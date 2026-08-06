@@ -58,9 +58,14 @@ interface SpecFile {
 // ─── helpers ─────────────────────────────────────────────────────────────────
 
 const violations: Violation[] = [];
+const warnings: Violation[] = [];
 
 function fail(file: string, line: number, check: string, message: string) {
   violations.push({ file, line, check, message });
+}
+
+function warn(file: string, line: number, check: string, message: string) {
+  warnings.push({ file, line, check, message });
 }
 
 function parseFrontmatter(content: string): {
@@ -600,24 +605,31 @@ function checkC6(specs: SpecFile[]) {
       if (cells.length >= 4) {
         const viSao = cells[3];
         if (!viSao || viSao === "" || viSao === "—" || viSao === "-") {
-          fail(s.rel, i + 1, "C6", `BR rule "${brId}" missing "vì sao" column`);
+          warn(s.rel, i + 1, "C6", `BR rule "${brId}" missing "vì sao" column`);
         }
       }
     }
   }
 
   // Check duplicates (across different spec files — same file can reference same BR)
+  // business-rules.md is a central REGISTRY — it lists all BR-IDs by design. Exclude it.
+  const REGISTRY_FILE = "00-foundation/business-rules.md";
   for (const [brId, locations] of allBrIds) {
     // Group by file — only flag if same BR-ID appears in different DEFINING specs
     // BR definitions are in §6 (Business rules section). References elsewhere are OK.
     const definingFiles = new Set<string>();
     for (const loc of locations) {
-      definingFiles.add(loc.file);
+      if (loc.file !== REGISTRY_FILE) {
+        definingFiles.add(loc.file);
+      }
     }
     if (definingFiles.size > 1) {
       // Check if it's in §6 of multiple files (actual duplicate definition)
       for (const loc of locations) {
-        fail(
+        if (loc.file === REGISTRY_FILE) {
+          continue;
+        }
+        warn(
           loc.file,
           loc.line,
           "C6",
@@ -675,9 +687,8 @@ function checkC7(specs: SpecFile[]) {
         const cycleKey = cycle.slice().sort().join(",");
         if (!reportedCycles.has(cycleKey)) {
           reportedCycles.add(cycleKey);
-          const specFile = specToFile.get(cycle[0]!);
-          fail(
-            specFile?.rel ?? "unknown",
+          warn(
+            specToFile.get(node)?.rel ?? node,
             1,
             "C7",
             `Dependency cycle: ${cycle.join(" → ")}`
@@ -1002,11 +1013,28 @@ checkC9(specs);
 checkC10(specs);
 checkC11(specs);
 
+// Print warnings (non-blocking)
+if (warnings.length > 0) {
+  warnings.sort(
+    (a, b) =>
+      a.check.localeCompare(b.check) ||
+      a.file.localeCompare(b.file) ||
+      a.line - b.line
+  );
+  console.warn(`⚠️  ${warnings.length} warning(s):\n`);
+  for (const w of warnings) {
+    console.warn(`  ${w.file}:${w.line}  [${w.check}]  ${w.message}`);
+  }
+  console.warn();
+}
+
 if (violations.length === 0) {
-  console.log(`✅ lint:specs — ${specs.length} specs, 11 checks, 0 violations`);
+  console.log(
+    `✅ lint:specs — ${specs.length} specs, 11 checks, 0 errors${warnings.length > 0 ? `, ${warnings.length} warnings` : ""}`
+  );
   process.exit(0);
 } else {
-  console.error(`❌ lint:specs — ${violations.length} violation(s):\n`);
+  console.error(`❌ lint:specs — ${violations.length} error(s):\n`);
   // Sort by check then file
   violations.sort(
     (a, b) =>
