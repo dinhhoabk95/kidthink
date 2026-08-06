@@ -16,10 +16,11 @@
     "lint:deps": "depcruise apps packages --config .dependency-cruiser.cjs",
     "typecheck:root": "tsc --noEmit -p tsconfig.json",
     "typecheck": "pnpm typecheck:root && pnpm --recursive run typecheck",
-    "check": "pnpm lint && pnpm lint:tokens && pnpm lint:deps && pnpm typecheck",
+    "check": "pnpm lint && pnpm lint:tokens && pnpm lint:deps && pnpm lint:specs && pnpm typecheck",
     "check:services": "node scripts/check-services.ts",
     "format": "biome format --write .",
     "test": "vitest run",
+    "lint:specs": "node scripts/lint-specs.ts",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage"
   },

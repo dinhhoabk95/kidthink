@@ -709,11 +709,12 @@ pnpm dev:admin                                # admin      :3002
 pnpm dev:worker                               # worker     :3099
 
 # Quality gate — phải xanh trước khi merge
-pnpm check                                    # lint + lint:tokens + lint:deps + typecheck
+pnpm check                                    # lint + lint:tokens + lint:deps + lint:specs + typecheck
 pnpm lint                                     # biome check .
 pnpm lint:fix                                 # biome check --write .
 pnpm lint:tokens                              # cấm hex literal ngoài designTokens.ts
 pnpm lint:deps                                # dependency-cruiser — chặn import xuyên ranh giới package/app
+pnpm lint:specs                               # kiểm corpus spec: frontmatter, section, link, rule, mã lỗi
 pnpm typecheck                                # recursive
 pnpm format                                   # biome format --write .
 
