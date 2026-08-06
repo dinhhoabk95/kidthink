@@ -4,6 +4,9 @@ import {
   checkC7,
   checkC9,
   checkC10,
+  checkC12,
+  checkC13,
+  collectSpecFiles,
   getViolations,
   getWarnings,
   makeSpecFile,
@@ -245,5 +248,90 @@ describe("checkC10 (banned CI wording, code-fence aware)", () => {
         (v) => v.check === "C10" && v.file === "fake/inside.md"
       )
     ).toHaveLength(0);
+  });
+});
+
+describe("checkC12", () => {
+  it("detects mismatches between DMO §7 and schema-* §7.x on real corpus", () => {
+    const specs = collectSpecFiles();
+    checkC12(specs);
+    const c12Errors = getViolations().filter((v) => v.check === "C12");
+    // Pre-T3 corpus has known mismatches (social_identities, user_tags, etc.)
+    expect(c12Errors.length).toBeGreaterThan(0);
+    // Verify specific expected mismatches
+    const messages = c12Errors.map((v) => v.message);
+    expect(messages.some((m) => m.includes("social_identities"))).toBe(true);
+    expect(messages.some((m) => m.includes("user_tags"))).toBe(true);
+  });
+});
+
+describe("checkC13", () => {
+  it("detects invalid code literals on real corpus", () => {
+    const specs = collectSpecFiles();
+    checkC13(specs);
+    const c13Errors = getViolations().filter((v) => v.check === "C13");
+    // Pre-T3 corpus has GT-xxx, G-04021, EMJ-APPLE etc.
+    expect(c13Errors.length).toBeGreaterThan(0);
+  });
+
+  it("catches code literal with wrong prefix format in synthetic spec", () => {
+    const specs = [
+      makeSpecFile(
+        "fake/test-c13.md",
+        "fake/test-c13.md",
+        [
+          "---",
+          "spec: TEST-C13",
+          "title: Test C13",
+          "area: 04-play",
+          "feature: F-999",
+          "status: draft",
+          "reviewed: 2026-08-06",
+          "priority: p0",
+          "depends_on: []",
+          "owns: []",
+          "---",
+          "## 7. Data",
+          "",
+          "Level code `G-04021` should fail C13.",
+        ].join("\n")
+      ),
+    ];
+    checkC13(specs);
+    const c13Errors = getViolations().filter(
+      (v) => v.check === "C13" && v.file === "fake/test-c13.md"
+    );
+    expect(c13Errors.length).toBe(1);
+    expect(c13Errors[0]?.message).toContain("G-04021");
+  });
+
+  it("does not flag valid code literals", () => {
+    const specs = [
+      makeSpecFile(
+        "fake/test-c13-valid.md",
+        "fake/test-c13-valid.md",
+        [
+          "---",
+          "spec: TEST-C13V",
+          "title: Test C13 valid",
+          "area: 04-play",
+          "feature: F-999",
+          "status: draft",
+          "reviewed: 2026-08-06",
+          "priority: p0",
+          "depends_on: []",
+          "owns: []",
+          "---",
+          "## 7. Data",
+          "",
+          "Valid codes: `G-C1-CNT-007` · `GT-003` · `LO-C1.CNT.03-01` · `EMJ-apple-red`",
+        ].join("\n")
+      ),
+    ];
+    checkC13(specs);
+    const c13Errors = getViolations().filter(
+      (v) => v.check === "C13" && v.file === "fake/test-c13-valid.md"
+    );
+    expect(c13Errors).toHaveLength(0);
   });
 });

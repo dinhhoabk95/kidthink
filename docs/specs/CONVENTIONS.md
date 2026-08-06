@@ -178,3 +178,5 @@ Mỗi scenario map được sang **đúng một** test. Tên test mang ID scenar
 - [ ] Mọi link nội bộ resolve được.
 - [ ] Không `classification`, không `tenant_id`, không persona enum, không cột `role` trên `users`.
 - [ ] `depends_on` không tạo chu trình.
+- [ ] Bảng trong `data-model-overview` §7 khớp hai chiều với `schema-*` §7.x.
+- [ ] Mã ID trong spec khớp regex `id-conventions` §7 (ví dụ khớp regex cùng hàng).

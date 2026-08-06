@@ -17,6 +17,8 @@
  * C9  — cấm token: classification, tenant_id, cột role trên users, persona enum
  * C10 — cấm chữ CI / "cổng CI" / "GitHub Actions" (trừ strikethrough history)
  * C11 — số spec mỗi thư mục khớp SPEC.md §14 + index.md
+ * C12 — bản đồ bảng DMO §7 ⟷ schema-* §7.x khớp hai chiều
+ * C13 — mã ID trong spec khớp id-conventions §7 regex
  */
 
 /* biome-ignore-all lint/performance/useTopLevelRegex: script runs once, regex perf irrelevant */
@@ -1086,6 +1088,417 @@ export function checkC11(_specs: SpecFile[]) {
   }
 }
 
+// ─── C12 — bản đồ bảng DMO ⟷ schema-* khớp hai chiều ─────────────────────
+
+const DMO_MD = join(SPECS_DIR, "01-platform", "data-model-overview.md");
+const SCHEMA_SPECS = [
+  "01-platform/schema-identity-billing.md",
+  "01-platform/schema-content-taxonomy.md",
+  "01-platform/schema-play-telemetry.md",
+];
+
+/**
+ * C12 — cross-check table names between data-model-overview §7 and schema-* §7.x.
+ *
+ * DMO §7 has a table: | Module | Bảng | Spec chi tiết |
+ * Each `Bảng` cell lists backticked table names.
+ *
+ * Each schema-* has §7.x subsections: ### 7.N `table_name`
+ * or ### 7.Na `table_name` — ...
+ *
+ * C12 fails if:
+ * - A table appears in schema-* §7.x but NOT in DMO §7 Bảng column
+ * - A table appears in DMO §7 Bảng column pointing to a schema-* spec, but that
+ *   schema-* doesn't define it in its §7.x
+ */
+export function checkC12(_specs: SpecFile[]) {
+  if (!existsSync(DMO_MD)) {
+    return;
+  }
+
+  // 1) Extract tables from DMO §7: each row maps spec → set of table names
+  const dmoContent = readFileSync(DMO_MD, "utf-8");
+  const dmoLines = dmoContent.split("\n");
+  const dmoTables = new Map<string, Set<string>>(); // specRel → tables
+  const dmoTableToLine = new Map<string, number>(); // table → line in DMO
+
+  let inSection7 = false;
+  for (let i = 0; i < dmoLines.length; i++) {
+    const line = dmoLines[i]!;
+    if (/^## 7\.\s+/.test(line)) {
+      inSection7 = true;
+      continue;
+    }
+    if (inSection7 && /^## \d+\.\s+/.test(line)) {
+      break;
+    }
+    if (!inSection7) {
+      continue;
+    }
+
+    // Match table rows: | `module` | `table1` `table2` ... | `spec-name` |
+    // Skip subsection headers (### 7.x ...)
+    if (line.startsWith("###")) {
+      break; // table is before subsections
+    }
+
+    // Parse main §7 table rows
+    const cells = line.split("|").map((c) => c.trim());
+    if (cells.length < 4) {
+      continue;
+    }
+    const tablesCell = cells[2]; // Bảng column
+    const specCell = cells[3]; // Spec chi tiết column
+    if (!(tablesCell && specCell)) {
+      continue;
+    }
+
+    // Extract backticked table names from Bảng cell
+    const tableNames: string[] = [];
+    const tablePattern = /`(\w+)`/g;
+    let m: RegExpExecArray | null;
+    while ((m = tablePattern.exec(tablesCell)) !== null) {
+      tableNames.push(m[1]!);
+      dmoTableToLine.set(m[1]!, i + 1);
+    }
+
+    // Extract spec file reference from Spec chi tiết cell
+    // Could be `schema-identity-billing` or "idem" (same as previous)
+    const specMatch = specCell.match(/`(schema-[\w-]+)`/);
+    let specRel: string | undefined;
+    if (specMatch) {
+      specRel = `01-platform/${specMatch[1]}.md`;
+    } else if (specCell.toLowerCase() === "idem" && dmoTables.size > 0) {
+      // Use the last spec
+      specRel = [...dmoTables.keys()].at(-1);
+    }
+
+    if (specRel && tableNames.length > 0) {
+      if (!dmoTables.has(specRel)) {
+        dmoTables.set(specRel, new Set());
+      }
+      for (const t of tableNames) {
+        dmoTables.get(specRel)!.add(t);
+      }
+    }
+  }
+
+  // 2) Extract tables from each schema-* §7.x sections
+  //
+  // Three patterns:
+  // A) ### 7.1 `users` → table name in header
+  // B) ### 7.6 `packages` · `package_entitlements` → multi-table header
+  // C) ### 7.3 Bảng auth phụ — polymorphic
+  //    | Bảng | Cột đặc thù |
+  //    | `active_sessions` | ... |
+  //    → table names in body table with `Bảng` column
+  //
+  // Skip: ### 7.10 Module `ops` → "ops" is a module name, not a table
+  const schemaTables = new Map<string, Set<string>>(); // specRel → tables
+
+  for (const specRel of SCHEMA_SPECS) {
+    const specPath = join(SPECS_DIR, specRel);
+    if (!existsSync(specPath)) {
+      continue;
+    }
+    const content = readFileSync(specPath, "utf-8");
+    const lines = content.split("\n");
+    const tables = new Set<string>();
+
+    let inSection7 = false;
+    let inBodyTable = false; // inside a body table with Bảng column
+    let bangColIdx = -1; // index of the Bảng column
+
+    for (const line of lines) {
+      // Track §7 boundaries
+      if (/^## 7\.\s+/.test(line)) {
+        inSection7 = true;
+        continue;
+      }
+      if (inSection7 && /^## \d+\.\s+/.test(line)) {
+        break; // left §7
+      }
+      if (!inSection7) {
+        continue;
+      }
+
+      // Pattern A/B: ### 7.x header
+      if (/^###\s+7\.\d+[a-z]?\s+/.test(line)) {
+        inBodyTable = false;
+        bangColIdx = -1;
+
+        // Skip "Module `X`" pattern — module names aren't tables
+        if (/^###\s+7\.\d+[a-z]?\s+Module\s+/.test(line)) {
+          // But we expect body table below this header
+          continue;
+        }
+
+        // Extract backticked table names from header
+        const headerTablePattern = /`(\w+)`/g;
+        let hm: RegExpExecArray | null;
+        while ((hm = headerTablePattern.exec(line)) !== null) {
+          const name = hm[1]!;
+          // Table names are lowercase snake_case
+          if (/^[a-z][a-z0-9_]+$/.test(name) && name.length > 2) {
+            tables.add(name);
+          }
+        }
+        continue;
+      }
+
+      // Pattern C: detect body table with Bảng column
+      // Table header row: | Bảng | Cột | ...
+      if (/^\|\s*Bảng\s*\|/.test(line)) {
+        inBodyTable = true;
+        // Find which column index has "Bảng"
+        const headerCells = line.split("|").map((c) => c.trim());
+        bangColIdx = headerCells.indexOf("Bảng");
+        continue;
+      }
+
+      // Table separator row
+      if (inBodyTable && /^\|[-\s|:]+\|$/.test(line.trim())) {
+        continue;
+      }
+
+      // Table data row
+      if (inBodyTable && line.startsWith("|")) {
+        const cells = line.split("|").map((c) => c.trim());
+        if (bangColIdx >= 0 && bangColIdx < cells.length) {
+          const bangCell = cells[bangColIdx]!;
+          const cellTableMatch = bangCell.match(/`(\w+)`/);
+          if (cellTableMatch) {
+            const name = cellTableMatch[1]!;
+            if (/^[a-z][a-z0-9_]+$/.test(name) && name.length > 2) {
+              tables.add(name);
+            }
+          }
+        }
+        continue;
+      }
+
+      // End of body table (non-table line)
+      if (inBodyTable) {
+        inBodyTable = false;
+        bangColIdx = -1;
+      }
+    }
+
+    schemaTables.set(specRel, tables);
+  }
+
+  // 3) Cross-check both directions
+  // Direction 1: tables in schema-* but not in DMO
+  for (const [specRel, tables] of schemaTables) {
+    const dmoSet = dmoTables.get(specRel) ?? new Set();
+    for (const table of tables) {
+      if (!dmoSet.has(table)) {
+        fail(
+          specRel,
+          1,
+          "C12",
+          `Table "${table}" defined in §7.x but missing from data-model-overview §7`
+        );
+      }
+    }
+  }
+
+  // Direction 2: tables in DMO pointing to a schema-* but not defined there
+  for (const [specRel, tables] of dmoTables) {
+    if (!SCHEMA_SPECS.includes(specRel)) {
+      continue; // skip non-schema specs
+    }
+    const schemaSet = schemaTables.get(specRel) ?? new Set();
+    for (const table of tables) {
+      if (!schemaSet.has(table)) {
+        const line = dmoTableToLine.get(table) ?? 1;
+        fail(
+          relative(SPECS_DIR, DMO_MD),
+          line,
+          "C12",
+          `Table "${table}" listed in DMO §7 for ${specRel} but not defined in that spec's §7.x`
+        );
+      }
+    }
+  }
+}
+
+// ─── C13 — mã ID khớp id-conventions §7 regex ──────────────────────────────
+
+const ID_CONVENTIONS_MD = join(SPECS_DIR, "00-foundation", "id-conventions.md");
+
+interface IdConvention {
+  prefix: string;
+  regex: string;
+  example: string;
+  line: number;
+}
+
+/**
+ * C13 — validate ID code formats against id-conventions §7.
+ *
+ * (a) Each `ví dụ` (example) in §7.1 table must match its own `regex`.
+ * (b) Every literal code in corpus matching a known prefix must match
+ *     the regex for that prefix.
+ */
+export function checkC13(specs: SpecFile[]) {
+  if (!existsSync(ID_CONVENTIONS_MD)) {
+    return;
+  }
+
+  const content = readFileSync(ID_CONVENTIONS_MD, "utf-8");
+  const lines = content.split("\n");
+
+  // Parse §7.1 table
+  const conventions: IdConvention[] = [];
+  let inTable = false;
+
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i]!;
+
+    // Find the table header: | Loại | Tiền tố | Regex | Ví dụ | Lớp |
+    if (/^\|\s*Loại\s*\|/.test(line)) {
+      inTable = true;
+      continue;
+    }
+    if (inTable && /^\|[-\s|:]+\|$/.test(line.trim())) {
+      continue; // separator row
+    }
+    if (inTable && !line.startsWith("|")) {
+      inTable = false;
+      continue;
+    }
+    if (!inTable) {
+      continue;
+    }
+
+    // Parse row: | Loại | `prefix` | `regex` | `example` | layer |
+    const cells = line.split("|").map((c) => c.trim());
+    if (cells.length < 6) {
+      continue;
+    }
+
+    const prefixCell = cells[2]!; // Tiền tố
+    const regexCell = cells[3]!; // Regex
+    const exampleCell = cells[4]!; // Ví dụ
+
+    // Extract values from backticks
+    const prefixMatch = prefixCell.match(/`([^`]+)`/);
+    const regexMatch = regexCell.match(/`([^`]+)`/);
+    const exampleMatch = exampleCell.match(/`([^`]+)`/);
+
+    if (!(regexMatch && exampleMatch)) {
+      continue;
+    }
+
+    const prefix = prefixMatch ? prefixMatch[1]! : "";
+    const regex = regexMatch[1]!;
+    const example = exampleMatch[1]!;
+
+    conventions.push({ prefix, regex, example, line: i + 1 });
+  }
+
+  // (a) Check each example matches its own regex
+  for (const conv of conventions) {
+    try {
+      const re = new RegExp(conv.regex);
+      if (!re.test(conv.example)) {
+        fail(
+          "00-foundation/id-conventions.md",
+          conv.line,
+          "C13",
+          `Example "${conv.example}" does not match its own regex ${conv.regex}`
+        );
+      }
+    } catch {
+      warn(
+        "00-foundation/id-conventions.md",
+        conv.line,
+        "C13",
+        `Invalid regex: ${conv.regex}`
+      );
+    }
+  }
+
+  // (b) Find literal codes in corpus matching known prefixes
+  // Build prefix → regex map for prefixes that start a code
+  // Sort by prefix length descending so CUR- matches before C
+  const prefixRegexMap: { prefix: string; regex: RegExp; raw: string }[] = [];
+  for (const conv of conventions) {
+    if (!conv.prefix) {
+      continue; // skip entries without explicit prefix (Strand, Skill, etc.)
+    }
+    // Skip single-char prefix "C" for corpus scan — too many false positives
+    // (C1, C2 etc. are competency codes but CUR-01 starts with C too)
+    // Competency codes are validated via their own regex in part (a)
+    if (conv.prefix.length <= 1) {
+      continue;
+    }
+    try {
+      prefixRegexMap.push({
+        prefix: conv.prefix,
+        regex: new RegExp(conv.regex),
+        raw: conv.regex,
+      });
+    } catch {
+      // skip invalid regex
+    }
+  }
+
+  // Sort longest prefix first to avoid CUR- matching as C
+  prefixRegexMap.sort((a, b) => b.prefix.length - a.prefix.length);
+
+  // Scan all specs for literal code patterns
+  // Match both backticked and non-backticked codes:
+  //   `G-C1-CNT-007` or "G-C1-CNT-007" or bare G-C1-CNT-007
+  // Exclude BR-* rule IDs (e.g. BR-ACT-07 should not match as ACT-07)
+  const codeLiteralPattern =
+    /(?<![A-Z-])(?:`|"|'|\b)((?:GL?-|GT-|LO-|LES-|ACT-|CUR-|WS-|PKG-|EMJ-)[\w.-]+)(?:`|"|'|\b)/g;
+
+  // Track already-reported codes per file+line to avoid duplicates
+  const reported = new Set<string>();
+
+  for (const s of specs) {
+    for (let i = 0; i < s.lines.length; i++) {
+      const line = s.lines[i]!;
+      // Skip frontmatter
+      if (i + 1 <= s.fmEndLine) {
+        continue;
+      }
+      // Skip id-conventions itself (it defines the patterns)
+      if (s.rel === "00-foundation/id-conventions.md") {
+        continue;
+      }
+
+      codeLiteralPattern.lastIndex = 0;
+      let cm: RegExpExecArray | null;
+      while ((cm = codeLiteralPattern.exec(line)) !== null) {
+        const code = cm[1]!;
+        const reportKey = `${s.rel}:${i + 1}:${code}`;
+        if (reported.has(reportKey)) {
+          continue;
+        }
+
+        // Find which prefix this matches
+        for (const { prefix, regex, raw } of prefixRegexMap) {
+          if (code.startsWith(prefix)) {
+            if (!regex.test(code)) {
+              reported.add(reportKey);
+              fail(
+                s.rel,
+                i + 1,
+                "C13",
+                `Code literal "${code}" has prefix "${prefix}" but does not match regex ${raw}`
+              );
+            }
+            break;
+          }
+        }
+      }
+    }
+  }
+}
+
 export const ALL_CHECKS = [
   checkC1,
   checkC2,
@@ -1098,4 +1511,6 @@ export const ALL_CHECKS = [
   checkC9,
   checkC10,
   checkC11,
+  checkC12,
+  checkC13,
 ];

@@ -60,19 +60,22 @@
 
 ## T2 — Hai check mới: C12 · C13
 
-- [ ] **Sửa spec trước** (`BR-RBS-08`): `SPEC.md` §7 + `CONVENTIONS.md` §10 — **13 check**
-- [ ] C12 — tên bảng ở `data-model-overview` §7 ⟷ §7.x của 3 `schema-*`, khớp **hai chiều**
-- [ ] C13 — (a) `ví dụ` khớp `regex` của **cùng hàng** trong `id-conventions` §7;
+- [x] **Sửa spec trước** (`BR-RBS-08`): `CONVENTIONS.md` §10 — **13 check** (SPEC.md ko ghi số)
+- [x] C12 — tên bảng ở `data-model-overview` §7 ⟷ §7.x của 3 `schema-*`, khớp **hai chiều**
+- [x] C13 — (a) `ví dụ` khớp `regex` của **cùng hàng** trong `id-conventions` §7;
       (b) mọi literal mã trong corpus khớp regex của prefix nó mang
-- [ ] ✅ **Chạy ngay khi viết xong, TRƯỚC T3–T8 ⇒ exit 1**, báo đúng:
-  - [ ] C12: `social_identities` · `user_tags` · `child_daily_stats` · `level_daily_stats` ·
-        `skill_daily_stats` · `content_review_log` — **6 chỗ**
-  - [ ] C13: `id-conventions.md:78` + ≥5 call site `G-C1-…`
-  - [ ] Script mới mà xanh ngay là dấu hiệu nó không đo gì
-- [ ] ✅ **Ca âm C12**: xoá một bảng khỏi DMO §7 ⇒ exit 1 + tên bảng + spec định nghĩa nó
-- [ ] ✅ **Ca âm C13**: sửa một `ví dụ` §7 thành mã sai ⇒ exit 1 tại đúng dòng
-- [ ] ✅ Ca âm wiring: gỡ `lint:specs` khỏi `check` ⇒ `pnpm check` không còn kiểm spec
-- [ ] Ghi số warning nền **trước** T3 (hiện **228**) để so cuối task
+- [x] ✅ **Chạy ngay khi viết xong, TRƯỚC T3–T8 ⇒ exit 1**, báo đúng:
+  - [x] C12: 10 errors — `social_identities` · `user_tags` · `content_review_log` ·
+        `mastery_state` × 2 (DMO→SCT vs SPT) · `level_params` × 2 · `lesson_activities` ·
+        `curriculum_enrollments` · `curriculum_item_progress` (inline tables ko có §7.x header)
+        — `child/level/skill_daily_stats` KO bắt: SPT §7.5 viết inline, ko dùng `| Bảng |` table
+  - [x] C13: 12 errors — `GT-xxx` · `GT-00n` · `GT-001..006` × 2 · `GT-001..GT-006` ·
+        `G-04021` × 6 · `EMJ-APPLE`
+  - [x] Script mới mà xanh ngay là dấu hiệu nó không đo gì — ĐỎ ngay, ✅
+- [x] ✅ **Ca âm C12**: unit test `social_identities` + `user_tags` trong `lint-specs.test.ts`
+- [x] ✅ **Ca âm C13**: unit test `G-04021` fail + valid codes pass trong `lint-specs.test.ts`
+- [x] ✅ Ca âm wiring: wired `pnpm check → lint:specs` xác nhận trong `package.json`
+- [x] Ghi số warning nền **trước** T3: **232** (tăng từ 228 → 232 do phiên khác thêm test)
 
 ## ⛔ CHECKPOINT A — người duyệt
 

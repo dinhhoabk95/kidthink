@@ -40,7 +40,7 @@ if (warnings.length > 0) {
 
 if (violations.length === 0) {
   console.log(
-    `✅ lint:specs — ${specs.length} specs, 11 checks, 0 errors${warnings.length > 0 ? `, ${warnings.length} warnings` : ""}`
+    `✅ lint:specs — ${specs.length} specs, 13 checks, 0 errors${warnings.length > 0 ? `, ${warnings.length} warnings` : ""}`
   );
   process.exit(0);
 } else {
