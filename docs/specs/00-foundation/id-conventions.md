@@ -75,7 +75,7 @@ File này chốt định dạng, ai cấp, và cái gì không bao giờ đượ
 | Skill | — | `^C[1-6]\.[A-Z]{2,5}\.\d{2}$` | `C1.CNT.03` | 1 |
 | Learning Objective | `LO-` | `^LO-C[1-6]\.[A-Z]{2,5}\.\d{2}-\d{2}$` | `LO-C1.CNT.03-01` | 1 |
 | Game Template | `GT-` | `^GT-\d{3}$` | `GT-003` | 1 |
-| Game Level | `G-` | `^G-C[1-6]-[A-Z]{2,5}-\d{3}$` | `G-C1-CNT-007` | 2 |
+| Game Level | `GL-` | `^GL-C[1-6]-[A-Z]{2,5}-[A-Z]{2,5}-\d{4}$` | `GL-C1-CNT-MATCH-0007` | 2 |
 | Lesson | `LES-` | `^LES-\d{4}$` | `LES-0042` | 2 |
 | Activity | `ACT-` | `^ACT-\d{4}$` | `ACT-0117` | 2 |
 | Curriculum | `CUR-` | `^CUR-\d{3}$` | `CUR-001` | 2 |
@@ -109,7 +109,7 @@ Quy trình: tạo mã mới → bảng ánh xạ `code_aliases` → 301 cho URL 
 
 | Thứ | Dùng gì ra ngoài | ❌ Không dùng |
 |---|---|---|
-| Game level trong URL | `code` (`G-C1-CNT-007`) | `id` bigserial |
+| Game level trong URL | `code` (`GL-C1-CNT-MATCH-0007`) | `id` bigserial |
 | Child profile trong API | `uuid` | `id` bigserial |
 | Trong telemetry | `child_uuid` | tên, tuổi, `id` |
 | Payment order | `uuid` | `id` bigserial |
@@ -130,15 +130,15 @@ Không sở hữu route nào. Ràng buộc áp lên mọi route:
 ```gherkin
 Scenario: BR-ID-04 — client không đặt được mã
   Given Manager đã đăng nhập
-  When client POST /api/managers/game-levels với body chứa code = "G-C1-CNT-999"
+  When client POST /api/managers/game-levels với body chứa code = "GL-C1-CNT-MATCH-9999"
   Then mã trong body bị bỏ qua
   And level được tạo với mã do server sinh theo thứ tự
 
 Scenario: BR-ID-02 — mã đã xoá không tái dùng
-  Given game level "G-C1-CNT-007" tồn tại rồi bị xoá
+  Given game level "GL-C1-CNT-MATCH-0007" tồn tại rồi bị xoá
   When Manager tạo level mới cùng competency và strand
-  Then mã mới là "G-C1-CNT-008"
-  And không phải "G-C1-CNT-007"
+  Then mã mới là "GL-C1-CNT-MATCH-0008"
+  And không phải "GL-C1-CNT-MATCH-0007"
 
 Scenario: BR-ID-05 — regex ép ở cả hai tầng
   Given một seeder cố ghi skill code "c1.cnt.3"
@@ -147,7 +147,7 @@ Scenario: BR-ID-05 — regex ép ở cả hai tầng
   And thông báo nêu rõ regex mong đợi
 
 Scenario: BR-ID-01 — không sửa được mã đã publish
-  Given game level "G-C1-CNT-007" ở trạng thái published
+  Given game level "GL-C1-CNT-MATCH-0007" ở trạng thái published
   When Manager gửi PATCH đổi code
   Then hệ thống trả 409 CODE_IMMUTABLE
 ```
@@ -174,5 +174,5 @@ Scenario: BR-ID-01 — không sửa được mã đã publish
 
 | # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
 |---|---|---|---|---|
-| ~~1~~ | ~~Mã Game Level có nên mang `template_code` không~~ **Đóng 2026-08-06 (T9)**: **có** — mã level cần mang `template_code` để phân biệt loại game ngay từ mã. Format: `GL-{competency}-{strand}-{template}-{seq}` | — | ✅ đóng | D-X (T9) |
-| ~~2~~ | ~~3 chữ số cho Game Level đủ chưa~~ **Đóng 2026-08-06 (T9)**: **4 chữ số** (`\d{4}`) — 3.000+ level dự kiến, 3 chữ số tràn ở 1.000 | — | ✅ đóng | D-X (T9) |
+| ~~1~~ | ~~Mã Game Level có nên mang `template_code` không~~ **Đóng 2026-08-06 (T9)**: **có** — mã level cần mang `template_code` để phân biệt loại game ngay từ mã. Format: `GL-{competency}-{strand}-{template}-{seq}`. **Thân bài cập nhật T3, 2026-08-07** | — | ✅ đóng | D-X (T9) |
+| ~~2~~ | ~~3 chữ số cho Game Level đủ chưa~~ **Đóng 2026-08-06 (T9)**: **4 chữ số** (`\d{4}`) — 3.000+ level dự kiến, 3 chữ số tràn ở 1.000. **Thân bài cập nhật T3, 2026-08-07** | — | ✅ đóng | D-X (T9) |

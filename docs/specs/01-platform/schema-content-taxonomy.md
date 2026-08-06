@@ -85,7 +85,7 @@ Không có.
 | Cột | Ghi chú |
 |---|---|
 | `id` | bigserial |
-| `code` | `G-*` — **không** UNIQUE một mình |
+| `code` | `GL-*` — format theo [`id-conventions`](../00-foundation/id-conventions.md) §7. **Không** UNIQUE một mình |
 | `content_version` | int NOT NULL |
 | — | UNIQUE `(code, content_version)` |
 | — | UNIQUE `(code) WHERE status = 'published'` — partial |
@@ -153,7 +153,7 @@ Không có.
 
 ```gherkin
 Scenario: BR-SCT-03 — đúng một bản published
-  Given game level G-C1-CNT-007 version 1 published
+  Given game level GL-C1-CNT-MATCH-0007 version 1 published
   When chèn version 2 với status published mà không archive version 1
   Then partial unique index từ chối
 

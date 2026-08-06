@@ -91,17 +91,17 @@
 > ❗ File đang `status: approved`. Chỉ sửa chỗ file **tự mâu thuẫn với §11 của chính nó**.
 > ❌ Không đổi quyết định nào.
 
-- [ ] §7 hàng `Game Level`: prefix `GL-` · regex `^GL-C[1-6]-[A-Z]{2,5}-[A-Z]{2,5}-\d{4}$` ·
+- [x] §7 hàng `Game Level`: prefix `GL-` · regex `^GL-C[1-6]-[A-Z]{2,5}-[A-Z]{2,5}-\d{4}$` ·
       ví dụ `GL-C1-CNT-MATCH-0007`
-- [ ] §7 dòng "Game level trong URL" (`:112`)
-- [ ] §9 — 4 scenario dùng mã cũ (`:133` · `:138` · `:140` · `:141` · `:150`)
-- [ ] `schema-content-taxonomy` §7.4 `code` "`G-*`" → "`GL-*`" + trỏ `id-conventions` §7
-- [ ] `schema-content-taxonomy` §9 scenario `BR-SCT-03` (`G-C1-CNT-007`)
-- [ ] Quét toàn corpus mã `G-C…` còn sót
-- [ ] §11 Q1/Q2 — thêm ghi chú "thân bài cập nhật T3, 2026-08-06"
-- [ ] `reviewed: 2026-08-06`
-- [ ] ✅ C13 xanh · `grep -rn 'G-C[1-6]-' docs/` → **rỗng**
-- [ ] ✅ Diff ❌ không chạm prefix nào khác (`EMJ-` · `PKG-` · `LO-` · `LSN-` …)
+- [x] §7 dòng "Game level trong URL" (`:112`)
+- [x] §9 — 4 scenario dùng mã cũ (`:133` · `:138` · `:140` · `:141` · `:150`)
+- [x] `schema-content-taxonomy` §7.4 `code` "`G-*`" → "`GL-*`" + trỏ `id-conventions` §7
+- [x] `schema-content-taxonomy` §9 scenario `BR-SCT-03` (`G-C1-CNT-007` → `GL-C1-CNT-MATCH-0007`)
+- [x] Quét toàn corpus mã `G-C…` còn sót — 9 chỗ ở 5 file + SPEC.md, đã sửa hết
+- [x] §11 Q1/Q2 — thêm ghi chú "thân bài cập nhật T3, 2026-08-07"
+- [x] `reviewed: 2026-08-06` (giữ nguyên — không đổi quyết định, chỉ cập nhật thân bài)
+- [x] ✅ C13 xanh cho `G-C` codes · `grep -rn 'G-C[1-6]-' docs/specs/` → **rỗng**
+- [x] ✅ Diff ❌ không chạm prefix nào khác (`EMJ-` · `PKG-` · `LO-` · `LSN-` …)
 
 ## T4 — `child-data-compliance`: 2 tên cột (M7 · M8) ⟂
 

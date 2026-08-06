@@ -293,7 +293,7 @@ describe("checkC13", () => {
           "---",
           "## 7. Data",
           "",
-          "Level code `G-04021` should fail C13.",
+          "Level code `GL-BAD-FORMAT` should fail C13.",
         ].join("\n")
       ),
     ];
@@ -302,7 +302,7 @@ describe("checkC13", () => {
       (v) => v.check === "C13" && v.file === "fake/test-c13.md"
     );
     expect(c13Errors.length).toBe(1);
-    expect(c13Errors[0]?.message).toContain("G-04021");
+    expect(c13Errors[0]?.message).toContain("GL-BAD-FORMAT");
   });
 
   it("does not flag valid code literals", () => {
@@ -324,7 +324,7 @@ describe("checkC13", () => {
           "---",
           "## 7. Data",
           "",
-          "Valid codes: `G-C1-CNT-007` · `GT-003` · `LO-C1.CNT.03-01` · `EMJ-apple-red`",
+          "Valid codes: `GL-C1-CNT-MATCH-0007` · `GT-003` · `LO-C1.CNT.03-01` · `EMJ-apple-red`",
         ].join("\n")
       ),
     ];

@@ -81,7 +81,7 @@ Mỗi ứng viên phải qua **gating** trước khi vào danh sách gợi ý.
 ```jsonc
 {
   "primary": {
-    "level_code": "G-C1-CNT-008",
+    "level_code": "GL-C1-CNT-MATCH-0008",
     "title_vi": "Đếm quả cam",
     "thumbnail_emoji": "EMJ-orange",
     "reason_vi": "Cùng chủ đề, khó hơn một chút",

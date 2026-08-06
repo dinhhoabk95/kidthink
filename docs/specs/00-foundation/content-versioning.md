@@ -150,19 +150,19 @@ Response **có** kèm `content_version` để client ghim vào phiên.
 
 ```gherkin
 Scenario: BR-VER-02 — đúng một bản published mỗi code
-  Given game level G-C1-CNT-007 có version 1 published
+  Given game level GL-C1-CNT-MATCH-0007 có version 1 published
   When manager publish version 2
-  Then đúng một hàng có code G-C1-CNT-007 và status published
+  Then đúng một hàng có code GL-C1-CNT-MATCH-0007 và status published
   And đó là version 2
   And version 1 có status archived
 
 Scenario: BR-VER-02 — index ép ở tầng DB
-  Given game level G-C1-CNT-007 version 1 đang published
+  Given game level GL-C1-CNT-MATCH-0007 version 1 đang published
   When chạy UPDATE trực tiếp đặt version 2 thành published mà không archive version 1
   Then transaction bị unique index từ chối
 
 Scenario: BR-VER-03 — phiên chơi ghim version
-  Given trẻ mở game level G-C1-CNT-007 đang ở version 3
+  Given trẻ mở game level GL-C1-CNT-MATCH-0007 đang ở version 3
   When phiên chơi được tạo
   Then play_sessions.content_version = 3
   And mọi telemetry_event của phiên đó cũng mang content_version = 3

@@ -1450,7 +1450,7 @@ export function checkC13(specs: SpecFile[]) {
 
   // Scan all specs for literal code patterns
   // Match both backticked and non-backticked codes:
-  //   `G-C1-CNT-007` or "G-C1-CNT-007" or bare G-C1-CNT-007
+  //   `GL-C1-CNT-MATCH-0007` or "G-04021" or bare GT-xxx
   // Exclude BR-* rule IDs (e.g. BR-ACT-07 should not match as ACT-07)
   const codeLiteralPattern =
     /(?<![A-Z-])(?:`|"|'|\b)((?:GL?-|GT-|LO-|LES-|ACT-|CUR-|WS-|PKG-|EMJ-)[\w.-]+)(?:`|"|'|\b)/g;

@@ -313,7 +313,7 @@ interface GameTemplate {
 
 ```ts
 {
-  code: "G-C1-CNT-001",
+  code: "GL-C1-CNT-MATCH-0001",
   template_code: "GT-003",
   content_pack:      { /* NỘI DUNG — emoji, item, đáp án đúng */ },
   difficulty_params: { /* ĐỘ KHÓ — count, distractor, hints, time */ },

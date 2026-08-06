@@ -79,7 +79,7 @@ Payload phải nhỏ (tablet trên 4G) và đã qua gating (không rò nội dun
 
 ```jsonc
 {
-  "level_code": "G-C1-CNT-007",
+  "level_code": "GL-C1-CNT-MATCH-0007",
   "content_version": 3,
   "template_code": "GT-003",
   "title_vi": "Đếm quả táo",

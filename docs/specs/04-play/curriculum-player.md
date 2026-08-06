@@ -94,7 +94,7 @@ progress    = numerator / denominator
 ```jsonc
 {
   "week_no": 3, "session_no": 2,
-  "item": { "entity_type": "game_level", "entity_code": "G-C1-CNT-008", "locked": false },
+  "item": { "entity_type": "game_level", "entity_code": "GL-C1-CNT-MATCH-0008", "locked": false },
   "week_progress": { "done": 3, "total": 5 },
   "curriculum_progress": 0.28
 }
