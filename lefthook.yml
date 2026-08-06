@@ -7,8 +7,7 @@
 # ⛔ `git commit --no-verify` / `git push --no-verify` BỎ QUA hook này.
 # lefthook là gate local, ❌ KHÔNG phải cưỡng chế server-side. Xem repo-bootstrap §11 Q12.
 
-# Không tự cài lại hook khi lefthook.yml đổi mà người chưa chạy `lefthook install`
-# → hook cũ chạy im lặng. Bật để lefthook tự đồng bộ.
+# skip_lfs: bỏ qua Git LFS hooks (repo không dùng LFS, tránh lefthook cảnh báo/lỗi thừa).
 skip_lfs: true
 
 pre-commit:

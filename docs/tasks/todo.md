@@ -1,216 +1,306 @@
-# Todo — Task #2: 16 spec `00-foundation` → `approved`
+# Todo — Task #3: P0 bước 7 — khoá contract schema
 
 > Bản 1, 2026-08-06. Chi tiết + acceptance + lý do: [`plan.md`](./plan.md).
-> Task #1 lưu trữ: [`01-bootstrap-todo.md`](./01-bootstrap-todo.md).
+> Task #1 lưu trữ: [`01-bootstrap-todo.md`](./01-bootstrap-todo.md) ·
+> Task #2 lưu trữ: [`02-foundation-approve-todo.md`](./02-foundation-approve-todo.md).
 >
-> Thứ tự: `T1 → T2 → T3 → ⛔A → {T4, T5, T6} → ⛔B → T7 → ⛔C → T8 → T9 → T10 → T11 → T12 → ⛔D`
+> Thứ tự: `T0 → T1✅ → T2 → ⛔A → {T3, T4, T4b} → ⛔B → {T5, T6, T7, T8} → ⛔C → T9 → T10 → T11 → ⛔D`
+>
+> **Đã chốt 2026-08-06 (👤):** M1 = sửa `id-conventions` §7 theo Q1/Q2 (`GL-`+template+`\d{4}`) ·
+> **D-Y** = 7 spec (thêm `auth-tokens-sessions`) · **D-Z** = ❌ không partition ở P0, mở lại
+> `event-catalog` Q2 · **D-AA** = `age_band` suy lúc đọc (12 cột). Còn chờ: D-AB · D-AC · D-AD.
 >
 > ⚠️ Mọi lệnh prefix `export PATH=/Users/macbook/.nvm/versions/node/v24.15.0/bin:$PATH`
 > — shell state không persist, shell mặc định vẫn node v20.17.0.
+>
+> ⚠️ Tick checkbox **ngay khi làm**. Task #2 để lại một file 217 dòng toàn ô trống trong khi
+> việc đã xong — không lặp lại.
 
 ## Mục tiêu đo được
 
 | Đo bây giờ | Đo lúc đóng task |
 |---|---|
-| 0/16 spec foundation `approved` | **16/16** |
-| 48 OQ không phân loại | 48/48 có `Chặn phase` + `Chủ`; 14 nhóm 🔴 P0 đã đóng |
-| Corpus không trong git | Trong `kidthink/`, `git log --follow` chạy được |
-| Không có cổng kiểm spec | `pnpm lint:specs` — 11 check, 11 ca âm |
-| `BR-RBS-04` chặn | **Mở khoá** |
+| `pnpm check` ❌ **đỏ** (biome format trong `scripts/lint-specs-lib.ts`) | ✅ exit 0 |
+| `pnpm test` 73/73 (phiên khác vừa thêm 17 test) | ≥ **73/73**, ❌ không giảm |
+| 16/130 spec `approved` | **23/130** (D-Y = 7 spec) |
+| `lint:specs` 11 check | **13 check** (thêm C12 · C13), mỗi cái có ca âm |
+| 11 lệch/mâu thuẫn contract (M1–M11) | **0** |
+| 6 bảng lệch giữa DMO §7 và `schema-*` | **0** — C12 xanh |
+| `content_review_log` không spec nào `owns` cột | có đúng **1** chủ |
+| `data-model-overview` §Ràng buộc chờ | **≥19 dòng** |
+| `SPEC.md` §13 thiếu 3 dòng neo (D-W · Q4/T9 · D-Z) | có đủ **3** (2 ở P0, 1 ở P1) |
+| `event-catalog` Q2 đóng "có partition" — xung đột PK | **mở lại**, 🟡 P1, có tên chủ + ngưỡng 5M hàng/2GB |
+| 17 OQ ở 6 spec đích | 0 mở mà không có `Chặn phase` + `Chủ` |
+| Mã `G-C…` trong corpus | **0** |
+| P0 bước 8 (migration) | **Mở khoá** |
 
 ---
 
-## T1 — Đóng nợ migration CI → lefthook
+## T0 — Đóng nợ working tree (gate đang đỏ) ⚠️ phiên khác đang sửa cùng file
 
-- [ ] Ca dương `pre-commit`: commit hợp lệ đi qua
-- [ ] ✅ **Ca âm** `pre-commit`: file `.ts` vi phạm được `git add` ⇒ `git commit` exit ≠ 0,
-      `HEAD` không đổi, output in `file:line`
-- [ ] ✅ **Ca âm** `pre-push`: `pnpm check` đỏ ⇒ push bị chặn
-- [ ] Commit `chore: thay CI remote bằng lefthook gate local`
-- [ ] ✅ `git status --short` trong `kidthink/` **rỗng**
-- [ ] ✅ `kidthink/.github/` không còn tồn tại
+- [ ] ⚠️ **Trước hết**: xác nhận phiên khác đã dừng — `git status` không đổi qua 2 lần đo cách
+      nhau vài phút. Phiên đó đang tách `scripts/lint-specs-lib.ts` + `scripts/tests/`
+      (mtime 23:11→23:15). ❌ Không ghi đè, ❌ không commit hộ
+- [ ] Đọc `scripts/tests/lint-specs.test.ts` — ghi lại check nào **đã** có test
+      (`parseFrontmatter` · C7 · C9) để T2 không viết lại
+- [ ] Sửa lỗi biome format còn lại trong `scripts/lint-specs-lib.ts` — ❌ không refactor thêm
+- [ ] ✅ **Ca âm C6-trùng**: fixture định nghĩa lại `BR-DM-01` ở §6 spec khác ⇒ `lint:specs`
+      exit **1**, in `file:line` + `C6`; xoá fixture ⇒ exit 0
+- [ ] ✅ **Ca âm C10-codeblock** hai chiều: `GitHub Actions` **trong** code fence ⇒ im lặng;
+      **ngoài** fence ⇒ exit 1
+- [ ] Commit
+- [ ] ✅ `pnpm check` exit 0 · `pnpm test` ≥ **73/73** (❌ không giảm) · `git status --short` **rỗng**
 
-## T2 — Chuyển corpus vào `kidthink/docs/` (đóng §11 Q10 · D-U)
+## T1 — Lưu trữ Task #2 ✅ (làm khi viết plan)
 
-- [ ] Đếm link resolve **TRƯỚC** khi di chuyển (số nền để so sánh)
-- [ ] `docs/specs/` → `kidthink/docs/specs/` (135 file)
-- [ ] `SPEC.md` (file thật 71K) → `kidthink/docs/SPEC.md`
-- [ ] Symlink `kidthink/SPEC.md -> docs/SPEC.md` (`SPEC.md` §8: *"root SPEC.md symlink về đây"*)
-- [ ] `docs/tasks/*` → `kidthink/docs/tasks/` (4 file: plan · todo · 01-bootstrap-plan · 01-bootstrap-todo)
-- [ ] Sửa 13 tham chiếu đường dẫn trong `.agents/AGENTS.md`
-- [ ] Xoá bản cũ ở workspace root — ❌ không để hai bản cùng tồn tại
-- [ ] `repo-bootstrap.md` §11 Q10 → gạch `~~10~~` **Đóng 2026-08-06**, ghi D-U
-- [ ] ✅ `git ls-files docs/specs | wc -l` = **135**
-- [ ] ✅ 217 link `.md` resolve, **0 vỡ** — và **0 link phải sửa** (nếu phải sửa link ⇒ đặt sai chỗ `SPEC.md`)
-- [ ] ✅ `cat kidthink/SPEC.md` ra nội dung (symlink sống)
-- [ ] ✅ `git log --follow kidthink/docs/specs/00-foundation/glossary.md` ≥ 1 commit
-- [ ] ✅ Root không còn `SPEC.md` · `docs/specs/` · `docs/tasks/`
-- [ ] ✅ `docs/montessori/` **giữ nguyên** ở root
+- [x] `plan.md` → `02-foundation-approve-plan.md` · `todo.md` → `02-foundation-approve-todo.md` (`git mv`)
+- [x] Banner ở đầu file lưu trữ: checkbox không phản ánh sự thật + 3 acceptance chưa xong
+- [ ] ✅ `git log --follow docs/tasks/02-foundation-approve-plan.md` ≥ 2 commit
+- [ ] ✅ C4 xanh — mọi link tới `plan.md`/`todo.md` trong corpus còn resolve
 
-## T3 — `scripts/lint-specs.ts` + `pnpm lint:specs`
+## T2 — Hai check mới: C12 · C13
 
-- [ ] **Sửa spec trước** (`BR-RBS-08`): `SPEC.md` §7 — `check` thành 5 bước, thêm dòng `pnpm lint:specs`
-- [ ] C1 — 9 field frontmatter đủ, `status ∈ {draft, approved, implemented}`
-- [ ] C2 — `owns` không trùng giữa hai spec
-- [ ] C3 — 11 section đúng thứ tự (`07-addon/**` = 7)
-- [ ] C4 — mọi link `.md` nội bộ resolve
-- [ ] C5 — mã lỗi dùng ở §8 phải có trong `error-codes.md`
-- [ ] C6 — `BR-*` ID không trùng, cột "vì sao" không rỗng
-- [ ] C7 — `depends_on` không chu trình
-- [ ] C8 — spec `approved` ⇒ mọi `depends_on` cũng `approved`
-- [ ] C9 — cấm `classification` · `tenant_id` · cột `role` trên `users` · persona enum
-- [ ] C10 — cấm `CI` / "cổng CI" / "GitHub Actions"
-- [ ] C11 — số spec mỗi thư mục khớp `SPEC.md` §14 + `index.md`
-- [ ] ✅ **Chạy ngay khi viết xong (trước T4–T6) ⇒ exit 1**, báo đúng **C5 · C10 · C11**
-      — script mới mà xanh ngay là dấu hiệu nó không đo gì
-- [ ] ✅ **11 ca âm**: mỗi check một fixture vi phạm ⇒ exit 1 + `file:line` + tên check
+- [ ] **Sửa spec trước** (`BR-RBS-08`): `SPEC.md` §7 + `CONVENTIONS.md` §10 — **13 check**
+- [ ] C12 — tên bảng ở `data-model-overview` §7 ⟷ §7.x của 3 `schema-*`, khớp **hai chiều**
+- [ ] C13 — (a) `ví dụ` khớp `regex` của **cùng hàng** trong `id-conventions` §7;
+      (b) mọi literal mã trong corpus khớp regex của prefix nó mang
+- [ ] ✅ **Chạy ngay khi viết xong, TRƯỚC T3–T8 ⇒ exit 1**, báo đúng:
+  - [ ] C12: `social_identities` · `user_tags` · `child_daily_stats` · `level_daily_stats` ·
+        `skill_daily_stats` · `content_review_log` — **6 chỗ**
+  - [ ] C13: `id-conventions.md:78` + ≥5 call site `G-C1-…`
+  - [ ] Script mới mà xanh ngay là dấu hiệu nó không đo gì
+- [ ] ✅ **Ca âm C12**: xoá một bảng khỏi DMO §7 ⇒ exit 1 + tên bảng + spec định nghĩa nó
+- [ ] ✅ **Ca âm C13**: sửa một `ví dụ` §7 thành mã sai ⇒ exit 1 tại đúng dòng
 - [ ] ✅ Ca âm wiring: gỡ `lint:specs` khỏi `check` ⇒ `pnpm check` không còn kiểm spec
+- [ ] Ghi số warning nền **trước** T3 (hiện **228**) để so cuối task
 
 ## ⛔ CHECKPOINT A — người duyệt
 
-- [ ] Corpus trong git, history truy được, 0 link vỡ
-- [ ] `pnpm lint:specs` **đỏ đúng chỗ** trên 3 vi phạm đã biết
-- [ ] 11/11 ca âm chặn đúng
+- [ ] `pnpm check` xanh · working tree sạch
+- [ ] C12 + C13 **đỏ đúng 7 nhóm chỗ đã đo**
+- [ ] 2 ca âm mới chặn đúng
 - [ ] Duyệt trước khi động vào **nội dung** spec
 
 ---
 
-## T4 — Q13: 17 file "CI" → "cổng tự động" (D-V) ⟂
+## T3 — `id-conventions`: `G-…\d{3}` → `GL-…\d{4}` (M1 · M2 · M3) ⟂
 
-- [ ] `00-foundation/`: `repo-bootstrap` · `monorepo-package-architecture` · `content-lifecycle` · `mvp-scope`
-- [ ] `01-platform/`: `content-seed-authoring` (13 hit) · `ai-codegen-pipeline` (10) · `game-engine-runtime` · `emoji-registry`
-- [ ] `08-quality/`: `testing-strategy` (7) · `performance-budgets` (7) · `security-checklist` (3) · `accessibility` · `design-system-contract`
-- [ ] `06-admin/schema-driven-form`
-- [ ] Meta: `SPEC.md` (§12 dòng P0 + §14) · `index.md` · `roadmap.md`
-- [ ] ❌ **KHÔNG** đổi thành "lefthook" — §11 **Q12 còn mở**, lefthook bỏ qua được bằng
-      `--no-verify` nên không thay được câu "không có cờ bỏ qua"
-- [ ] ✅ `grep -rnE '\bCI\b|GitHub Actions' docs/` → rỗng (trừ mục §11 đã gạch ghi lịch sử)
-- [ ] ✅ C10 xanh
-- [ ] ✅ Diff chỉ đổi **tên cơ chế**, không đổi ngưỡng/hành vi rule nào
+> ❗ File đang `status: approved`. Chỉ sửa chỗ file **tự mâu thuẫn với §11 của chính nó**.
+> ❌ Không đổi quyết định nào.
 
-## T5 — `PARENT_GATE_REQUIRED` + quét mã lỗi mồ côi ⟂
+- [ ] §7 hàng `Game Level`: prefix `GL-` · regex `^GL-C[1-6]-[A-Z]{2,5}-[A-Z]{2,5}-\d{4}$` ·
+      ví dụ `GL-C1-CNT-MATCH-0007`
+- [ ] §7 dòng "Game level trong URL" (`:112`)
+- [ ] §9 — 4 scenario dùng mã cũ (`:133` · `:138` · `:140` · `:141` · `:150`)
+- [ ] `schema-content-taxonomy` §7.4 `code` "`G-*`" → "`GL-*`" + trỏ `id-conventions` §7
+- [ ] `schema-content-taxonomy` §9 scenario `BR-SCT-03` (`G-C1-CNT-007`)
+- [ ] Quét toàn corpus mã `G-C…` còn sót
+- [ ] §11 Q1/Q2 — thêm ghi chú "thân bài cập nhật T3, 2026-08-06"
+- [ ] `reviewed: 2026-08-06`
+- [ ] ✅ C13 xanh · `grep -rn 'G-C[1-6]-' docs/` → **rỗng**
+- [ ] ✅ Diff ❌ không chạm prefix nào khác (`EMJ-` · `PKG-` · `LO-` · `LSN-` …)
 
-- [ ] Thêm `PARENT_GATE_REQUIRED` → **403** vào `error-codes.md` (spec sở hữu: `parent-gate.md`)
-- [ ] Chạy C5 trên **toàn 130 file** — không chỉ 2 call site đã biết
-- [ ] Mỗi mã mồ côi khác: đăng ký vào registry **hoặc** sửa call site về mã đã có
-- [ ] ✅ C5 xanh 130/130
-- [ ] ✅ **Ca âm**: xoá `PARENT_GATE_REQUIRED` khỏi registry ⇒ C5 đỏ, in đúng 2 call site
-      (`child-profile-switching.md:81` · `play-entry-and-profile-select.md:102`)
+## T4 — `child-data-compliance`: 2 tên cột (M7 · M8) ⟂
 
-## T6 — Đếm lại corpus + dọn OQ chết + sync `docs/tasks/` ⟂
+> ❗ File đang `status: approved`. Danh sách **cấm** ❌ không đổi một chữ.
 
-- [ ] `SPEC.md` §14: **124 → 130** spec module
-- [ ] `SPEC.md` §14: `00-foundation/` **14 → 16** · `07-addon/` **6 → 7**
-- [ ] `SPEC.md` §14.3: đối chiếu "120 prefix" với `business-rules.md` thật, sửa nếu lệch
-- [ ] `SPEC.md` §15 **Q6** ("repo riêng hay branch v2?") → chuyển sang bảng *Đã chốt*: repo
-      riêng `kidthink/`, D-A 2026-08-06
-- [ ] `SPEC.md` §15: rà 10 câu còn lại, cái nào trùng OQ foundation thì trỏ link thay vì lặp
-- [ ] `01-bootstrap-todo.md`: 3 mục "bật lại CI" → đánh dấu **huỷ**, không phải hoãn (D-V thay)
-- [ ] `01-bootstrap-todo.md` T8/T9đk2: ghi rõ CI đã bị bỏ hẳn
-- [ ] `01-bootstrap-plan.md` §5: thêm hệ quả D-Q + ghi D-S…D-V
-- [ ] ✅ C11 xanh — `SPEC.md` §14 = `index.md` = số file thật
-- [ ] ✅ `grep -rn 'bật lại CI' docs/` → rỗng
+- [ ] §7.1 `current_curriculum_id` FK → `current_curriculum_code` varchar, ghi vì sao
+      (`BR-DM-10` + `BR-SCT-06`)
+- [ ] §7.1 `age_band` → theo **D-AA**: "❌ không phải cột — suy từ `birth_year` lúc đọc"
+- [ ] §7.3 `occurred_at` → `occurred_at_ms` (int, tương đối `started_at`) + `ingested_at`
+- [ ] ❌ **KHÔNG** thêm `session_month` — D-Z bác partition ở P0
+- [ ] `reviewed: 2026-08-06`
+- [ ] ✅ Diff chỉ chạm dòng **cột được phép** — danh sách cấm §7.1/§7.3 nguyên vẹn
+- [ ] ✅ Đối chiếu tay: `child-data-compliance` §7.1 ⟷ `schema-play-telemetry` §7.1 khớp
+      **từng tên cột** (ghi kết quả vào commit message)
+- [ ] ✅ C4 · C9 xanh
 
-## ⛔ CHECKPOINT B
+## T4b — `event-catalog`: mở lại Q2 theo **D-Z** ⟂
 
-- [ ] ✅ `pnpm lint:specs` **exit 0** trên 130/130 — lần đầu corpus sạch cơ học **có đo**
-- [ ] ✅ `pnpm check` (5 bước) exit 0
-- [ ] ✅ `pnpm test` exit 0 — 56/56
-- [ ] 1 commit / task, message ghi rõ đóng OQ nào
+> ❗ Loại sửa nặng nhất trong task: **đổi** một quyết định đã đóng, không phải sửa chỗ ghi sai.
+> Phải để lại vết đọc được — lần tới người đọc Q2 sẽ thấy hai lượt kết luận trái nhau.
 
----
+- [ ] §11 Q2 — bỏ gạch `~~2~~`, ghi **cả hai** lượt theo thứ tự thời gian:
+  - [ ] `2026-08-06 (T11)` chốt **có** partition — giữ nguyên lý do gốc (t3.small, prune, vacuum)
+  - [ ] `2026-08-06 (T4b, D-Z)` **mở lại** — lý do: khoá partition phải nằm trong PK ⇒ partition
+        mua bằng cách hạ `BR-EVT-03` xuống tầng service. Chọn giữ bất biến ở DB
+- [ ] Q2 → 🟡 chặn **P1**, có **tên chủ thật** + hạn viết bằng câu đo được
+- [ ] Ghi **ngưỡng kích hoạt**: `telemetry_events` vượt **5M hàng** hoặc **2GB** trên t3.small
+      ⇒ phải đóng lại quyết định trước khi vượt
+- [ ] Ghi **điều kiện giữ đường mở**: ❌ không FK nào trỏ **vào** `telemetry_events`; giữ cột hẹp
+- [ ] `reviewed: 2026-08-06`; `event-catalog` giữ `status: approved`
+- [ ] ✅ §11 Q2 đọc được **cả hai** lượt + ngày từng lượt — ❌ không xoá lượt cũ
+- [ ] ✅ Q2 có tên chủ + ngưỡng **số** — ❌ không có chữ "sau này"/"khi cần"
+- [ ] ✅ C8 xanh — `event-catalog` vẫn `approved`, spec phụ thuộc không đổi trạng thái
 
-## T7 — Phân loại 48 OQ: thêm cột `Chặn phase` · `Chủ`
+## ⛔ CHECKPOINT B — người chốt 3 quyết định còn lại + 2 nợ
 
-- [ ] Thêm 2 cột vào bảng §11 của cả **16** spec foundation
-- [ ] 🔴 **P0 — 14 câu** (12 phải trả lời + 2 đã đóng ở T2/T4):
-  - [ ] `id-conventions` Q1 (`template_code` trong mã Game Level) · Q2 (3 hay **4** chữ số)
-  - [ ] `actors` Q1 (Manager MFA ngày đầu) · Q2 (`pending_verification` tạo child profile)
-  - [ ] `access-ladder` Q3 (gộp bậc `login` vào `standard`)
-  - [ ] `content-lifecycle` Q3 (trạng thái `scheduled`)
-  - [ ] `content-versioning` Q2 (FK `code` vs `(code, version)`)
-  - [ ] `event-catalog` Q2 (partition `telemetry_events` theo tháng)
-  - [ ] `package-catalog` Q2 (gói tháng ⇒ enum `billing_period`)
-  - [ ] `monorepo-package-architecture` Q3 (`packages/payment` · `notification` tách hay inline)
-  - [ ] `repo-bootstrap` Q2 (bump PG > 17) · Q12 (`--no-verify` vs 10 spec nói "không có cờ bỏ qua")
-  - [ ] `mvp-scope` Q4 (backup/monitoring thuộc phase nào)
-  - [ ] ✅ đã đóng: `repo-bootstrap` Q10 (T2) · Q13 (T4)
-- [ ] 👤 **Người quyết — 3 câu**: `mvp-scope` Q2 · Q3 · `package-catalog` Q1
-- [ ] 🟡 **Hoãn có chủ — 31 câu**: mỗi câu phải có **tên chủ** và **phase chặn**
-- [ ] ⚠️ `mvp-scope` **Q1** (ai biên soạn ≥690 LO · ≥120 level · ≥60 lesson) → 🟡 **P1** theo
-      **D-W**. Ghi hạn **cụ thể**: *trước khi `content-seed-authoring` khởi động* — ❌ không
-      ghi "P1" chung chung. Phải có **tên chủ**, ❌ không ghi "team"
-- [ ] ✅ 48/48 có `Chặn phase` ∈ {P0, P1, P2, P3, P5, go-live} và `Chủ` không rỗng
-- [ ] ✅ **Không OQ nào bị xoá** — diff chỉ thêm cột
+> ✅ Đã chốt 2026-08-06: **M1** · **D-Y** (7 spec) · **D-Z** (không partition ở P0) ·
+> **D-AA** (`age_band` suy lúc đọc).
 
-## ⛔ CHECKPOINT C — người quyết, quan trọng nhất
-
-- [ ] Duyệt bảng phân loại (14 🔴 P0 / 31 🟡 hoãn / 3 👤 người)
-- [x] ✅ **`mvp-scope` Q1 → chặn P1** — chốt 2026-08-06 (**D-W**), trước cả Checkpoint C.
-      Không còn chặn Task #2
-- [ ] `mvp-scope` Q2 (ngân sách + lịch P0→P3) · Q3 (mốc phát hành cứng) — trả lời hoặc hoãn có chủ
-- [ ] `repo-bootstrap` Q12 — chọn: chấp nhận rủi ro `--no-verify` (ghi rõ vào 10 spec)
-      **hoặc** cổng server-side ở P1
-- [ ] Gán **chủ + hạn**: Q7 AWS SES production access · `child-data-compliance` Q1 (pháp lý) · Q2 (DPIA)
+- [ ] **D-AB** — `billing_period` (M10). *Đề xuất: giữ `packages.offers` JSONB, đổi khoá
+      `billing_period_vi` → `billing_period`, miền đóng `{yearly, monthly}`*
+- [ ] **D-AC** — spec nào `owns` cột `content_review_log`? *Đề xuất: `schema-identity-billing` §7.10a*
+- [ ] **D-AD** — module `ops` trong migration #1 gồm bảng nào? *Đề xuất: + `audit_logs` ·
+      `content_review_log` · `backup_log`; hoãn `feature_flags` · `notifications` ·
+      `content_seed_batches`. Hệ quả: `audit-log` + `backup-and-restore` phải approved trước bước 8*
+- [ ] **Nợ #4** — `mvp-scope` Q1: **tên chủ thật** (❌ không "team", ❌ không "cần chủ có tên")
+      + hạn viết bằng câu đo được
+- [ ] **Chủ + ngưỡng** cho `event-catalog` Q2 vừa mở lại (T4b) — cùng loại nợ với #4, đừng lặp
 
 ---
 
-## Phase 3 — Approve theo layer (`depends_on`, ❌ không đảo)
+## T5 — `data-model-overview`: §Ràng buộc chờ + bản đồ + neo `SPEC.md` §13 ⟂
 
-Mỗi spec chạy đúng 4 bước: (1) checklist §10 phần thủ công → (2) đóng OQ 🔴 kèm **vì sao +
-ngày** → (3) `status: approved` + `reviewed:` → (4) `lint:specs` xanh (C8 gác thứ tự).
+- [ ] Thêm **§7.3 Ràng buộc chờ** — bảng `| Nguồn | Quyết định | Ngày | Ảnh hưởng cột |`
+  - [ ] `id-conventions` Q1·Q2 (T9) — `GL-…\d{4}` ⇒ `game_levels.code`
+  - [ ] `actors` Q1 (T9) — Manager MFA bắt buộc ⇒ `mfa_settings`
+  - [ ] `actors` Q2 (T9) — `pending_verification` ❌ không tạo child ⇒ guard service
+  - [ ] `mvp-scope` Q4 (T9) — backup/monitoring P0 ⇒ `backup_log` vào migration #1
+  - [ ] `monorepo…` Q3 (T9) — `payment`/`notification` inline ⇒ không đụng cột
+  - [ ] `access-ladder` Q3 (T10) — enum **4 bậc** ⇒ `access_tier` mọi bảng Lớp 2
+  - [ ] `content-lifecycle` Q3 (T10) — ❌ không `scheduled` ⇒ enum status **6** giá trị
+  - [ ] `content-versioning` Q2 (T11) — `code` only ⇒ `curriculum_items.entity_code`
+  - [ ] `event-catalog` Q2 (T11 → **mở lại** T4b/D-Z) — ❌ không partition ở P0; PK giữ nguyên;
+        kèm ngưỡng 5M hàng/2GB + điều kiện 0 FK trỏ vào
+  - [ ] `package-catalog` Q2 (T12) — chỉ bán năm ⇒ D-AB
+  - [ ] **D-Y** — 7 spec, `AUTH-TOKENS-SESSIONS` vào `depends_on` SIB
+  - [ ] **D-AA** — `age_band` suy lúc đọc ⇒ `child_profiles` 12 cột + index `birth_year`
+  - [ ] D-AB · D-AC · D-AD (điền sau Checkpoint B)
+- [ ] §7 bản đồ module: thêm `social_identities` · `user_tags` · `child_daily_stats` ·
+      `level_daily_stats` · `skill_daily_stats`
+- [ ] §7 `content_review_log` — trỏ đúng spec `owns` theo D-AC
+- [ ] Kiểm lại câu "**11 module**" còn đúng sau khi thêm bảng
+- [ ] §11 Q1 (partition) → **đóng** bằng `event-catalog` Q2 + D-Z, ghi ngày + vì sao
+- [ ] §11 Q2 (retention `audit_logs`) · Q3 (read replica) → hoãn **có chủ + phase**
+- [ ] §11 thêm 2 cột `Chặn phase` · `Chủ`
+- [ ] **Nợ #2 + D-Z** — `SPEC.md` §13 thêm đúng **3** dòng:
+  - [ ] Cổng ra P0: `mvp-scope` Q1 có chủ có tên trước khi mở P1 (neo **D-W**)
+  - [ ] Cổng ra P0: `backup-and-restore` + `monitoring-and-alerting` approved và `backup_log`
+        trong migration P0 (neo **Q4/T9**)
+  - [ ] **Cổng ra P1**: `event-catalog` Q2 (partition) đóng lại trước khi `telemetry_events`
+        vượt 5M hàng / 2GB (neo **D-Z**)
+- [ ] ✅ C12 xanh — bản đồ khớp hai chiều 100%
+- [ ] ✅ §7.3 có **≥19 dòng**, mỗi dòng có nguồn (`spec` + `Qn` + task) và cột ảnh hưởng
+- [ ] ✅ `SPEC.md` §13 tăng đúng **3** ô checklist (2 ở P0, 1 ở P1)
+- [ ] ✅ `grep -rn 'partition' docs/specs/` → chỉ ở `event-catalog` Q2 · DMO §7.3 · `SPEC.md` §13
+- [ ] ⚠️ §7.3 **không có cổng máy** — Checkpoint C phải đối chiếu tay 11 closure ⟷ 11 dòng
 
-Mỗi quyết định đụng schema ⇒ ghi thêm một dòng vào `data-model-overview.md` §Ràng buộc chờ.
+## T6 — `schema-play-telemetry` (M4 · R1 · R2 · M7 · M8) ⟂
 
-### T8 — Layer 0
-- [ ] `glossary` — 0 OQ, approve sau checklist
-- [ ] `business-rules` — Q1 hoãn (tooling)
-- [ ] `repo-bootstrap` — đóng Q2 (giữ PG 17) · Q12 (lối cho `--no-verify`); hoãn Q1·Q6·Q7·Q8·Q9
+- [ ] §7.3 theo **D-Z**: giữ PK `(session_uuid, seq)` **nguyên vẹn**, `BR-SPT-03` ❌ không đổi
+- [ ] §7.3 thêm một dòng: bảng này ❌ **không** partitioned ở P0 + **hai điều kiện giữ đường mở**
+      — (a) ❌ không FK nào trỏ **vào** `telemetry_events`; (b) giữ cột hẹp. Trỏ `event-catalog` Q2
+- [ ] §7.1 theo **D-AA**: bỏ `age_band` khỏi bảng cột, thêm index `birth_year`
+- [ ] `BR-SPT-01` "13 cột" → "**12 cột**"
+- [ ] §9 scenario `BR-SPT-01`: 13 → 12 + assert `age_band` ❌ không là cột
+- [ ] §7.1 `current_curriculum_code` — khớp T4
+- [ ] §7.5 — 3 bảng rollup khớp bản đồ DMO (T5)
+- [ ] §11 Q1 → **đóng** bằng D-Z (chủ câu hỏi = `event-catalog` Q2) · Q2 → **đóng** (D-AA)
+- [ ] §11 thêm 2 cột `Chặn phase` · `Chủ`
+- [ ] §9 thêm scenario: quét schema tìm FK trỏ **vào** `telemetry_events` ⇒ **0 kết quả**
+- [ ] ✅ 0 OQ mở (2/2 đóng, có ngày + vì sao)
+- [ ] ✅ `BR-SPT-03` + PK **không đổi một chữ** — D-Z là quyết định *không làm gì*
+- [ ] ✅ Số cột `child_profiles` khớp **ba chỗ**: §7.1 · `BR-SPT-01` · §9
+- [ ] ✅ Đối chiếu tay `child-data-compliance` §7.1 ⟷ §7.1 khớp từng tên cột
+- [ ] ✅ `grep -rn 'session_month' docs/` → **rỗng**
 
-### T9 — Layer 1 ⚠️ nặng nhất, tách 2 lượt nếu diff quá sức đọc một lần
-- [ ] `actors` — đóng Q1 (tham chiếu `admin-auth` P0 "MFA bắt buộc") · Q2 (tham chiếu `email-verification`)
-- [ ] `id-conventions` — đóng Q1 · Q2 (đề xuất **4 chữ số**)
-- [ ] `error-codes` — cả 2 hoãn
-- [ ] `mvp-scope` — đóng Q4 (gắn backup/monitoring vào cổng ra P0)
-  - [ ] Q1 → 🟡 P1, hạn *trước khi `content-seed-authoring` khởi động*, có tên chủ (D-W)
-  - [ ] Q2·Q3 theo Checkpoint C
-  - [ ] ✅ `SPEC.md` §13 **Cổng ra P0** thêm một dòng: *Q1 phải có chủ trước khi mở P1* —
-        neo D-W vào cổng đo được, ❌ không để nó chỉ nằm trong bảng OQ
-- [ ] `monorepo-package-architecture` — đóng Q3 (đề xuất inline tới khi `apps/admin` cần)
+## T7 — `schema-content-taxonomy` (M2 · M6) ⟂
+
+- [ ] §7.4 `code` → `GL-*` (khớp T3) + §9 dùng mã mới
+- [ ] §11 Q1 → **đóng** bằng `content-versioning` Q2 (T11): ❌ không ghim `entity_version`
+- [ ] Ghi hệ quả của Q1: đổi nội dung published ⇒ mọi curriculum thấy bản mới ngay, **không có**
+      đường ghim version
+- [ ] §11 Q2 (`lesson_activities` copy theo version) → hoãn có chủ, chặn **P3**
+- [ ] §7.2 `user_tags` — khớp bản đồ DMO (T5)
+- [ ] `BR-SCT-02` trỏ `content-lifecycle` §7 làm nguồn **6** giá trị enum status
+- [ ] §11 thêm 2 cột `Chặn phase` · `Chủ`
+- [ ] ✅ C13 xanh trên file này
+- [ ] ✅ 0 chỗ ghi `G-*` · 0 chỗ ghi `scheduled`
+
+## T8 — `schema-identity-billing` (M9 · M10 · D-AC · D-AD · D-Y) ⟂
+
+- [ ] Theo **D-Y** (đã chốt): thêm `AUTH-TOKENS-SESSIONS` vào `depends_on`
+- [ ] Theo **D-AB**: `packages.offers` khoá `billing_period_vi` → `billing_period`, miền đóng
+      `{yearly, monthly}`, ghi rõ MVP chỉ dùng `yearly`
+- [ ] Theo **D-AC**: §7.10a định nghĩa cột `content_review_log` — INSERT-only,
+      `(entity_type, entity_id)` polymorphic
+- [ ] Theo **D-AD**: §7.10 ghi rõ bảng nào vào **migration #1**, bảng nào chờ spec sở hữu
+- [ ] Theo **D-AD**: ghi **điều kiện chặn** — `audit-log` + `backup-and-restore` phải
+      `approved` trước bước 8
+- [ ] **M9**: sửa `actors` §11 Q1 closure → `mfa_settings.secret_encrypted`
+      (❌ không `mfa_secret`)
+- [ ] Ghi bất biến MFA: Manager ❌ không hoạt động khi `mfa_settings.confirmed_at IS NULL`,
+      **ép ở tầng service** (không ép được ở cột) — `actors` Q1
+- [ ] §7.3a `social_identities` — khớp bản đồ DMO (T5)
+- [ ] §11 thêm 2 cột `Chặn phase` · `Chủ`; 2 OQ hiện có → đóng hoặc hoãn có chủ
+- [ ] ✅ C12 xanh · `content_review_log` có đúng **1** spec `owns`
+- [ ] ✅ `BR-DM-04` + DMO §7.2 vẫn đếm **7** FK polymorphic
+- [ ] ✅ `actors` §11 Q1 ⟷ SIB §7.3 nêu **cùng một** tên cột
+- [ ] ✅ §7.10 ❌ không để "xem spec X" cho bảng thuộc migration #1
+
+## ⛔ CHECKPOINT C
+
+- [ ] ✅ `pnpm lint:specs` exit 0 — **13 check** × 130 spec
+- [ ] ✅ Số warning **≤ 228** (tăng thì phải giải thích từng cái)
+- [ ] ✅ `pnpm check` exit 0 · `pnpm test` exit 0 (56/56)
+- [ ] 👤 Đối chiếu tay: **11 closure T8–T12 ⟷ 11 dòng** DMO §7.3 — cổng người, không có cổng máy
+- [ ] 1 commit / task, message ghi rõ đóng **M mấy** / **D nào**
+
+---
+
+## Phase 3 — Approve theo `depends_on` (❌ không đảo, C8 gác)
+
+Mỗi spec 4 bước: (1) checklist `CONVENTIONS.md` §10 thủ công → (2) đóng OQ chặn P0 kèm
+**vì sao + ngày** → (3) `status: approved` + `reviewed:` → (4) `lint:specs` xanh.
+
+### T9 — Layer 1 (⟂ song song)
+- [ ] `taxonomy-service` — Q1 → 🟡 **P1** theo **D-W** (M11), có tên chủ · Q2 sau MVP ·
+      Q3 chặn `adaptive-engine` · Q4 chặn nội dung P1 · thêm 2 cột §11
+- [ ] `game-template-contract` — ghi rõ trong §11: `phase: P1` là phase **implement**,
+      ❌ không phải phase **approve**; approve bây giờ vì `schema-content-taxonomy` (P0)
+      `depends_on` nó
+  - [ ] Q1 (khảo sát 60 game type v1) → hoãn có chủ, chặn **phạm vi P1**, ❌ không chặn hình
+        dạng contract
+  - [ ] Q2 · Q3 · Q4 hoãn có chủ · thêm 2 cột §11
 
 ### T10 — Layer 2
-- [ ] `access-ladder` — đóng Q3 (bậc `login`); hoãn Q1·Q2
-- [ ] `child-data-compliance` — cả 4 hoãn, cần chủ + hạn từ Checkpoint C
-- [ ] `content-lifecycle` — đóng Q3 (`scheduled`); hoãn Q1·Q2
+- [ ] `data-model-overview` — sau T5, 3/3 OQ có kết luận
 
 ### T11 — Layer 3
-- [ ] `content-versioning` — đóng Q2 (FK); hoãn Q1·Q3
-- [ ] `entitlement-model` — cả 3 hoãn
-- [ ] `event-catalog` — đóng Q2 (partition); hoãn Q1·Q3
+- [ ] `auth-tokens-sessions` (**D-Y = 7**, đã chốt) — 4 OQ phân loại
+- [ ] `schema-identity-billing`
+- [ ] `schema-content-taxonomy`
+- [ ] `schema-play-telemetry`
 
-### T12 — Layer 4/5
-- [ ] `package-catalog` — đóng Q2 (enum `billing_period`); hoãn Q1·Q3·Q4
-- [ ] `payment-flow` — cả 4 hoãn
+## ⛔ CHECKPOINT D — mở khoá P0 bước 8
 
-## ⛔ CHECKPOINT D — `BR-RBS-04` mở khoá
-
-- [ ] ✅ 16/16 `00-foundation` = `status: approved`
+- [ ] ✅ Tổng `approved` = **23/130** (7 spec đích)
 - [ ] ✅ `pnpm lint:specs` exit 0 · `pnpm check` exit 0 · `pnpm test` exit 0
-- [ ] ✅ **Ca âm cuối**: đặt `glossary` về `draft` ⇒ C8 làm đỏ 11 spec phụ thuộc nó
-- [ ] `todo.md` ghi việc kế tiếp: **P0 bước 7** — `data-model-overview` → `schema-*`
-- [ ] 👤 Người duyệt — hành động khó đảo, mở đường cho PR schema đầu tiên
+- [ ] ✅ **Ca âm C8**: `data-model-overview` → `draft` ⇒ 3 `schema-*` đỏ
+- [ ] ✅ **Ca âm C12**: xoá `social_identities` khỏi DMO §7 ⇒ đỏ
+- [ ] ✅ **Ca âm C13**: đổi một ví dụ mã về `G-C1-CNT-007` ⇒ đỏ
+- [ ] ✅ `grep -rn 'G-C[1-6]-' docs/` → rỗng · `grep -rn 'session_month' docs/` → rỗng
+- [ ] `todo.md` mới ghi **P0 bước 8** — `packages/db/src/schema/*.ts` + migration #1, kèm điều
+      kiện chặn D-AD (`audit-log` + `backup-and-restore` approved trước)
+- [ ] 👤 Người duyệt — sau đây là PR schema đầu tiên, đảo lại tốn **hai phase deprecation**
+      (`BR-DM-09`)
 
 ---
 
 ## Ngoài task này (theo dõi riêng)
 
-- [ ] Approve 114 spec `01-*`…`08-*` — theo phase của từng cái, không phải bây giờ
-- [ ] Chuyển `.agents/` vào `kidthink/` theo `SPEC.md` §8 — hiện phục vụ cả workspace, di
-      chuyển làm mất `CLAUDE.md` ở cwd
+- [ ] **Nợ Task #2 #3** — 228 warning C6 "thiếu cột vì sao", và nâng C6 trở lại error
+- [ ] **Nợ Task #2 #5** — `D-X` dùng cho 11 quyết định T9–T12, ledger mất tác dụng truy vết
+- [ ] 7 chu trình `depends_on` (C7 warning): `02-public` 3 · `03-account` 1 · `06-admin` 3 ·
+      `08-quality` 1
+- [ ] Approve `audit-log` + `backup-and-restore` — **chặn bước 8** theo D-AD
+- [ ] Approve `taxonomy-service` seed + `emoji-registry` — P0 bước 9, sau migration
+- [ ] Chuyển `.agents/` vào `kidthink/` theo `SPEC.md` §8
 - [ ] Chuyển `infra/` vào `kidthink/infra/` khi tới deploy
-- [ ] `docs/montessori/` — không thuộc corpus spec, chưa có spec nào sở hữu
+- [ ] `docs/montessori/` — chưa spec nào sở hữu
 - [ ] Nhánh lỗi PG trong `check-services.ts` in message rỗng (mất `.message` ECONNREFUSED)
-- [ ] **Task #3 (P1)** — khảo sát 60 game type v1 → 6 template, rồi port `game-engine`
+- [ ] Khảo sát 60 game type v1 → 6 template (P1, `game-template-contract` Q1)
 - [ ] Audit `packages/ui` (1.2M) vs `design-system-contract.md` (§11 Q1)
-- [ ] Cổng server-side thay `--no-verify` — chỉ nếu Checkpoint C chọn hướng đó
+- [ ] Cổng server-side thay `--no-verify` (`repo-bootstrap` Q12)
 - [ ] Thêm lại service S3 local vào docker-compose khi `image-storage` tới

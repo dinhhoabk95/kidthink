@@ -5,6 +5,6 @@ import { defineConfig } from "vitest/config";
 // (packages/game-engine sẽ cần happy-dom, packages/db cần PG thật).
 export default defineConfig({
   test: {
-    projects: ["apps/*", "packages/*"],
+    projects: ["apps/*", "packages/*", "scripts"],
   },
 });

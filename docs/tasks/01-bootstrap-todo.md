@@ -1,6 +1,6 @@
 # Todo — Bootstrap `kidthink/` (P0 bước 1)
 
-> Bản 2, 2026-08-06. Chi tiết + acceptance + lý do: [`plan.md`](./plan.md).
+> Bản 2, 2026-08-06. Chi tiết + acceptance + lý do: [`01-bootstrap-plan.md`](./01-bootstrap-plan.md).
 > Thứ tự: `T0 → T1 → {T2→T4, T3, T5, T6, T7→T8} → T9`.
 
 ## T0 — Prerequisites ⛔ chặn mọi thứ
