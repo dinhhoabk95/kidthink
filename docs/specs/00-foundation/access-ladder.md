@@ -2,10 +2,10 @@
 spec: ACCESS-LADDER
 title: Bậc truy cập nội dung
 area: foundation
-status: draft
+status: approved
 mvp: true
 phase: P0
-reviewed: 2026-08-04
+reviewed: 2026-08-06
 owns:
   - Enum access_tier và thứ tự bao hàm
   - Quy tắc mặc-định-đóng
@@ -218,4 +218,4 @@ Scenario: BR-LAD-09 — không cache nội dung trả phí
 |---|---|---|---|---|
 | 1 | **6 game level nào vào allow-list guest?** Cần 1 mỗi competency, difficulty ≤ 2 | P1 gating | 🟡 P1 | nội dung |
 | 2 | Guest chơi xong bao nhiêu lượt thì hiện lời mời đăng ký? Hiện chưa chốt ngưỡng | P1 conversion | 🟡 P1 | nội dung |
-| 3 | Nội dung `login` có nên tồn tại riêng, hay gộp vào `standard`? Bậc `login` hiện chỉ khác `free` ở chỗ lưu tiến độ | Đơn giản hoá ladder | 🔴 P0 | spec owner |
+| ~~3~~ | ~~Gộp bậc `login` vào `standard`?~~ **Đóng 2026-08-06 (T10)**: **giữ enum 4 bậc** (`guest`, `login`, `standard`, `premium`). Bỏ bậc sau khi có dữ liệu là migration + sửa ma trận 20 ô. Giữ `login` để có chỗ gate lưu tiến độ miễn phí | — | ✅ đóng | D-X (T10) |

@@ -2,10 +2,10 @@
 spec: CHILD-DATA-COMPLIANCE
 title: Tuân thủ dữ liệu trẻ em — Nghị định 13/2023 và Luật Trẻ em
 area: foundation
-status: draft
+status: approved
 mvp: true
 phase: P0
-reviewed: 2026-08-04
+reviewed: 2026-08-06
 owns:
   - Danh sách đóng trường dữ liệu được phép thu của trẻ
   - Quy tắc đồng ý và rút đồng ý

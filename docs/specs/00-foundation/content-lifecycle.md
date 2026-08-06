@@ -2,10 +2,10 @@
 spec: CONTENT-LIFECYCLE
 title: Vòng đời nội dung và cổng duyệt
 area: foundation
-status: draft
+status: approved
 mvp: true
 phase: P0
-reviewed: 2026-08-04
+reviewed: 2026-08-06
 owns:
   - Enum trạng thái nội dung và bảng chuyển trạng thái
   - Quy tắc ai được chuyển trạng thái nào
@@ -279,4 +279,4 @@ Scenario: BR-CLC-08 — không xoá được nội dung có telemetry
 |---|---|---|---|---|
 | 1 | Ở MVP một người vừa soạn vừa duyệt. Có nên chặn tự duyệt bản do chính mình tạo khi có ≥2 manager? | Khi tuyển người thứ hai | 🟡 P2 | hoãn |
 | 2 | Nội dung `authored_in = repo_seed` có cần hiển thị khác trong studio để admin biết sửa nó nghĩa là tách khỏi seeder không? | `content-seed-authoring` `BR-CSA-11` | 🟡 P1 | hoãn |
-| 3 | Có cần trạng thái `scheduled` (hẹn giờ publish) không? | Chiến dịch nội dung theo mùa | 🔴 P0 | spec owner |
+| ~~3~~ | ~~Có cần trạng thái `scheduled`~~ **Đóng 2026-08-06 (T10)**: **không ở MVP**. Thêm giá trị enum vòng đời sau là migration non-breaking. MVP không có chiến dịch nội dung theo mùa | — | ✅ đóng | D-X (T10) |
