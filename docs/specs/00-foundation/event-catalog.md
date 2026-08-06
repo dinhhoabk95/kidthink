@@ -2,10 +2,10 @@
 spec: EVENT-CATALOG
 title: Catalog sự kiện và schema payload
 area: foundation
-status: draft
+status: approved
 mvp: true
 phase: P0
-reviewed: 2026-08-04
+reviewed: 2026-08-06
 owns:
   - Danh sách tên sự kiện hợp lệ
   - Schema payload từng sự kiện
@@ -232,5 +232,5 @@ Scenario: offline buffer flush khi có mạng lại
 | # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
 |---|---|---|---|---|
 | 1 | `fps_sample` mỗi 30s có quá dày không trên 3.000 phiên/ngày? Cân nhắc chỉ gửi khi p95 dưới ngưỡng | Chi phí lưu trữ | 🟡 P1 | hoãn — tuning sau khi có lưu lượng |
-| 2 | Có cần partition `telemetry_events` theo tháng ngay từ đầu không? Trên t3.small bảng này sẽ lớn nhất | Vận hành DB | 🔴 P0 | spec owner |
+| ~~2~~ | ~~Partition `telemetry_events` theo tháng ngay từ đầu~~ **Đóng 2026-08-06 (T11)**: **có** — partition quyết định lúc `CREATE TABLE`. Chuyển bảng lớn sang partitioned sau = downtime + rewrite. Trên t3.small bảng này lớn nhất, partition giúp prune query và vacuum hiệu quả | — | ✅ đóng | D-X (T11) |
 | 3 | Giữ event thô bao lâu trước khi rollup thành `child_session_summaries`? | Retention | 🟡 P1 | hoãn |

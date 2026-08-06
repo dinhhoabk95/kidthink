@@ -2,10 +2,10 @@
 spec: ENTITLEMENT-MODEL
 title: Mô hình quyền sử dụng và hạn mức
 area: foundation
-status: draft
+status: approved
 mvp: true
 phase: P0
-reviewed: 2026-08-04
+reviewed: 2026-08-06
 owns:
   - Registry entitlement key
   - Quy tắc hợp nhiều gói

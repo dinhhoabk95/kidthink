@@ -2,10 +2,10 @@
 spec: CONTENT-VERSIONING
 title: Phiên bản nội dung và neo lịch sử
 area: foundation
-status: draft
+status: approved
 mvp: true
 phase: P0
-reviewed: 2026-08-04
+reviewed: 2026-08-06
 owns:
   - Ngữ nghĩa content_version
   - Quy tắc ghim version trong play session
@@ -223,5 +223,5 @@ Scenario: BR-VER-05 — báo cáo cảnh báo khi nội dung đã đổi
 | # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
 |---|---|---|---|---|
 | 1 | Giữ bao nhiêu version cũ trước khi archive lạnh sang S3? Trên t3.small dung lượng là ràng buộc thật | Chi phí lưu trữ | 🟡 chi phí | hoãn |
-| 2 | Curriculum tham chiếu lesson theo `code` (luôn bản mới) hay theo `(code, version)` (ghim cứng)? Ghim cứng an toàn hơn nhưng làm curriculum không tự hưởng nội dung cải thiện | `curriculum-model`, P3 | 🔴 P0 | spec owner |
+| ~~2~~ | ~~Curriculum tham chiếu lesson theo `code` hay `(code, version)`~~ **Đóng 2026-08-06 (T11)**: **`code` only** — curriculum luôn dùng bản published mới nhất. Ghim version tạo overhead quản lý quá lớn cho MVP (phải bump FK mỗi lần cập nhật nội dung). FK trong `schema-content-taxonomy` trỏ `code` | — | ✅ đóng | D-X (T11) |
 | 3 | Báo cáo nâng cao có nên loại trừ dữ liệu từ version quá cũ không? | `advanced-report` | 🟡 P3 | hoãn |
