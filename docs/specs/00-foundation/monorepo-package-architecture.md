@@ -2,10 +2,10 @@
 spec: MONOREPO-PACKAGE-ARCHITECTURE
 title: Kiến trúc package/driver trong monorepo
 area: foundation
-status: draft
+status: approved
 mvp: true
 phase: P0
-reviewed: 2026-08-05
+reviewed: 2026-08-06
 owns:
   - Quy tắc khi nào tách package mới vs viết inline trong app
   - Pattern "driver" bọc thư viện bên thứ ba dùng chung nhiều app
@@ -203,4 +203,4 @@ Scenario: BR-MPA-04 — module cấu hình thuần không bị ép bọc driver
 |---|---|---|---|---|
 | ~~1~~ | ~~Dependency-graph check chạy bằng công cụ nào~~ **Đóng 2026-08-06**: `dependency-cruiser ^18.1` — duy nhất hỗ trợ cấm thư viện ngoài cụ thể theo zone (`BR-MPA-01`), không chỉ graph nội bộ. Xem `repo-bootstrap.md` §7.1 | — | 🟡 P1 | hoãn |
 | ~~2~~ | ~~Tách `packages/auth-oauth`/`packages/auth-jwt`?~~ **Đóng 2026-08-06**: giữ **một** `packages/auth` — `nuxt-auth-utils` dùng chung cho cả 2 app, `jose` chỉ phần service-to-service riêng biệt trong cùng package. Không cần tách vì không có 2 cơ chế song song nữa | — | 🟡 P1 | hoãn |
-| 3 | `packages/payment` và `packages/notification` (§7.1) — tách ngay từ đầu hay để inline trong `apps/web` tới khi `apps/admin` cần dùng lại (vd admin gửi email khi duyệt thanh toán)? | Cấu trúc package lúc bootstrap, `BR-MPA-01` | 🔴 P0 | spec owner |
+| ~~3~~ | ~~Tách `packages/payment` và `packages/notification` ngay từ đầu hay inline~~ **Đóng 2026-08-06 (T9)**: **inline** tới khi `apps/admin` cần dùng lại. Tách sớm tạo package rỗng; inline trước rồi extract khi có 2 consumer | — | ✅ đóng | D-X (T9) |

@@ -2,10 +2,10 @@
 spec: ERROR-CODES
 title: Registry mã lỗi
 area: foundation
-status: draft
+status: approved
 mvp: true
 phase: P0
-reviewed: 2026-08-05
+reviewed: 2026-08-06
 owns:
   - Danh sách mã lỗi nghiệp vụ
   - Ánh xạ mã lỗi → HTTP status

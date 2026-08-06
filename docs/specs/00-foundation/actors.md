@@ -2,10 +2,10 @@
 spec: ACTORS
 title: Tác nhân hệ thống và ranh giới quyền
 area: foundation
-status: draft
+status: approved
 mvp: true
 phase: P0
-reviewed: 2026-08-04
+reviewed: 2026-08-06
 owns:
   - Danh sách tác nhân và định nghĩa của từng loại
   - Ranh giới giữa hai guard
@@ -242,5 +242,5 @@ Scenario: BR-ACT-08 — content_reviewer không vào được thanh toán
 
 | # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
 |---|---|---|---|---|
-| 1 | Manager có bắt buộc MFA từ ngày đầu không, hay bật sau? | `mfa` spec, P0 hay P2 | 🔴 P0 | spec owner — tham chiếu `admin-auth` |
-| 2 | `pending_verification` được tạo child profile không? Hiện spec nói không — cần xác nhận với luồng onboarding | `registration` · `child-profile-crud` | 🔴 P0 | spec owner — tham chiếu `email-verification` |
+| ~~1~~ | ~~Manager có bắt buộc MFA từ ngày đầu không~~ **Đóng 2026-08-06 (T9)**: **có**, `admin-auth.md` §7 ghi MFA bắt buộc. Cột `mfa_secret` ở `schema-identity-billing`. `index.md` ghi `admin-auth` = P0 | — | ✅ đóng | D-X (T9) |
+| ~~2~~ | ~~`pending_verification` được tạo child profile không~~ **Đóng 2026-08-06 (T9)**: **không**, `email-verification.md` là điều kiện tiên quyết. Guard P0 của `registration`/`child-profile-crud` | — | ✅ đóng | D-X (T9) |

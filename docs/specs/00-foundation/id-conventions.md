@@ -2,10 +2,10 @@
 spec: ID-CONVENTIONS
 title: Quy ước định danh và mã bất biến
 area: foundation
-status: draft
+status: approved
 mvp: true
 phase: P0
-reviewed: 2026-08-04
+reviewed: 2026-08-06
 owns:
   - Định dạng mọi mã nghiệp vụ
   - Danh sách mã bất biến sau khi phát hành
@@ -174,5 +174,5 @@ Scenario: BR-ID-01 — không sửa được mã đã publish
 
 | # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
 |---|---|---|---|---|
-| 1 | Mã Game Level có nên mang `template_code` không? Hiện chỉ mang competency + strand | Thay đổi sau khi có level là migration | 🔴 P0 | spec owner |
-| 2 | 3 chữ số cho Game Level (`\d{3}`) đủ chưa? V1 dự kiến 3.000+ level → cần 4 | Chốt trước khi seed lô đầu | 🔴 P0 | spec owner |
+| ~~1~~ | ~~Mã Game Level có nên mang `template_code` không~~ **Đóng 2026-08-06 (T9)**: **có** — mã level cần mang `template_code` để phân biệt loại game ngay từ mã. Format: `GL-{competency}-{strand}-{template}-{seq}` | — | ✅ đóng | D-X (T9) |
+| ~~2~~ | ~~3 chữ số cho Game Level đủ chưa~~ **Đóng 2026-08-06 (T9)**: **4 chữ số** (`\d{4}`) — 3.000+ level dự kiến, 3 chữ số tràn ở 1.000 | — | ✅ đóng | D-X (T9) |
