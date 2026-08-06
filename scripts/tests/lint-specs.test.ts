@@ -1,7 +1,9 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import {
+  checkC6,
   checkC7,
   checkC9,
+  checkC10,
   getViolations,
   getWarnings,
   makeSpecFile,
@@ -164,5 +166,84 @@ describe("checkC9 (banned token negation context)", () => {
     ];
     checkC9(specs);
     expect(getViolations()).toHaveLength(0);
+  });
+});
+
+describe("checkC6 (BR-ID duplicate definitions + missing vì sao)", () => {
+  function specWithBrRow(id: string, rel: string, row: string) {
+    const content = [
+      "---",
+      `spec: ${id}`,
+      "---",
+      "",
+      "## 6. Business rules",
+      "",
+      "| ID | Rule | Vì sao |",
+      "|---|---|---|",
+      row,
+    ].join("\n");
+    return makeSpecFile(`/fake/${rel}`, rel, content);
+  }
+
+  // Ca âm — chiều "có" (dương): hai spec khác nhau cùng định nghĩa BR-DM-01 ở
+  // §6 ⇒ phải fail cả hai vị trí, kèm file:line, không phải warn im lặng.
+  it("flags BR-DM-01 defined a second time in a different spec (fixture present)", () => {
+    const specs = [
+      specWithBrRow("A", "fake/a.md", "| `BR-DM-01` | Rule A | vì lý do A |"),
+      specWithBrRow("B", "fake/b.md", "| `BR-DM-01` | Rule B | vì lý do B |"),
+    ];
+    checkC6(specs);
+    const dupes = getViolations().filter((v) => v.check === "C6");
+    expect(dupes).toHaveLength(2);
+    expect(dupes[0]?.file).toBe("fake/a.md");
+    expect(dupes[1]?.file).toBe("fake/b.md");
+    expect(dupes.every((v) => v.message.includes("BR-DM-01"))).toBe(true);
+  });
+
+  // Ca âm — chiều "không" (âm): xoá fixture trùng đi (chỉ còn một định nghĩa)
+  // ⇒ exit sạch, không còn violation C6 nào.
+  it("does not flag BR-DM-01 once the duplicate fixture is removed", () => {
+    const specs = [
+      specWithBrRow("A", "fake/a.md", "| `BR-DM-01` | Rule A | vì lý do A |"),
+    ];
+    checkC6(specs);
+    expect(getViolations().filter((v) => v.check === "C6")).toHaveLength(0);
+  });
+});
+
+describe("checkC10 (banned CI wording, code-fence aware)", () => {
+  function specWithBody(rel: string, body: string) {
+    const content = ["---", "spec: FOO", "---", body].join("\n");
+    return makeSpecFile(`/fake/${rel}`, rel, content);
+  }
+
+  // Ca âm — chiều "ngoài fence": phải bắt.
+  it("flags 'GitHub Actions' mentioned outside a fenced code block", () => {
+    const specs = [
+      specWithBody(
+        "fake/outside.md",
+        "## 6. Business rules\n\nDeploy chạy qua GitHub Actions.\n"
+      ),
+    ];
+    checkC10(specs);
+    const hits = getViolations().filter((v) => v.check === "C10");
+    expect(hits).toHaveLength(1);
+    expect(hits[0]?.file).toBe("fake/outside.md");
+  });
+
+  // Ca âm — chiều "trong fence": phải im lặng.
+  it("does NOT flag 'GitHub Actions' inside a fenced code block", () => {
+    const specs = [
+      specWithBody(
+        "fake/inside.md",
+        "## 6. Business rules\n\n```\n# GitHub Actions example\n```\n"
+      ),
+    ];
+    checkC10(specs);
+    expect(
+      getViolations().filter(
+        (v) => v.check === "C10" && v.file === "fake/inside.md"
+      )
+    ).toHaveLength(0);
   });
 });
