@@ -1170,7 +1170,7 @@ hình báo cáo mang câu này.
 
 Mỗi outcome có **đúng một** spec sở hữu. Spec khác **link tới**, không copy contract.
 
-**124 spec module.** Bản đồ đầy đủ: [`docs/specs/index.md`](./specs/index.md).
+**130 spec module.** Bản đồ đầy đủ: [`docs/specs/index.md`](./specs/index.md).
 
 ```
 docs/
@@ -1179,14 +1179,14 @@ docs/
     ├── AUDIT-v1.md            vì sao KHÔNG dùng lại corpus v1
     ├── CONVENTIONS.md         quy ước viết spec v2
     ├── TEMPLATE.md · index.md · roadmap.md
-    ├── 00-foundation/  14     contract cắt ngang mọi bề mặt
+    ├── 00-foundation/  16     contract cắt ngang mọi bề mặt
     ├── 01-platform/    27     năng lực nội bộ (gồm seeder nội dung + codegen + OAuth)
     ├── 02-public/       9     khách chưa đăng nhập
     ├── 03-account/     20     User đã đăng nhập (gồm SNS login + linking)
     ├── 04-play/        13     bề mặt trẻ — core business
     ├── 05-content/      5     ràng buộc biên tập nội dung
     ├── 06-admin/       28     Manager
-    ├── 07-addon/        6     spec đủ, KHÔNG bán ở MVP
+    ├── 07-addon/        7     spec đủ, KHÔNG bán ở MVP
     └── 08-quality/      5     test · bảo mật · a11y · hiệu năng · design
 ```
 
@@ -1257,7 +1257,6 @@ Mã taxonomy giữ format v1 (`C1.CNT.03`) — đã biên soạn, bất biến, 
 | 3 | **Năng lực đọc review là bao nhiêu bản/ngày/người?** Seeder (§0 D7) giải quyết phần *soạn* ≥690 LO + ≥120 game level + ≥60 lesson. Nó **không** giải quyết phần *đọc review* — và đó mới là đường găng. Soạn 500 bản mà review được 20/ngày thì seeder không giúp gì | P0 · P1 · P3 |
 | 4 | Ai là người review nội dung, và người đó có nền sư phạm mầm non không? | P1 · P3 |
 | 5 | C5 Language cần audio tiếng Việt cho ~21 skill — thu âm người thật hay TTS? | P1 nội dung |
-| 6 | Repo mới: tạo repo riêng hay branch `v2` trong repo hiện tại? Chiến lược port `game-engine`/`emoji`/`taxonomy` | P0 khởi động |
 | 7 | Có giữ 60 game type v1 làm backlog port, hay bỏ hẳn và chỉ dùng 6 template? | P1 phạm vi |
 | 8 | Ngân sách pháp lý rà soát ToS / Privacy / Chính sách trẻ em theo ND 13/2023 | Go-live |
 | 9 | Model tablet Android 2GB nào làm chuẩn đo 60 fps | P1 nghiệm thu |
@@ -1273,6 +1272,7 @@ Mã taxonomy giữ format v1 (`C1.CNT.03`) — đã biên soạn, bất biến, 
 | Add-on ở MVP | **Chỉ spec, không lên catalog.** MVP bán đúng `standard` + `premium` | 2026-08-04 |
 | Premium vs Creator | **Gộp.** Premium bao hàm quyền học của Creator; quyền tạo nằm ở add-on | 2026-08-04 |
 | Pháp lý | **Việt Nam** — Nghị định 13/2023 + Luật Trẻ em. Không COPPA/GDPR-K ở MVP | 2026-08-04 |
+| Repo mới hay branch v2? | **Repo riêng `kidthink/`**, nằm cạnh `tinimath/` (v1). Port có chọn lọc: `game-engine`, `emoji`, taxonomy data | 2026-08-06 (D-A) |
 | Thư viện ảnh | **Không có.** Emoji cố định; ảnh upload gắn content item | 2026-08-04 |
 | Master data | **Lớp 1 code-owned, admin read-only**; Lớp 2 studio CRUD | 2026-08-04 |
 | Dùng AI để soạn game và code? | **Có — AI agent IDE soạn file trong repo, người merge.** Nội dung nền là **seeder** (8 cổng tự động → PR review → seed ghi thẳng `published`), code là codegen (6 vùng cấm → PR review). ❌ Không có pipeline LLM sinh nội dung trong runtime. Hard rule cũ "NEVER để AI sinh nội dung cốt lõi" viết sai chỗ — cái cần cấm là **phát hành không có người kiểm** | 2026-08-05 |
