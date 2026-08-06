@@ -1,0 +1,38 @@
+# Dependencies
+node_modules
+
+# Version control
+.git
+.gitignore
+
+# Build artifacts
+.nuxt
+.output
+dist
+
+# Logs
+*.log
+
+# Editor configs
+.vscode
+.idea
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# Testing
+coverage
+.nyc_output
+
+# Documentation (not needed in image)
+docs
+*.md
+!README.md

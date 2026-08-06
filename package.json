@@ -1,0 +1,35 @@
+{
+  "name": "@kidthink/monorepo",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=24",
+    "pnpm": ">=11"
+  },
+  "packageManager": "pnpm@11.16.0",
+  "scripts": {
+    "lint": "biome check .",
+    "lint:fix": "biome check --write .",
+    "lint:tokens": "node scripts/lint-tokens.ts",
+    "lint:deps": "depcruise apps packages --config .dependency-cruiser.cjs",
+    "typecheck:root": "tsc --noEmit -p tsconfig.json",
+    "typecheck": "pnpm typecheck:root && pnpm --recursive run typecheck",
+    "check": "pnpm lint && pnpm lint:tokens && pnpm lint:deps && pnpm typecheck",
+    "check:services": "node scripts/check-services.ts",
+    "format": "biome format --write .",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "catalog:",
+    "@types/node": "catalog:",
+    "dependency-cruiser": "catalog:",
+    "ioredis": "catalog:",
+    "postgres": "catalog:",
+    "typescript": "catalog:",
+    "ultracite": "catalog:",
+    "vitest": "catalog:"
+  }
+}

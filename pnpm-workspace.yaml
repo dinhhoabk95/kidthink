@@ -1,0 +1,27 @@
+packages:
+  - apps/*
+  - packages/*
+
+# Catalog — nguồn version duy nhất cho dependency dùng chung (BR-RBS-06).
+# Package con khai "catalog:", ❌ NEVER khai version rời.
+#
+# Chỉ liệt kê thứ ĐÃ cài ở bootstrap. Dòng còn lại của baseline
+# (docs/specs/00-foundation/repo-bootstrap.md §7.1) thêm vào KHI package cần nó
+# tới — pin trước cho thư viện chưa dùng chỉ tạo version chết.
+catalog:
+  # Tooling — xem plan.md D-H (lint) và D-I (TypeScript)
+  "@biomejs/biome": ^2.5.7
+  ultracite: ~6.5.1 # ❌ NEVER ^7 — từ 7.0 ultracite bỏ Biome sang oxlint/oxfmt
+  typescript: ~5.9.3 # ❌ chưa 7.x — xem plan.md D-I
+  "@types/node": ^24.7.0 # khớp runtime Node 24, không nhảy theo @types/node 26
+  vitest: ^4.1.10
+  dependency-cruiser: ^18.1.1 # cưỡng chế BR-MPA-01/06/07 trong CI
+
+  # Driver hạ tầng — hiện chỉ scripts/check-services.ts dùng (repo-bootstrap §4
+  # bước 5: "verify kết nối được từ Node"). Chuyển vào packages/db và
+  # packages/cache khi hai package đó được dựng thật.
+  postgres: ^3.4.9 # driver postgres.js, không phải node-postgres
+  ioredis: ^5.11.1 # ❌ NEVER ^6 — §7.1 pin 5.11 để khớp version BullMQ tự test
+
+onlyBuiltDependencies:
+  - sharp

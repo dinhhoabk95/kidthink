@@ -1,0 +1,24 @@
+{
+  "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
+  "root": true,
+  "extends": ["ultracite/core", "ultracite/vue"],
+
+  // Zero-config là mặc định. Mỗi override dưới đây phải trỏ được về một contract
+  // trong docs/specs/ — ❌ NEVER nới rule chỉ vì code hiện tại đang vi phạm.
+  "overrides": [
+    {
+      // monorepo-package-architecture.md §8: "Export — Chỉ qua src/index.ts,
+      // không import path sâu". Kiến trúc BẮT BUỘC barrel file ở đúng một chỗ
+      // mỗi package, nên noBarrelFile không áp được cho file đó.
+      // Ngoài src/index.ts, rule vẫn bật.
+      "includes": ["packages/*/src/index.ts"],
+      "linter": {
+        "rules": {
+          "performance": {
+            "noBarrelFile": "off"
+          }
+        }
+      }
+    }
+  ]
+}

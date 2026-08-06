@@ -1,0 +1,23 @@
+{
+  // Lưới phủ typecheck của cả repo. Trước file này `pnpm check` chạy
+  // `tsc` trên đúng 1/15 project — scripts/, *.config.ts và packages/*/tests/
+  // đều nằm ngoài gate, nên `pnpm check` exit 0 với lỗi type thật.
+  //
+  // `include` cố ý dùng glob `packages/*`: package mới sinh ra là được phủ ngay,
+  // ❌ không phải nhớ thêm tsconfig + script cho từng cái (thứ chắc chắn sẽ quên).
+  //
+  // apps/* KHÔNG nằm đây — Nuxt sinh tsconfig riêng ở .nuxt/. Khi apps/web có
+  // code thật, app đó tự khai script `typecheck` (`nuxt typecheck`) và
+  // `pnpm --recursive run typecheck` nhặt lên.
+  "extends": "./packages/config/tsconfig.base.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "types": ["node"]
+  },
+  "include": [
+    "scripts/**/*.ts",
+    "*.config.ts",
+    "packages/*/src/**/*.ts",
+    "packages/*/tests/**/*.ts"
+  ]
+}

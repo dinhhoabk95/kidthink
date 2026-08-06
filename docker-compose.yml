@@ -1,0 +1,58 @@
+# KidThink — hạ tầng dev (chỉ DB + cache; app Node chạy trên host)
+#
+#   docker compose up -d
+#   psql -h localhost -p 5433 -U postgres -d kidthink
+#
+# BR-RBS-07: major version phải KHỚP production — PostgreSQL 17, Valkey 9.
+# Test trên version khác production là kiểm tra sai thứ.
+#
+# Host port lệch số container (5433/6380 thay vì 5432/6379, container giữ
+# nguyên): máy dev này đã có stack khác (hlo-api) chiếm 5432/6379 trên host.
+# App Node đọc qua DATABASE_URL/VALKEY_PORT — không phụ thuộc số cổng mặc định.
+
+services:
+  db:
+    image: postgres:17-alpine
+    restart: unless-stopped
+    # Bind loopback: app Node chạy trên host nên không cần lộ ra LAN.
+    # "5433:5432" bind 0.0.0.0 — với creds postgres/postgres thì bất kỳ máy nào
+    # cùng mạng cũng vào được.
+    ports:
+      - "127.0.0.1:5433:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: kidthink
+    volumes:
+      - pgdata_dev:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  valkey:
+    image: valkey/valkey:9-alpine
+    restart: unless-stopped
+    command: >
+      valkey-server
+      --appendonly yes
+      --maxmemory 256mb
+      --maxmemory-policy noeviction
+    # Valkey không có requirepass — lộ 0.0.0.0:6379 là đường compromise cổ điển.
+    ports:
+      - "127.0.0.1:6380:6379"
+    volumes:
+      - valkey_dev:/data
+    healthcheck:
+      test: ["CMD", "valkey-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+# ❌ Chưa có service S3 local (v1 dùng rustfs) — chưa spec nào ở bootstrap cần.
+# Thêm khi `05-content`/`image-storage` tới, không trước.
+
+volumes:
+  pgdata_dev:
+  valkey_dev:
