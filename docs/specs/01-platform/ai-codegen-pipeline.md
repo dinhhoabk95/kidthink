@@ -51,7 +51,7 @@ nhau.
 | Dev | Chạy generator, review diff, viết logic, mở PR | — |
 | Generator (máy, không LLM) | Sinh từ artefact xác định: Zod, Drizzle, barrel, type | — |
 | LLM | Sinh skeleton cần suy luận: test từ Gherkin, Session class từ template contract | Ghi thẳng vào `main` · chạm vùng cấm §5 |
-| CI | Chặn merge khi cổng §6 đỏ | — |
+| cổng tự động | Chặn merge khi cổng §6 đỏ | — |
 
 ## 3. Entry points
 
@@ -78,7 +78,7 @@ cổng §6.
 5. Người viết logic nghiệp vụ vào chỗ TODO
 6. pnpm check && pnpm test      → phải xanh
 7. PR có người review           → merge
-8. pnpm gen:check trong CI      → chặn merge nếu spec và code lệch
+8. pnpm gen:check trong cổng tự động      → chặn merge nếu spec và code lệch
 ```
 
 ## 5. Vùng cấm — AI ❌ không sinh code
@@ -106,7 +106,7 @@ Ranh giới đặt theo *hậu quả khi sai*, không theo *độ khó khi viế
 | `BR-AIG-03` | AI ❌ **NEVER** sinh code trong vùng cấm §5 | |
 | `BR-AIG-04` | Code sinh ra mang header `@generated from <spec-id>@<sha>`; ❌ **NEVER sửa tay** file `@generated` | Sửa tay file sinh ra sẽ mất ở lần sinh sau |
 | `BR-AIG-05` | Test sinh từ Gherkin ra dưới dạng `test.todo`, ❌ **không** dưới dạng test rỗng pass | Test rỗng pass là tệ hơn không có test — nó báo xanh giả |
-| `BR-AIG-06` | `pnpm gen:check` chạy trong CI, **chặn merge** khi spec và code lệch | Không có cổng này thì spec trôi khỏi code trong 3 sprint |
+| `BR-AIG-06` | `pnpm gen:check` chạy trong cổng tự động, **chặn merge** khi spec và code lệch | Không có cổng này thì spec trôi khỏi code trong 3 sprint |
 | `BR-AIG-07` | Đổi contract → sửa **spec trước**, sinh lại, rồi sửa code. ❌ Không sửa code trước | Nếu code đi trước, spec thành tài liệu chết |
 | `BR-AIG-08` | Prompt của `gen:session` version trong repo | Prompt là code |
 | `BR-AIG-09` | Session class sinh ra phải qua `pnpm lint:tokens` — ❌ không hex literal | LLM rất hay sinh hex literal |
@@ -182,7 +182,7 @@ Tách `*.gen.ts` (sinh, không sửa) khỏi `*.impl.ts` (người viết). `gen
 
 ## 8. API contract
 
-Không có route. Giao diện là CLI + CI.
+Không có route. Giao diện là CLI + cổng tự động.
 
 ```ts
 interface GenCheckResult {
@@ -192,7 +192,7 @@ interface GenCheckResult {
 }
 ```
 
-CI fail khi `errors.length > 0`.
+Cổng tự động fail khi `errors.length > 0`.
 
 ## 9. Acceptance criteria
 
@@ -204,11 +204,11 @@ Scenario: BR-AIG-05 — test sinh ra là test.todo, không phải test rỗng
   And pnpm test báo 8 todo
   And không test nào pass mà chưa có assertion
 
-Scenario: BR-AIG-06 — CI chặn khi spec và code lệch
+Scenario: BR-AIG-06 — cổng tự động chặn khi spec và code lệch
   Given một route tồn tại trong code nhưng không có trong spec nào
   When chạy pnpm gen:check
   Then kết quả có ít nhất một error
-  And CI fail
+  And cổng tự động fail
 
 Scenario: BR-AIG-04 — sửa tay file generated bị bắt
   Given một file .gen.ts đã sinh
@@ -228,7 +228,7 @@ Scenario: BR-AIG-09 — Session class sinh ra không có hex literal
 
 Scenario: BR-AIG-07 — đổi contract bắt đầu từ spec
   Given một dev đổi một route trong code mà không đổi spec
-  When CI chạy
+  When cổng tự động chạy
   Then gen:check báo error "route không có trong spec"
 
 Scenario: sinh lại là idempotent
@@ -248,7 +248,7 @@ Scenario: mọi mã lỗi trong code đều có trong registry
 - Ưu tiên generator xác định hơn LLM.
 - Đọc từng dòng diff của code sinh ra trước khi commit.
 - Tách `*.gen.ts` khỏi `*.impl.ts`.
-- Chạy `gen:check` trong CI như cổng chặn merge.
+- Chạy `gen:check` trong cổng tự động như cổng chặn merge.
 - Sửa spec trước, sinh lại, rồi sửa code.
 
 **Ask first**
@@ -271,4 +271,4 @@ Scenario: mọi mã lỗi trong code đều có trong registry
 | 1 | Parser Markdown → `spec-index.json` chịu được spec viết lệch chuẩn tới đâu? Cần lint spec riêng hay parser đủ nghiêm? | Xây generator |
 | 2 | `gen:session` sinh skeleton hay sinh cả logic gameplay cơ bản? Sinh nhiều hơn thì review đắt hơn | Phạm vi P1 |
 | 3 | Có sinh Vue component skeleton từ section Entry points không? Hiện chưa nằm trong phạm vi | P1 UI |
-| 4 | `gen:check` chạy trong pre-commit hay chỉ CI? Pre-commit nhanh hơn nhưng chậm commit | DX |
+| 4 | `gen:check` chạy trong pre-commit hay chỉ cổng tự động? Pre-commit nhanh hơn nhưng chậm commit | DX |

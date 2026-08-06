@@ -1021,7 +1021,7 @@ snapshot. Offline test dùng Playwright offline mode, không mock `navigator.onL
 - Đổi ánh xạ competency của một skill đã có nội dung gắn vào.
 - Đổi số child profile tối đa của một gói.
 - Đổi design token.
-- Đổi cấu hình CI/CD hoặc process manager.
+- Đổi cấu hình cổng tự động hoặc process manager.
 - Mở rộng phạm vi tuân thủ ra ngoài Việt Nam.
 
 ### ❌ Never
@@ -1066,7 +1066,7 @@ snapshot. Offline test dùng Playwright offline mode, không mock `navigator.onL
 
 | Phase | Nội dung | Cắt được không |
 |---|---|---|
-| **P0 — Foundation** | Repo, schema, migration, auth, Lớp 1 seed (taxonomy 230 skill + 690 LO + 6 template + emoji + package + entitlement key), CI | ❌ chặn mọi thứ |
+| **P0 — Foundation** | Repo, schema, migration, auth, Lớp 1 seed (taxonomy 230 skill + 690 LO + 6 template + emoji + package + entitlement key), cổng tự động | ❌ chặn mọi thứ |
 | **P1 — Play core** | Game engine 6 template, catalog + gating 4 bậc, play session + event, healthy-play cap, báo cáo cơ bản, ≥120 game level seed, Public Site + SEO | ❌ core business |
 | **P2 — Commerce + Admin** | Package catalog, VietQR order, duyệt tay, entitlement, Admin dashboard, **Authoring Studio**, asset pipeline, audit log | ⚠️ Studio có thể thu về "sửa level đã có" nếu thiếu nguồn lực |
 | **P3 — Curriculum** | Lesson library (≥60), activity, 5 curriculum, curriculum player, mastery + adaptive ZPD, báo cáo nâng cao | ⚠️ Có thể ship 1 curriculum theo tuổi thay vì 5 |

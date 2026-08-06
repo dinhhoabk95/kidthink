@@ -26,7 +26,7 @@ trẻ là ❌ không sửa được.
 
 ## 2. Actors
 
-Dev · reviewer · CI.
+Dev · reviewer · cổng tự động.
 
 ## 3. Entry points
 
@@ -107,7 +107,7 @@ Checklist trong PR template · `pnpm check` · rà soát trước release.
 | Injection | Drizzle parameterize · Zod |
 | Insecure design | Spec-first, review bắt buộc vùng nhạy cảm |
 | Security misconfiguration | `health-check` · header · CORS |
-| Vulnerable components | Quét dependency trong CI |
+| Vulnerable components | Quét dependency trong cổng tự động |
 | Auth failures | `auth-tokens-sessions` · rate limit hai trục |
 | Data integrity failures | Bảng INSERT-only · trigger `published` |
 | Logging failures | `audit-log` · `monitoring-and-alerting` |
@@ -152,7 +152,7 @@ Scenario: BR-SEC-09 — không dữ liệu trẻ ra ngoài
 
 Scenario: BR-SEC-01 — CRITICAL chặn merge
   Given một PR có secret hardcode
-  When CI chạy
+  When cổng tự động chạy
   Then merge bị chặn
 ```
 

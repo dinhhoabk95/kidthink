@@ -54,7 +54,7 @@ Thứ tự làm:
 
 Bước 1 **không phụ thuộc** bất kỳ spec nào khác — đó là lý do nó chạy trước cả `glossary`.
 Nó cũng là bước duy nhất mà bản roadmap gốc (trước 2026-08-05) bỏ trống spec sở hữu (từng
-ghi "Dựng repo, migration, CI | —") — xem [`00-foundation/repo-bootstrap.md`](./00-foundation/repo-bootstrap.md) §1.
+ghi "Dựng repo, migration, cổng tự động | —") — xem [`00-foundation/repo-bootstrap.md`](./00-foundation/repo-bootstrap.md) §1.
 
 Reauth (`auth-tokens-sessions` §7.4) và cột `social_identities`
 (`schema-identity-billing` §7.3a) thuộc **P0** dù SNS chỉ chạy ở P1 — cả hai đụng schema và

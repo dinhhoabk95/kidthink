@@ -18,7 +18,7 @@ depends_on: []
 
 ## 1. Objective
 
-`../roadmap.md` §P0 bước 7 ghi "Dựng repo, migration, CI" nhưng không có spec sở hữu — đây
+`../roadmap.md` §P0 bước 7 ghi "Dựng repo, migration, cổng tự động" nhưng không có spec sở hữu — đây
 là lỗ hổng duy nhất trong 128 spec gốc. File này lấp nó, và là **spec đầu tiên thực thi**,
 trước cả `glossary`/`id-conventions`, vì mọi spec khác giả định đã có repo để đặt code vào.
 
@@ -41,7 +41,7 @@ thay vì tự viết (§0 D10).
 |---|---|
 | `kidthink/package.json`, `pnpm-workspace.yaml` | Gốc workspace |
 | `kidthink/apps/*`, `kidthink/packages/*` | Khung app/package rỗng |
-| `kidthink/lefthook.yml` + `.git/hooks/pre-commit`·`pre-push` | Gate lint+typecheck+test, chạy local. ❌ Không có CI remote |
+| `kidthink/lefthook.yml` + `.git/hooks/pre-commit`·`pre-push` | Gate lint+typecheck+test, chạy local. ❌ Không có cổng remote |
 | `kidthink/docker-compose.yml` | PostgreSQL 17 + Valkey 9 cho dev local |
 | `tinimath/tinimath/**` (v1, đọc-only) | Nguồn port — xem §7.3 |
 
@@ -128,7 +128,7 @@ hardcode `ioredis` không nhận client khác. Cả hai điểm chạm Valkey du
 | Logging | `pino` + `pino-http` nối trực tiếp Nitro plugin | | ❌ Không wrapper Nuxt (`nuxt-pino-log` bỏ hoang từ 2022) |
 | Alert tới người | Healthchecks.io (free) cho liveness job/cron + Telegram Bot API (`fetch` thô) cho ngưỡng/crash | | Email chỉ là kênh dự phòng — VN dev quen Telegram hơn, tới nhanh hơn |
 | Dependency-boundary | `dependency-cruiser` `^18.1` | | Duy nhất trong 4 lựa chọn khảo sát hỗ trợ cấm **thư viện ngoài cụ thể** theo từng zone (`BR-MPA-01`), không chỉ graph nội bộ. `sherif` giữ làm lint dependency-hygiene bổ sung, không thay được việc này |
-| Gate chất lượng | **`lefthook` `^2.1`** (git hook local) | — | ❌ **Không CI remote** — không GitHub Actions, không GitLab CI, không Jenkins (quyết định người dùng 2026-08-06, xem §11 Q5). ❌ Không `husky` + `lint-staged` (hai package, hook là shell script — lefthook là một binary Go, config một file, có `{staged_files}` sẵn). pnpm: khai **`allowBuilds: {lefthook: false}`** ở `pnpm-workspace.yaml`. Binary tới từ `optionalDependencies` theo platform (`lefthook-darwin-x64`…), `postinstall` **không cần chạy** — đo được: `.modules.yaml` ghi `ignoredBuilds: [lefthook@2.1.10]` mà `lefthook version` vẫn ra `2.1.10`. Không khai thì `pnpm install` trên **clone mới** exit 1 (`ERR_PNPM_IGNORED_BUILDS`) — vỡ onboarding. ❌ `onlyBuiltDependencies: [lefthook]` và ❌ `ignoredBuiltDependencies: [lefthook]` đều **không** tắt được lỗi này (đã đo trên pnpm 11.16) |
+| Gate chất lượng | **`lefthook` `^2.1`** (git hook local) | — | ❌ **Không cổng remote** — không cổng tự động, không GitLab cổng tự động, không Jenkins (quyết định người dùng 2026-08-06, xem §11 Q5). ❌ Không `husky` + `lint-staged` (hai package, hook là shell script — lefthook là một binary Go, config một file, có `{staged_files}` sẵn). pnpm: khai **`allowBuilds: {lefthook: false}`** ở `pnpm-workspace.yaml`. Binary tới từ `optionalDependencies` theo platform (`lefthook-darwin-x64`…), `postinstall` **không cần chạy** — đo được: `.modules.yaml` ghi `ignoredBuilds: [lefthook@2.1.10]` mà `lefthook version` vẫn ra `2.1.10`. Không khai thì `pnpm install` trên **clone mới** exit 1 (`ERR_PNPM_IGNORED_BUILDS`) — vỡ onboarding. ❌ `onlyBuiltDependencies: [lefthook]` và ❌ `ignoredBuiltDependencies: [lefthook]` đều **không** tắt được lỗi này (đã đo trên pnpm 11.16) |
 | Lint/format | `ultracite@~6.5.1` (**preset only**) + `@biomejs/biome@^2.5.7` (**CLI chạy thật**) | ❌ **Không** nâng `ultracite` lên `^7` — từ 7.0 bỏ Biome sang oxlint/oxfmt, kể cả bản v1 pin `7.9.4` đã là oxlint. ❌ **Không** dùng CLI `ultracite check` làm gate — đo trên Biome 2.5.7/2.5.5/2.4.0: wrapper báo `Failed to parse Biome output` rồi **exit 0** dù có lỗi lint thật (nuốt lỗi). Script `lint` gọi thẳng `biome check .` |
 | Test | Vitest · Playwright · `fast-check` · k6 · `@axe-core/playwright` | giữ nguyên | |
 | Storage | S3 SDK | giữ nguyên | |
@@ -154,7 +154,7 @@ sở hữu cây thư mục `kidthink/`; file này chỉ sở hữu **trình tự
 | `packages/game-engine/` | `packages/game-engine/` | Port **có điều kiện**, đổi scope — ❌ không "port nguyên": đo được là bất khả thi. **48 import** `D1xx–D4xxConfig` từ `@tinimath/shared` — package ngoài danh sách port ở bảng này; v1 `handlers/d1..d6/` 86 file / 60 game type vs v2 `templates/GT-001..006`. Phụ thuộc `game-template-contract.md` §11 Q1 — khảo sát % port được **trước khi cam kết**. Task riêng, ngoài P0 bước 1 |
 | `biome.json`, TSConfig base, `.dockerignore`, `docker-compose*.yml` skeleton | `packages/config/`, gốc `kidthink/` | Port làm điểm khởi đầu, chỉnh version dependency theo §7.1 |
 | `packages/config/src/constants.ts` | ❌ Không port | `COOKIE_PREFIXES` (`superadmin: "tinimath_sa"`) + `API_PATHS` là bề mặt auth v1 — actor `superadmin` (v2 dùng `manager`), prefix `tinimath_`. Auth là 1 trong 6 vùng cấm AI-codegen (`../SPEC.md` §0 D7) |
-| CI workflow v1 (`.github/workflows/`) | ❌ Không port | Không có CI remote ở v2 (§7.1 dòng "Gate chất lượng", §11 Q5). Bản port ngày 2026-08-06 đã **xoá lại** cùng cả thư mục `.github/` |
+| Workflow v1 (`.github/workflows/`) | ❌ Không port | Không có cổng remote ở v2 (§7.1 dòng "Gate chất lượng", §11 Q5). Bản port ngày 2026-08-06 đã **xoá lại** cùng cả thư mục `.github/` |
 | `packages/ui/` (Nuxt UI v4 + Tailwind preset, brand component) | `packages/ui/` | Port **có điều kiện** — chỉ phần đã khớp `docs/specs/08-quality/design-system-contract.md`; phần lệch thì viết lại, không ép port. Cần audit riêng trước khi merge — xem §11 Q1 |
 | Mọi route API, Drizzle schema, service, session class | ❌ Không port | Business logic viết mới hoàn toàn theo 128 spec v2 — đây chính là lý do greenfield (`../SPEC.md` §0 D9) |
 
@@ -228,7 +228,7 @@ Scenario: BR-RBS-04 — chặn code nghiệp vụ trước foundation approved
 - Copy route/schema/service từ v1.
 - Để hai scope package (`@tinimath/*` và `@kidthink/*`) cùng tồn tại sau khi port xong.
 - Merge PR business logic khi gate local chưa xanh.
-- `git commit --no-verify` / `git push --no-verify` — không có CI remote đỡ phía sau, bỏ qua
+- `git commit --no-verify` / `git push --no-verify` — không có cổng tự động remote đỡ phía sau, bỏ qua
   hook là bỏ qua **toàn bộ** kiểm tra tự động của project này.
 - Hạ version xuống dưới §7.1 vì tiện.
 
@@ -240,12 +240,12 @@ Scenario: BR-RBS-04 — chặn code nghiệp vụ trước foundation approved
 | 2 | PostgreSQL có nên bump theo major mới nhất (nếu có bản mới hơn 17 tại thời điểm bootstrap) hay giữ 17 vì đã kiểm chứng ở v1? Chưa nghiên cứu trong lượt này | Migration §4 bước 5, `data-model-overview` |
 | ~~3~~ | ~~Mô hình session lõi~~ **Đóng 2026-08-06**: `nuxt-auth-utils` cho cả 2 app, cookie niêm phong bọc quanh refresh-token rotation sẵn có — xem `auth-tokens-sessions.md` §1, §4, §7. Không tách 2 cơ chế | — |
 | ~~4~~ | ~~Thư viện TOTP~~ **Đóng 2026-08-06**: `otpauth` — xem §7.1 | — |
-| ~~5~~ | ~~CI provider~~ **Đóng lại 2026-08-06 (lần 2, quyết định người dùng)**: **không dùng CI remote nào**. `.github/workflows/ci.yml` đã xoá cùng cả thư mục `.github/`. Thay bằng `lefthook` chạy local (§7.1). Lần đóng trước cùng ngày ghi "GitHub Actions" — **sai, đã thay** | — |
+| ~~5~~ | ~~CI provider~~ **Đóng lại 2026-08-06 (lần 2, quyết định người dùng)**: **không dùng cổng tự động remote nào**. `.github/workflows/ci.yml` đã xoá cùng cả thư mục `.github/`. Thay bằng `lefthook` chạy local (§7.1). Lần đóng trước cùng ngày ghi "cổng tự động" — **sai, đã thay** | — |
 | 6 | Chấp nhận phụ thuộc runtime vào `img.vietqr.io` (bên thứ ba, ngoài tầm kiểm soát) cho toàn bộ luồng thanh toán MVP? Không có lựa chọn tự-host tương đương đủ tin cậy ở §7.1 | `payment-order-create.md` |
 | 7 | Xin production access AWS SES trước khi nào — cần review thời gian duyệt của AWS trước go-live P2 (không tự chốt được, phụ thuộc AWS) | Go-live P2, `notification-service.md` |
 | 8 | Sentry SaaS Team tier ($26/mo) hay tự host GlitchTip ngay từ đầu — quyết định chi phí, không phải kỹ thuật (đổi qua lại chỉ là đổi DSN) | Ngân sách vận hành |
 | 9 | Kích thước pool `postgres.js` (`max`) và `PG max_connections` phải tính theo **loại EC2 instance thật** (số vCPU × số PM2 instance) — chưa chốt vì chưa biết instance type production | `data-model-overview`, deploy |
 | ~~10~~ | ~~Chiến lược version control cho corpus spec ở workspace root~~ **Đóng 2026-08-06 (D-U)**: corpus spec (`SPEC.md` + `docs/specs/` + `docs/tasks/`) chuyển vào `kidthink/docs/`, thuộc git repo. `kidthink/SPEC.md` = symlink → `docs/SPEC.md`. `git log --follow` truy được vết. 223 link `.md` resolve, 0 vỡ | — |
-| ~~11~~ | ~~Bật lại CI GitHub Actions khi nào~~ **Đóng 2026-08-06**: câu hỏi biến mất cùng provider — không còn CI để bật. `BR-RBS-03` giờ đo bằng `lefthook run pre-push` + ca âm tại máy | — |
+| ~~11~~ | ~~Bật lại CI cổng tự động khi nào~~ **Đóng 2026-08-06**: câu hỏi biến mất cùng provider — không còn CI để bật. `BR-RBS-03` giờ đo bằng `lefthook run pre-push` + ca âm tại máy | — |
 | ~~12~~ | ~~Gate local bỏ qua được bằng `--no-verify`~~ **Đóng 2026-08-06 (quyết định người dùng)**: chấp nhận rủi ro đến P1. Ở P0 chưa có business logic để mất; `content-seed-authoring.md` §5 đã sửa lại câu "không có cờ bỏ qua" cho đúng thực tế (cờ tồn tại ở máy cá nhân, không ở PR). Trước `content-seed-authoring` chạy thật (P1) phải quyết định branch protection GitHub (required PR review) — quyết định đó chưa chốt, dời sang lúc đó | — |
-| ~~13~~ | ~~"Cổng CI" còn sót ở spec khác~~ **Đóng 2026-08-06**: đo lại chính xác là **7 file** (không phải 15 — số cũ ước lượng sai), đã sửa hết thành "cổng tự động": `mvp-scope.md` · `content-lifecycle.md` · `content-seed-authoring.md` (2 chỗ, gồm câu "không có cờ bỏ qua" ở Q12) · `roadmap.md` · `index.md` · `../SPEC.md` (4 chỗ). `grep -rn "cổng CI\|CI xanh\|GitHub Actions" docs/specs/ SPEC.md` chỉ còn khớp trong chính file này (lịch sử quyết định, không phải khẳng định hiện tại) | — |
+| ~~13~~ | ~~"Cổng CI" còn sót ở spec khác~~ **Đóng 2026-08-06**: đo lại chính xác là **7 file** (không phải 15 — số cũ ước lượng sai), đã sửa hết thành "cổng tự động": `mvp-scope.md` · `content-lifecycle.md` · `content-seed-authoring.md` (2 chỗ, gồm câu "không có cờ bỏ qua" ở Q12) · `roadmap.md` · `index.md` · `../SPEC.md` (4 chỗ). `grep -rn "cổng tự động\|CI xanh\|cổng tự động" docs/specs/ SPEC.md` chỉ còn khớp trong chính file này (lịch sử quyết định, không phải khẳng định hiện tại) | — |

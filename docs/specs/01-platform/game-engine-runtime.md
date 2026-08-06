@@ -74,7 +74,7 @@ một tầng theo dõi không đoán trước được vào đúng chỗ không 
 | `BR-ENG-01` | TypeScript thuần. ❌ NEVER Vue/Pinia/VueUse trong engine | RAF loop 60 lần/giây không chịu được tầng reactivity |
 | `BR-ENG-02` | ❌ **NEVER ghi DB từ engine.** Engine phát event, server ghi | Client không phải nguồn sự thật |
 | `BR-ENG-03` | ❌ **NEVER network call trong lúc chơi.** Offline-first | Mạng chập chờn không được làm đứng game |
-| `BR-ENG-04` | Mọi màu và font từ `designTokens.ts`. ❌ NEVER hex literal, ❌ NEVER `ctx.font` inline | Ép bằng `pnpm lint:tokens` trong CI |
+| `BR-ENG-04` | Mọi màu và font từ `designTokens.ts`. ❌ NEVER hex literal, ❌ NEVER `ctx.font` inline | Ép bằng `pnpm lint:tokens` trong cổng tự động |
 | `BR-ENG-05` | Sàn touch theo band tuổi qua **một hàm duy nhất**. Band 3–4: **96px**; 5–6: **72px**; sàn tuyệt đối **64px** | Sàn tự viết rải rác là 60 chỗ để lệch |
 | `BR-ENG-06` | Mọi mechanic drag có **hit band khoan dung** và **fallback tap-tap** cho band 3–4 | Drag là cử chỉ khó nhất ở tuổi này |
 | `BR-ENG-07` | Trả lời sai **phải có phản hồi**, và **không bao giờ trừng phạt**. ❌ Không đỏ, không buzzer, không trừ điểm — **im lặng cũng là defect** | Không phản hồi thì trẻ không biết mình đã thao tác |
@@ -103,7 +103,7 @@ class là toạ độ logic — ❌ không bao giờ pixel thiết bị.
 | FPS | 60 trên tablet Android 2GB | `fps_sample` mỗi 30s |
 | Thời gian frame | P95 < 16 ms | `performance.now()` mỗi tick |
 | Thời gian tới màn hình đầu | < 2,5 s trên 4G | Playwright throttle |
-| Bundle mỗi template | ≤ 80 KB gz | CI size check |
+| Bundle mỗi template | ≤ 80 KB gz | cổng tự động size check |
 | Cấp phát mỗi frame | 0 | Object pool cho sprite/particle |
 
 ### 7.3 Scaffolding — leo thang theo đồng hồ hoặc miss

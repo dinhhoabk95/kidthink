@@ -35,7 +35,7 @@ Dev UI · reviewer.
 
 1. Token khai báo ở **một nơi** mỗi tầng: CSS `@theme` cho Vue, `designTokens.ts` cho canvas.
 2. Component dùng token, ❌ không dùng giá trị thô.
-3. CI ép bằng `pnpm lint:tokens` và grep hex trong `.vue`.
+3. cổng tự động ép bằng `pnpm lint:tokens` và grep hex trong `.vue`.
 
 ## 5. Alternative flows
 

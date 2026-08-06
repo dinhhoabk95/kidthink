@@ -9,7 +9,7 @@ reviewed: 2026-08-05
 owns:
   - Ranh giới giữa AI agent IDE hỗ trợ soạn và người phát hành
   - Vị trí, hình dạng, và quy ước đặt tên seeder nội dung
-  - Tám cổng kiểm chạy trong CI trước khi merge
+  - Tám cổng kiểm chạy trong cổng tự động trước khi merge
   - Đường ghi thẳng `published` từ seed và ràng buộc idempotency
   - `content_seed_batches` và cột provenance của nội dung nền
 depends_on:
@@ -77,7 +77,7 @@ cũng là tài sản và cũng cần review: code.
 | **Người biên soạn** | Viết seeder, chạy cổng local, mở PR | Merge PR của chính mình khi có ≥2 manager |
 | **AI agent IDE** | Soạn thảo file seeder theo `content_contract`, tra taxonomy · emoji registry · spec | Chạy `seed:content` lên môi trường ≠ local · merge PR · chạm `skills`/`strands` |
 | **Người review PR** | Đọc **từng bản** trong diff, approve = phát hành | Approve theo lô mà không mở nội dung |
-| **CI** | Chạy 8 cổng §7.3 + `seed:content --dry-run` trên DB tạm | Merge tự động |
+| **cổng tự động** | Chạy 8 cổng §7.3 + `seed:content --dry-run` trên DB tạm | Merge tự động |
 | **`pnpm seed:content`** | INSERT hàng `published` + `content_review_log` + batch | `UPDATE` hàng đã có |
 | **Manager trong studio** | Từ đây quản lý nội dung: tạo version mới, archive, rollback | Sửa tại chỗ hàng đã `published` |
 
@@ -107,7 +107,7 @@ deploy một lô nội dung đã merge.
        └── skill_codes / learning_objective_codes là FK có thật
 3. pnpm seed:check                 → 8 cổng, chạy local, sửa cho tới khi xanh
 4. Mở PR
-5. CI chạy 8 cổng + seed:content --dry-run trên DB tạm
+5. Cổng tự động chạy 8 cổng + seed:content --dry-run trên DB tạm
 6. ► NGƯỜI REVIEW ĐỌC TỪNG BẢN  ← cổng người
 7. Merge  = quyết định phát hành
 8. pnpm seed:content --batch=…     → INSERT published + content_review_log + batch row
@@ -141,7 +141,7 @@ deploy một lô nội dung đã merge.
 | `BR-CSA-09` | `learning_objectives` soạn bằng seeder như game level, chịu đúng 8 cổng và đúng PR review | LO là Tầng 4 taxonomy nhưng là **mô tả hành vi** — soạn được, miễn có người đọc |
 | `BR-CSA-10` | `code` trong seeder **bất biến** sau khi merge | `id-conventions` — mã published là neo của mọi telemetry và báo cáo |
 | `BR-CSA-11` | Seeder file là **nguồn sự thật** của lô nền. `pnpm seed:check --against-db` báo lệch giữa repo và DB | Sửa DB tay rồi quên seeder = môi trường tiếp theo mất bản sửa |
-| `BR-CSA-12` | `content_pack` viết bằng **TS có kiểu**, kiểu lấy từ `content_contract` của template. ❌ Không JSON trần | Sai schema bắt lúc `tsc` rẻ hơn bắt lúc CI, rẻ hơn nhiều bắt lúc trẻ đang chơi |
+| `BR-CSA-12` | `content_pack` viết bằng **TS có kiểu**, kiểu lấy từ `content_contract` của template. ❌ Không JSON trần | Sai schema bắt lúc `tsc` rẻ hơn bắt lúc cổng tự động, rẻ hơn nhiều bắt lúc trẻ đang chơi |
 | `BR-CSA-13` | Emoji **chỉ** lấy từ `emoji_registry`. ❌ NEVER emoji ngoài registry | `emoji-registry` `BR-EMJ-*` — ref không resolve được là ô trống trên màn hình trẻ |
 | `BR-CSA-14` | Mọi hàng seed mang `seed_batch_id` + `origin` + `authored_in = 'repo_seed'` | Khi phát hiện một lô sai, phải truy được lô nào cùng PR |
 
@@ -193,7 +193,7 @@ export const seed: ContentSeed<"GT-004"> = {
 (`game-template-contract` §7.3). Thiếu field, thừa field, sai kiểu → lỗi `tsc`, ❌ không phải
 lỗi runtime. Đây là lý do seeder là TS chứ không phải JSON hay YAML.
 
-### 7.3 Tám cổng — chạy trong CI, chặn merge
+### 7.3 Tám cổng — chạy trong cổng tự động, chặn merge
 
 Chạy tuần tự. Trượt cổng nào thì dừng ở đó, in `file:line` và **PR ❌ không merge được**.
 
@@ -221,7 +221,7 @@ luận. Đó là lý do bước review của người vẫn bắt buộc.
 | `pr_url` | |
 | `approved_by_manager_id` | Người approve PR — **người phát hành** |
 | `rows_inserted` | |
-| `gate_results` | JSONB — kết quả 8 cổng lúc CI |
+| `gate_results` | JSONB — kết quả 8 cổng lúc cổng tự động |
 | `seeded_at` `seeded_by` | |
 
 Trên hàng content: `origin ∈ {human, ai_assisted}` · `authored_in ∈ {repo_seed, studio}` ·
@@ -245,7 +245,7 @@ dùng đúng danh sách này.
 
 ## 8. API contract
 
-❌ **Không có route.** Giao diện là CLI + CI. ❌ Không mã lỗi HTTP — CLI thoát khác 0.
+❌ **Không có route.** Giao diện là CLI + cổng tự động. ❌ Không mã lỗi HTTP — CLI thoát khác 0.
 
 ```ts
 interface SeedOptions {
@@ -263,7 +263,7 @@ interface SeedResult {
 }
 ```
 
-CI fail khi `gate_failures.length > 0` hoặc `drift.length > 0`.
+Cổng tự động fail khi `gate_failures.length > 0` hoặc `drift.length > 0`.
 
 ## 9. Acceptance criteria
 
@@ -350,7 +350,7 @@ Scenario: BR-CSA-11 — lệch giữa repo và DB bị bắt
   Given một hàng trong DB bị sửa tay khác với seeder
   When chạy pnpm seed:check --against-db
   Then drift liệt kê code và field lệch
-  And CI fail
+  And cổng tự động fail
 
 Scenario: studio thắng seed khi trùng code
   Given một game level cùng code do manager tạo trong studio
@@ -369,12 +369,12 @@ Scenario: dry-run không chạm DB thật
 ## 10. Boundaries
 
 **Always**
-- Chạy đủ 8 cổng trước khi merge; CI là cổng chặn.
+- Chạy đủ 8 cổng trước khi merge; cổng tự động là cổng chặn.
 - Đọc **từng bản** trong PR trước khi approve.
 - Ghi `content_review_log` + `content_seed_batches` cho mọi hàng seed.
 - Chạy đủ checklist publish `content-lifecycle` §7.3 ở tầng service.
 - Một batch một transaction.
-- Giữ seeder file đồng bộ với DB (`--against-db` trong CI).
+- Giữ seeder file đồng bộ với DB (`--against-db` trong cổng tự động).
 - Lấy kiểu `content_pack` từ `content_contract`, ❌ không viết lại tay.
 
 **Ask first**

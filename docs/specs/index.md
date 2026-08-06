@@ -34,7 +34,7 @@ Bắt đầu từ [`../SPEC.md`](../SPEC.md) — contract toàn dự án. Rồi 
 
 v1 có **31** spec cho cùng phạm vi. Xé nhỏ là chủ ý — xem [`AUDIT-v1.md`](./AUDIT-v1.md) §1.2.
 2 spec cộng thêm 2026-08-05 (`repo-bootstrap`, `monorepo-package-architecture`) lấp lỗ hổng
-"Dựng repo, migration, CI" không có spec sở hữu ở `roadmap.md` §P0 — xem `../../SPEC.md` §0 D9–D10.
+"Dựng repo, migration, cổng tự động" không có spec sở hữu ở `roadmap.md` §P0 — xem `../../SPEC.md` §0 D9–D10.
 
 ---
 

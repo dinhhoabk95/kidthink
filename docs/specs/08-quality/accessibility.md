@@ -33,7 +33,7 @@ Trẻ 3–6 · người lớn · người dùng công nghệ trợ giúp.
 ## 4. Main flow
 
 1. Mọi page object có test axe.
-2. CI fail khi có violation.
+2. Cổng tự động fail khi có violation.
 3. Ràng buộc bề mặt trẻ §7.2 kiểm bằng DOM snapshot và test riêng.
 
 ## 5. Alternative flows

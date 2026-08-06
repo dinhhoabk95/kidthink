@@ -24,25 +24,25 @@ mọi Gherkin scenario map sang đúng một test.
 
 ## 2. Actors
 
-Dev · CI.
+Dev · cổng tự động.
 
 ## 3. Entry points
 
-`pnpm test` · `pnpm test:coverage` · `pnpm test:e2e` · CI.
+`pnpm test` · `pnpm test:coverage` · `pnpm test:e2e` · cổng tự động.
 
 ## 4. Main flow
 
 1. Spec `approved` → `pnpm gen:tests` sinh `test.todo` từ Gherkin.
 2. TDD: RED → GREEN → REFACTOR.
 3. `pnpm check` + `pnpm test` xanh trước khi mở PR.
-4. CI chạy đủ tầng, chặn merge khi đỏ hoặc coverage tụt.
+4. Cổng tự động chạy đủ tầng, chặn merge khi đỏ hoặc coverage tụt.
 
 ## 5. Alternative flows
 
 | Nhánh | Hành vi |
 |---|---|
 | Test flaky | Quarantine + issue, ❌ **NEVER xoá** |
-| Coverage tụt dưới ngưỡng | CI fail |
+| Coverage tụt dưới ngưỡng | cổng tự động fail |
 | Test chậm | Tách suite, ❌ không bỏ |
 
 ## 6. Business rules
@@ -113,7 +113,7 @@ Chrome + WebKit + Firefox, 2 major gần nhất · offline test dùng **Playwrig
 
 ## 8. API contract
 
-Không có. Ràng buộc lên CI:
+Không có. Ràng buộc lên cổng tự động:
 
 ```
 pnpm check            → lint + tokens + typecheck
@@ -130,7 +130,7 @@ Cả năm phải xanh để merge.
 ```gherkin
 Scenario: BR-TST-01 — ngưỡng coverage được ép
   When coverage critical path tụt xuống 80%
-  Then CI fail
+  Then cổng tự động fail
 
 Scenario: BR-TST-02 — không mock DB
   When quét test tìm mock của drizzle hay của kết nối DB
@@ -183,5 +183,5 @@ Scenario: E2E chạy đúng viewport
 
 | # | Câu hỏi | Chặn gì |
 |---|---|---|
-| 1 | CI chạy PG Docker mất bao lâu? Nếu quá chậm cần tách suite | P0 |
+| 1 | Cổng tự động chạy PG Docker mất bao lâu? Nếu quá chậm cần tách suite | P0 |
 | 2 | Thiết bị chuẩn đo 60 fps trong E2E là gì? | `game-engine-runtime` Q1 |

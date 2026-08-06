@@ -43,7 +43,7 @@ chỗ thay vì một.
 |---|---|
 | `packages/*/src/index.ts` | Bề mặt export duy nhất của một driver — nơi duy nhất thư viện nền được import |
 | `apps/*/package.json` | Khai `@kidthink/*`, không khai thư viện nền mà driver đã bọc |
-| CI dependency-graph check | Chặn `apps/*` phụ thuộc ngược vào nhau, và chặn `apps/*` import thư viện nền đã có driver |
+| cổng tự động dependency-graph check | Chặn `apps/*` phụ thuộc ngược vào nhau, và chặn `apps/*` import thư viện nền đã có driver |
 
 ## 4. Main flow — quyết định tách package mới
 
@@ -77,7 +77,7 @@ chỗ thay vì một.
 | `BR-MPA-03` | Đổi thư viện nền chỉ sửa **trong** driver + test của package đó, ❌ **NEVER** sửa call site ở `apps/*` | Đây là lý do tồn tại của driver — nếu vẫn phải sửa app thì driver không có tác dụng |
 | `BR-MPA-04` | Nuxt module cấu hình thuần qua `nuxt.config` (không có call site logic runtime) ❌ **NEVER** bị ép bọc driver | Bọc driver cho thứ chỉ là cấu hình khai báo là phức tạp hoá không cần thiết |
 | `BR-MPA-05` | Package mới bắt buộc có **một** capability rõ trong tên — áp dụng luật "một outcome một file" của `CONVENTIONS.md` §1 cho package | Package gộp nhiều capability (`utils`, `common`) là nơi code chết tích tụ |
-| `BR-MPA-06` | `packages/*` ❌ **NEVER** phụ thuộc ngược vào `apps/*`; CI kiểm bằng dependency-graph check | Phụ thuộc ngược tạo chu trình, packages không còn tái dùng được độc lập |
+| `BR-MPA-06` | `packages/*` ❌ **NEVER** phụ thuộc ngược vào `apps/*`; cổng tự động kiểm bằng dependency-graph check | Phụ thuộc ngược tạo chu trình, packages không còn tái dùng được độc lập |
 | `BR-MPA-07` | Hai `apps/*` ❌ **NEVER** phụ thuộc thẳng vào nhau — chia sẻ luôn qua `packages/*` | `apps/admin` gọi thẳng code của `apps/web` là dấu hiệu thiếu một package |
 
 ## 7. Data
@@ -98,7 +98,7 @@ chỗ thay vì một.
 | Storage ảnh | `packages/storage` | S3 SDK + `sharp` (xử lý server) | `image-storage` |
 | Error tracking | **Không cần driver riêng** — SDK gắn ở entry mỗi app | `@sentry/nuxt` | `monitoring-and-alerting` |
 | Logging | `packages/config` (factory logger dùng chung) hoặc `packages/observability` nếu tách | `pino` + `pino-http` (Nitro plugin) | `monitoring-and-alerting` |
-| Alert tới người | `apps/worker` (job định kỳ ping) + script CI | Healthchecks.io (`fetch` ping) + Telegram Bot API (`fetch` thô) | `monitoring-and-alerting`, `job-queue` |
+| Alert tới người | `apps/worker` (job định kỳ ping) + script cổng tự động | Healthchecks.io (`fetch` ping) + Telegram Bot API (`fetch` thô) | `monitoring-and-alerting`, `job-queue` |
 | Taxonomy | `packages/taxonomy` | Pure TS, không thư viện ngoài | `taxonomy-service` |
 | Emoji | `packages/emoji` | Pure TS + data, port từ v1 | `emoji-registry` |
 | Game engine | `packages/game-engine` | Canvas 2D thuần TS, port từ v1 | `game-template-contract`, `game-engine-runtime` |
@@ -167,7 +167,7 @@ Scenario: BR-MPA-01 — app không import thư viện nền trực tiếp
   And mọi truy cập đi qua "@kidthink/cache", "@kidthink/queue", hoặc "@kidthink/auth"
 
 Scenario: BR-MPA-06 — packages không phụ thuộc ngược apps
-  When chạy dependency-graph check trong CI
+  When chạy dependency-graph check trong cổng tự động
   Then không package nào trong packages/* có import từ apps/*
 
 Scenario: BR-MPA-03 — đổi thư viện nền không đụng call site
@@ -185,7 +185,7 @@ Scenario: BR-MPA-04 — module cấu hình thuần không bị ép bọc driver
 **Always**
 - Tách package khi capability dùng ở ≥ 2 app.
 - Export interface theo domain dự án, giấu thư viện nền sau `src/index.ts`.
-- Chạy dependency-graph check trong CI mỗi PR.
+- Chạy dependency-graph check trong cổng tự động mỗi PR.
 
 **Ask first**
 - Gộp hai package đã tách làm một.

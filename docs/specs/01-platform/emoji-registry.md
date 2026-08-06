@@ -32,7 +32,7 @@ phù hợp lọt vào bài học của trẻ.
 |---|---|
 | Dev | Thêm emoji vào registry qua PR |
 | Manager | **Chọn** từ picker. ❌ Không gõ tự do, ❌ không thêm mới |
-| AI agent IDE (lúc soạn seeder) | Nhận danh sách đóng làm ràng buộc; cổng 3 CI chặn ref lạ |
+| AI agent IDE (lúc soạn seeder) | Nhận danh sách đóng làm ràng buộc; cổng 3 cổng tự động chặn ref lạ |
 | Engine | Render emoji với font stack đã ghim |
 
 ## 3. Entry points
@@ -42,7 +42,7 @@ phù hợp lọt vào bài học của trẻ.
 | `packages/emoji/` | 32 nhóm data + `search.ts` · `query.ts` · `registry.ts` |
 | `packages/db/src/seed-master/emoji.ts` | Seed Lớp 1 |
 | `06-admin/emoji-picker.md` | UI chọn |
-| `01-platform/content-seed-authoring.md` cổng 3 | Kiểm ref hợp lệ trong CI |
+| `01-platform/content-seed-authoring.md` cổng 3 | Kiểm ref hợp lệ trong cổng tự động |
 
 ## 4. Main flow — chọn emoji trong studio
 

@@ -24,15 +24,15 @@ ngân sách sẽ trôi mỗi sprint một chút cho tới khi ❌ không sửa �
 
 ## 2. Actors
 
-Dev · CI · giám sát production.
+Dev · cổng tự động · giám sát production.
 
 ## 3. Entry points
 
-CI size check · Playwright throttle 4G · k6 · `fps_sample` từ production.
+cổng tự động size check · Playwright throttle 4G · k6 · `fps_sample` từ production.
 
 ## 4. Main flow
 
-1. CI đo kích thước bundle mỗi build, so ngân sách §7.1.
+1. cổng tự động đo kích thước bundle mỗi build, so ngân sách §7.1.
 2. E2E đo LCP và fps ở 4G throttle.
 3. k6 đo API P95.
 4. Production gửi `fps_sample`; tụt ngưỡng → alert.
@@ -41,7 +41,7 @@ CI size check · Playwright throttle 4G · k6 · `fps_sample` từ production.
 
 | Nhánh | Hành vi |
 |---|---|
-| Vượt ngân sách bundle | **CI fail**, ❌ không cảnh báo suông |
+| Vượt ngân sách bundle | **cổng tự động fail**, ❌ không cảnh báo suông |
 | FPS tụt ở production | Giảm hạt và bóng, ❌ **NEVER giảm sàn touch** |
 | API chậm | Alert P1, điều tra query |
 
@@ -105,7 +105,7 @@ Puppeteer là câu hỏi mở (`pdf-export` §11 Q1) · rollup thay vì query tr
 
 ## 8. API contract
 
-Không có. Ràng buộc lên CI:
+Không có. Ràng buộc lên cổng tự động:
 
 ```
 size-limit        → ngân sách §7.1
@@ -118,7 +118,7 @@ k6                → API P95
 ```gherkin
 Scenario: BR-PRF-01 — vượt ngân sách chặn merge
   Given một thay đổi làm app shell vượt 180 KB gzipped
-  When CI chạy
+  When cổng tự động chạy
   Then merge bị chặn
 
 Scenario: BR-PRF-02 — đo ở 4G
@@ -155,7 +155,7 @@ Scenario: BR-PRF-08 — ảnh đúng định dạng và cỡ
 
 **Always**
 - Đo ở thiết bị và mạng mục tiêu.
-- Ép ngân sách trong CI.
+- Ép ngân sách trong cổng tự động.
 - Suy giảm theo đúng thứ tự §7.3.
 
 **Ask first**

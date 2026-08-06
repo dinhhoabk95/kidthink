@@ -144,7 +144,7 @@ Scenario: BR-SDF-07 — input đủ lớn
 
 Scenario: BR-SDF-08 — field rơi vào text bị phát hiện
   Given một field tên không theo quy ước
-  When chạy kiểm tra schema ở CI
+  When chạy kiểm tra schema ở cổng tự động
   Then cảnh báo được phát ra
 ```
 
