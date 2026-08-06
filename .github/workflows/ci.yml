@@ -1,10 +1,19 @@
 name: CI
 
+# ⏸ CI TẠM TẮT 2026-08-06 (quyết định người dùng).
+# Trigger tự động bị comment; nội dung job giữ nguyên — bật lại = uncomment 4 dòng dưới.
+# Giữ `workflow_dispatch` để file vẫn hợp lệ: workflow không có event nào bị GitHub
+# báo "invalid workflow file" và gắn annotation đỏ lên repo. Đỏ giả dạy người ta bỏ
+# qua màu, tệ hơn xanh giả.
+#
+# ⛔ `BR-RBS-03` VẪN CHẶN: phải bật lại + xanh remote TRƯỚC khi PR business logic
+# đầu tiên mở. Xem docs/specs/00-foundation/repo-bootstrap.md §11 Q11.
 on:
-  pull_request:
-    branches: [main]
-  push:
-    branches: [main]
+  workflow_dispatch:
+  # pull_request:
+  #   branches: [main]
+  # push:
+  #   branches: [main]
 
 concurrency:
   group: ci-${{ github.workflow }}-${{ github.ref }}
