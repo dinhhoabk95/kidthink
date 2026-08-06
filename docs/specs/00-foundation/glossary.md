@@ -2,10 +2,10 @@
 spec: GLOSSARY
 title: Từ vựng chuẩn
 area: foundation
-status: draft
+status: approved
 mvp: true
 phase: P0
-reviewed: 2026-08-04
+reviewed: 2026-08-06
 owns:
   - Định nghĩa duy nhất của mọi thuật ngữ domain
   - Ánh xạ thuật ngữ PRD ↔ thuật ngữ code

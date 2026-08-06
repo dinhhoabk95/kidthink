@@ -2,10 +2,10 @@
 spec: REPO-BOOTSTRAP
 title: Khởi tạo repo và dependency baseline
 area: foundation
-status: draft
+status: approved
 mvp: true
 phase: P0
-reviewed: 2026-08-05
+reviewed: 2026-08-06
 owns:
   - Cấu trúc thư mục gốc `kidthink/` và trình tự dựng repo
   - Dependency/tech baseline (version tối thiểu từng lớp)
@@ -237,7 +237,7 @@ Scenario: BR-RBS-04 — chặn code nghiệp vụ trước foundation approved
 | # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
 |---|---|---|---|---|
 | 1 | `packages/ui` (Nuxt UI v4 + Tailwind preset + brand component ở v1) có đủ khớp `design-system-contract` mới để port nguyên, hay phải viết lại phần lớn? Cần audit riêng, không đoán ở đây | Bước port §7.3, và mọi UI apps/web sau đó | 🟡 P1 | hoãn |
-| 2 | PostgreSQL có nên bump theo major mới nhất (nếu có bản mới hơn 17 tại thời điểm bootstrap) hay giữ 17 vì đã kiểm chứng ở v1? Chưa nghiên cứu trong lượt này | Migration §4 bước 5, `data-model-overview` | 🔴 P0 | spec owner |
+| ~~2~~ | ~~PostgreSQL có nên bump theo major mới nhất~~ **Đóng 2026-08-06 (T8)**: **giữ PG 17** — đã kiểm chứng ở v1, PG 18 chưa GA. `BR-RBS-07` chốt major version trước migration | — | ✅ đóng | D-X (T8) |
 | ~~3~~ | ~~Mô hình session lõi~~ **Đóng 2026-08-06**: `nuxt-auth-utils` cho cả 2 app, cookie niêm phong bọc quanh refresh-token rotation sẵn có — xem `auth-tokens-sessions.md` §1, §4, §7. Không tách 2 cơ chế | — | 🟡 P1 | hoãn |
 | ~~4~~ | ~~Thư viện TOTP~~ **Đóng 2026-08-06**: `otpauth` — xem §7.1 | — | 🟡 P1 | hoãn |
 | ~~5~~ | ~~CI provider~~ **Đóng lại 2026-08-06 (lần 2, quyết định người dùng)**: **không dùng cổng tự động remote nào**. `.github/workflows/ci.yml` đã xoá cùng cả thư mục `.github/`. Thay bằng `lefthook` chạy local (§7.1). Lần đóng trước cùng ngày ghi "cổng tự động" — **sai, đã thay** | — | ✅ đóng | D-S (T1) |
@@ -247,5 +247,5 @@ Scenario: BR-RBS-04 — chặn code nghiệp vụ trước foundation approved
 | 9 | Kích thước pool `postgres.js` (`max`) và `PG max_connections` phải tính theo **loại EC2 instance thật** (số vCPU × số PM2 instance) — chưa chốt vì chưa biết instance type production | `data-model-overview`, deploy | 🟡 P1 | hoãn |
 | ~~10~~ | ~~Chiến lược version control cho corpus spec ở workspace root~~ **Đóng 2026-08-06 (D-U)**: corpus spec (`SPEC.md` + `docs/specs/` + `docs/tasks/`) chuyển vào `kidthink/docs/`, thuộc git repo. `kidthink/SPEC.md` = symlink → `docs/SPEC.md`. `git log --follow` truy được vết. 223 link `.md` resolve, 0 vỡ | — | ✅ đóng | D-U (T2) |
 | ~~11~~ | ~~Bật lại CI cổng tự động khi nào~~ **Đóng 2026-08-06**: câu hỏi biến mất cùng provider — không còn CI để bật. `BR-RBS-03` giờ đo bằng `lefthook run pre-push` + ca âm tại máy | — | ✅ đóng | D-S (T1) |
-| ~~12~~ | ~~Gate local bỏ qua được bằng `--no-verify`~~ **Đóng 2026-08-06 (quyết định người dùng)**: chấp nhận rủi ro đến P1. Ở P0 chưa có business logic để mất; `content-seed-authoring.md` §5 đã sửa lại câu "không có cờ bỏ qua" cho đúng thực tế (cờ tồn tại ở máy cá nhân, không ở PR). Trước `content-seed-authoring` chạy thật (P1) phải quyết định branch protection GitHub (required PR review) — quyết định đó chưa chốt, dời sang lúc đó | — | 🔴 P0 | cần quyết định — 10 spec nói 'không có cờ bỏ qua' |
+| ~~12~~ | ~~Gate local bỏ qua được bằng `--no-verify`~~ **Đóng 2026-08-06 (quyết định người dùng)**: chấp nhận rủi ro đến P1. Ở P0 chưa có business logic để mất; `content-seed-authoring.md` §5 đã sửa lại câu "không có cờ bỏ qua" cho đúng thực tế (cờ tồn tại ở máy cá nhân, không ở PR). Trước `content-seed-authoring` chạy thật (P1) phải quyết định branch protection GitHub (required PR review) — quyết định đó chưa chốt, dời sang lúc đó | — | ✅ đóng | D-S+người (T1) |
 | ~~13~~ | ~~"Cổng CI" còn sót ở spec khác~~ **Đóng 2026-08-06**: đo lại chính xác là **7 file** (không phải 15 — số cũ ước lượng sai), đã sửa hết thành "cổng tự động": `mvp-scope.md` · `content-lifecycle.md` · `content-seed-authoring.md` (2 chỗ, gồm câu "không có cờ bỏ qua" ở Q12) · `roadmap.md` · `index.md` · `../SPEC.md` (4 chỗ). `grep -rn "cổng tự động\|CI xanh\|cổng tự động" docs/specs/ SPEC.md` chỉ còn khớp trong chính file này (lịch sử quyết định, không phải khẳng định hiện tại) | — | ✅ đóng | D-V (T4) |

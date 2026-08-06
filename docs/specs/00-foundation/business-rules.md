@@ -2,10 +2,10 @@
 spec: BUSINESS-RULES
 title: Registry business rule
 area: foundation
-status: draft
+status: approved
 mvp: true
 phase: P0
-reviewed: 2026-08-05
+reviewed: 2026-08-06
 owns:
   - Bản đồ prefix BR → spec sở hữu
   - Danh sách rule không bao giờ được vi phạm
