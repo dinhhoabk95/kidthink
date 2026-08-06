@@ -98,10 +98,10 @@ Spec này ép ràng buộc lên schema **trước** khi bảng được tạo.
 | `user_id` | FK `users` | Chủ sở hữu | ✅ |
 | `display_name` | varchar(40) | Tên gọi / biệt danh. ❌ không họ tên đầy đủ | ✅ |
 | `birth_year` | smallint | `[năm hiện tại − 7, năm hiện tại − 2]` | ✅ |
-| `age_band` | enum | `3-4` \| `4-5` \| `5-6` — suy ra, không nhập | tự sinh |
+| — | — | `age_band` **không phải cột** — suy từ `birth_year` lúc đọc (D-AA) | — |
 | `avatar_id` | varchar(24) | FK logic tới bộ preset. ❌ không path upload | ✅ |
 | `relationship` | enum | `child` \| `student` \| `other` | ❌ tuỳ chọn |
-| `current_curriculum_id` | FK | Chương trình đang theo | ❌ |
+| `current_curriculum_code` | varchar | Chương trình đang theo — dùng `code` thay `id` vì `BR-DM-10` + `BR-SCT-06` | ❌ |
 | `daily_play_cap_minutes` | smallint | Hạn mức giờ chơi | ✅ mặc định |
 | `status` | enum | `active` \| `archived` \| `pending_deletion` | ✅ |
 | `created_at` `updated_at` | timestamptz | | ✅ |
@@ -124,7 +124,7 @@ vân tay) · định vị · danh bạ · nội dung tự do do trẻ nhập.
 ### 7.3 `telemetry_events`
 
 Được phép: `child_uuid` · `game_level_code` · `content_version` · `event_name` · `seq` ·
-`occurred_at` · `payload` (số và enum).
+`occurred_at_ms` (int, tương đối `started_at`) · `ingested_at` · `payload` (số và enum).
 
 ❌ Không: `display_name` · `birth_year` · `user_id` · `email` · IP · toạ độ chạm thô ·
 bất kỳ chuỗi tự do nào.

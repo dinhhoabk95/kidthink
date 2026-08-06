@@ -107,16 +107,16 @@
 
 > ❗ File đang `status: approved`. Danh sách **cấm** ❌ không đổi một chữ.
 
-- [ ] §7.1 `current_curriculum_id` FK → `current_curriculum_code` varchar, ghi vì sao
+- [x] §7.1 `current_curriculum_id` FK → `current_curriculum_code` varchar, ghi vì sao
       (`BR-DM-10` + `BR-SCT-06`)
-- [ ] §7.1 `age_band` → theo **D-AA**: "❌ không phải cột — suy từ `birth_year` lúc đọc"
-- [ ] §7.3 `occurred_at` → `occurred_at_ms` (int, tương đối `started_at`) + `ingested_at`
-- [ ] ❌ **KHÔNG** thêm `session_month` — D-Z bác partition ở P0
-- [ ] `reviewed: 2026-08-06`
-- [ ] ✅ Diff chỉ chạm dòng **cột được phép** — danh sách cấm §7.1/§7.3 nguyên vẹn
-- [ ] ✅ Đối chiếu tay: `child-data-compliance` §7.1 ⟷ `schema-play-telemetry` §7.1 khớp
-      **từng tên cột** (ghi kết quả vào commit message)
-- [ ] ✅ C4 · C9 xanh
+- [x] §7.1 `age_band` → theo **D-AA**: "❌ không phải cột — suy từ `birth_year` lúc đọc"
+- [x] §7.3 `occurred_at` → `occurred_at_ms` (int, tương đối `started_at`) + `ingested_at`
+- [x] ❌ **KHÔNG** thêm `session_month` — D-Z bác partition ở P0
+- [x] `reviewed: 2026-08-06` (giữ nguyên, chỉ sửa tên cột)
+- [x] ✅ Diff chỉ chạm dòng **cột được phép** — danh sách cấm §7.1/§7.3 nguyên vẹn
+- [x] ✅ Đối chiếu tay: `child-data-compliance` §7.1 ⟷ `schema-play-telemetry` §7.1 khớp
+      **từng tên cột** — `current_curriculum_code` ✓, `occurred_at_ms` ✓, `ingested_at` ✓
+- [x] ✅ C4 · C9 xanh
 
 ## T4b — `event-catalog`: mở lại Q2 theo **D-Z** ⟂
 
