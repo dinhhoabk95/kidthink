@@ -2,10 +2,10 @@
 spec: PAYMENT-FLOW
 title: Luồng thanh toán VietQR duyệt tay
 area: foundation
-status: draft
+status: approved
 mvp: true
 phase: P2
-reviewed: 2026-08-04
+reviewed: 2026-08-06
 owns:
   - Máy trạng thái payment_orders
   - Ngữ nghĩa soft_unlock
