@@ -240,9 +240,9 @@ Scenario: BR-PKG-09 — đổi giá không hồi tố
 
 ## 11. Open questions
 
-| # | Câu hỏi | Chặn gì |
-|---|---|---|
-| 1 | **Giá cuối** của `standard` (365 ngày) và `premium` (365 ngày / vĩnh viễn) | Mở thanh toán, P2 |
-| 2 | Có bán gói tháng không, hay chỉ năm? Gói tháng tăng tải duyệt tay lên 12× | Tải vận hành |
-| 3 | Giá nâng cấp `standard → premium` giữa chu kỳ tính thế nào — trừ theo tỉ lệ hay giá đầy đủ? | Luồng nâng cấp |
-| 4 | `premium` vĩnh viễn có rủi ro chi phí dài hạn không? Cần mô hình chi phí phục vụ mỗi user/năm | Quyết định thương mại |
+| # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
+|---|---|---|---|---|
+| 1 | **Giá cuối** của `standard` (365 ngày) và `premium` (365 ngày / vĩnh viễn) | Mở thanh toán, P2 | 👤 người | người quyết — chặn P2 |
+| 2 | Có bán gói tháng không, hay chỉ năm? Gói tháng tăng tải duyệt tay lên 12× | Tải vận hành | 🔴 P0 | spec owner |
+| 3 | Giá nâng cấp `standard → premium` giữa chu kỳ tính thế nào — trừ theo tỉ lệ hay giá đầy đủ? | Luồng nâng cấp | 🟡 P2 | hoãn |
+| 4 | `premium` vĩnh viễn có rủi ro chi phí dài hạn không? Cần mô hình chi phí phục vụ mỗi user/năm | Quyết định thương mại | 🟡 thương mại | hoãn |

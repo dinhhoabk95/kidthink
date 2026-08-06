@@ -240,7 +240,7 @@ Scenario: BR-ACT-08 — content_reviewer không vào được thanh toán
 
 ## 11. Open questions
 
-| # | Câu hỏi | Chặn gì |
-|---|---|---|
-| 1 | Manager có bắt buộc MFA từ ngày đầu không, hay bật sau? | `mfa` spec, P0 hay P2 |
-| 2 | `pending_verification` được tạo child profile không? Hiện spec nói không — cần xác nhận với luồng onboarding | `registration` · `child-profile-crud` |
+| # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
+|---|---|---|---|---|
+| 1 | Manager có bắt buộc MFA từ ngày đầu không, hay bật sau? | `mfa` spec, P0 hay P2 | 🔴 P0 | spec owner — tham chiếu `admin-auth` |
+| 2 | `pending_verification` được tạo child profile không? Hiện spec nói không — cần xác nhận với luồng onboarding | `registration` · `child-profile-crud` | 🔴 P0 | spec owner — tham chiếu `email-verification` |

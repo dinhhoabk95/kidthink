@@ -172,7 +172,7 @@ Scenario: BR-ID-01 — không sửa được mã đã publish
 
 ## 11. Open questions
 
-| # | Câu hỏi | Chặn gì |
-|---|---|---|
-| 1 | Mã Game Level có nên mang `template_code` không? Hiện chỉ mang competency + strand | Thay đổi sau khi có level là migration |
-| 2 | 3 chữ số cho Game Level (`\d{3}`) đủ chưa? V1 dự kiến 3.000+ level → cần 4 | Chốt trước khi seed lô đầu |
+| # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
+|---|---|---|---|---|
+| 1 | Mã Game Level có nên mang `template_code` không? Hiện chỉ mang competency + strand | Thay đổi sau khi có level là migration | 🔴 P0 | spec owner |
+| 2 | 3 chữ số cho Game Level (`\d{3}`) đủ chưa? V1 dự kiến 3.000+ level → cần 4 | Chốt trước khi seed lô đầu | 🔴 P0 | spec owner |

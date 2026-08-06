@@ -220,8 +220,8 @@ Scenario: BR-VER-05 — báo cáo cảnh báo khi nội dung đã đổi
 
 ## 11. Open questions
 
-| # | Câu hỏi | Chặn gì |
-|---|---|---|
-| 1 | Giữ bao nhiêu version cũ trước khi archive lạnh sang S3? Trên t3.small dung lượng là ràng buộc thật | Chi phí lưu trữ |
-| 2 | Curriculum tham chiếu lesson theo `code` (luôn bản mới) hay theo `(code, version)` (ghim cứng)? Ghim cứng an toàn hơn nhưng làm curriculum không tự hưởng nội dung cải thiện | `curriculum-model`, P3 |
-| 3 | Báo cáo nâng cao có nên loại trừ dữ liệu từ version quá cũ không? | `advanced-report` |
+| # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
+|---|---|---|---|---|
+| 1 | Giữ bao nhiêu version cũ trước khi archive lạnh sang S3? Trên t3.small dung lượng là ràng buộc thật | Chi phí lưu trữ | 🟡 chi phí | hoãn |
+| 2 | Curriculum tham chiếu lesson theo `code` (luôn bản mới) hay theo `(code, version)` (ghim cứng)? Ghim cứng an toàn hơn nhưng làm curriculum không tự hưởng nội dung cải thiện | `curriculum-model`, P3 | 🔴 P0 | spec owner |
+| 3 | Báo cáo nâng cao có nên loại trừ dữ liệu từ version quá cũ không? | `advanced-report` | 🟡 P3 | hoãn |

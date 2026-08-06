@@ -214,8 +214,8 @@ Scenario: BR-LAD-09 — không cache nội dung trả phí
 
 ## 11. Open questions
 
-| # | Câu hỏi | Chặn gì |
-|---|---|---|
-| 1 | **6 game level nào vào allow-list guest?** Cần 1 mỗi competency, difficulty ≤ 2 | P1 gating |
-| 2 | Guest chơi xong bao nhiêu lượt thì hiện lời mời đăng ký? Hiện chưa chốt ngưỡng | P1 conversion |
-| 3 | Nội dung `login` có nên tồn tại riêng, hay gộp vào `standard`? Bậc `login` hiện chỉ khác `free` ở chỗ lưu tiến độ | Đơn giản hoá ladder |
+| # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
+|---|---|---|---|---|
+| 1 | **6 game level nào vào allow-list guest?** Cần 1 mỗi competency, difficulty ≤ 2 | P1 gating | 🟡 P1 | nội dung |
+| 2 | Guest chơi xong bao nhiêu lượt thì hiện lời mời đăng ký? Hiện chưa chốt ngưỡng | P1 conversion | 🟡 P1 | nội dung |
+| 3 | Nội dung `login` có nên tồn tại riêng, hay gộp vào `standard`? Bậc `login` hiện chỉ khác `free` ở chỗ lưu tiến độ | Đơn giản hoá ladder | 🔴 P0 | spec owner |

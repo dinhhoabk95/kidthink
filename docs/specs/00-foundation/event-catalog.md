@@ -229,8 +229,8 @@ Scenario: offline buffer flush khi có mạng lại
 
 ## 11. Open questions
 
-| # | Câu hỏi | Chặn gì |
-|---|---|---|
-| 1 | `fps_sample` mỗi 30s có quá dày không trên 3.000 phiên/ngày? Cân nhắc chỉ gửi khi p95 dưới ngưỡng | Chi phí lưu trữ |
-| 2 | Có cần partition `telemetry_events` theo tháng ngay từ đầu không? Trên t3.small bảng này sẽ lớn nhất | Vận hành DB |
-| 3 | Giữ event thô bao lâu trước khi rollup thành `child_session_summaries`? | Retention |
+| # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
+|---|---|---|---|---|
+| 1 | `fps_sample` mỗi 30s có quá dày không trên 3.000 phiên/ngày? Cân nhắc chỉ gửi khi p95 dưới ngưỡng | Chi phí lưu trữ | 🟡 P1 | hoãn — tuning sau khi có lưu lượng |
+| 2 | Có cần partition `telemetry_events` theo tháng ngay từ đầu không? Trên t3.small bảng này sẽ lớn nhất | Vận hành DB | 🔴 P0 | spec owner |
+| 3 | Giữ event thô bao lâu trước khi rollup thành `child_session_summaries`? | Retention | 🟡 P1 | hoãn |

@@ -251,8 +251,8 @@ Scenario: BR-ENT-10 — quota reset đúng nửa đêm ICT
 
 ## 11. Open questions
 
-| # | Câu hỏi | Chặn gì |
-|---|---|---|
-| 1 | `daily_play_minutes` 30/60/90 đã đúng chưa? Cần đối chiếu khuyến nghị thời gian màn hình cho trẻ 3–6 | `healthy-play-limits` |
-| 2 | `grace_period` kéo dài bao lâu sau `expires_at`? | Luồng gia hạn |
-| 3 | Có cần ledger cho quota kiểu credit (`ai_calls`) không, hay counter là đủ? | P4 add-on AI |
+| # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
+|---|---|---|---|---|
+| 1 | `daily_play_minutes` 30/60/90 đã đúng chưa? Cần đối chiếu khuyến nghị thời gian màn hình cho trẻ 3–6 | `healthy-play-limits` | 🟡 P1 | hoãn |
+| 2 | `grace_period` kéo dài bao lâu sau `expires_at`? | Luồng gia hạn | 🟡 P1 | hoãn |
+| 3 | Có cần ledger cho quota kiểu credit (`ai_calls`) không, hay counter là đủ? | P4 add-on AI | 🟡 P4 | hoãn |

@@ -175,9 +175,9 @@ Scenario: BR-MVP-04 — không có dấu vết của thứ ngoài phạm vi
 
 ## 11. Open questions
 
-| # | Câu hỏi | Chặn gì |
-|---|---|---|
-| 1 | **Ai biên soạn ≥690 LO, ≥120 game level, ≥60 lesson?** Đây là rủi ro lớn nhất của MVP. `content-seed-authoring` giảm chi phí *soạn* (AI agent IDE + kiểu TS + 8 cổng tự động), không giảm chi phí *đọc review* | P0, P1, P3 |
-| 2 | Ngân sách và lịch cho P0→P3 là bao nhiêu? Chưa có ước lượng nào | Toàn bộ kế hoạch |
-| 3 | Có mốc phát hành cứng không, hay ship khi xong? Nếu có mốc cứng thì §5 phải được kích hoạt sớm | Ưu tiên |
-| 4 | Backup và monitoring thuộc phase nào? Hiện chưa gắn vào cổng ra nào — nhưng go-live không có backup là không chấp nhận được | Go-live |
+| # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
+|---|---|---|---|---|
+| 1 | **Ai biên soạn ≥690 LO, ≥120 game level, ≥60 lesson?** Đây là rủi ro lớn nhất của MVP. `content-seed-authoring` giảm chi phí *soạn* (AI agent IDE + kiểu TS + 8 cổng tự động), không giảm chi phí *đọc review* | P0, P1, P3 | 🟡 P1 | cần chủ có tên (D-W) |
+| 2 | Ngân sách và lịch cho P0→P3 là bao nhiêu? Chưa có ước lượng nào | Toàn bộ kế hoạch | 👤 người | người quyết |
+| 3 | Có mốc phát hành cứng không, hay ship khi xong? Nếu có mốc cứng thì §5 phải được kích hoạt sớm | Ưu tiên | 👤 người | người quyết |
+| 4 | Backup và monitoring thuộc phase nào? Hiện chưa gắn vào cổng ra nào — nhưng go-live không có backup là không chấp nhận được | Go-live | 🔴 P0 | spec owner |

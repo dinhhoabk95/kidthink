@@ -313,6 +313,6 @@ Scenario: BR-REG2-02 — ID không tái dùng
 
 ## 11. Open questions
 
-| # | Câu hỏi | Chặn gì |
-|---|---|---|
-| 1 | Có tự sinh registry này từ corpus không, thay vì duy trì tay? `gen:spec-index` làm được | `ai-codegen-pipeline` |
+| # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
+|---|---|---|---|---|
+| 1 | Có tự sinh registry này từ corpus không, thay vì duy trì tay? `gen:spec-index` làm được | `ai-codegen-pipeline` | 🟡 tooling | hoãn — lint-specs.ts (T3) là bước đầu |

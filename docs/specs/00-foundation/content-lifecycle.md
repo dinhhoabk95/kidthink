@@ -275,8 +275,8 @@ Scenario: BR-CLC-08 — không xoá được nội dung có telemetry
 
 ## 11. Open questions
 
-| # | Câu hỏi | Chặn gì |
-|---|---|---|
-| 1 | Ở MVP một người vừa soạn vừa duyệt. Có nên chặn tự duyệt bản do chính mình tạo khi có ≥2 manager? | Khi tuyển người thứ hai |
-| 2 | Nội dung `authored_in = repo_seed` có cần hiển thị khác trong studio để admin biết sửa nó nghĩa là tách khỏi seeder không? | `content-seed-authoring` `BR-CSA-11` |
-| 3 | Có cần trạng thái `scheduled` (hẹn giờ publish) không? | Chiến dịch nội dung theo mùa |
+| # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
+|---|---|---|---|---|
+| 1 | Ở MVP một người vừa soạn vừa duyệt. Có nên chặn tự duyệt bản do chính mình tạo khi có ≥2 manager? | Khi tuyển người thứ hai | 🟡 P2 | hoãn |
+| 2 | Nội dung `authored_in = repo_seed` có cần hiển thị khác trong studio để admin biết sửa nó nghĩa là tách khỏi seeder không? | `content-seed-authoring` `BR-CSA-11` | 🟡 P1 | hoãn |
+| 3 | Có cần trạng thái `scheduled` (hẹn giờ publish) không? | Chiến dịch nội dung theo mùa | 🔴 P0 | spec owner |

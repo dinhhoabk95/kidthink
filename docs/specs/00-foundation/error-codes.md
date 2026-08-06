@@ -268,7 +268,7 @@ Scenario: REAUTH_REQUIRED nói được làm gì tiếp
 
 ## 11. Open questions
 
-| # | Câu hỏi | Chặn gì |
-|---|---|---|
-| 1 | Có cần i18n cho `message` không, hay tiếng Việt là đủ ở MVP? | Mở thị trường |
-| 2 | `EVENT_DUPLICATE` trả 200 — client có cần biết là trùng không, hay im lặng là đủ? | `play-event-ingestion` |
+| # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
+|---|---|---|---|---|
+| 1 | Có cần i18n cho `message` không, hay tiếng Việt là đủ ở MVP? | Mở thị trường | 🟡 P5 | hoãn |
+| 2 | `EVENT_DUPLICATE` trả 200 — client có cần biết là trùng không, hay im lặng là đủ? | `play-event-ingestion` | 🟡 P1 | hoãn |

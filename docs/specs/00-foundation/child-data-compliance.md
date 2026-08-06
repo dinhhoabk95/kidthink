@@ -233,9 +233,9 @@ Scenario: BR-CDC-08 — không có tracking bên thứ ba trên bề mặt trẻ
 
 ## 11. Open questions
 
-| # | Câu hỏi | Chặn gì |
-|---|---|---|
-| 1 | Ngân sách và người rà soát pháp lý cho ToS / Privacy / Chính sách trẻ em theo ND 13/2023 | Go-live |
-| 2 | Có cần đăng ký hồ sơ đánh giá tác động xử lý dữ liệu (DPIA) với Bộ Công an không? ND13 Điều 24 yêu cầu với dữ liệu nhạy cảm | Go-live |
-| 3 | Retention của `telemetry_events` đã ẩn danh — giữ vĩnh viễn hay cắt sau N năm? | Chi phí lưu trữ |
-| 4 | Nếu mở thị trường ngoài VN thì COPPA hay GDPR-K trước? Hai chuẩn ràng buộc khác nhau | Roadmap P5 |
+| # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
+|---|---|---|---|---|
+| 1 | Ngân sách và người rà soát pháp lý cho ToS / Privacy / Chính sách trẻ em theo ND 13/2023 | Go-live | 🟡 go-live | cần chủ + hạn |
+| 2 | Có cần đăng ký hồ sơ đánh giá tác động xử lý dữ liệu (DPIA) với Bộ Công an không? ND13 Điều 24 yêu cầu với dữ liệu nhạy cảm | Go-live | 🟡 go-live | cần chủ + hạn |
+| 3 | Retention của `telemetry_events` đã ẩn danh — giữ vĩnh viễn hay cắt sau N năm? | Chi phí lưu trữ | 🟡 P5 | hoãn |
+| 4 | Nếu mở thị trường ngoài VN thì COPPA hay GDPR-K trước? Hai chuẩn ràng buộc khác nhau | Roadmap P5 | 🟡 P5 | hoãn |

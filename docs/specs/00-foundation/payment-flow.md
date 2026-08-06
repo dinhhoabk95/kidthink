@@ -268,9 +268,9 @@ Scenario: E2E xuyên hai app
 
 ## 11. Open questions
 
-| # | Câu hỏi | Chặn gì |
-|---|---|---|
-| 1 | Có tự động đối chiếu sao kê ngân hàng (webhook/API) không, hay thuần mắt người? Thuần tay giới hạn quy mô ở vài chục đơn/ngày | Quy mô vận hành |
-| 2 | `SOFT_UNLOCK_DAYS = 3` đủ chưa nếu duyệt vào cuối tuần? | SLA duyệt |
-| 3 | Có hoàn tiền không, và luồng hoàn tiền thế nào? Chưa có spec | Chính sách hoàn tiền |
-| 4 | Giữ VietQR duyệt tay vĩnh viễn hay chuyển cổng tự động ở P5? | Payment roadmap |
+| # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
+|---|---|---|---|---|
+| 1 | Có tự động đối chiếu sao kê ngân hàng (webhook/API) không, hay thuần mắt người? Thuần tay giới hạn quy mô ở vài chục đơn/ngày | Quy mô vận hành | 🟡 P2 | hoãn |
+| 2 | `SOFT_UNLOCK_DAYS = 3` đủ chưa nếu duyệt vào cuối tuần? | SLA duyệt | 🟡 P2 | hoãn |
+| 3 | Có hoàn tiền không, và luồng hoàn tiền thế nào? Chưa có spec | Chính sách hoàn tiền | 🟡 P5 | hoãn |
+| 4 | Giữ VietQR duyệt tay vĩnh viễn hay chuyển cổng tự động ở P5? | Payment roadmap | 🟡 P5 | hoãn |
