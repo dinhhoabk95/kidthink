@@ -14,11 +14,20 @@ import postgres from "postgres";
 const EXPECTED_POSTGRES_MAJOR = 17;
 const EXPECTED_VALKEY_MAJOR = 9;
 
+/**
+ * Default port phải khớp host port ở `docker-compose.yml` (5433/6380, không
+ * phải 5432/6379 mặc định của image).
+ *
+ * Đo được 2026-08-06: default 5432/6379 nối vào container của stack KHÁC trên
+ * máy dev này (`hlo-api-postgres-1`, `hlo-api-valkey-1`) và in `✅ Valkey 9.1.0`
+ * — xanh giả, vì nó khẳng định version của service không thuộc repo này.
+ * Version thật của kidthink là 9.1.1.
+ */
 const PG_URL =
   process.env.DATABASE_URL ??
-  "postgres://postgres:postgres@localhost:5432/kidthink";
+  "postgres://postgres:postgres@localhost:5433/kidthink";
 const VALKEY_HOST = process.env.VALKEY_HOST ?? "localhost";
-const DEFAULT_VALKEY_PORT = 6379;
+const DEFAULT_VALKEY_PORT = 6380;
 const MAX_PORT = 65_535;
 
 const VALKEY_VERSION_PATTERN = /valkey_version:([\d.]+)/;
