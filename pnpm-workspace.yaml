@@ -15,7 +15,7 @@ catalog:
   typescript: ~5.9.3 # ❌ chưa 7.x — xem plan.md D-I
   "@types/node": ^24.7.0 # khớp runtime Node 24, không nhảy theo @types/node 26
   vitest: ^4.1.10
-  dependency-cruiser: ^18.1.1 # cưỡng chế BR-MPA-01/06/07 trong CI
+  dependency-cruiser: ^18.1.1 # cưỡng chế BR-MPA-01/06/07 trong gate local
 
   # Driver hạ tầng — hiện chỉ scripts/check-services.ts dùng (repo-bootstrap §4
   # bước 5: "verify kết nối được từ Node"). Chuyển vào packages/db và
@@ -25,3 +25,11 @@ catalog:
 
 onlyBuiltDependencies:
   - sharp
+
+# lefthook KHÔNG cần postinstall: binary tới từ optionalDependencies theo platform
+# (`lefthook-darwin-x64` v.v.). Đo được: `ignoredBuilds: [lefthook@2.1.10]` trong
+# .modules.yaml mà `lefthook version` vẫn chạy.
+# Khai tường minh ở đây vì không khai thì `pnpm install` trên clone MỚI exit 1
+# (ERR_PNPM_IGNORED_BUILDS) — vỡ onboarding. Xem repo-bootstrap §7.1.
+allowBuilds:
+  lefthook: false

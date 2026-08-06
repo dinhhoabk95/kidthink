@@ -1,0 +1,42 @@
+# Gate chất lượng — chạy LOCAL, không có CI remote (repo-bootstrap.md §7.1, §11 Q5).
+#
+# Phân tầng có chủ đích:
+#   pre-commit  = nhanh, chỉ file staged  → không làm commit chậm tới mức người ta bỏ qua
+#   pre-push    = đủ, toàn repo + test    → cổng thật trước khi code ra khỏi máy
+#
+# ⛔ `git commit --no-verify` / `git push --no-verify` BỎ QUA hook này.
+# lefthook là gate local, ❌ KHÔNG phải cưỡng chế server-side. Xem repo-bootstrap §11 Q12.
+
+# Không tự cài lại hook khi lefthook.yml đổi mà người chưa chạy `lefthook install`
+# → hook cũ chạy im lặng. Bật để lefthook tự đồng bộ.
+skip_lfs: true
+
+pre-commit:
+  parallel: true
+  jobs:
+    # biome trên file staged. --no-errors-on-unmatched: commit không có file JS/TS
+    # (vd chỉ đổi .md) thì đây là no-op hợp lệ, ❌ không phải lỗi.
+    - name: lint-staged
+      glob: "*.{js,jsx,ts,tsx,vue,json,jsonc}"
+      run: pnpm exec biome check --no-errors-on-unmatched {staged_files}
+
+    # Quét hex literal. Chạy toàn repo — script không nhận danh sách file.
+    - name: lint-tokens
+      run: pnpm lint:tokens
+
+pre-push:
+  parallel: false
+  jobs:
+    # lint + lint:tokens + lint:deps + typecheck (SPEC.md §7)
+    - name: check
+      run: pnpm check
+
+    # `pnpm check` KHÔNG chạy test (contract §7) — chạy riêng ở đây.
+    - name: test
+      run: pnpm test
+
+    # repo-bootstrap §4 bước 5 — PG 17 + Valkey 9 phải sống và ĐÚNG major version.
+    # fail_text nói rõ phải làm gì: không có docker thì không push được, có chủ đích.
+    - name: services
+      run: pnpm check:services
+      fail_text: "docker compose up -d trước khi push (PG 17 + Valkey 9 phải sống)"

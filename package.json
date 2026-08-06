@@ -9,6 +9,7 @@
   },
   "packageManager": "pnpm@11.16.0",
   "scripts": {
+    "prepare": "lefthook install",
     "lint": "biome check .",
     "lint:fix": "biome check --write .",
     "lint:tokens": "node scripts/lint-tokens.ts",
@@ -27,6 +28,7 @@
     "@types/node": "catalog:",
     "dependency-cruiser": "catalog:",
     "ioredis": "catalog:",
+    "lefthook": "^2.1.10",
     "postgres": "catalog:",
     "typescript": "catalog:",
     "ultracite": "catalog:",
