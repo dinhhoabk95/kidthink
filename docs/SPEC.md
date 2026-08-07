@@ -765,22 +765,15 @@ kidthink/
 │   ├── game-engine/  Canvas 2D thuần TS, template + Session
 │   ├── adaptive/     BKT mastery + ZPD selector — pure TS, KHÔNG ghi DB
 │   └── ui/           Nuxt Layer — Nuxt UI v4 preset + brand component
+├── docs/                     spec + task, cùng git repo code (D-U, xem `repo-bootstrap.md`
+│                             §11 Q10 — lịch sử 3 lượt quyết định, lượt cuối giữ tại đây)
+│   ├── SPEC.md               file này (root `SPEC.md` symlink về đây)
+│   ├── specs/                spec từng module — đọc TRƯỚC khi implement
+│   ├── taxonomy/             registry C1–C6 + 230 skill
+│   ├── montessori/           tài liệu tham khảo nguồn
+│   └── tasks/                plan.md · todo.md
 ├── infra/                    deploy script, nginx, monitoring
 └── .agents/                  AGENTS.md + rules/ + agents/ + commands/
-```
-
-`docs/` **không** nằm trong `kidthink/` — nó là sibling ở workspace root, cố ý **không** track
-chung git repo code (đảo lại D-U, xem `repo-bootstrap.md` §11 Q10, 2026-08-07):
-
-```
-workspace-root/
-├── kidthink/                 cây ở trên — git repo code, đây là working dir mọi lệnh pnpm
-└── docs/                     git repo/lưu trữ RIÊNG — contract, không lẫn diff code
-    ├── SPEC.md               file này (kidthink/SPEC.md symlink → ../docs/SPEC.md)
-    ├── specs/                spec từng module — đọc TRƯỚC khi implement
-    ├── taxonomy/             registry C1–C6 + 230 skill
-    ├── design-system/        MASTER.md + pages/
-    └── tasks/                plan.md · todo.md · lessons.md
 ```
 
 **3 app + 12 package** (v1 có 4 + 18). Cắt: `socket`, `ai-vision`, `ai-voice`,

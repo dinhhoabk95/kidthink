@@ -13,10 +13,10 @@
 > ⚠️ Mọi lệnh prefix `export PATH=/Users/macbook/.nvm/versions/node/v24.15.0/bin:$PATH`
 > — shell state không persist, shell mặc định vẫn node v20.17.0.
 >
-> ⚠️ **2026-08-07 (👤)**: `docs/` chuyển RA KHỎI `kidthink/` — về sibling ở workspace root,
-> không track chung git repo code (đảo D-U, xem `repo-bootstrap.md` §11 Q10). Đo/grep trực
-> tiếp file `.md` phải chạy từ workspace root, không phải từ `cd kidthink`. `pnpm lint:specs`
-> vẫn chạy trong `kidthink/` bình thường — script tự trỏ ra ngoài qua `CORPUS_ROOT`.
+> ⚠️ **2026-08-07 (👤)**: quyết định dời `docs/` ra khỏi `kidthink/` (sáng) đã **đảo lại cùng
+> ngày** (chiều) — `docs/` ở nguyên trong `kidthink/docs/`, track chung git repo code. Xem
+> `repo-bootstrap.md` §11 Q10 (Lượt 3). Mọi lệnh đo/grep chạy từ `cd kidthink` như cũ, không
+> cần `CORPUS_ROOT`.
 >
 > ⚠️ Tick checkbox **ngay khi làm**. Task #2 để lại một file 217 dòng toàn ô trống trong khi
 > việc đã xong — không lặp lại.

@@ -587,13 +587,12 @@ kèm **vì sao + ngày** → (3) `status: approved` + `reviewed:` → (4) `lint:
 ## Verification tổng
 
 ```bash
-# docs/ là sibling của kidthink/ ở workspace root, KHÔNG track chung git repo code
-# (đảo D-U, repo-bootstrap.md §11 Q10, 2026-08-07). Hai cwd khác nhau bên dưới.
+# docs/ ở trong kidthink/docs/, cùng git repo code (repo-bootstrap.md §11 Q10, Lượt 3, 2026-08-07)
 
 cd kidthink
 export PATH=/Users/macbook/.nvm/versions/node/v24.15.0/bin:$PATH   # shell mặc định vẫn node v20
 
-# Cổng cơ học — script đọc docs/ qua CORPUS_ROOT (lint-specs-lib.ts), tự trỏ ra ngoài
+# Cổng cơ học
 pnpm lint:specs     # 13 check × 130 spec — exit 0, và số warning ≤ 228
 pnpm check          # lint · lint:tokens · lint:deps · lint:specs · typecheck
 pnpm test           # 56/56
