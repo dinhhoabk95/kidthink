@@ -2,7 +2,7 @@
 spec: DATA-MODEL-OVERVIEW
 title: Tổng quan mô hình dữ liệu
 area: platform
-status: draft
+status: approved
 mvp: true
 phase: P0
 reviewed: 2026-08-07
@@ -67,10 +67,10 @@ Bốn quyết định định hình toàn bộ schema, mỗi cái là một ràn
 | `BR-DM-03` | **`content_skill_map.weight ∈ [0,1]`** — 1.0 mục tiêu chính, 0.3 có chạm tới | Không có nó, một game đếm vô tình "dạy" mọi skill nó chạm tới |
 | `BR-DM-04` | **FK polymorphic không ép được ở Postgres** → toàn vẹn do tầng service giữ, **bắt buộc** integration test bắt orphan | Ràng buộc không ép được ở DB là ràng buộc sẽ bị vi phạm |
 | `BR-DM-05` | Bảng INSERT-only: `audit_logs` `consent_logs` `content_review_log` `telemetry_events` `play_events` — ép bằng **quyền DB** | Ép bằng quy ước là không ép |
-| `BR-DM-06` | ❌ **NEVER raw SQL** — chỉ Drizzle. Ngoại lệ: `sql\`\`` cho tăng nguyên tử và `coalesce` cross-table | |
+| `BR-DM-06` | ❌ **NEVER raw SQL** — chỉ Drizzle. Ngoại lệ: `sql\`\`` cho tăng nguyên tử và `coalesce` cross-table | Chuỗi SQL nối tay là đường vào injection, và né được typecheck nên đổi schema không làm nó đỏ. Hai ngoại lệ là chỗ Drizzle ❌ không diễn đạt được — giữ hẹp, ❌ không mở thành cửa chung |
 | `BR-DM-07` | Cột và bảng `snake_case`. Payload API giữ nguyên `snake_case`, ❌ không transform | Transform hai chiều là hai chỗ để lệch |
-| `BR-DM-08` | Mọi bảng có `created_at`; bảng sửa được có `updated_at` | |
-| `BR-DM-09` | ❌ **NEVER `DROP COLUMN`** mà không qua 2 phase deprecation | |
+| `BR-DM-08` | Mọi bảng có `created_at`; bảng sửa được có `updated_at` | Không có mốc thời gian thì ❌ không trả lời được "hàng này có từ bao giờ" lúc điều tra sự cố — và thêm cột sau khi đã có dữ liệu thì mọi hàng cũ mang giá trị bịa |
+| `BR-DM-09` | ❌ **NEVER `DROP COLUMN`** mà không qua 2 phase deprecation | Drop cột là thao tác ❌ không revert được bằng `git revert` — code cũ rollback về vẫn đọc cột đã biến mất, và dữ liệu trong đó ❌ không lấy lại được nếu backup đã xoay vòng |
 | `BR-DM-10` | Định danh **đối ngoại** (API/URL — cái client nhìn thấy) là `uuid` hoặc `code`, ❌ không `bigserial` | `bigserial` để lộ quy mô và mời enumeration. **Chỉ áp cho lớp đối ngoại** — xem `BR-DM-13` cho FK nội bộ |
 | `BR-DM-11` | Mỗi file schema ≤ **400 dòng**, chia theo domain, ❌ không theo kiểu | Một file 3.000 dòng là nơi mọi merge conflict gặp nhau |
 | `BR-DM-12` | Trần phân trang ép ở **server** | Một query không trần hạ cả instance trên t3.small |

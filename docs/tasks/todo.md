@@ -350,7 +350,13 @@ Mỗi spec 4 bước: (1) checklist `CONVENTIONS.md` §10 thủ công → (2) đ
 - [x] ✅ `approved` 16 → **18**/130 · `pnpm check` exit 0 · `pnpm test` 81/81
 
 ### T10 — Layer 2
-- [ ] `data-model-overview` — sau T5, 3/3 OQ có kết luận
+- [x] `data-model-overview` — sau T5, 3/3 OQ có kết luận (Q1 đóng D-Z · Q2 hoãn 🟡 P1 ·
+      Q3 hoãn 🟡 P3, cả hai có chủ + phase) · `approved` + `reviewed: 2026-08-07`
+- [x] ✅ C8 xanh — 4 deps (`GLOSSARY`·`ID-CONVENTIONS`·`CHILD-DATA-COMPLIANCE`·
+      `CONTENT-VERSIONING`) đều `approved` từ trước
+- [x] Ngoài checklist: 3 `BR-*` thiếu cột "vì sao" (`BR-DM-06`·`08`·`09`) — điền theo
+      `CONVENTIONS.md` §10. Warning nền **230 → 227**
+- [x] ✅ `approved` 18 → **19**/130 · `pnpm check` exit 0 · `pnpm test` 81/81
 
 ### T11 — Layer 3
 - [ ] `auth-tokens-sessions` (**D-Y = 7**, đã chốt) — 4 OQ phân loại
