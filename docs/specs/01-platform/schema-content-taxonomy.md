@@ -44,7 +44,7 @@ Không có.
 | ID | Rule | Vì sao |
 |---|---|---|
 | `BR-SCT-01` | Bảng Lớp 1 ❌ **không có** cột `status` vòng đời nội dung — chúng chỉ `active`/`deprecated` | Lớp 1 không đi qua cổng duyệt |
-| `BR-SCT-02` | Bảng Lớp 2 **bắt buộc** có `content_version` + `status` 6 giá trị | |
+| `BR-SCT-02` | Bảng Lớp 2 **bắt buộc** có `content_version` + `status` 6 giá trị | 6 giá trị định nghĩa ở [`content-lifecycle`](../00-foundation/content-lifecycle.md) §7.1 — ❌ không tự thêm giá trị thứ 7 ở đây |
 | `BR-SCT-03` | Partial unique index ép **đúng một** hàng `published` mỗi `code` | `content-versioning` `BR-VER-02` |
 | `BR-SCT-04` | `content_pack` và `difficulty_params` là **hai cột JSONB riêng** | `BR-DM-02` |
 | `BR-SCT-05` | Trigger chặn `UPDATE` hàng `published` | `content-lifecycle` `BR-CLC-01` |
@@ -205,7 +205,7 @@ Scenario: strand lồng tối đa một tầng
 
 ## 11. Open questions
 
-| # | Câu hỏi | Chặn gì |
-|---|---|---|
-| 1 | `curriculum_items` ghim `entity_version` hay luôn lấy bản published mới nhất? | `content-versioning` Q2 |
-| 2 | `lesson_activities` khoá theo `lesson_version` làm mọi version copy lại toàn bộ item — chấp nhận được không? | P3 |
+| # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
+|---|---|---|---|---|
+| ~~1~~ | ~~`curriculum_items` ghim `entity_version` hay luôn lấy bản published mới nhất?~~ **Đóng 2026-08-07 (T7)**: theo [`content-versioning`](../00-foundation/content-versioning.md) §11 Q2 (đóng T11) — **`code` only**, `curriculum_items` luôn lấy bản `published` mới nhất, ❌ không ghim `entity_version`. Hệ quả: đổi nội dung `published` ⇒ mọi curriculum thấy bản mới ngay lập tức, **không có** đường ghim version | — | ✅ đóng | D-X (T11) |
+| 2 | `lesson_activities` khoá theo `lesson_version` làm mọi version copy lại toàn bộ item — chấp nhận được không? | P3 | 🟡 P3 | hoãn |

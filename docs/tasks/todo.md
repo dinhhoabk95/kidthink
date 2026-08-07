@@ -209,16 +209,16 @@
 
 ## T7 — `schema-content-taxonomy` (M2 · M6) ⟂
 
-- [ ] §7.4 `code` → `GL-*` (khớp T3) + §9 dùng mã mới
-- [ ] §11 Q1 → **đóng** bằng `content-versioning` Q2 (T11): ❌ không ghim `entity_version`
-- [ ] Ghi hệ quả của Q1: đổi nội dung published ⇒ mọi curriculum thấy bản mới ngay, **không có**
+- [x] §7.4 `code` → `GL-*` (khớp T3) + §9 dùng mã mới — đã xong ở T3
+- [x] §11 Q1 → **đóng** bằng `content-versioning` Q2 (T11): ❌ không ghim `entity_version`
+- [x] Ghi hệ quả của Q1: đổi nội dung published ⇒ mọi curriculum thấy bản mới ngay, **không có**
       đường ghim version
-- [ ] §11 Q2 (`lesson_activities` copy theo version) → hoãn có chủ, chặn **P3**
-- [ ] §7.2 `user_tags` — khớp bản đồ DMO (T5)
-- [ ] `BR-SCT-02` trỏ `content-lifecycle` §7 làm nguồn **6** giá trị enum status
-- [ ] §11 thêm 2 cột `Chặn phase` · `Chủ`
-- [ ] ✅ C13 xanh trên file này
-- [ ] ✅ 0 chỗ ghi `G-*` · 0 chỗ ghi `scheduled`
+- [x] §11 Q2 (`lesson_activities` copy theo version) → hoãn có chủ, chặn **P3**
+- [x] §7.2 `user_tags` — khớp bản đồ DMO (T5) — đã khớp sẵn, xác nhận không cần sửa
+- [x] `BR-SCT-02` trỏ `content-lifecycle` §7.1 làm nguồn **6** giá trị enum status
+- [x] §11 thêm 2 cột `Chặn phase` · `Chủ`
+- [x] ✅ C13 xanh trên file này
+- [x] ✅ 0 chỗ ghi `G-*` · 0 chỗ ghi `scheduled`
 
 ## T8 — `schema-identity-billing` (M9 · M10 · D-AC · D-AD · D-Y) ⟂
 
