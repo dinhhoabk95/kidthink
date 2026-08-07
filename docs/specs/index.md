@@ -87,7 +87,7 @@ v1 có **31** spec cho cùng phạm vi. Xé nhỏ là chủ ý — xem [`AUDIT-v
 | [monitoring-and-alerting](01-platform/monitoring-and-alerting.md) | P1 | Alert **tới người** |
 | [offline-play](01-platform/offline-play.md) | P1 | Buffer IndexedDB, ❌ không ngắt phiên |
 | [image-storage](01-platform/image-storage.md) | P2 | ❌ Không thư viện ảnh |
-| [notification-service](01-platform/notification-service.md) | P2 | 11 loại, một kênh email |
+| [notification-service](01-platform/notification-service.md) | P0 | 11 loại, một kênh email |
 | [feature-flag-service](01-platform/feature-flag-service.md) | P2 | Cờ có hạn, mặc định an toàn |
 | [adaptive-engine](01-platform/adaptive-engine.md) | P3 | BKT, ZPD, nhãn báo cáo |
 | [pwa-install](01-platform/pwa-install.md) | P5 | Ngoài MVP |

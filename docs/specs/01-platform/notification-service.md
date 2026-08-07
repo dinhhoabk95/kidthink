@@ -2,10 +2,10 @@
 spec: NOTIFICATION-SERVICE
 title: Dịch vụ thông báo
 area: platform
-status: draft
+status: approved
 mvp: true
-phase: P2
-reviewed: 2026-08-04
+phase: P0
+reviewed: 2026-08-08
 owns:
   - Danh sách loại thông báo
   - Kênh gửi và quy tắc chọn kênh
@@ -63,12 +63,12 @@ là xây hạ tầng cho việc chưa tồn tại.
 |---|---|---|
 | `BR-NOT-01` | Email **giao dịch** ❌ không opt-out được; email **định kỳ** phải opt-out được | Xác thực email và duyệt thanh toán là một phần của dịch vụ |
 | `BR-NOT-02` | ❌ **NEVER gửi bất cứ gì tới trẻ** | Trẻ không có tài khoản, không có email |
-| `BR-NOT-03` | ❌ **NEVER PII của trẻ trong nội dung email** ngoài `display_name` mà chính phụ huynh đặt | |
+| `BR-NOT-03` | ❌ **NEVER PII của trẻ trong nội dung email** ngoài `display_name` mà chính phụ huynh đặt | `child-data-compliance` cấm mọi PII trẻ ra ngoài hệ thống; email là ngoài hệ thống |
 | `BR-NOT-04` | INSERT `notifications` trong **cùng transaction** với sự kiện | Đơn được duyệt mà không có thông báo là ca hỗ trợ |
 | `BR-NOT-05` | `jobId = notification_id` — idempotent | Không gửi hai lần |
 | `BR-NOT-06` | ❌ **NEVER email tiếp thị ở MVP** | Chưa có cơ chế đồng ý tiếp thị tách riêng |
-| `BR-NOT-07` | Mọi email có link huỷ đăng ký cho loại định kỳ | |
-| `BR-NOT-08` | ❌ **NEVER tracking pixel** trong email tới người dùng của sản phẩm trẻ em | |
+| `BR-NOT-07` | Mọi email có link huỷ đăng ký cho loại định kỳ | CAN-SPAM và GDPR bắt buộc; thiếu link là rủi ro pháp lý |
+| `BR-NOT-08` | ❌ **NEVER tracking pixel** trong email tới người dùng của sản phẩm trẻ em | COPPA cấm thu thập dữ liệu hành vi từ sản phẩm hướng trẻ em; tracking pixel thu chính dữ liệu đó |
 
 ## 7. Data
 
