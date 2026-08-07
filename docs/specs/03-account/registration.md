@@ -2,10 +2,10 @@
 spec: REGISTRATION
 title: Đăng ký tài khoản
 area: account
-status: draft
+status: approved
 mvp: true
 phase: P0
-reviewed: 2026-08-05
+reviewed: 2026-08-08
 owns:
   - Luồng đăng ký bằng email
   - Ràng buộc đồng ý điều khoản
@@ -69,7 +69,7 @@ Guest → User. ❌ Trẻ không đăng ký.
 | `BR-REG-04` | `pending_verification` ❌ **không tạo được child profile** | Không thu dữ liệu trẻ trước khi xác minh người lớn |
 | `BR-REG-05` | Mật khẩu ≥8 ký tự, ❌ **NEVER** ép ký tự đặc biệt | Quy tắc phức tạp làm người dùng viết mật khẩu ra giấy |
 | `BR-REG-06` | ❌ **NEVER tự gộp phiên chơi guest** vào tài khoản mới | Không xác định được phiên đó là của ai — thiết bị dùng chung là chuyện thường |
-| `BR-REG-07` | Email so sánh **không phân biệt hoa thường** | |
+| `BR-REG-07` | Email so sánh **không phân biệt hoa thường** | Người dùng không nhớ mình gõ hoa hay thường lúc đăng ký; hai tài khoản cùng email là sự cố |
 | `BR-REG-08` | ❌ **NEVER thu tuổi, giới tính, số điện thoại, hay địa chỉ** khi đăng ký | Thu tối thiểu |
 | `BR-REG-09` | Rate limit theo IP | `rate-limiting` |
 | `BR-REG-10` | 409 trùng email ❌ **không** nói tài khoản đó đăng ký bằng cách nào | Biết "email này dùng Google" là một mẩu thông tin cho kẻ tấn công chọn hướng, và ta ❌ không đổi được nó cho người dùng |
