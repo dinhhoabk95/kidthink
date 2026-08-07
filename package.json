@@ -21,6 +21,7 @@
     "format": "biome format --write .",
     "test": "vitest run",
     "lint:specs": "node scripts/lint-specs.ts",
+    "inventory:symbols": "node scripts/inventory-symbols.ts",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage"
   },

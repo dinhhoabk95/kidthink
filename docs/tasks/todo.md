@@ -1,433 +1,588 @@
-# Todo — Task #3: P0 bước 7 — khoá contract schema
+# Checklist — Task #4: Viết lại corpus theo ngôn ngữ tự nhiên
 
-> Bản 1, 2026-08-06. Chi tiết + acceptance + lý do: [`plan.md`](plan.md).
-> Task #1 lưu trữ: [`01-bootstrap-todo.md`](01-bootstrap-todo.md) ·
-> Task #2 lưu trữ: [`02-foundation-approve-todo.md`](02-foundation-approve-todo.md).
+> Bản 2, viết 2026-08-07 sau khi đo per-file. Lý do, tiêu chí chấp nhận, đồ thị phụ thuộc và
+> **quy trình chuẩn chín việc**: [`plan.md`](plan.md). Đặc tả: [`04-readability-spec.md`](04-readability-spec.md).
 >
-> Thứ tự: `T0 → T1✅ → T2 → ⛔A → {T3, T4, T4b} → ⛔B → {T5, T6, T7, T8} → ⛔C → T9 → T10 → T11 → ⛔D`
+> Mọi lệnh chạy từ thư mục `kidthink/` và phải đặt lại đường dẫn Node trước, vì shell mặc định
+> của máy là v20.17.0 còn dự án cần v24:
+> `export PATH=/Users/macbook/.nvm/versions/node/v24.15.0/bin:$PATH`
 >
-> **Ký hiệu file này:** `Tn` = bước · `⛔` = cổng dừng, ❌ không đi tiếp khi chưa qua ·
-> `⟂` = song song được (chạm file khác nhau) · `Mn` = chỗ contract tự mâu thuẫn ·
-> `D-*` = quyết định trong ledger (`grep '| \*\*D-XX\*\*' docs/tasks/`) · `👤` = cần người.
-> Đầy đủ: [`../specs/READING-GUIDE.md`](../specs/READING-GUIDE.md) §4.3.
->
-> **Đã chốt 2026-08-06 (👤):** M1 = sửa `id-conventions` §7 theo Q1/Q2 (`GL-`+template+`\d{4}`) ·
-> **D-Y** = 7 spec (thêm `auth-tokens-sessions`) · **D-Z** = ❌ không partition ở P0, mở lại
-> `event-catalog` Q2 · **D-AA** = `age_band` suy lúc đọc (12 cột). Còn chờ: D-AB · D-AC · D-AD.
->
-> ⚠️ Mọi lệnh prefix `export PATH=/Users/macbook/.nvm/versions/node/v24.15.0/bin:$PATH`
-> — shell state không persist, shell mặc định vẫn node v20.17.0.
->
-> ⚠️ **2026-08-07 (👤)**: quyết định dời `docs/` ra khỏi `kidthink/` (sáng) đã **đảo lại cùng
-> ngày** (chiều) — `docs/` ở nguyên trong `kidthink/docs/`, track chung git repo code. Xem
-> `repo-bootstrap.md` §11 Q10 (Lượt 3). Mọi lệnh đo/grep chạy từ `cd kidthink` như cũ, không
-> cần `CORPUS_ROOT`.
->
-> ⚠️ Tick checkbox **ngay khi làm**. Task #2 để lại một file 217 dòng toàn ô trống trong khi
-> việc đã xong — không lặp lại.
+> Tick ô **ngay khi làm xong**. Task #2 từng để lại một file 217 dòng toàn ô trống trong khi
+> việc đã xong — đừng lặp lại.
+
+## Đang chặn
+
+- [x] **Câu hỏi 1 của [`04-readability-spec.md`](04-readability-spec.md) mục 8** — bốn giả định
+      về phạm vi, tên mục, ký hiệu và mã định danh. Đóng 2026-08-07: người dùng chấp nhận cả bốn,
+      không bác điểm nào. Bắt đầu bước 1.
+
+## Thứ tự làm
+
+```
+Bước 1  -> Bước 2  -> Cổng dừng A
+Bước 3  -> Bước 4  -> Cổng dừng B
+Bước 5  -> { Bước 6 -> Bước 7 } | Bước 8 | Bước 9 | Bước 10 | { Bước 11 -> Bước 12 } | Bước 13
+           Cổng dừng C sau bước 7 · Cổng dừng D sau bước 13
+Bước 14 -> Bước 15 -> Bước 16 -> Bước 17
+Bước 18 -> Bước 19 -> Bước 20 -> Cổng dừng E
+```
+
+Sáu nhánh sau bước 5 chạm thư mục khác nhau nên làm song song được. Trong mỗi bước, thứ tự file
+đã xếp sẵn dưới đây theo **khối lượng giảm dần** — làm file dày nhất trước, vì nó buộc quyết
+định nhiều nhất về cách diễn đạt, và các file sau chỉ việc theo.
+
+## Nội dung phải làm cho mỗi file
+
+Chi tiết đầy đủ ở [`plan.md`](plan.md) mục "Quy trình chuẩn cho một file":
+
+1. Đọc hết file. Ghi lại ba con số của nó từ bảng dưới đây.
+2. Không đụng frontmatter, kể cả `reviewed`.
+3. Sửa mục 1 Objective trước — nếu nó khó hiểu thì cả file khó hiểu.
+4. Thay ký hiệu, từng chỗ một, đọc lại cả câu sau mỗi lần thay.
+5. **Giữ nguyên thuật ngữ chuyên môn tiếng Anh.** Việc "không làm gì", và là việc dễ vi phạm
+   nhất — phản xạ tự nhiên khi viết lại câu là dịch luôn `partition`, `feature flag`, `KPI`.
+   Danh sách thuật ngữ ở [`04-readability-spec.md`](04-readability-spec.md) mục 4.3.
+5b. Thay chữ viết tắt tự phát. Thử phân biệt với việc 5 bằng câu hỏi: người ngoài dự án tra được
+   nghĩa không? Tra được thì là thuật ngữ, giữ. Không tra được thì là viết tắt tự phát, bỏ.
+6. Đổi tham chiếu trần thành liên kết có số mục.
+7. Mã hợp đồng kèm tên đọc được ở lần nhắc đầu tiên trong file.
+8. Ô "vì sao" trống thì điền, lý do phải nói hậu quả cụ thể.
+9. Chạy `pnpm lint:specs`, đọc diff từng dòng, tự hỏi: có chỗ nào đổi nghĩa không.
+
+**Tên mười một mục giữ nguyên tiếng Anh** — `Objective`, `Actors`, `Entry points`, `Main flow`,
+`Alternative flows`, `Business rules`, `Data`, `API contract`, `Acceptance criteria`,
+`Boundaries`, `Open questions` — cùng ba nhãn con `Always`, `Ask first`, `Never`. Người dùng chốt
+2026-08-07. Xem [`04-readability-spec.md`](04-readability-spec.md) mục 4.4.
+
+Ký hiệu trong bảng dưới: **kh** = ký hiệu emoji · **vt** = chữ viết tắt tự phát ·
+**tc** = tham chiếu trần chưa có liên kết. Ba viết tắt `KPI`, `ZPD`, `LO` **không** tính vào cột
+`vt` — chúng là thuật ngữ, giữ nguyên.
 
 ## Mục tiêu đo được
 
-> **Đo lần cuối 2026-08-07 sau T11 + Checkpoint C/D (phần máy):** `pnpm check` exit 0 ·
-> `pnpm test` 81/81 · `lint:specs` 0 error / **219** warning · `approved` **23/130** ·
-> 3/3 ca âm chặn đúng. Cột "Đạt" bên dưới ghi số đo thật.
-
-| Đo bây giờ | Đo lúc đóng task | Đạt |
+| Đo lúc bắt đầu (2026-08-07, commit `2a615bb`) | Đo lúc đóng task | Đạt |
 |---|---|---|
-| `pnpm check` ❌ **đỏ** (biome format trong `scripts/lint-specs-lib.ts`) | ✅ exit 0 | ✅ exit 0 |
-| `pnpm test` 73/73 (phiên khác vừa thêm 17 test) | ≥ **73/73**, ❌ không giảm | ✅ **81/81** |
-| 16/130 spec `approved` | **23/130** (D-Y = 7 spec) | ✅ **23/130** |
-| `lint:specs` 11 check | **13 check** (thêm C12 · C13), mỗi cái có ca âm | ✅ 13, 3 ca âm chạy lại ở CP-D |
-| 11 lệch/mâu thuẫn contract (M1–M11) | **0** | ✅ 0 — **+2 lệch mới** tìm ở CP-C, đã sửa |
-| 6 bảng lệch giữa DMO §7 và `schema-*` | **0** — C12 xanh | ✅ 0 |
-| `content_review_log` không spec nào `owns` cột | có đúng **1** chủ | ✅ SIB §7.10a |
-| `data-model-overview` §Ràng buộc chờ | **≥19 dòng** | ⚠️ **17** — xem ghi chú dưới |
-| `SPEC.md` §13 thiếu 3 dòng neo (D-W · Q4/T9 · D-Z) | có đủ **3** (2 ở P0, 1 ở P1) | ✅ 3 |
-| `event-catalog` Q2 đóng "có partition" — xung đột PK | **mở lại**, 🟡 P1, có tên chủ + ngưỡng 5M hàng/2GB | ✅ |
-| 17 OQ ở 6 spec đích | 0 mở mà không có `Chặn phase` + `Chủ` | ✅ 0 |
-| Mã `G-C…` trong corpus | **0** | ✅ 0 |
-| P0 bước 8 (migration) | **Mở khoá** | ⏸ chờ 👤 duyệt CP-D |
-
-> ⚠️ **§Ràng buộc chờ = 17 dòng, không đạt "≥19"**. Con số 19 đặt ra lúc viết todo là **ước
-> lượng trước khi đếm** — thực tế chỉ có 11 closure spec-Q + 6 quyết định D (D-Y·D-AA·D-AB·
-> D-AC·D-AD·D-AE) = 17 ràng buộc **thật**. ❌ Không bịa thêm 2 dòng cho đủ số. Nếu người duyệt
-> thấy thiếu ràng buộc nào, thêm dòng đó — ❌ không hạ mục tiêu để khớp.
+| `pnpm lint:specs` exit 0, 13 kiểm tra, 0 lỗi, 213 cảnh báo | exit 0, **15 kiểm tra**, 0 lỗi, cảnh báo không quá 213 | |
+| `pnpm check` exit 0 | exit 0 | |
+| `pnpm test` 81 trên 81 | ít nhất **89** | |
+| 2.925 ký hiệu emoji trên 151 file | **0** | |
+| 155 chữ viết tắt tự phát | **0** | |
+| 4 cảnh báo C3 vì tên mục lệch khuôn | **0** | |
+| 1.420 tên mục tiếng Anh | **vẫn 1.420** — giữ nguyên, không dịch | |
+| 1.212 tham chiếu trần | **0** | |
+| 235 liên kết markdown | ít nhất **1.400** | |
+| 23 trên 130 spec `approved` | vẫn đúng **23**, không file nào đổi `status` | |
+| 6 hồ sơ task cũ không có mục tóm tắt kết quả | cả **6** đều có mục "Kết quả cuối cùng" | |
+| Không có script kiểm kê | `pnpm inventory:symbols` chạy được | |
 
 ---
 
-## T0 — Đóng nợ working tree (gate đang đỏ) ⚠️ phiên khác đang sửa cùng file
+## Bước 1 — Script kiểm kê ký hiệu và chữ viết tắt
 
-- [ ] ⚠️ **Trước hết**: xác nhận phiên khác đã dừng — `git status` không đổi qua 2 lần đo cách
-      nhau vài phút. Phiên đó đang tách `scripts/lint-specs-lib.ts` + `scripts/tests/`
-      (mtime 23:11→23:15). ❌ Không ghi đè, ❌ không commit hộ
-- [ ] Đọc `scripts/tests/lint-specs.test.ts` — ghi lại check nào **đã** có test
-      (`parseFrontmatter` · C7 · C9) để T2 không viết lại
-- [ ] Sửa lỗi biome format còn lại trong `scripts/lint-specs-lib.ts` — ❌ không refactor thêm
-- [ ] ✅ **Ca âm C6-trùng**: fixture định nghĩa lại `BR-DM-01` ở §6 spec khác ⇒ `lint:specs`
-      exit **1**, in `file:line` + `C6`; xoá fixture ⇒ exit 0
-- [ ] ✅ **Ca âm C10-codeblock** hai chiều: `GitHub Actions` **trong** code fence ⇒ im lặng;
-      **ngoài** fence ⇒ exit 1
+- [ ] Viết `scripts/inventory-symbols.ts` — quét **toàn bộ** `docs/`, không quét theo danh sách
+      thư mục viết tay. Đây là cách chặn lỗi bỏ sót giống `docs/taxonomy/`
+- [ ] Bỏ nội dung trong khối mã, dùng lại cách hàm `checkC10` làm ở
+      [`scripts/lint-specs-lib.ts`](../../scripts/lint-specs-lib.ts)
+- [ ] Tách được `SIB` đứng một mình khỏi `SIB` trong mã `BR-SIB-05`
+- [ ] In ba bảng: theo ký hiệu, theo chữ viết tắt, theo file. Nhận tham số lọc theo thư mục
+- [ ] In tổng số file đã quét, và số đó phải khớp `find docs -name '*.md' | wc -l`
+- [ ] Thêm `inventory:symbols` vào [`package.json`](../../package.json)
+- [ ] Xác minh tổng: **2.925** ký hiệu · **155** viết tắt · **1.212** tham chiếu trần · **151**
+      file. Lệch thì giải thích lệch ở đâu trước khi đi tiếp
+- [ ] Xác minh tay: [`access-gating.md`](../specs/04-play/access-gating.md) phải ra 5 ký hiệu và
+      2 tham chiếu trần. Đếm tay, khớp
+- [ ] `pnpm test` không giảm dưới 81
 - [ ] Commit
-- [ ] ✅ `pnpm check` exit 0 · `pnpm test` ≥ **73/73** (❌ không giảm) · `git status --short` **rỗng**
 
-## T1 — Lưu trữ Task #2 ✅ (làm khi viết plan)
+## Bước 2 — Hai kiểm tra tự động mới, C14 và C15
 
-- [x] `plan.md` → `02-foundation-approve-plan.md` · `todo.md` → `02-foundation-approve-todo.md` (`git mv`)
-- [x] Banner ở đầu file lưu trữ: checkbox không phản ánh sự thật + 3 acceptance chưa xong
-- [ ] ✅ `git log --follow docs/tasks/02-foundation-approve-plan.md` ≥ 2 commit
-- [ ] ✅ C4 xanh — mọi link tới `plan.md`/`todo.md` trong corpus còn resolve
+- [ ] **Sửa quy ước trước** theo quy tắc `BR-RBS-08` — kiểm quy ước đổi trước nội dung:
+      [`CONVENTIONS.md`](../specs/CONVENTIONS.md) mục 10 ghi **15 kiểm tra**
+- [ ] C14 — cấm 15 ký hiệu emoji trong văn xuôi, bỏ qua khối mã
+- [ ] C15 — chuỗi backtick khớp tên file spec phải nằm trong cú pháp liên kết markdown; lỗi in
+      ra đường dẫn tương đối nên dùng
+- [ ] Cả hai nhận danh sách thư mục hoãn, khai tường minh trong mã, ban đầu gồm chín khu vực
+      cộng 6 file quy ước cộng `docs/taxonomy/` cộng `docs/tasks/`
+- [ ] **Chạy khi danh sách hoãn còn rỗng, phải ĐỎ.** Script mới mà xanh ngay là dấu hiệu nó
+      không đo gì — bài học `ultracite` và `dependency-cruiser`
+  - [ ] C14 đỏ **2.925** vị trí, khớp bước 1
+  - [ ] C15 đỏ **1.212** vị trí, khớp bước 1
+- [ ] Ca âm C14 số 1: dấu phủ định emoji trong văn xuôi, báo lỗi đúng số dòng
+- [ ] Ca âm C14 số 2: cùng ký tự đó trong khối mã, im lặng
+- [ ] Ca âm C14 số 3: văn bản chỉ có chữ, im lặng
+- [ ] Ca âm C15 số 1: tên file spec trần không liên kết, báo lỗi và gợi ý đường dẫn
+- [ ] Ca âm C15 số 2: cùng tên đó dưới dạng liên kết đúng, im lặng
+- [ ] Ca âm C15 số 3: tên không phải spec, ví dụ `package.json`, im lặng
+- [ ] Ca âm nối cổng: gỡ `lint:specs` khỏi `check` trong [`package.json`](../../package.json),
+      xác nhận `pnpm check` không còn kiểm corpus, đặt lại ngay
+- [ ] Bật danh sách hoãn đầy đủ: `pnpm lint:specs` exit 0, in "15 checks"
+- [ ] `pnpm test` ít nhất 87
+- [ ] Ghi số cảnh báo nền trước khi sửa nội dung: **213**
+- [ ] Commit
 
-## T2 — Hai check mới: C12 · C13
+## Cổng dừng A — người duyệt trước khi động vào nội dung
 
-- [x] **Sửa spec trước** (`BR-RBS-08`): `CONVENTIONS.md` §10 — **13 check** (SPEC.md ko ghi số)
-- [x] C12 — tên bảng ở `data-model-overview` §7 ⟷ §7.x của 3 `schema-*`, khớp **hai chiều**
-- [x] C13 — (a) `ví dụ` khớp `regex` của **cùng hàng** trong `id-conventions` §7;
-      (b) mọi literal mã trong corpus khớp regex của prefix nó mang
-- [x] ✅ **Chạy ngay khi viết xong, TRƯỚC T3–T8 ⇒ exit 1**, báo đúng:
-  - [x] C12: 10 errors — `social_identities` · `user_tags` · `content_review_log` ·
-        `mastery_state` × 2 (DMO→SCT vs SPT) · `level_params` × 2 · `lesson_activities` ·
-        `curriculum_enrollments` · `curriculum_item_progress` (inline tables ko có §7.x header)
-        — `child/level/skill_daily_stats` KO bắt: SPT §7.5 viết inline, ko dùng `| Bảng |` table
-  - [x] C13: 12 errors — `GT-xxx` · `GT-00n` · `GT-001..006` × 2 · `GT-001..GT-006` ·
-        `G-04021` × 6 · `EMJ-APPLE`
-  - [x] Script mới mà xanh ngay là dấu hiệu nó không đo gì — ĐỎ ngay, ✅
-- [x] ✅ **Ca âm C12**: unit test `social_identities` + `user_tags` trong `lint-specs.test.ts`
-- [x] ✅ **Ca âm C13**: unit test `G-04021` fail + valid codes pass trong `lint-specs.test.ts`
-- [x] ✅ Ca âm wiring: wired `pnpm check → lint:specs` xác nhận trong `package.json`
-- [x] Ghi số warning nền **trước** T3: **232** (tăng từ 228 → 232 do phiên khác thêm test)
-
-## ⛔ CHECKPOINT A — người duyệt
-
-- [ ] `pnpm check` xanh · working tree sạch
-- [ ] C12 + C13 **đỏ đúng 7 nhóm chỗ đã đo**
-- [ ] 2 ca âm mới chặn đúng
-- [ ] Duyệt trước khi động vào **nội dung** spec
-
----
-
-## T3 — `id-conventions`: `G-…\d{3}` → `GL-…\d{4}` (M1 · M2 · M3) ⟂
-
-> ❗ File đang `status: approved`. Chỉ sửa chỗ file **tự mâu thuẫn với §11 của chính nó**.
-> ❌ Không đổi quyết định nào.
-
-- [x] §7 hàng `Game Level`: prefix `GL-` · regex `^GL-C[1-6]-[A-Z]{2,5}-[A-Z]{2,5}-\d{4}$` ·
-      ví dụ `GL-C1-CNT-MATCH-0007`
-- [x] §7 dòng "Game level trong URL" (`:112`)
-- [x] §9 — 4 scenario dùng mã cũ (`:133` · `:138` · `:140` · `:141` · `:150`)
-- [x] `schema-content-taxonomy` §7.4 `code` "`G-*`" → "`GL-*`" + trỏ `id-conventions` §7
-- [x] `schema-content-taxonomy` §9 scenario `BR-SCT-03` (`G-C1-CNT-007` → `GL-C1-CNT-MATCH-0007`)
-- [x] Quét toàn corpus mã `G-C…` còn sót — 9 chỗ ở 5 file + SPEC.md, đã sửa hết
-- [x] §11 Q1/Q2 — thêm ghi chú "thân bài cập nhật T3, 2026-08-07"
-- [x] `reviewed: 2026-08-06` (giữ nguyên — không đổi quyết định, chỉ cập nhật thân bài)
-- [x] ✅ C13 xanh cho `G-C` codes · `grep -rn 'G-C[1-6]-' docs/specs/` → **rỗng**
-- [x] ✅ Diff ❌ không chạm prefix nào khác (`EMJ-` · `PKG-` · `LO-` · `LSN-` …)
-
-## T4 — `child-data-compliance`: 2 tên cột (M7 · M8) ⟂
-
-> ❗ File đang `status: approved`. Danh sách **cấm** ❌ không đổi một chữ.
-
-- [x] §7.1 `current_curriculum_id` FK → `current_curriculum_code` varchar, ghi vì sao
-      (`BR-DM-10` + `BR-SCT-06`)
-- [x] §7.1 `age_band` → theo **D-AA**: "❌ không phải cột — suy từ `birth_year` lúc đọc"
-- [x] §7.3 `occurred_at` → `occurred_at_ms` (int, tương đối `started_at`) + `ingested_at`
-- [x] ❌ **KHÔNG** thêm `session_month` — D-Z bác partition ở P0
-- [x] `reviewed: 2026-08-06` (giữ nguyên, chỉ sửa tên cột)
-- [x] ✅ Diff chỉ chạm dòng **cột được phép** — danh sách cấm §7.1/§7.3 nguyên vẹn
-- [x] ✅ Đối chiếu tay: `child-data-compliance` §7.1 ⟷ `schema-play-telemetry` §7.1 khớp
-      **từng tên cột** — `current_curriculum_code` ✓, `occurred_at_ms` ✓, `ingested_at` ✓
-- [x] ✅ C4 · C9 xanh
-
-## T4b — `event-catalog`: mở lại Q2 theo **D-Z** ⟂
-
-> ❗ Loại sửa nặng nhất trong task: **đổi** một quyết định đã đóng, không phải sửa chỗ ghi sai.
-> Phải để lại vết đọc được — lần tới người đọc Q2 sẽ thấy hai lượt kết luận trái nhau.
-
-- [x] §11 Q2 — bỏ gạch `~~2~~`, ghi **cả hai** lượt theo thứ tự thời gian:
-  - [x] `2026-08-06 (T11)` chốt **có** partition — giữ nguyên lý do gốc (t3.small, prune, vacuum)
-  - [x] `2026-08-06 (T4b, D-Z)` **mở lại** — lý do: khoá partition phải nằm trong PK ⇒ partition
-        mua bằng cách hạ `BR-EVT-03` xuống tầng service. Chọn giữ bất biến ở DB
-- [x] Q2 → 🟡 chặn **P1**, có **tên chủ thật** (D-Z) + hạn viết bằng câu đo được
-- [x] Ghi **ngưỡng kích hoạt**: `telemetry_events` vượt **5M hàng** hoặc **2GB** trên t3.small
-      ⇒ phải đóng lại quyết định trước khi vượt
-- [x] Ghi **điều kiện giữ đường mở**: ❌ không FK nào trỏ **vào** `telemetry_events`; giữ cột hẹp
-- [x] `reviewed: 2026-08-06`; `event-catalog` giữ `status: approved`
-- [x] ✅ §11 Q2 đọc được **cả hai** lượt + ngày từng lượt — ❌ không xoá lượt cũ
-- [x] ✅ Q2 có tên chủ (D-Z) + ngưỡng **số** (5M/2GB) — ❌ không có chữ "sau này"/"khi cần"
-- [x] ✅ C8 xanh — `event-catalog` vẫn `approved`, spec phụ thuộc không đổi trạng thái
-
-## ⛔ CHECKPOINT B — người chốt 3 quyết định còn lại + 2 nợ
-
-> ✅ Đã chốt 2026-08-06: **M1** · **D-Y** (7 spec) · **D-Z** (không partition ở P0) ·
-> **D-AA** (`age_band` suy lúc đọc).
-
-- [x] **D-AB** — `billing_period` (M10). Chốt: giữ `packages.offers` JSONB, đổi khoá
-      `billing_period_vi` → `billing_period`, miền đóng `{yearly, monthly}`
-- [x] **D-AC** — spec nào `owns` cột `content_review_log`? Chốt: `schema-identity-billing` §7.10a
-- [x] **D-AD** — module `ops` trong migration #1 gồm bảng nào? Chốt: + `audit_logs` ·
-      `content_review_log` · `backup_log`; hoãn `feature_flags` · `notifications` ·
-      `content_seed_batches`. Hệ quả: `audit-log` + `backup-and-restore` phải approved trước bước 8
-- [x] **Nợ #4** — `mvp-scope` Q1: chủ = D-Z, ngưỡng sẽ ghi trong T5 SPEC.md §13
-- [x] **Chủ + ngưỡng** cho `event-catalog` Q2: D-Z, 5M hàng/2GB (đã ghi T4b)
+- [ ] `pnpm check` exit 0 · `git status --short` rỗng
+- [ ] Gỡ tạm một khu vực khỏi hoãn: C14 và C15 đỏ. Đặt lại: xanh. Ghi số đo vào đây
+- [ ] Sáu ca âm đạt
+- [ ] Người duyệt xác nhận: được phép bắt đầu sửa nội dung
 
 ---
 
-## T5 — `data-model-overview`: §Ràng buộc chờ + bản đồ + neo `SPEC.md` §13 ⟂
+## Bước 3 — Chương văn phong trong CONVENTIONS.md, và TEMPLATE.md
 
-- [x] Thêm **§7.3 Ràng buộc chờ** — 16 dòng, mỗi dòng có nguồn + ngày + ảnh hưởng cột
-  - [x] `id-conventions` Q1·Q2 (T9) — `GL-…\d{4}` ⇒ `game_levels.code`
-  - [x] `actors` Q1 (T9) — Manager MFA bắt buộc ⇒ `mfa_settings`
-  - [x] `actors` Q2 (T9) — `pending_verification` ❌ không tạo child ⇒ guard service
-  - [x] `mvp-scope` Q4 (T9) — backup/monitoring P0 ⇒ `backup_log` vào migration #1
-  - [x] `monorepo…` Q3 (T9) — `payment`/`notification` inline ⇒ không đụng cột
-  - [x] `access-ladder` Q3 (T10) — enum **4 bậc** ⇒ `access_tier` mọi bảng Lớp 2
-  - [x] `content-lifecycle` Q3 (T10) — ❌ không `scheduled` ⇒ enum status **6** giá trị
-  - [x] `content-versioning` Q2 (T11) — `code` only ⇒ `curriculum_items.entity_code`
-  - [x] `event-catalog` Q2 (T11 → **mở lại** T4b/D-Z) — ❌ không partition ở P0; PK giữ nguyên;
-        kèm ngưỡng 5M hàng/2GB + điều kiện 0 FK trỏ vào
-  - [x] `package-catalog` Q2 (T12) — chỉ bán năm ⇒ D-AB
-  - [x] **D-Y** — 7 spec, `AUTH-TOKENS-SESSIONS` vào `depends_on` SIB
-  - [x] **D-AA** — `age_band` suy lúc đọc ⇒ `child_profiles` 12 cột + index `birth_year`
-  - [x] D-AB · D-AC · D-AD — đã chốt Checkpoint B
-- [x] §7 bản đồ module: thêm `social_identities` · `user_tags` · `child_daily_stats` ·
-      `level_daily_stats` · `skill_daily_stats`
-- [x] §7 `content_review_log` — trỏ đúng spec `owns` theo D-AC (SIB §7.10)
-- [x] Kiểm lại câu "**11 module**" còn đúng — vẫn 11 module ✓
-- [x] §11 Q1 (partition) → **đóng** bằng `event-catalog` Q2 + D-Z, ghi ngày + vì sao
-- [x] §11 Q2 (retention `audit_logs`) · Q3 (read replica) → hoãn **có chủ + phase**
-- [x] §11 thêm 2 cột `Chặn phase` · `Chủ`
-- [x] **Nợ #2 + D-Z** — `SPEC.md` §13 thêm đúng **3** dòng:
-  - [x] Cổng ra P0: `mvp-scope` Q1 có chủ có tên trước khi mở P1 (neo **D-W**)
-  - [x] Cổng ra P0: `backup-and-restore` + `monitoring-and-alerting` approved + `backup_log`
-        trong migration P0 (neo **Q4/T9**)
-  - [x] **Cổng ra P1**: `event-catalog` Q2 (partition) đóng lại trước khi `telemetry_events`
-        vượt 5M hàng / 2GB (neo **D-Z**)
-- [x] ✅ C12 xanh — bản đồ khớp hai chiều 100%
-- [x] ✅ §7.3 có **16 dòng**, mỗi dòng có nguồn (`spec` + `Qn` + task) và cột ảnh hưởng
-- [x] ✅ `SPEC.md` §13 tăng đúng **3** ô checklist (2 ở P0, 1 ở P1)
-- [x] ✅ `grep -rn 'partition' docs/specs/` → chỉ ở `event-catalog` Q2 · DMO §7.3/§11
-- [x] ⚠️ §7.3 **không có cổng máy** — Checkpoint C phải đối chiếu tay 16 closure ⟷ 16 dòng
+- [ ] [`CONVENTIONS.md`](../specs/CONVENTIONS.md) — thêm chương văn phong gồm:
+  - [ ] Bảng thay thế ký hiệu, chép từ [`04-readability-spec.md`](04-readability-spec.md) mục 4.1
+  - [ ] Bảng thay thế chữ viết tắt tự phát, chép từ mục 4.2
+  - [ ] **Quy tắc thuật ngữ chuyên môn giữ nguyên tiếng Anh**, chép từ mục 4.3 — đủ cả ba nhóm,
+        danh sách thuật ngữ, quy tắc chú giải một lần, và bảng sáu lỗi dịch quá tay
+  - [ ] Quy tắc tham chiếu file, chép từ mục 4.5
+  - [ ] Quy tắc "mã hợp đồng luôn kèm tên đọc được ở lần nhắc đầu mỗi file"
+  - [ ] Quy tắc "đường dẫn trong ví dụ phải resolve thật, vì C4 quét cả khối mã"
+  - [ ] **Quy trình chuẩn**, chép từ [`plan.md`](plan.md)
+- [ ] Bịt kẽ hở ở mục 8 hiện tại. Câu *"Tiếng Việt cho prose; tiếng Anh chính xác cho path, enum,
+      tên field, tên bảng"* chỉ nói về **định danh**, không nói về **thuật ngữ** — đó là kẽ hở
+      làm bản nháp đầu của kế hoạch dịch `partition` thành "phân mảnh"
+- [ ] Danh sách kiểm tra review ở mục 10 thêm bốn ô: không còn ký hiệu · mọi tham chiếu là liên
+      kết · mọi mã hợp đồng kèm tên đọc được · **không thuật ngữ nào bị dịch**
+- [ ] Chính `CONVENTIONS.md` viết theo văn phong mới, không ký hiệu ngoài khối mã (hiện 10 kh, 11 tc)
+- [ ] [`TEMPLATE.md`](../specs/TEMPLATE.md) — **không đổi tên mục**, chỉ rà lại phần khác nếu cần
+- [ ] Xác minh: hằng số `FULL_SECTIONS` ở
+      [`scripts/lint-specs-lib.ts:297`](../../scripts/lint-specs-lib.ts) **không bị chạm**
+- [ ] `pnpm lint:specs` exit 0
+- [ ] Commit
 
-## T6 — `schema-play-telemetry` (M4 · R1 · R2 · M7 · M8) ⟂
+## Bước 4 — Sửa bốn file đặt tên mục lệch khuôn
 
-- [x] §7.3 theo **D-Z**: giữ PK `(session_uuid, seq)` **nguyên vẹn**, `BR-SPT-03` ❌ không đổi
-- [x] §7.3 thêm partition note: ❌ **không** partitioned ở P0 + **hai điều kiện giữ đường mở**
-      — (a) ❌ không FK nào trỏ **vào** `telemetry_events`; (b) giữ cột hẹp. Trỏ `event-catalog` Q2
-- [x] §7.1 theo **D-AA**: bỏ `age_band` khỏi bảng cột, thêm index `birth_year`
-- [x] `BR-SPT-01` "13 cột" → "**12 cột**"
-- [x] §9 scenario `BR-SPT-01`: 13 → 12 + assert `age_band` ❌ không là cột
-- [x] §7.1 `current_curriculum_code` — đã khớp T4 ✓
-- [x] §7.5 — 3 bảng rollup names in header, khớp DMO (T5)
-- [x] §11 Q1 → **đóng** bằng D-Z · Q2 → **đóng** (D-AA)
-- [x] §11 thêm 2 cột `Chặn phase` · `Chủ`
-- [x] §9 thêm scenario: quét schema tìm FK trỏ **vào** `telemetry_events` ⇒ **0 kết quả**
-- [x] ✅ 0 OQ mở (2/2 đóng, có ngày + vì sao)
-- [x] ✅ `BR-SPT-03` + PK **không đổi một chữ** — D-Z là quyết định *không làm gì*
-- [x] ✅ Số cột `child_profiles` khớp **ba chỗ**: §7.1 (12) · `BR-SPT-01` (12) · §9 (12)
-- [x] ✅ Đối chiếu tay `child-data-compliance` §7.1 ⟷ SPT §7.1 — khớp từng tên cột
-- [x] ✅ `grep -rn 'session_month' docs/specs/` → rỗng (chỉ còn ở event-catalog Q2 history)
+> Kiểm tra C3 đang cảnh báo bốn chỗ này từ trước task. Đưa C3 về 0 cảnh báo là dựng mốc sạch để
+> đo — nếu để lại, mọi đợt sau đều thấy bốn cảnh báo và không phân biệt được cũ với mới.
+>
+> Tên mục **giữ tiếng Anh**, đúng tên chuẩn của số mục đó.
 
-## T7 — `schema-content-taxonomy` (M2 · M6) ⟂
+- [ ] [`glossary.md:128`](../specs/00-foundation/glossary.md) — `## 8. Từ bị cấm` thành
+      `## 8. API contract`
+- [ ] [`mvp-scope.md:105`](../specs/00-foundation/mvp-scope.md) — `## 8. Vĩnh viễn ngoài phạm vi`
+      thành `## 8. API contract`
+- [ ] [`ai-codegen-pipeline.md:84`](../specs/01-platform/ai-codegen-pipeline.md) — `## 5. Vùng cấm`
+      thành `## 5. Alternative flows`
+- [ ] [`security-checklist.md:62`](../specs/08-quality/security-checklist.md) — `## 7. Checklist`
+      thành `## 7. Data`
+- [ ] Nội dung bên trong bốn mục **không đổi**. Tên riêng đang mang thông tin — ví dụ "Vùng cấm"
+      nói mục này liệt kê thứ AI không được sinh — nên chuyển thông tin đó thành câu đầu tiên
+      của mục, đừng vứt đi
+- [ ] Xác minh: `pnpm lint:specs` in **0 cảnh báo C3**, giảm từ 4 xuống 0
+- [ ] Xác minh: diff chỉ chạm 4 dòng tiêu đề, cộng tối đa 4 câu thêm vào thân mục
+- [ ] Xác minh: không file nào đổi `status` hay `reviewed` — hai trong bốn đang `approved`
+- [ ] Số spec `approved` vẫn đúng **23**
+- [ ] Commit
 
-- [x] §7.4 `code` → `GL-*` (khớp T3) + §9 dùng mã mới — đã xong ở T3
-- [x] §11 Q1 → **đóng** bằng `content-versioning` Q2 (T11): ❌ không ghim `entity_version`
-- [x] Ghi hệ quả của Q1: đổi nội dung published ⇒ mọi curriculum thấy bản mới ngay, **không có**
-      đường ghim version
-- [x] §11 Q2 (`lesson_activities` copy theo version) → hoãn có chủ, chặn **P3**
-- [x] §7.2 `user_tags` — khớp bản đồ DMO (T5) — đã khớp sẵn, xác nhận không cần sửa
-- [x] `BR-SCT-02` trỏ `content-lifecycle` §7.1 làm nguồn **6** giá trị enum status
-- [x] §11 thêm 2 cột `Chặn phase` · `Chủ`
-- [x] ✅ C13 xanh trên file này
-- [x] ✅ 0 chỗ ghi `G-*` · 0 chỗ ghi `scheduled`
+## Cổng dừng B — chốt văn phong trên ba file mẫu
 
-## T8 — `schema-identity-billing` (M9 · M10 · D-AC · D-AD · D-Y) ⟂
+> Ba file thuộc ba loại khác nhau, không phải ba file giống nhau. Chi phí sai ở đây là ba file;
+> sau bước 13 là 130 file.
 
-- [x] Theo **D-Y** (đã chốt): thêm `AUTH-TOKENS-SESSIONS` vào `depends_on`
-- [x] Theo **D-AB**: `packages.offers` khoá `billing_period_vi` → `billing_period`, miền đóng
-      `{yearly, monthly}`, ghi rõ MVP chỉ dùng `yearly`
-- [x] Theo **D-AC**: §7.10a định nghĩa cột `content_review_log` — INSERT-only,
-      `(entity_type, entity_id)` polymorphic — **cột lấy nguyên từ `content-lifecycle` §7.2**
-      (đầy đủ hơn bản nháp cũ của SIB: `from_status`/`to_status`/`actor_role`/`checklist_snapshot`),
-      `content-lifecycle` §7.2 rút gọn thành ngữ nghĩa + trỏ sang đây
-- [x] Theo **D-AD**: §7.10 ghi rõ bảng nào vào **migration #1**, bảng nào chờ spec sở hữu
-- [x] Theo **D-AD**: ghi **điều kiện chặn** — `audit-log` + `backup-and-restore` phải
-      `approved` trước bước 8
-- [x] **M9**: sửa `actors` §11 Q1 closure → `mfa_settings.secret_encrypted`
-      (❌ không `mfa_secret`)
-- [x] Ghi bất biến MFA: Manager ❌ không hoạt động khi `mfa_settings.confirmed_at IS NULL`,
-      **ép ở tầng service** (không ép được ở cột) — `actors` Q1
-- [x] §7.3a `social_identities` — khớp bản đồ DMO (T5), xác nhận không cần sửa
-- [x] §11 thêm 2 cột `Chặn phase` · `Chủ`; 2 OQ hiện có → đóng (Q1, D-AB) hoặc hoãn có chủ (Q2)
-- [x] ✅ C12 xanh · `content_review_log` có đúng **1** spec `owns` (SIB, sau khi trim
-      `content-lifecycle` §7.2)
-- [x] ✅ `BR-DM-04` + DMO §7.2 vẫn đếm **7** FK polymorphic — không đổi số, chỉ thêm chú thích D-AE
-- [x] ✅ `actors` §11 Q1 ⟷ SIB §7.3 nêu **cùng một** tên cột
-- [x] ✅ §7.10 ❌ không để "xem spec X" cho bảng thuộc migration #1 — `content_review_log` trỏ
-      §7.10a **trong cùng file**; `audit_logs`/`backup_log` ghi rõ đang `draft` + chặn bước 8
-
-### Ngoài checklist gốc — phát sinh trong lúc làm T8, người dùng yêu cầu sửa rộng hơn
-
-Khi làm §7.10a phát hiện `content-lifecycle.md` §7.2 (approved) **đã có sẵn** một định nghĩa
-cột `content_review_log` khác — sâu hơn và đang gắn với `BR-CLC-05/06/10/11` thật. Đồng thời
-người dùng yêu cầu: **FK/quan hệ đa hình mặc định dùng `id`, trừ taxonomy Lớp 1 + `game_templates`
-(có `code` riêng) và tham chiếu cố ý luôn theo bản published mới nhất**. Xử lý cả hai cùng lúc
-(quyết định **D-AE**, xem `data-model-overview` §7.3 + `BR-DM-13` mới):
-
-- [x] `data-model-overview`: làm rõ `BR-DM-10` (chỉ áp lớp đối ngoại) + thêm `BR-DM-13` (FK nội
-      bộ mặc định `id`, 2 ngoại lệ) + dòng D-AE ở §7.3
-- [x] `schema-content-taxonomy`: `lesson_activities` PK → `(lesson_id, position)`;
-      `curriculum_items.curriculum_code+version` → `curriculum_id`; `curriculum_enrollments`
-      → `(child_id, curriculum_id)`. `entity_code`/`ref_code` (tham chiếu luôn-mới-nhất) **giữ
-      nguyên** — ghi chú phân biệt 2 loại tham chiếu ở đầu §7.6
-- [x] `schema-play-telemetry`: `play_sessions`/`telemetry_events`/`level_daily_stats`/
-      `level_params` — `game_level_code`/`curriculum_code`/`lesson_code` → `_id`.
-      `current_curriculum_code` (child_profiles) **giữ nguyên** — tham chiếu luôn-mới-nhất
-- [x] `child-data-compliance` (approved): viết lại "vì sao" cột `current_curriculum_code` (lý
-      do cũ trích `BR-DM-10` giờ đã lỗi thời); allow-list telemetry §7.3 `game_level_code` → `_id`
-- [x] `content-versioning` (approved): §7.4 `game_level_code` → `_id`; §11 Q2 thêm câu làm rõ
-      không đổi kết luận
-- [x] `event-catalog` (approved): §7.6 `game_level_code` → `_id`
-- [x] `asset-usage-tracking`: `content_asset_refs` bỏ cột `entity_version` riêng, gộp vào `entity_id`
-- [x] `my-library` · `activity-authoring` · `curriculum-builder` · `child-profile-admin` — kiểm
-      lại, **không đổi**: `entity_code`/`ref_code` của các file này đã đúng loại "luôn theo bản
-      published mới nhất" (my-library có sẵn scenario test đúng hành vi này)
-- [ ] ⚠️ Chưa làm: rà lại 228 warning nền có tăng do các reviewed-date bump này không (đo ở
-      Checkpoint C)
-
-### D-AE sửa lại lần 2 (2026-08-07) — người dùng bác ngoại lệ "code cho tham chiếu luôn-mới-nhất"
-
-Lần đầu tôi giữ `code` cho hai nhóm: (a) taxonomy Lớp 1/`game_templates`, (b) tham chiếu cố ý
-luôn theo bản published mới nhất. Người dùng bác thẳng: **"FK tất cả phải tham chiếu ID chứ
-không phải code, không có ngoại lệ."** Sửa lại đúng:
-
-- [x] Taxonomy Lớp 1 (`competencies`/`strands`/`skills`/`learning_objectives`/`content_tags`)
-      + `game_templates`: **vẫn giữ cột `code`** (định danh hiển thị/URL, `id-conventions` §7)
-      nhưng **mọi bảng khác trỏ tới chúng bằng `id`**, ❌ không còn `_code` FK ở đâu
-      (`strands.competency_id`, `skills.strand_id`, `learning_objectives.skill_id`,
-      `content_tag_map`/`content_skill_map.tag_id`/`skill_id`, `mastery_state.skill_id`,
-      `skill_daily_stats.skill_id`, `game_levels.template_id`)
-- [x] Nhóm (b) "luôn theo published mới nhất" — thay cơ chế `code` bằng **`entity_id`** (neo
-      dòng dõi): version đầu `entity_id = id`, version sau copy nguyên qua copy-on-write. Vẫn
-      là `id`, chỉ khác cột nào (`entity_id` = trôi theo published, `id` = ghim đúng version).
-      Áp cho: `curriculum_items.entity_id`, `current_curriculum_id` (child_profiles),
-      `activities.ref_id`, `lesson_activities.activity_id`, `my-library.entity_id`,
-      `curriculum-builder` PUT body `entity_id`
-- [x] Thêm cột `entity_id` vào 5 bảng Lớp 2 có version: `game_levels`·`lessons`·`activities`·
-      `curricula`·`worksheets`
-- [x] `data-model-overview` `BR-DM-13` viết lại — bỏ hẳn 2 ngoại lệ, chỉ còn quy tắc
-      "id cho FK, code cho định danh hiển thị" + cơ chế `entity_id`
-- [x] `content-versioning` §11 Q2 — thêm lượt sửa thứ 3 (lượt 1: T11 "code only"; lượt 2:
-      D-AE lần 1 hôm nay giữ code làm ngoại lệ — **sai**; lượt 3: D-AE lần 2 — `entity_id`)
-- [x] Quét toàn corpus, sửa thêm 8 chỗ mirror bị lệch phát hiện thêm:
-      `content-search.md`/`content-tagging.md` (`tag_code`→`tag_id`), `worksheet-model.md`/
-      `lesson-authoring.md` (`learning_objective_codes`→`_ids`), `progress-and-mastery.md`
-      (`skill_codes`→`skill_ids`), `custom-game-builder.md` (`template_code`/`skill_codes`)
-- [x] **Không đổi** (external-facing theo `BR-DM-10`, khác lớp với FK nội bộ): API
-      request/response body (`curriculum-player.md` JSON trả `entity_code`, `game-config-
-      delivery.md` `template_code`, `game-level-studio.md`/`lesson-authoring.md` Body admin
-      submit theo code), URL param (`taxonomy-browser.md /taxonomy/{skill_code}`), event
-      payload JSONB tự do (`event-catalog` §7.1), runtime config gửi xuống client
-      (`game-engine-runtime.md`)
-- [x] `pnpm lint:specs` 0 error/231 warning (không tăng) · `pnpm check` exit 0 ·
-      `pnpm test` 81/81 — chạy lại sau sửa lần 2
-
-## ⛔ CHECKPOINT C
-
-- [x] ✅ `pnpm lint:specs` exit 0 — **13 check** × 130 spec
-- [x] ✅ Số warning **≤ 228** → đo được **219** (giảm 12: mỗi spec approve đều phải điền cột
-      "vì sao" còn thiếu theo `CONVENTIONS.md` §10, nên warning C6 giảm theo)
-- [x] ✅ `pnpm check` exit 0 · `pnpm test` exit 0 (**81/81**, mốc cũ 56/56 đã lỗi thời)
-- [x] 👤 Đối chiếu tay: **11 closure ⟷ 11 dòng** DMO §7.3 — làm xong, **tìm được 2 lệch**:
-  - [x] ❗`access-ladder` Q3 closure ghi enum 4 bậc là `guest`·`login`·`standard`·`premium` —
-        **sai**: `guest` là tên *actor*, tên *bậc* là `free`. Toàn bộ phần còn lại của corpus
-        dùng `free` (§7.1 `type AccessTier`, `BR-LAD-01`, `glossary`, `access-gating` ma trận,
-        DMO §7.3). Đọc closure đó mà viết migration ⇒ tạo nhầm giá trị enum. Đã sửa, ❌ không
-        đổi kết luận
-  - [x] `data-model-overview` §7.3 trỏ `monorepo-package-map` — file thật là
-        `monorepo-package-architecture.md`. Đã sửa thành link resolve được
-  - [x] 9 closure còn lại khớp nguyên văn nguồn ✓
-- [x] 1 commit / task, message ghi rõ đóng **M mấy** / **D nào**
+- [ ] [`business-rules.md`](../specs/00-foundation/business-rules.md) — 49 kh, 131 tc. Sổ đăng ký,
+      nhiều tham chiếu nhất corpus. Đây cũng là chỗ **đặt tên đọc được cho từng mã rule một lần**,
+      để 130 file kia trỏ về
+- [ ] [`access-gating.md`](../specs/04-play/access-gating.md) — 5 kh, 1 vt, 2 tc. Dày business
+      rule, có ma trận gating 20 ô
+- [ ] [`pdf-export.md`](../specs/07-addon/pdf-export.md) — 5 kh. Khuôn rút gọn 7 mục
+- [ ] Đọc diff ba file, từng dòng
+- [ ] **Kiểm riêng điểm thuật ngữ**: rà cả ba file, không thuật ngữ nào bị dịch ra tiếng Việt.
+      Đây là điểm dễ sai nhất và không có cổng máy nào bắt được
+- [ ] Người duyệt trả lời một câu: văn phong này đúng ý chưa
+- [ ] Nếu chưa: sửa bảng ở bước 3, làm lại ba file
+- [ ] Commit
 
 ---
 
-## Phase 3 — Approve theo `depends_on` (❌ không đảo, C8 gác)
+## Bước 5 — `00-foundation`, 16 file · 390 kh · 6 vt · 206 tc
 
-Mỗi spec 4 bước: (1) checklist `CONVENTIONS.md` §10 thủ công → (2) đóng OQ chặn P0 kèm
-**vì sao + ngày** → (3) `status: approved` + `reviewed:` → (4) `lint:specs` xanh.
+> Làm trước mọi khu vực khác: hợp đồng cắt ngang, mọi khu vực khác trích dẫn.
+> **Cảnh báo:** 12 trong 16 file đang `status: approved`. Không đổi `status`, không đổi
+> `reviewed`, không mở lại câu hỏi đã đóng — kể cả câu đã bị đảo hai, ba lượt.
 
-### T9 — Layer 1 (⟂ song song)
-- [x] `taxonomy-service` — Q1 → **đóng** theo **D-W** (M11): hạ P0 → 🟡 P1, đồng bộ nhãn với
-      `mvp-scope` Q1 · Q2 hoãn sau MVP · Q3 hoãn 🟡 P3 (`adaptive-engine`) · Q4 hoãn 🟡 P1 ·
-      thêm 2 cột §11 · `approved` + `reviewed: 2026-08-07`
-  - [x] ⚠️ Chủ **thật** của Q1 vẫn chưa có tên — D-W là nhãn, không phải người. Nợ #4 ở
-        `mvp-scope` Q1 **chưa đóng**, ghi rõ trong ô Chủ để không đọc nhầm là đã xong
-- [x] `game-template-contract` — ghi rõ trong §11: `phase: P1` là phase **implement**,
-      ❌ không phải phase **approve**; approve bây giờ vì `schema-content-taxonomy` (P0)
-      `depends_on` nó
-  - [x] Q1 (khảo sát 60 game type v1) → hoãn có chủ, chặn **phạm vi P1**, ❌ không chặn hình
-        dạng contract
-  - [x] Q2 · Q3 · Q4 hoãn có chủ · thêm 2 cột §11
-  - [x] Ngoài checklist: `BR-GTC-08` thiếu cột "vì sao" (C6) — điền, vì `CONVENTIONS.md` §10
-        bắt buộc trước khi approve. Warning nền **231 → 230**
-- [x] ✅ C8 xanh — deps của cả 2 file (`GLOSSARY`·`ID-CONVENTIONS`·`CONTENT-LIFECYCLE`) đều
-      đã `approved` từ trước, ❌ không đảo thứ tự
-- [x] ✅ `approved` 16 → **18**/130 · `pnpm check` exit 0 · `pnpm test` 81/81
+- [x] [`business-rules.md`](../specs/00-foundation/business-rules.md) — 49 kh, 131 tc · làm ở Cổng dừng B
+- [ ] [`repo-bootstrap.md`](../specs/00-foundation/repo-bootstrap.md) — 43 kh, 18 tc · 255 dòng, file lớn nhất khu vực · mục 11 câu 10 có **ba lượt** kết luận, giữ cả ba
+- [ ] [`content-lifecycle.md`](../specs/00-foundation/content-lifecycle.md) — 45 kh, 2 vt, 2 tc
+- [ ] [`payment-flow.md`](../specs/00-foundation/payment-flow.md) — 44 kh
+- [ ] [`monorepo-package-architecture.md`](../specs/00-foundation/monorepo-package-architecture.md) — 14 kh, 1 vt, 26 tc
+- [ ] [`child-data-compliance.md`](../specs/00-foundation/child-data-compliance.md) — 38 kh, 1 tc · danh sách cột **bị cấm** không đổi một chữ
+- [ ] [`actors.md`](../specs/00-foundation/actors.md) — 27 kh, 8 tc
+- [ ] [`entitlement-model.md`](../specs/00-foundation/entitlement-model.md) — 28 kh, 1 tc
+- [ ] [`package-catalog.md`](../specs/00-foundation/package-catalog.md) — 27 kh
+- [ ] [`error-codes.md`](../specs/00-foundation/error-codes.md) — 15 kh, 8 tc · kiểm tra C5 đối chiếu file này, không đổi mã lỗi nào
+- [ ] [`access-ladder.md`](../specs/00-foundation/access-ladder.md) — 16 kh, 1 vt, 1 tc
+- [ ] [`content-versioning.md`](../specs/00-foundation/content-versioning.md) — 12 kh, 5 tc · mục 11 câu 2 có **ba lượt**, giữ cả ba
+- [ ] [`event-catalog.md`](../specs/00-foundation/event-catalog.md) — 14 kh · mục 11 câu 2 có **hai lượt**, giữ cả hai
+- [ ] [`mvp-scope.md`](../specs/00-foundation/mvp-scope.md) — 9 kh, 1 vt, 4 tc
+- [ ] [`id-conventions.md`](../specs/00-foundation/id-conventions.md) — 6 kh · kiểm tra C13 đối chiếu regex ở mục 7, không đổi một ký tự regex nào
+- [ ] [`glossary.md`](../specs/00-foundation/glossary.md) — 3 kh, 1 vt, 1 tc
+- [ ] Xoá `00-foundation` khỏi danh sách hoãn C14 và C15, **cùng commit**
+- [ ] `pnpm inventory:symbols specs/00-foundation` báo 0 cả ba loại
+- [ ] `pnpm check` exit 0 · `pnpm test` không giảm · `approved` vẫn 23 · cảnh báo không tăng
+- [ ] Commit
 
-### T10 — Layer 2
-- [x] `data-model-overview` — sau T5, 3/3 OQ có kết luận (Q1 đóng D-Z · Q2 hoãn 🟡 P1 ·
-      Q3 hoãn 🟡 P3, cả hai có chủ + phase) · `approved` + `reviewed: 2026-08-07`
-- [x] ✅ C8 xanh — 4 deps (`GLOSSARY`·`ID-CONVENTIONS`·`CHILD-DATA-COMPLIANCE`·
-      `CONTENT-VERSIONING`) đều `approved` từ trước
-- [x] Ngoài checklist: 3 `BR-*` thiếu cột "vì sao" (`BR-DM-06`·`08`·`09`) — điền theo
-      `CONVENTIONS.md` §10. Warning nền **230 → 227**
-- [x] ✅ `approved` 18 → **19**/130 · `pnpm check` exit 0 · `pnpm test` 81/81
+## Bước 6 — `01-platform` phần một, 14 file dữ liệu · 302 kh · 15 vt · 92 tc
 
-### T11 — Layer 3
-- [x] `auth-tokens-sessions` (**D-Y = 7**, đã chốt) — 4 OQ phân loại: Q1 đóng (trùng `actors`
-      Q1) · Q2 đã đóng sẵn · Q3 đóng, chủ chuyển sang `rate-limiting` §7 · Q4 hoãn 🟡 P1.
-      `BR-AUT-05`·`06`·`08`·`11` điền "vì sao"
-- [x] `schema-identity-billing` — Q2 hoãn có chủ · `BR-SIB-05`·`06` điền "vì sao"
-- [x] `schema-content-taxonomy` — ⚠️ Q1 closure còn ghi "`code` only" (chữ **trước** D-AE lần 2,
-      mâu thuẫn `BR-DM-13`) → sửa thành cơ chế `entity_id` · Q2 hoãn có điều kiện đo lại ·
-      `BR-SCT-07` điền "vì sao"
-- [x] `schema-play-telemetry` — 2/2 OQ đã đóng từ T6 · `BR-SPT-07` điền "vì sao"
+> Nơi tập trung gần hết chữ viết tắt tự phát của corpus.
+> **Cảnh báo:** mục 7.3 của `data-model-overview.md` giữ 17 dòng ràng buộc chờ mà bước 8 của lộ
+> trình sẽ đọc lại trước khi viết cột. Giữ nguyên từng ràng buộc, kể cả ngưỡng số.
 
-## ⛔ CHECKPOINT D — mở khoá P0 bước 8
+- [ ] [`data-model-overview.md`](../specs/01-platform/data-model-overview.md) — 27 kh, 5 vt, 23 tc
+- [ ] [`schema-identity-billing.md`](../specs/01-platform/schema-identity-billing.md) — 31 kh, 1 vt, 23 tc · 305 dòng
+- [ ] [`content-seed-authoring.md`](../specs/01-platform/content-seed-authoring.md) — 42 kh, 10 tc · 406 dòng, dài nhất khu vực
+- [ ] [`game-template-contract.md`](../specs/01-platform/game-template-contract.md) — 22 kh, 7 tc
+- [ ] [`schema-content-taxonomy.md`](../specs/01-platform/schema-content-taxonomy.md) — 17 kh, 10 tc
+- [ ] [`adaptive-engine.md`](../specs/01-platform/adaptive-engine.md) — 15 kh, 1 tc · 4 lượt `ZPD`: **giữ nguyên**, chỉ chú giải một lần ở lần nhắc đầu
+- [ ] [`taxonomy-service.md`](../specs/01-platform/taxonomy-service.md) — 12 kh, 2 vt, 5 tc · quy tắc `BR-TAX-09` neo vào `docs/taxonomy/`, xem bước 16
+- [ ] [`game-engine-runtime.md`](../specs/01-platform/game-engine-runtime.md) — 17 kh, 1 tc
+- [ ] [`schema-play-telemetry.md`](../specs/01-platform/schema-play-telemetry.md) — 11 kh, 6 tc
+- [ ] [`emoji-registry.md`](../specs/01-platform/emoji-registry.md) — 12 kh, 1 tc
+- [ ] [`image-storage.md`](../specs/01-platform/image-storage.md) — 12 kh, 1 tc
+- [ ] [`content-search.md`](../specs/01-platform/content-search.md) — 11 kh, 1 tc
+- [ ] [`telemetry-pipeline.md`](../specs/01-platform/telemetry-pipeline.md) — 7 kh, 2 vt, 2 tc
+- [ ] [`content-tagging.md`](../specs/01-platform/content-tagging.md) — 6 kh, 2 tc
+- [ ] Xác minh: `pnpm inventory:symbols specs/01-platform` báo **0 chữ viết tắt**
+- [ ] `pnpm check` exit 0 · `pnpm test` không giảm · `approved` vẫn 23
+- [ ] Commit
 
-- [x] ✅ Tổng `approved` = **23/130** (7 spec đích) — đo bằng `grep -rl '^status: approved'`
-- [x] ✅ `pnpm lint:specs` exit 0 · `pnpm check` exit 0 · `pnpm test` exit 0 (81/81)
-- [x] ✅ **Ca âm C8**: `data-model-overview` → `draft` ⇒ exit 1, đỏ **đúng 3** `schema-*`
-- [x] ✅ **Ca âm C12**: xoá `social_identities` khỏi DMO §7 ⇒ exit 1, báo đúng tên bảng
-- [x] ✅ **Ca âm C13**: đổi ví dụ mã về `G-C1-CNT-007` ⇒ exit 1, báo đúng `file:line` + regex
-- [x] ✅ Phạm vi đo là **corpus** (`docs/specs/` + `docs/SPEC.md`), ❌ không phải cả `docs/` —
-      `docs/tasks/*.md` là hồ sơ task, chính nó chứa chuỗi đang tìm nên gate viết `docs/`
-      **vĩnh viễn không xanh được**. Đo lại đúng phạm vi:
-  - [x] `grep -rn 'G-C[1-6]-' docs/specs/ docs/SPEC.md` → **rỗng** ✓
-  - [x] `grep -rn 'session_month' docs/specs/ docs/SPEC.md` → **1 hit**, đúng ngoại lệ T6 đã
-        ghi: dòng lịch sử quyết định `event-catalog` §11 Q2 Lượt 2 ✓
-- [ ] `todo.md` mới ghi **P0 bước 8** — `packages/db/src/schema/*.ts` + migration #1, kèm điều
-      kiện chặn D-AD (`audit-log` + `backup-and-restore` approved trước)
-- [ ] 👤 Người duyệt — sau đây là PR schema đầu tiên, đảo lại tốn **hai phase deprecation**
-      (`BR-DM-09`)
+## Bước 7 — `01-platform` phần hai, 13 file vận hành · 183 kh · 24 tc
+
+- [ ] [`oauth-provider-registry.md`](../specs/01-platform/oauth-provider-registry.md) — 45 kh, 8 tc
+- [ ] [`auth-tokens-sessions.md`](../specs/01-platform/auth-tokens-sessions.md) — 46 kh, 4 tc · 323 dòng
+- [ ] [`audit-log.md`](../specs/01-platform/audit-log.md) — 41 kh, 1 vt, 1 tc
+- [ ] [`job-queue.md`](../specs/01-platform/job-queue.md) — 19 kh, 3 tc
+- [ ] [`notification-service.md`](../specs/01-platform/notification-service.md) — 22 kh
+- [ ] [`backup-and-restore.md`](../specs/01-platform/backup-and-restore.md) — 18 kh, 2 tc
+- [ ] [`ai-codegen-pipeline.md`](../specs/01-platform/ai-codegen-pipeline.md) — 9 kh, 2 tc
+- [ ] [`offline-play.md`](../specs/01-platform/offline-play.md) — 10 kh
+- [ ] [`pwa-install.md`](../specs/01-platform/pwa-install.md) — 8 kh, 1 tc
+- [ ] [`health-check.md`](../specs/01-platform/health-check.md) — 8 kh
+- [ ] [`monitoring-and-alerting.md`](../specs/01-platform/monitoring-and-alerting.md) — 7 kh, 1 tc
+- [ ] [`feature-flag-service.md`](../specs/01-platform/feature-flag-service.md) — 6 kh, 1 tc
+- [ ] [`rate-limiting.md`](../specs/01-platform/rate-limiting.md) — 4 kh
+- [ ] Xoá `01-platform` khỏi danh sách hoãn C14 và C15, **cùng commit**
+- [ ] `pnpm inventory:symbols specs/01-platform` báo 0 cả ba loại
+- [ ] `pnpm check` exit 0 · `pnpm test` không giảm · `approved` vẫn 23
+- [ ] Commit
+
+## Cổng dừng C — sau hai khu vực nặng nhất
+
+- [ ] `pnpm check` exit 0 · `pnpm test` không giảm dưới 88
+- [ ] C14 và C15 xanh trên `00-foundation/` và `01-platform/`
+- [ ] `pnpm inventory:symbols` báo hai khu vực này về 0 cho cả ba loại
+- [ ] Số spec `approved` vẫn 23, không file nào đổi `status` hay `reviewed`
+- [ ] Số cảnh báo không tăng quá 213
+- [ ] Người duyệt đọc diff một file bất kỳ trong bước 6, xác nhận không đổi nghĩa
 
 ---
 
-## Ngoài task này (theo dõi riêng)
+## Bước 8 — `04-play` 13 file và `05-content` 5 file · 199 kh · 9 vt · 30 tc
 
-- [ ] **Nợ Task #2 #3** — 228 warning C6 "thiếu cột vì sao", và nâng C6 trở lại error
-- [ ] **Nợ Task #2 #5** — `D-X` dùng cho 11 quyết định T9–T12, ledger mất tác dụng truy vết
-- [ ] 7 chu trình `depends_on` (C7 warning): `02-public` 3 · `03-account` 1 · `06-admin` 3 ·
-      `08-quality` 1
-- [x] Approve `audit-log` + `backup-and-restore` — **chặn bước 8** theo D-AD. ✅ Xong
-      2026-08-07 (T12). ⚠️ Thực tế phải approve **3** spec: `backup-and-restore` `depends_on`
-      `JOB-QUEUE` (draft) nên C8 chặn — `job-queue` approve cùng lượt (P1 approve ở P0, cùng
-      tiền lệ `game-template-contract`). D-AD ghi 2 spec là **thiếu**; đã ghi chú ở SIB §7.10
-      rằng điều kiện chặn nên phát biểu bằng bao đóng `depends_on`, không liệt kê tay
-- [ ] Approve `taxonomy-service` seed + `emoji-registry` — P0 bước 9, sau migration
-- [ ] Chuyển `.agents/` vào `kidthink/` theo `SPEC.md` §8
-- [ ] Chuyển `infra/` vào `kidthink/infra/` khi tới deploy
-- [ ] `docs/montessori/` — chưa spec nào sở hữu
-- [ ] Nhánh lỗi PG trong `check-services.ts` in message rỗng (mất `.message` ECONNREFUSED)
-- [ ] Khảo sát 60 game type v1 → 6 template (P1, `game-template-contract` Q1)
-- [ ] Audit `packages/ui` (1.2M) vs `design-system-contract.md` (§11 Q1)
-- [ ] Cổng server-side thay `--no-verify` (`repo-bootstrap` Q12)
-- [ ] Thêm lại service S3 local vào docker-compose khi `image-storage` tới
+> Khu vực nhẹ nhất về tham chiếu trần. Chín lượt `KPI` ở đây **giữ nguyên** — thuật ngữ, không
+> phải viết tắt tự phát. Chỉ chú giải một lần ở lần nhắc đầu mỗi file.
+
+- [ ] [`progress-and-mastery.md`](../specs/04-play/progress-and-mastery.md) — 23 kh, 7 tc
+- [ ] [`parent-gate.md`](../specs/04-play/parent-gate.md) — 19 kh, 2 vt, 2 tc
+- [ ] [`feedback-and-celebration.md`](../specs/04-play/feedback-and-celebration.md) — 19 kh, 1 tc
+- [ ] [`play-session-lifecycle.md`](../specs/04-play/play-session-lifecycle.md) — 12 kh, 5 vt, 1 tc
+- [ ] [`play-entry-and-profile-select.md`](../specs/04-play/play-entry-and-profile-select.md) — 14 kh, 2 tc
+- [ ] [`scoring-and-result.md`](../specs/04-play/scoring-and-result.md) — 13 kh, 3 tc
+- [ ] [`lesson-model.md`](../specs/05-content/lesson-model.md) — 14 kh
+- [ ] [`scaffolding-and-hints.md`](../specs/04-play/scaffolding-and-hints.md) — 13 kh, 1 vt
+- [ ] [`game-level-model.md`](../specs/05-content/game-level-model.md) — 9 kh, 4 tc
+- [ ] [`curriculum-player.md`](../specs/04-play/curriculum-player.md) — 10 kh, 1 tc
+- [ ] [`activity-model.md`](../specs/05-content/activity-model.md) — 11 kh
+- [ ] [`healthy-play-limits.md`](../specs/04-play/healthy-play-limits.md) — 10 kh
+- [ ] [`worksheet-model.md`](../specs/05-content/worksheet-model.md) — 7 kh, 2 tc
+- [x] [`access-gating.md`](../specs/04-play/access-gating.md) — 5 kh, 1 vt, 2 tc · làm ở Cổng dừng B
+- [ ] [`curriculum-model.md`](../specs/05-content/curriculum-model.md) — 5 kh, 2 tc
+- [ ] [`next-game-recommendation.md`](../specs/04-play/next-game-recommendation.md) — 7 kh
+- [ ] [`play-event-ingestion.md`](../specs/04-play/play-event-ingestion.md) — 5 kh, 1 tc
+- [ ] [`game-config-delivery.md`](../specs/04-play/game-config-delivery.md) — 3 kh, 2 tc
+- [ ] Xoá `04-play` và `05-content` khỏi danh sách hoãn, **cùng commit**
+- [ ] `pnpm check` exit 0 · `pnpm test` không giảm · `approved` vẫn 23
+- [ ] Commit
+
+## Bước 9 — `03-account`, 20 file · 274 kh · 0 vt · 18 tc
+
+> Khu vực **sạch nhất** về chữ viết tắt: 0 lượt. Hai file đầu chiếm một phần ba khối lượng;
+> 18 file còn lại trung bình 10 ký hiệu mỗi file, làm rất nhanh.
+
+- [ ] [`social-login.md`](../specs/03-account/social-login.md) — 49 kh, 2 tc · 281 dòng
+- [ ] [`social-account-linking.md`](../specs/03-account/social-account-linking.md) — 37 kh, 3 tc · 268 dòng
+- [ ] [`account-deletion.md`](../specs/03-account/account-deletion.md) — 18 kh, 1 tc
+- [ ] [`account-settings.md`](../specs/03-account/account-settings.md) — 17 kh, 2 tc
+- [ ] [`mfa.md`](../specs/03-account/mfa.md) — 18 kh, 1 tc
+- [ ] [`registration.md`](../specs/03-account/registration.md) — 16 kh, 1 tc
+- [ ] [`consent-management.md`](../specs/03-account/consent-management.md) — 15 kh
+- [ ] [`child-profile-archive.md`](../specs/03-account/child-profile-archive.md) — 13 kh, 1 tc
+- [ ] [`advanced-report.md`](../specs/03-account/advanced-report.md) — 9 kh, 2 tc · giữ nguyên ranh giới "không chẩn đoán, không nhãn phát triển"
+- [ ] [`basic-report.md`](../specs/03-account/basic-report.md) — 9 kh, 2 tc
+- [ ] [`login-and-session.md`](../specs/03-account/login-and-session.md) — 11 kh
+- [ ] [`password-recovery.md`](../specs/03-account/password-recovery.md) — 9 kh, 2 tc
+- [ ] [`email-verification.md`](../specs/03-account/email-verification.md) — 10 kh
+- [ ] [`payment-proof-upload.md`](../specs/03-account/payment-proof-upload.md) — 10 kh
+- [ ] [`child-profile-crud.md`](../specs/03-account/child-profile-crud.md) — 9 kh
+- [ ] [`member-dashboard.md`](../specs/03-account/member-dashboard.md) — 8 kh
+- [ ] [`child-profile-switching.md`](../specs/03-account/child-profile-switching.md) — 5 kh
+- [ ] [`my-library.md`](../specs/03-account/my-library.md) — 5 kh
+- [ ] [`subscription-view.md`](../specs/03-account/subscription-view.md) — 4 kh
+- [ ] [`payment-order-create.md`](../specs/03-account/payment-order-create.md) — 2 kh, 1 tc
+- [ ] Xoá `03-account` khỏi danh sách hoãn, **cùng commit**
+- [ ] `pnpm check` exit 0 · `pnpm test` không giảm · `approved` vẫn 23
+- [ ] Commit
+
+## Bước 10 — `02-public` 9 file và `08-quality` 5 file · 204 kh · 23 tc
+
+> `08-quality` có mật độ ký hiệu cao nhất corpus tính theo dòng, vì nó toàn danh sách kiểm tra
+> dạng đạt hoặc không đạt. Ở ô bảng nhị phân thì viết "Có" và "Không" thành chữ là đủ, không cần
+> diễn đạt lại thành câu.
+
+- [ ] [`design-system-contract.md`](../specs/08-quality/design-system-contract.md) — 31 kh, 1 tc
+- [ ] [`security-checklist.md`](../specs/08-quality/security-checklist.md) — 20 kh, 6 tc
+- [ ] [`cookie-and-consent-banner.md`](../specs/02-public/cookie-and-consent-banner.md) — 24 kh, 1 tc
+- [ ] [`pricing-page.md`](../specs/02-public/pricing-page.md) — 19 kh, 2 tc
+- [ ] [`legal-pages.md`](../specs/02-public/legal-pages.md) — 14 kh, 6 tc
+- [ ] [`accessibility.md`](../specs/08-quality/accessibility.md) — 20 kh
+- [ ] [`testing-strategy.md`](../specs/08-quality/testing-strategy.md) — 18 kh, 1 tc
+- [ ] [`performance-budgets.md`](../specs/08-quality/performance-budgets.md) — 13 kh, 1 tc · giữ nguyên mọi ngưỡng số
+- [ ] [`landing-page.md`](../specs/02-public/landing-page.md) — 12 kh, 1 tc
+- [ ] [`faq-and-help.md`](../specs/02-public/faq-and-help.md) — 8 kh, 1 tc
+- [ ] [`game-catalog-public.md`](../specs/02-public/game-catalog-public.md) — 7 kh, 2 tc
+- [ ] [`game-detail-public.md`](../specs/02-public/game-detail-public.md) — 7 kh
+- [ ] [`seo-and-structured-data.md`](../specs/02-public/seo-and-structured-data.md) — 6 kh, 1 tc
+- [ ] [`program-showcase.md`](../specs/02-public/program-showcase.md) — 5 kh
+- [ ] Xoá `02-public` và `08-quality` khỏi danh sách hoãn, **cùng commit**
+- [ ] `pnpm check` exit 0 · `pnpm test` không giảm · `approved` vẫn 23
+- [ ] Commit
+
+## Bước 11 — `06-admin` phần một, 14 file nội dung và studio · 110 kh · 4 vt · 25 tc
+
+> Khu vực phân bố đều, không file nào áp đảo.
+
+- [ ] [`lesson-authoring.md`](../specs/06-admin/lesson-authoring.md) — 15 kh, 2 tc
+- [ ] [`publish-and-version.md`](../specs/06-admin/publish-and-version.md) — 13 kh, 2 tc
+- [ ] [`game-level-studio.md`](../specs/06-admin/game-level-studio.md) — 10 kh, 4 tc
+- [ ] [`live-preview.md`](../specs/06-admin/live-preview.md) — 10 kh, 3 vt, 1 tc
+- [ ] [`content-review-queue.md`](../specs/06-admin/content-review-queue.md) — 8 kh, 4 tc
+- [ ] [`data-export.md`](../specs/06-admin/data-export.md) — 8 kh, 1 vt, 2 tc
+- [ ] [`schema-driven-form.md`](../specs/06-admin/schema-driven-form.md) — 10 kh, 1 tc
+- [ ] [`seo-content-admin.md`](../specs/06-admin/seo-content-admin.md) — 7 kh, 1 tc
+- [ ] [`curriculum-builder.md`](../specs/06-admin/curriculum-builder.md) — 5 kh, 1 tc
+- [ ] [`emoji-picker.md`](../specs/06-admin/emoji-picker.md) — 5 kh, 1 tc
+- [ ] [`taxonomy-browser.md`](../specs/06-admin/taxonomy-browser.md) — 6 kh
+- [ ] [`image-upload.md`](../specs/06-admin/image-upload.md) — 5 kh
+- [ ] [`activity-authoring.md`](../specs/06-admin/activity-authoring.md) — 3 kh, 1 tc
+- [ ] [`asset-usage-tracking.md`](../specs/06-admin/asset-usage-tracking.md) — 3 kh
+- [ ] `pnpm check` exit 0 · `pnpm test` không giảm · `approved` vẫn 23
+- [ ] Commit
+
+## Bước 12 — `06-admin` phần hai, 14 file người dùng và vận hành · 137 kh · 2 vt · 18 tc
+
+> Hai file đầu chiếm hơn một phần ba khu vực.
+
+- [ ] [`admin-auth.md`](../specs/06-admin/admin-auth.md) — 29 kh
+- [ ] [`child-profile-admin.md`](../specs/06-admin/child-profile-admin.md) — 23 kh, 3 tc
+- [ ] [`user-detail.md`](../specs/06-admin/user-detail.md) — 10 kh, 7 tc
+- [ ] [`admin-dashboard.md`](../specs/06-admin/admin-dashboard.md) — 9 kh, 2 vt, 4 tc
+- [ ] [`user-management.md`](../specs/06-admin/user-management.md) — 12 kh, 3 tc
+- [ ] [`notification-admin.md`](../specs/06-admin/notification-admin.md) — 9 kh, 1 tc
+- [ ] [`error-log-viewer.md`](../specs/06-admin/error-log-viewer.md) — 8 kh
+- [ ] [`payment-approval.md`](../specs/06-admin/payment-approval.md) — 8 kh
+- [ ] [`payment-queue.md`](../specs/06-admin/payment-queue.md) — 5 kh, 3 tc
+- [ ] [`system-activity.md`](../specs/06-admin/system-activity.md) — 7 kh
+- [ ] [`audit-log-viewer.md`](../specs/06-admin/audit-log-viewer.md) — 6 kh
+- [ ] [`entitlement-grant.md`](../specs/06-admin/entitlement-grant.md) — 5 kh, 1 tc
+- [ ] [`package-catalog-admin.md`](../specs/06-admin/package-catalog-admin.md) — 5 kh, 1 tc
+- [ ] [`feature-flags.md`](../specs/06-admin/feature-flags.md) — 3 kh
+- [ ] Xoá `06-admin` khỏi danh sách hoãn, **cùng commit**
+- [ ] `pnpm check` exit 0 · `pnpm test` không giảm · `approved` vẫn 23
+- [ ] Commit
+
+## Bước 13 — `07-addon`, 7 file · 99 kh · 33 tc
+
+> Khuôn rút gọn 7 mục thay vì 11. Tỷ lệ tham chiếu trần cao bất thường, và 24 trong 33 nằm riêng
+> ở một file.
+
+- [ ] [`semantic-search.md`](../specs/07-addon/semantic-search.md) — 20 kh, 24 tc · **có 11 tên
+      mục**, tức đang dùng khuôn đầy đủ chứ không phải khuôn rút gọn. Kiểm xem cố ý hay lỗi;
+      nếu lỗi thì **báo, không tự sửa cấu trúc mục**
+- [ ] [`ai-assistant.md`](../specs/07-addon/ai-assistant.md) — 22 kh, 4 tc
+- [ ] [`personal-curriculum.md`](../specs/07-addon/personal-curriculum.md) — 17 kh, 1 tc
+- [ ] [`custom-game-builder.md`](../specs/07-addon/custom-game-builder.md) — 15 kh, 2 tc
+- [ ] [`lesson-plan-creator.md`](../specs/07-addon/lesson-plan-creator.md) — 12 kh, 1 tc
+- [ ] [`ai-credit-ledger.md`](../specs/07-addon/ai-credit-ledger.md) — 8 kh, 1 tc
+- [x] [`pdf-export.md`](../specs/07-addon/pdf-export.md) — 5 kh · làm ở Cổng dừng B
+- [ ] Xoá `07-addon` khỏi danh sách hoãn, **cùng commit**
+- [ ] `pnpm check` exit 0 · `pnpm test` không giảm · `approved` vẫn 23
+- [ ] Commit
+
+## Cổng dừng D — hết chín khu vực của `docs/specs/`
+
+- [ ] Danh sách hoãn chỉ còn 6 file quy ước, `docs/taxonomy/`, `docs/tasks/`
+- [ ] `pnpm lint:specs` exit 0, 15 kiểm tra, 130 spec, 0 lỗi, cảnh báo không quá 213
+- [ ] `pnpm inventory:symbols specs` báo 0 cho cả chín khu vực
+- [ ] Số spec `approved` vẫn 23
+- [ ] Người duyệt đọc diff một khu vực chưa từng xem, xác nhận đạt
+
+---
+
+## Bước 14 — `docs/SPEC.md` · 1.287 dòng · 93 kh · 6 vt · 12 tc
+
+> File nhiều người đọc nhất, điểm vào dự án.
+
+- [ ] Viết lại toàn bộ văn xuôi theo chín việc
+- [ ] Mục 13, danh sách cổng ra từng phase: giữ nguyên **từng dòng**, kể cả ba dòng neo thêm ở
+      Task #3. Chỉ đổi cách viết
+- [ ] Kiểm tra C11 vẫn xanh — số spec khai trong file khớp filesystem
+- [ ] 6 lượt `ZPD` và `KPI`: **giữ nguyên**, chỉ chú giải một lần ở lần nhắc đầu
+- [ ] `pnpm check` exit 0 · `pnpm test` không giảm
+- [ ] Commit
+
+## Bước 15 — `index.md`, `roadmap.md`, `AUDIT-v1.md` · 37 kh · 4 vt · 213 tc
+
+> Ba file này gần như không có ký hiệu nhưng chiếm 213 tham chiếu trần, vì bản chất chúng là
+> bảng liệt kê tên spec. Bước này chủ yếu là việc 6 của quy trình chuẩn, làm hàng loạt.
+
+- [ ] [`AUDIT-v1.md`](../specs/AUDIT-v1.md) — 4 kh, 2 vt, 104 tc
+- [ ] [`roadmap.md`](../specs/roadmap.md) — 1 kh, 104 tc
+- [ ] [`index.md`](../specs/index.md) — 32 kh, 2 vt, 5 tc · kiểm tra C11 đối chiếu số lượng spec, đổi cách viết không được làm lệch số
+- [ ] Xoá 6 file quy ước khỏi danh sách hoãn, **cùng commit** (CONVENTIONS và TEMPLATE đã xong ở bước 3)
+- [ ] `pnpm check` exit 0 · `pnpm test` không giảm
+- [ ] Commit
+
+## Bước 16 — `docs/taxonomy/`, 8 file · 221 kh · 0 vt · 0 tc
+
+> Không phải spec — không frontmatter, không 11 mục — nên C1 và C3 không áp, chỉ C14 áp.
+>
+> **Cảnh báo nghiêm ngặt:** quy tắc `BR-TAX-09` của
+> [`taxonomy-service.md`](../specs/01-platform/taxonomy-service.md) mục 6 buộc dữ liệu seed khớp
+> **chính xác** ba con số 6, 41, 230 với các file này. Được đổi câu chữ mô tả. **Không** được
+> đổi: số lượng mục, mã kỹ năng, tên kỹ năng, thứ tự.
+
+- [ ] [`c1-mathematical-thinking.md`](../taxonomy/c1-mathematical-thinking.md) — 98 kh trên 197 dòng, mật độ cao nhất corpus
+- [ ] [`c2-spatial-thinking.md`](../taxonomy/c2-spatial-thinking.md) — 44 kh
+- [ ] [`c3-logical-thinking.md`](../taxonomy/c3-logical-thinking.md) — 30 kh
+- [ ] [`c5-language-thinking.md`](../taxonomy/c5-language-thinking.md) — 18 kh
+- [ ] [`c4-observation-thinking.md`](../taxonomy/c4-observation-thinking.md) — 15 kh
+- [ ] [`c6-executive-function.md`](../taxonomy/c6-executive-function.md) — 13 kh
+- [ ] [`index.md`](../taxonomy/index.md) — 2 kh
+- [ ] [`game-type-migration.md`](../taxonomy/game-type-migration.md) — 1 kh
+- [ ] **Đếm lại và ghi kết quả**: 6 năng lực · 41 nhánh · 230 kỹ năng. Lệch một con số là chặn
+- [ ] Xoá `docs/taxonomy/` khỏi danh sách hoãn, **cùng commit**
+- [ ] `pnpm check` exit 0 · `pnpm test` không giảm
+- [ ] Commit
+
+## Bước 17 — Thu gọn `READING-GUIDE.md` · 328 dòng · 74 kh · 2 vt · 6 tc
+
+> Làm sau bước 16: chỉ khi đã bỏ hết ký hiệu thật mới biết chắc mục nào thừa.
+
+- [ ] Bỏ hẳn mục 4, bảng giải mã ký hiệu — không còn ký hiệu để giải mã
+- [ ] Mục 8, giải mã văn phong: giữ, bỏ phần nói về ký hiệu
+- [ ] Mục 5: cập nhật từ 13 lên 15 kiểm tra
+- [ ] Mục 4.3, giải mã ký hiệu trong hồ sơ task: bỏ hẳn sau khi bước 18 và 19 xong. **Ghi chú
+      lại đây để không quên** — hoặc làm bước này hai lượt, hoặc dời hẳn sau bước 19
+- [ ] Giữ nguyên mục 1, 2, 3, 6, 7, 9, 10
+- [ ] Kiểm tra C4 xanh, mọi liên kết còn resolve
+- [ ] `pnpm check` exit 0
+- [ ] Commit
+
+---
+
+## Bước 18 — Hồ sơ Task #3, 2 file · 316 kh · 74 vt · 254 tc
+
+> Hai file dày nhất corpus. Đây là chỗ người dùng chỉ đích danh là khó đọc.
+>
+> **Không đổi trạng thái ô tick.** Đếm số `- [x]` và `- [ ]` trước và sau, phải bằng nhau.
+> Sổ ghi sai sự thật còn tệ hơn sổ khó đọc.
+
+- [ ] [`03-schema-contract-plan.md`](03-schema-contract-plan.md) — 629 dòng, 140 kh, 46 vt, 139 tc
+  - [ ] Bỏ hẳn khối chú giải ký hiệu ở dòng 8 tới 9 — không còn ký hiệu thì không cần chú giải
+  - [ ] `OQ` 11 lượt → "câu hỏi còn mở"
+  - [ ] `DMO` 18 · `SIB` 6 · `SPT` 6 · `SCT` 2 · `TAX` 1 · `GTC` 1 · `CLC` 1 → tên file thật kèm liên kết
+  - [ ] Ký hiệu bước `T0`, `T4b`, `T11` → "Bước 0", "Bước 4b", "Bước 11"
+  - [ ] Ký hiệu mâu thuẫn `M1` tới `M11` → "Mâu thuẫn 1" tới "Mâu thuẫn 11"
+  - [ ] Mã quyết định `D-Y` tới `D-AE`: **giữ mã**, thêm tên đọc được ở lần nhắc đầu
+  - [ ] Thêm mục "Kết quả cuối cùng" ở đầu file theo khuôn ở [`plan.md`](plan.md) giai đoạn 5
+- [ ] [`03-schema-contract-todo.md`](03-schema-contract-todo.md) — 438 dòng, 176 kh, 28 vt, 115 tc
+  - [ ] Bỏ khối chú giải ký hiệu ở đầu file
+  - [ ] `OQ` 7 · `DMO` 10 · `SIB` 7 · `SPT` 3 · `SCT` 1
+  - [ ] Thêm mục "Kết quả cuối cùng", ghi rõ hai ô Cổng dừng D còn treo
+- [ ] Xác minh: 7 spec đang trích mã `D-*` từ hai file này vẫn resolve. Kiểm
+      [`data-model-overview.md`](../specs/01-platform/data-model-overview.md) mục 7.3
+- [ ] Xác minh: số ô tick không đổi, đếm cả hai loại, cả hai file
+- [ ] `pnpm check` exit 0 · `pnpm test` không giảm
+- [ ] Commit
+
+## Bước 19 — Hồ sơ Task #1 và Task #2, 4 file · 276 kh · 33 vt · 247 tc
+
+- [ ] [`02-foundation-approve-plan.md`](02-foundation-approve-plan.md) — 477 dòng, 74 kh, 23 vt, 121 tc
+  - [ ] 23 lượt `OQ` — nhiều nhất corpus cho một file. Đây là file làm chữ viết tắt đó lan ra
+  - [ ] Mục "Kết quả cuối cùng" phải ghi nợ đang theo dõi: mã `D-X` bị dùng cho 11 quyết định
+        khác nhau, nên tra theo mã không phân biệt được. **Không sửa mã** — sửa sẽ hỏng mọi chỗ trích
+- [ ] [`02-foundation-approve-todo.md`](02-foundation-approve-todo.md) — 227 dòng, 74 kh, 9 vt, 66 tc
+- [ ] [`01-bootstrap-todo.md`](01-bootstrap-todo.md) — 171 dòng, 75 kh, 1 vt, 26 tc · mật độ cao nhất nhóm
+- [ ] [`01-bootstrap-plan.md`](01-bootstrap-plan.md) — 418 dòng, 53 kh, 34 tc
+- [ ] Cả 4 file có mục "Kết quả cuối cùng"
+- [ ] Xác minh: số ô tick không đổi, từng file
+- [ ] `pnpm check` exit 0 · `pnpm test` không giảm
+- [ ] Commit
+
+## Bước 20 — Ba file của chính Task #4
+
+- [ ] [`04-readability-spec.md`](04-readability-spec.md) — bọc hai bảng thay thế ở mục 4.1 và
+      4.2 vào khối mã, theo lối xử lý số 1 đã chọn ở mục 5.1
+- [ ] [`plan.md`](plan.md) — chuyển các lệnh `grep` chứa ký hiệu vào khối mã
+- [ ] [`todo.md`](todo.md) — file này, cùng việc như trên
+- [ ] Rà lại cả ba cho khớp quy ước cuối cùng, phòng khi bước 3 có điều chỉnh
+- [ ] Xoá `docs/tasks/` khỏi danh sách hoãn — **danh sách rỗng hoàn toàn**, không còn loại trừ nào
+- [ ] `pnpm check` exit 0 · `pnpm test` ít nhất 89
+- [ ] Commit
+
+## Cổng dừng E — đóng task
+
+- [ ] Mọi tiêu chí ở [`04-readability-spec.md`](04-readability-spec.md) mục 7 đạt
+- [ ] Bảng "Mục tiêu đo được" ở đầu file này điền đủ cột "Đạt" bằng số đo thật
+- [ ] `pnpm inventory:symbols` báo 0 cho **toàn bộ** `docs/`, không loại trừ vùng nào
+- [ ] Người duyệt ký
+
+---
+
+## Việc kế tiếp sau task này
+
+> Chuyển từ ô chưa tick của Cổng dừng D, Task #3 — xem
+> [`03-schema-contract-todo.md`](03-schema-contract-todo.md).
+
+- [ ] **Bước 8 của lộ trình phase P0** — viết `packages/db/src/schema/*.ts` và migration đầu
+      tiên. Điều kiện chặn theo quyết định D-AD: hai spec
+      [`audit-log.md`](../specs/01-platform/audit-log.md) và
+      [`backup-and-restore.md`](../specs/01-platform/backup-and-restore.md) phải `approved`
+      trước. Cả hai đã duyệt 2026-08-07, nên điều kiện đã thoả
+- [ ] **Người duyệt ký Cổng dừng D của Task #3** — ô cuối chưa tick, vẫn chờ
+
+## Theo dõi riêng, ngoài mọi task
+
+- [ ] Nợ Task #2 số 3 — 213 cảnh báo C6 thiếu cột "vì sao", và nâng C6 trở lại mức lỗi
+- [ ] Nợ Task #2 số 5 — mã `D-X` dùng cho 11 quyết định khác nhau, sổ quyết định mất tác dụng
+      truy vết
+- [ ] Bảy chu trình `depends_on` mà kiểm tra C7 cảnh báo: `02-public` ba, `03-account` một,
+      `06-admin` ba, `08-quality` một
+- [ ] Hành vi không nhất quán giữa C4, C9, C10 về việc có bỏ qua khối mã hay không. C4 không bỏ
+      qua, hai cái kia có. Đo được 2026-08-07
+- [ ] Duyệt phần seed của [`taxonomy-service.md`](../specs/01-platform/taxonomy-service.md) và
+      [`emoji-registry.md`](../specs/01-platform/emoji-registry.md) — bước 9 của lộ trình
+- [ ] `docs/montessori/` — 22 file PDF, chưa spec nào sở hữu
+- [ ] Chuyển `.agents/` vào `kidthink/` theo [`../SPEC.md`](../SPEC.md) mục 8
+- [ ] Chuyển `infra/` vào `kidthink/infra/` khi tới lúc triển khai
+- [ ] Nhánh lỗi PostgreSQL trong `scripts/check-services.ts` in thông điệp rỗng, mất `.message`
+      của lỗi ECONNREFUSED
+- [ ] Khảo sát 60 loại game bản v1 rút về 6 khuôn — phase P1, câu hỏi 1 của
+      [`game-template-contract.md`](../specs/01-platform/game-template-contract.md)
+- [ ] Kiểm toán `packages/ui` (1,2 MB) đối chiếu
+      [`design-system-contract.md`](../specs/08-quality/design-system-contract.md) câu hỏi 1
+- [ ] Cổng phía server thay cho `--no-verify`, câu hỏi 12 của
+      [`repo-bootstrap.md`](../specs/00-foundation/repo-bootstrap.md)
+- [ ] Thêm lại service S3 local vào `docker-compose.yml` khi làm tới
+      [`image-storage.md`](../specs/01-platform/image-storage.md)
