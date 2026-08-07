@@ -52,9 +52,9 @@ của Manager, và đó là một luồng khác chưa có ở phiên bản này.
 
 ## 7. Data
 
-`custom_games`: `id` · `uuid` · `user_id` · `template_code` · `title` · `instruction` ·
+`custom_games`: `id` · `uuid` · `user_id` · `template_id` · `title` · `instruction` ·
 `content_pack` JSONB · `difficulty_params` JSONB · `theme_id` · `age_min` `age_max` ·
-`skill_codes` nullable · `status` (`draft`\|`ready`) · `created_at`.
+`skill_ids` nullable · `status` (`draft`\|`ready`) · `created_at`.
 
 ❌ Không `access_tier` — luôn riêng tư. ❌ Không `content_version` — ❌ không có publish công khai.
 

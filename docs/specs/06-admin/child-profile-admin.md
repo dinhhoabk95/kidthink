@@ -75,7 +75,7 @@ Nhóm "Hồ sơ trẻ" trong `/users/{uuid}`. Không có trang độc lập —
 | `created_at` | ✅ | Vận hành |
 | `birth_year` | ❌ | Chi tiết hơn `age_band` mà không thêm giá trị vận hành |
 | `avatar_id` | ❌ | |
-| `current_curriculum_code` | ❌ | |
+| `current_curriculum_id` | ❌ | |
 | `daily_play_cap_minutes` | ❌ | |
 | `uuid` | ❌ hiện dạng rút gọn khi cần đối chiếu log | |
 | Mọi dữ liệu học tập | ❌ | `BR-CPA-03` |

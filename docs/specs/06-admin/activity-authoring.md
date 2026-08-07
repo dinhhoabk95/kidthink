@@ -67,12 +67,12 @@ sửa một lần, mọi lesson dùng nó đều được cập nhật.
 
 | `kind` | Trường đặc thù |
 |---|---|
-| `digital_game` | `ref_code` → game level |
+| `digital_game` | `ref_id` → game level (`entity_id`, D-AE) |
 | `discussion` | Câu hỏi gợi mở |
 | `storytelling` | Nội dung truyện hoặc link |
 | `movement` | Không gian cần, an toàn |
 | `manipulative` | Vật liệu (khối, thẻ, hạt) |
-| `worksheet` | `ref_code` → worksheet |
+| `worksheet` | `ref_id` → worksheet (`entity_id`, D-AE) |
 | `observation` | Điều cần quan sát ở trẻ |
 | `mini_project` | Nhiều buổi, vật liệu |
 | `assessment` | Tiêu chí quan sát |
@@ -84,14 +84,14 @@ cho thời gian màn hình.
 ### 7.2 Trường chung
 
 `code` · `title_vi` · `instruction_vi` · `estimated_minutes` · `materials_vi` ·
-`skill_codes` + `weight` · `learning_objective_codes` · tag ba trục · `access_tier` ·
+`skill_ids` + `weight` · `learning_objective_ids` · tag ba trục · `access_tier` ·
 `status` · `content_version`.
 
 ## 8. API contract
 
 ### `POST /api/managers/activities` · `PATCH .../{code}/{version}`
 
-422 khi `kind = digital_game` mà `ref_code` trỏ level không `published`.
+422 khi `kind = digital_game` mà `ref_id` trỏ level không `published`.
 
 ### `GET /api/managers/activities`
 
@@ -109,7 +109,7 @@ Scenario: BR-ACA-01 — trường thay đổi theo kind
   When chọn kind manipulative
   Then trường materials_vi hiện ra
   When chọn kind digital_game
-  Then trường ref_code hiện ra thay thế
+  Then trường ref_id hiện ra thay thế
 
 Scenario: BR-ACA-03 — thời lượng trong khoảng
   When đặt estimated_minutes = 40
@@ -134,7 +134,7 @@ Scenario: sửa activity ảnh hưởng mọi lesson dùng nó
 ## 10. Boundaries
 
 **Always**
-- Kiểm `ref_code` trỏ nội dung `published`.
+- Kiểm `ref_id` trỏ nội dung `published`.
 - Vật liệu bắt buộc cho hoạt động ngoài màn hình.
 - Tag ba trục trước publish.
 

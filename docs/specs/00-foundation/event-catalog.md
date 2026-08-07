@@ -136,7 +136,7 @@ client, tương đối so với `session.started_at`) · `content_version`.
 |---|---|
 | `session_uuid` `seq` | PK ghép — ép idempotent ở tầng DB |
 | `child_uuid` | NULL cho guest |
-| `game_level_id` `content_version` `template_code` | `game_level_id` FK hàng version cụ thể (D-AE), `template_code` ngoại lệ (`game_templates`) |
+| `game_level_id` `content_version` `template_id` | Cột thật — FK hàng version cụ thể lúc chơi (D-AE). Khác `payload.template_code` ở §7.1 (JSONB tự do, không phải FK) |
 | `event_name` | FK logic tới catalog |
 | `payload` | JSONB, parse bằng schema của event |
 | `occurred_at_ms` `ingested_at` | |

@@ -71,7 +71,7 @@ hoạt động ngoài màn hình.
 | Phần | Bắt buộc |
 |---|:--:|
 | `title_vi` | ✅ |
-| `learning_objective_codes` | ✅ ≥1 |
+| `learning_objective_ids` | ✅ ≥1 |
 | `target_age_min` / `max` | ✅ |
 | `estimated_minutes` | ✅ |
 | `materials_vi` — vật liệu cần chuẩn bị | ❌ |

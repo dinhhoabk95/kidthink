@@ -101,7 +101,7 @@ Spec này ép ràng buộc lên schema **trước** khi bảng được tạo.
 | — | — | `age_band` **không phải cột** — suy từ `birth_year` lúc đọc (D-AA) | — |
 | `avatar_id` | varchar(24) | FK logic tới bộ preset. ❌ không path upload | ✅ |
 | `relationship` | enum | `child` \| `student` \| `other` | ❌ tuỳ chọn |
-| `current_curriculum_code` | varchar | Chương trình đang theo — con trỏ luôn theo bản `published` mới nhất, ❌ không ghim version. Ngoại lệ có chủ đích trong quy tắc chung "FK dùng `id`" (`data-model-overview` `BR-DM-13`, D-AE), cùng cơ chế `curriculum_items.entity_code` (`BR-SCT-06`) | ❌ |
+| `current_curriculum_id` | bigint | Chương trình đang theo — FK `curricula.entity_id` (**neo dòng dõi**, bất biến qua version), ❌ không phải `id` của một hàng version cụ thể và ❌ không phải `code`. Luôn theo bản `published` mới nhất qua `WHERE entity_id = ? AND status='published'` (`data-model-overview` `BR-DM-13`, D-AE — sửa lại 2026-08-07, cùng cơ chế `curriculum_items` `BR-SCT-06`) | ❌ |
 | `daily_play_cap_minutes` | smallint | Hạn mức giờ chơi | ✅ mặc định |
 | `status` | enum | `active` \| `archived` \| `pending_deletion` | ✅ |
 | `created_at` `updated_at` | timestamptz | | ✅ |

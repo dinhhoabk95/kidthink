@@ -100,7 +100,7 @@ Index này là nơi `BR-VER-02` thực sự được ép. Tầng service kiểm 
 
 | Thực thể | Field |
 |---|---|
-| `game_levels` | `template_code` · `content_pack` · `difficulty_params` · `skill_ids` · `learning_objective_ids` · `age_min` · `age_max` · `difficulty` · `access_tier` |
+| `game_levels` | `template_id` · `content_pack` · `difficulty_params` · `skill_ids` · `learning_objective_ids` · `age_min` · `age_max` · `difficulty` · `access_tier` |
 | `lessons` | `activities[]` · `learning_objective_ids` · `target_age` · `access_tier` |
 | `curricula` | `curriculum_items[]` · thứ tự · `access_tier` |
 
@@ -116,9 +116,14 @@ chỉ để hiển thị thì không.**
 ```
 play_sessions.game_level_id         → FK hàng version cụ thể lúc chơi (D-AE)
 play_sessions.content_version       → NOT NULL — giữ tường minh dù đã ngầm định trong id
-play_sessions.template_code         → template lúc chơi (game_templates dùng code, ngoại lệ D-AE)
+play_sessions.template_id           → template lúc chơi (FK game_templates.id, D-AE)
 telemetry_events.content_version    → NOT NULL
 ```
+
+Ngoài dữ liệu chơi (ghim đúng version, ❌ không đổi theo published mới), tham chiếu **tới
+nội dung khác cần luôn theo bản published mới nhất** (`curriculum_items`, `current_curriculum_id`)
+dùng `entity_id` — neo dòng dõi bất biến qua version, xem `schema-content-taxonomy` §7 đầu mục
+và `data-model-overview` `BR-DM-13`. Cả hai loại đều là `id`, không phải `code` (D-AE).
 
 ## 8. API contract
 
@@ -223,5 +228,5 @@ Scenario: BR-VER-05 — báo cáo cảnh báo khi nội dung đã đổi
 | # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
 |---|---|---|---|---|
 | 1 | Giữ bao nhiêu version cũ trước khi archive lạnh sang S3? Trên t3.small dung lượng là ràng buộc thật | Chi phí lưu trữ | 🟡 chi phí | hoãn |
-| ~~2~~ | ~~Curriculum tham chiếu lesson theo `code` hay `(code, version)`~~ **Đóng 2026-08-06 (T11)**: **`code` only** — curriculum luôn dùng bản published mới nhất. Ghim version tạo overhead quản lý quá lớn cho MVP (phải bump FK mỗi lần cập nhật nội dung). FK trong `schema-content-taxonomy` trỏ `code` **Làm rõ 2026-08-07 (D-AE)**: kết luận này **không đổi** — đây là ngoại lệ có chủ đích trong quy tắc chung "FK dùng `id`" mới chốt ở `data-model-overview` `BR-DM-13`, áp riêng cho tham chiếu cố ý luôn theo bản published mới nhất (`entity_code`). Quan hệ cha-con khác (vd. `lesson_activities`→`lessons`, `curriculum_items`→`curricula`) chuyển sang `id` | — | ✅ đóng | D-X (T11) · D-AE |
+| ~~2~~ | ~~Curriculum tham chiếu lesson theo `code` hay `(code, version)`~~ **Đóng 2026-08-06 (T11)**: **`code` only** — curriculum luôn dùng bản published mới nhất, ❌ không ghim version. **Sửa lại 2026-08-07 (D-AE, lần 2)**: kết luận **hành vi** (luôn theo published mới nhất) **không đổi**, nhưng cơ chế lưu trữ đổi — lần đầu (2026-08-07, D-AE lần 1) tôi chọn giữ `code` làm ngoại lệ cho FK, đó là **sai** (người dùng bác: "FK tất cả phải tham chiếu ID, không có ngoại lệ"). Cơ chế đúng: cột `entity_id` — **neo dòng dõi**, bất biến qua mọi version của một `code` (version đầu `entity_id = id`, version sau copy nguyên). Tham chiếu join `WHERE entity_id = ? AND status = 'published'` — vẫn tự động theo bản mới nhất, và **vẫn là `id`**, không phải `code`. FK trong `schema-content-taxonomy` trỏ `entity_id`. Quan hệ cha-con (`lesson_activities`→`lessons`, `curriculum_items`→`curricula`) dùng `id` của đúng hàng version (không đổi) | — | ✅ đóng | D-X (T11) · D-AE |
 | 3 | Báo cáo nâng cao có nên loại trừ dữ liệu từ version quá cũ không? | `advanced-report` | 🟡 P3 | hoãn |

@@ -88,11 +88,15 @@ L1 COMPETENCY          6      C1..C6
 
 | Bảng | Field then chốt |
 |---|---|
-| `competencies` | `code` (C1–C6), `name_vi`, `description_vi`, `color_token`, `icon` |
-| `strands` | `code`, `competency_code` FK, `parent_strand_id` (≤1 tầng), `name_vi`, `position` |
-| `skills` | `code`, `strand_code` FK, `name_vi`, `age_min`, `age_max`, `difficulty`, `thinking_processes[]`, `what_axis[]`, `status` |
-| `skill_prerequisites` | `skill_code` FK, `prerequisite_code` FK, `strength` — PK ghép |
-| `learning_objectives` | `code`, `skill_code` FK, `behaviour_vi`, `observable_criteria_vi`, `position` |
+| `competencies` | `id` PK, `code` (C1–C6, hiển thị), `name_vi`, `description_vi`, `color_token`, `icon` |
+| `strands` | `id` PK, `code` (hiển thị), `competency_id` FK, `parent_strand_id` (≤1 tầng), `name_vi`, `position` |
+| `skills` | `id` PK, `code` (hiển thị), `strand_id` FK, `name_vi`, `age_min`, `age_max`, `difficulty`, `thinking_processes[]`, `what_axis[]`, `status` |
+| `skill_prerequisites` | `skill_id` FK, `prerequisite_id` FK, `strength` — PK ghép |
+| `learning_objectives` | `id` PK, `code` (hiển thị), `skill_id` FK, `behaviour_vi`, `observable_criteria_vi`, `position` |
+
+Cột thật xem [`schema-content-taxonomy.md`](schema-content-taxonomy.md) §7.1 — file này chỉ
+liệt kê field, không phải nguồn `owns`. FK dùng `id` theo `data-model-overview` `BR-DM-13`
+(D-AE, sửa lại 2026-08-07) — `code` giữ lại làm định danh hiển thị, ❌ không dùng làm FK.
 
 ### 7.2 Phân bố MVP
 
@@ -159,7 +163,7 @@ Scenario: BR-TAX-01 — chu trình làm seed fail trước khi ghi
 
 Scenario: BR-TAX-02 — mọi skill có đủ LO
   Given seed hoàn tất
-  When đếm learning_objectives theo skill_code
+  When đếm learning_objectives theo skill_id
   Then không skill nào có ít hơn 3
 
 Scenario: BR-TAX-09 — số lượng khớp tài liệu
@@ -171,7 +175,7 @@ Scenario: BR-TAX-09 — số lượng khớp tài liệu
 
 Scenario: BR-TAX-03 — mỗi LO thuộc đúng một skill
   When kiểm mọi hàng learning_objectives
-  Then mỗi hàng có đúng một skill_code không NULL
+  Then mỗi hàng có đúng một skill_id không NULL
 
 Scenario: BR-TAX-05 — prerequisite không khó hơn skill
   When kiểm mọi hàng skill_prerequisites

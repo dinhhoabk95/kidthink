@@ -45,7 +45,7 @@ Không có.
 | `BR-SPT-02` | ❌ **NEVER cột ngày sinh đầy đủ, họ tên đầy đủ, hay path ảnh upload** trên `child_profiles` | `BR-CDC-02` `BR-CDC-03` `BR-CDC-04` |
 | `BR-SPT-03` | `telemetry_events` PK `(session_uuid, seq)` — idempotent ở tầng DB | `BR-EVT-03` |
 | `BR-SPT-04` | `telemetry_events.child_uuid` **nullable** — guest là NULL, và xoá tài khoản đặt về NULL | Ẩn danh hoá thay vì xoá cứng |
-| `BR-SPT-05` | `mastery_state` khoá theo `skill_code` **FK**, ❌ không chuỗi tự do | `BR-TAX-07` |
+| `BR-SPT-05` | `mastery_state` khoá theo `skill_id` **FK** (`skills.id`), ❌ không chuỗi tự do, ❌ không `skill_code` (D-AE) | `BR-TAX-07` |
 | `BR-SPT-06` | `play_sessions.content_version` NOT NULL | `BR-VER-03` |
 | `BR-SPT-07` | `telemetry_events` · `play_sessions` INSERT-only sau khi `completed` | |
 | `BR-SPT-08` | `p_learn` CHECK 0–1 ở tầng DB | Bất biến quan trọng nhất của adaptive |
@@ -63,7 +63,7 @@ Không có.
 | `birth_year` | smallint | NOT NULL, CHECK trong khoảng cho tuổi 3–6. Index đơn cho lookup theo tuổi |
 | `avatar_id` | varchar(24) | NOT NULL — FK logic tới preset |
 | `relationship` | enum | `child`\|`student`\|`other`, nullable |
-| `current_curriculum_code` | varchar | nullable |
+| `current_curriculum_id` | bigint | nullable — FK `curricula.entity_id` (neo dòng dõi, D-AE), luôn theo bản `published` mới nhất |
 | `daily_play_cap_minutes` | smallint | NOT NULL default theo gói |
 | `status` | enum | `active`\|`archived`\|`pending_deletion` |
 | `created_at` `updated_at` | timestamptz | |
@@ -79,7 +79,7 @@ Không có.
 | `user_id` | nullable — NULL cho guest |
 | `child_profile_id` | nullable — NULL cho guest |
 | `guest_device_id` | nullable — cookie `tm_did` |
-| `game_level_id` `content_version` `template_code` | NOT NULL — `game_level_id` FK hàng version cụ thể (D-AE), `template_code` ngoại lệ (`game_templates`) |
+| `game_level_id` `content_version` `template_id` | NOT NULL — FK hàng version cụ thể lúc chơi (D-AE), kể cả `template_id` (`game_templates.id`) |
 | `curriculum_id` `curriculum_item_id` `lesson_id` | nullable — FK hàng version cụ thể lúc chơi (D-AE) |
 | `access_tier_at_start` | Bậc lúc mở phiên |
 | `started_at` `completed_at` `duration_ms` | |
@@ -98,7 +98,7 @@ CHECK: `(child_profile_id IS NOT NULL) OR (guest_device_id IS NOT NULL)`.
 |---|---|
 | `session_uuid` `seq` | PK ghép |
 | `child_uuid` | nullable |
-| `game_level_id` `content_version` `template_code` | `game_level_id` FK hàng version cụ thể lúc chơi (D-AE); `content_version` giữ tường minh cho báo cáo dù đã ngầm định trong id |
+| `game_level_id` `content_version` `template_id` | FK hàng version cụ thể lúc chơi (D-AE); `content_version` giữ tường minh cho báo cáo dù đã ngầm định trong `game_level_id` |
 | `event_name` | varchar — từ catalog |
 | `payload` | JSONB — schema theo event |
 | `occurred_at_ms` | int — tương đối so với `started_at` |
@@ -114,14 +114,13 @@ Hai điều kiện giữ đường mở: (a) ❌ không FK nào trỏ **vào** `
 
 ### 7.4 `child_session_summaries`
 
-`(child_profile_id, session_uuid)` PK · `date_ict` date · `skill_codes` text[] ·
+`(child_profile_id, session_uuid)` PK · `date_ict` date · `skill_ids` bigint[] ·
 `score` · `duration_ms` · `hint_count` · `retry_count` · `completed` bool.
 
 ### 7.5 Bảng rollup — `child_daily_stats` · `level_daily_stats` · `skill_daily_stats`
 
 `child_daily_stats` `(child_profile_id, date_ict)` · `level_daily_stats`
-`(game_level_id, date_ict)` · `skill_daily_stats` `(skill_code, date_ict)` — `skill_code`
-ngoại lệ D-AE (taxonomy Lớp 1).
+`(game_level_id, date_ict)` · `skill_daily_stats` `(skill_id, date_ict)`.
 
 Chi tiết cột: `telemetry-pipeline` §7.1.
 
@@ -129,7 +128,7 @@ Chi tiết cột: `telemetry-pipeline` §7.1.
 
 | Cột | Ràng buộc |
 |---|---|
-| `(child_profile_id, skill_code)` | PK ghép, cả hai FK |
+| `(child_profile_id, skill_id)` | PK ghép, cả hai FK |
 | `p_learn` | numeric CHECK `>= 0 AND <= 1` |
 | `attempts_total` `attempts_recent` | int |
 | `ema_correct` | numeric CHECK 0–1 |
@@ -163,8 +162,8 @@ Scenario: BR-SPT-08 — p_learn bị ràng buộc ở DB
   When chèn mastery_state với p_learn = 1.5
   Then CHECK constraint từ chối
 
-Scenario: BR-SPT-05 — skill_code là FK thật
-  When chèn mastery_state với skill_code không tồn tại
+Scenario: BR-SPT-05 — skill_id là FK thật
+  When chèn mastery_state với skill_id không tồn tại
   Then vi phạm khoá ngoại
 
 Scenario: BR-SPT-06 — phiên chơi bắt buộc có content_version

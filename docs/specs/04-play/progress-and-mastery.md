@@ -97,7 +97,7 @@ Huy hiệu là **kỷ niệm**, không phải mục tiêu. ❌ Không có bảng
 | Trường | Nguồn |
 |---|---|
 | Nhãn thành thạo mỗi skill | `mastery_state.p_learn` → bảng `adaptive-engine` §7.4 |
-| Skill đã tiếp xúc | `child_session_summaries.skill_codes` |
+| Skill đã tiếp xúc | `child_session_summaries.skill_ids` |
 | Skill cần củng cố | `p_learn < 0.4` và `attempts_total ≥ 3` |
 | Skill sẵn sàng học tiếp | `p_learn ≥ 0.8` và có skill kế trong DAG |
 

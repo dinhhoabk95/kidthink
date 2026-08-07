@@ -279,6 +279,43 @@ người dùng yêu cầu: **FK/quan hệ đa hình mặc định dùng `id`, tr
 - [ ] ⚠️ Chưa làm: rà lại 228 warning nền có tăng do các reviewed-date bump này không (đo ở
       Checkpoint C)
 
+### D-AE sửa lại lần 2 (2026-08-07) — người dùng bác ngoại lệ "code cho tham chiếu luôn-mới-nhất"
+
+Lần đầu tôi giữ `code` cho hai nhóm: (a) taxonomy Lớp 1/`game_templates`, (b) tham chiếu cố ý
+luôn theo bản published mới nhất. Người dùng bác thẳng: **"FK tất cả phải tham chiếu ID chứ
+không phải code, không có ngoại lệ."** Sửa lại đúng:
+
+- [x] Taxonomy Lớp 1 (`competencies`/`strands`/`skills`/`learning_objectives`/`content_tags`)
+      + `game_templates`: **vẫn giữ cột `code`** (định danh hiển thị/URL, `id-conventions` §7)
+      nhưng **mọi bảng khác trỏ tới chúng bằng `id`**, ❌ không còn `_code` FK ở đâu
+      (`strands.competency_id`, `skills.strand_id`, `learning_objectives.skill_id`,
+      `content_tag_map`/`content_skill_map.tag_id`/`skill_id`, `mastery_state.skill_id`,
+      `skill_daily_stats.skill_id`, `game_levels.template_id`)
+- [x] Nhóm (b) "luôn theo published mới nhất" — thay cơ chế `code` bằng **`entity_id`** (neo
+      dòng dõi): version đầu `entity_id = id`, version sau copy nguyên qua copy-on-write. Vẫn
+      là `id`, chỉ khác cột nào (`entity_id` = trôi theo published, `id` = ghim đúng version).
+      Áp cho: `curriculum_items.entity_id`, `current_curriculum_id` (child_profiles),
+      `activities.ref_id`, `lesson_activities.activity_id`, `my-library.entity_id`,
+      `curriculum-builder` PUT body `entity_id`
+- [x] Thêm cột `entity_id` vào 5 bảng Lớp 2 có version: `game_levels`·`lessons`·`activities`·
+      `curricula`·`worksheets`
+- [x] `data-model-overview` `BR-DM-13` viết lại — bỏ hẳn 2 ngoại lệ, chỉ còn quy tắc
+      "id cho FK, code cho định danh hiển thị" + cơ chế `entity_id`
+- [x] `content-versioning` §11 Q2 — thêm lượt sửa thứ 3 (lượt 1: T11 "code only"; lượt 2:
+      D-AE lần 1 hôm nay giữ code làm ngoại lệ — **sai**; lượt 3: D-AE lần 2 — `entity_id`)
+- [x] Quét toàn corpus, sửa thêm 8 chỗ mirror bị lệch phát hiện thêm:
+      `content-search.md`/`content-tagging.md` (`tag_code`→`tag_id`), `worksheet-model.md`/
+      `lesson-authoring.md` (`learning_objective_codes`→`_ids`), `progress-and-mastery.md`
+      (`skill_codes`→`skill_ids`), `custom-game-builder.md` (`template_code`/`skill_codes`)
+- [x] **Không đổi** (external-facing theo `BR-DM-10`, khác lớp với FK nội bộ): API
+      request/response body (`curriculum-player.md` JSON trả `entity_code`, `game-config-
+      delivery.md` `template_code`, `game-level-studio.md`/`lesson-authoring.md` Body admin
+      submit theo code), URL param (`taxonomy-browser.md /taxonomy/{skill_code}`), event
+      payload JSONB tự do (`event-catalog` §7.1), runtime config gửi xuống client
+      (`game-engine-runtime.md`)
+- [x] `pnpm lint:specs` 0 error/231 warning (không tăng) · `pnpm check` exit 0 ·
+      `pnpm test` 81/81 — chạy lại sau sửa lần 2
+
 ## ⛔ CHECKPOINT C
 
 - [ ] ✅ `pnpm lint:specs` exit 0 — **13 check** × 130 spec

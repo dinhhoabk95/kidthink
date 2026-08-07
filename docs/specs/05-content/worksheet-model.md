@@ -60,7 +60,7 @@ Người soạn · người dạy · trẻ (làm trên giấy).
 
 ## 7. Data
 
-`code` · `content_version` · `title_vi` · `learning_objective_codes` · `layout_template` ·
+`code` · `content_version` · `title_vi` · `learning_objective_ids` · `layout_template` ·
 `content_blocks` JSONB · `pdf_path` · `access_tier` · `status`.
 
 ### 7.1 Loại worksheet

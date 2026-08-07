@@ -104,7 +104,7 @@ không phải một thư viện.
 ### 7.3 Index cần có
 
 `game_levels(status, access_tier, age_min, age_max)` ·
-`content_tag_map(tag_code, entity_type)` ·
+`content_tag_map(tag_id, entity_type)` ·
 `content_skill_map(skill_id, entity_type)` ·
 GIN trên `to_tsvector('simple', unaccent(title_vi || ' ' || description_vi))`.
 

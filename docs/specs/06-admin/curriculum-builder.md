@@ -99,7 +99,8 @@ Trên: chỉ báo cân bằng dạng thanh. Dưới: cảnh báo còn lại.
 
 ### `PUT /api/managers/curricula/{code}/{version}/items`
 
-Body `{ items: [{ week_no, session_no, position, entity_type, entity_code, is_required, estimated_minutes }] }`.
+Body `{ items: [{ week_no, session_no, position, entity_type, entity_id, is_required, estimated_minutes }] }`.
+`entity_id` là `entity_id` (neo dòng dõi, D-AE) của bảng đích — luôn bản `published` mới nhất.
 Thay toàn bộ, ❌ không patch từng item — giữ tính nguyên tử của thứ tự.
 
 ### `GET /api/managers/curricula/{code}/{version}/balance`

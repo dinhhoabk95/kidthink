@@ -63,8 +63,9 @@ User đã đăng nhập.
 
 ### 7.1 Bảng
 
-`library_items`: `(user_id, entity_type, entity_code)` PK ghép · `collection_id` nullable ·
-`note` nullable · `created_at`.
+`library_items`: `(user_id, entity_type, entity_id)` PK ghép · `entity_id` FK `entity_id`
+(neo dòng dõi, D-AE) của bảng tương ứng theo `entity_type` — luôn bản `published` mới nhất ·
+`collection_id` nullable · `note` nullable · `created_at`.
 
 `collections`: `id` · `user_id` · `name` · `position`.
 
@@ -88,9 +89,9 @@ Query `entity_type` `collection_id` `tag` `q`. Trần 100.
 
 ### `POST /api/users/library/items`
 
-Body `{ entity_type, entity_code, collection_id? }`. 201. 409 nếu đã lưu.
+Body `{ entity_type, entity_id, collection_id? }`. 201. 409 nếu đã lưu.
 
-### `DELETE /api/users/library/items/{entity_type}/{entity_code}`
+### `DELETE /api/users/library/items/{entity_type}/{entity_id}`
 
 ### `POST /api/users/collections`
 
