@@ -2,7 +2,7 @@
 spec: SCHEMA-PLAY-TELEMETRY
 title: Schema — trẻ, phiên chơi, telemetry, mastery
 area: platform
-status: draft
+status: approved
 mvp: true
 phase: P0
 reviewed: 2026-08-07
@@ -47,7 +47,7 @@ Không có.
 | `BR-SPT-04` | `telemetry_events.child_uuid` **nullable** — guest là NULL, và xoá tài khoản đặt về NULL | Ẩn danh hoá thay vì xoá cứng |
 | `BR-SPT-05` | `mastery_state` khoá theo `skill_id` **FK** (`skills.id`), ❌ không chuỗi tự do, ❌ không `skill_code` (D-AE) | `BR-TAX-07` |
 | `BR-SPT-06` | `play_sessions.content_version` NOT NULL | `BR-VER-03` |
-| `BR-SPT-07` | `telemetry_events` · `play_sessions` INSERT-only sau khi `completed` | |
+| `BR-SPT-07` | `telemetry_events` · `play_sessions` INSERT-only sau khi `completed` | `BR-DM-05`. Đây là dữ liệu **đã xảy ra** — sửa được nghĩa là báo cáo tiến bộ của một đứa trẻ ❌ không còn giải thích được bằng thứ nó thật sự đã chơi (D5). `play_sessions` mở cho UPDATE tới lúc `completed` vì phiên đang chạy còn ghi tiếp; sau đó đóng lại |
 | `BR-SPT-08` | `p_learn` CHECK 0–1 ở tầng DB | Bất biến quan trọng nhất của adaptive |
 
 ## 7. Data
