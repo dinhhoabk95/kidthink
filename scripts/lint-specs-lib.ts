@@ -1176,12 +1176,14 @@ export function checkC12(_specs: SpecFile[]) {
     }
 
     // Extract spec file reference from Spec chi tiết cell
-    // Could be `schema-identity-billing` (backticked) or
-    // [`schema-identity-billing.md`](schema-identity-billing.md) (link) or
-    // "idem" (same as previous)
+    // Three formats:
+    //   1. `schema-identity-billing` (backticked, no extension)
+    //   2. [`schema-identity-billing.md`](schema-identity-billing.md) (link with backticked text)
+    //   3. [schema-identity-billing.md](schema-identity-billing.md) (link with plain text)
+    //   4. "idem" (same as previous)
     const specMatch =
-      specCell.match(/`(schema-[\w-]+)`/) ??
-      specCell.match(/\[(schema-[\w-]+)(?:\.md)?\]\([^)]+\)/);
+      specCell.match(/`(schema-[\w-]+)(?:\.md)?`/) ??
+      specCell.match(/\[`?(schema-[\w-]+)(?:\.md)?`?\]\([^)]+\)/);
     let specRel: string | undefined;
     if (specMatch) {
       specRel = `01-platform/${specMatch[1]}.md`;

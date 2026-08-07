@@ -22,7 +22,7 @@ depends_on:
 ## 1. Objective
 
 Bản đồ schema và **quy tắc chung** áp cho mọi bảng. Chi tiết từng nhóm ở ba spec con —
-file này ❌ không lặp lại định nghĩa cột.
+file này không lặp lại định nghĩa cột.
 
 Bốn quyết định định hình toàn bộ schema, mỗi cái là một ràng buộc không thương lượng.
 
@@ -40,7 +40,7 @@ Bốn quyết định định hình toàn bộ schema, mỗi cái là một ràn
 |---|---|
 | `packages/db/src/schema/` | Một file mỗi module domain, ≤ 400 dòng |
 | `packages/db/src/migrations/` | Drizzle migration |
-| `schema-identity-billing.md` · `schema-content-taxonomy.md` · `schema-play-telemetry.md` | Chi tiết cột |
+| [`schema-identity-billing.md`](schema-identity-billing.md) · [`schema-content-taxonomy.md`](schema-content-taxonomy.md) · [`schema-play-telemetry.md`](schema-play-telemetry.md) | Chi tiết cột |
 
 ## 4. Main flow — thêm một bảng
 
@@ -55,7 +55,7 @@ Bốn quyết định định hình toàn bộ schema, mỗi cái là một ràn
 | Nhánh | Hành vi |
 |---|---|
 | Đổi kiểu cột | **Ask first.** Hai phase: thêm cột mới → backfill → chuyển đọc → drop cột cũ |
-| Xoá cột | ❌ **NEVER một phase.** Deprecate trước, drop sau ≥1 release |
+| Xoá cột | **NEVER một phase.** Deprecate trước, drop sau ≥1 release |
 | Bảng lớn cần index | Tạo `CONCURRENTLY` ở production |
 
 ## 6. Business rules
@@ -67,32 +67,32 @@ Bốn quyết định định hình toàn bộ schema, mỗi cái là một ràn
 | `BR-DM-03` | **`content_skill_map.weight ∈ [0,1]`** — 1.0 mục tiêu chính, 0.3 có chạm tới | Không có nó, một game đếm vô tình "dạy" mọi skill nó chạm tới |
 | `BR-DM-04` | **FK polymorphic không ép được ở Postgres** → toàn vẹn do tầng service giữ, **bắt buộc** integration test bắt orphan | Ràng buộc không ép được ở DB là ràng buộc sẽ bị vi phạm |
 | `BR-DM-05` | Bảng INSERT-only: `audit_logs` `consent_logs` `content_review_log` `telemetry_events` `play_events` — ép bằng **quyền DB** | Ép bằng quy ước là không ép |
-| `BR-DM-06` | ❌ **NEVER raw SQL** — chỉ Drizzle. Ngoại lệ: `sql\`\`` cho tăng nguyên tử và `coalesce` cross-table | Chuỗi SQL nối tay là đường vào injection, và né được typecheck nên đổi schema không làm nó đỏ. Hai ngoại lệ là chỗ Drizzle ❌ không diễn đạt được — giữ hẹp, ❌ không mở thành cửa chung |
-| `BR-DM-07` | Cột và bảng `snake_case`. Payload API giữ nguyên `snake_case`, ❌ không transform | Transform hai chiều là hai chỗ để lệch |
-| `BR-DM-08` | Mọi bảng có `created_at`; bảng sửa được có `updated_at` | Không có mốc thời gian thì ❌ không trả lời được "hàng này có từ bao giờ" lúc điều tra sự cố — và thêm cột sau khi đã có dữ liệu thì mọi hàng cũ mang giá trị bịa |
-| `BR-DM-09` | ❌ **NEVER `DROP COLUMN`** mà không qua 2 phase deprecation | Drop cột là thao tác ❌ không revert được bằng `git revert` — code cũ rollback về vẫn đọc cột đã biến mất, và dữ liệu trong đó ❌ không lấy lại được nếu backup đã xoay vòng |
-| `BR-DM-10` | Định danh **đối ngoại** (API/URL — cái client nhìn thấy) là `uuid` hoặc `code`, ❌ không `bigserial` | `bigserial` để lộ quy mô và mời enumeration. **Chỉ áp cho lớp đối ngoại** — xem `BR-DM-13` cho FK nội bộ |
-| `BR-DM-11` | Mỗi file schema ≤ **400 dòng**, chia theo domain, ❌ không theo kiểu | Một file 3.000 dòng là nơi mọi merge conflict gặp nhau |
+| `BR-DM-06` | **NEVER raw SQL** — chỉ Drizzle. Ngoại lệ: `sql\`\`` cho tăng nguyên tử và `coalesce` cross-table | Chuỗi SQL nối tay là đường vào injection, và né được typecheck nên đổi schema không làm nó đỏ. Hai ngoại lệ là chỗ Drizzle không diễn đạt được — giữ hẹp, không mở thành cửa chung |
+| `BR-DM-07` | Cột và bảng `snake_case`. Payload API giữ nguyên `snake_case`, không transform | Transform hai chiều là hai chỗ để lệch |
+| `BR-DM-08` | Mọi bảng có `created_at`; bảng sửa được có `updated_at` | Không có mốc thời gian thì không trả lời được "hàng này có từ bao giờ" lúc điều tra sự cố — và thêm cột sau khi đã có dữ liệu thì mọi hàng cũ mang giá trị bịa |
+| `BR-DM-09` | **NEVER `DROP COLUMN`** mà không qua 2 phase deprecation | Drop cột là thao tác không revert được bằng `git revert` — code cũ rollback về vẫn đọc cột đã biến mất, và dữ liệu trong đó không lấy lại được nếu backup đã xoay vòng |
+| `BR-DM-10` | Định danh **đối ngoại** (API/URL — cái client nhìn thấy) là `uuid` hoặc `code`, không `bigserial` | `bigserial` để lộ quy mô và mời enumeration. **Chỉ áp cho lớp đối ngoại** — xem `BR-DM-13` cho FK nội bộ |
+| `BR-DM-11` | Mỗi file schema ≤ **400 dòng**, chia theo domain, không theo kiểu | Một file 3.000 dòng là nơi mọi merge conflict gặp nhau |
 | `BR-DM-12` | Trần phân trang ép ở **server** | Một query không trần hạ cả instance trên t3.small |
-| `BR-DM-13` | FK/quan hệ đa hình **nội bộ** luôn lưu `id` (bigint) của bảng đích — **không có ngoại lệ**, kể cả taxonomy Lớp 1 (`competencies`·`strands`·`skills`·`learning_objectives`·`content_tags`) và `game_templates`. Các bảng đó **vẫn giữ** cột `code` (định danh hiển thị/URL) nhưng bảng khác ❌ **không** được FK bằng `code` của chúng. Bảng Lớp 2 có version thêm cột `entity_id` — **neo dòng dõi**, bất biến qua mọi version của một `code` (gán = `id` ở version đầu, copy nguyên ở version sau) — tham chiếu cần luôn theo bản `published` mới nhất trỏ vào `entity_id`; tham chiếu cần ghim đúng version cụ thể (dữ liệu lịch sử chơi) trỏ vào `id` của đúng hàng đó. **Cả hai đều là `id`**, khác nhau ở cột nào, không khác ở kiểu dữ liệu | `BR-DM-10` nói về lớp đối ngoại; lần đầu (2026-08-07) tôi đọc nhầm thành hai ngoại lệ dùng `code` — người dùng bác: "FK tất cả phải tham chiếu ID, không có ngoại lệ". Sửa lại cùng ngày bằng cơ chế `entity_id` |
+| `BR-DM-13` | FK/quan hệ đa hình **nội bộ** luôn lưu `id` (bigint) của bảng đích — **không có ngoại lệ**, kể cả taxonomy Lớp 1 (`competencies`·`strands`·`skills`·`learning_objectives`·`content_tags`) và `game_templates`. Các bảng đó **vẫn giữ** cột `code` (định danh hiển thị/URL) nhưng bảng khác **không** được FK bằng `code` của chúng. Bảng Lớp 2 có version thêm cột `entity_id` — **neo dòng dõi**, bất biến qua mọi version của một `code` (gán = `id` ở version đầu, copy nguyên ở version sau) — tham chiếu cần luôn theo bản `published` mới nhất trỏ vào `entity_id`; tham chiếu cần ghim đúng version cụ thể (dữ liệu lịch sử chơi) trỏ vào `id` của đúng hàng đó. **Cả hai đều là `id`**, khác nhau ở cột nào, không khác ở kiểu dữ liệu | `BR-DM-10` nói về lớp đối ngoại; lần đầu (2026-08-07) tôi đọc nhầm thành hai ngoại lệ dùng `code` — người dùng bác: "FK tất cả phải tham chiếu ID, không có ngoại lệ". Sửa lại cùng ngày bằng cơ chế `entity_id` |
 
 ## 7. Data — bản đồ module
 
 | Module | Bảng | Spec chi tiết |
 |---|---|---|
-| `identity` | `users` `managers` `active_sessions` `mfa_settings` `mfa_recovery_codes` `verification_tokens` `consent_logs` `social_identities` | `schema-identity-billing` |
+| `identity` | `users` `managers` `active_sessions` `mfa_settings` `mfa_recovery_codes` `verification_tokens` `consent_logs` `social_identities` | [`schema-identity-billing.md`](schema-identity-billing.md) |
 | `billing` | `packages` `package_entitlements` `entitlement_keys` `entitlements` `payment_orders` `quota_usage` | idem |
-| `child` | `child_profiles` `child_session_summaries` | `schema-play-telemetry` |
-| `taxonomy` | `competencies` `strands` `skills` `skill_prerequisites` `learning_objectives` | `schema-content-taxonomy` |
+| `child` | `child_profiles` `child_session_summaries` | [`schema-play-telemetry.md`](schema-play-telemetry.md) |
+| `taxonomy` | `competencies` `strands` `skills` `skill_prerequisites` `learning_objectives` | [`schema-content-taxonomy.md`](schema-content-taxonomy.md) |
 | `tagging` | `content_tags` `content_tag_map` `content_skill_map` `user_tags` | idem |
 | `game` | `game_templates` `game_levels` | idem |
 | `content` | `lessons` `activities` `lesson_activities` `worksheets` `content_images` | idem |
 | `curriculum` | `curricula` `curriculum_items` `curriculum_enrollments` `curriculum_item_progress` | idem |
-| `play` | `play_sessions` `telemetry_events` `child_daily_stats` `level_daily_stats` `skill_daily_stats` | `schema-play-telemetry` |
-| `adaptive` | `mastery_state` `level_params` | `schema-play-telemetry` |
-| `ops` | `audit_logs` `content_review_log` `backup_log` | `schema-identity-billing` |
+| `play` | `play_sessions` `telemetry_events` `child_daily_stats` `level_daily_stats` `skill_daily_stats` | [`schema-play-telemetry.md`](schema-play-telemetry.md) |
+| `adaptive` | `mastery_state` `level_params` | [`schema-play-telemetry.md`](schema-play-telemetry.md) |
+| `ops` | `audit_logs` `content_review_log` `backup_log` | [`schema-identity-billing.md`](schema-identity-billing.md) |
 
-**11 module.** Bảng của add-on (`lesson_plans`, `custom_games`, `ai_usage_log`) ❌ **không
+**11 module.** Bảng của add-on (`lesson_plans`, `custom_games`, `ai_usage_log`) **không
 tạo ở MVP** — tạo cùng lúc với tính năng. Để bảng rỗng nằm đó là mời code tham chiếu vào
 thứ chưa có contract.
 
@@ -100,11 +100,11 @@ thứ chưa có contract.
 
 | Cột | Kiểu | Ghi chú |
 |---|---|---|
-| `id` | `bigserial` PK | Nội bộ, ❌ không ra ngoài |
+| `id` | `bigserial` PK | Nội bộ, không ra ngoài |
 | `uuid` | `uuid` UNIQUE | Đối ngoại, cho bảng người dùng chạm tới |
 | `code` | `varchar` UNIQUE | Đối ngoại, cho nội dung |
 | `created_at` `updated_at` | `timestamptz` | UTC. Hiển thị đổi sang ICT ở tầng UI |
-| `status` | enum | ❌ không dùng chuỗi tự do |
+| `status` | enum | Không dùng chuỗi tự do |
 
 ### 7.2 FK polymorphic — danh sách đóng
 
@@ -113,34 +113,34 @@ thứ chưa có contract.
 | `content_tag_map` | `(entity_type, entity_id)` | orphan target |
 | `content_skill_map` | `(entity_type, entity_id)` | orphan target |
 | `content_images` | `(owner_type, owner_id)` | orphan owner |
-| `content_review_log` | `(entity_type, entity_id)` | orphan target — `entity_id`, khớp `BR-DM-13` (D-AE) |
+| `content_review_log` | `(entity_type, entity_id)` | orphan target — `entity_id`, khớp quy tắc `BR-DM-13` (quyết định D-AE) |
 | `active_sessions` · `mfa_settings` · `mfa_recovery_codes` · `verification_tokens` | `(account_type, account_id)` | orphan account |
 
 Bảy chỗ. Mỗi chỗ **bắt buộc** một integration test bắt orphan — đây không phải khuyến nghị.
 
-### 7.3 Ràng buộc chờ — quyết định từ OQ đã đóng
+### 7.3 Ràng buộc chờ — quyết định từ open question đã đóng
 
 | Nguồn | Quyết định | Ngày | Ảnh hưởng cột |
 |---|---|---|---|
-| `id-conventions` Q1 (T9) | Game Level mang `template_code` trong mã | 2026-08-06 | `game_levels.code` format `GL-{C}-{strand}-{template}-{seq}` |
-| `id-conventions` Q2 (T9) | 4 chữ số (`\d{4}`) cho Game Level | 2026-08-06 | `game_levels.code` regex mở rộng |
-| `actors` Q1 (T9) | Manager MFA bắt buộc | 2026-08-06 | `mfa_settings` bắt buộc cho mọi manager |
-| `actors` Q2 (T9) | `pending_verification` ❌ không tạo child | 2026-08-06 | Guard ở tầng service, không ảnh hưởng cột |
-| `mvp-scope` Q4 (T9) | Backup/monitoring vào P0 | 2026-08-06 | `backup_log` vào migration #1 |
-| [`monorepo-package-architecture`](../00-foundation/monorepo-package-architecture.md) Q3 (T9) | `payment`/`notification` inline | 2026-08-06 | Không đụng cột — ảnh hưởng cấu trúc package |
-| `access-ladder` Q3 (T10) | Enum 4 bậc | 2026-08-06 | `access_tier` enum (`free`·`login`·`standard`·`premium`) mọi bảng Lớp 2 |
-| `content-lifecycle` Q3 (T10) | ❌ không `scheduled` | 2026-08-06 | `status` enum 6 giá trị (`draft`·`review`·`approved`·`published`·`archived`·`rejected`) |
-| `content-versioning` Q2 (T11) | Luôn theo bản published mới nhất (không ghim version) | 2026-08-06, cơ chế sửa 2026-08-07 (D-AE) | `curriculum_items.entity_id` bigint FK `entity_id` (neo dòng dõi) của bảng đích — ❌ không `entity_code`, không cần `entity_version` |
-| `event-catalog` Q2 (T11→T4b) | ❌ không partition P0 — **mở lại** | 2026-08-07 | PK `(session_uuid, seq)` giữ nguyên; ngưỡng 5M hàng/2GB; 0 FK trỏ vào |
-| `package-catalog` Q2 (T12) | Chỉ bán năm | 2026-08-06 | `billing_period` miền đóng `{yearly, monthly}` (D-AB) |
-| D-Y | 7 spec thêm `depends_on AUTH-TOKENS-SESSIONS` | 2026-08-06 | SIB thêm `AUTH-TOKENS-SESSIONS` vào `depends_on` |
+| [`id-conventions.md`](../00-foundation/id-conventions.md) Q1 (T9) | Game Level mang `template_code` trong mã | 2026-08-06 | `game_levels.code` format `GL-{C}-{strand}-{template}-{seq}` |
+| [`id-conventions.md`](../00-foundation/id-conventions.md) Q2 (T9) | 4 chữ số (`\d{4}`) cho Game Level | 2026-08-06 | `game_levels.code` regex mở rộng |
+| [`actors.md`](../00-foundation/actors.md) Q1 (T9) | Manager MFA bắt buộc | 2026-08-06 | `mfa_settings` bắt buộc cho mọi manager |
+| [`actors.md`](../00-foundation/actors.md) Q2 (T9) | `pending_verification` không tạo child | 2026-08-06 | Guard ở tầng service, không ảnh hưởng cột |
+| [`mvp-scope.md`](../00-foundation/mvp-scope.md) Q4 (T9) | Backup/monitoring vào P0 | 2026-08-06 | `backup_log` vào migration #1 |
+| [`monorepo-package-architecture.md`](../00-foundation/monorepo-package-architecture.md) Q3 (T9) | `payment`/`notification` inline | 2026-08-06 | Không đụng cột — ảnh hưởng cấu trúc package |
+| [`access-ladder.md`](../00-foundation/access-ladder.md) Q3 (T10) | Enum 4 bậc | 2026-08-06 | `access_tier` enum (`free`·`login`·`standard`·`premium`) mọi bảng Lớp 2 |
+| [`content-lifecycle.md`](../00-foundation/content-lifecycle.md) Q3 (T10) | Không `scheduled` | 2026-08-06 | `status` enum 6 giá trị (`draft`·`review`·`approved`·`published`·`archived`·`rejected`) |
+| [`content-versioning.md`](../00-foundation/content-versioning.md) Q2 (T11) | Luôn theo bản published mới nhất (không ghim version) | 2026-08-06, cơ chế sửa 2026-08-07 (D-AE) | `curriculum_items.entity_id` bigint FK `entity_id` (neo dòng dõi) của bảng đích — không `entity_code`, không cần `entity_version` |
+| [`event-catalog.md`](../00-foundation/event-catalog.md) Q2 (T11 sang T4b) | Không partition P0 — **mở lại** | 2026-08-07 | PK `(session_uuid, seq)` giữ nguyên; ngưỡng 5M hàng/2GB; 0 FK trỏ vào |
+| [`package-catalog.md`](../00-foundation/package-catalog.md) Q2 (T12) | Chỉ bán năm | 2026-08-06 | `billing_period` miền đóng `{yearly, monthly}` (D-AB) |
+| D-Y | 7 spec thêm `depends_on AUTH-TOKENS-SESSIONS` | 2026-08-06 | [`schema-identity-billing.md`](schema-identity-billing.md) thêm `AUTH-TOKENS-SESSIONS` vào `depends_on` |
 | D-AA | `age_band` suy lúc đọc | 2026-08-06 | `child_profiles` 12 cột (bỏ `age_band`), index `birth_year` |
-| D-AB | `billing_period_vi` → `billing_period` | 2026-08-07 | `packages.offers` JSONB key đổi tên |
-| D-AC | `content_review_log` thuộc SIB | 2026-08-07 | `schema-identity-billing` §7.10 |
+| D-AB | `billing_period_vi` sang `billing_period` | 2026-08-07 | `packages.offers` JSONB key đổi tên |
+| D-AC | `content_review_log` thuộc [`schema-identity-billing.md`](schema-identity-billing.md) | 2026-08-07 | [`schema-identity-billing.md`](schema-identity-billing.md) §7.10 |
 | D-AD | `ops` P0: 3 bảng | 2026-08-07 | `audit_logs` · `content_review_log` · `backup_log`; hoãn 4 bảng |
-| D-AE | Làm rõ `BR-DM-10` (chỉ áp lớp đối ngoại) + thêm `BR-DM-13` — FK/quan hệ đa hình nội bộ **luôn** dùng `id`, **không ngoại lệ** (kể cả taxonomy Lớp 1 + `game_templates` — các bảng đó giữ `code` làm định danh hiển thị nhưng không dùng làm FK). Bảng Lớp 2 có version thêm cột `entity_id` (neo dòng dõi, bất biến qua version) cho tham chiếu cần luôn theo bản published mới nhất — **sửa lại 2026-08-07** sau khi người dùng bác đề xuất ban đầu (giữ `code` cho 2 nhóm ngoại lệ) | 2026-08-07 | Toàn bộ taxonomy Lớp 1 (`strands.competency_id`, `skills.strand_id`, `learning_objectives.skill_id`, `content_tag_map`/`content_skill_map.tag_id`/`skill_id`, `mastery_state.skill_id`, `skill_daily_stats.skill_id`) · `game_levels.template_id` · `content_review_log.entity_id` (SIB) · `lesson_activities.lesson_id`+`activity_id` · `curriculum_items.curriculum_id`+`entity_id` · `curriculum_enrollments.curriculum_id` · `activities.ref_id` · `current_curriculum_id` (child_profiles) · `play_sessions`/`telemetry_events`/`level_daily_stats`/`level_params`.`game_level_id`/`template_id`/`curriculum_id`/`lesson_id` · `content_asset_refs.entity_id` · **`entity_id` (cột mới)** trên `game_levels`/`lessons`/`activities`/`curricula`/`worksheets` |
+| D-AE | Làm rõ `BR-DM-10` (chỉ áp lớp đối ngoại) + thêm `BR-DM-13` — FK/quan hệ đa hình nội bộ **luôn** dùng `id`, **không ngoại lệ** (kể cả taxonomy Lớp 1 + `game_templates` — các bảng đó giữ `code` làm định danh hiển thị nhưng không dùng làm FK). Bảng Lớp 2 có version thêm cột `entity_id` (neo dòng dõi, bất biến qua version) cho tham chiếu cần luôn theo bản published mới nhất — **sửa lại 2026-08-07** sau khi người dùng bác đề xuất ban đầu (giữ `code` cho 2 nhóm ngoại lệ) | 2026-08-07 | Toàn bộ taxonomy Lớp 1 (`strands.competency_id`, `skills.strand_id`, `learning_objectives.skill_id`, `content_tag_map`/`content_skill_map.tag_id`/`skill_id`, `mastery_state.skill_id`, `skill_daily_stats.skill_id`) · `game_levels.template_id` · `content_review_log.entity_id` ([`schema-identity-billing.md`](schema-identity-billing.md)) · `lesson_activities.lesson_id`+`activity_id` · `curriculum_items.curriculum_id`+`entity_id` · `curriculum_enrollments.curriculum_id` · `activities.ref_id` · `current_curriculum_id` (child_profiles) · `play_sessions`/`telemetry_events`/`level_daily_stats`/`level_params`.`game_level_id`/`template_id`/`curriculum_id`/`lesson_id` · `content_asset_refs.entity_id` · **`entity_id` (cột mới)** trên `game_levels`/`lessons`/`activities`/`curricula`/`worksheets` |
 
-**17 ràng buộc.** Mỗi dòng có nguồn spec + mã OQ + task + ngày. ⚠️ Bảng này **không có cổng
+**17 ràng buộc.** Mỗi dòng có nguồn spec + mã open question + task + ngày. Lưu ý: bảng này **không có cổng
 máy** — Checkpoint C phải đối chiếu tay.
 
 ## 8. API contract
@@ -148,13 +148,13 @@ máy** — Checkpoint C phải đối chiếu tay.
 Không có route. Ràng buộc lên tầng data access:
 
 ```ts
-// ✅ Map từng field
+// Đúng — map từng field
 await db.update(users).set({ display_name: p.display_name }).where(eq(users.id, uid));
-// ❌ Mass assignment
+// Sai — mass assignment
 await db.update(users).set(parsed).where(eq(users.id, uid));
 ```
 
-Cột đặc quyền ❌ **NEVER** nhận từ payload: `managers.role` · `users.status` ·
+Cột đặc quyền **NEVER** nhận từ payload: `managers.role` · `users.status` ·
 `users.refresh_token_version` · `entitlements.status` · `payment_orders.status` ·
 mọi `*.status` của bảng nội dung · `*.content_version`.
 
@@ -219,6 +219,6 @@ Scenario: BR-DM-12 — trần phân trang ép ở server
 
 | # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
 |---|---|---|---|---|
-| ~~1~~ | ~~Partition `telemetry_events` theo tháng ngay từ đầu?~~ **Đóng 2026-08-07 (T5)**: quyết định sống ở `event-catalog` Q2 — xem §7.3 dòng `event-catalog Q2`. ❌ Không partition ở P0; PK giữ `(session_uuid, seq)`. Ngưỡng kích hoạt: 5M hàng/2GB | — | ✅ đóng | D-Z |
-| 2 | ~~Retention `audit_logs`~~ **Chuyển chủ 2026-08-07 (T12)**: câu hỏi này trùng [`audit-log`](audit-log.md) §11 Q1 — chủ duy nhất là `audit-log` (nó `owns` hình dạng bản ghi audit). Trả lời ở đó, ❌ không ở đây | Vận hành | 🟡 P1 | `audit-log` §11 Q1 |
-| 3 | Có cần read replica cho báo cáo không, hay index đủ? | Hiệu năng | 🟡 P3 | hoãn — tuning khi có lưu lượng |
+| ~~1~~ | ~~Partition `telemetry_events` theo tháng ngay từ đầu?~~ **Đóng 2026-08-07 (T5)**: quyết định sống ở [`event-catalog.md`](../00-foundation/event-catalog.md) Q2 — xem §7.3 dòng `event-catalog Q2`. Không partition ở P0; PK giữ `(session_uuid, seq)`. Ngưỡng kích hoạt: 5M hàng/2GB | — | đóng | D-Z |
+| 2 | ~~Retention `audit_logs`~~ **Chuyển chủ 2026-08-07 (T12)**: câu hỏi này trùng [`audit-log.md`](audit-log.md) §11 Q1 — chủ duy nhất là `audit-log` (nó `owns` hình dạng bản ghi audit). Trả lời ở đó, không ở đây | Vận hành | P1 | [`audit-log.md`](audit-log.md) §11 Q1 |
+| 3 | Có cần read replica cho báo cáo không, hay index đủ? | Hiệu năng | P3 | hoãn — tuning khi có lưu lượng |
