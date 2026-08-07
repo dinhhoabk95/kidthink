@@ -2,10 +2,10 @@
 spec: TESTING-STRATEGY
 title: Chiến lược kiểm thử
 area: quality
-status: draft
+status: approved
 mvp: true
 phase: P0
-reviewed: 2026-08-04
+reviewed: 2026-08-08
 owns:
   - Tầng test, ngưỡng coverage, bài test không được rút gọn
 depends_on:
@@ -49,14 +49,14 @@ Dev · cổng tự động.
 
 | ID | Rule | Vì sao |
 |---|---|---|
-| `BR-TST-01` | Critical path ≥ **85%**; toàn bộ ≥ **80%** | |
+| `BR-TST-01` | Critical path ≥ **85%**; toàn bộ ≥ **80%** | Dưới 80% là không biết thay đổi có phá gì không; 85% cho critical vì hậu quả khi bug ở gating/thanh toán lớn hơn |
 | `BR-TST-02` | ❌ **NEVER mock DB** — dùng PostgreSQL thật qua Docker | Mock DB ❌ không kiểm được ràng buộc, mà ràng buộc là thứ đáng kiểm nhất |
 | `BR-TST-03` | ❌ **NEVER gọi LLM thật** trong test | Chi phí và không tái lập |
 | `BR-TST-04` | ❌ **NEVER `setTimeout` để chờ** — dùng `expect.poll()` / `waitFor` | Test chờ theo đồng hồ là test flaky |
-| `BR-TST-05` | ❌ **NEVER chạm DB / S3 / email production** | |
+| `BR-TST-05` | ❌ **NEVER chạm DB / S3 / email production** | Test đụng DB production là sự cố dữ liệu; đụng S3 production là tốn tiền và rủi ro ghi đè |
 | `BR-TST-06` | ❌ **NEVER dữ liệu random không seed** | Snapshot test cần tái lập |
 | `BR-TST-07` | Test flaky **quarantine**, ❌ không xoá | Xoá test flaky là xoá tín hiệu |
-| `BR-TST-08` | Bài ở §7.3 ❌ **NEVER rút gọn** | |
+| `BR-TST-08` | Bài ở §7.3 ❌ **NEVER rút gọn** | Đó là danh sách bài đã chốt vì hậu quả khi thiếu; rút gọn là tự mở cửa cho bug ở vùng nhạy cảm |
 | `BR-TST-09` | Mock **chỉ biên ngoài**: LLM, S3, email, OAuth. ❌ NEVER mock module nội bộ | Mock nội bộ test cái mock, ❌ không test hệ thống |
 | `BR-TST-10` | Test sinh từ Gherkin là `test.todo`, ❌ không test rỗng pass | `BR-AIG-05` |
 

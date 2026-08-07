@@ -2,10 +2,10 @@
 spec: ADMIN-AUTH
 title: Đăng nhập quản trị
 area: admin
-status: draft
+status: approved
 mvp: true
 phase: P0
-reviewed: 2026-08-04
+reviewed: 2026-08-08
 owns:
   - Luồng đăng nhập Manager
   - Phân quyền theo role ở tầng route
