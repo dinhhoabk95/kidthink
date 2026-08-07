@@ -2,7 +2,7 @@
  * lint:specs — kiểm corpus specification theo CONVENTIONS.md §10.
  *
  * SPEC.md §7: một trong năm bước của `pnpm check`.
- * Logic 11 check ở ./lint-specs-lib.ts (importable, test được). File này chỉ
+ * Logic 15 check ở ./lint-specs-lib.ts (importable, test được). File này chỉ
  * lo phần CLI: collect file thật, chạy check, in kết quả, exit code.
  * Exit 1 nếu có bất kỳ vi phạm nào.
  */
@@ -40,7 +40,7 @@ if (warnings.length > 0) {
 
 if (violations.length === 0) {
   console.log(
-    `✅ lint:specs — ${specs.length} specs, 13 checks, 0 errors${warnings.length > 0 ? `, ${warnings.length} warnings` : ""}`
+    `✅ lint:specs — ${specs.length} specs, 15 checks, 0 errors${warnings.length > 0 ? `, ${warnings.length} warnings` : ""}`
   );
   process.exit(0);
 } else {

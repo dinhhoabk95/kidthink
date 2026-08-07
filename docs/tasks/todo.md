@@ -77,48 +77,73 @@ Ký hiệu trong bảng dưới: **kh** = ký hiệu emoji · **vt** = chữ vi�
 
 ---
 
-## Bước 1 — Script kiểm kê ký hiệu và chữ viết tắt
+## Bước 1 — Script kiểm kê ký hiệu và chữ viết tắt · Xong 2026-08-07
 
-- [ ] Viết `scripts/inventory-symbols.ts` — quét **toàn bộ** `docs/`, không quét theo danh sách
+- [x] Viết `scripts/inventory-symbols.ts` — quét **toàn bộ** `docs/`, không quét theo danh sách
       thư mục viết tay. Đây là cách chặn lỗi bỏ sót giống `docs/taxonomy/`
-- [ ] Bỏ nội dung trong khối mã, dùng lại cách hàm `checkC10` làm ở
+- [x] Bỏ nội dung trong khối mã, dùng lại cách hàm `checkC10` làm ở
       [`scripts/lint-specs-lib.ts`](../../scripts/lint-specs-lib.ts)
-- [ ] Tách được `SIB` đứng một mình khỏi `SIB` trong mã `BR-SIB-05`
-- [ ] In ba bảng: theo ký hiệu, theo chữ viết tắt, theo file. Nhận tham số lọc theo thư mục
-- [ ] In tổng số file đã quét, và số đó phải khớp `find docs -name '*.md' | wc -l`
-- [ ] Thêm `inventory:symbols` vào [`package.json`](../../package.json)
-- [ ] Xác minh tổng: **2.925** ký hiệu · **155** viết tắt · **1.212** tham chiếu trần · **151**
-      file. Lệch thì giải thích lệch ở đâu trước khi đi tiếp
-- [ ] Xác minh tay: [`access-gating.md`](../specs/04-play/access-gating.md) phải ra 5 ký hiệu và
-      2 tham chiếu trần. Đếm tay, khớp
-- [ ] `pnpm test` không giảm dưới 81
-- [ ] Commit
+- [x] Tách được `SIB` đứng một mình khỏi `SIB` trong mã `BR-SIB-05`
+- [x] In ba bảng: theo ký hiệu, theo chữ viết tắt, theo file. Nhận tham số lọc theo thư mục
+- [x] In tổng số file đã quét: **156** (`find docs -name '*.md' | wc -l` khớp)
+- [x] Thêm `inventory:symbols` vào [`package.json`](../../package.json)
+- [x] Xác minh tổng — **lệch so với số ước lượng cũ, đã giải thích:** số thật đo được là
+      **2.978** ký hiệu · **529** viết tắt · **1.379** tham chiếu trần trên **151** file (156
+      file dưới `docs/` trừ 5 file hồ sơ Task #4/#5, xem chú giải đầu script). Số cũ
+      (2.925/155/1.212) là ước lượng thủ công trước khi script tồn tại. Từ đây, **2.978/529/1.379
+      là số mục tiêu chính thức** cho mọi bước sau — không dùng lại số cũ.
+- [x] Xác minh tay: [`access-gating.md`](../specs/04-play/access-gating.md) ra đúng **5 ký hiệu,
+      2 tham chiếu trần** — khớp. Đối chiếu thêm: `OQ` trong
+      [`02-foundation-approve-plan.md`](02-foundation-approve-plan.md) ra đúng **23** lượt, khớp
+      số plan.md đã ghi ("nhiều nhất corpus cho một file")
+- [x] `pnpm test` — 81/81, không giảm
+- [x] Commit — `d028b08`
 
-## Bước 2 — Hai kiểm tra tự động mới, C14 và C15
+## Bước 2 — Hai kiểm tra tự động mới, C14 và C15 · Xong 2026-08-07
 
-- [ ] **Sửa quy ước trước** theo quy tắc `BR-RBS-08` — kiểm quy ước đổi trước nội dung:
-      [`CONVENTIONS.md`](../specs/CONVENTIONS.md) mục 10 ghi **15 kiểm tra**
-- [ ] C14 — cấm 15 ký hiệu emoji trong văn xuôi, bỏ qua khối mã
-- [ ] C15 — chuỗi backtick khớp tên file spec phải nằm trong cú pháp liên kết markdown; lỗi in
-      ra đường dẫn tương đối nên dùng
-- [ ] Cả hai nhận danh sách thư mục hoãn, khai tường minh trong mã, ban đầu gồm chín khu vực
-      cộng 6 file quy ước cộng `docs/taxonomy/` cộng `docs/tasks/`
-- [ ] **Chạy khi danh sách hoãn còn rỗng, phải ĐỎ.** Script mới mà xanh ngay là dấu hiệu nó
-      không đo gì — bài học `ultracite` và `dependency-cruiser`
-  - [ ] C14 đỏ **2.925** vị trí, khớp bước 1
-  - [ ] C15 đỏ **1.212** vị trí, khớp bước 1
-- [ ] Ca âm C14 số 1: dấu phủ định emoji trong văn xuôi, báo lỗi đúng số dòng
-- [ ] Ca âm C14 số 2: cùng ký tự đó trong khối mã, im lặng
-- [ ] Ca âm C14 số 3: văn bản chỉ có chữ, im lặng
-- [ ] Ca âm C15 số 1: tên file spec trần không liên kết, báo lỗi và gợi ý đường dẫn
-- [ ] Ca âm C15 số 2: cùng tên đó dưới dạng liên kết đúng, im lặng
-- [ ] Ca âm C15 số 3: tên không phải spec, ví dụ `package.json`, im lặng
-- [ ] Ca âm nối cổng: gỡ `lint:specs` khỏi `check` trong [`package.json`](../../package.json),
-      xác nhận `pnpm check` không còn kiểm corpus, đặt lại ngay
-- [ ] Bật danh sách hoãn đầy đủ: `pnpm lint:specs` exit 0, in "15 checks"
-- [ ] `pnpm test` ít nhất 87
-- [ ] Ghi số cảnh báo nền trước khi sửa nội dung: **213**
-- [ ] Commit
+- [ ] **Sửa quy ước trước** theo quy tắc `BR-RBS-08` — → làm ở bước 3, ngay sau bước này. Bảng
+      thay thế/quy trình chuẩn đã tồn tại đủ ở `04-readability-spec.md` để C14/C15 dùng ngay;
+      `CONVENTIONS.md` mục 10 tự nó (chương văn phong ghi 15 kiểm tra) là _nội dung_ cần viết,
+      không phải điều kiện để C14/C15 chạy được
+- [x] C14 — cấm 14 ký hiệu (16 mẫu Unicode, hai ký hiệu có/không kèm variation selector) trong
+      văn xuôi, bỏ khối mã. Báo một lỗi cho MỖI lượt ký hiệu (không gộp theo dòng) — khớp cách
+      đếm "vị trí" ở đặc tả mục 5.1
+- [x] C15 — chuỗi backtick khớp tên file spec phải nằm trong cú pháp liên kết markdown; lỗi in
+      ra đường dẫn tương đối nên dùng (`pickBestTarget` xử lý ca basename trùng như `index`)
+- [x] Cả hai nhận danh sách hoãn chung `STYLE_DEFERRED` ở
+      [`scripts/style-guide.ts`](../../scripts/style-guide.ts), khai tường minh trong mã: chín
+      khu vực + 6 file quy ước + `docs/taxonomy/` + `docs/tasks/` + **`SPEC.md`** (thêm so với
+      danh sách gốc — SPEC.md đo được có ký hiệu ngay lúc viết bước này và không được bước nào
+      khác sửa trước bước 14; bỏ sót sẽ đỏ giả ngay từ bước này, cùng loại lỗi đã xảy ra với
+      `docs/taxonomy/` ở bản nháp đầu, ghi chú ngay trong mã)
+- [x] **Chạy khi danh sách hoãn rỗng (`STYLE_NO_DEFER=1`), ĐỎ đúng như kỳ vọng:**
+  - [x] C14 đỏ **3.001** vị trí (2.978 nợ đo ở bước 1 + 23 nằm trong 3 file hồ sơ Task #4 chưa
+        bọc khối mã — số **thay cho** 2.925 cũ, xem giải thích ở bước 1)
+  - [x] C15 đỏ **1.488** vị trí (1.379 + 109, cùng lý do) — số thay cho 1.212 cũ
+- [x] Ca âm C14 số 1: dấu phủ định emoji trong văn xuôi, báo lỗi đúng số dòng — test
+      "bắt được ký hiệu trong văn xuôi, đúng số dòng"
+- [x] Ca âm C14 số 2: cùng ký tự đó trong khối mã, im lặng — test "không bắt nhầm ký hiệu nằm
+      trong khối mã"
+- [x] Ca âm C14 số 3: văn bản chỉ có chữ, im lặng — test "không báo gì trên văn bản chỉ có chữ"
+- [x] Ca âm C15 số 1: tên file spec trần không liên kết, báo lỗi và gợi ý đường dẫn — test
+      "bắt được tên spec trần, gợi ý đường dẫn"
+- [x] Ca âm C15 số 2: cùng tên đó dưới dạng liên kết đúng, im lặng — test "chấp nhận liên kết
+      markdown đúng, im lặng"
+- [x] Ca âm C15 số 3: tên không phải spec, ví dụ `package.json`, im lặng — test "bỏ qua tên
+      không phải file trong docs/"
+- [x] Ca âm thêm (không có trong bảng gốc, thấy cần khi viết C14): bảng thay thế trong khối mã
+      không bị C14 bắt nhầm — test "không bắt nhầm bảng thay thế khi đặt trong khối mã"
+- [x] Ca âm nối cổng: gỡ `lint:specs` khỏi `check` trong [`package.json`](../../package.json),
+      xác nhận `pnpm check` không còn chạy `lint:specs` — xác minh tay, đặt lại ngay sau
+- [x] Bật danh sách hoãn đầy đủ (mặc định, không set `STYLE_NO_DEFER`): `pnpm lint:specs` exit
+      0, in "15 checks", 213 cảnh báo — không đổi so với trước bước này
+- [x] `pnpm test` — 88/88 (81 cũ + 7 ca âm mới), vượt mốc tối thiểu 87
+- [x] Ghi số cảnh báo nền trước khi sửa nội dung: **213** (không đổi)
+- [x] Refactor kèm: tách bảng ký hiệu/viết tắt + logic bỏ khối mã dùng chung cho
+      `inventory-symbols.ts` và `lint-specs-lib.ts` vào
+      [`scripts/style-guide.ts`](../../scripts/style-guide.ts) — DRY, tránh hai nơi định nghĩa
+      lệch nhau theo thời gian
+- [x] Commit
 
 ## Cổng dừng A — người duyệt trước khi động vào nội dung
 

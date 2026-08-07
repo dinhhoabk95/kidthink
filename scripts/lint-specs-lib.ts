@@ -19,6 +19,8 @@
  * C11 — số spec mỗi thư mục khớp SPEC.md §14 + index.md
  * C12 — bản đồ bảng DMO §7 ⟷ schema-* §7.x khớp hai chiều
  * C13 — mã ID trong spec khớp id-conventions §7 regex
+ * C14 — cấm ký hiệu emoji trong văn xuôi (Task #4, nhận danh sách hoãn)
+ * C15 — tên file spec trong backtick phải là liên kết (Task #4, nhận danh sách hoãn)
  */
 
 /* biome-ignore-all lint/performance/useTopLevelRegex: script runs once, regex perf irrelevant */
@@ -28,10 +30,21 @@
 
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { dirname, join, normalize, relative, resolve } from "node:path";
+import {
+  buildBasenameMap,
+  collectDocsFiles,
+  computeSkipLines,
+  findBareRefs,
+  isDeferred,
+  pickBestTarget,
+  STYLE_DEFERRED,
+  SYMBOLS,
+} from "./style-guide.ts";
 
 // ─── paths ───────────────────────────────────────────────────────────────────
 
 export const ROOT = resolve(import.meta.dirname, "..");
+export const DOCS_DIR = join(ROOT, "docs");
 export const SPECS_DIR = join(ROOT, "docs", "specs");
 export const SPEC_MD = join(ROOT, "docs", "SPEC.md");
 export const INDEX_MD = join(SPECS_DIR, "index.md");
@@ -1499,6 +1512,96 @@ export function checkC13(specs: SpecFile[]) {
   }
 }
 
+// ─── C14 — cấm ký hiệu emoji trong văn xuôi ─────────────────────────────────
+//
+// Task #4 — docs/tasks/04-readability-spec.md mục 5.1. Quét toàn bộ docs/,
+// bỏ khối mã và frontmatter (computeSkipLines, dùng chung với C9/C10). Bỏ
+// qua file/thư mục còn trong danh sách hoãn STYLE_DEFERRED — mỗi đợt viết
+// lại xong một khu vực thì xoá khu vực đó khỏi danh sách, cùng commit với
+// nội dung đã sửa (xem quyết định thiết kế 1 của plan.md).
+
+/**
+ * docs/ thật (collectDocsFiles) cộng thêm bất kỳ spec TỔNG HỢP trong `specs`
+ * chưa có mặt trên đĩa — cách unit test tiêm được một file giả (đường dẫn
+ * kiểu "fake/test-c14.md") mà không đếm hai lần 130 spec thật khi chạy CLI
+ * thật (ở đó `specs` chính là collectSpecFiles(), đã có sẵn trên đĩa).
+ */
+function collectDocsFilesWithSynthetic(
+  specs: SpecFile[]
+): { rel: string; abs: string; lines: string[] }[] {
+  const real = collectDocsFiles(DOCS_DIR);
+  const realRels = new Set(real.map((f) => f.rel));
+  const synthetic = specs
+    .map((s) => ({ rel: `specs/${s.rel}`, abs: s.path, lines: s.lines }))
+    .filter((f) => !realRels.has(f.rel));
+  return [...real, ...synthetic];
+}
+
+export function checkC14(specs: SpecFile[]) {
+  const files = collectDocsFilesWithSynthetic(specs);
+  for (const f of files) {
+    if (isDeferred(f.rel, STYLE_DEFERRED)) {
+      continue;
+    }
+    const skip = computeSkipLines(f.lines);
+    for (let i = 0; i < f.lines.length; i++) {
+      if (skip[i]) {
+        continue;
+      }
+      const line = f.lines[i] ?? "";
+      // Một fail() cho MỖI lượt ký hiệu, không gộp theo dòng — mục 5.1 của
+      // 04-readability-spec.md kỳ vọng số vi phạm khớp đúng tổng "vị trí"
+      // (occurrence) đo được ở scripts/inventory-symbols.ts, không phải số
+      // dòng có ký hiệu.
+      for (const { char, name } of SYMBOLS) {
+        let idx = line.indexOf(char);
+        while (idx !== -1) {
+          fail(f.rel, i + 1, "C14", `Ký hiệu cấm trong văn xuôi: ${name}`);
+          idx = line.indexOf(char, idx + char.length);
+        }
+      }
+    }
+  }
+}
+
+// ─── C15 — tên file spec trong backtick phải là liên kết ────────────────────
+//
+// Task #4 — mục 5.1. Chuỗi trong backtick khớp basename một file thật dưới
+// docs/, không nằm trong cú pháp liên kết markdown `[`tên`](đường-dẫn)` ⇒
+// lỗi, kèm đường dẫn tương đối nên dùng (pickBestTarget xử lý ca basename
+// trùng như "index").
+
+export function checkC15(specs: SpecFile[]) {
+  const files = collectDocsFilesWithSynthetic(specs);
+  const basenameMap = buildBasenameMap(files);
+  const knownBasenames = new Set(basenameMap.keys());
+
+  for (const f of files) {
+    if (isDeferred(f.rel, STYLE_DEFERRED)) {
+      continue;
+    }
+    const skip = computeSkipLines(f.lines);
+    for (let i = 0; i < f.lines.length; i++) {
+      if (skip[i]) {
+        continue;
+      }
+      const line = f.lines[i] ?? "";
+      const bareRefs = findBareRefs(line, knownBasenames);
+      for (const ref of bareRefs) {
+        const candidates = basenameMap.get(ref.candidate) ?? [];
+        const targetRel = pickBestTarget(candidates, f.rel);
+        const suggested = relative(dirname(f.abs), join(DOCS_DIR, targetRel));
+        fail(
+          f.rel,
+          i + 1,
+          "C15",
+          `Tham chiếu trần "${ref.raw}" — dùng liên kết tới ${suggested}`
+        );
+      }
+    }
+  }
+}
+
 export const ALL_CHECKS = [
   checkC1,
   checkC2,
@@ -1513,4 +1616,6 @@ export const ALL_CHECKS = [
   checkC11,
   checkC12,
   checkC13,
+  checkC14,
+  checkC15,
 ];

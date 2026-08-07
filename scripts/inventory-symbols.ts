@@ -23,13 +23,26 @@
  * ký hiệu bị cấm trong bảng thay thế của chính đặc tả (đối tượng được nói
  * tới, chưa bọc khối mã tới bước 20), hai file sau thuộc một task chưa bắt
  * đầu. Tính cả năm file này vào nợ sẽ đếm nhầm ví dụ minh hoạ thành vi phạm.
+ *
+ * Bảng ký hiệu/viết tắt và logic bỏ khối mã dùng chung với checkC14/checkC15
+ * ở scripts/lint-specs-lib.ts — định nghĩa một lần ở scripts/style-guide.ts.
  */
 
-import { readdirSync, readFileSync, statSync } from "node:fs";
-import { basename, extname, join, relative, resolve } from "node:path";
+import { resolve } from "node:path";
+import {
+  ABBREVIATIONS,
+  buildBasenameMap,
+  collectDocsFiles,
+  computeSkipLines,
+  countSymbolsInLine,
+  type DocsFile,
+  findBareRefs,
+  M_CONFLICT_PATTERN,
+  T_STEP_PATTERN,
+} from "./style-guide.ts";
 
 const ROOT = resolve(import.meta.dirname, "..");
-const DOCS_DIR = join(ROOT, "docs");
+const DOCS_DIR = resolve(ROOT, "docs");
 
 const EXCLUDED_FROM_DEBT = new Set([
   "tasks/04-readability-spec.md",
@@ -38,129 +51,6 @@ const EXCLUDED_FROM_DEBT = new Set([
   "tasks/05-p0-spec-closure-plan.md",
   "tasks/05-p0-spec-closure-todo.md",
 ]);
-
-// ─── mục 4.1 — bảng thay thế ký hiệu ────────────────────────────────────────
-
-const SYMBOLS: { char: string; name: string }[] = [
-  { char: "❌", name: "❌" },
-  { char: "✅", name: "✅" },
-  { char: "⚠️", name: "⚠️" },
-  { char: "⚠", name: "⚠️" }, // bare U+26A0 without variation selector
-  { char: "⛔", name: "⛔" },
-  { char: "⟂", name: "⟂" },
-  { char: "👤", name: "👤" },
-  { char: "🟡", name: "🟡" },
-  { char: "🔴", name: "🔴" },
-  { char: "❗", name: "❗" },
-  { char: "⏸️", name: "⏸" },
-  { char: "⏸", name: "⏸" }, // bare U+23F8 without variation selector
-  { char: "⟷", name: "⟷" },
-  { char: "⊂", name: "⊂" },
-  { char: "⇒", name: "⇒" },
-  { char: "✱", name: "✱" },
-];
-
-// ─── mục 4.2 — bảng thay thế chữ viết tắt tự phát ───────────────────────────
-// LO, ZPD, KPI KHÔNG nằm ở đây — chúng là thuật ngữ chuyên môn giữ nguyên,
-// xem mục 4.3.
-
-const ABBREVIATIONS = [
-  "OQ",
-  "DMO",
-  "SIB",
-  "SCT",
-  "SPT",
-  "TAX",
-  "GTC",
-  "CLC",
-  "CP-C",
-  "CP-D",
-];
-
-/** `Tn` trong hồ sơ task — "T0", "T4b", "T11", không phải "T" đứng lẻ. */
-const T_STEP_PATTERN = /(?<![A-Za-z0-9-])T\d{1,2}[a-z]?(?![A-Za-z0-9-])/g;
-/** `Mn` — "M1" tới "M11", ký hiệu mâu thuẫn trong hồ sơ task. */
-const M_CONFLICT_PATTERN = /(?<![A-Za-z0-9-])M\d{1,2}(?![A-Za-z0-9-])/g;
-
-// ─── thu thập file ───────────────────────────────────────────────────────────
-
-interface ScannedFile {
-  /** relative to docs/ */
-  rel: string;
-  lines: string[];
-}
-
-function walkMarkdownFiles(dir: string, out: string[]): string[] {
-  for (const entry of readdirSync(dir)) {
-    const full = join(dir, entry);
-    const stat = statSync(full);
-    if (stat.isDirectory()) {
-      walkMarkdownFiles(full, out);
-    } else if (extname(entry) === ".md") {
-      out.push(full);
-    }
-  }
-  return out;
-}
-
-function collectDocsFiles(): ScannedFile[] {
-  const paths = walkMarkdownFiles(DOCS_DIR, []);
-  return paths
-    .map((p) => ({
-      rel: relative(DOCS_DIR, p),
-      lines: readFileSync(p, "utf-8").split("\n"),
-    }))
-    .sort((a, b) => a.rel.localeCompare(b.rel));
-}
-
-/** Basename without ".md", for every file under docs/ — bare-ref targets. */
-function buildKnownBasenames(files: ScannedFile[]): Set<string> {
-  const names = new Set<string>();
-  for (const f of files) {
-    names.add(basename(f.rel, ".md"));
-  }
-  return names;
-}
-
-// ─── bỏ khối mã + frontmatter, giống checkC9/C10 ở lint-specs-lib.ts ────────
-
-function isFrontmatterEnd(lines: string[]): number {
-  if (lines[0]?.trim() !== "---") {
-    return -1;
-  }
-  for (let i = 1; i < lines.length; i++) {
-    if (lines[i]?.trim() === "---") {
-      return i;
-    }
-  }
-  return -1;
-}
-
-/** Trả về mảng cờ song song với lines: true = dòng nằm trong khối mã hoặc frontmatter, bỏ đếm. */
-function computeSkipLines(lines: string[]): boolean[] {
-  const skip = new Array(lines.length).fill(false);
-  const fmEnd = isFrontmatterEnd(lines);
-  if (fmEnd >= 0) {
-    for (let i = 0; i <= fmEnd; i++) {
-      skip[i] = true;
-    }
-  }
-  let inCodeBlock = false;
-  for (let i = 0; i < lines.length; i++) {
-    if (skip[i]) {
-      continue;
-    }
-    if (lines[i]?.trimStart().startsWith("```")) {
-      inCodeBlock = !inCodeBlock;
-      skip[i] = true;
-      continue;
-    }
-    if (inCodeBlock) {
-      skip[i] = true;
-    }
-  }
-  return skip;
-}
 
 // ─── đếm ─────────────────────────────────────────────────────────────────────
 
@@ -171,19 +61,6 @@ interface FileCounts {
   bareRefs: number;
   bySymbol: Map<string, number>;
   byAbbreviation: Map<string, number>;
-}
-
-function countSymbols(line: string, bySymbol: Map<string, number>): number {
-  let total = 0;
-  for (const { char, name } of SYMBOLS) {
-    let idx = line.indexOf(char);
-    while (idx !== -1) {
-      total++;
-      bySymbol.set(name, (bySymbol.get(name) ?? 0) + 1);
-      idx = line.indexOf(char, idx + char.length);
-    }
-  }
-  return total;
 }
 
 function countAbbreviations(
@@ -228,27 +105,7 @@ function countAbbreviations(
   return total;
 }
 
-/** Bọc mọi span `[`tên`](đường-dẫn)` thành khoảng trắng cùng độ dài, để không đếm hai lần. */
-function maskMarkdownLinks(line: string): string {
-  return line.replace(/\[`[^`]+`\]\([^)]*\)/g, (m) => " ".repeat(m.length));
-}
-
-function countBareRefs(line: string, knownBasenames: Set<string>): number {
-  const masked = maskMarkdownLinks(line);
-  let total = 0;
-  const backtickPattern = /`([^`]+)`/g;
-  const matches = masked.matchAll(backtickPattern);
-  for (const match of matches) {
-    const raw = match[1] ?? "";
-    const candidate = raw.endsWith(".md") ? raw.slice(0, -3) : raw;
-    if (knownBasenames.has(candidate)) {
-      total++;
-    }
-  }
-  return total;
-}
-
-function countFile(f: ScannedFile, knownBasenames: Set<string>): FileCounts {
+function countFile(f: DocsFile, knownBasenames: Set<string>): FileCounts {
   const skip = computeSkipLines(f.lines);
   const bySymbol = new Map<string, number>();
   const byAbbreviation = new Map<string, number>();
@@ -262,9 +119,9 @@ function countFile(f: ScannedFile, knownBasenames: Set<string>): FileCounts {
       continue;
     }
     const line = f.lines[i] ?? "";
-    symbols += countSymbols(line, bySymbol);
+    symbols += countSymbolsInLine(line, bySymbol);
     abbreviations += countAbbreviations(line, byAbbreviation, isTaskFile);
-    bareRefs += countBareRefs(line, knownBasenames);
+    bareRefs += findBareRefs(line, knownBasenames).length;
   }
 
   return {
@@ -301,8 +158,9 @@ function printTable(
 
 function main() {
   const prefixArg = process.argv[2];
-  const allFiles = collectDocsFiles();
-  const knownBasenames = buildKnownBasenames(allFiles);
+  const allFiles = collectDocsFiles(DOCS_DIR);
+  const basenameMap = buildBasenameMap(allFiles);
+  const knownBasenames = new Set(basenameMap.keys());
 
   const filtered = prefixArg
     ? allFiles.filter((f) => f.rel.startsWith(prefixArg))

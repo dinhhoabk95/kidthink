@@ -6,6 +6,8 @@ import {
   checkC10,
   checkC12,
   checkC13,
+  checkC14,
+  checkC15,
   collectSpecFiles,
   getViolations,
   getWarnings,
@@ -329,5 +331,212 @@ describe("checkC13", () => {
       (v) => v.check === "C13" && v.file === "fake/test-c13-valid.md"
     );
     expect(c13Errors).toHaveLength(0);
+  });
+});
+
+// ─── C14/C15 — Task #4, docs/tasks/04-readability-spec.md mục 5.2 ───────────
+// Sáu ca âm bắt buộc trong danh sách tám ca của mục 5.2. Hai ca còn lại
+// ("cổng thật sự được nối" và ca âm C14 số 3 "văn bản chỉ có chữ, im lặng" —
+// ca thứ hai đã phủ gián tiếp bởi test "không báo gì trên văn bản sạch" ở
+// dưới) kiểm bằng tay, ghi ở todo.md Bước 2, không phải unit test vì đòi
+// sửa package.json.
+
+function fakeSpec(rel: string, lines: string[]) {
+  return makeSpecFile(`fake/${rel}`, `fake/${rel}`, lines.join("\n"));
+}
+
+describe("checkC14 — cấm ký hiệu emoji trong văn xuôi", () => {
+  it("bắt được ký hiệu trong văn xuôi, đúng số dòng", () => {
+    const specs = [
+      fakeSpec("test-c14-prose.md", [
+        "---",
+        "spec: TEST-C14",
+        "title: Test",
+        "area: play",
+        "status: draft",
+        "mvp: true",
+        "phase: P1",
+        "reviewed: 2026-08-07",
+        "owns: []",
+        "depends_on: []",
+        "---",
+        "## 6. Business rules",
+        "",
+        "Kiểm ở server, ❌ không ở client.",
+      ]),
+    ];
+    checkC14(specs);
+    const errors = getViolations().filter(
+      (v) => v.check === "C14" && v.file === "specs/fake/test-c14-prose.md"
+    );
+    expect(errors).toHaveLength(1);
+    expect(errors[0]?.line).toBe(14);
+  });
+
+  it("không bắt nhầm ký hiệu nằm trong khối mã", () => {
+    const specs = [
+      fakeSpec("test-c14-codeblock.md", [
+        "---",
+        "spec: TEST-C14B",
+        "title: Test",
+        "area: play",
+        "status: draft",
+        "mvp: true",
+        "phase: P1",
+        "reviewed: 2026-08-07",
+        "owns: []",
+        "depends_on: []",
+        "---",
+        "## 6. Business rules",
+        "",
+        "```",
+        "❌ ví dụ ký hiệu trước khi sửa",
+        "```",
+      ]),
+    ];
+    checkC14(specs);
+    const errors = getViolations().filter(
+      (v) => v.check === "C14" && v.file === "specs/fake/test-c14-codeblock.md"
+    );
+    expect(errors).toHaveLength(0);
+  });
+
+  it("không báo gì trên văn bản chỉ có chữ", () => {
+    const specs = [
+      fakeSpec("test-c14-clean.md", [
+        "---",
+        "spec: TEST-C14C",
+        "title: Test",
+        "area: play",
+        "status: draft",
+        "mvp: true",
+        "phase: P1",
+        "reviewed: 2026-08-07",
+        "owns: []",
+        "depends_on: []",
+        "---",
+        "## 6. Business rules",
+        "",
+        "Kiểm ở server, không kiểm ở client.",
+      ]),
+    ];
+    checkC14(specs);
+    const errors = getViolations().filter(
+      (v) => v.check === "C14" && v.file === "specs/fake/test-c14-clean.md"
+    );
+    expect(errors).toHaveLength(0);
+  });
+
+  it("không bắt nhầm bảng thay thế khi đặt trong khối mã", () => {
+    const specs = [
+      fakeSpec("test-c14-replacement-table.md", [
+        "---",
+        "spec: TEST-C14D",
+        "title: Test",
+        "area: play",
+        "status: draft",
+        "mvp: true",
+        "phase: P1",
+        "reviewed: 2026-08-07",
+        "owns: []",
+        "depends_on: []",
+        "---",
+        "## 6. Business rules",
+        "",
+        "```",
+        "| Ký hiệu | Viết thành |",
+        "|---|---|",
+        "| ❌ | Không ... |",
+        "```",
+      ]),
+    ];
+    checkC14(specs);
+    const errors = getViolations().filter(
+      (v) =>
+        v.check === "C14" &&
+        v.file === "specs/fake/test-c14-replacement-table.md"
+    );
+    expect(errors).toHaveLength(0);
+  });
+});
+
+describe("checkC15 — tham chiếu trần phải là liên kết", () => {
+  it("bắt được tên spec trần, gợi ý đường dẫn", () => {
+    const specs = [
+      fakeSpec("test-c15-bare.md", [
+        "---",
+        "spec: TEST-C15",
+        "title: Test",
+        "area: play",
+        "status: draft",
+        "mvp: true",
+        "phase: P1",
+        "reviewed: 2026-08-07",
+        "owns: []",
+        "depends_on: []",
+        "---",
+        "## 6. Business rules",
+        "",
+        "Xem `access-ladder` để biết chi tiết.",
+      ]),
+    ];
+    checkC15(specs);
+    const errors = getViolations().filter(
+      (v) => v.check === "C15" && v.file === "specs/fake/test-c15-bare.md"
+    );
+    expect(errors).toHaveLength(1);
+    expect(errors[0]?.message).toContain("access-ladder.md");
+  });
+
+  it("chấp nhận liên kết markdown đúng, im lặng", () => {
+    const specs = [
+      fakeSpec("test-c15-linked.md", [
+        "---",
+        "spec: TEST-C15B",
+        "title: Test",
+        "area: play",
+        "status: draft",
+        "mvp: true",
+        "phase: P1",
+        "reviewed: 2026-08-07",
+        "owns: []",
+        "depends_on: []",
+        "---",
+        "## 6. Business rules",
+        "",
+        "Xem [`access-ladder.md`](../00-foundation/access-ladder.md) để biết chi tiết.",
+      ]),
+    ];
+    checkC15(specs);
+    const errors = getViolations().filter(
+      (v) => v.check === "C15" && v.file === "specs/fake/test-c15-linked.md"
+    );
+    expect(errors).toHaveLength(0);
+  });
+
+  it("bỏ qua tên không phải file trong docs/ (package.json)", () => {
+    const specs = [
+      fakeSpec("test-c15-nonspec.md", [
+        "---",
+        "spec: TEST-C15C",
+        "title: Test",
+        "area: play",
+        "status: draft",
+        "mvp: true",
+        "phase: P1",
+        "reviewed: 2026-08-07",
+        "owns: []",
+        "depends_on: []",
+        "---",
+        "## 6. Business rules",
+        "",
+        "Xem `package.json` để biết script.",
+      ]),
+    ];
+    checkC15(specs);
+    const errors = getViolations().filter(
+      (v) => v.check === "C15" && v.file === "specs/fake/test-c15-nonspec.md"
+    );
+    expect(errors).toHaveLength(0);
   });
 });
