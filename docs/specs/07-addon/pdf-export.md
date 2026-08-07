@@ -16,12 +16,12 @@ depends_on:
 
 # Xuất PDF
 
-> **Add-on — ❌ không bán ở MVP.** Đi kèm `addon_lesson_plan`.
+> **Add-on — không bán ở MVP.** Đi kèm `addon_lesson_plan`.
 
 ## 1. Objective
 
-Giáo viên cần **bản giấy** mang vào lớp. Màn hình ❌ không thay được tờ giấy đặt cạnh bàn khi
-đang dạy.
+Giáo viên cần **bản giấy** mang vào lớp. Màn hình không thay được tờ giấy đặt cạnh bàn khi đang
+dạy.
 
 ## 2. Actors
 
@@ -33,12 +33,12 @@ Giáo viên cần **bản giấy** mang vào lớp. Màn hình ❌ không thay �
 
 | ID | Rule | Vì sao |
 |---|---|---|
-| `BR-PDF-01` | Render chạy trong **job nền**, ❌ không trong request | Render tốn RAM và thời gian; chặn request là hạ instance |
+| `BR-PDF-01` | Render chạy trong **job nền**, không chạy trong request | Render tốn RAM và thời gian; chặn request là hạ instance |
 | `BR-PDF-02` | Trừ quota **trước** khi render; hoàn lại nếu fail | `BR-ACL-02` |
 | `BR-PDF-03` | File qua **signed URL ≤60 phút** | |
-| `BR-PDF-04` | Watermark ở **chân trang**, ❌ **NEVER trên vùng nội dung** | Watermark che nội dung làm bản in vô dụng |
+| `BR-PDF-04` | Watermark ở **chân trang** — cấm đặt trên vùng nội dung | Watermark che nội dung làm bản in vô dụng |
 | `BR-PDF-05` | Trần **20 trang** mỗi lần xuất | Trên t3.small render dài là rủi ro vận hành |
-| `BR-PDF-06` | ❌ **NEVER chứa dữ liệu trẻ** trong PDF giáo án | `BR-LPC-09` |
+| `BR-PDF-06` | **Cấm chứa dữ liệu trẻ** trong PDF giáo án | `BR-LPC-09` |
 | `BR-PDF-07` | Font nhúng, dấu tiếng Việt hiển thị đúng | Dấu vỡ là lỗi hay gặp nhất khi render PDF tiếng Việt |
 | `BR-PDF-08` | File tự xoá sau **7 ngày** | Dung lượng |
 | `BR-PDF-09` | Render fail → thông báo + **hoàn quota** | |

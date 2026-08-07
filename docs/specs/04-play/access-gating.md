@@ -22,7 +22,8 @@ depends_on:
 Nơi ladder và entitlement gặp nhau trong một request thật. Đây là **cổng doanh thu** — bug ở
 đây cho không toàn bộ thư viện, và không sửa ngược được sau khi nội dung đã phát tán.
 
-`access-ladder` sở hữu *luật*. Spec này sở hữu *thứ tự thực thi* và *ma trận test*.
+[`access-ladder.md`](../00-foundation/access-ladder.md) sở hữu *luật*. Spec này sở hữu *thứ tự
+thực thi* và *ma trận test*.
 
 ## 2. Actors
 
@@ -70,14 +71,14 @@ ra họ không có quyền.
 
 | ID | Rule | Vì sao |
 |---|---|---|
-| `BR-GAT-01` | Kiểm ở **server handler**, ❌ không ở component hay middleware client | Ẩn bằng CSS không phải paywall |
+| `BR-GAT-01` | Việc kiểm quyền chạy ở **server handler**. Không kiểm ở component, không kiểm ở middleware phía client. | Ẩn nội dung bằng CSS không phải là paywall. Người dùng mở DevTools là thấy hết. |
 | `BR-GAT-02` | Thứ tự §4 là **cố định** | Đảo thứ tự làm mã lỗi nói sai lý do |
 | `BR-GAT-03` | Response 403 strip `content_pack` và `difficulty_params` | `BR-LAD-04` |
-| `BR-GAT-04` | Ownership `active_child_id` kiểm bằng **DB query**, ❌ không tin cookie | `BR-ACT-07` |
+| `BR-GAT-04` | Ownership của `active_child_id` phải kiểm bằng **DB query**. Không tin giá trị trong cookie. | Cookie do client gửi lên nên sửa được. Rule `BR-ACT-07` của [`actors.md`](../00-foundation/actors.md) mục 6 nêu cùng lý do. |
 | `BR-GAT-05` | **20 ô** của ma trận §7.1 đều phải có test | Gating là ma trận; test vài ô sẽ để lọt ô còn lại |
 | `BR-GAT-06` | Property test khẳng định **tính bao hàm** trên mọi tổ hợp entitlement | Ví dụ không chứng minh được bao hàm |
-| `BR-GAT-07` | Bỏ token/cookie ở client ❌ **không mở thêm gì** | |
-| `BR-GAT-08` | Preview của Manager ❌ không ghi `mastery_state`, ❌ không đếm KPI | |
+| `BR-GAT-07` | Bỏ token hoặc bỏ cookie ở phía client **không mở thêm quyền nào**. | Người gọi không có token là guest, và guest chỉ thấy nội dung tier `free`. |
+| `BR-GAT-08` | Preview của Manager không ghi `mastery_state`, và không đếm KPI (chỉ số hiệu suất theo dõi). | |
 
 ## 7. Data
 
@@ -96,8 +97,8 @@ mua gói mà họ đã có.
 
 ### 7.2 Metadata gate
 
-Xem `access-ladder` §7.3. Bổ sung ở đây: `upgrade_package_codes` lấy từ
-`package_entitlements` — gói nào cấp `required_entitlement`.
+Xem mục 7.3 của [`access-ladder.md`](../00-foundation/access-ladder.md). Bổ sung ở đây:
+`upgrade_package_codes` lấy từ `package_entitlements` — gói nào cấp `required_entitlement`.
 
 ## 8. API contract
 

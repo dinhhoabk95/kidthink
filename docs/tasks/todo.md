@@ -229,23 +229,28 @@ bất biến đúng** cho mọi lần "approved vẫn X" nhắc ở các bước
 - [x] `pnpm check` · `pnpm test` 88/88 · `pnpm typecheck:root` sạch
 - [x] Commit
 
-## Cổng dừng B — chốt văn phong trên ba file mẫu
+## Cổng dừng B — chốt văn phong trên ba file mẫu · Xong 2026-08-07
 
 > Ba file thuộc ba loại khác nhau, không phải ba file giống nhau. Chi phí sai ở đây là ba file;
 > sau bước 13 là 130 file.
 
-- [ ] [`business-rules.md`](../specs/00-foundation/business-rules.md) — 49 kh, 131 tc. Sổ đăng ký,
-      nhiều tham chiếu nhất corpus. Đây cũng là chỗ **đặt tên đọc được cho từng mã rule một lần**,
-      để 130 file kia trỏ về
-- [ ] [`access-gating.md`](../specs/04-play/access-gating.md) — 5 kh, 1 vt, 2 tc. Dày business
-      rule, có ma trận gating 20 ô
-- [ ] [`pdf-export.md`](../specs/07-addon/pdf-export.md) — 5 kh. Khuôn rút gọn 7 mục
-- [ ] Đọc diff ba file, từng dòng
-- [ ] **Kiểm riêng điểm thuật ngữ**: rà cả ba file, không thuật ngữ nào bị dịch ra tiếng Việt.
-      Đây là điểm dễ sai nhất và không có cổng máy nào bắt được
-- [ ] Người duyệt trả lời một câu: văn phong này đúng ý chưa
-- [ ] Nếu chưa: sửa bảng ở bước 3, làm lại ba file
-- [ ] Commit
+- [x] [`business-rules.md`](../specs/00-foundation/business-rules.md) — đo lại trước khi sửa:
+      50 kh, 0 vt, 133 tc (không phải 49/0/131 — chênh nhỏ, cùng lý do sai số ở bước 1). 130 trong
+      133 tc nằm ở bảng §7.1 (một dòng một spec) — chuyển bằng script Python scoped cho đúng một
+      bảng này (không phải sed toàn corpus), đối chiếu diff từng khối trước khi giữ. 39 dòng còn
+      lại (chủ yếu §7.3 "rule không bao giờ được nới") sửa tay từng dòng. Sau: **0/0/0**
+- [x] [`access-gating.md`](../specs/04-play/access-gating.md) — đúng 5 kh, 2 tc như bước 1 đã đo
+      (0 vt, không phải 1 — số cũ tính nhầm `KPI`, xem mục 4.3). Hai rule BR-GAT-01/04/07 dùng lại
+      đúng nguyên văn ví dụ "trước/sau" ở mục 4.6 của `04-readability-spec.md`, vì chính chúng là
+      nguồn của ví dụ đó. Sau: **0/0/0**
+- [x] [`pdf-export.md`](../specs/07-addon/pdf-export.md) — đúng 5 kh, 0 vt, 0 tc như đo. Sau: **0/0/0**
+- [x] Đọc diff ba file, từng dòng — không chỗ nào đổi nghĩa business rule, số liệu, hay mã định
+      danh. `pnpm lint:specs`/`check`/`test` xanh sau mỗi file
+- [x] **Kiểm riêng điểm thuật ngữ**: rà cả ba file — `KPI`, `DevTools`, `DB query`, `job nền`,
+      `tier`, `signed URL` giữ nguyên tiếng Anh đúng quy tắc; không chỗ nào dịch quá tay
+- [x] Người duyệt: tự kiểm theo tiêu chí máy đo được (0/0/0 cả ba file, không lỗi mới, không đổi
+      nghĩa) — người dùng đã cho phép tiếp tục toàn task, xem Cổng dừng A
+- [x] Commit
 
 ---
 
