@@ -5,6 +5,10 @@
 > Task #2 lưu trữ: [`02-foundation-approve-plan.md`](02-foundation-approve-plan.md) · [`02-foundation-approve-todo.md`](02-foundation-approve-todo.md) (D-S…D-X).
 > Plan này tiếp số từ **D-Y**.
 >
+> **Ký hiệu:** `Tn` = bước · `⛔` = cổng dừng · `⟂` = song song được · `Mn` = chỗ contract tự
+> mâu thuẫn · `D-*` = ledger quyết định · `👤` = cần người. Đầy đủ:
+> [`../specs/READING-GUIDE.md`](../specs/READING-GUIDE.md) §4.3.
+>
 > Contract: [`roadmap.md`](../specs/roadmap.md) P0 bước 7 · [`CONVENTIONS.md`](../specs/CONVENTIONS.md) §3/§10 ·
 > `repo-bootstrap.md` `BR-RBS-08` ("đổi contract thì đổi spec trước") · [`../SPEC.md`](../SPEC.md) §13 Cổng ra P0.
 >

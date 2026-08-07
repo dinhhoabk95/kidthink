@@ -6,6 +6,11 @@
 >
 > Thứ tự: `T0 → T1✅ → T2 → ⛔A → {T3, T4, T4b} → ⛔B → {T5, T6, T7, T8} → ⛔C → T9 → T10 → T11 → ⛔D`
 >
+> **Ký hiệu file này:** `Tn` = bước · `⛔` = cổng dừng, ❌ không đi tiếp khi chưa qua ·
+> `⟂` = song song được (chạm file khác nhau) · `Mn` = chỗ contract tự mâu thuẫn ·
+> `D-*` = quyết định trong ledger (`grep '| \*\*D-XX\*\*' docs/tasks/`) · `👤` = cần người.
+> Đầy đủ: [`../specs/READING-GUIDE.md`](../specs/READING-GUIDE.md) §4.3.
+>
 > **Đã chốt 2026-08-06 (👤):** M1 = sửa `id-conventions` §7 theo Q1/Q2 (`GL-`+template+`\d{4}`) ·
 > **D-Y** = 7 spec (thêm `auth-tokens-sessions`) · **D-Z** = ❌ không partition ở P0, mở lại
 > `event-catalog` Q2 · **D-AA** = `age_band` suy lúc đọc (12 cột). Còn chờ: D-AB · D-AC · D-AD.

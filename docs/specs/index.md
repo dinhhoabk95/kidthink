@@ -11,6 +11,7 @@ Bắt đầu từ [`../SPEC.md`](../SPEC.md) — contract toàn dự án. Rồi 
 
 | Cần gì | Đọc ở đâu |
 |---|---|
+| **Lần đầu đọc corpus** — ký hiệu, viết tắt, cách đọc | [`READING-GUIDE.md`](READING-GUIDE.md) |
 | Quy ước viết spec | [`CONVENTIONS.md`](CONVENTIONS.md) |
 | Khuôn spec mới | [`TEMPLATE.md`](TEMPLATE.md) |
 | Thứ tự implement | [`roadmap.md`](roadmap.md) |
