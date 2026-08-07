@@ -32,8 +32,10 @@ import { dirname, join, normalize, relative, resolve } from "node:path";
 // ─── paths ───────────────────────────────────────────────────────────────────
 
 export const ROOT = resolve(import.meta.dirname, "..");
-export const SPECS_DIR = join(ROOT, "docs", "specs");
-export const SPEC_MD = join(ROOT, "docs", "SPEC.md");
+// docs/ sống ngoài root kidthink (sibling directory), không commit chung git repo code.
+export const CORPUS_ROOT = resolve(ROOT, "..", "docs");
+export const SPECS_DIR = join(CORPUS_ROOT, "specs");
+export const SPEC_MD = join(CORPUS_ROOT, "SPEC.md");
 export const INDEX_MD = join(SPECS_DIR, "index.md");
 export const ERROR_CODES_MD = join(
   SPECS_DIR,
@@ -403,14 +405,14 @@ export function checkC4(specs: SpecFile[]) {
     const content = readFileSync(SPEC_MD, "utf-8");
     allFiles.push({
       path: SPEC_MD,
-      rel: relative(join(ROOT, "docs"), SPEC_MD),
+      rel: relative(CORPUS_ROOT, SPEC_MD),
       lines: content.split("\n"),
     });
   }
 
   // Add docs/tasks/*.md (plan.md, todo.md, ...) — comment above already
   // claimed "+ tasks" but the scan was missing; broken links there went unchecked.
-  const tasksDir = join(ROOT, "docs", "tasks");
+  const tasksDir = join(CORPUS_ROOT, "tasks");
   if (existsSync(tasksDir)) {
     for (const f of readdirSync(tasksDir)) {
       if (!f.endsWith(".md")) {
@@ -420,7 +422,7 @@ export function checkC4(specs: SpecFile[]) {
       const content = readFileSync(p, "utf-8");
       allFiles.push({
         path: p,
-        rel: relative(join(ROOT, "docs"), p),
+        rel: relative(CORPUS_ROOT, p),
         lines: content.split("\n"),
       });
     }
@@ -936,7 +938,7 @@ export function checkC10(specs: SpecFile[]) {
   if (existsSync(SPEC_MD)) {
     allFiles.push({
       path: SPEC_MD,
-      rel: relative(join(ROOT, "docs"), SPEC_MD),
+      rel: relative(CORPUS_ROOT, SPEC_MD),
       lines: readFileSync(SPEC_MD, "utf-8").split("\n"),
     });
   }
