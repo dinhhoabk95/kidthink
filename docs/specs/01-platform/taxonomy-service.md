@@ -2,10 +2,10 @@
 spec: TAXONOMY-SERVICE
 title: Dịch vụ taxonomy — cây 5 tầng
 area: platform
-status: draft
+status: approved
 mvp: true
 phase: P0
-reviewed: 2026-08-04
+reviewed: 2026-08-07
 owns:
   - Cấu trúc cây competency → strand → skill → learning objective
   - Bất biến DAG của skill_prerequisites
@@ -225,9 +225,9 @@ Scenario: skill planned không vào DB
 
 ## 11. Open questions
 
-| # | Câu hỏi | Chặn gì |
-|---|---|---|
-| 1 | **Ai biên soạn ≥690 LO?** Seeder + AI agent IDE soạn nhanh được, nhưng vẫn cần người đọc review từng bản | P0 |
-| 2 | 120 skill còn thiếu (230 → 350) biên soạn khi nào và bởi ai? | Sau MVP |
-| 3 | `strength` của prerequisite dùng thang nào — nhị phân hay 0–1? Adaptive cần biết để cân nhắc | `adaptive-engine` |
-| 4 | C5 Language cần audio tiếng Việt cho ~21 skill — thu âm người thật hay TTS? | Nội dung P1 |
+| # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
+|---|---|---|---|---|
+| ~~1~~ | ~~Ai biên soạn ≥690 LO?~~ Seeder + AI agent IDE soạn nhanh được, nhưng vẫn cần người đọc review từng bản. **Đóng 2026-08-07 (T9)**: đồng bộ theo `mvp-scope` Q1 — hạ từ chặn P0 xuống 🟡 P1, cùng nhãn D-W | — | ✅ đóng | D-W (chủ thật chưa chốt ở `mvp-scope` Q1 — Nợ #4, chưa đóng) |
+| 2 | 120 skill còn thiếu (230 → 350) biên soạn khi nào và bởi ai? | Nội dung sau MVP | 🟡 sau MVP | hoãn |
+| 3 | `strength` của prerequisite dùng thang nào — nhị phân hay 0–1? Adaptive cần biết để cân nhắc | `adaptive-engine` | 🟡 P3 | hoãn — chốt lúc `adaptive-engine` thiết kế (P3) |
+| 4 | C5 Language cần audio tiếng Việt cho ~21 skill — thu âm người thật hay TTS? | Nội dung P1 | 🟡 P1 | hoãn |

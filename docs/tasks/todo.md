@@ -332,14 +332,22 @@ Mỗi spec 4 bước: (1) checklist `CONVENTIONS.md` §10 thủ công → (2) đ
 **vì sao + ngày** → (3) `status: approved` + `reviewed:` → (4) `lint:specs` xanh.
 
 ### T9 — Layer 1 (⟂ song song)
-- [ ] `taxonomy-service` — Q1 → 🟡 **P1** theo **D-W** (M11), có tên chủ · Q2 sau MVP ·
-      Q3 chặn `adaptive-engine` · Q4 chặn nội dung P1 · thêm 2 cột §11
-- [ ] `game-template-contract` — ghi rõ trong §11: `phase: P1` là phase **implement**,
+- [x] `taxonomy-service` — Q1 → **đóng** theo **D-W** (M11): hạ P0 → 🟡 P1, đồng bộ nhãn với
+      `mvp-scope` Q1 · Q2 hoãn sau MVP · Q3 hoãn 🟡 P3 (`adaptive-engine`) · Q4 hoãn 🟡 P1 ·
+      thêm 2 cột §11 · `approved` + `reviewed: 2026-08-07`
+  - [x] ⚠️ Chủ **thật** của Q1 vẫn chưa có tên — D-W là nhãn, không phải người. Nợ #4 ở
+        `mvp-scope` Q1 **chưa đóng**, ghi rõ trong ô Chủ để không đọc nhầm là đã xong
+- [x] `game-template-contract` — ghi rõ trong §11: `phase: P1` là phase **implement**,
       ❌ không phải phase **approve**; approve bây giờ vì `schema-content-taxonomy` (P0)
       `depends_on` nó
-  - [ ] Q1 (khảo sát 60 game type v1) → hoãn có chủ, chặn **phạm vi P1**, ❌ không chặn hình
+  - [x] Q1 (khảo sát 60 game type v1) → hoãn có chủ, chặn **phạm vi P1**, ❌ không chặn hình
         dạng contract
-  - [ ] Q2 · Q3 · Q4 hoãn có chủ · thêm 2 cột §11
+  - [x] Q2 · Q3 · Q4 hoãn có chủ · thêm 2 cột §11
+  - [x] Ngoài checklist: `BR-GTC-08` thiếu cột "vì sao" (C6) — điền, vì `CONVENTIONS.md` §10
+        bắt buộc trước khi approve. Warning nền **231 → 230**
+- [x] ✅ C8 xanh — deps của cả 2 file (`GLOSSARY`·`ID-CONVENTIONS`·`CONTENT-LIFECYCLE`) đều
+      đã `approved` từ trước, ❌ không đảo thứ tự
+- [x] ✅ `approved` 16 → **18**/130 · `pnpm check` exit 0 · `pnpm test` 81/81
 
 ### T10 — Layer 2
 - [ ] `data-model-overview` — sau T5, 3/3 OQ có kết luận

@@ -2,10 +2,10 @@
 spec: GAME-TEMPLATE-CONTRACT
 title: Contract khuôn trò chơi
 area: platform
-status: draft
+status: approved
 mvp: true
 phase: P1
-reviewed: 2026-08-04
+reviewed: 2026-08-07
 owns:
   - Hình dạng GameTemplate
   - content_contract và difficulty_contract
@@ -84,7 +84,7 @@ Template là **Lớp 1** — thêm template là việc của dev, không của M
 | `BR-GTC-05` | Mỗi template khai báo `age_min`/`age_max` và **mechanic bị cấm theo band** | Drag chính xác ở tuổi 3–4 là thiết kế sai, không phải độ khó cao |
 | `BR-GTC-06` | Template có mechanic drag **bắt buộc** khai báo fallback tap-tap cho band 3–4 | Drag là cử chỉ khó nhất ở tuổi này |
 | `BR-GTC-07` | `content_contract` phải xuất được sang **JSON Schema**, và phải **suy ra kiểu TS** được (`z.infer`) | JSON Schema cho studio sinh form (`schema-driven-form`); kiểu TS cho seeder bắt lỗi lúc `tsc` (`BR-CSA-12`) |
-| `BR-GTC-08` | Đổi `content_contract` của template đã publish = **breaking change**, cần migration kế hoạch | |
+| `BR-GTC-08` | Đổi `content_contract` của template đã publish = **breaking change**, cần migration kế hoạch | Mọi `game_level` đã seed giữ `content_pack` parse được bằng contract **cũ**. Đổi contract mà không migrate = level cũ fail parse ở `BR-GTC-02` — phát hiện lúc trẻ mở màn chơi, không phải lúc deploy |
 | `BR-GTC-09` | `checkWinCondition()` **thuần** — ❌ không side effect | Nó được gọi nhiều lần mỗi frame |
 | `BR-GTC-10` | Test round-trip `content_pack` × `content_contract` chạy trên **toàn bộ** level đã seed | Một level lọt lưới là một đứa trẻ gặp màn hình trắng |
 
@@ -287,9 +287,15 @@ Scenario: mỗi template có E2E journey
 
 ## 11. Open questions
 
-| # | Câu hỏi | Chặn gì |
-|---|---|---|
-| 1 | 60 game type của v1 port thành `content_pack` của 6 template được bao nhiêu phần trăm? Cần khảo sát trước khi cam kết | Phạm vi P1 |
-| 2 | Template thứ 7–10 nên là gì? Maze, memory-flip, rotate đều thuộc mechanic PRD nêu nhưng chưa vào MVP | P4 |
-| 3 | `scoring` schema chung cho mọi template hay mỗi template một kiểu? Chung thì đơn giản, riêng thì đo chính xác hơn | `scoring-and-result` |
-| 4 | Xuất Zod → JSON Schema mất `refine`, nên form studio ❌ không cảnh báo được ràng buộc quan hệ tới lúc submit. Có nên khai `refine` dạng ui-hint riêng để form biết trước không? | `schema-driven-form` |
+> `phase: P1` ở trên là phase **implement** (khi 6 template MVP thật sự được build), ❌ không
+> phải phase **approve**. File này approve **bây giờ**, ở P0, vì `schema-content-taxonomy`
+> (P0, `depends_on` nó) cần hình dạng `GameTemplate` ổn định trước. Approve = *hình dạng*
+> contract (§7.1, §7.4) đã chốt; **không** có nghĩa 6 template hay phạm vi khảo sát Q1 đã chốt
+> — đổi hình dạng sau này là version mới của spec, không phải sửa im lặng.
+
+| # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
+|---|---|---|---|---|
+| 1 | 60 game type của v1 port thành `content_pack` của 6 template được bao nhiêu phần trăm? Cần khảo sát trước khi cam kết | Phạm vi P1 — ❌ không chặn hình dạng contract | 🟡 P1 | hoãn — khảo sát trước khi vào P1 |
+| 2 | Template thứ 7–10 nên là gì? Maze, memory-flip, rotate đều thuộc mechanic PRD nêu nhưng chưa vào MVP | P4 | 🟡 P4 | hoãn |
+| 3 | `scoring` schema chung cho mọi template hay mỗi template một kiểu? Chung thì đơn giản, riêng thì đo chính xác hơn | `scoring-and-result` | 🟡 P1 | hoãn — chốt lúc `scoring-and-result` thiết kế |
+| 4 | Xuất Zod → JSON Schema mất `refine`, nên form studio ❌ không cảnh báo được ràng buộc quan hệ tới lúc submit. Có nên khai `refine` dạng ui-hint riêng để form biết trước không? | `schema-driven-form` | 🟡 P2 | hoãn — chốt lúc `schema-driven-form` thiết kế |
