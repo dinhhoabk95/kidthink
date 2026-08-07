@@ -64,13 +64,13 @@ Khi nguồn lực căng, cắt theo đúng thứ tự này:
 | 3 | P1: **80 game level** thay vì 120 | ~13 level mỗi competency | Nội dung mỏng, trẻ hết bài sớm hơn |
 | 4 | P3: **báo cáo nâng cao rút gọn** — bỏ xu hướng theo tuần | Vẫn có điểm theo competency/skill | Giá trị của `premium` yếu đi |
 
-### Bốn thứ ❌ **không bao giờ cắt**
+### Bốn thứ **không bao giờ cắt**
 
 | Không cắt | Vì sao |
 |---|---|
 | **Access gating** | Cắt gating là cho không toàn bộ nội dung. Không có đường sửa sau khi đã phát hành |
 | **Audit log** | Thêm audit sau là đi vá từng call site, và không có dữ liệu cho khoảng thời gian đã chạy |
-| **Tuân thủ dữ liệu trẻ em** (`child-data-compliance`) | Dữ liệu thu sai không xoá ngược được khỏi backup và log |
+| **Tuân thủ dữ liệu trẻ em** ([`child-data-compliance.md`](child-data-compliance.md)) | Dữ liệu thu sai không xoá ngược được khỏi backup và log |
 | **Versioning nội dung** | Không có nó thì mọi báo cáo học tập trở nên vô nghĩa sau lần sửa nội dung đầu tiên |
 
 Bốn thứ này rẻ khi làm đúng lúc và rất đắt khi vá sau. Chúng là lý do phase gate tồn tại.
@@ -80,10 +80,10 @@ Bốn thứ này rẻ khi làm đúng lúc và rất đắt khi vá sau. Chúng 
 | ID | Rule | Vì sao |
 |---|---|---|
 | `BR-MVP-01` | Phase không xong khi cổng ra chưa xanh toàn bộ | 90% xong của một cổng an toàn là 0% an toàn |
-| `BR-MVP-02` | ❌ **NEVER bán một gói chưa mở được tính năng nào** | Vấn đề đạo đức thương mại, không chỉ là gap kỹ thuật |
-| `BR-MVP-03` | Add-on lên catalog **cùng lúc** với tính năng của nó, ❌ không trước | idem |
+| `BR-MVP-02` | **NEVER bán một gói chưa mở được tính năng nào** | Vấn đề đạo đức thương mại, không chỉ là gap kỹ thuật |
+| `BR-MVP-03` | Add-on lên catalog **cùng lúc** với tính năng của nó, không trước | idem |
 | `BR-MVP-04` | Thứ ở §8 **vĩnh viễn ngoài phạm vi** — không viết code, không viết spec, không để lại chỗ trống trong schema cho nó | Chỗ trống "để sau này dùng" là nợ không ai trả |
-| `BR-MVP-05` | Bốn thứ ở §5 ❌ không được cắt dù nguồn lực thế nào | |
+| `BR-MVP-05` | Bốn thứ ở §5 không được cắt dù nguồn lực thế nào | |
 | `BR-MVP-06` | Nội dung MVP đủ cho **4–8 tuần** quay lại | Dưới ngưỡng đó thì retention không đo được, và KPI không có nghĩa |
 
 ## 7. Data — số lượng phải đạt
@@ -99,7 +99,7 @@ Bốn thứ này rẻ khi làm đúng lúc và rất đắt khi vá sau. Chúng 
 | Lesson published | ≥60 | 40 |
 | Curriculum | 5 | 1 |
 
-Taxonomy ❌ không cắt được — nó là bộ xương mà mọi thứ khác treo lên. Cắt skill là cắt khả
+Taxonomy không cắt được — nó là bộ xương mà mọi thứ khác treo lên. Cắt skill là cắt khả
 năng đo, và không thêm lại được cho dữ liệu đã thu.
 
 ## 8. API contract
@@ -113,7 +113,7 @@ viết lại spec này.
 | Multi-tenancy, `tenant_id` | B2C. Thêm trục tenant vào mọi query để phục vụ khách hàng chưa tồn tại |
 | School admin, class roster, classroom lockdown | B2B khác mô hình bán, khác mô hình hỗ trợ, khác nghĩa vụ pháp lý |
 | Marketplace nội dung | Kéo theo kiểm duyệt UGC ở quy mô, thanh toán cho người bán, tranh chấp bản quyền |
-| Leaderboard công khai | Vi phạm nguyên tắc thiết kế cho trẻ 3–6 và ranh giới `child-data-compliance` |
+| Leaderboard công khai | Vi phạm nguyên tắc thiết kế cho trẻ 3–6 và ranh giới [`child-data-compliance.md`](child-data-compliance.md) |
 | Mạng xã hội, bình luận, chia sẻ công khai | idem |
 | Nhiều cấp admin, phân quyền tuỳ biến | Hai role là đủ cho một đội vận hành |
 | White-label, licensing | |
@@ -178,7 +178,7 @@ Scenario: BR-MVP-04 — không có dấu vết của thứ ngoài phạm vi
 
 | # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
 |---|---|---|---|---|
-| 1 | **Ai biên soạn ≥690 LO, ≥120 game level, ≥60 lesson?** Đây là rủi ro lớn nhất của MVP. `content-seed-authoring` giảm chi phí *soạn* (AI agent IDE + kiểu TS + 8 cổng tự động), không giảm chi phí *đọc review* | P0, P1, P3 | 🟡 P1 | cần chủ có tên (D-W) |
-| 2 | Ngân sách và lịch cho P0→P3 là bao nhiêu? Chưa có ước lượng nào | Toàn bộ kế hoạch | 👤 người | người quyết |
-| 3 | Có mốc phát hành cứng không, hay ship khi xong? Nếu có mốc cứng thì §5 phải được kích hoạt sớm | Ưu tiên | 👤 người | người quyết |
-| ~~4~~ | ~~Backup và monitoring thuộc phase nào~~ **Đóng 2026-08-06 (T9)**: **P0** — `backup-and-restore` spec gắn vào cổng ra P0. Go-live không có backup là không chấp nhận được | — | ✅ đóng | D-X (T9) |
+| 1 | **Ai biên soạn ≥690 LO (Learning Objective — mục tiêu học tập), ≥120 game level, ≥60 lesson?** Đây là rủi ro lớn nhất của MVP. [`content-seed-authoring.md`](../01-platform/content-seed-authoring.md) giảm chi phí *soạn* (AI agent IDE + kiểu TS + 8 cổng tự động), không giảm chi phí *đọc review* | P0, P1, P3 | Hoãn, chặn phase P1 | cần chủ có tên (D-W) |
+| 2 | Ngân sách và lịch cho P0→P3 là bao nhiêu? Chưa có ước lượng nào | Toàn bộ kế hoạch | cần người quyết | người quyết |
+| 3 | Có mốc phát hành cứng không, hay ship khi xong? Nếu có mốc cứng thì §5 phải được kích hoạt sớm | Ưu tiên | cần người quyết | người quyết |
+| ~~4~~ | ~~Backup và monitoring thuộc phase nào~~ **Đóng 2026-08-06 (T9)**: **P0** — [`backup-and-restore.md`](../01-platform/backup-and-restore.md) spec gắn vào cổng ra P0. Go-live không có backup là không chấp nhận được | — | Đã đóng | D-X (T9) |

@@ -36,17 +36,17 @@ nó là thứ duy nhất chặn xuất bản nhầm.
 |---|---|
 | Manager `content_reviewer` | `draft → in_review` · `in_review → approved` · `in_review → rejected` · `approved → published` · `published → archived` |
 | Manager `super_admin` | Tất cả, cộng `archived → published` (rollback) |
-| `pnpm seed:content` | **Chỉ INSERT** hàng mới ở `published` sau khi PR đã được người merge (§4.1). ❌ Không `UPDATE`, ❌ không chuyển trạng thái hàng đã có |
+| `pnpm seed:content` | **Chỉ INSERT** hàng mới ở `published` sau khi PR đã được người merge (§4.1). Không `UPDATE`, không chuyển trạng thái hàng đã có |
 | User | Không chạm. `lesson_plans` của User có vòng đời riêng, không duyệt |
 
 ## 3. Entry points
 
 | Nơi | Ghi chú |
 |---|---|
-| `06-admin/game-level-studio.md` | Soạn và chuyển trạng thái |
-| `06-admin/content-review-queue.md` | Hàng đợi `in_review` |
-| `06-admin/publish-and-version.md` | Publish, archive, rollback |
-| `01-platform/content-seed-authoring.md` | Nội dung nền từ seeder — sinh ra đã `published`, §4.1 |
+| [`game-level-studio.md`](../06-admin/game-level-studio.md) | Soạn và chuyển trạng thái |
+| [`content-review-queue.md`](../06-admin/content-review-queue.md) | Hàng đợi `in_review` |
+| [`publish-and-version.md`](../06-admin/publish-and-version.md) | Publish, archive, rollback |
+| [`content-seed-authoring.md`](../01-platform/content-seed-authoring.md) | Nội dung nền từ seeder — sinh ra đã `published`, §4.1 |
 
 ## 4. Main flow
 
@@ -71,7 +71,7 @@ draft ──┴──► in_review ──► approved ──► published ──
 
 ### 4.1 Đường thứ hai — nội dung nền từ seeder
 
-Nội dung nền của MVP ❌ **không** đi qua studio. Nó được viết thành seeder file trong repo,
+Nội dung nền của MVP **không** đi qua studio. Nó được viết thành seeder file trong repo,
 qua 8 cổng tự động, và **PR review là cổng người**. Merge = quyết định phát hành.
 
 ```
@@ -80,8 +80,9 @@ seeder file  ──8 cổng tự động──►  PR có người review  ─�
                         cổng người ở đây, ❌ không ở hàng đợi duyệt
 ```
 
-Hàng seed **sinh ra đã `published`** — nó ❌ không phải một chuyển trạng thái, nên ❌ không vi
-phạm `BR-CLC-02`. Ràng buộc đổi lại: seed **chỉ INSERT**, và phải qua đủ checklist §7.3 ở
+Hàng seed **sinh ra đã `published`** — nó không phải một chuyển trạng thái, nên không vi
+phạm quy tắc `BR-CLC-02` (chỉ `approved` mới được `published`, không có đường tắt
+`draft → published`). Ràng buộc đổi lại: seed **chỉ INSERT**, và phải qua đủ checklist §7.3 ở
 tầng service như mọi lần publish khác (`BR-CLC-11`).
 
 Sau khi seed, nội dung nằm hoàn toàn dưới quyền quản lý của admin trong studio: sửa = tạo
@@ -93,7 +94,7 @@ version mới, đi đúng máy trạng thái §4. Contract đầy đủ:
 | Nhánh | Hành vi |
 |---|---|
 | `rejected` | Quay lại `draft` được. Lý do từ chối giữ trong `content_review_log` |
-| Publish khi thiếu ràng buộc bắt buộc (§7.3) | **422** kèm danh sách thiếu — ❌ không publish một phần |
+| Publish khi thiếu ràng buộc bắt buộc (§7.3) | **422** kèm danh sách thiếu — không publish một phần |
 | Archive nội dung đang nằm trong curriculum `published` | **409** kèm danh sách nơi dùng |
 | Rollback | `super_admin` publish lại một version `archived`; version đang chạy chuyển `archived` |
 | Xoá cứng | **Chỉ** cho nội dung chưa từng `published` và chưa có telemetry |
@@ -103,16 +104,16 @@ version mới, đi đúng máy trạng thái §4. Contract đầy đủ:
 | ID | Rule | Vì sao |
 |---|---|---|
 | `BR-CLC-01` | Nội dung `published` **bất biến**. Mọi `UPDATE` lên hàng `published` bị từ chối ở tầng service **và** ở DB trigger | Báo cáo học tập phải giải thích được bằng đúng nội dung trẻ đã chơi |
-| `BR-CLC-02` | Chỉ `approved` mới `published` được. ❌ Không có đường tắt `draft → published` | Cổng duyệt bị bỏ qua một lần là bị bỏ qua mãi mãi |
+| `BR-CLC-02` | Chỉ `approved` mới `published` được. Không có đường tắt `draft → published` | Cổng duyệt bị bỏ qua một lần là bị bỏ qua mãi mãi |
 | `BR-CLC-03` | Người **tạo** và người **duyệt** có thể là một ở MVP, nhưng hệ thống ghi rõ cả hai | Khi có người thứ hai, tách nhiệm vụ không cần đổi schema |
-| `BR-CLC-04` | ❌ **NEVER** có tiến trình máy nào tự chuyển trạng thái nội dung. Mọi chuyển trạng thái do một `manager_id` cụ thể thực hiện; seed chỉ **INSERT** hàng mới (§4.1) | Ranh giới cứng giữa "AI hỗ trợ soạn" và "AI tự phát hành". Không có LLM nào chạy trong hệ thống |
+| `BR-CLC-04` | **NEVER** có tiến trình máy nào tự chuyển trạng thái nội dung. Mọi chuyển trạng thái do một `manager_id` cụ thể thực hiện; seed chỉ **INSERT** hàng mới (§4.1) | Ranh giới cứng giữa "AI hỗ trợ soạn" và "AI tự phát hành". Không có LLM nào chạy trong hệ thống |
 | `BR-CLC-05` | `rejected` **bắt buộc** có lý do ≥ 10 ký tự | Từ chối không lý do làm người soạn lặp lại đúng lỗi cũ |
 | `BR-CLC-06` | `content_review_log` **INSERT-only** | Lịch sử duyệt là bằng chứng, không phải trạng thái |
 | `BR-CLC-07` | Publish chạy trong **một transaction** với việc archive version cũ | Hai bản cùng `published` là hai bản cùng được phục vụ |
 | `BR-CLC-08` | Xoá cứng **chỉ** khi chưa từng `published` **và** không có telemetry trỏ tới | Xoá cứng làm mồ côi dữ liệu học tập của trẻ |
 | `BR-CLC-09` | Publish kiểm **toàn bộ** ràng buộc §7.3 ở server, không tin client | Một `content_pack` sai schema làm crash engine trong lúc trẻ đang chơi |
 | `BR-CLC-10` | Mọi chuyển trạng thái ghi `audit_logs` | Nội dung sai gây hại cho trẻ — phải trả lời được ai đổi gì lúc nào |
-| `BR-CLC-11` | Hàng sinh ra từ seed ở `published` phải qua **đủ checklist §7.3** ở tầng service, ghi `content_review_log` với `actor_manager_id` = người approve PR, và ❌ **không được `UPDATE`** bởi seed | Seed đi vòng qua route studio. Nếu checklist chỉ nằm ở route thì seed là lỗ hổng lớn nhất của cổng duyệt |
+| `BR-CLC-11` | Hàng sinh ra từ seed ở `published` phải qua **đủ checklist §7.3** ở tầng service, ghi `content_review_log` với `actor_manager_id` = người approve PR, và **không được `UPDATE`** bởi seed | Seed đi vòng qua route studio. Nếu checklist chỉ nằm ở route thì seed là lỗ hổng lớn nhất của cổng duyệt |
 
 ## 7. Data
 
@@ -126,27 +127,30 @@ Bảng chuyển hợp lệ:
 
 | Từ ↓ / Sang → | draft | in_review | approved | published | archived | rejected |
 |---|:--:|:--:|:--:|:--:|:--:|:--:|
-| **draft** | — | ✅ | ❌ | ❌ | ❌ | ❌ |
-| **in_review** | ✅ | — | ✅ | ❌ | ❌ | ✅ |
-| **approved** | ✅ | ❌ | — | ✅ | ❌ | ❌ |
-| **published** | ❌ | ❌ | ❌ | — | ✅ | ❌ |
-| **archived** | ❌ | ❌ | ❌ | ✅ *(chỉ super_admin)* | — | ❌ |
-| **rejected** | ✅ | ❌ | ❌ | ❌ | ❌ | — |
+| **draft** | — | Có | Không | Không | Không | Không |
+| **in_review** | Có | — | Có | Không | Không | Có |
+| **approved** | Có | Không | — | Có | Không | Không |
+| **published** | Không | Không | Không | — | Có | Không |
+| **archived** | Không | Không | Không | Có *(chỉ super_admin)* | — | Không |
+| **rejected** | Có | Không | Không | Không | Không | — |
 
 Chuyển ngoài bảng → **409** `INVALID_STATUS_TRANSITION`.
 
 Bảng này nói về **chuyển** trạng thái. Trạng thái **khởi sinh** có hai giá trị hợp lệ:
-`draft` (tạo trong studio) và `published` (INSERT từ seed, §4.1). ❌ Không có giá trị khởi
+`draft` (tạo trong studio) và `published` (INSERT từ seed, §4.1). Không có giá trị khởi
 sinh nào khác.
 
 ### 7.2 `content_review_log` — INSERT-only
 
 **Định nghĩa cột chuyển sang [`schema-identity-billing.md`](../01-platform/schema-identity-billing.md)
-§7.10a theo D-AC** (2026-08-07) — DMO §7 xếp bảng này vào module `ops`, sở hữu bởi
-`schema-identity-billing`. File này (content-lifecycle) giữ quyền định nghĩa **ngữ nghĩa**:
-mỗi hàng ghi một lần chuyển trạng thái (`from_status`/`to_status`), `reason` bắt buộc ≥10 ký
-tự khi `to_status = 'rejected'` (`BR-CLC-05`), `checklist_snapshot` là kết quả §7.3 tại thời
-điểm chuyển. Cột thật — tên, kiểu, `entity_id` polymorphic — xem SIB §7.10a.
+mục 7.10a, theo quyết định D-AC** (2026-08-07 — cột `content_review_log` thuộc
+[`schema-identity-billing.md`](../01-platform/schema-identity-billing.md), không thuộc file
+này). Mục 7 của [`data-model-overview.md`](../01-platform/data-model-overview.md) xếp bảng này
+vào module `ops`, sở hữu bởi file đó. File này (content-lifecycle) giữ quyền định nghĩa **ngữ
+nghĩa**: mỗi hàng ghi một lần chuyển trạng thái (`from_status`/`to_status`), `reason` bắt buộc
+≥10 ký tự khi `to_status = 'rejected'` (quy tắc `BR-CLC-05` — `rejected` bắt buộc có lý do dài
+tối thiểu 10 ký tự), `checklist_snapshot` là kết quả §7.3 tại thời điểm chuyển. Cột thật — tên,
+kiểu, `entity_id` polymorphic — xem mục 7.10a của cùng file trên.
 
 ### 7.3 Checklist publish — kiểm ở server
 
@@ -158,7 +162,7 @@ tự khi `to_status = 'rejected'` (`BR-CLC-05`), `checklist_snapshot` là kết 
 | `curricula` | Mọi `curriculum_item` trỏ tới nội dung `published` · không tuần rỗng |
 | `worksheets` | Render thử ra PDF thành công |
 
-Thiếu bất kỳ mục nào → **422** kèm mảng `missing[]`, ❌ không publish một phần.
+Thiếu bất kỳ mục nào → **422** kèm mảng `missing[]`, không publish một phần.
 
 ### 7.4 Ràng buộc DB
 
@@ -276,6 +280,6 @@ Scenario: BR-CLC-08 — không xoá được nội dung có telemetry
 
 | # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
 |---|---|---|---|---|
-| 1 | Ở MVP một người vừa soạn vừa duyệt. Có nên chặn tự duyệt bản do chính mình tạo khi có ≥2 manager? | Khi tuyển người thứ hai | 🟡 P2 | hoãn |
-| 2 | Nội dung `authored_in = repo_seed` có cần hiển thị khác trong studio để admin biết sửa nó nghĩa là tách khỏi seeder không? | `content-seed-authoring` `BR-CSA-11` | 🟡 P1 | hoãn |
-| ~~3~~ | ~~Có cần trạng thái `scheduled`~~ **Đóng 2026-08-06 (T10)**: **không ở MVP**. Thêm giá trị enum vòng đời sau là migration non-breaking. MVP không có chiến dịch nội dung theo mùa | — | ✅ đóng | D-X (T10) |
+| 1 | Ở MVP một người vừa soạn vừa duyệt. Có nên chặn tự duyệt bản do chính mình tạo khi có ≥2 manager? | Khi tuyển người thứ hai | Hoãn, chặn phase P2 | hoãn |
+| 2 | Nội dung `authored_in = repo_seed` có cần hiển thị khác trong studio để admin biết sửa nó nghĩa là tách khỏi seeder không? | [`content-seed-authoring.md`](../01-platform/content-seed-authoring.md), quy tắc `BR-CSA-11` (seeder file là nguồn sự thật của lô nền) | Hoãn, chặn phase P1 | hoãn |
+| ~~3~~ | ~~Có cần trạng thái `scheduled`~~ **Đóng 2026-08-06 (T10)**: **không ở MVP**. Thêm giá trị enum vòng đời sau là migration non-breaking. MVP không có chiến dịch nội dung theo mùa | — | Đã đóng | D-X (T10) |

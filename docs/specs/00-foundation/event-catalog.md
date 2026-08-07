@@ -59,7 +59,7 @@ API — sai schema không sửa được ngược cho dữ liệu đã thu.
 | Lô trùng hoàn toàn | Trả **200**, ghi 0 hàng. Idempotent theo `(session_uuid, seq)` |
 | Lô trùng một phần | Ghi hàng mới, bỏ qua hàng trùng, trả 200 kèm `{ accepted, skipped }` |
 | `seq` lùi | **409** `EVENT_OUT_OF_ORDER` — client lỗi, log để điều tra |
-| Tên event không có trong catalog | **422**, ❌ không ghi. Bảo vệ schema khỏi rác |
+| Tên event không có trong catalog | **422**, không ghi. Bảo vệ schema khỏi rác |
 | Payload thừa field | Field thừa bị **strip**, ghi phần hợp lệ. Log cảnh báo |
 | Offline | Buffer trong IndexedDB, flush khi có mạng, tối đa 24h rồi bỏ |
 | Phiên đã `completed` | Event tới sau bị bỏ, trả 200 |
@@ -69,14 +69,14 @@ API — sai schema không sửa được ngược cho dữ liệu đã thu.
 | ID | Rule | Vì sao |
 |---|---|---|
 | `BR-EVT-01` | Tên event nằm trong catalog §7. Tên lạ → 422 | Tên tự do làm bảng telemetry thành bãi rác không query được |
-| `BR-EVT-02` | ❌ **NEVER PII trong payload** — chỉ số, enum, và mã nội dung | Bảng telemetry lớn nhất, giữ lâu nhất, dễ export nhầm nhất |
+| `BR-EVT-02` | **NEVER PII trong payload** — chỉ số, enum, và mã nội dung | Bảng telemetry lớn nhất, giữ lâu nhất, dễ export nhầm nhất |
 | `BR-EVT-03` | Idempotent theo `(session_uuid, seq)` | Mạng yếu gửi lại là chuyện thường, không phải ngoại lệ |
 | `BR-EVT-04` | `telemetry_events` **INSERT-only** | Event là bằng chứng, không phải trạng thái |
-| `BR-EVT-05` | Điểm chính thức tính ở **server** từ event, ❌ không nhận `score` từ client | Client sửa được |
+| `BR-EVT-05` | Điểm chính thức tính ở **server** từ event, không nhận `score` từ client | Client sửa được |
 | `BR-EVT-06` | Mọi event mang `content_version` | Báo cáo lịch sử phải giải thích được bằng đúng nội dung đã chơi |
-| `BR-EVT-07` | Thêm event mới = thêm vào catalog **trước**, dùng sau. Đổi schema của event đã có = **thêm event mới**, ❌ không sửa cũ | Dữ liệu đã thu không sửa ngược được |
-| `BR-EVT-08` | ❌ **NEVER toạ độ chạm thô** trong payload | Chuỗi toạ độ là dữ liệu hành vi chi tiết vượt nhu cầu |
-| `BR-EVT-09` | Phiên guest ghi event nhưng ❌ **không** cập nhật `mastery_state` | Lượt ẩn danh không neo được vào một trẻ |
+| `BR-EVT-07` | Thêm event mới = thêm vào catalog **trước**, dùng sau. Đổi schema của event đã có = **thêm event mới**, không sửa cũ | Dữ liệu đã thu không sửa ngược được |
+| `BR-EVT-08` | **NEVER toạ độ chạm thô** trong payload | Chuỗi toạ độ là dữ liệu hành vi chi tiết vượt nhu cầu |
+| `BR-EVT-09` | Phiên guest ghi event nhưng **không** cập nhật `mastery_state` | Lượt ẩn danh không neo được vào một trẻ |
 
 ## 7. Data — catalog
 
@@ -111,7 +111,7 @@ client, tương đối so với `session.started_at`) · `content_version`.
 
 | Event | Payload |
 |---|---|
-| `hint_requested` | `{ round_index, source: "auto_timer"\|"auto_miss" }` — ❌ không có `"user"`, scaffolding không theo yêu cầu |
+| `hint_requested` | `{ round_index, source: "auto_timer"\|"auto_miss" }` — không có `"user"`, scaffolding không theo yêu cầu |
 | `scaffold_escalated` | `{ round_index, level: 1\|2\|3, trigger: "timer"\|"miss_streak", elapsed_ms }` |
 | `demo_shown` | `{ round_index, speed: 1.0\|0.5 }` |
 
@@ -231,10 +231,10 @@ Scenario: offline buffer flush khi có mạng lại
 
 | # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
 |---|---|---|---|---|
-| 1 | `fps_sample` mỗi 30s có quá dày không trên 3.000 phiên/ngày? Cân nhắc chỉ gửi khi p95 dưới ngưỡng | Chi phí lưu trữ | 🟡 P1 | hoãn — tuning sau khi có lưu lượng |
-| 2 | Partition `telemetry_events` theo tháng ngay từ đầu? **Hai lượt quyết định:** | Thiết kế bảng | 🟡 P1 | D-Z |
+| 1 | `fps_sample` mỗi 30s có quá dày không trên 3.000 phiên/ngày? Cân nhắc chỉ gửi khi p95 dưới ngưỡng | Chi phí lưu trữ | Hoãn, chặn phase P1 | hoãn — tuning sau khi có lưu lượng |
+| 2 | Partition `telemetry_events` theo tháng ngay từ đầu? **Hai lượt quyết định:** | Thiết kế bảng | Hoãn, chặn phase P1 | D-Z |
 | | **Lượt 1 — 2026-08-06 (T11)**: chốt **có** — partition quyết định lúc `CREATE TABLE`. Trên t3.small bảng này lớn nhất, partition giúp prune query và vacuum hiệu quả. | | | |
-| | **Lượt 2 — 2026-08-07 (T4b, D-Z)**: **mở lại** — khoá partition (`session_month`) phải nằm trong PK ⇒ PK thay đổi ⇒ ảnh hưởng `BR-EVT-03` idempotent. Chọn giữ bất biến PK `(session_uuid, seq)` ở P0, hoãn partition sang P1. | | | |
-| | **Ngưỡng kích hoạt**: `telemetry_events` vượt **5M hàng** hoặc **2GB** trên t3.small ⇒ phải đóng lại quyết định trước khi vượt. | | | |
-| | **Điều kiện giữ đường mở**: ❌ không FK nào trỏ **vào** `telemetry_events`; giữ cột hẹp, index tối thiểu. | | | |
-| 3 | Giữ event thô bao lâu trước khi rollup thành `child_session_summaries`? | Retention | 🟡 P1 | hoãn |
+| | **Lượt 2 — 2026-08-07 (T4b, D-Z)**: **mở lại** — khoá partition (`session_month`) phải nằm trong PK, dẫn tới PK thay đổi, dẫn tới ảnh hưởng quy tắc `BR-EVT-03` (idempotent theo `(session_uuid, seq)`). Chọn giữ bất biến PK `(session_uuid, seq)` ở P0, hoãn partition sang P1. | | | |
+| | **Ngưỡng kích hoạt**: `telemetry_events` vượt **5M hàng** hoặc **2GB** trên t3.small thì phải đóng lại quyết định trước khi vượt. | | | |
+| | **Điều kiện giữ đường mở**: không FK nào trỏ **vào** `telemetry_events`; giữ cột hẹp, index tối thiểu. | | | |
+| 3 | Giữ event thô bao lâu trước khi rollup (tổng hợp dữ liệu chi tiết thành số liệu gộp) thành `child_session_summaries`? | Retention | Hoãn, chặn phase P1 | hoãn |

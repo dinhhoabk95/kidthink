@@ -101,7 +101,7 @@ Không có.
 | **Entitlement key** | Khoá quyền | Định danh năng lực: `play_premium_games`, … Lớp 1 |
 | **Package** | Gói | Bó entitlement + giá + thời hạn. Lớp 1 |
 | **Add-on** | Gói bổ sung | Package trục độc lập, không mở tier game |
-| **Access tier** | Bậc truy cập | `free` ⊂ `login` ⊂ `standard` ⊂ `premium` trên **content** |
+| **Access tier** | Bậc truy cập | Tier `premium` bao hàm tier `standard`, tier `standard` bao hàm tier `login`, tier `login` bao hàm tier `free` — áp dụng trên **content** |
 | **Quota** | Hạn mức | Giới hạn đếm được: số trẻ, phút chơi/ngày, lượt AI |
 
 ### 7.5 Chơi và đo
@@ -140,7 +140,7 @@ trong corpus, không phải hợp đồng API.
 | `game` (trần trụi) | Mơ hồ giữa Template và Level | `game_template` / `game_level` |
 | `student`, `pupil` | Trẻ 3–6 không phải học sinh trong hệ thống | `child profile` |
 | `score` hiển thị cho trẻ | Không hiện điểm lúc chơi | `sao`, `hoàn thành` |
-| "chậm phát triển", "IQ", "chẩn đoán" | Vi phạm ranh giới báo cáo | Nhãn ở `advanced-report` |
+| "chậm phát triển", "IQ", "chẩn đoán" | Vi phạm ranh giới báo cáo | Nhãn ở [`advanced-report.md`](../03-account/advanced-report.md) |
 
 ## 9. Acceptance criteria
 

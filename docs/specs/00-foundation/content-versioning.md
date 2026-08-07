@@ -41,7 +41,7 @@ trở nên vô nghĩa — điểm 4/4 hôm qua đọc thành 4/6 hôm nay. Phụ
 | `06-admin/publish-and-version.md` | Tạo version, publish, rollback |
 | `04-play/game-config-delivery.md` | Gắn `content_version` vào config trả về |
 | `04-play/play-session-lifecycle.md` | Ghim version lúc mở phiên |
-| `03-account/basic-report.md` · `advanced-report.md` | Đọc theo version đã ghim |
+| [`basic-report.md`](../03-account/basic-report.md) · [`advanced-report.md`](../03-account/advanced-report.md) | Đọc theo version đã ghim |
 
 ## 4. Main flow — sửa một nội dung đã publish
 
@@ -58,22 +58,22 @@ trở nên vô nghĩa — điểm 4/4 hôm qua đọc thành 4/6 hôm nay. Phụ
 |---|---|
 | Rollback | `super_admin` publish lại bản `archived` version M; bản đang chạy chuyển `archived`. `content_version` **không** giảm — bản M vẫn là M |
 | Phiên đang chơi khi version đổi | Phiên tiếp tục với config đã tải. Không ép reload — `BR-VER-04` |
-| Đọc một version đã archived | Được, qua `?version=` ở API admin. Bề mặt người dùng ❌ không có tham số này |
-| Sửa nội dung chưa từng publish | Sửa tại chỗ, ❌ không tạo version mới. Version chỉ có nghĩa sau lần publish đầu |
+| Đọc một version đã archived | Được, qua `?version=` ở API admin. Bề mặt người dùng không có tham số này |
+| Sửa nội dung chưa từng publish | Sửa tại chỗ, không tạo version mới. Version chỉ có nghĩa sau lần publish đầu |
 
 ## 6. Business rules
 
 | ID | Rule | Vì sao |
 |---|---|---|
-| `BR-VER-01` | `content_version` bắt đầu từ **1** ở lần publish đầu, **chỉ tăng**, ❌ không bao giờ giảm hay tái dùng | Version là mốc thời gian, không phải nhãn |
+| `BR-VER-01` | `content_version` bắt đầu từ **1** ở lần publish đầu, **chỉ tăng**, không bao giờ giảm hay tái dùng | Version là mốc thời gian, không phải nhãn |
 | `BR-VER-02` | Mỗi `code` có **đúng một** hàng `published` tại một thời điểm | Hai bản cùng published là hai bản cùng được phục vụ |
 | `BR-VER-03` | `play_sessions` và `telemetry_events` **bắt buộc** ghi `content_version` | Không có nó thì báo cáo lịch sử không giải thích được |
-| `BR-VER-04` | Phiên đang mở giữ config đã tải. ❌ Không ép reload khi version đổi | Đổi luật giữa lúc trẻ đang chơi là thiệt hại lớn hơn lợi ích của bản mới |
+| `BR-VER-04` | Phiên đang mở giữ config đã tải. Không ép reload khi version đổi | Đổi luật giữa lúc trẻ đang chơi là thiệt hại lớn hơn lợi ích của bản mới |
 | `BR-VER-05` | Báo cáo tổng hợp qua nhiều version **phải nói rõ** khi nội dung đã đổi | So sánh điểm qua hai version khác nhau mà không cảnh báo là so sánh sai |
 | `BR-VER-06` | Rollback **không** đảo `content_version`. Bản M được publish lại vẫn là M | Số version phải map 1-1 với một nội dung cụ thể, vĩnh viễn |
-| `BR-VER-07` | Đổi **chỉ metadata không ảnh hưởng gameplay** (mô tả, tag, SEO) ❌ **không** tạo version mới | Bơm version cho mỗi lần sửa chính tả làm lịch sử vô dụng |
+| `BR-VER-07` | Đổi **chỉ metadata không ảnh hưởng gameplay** (mô tả, tag, SEO) **không** tạo version mới | Bơm version cho mỗi lần sửa chính tả làm lịch sử vô dụng |
 | `BR-VER-08` | Đổi bất kỳ field nào ở §7.2 **bắt buộc** tạo version mới | Đây là những field làm điểm cũ đọc sai |
-| `BR-VER-09` | Bản `archived` ❌ **NEVER xoá cứng** khi còn telemetry trỏ tới | Xoá bản cũ làm mồ côi dữ liệu học tập |
+| `BR-VER-09` | Bản `archived` **NEVER xoá cứng** khi còn telemetry trỏ tới | Xoá bản cũ làm mồ côi dữ liệu học tập |
 
 ## 7. Data
 
@@ -120,10 +120,13 @@ play_sessions.template_id           → template lúc chơi (FK game_templates.i
 telemetry_events.content_version    → NOT NULL
 ```
 
-Ngoài dữ liệu chơi (ghim đúng version, ❌ không đổi theo published mới), tham chiếu **tới
+Ngoài dữ liệu chơi (ghim đúng version, không đổi theo published mới), tham chiếu **tới
 nội dung khác cần luôn theo bản published mới nhất** (`curriculum_items`, `current_curriculum_id`)
-dùng `entity_id` — neo dòng dõi bất biến qua version, xem `schema-content-taxonomy` §7 đầu mục
-và `data-model-overview` `BR-DM-13`. Cả hai loại đều là `id`, không phải `code` (D-AE).
+dùng `entity_id` — neo dòng dõi bất biến qua version, xem mục 7 đầu mục của
+[`schema-content-taxonomy.md`](../01-platform/schema-content-taxonomy.md) và quy tắc `BR-DM-13`
+của [`data-model-overview.md`](../01-platform/data-model-overview.md). Cả hai loại đều là `id`,
+không phải `code` (quyết định D-AE — dùng `entity_id` neo dòng dõi thay cho tham chiếu bằng
+`code`, FK vẫn trỏ `id`).
 
 ## 8. API contract
 
@@ -142,7 +145,7 @@ Trả lịch sử version kèm `content_review_log` mỗi bản.
 
 ### Bề mặt người dùng
 
-❌ **Không** có tham số `version`. `GET /api/users/levels/{code}` luôn trả bản `published`.
+**Không** có tham số `version`. `GET /api/users/levels/{code}` luôn trả bản `published`.
 Response **có** kèm `content_version` để client ghim vào phiên.
 
 | Mã lỗi | HTTP |
@@ -227,6 +230,6 @@ Scenario: BR-VER-05 — báo cáo cảnh báo khi nội dung đã đổi
 
 | # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
 |---|---|---|---|---|
-| 1 | Giữ bao nhiêu version cũ trước khi archive lạnh sang S3? Trên t3.small dung lượng là ràng buộc thật | Chi phí lưu trữ | 🟡 chi phí | hoãn |
-| ~~2~~ | ~~Curriculum tham chiếu lesson theo `code` hay `(code, version)`~~ **Đóng 2026-08-06 (T11)**: **`code` only** — curriculum luôn dùng bản published mới nhất, ❌ không ghim version. **Sửa lại 2026-08-07 (D-AE, lần 2)**: kết luận **hành vi** (luôn theo published mới nhất) **không đổi**, nhưng cơ chế lưu trữ đổi — lần đầu (2026-08-07, D-AE lần 1) tôi chọn giữ `code` làm ngoại lệ cho FK, đó là **sai** (người dùng bác: "FK tất cả phải tham chiếu ID, không có ngoại lệ"). Cơ chế đúng: cột `entity_id` — **neo dòng dõi**, bất biến qua mọi version của một `code` (version đầu `entity_id = id`, version sau copy nguyên). Tham chiếu join `WHERE entity_id = ? AND status = 'published'` — vẫn tự động theo bản mới nhất, và **vẫn là `id`**, không phải `code`. FK trong `schema-content-taxonomy` trỏ `entity_id`. Quan hệ cha-con (`lesson_activities`→`lessons`, `curriculum_items`→`curricula`) dùng `id` của đúng hàng version (không đổi) | — | ✅ đóng | D-X (T11) · D-AE |
-| 3 | Báo cáo nâng cao có nên loại trừ dữ liệu từ version quá cũ không? | `advanced-report` | 🟡 P3 | hoãn |
+| 1 | Giữ bao nhiêu version cũ trước khi archive lạnh sang S3? Trên t3.small dung lượng là ràng buộc thật | Chi phí lưu trữ | Hoãn, chặn chi phí | hoãn |
+| ~~2~~ | ~~Curriculum tham chiếu lesson theo `code` hay `(code, version)`~~ **Đóng 2026-08-06 (T11)**: **`code` only** — curriculum luôn dùng bản published mới nhất, không ghim version. **Sửa lại 2026-08-07 (D-AE, lần 2)**: kết luận **hành vi** (luôn theo published mới nhất) **không đổi**, nhưng cơ chế lưu trữ đổi — lần đầu (2026-08-07, D-AE lần 1) tôi chọn giữ `code` làm ngoại lệ cho FK, đó là **sai** (người dùng bác: "FK tất cả phải tham chiếu ID, không có ngoại lệ"). Cơ chế đúng: cột `entity_id` — **neo dòng dõi**, bất biến qua mọi version của một `code` (version đầu `entity_id = id`, version sau copy nguyên). Tham chiếu join `WHERE entity_id = ? AND status = 'published'` — vẫn tự động theo bản mới nhất, và **vẫn là `id`**, không phải `code`. FK trong [`schema-content-taxonomy.md`](../01-platform/schema-content-taxonomy.md) trỏ `entity_id`. Quan hệ cha-con (`lesson_activities`→`lessons`, `curriculum_items`→`curricula`) dùng `id` của đúng hàng version (không đổi) | — | Đã đóng | D-X (T11) · D-AE |
+| 3 | Báo cáo nâng cao có nên loại trừ dữ liệu từ version quá cũ không? | [`advanced-report.md`](../03-account/advanced-report.md) | Hoãn, chặn phase P3 | hoãn |

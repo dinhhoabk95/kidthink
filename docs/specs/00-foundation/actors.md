@@ -29,10 +29,10 @@ Lý do: một người vừa là phụ huynh vừa là giáo viên là **ca dùn
 
 | Tác nhân | Bảng | Guard | Có credential |
 |---|---|---|---|
-| **Guest** | không có record | không | ❌ |
-| **User** | `users` | `requireUserAuth(event)` | ✅ email + password |
-| **Child Profile** | `child_profiles` | không — thuộc User | ❌ **không bao giờ** |
-| **Manager** | `managers` | `requireManagerAuth(event)` | ✅ email + password + MFA |
+| **Guest** | không có record | không | Không |
+| **User** | `users` | `requireUserAuth(event)` | Có, email + password |
+| **Child Profile** | `child_profiles` | không — thuộc User | **Không bao giờ** |
+| **Manager** | `managers` | `requireManagerAuth(event)` | Có, email + password + MFA |
 
 ### 2.1 Guest
 
@@ -43,7 +43,7 @@ Chưa đăng nhập. Không có record trong DB.
 | Định danh | Cookie thiết bị `kidthink_did` (uuid, không HttpOnly, 1 năm) |
 | Chơi được | Allow-list 6 game level `access_tier='free'`, một cho mỗi competency, difficulty 1–2 |
 | Giới hạn lượt | **Không có** |
-| Lưu tiến độ | ❌ — `play_sessions.child_profile_id IS NULL`, ❌ không ghi `mastery_state` |
+| Lưu tiến độ | Không — `play_sessions.child_profile_id IS NULL`, không ghi `mastery_state` |
 | Thấy được | Toàn bộ public site, metadata mọi game level, **không** thấy `content_pack` của level bị chặn |
 
 *Vì sao guest không bị giới hạn lượt:* quota theo cookie thiết bị dễ vượt (xoá cookie là
@@ -67,10 +67,10 @@ Xem [`entitlement-model.md`](entitlement-model.md).
 
 | Trạng thái tài khoản | Nghĩa | Đăng nhập được |
 |---|---|---|
-| `pending_verification` | Đã đăng ký, chưa xác thực email | ✅ hạn chế — không tạo được child profile |
-| `active` | Bình thường | ✅ |
-| `suspended` | Tạm khoá bởi Manager, có lý do | ❌ — thông báo nêu cách liên hệ |
-| `deleted` | Đã yêu cầu xoá, trong 30 ngày chờ | ❌ |
+| `pending_verification` | Đã đăng ký, chưa xác thực email | Có, hạn chế — không tạo được child profile |
+| `active` | Bình thường | Có |
+| `suspended` | Tạm khoá bởi Manager, có lý do | Không — thông báo nêu cách liên hệ |
+| `deleted` | Đã yêu cầu xoá, trong 30 ngày chờ | Không |
 
 ### 2.3 Child Profile
 
@@ -85,7 +85,7 @@ nhập. Là một ngữ cảnh thuộc về User.
 | Chọn trẻ | Cookie `active_child_id` (không HttpOnly, SameSite=Lax) |
 | Kiểm quyền | `assertActiveChild(event)` throw **428**, **và** kiểm ownership ở DB |
 
-❌ **NEVER tin `active_child_id` từ cookie.** Cookie không HttpOnly, người dùng sửa được.
+**NEVER tin `active_child_id` từ cookie.** Cookie không HttpOnly, người dùng sửa được.
 Mọi endpoint chạm dữ liệu trẻ phải `SELECT … WHERE child_profiles.user_id = <user từ JWT>`.
 
 ### 2.4 Manager
@@ -101,7 +101,7 @@ interface ManagerTokenPayload {
 | Role | Làm được | Không làm được |
 |---|---|---|
 | `super_admin` | Mọi thứ ở admin | — |
-| `content_reviewer` | Soạn, duyệt, publish nội dung; xem taxonomy | ❌ thanh toán, ❌ quản lý User, ❌ cấp entitlement, ❌ feature flag, ❌ export dữ liệu |
+| `content_reviewer` | Soạn, duyệt, publish nội dung; xem taxonomy | thanh toán, quản lý User, cấp entitlement, feature flag, export dữ liệu |
 
 Manager **không tự đăng ký** — không endpoint public nào tạo manager. Tạo qua seed hoặc
 qua `super_admin` khác.
@@ -138,14 +138,14 @@ qua `super_admin` khác.
 
 | ID | Rule | Vì sao |
 |---|---|---|
-| `BR-ACT-01` | Hai guard **tách biệt, không lồng nhau**. ❌ Không có guard chung với cờ `isAdmin` | Một guard chung có cờ là con đường ngắn nhất tới leo thang đặc quyền |
-| `BR-ACT-02` | Guard kiểm **audience** JWT tường minh. Token user ❌ không bao giờ được `requireManagerAuth` chấp nhận và ngược lại | Chỉ kiểm chữ ký thì một token hợp lệ ở namespace này dùng được ở namespace kia |
+| `BR-ACT-01` | Hai guard **tách biệt, không lồng nhau**. Không có guard chung với cờ `isAdmin` | Một guard chung có cờ là con đường ngắn nhất tới leo thang đặc quyền |
+| `BR-ACT-02` | Guard kiểm **audience** JWT tường minh. Token user không bao giờ được `requireManagerAuth` chấp nhận và ngược lại | Chỉ kiểm chữ ký thì một token hợp lệ ở namespace này dùng được ở namespace kia |
 | `BR-ACT-03` | Record của người khác → **404**, không phải 403 | 403 xác nhận record tồn tại — đó là rò rỉ thông tin |
-| `BR-ACT-04` | Năng lực đọc từ `entitlements`, ❌ **không** từ JWT | JWT sống 15 phút; thu hồi quyền phải có hiệu lực ngay |
-| `BR-ACT-05` | ❌ **NEVER cột `role`/`persona`/`tier` trên `users`** | Năng lực = gói đã mua. Nhãn trên user sẽ lệch khỏi gói |
-| `BR-ACT-06` | ❌ **NEVER tạo credential cho trẻ** | Ràng buộc pháp lý và ràng buộc sản phẩm — xem `child-data-compliance` |
+| `BR-ACT-04` | Năng lực đọc từ `entitlements`, **không** từ JWT | JWT sống 15 phút; thu hồi quyền phải có hiệu lực ngay |
+| `BR-ACT-05` | **NEVER cột `role`/`persona`/`tier` trên `users`** | Năng lực = gói đã mua. Nhãn trên user sẽ lệch khỏi gói |
+| `BR-ACT-06` | **NEVER tạo credential cho trẻ** | Ràng buộc pháp lý và ràng buộc sản phẩm — xem [`child-data-compliance.md`](child-data-compliance.md) |
 | `BR-ACT-07` | Ownership child profile kiểm ở **DB query**, không ở cookie | Cookie `active_child_id` không HttpOnly |
-| `BR-ACT-08` | `content_reviewer` ❌ không thấy bề mặt thanh toán và quản lý User | Tách nhiệm vụ — người soạn nội dung không cần dữ liệu tài chính |
+| `BR-ACT-08` | `content_reviewer` không thấy bề mặt thanh toán và quản lý User | Tách nhiệm vụ — người soạn nội dung không cần dữ liệu tài chính |
 
 ## 7. Data
 
@@ -154,7 +154,7 @@ qua `super_admin` khác.
 
 | Bảng | Field then chốt | Ràng buộc |
 |---|---|---|
-| `users` | `email` UNIQUE, `password_hash`, `status`, `refresh_token_version` | ❌ không có `role` |
+| `users` | `email` UNIQUE, `password_hash`, `status`, `refresh_token_version` | Không có `role` |
 | `managers` | `email` UNIQUE, `password_hash`, `role`, `mfa_enabled` | `role` NOT NULL |
 | `child_profiles` | `uuid` UNIQUE, `user_id` FK, `display_name`, `birth_year`, `avatar_id` | Danh sách đóng field |
 | Bảng auth phụ | `account_type ('user'\|'manager')` + `account_id` | FK polymorphic — **bắt buộc** integration test bắt orphan |
@@ -218,7 +218,7 @@ Scenario: BR-ACT-08 — content_reviewer không vào được thanh toán
 ## 10. Boundaries
 
 **Always**
-- Gọi đúng một guard mỗi handler. Guard là **sync** — ❌ không `await`.
+- Gọi đúng một guard mỗi handler. Guard là **sync** — không `await`.
 - Kiểm audience JWT tường minh.
 - Kiểm ownership ở DB query, không ở cookie.
 - Trả 404 cho record của người khác.
@@ -242,5 +242,5 @@ Scenario: BR-ACT-08 — content_reviewer không vào được thanh toán
 
 | # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
 |---|---|---|---|---|
-| ~~1~~ | ~~Manager có bắt buộc MFA từ ngày đầu không~~ **Đóng 2026-08-06 (T9)**: **có**, `admin-auth.md` §7 ghi MFA bắt buộc. **Sửa 2026-08-07 (T8, M9)**: cột thật là `mfa_settings.secret_encrypted` (bảng phụ) + `managers.mfa_enabled` bool ở `schema-identity-billing` §7.3 — closure gốc trỏ nhầm tên cột `mfa_secret` (không tồn tại). Bất biến: Manager ❌ không hoạt động khi `mfa_settings.confirmed_at IS NULL`, ép ở **tầng service** (không ép được ở cột). `index.md` ghi `admin-auth` = P0 | — | ✅ đóng | D-X (T9) · M9 |
-| ~~2~~ | ~~`pending_verification` được tạo child profile không~~ **Đóng 2026-08-06 (T9)**: **không**, `email-verification.md` là điều kiện tiên quyết. Guard P0 của `registration`/`child-profile-crud` | — | ✅ đóng | D-X (T9) |
+| ~~1~~ | ~~Manager có bắt buộc MFA từ ngày đầu không~~ **Đóng 2026-08-06 (T9)**: **có**, mục 7 của [`admin-auth.md`](../06-admin/admin-auth.md) ghi MFA bắt buộc. **Sửa 2026-08-07 (T8, M9)**: cột thật là `mfa_settings.secret_encrypted` (bảng phụ) + `managers.mfa_enabled` bool ở mục 7.3 của [`schema-identity-billing.md`](../01-platform/schema-identity-billing.md) — closure gốc trỏ nhầm tên cột `mfa_secret` (không tồn tại). Bất biến: Manager không hoạt động khi `mfa_settings.confirmed_at IS NULL`, ép ở **tầng service** (không ép được ở cột). [`index.md`](../index.md) ghi admin-auth = P0 | — | Đã đóng | D-X (T9) · M9 |
+| ~~2~~ | ~~`pending_verification` được tạo child profile không~~ **Đóng 2026-08-06 (T9)**: **không**, [`email-verification.md`](../03-account/email-verification.md) là điều kiện tiên quyết. Guard P0 của [`registration.md`](../03-account/registration.md) và [`child-profile-crud.md`](../03-account/child-profile-crud.md) | — | Đã đóng | D-X (T9) |

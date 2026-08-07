@@ -37,8 +37,8 @@ Spec này ép ràng buộc lên schema **trước** khi bảng được tạo.
 |---|---|
 | **User** (người lớn) | Chủ thể cho đồng ý. Là người duy nhất được thao tác dữ liệu trẻ |
 | **Child Profile** | Chủ thể dữ liệu. Không có tài khoản, không tự thao tác |
-| **Manager** | Xử lý dữ liệu trong phạm vi vận hành. `content_reviewer` ❌ không thấy dữ liệu trẻ |
-| **Bên thứ ba** | LLM provider, S3, email. ❌ **Không bên nào nhận PII của trẻ** |
+| **Manager** | Xử lý dữ liệu trong phạm vi vận hành. `content_reviewer` không thấy dữ liệu trẻ |
+| **Bên thứ ba** | LLM provider, S3, email. **Không bên nào nhận PII của trẻ** |
 
 ## 3. Entry points
 
@@ -56,7 +56,7 @@ Spec này ép ràng buộc lên schema **trước** khi bảng được tạo.
 1. User đăng ký, xác thực email.
 2. User mở luồng tạo child profile lần đầu.
 3. Hệ thống hiện **bản tóm tắt** những gì sẽ thu và vì sao, kèm link chính sách đầy đủ.
-4. User tick đồng ý **tường minh** — ❌ không tick sẵn, ❌ không "tiếp tục nghĩa là đồng ý".
+4. User tick đồng ý **tường minh** — không tick sẵn, không "tiếp tục nghĩa là đồng ý".
 5. Hệ thống INSERT `consent_logs` `{user_id, consent_type:'child_data', policy_version, ip, ua, created_at}`.
 6. Chỉ khi bước 5 thành công, form tạo child profile mới mở.
 
@@ -74,19 +74,19 @@ Spec này ép ràng buộc lên schema **trước** khi bảng được tạo.
 | ID | Rule | Vì sao |
 |---|---|---|
 | `BR-CDC-01` | `child_profiles` chỉ chứa trường ở **danh sách đóng** §7.1. Thêm trường = sửa spec này trước | Danh sách mở sẽ đầy dần bằng những field "để sau này dùng" |
-| `BR-CDC-02` | ❌ **NEVER thu ngày sinh chính xác.** Chỉ `birth_year` hoặc `age_band` | Ngày sinh đầy đủ là định danh mạnh; tuổi theo năm đủ để chọn nội dung |
-| `BR-CDC-03` | ❌ **NEVER thu họ tên đầy đủ.** Chỉ tên gọi / biệt danh | Tên đầy đủ + năm sinh + email phụ huynh là bộ định danh trẻ hoàn chỉnh |
-| `BR-CDC-04` | Avatar chỉ chọn từ **bộ preset**. ❌ **NEVER upload ảnh chụp trẻ** | Ảnh khuôn mặt trẻ là dữ liệu sinh trắc. Không có ca dùng nào ở MVP biện minh được |
-| `BR-CDC-05` | ❌ **NEVER PII trong `telemetry_events`** — chỉ `child_uuid` | Bảng telemetry lớn nhất, giữ lâu nhất, và là bảng dễ export nhầm nhất |
-| `BR-CDC-06` | ❌ **NEVER gửi tên, `child_uuid`, hay tuổi chính xác của trẻ tới LLM provider** | Dữ liệu rời khỏi hạ tầng là rủi ro không định lượng được |
+| `BR-CDC-02` | **NEVER thu ngày sinh chính xác.** Chỉ `birth_year` hoặc `age_band` | Ngày sinh đầy đủ là định danh mạnh; tuổi theo năm đủ để chọn nội dung |
+| `BR-CDC-03` | **NEVER thu họ tên đầy đủ.** Chỉ tên gọi / biệt danh | Tên đầy đủ + năm sinh + email phụ huynh là bộ định danh trẻ hoàn chỉnh |
+| `BR-CDC-04` | Avatar chỉ chọn từ **bộ preset**. **NEVER upload ảnh chụp trẻ** | Ảnh khuôn mặt trẻ là dữ liệu sinh trắc. Không có ca dùng nào ở MVP biện minh được |
+| `BR-CDC-05` | **NEVER PII trong `telemetry_events`** — chỉ `child_uuid` | Bảng telemetry lớn nhất, giữ lâu nhất, và là bảng dễ export nhầm nhất |
+| `BR-CDC-06` | **NEVER gửi tên, `child_uuid`, hay tuổi chính xác của trẻ tới LLM provider** | Dữ liệu rời khỏi hạ tầng là rủi ro không định lượng được |
 | `BR-CDC-07` | `consent_logs` **INSERT-only**. Rút đồng ý = thêm hàng | Sửa hàng cũ làm mất bằng chứng đã từng đồng ý |
-| `BR-CDC-08` | ❌ **NEVER tracking script bên thứ ba** trên bề mặt trẻ và trang pháp lý | Trang giải thích quyền riêng tư mà tự nó theo dõi là mâu thuẫn không giải thích được |
-| `BR-CDC-09` | ❌ **NEVER quảng cáo, nhắm mục tiêu, leaderboard công khai, hay cơ chế gây nghiện** | Luật Trẻ em cấm khai thác thương mại nhắm vào trẻ |
+| `BR-CDC-08` | **NEVER tracking script bên thứ ba** trên bề mặt trẻ và trang pháp lý | Trang giải thích quyền riêng tư mà tự nó theo dõi là mâu thuẫn không giải thích được |
+| `BR-CDC-09` | **NEVER quảng cáo, nhắm mục tiêu, leaderboard công khai, hay cơ chế gây nghiện** | Luật Trẻ em cấm khai thác thương mại nhắm vào trẻ |
 | `BR-CDC-10` | Xoá tài khoản → cascade xoá dữ liệu trẻ trong **30 ngày**; `telemetry_events` ẩn danh hoá | Xoá phải thực sự xảy ra, có thời hạn kiểm được |
-| `BR-CDC-11` | ❌ **NEVER credential cho trẻ**, ❌ không endpoint đăng nhập trẻ | Tài khoản trẻ tạo ra nghĩa vụ xác thực tuổi không đáp ứng nổi |
-| `BR-CDC-12` | Trẻ ❌ không rời được khu vực chơi mà không qua **Parent Gate** | Ngăn trẻ tự chạm vào thanh toán và cấu hình |
-| `BR-CDC-13` | `content_reviewer` ❌ không truy cập được bất kỳ dữ liệu trẻ nào | Người soạn nội dung không có nhu cầu nghiệp vụ với dữ liệu trẻ |
-| `BR-CDC-14` | Bề mặt admin ❌ không hiện telemetry / mastery / lịch sử chơi của **một trẻ cụ thể** | Vận hành không cần dữ liệu học tập của một đứa trẻ; phụ huynh cần |
+| `BR-CDC-11` | **NEVER credential cho trẻ**, không endpoint đăng nhập trẻ | Tài khoản trẻ tạo ra nghĩa vụ xác thực tuổi không đáp ứng nổi |
+| `BR-CDC-12` | Trẻ không rời được khu vực chơi mà không qua **Parent Gate** | Ngăn trẻ tự chạm vào thanh toán và cấu hình |
+| `BR-CDC-13` | `content_reviewer` không truy cập được bất kỳ dữ liệu trẻ nào | Người soạn nội dung không có nhu cầu nghiệp vụ với dữ liệu trẻ |
+| `BR-CDC-14` | Bề mặt admin không hiện telemetry / mastery / lịch sử chơi của **một trẻ cụ thể** | Vận hành không cần dữ liệu học tập của một đứa trẻ; phụ huynh cần |
 
 ## 7. Data
 
@@ -94,19 +94,19 @@ Spec này ép ràng buộc lên schema **trước** khi bảng được tạo.
 
 | Field | Kiểu | Ràng buộc | Bắt buộc |
 |---|---|---|---|
-| `uuid` | uuid | Định danh đối ngoại duy nhất | ✅ |
-| `user_id` | FK `users` | Chủ sở hữu | ✅ |
-| `display_name` | varchar(40) | Tên gọi / biệt danh. ❌ không họ tên đầy đủ | ✅ |
-| `birth_year` | smallint | `[năm hiện tại − 7, năm hiện tại − 2]` | ✅ |
+| `uuid` | uuid | Định danh đối ngoại duy nhất | Có |
+| `user_id` | FK `users` | Chủ sở hữu | Có |
+| `display_name` | varchar(40) | Tên gọi / biệt danh. Không họ tên đầy đủ | Có |
+| `birth_year` | smallint | `[năm hiện tại − 7, năm hiện tại − 2]` | Có |
 | — | — | `age_band` **không phải cột** — suy từ `birth_year` lúc đọc (D-AA) | — |
-| `avatar_id` | varchar(24) | FK logic tới bộ preset. ❌ không path upload | ✅ |
-| `relationship` | enum | `child` \| `student` \| `other` | ❌ tuỳ chọn |
-| `current_curriculum_id` | bigint | Chương trình đang theo — FK `curricula.entity_id` (**neo dòng dõi**, bất biến qua version), ❌ không phải `id` của một hàng version cụ thể và ❌ không phải `code`. Luôn theo bản `published` mới nhất qua `WHERE entity_id = ? AND status='published'` (`data-model-overview` `BR-DM-13`, D-AE — sửa lại 2026-08-07, cùng cơ chế `curriculum_items` `BR-SCT-06`) | ❌ |
-| `daily_play_cap_minutes` | smallint | Hạn mức giờ chơi | ✅ mặc định |
-| `status` | enum | `active` \| `archived` \| `pending_deletion` | ✅ |
-| `created_at` `updated_at` | timestamptz | | ✅ |
+| `avatar_id` | varchar(24) | FK logic tới bộ preset. Không path upload | Có |
+| `relationship` | enum | `child` \| `student` \| `other` | Không |
+| `current_curriculum_id` | bigint | Chương trình đang theo — FK `curricula.entity_id` (**neo dòng dõi**, bất biến qua version), không phải `id` của một hàng version cụ thể và không phải `code`. Luôn theo bản `published` mới nhất qua `WHERE entity_id = ? AND status='published'`, cùng cơ chế với quy tắc `BR-DM-13` của [`data-model-overview.md`](../01-platform/data-model-overview.md) và quy tắc `BR-SCT-06` của [`schema-content-taxonomy.md`](../01-platform/schema-content-taxonomy.md) — cả hai đều bắt FK nội bộ trỏ `entity_id`/`id`, không dùng `code` (quyết định D-AE, sửa lại 2026-08-07) | Không |
+| `daily_play_cap_minutes` | smallint | Hạn mức giờ chơi | Có, mặc định |
+| `status` | enum | `active` \| `archived` \| `pending_deletion` | Có |
+| `created_at` `updated_at` | timestamptz | | Có |
 
-**❌ Cấm tuyệt đối, ở mọi bảng:** họ tên đầy đủ · ngày sinh đầy đủ · ảnh chụp · địa chỉ ·
+**Cấm tuyệt đối, ở mọi bảng:** họ tên đầy đủ · ngày sinh đầy đủ · ảnh chụp · địa chỉ ·
 trường học · lớp · số điện thoại · email của trẻ · dữ liệu sinh trắc (khuôn mặt, giọng nói,
 vân tay) · định vị · danh bạ · nội dung tự do do trẻ nhập.
 
@@ -119,14 +119,14 @@ vân tay) · định vị · danh bạ · nội dung tự do do trẻ nhập.
 | `policy_version` | Bản chính sách tại thời điểm đồng ý |
 | `ip_address` `user_agent` `created_at` | Bằng chứng |
 
-❌ Không `UPDATE`, ❌ không `DELETE`. Ép bằng quyền DB, không chỉ bằng quy ước.
+Không `UPDATE`, không `DELETE`. Ép bằng quyền DB, không chỉ bằng quy ước.
 
 ### 7.3 `telemetry_events`
 
 Được phép: `child_uuid` · `game_level_id` · `content_version` · `event_name` · `seq` ·
 `occurred_at_ms` (int, tương đối `started_at`) · `ingested_at` · `payload` (số và enum).
 
-❌ Không: `display_name` · `birth_year` · `user_id` · `email` · IP · toạ độ chạm thô ·
+Không: `display_name` · `birth_year` · `user_id` · `email` · IP · toạ độ chạm thô ·
 bất kỳ chuỗi tự do nào.
 
 ### 7.4 Vòng đời xoá
@@ -235,7 +235,7 @@ Scenario: BR-CDC-08 — không có tracking bên thứ ba trên bề mặt trẻ
 
 | # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
 |---|---|---|---|---|
-| 1 | Ngân sách và người rà soát pháp lý cho ToS / Privacy / Chính sách trẻ em theo ND 13/2023 | Go-live | 🟡 go-live | cần chủ + hạn |
-| 2 | Có cần đăng ký hồ sơ đánh giá tác động xử lý dữ liệu (DPIA) với Bộ Công an không? ND13 Điều 24 yêu cầu với dữ liệu nhạy cảm | Go-live | 🟡 go-live | cần chủ + hạn |
-| 3 | Retention của `telemetry_events` đã ẩn danh — giữ vĩnh viễn hay cắt sau N năm? | Chi phí lưu trữ | 🟡 P5 | hoãn |
-| 4 | Nếu mở thị trường ngoài VN thì COPPA hay GDPR-K trước? Hai chuẩn ràng buộc khác nhau | Roadmap P5 | 🟡 P5 | hoãn |
+| 1 | Ngân sách và người rà soát pháp lý cho ToS / Privacy / Chính sách trẻ em theo ND 13/2023 | Go-live | Hoãn, chặn go-live | cần chủ + hạn |
+| 2 | Có cần đăng ký hồ sơ đánh giá tác động xử lý dữ liệu (DPIA) với Bộ Công an không? ND13 Điều 24 yêu cầu với dữ liệu nhạy cảm | Go-live | Hoãn, chặn go-live | cần chủ + hạn |
+| 3 | Retention của `telemetry_events` đã ẩn danh — giữ vĩnh viễn hay cắt sau N năm? | Chi phí lưu trữ | Hoãn, chặn phase P5 | hoãn |
+| 4 | Nếu mở thị trường ngoài VN thì COPPA hay GDPR-K trước? Hai chuẩn ràng buộc khác nhau | Roadmap P5 | Hoãn, chặn phase P5 | hoãn |

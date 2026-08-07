@@ -254,31 +254,46 @@ bất biến đúng** cho mọi lần "approved vẫn X" nhắc ở các bước
 
 ---
 
-## Bước 5 — `00-foundation`, 16 file · 390 kh · 6 vt · 206 tc
+## Bước 5 — `00-foundation`, 16 file · Xong 2026-08-07
 
 > Làm trước mọi khu vực khác: hợp đồng cắt ngang, mọi khu vực khác trích dẫn.
-> **Cảnh báo:** 12 trong 16 file đang `status: approved`. Không đổi `status`, không đổi
-> `reviewed`, không mở lại câu hỏi đã đóng — kể cả câu đã bị đảo hai, ba lượt.
+> **Sửa cảnh báo cũ:** cả 16 file đang `status: approved` (không phải 12/16 — xác nhận qua
+> Read trước khi sửa từng file). Không đổi `status`, không đổi `reviewed`, không mở lại câu hỏi
+> đã đóng — kể cả câu đã bị đảo hai, ba lượt.
 
-- [x] [`business-rules.md`](../specs/00-foundation/business-rules.md) — 49 kh, 131 tc · làm ở Cổng dừng B
-- [ ] [`repo-bootstrap.md`](../specs/00-foundation/repo-bootstrap.md) — 43 kh, 18 tc · 255 dòng, file lớn nhất khu vực · mục 11 câu 10 có **ba lượt** kết luận, giữ cả ba
-- [ ] [`content-lifecycle.md`](../specs/00-foundation/content-lifecycle.md) — 45 kh, 2 vt, 2 tc
-- [ ] [`payment-flow.md`](../specs/00-foundation/payment-flow.md) — 44 kh
-- [ ] [`monorepo-package-architecture.md`](../specs/00-foundation/monorepo-package-architecture.md) — 14 kh, 1 vt, 26 tc
-- [ ] [`child-data-compliance.md`](../specs/00-foundation/child-data-compliance.md) — 38 kh, 1 tc · danh sách cột **bị cấm** không đổi một chữ
-- [ ] [`actors.md`](../specs/00-foundation/actors.md) — 27 kh, 8 tc
-- [ ] [`entitlement-model.md`](../specs/00-foundation/entitlement-model.md) — 28 kh, 1 tc
-- [ ] [`package-catalog.md`](../specs/00-foundation/package-catalog.md) — 27 kh
-- [ ] [`error-codes.md`](../specs/00-foundation/error-codes.md) — 15 kh, 8 tc · kiểm tra C5 đối chiếu file này, không đổi mã lỗi nào
-- [ ] [`access-ladder.md`](../specs/00-foundation/access-ladder.md) — 16 kh, 1 vt, 1 tc
-- [ ] [`content-versioning.md`](../specs/00-foundation/content-versioning.md) — 12 kh, 5 tc · mục 11 câu 2 có **ba lượt**, giữ cả ba
-- [ ] [`event-catalog.md`](../specs/00-foundation/event-catalog.md) — 14 kh · mục 11 câu 2 có **hai lượt**, giữ cả hai
-- [ ] [`mvp-scope.md`](../specs/00-foundation/mvp-scope.md) — 9 kh, 1 vt, 4 tc
-- [ ] [`id-conventions.md`](../specs/00-foundation/id-conventions.md) — 6 kh · kiểm tra C13 đối chiếu regex ở mục 7, không đổi một ký tự regex nào
-- [ ] [`glossary.md`](../specs/00-foundation/glossary.md) — 3 kh, 1 vt, 1 tc
-- [ ] Xoá `00-foundation` khỏi danh sách hoãn C14 và C15, **cùng commit**
-- [ ] `pnpm inventory:symbols specs/00-foundation` báo 0 cả ba loại
-- [ ] `pnpm check` exit 0 · `pnpm test` không giảm · `approved` vẫn 23 · cảnh báo không tăng
+Giao cho một agent (general-purpose) làm cả 15 file còn lại theo đúng "chín việc" —
+[`scripts/inventory-symbols.ts`](../../scripts/inventory-symbols.ts) đo trước/sau từng file, tôi
+đọc lại diff toàn bộ + chạy `pnpm check`/`test`/`typecheck:root` độc lập trước khi commit.
+
+- [x] [`business-rules.md`](../specs/00-foundation/business-rules.md) — làm ở Cổng dừng B
+- [x] [`repo-bootstrap.md`](../specs/00-foundation/repo-bootstrap.md) — 43/0/22 → 0/0/0. Mục 11
+      câu 10, ba lượt kết luận: giữ nguyên cả ba, đã đọc lại xác nhận
+- [x] [`content-lifecycle.md`](../specs/00-foundation/content-lifecycle.md) — 44/2/2 → 0/0/0
+- [x] [`payment-flow.md`](../specs/00-foundation/payment-flow.md) — 44/0/0 → 0/0/0. Ma trận
+      chuyển trạng thái (bảng ✅/❌) đổi đúng "Có"/"Không" theo quy tắc ô nhị phân
+- [x] [`monorepo-package-architecture.md`](../specs/00-foundation/monorepo-package-architecture.md) — 14/0/27 → 0/0/0
+- [x] [`child-data-compliance.md`](../specs/00-foundation/child-data-compliance.md) — 38/0/1 →
+      0/0/0. Danh sách cột bị cấm: đối chiếu tay xác nhận nội dung liệt kê không đổi một chữ,
+      chỉ bỏ ký hiệu đầu dòng
+- [x] [`actors.md`](../specs/00-foundation/actors.md) — 27/0/8 → 0/0/0
+- [x] [`entitlement-model.md`](../specs/00-foundation/entitlement-model.md) — 28/0/1 → 0/0/0
+- [x] [`package-catalog.md`](../specs/00-foundation/package-catalog.md) — 27/0/0 → 0/0/0
+- [x] [`error-codes.md`](../specs/00-foundation/error-codes.md) — 15/0/8 → 0/0/0. Không mã lỗi
+      nào đổi — C5 vẫn xanh
+- [x] [`access-ladder.md`](../specs/00-foundation/access-ladder.md) — 13/0/1 → 0/0/0
+- [x] [`content-versioning.md`](../specs/00-foundation/content-versioning.md) — 12/0/5 → 0/0/0.
+      Mục 11 câu 2, ba lượt: giữ nguyên, đã đọc lại xác nhận
+- [x] [`event-catalog.md`](../specs/00-foundation/event-catalog.md) — 14/0/0 → 0/0/0. Mục 11
+      câu 2, hai lượt: giữ nguyên
+- [x] [`mvp-scope.md`](../specs/00-foundation/mvp-scope.md) — 9/0/4 → 0/0/0
+- [x] [`id-conventions.md`](../specs/00-foundation/id-conventions.md) — 6/0/0 → 0/0/0. Đối chiếu
+      tay bảng regex mục 7.1 — không một ký tự nào đổi, kể cả sau khi agent sửa xong
+- [x] [`glossary.md`](../specs/00-foundation/glossary.md) — 3/0/1 → 0/0/0
+- [x] Xoá `00-foundation` khỏi danh sách hoãn C14 và C15, cùng commit —
+      [`scripts/style-guide.ts`](../../scripts/style-guide.ts)
+- [x] `pnpm inventory:symbols specs/00-foundation` báo 0/0/0 cho cả 16 file
+- [x] `pnpm check` exit 0 · `pnpm test` 88/88 · `pnpm typecheck:root` sạch · `approved` vẫn **27**
+      (không phải 23, xem sửa số nền ở bước 4) · cảnh báo vẫn 208, không tăng
 - [ ] Commit
 
 ## Bước 6 — `01-platform` phần một, 14 file dữ liệu · 302 kh · 15 vt · 92 tc

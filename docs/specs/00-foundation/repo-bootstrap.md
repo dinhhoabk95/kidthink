@@ -18,14 +18,17 @@ depends_on: []
 
 ## 1. Objective
 
-`../roadmap.md` §P0 bước 7 ghi "Dựng repo, migration, cổng tự động" nhưng không có spec sở hữu — đây
-là lỗ hổng duy nhất trong 128 spec gốc. File này lấp nó, và là **spec đầu tiên thực thi**,
-trước cả `glossary`/`id-conventions`, vì mọi spec khác giả định đã có repo để đặt code vào.
+Mục P0 bước 7 của [`roadmap.md`](../roadmap.md) ghi "Dựng repo, migration, cổng tự động" nhưng
+không có spec sở hữu — đây là lỗ hổng duy nhất trong 128 spec gốc. File này lấp nó, và là **spec
+đầu tiên thực thi**, trước cả [`glossary.md`](glossary.md) và
+[`id-conventions.md`](id-conventions.md), vì mọi spec khác giả định đã có repo để đặt code vào.
 
 Quyết định nền: **khởi tạo từ đầu trong `kidthink/`**, nằm cạnh `tinimath/` (v1, tham khảo
-đọc-only) trong cùng workspace — không update dần trên code cũ (`../SPEC.md` §0 D9). Port có
-chọn lọc, không copy nguyên khối; phần lớn thư viện nền adopt từ hệ sinh thái đã kiểm chứng
-thay vì tự viết (§0 D10).
+đọc-only) trong cùng workspace — không update dần trên code cũ (quyết định D9 — khởi tạo source
+mới từ đầu trong `kidthink/` thay vì update dần code cũ, mục 0 của [`SPEC.md`](../../SPEC.md)).
+Port có chọn lọc, không copy nguyên khối; phần lớn thư viện nền adopt từ hệ sinh thái đã kiểm
+chứng thay vì tự viết (quyết định D10 — ưu tiên adopt thư viện Nuxt ecosystem đã kiểm chứng thay
+vì tự xây từ đầu, cùng mục).
 
 ## 2. Actors
 
@@ -41,7 +44,7 @@ thay vì tự viết (§0 D10).
 |---|---|
 | `kidthink/package.json`, `pnpm-workspace.yaml` | Gốc workspace |
 | `kidthink/apps/*`, `kidthink/packages/*` | Khung app/package rỗng |
-| `kidthink/lefthook.yml` + `.git/hooks/pre-commit`·`pre-push` | Gate lint+typecheck+test, chạy local. ❌ Không có cổng remote |
+| `kidthink/lefthook.yml` + `.git/hooks/pre-commit`·`pre-push` | Gate lint+typecheck+test, chạy local. Không có cổng remote |
 | `kidthink/docker-compose.yml` | PostgreSQL 17 + Valkey 9 cho dev local |
 | `tinimath/tinimath/**` (v1, đọc-only) | Nguồn port — xem §7.3 |
 
@@ -60,32 +63,33 @@ thay vì tự viết (§0 D10).
 6. Cấu hình gate local bằng `lefthook`: `pre-commit` chạy lint trên file staged;
    `pre-push` chạy `pnpm check` (lint · lint:tokens · lint:deps · typecheck) + `pnpm test`
    + `pnpm check:services`. Chạy `lefthook install` để ghi `.git/hooks/*`, rồi bắt xanh
-   trên **commit rỗng** — và kiểm **ca âm** (file vi phạm ⇒ hook chặn commit) trước khi
+   trên **commit rỗng** — và kiểm **ca âm** (file vi phạm thì hook chặn commit) trước khi
    PR đầu tiên chứa business logic được mở. Hook không có ca âm đã đo là hook chưa tồn tại.
 7. Gate ra: `pnpm check` xanh tại chỗ, `lefthook run pre-commit`/`pre-push` xanh **và** ca âm
    chặn đúng, `docker compose up -d` chạy được PG + Valkey — rồi mới bắt đầu viết
-   `glossary.md`/`id-conventions.md` (P0 bước 1 kế tiếp theo `../roadmap.md`).
+   [`glossary.md`](glossary.md) và [`id-conventions.md`](id-conventions.md) (P0 bước 1 kế tiếp
+   theo [`roadmap.md`](../roadmap.md)).
 
 ## 5. Alternative flows
 
 | Nhánh | Điều kiện | Hành vi |
 |---|---|---|
-| Asset v1 không tương thích `design-system-contract` mới | Kiểm khi port `packages/ui` | Viết lại theo contract mới, **không** port nguyên trạng — ghi lại quyết định ở §11 |
+| Asset v1 không tương thích [`design-system-contract.md`](../08-quality/design-system-contract.md) mới | Kiểm khi port `packages/ui` | Viết lại theo contract mới, **không** port nguyên trạng — ghi lại quyết định ở §11 |
 | Dependency ở §7.1 có bản vá bảo mật mới hơn version chốt | Trước khi cài | Lấy bản vá mới nhất trong cùng major/minor đã chốt, không tự ý nhảy major |
 | Thư viện ở §7.1 ngừng bảo trì trước khi bootstrap xong | Phát hiện lúc cài | Dừng, quay lại Specify — sửa bảng §7.1 trước khi tiếp tục, không âm thầm đổi trong PR code |
-| Gate local đỏ mà cần commit/push gấp | Áp lực lịch trình | ❌ Không dùng `--no-verify`. Sửa lỗi, hoặc `git stash` phần chưa xong — xem Boundaries |
+| Gate local đỏ mà cần commit/push gấp | Áp lực lịch trình | Không dùng `--no-verify`. Sửa lỗi, hoặc `git stash` phần chưa xong — xem Boundaries |
 | Người clone repo mới nhưng chưa chạy `lefthook install` | `.git/hooks/` rỗng | Hook **không tồn tại** và git im lặng. `pnpm install` phải kéo `lefthook install` theo (`prepare` script) — đây là điểm hỏng mặc định của mọi gate local |
 
 ## 6. Business rules
 
 | ID | Rule | Vì sao |
 |---|---|---|
-| `BR-RBS-01` | Repo mới ❌ **NEVER copy trực tiếp** route/schema/service từ v1 — chỉ 3 tài sản + tooling config ở §7.3, trừ khi có audit riêng bổ sung | `AUDIT-v1.md` §1 đã đo: ~26% nội dung v1 là "nợ" gắn với code sẽ bỏ. Copy nguyên khối mang nợ đó sang |
+| `BR-RBS-01` | Repo mới **NEVER copy trực tiếp** route/schema/service từ v1 — chỉ 3 tài sản + tooling config ở §7.3, trừ khi có audit riêng bổ sung | Mục 1 của [`AUDIT-v1.md`](../AUDIT-v1.md) đã đo: ~26% nội dung v1 là "nợ" gắn với code sẽ bỏ. Copy nguyên khối mang nợ đó sang |
 | `BR-RBS-02` | Mọi package port từ v1 **phải đổi scope** `@tinimath/*` → `@kidthink/*` trong cùng PR port, không để hai scope cùng tồn tại | Hai scope trộn lẫn làm import path không nhất quán và dễ import nhầm bản cũ |
 | `BR-RBS-03` | Gate local `lefthook` (lint + lint:tokens + lint:deps + typecheck + test) phải xanh trên commit rỗng **và** chặn đúng ở ca âm, **trước khi** PR đầu tiên chứa business logic mở | Bootstrap xong mà gate chưa chạy là nợ kỹ thuật ghi nhận ngay từ dòng code đầu tiên. Ca âm bắt buộc vì gate exit 0 khi có lỗi là chuyện **đã xảy ra** ở project này (`ultracite check`, `check:services`) |
-| `BR-RBS-03a` | `lefthook install` phải chạy tự động qua `prepare` script của `package.json` — ❌ không dựa vào người mới clone tự nhớ | Hook chỉ tồn tại trong `.git/hooks/` (không được commit). Người clone mà không cài hook thì gate im lặng biến mất, và git không báo gì |
-| `BR-RBS-04` | ❌ **NEVER viết code nghiệp vụ** trước khi toàn bộ spec `00-foundation` đạt `status: approved` | `../roadmap.md` nguyên tắc 1 — contract trước implementation |
-| `BR-RBS-05` | Dependency ở §7.1 **ưu tiên adopt** thư viện phổ biến; chỉ tự viết khi không có thư viện phù hợp hoặc cần bọc dùng chung nhiều app (driver) | `../SPEC.md` §0 D10 |
+| `BR-RBS-03a` | `lefthook install` phải chạy tự động qua `prepare` script của `package.json` — không dựa vào người mới clone tự nhớ | Hook chỉ tồn tại trong `.git/hooks/` (không được commit). Người clone mà không cài hook thì gate im lặng biến mất, và git không báo gì |
+| `BR-RBS-04` | **NEVER viết code nghiệp vụ** trước khi toàn bộ spec `00-foundation` đạt `status: approved` | Nguyên tắc 1 của [`roadmap.md`](../roadmap.md) — contract trước implementation |
+| `BR-RBS-05` | Dependency ở §7.1 **ưu tiên adopt** thư viện phổ biến; chỉ tự viết khi không có thư viện phù hợp hoặc cần bọc dùng chung nhiều app (driver) | Mục 0, quyết định D10 của [`SPEC.md`](../../SPEC.md) |
 | `BR-RBS-06` | Version pin ở `engines` (root) + pnpm `catalog:` — package con **không tự ý** khai version khác catalog | Version rải rác từng package là nguồn drift kinh điển trong monorepo |
 | `BR-RBS-07` | `docker-compose.yml` dev phải chạy **đúng major version** production (PG 17, Valkey 9) trước khi bất kỳ ai viết schema | Test trên version khác production là kiểm tra sai thứ |
 | `BR-RBS-08` | Đổi bảng §7.1 (thêm/gỡ thư viện nền, đổi major version) là đổi spec — **không** sửa âm thầm trong PR cài dependency | Bảng này là contract; sửa không qua Specify làm mất lý do quyết định |
@@ -102,43 +106,43 @@ hardcode `ioredis` không nhận client khác. Cả hai điểm chạm Valkey du
 
 | Lớp | Chọn | Version tối thiểu | Ghi chú |
 |---|---|---|---|
-| Runtime | Node | 24 (LTS, hỗ trợ tới 04/2028) | ❌ Node 20 (EOL 03/2026), chưa pin Node 26 (chưa LTS) |
+| Runtime | Node | 24 (LTS, hỗ trợ tới 04/2028) | Không dùng Node 20 (EOL 03/2026), chưa pin Node 26 (chưa LTS) |
 | Package manager | pnpm | 11 | Bật `catalog:`; SQLite store index; supply-chain cooldown 1 ngày mặc định |
 | Web framework | Nuxt | `^4.5` | Nuxt 3 EOL 31/07/2026. Nuxt 5 chưa phát hành tại thời điểm chốt |
 | DB | PostgreSQL | 17 | Giữ nguyên từ v1 — chưa có lý do kỹ thuật để bump, xem §11 Q2 |
-| ORM | Drizzle | `^0.45` (drizzle-kit `^0.31`, lockstep) | Driver `postgres.js`, singleton `postgres()`+`drizzle()` **một lần mỗi tiến trình PM2** (❌ không tạo client mỗi request — đó là anti-pattern của serverless, không áp dụng ở đây). `prepare: true` (mặc định) — chỉ tắt nếu sau này có pooler transaction-mode (PgBouncer/RDS Proxy) đứng trước |
+| ORM | Drizzle | `^0.45` (drizzle-kit `^0.31`, lockstep) | Driver `postgres.js`, singleton `postgres()`+`drizzle()` **một lần mỗi tiến trình PM2** (không tạo client mỗi request — đó là anti-pattern của serverless, không áp dụng ở đây). `prepare: true` (mặc định) — chỉ tắt nếu sau này có pooler transaction-mode (PgBouncer/RDS Proxy) đứng trước |
 | Valkey server | Valkey | 9 (9.1) | Linux Foundation, tương thích Redis protocol ~90% (không còn 1:1) |
-| Valkey client (Node) | **`ioredis`** `^5.11` | — | ❌ Không `iovalkey` (xem ghi chú sửa ở trên) — pin khớp version BullMQ tự test (`5.11.1`). Pin `^5.11` **có chủ đích** — ❌ không nâng `^6` dù npm báo đó là bản mới nhất. `iovalkey ^0.4` chỉ dùng **nếu sau này** có code tự viết gọi Valkey trực tiếp ngoài BullMQ/unstorage (hiện chưa có) |
-| Ngôn ngữ | TypeScript | `~5.9.3` | ❌ Không pin theo `latest` npm (`7.0.2` là bản viết lại native compiler) — Nuxt 4.5.2 không pin TS, `vue-tsc@3.3.9` chỉ khai `>=5.0.0` (*cho phép*, không phải *đã kiểm chứng*). Giữ major 5, boring tech (`../SPEC.md` §6). Đánh giá TS 7 là task riêng khi có code thật để đo |
+| Valkey client (Node) | **`ioredis`** `^5.11` | — | Không dùng `iovalkey` (xem ghi chú sửa ở trên) — pin khớp version BullMQ tự test (`5.11.1`). Pin `^5.11` **có chủ đích**, không nâng `^6` dù npm báo đó là bản mới nhất. `iovalkey ^0.4` chỉ dùng **nếu sau này** có code tự viết gọi Valkey trực tiếp ngoài BullMQ/unstorage (hiện chưa có) |
+| Ngôn ngữ | TypeScript | `~5.9.3` | Không pin theo `latest` npm (`7.0.2` là bản viết lại native compiler) — Nuxt 4.5.2 không pin TS, `vue-tsc@3.3.9` chỉ khai `>=5.0.0` (*cho phép*, không phải *đã kiểm chứng*). Giữ major 5, boring tech (mục 6 của [`SPEC.md`](../../SPEC.md)). Đánh giá TS 7 là task riêng khi có code thật để đo |
 | Cache abstraction | `unstorage` | `^1.17` | Driver `redis` built-in, trỏ thẳng `host`/`port` Valkey — không cần workaround, không cần driver tự viết |
-| Queue | BullMQ | `^6.0` | `connection: {host, port, password}` — object thường, BullMQ tự dựng `ioredis` nội bộ (tự set `maxRetriesPerRequest: null` cho Worker). ❌ Không `createValkeyGlideClient` (đó là path cho HA/cluster kiểu AWS, không cần ở self-host Docker) |
-| Queue — Nuxt wrapper | ❌ Không dùng `nuxt-simple-bullmq` | — | Solo-maintainer, README tự nhận chỉ test Node 21, tác giả khuyên dùng lựa chọn khác cho production. Nối BullMQ trực tiếp qua Nitro plugin trong `apps/worker` |
+| Queue | BullMQ | `^6.0` | `connection: {host, port, password}` — object thường, BullMQ tự dựng `ioredis` nội bộ (tự set `maxRetriesPerRequest: null` cho Worker). Không dùng `createValkeyGlideClient` (đó là path cho HA/cluster kiểu AWS, không cần ở self-host Docker) |
+| Queue — Nuxt wrapper | Không dùng `nuxt-simple-bullmq` | — | Solo-maintainer, README tự nhận chỉ test Node 21, tác giả khuyên dùng lựa chọn khác cho production. Nối BullMQ trực tiếp qua Nitro plugin trong `apps/worker` |
 | Auth — OAuth/session (cả 2 app) | `nuxt-auth-utils` | `^0.5` | **Dùng cho cả `apps/web` VÀ `apps/admin`** (không tách 2 cơ chế — xem §11, đã đóng Q3 cũ). Cookie niêm phong (Iron seal qua h3), không phải JWT — không cần `unstorage`/KV. `apps/web` đăng ký OAuth Google+Facebook; `apps/admin` **không đăng ký route OAuth nào** (cấm bằng việc không có file, không phải check runtime). Tên cookie + secret niêm phong **khác nhau mỗi app** |
-| Auth — TOTP (Manager, bắt buộc) | `otpauth` | mới nhất | `nuxt-auth-utils` không có TOTP. Zero-dependency, RFC 4226/6238. ❌ `speakeasy` (không bảo trì ~10 năm) |
+| Auth — TOTP (Manager, bắt buộc) | `otpauth` | mới nhất | `nuxt-auth-utils` không có TOTP. Zero-dependency, RFC 4226/6238. Không dùng `speakeasy` (không bảo trì ~10 năm) |
 | Auth — service-to-service | `jose` | giữ nguyên | JWT cho gọi giữa service (vd `apps/worker` gọi API nội bộ), không phải session trình duyệt |
 | SEO | `@nuxtjs/seo` | `^5.3` (pin chính xác, không float `^`) | Bundle: `@nuxtjs/robots` `@nuxtjs/sitemap` `nuxt-og-image` (renderer **Takumi**, cài thêm `@takumi-rs/core`) `nuxt-schema-org` `nuxt-site-config`. Sitemap động qua `defineSitemapEventHandler()` + `chunks: 5000` (tính trước cho lúc scale ngàn trang). Thứ tự module: `@nuxt/ui` → `@nuxtjs/seo` → layer khác |
 | UI kit | Nuxt UI v4 (`^4.10`, pin do #6184 peer-dep vue-router) + Tailwind v4 | | Ép light-mode `pages/play/**` qua `middleware/force-play-light.global.ts` set `to.meta.colorMode = 'light'` (route-group, không phải `definePageMeta` từng file) |
 | Form (admin) | `UForm` (Nuxt UI v4) + Zod 4 (Standard Schema, không cần adapter) | | Không có lib "Zod → form" đủ chín cho schema lồng nhau — hand-author field layout mỗi content type. `@norbiros/nuxt-auto-form` chỉ pilot cho form phẳng, chưa dùng critical path |
-| Rich text (admin) | `Editor` component có sẵn trong Nuxt UI v4 (nền Tiptap 3) | | Set `starter-kit` về đúng bold/italic/link/heading. Lưu **markdown** (`html: false` khi render) thay vì HTML — biên an toàn tự nhiên hơn allowlist. Nếu chọn HTML: `sanitize-html` server-side, ❌ `dompurify` server-side |
-| Payment QR | Gọi `img.vietqr.io` (Quick Link API) trực tiếp | | ❌ Không tự sinh EMVCo/CRC16, ❌ không package `vietqr` npm (stale từ 2022). Fetch + lưu PNG bytes lúc tạo order, không chỉ hotlink |
+| Rich text (admin) | `Editor` component có sẵn trong Nuxt UI v4 (nền Tiptap 3) | | Set `starter-kit` về đúng bold/italic/link/heading. Lưu **markdown** (`html: false` khi render) thay vì HTML — biên an toàn tự nhiên hơn allowlist. Nếu chọn HTML: dùng `sanitize-html` server-side, không dùng `dompurify` server-side |
+| Payment QR | Gọi `img.vietqr.io` (Quick Link API) trực tiếp | | Không tự sinh EMVCo/CRC16, không dùng package `vietqr` npm (stale từ 2022). Fetch + lưu PNG bytes lúc tạo order, không chỉ hotlink |
 | Email | AWS SES qua `@aws-sdk/client-ses` (+ `nodemailer` transport nếu cần dùng chung API gửi mail) | | Đã ở AWS (EC2) — IAM role, không secret SMTP để xoay. Cần xin production access sớm + SNS bounce/complaint webhook trước go-live |
 | Ảnh — xử lý server | `sharp` | | Vẫn chuẩn 2026. pnpm: khai `onlyBuiltDependencies: [sharp]` ở `pnpm-workspace.yaml`. Docker: build native binary **trong** stage cùng base image runtime, không copy từ host |
 | Ảnh — crop client | `vue-advanced-cropper` | | Vue-3-native, có `&lt;Preview&gt;` khớp yêu cầu "xem trước cỡ thật". Mount `&lt;ClientOnly&gt;` (SSR không đụng canvas) |
 | Error tracking | `@sentry/nuxt` (SaaS Team tier) | | GlitchTip self-host là fallback nếu chi phí/lưu trú dữ liệu VN sau này bắt buộc — cùng giao thức ingest, đổi DSN là xong |
-| Logging | `pino` + `pino-http` nối trực tiếp Nitro plugin | | ❌ Không wrapper Nuxt (`nuxt-pino-log` bỏ hoang từ 2022) |
+| Logging | `pino` + `pino-http` nối trực tiếp Nitro plugin | | Không dùng wrapper Nuxt (`nuxt-pino-log` bỏ hoang từ 2022) |
 | Alert tới người | Healthchecks.io (free) cho liveness job/cron + Telegram Bot API (`fetch` thô) cho ngưỡng/crash | | Email chỉ là kênh dự phòng — VN dev quen Telegram hơn, tới nhanh hơn |
-| Dependency-boundary | `dependency-cruiser` `^18.1` | | Duy nhất trong 4 lựa chọn khảo sát hỗ trợ cấm **thư viện ngoài cụ thể** theo từng zone (`BR-MPA-01`), không chỉ graph nội bộ. `sherif` giữ làm lint dependency-hygiene bổ sung, không thay được việc này |
-| Gate chất lượng | **`lefthook` `^2.1`** (git hook local) | — | ❌ **Không cổng remote** — không cổng tự động, không GitLab cổng tự động, không Jenkins (quyết định người dùng 2026-08-06, xem §11 Q5). ❌ Không `husky` + `lint-staged` (hai package, hook là shell script — lefthook là một binary Go, config một file, có `{staged_files}` sẵn). pnpm: khai **`allowBuilds: {lefthook: false}`** ở `pnpm-workspace.yaml`. Binary tới từ `optionalDependencies` theo platform (`lefthook-darwin-x64`…), `postinstall` **không cần chạy** — đo được: `.modules.yaml` ghi `ignoredBuilds: [lefthook@2.1.10]` mà `lefthook version` vẫn ra `2.1.10`. Không khai thì `pnpm install` trên **clone mới** exit 1 (`ERR_PNPM_IGNORED_BUILDS`) — vỡ onboarding. ❌ `onlyBuiltDependencies: [lefthook]` và ❌ `ignoredBuiltDependencies: [lefthook]` đều **không** tắt được lỗi này (đã đo trên pnpm 11.16) |
-| Lint/format | `ultracite@~6.5.1` (**preset only**) + `@biomejs/biome@^2.5.7` (**CLI chạy thật**) | ❌ **Không** nâng `ultracite` lên `^7` — từ 7.0 bỏ Biome sang oxlint/oxfmt, kể cả bản v1 pin `7.9.4` đã là oxlint. ❌ **Không** dùng CLI `ultracite check` làm gate — đo trên Biome 2.5.7/2.5.5/2.4.0: wrapper báo `Failed to parse Biome output` rồi **exit 0** dù có lỗi lint thật (nuốt lỗi). Script `lint` gọi thẳng `biome check .` |
+| Dependency-boundary | `dependency-cruiser` `^18.1` | | Duy nhất trong 4 lựa chọn khảo sát hỗ trợ cấm **thư viện ngoài cụ thể** theo từng zone (quy tắc `BR-MPA-01` của [`monorepo-package-architecture.md`](monorepo-package-architecture.md) — app không được import trực tiếp thư viện nền cho capability dùng chung từ ít nhất 2 app, phải qua package driver), không chỉ graph nội bộ. `sherif` giữ làm lint dependency-hygiene bổ sung, không thay được việc này |
+| Gate chất lượng | **`lefthook` `^2.1`** (git hook local) | — | **Không cổng remote** — không cổng tự động, không GitLab cổng tự động, không Jenkins (quyết định người dùng 2026-08-06, xem §11 Q5). Không dùng `husky` + `lint-staged` (hai package, hook là shell script — lefthook là một binary Go, config một file, có `{staged_files}` sẵn). pnpm: khai **`allowBuilds: {lefthook: false}`** ở `pnpm-workspace.yaml`. Binary tới từ `optionalDependencies` theo platform (`lefthook-darwin-x64`…), `postinstall` **không cần chạy** — đo được: `.modules.yaml` ghi `ignoredBuilds: [lefthook@2.1.10]` mà `lefthook version` vẫn ra `2.1.10`. Không khai thì `pnpm install` trên **clone mới** exit 1 (`ERR_PNPM_IGNORED_BUILDS`) — vỡ onboarding. `onlyBuiltDependencies: [lefthook]` và `ignoredBuiltDependencies: [lefthook]` đều **không** tắt được lỗi này (đã đo trên pnpm 11.16) |
+| Lint/format | `ultracite@~6.5.1` (**preset only**) + `@biomejs/biome@^2.5.7` (**CLI chạy thật**) | **Không** nâng `ultracite` lên `^7` — từ 7.0 bỏ Biome sang oxlint/oxfmt, kể cả bản v1 pin `7.9.4` đã là oxlint. **Không** dùng CLI `ultracite check` làm gate — đo trên Biome 2.5.7/2.5.5/2.4.0: wrapper báo `Failed to parse Biome output` rồi **exit 0** dù có lỗi lint thật (nuốt lỗi). Script `lint` gọi thẳng `biome check .` |
 | Test | Vitest · Playwright · `fast-check` · k6 · `@axe-core/playwright` | giữ nguyên | |
 | Storage | S3 SDK | giữ nguyên | |
 | Deploy | Docker (PG 17 + Valkey 9) · PM2 · Nginx · EC2 | giữ nguyên | |
 
 Version cụ thể ở bảng trên là **version tối thiểu tại 2026-08-06**. Lúc bootstrap thực tế,
-lấy bản vá/minor mới nhất cùng major đã chốt — không hạ version, không tự ý nhảy major
-(`BR-RBS-08`). Nguồn nghiên cứu chi tiết (npm registry, GitHub issue, docs) — xem lịch sử
-phiên làm việc 2026-08-05/06, không lặp lại ở đây theo `CONVENTIONS.md` (spec khác link tới,
-không copy).
+lấy bản vá/minor mới nhất cùng major đã chốt — không hạ version, không tự ý nhảy major (quy tắc
+`BR-RBS-08` — đổi bảng §7.1 là đổi spec, không sửa âm thầm trong PR cài dependency). Nguồn
+nghiên cứu chi tiết (npm registry, GitHub issue, docs) — xem lịch sử phiên làm việc 2026-08-05/06,
+không lặp lại ở đây theo [`CONVENTIONS.md`](../CONVENTIONS.md) (spec khác link tới, không copy).
 
 ### 7.2 Cấu trúc thư mục
 
@@ -151,12 +155,12 @@ sở hữu cây thư mục `kidthink/`; file này chỉ sở hữu **trình tự
 |---|---|---|
 | `docs/taxonomy/` | `docs/taxonomy/` | Port nguyên — registry C1–C6 + 230 skill là dữ liệu, không phải code |
 | `packages/emoji/` | `packages/emoji/` | Port nguyên, đổi scope. 32 nhóm emoji cố định không đổi theo spec v2 |
-| `packages/game-engine/` | `packages/game-engine/` | Port **có điều kiện**, đổi scope — ❌ không "port nguyên": đo được là bất khả thi. **48 import** `D1xx–D4xxConfig` từ `@tinimath/shared` — package ngoài danh sách port ở bảng này; v1 `handlers/d1..d6/` 86 file / 60 game type vs v2 `templates/` `GT-001`…`GT-006`. Phụ thuộc `game-template-contract.md` §11 Q1 — khảo sát % port được **trước khi cam kết**. Task riêng, ngoài P0 bước 1 |
+| `packages/game-engine/` | `packages/game-engine/` | Port **có điều kiện**, đổi scope — không "port nguyên": đo được là bất khả thi. **48 import** `D1xx–D4xxConfig` từ `@tinimath/shared` — package ngoài danh sách port ở bảng này; v1 `handlers/d1..d6/` 86 file / 60 game type vs v2 `templates/` `GT-001`…`GT-006`. Phụ thuộc mục 11 câu hỏi 1 của [`game-template-contract.md`](../01-platform/game-template-contract.md) — khảo sát % port được **trước khi cam kết**. Task riêng, ngoài P0 bước 1 |
 | `biome.json`, TSConfig base, `.dockerignore`, `docker-compose*.yml` skeleton | `packages/config/`, gốc `kidthink/` | Port làm điểm khởi đầu, chỉnh version dependency theo §7.1 |
-| `packages/config/src/constants.ts` | ❌ Không port | `COOKIE_PREFIXES` (`superadmin: "tinimath_sa"`) + `API_PATHS` là bề mặt auth v1 — actor `superadmin` (v2 dùng `manager`), prefix `tinimath_`. Auth là 1 trong 6 vùng cấm AI-codegen (`../SPEC.md` §0 D7) |
-| Workflow v1 (`.github/workflows/`) | ❌ Không port | Không có cổng remote ở v2 (§7.1 dòng "Gate chất lượng", §11 Q5). Bản port ngày 2026-08-06 đã **xoá lại** cùng cả thư mục `.github/` |
-| `packages/ui/` (Nuxt UI v4 + Tailwind preset, brand component) | `packages/ui/` | Port **có điều kiện** — chỉ phần đã khớp `docs/specs/08-quality/design-system-contract.md`; phần lệch thì viết lại, không ép port. Cần audit riêng trước khi merge — xem §11 Q1 |
-| Mọi route API, Drizzle schema, service, session class | ❌ Không port | Business logic viết mới hoàn toàn theo 128 spec v2 — đây chính là lý do greenfield (`../SPEC.md` §0 D9) |
+| `packages/config/src/constants.ts` | Không port | `COOKIE_PREFIXES` (`superadmin: "tinimath_sa"`) + `API_PATHS` là bề mặt auth v1 — actor `superadmin` (v2 dùng `manager`), prefix `tinimath_`. Auth là 1 trong 6 vùng cấm AI-codegen (quyết định D7 — AI soạn trong repo, người merge, không có LLM chạy trong hệ thống để sinh nội dung, mục 0 của [`SPEC.md`](../../SPEC.md)) |
+| Workflow v1 (`.github/workflows/`) | Không port | Không có cổng remote ở v2 (§7.1 dòng "Gate chất lượng", §11 Q5). Bản port ngày 2026-08-06 đã **xoá lại** cùng cả thư mục `.github/` |
+| `packages/ui/` (Nuxt UI v4 + Tailwind preset, brand component) | `packages/ui/` | Port **có điều kiện** — chỉ phần đã khớp [`design-system-contract.md`](../08-quality/design-system-contract.md); phần lệch thì viết lại, không ép port. Cần audit riêng trước khi merge — xem §11 Q1 |
+| Mọi route API, Drizzle schema, service, session class | Không port | Business logic viết mới hoàn toàn theo 128 spec v2 — đây chính là lý do greenfield (quyết định D9 ở mục 0 của [`SPEC.md`](../../SPEC.md)) |
 
 ## 8. API contract
 
@@ -236,19 +240,19 @@ Scenario: BR-RBS-04 — chặn code nghiệp vụ trước foundation approved
 
 | # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
 |---|---|---|---|---|
-| 1 | `packages/ui` (Nuxt UI v4 + Tailwind preset + brand component ở v1) có đủ khớp `design-system-contract` mới để port nguyên, hay phải viết lại phần lớn? Cần audit riêng, không đoán ở đây | Bước port §7.3, và mọi UI apps/web sau đó | 🟡 P1 | hoãn |
-| ~~2~~ | ~~PostgreSQL có nên bump theo major mới nhất~~ **Đóng 2026-08-06 (T8)**: **giữ PG 17** — đã kiểm chứng ở v1, PG 18 chưa GA. `BR-RBS-07` chốt major version trước migration | — | ✅ đóng | D-X (T8) |
-| ~~3~~ | ~~Mô hình session lõi~~ **Đóng 2026-08-06**: `nuxt-auth-utils` cho cả 2 app, cookie niêm phong bọc quanh refresh-token rotation sẵn có — xem `auth-tokens-sessions.md` §1, §4, §7. Không tách 2 cơ chế | — | 🟡 P1 | hoãn |
-| ~~4~~ | ~~Thư viện TOTP~~ **Đóng 2026-08-06**: `otpauth` — xem §7.1 | — | 🟡 P1 | hoãn |
-| ~~5~~ | ~~CI provider~~ **Đóng lại 2026-08-06 (lần 2, quyết định người dùng)**: **không dùng cổng tự động remote nào**. `.github/workflows/ci.yml` đã xoá cùng cả thư mục `.github/`. Thay bằng `lefthook` chạy local (§7.1). Lần đóng trước cùng ngày ghi "cổng tự động" — **sai, đã thay** | — | ✅ đóng | D-S (T1) |
-| 6 | Chấp nhận phụ thuộc runtime vào `img.vietqr.io` (bên thứ ba, ngoài tầm kiểm soát) cho toàn bộ luồng thanh toán MVP? Không có lựa chọn tự-host tương đương đủ tin cậy ở §7.1 | `payment-order-create.md` | 🟡 P2 | hoãn |
-| 7 | Xin production access AWS SES trước khi nào — cần review thời gian duyệt của AWS trước go-live P2 (không tự chốt được, phụ thuộc AWS) | Go-live P2, `notification-service.md` | 🟡 go-live | cần chủ + hạn |
-| 8 | Sentry SaaS Team tier ($26/mo) hay tự host GlitchTip ngay từ đầu — quyết định chi phí, không phải kỹ thuật (đổi qua lại chỉ là đổi DSN) | Ngân sách vận hành | 🟡 P1 | hoãn |
-| 9 | Kích thước pool `postgres.js` (`max`) và `PG max_connections` phải tính theo **loại EC2 instance thật** (số vCPU × số PM2 instance) — chưa chốt vì chưa biết instance type production | `data-model-overview`, deploy | 🟡 P1 | hoãn |
-| 10 | Chiến lược version control cho corpus spec ở workspace root. **Ba lượt quyết định:** | — | ✅ đóng | D-U → 👤 2026-08-07 (lần 2) |
-| | **Lượt 1 — 2026-08-06 (D-U, T2)**: chốt corpus spec (`SPEC.md` + `docs/specs/` + `docs/tasks/`) chuyển vào `kidthink/docs/`, thuộc git repo code. `kidthink/SPEC.md` = symlink → `docs/SPEC.md`. `git log --follow` truy được vết. 223 link `.md` resolve, 0 vỡ. | | | |
-| | **Lượt 2 — 2026-08-07 sáng (quyết định người dùng)**: **đảo lại** — corpus spec ra khỏi `kidthink/`, về `docs/` ở workspace root (sibling của `kidthink/`), **không** track chung git repo code. Lý do lúc đó: docs đổi nhịp khác code và người duyệt khác nhau — tách để diff/review code không lẫn thay đổi markdown. Chưa kịp code hoá (`CORPUS_ROOT` chưa thêm vào `scripts/lint-specs-lib.ts`) thì đã đảo lại ở Lượt 3 — bản ghi lượt này giữ lại làm lịch sử, ❌ không phải trạng thái hiện hành | | | |
-| | **Lượt 3 — 2026-08-07 chiều (quyết định người dùng, đảo lại Lượt 2)**: **khôi phục Lượt 1** — corpus spec (`SPEC.md` + `docs/specs/` + `docs/tasks/` + `docs/taxonomy/` + `docs/montessori/`) ở nguyên trong `kidthink/docs/`, thuộc git repo code, commit chung dòng lịch sử với task code (ví dụ Task #3). Lý do: tách riêng repo docs mới chỉ là quyết định trên giấy — chưa mang lại lợi ích gì (chưa review-tách-luồng nào từng chạy) mà đã phát sinh rủi ro thật: một bản `docs/` cũ bị bỏ quên ở workspace root làm `kidthink/SPEC.md` (symlink) trỏ nhầm sang nội dung lỗi thời. `kidthink/SPEC.md` = symlink → `docs/SPEC.md` (khôi phục, bỏ `../`). Xoá bản `docs/` trùng ở workspace root | | | |
-| ~~11~~ | ~~Bật lại CI cổng tự động khi nào~~ **Đóng 2026-08-06**: câu hỏi biến mất cùng provider — không còn CI để bật. `BR-RBS-03` giờ đo bằng `lefthook run pre-push` + ca âm tại máy | — | ✅ đóng | D-S (T1) |
-| ~~12~~ | ~~Gate local bỏ qua được bằng `--no-verify`~~ **Đóng 2026-08-06 (quyết định người dùng)**: chấp nhận rủi ro đến P1. Ở P0 chưa có business logic để mất; `content-seed-authoring.md` §5 đã sửa lại câu "không có cờ bỏ qua" cho đúng thực tế (cờ tồn tại ở máy cá nhân, không ở PR). Trước `content-seed-authoring` chạy thật (P1) phải quyết định branch protection GitHub (required PR review) — quyết định đó chưa chốt, dời sang lúc đó | — | ✅ đóng | D-S+người (T1) |
-| ~~13~~ | ~~"Cổng CI" còn sót ở spec khác~~ **Đóng 2026-08-06**: đo lại chính xác là **7 file** (không phải 15 — số cũ ước lượng sai), đã sửa hết thành "cổng tự động": `mvp-scope.md` · `content-lifecycle.md` · `content-seed-authoring.md` (2 chỗ, gồm câu "không có cờ bỏ qua" ở Q12) · `roadmap.md` · `index.md` · `../SPEC.md` (4 chỗ). `grep -rn "cổng tự động\|CI xanh\|cổng tự động" docs/specs/ SPEC.md` chỉ còn khớp trong chính file này (lịch sử quyết định, không phải khẳng định hiện tại) | — | ✅ đóng | D-V (T4) |
+| 1 | `packages/ui` (Nuxt UI v4 + Tailwind preset + brand component ở v1) có đủ khớp [`design-system-contract.md`](../08-quality/design-system-contract.md) mới để port nguyên, hay phải viết lại phần lớn? Cần audit riêng, không đoán ở đây | Bước port §7.3, và mọi UI apps/web sau đó | Hoãn, chặn phase P1 | hoãn |
+| ~~2~~ | ~~PostgreSQL có nên bump theo major mới nhất~~ **Đóng 2026-08-06 (T8)**: **giữ PG 17** — đã kiểm chứng ở v1, PG 18 chưa GA, đúng yêu cầu của quy tắc `BR-RBS-07` (chạy đúng major version production trước khi viết schema), chốt trước migration | — | Đã đóng | D-X (T8) |
+| ~~3~~ | ~~Mô hình session lõi~~ **Đóng 2026-08-06**: `nuxt-auth-utils` cho cả 2 app, cookie niêm phong bọc quanh refresh-token rotation sẵn có — xem mục 1, 4 và 7 của [`auth-tokens-sessions.md`](../01-platform/auth-tokens-sessions.md). Không tách 2 cơ chế | — | Hoãn, chặn phase P1 | hoãn |
+| ~~4~~ | ~~Thư viện TOTP~~ **Đóng 2026-08-06**: `otpauth` — xem §7.1 | — | Hoãn, chặn phase P1 | hoãn |
+| ~~5~~ | ~~CI provider~~ **Đóng lại 2026-08-06 (lần 2, quyết định người dùng)**: **không dùng cổng tự động remote nào**. `.github/workflows/ci.yml` đã xoá cùng cả thư mục `.github/`. Thay bằng `lefthook` chạy local (§7.1). Lần đóng trước cùng ngày ghi "cổng tự động" — **sai, đã thay** | — | Đã đóng | D-S (T1) |
+| 6 | Chấp nhận phụ thuộc runtime vào `img.vietqr.io` (bên thứ ba, ngoài tầm kiểm soát) cho toàn bộ luồng thanh toán MVP? Không có lựa chọn tự-host tương đương đủ tin cậy ở §7.1 | [`payment-order-create.md`](../03-account/payment-order-create.md) | Hoãn, chặn phase P2 | hoãn |
+| 7 | Xin production access AWS SES trước khi nào — cần review thời gian duyệt của AWS trước go-live P2 (không tự chốt được, phụ thuộc AWS) | Go-live P2, [`notification-service.md`](../01-platform/notification-service.md) | Hoãn, chặn go-live | cần chủ + hạn |
+| 8 | Sentry SaaS Team tier ($26/mo) hay tự host GlitchTip ngay từ đầu — quyết định chi phí, không phải kỹ thuật (đổi qua lại chỉ là đổi DSN) | Ngân sách vận hành | Hoãn, chặn phase P1 | hoãn |
+| 9 | Kích thước pool `postgres.js` (`max`) và `PG max_connections` phải tính theo **loại EC2 instance thật** (số vCPU × số PM2 instance) — chưa chốt vì chưa biết instance type production | [`data-model-overview.md`](../01-platform/data-model-overview.md), deploy | Hoãn, chặn phase P1 | hoãn |
+| 10 | Chiến lược version control cho corpus spec ở workspace root. **Ba lượt quyết định:** | — | Đã đóng | D-U → cần người quyết, 2026-08-07 (lần 2) |
+| | **Lượt 1 — 2026-08-06 (D-U, T2)**: chốt corpus spec ([`SPEC.md`](../../SPEC.md) + `docs/specs/` + `docs/tasks/`) chuyển vào `kidthink/docs/`, thuộc git repo code. `kidthink/SPEC.md` = symlink → `docs/SPEC.md`. `git log --follow` truy được vết. 223 link `.md` resolve, 0 vỡ. | | | |
+| | **Lượt 2 — 2026-08-07 sáng (quyết định người dùng)**: **đảo lại** — corpus spec ra khỏi `kidthink/`, về `docs/` ở workspace root (sibling của `kidthink/`), **không** track chung git repo code. Lý do lúc đó: docs đổi nhịp khác code và người duyệt khác nhau — tách để diff/review code không lẫn thay đổi markdown. Chưa kịp code hoá (`CORPUS_ROOT` chưa thêm vào `scripts/lint-specs-lib.ts`) thì đã đảo lại ở Lượt 3 — bản ghi lượt này giữ lại làm lịch sử, không phải trạng thái hiện hành | | | |
+| | **Lượt 3 — 2026-08-07 chiều (quyết định người dùng, đảo lại Lượt 2)**: **khôi phục Lượt 1** — corpus spec ([`SPEC.md`](../../SPEC.md) + `docs/specs/` + `docs/tasks/` + `docs/taxonomy/` + `docs/montessori/`) ở nguyên trong `kidthink/docs/`, thuộc git repo code, commit chung dòng lịch sử với task code (ví dụ Task #3). Lý do: tách riêng repo docs mới chỉ là quyết định trên giấy — chưa mang lại lợi ích gì (chưa review-tách-luồng nào từng chạy) mà đã phát sinh rủi ro thật: một bản `docs/` cũ bị bỏ quên ở workspace root làm `kidthink/SPEC.md` (symlink) trỏ nhầm sang nội dung lỗi thời. `kidthink/SPEC.md` = symlink → `docs/SPEC.md` (khôi phục, bỏ `../`). Xoá bản `docs/` trùng ở workspace root | | | |
+| ~~11~~ | ~~Bật lại CI cổng tự động khi nào~~ **Đóng 2026-08-06**: câu hỏi biến mất cùng provider — không còn CI để bật. Quy tắc `BR-RBS-03` (gate local phải xanh và chặn đúng ca âm trước khi mở PR chứa business logic) giờ đo bằng `lefthook run pre-push` + ca âm tại máy | — | Đã đóng | D-S (T1) |
+| ~~12~~ | ~~Gate local bỏ qua được bằng `--no-verify`~~ **Đóng 2026-08-06 (quyết định người dùng)**: chấp nhận rủi ro đến P1. Ở P0 chưa có business logic để mất; mục 5 của [`content-seed-authoring.md`](../01-platform/content-seed-authoring.md) đã sửa lại câu "không có cờ bỏ qua" cho đúng thực tế (cờ tồn tại ở máy cá nhân, không ở PR). Trước khi spec đó chạy thật (P1) phải quyết định branch protection GitHub (required PR review) — quyết định đó chưa chốt, dời sang lúc đó | — | Đã đóng | D-S+người (T1) |
+| ~~13~~ | ~~"Cổng CI" còn sót ở spec khác~~ **Đóng 2026-08-06**: đo lại chính xác là **7 file** (không phải 15 — số cũ ước lượng sai), đã sửa hết thành "cổng tự động": [`mvp-scope.md`](mvp-scope.md) · [`content-lifecycle.md`](content-lifecycle.md) · [`content-seed-authoring.md`](../01-platform/content-seed-authoring.md) (2 chỗ, gồm câu "không có cờ bỏ qua" ở Q12) · [`roadmap.md`](../roadmap.md) · [`index.md`](../index.md) · [`SPEC.md`](../../SPEC.md) (4 chỗ). `grep -rn "cổng tự động\|CI xanh\|cổng tự động" docs/specs/ SPEC.md` chỉ còn khớp trong chính file này (lịch sử quyết định, không phải khẳng định hiện tại) | — | Đã đóng | D-V (T4) |

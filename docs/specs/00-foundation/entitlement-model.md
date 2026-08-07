@@ -64,20 +64,20 @@ if (await hasEntitlement(userId, "play_premium_games")) { … }
 | Gói hết hạn | Key biến khỏi tập. Dữ liệu **giữ nguyên** — `BR-ENT-05` |
 | Manager thu hồi | Invalidate cache ngay, không chờ TTL |
 | Đơn thanh toán bị từ chối | Entitlement sinh từ đơn đó hết hiệu lực **trong cùng transaction** |
-| Quota cạn | Trả **402** `QUOTA_EXCEEDED`, ❌ không degrade âm thầm |
+| Quota cạn | Trả **402** `QUOTA_EXCEEDED`, không degrade âm thầm |
 
 ## 6. Business rules
 
 | ID | Rule | Vì sao |
 |---|---|---|
-| `BR-ENT-01` | Gate bằng **entitlement key**, ❌ không bằng `package_code` | Đổi cấu trúc gói không được kéo theo sửa code tính năng |
-| `BR-ENT-02` | Năng lực = **hợp** của mọi entitlement hiệu lực. ❌ Không gói nào ghi đè gói khác | Một người vừa là phụ huynh vừa là giáo viên là ca dùng chính |
-| `BR-ENT-03` | `entitlement_keys` là **Lớp 1** — admin ❌ không tạo/sửa/xoá qua UI | Key là hằng số mà code tham chiếu. Sửa từ UI làm code gate một key không tồn tại |
+| `BR-ENT-01` | Gate bằng **entitlement key**, không bằng `package_code` | Đổi cấu trúc gói không được kéo theo sửa code tính năng |
+| `BR-ENT-02` | Năng lực = **hợp** của mọi entitlement hiệu lực. Không gói nào ghi đè gói khác | Một người vừa là phụ huynh vừa là giáo viên là ca dùng chính |
+| `BR-ENT-03` | `entitlement_keys` là **Lớp 1** — admin không tạo/sửa/xoá qua UI | Key là hằng số mà code tham chiếu. Sửa từ UI làm code gate một key không tồn tại |
 | `BR-ENT-04` | Key được khai báo nhưng **không gói MVP nào cấp** vẫn hợp lệ (key add-on) | Khai báo trước giữ contract ổn định; nhưng không được bán |
 | `BR-ENT-05` | Hết hạn **không xoá dữ liệu**. `child_profiles`, `mastery_state`, `lesson_plans` giữ nguyên | Mua lại là mở lại, không phải bắt đầu lại |
-| `BR-ENT-06` | Đọc năng lực từ **DB/cache**, ❌ không từ JWT | JWT sống 15 phút; thu hồi phải có hiệu lực ngay |
-| `BR-ENT-07` | Quota cạn → **402**, ❌ không degrade âm thầm | Degrade im lặng biến vấn đề thanh toán thành báo cáo lỗi chất lượng |
-| `BR-ENT-08` | Add-on là **trục độc lập** — ❌ không mở `access_tier` nào | Chi phí add-on là biến phí; gộp vào tier cố định mất kiểm soát chi phí |
+| `BR-ENT-06` | Đọc năng lực từ **DB/cache**, không từ JWT | JWT sống 15 phút; thu hồi phải có hiệu lực ngay |
+| `BR-ENT-07` | Quota cạn → **402**, không degrade âm thầm | Degrade im lặng biến vấn đề thanh toán thành báo cáo lỗi chất lượng |
+| `BR-ENT-08` | Add-on là **trục độc lập** — không mở `access_tier` nào | Chi phí add-on là biến phí; gộp vào tier cố định mất kiểm soát chi phí |
 | `BR-ENT-09` | Mọi thao tác cấp/thu hồi ghi `audit_logs` kèm lý do bắt buộc | Cấp quyền tay là đường lạm dụng dễ nhất |
 | `BR-ENT-10` | Quota reset theo **múi giờ ICT (UTC+7)**, mốc 00:00 | Lỗi múi giờ chỉ hiện ra một giờ trong ngày — đúng giờ trẻ hay chơi |
 
@@ -87,25 +87,25 @@ if (await hasEntitlement(userId, "play_premium_games")) { … }
 
 | Key | Nhóm | MVP | Gói cấp |
 |---|---|:--:|---|
-| `play_free_games` | content | ✅ | ngầm định, mọi tác nhân |
-| `play_login_games` | content | ✅ | mọi User đã đăng nhập |
-| `play_standard_games` | content | ✅ | `standard`, `premium` |
-| `play_premium_games` | content | ✅ | `premium` |
-| `access_premium_curriculum` | content | ✅ | `premium` |
-| `manage_children` | account | ✅ | mọi User đã đăng nhập |
-| `view_basic_report` | report | ✅ | mọi User đã đăng nhập |
-| `view_advanced_report` | report | ✅ | `standard`, `premium` |
-| `create_lesson_plan` | creator | ❌ | `addon_lesson_plan` |
-| `duplicate_lesson` | creator | ❌ | `addon_lesson_plan` |
-| `customize_lesson` | creator | ❌ | `addon_lesson_plan` |
-| `export_pdf` | creator | ❌ | `addon_lesson_plan` |
-| `create_custom_curriculum` | creator | ❌ | `addon_curriculum` |
-| `create_custom_game` | creator | ❌ | `addon_custom_game` |
-| `use_ai_analysis` | ai | ❌ | `addon_ai` |
-| `use_ai_search` | ai | ❌ | `addon_ai` |
+| `play_free_games` | content | Có | ngầm định, mọi tác nhân |
+| `play_login_games` | content | Có | mọi User đã đăng nhập |
+| `play_standard_games` | content | Có | `standard`, `premium` |
+| `play_premium_games` | content | Có | `premium` |
+| `access_premium_curriculum` | content | Có | `premium` |
+| `manage_children` | account | Có | mọi User đã đăng nhập |
+| `view_basic_report` | report | Có | mọi User đã đăng nhập |
+| `view_advanced_report` | report | Có | `standard`, `premium` |
+| `create_lesson_plan` | creator | Không | `addon_lesson_plan` |
+| `duplicate_lesson` | creator | Không | `addon_lesson_plan` |
+| `customize_lesson` | creator | Không | `addon_lesson_plan` |
+| `export_pdf` | creator | Không | `addon_lesson_plan` |
+| `create_custom_curriculum` | creator | Không | `addon_curriculum` |
+| `create_custom_game` | creator | Không | `addon_custom_game` |
+| `use_ai_analysis` | ai | Không | `addon_ai` |
+| `use_ai_search` | ai | Không | `addon_ai` |
 
 **16 key. 8 mở được ở MVP, 8 khai báo trước.** Key add-on tồn tại trong registry nhưng
-`package_entitlements` ❌ không có hàng nào cấp chúng ở MVP.
+`package_entitlements` không có hàng nào cấp chúng ở MVP.
 
 ### 7.2 Bảng `entitlements`
 
@@ -169,7 +169,7 @@ async function consumeQuota(userId: number, key: QuotaKey, n: number): Promise<v
 | Auth | `requireUserAuth()` |
 | 200 | `{ keys: string[], quotas: { key, used, limit, remaining, resets_at }[], packages: { code, expires_at }[] }` |
 
-Dùng để UI hiện đúng trạng thái. ❌ **Client không được tin làm nguồn quyết định** — server
+Dùng để UI hiện đúng trạng thái. **Client không được tin làm nguồn quyết định** — server
 vẫn kiểm lại ở mọi hành động.
 
 | Mã lỗi | HTTP |
@@ -253,6 +253,6 @@ Scenario: BR-ENT-10 — quota reset đúng nửa đêm ICT
 
 | # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
 |---|---|---|---|---|
-| 1 | `daily_play_minutes` 30/60/90 đã đúng chưa? Cần đối chiếu khuyến nghị thời gian màn hình cho trẻ 3–6 | `healthy-play-limits` | 🟡 P1 | hoãn |
-| 2 | `grace_period` kéo dài bao lâu sau `expires_at`? | Luồng gia hạn | 🟡 P1 | hoãn |
-| 3 | Có cần ledger cho quota kiểu credit (`ai_calls`) không, hay counter là đủ? | P4 add-on AI | 🟡 P4 | hoãn |
+| 1 | `daily_play_minutes` 30/60/90 đã đúng chưa? Cần đối chiếu khuyến nghị thời gian màn hình cho trẻ 3–6 | [`healthy-play-limits.md`](../04-play/healthy-play-limits.md) | Hoãn, chặn phase P1 | hoãn |
+| 2 | `grace_period` kéo dài bao lâu sau `expires_at`? | Luồng gia hạn | Hoãn, chặn phase P1 | hoãn |
+| 3 | Có cần ledger cho quota kiểu credit (`ai_calls`) không, hay counter là đủ? | P4 add-on AI | Hoãn, chặn phase P4 | hoãn |

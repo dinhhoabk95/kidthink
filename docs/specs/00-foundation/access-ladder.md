@@ -33,7 +33,7 @@ Mục tiêu thương mại: guest chơi đủ để thấy giá trị, **không*
 | User đã đăng nhập, không gói | `login` |
 | User có `standard` | `standard` |
 | User có `premium` | `premium` |
-| Manager (preview) | mọi bậc — nhưng phiên preview ❌ không ghi `mastery_state` |
+| Manager (preview) | mọi bậc — nhưng phiên preview không ghi `mastery_state` |
 
 ## 3. Entry points
 
@@ -67,14 +67,14 @@ Mọi handler trả nội dung: `/api/guest/levels/**` · `/api/users/levels/**`
 |---|---|---|
 | `BR-LAD-01` | Ladder **bao hàm**: `premium ⊃ standard ⊃ login ⊃ free`. Vào được bậc N thì vào được mọi bậc dưới | Người trả nhiều tiền hơn không bao giờ được thấy ít hơn |
 | `BR-LAD-02` | Content thiếu `access_tier` coi là **`premium`** | Mặc định phải là **đóng**. Quên gán tier là cho không nội dung |
-| `BR-LAD-03` | Kiểm ở **server handler**, ❌ không ở component | Ẩn bằng CSS không phải paywall |
+| `BR-LAD-03` | Kiểm ở **server handler**, không ở component | Ẩn bằng CSS không phải paywall (cơ chế chặn nội dung, yêu cầu trả phí mới xem được) |
 | `BR-LAD-04` | Khi chặn: **strip** `content_pack` và `difficulty_params` khỏi response | Gửi nội dung rồi ẩn là đã gửi nội dung |
 | `BR-LAD-05` | Nội dung nằm trong một curriculum có tier cao hơn → bậc hiệu lực là **max** | Không được lách curriculum trả phí bằng cách mở từng level lẻ |
 | `BR-LAD-06` | Guest **không giới hạn lượt** trên allow-list | Quota theo cookie thiết bị chỉ làm phiền người thật |
 | `BR-LAD-07` | Allow-list guest = đúng **6 game level**, 1 mỗi competency, difficulty ≤ 2 | Hẹp mới tạo lý do đăng ký; rộng thì không ai trả tiền |
-| `BR-LAD-08` | Phiên chơi đang mở ❌ **không bị ngắt** khi gói hết hạn | Cắt ngang lúc trẻ đang chơi thiệt hại lớn hơn doanh thu một lượt |
-| `BR-LAD-09` | ❌ **NEVER cache** response chứa nội dung trả phí | Cache là đường rò nội dung sang người chưa trả tiền |
-| `BR-LAD-10` | Phiên preview của Manager ❌ không ghi `mastery_state`, ❌ không đếm vào KPI | Lượt test làm nhiễu dữ liệu học tập của trẻ |
+| `BR-LAD-08` | Phiên chơi đang mở **không bị ngắt** khi gói hết hạn | Cắt ngang lúc trẻ đang chơi thiệt hại lớn hơn doanh thu một lượt |
+| `BR-LAD-09` | **NEVER cache** response chứa nội dung trả phí | Cache là đường rò nội dung sang người chưa trả tiền |
+| `BR-LAD-10` | Phiên preview của Manager không ghi `mastery_state`, không đếm vào KPI (chỉ số đo hiệu quả) | Lượt test làm nhiễu dữ liệu học tập của trẻ |
 
 ## 7. Data
 
@@ -127,7 +127,7 @@ Hàm này là **nơi duy nhất** ánh xạ entitlement sang bậc. Mọi handle
 }
 ```
 
-❌ **Không** `content_pack`, ❌ **không** `difficulty_params`, ❌ **không** đáp án.
+**Không** `content_pack`, **không** `difficulty_params`, **không** đáp án.
 `preview` chỉ chứa metadata đủ để UI mời nâng cấp — không đủ để chơi.
 
 ## 8. API contract
@@ -216,6 +216,6 @@ Scenario: BR-LAD-09 — không cache nội dung trả phí
 
 | # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
 |---|---|---|---|---|
-| 1 | **6 game level nào vào allow-list guest?** Cần 1 mỗi competency, difficulty ≤ 2 | P1 gating | 🟡 P1 | nội dung |
-| 2 | Guest chơi xong bao nhiêu lượt thì hiện lời mời đăng ký? Hiện chưa chốt ngưỡng | P1 conversion | 🟡 P1 | nội dung |
-| ~~3~~ | ~~Gộp bậc `login` vào `standard`?~~ **Đóng 2026-08-06 (T10)**: **giữ enum 4 bậc** — `free`, `login`, `standard`, `premium`. Bỏ bậc sau khi có dữ liệu là migration + sửa ma trận 20 ô. Giữ `login` để có chỗ gate lưu tiến độ miễn phí. **Sửa 2026-08-07 (Checkpoint C)**: bản ghi cũ liệt kê giá trị đầu là `guest` — **sai**, `guest` là tên *actor*, tên *bậc* là `free` (§7.1 `type AccessTier`, `BR-LAD-01`, `glossary` §Access tier). Kết luận ❌ không đổi, chỉ sửa tên giá trị viết nhầm | — | ✅ đóng | D-X (T10) |
+| 1 | **6 game level nào vào allow-list guest?** Cần 1 mỗi competency, difficulty ≤ 2 | P1 gating | Hoãn, chặn phase P1 | nội dung |
+| 2 | Guest chơi xong bao nhiêu lượt thì hiện lời mời đăng ký? Hiện chưa chốt ngưỡng | P1 conversion | Hoãn, chặn phase P1 | nội dung |
+| ~~3~~ | ~~Gộp bậc `login` vào `standard`?~~ **Đóng 2026-08-06 (T10)**: **giữ enum 4 bậc** — `free`, `login`, `standard`, `premium`. Bỏ bậc sau khi có dữ liệu là migration + sửa ma trận 20 ô. Giữ `login` để có chỗ gate lưu tiến độ miễn phí. **Sửa 2026-08-07 (Checkpoint C)**: bản ghi cũ liệt kê giá trị đầu là `guest` — **sai**, `guest` là tên *actor*, tên *bậc* là `free` (§7.1 `type AccessTier`, `BR-LAD-01`, mục Access tier của [`glossary.md`](glossary.md)). Kết luận không đổi, chỉ sửa tên giá trị viết nhầm | — | Đã đóng | D-X (T10) |

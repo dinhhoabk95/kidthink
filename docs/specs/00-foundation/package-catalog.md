@@ -57,21 +57,21 @@ một điều.
 | Gói `is_public = false` | Không xuất hiện trong catalog. Chỉ Manager gán được |
 | Gói `status = 'retired'` | Không bán mới. User đang giữ vẫn dùng tới `expires_at` |
 | User đã có `premium` | `standard` hiện dạng "đã bao gồm", không cho mua |
-| Add-on ở MVP | ❌ **Không xuất hiện.** Tạo đơn cho add-on → 400 `PACKAGE_NOT_SELLABLE` |
+| Add-on ở MVP | **Không xuất hiện.** Tạo đơn cho add-on → 400 `PACKAGE_NOT_SELLABLE` |
 
 ## 6. Business rules
 
 | ID | Rule | Vì sao |
 |---|---|---|
 | `BR-PKG-01` | `PACKAGE_CATALOG` là **nguồn sự thật duy nhất** cho giá và thời hạn | Một giá copy sang 5 chỗ sẽ đổi được 4 |
-| `BR-PKG-02` | ❌ **NEVER hardcode số tiền** ngoài catalog — kể cả trong spec, email, hay trang giá | |
-| `BR-PKG-03` | ❌ **NEVER nhận giá từ client.** Server đọc từ catalog theo `package_code` | Giá từ client là lỗ hổng thanh toán kinh điển |
+| `BR-PKG-02` | **NEVER hardcode số tiền** ngoài catalog — kể cả trong spec, email, hay trang giá | |
+| `BR-PKG-03` | **NEVER nhận giá từ client.** Server đọc từ catalog theo `package_code` | Giá từ client là lỗ hổng thanh toán kinh điển |
 | `BR-PKG-04` | Catalog MVP chào bán **đúng 2 gói**: `standard`, `premium` | Bán gói không mở được tính năng nào là vấn đề đạo đức thương mại |
 | `BR-PKG-05` | Add-on được **khai báo** nhưng `is_public = false` ở MVP | Contract ổn định trước; lên catalog cùng lúc với tính năng |
 | `BR-PKG-06` | Quyền lợi hiển thị trên trang giá sinh **từ `package_entitlements`**, không từ chuỗi viết tay | Danh sách viết tay sẽ lệch khỏi thứ hệ thống thực sự cấp |
-| `BR-PKG-07` | Package là **Lớp 1** — admin ❌ không tạo/sửa qua UI | Giá và quyền lợi là contract thương mại, đổi phải qua review |
+| `BR-PKG-07` | Package là **Lớp 1** — admin không tạo/sửa qua UI | Giá và quyền lợi là contract thương mại, đổi phải qua review |
 | `BR-PKG-08` | `premium` **bao hàm** mọi entitlement của `standard` | Ladder bao hàm — `BR-LAD-01` |
-| `BR-PKG-09` | Đổi giá ❌ không hồi tố. Entitlement đã cấp giữ nguyên thời hạn | Người đã trả tiền không bị ảnh hưởng bởi quyết định thương mại sau đó |
+| `BR-PKG-09` | Đổi giá không hồi tố. Entitlement đã cấp giữ nguyên thời hạn | Người đã trả tiền không bị ảnh hưởng bởi quyết định thương mại sau đó |
 
 ## 7. Data
 
@@ -84,19 +84,19 @@ một điều.
 | Đối tượng | Phụ huynh phổ thông | Phụ huynh theo dõi sâu + giáo viên |
 | Offer | 365 ngày | 365 ngày · vĩnh viễn |
 | Giá | **chờ chốt** §11 Q1 | **chờ chốt** §11 Q1 |
-| `is_public` | ✅ | ✅ |
+| `is_public` | Có | Có |
 
 **Entitlement mở:**
 
 | Key | `standard` | `premium` |
 |---|:--:|:--:|
-| `play_login_games` | ✅ | ✅ |
-| `play_standard_games` | ✅ | ✅ |
-| `play_premium_games` | ❌ | ✅ |
-| `access_premium_curriculum` | ❌ | ✅ |
-| `manage_children` | ✅ | ✅ |
-| `view_basic_report` | ✅ | ✅ |
-| `view_advanced_report` | ✅ | ✅ |
+| `play_login_games` | Có | Có |
+| `play_standard_games` | Có | Có |
+| `play_premium_games` | Không | Có |
+| `access_premium_curriculum` | Không | Có |
+| `manage_children` | Có | Có |
+| `view_basic_report` | Có | Có |
+| `view_advanced_report` | Có | Có |
 
 **Quota:**
 
@@ -117,7 +117,8 @@ một điều.
 | `PKG-addon_custom_game` | `create_custom_game` | `07-addon/custom-game-builder.md` đạt `implemented` |
 | `PKG-addon_ai` | `use_ai_analysis` `use_ai_search` | `07-addon/ai-credit-ledger.md` đạt `implemented` |
 
-Add-on là **trục độc lập** — ❌ không mở `access_tier` nào (`BR-ENT-08`).
+Add-on là **trục độc lập** — không mở `access_tier` nào (quy tắc `BR-ENT-08` của
+[`entitlement-model.md`](entitlement-model.md)).
 
 **"Build game custom theo yêu cầu" không phải SKU tự phục vụ** — báo giá tay, Manager tạo
 trong studio rồi gán bằng `manual_grant`. Lý do: mỗi yêu cầu custom cần thẩm định sư phạm,
@@ -150,7 +151,7 @@ interface Offer {
 ### 7.4 Bảng DB
 
 `packages` và `package_entitlements` là **bảng chiếu** của hằng số, seed idempotent theo
-`code`. Chúng tồn tại để `entitlements.entitlement_key` có FK và để join báo cáo — ❌ không
+`code`. Chúng tồn tại để `entitlements.entitlement_key` có FK và để join báo cáo — không
 phải để sửa từ UI.
 
 ## 8. API contract
@@ -242,7 +243,7 @@ Scenario: BR-PKG-09 — đổi giá không hồi tố
 
 | # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
 |---|---|---|---|---|
-| 1 | **Giá cuối** của `standard` (365 ngày) và `premium` (365 ngày / vĩnh viễn) | Mở thanh toán, P2 | 👤 người | người quyết — chặn P2 |
-| ~~2~~ | ~~Có bán gói tháng không, hay chỉ năm~~ **Đóng 2026-08-06 (T12)**: **chỉ năm ở MVP**. Enum `billing_period` giữ chỗ cho `monthly`; kích hoạt khi có cổng thanh toán tự động (P5). Gói tháng tăng tải duyệt tay VietQR lên 12× | — | ✅ đóng | D-X (T12) |
-| 3 | Giá nâng cấp `standard → premium` giữa chu kỳ tính thế nào — trừ theo tỉ lệ hay giá đầy đủ? | Luồng nâng cấp | 🟡 P2 | hoãn |
-| 4 | `premium` vĩnh viễn có rủi ro chi phí dài hạn không? Cần mô hình chi phí phục vụ mỗi user/năm | Quyết định thương mại | 🟡 thương mại | hoãn |
+| 1 | **Giá cuối** của `standard` (365 ngày) và `premium` (365 ngày / vĩnh viễn) | Mở thanh toán, P2 | cần người quyết | người quyết — chặn P2 |
+| ~~2~~ | ~~Có bán gói tháng không, hay chỉ năm~~ **Đóng 2026-08-06 (T12)**: **chỉ năm ở MVP**. Enum `billing_period` giữ chỗ cho `monthly`; kích hoạt khi có cổng thanh toán tự động (P5). Gói tháng tăng tải duyệt tay VietQR lên 12× | — | Đã đóng | D-X (T12) |
+| 3 | Giá nâng cấp `standard → premium` giữa chu kỳ tính thế nào — trừ theo tỉ lệ hay giá đầy đủ? | Luồng nâng cấp | Hoãn, chặn phase P2 | hoãn |
+| 4 | `premium` vĩnh viễn có rủi ro chi phí dài hạn không? Cần mô hình chi phí phục vụ mỗi user/năm | Quyết định thương mại | Hoãn, chặn thương mại | hoãn |

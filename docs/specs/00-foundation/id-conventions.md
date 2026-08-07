@@ -58,8 +58,8 @@ File này chốt định dạng, ai cấp, và cái gì không bao giờ đượ
 | ID | Rule | Vì sao |
 |---|---|---|
 | `BR-ID-01` | Mã ở §7.2 **bất biến** sau khi content đạt `published` | `mastery_state`, telemetry, báo cáo đều khoá theo mã. Đổi mã là mất dữ liệu đã thu |
-| `BR-ID-02` | ❌ **NEVER tái dùng** mã của bản đã xoá | Mã cũ có thể còn trong telemetry và báo cáo đã xuất |
-| `BR-ID-03` | ❌ **NEVER chèn mã vào giữa dãy** | Thứ tự mã là thứ tự tạo, không phải thứ tự sư phạm. Thứ tự sư phạm nằm ở `curriculum_items.position` |
+| `BR-ID-02` | **NEVER tái dùng** mã của bản đã xoá | Mã cũ có thể còn trong telemetry và báo cáo đã xuất |
+| `BR-ID-03` | **NEVER chèn mã vào giữa dãy** | Thứ tự mã là thứ tự tạo, không phải thứ tự sư phạm. Thứ tự sư phạm nằm ở `curriculum_items.position` |
 | `BR-ID-04` | Mã Lớp 2 do **server** sinh, không nhận từ client | Client gửi mã là đường để ghi đè content của người khác |
 | `BR-ID-05` | Mọi mã kiểm bằng regex ở **cả** Zod và DB `CHECK` | Zod bảo vệ API; `CHECK` bảo vệ seeder và migration |
 | `BR-ID-06` | ID nội bộ (`bigserial`) **không bao giờ** xuất hiện trong URL công khai hay payload cho client | ID tự tăng để lộ quy mô kinh doanh và mời enumeration |
@@ -107,7 +107,7 @@ Quy trình: tạo mã mới → bảng ánh xạ `code_aliases` → 301 cho URL 
 
 ### 7.4 Định danh đối ngoại
 
-| Thứ | Dùng gì ra ngoài | ❌ Không dùng |
+| Thứ | Dùng gì ra ngoài | Không dùng |
 |---|---|---|
 | Game level trong URL | `code` (`GL-C1-CNT-MATCH-0007`) | `id` bigserial |
 | Child profile trong API | `uuid` | `id` bigserial |
@@ -121,7 +121,7 @@ Không sở hữu route nào. Ràng buộc áp lên mọi route:
 
 | Ràng buộc | |
 |---|---|
-| Path param nhận mã | `:code` với Zod regex tương ứng, ❌ không `:id` số cho tài nguyên công khai |
+| Path param nhận mã | `:code` với Zod regex tương ứng, không `:id` số cho tài nguyên công khai |
 | Body chứa mã | Zod regex, và **bỏ qua** mọi field mã do client gửi khi tạo mới (`BR-ID-04`) |
 | Lỗi | `INVALID_CODE_FORMAT` (400) · `CODE_ALREADY_EXISTS` (409) · `CODE_ALLOCATION_FAILED` (500) |
 
@@ -174,5 +174,5 @@ Scenario: BR-ID-01 — không sửa được mã đã publish
 
 | # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
 |---|---|---|---|---|
-| ~~1~~ | ~~Mã Game Level có nên mang `template_code` không~~ **Đóng 2026-08-06 (T9)**: **có** — mã level cần mang `template_code` để phân biệt loại game ngay từ mã. Format: `GL-{competency}-{strand}-{template}-{seq}`. **Thân bài cập nhật T3, 2026-08-07** | — | ✅ đóng | D-X (T9) |
-| ~~2~~ | ~~3 chữ số cho Game Level đủ chưa~~ **Đóng 2026-08-06 (T9)**: **4 chữ số** (`\d{4}`) — 3.000+ level dự kiến, 3 chữ số tràn ở 1.000. **Thân bài cập nhật T3, 2026-08-07** | — | ✅ đóng | D-X (T9) |
+| ~~1~~ | ~~Mã Game Level có nên mang `template_code` không~~ **Đóng 2026-08-06 (T9)**: **có** — mã level cần mang `template_code` để phân biệt loại game ngay từ mã. Format: `GL-{competency}-{strand}-{template}-{seq}`. **Thân bài cập nhật T3, 2026-08-07** | — | Đã đóng | D-X (T9) |
+| ~~2~~ | ~~3 chữ số cho Game Level đủ chưa~~ **Đóng 2026-08-06 (T9)**: **4 chữ số** (`\d{4}`) — 3.000+ level dự kiến, 3 chữ số tràn ở 1.000. **Thân bài cập nhật T3, 2026-08-07** | — | Đã đóng | D-X (T9) |

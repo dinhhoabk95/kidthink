@@ -21,7 +21,7 @@ depends_on:
 Client cần phân biệt "chưa đăng nhập" với "đã đăng nhập nhưng không đủ quyền" với "hết
 quota" — ba thứ này dẫn tới ba màn hình khác nhau. HTTP status một mình không đủ.
 
-Mã lỗi nghiệp vụ là **contract**. Client bắt theo mã, ❌ không bao giờ bắt theo chuỗi thông
+Mã lỗi nghiệp vụ là **contract**. Client bắt theo mã, không bao giờ bắt theo chuỗi thông
 báo — chuỗi đổi theo bản dịch, mã thì không.
 
 ## 2. Actors
@@ -46,20 +46,20 @@ Mọi handler API. Mọi spec khai báo mã lỗi phải đăng ký ở đây.
 |---|---|
 | Lỗi không có trong registry | Log `ERROR` mức cao + trả `INTERNAL_ERROR` 500. **Lỗi lập trình** |
 | Lỗi Zod | Gom thành `VALIDATION_FAILED` 422 kèm `fields[]` |
-| Lỗi DB constraint | Ánh xạ sang mã nghiệp vụ tương ứng, ❌ không lộ tên constraint |
+| Lỗi DB constraint | Ánh xạ sang mã nghiệp vụ tương ứng, không lộ tên constraint |
 
 ## 6. Business rules
 
 | ID | Rule | Vì sao |
 |---|---|---|
 | `BR-ERR-01` | Mã lỗi là `SCREAMING_SNAKE`, đăng ký ở §7 trước khi dùng | Mã không đăng ký sẽ trùng nghĩa với mã khác |
-| `BR-ERR-02` | ❌ **NEVER thông báo lỗi tiết lộ tài khoản có tồn tại hay không** | Enumeration email |
-| `BR-ERR-03` | ❌ **NEVER stack trace, tên bảng, tên constraint, hay id nội bộ** trong body | |
+| `BR-ERR-02` | **NEVER thông báo lỗi tiết lộ tài khoản có tồn tại hay không** | Enumeration email |
+| `BR-ERR-03` | **NEVER stack trace, tên bảng, tên constraint, hay id nội bộ** trong body | |
 | `BR-ERR-04` | Thông báo hướng người dùng là **tiếng Việt thân thiện**, nói được **làm gì tiếp** | "Đã xảy ra lỗi" không giúp ai |
-| `BR-ERR-05` | Record của người khác → `NOT_FOUND` 404, ❌ không `FORBIDDEN` 403 | 403 xác nhận record tồn tại |
-| `BR-ERR-06` | Client bắt theo **mã**, ❌ không theo chuỗi | |
+| `BR-ERR-05` | Record của người khác → `NOT_FOUND` 404, không `FORBIDDEN` 403 | 403 xác nhận record tồn tại |
+| `BR-ERR-06` | Client bắt theo **mã**, không theo chuỗi | |
 | `BR-ERR-07` | Mã 402 dành riêng cho **hết quota**; 403 cho **thiếu quyền** | Hai thứ này dẫn tới hai CTA khác nhau: mua thêm vs nâng cấp |
-| `BR-ERR-08` | ❌ **NEVER thông báo lỗi tiết lộ tài khoản đăng nhập bằng cách nào** — mật khẩu hay SNS nào | Mở rộng của `BR-ERR-02`. Biết "email này dùng Google" cho kẻ tấn công chọn hướng, và người dùng ❌ không đổi được điều đó. Ngoại lệ duy nhất: `SOCIAL_EMAIL_CONFLICT`, nơi caller **đã chứng minh** kiểm soát hộp thư ấy |
+| `BR-ERR-08` | **NEVER thông báo lỗi tiết lộ tài khoản đăng nhập bằng cách nào** — mật khẩu hay SNS nào | Mở rộng của quy tắc `BR-ERR-02` (không tiết lộ tài khoản có tồn tại hay không). Biết "email này dùng Google" cho kẻ tấn công chọn hướng, và người dùng không đổi được điều đó. Ngoại lệ duy nhất: `SOCIAL_EMAIL_CONFLICT`, nơi caller **đã chứng minh** kiểm soát hộp thư ấy |
 
 ## 7. Data — registry
 
@@ -87,7 +87,7 @@ Mọi handler API. Mọi spec khai báo mã lỗi phải đăng ký ở đây.
 | `TIER_LOCKED` | 403 | Content bậc cao hơn quyền | "Nội dung này thuộc gói {tên gói}." |
 | `ACCOUNT_SUSPENDED` | 403 | `users.status = 'suspended'` | "Tài khoản đang tạm khoá. Liên hệ hỗ trợ." |
 | `NO_ACTIVE_CHILD` | 428 | Route cần trẻ, chưa chọn | "Hãy chọn hồ sơ bé trước khi tiếp tục." |
-| `PARENT_GATE_REQUIRED` | 403 | Đổi `active_child_id` sang trẻ khác không kèm `gate_token` hợp lệ (`child-profile-switching.md`, `play-entry-and-profile-select.md`) | "Cần xác nhận của phụ huynh để tiếp tục." |
+| `PARENT_GATE_REQUIRED` | 403 | Đổi `active_child_id` sang trẻ khác không kèm `gate_token` hợp lệ ([`child-profile-switching.md`](../03-account/child-profile-switching.md), [`play-entry-and-profile-select.md`](../04-play/play-entry-and-profile-select.md)) | "Cần xác nhận của phụ huynh để tiếp tục." |
 | `CONSENT_REQUIRED` | 428 | Chưa đồng ý chính sách hiện hành | "Vui lòng đọc và đồng ý chính sách bảo vệ dữ liệu trẻ em." |
 | `CONSENT_VERSION_STALE` | 409 | Chính sách đã có bản mới | "Chính sách đã cập nhật. Vui lòng xem lại." |
 | `MFA_REQUIRED` | 428 | Manager chưa qua MFA; hoặc User đã bật MFA và mới qua yếu tố thứ nhất — kể cả khi yếu tố đó là SNS (`BR-MFA-09`) | — |
@@ -100,13 +100,13 @@ Mọi handler API. Mọi spec khai báo mã lỗi phải đăng ký ở đây.
 
 | Mã | HTTP | Khi nào | Thông báo |
 |---|:--:|---|---|
-| `SOCIAL_EMAIL_CONFLICT` | 409 | Provider trả email đã có tài khoản, chưa liên kết. ❌ **NEVER tự liên kết** (`BR-SCL-04`) | "Email này đã có tài khoản KidThink. Hãy đăng nhập rồi liên kết {provider} trong Cài đặt → Bảo mật." |
-| `SOCIAL_IDENTITY_ALREADY_LINKED` | 409 | Tài khoản SNS đó đã gắn User khác. Body ❌ **không** nói User nào (`BR-SLK-06`) | "Tài khoản {provider} này đã được liên kết với một tài khoản khác." |
+| `SOCIAL_EMAIL_CONFLICT` | 409 | Provider trả email đã có tài khoản, chưa liên kết. **NEVER tự liên kết** (quy tắc `BR-SCL-04` — cấm tự liên kết SNS vào tài khoản sẵn có vì trùng email) | "Email này đã có tài khoản KidThink. Hãy đăng nhập rồi liên kết {provider} trong Cài đặt → Bảo mật." |
+| `SOCIAL_IDENTITY_ALREADY_LINKED` | 409 | Tài khoản SNS đó đã gắn User khác. Body **không** nói User nào (quy tắc `BR-SLK-06` — không tiết lộ người đã gắn tài khoản SNS đó là ai) | "Tài khoản {provider} này đã được liên kết với một tài khoản khác." |
 | `SOCIAL_PROVIDER_ALREADY_LINKED` | 409 | User đã có provider đó (`BR-SLK-02`) | "Bạn đã liên kết {provider} rồi." |
-| `LAST_LOGIN_METHOD` | 409 | Gỡ SNS cuối trên tài khoản ❌ không mật khẩu. `details.set_password_url` | "Đây là cách đăng nhập duy nhất của bạn. Hãy đặt mật khẩu trước khi gỡ." |
+| `LAST_LOGIN_METHOD` | 409 | Gỡ SNS cuối trên tài khoản không mật khẩu. `details.set_password_url` | "Đây là cách đăng nhập duy nhất của bạn. Hãy đặt mật khẩu trước khi gỡ." |
 | `PASSWORD_NOT_SET` | 409 | Gọi "đổi mật khẩu" trên tài khoản `password_hash` NULL | "Tài khoản chưa có mật khẩu. Hãy dùng Đặt mật khẩu." |
 | `OAUTH_STATE_INVALID` | 400 | `state` lệch, thiếu, hoặc đã dùng (`BR-OAP-03` `BR-OAP-14`) | "Phiên đăng nhập đã hết hạn. Vui lòng thử lại." |
-| `OAUTH_PROVIDER_DISABLED` | 404 | Provider tắt **hoặc** ❌ không có trong danh sách đóng — ❌ không phân biệt hai ca | "Cách đăng nhập này hiện không khả dụng." |
+| `OAUTH_PROVIDER_DISABLED` | 404 | Provider tắt **hoặc** không có trong danh sách đóng — không phân biệt hai ca | "Cách đăng nhập này hiện không khả dụng." |
 | `OAUTH_PROVIDER_ERROR` | 502 | Provider 5xx / timeout / trả lỗi ngoài `access_denied` | "Không kết nối được với {provider}. Bạn có thể đăng nhập bằng email và mật khẩu." |
 
 ### 7.3 Quota và thanh toán
@@ -117,7 +117,7 @@ Mọi handler API. Mọi spec khai báo mã lỗi phải đăng ký ở đây.
 | `CHILD_LIMIT_EXCEEDED` | 402 | Vượt `child_profiles` quota |
 | `DAILY_PLAY_CAP_REACHED` | 402 | Hết phút chơi trong ngày |
 | `PACKAGE_NOT_FOUND` | 404 | `package_code` không có trong catalog |
-| `UNKNOWN_ENTITLEMENT_KEY` | 500 | Entitlement key không có trong registry — lỗi lập trình, không phải lỗi người dùng (`entitlement-model.md`) |
+| `UNKNOWN_ENTITLEMENT_KEY` | 500 | Entitlement key không có trong registry — lỗi lập trình, không phải lỗi người dùng ([`entitlement-model.md`](entitlement-model.md)) |
 | `PACKAGE_NOT_SELLABLE` | 400 | Gói `is_public = false` hoặc `retired` |
 | `OFFER_NOT_FOUND` | 400 | `offer_code` không thuộc gói |
 | `ORDER_ALREADY_PENDING` | 409 | Đã có đơn chưa xử lý cho gói đó |
@@ -135,13 +135,13 @@ Mọi handler API. Mọi spec khai báo mã lỗi phải đăng ký ở đây.
 | `CONTENT_IN_USE` | 409 | Xoá nội dung đang được dùng, `details.used_by[]` |
 | `VERSION_CONFLICT` | 409 | `expected_version` lệch |
 | `VERSION_ALREADY_DRAFTED` | 409 | Đã có bản draft chưa publish |
-| `VERSION_NOT_FOUND` | 404 | Version content được yêu cầu không tồn tại (`content-versioning.md`) |
-| `CANNOT_ROLLBACK_TO_CURRENT` | 409 | Rollback nhắm đúng version hiện tại (`content-versioning.md`) |
+| `VERSION_NOT_FOUND` | 404 | Version content được yêu cầu không tồn tại ([`content-versioning.md`](content-versioning.md)) |
+| `CANNOT_ROLLBACK_TO_CURRENT` | 409 | Rollback nhắm đúng version hiện tại ([`content-versioning.md`](content-versioning.md)) |
 | `CONTENT_PACK_INVALID` | 422 | Không parse được bằng `content_contract`, `details.issues[]` |
 | `CODE_IMMUTABLE` | 409 | Đổi mã đã publish |
 | `INVALID_CODE_FORMAT` | 400 | Sai regex |
 | `CODE_ALREADY_EXISTS` | 409 | Trùng mã |
-| `CODE_ALLOCATION_FAILED` | 500 | Cấp mã ID mới thất bại sau 3 lần retry do trùng (`id-conventions.md`) |
+| `CODE_ALLOCATION_FAILED` | 500 | Cấp mã ID mới thất bại sau 3 lần retry do trùng ([`id-conventions.md`](id-conventions.md)) |
 
 ### 7.5 Chơi
 
@@ -149,7 +149,7 @@ Mọi handler API. Mọi spec khai báo mã lỗi phải đăng ký ở đây.
 |---|:--:|---|
 | `SESSION_NOT_FOUND` | 404 | |
 | `SESSION_ALREADY_COMPLETED` | 409 | Complete lần hai |
-| `ALREADY_ENROLLED` | 409 | Trẻ đã đăng ký curriculum này (`curriculum-player.md`) |
+| `ALREADY_ENROLLED` | 409 | Trẻ đã đăng ký curriculum này ([`curriculum-player.md`](../04-play/curriculum-player.md)) |
 | `SESSION_EXPIRED` | 410 | Phiên bỏ dở quá lâu |
 | `EVENT_OUT_OF_ORDER` | 409 | `seq` lùi — client lỗi |
 | `EVENT_DUPLICATE` | 200 | Trùng `(session, seq)` — **idempotent, trả 200** |
@@ -270,5 +270,5 @@ Scenario: REAUTH_REQUIRED nói được làm gì tiếp
 
 | # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
 |---|---|---|---|---|
-| 1 | Có cần i18n cho `message` không, hay tiếng Việt là đủ ở MVP? | Mở thị trường | 🟡 P5 | hoãn |
-| 2 | `EVENT_DUPLICATE` trả 200 — client có cần biết là trùng không, hay im lặng là đủ? | `play-event-ingestion` | 🟡 P1 | hoãn |
+| 1 | Có cần i18n cho `message` không, hay tiếng Việt là đủ ở MVP? | Mở thị trường | Hoãn, chặn phase P5 | hoãn |
+| 2 | `EVENT_DUPLICATE` trả 200 — client có cần biết là trùng không, hay im lặng là đủ? | [`play-event-ingestion.md`](../04-play/play-event-ingestion.md) | Hoãn, chặn phase P1 | hoãn |
