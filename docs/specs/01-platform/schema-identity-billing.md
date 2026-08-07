@@ -169,14 +169,23 @@ Index `(user_id, status, expires_at)`.
 ### 7.10 Module `ops` — P0, vào migration #1
 
 Ba bảng dưới đây **vào migration #1** (bước 8 theo `roadmap.md`). **Điều kiện chặn (D-AD):**
-`audit-log` và `backup-and-restore` phải `status: approved` **trước khi** migration #1 chạy —
-cột của `audit_logs`/`backup_log` do hai spec đó sở hữu, hiện cả hai đang `draft`.
+[`audit-log`](audit-log.md) và [`backup-and-restore`](backup-and-restore.md) phải
+`status: approved` **trước khi** migration #1 chạy — cột của `audit_logs`/`backup_log` do hai
+spec đó sở hữu.
+
+> ✅ **Đã thoả 2026-08-07 (T12)**: cả hai `approved`.
+>
+> ⚠️ **D-AD ghi thiếu một spec.** Điều kiện viết là 2 spec, nhưng đồ thị `depends_on` bắt **3**:
+> `backup-and-restore` `depends_on` [`JOB-QUEUE`](job-queue.md) (§2/§3 — backup chạy bằng job
+> `backup:postgres`/`backup:verify` ở `apps/worker`), nên C8 ❌ không cho approve
+> `backup-and-restore` khi `job-queue` còn `draft`. Đã approve `job-queue` cùng lượt. Bài học:
+> điều kiện chặn nên phát biểu bằng **bao đóng `depends_on`**, ❌ không phải liệt kê tay.
 
 | Bảng | Cột | Sở hữu |
 |---|---|---|
-| `audit_logs` | §`audit-log` §7.1 — INSERT-only | `audit-log` (đang `draft` — chặn migration #1) |
+| `audit_logs` | §`audit-log` §7.1 — INSERT-only | `audit-log` ✅ `approved` 2026-08-07 |
 | `content_review_log` | xem §7.10a dưới | `schema-identity-billing` (file này, D-AC) |
-| `backup_log` | §`backup-and-restore` §7.2 | `backup-and-restore` (đang `draft` — chặn migration #1) |
+| `backup_log` | §`backup-and-restore` §7.2 | `backup-and-restore` ✅ `approved` 2026-08-07 |
 
 ### 7.10a `content_review_log` — polymorphic, INSERT-only
 

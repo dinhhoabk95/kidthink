@@ -2,10 +2,10 @@
 spec: JOB-QUEUE
 title: Hàng đợi job nền
 area: platform
-status: draft
+status: approved
 mvp: true
 phase: P1
-reviewed: 2026-08-04
+reviewed: 2026-08-07
 owns:
   - Danh sách job và lịch chạy
   - Quy tắc retry và idempotency
@@ -67,7 +67,7 @@ consumer nào lấy ra, email và export im lặng không chạy. Spec này ép 
 | `BR-JOB-02` | `jobId` xác định từ khoá nghiệp vụ | Chống đẩy trùng ở tầng producer |
 | `BR-JOB-03` | Backlog vượt ngưỡng → **alert tới người** | Worker chết im lặng là chế độ hỏng tệ nhất |
 | `BR-JOB-04` | `packages/queue` ❌ **NEVER chứa consumer**; `apps/worker` ❌ **NEVER expose HTTP** | Trộn hai vai làm worker trở thành một app web không ai bảo trì |
-| `BR-JOB-05` | Job fail hết retry ❌ **NEVER bị bỏ im lặng** | |
+| `BR-JOB-05` | Job fail hết retry ❌ **NEVER bị bỏ im lặng** | Job nền ❌ không có người dùng đứng chờ để báo hỏng — im lặng là chế độ mặc định của nó. `account:purge` fail im lặng ⇒ vi phạm nghĩa vụ xoá dữ liệu; `backup:postgres` fail im lặng ⇒ đúng bài học v1 (`BR-BAK-04`) |
 | `BR-JOB-06` | Job chạm dữ liệu trẻ tuân thủ đủ ràng buộc `child-data-compliance` | Job chạy ngoài ngữ cảnh request dễ quên guard |
 | `BR-JOB-07` | Worker **phải có process trong cấu hình production** | v1 comment mất worker và không ai phát hiện |
 | `BR-JOB-08` | Job dài chia lô có checkpoint | Job 30 phút fail ở phút 29 mà làm lại từ đầu là lãng phí |
@@ -181,7 +181,13 @@ Scenario: Valkey mất không chặn request
 
 ## 11. Open questions
 
-| # | Câu hỏi | Chặn gì |
-|---|---|---|
-| 1 | Alert đi kênh nào — email, Telegram, hay dashboard? Cần một kênh **tới được người** | Go-live |
-| 2 | Worker chạy cùng instance với web hay tách? Trên t3.small tách là tốn thêm | Vận hành |
+> `phase: P1` là phase **implement** (khi worker thật sự chạy), ❌ không phải phase **approve**.
+> File này approve ở **P0** vì [`backup-and-restore`](backup-and-restore.md) (P0, điều kiện
+> chặn migration #1 theo **D-AD**) `depends_on` nó — hai job `backup:postgres`/`backup:verify`
+> ở §7.1 là của spec đó. Cùng tiền lệ [`game-template-contract`](game-template-contract.md).
+> Approve = *hình dạng* contract job (danh sách, retry, idempotency, ngưỡng alert) đã chốt.
+
+| # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
+|---|---|---|---|---|
+| 1 | Alert đi kênh nào — email, Telegram, hay dashboard? Cần một kênh **tới được người**. ⚠️ ❌ **Không chặn migration #1** — không đụng cột nào; nhưng `BR-JOB-03`/`BR-JOB-05` vô nghĩa tới khi có kênh thật | Go-live | 🟡 go-live | hoãn — chốt cùng `monitoring-and-alerting`; ❌ không được để mở tới lúc go-live |
+| 2 | Worker chạy cùng instance với web hay tách? Trên t3.small tách là tốn thêm | Vận hành, ❌ không đụng cột | 🟡 P1 | hoãn — chốt khi biết instance type production (`repo-bootstrap` §11 Q9 cùng chủ đề) |

@@ -412,7 +412,11 @@ Mỗi spec 4 bước: (1) checklist `CONVENTIONS.md` §10 thủ công → (2) đ
 - [ ] **Nợ Task #2 #5** — `D-X` dùng cho 11 quyết định T9–T12, ledger mất tác dụng truy vết
 - [ ] 7 chu trình `depends_on` (C7 warning): `02-public` 3 · `03-account` 1 · `06-admin` 3 ·
       `08-quality` 1
-- [ ] Approve `audit-log` + `backup-and-restore` — **chặn bước 8** theo D-AD
+- [x] Approve `audit-log` + `backup-and-restore` — **chặn bước 8** theo D-AD. ✅ Xong
+      2026-08-07 (T12). ⚠️ Thực tế phải approve **3** spec: `backup-and-restore` `depends_on`
+      `JOB-QUEUE` (draft) nên C8 chặn — `job-queue` approve cùng lượt (P1 approve ở P0, cùng
+      tiền lệ `game-template-contract`). D-AD ghi 2 spec là **thiếu**; đã ghi chú ở SIB §7.10
+      rằng điều kiện chặn nên phát biểu bằng bao đóng `depends_on`, không liệt kê tay
 - [ ] Approve `taxonomy-service` seed + `emoji-registry` — P0 bước 9, sau migration
 - [ ] Chuyển `.agents/` vào `kidthink/` theo `SPEC.md` §8
 - [ ] Chuyển `infra/` vào `kidthink/infra/` khi tới deploy
