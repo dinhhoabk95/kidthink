@@ -102,10 +102,11 @@ Bốn thứ này rẻ khi làm đúng lúc và rất đắt khi vá sau. Chúng 
 Taxonomy ❌ không cắt được — nó là bộ xương mà mọi thứ khác treo lên. Cắt skill là cắt khả
 năng đo, và không thêm lại được cho dữ liệu đã thu.
 
-## 8. Vĩnh viễn ngoài phạm vi
+## 8. API contract
 
-Không phải "sau MVP" — là **không bao giờ**, trừ khi có quyết định sản phẩm mới viết lại
-spec này.
+Spec này không có route — mục này giữ số thứ tự chuẩn nhưng nội dung là danh sách vĩnh viễn
+ngoài phạm vi. Không phải "sau MVP" — là **không bao giờ**, trừ khi có quyết định sản phẩm mới
+viết lại spec này.
 
 | Ngoài phạm vi | Vì sao |
 |---|---|

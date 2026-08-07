@@ -81,7 +81,9 @@ cổng §6.
 8. pnpm gen:check trong cổng tự động      → chặn merge nếu spec và code lệch
 ```
 
-## 5. Vùng cấm — AI ❌ không sinh code
+## 5. Alternative flows
+
+Nhánh rẽ ở đây không phải lỗi runtime — là vùng cấm AI sinh code sẽ merge, theo bảng dưới.
 
 | Vùng | Vì sao |
 |---|---|

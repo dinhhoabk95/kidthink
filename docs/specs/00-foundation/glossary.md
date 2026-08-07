@@ -125,7 +125,10 @@ Không có.
 
 Xem [`../../SPEC.md`](../../SPEC.md) §2.1.
 
-## 8. Từ bị cấm
+## 8. API contract
+
+Glossary không có route — mục này giữ nguyên số thứ tự chuẩn nhưng nội dung là từ bị cấm dùng
+trong corpus, không phải hợp đồng API.
 
 | Từ | Vì sao cấm | Dùng gì thay |
 |---|---|---|

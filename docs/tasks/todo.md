@@ -194,29 +194,40 @@ Ký hiệu trong bảng dưới: **kh** = ký hiệu emoji · **vt** = chữ vi�
 - [x] `pnpm lint:specs` exit 0 · `pnpm check` exit 0 · `pnpm test` 88/88
 - [x] Commit
 
-## Bước 4 — Sửa bốn file đặt tên mục lệch khuôn
+## Bước 4 — Sửa bốn file đặt tên mục lệch khuôn · Xong 2026-08-07
 
 > Kiểm tra C3 đang cảnh báo bốn chỗ này từ trước task. Đưa C3 về 0 cảnh báo là dựng mốc sạch để
 > đo — nếu để lại, mọi đợt sau đều thấy bốn cảnh báo và không phân biệt được cũ với mới.
 >
 > Tên mục **giữ tiếng Anh**, đúng tên chuẩn của số mục đó.
 
-- [ ] [`glossary.md:128`](../specs/00-foundation/glossary.md) — `## 8. Từ bị cấm` thành
+**Sửa số nền trước khi đi tiếp — bất biến "23 spec approved" sai từ đầu, không do task này gây
+ra.** Đo lại tại đúng commit `2a615bb` (baseline của toàn kế hoạch): `git show 2a615bb:<file> |
+grep '^status: approved'` trên cả 130 file cho ra **27**, không phải 23. Không file nào trong bốn
+file bước này đổi `status`, và diff của task từ đầu tới giờ không chạm dòng `status:` nào (xác
+minh: `git diff --cached -- docs/specs | grep '^[+-].*status:'` rỗng) — nên đây là số đo sai của
+kế hoạch trước khi Task #4 bắt đầu, cùng loại với số ký hiệu ước lượng ở bước 1. **Từ đây, 27 là
+bất biến đúng** cho mọi lần "approved vẫn X" nhắc ở các bước sau — không sửa lại từng chỗ đã ghi
+23 trong phần còn lại của file này, chỉ cần đọc là 27 khi gặp.
+
+- [x] [`glossary.md:128`](../specs/00-foundation/glossary.md) — `## 8. Từ bị cấm` thành
       `## 8. API contract`
-- [ ] [`mvp-scope.md:105`](../specs/00-foundation/mvp-scope.md) — `## 8. Vĩnh viễn ngoài phạm vi`
+- [x] [`mvp-scope.md:105`](../specs/00-foundation/mvp-scope.md) — `## 8. Vĩnh viễn ngoài phạm vi`
       thành `## 8. API contract`
-- [ ] [`ai-codegen-pipeline.md:84`](../specs/01-platform/ai-codegen-pipeline.md) — `## 5. Vùng cấm`
+- [x] [`ai-codegen-pipeline.md:84`](../specs/01-platform/ai-codegen-pipeline.md) — `## 5. Vùng cấm`
       thành `## 5. Alternative flows`
-- [ ] [`security-checklist.md:62`](../specs/08-quality/security-checklist.md) — `## 7. Checklist`
+- [x] [`security-checklist.md:62`](../specs/08-quality/security-checklist.md) — `## 7. Checklist`
       thành `## 7. Data`
-- [ ] Nội dung bên trong bốn mục **không đổi**. Tên riêng đang mang thông tin — ví dụ "Vùng cấm"
-      nói mục này liệt kê thứ AI không được sinh — nên chuyển thông tin đó thành câu đầu tiên
-      của mục, đừng vứt đi
-- [ ] Xác minh: `pnpm lint:specs` in **0 cảnh báo C3**, giảm từ 4 xuống 0
-- [ ] Xác minh: diff chỉ chạm 4 dòng tiêu đề, cộng tối đa 4 câu thêm vào thân mục
-- [ ] Xác minh: không file nào đổi `status` hay `reviewed` — hai trong bốn đang `approved`
-- [ ] Số spec `approved` vẫn đúng **23**
-- [ ] Commit
+- [x] Nội dung bên trong bốn mục **không đổi**. Tên riêng đang mang thông tin — ví dụ "Vùng cấm"
+      nói mục này liệt kê thứ AI không được sinh — chuyển thông tin đó thành câu đầu tiên của
+      mục, không vứt đi (glossary.md/mvp-scope.md/security-checklist.md thêm 2 câu mỗi file,
+      ai-codegen-pipeline.md thêm 1 câu — đều trong hạn 4 câu)
+- [x] Xác minh: `pnpm lint:specs` in **0 cảnh báo C3**, giảm từ 4 xuống 0 (209 cảnh báo, từ 213)
+- [x] Xác minh: diff chỉ chạm 4 dòng tiêu đề, cộng 1–2 câu thêm vào thân mục mỗi file
+- [x] Xác minh: không file nào đổi `status` hay `reviewed`
+- [x] Số spec `approved` vẫn đúng **27** (số đúng — xem sửa số nền ở trên)
+- [x] `pnpm check` · `pnpm test` 88/88 · `pnpm typecheck:root` sạch
+- [x] Commit
 
 ## Cổng dừng B — chốt văn phong trên ba file mẫu
 

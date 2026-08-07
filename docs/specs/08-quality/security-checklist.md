@@ -59,7 +59,10 @@ Checklist trong PR template · `pnpm check` · rà soát trước release.
 | `BR-SEC-08` | Code chạm auth, payment, hoặc dữ liệu trẻ → **bắt buộc review** người thứ hai | |
 | `BR-SEC-09` | ❌ **NEVER dữ liệu trẻ ra khỏi hạ tầng** | `BR-CDC-06` |
 
-## 7. Checklist
+## 7. Data
+
+Contract chất lượng cắt ngang này không có entity riêng — mục này giữ số thứ tự chuẩn nhưng nội
+dung là checklist an ninh áp cho mọi PR, chia theo mức độ chặn merge.
 
 ### 7.1 CRITICAL — chặn merge
 
