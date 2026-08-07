@@ -2,10 +2,10 @@
 spec: PASSWORD-RECOVERY
 title: Quên và đặt lại mật khẩu
 area: account
-status: draft
+status: approved
 mvp: true
 phase: P0
-reviewed: 2026-08-05
+reviewed: 2026-08-08
 owns:
   - Luồng quên mật khẩu và đặt lại
 depends_on:
@@ -58,10 +58,10 @@ User. Manager dùng luồng riêng có MFA.
 | `BR-PWR-02` | Token hash, hạn **60 phút**, dùng một lần | Ngắn hơn xác thực email vì hậu quả nặng hơn |
 | `BR-PWR-03` | Đặt lại → `refresh_token_version` **+1** | Nếu tài khoản đã bị chiếm, đổi mật khẩu phải đá kẻ tấn công ra |
 | `BR-PWR-04` | Gửi **email thông báo** sau khi đổi thành công | Người thật biết ngay nếu không phải họ đổi |
-| `BR-PWR-05` | Yêu cầu mới **vô hiệu token cũ** | |
-| `BR-PWR-06` | Rate limit theo **IP và email** | |
+| `BR-PWR-05` | Yêu cầu mới **vô hiệu token cũ** | Hai token cùng hợp lệ nghĩa là kẻ tấn công dùng token đánh cắp trong khi người thật đang yêu cầu lại |
+| `BR-PWR-06` | Rate limit theo **IP và email** | Chặn brute force token và enumeration email cùng lúc |
 | `BR-PWR-07` | ❌ **NEVER cho đặt lại mà không có token** — không có "câu hỏi bí mật" | Câu hỏi bí mật là mật khẩu yếu hơn |
-| `BR-PWR-08` | Mật khẩu mới theo cùng quy tắc đăng ký | |
+| `BR-PWR-08` | Mật khẩu mới theo cùng quy tắc đăng ký | Hai chuẩn khác nhau là lỗ hổng — đặt lại với mật khẩu yếu hơn lúc đăng ký thì bảo vệ giảm |
 | `BR-PWR-09` | ❌ **NEVER tự đăng nhập** sau khi đặt lại | Buộc dùng mật khẩu mới xác nhận người dùng nhớ nó |
 | `BR-PWR-10` | Tài khoản chỉ có SNS **vẫn dùng được** luồng này — nó **đặt** mật khẩu thay vì đặt lại. Thông báo và mã trả về giống hệt | `BR-PWR-01`. Rẽ nhánh theo `password_hash IS NULL` sẽ tiết lộ tài khoản đăng ký bằng cách nào. Mô hình tin cậy ❌ không đổi: cả hai đều dựa trên kiểm soát hộp thư |
 | `BR-PWR-11` | Luồng này ❌ **NEVER gỡ hay đụng tới** `social_identities` | Đặt mật khẩu là **thêm** một cách vào, ❌ không phải thay cách cũ. Gỡ SNS là thao tác tường minh ở [`social-account-linking.md`](social-account-linking.md) |
