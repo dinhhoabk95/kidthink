@@ -190,22 +190,22 @@
 
 ## T6 — `schema-play-telemetry` (M4 · R1 · R2 · M7 · M8) ⟂
 
-- [ ] §7.3 theo **D-Z**: giữ PK `(session_uuid, seq)` **nguyên vẹn**, `BR-SPT-03` ❌ không đổi
-- [ ] §7.3 thêm một dòng: bảng này ❌ **không** partitioned ở P0 + **hai điều kiện giữ đường mở**
+- [x] §7.3 theo **D-Z**: giữ PK `(session_uuid, seq)` **nguyên vẹn**, `BR-SPT-03` ❌ không đổi
+- [x] §7.3 thêm partition note: ❌ **không** partitioned ở P0 + **hai điều kiện giữ đường mở**
       — (a) ❌ không FK nào trỏ **vào** `telemetry_events`; (b) giữ cột hẹp. Trỏ `event-catalog` Q2
-- [ ] §7.1 theo **D-AA**: bỏ `age_band` khỏi bảng cột, thêm index `birth_year`
-- [ ] `BR-SPT-01` "13 cột" → "**12 cột**"
-- [ ] §9 scenario `BR-SPT-01`: 13 → 12 + assert `age_band` ❌ không là cột
-- [ ] §7.1 `current_curriculum_code` — khớp T4
-- [ ] §7.5 — 3 bảng rollup khớp bản đồ DMO (T5)
-- [ ] §11 Q1 → **đóng** bằng D-Z (chủ câu hỏi = `event-catalog` Q2) · Q2 → **đóng** (D-AA)
-- [ ] §11 thêm 2 cột `Chặn phase` · `Chủ`
-- [ ] §9 thêm scenario: quét schema tìm FK trỏ **vào** `telemetry_events` ⇒ **0 kết quả**
-- [ ] ✅ 0 OQ mở (2/2 đóng, có ngày + vì sao)
-- [ ] ✅ `BR-SPT-03` + PK **không đổi một chữ** — D-Z là quyết định *không làm gì*
-- [ ] ✅ Số cột `child_profiles` khớp **ba chỗ**: §7.1 · `BR-SPT-01` · §9
-- [ ] ✅ Đối chiếu tay `child-data-compliance` §7.1 ⟷ §7.1 khớp từng tên cột
-- [ ] ✅ `grep -rn 'session_month' docs/` → **rỗng**
+- [x] §7.1 theo **D-AA**: bỏ `age_band` khỏi bảng cột, thêm index `birth_year`
+- [x] `BR-SPT-01` "13 cột" → "**12 cột**"
+- [x] §9 scenario `BR-SPT-01`: 13 → 12 + assert `age_band` ❌ không là cột
+- [x] §7.1 `current_curriculum_code` — đã khớp T4 ✓
+- [x] §7.5 — 3 bảng rollup names in header, khớp DMO (T5)
+- [x] §11 Q1 → **đóng** bằng D-Z · Q2 → **đóng** (D-AA)
+- [x] §11 thêm 2 cột `Chặn phase` · `Chủ`
+- [x] §9 thêm scenario: quét schema tìm FK trỏ **vào** `telemetry_events` ⇒ **0 kết quả**
+- [x] ✅ 0 OQ mở (2/2 đóng, có ngày + vì sao)
+- [x] ✅ `BR-SPT-03` + PK **không đổi một chữ** — D-Z là quyết định *không làm gì*
+- [x] ✅ Số cột `child_profiles` khớp **ba chỗ**: §7.1 (12) · `BR-SPT-01` (12) · §9 (12)
+- [x] ✅ Đối chiếu tay `child-data-compliance` §7.1 ⟷ SPT §7.1 — khớp từng tên cột
+- [x] ✅ `grep -rn 'session_month' docs/specs/` → rỗng (chỉ còn ở event-catalog Q2 history)
 
 ## T7 — `schema-content-taxonomy` (M2 · M6) ⟂
 

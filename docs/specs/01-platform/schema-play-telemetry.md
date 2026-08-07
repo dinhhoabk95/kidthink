@@ -60,8 +60,7 @@ Không có.
 | `uuid` | uuid | UNIQUE — đối ngoại và dùng làm `child_uuid` |
 | `user_id` | bigint FK | ON DELETE CASCADE |
 | `display_name` | varchar(40) | NOT NULL — tên gọi, ❌ không họ tên đầy đủ |
-| `birth_year` | smallint | NOT NULL, CHECK trong khoảng cho tuổi 3–6 |
-| `age_band` | enum | `3-4`\|`4-5`\|`5-6` — cột sinh (generated) từ `birth_year` |
+| `birth_year` | smallint | NOT NULL, CHECK trong khoảng cho tuổi 3–6. Index đơn cho lookup theo tuổi |
 | `avatar_id` | varchar(24) | NOT NULL — FK logic tới preset |
 | `relationship` | enum | `child`\|`student`\|`other`, nullable |
 | `current_curriculum_code` | varchar | nullable |
@@ -69,7 +68,8 @@ Không có.
 | `status` | enum | `active`\|`archived`\|`pending_deletion` |
 | `created_at` `updated_at` | timestamptz | |
 
-**13 cột. Không hơn.** Bất kỳ cột thứ 14 nào cần sửa `child-data-compliance` trước.
+**12 cột. Không hơn.** Bất kỳ cột thứ 13 nào cần sửa `child-data-compliance` trước.
+`age_band` **không phải cột** — suy từ `birth_year` lúc đọc (D-AA).
 
 ### 7.2 `play_sessions`
 
@@ -108,6 +108,10 @@ Index `(game_level_code, content_version, ingested_at)` · `(child_uuid, ingeste
 
 ❌ Không cột nào chứa PII. Xem `child-data-compliance` §7.3.
 
+❌ **Không partitioned ở P0.** PK `(session_uuid, seq)` giữ nguyên (`BR-SPT-03`).
+Hai điều kiện giữ đường mở: (a) ❌ không FK nào trỏ **vào** `telemetry_events`;
+(b) giữ cột hẹp, index tối thiểu. Xem `event-catalog` §11 Q2.
+
 ### 7.4 `child_session_summaries`
 
 `(child_profile_id, session_uuid)` PK · `date_ict` date · `skill_codes` text[] ·
@@ -145,10 +149,10 @@ Không có.
 ## 9. Acceptance criteria
 
 ```gherkin
-Scenario: BR-SPT-01 — child_profiles đúng 13 cột
+Scenario: BR-SPT-01 — child_profiles đúng 12 cột
   When đọc định nghĩa bảng child_profiles
-  Then số cột là 13
-  And không cột nào tên full_name, birth_date, school, hay photo_path
+  Then số cột là 12
+  And không cột nào tên full_name, birth_date, school, photo_path, hay age_band
 
 Scenario: BR-SPT-03 — event trùng bị DB chặn
   When chèn hai hàng telemetry_events cùng session_uuid và seq
@@ -175,6 +179,10 @@ Scenario: BR-SPT-04 — ẩn danh hoá khi xoá tài khoản
 Scenario: phiên phải thuộc trẻ hoặc thiết bị guest
   When chèn play_sessions không có cả child_profile_id lẫn guest_device_id
   Then CHECK constraint từ chối
+
+Scenario: D-Z — không FK trỏ vào telemetry_events
+  When quét toàn bộ FK trong schema
+  Then không có FK nào có target là telemetry_events
 ```
 
 ## 10. Boundaries
@@ -196,7 +204,7 @@ Scenario: phiên phải thuộc trẻ hoặc thiết bị guest
 
 ## 11. Open questions
 
-| # | Câu hỏi | Chặn gì |
-|---|---|---|
-| 1 | Partition `telemetry_events` theo tháng ngay từ P0? | P1 |
-| 2 | `age_band` là cột sinh hay tính lúc đọc? Cột sinh nhanh hơn nhưng cần cập nhật khi sang năm | P0 |
+| # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
+|---|---|---|---|---|
+| ~~1~~ | ~~Partition `telemetry_events` theo tháng ngay từ P0?~~ **Đóng 2026-08-07 (T6)**: quyết định sống ở `event-catalog` Q2. ❌ Không partition ở P0; PK giữ nguyên (D-Z) | — | ✅ đóng | D-Z |
+| ~~2~~ | ~~`age_band` là cột sinh hay tính lúc đọc?~~ **Đóng 2026-08-07 (T6)**: tính lúc đọc từ `birth_year` (D-AA). Không cần cập nhật khi sang năm | — | ✅ đóng | D-AA |
