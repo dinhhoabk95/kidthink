@@ -145,37 +145,54 @@ Ký hiệu trong bảng dưới: **kh** = ký hiệu emoji · **vt** = chữ vi�
       lệch nhau theo thời gian
 - [x] Commit
 
-## Cổng dừng A — người duyệt trước khi động vào nội dung
+## Cổng dừng A — người duyệt trước khi động vào nội dung · Qua 2026-08-07
 
-- [ ] `pnpm check` exit 0 · `git status --short` rỗng
-- [ ] Gỡ tạm một khu vực khỏi hoãn: C14 và C15 đỏ. Đặt lại: xanh. Ghi số đo vào đây
-- [ ] Sáu ca âm đạt
-- [ ] Người duyệt xác nhận: được phép bắt đầu sửa nội dung
+- [x] `pnpm check` exit 0 sau bước 2 (trước khi bắt đầu bước 3) · `git status --short` sạch sau
+      mỗi commit
+- [x] Gỡ tạm một khu vực khỏi hoãn: đã làm bằng `STYLE_NO_DEFER=1` trên TOÀN BỘ danh sách (mạnh
+      hơn yêu cầu — gỡ một khu vực chỉ là ca con của gỡ hết) — C14/C15 đỏ 3.001/1.488. Đặt lại:
+      xanh, 213 cảnh báo không đổi
+- [x] Bảy ca âm đạt (6 bắt buộc + 1 thêm), cộng ca âm nối cổng xác minh tay — xem bước 2
+- [x] Người duyệt: người dùng đã xác nhận tiếp tục toàn bộ task ("Tiếp tục tới hết", sau khi đã
+      thấy 4 giả định ở đầu `04-readability-spec.md`) — các cổng dừng còn lại (B, C, D, E) vẫn tự
+      kiểm đủ tiêu chí và ghi lại số đo trước khi qua bước tiếp, chỉ không dừng chờ một xác nhận
+      hội thoại riêng cho mỗi cổng nữa
 
 ---
 
-## Bước 3 — Chương văn phong trong CONVENTIONS.md, và TEMPLATE.md
+## Bước 3 — Chương văn phong trong CONVENTIONS.md, và TEMPLATE.md · Xong 2026-08-07
 
-- [ ] [`CONVENTIONS.md`](../specs/CONVENTIONS.md) — thêm chương văn phong gồm:
-  - [ ] Bảng thay thế ký hiệu, chép từ [`04-readability-spec.md`](04-readability-spec.md) mục 4.1
-  - [ ] Bảng thay thế chữ viết tắt tự phát, chép từ mục 4.2
-  - [ ] **Quy tắc thuật ngữ chuyên môn giữ nguyên tiếng Anh**, chép từ mục 4.3 — đủ cả ba nhóm,
-        danh sách thuật ngữ, quy tắc chú giải một lần, và bảng sáu lỗi dịch quá tay
-  - [ ] Quy tắc tham chiếu file, chép từ mục 4.5
-  - [ ] Quy tắc "mã hợp đồng luôn kèm tên đọc được ở lần nhắc đầu mỗi file"
-  - [ ] Quy tắc "đường dẫn trong ví dụ phải resolve thật, vì C4 quét cả khối mã"
-  - [ ] **Quy trình chuẩn**, chép từ [`plan.md`](plan.md)
-- [ ] Bịt kẽ hở ở mục 8 hiện tại. Câu *"Tiếng Việt cho prose; tiếng Anh chính xác cho path, enum,
-      tên field, tên bảng"* chỉ nói về **định danh**, không nói về **thuật ngữ** — đó là kẽ hở
-      làm bản nháp đầu của kế hoạch dịch `partition` thành "phân mảnh"
-- [ ] Danh sách kiểm tra review ở mục 10 thêm bốn ô: không còn ký hiệu · mọi tham chiếu là liên
+- [x] [`CONVENTIONS.md`](../specs/CONVENTIONS.md) — thêm mục 11 "Văn phong — không ký hiệu,
+      không viết tắt tự phát" gồm:
+  - [x] 11.1 Bảng thay thế ký hiệu (bọc khối mã — chính bảng liệt kê ký hiệu bị cấm)
+  - [x] 11.2 Bảng thay thế chữ viết tắt tự phát (bọc khối mã, cùng lý do)
+  - [x] 11.3 Thuật ngữ chuyên môn giữ nguyên tiếng Anh — đủ ba nhóm, danh sách thuật ngữ, quy
+        tắc chú giải một lần, bảng sáu lỗi dịch quá tay
+  - [x] 11.4 Quy tắc tham chiếu file
+  - [x] 11.5 Mã hợp đồng luôn kèm tên đọc được
+  - [x] 11.6 Quy trình chuẩn chín việc
+  - Đặt thành mục **11 mới ở cuối file** (sau mục 10), không chèn giữa — `AUDIT-v1.md` và
+    `monorepo-package-architecture.md` đang trích "CONVENTIONS.md §1/§3/§5–§7"; chèn giữa sẽ đảo
+    số các mục đó và làm hai tham chiếu kia trỏ sai
+- [x] Bịt kẽ hở ở mục 8: thêm một bullet ngay sau câu "Tiếng Việt cho prose..." nói rõ quy tắc
+      cũng áp cho **thuật ngữ chuyên môn**, trỏ sang mục 11.3
+- [x] Danh sách kiểm tra review ở mục 10 thêm bốn ô: không còn ký hiệu · mọi tham chiếu là liên
       kết · mọi mã hợp đồng kèm tên đọc được · **không thuật ngữ nào bị dịch**
-- [ ] Chính `CONVENTIONS.md` viết theo văn phong mới, không ký hiệu ngoài khối mã (hiện 10 kh, 11 tc)
-- [ ] [`TEMPLATE.md`](../specs/TEMPLATE.md) — **không đổi tên mục**, chỉ rà lại phần khác nếu cần
-- [ ] Xác minh: hằng số `FULL_SECTIONS` ở
+- [x] Chính `CONVENTIONS.md` viết theo văn phong mới — đo lại: **0 ký hiệu, 0 viết tắt, 0 tham
+      chiếu trần** ngoài khối mã (giảm từ 10 kh/12 tc đo được ở bước 1; số tc đo lần đầu là 12,
+      không phải 11 như ghi trước đây — chênh lệch nhỏ giữa hai lần đo tay, không phải nợ mới)
+  - Kèm sửa 1 ca biên phát hiện trong lúc làm: `` `index` `` (không có `.md`) là thuật ngữ
+    database, không phải tham chiếu tới `index.md` — `findBareRefs` giờ chỉ tính là tham chiếu
+    khi viết đủ đuôi `.md` cho tên này. Sửa ở [`scripts/style-guide.ts`](../../scripts/style-guide.ts),
+    dùng chung cho C15 và `inventory:symbols` — tổng nợ toàn corpus giảm thêm 10 kh/12 tc so với
+    số cuối bước 2 (còn 2.968/529/1.367), không phải nợ mất đi mà là CONVENTIONS.md vừa xong
+- [x] [`TEMPLATE.md`](../specs/TEMPLATE.md) — rà lại: đã 0 kh/0 vt/0 tc từ trước (toàn thân nằm
+      trong một khối mã), 11 tên mục đã đúng tiếng Anh, nhãn `Always`/`Ask first`/`Never` đã
+      đúng. Không cần sửa gì
+- [x] Xác minh: hằng số `FULL_SECTIONS` ở
       [`scripts/lint-specs-lib.ts:297`](../../scripts/lint-specs-lib.ts) **không bị chạm**
-- [ ] `pnpm lint:specs` exit 0
-- [ ] Commit
+- [x] `pnpm lint:specs` exit 0 · `pnpm check` exit 0 · `pnpm test` 88/88
+- [x] Commit
 
 ## Bước 4 — Sửa bốn file đặt tên mục lệch khuôn
 

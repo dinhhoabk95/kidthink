@@ -207,6 +207,14 @@ export interface BareRefMatch {
   candidate: string;
 }
 
+/**
+ * Basename trùng một thuật ngữ chuyên môn thường dùng (mục 4.3/11.3) — chỉ
+ * tính là tham chiếu file khi viết đủ ".md", vì `` `index` `` áp gần như
+ * chắc chắn là "database index" (thuật ngữ, giữ nguyên), không phải nhắc
+ * tới `specs/index.md`. `` `index.md` `` (có .md) thì không mơ hồ, vẫn bắt.
+ */
+const AMBIGUOUS_WITHOUT_MD_SUFFIX = new Set(["index"]);
+
 /** Tìm mọi backtick-span khớp một basename đã biết, KHÔNG nằm trong liên kết. */
 export function findBareRefs(
   line: string,
@@ -217,7 +225,11 @@ export function findBareRefs(
   const backtickPattern = /`([^`]+)`/g;
   for (const match of masked.matchAll(backtickPattern)) {
     const raw = match[1] ?? "";
-    const candidate = raw.endsWith(".md") ? raw.slice(0, -3) : raw;
+    const hasMdSuffix = raw.endsWith(".md");
+    const candidate = hasMdSuffix ? raw.slice(0, -3) : raw;
+    if (!hasMdSuffix && AMBIGUOUS_WITHOUT_MD_SUFFIX.has(candidate)) {
+      continue;
+    }
     if (knownBasenames.has(candidate)) {
       found.push({ raw, candidate });
     }
