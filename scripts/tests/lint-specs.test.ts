@@ -2,6 +2,7 @@ import { beforeEach, describe, expect, it } from "vitest";
 import {
   checkC6,
   checkC7,
+  checkC8,
   checkC9,
   checkC10,
   checkC12,
@@ -538,5 +539,55 @@ describe("checkC15 — tham chiếu trần phải là liên kết", () => {
       (v) => v.check === "C15" && v.file === "specs/fake/test-c15-nonspec.md"
     );
     expect(errors).toHaveLength(0);
+  });
+});
+
+describe("checkC8 (approved spec depends_on must also be approved)", () => {
+  function spec(id: string, status: string, dependsOn: string[]) {
+    const content = [
+      "---",
+      `spec: ${id}`,
+      `status: ${status}`,
+      "depends_on:",
+      ...dependsOn.map((d) => `  - ${d}`),
+      "---",
+    ].join("\n");
+    return makeSpecFile(`/fake/${id}.md`, `fake/${id}.md`, content);
+  }
+
+  it("flags approved spec depending on draft spec", () => {
+    const specs = [
+      spec("ALPHA", "approved", ["BETA"]),
+      spec("BETA", "draft", []),
+    ];
+    checkC8(specs);
+    const violations = getViolations().filter((v) => v.check === "C8");
+    expect(violations).toHaveLength(1);
+    expect(violations[0].message).toContain('"BETA"');
+    expect(violations[0].message).toContain('"draft"');
+  });
+
+  it("does not flag when dependency is also approved", () => {
+    const specs = [
+      spec("ALPHA", "approved", ["BETA"]),
+      spec("BETA", "approved", []),
+    ];
+    checkC8(specs);
+    const violations = getViolations().filter((v) => v.check === "C8");
+    expect(violations).toHaveLength(0);
+  });
+
+  it("does not flag draft specs (only checks approved ones)", () => {
+    const specs = [spec("ALPHA", "draft", ["BETA"]), spec("BETA", "draft", [])];
+    checkC8(specs);
+    const violations = getViolations().filter((v) => v.check === "C8");
+    expect(violations).toHaveLength(0);
+  });
+
+  it("ignores deps pointing outside the known spec graph", () => {
+    const specs = [spec("ALPHA", "approved", ["CONVENTIONS"])];
+    checkC8(specs);
+    const violations = getViolations().filter((v) => v.check === "C8");
+    expect(violations).toHaveLength(0);
   });
 });
