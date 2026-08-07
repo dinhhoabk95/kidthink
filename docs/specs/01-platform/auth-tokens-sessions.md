@@ -2,10 +2,10 @@
 spec: AUTH-TOKENS-SESSIONS
 title: Token, cookie và vòng đời phiên
 area: platform
-status: draft
+status: approved
 mvp: true
 phase: P0
-reviewed: 2026-08-06
+reviewed: 2026-08-07
 owns:
   - Hình dạng JWT và audience
   - Thuộc tính cookie
@@ -96,13 +96,13 @@ nào tồn tại ở trạng thái "chưa qua MFA" (§5).
 | `BR-AUT-02` | Guard là hàm **sync**, đọc `event.context`. ❌ NEVER `await requireUserAuth()` | Guard trả Promise mời quên `await`, và quên `await` nghĩa là không có guard |
 | `BR-AUT-03` | Refresh cookie **path-scoped** tới đúng route refresh | Refresh token không được gửi kèm mọi request |
 | `BR-AUT-04` | Refresh token **xoay** mỗi lần dùng; tái dùng → thu hồi toàn bộ phiên | Phát hiện token bị đánh cắp |
-| `BR-AUT-05` | `refresh_token_version` **+1** khi đổi mật khẩu và khi thu hồi phiên | |
-| `BR-AUT-06` | CSRF token **không** HttpOnly, gửi qua header `x-csrf-token` trên **mọi** route đổi trạng thái | |
+| `BR-AUT-05` | `refresh_token_version` **+1** khi đổi mật khẩu và khi thu hồi phiên | Đổi mật khẩu mà refresh token cũ vẫn dùng được thì việc đổi ❌ không đuổi được kẻ đã vào. Version là cách vô hiệu hoá **mọi** token đã phát bằng một phép ghi, ❌ không phải đi xoá từng hàng |
+| `BR-AUT-06` | CSRF token **không** HttpOnly, gửi qua header `x-csrf-token` trên **mọi** route đổi trạng thái | Cookie phiên tự động đi kèm request từ site khác; header thì ❌ không. Token phải đọc được bằng JS để gắn vào header — đó là lý do nó cố ý ❌ **không** HttpOnly, khác với cookie phiên |
 | `BR-AUT-07` | JWT ❌ **không** chứa entitlement, `tenant_id`, hay `role` của User | Năng lực đọc từ DB — thu hồi phải có hiệu lực ngay |
-| `BR-AUT-08` | Mật khẩu hash bằng **argon2id**; ❌ không bcrypt, ❌ không MD5/SHA | |
+| `BR-AUT-08` | Mật khẩu hash bằng **argon2id**; ❌ không bcrypt, ❌ không MD5/SHA | MD5/SHA là hash **nhanh** — chính thứ giúp kẻ có DB dò tỉ tổ hợp mỗi giây. argon2id tốn cả bộ nhớ nên GPU/ASIC ❌ không nhân được thông lượng; bcrypt chậm nhưng ❌ không tốn bộ nhớ và trần 72 byte |
 | `BR-AUT-09` | Rate limit đăng nhập theo **IP và theo account** — hai trục | Khoá account chặn nhắm mục tiêu; giới hạn IP chặn quét diện rộng |
 | `BR-AUT-10` | Thông báo lỗi đăng nhập ❌ không tiết lộ tài khoản tồn tại; thời gian phản hồi không lệch | Enumeration email |
-| `BR-AUT-11` | Manager ❌ không có endpoint đăng ký công khai | |
+| `BR-AUT-11` | Manager ❌ không có endpoint đăng ký công khai | Manager là tài khoản vận hành, tạo bằng seed/mời từ super admin. Một route đăng ký công khai — kể cả có duyệt phía sau — là bề mặt để tự tạo tài khoản chờ leo quyền, và nó ❌ không mua lại được lợi ích gì vì số Manager đếm trên đầu ngón tay |
 | `BR-AUT-12` | Cookie Manager giới hạn domain `admin.{domain}` | Tách bề mặt |
 | `BR-AUT-13` | Thao tác nhạy cảm §7.4 cần **reauth trong 5 phút**. Phiên hợp lệ một mình ❌ **không đủ** | Phiên bị chiếm ❌ không được đổi khoá vào tài khoản. Đây là ranh giới giữa "đọc được dữ liệu" và "chiếm vĩnh viễn" |
 | `BR-AUT-14` | Reauth chấp nhận **bất kỳ** cách nào ở §7.4, ❌ không cứng mật khẩu | `password_hash` nullable từ `BR-AUT-16`. Ép mật khẩu làm tài khoản chỉ-SNS ❌ không đổi được cài đặt nào |
@@ -314,9 +314,9 @@ Scenario: BR-AUT-18 — không token nào của provider được lưu
 
 ## 11. Open questions
 
-| # | Câu hỏi | Chặn gì |
-|---|---|---|
-| 1 | MFA cho Manager bắt buộc từ P0 hay bật ở P2? | `03-account/mfa.md` |
-| 2 | ~~Social login (Google) có vào MVP không?~~ **Chốt 2026-08-05: có, P1.** Google và Facebook — [`oauth-provider-registry.md`](oauth-provider-registry.md) | — |
-| 3 | Khoá tạm account sau bao nhiêu lần sai, và bao lâu? | Rate limit |
-| 4 | Reauth bằng OAuth cần vượt lại **màn hình đồng ý** của provider hay chấp nhận phiên SSO đang mở? Chấp nhận phiên đang mở làm reauth gần như vô nghĩa trên máy dùng chung | P1 |
+| # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
+|---|---|---|---|---|
+| ~~1~~ | ~~MFA cho Manager bắt buộc từ P0 hay bật ở P2?~~ **Đóng 2026-08-07 (T11)**: trùng câu hỏi với [`../00-foundation/actors.md`](../00-foundation/actors.md) §11 Q1 — đã đóng ở đó: **bắt buộc từ P0**. Cột thật `mfa_settings.secret_encrypted` + `managers.mfa_enabled` ([`schema-identity-billing.md`](schema-identity-billing.md) §7.3). Bất biến "Manager ❌ không hoạt động khi `mfa_settings.confirmed_at IS NULL`" ép ở **tầng service** | — | ✅ đóng | `actors` Q1 (D-X/T9 · M9) |
+| ~~2~~ | ~~Social login (Google) có vào MVP không?~~ **Chốt 2026-08-05: có, P1.** Google và Facebook — [`oauth-provider-registry.md`](oauth-provider-registry.md) | — | ✅ đóng | D-X |
+| ~~3~~ | ~~Khoá tạm account sau bao nhiêu lần sai, và bao lâu?~~ **Đóng 2026-08-07 (T11)**: số cụ thể sống ở [`rate-limiting.md`](rate-limiting.md) §7 (`BR-RTL-05`) — **5 lần → 1 phút · 10 → 5 phút · 15 → 30 phút · reset sau 24 giờ không sai**, khoá tăng dần ❌ không vĩnh viễn. ⚠️ `rate-limiting` còn `draft`: con số có thể đổi khi nó được approve, nhưng *chủ sở hữu* câu hỏi đã rõ và ❌ không còn nằm ở file này | — | ✅ đóng (chủ chuyển) | `rate-limiting` §7 |
+| 4 | Reauth bằng OAuth cần vượt lại **màn hình đồng ý** của provider hay chấp nhận phiên SSO đang mở? Chấp nhận phiên đang mở làm reauth gần như vô nghĩa trên máy dùng chung | Reauth trên tài khoản social — ❌ không chặn reauth password (P0 đã đủ) | 🟡 P1 | hoãn — chốt cùng lúc `oauth-provider-registry` vào P1 |
