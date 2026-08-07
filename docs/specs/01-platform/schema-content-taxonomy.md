@@ -2,7 +2,7 @@
 spec: SCHEMA-CONTENT-TAXONOMY
 title: Schema — taxonomy, nội dung, curriculum
 area: platform
-status: draft
+status: approved
 mvp: true
 phase: P0
 reviewed: 2026-08-07
@@ -49,7 +49,7 @@ Không có.
 | `BR-SCT-04` | `content_pack` và `difficulty_params` là **hai cột JSONB riêng** | `BR-DM-02` |
 | `BR-SCT-05` | Trigger chặn `UPDATE` hàng `published` | `content-lifecycle` `BR-CLC-01` |
 | `BR-SCT-06` | `curriculum_items` trỏ tới nội dung bằng `(entity_type, entity_id)` — `entity_id` là **neo dòng dõi** (`entity_id` lineage anchor), bất biến qua mọi version, ❌ không phải `id` của một hàng version cụ thể | Ghim đúng hàng version thì content update xong curriculum vẫn thấy bản cũ. Neo dòng dõi + `WHERE status='published'` giải quyết mà **vẫn là `id`**, không cần `code` (D-AE, sửa lại 2026-08-07) |
-| `BR-SCT-07` | `content_skill_map.weight` có `CHECK (weight > 0 AND weight <= 1)` | |
+| `BR-SCT-07` | `content_skill_map.weight` có `CHECK (weight > 0 AND weight <= 1)` | `BR-DM-03` định nghĩa miền `[0,1]`; `CHECK` là chỗ **duy nhất** ép được — miền ghi trong prose ❌ không chặn một seeder ghi `weight = 5`. Cận dưới **loại trừ 0**: một hàng `weight = 0` nghĩa là "có ánh xạ nhưng không đóng góp gì", mâu thuẫn với chính việc hàng đó tồn tại, và nó làm mọi phép chuẩn hoá mastery chia cho tổng bằng 0 |
 
 ## 7. Data
 
@@ -247,5 +247,5 @@ Scenario: strand lồng tối đa một tầng
 
 | # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
 |---|---|---|---|---|
-| ~~1~~ | ~~`curriculum_items` ghim `entity_version` hay luôn lấy bản published mới nhất?~~ **Đóng 2026-08-07 (T7)**: theo [`content-versioning`](../00-foundation/content-versioning.md) §11 Q2 (đóng T11) — **`code` only**, `curriculum_items` luôn lấy bản `published` mới nhất, ❌ không ghim `entity_version`. Hệ quả: đổi nội dung `published` ⇒ mọi curriculum thấy bản mới ngay lập tức, **không có** đường ghim version | — | ✅ đóng | D-X (T11) |
-| 2 | `lesson_activities` khoá theo `lesson_version` làm mọi version copy lại toàn bộ item — chấp nhận được không? | P3 | 🟡 P3 | hoãn |
+| ~~1~~ | ~~`curriculum_items` ghim `entity_version` hay luôn lấy bản published mới nhất?~~ **Đóng 2026-08-07 (T7)**: theo [`content-versioning`](../00-foundation/content-versioning.md) §11 Q2 — `curriculum_items` **luôn lấy bản `published` mới nhất**, ❌ không ghim `entity_version`. Hệ quả: đổi nội dung `published` ⇒ mọi curriculum thấy bản mới ngay lập tức, **không có** đường ghim version. **Sửa cơ chế 2026-08-07 (D-AE lần 2)**: hành vi trên **không đổi**, nhưng cột lưu ❌ **không** phải `entity_code` — là `curriculum_items.entity_id` bigint, trỏ cột **`entity_id`** (neo dòng dõi, bất biến qua mọi version) của bảng đích. Join `WHERE entity_id = ? AND status = 'published'`. Theo `BR-DM-13`: FK luôn là `id`, ❌ không có ngoại lệ `code` | — | ✅ đóng | D-X (T11) · D-AE |
+| 2 | `lesson_activities` khoá theo `lesson_version` làm mọi version copy lại toàn bộ item — chấp nhận được không? | P3 | 🟡 P3 | hoãn — copy-on-write đắt về dung lượng nhưng ❌ không sai; đo lại khi có số hàng thật, cùng lúc `content-versioning` Q1 (archive S3) |
