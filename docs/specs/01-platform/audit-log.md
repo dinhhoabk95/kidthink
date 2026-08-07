@@ -2,10 +2,10 @@
 spec: AUDIT-LOG
 title: Nhật ký kiểm toán
 area: platform
-status: draft
+status: approved
 mvp: true
 phase: P0
-reviewed: 2026-08-04
+reviewed: 2026-08-07
 owns:
   - Danh sách hành động bắt buộc audit
   - Hình dạng bản ghi audit
@@ -64,10 +64,10 @@ cho hành động chưa xảy ra. Cả hai đều làm nhật ký mất giá tr�
 |---|---|---|
 | `BR-AUD-01` | `audit_logs` **INSERT-only**, ép bằng **quyền DB** | Nhật ký sửa được không phải nhật ký |
 | `BR-AUD-02` | Ghi audit trong **cùng transaction** với hành động | Hai chế độ hỏng ở §4 |
-| `BR-AUD-03` | Mọi hành động ở §7.2 **bắt buộc** audit | |
+| `BR-AUD-03` | Mọi hành động ở §7.2 **bắt buộc** audit | Danh sách đóng là thứ duy nhất trả lời được "hành động này có được ghi không" mà ❌ không phải đi đọc từng handler. Để mỗi dev tự quyết ⇒ khoảng trống chỉ lộ ra lúc điều tra, khi dữ liệu đã ❌ không còn cách nào dựng lại |
 | `BR-AUD-04` | Bản ghi mang `before_data` và `after_data` cho thao tác sửa | "Đã đổi package" không đủ để hoàn tác hay điều tra |
 | `BR-AUD-05` | ❌ **NEVER PII của trẻ** trong `before_data`/`after_data` — dùng `child_uuid` | `child-data-compliance` |
-| `BR-AUD-06` | ❌ **NEVER mật khẩu, token, hay chuỗi bí mật** — kể cả dạng hash | |
+| `BR-AUD-06` | ❌ **NEVER mật khẩu, token, hay chuỗi bí mật** — kể cả dạng hash | `audit_logs` INSERT-only + giữ vĩnh viễn ⇒ bí mật lọt vào đây là ❌ **không xoá được**, kể cả sau khi đã xoay khoá. Hash cũng cấm: hash mật khẩu vẫn brute-force được offline, và nó biến bảng audit thành bản sao thứ hai của kho mật khẩu — với tập người đọc rộng hơn |
 | `BR-AUD-07` | Hành động hàng loạt ghi **một bản mỗi entity** | Một bản cho 200 entity không truy được entity nào |
 | `BR-AUD-08` | `audit_logs` giữ lại khi xoá tài khoản | Nghĩa vụ pháp lý. Không chứa PII của trẻ nên giữ được |
 | `BR-AUD-09` | Đọc audit **chỉ** `super_admin` | `content_reviewer` không có nhu cầu nghiệp vụ |
@@ -211,8 +211,13 @@ Scenario: BR-AUD-06 — không bí mật trong audit
 
 ## 11. Open questions
 
-| # | Câu hỏi | Chặn gì |
-|---|---|---|
-| 1 | Retention — giữ vĩnh viễn hay archive sang S3 sau 2 năm? Trên t3.small dung lượng là ràng buộc thật | Vận hành |
-| 2 | Có cần chữ ký chuỗi (hash chain) để chống sửa ở tầng hạ tầng không? | Mức đảm bảo |
-| 3 | `data_exported` có cần ghi cả nội dung export không, hay chỉ metadata? | Dung lượng vs bằng chứng |
+> **Chủ duy nhất của câu hỏi retention (2026-08-07, T12)**: Q1 dưới đây và
+> [`data-model-overview`](data-model-overview.md) §11 Q2 hỏi **cùng một** thứ. Theo luật
+> "một outcome một chủ", câu hỏi thuộc file này — nó `owns` hình dạng bản ghi audit. DMO §11 Q2
+> đã đổi thành con trỏ sang đây. ❌ Không trả lời ở hai chỗ.
+
+| # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
+|---|---|---|---|---|
+| 1 | Retention — giữ vĩnh viễn hay archive sang S3 sau 2 năm? Trên t3.small dung lượng là ràng buộc thật. ⚠️ ❌ **Không chặn migration #1**: đây là quyết định *vận hành*, ❌ không đụng cột nào ở §7.1 — đổi retention sau là job archive, không phải migration schema | Vận hành, ❌ không chặn bước 8 | 🟡 P1 | hoãn — cần số dung lượng thật sau khi có seeder (`BR-AUD-08` giữ bản ghi khi xoá tài khoản ⇒ bảng chỉ lớn lên) |
+| 2 | Có cần chữ ký chuỗi (hash chain) để chống sửa ở tầng hạ tầng không? ❌ Không chặn P0: `BR-AUD-01` đã ép INSERT-only bằng **quyền DB**; hash chain chỉ thêm phòng vệ trước kẻ có quyền `superuser` | Mức đảm bảo | 🟡 P3 | hoãn — mở lại nếu có nghĩa vụ tuân thủ đòi bằng chứng chống sửa ở tầng hạ tầng |
+| 3 | `data_exported` có cần ghi cả nội dung export không, hay chỉ metadata? | Dung lượng vs bằng chứng | 🟡 P2 | hoãn — chốt cùng lúc tính năng export vào scope; mặc định hiện tại là **chỉ metadata** (`BR-AUD-06` cấm nội dung nhạy cảm trong payload) |

@@ -220,5 +220,5 @@ Scenario: BR-DM-12 — trần phân trang ép ở server
 | # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
 |---|---|---|---|---|
 | ~~1~~ | ~~Partition `telemetry_events` theo tháng ngay từ đầu?~~ **Đóng 2026-08-07 (T5)**: quyết định sống ở `event-catalog` Q2 — xem §7.3 dòng `event-catalog Q2`. ❌ Không partition ở P0; PK giữ `(session_uuid, seq)`. Ngưỡng kích hoạt: 5M hàng/2GB | — | ✅ đóng | D-Z |
-| 2 | Retention `audit_logs` — giữ vĩnh viễn hay archive sang S3 sau N năm? | Vận hành | 🟡 P1 | hoãn — cần ước tính dung lượng sau khi có seeder |
+| 2 | ~~Retention `audit_logs`~~ **Chuyển chủ 2026-08-07 (T12)**: câu hỏi này trùng [`audit-log`](audit-log.md) §11 Q1 — chủ duy nhất là `audit-log` (nó `owns` hình dạng bản ghi audit). Trả lời ở đó, ❌ không ở đây | Vận hành | 🟡 P1 | `audit-log` §11 Q1 |
 | 3 | Có cần read replica cho báo cáo không, hay index đủ? | Hiệu năng | 🟡 P3 | hoãn — tuning khi có lưu lượng |
