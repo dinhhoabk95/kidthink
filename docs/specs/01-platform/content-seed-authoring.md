@@ -182,7 +182,7 @@ export const seed: ContentSeed<"GT-004"> = {
     age_min: 4, age_max: 5, difficulty: 2,
     access_tier: "premium",          // NOT NULL, không default
     theme_id: "farm",
-    thumbnail_emoji: "EMJ-APPLE",
+    thumbnail_emoji: "EMJ-apple",
     content_pack: { /* kiểu = z.infer<typeof SortGroupsContent> */ },
     difficulty_params: { /* kiểu = z.infer<typeof SortGroupsDifficulty> */ },
   }],

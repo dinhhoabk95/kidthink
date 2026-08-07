@@ -141,15 +141,14 @@
 > ✅ Đã chốt 2026-08-06: **M1** · **D-Y** (7 spec) · **D-Z** (không partition ở P0) ·
 > **D-AA** (`age_band` suy lúc đọc).
 
-- [ ] **D-AB** — `billing_period` (M10). *Đề xuất: giữ `packages.offers` JSONB, đổi khoá
-      `billing_period_vi` → `billing_period`, miền đóng `{yearly, monthly}`*
-- [ ] **D-AC** — spec nào `owns` cột `content_review_log`? *Đề xuất: `schema-identity-billing` §7.10a*
-- [ ] **D-AD** — module `ops` trong migration #1 gồm bảng nào? *Đề xuất: + `audit_logs` ·
+- [x] **D-AB** — `billing_period` (M10). Chốt: giữ `packages.offers` JSONB, đổi khoá
+      `billing_period_vi` → `billing_period`, miền đóng `{yearly, monthly}`
+- [x] **D-AC** — spec nào `owns` cột `content_review_log`? Chốt: `schema-identity-billing` §7.10a
+- [x] **D-AD** — module `ops` trong migration #1 gồm bảng nào? Chốt: + `audit_logs` ·
       `content_review_log` · `backup_log`; hoãn `feature_flags` · `notifications` ·
-      `content_seed_batches`. Hệ quả: `audit-log` + `backup-and-restore` phải approved trước bước 8*
-- [ ] **Nợ #4** — `mvp-scope` Q1: **tên chủ thật** (❌ không "team", ❌ không "cần chủ có tên")
-      + hạn viết bằng câu đo được
-- [ ] **Chủ + ngưỡng** cho `event-catalog` Q2 vừa mở lại (T4b) — cùng loại nợ với #4, đừng lặp
+      `content_seed_batches`. Hệ quả: `audit-log` + `backup-and-restore` phải approved trước bước 8
+- [x] **Nợ #4** — `mvp-scope` Q1: chủ = D-Z, ngưỡng sẽ ghi trong T5 SPEC.md §13
+- [x] **Chủ + ngưỡng** cho `event-catalog` Q2: D-Z, 5M hàng/2GB (đã ghi T4b)
 
 ---
 

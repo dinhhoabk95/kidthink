@@ -261,7 +261,7 @@ Scenario: BR-GTC-04 — admin không tạo được template
 
 Scenario: mỗi template có E2E journey
   When kiểm thư mục test e2e
-  Then mỗi template trong GT-001..GT-006 có ít nhất một journey xanh
+  Then mỗi template trong `GT-001`…`GT-006` có ít nhất một journey xanh
 ```
 
 ## 10. Boundaries

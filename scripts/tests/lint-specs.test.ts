@@ -252,26 +252,22 @@ describe("checkC10 (banned CI wording, code-fence aware)", () => {
 });
 
 describe("checkC12", () => {
-  it("detects mismatches between DMO §7 and schema-* §7.x on real corpus", () => {
+  it("passes on fixed corpus — DMO §7 and schema-* §7.x match", () => {
     const specs = collectSpecFiles();
     checkC12(specs);
     const c12Errors = getViolations().filter((v) => v.check === "C12");
-    // Pre-T3 corpus has known mismatches (social_identities, user_tags, etc.)
-    expect(c12Errors.length).toBeGreaterThan(0);
-    // Verify specific expected mismatches
-    const messages = c12Errors.map((v) => v.message);
-    expect(messages.some((m) => m.includes("social_identities"))).toBe(true);
-    expect(messages.some((m) => m.includes("user_tags"))).toBe(true);
+    // Post-T5: all mismatches resolved
+    expect(c12Errors).toHaveLength(0);
   });
 });
 
 describe("checkC13", () => {
-  it("detects invalid code literals on real corpus", () => {
+  it("passes on fixed corpus — no invalid code literals", () => {
     const specs = collectSpecFiles();
     checkC13(specs);
     const c13Errors = getViolations().filter((v) => v.check === "C13");
-    // Pre-T3 corpus has GT-xxx, G-04021, EMJ-APPLE etc.
-    expect(c13Errors.length).toBeGreaterThan(0);
+    // Post-T5: all code literal issues resolved
+    expect(c13Errors).toHaveLength(0);
   });
 
   it("catches code literal with wrong prefix format in synthetic spec", () => {

@@ -165,16 +165,19 @@ Index `(user_id, status, expires_at)`.
 `(user_id, quota_key, period_start)` PK ghép · `used` int · `limit_snapshot` int ·
 `period_end` · `updated_at`.
 
-### 7.10 Module `ops`
+### 7.10 Module `ops` — P0
 
 | Bảng | Cột |
 |---|---|
 | `audit_logs` | §`audit-log` §7.1 — INSERT-only |
-| `error_log` | `id` · `source` (`server`\|`client`) · `level` · `code` · `message` · `context` JSONB · `request_id` · `created_at` |
-| `feature_flags` | §`feature-flag-service` §7 |
-| `notifications` | §`notification-service` §7.2 |
-| `content_seed_batches` | §`content-seed-authoring` §7.4 |
+| `content_review_log` | `id` · `entity_type` · `entity_code` · `content_version` · `reviewer_id` FK `managers` · `action` enum · `comment` · `created_at` — INSERT-only |
 | `backup_log` | §`backup-and-restore` §7.2 |
+
+### 7.10b Module `ops` — hoãn (P1+, tạo cùng tính năng)
+
+Bảng **không** tạo ở P0 — tạo cùng lúc với tính năng sở hữu:
+`error_log` (Observability), `feature_flags` (feature-flag-service),
+`notifications` (notification-service), `content_seed_batches` (content-seed-authoring).
 
 ## 8. API contract
 

@@ -85,7 +85,7 @@ Ba bề mặt, cùng một bộ lọc, khác nhau ở **phạm vi quyền** và 
 | `what` `thinking` `mechanic` | tag | mọi |
 | `theme` | tag chủ đề | level |
 | `access_tier` | enum | mọi |
-| `template` | `GT-xxx` | level |
+| `template` | mã GT (ví dụ `GT-003`) | level |
 | `status` | enum | **chỉ** admin |
 | `curriculum` | code | mọi |
 | `sort` | `relevance` \| `newest` \| `popular` \| `difficulty` | |

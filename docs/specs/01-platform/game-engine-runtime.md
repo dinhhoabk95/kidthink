@@ -39,7 +39,7 @@ một tầng theo dõi không đoán trước được vào đúng chỗ không 
 |---|---|
 | `packages/game-engine/src/index.ts` | Barrel — entry public **duy nhất** |
 | `core.ts` | `GameEngine` — RAF loop, buffer, render |
-| `templates/GT-00n/` | Session class mỗi template |
+| `templates/<mã GT>/` | Session class mỗi template (ví dụ `GT-001/`) |
 | `systems/` | render · audio · scene · scaffolding · designTokens |
 | `apps/web/app/pages/play/[code].vue` | Mount canvas |
 
@@ -124,7 +124,7 @@ packages/game-engine/src/
 ├── core.ts               GameEngine — RAF, buffer, render
 ├── interaction.ts        drag/tap/snap, validateDrop, onSnap
 ├── gameSession.ts        BaseGameSession / StatefulGameSession
-├── templates/GT-001..006/
+├── templates/{GT-001…GT-006}/
 ├── mechanics/            DragDropSession · TapSelectSession
 ├── pipeline/             ProcessPipeline + stage
 ├── systems/              renderSystem · audioController · sceneManager · scaffolding · designTokens

@@ -79,17 +79,17 @@ Bốn quyết định định hình toàn bộ schema, mỗi cái là một ràn
 
 | Module | Bảng | Spec chi tiết |
 |---|---|---|
-| `identity` | `users` `managers` `active_sessions` `mfa_settings` `mfa_recovery_codes` `verification_tokens` `consent_logs` | `schema-identity-billing` |
+| `identity` | `users` `managers` `active_sessions` `mfa_settings` `mfa_recovery_codes` `verification_tokens` `consent_logs` `social_identities` | `schema-identity-billing` |
 | `billing` | `packages` `package_entitlements` `entitlement_keys` `entitlements` `payment_orders` `quota_usage` | idem |
 | `child` | `child_profiles` `child_session_summaries` | `schema-play-telemetry` |
 | `taxonomy` | `competencies` `strands` `skills` `skill_prerequisites` `learning_objectives` | `schema-content-taxonomy` |
-| `tagging` | `content_tags` `content_tag_map` `content_skill_map` | idem |
+| `tagging` | `content_tags` `content_tag_map` `content_skill_map` `user_tags` | idem |
 | `game` | `game_templates` `game_levels` | idem |
 | `content` | `lessons` `activities` `lesson_activities` `worksheets` `content_images` | idem |
 | `curriculum` | `curricula` `curriculum_items` `curriculum_enrollments` `curriculum_item_progress` | idem |
 | `play` | `play_sessions` `telemetry_events` | `schema-play-telemetry` |
-| `adaptive` | `mastery_state` `level_params` | idem |
-| `ops` | `audit_logs` `content_review_log` `error_log` `feature_flags` `notifications` `content_seed_batches` `backup_log` | `schema-identity-billing` |
+| `adaptive` | `mastery_state` `level_params` | `schema-play-telemetry` |
+| `ops` | `audit_logs` `content_review_log` `backup_log` | `schema-identity-billing` |
 
 **11 module.** Bảng của add-on (`lesson_plans`, `custom_games`, `ai_usage_log`) ❌ **không
 tạo ở MVP** — tạo cùng lúc với tính năng. Để bảng rỗng nằm đó là mời code tham chiếu vào

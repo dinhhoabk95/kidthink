@@ -107,7 +107,7 @@ Không có.
 `access_tier` NOT NULL **không có default** — ép người soạn quyết định, thay vì im lặng cho
 không nội dung (`access-ladder` `BR-LAD-02`).
 
-### 7.5 `lessons` · `activities` — Lớp 2, có version
+### 7.5 `lessons` · `activities` · `lesson_activities` — Lớp 2, có version
 
 `lessons`: `code` · `content_version` · `title_vi` · `guide_vi` · `target_age_min/max` ·
 `estimated_minutes` CHECK 5–45 · `materials_vi` · `warm_up_vi` · `reflection_vi` ·
@@ -121,7 +121,7 @@ không nội dung (`access-ladder` `BR-LAD-02`).
 `lesson_activities`: `(lesson_code, lesson_version, position)` PK · `activity_code` ·
 `is_required` bool.
 
-### 7.6 `curricula` · `curriculum_items`
+### 7.6 `curricula` · `curriculum_items` · `curriculum_enrollments` · `curriculum_item_progress`
 
 `curricula`: `code` · `content_version` · `title_vi` · `description_vi` ·
 `program_type` enum · `age_min` `age_max` · `duration_weeks` · `sessions_per_week` ·
