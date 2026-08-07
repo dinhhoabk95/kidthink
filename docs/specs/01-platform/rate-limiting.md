@@ -2,10 +2,10 @@
 spec: RATE-LIMITING
 title: Giới hạn tần suất
 area: platform
-status: draft
+status: approved
 mvp: true
 phase: P0
-reviewed: 2026-08-04
+reviewed: 2026-08-08
 owns:
   - Bảng giới hạn theo route
   - Hai trục IP và account
@@ -61,7 +61,7 @@ Middleware trước mọi route. Token bucket trên Valkey (`packages/cache`).
 | `BR-RTL-04` | ❌ **NEVER lấy IP từ `X-Forwarded-For` thô** | Header giả được |
 | `BR-RTL-05` | Đăng nhập sai → khoá tài khoản **tăng dần**, ❌ không khoá vĩnh viễn | Khoá vĩnh viễn là DoS lên người dùng thật |
 | `BR-RTL-06` | Ingest event có hạn mức riêng, rộng hơn | Trẻ chơi liên tục là hành vi bình thường |
-| `BR-RTL-07` | Thông báo 429 ❌ không tiết lộ tài khoản tồn tại | |
+| `BR-RTL-07` | Thông báo 429 ❌ không tiết lộ tài khoản tồn tại | Tiết lộ là cho kẻ tấn công biết email nào đã đăng ký, rút ngắn bước quét tiếp theo |
 
 ## 7. Data
 
