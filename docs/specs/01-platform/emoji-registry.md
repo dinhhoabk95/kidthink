@@ -2,10 +2,10 @@
 spec: EMOJI-REGISTRY
 title: Kho emoji cố định
 area: platform
-status: draft
+status: approved
 mvp: true
 phase: P0
-reviewed: 2026-08-04
+reviewed: 2026-08-08
 owns:
   - Danh sách đóng emoji được dùng làm nội dung
   - Metadata và tìm kiếm tiếng Việt
@@ -70,8 +70,8 @@ phù hợp lọt vào bài học của trẻ.
 | `BR-EMJ-03` | Emoji chỉ làm **nội dung**. ❌ **NEVER làm affordance** — nav, button, HUD, trạng thái, empty state đều dùng SVG | Render khác nhau theo OS · không recolour được · không mang được focus ring |
 | `BR-EMJ-04` | Tìm kiếm **bắt buộc** hoạt động bằng tiếng Việt | Manager nghĩ bằng tiếng Việt; tìm "apple" không ra kết quả cần |
 | `BR-EMJ-05` | Ô emoji trong picker ≥ **40×40px**, glyph ≥ **28px** | Nhỏ hơn thì nhiều emoji trông giống nhau — và **sai emoji = sai bài học** |
-| `BR-EMJ-06` | Ghim font stack `"Noto Color Emoji", "Apple Color Emoji", "Segoe UI Emoji"` mọi nơi render emoji | |
-| `BR-EMJ-07` | Registry là **Lớp 1** — admin ❌ không thêm/sửa/xoá qua UI | |
+| `BR-EMJ-06` | Ghim font stack `"Noto Color Emoji", "Apple Color Emoji", "Segoe UI Emoji"` mọi nơi render emoji | Thiếu font thì OS fallback sang monochrome hoặc tofu — trẻ không nhận ra vật |
+| `BR-EMJ-07` | Registry là **Lớp 1** — admin ❌ không thêm/sửa/xoá qua UI | Emoji sai lọt vào bài học trẻ em là sự cố nội dung; seed qua PR review là cổng người duy nhất |
 | `BR-EMJ-08` | Emoji có `age_suitability` — loại không phù hợp tuổi ❌ không vào picker của nội dung trẻ | Vũ khí, rượu, biểu cảm tiêu cực mạnh |
 | `BR-EMJ-09` | ❌ **NEVER emoji có skin tone modifier** trong nội dung game | Chọn một tông là loại trừ; dùng tông vàng trung tính |
 | `BR-EMJ-10` | Xoá emoji khỏi registry → `deprecated`, ❌ không xoá cứng | Nội dung đã publish trỏ tới nó |
