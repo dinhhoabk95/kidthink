@@ -2,7 +2,7 @@
 spec: SCHEMA-IDENTITY-BILLING
 title: Schema — danh tính, thanh toán, vận hành
 area: platform
-status: draft
+status: approved
 mvp: true
 phase: P0
 reviewed: 2026-08-07
@@ -47,8 +47,8 @@ Không có.
 | `BR-SIB-02` | `entitlements.entitlement_key` là **FK thật** tới `entitlement_keys` | Sai chính tả bị chặn ở FK |
 | `BR-SIB-03` | `payment_orders.amount_vnd` là **snapshot** lúc tạo đơn | Giá đổi sau ❌ không ảnh hưởng đơn đã tạo |
 | `BR-SIB-04` | 4 bảng auth phụ polymorphic → **bắt buộc** test bắt orphan | `data-model-overview` `BR-DM-04` |
-| `BR-SIB-05` | `password_hash` argon2id; ❌ **NEVER** cột mật khẩu dạng khác | |
-| `BR-SIB-06` | `consent_logs` · `audit_logs` INSERT-only, ép bằng quyền DB | |
+| `BR-SIB-05` | `password_hash` argon2id; ❌ **NEVER** cột mật khẩu dạng khác | `BR-AUT-08`. Ghi ở tầng cột vì đây là chỗ vi phạm để lại dấu vĩnh viễn: một cột `password` plaintext hay `password_md5` lọt vào migration thì mọi hàng đã ghi ❌ không hash ngược lại được |
+| `BR-SIB-06` | `consent_logs` · `audit_logs` INSERT-only, ép bằng quyền DB | `BR-DM-05`. Hai bảng này là bằng chứng pháp lý (Nghị định 13/2023) và vết điều tra — sửa được nghĩa là ❌ không chứng minh được điều gì. Quyền DB ép, ❌ không phải quy ước code |
 | `BR-SIB-07` | `users.email` UNIQUE **case-insensitive** (`citext` hoặc index trên `lower()`) | `A@x.com` và `a@x.com` là một người |
 | `BR-SIB-08` | `users.password_hash` **nullable** — tài khoản chỉ có SNS là hợp lệ | `BR-AUT-16` `BR-SCL-08`. Bất biến thay thế là `login_methods ≥ 1` (`BR-SLK-04`), ép ở tầng service ❌ không ở cột |
 | `BR-SIB-09` | `social_identities` có **hai** UNIQUE: `(provider, provider_user_id)` và `(user_id, provider)` | Cái thứ nhất chặn một tài khoản SNS gắn hai User; cái thứ hai chặn hai tài khoản SNS cùng provider trên một User (`BR-SLK-02`) |
@@ -292,4 +292,4 @@ Scenario: BR-SIB-11 — xoá user cascade xoá danh tính SNS
 | # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
 |---|---|---|---|---|
 | ~~1~~ | ~~`offers` để JSONB trên `packages` hay tách bảng `package_offers`?~~ **Đóng 2026-08-07 (D-AB)**: giữ JSONB `offers[]`. Một package **nhiều** offer buộc tách bảng `package_offers` mới join được — việc P2, MVP chỉ bán năm (`package-catalog` §11 Q2) chưa cần | — | ✅ đóng | D-AB |
-| 2 | `error_log` client cần sampling ở mức nào? | Vận hành | 🟡 P1+ (bảng chưa tạo, xem §7.10b) | hoãn |
+| 2 | `error_log` client cần sampling ở mức nào? | Vận hành | 🟡 P1+ (bảng chưa tạo, xem §7.10b) | hoãn — chốt cùng lúc `error-log-viewer` vào phase của nó; bảng ❌ không nằm trong migration #1 (D-AD) nên ❌ không chặn bước 8 |
