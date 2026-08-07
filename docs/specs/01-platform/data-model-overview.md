@@ -87,7 +87,7 @@ Bốn quyết định định hình toàn bộ schema, mỗi cái là một ràn
 | `game` | `game_templates` `game_levels` | idem |
 | `content` | `lessons` `activities` `lesson_activities` `worksheets` `content_images` | idem |
 | `curriculum` | `curricula` `curriculum_items` `curriculum_enrollments` `curriculum_item_progress` | idem |
-| `play` | `play_sessions` `telemetry_events` | `schema-play-telemetry` |
+| `play` | `play_sessions` `telemetry_events` `child_daily_stats` `level_daily_stats` `skill_daily_stats` | `schema-play-telemetry` |
 | `adaptive` | `mastery_state` `level_params` | `schema-play-telemetry` |
 | `ops` | `audit_logs` `content_review_log` `backup_log` | `schema-identity-billing` |
 
@@ -116,6 +116,30 @@ thứ chưa có contract.
 | `active_sessions` · `mfa_settings` · `mfa_recovery_codes` · `verification_tokens` | `(account_type, account_id)` | orphan account |
 
 Bảy chỗ. Mỗi chỗ **bắt buộc** một integration test bắt orphan — đây không phải khuyến nghị.
+
+### 7.3 Ràng buộc chờ — quyết định từ OQ đã đóng
+
+| Nguồn | Quyết định | Ngày | Ảnh hưởng cột |
+|---|---|---|---|
+| `id-conventions` Q1 (T9) | Game Level mang `template_code` trong mã | 2026-08-06 | `game_levels.code` format `GL-{C}-{strand}-{template}-{seq}` |
+| `id-conventions` Q2 (T9) | 4 chữ số (`\d{4}`) cho Game Level | 2026-08-06 | `game_levels.code` regex mở rộng |
+| `actors` Q1 (T9) | Manager MFA bắt buộc | 2026-08-06 | `mfa_settings` bắt buộc cho mọi manager |
+| `actors` Q2 (T9) | `pending_verification` ❌ không tạo child | 2026-08-06 | Guard ở tầng service, không ảnh hưởng cột |
+| `mvp-scope` Q4 (T9) | Backup/monitoring vào P0 | 2026-08-06 | `backup_log` vào migration #1 |
+| `monorepo-package-map` Q3 (T9) | `payment`/`notification` inline | 2026-08-06 | Không đụng cột — ảnh hưởng cấu trúc package |
+| `access-ladder` Q3 (T10) | Enum 4 bậc | 2026-08-06 | `access_tier` enum (`free`·`login`·`standard`·`premium`) mọi bảng Lớp 2 |
+| `content-lifecycle` Q3 (T10) | ❌ không `scheduled` | 2026-08-06 | `status` enum 6 giá trị (`draft`·`review`·`approved`·`published`·`archived`·`rejected`) |
+| `content-versioning` Q2 (T11) | `code` only (không `code+version`) | 2026-08-06 | `curriculum_items.entity_code` varchar, không cần `entity_version` |
+| `event-catalog` Q2 (T11→T4b) | ❌ không partition P0 — **mở lại** | 2026-08-07 | PK `(session_uuid, seq)` giữ nguyên; ngưỡng 5M hàng/2GB; 0 FK trỏ vào |
+| `package-catalog` Q2 (T12) | Chỉ bán năm | 2026-08-06 | `billing_period` miền đóng `{yearly, monthly}` (D-AB) |
+| D-Y | 7 spec thêm `depends_on AUTH-TOKENS-SESSIONS` | 2026-08-06 | SIB thêm `AUTH-TOKENS-SESSIONS` vào `depends_on` |
+| D-AA | `age_band` suy lúc đọc | 2026-08-06 | `child_profiles` 12 cột (bỏ `age_band`), index `birth_year` |
+| D-AB | `billing_period_vi` → `billing_period` | 2026-08-07 | `packages.offers` JSONB key đổi tên |
+| D-AC | `content_review_log` thuộc SIB | 2026-08-07 | `schema-identity-billing` §7.10 |
+| D-AD | `ops` P0: 3 bảng | 2026-08-07 | `audit_logs` · `content_review_log` · `backup_log`; hoãn 4 bảng |
+
+**16 ràng buộc.** Mỗi dòng có nguồn spec + mã OQ + task + ngày. ⚠️ Bảng này **không có cổng
+máy** — Checkpoint C phải đối chiếu tay.
 
 ## 8. API contract
 
@@ -191,8 +215,8 @@ Scenario: BR-DM-12 — trần phân trang ép ở server
 
 ## 11. Open questions
 
-| # | Câu hỏi | Chặn gì |
-|---|---|---|
-| 1 | Partition `telemetry_events` theo tháng ngay từ đầu? Nó sẽ là bảng lớn nhất và trên t3.small dung lượng là ràng buộc thật | P1 |
-| 2 | Retention `audit_logs` — giữ vĩnh viễn hay archive sang S3 sau N năm? | Vận hành |
-| 3 | Có cần read replica cho báo cáo không, hay index đủ? | P3 |
+| # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
+|---|---|---|---|---|
+| ~~1~~ | ~~Partition `telemetry_events` theo tháng ngay từ đầu?~~ **Đóng 2026-08-07 (T5)**: quyết định sống ở `event-catalog` Q2 — xem §7.3 dòng `event-catalog Q2`. ❌ Không partition ở P0; PK giữ `(session_uuid, seq)`. Ngưỡng kích hoạt: 5M hàng/2GB | — | ✅ đóng | D-Z |
+| 2 | Retention `audit_logs` — giữ vĩnh viễn hay archive sang S3 sau N năm? | Vận hành | 🟡 P1 | hoãn — cần ước tính dung lượng sau khi có seeder |
+| 3 | Có cần read replica cho báo cáo không, hay index đủ? | Hiệu năng | 🟡 P3 | hoãn — tuning khi có lưu lượng |

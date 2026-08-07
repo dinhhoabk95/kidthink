@@ -1163,6 +1163,11 @@ hình báo cáo mang câu này.
 - Curriculum liên kết lesson và game thành lộ trình.
 - Có đủ nội dung để một trẻ quay lại **4–8 tuần**.
 - Không có dữ liệu trẻ nào vượt danh sách đóng §4.1.
+- **Cổng ra P0**: `mvp-scope` Q1 có chủ có tên trước khi mở P1 (neo D-W).
+- **Cổng ra P0**: `backup-and-restore` + `monitoring-and-alerting` approved và `backup_log`
+  trong migration P0 (neo Q4/T9).
+- **Cổng ra P1**: `event-catalog` Q2 (partition) đóng lại trước khi `telemetry_events`
+  vượt 5M hàng / 2GB (neo D-Z).
 
 ---
 

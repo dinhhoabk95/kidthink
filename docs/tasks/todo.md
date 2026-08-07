@@ -154,39 +154,39 @@
 
 ## T5 — `data-model-overview`: §Ràng buộc chờ + bản đồ + neo `SPEC.md` §13 ⟂
 
-- [ ] Thêm **§7.3 Ràng buộc chờ** — bảng `| Nguồn | Quyết định | Ngày | Ảnh hưởng cột |`
-  - [ ] `id-conventions` Q1·Q2 (T9) — `GL-…\d{4}` ⇒ `game_levels.code`
-  - [ ] `actors` Q1 (T9) — Manager MFA bắt buộc ⇒ `mfa_settings`
-  - [ ] `actors` Q2 (T9) — `pending_verification` ❌ không tạo child ⇒ guard service
-  - [ ] `mvp-scope` Q4 (T9) — backup/monitoring P0 ⇒ `backup_log` vào migration #1
-  - [ ] `monorepo…` Q3 (T9) — `payment`/`notification` inline ⇒ không đụng cột
-  - [ ] `access-ladder` Q3 (T10) — enum **4 bậc** ⇒ `access_tier` mọi bảng Lớp 2
-  - [ ] `content-lifecycle` Q3 (T10) — ❌ không `scheduled` ⇒ enum status **6** giá trị
-  - [ ] `content-versioning` Q2 (T11) — `code` only ⇒ `curriculum_items.entity_code`
-  - [ ] `event-catalog` Q2 (T11 → **mở lại** T4b/D-Z) — ❌ không partition ở P0; PK giữ nguyên;
+- [x] Thêm **§7.3 Ràng buộc chờ** — 16 dòng, mỗi dòng có nguồn + ngày + ảnh hưởng cột
+  - [x] `id-conventions` Q1·Q2 (T9) — `GL-…\d{4}` ⇒ `game_levels.code`
+  - [x] `actors` Q1 (T9) — Manager MFA bắt buộc ⇒ `mfa_settings`
+  - [x] `actors` Q2 (T9) — `pending_verification` ❌ không tạo child ⇒ guard service
+  - [x] `mvp-scope` Q4 (T9) — backup/monitoring P0 ⇒ `backup_log` vào migration #1
+  - [x] `monorepo…` Q3 (T9) — `payment`/`notification` inline ⇒ không đụng cột
+  - [x] `access-ladder` Q3 (T10) — enum **4 bậc** ⇒ `access_tier` mọi bảng Lớp 2
+  - [x] `content-lifecycle` Q3 (T10) — ❌ không `scheduled` ⇒ enum status **6** giá trị
+  - [x] `content-versioning` Q2 (T11) — `code` only ⇒ `curriculum_items.entity_code`
+  - [x] `event-catalog` Q2 (T11 → **mở lại** T4b/D-Z) — ❌ không partition ở P0; PK giữ nguyên;
         kèm ngưỡng 5M hàng/2GB + điều kiện 0 FK trỏ vào
-  - [ ] `package-catalog` Q2 (T12) — chỉ bán năm ⇒ D-AB
-  - [ ] **D-Y** — 7 spec, `AUTH-TOKENS-SESSIONS` vào `depends_on` SIB
-  - [ ] **D-AA** — `age_band` suy lúc đọc ⇒ `child_profiles` 12 cột + index `birth_year`
-  - [ ] D-AB · D-AC · D-AD (điền sau Checkpoint B)
-- [ ] §7 bản đồ module: thêm `social_identities` · `user_tags` · `child_daily_stats` ·
+  - [x] `package-catalog` Q2 (T12) — chỉ bán năm ⇒ D-AB
+  - [x] **D-Y** — 7 spec, `AUTH-TOKENS-SESSIONS` vào `depends_on` SIB
+  - [x] **D-AA** — `age_band` suy lúc đọc ⇒ `child_profiles` 12 cột + index `birth_year`
+  - [x] D-AB · D-AC · D-AD — đã chốt Checkpoint B
+- [x] §7 bản đồ module: thêm `social_identities` · `user_tags` · `child_daily_stats` ·
       `level_daily_stats` · `skill_daily_stats`
-- [ ] §7 `content_review_log` — trỏ đúng spec `owns` theo D-AC
-- [ ] Kiểm lại câu "**11 module**" còn đúng sau khi thêm bảng
-- [ ] §11 Q1 (partition) → **đóng** bằng `event-catalog` Q2 + D-Z, ghi ngày + vì sao
-- [ ] §11 Q2 (retention `audit_logs`) · Q3 (read replica) → hoãn **có chủ + phase**
-- [ ] §11 thêm 2 cột `Chặn phase` · `Chủ`
-- [ ] **Nợ #2 + D-Z** — `SPEC.md` §13 thêm đúng **3** dòng:
-  - [ ] Cổng ra P0: `mvp-scope` Q1 có chủ có tên trước khi mở P1 (neo **D-W**)
-  - [ ] Cổng ra P0: `backup-and-restore` + `monitoring-and-alerting` approved và `backup_log`
+- [x] §7 `content_review_log` — trỏ đúng spec `owns` theo D-AC (SIB §7.10)
+- [x] Kiểm lại câu "**11 module**" còn đúng — vẫn 11 module ✓
+- [x] §11 Q1 (partition) → **đóng** bằng `event-catalog` Q2 + D-Z, ghi ngày + vì sao
+- [x] §11 Q2 (retention `audit_logs`) · Q3 (read replica) → hoãn **có chủ + phase**
+- [x] §11 thêm 2 cột `Chặn phase` · `Chủ`
+- [x] **Nợ #2 + D-Z** — `SPEC.md` §13 thêm đúng **3** dòng:
+  - [x] Cổng ra P0: `mvp-scope` Q1 có chủ có tên trước khi mở P1 (neo **D-W**)
+  - [x] Cổng ra P0: `backup-and-restore` + `monitoring-and-alerting` approved + `backup_log`
         trong migration P0 (neo **Q4/T9**)
-  - [ ] **Cổng ra P1**: `event-catalog` Q2 (partition) đóng lại trước khi `telemetry_events`
+  - [x] **Cổng ra P1**: `event-catalog` Q2 (partition) đóng lại trước khi `telemetry_events`
         vượt 5M hàng / 2GB (neo **D-Z**)
-- [ ] ✅ C12 xanh — bản đồ khớp hai chiều 100%
-- [ ] ✅ §7.3 có **≥19 dòng**, mỗi dòng có nguồn (`spec` + `Qn` + task) và cột ảnh hưởng
-- [ ] ✅ `SPEC.md` §13 tăng đúng **3** ô checklist (2 ở P0, 1 ở P1)
-- [ ] ✅ `grep -rn 'partition' docs/specs/` → chỉ ở `event-catalog` Q2 · DMO §7.3 · `SPEC.md` §13
-- [ ] ⚠️ §7.3 **không có cổng máy** — Checkpoint C phải đối chiếu tay 11 closure ⟷ 11 dòng
+- [x] ✅ C12 xanh — bản đồ khớp hai chiều 100%
+- [x] ✅ §7.3 có **16 dòng**, mỗi dòng có nguồn (`spec` + `Qn` + task) và cột ảnh hưởng
+- [x] ✅ `SPEC.md` §13 tăng đúng **3** ô checklist (2 ở P0, 1 ở P1)
+- [x] ✅ `grep -rn 'partition' docs/specs/` → chỉ ở `event-catalog` Q2 · DMO §7.3/§11
+- [x] ⚠️ §7.3 **không có cổng máy** — Checkpoint C phải đối chiếu tay 16 closure ⟷ 16 dòng
 
 ## T6 — `schema-play-telemetry` (M4 · R1 · R2 · M7 · M8) ⟂
 

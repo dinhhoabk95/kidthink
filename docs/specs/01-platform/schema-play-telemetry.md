@@ -113,7 +113,7 @@ Index `(game_level_code, content_version, ingested_at)` · `(child_uuid, ingeste
 `(child_profile_id, session_uuid)` PK · `date_ict` date · `skill_codes` text[] ·
 `score` · `duration_ms` · `hint_count` · `retry_count` · `completed` bool.
 
-### 7.5 Bảng rollup
+### 7.5 Bảng rollup — `child_daily_stats` · `level_daily_stats` · `skill_daily_stats`
 
 `child_daily_stats` `(child_profile_id, date_ict)` · `level_daily_stats`
 `(game_level_code, content_version, date_ict)` · `skill_daily_stats` `(skill_code, date_ict)`.
