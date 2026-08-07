@@ -2,10 +2,10 @@
 spec: EMAIL-VERIFICATION
 title: Xác thực email
 area: account
-status: draft
+status: approved
 mvp: true
 phase: P0
-reviewed: 2026-08-04
+reviewed: 2026-08-08
 owns:
   - Luồng xác thực email
   - Vòng đời token xác thực
@@ -55,12 +55,12 @@ User ở trạng thái `pending_verification`.
 | ID | Rule | Vì sao |
 |---|---|---|
 | `BR-EVF-01` | Token lưu **dạng hash** | Rò DB ❌ không cho phép chiếm tài khoản |
-| `BR-EVF-02` | Hạn **24 giờ**, dùng **một lần** | |
+| `BR-EVF-02` | Hạn **24 giờ**, dùng **một lần** | Dài hơn là rủi ro đường link bị lộ (forward, lịch sử trình duyệt); ngắn hơn là nhiều người không kịp bấm |
 | `BR-EVF-03` | Gửi lại **vô hiệu token cũ** | Nhiều token sống cùng lúc là nhiều đường tấn công |
 | `BR-EVF-04` | Token đã dùng + user `active` → **chuyển hướng êm**, ❌ không báo lỗi | Bấm lại link trong email là hành vi bình thường |
-| `BR-EVF-05` | ❌ **NEVER tiết lộ** email nào gắn với token | |
+| `BR-EVF-05` | ❌ **NEVER tiết lộ** email nào gắn với token | Kẻ tấn công đoán được token có thể xác định email — tổ hợp với brute force là chiếm tài khoản |
 | `BR-EVF-06` | Chưa xác thực ❌ **không tạo được child profile** | `BR-REG-04` |
-| `BR-EVF-07` | Rate limit gửi lại **3 lần/giờ** | |
+| `BR-EVF-07` | Rate limit gửi lại **3 lần/giờ** | Không giới hạn thì kẻ tấn công spam hộp thư người khác qua hệ thống của ta |
 | `BR-EVF-08` | Sau xác thực chuyển tới **tạo hồ sơ trẻ**, ❌ không về trang chủ | Bước tiếp theo tự nhiên; giảm bỏ cuộc |
 
 ## 7. Data
