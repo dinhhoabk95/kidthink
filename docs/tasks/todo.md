@@ -23,21 +23,30 @@
 
 ## Mục tiêu đo được
 
-| Đo bây giờ | Đo lúc đóng task |
-|---|---|
-| `pnpm check` ❌ **đỏ** (biome format trong `scripts/lint-specs-lib.ts`) | ✅ exit 0 |
-| `pnpm test` 73/73 (phiên khác vừa thêm 17 test) | ≥ **73/73**, ❌ không giảm |
-| 16/130 spec `approved` | **23/130** (D-Y = 7 spec) |
-| `lint:specs` 11 check | **13 check** (thêm C12 · C13), mỗi cái có ca âm |
-| 11 lệch/mâu thuẫn contract (M1–M11) | **0** |
-| 6 bảng lệch giữa DMO §7 và `schema-*` | **0** — C12 xanh |
-| `content_review_log` không spec nào `owns` cột | có đúng **1** chủ |
-| `data-model-overview` §Ràng buộc chờ | **≥19 dòng** |
-| `SPEC.md` §13 thiếu 3 dòng neo (D-W · Q4/T9 · D-Z) | có đủ **3** (2 ở P0, 1 ở P1) |
-| `event-catalog` Q2 đóng "có partition" — xung đột PK | **mở lại**, 🟡 P1, có tên chủ + ngưỡng 5M hàng/2GB |
-| 17 OQ ở 6 spec đích | 0 mở mà không có `Chặn phase` + `Chủ` |
-| Mã `G-C…` trong corpus | **0** |
-| P0 bước 8 (migration) | **Mở khoá** |
+> **Đo lần cuối 2026-08-07 sau T11 + Checkpoint C/D (phần máy):** `pnpm check` exit 0 ·
+> `pnpm test` 81/81 · `lint:specs` 0 error / **219** warning · `approved` **23/130** ·
+> 3/3 ca âm chặn đúng. Cột "Đạt" bên dưới ghi số đo thật.
+
+| Đo bây giờ | Đo lúc đóng task | Đạt |
+|---|---|---|
+| `pnpm check` ❌ **đỏ** (biome format trong `scripts/lint-specs-lib.ts`) | ✅ exit 0 | ✅ exit 0 |
+| `pnpm test` 73/73 (phiên khác vừa thêm 17 test) | ≥ **73/73**, ❌ không giảm | ✅ **81/81** |
+| 16/130 spec `approved` | **23/130** (D-Y = 7 spec) | ✅ **23/130** |
+| `lint:specs` 11 check | **13 check** (thêm C12 · C13), mỗi cái có ca âm | ✅ 13, 3 ca âm chạy lại ở CP-D |
+| 11 lệch/mâu thuẫn contract (M1–M11) | **0** | ✅ 0 — **+2 lệch mới** tìm ở CP-C, đã sửa |
+| 6 bảng lệch giữa DMO §7 và `schema-*` | **0** — C12 xanh | ✅ 0 |
+| `content_review_log` không spec nào `owns` cột | có đúng **1** chủ | ✅ SIB §7.10a |
+| `data-model-overview` §Ràng buộc chờ | **≥19 dòng** | ⚠️ **17** — xem ghi chú dưới |
+| `SPEC.md` §13 thiếu 3 dòng neo (D-W · Q4/T9 · D-Z) | có đủ **3** (2 ở P0, 1 ở P1) | ✅ 3 |
+| `event-catalog` Q2 đóng "có partition" — xung đột PK | **mở lại**, 🟡 P1, có tên chủ + ngưỡng 5M hàng/2GB | ✅ |
+| 17 OQ ở 6 spec đích | 0 mở mà không có `Chặn phase` + `Chủ` | ✅ 0 |
+| Mã `G-C…` trong corpus | **0** | ✅ 0 |
+| P0 bước 8 (migration) | **Mở khoá** | ⏸ chờ 👤 duyệt CP-D |
+
+> ⚠️ **§Ràng buộc chờ = 17 dòng, không đạt "≥19"**. Con số 19 đặt ra lúc viết todo là **ước
+> lượng trước khi đếm** — thực tế chỉ có 11 closure spec-Q + 6 quyết định D (D-Y·D-AA·D-AB·
+> D-AC·D-AD·D-AE) = 17 ràng buộc **thật**. ❌ Không bịa thêm 2 dòng cho đủ số. Nếu người duyệt
+> thấy thiếu ràng buộc nào, thêm dòng đó — ❌ không hạ mục tiêu để khớp.
 
 ---
 
@@ -318,11 +327,20 @@ không phải code, không có ngoại lệ."** Sửa lại đúng:
 
 ## ⛔ CHECKPOINT C
 
-- [ ] ✅ `pnpm lint:specs` exit 0 — **13 check** × 130 spec
-- [ ] ✅ Số warning **≤ 228** (tăng thì phải giải thích từng cái)
-- [ ] ✅ `pnpm check` exit 0 · `pnpm test` exit 0 (56/56)
-- [ ] 👤 Đối chiếu tay: **11 closure T8–T12 ⟷ 11 dòng** DMO §7.3 — cổng người, không có cổng máy
-- [ ] 1 commit / task, message ghi rõ đóng **M mấy** / **D nào**
+- [x] ✅ `pnpm lint:specs` exit 0 — **13 check** × 130 spec
+- [x] ✅ Số warning **≤ 228** → đo được **219** (giảm 12: mỗi spec approve đều phải điền cột
+      "vì sao" còn thiếu theo `CONVENTIONS.md` §10, nên warning C6 giảm theo)
+- [x] ✅ `pnpm check` exit 0 · `pnpm test` exit 0 (**81/81**, mốc cũ 56/56 đã lỗi thời)
+- [x] 👤 Đối chiếu tay: **11 closure ⟷ 11 dòng** DMO §7.3 — làm xong, **tìm được 2 lệch**:
+  - [x] ❗`access-ladder` Q3 closure ghi enum 4 bậc là `guest`·`login`·`standard`·`premium` —
+        **sai**: `guest` là tên *actor*, tên *bậc* là `free`. Toàn bộ phần còn lại của corpus
+        dùng `free` (§7.1 `type AccessTier`, `BR-LAD-01`, `glossary`, `access-gating` ma trận,
+        DMO §7.3). Đọc closure đó mà viết migration ⇒ tạo nhầm giá trị enum. Đã sửa, ❌ không
+        đổi kết luận
+  - [x] `data-model-overview` §7.3 trỏ `monorepo-package-map` — file thật là
+        `monorepo-package-architecture.md`. Đã sửa thành link resolve được
+  - [x] 9 closure còn lại khớp nguyên văn nguồn ✓
+- [x] 1 commit / task, message ghi rõ đóng **M mấy** / **D nào**
 
 ---
 
@@ -359,20 +377,28 @@ Mỗi spec 4 bước: (1) checklist `CONVENTIONS.md` §10 thủ công → (2) đ
 - [x] ✅ `approved` 18 → **19**/130 · `pnpm check` exit 0 · `pnpm test` 81/81
 
 ### T11 — Layer 3
-- [ ] `auth-tokens-sessions` (**D-Y = 7**, đã chốt) — 4 OQ phân loại
-- [ ] `schema-identity-billing`
-- [ ] `schema-content-taxonomy`
-- [ ] `schema-play-telemetry`
+- [x] `auth-tokens-sessions` (**D-Y = 7**, đã chốt) — 4 OQ phân loại: Q1 đóng (trùng `actors`
+      Q1) · Q2 đã đóng sẵn · Q3 đóng, chủ chuyển sang `rate-limiting` §7 · Q4 hoãn 🟡 P1.
+      `BR-AUT-05`·`06`·`08`·`11` điền "vì sao"
+- [x] `schema-identity-billing` — Q2 hoãn có chủ · `BR-SIB-05`·`06` điền "vì sao"
+- [x] `schema-content-taxonomy` — ⚠️ Q1 closure còn ghi "`code` only" (chữ **trước** D-AE lần 2,
+      mâu thuẫn `BR-DM-13`) → sửa thành cơ chế `entity_id` · Q2 hoãn có điều kiện đo lại ·
+      `BR-SCT-07` điền "vì sao"
+- [x] `schema-play-telemetry` — 2/2 OQ đã đóng từ T6 · `BR-SPT-07` điền "vì sao"
 
 ## ⛔ CHECKPOINT D — mở khoá P0 bước 8
 
-- [ ] ✅ Tổng `approved` = **23/130** (7 spec đích)
-- [ ] ✅ `pnpm lint:specs` exit 0 · `pnpm check` exit 0 · `pnpm test` exit 0
-- [ ] ✅ **Ca âm C8**: `data-model-overview` → `draft` ⇒ 3 `schema-*` đỏ
-- [ ] ✅ **Ca âm C12**: xoá `social_identities` khỏi DMO §7 ⇒ đỏ
-- [ ] ✅ **Ca âm C13**: đổi một ví dụ mã về `G-C1-CNT-007` ⇒ đỏ
-- [ ] ✅ (chạy từ workspace root, một cấp trên `kidthink/` — docs/ không nằm trong kidthink/)
-      `grep -rn 'G-C[1-6]-' docs/` → rỗng · `grep -rn 'session_month' docs/` → rỗng
+- [x] ✅ Tổng `approved` = **23/130** (7 spec đích) — đo bằng `grep -rl '^status: approved'`
+- [x] ✅ `pnpm lint:specs` exit 0 · `pnpm check` exit 0 · `pnpm test` exit 0 (81/81)
+- [x] ✅ **Ca âm C8**: `data-model-overview` → `draft` ⇒ exit 1, đỏ **đúng 3** `schema-*`
+- [x] ✅ **Ca âm C12**: xoá `social_identities` khỏi DMO §7 ⇒ exit 1, báo đúng tên bảng
+- [x] ✅ **Ca âm C13**: đổi ví dụ mã về `G-C1-CNT-007` ⇒ exit 1, báo đúng `file:line` + regex
+- [x] ✅ Phạm vi đo là **corpus** (`docs/specs/` + `docs/SPEC.md`), ❌ không phải cả `docs/` —
+      `docs/tasks/*.md` là hồ sơ task, chính nó chứa chuỗi đang tìm nên gate viết `docs/`
+      **vĩnh viễn không xanh được**. Đo lại đúng phạm vi:
+  - [x] `grep -rn 'G-C[1-6]-' docs/specs/ docs/SPEC.md` → **rỗng** ✓
+  - [x] `grep -rn 'session_month' docs/specs/ docs/SPEC.md` → **1 hit**, đúng ngoại lệ T6 đã
+        ghi: dòng lịch sử quyết định `event-catalog` §11 Q2 Lượt 2 ✓
 - [ ] `todo.md` mới ghi **P0 bước 8** — `packages/db/src/schema/*.ts` + migration #1, kèm điều
       kiện chặn D-AD (`audit-log` + `backup-and-restore` approved trước)
 - [ ] 👤 Người duyệt — sau đây là PR schema đầu tiên, đảo lại tốn **hai phase deprecation**

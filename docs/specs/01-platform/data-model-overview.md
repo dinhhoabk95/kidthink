@@ -127,7 +127,7 @@ Bảy chỗ. Mỗi chỗ **bắt buộc** một integration test bắt orphan �
 | `actors` Q1 (T9) | Manager MFA bắt buộc | 2026-08-06 | `mfa_settings` bắt buộc cho mọi manager |
 | `actors` Q2 (T9) | `pending_verification` ❌ không tạo child | 2026-08-06 | Guard ở tầng service, không ảnh hưởng cột |
 | `mvp-scope` Q4 (T9) | Backup/monitoring vào P0 | 2026-08-06 | `backup_log` vào migration #1 |
-| `monorepo-package-map` Q3 (T9) | `payment`/`notification` inline | 2026-08-06 | Không đụng cột — ảnh hưởng cấu trúc package |
+| [`monorepo-package-architecture`](../00-foundation/monorepo-package-architecture.md) Q3 (T9) | `payment`/`notification` inline | 2026-08-06 | Không đụng cột — ảnh hưởng cấu trúc package |
 | `access-ladder` Q3 (T10) | Enum 4 bậc | 2026-08-06 | `access_tier` enum (`free`·`login`·`standard`·`premium`) mọi bảng Lớp 2 |
 | `content-lifecycle` Q3 (T10) | ❌ không `scheduled` | 2026-08-06 | `status` enum 6 giá trị (`draft`·`review`·`approved`·`published`·`archived`·`rejected`) |
 | `content-versioning` Q2 (T11) | Luôn theo bản published mới nhất (không ghim version) | 2026-08-06, cơ chế sửa 2026-08-07 (D-AE) | `curriculum_items.entity_id` bigint FK `entity_id` (neo dòng dõi) của bảng đích — ❌ không `entity_code`, không cần `entity_version` |

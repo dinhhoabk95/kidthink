@@ -218,4 +218,4 @@ Scenario: BR-LAD-09 — không cache nội dung trả phí
 |---|---|---|---|---|
 | 1 | **6 game level nào vào allow-list guest?** Cần 1 mỗi competency, difficulty ≤ 2 | P1 gating | 🟡 P1 | nội dung |
 | 2 | Guest chơi xong bao nhiêu lượt thì hiện lời mời đăng ký? Hiện chưa chốt ngưỡng | P1 conversion | 🟡 P1 | nội dung |
-| ~~3~~ | ~~Gộp bậc `login` vào `standard`?~~ **Đóng 2026-08-06 (T10)**: **giữ enum 4 bậc** (`guest`, `login`, `standard`, `premium`). Bỏ bậc sau khi có dữ liệu là migration + sửa ma trận 20 ô. Giữ `login` để có chỗ gate lưu tiến độ miễn phí | — | ✅ đóng | D-X (T10) |
+| ~~3~~ | ~~Gộp bậc `login` vào `standard`?~~ **Đóng 2026-08-06 (T10)**: **giữ enum 4 bậc** — `free`, `login`, `standard`, `premium`. Bỏ bậc sau khi có dữ liệu là migration + sửa ma trận 20 ô. Giữ `login` để có chỗ gate lưu tiến độ miễn phí. **Sửa 2026-08-07 (Checkpoint C)**: bản ghi cũ liệt kê giá trị đầu là `guest` — **sai**, `guest` là tên *actor*, tên *bậc* là `free` (§7.1 `type AccessTier`, `BR-LAD-01`, `glossary` §Access tier). Kết luận ❌ không đổi, chỉ sửa tên giá trị viết nhầm | — | ✅ đóng | D-X (T10) |
