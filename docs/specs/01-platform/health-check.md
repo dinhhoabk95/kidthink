@@ -2,10 +2,10 @@
 spec: HEALTH-CHECK
 title: Health check dịch vụ
 area: platform
-status: draft
+status: approved
 mvp: true
 phase: P0
-reviewed: 2026-08-04
+reviewed: 2026-08-08
 owns:
   - Endpoint health và ngữ nghĩa mã trả về
   - Danh sách dịch vụ critical
@@ -58,7 +58,7 @@ tin vào nó, nên nó không được nói dối.
 | `BR-HLT-03` | 503 **phải được thông báo cho người** | Health check không alerting chỉ là một endpoint |
 | `BR-HLT-04` | Response ❌ **không lộ** version, hostname, hay chuỗi kết nối | Bề mặt công khai |
 | `BR-HLT-05` | Timeout mỗi dịch vụ ≤ 2s, tổng ≤ 3s | Health check chậm bị LB coi là fail |
-| `BR-HLT-06` | Deploy **abort và revert** khi smoke non-200 | |
+| `BR-HLT-06` | Deploy **abort và revert** khi smoke non-200 | Tiếp deploy lên instance hỏng là tản traffic vào ổ đã biết chết |
 
 ## 7. Data
 
