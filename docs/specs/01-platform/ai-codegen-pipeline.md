@@ -2,10 +2,10 @@
 spec: AI-CODEGEN-PIPELINE
 title: Pipeline AI sinh code từ spec
 area: platform
-status: draft
+status: approved
 mvp: true
 phase: P0
-reviewed: 2026-08-04
+reviewed: 2026-08-08
 owns:
   - Artefact máy đọc được sinh ra từ spec
   - Cái gì AI được sinh code, cái gì không
@@ -103,9 +103,9 @@ Ranh giới đặt theo *hậu quả khi sai*, không theo *độ khó khi viế
 
 | ID | Rule | Vì sao |
 |---|---|---|
-| `BR-AIG-01` | Code sinh ra ❌ **NEVER** merge tự động. Luôn qua PR có người review | |
+| `BR-AIG-01` | Code sinh ra ❌ **NEVER** merge tự động. Luôn qua PR có người review | AI sinh sai thì người bắt; merge tự động thì không ai bắt |
 | `BR-AIG-02` | Ưu tiên generator **xác định** hơn LLM. Dùng LLM chỉ khi output không suy ra máy móc được | Generator xác định tái lập được, diff sạch, không tốn tiền |
-| `BR-AIG-03` | AI ❌ **NEVER** sinh code trong vùng cấm §5 | |
+| `BR-AIG-03` | AI ❌ **NEVER** sinh code trong vùng cấm §5 | Hậu quả khi sai ở sáu vùng đó (lỗ hổng, mất tiền, rò dữ liệu trẻ) lớn hơn lợi ích tiết kiệm thời gian |
 | `BR-AIG-04` | Code sinh ra mang header `@generated from <spec-id>@<sha>`; ❌ **NEVER sửa tay** file `@generated` | Sửa tay file sinh ra sẽ mất ở lần sinh sau |
 | `BR-AIG-05` | Test sinh từ Gherkin ra dưới dạng `test.todo`, ❌ **không** dưới dạng test rỗng pass | Test rỗng pass là tệ hơn không có test — nó báo xanh giả |
 | `BR-AIG-06` | `pnpm gen:check` chạy trong cổng tự động, **chặn merge** khi spec và code lệch | Không có cổng này thì spec trôi khỏi code trong 3 sprint |
