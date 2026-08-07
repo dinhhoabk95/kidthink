@@ -2,10 +2,10 @@
 spec: LOGIN-AND-SESSION
 title: Đăng nhập và quản lý phiên
 area: account
-status: draft
+status: approved
 mvp: true
 phase: P0
-reviewed: 2026-08-05
+reviewed: 2026-08-08
 owns:
   - Luồng đăng nhập User bằng email và mật khẩu
   - Quản lý thiết bị đang đăng nhập
@@ -64,9 +64,9 @@ User. ❌ Trẻ không đăng nhập.
 | `BR-LGN-01` | Thông báo lỗi ❌ **không tiết lộ** email có tồn tại; thời gian phản hồi không lệch | Enumeration email |
 | `BR-LGN-02` | Rate limit theo **IP và account** | `BR-RTL-01` |
 | `BR-LGN-03` | Refresh token **xoay** mỗi lần dùng; tái dùng → thu hồi toàn bộ | `BR-AUT-04` |
-| `BR-LGN-04` | `logout` xoá **phiên hiện tại**; `logout-all` tăng `refresh_token_version` | |
+| `BR-LGN-04` | `logout` xoá **phiên hiện tại**; `logout-all` tăng `refresh_token_version` | Hai thao tác khác nhau — xoá một phiên là rời thiết bị; xoá tất cả là nghi bị chiếm — không nên buộc chọn cái to hơn |
 | `BR-LGN-05` | Danh sách thiết bị hiện **nhãn thô** (loại trình duyệt, hệ điều hành, thành phố từ IP), ❌ không IP đầy đủ | Đủ để nhận ra, ❌ không đủ để lộ vị trí chính xác |
-| `BR-LGN-06` | Đổi mật khẩu → mọi phiên khác chết | |
+| `BR-LGN-06` | Đổi mật khẩu → mọi phiên khác chết | Người đổi mật khẩu vì nghi lộ; phiên cũ còn sống là lỗ hổng |
 | `BR-LGN-07` | ❌ **NEVER "ghi nhớ đăng nhập" kéo dài quá 7 ngày** | Thiết bị dùng chung với trẻ |
 | `BR-LGN-08` | Sau đăng nhập, ❌ **không tự vào khu vực chơi** — vào `/me` | Người lớn cần chọn trẻ trước |
 | `BR-LGN-09` | Tài khoản có `password_hash` NULL trả **cùng** `INVALID_CREDENTIALS` khi thử mật khẩu | `BR-ERR-02`. "Tài khoản này dùng Google" cho kẻ tấn công biết nên nhắm vào đâu, và đó là thông tin ta ❌ không nợ ai |
