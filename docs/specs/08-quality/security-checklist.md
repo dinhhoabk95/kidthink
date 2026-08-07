@@ -10,7 +10,6 @@ owns:
   - Checklist bảo mật bắt buộc trước merge và trước release
 depends_on:
   - AUTH-TOKENS-SESSIONS
-  - ACCESS-GATING
   - CHILD-DATA-COMPLIANCE
 ---
 
@@ -105,7 +104,7 @@ dung là checklist an ninh áp cho mọi PR, chia theo mức độ chặn merge.
 
 | Nguy cơ | Nơi xử lý |
 |---|---|
-| Broken access control | `access-gating` — ma trận 20 ô |
+| Broken access control | [`access-gating`](../04-play/access-gating.md) — ma trận 20 ô |
 | Cryptographic failures | argon2id · secret ngoài code · TLS |
 | Injection | Drizzle parameterize · Zod |
 | Insecure design | Spec-first, review bắt buộc vùng nhạy cảm |
