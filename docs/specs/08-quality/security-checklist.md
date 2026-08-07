@@ -2,10 +2,10 @@
 spec: SECURITY-CHECKLIST
 title: Danh sách kiểm bảo mật
 area: quality
-status: draft
+status: approved
 mvp: true
 phase: P0
-reviewed: 2026-08-04
+reviewed: 2026-08-08
 owns:
   - Checklist bảo mật bắt buộc trước merge và trước release
 depends_on:
@@ -48,14 +48,14 @@ Checklist trong PR template · `pnpm check` · rà soát trước release.
 
 | ID | Rule | Vì sao |
 |---|---|---|
-| `BR-SEC-01` | Vi phạm CRITICAL **chặn merge** | |
-| `BR-SEC-02` | ❌ **NEVER đọc/ghi `.env`** trong code hay công cụ | |
+| `BR-SEC-01` | Vi phạm CRITICAL **chặn merge** | CRITICAL nghĩa là chiếm tài khoản hoặc rò dữ liệu trẻ; để lọt là sự cố không sửa ngược được |
+| `BR-SEC-02` | ❌ **NEVER đọc/ghi `.env`** trong code hay công cụ | `.env` chứa secret; đọc trong code là mời commit nhầm lên repo |
 | `BR-SEC-03` | Secret lộ → **xoay ngay** | Secret đã lộ là secret đã mất |
 | `BR-SEC-04` | Mọi route `/api/*` **Zod validate** body, query, params | Query param đi vào `ilike`/`gte` là đường vào injection |
-| `BR-SEC-05` | ❌ **NEVER mass assignment** — map từng field | |
-| `BR-SEC-06` | Kiểm quyền và ownership ở **server**, ❌ không client | |
+| `BR-SEC-05` | ❌ **NEVER mass assignment** — map từng field | Client gửi thừa field là ghi đè cột không được sửa (status, role) |
+| `BR-SEC-06` | Kiểm quyền và ownership ở **server**, ❌ không client | Client là của sổ do người dùng kiểm soát; quyền kiểm ở client là quyền không kiểm |
 | `BR-SEC-07` | Record của người khác → **404** | `BR-ACT-03` |
-| `BR-SEC-08` | Code chạm auth, payment, hoặc dữ liệu trẻ → **bắt buộc review** người thứ hai | |
+| `BR-SEC-08` | Code chạm auth, payment, hoặc dữ liệu trẻ → **bắt buộc review** người thứ hai | Một người viết và merge là một người quyết định; hai mắt thấy lỗi mà một mắt bỏ qua |
 | `BR-SEC-09` | ❌ **NEVER dữ liệu trẻ ra khỏi hạ tầng** | `BR-CDC-06` |
 
 ## 7. Data
