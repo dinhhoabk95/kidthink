@@ -232,5 +232,9 @@ Scenario: offline buffer flush khi có mạng lại
 | # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
 |---|---|---|---|---|
 | 1 | `fps_sample` mỗi 30s có quá dày không trên 3.000 phiên/ngày? Cân nhắc chỉ gửi khi p95 dưới ngưỡng | Chi phí lưu trữ | 🟡 P1 | hoãn — tuning sau khi có lưu lượng |
-| ~~2~~ | ~~Partition `telemetry_events` theo tháng ngay từ đầu~~ **Đóng 2026-08-06 (T11)**: **có** — partition quyết định lúc `CREATE TABLE`. Chuyển bảng lớn sang partitioned sau = downtime + rewrite. Trên t3.small bảng này lớn nhất, partition giúp prune query và vacuum hiệu quả | — | ✅ đóng | D-X (T11) |
+| 2 | Partition `telemetry_events` theo tháng ngay từ đầu? **Hai lượt quyết định:** | Thiết kế bảng | 🟡 P1 | D-Z |
+| | **Lượt 1 — 2026-08-06 (T11)**: chốt **có** — partition quyết định lúc `CREATE TABLE`. Trên t3.small bảng này lớn nhất, partition giúp prune query và vacuum hiệu quả. | | | |
+| | **Lượt 2 — 2026-08-07 (T4b, D-Z)**: **mở lại** — khoá partition (`session_month`) phải nằm trong PK ⇒ PK thay đổi ⇒ ảnh hưởng `BR-EVT-03` idempotent. Chọn giữ bất biến PK `(session_uuid, seq)` ở P0, hoãn partition sang P1. | | | |
+| | **Ngưỡng kích hoạt**: `telemetry_events` vượt **5M hàng** hoặc **2GB** trên t3.small ⇒ phải đóng lại quyết định trước khi vượt. | | | |
+| | **Điều kiện giữ đường mở**: ❌ không FK nào trỏ **vào** `telemetry_events`; giữ cột hẹp, index tối thiểu. | | | |
 | 3 | Giữ event thô bao lâu trước khi rollup thành `child_session_summaries`? | Retention | 🟡 P1 | hoãn |

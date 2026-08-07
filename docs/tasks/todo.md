@@ -123,18 +123,18 @@
 > ❗ Loại sửa nặng nhất trong task: **đổi** một quyết định đã đóng, không phải sửa chỗ ghi sai.
 > Phải để lại vết đọc được — lần tới người đọc Q2 sẽ thấy hai lượt kết luận trái nhau.
 
-- [ ] §11 Q2 — bỏ gạch `~~2~~`, ghi **cả hai** lượt theo thứ tự thời gian:
-  - [ ] `2026-08-06 (T11)` chốt **có** partition — giữ nguyên lý do gốc (t3.small, prune, vacuum)
-  - [ ] `2026-08-06 (T4b, D-Z)` **mở lại** — lý do: khoá partition phải nằm trong PK ⇒ partition
+- [x] §11 Q2 — bỏ gạch `~~2~~`, ghi **cả hai** lượt theo thứ tự thời gian:
+  - [x] `2026-08-06 (T11)` chốt **có** partition — giữ nguyên lý do gốc (t3.small, prune, vacuum)
+  - [x] `2026-08-06 (T4b, D-Z)` **mở lại** — lý do: khoá partition phải nằm trong PK ⇒ partition
         mua bằng cách hạ `BR-EVT-03` xuống tầng service. Chọn giữ bất biến ở DB
-- [ ] Q2 → 🟡 chặn **P1**, có **tên chủ thật** + hạn viết bằng câu đo được
-- [ ] Ghi **ngưỡng kích hoạt**: `telemetry_events` vượt **5M hàng** hoặc **2GB** trên t3.small
+- [x] Q2 → 🟡 chặn **P1**, có **tên chủ thật** (D-Z) + hạn viết bằng câu đo được
+- [x] Ghi **ngưỡng kích hoạt**: `telemetry_events` vượt **5M hàng** hoặc **2GB** trên t3.small
       ⇒ phải đóng lại quyết định trước khi vượt
-- [ ] Ghi **điều kiện giữ đường mở**: ❌ không FK nào trỏ **vào** `telemetry_events`; giữ cột hẹp
-- [ ] `reviewed: 2026-08-06`; `event-catalog` giữ `status: approved`
-- [ ] ✅ §11 Q2 đọc được **cả hai** lượt + ngày từng lượt — ❌ không xoá lượt cũ
-- [ ] ✅ Q2 có tên chủ + ngưỡng **số** — ❌ không có chữ "sau này"/"khi cần"
-- [ ] ✅ C8 xanh — `event-catalog` vẫn `approved`, spec phụ thuộc không đổi trạng thái
+- [x] Ghi **điều kiện giữ đường mở**: ❌ không FK nào trỏ **vào** `telemetry_events`; giữ cột hẹp
+- [x] `reviewed: 2026-08-06`; `event-catalog` giữ `status: approved`
+- [x] ✅ §11 Q2 đọc được **cả hai** lượt + ngày từng lượt — ❌ không xoá lượt cũ
+- [x] ✅ Q2 có tên chủ (D-Z) + ngưỡng **số** (5M/2GB) — ❌ không có chữ "sau này"/"khi cần"
+- [x] ✅ C8 xanh — `event-catalog` vẫn `approved`, spec phụ thuộc không đổi trạng thái
 
 ## ⛔ CHECKPOINT B — người chốt 3 quyết định còn lại + 2 nợ
 
