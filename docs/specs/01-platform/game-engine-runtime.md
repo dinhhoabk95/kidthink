@@ -2,10 +2,10 @@
 spec: GAME-ENGINE-RUNTIME
 title: Runtime game engine trên canvas
 area: platform
-status: draft
+status: approved
 mvp: true
 phase: P1
-reviewed: 2026-08-04
+reviewed: 2026-08-08
 owns:
   - Vòng lặp render và ngân sách hiệu năng
   - Ràng buộc thiết kế cho bề mặt trẻ 3–6
@@ -75,7 +75,7 @@ một tầng theo dõi không đoán trước được vào đúng chỗ không 
 | `BR-ENG-02` (không ghi DB) | Cấm — **NEVER ghi DB từ engine.** Engine phát event, server ghi | Client không phải nguồn sự thật |
 | `BR-ENG-03` (offline-first) | Cấm — **NEVER network call trong lúc chơi.** Offline-first | Mạng chập chờn không được làm đứng game |
 | `BR-ENG-04` (design token) | Mọi màu và font từ `designTokens.ts`. Cấm hex literal, cấm `ctx.font` inline | Ép bằng `pnpm lint:tokens` trong cổng tự động |
-| `BR-ENG-05` (sàn touch) | Sàn touch theo band tuổi qua **một hàm duy nhất**. Band 3–4: **96px**; 5–6: **72px**; sàn tuyệt đối **64px** | Sàn tự viết rải rác là 60 chỗ để lệch |
+| `BR-ENG-05` (sàn touch) | Sàn touch theo band tuổi qua **một hàm duy nhất**. Con số do [`accessibility.md`](../08-quality/accessibility.md) `BR-A11-04` sở hữu: band 3–4 **96px**, phần tử chính **76px**, sàn bề mặt trẻ **64px** | Sàn tự viết rải rác là 60 chỗ để lệch. Con số **không** khai lại ở đây — bản trước ghi "5–6: 72px" trong khi spec sở hữu ghi 76px, và không cổng nào bắt được vì hai file không đọc lẫn nhau (`D-AO`) |
 | `BR-ENG-06` (fallback tap) | Mọi mechanic drag có **hit band khoan dung** và **fallback tap-tap** cho band 3–4 | Drag là cử chỉ khó nhất ở tuổi này |
 | `BR-ENG-07` (sai có phản hồi) | Trả lời sai **phải có phản hồi**, và **không bao giờ trừng phạt**. Cấm đỏ, cấm buzzer, cấm trừ điểm — **im lặng cũng là defect** | Không phản hồi thì trẻ không biết mình đã thao tác |
 | `BR-ENG-08` (ăn mừng đúng chỗ) | Ăn mừng lớn **chỉ khi hoàn thành level**. Item đúng chỉ pop nhỏ **tại điểm chạm** | Ăn mừng mọi lúc làm ăn mừng mất nghĩa |
@@ -84,7 +84,7 @@ một tầng theo dõi không đoán trước được vào đúng chỗ không 
 | `BR-ENG-11` (không áp lực) | Cấm đồng hồ đếm ngược, cấm điểm hiện lúc chơi, cấm nút thoát tap trúng được | Áp lực thời gian và điểm số phản tác dụng ở tuổi này |
 | `BR-ENG-12` (vận động tinh) | Cấm pinch, xoay bằng cử chỉ, thao tác hai ngón, hay drag tính giờ | Vận động tinh chưa đủ |
 | `BR-ENG-13` (hàm thuần) | `checkWinCondition()` và `validateAction()` **thuần** | Chúng được gọi nhiều lần mỗi frame |
-| `BR-ENG-14` (RAF) | RAF cho vòng lặp. Cấm — NEVER `setInterval`/`setTimeout` | |
+| `BR-ENG-14` (RAF) | RAF cho vòng lặp. Cấm — NEVER `setInterval`/`setTimeout` | `setInterval` không đồng bộ với nhịp vẽ của màn hình: nó vẫn chạy khi tab ẩn (đốt pin tablet, và tích luỹ một loạt tick dồn lại khi tab hiện lại), và trôi dần so với thời gian thật vì không bù được frame trễ. RAF do trình duyệt gọi đúng trước mỗi lần vẽ và tự dừng khi tab ẩn — đó là hành vi `game_paused` ở §5 dựa vào |
 | `BR-ENG-15` (zero alloc) | Cấm cấp phát object mỗi frame, cấm DOM mutation mỗi frame, cấm `JSON.parse` trong hot path | GC pause đọc thành giật |
 | `BR-ENG-16` (audio) | Audio: master ceiling cưỡng chế trong code, mục tiêu −16 LUFS, true peak ≤ −1 dBTP, ramp vào ≥20ms ra ≥40ms | Onset tức thì làm trẻ giật mình |
 | `BR-ENG-17` (bundle) | Ngân sách bundle mỗi template ≤ **80 KB** gzipped | Tablet 2GB trên mạng 4G |
@@ -227,6 +227,6 @@ Scenario: asset lỗi không làm đứng game
 
 | # | Câu hỏi | Chặn gì |
 |---|---|---|
-| 1 | Model tablet Android 2GB nào làm chuẩn đo 60 fps? Chưa chốt thiết bị chuẩn thì con số 60 fps không nghiệm thu được | Cổng ra P1 |
+| 1 | Model tablet Android 2GB nào làm chuẩn đo 60 fps? Chưa chốt thiết bị chuẩn thì con số 60 fps không nghiệm thu được. **Cần người quyết, không tự chốt được** — approve spec này 2026-08-08 **không** đóng câu này. Nó là 1 trong 3 câu chặn nhiều nhất corpus ([`index.md`](../index.md)), và [`testing-strategy.md`](../08-quality/testing-strategy.md) §11 Q2 trỏ về đây | Cổng ra P1 |
 | 2 | WebGL cho template về sau? Canvas 2D đủ cho 6 template MVP | P4 |
 | 3 | Audio narration tiếng Việt — thu âm người thật hay TTS? Ảnh hưởng kích thước bundle và chất lượng | Nội dung P1 |
