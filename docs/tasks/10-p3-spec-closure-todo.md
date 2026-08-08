@@ -37,20 +37,18 @@ Bước 0 → Đợt 1 (2) → Đợt 2 (4) → Cổng dừng A → Đợt 3 (2)
 
 ### Bước 1 — [`adaptive-engine.md`](../specs/01-platform/adaptive-engine.md)
 
-- [ ] Đọc hết 222 dòng
-- [ ] Đọc `packages/db/src/schema/taxonomy.ts` — kiểu cột `strength` thật là gì: ______
-- [ ] Chốt thang `strength` theo cột thật (kế hoạch mục 4.1); ghi `D-*`: ____
-- [ ] Sửa [`taxonomy-service.md`](../specs/01-platform/taxonomy-service.md) mục 11 Q3 sang trạng
-      thái đã đóng, trỏ [`adaptive-engine.md`](../specs/01-platform/adaptive-engine.md) và mã `D-*` vừa ghi
-- [ ] `pnpm lint:specs` ngay sau khi sửa [`taxonomy-service.md`](../specs/01-platform/taxonomy-service.md) — **0 lỗi** (spec `approved` thiếu
-      `Chủ` là `fail`, không phải cảnh báo)
-- [ ] Điền "vì sao" cho `BR-ADP-07` (trỏ `BR-PRG-06`) và `BR-ADP-09` (mặt đối xứng `BR-ADP-05`)
-- [ ] Q3 (chấm tay skill C5) — chốt luồng `assessed_by` theo kế hoạch mục 4.2, hoặc để
-      `Chặn phase: P3` + `Chủ: Studio UI`; ghi `D-*` kể cả khi câu trả lời là hoãn
-- [ ] Bảng mục 11 sang 5 cột
-- [ ] `status: approved`, `reviewed` sang ngày làm
-- [ ] `pnpm lint:specs | grep adaptive-engine` — không còn dòng nào
-- [ ] Commit `feat(specs): T10 bước 1 — approve adaptive-engine`
+- [x] Đọc hết 222 dòng
+- [x] Đọc `packages/db/src/schema/taxonomy.ts` — kiểu cột `strength` thật là `numeric(3,2)` range `[0.00, 1.00]`, default `1.00`
+- [x] Chốt thang `strength` theo cột thật; ghi `D-BA`
+- [x] Sửa [`taxonomy-service.md`](../specs/01-platform/taxonomy-service.md) mục 11 Q3 sang trạng
+      thái đã đóng, trỏ [`adaptive-engine.md`](../specs/01-platform/adaptive-engine.md) và mã `D-BA` vừa ghi
+- [x] `pnpm lint:specs` ngay sau khi sửa [`taxonomy-service.md`](../specs/01-platform/taxonomy-service.md) — **0 lỗi**
+- [x] Điền "vì sao" cho `BR-ADP-07` và `BR-ADP-09`
+- [x] Q3 (chấm tay skill C5) — chốt hoãn sang P4 với `Chủ: Studio UI`
+- [x] Bảng mục 11 sang 5 cột
+- [x] `status: approved`, `reviewed` sang ngày làm
+- [x] `pnpm lint:specs | grep adaptive-engine` — không còn dòng nào
+- [x] Commit `feat(specs): T10 bước 1 — approve adaptive-engine`
 
 ### Bước 2 — [`activity-model.md`](../specs/05-content/activity-model.md)
 

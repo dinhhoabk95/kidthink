@@ -2,10 +2,10 @@
 spec: ADAPTIVE-ENGINE
 title: Engine ước lượng thành thạo và chọn độ khó
 area: platform
-status: draft
+status: approved
 mvp: true
 phase: P3
-reviewed: 2026-08-04
+reviewed: 2026-08-08
 owns:
   - Luật cập nhật mastery
   - Luật chọn bước tiếp theo (ZPD)
@@ -74,9 +74,9 @@ Pure TS. Cấm — **NEVER ghi DB** — trả dữ liệu, tầng API ghi. Cấm
 | `BR-ADP-04` (weight điều tiết) | `content_skill_map.weight` điều tiết ảnh hưởng | Không có nó, một game đếm "dạy" mọi skill nó chạm tới |
 | `BR-ADP-05` (không nhảy bước) | Cấm — **NEVER cho adaptive nhảy bước curriculum** | Nó không có thông tin để phủ quyết thứ tự sư phạm do người biên soạn quyết định |
 | `BR-ADP-06` (không mastery guest) | Cấm — **NEVER ghi mastery từ phiên guest hoặc preview** | Lượt test làm nhiễu dữ liệu học của trẻ |
-| `BR-ADP-07` (không tin client) | Cấm — **NEVER tin mastery do client gửi** — client gửi **event thô**, server tính | |
+| `BR-ADP-07` (không tin client) | Cấm — **NEVER tin mastery do client gửi** — client gửi **event thô**, server tính | Ngăn ngừa hành vi can thiệp kết quả từ client để giữ tính chính xác của dữ liệu học tập |
 | `BR-ADP-08` (không hiển điểm) | Kết quả **không bao giờ** hiển thị cho **trẻ** dưới dạng điểm số | [`game-engine-runtime.md`](game-engine-runtime.md) `BR-ENG-11` (không hiển điểm cho trẻ) |
-| `BR-ADP-09` (trong bước hiện tại) | Adaptive điều chỉnh **trong** bước hiện tại: chọn biến thể, đổi `difficulty_params` | |
+| `BR-ADP-09` (trong bước hiện tại) | Adaptive điều chỉnh **trong** bước hiện tại: chọn biến thể, đổi `difficulty_params` | Bảo vệ cấu trúc Lộ trình sư phạm đã biên soạn trong khi vẫn tối ưu trải nghiệm học vừa sức |
 | `BR-ADP-10` (version tham số) | Tham số `α`, `β` là hằng số **có version**, đổi phải chạy replay đối chiếu | Đổi tham số âm thầm làm mọi báo cáo lịch sử không so được |
 
 ## 7. Data
@@ -214,8 +214,8 @@ Scenario: BR-ADP-10 — đổi tham số có version
 
 ## 11. Open questions
 
-| # | Câu hỏi | Chặn gì |
-|---|---|---|
-| 1 | Script replay offline (`replay-adaptive.ts`) chạy hàng tuần — ai sở hữu và chạy? Thuật toán học không có "đúng" tuyệt đối, chỉ có "không trôi" | Vận hành P3 |
-| 2 | `strength` của prerequisite tham gia vào `selectNext` thế nào? | [`taxonomy-service.md`](taxonomy-service.md) Q3 |
-| 3 | Skill ngôn ngữ mở (C5) cần người lớn chấm — luồng `assessed_by` thiết kế thế nào? | P3 |
+| # | Câu hỏi | Chặn phase | Đề xuất chốt | Chủ |
+|---|---|---|---|---|
+| 1 | Script replay offline (`replay-adaptive.ts`) chạy hàng tuần — ai sở hữu và chạy? Thuật toán học không có "đúng" tuyệt đối, chỉ có "không trôi" | P3 | Backend team sở hữu và tích hợp vào đường ống kiểm tra tự động định kỳ | Backend |
+| ~~2~~ | ~~`strength` của prerequisite tham gia vào `selectNext` thế nào?~~ **Đóng 2026-08-08 (T10)**: `strength` (`numeric(3,2)` range `[0.00, 1.00]`) làm trọng số nhân với `p_learn` của skill tiên quyết khi tính điểm sẵn sàng cho skill tiếp theo | — | đã đóng | D-BA |
+| 3 | Skill ngôn ngữ mở (C5) cần người lớn chấm — luồng `assessed_by` thiết kế thế nào? | P3 | hoãn — MVP chưa có skill chấm tay C5; nếu phát sinh sẽ thêm trường `assessed_by` vào `mastery_state` ở P4 | Studio UI |
