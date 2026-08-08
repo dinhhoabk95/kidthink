@@ -2,10 +2,10 @@
 spec: GAME-LEVEL-MODEL
 title: Mô hình màn chơi — ràng buộc biên tập
 area: content
-status: draft
+status: approved
 mvp: true
 phase: P1
-reviewed: 2026-08-04
+reviewed: 2026-08-08
 owns:
   - Ràng buộc biên tập của một game level
   - Tiêu chuẩn chất lượng nội dung
@@ -156,7 +156,7 @@ Scenario: BR-GLM-08 — tăng một chiều
 
 ## 11. Open questions
 
-| # | Câu hỏi | Chặn gì |
-|---|---|---|
-| 1 | Trần số item dựa trên nguồn nào? Cần đối chiếu tài liệu phát triển nhận thức | P1 |
-| 2 | Cần bao nhiêu level mỗi skill để đủ đa dạng mà không lặp? | Kế hoạch nội dung |
+| # | Câu hỏi | Chặn gì | Chủ |
+|---|---|---|---|
+| 1 | Trần số item ở §7.1 (2–4 / 3–6 / 3–8) dựa trên nguồn nào? Cần đối chiếu tài liệu phát triển nhận thức. **Approve spec này 2026-08-08 không đóng câu này** — trần đang là phán đoán chuyên môn chưa có trích dẫn, và `BR-GLM-02` biến nó thành lý do từ chối duyệt. Một con số chặn việc mà không ai truy được nguồn sẽ bị nới trong lần đầu nó cản một lô nội dung | P1 — mọi level seed đo bằng trần này | cần **người** — không tự chốt được, cùng loại với [`accessibility.md`](../08-quality/accessibility.md) §11 Q2 (nguồn của sàn 96px) |
+| 2 | Cần bao nhiêu level mỗi skill để đủ đa dạng mà không lặp? | Kế hoạch nội dung, [`content-seed-authoring.md`](../01-platform/content-seed-authoring.md) | hoãn — chốt cùng lúc chốt người biên soạn |
