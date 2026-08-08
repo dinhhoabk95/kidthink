@@ -199,7 +199,7 @@ Scenario: BR-GAT-08 — preview của manager không ghi mastery
 
 ## 11. Open questions
 
-| # | Câu hỏi | Chặn gì |
-|---|---|---|
-| 1 | Nội dung `login` có gộp vào `standard` được không? Bậc `login` chỉ khác `free` ở chỗ lưu tiến độ | Đơn giản hoá ladder |
-| 2 | `age_mismatch` hiện cảnh báo ở đâu — trước khi vào game hay chỉ trong báo cáo? | UI P1 |
+| # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
+|---|---|---|---|---|
+| 1 | Nội dung `login` có gộp vào `standard` được không? Bậc `login` chỉ khác `free` ở chỗ lưu tiến độ | Đơn giản hoá ladder | P1 | người quyết |
+| 2 | `age_mismatch` hiện cảnh báo ở đâu — trước khi vào game hay chỉ trong báo cáo? | UI P1 | P1 | Studio UI |
