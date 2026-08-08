@@ -2,10 +2,10 @@
 spec: CUSTOM-GAME-BUILDER
 title: Công cụ tạo trò chơi cá nhân
 area: addon
-status: draft
+status: approved
 mvp: false
 phase: P4
-reviewed: 2026-08-04
+reviewed: 2026-08-08
 owns:
   - Luồng User tạo game từ template
   - Ràng buộc validation cho game do User tạo
@@ -40,13 +40,13 @@ của Manager, và đó là một luồng khác chưa có ở phiên bản này.
 | ID | Rule | Vì sao |
 |---|---|---|
 | `BR-CGB-01` | Game do User tạo **chỉ trẻ của User đó** chơi được | Cấm có kiểm duyệt; nội dung chưa duyệt không được tới trẻ khác |
-| `BR-CGB-02` | Cấm — **NEVER vào catalog công khai** | |
+| `BR-CGB-02` | Cấm — **NEVER vào catalog công khai** | Nội dung do người dùng tự tạo chưa qua kiểm duyệt sư phạm chuyên sâu không được phát hành công khai |
 | `BR-CGB-03` | Dùng **cùng `content_contract`** và **cùng validation** với studio | Một bộ luật, không hai |
 | `BR-CGB-04` | Chỉ dùng **emoji registry**; ảnh upload trừ quota `upload_mb` | `BR-EMJ-01` |
 | `BR-CGB-05` | Validation §7.1 chạy ở **server** trước khi lưu | Sai schema làm crash engine trước mặt trẻ |
 | `BR-CGB-06` | Game custom **không cập nhật `mastery_state`** | Nội dung chưa kiểm duyệt không được đẩy dữ liệu học chính thức |
-| `BR-CGB-07` | Chỉ **6 template MVP** dùng được | |
-| `BR-CGB-08` | Quota `custom_games_saved` theo gói add-on | |
+| `BR-CGB-07` | Chỉ **6 template MVP** dùng được | Hạn chế phạm vi thử nghiệm ở các khuôn mẫu ổn định nhất đã được tối ưu hóa cho mầm non |
+| `BR-CGB-08` | Quota `custom_games_saved` theo gói add-on | Kiểm soát dung lượng lưu trữ và khuyến khích người dùng nâng cấp gói dịch vụ |
 | `BR-CGB-09` | Nội dung do User tạo qua `packages/moderation` trước khi lưu | UGC, dù riêng tư, vẫn tới trẻ |
 | `BR-CGB-10` | Áp **mọi ràng buộc biên tập** của [`game-level-model.md`](../05-content/game-level-model.md) §7.1 | Trẻ 3 tuổi không phân biệt game của ai |
 
@@ -118,8 +118,8 @@ Scenario: BR-CGB-09 — qua kiểm duyệt nội dung
 
 ## 11. Open questions
 
-| # | Câu hỏi | Chặn gì |
-|---|---|---|
-| 1 | Có luồng gửi game custom lên duyệt để vào catalog công khai không? | P5 |
-| 2 | Quota `custom_games_saved` là bao nhiêu? | Lên catalog |
-| 3 | Game custom có nên gắn skill để ít nhất hiện trong "đã tiếp xúc" của báo cáo không? | P4 |
+| # | Câu hỏi | Chặn phase | Đề xuất chốt | Chủ |
+|---|---|---|---|---|
+| 1 | Có luồng gửi game custom lên duyệt để vào catalog công khai không? | P5 | Chưa hỗ trợ luồng gửi duyệt từ người dùng ở P4; quy trình duyệt nội dung tuân thủ [`content-lifecycle.md`](../00-foundation/content-lifecycle.md) | người quyết |
+| 2 | Quota `custom_games_saved` là bao nhiêu? | P4 | Định lượng theo gói bán khi lên catalog sản phẩm | người quyết |
+| 3 | Game custom có nên gắn skill để ít nhất hiện trong "đã tiếp xúc" của báo cáo không? | P4 | Cho phép gắn `skill_ids` để báo cáo ghi nhận lịch sử tiếp xúc nhưng không tính mastery score (`D-BL`) | Studio UI |

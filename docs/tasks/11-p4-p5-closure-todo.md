@@ -44,18 +44,13 @@ Bước 0 → Đợt 1 (3) → Cổng dừng A → [chờ Task #10 xong] → Đ�
 - [x] `pnpm lint:specs | grep ai-credit-ledger` trống
 - [x] Commit `feat(specs): T11 bước 1 — approve ai-credit-ledger`
 
-### Bước 2 — [`custom-game-builder.md`](../specs/07-addon/custom-game-builder.md)
-
-- [ ] Đọc hết 126 dòng
-- [ ] Điền "vì sao" cho `BR-CGB-02`, `BR-CGB-07`, `BR-CGB-08`
-- [ ] Q1 (có luồng gửi game custom lên duyệt để vào catalog công khai) — `Chặn phase: P5`,
-      `Chủ: người quyết`; đối chiếu cổng duyệt nội dung ở
-      [`content-lifecycle.md`](../specs/00-foundation/content-lifecycle.md) trước khi viết
-- [ ] Q2 (quota `custom_games_saved`) — khuôn `Lên catalog`
-- [ ] Q3 (game custom có gắn skill để hiện trong "đã tiếp xúc") — chốt được từ corpus: báo cáo dựa
-      `content_skill_map`; ghi `D-*`
-- [ ] Bảng mục 11 sang 5 cột; `status: approved`
-- [ ] Commit `feat(specs): T11 bước 2 — approve custom-game-builder`
+- [x] Đọc hết 126 dòng
+- [x] Điền "vì sao" cho `BR-CGB-02`, `BR-CGB-07`, `BR-CGB-08`
+- [x] Q1 (có luồng gửi game custom lên duyệt để vào catalog công khai) — `Chặn phase: P5`, `Chủ: người quyết`; đối chiếu cổng duyệt nội dung ở [`content-lifecycle.md`](../specs/00-foundation/content-lifecycle.md) trước khi viết
+- [x] Q2 (quota `custom_games_saved`) — khuôn `Lên catalog`
+- [x] Q3 (game custom có gắn skill để hiện trong "đã tiếp xúc") — chốt được từ corpus: báo cáo dựa `content_skill_map`; ghi `D-BL`
+- [x] Bảng mục 11 sang 5 cột; `status: approved`
+- [x] Commit `feat(specs): T11 bước 2 — approve custom-game-builder`
 
 ### Bước 3 — [`pwa-install.md`](../specs/01-platform/pwa-install.md)
 
