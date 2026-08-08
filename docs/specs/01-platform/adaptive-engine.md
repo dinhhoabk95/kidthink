@@ -24,7 +24,7 @@ depends_on:
 Quá dễ thì trẻ bỏ; quá khó thì trẻ khóc. Khoảng ở giữa là ZPD, và nó khác nhau theo từng
 trẻ, từng skill, từng ngày.
 
-Pure TS. ❌ **NEVER ghi DB** — trả dữ liệu, tầng API ghi. ❌ **NEVER `new Date()`** — nhận
+Pure TS. Cấm — **NEVER ghi DB** — trả dữ liệu, tầng API ghi. Cấm — **NEVER `new Date()`** — nhận
 `now` làm tham số.
 
 ## 2. Actors
@@ -34,7 +34,7 @@ Pure TS. ❌ **NEVER ghi DB** — trả dữ liệu, tầng API ghi. ❌ **NEVER
 | `packages/adaptive` | Tính toán thuần |
 | Tầng API | Đọc trạng thái, gọi engine, ghi kết quả |
 | Curriculum player | Hỏi biến thể nào trong bước hiện tại |
-| Người lớn | Xem kết quả qua báo cáo — ❌ không thấy `p_learn` thô |
+| Người lớn | Xem kết quả qua báo cáo — không thấy `p_learn` thô |
 
 ## 3. Entry points
 
@@ -57,8 +57,8 @@ Pure TS. ❌ **NEVER ghi DB** — trả dữ liệu, tầng API ghi. ❌ **NEVER
 
 | Nhánh | Hành vi |
 |---|---|
-| Phiên guest | ❌ **không** cập nhật gì |
-| Phiên preview của Manager | ❌ **không** cập nhật gì |
+| Phiên guest | **không** cập nhật gì |
+| Phiên preview của Manager | **không** cập nhật gì |
 | Trẻ chưa chơi 7 ngày | `revision_mode = true` — ôn lại trước khi đi tiếp |
 | Skill phụ (`weight` thấp) | Ảnh hưởng nhỏ hơn theo đúng `weight` |
 | Phiên bỏ dở | Cập nhật với `correct_ratio` tính trên round đã hoàn thành, `attempts` tăng |
@@ -68,16 +68,16 @@ Pure TS. ❌ **NEVER ghi DB** — trả dữ liệu, tầng API ghi. ❌ **NEVER
 
 | ID | Rule | Vì sao |
 |---|---|---|
-| `BR-ADP-01` | ❌ **NEVER ghi DB từ package** | Hàm thuần test được; hàm ghi DB thì không |
-| `BR-ADP-02` | ❌ **NEVER `new Date()` trong package** — nhận `now` | "Chưa chơi 7 ngày" phụ thuộc múi giờ; `new Date()` làm test không tái lập được |
-| `BR-ADP-03` | **`p_learn ∈ [0,1]`** sau mọi chuỗi cập nhật — property test | Giá trị ngoài khoảng làm mọi ngưỡng vô nghĩa |
-| `BR-ADP-04` | `content_skill_map.weight` điều tiết ảnh hưởng | Không có nó, một game đếm "dạy" mọi skill nó chạm tới |
-| `BR-ADP-05` | ❌ **NEVER cho adaptive nhảy bước curriculum** | Nó không có thông tin để phủ quyết thứ tự sư phạm do người biên soạn quyết định |
-| `BR-ADP-06` | ❌ **NEVER ghi mastery từ phiên guest hoặc preview** | Lượt test làm nhiễu dữ liệu học của trẻ |
-| `BR-ADP-07` | ❌ **NEVER tin mastery do client gửi** — client gửi **event thô**, server tính | |
-| `BR-ADP-08` | Kết quả ❌ **không bao giờ** hiển thị cho **trẻ** dưới dạng điểm số | `BR-ENG-11` |
-| `BR-ADP-09` | Adaptive điều chỉnh **trong** bước hiện tại: chọn biến thể, đổi `difficulty_params` | |
-| `BR-ADP-10` | Tham số `α`, `β` là hằng số **có version**, đổi phải chạy replay đối chiếu | Đổi tham số âm thầm làm mọi báo cáo lịch sử không so được |
+| `BR-ADP-01` (không ghi DB) | Cấm — **NEVER ghi DB từ package** | Hàm thuần test được; hàm ghi DB thì không |
+| `BR-ADP-02` (không đọc đồng hồ) | Cấm — **NEVER `new Date()` trong package** — nhận `now` | "Chưa chơi 7 ngày" phụ thuộc múi giờ; `new Date()` làm test không tái lập được |
+| `BR-ADP-03` (p_learn bất biến) | **`p_learn ∈ [0,1]`** sau mọi chuỗi cập nhật — property test | Giá trị ngoài khoảng làm mọi ngưỡng vô nghĩa |
+| `BR-ADP-04` (weight điều tiết) | `content_skill_map.weight` điều tiết ảnh hưởng | Không có nó, một game đếm "dạy" mọi skill nó chạm tới |
+| `BR-ADP-05` (không nhảy bước) | Cấm — **NEVER cho adaptive nhảy bước curriculum** | Nó không có thông tin để phủ quyết thứ tự sư phạm do người biên soạn quyết định |
+| `BR-ADP-06` (không mastery guest) | Cấm — **NEVER ghi mastery từ phiên guest hoặc preview** | Lượt test làm nhiễu dữ liệu học của trẻ |
+| `BR-ADP-07` (không tin client) | Cấm — **NEVER tin mastery do client gửi** — client gửi **event thô**, server tính | |
+| `BR-ADP-08` (không hiển điểm) | Kết quả **không bao giờ** hiển thị cho **trẻ** dưới dạng điểm số | [`game-engine-runtime.md`](game-engine-runtime.md) `BR-ENG-11` (không hiển điểm cho trẻ) |
+| `BR-ADP-09` (trong bước hiện tại) | Adaptive điều chỉnh **trong** bước hiện tại: chọn biến thể, đổi `difficulty_params` | |
+| `BR-ADP-10` (version tham số) | Tham số `α`, `β` là hằng số **có version**, đổi phải chạy replay đối chiếu | Đổi tham số âm thầm làm mọi báo cáo lịch sử không so được |
 
 ## 7. Data
 
@@ -105,7 +105,7 @@ ema_correct' = β · correct_ratio + (1 − β) · ema_correct
 ```
 
 Mặc định `α = 0.2`, `β = 0.3`, `params_version = "v1"`. Tinh chỉnh bằng offline replay,
-❌ không bằng cảm giác.
+cấm tinh chỉnh bằng cảm giác.
 
 ### 7.3 ZPD — bốn nhánh
 
@@ -113,7 +113,7 @@ Mặc định `α = 0.2`, `β = 0.3`, `params_version = "v1"`. Tinh chỉnh bằ
 |---|---|
 | `p_learn < 0.4` | Lặp lại, hoặc biến thể **dễ hơn** |
 | `0.4 ≤ p_learn < 0.8` | Cùng độ khó, **biến thể khác** |
-| `p_learn ≥ 0.8` | Lên **một** bậc — ❌ không nhảy hai |
+| `p_learn ≥ 0.8` | Lên **một** bậc — cấm nhảy hai |
 | `last_seen_at > 7 ngày` | `revision_mode = true`, bất kể `p_learn` |
 
 ### 7.4 Nhãn báo cáo — ánh xạ duy nhất
@@ -126,7 +126,7 @@ Mặc định `α = 0.2`, `β = 0.3`, `params_version = "v1"`. Tinh chỉnh bằ
 | 0.6–0.8 | `Khá ổn định` |
 | ≥ 0.8 | `Thành thạo trong phạm vi bài tập` |
 
-❌ **NEVER** hiển thị `p_learn` thô cho người dùng. ❌ **NEVER** nhãn mang nghĩa chẩn đoán.
+Cấm — **NEVER** hiển thị `p_learn` thô cho người dùng. Cấm — **NEVER** nhãn mang nghĩa chẩn đoán.
 
 ## 8. API contract
 
@@ -217,5 +217,5 @@ Scenario: BR-ADP-10 — đổi tham số có version
 | # | Câu hỏi | Chặn gì |
 |---|---|---|
 | 1 | Script replay offline (`replay-adaptive.ts`) chạy hàng tuần — ai sở hữu và chạy? Thuật toán học không có "đúng" tuyệt đối, chỉ có "không trôi" | Vận hành P3 |
-| 2 | `strength` của prerequisite tham gia vào `selectNext` thế nào? | `taxonomy-service` Q3 |
+| 2 | `strength` của prerequisite tham gia vào `selectNext` thế nào? | [`taxonomy-service.md`](taxonomy-service.md) Q3 |
 | 3 | Skill ngôn ngữ mở (C5) cần người lớn chấm — luồng `assessed_by` thiết kế thế nào? | P3 |

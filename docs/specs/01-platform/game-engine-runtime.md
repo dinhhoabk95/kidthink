@@ -22,7 +22,7 @@ depends_on:
 Engine là **core business**. Nó chạy 60 lần mỗi giây trên tablet Android 2GB, trước mặt một
 đứa trẻ 3 tuổi chưa biết đọc. Hai ràng buộc đó quyết định mọi thứ còn lại.
 
-TypeScript thuần, Canvas 2D. ❌ Không Vue, không Pinia, không reactivity — reactivity thêm
+TypeScript thuần, Canvas 2D. Cấm Vue, Pinia, reactivity — reactivity thêm
 một tầng theo dõi không đoán trước được vào đúng chỗ không được phép chậm.
 
 ## 2. Actors
@@ -45,7 +45,7 @@ một tầng theo dõi không đoán trước được vào đúng chỗ không 
 
 ## 4. Main flow
 
-1. Page nhận game config từ `game-config-delivery`, gọi `engine.load(config)`.
+1. Page nhận game config từ [`game-config-delivery.md`](../04-play/game-config-delivery.md), gọi `engine.load(config)`.
 2. Engine parse `content_pack` bằng contract của template (kiểm lại phía client — server đã
    kiểm, đây là lưới an toàn thứ hai).
 3. `setupEntities()` — tính layout **một lần**, cache. Tính lại **chỉ** khi resize.
@@ -63,38 +63,38 @@ một tầng theo dõi không đoán trước được vào đúng chỗ không 
 | Asset load fail | Phát `asset_load_failed`, thay bằng placeholder trung tính, **tiếp tục chơi** |
 | Mất mạng giữa chừng | Buffer event vào IndexedDB, chơi tiếp bình thường |
 | Trang ẩn | `game_paused`, dừng RAF, flush event qua `sendBeacon` |
-| `prefers-reduced-motion` | Giảm chuyển động, ❌ **không** bỏ. Ăn mừng còn một nhịp scale 400ms |
+| `prefers-reduced-motion` | Giảm chuyển động, **không** bỏ. Ăn mừng còn một nhịp scale 400ms |
 | Trẻ giữ nút thoát | Long-press 800ms → Parent Gate |
-| FPS tụt dưới 45 kéo dài | Giảm hạt và bóng, ❌ không giảm kích thước touch target |
+| FPS tụt dưới 45 kéo dài | Giảm hạt và bóng, cấm giảm kích thước touch target |
 
 ## 6. Business rules
 
 | ID | Rule | Vì sao |
 |---|---|---|
-| `BR-ENG-01` | TypeScript thuần. ❌ NEVER Vue/Pinia/VueUse trong engine | RAF loop 60 lần/giây không chịu được tầng reactivity |
-| `BR-ENG-02` | ❌ **NEVER ghi DB từ engine.** Engine phát event, server ghi | Client không phải nguồn sự thật |
-| `BR-ENG-03` | ❌ **NEVER network call trong lúc chơi.** Offline-first | Mạng chập chờn không được làm đứng game |
-| `BR-ENG-04` | Mọi màu và font từ `designTokens.ts`. ❌ NEVER hex literal, ❌ NEVER `ctx.font` inline | Ép bằng `pnpm lint:tokens` trong cổng tự động |
-| `BR-ENG-05` | Sàn touch theo band tuổi qua **một hàm duy nhất**. Band 3–4: **96px**; 5–6: **72px**; sàn tuyệt đối **64px** | Sàn tự viết rải rác là 60 chỗ để lệch |
-| `BR-ENG-06` | Mọi mechanic drag có **hit band khoan dung** và **fallback tap-tap** cho band 3–4 | Drag là cử chỉ khó nhất ở tuổi này |
-| `BR-ENG-07` | Trả lời sai **phải có phản hồi**, và **không bao giờ trừng phạt**. ❌ Không đỏ, không buzzer, không trừ điểm — **im lặng cũng là defect** | Không phản hồi thì trẻ không biết mình đã thao tác |
-| `BR-ENG-08` | Ăn mừng lớn **chỉ khi hoàn thành level**. Item đúng chỉ pop nhỏ **tại điểm chạm** | Ăn mừng mọi lúc làm ăn mừng mất nghĩa |
-| `BR-ENG-09` | **Một** phần tử động thu hút chú ý tại một thời điểm | Nhiều thứ nhấp nháy cùng lúc là không có thứ nào được chú ý |
-| `BR-ENG-10` | Chữ ❌ **không bao giờ** mang chỉ dẫn một mình — mọi chỉ dẫn đọc thành tiếng hoặc trình diễn bằng hình | Người dùng chưa biết đọc |
-| `BR-ENG-11` | ❌ Không đồng hồ đếm ngược · không điểm hiện lúc chơi · không nút thoát tap trúng được | Áp lực thời gian và điểm số phản tác dụng ở tuổi này |
-| `BR-ENG-12` | ❌ Không pinch, xoay bằng cử chỉ, thao tác hai ngón, hay drag tính giờ | Vận động tinh chưa đủ |
-| `BR-ENG-13` | `checkWinCondition()` và `validateAction()` **thuần** | Chúng được gọi nhiều lần mỗi frame |
-| `BR-ENG-14` | RAF cho vòng lặp. ❌ NEVER `setInterval`/`setTimeout` | |
-| `BR-ENG-15` | ❌ Không cấp phát object mỗi frame · không DOM mutation mỗi frame · không `JSON.parse` trong hot path | GC pause đọc thành giật |
-| `BR-ENG-16` | Audio: master ceiling cưỡng chế trong code, mục tiêu −16 LUFS, true peak ≤ −1 dBTP, ramp vào ≥ 20ms ra ≥ 40ms | Onset tức thì làm trẻ giật mình |
-| `BR-ENG-17` | Ngân sách bundle mỗi template ≤ **80 KB** gzipped | Tablet 2GB trên mạng 4G |
+| `BR-ENG-01` (thuần TS) | TypeScript thuần. Cấm — NEVER Vue/Pinia/VueUse trong engine | RAF loop 60 lần/giây không chịu được tầng reactivity |
+| `BR-ENG-02` (không ghi DB) | Cấm — **NEVER ghi DB từ engine.** Engine phát event, server ghi | Client không phải nguồn sự thật |
+| `BR-ENG-03` (offline-first) | Cấm — **NEVER network call trong lúc chơi.** Offline-first | Mạng chập chờn không được làm đứng game |
+| `BR-ENG-04` (design token) | Mọi màu và font từ `designTokens.ts`. Cấm hex literal, cấm `ctx.font` inline | Ép bằng `pnpm lint:tokens` trong cổng tự động |
+| `BR-ENG-05` (sàn touch) | Sàn touch theo band tuổi qua **một hàm duy nhất**. Band 3–4: **96px**; 5–6: **72px**; sàn tuyệt đối **64px** | Sàn tự viết rải rác là 60 chỗ để lệch |
+| `BR-ENG-06` (fallback tap) | Mọi mechanic drag có **hit band khoan dung** và **fallback tap-tap** cho band 3–4 | Drag là cử chỉ khó nhất ở tuổi này |
+| `BR-ENG-07` (sai có phản hồi) | Trả lời sai **phải có phản hồi**, và **không bao giờ trừng phạt**. Cấm đỏ, cấm buzzer, cấm trừ điểm — **im lặng cũng là defect** | Không phản hồi thì trẻ không biết mình đã thao tác |
+| `BR-ENG-08` (ăn mừng đúng chỗ) | Ăn mừng lớn **chỉ khi hoàn thành level**. Item đúng chỉ pop nhỏ **tại điểm chạm** | Ăn mừng mọi lúc làm ăn mừng mất nghĩa |
+| `BR-ENG-09` (một phần tử động) | **Một** phần tử động thu hút chú ý tại một thời điểm | Nhiều thứ nhấp nháy cùng lúc là không có thứ nào được chú ý |
+| `BR-ENG-10` (chữ không đủ) | Chữ **không bao giờ** mang chỉ dẫn một mình — mọi chỉ dẫn đọc thành tiếng hoặc trình diễn bằng hình | Người dùng chưa biết đọc |
+| `BR-ENG-11` (không áp lực) | Cấm đồng hồ đếm ngược, cấm điểm hiện lúc chơi, cấm nút thoát tap trúng được | Áp lực thời gian và điểm số phản tác dụng ở tuổi này |
+| `BR-ENG-12` (vận động tinh) | Cấm pinch, xoay bằng cử chỉ, thao tác hai ngón, hay drag tính giờ | Vận động tinh chưa đủ |
+| `BR-ENG-13` (hàm thuần) | `checkWinCondition()` và `validateAction()` **thuần** | Chúng được gọi nhiều lần mỗi frame |
+| `BR-ENG-14` (RAF) | RAF cho vòng lặp. Cấm — NEVER `setInterval`/`setTimeout` | |
+| `BR-ENG-15` (zero alloc) | Cấm cấp phát object mỗi frame, cấm DOM mutation mỗi frame, cấm `JSON.parse` trong hot path | GC pause đọc thành giật |
+| `BR-ENG-16` (audio) | Audio: master ceiling cưỡng chế trong code, mục tiêu −16 LUFS, true peak ≤ −1 dBTP, ramp vào ≥20ms ra ≥40ms | Onset tức thì làm trẻ giật mình |
+| `BR-ENG-17` (bundle) | Ngân sách bundle mỗi template ≤ **80 KB** gzipped | Tablet 2GB trên mạng 4G |
 
 ## 7. Data
 
 ### 7.1 Không gian canvas
 
 Logic **cố định 960×540**, scale theo DPR, `object-fit: contain`. Mọi toạ độ trong Session
-class là toạ độ logic — ❌ không bao giờ pixel thiết bị.
+class là toạ độ logic — cấm dùng pixel thiết bị.
 
 ### 7.2 Ngân sách hiệu năng
 
@@ -114,8 +114,8 @@ class là toạ độ logic — ❌ không bao giờ pixel thiết bị.
 | 4–5 | 2 / 15s | 3 / 25s | 4 / 35s |
 | 5–6 | 2 / 20s | 3 / 30s | 5 / 40s |
 
-❌ **NEVER theo yêu cầu** — trẻ 3 tuổi sẽ không xin trợ giúp.
-Chi tiết: `04-play/scaffolding-and-hints.md`.
+Cấm — **NEVER theo yêu cầu** — trẻ 3 tuổi sẽ không xin trợ giúp.
+Chi tiết: [`scaffolding-and-hints.md`](../04-play/scaffolding-and-hints.md).
 
 ### 7.4 Cấu trúc thư mục
 
@@ -149,7 +149,7 @@ engine.destroy(): void;
 engine.on("event", (e: TelemetryEvent) => void): void;
 ```
 
-Engine ❌ không biết gì về HTTP, cookie, hay entitlement. Nó nhận config đã qua gating.
+Engine không biết gì về HTTP, cookie, hay entitlement. Nó nhận config đã qua gating.
 
 ## 9. Acceptance criteria
 
