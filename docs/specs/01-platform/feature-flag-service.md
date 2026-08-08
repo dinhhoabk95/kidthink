@@ -2,10 +2,10 @@
 spec: FEATURE-FLAG-SERVICE
 title: Cờ tính năng
 area: platform
-status: draft
+status: approved
 mvp: true
 phase: P2
-reviewed: 2026-08-04
+reviewed: 2026-08-08
 owns:
   - Hình dạng cờ và phạm vi áp
   - Quy tắc dọn cờ
@@ -62,10 +62,10 @@ sự thật cho cùng một câu hỏi.
 | `BR-FLG-01` | Cờ Cấm — **NEVER dùng thay entitlement** | Hai nguồn sự thật cho "được dùng không" là hai câu trả lời khác nhau |
 | `BR-FLG-02` | Mọi cờ có **mặc định an toàn** — thường là `off` | Cờ thiếu mặc định làm sự cố cache thành sự cố tính năng |
 | `BR-FLG-03` | Mọi cờ có **ngày hết hạn** khi tạo | Cờ vĩnh viễn là nhánh code chết không ai dám xoá |
-| `BR-FLG-04` | Đổi cờ ghi `audit_logs` kèm **lý do bắt buộc** | |
+| `BR-FLG-04` | Đổi cờ ghi `audit_logs` kèm **lý do bắt buộc** | Đảm bảo khả năng giải trình và kiểm soát thay đổi cấu hình hệ thống theo `BR-AUD-01` |
 | `BR-FLG-05` | Cấm — **NEVER cờ trên bề mặt trẻ** làm đổi độ khó hay cách tính điểm giữa chừng | Đổi luật giữa lúc trẻ đang chơi |
-| `BR-FLG-06` | Cờ Cấm — **NEVER gate ràng buộc tuân thủ** — [`child-data-compliance.md`](../00-foundation/child-data-compliance.md) không có công tắc | |
-| `BR-FLG-07` | Chỉ `super_admin` thấy và đổi | |
+| `BR-FLG-06` | Cờ Cấm — **NEVER gate ràng buộc tuân thủ** — [`child-data-compliance.md`](../00-foundation/child-data-compliance.md) không có công tắc | Đảm bảo quy định bảo vệ dữ liệu trẻ em được thực thi tuyệt đối không thể bị vô hiệu hóa |
+| `BR-FLG-07` | Chỉ `super_admin` thấy và đổi | Giới hạn quyền thay đổi cấu hình hạ tầng cho đúng vai trò quản trị tối cao theo `BR-ADA-02` |
 
 ## 7. Data
 
@@ -150,6 +150,6 @@ Scenario: BR-FLG-06 — không có cờ tắt tuân thủ
 
 ## 11. Open questions
 
-| # | Câu hỏi | Chặn gì |
-|---|---|---|
-| 1 | Cờ `percentage` có cần sticky theo user không? Không sticky thì trải nghiệm nhấp nháy | P2 |
+| # | Câu hỏi | Chặn phase | Đề xuất chốt | Chủ |
+|---|---|---|---|---|
+| 1 | Cờ `percentage` có cần sticky theo user không? Không sticky thì trải nghiệm nhấp nháy | P2 | Có — hash `user_id` % 100 để giữ cờ cố định cho từng người dùng (xem [`feature-flags.md`](../06-admin/feature-flags.md)) | người quyết |

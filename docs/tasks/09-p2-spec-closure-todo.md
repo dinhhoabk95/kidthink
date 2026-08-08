@@ -337,9 +337,9 @@ admin-dashboard (độc lập)
 
 ### Bước 23 — [`feature-flag-service.md`](../specs/01-platform/feature-flag-service.md)
 
-- [ ] Đọc hết 155 dòng; điền "vì sao" cho **3** cảnh báo `C6`
-- [ ] Kiểm hai rule không nới: cờ luôn có hạn · cấm cờ gate ràng buộc tuân thủ
-- [ ] `status: approved`; commit `feat(specs): T9 bước 23 — approve feature-flag-service`
+- [x] Đọc hết 155 dòng; điền "vì sao" cho **3** cảnh báo `C6`
+- [x] Kiểm hai rule không nới: cờ luôn có hạn · cấm cờ gate ràng buộc tuân thủ
+- [x] `status: approved`; commit `feat(specs): T9 bước 23 — approve feature-flag-service`
 
 ### Bước 24 — [`feature-flags.md`](../specs/06-admin/feature-flags.md)
 
