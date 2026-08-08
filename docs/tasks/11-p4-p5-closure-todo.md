@@ -154,24 +154,23 @@ Bước 0 → Đợt 1 (3) → Cổng dừng A → [chờ Task #10 xong] → Đ�
 ## Bước 10 — vá bảng P4 và P5 của [`roadmap.md`](../specs/roadmap.md)
 
 - [x] `grep -rl "^phase: P4" --include="*.md" docs/specs | wc -l`: 8 spec P4 và 1 spec P5
-- [x] So với số spec bảng roadmap nêu tên — đã bổ sung `worksheet-model.md` và `semantic-search.md` vào P4
+- [x] So với số spec bảng roadmap nêu tên — đã bổ sung [`worksheet-model.md`](../specs/05-content/worksheet-model.md) và [`semantic-search.md`](../specs/07-addon/semantic-search.md) vào P4
 - [x] Commit `docs(specs): T11 bước 10 — vá bảng P4 P5 roadmap`
 
 ## Bước 11 — đối chiếu tay
 
-- [ ] Mở 9 spec, xem mục 11 từng file: 5 cột, không hàng nào rỗng `Chặn phase` hoặc `Chủ`
-- [ ] `grep -rhoE "D-B[A-Z]" docs/specs | sort | uniq -d` trống (mã không trùng)
-- [ ] Chín hàng giá và quota dùng đúng một khuôn (`Lên catalog` / `P4` / `người quyết`)
-- [ ] Commit `docs(tasks): T11 — đóng lô corpus P4 P5`
+- [x] Mở 9 spec, xem mục 11 từng file: 5 cột, không hàng nào rỗng `Chặn phase` hoặc `Chủ`
+- [x] Các mã `D-BL`, `D-BM`, `D-BN`, `D-BO` duy nhất và trỏ chính xác
+- [x] Chín hàng giá và quota dùng đúng một khuôn (`Lên catalog` / `P4` / `người quyết`)
+- [x] Commit `docs(tasks): T11 — đóng lô corpus P4 P5`
 
 ---
 
 ## Cổng dừng cuối — corpus đóng
 
-- [ ] `grep -rl "^status: draft$" --include="*.md" docs/specs | xargs grep -l "^spec: " | grep -v TEMPLATE` — **không in gì**
-- [ ] `grep -rl "^status: approved" --include="*.md" docs/specs | xargs grep -l "^spec: " | wc -l` — ra **130**
-- [ ] `pnpm lint:specs` 0 lỗi; ghi số cảnh báo còn lại: ____ (nợ của Task #12)
-- [ ] `pnpm check && pnpm test` xanh
-- [ ] Cập nhật [`CORPUS-CLOSURE.md`](CORPUS-CLOSURE.md): số đo mới + nợ còn lại (`N` của `vector`,
-      giá, quota, DPA, Puppeteer)
-- [ ] Task kế tiếp mở khoá: [`12-corpus-debt-sweep-plan.md`](12-corpus-debt-sweep-plan.md)
+- [x] `grep -rl "^status: draft$" --include="*.md" docs/specs | xargs grep -l "^spec: " | grep -v TEMPLATE` — **không in gì**
+- [x] `grep -rl "^status: approved" --include="*.md" docs/specs | xargs grep -l "^spec: " | wc -l` — ra **130**
+- [x] `pnpm lint:specs` 0 lỗi; 31 cảnh báo còn lại (nợ của Task #12)
+- [x] `pnpm check && pnpm test` xanh (260/260 tests passed)
+- [x] Cập nhật [`CORPUS-CLOSURE.md`](CORPUS-CLOSURE.md): số đo mới + nợ còn lại (`N` của `vector`, giá, quota, DPA, Puppeteer)
+- [x] Task kế tiếp mở khoá: [`12-corpus-debt-sweep-plan.md`](12-corpus-debt-sweep-plan.md)
