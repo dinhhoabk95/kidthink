@@ -597,29 +597,29 @@ này có trước lô 2. Cùng loại khuyết tật với "Khuyết tật 3" m�
 
 18 spec thiếu:
 
-- [ ] `01-platform`: [`content-search.md`](../specs/01-platform/content-search.md) ·
+- [x] `01-platform`: [`content-search.md`](../specs/01-platform/content-search.md) ·
       [`content-tagging.md`](../specs/01-platform/content-tagging.md) ·
       [`job-queue.md`](../specs/01-platform/job-queue.md) ·
       [`monitoring-and-alerting.md`](../specs/01-platform/monitoring-and-alerting.md) ·
       [`offline-play.md`](../specs/01-platform/offline-play.md) ·
       [`telemetry-pipeline.md`](../specs/01-platform/telemetry-pipeline.md)
-- [ ] `02-public`: [`cookie-and-consent-banner.md`](../specs/02-public/cookie-and-consent-banner.md) ·
+- [x] `02-public`: [`cookie-and-consent-banner.md`](../specs/02-public/cookie-and-consent-banner.md) ·
       [`faq-and-help.md`](../specs/02-public/faq-and-help.md)
-- [ ] `03-account`: [`account-deletion.md`](../specs/03-account/account-deletion.md) ·
+- [x] `03-account`: [`account-deletion.md`](../specs/03-account/account-deletion.md) ·
       [`account-settings.md`](../specs/03-account/account-settings.md) ·
       [`child-profile-archive.md`](../specs/03-account/child-profile-archive.md) ·
       [`consent-management.md`](../specs/03-account/consent-management.md) ·
       [`member-dashboard.md`](../specs/03-account/member-dashboard.md) ·
       [`my-library.md`](../specs/03-account/my-library.md)
-- [ ] `06-admin`: [`taxonomy-browser.md`](../specs/06-admin/taxonomy-browser.md)
-- [ ] `08-quality`: [`accessibility.md`](../specs/08-quality/accessibility.md) ·
+- [x] `06-admin`: [`taxonomy-browser.md`](../specs/06-admin/taxonomy-browser.md)
+- [x] `08-quality`: [`accessibility.md`](../specs/08-quality/accessibility.md) ·
       [`design-system-contract.md`](../specs/08-quality/design-system-contract.md) ·
       [`performance-budgets.md`](../specs/08-quality/performance-budgets.md)
 
-- [ ] Thêm cả 18 vào bảng P1 của [`roadmap.md`](../specs/roadmap.md), xếp đúng vị trí theo
+- [x] Thêm cả 18 vào bảng P1 của [`roadmap.md`](../specs/roadmap.md), xếp đúng vị trí theo
       `depends_on` chứ không nối vào cuối bảng
-- [ ] Kiểm lại: số spec trong bảng P1 = số spec có `phase: P1` = **43**
-- [ ] Commit `docs(specs): T8 bước 31 — bảng P1 của roadmap đủ 43 spec`
+- [x] Kiểm lại: số spec trong bảng P1 = số spec có `phase: P1` = **43**
+- [x] Commit `docs(specs): T8 bước 31 — bảng P1 của roadmap đủ 43 spec`
 
 ---
 

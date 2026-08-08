@@ -74,22 +74,27 @@ access-gating ──→ game-config-delivery ──→ play-session-lifecycle
 
 | # | Việc | Spec sở hữu |
 |---|---|---|
-| 1 | Contract template + 6 template chạy được | [`game-template-contract.md`](01-platform/game-template-contract.md) · [`game-engine-runtime.md`](01-platform/game-engine-runtime.md) |
-| 2 | **Gating trước nội dung** | [`access-gating.md`](04-play/access-gating.md) |
-| 3 | Giao config game đã lọc quyền | [`game-config-delivery.md`](04-play/game-config-delivery.md) |
-| 4 | Vòng đời phiên + nạp event idempotent | [`play-session-lifecycle.md`](04-play/play-session-lifecycle.md) · [`play-event-ingestion.md`](04-play/play-event-ingestion.md) |
-| 5 | Tính điểm ở server | [`scoring-and-result.md`](04-play/scoring-and-result.md) |
-| 6 | Scaffolding, phản hồi, parent gate, hạn mức giờ | [`scaffolding-and-hints.md`](04-play/scaffolding-and-hints.md) · [`feedback-and-celebration.md`](04-play/feedback-and-celebration.md) · [`parent-gate.md`](04-play/parent-gate.md) · [`healthy-play-limits.md`](04-play/healthy-play-limits.md) |
-| 7 | Child profile + chọn trẻ | [`child-profile-crud.md`](03-account/child-profile-crud.md) · [`child-profile-switching.md`](03-account/child-profile-switching.md) · [`play-entry-and-profile-select.md`](04-play/play-entry-and-profile-select.md) |
-| 8 | **Seeder nội dung nền** (8 cổng tự động + PR review) | [`content-seed-authoring.md`](01-platform/content-seed-authoring.md) |
-| 9 | ≥120 game level `published` | [`game-level-model.md`](05-content/game-level-model.md) |
-| 10 | Báo cáo cơ bản | [`basic-report.md`](03-account/basic-report.md) |
-| 11 | Public site + SEO | [`landing-page.md`](02-public/landing-page.md) · [`game-catalog-public.md`](02-public/game-catalog-public.md) · [`game-detail-public.md`](02-public/game-detail-public.md) · [`seo-and-structured-data.md`](02-public/seo-and-structured-data.md) · [`legal-pages.md`](02-public/legal-pages.md) |
-| 12 | **Đăng nhập SNS** — Google trước, Facebook sau | [`oauth-provider-registry.md`](01-platform/oauth-provider-registry.md) → [`social-login.md`](03-account/social-login.md) → [`social-account-linking.md`](03-account/social-account-linking.md) |
+| 1 | Ràng buộc chất lượng & thiết kế UI | [`design-system-contract.md`](08-quality/design-system-contract.md) · [`accessibility.md`](08-quality/accessibility.md) · [`performance-budgets.md`](08-quality/performance-budgets.md) |
+| 2 | Contract template + 6 template chạy được | [`game-template-contract.md`](01-platform/game-template-contract.md) · [`game-engine-runtime.md`](01-platform/game-engine-runtime.md) |
+| 3 | **Gating trước nội dung** | [`access-gating.md`](04-play/access-gating.md) |
+| 4 | Giao config game đã lọc quyền | [`game-config-delivery.md`](04-play/game-config-delivery.md) |
+| 5 | Hạ tầng hàng đợi công việc & đường ống telemetry | [`job-queue.md`](01-platform/job-queue.md) · [`telemetry-pipeline.md`](01-platform/telemetry-pipeline.md) |
+| 6 | Vòng đời phiên, nạp event idempotent & xử lý mất mạng | [`play-session-lifecycle.md`](04-play/play-session-lifecycle.md) · [`play-event-ingestion.md`](04-play/play-event-ingestion.md) · [`offline-play.md`](01-platform/offline-play.md) |
+| 7 | Tính điểm ở server | [`scoring-and-result.md`](04-play/scoring-and-result.md) |
+| 8 | Scaffolding, phản hồi, parent gate, hạn mức giờ | [`scaffolding-and-hints.md`](04-play/scaffolding-and-hints.md) · [`feedback-and-celebration.md`](04-play/feedback-and-celebration.md) · [`parent-gate.md`](04-play/parent-gate.md) · [`healthy-play-limits.md`](04-play/healthy-play-limits.md) |
+| 9 | Quản lý hồ sơ trẻ, lưu trữ & chọn trẻ chơi | [`child-profile-crud.md`](03-account/child-profile-crud.md) · [`child-profile-switching.md`](03-account/child-profile-switching.md) · [`child-profile-archive.md`](03-account/child-profile-archive.md) · [`play-entry-and-profile-select.md`](04-play/play-entry-and-profile-select.md) |
+| 10 | Gắn tag nội dung & **Seeder nội dung nền** | [`content-tagging.md`](01-platform/content-tagging.md) · [`content-seed-authoring.md`](01-platform/content-seed-authoring.md) |
+| 11 | ≥120 game level `published` | [`game-level-model.md`](05-content/game-level-model.md) |
+| 12 | Báo cáo cơ bản, trang chính phụ huynh & thư viện cá nhân | [`basic-report.md`](03-account/basic-report.md) · [`member-dashboard.md`](03-account/member-dashboard.md) · [`my-library.md`](03-account/my-library.md) |
+| 13 | Tìm kiếm nội dung, Public site, SEO & Trang pháp lý | [`content-search.md`](01-platform/content-search.md) · [`landing-page.md`](02-public/landing-page.md) · [`game-catalog-public.md`](02-public/game-catalog-public.md) · [`game-detail-public.md`](02-public/game-detail-public.md) · [`seo-and-structured-data.md`](02-public/seo-and-structured-data.md) · [`legal-pages.md`](02-public/legal-pages.md) · [`faq-and-help.md`](02-public/faq-and-help.md) · [`cookie-and-consent-banner.md`](02-public/cookie-and-consent-banner.md) |
+| 14 | Cài đặt tài khoản, đồng ý pháp lý & xoá tài khoản | [`account-settings.md`](03-account/account-settings.md) · [`consent-management.md`](03-account/consent-management.md) · [`account-deletion.md`](03-account/account-deletion.md) |
+| 15 | **Đăng nhập SNS** — Google trước, Facebook sau | [`oauth-provider-registry.md`](01-platform/oauth-provider-registry.md) → [`social-login.md`](03-account/social-login.md) → [`social-account-linking.md`](03-account/social-account-linking.md) |
+| 16 | Trình duyệt taxonomy admin & Giám sát hệ thống | [`taxonomy-browser.md`](06-admin/taxonomy-browser.md) · [`monitoring-and-alerting.md`](01-platform/monitoring-and-alerting.md) |
 
-Thứ tự ở #12 **không đảo được**: [`social-account-linking.md`](03-account/social-account-linking.md) là lối thoát duy nhất cho nhánh
+Thứ tự ở #15 **không đảo được**: [`social-account-linking.md`](03-account/social-account-linking.md) là lối thoát duy nhất cho nhánh
 409 `SOCIAL_EMAIL_CONFLICT` của [`social-login.md`](03-account/social-login.md) (`BR-SCL-04`). Ship [`social-login.md`](03-account/social-login.md) mà chưa có
 màn hình liên kết là đẩy mọi người dùng trùng email vào ngõ cụt.
+
 
 ## P2 — Commerce + Admin
 
