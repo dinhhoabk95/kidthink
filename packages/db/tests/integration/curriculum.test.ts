@@ -8,6 +8,7 @@ describe("Curriculum Schema Integration Tests", () => {
   it("orphan curriculum_items.(entity_type, entity_id) polymorphic check", async () => {
     const db = getOwnerDb();
     const curCode = `CUR-${(Math.floor(Math.random() * 800) + 100).toString()}`;
+    await db.delete(curricula).where(eq(curricula.code, curCode));
 
     const [cur] = await db
       .insert(curricula)
@@ -80,6 +81,7 @@ describe("Curriculum Schema Integration Tests", () => {
 
     // 2. Create Curriculum and Curriculum Item pointing to lineage anchor
     const curCode = `CUR-${(Math.floor(Math.random() * 800) + 100).toString()}`;
+    await db.delete(curricula).where(eq(curricula.code, curCode));
     const [cur] = await db
       .insert(curricula)
       .values({

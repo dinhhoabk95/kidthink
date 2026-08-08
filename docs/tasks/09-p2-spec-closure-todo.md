@@ -375,11 +375,11 @@ admin-dashboard (độc lập)
 
 ### Bước 29 — [`notification-admin.md`](../specs/06-admin/notification-admin.md)
 
-- [ ] Đọc hết 150 dòng; điền "vì sao" cho **1** cảnh báo `C6`
-- [ ] Q1 (provider có bounce/delivery) — dùng câu trả lời số 5 của Cổng dừng A
-- [ ] Đối chiếu 11 loại thông báo, một kênh email với
+- [x] Đọc hết 150 dòng; điền "vì sao" cho **1** cảnh báo `C6`
+- [x] Q1 (provider có bounce/delivery) — dùng câu trả lời số 5 của Cổng dừng A
+- [x] Đối chiếu 11 loại thông báo, một kênh email với
       [`notification-service.md`](../specs/01-platform/notification-service.md)
-- [ ] `status: approved`; commit `feat(specs): T9 bước 29 — approve notification-admin`
+- [x] `status: approved`; commit `feat(specs): T9 bước 29 — approve notification-admin`
 
 ### Bước 30 — [`mfa.md`](../specs/03-account/mfa.md)
 

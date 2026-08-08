@@ -2,10 +2,10 @@
 spec: NOTIFICATION-ADMIN
 title: Quản lý thông báo
 area: admin
-status: draft
+status: approved
 mvp: true
 phase: P2
-reviewed: 2026-08-04
+reviewed: 2026-08-08
 owns:
   - Bề mặt theo dõi thông báo đã gửi
   - Soạn nội dung template thông báo
@@ -55,7 +55,7 @@ Và cho phép sửa nội dung template không cần deploy.
 | `BR-NTA-02` | Cấm — **NEVER gửi hàng loạt tuỳ ý** từ màn hình này | Không có cơ chế đồng ý tiếp thị — `BR-NOT-06` |
 | `BR-NTA-03` | Template sửa được không cần deploy, nhưng đi qua **duyệt** | Email sai gửi đi không thu hồi được |
 | `BR-NTA-04` | Nội dung email hiển thị **đã che** phần nhạy cảm (token đặt lại mật khẩu) | Manager không cần thấy token của User |
-| `BR-NTA-05` | Chỉ `super_admin` | |
+| `BR-NTA-05` | Chỉ `super_admin` | Giới hạn quyền quản lý thông báo hệ thống cho đúng vai trò quản trị tối cao theo `BR-ADA-02` |
 | `BR-NTA-06` | Cấm — **NEVER template gửi tới trẻ** | `BR-NOT-02` |
 | `BR-NTA-07` | Template có biến bắt buộc; thiếu biến → chặn lưu | Email thiếu biến hiện `{{name}}` cho người dùng thật |
 
@@ -145,6 +145,6 @@ Scenario: BR-NTA-05 — content_reviewer bị chặn
 
 ## 11. Open questions
 
-| # | Câu hỏi | Chặn gì |
-|---|---|---|
-| 1 | Provider nào cung cấp trạng thái bounce/delivery? Ảnh hưởng độ chính xác của nhật ký | P2 |
+| # | Câu hỏi | Chặn phase | Đề xuất chốt | Chủ |
+|---|---|---|---|---|
+| 1 | Provider nào cung cấp trạng thái bounce/delivery? Ảnh hưởng độ chính xác của nhật ký | P2 | MVP dùng webhook của Resend/SES để nhận sự kiện delivery/bounce; lưu trong `notification_logs` | người quyết |
