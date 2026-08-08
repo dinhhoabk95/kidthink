@@ -366,20 +366,20 @@ Lô đụng `play_sessions` và `play_events`. **Mọi cột phát sinh phải s
 
 175 dòng · 10 rule · 2 câu hỏi · 2 cảnh báo.
 
-- [ ] Đọc hết file
-- [ ] Điền "vì sao" cho `BR-BRP-03`, `BR-BRP-05`
-- [ ] Xác nhận `depends_on` **không còn** `PROGRESS-AND-MASTERY` — nhát cắt `D-AK` của Task #6;
+- [x] Đọc hết file
+- [x] Điền "vì sao" cho `BR-BRP-03`, `BR-BRP-05`
+- [x] Xác nhận `depends_on` **không còn** `PROGRESS-AND-MASTERY` — nhát cắt `D-AK` của Task #6;
       ranh giới "6 mục, không chẩn đoán" phải còn nguyên trong văn xuôi
-- [ ] Đối chiếu nguồn dữ liệu với
+- [x] Đối chiếu nguồn dữ liệu với
       [`telemetry-pipeline.md`](../specs/01-platform/telemetry-pipeline.md) (đã `approved`)
-- [ ] Chuyển bảng mục 11 sang 5 cột
-- [ ] Q1 (báo cáo tuần qua email, mặc định bật hay tắt) — **chặn P1, chốt**; phải khớp
+- [x] Chuyển bảng mục 11 sang 5 cột
+- [x] Q1 (báo cáo tuần qua email, mặc định bật hay tắt) — **chặn P1, chốt**; phải khớp
       [`notification-service.md`](../specs/01-platform/notification-service.md)
-- [ ] Q2 (gợi ý hoạt động ngoài màn hình) — **cặp số 4**: tham chiếu quyết định đã chốt ở bước 8,
+- [x] Q2 (gợi ý hoạt động ngoài màn hình) — **cặp số 4**: tham chiếu quyết định đã chốt ở bước 8 (D-BB),
       không quyết lại
-- [ ] Checklist review 15 mục
-- [ ] `status: approved`, `reviewed` mới, cảnh báo giảm **2**
-- [ ] Commit `feat(specs): T8 bước 18 — approve basic-report`
+- [x] Checklist review 15 mục
+- [x] `status: approved`, `reviewed: 2026-08-08`, cảnh báo giảm **2**
+- [x] Commit `feat(specs): T8 bước 18 — approve basic-report`
 
 ### Bước 19 — [`member-dashboard.md`](../specs/03-account/member-dashboard.md)
 
