@@ -187,7 +187,7 @@ Scenario: BR-REG-11 — nút SNS đứng trước form
 
 ## 11. Open questions
 
-| # | Câu hỏi | Chặn gì |
-|---|---|---|
-| 1 | ~~Social login (Google) có vào MVP không?~~ **Chốt 2026-08-05: có, P1, Google + Facebook.** Luồng đồng ý giữ nguyên hai checkbox — [`social-login.md`](social-login.md) `BR-SCL-01` | — |
-| 2 | Guest có nên được đề nghị gộp phiên **tường minh** không, thay vì bỏ hẳn? | P1 conversion |
+| # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
+|---|---|---|---|---|
+| 1 | ~~Social login (Google) có vào MVP không?~~ **Chốt 2026-08-05: có, P1, Google + Facebook.** Luồng đồng ý giữ nguyên hai checkbox — [`social-login.md`](social-login.md) `BR-SCL-01` | — | P1 | D-U |
+| 2 | Guest có nên được đề nghị gộp phiên **tường minh** không, thay vì bỏ hẳn? | P1 conversion | P1 | người quyết |
