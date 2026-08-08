@@ -85,12 +85,12 @@ status = submitted                   → cấp entitlement status = soft_unlock,
 
 | ID | Rule | Vì sao |
 |---|---|---|
-| `BR-PAY-01` | Chỉ đơn `submitted` hoặc `under_review` mới approve/reject được | |
+| `BR-PAY-01` | Chỉ đơn `submitted` hoặc `under_review` mới approve/reject được | Đảm bảo đơn đã chốt hoặc đã xử lý xong không bị duyệt đè hoặc thay đổi trạng thái trái phép |
 | `BR-PAY-02` | **Idempotent theo `order_uuid`.** Approve lần hai → 409, không tạo thêm entitlement | Duyệt trùng tạo hai subscription và mất tiền |
 | `BR-PAY-03` | Approve chạy trong **một transaction**: đổi status + cấp entitlement + ghi audit. Fail bất kỳ bước nào → rollback toàn bộ | Đơn `approved` mà không có quyền là ca hỗ trợ tệ nhất |
 | `BR-PAY-04` | Reject thu hồi entitlement sinh từ đơn đó **ngay, cùng transaction**. Không chờ cron | `soft_unlock` là tin tưởng có thời hạn; rút tin tưởng thì quyền hết cùng lúc |
 | `BR-PAY-05` | **NEVER kích hoạt gói chỉ dựa trên việc upload chứng từ.** Upload cấp `soft_unlock`, **không** cấp `active` | Ảnh chứng từ giả mạo được. Duyệt tay là bước xác minh thật |
-| `BR-PAY-06` | Số tiền đọc từ `PACKAGE_CATALOG`, không từ client | |
+| `BR-PAY-06` | Số tiền đọc từ `PACKAGE_CATALOG`, không từ client | Ngăn ngừa hành vi can thiệp giá từ phía client để trục lợi giao dịch |
 | `BR-PAY-07` | Mọi approve/reject **bắt buộc** có `admin_note` ≥ 10 ký tự | Luồng tiền phải trả lời được vì sao |
 | `BR-PAY-08` | **NEVER xoá** hàng `payment_orders`. Huỷ = đổi status | Lịch sử giao dịch là nghĩa vụ kế toán |
 | `BR-PAY-09` | Nội dung chuyển khoản **là mã đơn**, ép định dạng, hiện nổi bật | Sai nội dung chuyển khoản là nguyên nhân số một của đối chiếu thủ công thất bại |

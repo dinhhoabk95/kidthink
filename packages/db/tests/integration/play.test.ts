@@ -72,6 +72,7 @@ describe("Play Schema Integration Tests", () => {
       .returning();
 
     const glCode = `GL-C1-NUM-DRAG-${(Math.floor(Math.random() * 9000) + 1000).toString()}`;
+    await db.delete(gameLevels).where(eq(gameLevels.code, glCode));
     const [gl] = await db
       .insert(gameLevels)
       .values({

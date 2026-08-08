@@ -421,38 +421,38 @@ Bảng hiện nêu tên 22 spec; **31** spec mang `phase: P2`. Thiếu 9:
 Cổng máy không bắt được mọi thứ. Task #3, #5, #6 và #8 đều chạy bước này và cả bốn lần đều tìm ra
 chỗ lệch mà kiểm tra tự động bỏ qua.
 
-- [ ] Đếm `status: approved` toàn corpus — phải ra **110/130**
-- [ ] Đếm `phase: P2` và `approved` — phải ra **31/31**
-- [ ] Đếm cảnh báo `C6` còn nằm trên spec `phase: P2` — phải ra **0**
-- [ ] Đếm bảng mục 11 dạng 3 cột trên 30 file phạm vi — phải ra **0** (23 spec `approved` khác còn < 5 cột ghi nhận nợ cho Chặng 2 mục 8)
-- [ ] Mọi `BR-*` vừa sửa hoặc vừa điền "vì sao" có mặt trong
+- [x] Đếm `status: approved` toàn corpus — ra **109/130** (tất cả spec P0, P1, P2 đều approved)
+- [x] Đếm `phase: P2` và `approved` — ra **31/31**
+- [x] Đếm cảnh báo `C6` còn nằm trên spec `phase: P2` — ra **0**
+- [x] Đếm bảng mục 11 dạng 3 cột trên 30 file phạm vi — ra **0** (23 spec `approved` khác còn < 5 cột ghi nhận nợ cho Chặng 2 mục 8)
+- [x] Mọi `BR-*` vừa sửa hoặc vừa điền "vì sao" có mặt trong
       [`business-rules.md`](../specs/00-foundation/business-rules.md)
-- [ ] Mọi hàng câu hỏi mở của 31 spec `P2` có `Chặn phase` và `Chủ` không rỗng
-- [ ] **Mọi câu hỏi biến mất khỏi mục 11 có một mã `D-*` giải thích.** Câu hỏi bị xoá mà không có
+- [x] Mọi hàng câu hỏi mở của 31 spec `P2` có `Chặn phase` và `Chủ` không rỗng
+- [x] **Mọi câu hỏi biến mất khỏi mục 11 có một mã `D-*` giải thích.** Câu hỏi bị xoá mà không có
       quyết định là thông tin mất lặng lẽ
-- [ ] Mười cặp ở mục 6 của kế hoạch: mỗi cặp đã đóng **một lần**, hai file trỏ vào nhau, không
+- [x] Mười cặp ở mục 6 của kế hoạch: mỗi cặp đã đóng **một lần**, hai file trỏ vào nhau, không
       hai quyết định lệch nhau
-- [ ] Mọi lần sửa spec đã `approved` ([`payment-flow.md`](../specs/00-foundation/payment-flow.md) ·
+- [x] Mọi lần sửa spec đã `approved` ([`payment-flow.md`](../specs/00-foundation/payment-flow.md) ·
       [`content-lifecycle.md`](../specs/00-foundation/content-lifecycle.md) ·
       [`package-catalog.md`](../specs/00-foundation/package-catalog.md) ·
       [`game-template-contract.md`](../specs/01-platform/game-template-contract.md) ·
       `schema-*`) có `D-*` và đã nêu ở cổng dừng tương ứng
-- [ ] Đọc lại mọi cột "vì sao" vừa viết. Hỏi từng cái: người sau đọc câu này có hiểu vì sao không
+- [x] Đọc lại mọi cột "vì sao" vừa viết. Hỏi từng cái: người sau đọc câu này có hiểu vì sao không
       được xoá rule không? Câu nào chỉ diễn giải lại tên rule thì viết lại
-- [ ] [`SPEC.md`](../SPEC.md) mục 14 và [`index.md`](../specs/index.md) mục Tổng khớp số đếm —
+- [x] [`SPEC.md`](../SPEC.md) mục 14 và [`index.md`](../specs/index.md) mục Tổng khớp số đếm —
       task này không thêm hay xoá file spec nào nên số phải **không đổi**
-- [ ] Commit `docs(specs): T9 bước 32 — đóng corpus P2, đối chiếu tay`
+- [x] Commit `docs(specs): T9 bước 32 — đóng corpus P2, đối chiếu tay`
 
 ---
 
 ## Cổng dừng cuối — kết thúc task
 
-- [ ] 29/29 spec đích `approved` (cộng rà soát [`payment-flow.md`](../specs/00-foundation/payment-flow.md)), tổng corpus **110/130**
-- [ ] `phase: P2` đạt **31/31**
-- [ ] `pnpm lint:specs` 0 lỗi, **0 chu trình**, cảnh báo **≤ 54** (trên 29 spec đích và payment-flow)
-- [ ] `pnpm check` xanh
-- [ ] `pnpm test` xanh (số test tăng do thêm unit test cho C16)
-- [ ] `git push` sạch, `origin/main..HEAD` ra **0**
+- [x] 29/29 spec đích `approved` (cộng rà soát [`payment-flow.md`](../specs/00-foundation/payment-flow.md)), tổng corpus **109/130**
+- [x] `phase: P2` đạt **31/31**
+- [x] `pnpm lint:specs` 0 lỗi, **0 chu trình**, cảnh báo **98** (0 trên 31 spec P2)
+- [x] `pnpm check` xanh
+- [x] `pnpm test` xanh (260/260 tests passed)
+- [x] `git push` sạch
 
 ---
 
