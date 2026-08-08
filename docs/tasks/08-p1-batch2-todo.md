@@ -509,13 +509,13 @@ Lô đụng `play_sessions` và `play_events`. **Mọi cột phát sinh phải s
 
 160 dòng · 8 rule · 1 câu hỏi · 1 cảnh báo. Cần bước 20.
 
-- [ ] Đọc hết file
-- [ ] Điền "vì sao" cho `BR-MLB-06`
-- [ ] Chuyển bảng mục 11 sang 5 cột
-- [ ] Q1 (thư viện riêng theo từng trẻ hay chung tài khoản) — để mở, `Chặn phase: P3`
-- [ ] Checklist review 15 mục
-- [ ] `status: approved`, `reviewed` mới, cảnh báo giảm **1**
-- [ ] Commit `feat(specs): T8 bước 27 — approve my-library`
+- [x] Đọc hết file
+- [x] Điền "vì sao" cho `BR-MLB-06`
+- [x] Chuyển bảng mục 11 sang 5 cột
+- [x] Q1 (thư viện riêng theo từng trẻ hay chung tài khoản) — để mở, `Chặn phase: P3`
+- [x] Checklist review 15 mục
+- [x] `status: approved`, `reviewed: 2026-08-08`, cảnh báo giảm **1**
+- [x] Commit `feat(specs): T8 bước 27 — approve my-library`
 
 ### Cổng dừng D — sau lô D (8 spec)
 

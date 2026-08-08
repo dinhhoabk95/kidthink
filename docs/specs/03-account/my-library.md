@@ -2,10 +2,10 @@
 spec: MY-LIBRARY
 title: Thư viện cá nhân
 area: account
-status: draft
+status: approved
 mvp: true
 phase: P1
-reviewed: 2026-08-04
+reviewed: 2026-08-08
 owns:
   - Lưu và tổ chức nội dung yêu thích
 depends_on:
@@ -56,7 +56,7 @@ User đã đăng nhập.
 | `BR-MLB-03` | `user_tags` **tách hoàn toàn** khỏi `content_tags` | `BR-TAG-05` |
 | `BR-MLB-04` | Thư viện **riêng tư**, không chia sẻ được ở MVP | Chia sẻ kéo theo kiểm duyệt |
 | `BR-MLB-05` | Nội dung archived vẫn hiện, gắn nhãn | Xoá âm thầm khỏi thư viện làm người dùng tưởng mất |
-| `BR-MLB-06` | Quota collection: **20** ở MVP | |
+| `BR-MLB-06` | Quota collection: **20** ở MVP | Giới hạn tài nguyên hệ thống và ngăn ngừa lạm dụng bảng collection |
 | `BR-MLB-07` | Cấm — **NEVER chứa nội dung do User tạo** ở MVP | Đó là add-on, chưa có |
 
 ## 7. Data
@@ -154,6 +154,7 @@ Scenario: xoá bookmark không ảnh hưởng nội dung
 
 ## 11. Open questions
 
-| # | Câu hỏi | Chặn gì |
-|---|---|---|
-| 1 | Có cần thư viện riêng theo từng trẻ không, hay chung cho tài khoản? | P3 |
+| # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
+|---|---|---|---|---|
+| 1 | Có cần thư viện riêng theo từng trẻ không, hay chung cho tài khoản? | Phân chia thư viện đa hồ sơ | P3 | Account & Child Multi-Profile |
+
