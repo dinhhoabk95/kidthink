@@ -171,13 +171,13 @@ entitlement-grant · subscription-view · package-catalog-admin (độc lập)
 
 ### Bước 9 — [`pricing-page.md`](../specs/02-public/pricing-page.md)
 
-- [ ] Đọc hết 145 dòng
-- [ ] Điền "vì sao" cho **1** cảnh báo `C6`
-- [ ] Q1 (giá cuối) — **giữ mở**, `Chặn phase: P2`, `Chủ: người quyết`, trỏ sang
+- [x] Đọc hết 145 dòng
+- [x] Điền "vì sao" cho **1** cảnh báo `C6`
+- [x] Q1 (giá cuối) — **giữ mở**, `Chặn phase: P2`, `Chủ: người quyết`, trỏ sang
       [`package-catalog.md`](../specs/00-foundation/package-catalog.md) Q1. Mục 7 của kế hoạch
       giải thích vì sao giá không chặn `approved`
-- [ ] Kiểm rule "sinh giá và quyền lợi từ dữ liệu" còn nguyên — đó là lý do Q1 không chặn
-- [ ] `status: approved`; commit `feat(specs): T9 bước 9 — approve pricing-page`
+- [x] Kiểm rule "sinh giá và quyền lợi từ dữ liệu" còn nguyên — đó là lý do Q1 không chặn
+- [x] `status: approved`; commit `feat(specs): T9 bước 9 — approve pricing-page`
 
 ### Bước 10 — [`entitlement-grant.md`](../specs/06-admin/entitlement-grant.md)
 

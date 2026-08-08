@@ -2,10 +2,10 @@
 spec: PRICING-PAGE
 title: Trang giá
 area: public
-status: draft
+status: approved
 mvp: true
 phase: P2
-reviewed: 2026-08-04
+reviewed: 2026-08-08
 owns:
   - Trình bày gói và giá cho khách
 depends_on:
@@ -57,7 +57,7 @@ Guest · User.
 | `BR-PRC-05` | Cấm — **NEVER đếm ngược giả hay "chỉ còn X suất"** | Sản phẩm cho trẻ em bán bằng niềm tin |
 | `BR-PRC-06` | Add-on chưa bán **không xuất hiện** | `BR-PKG-05` |
 | `BR-PRC-07` | Nêu rõ **không tự động gia hạn** | Không có cổng thanh toán tự động; kỳ vọng sai tạo khiếu nại |
-| `BR-PRC-08` | Structured data `Product` + `Offer` từ dữ liệu | |
+| `BR-PRC-08` | Structured data `Product` + `Offer` từ dữ liệu | Tối ưu SEO và khai báo giá chính thức cho các máy tìm kiếm theo chuẩn Schema.org |
 
 ## 7. Data
 
@@ -139,7 +139,7 @@ Scenario: user đã có gói thì đánh dấu
 
 ## 11. Open questions
 
-| # | Câu hỏi | Chặn gì |
-|---|---|---|
-| 1 | **Giá cuối** — chặn phát hành trang này | [`package-catalog.md`](../00-foundation/package-catalog.md) Q1 |
-| 2 | Có gói dùng thử có thời hạn không, hay chỉ tier miễn phí vĩnh viễn? | Chiến lược conversion |
+| # | Câu hỏi | Chặn phase | Đề xuất chốt | Chủ |
+|---|---|---|---|---|
+| 1 | **Giá cuối** — chặn phát hành trang này | P2 | Giữ mở — giá trị cấu hình constant trong `PACKAGE_CATALOG`; trỏ sang [`package-catalog.md`](../00-foundation/package-catalog.md) Q1 | người quyết |
+| 2 | Có gói dùng thử có thời hạn không, hay chỉ tier miễn phí vĩnh viễn? | P2 | Tier miễn phí vĩnh viễn với quyền lợi giới hạn cho MVP; đánh giá gói dùng thử ở P3 | người quyết |
