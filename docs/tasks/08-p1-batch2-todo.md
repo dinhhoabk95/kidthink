@@ -303,16 +303,16 @@ Lô đụng `play_sessions` và `play_events`. **Mọi cột phát sinh phải s
 
 173 dòng · 10 rule · 2 câu hỏi · 3 cảnh báo.
 
-- [ ] Đọc hết file
-- [ ] Điền "vì sao" cho `BR-CSM-02`, `BR-CSM-03`, `BR-CSM-06`
-- [ ] Đối chiếu với [`child-data-compliance.md`](../specs/00-foundation/child-data-compliance.md):
+- [x] Đọc hết file
+- [x] Điền "vì sao" cho `BR-CSM-02`, `BR-CSM-03`, `BR-CSM-06`
+- [x] Đối chiếu với [`child-data-compliance.md`](../specs/00-foundation/child-data-compliance.md):
       bản đồng ý phải trỏ tới một version chính sách cụ thể
-- [ ] Chuyển bảng mục 11 sang 5 cột
-- [ ] Q1 (diff chính sách sinh tự động hay soạn tay) — **chặn P1, chốt**
-- [ ] Q2 (version chính sách đổi bao lâu một lần, ai quyết) — để mở, `Chủ`: pháp lý
-- [ ] Checklist review 15 mục
-- [ ] `status: approved`, `reviewed` mới, cảnh báo giảm **3**
-- [ ] Commit `feat(specs): T8 bước 14 — approve consent-management`
+- [x] Chuyển bảng mục 11 sang 5 cột
+- [x] Q1 (diff chính sách sinh tự động hay soạn tay) — **chặn P1, chốt**
+- [x] Q2 (version chính sách đổi bao lâu một lần, ai quyết) — để mở, `Chủ`: pháp lý
+- [x] Checklist review 15 mục
+- [x] `status: approved`, `reviewed: 2026-08-08`, cảnh báo giảm **3**
+- [x] Commit `feat(specs): T8 bước 14 — approve consent-management`
 
 ### Bước 15 — [`child-profile-crud.md`](../specs/03-account/child-profile-crud.md)
 

@@ -2,10 +2,10 @@
 spec: CONSENT-MANAGEMENT
 title: Quản lý đồng ý
 area: account
-status: draft
+status: approved
 mvp: true
 phase: P1
-reviewed: 2026-08-04
+reviewed: 2026-08-08
 owns:
   - Luồng xem, cập nhật, rút đồng ý
   - Xử lý khi chính sách đổi version
@@ -53,11 +53,11 @@ User (người lớn). Cấm Trẻ không cho đồng ý.
 | ID | Rule | Vì sao |
 |---|---|---|
 | `BR-CSM-01` | `consent_logs` **INSERT-only**. Rút = **thêm hàng** | `BR-CDC-07` — sửa hàng cũ làm mất bằng chứng đã từng đồng ý |
-| `BR-CSM-02` | Đồng ý **tường minh**, không tick sẵn, không suy từ hành vi | |
-| `BR-CSM-03` | Chính sách đổi version → hỏi lại, Cấm — **NEVER coi là đồng ý ngầm** | |
+| `BR-CSM-02` | Đồng ý **tường minh**, không tick sẵn, không suy từ hành vi | Tuân thủ Nghị định 13/2023/NĐ-CP về sự đồng ý tự nguyện của chủ thể dữ liệu |
+| `BR-CSM-03` | Chính sách đổi version → hỏi lại, Cấm — **NEVER coi là đồng ý ngầm** | Bảo vệ quyền lợi phụ huynh và đảm bảo tính minh bạch khi điều khoản thay đổi |
 | `BR-CSM-04` | Version mới chặn **tạo hồ sơ mới**, không chặn truy cập dữ liệu đã có | Khoá dữ liệu của người dùng để ép đồng ý là ép buộc |
 | `BR-CSM-05` | Trang hiện **thay đổi so với version trước**, không chỉ toàn văn | Không ai đọc lại 10 trang để tìm đoạn đổi |
-| `BR-CSM-06` | Rút đồng ý nêu **hậu quả cụ thể** trước khi xác nhận | |
+| `BR-CSM-06` | Rút đồng ý nêu **hậu quả cụ thể** trước khi xác nhận | Đảm bảo người dùng hiểu rõ phạm vi ảnh hưởng trước khi thực hiện hành động không đảo ngược |
 | `BR-CSM-07` | Mỗi hàng ghi `policy_version`, IP, user agent, thời điểm | Bằng chứng |
 | `BR-CSM-08` | Rút `child_data` **không xoá ngay** — archive rồi xoá sau 30 ngày | Cho phép đổi ý |
 
@@ -166,7 +166,8 @@ Scenario: BR-CSM-02 — không tick sẵn
 
 ## 11. Open questions
 
-| # | Câu hỏi | Chặn gì |
-|---|---|---|
-| 1 | Diff chính sách sinh tự động hay soạn tay tóm tắt thay đổi? Tự động dễ khó đọc | P1 |
-| 2 | Version chính sách đổi bao lâu một lần và ai quyết định? | Pháp lý |
+| # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
+|---|---|---|---|---|
+| 1 | Diff chính sách sinh tự động hay soạn tay tóm tắt thay đổi? | Trải nghiệm đồng ý | P1 | Chốt: Soạn tay tóm tắt thay đổi (`summary_vi`) cho phụ huynh; diff toàn văn ở chế độ xem chi tiết |
+| 2 | Version chính sách đổi bao lâu một lần và ai quyết định? | Quy trình vận hành | P1 | Chuyên gia pháp lý / Ban điều hành |
+
