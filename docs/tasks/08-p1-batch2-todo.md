@@ -166,18 +166,18 @@ Lô đụng `play_sessions` và `play_events`. **Mọi cột phát sinh phải s
 
 193 dòng · 9 rule · 2 câu hỏi · 1 cảnh báo.
 
-- [ ] Đọc hết file
-- [ ] Điền "vì sao" cho `BR-ING-04`
-- [ ] Đối chiếu tính idempotent với Cổng ra P1 ở [`SPEC.md`](../SPEC.md) mục 13: "ghi đủ event,
+- [x] Đọc hết file
+- [x] Điền "vì sao" cho `BR-ING-04`
+- [x] Đối chiếu tính idempotent với Cổng ra P1 ở [`SPEC.md`](../SPEC.md) mục 13: "ghi đủ event,
       idempotent khi gửi trùng, không complete được hai lần"
-- [ ] Đối chiếu mã sự kiện với [`event-catalog.md`](../specs/00-foundation/event-catalog.md)
-- [ ] Chuyển bảng mục 11 sang 5 cột
-- [ ] Q1 (khoảng trống `seq` có cần cảnh báo không) — **chặn P1, chốt**; nếu có cảnh báo thì phải
+- [x] Đối chiếu mã sự kiện với [`event-catalog.md`](../specs/00-foundation/event-catalog.md)
+- [x] Chuyển bảng mục 11 sang 5 cột
+- [x] Q1 (khoảng trống `seq` có cần cảnh báo không) — **chặn P1, chốt**; nếu có cảnh báo thì phải
       khớp [`monitoring-and-alerting.md`](../specs/01-platform/monitoring-and-alerting.md)
-- [ ] Q2 (có nén payload event không) — **chặn P1, chốt**
-- [ ] Checklist review 15 mục
-- [ ] `status: approved`, `reviewed` mới, cảnh báo giảm **1**
-- [ ] Commit `feat(specs): T8 bước 6 — approve play-event-ingestion`
+- [x] Q2 (có nén payload event không) — **chặn P1, chốt**
+- [x] Checklist review 15 mục
+- [x] `status: approved`, `reviewed: 2026-08-08`, cảnh báo giảm **1**
+- [x] Commit `feat(specs): T8 bước 6 — approve play-event-ingestion`
 
 ### Bước 7 — [`scoring-and-result.md`](../specs/04-play/scoring-and-result.md)
 

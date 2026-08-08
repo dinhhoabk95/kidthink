@@ -2,10 +2,10 @@
 spec: PLAY-EVENT-INGESTION
 title: Nạp sự kiện chơi
 area: play
-status: draft
+status: approved
 mvp: true
 phase: P1
-reviewed: 2026-08-04
+reviewed: 2026-08-08
 owns:
   - Giao thức gửi lô event
   - Quy tắc idempotency và thứ tự
@@ -64,7 +64,7 @@ không làm chậm gameplay.
 | `BR-ING-01` | Idempotent theo `(session_uuid, seq)`, ép ở **PK của DB** | Mạng yếu gửi lại là chuyện thường, không phải ngoại lệ |
 | `BR-ING-02` | Event tới sau khi phiên terminal → **200**, bỏ | Trả lỗi làm client retry mãi |
 | `BR-ING-03` | Tên event lạ → **422 cho cả lô** | Bảo vệ schema; nửa lô ghi nửa lô không là trạng thái khó gỡ |
-| `BR-ING-04` | Ownership phiên kiểm ở **DB**, người khác → **404** | |
+| `BR-ING-04` | Ownership phiên kiểm ở **DB**, người khác → **404** | Bảo mật dữ liệu phiên chơi, tránh nạp event vào phiên của tài khoản khác |
 | `BR-ING-05` | Cấm — **NEVER chặn gameplay** để chờ ingest thành công | Trẻ không được chờ mạng |
 | `BR-ING-06` | Flush khi trang ẩn dùng `sendBeacon` | `fetch` bị huỷ khi trang unload |
 | `BR-ING-07` | Rate limit riêng, rộng | Trẻ chơi liên tục là bình thường |
@@ -186,7 +186,8 @@ Scenario: offline flush đúng thứ tự
 
 ## 11. Open questions
 
-| # | Câu hỏi | Chặn gì |
-|---|---|---|
-| 1 | Khoảng trống `seq` có cần cảnh báo mức nào không? Nhiều khoảng trống nghĩa là mất dữ liệu | P1 |
-| 2 | Có nén payload event không? 64 KB là đủ nhưng trên 4G vẫn tốn | P1 |
+| # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
+|---|---|---|---|---|
+| 1 | Khoảng trống `seq` có cần cảnh báo mức nào không? | Giám sát thất thoát dữ liệu | P1 | Chốt: Cảnh báo WARN ở server log khi gap > 1; không fail request để tránh đứt mạch client |
+| 2 | Có nén payload event không? | Hiệu năng truyền tải | P1 | Chốt: Không nén custom ở P1 (dùng HTTP/2 header compression); hoãn nén custom sang P3 |
+
