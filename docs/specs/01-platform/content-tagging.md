@@ -2,10 +2,10 @@
 spec: CONTENT-TAGGING
 title: Gắn thẻ nội dung ba trục
 area: platform
-status: draft
+status: approved
 mvp: true
 phase: P1
-reviewed: 2026-08-04
+reviewed: 2026-08-08
 owns:
   - Từ vựng ba trục what/thinking/mechanic
   - content_skill_map và weight
@@ -68,9 +68,9 @@ lọc theo một cây.
 | `BR-TAG-02` | Mọi nội dung `published` có ≥1 tag **mỗi trục** | Thiếu một trục là mất một chiều lọc |
 | `BR-TAG-03` | `content_skill_map.weight ∈ [0,1]` — 1.0 mục tiêu chính, 0.3 có chạm tới | Không có nó, một game đếm "dạy" mọi skill nó chạm tới |
 | `BR-TAG-04` | Mỗi nội dung có **đúng một** skill `weight = 1.0` | Hai mục tiêu chính là không có mục tiêu chính |
-| `BR-TAG-05` | Tag do User tạo Cấm — **NEVER** vào catalog công khai | |
+| `BR-TAG-05` | Tag do User tạo Cấm — **NEVER** vào catalog công khai | Tag tự do không qua kiểm duyệt từ vựng — một User đặt tên xúc phạm hay sai chính tả mà lọt vào tìm kiếm công khai thì cả hệ thống thừa hưởng lỗi cá nhân đó |
 | `BR-TAG-06` | AI **đề xuất** tag, người **xác nhận**. Cấm tự gắn | Tag sai làm nội dung không tìm thấy hoặc tìm nhầm |
-| `BR-TAG-07` | `content_tag_map` là FK polymorphic → **bắt buộc** test bắt orphan | |
+| `BR-TAG-07` | `content_tag_map` là FK polymorphic → **bắt buộc** test bắt orphan | [`data-model-overview.md`](data-model-overview.md) `BR-DM-04` — FK đa hình không ép được ở Postgres, nên đây là 1 trong 7 chỗ đóng phải có integration test, không phải khuyến nghị |
 
 ## 7. Data
 
@@ -88,6 +88,12 @@ Trục `mechanic` suy ra từ `game_templates.mechanic` — không nhập tay.
 
 `animal` `fruit` `vegetable` `vehicle` `shape` `family` `school` `weather` `festival`
 `body` `food` `nature` — dùng cho theme và tìm kiếm, không dùng cho sư phạm.
+
+Lưu trong `content_tags` với `axis = 'theme'` — cột `axis` của
+[`schema-content-taxonomy.md`](schema-content-taxonomy.md) §7.2 khai đúng 4 giá trị
+(`what`\|`thinking`\|`mechanic`\|`theme`); đây là chỗ giá trị thứ tư đó được dùng. "Tuỳ chọn"
+nghĩa là `BR-TAG-02` (mỗi nội dung `published` có ≥1 tag mỗi trục) chỉ ép ba trục sư phạm —
+`theme` không nằm trong ràng buộc đó, một level không có theme vẫn publish được.
 
 ### 7.3 Bảng
 
@@ -166,7 +172,7 @@ Scenario: BR-TAG-07 — orphan tag map bị bắt
 
 ## 11. Open questions
 
-| # | Câu hỏi | Chặn gì |
-|---|---|---|
-| 1 | Từ vựng `what` và `thinking` đã đủ phủ 230 skill chưa? Cần đối chiếu | P1 |
-| 2 | `weight` do người đặt hay suy từ mức độ khớp LO? | [`adaptive-engine.md`](adaptive-engine.md) |
+| # | Câu hỏi | Chặn gì | Chủ |
+|---|---|---|---|
+| 1 | Từ vựng `what` và `thinking` đã đủ phủ 230 skill chưa? Cần đối chiếu. **Không chặn approve spec này** — từ vựng là Lớp 1, mở rộng qua PR như mọi hằng số Lớp 1 khác, không phải quyết định kiến trúc | [`content-seed-authoring.md`](content-seed-authoring.md) — lộ ra khi seeder thật cố gắn tag cho 230 skill | hoãn — đo được khi seed |
+| 2 | `weight` do người đặt hay suy từ mức độ khớp LO? | [`adaptive-engine.md`](adaptive-engine.md) | hoãn — P3, engine chưa tồn tại |
