@@ -2,10 +2,10 @@
 spec: MONITORING-AND-ALERTING
 title: Giám sát và cảnh báo
 area: platform
-status: draft
+status: approved
 mvp: true
 phase: P1
-reviewed: 2026-08-04
+reviewed: 2026-08-08
 owns:
   - Danh sách metric và ngưỡng alert
   - Kênh nhận alert
@@ -64,9 +64,9 @@ Alert phải **tới được người**, không chỉ ghi vào log mà không a
 | `BR-MON-02` | Mỗi alert có **runbook** kèm theo | Alert không nói làm gì tiếp thì người trực đoán |
 | `BR-MON-03` | Cấm — **NEVER tắt một alert** để giảm ồn — sửa ngưỡng hoặc sửa nguyên nhân | Alert bị tắt là điểm mù vĩnh viễn |
 | `BR-MON-04` | Có **dead-man switch** — hệ thống giám sát im lặng cũng là alert | Giám sát chết trông giống mọi thứ đều ổn |
-| `BR-MON-05` | Log Cấm — **NEVER chứa PII của trẻ**, mật khẩu, hay token | |
+| `BR-MON-05` | Log Cấm — **NEVER chứa PII của trẻ**, mật khẩu, hay token | Log sống lâu hơn và có nhiều người đọc hơn audit log — dev debug, dịch vụ log tập trung bên thứ ba nếu có. PII lọt vào log là lọt ra ngoài vành đai kiểm soát nhanh nhất trong toàn hệ thống |
 | `BR-MON-06` | Lỗi client được thu về `error_log` với sampling | Lỗi trên tablet của người dùng không thấy được từ server |
-| `BR-MON-07` | Go-live **không được** khi chưa có alert cho §7.2 nhóm P0 | |
+| `BR-MON-07` | Go-live **không được** khi chưa có alert cho §7.2 nhóm P0 | Cùng lý do với `BR-BAK-06` (go-live chặn khi chưa verify restore) — một alert "sẽ cấu hình sau go-live" không bao giờ được cấu hình, vì áp lực sau go-live luôn là tính năng mới, không phải việc đã coi là xong |
 
 ## 7. Data
 
@@ -112,9 +112,13 @@ chi phí LLM tích luỹ.
 
 | Mức | Kênh |
 |---|---|
-| P0 | Kênh trực tiếp tới người (chốt ở §11) + email |
+| P0 | Healthchecks.io (dead-man switch cho job/cron sống hay chết) + Telegram Bot API cho ngưỡng và crash + email (chỉ dự phòng) |
 | P1 | Email + dashboard admin |
 | P2 | Báo cáo tổng hợp hàng tuần |
+
+Kênh P0 chốt ở [`repo-bootstrap.md`](../00-foundation/repo-bootstrap.md) §7.1, dòng "Alert tới
+người": Telegram thay vì email làm kênh chính vì dev VN quen Telegram hơn, tới nhanh hơn.
+File này viết 2026-08-04, trước quyết định đó — bảng trên đã cập nhật khớp.
 
 ### 7.4 Log có cấu trúc
 
@@ -185,8 +189,9 @@ Scenario: alert lặp được gộp
 
 ## 11. Open questions
 
-| # | Câu hỏi | Chặn gì |
-|---|---|---|
-| 1 | **Kênh P0 là gì và ai trực?** Chưa có người trực thì alert P0 không có nghĩa | Go-live |
-| 2 | Dùng Sentry + Grafana hay dịch vụ gộp? Trên t3.small self-host Grafana tốn RAM | Ngân sách |
-| 3 | SLO 99,7% có ràng buộc hợp đồng nào không, hay chỉ mục tiêu nội bộ? | Cam kết |
+| # | Câu hỏi | Chặn gì | Chủ |
+|---|---|---|---|
+| ~~1a~~ | ~~Kênh P0 là gì?~~ **Đóng — trỏ [`repo-bootstrap.md`](../00-foundation/repo-bootstrap.md) §7.1**: Healthchecks.io + Telegram Bot API, email dự phòng. Xem §7.3 đã cập nhật | — | đã đóng |
+| 1b | **Ai trực?** Kênh có rồi nhưng chưa có người nhận nó. `BR-MON-07` chặn go-live khi thiếu alert P0 — một alert gửi vào Telegram không ai đọc cũng là chưa cấu hình xong, dù kỹ thuật đã chạy | Go-live | cần **người** — không tự chốt được |
+| 2 | Sentry SaaS Team tier ($26/mo) hay tự host GlitchTip ngay từ đầu? Trên t3.small self-host Grafana tốn RAM nên không xét Grafana — dùng `@sentry/nuxt` đã chốt ở [`repo-bootstrap.md`](../00-foundation/repo-bootstrap.md) §7.1, chỉ còn SaaS-vs-self-host. **Cùng câu hỏi với** [`repo-bootstrap.md`](../00-foundation/repo-bootstrap.md) §11 Q8 ("hoãn, chặn phase P1") — approve spec này 2026-08-08 làm câu hỏi đó tới hạn, theo luật một outcome một chủ, câu hỏi thuộc về đó, không lặp lại quyết định ở đây | Ngân sách vận hành | [`repo-bootstrap.md`](../00-foundation/repo-bootstrap.md) §11 Q8 |
+| 3 | SLO 99,7% có ràng buộc hợp đồng nào không, hay chỉ mục tiêu nội bộ? | Cam kết thương mại | cần **người** — không phải quyết định kỹ thuật |
