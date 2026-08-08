@@ -343,8 +343,8 @@ admin-dashboard (độc lập)
 
 ### Bước 24 — [`feature-flags.md`](../specs/06-admin/feature-flags.md)
 
-- [ ] Đọc hết 131 dòng; điền "vì sao" cho **1** cảnh báo `C6`
-- [ ] `status: approved`; commit `feat(specs): T9 bước 24 — approve feature-flags`
+- [x] Đọc hết 131 dòng; điền "vì sao" cho **1** cảnh báo `C6`
+- [x] `status: approved`; commit `feat(specs): T9 bước 24 — approve feature-flags`
 
 ### Bước 25 — [`audit-log-viewer.md`](../specs/06-admin/audit-log-viewer.md)
 

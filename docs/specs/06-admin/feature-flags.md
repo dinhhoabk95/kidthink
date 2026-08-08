@@ -2,10 +2,10 @@
 spec: FEATURE-FLAGS-ADMIN
 title: Quản lý cờ tính năng
 area: admin
-status: draft
+status: approved
 mvp: true
 phase: P2
-reviewed: 2026-08-04
+reviewed: 2026-08-08
 owns:
   - Bề mặt bật/tắt cờ trong admin
 depends_on:
@@ -49,7 +49,7 @@ này — và nó chỉ có giá trị nếu thao tác mất dưới 30 giây.
 |---|---|---|
 | `BR-FFA-01` | Đổi cờ **bắt buộc lý do** ≥10 ký tự, ghi audit | `BR-FLG-04` |
 | `BR-FFA-02` | Hiện **ngày hết hạn** và cảnh báo khi quá | Cờ vĩnh viễn là nhánh code chết |
-| `BR-FFA-03` | Chỉ `super_admin` | |
+| `BR-FFA-03` | Chỉ `super_admin` | Giới hạn quyền thao tác hạ tầng cho đúng vai trò quản trị tối cao theo `BR-ADA-02` |
 | `BR-FFA-04` | Danh sách cờ **suy từ code**, không từ DB | DB có thể có cờ mồ côi; code là nguồn sự thật |
 | `BR-FFA-05` | Hiện **mặc định an toàn** cạnh trạng thái hiện tại | Người bấm cần biết fallback là gì |
 | `BR-FFA-06` | Cấm — **NEVER cờ gate ràng buộc tuân thủ** — không hiện cờ nào như vậy | `BR-FLG-06` |
@@ -126,6 +126,6 @@ Scenario: BR-FFA-01 — audit đầy đủ
 
 ## 11. Open questions
 
-| # | Câu hỏi | Chặn gì |
-|---|---|---|
-| 1 | Có cần lịch sử đổi cờ ngay trên màn hình không, hay tra audit là đủ? | P2 |
+| # | Câu hỏi | Chặn phase | Đề xuất chốt | Chủ |
+|---|---|---|---|---|
+| 1 | Có cần lịch sử đổi cờ ngay trên màn hình không, hay tra audit là đủ? | P2 | MVP hiện thông tin lần đổi gần nhất trên thẻ cờ; xem lịch sử đầy đủ qua [`audit-log-viewer.md`](audit-log-viewer.md) | người quyết |
