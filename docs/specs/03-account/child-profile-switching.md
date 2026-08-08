@@ -2,10 +2,10 @@
 spec: CHILD-PROFILE-SWITCHING
 title: Chọn và đổi hồ sơ trẻ
 area: account
-status: draft
+status: approved
 mvp: true
 phase: P1
-reviewed: 2026-08-04
+reviewed: 2026-08-08
 owns:
   - Cơ chế đặt và đổi active_child_id
 depends_on:
@@ -57,9 +57,9 @@ thì không tách ra được. Vì vậy đổi trẻ đi qua Parent Gate.
 |---|---|---|
 | `BR-CPS-01` | Đổi trẻ **phải qua Parent Gate** | Trẻ đổi sang hồ sơ anh chị làm hỏng dữ liệu cả hai |
 | `BR-CPS-02` | Ownership kiểm ở **DB mỗi request**, không tin cookie | `BR-ACT-07` |
-| `BR-CPS-03` | Cookie **không phải nguồn quyền** — chỉ là ngữ cảnh | |
+| `BR-CPS-03` | Cookie **không phải nguồn quyền** — chỉ là ngữ cảnh | Đảm bảo an toàn dữ liệu, tránh việc client thay đổi cookie để truy cập hồ sơ khác |
 | `BR-CPS-04` | Đổi trẻ giữa phiên → phiên cũ `abandoned` | Dữ liệu phiên phải thuộc đúng một trẻ |
-| `BR-CPS-05` | Trẻ `archived` không chọn được | |
+| `BR-CPS-05` | Trẻ `archived` không chọn được | Đảm bảo dữ liệu của hồ sơ đã dọn dẹp không bị ghi đè hay xáo trộn |
 | `BR-CPS-06` | Bề mặt trẻ hiện **avatar + tên** của trẻ đang hoạt động | Xác nhận trực quan đang chơi với hồ sơ nào |
 | `BR-CPS-07` | Lần đầu **phải chọn tường minh**, kể cả khi chỉ có một trẻ | Tạo thói quen đúng |
 
@@ -137,6 +137,7 @@ Scenario: BR-CPS-07 — chọn tường minh lần đầu
 
 ## 11. Open questions
 
-| # | Câu hỏi | Chặn gì |
-|---|---|---|
-| 1 | Có nên có PIN riêng cho từng trẻ (trẻ lớn tự chọn) không? | P4 |
+| # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
+|---|---|---|---|---|
+| 1 | Có nên có PIN riêng cho từng trẻ (trẻ lớn tự chọn) không? | Bảo mật hồ sơ | P4 | Product / Profile Security |
+

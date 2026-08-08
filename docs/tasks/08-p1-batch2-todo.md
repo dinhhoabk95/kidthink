@@ -352,15 +352,15 @@ Lô đụng `play_sessions` và `play_events`. **Mọi cột phát sinh phải s
 
 143 dòng · 8 rule · 1 câu hỏi · 2 cảnh báo. Cần cả bước 15 và bước 10 xong.
 
-- [ ] Đọc hết file
-- [ ] Điền "vì sao" cho `BR-CPS-03`, `BR-CPS-05`
-- [ ] Đối chiếu ranh giới với [`parent-gate.md`](../specs/04-play/parent-gate.md): đổi hồ sơ trẻ
+- [x] Đọc hết file
+- [x] Điền "vì sao" cho `BR-CPS-03`, `BR-CPS-05`
+- [x] Đối chiếu ranh giới với [`parent-gate.md`](../specs/04-play/parent-gate.md): đổi hồ sơ trẻ
       có phải qua cổng phụ huynh không, và ai sở hữu rule đó
-- [ ] Chuyển bảng mục 11 sang 5 cột
-- [ ] Q1 (PIN riêng cho từng trẻ) — để mở, `Chặn phase: P4`
-- [ ] Checklist review 15 mục
-- [ ] `status: approved`, `reviewed` mới, cảnh báo giảm **2**
-- [ ] Commit `feat(specs): T8 bước 17 — approve child-profile-switching`
+- [x] Chuyển bảng mục 11 sang 5 cột
+- [x] Q1 (PIN riêng cho từng trẻ) — để mở, `Chặn phase: P4`
+- [x] Checklist review 15 mục
+- [x] `status: approved`, `reviewed: 2026-08-08`, cảnh báo giảm **2**
+- [x] Commit `feat(specs): T8 bước 17 — approve child-profile-switching`
 
 ### Bước 18 — [`basic-report.md`](../specs/03-account/basic-report.md)
 
