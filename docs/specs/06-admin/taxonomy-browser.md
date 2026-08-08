@@ -2,10 +2,10 @@
 spec: TAXONOMY-BROWSER
 title: Duyệt cây taxonomy
 area: admin
-status: draft
+status: approved
 mvp: true
 phase: P1
-reviewed: 2026-08-04
+reviewed: 2026-08-08
 owns:
   - Bề mặt duyệt taxonomy trong admin
   - Chỉ báo khoảng trống nội dung
@@ -58,7 +58,7 @@ Taxonomy là **Lớp 1**: màn hình này **chỉ đọc**.
 | `BR-TXB-03` | Skill **0 nội dung published** đánh dấu nổi bật | Khoảng trống nội dung là việc phải làm, không phải thông tin phụ |
 | `BR-TXB-04` | Có nút **"soạn level cho skill này"** dẫn thẳng sang studio với skill đã chọn sẵn | Giảm ma sát từ phát hiện khoảng trống tới hành động |
 | `BR-TXB-05` | Hiện đồ thị prerequisite của skill | Người soạn cần biết skill này đứng sau cái gì |
-| `BR-TXB-06` | Cache 5 phút; số đếm nội dung có `as_of` | |
+| `BR-TXB-06` | Cache 5 phút; số đếm nội dung có `as_of` | Đếm trực tiếp trên toàn cây mỗi lần mở màn hình là quét hết `content_skill_map` cho 230 skill mỗi request. `as_of` cho người soạn biết số đang xem cũ tới đâu, thay vì ngầm định nó luôn tức thời |
 
 ## 7. Data
 
@@ -150,6 +150,6 @@ Scenario: cả hai role đọc được
 
 ## 11. Open questions
 
-| # | Câu hỏi | Chặn gì |
-|---|---|---|
-| 1 | Ngưỡng "đủ" là 3 level mỗi skill — với 230 skill thì cần 690 level, gấp 5,75 lần mục tiêu MVP (120). Ngưỡng này có thực tế không? | Kế hoạch nội dung |
+| # | Câu hỏi | Chặn gì | Chủ |
+|---|---|---|---|
+| 1 | Ngưỡng "đủ" ở §7.3 là **3 level mỗi skill** — với 230 skill thì cần 690 level để mọi skill đạt "đủ", nhưng mục tiêu MVP đã cam kết ở [`mvp-scope.md`](../00-foundation/mvp-scope.md) §7 chỉ là **≥120 game level published** (mốc tối thiểu 80). Ngưỡng "đủ" ở đây gấp 5,75 lần con số MVP thật sự nhắm tới — nghĩa là ở MVP, phần lớn cây sẽ hiện "mỏng", không phải vì thiếu mà vì ngưỡng đặt cho quy mô sau MVP. **Không tự hạ ngưỡng** — đây là tín hiệu cho người soạn, hạ ngưỡng để cây "xanh" giả tạo đánh mất đúng mục đích tồn tại của màn hình (`BR-TXB-03`) | Kế hoạch nội dung — cùng câu hỏi gốc với [`mvp-scope.md`](../00-foundation/mvp-scope.md) §11 Q1 (`D-W`, "ai biên soạn ≥690 LO, ≥120 game level") | cần chủ có tên, xem `D-W` |
