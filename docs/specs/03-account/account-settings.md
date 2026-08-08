@@ -198,6 +198,6 @@ Scenario: BR-ACS-08 — không có cài đặt của trẻ
 
 ## 11. Open questions
 
-| # | Câu hỏi | Chặn gì |
-|---|---|---|
-| 1 | ~~MFA cho User có vào MVP không?~~ **Chốt 2026-08-05: tuỳ chọn, P2, ngoài MVP** — [`mfa.md`](mfa.md) | — |
+| # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
+|---|---|---|---|---|
+| 1 | ~~MFA cho User có vào MVP không?~~ **Chốt 2026-08-05: tuỳ chọn, P2, ngoài MVP** — [`mfa.md`](mfa.md) | — | P2 | D-V |
