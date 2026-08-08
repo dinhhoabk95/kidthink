@@ -11,7 +11,6 @@ owns:
   - Quy tắc version hoá chính sách
 depends_on:
   - CHILD-DATA-COMPLIANCE
-  - CONSENT-MANAGEMENT
 ---
 
 # Trang pháp lý và chính sách

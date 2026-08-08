@@ -11,7 +11,6 @@ owns:
   - Quy tắc hiển thị lỗi preview
 depends_on:
   - GAME-ENGINE-RUNTIME
-  - GAME-LEVEL-STUDIO
 ---
 
 # Xem trước bằng engine thật
@@ -22,6 +21,11 @@ Manager phải thấy **chính xác thứ trẻ sẽ thấy**, trước khi publ
 
 Preview xấp xỉ để lọt level không chơi được, và người phát hiện sẽ là một đứa trẻ 4 tuổi
 ngồi trước màn hình không hiểu vì sao không bấm được.
+
+Cơ chế preview đứng độc lập, chỉ cần engine thật ở
+[`game-engine-runtime.md`](../01-platform/game-engine-runtime.md) để chạy.
+[`game-level-studio.md`](game-level-studio.md) **nhúng** nó và khai `depends_on` về đây;
+không có chiều ngược lại (`D-AN`).
 
 ## 2. Actors
 

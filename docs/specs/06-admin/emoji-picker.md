@@ -10,7 +10,6 @@ owns:
   - Giao diện chọn emoji trong studio
 depends_on:
   - EMOJI-REGISTRY
-  - SCHEMA-DRIVEN-FORM
 ---
 
 # Bộ chọn emoji

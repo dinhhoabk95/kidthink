@@ -9,7 +9,6 @@ reviewed: 2026-08-04
 owns:
   - Nội dung FAQ và trang hướng dẫn
 depends_on:
-  - SEO-CONTENT-ADMIN
   - SEO-AND-STRUCTURED-DATA
 ---
 

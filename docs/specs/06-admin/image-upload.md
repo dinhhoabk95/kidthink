@@ -11,7 +11,6 @@ owns:
   - Ràng buộc phía client
 depends_on:
   - IMAGE-STORAGE
-  - SCHEMA-DRIVEN-FORM
 ---
 
 # Tải và cắt ảnh trong studio
@@ -23,6 +22,11 @@ của chính nó ([`SPEC.md`](../../SPEC.md) D4).
 
 Crop ở client là quyết định **biên tập**; resize ở server là ràng buộc **kỹ thuật**. Hai việc
 khác nhau và không thay thế nhau.
+
+Màn hình này là một **widget** mà [`schema-driven-form.md`](schema-driven-form.md) sinh ra
+cho field ảnh; spec đó khai `depends_on` về đây. Không có chiều ngược lại — upload đứng độc
+lập, chỉ cần kho ảnh ở [`image-storage.md`](../01-platform/image-storage.md) để tồn tại
+(`D-AN`).
 
 ## 2. Actors
 

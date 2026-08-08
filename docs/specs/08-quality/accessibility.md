@@ -8,8 +8,7 @@ phase: P1
 reviewed: 2026-08-04
 owns:
   - Ngưỡng a11y theo bề mặt
-depends_on:
-  - DESIGN-SYSTEM-CONTRACT
+depends_on: []
 ---
 
 # Tiêu chuẩn tiếp cận
@@ -21,6 +20,11 @@ trẻ — vì trẻ 3–6 chưa đọc, vận động tinh chưa đủ, và khô
 
 Nhiều ràng buộc a11y ở đây trùng với ràng buộc "dùng được cho trẻ". Đó không phải trùng
 lặp — nó là cùng một điều: thiết kế cho người có năng lực khác nhau.
+
+Spec này sở hữu **ngưỡng**; token và kit component hiện thực hoá chúng ở
+[`design-system-contract.md`](design-system-contract.md), spec đó khai `depends_on` về đây.
+Không có chiều ngược lại: ngưỡng tồn tại trước và độc lập với bộ token nào được chọn để đạt
+nó (`D-AH`).
 
 ## 2. Actors
 

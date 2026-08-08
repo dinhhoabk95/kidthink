@@ -12,7 +12,6 @@ owns:
 depends_on:
   - TELEMETRY-PIPELINE
   - ENTITLEMENT-MODEL
-  - PROGRESS-AND-MASTERY
 ---
 
 # Báo cáo cơ bản
@@ -23,6 +22,12 @@ Trả lời câu hỏi của phụ huynh: **"con tôi đã chơi gì và có ti�
 
 Đây là thứ tạo ra quyết định trả tiền. Một phụ huynh thấy giá trị qua báo cáo sẽ nâng gói;
 một phụ huynh không thấy gì sẽ rời đi sau hai tuần.
+
+Báo cáo cơ bản đọc dữ liệu tổng hợp từ
+[`telemetry-pipeline.md`](../01-platform/telemetry-pipeline.md), **không** đọc
+`mastery_state`. Bản đồ tiến bộ và huy hiệu là bề mặt khác, mở rộng ở P3 qua
+[`progress-and-mastery.md`](../04-play/progress-and-mastery.md) — spec này cố ý dừng trước
+ranh giới đó (`D-AK`).
 
 ## 2. Actors
 

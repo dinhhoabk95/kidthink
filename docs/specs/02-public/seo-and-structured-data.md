@@ -9,9 +9,7 @@ reviewed: 2026-08-04
 owns:
   - Meta tag, sitemap, robots, canonical
   - Schema JSON-LD toàn site
-depends_on:
-  - GAME-DETAIL-PUBLIC
-  - PROGRAM-SHOWCASE
+depends_on: []
 ---
 
 # SEO kỹ thuật và dữ liệu có cấu trúc
@@ -22,6 +20,12 @@ Tìm kiếm tự nhiên là kênh acquisition rẻ nhất cho sản phẩm này 
 duy cho bé 4 tuổi", không tìm tên thương hiệu.
 
 Spec này sở hữu **hạ tầng SEO**; nội dung trang ở [`seo-content-admin.md`](../06-admin/seo-content-admin.md).
+
+Đây là contract **cắt ngang**: trang công khai tuân theo nó, nó không phụ thuộc trang nào.
+Ba trang tiêu thụ contract này là [`game-catalog-public.md`](game-catalog-public.md),
+[`game-detail-public.md`](game-detail-public.md) và
+[`program-showcase.md`](program-showcase.md) — cả ba khai `depends_on` về đây, không có
+chiều ngược lại (`D-AJ`).
 
 ## 2. Actors
 
