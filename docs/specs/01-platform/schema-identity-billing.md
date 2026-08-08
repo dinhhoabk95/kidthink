@@ -206,7 +206,7 @@ bảng này vào module `ops`, sở hữu cột chuyển sang schema-*; [`conten
 |---|---|---|
 | `id` | bigserial | PK |
 | `entity_type` | enum | Loại nội dung Lớp 2 được review (`game_level`\|`lesson`\|`activity`\|`worksheet`\|`curriculum`) |
-| `entity_id` | bigint | FK hàng version cụ thể của nội dung đó — polymorphic, `(entity_type, entity_id)` là 1 trong 7 FK polymorphic đóng ở [`data-model-overview.md`](data-model-overview.md) §7.2 (`BR-DM-13` — danh sách polymorphic đóng, D-AE) |
+| `entity_id` | bigint | FK hàng version cụ thể của nội dung đó — polymorphic, `(entity_type, entity_id)` là 1 trong 9 FK polymorphic đóng ở [`data-model-overview.md`](data-model-overview.md) §7.2 (`BR-DM-13` — danh sách polymorphic đóng, D-AE; số chỗ 7→9 ở `D-AQ`) |
 | `content_version` | int | Snapshot version tại thời điểm review — cột thông tin, không phải FK riêng (đã ngầm định trong `entity_id`) |
 | `from_status` `to_status` | enum | Theo [`content-lifecycle.md`](../00-foundation/content-lifecycle.md) §7.1 — 6 giá trị |
 | `actor_manager_id` | bigint | FK `managers(id)` |

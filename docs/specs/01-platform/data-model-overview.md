@@ -115,8 +115,25 @@ thứ chưa có contract.
 | `content_images` | `(owner_type, owner_id)` | orphan owner |
 | `content_review_log` | `(entity_type, entity_id)` | orphan target — `entity_id`, khớp quy tắc `BR-DM-13` (quyết định D-AE) |
 | `active_sessions` · `mfa_settings` · `mfa_recovery_codes` · `verification_tokens` | `(account_type, account_id)` | orphan account |
+| `activities.ref_id` | `(ref_type, ref_id)` — trỏ `game_levels.entity_id` hoặc `worksheets.entity_id` tuỳ `ref_type` | orphan target |
+| `curriculum_items.entity_id` | `(entity_type, entity_id)` — trỏ `lessons.entity_id` hoặc `game_levels.entity_id` tuỳ `entity_type` | orphan target |
 
-Bảy chỗ. Mỗi chỗ **bắt buộc** một integration test bắt orphan — đây không phải khuyến nghị.
+Chín chỗ (`D-AQ`, 2026-08-08 — thêm hai dòng cuối). Mỗi chỗ **bắt buộc** một integration
+test bắt orphan — đây không phải khuyến nghị. Hai dòng mới phát hiện khi soạn kế hoạch
+migration đầu tiên: [`schema-content-taxonomy.md`](schema-content-taxonomy.md) §7.5 và §7.6
+mô tả `activities.ref_id` và `curriculum_items.entity_id` là polymorphic thật, nhưng danh
+sách này — vốn tự nhận là "đóng" — không có chúng. `§10` Boundaries của chính file này ghi
+"Ask first: Thêm một FK polymorphic thứ tám", tức thêm là đổi contract, không phải chi tiết
+triển khai tự quyết — sửa spec trước, đúng nguyên tắc [`roadmap.md`](../roadmap.md).
+
+Lưu ý đếm: dòng "`active_sessions` · `mfa_settings` · `mfa_recovery_codes` ·
+`verification_tokens`" gộp bốn bảng vào một dòng nhưng bốn bảng đó là bốn `(account_type,
+account_id)` độc lập trên bốn bảng khác nhau. Đếm theo **tên bảng** thay vì theo **dòng**,
+tổng trước khi thêm hai dòng mới đã là tám, không phải bảy như văn xuôi cũ ghi — sai số này
+có từ bản viết gốc (2026-08-04), không liên quan tới D-AQ. Không sửa ở đây vì cần quyết định
+"chỗ" đếm theo bảng hay theo mẫu dùng chung trước khi đổi con số — để lại cho người review
+Task #7 xác nhận trước khi viết integration test, đừng lặng lẽ đếm theo cách khác nhau giữa
+văn xuôi và test thật.
 
 ### 7.3 Ràng buộc chờ — quyết định từ open question đã đóng
 
@@ -205,7 +222,7 @@ Scenario: BR-DM-12 — trần phân trang ép ở server
 
 **Ask first**
 - Thêm/xoá bảng, đổi kiểu cột, đổi PK.
-- Thêm một FK polymorphic thứ tám.
+- Thêm một FK polymorphic thứ mười (chín chỗ hiện tại đã là con số chốt, xem `D-AQ`).
 - Tạo bảng cho tính năng chưa vào scope.
 
 **Never**
