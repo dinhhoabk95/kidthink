@@ -2,10 +2,10 @@
 spec: CURRICULUM-MODEL
 title: Mô hình chương trình — ràng buộc sư phạm
 area: content
-status: draft
+status: approved
 mvp: true
 phase: P3
-reviewed: 2026-08-04
+reviewed: 2026-08-08
 owns:
   - Ràng buộc sư phạm khi dựng chương trình
 depends_on:
@@ -45,12 +45,12 @@ Không có.
 | `BR-CRM-01` | Skill xuất hiện **sau** mọi prerequisite của nó trong lộ trình | Dạy so sánh trước khi dạy đếm là sai thứ tự |
 | `BR-CRM-02` | Mỗi tuần chạm **2–4 competency**, không 1, không cả 6 | Một competency mỗi tuần quá hẹp; cả sáu quá loãng |
 | `BR-CRM-03` | Skill mới xuất hiện phải được **ôn lại** trong 2–3 tuần sau | Học một lần rồi bỏ là quên |
-| `BR-CRM-04` | Độ khó trung bình **tăng dần**, cho phép chững, không giảm mạnh | |
-| `BR-CRM-05` | Mỗi tuần có **≥1 hoạt động ngoài màn hình** | |
+| `BR-CRM-04` | Độ khó trung bình **tăng dần**, cho phép chững, không giảm mạnh | Tạo độ dốc học tập tự nhiên giúp trẻ tự tin tiến bộ mà không bị hẫng hoặc nản lòng |
+| `BR-CRM-05` | Mỗi tuần có **≥1 hoạt động ngoài màn hình** | Cân bằng giữa tương tác màn hình và vận động thực tế theo định hướng giáo dục toàn diện |
 | `BR-CRM-06` | Tuần đầu **dễ có chủ ý** | Tuần đầu quyết định trẻ có quay lại không |
 | `BR-CRM-07` | Cấm — **NEVER quá 40%** item thuộc một competency trên toàn chương trình | Chương trình lệch là lỗi sư phạm khó thấy bằng mắt |
-| `BR-CRM-08` | Chương trình theo tuổi phải phủ **cả 6 competency** | |
-| `BR-CRM-09` | Cấm — **NEVER lặp cùng một item trong 4 tuần liên tiếp** | |
+| `BR-CRM-08` | Chương trình theo tuổi phải phủ **cả 6 competency** | Phát triển đồng đều toàn bộ 6 năng lực tư duy toán học cốt lõi cho trẻ |
+| `BR-CRM-09` | Cấm — **NEVER lặp cùng một item trong 4 tuần liên tiếp** | Duy trì sự mới mẻ và hứng thú học tập cho trẻ mầm non |
 | `BR-CRM-10` | Nêu rõ **mục tiêu của mỗi tuần** bằng một câu cho người lớn | Phụ huynh cần biết tuần này học gì |
 
 ## 7. Data
@@ -141,7 +141,7 @@ Scenario: BR-CRM-10 — mỗi tuần có mục tiêu
 
 ## 11. Open questions
 
-| # | Câu hỏi | Chặn gì |
-|---|---|---|
-| 1 | 42 tuần cần ~126 buổi. Với ≥60 lesson thì mỗi lesson dùng lại 2 lần — có chấp nhận được không? | P3 phạm vi |
-| 2 | Chu kỳ ôn lại 2–3 tuần dựa trên nguồn nào? Đường cong quên có tài liệu nhưng chưa đối chiếu cho tuổi 3–6 | P3 |
+| # | Câu hỏi | Chặn phase | Đề xuất chốt | Chủ |
+|---|---|---|---|---|
+| 1 | 42 tuần cần ~126 buổi. Với ≥60 lesson thì mỗi lesson dùng lại 2 lần — có chấp nhận được không? | P3 | Chấp nhận tái sử dụng lesson với biến thể hoặc bối cảnh luyện tập khác nhau theo thiết kế `BR-ACM-06` | người quyết |
+| 2 | Chu kỳ ôn lại 2–3 tuần dựa trên nguồn nào? Đường cong quên có tài liệu nhưng chưa đối chiếu cho tuổi 3–6 | P3 | Giữ quy tắc ôn lại 2-3 tuần cho MVP; đo lường tỉ lệ hoàn thành thực tế để tinh chỉnh ở P4 | Nội dung |

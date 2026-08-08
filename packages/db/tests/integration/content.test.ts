@@ -55,6 +55,10 @@ describe("Content Schema Integration Tests", () => {
     const actCode = `ACT-${(Math.floor(Math.random() * 9000) + 1000).toString()}`;
     const wsCode = `WS-${(Math.floor(Math.random() * 9000) + 1000).toString()}`;
 
+    await db.delete(lessons).where(eq(lessons.code, lesCode));
+    await db.delete(activities).where(eq(activities.code, actCode));
+    await db.delete(worksheets).where(eq(worksheets.code, wsCode));
+
     // 1. Published lesson
     const [les] = await db
       .insert(lessons)

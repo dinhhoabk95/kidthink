@@ -64,6 +64,8 @@ describe("Curriculum Schema Integration Tests", () => {
     const glCode = `GL-C1-NUM-DRAG-${seq}`;
     const lineageAnchorEntityId = Math.floor(Math.random() * 900_000) + 100_000;
 
+    await db.delete(gameLevels).where(eq(gameLevels.code, glCode));
+
     const [glV1] = await db
       .insert(gameLevels)
       .values({

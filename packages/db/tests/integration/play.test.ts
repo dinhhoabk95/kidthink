@@ -61,20 +61,29 @@ describe("Play Schema Integration Tests", () => {
       .returning();
 
     // 2. Create Game Template & Level
-    const gtCode = `GT-${(Math.floor(Math.random() * 899) + 100).toString()}`;
-    await db.delete(gameTemplates).where(eq(gameTemplates.code, gtCode));
-    const [gt] = await db
+    const gtCode = `GT-${Math.floor(Math.random() * 899 + 100)}`;
+    let [gt] = await db
       .insert(gameTemplates)
       .values({
         code: gtCode,
         nameVi: "Template Play Test",
         mechanic: "drag_drop",
       })
+      .onConflictDoNothing()
       .returning();
 
-    const glCode = `GL-C1-NUM-DRAG-${(Math.floor(Math.random() * 9000) + 1000).toString()}`;
-    await db.delete(gameLevels).where(eq(gameLevels.code, glCode));
-    const [gl] = await db
+    if (!gt) {
+      const [existingGt] = await db
+        .select()
+        .from(gameTemplates)
+        .where(eq(gameTemplates.code, gtCode));
+      if (existingGt) {
+        gt = existingGt;
+      }
+    }
+
+    const glCode = `GL-C1-NUM-DRAG-${Math.floor(Math.random() * 8999 + 1000)}`;
+    let [gl] = await db
       .insert(gameLevels)
       .values({
         entityId: Math.floor(Math.random() * 900_000) + 100_000,
@@ -87,7 +96,18 @@ describe("Play Schema Integration Tests", () => {
         accessTier: "free",
         status: "published",
       })
+      .onConflictDoNothing()
       .returning();
+
+    if (!gl) {
+      const [existingGl] = await db
+        .select()
+        .from(gameLevels)
+        .where(eq(gameLevels.code, glCode));
+      if (existingGl) {
+        gl = existingGl;
+      }
+    }
 
     // 3. Create Play Session in_progress
     const [ps] = await db

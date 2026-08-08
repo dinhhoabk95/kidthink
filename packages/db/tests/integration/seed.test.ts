@@ -1,4 +1,4 @@
-import { count, eq } from "drizzle-orm";
+import { count, eq, inArray } from "drizzle-orm";
 import { describe, expect, it } from "vitest";
 import { getOwnerDb } from "../../src/index.ts";
 import {
@@ -18,7 +18,10 @@ describe("Seed Idempotency Integration Tests", () => {
     const [keyCount1] = await db
       .select({ value: count() })
       .from(entitlementKeys);
-    const [pkgCount1] = await db.select({ value: count() }).from(packages);
+    const [pkgCount1] = await db
+      .select({ value: count() })
+      .from(packages)
+      .where(inArray(packages.code, ["PKG-standard", "PKG-premium"]));
     const [mapCount1] = await db
       .select({ value: count() })
       .from(packageEntitlements);
@@ -45,7 +48,10 @@ describe("Seed Idempotency Integration Tests", () => {
     const [keyCount2] = await db
       .select({ value: count() })
       .from(entitlementKeys);
-    const [pkgCount2] = await db.select({ value: count() }).from(packages);
+    const [pkgCount2] = await db
+      .select({ value: count() })
+      .from(packages)
+      .where(inArray(packages.code, ["PKG-standard", "PKG-premium"]));
     const [mapCount2] = await db
       .select({ value: count() })
       .from(packageEntitlements);

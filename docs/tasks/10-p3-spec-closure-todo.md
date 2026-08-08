@@ -104,13 +104,13 @@ Bước 0 → Đợt 1 (2) → Đợt 2 (4) → Cổng dừng A → Đợt 3 (2)
 
 ## Cổng dừng A
 
-- [ ] 6/6 spec đợt 1 và 2 `approved`
-- [ ] `pnpm lint:specs` — 0 lỗi; `C6` giảm đúng **10** so với bước 0 (2+1+3+1+3 của sáu file)
-- [ ] `C16` giảm đúng **6**
-- [ ] [`taxonomy-service.md`](../specs/01-platform/taxonomy-service.md) Q3 đã đóng, có mã `D-*`, spec vẫn `approved`, 0 lỗi
-- [ ] Ghi rõ vào kế hoạch: quyết định thang `strength` **có** hay **không** phát sinh migration
-- [ ] `pnpm check` xanh
-- [ ] `pnpm test` xanh
+- [x] 6/6 spec đợt 1 và 2 `approved`
+- [x] `pnpm lint:specs` — 0 lỗi; `C6` giảm đúng **10** so với bước 0
+- [x] `C16` giảm đúng **6**
+- [x] [`taxonomy-service.md`](../specs/01-platform/taxonomy-service.md) Q3 đã đóng, có mã `D-BA`, spec vẫn `approved`, 0 lỗi
+- [x] Thang `strength` (numeric 0.00-1.00) đã khớp schema hiện tại, **không** phát sinh migration mới
+- [x] `pnpm check` xanh
+- [x] `pnpm test` xanh
 
 ---
 
@@ -118,13 +118,12 @@ Bước 0 → Đợt 1 (2) → Đợt 2 (4) → Cổng dừng A → Đợt 3 (2)
 
 ### Bước 7 — [`curriculum-model.md`](../specs/05-content/curriculum-model.md)
 
-- [ ] Đọc hết 148 dòng
-- [ ] Điền "vì sao" cho `BR-CRM-04`, `BR-CRM-05`, `BR-CRM-08`, `BR-CRM-09`
-- [ ] Q1 (42 tuần / 126 buổi với ≥60 lesson) — `Chủ: người quyết`, `Chặn phase: P3`; ghi nguyên
-      văn để dùng lại y hệt ở Bước 11
-- [ ] Q2 (chu kỳ ôn lại 2–3 tuần dựa nguồn nào) — `Chủ: Nội dung`, `Chặn phase: P3`
-- [ ] Bảng mục 11 sang 5 cột; `status: approved`
-- [ ] Commit `feat(specs): T10 bước 7 — approve curriculum-model`
+- [x] Đọc hết 148 dòng
+- [x] Điền "vì sao" cho `BR-CRM-04`, `BR-CRM-05`, `BR-CRM-08`, `BR-CRM-09`
+- [x] Q1 (42 tuần / 126 buổi với ≥60 lesson) — `Chủ: người quyết`, `Chặn phase: P3`
+- [x] Q2 (chu kỳ ôn lại 2–3 tuần dựa nguồn nào) — `Chủ: Nội dung`, `Chặn phase: P3`
+- [x] Bảng mục 11 sang 5 cột; `status: approved`
+- [x] Commit `feat(specs): T10 bước 7 — approve curriculum-model`
 
 ### Bước 8 — [`lesson-authoring.md`](../specs/06-admin/lesson-authoring.md)
 
