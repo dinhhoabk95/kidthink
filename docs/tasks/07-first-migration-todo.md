@@ -114,19 +114,32 @@ File: `packages/db/src/schema/billing.ts` — 6 bảng theo
 
 File: `packages/db/src/schema/ops.ts` — theo
 [`schema-identity-billing.md`](../specs/01-platform/schema-identity-billing.md) §7.10/7.10a,
-[`audit-log.md`](../specs/01-platform/audit-log.md) §7.1, [`backup-and-restore.md`](../specs/01-platform/backup-and-restore.md) §7.2
+[`audit-log.md`](../specs/01-platform/audit-log.md) §7.1, [`backup-and-restore.md`](../specs/01-platform/backup-and-restore.md) §7.2,
+[`notification-service.md`](../specs/01-platform/notification-service.md) §7.2
+
+Bốn bảng, không phải ba — `notifications` gia nhập module `ops` ở `D-AP` (Task #6 bước 12b,
+sau khi [`notification-service.md`](../specs/01-platform/notification-service.md) chuyển
+P2→P0). Bỏ sót bảng này thì
+[`email-verification.md`](../specs/03-account/email-verification.md)/[`password-recovery.md`](../specs/03-account/password-recovery.md)
+(P0) không có chỗ ghi log gửi email theo `BR-NOT-04`.
 
 - [ ] `audit_logs` — cột theo [`audit-log.md`](../specs/01-platform/audit-log.md) §7.1, index ba cột theo §7.1
-- [ ] `content_review_log` — polymorphic `(entity_type, entity_id)`, đây là **1 trong 7** chỗ
+- [ ] `content_review_log` — polymorphic `(entity_type, entity_id)`, đây là **1 trong 9** chỗ
       đóng của [`data-model-overview.md`](../specs/01-platform/data-model-overview.md) §7.2
 - [ ] `backup_log` — cột theo [`backup-and-restore.md`](../specs/01-platform/backup-and-restore.md) §7.2
+- [ ] `notifications` — cột theo [`notification-service.md`](../specs/01-platform/notification-service.md) §7.2
+      (`recipient_type`/`recipient_id` polymorphic **nhưng không** nằm trong danh sách đóng 9
+      chỗ của DMO §7.2 — xác nhận lại trước khi bỏ qua test orphan cho nó, đừng tự loại trừ)
 - [ ] `REVOKE UPDATE, DELETE ... FROM kidthink_app` trên `audit_logs` và `content_review_log`
       (`BR-AUD-01`, INSERT-only) — `backup_log` **không** insert-only (job ghi `finished_at`
-      sau khi đã ghi `started_at`, cần UPDATE)
+      sau khi đã ghi `started_at`, cần UPDATE); `notifications` **không** insert-only (worker
+      cập nhật `status`/`dispatched_at`/`error` sau khi gửi)
 - [ ] `pnpm db:generate` → đọc SQL → `pnpm db:migrate`
 - [ ] Integration test:
       - [ ] `BR-AUD-01` — `UPDATE`/`DELETE` trên `audit_logs` bằng role app bị từ chối
-      - [ ] orphan `content_review_log.entity_id` — 1 trong 7 test bắt buộc của `BR-DM-04`
+      - [ ] orphan `content_review_log.entity_id` — 1 trong 9 test bắt buộc của `BR-DM-04`
+      - [ ] `BR-NOT-04` — insert `notifications` trong cùng transaction với sự kiện kích hoạt
+            nó (test tối thiểu: transaction rollback thì cả hai cùng không tồn tại)
 - [ ] `pnpm test` xanh
 - [ ] Commit `feat(db): P0 bước 8.4 — schema ops`
 
@@ -213,16 +226,15 @@ File: `packages/db/src/schema/game.ts` — theo
 
 Xem lý do đầy đủ ở [`07-first-migration-plan.md`](07-first-migration-plan.md) §2a.
 
-- [ ] Đọc lại [`schema-content-taxonomy.md`](../specs/01-platform/schema-content-taxonomy.md) §7.5 (`activities.ref_id`) và §7.6
-      (`curriculum_items.entity_id`) — xác nhận cả hai polymorphic thật, không phải FK đơn
-- [ ] Thêm hai dòng vào bảng "danh sách đóng" ở [`data-model-overview.md`](../specs/01-platform/data-model-overview.md) §7.2:
-      `activities` `(ref_type, ref_id)` và `curriculum_items` `(entity_type, entity_id)`
-- [ ] Sửa "Bảy chỗ" → "Chín chỗ" trong văn xuôi ngay dưới bảng
-- [ ] Ghi quyết định mới vào §11 (hoặc mục quyết định tương ứng), đánh số tiếp theo dãy D- gần
-      nhất trong file
-- [ ] Cập nhật `reviewed` sang ngày làm việc này, giữ `status: approved`
-- [ ] `pnpm lint:specs` 0 lỗi
-- [ ] Commit `fix(specs): T7.8 — DMO §7.2 thêm 2 chỗ polymorphic (activities.ref_id, curriculum_items.entity_id)`
+- [x] **Đã đóng trước khi Task #7 bắt đầu.** Task #6 bước 15 tìm đúng lỗ hổng này khi đối
+      chiếu spec P1 và sửa nó ở đó, sớm hơn kế hoạch — `D-AQ`, commit
+      [`06-p1-spec-closure-todo.md`](06-p1-spec-closure-todo.md) bước 15. Danh sách đóng ở
+      [`data-model-overview.md`](../specs/01-platform/data-model-overview.md) §7.2 đã là
+      **9 chỗ** (thêm `activities.ref_id`, `curriculum_items.entity_id`), `status: approved`,
+      `reviewed: 2026-08-08`
+- [x] Xác nhận không cần làm lại: `pnpm lint:specs` 0 lỗi, danh sách đã có 9 dòng
+- [x] Bỏ qua các ô còn lại của Bước 8 gốc (đọc §7.5/§7.6, thêm dòng, sửa văn xuôi, ghi sổ cái) —
+      đã làm ở Task #6, không lặp lại
 
 ## Bước 9 — `schema/content.ts`
 
@@ -242,8 +254,8 @@ File: `packages/db/src/schema/content.ts` — theo
 - [ ] Trigger `BR-SCT-05` mở rộng cho 3 bảng Lớp 2 mới (`lessons`·`activities`·`worksheets`)
 - [ ] `pnpm db:generate` (+ `--custom` cho trigger) → đọc SQL → `pnpm db:migrate`
 - [ ] Integration test:
-      - [ ] orphan `content_images.(owner_type, owner_id)` — 1 trong 9 (sau Bước 8)
-      - [ ] orphan `activities.(ref_type, ref_id)` — mới, từ Bước 8
+      - [ ] orphan `content_images.(owner_type, owner_id)` — 1 trong 9 chỗ đóng (DMO §7.2)
+      - [ ] orphan `activities.(ref_type, ref_id)` — 1 trong 9 chỗ đóng, đã ghi ở DMO §7.2 từ Task #6
       - [ ] `BR-SCT-05` — trigger chặn sửa `lessons`/`activities`/`worksheets` khi `published`
 - [ ] `pnpm test` xanh
 - [ ] Commit `feat(db): P0 bước 8.9 — schema content`
@@ -263,7 +275,7 @@ File: `packages/db/src/schema/curriculum.ts` — theo
 - [ ] Trigger `BR-SCT-05` mở rộng cho `curricula`
 - [ ] `pnpm db:generate` (+ `--custom`) → đọc SQL → `pnpm db:migrate`
 - [ ] Integration test:
-      - [ ] orphan `curriculum_items.(entity_type, entity_id)` — mới, từ Bước 8
+      - [ ] orphan `curriculum_items.(entity_type, entity_id)` — 1 trong 9 chỗ đóng, đã ghi ở DMO §7.2 từ Task #6
       - [ ] `BR-SCT-06` — tạo version 2 của một game level (copy-on-write) rồi publish; xác
             nhận `curriculum_items` trỏ `entity_id` cũ tự động thấy version mới
 - [ ] `pnpm test` xanh
@@ -367,8 +379,8 @@ File: `packages/db/src/seed.ts`
 ## Bước 15 — Sweep test toàn corpus + đóng task
 
 - [ ] Đếm dòng mỗi file `packages/db/src/schema/*.ts` — không file nào > 400 dòng (`BR-DM-11`)
-- [ ] Đếm test orphan polymorphic — đúng **9** ca (7 gốc + 2 mới từ Bước 8), khớp
-      `BR-DM-04`
+- [ ] Đếm test orphan polymorphic — đúng **9** ca, khớp danh sách đóng 9 dòng của DMO §7.2
+      (`BR-DM-04`)
 - [ ] Quét `packages/db/src` tìm chuỗi SQL thô ngoài Drizzle — chỉ còn `sql\`\`` cho tăng
       nguyên tử/coalesce và trigger trong migration (`BR-DM-06`, D2)
 - [ ] `docker compose down -v && docker compose up -d` — khôi phục hoàn toàn từ đầu
