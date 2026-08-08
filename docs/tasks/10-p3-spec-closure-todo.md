@@ -75,15 +75,13 @@ Bước 0 → Đợt 1 (2) → Đợt 2 (4) → Cổng dừng A → Đợt 3 (2)
 
 ### Bước 4 — [`advanced-report.md`](../specs/03-account/advanced-report.md)
 
-- [ ] Đọc hết 169 dòng
-- [ ] Điền "vì sao" cho `BR-ARP-01`
-- [ ] Đối chiếu [`content-versioning.md`](../specs/00-foundation/content-versioning.md) Q3 (loại
-      trừ dữ liệu từ version quá cũ) — hàng đó đang trỏ chính file này
-- [ ] Q1 (ngưỡng 3–10 phiên đủ chưa) — cần dữ liệu thật, `Chặn phase: P3`, `Chủ: hoãn`
-- [ ] Q2 (gợi ý hành động soạn tay hay sinh từ `home_activity`) — chốt được từ `D7`: không LLM
-      runtime, nên soạn tay theo skill; ghi `D-*`
-- [ ] Bảng mục 11 sang 5 cột; `status: approved`
-- [ ] Commit `feat(specs): T10 bước 4 — approve advanced-report`
+- [x] Đọc hết 169 dòng
+- [x] Điền "vì sao" cho `BR-ARP-01`
+- [x] Đối chiếu [`content-versioning.md`](../specs/00-foundation/content-versioning.md) Q3
+- [x] Q1 (ngưỡng 3–10 phiên đủ chưa) — cần dữ liệu thật, `Chặn phase: P3`, `Chủ: hoãn`
+- [x] Q2 (gợi ý hành động soạn tay hay sinh từ `home_activity`) — chốt từ `D7`/`D-STRUCTURED`: `Chủ: người quyết`
+- [x] Bảng mục 11 sang 5 cột; `status: approved`
+- [x] Commit `feat(specs): T10 bước 4 — approve advanced-report`
 
 ### Bước 5 — [`lesson-model.md`](../specs/05-content/lesson-model.md)
 

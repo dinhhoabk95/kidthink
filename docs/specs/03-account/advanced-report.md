@@ -2,10 +2,10 @@
 spec: ADVANCED-REPORT
 title: Báo cáo nâng cao
 area: account
-status: draft
+status: approved
 mvp: true
 phase: P3
-reviewed: 2026-08-04
+reviewed: 2026-08-08
 owns:
   - Nội dung báo cáo nâng cao
   - Ngưỡng dữ liệu tối thiểu để kết luận
@@ -54,7 +54,7 @@ User có `view_advanced_report` (gói `standard` và `premium`).
 
 | ID | Rule | Vì sao |
 |---|---|---|
-| `BR-ARP-01` | Mọi ràng buộc ngôn ngữ của [`basic-report.md`](basic-report.md) áp ở đây | |
+| `BR-ARP-01` | Mọi ràng buộc ngôn ngữ của [`basic-report.md`](basic-report.md) áp ở đây | Đảm bảo nhất quán nguyên tắc ngôn ngữ tích cực và tránh gây hoang mang cho phụ huynh theo `BR-REP-01` |
 | `BR-ARP-02` | Ngưỡng dữ liệu tối thiểu §7.2 — dưới ngưỡng **không kết luận** | Chi tiết hơn không có nghĩa là chắc chắn hơn |
 | `BR-ARP-03` | Biểu đồ **luôn có nhãn văn bản thay thế** | A11y, và biểu đồ một mình dễ đọc sai |
 | `BR-ARP-04` | Xu hướng hiện **hướng đi**, không hiện độ dốc chính xác | Độ dốc chính xác từ dữ liệu thưa là chính xác giả tạo |
@@ -162,7 +162,7 @@ Scenario: BR-ARP-08 — cảnh báo khi nội dung đã đổi
 
 ## 11. Open questions
 
-| # | Câu hỏi | Chặn gì |
-|---|---|---|
-| 1 | Ngưỡng 3–10 phiên đã đủ để kết luận chưa? Cần kiểm chứng thống kê trên dữ liệu thật | P3 |
-| 2 | Gợi ý hành động lấy từ đâu — soạn tay theo skill, hay sinh từ activity `home_activity`? | P3 |
+| # | Câu hỏi | Chặn phase | Đề xuất chốt | Chủ |
+|---|---|---|---|---|
+| 1 | Ngưỡng 3–10 phiên đã đủ để kết luận chưa? Cần kiểm chứng thống kê trên dữ liệu thật | P3 | Giữ ngưỡng 3-10 phiên cho MVP; theo dõi độ biến động dữ liệu thực tế để tinh chỉnh ở P4 | hoãn |
+| 2 | Gợi ý hành động lấy từ đâu — soạn tay theo skill, hay sinh từ activity `home_activity`? | P3 | Soạn tay theo từng skill (không sinh tự động runtime theo quyết định `D-STRUCTURED` / D7) | người quyết |
