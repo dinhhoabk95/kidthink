@@ -18,9 +18,9 @@
 
 | Code | Skill | Tuổi | Khó | Prerequisite | Thinking | Status |
 |---|---|---|---|---|---|---|
-| C6.ATT.01 | Duy trì chú ý tới hết nhiệm vụ | 3 | 2 | — | `observe` | 🟡 |
-| C6.ATT.02 | Tìm mục tiêu giữa nhiều vật | 3 | 2 | C4.VIS.02 | `observe` | 🟡 |
-| C6.ATT.03 | Bỏ qua vật gây nhiễu | 4 | 3 | C6.ATT.02 | `observe` `inhibit` | 🟡 |
+| C6.ATT.01 | Duy trì chú ý tới hết nhiệm vụ | 3 | 2 | — | `observe` | chờ |
+| C6.ATT.02 | Tìm mục tiêu giữa nhiều vật | 3 | 2 | C4.VIS.02 | `observe` | chờ |
+| C6.ATT.03 | Bỏ qua vật gây nhiễu | 4 | 3 | C6.ATT.02 | `observe` `inhibit` | chờ |
 
 ## C6.WM — Working Memory (4)
 
@@ -28,10 +28,10 @@ Giữ thông tin trong đầu **trong khi** làm việc khác.
 
 | Code | Skill | Tuổi | Khó | Prerequisite | Thinking | Status |
 |---|---|---|---|---|---|---|
-| C6.WM.01 | Nhớ và thực hiện 2 bước | 3 | 2 | C5.LIS.02 | `recall` `plan` | 🟡 |
-| C6.WM.02 | Nhớ và thực hiện 3 bước | 5 | 4 | C6.WM.01 | `recall` `plan` | 🟡 |
-| C6.WM.03 | Nhớ vị trí sau khi bị che | 4 | 3 | C4.MEM.01 | `recall` | ✅ |
-| C6.WM.04 | Nhớ hình sau khi biến mất | 4 | 3 | C4.MEM.02 | `recall` | ✅ |
+| C6.WM.01 | Nhớ và thực hiện 2 bước | 3 | 2 | C5.LIS.02 | `recall` `plan` | chờ |
+| C6.WM.02 | Nhớ và thực hiện 3 bước | 5 | 4 | C6.WM.01 | `recall` `plan` | chờ |
+| C6.WM.03 | Nhớ vị trí sau khi bị che | 4 | 3 | C4.MEM.01 | `recall` | |
+| C6.WM.04 | Nhớ hình sau khi biến mất | 4 | 3 | C4.MEM.02 | `recall` | |
 
 ## C6.INH — Inhibition (4)
 
@@ -58,16 +58,16 @@ Chuyển tiêu chí giữa lúc đang làm. Trục **thiết yếu** thứ hai.
 
 | Code | Skill | Tuổi | Khó | Prerequisite | Thinking | Status |
 |---|---|---|---|---|---|---|
-| C6.PLN.01 | Lập kế hoạch trước khi làm | 5 | 4 | — | `plan` | ✅ |
-| C6.PLN.02 | Chọn đường đi tối ưu | 5 | 4 | C2.MAZ.02 | `plan` `compare` | 🟡 |
-| C6.PLN.03 | Thử trong đầu trước khi thao tác | 6 | 5 | C6.PLN.01 | `plan` `predict` | 🟡 |
+| C6.PLN.01 | Lập kế hoạch trước khi làm | 5 | 4 | — | `plan` | |
+| C6.PLN.02 | Chọn đường đi tối ưu | 5 | 4 | C2.MAZ.02 | `plan` `compare` | chờ |
+| C6.PLN.03 | Thử trong đầu trước khi thao tác | 6 | 5 | C6.PLN.01 | `plan` `predict` | chờ |
 
 ## C6.MON — Self Monitoring (3)
 
 | Code | Skill | Tuổi | Khó | Prerequisite | Thinking | Status |
 |---|---|---|---|---|---|---|
-| C6.MON.01 | Tự phát hiện lỗi | 5 | 4 | C1.CNT.10 | `verify` | 🟡 |
-| C6.MON.02 | Tự sửa lỗi | 5 | 4 | C6.MON.01 | `verify` `shift` | 🟡 |
+| C6.MON.01 | Tự phát hiện lỗi | 5 | 4 | C1.CNT.10 | `verify` | chờ |
+| C6.MON.02 | Tự sửa lỗi | 5 | 4 | C6.MON.01 | `verify` `shift` | chờ |
 | C6.MON.03 | Tự đánh giá kết quả | 6 | 5 | C6.MON.02 | `verify` `describe` | ⬜ |
 
 ---
@@ -95,7 +95,7 @@ không phải bỏ sót ngẫu nhiên: hai trục này đòi hỏi cơ chế mà
 | Tín hiệu bắt đầu/dừng theo thời gian thực | Có `timerSystem` nhưng chưa dùng làm điều kiện thắng. |
 | Đo thời gian phản ứng để tính khả năng kìm chế | `telemetry_events` có `time_ms`, đủ dùng. |
 
-⇒ C6.INH và C6.FLX là **nhóm duy nhất** trong toàn taxonomy chắc chắn cần
+thì C6.INH và C6.FLX là **nhóm duy nhất** trong toàn taxonomy chắc chắn cần
 **mở rộng engine**, không chỉ thêm `content_pack`. Cần spec riêng: hai template
 mới `tpl-go-nogo` và `tpl-rule-switch`, cùng một `ruleSwitchSystem` cho phép
 thay `validateAction` giữa session.

@@ -7,7 +7,7 @@
 **Strand:** 4 · **Skill đã đặt tên:** 16 · **Mục tiêu:** ~60 · **Còn thiếu:** 44
 **Game type hiện có:** 3 (D2-08, D6-04, D6-06)
 
-> ⚠️ **Khoảng trống lớn nhất của sản phẩm.** 16/60 skill, 3/60 game type.
+> Lưu ý: **Khoảng trống lớn nhất của sản phẩm.** 16/60 skill, 3/60 game type.
 > Ưu tiên nội dung số 1 cùng với [C5](c5-language-thinking.md).
 
 ---
@@ -16,28 +16,28 @@
 
 | Code | Skill | Tuổi | Khó | Prerequisite | Thinking | Status |
 |---|---|---|---|---|---|---|
-| C4.VIS.01 | Tìm điểm khác giữa hai tranh | 4 | 3 | — | `observe` `compare` | 🟡 |
-| C4.VIS.02 | Tìm vật giống nhau trong nhóm | 3 | 2 | — | `observe` `match` | 🟡 |
-| C4.VIS.03 | Tìm vật ẩn trong tranh (Hidden Object) | 4 | 3 | C4.VIS.02 | `observe` | ✅ |
-| C4.VIS.04 | Tìm hình bị che một phần | 5 | 4 | C4.VIS.03 | `observe` `infer` | ✅ |
+| C4.VIS.01 | Tìm điểm khác giữa hai tranh | 4 | 3 | — | `observe` `compare` | chờ |
+| C4.VIS.02 | Tìm vật giống nhau trong nhóm | 3 | 2 | — | `observe` `match` | chờ |
+| C4.VIS.03 | Tìm vật ẩn trong tranh (Hidden Object) | 4 | 3 | C4.VIS.02 | `observe` | |
+| C4.VIS.04 | Tìm hình bị che một phần | 5 | 4 | C4.VIS.03 | `observe` `infer` | |
 
 ## C4.DET — Detail Recognition (4)
 
 | Code | Skill | Tuổi | Khó | Prerequisite | Thinking | Status |
 |---|---|---|---|---|---|---|
-| C4.DET.01 | Quan sát màu | 3 | 1 | — | `observe` | 🟡 |
-| C4.DET.02 | Quan sát hình | 3 | 1 | C2.GEO.01 | `observe` | 🟡 |
-| C4.DET.03 | Quan sát kích thước | 3 | 2 | C1.CMP.01 | `observe` `compare` | 🟡 |
-| C4.DET.04 | Quan sát vị trí | 4 | 3 | C2.ORI.03 | `observe` | 🟡 |
+| C4.DET.01 | Quan sát màu | 3 | 1 | — | `observe` | chờ |
+| C4.DET.02 | Quan sát hình | 3 | 1 | C2.GEO.01 | `observe` | chờ |
+| C4.DET.03 | Quan sát kích thước | 3 | 2 | C1.CMP.01 | `observe` `compare` | chờ |
+| C4.DET.04 | Quan sát vị trí | 4 | 3 | C2.ORI.03 | `observe` | chờ |
 
 ## C4.MEM — Memory (4)
 
 | Code | Skill | Tuổi | Khó | Prerequisite | Thinking | Status |
 |---|---|---|---|---|---|---|
-| C4.MEM.01 | Memory Card — tìm cặp | 3 | 2 | C3.ANA.01 | `recall` `match` | 🟡 |
-| C4.MEM.02 | Nhớ chuỗi hình | 4 | 3 | C4.DET.02 | `recall` `sequence` | 🟡 |
-| C4.MEM.03 | Nhớ chuỗi màu | 4 | 3 | C4.DET.01 | `recall` `sequence` | 🟡 |
-| C4.MEM.04 | Nhớ chuỗi âm thanh | 5 | 4 | — | `recall` `listen` | 🟡 |
+| C4.MEM.01 | Memory Card — tìm cặp | 3 | 2 | C3.ANA.01 | `recall` `match` | chờ |
+| C4.MEM.02 | Nhớ chuỗi hình | 4 | 3 | C4.DET.02 | `recall` `sequence` | chờ |
+| C4.MEM.03 | Nhớ chuỗi màu | 4 | 3 | C4.DET.01 | `recall` `sequence` | chờ |
+| C4.MEM.04 | Nhớ chuỗi âm thanh | 5 | 4 | — | `recall` `listen` | chờ |
 
 ## C4.SEN — Sensory Discrimination (4)
 
@@ -45,8 +45,8 @@ Phân biệt bằng cảm quan. Montessori: tách biệt một thuộc tính m�
 
 | Code | Skill | Tuổi | Khó | Prerequisite | Thinking | Status |
 |---|---|---|---|---|---|---|
-| C4.SEN.01 | Phân biệt sắc độ màu | 4 | 3 | C4.DET.01 | `compare` `observe` | 🟡 |
-| C4.SEN.02 | Phân biệt hình gần giống | 4 | 3 | C4.DET.02 | `compare` `observe` | 🟡 |
+| C4.SEN.01 | Phân biệt sắc độ màu | 4 | 3 | C4.DET.01 | `compare` `observe` | chờ |
+| C4.SEN.02 | Phân biệt hình gần giống | 4 | 3 | C4.DET.02 | `compare` `observe` | chờ |
 | C4.SEN.03 | Phân biệt kết cấu | 4 | 3 | — | `compare` `observe` | ⬜ |
 | C4.SEN.04 | Phân biệt cao độ / âm sắc | 5 | 4 | — | `compare` `listen` | ⬜ |
 

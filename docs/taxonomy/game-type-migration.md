@@ -145,7 +145,7 @@ có **59 `mechanic` khác nhau** — tức gần như không tái sử dụng g�
 | `tpl-go-nogo` | C6.INH.03 · C6.INH.04 | **Có** — cần phản hồi khi trẻ *không* hành động |
 | `tpl-rule-switch` | C6.FLX.01 · C6.FLX.02 · C6.FLX.03 | **Có** — cần đổi `validateAction` giữa session |
 
-⇒ Tổng **26** template (21 đang dùng + 5 xây mới). Chỉ **2** trong số đó cần mở rộng
+thì Tổng **26** template (21 đang dùng + 5 xây mới). Chỉ **2** trong số đó cần mở rộng
 engine. 24 template còn lại chỉ cần `content_pack` + theme mới. Xem cảnh báo thiết kế trong
 [`c6-executive-function.md`](c6-executive-function.md).
 

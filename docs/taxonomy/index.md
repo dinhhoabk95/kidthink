@@ -30,9 +30,9 @@ C1.CNT.03
 | Ký hiệu | Nghĩa | Điều kiện |
 |---|---|---|
 | ⬜ | `planned` | Đã xác định tên, chưa biên soạn gì |
-| 🟡 | `drafted` | Có tên + tuổi + độ khó + prerequisite |
+| chờ | `drafted` | Có tên + tuổi + độ khó + prerequisite |
 | 🟢 | `seeded` | Có ≥ 3 Learning Objective, đã vào DB |
-| ✅ | `covered` | Có ≥ 1 `game_level` + ≥ 1 `lesson` published |
+| | `covered` | Có ≥ 1 `game_level` + ≥ 1 `lesson` published |
 
 ## Tổng quan tiến độ
 

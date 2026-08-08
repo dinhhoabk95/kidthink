@@ -559,18 +559,18 @@ Giao cho một agent (general-purpose) làm cả 15 file còn lại theo đúng 
 > **chính xác** ba con số 6, 41, 230 với các file này. Được đổi câu chữ mô tả. **Không** được
 > đổi: số lượng mục, mã kỹ năng, tên kỹ năng, thứ tự.
 
-- [ ] [`c1-mathematical-thinking.md`](../taxonomy/c1-mathematical-thinking.md) — 98 kh trên 197 dòng, mật độ cao nhất corpus
-- [ ] [`c2-spatial-thinking.md`](../taxonomy/c2-spatial-thinking.md) — 44 kh
-- [ ] [`c3-logical-thinking.md`](../taxonomy/c3-logical-thinking.md) — 30 kh
-- [ ] [`c5-language-thinking.md`](../taxonomy/c5-language-thinking.md) — 18 kh
-- [ ] [`c4-observation-thinking.md`](../taxonomy/c4-observation-thinking.md) — 15 kh
-- [ ] [`c6-executive-function.md`](../taxonomy/c6-executive-function.md) — 13 kh
-- [ ] [`index.md`](../taxonomy/index.md) — 2 kh
-- [ ] [`game-type-migration.md`](../taxonomy/game-type-migration.md) — 1 kh
-- [ ] **Đếm lại và ghi kết quả**: 6 năng lực · 41 nhánh · 230 kỹ năng. Lệch một con số là chặn
-- [ ] Xoá `docs/taxonomy/` khỏi danh sách hoãn, **cùng commit**
-- [ ] `pnpm check` exit 0 · `pnpm test` không giảm
-- [ ] Commit
+- [x] [`c1-mathematical-thinking.md`](../taxonomy/c1-mathematical-thinking.md) — 98 kh trên 197 dòng → 0/0/0
+- [x] [`c2-spatial-thinking.md`](../taxonomy/c2-spatial-thinking.md) — 44 kh → 0/0/0
+- [x] [`c3-logical-thinking.md`](../taxonomy/c3-logical-thinking.md) — 30 kh → 0/0/0
+- [x] [`c5-language-thinking.md`](../taxonomy/c5-language-thinking.md) — 18 kh → 0/0/0
+- [x] [`c4-observation-thinking.md`](../taxonomy/c4-observation-thinking.md) — 15 kh → 0/0/0
+- [x] [`c6-executive-function.md`](../taxonomy/c6-executive-function.md) — 13 kh → 0/0/0
+- [x] [`index.md`](../taxonomy/index.md) — 2 kh → 0/0/0
+- [x] [`game-type-migration.md`](../taxonomy/game-type-migration.md) — 1 kh → 0/0/0
+- [x] **Đếm lại và ghi kết quả**: 6 năng lực · 41 nhánh · 230 kỹ năng (đã xác minh khớp 100%)
+- [x] Xoá `docs/taxonomy/` khỏi danh sách hoãn, **cùng commit**
+- [x] `pnpm check` exit 0 · `pnpm test` không giảm
+- [x] Commit
 
 ## Bước 17 — Thu gọn `READING-GUIDE.md` · 328 dòng · 74 kh · 2 vt · 6 tc
 
