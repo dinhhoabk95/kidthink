@@ -268,9 +268,9 @@ Scenario: mọi mã lỗi trong code đều có trong registry
 
 ## 11. Open questions
 
-| # | Câu hỏi | Chặn gì |
-|---|---|---|
-| 1 | Parser Markdown → `spec-index.json` chịu được spec viết lệch chuẩn tới đâu? Cần lint spec riêng hay parser đủ nghiêm? | Xây generator |
-| 2 | `gen:session` sinh skeleton hay sinh cả logic gameplay cơ bản? Sinh nhiều hơn thì review đắt hơn | Phạm vi P1 |
-| 3 | Có sinh Vue component skeleton từ section Entry points không? Hiện chưa nằm trong phạm vi | P1 UI |
-| 4 | `gen:check` chạy trong pre-commit hay chỉ cổng tự động? Pre-commit nhanh hơn nhưng chậm commit | DX |
+| # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
+|---|---|---|---|---|
+| 1 | Parser Markdown → `spec-index.json` chịu được spec viết lệch chuẩn tới đâu? Cần lint spec riêng hay parser đủ nghiêm? | Xây generator | P1 | Backend |
+| 2 | `gen:session` sinh skeleton hay sinh cả logic gameplay cơ bản? Sinh nhiều hơn thì review đắt hơn | Phạm vi P1 | P1 | Studio UI |
+| 3 | Có sinh Vue component skeleton từ section Entry points không? Hiện chưa nằm trong phạm vi | P1 UI | P1 | Studio UI |
+| 4 | `gen:check` chạy trong pre-commit hay chỉ cổng tự động? Pre-commit nhanh hơn nhưng chậm commit | DX | P1 | Infra |
