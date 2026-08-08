@@ -2,10 +2,10 @@
 spec: FAQ-AND-HELP
 title: Câu hỏi thường gặp và hướng dẫn
 area: public
-status: draft
+status: approved
 mvp: true
 phase: P1
-reviewed: 2026-08-04
+reviewed: 2026-08-08
 owns:
   - Nội dung FAQ và trang hướng dẫn
 depends_on:
@@ -49,8 +49,8 @@ Guest · User.
 |---|---|---|
 | `BR-FAQ-01` | Mỗi câu có **URL neo riêng** | Hỗ trợ gửi được link chính xác |
 | `BR-FAQ-02` | Câu trả lời liên quan pháp lý **link tới** trang chính sách, không copy | Copy sẽ drift khỏi văn bản có hiệu lực |
-| `BR-FAQ-03` | Schema `FAQPage` sinh từ dữ liệu | |
-| `BR-FAQ-04` | Nội dung sửa qua [`seo-content-admin.md`](../06-admin/seo-content-admin.md), không hardcode | |
+| `BR-FAQ-03` | Schema `FAQPage` sinh từ dữ liệu | Hiển thị Rich Snippet trên kết quả tìm kiếm Google (tăng CTR) |
+| `BR-FAQ-04` | Nội dung sửa qua [`seo-content-admin.md`](../06-admin/seo-content-admin.md), không hardcode | Cho phép bộ phận vận hành và marketing cập nhật câu hỏi mà không phụ thuộc dev |
 | `BR-FAQ-05` | Trả lời **thẳng câu hỏi ở câu đầu**, chi tiết sau | Người đọc FAQ đang vội |
 | `BR-FAQ-06` | Cấm — **NEVER né câu hỏi khó** — nói thẳng giới hạn của sản phẩm | Né tránh làm mất niềm tin hơn là thừa nhận |
 
@@ -123,6 +123,7 @@ Scenario: BR-FAQ-04 — sửa được không cần deploy
 
 ## 11. Open questions
 
-| # | Câu hỏi | Chặn gì |
-|---|---|---|
-| 1 | Có kênh hỗ trợ trực tiếp không (email, Zalo)? Cần cho câu "không tìm thấy câu trả lời" | Go-live |
+| # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
+|---|---|---|---|---|
+| 1 | Có kênh hỗ trợ trực tiếp không (email, Zalo)? | Kênh hỗ trợ khách hàng | P1 | Chốt D-AX: Dùng email support@kidthink.vn + Zalo OA |
+

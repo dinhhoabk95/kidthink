@@ -481,15 +481,15 @@ Lô đụng `play_sessions` và `play_events`. **Mọi cột phát sinh phải s
 
 129 dòng · 6 rule · 1 câu hỏi · 2 cảnh báo. File ngắn nhất lô 2.
 
-- [ ] Đọc hết file
-- [ ] Điền "vì sao" cho `BR-FAQ-03`, `BR-FAQ-04`
-- [ ] Xác nhận `depends_on` **không còn** `SEO-CONTENT-ADMIN` — nhát cắt `D-AL` của Task #6; nội
+- [x] Đọc hết file
+- [x] Điền "vì sao" cho `BR-FAQ-03`, `BR-FAQ-04`
+- [x] Xác nhận `depends_on` **không còn** `SEO-CONTENT-ADMIN` — nhát cắt `D-AL` của Task #6; nội
       dung FAQ ở P1 vào bằng seed, sửa qua giao diện quản trị là năng lực P2
-- [ ] Chuyển bảng mục 11 sang 5 cột
-- [ ] Q1 (kênh hỗ trợ trực tiếp) — dùng câu trả lời số 6 của Cổng dừng A
-- [ ] Checklist review 15 mục
-- [ ] `status: approved`, `reviewed` mới, cảnh báo giảm **2**
-- [ ] Commit `feat(specs): T8 bước 25 — approve faq-and-help`
+- [x] Chuyển bảng mục 11 sang 5 cột
+- [x] Q1 (kênh hỗ trợ trực tiếp) — dùng câu trả lời số 6 của Cổng dừng A (D-AX)
+- [x] Checklist review 15 mục
+- [x] `status: approved`, `reviewed: 2026-08-08`, cảnh báo giảm **2**
+- [x] Commit `feat(specs): T8 bước 25 — approve faq-and-help`
 
 ### Bước 26 — [`cookie-and-consent-banner.md`](../specs/02-public/cookie-and-consent-banner.md)
 
