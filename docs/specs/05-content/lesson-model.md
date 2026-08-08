@@ -2,10 +2,10 @@
 spec: LESSON-MODEL
 title: Mô hình bài học — ràng buộc biên tập
 area: content
-status: draft
+status: approved
 mvp: true
 phase: P3
-reviewed: 2026-08-04
+reviewed: 2026-08-08
 owns:
   - Ràng buộc biên tập của một lesson
 depends_on:
@@ -46,10 +46,10 @@ Không có.
 | `BR-LSM-02` | ≥1 hoạt động **ngoài màn hình** | Sản phẩm không tối ưu cho thời gian màn hình |
 | `BR-LSM-03` | `guide_vi` viết cho **người lớn không được đào tạo** | Phụ huynh không phải giáo viên |
 | `BR-LSM-04` | Vật liệu phải là thứ **có sẵn trong nhà** | Yêu cầu mua đồ làm lesson không dùng được |
-| `BR-LSM-05` | Tổng thời lượng 15–30 phút, trần cứng 45 | |
+| `BR-LSM-05` | Tổng thời lượng 15–30 phút, trần cứng 45 | Tối ưu khoảng thời gian tập trung hiệu quả của trẻ mầm non mà không gây quá tải |
 | `BR-LSM-06` | Phần đánh giá mô tả **hành vi quan sát được**, không mức độ trừu tượng | "Bé chỉ đúng vật to hơn" đo được; "bé hiểu khái niệm kích thước" thì không |
-| `BR-LSM-07` | Cấm — **NEVER giả định trẻ biết đọc** | |
-| `BR-LSM-08` | Lesson phục vụ **một cụm learning objective liên quan**, không rải rác | |
+| `BR-LSM-07` | Cấm — **NEVER giả định trẻ biết đọc** | Đảm bảo trẻ 3-6 tuổi chưa biết đọc chữ vẫn tham gia và hiểu được hướng dẫn học tập |
+| `BR-LSM-08` | Lesson phục vụ **một cụm learning objective liên quan**, không rải rác | Giữ sự tập trung vào một mục tiêu sư phạm cốt lõi và tránh làm rối kiến thức |
 | `BR-LSM-09` | Phần mở rộng là **tuỳ chọn**, không bắt buộc | Người dạy quyết định theo sức trẻ hôm đó |
 
 ## 7. Data
@@ -136,7 +136,7 @@ Scenario: BR-LSM-04 — vật liệu có sẵn
 
 ## 11. Open questions
 
-| # | Câu hỏi | Chặn gì |
-|---|---|---|
-| 1 | **Ai biên soạn ≥60 lesson?** Cần người có nền sư phạm mầm non | P3 |
-| 2 | Lesson có cần bản cho giáo viên khác bản cho phụ huynh không? | P3 |
+| # | Câu hỏi | Chặn phase | Đề xuất chốt | Chủ |
+|---|---|---|---|---|
+| 1 | **Ai biên soạn ≥60 lesson?** Cần người có nền sư phạm mầm non | P3 | Đồng bộ nợ `D-W` ở [`mvp-scope.md`](../00-foundation/mvp-scope.md) Q1 — Seeder + AI hỗ trợ bản thô, Chuyên gia sư phạm mầm non đọc và duyệt | người quyết |
+| 2 | Lesson có cần bản cho giáo viên khác bản cho phụ huynh không? | P3 | hoãn — MVP chỉ có 1 bản hướng dẫn chung dành cho phụ huynh/người hướng dẫn; bản giáo viên hoãn sang P4 | Nội dung |

@@ -62,6 +62,7 @@ describe("Play Schema Integration Tests", () => {
 
     // 2. Create Game Template & Level
     const gtCode = `GT-${(Math.floor(Math.random() * 899) + 100).toString()}`;
+    await db.delete(gameTemplates).where(eq(gameTemplates.code, gtCode));
     const [gt] = await db
       .insert(gameTemplates)
       .values({

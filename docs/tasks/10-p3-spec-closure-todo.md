@@ -85,13 +85,12 @@ Bước 0 → Đợt 1 (2) → Đợt 2 (4) → Cổng dừng A → Đợt 3 (2)
 
 ### Bước 5 — [`lesson-model.md`](../specs/05-content/lesson-model.md)
 
-- [ ] Đọc hết 143 dòng
-- [ ] Điền "vì sao" cho `BR-LSM-05`, `BR-LSM-07`, `BR-LSM-08`
-- [ ] Q1 (ai biên soạn ≥60 lesson) — trỏ nợ `D-W` ở [`mvp-scope.md`](../specs/00-foundation/mvp-scope.md)
-      Q1; `Chủ: người quyết`. Cấm tự nhận là seeder giải quyết xong
-- [ ] Q2 (bản cho giáo viên khác bản cho phụ huynh) — `Chặn phase: P4`, `Chủ: Nội dung`
-- [ ] Bảng mục 11 sang 5 cột; `status: approved`
-- [ ] Commit `feat(specs): T10 bước 5 — approve lesson-model`
+- [x] Đọc hết 143 dòng
+- [x] Điền "vì sao" cho `BR-LSM-05`, `BR-LSM-07`, `BR-LSM-08`
+- [x] Q1 (ai biên soạn ≥60 lesson) — trỏ nợ `D-W` ở [`mvp-scope.md`](../specs/00-foundation/mvp-scope.md) Q1; `Chủ: người quyết`
+- [x] Q2 (bản cho giáo viên khác bản cho phụ huynh) — `Chặn phase: P3`, `Chủ: Nội dung`
+- [x] Bảng mục 11 sang 5 cột; `status: approved`
+- [x] Commit `feat(specs): T10 bước 5 — approve lesson-model`
 
 ### Bước 6 — [`activity-authoring.md`](../specs/06-admin/activity-authoring.md)
 
