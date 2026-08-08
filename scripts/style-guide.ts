@@ -130,7 +130,6 @@ export function computeSkipLines(lines: string[]): boolean[] {
 // từng xảy ra với `docs/taxonomy/` ở bản nháp đầu — ghi lại ở đây để không
 // lặp lại lần hai.
 export const STYLE_DEFERRED: string[] = [
-  "specs/01-platform/",
   "specs/02-public/",
   "specs/03-account/",
   "specs/04-play/",
@@ -212,7 +211,7 @@ export interface BareRefMatch {
  * chắc chắn là "database index" (thuật ngữ, giữ nguyên), không phải nhắc
  * tới `specs/index.md`. `` `index.md` `` (có .md) thì không mơ hồ, vẫn bắt.
  */
-const AMBIGUOUS_WITHOUT_MD_SUFFIX = new Set(["index"]);
+const AMBIGUOUS_WITHOUT_MD_SUFFIX = new Set(["index", "plan"]);
 
 /** Tìm mọi backtick-span khớp một basename đã biết, KHÔNG nằm trong liên kết. */
 export function findBareRefs(

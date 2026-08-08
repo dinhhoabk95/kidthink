@@ -84,7 +84,7 @@ cho hành động chưa xảy ra. Cả hai đều làm nhật ký mất giá tr�
 | `action` | varchar | `snake_case`, từ danh sách đóng §7.2 |
 | `entity_type` `entity_id` | varchar / varchar | Polymorphic |
 | `before_data` `after_data` | JSONB | Chỉ field đã đổi |
-| `reason` | text | Bắt buộc với hành động đánh dấu ✱ |
+| `reason` | text | Bắt buộc với hành động cần lý do (§7.2) |
 | `ip_address` `user_agent` | | |
 | `created_at` | timestamptz | |
 
@@ -95,15 +95,15 @@ Index: `(entity_type, entity_id, created_at)` · `(actor_type, actor_id, created
 
 | Nhóm | Action | Lý do bắt buộc `reason` |
 |---|---|:--:|
-| Auth | `manager_login` · `manager_login_failed` · `manager_mfa_failed` | |
-| User | `user_suspended` ✱ · `user_reactivated` ✱ · `user_deleted` | ✱ |
-| Quyền | `entitlement_granted` ✱ · `entitlement_revoked` ✱ · `quota_reset` ✱ | ✱ |
-| Tiền | `order_approved` ✱ · `order_rejected` ✱ · `bonus_days_granted` ✱ | ✱ |
-| Nội dung | `content_created` · `content_submitted` · `content_approved` · `content_rejected` ✱ · `content_published` · `content_archived` · `content_rolled_back` ✱ · `content_deleted` ✱ | ✱ |
-| Asset | `image_uploaded` · `image_deleted` ✱ | ✱ |
-| Cấu hình | `feature_flag_changed` ✱ · `package_catalog_deployed` | ✱ |
-| Dữ liệu | `data_exported` ✱ · `consent_withdrawn` | ✱ |
-| Trẻ | `child_profile_archived` · `child_data_purged` | |
+| Auth | `manager_login` · `manager_login_failed` · `manager_mfa_failed` | không |
+| User | `user_suspended` · `user_reactivated` · `user_deleted` | có |
+| Quyền | `entitlement_granted` · `entitlement_revoked` · `quota_reset` | có |
+| Tiền | `order_approved` · `order_rejected` · `bonus_days_granted` | có |
+| Nội dung | `content_created` · `content_submitted` · `content_approved` · `content_rejected` · `content_published` · `content_archived` · `content_rolled_back` · `content_deleted` | có (`content_rejected`, `content_rolled_back`, `content_deleted`) |
+| Asset | `image_uploaded` · `image_deleted` | có (`image_deleted`) |
+| Cấu hình | `feature_flag_changed` · `package_catalog_deployed` | có (`feature_flag_changed`) |
+| Dữ liệu | `data_exported` · `consent_withdrawn` | có (`data_exported`) |
+| Trẻ | `child_profile_archived` · `child_data_purged` | không |
 
 **28 hành động.** Thêm hành động mới vào bảng này **trước** khi implement nó.
 

@@ -336,28 +336,41 @@ Giao cho một agent (general-purpose) làm cả 15 file còn lại theo đúng 
 
 ## Bước 7 — `01-platform` phần hai, 13 file vận hành · 183 kh · 24 tc
 
-- [ ] [`oauth-provider-registry.md`](../specs/01-platform/oauth-provider-registry.md) — 45 kh, 8 tc
-- [ ] [`auth-tokens-sessions.md`](../specs/01-platform/auth-tokens-sessions.md) — 46 kh, 4 tc · 323 dòng
-- [ ] [`audit-log.md`](../specs/01-platform/audit-log.md) — 41 kh, 1 vt, 1 tc
-- [ ] [`job-queue.md`](../specs/01-platform/job-queue.md) — 19 kh, 3 tc
-- [ ] [`notification-service.md`](../specs/01-platform/notification-service.md) — 22 kh
-- [ ] [`backup-and-restore.md`](../specs/01-platform/backup-and-restore.md) — 18 kh, 2 tc
-- [ ] [`ai-codegen-pipeline.md`](../specs/01-platform/ai-codegen-pipeline.md) — 9 kh, 2 tc
-- [ ] [`offline-play.md`](../specs/01-platform/offline-play.md) — 10 kh
-- [ ] [`pwa-install.md`](../specs/01-platform/pwa-install.md) — 8 kh, 1 tc
-- [ ] [`health-check.md`](../specs/01-platform/health-check.md) — 8 kh
-- [ ] [`monitoring-and-alerting.md`](../specs/01-platform/monitoring-and-alerting.md) — 7 kh, 1 tc
-- [ ] [`feature-flag-service.md`](../specs/01-platform/feature-flag-service.md) — 6 kh, 1 tc
-- [ ] [`rate-limiting.md`](../specs/01-platform/rate-limiting.md) — 4 kh
-- [ ] Xoá `01-platform` khỏi danh sách hoãn C14 và C15, **cùng commit**
-- [ ] `pnpm inventory:symbols specs/01-platform` báo 0 cả ba loại
-- [ ] `pnpm check` exit 0 · `pnpm test` không giảm · `approved` vẫn 23
-- [ ] Commit
+- [x] [`oauth-provider-registry.md`](../specs/01-platform/oauth-provider-registry.md) — 45 kh, 8 tc → 0/0/0
+      (commit `13e2de9`)
+- [x] [`auth-tokens-sessions.md`](../specs/01-platform/auth-tokens-sessions.md) — 46 kh, 4 tc · 323 dòng → 0/0/0
+      (commit `13e2de9`)
+- [x] [`audit-log.md`](../specs/01-platform/audit-log.md) — 41 kh, 1 vt, 1 tc → 0/0/0
+      (commit `13e2de9`)
+- [x] [`job-queue.md`](../specs/01-platform/job-queue.md) — 19 kh, 3 tc → 0/0/0
+      (commit `13e2de9`)
+- [x] [`notification-service.md`](../specs/01-platform/notification-service.md) — 22 kh → 0/0/0
+      (commit `13e2de9`)
+- [x] [`backup-and-restore.md`](../specs/01-platform/backup-and-restore.md) — 18 kh, 2 tc → 0/0/0
+      (commit `13e2de9`)
+- [x] [`ai-codegen-pipeline.md`](../specs/01-platform/ai-codegen-pipeline.md) — 9 kh, 2 tc → 0/0/0
+      (commit `13e2de9`)
+- [x] [`offline-play.md`](../specs/01-platform/offline-play.md) — 10 kh → 0/0/0
+      (commit `13e2de9`)
+- [x] [`pwa-install.md`](../specs/01-platform/pwa-install.md) — 8 kh, 1 tc → 0/0/0
+      (commit `13e2de9`)
+- [x] [`health-check.md`](../specs/01-platform/health-check.md) — 8 kh → 0/0/0
+      (commit `13e2de9`)
+- [x] [`monitoring-and-alerting.md`](../specs/01-platform/monitoring-and-alerting.md) — 7 kh, 1 tc → 0/0/0
+      (commit `13e2de9`)
+- [x] [`feature-flag-service.md`](../specs/01-platform/feature-flag-service.md) — 6 kh, 1 tc → 0/0/0
+      (commit `13e2de9`)
+- [x] [`rate-limiting.md`](../specs/01-platform/rate-limiting.md) — 4 kh → 0/0/0
+      (commit `13e2de9`)
+- [x] Xoá `01-platform` khỏi danh sách hoãn C14 và C15, **cùng commit**
+- [x] `pnpm inventory:symbols specs/01-platform` báo 0 cả ba loại
+- [x] `pnpm check` exit 0 · `pnpm test` không giảm · `approved` vẫn 38
+- [x] Commit
 
 ## Cổng dừng C — sau hai khu vực nặng nhất
 
-- [ ] `pnpm check` exit 0 · `pnpm test` không giảm dưới 88
-- [ ] C14 và C15 xanh trên `00-foundation/` và `01-platform/`
+- [x] `pnpm check` exit 0 · `pnpm test` không giảm dưới 88
+- [x] C14 và C15 xanh trên `00-foundation/` và `01-platform/`
 - [ ] `pnpm inventory:symbols` báo hai khu vực này về 0 cho cả ba loại
 - [ ] Số spec `approved` vẫn 23, không file nào đổi `status` hay `reviewed`
 - [ ] Số cảnh báo không tăng quá 213
