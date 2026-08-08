@@ -2,10 +2,10 @@
 spec: PLAY-ENTRY-AND-PROFILE-SELECT
 title: Vào khu vực chơi và chọn trẻ
 area: play
-status: draft
+status: approved
 mvp: true
 phase: P1
-reviewed: 2026-08-04
+reviewed: 2026-08-08
 owns:
   - Luồng vào khu vực chơi
   - Cơ chế chọn và đổi child profile
@@ -167,7 +167,8 @@ Scenario: trẻ đã archive thì yêu cầu chọn lại
 
 ## 11. Open questions
 
-| # | Câu hỏi | Chặn gì |
-|---|---|---|
-| 1 | Guest chơi bao nhiêu lượt thì mời đăng ký? | [`access-ladder.md`](../00-foundation/access-ladder.md) Q2 |
-| 2 | Sảnh trẻ có cần chế độ "chỉ hiện nội dung mở được" cho gói thấp không? Ổ khoá nhiều quá gây nản | UX P1 |
+| # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
+|---|---|---|---|---|
+| 1 | Guest chơi bao nhiêu lượt thì mời đăng ký? | Chuyển đổi guest | P1 | Chốt D-AY ở [`access-ladder.md`](../00-foundation/access-ladder.md): 5 lượt chơi mượt |
+| 2 | Sảnh trẻ có cần chế độ "chỉ hiện nội dung mở được" cho gói thấp không? | UX sảnh trẻ | P1 | Chốt: Không, sảnh trẻ mặc định ưu tiên gợi ý bài học mở được; tab tất cả hiện ổ khoá trung tính |
+

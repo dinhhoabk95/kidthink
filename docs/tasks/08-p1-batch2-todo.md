@@ -244,16 +244,15 @@ Lô đụng `play_sessions` và `play_events`. **Mọi cột phát sinh phải s
 
 174 dòng · 9 rule · 2 câu hỏi · 0 cảnh báo.
 
-- [ ] Đọc hết file
-- [ ] Chuyển bảng mục 11 sang 5 cột
-- [ ] Q1 (guest chơi bao nhiêu lượt thì mời đăng ký) — **cặp số 5**: dùng câu trả lời số 7 của
-      Cổng dừng A. Chốt ở đây thì **phải sửa
-      [`access-ladder.md`](../specs/00-foundation/access-ladder.md) Q2 cùng commit** — spec `P0`
-      đã `approved`, ghi `D-*` và nêu ở Cổng dừng B
-- [ ] Q2 (sảnh trẻ có cần chế độ chỉ hiện nội dung mở được) — **chặn P1, chốt**
-- [ ] Checklist review 15 mục
-- [ ] `status: approved`, `reviewed` mới
-- [ ] Commit `feat(specs): T8 bước 11 — approve play-entry-and-profile-select, đóng Q2 của access-ladder`
+- [x] Đọc hết file
+- [x] Chuyển bảng mục 11 sang 5 cột
+- [x] Q1 (guest chơi bao nhiêu lượt thì mời đăng ký) — **cặp số 5**: dùng câu trả lời số 7 của
+      Cổng dừng A (D-AY). Đóng Q2 ở
+      [`access-ladder.md`](../specs/00-foundation/access-ladder.md) cùng commit (`D-AY`)
+- [x] Q2 (sảnh trẻ có cần chế độ chỉ hiện nội dung mở được) — **chặn P1, chốt**
+- [x] Checklist review 15 mục
+- [x] `status: approved`, `reviewed: 2026-08-08`
+- [x] Commit `feat(specs): T8 bước 11 — approve play-entry-and-profile-select, đóng Q2 của access-ladder`
 
 ### Bước 12 — [`scaffolding-and-hints.md`](../specs/04-play/scaffolding-and-hints.md)
 
