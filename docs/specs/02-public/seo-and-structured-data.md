@@ -58,12 +58,13 @@ Công cụ tìm kiếm · Guest.
 | `BR-SEO2-01` | Bề mặt trẻ và bề mặt tài khoản **`noindex`** | Nội dung sau đăng nhập không nên vào kết quả tìm kiếm |
 | `BR-SEO2-02` | Sitemap sinh **động** từ nội dung `published` | Sitemap tay sẽ lệch trong một tuần |
 | `BR-SEO2-03` | JSON-LD sinh **từ dữ liệu** | `BR-SEO-06` |
-| `BR-SEO2-04` | Mọi trang public có `title`, `meta description`, `canonical`, `og:*` | |
-| `BR-SEO2-05` | Nội dung chính render **server-side**, không phụ thuộc JS | |
-| `BR-SEO2-06` | Cấm — **NEVER cloaking** — nội dung cho bot và người phải giống nhau | |
-| `BR-SEO2-07` | Nội dung archived: **410** + gỡ khỏi sitemap | |
+| `BR-SEO2-04` | Mọi trang public có `title`, `meta description`, `canonical`, `og:*` | Đảm bảo hiển thị đầy đủ thẻ xem trước (OpenGraph) khi chia sẻ và tối ưu hoá hiển thị tìm kiếm |
+| `BR-SEO2-05` | Nội dung chính render **server-side**, không phụ thuộc JS | Đảm bảo bot tìm kiếm crawl được nội dung mà không phụ thuộc vào việc thực thi JavaScript |
+| `BR-SEO2-06` | Cấm — **NEVER cloaking** — nội dung cho bot và người phải giống nhau | Tránh bị công cụ tìm kiếm phạt gỡ index do hành vi gian lận nội dung |
+| `BR-SEO2-07` | Nội dung archived: **410** + gỡ khỏi sitemap | Báo hiệu tường minh cho công cụ tìm kiếm gỡ URL đã hết tồn tại khỏi chỉ mục |
 | `BR-SEO2-08` | Cấm — **NEVER script bên thứ ba** trên trang pháp lý | `BR-CDC-08` |
 | `BR-SEO2-09` | `hreflang` chỉ `vi-VN` ở MVP | Một thị trường |
+
 
 ## 7. Data
 

@@ -628,31 +628,31 @@ này có trước lô 2. Cùng loại khuyết tật với "Khuyết tật 3" m�
 Cổng máy không bắt được mọi thứ. Task #3, Task #5 và Task #6 đều chạy bước này và cả ba lần đều
 tìm ra chỗ lệch mà kiểm tra tự động bỏ qua.
 
-- [ ] Đếm `status: approved` toàn corpus — phải ra **79/130**
-- [ ] Đếm `phase: P1` và `approved` — phải ra **43/43**
-- [ ] Đếm cảnh báo `C6` còn nằm trên spec `phase: P1` — phải ra **0**
-- [ ] Mọi `BR-*` vừa sửa hoặc vừa điền "vì sao" có mặt trong
+- [x] Đếm `status: approved` toàn corpus — phải ra **79/130**
+- [x] Đếm `phase: P1` và `approved` — phải ra **43/43**
+- [x] Đếm cảnh báo `C6` còn nằm trên spec `phase: P1` — phải ra **0**
+- [x] Mọi `BR-*` vừa sửa hoặc vừa điền "vì sao" có mặt trong
       [`business-rules.md`](../specs/00-foundation/business-rules.md)
-- [ ] Mọi hàng câu hỏi mở của 43 spec `P1` có `Chặn phase` và `Chủ` không rỗng
-- [ ] **Mọi câu hỏi biến mất khỏi mục 11 có một mã `D-*` giải thích.** Câu hỏi bị xoá mà không có
+- [x] Mọi hàng câu hỏi mở của 43 spec `P1` có `Chặn phase` và `Chủ` không rỗng
+- [x] **Mọi câu hỏi biến mất khỏi mục 11 có một mã `D-*` giải thích.** Câu hỏi bị xoá mà không có
       quyết định là thông tin mất lặng lẽ
-- [ ] Đọc lại mọi cột "vì sao" vừa viết. Hỏi từng cái: người sau đọc câu này có hiểu vì sao không
+- [x] Đọc lại mọi cột "vì sao" vừa viết. Hỏi từng cái: người sau đọc câu này có hiểu vì sao không
       được xoá rule không? Câu nào chỉ diễn giải lại tên rule thì viết lại
-- [ ] [`SPEC.md`](../SPEC.md) mục 14 và [`index.md`](../specs/index.md) mục Tổng khớp số đếm —
+- [x] [`SPEC.md`](../SPEC.md) mục 14 và [`index.md`](../specs/index.md) mục Tổng khớp số đếm —
       task này không thêm hay xoá file spec nào nên số phải **không đổi**
-- [ ] Commit `docs(specs): T8 bước 32 — đóng lô 2 corpus P1, đối chiếu tay`
+- [x] Commit `docs(specs): T8 bước 32 — đóng lô 2 corpus P1, đối chiếu tay`
 
 ---
 
 ## Cổng dừng cuối — kết thúc task
 
-- [ ] 30/30 spec đích `approved`, tổng corpus **79/130**
-- [ ] `phase: P1` đạt **43/43**
-- [ ] `pnpm lint:specs` 0 lỗi, **0 chu trình**, cảnh báo **≤ 104**
-- [ ] `pnpm check` xanh
-- [ ] `pnpm test` xanh
-- [ ] `git push` sạch, `origin/main..HEAD` ra **0**
-- [ ] Việc tiếp theo: **Task #7** — [`07-first-migration-plan.md`](07-first-migration-plan.md),
+- [x] 30/30 spec đích `approved`, tổng corpus **79/130**
+- [x] `phase: P1` đạt **43/43**
+- [x] `pnpm lint:specs` 0 lỗi, **0 chu trình**, cảnh báo **≤ 104** (đạt **100**)
+- [x] `pnpm check` xanh
+- [x] `pnpm test` xanh
+- [x] `git push` sạch, `origin/main..HEAD` ra **0**
+- [x] Việc tiếp theo: **Task #7** — [`07-first-migration-plan.md`](07-first-migration-plan.md),
       mở lại từ Bước 1. Nếu lô B có đổi `schema-*` thì đọc lại phạm vi Task #7 mục 0 trước khi
       chạy tiếp
 
