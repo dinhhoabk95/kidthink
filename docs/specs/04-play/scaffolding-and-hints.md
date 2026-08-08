@@ -2,10 +2,10 @@
 spec: SCAFFOLDING-AND-HINTS
 title: Trợ giúp leo thang
 area: play
-status: draft
+status: approved
 mvp: true
 phase: P1
-reviewed: 2026-08-04
+reviewed: 2026-08-08
 owns:
   - Ngưỡng leo thang theo band tuổi
   - Ba cấp trợ giúp
@@ -168,7 +168,8 @@ Scenario: BR-SCF-08 — không có giọng chê
 
 ## 11. Open questions
 
-| # | Câu hỏi | Chặn gì |
-|---|---|---|
-| 1 | Ngưỡng thời gian cần kiểm chứng với trẻ thật. Số hiện tại là ước lượng | P1 nghiệm thu |
-| 2 | `hint_rate` cao trên một level nên coi là nội dung khó hay nội dung sai? | KPI nội dung |
+| # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
+|---|---|---|---|---|
+| 1 | Ngưỡng thời gian cần kiểm chứng với trẻ thật | Kiểm chứng UX | P1 nghiệm thu | UX Research / Content (Lưu ý: Ngưỡng §7.1 là số ước lượng, cần đo đạc thực tế) |
+| 2 | `hint_rate` cao trên một level nên coi là nội dung khó hay nội dung sai? | Phân tích KPI | P1 | Content Analytics (`hint_rate` > 40% + `drop_rate` > 20% là tín hiệu level bị sai độ khó) |
+

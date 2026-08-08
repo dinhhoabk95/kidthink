@@ -258,14 +258,14 @@ Lô đụng `play_sessions` và `play_events`. **Mọi cột phát sinh phải s
 
 175 dòng · 9 rule · 2 câu hỏi · 0 cảnh báo. Không phụ thuộc gì trong lô — làm lúc nào cũng được.
 
-- [ ] Đọc hết file
-- [ ] Chuyển bảng mục 11 sang 5 cột
-- [ ] Q1 (ngưỡng thời gian cần kiểm chứng với trẻ thật) — để mở, `Chặn phase` ghi nghiệm thu P1,
+- [x] Đọc hết file
+- [x] Chuyển bảng mục 11 sang 5 cột
+- [x] Q1 (ngưỡng thời gian cần kiểm chứng với trẻ thật) — để mở, `Chặn phase` ghi nghiệm thu P1,
       nhưng **ghi rõ số hiện tại là ước lượng** để người implement không tưởng là số đã đo
-- [ ] Q2 (`hint_rate` cao là nội dung khó hay nội dung sai) — để mở, `Chủ`: KPI nội dung
-- [ ] Checklist review 15 mục
-- [ ] `status: approved`, `reviewed` mới
-- [ ] Commit `feat(specs): T8 bước 12 — approve scaffolding-and-hints`
+- [x] Q2 (`hint_rate` cao là nội dung khó hay nội dung sai) — **chặn P1, chốt**
+- [x] Checklist review 15 mục
+- [x] `status: approved`, `reviewed: 2026-08-08`
+- [x] Commit `feat(specs): T8 bước 12 — approve scaffolding-and-hints`
 
 ### Cổng dừng B — sau lô B (9 spec)
 
