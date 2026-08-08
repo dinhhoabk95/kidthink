@@ -2,10 +2,10 @@
 spec: SEO-CONTENT-ADMIN
 title: Quản lý nội dung SEO
 area: admin
-status: draft
+status: approved
 mvp: true
 phase: P2
-reviewed: 2026-08-04
+reviewed: 2026-08-08
 owns:
   - Soạn nội dung trang SEO
   - Ràng buộc meta và structured data
@@ -58,9 +58,9 @@ sửa được **không cần deploy**.
 | `BR-SEO-02` | Rich text **hạn chế** — chỉ heading, đoạn, danh sách, link, ảnh. Cấm HTML tự do | HTML tự do là đường XSS và là đường phá vỡ design system |
 | `BR-SEO-03` | Nội dung nhúng là **tham chiếu**, không copy | Copy sẽ drift khi nội dung gốc đổi |
 | `BR-SEO-04` | Cấm — **NEVER tracking script bên thứ ba** trên trang pháp lý | `BR-CDC-08` |
-| `BR-SEO-05` | `title` ≤60 ký tự, `meta_description` ≤160 — cảnh báo khi vượt | |
+| `BR-SEO-05` | `title` ≤60 ký tự, `meta_description` ≤160 — cảnh báo khi vượt | Đảm bảo hiển thị tối ưu trên thẻ kết quả tìm kiếm của Google mà không bị cắt tỉa bớt nội dung |
 | `BR-SEO-06` | Structured data sinh **từ dữ liệu**, không gõ tay JSON-LD | JSON-LD gõ tay sẽ lệch khỏi nội dung thật |
-| `BR-SEO-07` | Trang SEO đi qua cùng vòng đời duyệt như nội dung khác | |
+| `BR-SEO-07` | Trang SEO đi qua cùng vòng đời duyệt như nội dung khác | Kiểm soát chất lượng nội dung công khai và ngăn ngừa thông tin không chính xác hoặc vi phạm quy định |
 | `BR-SEO-08` | Cấm — **NEVER nội dung nhắm tới trẻ** trên trang SEO | Trang SEO là bề mặt người lớn |
 
 ## 7. Data
@@ -151,7 +151,7 @@ Scenario: preview snippet đúng độ dài thật
 
 ## 11. Open questions
 
-| # | Câu hỏi | Chặn gì |
-|---|---|---|
-| 1 | Bao nhiêu trang SEO ở MVP? 6 competency + 41 strand là 47 trang cần nội dung | P1 nội dung |
-| 2 | Có dùng AI agent IDE soạn mô tả SEO thành seeder không? Nếu có thì vẫn qua PR review | [`content-seed-authoring.md`](../01-platform/content-seed-authoring.md) |
+| # | Câu hỏi | Chặn phase | Đề xuất chốt | Chủ |
+|---|---|---|---|---|
+| 1 | Bao nhiêu trang SEO ở MVP? 6 competency + 41 strand là 47 trang cần nội dung | P2 | MVP có 6 trang competency + 1 trang chủ (tổng 7 trang); 41 trang strand hoãn sang P4 | người quyết |
+| 2 | Có dùng AI agent IDE soạn mô tả SEO thành seeder không? Nếu có thì vẫn qua PR review | P2 | Có — cho phép dùng AI soạn file seeder trong repo theo quy trình [`content-seed-authoring.md`](../01-platform/content-seed-authoring.md) | người quyết |

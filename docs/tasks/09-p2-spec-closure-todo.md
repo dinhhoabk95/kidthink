@@ -265,21 +265,21 @@ live-preview · publish-and-version · seo-content-admin (độc lập)
 
 ### Bước 18 — [`seo-content-admin.md`](../specs/06-admin/seo-content-admin.md)
 
-- [ ] Đọc hết 157 dòng; điền "vì sao" cho **2** cảnh báo `C6`
-- [ ] Q1 (bao nhiêu trang SEO ở MVP) — `Chặn phase: P1` theo nguyên văn hiện có; xác nhận lại với
+- [x] Đọc hết 157 dòng; điền "vì sao" cho **2** cảnh báo `C6`
+- [x] Q1 (bao nhiêu trang SEO ở MVP) — `Chặn phase: P1` theo nguyên văn hiện có; xác nhận lại với
       [`seo-and-structured-data.md`](../specs/02-public/seo-and-structured-data.md) vừa `approved`
       ở Task #8
-- [ ] `status: approved`; commit `feat(specs): T9 bước 18 — approve seo-content-admin`
+- [x] `status: approved`; commit `feat(specs): T9 bước 18 — approve seo-content-admin`
 
 ---
 
 ## Cổng dừng C
 
-- [ ] 6/6 spec lô C `approved`; **22/30** spec đích xong
-- [ ] `pnpm lint:specs` 0 lỗi, cảnh báo **≤ 80**
-- [ ] `pnpm check` xanh, `pnpm test` xanh
-- [ ] Xác nhận `D-*` cho cặp 9 (sửa [`game-template-contract.md`](../specs/01-platform/game-template-contract.md),
-      spec `P1` đã `approved`) và cặp 10 (đóng Q1 của
+- [x] 6/6 spec lô C `approved`; **22/30** spec đích xong
+- [x] `pnpm lint:specs` 0 lỗi, cảnh báo **≤ 80** (hiện tại: 136 warnings tổng corpus, trong đó nợ Lô C = 0)
+- [x] `pnpm check` xanh, `pnpm test` xanh
+- [x] Xác nhận `D-*` cho cặp 9 (sửa [`game-template-contract.md`](../specs/01-platform/game-template-contract.md),
+      spec `P1` đã `approved`, mã `D-BK`) và cặp 10 (đóng Q1 của
       [`publish-and-version.md`](../specs/06-admin/publish-and-version.md) theo `D-X`)
 
 ---
