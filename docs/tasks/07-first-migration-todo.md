@@ -123,25 +123,25 @@ P2→P0). Bỏ sót bảng này thì
 [`email-verification.md`](../specs/03-account/email-verification.md)/[`password-recovery.md`](../specs/03-account/password-recovery.md)
 (P0) không có chỗ ghi log gửi email theo `BR-NOT-04`.
 
-- [ ] `audit_logs` — cột theo [`audit-log.md`](../specs/01-platform/audit-log.md) §7.1, index ba cột theo §7.1
-- [ ] `content_review_log` — polymorphic `(entity_type, entity_id)`, đây là **1 trong 9** chỗ
+- [x] `audit_logs` — cột theo [`audit-log.md`](../specs/01-platform/audit-log.md) §7.1, index ba cột theo §7.1
+- [x] `content_review_log` — polymorphic `(entity_type, entity_id)`, đây là **1 trong 9** chỗ
       đóng của [`data-model-overview.md`](../specs/01-platform/data-model-overview.md) §7.2
-- [ ] `backup_log` — cột theo [`backup-and-restore.md`](../specs/01-platform/backup-and-restore.md) §7.2
-- [ ] `notifications` — cột theo [`notification-service.md`](../specs/01-platform/notification-service.md) §7.2
+- [x] `backup_log` — cột theo [`backup-and-restore.md`](../specs/01-platform/backup-and-restore.md) §7.2
+- [x] `notifications` — cột theo [`notification-service.md`](../specs/01-platform/notification-service.md) §7.2
       (`recipient_type`/`recipient_id` polymorphic **nhưng không** nằm trong danh sách đóng 9
       chỗ của DMO §7.2 — xác nhận lại trước khi bỏ qua test orphan cho nó, đừng tự loại trừ)
-- [ ] `REVOKE UPDATE, DELETE ... FROM kidthink_app` trên `audit_logs` và `content_review_log`
+- [x] `REVOKE UPDATE, DELETE ... FROM kidthink_app` trên `audit_logs` và `content_review_log`
       (`BR-AUD-01`, INSERT-only) — `backup_log` **không** insert-only (job ghi `finished_at`
       sau khi đã ghi `started_at`, cần UPDATE); `notifications` **không** insert-only (worker
       cập nhật `status`/`dispatched_at`/`error` sau khi gửi)
-- [ ] `pnpm db:generate` → đọc SQL → `pnpm db:migrate`
-- [ ] Integration test:
-      - [ ] `BR-AUD-01` — `UPDATE`/`DELETE` trên `audit_logs` bằng role app bị từ chối
-      - [ ] orphan `content_review_log.entity_id` — 1 trong 9 test bắt buộc của `BR-DM-04`
-      - [ ] `BR-NOT-04` — insert `notifications` trong cùng transaction với sự kiện kích hoạt
+- [x] `pnpm db:generate` → đọc SQL → `pnpm db:migrate`
+- [x] Integration test:
+      - [x] `BR-AUD-01` — `UPDATE`/`DELETE` trên `audit_logs` bằng role app bị từ chối
+      - [x] orphan `content_review_log.entity_id` — 1 trong 9 test bắt buộc của `BR-DM-04`
+      - [x] `BR-NOT-04` — insert `notifications` trong cùng transaction với sự kiện kích hoạt
             nó (test tối thiểu: transaction rollback thì cả hai cùng không tồn tại)
-- [ ] `pnpm test` xanh
-- [ ] Commit `feat(db): P0 bước 8.4 — schema ops`
+- [x] `pnpm test` xanh
+- [x] Commit `feat(db): P0 bước 8.4 — schema ops`
 
 ## Cổng dừng A
 
