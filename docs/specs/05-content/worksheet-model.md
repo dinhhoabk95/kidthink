@@ -2,10 +2,10 @@
 spec: WORKSHEET-MODEL
 title: Mô hình phiếu bài tập
 area: content
-status: draft
+status: approved
 mvp: false
 phase: P4
-reviewed: 2026-08-04
+reviewed: 2026-08-08
 owns:
   - Ràng buộc biên tập và kỹ thuật của worksheet
 depends_on:
@@ -50,13 +50,13 @@ Người soạn · người dạy · trẻ (làm trên giấy).
 | ID | Rule | Vì sao |
 |---|---|---|
 | `BR-WSM-01` | Worksheet phải dùng được khi in **đen trắng** | Không phải nhà nào cũng có máy in màu |
-| `BR-WSM-02` | Cấm — **NEVER yêu cầu trẻ đọc chữ** — chỉ dẫn bằng hình, chữ dành cho người lớn | |
+| `BR-WSM-02` | Cấm — **NEVER yêu cầu trẻ đọc chữ** — chỉ dẫn bằng hình, chữ dành cho người lớn | Trẻ mầm non 3-6 tuổi chưa có khả năng đọc thành thạo |
 | `BR-WSM-03` | Một trang A4, không nhiều trang | Trẻ 3–6 không giữ được tập trung qua nhiều trang |
 | `BR-WSM-04` | Vùng viết/vẽ ≥ **2cm**, đường nét dày ≥ 2pt | Vận động tinh chưa đủ |
-| `BR-WSM-05` | Có **hướng dẫn cho người lớn** ở chân trang | |
+| `BR-WSM-05` | Có **hướng dẫn cho người lớn** ở chân trang | Giúp người lớn nắm bắt mục tiêu sư phạm và cách hỗ trợ trẻ tương tác đúng hướng |
 | `BR-WSM-06` | Render PDF thành công là điều kiện publish | [`content-lifecycle.md`](../00-foundation/content-lifecycle.md) §7.3 |
 | `BR-WSM-07` | Lesson dùng worksheet phải có **hoạt động thay thế** không cần in | Không phải nhà nào cũng có máy in |
-| `BR-WSM-08` | Cấm — **NEVER watermark trên vùng làm bài** | |
+| `BR-WSM-08` | Cấm — **NEVER watermark trên vùng làm bài** | Tránh cản trở nét vẽ và hoạt động tương tác thực hành của trẻ |
 
 ## 7. Data
 
@@ -118,6 +118,6 @@ Scenario: BR-WSM-07 — lesson có thay thế
 
 ## 11. Open questions
 
-| # | Câu hỏi | Chặn gì |
-|---|---|---|
-| 1 | Render PDF server-side (Puppeteer) hay dựng sẵn? Puppeteer tốn RAM trên t3.small | P4 |
+| # | Câu hỏi | Chặn phase | Đề xuất chốt | Chủ |
+|---|---|---|---|---|
+| 1 | Render PDF server-side (Puppeteer) hay dựng sẵn? Puppeteer tốn RAM trên t3.small | P4 | Đánh giá tách worker render PDF sang microservice/lambda riêng nếu tải RAM t3.small vượt quá 80% (cùng câu với [`pdf-export.md`](../07-addon/pdf-export.md) Q1) | Infra |

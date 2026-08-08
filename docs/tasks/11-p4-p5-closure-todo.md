@@ -134,12 +134,11 @@ Bước 0 → Đợt 1 (3) → Cổng dừng A → [chờ Task #10 xong] → Đ�
 
 ### Bước 8 — [`worksheet-model.md`](../specs/05-content/worksheet-model.md)
 
-- [ ] Đọc hết 124 dòng
-- [ ] Điền "vì sao" cho `BR-WSM-02`, `BR-WSM-05`, `BR-WSM-08`
-- [ ] Q1 (render PDF server-side hay dựng sẵn) — **cùng câu** với Bước 6 Q1; hai hàng trỏ nhau,
-      cùng `Chủ: Infra`
-- [ ] Bảng mục 11 sang 5 cột; `status: approved`
-- [ ] Commit `feat(specs): T11 bước 8 — approve worksheet-model`
+- [x] Đọc hết 124 dòng
+- [x] Điền "vì sao" cho `BR-WSM-02`, `BR-WSM-05`, `BR-WSM-08`
+- [x] Q1 (render PDF server-side hay dựng sẵn) — **cùng câu** với Bước 6 Q1 ([`pdf-export.md`](../specs/07-addon/pdf-export.md)); hai hàng trỏ nhau, cùng `Chủ: Infra`
+- [x] Bảng mục 11 sang 5 cột; `status: approved`
+- [x] Commit `feat(specs): T11 bước 8 — approve worksheet-model`
 
 ### Bước 9 — [`personal-curriculum.md`](../specs/07-addon/personal-curriculum.md)
 
