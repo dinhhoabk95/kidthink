@@ -5,7 +5,7 @@ area: platform
 status: approved
 mvp: true
 phase: P0
-reviewed: 2026-08-07
+reviewed: 2026-08-08
 owns:
   - Danh mục module schema và ranh giới giữa chúng
   - Quy tắc chung áp cho mọi bảng
@@ -90,7 +90,7 @@ Bốn quyết định định hình toàn bộ schema, mỗi cái là một ràn
 | `curriculum` | `curricula` `curriculum_items` `curriculum_enrollments` `curriculum_item_progress` | idem |
 | `play` | `play_sessions` `telemetry_events` `child_daily_stats` `level_daily_stats` `skill_daily_stats` | [`schema-play-telemetry.md`](schema-play-telemetry.md) |
 | `adaptive` | `mastery_state` `level_params` | [`schema-play-telemetry.md`](schema-play-telemetry.md) |
-| `ops` | `audit_logs` `content_review_log` `backup_log` | [`schema-identity-billing.md`](schema-identity-billing.md) |
+| `ops` | `audit_logs` `content_review_log` `backup_log` `notifications` | [`schema-identity-billing.md`](schema-identity-billing.md) |
 
 **11 module.** Bảng của add-on (`lesson_plans`, `custom_games`, `ai_usage_log`) **không
 tạo ở MVP** — tạo cùng lúc với tính năng. Để bảng rỗng nằm đó là mời code tham chiếu vào
@@ -138,6 +138,7 @@ Bảy chỗ. Mỗi chỗ **bắt buộc** một integration test bắt orphan �
 | D-AB | `billing_period_vi` sang `billing_period` | 2026-08-07 | `packages.offers` JSONB key đổi tên |
 | D-AC | `content_review_log` thuộc [`schema-identity-billing.md`](schema-identity-billing.md) | 2026-08-07 | [`schema-identity-billing.md`](schema-identity-billing.md) §7.10 |
 | D-AD | `ops` P0: 3 bảng | 2026-08-07 | `audit_logs` · `content_review_log` · `backup_log`; hoãn 4 bảng |
+| D-AP | `ops` P0: thêm bảng thứ 4 — `notifications` | 2026-08-08 | [`notification-service.md`](notification-service.md) chuyển P2→P0 ở `D-AF` (Task #5) nhưng bảng của nó bị bỏ sót trong danh sách hoãn của [`schema-identity-billing.md`](schema-identity-billing.md) §7.10b — sửa lại vì `BR-NOT-04` áp dụng cho hai spec P0 ([`email-verification.md`](../03-account/email-verification.md), [`password-recovery.md`](../03-account/password-recovery.md)) cần gửi email thật từ migration #1 |
 | D-AE | Làm rõ `BR-DM-10` (chỉ áp lớp đối ngoại) + thêm `BR-DM-13` — FK/quan hệ đa hình nội bộ **luôn** dùng `id`, **không ngoại lệ** (kể cả taxonomy Lớp 1 + `game_templates` — các bảng đó giữ `code` làm định danh hiển thị nhưng không dùng làm FK). Bảng Lớp 2 có version thêm cột `entity_id` (neo dòng dõi, bất biến qua version) cho tham chiếu cần luôn theo bản published mới nhất — **sửa lại 2026-08-07** sau khi người dùng bác đề xuất ban đầu (giữ `code` cho 2 nhóm ngoại lệ) | 2026-08-07 | Toàn bộ taxonomy Lớp 1 (`strands.competency_id`, `skills.strand_id`, `learning_objectives.skill_id`, `content_tag_map`/`content_skill_map.tag_id`/`skill_id`, `mastery_state.skill_id`, `skill_daily_stats.skill_id`) · `game_levels.template_id` · `content_review_log.entity_id` ([`schema-identity-billing.md`](schema-identity-billing.md)) · `lesson_activities.lesson_id`+`activity_id` · `curriculum_items.curriculum_id`+`entity_id` · `curriculum_enrollments.curriculum_id` · `activities.ref_id` · `current_curriculum_id` (child_profiles) · `play_sessions`/`telemetry_events`/`level_daily_stats`/`level_params`.`game_level_id`/`template_id`/`curriculum_id`/`lesson_id` · `content_asset_refs.entity_id` · **`entity_id` (cột mới)** trên `game_levels`/`lessons`/`activities`/`curricula`/`worksheets` |
 
 **17 ràng buộc.** Mỗi dòng có nguồn spec + mã open question + task + ngày. Lưu ý: bảng này **không có cổng

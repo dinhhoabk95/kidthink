@@ -5,7 +5,7 @@ area: platform
 status: approved
 mvp: true
 phase: P0
-reviewed: 2026-08-07
+reviewed: 2026-08-08
 owns:
   - Định nghĩa cột module identity, billing, ops
 depends_on:
@@ -186,6 +186,15 @@ spec đó sở hữu.
 | `audit_logs` | [`audit-log.md`](audit-log.md) §7.1 — INSERT-only | [`audit-log.md`](audit-log.md) `approved` 2026-08-07 |
 | `content_review_log` | xem §7.10a dưới | [`schema-identity-billing.md`](schema-identity-billing.md) (file này, D-AC) |
 | `backup_log` | [`backup-and-restore.md`](backup-and-restore.md) §7.2 | [`backup-and-restore.md`](backup-and-restore.md) `approved` 2026-08-07 |
+| `notifications` | [`notification-service.md`](notification-service.md) §7.2 | [`notification-service.md`](notification-service.md) `approved` 2026-08-07 (`D-AF`, P2→P0) |
+
+**D-AP (2026-08-08):** `notifications` chuyển từ §7.10b (hoãn) sang bảng trên. §7.10b viết
+trước `D-AF` (Task #5) chuyển [`notification-service.md`](notification-service.md) từ P2 sang
+P0 — bảng đó bị bỏ quên trong danh sách hoãn khi phase của spec sở hữu nó đổi.
+`BR-NOT-04` ("INSERT `notifications` trong cùng transaction với sự kiện") áp dụng cho
+[`password-recovery.md`](../03-account/password-recovery.md) và
+[`email-verification.md`](../03-account/email-verification.md) — cả hai P0, cả hai cần gửi
+email thật ở migration #1. Bảng phải tồn tại từ đầu, không hoãn theo tính năng UI quản lý nó.
 
 ### 7.10a `content_review_log` — polymorphic, INSERT-only
 
@@ -212,7 +221,8 @@ INSERT-only ([`data-model-overview.md`](data-model-overview.md) `BR-DM-05` — b
 
 Bảng **không** tạo ở P0 — tạo cùng lúc với tính năng sở hữu:
 `error_log` (Observability), `feature_flags` (feature-flag-service),
-`notifications` (notification-service), `content_seed_batches` (content-seed-authoring).
+`content_seed_batches` (content-seed-authoring). `notifications` đã chuyển sang §7.10 —
+xem `D-AP`.
 
 ## 8. API contract
 
