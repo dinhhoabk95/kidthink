@@ -359,22 +359,22 @@ File: `packages/db/src/schema/adaptive.ts` — theo
 
 File: `packages/db/src/seed.ts`
 
-- [ ] Seed `entitlement_keys` — đúng 16 key theo
+- [x] Seed `entitlement_keys` — đúng 16 key theo
       [`entitlement-model.md`](../specs/00-foundation/entitlement-model.md) §7.1, upsert theo
       `key` (idempotent)
-- [ ] Seed `packages` — `PKG-standard`, `PKG-premium` theo
+- [x] Seed `packages` — `PKG-standard`, `PKG-premium` theo
       [`package-catalog.md`](../specs/00-foundation/package-catalog.md) §7.1, `offers[].price_vnd
       = PENDING_PRICE_VND` (hằng số = 0, comment trỏ [`package-catalog.md`](../specs/00-foundation/package-catalog.md) §11 Q1 — **không**
       bịa giá thật, xem plan.md §4), upsert theo `code`
-- [ ] Seed `package_entitlements` — bảng ánh xạ theo §7.1 của [`package-catalog.md`](../specs/00-foundation/package-catalog.md)
+- [x] Seed `package_entitlements` — bảng ánh xạ theo §7.1 của [`package-catalog.md`](../specs/00-foundation/package-catalog.md)
       ("Entitlement mở" — `standard` 5 key, `premium` 7 key), upsert theo `(package_code,
       entitlement_key)`
-- [ ] **Không** seed `game_templates`, taxonomy Lớp 1, hay bất kỳ bảng nào ngoài ba bảng trên
+- [x] **Không** seed `game_templates`, taxonomy Lớp 1, hay bất kỳ bảng nào ngoài ba bảng trên
       — đó là việc của roadmap P0 bước 9 / P1, ngoài phạm vi task này
-- [ ] `pnpm db:seed` — exit 0, đếm số hàng ba bảng
-- [ ] `pnpm db:seed` lần thứ hai — số hàng **không đổi** (test tự động, không chỉ chạy tay)
-- [ ] `pnpm test` xanh
-- [ ] Commit `feat(db): P0 bước 8.14 — seed idempotent entitlement_keys + packages`
+- [x] `pnpm db:seed` — exit 0, đếm số hàng ba bảng
+- [x] `pnpm db:seed` lần thứ hai — số hàng **không đổi** (test tự động, không chỉ chạy tay)
+- [x] `pnpm test` xanh
+- [x] Commit `feat(db): P0 bước 8.14 — seed idempotent entitlement_keys + packages`
 
 ## Bước 15 — Sweep test toàn corpus + đóng task
 
