@@ -41,13 +41,13 @@ Không có.
 
 | ID | Rule | Vì sao |
 |---|---|---|
-| `BR-SPT-01` | `child_profiles` chỉ có cột ở §7.1. Thêm cột = sửa `child-data-compliance` trước | Danh sách đóng ép ở schema |
-| `BR-SPT-02` | ❌ **NEVER cột ngày sinh đầy đủ, họ tên đầy đủ, hay path ảnh upload** trên `child_profiles` | `BR-CDC-02` `BR-CDC-03` `BR-CDC-04` |
+| `BR-SPT-01` | `child_profiles` chỉ có cột ở §7.1. Thêm cột = sửa [`child-data-compliance.md`](../00-foundation/child-data-compliance.md) trước | Danh sách đóng ép ở schema |
+| `BR-SPT-02` | Cấm — **NEVER cột ngày sinh đầy đủ, họ tên đầy đủ, hay path ảnh upload** trên `child_profiles` | `BR-CDC-02` `BR-CDC-03` `BR-CDC-04` |
 | `BR-SPT-03` | `telemetry_events` PK `(session_uuid, seq)` — idempotent ở tầng DB | `BR-EVT-03` |
 | `BR-SPT-04` | `telemetry_events.child_uuid` **nullable** — guest là NULL, và xoá tài khoản đặt về NULL | Ẩn danh hoá thay vì xoá cứng |
-| `BR-SPT-05` | `mastery_state` khoá theo `skill_id` **FK** (`skills.id`), ❌ không chuỗi tự do, ❌ không `skill_code` (D-AE) | `BR-TAX-07` |
+| `BR-SPT-05` | `mastery_state` khoá theo `skill_id` **FK** (`skills.id`), không chuỗi tự do, không `skill_code` (D-AE) | `BR-TAX-07` |
 | `BR-SPT-06` | `play_sessions.content_version` NOT NULL | `BR-VER-03` |
-| `BR-SPT-07` | `telemetry_events` · `play_sessions` INSERT-only sau khi `completed` | `BR-DM-05`. Đây là dữ liệu **đã xảy ra** — sửa được nghĩa là báo cáo tiến bộ của một đứa trẻ ❌ không còn giải thích được bằng thứ nó thật sự đã chơi (D5). `play_sessions` mở cho UPDATE tới lúc `completed` vì phiên đang chạy còn ghi tiếp; sau đó đóng lại |
+| `BR-SPT-07` | `telemetry_events` · `play_sessions` INSERT-only sau khi `completed` | `BR-DM-05`. Đây là dữ liệu **đã xảy ra** — sửa được nghĩa là báo cáo tiến bộ của một đứa trẻ không còn giải thích được bằng thứ nó thật sự đã chơi (D5). `play_sessions` mở cho UPDATE tới lúc `completed` vì phiên đang chạy còn ghi tiếp; sau đó đóng lại |
 | `BR-SPT-08` | `p_learn` CHECK 0–1 ở tầng DB | Bất biến quan trọng nhất của adaptive |
 
 ## 7. Data
@@ -59,7 +59,7 @@ Không có.
 | `id` | bigserial | PK — nội bộ |
 | `uuid` | uuid | UNIQUE — đối ngoại và dùng làm `child_uuid` |
 | `user_id` | bigint FK | ON DELETE CASCADE |
-| `display_name` | varchar(40) | NOT NULL — tên gọi, ❌ không họ tên đầy đủ |
+| `display_name` | varchar(40) | NOT NULL — tên gọi, không họ tên đầy đủ |
 | `birth_year` | smallint | NOT NULL, CHECK trong khoảng cho tuổi 3–6. Index đơn cho lookup theo tuổi |
 | `avatar_id` | varchar(24) | NOT NULL — FK logic tới preset |
 | `relationship` | enum | `child`\|`student`\|`other`, nullable |
@@ -68,7 +68,7 @@ Không có.
 | `status` | enum | `active`\|`archived`\|`pending_deletion` |
 | `created_at` `updated_at` | timestamptz | |
 
-**12 cột. Không hơn.** Bất kỳ cột thứ 13 nào cần sửa `child-data-compliance` trước.
+**12 cột. Không hơn.** Bất kỳ cột thứ 13 nào cần sửa [`child-data-compliance.md`](../00-foundation/child-data-compliance.md) trước.
 `age_band` **không phải cột** — suy từ `birth_year` lúc đọc (D-AA).
 
 ### 7.2 `play_sessions`
@@ -106,11 +106,11 @@ CHECK: `(child_profile_id IS NOT NULL) OR (guest_device_id IS NOT NULL)`.
 
 Index `(game_level_id, ingested_at)` · `(child_uuid, ingested_at)`.
 
-❌ Không cột nào chứa PII. Xem `child-data-compliance` §7.3.
+Cấm cột nào chứa PII. Xem [`child-data-compliance.md`](../00-foundation/child-data-compliance.md) §7.3.
 
-❌ **Không partitioned ở P0.** PK `(session_uuid, seq)` giữ nguyên (`BR-SPT-03`).
-Hai điều kiện giữ đường mở: (a) ❌ không FK nào trỏ **vào** `telemetry_events`;
-(b) giữ cột hẹp, index tối thiểu. Xem `event-catalog` §11 Q2.
+**Không partitioned ở P0.** PK `(session_uuid, seq)` giữ nguyên (`BR-SPT-03`).
+Hai điều kiện giữ đường mở: (a) không FK nào trỏ **vào** `telemetry_events`;
+(b) giữ cột hẹp, index tối thiểu. Xem [`event-catalog.md`](../00-foundation/event-catalog.md) §11 Q2.
 
 ### 7.4 `child_session_summaries`
 
@@ -122,7 +122,7 @@ Hai điều kiện giữ đường mở: (a) ❌ không FK nào trỏ **vào** `
 `child_daily_stats` `(child_profile_id, date_ict)` · `level_daily_stats`
 `(game_level_id, date_ict)` · `skill_daily_stats` `(skill_id, date_ict)`.
 
-Chi tiết cột: `telemetry-pipeline` §7.1.
+Chi tiết cột: [`telemetry-pipeline.md`](telemetry-pipeline.md) §7.1.
 
 ### 7.6 `mastery_state`
 
@@ -206,5 +206,5 @@ Scenario: D-Z — không FK trỏ vào telemetry_events
 
 | # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
 |---|---|---|---|---|
-| ~~1~~ | ~~Partition `telemetry_events` theo tháng ngay từ P0?~~ **Đóng 2026-08-07 (T6)**: quyết định sống ở `event-catalog` Q2. ❌ Không partition ở P0; PK giữ nguyên (D-Z) | — | ✅ đóng | D-Z |
-| ~~2~~ | ~~`age_band` là cột sinh hay tính lúc đọc?~~ **Đóng 2026-08-07 (T6)**: tính lúc đọc từ `birth_year` (D-AA). Không cần cập nhật khi sang năm | — | ✅ đóng | D-AA |
+| ~~1~~ | ~~Partition `telemetry_events` theo tháng ngay từ P0?~~ **Đóng 2026-08-07 (T6)**: quyết định sống ở [`event-catalog.md`](../00-foundation/event-catalog.md) Q2. Cấm partition ở P0; PK giữ nguyên (D-Z) | — | đã đóng | D-Z |
+| ~~2~~ | ~~`age_band` là cột sinh hay tính lúc đọc?~~ **Đóng 2026-08-07 (T6)**: tính lúc đọc từ `birth_year` (D-AA). Không cần cập nhật khi sang năm | — | đã đóng | D-AA |

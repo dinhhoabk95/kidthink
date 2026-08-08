@@ -31,7 +31,7 @@ phù hợp lọt vào bài học của trẻ.
 | Actor | Làm gì |
 |---|---|
 | Dev | Thêm emoji vào registry qua PR |
-| Manager | **Chọn** từ picker. ❌ Không gõ tự do, ❌ không thêm mới |
+| Manager | **Chọn** từ picker. Cấm gõ tự do, không thêm mới |
 | AI agent IDE (lúc soạn seeder) | Nhận danh sách đóng làm ràng buộc; cổng 3 cổng tự động chặn ref lạ |
 | Engine | Render emoji với font stack đã ghim |
 
@@ -49,7 +49,7 @@ phù hợp lọt vào bài học của trẻ.
 1. Manager mở field kiểu `emoji`.
 2. Picker hiện **12 emoji gần đây** + 32 nhóm chủ đề.
 3. Gõ tìm **bằng tiếng Việt** — "táo", "con mèo", "hình tròn".
-4. Chọn → lưu `EMJ-<slug>`, ❌ không lưu ký tự Unicode thô.
+4. Chọn → lưu `EMJ-<slug>`, không lưu ký tự Unicode thô.
 5. Preview hiện ở **cỡ thật trong game**.
 
 ## 5. Alternative flows
@@ -58,23 +58,23 @@ phù hợp lọt vào bài học của trẻ.
 |---|---|
 | Gõ ký tự emoji trực tiếp vào ô | Bị chặn — picker là đường duy nhất |
 | Tìm không ra | Hiện gợi ý nhóm gần nhất + nút báo thiếu emoji cho dev |
-| Emoji bị `deprecated` | Nội dung đang dùng vẫn render; ❌ không chọn mới được |
+| Emoji bị `deprecated` | Nội dung đang dùng vẫn render; không chọn mới được |
 | Font thiết bị không có glyph | Fallback theo stack đã ghim; nếu vẫn thiếu → placeholder trung tính + `asset_load_failed` |
 
 ## 6. Business rules
 
 | ID | Rule | Vì sao |
 |---|---|---|
-| `BR-EMJ-01` | ❌ **NEVER cho gõ emoji ngoài registry** | Không tên tiếng Việt, không tra được, không kiểm duyệt được |
-| `BR-EMJ-02` | Lưu `EMJ-<slug>`, ❌ **không** ký tự Unicode thô | Unicode thô không tra ngược ra tên và không tag được |
-| `BR-EMJ-03` | Emoji chỉ làm **nội dung**. ❌ **NEVER làm affordance** — nav, button, HUD, trạng thái, empty state đều dùng SVG | Render khác nhau theo OS · không recolour được · không mang được focus ring |
+| `BR-EMJ-01` | Cấm — **NEVER cho gõ emoji ngoài registry** | Không tên tiếng Việt, không tra được, không kiểm duyệt được |
+| `BR-EMJ-02` | Lưu `EMJ-<slug>`, **không** ký tự Unicode thô | Unicode thô không tra ngược ra tên và không tag được |
+| `BR-EMJ-03` | Emoji chỉ làm **nội dung**. Cấm — **NEVER làm affordance** — nav, button, HUD, trạng thái, empty state đều dùng SVG | Render khác nhau theo OS · không recolour được · không mang được focus ring |
 | `BR-EMJ-04` | Tìm kiếm **bắt buộc** hoạt động bằng tiếng Việt | Manager nghĩ bằng tiếng Việt; tìm "apple" không ra kết quả cần |
 | `BR-EMJ-05` | Ô emoji trong picker ≥ **40×40px**, glyph ≥ **28px** | Nhỏ hơn thì nhiều emoji trông giống nhau — và **sai emoji = sai bài học** |
 | `BR-EMJ-06` | Ghim font stack `"Noto Color Emoji", "Apple Color Emoji", "Segoe UI Emoji"` mọi nơi render emoji | Thiếu font thì OS fallback sang monochrome hoặc tofu — trẻ không nhận ra vật |
-| `BR-EMJ-07` | Registry là **Lớp 1** — admin ❌ không thêm/sửa/xoá qua UI | Emoji sai lọt vào bài học trẻ em là sự cố nội dung; seed qua PR review là cổng người duy nhất |
-| `BR-EMJ-08` | Emoji có `age_suitability` — loại không phù hợp tuổi ❌ không vào picker của nội dung trẻ | Vũ khí, rượu, biểu cảm tiêu cực mạnh |
-| `BR-EMJ-09` | ❌ **NEVER emoji có skin tone modifier** trong nội dung game | Chọn một tông là loại trừ; dùng tông vàng trung tính |
-| `BR-EMJ-10` | Xoá emoji khỏi registry → `deprecated`, ❌ không xoá cứng | Nội dung đã publish trỏ tới nó |
+| `BR-EMJ-07` | Registry là **Lớp 1** — admin không thêm/sửa/xoá qua UI | Emoji sai lọt vào bài học trẻ em là sự cố nội dung; seed qua PR review là cổng người duy nhất |
+| `BR-EMJ-08` | Emoji có `age_suitability` — loại không phù hợp tuổi không vào picker của nội dung trẻ | Vũ khí, rượu, biểu cảm tiêu cực mạnh |
+| `BR-EMJ-09` | Cấm — **NEVER emoji có skin tone modifier** trong nội dung game | Chọn một tông là loại trừ; dùng tông vàng trung tính |
+| `BR-EMJ-10` | Xoá emoji khỏi registry → `deprecated`, không xoá cứng | Nội dung đã publish trỏ tới nó |
 
 ## 7. Data
 
@@ -99,7 +99,7 @@ vehicle-water · weather-season · body · family · food · clothing · househo
 festival · flower-tree · nature-landscape · sky-space · sport-game · music-art ·
 face-emotion · hand-gesture · flag-symbol · misc
 
-Nhóm theo **chủ đề dạy học**, ❌ không theo Unicode block. Manager duyệt theo cách nghĩ của
+Nhóm theo **chủ đề dạy học**, không theo Unicode block. Manager duyệt theo cách nghĩ của
 người soạn bài, không theo cách tổ chức của Unicode Consortium.
 
 ### 7.3 API package
@@ -197,4 +197,4 @@ Scenario: BR-EMJ-05 — ô picker đủ lớn
 |---|---|---|
 | 1 | Registry cần bao nhiêu emoji để phủ 120 game level? Chưa đếm | P1 nội dung |
 | 2 | Có cần bộ emoji vẽ riêng (SVG) cho những khái niệm Unicode không có không? | P4 |
-| 3 | `what_axis` gợi ý tự động có đủ chính xác để người soạn seeder dựa vào không? | `content-seed-authoring` |
+| 3 | `what_axis` gợi ý tự động có đủ chính xác để người soạn seeder dựa vào không? | [`content-seed-authoring.md`](content-seed-authoring.md) |

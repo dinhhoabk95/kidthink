@@ -19,7 +19,7 @@ depends_on:
 
 ## 1. Objective
 
-Một asset ❌ **không** gắn vào một kỹ năng duy nhất. Nó gắn trên **ba trục độc lập** —
+Một asset **không** gắn vào một kỹ năng duy nhất. Nó gắn trên **ba trục độc lập** —
 học *cái gì*, rèn *cách nghĩ* nào, chơi *bằng cách nào*.
 
 Hệ quả: một template phục vụ hàng chục mục tiêu học tập, và tìm kiếm nội dung trả lời được
@@ -56,9 +56,9 @@ lọc theo một cây.
 | Nhánh | Hành vi |
 |---|---|
 | Tag không có trong từ vựng | **422** — từ vựng là danh sách đóng |
-| Tag do User tạo | Sống trong `user_tags`, ❌ không vào `content_tags` |
+| Tag do User tạo | Sống trong `user_tags`, không vào `content_tags` |
 | Skill phụ | `weight` thấp (0.2–0.5), ảnh hưởng mastery ít hơn |
-| Đổi skill của nội dung `published` | Bump version — `content-versioning` §7.2 |
+| Đổi skill của nội dung `published` | Bump version — [`content-versioning.md`](../00-foundation/content-versioning.md) §7.2 |
 
 ## 6. Business rules
 
@@ -68,8 +68,8 @@ lọc theo một cây.
 | `BR-TAG-02` | Mọi nội dung `published` có ≥1 tag **mỗi trục** | Thiếu một trục là mất một chiều lọc |
 | `BR-TAG-03` | `content_skill_map.weight ∈ [0,1]` — 1.0 mục tiêu chính, 0.3 có chạm tới | Không có nó, một game đếm "dạy" mọi skill nó chạm tới |
 | `BR-TAG-04` | Mỗi nội dung có **đúng một** skill `weight = 1.0` | Hai mục tiêu chính là không có mục tiêu chính |
-| `BR-TAG-05` | Tag do User tạo ❌ **NEVER** vào catalog công khai | |
-| `BR-TAG-06` | AI **đề xuất** tag, người **xác nhận**. ❌ Không tự gắn | Tag sai làm nội dung không tìm thấy hoặc tìm nhầm |
+| `BR-TAG-05` | Tag do User tạo Cấm — **NEVER** vào catalog công khai | |
+| `BR-TAG-06` | AI **đề xuất** tag, người **xác nhận**. Cấm tự gắn | Tag sai làm nội dung không tìm thấy hoặc tìm nhầm |
 | `BR-TAG-07` | `content_tag_map` là FK polymorphic → **bắt buộc** test bắt orphan | |
 
 ## 7. Data
@@ -82,12 +82,12 @@ lọc theo một cây.
 | **thinking** | `observe` `compare` `sort` `match` `sequence` `infer` `predict` `plan` `recall` `inhibit` `shift` `count` |
 | **mechanic** | `tap-select` `tap-select-multi` `drag-to-container` `sort-groups` `pair-match` `sequence-order` |
 
-Trục `mechanic` suy ra từ `game_templates.mechanic` — ❌ không nhập tay.
+Trục `mechanic` suy ra từ `game_templates.mechanic` — không nhập tay.
 
 ### 7.2 Tag chủ đề (trục thứ tư, tuỳ chọn)
 
 `animal` `fruit` `vegetable` `vehicle` `shape` `family` `school` `weather` `festival`
-`body` `food` `nature` — dùng cho theme và tìm kiếm, ❌ không dùng cho sư phạm.
+`body` `food` `nature` — dùng cho theme và tìm kiếm, không dùng cho sư phạm.
 
 ### 7.3 Bảng
 
@@ -169,4 +169,4 @@ Scenario: BR-TAG-07 — orphan tag map bị bắt
 | # | Câu hỏi | Chặn gì |
 |---|---|---|
 | 1 | Từ vựng `what` và `thinking` đã đủ phủ 230 skill chưa? Cần đối chiếu | P1 |
-| 2 | `weight` do người đặt hay suy từ mức độ khớp LO? | `adaptive-engine` |
+| 2 | `weight` do người đặt hay suy từ mức độ khớp LO? | [`adaptive-engine.md`](adaptive-engine.md) |

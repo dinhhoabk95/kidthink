@@ -45,7 +45,7 @@ Ba bề mặt, cùng một bộ lọc, khác nhau ở **phạm vi quyền** và 
 1. Parse query bằng Zod, ép trần `limit`.
 2. Dựng điều kiện: trạng thái theo actor · bậc theo `allowedTiers()` · bộ lọc §7.1.
 3. Truy vấn với index phù hợp, phân trang bằng cursor.
-4. Với mỗi kết quả bị chặn bậc: trả **metadata + cờ `locked`**, ❌ không trả `content_pack`.
+4. Với mỗi kết quả bị chặn bậc: trả **metadata + cờ `locked`**, không trả `content_pack`.
 5. Xếp hạng §7.2.
 
 ## 5. Alternative flows
@@ -53,20 +53,20 @@ Ba bề mặt, cùng một bộ lọc, khác nhau ở **phạm vi quyền** và 
 | Nhánh | Hành vi |
 |---|---|
 | Không kết quả | Trả rỗng + gợi ý nới bộ lọc nào |
-| Truy vấn text có ký tự đặc biệt | Parameterize, ❌ không nối chuỗi |
+| Truy vấn text có ký tự đặc biệt | Parameterize, không nối chuỗi |
 | Lọc theo bậc cao hơn quyền | Trả kết quả kèm `locked: true` — để bán được |
-| `limit` quá trần | Ép về trần, ❌ không lỗi |
+| `limit` quá trần | Ép về trần, không lỗi |
 
 ## 6. Business rules
 
 | ID | Rule | Vì sao |
 |---|---|---|
-| `BR-SRC-01` | Nội dung bị chặn bậc vẫn **hiện trong kết quả** kèm `locked`, nhưng ❌ không kèm `content_pack` | Người dùng phải thấy được thứ mình đang bỏ lỡ để có lý do nâng cấp |
+| `BR-SRC-01` | Nội dung bị chặn bậc vẫn **hiện trong kết quả** kèm `locked`, nhưng không kèm `content_pack` | Người dùng phải thấy được thứ mình đang bỏ lỡ để có lý do nâng cấp |
 | `BR-SRC-02` | Trần `limit` ép ở **server** — level ≤ 60, lesson ≤ 40, admin ≤ 100 | Query không trần hạ instance trên t3.small |
 | `BR-SRC-03` | Zod parse **mọi** query param, kể cả route chỉ đọc | Param đi vào `ilike`/`gte` là đường vào injection |
-| `BR-SRC-04` | Phân trang bằng **cursor**, ❌ không offset ở bảng lớn | Offset sâu quét toàn bảng |
-| `BR-SRC-05` | Guest ❌ không thấy nội dung khác `published` | |
-| `BR-SRC-06` | ❌ **NEVER cache** kết quả có nội dung trả phí | `access-ladder` `BR-LAD-09` |
+| `BR-SRC-04` | Phân trang bằng **cursor**, không offset ở bảng lớn | Offset sâu quét toàn bảng |
+| `BR-SRC-05` | Guest không thấy nội dung khác `published` | |
+| `BR-SRC-06` | Cấm — **NEVER cache** kết quả có nội dung trả phí | [`access-ladder.md`](../00-foundation/access-ladder.md) `BR-LAD-09` |
 | `BR-SRC-07` | Tìm text hoạt động **cả có dấu lẫn không dấu** tiếng Việt | Người dùng gõ không dấu là mặc định |
 
 ## 7. Data
@@ -108,7 +108,7 @@ không phải một thư viện.
 `content_skill_map(skill_id, entity_type)` ·
 GIN trên `to_tsvector('simple', unaccent(title_vi || ' ' || description_vi))`.
 
-MVP dùng Postgres full-text với `unaccent`. ❌ Không thêm search engine riêng — một dịch vụ
+MVP dùng Postgres full-text với `unaccent`. Cấm thêm search engine riêng — một dịch vụ
 nữa để vận hành không đáng cho 120 level.
 
 ## 8. API contract
@@ -122,7 +122,7 @@ nữa để vận hành không đáng cho 120 level.
 | 200 | `{ items: [{ code, title_vi, thumbnail_emoji, competency, age_min, age_max, difficulty, access_tier, locked }], next_cursor }` |
 | 422 | `VALIDATION_FAILED` |
 
-`items[].locked = true` → ❌ không có `content_pack`, ❌ không có `difficulty_params`.
+`items[].locked = true` → không có `content_pack`, không có `difficulty_params`.
 
 ## 9. Acceptance criteria
 
@@ -187,4 +187,4 @@ Scenario: BR-SRC-06 — không cache kết quả trả phí
 | # | Câu hỏi | Chặn gì |
 |---|---|---|
 | 1 | Postgres full-text đủ tới bao nhiêu nội dung? Ước lượng ngưỡng phải chuyển | Sau MVP |
-| 2 | ~~Tìm kiếm ngữ nghĩa (embedding) thuộc add-on AI hay tính năng chung?~~ **Đã chốt 2026-08-05**: add-on AI (`use_ai_search`), ❌ không đưa vào tìm kiếm cơ bản này. Spec: [`07-addon/semantic-search`](../07-addon/semantic-search.md) | — |
+| 2 | ~~Tìm kiếm ngữ nghĩa (embedding) thuộc add-on AI hay tính năng chung?~~ **Đã chốt 2026-08-05**: add-on AI (`use_ai_search`), không đưa vào tìm kiếm cơ bản này. Spec: [`07-addon/semantic-search`](../07-addon/semantic-search.md) | — |

@@ -32,7 +32,7 @@ kế rollup từ đầu là bắt buộc, không phải tối ưu sớm.
 | Engine | Sinh event |
 | API ingest | Xác thực, khử trùng, ghi |
 | Worker | Rollup theo lịch |
-| Báo cáo | Đọc bảng rollup, ❌ không đọc event thô |
+| Báo cáo | Đọc bảng rollup, không đọc event thô |
 | Admin analytics | Đọc rollup + query ad-hoc có giới hạn |
 
 ## 3. Entry points
@@ -64,7 +64,7 @@ Engine buffer → flush (20 event | 10s | phiên kết thúc | trang ẩn)
 |---|---|
 | Lô trùng | 200, ghi 0 hàng |
 | Phiên bỏ dở, không có `game_completed` | Job `sweep:abandoned` sau 30 phút đóng phiên với `completion_status = abandoned` |
-| Rollup fail | Retry 3 lần backoff; fail tiếp → alert, ❌ không âm thầm bỏ |
+| Rollup fail | Retry 3 lần backoff; fail tiếp → alert, không âm thầm bỏ |
 | Worker chết | Event vẫn ghi được; rollup dồn lại. **Phải có alert** — worker chết im lặng là chế độ hỏng tệ nhất |
 | Offline lâu | Event tới muộn ≤ 24h vẫn nhận; rollup ngày đó chạy lại |
 
@@ -72,11 +72,11 @@ Engine buffer → flush (20 event | 10s | phiên kết thúc | trang ẩn)
 
 | ID | Rule | Vì sao |
 |---|---|---|
-| `BR-TLM-01` | Báo cáo đọc **rollup**, ❌ không đọc `telemetry_events` trực tiếp | Query trên bảng lớn nhất trong đường vào màn hình là cách hạ instance |
+| `BR-TLM-01` | Báo cáo đọc **rollup**, không đọc `telemetry_events` trực tiếp | Query trên bảng lớn nhất trong đường vào màn hình là cách hạ instance |
 | `BR-TLM-02` | Rollup **idempotent** — chạy lại cùng ngày cho cùng kết quả | Retry là chuyện thường |
-| `BR-TLM-03` | ❌ **NEVER PII trên toàn đường ống** — event, rollup, export | |
-| `BR-TLM-04` | Điểm chính thức tính ở **rollup:session** phía server | ❌ không tin client |
-| `BR-TLM-05` | Phiên guest ghi event nhưng ❌ **không** vào `mastery_state` và ❌ không đếm vào KPI trẻ | |
+| `BR-TLM-03` | Cấm — **NEVER PII trên toàn đường ống** — event, rollup, export | |
+| `BR-TLM-04` | Điểm chính thức tính ở **rollup:session** phía server | không tin client |
+| `BR-TLM-05` | Phiên guest ghi event nhưng **không** vào `mastery_state` và không đếm vào KPI trẻ | |
 | `BR-TLM-06` | Worker chết **phải có alert** | Producer đẩy job, không consumer nào lấy, và không ai biết |
 | `BR-TLM-07` | Event tới sau khi phiên đã `completed` bị bỏ, trả 200 | Không làm client retry vô hạn |
 | `BR-TLM-08` | Rollup ngày theo **ICT (UTC+7)**, mốc 00:00 | Ngày của người dùng, không phải ngày UTC |
@@ -182,5 +182,5 @@ Scenario: phiên bỏ dở được đóng
 | # | Câu hỏi | Chặn gì |
 |---|---|---|
 | 1 | Partition `telemetry_events` theo tháng ngay từ đầu? | P1 |
-| 2 | Retention 90 ngày đủ để tinh chỉnh adaptive bằng replay không? | `adaptive-engine` |
-| 3 | Có cần bảng rollup theo tuần cho báo cáo xu hướng không? | `advanced-report` |
+| 2 | Retention 90 ngày đủ để tinh chỉnh adaptive bằng replay không? | [`adaptive-engine.md`](adaptive-engine.md) |
+| 3 | Có cần bảng rollup theo tuần cho báo cáo xu hướng không? | [`advanced-report.md`](../03-account/advanced-report.md) |

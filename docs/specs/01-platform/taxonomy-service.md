@@ -39,7 +39,7 @@ L1 COMPETENCY          6      C1..C6
 | Dev | Thiết kế cây, seed qua PR |
 | Manager | **Chỉ đọc** — duyệt cây để gắn nội dung |
 | Adaptive engine | Đọc `skill_prerequisites` để chọn bước tiếp |
-| AI agent IDE (lúc soạn seeder) | Đọc skill + LO làm ngữ cảnh. ❌ Không tạo `skills`/`strands` — `BR-CSA-08` |
+| AI agent IDE (lúc soạn seeder) | Đọc skill + LO làm ngữ cảnh. Cấm tạo `skills`/`strands` — `BR-CSA-08` |
 
 ## 3. Entry points
 
@@ -56,13 +56,13 @@ L1 COMPETENCY          6      C1..C6
 2. `validate()` chạy **trước** khi insert — Zod từng hàng, fail fast.
 3. Sau seed, chạy bộ bất biến §6 — bất kỳ vi phạm nào làm seed fail.
 4. Runtime: `packages/taxonomy` dựng cây trong bộ nhớ từ DB, cache 5 phút.
-5. Traversal trả kết quả từ cache, ❌ không query đệ quy mỗi lần.
+5. Traversal trả kết quả từ cache, cấm query đệ quy mỗi lần.
 
 ## 5. Alternative flows
 
 | Nhánh | Hành vi |
 |---|---|
-| Skill `planned` / `drafted` | Sống trong `docs/taxonomy/*.md`, ❌ **không** vào DB |
+| Skill `planned` / `drafted` | Sống trong `docs/taxonomy/*.md`, **không** vào DB |
 | Skill không có LO | Seed **fail** — mọi skill `seeded` phải có ≥3 LO |
 | Prerequisite tạo chu trình | Seed **fail** trước khi ghi bất kỳ hàng nào |
 | Cache lệch sau deploy | Invalidate theo `taxonomy_version` |
@@ -76,8 +76,8 @@ L1 COMPETENCY          6      C1..C6
 | `BR-TAX-03` | Mọi LO thuộc **đúng một** skill; mọi skill thuộc **đúng một** strand | Cây, không phải đồ thị. Đa cha làm báo cáo cộng trùng |
 | `BR-TAX-04` | Mọi skill có `age_min ≤ age_max ∈ [3,6]`, `difficulty ∈ [1,5]`, ≥1 thinking process | Thiếu bất kỳ cái nào làm ZPD không chọn được |
 | `BR-TAX-05` | `prerequisite.difficulty ≤ skill.difficulty` | Điều kiện tiên quyết khó hơn thứ nó mở khoá là mâu thuẫn |
-| `BR-TAX-06` | Taxonomy là **Lớp 1** — admin ❌ không tạo/sửa/xoá qua UI | Mọi FK trỏ vào đây. Sửa từ UI làm mồ côi dữ liệu đã thu |
-| `BR-TAX-07` | `mastery_state` khoá theo **`skill_id` FK**, ❌ không phải chuỗi `concept` tự do | Sai chính tả bị chặn ở FK, không phải phát hiện sau 6 tháng |
+| `BR-TAX-06` (Lớp 1) | Taxonomy là **Lớp 1** — admin cấm tạo/sửa/xoá qua UI | Mọi FK trỏ vào đây. Sửa từ UI làm mồ côi dữ liệu đã thu |
+| `BR-TAX-07` (FK skill_id) | `mastery_state` khoá theo **`skill_id` FK**, không phải chuỗi `concept` tự do | Sai chính tả bị chặn ở FK, không phải phát hiện sau 6 tháng |
 | `BR-TAX-08` | `strands.parent_strand_id` cho **đúng một** tầng lồng. Sâu hơn bị cấm | Cây sâu tuỳ ý làm mọi truy vấn thành đệ quy |
 | `BR-TAX-09` | Seed **khớp chính xác** `docs/taxonomy/c1..c6.md` — 6 / 41 / 230 | Hai nguồn sự thật lệch nhau là không có nguồn nào |
 | `BR-TAX-10` | Truy vấn `skill → LO → asset` **< 100 ms P95** với toàn bộ dữ liệu MVP | Nó nằm trong đường vào mọi màn hình chọn nội dung |
@@ -95,8 +95,8 @@ L1 COMPETENCY          6      C1..C6
 | `learning_objectives` | `id` PK, `code` (hiển thị), `skill_id` FK, `behaviour_vi`, `observable_criteria_vi`, `position` |
 
 Cột thật xem [`schema-content-taxonomy.md`](schema-content-taxonomy.md) §7.1 — file này chỉ
-liệt kê field, không phải nguồn `owns`. FK dùng `id` theo `data-model-overview` `BR-DM-13`
-(D-AE, sửa lại 2026-08-07) — `code` giữ lại làm định danh hiển thị, ❌ không dùng làm FK.
+liệt kê field, không phải nguồn `owns`. FK dùng `id` theo [`data-model-overview.md`](data-model-overview.md) `BR-DM-13`
+(D-AE, sửa lại 2026-08-07) — `code` giữ lại làm định danh hiển thị, không dùng làm FK.
 
 ### 7.2 Phân bố MVP
 
@@ -125,7 +125,7 @@ assertDag(tree): void;            // throw kèm chu trình tìm được
 nextCandidates(tree, mastered: Set<string>): Skill[];
 ```
 
-Pure TS. ❌ **NEVER ghi DB** từ package này — trả dữ liệu, tầng API ghi.
+Pure TS. Cấm — **NEVER ghi DB** từ package này — trả dữ liệu, tầng API ghi.
 
 ## 8. API contract
 
@@ -227,7 +227,7 @@ Scenario: skill planned không vào DB
 
 | # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
 |---|---|---|---|---|
-| ~~1~~ | ~~Ai biên soạn ≥690 LO?~~ Seeder + AI agent IDE soạn nhanh được, nhưng vẫn cần người đọc review từng bản. **Đóng 2026-08-07 (T9)**: đồng bộ theo `mvp-scope` Q1 — hạ từ chặn P0 xuống 🟡 P1, cùng nhãn D-W | — | ✅ đóng | D-W (chủ thật chưa chốt ở `mvp-scope` Q1 — Nợ #4, chưa đóng) |
-| 2 | 120 skill còn thiếu (230 → 350) biên soạn khi nào và bởi ai? | Nội dung sau MVP | 🟡 sau MVP | hoãn |
-| 3 | `strength` của prerequisite dùng thang nào — nhị phân hay 0–1? Adaptive cần biết để cân nhắc | `adaptive-engine` | 🟡 P3 | hoãn — chốt lúc `adaptive-engine` thiết kế (P3) |
-| 4 | C5 Language cần audio tiếng Việt cho ~21 skill — thu âm người thật hay TTS? | Nội dung P1 | 🟡 P1 | hoãn |
+| ~~1~~ | ~~Ai biên soạn ≥690 LO?~~ Seeder + AI agent IDE soạn nhanh được, nhưng vẫn cần người đọc review từng bản. **Đóng 2026-08-07 (T9)**: đồng bộ theo [`mvp-scope.md`](../00-foundation/mvp-scope.md) Q1 — hạ từ chặn P0 xuống chờ P1, cùng nhãn D-W | — | đã đóng | D-W (chủ thật chưa chốt ở [`mvp-scope.md`](../00-foundation/mvp-scope.md) Q1 — Nợ #4, chưa đóng) |
+| 2 | 120 skill còn thiếu (230 → 350) biên soạn khi nào và bởi ai? | Nội dung sau MVP | chờ sau MVP | hoãn |
+| 3 | `strength` của prerequisite dùng thang nào — nhị phân hay 0–1? Adaptive cần biết để cân nhắc | [`adaptive-engine.md`](adaptive-engine.md) | chờ P3 | hoãn — chốt lúc [`adaptive-engine.md`](adaptive-engine.md) thiết kế (P3) |
+| 4 | C5 Language cần audio tiếng Việt cho ~21 skill — thu âm người thật hay TTS? | Nội dung P1 | chờ P1 | hoãn |

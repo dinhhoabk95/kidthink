@@ -35,7 +35,7 @@ tính năng nào người dùng thấy.
 | Manager | Upload trong studio, crop, thay thế |
 | Server | Kiểm MIME thật, chuẩn hoá WebP, lưu S3 |
 | Engine | Nạp qua URL dựng từ `path` |
-| User | ❌ Không upload gì ở MVP (add-on mới có) |
+| User | Cấm upload gì ở MVP (add-on mới có) |
 
 ## 3. Entry points
 
@@ -63,29 +63,29 @@ Chọn/kéo ảnh
 
 | Nhánh | Hành vi |
 |---|---|
-| MIME khai báo ≠ magic bytes | **415**, ❌ không lưu |
+| MIME khai báo ≠ magic bytes | **415**, không lưu |
 | SVG | **415** — có thể chứa script |
 | > 2 MB | **413** |
-| Ảnh nhỏ hơn 160×160 | Chấp nhận, ❌ không phóng to |
+| Ảnh nhỏ hơn 160×160 | Chấp nhận, không phóng to |
 | Xoá ảnh đang được content `published` dùng | **409** kèm danh sách nơi dùng |
 | Content bị xoá cứng | Ảnh của nó chuyển `orphan`, job dọn sau 30 ngày |
-| Upload fail giữa chừng | ❌ Không mất dữ liệu form — studio giữ nguyên trạng thái |
+| Upload fail giữa chừng | Cấm mất dữ liệu form — studio giữ nguyên trạng thái |
 
 ## 6. Business rules
 
 | ID | Rule | Vì sao |
 |---|---|---|
-| `BR-IMG-01` | ❌ **NEVER thư viện ảnh dùng chung.** Ảnh thuộc `(owner_type, owner_id)` | §1 |
-| `BR-IMG-02` | ❌ **NEVER cho upload SVG** | Có thể chứa script |
-| `BR-IMG-03` | Kiểm MIME bằng **magic bytes**, ❌ không tin header client | Header đổi được |
+| `BR-IMG-01` | Cấm — **NEVER thư viện ảnh dùng chung.** Ảnh thuộc `(owner_type, owner_id)` | §1 |
+| `BR-IMG-02` | Cấm — **NEVER cho upload SVG** | Có thể chứa script |
+| `BR-IMG-03` | Kiểm MIME bằng **magic bytes**, không tin header client | Header đổi được |
 | `BR-IMG-04` | Kiểm giới hạn ở **cả client và server** | Client để trải nghiệm; server để an toàn |
 | `BR-IMG-05` | DB lưu **`path` tương đối**, URL dựng lúc đọc | Đổi CDN/bucket không làm chết mọi content đã tạo |
-| `BR-IMG-06` | ❌ **NEVER ghi đè file gốc.** Thay ảnh = path mới | Version nội dung cũ vẫn trỏ ảnh cũ |
-| `BR-IMG-07` | Crop ở client là quyết định **biên tập**; resize ở server là ràng buộc **kỹ thuật**. Hai việc khác nhau, ❌ không thay thế nhau | |
+| `BR-IMG-06` | Cấm — **NEVER ghi đè file gốc.** Thay ảnh = path mới | Version nội dung cũ vẫn trỏ ảnh cũ |
+| `BR-IMG-07` | Crop ở client là quyết định **biên tập**; resize ở server là ràng buộc **kỹ thuật**. Hai việc khác nhau, không thay thế nhau | |
 | `BR-IMG-08` | Preview ở **cỡ thật trong game** | Ảnh ổn ở 400px có thể vô nghĩa ở 96px |
-| `BR-IMG-09` | ❌ **NEVER ảnh chụp trẻ em** ở bất kỳ đâu, kể cả avatar | `child-data-compliance` `BR-CDC-04` |
+| `BR-IMG-09` | Cấm — **NEVER ảnh chụp trẻ em** ở bất kỳ đâu, kể cả avatar | [`child-data-compliance.md`](../00-foundation/child-data-compliance.md) `BR-CDC-04` |
 | `BR-IMG-10` | Ảnh chứng từ thanh toán lưu **private**, signed URL 15 phút | Chứa thông tin ngân hàng |
-| `BR-IMG-11` | ❌ **NEVER raw `$fetch` cho route upload** — mất `x-csrf-token` | |
+| `BR-IMG-11` | Cấm — **NEVER raw `$fetch` cho route upload** — mất `x-csrf-token` | |
 | `BR-IMG-12` | Mọi upload/xoá ghi `audit_logs` | |
 
 ## 7. Data
@@ -124,7 +124,7 @@ storage.url(path, { variant: "full" | "thumb" }): string;
 storage.signedUrl(path, ttlSeconds): string;   // chỉ cho private
 ```
 
-❌ **NEVER** lưu URL tuyệt đối vào DB.
+Cấm — **NEVER** lưu URL tuyệt đối vào DB.
 
 ## 8. API contract
 
