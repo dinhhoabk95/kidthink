@@ -2,10 +2,10 @@
 spec: CHILD-PROFILE-ARCHIVE
 title: Lưu trữ và xoá hồ sơ trẻ
 area: account
-status: draft
+status: approved
 mvp: true
 phase: P1
-reviewed: 2026-08-04
+reviewed: 2026-08-08
 owns:
   - Luồng lưu trữ và xoá một hồ sơ trẻ
 depends_on:
@@ -154,6 +154,7 @@ Scenario: BR-CPR-06 — admin không xoá được
 
 ## 11. Open questions
 
-| # | Câu hỏi | Chặn gì |
-|---|---|---|
-| 1 | Trẻ sang 7 tuổi có tự động archive không, hay để phụ huynh quyết định? | [`child-profile-crud.md`](child-profile-crud.md) Q2 |
+| # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
+|---|---|---|---|---|
+| 1 | Trẻ sang 7 tuổi có tự động archive không, hay để phụ huynh quyết định? | Quy tắc tuổi tác | P3 | [`child-profile-crud.md`](child-profile-crud.md) Q2 (Để phụ huynh quyết định, không tự động archive) |
+

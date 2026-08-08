@@ -338,15 +338,15 @@ Lô đụng `play_sessions` và `play_events`. **Mọi cột phát sinh phải s
 
 160 dòng · 10 rule · 1 câu hỏi · 0 cảnh báo.
 
-- [ ] Đọc hết file
-- [ ] Đối chiếu với [`account-deletion.md`](../specs/03-account/account-deletion.md) (đã
+- [x] Đọc hết file
+- [x] Đối chiếu với [`account-deletion.md`](../specs/03-account/account-deletion.md) (đã
       `approved` ở Task #6): xoá tài khoản và lưu trữ hồ sơ trẻ phải nói cùng một chuyện về dữ liệu
-- [ ] Chuyển bảng mục 11 sang 5 cột
-- [ ] Q1 (trẻ sang 7 tuổi có tự động archive không) — **cặp số 7**: để mở, `Chặn phase: P3`,
+- [x] Chuyển bảng mục 11 sang 5 cột
+- [x] Q1 (trẻ sang 7 tuổi có tự động archive không) — **cặp số 7**: để mở, `Chặn phase: P3`,
       `Chủ` trỏ [`child-profile-crud.md`](../specs/03-account/child-profile-crud.md) Q2
-- [ ] Checklist review 15 mục
-- [ ] `status: approved`, `reviewed` mới
-- [ ] Commit `feat(specs): T8 bước 16 — approve child-profile-archive`
+- [x] Checklist review 15 mục
+- [x] `status: approved`, `reviewed: 2026-08-08`
+- [x] Commit `feat(specs): T8 bước 16 — approve child-profile-archive`
 
 ### Bước 17 — [`child-profile-switching.md`](../specs/03-account/child-profile-switching.md)
 
