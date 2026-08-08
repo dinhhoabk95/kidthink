@@ -231,14 +231,14 @@ Lô đụng `play_sessions` và `play_events`. **Mọi cột phát sinh phải s
 
 167 dòng · 8 rule · 2 câu hỏi · 0 cảnh báo. Nút chặn của bước 11 và bước 17.
 
-- [ ] Đọc hết file
-- [ ] Chuyển bảng mục 11 sang 5 cột
-- [ ] Q1 (nút back trình duyệt không chặn được) — **cặp số 8**: để mở,
+- [x] Đọc hết file
+- [x] Chuyển bảng mục 11 sang 5 cột
+- [x] Q1 (nút back trình duyệt không chặn được) — **cặp số 8**: để mở,
       `Chặn phase: P5`, `Chủ`: [`pwa-install.md`](../specs/01-platform/pwa-install.md)
-- [ ] Q2 (tỉ lệ fail bao nhiêu là quá khó) — để mở, `Chặn phase` ghi KPI P1
-- [ ] Checklist review 15 mục
-- [ ] `status: approved`, `reviewed` mới
-- [ ] Commit `feat(specs): T8 bước 10 — approve parent-gate`
+- [x] Q2 (tỉ lệ fail bao nhiêu là quá khó) — để mở, `Chặn phase` ghi KPI P1
+- [x] Checklist review 15 mục
+- [x] `status: approved`, `reviewed: 2026-08-08`
+- [x] Commit `feat(specs): T8 bước 10 — approve parent-gate`
 
 ### Bước 11 — [`play-entry-and-profile-select.md`](../specs/04-play/play-entry-and-profile-select.md)
 

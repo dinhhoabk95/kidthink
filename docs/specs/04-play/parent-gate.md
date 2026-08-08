@@ -2,10 +2,10 @@
 spec: PARENT-GATE
 title: Cổng phụ huynh
 area: play
-status: draft
+status: approved
 mvp: true
 phase: P1
-reviewed: 2026-08-04
+reviewed: 2026-08-08
 owns:
   - Cơ chế xác minh người lớn
   - Nơi bắt buộc có cổng
@@ -160,7 +160,8 @@ Scenario: sai 3 lần thì khoá tạm
 
 ## 11. Open questions
 
-| # | Câu hỏi | Chặn gì |
-|---|---|---|
-| 1 | Nút back của trình duyệt không chặn được — có bắt buộc PWA toàn màn hình cho trải nghiệm trẻ không? | [`pwa-install.md`](../01-platform/pwa-install.md) |
-| 2 | Tỉ lệ fail bao nhiêu thì coi là thử thách quá khó? | KPI P1 |
+| # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
+|---|---|---|---|---|
+| 1 | Nút back của trình duyệt không chặn được — có bắt buộc PWA toàn màn hình cho trải nghiệm trẻ không? | PWA toàn màn hình | P5 | [`pwa-install.md`](../01-platform/pwa-install.md) |
+| 2 | Tỉ lệ fail bao nhiêu thì coi là thử thách quá khó? | KPI trải nghiệm | P1 | Product / Analytics (Tỉ lệ fail > 15% là tín hiệu cần hạ độ khó thử thách) |
+
