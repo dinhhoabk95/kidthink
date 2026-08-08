@@ -1625,6 +1625,93 @@ export function checkC15(specs: SpecFile[]) {
   }
 }
 
+// ─── C16 — câu hỏi mở phải có "Chặn phase" và "Chủ" không rỗng ───────────────
+//
+// Đề xuất C16 (Task #8, 2026-08-08).
+// Mọi hàng câu hỏi mở dưới section "11. Open questions" phải có cột "Chặn phase"
+// và "Chủ" không rỗng (và không chỉ là gạch ngang "-"/ "—").
+// - Lỗi (fail) nếu spec status: approved
+// - Cảnh báo (warn) nếu spec status: draft
+
+export function checkC16(specs: SpecFile[]) {
+  for (const s of specs) {
+    let inSection11 = false;
+    let tableHas5Cols = false;
+
+    for (let i = 0; i < s.lines.length; i++) {
+      const line = s.lines[i] ?? "";
+      if (/^##\s+11\.\s+Open questions/i.test(line)) {
+        inSection11 = true;
+        tableHas5Cols = false;
+        continue;
+      }
+      if (inSection11 && /^##\s+/.test(line)) {
+        inSection11 = false;
+        continue;
+      }
+
+      if (!inSection11) {
+        continue;
+      }
+
+      if (!line.trim().startsWith("|")) {
+        continue;
+      }
+
+      const cols = line
+        .split("|")
+        .map((c) => c.trim())
+        .filter((_, idx, arr) => idx > 0 && idx < arr.length - 1);
+
+      if (cols.length === 0) {
+        continue;
+      }
+
+      // Check header row
+      if (cols[0] === "#" || cols[1]?.includes("Câu hỏi")) {
+        tableHas5Cols =
+          cols.length >= 5 &&
+          line.includes("Chủ") &&
+          line.includes("Chặn phase");
+        continue;
+      }
+
+      // Skip separator rows
+      if (
+        cols[0]?.startsWith("---") ||
+        cols.every((c) => /^[-:|\s]+$/.test(c))
+      ) {
+        continue;
+      }
+
+      // Skip continuation rows (where q# is empty) or closed questions (~~3~~)
+      const qNum = cols[0] ?? "";
+      if (!qNum || qNum.startsWith("~~")) {
+        continue;
+      }
+
+      if (tableHas5Cols || cols.length >= 5) {
+        const phase = cols[3] ?? "";
+        const owner = cols[4] ?? "";
+
+        const isPhaseMissing =
+          !phase || phase === "" || phase === "-" || phase === "—";
+        const isOwnerMissing =
+          !owner || owner === "" || owner === "-" || owner === "—";
+
+        if (isPhaseMissing || isOwnerMissing) {
+          const msg = `Hàng câu hỏi mở (hàng ${qNum}) thiếu "Chặn phase" hoặc "Chủ"`;
+          if (s.frontmatter.status === "approved") {
+            fail(s.rel, i + 1, "C16", msg);
+          } else {
+            warn(s.rel, i + 1, "C16", msg);
+          }
+        }
+      }
+    }
+  }
+}
+
 export const ALL_CHECKS = [
   checkC1,
   checkC2,
@@ -1641,4 +1728,5 @@ export const ALL_CHECKS = [
   checkC13,
   checkC14,
   checkC15,
+  checkC16,
 ];

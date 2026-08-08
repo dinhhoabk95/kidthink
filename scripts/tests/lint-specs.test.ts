@@ -9,6 +9,7 @@ import {
   checkC13,
   checkC14,
   checkC15,
+  checkC16,
   collectSpecFiles,
   getViolations,
   getWarnings,
@@ -681,5 +682,59 @@ describe("checkC8 (approved spec depends_on must also be approved)", () => {
     checkC8(specs);
     const violations = getViolations().filter((v) => v.check === "C8");
     expect(violations).toHaveLength(0);
+  });
+});
+
+describe("checkC16 (open questions phase and owner check)", () => {
+  function specWithQuestions(status: string, rows: string[]) {
+    const content = [
+      "---",
+      "spec: TEST_C16",
+      `status: ${status}`,
+      "---",
+      "",
+      "## 11. Open questions",
+      "",
+      "| # | Câu hỏi | Chặn gì | Chặn phase | Chủ |",
+      "|---|---|---|---|---|",
+      ...rows,
+    ].join("\n");
+    return makeSpecFile("/fake/test_c16.md", "fake/test_c16.md", content);
+  }
+
+  it("flags approved spec with open question missing owner", () => {
+    const specs = [
+      specWithQuestions("approved", [
+        "| 1 | Test question | Blocked feature | P1 | |",
+      ]),
+    ];
+    checkC16(specs);
+    const violations = getViolations().filter((v) => v.check === "C16");
+    expect(violations).toHaveLength(1);
+    expect(violations[0].message).toContain('thiếu "Chặn phase" hoặc "Chủ"');
+  });
+
+  it("passes approved spec with open question having phase and owner", () => {
+    const specs = [
+      specWithQuestions("approved", [
+        "| 1 | Test question | Blocked feature | P1 | product_owner |",
+      ]),
+    ];
+    checkC16(specs);
+    const violations = getViolations().filter((v) => v.check === "C16");
+    expect(violations).toHaveLength(0);
+  });
+
+  it("warns draft spec with open question missing owner", () => {
+    const specs = [
+      specWithQuestions("draft", [
+        "| 1 | Test question | Blocked feature | P1 | - |",
+      ]),
+    ];
+    checkC16(specs);
+    const violations = getViolations().filter((v) => v.check === "C16");
+    const warnings = getWarnings().filter((w) => w.check === "C16");
+    expect(violations).toHaveLength(0);
+    expect(warnings).toHaveLength(1);
   });
 });

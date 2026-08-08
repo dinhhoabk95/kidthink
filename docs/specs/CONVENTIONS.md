@@ -196,6 +196,8 @@ Mỗi scenario map được sang **đúng một** test. Tên test mang ID scenar
 - [ ] Mọi mã hợp đồng (`BR-*`, mã lỗi, mã quyết định `D-*`, mã kiểm tra `Cn`) kèm tên đọc được
       ở lần nhắc đầu tiên trong file (mục 11.5).
 - [ ] Không thuật ngữ chuyên môn nào bị dịch ra tiếng Việt (mục 11.3).
+- [ ] Mọi hàng câu hỏi mở ở mục 11 của spec có 5 cột với "Chặn phase" và "Chủ" không rỗng.
+
 
 ## 11. Văn phong — không ký hiệu, không viết tắt tự phát
 
