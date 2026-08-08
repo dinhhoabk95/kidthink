@@ -2,10 +2,10 @@
 spec: MEMBER-DASHBOARD
 title: Trang chính của người dùng
 area: account
-status: draft
+status: approved
 mvp: true
 phase: P1
-reviewed: 2026-08-04
+reviewed: 2026-08-08
 owns:
   - Nội dung trang /me
   - Thứ tự ưu tiên thông tin
@@ -55,7 +55,7 @@ User đã đăng nhập. Cấm Trẻ không thấy trang này.
 | `BR-MDB-01` | Chưa có hồ sơ trẻ → **chỉ** hiện CTA tạo hồ sơ | Trang đầy widget rỗng làm người mới bối rối |
 | `BR-MDB-02` | Vào khu vực chơi **phải chọn trẻ** trước | `BR-PEN-02` |
 | `BR-MDB-03` | Thông tin thương mại được phép ở đây, Cấm — **NEVER trên bề mặt trẻ** | `BR-PEN-04` |
-| `BR-MDB-04` | Đọc từ **rollup**, không quét event thô | |
+| `BR-MDB-04` | Đọc từ **rollup**, không quét event thô | Tối ưu hiệu năng truy vấn và tuân thủ nguyên tắc không quét dữ liệu thô ở tầng ứng dụng |
 | `BR-MDB-05` | Hiện quota còn lại khi **gần hết** (>80%), không phải lúc nào | Hiện thường trực tạo cảm giác bị giới hạn |
 | `BR-MDB-06` | Cấm — **NEVER so sánh giữa các trẻ** trong cùng tài khoản | `BR-PRG-05` |
 | `BR-MDB-07` | Nhắc nâng cấp tối đa **một chỗ** mỗi trang | Nhiều lời mời cùng lúc đọc thành ép mua |
@@ -147,6 +147,7 @@ Scenario: BR-MDB-04 — không quét event thô
 
 ## 11. Open questions
 
-| # | Câu hỏi | Chặn gì |
-|---|---|---|
-| 1 | Tài khoản nhiều trẻ (giáo viên) cần bố cục khác không? 5 thẻ trẻ đã chật | P3 |
+| # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
+|---|---|---|---|---|
+| 1 | Tài khoản nhiều trẻ (giáo viên) cần bố cục khác không? | Bố cục đa hồ sơ | P3 | Teacher & Institution Addon |
+

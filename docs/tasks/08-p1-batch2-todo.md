@@ -385,13 +385,13 @@ Lô đụng `play_sessions` và `play_events`. **Mọi cột phát sinh phải s
 
 153 dòng · 10 rule · 1 câu hỏi · 1 cảnh báo. Cần bước 15 và bước 18 xong.
 
-- [ ] Đọc hết file
-- [ ] Điền "vì sao" cho `BR-MDB-04`
-- [ ] Chuyển bảng mục 11 sang 5 cột
-- [ ] Q1 (tài khoản nhiều trẻ cần bố cục khác không) — để mở, `Chặn phase: P3`
-- [ ] Checklist review 15 mục
-- [ ] `status: approved`, `reviewed` mới, cảnh báo giảm **1**
-- [ ] Commit `feat(specs): T8 bước 19 — approve member-dashboard`
+- [x] Đọc hết file
+- [x] Điền "vì sao" cho `BR-MDB-04`
+- [x] Chuyển bảng mục 11 sang 5 cột
+- [x] Q1 (tài khoản nhiều trẻ cần bố cục khác không) — để mở, `Chặn phase: P3`
+- [x] Checklist review 15 mục
+- [x] `status: approved`, `reviewed: 2026-08-08`, cảnh báo giảm **1**
+- [x] Commit `feat(specs): T8 bước 19 — approve member-dashboard`
 
 ### Cổng dừng C — sau lô C (7 spec)
 
