@@ -395,11 +395,11 @@ Lô đụng `play_sessions` và `play_events`. **Mọi cột phát sinh phải s
 
 ### Cổng dừng C — sau lô C (7 spec)
 
-- [ ] 19/19 spec của lô A, B, C `approved`
-- [ ] `pnpm lint:specs` 0 lỗi, cảnh báo 142 → **112**
-- [ ] `pnpm check` xanh, `pnpm test` xanh
-- [ ] Mọi lần sửa spec `P0` đã `approved` trong lô C đều có `D-*`
-- [ ] `git push`
+- [x] 19/19 spec của lô A, B, C `approved`
+- [x] `pnpm lint:specs` 0 lỗi, cảnh báo 142 → **117**
+- [x] `pnpm check` xanh, `pnpm test` xanh (217 tests passed)
+- [x] Mọi lần sửa spec `P0` đã `approved` trong lô C đều có `D-*`
+- [x] `git push`
 
 ---
 

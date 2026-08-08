@@ -170,6 +170,7 @@ Scenario: chưa chơi lần nào
 
 | # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
 |---|---|---|---|---|
-| 1 | Có gửi báo cáo tuần qua email không, và mặc định bật hay tắt? | Kênh thông báo | P1 | Chốt: Gửi email tổng kết tuần (weekly digest); mặc định bật khi đăng ký, có thể tắt trong cài đặt (`notification-service.md`) |
+| 1 | Có gửi báo cáo tuần qua email không, và mặc định bật hay tắt? | Kênh thông báo | P1 | Chốt: Gửi email tổng kết tuần (weekly digest); mặc định bật khi đăng ký, có thể tắt trong cài đặt ([`notification-service.md`](../01-platform/notification-service.md)) |
+
 | 2 | Gợi ý hoạt động ngoài màn hình lấy từ đâu khi `lessons` chưa có ở P1? | Nội dung gợi ý | P1 | Chốt D-BB (khớp với [`healthy-play-limits.md`](../04-play/healthy-play-limits.md) Q3): Dùng danh sách tĩnh 12 hoạt động ngoài màn hình dạng seed file |
 
