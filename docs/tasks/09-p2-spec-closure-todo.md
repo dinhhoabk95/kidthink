@@ -228,14 +228,14 @@ live-preview · publish-and-version · seo-content-admin (độc lập)
 
 ### Bước 14 — [`schema-driven-form.md`](../specs/06-admin/schema-driven-form.md)
 
-- [ ] Đọc hết 174 dòng; điền "vì sao" cho **1** cảnh báo `C6`
-- [ ] **Q1 — cặp 9 của mục 6.** [`game-template-contract.md`](../specs/01-platform/game-template-contract.md)
+- [x] Đọc hết 174 dòng; điền "vì sao" cho **1** cảnh báo `C6`
+- [x] **Q1 — cặp 9 của mục 6.** [`game-template-contract.md`](../specs/01-platform/game-template-contract.md)
       Q4 ghi "hoãn — chốt lúc [`schema-driven-form.md`](../specs/06-admin/schema-driven-form.md)
       thiết kế". Chốt cách khai `refine` dạng ui-hint, ghi **một** `D-*`, sửa **cả hai** file
       trong cùng commit
-- [ ] [`game-template-contract.md`](../specs/01-platform/game-template-contract.md) là `P1` đã
+- [x] [`game-template-contract.md`](../specs/01-platform/game-template-contract.md) là `P1` đã
       `approved` — nêu ở Cổng dừng C
-- [ ] `status: approved`; commit `feat(specs): T9 bước 14 — approve schema-driven-form + đóng GTC Q4`
+- [x] `status: approved`; commit `feat(specs): T9 bước 14 — approve schema-driven-form + đóng GTC Q4`
 
 ### Bước 15 — [`game-level-studio.md`](../specs/06-admin/game-level-studio.md)
 

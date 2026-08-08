@@ -2,10 +2,10 @@
 spec: SCHEMA-DRIVEN-FORM
 title: Form sinh từ schema
 area: admin
-status: draft
+status: approved
 mvp: true
 phase: P2
-reviewed: 2026-08-04
+reviewed: 2026-08-08
 owns:
   - Cơ chế suy widget từ Zod
   - Quy ước đặt tên field
@@ -64,7 +64,7 @@ lớn lên. Form sinh từ schema giữ studio và engine không bao giờ nói 
 | `BR-SDF-05` | Validate client dùng **cùng schema** với server | Hai bộ luật là hai kết quả |
 | `BR-SDF-06` | Nhãn tiếng Việt bắt buộc cho mọi field hiện ra | Manager nghĩ bằng tiếng Việt |
 | `BR-SDF-07` | Input giữ `font-size ≥ 16px` | Dưới đó iOS tự zoom |
-| `BR-SDF-08` | Field rơi vào text ngoài ý muốn là **lỗi**, không phải mặc định chấp nhận được | |
+| `BR-SDF-08` | Field rơi vào text ngoài ý muốn là **lỗi**, không phải mặc định chấp nhận được | Phát hiện sớm lỗi quên đặt hậu tố quy ước khi bổ sung field mới vào Zod schema |
 
 ## 7. Data
 
@@ -168,7 +168,7 @@ Scenario: BR-SDF-08 — field rơi vào text bị phát hiện
 
 ## 11. Open questions
 
-| # | Câu hỏi | Chặn gì |
-|---|---|---|
-| 1 | Zod → JSON Schema mất `refine` — client kiểm quan hệ bằng cách nào? | [`game-template-contract.md`](../01-platform/game-template-contract.md) Q4 |
-| 2 | Field lồng sâu (array of object of array) render thế nào cho dễ dùng? | P2 UX |
+| # | Câu hỏi | Chặn phase | Đề xuất chốt | Chủ |
+|---|---|---|---|---|
+| 1 | Zod → JSON Schema mất `refine` — client kiểm quan hệ bằng cách nào? | P2 | Chốt `D-BK`: Dùng custom serializer để khai `uiHint` cho `refine` đơn giản ở client, các `refine` quan hệ phức tạp validate tại server; trỏ sang [`game-template-contract.md`](../01-platform/game-template-contract.md) Q4 | người quyết |
+| 2 | Field lồng sâu (array of object of array) render thế nào cho dễ dùng? | P2 | Giới hạn độ sâu tối đa 3 tầng và render dạng modal / sub-drawer theo quy định UI | người quyết |
