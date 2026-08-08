@@ -136,6 +136,6 @@ Scenario: BR-EVF-08 — chuyển tới tạo hồ sơ trẻ
 
 ## 11. Open questions
 
-| # | Câu hỏi | Chặn gì |
-|---|---|---|
-| 1 | Có cho phép dùng sản phẩm hạn chế mãi mà không xác thực không, hay khoá sau N ngày? | P1 |
+| # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
+|---|---|---|---|---|
+| 1 | Có cho phép dùng sản phẩm hạn chế mãi mà không xác thực không, hay khoá sau N ngày? | Quyền truy cập P1 | P1 | người quyết |
