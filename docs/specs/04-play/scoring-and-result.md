@@ -2,10 +2,10 @@
 spec: SCORING-AND-RESULT
 title: Tính điểm và kết quả phiên
 area: play
-status: draft
+status: approved
 mvp: true
 phase: P1
-reviewed: 2026-08-04
+reviewed: 2026-08-08
 owns:
   - Công thức tính điểm từ event
   - Ánh xạ điểm sang biểu diễn cho trẻ
@@ -60,11 +60,11 @@ báo cáo của người lớn.
 
 | ID | Rule | Vì sao |
 |---|---|---|
-| `BR-SCO-01` | Điểm tính ở **server** từ event, không nhận từ client | |
+| `BR-SCO-01` | Điểm tính ở **server** từ event, không nhận từ client | Tránh việc client gửi điểm giả để gian lận thành tích |
 | `BR-SCO-02` | Trẻ Cấm — **NEVER thấy con số điểm** | Áp lực điểm số phản tác dụng ở tuổi 3–6 |
 | `BR-SCO-03` | Hint và retry Cấm — **NEVER trừ điểm** — chúng được **đếm riêng** | Trừ điểm vì xin trợ giúp dạy trẻ đừng xin trợ giúp |
 | `BR-SCO-04` | `normalized_score ∈ [0,1]`, so được giữa các template | Adaptive cần một thang chung |
-| `BR-SCO-05` | Sai Cấm — **NEVER làm điểm âm**. Sàn là 0 | |
+| `BR-SCO-05` | Sai Cấm — **NEVER làm điểm âm**. Sàn là 0 | Đảm bảo nguyên tắc thiết kế tích cực, không gây cảm giác trừng phạt cho trẻ |
 | `BR-SCO-06` | `stars` không phải hàm của tốc độ | Thưởng tốc độ ở tuổi này tạo thói quen đoán bừa |
 | `BR-SCO-07` | Phiên `abandoned` không hiện `stars` | Ăn mừng phiên bỏ dở làm ăn mừng mất nghĩa |
 | `BR-SCO-08` | Kết quả hiển thị **luôn tích cực**, kể cả điểm thấp | [`feedback-and-celebration.md`](feedback-and-celebration.md) |
@@ -192,7 +192,8 @@ Scenario: BR-SCO-04 — thang chung giữa template
 
 ## 11. Open questions
 
-| # | Câu hỏi | Chặn gì |
-|---|---|---|
-| 1 | Trọng số 0,6/0,4 đã đúng chưa? Cần đo trên dữ liệu thật rồi tinh chỉnh bằng replay | P3 |
-| 2 | Template `sequence-order` chấm từng vị trí hay cả chuỗi? Ảnh hưởng `accuracy` | [`game-template-contract.md`](../01-platform/game-template-contract.md) Q3 |
+| # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
+|---|---|---|---|---|
+| 1 | Trọng số 0,6/0,4 đã đúng chưa? | Tinh chỉnh adaptive | P3 | Data / Adaptive |
+| 2 | Template `sequence-order` chấm từng vị trí hay cả chuỗi? | Tinh chỉnh scoring | P1 | Chốt D-BA: P1 chấm cả chuỗi; hoãn chấm từng vị trí sang P3 khi adaptive engine cần |
+

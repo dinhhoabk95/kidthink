@@ -183,20 +183,20 @@ Lô đụng `play_sessions` và `play_events`. **Mọi cột phát sinh phải s
 
 199 dòng · 8 rule · 2 câu hỏi · 2 cảnh báo.
 
-- [ ] Đọc hết file
-- [ ] Điền "vì sao" cho `BR-SCO-01`, `BR-SCO-05`
-- [ ] Đối chiếu với Cổng ra P1: "điểm tính ở server; gửi điểm giả từ client không đổi kết quả lưu"
-- [ ] Chuyển bảng mục 11 sang 5 cột
-- [ ] Q1 (trọng số 0,6/0,4) — để mở, `Chặn phase: P3` (cần dữ liệu thật để tinh chỉnh)
-- [ ] Q2 (`sequence-order` chấm từng vị trí hay cả chuỗi) — **cặp số 6**: đây chính là chỗ mà
+- [x] Đọc hết file
+- [x] Điền "vì sao" cho `BR-SCO-01`, `BR-SCO-05`
+- [x] Đối chiếu với Cổng ra P1: "điểm tính ở server; gửi điểm giả từ client không đổi kết quả lưu"
+- [x] Chuyển bảng mục 11 sang 5 cột
+- [x] Q1 (trọng số 0,6/0,4) — để mở, `Chặn phase: P3` (cần dữ liệu thật để tinh chỉnh)
+- [x] Q2 (`sequence-order` chấm từng vị trí hay cả chuỗi) — **cặp số 6**: đây chính là chỗ mà
       [`game-template-contract.md`](../specs/01-platform/game-template-contract.md) Q3 hẹn "chốt
       lúc [`scoring-and-result.md`](../specs/04-play/scoring-and-result.md) thiết kế". Chốt cả
-      hai chỗ trong **cùng commit**, ghi `D-*`
-- [ ] [`game-template-contract.md`](../specs/01-platform/game-template-contract.md) là spec
+      hai chỗ trong **cùng commit**, ghi `D-BA`
+- [x] [`game-template-contract.md`](../specs/01-platform/game-template-contract.md) là spec
       `approved` — sửa nó là đổi contract, nêu ở Cổng dừng B
-- [ ] Checklist review 15 mục
-- [ ] `status: approved`, `reviewed` mới, cảnh báo giảm **2**
-- [ ] Commit `feat(specs): T8 bước 7 — approve scoring-and-result, đóng Q3 của game-template-contract`
+- [x] Checklist review 15 mục
+- [x] `status: approved`, `reviewed: 2026-08-08`, cảnh báo giảm **2**
+- [x] Commit `feat(specs): T8 bước 7 — approve scoring-and-result, đóng Q3 của game-template-contract`
 
 ### Bước 8 — [`healthy-play-limits.md`](../specs/04-play/healthy-play-limits.md)
 

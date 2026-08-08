@@ -297,5 +297,6 @@ Scenario: mỗi template có E2E journey
 |---|---|---|---|---|
 | 1 | 60 game type của v1 port thành `content_pack` của 6 template được bao nhiêu phần trăm? Cần khảo sát trước khi cam kết | Phạm vi P1 — không chặn hình dạng contract | chờ P1 | hoãn — khảo sát trước khi vào P1 |
 | 2 | Template thứ 7–10 nên là gì? Maze, memory-flip, rotate đều thuộc mechanic PRD nêu nhưng chưa vào MVP | P4 | chờ P4 | hoãn |
-| 3 | `scoring` schema chung cho mọi template hay mỗi template một kiểu? Chung thì đơn giản, riêng thì đo chính xác hơn | [`scoring-and-result.md`](../04-play/scoring-and-result.md) | chờ P1 | hoãn — chốt lúc [`scoring-and-result.md`](../04-play/scoring-and-result.md) thiết kế |
+| 3 | `scoring` schema chung cho mọi template hay mỗi template một kiểu? | [`scoring-and-result.md`](../04-play/scoring-and-result.md) | P1 | Chốt D-BA ở [`scoring-and-result.md`](../04-play/scoring-and-result.md): P1 dùng `scoring` schema chung (rounds/timer), sequence-order chấm cả chuỗi ở P1 |
+
 | 4 | Xuất Zod → JSON Schema mất `refine`, nên form studio không cảnh báo được ràng buộc quan hệ tới lúc submit. Có nên khai `refine` dạng ui-hint riêng để form biết trước không? | [`schema-driven-form.md`](../06-admin/schema-driven-form.md) | chờ P2 | hoãn — chốt lúc [`schema-driven-form.md`](../06-admin/schema-driven-form.md) thiết kế |
