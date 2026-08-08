@@ -409,16 +409,16 @@ Lô đụng `play_sessions` và `play_events`. **Mọi cột phát sinh phải s
 
 191 dòng · 8 rule · 2 câu hỏi · 1 cảnh báo. Nút chặn của bước 22 và bước 27.
 
-- [ ] Đọc hết file
-- [ ] Điền "vì sao" cho `BR-SRC-05`
-- [ ] Xác nhận lọc theo quyền khớp [`access-gating.md`](../specs/04-play/access-gating.md)
-- [ ] Chuyển bảng mục 11 sang 5 cột
-- [ ] Q1 (Postgres full-text đủ tới bao nhiêu nội dung) — để mở, `Chặn phase` ghi sau MVP
-- [ ] Q2 — **đã đóng 2026-08-05** (tìm kiếm ngữ nghĩa thuộc add-on AI). Giữ nguyên dạng gạch
+- [x] Đọc hết file
+- [x] Điền "vì sao" cho `BR-SRC-05`
+- [x] Xác nhận lọc theo quyền khớp [`access-gating.md`](../specs/04-play/access-gating.md)
+- [x] Chuyển bảng mục 11 sang 5 cột
+- [x] Q1 (Postgres full-text đủ tới bao nhiêu nội dung) — để mở, `Chặn phase` ghi sau MVP
+- [x] Q2 — **đã đóng 2026-08-05** (tìm kiếm ngữ nghĩa thuộc add-on AI). Giữ nguyên dạng gạch
       ngang, không xoá
-- [ ] Checklist review 15 mục
-- [ ] `status: approved`, `reviewed` mới, cảnh báo giảm **1**
-- [ ] Commit `feat(specs): T8 bước 20 — approve content-search`
+- [x] Checklist review 15 mục
+- [x] `status: approved`, `reviewed: 2026-08-08`, cảnh báo giảm **1**
+- [x] Commit `feat(specs): T8 bước 20 — approve content-search`
 
 ### Bước 21 — [`seo-and-structured-data.md`](../specs/02-public/seo-and-structured-data.md)
 

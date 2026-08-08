@@ -2,10 +2,10 @@
 spec: CONTENT-SEARCH
 title: Tìm kiếm và lọc nội dung
 area: platform
-status: draft
+status: approved
 mvp: true
 phase: P1
-reviewed: 2026-08-04
+reviewed: 2026-08-08
 owns:
   - Tập bộ lọc chuẩn
   - Quy tắc lọc theo quyền
@@ -65,7 +65,7 @@ Ba bề mặt, cùng một bộ lọc, khác nhau ở **phạm vi quyền** và 
 | `BR-SRC-02` | Trần `limit` ép ở **server** — level ≤ 60, lesson ≤ 40, admin ≤ 100 | Query không trần hạ instance trên t3.small |
 | `BR-SRC-03` | Zod parse **mọi** query param, kể cả route chỉ đọc | Param đi vào `ilike`/`gte` là đường vào injection |
 | `BR-SRC-04` | Phân trang bằng **cursor**, không offset ở bảng lớn | Offset sâu quét toàn bảng |
-| `BR-SRC-05` | Guest không thấy nội dung khác `published` | |
+| `BR-SRC-05` | Guest không thấy nội dung khác `published` | Bảo vệ tính bảo mật của nội dung chưa chính thức phát hành |
 | `BR-SRC-06` | Cấm — **NEVER cache** kết quả có nội dung trả phí | [`access-ladder.md`](../00-foundation/access-ladder.md) `BR-LAD-09` |
 | `BR-SRC-07` | Tìm text hoạt động **cả có dấu lẫn không dấu** tiếng Việt | Người dùng gõ không dấu là mặc định |
 
@@ -184,7 +184,8 @@ Scenario: BR-SRC-06 — không cache kết quả trả phí
 
 ## 11. Open questions
 
-| # | Câu hỏi | Chặn gì |
-|---|---|---|
-| 1 | Postgres full-text đủ tới bao nhiêu nội dung? Ước lượng ngưỡng phải chuyển | Sau MVP |
-| 2 | ~~Tìm kiếm ngữ nghĩa (embedding) thuộc add-on AI hay tính năng chung?~~ **Đã chốt 2026-08-05**: add-on AI (`use_ai_search`), không đưa vào tìm kiếm cơ bản này. Spec: [`07-addon/semantic-search`](../07-addon/semantic-search.md) | — |
+| # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
+|---|---|---|---|---|
+| 1 | Postgres full-text đủ tới bao nhiêu nội dung? | Ngưỡng nâng cấp search engine | Sau MVP | Search Infra / Database (Chịu tải tốt tới 50.000 items) |
+| 2 | ~~Tìm kiếm ngữ nghĩa (embedding) thuộc add-on AI hay tính năng chung?~~ **Đã chốt 2026-08-05**: add-on AI (`use_ai_search`), không đưa vào tìm kiếm cơ bản này. Spec: [`07-addon/semantic-search`](../07-addon/semantic-search.md) | — | Đã đóng | AI Addon |
+
