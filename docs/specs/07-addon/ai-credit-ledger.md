@@ -2,10 +2,10 @@
 spec: AI-CREDIT-LEDGER
 title: Sổ credit AI
 area: addon
-status: draft
+status: approved
 mvp: false
 phase: P4
-reviewed: 2026-08-04
+reviewed: 2026-08-08
 owns:
   - Mô hình credit và sổ ghi
 depends_on:
@@ -43,9 +43,9 @@ Credit là cách duy nhất giới hạn mà không chặn người dùng bình 
 | `BR-ACL-04` | Credit **không hết hạn** ở phiên bản đầu | Credit hết hạn tạo khiếu nại nhiều hơn giá trị nó mang lại |
 | `BR-ACL-05` | Trừ credit **nguyên tử**, chống chạy đua | Hai request đồng thời không được vượt số dư |
 | `BR-ACL-06` | Credit Cấm — **NEVER mở `access_tier`** | `BR-ENT-08` |
-| `BR-ACL-07` | Cấp bù tay ghi `audit_logs` + lý do bắt buộc | |
+| `BR-ACL-07` | Cấp bù tay ghi `audit_logs` + lý do bắt buộc | Đảm bảo trách nhiệm giải trình và ngăn chặn việc lạm dụng quyền quản trị viên |
 | `BR-ACL-08` | Chi phí thật (USD) ghi **riêng** với credit tiêu | Credit là đơn vị bán; USD là chi phí. Trộn hai cái làm không tính được biên |
-| `BR-ACL-09` | Cảnh báo User khi còn **< 20%** credit | |
+| `BR-ACL-09` | Cảnh báo User khi còn **< 20%** credit | Nhắc nhở người dùng chủ động nạp thêm để trải nghiệm sử dụng không bị ngắt quãng |
 
 ## 7. Data
 
@@ -89,6 +89,8 @@ COMMIT
   → gọi LLM
   → fail? INSERT ledger (delta = +cost, reason = refund)
 ```
+
+Hoàn tiền/credit cho giao dịch lỗi phải dùng bút toán ngược (`delta` dương, `reason = refund`), Cấm — **NEVER sửa trực tiếp** dòng ledger đã ghi để đảm bảo tính bất biến của sổ kế toán.
 
 ## 8. API contract
 
@@ -142,8 +144,8 @@ Scenario: BR-ACL-08 — chi phí USD ghi riêng
 
 ## 11. Open questions
 
-| # | Câu hỏi | Chặn gì |
-|---|---|---|
-| 1 | **Tỉ lệ trừ credit mỗi loại lời gọi** — cần đo chi phí thật trước khi định giá | Lên catalog |
-| 2 | Giá gói credit: bao nhiêu credit cho bao nhiêu tiền? | Lên catalog |
-| 3 | Credit không hết hạn có tạo nợ dài hạn không? | Kế toán |
+| # | Câu hỏi | Chặn phase | Đề xuất chốt | Chủ |
+|---|---|---|---|---|
+| 1 | **Tỉ lệ trừ credit mỗi loại lời gọi** — cần đo chi phí thật trước khi định giá | P4 | Đo chi phí API thật (token, GPU time) ở P3 trước khi chốt bảng tỉ lệ | người quyết |
+| 2 | Giá gói credit: bao nhiêu credit cho bao nhiêu tiền? | P4 | Đóng gói theo các nấc linh hoạt (vd: 50/100/500 credits) khi mở bán gói add-on | người quyết |
+| 3 | Credit không hết hạn có tạo nợ dài hạn không? | P4 | Đánh giá trích lập dự phòng theo chuẩn kế toán cho số dư credit chưa tiêu | Kế toán |
