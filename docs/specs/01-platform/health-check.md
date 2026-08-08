@@ -138,6 +138,6 @@ Scenario: BR-HLT-06 — deploy revert khi smoke fail
 
 ## 11. Open questions
 
-| # | Câu hỏi | Chặn gì |
-|---|---|---|
-| 1 | Có cần tách `/health/live` và `/health/ready` không? Hiện một endpoint làm cả hai vai | Vận hành |
+| # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
+|---|---|---|---|---|
+| 1 | Có cần tách `/health/live` và `/health/ready` không? Hiện một endpoint làm cả hai vai | Vận hành | P1 | Infra |
