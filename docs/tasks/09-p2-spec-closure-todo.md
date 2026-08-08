@@ -56,12 +56,12 @@ Mẫu commit: `feat(specs): T9 bước <n> — approve <tên-spec>`
 
 ### Bước 2 — [`image-upload.md`](../specs/06-admin/image-upload.md)
 
-- [ ] Đọc hết 168 dòng
-- [ ] Điền "vì sao" cho **2** cảnh báo `C6`
-- [ ] Bảng mục 11 sang 5 cột; Q1 trỏ ngược sang
+- [x] Đọc hết 168 dòng
+- [x] Điền "vì sao" cho **2** cảnh báo `C6`
+- [x] Bảng mục 11 sang 5 cột; Q1 trỏ ngược sang
       [`image-storage.md`](../specs/01-platform/image-storage.md) Q1, cùng `Chặn phase: P4`
-- [ ] `status: approved`; `pnpm lint:specs` cảnh báo **101 → 99**
-- [ ] Commit `feat(specs): T9 bước 2 — approve image-upload`
+- [x] `status: approved`; `pnpm lint:specs` cảnh báo **101 → 99**
+- [x] Commit `feat(specs): T9 bước 2 — approve image-upload`
 
 ### Bước 3 — [`emoji-picker.md`](../specs/06-admin/emoji-picker.md)
 

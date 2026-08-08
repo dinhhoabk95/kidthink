@@ -2,10 +2,10 @@
 spec: IMAGE-UPLOAD
 title: Tải và cắt ảnh trong studio
 area: admin
-status: draft
+status: approved
 mvp: true
 phase: P2
-reviewed: 2026-08-04
+reviewed: 2026-08-08
 owns:
   - Giao diện crop và upload
   - Ràng buộc phía client
@@ -67,10 +67,10 @@ Chọn hoặc kéo thả ảnh
 | `BR-IUP-03` | Nút **xoay 90°** | Ảnh từ điện thoại thường sai hướng |
 | `BR-IUP-04` | Kiểm giới hạn ở **cả client và server** | Client để trải nghiệm; server để an toàn |
 | `BR-IUP-05` | `alt_vi` **bắt buộc** | A11y, và nó cũng là mô tả để tra sau này |
-| `BR-IUP-06` | Upload dùng client có **CSRF token**, Cấm — **NEVER raw `$fetch`** | |
+| `BR-IUP-06` | Upload dùng client có **CSRF token**, Cấm — **NEVER raw `$fetch`** | Tránh tấn công CSRF khi tải tệp và đảm bảo qua tầng wrapper quản lý token |
 | `BR-IUP-07` | Upload fail **không mất crop đã làm** | `BR-STU-03` |
 | `BR-IUP-08` | Cấm — **NEVER upload ảnh chụp trẻ em** — nhắc rõ trên UI | `BR-CDC-04` |
-| `BR-IUP-09` | Ghi `audit_logs` mọi upload và xoá | |
+| `BR-IUP-09` | Ghi `audit_logs` mọi upload và xoá | Đảm bảo khả năng truy vết và giải trình theo `BR-AUD-01` đối với thao tác tài nguyên |
 
 ## 7. Data
 
@@ -163,6 +163,6 @@ Scenario: thay ảnh không ghi đè file cũ
 
 ## 11. Open questions
 
-| # | Câu hỏi | Chặn gì |
-|---|---|---|
-| 1 | Xoá nền tự động có đáng làm không? Nhiều ảnh nền trắng sẽ trông rời rạc trên canvas màu | P4 |
+| # | Câu hỏi | Chặn phase | Đề xuất chốt | Chủ |
+|---|---|---|---|---|
+| 1 | Xoá nền tự động có đáng làm không? Nhiều ảnh nền trắng sẽ trông rời rạc trên canvas màu | P4 | Hoãn sang P4 — trỏ sang [`image-storage.md`](../01-platform/image-storage.md) Q1 | người quyết |
