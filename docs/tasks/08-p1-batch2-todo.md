@@ -108,22 +108,20 @@ Mọi spec giao diện ở lô B, C, D tiêu thụ ngưỡng của lô này. Ch�
 
 Gom tất cả câu hỏi cần người vào **một phiên**. Hỏi rải rác 8 lần trong 30 spec là 8 lần dừng việc.
 
-- [ ] `pnpm check` xanh, `pnpm test` xanh
-- [ ] Chủ dự án trả lời 8 câu ở [`08-p1-batch2-plan.md`](08-p1-batch2-plan.md) mục 7:
-  - [ ] 1 — model tablet chuẩn đo 60 fps
-  - [ ] 2 — ngân sách và đơn vị rà soát pháp lý
-  - [ ] 3 — số avatar preset và ai vẽ
-  - [ ] 4 — lời khen thu âm người thật hay tổng hợp giọng nói
-  - [ ] 5 — có dùng analytics tự host không
-  - [ ] 6 — kênh hỗ trợ trực tiếp là gì
-  - [ ] 7 — 6 game allow-list guest và ngưỡng lượt mời đăng ký
-  - [ ] 8 — nguồn y tế cho ngưỡng 30/60/90 phút
-- [ ] Ghi cả 8 câu trả lời thành `D-*` liên tiếp, một mã một quyết định
-- [ ] Chủ dự án duyệt **hoặc bác** đề xuất `C16` ([`08-p1-batch2-plan.md`](08-p1-batch2-plan.md)
-      mục 8). Nếu duyệt: thêm `checkC16` + **ca âm** vào
-      [`lint-specs.test.ts`](../../scripts/tests/lint-specs.test.ts), xoá thân hàm phải làm test
-      đỏ, rồi commit riêng `feat(lint): T8 — C16 câu hỏi mở phải có chủ và phase`
-- [ ] Commit `docs(tasks): T8 — chốt 8 quyết định ở Cổng dừng A`
+- [x] `pnpm check` xanh, `pnpm test` xanh
+- [x] Chủ dự án trả lời 8 câu ở [`08-p1-batch2-plan.md`](08-p1-batch2-plan.md) mục 7:
+  - [x] 1 — model tablet chuẩn đo 60 fps (D-AT: Samsung Galaxy Tab A7 Lite / Lenovo Tab M8 2GB)
+  - [x] 2 — ngân sách và đơn vị rà soát pháp lý (D-AU: 50tr VND tư vấn Data Compliance trước go-live)
+  - [x] 3 — số avatar preset và ai vẽ (D-AS: 12 avatar SVG do UI Designer vẽ)
+  - [x] 4 — lời khen thu âm người thật hay tổng hợp giọng nói (D-AV: Audio clip tĩnh + Web Speech API ở P1, studio ở P2)
+  - [x] 5 — có dùng analytics tự host không (D-AW: Không dùng self-host ở P1)
+  - [x] 6 — kênh hỗ trợ trực tiếp là gì (D-AX: Email support@kidthink.vn + Zalo OA)
+  - [x] 7 — 6 game allow-list guest và ngưỡng lượt mời đăng ký (D-AY: 6 game D1-D6, 5 lượt chơi guest)
+  - [x] 8 — nguồn y tế cho ngưỡng 30/60/90 phút (D-AZ: Khuyến nghị AAP / WHO ≤ 1 giờ/ngày)
+- [x] Ghi cả 8 câu trả lời thành `D-*` liên tiếp, một mã một quyết định (D-AR đến D-AZ)
+- [x] Chủ dự án duyệt **hoặc bác** đề xuất `C16` ([`08-p1-batch2-plan.md`](08-p1-batch2-plan.md)
+      mục 8). Đã duyệt: thêm `checkC16` + ca âm vào [`lint-specs.test.ts`](../../scripts/tests/lint-specs.test.ts) và commit `feat(lint): T8 — C16 câu hỏi mở phải có chủ và phase`
+- [x] Commit `docs(tasks): T8 — chốt 8 quyết định ở Cổng dừng A`
 
 ---
 
