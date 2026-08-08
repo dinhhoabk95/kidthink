@@ -164,6 +164,6 @@ Scenario: BR-PWR-11 — đặt mật khẩu không gỡ SNS
 
 ## 11. Open questions
 
-| # | Câu hỏi | Chặn gì |
-|---|---|---|
-| ~~1~~ | ~~Có cần thông báo cho email cũ khi User đổi email không?~~ **Đóng 2026-08-08**: có — [`account-settings.md`](account-settings.md) `BR-ACS-05` chốt gửi thông báo tới địa chỉ cũ khi đổi email | — |
+| # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
+|---|---|---|---|---|
+| ~~1~~ | ~~Có cần thông báo cho email cũ khi User đổi email không?~~ **Đóng 2026-08-08**: có — [`account-settings.md`](account-settings.md) `BR-ACS-05` chốt gửi thông báo tới địa chỉ cũ khi đổi email | — | P1 | D-BE |
