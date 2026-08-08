@@ -24,22 +24,28 @@ suy ra từ `depends_on` của các spec.
 ## P0 — Foundation
 
 ```
+   testing-strategy · ai-codegen-pipeline · mvp-scope (bước 0)
+                      │
    repo-bootstrap ──→ monorepo-package-architecture   (chạy TRƯỚC mọi spec khác, 0 phụ thuộc)
 
    id-conventions ──┐
-   glossary ────────┼──→ data-model-overview ──→ schema-* ──→ migration đầu tiên
+   glossary ────────┼──→ data-model-overview ──→ schema-* ──→ migration đầu tiên ──→ backup-and-restore · health-check
    actors ──────────┤
    child-data-compliance ──→ (ràng buộc schema child_profiles)
                     │
    access-ladder ───┼──→ entitlement-model ──→ package-catalog
    content-lifecycle ──→ content-versioning
-   error-codes · event-catalog · business-rules   (registry, viết song song)
+   error-codes · event-catalog · business-rules   (registry, tra ở MỌI bước)
+   notification-service · rate-limiting ────────→ registration · email-verification · login-and-session · password-recovery
+                                                 │
+                                                 └──→ audit-log ──→ admin-auth
 ```
 
 Thứ tự làm:
 
 | # | Việc | Spec sở hữu |
 |---|---|---|
+| 0 | Cổng chất lượng, vùng cấm & cắt MVP | [`testing-strategy.md`](08-quality/testing-strategy.md) · [`ai-codegen-pipeline.md`](01-platform/ai-codegen-pipeline.md) · [`mvp-scope.md`](00-foundation/mvp-scope.md) |
 | 1 | Dựng khung repo trong `kidthink/` + chốt dependency baseline + port có chọn lọc từ v1 | [`repo-bootstrap.md`](00-foundation/repo-bootstrap.md) · [`monorepo-package-architecture.md`](00-foundation/monorepo-package-architecture.md) |
 | 2 | Chốt từ vựng và ID | [`glossary.md`](00-foundation/glossary.md) · [`id-conventions.md`](00-foundation/id-conventions.md) |
 | 3 | Chốt tác nhân và guard | [`actors.md`](00-foundation/actors.md) · [`auth-tokens-sessions.md`](01-platform/auth-tokens-sessions.md) |
@@ -48,9 +54,22 @@ Thứ tự làm:
 | 6 | Chốt vòng đời + version nội dung | [`content-lifecycle.md`](00-foundation/content-lifecycle.md) → [`content-versioning.md`](00-foundation/content-versioning.md) |
 | 7 | Thiết kế schema | [`data-model-overview.md`](01-platform/data-model-overview.md) → [`schema-identity-billing.md`](01-platform/schema-identity-billing.md) · [`schema-content-taxonomy.md`](01-platform/schema-content-taxonomy.md) · [`schema-play-telemetry.md`](01-platform/schema-play-telemetry.md) |
 | 8 | Chạy migration đầu tiên, gate local xanh trên schema thật | [`repo-bootstrap.md`](00-foundation/repo-bootstrap.md) (cơ chế) + `schema-*` (cột) |
+| 8b | Sao lưu và quan sát | [`backup-and-restore.md`](01-platform/backup-and-restore.md) · [`health-check.md`](01-platform/health-check.md) |
 | 9 | Taxonomy service + seed Lớp 1 | [`taxonomy-service.md`](01-platform/taxonomy-service.md) · [`emoji-registry.md`](01-platform/emoji-registry.md) |
+| 9b | Email và guard | [`notification-service.md`](01-platform/notification-service.md) · [`rate-limiting.md`](01-platform/rate-limiting.md) |
 | 10 | Auth end-to-end **bằng email/mật khẩu** | [`registration.md`](03-account/registration.md) · [`email-verification.md`](03-account/email-verification.md) · [`login-and-session.md`](03-account/login-and-session.md) · [`password-recovery.md`](03-account/password-recovery.md) |
 | 11 | Audit log (trước mọi hành động cần audit) | [`audit-log.md`](01-platform/audit-log.md) |
+| 11b | Đăng nhập admin | [`admin-auth.md`](06-admin/admin-auth.md) |
+
+Ghi chú:
+- Registry: [`business-rules.md`](00-foundation/business-rules.md), [`error-codes.md`](00-foundation/error-codes.md), [`event-catalog.md`](00-foundation/event-catalog.md) không thành bước riêng mà được tra cứu và tuân thủ ở **mọi** bước.
+- Cổng ra P0: [`security-checklist.md`](08-quality/security-checklist.md) là checklist nghiệm thu cổng ra, không thành bước code riêng.
+
+**Quyết định xử lý 4 cạnh `depends_on` đảo phase:**
+- `D-BQ`: [`schema-identity-billing.md`](01-platform/schema-identity-billing.md) (P0) → [`payment-flow.md`](00-foundation/payment-flow.md) (P2) — Contract-only (chỉ dùng enum `status` §7, P0 tạo cột, P2 làm luồng thanh toán).
+- `D-BR`: [`schema-content-taxonomy.md`](01-platform/schema-content-taxonomy.md) (P0) → [`game-template-contract.md`](01-platform/game-template-contract.md) (P1) — Contract-only (taxonomy schema P0 đứng trước template contract P1).
+- `D-BS`: [`ai-codegen-pipeline.md`](01-platform/ai-codegen-pipeline.md) (P0) → [`game-template-contract.md`](01-platform/game-template-contract.md) (P1) — Contract-only (xác lập quy tắc vùng cấm P0 trước khi triển khai template contract).
+- `D-BT`: [`backup-and-restore.md`](01-platform/backup-and-restore.md) (P0) → [`job-queue.md`](01-platform/job-queue.md) (P1) — Contract & script P0 (định nghĩa quy trình backup/restore), job-queue P1 thực thi job định kỳ.
 
 Bước 1 **không phụ thuộc** bất kỳ spec nào khác — đó là lý do nó chạy trước cả [`glossary.md`](00-foundation/glossary.md).
 Nó cũng là bước duy nhất mà bản roadmap gốc (trước 2026-08-05) bỏ trống spec sở hữu (từng
@@ -60,7 +79,7 @@ Reauth ([`auth-tokens-sessions.md`](01-platform/auth-tokens-sessions.md) §7.4) 
 ([`schema-identity-billing.md`](01-platform/schema-identity-billing.md) §7.3a) thuộc **P0** dù SNS chỉ chạy ở P1 — cả hai đụng schema và
 migration, và thêm cột vào bảng danh tính sau khi có dữ liệu thật là việc khác hẳn.
 
-**Cổng ra P0:** `../SPEC.md` §13.
+**Cổng ra P0:** `../SPEC.md` §13 + [`security-checklist.md`](08-quality/security-checklist.md).
 
 ## P1 — Play core
 
