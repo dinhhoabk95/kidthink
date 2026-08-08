@@ -20,7 +20,7 @@ depends_on:
 
 ## 1. Objective
 
-Một **Game Template** là mechanic + layout + hợp đồng nội dung. Nó ❌ **không gắn skill**.
+Một **Game Template** là mechanic + layout + hợp đồng nội dung. Nó **không gắn skill**.
 
 Đây là quyết định kiến trúc quan trọng nhất của tầng game: tách *cơ chế chơi* khỏi *nội
 dung học*. Một template phục vụ hàng chục mục tiêu học tập; đổi `content_pack` sinh ra một
@@ -41,7 +41,7 @@ Bốn game level, bốn competency, không dòng code mới.
 | Actor | Làm gì |
 |---|---|
 | Dev | Định nghĩa template, viết Session class, khai báo `content_contract` |
-| Manager | **Chọn** template khi tạo level. ❌ Không tạo/sửa template |
+| Manager | **Chọn** template khi tạo level. Cấm: không tạo/sửa template |
 | Người soạn seeder + AI agent IDE | Lấy **kiểu TS** của `content_pack` từ `content_contract`; sai schema fail lúc `tsc` |
 | Engine | Nạp `content_pack`, dựng phiên |
 
@@ -51,8 +51,8 @@ Bốn game level, bốn competency, không dòng code mới.
 |---|---|
 | `packages/game-engine/src/templates/` | Định nghĩa template + Session class |
 | `packages/db/src/seed-master/game-templates.ts` | Seed Lớp 1 |
-| `06-admin/game-level-studio.md` | Manager chọn template |
-| `01-platform/content-seed-authoring.md` | Cổng 1 dùng `content_contract`; seeder lấy kiểu từ nó |
+| [`game-level-studio.md`](../06-admin/game-level-studio.md) | Manager chọn template |
+| [`content-seed-authoring.md`](content-seed-authoring.md) | Cổng 1 dùng `content_contract`; seeder lấy kiểu từ nó |
 
 ## 4. Main flow — thêm một template mới
 
@@ -70,23 +70,23 @@ Template là **Lớp 1** — thêm template là việc của dev, không của M
 | Nhánh | Hành vi |
 |---|---|
 | Đổi `content_contract` của template đã publish | **Ask first.** Mọi `game_level` dùng template đó phải được validate lại; bản nào fail phải sửa hoặc archive trước khi deploy |
-| Template `deprecated` | Level đang dùng vẫn chạy. ❌ Không tạo level mới với template đó |
+| Template `deprecated` | Level đang dùng vẫn chạy. Cấm tạo level mới với template đó |
 | Client yêu cầu template không tồn tại | **422** `TEMPLATE_NOT_SUPPORTED` |
 
 ## 6. Business rules
 
 | ID | Rule | Vì sao |
 |---|---|---|
-| `BR-GTC-01` | Template ❌ **không gắn skill**. Skill gắn ở `game_levels` | Gắn skill vào template phá tính tái dùng — mất toàn bộ giá trị của mô hình |
-| `BR-GTC-02` | `content_pack` **phải parse được** bằng `content_contract`, kiểm ở **server** trước khi ghi | Một `content_pack` sai schema làm crash engine trong lúc trẻ đang chơi |
-| `BR-GTC-03` | `content_pack` giữ **nội dung**; `difficulty_params` giữ **độ khó**. ❌ Không trộn | Tách đôi tồn tại để đổi nội dung không cần code, và đổi độ khó không cần biên tập |
-| `BR-GTC-04` | Template là **Lớp 1** — admin ❌ không tạo/sửa qua UI | Template là code. Sửa từ UI làm dữ liệu trỏ tới Session class không tồn tại |
-| `BR-GTC-05` | Mỗi template khai báo `age_min`/`age_max` và **mechanic bị cấm theo band** | Drag chính xác ở tuổi 3–4 là thiết kế sai, không phải độ khó cao |
-| `BR-GTC-06` | Template có mechanic drag **bắt buộc** khai báo fallback tap-tap cho band 3–4 | Drag là cử chỉ khó nhất ở tuổi này |
-| `BR-GTC-07` | `content_contract` phải xuất được sang **JSON Schema**, và phải **suy ra kiểu TS** được (`z.infer`) | JSON Schema cho studio sinh form (`schema-driven-form`); kiểu TS cho seeder bắt lỗi lúc `tsc` (`BR-CSA-12`) |
-| `BR-GTC-08` | Đổi `content_contract` của template đã publish = **breaking change**, cần migration kế hoạch | Mọi `game_level` đã seed giữ `content_pack` parse được bằng contract **cũ**. Đổi contract mà không migrate = level cũ fail parse ở `BR-GTC-02` — phát hiện lúc trẻ mở màn chơi, không phải lúc deploy |
-| `BR-GTC-09` | `checkWinCondition()` **thuần** — ❌ không side effect | Nó được gọi nhiều lần mỗi frame |
-| `BR-GTC-10` | Test round-trip `content_pack` × `content_contract` chạy trên **toàn bộ** level đã seed | Một level lọt lưới là một đứa trẻ gặp màn hình trắng |
+| `BR-GTC-01` (template không gắn skill) | Template **không gắn skill**. Skill gắn ở `game_levels` | Gắn skill vào template phá tính tái dùng — mất toàn bộ giá trị của mô hình |
+| `BR-GTC-02` (parse ở server) | `content_pack` **phải parse được** bằng `content_contract`, kiểm ở **server** trước khi ghi | Một `content_pack` sai schema làm crash engine trong lúc trẻ đang chơi |
+| `BR-GTC-03` (tách nội dung/độ khó) | `content_pack` giữ **nội dung**; `difficulty_params` giữ **độ khó**. Cấm trộn | Tách đôi tồn tại để đổi nội dung không cần code, và đổi độ khó không cần biên tập |
+| `BR-GTC-04` (Lớp 1) | Template là **Lớp 1** — admin cấm tạo/sửa qua UI | Template là code. Sửa từ UI làm dữ liệu trỏ tới Session class không tồn tại |
+| `BR-GTC-05` (band tuổi) | Mỗi template khai báo `age_min`/`age_max` và **mechanic bị cấm theo band** | Drag chính xác ở tuổi 3–4 là thiết kế sai, không phải độ khó cao |
+| `BR-GTC-06` (fallback tap) | Template có mechanic drag **bắt buộc** khai báo fallback tap-tap cho band 3–4 | Drag là cử chỉ khó nhất ở tuổi này |
+| `BR-GTC-07` (xuất JSON Schema) | `content_contract` phải xuất được sang **JSON Schema**, và phải **suy ra kiểu TS** được (`z.infer`) | JSON Schema cho studio sinh form ([`schema-driven-form.md`](../06-admin/schema-driven-form.md)); kiểu TS cho seeder bắt lỗi lúc `tsc` (`BR-CSA-12`) |
+| `BR-GTC-08` (breaking change) | Đổi `content_contract` của template đã publish = **breaking change**, cần migration kế hoạch | Mọi `game_level` đã seed giữ `content_pack` parse được bằng contract **cũ**. Đổi contract mà không migrate = level cũ fail parse ở `BR-GTC-02` — phát hiện lúc trẻ mở màn chơi, không phải lúc deploy |
+| `BR-GTC-09` (checkWinCondition thuần) | `checkWinCondition()` **thuần** — cấm side effect | Nó được gọi nhiều lần mỗi frame |
+| `BR-GTC-10` (round-trip test) | Test round-trip `content_pack` × `content_contract` chạy trên **toàn bộ** level đã seed | Một level lọt lưới là một đứa trẻ gặp màn hình trắng |
 
 ## 7. Data
 
@@ -124,12 +124,12 @@ interface GameTemplate {
 |---|---|---|---|:--:|---|
 | `GT-001` | Chọn một đáp án | `tap-select` | 3–6 | n/a | 2–6 |
 | `GT-002` | Chọn nhiều đáp án | `tap-select-multi` | 4–6 | n/a | 3–8 |
-| `GT-003` | Kéo vào đích | `drag-to-container` | 3–6 | ✅ | 2–6 |
-| `GT-004` | Phân loại vào nhóm | `sort-groups` | 4–6 | ✅ | 4–10 |
-| `GT-005` | Ghép cặp | `pair-match` | 3–6 | ✅ | 2–6 cặp |
-| `GT-006` | Sắp xếp thứ tự | `sequence-order` | 5–6 | ✅ | 3–5 |
+| `GT-003` | Kéo vào đích | `drag-to-container` | 3–6 | có | 2–6 |
+| `GT-004` | Phân loại vào nhóm | `sort-groups` | 4–6 | có | 4–10 |
+| `GT-005` | Ghép cặp | `pair-match` | 3–6 | có | 2–6 cặp |
+| `GT-006` | Sắp xếp thứ tự | `sequence-order` | 5–6 | có | 3–5 |
 
-`GT-002` và `GT-006` ❌ không cho band 3–4: chọn nhiều đáp án cần giữ nhiều điều kiện trong
+`GT-002` và `GT-006` không cho band 3–4: chọn nhiều đáp án cần giữ nhiều điều kiện trong
 trí nhớ làm việc; sắp xếp thứ tự cần biểu diễn quan hệ thứ tự. Cả hai chưa vững ở tuổi đó.
 
 ### 7.3 Ví dụ `content_contract` — `GT-004` sort-groups
@@ -168,8 +168,8 @@ Hai `refine` cuối là lý do `content_contract` phải là **Zod**, không ph�
 Xuất sang JSON Schema cho form studio **bỏ mất** hai refine đó — vì vậy server luôn parse
 lại bằng Zod thật trước khi ghi (`BR-GTC-02`).
 
-Seeder ❌ không gặp vấn đề này: nó dùng thẳng `z.infer<typeof SortGroupsContent>` làm kiểu,
-và cổng 1 của `content-seed-authoring` chạy `SortGroupsContent.parse()` — còn đủ cả hai
+Seeder không gặp vấn đề này: nó dùng thẳng `z.infer<typeof SortGroupsContent>` làm kiểu,
+và cổng 1 của [`content-seed-authoring.md`](content-seed-authoring.md) chạy `SortGroupsContent.parse()` — còn đủ cả hai
 `refine`.
 
 ### 7.4 Interface Session
@@ -187,7 +187,7 @@ interface GameSession {
 }
 ```
 
-Side effect khi item được đặt đúng đi vào `onItemLocked`, ❌ **NEVER** trong `validateAction`
+Side effect khi item được đặt đúng đi vào `onItemLocked`, cấm — **NEVER** trong `validateAction`
 (được gọi cả lúc hover) hay `checkWinCondition` (được gọi nhiều lần mỗi frame).
 
 ## 8. API contract
@@ -197,7 +197,7 @@ Side effect khi item được đặt đúng đi vào `onItemLocked`, ❌ **NEVER
 | | |
 |---|---|
 | Auth | không |
-| 200 | `{ templates: [{ code, name_vi, mechanic, age_min, age_max }] }` — metadata, ❌ không có contract |
+| 200 | `{ templates: [{ code, name_vi, mechanic, age_min, age_max }] }` — metadata, không có contract |
 
 ### `GET /api/managers/templates/{code}/contract`
 
@@ -206,7 +206,7 @@ Side effect khi item được đặt đúng đi vào `onItemLocked`, ❌ **NEVER
 | Auth | `requireManagerAuth()` |
 | 200 | `{ code, content_contract_json_schema, difficulty_contract_json_schema, limits, ui_hints }` |
 
-Dùng để studio sinh form. Xem `06-admin/schema-driven-form.md`.
+Dùng để studio sinh form. Xem [`schema-driven-form.md`](../06-admin/schema-driven-form.md).
 
 | Mã lỗi | HTTP |
 |---|---|
@@ -287,15 +287,15 @@ Scenario: mỗi template có E2E journey
 
 ## 11. Open questions
 
-> `phase: P1` ở trên là phase **implement** (khi 6 template MVP thật sự được build), ❌ không
-> phải phase **approve**. File này approve **bây giờ**, ở P0, vì `schema-content-taxonomy`
+> `phase: P1` ở trên là phase **implement** (khi 6 template MVP thật sự được build), không
+> phải phase **approve**. File này approve **bây giờ**, ở P0, vì [`schema-content-taxonomy.md`](schema-content-taxonomy.md)
 > (P0, `depends_on` nó) cần hình dạng `GameTemplate` ổn định trước. Approve = *hình dạng*
 > contract (§7.1, §7.4) đã chốt; **không** có nghĩa 6 template hay phạm vi khảo sát Q1 đã chốt
 > — đổi hình dạng sau này là version mới của spec, không phải sửa im lặng.
 
 | # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
 |---|---|---|---|---|
-| 1 | 60 game type của v1 port thành `content_pack` của 6 template được bao nhiêu phần trăm? Cần khảo sát trước khi cam kết | Phạm vi P1 — ❌ không chặn hình dạng contract | 🟡 P1 | hoãn — khảo sát trước khi vào P1 |
-| 2 | Template thứ 7–10 nên là gì? Maze, memory-flip, rotate đều thuộc mechanic PRD nêu nhưng chưa vào MVP | P4 | 🟡 P4 | hoãn |
-| 3 | `scoring` schema chung cho mọi template hay mỗi template một kiểu? Chung thì đơn giản, riêng thì đo chính xác hơn | `scoring-and-result` | 🟡 P1 | hoãn — chốt lúc `scoring-and-result` thiết kế |
-| 4 | Xuất Zod → JSON Schema mất `refine`, nên form studio ❌ không cảnh báo được ràng buộc quan hệ tới lúc submit. Có nên khai `refine` dạng ui-hint riêng để form biết trước không? | `schema-driven-form` | 🟡 P2 | hoãn — chốt lúc `schema-driven-form` thiết kế |
+| 1 | 60 game type của v1 port thành `content_pack` của 6 template được bao nhiêu phần trăm? Cần khảo sát trước khi cam kết | Phạm vi P1 — không chặn hình dạng contract | chờ P1 | hoãn — khảo sát trước khi vào P1 |
+| 2 | Template thứ 7–10 nên là gì? Maze, memory-flip, rotate đều thuộc mechanic PRD nêu nhưng chưa vào MVP | P4 | chờ P4 | hoãn |
+| 3 | `scoring` schema chung cho mọi template hay mỗi template một kiểu? Chung thì đơn giản, riêng thì đo chính xác hơn | [`scoring-and-result.md`](../04-play/scoring-and-result.md) | chờ P1 | hoãn — chốt lúc [`scoring-and-result.md`](../04-play/scoring-and-result.md) thiết kế |
+| 4 | Xuất Zod → JSON Schema mất `refine`, nên form studio không cảnh báo được ràng buộc quan hệ tới lúc submit. Có nên khai `refine` dạng ui-hint riêng để form biết trước không? | [`schema-driven-form.md`](../06-admin/schema-driven-form.md) | chờ P2 | hoãn — chốt lúc [`schema-driven-form.md`](../06-admin/schema-driven-form.md) thiết kế |

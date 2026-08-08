@@ -304,8 +304,10 @@ Giao cho một agent (general-purpose) làm cả 15 file còn lại theo đúng 
 
 - [x] [`data-model-overview.md`](../specs/01-platform/data-model-overview.md) — 27 kh, 5 vt, 23 tc → 0/0/1
       (1 tc còn lại — commit `da5b1f3`)
-- [ ] [`schema-identity-billing.md`](../specs/01-platform/schema-identity-billing.md) — 31 kh, 1 vt, 23 tc · 305 dòng
-- [ ] [`content-seed-authoring.md`](../specs/01-platform/content-seed-authoring.md) — 42 kh, 10 tc · 406 dòng, dài nhất khu vực
+- [x] [`schema-identity-billing.md`](../specs/01-platform/schema-identity-billing.md) — 31 kh, 1 vt, 23 tc → 0/0/0
+      (commit `322e3ab`)
+- [x] [`content-seed-authoring.md`](../specs/01-platform/content-seed-authoring.md) — 42 kh, 10 tc → 0/0/0
+      (commit `322e3ab`)
 - [ ] [`game-template-contract.md`](../specs/01-platform/game-template-contract.md) — 22 kh, 7 tc
 - [ ] [`schema-content-taxonomy.md`](../specs/01-platform/schema-content-taxonomy.md) — 17 kh, 10 tc
 - [ ] [`adaptive-engine.md`](../specs/01-platform/adaptive-engine.md) — 15 kh, 1 tc · 4 lượt `ZPD`: **giữ nguyên**, chỉ chú giải một lần ở lần nhắc đầu
