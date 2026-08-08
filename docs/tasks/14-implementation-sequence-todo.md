@@ -60,28 +60,28 @@ Mỗi bước: tám việc ở kế hoạch mục 5, một PR.
 - [x] **P0.4** Ràng buộc pháp lý trước khi thiết kế bảng trẻ — [`child-data-compliance.md`](../specs/00-foundation/child-data-compliance.md)
 - [x] **P0.5** Ladder + entitlement + package — [`access-ladder.md`](../specs/00-foundation/access-ladder.md) → [`entitlement-model.md`](../specs/00-foundation/entitlement-model.md) → [`package-catalog.md`](../specs/00-foundation/package-catalog.md)
 - [x] **P0.6** Vòng đời + version nội dung — [`content-lifecycle.md`](../specs/00-foundation/content-lifecycle.md) → [`content-versioning.md`](../specs/00-foundation/content-versioning.md)
-- [ ] **P0.7** Thiết kế schema — [`data-model-overview.md`](../specs/01-platform/data-model-overview.md) → [`schema-identity-billing.md`](../specs/01-platform/schema-identity-billing.md) · [`schema-content-taxonomy.md`](../specs/01-platform/schema-content-taxonomy.md) · [`schema-play-telemetry.md`](../specs/01-platform/schema-play-telemetry.md)
-- [ ] **P0.8** Migration đầu tiên, gate local xanh trên schema thật
-- [ ] **P0.8b** Sao lưu và quan sát — [`backup-and-restore.md`](../specs/01-platform/backup-and-restore.md) · [`health-check.md`](../specs/01-platform/health-check.md)
-- [ ] **P0.9** Taxonomy service + seed Lớp 1 — [`taxonomy-service.md`](../specs/01-platform/taxonomy-service.md) · [`emoji-registry.md`](../specs/01-platform/emoji-registry.md)
-- [ ] **P0.9b** Email và guard — [`notification-service.md`](../specs/01-platform/notification-service.md) · [`rate-limiting.md`](../specs/01-platform/rate-limiting.md)
-- [ ] **P0.10** Auth end-to-end bằng email/mật khẩu — [`registration.md`](../specs/03-account/registration.md) · [`email-verification.md`](../specs/03-account/email-verification.md) · [`login-and-session.md`](../specs/03-account/login-and-session.md) · [`password-recovery.md`](../specs/03-account/password-recovery.md)
-- [ ] **P0.11** Audit log, trước mọi hành động cần audit — [`audit-log.md`](../specs/01-platform/audit-log.md)
-- [ ] **P0.11b** Đăng nhập admin — [`admin-auth.md`](../specs/06-admin/admin-auth.md)
+- [x] **P0.7** Thiết kế schema — [`data-model-overview.md`](../specs/01-platform/data-model-overview.md) → [`schema-identity-billing.md`](../specs/01-platform/schema-identity-billing.md) · [`schema-content-taxonomy.md`](../specs/01-platform/schema-content-taxonomy.md) · [`schema-play-telemetry.md`](../specs/01-platform/schema-play-telemetry.md)
+- [x] **P0.8** Migration đầu tiên, gate local xanh trên schema thật
+- [x] **P0.8b** Sao lưu và quan sát — [`backup-and-restore.md`](../specs/01-platform/backup-and-restore.md) · [`health-check.md`](../specs/01-platform/health-check.md)
+- [x] **P0.9** Taxonomy service + seed Lớp 1 — [`taxonomy-service.md`](../specs/01-platform/taxonomy-service.md) · [`emoji-registry.md`](../specs/01-platform/emoji-registry.md)
+- [x] **P0.9b** Email và guard — [`notification-service.md`](../specs/01-platform/notification-service.md) · [`rate-limiting.md`](../specs/01-platform/rate-limiting.md)
+- [x] **P0.10** Auth end-to-end bằng email/mật khẩu — [`registration.md`](../specs/03-account/registration.md) · [`email-verification.md`](../specs/03-account/email-verification.md) · [`login-and-session.md`](../specs/03-account/login-and-session.md) · [`password-recovery.md`](../specs/03-account/password-recovery.md)
+- [x] **P0.11** Audit log, trước mọi hành động cần audit — [`audit-log.md`](../specs/01-platform/audit-log.md)
+- [x] **P0.11b** Đăng nhập admin — [`admin-auth.md`](../specs/06-admin/admin-auth.md)
 
 Kiểm giữa phase:
 
-- [ ] Sau P0.8: migration chạy được từ đầu trên database rỗng, không phải chỉ chạy tiếp được
-- [ ] Sau P0.10: một người dùng thật đăng ký → nhận email → đăng nhập → đổi mật khẩu, không dùng seed tay
-- [ ] Sau mỗi bước: `pnpm check && pnpm test && pnpm lint:specs` xanh
+- [x] Sau P0.8: migration chạy được từ đầu trên database rỗng, không phải chỉ chạy tiếp được
+- [x] Sau P0.10: một người dùng thật đăng ký → nhận email → đăng nhập → đổi mật khẩu, không dùng seed tay
+- [x] Sau mỗi bước: `pnpm check && pnpm test && pnpm lint:specs` xanh
 
 ## Cổng ra P0
 
-- [ ] Điều kiện ở [`SPEC.md`](../SPEC.md) §13
-- [ ] [`security-checklist.md`](../specs/08-quality/security-checklist.md) chạy hết, không mục nào đỏ
-- [ ] 35 spec P0 mang `status: implemented`
-- [ ] Mọi `BR-*` mà P0 sở hữu có ít nhất một test tham chiếu mã rule
-- [ ] Không spec P0 nào còn câu hỏi mở mang `Chặn phase: P0`
+- [x] Điều kiện ở [`SPEC.md`](../SPEC.md) §13
+- [x] [`security-checklist.md`](../specs/08-quality/security-checklist.md) chạy hết, không mục nào đỏ
+- [x] 35 spec P0 mang `status: implemented`
+- [x] Mọi `BR-*` mà P0 sở hữu có ít nhất một test tham chiếu mã rule
+- [x] Không spec P0 nào còn câu hỏi mở mang `Chặn phase: P0`
 
 ---
 
