@@ -2,10 +2,10 @@
 spec: SEO-AND-STRUCTURED-DATA
 title: SEO kỹ thuật và dữ liệu có cấu trúc
 area: public
-status: draft
+status: approved
 mvp: true
 phase: P1
-reviewed: 2026-08-04
+reviewed: 2026-08-08
 owns:
   - Meta tag, sitemap, robots, canonical
   - Schema JSON-LD toàn site
@@ -168,7 +168,8 @@ Scenario: BR-SEO2-08 — trang pháp lý sạch script
 
 ## 11. Open questions
 
-| # | Câu hỏi | Chặn gì |
-|---|---|---|
-| 1 | Tổ hợp bộ lọc nào đáng index riêng? Index hết sẽ tạo nội dung mỏng trùng lặp | P1 |
-| 2 | `og:image` sinh động cho từng game hay dùng ảnh chung? | P1 |
+| # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
+|---|---|---|---|---|
+| 1 | Tổ hợp bộ lọc nào đáng index riêng? | Cấu hình index bộ lọc | P1 | Chốt: Chỉ index 6 trang competency (`C1..C6`) và 3 trang độ tuổi; bộ lọc khác dùng canonical hoặc noindex |
+| 2 | `og:image` sinh động cho từng game hay dùng ảnh chung? | Render og:image | P1 | Chốt: Sinh og:image động từ emoji + tiêu đề + background template bằng Nuxt OgImage |
+

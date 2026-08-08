@@ -424,16 +424,16 @@ Lô đụng `play_sessions` và `play_events`. **Mọi cột phát sinh phải s
 
 175 dòng · 2 rule · 2 câu hỏi · 0 cảnh báo. `depends_on: []` sau nhát cắt `D-AJ`.
 
-- [ ] Đọc hết file
-- [ ] Xác nhận `depends_on: []` và ranh giới "spec này sở hữu **hạ tầng** SEO, nội dung trang ở
+- [x] Đọc hết file
+- [x] Xác nhận `depends_on: []` và ranh giới "spec này sở hữu **hạ tầng** SEO, nội dung trang ở
       [`seo-content-admin.md`](../specs/06-admin/seo-content-admin.md)" còn nguyên
-- [ ] Chuyển bảng mục 11 sang 5 cột
-- [ ] Q1 (tổ hợp bộ lọc nào đáng index riêng) — **chặn P1, chốt**; liên quan trực tiếp Q1 của
+- [x] Chuyển bảng mục 11 sang 5 cột
+- [x] Q1 (tổ hợp bộ lọc nào đáng index riêng) — **chặn P1, chốt**; liên quan trực tiếp Q1 của
       bước 22
-- [ ] Q2 (`og:image` sinh động hay ảnh chung) — **chặn P1, chốt**
-- [ ] Checklist review 15 mục
-- [ ] `status: approved`, `reviewed` mới
-- [ ] Commit `feat(specs): T8 bước 21 — approve seo-and-structured-data`
+- [x] Q2 (`og:image` sinh động hay ảnh chung) — **chặn P1, chốt**
+- [x] Checklist review 15 mục
+- [x] `status: approved`, `reviewed: 2026-08-08`
+- [x] Commit `feat(specs): T8 bước 21 — approve seo-and-structured-data`
 
 ### Bước 22 — [`game-catalog-public.md`](../specs/02-public/game-catalog-public.md)
 
