@@ -2,10 +2,10 @@
 spec: PERSONAL-CURRICULUM
 title: Chương trình cá nhân
 area: addon
-status: draft
+status: approved
 mvp: false
 phase: P4
-reviewed: 2026-08-04
+reviewed: 2026-08-08
 owns:
   - Luồng User tự dựng lộ trình cho trẻ của mình
 depends_on:
@@ -38,13 +38,13 @@ Khác chương trình hệ thống ở đúng hai điểm: không qua duyệt, v
 | ID | Rule | Vì sao |
 |---|---|---|
 | `BR-PCU-01` | Chỉ dùng nội dung **`published`** mà User **có quyền** | Cấm lách paywall bằng cách nhét nội dung premium vào lộ trình riêng |
-| `BR-PCU-02` | Chỉ trẻ của **chính User** ghi danh được | |
+| `BR-PCU-02` | Chỉ trẻ của **chính User** ghi danh được | Bảo vệ quyền riêng tư và đảm bảo nội dung tự tạo không phát tán ra ngoài phạm vi quản lý của gia đình/lớp học |
 | `BR-PCU-03` | Cấm — **NEVER vào catalog công khai** | `BR-CGB-02` |
 | `BR-PCU-04` | Player dùng **cùng engine** với curriculum hệ thống | Một bộ luật, không hai |
 | `BR-PCU-05` | Cảnh báo cân bằng của [`curriculum-builder.md`](../06-admin/curriculum-builder.md) §7.2 vẫn hiện, nhưng **không chặn** | User tự chịu trách nhiệm lộ trình riêng, nhưng phải được cảnh báo |
 | `BR-PCU-06` | Cấm — **NEVER chặn tuần rỗng** — nhưng player bỏ qua tuần rỗng | Khác chương trình hệ thống ở chỗ này |
-| `BR-PCU-07` | Nội dung trong lộ trình bị archive → hiện cảnh báo, player bỏ qua | |
-| `BR-PCU-08` | Quota `custom_curricula_saved` theo gói add-on | |
+| `BR-PCU-07` | Nội dung trong lộ trình bị archive → hiện cảnh báo, player bỏ qua | Tránh gây gián đoạn trải nghiệm học tập của trẻ khi tài nguyên gốc bị ngừng phát hành |
+| `BR-PCU-08` | Quota `custom_curricula_saved` theo gói add-on | Kiểm soát tài nguyên hệ thống và khuyến khích người dùng đăng ký gói dịch vụ phù hợp |
 
 ## 7. Data
 
@@ -118,7 +118,7 @@ Scenario: BR-PCU-04 — dùng cùng engine
 
 ## 11. Open questions
 
-| # | Câu hỏi | Chặn gì |
-|---|---|---|
-| 1 | Có cho sao chép một curriculum hệ thống làm điểm khởi đầu không? | P4 |
-| 2 | Quota số lộ trình lưu là bao nhiêu? | Lên catalog |
+| # | Câu hỏi | Chặn phase | Đề xuất chốt | Chủ |
+|---|---|---|---|---|
+| 1 | Có cho sao chép một curriculum hệ thống làm điểm khởi đầu không? | P4 | Cho phép sao chép curriculum hệ thống làm bản thảo lộ trình riêng; bản sao là nội dung mới thuộc sở hữu cá nhân người dùng theo [`content-lifecycle.md`](../00-foundation/content-lifecycle.md) (`D-BO`) | Studio UI |
+| 2 | Quota số lộ trình lưu là bao nhiêu? | P4 | Định lượng theo gói bán khi lên catalog sản phẩm | người quyết |

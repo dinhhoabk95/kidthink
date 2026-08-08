@@ -142,14 +142,12 @@ Bước 0 → Đợt 1 (3) → Cổng dừng A → [chờ Task #10 xong] → Đ�
 
 ### Bước 9 — [`personal-curriculum.md`](../specs/07-addon/personal-curriculum.md)
 
-- [ ] Đọc hết 125 dòng
-- [ ] Điền "vì sao" cho `BR-PCU-02`, `BR-PCU-07`, `BR-PCU-08`
-- [ ] Q1 (sao chép curriculum hệ thống làm điểm khởi đầu) — chốt được từ
-      [`content-lifecycle.md`](../specs/00-foundation/content-lifecycle.md): bản sao là nội dung
-      mới của người dùng, không phải version của curriculum hệ thống; ghi `D-*`
-- [ ] Q2 (quota số lộ trình lưu) — khuôn `Lên catalog`
-- [ ] Bảng mục 11 sang 5 cột; `status: approved`
-- [ ] Commit `feat(specs): T11 bước 9 — approve personal-curriculum`
+- [x] Đọc hết 125 dòng
+- [x] Điền "vì sao" cho `BR-PCU-02`, `BR-PCU-07`, `BR-PCU-08`
+- [x] Q1 (sao chép curriculum hệ thống làm điểm khởi đầu) — chốt được từ [`content-lifecycle.md`](../specs/00-foundation/content-lifecycle.md): bản sao là nội dung mới của người dùng; ghi `D-BO`
+- [x] Q2 (quota số lộ trình lưu) — khuôn `Lên catalog` / `P4` / `người quyết`
+- [x] Bảng mục 11 sang 5 cột; `status: approved`
+- [x] Commit `feat(specs): T11 bước 9 — approve personal-curriculum`
 
 ---
 
