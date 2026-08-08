@@ -2,10 +2,10 @@
 spec: DATA-EXPORT
 title: Xuất dữ liệu từ quản trị
 area: admin
-status: draft
+status: approved
 mvp: true
 phase: P2
-reviewed: 2026-08-04
+reviewed: 2026-08-08
 owns:
   - Loại dữ liệu được xuất và giới hạn
   - Ràng buộc bảo vệ khi xuất
@@ -55,10 +55,10 @@ audit.
 |---|---|---|
 | `BR-EXP-01` | **Danh sách đóng** §7.1. Cấm có xuất tuỳ ý theo SQL | Xuất tuỳ ý là cửa sau vào mọi bảng |
 | `BR-EXP-02` | Cấm — **NEVER xuất PII của trẻ** ở bất kỳ loại nào | [`child-data-compliance.md`](../00-foundation/child-data-compliance.md) |
-| `BR-EXP-03` | Mọi lần xuất ghi audit kèm **lý do bắt buộc** | |
-| `BR-EXP-04` | File qua **signed URL ≤15 phút**, không link công khai | |
-| `BR-EXP-05` | Trần **100.000 hàng** mỗi lần xuất | |
-| `BR-EXP-06` | Chỉ `super_admin` | |
+| `BR-EXP-03` | Mọi lần xuất ghi audit kèm **lý do bắt buộc** | Đảm bảo khả năng giải trình và theo dõi trách nhiệm theo `BR-AUD-01` |
+| `BR-EXP-04` | File qua **signed URL ≤15 phút**, không link công khai | Ngăn ngừa rò rỉ dữ liệu qua đường liên kết không bảo mật hoặc hết hạn |
+| `BR-EXP-05` | Trần **100.000 hàng** mỗi lần xuất | Tránh tràn bộ nhớ và bảo vệ hiệu năng hệ thống khi trích xuất dữ liệu |
+| `BR-EXP-06` | Chỉ `super_admin` | Giới hạn quyền trích xuất dữ liệu nhạy cảm cho đúng vai trò quản trị tối cao theo `BR-ADA-02` |
 | `BR-EXP-07` | Rate limit **5 lần/ngày** mỗi Manager | Xuất liên tục là dấu hiệu bất thường |
 | `BR-EXP-08` | Email User bị **hash hoặc rút gọn** trong xuất phân tích; hiện đầy đủ **chỉ** trong xuất kế toán | Phân tích không cần định danh người |
 
@@ -155,6 +155,6 @@ Scenario: BR-EXP-06 — content_reviewer bị chặn
 
 ## 11. Open questions
 
-| # | Câu hỏi | Chặn gì |
-|---|---|---|
-| 1 | Có cần xuất tự động định kỳ gửi email không? Tiện cho kế toán nhưng thêm bề mặt rò rỉ | P2 |
+| # | Câu hỏi | Chặn phase | Đề xuất chốt | Chủ |
+|---|---|---|---|---|
+| 1 | Có cần xuất tự động định kỳ gửi email không? Tiện cho kế toán nhưng thêm bề mặt rò rỉ | P2 | MVP chỉ hỗ trợ xuất thủ công qua ký duyệt trực tiếp của `super_admin`; tính năng xuất định kỳ hoãn sang P4 | người quyết |

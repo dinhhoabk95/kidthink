@@ -368,10 +368,10 @@ admin-dashboard (độc lập)
 
 ### Bước 28 — [`data-export.md`](../specs/06-admin/data-export.md)
 
-- [ ] Đọc hết 160 dòng; điền "vì sao" cho **4** cảnh báo `C6`
-- [ ] Kiểm rule "PII của trẻ ở bất kỳ loại xuất nào" nằm trong nhóm Never — đối chiếu
+- [x] Đọc hết 160 dòng; điền "vì sao" cho **4** cảnh báo `C6`
+- [x] Kiểm rule "PII của trẻ ở bất kỳ loại xuất nào" nằm trong nhóm Never — đối chiếu
       [`child-data-compliance.md`](../specs/00-foundation/child-data-compliance.md)
-- [ ] `status: approved`; commit `feat(specs): T9 bước 28 — approve data-export`
+- [x] `status: approved`; commit `feat(specs): T9 bước 28 — approve data-export`
 
 ### Bước 29 — [`notification-admin.md`](../specs/06-admin/notification-admin.md)
 
