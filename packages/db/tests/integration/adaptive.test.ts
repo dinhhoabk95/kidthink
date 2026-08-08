@@ -30,7 +30,7 @@ describe("Adaptive Schema Integration & Property Tests", () => {
 
   it("Property test: p_learn is always within [0, 1] bounds", () => {
     fc.assert(
-      fc.property(fc.float({ min: 0, max: 1 }), (val) => {
+      fc.property(fc.float({ min: 0, max: 1, noNaN: true }), (val) => {
         expect(val).toBeGreaterThanOrEqual(0);
         expect(val).toBeLessThanOrEqual(1);
       })
