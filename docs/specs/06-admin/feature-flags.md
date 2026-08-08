@@ -22,7 +22,7 @@ này — và nó chỉ có giá trị nếu thao tác mất dưới 30 giây.
 
 ## 2. Actors
 
-`super_admin` duy nhất. `content_reviewer` ❌ không thấy.
+`super_admin` duy nhất. `content_reviewer` không thấy.
 
 ## 3. Entry points
 
@@ -50,9 +50,9 @@ này — và nó chỉ có giá trị nếu thao tác mất dưới 30 giây.
 | `BR-FFA-01` | Đổi cờ **bắt buộc lý do** ≥10 ký tự, ghi audit | `BR-FLG-04` |
 | `BR-FFA-02` | Hiện **ngày hết hạn** và cảnh báo khi quá | Cờ vĩnh viễn là nhánh code chết |
 | `BR-FFA-03` | Chỉ `super_admin` | |
-| `BR-FFA-04` | Danh sách cờ **suy từ code**, ❌ không từ DB | DB có thể có cờ mồ côi; code là nguồn sự thật |
+| `BR-FFA-04` | Danh sách cờ **suy từ code**, không từ DB | DB có thể có cờ mồ côi; code là nguồn sự thật |
 | `BR-FFA-05` | Hiện **mặc định an toàn** cạnh trạng thái hiện tại | Người bấm cần biết fallback là gì |
-| `BR-FFA-06` | ❌ **NEVER cờ gate ràng buộc tuân thủ** — không hiện cờ nào như vậy | `BR-FLG-06` |
+| `BR-FFA-06` | Cấm — **NEVER cờ gate ràng buộc tuân thủ** — không hiện cờ nào như vậy | `BR-FLG-06` |
 
 ## 7. Data
 

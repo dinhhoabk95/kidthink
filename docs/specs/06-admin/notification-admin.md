@@ -21,11 +21,11 @@ depends_on:
 Trả lời **"email đó đã gửi chưa"** khi User nói không nhận được — câu hỏi hỗ trợ phổ biến
 nhất của mọi hệ thống có email.
 
-Và cho phép sửa nội dung template ❌ không cần deploy.
+Và cho phép sửa nội dung template không cần deploy.
 
 ## 2. Actors
 
-`super_admin` duy nhất. `content_reviewer` ❌ không thấy.
+`super_admin` duy nhất. `content_reviewer` không thấy.
 
 ## 3. Entry points
 
@@ -42,21 +42,21 @@ Và cho phép sửa nội dung template ❌ không cần deploy.
 
 | Nhánh | Hành vi |
 |---|---|
-| Gửi lại | Tạo `notification` mới, ❌ không sửa hàng cũ |
-| Địa chỉ `bouncing` | Hiện cảnh báo, ❌ không cho gửi lại loại định kỳ |
+| Gửi lại | Tạo `notification` mới, không sửa hàng cũ |
+| Địa chỉ `bouncing` | Hiện cảnh báo, không cho gửi lại loại định kỳ |
 | Template lỗi cú pháp | Chặn lưu, hiện lỗi |
-| Người nhận đã xoá tài khoản | ❌ Không gửi lại được |
+| Người nhận đã xoá tài khoản | Cấm gửi lại được |
 
 ## 6. Business rules
 
 | ID | Rule | Vì sao |
 |---|---|---|
-| `BR-NTA-01` | Gửi lại tạo **hàng mới**, ❌ không sửa hàng cũ | Nhật ký gửi là bằng chứng |
-| `BR-NTA-02` | ❌ **NEVER gửi hàng loạt tuỳ ý** từ màn hình này | Không có cơ chế đồng ý tiếp thị — `BR-NOT-06` |
-| `BR-NTA-03` | Template sửa được ❌ không cần deploy, nhưng đi qua **duyệt** | Email sai gửi đi không thu hồi được |
+| `BR-NTA-01` | Gửi lại tạo **hàng mới**, không sửa hàng cũ | Nhật ký gửi là bằng chứng |
+| `BR-NTA-02` | Cấm — **NEVER gửi hàng loạt tuỳ ý** từ màn hình này | Không có cơ chế đồng ý tiếp thị — `BR-NOT-06` |
+| `BR-NTA-03` | Template sửa được không cần deploy, nhưng đi qua **duyệt** | Email sai gửi đi không thu hồi được |
 | `BR-NTA-04` | Nội dung email hiển thị **đã che** phần nhạy cảm (token đặt lại mật khẩu) | Manager không cần thấy token của User |
 | `BR-NTA-05` | Chỉ `super_admin` | |
-| `BR-NTA-06` | ❌ **NEVER template gửi tới trẻ** | `BR-NOT-02` |
+| `BR-NTA-06` | Cấm — **NEVER template gửi tới trẻ** | `BR-NOT-02` |
 | `BR-NTA-07` | Template có biến bắt buộc; thiếu biến → chặn lưu | Email thiếu biến hiện `{{name}}` cho người dùng thật |
 
 ## 7. Data
@@ -90,7 +90,7 @@ Chỉ loại giao dịch. 409 nếu người nhận đã xoá tài khoản.
 
 ### `PATCH /api/managers/notification-templates/{code}/{version}`
 
-Đi qua vòng đời `content-lifecycle`.
+Đi qua vòng đời [`content-lifecycle.md`](../00-foundation/content-lifecycle.md).
 
 ## 9. Acceptance criteria
 

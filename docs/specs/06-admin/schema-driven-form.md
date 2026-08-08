@@ -22,14 +22,14 @@ depends_on:
 **Thêm field vào Zod schema là form tự có field đó.**
 
 Viết form riêng cho từng template là 6 chỗ để lệch hôm nay và 30 chỗ khi thư viện template
-lớn lên. Form sinh từ schema giữ studio và engine ❌ không bao giờ nói hai điều khác nhau.
+lớn lên. Form sinh từ schema giữ studio và engine không bao giờ nói hai điều khác nhau.
 
 ## 2. Actors
 
 | Actor | Vai trò |
 |---|---|
 | Dev | Khai báo Zod schema + `uiHint` qua quy ước đặt tên |
-| Manager | Điền form, ❌ không biết schema tồn tại |
+| Manager | Điền form, không biết schema tồn tại |
 
 ## 3. Entry points
 
@@ -48,23 +48,23 @@ lớn lên. Form sinh từ schema giữ studio và engine ❌ không bao giờ n
 
 | Nhánh | Hành vi |
 |---|---|
-| Field rơi vào `<UInput>` text ngoài ý muốn | **Lỗi đặt tên field** — sửa tên, ❌ không thêm mapping đặc biệt |
+| Field rơi vào `<UInput>` text ngoài ý muốn | **Lỗi đặt tên field** — sửa tên, không thêm mapping đặc biệt |
 | Field không có nhãn trong dictionary | Hiện tên field thô + cảnh báo dev ở chế độ dev |
-| Schema có `refine` quan hệ | Client kiểm được thì kiểm; ❌ không kiểm được thì để server báo |
+| Schema có `refine` quan hệ | Client kiểm được thì kiểm; không kiểm được thì để server báo |
 | Field lồng sâu > 3 tầng | Cảnh báo — schema quá phức tạp cho form sinh |
 
 ## 6. Business rules
 
 | ID | Rule | Vì sao |
 |---|---|---|
-| `BR-SDF-01` | ❌ **NEVER viết form riêng cho một template** | N template × form viết tay = N chỗ để lệch |
-| `BR-SDF-02` | `uiHint` suy từ **tên field theo quy ước**, ❌ không từ bảng mapping | Quy ước đặt tên rẻ hơn một bảng mapping phải bảo trì. Đánh đổi có ý thức |
-| `BR-SDF-03` | Field màu chọn từ **token**, ❌ **NEVER color wheel tự do** | Màu ngoài hệ thống phá design system và có thể không đạt contrast |
-| `BR-SDF-04` | Field emoji dùng **picker**, ❌ không input text | `BR-EMJ-01` |
+| `BR-SDF-01` | Cấm — **NEVER viết form riêng cho một template** | N template × form viết tay = N chỗ để lệch |
+| `BR-SDF-02` | `uiHint` suy từ **tên field theo quy ước**, không từ bảng mapping | Quy ước đặt tên rẻ hơn một bảng mapping phải bảo trì. Đánh đổi có ý thức |
+| `BR-SDF-03` | Field màu chọn từ **token**, Cấm — **NEVER color wheel tự do** | Màu ngoài hệ thống phá design system và có thể không đạt contrast |
+| `BR-SDF-04` | Field emoji dùng **picker**, không input text | `BR-EMJ-01` |
 | `BR-SDF-05` | Validate client dùng **cùng schema** với server | Hai bộ luật là hai kết quả |
 | `BR-SDF-06` | Nhãn tiếng Việt bắt buộc cho mọi field hiện ra | Manager nghĩ bằng tiếng Việt |
 | `BR-SDF-07` | Input giữ `font-size ≥ 16px` | Dưới đó iOS tự zoom |
-| `BR-SDF-08` | Field rơi vào text ngoài ý muốn là **lỗi**, ❌ không phải mặc định chấp nhận được | |
+| `BR-SDF-08` | Field rơi vào text ngoài ý muốn là **lỗi**, không phải mặc định chấp nhận được | |
 
 ## 7. Data
 
@@ -105,7 +105,7 @@ Thứ tự cố định — Manager soạn nhiều bản mỗi ngày, thứ tự
 
 200 → `{ content_contract_json_schema, difficulty_contract_json_schema, ui_hints, labels, limits }`.
 
-`ui_hints` server tính sẵn — client ❌ không tự suy, để hai bên không lệch.
+`ui_hints` server tính sẵn — client không tự suy, để hai bên không lệch.
 
 ## 9. Acceptance criteria
 
@@ -170,5 +170,5 @@ Scenario: BR-SDF-08 — field rơi vào text bị phát hiện
 
 | # | Câu hỏi | Chặn gì |
 |---|---|---|
-| 1 | Zod → JSON Schema mất `refine` — client kiểm quan hệ bằng cách nào? | `game-template-contract` Q4 |
+| 1 | Zod → JSON Schema mất `refine` — client kiểm quan hệ bằng cách nào? | [`game-template-contract.md`](../01-platform/game-template-contract.md) Q4 |
 | 2 | Field lồng sâu (array of object of array) render thế nào cho dễ dùng? | P2 UX |

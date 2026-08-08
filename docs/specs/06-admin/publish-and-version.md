@@ -21,14 +21,14 @@ depends_on:
 Đưa nội dung `approved` ra production, và quay lại được khi sai.
 
 Đây là hành động **có hậu quả tức thì với trẻ đang chơi**. Nó tách khỏi studio và khỏi hàng
-đợi duyệt để ❌ không ai bấm nhầm trong lúc đang soạn.
+đợi duyệt để không ai bấm nhầm trong lúc đang soạn.
 
 ## 2. Actors
 
 | Actor | Publish | Archive | Rollback |
 |---|:--:|:--:|:--:|
-| `content_reviewer` | ✅ | ✅ | ❌ |
-| `super_admin` | ✅ | ✅ | ✅ |
+| `content_reviewer` | | | Cấm |
+| `super_admin` | | | |
 
 ## 3. Entry points
 
@@ -39,7 +39,7 @@ depends_on:
 ## 4. Main flow
 
 1. Chọn bản `approved`.
-2. Server chạy **checklist publish** `content-lifecycle` §7.3.
+2. Server chạy **checklist publish** [`content-lifecycle.md`](../00-foundation/content-lifecycle.md) §7.3.
 3. Đủ → transaction: bản mới `published`, bản cũ `archived`.
 4. Ghi `content_review_log` + `audit_logs`.
 5. Nội dung có hiệu lực **ngay** cho phiên chơi mới; phiên đang chạy giữ version cũ.
@@ -48,9 +48,9 @@ depends_on:
 
 | Nhánh | Hành vi |
 |---|---|
-| Checklist thiếu | **422** kèm `missing[]`, ❌ không publish một phần |
+| Checklist thiếu | **422** kèm `missing[]`, không publish một phần |
 | Archive nội dung trong curriculum `published` | **409** kèm danh sách nơi dùng |
-| Rollback | `super_admin` publish lại bản `archived`; số version ❌ không đảo |
+| Rollback | `super_admin` publish lại bản `archived`; số version không đảo |
 | Publish khi đã có bản published | Tự động archive bản cũ **trong cùng transaction** |
 | Xoá cứng | Chỉ khi chưa từng `published` **và** không có telemetry |
 
@@ -58,12 +58,12 @@ depends_on:
 
 | ID | Rule | Vì sao |
 |---|---|---|
-| `BR-PUB-01` | Publish chạy checklist **ở server**, ❌ không tin client | `BR-CLC-09` |
+| `BR-PUB-01` | Publish chạy checklist **ở server**, không tin client | `BR-CLC-09` |
 | `BR-PUB-02` | Publish + archive trong **một transaction** | Hai bản cùng `published` là hai bản cùng được phục vụ |
 | `BR-PUB-03` | Rollback **chỉ** `super_admin` | Nó đổi thứ trẻ đang thấy |
-| `BR-PUB-04` | Rollback ❌ **không đảo số version** | Số version map 1-1 với một nội dung, vĩnh viễn |
+| `BR-PUB-04` | Rollback **không đảo số version** | Số version map 1-1 với một nội dung, vĩnh viễn |
 | `BR-PUB-05` | Archive nội dung đang dùng → **409** kèm danh sách | Xoá cứng làm mồ côi dữ liệu học tập |
-| `BR-PUB-06` | Publish ❌ **không ngắt phiên đang chạy** | `BR-VER-04` |
+| `BR-PUB-06` | Publish **không ngắt phiên đang chạy** | `BR-VER-04` |
 | `BR-PUB-07` | Màn hình publish hiện **diff so với bản đang chạy** | Publish mà không biết đổi gì là publish mù |
 | `BR-PUB-08` | Mọi thao tác ghi audit | |
 
@@ -87,7 +87,7 @@ với rollback version có 3 lượt.
 ### 7.2 Diff hiển thị
 
 So `content_pack`, `difficulty_params`, `skill_ids`, `access_tier`, `age` giữa bản sắp
-publish và bản đang chạy. Hiện dạng field-by-field, ❌ không dump JSON thô.
+publish và bản đang chạy. Hiện dạng field-by-field, không dump JSON thô.
 
 ## 8. API contract
 
@@ -173,5 +173,5 @@ Scenario: lịch sử hiện lượt chơi mỗi version
 
 | # | Câu hỏi | Chặn gì |
 |---|---|---|
-| 1 | Có cần publish theo lịch (hẹn giờ) không? | `content-lifecycle` Q3 |
+| 1 | Có cần publish theo lịch (hẹn giờ) không? | [`content-lifecycle.md`](../00-foundation/content-lifecycle.md) Q3 |
 | 2 | Rollback có nên cảnh báo mạnh hơn khi version đang chạy có nhiều lượt chơi không? | P2 UX |

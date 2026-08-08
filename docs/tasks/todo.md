@@ -462,44 +462,44 @@ Giao cho một agent (general-purpose) làm cả 15 file còn lại theo đúng 
 
 > Khu vực phân bố đều, không file nào áp đảo.
 
-- [ ] [`lesson-authoring.md`](../specs/06-admin/lesson-authoring.md) — 15 kh, 2 tc
-- [ ] [`publish-and-version.md`](../specs/06-admin/publish-and-version.md) — 13 kh, 2 tc
-- [ ] [`game-level-studio.md`](../specs/06-admin/game-level-studio.md) — 10 kh, 4 tc
-- [ ] [`live-preview.md`](../specs/06-admin/live-preview.md) — 10 kh, 3 vt, 1 tc
-- [ ] [`content-review-queue.md`](../specs/06-admin/content-review-queue.md) — 8 kh, 4 tc
-- [ ] [`data-export.md`](../specs/06-admin/data-export.md) — 8 kh, 1 vt, 2 tc
-- [ ] [`schema-driven-form.md`](../specs/06-admin/schema-driven-form.md) — 10 kh, 1 tc
-- [ ] [`seo-content-admin.md`](../specs/06-admin/seo-content-admin.md) — 7 kh, 1 tc
-- [ ] [`curriculum-builder.md`](../specs/06-admin/curriculum-builder.md) — 5 kh, 1 tc
-- [ ] [`emoji-picker.md`](../specs/06-admin/emoji-picker.md) — 5 kh, 1 tc
-- [ ] [`taxonomy-browser.md`](../specs/06-admin/taxonomy-browser.md) — 6 kh
-- [ ] [`image-upload.md`](../specs/06-admin/image-upload.md) — 5 kh
-- [ ] [`activity-authoring.md`](../specs/06-admin/activity-authoring.md) — 3 kh, 1 tc
-- [ ] [`asset-usage-tracking.md`](../specs/06-admin/asset-usage-tracking.md) — 3 kh
-- [ ] `pnpm check` exit 0 · `pnpm test` không giảm · `approved` vẫn 23
-- [ ] Commit
+- [x] [`lesson-authoring.md`](../specs/06-admin/lesson-authoring.md) — 15 kh, 2 tc → 0/0/0
+- [x] [`publish-and-version.md`](../specs/06-admin/publish-and-version.md) — 13 kh, 2 tc → 0/0/0
+- [x] [`game-level-studio.md`](../specs/06-admin/game-level-studio.md) — 10 kh, 4 tc → 0/0/0
+- [x] [`live-preview.md`](../specs/06-admin/live-preview.md) — 10 kh, 3 vt, 1 tc → 0/0/0
+- [x] [`content-review-queue.md`](../specs/06-admin/content-review-queue.md) — 8 kh, 4 tc → 0/0/0
+- [x] [`data-export.md`](../specs/06-admin/data-export.md) — 8 kh, 1 vt, 2 tc → 0/0/0
+- [x] [`schema-driven-form.md`](../specs/06-admin/schema-driven-form.md) — 10 kh, 1 tc → 0/0/0
+- [x] [`seo-content-admin.md`](../specs/06-admin/seo-content-admin.md) — 7 kh, 1 tc → 0/0/0
+- [x] [`curriculum-builder.md`](../specs/06-admin/curriculum-builder.md) — 5 kh, 1 tc → 0/0/0
+- [x] [`emoji-picker.md`](../specs/06-admin/emoji-picker.md) — 5 kh, 1 tc → 0/0/0
+- [x] [`taxonomy-browser.md`](../specs/06-admin/taxonomy-browser.md) — 6 kh → 0/0/0
+- [x] [`image-upload.md`](../specs/06-admin/image-upload.md) — 5 kh → 0/0/0
+- [x] [`activity-authoring.md`](../specs/06-admin/activity-authoring.md) — 3 kh, 1 tc → 0/0/0
+- [x] [`asset-usage-tracking.md`](../specs/06-admin/asset-usage-tracking.md) — 3 kh → 0/0/0
+- [x] `pnpm check` exit 0 · `pnpm test` không giảm · `approved` vẫn 38
+- [x] Commit
 
 ## Bước 12 — `06-admin` phần hai, 14 file người dùng và vận hành · 137 kh · 2 vt · 18 tc
 
 > Hai file đầu chiếm hơn một phần ba khu vực.
 
-- [ ] [`admin-auth.md`](../specs/06-admin/admin-auth.md) — 29 kh
-- [ ] [`child-profile-admin.md`](../specs/06-admin/child-profile-admin.md) — 23 kh, 3 tc
-- [ ] [`user-detail.md`](../specs/06-admin/user-detail.md) — 10 kh, 7 tc
-- [ ] [`admin-dashboard.md`](../specs/06-admin/admin-dashboard.md) — 9 kh, 2 vt, 4 tc
-- [ ] [`user-management.md`](../specs/06-admin/user-management.md) — 12 kh, 3 tc
-- [ ] [`notification-admin.md`](../specs/06-admin/notification-admin.md) — 9 kh, 1 tc
-- [ ] [`error-log-viewer.md`](../specs/06-admin/error-log-viewer.md) — 8 kh
-- [ ] [`payment-approval.md`](../specs/06-admin/payment-approval.md) — 8 kh
-- [ ] [`payment-queue.md`](../specs/06-admin/payment-queue.md) — 5 kh, 3 tc
-- [ ] [`system-activity.md`](../specs/06-admin/system-activity.md) — 7 kh
-- [ ] [`audit-log-viewer.md`](../specs/06-admin/audit-log-viewer.md) — 6 kh
-- [ ] [`entitlement-grant.md`](../specs/06-admin/entitlement-grant.md) — 5 kh, 1 tc
-- [ ] [`package-catalog-admin.md`](../specs/06-admin/package-catalog-admin.md) — 5 kh, 1 tc
-- [ ] [`feature-flags.md`](../specs/06-admin/feature-flags.md) — 3 kh
-- [ ] Xoá `06-admin` khỏi danh sách hoãn, **cùng commit**
-- [ ] `pnpm check` exit 0 · `pnpm test` không giảm · `approved` vẫn 23
-- [ ] Commit
+- [x] [`admin-auth.md`](../specs/06-admin/admin-auth.md) — 29 kh → 0/0/0
+- [x] [`child-profile-admin.md`](../specs/06-admin/child-profile-admin.md) — 23 kh, 3 tc → 0/0/0
+- [x] [`user-detail.md`](../specs/06-admin/user-detail.md) — 10 kh, 7 tc → 0/0/0
+- [x] [`admin-dashboard.md`](../specs/06-admin/admin-dashboard.md) — 9 kh, 2 vt, 4 tc → 0/0/0
+- [x] [`user-management.md`](../specs/06-admin/user-management.md) — 12 kh, 3 tc → 0/0/0
+- [x] [`notification-admin.md`](../specs/06-admin/notification-admin.md) — 9 kh, 1 tc → 0/0/0
+- [x] [`error-log-viewer.md`](../specs/06-admin/error-log-viewer.md) — 8 kh → 0/0/0
+- [x] [`payment-approval.md`](../specs/06-admin/payment-approval.md) — 8 kh → 0/0/0
+- [x] [`payment-queue.md`](../specs/06-admin/payment-queue.md) — 5 kh, 3 tc → 0/0/0
+- [x] [`system-activity.md`](../specs/06-admin/system-activity.md) — 7 kh → 0/0/0
+- [x] [`audit-log-viewer.md`](../specs/06-admin/audit-log-viewer.md) — 6 kh → 0/0/0
+- [x] [`entitlement-grant.md`](../specs/06-admin/entitlement-grant.md) — 5 kh, 1 tc → 0/0/0
+- [x] [`package-catalog-admin.md`](../specs/06-admin/package-catalog-admin.md) — 5 kh, 1 tc → 0/0/0
+- [x] [`feature-flags.md`](../specs/06-admin/feature-flags.md) — 3 kh → 0/0/0
+- [x] Xoá `06-admin` khỏi danh sách hoãn, **cùng commit**
+- [x] `pnpm check` exit 0 · `pnpm test` không giảm · `approved` vẫn 38
+- [x] Commit
 
 ## Bước 13 — `07-addon`, 7 file · 99 kh · 33 tc
 

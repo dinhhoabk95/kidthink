@@ -37,7 +37,7 @@ sửa được **không cần deploy**.
 2. Điền: `slug` · `title` · `meta_description` · nội dung (rich text hạn chế) ·
    `og_image` · structured data.
 3. Chọn nội dung liên quan để nhúng (level, lesson, curriculum) — nhúng **tham chiếu**,
-   ❌ không copy.
+   không copy.
 4. Preview cả desktop và mobile + preview kết quả tìm kiếm.
 5. Gửi duyệt → publish.
 
@@ -48,20 +48,20 @@ sửa được **không cần deploy**.
 | `slug` trùng | 409 |
 | Đổi `slug` của trang đã published | Tạo redirect 301 tự động từ slug cũ |
 | Nội dung nhúng bị archive | Trang vẫn render, ẩn mục đó, cảnh báo trong admin |
-| `meta_description` quá dài | Cảnh báo, ❌ không chặn |
+| `meta_description` quá dài | Cảnh báo, không chặn |
 
 ## 6. Business rules
 
 | ID | Rule | Vì sao |
 |---|---|---|
 | `BR-SEO-01` | Đổi `slug` đã published **tự tạo 301** | Link chia sẻ và thứ hạng tìm kiếm không được chết |
-| `BR-SEO-02` | Rich text **hạn chế** — chỉ heading, đoạn, danh sách, link, ảnh. ❌ Không HTML tự do | HTML tự do là đường XSS và là đường phá vỡ design system |
-| `BR-SEO-03` | Nội dung nhúng là **tham chiếu**, ❌ không copy | Copy sẽ drift khi nội dung gốc đổi |
-| `BR-SEO-04` | ❌ **NEVER tracking script bên thứ ba** trên trang pháp lý | `BR-CDC-08` |
+| `BR-SEO-02` | Rich text **hạn chế** — chỉ heading, đoạn, danh sách, link, ảnh. Cấm HTML tự do | HTML tự do là đường XSS và là đường phá vỡ design system |
+| `BR-SEO-03` | Nội dung nhúng là **tham chiếu**, không copy | Copy sẽ drift khi nội dung gốc đổi |
+| `BR-SEO-04` | Cấm — **NEVER tracking script bên thứ ba** trên trang pháp lý | `BR-CDC-08` |
 | `BR-SEO-05` | `title` ≤60 ký tự, `meta_description` ≤160 — cảnh báo khi vượt | |
-| `BR-SEO-06` | Structured data sinh **từ dữ liệu**, ❌ không gõ tay JSON-LD | JSON-LD gõ tay sẽ lệch khỏi nội dung thật |
+| `BR-SEO-06` | Structured data sinh **từ dữ liệu**, không gõ tay JSON-LD | JSON-LD gõ tay sẽ lệch khỏi nội dung thật |
 | `BR-SEO-07` | Trang SEO đi qua cùng vòng đời duyệt như nội dung khác | |
-| `BR-SEO-08` | ❌ **NEVER nội dung nhắm tới trẻ** trên trang SEO | Trang SEO là bề mặt người lớn |
+| `BR-SEO-08` | Cấm — **NEVER nội dung nhắm tới trẻ** trên trang SEO | Trang SEO là bề mặt người lớn |
 
 ## 7. Data
 
@@ -154,4 +154,4 @@ Scenario: preview snippet đúng độ dài thật
 | # | Câu hỏi | Chặn gì |
 |---|---|---|
 | 1 | Bao nhiêu trang SEO ở MVP? 6 competency + 41 strand là 47 trang cần nội dung | P1 nội dung |
-| 2 | Có dùng AI agent IDE soạn mô tả SEO thành seeder không? Nếu có thì vẫn qua PR review | `content-seed-authoring` |
+| 2 | Có dùng AI agent IDE soạn mô tả SEO thành seeder không? Nếu có thì vẫn qua PR review | [`content-seed-authoring.md`](../01-platform/content-seed-authoring.md) |

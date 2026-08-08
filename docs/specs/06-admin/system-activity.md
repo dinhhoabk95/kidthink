@@ -19,9 +19,9 @@ depends_on:
 
 ## 1. Objective
 
-Một màn hình cho câu hỏi **"hệ thống có ổn không"** mà ❌ không cần SSH.
+Một màn hình cho câu hỏi **"hệ thống có ổn không"** mà không cần SSH.
 
-Nó ❌ không thay hệ thống giám sát — alert vẫn đi tới người qua kênh riêng. Màn hình này là
+Nó không thay hệ thống giám sát — alert vẫn đi tới người qua kênh riêng. Màn hình này là
 nơi xác nhận và tra cứu sau khi nhận alert.
 
 ## 2. Actors
@@ -43,17 +43,17 @@ nơi xác nhận và tra cứu sau khi nhận alert.
 | Nhánh | Hành vi |
 |---|---|
 | Dịch vụ down | Nhóm đó đỏ, kèm thời điểm phát hiện |
-| Không lấy được số liệu | Hiện "không xác định", ❌ không hiện xanh |
+| Không lấy được số liệu | Hiện "không xác định", không hiện xanh |
 | Backup chưa verify lần nào | Cảnh báo mức cao, chặn checklist go-live |
 
 ## 6. Business rules
 
 | ID | Rule | Vì sao |
 |---|---|---|
-| `BR-SYS-01` | ❌ **NEVER hiện xanh khi không lấy được số liệu** | Không biết ≠ ổn |
-| `BR-SYS-02` | Màn hình này ❌ **không thay** alerting | Người phải được gọi, ❌ không phải tự vào xem |
+| `BR-SYS-01` | Cấm — **NEVER hiện xanh khi không lấy được số liệu** | Không biết ≠ ổn |
+| `BR-SYS-02` | Màn hình này **không thay** alerting | Người phải được gọi, không phải tự vào xem |
 | `BR-SYS-03` | Mỗi mục bất thường có link runbook | `BR-MON-02` |
-| `BR-SYS-04` | ❌ **NEVER hiện chuỗi kết nối, secret, hay biến môi trường** | |
+| `BR-SYS-04` | Cấm — **NEVER hiện chuỗi kết nối, secret, hay biến môi trường** | |
 | `BR-SYS-05` | Chỉ `super_admin` | |
 | `BR-SYS-06` | Backup chưa verify → cảnh báo mức cao | `BR-BAK-06` |
 

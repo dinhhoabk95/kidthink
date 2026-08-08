@@ -20,10 +20,10 @@ depends_on:
 
 Một màn hình trả lời **"hôm nay phải làm gì"** trong một lần nhìn.
 
-Đây ❌ **không phải BI**. Nó là danh sách việc: đơn chờ duyệt, nội dung chờ duyệt, cảnh báo
-hệ thống. Số liệu tăng trưởng chỉ đủ để biết xu hướng, ❌ không để phân tích sâu.
+Đây **không phải BI**. Nó là danh sách việc: đơn chờ duyệt, nội dung chờ duyệt, cảnh báo
+hệ thống. Số liệu tăng trưởng chỉ đủ để biết xu hướng, không để phân tích sâu.
 
-> Tách khỏi `user-management` có chủ đích. v1 gộp hai thứ vào một spec và không trả lời được
+> Tách khỏi [`user-management.md`](user-management.md) có chủ đích. v1 gộp hai thứ vào một spec và không trả lời được
 > "phần nào xong". Dashboard chỉ đọc; quản lý User là bề mặt khác, có mutation và có audit
 > riêng.
 
@@ -41,7 +41,7 @@ hệ thống. Số liệu tăng trưởng chỉ đủ để biết xu hướng, 
 ## 4. Main flow
 
 1. Manager đăng nhập → landing là dashboard.
-2. Server gom số liệu từ **bảng rollup**, ❌ không quét bảng thô.
+2. Server gom số liệu từ **bảng rollup**, không quét bảng thô.
 3. Hiện 4 nhóm §7, mỗi thẻ có **link tới nơi hành động**.
 4. Thẻ vượt ngưỡng đổi màu cảnh báo.
 
@@ -49,20 +49,20 @@ hệ thống. Số liệu tăng trưởng chỉ đủ để biết xu hướng, 
 
 | Nhánh | Hành vi |
 |---|---|
-| Chưa có dữ liệu | Hiện "chưa có dữ liệu", ❌ không hiện 0 gây hiểu nhầm |
-| Rollup chậm | Hiện `as_of` — thời điểm số liệu, ❌ không giả vờ realtime |
+| Chưa có dữ liệu | Hiện "chưa có dữ liệu", không hiện 0 gây hiểu nhầm |
+| Rollup chậm | Hiện `as_of` — thời điểm số liệu, không giả vờ realtime |
 | `content_reviewer` | Ẩn hoàn toàn nhóm §7.1, §7.2, §7.4 |
 
 ## 6. Business rules
 
 | ID | Rule | Vì sao |
 |---|---|---|
-| `BR-DSH-01` | Dashboard **chỉ đọc**. ❌ Không mutation nào từ màn hình này | Trang tổng quan có nút sửa là chỗ dễ bấm nhầm nhất |
+| `BR-DSH-01` | Dashboard **chỉ đọc**. Cấm mutation nào từ màn hình này | Trang tổng quan có nút sửa là chỗ dễ bấm nhầm nhất |
 | `BR-DSH-02` | Mỗi thẻ có **link tới nơi hành động** | Số không kèm hành động là số vô dụng |
-| `BR-DSH-03` | Đọc từ **rollup**, ❌ không quét `telemetry_events` | `BR-TLM-01` |
+| `BR-DSH-03` | Đọc từ **rollup**, không quét `telemetry_events` | `BR-TLM-01` |
 | `BR-DSH-04` | Hiện `as_of` khi số liệu không realtime | Số liệu vận hành sai tệ hơn số liệu chậm |
-| `BR-DSH-05` | ❌ **NEVER hiện dữ liệu học tập của một trẻ cụ thể** | `BR-CDC-14` |
-| `BR-DSH-06` | `content_reviewer` ❌ không thấy số liệu tiền và User | Tách nhiệm vụ |
+| `BR-DSH-05` | Cấm — **NEVER hiện dữ liệu học tập của một trẻ cụ thể** | `BR-CDC-14` |
+| `BR-DSH-06` | `content_reviewer` không thấy số liệu tiền và User | Tách nhiệm vụ |
 
 ## 7. Data — bốn nhóm thẻ
 
@@ -70,9 +70,9 @@ hệ thống. Số liệu tăng trưởng chỉ đủ để biết xu hướng, 
 
 | Thẻ | Ngưỡng cảnh báo | Link tới |
 |---|---|---|
-| Đơn thanh toán chờ duyệt | > 20 hoặc cũ nhất > 24h | `payment-queue` |
-| Nội dung chờ duyệt | > 50 | `content-review-queue` |
-| Cảnh báo hệ thống đang mở | ≥ 1 | `system-activity` |
+| Đơn thanh toán chờ duyệt | > 20 hoặc cũ nhất > 24h | [`payment-queue.md`](payment-queue.md) |
+| Nội dung chờ duyệt | > 50 | [`content-review-queue.md`](content-review-queue.md) |
+| Cảnh báo hệ thống đang mở | ≥ 1 | [`system-activity.md`](system-activity.md) |
 
 ### 7.2 Tăng trưởng
 

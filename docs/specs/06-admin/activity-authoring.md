@@ -30,7 +30,7 @@ sửa một lần, mọi lesson dùng nó đều được cập nhật.
 
 ## 3. Entry points
 
-`/studio/activities` · tạo nhanh từ trong `lesson-authoring`.
+`/studio/activities` · tạo nhanh từ trong [`lesson-authoring.md`](lesson-authoring.md).
 
 ## 4. Main flow
 
@@ -56,8 +56,8 @@ sửa một lần, mọi lesson dùng nó đều được cập nhật.
 | `BR-ACA-01` | `kind` quyết định trường hiện ra | 10 loại có nhu cầu rất khác nhau |
 | `BR-ACA-02` | `kind = digital_game` **bắt buộc** trỏ tới game level `published` | Trỏ level draft là activity hỏng |
 | `BR-ACA-03` | `estimated_minutes ∈ [2,20]` | Activity dài hơn nên là lesson |
-| `BR-ACA-04` | Activity ❌ **NEVER xoá cứng** khi đang dùng | |
-| `BR-ACA-05` | Hoạt động ngoài màn hình ghi rõ **vật liệu cần chuẩn bị** | Người lớn cần chuẩn bị trước, ❌ không giữa chừng |
+| `BR-ACA-04` | Activity Cấm — **NEVER xoá cứng** khi đang dùng | |
+| `BR-ACA-05` | Hoạt động ngoài màn hình ghi rõ **vật liệu cần chuẩn bị** | Người lớn cần chuẩn bị trước, không giữa chừng |
 | `BR-ACA-06` | Tag ba trục bắt buộc trước publish | |
 | `BR-ACA-07` | Sửa activity đã published → version mới | |
 
@@ -78,7 +78,7 @@ sửa một lần, mọi lesson dùng nó đều được cập nhật.
 | `assessment` | Tiêu chí quan sát |
 | `home_activity` | Hướng dẫn cho phụ huynh |
 
-Bảy trong mười loại là **hoạt động ngoài màn hình**. Đó là chủ ý — sản phẩm ❌ không tối ưu
+Bảy trong mười loại là **hoạt động ngoài màn hình**. Đó là chủ ý — sản phẩm không tối ưu
 cho thời gian màn hình.
 
 ### 7.2 Trường chung

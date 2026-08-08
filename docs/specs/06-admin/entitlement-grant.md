@@ -30,7 +30,7 @@ dùng thử cho đối tác, game custom theo yêu cầu.
 | Actor | Quyền |
 |---|---|
 | `super_admin` | Cấp, thu hồi |
-| `content_reviewer` | ❌ Không truy cập |
+| `content_reviewer` | Cấm truy cập |
 
 ## 3. Entry points
 
@@ -39,8 +39,8 @@ dùng thử cho đối tác, game custom theo yêu cầu.
 
 ## 4. Main flow
 
-1. Mở từ `user-detail`.
-2. Chọn **package** (❌ không chọn key lẻ) + thời hạn + lý do.
+1. Mở từ [`user-detail.md`](user-detail.md).
+2. Chọn **package** (không chọn key lẻ) + thời hạn + lý do.
 3. Xác nhận → transaction: tạo entitlement `source = manual_grant`, ghi audit.
 4. User nhận thông báo.
 
@@ -57,14 +57,14 @@ dùng thử cho đối tác, game custom theo yêu cầu.
 
 | ID | Rule | Vì sao |
 |---|---|---|
-| `BR-EGR-01` | Cấp theo **package**, ❌ không theo key lẻ | Cấp key lẻ tạo tổ hợp quyền không tồn tại trong catalog, và không ai test |
+| `BR-EGR-01` | Cấp theo **package**, không theo key lẻ | Cấp key lẻ tạo tổ hợp quyền không tồn tại trong catalog, và không ai test |
 | `BR-EGR-02` | `grant_reason` **bắt buộc** ≥20 ký tự | Đây là đường lạm dụng dễ nhất |
 | `BR-EGR-03` | Mọi thao tác ghi `audit_logs` kèm before/after | |
 | `BR-EGR-04` | Thời hạn tối đa **365 ngày** một lần cấp | Cấp vĩnh viễn bằng tay là mất kiểm soát doanh thu |
 | `BR-EGR-05` | Chỉ `super_admin` | |
 | `BR-EGR-06` | Thu hồi có hiệu lực **ngay**, invalidate cache | `BR-ENT-06` |
-| `BR-EGR-07` | Cộng dồn khi còn hạn, ❌ không ghi đè | `BR-PAP-05` |
-| `BR-EGR-08` | Cấp tay ❌ **không tạo** `payment_orders` giả | Doanh thu và quyền là hai sổ khác nhau |
+| `BR-EGR-07` | Cộng dồn khi còn hạn, không ghi đè | `BR-PAP-05` |
+| `BR-EGR-08` | Cấp tay **không tạo** `payment_orders` giả | Doanh thu và quyền là hai sổ khác nhau |
 | `BR-EGR-09` | Báo cáo cấp tay hàng tháng gửi cho `super_admin` | Tự giám sát |
 
 ## 7. Data

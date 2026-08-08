@@ -22,7 +22,7 @@ depends_on:
 Tìm một User để hỗ trợ, và thực hiện đúng ba thao tác vận hành: **khoá**, **mở khoá**,
 **xoá theo yêu cầu**.
 
-> Tách khỏi `admin-dashboard` và khỏi `user-detail`. Danh sách là bề mặt tìm kiếm; chi tiết
+> Tách khỏi [`admin-dashboard.md`](admin-dashboard.md) và khỏi [`user-detail.md`](user-detail.md). Danh sách là bề mặt tìm kiếm; chi tiết
 > là bề mặt đọc sâu. Gộp cả ba như v1 làm không ai trả lời được phần nào đã xong.
 
 ## 2. Actors
@@ -30,7 +30,7 @@ Tìm một User để hỗ trợ, và thực hiện đúng ba thao tác vận h�
 | Actor | Quyền |
 |---|---|
 | `super_admin` | Đầy đủ |
-| `content_reviewer` | ❌ Không truy cập |
+| `content_reviewer` | Cấm truy cập |
 
 ## 3. Entry points
 
@@ -42,7 +42,7 @@ Tìm một User để hỗ trợ, và thực hiện đúng ba thao tác vận h�
 1. Manager mở `/users`.
 2. Tìm theo email hoặc tên hiển thị; lọc theo trạng thái và gói.
 3. Kết quả phân trang, trần **100**.
-4. Mở một User → `user-detail`.
+4. Mở một User → [`user-detail.md`](user-detail.md).
 5. Khoá/mở khoá cần **lý do bắt buộc**, ghi audit.
 
 ## 5. Alternative flows
@@ -51,8 +51,8 @@ Tìm một User để hỗ trợ, và thực hiện đúng ba thao tác vận h�
 |---|---|
 | Tìm không ra | Gợi ý tìm bằng email đầy đủ |
 | Khoá User đang có phiên | Thu hồi mọi phiên ngay (`refresh_token_version` +1) |
-| Khoá User có entitlement | Entitlement **giữ nguyên** — khoá là chặn đăng nhập, ❌ không thu hồi quyền đã mua |
-| User đã `deleted` | Hiện dạng chỉ đọc, ❌ không thao tác được |
+| Khoá User có entitlement | Entitlement **giữ nguyên** — khoá là chặn đăng nhập, không thu hồi quyền đã mua |
+| User đã `deleted` | Hiện dạng chỉ đọc, không thao tác được |
 
 ## 6. Business rules
 
@@ -61,11 +61,11 @@ Tìm một User để hỗ trợ, và thực hiện đúng ba thao tác vận h�
 | `BR-USM-01` | Trần phân trang **100**, ép ở Zod | Query không trần hạ instance trên t3.small |
 | `BR-USM-02` | Zod parse **mọi** query param | Param đi vào `ilike` là đường vào injection |
 | `BR-USM-03` | Khoá/mở khoá **bắt buộc lý do** ≥10 ký tự, ghi audit | |
-| `BR-USM-04` | Khoá ❌ **không** thu hồi entitlement đã mua | Khoá là biện pháp vận hành, ❌ không phải phạt tài chính |
+| `BR-USM-04` | Khoá **không** thu hồi entitlement đã mua | Khoá là biện pháp vận hành, không phải phạt tài chính |
 | `BR-USM-05` | Khoá thu hồi **mọi phiên** ngay | Khoá mà token cũ còn dùng được là không khoá |
-| `BR-USM-06` | Danh sách ❌ **NEVER hiện dữ liệu trẻ** ngoài **số lượng** hồ sơ | `BR-CDC-14` |
-| `BR-USM-07` | ❌ **NEVER endpoint xoá cứng User** từ admin. Xoá đi qua luồng yêu cầu của chính User | Xoá tài khoản là quyền của chủ thể dữ liệu, có thời hạn 30 ngày |
-| `BR-USM-08` | Manager ❌ **NEVER đổi được mật khẩu của User** | Chỉ gửi được link đặt lại |
+| `BR-USM-06` | Danh sách Cấm — **NEVER hiện dữ liệu trẻ** ngoài **số lượng** hồ sơ | `BR-CDC-14` |
+| `BR-USM-07` | Cấm — **NEVER endpoint xoá cứng User** từ admin. Xoá đi qua luồng yêu cầu của chính User | Xoá tài khoản là quyền của chủ thể dữ liệu, có thời hạn 30 ngày |
+| `BR-USM-08` | Manager Cấm — **NEVER đổi được mật khẩu của User** | Chỉ gửi được link đặt lại |
 
 ## 7. Data
 
@@ -79,7 +79,7 @@ Tìm một User để hỗ trợ, và thực hiện đúng ba thao tác vận h�
 Email · Tên hiển thị · Trạng thái · Số hồ sơ trẻ (**chỉ số lượng**) · Gói đang hiệu lực ·
 Ngày tạo · Hoạt động gần nhất.
 
-❌ Không tên trẻ, ❌ không tuổi trẻ, ❌ không tiến độ học.
+Cấm tên trẻ, không tuổi trẻ, không tiến độ học.
 
 ## 8. API contract
 
@@ -102,7 +102,7 @@ Body `{ reason }`.
 
 ### `POST /api/managers/users/{uuid}/send-password-reset`
 
-Gửi link đặt lại. ❌ Không trả token cho Manager.
+Gửi link đặt lại. Cấm trả token cho Manager.
 
 ## 9. Acceptance criteria
 

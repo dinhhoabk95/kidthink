@@ -20,12 +20,12 @@ depends_on:
 
 Đủ ngữ cảnh để hỗ trợ một User, **không hơn**.
 
-Ranh giới dữ liệu ở đây là ràng buộc tuân thủ, không phải lựa chọn UX: vận hành ❌ không cần
+Ranh giới dữ liệu ở đây là ràng buộc tuân thủ, không phải lựa chọn UX: vận hành không cần
 dữ liệu học tập của một đứa trẻ cụ thể — phụ huynh cần.
 
 ## 2. Actors
 
-`super_admin` đầy đủ. `content_reviewer` ❌ không truy cập.
+`super_admin` đầy đủ. `content_reviewer` không truy cập.
 
 ## 3. Entry points
 
@@ -35,25 +35,25 @@ dữ liệu học tập của một đứa trẻ cụ thể — phụ huynh cầ
 
 1. Mở từ danh sách hoặc từ một đơn thanh toán.
 2. Hiện bốn nhóm §7.1, **chỉ đọc**.
-3. Hành động dẫn sang bề mặt khác: `user-management` (khoá), `entitlement-grant` (cấp
-   quyền), `payment-queue` (đơn).
+3. Hành động dẫn sang bề mặt khác: [`user-management.md`](user-management.md) (khoá), [`entitlement-grant.md`](entitlement-grant.md) (cấp
+   quyền), [`payment-queue.md`](payment-queue.md) (đơn).
 
 ## 5. Alternative flows
 
 | Nhánh | Hành vi |
 |---|---|
-| User `deleted` | Hiện chỉ đọc + `purge_at`, ❌ không thao tác được |
+| User `deleted` | Hiện chỉ đọc + `purge_at`, không thao tác được |
 | User chưa xác thực email | Nút gửi lại email xác thực |
-| Không có hồ sơ trẻ | Hiện "chưa có", ❌ không hiện 0 gây hiểu nhầm |
+| Không có hồ sơ trẻ | Hiện "chưa có", không hiện 0 gây hiểu nhầm |
 
 ## 6. Business rules
 
 | ID | Rule | Vì sao |
 |---|---|---|
-| `BR-USD-01` | ❌ **NEVER hiện telemetry, mastery, hay lịch sử chơi của một trẻ** | `BR-CDC-14` — vận hành không có nhu cầu nghiệp vụ |
-| `BR-USD-02` | Hồ sơ trẻ hiện **`display_name` + `age_band`** để hỗ trợ được; ❌ không hơn | Đủ để nói chuyện với phụ huynh, ❌ không đủ để hồ sơ hoá đứa trẻ |
+| `BR-USD-01` | Cấm — **NEVER hiện telemetry, mastery, hay lịch sử chơi của một trẻ** | `BR-CDC-14` — vận hành không có nhu cầu nghiệp vụ |
+| `BR-USD-02` | Hồ sơ trẻ hiện **`display_name` + `age_band`** để hỗ trợ được; không hơn | Đủ để nói chuyện với phụ huynh, không đủ để hồ sơ hoá đứa trẻ |
 | `BR-USD-03` | Màn hình **chỉ đọc**; hành động dẫn sang bề mặt có audit riêng | |
-| `BR-USD-04` | ❌ **NEVER hiện mật khẩu hash hay token** | |
+| `BR-USD-04` | Cấm — **NEVER hiện mật khẩu hash hay token** | |
 | `BR-USD-05` | Mở chi tiết User ghi `audit_logs` khi có xem hồ sơ trẻ | Truy cập dữ liệu trẻ phải truy được |
 | `BR-USD-06` | Lịch sử đơn hiện **đủ**, kể cả đơn bị từ chối | Ngữ cảnh hỗ trợ |
 
@@ -64,14 +64,14 @@ dữ liệu học tập của một đứa trẻ cụ thể — phụ huynh cầ
 | Nhóm | Nội dung |
 |---|---|
 | **Tài khoản** | email · `display_name` · trạng thái · ngày tạo · xác thực email · hoạt động gần nhất · số phiên đang mở |
-| **Hồ sơ trẻ** | Danh sách: `display_name` · `age_band` · trạng thái · ngày tạo. ❌ Không tiến độ, ❌ không lịch sử chơi |
+| **Hồ sơ trẻ** | Danh sách: `display_name` · `age_band` · trạng thái · ngày tạo. Cấm tiến độ, không lịch sử chơi |
 | **Quyền** | Entitlement đang hiệu lực: key · nguồn · `expires_at`. Lịch sử entitlement đã hết |
 | **Thanh toán** | Mọi đơn: thời gian · gói · số tiền · trạng thái · người duyệt · ghi chú |
 
 ### 7.2 Hành động (dẫn đi nơi khác)
 
-Khoá/mở khoá → `user-management` · Cấp entitlement → `entitlement-grant` ·
-Gửi lại email xác thực · Gửi link đặt lại mật khẩu · Xem đơn → `payment-queue`.
+Khoá/mở khoá → [`user-management.md`](user-management.md) · Cấp entitlement → [`entitlement-grant.md`](entitlement-grant.md) ·
+Gửi lại email xác thực · Gửi link đặt lại mật khẩu · Xem đơn → [`payment-queue.md`](payment-queue.md).
 
 ## 8. API contract
 
@@ -132,4 +132,4 @@ Scenario: BR-USD-06 — hiện cả đơn bị từ chối
 
 | # | Câu hỏi | Chặn gì |
 |---|---|---|
-| 1 | Có cần ghi chú hỗ trợ gắn với User không? | `user-management` Q1 |
+| 1 | Có cần ghi chú hỗ trợ gắn với User không? | [`user-management.md`](user-management.md) Q1 |

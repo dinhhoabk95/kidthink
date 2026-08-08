@@ -19,10 +19,10 @@ depends_on:
 ## 1. Objective
 
 Ảnh dùng khi emoji không diễn tả được. **Không có thư viện** — mỗi content item upload ảnh
-của chính nó (`SPEC.md` D4).
+của chính nó ([`SPEC.md`](../../SPEC.md) D4).
 
 Crop ở client là quyết định **biên tập**; resize ở server là ràng buộc **kỹ thuật**. Hai việc
-khác nhau và ❌ không thay thế nhau.
+khác nhau và không thay thế nhau.
 
 ## 2. Actors
 
@@ -51,7 +51,7 @@ Chọn hoặc kéo thả ảnh
 | SVG | Chặn ở cả hai phía |
 | Ảnh sai hướng (từ điện thoại) | Nút xoay 90° |
 | Upload fail | **Giữ nguyên** crop đã làm, cho thử lại |
-| Thay ảnh | Path mới, ❌ không ghi đè file cũ |
+| Thay ảnh | Path mới, không ghi đè file cũ |
 | Xoá ảnh đang dùng | 409 kèm danh sách nơi dùng |
 
 ## 6. Business rules
@@ -63,9 +63,9 @@ Chọn hoặc kéo thả ảnh
 | `BR-IUP-03` | Nút **xoay 90°** | Ảnh từ điện thoại thường sai hướng |
 | `BR-IUP-04` | Kiểm giới hạn ở **cả client và server** | Client để trải nghiệm; server để an toàn |
 | `BR-IUP-05` | `alt_vi` **bắt buộc** | A11y, và nó cũng là mô tả để tra sau này |
-| `BR-IUP-06` | Upload dùng client có **CSRF token**, ❌ **NEVER raw `$fetch`** | |
-| `BR-IUP-07` | Upload fail ❌ **không mất crop đã làm** | `BR-STU-03` |
-| `BR-IUP-08` | ❌ **NEVER upload ảnh chụp trẻ em** — nhắc rõ trên UI | `BR-CDC-04` |
+| `BR-IUP-06` | Upload dùng client có **CSRF token**, Cấm — **NEVER raw `$fetch`** | |
+| `BR-IUP-07` | Upload fail **không mất crop đã làm** | `BR-STU-03` |
+| `BR-IUP-08` | Cấm — **NEVER upload ảnh chụp trẻ em** — nhắc rõ trên UI | `BR-CDC-04` |
 | `BR-IUP-09` | Ghi `audit_logs` mọi upload và xoá | |
 
 ## 7. Data

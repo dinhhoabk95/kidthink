@@ -29,7 +29,7 @@ Một thao tác, ba hậu quả: đổi trạng thái đơn, cấp hoặc thu h�
 | Actor | Quyền |
 |---|---|
 | `super_admin` | Duyệt, từ chối, cấp bù ngày |
-| `content_reviewer` | ❌ Không truy cập |
+| `content_reviewer` | Cấm truy cập |
 
 ## 3. Entry points
 
@@ -50,7 +50,7 @@ BEGIN TRANSACTION
 COMMIT
 ```
 
-Bước 4 dùng `max(now, expires_at cũ)` để mua khi còn hạn thì **cộng dồn**, ❌ không mất phần
+Bước 4 dùng `max(now, expires_at cũ)` để mua khi còn hạn thì **cộng dồn**, không mất phần
 còn lại.
 
 ## 5. Alternative flows
@@ -58,10 +58,10 @@ còn lại.
 | Nhánh | Hành vi |
 |---|---|
 | Approve đơn đã terminal | **409** `ORDER_ALREADY_PROCESSED` |
-| Cấp entitlement fail | **Rollback toàn bộ** — đơn ❌ không thành `approved` |
+| Cấp entitlement fail | **Rollback toàn bộ** — đơn không thành `approved` |
 | Reject | Đổi `rejected`, entitlement từ đơn đó → `cancelled` **ngay, cùng transaction** |
 | Cấp bù ngày | `bonus_days` ≤ 30, ghi lý do bắt buộc |
-| Đơn `expired` | ❌ Không duyệt được; User tạo đơn mới |
+| Đơn `expired` | Cấm duyệt được; User tạo đơn mới |
 
 ## 6. Business rules
 
@@ -71,11 +71,11 @@ còn lại.
 | `BR-PAP-02` | Toàn bộ trong **một transaction**, có khoá hàng | Đơn `approved` mà không có quyền là ca hỗ trợ tệ nhất |
 | `BR-PAP-03` | Reject thu hồi entitlement **ngay, cùng transaction** | `soft_unlock` là tin tưởng có thời hạn |
 | `BR-PAP-04` | `admin_note` **bắt buộc** ≥10 ký tự cho cả approve và reject | Luồng tiền phải trả lời được vì sao |
-| `BR-PAP-05` | Mua khi còn hạn → **cộng dồn** từ `expires_at` cũ | Người dùng ❌ không mất phần đã trả |
+| `BR-PAP-05` | Mua khi còn hạn → **cộng dồn** từ `expires_at` cũ | Người dùng không mất phần đã trả |
 | `BR-PAP-06` | `bonus_days` ≤ **30**, lý do bắt buộc, ghi audit | Cấp bù không giới hạn là đường lạm dụng |
-| `BR-PAP-07` | Số tiền và thời hạn đọc từ **`PACKAGE_CATALOG`** theo `package_code`/`offer_code` snapshot trên đơn | ❌ không nhận từ form |
+| `BR-PAP-07` | Số tiền và thời hạn đọc từ **`PACKAGE_CATALOG`** theo `package_code`/`offer_code` snapshot trên đơn | không nhận từ form |
 | `BR-PAP-08` | Màn hình quyết định hiện **checklist đối chiếu** | Duyệt theo thói quen là nơi sai xảy ra |
-| `BR-PAP-09` | ❌ **NEVER xoá đơn.** Huỷ = đổi trạng thái | Nghĩa vụ kế toán |
+| `BR-PAP-09` | Cấm — **NEVER xoá đơn.** Huỷ = đổi trạng thái | Nghĩa vụ kế toán |
 
 ## 7. Data
 
@@ -85,7 +85,7 @@ còn lại.
 - [ ] Nội dung chuyển khoản **chứa** `transfer_note`
 - [ ] Mã giao dịch **chưa dùng** cho đơn khác
 - [ ] Thời gian chuyển khoản **sau** thời điểm tạo đơn
-- [ ] Ảnh chứng từ **đọc được**, ❌ không cắt xén phần quan trọng
+- [ ] Ảnh chứng từ **đọc được**, không cắt xén phần quan trọng
 
 Cả 5 tick mới bật nút duyệt. Kết quả lưu vào `admin_note` dạng cấu trúc.
 

@@ -28,7 +28,7 @@ Và **sai emoji = sai bài học**: một quả táo trông giống quả cà ch
 
 ## 3. Entry points
 
-Mọi field có `uiHint = emoji` (§`schema-driven-form` 7.1) ·
+Mọi field có `uiHint = emoji` (§[`schema-driven-form.md`](schema-driven-form.md) 7.1) ·
 `GET /api/managers/emoji`.
 
 ## 4. Main flow
@@ -45,7 +45,7 @@ Mọi field có `uiHint = emoji` (§`schema-driven-form` 7.1) ·
 |---|---|
 | Tìm không ra | Hiện nhóm gần nhất + nút "báo thiếu emoji" gửi cho dev |
 | Gõ ký tự emoji trực tiếp | Bị chặn, hiện gợi ý dùng picker |
-| Emoji `deprecated` | ❌ Không xuất hiện trong picker; nội dung cũ vẫn render |
+| Emoji `deprecated` | Cấm xuất hiện trong picker; nội dung cũ vẫn render |
 | Nội dung cho trẻ | Lọc bỏ `age_suitability = blocked` |
 
 ## 6. Business rules
@@ -54,9 +54,9 @@ Mọi field có `uiHint = emoji` (§`schema-driven-form` 7.1) ·
 |---|---|---|
 | `BR-EPK-01` | Ô emoji ≥ **40×40px**, glyph render ≥ **28px** | Nhỏ hơn thì nhiều emoji trông giống nhau — sai emoji là sai bài học |
 | `BR-EPK-02` | Tìm kiếm **bắt buộc** hoạt động tiếng Việt, có dấu và không dấu | `BR-EMJ-04` |
-| `BR-EPK-03` | ❌ **NEVER cho gõ emoji ngoài registry** | `BR-EMJ-01` |
+| `BR-EPK-03` | Cấm — **NEVER cho gõ emoji ngoài registry** | `BR-EMJ-01` |
 | `BR-EPK-04` | 12 emoji **gần đây** hiện đầu tiên | Một level thường dùng lặp một bộ nhỏ |
-| `BR-EPK-05` | Duyệt theo **32 nhóm chủ đề học**, ❌ không theo Unicode block | Manager nghĩ theo chủ đề dạy |
+| `BR-EPK-05` | Duyệt theo **32 nhóm chủ đề học**, không theo Unicode block | Manager nghĩ theo chủ đề dạy |
 | `BR-EPK-06` | Bàn phím: mũi tên di chuyển, Enter chọn, Esc đóng | Chọn hàng chục emoji bằng chuột là chậm |
 | `BR-EPK-07` | Ghim font stack emoji | `BR-EMJ-06` |
 | `BR-EPK-08` | Picker là **chrome** — nút, tab, icon của nó dùng SVG | `BR-EMJ-03` |
@@ -75,8 +75,8 @@ Mọi field có `uiHint = emoji` (§`schema-driven-form` 7.1) ·
 
 ### 7.2 Gần đây
 
-Lưu localStorage theo Manager, tối đa 12, LRU. ❌ Không đồng bộ server — nó là tiện ích cục
-bộ, ❌ không phải dữ liệu.
+Lưu localStorage theo Manager, tối đa 12, LRU. Cấm đồng bộ server — nó là tiện ích cục
+bộ, không phải dữ liệu.
 
 ## 8. API contract
 

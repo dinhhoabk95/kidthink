@@ -21,11 +21,11 @@ Manager cần biết **gói nào mở entitlement nào** để trả lời câu 
 đúng.
 
 Màn hình này **chỉ đọc**. Package là Lớp 1 — giá và quyền lợi là contract thương mại, đổi
-phải qua PR và review, ❌ không qua một ô input.
+phải qua PR và review, không qua một ô input.
 
 ## 2. Actors
 
-`super_admin` xem. `content_reviewer` ❌ không truy cập.
+`super_admin` xem. `content_reviewer` không truy cập.
 
 ## 3. Entry points
 
@@ -49,12 +49,12 @@ phải qua PR và review, ❌ không qua một ô input.
 
 | ID | Rule | Vì sao |
 |---|---|---|
-| `BR-PCA-01` | **Chỉ đọc**. ❌ Không tạo/sửa/xoá gói | `BR-PKG-07` |
+| `BR-PCA-01` | **Chỉ đọc**. Cấm tạo/sửa/xoá gói | `BR-PKG-07` |
 | `BR-PCA-02` | Hiện **cả** gói `is_public = false` | Manager cần biết để cấp tay |
 | `BR-PCA-03` | Hiện **số người đang dùng** mỗi gói | Ngữ cảnh trước khi retire một gói |
 | `BR-PCA-04` | Add-on chưa bán nêu rõ **điều kiện lên catalog** | Tránh cấp nhầm gói chưa có tính năng |
 | `BR-PCA-05` | Chỉ `super_admin` | Dữ liệu doanh thu |
-| `BR-PCA-06` | Danh sách User theo gói ❌ **không hiện dữ liệu trẻ** | |
+| `BR-PCA-06` | Danh sách User theo gói **không hiện dữ liệu trẻ** | |
 
 ## 7. Data
 
@@ -73,7 +73,7 @@ Cột "nguồn" phân biệt doanh thu thật với quyền cấp tay.
 
 ### `GET /api/managers/packages`
 
-200 → §7.1 mọi gói. ❌ Không có `POST`/`PATCH`/`DELETE`.
+200 → §7.1 mọi gói. Cấm có `POST`/`PATCH`/`DELETE`.
 
 ### `GET /api/managers/packages/{code}/subscribers`
 
@@ -127,4 +127,4 @@ Scenario: BR-PCA-05 — content_reviewer bị chặn
 
 | # | Câu hỏi | Chặn gì |
 |---|---|---|
-| 1 | Doanh thu 30 ngày tính theo đơn approved hay theo ngày hiệu lực? | `admin-dashboard` Q1 |
+| 1 | Doanh thu 30 ngày tính theo đơn approved hay theo ngày hiệu lực? | [`admin-dashboard.md`](admin-dashboard.md) Q1 |

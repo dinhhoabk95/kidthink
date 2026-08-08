@@ -47,16 +47,16 @@ audit.
 |---|---|
 | Vượt trần hàng | Chia lô hoặc thu hẹp khoảng thời gian |
 | Xuất lớn | Chạy job nền, thông báo khi xong |
-| Loại không có trong danh sách | ❌ Không có endpoint |
+| Loại không có trong danh sách | Cấm có endpoint |
 
 ## 6. Business rules
 
 | ID | Rule | Vì sao |
 |---|---|---|
-| `BR-EXP-01` | **Danh sách đóng** §7.1. ❌ Không có xuất tuỳ ý theo SQL | Xuất tuỳ ý là cửa sau vào mọi bảng |
-| `BR-EXP-02` | ❌ **NEVER xuất PII của trẻ** ở bất kỳ loại nào | `child-data-compliance` |
+| `BR-EXP-01` | **Danh sách đóng** §7.1. Cấm có xuất tuỳ ý theo SQL | Xuất tuỳ ý là cửa sau vào mọi bảng |
+| `BR-EXP-02` | Cấm — **NEVER xuất PII của trẻ** ở bất kỳ loại nào | [`child-data-compliance.md`](../00-foundation/child-data-compliance.md) |
 | `BR-EXP-03` | Mọi lần xuất ghi audit kèm **lý do bắt buộc** | |
-| `BR-EXP-04` | File qua **signed URL ≤15 phút**, ❌ không link công khai | |
+| `BR-EXP-04` | File qua **signed URL ≤15 phút**, không link công khai | |
 | `BR-EXP-05` | Trần **100.000 hàng** mỗi lần xuất | |
 | `BR-EXP-06` | Chỉ `super_admin` | |
 | `BR-EXP-07` | Rate limit **5 lần/ngày** mỗi Manager | Xuất liên tục là dấu hiệu bất thường |
@@ -70,12 +70,12 @@ audit.
 |---|---|---|
 | `revenue` | ngày · gói · số đơn · doanh thu · người duyệt | email đầy đủ (kế toán) |
 | `subscriptions` | gói · số đang hiệu lực · hết hạn trong 30 ngày · nguồn | email rút gọn |
-| `content_kpi` | level · version · lượt chơi · tỉ lệ hoàn thành · tỉ lệ bỏ · hint TB | ❌ không |
-| `skill_coverage` | skill · số level published · số LO · lượt tiếp xúc | ❌ không |
-| `curriculum_health` | curriculum · tuần · số hoạt động · số trẻ đang học | ❌ không |
-| `audit` | §`audit-log-viewer` §8 | actor là Manager |
+| `content_kpi` | level · version · lượt chơi · tỉ lệ hoàn thành · tỉ lệ bỏ · hint TB | không |
+| `skill_coverage` | skill · số level published · số LO · lượt tiếp xúc | không |
+| `curriculum_health` | curriculum · tuần · số hoạt động · số trẻ đang học | không |
+| `audit` | §[`audit-log-viewer.md`](audit-log-viewer.md) §8 | actor là Manager |
 
-**Sáu loại.** ❌ Không có loại nào xuất `child_profiles`, `mastery_state`, hay
+**Sáu loại.** Cấm có loại nào xuất `child_profiles`, `mastery_state`, hay
 `telemetry_events` ở mức cá nhân.
 
 ### 7.2 Định dạng

@@ -46,14 +46,14 @@ Taxonomy là **Lớp 1**: màn hình này **chỉ đọc**.
 | Nhánh | Hành vi |
 |---|---|
 | Skill có nội dung nhưng toàn `draft` | Đếm riêng `draft` và `published` |
-| Skill `deprecated` | Hiện mờ, ❌ không cho soạn mới |
+| Skill `deprecated` | Hiện mờ, không cho soạn mới |
 | Muốn sửa taxonomy | Hiện thông báo: taxonomy đổi qua PR, kèm link tài liệu |
 
 ## 6. Business rules
 
 | ID | Rule | Vì sao |
 |---|---|---|
-| `BR-TXB-01` | Màn hình **chỉ đọc**. ❌ Không tạo/sửa/xoá | Taxonomy là Lớp 1 — mọi FK trỏ vào đây |
+| `BR-TXB-01` | Màn hình **chỉ đọc**. Cấm tạo/sửa/xoá | Taxonomy là Lớp 1 — mọi FK trỏ vào đây |
 | `BR-TXB-02` | Hiện **số nội dung published** mỗi nút | Đây là lý do chính màn hình tồn tại |
 | `BR-TXB-03` | Skill **0 nội dung published** đánh dấu nổi bật | Khoảng trống nội dung là việc phải làm, không phải thông tin phụ |
 | `BR-TXB-04` | Có nút **"soạn level cho skill này"** dẫn thẳng sang studio với skill đã chọn sẵn | Giảm ma sát từ phát hiện khoảng trống tới hành động |
@@ -85,10 +85,10 @@ C1 Tư duy toán học            99 skill · 412 level published
 
 | Chỉ báo | Điều kiện |
 |---|---|
-| 🔴 Chưa có nội dung | 0 level published |
-| 🟡 Mỏng | 1–2 level published |
-| 🟢 Đủ | ≥3 level published |
-| ⚠️ LO chưa phủ | Có LO không level nào gắn |
+| Chưa có nội dung | 0 level published |
+| Mỏng | 1–2 level published |
+| Đủ | ≥3 level published |
+| LO chưa phủ | Có LO không level nào gắn |
 
 ## 8. API contract
 
@@ -100,7 +100,7 @@ Query `?depth=` `?gaps_only=true`. 200 → cây kèm số đếm và `as_of`.
 
 200 → §7.2.
 
-❌ Không có `POST`, `PATCH`, `DELETE`.
+Cấm có `POST`, `PATCH`, `DELETE`.
 
 ## 9. Acceptance criteria
 

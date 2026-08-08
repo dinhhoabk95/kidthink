@@ -24,14 +24,14 @@ Manager tạo và sửa game level **không viết một dòng code nào**. Đâ
 lớn nhanh hơn tốc độ tuyển được lập trình viên — và là một trong sáu tiêu chí MVP hoàn thành.
 
 Studio ghi `game_levels` ở trạng thái `draft`. Publish là bề mặt khác
-(`publish-and-version`), có cổng duyệt riêng.
+([`publish-and-version.md`](publish-and-version.md)), có cổng duyệt riêng.
 
 ## 2. Actors
 
 | Actor | Làm gì |
 |---|---|
 | `content_reviewer` · `super_admin` | Tạo, sửa, gửi duyệt |
-| `pnpm seed:content` | Ghi nội dung nền `published` qua đường khác (`content-seed-authoring`); từ đó Manager quản lý trong studio bằng **version mới** |
+| `pnpm seed:content` | Ghi nội dung nền `published` qua đường khác ([`content-seed-authoring.md`](../01-platform/content-seed-authoring.md)); từ đó Manager quản lý trong studio bằng **version mới** |
 
 ## 3. Entry points
 
@@ -39,9 +39,9 @@ Studio ghi `game_levels` ở trạng thái `draft`. Publish là bề mặt khác
 
 ## 4. Main flow
 
-1. Chọn **template** — quyết định đầu tiên, ❌ không đổi được sau khi có nội dung.
+1. Chọn **template** — quyết định đầu tiên, không đổi được sau khi có nội dung.
 2. Chọn **skill mục tiêu** → hệ thống gợi ý tag ba trục và band tuổi.
-3. Form sinh **từ `content_contract`** của template (`schema-driven-form`).
+3. Form sinh **từ `content_contract`** của template ([`schema-driven-form.md`](schema-driven-form.md)).
 4. Chọn emoji hoặc upload ảnh cho từng item.
 5. Đặt `difficulty_params`, `theme_id`, `access_tier`.
 6. **Preview trên engine thật**, cập nhật khi field đổi (debounce 300ms).
@@ -52,24 +52,24 @@ Studio ghi `game_levels` ở trạng thái `draft`. Publish là bề mặt khác
 | Nhánh | Hành vi |
 |---|---|
 | Đổi template khi đã có nội dung | Cảnh báo mất dữ liệu, yêu cầu xác nhận; `content_pack` bị reset |
-| Sửa level đã `published` | Tạo **version mới** ở `draft` — `content-versioning` §4 |
+| Sửa level đã `published` | Tạo **version mới** ở `draft` — [`content-versioning.md`](../00-foundation/content-versioning.md) §4 |
 | Lưu fail (mạng, validation) | **Giữ nguyên toàn bộ dữ liệu form**, cho thử lại |
 | Hai Manager mở cùng bản | `expected_version` chống ghi đè; người sau nhận **409** |
-| Preview không dựng được | Hiện **rõ lý do**, ❌ không để preview trống im lặng |
+| Preview không dựng được | Hiện **rõ lý do**, không để preview trống im lặng |
 
 ## 6. Business rules
 
 | ID | Rule | Vì sao |
 |---|---|---|
-| `BR-STU-01` | Studio ghi `game_levels`. ❌ **NEVER ghi `game_templates`** | Template là Lớp 1, do seed và migration sở hữu |
+| `BR-STU-01` | Studio ghi `game_levels`. Cấm — **NEVER ghi `game_templates`** | Template là Lớp 1, do seed và migration sở hữu |
 | `BR-STU-02` | `content_pack` validate bằng `content_contract` ở **server** trước khi ghi | Sai schema làm crash engine trong lúc trẻ đang chơi |
-| `BR-STU-03` | ❌ **NEVER mất công việc.** Lưu fail giữ nguyên form | Manager mất 20 phút biên soạn vì lỗi mạng sẽ không tin studio nữa |
-| `BR-STU-04` | Preview dùng **engine thật**, ❌ không mock, ❌ không ảnh tĩnh | Preview xấp xỉ để lọt level không chơi được, và người phát hiện sẽ là một đứa trẻ 4 tuổi |
+| `BR-STU-03` | Cấm — **NEVER mất công việc.** Lưu fail giữ nguyên form | Manager mất 20 phút biên soạn vì lỗi mạng sẽ không tin studio nữa |
+| `BR-STU-04` | Preview dùng **engine thật**, không mock, không ảnh tĩnh | Preview xấp xỉ để lọt level không chơi được, và người phát hiện sẽ là một đứa trẻ 4 tuổi |
 | `BR-STU-05` | Mọi thao tác ghi `audit_logs` | Nội dung sai gây hại cho trẻ |
-| `BR-STU-06` | `access_tier` **bắt buộc chọn**, ❌ không mặc định | `BR-LAD-02` |
-| `BR-STU-07` | Studio ❌ **NEVER publish trực tiếp** — đi qua `in_review` | `BR-CLC-02` |
+| `BR-STU-06` | `access_tier` **bắt buộc chọn**, không mặc định | `BR-LAD-02` |
+| `BR-STU-07` | Studio Cấm — **NEVER publish trực tiếp** — đi qua `in_review` | `BR-CLC-02` |
 | `BR-STU-08` | Mật độ UI dày hơn MASTER: field 16px, control 40px | Studio là bề mặt làm việc theo lô |
-| `BR-STU-09` | Lỗi validate hiện **cạnh field**, ❌ không dồn lên đầu form | Form có thể dài 40 field |
+| `BR-STU-09` | Lỗi validate hiện **cạnh field**, không dồn lên đầu form | Form có thể dài 40 field |
 | `BR-STU-10` | Emoji chọn qua **picker**; chrome của studio vẫn là SVG | `BR-EMJ-01` `BR-EMJ-03` |
 
 ## 7. Data
@@ -91,7 +91,7 @@ Studio ghi `game_levels` ở trạng thái `draft`. Publish là bề mặt khác
 
 ### 7.3 Lưu nháp
 
-Tự động mỗi 30 giây khi có thay đổi, và khi rời field. Nháp ❌ không cần hợp lệ đầy đủ —
+Tự động mỗi 30 giây khi có thay đổi, và khi rời field. Nháp không cần hợp lệ đầy đủ —
 validate đầy đủ chỉ chạy khi **gửi duyệt**.
 
 ## 8. API contract

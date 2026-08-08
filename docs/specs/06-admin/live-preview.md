@@ -39,13 +39,13 @@ Khung phải của `/studio/levels/{code}/{version}` · `GET /api/managers/level
 1. Field đổi → debounce 300ms → dựng lại config từ dữ liệu form hiện tại.
 2. Validate `content_pack` cục bộ; hợp lệ → nạp vào engine.
 3. Engine chạy **đầy đủ**: scaffolding, âm thanh, ăn mừng, sàn touch.
-4. Manager chơi thử được, kết quả ❌ không ghi mastery, ❌ không đếm KPI.
+4. Manager chơi thử được, kết quả không ghi mastery, không đếm KPI.
 
 ## 5. Alternative flows
 
 | Nhánh | Hành vi |
 |---|---|
-| `content_pack` chưa hợp lệ | Hiện **rõ lý do** ở khung preview, ❌ không để trống im lặng |
+| `content_pack` chưa hợp lệ | Hiện **rõ lý do** ở khung preview, không để trống im lặng |
 | Asset thiếu | Engine hiện placeholder, preview cảnh báo asset nào |
 | Chọn band tuổi khác | Preview dựng lại với sàn touch và scaffolding của band đó |
 | Bật `reduced-motion` giả lập | Preview áp ngay |
@@ -55,12 +55,12 @@ Khung phải của `/studio/levels/{code}/{version}` · `GET /api/managers/level
 | ID | Rule | Vì sao |
 |---|---|---|
 | `BR-LPV-01` | Preview dùng **engine thật**, cùng entry point với runtime của trẻ | Preview xấp xỉ để lọt level không chơi được |
-| `BR-LPV-02` | Preview kế thừa **toàn bộ** ràng buộc bề mặt trẻ: sàn touch 64–96px, ❌ không `dark:`, ❌ không đỏ | Nghĩa là preview **có thể trông quá lớn** trong khung 60% màn hình. Đó là **đúng** |
-| `BR-LPV-03` | Preview trống ❌ **NEVER im lặng** — luôn nói lý do | Preview trống không giải thích là chỗ tệ nhất |
-| `BR-LPV-04` | Cập nhật khi field đổi, ❌ không cần bấm Lưu. Debounce 300ms | |
-| `BR-LPV-05` | Phiên preview `is_preview = true`, ❌ không ghi mastery, ❌ không đếm KPI | `BR-PSL-05` |
+| `BR-LPV-02` | Preview kế thừa **toàn bộ** ràng buộc bề mặt trẻ: sàn touch 64–96px, không `dark:`, không đỏ | Nghĩa là preview **có thể trông quá lớn** trong khung 60% màn hình. Đó là **đúng** |
+| `BR-LPV-03` | Preview trống Cấm — **NEVER im lặng** — luôn nói lý do | Preview trống không giải thích là chỗ tệ nhất |
+| `BR-LPV-04` | Cập nhật khi field đổi, không cần bấm Lưu. Debounce 300ms | |
+| `BR-LPV-05` | Phiên preview `is_preview = true`, không ghi mastery, không đếm KPI | `BR-PSL-05` |
 | `BR-LPV-06` | Preview cho chọn **band tuổi** để kiểm sàn touch và scaffolding | Level cho band 3–4 và 5–6 trông rất khác |
-| `BR-LPV-07` | Preview chạy trong **cùng trang**, ❌ không popup mới | Mất ngữ cảnh form |
+| `BR-LPV-07` | Preview chạy trong **cùng trang**, không popup mới | Mất ngữ cảnh form |
 
 ## 7. Data
 
@@ -89,7 +89,7 @@ Nút "100%" quan trọng: khung 60% màn hình làm mọi thứ trông nhỏ hơ
 
 ### `GET /api/managers/levels/{code}/{version}/config`
 
-Giống `game-config-delivery` §8 nhưng: bỏ qua gating, cho phép `?version=`, đặt
+Giống [`game-config-delivery.md`](../04-play/game-config-delivery.md) §8 nhưng: bỏ qua gating, cho phép `?version=`, đặt
 `is_preview = true`, và **không** tạo `play_session` trừ khi Manager bấm chơi thử.
 
 ## 9. Acceptance criteria

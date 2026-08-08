@@ -17,7 +17,7 @@ depends_on:
 
 ## 1. Objective
 
-Lỗi trên tablet của người dùng ❌ không thấy được từ server. Màn hình này gom cả hai nguồn để
+Lỗi trên tablet của người dùng không thấy được từ server. Màn hình này gom cả hai nguồn để
 trả lời **"cái gì đang hỏng và với bao nhiêu người"**.
 
 ## 2. Actors
@@ -32,7 +32,7 @@ trả lời **"cái gì đang hỏng và với bao nhiêu người"**.
 
 1. Client gặp lỗi → gửi báo cáo rút gọn, có sampling.
 2. Server ghi `error_log` với `source = 'client'`.
-3. Manager mở `/errors`, thấy lỗi **gom nhóm theo dấu vân tay**, ❌ không phải danh sách phẳng.
+3. Manager mở `/errors`, thấy lỗi **gom nhóm theo dấu vân tay**, không phải danh sách phẳng.
 4. Mở một nhóm → số lần, số người ảnh hưởng, mẫu ngữ cảnh.
 
 ## 5. Alternative flows
@@ -40,7 +40,7 @@ trả lời **"cái gì đang hỏng và với bao nhiêu người"**.
 | Nhánh | Hành vi |
 |---|---|
 | Cùng lỗi lặp nghìn lần | Gom một nhóm, đếm |
-| Lỗi từ một client lỗi thời | Gắn nhãn phiên bản, ❌ không alert |
+| Lỗi từ một client lỗi thời | Gắn nhãn phiên bản, không alert |
 | Lỗi chứa dữ liệu nhạy cảm | Bị strip ở tầng nhận — `BR-ELV-03` |
 
 ## 6. Business rules
@@ -48,9 +48,9 @@ trả lời **"cái gì đang hỏng và với bao nhiêu người"**.
 | ID | Rule | Vì sao |
 |---|---|---|
 | `BR-ELV-01` | Gom nhóm theo **dấu vân tay** (code + route + stack rút gọn) | Danh sách phẳng 10.000 hàng không đọc được |
-| `BR-ELV-02` | Đếm **số người ảnh hưởng**, ❌ không chỉ số lần | Một lỗi 1.000 lần với 1 người khác một lỗi 1.000 lần với 1.000 người |
-| `BR-ELV-03` | ❌ **NEVER PII trong `error_log`** — strip ở tầng nhận | `BR-MON-05` |
-| `BR-ELV-04` | Client error có **sampling**, ❌ không nhận toàn bộ | Một lỗi vòng lặp sẽ tự DDoS endpoint nhận |
+| `BR-ELV-02` | Đếm **số người ảnh hưởng**, không chỉ số lần | Một lỗi 1.000 lần với 1 người khác một lỗi 1.000 lần với 1.000 người |
+| `BR-ELV-03` | Cấm — **NEVER PII trong `error_log`** — strip ở tầng nhận | `BR-MON-05` |
+| `BR-ELV-04` | Client error có **sampling**, không nhận toàn bộ | Một lỗi vòng lặp sẽ tự DDoS endpoint nhận |
 | `BR-ELV-05` | Endpoint nhận lỗi client có **rate limit** riêng | |
 | `BR-ELV-06` | Chỉ `super_admin` | |
 | `BR-ELV-07` | Nhóm lỗi đánh dấu **đã xử lý** được, kèm ghi chú | Không thì mọi lỗi cũ lẫn với lỗi mới |
@@ -61,7 +61,7 @@ trả lời **"cái gì đang hỏng và với bao nhiêu người"**.
 
 `id` · `source` (`server`\|`client`) · `level` · `code` · `message` · `fingerprint` ·
 `context` JSONB (route, phiên bản app, loại thiết bị) · `request_id` · `user_id` (nullable,
-❌ không `child_uuid`) · `created_at`.
+không `child_uuid`) · `created_at`.
 
 ### 7.2 Nhóm
 
@@ -81,7 +81,7 @@ trả lời **"cái gì đang hỏng và với bao nhiêu người"**.
 
 ### `GET /api/managers/error-logs`
 
-Query `source` `level` `status` `from` `to` `q`. Trần 100. Trả nhóm, ❌ không trả hàng lẻ.
+Query `source` `level` `status` `from` `to` `q`. Trần 100. Trả nhóm, không trả hàng lẻ.
 
 ### `POST /api/guest/client-errors`
 

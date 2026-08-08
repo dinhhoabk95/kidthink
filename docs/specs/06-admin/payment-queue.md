@@ -18,8 +18,8 @@ depends_on:
 
 ## 1. Objective
 
-Nơi Manager **tìm và đối chiếu** đơn. Hành động duyệt/từ chối ở `payment-approval` — tách
-ra để màn hình danh sách ❌ không có nút gây hậu quả tài chính.
+Nơi Manager **tìm và đối chiếu** đơn. Hành động duyệt/từ chối ở [`payment-approval.md`](payment-approval.md) — tách
+ra để màn hình danh sách không có nút gây hậu quả tài chính.
 
 SLA vận hành: **P90 < 12 giờ** từ lúc User nộp chứng từ tới lúc có quyết định.
 
@@ -28,7 +28,7 @@ SLA vận hành: **P90 < 12 giờ** từ lúc User nộp chứng từ tới lúc
 | Actor | Quyền |
 |---|---|
 | `super_admin` | Đầy đủ |
-| `content_reviewer` | ❌ Không truy cập |
+| `content_reviewer` | Cấm truy cập |
 
 ## 3. Entry points
 
@@ -41,7 +41,7 @@ SLA vận hành: **P90 < 12 giờ** từ lúc User nộp chứng từ tới lúc
 2. Mở một đơn → xem: User, gói, số tiền, mã giao dịch, ảnh chứng từ.
 3. Ảnh chứng từ mở qua **signed URL 15 phút**.
 4. Manager đối chiếu với sao kê ngân hàng ngoài hệ thống.
-5. Chuyển sang `payment-approval` để quyết định.
+5. Chuyển sang [`payment-approval.md`](payment-approval.md) để quyết định.
 
 ## 5. Alternative flows
 
@@ -56,14 +56,14 @@ SLA vận hành: **P90 < 12 giờ** từ lúc User nộp chứng từ tới lúc
 
 | ID | Rule | Vì sao |
 |---|---|---|
-| `BR-PQU-01` | Danh sách **không có nút duyệt** | Nút gây hậu quả tài chính ❌ không nằm trên màn hình lướt nhanh |
+| `BR-PQU-01` | Danh sách **không có nút duyệt** | Nút gây hậu quả tài chính không nằm trên màn hình lướt nhanh |
 | `BR-PQU-02` | Sắp mặc định **cũ nhất trước** | Người chờ lâu nhất được xử lý trước |
 | `BR-PQU-03` | Ảnh chứng từ qua **signed URL ≤15 phút** | Chứng từ chứa thông tin ngân hàng |
 | `BR-PQU-04` | Cảnh báo khi `bank_txn_ref` **trùng** đơn khác | Nộp lại chứng từ cũ là gian lận phổ biến nhất của duyệt tay |
-| `BR-PQU-05` | ❌ **NEVER hiện dữ liệu trẻ** trong màn hình đơn | `BR-CDC-14` |
+| `BR-PQU-05` | Cấm — **NEVER hiện dữ liệu trẻ** trong màn hình đơn | `BR-CDC-14` |
 | `BR-PQU-06` | Trần phân trang **100** | |
 | `BR-PQU-07` | Đơn cũ nhất > 24h → **cảnh báo trên dashboard** | SLA |
-| `BR-PQU-08` | `content_reviewer` ❌ không truy cập | |
+| `BR-PQU-08` | `content_reviewer` không truy cập | |
 
 ## 7. Data
 
@@ -86,7 +86,7 @@ Trạng thái · Cờ cảnh báo (trùng mã / User đã bị từ chối trư�
 | User | email · tên · ngày tạo · **số** hồ sơ trẻ · lịch sử đơn trước |
 | Chứng từ | Ảnh (signed URL) · `bank_txn_ref` |
 | Cảnh báo | Trùng mã giao dịch · User có đơn bị từ chối trước |
-| Hành động | Nút chuyển sang `payment-approval` |
+| Hành động | Nút chuyển sang [`payment-approval.md`](payment-approval.md) |
 
 ## 8. API contract
 

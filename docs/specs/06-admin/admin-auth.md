@@ -51,7 +51,7 @@ Manager có quyền chạm tiền và nội dung mà trẻ sẽ chơi. Đó là 
 | Sai MFA | 401, audit `manager_mfa_failed`; 5 lần → khoá 15 phút |
 | Chưa bật MFA | Bắt buộc thiết lập **trước khi** vào bất kỳ trang nào |
 | Mất thiết bị MFA | Mã khôi phục dùng một lần; hết mã → `super_admin` khác reset |
-| `is_active = false` | 403, ❌ không nói lý do chi tiết |
+| `is_active = false` | 403, không nói lý do chi tiết |
 
 ## 6. Business rules
 
@@ -59,10 +59,10 @@ Manager có quyền chạm tiền và nội dung mà trẻ sẽ chơi. Đó là 
 |---|---|---|
 | `BR-ADA-01` | MFA **bắt buộc** cho mọi Manager | Tài khoản chạm tiền và nội dung cho trẻ |
 | `BR-ADA-02` | Cookie Manager giới hạn domain `admin.{domain}` | Tách bề mặt |
-| `BR-ADA-03` | ❌ **NEVER endpoint public tạo Manager** | |
-| `BR-ADA-04` | `requireRole()` kiểm ở **server route**, ❌ không chỉ ẩn menu | Ẩn menu không phải phân quyền |
+| `BR-ADA-03` | Cấm — **NEVER endpoint public tạo Manager** | |
+| `BR-ADA-04` | `requireRole()` kiểm ở **server route**, không chỉ ẩn menu | Ẩn menu không phải phân quyền |
 | `BR-ADA-05` | Mọi đăng nhập và thất bại ghi `audit_logs` | |
-| `BR-ADA-06` | Manager ❌ **không tự đổi được `role` của mình** | Leo thang đặc quyền |
+| `BR-ADA-06` | Manager **không tự đổi được `role` của mình** | Leo thang đặc quyền |
 | `BR-ADA-07` | Phiên Manager TTL **ngắn hơn** User: access 15 phút, refresh **24 giờ** | |
 | `BR-ADA-08` | Reset MFA của Manager khác **phải** do `super_admin` và ghi audit | |
 
@@ -81,19 +81,19 @@ interface ManagerTokenPayload {
 
 | Bề mặt | `super_admin` | `content_reviewer` |
 |---|:--:|:--:|
-| Dashboard (đủ) | ✅ | phần nội dung |
-| User management · user detail · child profile admin | ✅ | ❌ |
-| Entitlement grant | ✅ | ❌ |
-| Payment queue · approval | ✅ | ❌ |
-| Package catalog | ✅ | ❌ |
-| Taxonomy browser | ✅ | ✅ |
-| Game level studio · lesson · activity · curriculum builder | ✅ | ✅ |
-| Content review queue · publish | ✅ | ✅ |
-| Image upload · emoji picker | ✅ | ✅ |
-| SEO content | ✅ | ✅ |
-| Audit log · error log · system activity | ✅ | ❌ |
-| Feature flags · data export | ✅ | ❌ |
-| Notification admin | ✅ | ❌ |
+| Dashboard (đủ) | | phần nội dung |
+| User management · user detail · child profile admin | | Cấm |
+| Entitlement grant | | Cấm |
+| Payment queue · approval | | Cấm |
+| Package catalog | | Cấm |
+| Taxonomy browser | | |
+| Game level studio · lesson · activity · curriculum builder | | |
+| Content review queue · publish | | |
+| Image upload · emoji picker | | |
+| SEO content | | |
+| Audit log · error log · system activity | | Cấm |
+| Feature flags · data export | | Cấm |
+| Notification admin | | Cấm |
 
 ## 8. API contract
 

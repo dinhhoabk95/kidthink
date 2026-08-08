@@ -21,18 +21,18 @@ depends_on:
 
 Cổng người giữa "nội dung được **soạn trong studio**" và "trẻ chơi được".
 
-Phạm vi: nội dung `authored_in = 'studio'`. Nội dung nền `authored_in = 'repo_seed'` ❌
+Phạm vi: nội dung `authored_in = 'studio'`. Nội dung nền `authored_in = 'repo_seed'` Cấm
 **không** đi qua hàng đợi này — cổng người của nó là PR review, xem
 [`01-platform/content-seed-authoring.md`](../01-platform/content-seed-authoring.md) §4.1.
 
-Hàng đợi phải làm việc duyệt nhanh nhất có thể mà ❌ không làm nó cẩu thả.
+Hàng đợi phải làm việc duyệt nhanh nhất có thể mà không làm nó cẩu thả.
 
 ## 2. Actors
 
 | Actor | Làm gì |
 |---|---|
 | `content_reviewer` · `super_admin` | Duyệt, từ chối |
-| Manager soạn nội dung | Gửi `draft → in_review`, ❌ không tự chuyển tiếp |
+| Manager soạn nội dung | Gửi `draft → in_review`, không tự chuyển tiếp |
 
 ## 3. Entry points
 
@@ -52,8 +52,8 @@ Hàng đợi phải làm việc duyệt nhanh nhất có thể mà ❌ không l�
 | Nhánh | Hành vi |
 |---|---|
 | Bản soạn có AI hỗ trợ (`origin = ai_assisted`) | Gắn nhãn rõ ràng; checklist thêm mục "đối chiếu mục tiêu học tập" |
-| Bản là version mới của một hàng `authored_in = repo_seed` | Gắn nhãn "tách khỏi seeder"; nhắc sửa seeder file trong repo, ❌ nếu không môi trường dựng mới sẽ mất bản sửa (`BR-CSA-11`) |
-| Duyệt xong nhưng chưa publish | Ở `approved`, chờ `publish-and-version` |
+| Bản là version mới của một hàng `authored_in = repo_seed` | Gắn nhãn "tách khỏi seeder"; nhắc sửa seeder file trong repo, Cấm nếu không môi trường dựng mới sẽ mất bản sửa (`BR-CSA-11`) |
+| Duyệt xong nhưng chưa publish | Ở `approved`, chờ [`publish-and-version.md`](publish-and-version.md) |
 | Người duyệt là người tạo | Cho phép ở MVP (một người), ghi rõ cả hai vai |
 | Hàng đợi > 50 | Cảnh báo trên dashboard |
 | Bản bị sửa sau khi vào hàng đợi | Quay về `draft`, rời hàng đợi |
@@ -62,14 +62,14 @@ Hàng đợi phải làm việc duyệt nhanh nhất có thể mà ❌ không l�
 
 | ID | Rule | Vì sao |
 |---|---|---|
-| `BR-CRQ-01` | ❌ **NEVER duyệt theo lô.** Mỗi bản một quyết định | Duyệt hàng loạt là bỏ qua cổng người |
+| `BR-CRQ-01` | Cấm — **NEVER duyệt theo lô.** Mỗi bản một quyết định | Duyệt hàng loạt là bỏ qua cổng người |
 | `BR-CRQ-02` | Nút duyệt **chỉ bật sau khi mở preview** | Duyệt không xem là duyệt mù |
 | `BR-CRQ-03` | Từ chối **bắt buộc lý do** ≥10 ký tự | Từ chối không lý do làm người soạn lặp lại đúng lỗi cũ |
 | `BR-CRQ-04` | Bản `origin = ai_assisted` gắn **nhãn rõ ràng** | Người duyệt cần biết để soi kỹ hơn |
 | `BR-CRQ-05` | Bản là version mới của hàng `authored_in = repo_seed` gắn **nhãn cảnh báo lệch seeder** | Sửa trong studio mà quên seeder = môi trường dựng mới mất bản sửa (`BR-CSA-11`) |
 | `BR-CRQ-06` | Mọi quyết định ghi `content_review_log` + `audit_logs` | |
-| `BR-CRQ-07` | Checklist §7.2 hiện **đầy đủ**, ❌ không rút gọn theo loại nội dung | Rút gọn checklist là cách bỏ sót có hệ thống |
-| `BR-CRQ-08` | Hàng đợi ưu tiên theo §7.1, ❌ không theo thứ tự tạo | Nội dung chặn một tuần curriculum quan trọng hơn nội dung lẻ |
+| `BR-CRQ-07` | Checklist §7.2 hiện **đầy đủ**, không rút gọn theo loại nội dung | Rút gọn checklist là cách bỏ sót có hệ thống |
+| `BR-CRQ-08` | Hàng đợi ưu tiên theo §7.1, không theo thứ tự tạo | Nội dung chặn một tuần curriculum quan trọng hơn nội dung lẻ |
 
 ## 7. Data
 
@@ -108,11 +108,11 @@ chối** hàng loạt được, nhưng **duyệt** thì không (`BR-CRQ-01`).
 200 → `{ items: [{ entity_type, code, version, title_vi, origin, authored_in, competency, age_band, waiting_since }], next_cursor }`. Trần 50.
 
 Hàng đợi **chỉ** chứa `status = in_review`; nội dung `authored_in = repo_seed` chưa từng qua
-studio ❌ không bao giờ xuất hiện ở đây (§1).
+studio không bao giờ xuất hiện ở đây (§1).
 
 ### `POST /api/managers/content/{type}/{id}/transition`
 
-Xem `content-lifecycle` §8. Bổ sung: body `{ checklist }` bắt buộc khi `to_status = approved`.
+Xem [`content-lifecycle.md`](../00-foundation/content-lifecycle.md) §8. Bổ sung: body `{ checklist }` bắt buộc khi `to_status = approved`.
 
 ## 9. Acceptance criteria
 
@@ -190,5 +190,5 @@ Scenario: từ chối hàng loạt một lô cùng người soạn
 | # | Câu hỏi | Chặn gì |
 |---|---|---|
 | 1 | **Một người duyệt được bao nhiêu bản/ngày?** Đây là ràng buộc thật của đường găng | Kế hoạch nội dung |
-| 2 | Khi có ≥2 manager, có chặn tự duyệt bản mình tạo không? | `content-lifecycle` Q1 |
-| 3 | Có cần duyệt hai vòng cho nội dung `origin = ai_assisted` không? | `content-seed-authoring` Q5 |
+| 2 | Khi có ≥2 manager, có chặn tự duyệt bản mình tạo không? | [`content-lifecycle.md`](../00-foundation/content-lifecycle.md) Q1 |
+| 3 | Có cần duyệt hai vòng cho nội dung `origin = ai_assisted` không? | [`content-seed-authoring.md`](../01-platform/content-seed-authoring.md) Q5 |

@@ -19,7 +19,7 @@ depends_on:
 
 ## 1. Objective
 
-Trả lời **"xoá cái này thì hỏng cái gì"** trước khi xoá, ❌ không phải sau.
+Trả lời **"xoá cái này thì hỏng cái gì"** trước khi xoá, không phải sau.
 
 Xoá một ảnh đang được ba game level published dùng sẽ tạo ra ba màn hình lỗi trước mặt trẻ,
 và không có cách phát hiện tự động ngoài việc một đứa trẻ gặp phải.
@@ -48,7 +48,7 @@ Modal xác nhận xoá asset · `/studio/assets/{id}/usage` ·
 | Chỉ dùng ở bản `archived` | Cho xoá, cảnh báo bản cũ sẽ hỏng preview |
 | Dùng ở bản `draft` | Cho xoá, cảnh báo draft sẽ không publish được |
 | Dùng ở bản `published` | **Chặn** — 409 |
-| Emoji `deprecated` | ❌ Không xoá khỏi registry, chỉ ẩn khỏi picker |
+| Emoji `deprecated` | Cấm xoá khỏi registry, chỉ ẩn khỏi picker |
 | Ảnh `orphan` (owner đã xoá) | Job dọn sau 30 ngày |
 
 ## 6. Business rules
@@ -56,7 +56,7 @@ Modal xác nhận xoá asset · `/studio/assets/{id}/usage` ·
 | ID | Rule | Vì sao |
 |---|---|---|
 | `BR-AUT2-01` | Xoá asset đang dùng ở nội dung `published` → **409** kèm danh sách | Xoá cứng làm mồ côi nội dung trẻ đang chơi |
-| `BR-AUT2-02` | Emoji ❌ **NEVER xoá cứng** — chỉ `deprecated` | Nội dung đã publish trỏ tới nó |
+| `BR-AUT2-02` | Emoji Cấm — **NEVER xoá cứng** — chỉ `deprecated` | Nội dung đã publish trỏ tới nó |
 | `BR-AUT2-03` | Quét ngược trên **`content_pack` JSONB**, có index hỗ trợ | Quét toàn bảng mỗi lần xoá là không chấp nhận được |
 | `BR-AUT2-04` | Danh sách nơi dùng hiện **trạng thái nội dung** | Dùng ở `draft` khác dùng ở `published` |
 | `BR-AUT2-05` | Ảnh `orphan` dọn tự động sau **30 ngày** | Giữ mãi tốn dung lượng; xoá ngay mất khả năng khôi phục |

@@ -24,7 +24,7 @@ thay vì để "sau này viết query tay".
 
 ## 2. Actors
 
-`super_admin` **duy nhất**. `content_reviewer` ❌ không truy cập.
+`super_admin` **duy nhất**. `content_reviewer` không truy cập.
 
 ## 3. Entry points
 
@@ -34,7 +34,7 @@ thay vì để "sau này viết query tay".
 
 1. Mở `/audit`, mặc định 24 giờ gần nhất.
 2. Lọc theo actor, action, entity, khoảng thời gian.
-3. Mở một hàng → xem `before_data`/`after_data` dạng **diff**, ❌ không dump JSON thô.
+3. Mở một hàng → xem `before_data`/`after_data` dạng **diff**, không dump JSON thô.
 4. Từ một entity bất kỳ (level, user, đơn) mở được lịch sử của riêng nó.
 
 ## 5. Alternative flows
@@ -49,13 +49,13 @@ thay vì để "sau này viết query tay".
 
 | ID | Rule | Vì sao |
 |---|---|---|
-| `BR-ALV-01` | **Chỉ đọc**. ❌ Không xoá, không sửa, không export tuỳ tiện | `audit_logs` là INSERT-only |
+| `BR-ALV-01` | **Chỉ đọc**. Cấm xoá, không sửa, không export tuỳ tiện | `audit_logs` là INSERT-only |
 | `BR-ALV-02` | Chỉ `super_admin` | `BR-AUD-09` |
 | `BR-ALV-03` | Trần phân trang **200** | |
-| `BR-ALV-04` | Hiện diff, ❌ không dump JSON thô | JSON thô không đọc được khi đang xử lý sự cố |
-| `BR-ALV-05` | Từ mọi entity có audit, có link "xem lịch sử" | Tra cứu bắt đầu từ đối tượng, ❌ không từ danh sách phẳng |
+| `BR-ALV-04` | Hiện diff, không dump JSON thô | JSON thô không đọc được khi đang xử lý sự cố |
+| `BR-ALV-05` | Từ mọi entity có audit, có link "xem lịch sử" | Tra cứu bắt đầu từ đối tượng, không từ danh sách phẳng |
 | `BR-ALV-06` | Export audit **là hành động được audit** (`data_exported`) | |
-| `BR-ALV-07` | ❌ **NEVER hiện PII của trẻ**, mật khẩu, hay token — chúng vốn không có trong bảng | Lưới an toàn thứ hai |
+| `BR-ALV-07` | Cấm — **NEVER hiện PII của trẻ**, mật khẩu, hay token — chúng vốn không có trong bảng | Lưới an toàn thứ hai |
 
 ## 7. Data
 

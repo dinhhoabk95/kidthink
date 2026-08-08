@@ -19,7 +19,7 @@ depends_on:
 
 ## 1. Objective
 
-Curriculum ❌ **không phải tài sản gốc** — nó là **một thứ tự** trên thư viện.
+Curriculum **không phải tài sản gốc** — nó là **một thứ tự** trên thư viện.
 
 Cùng một Lesson Library sinh ra được 42 tuần, chương trình theo tuổi, Logic Track, School
 Readiness — **không biên soạn lại nội dung**. Builder là công cụ để làm điều đó nhanh.
@@ -56,13 +56,13 @@ Readiness — **không biên soạn lại nội dung**. Builder là công cụ �
 
 | ID | Rule | Vì sao |
 |---|---|---|
-| `BR-CBD-01` | Curriculum **tham chiếu** nội dung, ❌ không sở hữu | Một lesson xuất hiện trong nhiều curriculum, chỉ tồn tại một bản gốc |
-| `BR-CBD-02` | ❌ **NEVER publish curriculum có tuần rỗng** | Tuần rỗng làm trẻ dừng lộ trình giữa chừng |
+| `BR-CBD-01` | Curriculum **tham chiếu** nội dung, không sở hữu | Một lesson xuất hiện trong nhiều curriculum, chỉ tồn tại một bản gốc |
+| `BR-CBD-02` | Cấm — **NEVER publish curriculum có tuần rỗng** | Tuần rỗng làm trẻ dừng lộ trình giữa chừng |
 | `BR-CBD-03` | Mọi item phải `published` khi curriculum publish | |
 | `BR-CBD-04` | Mỗi tuần có **≥3 hoạt động** | Dưới đó không đủ cho một tuần |
 | `BR-CBD-05` | Chỉ báo cân bằng competency hiện thường trực | Chương trình lệch về một competency là lỗi sư phạm khó thấy bằng mắt |
 | `BR-CBD-06` | Prerequisite của item được kiểm: skill tiên quyết phải xuất hiện **trước** trong lộ trình | Dạy phép so sánh trước khi dạy đếm là sai thứ tự |
-| `BR-CBD-07` | ❌ **NEVER gắn hạn thời gian** vào tuần | "Tuần 3" là thứ tự, không phải lịch — `BR-CUR-08` |
+| `BR-CBD-07` | Cấm — **NEVER gắn hạn thời gian** vào tuần | "Tuần 3" là thứ tự, không phải lịch — `BR-CUR-08` |
 | `BR-CBD-08` | Sửa curriculum đã published → version mới | |
 
 ## 7. Data
@@ -101,7 +101,7 @@ Trên: chỉ báo cân bằng dạng thanh. Dưới: cảnh báo còn lại.
 
 Body `{ items: [{ week_no, session_no, position, entity_type, entity_id, is_required, estimated_minutes }] }`.
 `entity_id` là `entity_id` (neo dòng dõi, D-AE) của bảng đích — luôn bản `published` mới nhất.
-Thay toàn bộ, ❌ không patch từng item — giữ tính nguyên tử của thứ tự.
+Thay toàn bộ, không patch từng item — giữ tính nguyên tử của thứ tự.
 
 ### `GET /api/managers/curricula/{code}/{version}/balance`
 
@@ -171,5 +171,5 @@ Scenario: BR-CBD-08 — sửa bản published tạo version mới
 
 | # | Câu hỏi | Chặn gì |
 |---|---|---|
-| 1 | Curriculum item ghim version của lesson hay lấy bản mới nhất? | `content-versioning` Q2 |
+| 1 | Curriculum item ghim version của lesson hay lấy bản mới nhất? | [`content-versioning.md`](../00-foundation/content-versioning.md) Q2 |
 | 2 | 42 tuần cần ~126 buổi — với ≥60 lesson MVP thì mỗi lesson dùng lại 2 lần. Chấp nhận được không? | P3 phạm vi |

@@ -46,8 +46,8 @@ hoạt động ngoài màn hình.
 
 | Nhánh | Hành vi |
 |---|---|
-| Activity chưa tồn tại | Tạo mới ngay trong luồng (`activity-authoring`), quay lại lesson |
-| Tổng thời lượng vượt 45 phút | Cảnh báo, ❌ không chặn — người soạn quyết định |
+| Activity chưa tồn tại | Tạo mới ngay trong luồng ([`activity-authoring.md`](activity-authoring.md)), quay lại lesson |
+| Tổng thời lượng vượt 45 phút | Cảnh báo, không chặn — người soạn quyết định |
 | Activity bị archive sau khi lắp | Lesson vẫn giữ tham chiếu; cổng publish báo lỗi |
 | Sửa lesson đã published | Tạo version mới |
 
@@ -60,9 +60,9 @@ hoạt động ngoài màn hình.
 | `BR-LSA-03` | Mọi activity tham chiếu phải ở trạng thái `published` khi lesson publish | Lesson trỏ activity draft là lesson hỏng |
 | `BR-LSA-04` | Lesson **bắt buộc** có `guide_vi` cho người lớn | Người dạy là người lớn, không phải trẻ |
 | `BR-LSA-05` | Activity dùng lại được ở nhiều lesson; sửa activity ảnh hưởng mọi lesson dùng nó | Đó là lý do tách activity ra |
-| `BR-LSA-06` | Lesson nên có **ít nhất một hoạt động ngoài màn hình** | Sản phẩm ❌ không tối ưu cho thời gian màn hình |
+| `BR-LSA-06` | Lesson nên có **ít nhất một hoạt động ngoài màn hình** | Sản phẩm không tối ưu cho thời gian màn hình |
 | `BR-LSA-07` | Tag ba trục bắt buộc trước khi publish | `BR-TAG-02` |
-| `BR-LSA-08` | ❌ **NEVER publish trực tiếp** — qua `in_review` | |
+| `BR-LSA-08` | Cấm — **NEVER publish trực tiếp** — qua `in_review` | |
 
 ## 7. Data
 
@@ -70,18 +70,18 @@ hoạt động ngoài màn hình.
 
 | Phần | Bắt buộc |
 |---|:--:|
-| `title_vi` | ✅ |
-| `learning_objective_ids` | ✅ ≥1 |
-| `target_age_min` / `max` | ✅ |
-| `estimated_minutes` | ✅ |
-| `materials_vi` — vật liệu cần chuẩn bị | ❌ |
-| `guide_vi` — hướng dẫn cho người lớn | ✅ |
-| `warm_up_vi` | ❌ |
-| Activity (có thứ tự, có cờ bắt buộc) | ✅ ≥1 |
-| `reflection_vi` — câu hỏi gợi mở sau bài | ❌ |
-| `assessment_vi` — cách quan sát trẻ đã đạt chưa | ❌ |
-| `extension_vi` — làm thêm ở nhà | ❌ |
-| `access_tier` | ✅ |
+| `title_vi` | |
+| `learning_objective_ids` | ≥1 |
+| `target_age_min` / `max` | |
+| `estimated_minutes` | |
+| `materials_vi` — vật liệu cần chuẩn bị | Cấm |
+| `guide_vi` — hướng dẫn cho người lớn | |
+| `warm_up_vi` | Cấm |
+| Activity (có thứ tự, có cờ bắt buộc) | ≥1 |
+| `reflection_vi` — câu hỏi gợi mở sau bài | Cấm |
+| `assessment_vi` — cách quan sát trẻ đã đạt chưa | Cấm |
+| `extension_vi` — làm thêm ở nhà | Cấm |
+| `access_tier` | |
 
 ### 7.2 Màn hình
 
@@ -159,4 +159,4 @@ Scenario: kéo thả đổi thứ tự
 | # | Câu hỏi | Chặn gì |
 |---|---|---|
 | 1 | **Ai biên soạn ≥60 lesson?** Seeder + AI agent IDE soạn khung được, nhưng phần sư phạm cần người | P3 |
-| 2 | Lesson có nên ghim version của activity không, hay luôn lấy bản mới nhất? | `content-versioning` Q2 |
+| 2 | Lesson có nên ghim version của activity không, hay luôn lấy bản mới nhất? | [`content-versioning.md`](../00-foundation/content-versioning.md) Q2 |

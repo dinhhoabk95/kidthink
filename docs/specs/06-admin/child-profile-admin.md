@@ -21,23 +21,23 @@ depends_on:
 Spec này tồn tại chủ yếu để nói **cái gì admin KHÔNG được thấy**.
 
 Vận hành cần biết một tài khoản có mấy hồ sơ trẻ và trạng thái của chúng, để hỗ trợ và để
-thực thi yêu cầu xoá. Vận hành ❌ **không** cần biết đứa trẻ học đến đâu.
+thực thi yêu cầu xoá. Vận hành **không** cần biết đứa trẻ học đến đâu.
 
 ## 2. Actors
 
 | Actor | Quyền |
 |---|---|
 | `super_admin` | Xem danh sách, thực thi yêu cầu xoá/lưu trữ |
-| `content_reviewer` | ❌ **Không truy cập bất kỳ dữ liệu trẻ nào** |
+| `content_reviewer` | Cấm **Không truy cập bất kỳ dữ liệu trẻ nào** |
 
 ## 3. Entry points
 
 Nhóm "Hồ sơ trẻ" trong `/users/{uuid}`. Không có trang độc lập —
-❌ **không có** `/children` liệt kê toàn bộ trẻ trong hệ thống.
+**không có** `/children` liệt kê toàn bộ trẻ trong hệ thống.
 
 ## 4. Main flow
 
-1. Mở `user-detail`, xem nhóm hồ sơ trẻ.
+1. Mở [`user-detail.md`](user-detail.md), xem nhóm hồ sơ trẻ.
 2. Mỗi hồ sơ hiện: `display_name` · `age_band` · trạng thái · ngày tạo.
 3. Thao tác duy nhất: **lưu trữ** hồ sơ theo yêu cầu của phụ huynh, kèm lý do.
 4. Mọi lần xem ghi audit.
@@ -46,22 +46,22 @@ Nhóm "Hồ sơ trẻ" trong `/users/{uuid}`. Không có trang độc lập —
 
 | Nhánh | Hành vi |
 |---|---|
-| Yêu cầu xoá của phụ huynh | Đi qua luồng của chính User (`account-deletion`), admin ❌ không xoá thay |
-| Hồ sơ `pending_deletion` | Hiện `purge_at`, ❌ không thao tác được |
+| Yêu cầu xoá của phụ huynh | Đi qua luồng của chính User ([`account-deletion.md`](../03-account/account-deletion.md)), admin không xoá thay |
+| Hồ sơ `pending_deletion` | Hiện `purge_at`, không thao tác được |
 | Tài khoản `deleted` | Hồ sơ hiện chỉ đọc |
 
 ## 6. Business rules
 
 | ID | Rule | Vì sao |
 |---|---|---|
-| `BR-CPA-01` | ❌ **NEVER trang liệt kê toàn bộ trẻ trong hệ thống** | Một danh sách trẻ em là tài sản dữ liệu không có nhu cầu nghiệp vụ nào biện minh được |
+| `BR-CPA-01` | Cấm — **NEVER trang liệt kê toàn bộ trẻ trong hệ thống** | Một danh sách trẻ em là tài sản dữ liệu không có nhu cầu nghiệp vụ nào biện minh được |
 | `BR-CPA-02` | Admin thấy **đúng 4 trường**: `display_name` `age_band` `status` `created_at` | `BR-CDC-14` |
-| `BR-CPA-03` | ❌ **NEVER telemetry, mastery, lịch sử chơi, hay `birth_year` chính xác** | |
-| `BR-CPA-04` | `content_reviewer` ❌ không truy cập | `BR-CDC-13` |
+| `BR-CPA-03` | Cấm — **NEVER telemetry, mastery, lịch sử chơi, hay `birth_year` chính xác** | |
+| `BR-CPA-04` | `content_reviewer` không truy cập | `BR-CDC-13` |
 | `BR-CPA-05` | Mỗi lần xem hồ sơ trẻ ghi `audit_logs` | Truy cập dữ liệu trẻ phải truy được |
-| `BR-CPA-06` | Admin ❌ **không sửa** được `display_name`, `avatar_id`, hay bất kỳ trường nào | Đó là dữ liệu của phụ huynh |
-| `BR-CPA-07` | Admin ❌ **không xoá** hồ sơ trẻ; chỉ **lưu trữ** theo yêu cầu | Xoá là quyền của chủ thể dữ liệu, có quy trình 30 ngày |
-| `BR-CPA-08` | ❌ **NEVER tìm kiếm trẻ theo tên** trên bề mặt admin | Tìm được theo tên nghĩa là đã có danh sách |
+| `BR-CPA-06` | Admin **không sửa** được `display_name`, `avatar_id`, hay bất kỳ trường nào | Đó là dữ liệu của phụ huynh |
+| `BR-CPA-07` | Admin **không xoá** hồ sơ trẻ; chỉ **lưu trữ** theo yêu cầu | Xoá là quyền của chủ thể dữ liệu, có quy trình 30 ngày |
+| `BR-CPA-08` | Cấm — **NEVER tìm kiếm trẻ theo tên** trên bề mặt admin | Tìm được theo tên nghĩa là đã có danh sách |
 
 ## 7. Data
 
@@ -69,22 +69,22 @@ Nhóm "Hồ sơ trẻ" trong `/users/{uuid}`. Không có trang độc lập —
 
 | Trường | Hiện | Lý do |
 |---|:--:|---|
-| `display_name` | ✅ | Nói chuyện được với phụ huynh |
-| `age_band` | ✅ | Ngữ cảnh hỗ trợ |
-| `status` | ✅ | Vận hành |
-| `created_at` | ✅ | Vận hành |
-| `birth_year` | ❌ | Chi tiết hơn `age_band` mà không thêm giá trị vận hành |
-| `avatar_id` | ❌ | |
-| `current_curriculum_id` | ❌ | |
-| `daily_play_cap_minutes` | ❌ | |
-| `uuid` | ❌ hiện dạng rút gọn khi cần đối chiếu log | |
-| Mọi dữ liệu học tập | ❌ | `BR-CPA-03` |
+| `display_name` | | Nói chuyện được với phụ huynh |
+| `age_band` | | Ngữ cảnh hỗ trợ |
+| `status` | | Vận hành |
+| `created_at` | | Vận hành |
+| `birth_year` | Cấm | Chi tiết hơn `age_band` mà không thêm giá trị vận hành |
+| `avatar_id` | Cấm | |
+| `current_curriculum_id` | Cấm | |
+| `daily_play_cap_minutes` | Cấm | |
+| `uuid` | Cấm hiện dạng rút gọn khi cần đối chiếu log | |
+| Mọi dữ liệu học tập | Cấm | `BR-CPA-03` |
 
 ### 7.2 Thao tác
 
 | Thao tác | Ai | Lý do bắt buộc |
 |---|---|:--:|
-| Lưu trữ hồ sơ theo yêu cầu | `super_admin` | ✅ |
+| Lưu trữ hồ sơ theo yêu cầu | `super_admin` | |
 
 Chỉ **một** thao tác. Mọi thứ khác đi qua luồng của chính User.
 
@@ -99,7 +99,7 @@ Chỉ **một** thao tác. Mọi thứ khác đi qua luồng của chính User.
 | 200 | |
 | 422 | `ADMIN_NOTE_REQUIRED` |
 
-❌ **Không có** `GET /api/managers/children` — dữ liệu trẻ chỉ đến qua `user-detail`.
+Cấm **Không có** `GET /api/managers/children` — dữ liệu trẻ chỉ đến qua [`user-detail.md`](user-detail.md).
 
 ## 9. Acceptance criteria
 
