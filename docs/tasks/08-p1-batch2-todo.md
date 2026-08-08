@@ -533,22 +533,22 @@ Lô đụng `play_sessions` và `play_events`. **Mọi cột phát sinh phải s
 281 dòng · 27 rule · 2 câu hỏi · 0 cảnh báo. **File nặng nhất corpus lô 2** — đọc riêng, không
 ghép chung ngày với spec khác.
 
-- [ ] Đọc hết file. 27 rule, đọc từng cái
-- [ ] Đối chiếu với [`oauth-provider-registry.md`](../specs/01-platform/oauth-provider-registry.md)
+- [x] Đọc hết file. 27 rule, đọc từng cái
+- [x] Đối chiếu với [`oauth-provider-registry.md`](../specs/01-platform/oauth-provider-registry.md)
       (đã `approved` ở Task #6): danh sách provider và hình dạng cấu hình
-- [ ] Đối chiếu cột `social_identities` với
+- [x] Đối chiếu cột `social_identities` với
       [`schema-identity-billing.md`](../specs/01-platform/schema-identity-billing.md) mục 7.3a —
       cột này đã vào migration P0 dù luồng SNS chỉ chạy ở P1
-- [ ] Xác nhận `BR-SCL-04` (409 `SOCIAL_EMAIL_CONFLICT`, **không** tự liên kết) khớp Cổng ra P1
+- [x] Xác nhận `BR-SCL-04` (409 `SOCIAL_EMAIL_CONFLICT`, **không** tự liên kết) khớp Cổng ra P1
       ở [`SPEC.md`](../SPEC.md) mục 13
-- [ ] Xác nhận mọi mã lỗi trong mục 8 có trong
+- [x] Xác nhận mọi mã lỗi trong mục 8 có trong
       [`error-codes.md`](../specs/00-foundation/error-codes.md) — `C5` là cổng
-- [ ] Chuyển bảng mục 11 sang 5 cột
-- [ ] Q1 (gửi email khi có người thử đăng nhập bằng Google) — để mở, `Chặn phase: P2`
-- [ ] Q2 (nhánh B khi provider không trả email) — **chặn P1, chốt**
-- [ ] Checklist review 15 mục
-- [ ] `status: approved`, `reviewed` mới
-- [ ] Commit `feat(specs): T8 bước 28 — approve social-login`
+- [x] Chuyển bảng mục 11 sang 5 cột
+- [x] Q1 (gửi email khi có người thử đăng nhập bằng Google) — để mở, `Chặn phase: P2`
+- [x] Q2 (nhánh B khi provider không trả email) — **chặn P1, chốt**
+- [x] Checklist review 15 mục
+- [x] `status: approved`, `reviewed: 2026-08-08`
+- [x] Commit `feat(specs): T8 bước 28 — approve social-login`
 
 ### Bước 29 — [`social-account-linking.md`](../specs/03-account/social-account-linking.md)
 

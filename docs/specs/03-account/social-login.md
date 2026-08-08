@@ -2,10 +2,10 @@
 spec: SOCIAL-LOGIN
 title: Đăng ký và đăng nhập bằng mạng xã hội
 area: account
-status: draft
+status: approved
 mvp: true
 phase: P1
-reviewed: 2026-08-05
+reviewed: 2026-08-08
 owns:
   - Luồng đăng ký lần đầu bằng SNS
   - Luồng đăng nhập lại bằng SNS
@@ -274,7 +274,8 @@ Scenario: BR-SCL-13 — provider tắt thì không hiện nút
 
 ## 11. Open questions
 
-| # | Câu hỏi | Chặn gì |
-|---|---|---|
-| 1 | Nhánh C trả 409 là đúng bảo mật nhưng là ngõ cụt của phễu. Có nên gửi email "ai đó vừa thử đăng nhập bằng Google vào tài khoản của bạn — bấm đây để liên kết" không? Thêm một kênh xác minh thật, nhưng cũng thêm một email do người lạ kích hoạt được | P2 · [`notification-service.md`](../01-platform/notification-service.md) |
-| 2 | Ở nhánh B khi provider không trả email, ta bắt nhập email nhưng Cấm chưa biết người dùng có kiểm soát nó không cho tới khi họ xác thực. Có nên chặn tạo `users` cho tới lúc đó không? | P1 |
+| # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
+|---|---|---|---|---|
+| 1 | Nhánh C trả 409: Có nên gửi email thông báo khi trùng email không? | Kênh thông báo bảo mật | P2 | Security / Notification Service ([`notification-service.md`](../01-platform/notification-service.md)) |
+| 2 | Nhánh B khi provider không trả email: Có nên chặn tạo `users` cho tới lúc xác thực không? | Luồng xác minh email SNS | P1 | Chốt: Tạo `users` với `status = pending_verification`, hạn chế quyền tạo hồ sơ trẻ cho đến khi xác minh |
+
