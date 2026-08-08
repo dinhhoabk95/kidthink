@@ -760,7 +760,7 @@ describe("checkC16 (open questions phase and owner check)", () => {
     expect(warnings[0].message).toContain("< 5 cột");
   });
 
-  it("warns approved spec with §11 open questions table having < 5 columns", () => {
+  it("fails approved spec with §11 open questions table having < 5 columns", () => {
     const content = [
       "---",
       "spec: TEST_3COL_APPROVED",
@@ -781,9 +781,9 @@ describe("checkC16 (open questions phase and owner check)", () => {
       ),
     ];
     checkC16(specs);
-    const warnings = getWarnings().filter((w) => w.check === "C16");
-    expect(warnings).toHaveLength(1);
-    expect(warnings[0].message).toContain("< 5 cột");
+    const violations = getViolations().filter((v) => v.check === "C16");
+    expect(violations).toHaveLength(1);
+    expect(violations[0].message).toContain("< 5 cột");
   });
 
   it("warns approved spec with §11 having no table and body not 'Không có.'", () => {

@@ -707,7 +707,21 @@ export function checkC6(specs: SpecFile[]) {
       if (cells.length >= 5) {
         const viSao = cells[3];
         if (!viSao || viSao === "" || viSao === "—" || viSao === "-") {
-          warn(s.rel, i + 1, "C6", `BR rule "${brId}" missing "vì sao" column`);
+          if (s.frontmatter.status === "approved") {
+            fail(
+              s.rel,
+              i + 1,
+              "C6",
+              `BR rule "${brId}" missing "vì sao" column`
+            );
+          } else {
+            warn(
+              s.rel,
+              i + 1,
+              "C6",
+              `BR rule "${brId}" missing "vì sao" column`
+            );
+          }
         }
       }
     }
@@ -1718,12 +1732,21 @@ export function checkC16(specs: SpecFile[]) {
     }
 
     if (!tableHas5Cols) {
-      warn(
-        s.rel,
-        headerLineIdx > 0 ? headerLineIdx : section11Line,
-        "C16",
-        'Bảng câu hỏi mở trong section "## 11. Open questions" có < 5 cột'
-      );
+      if (s.frontmatter.status === "approved") {
+        fail(
+          s.rel,
+          headerLineIdx > 0 ? headerLineIdx : section11Line,
+          "C16",
+          'Bảng câu hỏi mở trong section "## 11. Open questions" có < 5 cột'
+        );
+      } else {
+        warn(
+          s.rel,
+          headerLineIdx > 0 ? headerLineIdx : section11Line,
+          "C16",
+          'Bảng câu hỏi mở trong section "## 11. Open questions" có < 5 cột'
+        );
+      }
       continue;
     }
 
