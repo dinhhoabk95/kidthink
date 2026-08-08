@@ -65,31 +65,31 @@ Bước 1 -> Bước 2 -> Bước 3 -> Bước 4 -> Cổng dừng A
 File: `packages/db/src/schema/identity.ts` — 8 bảng theo
 [`schema-identity-billing.md`](../specs/01-platform/schema-identity-billing.md) §7.1–7.4
 
-- [ ] `users` — đúng cột §7.1, **không** cột `role`/`persona`/`tier` (`BR-SIB-01`)
-- [ ] `email` kiểu `citext` UNIQUE (cần `CREATE EXTENSION citext` trong migration —
+- [x] `users` — đúng cột §7.1, **không** cột `role`/`persona`/`tier` (`BR-SIB-01`)
+- [x] `email` kiểu `citext` UNIQUE (cần `CREATE EXTENSION citext` trong migration —
       thêm vào migration custom Bước 1 hoặc migration riêng của bảng này)
-- [ ] `managers` — đúng cột §7.2
-- [ ] 4 bảng auth phụ polymorphic (`active_sessions`·`mfa_settings`·`mfa_recovery_codes`·
+- [x] `managers` — đúng cột §7.2
+- [x] 4 bảng auth phụ polymorphic (`active_sessions`·`mfa_settings`·`mfa_recovery_codes`·
       `verification_tokens`) — cột chung `(account_type, account_id)` theo §7.3
-- [ ] `social_identities` — FK thẳng `users(id)` **ON DELETE CASCADE** (`BR-SIB-11`), hai
+- [x] `social_identities` — FK thẳng `users(id)` **ON DELETE CASCADE** (`BR-SIB-11`), hai
       UNIQUE `(provider, provider_user_id)` và `(user_id, provider)` (`BR-SIB-09`), **không**
       cột `access_token`/`refresh_token`/`id_token`/`avatar_url` (`BR-SIB-10`)
-- [ ] `consent_logs` — INSERT-only: `REVOKE UPDATE, DELETE ... FROM kidthink_app` trong cùng
+- [x] `consent_logs` — INSERT-only: `REVOKE UPDATE, DELETE ... FROM kidthink_app` trong cùng
       migration (`BR-SIB-06`)
-- [ ] `pnpm db:generate` — đọc file SQL sinh ra trước khi tiếp tục
-- [ ] `pnpm db:migrate` trên DB rỗng — exit 0
-- [ ] Integration test (`packages/db/tests/integration/identity.test.ts`, PG Docker thật,
+- [x] `pnpm db:generate` — đọc file SQL sinh ra trước khi tiếp tục
+- [x] `pnpm db:migrate` trên DB rỗng — exit 0
+- [x] Integration test (`packages/db/tests/integration/identity.test.ts`, PG Docker thật,
       không mock — `BR-TST-02`):
-      - [ ] `BR-SIB-04` — orphan `active_sessions.account_id` bị bắt
-      - [ ] `BR-SIB-07` — `A@X.com` trùng `a@x.com` → UNIQUE từ chối
-      - [ ] `BR-SIB-08` — `users` không `password_hash` vẫn INSERT được
-      - [ ] `BR-SIB-09` — cả hai UNIQUE của `social_identities` đều bị bắt (2 test)
-      - [ ] `BR-SIB-10` — đọc định nghĩa bảng, không có 4 cột token
-      - [ ] `BR-SIB-11` — xoá `users` → 0 hàng `social_identities` còn lại
-      - [ ] `BR-SIB-06` — `UPDATE`/`DELETE` trên `consent_logs` bằng role `kidthink_app` bị từ
+      - [x] `BR-SIB-04` — orphan `active_sessions.account_id` bị bắt
+      - [x] `BR-SIB-07` — `A@X.com` trùng `a@x.com` → UNIQUE từ chối
+      - [x] `BR-SIB-08` — `users` không `password_hash` vẫn INSERT được
+      - [x] `BR-SIB-09` — cả hai UNIQUE của `social_identities` đều bị bắt (2 test)
+      - [x] `BR-SIB-10` — đọc định nghĩa bảng, không có 4 cột token
+      - [x] `BR-SIB-11` — xoá `users` → 0 hàng `social_identities` còn lại
+      - [x] `BR-SIB-06` — `UPDATE`/`DELETE` trên `consent_logs` bằng role `kidthink_app` bị từ
             chối (kết nối **bằng đúng role app**, không phải owner)
-- [ ] `pnpm test` xanh
-- [ ] Commit `feat(db): P0 bước 8.2 — schema identity`
+- [x] `pnpm test` xanh
+- [x] Commit `feat(db): P0 bước 8.2 — schema identity`
 
 ## Bước 3 — `schema/billing.ts`
 

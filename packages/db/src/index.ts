@@ -1,6 +1,8 @@
 import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
 
+export * from "./schema/identity.ts";
+
 let ownerDbInstance: ReturnType<typeof drizzle> | undefined;
 let appDbInstance: ReturnType<typeof drizzle> | undefined;
 
