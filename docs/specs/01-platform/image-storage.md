@@ -2,10 +2,10 @@
 spec: IMAGE-STORAGE
 title: Lưu trữ và chuẩn hoá ảnh upload
 area: platform
-status: draft
+status: approved
 mvp: true
 phase: P2
-reviewed: 2026-08-04
+reviewed: 2026-08-08
 owns:
   - Pipeline chuẩn hoá ảnh
   - Quy tắc sở hữu ảnh theo content item
@@ -81,12 +81,12 @@ Chọn/kéo ảnh
 | `BR-IMG-04` | Kiểm giới hạn ở **cả client và server** | Client để trải nghiệm; server để an toàn |
 | `BR-IMG-05` | DB lưu **`path` tương đối**, URL dựng lúc đọc | Đổi CDN/bucket không làm chết mọi content đã tạo |
 | `BR-IMG-06` | Cấm — **NEVER ghi đè file gốc.** Thay ảnh = path mới | Version nội dung cũ vẫn trỏ ảnh cũ |
-| `BR-IMG-07` | Crop ở client là quyết định **biên tập**; resize ở server là ràng buộc **kỹ thuật**. Hai việc khác nhau, không thay thế nhau | |
+| `BR-IMG-07` | Crop ở client là quyết định **biên tập**; resize ở server là ràng buộc **kỹ thuật**. Hai việc khác nhau, không thay thế nhau | Crop giữ đúng góc nhìn sư phạm do manager chọn; resize server đảm bảo băng thông và memory canvas của thiết bị trẻ |
 | `BR-IMG-08` | Preview ở **cỡ thật trong game** | Ảnh ổn ở 400px có thể vô nghĩa ở 96px |
 | `BR-IMG-09` | Cấm — **NEVER ảnh chụp trẻ em** ở bất kỳ đâu, kể cả avatar | [`child-data-compliance.md`](../00-foundation/child-data-compliance.md) `BR-CDC-04` |
 | `BR-IMG-10` | Ảnh chứng từ thanh toán lưu **private**, signed URL 15 phút | Chứa thông tin ngân hàng |
-| `BR-IMG-11` | Cấm — **NEVER raw `$fetch` cho route upload** — mất `x-csrf-token` | |
-| `BR-IMG-12` | Mọi upload/xoá ghi `audit_logs` | |
+| `BR-IMG-11` | Cấm — **NEVER raw `$fetch` cho route upload** — mất `x-csrf-token` | $fetch mặc định không đính kèm CSRF token từ nuxt-auth-utils, dễ bị tấn công CSRF upload file độc hại |
+| `BR-IMG-12` | Mọi upload/xoá ghi `audit_logs` | Bắt buộc để vết trách nhiệm quản trị viên khi có sự cố phát tán ảnh hoặc xoá nhầm asset của content published (`BR-AUD-01`) |
 
 ## 7. Data
 
@@ -95,7 +95,7 @@ Chọn/kéo ảnh
 | Field | Ghi chú |
 |---|---|
 | `id` `uuid` | |
-| `owner_type` `owner_id` | Polymorphic — `game_level` \| `lesson` \| `activity` \| `worksheet` \| `payment_order` |
+| `owner_type` `owner_id` | Polymorphic — `game_level` \| `lesson` \| `activity` \| `worksheet` \| `payment_order` \| `payment_proof` \| `custom_game` \| `user_avatar` \| `manager_avatar` |
 | `path` | Tương đối, ví dụ `content/2026/08/ab12cd.webp` |
 | `thumb_path` | |
 | `width` `height` `bytes` `mime` | Sau chuẩn hoá |
@@ -217,8 +217,9 @@ Scenario: alt_vi bắt buộc
 
 ## 11. Open questions
 
-| # | Câu hỏi | Chặn gì |
-|---|---|---|
-| 1 | Xoá nền tự động có vào P4 không? | Chất lượng nội dung |
-| 2 | CDN trước S3 ngay từ đầu hay sau? Ảnh hưởng độ trễ tải asset trên 4G | P2 |
-| 3 | Job dọn ảnh `orphan` chạy tần suất nào? | Vận hành |
+| # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
+|---|---|---|---|---|
+| 1 | Xoá nền tự động có vào P4 không? Trỏ sang [`image-upload.md`](../06-admin/image-upload.md) Q1 | Chất lượng nội dung | P4 | Studio UI |
+| 2 | CDN trước S3 ngay từ đầu hay sau? Ảnh hưởng độ trễ tải asset trên 4G | Hạ tầng | P2 | Infra |
+| 3 | Job dọn ảnh `orphan` chạy tần suất nào? (D-BD: 01:00 UTC hàng ngày, dọn ảnh orphan > 30 ngày) | Vận hành | P2 | Backend |
+

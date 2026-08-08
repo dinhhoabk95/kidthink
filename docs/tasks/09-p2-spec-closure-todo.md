@@ -43,16 +43,16 @@ Mẫu commit: `feat(specs): T9 bước <n> — approve <tên-spec>`
 
 ### Bước 1 — [`image-storage.md`](../specs/01-platform/image-storage.md)
 
-- [ ] Đọc hết 224 dòng
-- [ ] Đối chiếu `owner_type` đa hình ở mục 7 với **danh sách đa hình 9 mục** (`D-AQ`)
-- [ ] Điền "vì sao" cho **3** cảnh báo `C6`
-- [ ] Bảng mục 11 sang 5 cột; Q1 (xoá nền tự động) trỏ sang
+- [x] Đọc hết 224 dòng
+- [x] Đối chiếu `owner_type` đa hình ở mục 7 với **danh sách đa hình 9 mục** (`D-AQ`)
+- [x] Điền "vì sao" cho **3** cảnh báo `C6`
+- [x] Bảng mục 11 sang 5 cột; Q1 (xoá nền tự động) trỏ sang
       [`image-upload.md`](../specs/06-admin/image-upload.md) Q1 — cặp 7 của mục 6
-- [ ] Q2 (CDN trước S3) — `Chặn phase: P2`, `Chủ: người quyết`, không tự chốt
-- [ ] Q3 (tần suất job dọn ảnh `orphan`) — chốt được từ corpus, ghi `D-*`
-- [ ] `status: approved`, `reviewed` sang ngày làm
-- [ ] `pnpm lint:specs` — 0 lỗi, cảnh báo **104 → 101**
-- [ ] Commit `feat(specs): T9 bước 1 — approve image-storage`
+- [x] Q2 (CDN trước S3) — `Chặn phase: P2`, `Chủ: người quyết`, không tự chốt
+- [x] Q3 (tần suất job dọn ảnh `orphan`) — chốt được từ corpus, ghi `D-*` (`D-BD`)
+- [x] `status: approved`, `reviewed` sang ngày làm
+- [x] `pnpm lint:specs` — 0 lỗi, cảnh báo **104 → 101**
+- [x] Commit `feat(specs): T9 bước 1 — approve image-storage`
 
 ### Bước 2 — [`image-upload.md`](../specs/06-admin/image-upload.md)
 
