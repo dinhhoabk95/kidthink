@@ -2,10 +2,10 @@
 spec: TELEMETRY-PIPELINE
 title: Đường ống telemetry và rollup
 area: platform
-status: draft
+status: approved
 mvp: true
 phase: P1
-reviewed: 2026-08-04
+reviewed: 2026-08-08
 owns:
   - Đường đi của event từ client tới báo cáo
   - Bảng rollup và lịch chạy
@@ -74,9 +74,9 @@ Engine buffer → flush (20 event | 10s | phiên kết thúc | trang ẩn)
 |---|---|---|
 | `BR-TLM-01` | Báo cáo đọc **rollup**, không đọc `telemetry_events` trực tiếp | Query trên bảng lớn nhất trong đường vào màn hình là cách hạ instance |
 | `BR-TLM-02` | Rollup **idempotent** — chạy lại cùng ngày cho cùng kết quả | Retry là chuyện thường |
-| `BR-TLM-03` | Cấm — **NEVER PII trên toàn đường ống** — event, rollup, export | |
+| `BR-TLM-03` | Cấm — **NEVER PII trên toàn đường ống** — event, rollup, export | [`child-data-compliance.md`](../00-foundation/child-data-compliance.md) §7.3. Một event chứa tên hay ngày sinh trẻ thì mọi tầng sau nó — rollup, export, dashboard admin — thừa hưởng PII đó, và không cổng nào ở cuối đường ống dọn lại được thứ đã lọt vào từ đầu |
 | `BR-TLM-04` | Điểm chính thức tính ở **rollup:session** phía server | không tin client |
-| `BR-TLM-05` | Phiên guest ghi event nhưng **không** vào `mastery_state` và không đếm vào KPI trẻ | |
+| `BR-TLM-05` | Phiên guest ghi event nhưng **không** vào `mastery_state` và không đếm vào KPI trẻ | `mastery_state` khoá theo `child_profile_id` — guest không có hồ sơ trẻ nên không có gì để ghi vào. Đếm guest vào KPI "trẻ đã tiếp xúc skill" sẽ thổi phồng số liệu bằng những phiên có thể là cùng một thiết bị chơi lại nhiều lần, không phải trẻ khác nhau |
 | `BR-TLM-06` | Worker chết **phải có alert** | Producer đẩy job, không consumer nào lấy, và không ai biết |
 | `BR-TLM-07` | Event tới sau khi phiên đã `completed` bị bỏ, trả 200 | Không làm client retry vô hạn |
 | `BR-TLM-08` | Rollup ngày theo **ICT (UTC+7)**, mốc 00:00 | Ngày của người dùng, không phải ngày UTC |
@@ -179,8 +179,8 @@ Scenario: phiên bỏ dở được đóng
 
 ## 11. Open questions
 
-| # | Câu hỏi | Chặn gì |
-|---|---|---|
-| 1 | Partition `telemetry_events` theo tháng ngay từ đầu? | P1 |
-| 2 | Retention 90 ngày đủ để tinh chỉnh adaptive bằng replay không? | [`adaptive-engine.md`](adaptive-engine.md) |
-| 3 | Có cần bảng rollup theo tuần cho báo cáo xu hướng không? | [`advanced-report.md`](../03-account/advanced-report.md) |
+| # | Câu hỏi | Chặn gì | Chủ |
+|---|---|---|---|
+| ~~1~~ | ~~Partition `telemetry_events` theo tháng ngay từ đầu?~~ **Đóng — quyết định sống ở [`event-catalog.md`](../00-foundation/event-catalog.md) §11 Q2 (`D-Z`, 2026-08-07)**: không partition ở P0, giữ nguyên PK `(session_uuid, seq)` vì khoá partition sẽ phải nằm trong PK và phá `BR-EVT-03` (idempotent theo cặp đó). File này viết 2026-08-04, trước quyết định — câu hỏi lặp lại ở đây đã lỗi thời | — | đã đóng, xem [`event-catalog.md`](../00-foundation/event-catalog.md) §11 Q2 |
+| 2 | Retention 90 ngày đủ để tinh chỉnh adaptive bằng replay không? | [`adaptive-engine.md`](adaptive-engine.md) | hoãn — P3, engine chưa tồn tại |
+| 3 | Có cần bảng rollup theo tuần cho báo cáo xu hướng không? | [`advanced-report.md`](../03-account/advanced-report.md) | hoãn — P3 |
