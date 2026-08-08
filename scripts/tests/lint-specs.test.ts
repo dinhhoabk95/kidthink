@@ -104,10 +104,21 @@ describe("checkC7 (dependency cycle detection)", () => {
 
   // checkC7 reports via warn(), not fail() — a dependency cycle in the spec
   // corpus is a design smell to flag, not a hard build-breaking error.
-  it("flags a real cycle (A -> B -> A)", () => {
+  //
+  // Assert the exact COUNT, not `.some(...)`, so both over- and under-reporting
+  // fail. Measured on 2026-08-08 by mutating checkC7:
+  //   - narrowing the GRAY back-edge test to `dep !== node` (drops self-edges)
+  //     -> only the self-dependency case below turns red
+  //   - making `cycleKey` collision-prone (`String(cycle.length)`)
+  //     -> only the disjoint-cycles case below turns red, and the real corpus
+  //        silently drops from 8 reported cycles to 2
+  // Removing the `reportedCycles` guard entirely changed nothing on any input
+  // tried, including the real corpus — the 3-colour DFS already visits each
+  // node once. That guard is defensive, not load-bearing today.
+  it("flags a real cycle (A -> B -> A) exactly once", () => {
     const specs = [spec("A", ["B"]), spec("B", ["A"])];
     checkC7(specs);
-    expect(getWarnings().some((w) => w.check === "C7")).toBe(true);
+    expect(getWarnings().filter((w) => w.check === "C7")).toHaveLength(1);
   });
 
   it("does not flag a valid DAG (A -> B -> C, no cycle)", () => {
@@ -122,10 +133,32 @@ describe("checkC7 (dependency cycle detection)", () => {
     expect(getWarnings()).toHaveLength(0);
   });
 
-  it("flags a longer cycle (A -> B -> C -> A)", () => {
+  it("flags a longer cycle (A -> B -> C -> A) exactly once", () => {
     const specs = [spec("A", ["B"]), spec("B", ["C"]), spec("C", ["A"])];
     checkC7(specs);
-    expect(getWarnings().some((w) => w.check === "C7")).toBe(true);
+    expect(getWarnings().filter((w) => w.check === "C7")).toHaveLength(1);
+  });
+
+  // Two independent cycles must both be reported. De-duplication keys on the
+  // sorted node set; a key that collides across distinct cycles drops one of
+  // them silently — see the measurement note above.
+  it("flags two disjoint cycles separately", () => {
+    const specs = [
+      spec("A", ["B"]),
+      spec("B", ["A"]),
+      spec("C", ["D"]),
+      spec("D", ["C"]),
+    ];
+    checkC7(specs);
+    expect(getWarnings().filter((w) => w.check === "C7")).toHaveLength(2);
+  });
+
+  // A self-edge (A depends_on A) is the degenerate cycle. It is the easiest
+  // one to write by accident when copy-pasting frontmatter between specs.
+  it("flags a self-dependency (A -> A)", () => {
+    const specs = [spec("A", ["A"])];
+    checkC7(specs);
+    expect(getWarnings().filter((w) => w.check === "C7")).toHaveLength(1);
   });
 });
 
