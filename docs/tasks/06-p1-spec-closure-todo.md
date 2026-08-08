@@ -374,62 +374,65 @@ Spec mà `D-AG` của Task #5 đã cắt cạnh để không phải kéo vào l�
 
 Lý do đầy đủ: [`07-first-migration-plan.md`](07-first-migration-plan.md) §2a.
 
-- [ ] Đọc lại [`schema-content-taxonomy.md`](../specs/01-platform/schema-content-taxonomy.md)
+- [x] Đọc lại [`schema-content-taxonomy.md`](../specs/01-platform/schema-content-taxonomy.md)
       §7.5 (`activities.ref_id` theo `ref_type`) và §7.6 (`curriculum_items.entity_id` theo
       `entity_type`) — xác nhận cả hai là đa hình thật, không phải FK đơn bảng
-- [ ] Thêm hai dòng vào bảng "danh sách đóng" §7.2 kèm cột "Test bắt buộc"
-- [ ] Sửa "**Bảy chỗ**" thành "**Chín chỗ**" trong văn xuôi ngay dưới bảng
-- [ ] Sửa `BR-DM-04` nếu nó nhắc con số bảy
-- [ ] Sửa dòng "Ask first: Thêm một FK polymorphic thứ tám" ở §10 thành "thứ mười"
-- [ ] Ghi quyết định vào sổ cái, đánh số tiếp từ `D-AN`
-- [ ] Cập nhật `reviewed`, giữ `status: approved`
-- [ ] `pnpm lint:specs` 0 lỗi
-- [ ] Commit `fix(specs): T6 bước 15 — DMO §7.2 danh sách đa hình 7 sang 9`
+- [x] Thêm hai dòng vào bảng "danh sách đóng" §7.2 kèm cột "Test bắt buộc"
+- [x] Sửa "**Bảy chỗ**" thành "**Chín chỗ**" trong văn xuôi ngay dưới bảng
+- [x] Sửa `BR-DM-04` nếu nó nhắc con số bảy
+- [x] Sửa dòng "Ask first: Thêm một FK polymorphic thứ tám" ở §10 thành "thứ mười"
+- [x] Ghi quyết định vào sổ cái, đánh số tiếp từ `D-AN`
+- [x] Cập nhật `reviewed`, giữ `status: approved`
+- [x] `pnpm lint:specs` 0 lỗi
+- [x] Commit `fix(specs): T6 bước 15 — DMO §7.2 danh sách đa hình 7 sang 9`
 
 ## Bước 16 — Nâng `C7` từ cảnh báo lên lỗi
 
 Chỉ làm **sau** khi Cổng dừng A đã xác nhận `C7` về 0. Nâng sớm hơn là làm đỏ gate.
 
-- [ ] Đổi `warn(` thành `fail(` trong `checkC7`
+- [x] Đổi `warn(` thành `fail(` trong `checkC7`
       ([`scripts/lint-specs-lib.ts`](../../scripts/lint-specs-lib.ts) dòng 785)
-- [ ] Cập nhật ca âm Bước 1 để khẳng định nó nằm trong danh sách **lỗi**, không phải cảnh báo
-- [ ] Cập nhật phần chú thích đầu file liệt kê 15 kiểm tra (dòng 15: "C7 — depends_on không
+- [x] Cập nhật ca âm Bước 1 để khẳng định nó nằm trong danh sách **lỗi**, không phải cảnh báo
+- [x] Cập nhật phần chú thích đầu file liệt kê 15 kiểm tra (dòng 15: "C7 — depends_on không
       chu trình") nếu nó ghi mức nghiêm trọng
-- [ ] `pnpm lint:specs` — vẫn 0 lỗi (vì đã cắt hết chu trình ở Bước 2)
-- [ ] **Ca âm cuối**: thêm tạm một chu trình vào hai file spec thật, chạy `pnpm lint:specs`,
+- [x] `pnpm lint:specs` — vẫn 0 lỗi (vì đã cắt hết chu trình ở Bước 2)
+- [x] **Ca âm cuối**: thêm tạm một chu trình vào hai file spec thật, chạy `pnpm lint:specs`,
       phải **đỏ**; rồi hoàn tác
-- [ ] `pnpm test` xanh
-- [ ] Commit `feat(lint): T6 bước 16 — C7 chu trình depends_on chuyển từ cảnh báo sang lỗi`
+- [x] `pnpm test` xanh
+- [x] Commit `feat(lint): T6 bước 16 — C7 chu trình depends_on chuyển từ cảnh báo sang lỗi`
 
 ## Bước 17 — Đối chiếu tay và đóng sổ
 
 Cổng máy không bắt được mọi thứ. Task #3 và Task #5 đều chạy bước này và đều tìm ra chỗ lệch
 mà kiểm tra tự động bỏ qua.
 
-- [ ] Đếm `status: approved` toàn corpus — phải ra **49/130**
-- [ ] Đếm `phase: P1` — phải ra **43**; `phase: P3` — phải ra **12**
-- [ ] Đếm `P1` và `approved` — phải ra **13** (2 nền + 11 lô này)
-- [ ] Mọi `BR-*` vừa sửa hoặc vừa điền "vì sao" có mặt trong
+- [x] Đếm `status: approved` toàn corpus — phải ra **49/130**
+- [x] Đếm `phase: P1` — phải ra **43**; `phase: P3` — phải ra **12**
+- [x] Đếm `P1` và `approved` — phải ra **13** (2 nền + 11 lô này)
+- [x] Mọi `BR-*` vừa sửa hoặc vừa điền "vì sao" có mặt trong
       [`business-rules.md`](../specs/00-foundation/business-rules.md)
-- [ ] [`index.md`](../specs/index.md) khớp `phase` mới của
+- [x] [`index.md`](../specs/index.md) khớp `phase` mới của
       [`next-game-recommendation.md`](../specs/04-play/next-game-recommendation.md)
-- [ ] [`index.md`](../specs/index.md) §Tổng — số MVP mỗi khu vực còn đúng sau `D-AM`
-- [ ] [`SPEC.md`](../SPEC.md) §14 khớp số đếm mới
-- [ ] Đọc lại mọi cột "vì sao" vừa viết. Hỏi từng cái: người sau đọc câu này có hiểu vì sao
+- [x] [`index.md`](../specs/index.md) §Tổng — số MVP mỗi khu vực còn đúng sau `D-AM`
+- [x] [`SPEC.md`](../SPEC.md) §14 khớp số đếm mới
+- [x] Đọc lại mọi cột "vì sao" vừa viết. Hỏi từng cái: người sau đọc câu này có hiểu vì sao
       không được xoá rule không? Câu nào chỉ diễn giải lại tên rule thì viết lại
-- [ ] Đọc lại bảy nhát cắt `D-AH`–`D-AN`: mỗi cạnh bị xoá có còn một liên kết văn xuôi thay
+- [x] Đọc lại bảy nhát cắt `D-AH`–`D-AN`: mỗi cạnh bị xoá có còn một liên kết văn xuôi thay
       thế không? Cạnh bị xoá mà không còn dấu vết là thông tin bị mất
-- [ ] Commit `docs(specs): T6 bước 17 — đóng lô 1 corpus P1, đối chiếu tay`
+- [x] Commit `docs(specs): T6 bước 17 — đóng lô 1 corpus P1, đối chiếu tay`
 
 ## Cổng dừng cuối — kết thúc task
 
-- [ ] 11/11 spec đích `approved`, tổng corpus 49/130
-- [ ] `pnpm lint:specs` 0 lỗi, **0 chu trình** toàn corpus, `C7` là mức lỗi
-- [ ] `pnpm check` xanh
-- [ ] `pnpm test` xanh
-- [ ] `git push` thật thành công (không phải `lefthook run pre-push` thủ công — lệnh thủ công
-      thiếu ref data trên stdin và skip cả 3 job, exit 0 giả, đo được 2026-08-06)
-- [ ] Việc tiếp theo: lô 2 của P1 (31 spec còn lại), rồi **Task #7** —
+- [x] 11/11 spec đích `approved`, tổng corpus 49/130
+- [x] `pnpm lint:specs` 0 lỗi, **0 chu trình** toàn corpus, `C7` là mức lỗi
+- [x] `pnpm check` xanh
+- [x] `pnpm test` xanh
+- [ ] **`git push` — CHƯA làm được trong phiên này.** Docker daemon không chạy trong sandbox
+      (`/Users/macbook/.orbstack/run/docker.sock` không tồn tại) → `check:services` đỏ →
+      pre-push hook chặn đúng chức năng của nó. Không dùng `--no-verify` (cấm ở đầu file này).
+      101 commit đang chờ ở local, nhánh `main`. Người kế tiếp: `docker compose up -d` rồi
+      `git push` bình thường — không cần làm lại bất kỳ bước nào ở trên
+- [x] Việc tiếp theo: lô 2 của P1 (31 spec còn lại), rồi **Task #7** —
       [`07-first-migration-plan.md`](07-first-migration-plan.md)
 
 ## Lệnh đếm dùng ở Bước 17
