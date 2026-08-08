@@ -310,19 +310,29 @@ Giao cho một agent (general-purpose) làm cả 15 file còn lại theo đúng 
       (commit `322e3ab`)
 - [x] [`game-template-contract.md`](../specs/01-platform/game-template-contract.md) — 22 kh, 7 tc → 0/0/0
       (commit `df5b93f`)
-- [ ] [`schema-content-taxonomy.md`](../specs/01-platform/schema-content-taxonomy.md) — 17 kh, 10 tc
-- [ ] [`adaptive-engine.md`](../specs/01-platform/adaptive-engine.md) — 15 kh, 1 tc · 4 lượt `ZPD`: **giữ nguyên**, chỉ chú giải một lần ở lần nhắc đầu
-- [ ] [`taxonomy-service.md`](../specs/01-platform/taxonomy-service.md) — 12 kh, 2 vt, 5 tc · quy tắc `BR-TAX-09` neo vào `docs/taxonomy/`, xem bước 16
-- [ ] [`game-engine-runtime.md`](../specs/01-platform/game-engine-runtime.md) — 17 kh, 1 tc
-- [ ] [`schema-play-telemetry.md`](../specs/01-platform/schema-play-telemetry.md) — 11 kh, 6 tc
-- [ ] [`emoji-registry.md`](../specs/01-platform/emoji-registry.md) — 12 kh, 1 tc
-- [ ] [`image-storage.md`](../specs/01-platform/image-storage.md) — 12 kh, 1 tc
-- [ ] [`content-search.md`](../specs/01-platform/content-search.md) — 11 kh, 1 tc
-- [ ] [`telemetry-pipeline.md`](../specs/01-platform/telemetry-pipeline.md) — 7 kh, 2 vt, 2 tc
-- [ ] [`content-tagging.md`](../specs/01-platform/content-tagging.md) — 6 kh, 2 tc
-- [ ] Xác minh: `pnpm inventory:symbols specs/01-platform` báo **0 chữ viết tắt**
-- [ ] `pnpm check` exit 0 · `pnpm test` không giảm · `approved` vẫn 23
-- [ ] Commit
+- [x] [`schema-content-taxonomy.md`](../specs/01-platform/schema-content-taxonomy.md) — 17 kh, 10 tc → 0/0/0
+      (commit `50b092f`)
+- [x] [`adaptive-engine.md`](../specs/01-platform/adaptive-engine.md) — 15 kh, 1 tc → 0/0/0
+      (commit `5a7f56b`)
+- [x] [`taxonomy-service.md`](../specs/01-platform/taxonomy-service.md) — 12 kh, 2 vt, 5 tc → 0/0/0
+      (commit `3e25e16`)
+- [x] [`game-engine-runtime.md`](../specs/01-platform/game-engine-runtime.md) — 17 kh, 1 tc → 0/0/0
+      (commit `5a7f56b`)
+- [x] [`schema-play-telemetry.md`](../specs/01-platform/schema-play-telemetry.md) — 11 kh, 6 tc → 0/0/0
+      (commit `3e25e16`)
+- [x] [`emoji-registry.md`](../specs/01-platform/emoji-registry.md) — 12 kh, 1 tc → 0/0/0
+      (commit `3e25e16`)
+- [x] [`image-storage.md`](../specs/01-platform/image-storage.md) — 12 kh, 1 tc → 0/0/0
+      (commit `3e25e16`)
+- [x] [`content-search.md`](../specs/01-platform/content-search.md) — 11 kh, 1 tc → 0/0/0
+      (commit `3e25e16`)
+- [x] [`telemetry-pipeline.md`](../specs/01-platform/telemetry-pipeline.md) — 7 kh, 2 vt, 2 tc → 0/0/0
+      (commit `3e25e16`)
+- [x] [`content-tagging.md`](../specs/01-platform/content-tagging.md) — 6 kh, 2 tc → 0/0/1 (plan false positive)
+      (commit `3e25e16`)
+- [x] Xác minh: `pnpm inventory:symbols specs/01-platform` báo **0 chữ viết tắt**
+- [x] `pnpm check` exit 0 · `pnpm test` không giảm · `approved` vẫn 38
+- [x] Commit
 
 ## Bước 7 — `01-platform` phần hai, 13 file vận hành · 183 kh · 24 tc
 
