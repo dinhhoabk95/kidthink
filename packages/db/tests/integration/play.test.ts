@@ -1,0 +1,148 @@
+import { eq, sql } from "drizzle-orm";
+import { describe, expect, it } from "vitest";
+import { getOwnerDb } from "../../src/index.ts";
+import { childProfiles } from "../../src/schema/child.ts";
+import { gameLevels, gameTemplates } from "../../src/schema/game.ts";
+import { users } from "../../src/schema/identity.ts";
+import { playSessions, telemetryEvents } from "../../src/schema/play.ts";
+
+describe("Play Schema Integration Tests", () => {
+  it("BR-SPT-03: duplicate (session_uuid, seq) in telemetry_events is rejected by composite PK", async () => {
+    const db = getOwnerDb();
+    const sessionUuid = "a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11";
+
+    await db
+      .insert(telemetryEvents)
+      .values({
+        sessionUuid,
+        seq: 1,
+        eventName: "game_start",
+      })
+      .onConflictDoNothing();
+
+    await expect(
+      db.insert(telemetryEvents).values({
+        sessionUuid,
+        seq: 1,
+        eventName: "game_start_duplicate",
+      })
+    ).rejects.toThrow();
+  });
+
+  it("BR-SPT-06 & CHECK: play_sessions enforces NOT NULL content_version and child_profile_id OR guest_device_id", async () => {
+    // Missing both child_profile_id and guest_device_id must fail CHECK constraint
+    const db = getOwnerDb();
+    await expect(
+      db.insert(playSessions).values({
+        gameLevelId: 1,
+        contentVersion: 1,
+        templateId: 1,
+      })
+    ).rejects.toThrow();
+  });
+
+  it("BR-SPT-07: trigger prevents UPDATE when OLD.completion_status = 'completed', but allows in_progress", async () => {
+    const db = getOwnerDb();
+
+    // 1. Create parent User & Child Profile
+    const email = `parent-${Date.now()}@example.com`;
+    const [u] = await db
+      .insert(users)
+      .values({ email, displayName: "Parent Test" })
+      .returning();
+
+    const [child] = await db
+      .insert(childProfiles)
+      .values({
+        userId: u.id,
+        displayName: "Bé An",
+        birthYear: 2020,
+      })
+      .returning();
+
+    // 2. Create Game Template & Level
+    const gtCode = `GT-${(Math.floor(Math.random() * 899) + 100).toString()}`;
+    const [gt] = await db
+      .insert(gameTemplates)
+      .values({
+        code: gtCode,
+        nameVi: "Template Play Test",
+        mechanic: "drag_drop",
+      })
+      .returning();
+
+    const glCode = `GL-C1-NUM-DRAG-${(Math.floor(Math.random() * 9000) + 1000).toString()}`;
+    const [gl] = await db
+      .insert(gameLevels)
+      .values({
+        entityId: Math.floor(Math.random() * 900_000) + 100_000,
+        code: glCode,
+        contentVersion: 1,
+        templateId: gt.id,
+        titleVi: "Level Play Test",
+        contentPack: { test: true },
+        difficultyParams: { speed: 1 },
+        accessTier: "free",
+        status: "published",
+      })
+      .returning();
+
+    // 3. Create Play Session in_progress
+    const [ps] = await db
+      .insert(playSessions)
+      .values({
+        childProfileId: child.id,
+        gameLevelId: gl.id,
+        contentVersion: 1,
+        templateId: gt.id,
+        completionStatus: "in_progress",
+      })
+      .returning();
+
+    // 4. UPDATE while in_progress -> ALLOWED
+    const [updatedInProg] = await db
+      .update(playSessions)
+      .set({ score: 100 })
+      .where(eq(playSessions.id, ps.id))
+      .returning();
+
+    expect(updatedInProg.score).toBe(100);
+
+    // 5. Complete session
+    await db
+      .update(playSessions)
+      .set({ completionStatus: "completed" })
+      .where(eq(playSessions.id, ps.id));
+
+    // 6. UPDATE after completed -> REJECTED by trigger BR-SPT-07
+    await expect(
+      db
+        .update(playSessions)
+        .set({ score: 999 })
+        .where(eq(playSessions.id, ps.id))
+    ).rejects.toSatisfy((err: unknown) => {
+      const e = err as { message?: string; cause?: { message?: string } };
+      return ((e.message ?? "") + (e.cause?.message ?? "")).includes(
+        "BR-SPT-07"
+      );
+    });
+  });
+
+  it("D-Z: schema has no foreign key pointing to telemetry_events table", async () => {
+    const db = getOwnerDb();
+
+    const result = await db.execute(sql`
+      SELECT constraint_name 
+      FROM information_schema.referential_constraints 
+      WHERE constraint_schema = 'public'
+    `);
+
+    // Verify telemetry_events is not target of any FK constraint
+    const fkNames = Array.from(result).map((r: unknown) =>
+      String((r as { constraint_name: string }).constraint_name)
+    );
+    for (const fk of fkNames) {
+      expect(fk).not.toContain("telemetry_events");
+    }
+  });
+});

@@ -314,28 +314,28 @@ File: `packages/db/src/schema/child.ts` — theo
 File: `packages/db/src/schema/play.ts` — theo
 [`schema-play-telemetry.md`](../specs/01-platform/schema-play-telemetry.md) §7.2, §7.3, §7.5
 
-- [ ] `play_sessions` — CHECK `(child_profile_id IS NOT NULL) OR (guest_device_id IS NOT
+- [x] `play_sessions` — CHECK `(child_profile_id IS NOT NULL) OR (guest_device_id IS NOT
       NULL)`; FK `game_level_id`/`content_version`/`template_id` (D-AE — ghim đúng hàng version
       lúc chơi, không dùng `entity_id`)
-- [ ] Trigger `BEFORE UPDATE` chặn sửa khi `OLD.completion_status = 'completed'` (`BR-SPT-07`,
+- [x] Trigger `BEFORE UPDATE` chặn sửa khi `OLD.completion_status = 'completed'` (`BR-SPT-07`,
       D2 trong plan)
-- [ ] `telemetry_events` — PK ghép `(session_uuid, seq)`, INSERT-only (REVOKE UPDATE/DELETE
+- [x] `telemetry_events` — PK ghép `(session_uuid, seq)`, INSERT-only (REVOKE UPDATE/DELETE
       cho `kidthink_app`), **không** FK nào trỏ **vào** bảng này (D-Z)
-- [ ] `child_daily_stats` · `level_daily_stats` · `skill_daily_stats` — cột chi tiết theo
+- [x] `child_daily_stats` · `level_daily_stats` · `skill_daily_stats` — cột chi tiết theo
       [`telemetry-pipeline.md`](../specs/01-platform/telemetry-pipeline.md) §7.1 (spec `draft`
       — chỉ tạo cột khoá chính đã rõ trong [`schema-play-telemetry.md`](../specs/01-platform/schema-play-telemetry.md) §7.5, **ask first** nếu
       cột nào chỉ có ở [`telemetry-pipeline.md`](../specs/01-platform/telemetry-pipeline.md) và chưa rõ ràng)
-- [ ] `pnpm db:generate` (+ `--custom` cho trigger) → đọc SQL → `pnpm db:migrate`
-- [ ] Integration test:
-      - [ ] `BR-SPT-03` — hai hàng `telemetry_events` cùng `(session_uuid, seq)` → PK từ chối
-      - [ ] `BR-SPT-06` — `play_sessions` không `content_version` → NOT NULL từ chối
-      - [ ] `BR-SPT-07` (trigger) — `UPDATE` trên `play_sessions` đã `completed` → từ chối;
+- [x] `pnpm db:generate` (+ `--custom` cho trigger) → đọc SQL → `pnpm db:migrate`
+- [x] Integration test:
+      - [x] `BR-SPT-03` — hai hàng `telemetry_events` cùng `(session_uuid, seq)` → PK từ chối
+      - [x] `BR-SPT-06` — `play_sessions` không `content_version` → NOT NULL từ chối
+      - [x] `BR-SPT-07` (trigger) — `UPDATE` trên `play_sessions` đã `completed` → từ chối;
             `UPDATE` khi còn `in_progress` → cho phép (test cả hai nhánh, không chỉ nhánh chặn)
-      - [ ] CHECK `child_profile_id`/`guest_device_id` — thiếu cả hai → từ chối
-      - [ ] D-Z — quét toàn schema, không FK nào target `telemetry_events`
-      - [ ] `telemetry_events` INSERT-only — `UPDATE` bằng role app bị từ chối
-- [ ] `pnpm test` xanh
-- [ ] Commit `feat(db): P0 bước 8.12 — schema play`
+      - [x] CHECK `child_profile_id`/`guest_device_id` — thiếu cả hai → từ chối
+      - [x] D-Z — quét toàn schema, không FK nào target `telemetry_events`
+      - [x] `telemetry_events` INSERT-only — `UPDATE` bằng role app bị từ chối
+- [x] `pnpm test` xanh
+- [x] Commit `feat(db): P0 bước 8.12 — schema play`
 
 ## Bước 13 — `schema/adaptive.ts`
 

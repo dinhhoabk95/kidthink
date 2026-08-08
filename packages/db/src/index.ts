@@ -8,6 +8,7 @@ export * from "./schema/curriculum.ts";
 export * from "./schema/game.ts";
 export * from "./schema/identity.ts";
 export * from "./schema/ops.ts";
+export * from "./schema/play.ts";
 export * from "./schema/tagging.ts";
 export * from "./schema/taxonomy.ts";
 
