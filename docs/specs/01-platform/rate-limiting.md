@@ -145,7 +145,7 @@ Scenario: BR-RTL-05 — khoá tăng dần rồi tự mở
 
 ## 11. Open questions
 
-| # | Câu hỏi | Chặn gì |
-|---|---|---|
-| 1 | Có dùng CAPTCHA cho đăng ký không? CAPTCHA bên thứ ba đụng ràng buộc tracking | P1 |
-| 2 | Hạn mức `play:events` đủ cho trẻ chơi nhanh không? Cần đo thực tế | P1 |
+| # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
+|---|---|---|---|---|
+| 1 | Có dùng CAPTCHA cho đăng ký không? CAPTCHA bên thứ ba đụng ràng buộc tracking | Đăng ký P1 | P1 | người quyết |
+| 2 | Hạn mức `play:events` đủ cho trẻ chơi nhanh không? Cần đo thực tế | Gameplay P1 | P1 | Studio UI |
