@@ -342,18 +342,18 @@ File: `packages/db/src/schema/play.ts` — theo
 File: `packages/db/src/schema/adaptive.ts` — theo
 [`schema-play-telemetry.md`](../specs/01-platform/schema-play-telemetry.md) §7.6–7.7
 
-- [ ] `mastery_state` — `(child_profile_id, skill_id)` PK ghép, `skill_id` **FK thật** tới
+- [x] `mastery_state` — `(child_profile_id, skill_id)` PK ghép, `skill_id` **FK thật** tới
       `skills.id` (`BR-SPT-05` — không chuỗi tự do), `p_learn` CHECK `>= 0 AND <= 1`
       (`BR-SPT-08`), `ema_correct` CHECK 0–1
-- [ ] `level_params` — `(child_profile_id, game_level_id)`
-- [ ] `pnpm db:generate` → đọc SQL → `pnpm db:migrate`
-- [ ] Integration/property test:
-      - [ ] `BR-SPT-05` — `mastery_state.skill_id` không tồn tại → FK từ chối
-      - [ ] `BR-SPT-08` — `p_learn = 1.5` → CHECK từ chối
-      - [ ] property test: `p_learn ∈ [0,1]` sau mọi chuỗi cập nhật giả lập
+- [x] `level_params` — `(child_profile_id, game_level_id)`
+- [x] `pnpm db:generate` → đọc SQL → `pnpm db:migrate`
+- [x] Integration/property test:
+      - [x] `BR-SPT-05` — `mastery_state.skill_id` không tồn tại → FK từ chối
+      - [x] `BR-SPT-08` — `p_learn = 1.5` → CHECK từ chối
+      - [x] property test: `p_learn ∈ [0,1]` sau mọi chuỗi cập nhật giả lập
             ([`testing-strategy.md`](../specs/08-quality/testing-strategy.md) §7.2)
-- [ ] `pnpm test` xanh
-- [ ] Commit `feat(db): P0 bước 8.13 — schema adaptive`
+- [x] `pnpm test` xanh
+- [x] Commit `feat(db): P0 bước 8.13 — schema adaptive`
 
 ## Bước 14 — Seed idempotent (song song được, chỉ cần Bước 3 xong)
 

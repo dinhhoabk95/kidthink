@@ -78,6 +78,13 @@
       "when": 1786182102281,
       "tag": "0010_wooden_the_twelve",
       "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1786182206338,
+      "tag": "0011_soft_scarecrow",
+      "breakpoints": true
     }
   ]
 }

@@ -1,6 +1,7 @@
 import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
 
+export * from "./schema/adaptive.ts";
 export * from "./schema/billing.ts";
 export * from "./schema/child.ts";
 export * from "./schema/content.ts";
