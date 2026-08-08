@@ -2,10 +2,10 @@
 spec: PERFORMANCE-BUDGETS
 title: Ngân sách hiệu năng
 area: quality
-status: draft
+status: approved
 mvp: true
 phase: P1
-reviewed: 2026-08-04
+reviewed: 2026-08-08
 owns:
   - Ngưỡng hiệu năng theo bề mặt và cách đo
 depends_on:
@@ -56,7 +56,7 @@ cổng tự động size check · Playwright throttle 4G · k6 · `fps_sample` t
 | `BR-PRF-05` | Cấm — **NEVER cấp phát object mỗi frame** | GC pause đọc thành giật |
 | `BR-PRF-06` | Trần phân trang ép ở server | `BR-DM-12` |
 | `BR-PRF-07` | Báo cáo đọc **rollup**, không quét bảng thô | `BR-TLM-01` |
-| `BR-PRF-08` | Ảnh phục vụ dạng **WebP**, ≤960×960, có thumbnail | |
+| `BR-PRF-08` | Ảnh phục vụ dạng **WebP**, ≤960×960, có thumbnail | Giảm dung lượng truyền tải mạng và tối ưu thời gian tải ảnh |
 
 ## 7. Data
 
@@ -171,8 +171,9 @@ Scenario: BR-PRF-08 — ảnh đúng định dạng và cỡ
 
 ## 11. Open questions
 
-| # | Câu hỏi | Chặn gì |
-|---|---|---|
-| 1 | **Thiết bị chuẩn** đo 60 fps là model nào? Chưa chốt thì con số không nghiệm thu được | Cổng ra P1 |
-| 2 | t3.small đủ cho MVP không, hay cần nâng trước go-live? | Ngân sách hạ tầng |
-| 3 | CDN trước S3 từ đầu hay sau? Ảnh hưởng thời gian tải asset trên 4G | P2 |
+| # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
+|---|---|---|---|---|
+| 1 | **Thiết bị chuẩn** đo 60 fps là model nào? (Hỏi Cổng dừng A) | Cổng ra P1 | P1 | Cặp Q1/D-AT: Hỏi Cổng dừng A (Tablet Android 2GB, ví dụ Samsung Tab A7 Lite / Lenovo M8) |
+| 2 | t3.small đủ cho MVP không, hay cần nâng trước go-live? | Ngân sách hạ tầng | Go-live | DevOps / Infra |
+| 3 | CDN trước S3 từ đầu hay sau? | Tốc độ tải 4G | P2 | Infra |
+

@@ -92,17 +92,17 @@ Mọi spec giao diện ở lô B, C, D tiêu thụ ngưỡng của lô này. Ch�
 
 179 dòng · 11 rule · 3 câu hỏi · 1 cảnh báo `C6`.
 
-- [ ] Đọc hết file
-- [ ] Điền "vì sao" cho `BR-PRF-08`
-- [ ] Chuyển bảng mục 11 sang 5 cột
-- [ ] Q1 (thiết bị chuẩn đo 60 fps) — **cặp số 1**: [`SPEC.md`](../SPEC.md) mục 13 Cổng ra P1 đã
+- [x] Đọc hết file
+- [x] Điền "vì sao" cho `BR-PRF-08`
+- [x] Chuyển bảng mục 11 sang 5 cột
+- [x] Q1 (thiết bị chuẩn đo 60 fps) — **cặp số 1**: [`SPEC.md`](../SPEC.md) mục 13 Cổng ra P1 đã
       ghi "60 fps trên tablet Android 2GB". Còn thiếu model cụ thể → hỏi ở Cổng dừng A
-- [ ] Q2 (t3.small đủ cho MVP không) — để mở, `Chặn phase` ghi ngân sách hạ tầng
-- [ ] Q3 (CDN trước S3 từ đầu hay sau) — để mở, `Chặn phase: P2`
-- [ ] Checklist review 15 mục
-- [ ] `status: approved`, `reviewed` mới
-- [ ] `pnpm lint:specs` 0 lỗi, cảnh báo giảm **1**
-- [ ] Commit `feat(specs): T8 bước 3 — approve performance-budgets`
+- [x] Q2 (t3.small đủ cho MVP không) — để mở, `Chặn phase` ghi ngân sách hạ tầng
+- [x] Q3 (CDN trước S3 từ đầu hay sau) — để mở, `Chặn phase: P2`
+- [x] Checklist review 15 mục
+- [x] `status: approved`, `reviewed: 2026-08-08`
+- [x] `pnpm lint:specs` 0 lỗi, cảnh báo giảm **1**
+- [x] Commit `feat(specs): T8 bước 3 — approve performance-budgets`
 
 ### Cổng dừng A — phiên quyết định của chủ dự án
 
