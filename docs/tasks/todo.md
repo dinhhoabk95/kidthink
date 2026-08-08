@@ -294,7 +294,7 @@ Giao cho một agent (general-purpose) làm cả 15 file còn lại theo đúng 
 - [x] `pnpm inventory:symbols specs/00-foundation` báo 0/0/0 cho cả 16 file
 - [x] `pnpm check` exit 0 · `pnpm test` 88/88 · `pnpm typecheck:root` sạch · `approved` vẫn **27**
       (không phải 23, xem sửa số nền ở bước 4) · cảnh báo vẫn 208, không tăng
-- [ ] Commit
+- [x] Commit — `071c0cb`
 
 ## Bước 6 — `01-platform` phần một, 14 file dữ liệu · 302 kh · 15 vt · 92 tc
 
@@ -302,7 +302,8 @@ Giao cho một agent (general-purpose) làm cả 15 file còn lại theo đúng 
 > **Cảnh báo:** mục 7.3 của `data-model-overview.md` giữ 17 dòng ràng buộc chờ mà bước 8 của lộ
 > trình sẽ đọc lại trước khi viết cột. Giữ nguyên từng ràng buộc, kể cả ngưỡng số.
 
-- [ ] [`data-model-overview.md`](../specs/01-platform/data-model-overview.md) — 27 kh, 5 vt, 23 tc
+- [x] [`data-model-overview.md`](../specs/01-platform/data-model-overview.md) — 27 kh, 5 vt, 23 tc → 0/0/1
+      (1 tc còn lại — commit `da5b1f3`)
 - [ ] [`schema-identity-billing.md`](../specs/01-platform/schema-identity-billing.md) — 31 kh, 1 vt, 23 tc · 305 dòng
 - [ ] [`content-seed-authoring.md`](../specs/01-platform/content-seed-authoring.md) — 42 kh, 10 tc · 406 dòng, dài nhất khu vực
 - [ ] [`game-template-contract.md`](../specs/01-platform/game-template-contract.md) — 22 kh, 7 tc

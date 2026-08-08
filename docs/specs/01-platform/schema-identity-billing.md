@@ -21,7 +21,7 @@ depends_on:
 ## 1. Objective
 
 Định nghĩa cột cho ba module: `identity`, `billing`, `ops`. Quy tắc chung ở
-[`data-model-overview.md`](data-model-overview.md) — file này ❌ không lặp lại.
+[`data-model-overview.md`](data-model-overview.md) — file này không lặp lại.
 
 ## 2. Actors
 
@@ -43,16 +43,16 @@ Không có.
 
 | ID | Rule | Vì sao |
 |---|---|---|
-| `BR-SIB-01` | ❌ **NEVER cột `role`/`persona`/`tier` trên `users`** | `actors` `BR-ACT-05` |
+| `BR-SIB-01` (cấm cột role trên users) | Cấm — **NEVER cột `role`/`persona`/`tier` trên `users`** | [`actors.md`](../00-foundation/actors.md) `BR-ACT-05` (một người nhiều vai, không gán cứng) |
 | `BR-SIB-02` | `entitlements.entitlement_key` là **FK thật** tới `entitlement_keys` | Sai chính tả bị chặn ở FK |
-| `BR-SIB-03` | `payment_orders.amount_vnd` là **snapshot** lúc tạo đơn | Giá đổi sau ❌ không ảnh hưởng đơn đã tạo |
-| `BR-SIB-04` | 4 bảng auth phụ polymorphic → **bắt buộc** test bắt orphan | `data-model-overview` `BR-DM-04` |
-| `BR-SIB-05` | `password_hash` argon2id; ❌ **NEVER** cột mật khẩu dạng khác | `BR-AUT-08`. Ghi ở tầng cột vì đây là chỗ vi phạm để lại dấu vĩnh viễn: một cột `password` plaintext hay `password_md5` lọt vào migration thì mọi hàng đã ghi ❌ không hash ngược lại được |
-| `BR-SIB-06` | `consent_logs` · `audit_logs` INSERT-only, ép bằng quyền DB | `BR-DM-05`. Hai bảng này là bằng chứng pháp lý (Nghị định 13/2023) và vết điều tra — sửa được nghĩa là ❌ không chứng minh được điều gì. Quyền DB ép, ❌ không phải quy ước code |
+| `BR-SIB-03` (snapshot giá) | `payment_orders.amount_vnd` là **snapshot** lúc tạo đơn | Giá đổi sau không ảnh hưởng đơn đã tạo |
+| `BR-SIB-04` (test orphan bắt buộc) | 4 bảng auth phụ polymorphic → **bắt buộc** test bắt orphan | [`data-model-overview.md`](data-model-overview.md) `BR-DM-04` (polymorphic phải có test toàn vẹn) |
+| `BR-SIB-05` (chỉ argon2id) | `password_hash` argon2id; cấm — **NEVER** cột mật khẩu dạng khác | [`auth-tokens-sessions.md`](auth-tokens-sessions.md) `BR-AUT-08`. Ghi ở tầng cột vì đây là chỗ vi phạm để lại dấu vĩnh viễn: một cột `password` plaintext hay `password_md5` lọt vào migration thì mọi hàng đã ghi không hash ngược lại được |
+| `BR-SIB-06` (INSERT-only cho log pháp lý) | `consent_logs` · `audit_logs` INSERT-only, ép bằng quyền DB | [`data-model-overview.md`](data-model-overview.md) `BR-DM-05` (bảng INSERT-only). Hai bảng này là bằng chứng pháp lý (Nghị định 13/2023) và vết điều tra — sửa được nghĩa là không chứng minh được điều gì. Quyền DB ép, không phải quy ước code |
 | `BR-SIB-07` | `users.email` UNIQUE **case-insensitive** (`citext` hoặc index trên `lower()`) | `A@x.com` và `a@x.com` là một người |
-| `BR-SIB-08` | `users.password_hash` **nullable** — tài khoản chỉ có SNS là hợp lệ | `BR-AUT-16` `BR-SCL-08`. Bất biến thay thế là `login_methods ≥ 1` (`BR-SLK-04`), ép ở tầng service ❌ không ở cột |
-| `BR-SIB-09` | `social_identities` có **hai** UNIQUE: `(provider, provider_user_id)` và `(user_id, provider)` | Cái thứ nhất chặn một tài khoản SNS gắn hai User; cái thứ hai chặn hai tài khoản SNS cùng provider trên một User (`BR-SLK-02`) |
-| `BR-SIB-10` | `social_identities` ❌ **NEVER có cột token** của nhà cung cấp | `BR-OAP-07`. Cột ❌ không tồn tại thì ❌ không rò được |
+| `BR-SIB-08` (password nullable) | `users.password_hash` **nullable** — tài khoản chỉ có SNS là hợp lệ | [`auth-tokens-sessions.md`](auth-tokens-sessions.md) `BR-AUT-16`, [`social-login.md`](../03-account/social-login.md) `BR-SCL-08`. Bất biến thay thế là `login_methods ≥ 1` ([`social-account-linking.md`](../03-account/social-account-linking.md) `BR-SLK-04`), ép ở tầng service không ở cột |
+| `BR-SIB-09` (hai UNIQUE) | `social_identities` có **hai** UNIQUE: `(provider, provider_user_id)` và `(user_id, provider)` | Cái thứ nhất chặn một tài khoản SNS gắn hai User; cái thứ hai chặn hai tài khoản SNS cùng provider trên một User ([`social-account-linking.md`](../03-account/social-account-linking.md) `BR-SLK-02` — một User tối đa một tài khoản mỗi provider) |
+| `BR-SIB-10` (cấm cột token provider) | `social_identities` cấm — **NEVER có cột token** của nhà cung cấp | [`oauth-provider-registry.md`](oauth-provider-registry.md) `BR-OAP-07` (không lưu token provider). Cột không tồn tại thì không rò được |
 | `BR-SIB-11` | Xoá `users` **cascade** xoá `social_identities` | Danh tính mồ côi làm `UNIQUE (provider, provider_user_id)` chặn người dùng đăng ký lại sau khi đã xoá tài khoản |
 
 ## 7. Data
@@ -73,7 +73,7 @@ Không có.
 | `purge_at` | timestamptz | Đặt khi yêu cầu xoá |
 | `created_at` `updated_at` | timestamptz | |
 
-❌ Không `role`, không `package`, không `tier`.
+Cấm: không `role`, không `package`, không `tier`.
 
 ### 7.2 `managers`
 
@@ -95,18 +95,18 @@ Chung: `(account_type, account_id)` — `account_type ∈ {user, manager}`.
 `reauth_at` là nguồn sự thật của cửa sổ reauth 5 phút —
 [`auth-tokens-sessions.md`](auth-tokens-sessions.md) §7.4.
 
-### 7.3a `social_identities` — ❌ **không** polymorphic
+### 7.3a `social_identities` — không phải polymorphic
 
-Chỉ User. Manager ❌ không liên kết SNS (`BR-AUT-15`), nên bảng này FK thẳng tới `users` —
-❌ không dùng `(account_type, account_id)` như 4 bảng trên.
+Chỉ User. Manager không liên kết SNS ([`auth-tokens-sessions.md`](auth-tokens-sessions.md) `BR-AUT-15`), nên bảng này FK thẳng tới `users` —
+không dùng `(account_type, account_id)` như 4 bảng trên.
 
 | Cột | Kiểu | Ràng buộc |
 |---|---|---|
 | `id` | bigserial | PK |
 | `user_id` | bigint | FK `users(id)` **ON DELETE CASCADE**, NOT NULL |
-| `provider` | enum | `google`\|`facebook` — danh sách đóng, `BR-OAP-06` |
-| `provider_user_id` | text | NOT NULL — `sub` của provider, ❌ không phải email |
-| `email_at_provider` | citext | NULL được — Facebook có thể ❌ không trả |
+| `provider` | enum | `google`\|`facebook` — danh sách đóng, [`oauth-provider-registry.md`](oauth-provider-registry.md) `BR-OAP-06` (chỉ hai provider) |
+| `provider_user_id` | text | NOT NULL — `sub` của provider, không phải email |
+| `email_at_provider` | citext | NULL được — Facebook có thể không trả |
 | `email_verified_at_provider` | bool | NOT NULL default false |
 | `display_name_at_provider` | varchar(60) | |
 | `linked_at` | timestamptz | NOT NULL |
@@ -119,8 +119,8 @@ UNIQUE (user_id, provider)            -- một User → tối đa một tài kho
 INDEX  (user_id)
 ```
 
-❌ Không cột `access_token`, `refresh_token`, `id_token`, hay `avatar_url` — `BR-SIB-10`
-`BR-OAP-15`.
+Cấm cột `access_token`, `refresh_token`, `id_token`, hay `avatar_url` — `BR-SIB-10` (cấm cột token provider),
+[`oauth-provider-registry.md`](oauth-provider-registry.md) `BR-OAP-15`.
 
 ### 7.4 `consent_logs` — INSERT-only
 
@@ -140,7 +140,7 @@ INDEX  (user_id)
 | `name_vi` `audience_vi` `description_vi` | |
 | `is_public` `is_featured` | bool |
 | `status` | `active`\|`retired` |
-| `offers` | JSONB — `[{offer_code, billing_period, price_vnd, duration_days}]` — `billing_period` ∈ `{yearly, monthly}` (miền đóng, D-AB); MVP chỉ dùng `yearly` (`package-catalog` §11 Q2) |
+| `offers` | JSONB — `[{offer_code, billing_period, price_vnd, duration_days}]` — `billing_period` ∈ `{yearly, monthly}` (miền đóng, D-AB); MVP chỉ dùng `yearly` ([`package-catalog.md`](../00-foundation/package-catalog.md) §11 Q2) |
 | `quotas` | JSONB |
 
 `package_entitlements`: `(package_code, entitlement_key)` PK ghép, cả hai FK.
@@ -157,7 +157,7 @@ Index `(user_id, status, expires_at)`.
 ### 7.8 `payment_orders`
 
 `id` · `uuid` UNIQUE · `user_id` FK · `package_code` · `offer_code` ·
-`amount_vnd` bigint · `currency` char(3) · `status` enum §`payment-flow` §7.1 ·
+`amount_vnd` bigint · `currency` char(3) · `status` enum theo [`payment-flow.md`](../00-foundation/payment-flow.md) §7.1 ·
 `transfer_note` · `bank_txn_ref` · `proof_path` · `submitted_at` · `reviewed_at` ·
 `reviewed_by_manager_id` · `admin_note` · `expires_at` · `created_at` `updated_at`.
 
@@ -168,45 +168,45 @@ Index `(user_id, status, expires_at)`.
 
 ### 7.10 Module `ops` — P0, vào migration #1
 
-Ba bảng dưới đây **vào migration #1** (bước 8 theo `roadmap.md`). **Điều kiện chặn (D-AD):**
-[`audit-log`](audit-log.md) và [`backup-and-restore`](backup-and-restore.md) phải
+Ba bảng dưới đây **vào migration #1** (bước 8 theo [`roadmap.md`](../roadmap.md)). **Điều kiện chặn (D-AD):**
+[`audit-log.md`](audit-log.md) và [`backup-and-restore.md`](backup-and-restore.md) phải
 `status: approved` **trước khi** migration #1 chạy — cột của `audit_logs`/`backup_log` do hai
 spec đó sở hữu.
 
-> ✅ **Đã thoả 2026-08-07 (T12)**: cả hai `approved`.
+> Đã thoả 2026-08-07 (Task #3, bước 12): cả hai `approved`.
 >
-> ⚠️ **D-AD ghi thiếu một spec.** Điều kiện viết là 2 spec, nhưng đồ thị `depends_on` bắt **3**:
-> `backup-and-restore` `depends_on` [`JOB-QUEUE`](job-queue.md) (§2/§3 — backup chạy bằng job
-> `backup:postgres`/`backup:verify` ở `apps/worker`), nên C8 ❌ không cho approve
-> `backup-and-restore` khi `job-queue` còn `draft`. Đã approve `job-queue` cùng lượt. Bài học:
-> điều kiện chặn nên phát biểu bằng **bao đóng `depends_on`**, ❌ không phải liệt kê tay.
+> Cảnh báo: **D-AD ghi thiếu một spec.** Điều kiện viết là 2 spec, nhưng đồ thị `depends_on` bắt **3**:
+> [`backup-and-restore.md`](backup-and-restore.md) `depends_on` [`job-queue.md`](job-queue.md) (§2/§3 — backup chạy bằng job
+> `backup:postgres`/`backup:verify` ở `apps/worker`), nên C8 không cho approve
+> [`backup-and-restore.md`](backup-and-restore.md) khi [`job-queue.md`](job-queue.md) còn `draft`. Đã approve [`job-queue.md`](job-queue.md) cùng lượt. Bài học:
+> điều kiện chặn nên phát biểu bằng **bao đóng `depends_on`**, không phải liệt kê tay.
 
 | Bảng | Cột | Sở hữu |
 |---|---|---|
-| `audit_logs` | §`audit-log` §7.1 — INSERT-only | `audit-log` ✅ `approved` 2026-08-07 |
-| `content_review_log` | xem §7.10a dưới | `schema-identity-billing` (file này, D-AC) |
-| `backup_log` | §`backup-and-restore` §7.2 | `backup-and-restore` ✅ `approved` 2026-08-07 |
+| `audit_logs` | [`audit-log.md`](audit-log.md) §7.1 — INSERT-only | [`audit-log.md`](audit-log.md) `approved` 2026-08-07 |
+| `content_review_log` | xem §7.10a dưới | [`schema-identity-billing.md`](schema-identity-billing.md) (file này, D-AC) |
+| `backup_log` | [`backup-and-restore.md`](backup-and-restore.md) §7.2 | [`backup-and-restore.md`](backup-and-restore.md) `approved` 2026-08-07 |
 
 ### 7.10a `content_review_log` — polymorphic, INSERT-only
 
-Cột chuyển từ `content-lifecycle.md` §7.2 sang đây theo **D-AC** (2026-08-07) — DMO §7 xếp
-bảng này vào module `ops`, sở hữu cột chuyển sang schema-*; `content-lifecycle` giữ quyền
+Cột chuyển từ [`content-lifecycle.md`](../00-foundation/content-lifecycle.md) §7.2 sang đây theo **D-AC** (2026-08-07) — [`data-model-overview.md`](data-model-overview.md) §7 xếp
+bảng này vào module `ops`, sở hữu cột chuyển sang schema-*; [`content-lifecycle.md`](../00-foundation/content-lifecycle.md) giữ quyền
 định nghĩa **ngữ nghĩa** state machine, không định nghĩa cột.
 
 | Cột | Kiểu | Ràng buộc |
 |---|---|---|
 | `id` | bigserial | PK |
 | `entity_type` | enum | Loại nội dung Lớp 2 được review (`game_level`\|`lesson`\|`activity`\|`worksheet`\|`curriculum`) |
-| `entity_id` | bigint | FK hàng version cụ thể của nội dung đó — polymorphic, `(entity_type, entity_id)` là 1 trong 7 FK polymorphic đóng ở `data-model-overview` §7.2 (`BR-DM-13`, D-AE) |
-| `content_version` | int | Snapshot version tại thời điểm review — cột thông tin, ❌ không phải FK riêng (đã ngầm định trong `entity_id`) |
-| `from_status` `to_status` | enum | Theo `content-lifecycle` §7.1 — 6 giá trị |
+| `entity_id` | bigint | FK hàng version cụ thể của nội dung đó — polymorphic, `(entity_type, entity_id)` là 1 trong 7 FK polymorphic đóng ở [`data-model-overview.md`](data-model-overview.md) §7.2 (`BR-DM-13` — danh sách polymorphic đóng, D-AE) |
+| `content_version` | int | Snapshot version tại thời điểm review — cột thông tin, không phải FK riêng (đã ngầm định trong `entity_id`) |
+| `from_status` `to_status` | enum | Theo [`content-lifecycle.md`](../00-foundation/content-lifecycle.md) §7.1 — 6 giá trị |
 | `actor_manager_id` | bigint | FK `managers(id)` |
 | `actor_role` | enum | Vai trò của actor lúc thực hiện — snapshot, không đổi theo role hiện tại |
-| `reason` | text | Bắt buộc ≥10 ký tự khi `to_status = 'rejected'` (`content-lifecycle` `BR-CLC-05`) |
-| `checklist_snapshot` | JSONB | Kết quả checklist publish (`content-lifecycle` §7.3) tại thời điểm chuyển |
+| `reason` | text | Bắt buộc ≥10 ký tự khi `to_status = 'rejected'` ([`content-lifecycle.md`](../00-foundation/content-lifecycle.md) `BR-CLC-05` — từ chối phải ghi lý do) |
+| `checklist_snapshot` | JSONB | Kết quả checklist publish ([`content-lifecycle.md`](../00-foundation/content-lifecycle.md) §7.3) tại thời điểm chuyển |
 | `created_at` | timestamptz | NOT NULL |
 
-INSERT-only (`BR-DM-05`, `content-lifecycle` `BR-CLC-06`) — ❌ không `UPDATE`/`DELETE`.
+INSERT-only ([`data-model-overview.md`](data-model-overview.md) `BR-DM-05` — bảng INSERT-only, [`content-lifecycle.md`](../00-foundation/content-lifecycle.md) `BR-CLC-06`) — cấm `UPDATE`/`DELETE`.
 
 ### 7.10b Module `ops` — hoãn (P1+, tạo cùng tính năng)
 
@@ -216,7 +216,7 @@ Bảng **không** tạo ở P0 — tạo cùng lúc với tính năng sở hữu
 
 ## 8. API contract
 
-Không có. Cột đặc quyền ❌ không nhận từ payload:
+Không có. Cột đặc quyền không nhận từ payload:
 `managers.role` · `users.status` · `users.refresh_token_version` · `entitlements.status` ·
 `payment_orders.status` · `payment_orders.amount_vnd`.
 
@@ -294,11 +294,11 @@ Scenario: BR-SIB-11 — xoá user cascade xoá danh tính SNS
 - Nhận cột đặc quyền từ payload.
 - `UPDATE`/`DELETE` trên bảng INSERT-only.
 - Cột token của nhà cung cấp OAuth ở bất kỳ bảng nào.
-- Làm `social_identities` polymorphic để "dùng chung cho Manager".
+- Làm `social_identities` polymorphic để dùng chung cho Manager.
 
 ## 11. Open questions
 
 | # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
 |---|---|---|---|---|
-| ~~1~~ | ~~`offers` để JSONB trên `packages` hay tách bảng `package_offers`?~~ **Đóng 2026-08-07 (D-AB)**: giữ JSONB `offers[]`. Một package **nhiều** offer buộc tách bảng `package_offers` mới join được — việc P2, MVP chỉ bán năm (`package-catalog` §11 Q2) chưa cần | — | ✅ đóng | D-AB |
-| 2 | `error_log` client cần sampling ở mức nào? | Vận hành | 🟡 P1+ (bảng chưa tạo, xem §7.10b) | hoãn — chốt cùng lúc `error-log-viewer` vào phase của nó; bảng ❌ không nằm trong migration #1 (D-AD) nên ❌ không chặn bước 8 |
+| ~~1~~ | ~~`offers` để JSONB trên `packages` hay tách bảng `package_offers`?~~ **Đóng 2026-08-07 (D-AB)**: giữ JSONB `offers[]`. Một package **nhiều** offer buộc tách bảng `package_offers` mới join được — việc P2, MVP chỉ bán năm ([`package-catalog.md`](../00-foundation/package-catalog.md) §11 Q2) chưa cần | — | đã đóng | D-AB |
+| 2 | `error_log` client cần sampling ở mức nào? | Vận hành | chờ P1+ (bảng chưa tạo, xem §7.10b) | hoãn — chốt cùng lúc [`error-log-viewer.md`](../06-admin/error-log-viewer.md) vào phase của nó; bảng không nằm trong migration #1 (D-AD) nên không chặn bước 8 |
