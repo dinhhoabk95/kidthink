@@ -25,7 +25,7 @@ niềm tin, hoặc đưa tới chơi thử.
 
 ## 2. Actors
 
-Guest (phụ huynh hoặc giáo viên). ❌ Trẻ không phải đối tượng của trang này.
+Guest (phụ huynh hoặc giáo viên). Cấm Trẻ không phải đối tượng của trang này.
 
 ## 3. Entry points
 
@@ -35,7 +35,7 @@ Guest (phụ huynh hoặc giáo viên). ❌ Trẻ không phải đối tượng 
 
 1. Vào trang chủ.
 2. Đọc thông điệp giá trị, thấy nút **"Cho bé chơi thử"** ngay màn hình đầu.
-3. Bấm → vào thẳng một game `free`, ❌ không cần đăng ký.
+3. Bấm → vào thẳng một game `free`, không cần đăng ký.
 4. Chơi xong → lời mời tạo tài khoản để lưu tiến độ.
 
 ## 5. Alternative flows
@@ -44,19 +44,19 @@ Guest (phụ huynh hoặc giáo viên). ❌ Trẻ không phải đối tượng 
 |---|---|
 | User đã đăng nhập | Chuyển thẳng `/me` |
 | Từ quảng cáo có tham số chiến dịch | Giữ tham số qua luồng đăng ký |
-| Mạng chậm | Prerender tĩnh; ảnh lazy; ❌ không chặn nội dung chờ JS |
+| Mạng chậm | Prerender tĩnh; ảnh lazy; không chặn nội dung chờ JS |
 
 ## 6. Business rules
 
 | ID | Rule | Vì sao |
 |---|---|---|
-| `BR-LND-01` | Nút **chơi thử** ở màn hình đầu, ❌ không cần cuộn | Trải nghiệm thuyết phục hơn mô tả |
-| `BR-LND-02` | Chơi thử ❌ **không cần đăng ký** | Đăng ký trước khi thấy giá trị là rào cản lớn nhất |
-| `BR-LND-03` | Trang **prerender tĩnh**, ❌ không phụ thuộc JS để hiện nội dung chính | SEO và mạng chậm |
-| `BR-LND-04` | ❌ **NEVER tracking bên thứ ba** trên trang có link tới chính sách trẻ em | `BR-CDC-08` |
+| `BR-LND-01` | Nút **chơi thử** ở màn hình đầu, không cần cuộn | Trải nghiệm thuyết phục hơn mô tả |
+| `BR-LND-02` | Chơi thử **không cần đăng ký** | Đăng ký trước khi thấy giá trị là rào cản lớn nhất |
+| `BR-LND-03` | Trang **prerender tĩnh**, không phụ thuộc JS để hiện nội dung chính | SEO và mạng chậm |
+| `BR-LND-04` | Cấm — **NEVER tracking bên thứ ba** trên trang có link tới chính sách trẻ em | `BR-CDC-08` |
 | `BR-LND-05` | Giá lấy từ **`PACKAGE_CATALOG`** | `BR-PKG-02` |
-| `BR-LND-06` | ❌ **NEVER hứa hẹn kết quả học tập** — không "giúp bé thông minh hơn", không "tăng IQ" | Vượt ranh giới của một sản phẩm giáo dục và có rủi ro pháp lý |
-| `BR-LND-07` | ❌ **NEVER dùng ảnh trẻ em thật** làm minh hoạ | Nhất quán với ràng buộc dữ liệu trẻ |
+| `BR-LND-06` | Cấm — **NEVER hứa hẹn kết quả học tập** — không "giúp bé thông minh hơn", không "tăng IQ" | Vượt ranh giới của một sản phẩm giáo dục và có rủi ro pháp lý |
+| `BR-LND-07` | Cấm — **NEVER dùng ảnh trẻ em thật** làm minh hoạ | Nhất quán với ràng buộc dữ liệu trẻ |
 | `BR-LND-08` | LCP < **2,5 s** trên 4G | |
 
 ## 7. Data
@@ -77,8 +77,8 @@ Guest (phụ huynh hoặc giáo viên). ❌ Trẻ không phải đối tượng 
 
 ### 7.2 Ngôn ngữ
 
-Tiếng Việt, giọng bình tĩnh. ❌ Không "đột phá", "thần tốc", "vượt trội".
-Nói **được gì** (bé chơi 6 nhóm tư duy, bạn xem tiến bộ hằng tuần), ❌ không nói **sẽ thành
+Tiếng Việt, giọng bình tĩnh. Cấm "đột phá", "thần tốc", "vượt trội".
+Nói **được gì** (bé chơi 6 nhóm tư duy, bạn xem tiến bộ hằng tuần), không nói **sẽ thành
 gì**.
 
 ## 8. API contract
@@ -150,5 +150,5 @@ Scenario: BR-LND-05 — giá khớp catalog
 
 | # | Câu hỏi | Chặn gì |
 |---|---|---|
-| 1 | Có dùng analytics tự host (Plausible/Umami) không? Cần đo phễu nhưng ❌ không được là bên thứ ba theo dõi | P1 |
-| 2 | 6 game nổi bật có trùng allow-list guest không? | `access-ladder` Q1 |
+| 1 | Có dùng analytics tự host (Plausible/Umami) không? Cần đo phễu nhưng không được là bên thứ ba theo dõi | P1 |
+| 2 | 6 game nổi bật có trùng allow-list guest không? | [`access-ladder.md`](../00-foundation/access-ladder.md) Q1 |

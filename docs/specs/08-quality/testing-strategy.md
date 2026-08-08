@@ -17,9 +17,9 @@ depends_on:
 ## 1. Objective
 
 Test là **cách duy nhất** biết một thay đổi có phá thứ đang chạy không. Trên một hệ thống có
-gating, thanh toán, và dữ liệu trẻ em, "chắc là ổn" ❌ không phải một mức đảm bảo.
+gating, thanh toán, và dữ liệu trẻ em, "chắc là ổn" không phải một mức đảm bảo.
 
-Spec này sở hữu **ngưỡng và danh sách bắt buộc**. Cách viết test theo `CONVENTIONS` §6 —
+Spec này sở hữu **ngưỡng và danh sách bắt buộc**. Cách viết test theo [`CONVENTIONS.md`](../CONVENTIONS.md) §6 —
 mọi Gherkin scenario map sang đúng một test.
 
 ## 2. Actors
@@ -41,24 +41,24 @@ Dev · cổng tự động.
 
 | Nhánh | Hành vi |
 |---|---|
-| Test flaky | Quarantine + issue, ❌ **NEVER xoá** |
+| Test flaky | Quarantine + issue, Cấm — **NEVER xoá** |
 | Coverage tụt dưới ngưỡng | cổng tự động fail |
-| Test chậm | Tách suite, ❌ không bỏ |
+| Test chậm | Tách suite, không bỏ |
 
 ## 6. Business rules
 
 | ID | Rule | Vì sao |
 |---|---|---|
 | `BR-TST-01` | Critical path ≥ **85%**; toàn bộ ≥ **80%** | Dưới 80% là không biết thay đổi có phá gì không; 85% cho critical vì hậu quả khi bug ở gating/thanh toán lớn hơn |
-| `BR-TST-02` | ❌ **NEVER mock DB** — dùng PostgreSQL thật qua Docker | Mock DB ❌ không kiểm được ràng buộc, mà ràng buộc là thứ đáng kiểm nhất |
-| `BR-TST-03` | ❌ **NEVER gọi LLM thật** trong test | Chi phí và không tái lập |
-| `BR-TST-04` | ❌ **NEVER `setTimeout` để chờ** — dùng `expect.poll()` / `waitFor` | Test chờ theo đồng hồ là test flaky |
-| `BR-TST-05` | ❌ **NEVER chạm DB / S3 / email production** | Test đụng DB production là sự cố dữ liệu; đụng S3 production là tốn tiền và rủi ro ghi đè |
-| `BR-TST-06` | ❌ **NEVER dữ liệu random không seed** | Snapshot test cần tái lập |
-| `BR-TST-07` | Test flaky **quarantine**, ❌ không xoá | Xoá test flaky là xoá tín hiệu |
-| `BR-TST-08` | Bài ở §7.3 ❌ **NEVER rút gọn** | Đó là danh sách bài đã chốt vì hậu quả khi thiếu; rút gọn là tự mở cửa cho bug ở vùng nhạy cảm |
-| `BR-TST-09` | Mock **chỉ biên ngoài**: LLM, S3, email, OAuth. ❌ NEVER mock module nội bộ | Mock nội bộ test cái mock, ❌ không test hệ thống |
-| `BR-TST-10` | Test sinh từ Gherkin là `test.todo`, ❌ không test rỗng pass | `BR-AIG-05` |
+| `BR-TST-02` | Cấm — **NEVER mock DB** — dùng PostgreSQL thật qua Docker | Mock DB không kiểm được ràng buộc, mà ràng buộc là thứ đáng kiểm nhất |
+| `BR-TST-03` | Cấm — **NEVER gọi LLM thật** trong test | Chi phí và không tái lập |
+| `BR-TST-04` | Cấm — **NEVER `setTimeout` để chờ** — dùng `expect.poll()` / `waitFor` | Test chờ theo đồng hồ là test flaky |
+| `BR-TST-05` | Cấm — **NEVER chạm DB / S3 / email production** | Test đụng DB production là sự cố dữ liệu; đụng S3 production là tốn tiền và rủi ro ghi đè |
+| `BR-TST-06` | Cấm — **NEVER dữ liệu random không seed** | Snapshot test cần tái lập |
+| `BR-TST-07` | Test flaky **quarantine**, không xoá | Xoá test flaky là xoá tín hiệu |
+| `BR-TST-08` | Bài ở §7.3 Cấm — **NEVER rút gọn** | Đó là danh sách bài đã chốt vì hậu quả khi thiếu; rút gọn là tự mở cửa cho bug ở vùng nhạy cảm |
+| `BR-TST-09` | Mock **chỉ biên ngoài**: LLM, S3, email, OAuth. Cấm — NEVER mock module nội bộ | Mock nội bộ test cái mock, không test hệ thống |
+| `BR-TST-10` | Test sinh từ Gherkin là `test.todo`, không test rỗng pass | `BR-AIG-05` |
 
 ## 7. Data
 
@@ -83,16 +83,16 @@ Dev · cổng tự động.
 - Mọi hàng `published` từ chối UPDATE
 - Số dư credit = tổng ledger
 
-Bất biến của cây ❌ không kiểm được bằng ví dụ — một chu trình có thể chỉ xuất hiện ở tổ hợp
+Bất biến của cây không kiểm được bằng ví dụ — một chu trình có thể chỉ xuất hiện ở tổ hợp
 thứ 4.000.
 
-### 7.3 Bài test ❌ không được rút gọn
+### 7.3 Bài test không được rút gọn
 
 | Bài | Vì sao |
 |---|---|
 | **Gating 4 tier × 5 trạng thái = 20 ô** | Gating là ma trận; test vài ô sẽ để lọt ô còn lại |
 | **404 trên MỌI endpoint** có tham số trẻ | IDOR là lỗi lặp lại theo từng route mới |
-| **E2E thanh toán xuyên hai app** | Luồng doanh thu; lỗi ở ranh giới hai app ❌ không bắt được bằng unit test |
+| **E2E thanh toán xuyên hai app** | Luồng doanh thu; lỗi ở ranh giới hai app không bắt được bằng unit test |
 | **Approve hai lần** trên cùng đơn | Duyệt trùng tạo hai subscription |
 | **Biên nửa đêm ICT** cho hạn mức giờ chơi | Lỗi múi giờ chỉ hiện một giờ trong ngày — đúng giờ trẻ hay chơi |
 | **Round-trip `content_pack`** trên toàn bộ level đã seed | Một level lọt lưới là một đứa trẻ gặp màn hình trắng |
@@ -109,7 +109,7 @@ taxonomy traversal · content lifecycle.
 
 Viewport mặc định **768×1024** tablet portrait · throttle 4G cho assertion hiệu năng ·
 Chrome + WebKit + Firefox, 2 major gần nhất · offline test dùng **Playwright offline mode**,
-❌ không mock `navigator.onLine` · screenshot khi fail.
+không mock `navigator.onLine` · screenshot khi fail.
 
 ## 8. API contract
 
@@ -184,4 +184,4 @@ Scenario: E2E chạy đúng viewport
 | # | Câu hỏi | Chặn gì |
 |---|---|---|
 | 1 | Cổng tự động chạy PG Docker mất bao lâu? Nếu quá chậm cần tách suite | P0 |
-| 2 | Thiết bị chuẩn đo 60 fps trong E2E là gì? | `game-engine-runtime` Q1 |
+| 2 | Thiết bị chuẩn đo 60 fps trong E2E là gì? | [`game-engine-runtime.md`](../01-platform/game-engine-runtime.md) Q1 |

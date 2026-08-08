@@ -19,7 +19,7 @@ depends_on:
 
 Giảm ca hỗ trợ và **trả lời câu hỏi chặn quyết định mua** ngay tại chỗ.
 
-Đây cũng là nội dung SEO tốt: phụ huynh tìm "trẻ 4 tuổi nên chơi game bao lâu" ❌ không tìm
+Đây cũng là nội dung SEO tốt: phụ huynh tìm "trẻ 4 tuổi nên chơi game bao lâu" không tìm
 tên sản phẩm.
 
 ## 2. Actors
@@ -41,7 +41,7 @@ Guest · User.
 | Nhánh | Hành vi |
 |---|---|
 | Không tìm thấy câu trả lời | Link tới `/lien-he` |
-| Câu hỏi liên quan chính sách | Link tới trang pháp lý, ❌ không copy nội dung |
+| Câu hỏi liên quan chính sách | Link tới trang pháp lý, không copy nội dung |
 | User đã đăng nhập | Hiện thêm nhóm câu hỏi về tài khoản |
 
 ## 6. Business rules
@@ -49,11 +49,11 @@ Guest · User.
 | ID | Rule | Vì sao |
 |---|---|---|
 | `BR-FAQ-01` | Mỗi câu có **URL neo riêng** | Hỗ trợ gửi được link chính xác |
-| `BR-FAQ-02` | Câu trả lời liên quan pháp lý **link tới** trang chính sách, ❌ không copy | Copy sẽ drift khỏi văn bản có hiệu lực |
+| `BR-FAQ-02` | Câu trả lời liên quan pháp lý **link tới** trang chính sách, không copy | Copy sẽ drift khỏi văn bản có hiệu lực |
 | `BR-FAQ-03` | Schema `FAQPage` sinh từ dữ liệu | |
-| `BR-FAQ-04` | Nội dung sửa qua `seo-content-admin`, ❌ không hardcode | |
+| `BR-FAQ-04` | Nội dung sửa qua [`seo-content-admin.md`](../06-admin/seo-content-admin.md), không hardcode | |
 | `BR-FAQ-05` | Trả lời **thẳng câu hỏi ở câu đầu**, chi tiết sau | Người đọc FAQ đang vội |
-| `BR-FAQ-06` | ❌ **NEVER né câu hỏi khó** — nói thẳng giới hạn của sản phẩm | Né tránh làm mất niềm tin hơn là thừa nhận |
+| `BR-FAQ-06` | Cấm — **NEVER né câu hỏi khó** — nói thẳng giới hạn của sản phẩm | Né tránh làm mất niềm tin hơn là thừa nhận |
 
 ## 7. Data
 
@@ -71,10 +71,10 @@ Guest · User.
 
 | Câu hỏi | Nguyên tắc trả lời |
 |---|---|
-| "Chơi có giúp bé thông minh hơn không?" | Nói rõ sản phẩm **rèn luyện tư duy qua hoạt động có cấu trúc**, ❌ không hứa tăng trí thông minh |
-| "Báo cáo có đánh giá được bé không?" | Nói rõ báo cáo phản ánh **hoạt động trong ứng dụng**, ❌ không phải đánh giá phát triển |
+| "Chơi có giúp bé thông minh hơn không?" | Nói rõ sản phẩm **rèn luyện tư duy qua hoạt động có cấu trúc**, không hứa tăng trí thông minh |
+| "Báo cáo có đánh giá được bé không?" | Nói rõ báo cáo phản ánh **hoạt động trong ứng dụng**, không phải đánh giá phát triển |
 | "Vì sao phải chuyển khoản tay?" | Nói thẳng: chưa tích hợp cổng thanh toán, xác nhận trong 12 giờ làm việc |
-| "Dữ liệu bé có an toàn không?" | Nêu cụ thể thu gì, ❌ không thu gì, link chính sách |
+| "Dữ liệu bé có an toàn không?" | Nêu cụ thể thu gì, không thu gì, link chính sách |
 
 ## 8. API contract
 

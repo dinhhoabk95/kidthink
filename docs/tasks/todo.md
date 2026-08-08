@@ -440,23 +440,23 @@ Giao cho một agent (general-purpose) làm cả 15 file còn lại theo đúng 
 > dạng đạt hoặc không đạt. Ở ô bảng nhị phân thì viết "Có" và "Không" thành chữ là đủ, không cần
 > diễn đạt lại thành câu.
 
-- [ ] [`design-system-contract.md`](../specs/08-quality/design-system-contract.md) — 31 kh, 1 tc
-- [ ] [`security-checklist.md`](../specs/08-quality/security-checklist.md) — 20 kh, 6 tc
-- [ ] [`cookie-and-consent-banner.md`](../specs/02-public/cookie-and-consent-banner.md) — 24 kh, 1 tc
-- [ ] [`pricing-page.md`](../specs/02-public/pricing-page.md) — 19 kh, 2 tc
-- [ ] [`legal-pages.md`](../specs/02-public/legal-pages.md) — 14 kh, 6 tc
-- [ ] [`accessibility.md`](../specs/08-quality/accessibility.md) — 20 kh
-- [ ] [`testing-strategy.md`](../specs/08-quality/testing-strategy.md) — 18 kh, 1 tc
-- [ ] [`performance-budgets.md`](../specs/08-quality/performance-budgets.md) — 13 kh, 1 tc · giữ nguyên mọi ngưỡng số
-- [ ] [`landing-page.md`](../specs/02-public/landing-page.md) — 12 kh, 1 tc
-- [ ] [`faq-and-help.md`](../specs/02-public/faq-and-help.md) — 8 kh, 1 tc
-- [ ] [`game-catalog-public.md`](../specs/02-public/game-catalog-public.md) — 7 kh, 2 tc
-- [ ] [`game-detail-public.md`](../specs/02-public/game-detail-public.md) — 7 kh
-- [ ] [`seo-and-structured-data.md`](../specs/02-public/seo-and-structured-data.md) — 6 kh, 1 tc
-- [ ] [`program-showcase.md`](../specs/02-public/program-showcase.md) — 5 kh
-- [ ] Xoá `02-public` và `08-quality` khỏi danh sách hoãn, **cùng commit**
-- [ ] `pnpm check` exit 0 · `pnpm test` không giảm · `approved` vẫn 23
-- [ ] Commit
+- [x] [`design-system-contract.md`](../specs/08-quality/design-system-contract.md) — 31 kh, 1 tc → 0/0/0
+- [x] [`security-checklist.md`](../specs/08-quality/security-checklist.md) — 20 kh, 6 tc → 0/0/0
+- [x] [`cookie-and-consent-banner.md`](../specs/02-public/cookie-and-consent-banner.md) — 24 kh, 1 tc → 0/0/0
+- [x] [`pricing-page.md`](../specs/02-public/pricing-page.md) — 19 kh, 2 tc → 0/0/0
+- [x] [`legal-pages.md`](../specs/02-public/legal-pages.md) — 14 kh, 6 tc → 0/0/0
+- [x] [`accessibility.md`](../specs/08-quality/accessibility.md) — 20 kh → 0/0/0
+- [x] [`testing-strategy.md`](../specs/08-quality/testing-strategy.md) — 18 kh, 1 tc → 0/0/0
+- [x] [`performance-budgets.md`](../specs/08-quality/performance-budgets.md) — 13 kh, 1 tc → 0/0/0
+- [x] [`landing-page.md`](../specs/02-public/landing-page.md) — 12 kh, 1 tc → 0/0/0
+- [x] [`faq-and-help.md`](../specs/02-public/faq-and-help.md) — 8 kh, 1 tc → 0/0/0
+- [x] [`game-catalog-public.md`](../specs/02-public/game-catalog-public.md) — 7 kh, 2 tc → 0/0/0
+- [x] [`game-detail-public.md`](../specs/02-public/game-detail-public.md) — 7 kh → 0/0/0
+- [x] [`seo-and-structured-data.md`](../specs/02-public/seo-and-structured-data.md) — 6 kh, 1 tc → 0/0/0
+- [x] [`program-showcase.md`](../specs/02-public/program-showcase.md) — 5 kh → 0/0/0
+- [x] Xoá `02-public` và `08-quality` khỏi danh sách hoãn, **cùng commit**
+- [x] `pnpm check` exit 0 · `pnpm test` không giảm · `approved` vẫn 38
+- [x] Commit
 
 ## Bước 11 — `06-admin` phần một, 14 file nội dung và studio · 110 kh · 4 vt · 25 tc
 

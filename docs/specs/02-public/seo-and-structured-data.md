@@ -19,9 +19,9 @@ depends_on:
 ## 1. Objective
 
 Tìm kiếm tự nhiên là kênh acquisition rẻ nhất cho sản phẩm này — phụ huynh tìm "trò chơi tư
-duy cho bé 4 tuổi", ❌ không tìm tên thương hiệu.
+duy cho bé 4 tuổi", không tìm tên thương hiệu.
 
-Spec này sở hữu **hạ tầng SEO**; nội dung trang ở `seo-content-admin`.
+Spec này sở hữu **hạ tầng SEO**; nội dung trang ở [`seo-content-admin.md`](../06-admin/seo-content-admin.md).
 
 ## 2. Actors
 
@@ -35,7 +35,7 @@ Công cụ tìm kiếm · Guest.
 
 1. Mỗi trang public sinh meta đầy đủ §7.1.
 2. Sitemap sinh **động** từ nội dung `published`, chia nhóm.
-3. JSON-LD sinh **từ dữ liệu**, ❌ không gõ tay.
+3. JSON-LD sinh **từ dữ liệu**, không gõ tay.
 4. Canonical trỏ URL chuẩn, không tham số.
 
 ## 5. Alternative flows
@@ -51,14 +51,14 @@ Công cụ tìm kiếm · Guest.
 
 | ID | Rule | Vì sao |
 |---|---|---|
-| `BR-SEO2-01` | Bề mặt trẻ và bề mặt tài khoản **`noindex`** | Nội dung sau đăng nhập ❌ không nên vào kết quả tìm kiếm |
+| `BR-SEO2-01` | Bề mặt trẻ và bề mặt tài khoản **`noindex`** | Nội dung sau đăng nhập không nên vào kết quả tìm kiếm |
 | `BR-SEO2-02` | Sitemap sinh **động** từ nội dung `published` | Sitemap tay sẽ lệch trong một tuần |
 | `BR-SEO2-03` | JSON-LD sinh **từ dữ liệu** | `BR-SEO-06` |
 | `BR-SEO2-04` | Mọi trang public có `title`, `meta description`, `canonical`, `og:*` | |
-| `BR-SEO2-05` | Nội dung chính render **server-side**, ❌ không phụ thuộc JS | |
-| `BR-SEO2-06` | ❌ **NEVER cloaking** — nội dung cho bot và người phải giống nhau | |
+| `BR-SEO2-05` | Nội dung chính render **server-side**, không phụ thuộc JS | |
+| `BR-SEO2-06` | Cấm — **NEVER cloaking** — nội dung cho bot và người phải giống nhau | |
 | `BR-SEO2-07` | Nội dung archived: **410** + gỡ khỏi sitemap | |
-| `BR-SEO2-08` | ❌ **NEVER script bên thứ ba** trên trang pháp lý | `BR-CDC-08` |
+| `BR-SEO2-08` | Cấm — **NEVER script bên thứ ba** trên trang pháp lý | `BR-CDC-08` |
 | `BR-SEO2-09` | `hreflang` chỉ `vi-VN` ở MVP | Một thị trường |
 
 ## 7. Data

@@ -18,10 +18,10 @@ depends_on:
 
 ## 1. Objective
 
-Sản phẩm này dùng **rất ít cookie**, và ❌ không cookie nào phục vụ quảng cáo hay theo dõi
-bên thứ ba. Đó là lựa chọn thiết kế, ❌ không phải hệ quả kỹ thuật.
+Sản phẩm này dùng **rất ít cookie**, và không cookie nào phục vụ quảng cáo hay theo dõi
+bên thứ ba. Đó là lựa chọn thiết kế, không phải hệ quả kỹ thuật.
 
-Vì vậy banner ở đây **đơn giản** — nó thông báo, ❌ không thương lượng, vì ❌ không có cookie
+Vì vậy banner ở đây **đơn giản** — nó thông báo, không thương lượng, vì không có cookie
 tuỳ chọn nào để bật tắt.
 
 ## 2. Actors
@@ -36,27 +36,27 @@ Banner ở lần truy cập đầu · `/cookie`.
 
 1. Lần đầu vào site → banner mỏng ở chân trang.
 2. Nội dung: một câu nói dùng cookie **kỹ thuật thiết yếu**, link chính sách, nút "Đã hiểu".
-3. Bấm → lưu localStorage, ❌ không hiện lại 12 tháng.
+3. Bấm → lưu localStorage, không hiện lại 12 tháng.
 
 ## 5. Alternative flows
 
 | Nhánh | Hành vi |
 |---|---|
-| ❌ Không bấm gì | Banner vẫn hiện, ❌ **không chặn** nội dung |
-| Bề mặt trẻ `/play/**` | ❌ **NEVER hiện banner** — trẻ không cho đồng ý được |
+| Cấm bấm gì | Banner vẫn hiện, **không chặn** nội dung |
+| Bề mặt trẻ `/play/**` | Cấm — **NEVER hiện banner** — trẻ không cho đồng ý được |
 | Xoá localStorage | Hiện lại |
-| Thêm cookie không thiết yếu trong tương lai | Cần cơ chế đồng ý thật, ❌ không dùng banner này |
+| Thêm cookie không thiết yếu trong tương lai | Cần cơ chế đồng ý thật, không dùng banner này |
 
 ## 6. Business rules
 
 | ID | Rule | Vì sao |
 |---|---|---|
-| `BR-CKB-01` | Chỉ dùng cookie **kỹ thuật thiết yếu** ở MVP | ❌ Không quảng cáo, ❌ không theo dõi bên thứ ba |
-| `BR-CKB-02` | Banner ❌ **NEVER chặn nội dung** — không modal toàn màn hình | Chặn nội dung để ép đồng ý là ép buộc |
-| `BR-CKB-03` | ❌ **NEVER hiện banner trên bề mặt trẻ** | Trẻ ❌ không cho đồng ý được |
-| `BR-CKB-04` | ❌ **NEVER cookie bên thứ ba** | `BR-CDC-08` |
+| `BR-CKB-01` | Chỉ dùng cookie **kỹ thuật thiết yếu** ở MVP | Cấm quảng cáo, không theo dõi bên thứ ba |
+| `BR-CKB-02` | Banner Cấm — **NEVER chặn nội dung** — không modal toàn màn hình | Chặn nội dung để ép đồng ý là ép buộc |
+| `BR-CKB-03` | Cấm — **NEVER hiện banner trên bề mặt trẻ** | Trẻ không cho đồng ý được |
+| `BR-CKB-04` | Cấm — **NEVER cookie bên thứ ba** | `BR-CDC-08` |
 | `BR-CKB-05` | Trang `/cookie` liệt kê **từng cookie**: tên, mục đích, thời hạn | Minh bạch cụ thể hơn tuyên bố chung |
-| `BR-CKB-06` | Thêm cookie không thiết yếu → **cần đồng ý thật**, ❌ không dùng banner thông báo | |
+| `BR-CKB-06` | Thêm cookie không thiết yếu → **cần đồng ý thật**, không dùng banner thông báo | |
 | `BR-CKB-07` | Banner không hiện lại **12 tháng** sau khi đóng | |
 
 ## 7. Data
@@ -65,12 +65,12 @@ Banner ở lần truy cập đầu · `/cookie`.
 
 | Cookie | Mục đích | Thời hạn | Thiết yếu |
 |---|---|---|:--:|
-| `tm_u_at` | Phiên đăng nhập | 15 phút | ✅ |
-| `tm_u_rt` | Làm mới phiên | 7 ngày | ✅ |
-| `tm_u_csrf` | Chống CSRF | 7 ngày | ✅ |
-| `tm_m_*` | Tương ứng cho quản trị | | ✅ |
-| `active_child_id` | Ghi nhớ bé đang chơi | 30 ngày | ✅ |
-| `tm_did` | Định danh thiết bị cho khách chơi thử | 1 năm | ✅ |
+| `tm_u_at` | Phiên đăng nhập | 15 phút | |
+| `tm_u_rt` | Làm mới phiên | 7 ngày | |
+| `tm_u_csrf` | Chống CSRF | 7 ngày | |
+| `tm_m_*` | Tương ứng cho quản trị | | |
+| `active_child_id` | Ghi nhớ bé đang chơi | 30 ngày | |
+| `tm_did` | Định danh thiết bị cho khách chơi thử | 1 năm | |
 
 **Sáu nhóm. Không có cookie nào khác.** Thêm cookie = cập nhật bảng này **trước**.
 
@@ -83,11 +83,11 @@ Banner ở lần truy cập đầu · `/cookie`.
 | `emoji_recent` | 12 emoji gần đây (admin) |
 | `pending_events` | Buffer event offline |
 
-Không phải cookie, nhưng liệt kê ở `/cookie` vì người dùng ❌ không phân biệt.
+Không phải cookie, nhưng liệt kê ở `/cookie` vì người dùng không phân biệt.
 
 ### 7.3 Nội dung banner
 
-> Chúng tôi chỉ dùng cookie cần thiết để đăng nhập và ghi nhớ bé đang chơi. Chúng tôi ❌ không
+> Chúng tôi chỉ dùng cookie cần thiết để đăng nhập và ghi nhớ bé đang chơi. Chúng tôi không
 > dùng cookie quảng cáo hay theo dõi. [Tìm hiểu thêm] [Đã hiểu]
 
 ## 8. API contract
@@ -145,4 +145,4 @@ Scenario: BR-CKB-01 — chỉ cookie thiết yếu
 
 | # | Câu hỏi | Chặn gì |
 |---|---|---|
-| 1 | Analytics tự host có cần thêm cookie không? Nếu có thì phải có đồng ý thật | `landing-page` Q1 |
+| 1 | Analytics tự host có cần thêm cookie không? Nếu có thì phải có đồng ý thật | [`landing-page.md`](landing-page.md) Q1 |

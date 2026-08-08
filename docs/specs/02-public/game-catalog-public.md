@@ -43,7 +43,7 @@ Guest. User đã đăng nhập thấy cùng trang nhưng có ngữ cảnh quyề
 | Nhánh | Hành vi |
 |---|---|
 | Lọc không ra kết quả | Gợi ý nới bộ lọc nào |
-| Guest bấm game khoá | Trang chi tiết + CTA, ❌ không phải lỗi 403 trần trụi |
+| Guest bấm game khoá | Trang chi tiết + CTA, không phải lỗi 403 trần trụi |
 | User đã đăng nhập | Thẻ hiện đúng trạng thái theo quyền của họ |
 | Nhiều bộ lọc | Phản ánh vào URL để chia sẻ và index được |
 
@@ -52,12 +52,12 @@ Guest. User đã đăng nhập thấy cùng trang nhưng có ngữ cảnh quyề
 | ID | Rule | Vì sao |
 |---|---|---|
 | `BR-GCP-01` | Hiện **metadata** mọi game, kể cả game khoá | Thấy thứ mình bỏ lỡ mới có lý do nâng cấp |
-| `BR-GCP-02` | ❌ **NEVER trả `content_pack`** cho game khoá | `BR-LAD-04` |
+| `BR-GCP-02` | Cấm — **NEVER trả `content_pack`** cho game khoá | `BR-LAD-04` |
 | `BR-GCP-03` | Bộ lọc phản ánh vào **URL** | Chia sẻ được và index được |
-| `BR-GCP-04` | Trang prerender/ISR, ❌ không phụ thuộc JS để hiện danh sách | SEO |
-| `BR-GCP-05` | Trạng thái khoá hiện **trung tính**, ❌ không hù doạ | Đây là bề mặt người lớn nhưng trẻ có thể ngồi cạnh |
+| `BR-GCP-04` | Trang prerender/ISR, không phụ thuộc JS để hiện danh sách | SEO |
+| `BR-GCP-05` | Trạng thái khoá hiện **trung tính**, không hù doạ | Đây là bề mặt người lớn nhưng trẻ có thể ngồi cạnh |
 | `BR-GCP-06` | Chỉ hiện game `published` | |
-| `BR-GCP-07` | Mỗi game có URL riêng có thể index | `game-detail-public` |
+| `BR-GCP-07` | Mỗi game có URL riêng có thể index | [`game-detail-public.md`](game-detail-public.md) |
 | `BR-GCP-08` | Trần phân trang **60** | |
 
 ## 7. Data
@@ -67,7 +67,7 @@ Guest. User đã đăng nhập thấy cùng trang nhưng có ngữ cảnh quyề
 Độ tuổi (3/4/5/6) · Năng lực (C1–C6) · Kỹ năng · Độ khó (1–5) · Cơ chế chơi ·
 Miễn phí / trả phí · Chủ đề.
 
-Bộ lọc rút gọn so với `content-search` — bề mặt công khai ❌ không cần lọc theo trạng thái
+Bộ lọc rút gọn so với [`content-search.md`](../01-platform/content-search.md) — bề mặt công khai không cần lọc theo trạng thái
 hay learning objective.
 
 ### 7.2 Thẻ game
@@ -91,9 +91,9 @@ hay learning objective.
 | Query | §7.1 + `limit` ≤60 + `cursor` |
 | 200 | `{ items: [...thẻ...], facets, next_cursor }` |
 
-`items[].locked` cho biết khoá; item khoá ❌ không có `content_pack`.
+`items[].locked` cho biết khoá; item khoá không có `content_pack`.
 
-`facets` trả số lượng mỗi giá trị bộ lọc — để ❌ không hiện bộ lọc dẫn tới 0 kết quả.
+`facets` trả số lượng mỗi giá trị bộ lọc — để không hiện bộ lọc dẫn tới 0 kết quả.
 
 ## 9. Acceptance criteria
 

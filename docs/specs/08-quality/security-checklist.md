@@ -21,7 +21,7 @@ Ba tài sản cần bảo vệ, theo thứ tự: **dữ liệu trẻ em** · **l
 phí**.
 
 Thứ tự này quyết định mức độ nghiêm ngặt. Rò nội dung trả phí là mất doanh thu; rò dữ liệu
-trẻ là ❌ không sửa được.
+trẻ là không sửa được.
 
 ## 2. Actors
 
@@ -42,21 +42,21 @@ Checklist trong PR template · `pnpm check` · rà soát trước release.
 | Nhánh | Hành vi |
 |---|---|
 | Phát hiện lỗ hổng sau release | Dừng, đánh giá phạm vi, vá, xoay secret liên quan |
-| Secret bị lộ | **Xoay ngay**, ❌ không chờ |
+| Secret bị lộ | **Xoay ngay**, không chờ |
 
 ## 6. Business rules
 
 | ID | Rule | Vì sao |
 |---|---|---|
 | `BR-SEC-01` | Vi phạm CRITICAL **chặn merge** | CRITICAL nghĩa là chiếm tài khoản hoặc rò dữ liệu trẻ; để lọt là sự cố không sửa ngược được |
-| `BR-SEC-02` | ❌ **NEVER đọc/ghi `.env`** trong code hay công cụ | `.env` chứa secret; đọc trong code là mời commit nhầm lên repo |
+| `BR-SEC-02` | Cấm — **NEVER đọc/ghi `.env`** trong code hay công cụ | `.env` chứa secret; đọc trong code là mời commit nhầm lên repo |
 | `BR-SEC-03` | Secret lộ → **xoay ngay** | Secret đã lộ là secret đã mất |
 | `BR-SEC-04` | Mọi route `/api/*` **Zod validate** body, query, params | Query param đi vào `ilike`/`gte` là đường vào injection |
-| `BR-SEC-05` | ❌ **NEVER mass assignment** — map từng field | Client gửi thừa field là ghi đè cột không được sửa (status, role) |
-| `BR-SEC-06` | Kiểm quyền và ownership ở **server**, ❌ không client | Client là của sổ do người dùng kiểm soát; quyền kiểm ở client là quyền không kiểm |
+| `BR-SEC-05` | Cấm — **NEVER mass assignment** — map từng field | Client gửi thừa field là ghi đè cột không được sửa (status, role) |
+| `BR-SEC-06` | Kiểm quyền và ownership ở **server**, không client | Client là của sổ do người dùng kiểm soát; quyền kiểm ở client là quyền không kiểm |
 | `BR-SEC-07` | Record của người khác → **404** | `BR-ACT-03` |
 | `BR-SEC-08` | Code chạm auth, payment, hoặc dữ liệu trẻ → **bắt buộc review** người thứ hai | Một người viết và merge là một người quyết định; hai mắt thấy lỗi mà một mắt bỏ qua |
-| `BR-SEC-09` | ❌ **NEVER dữ liệu trẻ ra khỏi hạ tầng** | `BR-CDC-06` |
+| `BR-SEC-09` | Cấm — **NEVER dữ liệu trẻ ra khỏi hạ tầng** | `BR-CDC-06` |
 
 ## 7. Data
 
@@ -65,19 +65,19 @@ dung là checklist an ninh áp cho mọi PR, chia theo mức độ chặn merge.
 
 ### 7.1 CRITICAL — chặn merge
 
-- [ ] ❌ Không secret hardcode (API key, mật khẩu, token, chuỗi kết nối)
-- [ ] ❌ Không đọc/ghi `.env`
+- [ ] Cấm secret hardcode (API key, mật khẩu, token, chuỗi kết nối)
+- [ ] Cấm đọc/ghi `.env`
 - [ ] Zod validate mọi body, query, params
-- [ ] ❌ Không mass assignment — map từng field
+- [ ] Cấm mass assignment — map từng field
 - [ ] Kiểm ownership ở server trước mọi đọc/ghi dữ liệu của người dùng
 - [ ] Record của người khác trả **404**
 - [ ] Gating kiểm ở server handler
-- [ ] Response bị chặn ❌ không chứa `content_pack`
-- [ ] ❌ Không PII của trẻ trong telemetry, log, hay prompt LLM
+- [ ] Response bị chặn không chứa `content_pack`
+- [ ] Cấm PII của trẻ trong telemetry, log, hay prompt LLM
 - [ ] Guard đúng namespace, kiểm audience
 - [ ] Thao tác thanh toán trong transaction, idempotent
 - [ ] Upload kiểm MIME thật, từ chối SVG
-- [ ] ❌ Không raw SQL nối chuỗi
+- [ ] Cấm raw SQL nối chuỗi
 
 ### 7.2 HIGH — sửa trước merge
 
@@ -85,18 +85,18 @@ dung là checklist an ninh áp cho mọi PR, chia theo mức độ chặn merge.
 - [ ] CSRF token trên route đổi trạng thái
 - [ ] Cookie đúng thuộc tính (`HttpOnly`, `SameSite`, `Secure`, path-scope refresh)
 - [ ] Trần phân trang ép ở server
-- [ ] Thông báo lỗi ❌ không tiết lộ tài khoản tồn tại
-- [ ] ❌ Không stack trace hay id nội bộ trong response
+- [ ] Thông báo lỗi không tiết lộ tài khoản tồn tại
+- [ ] Cấm stack trace hay id nội bộ trong response
 - [ ] File riêng tư qua signed URL ngắn hạn
 - [ ] `v-html` chỉ với hằng số trong repo
-- [ ] Audit ghi cho hành động trong `audit-log` §7.2
-- [ ] ❌ Không cache response chứa nội dung trả phí
+- [ ] Audit ghi cho hành động trong [`audit-log.md`](../01-platform/audit-log.md) §7.2
+- [ ] Cấm cache response chứa nội dung trả phí
 
 ### 7.3 MEDIUM
 
-- [ ] Dependency ❌ không có CVE mức cao
+- [ ] Dependency không có CVE mức cao
 - [ ] Header bảo mật (CSP, HSTS, X-Content-Type-Options)
-- [ ] CORS whitelist, ❌ không `*`
+- [ ] CORS whitelist, không `*`
 - [ ] URL outbound được validate (SSRF)
 - [ ] Đích redirect trong whitelist
 
@@ -108,11 +108,11 @@ dung là checklist an ninh áp cho mọi PR, chia theo mức độ chặn merge.
 | Cryptographic failures | argon2id · secret ngoài code · TLS |
 | Injection | Drizzle parameterize · Zod |
 | Insecure design | Spec-first, review bắt buộc vùng nhạy cảm |
-| Security misconfiguration | `health-check` · header · CORS |
+| Security misconfiguration | [`health-check.md`](../01-platform/health-check.md) · header · CORS |
 | Vulnerable components | Quét dependency trong cổng tự động |
-| Auth failures | `auth-tokens-sessions` · rate limit hai trục |
+| Auth failures | [`auth-tokens-sessions.md`](../01-platform/auth-tokens-sessions.md) · rate limit hai trục |
 | Data integrity failures | Bảng INSERT-only · trigger `published` |
-| Logging failures | `audit-log` · `monitoring-and-alerting` |
+| Logging failures | [`audit-log.md`](../01-platform/audit-log.md) · [`monitoring-and-alerting.md`](../01-platform/monitoring-and-alerting.md) |
 | SSRF | Validate URL outbound |
 
 ### 7.5 Trước release
@@ -121,9 +121,9 @@ dung là checklist an ninh áp cho mọi PR, chia theo mức độ chặn merge.
 - [ ] Alert P0 đã cấu hình và tới được người
 - [ ] Chính sách pháp lý đã rà soát
 - [ ] Secret production khác secret dev
-- [ ] PG và Valkey ❌ không bind `0.0.0.0`
-- [ ] Bề mặt admin ❌ không index
-- [ ] Quét toàn bộ: ❌ không PII trẻ trong log
+- [ ] PG và Valkey không bind `0.0.0.0`
+- [ ] Bề mặt admin không index
+- [ ] Quét toàn bộ: không PII trẻ trong log
 
 ## 8. API contract
 

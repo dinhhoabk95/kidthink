@@ -17,7 +17,7 @@ depends_on:
 
 ## 1. Objective
 
-Trả lời **"tôi trả bao nhiêu và được gì"** không mơ hồ, và ❌ không gây bất ngờ ở bước
+Trả lời **"tôi trả bao nhiêu và được gì"** không mơ hồ, và không gây bất ngờ ở bước
 thanh toán.
 
 Sản phẩm cho trẻ em bán bằng **niềm tin**. Giá mập mờ phá niềm tin nhanh hơn giá cao.
@@ -43,7 +43,7 @@ Guest · User.
 |---|---|
 | User đã có gói | Cột đó đánh dấu "gói hiện tại", CTA thành "gia hạn" |
 | User có premium | Cột standard hiện "đã bao gồm" |
-| Add-on chưa bán | ❌ Không xuất hiện |
+| Add-on chưa bán | Cấm xuất hiện |
 | Giá đổi | Trang tự cập nhật từ catalog sau deploy |
 
 ## 6. Business rules
@@ -51,11 +51,11 @@ Guest · User.
 | ID | Rule | Vì sao |
 |---|---|---|
 | `BR-PRC-01` | Giá và quyền lợi **sinh từ `PACKAGE_CATALOG` + `package_entitlements`** | `BR-PKG-06` |
-| `BR-PRC-02` | Cột **Miễn phí** hiện rõ, ❌ không giấu | Miễn phí là lối vào, ❌ không phải thứ phải che |
+| `BR-PRC-02` | Cột **Miễn phí** hiện rõ, không giấu | Miễn phí là lối vào, không phải thứ phải che |
 | `BR-PRC-03` | Nói rõ **thanh toán chuyển khoản + duyệt tay**, và thời gian dự kiến | Bất ngờ ở bước thanh toán là nơi mất khách |
 | `BR-PRC-04` | Nói rõ **dữ liệu không mất** khi hết hạn | `BR-SBV-02` |
-| `BR-PRC-05` | ❌ **NEVER đếm ngược giả hay "chỉ còn X suất"** | Sản phẩm cho trẻ em bán bằng niềm tin |
-| `BR-PRC-06` | Add-on chưa bán ❌ **không xuất hiện** | `BR-PKG-05` |
+| `BR-PRC-05` | Cấm — **NEVER đếm ngược giả hay "chỉ còn X suất"** | Sản phẩm cho trẻ em bán bằng niềm tin |
+| `BR-PRC-06` | Add-on chưa bán **không xuất hiện** | `BR-PKG-05` |
 | `BR-PRC-07` | Nêu rõ **không tự động gia hạn** | Không có cổng thanh toán tự động; kỳ vọng sai tạo khiếu nại |
 | `BR-PRC-08` | Structured data `Product` + `Offer` từ dữ liệu | |
 
@@ -68,13 +68,13 @@ Guest · User.
 | Giá | 0 | từ catalog | từ catalog |
 | Số hồ sơ bé | 1 | 3 | 5 |
 | Trò chơi | 6 game mẫu | thư viện Tiêu chuẩn | toàn bộ |
-| Lưu tiến độ | ❌ | ✅ | ✅ |
-| Báo cáo cơ bản | ❌ | ✅ | ✅ |
-| Báo cáo nâng cao | ❌ | ✅ | ✅ |
-| Chương trình đặc biệt | ❌ | ❌ | ✅ |
+| Lưu tiến độ | Cấm | | |
+| Báo cáo cơ bản | Cấm | | |
+| Báo cáo nâng cao | Cấm | | |
+| Chương trình đặc biệt | Cấm | Cấm | |
 | Phút chơi mỗi ngày | 30 | 60 | 90 |
 
-Mọi ô sinh từ dữ liệu, ❌ không viết tay.
+Mọi ô sinh từ dữ liệu, không viết tay.
 
 ### 7.2 Ba câu phải có dưới bảng
 
@@ -85,7 +85,7 @@ Mọi ô sinh từ dữ liệu, ❌ không viết tay.
 
 ## 8. API contract
 
-`GET /api/guest/packages` — xem `package-catalog` §8.
+`GET /api/guest/packages` — xem [`package-catalog.md`](../00-foundation/package-catalog.md) §8.
 Trang prerender, revalidate khi catalog đổi.
 
 ## 9. Acceptance criteria
@@ -141,5 +141,5 @@ Scenario: user đã có gói thì đánh dấu
 
 | # | Câu hỏi | Chặn gì |
 |---|---|---|
-| 1 | **Giá cuối** — chặn phát hành trang này | `package-catalog` Q1 |
+| 1 | **Giá cuối** — chặn phát hành trang này | [`package-catalog.md`](../00-foundation/package-catalog.md) Q1 |
 | 2 | Có gói dùng thử có thời hạn không, hay chỉ tier miễn phí vĩnh viễn? | Chiến lược conversion |

@@ -34,35 +34,35 @@ Dev UI · reviewer.
 ## 4. Main flow
 
 1. Token khai báo ở **một nơi** mỗi tầng: CSS `@theme` cho Vue, `designTokens.ts` cho canvas.
-2. Component dùng token, ❌ không dùng giá trị thô.
+2. Component dùng token, không dùng giá trị thô.
 3. cổng tự động ép bằng `pnpm lint:tokens` và grep hex trong `.vue`.
 
 ## 5. Alternative flows
 
 | Nhánh | Hành vi |
 |---|---|
-| Cần màu chưa có token | **Ask first** — thêm token, ❌ không dùng hex |
-| Canvas cần màu | Lấy từ `designTokens.ts`, ❌ không từ CSS |
-| Component thư viện ❌ không đủ | Mở rộng qua `app.config.ts`, ❌ không tạo kit thứ hai |
+| Cần màu chưa có token | **Ask first** — thêm token, không dùng hex |
+| Canvas cần màu | Lấy từ `designTokens.ts`, không từ CSS |
+| Component thư viện không đủ | Mở rộng qua `app.config.ts`, không tạo kit thứ hai |
 
 ## 6. Business rules
 
 | ID | Rule | Vì sao |
 |---|---|---|
-| `BR-DSC-01` | ❌ **NEVER hex literal trong `.vue`** — template, `<style>`, hay inline `:style` | Màu ngoài token phá tính nhất quán và có thể ❌ không đạt contrast |
-| `BR-DSC-02` | ❌ **NEVER hex literal trong `packages/game-engine`** ngoài `designTokens.ts` | Ép bằng `pnpm lint:tokens` |
-| `BR-DSC-03` | **Nuxt UI v4 là kit duy nhất.** ❌ NEVER tái sinh shadcn-vue (`components/ui/`, `cn()`, `cva`, `clsx`, `tailwind-merge`, `lucide-vue-next`) | Hai kit là hai hệ thống phải bảo trì |
-| `BR-DSC-04` | **Một icon library**: `i-lucide-*` qua `<UIcon>`. Icon dạng dữ liệu là **chuỗi** | Truyền component qua `<component :is>` làm ❌ không serialize được |
-| `BR-DSC-05` | ❌ **NEVER emoji làm affordance** — nav, button, HUD, trạng thái, empty state đều SVG | Render khác theo OS · ❌ không recolour · ❌ không mang được focus ring |
-| `BR-DSC-06` | ❌ **NEVER `dark:` trên bề mặt trẻ** | Light-only mọi breakpoint, bất kể tuỳ chọn hệ thống |
-| `BR-DSC-07` | ❌ **NEVER `danger`/đỏ trên bề mặt trẻ** — dùng `retry` hổ phách | Đỏ đọc thành trừng phạt ở tuổi 3–6 |
-| `BR-DSC-08` | App-level `@theme` **kế thừa**, ❌ **NEVER định nghĩa lại** token thương hiệu | Hai định nghĩa là hai giá trị |
+| `BR-DSC-01` | Cấm — **NEVER hex literal trong `.vue`** — template, `<style>`, hay inline `:style` | Màu ngoài token phá tính nhất quán và có thể không đạt contrast |
+| `BR-DSC-02` | Cấm — **NEVER hex literal trong `packages/game-engine`** ngoài `designTokens.ts` | Ép bằng `pnpm lint:tokens` |
+| `BR-DSC-03` | **Nuxt UI v4 là kit duy nhất.** Cấm — NEVER tái sinh shadcn-vue (`components/ui/`, `cn()`, `cva`, `clsx`, `tailwind-merge`, `lucide-vue-next`) | Hai kit là hai hệ thống phải bảo trì |
+| `BR-DSC-04` | **Một icon library**: `i-lucide-*` qua `<UIcon>`. Icon dạng dữ liệu là **chuỗi** | Truyền component qua `<component :is>` làm không serialize được |
+| `BR-DSC-05` | Cấm — **NEVER emoji làm affordance** — nav, button, HUD, trạng thái, empty state đều SVG | Render khác theo OS · không recolour · không mang được focus ring |
+| `BR-DSC-06` | Cấm — **NEVER `dark:` trên bề mặt trẻ** | Light-only mọi breakpoint, bất kể tuỳ chọn hệ thống |
+| `BR-DSC-07` | Cấm — **NEVER `danger`/đỏ trên bề mặt trẻ** — dùng `retry` hổ phách | Đỏ đọc thành trừng phạt ở tuổi 3–6 |
+| `BR-DSC-08` | App-level `@theme` **kế thừa**, Cấm — **NEVER định nghĩa lại** token thương hiệu | Hai định nghĩa là hai giá trị |
 | `BR-DSC-09` | SFC đúng thứ tự `<template>` → `<script setup>` → `<style scoped>` | |
-| `BR-DSC-10` | **Một CTA chính mỗi màn hình** | Hai thứ cùng màu cam thì ❌ không cái nào đọc thành hành động |
-| `BR-DSC-11` | Tablet-first: **`active:`** mang phản hồi nhấn, ❌ không phải `hover:` | Tablet ❌ không có hover |
-| `BR-DSC-12` | Chỉ animate `transform` và `opacity`. ❌ NEVER `width`/`height`/`top` | Gây reflow |
+| `BR-DSC-10` | **Một CTA chính mỗi màn hình** | Hai thứ cùng màu cam thì không cái nào đọc thành hành động |
+| `BR-DSC-11` | Tablet-first: **`active:`** mang phản hồi nhấn, không phải `hover:` | Tablet không có hover |
+| `BR-DSC-12` | Chỉ animate `transform` và `opacity`. Cấm — NEVER `width`/`height`/`top` | Gây reflow |
 | `BR-DSC-13` | File `.vue` ≤ **800 dòng** | |
-| `BR-DSC-14` | ❌ **NEVER `rounded-md`/`rounded-lg`** — chúng là mặc định shadcn, ngoài hệ thống | |
+| `BR-DSC-14` | Cấm — **NEVER `rounded-md`/`rounded-lg`** — chúng là mặc định shadcn, ngoài hệ thống | |
 
 ## 7. Data
 
@@ -70,10 +70,10 @@ Dev UI · reviewer.
 
 | Bề mặt | Ở đâu | Touch floor | Dark mode | Đỏ |
 |---|---|---|---|:--:|
-| **Kid** | `components/kid/`, `pages/play/`, gameboard | 64px (chính 76px, band 3–4 96px) | ❌ | ❌ |
-| **Account** | `pages/me/**` | 44px | ✅ | ✅ |
-| **Public** | trang công khai | 44px | ✅ | ✅ |
-| **Admin** | app admin (studio 40px) | 44px | ✅ | ✅ |
+| **Kid** | `components/kid/`, `pages/play/`, gameboard | 64px (chính 76px, band 3–4 96px) | Cấm | Cấm |
+| **Account** | `pages/me/**` | 44px | | |
+| **Public** | trang công khai | 44px | | |
+| **Admin** | app admin (studio 40px) | 44px | | |
 
 ### 7.2 Token
 
@@ -86,7 +86,7 @@ Dev UI · reviewer.
 | Canvas riêng | `retry` (hổ phách) — thay `danger` trên bề mặt trẻ |
 | Font | `--font-sans` · `--font-heading` · canvas dùng font chữ số riêng |
 
-`surface-400` **chỉ** là màu viền/placeholder — ❌ không đạt 4,5:1 làm body text.
+`surface-400` **chỉ** là màu viền/placeholder — không đạt 4,5:1 làm body text.
 
 ### 7.3 Radius
 
@@ -107,7 +107,7 @@ Dev UI · reviewer.
 | snap | 260ms `cubic-bezier(.34,1.56,.64,1)` | thả, đáp |
 | settle | 340ms ease-in-out | về nghỉ |
 
-`prefers-reduced-motion` xử lý **toàn cục** ở app stylesheet, ❌ không rải per-component.
+`prefers-reduced-motion` xử lý **toàn cục** ở app stylesheet, không rải per-component.
 
 ### 7.5 Kiểm trước merge
 
@@ -182,5 +182,5 @@ Scenario: BR-DSC-13 — file .vue đủ nhỏ
 
 | # | Câu hỏi | Chặn gì |
 |---|---|---|
-| 1 | Bộ avatar preset cho trẻ do ai vẽ và bao nhiêu cái? | `child-profile-crud` Q1 |
+| 1 | Bộ avatar preset cho trẻ do ai vẽ và bao nhiêu cái? | [`child-profile-crud.md`](../03-account/child-profile-crud.md) Q1 |
 | 2 | Font chữ số trên canvas có cần giấy phép riêng không? | P1 |

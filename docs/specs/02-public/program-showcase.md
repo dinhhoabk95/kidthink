@@ -17,7 +17,7 @@ depends_on:
 
 ## 1. Objective
 
-Cho phụ huynh thấy **lộ trình**, ❌ không chỉ một đống game rời rạc.
+Cho phụ huynh thấy **lộ trình**, không chỉ một đống game rời rạc.
 
 "Chương trình 42 tuần cho bé 4 tuổi" bán được; "120 trò chơi" thì không — lộ trình là thứ
 tạo cảm giác có kế hoạch.
@@ -52,11 +52,11 @@ Guest · User.
 |---|---|---|
 | `BR-PSH-01` | Hiện **cấu trúc đầy đủ** (bao nhiêu tuần, mỗi tuần mấy hoạt động), giấu **nội dung chi tiết** | Cấu trúc bán được; nội dung là thứ trả tiền |
 | `BR-PSH-02` | Hiện chi tiết **2 tuần đầu** kể cả với chương trình trả phí | Mẫu đủ để đánh giá chất lượng |
-| `BR-PSH-03` | ❌ **NEVER trả `content_pack`** của item trong chương trình | |
+| `BR-PSH-03` | Cấm — **NEVER trả `content_pack`** của item trong chương trình | |
 | `BR-PSH-04` | Structured data `Course` sinh từ dữ liệu | |
 | `BR-PSH-05` | Chương trình archived → **410** | `BR-GDP-03` |
-| `BR-PSH-06` | ❌ **NEVER hứa hẹn kết quả** — mô tả **hoạt động**, ❌ không mô tả **thành tựu** | `BR-LND-06` |
-| `BR-PSH-07` | Prerender, ❌ không phụ thuộc JS | |
+| `BR-PSH-06` | Cấm — **NEVER hứa hẹn kết quả** — mô tả **hoạt động**, không mô tả **thành tựu** | `BR-LND-06` |
+| `BR-PSH-07` | Prerender, không phụ thuộc JS | |
 
 ## 7. Data
 

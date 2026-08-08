@@ -42,7 +42,7 @@ Guest · User.
 
 | Nhánh | Hành vi |
 |---|---|
-| Game bị archive | **410 Gone** + gợi ý game thay thế, ❌ không 404 |
+| Game bị archive | **410 Gone** + gợi ý game thay thế, không 404 |
 | Game khoá | Vẫn hiện đủ mô tả; nút CTA đổi theo bậc thiếu |
 | User đã đăng nhập chưa chọn trẻ | Bấm chơi → màn hình chọn trẻ |
 | Trẻ đang hoạt động ngoài band tuổi | Cảnh báo nhẹ cho **người lớn**, vẫn cho chơi |
@@ -52,13 +52,13 @@ Guest · User.
 | ID | Rule | Vì sao |
 |---|---|---|
 | `BR-GDP-01` | Mỗi game có **URL riêng, index được** | 120 trang đích SEO |
-| `BR-GDP-02` | Mô tả đủ để hiểu game dạy gì **mà ❌ không tiết lộ đáp án** | |
-| `BR-GDP-03` | Game archived trả **410**, ❌ không 404 | 410 nói với công cụ tìm kiếm rằng nội dung đã bỏ hẳn |
+| `BR-GDP-02` | Mô tả đủ để hiểu game dạy gì **mà không tiết lộ đáp án** | |
+| `BR-GDP-03` | Game archived trả **410**, không 404 | 410 nói với công cụ tìm kiếm rằng nội dung đã bỏ hẳn |
 | `BR-GDP-04` | Structured data `LearningResource` sinh từ dữ liệu | `BR-SEO-06` |
-| `BR-GDP-05` | ❌ **NEVER trả `content_pack`** khi khoá | |
-| `BR-GDP-06` | CTA đổi theo **bậc còn thiếu**, ❌ không một CTA chung | "Đăng nhập" và "Nâng cấp Premium" là hai hành động khác nhau |
+| `BR-GDP-05` | Cấm — **NEVER trả `content_pack`** khi khoá | |
+| `BR-GDP-06` | CTA đổi theo **bậc còn thiếu**, không một CTA chung | "Đăng nhập" và "Nâng cấp Premium" là hai hành động khác nhau |
 | `BR-GDP-07` | Liên kết tới trang skill và competency | Nội bộ link giúp index |
-| `BR-GDP-08` | ❌ **NEVER hứa hẹn kết quả học tập** | `BR-LND-06` |
+| `BR-GDP-08` | Cấm — **NEVER hứa hẹn kết quả học tập** | `BR-LND-06` |
 
 ## 7. Data
 
@@ -82,7 +82,7 @@ Guest · User.
 
 ### 7.3 URL
 
-`/tro-choi/{code}` với `code` là mã bất biến. Đổi tiêu đề ❌ không đổi URL —
+`/tro-choi/{code}` với `code` là mã bất biến. Đổi tiêu đề không đổi URL —
 mã bất biến là lý do URL bền.
 
 ## 8. API contract

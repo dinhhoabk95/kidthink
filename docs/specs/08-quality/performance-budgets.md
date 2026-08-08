@@ -17,10 +17,10 @@ depends_on:
 
 ## 1. Objective
 
-Thiết bị mục tiêu là **tablet Android 2GB trên 4G**, ❌ không phải laptop dev trên Wi-Fi.
+Thiết bị mục tiêu là **tablet Android 2GB trên 4G**, không phải laptop dev trên Wi-Fi.
 
-Ngân sách là **ngưỡng chặn merge**, ❌ không phải mục tiêu mong muốn. Hiệu năng không có
-ngân sách sẽ trôi mỗi sprint một chút cho tới khi ❌ không sửa được.
+Ngân sách là **ngưỡng chặn merge**, không phải mục tiêu mong muốn. Hiệu năng không có
+ngân sách sẽ trôi mỗi sprint một chút cho tới khi không sửa được.
 
 ## 2. Actors
 
@@ -41,8 +41,8 @@ cổng tự động size check · Playwright throttle 4G · k6 · `fps_sample` t
 
 | Nhánh | Hành vi |
 |---|---|
-| Vượt ngân sách bundle | **cổng tự động fail**, ❌ không cảnh báo suông |
-| FPS tụt ở production | Giảm hạt và bóng, ❌ **NEVER giảm sàn touch** |
+| Vượt ngân sách bundle | **cổng tự động fail**, không cảnh báo suông |
+| FPS tụt ở production | Giảm hạt và bóng, Cấm — **NEVER giảm sàn touch** |
 | API chậm | Alert P1, điều tra query |
 
 ## 6. Business rules
@@ -50,12 +50,12 @@ cổng tự động size check · Playwright throttle 4G · k6 · `fps_sample` t
 | ID | Rule | Vì sao |
 |---|---|---|
 | `BR-PRF-01` | Vượt ngân sách **chặn merge** | Ngân sách không ép là ngân sách không tồn tại |
-| `BR-PRF-02` | Đo trên **thiết bị và mạng mục tiêu**, ❌ không trên máy dev | Máy dev nhanh gấp 5 lần thiết bị thật |
-| `BR-PRF-03` | Suy giảm khi tải nặng: bỏ **hạt và bóng**, ❌ **NEVER sàn touch hay kênh phản hồi** | Đẹp hy sinh được; dùng được thì không |
-| `BR-PRF-04` | ❌ **NEVER network call trong lúc chơi** | `BR-ENG-03` |
-| `BR-PRF-05` | ❌ **NEVER cấp phát object mỗi frame** | GC pause đọc thành giật |
+| `BR-PRF-02` | Đo trên **thiết bị và mạng mục tiêu**, không trên máy dev | Máy dev nhanh gấp 5 lần thiết bị thật |
+| `BR-PRF-03` | Suy giảm khi tải nặng: bỏ **hạt và bóng**, Cấm — **NEVER sàn touch hay kênh phản hồi** | Đẹp hy sinh được; dùng được thì không |
+| `BR-PRF-04` | Cấm — **NEVER network call trong lúc chơi** | `BR-ENG-03` |
+| `BR-PRF-05` | Cấm — **NEVER cấp phát object mỗi frame** | GC pause đọc thành giật |
 | `BR-PRF-06` | Trần phân trang ép ở server | `BR-DM-12` |
-| `BR-PRF-07` | Báo cáo đọc **rollup**, ❌ không quét bảng thô | `BR-TLM-01` |
+| `BR-PRF-07` | Báo cáo đọc **rollup**, không quét bảng thô | `BR-TLM-01` |
 | `BR-PRF-08` | Ảnh phục vụ dạng **WebP**, ≤960×960, có thumbnail | |
 
 ## 7. Data
@@ -92,7 +92,7 @@ Khi FPS tụt dưới 45 kéo dài, bỏ theo đúng thứ tự:
 3. Hoạt hình nền
 4. Nhịp thở của scaffolding
 
-❌ **NEVER giảm**: sàn touch · kênh phản hồi âm thanh · trình diễn ghost hand ·
+Cấm — **NEVER giảm**: sàn touch · kênh phản hồi âm thanh · trình diễn ghost hand ·
 kích thước chữ.
 
 ### 7.4 Ràng buộc hạ tầng
@@ -100,8 +100,8 @@ kích thước chữ.
 t3.small: 2 vCPU, 2 GB RAM, dùng chung cho PG, Valkey, web, worker.
 Mọi quyết định thiết kế phải hỏi: **cái này chạy được trên 2 GB không?**
 
-Đây là lý do: ❌ không search engine riêng · ❌ không read replica ở MVP ·
-Puppeteer là câu hỏi mở (`pdf-export` §11 Q1) · rollup thay vì query trực tiếp.
+Đây là lý do: không search engine riêng · không read replica ở MVP ·
+Puppeteer là câu hỏi mở ([`pdf-export.md`](../07-addon/pdf-export.md) §11 Q1) · rollup thay vì query trực tiếp.
 
 ## 8. API contract
 
