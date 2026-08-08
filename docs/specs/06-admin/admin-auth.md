@@ -59,12 +59,12 @@ Manager có quyền chạm tiền và nội dung mà trẻ sẽ chơi. Đó là 
 |---|---|---|
 | `BR-ADA-01` | MFA **bắt buộc** cho mọi Manager | Tài khoản chạm tiền và nội dung cho trẻ |
 | `BR-ADA-02` | Cookie Manager giới hạn domain `admin.{domain}` | Tách bề mặt |
-| `BR-ADA-03` | Cấm — **NEVER endpoint public tạo Manager** | |
+| `BR-ADA-03` | Cấm — **NEVER endpoint public tạo Manager** | Ngăn ngừa rò rỉ tài khoản quản trị và tự nâng cấp quyền |
 | `BR-ADA-04` | `requireRole()` kiểm ở **server route**, không chỉ ẩn menu | Ẩn menu không phải phân quyền |
-| `BR-ADA-05` | Mọi đăng nhập và thất bại ghi `audit_logs` | |
+| `BR-ADA-05` | Mọi đăng nhập và thất bại ghi `audit_logs` | Đảm bảo khả năng truy vết thao tác quản trị và phát hiện hành vi bất thường |
 | `BR-ADA-06` | Manager **không tự đổi được `role` của mình** | Leo thang đặc quyền |
-| `BR-ADA-07` | Phiên Manager TTL **ngắn hơn** User: access 15 phút, refresh **24 giờ** | |
-| `BR-ADA-08` | Reset MFA của Manager khác **phải** do `super_admin` và ghi audit | |
+| `BR-ADA-07` | Phiên Manager TTL **ngắn hơn** User: access 15 phút, refresh **24 giờ** | Giảm cửa sổ rủi ro khi thiết bị quản trị bị bỏ quên |
+| `BR-ADA-08` | Reset MFA của Manager khác **phải** do `super_admin` và ghi audit | Ngăn chặn bypass MFA trái phép giữa các tài khoản quản trị |
 
 ## 7. Data
 
@@ -162,7 +162,7 @@ Scenario: BR-ADA-07 — phiên manager ngắn hơn
 
 ## 11. Open questions
 
-| # | Câu hỏi | Chặn gì |
-|---|---|---|
-| 1 | Có giới hạn IP cho bề mặt admin không? An toàn hơn nhưng cản vận hành di động | P2 |
-| 2 | Manager đầu tiên tạo bằng seed — quy trình xoay mật khẩu ban đầu thế nào? | Go-live |
+| # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
+|---|---|---|---|---|
+| 1 | Có giới hạn IP cho bề mặt admin không? An toàn hơn nhưng cản vận hành di động | Cấu hình Admin P2 | P2 | Infra |
+| 2 | Manager đầu tiên tạo bằng seed — quy trình xoay mật khẩu ban đầu thế nào? | Quy trình Go-live | P1 | người quyết |
