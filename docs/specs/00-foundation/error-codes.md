@@ -54,10 +54,10 @@ Mọi handler API. Mọi spec khai báo mã lỗi phải đăng ký ở đây.
 |---|---|---|
 | `BR-ERR-01` | Mã lỗi là `SCREAMING_SNAKE`, đăng ký ở §7 trước khi dùng | Mã không đăng ký sẽ trùng nghĩa với mã khác |
 | `BR-ERR-02` | **NEVER thông báo lỗi tiết lộ tài khoản có tồn tại hay không** | Enumeration email |
-| `BR-ERR-03` | **NEVER stack trace, tên bảng, tên constraint, hay id nội bộ** trong body | |
+| `BR-ERR-03` | **NEVER stack trace, tên bảng, tên constraint, hay id nội bộ** trong body | Rò rỉ chi tiết hạ tầng tạo bề mặt tấn công cho kẻ xấu |
 | `BR-ERR-04` | Thông báo hướng người dùng là **tiếng Việt thân thiện**, nói được **làm gì tiếp** | "Đã xảy ra lỗi" không giúp ai |
 | `BR-ERR-05` | Record của người khác → `NOT_FOUND` 404, không `FORBIDDEN` 403 | 403 xác nhận record tồn tại |
-| `BR-ERR-06` | Client bắt theo **mã**, không theo chuỗi | |
+| `BR-ERR-06` | Client bắt theo **mã**, không theo chuỗi | Chuỗi tiếng Việt có thể đổi cho UX; mã lỗi bất biến để logic client không bị vỡ |
 | `BR-ERR-07` | Mã 402 dành riêng cho **hết quota**; 403 cho **thiếu quyền** | Hai thứ này dẫn tới hai CTA khác nhau: mua thêm vs nâng cấp |
 | `BR-ERR-08` | **NEVER thông báo lỗi tiết lộ tài khoản đăng nhập bằng cách nào** — mật khẩu hay SNS nào | Mở rộng của quy tắc `BR-ERR-02` (không tiết lộ tài khoản có tồn tại hay không). Biết "email này dùng Google" cho kẻ tấn công chọn hướng, và người dùng không đổi được điều đó. Ngoại lệ duy nhất: `SOCIAL_EMAIL_CONFLICT`, nơi caller **đã chứng minh** kiểm soát hộp thư ấy |
 
