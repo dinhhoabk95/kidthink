@@ -182,7 +182,7 @@ Scenario: BR-LGN-10 — danh sách thiết bị hiện cách đăng nhập
 
 ## 11. Open questions
 
-| # | Câu hỏi | Chặn gì |
-|---|---|---|
-| 1 | Có cần thông báo email khi đăng nhập từ thiết bị mới không? | P2 |
-| 2 | Vị trí gần đúng từ IP cần dịch vụ geo — có đáng thêm phụ thuộc không? | P2 |
+| # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
+|---|---|---|---|---|
+| 1 | Có cần thông báo email khi đăng nhập từ thiết bị mới không? | Bảo mật P2 | P2 | Backend |
+| 2 | Vị trí gần đúng từ IP cần dịch vụ geo — có đáng thêm phụ thuộc không? | Cấu hình IP P2 | P2 | Infra |
