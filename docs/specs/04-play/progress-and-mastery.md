@@ -2,10 +2,10 @@
 spec: PROGRESS-AND-MASTERY
 title: Ghi nhận tiến độ và thành thạo
 area: play
-status: draft
+status: approved
 mvp: true
 phase: P3
-reviewed: 2026-08-04
+reviewed: 2026-08-08
 owns:
   - Điều kiện ghi mastery
   - Bản đồ tiến độ hiển thị cho trẻ
@@ -66,10 +66,10 @@ Biến kết quả phiên thành trạng thái thành thạo theo skill, và bi�
 | `BR-PRG-02` | Trẻ Cấm — **NEVER thấy `p_learn`, phần trăm, hay xếp hạng** | Áp lực đo lường ở tuổi 3–6 phản tác dụng |
 | `BR-PRG-03` | Bản đồ trẻ Cấm — **NEVER hiện tiến độ đi xuống** | Trẻ không cần biết mình "tệ đi" |
 | `BR-PRG-04` | Huy hiệu Cấm — **NEVER hết hạn**, không mất đi | Phần thưởng lấy lại được là hình phạt |
-| `BR-PRG-05` | Cấm — **NEVER so sánh giữa trẻ**, kể cả trong cùng tài khoản | |
-| `BR-PRG-06` | Mastery ghi ở **server** từ event; không nhận từ client | |
+| `BR-PRG-05` | Cấm — **NEVER so sánh giữa trẻ**, kể cả trong cùng tài khoản | Tránh áp lực ganh đua và bảo vệ tâm lý phát triển tự nhiên của từng trẻ mầm non |
+| `BR-PRG-06` | Mastery ghi ở **server** từ event; không nhận từ client | Ngăn ngừa hành vi can thiệp kết quả từ client để giữ tính chính xác của dữ liệu học tập |
 | `BR-PRG-07` | Cấm — **NEVER streak ép buộc** — không "chuỗi ngày", không mất chuỗi khi nghỉ | `BR-CDC-09` cấm cơ chế gây nghiện |
-| `BR-PRG-08` | Nhãn thành thạo theo bảng [`adaptive-engine.md`](../01-platform/adaptive-engine.md) §7.4, không nhãn tự chế | |
+| `BR-PRG-08` | Nhãn thành thạo theo bảng [`adaptive-engine.md`](../01-platform/adaptive-engine.md) §7.4, không nhãn tự chế | Thống nhất thuật ngữ chuẩn hóa toàn hệ thống và tránh các từ mang tính chẩn đoán tiêu cực |
 
 ## 7. Data
 
@@ -174,7 +174,7 @@ Scenario: BR-PRG-06 — mastery không nhận từ client
 
 ## 11. Open questions
 
-| # | Câu hỏi | Chặn gì |
-|---|---|---|
-| 1 | Skill C5 cần người lớn chấm — luồng UI thế nào và ai nhắc? | P3 |
-| 2 | Bản đồ 6 vùng có quá nhiều cho trẻ 3 tuổi không? Cân nhắc chỉ hiện vùng đang học | UX P3 |
+| # | Câu hỏi | Chặn phase | Đề xuất chốt | Chủ |
+|---|---|---|---|---|
+| 1 | Skill C5 cần người lớn chấm — luồng UI thế nào và ai nhắc? | P3 | hoãn — trỏ sang quyết định `D-BA` ở [`adaptive-engine.md`](../01-platform/adaptive-engine.md); MVP chưa hỗ trợ skill chấm tay C5 | Studio UI |
+| 2 | Bản đồ 6 vùng có quá nhiều cho trẻ 3 tuổi không? Cân nhắc chỉ hiện vùng đang học | P3 | Chỉ hiển thị 1-2 vùng đang học và các chặng gần nhất trên giao diện mầm non; thu gọn 6 vùng vào trang báo cáo phụ huynh | Studio UI |

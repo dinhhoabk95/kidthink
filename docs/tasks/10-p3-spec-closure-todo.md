@@ -66,12 +66,12 @@ Bước 0 → Đợt 1 (2) → Đợt 2 (4) → Cổng dừng A → Đợt 3 (2)
 
 ### Bước 3 — [`progress-and-mastery.md`](../specs/04-play/progress-and-mastery.md)
 
-- [ ] Đọc hết 181 dòng
-- [ ] Điền "vì sao" cho `BR-PRG-05`, `BR-PRG-06`, `BR-PRG-08` (kế hoạch mục 5)
-- [ ] Q1 (chấm tay C5) — **trỏ** quyết định đã ghi ở Bước 1, không chốt lại
-- [ ] Q2 (bản đồ 6 vùng có quá nhiều cho trẻ 3 tuổi) — `Chủ: Studio UI`, `Chặn phase: P3`
-- [ ] Bảng mục 11 sang 5 cột; `status: approved`
-- [ ] Commit `feat(specs): T10 bước 3 — approve progress-and-mastery`
+- [x] Đọc hết 181 dòng
+- [x] Điền "vì sao" cho `BR-PRG-05`, `BR-PRG-06`, `BR-PRG-08`
+- [x] Q1 (chấm tay C5) — **trỏ** quyết định đã ghi ở Bước 1, không chốt lại
+- [x] Q2 (bản đồ 6 vùng có quá nhiều cho trẻ 3 tuổi) — `Chủ: Studio UI`, `Chặn phase: P3`
+- [x] Bảng mục 11 sang 5 cột; `status: approved`
+- [x] Commit `feat(specs): T10 bước 3 — approve progress-and-mastery`
 
 ### Bước 4 — [`advanced-report.md`](../specs/03-account/advanced-report.md)
 
