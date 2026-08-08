@@ -176,7 +176,7 @@ Scenario: BR-SEC-01 — CRITICAL chặn merge
 
 ## 11. Open questions
 
-| # | Câu hỏi | Chặn gì |
-|---|---|---|
-| 1 | Có thuê kiểm thử xâm nhập trước go-live không? | Go-live |
-| 2 | Khi chỉ có một dev thì "review người thứ hai" thực hiện thế nào? | Quy trình |
+| # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
+|---|---|---|---|---|
+| 1 | Có thuê kiểm thử xâm nhập trước go-live không? | Go-live P1 | P1 | người quyết |
+| 2 | Khi chỉ có một dev thì "review người thứ hai" thực hiện thế nào? | Quy trình P1 | P1 | người quyết |
