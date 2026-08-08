@@ -54,13 +54,11 @@ Bước 0 → Đợt 1 (3) → Cổng dừng A → [chờ Task #10 xong] → Đ�
 
 ### Bước 3 — [`pwa-install.md`](../specs/01-platform/pwa-install.md)
 
-- [ ] Đọc hết 124 dòng
-- [ ] Điền "vì sao" cho `BR-PWA-05`
-- [ ] Q1 (push notification qua PWA) — đọc
-      [`child-data-compliance.md`](../specs/00-foundation/child-data-compliance.md): nếu ràng buộc
-      "không gửi gì tới trẻ" đã cấm thì **đóng** hàng này kèm `D-*`, đừng hoãn
-- [ ] Bảng mục 11 sang 5 cột; `status: approved`
-- [ ] Commit `feat(specs): T11 bước 3 — approve pwa-install`
+- [x] Đọc hết 124 dòng
+- [x] Điền "vì sao" cho `BR-PWA-05`
+- [x] Q1 (push notification qua PWA) — đóng hàng này kèm `D-BM` theo [`child-data-compliance.md`](../specs/00-foundation/child-data-compliance.md)
+- [x] Bảng mục 11 sang 5 cột; `status: approved`
+- [x] Commit `feat(specs): T11 bước 3 — approve pwa-install`
 
 ---
 

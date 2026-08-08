@@ -2,10 +2,10 @@
 spec: PWA-INSTALL
 title: Cài đặt PWA
 area: platform
-status: draft
+status: approved
 mvp: false
 phase: P5
-reviewed: 2026-08-04
+reviewed: 2026-08-08
 owns:
   - Manifest và tiêu chí mời cài đặt
 depends_on:
@@ -56,7 +56,7 @@ service worker không phải làm lại khi tới lúc.
 | `BR-PWA-02` | Cấm — **NEVER hiện lời mời trong lúc trẻ đang chơi** | Ngắt phiên |
 | `BR-PWA-03` | Chỉ mời sau khi User đã dùng thật (≥3 phiên) | Mời quá sớm bị từ chối và mất cơ hội |
 | `BR-PWA-04` | `display: standalone`, `orientation: landscape` cho bề mặt trẻ | Tablet ngang là tư thế chơi |
-| `BR-PWA-05` | Từ chối 2 lần thì không hỏi nữa | |
+| `BR-PWA-05` | Từ chối 2 lần thì không hỏi nữa | Tôn trọng trải nghiệm người dùng và tránh gây phiền toái khi họ không có nhu cầu cài đặt |
 
 ## 7. Data
 
@@ -118,6 +118,6 @@ Scenario: start_url mở vào bề mặt người lớn
 
 ## 11. Open questions
 
-| # | Câu hỏi | Chặn gì |
-|---|---|---|
-| 1 | Có cần push notification qua PWA không? Đụng ràng buộc không gửi gì tới trẻ | P5 |
+| # | Câu hỏi | Chặn phase | Đề xuất chốt | Chủ |
+|---|---|---|---|---|
+| 1 | Có cần push notification qua PWA không? Đụng ràng buộc không gửi gì tới trẻ | P5 | Không dùng push notification PWA cho trẻ em; chỉ gửi thông báo tới phụ huynh qua email/SMS theo `BR-CHI-04` ở [`child-data-compliance.md`](../00-foundation/child-data-compliance.md) (`D-BM`) | PWA / Compliance |
