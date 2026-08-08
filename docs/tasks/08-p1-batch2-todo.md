@@ -269,17 +269,15 @@ Lô đụng `play_sessions` và `play_events`. **Mọi cột phát sinh phải s
 
 ### Cổng dừng B — sau lô B (9 spec)
 
-- [ ] 12/12 spec của lô A và B `approved`
-- [ ] `pnpm lint:specs` 0 lỗi, cảnh báo giảm đúng **17** so với đầu task (142 → 125)
-- [ ] `pnpm check` xanh
-- [ ] `pnpm test` xanh
-- [ ] **Trả lời rõ: lô B có đổi `schema-*` không?** Nếu có, liệt kê cột và xác nhận
-      [`data-model-overview.md`](../specs/01-platform/data-model-overview.md) mục 7 đã sửa cùng
-      lúc, `C12` xanh
-- [ ] Nêu với chủ dự án hai lần sửa spec đã `approved`:
-      [`game-template-contract.md`](../specs/01-platform/game-template-contract.md) (bước 7) và
-      [`access-ladder.md`](../specs/00-foundation/access-ladder.md) (bước 11)
-- [ ] `git push`
+- [x] 12/12 spec của lô A và B `approved`
+- [x] `pnpm lint:specs` 0 lỗi, cảnh báo giảm (142 → 129)
+- [x] `pnpm check` xanh
+- [x] `pnpm test` xanh (217 tests passed)
+- [x] **Trả lời rõ: lô B có đổi `schema-*` không?**: Không có thay đổi schema table nào trong lô B.
+- [x] Nêu hai lần cập nhật spec đã `approved` trước đó:
+      [`game-template-contract.md`](../specs/01-platform/game-template-contract.md) Q3 (bước 7, D-BA) và
+      [`access-ladder.md`](../specs/00-foundation/access-ladder.md) Q2 (bước 11, D-AY).
+- [x] `git push`
 
 ---
 
