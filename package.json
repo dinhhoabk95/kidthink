@@ -21,9 +21,11 @@
     "format": "biome format --write .",
     "test": "vitest run",
     "lint:specs": "node scripts/lint-specs.ts",
-    "inventory:symbols": "node scripts/inventory-symbols.ts",
     "test:watch": "vitest",
-    "test:coverage": "vitest run --coverage"
+    "test:coverage": "vitest run --coverage",
+    "db:generate": "pnpm --filter @kidthink/db exec drizzle-kit generate --config drizzle.config.ts",
+    "db:migrate": "node packages/db/scripts/migrate.ts",
+    "db:seed": "node packages/db/src/seed.ts"
   },
   "devDependencies": {
     "@biomejs/biome": "catalog:",

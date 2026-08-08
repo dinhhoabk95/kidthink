@@ -35,30 +35,30 @@ Bước 1 -> Bước 2 -> Bước 3 -> Bước 4 -> Cổng dừng A
 
 ## Bước 1 — Hạ tầng `packages/db`: driver, role, script
 
-- [ ] Thêm `drizzle-orm` `^0.45`, `drizzle-kit` `^0.31` vào `catalog:` của
+- [x] Thêm `drizzle-orm` `^0.45`, `drizzle-kit` `^0.31` vào `catalog:` của
       `pnpm-workspace.yaml` (lockstep — không lệch minor giữa hai gói, theo
       [`repo-bootstrap.md`](../specs/00-foundation/repo-bootstrap.md) §7.1)
-- [ ] `packages/db/package.json` — thêm dependency `drizzle-orm`, `postgres` (`catalog:`);
+- [x] `packages/db/package.json` — thêm dependency `drizzle-orm`, `postgres` (`catalog:`);
       devDependency `drizzle-kit` (`catalog:`)
-- [ ] Tạo `packages/db/drizzle.config.ts` — `schema: "./src/schema/*.ts"`,
+- [x] Tạo `packages/db/drizzle.config.ts` — `schema: "./src/schema/*.ts"`,
       `out: "./src/migrations"`, `dialect: "postgresql"`
-- [ ] `packages/db/src/index.ts` — hai factory kết nối (D1 trong plan):
+- [x] `packages/db/src/index.ts` — hai factory kết nối (D1 trong plan):
       - `getOwnerDb()` — dùng `DATABASE_URL` (role `postgres`, cho script migration)
       - `getAppDb()` — dùng `DATABASE_URL_APP` (role `kidthink_app`, cho `apps/*` runtime)
       - Cả hai lazy-init, không kết nối lúc import module (khớp
         [`monorepo-package-architecture.md`](../specs/00-foundation/monorepo-package-architecture.md) §8 "side effect lúc import")
-- [ ] `.env` mẫu (`.env.example` ở gốc) — thêm `DATABASE_URL_APP`
-- [ ] Root `package.json` — thêm script `db:generate` (`drizzle-kit generate`),
+- [x] `.env` mẫu (`.env.example` ở gốc) — thêm `DATABASE_URL_APP`
+- [x] Root `package.json` — thêm script `db:generate` (`drizzle-kit generate`),
       `db:migrate` (script tự viết chạy migration bằng owner connection),
       `db:seed` (chạy `packages/db/src/seed.ts`)
-- [ ] Migration custom đầu tiên (`pnpm db:generate --custom` hoặc tương đương của
+- [x] Migration custom đầu tiên (`pnpm db:generate --custom` hoặc tương đương của
       `drizzle-kit`) — tạo role `kidthink_app` `NOLOGIN` → sau đó `ALTER ROLE ... LOGIN
       PASSWORD ...` (đọc từ biến môi trường lúc chạy migration, không hardcode), `GRANT
       CONNECT` lên DB `kidthink`
-- [ ] `docker compose up -d` (đã chạy sẵn nếu chưa dừng từ Task #5) → `pnpm db:migrate` exit 0
+- [x] `docker compose up -d` (đã chạy sẵn nếu chưa dừng từ Task #5) → `pnpm db:migrate` exit 0
       trên DB rỗng
-- [ ] `pnpm check` xanh (chưa có bảng nghiệp vụ nào, chỉ hạ tầng)
-- [ ] Commit `feat(db): P0 bước 8.1 — driver, role kidthink_app, script db:*`
+- [x] `pnpm check` xanh (chưa có bảng nghiệp vụ nào, chỉ hạ tầng)
+- [x] Commit `feat(db): P0 bước 8.1 — driver, role kidthink_app, script db:*`
 
 ## Bước 2 — `schema/identity.ts`
 

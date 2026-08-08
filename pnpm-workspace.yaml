@@ -22,6 +22,8 @@ catalog:
   # bước 5: "verify kết nối được từ Node"). Chuyển vào packages/db và
   # packages/cache khi hai package đó được dựng thật.
   postgres: ^3.4.9 # driver postgres.js, không phải node-postgres
+  drizzle-orm: ^0.45.0
+  drizzle-kit: ^0.31.0
   ioredis: ^5.11.1 # ❌ NEVER ^6 — §7.1 pin 5.11 để khớp version BullMQ tự test
 
 onlyBuiltDependencies:
@@ -33,4 +35,5 @@ onlyBuiltDependencies:
 # Khai tường minh ở đây vì không khai thì `pnpm install` trên clone MỚI exit 1
 # (ERR_PNPM_IGNORED_BUILDS) — vỡ onboarding. Xem repo-bootstrap §7.1.
 allowBuilds:
+  esbuild: true
   lefthook: false
