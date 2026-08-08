@@ -29,8 +29,8 @@ Player trả lời một câu hỏi mỗi lần mở: **hôm nay học gì tiế
 | Actor | Làm gì |
 |---|---|
 | Người lớn | Ghi danh trẻ vào một curriculum, xem tiến độ |
-| Trẻ | Chơi bước kế tiếp, ❌ không chọn tuần |
-| Adaptive | Chọn **biến thể trong bước**, ❌ không nhảy bước |
+| Trẻ | Chơi bước kế tiếp, không chọn tuần |
+| Adaptive | Chọn **biến thể trong bước**, không nhảy bước |
 
 ## 3. Entry points
 
@@ -55,7 +55,7 @@ Player trả lời một câu hỏi mỗi lần mở: **hôm nay học gì tiế
 
 | Nhánh | Hành vi |
 |---|---|
-| Item tuỳ chọn chưa xong | ❌ Không chặn mở tuần mới |
+| Item tuỳ chọn chưa xong | Cấm chặn mở tuần mới |
 | Item bị khoá bậc | Bỏ qua trong tính "hoàn thành tuần", nhưng hiện trong danh sách kèm khoá |
 | Curriculum publish version mới | Trẻ đang học **giữ version đã ghi danh** — `BR-CUR-04` |
 | Trẻ ghi danh 2 curriculum | Cho phép; sảnh hiện cái đang hoạt động gần nhất |
@@ -66,14 +66,14 @@ Player trả lời một câu hỏi mỗi lần mở: **hôm nay học gì tiế
 
 | ID | Rule | Vì sao |
 |---|---|---|
-| `BR-CUR-01` | Trẻ ❌ **không chọn tuần**. Thứ tự do người biên soạn quyết định | Sư phạm là thứ tự có chủ đích |
-| `BR-CUR-02` | Adaptive điều chỉnh **trong** bước, ❌ **NEVER nhảy bước** | `BR-ADP-05` |
-| `BR-CUR-03` | Tuần mở khi xong mọi item **bắt buộc**; item tuỳ chọn ❌ không chặn | |
+| `BR-CUR-01` | Trẻ **không chọn tuần**. Thứ tự do người biên soạn quyết định | Sư phạm là thứ tự có chủ đích |
+| `BR-CUR-02` | Adaptive điều chỉnh **trong** bước, Cấm — **NEVER nhảy bước** | `BR-ADP-05` |
+| `BR-CUR-03` | Tuần mở khi xong mọi item **bắt buộc**; item tuỳ chọn không chặn | |
 | `BR-CUR-04` | Ghi danh **ghim `curriculum_version`** | Đổi chương trình giữa chừng làm tiến độ vô nghĩa |
-| `BR-CUR-05` | Item bị khoá bậc ❌ **không chặn** tiến độ | Người trả gói thấp vẫn phải đi hết được lộ trình mở của họ |
-| `BR-CUR-06` | Lời mời nâng cấp hiện **trên bề mặt người lớn**, ❌ không trên bề mặt trẻ | `BR-PEN-04` |
-| `BR-CUR-07` | Tiến độ tính theo **item bắt buộc mở được**, ❌ không theo tổng item | Mẫu số gồm nội dung không mở được làm tiến độ vĩnh viễn dưới 100% |
-| `BR-CUR-08` | Curriculum ❌ **không có hạn thời gian** — "tuần 3" là thứ tự, không phải lịch | Trẻ nghỉ 2 tuần không nên bị coi là chậm |
+| `BR-CUR-05` | Item bị khoá bậc **không chặn** tiến độ | Người trả gói thấp vẫn phải đi hết được lộ trình mở của họ |
+| `BR-CUR-06` | Lời mời nâng cấp hiện **trên bề mặt người lớn**, không trên bề mặt trẻ | `BR-PEN-04` |
+| `BR-CUR-07` | Tiến độ tính theo **item bắt buộc mở được**, không theo tổng item | Mẫu số gồm nội dung không mở được làm tiến độ vĩnh viễn dưới 100% |
+| `BR-CUR-08` | Curriculum **không có hạn thời gian** — "tuần 3" là thứ tự, không phải lịch | Trẻ nghỉ 2 tuần không nên bị coi là chậm |
 
 ## 7. Data
 
@@ -179,5 +179,5 @@ Scenario: BR-CUR-08 — nghỉ lâu không bị phạt
 
 | # | Câu hỏi | Chặn gì |
 |---|---|---|
-| 1 | Curriculum item trỏ tới bản `published` mới nhất hay ghim version của item? | `content-versioning` Q2 |
+| 1 | Curriculum item trỏ tới bản `published` mới nhất hay ghim version của item? | [`content-versioning.md`](../00-foundation/content-versioning.md) Q2 |
 | 2 | Trẻ ghi danh nhiều curriculum cùng lúc có gây rối không? Cân nhắc giới hạn 1 | P3 UX |

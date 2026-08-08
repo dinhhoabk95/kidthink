@@ -18,11 +18,11 @@ depends_on:
 
 ## 1. Objective
 
-`game-template-contract` nói **hình dạng kỹ thuật**; `schema-content-taxonomy` nói **cột
+[`game-template-contract.md`](../01-platform/game-template-contract.md) nói **hình dạng kỹ thuật**; [`schema-content-taxonomy.md`](../01-platform/schema-content-taxonomy.md) nói **cột
 DB**. File này nói thứ còn thiếu: **cái gì làm một màn chơi tốt** — và cái gì làm nó sai
 về mặt sư phạm dù đúng schema.
 
-Đây là tài liệu người soạn nội dung đọc, ❌ không phải dev.
+Đây là tài liệu người soạn nội dung đọc, không phải dev.
 
 ## 2. Actors
 
@@ -30,7 +30,7 @@ Người soạn nội dung · người review · AI agent IDE lúc soạn seeder
 
 ## 3. Entry points
 
-`06-admin/game-level-studio.md` · checklist duyệt `content-review-queue` §7.2.
+`06-admin/game-level-studio.md` · checklist duyệt [`content-review-queue.md`](../06-admin/content-review-queue.md) §7.2.
 
 ## 4. Main flow
 
@@ -48,11 +48,11 @@ Không có.
 | `BR-GLM-02` | Số item theo band tuổi §7.1 | Trí nhớ làm việc của trẻ 3 tuổi giữ được 2–3 thứ |
 | `BR-GLM-03` | Vật gây nhiễu phải **khác rõ ràng** với đáp án đúng | Nhiễu quá giống biến bài học thành bài kiểm tra thị giác |
 | `BR-GLM-04` | Chỉ dẫn ≤ **12 từ**, đọc thành tiếng dưới 5 giây | Trẻ chưa đọc; câu dài mất trước khi hết |
-| `BR-GLM-05` | ❌ **NEVER phủ định trong chỉ dẫn** — không "đừng chọn quả xanh" | Trẻ 3–6 xử lý phủ định kém; chúng nghe thấy "chọn quả xanh" |
+| `BR-GLM-05` | Cấm — **NEVER phủ định trong chỉ dẫn** — không "đừng chọn quả xanh" | Trẻ 3–6 xử lý phủ định kém; chúng nghe thấy "chọn quả xanh" |
 | `BR-GLM-06` | Emoji phải **rõ nghĩa ở 96px** | Quả táo và quả cà chua giống nhau ở cỡ nhỏ |
-| `BR-GLM-07` | Level cùng skill phải **khác nhau về nội dung**, ❌ không chỉ đổi số | Đổi 3 quả thành 4 quả ❌ không phải bài học mới |
+| `BR-GLM-07` | Level cùng skill phải **khác nhau về nội dung**, không chỉ đổi số | Đổi 3 quả thành 4 quả không phải bài học mới |
 | `BR-GLM-08` | Độ khó tăng theo **một chiều** mỗi lần | Tăng cả số item lẫn số nhiễu cùng lúc làm không biết cái nào gây khó |
-| `BR-GLM-09` | ❌ **NEVER nội dung phụ thuộc văn hoá hẹp** hoặc cần kiến thức ngoài | Trẻ chưa có nền kiến thức chung |
+| `BR-GLM-09` | Cấm — **NEVER nội dung phụ thuộc văn hoá hẹp** hoặc cần kiến thức ngoài | Trẻ chưa có nền kiến thức chung |
 | `BR-GLM-10` | Chủ đề (theme) phải **nhất quán trong một level** | Trộn nông trại và vũ trụ làm phân tán chú ý |
 
 ## 7. Data
@@ -65,7 +65,7 @@ Không có.
 | 4–5 | 3 | 6 | 2 |
 | 5–6 | 3 | 8 | 3 |
 
-Vượt trần là lý do **từ chối duyệt**, ❌ không phải cảnh báo.
+Vượt trần là lý do **từ chối duyệt**, không phải cảnh báo.
 
 ### 7.2 Thang độ khó 1–5
 
@@ -81,7 +81,7 @@ Một level chỉ tăng **một chiều** so với level trước cùng skill.
 
 ### 7.3 Chỉ dẫn — mẫu tốt và xấu
 
-| ❌ Xấu | ✅ Tốt | Vì sao |
+| Cấm Xấu | Tốt | Vì sao |
 |---|---|---|
 | "Đừng bỏ quả xanh vào giỏ" | "Bé bỏ quả đỏ vào giỏ nhé!" | Không phủ định |
 | "Hãy phân loại các đối tượng theo kích thước" | "Vật to bỏ bên trái, vật nhỏ bên phải" | Từ vựng trong tầm tuổi |
@@ -100,7 +100,7 @@ Một level chỉ tăng **một chiều** so với level trước cùng skill.
 
 ## 8. API contract
 
-Không sở hữu route. Ràng buộc §7.1 ép ở cổng publish `content-lifecycle` §7.3.
+Không sở hữu route. Ràng buộc §7.1 ép ở cổng publish [`content-lifecycle.md`](../00-foundation/content-lifecycle.md) §7.3.
 
 ## 9. Acceptance criteria
 
@@ -159,4 +159,4 @@ Scenario: BR-GLM-08 — tăng một chiều
 | # | Câu hỏi | Chặn gì |
 |---|---|---|
 | 1 | Trần số item dựa trên nguồn nào? Cần đối chiếu tài liệu phát triển nhận thức | P1 |
-| 2 | Cần bao nhiêu level mỗi skill để đủ đa dạng mà ❌ không lặp? | Kế hoạch nội dung |
+| 2 | Cần bao nhiêu level mỗi skill để đủ đa dạng mà không lặp? | Kế hoạch nội dung |

@@ -20,16 +20,16 @@ depends_on:
 ## 1. Objective
 
 Biến kết quả phiên thành trạng thái thành thạo theo skill, và biến trạng thái đó thành thứ
-**trẻ nhìn thấy được** (bản đồ, huy hiệu) mà ❌ không biến thành điểm số hay xếp hạng.
+**trẻ nhìn thấy được** (bản đồ, huy hiệu) mà không biến thành điểm số hay xếp hạng.
 
-`adaptive-engine` sở hữu *công thức*. Spec này sở hữu *khi nào ghi* và *hiện ra sao*.
+[`adaptive-engine.md`](../01-platform/adaptive-engine.md) sở hữu *công thức*. Spec này sở hữu *khi nào ghi* và *hiện ra sao*.
 
 ## 2. Actors
 
 | Actor | Thấy gì |
 |---|---|
-| Trẻ | Bản đồ tiến độ bằng hình, huy hiệu. ❌ Không con số, ❌ không xếp hạng |
-| Người lớn | Nhãn thành thạo theo skill — `basic-report` · `advanced-report` |
+| Trẻ | Bản đồ tiến độ bằng hình, huy hiệu. Cấm con số, không xếp hạng |
+| Người lớn | Nhãn thành thạo theo skill — [`basic-report.md`](../03-account/basic-report.md) · [`advanced-report.md`](../03-account/advanced-report.md) |
 | Adaptive | `mastery_state` thô |
 
 ## 3. Entry points
@@ -42,7 +42,7 @@ Biến kết quả phiên thành trạng thái thành thạo theo skill, và bi�
 
 ## 4. Main flow
 
-1. Phiên `completed` → kiểm bốn điều kiện `play-session-lifecycle` §7.3.
+1. Phiên `completed` → kiểm bốn điều kiện [`play-session-lifecycle.md`](play-session-lifecycle.md) §7.3.
 2. Với mỗi skill trong `content_skill_map` của level: gọi `computeUpdate` kèm `weight`.
 3. Tầng API ghi `mastery_state`, map từng field.
 4. Cập nhật bản đồ tiến độ của trẻ.
@@ -52,24 +52,24 @@ Biến kết quả phiên thành trạng thái thành thạo theo skill, và bi�
 
 | Nhánh | Hành vi |
 |---|---|
-| Guest / preview | ❌ Không ghi gì |
+| Guest / preview | Cấm ghi gì |
 | Phiên `abandoned` | Ghi với `correct_ratio` trên round đã xong; `attempts_total` tăng |
-| Level ❌ không gắn skill | ❌ Không ghi mastery. Cổng publish lẽ ra đã chặn — log cảnh báo |
+| Level không gắn skill | Cấm ghi mastery. Cổng publish lẽ ra đã chặn — log cảnh báo |
 | Skill ngôn ngữ mở (C5) | Cần người lớn chấm; `assessed_by_user_id` |
-| Mastery giảm | Bình thường — `p_learn` đi xuống được. ❌ Không hiện điều đó cho trẻ |
+| Mastery giảm | Bình thường — `p_learn` đi xuống được. Cấm hiện điều đó cho trẻ |
 
 ## 6. Business rules
 
 | ID | Rule | Vì sao |
 |---|---|---|
-| `BR-PRG-01` | Ghi mastery **chỉ khi** đủ bốn điều kiện §`play-session-lifecycle` 7.3 | Hàng rào chống nhiễu dữ liệu học tập |
-| `BR-PRG-02` | Trẻ ❌ **NEVER thấy `p_learn`, phần trăm, hay xếp hạng** | Áp lực đo lường ở tuổi 3–6 phản tác dụng |
-| `BR-PRG-03` | Bản đồ trẻ ❌ **NEVER hiện tiến độ đi xuống** | Trẻ không cần biết mình "tệ đi" |
-| `BR-PRG-04` | Huy hiệu ❌ **NEVER hết hạn**, ❌ không mất đi | Phần thưởng lấy lại được là hình phạt |
-| `BR-PRG-05` | ❌ **NEVER so sánh giữa trẻ**, kể cả trong cùng tài khoản | |
-| `BR-PRG-06` | Mastery ghi ở **server** từ event; ❌ không nhận từ client | |
-| `BR-PRG-07` | ❌ **NEVER streak ép buộc** — không "chuỗi ngày", không mất chuỗi khi nghỉ | `BR-CDC-09` cấm cơ chế gây nghiện |
-| `BR-PRG-08` | Nhãn thành thạo theo bảng `adaptive-engine` §7.4, ❌ không nhãn tự chế | |
+| `BR-PRG-01` | Ghi mastery **chỉ khi** đủ bốn điều kiện §[`play-session-lifecycle.md`](play-session-lifecycle.md) 7.3 | Hàng rào chống nhiễu dữ liệu học tập |
+| `BR-PRG-02` | Trẻ Cấm — **NEVER thấy `p_learn`, phần trăm, hay xếp hạng** | Áp lực đo lường ở tuổi 3–6 phản tác dụng |
+| `BR-PRG-03` | Bản đồ trẻ Cấm — **NEVER hiện tiến độ đi xuống** | Trẻ không cần biết mình "tệ đi" |
+| `BR-PRG-04` | Huy hiệu Cấm — **NEVER hết hạn**, không mất đi | Phần thưởng lấy lại được là hình phạt |
+| `BR-PRG-05` | Cấm — **NEVER so sánh giữa trẻ**, kể cả trong cùng tài khoản | |
+| `BR-PRG-06` | Mastery ghi ở **server** từ event; không nhận từ client | |
+| `BR-PRG-07` | Cấm — **NEVER streak ép buộc** — không "chuỗi ngày", không mất chuỗi khi nghỉ | `BR-CDC-09` cấm cơ chế gây nghiện |
+| `BR-PRG-08` | Nhãn thành thạo theo bảng [`adaptive-engine.md`](../01-platform/adaptive-engine.md) §7.4, không nhãn tự chế | |
 
 ## 7. Data
 
@@ -79,24 +79,24 @@ Bản đồ 6 vùng theo competency. Mỗi vùng có các "chặng" tương ứn
 
 | Trạng thái chặng | Hiển thị |
 |---|---|
-| Chưa chạm | Xám nhạt, ❌ không khoá đáng sợ |
+| Chưa chạm | Xám nhạt, không khoá đáng sợ |
 | Đang học | Có màu, mascot đứng ở đó |
 | Ổn định | Có màu đầy + một ngôi sao nhỏ |
 
-❌ Không phần trăm. ❌ Không thanh tiến độ có số. ❌ Không so sánh.
+Cấm phần trăm. Cấm thanh tiến độ có số. Cấm so sánh.
 
 ### 7.2 Huy hiệu
 
 Trao khi: hoàn thành lần đầu một competency-strand · hoàn thành một tuần curriculum ·
-chơi đủ 5 ngày khác nhau (❌ **không** liên tiếp — `BR-PRG-07`).
+chơi đủ 5 ngày khác nhau (**không** liên tiếp — `BR-PRG-07`).
 
-Huy hiệu là **kỷ niệm**, không phải mục tiêu. ❌ Không có bảng huy hiệu để "săn".
+Huy hiệu là **kỷ niệm**, không phải mục tiêu. Cấm có bảng huy hiệu để "săn".
 
 ### 7.3 Dữ liệu cho người lớn
 
 | Trường | Nguồn |
 |---|---|
-| Nhãn thành thạo mỗi skill | `mastery_state.p_learn` → bảng `adaptive-engine` §7.4 |
+| Nhãn thành thạo mỗi skill | `mastery_state.p_learn` → bảng [`adaptive-engine.md`](../01-platform/adaptive-engine.md) §7.4 |
 | Skill đã tiếp xúc | `child_session_summaries.skill_ids` |
 | Skill cần củng cố | `p_learn < 0.4` và `attempts_total ≥ 3` |
 | Skill sẵn sàng học tiếp | `p_learn ≥ 0.8` và có skill kế trong DAG |
@@ -113,7 +113,7 @@ Huy hiệu là **kỷ niệm**, không phải mục tiêu. ❌ Không có bảng
 
 ### `GET /api/users/play/map`
 
-Bề mặt trẻ. Trả **chỉ** trạng thái hình ảnh §7.1 — ❌ không `p_learn`, ❌ không số.
+Bề mặt trẻ. Trả **chỉ** trạng thái hình ảnh §7.1 — không `p_learn`, không số.
 
 ## 9. Acceptance criteria
 

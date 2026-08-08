@@ -21,7 +21,7 @@ depends_on:
 Đưa event từ tablet của trẻ vào DB **đúng một lần mỗi event**, trên mạng chập chờn, mà
 không làm chậm gameplay.
 
-`event-catalog` sở hữu *tên và schema*. Spec này sở hữu *giao thức truyền*.
+[`event-catalog.md`](../00-foundation/event-catalog.md) sở hữu *tên và schema*. Spec này sở hữu *giao thức truyền*.
 
 ## 2. Actors
 
@@ -51,9 +51,9 @@ không làm chậm gameplay.
 | Lô trùng hoàn toàn | **200**, `accepted = 0` |
 | Trùng một phần | Ghi phần mới, bỏ phần trùng, 200 |
 | `seq` lùi so với `last_seq` đã ghi | **409** `EVENT_OUT_OF_ORDER` + log — client lỗi |
-| Tên event lạ | **422**, ❌ không ghi lô |
+| Tên event lạ | **422**, không ghi lô |
 | Payload thừa field | Strip field thừa, ghi phần hợp lệ, log cảnh báo |
-| Phiên đã `completed` | Bỏ, trả **200** — ❌ không làm client retry vô hạn |
+| Phiên đã `completed` | Bỏ, trả **200** — không làm client retry vô hạn |
 | Phiên `abandoned` | idem |
 | Lô > 100 event | **413** |
 
@@ -65,10 +65,10 @@ không làm chậm gameplay.
 | `BR-ING-02` | Event tới sau khi phiên terminal → **200**, bỏ | Trả lỗi làm client retry mãi |
 | `BR-ING-03` | Tên event lạ → **422 cho cả lô** | Bảo vệ schema; nửa lô ghi nửa lô không là trạng thái khó gỡ |
 | `BR-ING-04` | Ownership phiên kiểm ở **DB**, người khác → **404** | |
-| `BR-ING-05` | ❌ **NEVER chặn gameplay** để chờ ingest thành công | Trẻ không được chờ mạng |
+| `BR-ING-05` | Cấm — **NEVER chặn gameplay** để chờ ingest thành công | Trẻ không được chờ mạng |
 | `BR-ING-06` | Flush khi trang ẩn dùng `sendBeacon` | `fetch` bị huỷ khi trang unload |
 | `BR-ING-07` | Rate limit riêng, rộng | Trẻ chơi liên tục là bình thường |
-| `BR-ING-08` | ❌ **NEVER nhận `score`** trong payload | `BR-EVT-05` |
+| `BR-ING-08` | Cấm — **NEVER nhận `score`** trong payload | `BR-EVT-05` |
 
 ## 7. Data
 
@@ -96,7 +96,7 @@ không làm chậm gameplay.
 ### 7.3 `seq`
 
 Số nguyên tăng dần **bắt đầu từ 1**, liên tục trong phiên. `game_started` luôn là `seq = 1`.
-Khoảng trống trong `seq` là dấu hiệu mất event — server log cảnh báo, ❌ không từ chối.
+Khoảng trống trong `seq` là dấu hiệu mất event — server log cảnh báo, không từ chối.
 
 ## 8. API contract
 

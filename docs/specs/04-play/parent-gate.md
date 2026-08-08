@@ -20,7 +20,7 @@ depends_on:
 
 Ngăn trẻ tự rời khu vực chơi vào bề mặt quản lý, thanh toán, hoặc cấu hình.
 
-Đây là ràng buộc **pháp lý và sản phẩm**: `child-data-compliance` `BR-CDC-12`. Nó cũng ngăn
+Đây là ràng buộc **pháp lý và sản phẩm**: [`child-data-compliance.md`](../00-foundation/child-data-compliance.md) `BR-CDC-12`. Nó cũng ngăn
 tình huống thực tế nhất — trẻ chạm lung tung và thoát ra giữa chừng.
 
 ## 2. Actors
@@ -34,39 +34,39 @@ tình huống thực tế nhất — trẻ chạm lung tung và thoát ra giữa
 
 | Nơi | Bắt buộc có cổng |
 |---|---|
-| Nút thoát khu vực chơi | ✅ |
-| Chuyển sang `/me/**` từ `/play/**` | ✅ |
-| Đổi child profile | ✅ |
-| Cài đặt âm thanh, chuyển động | ❌ — trẻ tự chỉnh được |
-| Bất kỳ bề mặt thanh toán nào | ✅ |
+| Nút thoát khu vực chơi | |
+| Chuyển sang `/me/**` từ `/play/**` | |
+| Đổi child profile | |
+| Cài đặt âm thanh, chuyển động | Cấm — trẻ tự chỉnh được |
+| Bất kỳ bề mặt thanh toán nào | |
 
 ## 4. Main flow
 
 1. Trẻ chạm nút thoát → yêu cầu **long-press 800ms** (không tap trúng được).
 2. Long-press đạt → hiện thử thách §7.1.
 3. Đúng → chuyển sang bề mặt người lớn, mở "cửa sổ tin cậy" 5 phút.
-4. Sai → quay lại game, ❌ không thông báo tiêu cực.
+4. Sai → quay lại game, không thông báo tiêu cực.
 
 ## 5. Alternative flows
 
 | Nhánh | Hành vi |
 |---|---|
 | Sai 3 lần | Quay lại game, khoá cổng 60 giây |
-| Đang trong cửa sổ tin cậy | ❌ Không hỏi lại |
+| Đang trong cửa sổ tin cậy | Cấm hỏi lại |
 | Trẻ nhấn nút hệ thống (back trình duyệt) | Không chặn được — đó là lý do khuyến nghị PWA/chế độ toàn màn hình |
-| Người lớn quên đáp án | Thử thách là phép tính đơn giản, ❌ không phải mật khẩu |
+| Người lớn quên đáp án | Thử thách là phép tính đơn giản, không phải mật khẩu |
 
 ## 6. Business rules
 
 | ID | Rule | Vì sao |
 |---|---|---|
-| `BR-PGT-01` | Nút thoát ❌ **NEVER tap trúng được** — long-press 800ms | Trẻ chạm ngẫu nhiên rất nhiều |
+| `BR-PGT-01` | Nút thoát Cấm — **NEVER tap trúng được** — long-press 800ms | Trẻ chạm ngẫu nhiên rất nhiều |
 | `BR-PGT-02` | Thử thách phải **ngoài tầm** trẻ 3–6 nhưng **tức thì** với người lớn | Mật khẩu làm phụ huynh bỏ cuộc; phép tính hai chữ số thì không |
-| `BR-PGT-03` | Sai ❌ **NEVER thông báo tiêu cực cho trẻ** | Trẻ có thể là người thao tác |
-| `BR-PGT-04` | Cửa sổ tin cậy **5 phút**, gắn với tab hiện tại | Đủ để làm việc, ❌ không đủ để trẻ tận dụng sau đó |
-| `BR-PGT-05` | ❌ **NEVER hiện dữ liệu thanh toán** trong khu vực chơi, kể cả sau cổng | Khu vực chơi là bề mặt trẻ |
-| `BR-PGT-06` | Cổng là **client-side UX**, ❌ **không thay guard server** | Nó ngăn tai nạn, không ngăn tấn công |
-| `BR-PGT-07` | Thử thách ❌ **NEVER dùng chữ cần đọc trôi chảy** — dùng chữ số | Người lớn khiếm thị/khó đọc vẫn phải qua được |
+| `BR-PGT-03` | Sai Cấm — **NEVER thông báo tiêu cực cho trẻ** | Trẻ có thể là người thao tác |
+| `BR-PGT-04` | Cửa sổ tin cậy **5 phút**, gắn với tab hiện tại | Đủ để làm việc, không đủ để trẻ tận dụng sau đó |
+| `BR-PGT-05` | Cấm — **NEVER hiện dữ liệu thanh toán** trong khu vực chơi, kể cả sau cổng | Khu vực chơi là bề mặt trẻ |
+| `BR-PGT-06` | Cổng là **client-side UX**, **không thay guard server** | Nó ngăn tai nạn, không ngăn tấn công |
+| `BR-PGT-07` | Thử thách Cấm — **NEVER dùng chữ cần đọc trôi chảy** — dùng chữ số | Người lớn khiếm thị/khó đọc vẫn phải qua được |
 
 ## 7. Data
 
@@ -74,15 +74,15 @@ tình huống thực tế nhất — trẻ chạm lung tung và thoát ra giữa
 
 Phép nhân hai số một chữ số, kết quả hai chữ số: `7 × 8 = ?`, nhập bằng bàn phím số lớn.
 
-Chọn cách này vì: trẻ 3–6 chưa nhân được; người lớn làm trong 2 giây; ❌ không cần đọc chữ;
-❌ không cần nhớ gì.
+Chọn cách này vì: trẻ 3–6 chưa nhân được; người lớn làm trong 2 giây; không cần đọc chữ;
+không cần nhớ gì.
 
 **Không** dùng: mật khẩu tài khoản (phiền, và gõ trước mặt trẻ là rủi ro) · năm sinh
 (đoán được) · giữ nút lâu (trẻ làm được) · ngày tháng hiện tại (người lớn cũng có thể sai).
 
 ### 7.2 Trạng thái
 
-`parent_gate_trusted_until` — sessionStorage, ❌ không cookie (không cần gửi lên server).
+`parent_gate_trusted_until` — sessionStorage, không cookie (không cần gửi lên server).
 
 ### 7.3 Event
 
@@ -95,7 +95,7 @@ Tỉ lệ fail cao là tín hiệu thử thách quá khó — theo dõi trong KP
 
 Không có route. Hoàn toàn client-side.
 
-Server ❌ **không** tin cổng này — mọi endbề mặt người lớn vẫn kiểm `requireUserAuth()`
+Server **không** tin cổng này — mọi endbề mặt người lớn vẫn kiểm `requireUserAuth()`
 (`BR-PGT-06`).
 
 ## 9. Acceptance criteria
@@ -143,7 +143,7 @@ Scenario: sai 3 lần thì khoá tạm
 
 **Always**
 - Long-press 800ms trước khi hiện cổng.
-- Thử thách bằng chữ số, ❌ không cần đọc.
+- Thử thách bằng chữ số, không cần đọc.
 - Ghi event để theo dõi tỉ lệ fail.
 
 **Ask first**
@@ -162,5 +162,5 @@ Scenario: sai 3 lần thì khoá tạm
 
 | # | Câu hỏi | Chặn gì |
 |---|---|---|
-| 1 | Nút back của trình duyệt không chặn được — có bắt buộc PWA toàn màn hình cho trải nghiệm trẻ không? | `pwa-install` |
+| 1 | Nút back của trình duyệt không chặn được — có bắt buộc PWA toàn màn hình cho trải nghiệm trẻ không? | [`pwa-install.md`](../01-platform/pwa-install.md) |
 | 2 | Tỉ lệ fail bao nhiêu thì coi là thử thách quá khó? | KPI P1 |

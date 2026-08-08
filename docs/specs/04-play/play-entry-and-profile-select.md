@@ -22,15 +22,15 @@ depends_on:
 Chuyển từ bề mặt người lớn sang bề mặt trẻ, và xác định **phiên này là của trẻ nào**.
 
 Chọn sai trẻ làm hỏng dữ liệu học tập của cả hai — nên bước này phải rõ ràng với người lớn
-và ❌ không đổi được bởi trẻ.
+và không đổi được bởi trẻ.
 
 ## 2. Actors
 
 | Actor | Làm gì |
 |---|---|
 | Người lớn | Chọn trẻ, vào khu vực chơi |
-| Trẻ | Chơi. ❌ Không đổi được trẻ |
-| Guest | Vào thẳng khu vực chơi, ❌ không có hồ sơ |
+| Trẻ | Chơi. Cấm đổi được trẻ |
+| Guest | Vào thẳng khu vực chơi, không có hồ sơ |
 
 ## 3. Entry points
 
@@ -46,14 +46,14 @@ và ❌ không đổi được bởi trẻ.
 1. Người lớn ở `/me/children`, chọn một trẻ.
 2. Server kiểm ownership, đặt cookie `active_child_id`.
 3. Chuyển sang `/play` — giao diện đổi hoàn toàn sang bề mặt trẻ.
-4. Trẻ duyệt catalog (ít chữ, hình lớn, ❌ không bộ lọc phức tạp).
+4. Trẻ duyệt catalog (ít chữ, hình lớn, không bộ lọc phức tạp).
 5. Chọn game → gating → config → chơi.
 
 ## 5. Alternative flows
 
 | Nhánh | Hành vi |
 |---|---|
-| Guest vào thẳng `/play` | Thấy allow-list 6 game free. ❌ Không lưu tiến độ. Sau 3 lượt hiện lời mời đăng ký **trên bề mặt người lớn**, ❌ không giữa lúc chơi |
+| Guest vào thẳng `/play` | Thấy allow-list 6 game free. Cấm lưu tiến độ. Sau 3 lượt hiện lời mời đăng ký **trên bề mặt người lớn**, không giữa lúc chơi |
 | User chưa có trẻ nào | Chuyển về `/me/children/new` |
 | User chưa chọn trẻ, vào thẳng `/play/{code}` bậc ≥ login | **428** → màn hình chọn trẻ |
 | Cookie trẻ trỏ tới trẻ đã archive | Xoá cookie, yêu cầu chọn lại |
@@ -64,11 +64,11 @@ và ❌ không đổi được bởi trẻ.
 | ID | Rule | Vì sao |
 |---|---|---|
 | `BR-PEN-01` | Đổi trẻ **phải qua Parent Gate** | Trẻ đổi sang hồ sơ anh chị làm hỏng dữ liệu của cả hai |
-| `BR-PEN-02` | Ownership `active_child_id` kiểm ở **DB mỗi request**, ❌ không tin cookie | `BR-ACT-07` |
-| `BR-PEN-03` | Catalog cho trẻ ❌ **không có bộ lọc chữ** — duyệt bằng hình và chủ đề | Trẻ chưa đọc |
-| `BR-PEN-04` | Bề mặt trẻ ❌ **NEVER hiện dữ liệu thanh toán, gói, hay lời mời nâng cấp** | `BR-CDC-12` |
-| `BR-PEN-05` | Lời mời đăng ký cho guest hiện **sau khi chơi xong**, ❌ không giữa lúc chơi | Ngắt trẻ để bán hàng là thiết kế tệ |
-| `BR-PEN-06` | Nội dung bị khoá hiện trong catalog trẻ dưới dạng **ổ khoá trung tính**, ❌ không có giá tiền | Trẻ không phải người mua |
+| `BR-PEN-02` | Ownership `active_child_id` kiểm ở **DB mỗi request**, không tin cookie | `BR-ACT-07` |
+| `BR-PEN-03` | Catalog cho trẻ **không có bộ lọc chữ** — duyệt bằng hình và chủ đề | Trẻ chưa đọc |
+| `BR-PEN-04` | Bề mặt trẻ Cấm — **NEVER hiện dữ liệu thanh toán, gói, hay lời mời nâng cấp** | `BR-CDC-12` |
+| `BR-PEN-05` | Lời mời đăng ký cho guest hiện **sau khi chơi xong**, không giữa lúc chơi | Ngắt trẻ để bán hàng là thiết kế tệ |
+| `BR-PEN-06` | Nội dung bị khoá hiện trong catalog trẻ dưới dạng **ổ khoá trung tính**, không có giá tiền | Trẻ không phải người mua |
 | `BR-PEN-07` | Chuyển sang `/play` đặt **landscape-locked** trên tablet | Tư thế chơi |
 
 ## 7. Data
@@ -85,10 +85,10 @@ quyền** — server luôn kiểm lại ownership.
 | Avatar trẻ | Xác nhận đang chơi với hồ sơ nào |
 | "Tiếp tục" | Level đang dở hoặc bước curriculum kế tiếp |
 | Theo chủ đề | 6 thẻ competency, mỗi thẻ một biểu tượng |
-| Gợi ý | 3–5 level từ `next-game-recommendation` |
+| Gợi ý | 3–5 level từ [`next-game-recommendation.md`](next-game-recommendation.md) |
 | Nút thoát | Góc, long-press 800ms → Parent Gate |
 
-❌ Không thanh tìm kiếm. ❌ Không bộ lọc. ❌ Không danh sách dài phải cuộn nhiều.
+Cấm thanh tìm kiếm. Cấm bộ lọc. Cấm danh sách dài phải cuộn nhiều.
 
 ## 8. API contract
 
@@ -169,5 +169,5 @@ Scenario: trẻ đã archive thì yêu cầu chọn lại
 
 | # | Câu hỏi | Chặn gì |
 |---|---|---|
-| 1 | Guest chơi bao nhiêu lượt thì mời đăng ký? | `access-ladder` Q2 |
+| 1 | Guest chơi bao nhiêu lượt thì mời đăng ký? | [`access-ladder.md`](../00-foundation/access-ladder.md) Q2 |
 | 2 | Sảnh trẻ có cần chế độ "chỉ hiện nội dung mở được" cho gói thấp không? Ổ khoá nhiều quá gây nản | UX P1 |

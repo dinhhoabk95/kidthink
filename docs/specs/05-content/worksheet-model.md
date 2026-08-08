@@ -17,10 +17,10 @@ depends_on:
 
 ## 1. Objective
 
-Worksheet là hoạt động **giấy** — thứ trẻ làm bằng bút chì, ❌ không bằng màn hình.
+Worksheet là hoạt động **giấy** — thứ trẻ làm bằng bút chì, không bằng màn hình.
 
-**Ngoài MVP.** Nó phụ thuộc `pdf-export` (add-on) và cần thiết kế in ấn riêng. Spec viết
-trước để mô hình dữ liệu ❌ không phải làm lại.
+**Ngoài MVP.** Nó phụ thuộc [`pdf-export.md`](../07-addon/pdf-export.md) (add-on) và cần thiết kế in ấn riêng. Spec viết
+trước để mô hình dữ liệu không phải làm lại.
 
 ## 2. Actors
 
@@ -41,7 +41,7 @@ Người soạn · người dạy · trẻ (làm trên giấy).
 
 | Nhánh | Hành vi |
 |---|---|
-| Render PDF fail | ❌ Không publish được |
+| Render PDF fail | Cấm publish được |
 | Không có máy in | Lesson phải có hoạt động thay thế |
 | In đen trắng | Worksheet phải dùng được ở đen trắng |
 
@@ -50,13 +50,13 @@ Người soạn · người dạy · trẻ (làm trên giấy).
 | ID | Rule | Vì sao |
 |---|---|---|
 | `BR-WSM-01` | Worksheet phải dùng được khi in **đen trắng** | Không phải nhà nào cũng có máy in màu |
-| `BR-WSM-02` | ❌ **NEVER yêu cầu trẻ đọc chữ** — chỉ dẫn bằng hình, chữ dành cho người lớn | |
-| `BR-WSM-03` | Một trang A4, ❌ không nhiều trang | Trẻ 3–6 ❌ không giữ được tập trung qua nhiều trang |
+| `BR-WSM-02` | Cấm — **NEVER yêu cầu trẻ đọc chữ** — chỉ dẫn bằng hình, chữ dành cho người lớn | |
+| `BR-WSM-03` | Một trang A4, không nhiều trang | Trẻ 3–6 không giữ được tập trung qua nhiều trang |
 | `BR-WSM-04` | Vùng viết/vẽ ≥ **2cm**, đường nét dày ≥ 2pt | Vận động tinh chưa đủ |
 | `BR-WSM-05` | Có **hướng dẫn cho người lớn** ở chân trang | |
-| `BR-WSM-06` | Render PDF thành công là điều kiện publish | `content-lifecycle` §7.3 |
+| `BR-WSM-06` | Render PDF thành công là điều kiện publish | [`content-lifecycle.md`](../00-foundation/content-lifecycle.md) §7.3 |
 | `BR-WSM-07` | Lesson dùng worksheet phải có **hoạt động thay thế** không cần in | Không phải nhà nào cũng có máy in |
-| `BR-WSM-08` | ❌ **NEVER watermark trên vùng làm bài** | |
+| `BR-WSM-08` | Cấm — **NEVER watermark trên vùng làm bài** | |
 
 ## 7. Data
 

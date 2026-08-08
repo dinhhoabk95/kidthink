@@ -18,17 +18,17 @@ depends_on:
 
 ## 1. Objective
 
-Trẻ 3–6 học từ phản hồi tức thì, ❌ không học từ trừng phạt. Nhưng **im lặng cũng là
+Trẻ 3–6 học từ phản hồi tức thì, không học từ trừng phạt. Nhưng **im lặng cũng là
 defect** — không phản hồi thì trẻ không biết mình đã thao tác.
 
-Khoảng ở giữa hẹp và cần spec: phản hồi rõ, tích cực, ❌ không trừng phạt, ❌ không lạm phát.
+Khoảng ở giữa hẹp và cần spec: phản hồi rõ, tích cực, không trừng phạt, không lạm phát.
 
 ## 2. Actors
 
 | Actor | Nhận gì |
 |---|---|
 | Trẻ | Toàn bộ phản hồi trực quan và âm thanh |
-| Người lớn | ❌ Không thấy màn hình này |
+| Người lớn | Cấm thấy màn hình này |
 
 ## 3. Entry points
 
@@ -41,7 +41,7 @@ Khoảng ở giữa hẹp và cần spec: phản hồi rõ, tích cực, ❌ kh�
 | Chạm/kéo bắt đầu | Item nhấc lên nhẹ, bóng đổ sâu hơn |
 | Thả **đúng** | Pop nhỏ **tại điểm chạm** + âm ngắn dễ chịu + item khoá vào vị trí |
 | Thả **sai** | Nhịp hổ phách trên target + âm nhẹ (ramp ≥20ms) + item **trôi về chỗ cũ** |
-| Round hoàn thành | Chuyển cảnh mượt, ❌ không ăn mừng lớn |
+| Round hoàn thành | Chuyển cảnh mượt, không ăn mừng lớn |
 | Level hoàn thành | **Ăn mừng lớn**: hạt, sao, mascot, lời khen tiếng Việt |
 
 ## 5. Alternative flows
@@ -49,23 +49,23 @@ Khoảng ở giữa hẹp và cần spec: phản hồi rõ, tích cực, ❌ kh�
 | Nhánh | Hành vi |
 |---|---|
 | `prefers-reduced-motion` | Ăn mừng thành **một nhịp scale 400ms** — vẫn rõ là ăn mừng |
-| Âm bị tắt | Phản hồi hình ảnh **tăng cường**, ❌ không mất kênh |
-| Phiên `abandoned` | ❌ Không ăn mừng, ❌ không sao |
-| Sai nhiều lần liên tiếp | Phản hồi **không đổi** — ❌ không tăng cường độ "sai" |
+| Âm bị tắt | Phản hồi hình ảnh **tăng cường**, không mất kênh |
+| Phiên `abandoned` | Cấm ăn mừng, không sao |
+| Sai nhiều lần liên tiếp | Phản hồi **không đổi** — không tăng cường độ "sai" |
 
 ## 6. Business rules
 
 | ID | Rule | Vì sao |
 |---|---|---|
-| `BR-FBK-01` | ❌ **NEVER màu đỏ, buzzer, rung mạnh, hay trừ điểm** khi sai | Đỏ đọc thành trừng phạt ở tuổi 3–6 |
-| `BR-FBK-02` | ❌ **NEVER im lặng khi sai** — im lặng là defect | Trẻ không biết mình đã thao tác |
-| `BR-FBK-03` | "Chưa đúng" dùng **hổ phách**, ❌ không `danger` | `danger` là token của bề mặt người lớn |
+| `BR-FBK-01` | Cấm — **NEVER màu đỏ, buzzer, rung mạnh, hay trừ điểm** khi sai | Đỏ đọc thành trừng phạt ở tuổi 3–6 |
+| `BR-FBK-02` | Cấm — **NEVER im lặng khi sai** — im lặng là defect | Trẻ không biết mình đã thao tác |
+| `BR-FBK-03` | "Chưa đúng" dùng **hổ phách**, không `danger` | `danger` là token của bề mặt người lớn |
 | `BR-FBK-04` | Ăn mừng lớn **chỉ** khi hoàn thành level | Ăn mừng mọi lúc làm ăn mừng mất nghĩa |
-| `BR-FBK-05` | Pop khi đúng phát ra **tại điểm chạm**, ❌ không từ toạ độ hardcode | Phản hồi phải gắn với hành động của trẻ |
-| `BR-FBK-06` | ❌ **NEVER màu là kênh duy nhất** — kèm hình dạng, chuyển động, hoặc âm | Trẻ mù màu và màn hình kém |
+| `BR-FBK-05` | Pop khi đúng phát ra **tại điểm chạm**, không từ toạ độ hardcode | Phản hồi phải gắn với hành động của trẻ |
+| `BR-FBK-06` | Cấm — **NEVER màu là kênh duy nhất** — kèm hình dạng, chuyển động, hoặc âm | Trẻ mù màu và màn hình kém |
 | `BR-FBK-07` | Cường độ phản hồi sai **không tăng** theo số lần sai | Tăng dần đọc thành trách móc |
-| `BR-FBK-08` | Lời khen ❌ **NEVER so sánh trẻ với trẻ khác** | |
-| `BR-FBK-09` | `reduced-motion` **giảm**, ❌ không bỏ ăn mừng | Bỏ ăn mừng là bỏ phần thưởng |
+| `BR-FBK-08` | Lời khen Cấm — **NEVER so sánh trẻ với trẻ khác** | |
+| `BR-FBK-09` | `reduced-motion` **giảm**, không bỏ ăn mừng | Bỏ ăn mừng là bỏ phần thưởng |
 | `BR-FBK-10` | Âm: ramp vào ≥20ms, ra ≥40ms, master ceiling cưỡng chế | Onset tức thì làm trẻ giật mình |
 
 ## 7. Data
@@ -79,16 +79,16 @@ Khoảng ở giữa hẹp và cần spec: phản hồi rõ, tích cực, ❌ kh�
 | Chưa đúng | `retry` (hổ phách) | nhịp 2 lần trên target · item trôi về | note trầm nhẹ |
 | Hoàn thành level | `success` + `brand` | hạt + sao + mascot 1,2s | giai điệu ngắn |
 
-❌ `danger` **không phải** token của canvas.
+Cấm `danger` **không phải** token của canvas.
 
 ### 7.2 Lời khen tiếng Việt
 
-Xoay vòng, ❌ không lặp liên tiếp: "Giỏi quá!" · "Đúng rồi!" · "Bé làm được rồi!" ·
+Xoay vòng, không lặp liên tiếp: "Giỏi quá!" · "Đúng rồi!" · "Bé làm được rồi!" ·
 "Tuyệt vời!" · "Bé thật chăm chỉ!"
 
 Khi chưa đúng: "Thử lại nhé!" · "Gần đúng rồi!" · "Bé thử chỗ khác xem?"
 
-❌ **NEVER**: "Sai rồi", "Không đúng", "Bé chưa giỏi", bất kỳ so sánh nào.
+Cấm — **NEVER**: "Sai rồi", "Không đúng", "Bé chưa giỏi", bất kỳ so sánh nào.
 
 ### 7.3 Ngân sách ăn mừng
 
@@ -101,7 +101,7 @@ Khi chưa đúng: "Thử lại nhé!" · "Gần đúng rồi!" · "Bé thử ch�
 ## 8. API contract
 
 Không có route. Màn hình tổng kết nhận từ
-`POST /play-sessions/{uuid}/complete` — xem `scoring-and-result` §8.
+`POST /play-sessions/{uuid}/complete` — xem [`scoring-and-result.md`](scoring-and-result.md) §8.
 
 ## 9. Acceptance criteria
 

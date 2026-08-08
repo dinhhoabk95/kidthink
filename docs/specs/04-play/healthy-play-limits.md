@@ -19,7 +19,7 @@ depends_on:
 
 ## 1. Objective
 
-Sản phẩm cho trẻ 3–6 ❌ **không được** tối ưu cho thời gian màn hình. Hạn mức là **tính
+Sản phẩm cho trẻ 3–6 **không được** tối ưu cho thời gian màn hình. Hạn mức là **tính
 năng**, không phải ràng buộc kỹ thuật — nó là lý do phụ huynh tin sản phẩm.
 
 Dừng phải **êm**: trẻ đang chơi dở không bị cắt ngang.
@@ -55,21 +55,21 @@ Dừng phải **êm**: trẻ đang chơi dở không bị cắt ngang.
 | Hết hạn mức **giữa phiên** | Phiên hiện tại **chạy hết** — `BR-HPL-02` |
 | Người lớn tăng hạn mức giữa ngày | Có hiệu lực ngay |
 | Người lớn cấp thêm giờ một lần | Qua Parent Gate, cộng vào ngày hôm đó, ghi lại |
-| Nhiều trẻ cùng tài khoản | Hạn mức **theo từng trẻ**, ❌ không dùng chung |
-| Đổi múi giờ thiết bị | Server dùng ICT, ❌ không dùng giờ thiết bị |
+| Nhiều trẻ cùng tài khoản | Hạn mức **theo từng trẻ**, không dùng chung |
+| Đổi múi giờ thiết bị | Server dùng ICT, không dùng giờ thiết bị |
 
 ## 6. Business rules
 
 | ID | Rule | Vì sao |
 |---|---|---|
-| `BR-HPL-01` | Hạn mức **theo từng trẻ**, ❌ không theo tài khoản | Hai anh em có nhu cầu khác nhau |
-| `BR-HPL-02` | Hết hạn mức ❌ **NEVER cắt phiên đang chạy** | Cắt ngang lúc trẻ đang chơi là thiệt hại lớn hơn |
-| `BR-HPL-03` | Ranh giới ngày theo **ICT (UTC+7)**, ❌ không giờ thiết bị | Đổi giờ thiết bị là cách lách rõ ràng nhất |
-| `BR-HPL-04` | Màn hình hết giờ ❌ **NEVER mang giọng trách** hay đếm ngược gây áp lực | |
-| `BR-HPL-05` | ❌ **NEVER cơ chế kéo dài thời gian chơi** — không streak ép buộc, không "chơi thêm để mở khoá", không thông báo dụ quay lại | Vi phạm nguyên tắc thiết kế cho trẻ và `BR-CDC-09` |
+| `BR-HPL-01` | Hạn mức **theo từng trẻ**, không theo tài khoản | Hai anh em có nhu cầu khác nhau |
+| `BR-HPL-02` | Hết hạn mức Cấm — **NEVER cắt phiên đang chạy** | Cắt ngang lúc trẻ đang chơi là thiệt hại lớn hơn |
+| `BR-HPL-03` | Ranh giới ngày theo **ICT (UTC+7)**, không giờ thiết bị | Đổi giờ thiết bị là cách lách rõ ràng nhất |
+| `BR-HPL-04` | Màn hình hết giờ Cấm — **NEVER mang giọng trách** hay đếm ngược gây áp lực | |
+| `BR-HPL-05` | Cấm — **NEVER cơ chế kéo dài thời gian chơi** — không streak ép buộc, không "chơi thêm để mở khoá", không thông báo dụ quay lại | Vi phạm nguyên tắc thiết kế cho trẻ và `BR-CDC-09` |
 | `BR-HPL-06` | Cấp thêm giờ **phải qua Parent Gate** | Trẻ không tự cấp thêm cho mình |
 | `BR-HPL-07` | Thời gian đếm là thời gian **phiên thật**, trừ thời gian `paused` | Tab mở nền không phải thời gian chơi |
-| `BR-HPL-08` | Trần của gói là **trần**, người lớn đặt thấp hơn được, ❌ không cao hơn | |
+| `BR-HPL-08` | Trần của gói là **trần**, người lớn đặt thấp hơn được, không cao hơn | |
 
 ## 7. Data
 
@@ -97,7 +97,7 @@ Phiên `in_progress` tính theo thời gian đã trôi, cập nhật khi nhận 
 
 Hình ảnh mascot vẫy tay · lời tiếng Việt ấm áp ("Hôm nay bé chơi giỏi lắm rồi! Mai mình chơi
 tiếp nhé.") · gợi ý **2 hoạt động ngoài màn hình** lấy từ lesson có `kind = offline` ·
-❌ không nút "chơi thêm" · nút duy nhất dẫn qua Parent Gate.
+không nút "chơi thêm" · nút duy nhất dẫn qua Parent Gate.
 
 ## 8. API contract
 

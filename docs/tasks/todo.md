@@ -383,27 +383,27 @@ Giao cho một agent (general-purpose) làm cả 15 file còn lại theo đúng 
 > Khu vực nhẹ nhất về tham chiếu trần. Chín lượt `KPI` ở đây **giữ nguyên** — thuật ngữ, không
 > phải viết tắt tự phát. Chỉ chú giải một lần ở lần nhắc đầu mỗi file.
 
-- [ ] [`progress-and-mastery.md`](../specs/04-play/progress-and-mastery.md) — 23 kh, 7 tc
-- [ ] [`parent-gate.md`](../specs/04-play/parent-gate.md) — 19 kh, 2 vt, 2 tc
-- [ ] [`feedback-and-celebration.md`](../specs/04-play/feedback-and-celebration.md) — 19 kh, 1 tc
-- [ ] [`play-session-lifecycle.md`](../specs/04-play/play-session-lifecycle.md) — 12 kh, 5 vt, 1 tc
-- [ ] [`play-entry-and-profile-select.md`](../specs/04-play/play-entry-and-profile-select.md) — 14 kh, 2 tc
-- [ ] [`scoring-and-result.md`](../specs/04-play/scoring-and-result.md) — 13 kh, 3 tc
-- [ ] [`lesson-model.md`](../specs/05-content/lesson-model.md) — 14 kh
-- [ ] [`scaffolding-and-hints.md`](../specs/04-play/scaffolding-and-hints.md) — 13 kh, 1 vt
-- [ ] [`game-level-model.md`](../specs/05-content/game-level-model.md) — 9 kh, 4 tc
-- [ ] [`curriculum-player.md`](../specs/04-play/curriculum-player.md) — 10 kh, 1 tc
-- [ ] [`activity-model.md`](../specs/05-content/activity-model.md) — 11 kh
-- [ ] [`healthy-play-limits.md`](../specs/04-play/healthy-play-limits.md) — 10 kh
-- [ ] [`worksheet-model.md`](../specs/05-content/worksheet-model.md) — 7 kh, 2 tc
+- [x] [`progress-and-mastery.md`](../specs/04-play/progress-and-mastery.md) — 23 kh, 7 tc → 0/0/0
+- [x] [`parent-gate.md`](../specs/04-play/parent-gate.md) — 19 kh, 2 vt, 2 tc → 0/0/0
+- [x] [`feedback-and-celebration.md`](../specs/04-play/feedback-and-celebration.md) — 19 kh, 1 tc → 0/0/0
+- [x] [`play-session-lifecycle.md`](../specs/04-play/play-session-lifecycle.md) — 12 kh, 5 vt, 1 tc → 0/0/0
+- [x] [`play-entry-and-profile-select.md`](../specs/04-play/play-entry-and-profile-select.md) — 14 kh, 2 tc → 0/0/0
+- [x] [`scoring-and-result.md`](../specs/04-play/scoring-and-result.md) — 13 kh, 3 tc → 0/0/0
+- [x] [`lesson-model.md`](../specs/05-content/lesson-model.md) — 14 kh → 0/0/0
+- [x] [`scaffolding-and-hints.md`](../specs/04-play/scaffolding-and-hints.md) — 13 kh, 1 vt → 0/0/0
+- [x] [`game-level-model.md`](../specs/05-content/game-level-model.md) — 9 kh, 4 tc → 0/0/0
+- [x] [`curriculum-player.md`](../specs/04-play/curriculum-player.md) — 10 kh, 1 tc → 0/0/0
+- [x] [`activity-model.md`](../specs/05-content/activity-model.md) — 11 kh → 0/0/0
+- [x] [`healthy-play-limits.md`](../specs/04-play/healthy-play-limits.md) — 10 kh → 0/0/0
+- [x] [`worksheet-model.md`](../specs/05-content/worksheet-model.md) — 7 kh, 2 tc → 0/0/0
 - [x] [`access-gating.md`](../specs/04-play/access-gating.md) — 5 kh, 1 vt, 2 tc · làm ở Cổng dừng B
-- [ ] [`curriculum-model.md`](../specs/05-content/curriculum-model.md) — 5 kh, 2 tc
-- [ ] [`next-game-recommendation.md`](../specs/04-play/next-game-recommendation.md) — 7 kh
-- [ ] [`play-event-ingestion.md`](../specs/04-play/play-event-ingestion.md) — 5 kh, 1 tc
-- [ ] [`game-config-delivery.md`](../specs/04-play/game-config-delivery.md) — 3 kh, 2 tc
-- [ ] Xoá `04-play` và `05-content` khỏi danh sách hoãn, **cùng commit**
-- [ ] `pnpm check` exit 0 · `pnpm test` không giảm · `approved` vẫn 23
-- [ ] Commit
+- [x] [`curriculum-model.md`](../specs/05-content/curriculum-model.md) — 5 kh, 2 tc → 0/0/0
+- [x] [`next-game-recommendation.md`](../specs/04-play/next-game-recommendation.md) — 7 kh → 0/0/0
+- [x] [`play-event-ingestion.md`](../specs/04-play/play-event-ingestion.md) — 5 kh, 1 tc → 0/0/0
+- [x] [`game-config-delivery.md`](../specs/04-play/game-config-delivery.md) — 3 kh, 2 tc → 0/0/0
+- [x] Xoá `04-play` và `05-content` khỏi danh sách hoãn, **cùng commit**
+- [x] `pnpm check` exit 0 · `pnpm test` không giảm · `approved` vẫn 38
+- [x] Commit
 
 ## Bước 9 — `03-account`, 20 file · 274 kh · 0 vt · 18 tc
 

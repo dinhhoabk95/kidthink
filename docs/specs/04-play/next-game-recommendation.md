@@ -21,7 +21,7 @@ depends_on:
 
 Sau khi hoàn thành một level, trẻ phải biết **chơi gì tiếp** mà không cần người lớn chọn.
 
-P1 dùng **luật**, ❌ không dùng ML. Luật giải thích được, test được, và đủ tốt ở quy mô 120
+P1 dùng **luật**, không dùng ML. Luật giải thích được, test được, và đủ tốt ở quy mô 120
 level.
 
 ## 2. Actors
@@ -58,21 +58,21 @@ Mỗi ứng viên phải qua **gating** trước khi vào danh sách gợi ý.
 |---|---|
 | Không đủ dữ liệu mastery (< 3 lần) | Nhảy tới bước 5 |
 | Mọi ứng viên đều bị khoá bậc | Gợi ý **1 level mở được** + 1 level khoá kèm mời nâng cấp **trên bề mặt người lớn** |
-| Trẻ vừa chơi level đó | ❌ Không gợi ý lại ngay; loại 3 level gần nhất |
-| Hết nội dung phù hợp | Gợi ý ôn lại, ❌ không để trống |
+| Trẻ vừa chơi level đó | Cấm gợi ý lại ngay; loại 3 level gần nhất |
+| Hết nội dung phù hợp | Gợi ý ôn lại, không để trống |
 
 ## 6. Business rules
 
 | ID | Rule | Vì sao |
 |---|---|---|
 | `BR-REC-01` | Gợi ý phải qua **gating** trước khi hiện | Gợi ý thứ không chơi được là quảng cáo trá hình trên bề mặt trẻ |
-| `BR-REC-02` | Curriculum **luôn ưu tiên hơn** adaptive | Adaptive ❌ không phủ quyết thứ tự sư phạm — `BR-ADP-05` |
+| `BR-REC-02` | Curriculum **luôn ưu tiên hơn** adaptive | Adaptive không phủ quyết thứ tự sư phạm — `BR-ADP-05` |
 | `BR-REC-03` | Loại 3 level chơi gần nhất | Lặp lại ngay làm trẻ chán |
 | `BR-REC-04` | Gợi ý luôn hợp **band tuổi** của trẻ | |
 | `BR-REC-05` | Mỗi gợi ý có `reason_vi` giải thích được | Người lớn cần hiểu vì sao |
-| `BR-REC-06` | ❌ **NEVER gợi ý dựa trên "trẻ khác cũng chơi"** | Không so sánh trẻ; và dữ liệu hành vi tập thể của trẻ là vùng nhạy cảm |
+| `BR-REC-06` | Cấm — **NEVER gợi ý dựa trên "trẻ khác cũng chơi"** | Không so sánh trẻ; và dữ liệu hành vi tập thể của trẻ là vùng nhạy cảm |
 | `BR-REC-07` | Ưu tiên nội dung **mở được**; nội dung khoá tối đa **1** trong danh sách | Danh sách toàn ổ khoá gây nản |
-| `BR-REC-08` | P1 dùng **luật**, ❌ không ML | Giải thích được và test được |
+| `BR-REC-08` | P1 dùng **luật**, không ML | Giải thích được và test được |
 
 ## 7. Data
 
@@ -103,7 +103,7 @@ Mỗi ứng viên phải qua **gating** trước khi vào danh sách gợi ý.
 | `popular` | "Nhiều bé thích trò này" |
 
 `popular` là code duy nhất chạm tới dữ liệu tập thể, và nó chỉ dùng **số lượt chơi tổng**,
-❌ không dùng hành vi cá nhân của trẻ khác (`BR-REC-06`).
+không dùng hành vi cá nhân của trẻ khác (`BR-REC-06`).
 
 ## 8. API contract
 

@@ -17,10 +17,10 @@ depends_on:
 ## 1. Objective
 
 Activity là đơn vị **tái sử dụng**. Nó phải đứng độc lập được — người dạy mở ra và làm được
-mà ❌ không cần đọc lesson chứa nó.
+mà không cần đọc lesson chứa nó.
 
 Đó là ràng buộc biên tập quan trọng nhất: activity phụ thuộc ngữ cảnh của một lesson cụ thể
-❌ không tái dùng được, và mất toàn bộ lý do tồn tại.
+không tái dùng được, và mất toàn bộ lý do tồn tại.
 
 ## 2. Actors
 
@@ -42,14 +42,14 @@ Không có.
 
 | ID | Rule | Vì sao |
 |---|---|---|
-| `BR-ACM-01` | Activity **đứng độc lập** — ❌ không tham chiếu "như bài trước" | Tái dùng ở lesson khác thì ngữ cảnh đó sai |
+| `BR-ACM-01` | Activity **đứng độc lập** — không tham chiếu "như bài trước" | Tái dùng ở lesson khác thì ngữ cảnh đó sai |
 | `BR-ACM-02` | 2–20 phút. Dài hơn nên là lesson | |
-| `BR-ACM-03` | `instruction_vi` viết cho **người lớn**, kèm câu **nói với trẻ** đặt trong ngoặc kép | Người dạy cần biết nói gì, ❌ không phải diễn giải |
+| `BR-ACM-03` | `instruction_vi` viết cho **người lớn**, kèm câu **nói với trẻ** đặt trong ngoặc kép | Người dạy cần biết nói gì, không phải diễn giải |
 | `BR-ACM-04` | Vật liệu là thứ **có sẵn trong nhà** | `BR-LSM-04` |
-| `BR-ACM-05` | Activity ngoài màn hình ❌ **NEVER cần in ấn** trừ khi `kind = worksheet` | Không phải nhà nào cũng có máy in |
+| `BR-ACM-05` | Activity ngoài màn hình Cấm — **NEVER cần in ấn** trừ khi `kind = worksheet` | Không phải nhà nào cũng có máy in |
 | `BR-ACM-06` | Nêu **biến thể dễ hơn và khó hơn** | Cùng một activity phục vụ được nhiều band tuổi |
-| `BR-ACM-07` | ❌ **NEVER hoạt động cần giám sát an toàn đặc biệt** — vật nhỏ nuốt được, kéo, nhiệt | Trẻ 3–6 |
-| `BR-ACM-08` | Activity gắn **1–2 skill**, ❌ không nhiều hơn | Nhiều skill làm không quy được kết quả |
+| `BR-ACM-07` | Cấm — **NEVER hoạt động cần giám sát an toàn đặc biệt** — vật nhỏ nuốt được, kéo, nhiệt | Trẻ 3–6 |
+| `BR-ACM-08` | Activity gắn **1–2 skill**, không nhiều hơn | Nhiều skill làm không quy được kết quả |
 
 ## 7. Data
 
@@ -64,17 +64,17 @@ Dễ hơn: <biến thể>
 Khó hơn: <biến thể>
 ```
 
-Cấu trúc cố định để người dạy quét nhanh, ❌ không phải đọc từ đầu.
+Cấu trúc cố định để người dạy quét nhanh, không phải đọc từ đầu.
 
 ### 7.2 Ràng buộc theo `kind`
 
 | `kind` | Ràng buộc riêng |
 |---|---|
 | `digital_game` | Trỏ level `published`; nêu thời lượng thật |
-| `discussion` | ≥3 câu hỏi mở, ❌ không câu hỏi có/không |
+| `discussion` | ≥3 câu hỏi mở, không câu hỏi có/không |
 | `storytelling` | Truyện ≤300 từ hoặc link nguồn công khai |
-| `movement` | Nêu không gian cần; ❌ không cần dụng cụ |
-| `manipulative` | Vật liệu có sẵn; ❌ không vật nhỏ nuốt được với band 3–4 |
+| `movement` | Nêu không gian cần; không cần dụng cụ |
+| `manipulative` | Vật liệu có sẵn; không vật nhỏ nuốt được với band 3–4 |
 | `worksheet` | Trỏ worksheet `published` |
 | `observation` | Nêu rõ quan sát cái gì và ghi lại thế nào |
 | `mini_project` | Chia được thành buổi; nêu điểm dừng |

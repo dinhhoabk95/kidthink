@@ -19,16 +19,16 @@ depends_on:
 ## 1. Objective
 
 Biến chuỗi event thành một con số đo được cho hệ thống, **và** một biểu hiện tích cực cho
-trẻ. Hai thứ đó khác nhau và ❌ không được lẫn.
+trẻ. Hai thứ đó khác nhau và không được lẫn.
 
-Trẻ 3–6 ❌ **không thấy điểm số**. Chúng thấy sao và lời khen. Điểm là cho adaptive và cho
+Trẻ 3–6 **không thấy điểm số**. Chúng thấy sao và lời khen. Điểm là cho adaptive và cho
 báo cáo của người lớn.
 
 ## 2. Actors
 
 | Actor | Thấy gì |
 |---|---|
-| Trẻ | Sao (1–3) + hoạt hình ăn mừng. ❌ Không con số |
+| Trẻ | Sao (1–3) + hoạt hình ăn mừng. Cấm con số |
 | Người lớn | `normalized_score`, tỉ lệ đúng, số hint, thời lượng |
 | Adaptive | `correct_ratio` để cập nhật mastery |
 
@@ -51,7 +51,7 @@ báo cáo của người lớn.
 | Nhánh | Hành vi |
 |---|---|
 | Phiên `abandoned` | Vẫn tính trên round đã hoàn thành; `normalized_score` có, `stars` **không** hiện |
-| Không round nào hoàn thành | `raw_score = 0`, ❌ không ghi mastery |
+| Không round nào hoàn thành | `raw_score = 0`, không ghi mastery |
 | Chuỗi event thiếu `round_completed` | Suy từ `answer_correct` cuối cùng của round đó, log cảnh báo |
 | Event mâu thuẫn (correct và incorrect cùng attempt) | Lấy cái đến sau, log cảnh báo |
 | Template chấm khác | Dùng `scoring` schema của template |
@@ -60,14 +60,14 @@ báo cáo của người lớn.
 
 | ID | Rule | Vì sao |
 |---|---|---|
-| `BR-SCO-01` | Điểm tính ở **server** từ event, ❌ không nhận từ client | |
-| `BR-SCO-02` | Trẻ ❌ **NEVER thấy con số điểm** | Áp lực điểm số phản tác dụng ở tuổi 3–6 |
-| `BR-SCO-03` | Hint và retry ❌ **NEVER trừ điểm** — chúng được **đếm riêng** | Trừ điểm vì xin trợ giúp dạy trẻ đừng xin trợ giúp |
+| `BR-SCO-01` | Điểm tính ở **server** từ event, không nhận từ client | |
+| `BR-SCO-02` | Trẻ Cấm — **NEVER thấy con số điểm** | Áp lực điểm số phản tác dụng ở tuổi 3–6 |
+| `BR-SCO-03` | Hint và retry Cấm — **NEVER trừ điểm** — chúng được **đếm riêng** | Trừ điểm vì xin trợ giúp dạy trẻ đừng xin trợ giúp |
 | `BR-SCO-04` | `normalized_score ∈ [0,1]`, so được giữa các template | Adaptive cần một thang chung |
-| `BR-SCO-05` | Sai ❌ **NEVER làm điểm âm**. Sàn là 0 | |
-| `BR-SCO-06` | `stars` ❌ không phải hàm của tốc độ | Thưởng tốc độ ở tuổi này tạo thói quen đoán bừa |
-| `BR-SCO-07` | Phiên `abandoned` ❌ không hiện `stars` | Ăn mừng phiên bỏ dở làm ăn mừng mất nghĩa |
-| `BR-SCO-08` | Kết quả hiển thị **luôn tích cực**, kể cả điểm thấp | `feedback-and-celebration` |
+| `BR-SCO-05` | Sai Cấm — **NEVER làm điểm âm**. Sàn là 0 | |
+| `BR-SCO-06` | `stars` không phải hàm của tốc độ | Thưởng tốc độ ở tuổi này tạo thói quen đoán bừa |
+| `BR-SCO-07` | Phiên `abandoned` không hiện `stars` | Ăn mừng phiên bỏ dở làm ăn mừng mất nghĩa |
+| `BR-SCO-08` | Kết quả hiển thị **luôn tích cực**, kể cả điểm thấp | [`feedback-and-celebration.md`](feedback-and-celebration.md) |
 
 ## 7. Data
 
@@ -103,7 +103,7 @@ normalized_score = clamp01(0.6 · first_try_ratio + 0.4 · accuracy)
 | ≥ 0,85 | ⭐⭐⭐ |
 | ≥ 0,55 | ⭐⭐ |
 | hoàn thành level | ⭐ |
-| chưa hoàn thành | ❌ không hiện sao |
+| chưa hoàn thành | không hiện sao |
 
 **Mọi trẻ hoàn thành đều có ít nhất một sao.** Hoàn thành là thành tựu; ngưỡng cao hơn là
 phần thưởng thêm, không phải điều kiện để được công nhận.
@@ -126,8 +126,8 @@ phần thưởng thêm, không phải điều kiện để được công nhận
 }
 ```
 
-❌ **Không** trả `normalized_score` hay `raw_score` xuống bề mặt trẻ. Người lớn xem qua
-`basic-report`.
+Cấm **Không** trả `normalized_score` hay `raw_score` xuống bề mặt trẻ. Người lớn xem qua
+[`basic-report.md`](../03-account/basic-report.md).
 
 ## 9. Acceptance criteria
 
@@ -176,7 +176,7 @@ Scenario: BR-SCO-04 — thang chung giữa template
 
 **Always**
 - Tính điểm ở server từ event.
-- Đếm hint và retry riêng, ❌ không trừ vào điểm.
+- Đếm hint và retry riêng, không trừ vào điểm.
 - Cho mọi trẻ hoàn thành ít nhất một sao.
 
 **Ask first**
@@ -195,4 +195,4 @@ Scenario: BR-SCO-04 — thang chung giữa template
 | # | Câu hỏi | Chặn gì |
 |---|---|---|
 | 1 | Trọng số 0,6/0,4 đã đúng chưa? Cần đo trên dữ liệu thật rồi tinh chỉnh bằng replay | P3 |
-| 2 | Template `sequence-order` chấm từng vị trí hay cả chuỗi? Ảnh hưởng `accuracy` | `game-template-contract` Q3 |
+| 2 | Template `sequence-order` chấm từng vị trí hay cả chuỗi? Ảnh hưởng `accuracy` | [`game-template-contract.md`](../01-platform/game-template-contract.md) Q3 |

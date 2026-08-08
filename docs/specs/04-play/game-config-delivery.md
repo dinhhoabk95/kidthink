@@ -43,7 +43,7 @@ Payload phải nhỏ (tablet trên 4G) và đã qua gating (không rò nội dun
 ## 4. Main flow
 
 1. Nạp bản `published` mới nhất theo `code` (admin có thể chọn version).
-2. `assertContentAccess()` — bảy bước của `access-gating`.
+2. `assertContentAccess()` — bảy bước của [`access-gating.md`](access-gating.md).
 3. Nạp `content_pack` + `difficulty_params`.
 4. Áp `computeAdaptiveParams()` nếu có `mastery_state` cho trẻ (P3; P1 dùng tham số gốc).
 5. Phân giải asset ref → URL đầy đủ (emoji → mã glyph, ảnh → URL).
@@ -54,7 +54,7 @@ Payload phải nhỏ (tablet trên 4G) và đã qua gating (không rò nội dun
 
 | Nhánh | Hành vi |
 |---|---|
-| Bị chặn bậc | 403 + metadata gate, ❌ không có config |
+| Bị chặn bậc | 403 + metadata gate, không có config |
 | Level `archived` giữa lúc mở | Vẫn trả nếu client đang có phiên; yêu cầu mới 404 |
 | `content_pack` không parse được | **500** + alert — dữ liệu hỏng ở production là sự cố nội dung |
 | Asset thiếu | Vẫn trả config, đánh dấu asset lỗi để engine dùng placeholder |
@@ -69,8 +69,8 @@ Payload phải nhỏ (tablet trên 4G) và đã qua gating (không rò nội dun
 | `BR-CFG-03` | Server **parse lại** `content_pack` bằng contract trước khi trả | Dữ liệu hỏng phải chặn ở server, không để engine crash trước mặt trẻ |
 | `BR-CFG-04` | Config bậc ≥ `login` gắn `Cache-Control: private, no-store` | `BR-LAD-09` |
 | `BR-CFG-05` | Config `free` được cache **public** ngắn (5 phút) | Giảm tải cho lối vào đông nhất |
-| `BR-CFG-06` | Payload ❌ **không chứa đáp án ở dạng lộ liễu** khi template cho phép chấm ở server | Xem §11 Q1 |
-| `BR-CFG-07` | Asset ref phân giải ở **server**, client ❌ không tự dựng URL | Đổi CDN không phải sửa client |
+| `BR-CFG-06` | Payload **không chứa đáp án ở dạng lộ liễu** khi template cho phép chấm ở server | Xem §11 Q1 |
+| `BR-CFG-07` | Asset ref phân giải ở **server**, client không tự dựng URL | Đổi CDN không phải sửa client |
 | `BR-CFG-08` | Payload ≤ **200 KB** gzipped | Tablet trên 4G |
 
 ## 7. Data
@@ -115,7 +115,7 @@ Asset không phân giải được → `{ ref, kind, error: "not_found" }`, engi
 | | |
 |---|---|
 | Auth | `requireUserAuth()` + `assertActiveChild()` cho bậc ≥ `login` |
-| 200 | §7.1 — **đồng thời tạo phiên chơi**, xem `play-session-lifecycle` |
+| 200 | §7.1 — **đồng thời tạo phiên chơi**, xem [`play-session-lifecycle.md`](play-session-lifecycle.md) |
 | 403 | `TIER_LOCKED` |
 | 404 | `NOT_FOUND` |
 | 428 | `NO_ACTIVE_CHILD` |

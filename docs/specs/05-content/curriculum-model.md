@@ -20,7 +20,7 @@ depends_on:
 Curriculum là **thứ tự có chủ đích**. Thứ tự sai làm trẻ gặp nội dung chưa đủ nền, thất bại
 liên tục, rồi bỏ.
 
-`curriculum-builder` nói **công cụ**; file này nói **luật sư phạm** mà công cụ phải ép.
+[`curriculum-builder.md`](../06-admin/curriculum-builder.md) nói **công cụ**; file này nói **luật sư phạm** mà công cụ phải ép.
 
 ## 2. Actors
 
@@ -43,14 +43,14 @@ Không có.
 | ID | Rule | Vì sao |
 |---|---|---|
 | `BR-CRM-01` | Skill xuất hiện **sau** mọi prerequisite của nó trong lộ trình | Dạy so sánh trước khi dạy đếm là sai thứ tự |
-| `BR-CRM-02` | Mỗi tuần chạm **2–4 competency**, ❌ không 1, ❌ không cả 6 | Một competency mỗi tuần quá hẹp; cả sáu quá loãng |
+| `BR-CRM-02` | Mỗi tuần chạm **2–4 competency**, không 1, không cả 6 | Một competency mỗi tuần quá hẹp; cả sáu quá loãng |
 | `BR-CRM-03` | Skill mới xuất hiện phải được **ôn lại** trong 2–3 tuần sau | Học một lần rồi bỏ là quên |
-| `BR-CRM-04` | Độ khó trung bình **tăng dần**, cho phép chững, ❌ không giảm mạnh | |
+| `BR-CRM-04` | Độ khó trung bình **tăng dần**, cho phép chững, không giảm mạnh | |
 | `BR-CRM-05` | Mỗi tuần có **≥1 hoạt động ngoài màn hình** | |
 | `BR-CRM-06` | Tuần đầu **dễ có chủ ý** | Tuần đầu quyết định trẻ có quay lại không |
-| `BR-CRM-07` | ❌ **NEVER quá 40%** item thuộc một competency trên toàn chương trình | Chương trình lệch là lỗi sư phạm khó thấy bằng mắt |
+| `BR-CRM-07` | Cấm — **NEVER quá 40%** item thuộc một competency trên toàn chương trình | Chương trình lệch là lỗi sư phạm khó thấy bằng mắt |
 | `BR-CRM-08` | Chương trình theo tuổi phải phủ **cả 6 competency** | |
-| `BR-CRM-09` | ❌ **NEVER lặp cùng một item trong 4 tuần liên tiếp** | |
+| `BR-CRM-09` | Cấm — **NEVER lặp cùng một item trong 4 tuần liên tiếp** | |
 | `BR-CRM-10` | Nêu rõ **mục tiêu của mỗi tuần** bằng một câu cho người lớn | Phụ huynh cần biết tuần này học gì |
 
 ## 7. Data
@@ -80,7 +80,7 @@ Xem `06-admin/curriculum-builder.md` §7.2. Chúng là biểu hiện công cụ 
 | Hành trình 42 tuần | 42 (phát hành 12 tuần đầu) | 4–6 |
 
 Năm chương trình. Điểm cắt nếu thiếu nguồn lực: giữ **một** chương trình theo tuổi —
-`mvp-scope` §5.
+[`mvp-scope.md`](../00-foundation/mvp-scope.md) §5.
 
 ## 8. API contract
 

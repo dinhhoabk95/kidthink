@@ -43,14 +43,14 @@ Không có.
 | ID | Rule | Vì sao |
 |---|---|---|
 | `BR-LSM-01` | Lesson có **cung bậc**: khởi động → hoạt động chính → đúc kết | Trẻ cần vào và ra khỏi trạng thái tập trung |
-| `BR-LSM-02` | ≥1 hoạt động **ngoài màn hình** | Sản phẩm ❌ không tối ưu cho thời gian màn hình |
-| `BR-LSM-03` | `guide_vi` viết cho **người lớn không được đào tạo** | Phụ huynh ❌ không phải giáo viên |
+| `BR-LSM-02` | ≥1 hoạt động **ngoài màn hình** | Sản phẩm không tối ưu cho thời gian màn hình |
+| `BR-LSM-03` | `guide_vi` viết cho **người lớn không được đào tạo** | Phụ huynh không phải giáo viên |
 | `BR-LSM-04` | Vật liệu phải là thứ **có sẵn trong nhà** | Yêu cầu mua đồ làm lesson không dùng được |
 | `BR-LSM-05` | Tổng thời lượng 15–30 phút, trần cứng 45 | |
-| `BR-LSM-06` | Phần đánh giá mô tả **hành vi quan sát được**, ❌ không mức độ trừu tượng | "Bé chỉ đúng vật to hơn" đo được; "bé hiểu khái niệm kích thước" thì không |
-| `BR-LSM-07` | ❌ **NEVER giả định trẻ biết đọc** | |
-| `BR-LSM-08` | Lesson phục vụ **một cụm learning objective liên quan**, ❌ không rải rác | |
-| `BR-LSM-09` | Phần mở rộng là **tuỳ chọn**, ❌ không bắt buộc | Người dạy quyết định theo sức trẻ hôm đó |
+| `BR-LSM-06` | Phần đánh giá mô tả **hành vi quan sát được**, không mức độ trừu tượng | "Bé chỉ đúng vật to hơn" đo được; "bé hiểu khái niệm kích thước" thì không |
+| `BR-LSM-07` | Cấm — **NEVER giả định trẻ biết đọc** | |
+| `BR-LSM-08` | Lesson phục vụ **một cụm learning objective liên quan**, không rải rác | |
+| `BR-LSM-09` | Phần mở rộng là **tuỳ chọn**, không bắt buộc | Người dạy quyết định theo sức trẻ hôm đó |
 
 ## 7. Data
 
@@ -58,12 +58,12 @@ Không có.
 
 | Phần | Thời lượng | Bắt buộc |
 |---|---|:--:|
-| Khởi động | 2–5 phút | ❌ khuyến nghị |
-| Hoạt động chính | 10–20 phút | ✅ |
-| — trong đó ≥1 ngoài màn hình | | ✅ |
-| Đúc kết / phản hồi | 2–5 phút | ❌ khuyến nghị |
-| Đánh giá | quan sát trong lúc làm | ❌ |
-| Mở rộng | tuỳ chọn | ❌ |
+| Khởi động | 2–5 phút | Cấm khuyến nghị |
+| Hoạt động chính | 10–20 phút | |
+| — trong đó ≥1 ngoài màn hình | | |
+| Đúc kết / phản hồi | 2–5 phút | Cấm khuyến nghị |
+| Đánh giá | quan sát trong lúc làm | Cấm |
+| Mở rộng | tuỳ chọn | Cấm |
 
 ### 7.2 `guide_vi` phải trả lời
 
@@ -77,7 +77,7 @@ Câu 4 và 5 là phần hay bị bỏ, và là phần người dạy cần nhấ
 
 ### 7.3 Ngôn ngữ phần đánh giá
 
-| ❌ Tránh | ✅ Dùng |
+| Cấm Tránh | Dùng |
 |---|---|
 | "Bé hiểu khái niệm số lượng" | "Bé chỉ đúng nhóm có nhiều hơn trong 3 lần thử" |
 | "Bé phát triển tư duy logic" | "Bé nói được lý do vì sao xếp như vậy" |

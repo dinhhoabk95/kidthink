@@ -21,16 +21,16 @@ depends_on:
 Trẻ 3 tuổi **sẽ không xin trợ giúp**. Nếu hệ thống chờ được yêu cầu, nó sẽ để trẻ ngồi bế
 tắc cho tới khi bỏ cuộc.
 
-Vì vậy trợ giúp leo thang **theo đồng hồ hoặc theo số lần miss liên tiếp**, tự động, ❌ không
+Vì vậy trợ giúp leo thang **theo đồng hồ hoặc theo số lần miss liên tiếp**, tự động, không
 theo yêu cầu.
 
 ## 2. Actors
 
 | Actor | Vai trò |
 |---|---|
-| Trẻ | Nhận trợ giúp, ❌ không phải xin |
+| Trẻ | Nhận trợ giúp, không phải xin |
 | Engine | Đếm thời gian và miss, leo thang |
-| Adaptive | Dùng `hint_rate` làm tín hiệu, ❌ không trừ điểm |
+| Adaptive | Dùng `hint_rate` làm tín hiệu, không trừ điểm |
 
 ## 3. Entry points
 
@@ -49,8 +49,8 @@ theo yêu cầu.
 
 | Nhánh | Hành vi |
 |---|---|
-| Trẻ đúng trước ngưỡng | ❌ Không hiện trợ giúp nào |
-| Trẻ vẫn không thao tác sau L3 | Giữ L3, ❌ **không** tự làm hộ. Sau 3 chu kỳ → gợi ý chuyển round (`round_skipped`) |
+| Trẻ đúng trước ngưỡng | Cấm hiện trợ giúp nào |
+| Trẻ vẫn không thao tác sau L3 | Giữ L3, **không** tự làm hộ. Sau 3 chu kỳ → gợi ý chuyển round (`round_skipped`) |
 | `prefers-reduced-motion` | Ghost hand thành highlight nhấp nháy chậm, **vẫn có** trình diễn |
 | Trẻ chạm liên tục lung tung | Coi là miss, leo thang bình thường |
 | Round retry | Đồng hồ reset, bộ đếm miss **không** reset |
@@ -59,14 +59,14 @@ theo yêu cầu.
 
 | ID | Rule | Vì sao |
 |---|---|---|
-| `BR-SCF-01` | Leo thang theo **đồng hồ hoặc miss**, ❌ **NEVER theo yêu cầu** | Trẻ 3 tuổi sẽ không xin |
-| `BR-SCF-02` | Hint ❌ **NEVER trừ điểm** | Trừ điểm dạy trẻ đừng nhận trợ giúp |
+| `BR-SCF-01` | Leo thang theo **đồng hồ hoặc miss**, Cấm — **NEVER theo yêu cầu** | Trẻ 3 tuổi sẽ không xin |
+| `BR-SCF-02` | Hint Cấm — **NEVER trừ điểm** | Trừ điểm dạy trẻ đừng nhận trợ giúp |
 | `BR-SCF-03` | Scaffolding **phải gán `engine.focusIndex`** | Một phần tử động thu hút chú ý tại một thời điểm — `BR-ENG-09` |
-| `BR-SCF-04` | Hệ thống ❌ **NEVER tự hoàn thành hộ trẻ** | Trẻ phải là người thao tác cuối cùng |
-| `BR-SCF-05` | Ngưỡng theo **band tuổi**, ❌ không một ngưỡng cho mọi tuổi | 3 tuổi cần trợ giúp sớm gấp đôi 6 tuổi |
-| `BR-SCF-06` | `prefers-reduced-motion` **giảm** trình diễn, ❌ không bỏ | Bỏ trình diễn là bỏ kênh chỉ dẫn duy nhất cho trẻ chưa đọc |
+| `BR-SCF-04` | Hệ thống Cấm — **NEVER tự hoàn thành hộ trẻ** | Trẻ phải là người thao tác cuối cùng |
+| `BR-SCF-05` | Ngưỡng theo **band tuổi**, không một ngưỡng cho mọi tuổi | 3 tuổi cần trợ giúp sớm gấp đôi 6 tuổi |
+| `BR-SCF-06` | `prefers-reduced-motion` **giảm** trình diễn, không bỏ | Bỏ trình diễn là bỏ kênh chỉ dẫn duy nhất cho trẻ chưa đọc |
 | `BR-SCF-07` | Mỗi lần leo thang phát event | `hint_rate` là tín hiệu chất lượng nội dung |
-| `BR-SCF-08` | Trợ giúp ❌ **NEVER kèm giọng chê** | Âm và lời luôn khích lệ |
+| `BR-SCF-08` | Trợ giúp Cấm — **NEVER kèm giọng chê** | Âm và lời luôn khích lệ |
 
 ## 7. Data
 
@@ -84,7 +84,7 @@ theo yêu cầu.
 
 | Cấp | Biểu hiện | Âm |
 |---|---|---|
-| L1 | Highlight target đúng bằng nhịp thở nhẹ | ❌ không |
+| L1 | Highlight target đúng bằng nhịp thở nhẹ | không |
 | L2 | Ghost hand đi từ item tới target, tốc độ thật, một lần | Âm nhẹ dẫn hướng |
 | L3 | Ghost hand 0,5×, lặp | Lời hướng dẫn tiếng Việt đọc lại |
 
@@ -93,7 +93,7 @@ theo yêu cầu.
 `scaffold_escalated { round_index, level, trigger: "timer"|"miss_streak", elapsed_ms }`
 `demo_shown { round_index, speed }`
 
-❌ Không có `hint_requested` với `source: "user"` — không tồn tại đường xin trợ giúp.
+Cấm có `hint_requested` với `source: "user"` — không tồn tại đường xin trợ giúp.
 
 ## 8. API contract
 
