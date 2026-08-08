@@ -83,7 +83,7 @@ Bốn thứ này rẻ khi làm đúng lúc và rất đắt khi vá sau. Chúng 
 | `BR-MVP-02` | **NEVER bán một gói chưa mở được tính năng nào** | Vấn đề đạo đức thương mại, không chỉ là gap kỹ thuật |
 | `BR-MVP-03` | Add-on lên catalog **cùng lúc** với tính năng của nó, không trước | idem |
 | `BR-MVP-04` | Thứ ở §8 **vĩnh viễn ngoài phạm vi** — không viết code, không viết spec, không để lại chỗ trống trong schema cho nó | Chỗ trống "để sau này dùng" là nợ không ai trả |
-| `BR-MVP-05` | Bốn thứ ở §5 không được cắt dù nguồn lực thế nào | |
+| `BR-MVP-05` | Bốn thứ ở §5 không được cắt dù nguồn lực thế nào | Bốn yếu tố này (dữ liệu trẻ, audit thanh toán, isolation, logging) bảo vệ pháp lý và nền tảng hệ thống |
 | `BR-MVP-06` | Nội dung MVP đủ cho **4–8 tuần** quay lại | Dưới ngưỡng đó thì retention không đo được, và KPI không có nghĩa |
 
 ## 7. Data — số lượng phải đạt
