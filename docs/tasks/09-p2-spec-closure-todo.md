@@ -181,9 +181,9 @@ entitlement-grant · subscription-view · package-catalog-admin (độc lập)
 
 ### Bước 10 — [`entitlement-grant.md`](../specs/06-admin/entitlement-grant.md)
 
-- [ ] Đọc hết 175 dòng; điền "vì sao" cho **2** cảnh báo `C6`
-- [ ] Đối chiếu 16 entitlement key với [`entitlement-model.md`](../specs/00-foundation/entitlement-model.md)
-- [ ] `status: approved`; commit `feat(specs): T9 bước 10 — approve entitlement-grant`
+- [x] Đọc hết 175 dòng; điền "vì sao" cho **2** cảnh báo `C6`
+- [x] Đối chiếu 16 entitlement key với [`entitlement-model.md`](../specs/00-foundation/entitlement-model.md)
+- [x] `status: approved`; commit `feat(specs): T9 bước 10 — approve entitlement-grant`
 
 ### Bước 11 — [`subscription-view.md`](../specs/03-account/subscription-view.md)
 

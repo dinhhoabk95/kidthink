@@ -2,10 +2,10 @@
 spec: ENTITLEMENT-GRANT
 title: Cấp và thu hồi quyền thủ công
 area: admin
-status: draft
+status: approved
 mvp: true
 phase: P2
-reviewed: 2026-08-04
+reviewed: 2026-08-08
 owns:
   - Thao tác cấp/thu hồi entitlement bằng tay
   - Giới hạn và audit của thao tác này
@@ -59,9 +59,9 @@ dùng thử cho đối tác, game custom theo yêu cầu.
 |---|---|---|
 | `BR-EGR-01` | Cấp theo **package**, không theo key lẻ | Cấp key lẻ tạo tổ hợp quyền không tồn tại trong catalog, và không ai test |
 | `BR-EGR-02` | `grant_reason` **bắt buộc** ≥20 ký tự | Đây là đường lạm dụng dễ nhất |
-| `BR-EGR-03` | Mọi thao tác ghi `audit_logs` kèm before/after | |
+| `BR-EGR-03` | Mọi thao tác ghi `audit_logs` kèm before/after | Đảm bảo khả năng giải trình và truy vết theo `BR-AUD-01` đối với thao tác tài chính thủ công |
 | `BR-EGR-04` | Thời hạn tối đa **365 ngày** một lần cấp | Cấp vĩnh viễn bằng tay là mất kiểm soát doanh thu |
-| `BR-EGR-05` | Chỉ `super_admin` | |
+| `BR-EGR-05` | Chỉ `super_admin` | Quyền tối cao về tài chính chỉ thuộc về người quản trị cao nhất để giảm nguy cơ trục lợi |
 | `BR-EGR-06` | Thu hồi có hiệu lực **ngay**, invalidate cache | `BR-ENT-06` |
 | `BR-EGR-07` | Cộng dồn khi còn hạn, không ghi đè | `BR-PAP-05` |
 | `BR-EGR-08` | Cấp tay **không tạo** `payment_orders` giả | Doanh thu và quyền là hai sổ khác nhau |
@@ -169,7 +169,7 @@ Scenario: BR-EGR-05 — content_reviewer bị chặn
 
 ## 11. Open questions
 
-| # | Câu hỏi | Chặn gì |
-|---|---|---|
-| 1 | Báo cáo cấp tay hàng tháng gửi cho ai khi chỉ có một `super_admin`? | Tự giám sát |
-| 2 | Có cần ngưỡng cảnh báo khi cấp tay vượt N lần/tháng không? | P2 |
+| # | Câu hỏi | Chặn phase | Đề xuất chốt | Chủ |
+|---|---|---|---|---|
+| 1 | Báo cáo cấp tay hàng tháng gửi cho ai khi chỉ có một `super_admin`? | P2 | Gửi email thông báo tổng hợp tới chính email `super_admin` duy nhất ở MVP | người quyết |
+| 2 | Có cần ngưỡng cảnh báo khi cấp tay vượt N lần/tháng không? | P2 | Chưa ở MVP — `super_admin` tự kiểm soát qua `audit_logs`; bổ sung cảnh báo ở P3 | người quyết |
