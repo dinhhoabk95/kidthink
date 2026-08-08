@@ -94,11 +94,11 @@ Bước 0 → Đợt 1 (2) → Đợt 2 (4) → Cổng dừng A → Đợt 3 (2)
 
 ### Bước 6 — [`activity-authoring.md`](../specs/06-admin/activity-authoring.md)
 
-- [ ] Đọc hết 155 dòng
-- [ ] Điền "vì sao" cho `BR-ACA-04`, `BR-ACA-06`, `BR-ACA-07`
-- [ ] Q1 (activity ngoài màn hình có cần hình minh hoạ) — `Chủ: Nội dung`, `Chặn phase: P3`
-- [ ] Bảng mục 11 sang 5 cột; `status: approved`
-- [ ] Commit `feat(specs): T10 bước 6 — approve activity-authoring`
+- [x] Đọc hết 155 dòng
+- [x] Điền "vì sao" cho `BR-ACA-04`, `BR-ACA-06`, `BR-ACA-07`
+- [x] Q1 (activity ngoài màn hình có cần hình minh hoạ) — `Chủ: Nội dung`, `Chặn phase: P3`
+- [x] Bảng mục 11 sang 5 cột; `status: approved`
+- [x] Commit `feat(specs): T10 bước 6 — approve activity-authoring`
 
 ---
 

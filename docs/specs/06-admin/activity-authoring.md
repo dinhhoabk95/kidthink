@@ -2,10 +2,10 @@
 spec: ACTIVITY-AUTHORING
 title: Soạn hoạt động
 area: admin
-status: draft
+status: approved
 mvp: true
 phase: P3
-reviewed: 2026-08-04
+reviewed: 2026-08-08
 owns:
   - Luồng soạn một activity
   - Mười loại activity
@@ -56,10 +56,10 @@ sửa một lần, mọi lesson dùng nó đều được cập nhật.
 | `BR-ACA-01` | `kind` quyết định trường hiện ra | 10 loại có nhu cầu rất khác nhau |
 | `BR-ACA-02` | `kind = digital_game` **bắt buộc** trỏ tới game level `published` | Trỏ level draft là activity hỏng |
 | `BR-ACA-03` | `estimated_minutes ∈ [2,20]` | Activity dài hơn nên là lesson |
-| `BR-ACA-04` | Activity Cấm — **NEVER xoá cứng** khi đang dùng | |
+| `BR-ACA-04` | Activity Cấm — **NEVER xoá cứng** khi đang dùng | Bảo vệ tính toàn vẹn của các lesson đang sử dụng và tránh làm đứt gãy kịch bản học tập |
 | `BR-ACA-05` | Hoạt động ngoài màn hình ghi rõ **vật liệu cần chuẩn bị** | Người lớn cần chuẩn bị trước, không giữa chừng |
-| `BR-ACA-06` | Tag ba trục bắt buộc trước publish | |
-| `BR-ACA-07` | Sửa activity đã published → version mới | |
+| `BR-ACA-06` | Tag ba trục bắt buộc trước publish | Đảm bảo dữ liệu được phân loại chuẩn xác phục vụ việc tìm kiếm và khuyến nghị sư phạm |
+| `BR-ACA-07` | Sửa activity đã published → version mới | Bảo toàn lịch sử các bản biên soạn và tránh ảnh hưởng ngoài ý muốn đến nội dung đã phát hành |
 
 ## 7. Data
 
@@ -149,6 +149,6 @@ Scenario: sửa activity ảnh hưởng mọi lesson dùng nó
 
 ## 11. Open questions
 
-| # | Câu hỏi | Chặn gì |
-|---|---|---|
-| 1 | Activity ngoài màn hình có cần hình minh hoạ không? Tốn công soạn nhưng dễ theo hơn | P3 |
+| # | Câu hỏi | Chặn phase | Đề xuất chốt | Chủ |
+|---|---|---|---|---|
+| 1 | Activity ngoài màn hình có cần hình minh hoạ không? Tốn công soạn nhưng dễ theo hơn | P3 | hoãn — MVP chỉ yêu cầu mô tả văn bản chi tiết; hình ảnh minh họa cho activity ngoài màn hình bổ sung ở P4 | Nội dung |
