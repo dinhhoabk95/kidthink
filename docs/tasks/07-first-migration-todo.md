@@ -378,34 +378,34 @@ File: `packages/db/src/seed.ts`
 
 ## Bước 15 — Sweep test toàn corpus + đóng task
 
-- [ ] Đếm dòng mỗi file `packages/db/src/schema/*.ts` — không file nào > 400 dòng (`BR-DM-11`)
-- [ ] Đếm test orphan polymorphic — đúng **9** ca, khớp danh sách đóng 9 dòng của DMO §7.2
+- [x] Đếm dòng mỗi file `packages/db/src/schema/*.ts` — không file nào > 400 dòng (`BR-DM-11`)
+- [x] Đếm test orphan polymorphic — đúng **9** ca, khớp danh sách đóng 9 dòng của DMO §7.2
       (`BR-DM-04`)
-- [ ] Quét `packages/db/src` tìm chuỗi SQL thô ngoài Drizzle — chỉ còn `sql\`\`` cho tăng
+- [x] Quét `packages/db/src` tìm chuỗi SQL thô ngoài Drizzle — chỉ còn `sql\`\`` cho tăng
       nguyên tử/coalesce và trigger trong migration (`BR-DM-06`, D2)
-- [ ] `docker compose down -v && docker compose up -d` — khôi phục hoàn toàn từ đầu
-- [ ] `pnpm db:migrate` trên DB rỗng — exit 0, toàn bộ 11 module
-- [ ] `pnpm db:seed` — exit 0, chạy lại lần hai số hàng không đổi
-- [ ] `pnpm check` xanh
-- [ ] `pnpm test` xanh (toàn bộ integration test của 11 module)
-- [ ] `pnpm check:services` xanh
-- [ ] `lefthook run pre-push` xanh (chạy thật bằng `git push`, không chỉ lệnh thủ công — xem
+- [x] `docker compose down -v && docker compose up -d` — khôi phục hoàn toàn từ đầu
+- [x] `pnpm db:migrate` trên DB rỗng — exit 0, toàn bộ 11 module
+- [x] `pnpm db:seed` — exit 0, chạy lại lần hai số hàng không đổi
+- [x] `pnpm check` xanh
+- [x] `pnpm test` xanh (toàn bộ integration test của 11 module)
+- [x] `pnpm check:services` xanh
+- [x] `lefthook run pre-push` xanh (chạy thật bằng `git push`, không chỉ lệnh thủ công — xem
       cảnh báo ở [`repo-bootstrap.md`](../specs/00-foundation/repo-bootstrap.md) §9 về lệnh thủ công thiếu ref data)
-- [ ] Push `origin/main`
-- [ ] Commit cuối `docs(tasks): T6 — đóng task migration đầu tiên, đối chiếu tay`
+- [x] Push `origin/main`
+- [x] Commit cuối `docs(tasks): T7 — đóng task migration đầu tiên`
 
 ## Cổng dừng cuối — kết thúc task
 
-- [ ] 11/11 file schema tồn tại và migrate được từ DB rỗng
-- [ ] 9/9 test orphan polymorphic pass
-- [ ] INSERT-only verify bằng role `kidthink_app` thật (không phải owner) trên 4 bảng:
+- [x] 11/11 file schema tồn tại và migrate được từ DB rỗng
+- [x] 9/9 test orphan polymorphic pass
+- [x] INSERT-only verify bằng role `kidthink_app` thật (không phải owner) trên 4 bảng:
       `audit_logs` · `consent_logs` · `content_review_log` · `telemetry_events`
-- [ ] 2 trigger (`published` bất biến, `play_sessions` hậu-completed bất biến) có test cả
+- [x] 2 trigger (`published` bất biến, `play_sessions` hậu-completed bất biến) có test cả
       nhánh chặn và nhánh cho phép
-- [ ] Seed idempotent verify bằng test tự động
-- [ ] `pnpm check && pnpm test && pnpm check:services` xanh
-- [ ] Đã push `origin/main`
-- [ ] Việc tiếp theo của dự án: roadmap P0 bước 9 — taxonomy service + seed Lớp 1
+- [x] Seed idempotent verify bằng test tự động
+- [x] `pnpm check && pnpm test && pnpm check:services` xanh
+- [x] Đã push `origin/main`
+- [x] Việc tiếp theo của dự án: roadmap P0 bước 9 — taxonomy service + seed Lớp 1
       ([`taxonomy-service.md`](../specs/01-platform/taxonomy-service.md),
       [`emoji-registry.md`](../specs/01-platform/emoji-registry.md)) — task riêng, không gộp
       vào đây
