@@ -100,13 +100,12 @@ Bước 0 → Đợt 1 (3) → Cổng dừng A → [chờ Task #10 xong] → Đ�
 
 ### Bước 6 — [`pdf-export.md`](../specs/07-addon/pdf-export.md)
 
-- [ ] Đọc hết 124 dòng
-- [ ] Điền "vì sao" cho `BR-PDF-03`, `BR-PDF-09`
-- [ ] Q1 (Puppeteer khoảng 300MB RAM trên t3.small) — `Chủ: Infra`, `Chặn phase: P4`; ghi nguyên
-      văn để dùng lại ở Bước 8
-- [ ] Q2 (quota export mỗi tháng) — khuôn `Lên catalog`
-- [ ] Bảng mục 11 sang 5 cột; `status: approved`
-- [ ] Commit `feat(specs): T11 bước 6 — approve pdf-export`
+- [x] Đọc hết 124 dòng
+- [x] Điền "vì sao" cho `BR-PDF-03`, `BR-PDF-09`
+- [x] Q1 (Puppeteer khoảng 300MB RAM trên t3.small) — `Chủ: Infra`, `Chặn phase: P4`; ghi nguyên văn để dùng lại ở Bước 8 ([`worksheet-model.md`](../specs/05-content/worksheet-model.md))
+- [x] Q2 (quota export mỗi tháng) — khuôn `Lên catalog` / `P4` / `người quyết`
+- [x] Bảng mục 11 sang 5 cột; `status: approved`
+- [x] Commit `feat(specs): T11 bước 6 — approve pdf-export`
 
 ### Bước 7 — [`semantic-search.md`](../specs/07-addon/semantic-search.md)
 

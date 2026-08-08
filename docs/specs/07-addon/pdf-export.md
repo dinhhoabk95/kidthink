@@ -2,10 +2,10 @@
 spec: PDF-EXPORT
 title: Xuất PDF
 area: addon
-status: draft
+status: approved
 mvp: false
 phase: P4
-reviewed: 2026-08-04
+reviewed: 2026-08-08
 owns:
   - Cơ chế render PDF và giới hạn
 depends_on:
@@ -35,13 +35,13 @@ dạy.
 |---|---|---|
 | `BR-PDF-01` | Render chạy trong **job nền**, không chạy trong request | Render tốn RAM và thời gian; chặn request là hạ instance |
 | `BR-PDF-02` | Trừ quota **trước** khi render; hoàn lại nếu fail | `BR-ACL-02` |
-| `BR-PDF-03` | File qua **signed URL ≤60 phút** | |
+| `BR-PDF-03` | File qua **signed URL ≤60 phút** | Bảo mật liên kết tải xuống và ngăn ngừa việc chia sẻ công khai không kiểm soát |
 | `BR-PDF-04` | Watermark ở **chân trang** — cấm đặt trên vùng nội dung | Watermark che nội dung làm bản in vô dụng |
 | `BR-PDF-05` | Trần **20 trang** mỗi lần xuất | Trên t3.small render dài là rủi ro vận hành |
 | `BR-PDF-06` | **Cấm chứa dữ liệu trẻ** trong PDF giáo án | `BR-LPC-09` |
 | `BR-PDF-07` | Font nhúng, dấu tiếng Việt hiển thị đúng | Dấu vỡ là lỗi hay gặp nhất khi render PDF tiếng Việt |
 | `BR-PDF-08` | File tự xoá sau **7 ngày** | Dung lượng |
-| `BR-PDF-09` | Render fail → thông báo + **hoàn quota** | |
+| `BR-PDF-09` | Render fail → thông báo + **hoàn quota** | Đảm bảo quyền lợi cho người dùng không bị mất lượt xuất khi hệ thống gặp sự cố |
 
 ## 7. Data
 
@@ -117,7 +117,7 @@ Scenario: BR-PDF-08 — file tự xoá
 
 ## 11. Open questions
 
-| # | Câu hỏi | Chặn gì |
-|---|---|---|
-| 1 | Puppeteer tốn ~300MB RAM mỗi instance — chạy được trên t3.small cùng web và worker không? | P4 hạ tầng |
-| 2 | Quota export mỗi tháng là bao nhiêu? | Lên catalog |
+| # | Câu hỏi | Chặn phase | Đề xuất chốt | Chủ |
+|---|---|---|---|---|
+| 1 | Puppeteer tốn ~300MB RAM mỗi instance — chạy được trên t3.small cùng web và worker không? | P4 | Đánh giá tách worker render PDF sang microservice/lambda riêng nếu tải RAM t3.small vượt quá 80% (cùng câu với [`worksheet-model.md`](../05-content/worksheet-model.md) Q1) | Infra |
+| 2 | Quota export mỗi tháng là bao nhiêu? | P4 | Định lượng theo gói bán khi lên catalog sản phẩm | người quyết |
