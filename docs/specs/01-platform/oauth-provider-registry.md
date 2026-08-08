@@ -248,7 +248,7 @@ Scenario: BR-OAP-15 — không lưu ảnh đại diện
 
 ## 11. Open questions
 
-| # | Câu hỏi | Chặn gì | Chủ |
-|---|---|---|---|
-| 1 | Zalo có nên là provider thứ ba không? Thị phần VN cao, nhưng luồng đồng ý và tài liệu khác hẳn hai provider hiện có | Sau P1 | hoãn — thêm provider là sửa §7.1 qua PR, không chặn hai provider hiện có |
-| 2 | Apple Sign-In bắt buộc nếu lên App Store — có làm PWA/native ở P5 không? | [`pwa-install.md`](pwa-install.md) | hoãn — P5, ngoài MVP |
+| # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
+|---|---|---|---|---|
+| 1 | Zalo có nên là provider thứ ba không? Thị phần VN cao, nhưng luồng đồng ý và tài liệu khác hẳn hai provider hiện có | Sau P1 | P2 | hoãn — thêm provider là sửa §7.1 qua PR |
+| 2 | Apple Sign-In bắt buộc nếu lên App Store — có làm PWA/native ở P5 không? | [`pwa-install.md`](pwa-install.md) | P5 | hoãn — P5, ngoài MVP |
