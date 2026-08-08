@@ -354,17 +354,17 @@ admin-dashboard (độc lập)
 
 ### Bước 26 — [`error-log-viewer.md`](../specs/06-admin/error-log-viewer.md)
 
-- [ ] Đọc hết 141 dòng; điền "vì sao" cho **2** cảnh báo `C6`
-- [ ] Q1 (Sentry hay tự xây) — dùng câu trả lời số 4 của Cổng dừng A, ghi `D-*`
-- [ ] Kiểm rule "strip PII ở tầng nhận" — không nới
-- [ ] `status: approved`; commit `feat(specs): T9 bước 26 — approve error-log-viewer`
+- [x] Đọc hết 141 dòng; điền "vì sao" cho **2** cảnh báo `C6`
+- [x] Q1 (Sentry hay tự xây) — dùng câu trả lời số 4 của Cổng dừng A, ghi `D-*`
+- [x] Kiểm rule "strip PII ở tầng nhận" — không nới
+- [x] `status: approved`; commit `feat(specs): T9 bước 26 — approve error-log-viewer`
 
 ### Bước 27 — [`system-activity.md`](../specs/06-admin/system-activity.md)
 
-- [ ] Đọc hết 121 dòng; điền "vì sao" cho **2** cảnh báo `C6`
-- [ ] Kiểm rule "cấm hiện xanh khi không có số liệu" khớp
+- [x] Đọc hết 121 dòng; điền "vì sao" cho **2** cảnh báo `C6`
+- [x] Kiểm rule "cấm hiện xanh khi không có số liệu" khớp
       [`health-check.md`](../specs/01-platform/health-check.md) (cấm 200 cứng) — cùng một nguyên tắc
-- [ ] `status: approved`; commit `feat(specs): T9 bước 27 — approve system-activity`
+- [x] `status: approved`; commit `feat(specs): T9 bước 27 — approve system-activity`
 
 ### Bước 28 — [`data-export.md`](../specs/06-admin/data-export.md)
 

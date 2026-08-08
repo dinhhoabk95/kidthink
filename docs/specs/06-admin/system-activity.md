@@ -2,10 +2,10 @@
 spec: SYSTEM-ACTIVITY
 title: Trạng thái hệ thống trong quản trị
 area: admin
-status: draft
+status: approved
 mvp: true
 phase: P2
-reviewed: 2026-08-04
+reviewed: 2026-08-08
 owns:
   - Bề mặt xem sức khoẻ hệ thống trong admin
 depends_on:
@@ -53,8 +53,8 @@ nơi xác nhận và tra cứu sau khi nhận alert.
 | `BR-SYS-01` | Cấm — **NEVER hiện xanh khi không lấy được số liệu** | Không biết ≠ ổn |
 | `BR-SYS-02` | Màn hình này **không thay** alerting | Người phải được gọi, không phải tự vào xem |
 | `BR-SYS-03` | Mỗi mục bất thường có link runbook | `BR-MON-02` |
-| `BR-SYS-04` | Cấm — **NEVER hiện chuỗi kết nối, secret, hay biến môi trường** | |
-| `BR-SYS-05` | Chỉ `super_admin` | |
+| `BR-SYS-04` | Cấm — **NEVER hiện chuỗi kết nối, secret, hay biến môi trường** | Bảo vệ an toàn thông tin hạ tầng và ngăn ngừa nguy cơ lộ bí mật hệ thống theo `BR-SEC-01` |
+| `BR-SYS-05` | Chỉ `super_admin` | Giới hạn quyền giám sát hạ tầng cho đúng vai trò quản trị tối cao theo `BR-ADA-02` |
 | `BR-SYS-06` | Backup chưa verify → cảnh báo mức cao | `BR-BAK-06` |
 
 ## 7. Data
@@ -116,6 +116,6 @@ Scenario: BR-SYS-05 — content_reviewer bị chặn
 
 ## 11. Open questions
 
-| # | Câu hỏi | Chặn gì |
-|---|---|---|
-| 1 | Có cho phép thao tác vận hành từ đây (retry job, chạy backup) không? Tiện nhưng mở bề mặt rủi ro | P2 |
+| # | Câu hỏi | Chặn phase | Đề xuất chốt | Chủ |
+|---|---|---|---|---|
+| 1 | Có cho phép thao tác vận hành từ đây (retry job, chạy backup) không? Tiện nhưng mở bề mặt rủi ro | P2 | MVP không hỗ trợ thao tác trực tiếp trên dashboard; chỉ hiển thị trạng thái và link sang công cụ vận hành riêng | người quyết |
