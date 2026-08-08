@@ -2,10 +2,10 @@
 spec: DESIGN-SYSTEM-CONTRACT
 title: Contract design system
 area: quality
-status: draft
+status: approved
 mvp: true
 phase: P1
-reviewed: 2026-08-04
+reviewed: 2026-08-08
 owns:
   - Token, kit component, quy tắc bốn bề mặt
 depends_on:
@@ -57,23 +57,25 @@ Dev UI · reviewer.
 | `BR-DSC-06` | Cấm — **NEVER `dark:` trên bề mặt trẻ** | Light-only mọi breakpoint, bất kể tuỳ chọn hệ thống |
 | `BR-DSC-07` | Cấm — **NEVER `danger`/đỏ trên bề mặt trẻ** — dùng `retry` hổ phách | Đỏ đọc thành trừng phạt ở tuổi 3–6 |
 | `BR-DSC-08` | App-level `@theme` **kế thừa**, Cấm — **NEVER định nghĩa lại** token thương hiệu | Hai định nghĩa là hai giá trị |
-| `BR-DSC-09` | SFC đúng thứ tự `<template>` → `<script setup>` → `<style scoped>` | |
+| `BR-DSC-09` | SFC đúng thứ tự `<template>` → `<script setup>` → `<style scoped>` | Quy chuẩn SFC Vue 3 giúp dễ đọc và nhất quán |
 | `BR-DSC-10` | **Một CTA chính mỗi màn hình** | Hai thứ cùng màu cam thì không cái nào đọc thành hành động |
 | `BR-DSC-11` | Tablet-first: **`active:`** mang phản hồi nhấn, không phải `hover:` | Tablet không có hover |
 | `BR-DSC-12` | Chỉ animate `transform` và `opacity`. Cấm — NEVER `width`/`height`/`top` | Gây reflow |
-| `BR-DSC-13` | File `.vue` ≤ **800 dòng** | |
-| `BR-DSC-14` | Cấm — **NEVER `rounded-md`/`rounded-lg`** — chúng là mặc định shadcn, ngoài hệ thống | |
+| `BR-DSC-13` | File `.vue` ≤ **800 dòng** | File quá dài gây khó đọc và bảo trì, nên tách component |
+| `BR-DSC-14` | Cấm — **NEVER `rounded-md`/`rounded-lg`** — chúng là mặc định shadcn, ngoài hệ thống | Đảm bảo nhất quán với hệ thống radius thiết kế riêng |
 
 ## 7. Data
 
 ### 7.1 Bốn bề mặt
 
+Ngưỡng sàn chạm do `BR-A11-04` của [`accessibility.md`](accessibility.md) sở hữu (64px / 76px / 96px cho bề mặt trẻ, 44px người lớn, sàn tuyệt đối 24px).
+
 | Bề mặt | Ở đâu | Touch floor | Dark mode | Đỏ |
 |---|---|---|---|:--:|
-| **Kid** | `components/kid/`, `pages/play/`, gameboard | 64px (chính 76px, band 3–4 96px) | Cấm | Cấm |
-| **Account** | `pages/me/**` | 44px | | |
-| **Public** | trang công khai | 44px | | |
-| **Admin** | app admin (studio 40px) | 44px | | |
+| **Kid** | `components/kid/`, `pages/play/`, gameboard | `BR-A11-04` | Cấm | Cấm |
+| **Account** | `pages/me/**` | `BR-A11-04` | | |
+| **Public** | trang công khai | `BR-A11-04` | | |
+| **Admin** | app admin (studio 40px) | `BR-A11-04` (studio 40px) | | |
 
 ### 7.2 Token
 
@@ -180,7 +182,8 @@ Scenario: BR-DSC-13 — file .vue đủ nhỏ
 
 ## 11. Open questions
 
-| # | Câu hỏi | Chặn gì |
-|---|---|---|
-| 1 | Bộ avatar preset cho trẻ do ai vẽ và bao nhiêu cái? | [`child-profile-crud.md`](../03-account/child-profile-crud.md) Q1 |
-| 2 | Font chữ số trên canvas có cần giấy phép riêng không? | P1 |
+| # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
+|---|---|---|---|---|
+| 1 | Bộ avatar preset cho trẻ do ai vẽ và bao nhiêu cái? | Tạo hồ sơ trẻ | P1 | Cặp Q2/D-AS: Hỏi Cổng dừng A (dính [`child-profile-crud.md`](../03-account/child-profile-crud.md) Q1) |
+| 2 | Font chữ số trên canvas có cần giấy phép riêng không? | Giấy phép font | P1 | Chốt: Dùng Google Fonts open-source (OFL license), không tốn phí bản quyền riêng |
+

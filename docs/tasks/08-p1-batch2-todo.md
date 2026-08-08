@@ -72,21 +72,21 @@ Mọi spec giao diện ở lô B, C, D tiêu thụ ngưỡng của lô này. Ch�
 
 187 dòng · 14 rule · 2 câu hỏi · 3 cảnh báo `C6`.
 
-- [ ] Đọc hết file
-- [ ] **Soi mục 7.1**: bảng sàn chạm (64px · 76px · 96px · 44px) đang **chép lại** thứ mà
+- [x] Đọc hết file
+- [x] **Soi mục 7.1**: bảng sàn chạm (64px · 76px · 96px · 44px) đang **chép lại** thứ mà
       `BR-A11-04` của [`accessibility.md`](../specs/08-quality/accessibility.md) sở hữu. Đổi
       thành liên kết, không giữ bản sao — [`CONVENTIONS.md`](../specs/CONVENTIONS.md) mục 2:
       contract bị copy sẽ drift
-- [ ] Điền "vì sao" cho `BR-DSC-09`, `BR-DSC-13`, `BR-DSC-14`
-- [ ] Chuyển bảng mục 11 sang 5 cột
-- [ ] Q1 (bộ avatar preset do ai vẽ, bao nhiêu cái) — **cặp số 2** của kế hoạch mục 6, dính với
+- [x] Điền "vì sao" cho `BR-DSC-09`, `BR-DSC-13`, `BR-DSC-14`
+- [x] Chuyển bảng mục 11 sang 5 cột
+- [x] Q1 (bộ avatar preset do ai vẽ, bao nhiêu cái) — **cặp số 2** của kế hoạch mục 6, dính với
       [`child-profile-crud.md`](../specs/03-account/child-profile-crud.md) Q1. Cần chủ dự án →
       hỏi ở Cổng dừng A, chốt một lần cho cả hai file
-- [ ] Q2 (giấy phép font chữ số trên canvas) — chặn P1, chốt hoặc ghi chủ sở hữu rõ
-- [ ] Checklist review 15 mục
-- [ ] `status: approved`, `reviewed` mới
-- [ ] `pnpm lint:specs` 0 lỗi, cảnh báo giảm **3**
-- [ ] Commit `feat(specs): T8 bước 2 — approve design-system-contract`
+- [x] Q2 (giấy phép font chữ số trên canvas) — chặn P1, chốt hoặc ghi chủ sở hữu rõ
+- [x] Checklist review 15 mục
+- [x] `status: approved`, `reviewed: 2026-08-08`
+- [x] `pnpm lint:specs` 0 lỗi, cảnh báo giảm **3**
+- [x] Commit `feat(specs): T8 bước 2 — approve design-system-contract`
 
 ### Bước 3 — [`performance-budgets.md`](../specs/08-quality/performance-budgets.md)
 
