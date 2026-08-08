@@ -196,28 +196,28 @@ File: `packages/db/src/schema/tagging.ts` — theo
 File: `packages/db/src/schema/game.ts` — theo
 [`schema-content-taxonomy.md`](../specs/01-platform/schema-content-taxonomy.md) §7.3–7.4
 
-- [ ] `game_templates` — Lớp 1, không `status` vòng đời nội dung (`BR-SCT-01`)
-- [ ] `game_levels` — Lớp 2: `entity_id` self-FK tới `game_levels(id)` (D3 trong plan),
+- [x] `game_templates` — Lớp 1, không `status` vòng đời nội dung (`BR-SCT-01`)
+- [x] `game_levels` — Lớp 2: `entity_id` self-FK tới `game_levels(id)` (D3 trong plan),
       UNIQUE `(code, content_version)`, partial UNIQUE `(code) WHERE status = 'published'`
       (`BR-SCT-03`), `access_tier` NOT NULL **không default** (cấm mặc định `free`)
-- [ ] Trigger `BEFORE UPDATE` chặn sửa hàng `status = 'published'` (`BR-SCT-05`, D2 trong
+- [x] Trigger `BEFORE UPDATE` chặn sửa hàng `status = 'published'` (`BR-SCT-05`, D2 trong
       plan — custom SQL migration, viết tay thân hàm trigger)
-- [ ] `pnpm db:generate --custom` cho phần trigger, `pnpm db:generate` cho phần bảng → đọc SQL
+- [x] `pnpm db:generate --custom` cho phần trigger, `pnpm db:generate` cho phần bảng → đọc SQL
       → `pnpm db:migrate`
-- [ ] Integration test:
-      - [ ] `BR-SCT-03` — insert version 2 `published` mà chưa archive version 1 → partial
+- [x] Integration test:
+      - [x] `BR-SCT-03` — insert version 2 `published` mà chưa archive version 1 → partial
             unique index từ chối
-      - [ ] `BR-SCT-05` — `UPDATE content_pack` trên hàng `published` → trigger từ chối
-      - [ ] `access_tier` không nêu → NOT NULL từ chối (không âm thầm nhận default)
-- [ ] `pnpm test` xanh
-- [ ] Commit `feat(db): P0 bước 8.7 — schema game`
+      - [x] `BR-SCT-05` — `UPDATE content_pack` trên hàng `published` → trigger từ chối
+      - [x] `access_tier` không nêu → NOT NULL từ chối (không âm thầm nhận default)
+- [x] `pnpm test` xanh
+- [x] Commit `feat(db): P0 bước 8.7 — schema game`
 
 ## Cổng dừng B — dừng trước khi chạm `content.ts`/`curriculum.ts`
 
-- [ ] 7 file schema tồn tại, mỗi file ≤400 dòng
-- [ ] Trigger `BR-SCT-05` có test xanh (game_levels)
-- [ ] `pnpm check && pnpm test` xanh
-- [ ] **Đọc lại §2a của plan.md trước khi làm Bước 8** — đây là điểm quyết định thật, không
+- [x] 7 file schema tồn tại, mỗi file ≤400 dòng
+- [x] Trigger `BR-SCT-05` có test xanh (game_levels)
+- [x] `pnpm check && pnpm test` xanh
+- [x] **Đọc lại §2a của plan.md trước khi làm Bước 8** — đây là điểm quyết định thật, không
       phải thủ tục
 
 ---
