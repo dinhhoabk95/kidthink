@@ -57,16 +57,16 @@ Mọi spec giao diện ở lô B, C, D tiêu thụ ngưỡng của lô này. Ch�
 
 172 dòng · 1 rule · 2 câu hỏi · 0 cảnh báo. Rẻ nhất lô 2, và là nút chặn của bước 2.
 
-- [ ] Đọc hết file, ghi lại số dòng và số rule thực đo
-- [ ] Đối chiếu `depends_on: []` — đúng như nhát cắt `D-AH` của Task #6 để lại
-- [ ] Chuyển bảng mục 11 sang 5 cột (`#`, `Câu hỏi`, `Chặn gì`, `Chặn phase`, `Chủ`)
-- [ ] Q1 (kiểm thử với trẻ thật và công nghệ trợ giúp trước go-live) — để mở, `Chặn phase: Go-live`
-- [ ] Q2 (sàn 96px cho band 3–4 dựa nguồn nào) — **chặn P1, phải chốt**: tìm nguồn trích dẫn
+- [x] Đọc hết file, ghi lại số dòng và số rule thực đo
+- [x] Đối chiếu `depends_on: []` — đúng như nhát cắt `D-AH` của Task #6 để lại
+- [x] Chuyển bảng mục 11 sang 5 cột (`#`, `Câu hỏi`, `Chặn gì`, `Chặn phase`, `Chủ`)
+- [x] Q1 (kiểm thử với trẻ thật và công nghệ trợ giúp trước go-live) — để mở, `Chặn phase: Go-live`
+- [x] Q2 (sàn 96px cho band 3–4 dựa nguồn nào) — **chặn P1, phải chốt**: tìm nguồn trích dẫn
       được hoặc ghi `D-AR` nói rõ số này là ước lượng nội bộ và điều kiện để sửa
-- [ ] Chạy checklist review [`CONVENTIONS.md`](../specs/CONVENTIONS.md) mục 10, đủ 15 mục
-- [ ] `status: approved`, `reviewed: <ngày làm>`
-- [ ] `pnpm lint:specs` 0 lỗi, cảnh báo **không đổi** (file này vốn 0 cảnh báo)
-- [ ] Commit `feat(specs): T8 bước 1 — approve accessibility`
+- [x] Chạy checklist review [`CONVENTIONS.md`](../specs/CONVENTIONS.md) mục 10, đủ 15 mục
+- [x] `status: approved`, `reviewed: 2026-08-08`
+- [x] `pnpm lint:specs` 0 lỗi, cảnh báo **không đổi** (file này vốn 0 cảnh báo)
+- [x] Commit `feat(specs): T8 bước 1 — approve accessibility`
 
 ### Bước 2 — [`design-system-contract.md`](../specs/08-quality/design-system-contract.md)
 

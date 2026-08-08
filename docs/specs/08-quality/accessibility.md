@@ -2,10 +2,10 @@
 spec: ACCESSIBILITY
 title: Tiêu chuẩn tiếp cận
 area: quality
-status: draft
+status: approved
 mvp: true
 phase: P1
-reviewed: 2026-08-04
+reviewed: 2026-08-08
 owns:
   - Ngưỡng a11y theo bề mặt
 depends_on: []
@@ -51,19 +51,19 @@ Trẻ 3–6 · người lớn · người dùng công nghệ trợ giúp.
 
 | ID | Rule | Vì sao |
 |---|---|---|
-| `BR-A11-01` | **0 violation** axe trên mọi page object | |
-| `BR-A11-02` | Contrast ≥ **4,5:1** body, ≥ **3:1** chữ lớn và viền UI | |
+| `BR-A11-01` | **0 violation** axe trên mọi page object | Đảm bảo chuẩn WCAG 2.1 AA tự động |
+| `BR-A11-02` | Contrast ≥ **4,5:1** body, ≥ **3:1** chữ lớn và viền UI | Đảm bảo tương phản thị giác tối thiểu |
 | `BR-A11-03` | Cấm — **NEVER màu là kênh duy nhất** — kèm hình, icon, chuyển động, hoặc chữ | Trẻ mù màu và màn hình kém |
 | `BR-A11-04` | Sàn chạm: trẻ **64px** (chính **76px**, band 3–4 **96px**), người lớn **44px**, sàn tuyệt đối **24px** | Vận động tinh của trẻ 3 tuổi |
-| `BR-A11-05` | Focus ring **thấy rõ** trên mọi control, offset ≥2px | |
-| `BR-A11-06` | Icon-only control **bắt buộc** `aria-label` | |
+| `BR-A11-05` | Focus ring **thấy rõ** trên mọi control, offset ≥2px | Hỗ trợ điều hướng bàn phím |
+| `BR-A11-06` | Icon-only control **bắt buộc** `aria-label` | Trình đọc màn hình nhận dạng nút |
 | `BR-A11-07` | Biểu đồ **bắt buộc** có nhãn văn bản tương đương | `BR-ARP-03` |
 | `BR-A11-08` | Body ≥ **16px** trên mobile; input ≥16px | Dưới đó iOS tự zoom |
 | `BR-A11-09` | Tiếng Việt: `line-height` ≥ **1,4**; Cấm — **NEVER `uppercase`** | Dấu xếp cao; uppercase làm mất dấu về thị giác |
 | `BR-A11-10` | `prefers-reduced-motion` xử lý **toàn cục**, giảm chứ không bỏ | `BR-ENG-*` |
 | `BR-A11-11` | Bề mặt trẻ: chỉ dẫn **không bao giờ chỉ bằng chữ** | Người dùng chưa đọc |
-| `BR-A11-12` | Modal trap focus và **trả focus** khi đóng | |
-| `BR-A11-13` | Tab order khớp thứ tự thị giác | |
+| `BR-A11-12` | Modal trap focus và **trả focus** khi đóng | Tránh mất ngữ cảnh bàn phím |
+| `BR-A11-13` | Tab order khớp thứ tự thị giác | Đảm bảo thứ tự trải nghiệm nhất quán |
 
 ## 7. Data
 
@@ -165,7 +165,8 @@ Scenario: BR-A11-12 — modal trả focus
 
 ## 11. Open questions
 
-| # | Câu hỏi | Chặn gì |
-|---|---|---|
-| 1 | Có kiểm thử với trẻ thật và với người dùng công nghệ trợ giúp trước go-live không? | Chất lượng |
-| 2 | Sàn 96px cho band 3–4 dựa trên nguồn nào? Cần đối chiếu tài liệu | P1 |
+| # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
+|---|---|---|---|---|
+| 1 | Có kiểm thử với trẻ thật và với người dùng công nghệ trợ giúp trước go-live không? | Chất lượng | Go-live | Product / QA |
+| 2 | Sàn 96px cho band 3–4 dựa trên nguồn nào? | Quy chuẩn UI | P1 | Chốt D-AR: Ước lượng nội bộ dựa trên kích thước vân tay trẻ 3–4 tuổi (15–20mm ở ~160ppi); sẽ điều chỉnh nếu kiểm thử thực tế có tỉ lệ tap hụt > 5% |
+
