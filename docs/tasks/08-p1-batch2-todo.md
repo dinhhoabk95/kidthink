@@ -452,16 +452,16 @@ Lô đụng `play_sessions` và `play_events`. **Mọi cột phát sinh phải s
 
 160 dòng · 10 rule · 1 câu hỏi · 2 cảnh báo.
 
-- [ ] Đọc hết file
-- [ ] Điền "vì sao" cho `BR-GDP-02`, `BR-GDP-05`
-- [ ] Xác nhận chiều phụ thuộc đúng: file này `depends_on`
+- [x] Đọc hết file
+- [x] Điền "vì sao" cho `BR-GDP-02`, `BR-GDP-05`
+- [x] Xác nhận chiều phụ thuộc đúng: file này `depends_on`
       [`seo-and-structured-data.md`](../specs/02-public/seo-and-structured-data.md), không ngược lại
-- [ ] Chuyển bảng mục 11 sang 5 cột
-- [ ] Q1 (có ảnh chụp màn hình game không) — **chặn P1, chốt**; nếu có thì phải nói ai sinh và
+- [x] Chuyển bảng mục 11 sang 5 cột
+- [x] Q1 (có ảnh chụp màn hình game không) — **chặn P1, chốt**; nếu có thì phải nói ai sinh và
       cập nhật theo `content_version`
-- [ ] Checklist review 15 mục
-- [ ] `status: approved`, `reviewed` mới, cảnh báo giảm **2**
-- [ ] Commit `feat(specs): T8 bước 23 — approve game-detail-public`
+- [x] Checklist review 15 mục
+- [x] `status: approved`, `reviewed: 2026-08-08`, cảnh báo giảm **2**
+- [x] Commit `feat(specs): T8 bước 23 — approve game-detail-public`
 
 ### Bước 24 — [`landing-page.md`](../specs/02-public/landing-page.md)
 

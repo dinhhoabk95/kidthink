@@ -2,10 +2,10 @@
 spec: GAME-DETAIL-PUBLIC
 title: Trang chi tiết trò chơi
 area: public
-status: draft
+status: approved
 mvp: true
 phase: P1
-reviewed: 2026-08-04
+reviewed: 2026-08-08
 owns:
   - Trang chi tiết một game cho khách
 depends_on:
@@ -52,10 +52,10 @@ Guest · User.
 | ID | Rule | Vì sao |
 |---|---|---|
 | `BR-GDP-01` | Mỗi game có **URL riêng, index được** | 120 trang đích SEO |
-| `BR-GDP-02` | Mô tả đủ để hiểu game dạy gì **mà không tiết lộ đáp án** | |
+| `BR-GDP-02` | Mô tả đủ để hiểu game dạy gì **mà không tiết lộ đáp án** | Đảm bảo tính thử thách của trò chơi |
 | `BR-GDP-03` | Game archived trả **410**, không 404 | 410 nói với công cụ tìm kiếm rằng nội dung đã bỏ hẳn |
 | `BR-GDP-04` | Structured data `LearningResource` sinh từ dữ liệu | `BR-SEO-06` |
-| `BR-GDP-05` | Cấm — **NEVER trả `content_pack`** khi khoá | |
+| `BR-GDP-05` | Cấm — **NEVER trả `content_pack`** khi khoá | Bảo vệ quyền truy cập nội dung trả phí theo ranh giới `BR-LAD-04` |
 | `BR-GDP-06` | CTA đổi theo **bậc còn thiếu**, không một CTA chung | "Đăng nhập" và "Nâng cấp Premium" là hai hành động khác nhau |
 | `BR-GDP-07` | Liên kết tới trang skill và competency | Nội bộ link giúp index |
 | `BR-GDP-08` | Cấm — **NEVER hứa hẹn kết quả học tập** | `BR-LND-06` |
@@ -154,6 +154,7 @@ Scenario: URL bền khi đổi tiêu đề
 
 ## 11. Open questions
 
-| # | Câu hỏi | Chặn gì |
-|---|---|---|
-| 1 | Có nên có ảnh chụp màn hình game không? Tăng chuyển đổi nhưng phải sinh và cập nhật theo version | P1 |
+| # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
+|---|---|---|---|---|
+| 1 | Có nên có ảnh chụp màn hình game không? | Media hiển thị trang chi tiết | P1 | Chốt: P1 dùng 3 ảnh xem trước tĩnh (static preview) do Designer cung cấp; P2 mới tự động chụp |
+
