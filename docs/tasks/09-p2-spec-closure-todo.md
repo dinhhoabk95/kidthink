@@ -151,13 +151,13 @@ entitlement-grant · subscription-view · package-catalog-admin (độc lập)
 
 ### Bước 7 — [`payment-queue.md`](../specs/06-admin/payment-queue.md)
 
-- [ ] Đọc hết 173 dòng
-- [ ] Điền "vì sao" cho **2** cảnh báo `C6`
-- [ ] Q1 (webhook/API ngân hàng) — cặp 4 của mục 6; khớp nguyên văn `Chặn phase` với
+- [x] Đọc hết 173 dòng
+- [x] Điền "vì sao" cho **2** cảnh báo `C6`
+- [x] Q1 (webhook/API ngân hàng) — cặp 4 của mục 6; khớp nguyên văn `Chặn phase` với
       [`payment-flow.md`](../specs/00-foundation/payment-flow.md) Q1
-- [ ] Kiểm rule "không có nút duyệt trên danh sách" còn nguyên — nó là ranh giới giữa spec này và
+- [x] Kiểm rule "không có nút duyệt trên danh sách" còn nguyên — nó là ranh giới giữa spec này và
       [`payment-approval.md`](../specs/06-admin/payment-approval.md)
-- [ ] `status: approved`; commit `feat(specs): T9 bước 7 — approve payment-queue`
+- [x] `status: approved`; commit `feat(specs): T9 bước 7 — approve payment-queue`
 
 ### Bước 8 — [`payment-approval.md`](../specs/06-admin/payment-approval.md)
 

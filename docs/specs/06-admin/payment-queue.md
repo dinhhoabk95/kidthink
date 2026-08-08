@@ -2,10 +2,10 @@
 spec: PAYMENT-QUEUE
 title: Hàng đợi đơn thanh toán
 area: admin
-status: draft
+status: approved
 mvp: true
 phase: P2
-reviewed: 2026-08-04
+reviewed: 2026-08-08
 owns:
   - Danh sách đơn chờ xử lý và bộ lọc
   - Bề mặt đối chiếu chứng từ
@@ -61,9 +61,9 @@ SLA vận hành: **P90 < 12 giờ** từ lúc User nộp chứng từ tới lúc
 | `BR-PQU-03` | Ảnh chứng từ qua **signed URL ≤15 phút** | Chứng từ chứa thông tin ngân hàng |
 | `BR-PQU-04` | Cảnh báo khi `bank_txn_ref` **trùng** đơn khác | Nộp lại chứng từ cũ là gian lận phổ biến nhất của duyệt tay |
 | `BR-PQU-05` | Cấm — **NEVER hiện dữ liệu trẻ** trong màn hình đơn | `BR-CDC-14` |
-| `BR-PQU-06` | Trần phân trang **100** | |
+| `BR-PQU-06` | Trần phân trang **100** | Hạn chế tài nguyên bộ nhớ server và ngăn cản việc tải dữ liệu quá mức |
 | `BR-PQU-07` | Đơn cũ nhất > 24h → **cảnh báo trên dashboard** | SLA |
-| `BR-PQU-08` | `content_reviewer` không truy cập | |
+| `BR-PQU-08` | `content_reviewer` không truy cập | Phân tách vai trò theo nguyên tắc quyền tối thiểu — chỉ super_admin mới được xem dữ liệu tài chính |
 
 ## 7. Data
 
@@ -167,7 +167,7 @@ Scenario: xem chứng từ được audit
 
 ## 11. Open questions
 
-| # | Câu hỏi | Chặn gì |
-|---|---|---|
-| 1 | Có tích hợp API/webhook ngân hàng để đối chiếu tự động không? Thuần tay giới hạn ở vài chục đơn/ngày | Quy mô vận hành |
-| 2 | Cờ cảnh báo nào nữa đáng có? Ví dụ User tạo nhiều đơn liên tiếp | P2 |
+| # | Câu hỏi | Chặn phase | Đề xuất chốt | Chủ |
+|---|---|---|---|---|
+| 1 | Có tích hợp API/webhook ngân hàng để đối chiếu tự động không? Thuần tay giới hạn ở vài chục đơn/ngày | P2 | Hoãn sang P2 nâng cao / P3 — trỏ sang [`payment-flow.md`](../00-foundation/payment-flow.md) Q1 | người quyết |
+| 2 | Cờ cảnh báo nào nữa đáng có? Ví dụ User tạo nhiều đơn liên tiếp | P2 | Đủ cờ cho MVP (trùng mã giao dịch, đã bị từ chối trước) — bổ sung cờ khác khi phát sinh mẫu thực tế | người quyết |
