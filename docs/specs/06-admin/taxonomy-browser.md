@@ -150,6 +150,6 @@ Scenario: cả hai role đọc được
 
 ## 11. Open questions
 
-| # | Câu hỏi | Chặn gì | Chủ |
-|---|---|---|---|
-| 1 | Ngưỡng "đủ" ở §7.3 là **3 level mỗi skill** — với 230 skill thì cần 690 level để mọi skill đạt "đủ", nhưng mục tiêu MVP đã cam kết ở [`mvp-scope.md`](../00-foundation/mvp-scope.md) §7 chỉ là **≥120 game level published** (mốc tối thiểu 80). Ngưỡng "đủ" ở đây gấp 5,75 lần con số MVP thật sự nhắm tới — nghĩa là ở MVP, phần lớn cây sẽ hiện "mỏng", không phải vì thiếu mà vì ngưỡng đặt cho quy mô sau MVP. **Không tự hạ ngưỡng** — đây là tín hiệu cho người soạn, hạ ngưỡng để cây "xanh" giả tạo đánh mất đúng mục đích tồn tại của màn hình (`BR-TXB-03`) | Kế hoạch nội dung — cùng câu hỏi gốc với [`mvp-scope.md`](../00-foundation/mvp-scope.md) §11 Q1 (`D-W`, "ai biên soạn ≥690 LO, ≥120 game level") | cần chủ có tên, xem `D-W` |
+| # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
+|---|---|---|---|---|
+| 1 | Ngưỡng "đủ" ở §7.3 là **3 level mỗi skill** — với 230 skill thì cần 690 level để mọi skill đạt "đủ", nhưng mục tiêu MVP đã cam kết ở [`mvp-scope.md`](../00-foundation/mvp-scope.md) §7 chỉ là **≥120 game level published** (mốc tối thiểu 80). Ngưỡng "đủ" ở đây gấp 5,75 lần con số MVP thật sự nhắm tới — nghĩa là ở MVP, phần lớn cây sẽ hiện "mỏng", không phải vì thiếu mà vì ngưỡng đặt cho quy mô sau MVP. **Không tự hạ ngưỡng** — đây là tín hiệu cho người soạn, hạ ngưỡng để cây "xanh" giả tạo đánh mất đúng mục đích tồn tại của màn hình (`BR-TXB-03`) | Kế hoạch nội dung — cùng câu hỏi gốc với [`mvp-scope.md`](../00-foundation/mvp-scope.md) §11 Q1 (`D-W`, "ai biên soạn ≥690 LO, ≥120 game level") | P1 | người quyết |
