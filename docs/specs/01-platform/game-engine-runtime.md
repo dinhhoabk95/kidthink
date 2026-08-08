@@ -225,8 +225,8 @@ Scenario: asset lỗi không làm đứng game
 
 ## 11. Open questions
 
-| # | Câu hỏi | Chặn gì |
-|---|---|---|
-| 1 | Model tablet Android 2GB nào làm chuẩn đo 60 fps? Chưa chốt thiết bị chuẩn thì con số 60 fps không nghiệm thu được. **Cần người quyết, không tự chốt được** — approve spec này 2026-08-08 **không** đóng câu này. Nó là 1 trong 3 câu chặn nhiều nhất corpus ([`index.md`](../index.md)), và [`testing-strategy.md`](../08-quality/testing-strategy.md) §11 Q2 trỏ về đây | Cổng ra P1 |
-| 2 | WebGL cho template về sau? Canvas 2D đủ cho 6 template MVP | P4 |
-| 3 | Audio narration tiếng Việt — thu âm người thật hay TTS? Ảnh hưởng kích thước bundle và chất lượng | Nội dung P1 |
+| # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
+|---|---|---|---|---|
+| 1 | Model tablet Android 2GB nào làm chuẩn đo 60 fps? Chưa chốt thiết bị chuẩn thì con số 60 fps không nghiệm thu được. **Cần người quyết, không tự chốt được** — approve spec này 2026-08-08 **không** đóng câu này. Nó là 1 trong 3 câu chặn nhiều nhất corpus ([`index.md`](../index.md)), và [`testing-strategy.md`](../08-quality/testing-strategy.md) §11 Q2 trỏ về đây | Cổng ra P1 | P1 | người quyết |
+| 2 | WebGL cho template về sau? Canvas 2D đủ cho 6 template MVP | P4 | P4 | Studio UI |
+| 3 | Audio narration tiếng Việt — thu âm người thật hay TTS? Ảnh hưởng kích thước bundle và chất lượng | Nội dung P1 | P1 | người quyết |
