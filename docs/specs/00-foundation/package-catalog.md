@@ -64,7 +64,7 @@ một điều.
 | ID | Rule | Vì sao |
 |---|---|---|
 | `BR-PKG-01` | `PACKAGE_CATALOG` là **nguồn sự thật duy nhất** cho giá và thời hạn | Một giá copy sang 5 chỗ sẽ đổi được 4 |
-| `BR-PKG-02` | **NEVER hardcode số tiền** ngoài catalog — kể cả trong spec, email, hay trang giá | |
+| `BR-PKG-02` | **NEVER hardcode số tiền** ngoài catalog — kể cả trong spec, email, hay trang giá | Hardcode giá dẫn đến bất đồng bộ dữ liệu hiển thị và rủi ro sai lệch thương mại khi đổi giá |
 | `BR-PKG-03` | **NEVER nhận giá từ client.** Server đọc từ catalog theo `package_code` | Giá từ client là lỗ hổng thanh toán kinh điển |
 | `BR-PKG-04` | Catalog MVP chào bán **đúng 2 gói**: `standard`, `premium` | Bán gói không mở được tính năng nào là vấn đề đạo đức thương mại |
 | `BR-PKG-05` | Add-on được **khai báo** nhưng `is_public = false` ở MVP | Contract ổn định trước; lên catalog cùng lúc với tính năng |
