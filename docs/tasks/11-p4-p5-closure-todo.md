@@ -153,9 +153,9 @@ Bước 0 → Đợt 1 (3) → Cổng dừng A → [chờ Task #10 xong] → Đ�
 
 ## Bước 10 — vá bảng P4 và P5 của [`roadmap.md`](../specs/roadmap.md)
 
-- [ ] `grep -rl "^phase: P4" --include="*.md" docs/specs | wc -l` và tương tự cho `P5`
-- [ ] So với số spec bảng roadmap nêu tên; lệch thì bổ sung
-- [ ] Commit `docs(specs): T11 bước 10 — vá bảng P4 P5 roadmap`
+- [x] `grep -rl "^phase: P4" --include="*.md" docs/specs | wc -l`: 8 spec P4 và 1 spec P5
+- [x] So với số spec bảng roadmap nêu tên — đã bổ sung `worksheet-model.md` và `semantic-search.md` vào P4
+- [x] Commit `docs(specs): T11 bước 10 — vá bảng P4 P5 roadmap`
 
 ## Bước 11 — đối chiếu tay
 

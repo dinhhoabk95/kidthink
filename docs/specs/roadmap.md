@@ -133,16 +133,13 @@ image-upload · emoji-picker ──→ game-level-studio
 
 ## P4 — Add-on (ngoài MVP)
 
-Chỉ bắt đầu khi P0–P3 đã `implemented`. Mỗi add-on **lên catalog cùng lúc với tính năng
-của nó**, không trước.
+Chỉ bắt đầu khi P0–P3 đã `implemented`. Mỗi add-on **lên catalog cùng lúc với tính năng của nó**, không trước.
 
-[`lesson-plan-creator.md`](07-addon/lesson-plan-creator.md) → [`pdf-export.md`](07-addon/pdf-export.md) · [`personal-curriculum.md`](07-addon/personal-curriculum.md) · [`custom-game-builder.md`](07-addon/custom-game-builder.md) ·
-[`ai-credit-ledger.md`](07-addon/ai-credit-ledger.md) → [`ai-assistant.md`](07-addon/ai-assistant.md)
+[`worksheet-model.md`](05-content/worksheet-model.md) · [`lesson-plan-creator.md`](07-addon/lesson-plan-creator.md) → [`pdf-export.md`](07-addon/pdf-export.md) · [`personal-curriculum.md`](07-addon/personal-curriculum.md) · [`custom-game-builder.md`](07-addon/custom-game-builder.md) · [`ai-credit-ledger.md`](07-addon/ai-credit-ledger.md) → [`ai-assistant.md`](07-addon/ai-assistant.md) · [`semantic-search.md`](07-addon/semantic-search.md)
 
 ## P5 — Scale (ngoài MVP)
 
-Cổng thanh toán tự động · [`pwa-install.md`](01-platform/pwa-install.md) · [`offline-play.md`](01-platform/offline-play.md) nâng cao · classroom · mobile app ·
-licensing.
+Cổng thanh toán tự động · [`pwa-install.md`](01-platform/pwa-install.md) · [`offline-play.md`](01-platform/offline-play.md) nâng cao · classroom · mobile app · licensing.
 
 ## Việc chạy song song được
 
