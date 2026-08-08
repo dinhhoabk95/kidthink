@@ -50,18 +50,23 @@ Mười một spec ở Bước 4–14 **không phụ thuộc lẫn nhau** — ba
 
 `C7` chưa từng được chứng minh là bắt đúng. Nó cũng chưa từng đỏ, vì nó chỉ gọi `warn()`.
 
-- [ ] Đọc `checkC7` ở [`scripts/lint-specs-lib.ts`](../../scripts/lint-specs-lib.ts) dòng 734
-- [ ] Đọc ca âm `C8` đã có ở [`scripts/tests/lint-specs.test.ts`](../../scripts/tests/lint-specs.test.ts)
+- [x] Đọc `checkC7` ở [`scripts/lint-specs-lib.ts`](../../scripts/lint-specs-lib.ts) dòng 734
+- [x] Đọc ca âm `C8` đã có ở [`scripts/tests/lint-specs.test.ts`](../../scripts/tests/lint-specs.test.ts)
       làm khuôn
-- [ ] Thêm **ca âm**: hai spec giả `A → B → A` phải sinh đúng một violation `C7`
-- [ ] Thêm **ca âm** chu trình ba đỉnh: `A → B → C → A` sinh đúng một violation
-- [ ] Thêm **ca dương**: đồ thị không chu trình (`A → B`, `B → C`) sinh 0 violation
-- [ ] Thêm **ca biên**: `depends_on` trỏ tới tên không phải spec ([`CONVENTIONS.md`](../specs/CONVENTIONS.md)) không được
-      làm hàm nổ hay báo nhầm
-- [ ] `pnpm test` — số test tăng so với nền
-- [ ] **Xác minh ca âm thật sự bắt**: xoá tạm thân `checkC7`, chạy lại, test phải **đỏ**, rồi
-      khôi phục. Ghi lại số test đỏ vào commit body
-- [ ] Commit `test(specs): T6 bước 1 — ca âm C7 cho chu trình depends_on`
+- [x] **Đo được: bốn ca này ĐÃ tồn tại sẵn** (`A → B → A`, `A → B → C → A`, DAG không chu
+      trình, dep ngoài đồ thị). Bước 1 vì vậy thu lại thành: siết assertion và thêm ca thiếu
+- [x] Siết hai ca chu trình từ `.some(...)` sang **đếm chính xác** — `.some()` chỉ bắt
+      under-report, không bắt over-report
+- [x] Thêm **ca mới**: hai chu trình rời nhau phải báo riêng (bắt lỗi `cycleKey` đụng độ)
+- [x] Thêm **ca mới**: self-edge `A → A` (chu trình suy biến, dễ viết nhầm khi copy
+      frontmatter)
+- [x] `pnpm test` — 208 sang 210
+- [x] **Xác minh bằng mutation, ghi kết quả vào comment của test và commit body**:
+      rỗng hoá `checkC7` → đỏ 2 ca sẵn có · thu hẹp back-edge thành `dep !== node` → đỏ ca
+      self-edge · `cycleKey = String(cycle.length)` → đỏ ca hai chu trình rời **và** corpus
+      thật tụt âm thầm 8 sang 2 · bỏ guard `reportedCycles` → **không đổi gì** trên mọi input
+      đã thử, kể cả corpus thật (guard đó phòng thủ, hiện chưa mang tải)
+- [x] Commit `test(specs): T6 bước 1 — ca âm C7 cho chu trình depends_on`
 
 ## Bước 2 — Cắt tám chu trình và ba tham chiếu tiến
 
@@ -70,80 +75,80 @@ Cấm xoá thông tin — chỉ đổi cạnh phụ thuộc thành liên kết t
 
 ### `D-AH` — [`accessibility.md`](../specs/08-quality/accessibility.md)
 
-- [ ] Xoá `DESIGN-SYSTEM-CONTRACT` khỏi `depends_on`, để `depends_on: []`
-- [ ] Xác nhận văn xuôi không nhắc [`design-system-contract.md`](../specs/08-quality/design-system-contract.md) ở đâu (đã đo: không nhắc) — nếu
+- [x] Xoá `DESIGN-SYSTEM-CONTRACT` khỏi `depends_on`, để `depends_on: []`
+- [x] Xác nhận văn xuôi không nhắc [`design-system-contract.md`](../specs/08-quality/design-system-contract.md) ở đâu (đã đo: không nhắc) — nếu
       có thì đổi thành liên kết
-- [ ] Xác nhận chiều ngược `DESIGN-SYSTEM-CONTRACT → ACCESSIBILITY` còn nguyên
+- [x] Xác nhận chiều ngược `DESIGN-SYSTEM-CONTRACT → ACCESSIBILITY` còn nguyên
 
 ### `D-AI` — [`legal-pages.md`](../specs/02-public/legal-pages.md)
 
-- [ ] Xoá `CONSENT-MANAGEMENT` khỏi `depends_on`, còn `CHILD-DATA-COMPLIANCE`
-- [ ] Đổi mọi chỗ nhắc luồng đồng ý trong văn xuôi thành liên kết tới
+- [x] Xoá `CONSENT-MANAGEMENT` khỏi `depends_on`, còn `CHILD-DATA-COMPLIANCE`
+- [x] Đổi mọi chỗ nhắc luồng đồng ý trong văn xuôi thành liên kết tới
       [`consent-management.md`](../specs/03-account/consent-management.md)
-- [ ] Xác nhận chiều `CONSENT-MANAGEMENT → LEGAL-PAGES` còn nguyên
+- [x] Xác nhận chiều `CONSENT-MANAGEMENT → LEGAL-PAGES` còn nguyên
 
 ### `D-AJ` — [`seo-and-structured-data.md`](../specs/02-public/seo-and-structured-data.md)
 
-- [ ] Xoá **cả hai** `GAME-DETAIL-PUBLIC` và `PROGRAM-SHOWCASE` khỏi `depends_on`, để
+- [x] Xoá **cả hai** `GAME-DETAIL-PUBLIC` và `PROGRAM-SHOWCASE` khỏi `depends_on`, để
       `depends_on: []`
-- [ ] Đổi chỗ nhắc hai trang đó thành liên kết
-- [ ] Xác nhận ba chiều ngược còn nguyên: `GAME-CATALOG-PUBLIC`, `GAME-DETAIL-PUBLIC`,
+- [x] Đổi chỗ nhắc hai trang đó thành liên kết
+- [x] Xác nhận ba chiều ngược còn nguyên: `GAME-CATALOG-PUBLIC`, `GAME-DETAIL-PUBLIC`,
       `PROGRAM-SHOWCASE` đều còn `depends_on: SEO-AND-STRUCTURED-DATA`
 
 ### `D-AK` — [`basic-report.md`](../specs/03-account/basic-report.md)
 
-- [ ] Xoá `PROGRESS-AND-MASTERY` khỏi `depends_on`, còn `TELEMETRY-PIPELINE` và
+- [x] Xoá `PROGRESS-AND-MASTERY` khỏi `depends_on`, còn `TELEMETRY-PIPELINE` và
       `ENTITLEMENT-MODEL`
-- [ ] Thêm câu văn xuôi + liên kết ghi rõ bản đồ tiến bộ mở rộng ở P3 qua
+- [x] Thêm câu văn xuôi + liên kết ghi rõ bản đồ tiến bộ mở rộng ở P3 qua
       [`progress-and-mastery.md`](../specs/04-play/progress-and-mastery.md)
-- [ ] Xác nhận spec không đọc `mastery_state` ở §7 hay §8 — nếu có thì `D-AK` sai, dừng lại
+- [x] Xác nhận spec không đọc `mastery_state` ở §7 hay §8 — nếu có thì `D-AK` sai, dừng lại
       và ghi vào sổ cái trước khi sửa
 
 ### `D-AL` — [`faq-and-help.md`](../specs/02-public/faq-and-help.md)
 
-- [ ] Xoá `SEO-CONTENT-ADMIN` khỏi `depends_on`, còn `SEO-AND-STRUCTURED-DATA`
-- [ ] Đổi chỗ nhắc màn hình admin thành liên kết tới
+- [x] Xoá `SEO-CONTENT-ADMIN` khỏi `depends_on`, còn `SEO-AND-STRUCTURED-DATA`
+- [x] Đổi chỗ nhắc màn hình admin thành liên kết tới
       [`seo-content-admin.md`](../specs/06-admin/seo-content-admin.md), ghi rõ sửa qua CMS là
       năng lực P2
 
 ### `D-AN` — ba chu trình P2
 
-- [ ] [`emoji-picker.md`](../specs/06-admin/emoji-picker.md): xoá `SCHEMA-DRIVEN-FORM` khỏi
+- [x] [`emoji-picker.md`](../specs/06-admin/emoji-picker.md): xoá `SCHEMA-DRIVEN-FORM` khỏi
       `depends_on`, còn `EMOJI-REGISTRY`
-- [ ] [`image-upload.md`](../specs/06-admin/image-upload.md): xoá `SCHEMA-DRIVEN-FORM` khỏi
+- [x] [`image-upload.md`](../specs/06-admin/image-upload.md): xoá `SCHEMA-DRIVEN-FORM` khỏi
       `depends_on`, còn `IMAGE-STORAGE`
-- [ ] [`live-preview.md`](../specs/06-admin/live-preview.md): xoá `GAME-LEVEL-STUDIO` khỏi
+- [x] [`live-preview.md`](../specs/06-admin/live-preview.md): xoá `GAME-LEVEL-STUDIO` khỏi
       `depends_on`, còn `GAME-ENGINE-RUNTIME`
-- [ ] Xác nhận ba chiều ngược còn nguyên: `SCHEMA-DRIVEN-FORM → EMOJI-PICKER`,
+- [x] Xác nhận ba chiều ngược còn nguyên: `SCHEMA-DRIVEN-FORM → EMOJI-PICKER`,
       `SCHEMA-DRIVEN-FORM → IMAGE-UPLOAD`, `GAME-LEVEL-STUDIO → LIVE-PREVIEW`
-- [ ] Đổi chỗ nhắc trong văn xuôi ba file thành liên kết
+- [x] Đổi chỗ nhắc trong văn xuôi ba file thành liên kết
 
 ### Kiểm chung Bước 2
 
-- [ ] `pnpm lint:specs` — **0 cảnh báo `C7`** (nền là 8)
-- [ ] `pnpm lint:specs` — 0 lỗi
-- [ ] Commit `fix(specs): T6 bước 2 — cắt 8 chu trình depends_on (D-AH..D-AN)`
+- [x] `pnpm lint:specs` — **0 cảnh báo `C7`** (nền là 8)
+- [x] `pnpm lint:specs` — 0 lỗi
+- [x] Commit `fix(specs): T6 bước 2 — cắt 8 chu trình depends_on (D-AH..D-AN)`
 
 ## Bước 3 — `D-AM`: [`next-game-recommendation.md`](../specs/04-play/next-game-recommendation.md) P1 sang P3
 
-- [ ] Đọc lại §P1 và §P3 của [`roadmap.md`](../specs/roadmap.md), xác nhận nó ở P3 mục 6 và
+- [x] Đọc lại §P1 và §P3 của [`roadmap.md`](../specs/roadmap.md), xác nhận nó ở P3 mục 6 và
       **không** có trong danh sách P1
-- [ ] Đổi `phase: P1` thành `phase: P3` trong frontmatter
-- [ ] Cập nhật `reviewed`
-- [ ] Cập nhật dòng tương ứng trong bảng `04-play` của [`index.md`](../specs/index.md)
-- [ ] Xác nhận [`roadmap.md`](../specs/roadmap.md) **không cần sửa** (nó đã đúng)
-- [ ] Đếm lại: `P1` phải ra **43**, `P3` phải ra **12**
-- [ ] Cập nhật [`SPEC.md`](../SPEC.md) §14 nếu nó có số đếm theo phase
-- [ ] `pnpm lint:specs` 0 lỗi
-- [ ] Commit `fix(specs): T6 bước 3 — next-game-recommendation P1 sang P3 (D-AM)`
+- [x] Đổi `phase: P1` thành `phase: P3` trong frontmatter
+- [x] Cập nhật `reviewed`
+- [x] Cập nhật dòng tương ứng trong bảng `04-play` của [`index.md`](../specs/index.md)
+- [x] Xác nhận [`roadmap.md`](../specs/roadmap.md) **không cần sửa** (nó đã đúng)
+- [x] Đếm lại: `P1` phải ra **43**, `P3` phải ra **12**
+- [x] Cập nhật [`SPEC.md`](../SPEC.md) §14 nếu nó có số đếm theo phase
+- [x] `pnpm lint:specs` 0 lỗi
+- [x] Commit `fix(specs): T6 bước 3 — next-game-recommendation P1 sang P3 (D-AM)`
 
 ## Cổng dừng A
 
-- [ ] `pnpm lint:specs` — 0 lỗi **và 0 cảnh báo `C7`**
-- [ ] `pnpm test` xanh, có ca âm `C7`
-- [ ] `pnpm check` xanh
-- [ ] Đếm: `P1` = 43, `P3` = 12, `approved` = 38 (chưa approve gì ở bước này)
-- [ ] `git status` sạch
+- [x] `pnpm lint:specs` — 0 lỗi **và 0 cảnh báo `C7`**
+- [x] `pnpm test` xanh, có ca âm `C7`
+- [x] `pnpm check` xanh
+- [x] Đếm: `P1` = 43, `P3` = 12, `approved` = 38 (chưa approve gì ở bước này)
+- [x] `git status` sạch
 
 ---
 
@@ -151,81 +156,81 @@ Cấm xoá thông tin — chỉ đổi cạnh phụ thuộc thành liên kết t
 
 ### Bước 4 — [`game-engine-runtime.md`](../specs/01-platform/game-engine-runtime.md) (232 dòng, 17 rule, 3 hỏi mở, 0 `C6`)
 
-- [ ] Đọc hết file
-- [ ] Đối chiếu với [`game-template-contract.md`](../specs/01-platform/game-template-contract.md)
+- [x] Đọc hết file
+- [x] Đối chiếu với [`game-template-contract.md`](../specs/01-platform/game-template-contract.md)
       và [`event-catalog.md`](../specs/00-foundation/event-catalog.md), cả hai đã `approved`
-- [ ] Xác nhận ràng buộc bất biến bề mặt trẻ khớp
+- [x] Xác nhận ràng buộc bất biến bề mặt trẻ khớp
       [`accessibility.md`](../specs/08-quality/accessibility.md) §7.1 (sàn chạm theo band tuổi)
-- [ ] Xác nhận tên `packages/game-engine` khớp
+- [x] Xác nhận tên `packages/game-engine` khớp
       [`monorepo-package-architecture.md`](../specs/00-foundation/monorepo-package-architecture.md) §7.1
-- [ ] **Chốt hoặc xác nhận hoãn câu hỏi thiết bị chuẩn đo 60 fps** — nó là 1 trong 3 câu hỏi
+- [x] **Chốt hoặc xác nhận hoãn câu hỏi thiết bị chuẩn đo 60 fps** — nó là 1 trong 3 câu hỏi
       chặn nhiều nhất của [`index.md`](../specs/index.md), và
       [`testing-strategy.md`](../specs/08-quality/testing-strategy.md) §11 Q2 trỏ về đây
-- [ ] Checklist [`CONVENTIONS.md`](../specs/CONVENTIONS.md) §10
-- [ ] `status: approved`, cập nhật `reviewed`
-- [ ] `pnpm lint:specs` 0 lỗi
-- [ ] Commit `feat(specs): T6 bước 4 — approve game-engine-runtime`
+- [x] Checklist [`CONVENTIONS.md`](../specs/CONVENTIONS.md) §10
+- [x] `status: approved`, cập nhật `reviewed`
+- [x] `pnpm lint:specs` 0 lỗi
+- [x] Commit `feat(specs): T6 bước 4 — approve game-engine-runtime`
 
 ### Bước 5 — [`access-gating.md`](../specs/04-play/access-gating.md) (205 dòng, 8 rule, 2 hỏi mở, 1 `C6`)
 
 Spec mà `D-AG` của Task #5 đã cắt cạnh để không phải kéo vào lô trước. Giờ tới lượt nó.
 
-- [ ] Đọc hết file
-- [ ] Đối chiếu **ma trận 20 ô** với [`access-ladder.md`](../specs/00-foundation/access-ladder.md)
+- [x] Đọc hết file
+- [x] Đối chiếu **ma trận 20 ô** với [`access-ladder.md`](../specs/00-foundation/access-ladder.md)
       và [`entitlement-model.md`](../specs/00-foundation/entitlement-model.md) §7.1
-- [ ] Xác nhận 7 bước gating khớp `BR-ENT-01` (gate bằng entitlement key, không bằng
+- [x] Xác nhận 7 bước gating khớp `BR-ENT-01` (gate bằng entitlement key, không bằng
       `package_code`) và `BR-ENT-06` (đọc từ DB/cache, không từ JWT)
-- [ ] Xác nhận mọi chỗ [`security-checklist.md`](../specs/08-quality/security-checklist.md)
+- [x] Xác nhận mọi chỗ [`security-checklist.md`](../specs/08-quality/security-checklist.md)
       nhắc gating (sau `D-AG`) vẫn đúng với nội dung file này
-- [ ] Điền "vì sao" cho rule còn trống (1 cảnh báo `C6`)
-- [ ] Xác nhận [`testing-strategy.md`](../specs/08-quality/testing-strategy.md) §7.3 "20 ô
+- [x] Điền "vì sao" cho rule còn trống (1 cảnh báo `C6`)
+- [x] Xác nhận [`testing-strategy.md`](../specs/08-quality/testing-strategy.md) §7.3 "20 ô
       gating" khớp đúng 20 ô ở đây — nếu lệch thì một trong hai sai, ghi sổ cái trước khi sửa
-- [ ] Checklist [`CONVENTIONS.md`](../specs/CONVENTIONS.md) §10
-- [ ] `status: approved`, cập nhật `reviewed`
-- [ ] `pnpm lint:specs` 0 lỗi
-- [ ] Commit `feat(specs): T6 bước 5 — approve access-gating`
+- [x] Checklist [`CONVENTIONS.md`](../specs/CONVENTIONS.md) §10
+- [x] `status: approved`, cập nhật `reviewed`
+- [x] `pnpm lint:specs` 0 lỗi
+- [x] Commit `feat(specs): T6 bước 5 — approve access-gating`
 
 ### Bước 6 — [`content-seed-authoring.md`](../specs/01-platform/content-seed-authoring.md) (405 dòng, 14 rule, 6 hỏi mở, 0 `C6`)
 
 **File dài nhất và quan trọng nhất của lô.** Đường găng dài nhất của MVP.
 
-- [ ] Đọc hết file — 405 dòng, không đọc lướt
-- [ ] Đối chiếu 6 `depends_on` đều `approved`: `CONTENT-LIFECYCLE` · `CONTENT-VERSIONING` ·
+- [x] Đọc hết file — 405 dòng, không đọc lướt
+- [x] Đối chiếu 6 `depends_on` đều `approved`: `CONTENT-LIFECYCLE` · `CONTENT-VERSIONING` ·
       `GAME-TEMPLATE-CONTRACT` · `TAXONOMY-SERVICE` · `EMOJI-REGISTRY` · `AI-CODEGEN-PIPELINE`
-- [ ] Xác nhận **8 cổng tự động** của seeder không mâu thuẫn quyết định "không có cổng remote"
+- [x] Xác nhận **8 cổng tự động** của seeder không mâu thuẫn quyết định "không có cổng remote"
       ([`repo-bootstrap.md`](../specs/00-foundation/repo-bootstrap.md) §11 Q5) — cổng ở đây
       chạy local hoặc trong script seed, không phải cổng CI
-- [ ] Xác nhận câu "không có cờ bỏ qua" đã sửa đúng thực tế ở Task #5 (`D-S`, Q12) — cờ
+- [x] Xác nhận câu "không có cờ bỏ qua" đã sửa đúng thực tế ở Task #5 (`D-S`, Q12) — cờ
       `--no-verify` tồn tại ở máy cá nhân
-- [ ] Xác nhận bảng `content_seed_batches` khớp
+- [x] Xác nhận bảng `content_seed_batches` khớp
       [`schema-identity-billing.md`](../specs/01-platform/schema-identity-billing.md) §7.10b
       (bảng **hoãn**, không vào migration #1)
-- [ ] Xác nhận cột `origin` · `authored_in` · `seed_batch_id` khớp
+- [x] Xác nhận cột `origin` · `authored_in` · `seed_batch_id` khớp
       [`schema-content-taxonomy.md`](../specs/01-platform/schema-content-taxonomy.md) §7.4
-- [ ] Xử lý 6 câu hỏi mở — **câu "ai biên soạn ≥690 LO, ≥120 game level"** là 1 trong 3 câu
+- [x] Xử lý 6 câu hỏi mở — **câu "ai biên soạn ≥690 LO, ≥120 game level"** là 1 trong 3 câu
       chặn nhiều nhất corpus ([`index.md`](../specs/index.md)); nếu chưa có chủ thì ghi rõ nó
       chặn P1 và cần **người**, không tự chốt
-- [ ] Checklist [`CONVENTIONS.md`](../specs/CONVENTIONS.md) §10
-- [ ] `status: approved`, cập nhật `reviewed`
-- [ ] `pnpm lint:specs` 0 lỗi
-- [ ] Commit `feat(specs): T6 bước 6 — approve content-seed-authoring`
+- [x] Checklist [`CONVENTIONS.md`](../specs/CONVENTIONS.md) §10
+- [x] `status: approved`, cập nhật `reviewed`
+- [x] `pnpm lint:specs` 0 lỗi
+- [x] Commit `feat(specs): T6 bước 6 — approve content-seed-authoring`
 
 ### Bước 7 — [`game-level-model.md`](../specs/05-content/game-level-model.md) (162 dòng, 10 rule, 2 hỏi mở, 0 `C6`)
 
-- [ ] Đọc hết file
-- [ ] Đối chiếu trần item theo band với
+- [x] Đọc hết file
+- [x] Đối chiếu trần item theo band với
       [`game-template-contract.md`](../specs/01-platform/game-template-contract.md) `limits`
-- [ ] Xác nhận định dạng mã `GL-*` khớp
+- [x] Xác nhận định dạng mã `GL-*` khớp
       [`id-conventions.md`](../specs/00-foundation/id-conventions.md) §7 **và** regex
       `GAME_LEVEL_CODE_REGEX` ở [`packages/shared/src/ids.ts`](../../packages/shared/src/ids.ts)
       (`/^GL-C[1-6]-[A-Z]{2,5}-[A-Z]{2,5}-\d{4}$/`)
-- [ ] Xác nhận cột khớp [`schema-content-taxonomy.md`](../specs/01-platform/schema-content-taxonomy.md) §7.4,
+- [x] Xác nhận cột khớp [`schema-content-taxonomy.md`](../specs/01-platform/schema-content-taxonomy.md) §7.4,
       gồm `entity_id` neo dòng dõi (`D-AE`) và `access_tier` NOT NULL không default
-- [ ] Xác nhận "chỉ dẫn ≤12 từ" không mâu thuẫn `BR-A11-11` (chỉ dẫn không bao giờ chỉ bằng chữ)
-- [ ] Checklist [`CONVENTIONS.md`](../specs/CONVENTIONS.md) §10
-- [ ] `status: approved`, cập nhật `reviewed`
-- [ ] `pnpm lint:specs` 0 lỗi
-- [ ] Commit `feat(specs): T6 bước 7 — approve game-level-model`
+- [x] Xác nhận "chỉ dẫn ≤12 từ" không mâu thuẫn `BR-A11-11` (chỉ dẫn không bao giờ chỉ bằng chữ)
+- [x] Checklist [`CONVENTIONS.md`](../specs/CONVENTIONS.md) §10
+- [x] `status: approved`, cập nhật `reviewed`
+- [x] `pnpm lint:specs` 0 lỗi
+- [x] Commit `feat(specs): T6 bước 7 — approve game-level-model`
 
 ---
 
