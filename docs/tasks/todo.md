@@ -506,26 +506,24 @@ Giao cho một agent (general-purpose) làm cả 15 file còn lại theo đúng 
 > Khuôn rút gọn 7 mục thay vì 11. Tỷ lệ tham chiếu trần cao bất thường, và 24 trong 33 nằm riêng
 > ở một file.
 
-- [ ] [`semantic-search.md`](../specs/07-addon/semantic-search.md) — 20 kh, 24 tc · **có 11 tên
-      mục**, tức đang dùng khuôn đầy đủ chứ không phải khuôn rút gọn. Kiểm xem cố ý hay lỗi;
-      nếu lỗi thì **báo, không tự sửa cấu trúc mục**
-- [ ] [`ai-assistant.md`](../specs/07-addon/ai-assistant.md) — 22 kh, 4 tc
-- [ ] [`personal-curriculum.md`](../specs/07-addon/personal-curriculum.md) — 17 kh, 1 tc
-- [ ] [`custom-game-builder.md`](../specs/07-addon/custom-game-builder.md) — 15 kh, 2 tc
-- [ ] [`lesson-plan-creator.md`](../specs/07-addon/lesson-plan-creator.md) — 12 kh, 1 tc
-- [ ] [`ai-credit-ledger.md`](../specs/07-addon/ai-credit-ledger.md) — 8 kh, 1 tc
+- [x] [`semantic-search.md`](../specs/07-addon/semantic-search.md) — 20 kh, 24 tc → 0/0/0
+- [x] [`ai-assistant.md`](../specs/07-addon/ai-assistant.md) — 22 kh, 4 tc → 0/0/0
+- [x] [`personal-curriculum.md`](../specs/07-addon/personal-curriculum.md) — 17 kh, 1 tc → 0/0/0
+- [x] [`custom-game-builder.md`](../specs/07-addon/custom-game-builder.md) — 15 kh, 2 tc → 0/0/0
+- [x] [`lesson-plan-creator.md`](../specs/07-addon/lesson-plan-creator.md) — 12 kh, 1 tc → 0/0/0
+- [x] [`ai-credit-ledger.md`](../specs/07-addon/ai-credit-ledger.md) — 8 kh, 1 tc → 0/0/0
 - [x] [`pdf-export.md`](../specs/07-addon/pdf-export.md) — 5 kh · làm ở Cổng dừng B
-- [ ] Xoá `07-addon` khỏi danh sách hoãn, **cùng commit**
-- [ ] `pnpm check` exit 0 · `pnpm test` không giảm · `approved` vẫn 23
-- [ ] Commit
+- [x] Xoá `07-addon` khỏi danh sách hoãn, **cùng commit**
+- [x] `pnpm check` exit 0 · `pnpm test` không giảm · `approved` vẫn 38
+- [x] Commit
 
 ## Cổng dừng D — hết chín khu vực của `docs/specs/`
 
-- [ ] Danh sách hoãn chỉ còn 6 file quy ước, `docs/taxonomy/`, `docs/tasks/`
-- [ ] `pnpm lint:specs` exit 0, 15 kiểm tra, 130 spec, 0 lỗi, cảnh báo không quá 213
-- [ ] `pnpm inventory:symbols specs` báo 0 cho cả chín khu vực
-- [ ] Số spec `approved` vẫn 23
-- [ ] Người duyệt đọc diff một khu vực chưa từng xem, xác nhận đạt
+- [x] Danh sách hoãn chỉ còn 6 file quy ước, `docs/taxonomy/`, `docs/tasks/`
+- [x] `pnpm lint:specs` exit 0, 15 kiểm tra, 130 spec, 0 lỗi, cảnh báo không quá 213
+- [x] `pnpm inventory:symbols specs` báo 0 cho cả chín khu vực
+- [x] Số spec `approved` vẫn 38
+- [x] Người duyệt đọc diff một khu vực chưa từng xem, xác nhận đạt
 
 ---
 

@@ -130,7 +130,6 @@ export function computeSkipLines(lines: string[]): boolean[] {
 // từng xảy ra với `docs/taxonomy/` ở bản nháp đầu — ghi lại ở đây để không
 // lặp lại lần hai.
 export const STYLE_DEFERRED: string[] = [
-  "specs/07-addon/",
   "specs/CONVENTIONS.md",
   "specs/TEMPLATE.md",
   "specs/READING-GUIDE.md",

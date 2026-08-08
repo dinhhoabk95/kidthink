@@ -15,15 +15,15 @@ depends_on:
 
 # Sổ credit AI
 
-> **Add-on — ❌ không bán ở MVP.** Đây là **điều kiện tiên quyết** để bán `addon_ai`:
-> ❌ không đếm được credit thì ❌ không bán được gói AI.
+> **Add-on — không bán ở MVP.** Đây là **điều kiện tiên quyết** để bán `addon_ai`:
+> không đếm được credit thì không bán được gói AI.
 
 ## 1. Objective
 
 Chi phí LLM là **biến phí theo lượt dùng**. Gộp nó vào thuê bao cố định làm mất kiểm soát chi
 phí — một User dùng nhiều gấp 100 lần User trung bình là chuyện bình thường.
 
-Credit là cách duy nhất giới hạn mà ❌ không chặn người dùng bình thường.
+Credit là cách duy nhất giới hạn mà không chặn người dùng bình thường.
 
 ## 2. Actors
 
@@ -37,12 +37,12 @@ Credit là cách duy nhất giới hạn mà ❌ không chặn người dùng b�
 
 | ID | Rule | Vì sao |
 |---|---|---|
-| `BR-ACL-01` | Sổ là **append-only** — mọi giao dịch là một hàng, số dư là **tổng** | Số dư lưu trực tiếp sẽ lệch và ❌ không truy được |
+| `BR-ACL-01` | Sổ là **append-only** — mọi giao dịch là một hàng, số dư là **tổng** | Số dư lưu trực tiếp sẽ lệch và không truy được |
 | `BR-ACL-02` | Trừ credit **trước** khi gọi LLM; hoàn lại nếu lời gọi fail | Gọi trước trừ sau cho phép lạm dụng bằng cách huỷ request |
-| `BR-ACL-03` | Hết credit → **402**, ❌ không degrade âm thầm | `BR-ENT-07` |
+| `BR-ACL-03` | Hết credit → **402**, không degrade âm thầm | `BR-ENT-07` |
 | `BR-ACL-04` | Credit **không hết hạn** ở phiên bản đầu | Credit hết hạn tạo khiếu nại nhiều hơn giá trị nó mang lại |
-| `BR-ACL-05` | Trừ credit **nguyên tử**, chống chạy đua | Hai request đồng thời ❌ không được vượt số dư |
-| `BR-ACL-06` | Credit ❌ **NEVER mở `access_tier`** | `BR-ENT-08` |
+| `BR-ACL-05` | Trừ credit **nguyên tử**, chống chạy đua | Hai request đồng thời không được vượt số dư |
+| `BR-ACL-06` | Credit Cấm — **NEVER mở `access_tier`** | `BR-ENT-08` |
 | `BR-ACL-07` | Cấp bù tay ghi `audit_logs` + lý do bắt buộc | |
 | `BR-ACL-08` | Chi phí thật (USD) ghi **riêng** với credit tiêu | Credit là đơn vị bán; USD là chi phí. Trộn hai cái làm không tính được biên |
 | `BR-ACL-09` | Cảnh báo User khi còn **< 20%** credit | |
@@ -97,7 +97,7 @@ COMMIT
 | `GET /api/users/ai/credits` | `{ balance, recent_transactions }` |
 | `POST /api/managers/users/{uuid}/ai-credits` | Cấp tay, `super_admin`, lý do bắt buộc |
 
-Mua credit đi qua `payment-flow` như một package.
+Mua credit đi qua [`payment-flow.md`](../00-foundation/payment-flow.md) như một package.
 
 ## 9. Acceptance criteria
 

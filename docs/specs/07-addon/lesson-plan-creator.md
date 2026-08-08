@@ -16,37 +16,37 @@ depends_on:
 
 # Công cụ soạn giáo án cá nhân
 
-> **Add-on — ❌ không bán ở MVP.** Lên catalog khi spec này đạt `implemented`
-> (`package-catalog` §7.2).
+> **Add-on — không bán ở MVP.** Lên catalog khi spec này đạt `implemented`
+> ([`package-catalog.md`](../00-foundation/package-catalog.md) §7.2).
 
 ## 1. Objective
 
 Giáo viên lắp giáo án riêng **từ thư viện đã kiểm duyệt** — chọn lesson và activity có sẵn,
 sắp xếp lại, thêm ghi chú, xuất PDF.
 
-Ranh giới then chốt: User tạo **bản copy thuộc sở hữu cá nhân**. Họ ❌ **không** sửa được
-bản gốc của hệ thống, và ❌ **không** xuất bản vào catalog công khai.
+Ranh giới then chốt: User tạo **bản copy thuộc sở hữu cá nhân**. Họ **không** sửa được
+bản gốc của hệ thống, và **không** xuất bản vào catalog công khai.
 
 ## 2. Actors
 
 | Actor | Cần entitlement |
 |---|---|
 | User | `create_lesson_plan` · `duplicate_lesson` · `customize_lesson` · `export_pdf` |
-| Manager | ❌ Không liên quan — đây là không gian riêng của User |
+| Manager | Cấm liên quan — đây là không gian riêng của User |
 
 ## 6. Business rules
 
 | ID | Rule | Vì sao |
 |---|---|---|
-| `BR-LPC-01` | User tạo **bản copy**, ❌ **NEVER sửa bản gốc hệ thống** | Bản gốc là tài sản chung có kiểm duyệt |
-| `BR-LPC-02` | Giáo án cá nhân ❌ **NEVER vào catalog công khai** | Vào catalog cần kiểm duyệt; kiểm duyệt UGC ở quy mô là mô hình khác |
-| `BR-LPC-03` | Giáo án chỉ dùng nội dung **`published`** mà User **có quyền truy cập** | ❌ Không lách paywall bằng cách nhét nội dung premium vào giáo án |
-| `BR-LPC-04` | ❌ **NEVER nhiều người cùng sửa** một giáo án ở MVP add-on | |
-| `BR-LPC-05` | Chia sẻ giáo án ❌ **không có ở phiên bản đầu** | Chia sẻ kéo theo kiểm duyệt và bản quyền |
+| `BR-LPC-01` | User tạo **bản copy**, Cấm — **NEVER sửa bản gốc hệ thống** | Bản gốc là tài sản chung có kiểm duyệt |
+| `BR-LPC-02` | Giáo án cá nhân Cấm — **NEVER vào catalog công khai** | Vào catalog cần kiểm duyệt; kiểm duyệt UGC ở quy mô là mô hình khác |
+| `BR-LPC-03` | Giáo án chỉ dùng nội dung **`published`** mà User **có quyền truy cập** | Cấm lách paywall bằng cách nhét nội dung premium vào giáo án |
+| `BR-LPC-04` | Cấm — **NEVER nhiều người cùng sửa** một giáo án ở MVP add-on | |
+| `BR-LPC-05` | Chia sẻ giáo án **không có ở phiên bản đầu** | Chia sẻ kéo theo kiểm duyệt và bản quyền |
 | `BR-LPC-06` | Xuất PDF trừ quota `export_pdf` | |
-| `BR-LPC-07` | Bản gốc đổi version → giáo án giữ **snapshot đã copy**, có thông báo có bản mới | Giáo án đã in ra ❌ không được đổi dưới chân người dùng |
+| `BR-LPC-07` | Bản gốc đổi version → giáo án giữ **snapshot đã copy**, có thông báo có bản mới | Giáo án đã in ra không được đổi dưới chân người dùng |
 | `BR-LPC-08` | Quota `lesson_plans_per_month` theo gói add-on | |
-| `BR-LPC-09` | Giáo án ❌ **NEVER chứa dữ liệu của trẻ** | Nó là tài liệu dạy, ❌ không phải hồ sơ học sinh |
+| `BR-LPC-09` | Giáo án Cấm — **NEVER chứa dữ liệu của trẻ** | Nó là tài liệu dạy, không phải hồ sơ học sinh |
 
 ## 7. Data
 

@@ -17,15 +17,15 @@ depends_on:
 
 # Trợ lý AI cho người dùng
 
-> **Add-on — ❌ không bán ở MVP.** Lên catalog khi `ai-credit-ledger` đạt `implemented`.
+> **Add-on — không bán ở MVP.** Lên catalog khi [`ai-credit-ledger.md`](ai-credit-ledger.md) đạt `implemented`.
 
 ## 1. Objective
 
-AI **hỗ trợ**, ❌ **không thay thế** chương trình biên soạn. Nó tóm tắt, gợi ý, tìm kiếm, và
-viết lại — trên dữ liệu đã có, ❌ không sinh nội dung cốt lõi mới.
+AI **hỗ trợ**, **không thay thế** chương trình biên soạn. Nó tóm tắt, gợi ý, tìm kiếm, và
+viết lại — trên dữ liệu đã có, không sinh nội dung cốt lõi mới.
 
-Đây là **LLM duy nhất chạy trong hệ thống**, và nó là add-on ngoài MVP. Nội dung nền ❌
-không do LLM sinh — nó được soạn thành seeder trong repo (`content-seed-authoring`), ở ngoài
+Đây là **LLM duy nhất chạy trong hệ thống**, và nó là add-on ngoài MVP. Nội dung nền Cấm
+không do LLM sinh — nó được soạn thành seeder trong repo ([`content-seed-authoring.md`](../01-platform/content-seed-authoring.md)), ở ngoài
 runtime hoàn toàn. Trợ lý thì chạy **trong request với ngữ cảnh của một User**, nên nguy cơ
 rò dữ liệu trẻ cao hơn hẳn và ranh giới phải chặt hơn.
 
@@ -34,22 +34,22 @@ rò dữ liệu trẻ cao hơn hẳn và ranh giới phải chặt hơn.
 | Actor | Cần entitlement |
 |---|---|
 | User | `use_ai_analysis` · `use_ai_search` |
-| LLM provider | ❌ **NEVER nhận dữ liệu định danh trẻ** |
+| LLM provider | Cấm — **NEVER nhận dữ liệu định danh trẻ** |
 
 ## 6. Business rules
 
 | ID | Rule | Vì sao |
 |---|---|---|
-| `BR-AIA-01` | ❌ **NEVER gửi tên, `child_uuid`, năm sinh, hay telemetry cá nhân tới LLM** | `BR-CDC-06` — ranh giới cứng |
-| `BR-AIA-02` | Chỉ gửi **số liệu tổng hợp và tên skill** | Đủ để tóm tắt, ❌ không đủ để định danh |
+| `BR-AIA-01` | Cấm — **NEVER gửi tên, `child_uuid`, năm sinh, hay telemetry cá nhân tới LLM** | `BR-CDC-06` — ranh giới cứng |
+| `BR-AIA-02` | Chỉ gửi **số liệu tổng hợp và tên skill** | Đủ để tóm tắt, không đủ để định danh |
 | `BR-AIA-03` | Mọi đầu ra AI mang **nhãn "gợi ý"** hiển thị | Người dùng phải biết đâu là máy nói |
-| `BR-AIA-04` | AI ❌ **NEVER đưa kết luận phát triển, y khoa, hay chẩn đoán** | Ranh giới sản phẩm và pháp lý |
-| `BR-AIA-05` | AI ❌ **NEVER sinh `skills`, `learning_objectives`, `lessons`, hay `game_levels`** | `BR-CSA-08` — nội dung cốt lõi soạn trong repo và có người merge, ❌ không sinh trong request |
-| `BR-AIA-06` | AI ❌ **NEVER tự publish** hay tự đổi lộ trình của trẻ | |
+| `BR-AIA-04` | AI Cấm — **NEVER đưa kết luận phát triển, y khoa, hay chẩn đoán** | Ranh giới sản phẩm và pháp lý |
+| `BR-AIA-05` | AI Cấm — **NEVER sinh `skills`, `learning_objectives`, `lessons`, hay `game_levels`** | `BR-CSA-08` — nội dung cốt lõi soạn trong repo và có người merge, không sinh trong request |
+| `BR-AIA-06` | AI Cấm — **NEVER tự publish** hay tự đổi lộ trình của trẻ | |
 | `BR-AIA-07` | Mọi lời gọi **trừ credit** và ghi `ai_usage_log` | |
-| `BR-AIA-08` | Hết credit → **402**, ❌ không degrade âm thầm sang model rẻ hơn | `BR-ENT-07` |
+| `BR-AIA-08` | Hết credit → **402**, không degrade âm thầm sang model rẻ hơn | `BR-ENT-07` |
 | `BR-AIA-09` | Đầu ra qua **bộ lọc kiểm duyệt** trước khi hiển thị | |
-| `BR-AIA-10` | User **bỏ qua được** mọi gợi ý; ❌ không gợi ý nào chặn luồng | |
+| `BR-AIA-10` | User **bỏ qua được** mọi gợi ý; không gợi ý nào chặn luồng | |
 | `BR-AIA-11` | Prompt và phiên bản model **có version**, ghi vào log | Truy được khi đầu ra sai |
 
 ## 7. Data
@@ -82,15 +82,15 @@ Sáu tính năng. Tất cả đều thao tác **trên nội dung đã có**.
 }
 ```
 
-❌ **Không** `child_uuid`, ❌ không `display_name`, ❌ không `birth_year`, ❌ không `user_id`,
-❌ không hàng telemetry lẻ.
+Cấm **Không** `child_uuid`, không `display_name`, không `birth_year`, không `user_id`,
+không hàng telemetry lẻ.
 
 ### 7.3 `ai_usage_log`
 
 `user_id` · `feature` · `credits_spent` · `model` · `prompt_version` ·
 `input_token` `output_token` · `cost_usd_micros` · `moderation_passed` · `created_at`.
 
-❌ Không lưu nội dung prompt chứa dữ liệu người dùng.
+Cấm lưu nội dung prompt chứa dữ liệu người dùng.
 
 ## 8. API contract
 
@@ -99,11 +99,11 @@ Sáu tính năng. Tất cả đều thao tác **trên nội dung đã có**.
 | `POST /api/users/ai/summarize-report` | Body `{ child_uuid, period }` — server tự dựng payload §7.2 |
 | `POST /api/users/ai/suggest-content` | |
 | `POST /api/users/ai/rewrite-guide` | |
-| `GET /api/users/ai/search` | Tìm kiếm ngữ nghĩa — contract chi tiết ở `semantic-search.md` §8 |
+| `GET /api/users/ai/search` | Tìm kiếm ngữ nghĩa — contract chi tiết ở [`semantic-search.md`](semantic-search.md) §8 |
 
 403 `ENTITLEMENT_REQUIRED` · 402 `QUOTA_EXCEEDED` · 503 khi provider lỗi.
 
-`child_uuid` trong body dùng để **server** tra dữ liệu; nó ❌ **không** đi tiếp tới LLM.
+`child_uuid` trong body dùng để **server** tra dữ liệu; nó **không** đi tiếp tới LLM.
 
 ## 9. Acceptance criteria
 
@@ -152,6 +152,6 @@ Scenario: BR-AIA-10 — bỏ qua được gợi ý
 | # | Câu hỏi | Chặn gì |
 |---|---|---|
 | 1 | Provider và model nào? Ảnh hưởng chi phí và chất lượng tiếng Việt | Lên catalog |
-| 2 | Tỉ lệ trừ credit mỗi loại lời gọi | `ai-credit-ledger` |
-| 3 | ~~Tìm kiếm ngữ nghĩa cần vector store — dùng pgvector hay dịch vụ ngoài?~~ **Đã chốt 2026-08-05**: pgvector trong Postgres 17 hiện có, add-on trả credit (❌ không base search). Spec chi tiết: [`semantic-search`](semantic-search.md) | — |
-| 4 | Có cần thoả thuận xử lý dữ liệu (DPA) với provider không, dù ❌ không gửi PII? | Pháp lý |
+| 2 | Tỉ lệ trừ credit mỗi loại lời gọi | [`ai-credit-ledger.md`](ai-credit-ledger.md) |
+| 3 | ~~Tìm kiếm ngữ nghĩa cần vector store — dùng pgvector hay dịch vụ ngoài?~~ **Đã chốt 2026-08-05**: pgvector trong Postgres 17 hiện có, add-on trả credit (không base search). Spec chi tiết: [`semantic-search`](semantic-search.md) | — |
+| 4 | Có cần thoả thuận xử lý dữ liệu (DPA) với provider không, dù không gửi PII? | Pháp lý |

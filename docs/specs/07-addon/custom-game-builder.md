@@ -17,14 +17,14 @@ depends_on:
 
 # Công cụ tạo trò chơi cá nhân
 
-> **Add-on — ❌ không bán ở MVP.**
+> **Add-on — không bán ở MVP.**
 
 ## 1. Objective
 
 Giáo viên tạo game riêng từ template có sẵn — cùng cơ chế Manager dùng trong studio, nhưng
 kết quả **chỉ trẻ của chính User đó chơi được**.
 
-Ranh giới: game do User tạo ❌ **NEVER vào catalog công khai**. Muốn công khai thì qua duyệt
+Ranh giới: game do User tạo Cấm — **NEVER vào catalog công khai**. Muốn công khai thì qua duyệt
 của Manager, và đó là một luồng khác chưa có ở phiên bản này.
 
 ## 2. Actors
@@ -33,22 +33,22 @@ của Manager, và đó là một luồng khác chưa có ở phiên bản này.
 |---|---|
 | User | `create_custom_game` |
 | Trẻ của User đó | Chơi được |
-| Trẻ của User khác | ❌ Không thấy |
+| Trẻ của User khác | Cấm thấy |
 
 ## 6. Business rules
 
 | ID | Rule | Vì sao |
 |---|---|---|
-| `BR-CGB-01` | Game do User tạo **chỉ trẻ của User đó** chơi được | ❌ Không có kiểm duyệt; nội dung chưa duyệt ❌ không được tới trẻ khác |
-| `BR-CGB-02` | ❌ **NEVER vào catalog công khai** | |
-| `BR-CGB-03` | Dùng **cùng `content_contract`** và **cùng validation** với studio | Một bộ luật, ❌ không hai |
+| `BR-CGB-01` | Game do User tạo **chỉ trẻ của User đó** chơi được | Cấm có kiểm duyệt; nội dung chưa duyệt không được tới trẻ khác |
+| `BR-CGB-02` | Cấm — **NEVER vào catalog công khai** | |
+| `BR-CGB-03` | Dùng **cùng `content_contract`** và **cùng validation** với studio | Một bộ luật, không hai |
 | `BR-CGB-04` | Chỉ dùng **emoji registry**; ảnh upload trừ quota `upload_mb` | `BR-EMJ-01` |
 | `BR-CGB-05` | Validation §7.1 chạy ở **server** trước khi lưu | Sai schema làm crash engine trước mặt trẻ |
-| `BR-CGB-06` | Game custom ❌ **không cập nhật `mastery_state`** | Nội dung chưa kiểm duyệt ❌ không được đẩy dữ liệu học chính thức |
+| `BR-CGB-06` | Game custom **không cập nhật `mastery_state`** | Nội dung chưa kiểm duyệt không được đẩy dữ liệu học chính thức |
 | `BR-CGB-07` | Chỉ **6 template MVP** dùng được | |
 | `BR-CGB-08` | Quota `custom_games_saved` theo gói add-on | |
 | `BR-CGB-09` | Nội dung do User tạo qua `packages/moderation` trước khi lưu | UGC, dù riêng tư, vẫn tới trẻ |
-| `BR-CGB-10` | Áp **mọi ràng buộc biên tập** của `game-level-model` §7.1 | Trẻ 3 tuổi không phân biệt game của ai |
+| `BR-CGB-10` | Áp **mọi ràng buộc biên tập** của [`game-level-model.md`](../05-content/game-level-model.md) §7.1 | Trẻ 3 tuổi không phân biệt game của ai |
 
 ## 7. Data
 
@@ -56,16 +56,16 @@ của Manager, và đó là một luồng khác chưa có ở phiên bản này.
 `content_pack` JSONB · `difficulty_params` JSONB · `theme_id` · `age_min` `age_max` ·
 `skill_ids` nullable · `status` (`draft`\|`ready`) · `created_at`.
 
-❌ Không `access_tier` — luôn riêng tư. ❌ Không `content_version` — ❌ không có publish công khai.
+Cấm `access_tier` — luôn riêng tư. Cấm `content_version` — không có publish công khai.
 
 ### 7.1 Validation trước khi lưu `ready`
 
 - `content_pack` parse được bằng `content_contract`
 - Có ít nhất một đáp án đúng
-- ❌ Không câu hỏi rỗng, ❌ không asset lỗi
-- Số item trong trần của template **và** của band tuổi (`game-level-model` §7.1)
+- Cấm câu hỏi rỗng, không asset lỗi
+- Số item trong trần của template **và** của band tuổi ([`game-level-model.md`](../05-content/game-level-model.md) §7.1)
 - Có band tuổi
-- Chỉ dẫn ≤12 từ, ❌ không phủ định
+- Chỉ dẫn ≤12 từ, không phủ định
 - Qua bộ lọc kiểm duyệt nội dung
 
 ## 8. API contract

@@ -20,37 +20,37 @@ depends_on:
 
 # Tìm kiếm ngữ nghĩa bằng vector embedding
 
-> **Add-on — ❌ không bán ở MVP.** Một trong sáu tính năng của `ai-assistant` (§7.1 dòng
+> **Add-on — không bán ở MVP.** Một trong sáu tính năng của [`ai-assistant.md`](ai-assistant.md) (§7.1 dòng
 > "Tìm kiếm ngữ nghĩa"); file này là spec chi tiết cho **riêng** tính năng đó — schema
-> vector, job re-embed, và thuật toán rerank không thuộc phạm vi `owns` của `ai-assistant`.
+> vector, job re-embed, và thuật toán rerank không thuộc phạm vi `owns` của [`ai-assistant.md`](ai-assistant.md).
 
 ## 1. Objective
 
-Bổ sung cho `content-search` (tsvector), ❌ không thay thế. User gõ câu hỏi tự nhiên hoặc
+Bổ sung cho [`content-search.md`](../01-platform/content-search.md) (tsvector), không thay thế. User gõ câu hỏi tự nhiên hoặc
 từ không khớp tag/tiêu đề đúng chữ ("bài giúp con đếm số" ≈ "Đếm trong phạm vi 5") và vẫn
 tìm ra bài giảng liên quan nhờ độ giống nghĩa của vector embedding, thay vì phải nhớ đúng
 từ khoá hay tag hệ thống dùng.
 
 Đây là tính năng **trả credit**, gate bởi `use_ai_search` — quyết định chốt 2026-08-05: giữ
-ở add-on, ❌ không đưa vào base search miễn phí (giữ nguyên D3 — 2 SKU + add-on chưa bán).
+ở add-on, không đưa vào base search miễn phí (giữ nguyên D3 — 2 SKU + add-on chưa bán).
 
 ## 2. Actors
 
 | Actor | Cần entitlement | Làm được gì |
 |---|---|---|
 | User | `use_ai_search` + đủ credit | Gõ câu hỏi tự nhiên, nhận danh sách nội dung xếp theo độ giống nghĩa |
-| Embedding provider (ngoài) | — | Nhận **chỉ** text nội dung đã `published` và câu query của user. ❌ **NEVER** nhận dữ liệu trẻ |
+| Embedding provider (ngoài) | — | Nhận **chỉ** text nội dung đã `published` và câu query của user. Cấm — **NEVER** nhận dữ liệu trẻ |
 | Job `embed:content` | system | Tính lại vector khi nội dung publish/update |
 
-Guest và Manager ❌ không dùng route này ở phạm vi spec này — giống `ai-assistant` §2, đây
+Guest và Manager không dùng route này ở phạm vi spec này — giống [`ai-assistant.md`](ai-assistant.md) §2, đây
 là tính năng của User.
 
 ## 3. Entry points
 
 | Route / job | | |
 |---|---|---|
-| `GET /api/users/ai/search` | Route đã đứng trong danh sách 6 tính năng ở `ai-assistant.md` §8; **contract chi tiết ở đây** |
-| Job `embed:content` | Producer: pipeline publish/version (`content-lifecycle` → `published`). Consumer: `apps/worker` |
+| `GET /api/users/ai/search` | Route đã đứng trong danh sách 6 tính năng ở [`ai-assistant.md`](ai-assistant.md) §8; **contract chi tiết ở đây** |
+| Job `embed:content` | Producer: pipeline publish/version ([`content-lifecycle.md`](../00-foundation/content-lifecycle.md) → `published`). Consumer: `apps/worker` |
 
 ## 4. Main flow
 
@@ -62,36 +62,36 @@ là tính năng của User.
 
 **Nhánh đọc (tìm kiếm):**
 1. Zod parse `q` (2–200 ký tự) + `limit`.
-2. Kiểm `use_ai_search` + credit (`ai-credit-ledger`) — thiếu → 403/402, ❌ không gọi provider.
+2. Kiểm `use_ai_search` + credit ([`ai-credit-ledger.md`](ai-credit-ledger.md)) — thiếu → 403/402, không gọi provider.
 3. Embed câu `q` qua provider.
 4. Truy vấn `content_embeddings` bằng cosine distance (`<=>` của pgvector), lọc theo
-   `access-ladder`/quyền hiện tại giống `content-search` (chỉ `published`, đúng bậc actor).
+   [`access-ladder.md`](../00-foundation/access-ladder.md)/quyền hiện tại giống [`content-search.md`](../01-platform/content-search.md) (chỉ `published`, đúng bậc actor).
 5. Rerank hybrid: kết hợp cosine similarity với hạng tsvector đang có; nội dung **mở được**
-   luôn xếp trên `locked` bất kể similarity (kế thừa nguyên tắc `content-search.md` §7.2 mục 2).
-6. Trả kết quả kèm `locked` khi bị chặn bậc, ❌ không kèm `content_pack`. Ghi `ai_usage_log`.
+   luôn xếp trên `locked` bất kể similarity (kế thừa nguyên tắc [`content-search.md`](../01-platform/content-search.md) §7.2 mục 2).
+6. Trả kết quả kèm `locked` khi bị chặn bậc, không kèm `content_pack`. Ghi `ai_usage_log`.
 
 ## 5. Alternative flows
 
 | Nhánh | Điều kiện | Hành vi |
 |---|---|---|
-| Nội dung chưa có embedding | Job chưa chạy hoặc job fail | Bỏ khỏi kết quả ngữ nghĩa, ❌ không lỗi — vẫn còn trong `content-search` thường |
-| Provider lỗi hoặc timeout | Gọi embed câu query fail | Fallback trả kết quả tsvector thường (`BR-SEM-07`), ❌ không 5xx chặn toàn bộ tìm kiếm |
-| Cả embed và tsvector đều rỗng | | Trả rỗng + gợi ý nới bộ lọc, giống `content-search` §5 |
+| Nội dung chưa có embedding | Job chưa chạy hoặc job fail | Bỏ khỏi kết quả ngữ nghĩa, không lỗi — vẫn còn trong [`content-search.md`](../01-platform/content-search.md) thường |
+| Provider lỗi hoặc timeout | Gọi embed câu query fail | Fallback trả kết quả tsvector thường (`BR-SEM-07`), không 5xx chặn toàn bộ tìm kiếm |
+| Cả embed và tsvector đều rỗng | | Trả rỗng + gợi ý nới bộ lọc, giống [`content-search.md`](../01-platform/content-search.md) §5 |
 | Query quá ngắn (<2 ký tự sau trim) | | 422 `VALIDATION_FAILED` |
-| Nội dung bị chặn bậc xuất hiện trong top-N | | `locked: true`, ❌ không `content_pack` — kế thừa `BR-SRC-01` |
+| Nội dung bị chặn bậc xuất hiện trong top-N | | `locked: true`, không `content_pack` — kế thừa `BR-SRC-01` |
 
 ## 6. Business rules
 
 | ID | Rule | Vì sao |
 |---|---|---|
-| `BR-SEM-01` | Provider ngoài ❌ **NEVER** nhận gì khác ngoài text nội dung đã `published` và câu query của user | Đây là điểm dữ liệu rời hệ thống mới — tái khẳng định `BR-AIA-01`/`BR-CDC-06` tại chính nơi rủi ro phát sinh |
+| `BR-SEM-01` | Provider ngoài Cấm — **NEVER** nhận gì khác ngoài text nội dung đã `published` và câu query của user | Đây là điểm dữ liệu rời hệ thống mới — tái khẳng định `BR-AIA-01`/`BR-CDC-06` tại chính nơi rủi ro phát sinh |
 | `BR-SEM-02` | Câu `q` là input chưa tin: Zod validate, cap độ dài trước khi gửi provider | Query dài bất thường là đường vào abuse chi phí gọi provider |
-| `BR-SEM-03` | Vector re-embed **mỗi lần** publish/update; ❌ **NEVER** serve vector cũ hơn `content_version` hiện tại | Nội dung sửa mà search vẫn khớp bản cũ là bug ngữ nghĩa, khó phát hiện bằng test thường |
+| `BR-SEM-03` | Vector re-embed **mỗi lần** publish/update; Cấm — **NEVER** serve vector cũ hơn `content_version` hiện tại | Nội dung sửa mà search vẫn khớp bản cũ là bug ngữ nghĩa, khó phát hiện bằng test thường |
 | `BR-SEM-04` | Job `embed:content` idempotent theo `(content_type, content_id, content_version)` | Retry không tạo dòng trùng, theo `BR-JOB-01` |
-| `BR-SEM-05` | ❌ **NEVER cache** kết quả tìm kiếm ngữ nghĩa | Kế thừa `BR-SRC-06` — danh sách có thể lộ nội dung trả phí |
-| `BR-SEM-06` | Kết quả tuân access-ladder như `content-search`: `locked` hiện, `content_pack` ❌ không hiện | Một đường tìm kiếm thứ hai không được là đường vòng qua gating |
-| `BR-SEM-07` | Provider lỗi ❌ **NEVER** làm tìm kiếm 5xx toàn phần — fallback tsvector | Semantic search là tăng cường, hỏng nó không được kéo sập tìm kiếm cơ bản |
-| `BR-SEM-08` | Cột/index `vector` tạo qua migration Drizzle, ❌ raw `ALTER` ngoài migration | Đồng nhất với nguyên tắc ORM chung của `SPEC.md` §6 |
+| `BR-SEM-05` | Cấm — **NEVER cache** kết quả tìm kiếm ngữ nghĩa | Kế thừa `BR-SRC-06` — danh sách có thể lộ nội dung trả phí |
+| `BR-SEM-06` | Kết quả tuân access-ladder như [`content-search.md`](../01-platform/content-search.md): `locked` hiện, `content_pack` không hiện | Một đường tìm kiếm thứ hai không được là đường vòng qua gating |
+| `BR-SEM-07` | Provider lỗi Cấm — **NEVER** làm tìm kiếm 5xx toàn phần — fallback tsvector | Semantic search là tăng cường, hỏng nó không được kéo sập tìm kiếm cơ bản |
+| `BR-SEM-08` | Cột/index `vector` tạo qua migration Drizzle, Cấm raw `ALTER` ngoài migration | Đồng nhất với nguyên tắc ORM chung của [`SPEC.md`](../../SPEC.md) §6 |
 
 ## 7. Data
 
@@ -109,10 +109,10 @@ là tính năng của User.
 | `model_version` | text | Để biết vector cũ cần re-embed khi đổi model |
 | `created_at` | timestamptz | |
 
-Unique `(content_type, content_id, content_version)`. ❌ Không build ANN index (HNSW/IVFFlat)
+Unique `(content_type, content_id, content_version)`. Cấm build ANN index (HNSW/IVFFlat)
 ở lần triển khai đầu — quy mô nội dung hiện tại (≤120 level, ≤40 lesson, theo
-`content-search.md` §7.3) đủ nhỏ cho sequential scan trên `vector_cosine_ops`, giống lý do
-`content-search` chưa cần search engine riêng.
+[`content-search.md`](../01-platform/content-search.md) §7.3) đủ nhỏ cho sequential scan trên `vector_cosine_ops`, giống lý do
+[`content-search.md`](../01-platform/content-search.md) chưa cần search engine riêng.
 
 ### 7.2 Job `embed:content`
 
@@ -123,8 +123,8 @@ Unique `(content_type, content_id, content_version)`. ❌ Không build ANN index
 | Timeout | 30s (gọi network ra ngoài) |
 | Retry | 3, backoff exponential 10s |
 
-**Add-on job — ❌ không tính vào 10 job MVP của `job-queue.md` §7.1**, nhưng dùng chung hạ
-tầng BullMQ/Valkey đã có. `job-queue.md` §7.1 đã có dòng chú "job add-on ❌ không tạo ở MVP" —
+**Add-on job — không tính vào 10 job MVP của [`job-queue.md`](../01-platform/job-queue.md) §7.1**, nhưng dùng chung hạ
+tầng BullMQ/Valkey đã có. [`job-queue.md`](../01-platform/job-queue.md) §7.1 đã có dòng chú "job add-on không tạo ở MVP" —
 đây là job cụ thể hoá dòng chú đó.
 
 ### 7.3 Xếp hạng hybrid
@@ -134,7 +134,7 @@ score = w1 * cosine_similarity + w2 * tsvector_rank
 ```
 
 Nội dung **mở được** với quyền hiện tại luôn xếp trên `locked` bất kể `score` — kế thừa
-nguyên tắc `content-search.md` §7.2 mục 2, không định nghĩa lại.
+nguyên tắc [`content-search.md`](../01-platform/content-search.md) §7.2 mục 2, không định nghĩa lại.
 
 Ngưỡng `cosine_similarity` tối thiểu để coi là "liên quan": **chưa chốt**, xem OQ2.
 
@@ -152,7 +152,7 @@ Ngưỡng `cosine_similarity` tối thiểu để coi là "liên quan": **chưa 
 | 422 | `VALIDATION_FAILED` |
 | 503 | Cả embed provider và fallback tsvector đều fail |
 
-`items[].locked = true` → ❌ không có `content_pack` — giống `content-search.md` §8.
+`items[].locked = true` → không có `content_pack` — giống [`content-search.md`](../01-platform/content-search.md) §8.
 
 ## 9. Acceptance criteria
 
@@ -205,7 +205,7 @@ Scenario: hết credit trả 402
 - Re-embed khi publish/update nội dung.
 - Fallback tsvector khi provider lỗi.
 - Validate và cap độ dài `q` trước khi gửi provider.
-- Trả `locked` thay vì ẩn nội dung trả phí — giống `content-search`.
+- Trả `locked` thay vì ẩn nội dung trả phí — giống [`content-search.md`](../01-platform/content-search.md).
 
 **Ask first**
 - Đổi model/provider embedding.
@@ -224,7 +224,7 @@ Scenario: hết credit trả 402
 
 | # | Câu hỏi | Chặn gì |
 |---|---|---|
-| 1 | Provider/model embedding nào — cùng quyết định với `ai-assistant.md` OQ1 (LLM provider) hay tách riêng? Ảnh hưởng `N` (dimension) của cột `vector` | Migration schema |
+| 1 | Provider/model embedding nào — cùng quyết định với [`ai-assistant.md`](ai-assistant.md) OQ1 (LLM provider) hay tách riêng? Ảnh hưởng `N` (dimension) của cột `vector` | Migration schema |
 | 2 | Ngưỡng `cosine_similarity` tối thiểu để coi là kết quả liên quan — cần đo thực nghiệm trên corpus thật, chưa có dữ liệu để đoán | Rerank |
-| 3 | Có cần ANN index không, và tới quy mô nội dung nào thì cần — tương tự câu hỏi ngưỡng của `content-search.md` OQ1 nhưng cho vector | Sau launch add-on |
-| 4 | Provider lỗi giữa chừng có trừ credit không? Phụ thuộc ngữ nghĩa `ai-credit-ledger` chưa chốt ở spec đó | `ai-credit-ledger` |
+| 3 | Có cần ANN index không, và tới quy mô nội dung nào thì cần — tương tự câu hỏi ngưỡng của [`content-search.md`](../01-platform/content-search.md) OQ1 nhưng cho vector | Sau launch add-on |
+| 4 | Provider lỗi giữa chừng có trừ credit không? Phụ thuộc ngữ nghĩa [`ai-credit-ledger.md`](ai-credit-ledger.md) chưa chốt ở spec đó | [`ai-credit-ledger.md`](ai-credit-ledger.md) |

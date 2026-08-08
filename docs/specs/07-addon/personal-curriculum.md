@@ -16,14 +16,14 @@ depends_on:
 
 # Chương trình cá nhân
 
-> **Add-on — ❌ không bán ở MVP.**
+> **Add-on — không bán ở MVP.**
 
 ## 1. Objective
 
 Giáo viên sắp xếp lộ trình riêng cho lớp mình, hoặc phụ huynh dựng lộ trình theo nhu cầu cụ
 thể của con — từ **nội dung đã kiểm duyệt**.
 
-Khác chương trình hệ thống ở đúng hai điểm: ❌ không qua duyệt, và chỉ trẻ của User đó theo
+Khác chương trình hệ thống ở đúng hai điểm: không qua duyệt, và chỉ trẻ của User đó theo
 được.
 
 ## 2. Actors
@@ -37,12 +37,12 @@ Khác chương trình hệ thống ở đúng hai điểm: ❌ không qua duyệ
 
 | ID | Rule | Vì sao |
 |---|---|---|
-| `BR-PCU-01` | Chỉ dùng nội dung **`published`** mà User **có quyền** | ❌ Không lách paywall bằng cách nhét nội dung premium vào lộ trình riêng |
+| `BR-PCU-01` | Chỉ dùng nội dung **`published`** mà User **có quyền** | Cấm lách paywall bằng cách nhét nội dung premium vào lộ trình riêng |
 | `BR-PCU-02` | Chỉ trẻ của **chính User** ghi danh được | |
-| `BR-PCU-03` | ❌ **NEVER vào catalog công khai** | `BR-CGB-02` |
-| `BR-PCU-04` | Player dùng **cùng engine** với curriculum hệ thống | Một bộ luật, ❌ không hai |
-| `BR-PCU-05` | Cảnh báo cân bằng của `curriculum-builder` §7.2 vẫn hiện, nhưng ❌ **không chặn** | User tự chịu trách nhiệm lộ trình riêng, nhưng phải được cảnh báo |
-| `BR-PCU-06` | ❌ **NEVER chặn tuần rỗng** — nhưng player bỏ qua tuần rỗng | Khác chương trình hệ thống ở chỗ này |
+| `BR-PCU-03` | Cấm — **NEVER vào catalog công khai** | `BR-CGB-02` |
+| `BR-PCU-04` | Player dùng **cùng engine** với curriculum hệ thống | Một bộ luật, không hai |
+| `BR-PCU-05` | Cảnh báo cân bằng của [`curriculum-builder.md`](../06-admin/curriculum-builder.md) §7.2 vẫn hiện, nhưng **không chặn** | User tự chịu trách nhiệm lộ trình riêng, nhưng phải được cảnh báo |
+| `BR-PCU-06` | Cấm — **NEVER chặn tuần rỗng** — nhưng player bỏ qua tuần rỗng | Khác chương trình hệ thống ở chỗ này |
 | `BR-PCU-07` | Nội dung trong lộ trình bị archive → hiện cảnh báo, player bỏ qua | |
 | `BR-PCU-08` | Quota `custom_curricula_saved` theo gói add-on | |
 
@@ -53,18 +53,18 @@ Khác chương trình hệ thống ở đúng hai điểm: ❌ không qua duyệ
 
 `personal_curriculum_items`: cùng hình dạng `curriculum_items`, thêm `personal_curriculum_id`.
 
-❌ Không `access_tier`, ❌ không `content_version` — ❌ không có publish công khai.
+Cấm `access_tier`, không `content_version` — không có publish công khai.
 
 ### 7.1 Khác biệt so với curriculum hệ thống
 
 | | Hệ thống | Cá nhân |
 |---|---|---|
-| Duyệt | ✅ | ❌ |
-| Vào catalog | ✅ | ❌ |
+| Duyệt | | Cấm |
+| Vào catalog | | Cấm |
 | Ai ghi danh được | Mọi trẻ đủ quyền | Chỉ trẻ của chủ sở hữu |
 | Tuần rỗng | Chặn publish | Cảnh báo, player bỏ qua |
 | Cân bằng competency | Chặn publish | Cảnh báo |
-| Version | ✅ | ❌ — sửa tại chỗ |
+| Version | | Cấm — sửa tại chỗ |
 
 ## 8. API contract
 
@@ -75,7 +75,7 @@ Khác chương trình hệ thống ở đúng hai điểm: ❌ không qua duyệ
 | `POST /api/users/children/{child}/enroll-personal` | Ghi danh trẻ của chính mình |
 | `GET /api/users/curricula/{uuid}/balance` | Chỉ báo cân bằng |
 
-403 `ENTITLEMENT_REQUIRED` · 403 khi thêm nội dung ❌ không có quyền · 402 quota.
+403 `ENTITLEMENT_REQUIRED` · 403 khi thêm nội dung không có quyền · 402 quota.
 
 ## 9. Acceptance criteria
 
