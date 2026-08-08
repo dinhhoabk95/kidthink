@@ -309,64 +309,64 @@ Spec mà `D-AG` của Task #5 đã cắt cạnh để không phải kéo vào l�
 
 ### Bước 12 — [`account-settings.md`](../specs/03-account/account-settings.md) (203 dòng, 11 rule, 1 hỏi mở, 0 `C6`)
 
-- [ ] Đọc hết file
-- [ ] Đối chiếu với [`login-and-session.md`](../specs/03-account/login-and-session.md),
+- [x] Đọc hết file
+- [x] Đối chiếu với [`login-and-session.md`](../specs/03-account/login-and-session.md),
       [`password-recovery.md`](../specs/03-account/password-recovery.md),
       [`notification-service.md`](../specs/01-platform/notification-service.md) — cả ba đã
       `approved` (cái cuối nhờ `D-AF`)
-- [ ] Xác nhận đổi mật khẩu **giết mọi phiên** khớp
+- [x] Xác nhận đổi mật khẩu **giết mọi phiên** khớp
       [`login-and-session.md`](../specs/03-account/login-and-session.md) và
       `users.refresh_token_version`
-- [ ] Xác nhận đổi email đi qua **reauth 5 phút**
+- [x] Xác nhận đổi email đi qua **reauth 5 phút**
       ([`auth-tokens-sessions.md`](../specs/01-platform/auth-tokens-sessions.md) §7.4,
       cột `active_sessions.reauth_at`)
-- [ ] Xác nhận câu hỏi 1 của
+- [x] Xác nhận câu hỏi 1 của
       [`password-recovery.md`](../specs/03-account/password-recovery.md) §11 (nó ghi là chặn
       file này) đã được trả lời ở đây, hoặc ghi rõ vẫn hoãn
-- [ ] Checklist [`CONVENTIONS.md`](../specs/CONVENTIONS.md) §10
-- [ ] `status: approved`, cập nhật `reviewed`
-- [ ] `pnpm lint:specs` 0 lỗi
-- [ ] Commit `feat(specs): T6 bước 12 — approve account-settings`
+- [x] Checklist [`CONVENTIONS.md`](../specs/CONVENTIONS.md) §10
+- [x] `status: approved`, cập nhật `reviewed`
+- [x] `pnpm lint:specs` 0 lỗi
+- [x] Commit `feat(specs): T6 bước 12 — approve account-settings`
 
 ### Bước 13 — [`account-deletion.md`](../specs/03-account/account-deletion.md) (193 dòng, 10 rule, 2 hỏi mở, 0 `C6`)
 
-- [ ] Đọc hết file
-- [ ] Đối chiếu với [`child-data-compliance.md`](../specs/00-foundation/child-data-compliance.md)
+- [x] Đọc hết file
+- [x] Đối chiếu với [`child-data-compliance.md`](../specs/00-foundation/child-data-compliance.md)
       và [`job-queue.md`](../specs/01-platform/job-queue.md), cả hai đã `approved`
-- [ ] Xác nhận 30 ngày hoàn tác khớp cột `users.purge_at`
+- [x] Xác nhận 30 ngày hoàn tác khớp cột `users.purge_at`
       ([`schema-identity-billing.md`](../specs/01-platform/schema-identity-billing.md) §7.1)
-- [ ] Xác nhận `audit_logs` **giữ lại** khi xoá tài khoản (`BR-AUD-08`) và
+- [x] Xác nhận `audit_logs` **giữ lại** khi xoá tài khoản (`BR-AUD-08`) và
       `telemetry_events.child_uuid` đặt về NULL thay vì xoá hàng (`BR-SPT-04`) — hai quy tắc
       này nằm ở spec khác, file này phải khớp chứ không định nghĩa lại
-- [ ] Xác nhận `social_identities` cascade theo `users` (`BR-SIB-11`) — danh tính mồ côi chặn
+- [x] Xác nhận `social_identities` cascade theo `users` (`BR-SIB-11`) — danh tính mồ côi chặn
       người dùng đăng ký lại
-- [ ] Checklist [`CONVENTIONS.md`](../specs/CONVENTIONS.md) §10
-- [ ] `status: approved`, cập nhật `reviewed`
-- [ ] `pnpm lint:specs` 0 lỗi
-- [ ] Commit `feat(specs): T6 bước 13 — approve account-deletion`
+- [x] Checklist [`CONVENTIONS.md`](../specs/CONVENTIONS.md) §10
+- [x] `status: approved`, cập nhật `reviewed`
+- [x] `pnpm lint:specs` 0 lỗi
+- [x] Commit `feat(specs): T6 bước 13 — approve account-deletion`
 
 ### Bước 14 — [`taxonomy-browser.md`](../specs/06-admin/taxonomy-browser.md) (155 dòng, 6 rule, 1 hỏi mở, 1 `C6`)
 
-- [ ] Đọc hết file
-- [ ] Đối chiếu với [`taxonomy-service.md`](../specs/01-platform/taxonomy-service.md) và
+- [x] Đọc hết file
+- [x] Đối chiếu với [`taxonomy-service.md`](../specs/01-platform/taxonomy-service.md) và
       [`admin-auth.md`](../specs/06-admin/admin-auth.md), cả hai đã `approved`
-- [ ] Xác nhận **chỉ đọc** — không route ghi nào, khớp `BR-TAX-*` (taxonomy là Lớp 1)
-- [ ] Xác nhận "chỉ báo khoảng trống" đọc từ `content_skill_map`, không tự tính lại taxonomy
-- [ ] Điền "vì sao" cho rule còn trống
-- [ ] Checklist [`CONVENTIONS.md`](../specs/CONVENTIONS.md) §10
-- [ ] `status: approved`, cập nhật `reviewed`
-- [ ] `pnpm lint:specs` 0 lỗi
-- [ ] Commit `feat(specs): T6 bước 14 — approve taxonomy-browser`
+- [x] Xác nhận **chỉ đọc** — không route ghi nào, khớp `BR-TAX-*` (taxonomy là Lớp 1)
+- [x] Xác nhận "chỉ báo khoảng trống" đọc từ `content_skill_map`, không tự tính lại taxonomy
+- [x] Điền "vì sao" cho rule còn trống
+- [x] Checklist [`CONVENTIONS.md`](../specs/CONVENTIONS.md) §10
+- [x] `status: approved`, cập nhật `reviewed`
+- [x] `pnpm lint:specs` 0 lỗi
+- [x] Commit `feat(specs): T6 bước 14 — approve taxonomy-browser`
 
 ## Cổng dừng B
 
-- [ ] 11/11 spec đích `approved`
-- [ ] `pnpm lint:specs` 0 lỗi, 0 cảnh báo `C7`
-- [ ] Cảnh báo `C6` giảm ít nhất 8 so với nền 171
-- [ ] `pnpm test` xanh
-- [ ] Mọi quyết định mới ghi vào sổ cái của
+- [x] 11/11 spec đích `approved`
+- [x] `pnpm lint:specs` 0 lỗi, 0 cảnh báo `C7`
+- [x] Cảnh báo `C6` giảm ít nhất 8 so với nền 171
+- [x] `pnpm test` xanh
+- [x] Mọi quyết định mới ghi vào sổ cái của
       [`06-p1-spec-closure-plan.md`](06-p1-spec-closure-plan.md), đánh số tiếp từ `D-AN`
-- [ ] Đếm `approved` toàn corpus = **49** (38 + 11)
+- [x] Đếm `approved` toàn corpus = **49** (38 + 11)
 
 ---
 
