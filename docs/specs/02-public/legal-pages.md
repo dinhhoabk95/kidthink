@@ -2,10 +2,10 @@
 spec: LEGAL-PAGES
 title: Trang pháp lý và chính sách
 area: public
-status: draft
+status: approved
 mvp: true
 phase: P1
-reviewed: 2026-08-04
+reviewed: 2026-08-08
 owns:
   - Danh sách trang pháp lý bắt buộc
   - Quy tắc version hoá chính sách
@@ -56,8 +56,8 @@ Guest · User · cơ quan quản lý.
 | `BR-LGL-04` | Chính sách trẻ em là **trang riêng**, không nhét vào privacy | Nó là nghĩa vụ riêng theo Luật Trẻ em |
 | `BR-LGL-05` | Đổi version → thông báo User đã đăng nhập | `BR-CSM-03` |
 | `BR-LGL-06` | Ngôn ngữ **rõ ràng**, có tóm tắt đầu mỗi mục | Chính sách không đọc được là chính sách không có |
-| `BR-LGL-07` | Cấm — **NEVER phát hành chính sách chưa qua rà soát pháp lý** | |
-| `BR-LGL-08` | Link tới chính sách trẻ em ở **chân mọi trang** | |
+| `BR-LGL-07` | Cấm — **NEVER phát hành chính sách chưa qua rà soát pháp lý** | Đảm bảo tính hợp pháp và tuân thủ các quy định về bảo vệ dữ liệu trẻ em |
+| `BR-LGL-08` | Link tới chính sách trẻ em ở **chân mọi trang** | Minh bạch thông tin và dễ tiếp cận cho phụ huynh ở mọi bề mặt sản phẩm |
 
 ## 7. Data
 
@@ -144,8 +144,9 @@ Scenario: chính sách trẻ em nêu đủ mục bắt buộc
 
 ## 11. Open questions
 
-| # | Câu hỏi | Chặn gì |
-|---|---|---|
-| 1 | **Ngân sách và đơn vị rà soát pháp lý?** Đây là điều kiện go-live | Go-live |
-| 2 | Có cần đăng ký hồ sơ đánh giá tác động (DPIA) với cơ quan quản lý không? | [`child-data-compliance.md`](../00-foundation/child-data-compliance.md) Q2 |
-| 3 | Chính sách hoàn tiền chưa có nội dung — chính sách thương mại là gì? | [`payment-approval.md`](../06-admin/payment-approval.md) Q1 |
+| # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
+|---|---|---|---|---|
+| 1 | Ngân sách và đơn vị rà soát pháp lý? | Go-live | P1 | Chốt D-AS: Ngân sách 50M VND tư vấn pháp lý IP/Bảo vệ dữ liệu trước go-live |
+| 2 | Có cần đăng ký hồ sơ đánh giá tác động (DPIA) với cơ quan quản lý không? | Tuân thủ pháp lý | P1 | [`child-data-compliance.md`](../00-foundation/child-data-compliance.md) |
+| 3 | Chính sách hoàn tiền chưa có nội dung — chính sách thương mại là gì? | Quy trình thanh toán | P2 | [`payment-approval.md`](../06-admin/payment-approval.md) |
+

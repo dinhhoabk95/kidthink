@@ -287,17 +287,17 @@ Lô đụng `play_sessions` và `play_events`. **Mọi cột phát sinh phải s
 
 152 dòng · 9 rule · 3 câu hỏi · 2 cảnh báo. Nút chặn của bước 14 và bước 26.
 
-- [ ] Đọc hết file
-- [ ] Điền "vì sao" cho `BR-LGL-07`, `BR-LGL-08`
-- [ ] Xác nhận `depends_on` **không còn** `CONSENT-MANAGEMENT` — nhát cắt `D-AI` của Task #6
-- [ ] Chuyển bảng mục 11 sang 5 cột
-- [ ] Q1 (ngân sách và đơn vị rà soát pháp lý) — dùng câu trả lời số 2 của Cổng dừng A
-- [ ] Q2 (hồ sơ đánh giá tác động) — để mở, `Chủ`:
+- [x] Đọc hết file
+- [x] Điền "vì sao" cho `BR-LGL-07`, `BR-LGL-08`
+- [x] Xác nhận `depends_on` **không còn** `CONSENT-MANAGEMENT` — nhát cắt `D-AI` của Task #6
+- [x] Chuyển bảng mục 11 sang 5 cột
+- [x] Q1 (ngân sách và đơn vị rà soát pháp lý) — dùng câu trả lời số 2 của Cổng dừng A (D-AS)
+- [x] Q2 (hồ sơ đánh giá tác động) — để mở, `Chủ`:
       [`child-data-compliance.md`](../specs/00-foundation/child-data-compliance.md)
-- [ ] Q3 (chính sách hoàn tiền) — để mở, `Chặn phase: P2`
-- [ ] Checklist review 15 mục
-- [ ] `status: approved`, `reviewed` mới, cảnh báo giảm **2**
-- [ ] Commit `feat(specs): T8 bước 13 — approve legal-pages`
+- [x] Q3 (chính sách hoàn tiền) — để mở, `Chặn phase: P2`
+- [x] Checklist review 15 mục
+- [x] `status: approved`, `reviewed: 2026-08-08`, cảnh báo giảm **2**
+- [x] Commit `feat(specs): T8 bước 13 — approve legal-pages`
 
 ### Bước 14 — [`consent-management.md`](../specs/03-account/consent-management.md)
 
