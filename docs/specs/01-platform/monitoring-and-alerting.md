@@ -189,9 +189,9 @@ Scenario: alert lặp được gộp
 
 ## 11. Open questions
 
-| # | Câu hỏi | Chặn gì | Chủ |
-|---|---|---|---|
-| ~~1a~~ | ~~Kênh P0 là gì?~~ **Đóng — trỏ [`repo-bootstrap.md`](../00-foundation/repo-bootstrap.md) §7.1**: Healthchecks.io + Telegram Bot API, email dự phòng. Xem §7.3 đã cập nhật | — | đã đóng |
-| 1b | **Ai trực?** Kênh có rồi nhưng chưa có người nhận nó. `BR-MON-07` chặn go-live khi thiếu alert P0 — một alert gửi vào Telegram không ai đọc cũng là chưa cấu hình xong, dù kỹ thuật đã chạy | Go-live | cần **người** — không tự chốt được |
-| 2 | Sentry SaaS Team tier ($26/mo) hay tự host GlitchTip ngay từ đầu? Trên t3.small self-host Grafana tốn RAM nên không xét Grafana — dùng `@sentry/nuxt` đã chốt ở [`repo-bootstrap.md`](../00-foundation/repo-bootstrap.md) §7.1, chỉ còn SaaS-vs-self-host. **Cùng câu hỏi với** [`repo-bootstrap.md`](../00-foundation/repo-bootstrap.md) §11 Q8 ("hoãn, chặn phase P1") — approve spec này 2026-08-08 làm câu hỏi đó tới hạn, theo luật một outcome một chủ, câu hỏi thuộc về đó, không lặp lại quyết định ở đây | Ngân sách vận hành | [`repo-bootstrap.md`](../00-foundation/repo-bootstrap.md) §11 Q8 |
-| 3 | SLO 99,7% có ràng buộc hợp đồng nào không, hay chỉ mục tiêu nội bộ? | Cam kết thương mại | cần **người** — không phải quyết định kỹ thuật |
+| # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
+|---|---|---|---|---|
+| ~~1a~~ | ~~Kênh P0 là gì?~~ **Đóng — trỏ [`repo-bootstrap.md`](../00-foundation/repo-bootstrap.md) §7.1**: Healthchecks.io + Telegram Bot API, email dự phòng. Xem §7.3 đã cập nhật | — | P1 | D-S |
+| 1b | **Ai trực?** Kênh có rồi nhưng chưa có người nhận nó. `BR-MON-07` chặn go-live khi thiếu alert P0 — một alert gửi vào Telegram không ai đọc cũng là chưa cấu hình xong, dù kỹ thuật đã chạy | Go-live | P1 | người quyết |
+| 2 | Sentry SaaS Team tier ($26/mo) hay tự host GlitchTip ngay từ đầu? Trên t3.small self-host Grafana tốn RAM nên không xét Grafana — dùng `@sentry/nuxt` đã chốt ở [`repo-bootstrap.md`](../00-foundation/repo-bootstrap.md) §7.1, chỉ còn SaaS-vs-self-host. **Cùng câu hỏi với** [`repo-bootstrap.md`](../00-foundation/repo-bootstrap.md) §11 Q8 ("hoãn, chặn phase P1") — approve spec này 2026-08-08 làm câu hỏi đó tới hạn, theo luật một outcome một chủ, câu hỏi thuộc về đó, không lặp lại quyết định ở đây | Ngân sách vận hành | P1 | Infra |
+| 3 | SLO 99,7% có ràng buộc hợp đồng nào không, hay chỉ mục tiêu nội bộ? | Cam kết thương mại | P1 | người quyết |
