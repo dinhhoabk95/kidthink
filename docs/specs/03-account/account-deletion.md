@@ -2,10 +2,10 @@
 spec: ACCOUNT-DELETION
 title: Xoá tài khoản và dữ liệu
 area: account
-status: draft
+status: approved
 mvp: true
 phase: P1
-reviewed: 2026-08-05
+reviewed: 2026-08-08
 owns:
   - Luồng yêu cầu xoá và huỷ yêu cầu
   - Phạm vi dữ liệu bị xoá
@@ -187,7 +187,7 @@ Scenario: đăng nhập trong 30 ngày dẫn tới huỷ
 
 ## 11. Open questions
 
-| # | Câu hỏi | Chặn gì |
-|---|---|---|
-| 1 | Có hoàn tiền phần gói chưa dùng khi xoá không? | Chính sách hoàn tiền |
-| 2 | Xoá **một hồ sơ trẻ** riêng lẻ có cần luồng 30 ngày không, hay xoá ngay? | [`child-profile-archive.md`](child-profile-archive.md) |
+| # | Câu hỏi | Chặn gì | Chủ |
+|---|---|---|---|
+| 1 | Có hoàn tiền phần gói chưa dùng khi xoá không? | Chính sách hoàn tiền | cần **người** — quyết định thương mại |
+| 2 | Xoá **một hồ sơ trẻ** riêng lẻ có cần luồng 30 ngày không, hay xoá ngay? | [`child-profile-archive.md`](child-profile-archive.md) | hoãn — chủ là spec đó, còn `draft` |
