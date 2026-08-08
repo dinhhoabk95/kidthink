@@ -2,10 +2,10 @@
 spec: CURRICULUM-PLAYER
 title: Chạy lộ trình chương trình
 area: play
-status: draft
+status: approved
 mvp: true
 phase: P3
-reviewed: 2026-08-04
+reviewed: 2026-08-08
 owns:
   - Luồng đi qua curriculum
   - Quy tắc mở khoá bước
@@ -68,7 +68,7 @@ Player trả lời một câu hỏi mỗi lần mở: **hôm nay học gì tiế
 |---|---|---|
 | `BR-CUR-01` | Trẻ **không chọn tuần**. Thứ tự do người biên soạn quyết định | Sư phạm là thứ tự có chủ đích |
 | `BR-CUR-02` | Adaptive điều chỉnh **trong** bước, Cấm — **NEVER nhảy bước** | `BR-ADP-05` |
-| `BR-CUR-03` | Tuần mở khi xong mọi item **bắt buộc**; item tuỳ chọn không chặn | |
+| `BR-CUR-03` | Tuần mở khi xong mọi item **bắt buộc**; item tuỳ chọn không chặn | Tạo ranh giới rõ ràng giữa nội dung cốt lõi bắt buộc và nội dung mở rộng tuỳ chọn |
 | `BR-CUR-04` | Ghi danh **ghim `curriculum_version`** | Đổi chương trình giữa chừng làm tiến độ vô nghĩa |
 | `BR-CUR-05` | Item bị khoá bậc **không chặn** tiến độ | Người trả gói thấp vẫn phải đi hết được lộ trình mở của họ |
 | `BR-CUR-06` | Lời mời nâng cấp hiện **trên bề mặt người lớn**, không trên bề mặt trẻ | `BR-PEN-04` |
@@ -177,7 +177,7 @@ Scenario: BR-CUR-08 — nghỉ lâu không bị phạt
 
 ## 11. Open questions
 
-| # | Câu hỏi | Chặn gì |
-|---|---|---|
-| 1 | Curriculum item trỏ tới bản `published` mới nhất hay ghim version của item? | [`content-versioning.md`](../00-foundation/content-versioning.md) Q2 |
-| 2 | Trẻ ghi danh nhiều curriculum cùng lúc có gây rối không? Cân nhắc giới hạn 1 | P3 UX |
+| # | Câu hỏi | Chặn phase | Đề xuất chốt | Chủ |
+|---|---|---|---|---|
+| 1 | Curriculum item trỏ tới bản `published` mới nhất hay ghim version của item? | P3 | Trỏ sang quyết định `D-VER-02` ở [`content-versioning.md`](../00-foundation/content-versioning.md): ghim version cụ thể ở thời điểm publish curriculum | Play Player |
+| 2 | Trẻ ghi danh nhiều curriculum cùng lúc có gây rối không? Cân nhắc giới hạn 1 | P3 | Giới hạn tối đa 1 curriculum hoạt động đồng thời cho mỗi trẻ trong MVP để tránh phân tán tiến độ | người quyết |

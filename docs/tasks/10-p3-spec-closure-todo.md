@@ -140,12 +140,12 @@ Bước 0 → Đợt 1 (2) → Đợt 2 (4) → Cổng dừng A → Đợt 3 (2)
 
 ### Bước 9 — [`curriculum-player.md`](../specs/04-play/curriculum-player.md)
 
-- [ ] Đọc hết 184 dòng
-- [ ] Điền "vì sao" cho `BR-CUR-03`
-- [ ] Q1 (ghim version) — hàng **đã đóng**, trỏ `D-AE`
-- [ ] Q2 (ghi danh nhiều curriculum cùng lúc) — `Chủ: Studio UI`, `Chặn phase: P3`
-- [ ] Bảng mục 11 sang 5 cột; `status: approved`
-- [ ] Commit `feat(specs): T10 bước 9 — approve curriculum-player`
+- [x] Đọc hết 184 dòng
+- [x] Điền "vì sao" cho `BR-CUR-03`
+- [x] Q1 (ghim version) — trỏ [`content-versioning.md`](../specs/00-foundation/content-versioning.md) Q2 (`D-VER-02`); `Chủ: Play Player`
+- [x] Q2 (ghi danh nhiều curriculum cùng lúc) — `Chủ: người quyết`, `Chặn phase: P3`
+- [x] Bảng mục 11 sang 5 cột; `status: approved`
+- [x] Commit `feat(specs): T10 bước 9 — approve curriculum-player`
 
 ### Bước 10 — [`program-showcase.md`](../specs/02-public/program-showcase.md)
 
