@@ -126,7 +126,7 @@ image-upload · emoji-picker ──→ game-level-studio
 | 2 | Soạn lesson và activity | [`lesson-authoring.md`](06-admin/lesson-authoring.md) · [`activity-authoring.md`](06-admin/activity-authoring.md) |
 | 3 | Mô hình + builder curriculum | [`curriculum-model.md`](05-content/curriculum-model.md) · [`curriculum-builder.md`](06-admin/curriculum-builder.md) |
 | 4 | Player curriculum | [`curriculum-player.md`](04-play/curriculum-player.md) |
-| 5 | Mastery + adaptive | [`adaptive-engine.md`](01-platform/adaptive-engine.md) · `adaptive-selector` · [`progress-and-mastery.md`](04-play/progress-and-mastery.md) |
+| 5 | Mastery + adaptive | [`adaptive-engine.md`](01-platform/adaptive-engine.md) · [`progress-and-mastery.md`](04-play/progress-and-mastery.md) |
 | 6 | Gợi ý game kế tiếp | [`next-game-recommendation.md`](04-play/next-game-recommendation.md) |
 | 7 | Báo cáo nâng cao | [`advanced-report.md`](03-account/advanced-report.md) |
 | 8 | Trưng bày chương trình ra public | [`program-showcase.md`](02-public/program-showcase.md) |

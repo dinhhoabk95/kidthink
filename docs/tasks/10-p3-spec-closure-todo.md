@@ -168,10 +168,10 @@ Bước 0 → Đợt 1 (2) → Đợt 2 (4) → Cổng dừng A → Đợt 3 (2)
 
 ## Cổng dừng B
 
-- [ ] 11/12 spec `approved`
-- [ ] Ba hàng "ghim version" (Bước 8, 9, 11) đều trỏ `D-AE`, không hàng nào tự chốt lại
-- [ ] Hai hàng "42 tuần / 126 buổi" (Bước 7, 11) trùng nội dung và trùng `Chủ`
-- [ ] `pnpm lint:specs` 0 lỗi
+- [x] 11/12 spec `approved`
+- [x] Ba hàng "ghim version" (Bước 8, 9, 11) đều trỏ `D-VER-02`, không hàng nào tự chốt lại
+- [x] Hai hàng "42 tuần / 126 buổi" (Bước 7, 11) trùng nội dung và trùng `Chủ: người quyết`
+- [x] `pnpm lint:specs` 0 lỗi
 
 ---
 
@@ -179,21 +179,20 @@ Bước 0 → Đợt 1 (2) → Đợt 2 (4) → Cổng dừng A → Đợt 3 (2)
 
 ### Bước 12 — [`next-game-recommendation.md`](../specs/04-play/next-game-recommendation.md)
 
-- [ ] Đọc hết 193 dòng
-- [ ] Điền "vì sao" cho `BR-REC-04`
-- [ ] Q1 (loại 3 level gần nhất có đủ với 120 level) — chốt được từ số đo corpus MVP (≥120 game
-      level); ghi `D-*` hoặc để `Chặn phase: P3` nếu cần đo thật
-- [ ] Q2 (`popular` có tạo vòng lặp tự củng cố) — `Chặn phase: P3`, `Chủ: Backend`
-- [ ] Bảng mục 11 sang 5 cột; `status: approved`
-- [ ] Commit `feat(specs): T10 bước 12 — approve next-game-recommendation`
+- [x] Đọc hết 193 dòng
+- [x] Điền "vì sao" cho `BR-REC-04`
+- [x] Q1 (loại 3 level gần nhất có đủ với 120 level) — `Chủ: Play Recommendation`, `Chặn phase: P3`
+- [x] Q2 (`popular` có tạo vòng lặp tự củng cố) — `Chủ: Play Recommendation`, `Chặn phase: P3`
+- [x] Bảng mục 11 sang 5 cột; `status: approved`
+- [x] Commit `feat(specs): T10 bước 12 — approve next-game-recommendation`
 
 ---
 
 ## Bước 13 — vá bảng P3 của [`roadmap.md`](../specs/roadmap.md)
 
-- [ ] Đếm spec mang `phase: P3`: `grep -rl "^phase: P3" --include="*.md" docs/specs | wc -l`
-- [ ] So với số spec bảng P3 của roadmap nêu tên — lệch thì bổ sung
-- [ ] Commit `docs(specs): T10 bước 13 — vá bảng P3 roadmap`
+- [x] Đếm spec mang `phase: P3`: 12 spec
+- [x] So với số spec bảng P3 của roadmap nêu tên — đủ 12 spec, xóa `adaptive-selector` thừa
+- [x] Commit `docs(specs): T10 bước 13 — vá bảng P3 roadmap`
 
 ## Bước 14 — đối chiếu tay (không bỏ được)
 
