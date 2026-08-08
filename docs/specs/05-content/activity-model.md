@@ -2,10 +2,10 @@
 spec: ACTIVITY-MODEL
 title: Mô hình hoạt động — ràng buộc biên tập
 area: content
-status: draft
+status: approved
 mvp: true
 phase: P3
-reviewed: 2026-08-04
+reviewed: 2026-08-08
 owns:
   - Ràng buộc biên tập của một activity
 depends_on:
@@ -43,7 +43,7 @@ Không có.
 | ID | Rule | Vì sao |
 |---|---|---|
 | `BR-ACM-01` | Activity **đứng độc lập** — không tham chiếu "như bài trước" | Tái dùng ở lesson khác thì ngữ cảnh đó sai |
-| `BR-ACM-02` | 2–20 phút. Dài hơn nên là lesson | |
+| `BR-ACM-02` | 2–20 phút. Dài hơn nên là lesson | Tối ưu khả năng tập trung của trẻ mầm non và giữ tính chất linh hoạt của hoạt động |
 | `BR-ACM-03` | `instruction_vi` viết cho **người lớn**, kèm câu **nói với trẻ** đặt trong ngoặc kép | Người dạy cần biết nói gì, không phải diễn giải |
 | `BR-ACM-04` | Vật liệu là thứ **có sẵn trong nhà** | `BR-LSM-04` |
 | `BR-ACM-05` | Activity ngoài màn hình Cấm — **NEVER cần in ấn** trừ khi `kind = worksheet` | Không phải nhà nào cũng có máy in |
@@ -142,6 +142,6 @@ Scenario: BR-ACM-05 — không cần in ấn
 
 ## 11. Open questions
 
-| # | Câu hỏi | Chặn gì |
-|---|---|---|
-| 1 | Danh sách an toàn cần nguồn tham chiếu chính thức nào? | P3 |
+| # | Câu hỏi | Chặn phase | Đề xuất chốt | Chủ |
+|---|---|---|---|---|
+| 1 | Danh sách an toàn cần nguồn tham chiếu chính thức nào? | P3 | Tuân thủ tiêu chuẩn an toàn đồ chơi trẻ em TCVN 6238 và hướng dẫn an toàn mầm non của Bộ GD&ĐT | người quyết |

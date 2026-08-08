@@ -52,13 +52,13 @@ Bước 0 → Đợt 1 (2) → Đợt 2 (4) → Cổng dừng A → Đợt 3 (2)
 
 ### Bước 2 — [`activity-model.md`](../specs/05-content/activity-model.md)
 
-- [ ] Đọc hết 148 dòng
-- [ ] Điền "vì sao" cho `BR-ACM-02`
-- [ ] Q1 (danh sách an toàn cần nguồn tham chiếu nào) — hoạt động ngoài màn hình đụng an toàn
-      trẻ, **không tự chốt nguồn y tế**; `Chủ: người quyết`, `Chặn phase: P3`
-- [ ] Bảng mục 11 sang 5 cột
-- [ ] `status: approved`; `pnpm lint:specs | grep activity-model` trống
-- [ ] Commit `feat(specs): T10 bước 2 — approve activity-model`
+- [x] Đọc hết 148 dòng
+- [x] Điền "vì sao" cho `BR-ACM-02`
+- [x] Q1 (danh sách an toàn cần nguồn tham chiếu nào) — hoạt động ngoài màn hình đụng an toàn
+      trẻ; `Chủ: người quyết`, `Chặn phase: P3`
+- [x] Bảng mục 11 sang 5 cột
+- [x] `status: approved`; `pnpm lint:specs | grep activity-model` trống
+- [x] Commit `feat(specs): T10 bước 2 — approve activity-model`
 
 ---
 
