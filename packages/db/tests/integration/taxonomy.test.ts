@@ -76,7 +76,12 @@ describe("Taxonomy Schema Integration Tests", () => {
         competencyId: compId,
         nameVi: "Hình học",
       })
+      .onConflictDoNothing()
       .returning();
+
+    const s0Id = s0
+      ? s0.id
+      : (await db.select().from(strands).where(sqlEqualStrand("C2.GEO")))[0].id;
 
     // Level 1 strand (parent = s0)
     const [s1] = await db
@@ -84,10 +89,15 @@ describe("Taxonomy Schema Integration Tests", () => {
       .values({
         code: "C2.SHP",
         competencyId: compId,
-        parentStrandId: s0.id,
+        parentStrandId: s0Id,
         nameVi: "Hình phẳng",
       })
+      .onConflictDoNothing()
       .returning();
+
+    const s1Id = s1
+      ? s1.id
+      : (await db.select().from(strands).where(sqlEqualStrand("C2.SHP")))[0].id;
 
     // Helper service function enforcing <=1 nesting level constraint
     async function createSubStrand(input: {
@@ -116,7 +126,7 @@ describe("Taxonomy Schema Integration Tests", () => {
       createSubStrand({
         code: "C2.CIR",
         competencyId: compId,
-        parentStrandId: s1.id,
+        parentStrandId: s1Id,
         nameVi: "Hình tròn",
       })
     ).rejects.toThrow("BR-SCT: Strand nesting depth cannot exceed 1 level");

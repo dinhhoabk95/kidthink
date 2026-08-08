@@ -180,16 +180,16 @@ File: `packages/db/src/schema/taxonomy.ts` — 5 bảng theo
 File: `packages/db/src/schema/tagging.ts` — theo
 [`schema-content-taxonomy.md`](../specs/01-platform/schema-content-taxonomy.md) §7.2
 
-- [ ] `content_tags` · `content_tag_map` · `content_skill_map` · `user_tags`
-- [ ] `content_skill_map.weight` — `CHECK (weight > 0 AND weight <= 1)` (`BR-SCT-07` — cận
+- [x] `content_tags` · `content_tag_map` · `content_skill_map` · `user_tags`
+- [x] `content_skill_map.weight` — `CHECK (weight > 0 AND weight <= 1)` (`BR-SCT-07` — cận
       dưới loại trừ 0, đọc lại vì sao trong spec trước khi viết CHECK)
-- [ ] `pnpm db:generate` → đọc SQL → `pnpm db:migrate`
-- [ ] Integration test:
-      - [ ] `BR-SCT-07` — insert `weight = 1.5` → CHECK từ chối; `weight = 0` → CHECK từ chối
-      - [ ] orphan `content_tag_map.(entity_type, entity_id)` — 1 trong 7 (`BR-DM-04`)
-      - [ ] orphan `content_skill_map.(entity_type, entity_id)` — 1 trong 7 (`BR-DM-04`)
-- [ ] `pnpm test` xanh
-- [ ] Commit `feat(db): P0 bước 8.6 — schema tagging`
+- [x] `pnpm db:generate` → đọc SQL → `pnpm db:migrate`
+- [x] Integration test:
+      - [x] `BR-SCT-07` — insert `weight = 1.5` → CHECK từ chối; `weight = 0` → CHECK từ chối
+      - [x] orphan `content_tag_map.(entity_type, entity_id)` — 1 trong 7 (`BR-DM-04`)
+      - [x] orphan `content_skill_map.(entity_type, entity_id)` — 1 trong 7 (`BR-DM-04`)
+- [x] `pnpm test` xanh
+- [x] Commit `feat(db): P0 bước 8.6 — schema tagging`
 
 ## Bước 7 — `schema/game.ts`
 
