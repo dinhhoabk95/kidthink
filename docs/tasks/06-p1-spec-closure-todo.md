@@ -238,70 +238,70 @@ Spec mà `D-AG` của Task #5 đã cắt cạnh để không phải kéo vào l�
 
 ### Bước 8 — [`content-tagging.md`](../specs/01-platform/content-tagging.md) (172 dòng, 7 rule, 2 hỏi mở, 2 `C6`)
 
-- [ ] Đọc hết file
-- [ ] Đối chiếu ba trục `what`/`thinking`/`mechanic` với
+- [x] Đọc hết file
+- [x] Đối chiếu ba trục `what`/`thinking`/`mechanic` với
       [`taxonomy-service.md`](../specs/01-platform/taxonomy-service.md)
-- [ ] Xác nhận enum `axis` khớp [`schema-content-taxonomy.md`](../specs/01-platform/schema-content-taxonomy.md) §7.2
+- [x] Xác nhận enum `axis` khớp [`schema-content-taxonomy.md`](../specs/01-platform/schema-content-taxonomy.md) §7.2
       — spec schema ghi **bốn** giá trị (`what`·`thinking`·`mechanic`·`theme`); nếu file này
       chỉ tả ba thì ghi sổ cái chỗ lệch trước khi sửa
-- [ ] Xác nhận `content_skill_map.weight` miền `(0,1]` khớp `BR-SCT-07` và `BR-DM-03`
-- [ ] Xác nhận FK dùng `id` không dùng `code` (`D-AE`, `BR-DM-13`)
-- [ ] Điền "vì sao" cho 2 rule còn trống
-- [ ] Checklist [`CONVENTIONS.md`](../specs/CONVENTIONS.md) §10
-- [ ] `status: approved`, cập nhật `reviewed`
-- [ ] `pnpm lint:specs` 0 lỗi
-- [ ] Commit `feat(specs): T6 bước 8 — approve content-tagging`
+- [x] Xác nhận `content_skill_map.weight` miền `(0,1]` khớp `BR-SCT-07` và `BR-DM-03`
+- [x] Xác nhận FK dùng `id` không dùng `code` (`D-AE`, `BR-DM-13`)
+- [x] Điền "vì sao" cho 2 rule còn trống
+- [x] Checklist [`CONVENTIONS.md`](../specs/CONVENTIONS.md) §10
+- [x] `status: approved`, cập nhật `reviewed`
+- [x] `pnpm lint:specs` 0 lỗi
+- [x] Commit `feat(specs): T6 bước 8 — approve content-tagging`
 
 ### Bước 9 — [`telemetry-pipeline.md`](../specs/01-platform/telemetry-pipeline.md) (186 dòng, 9 rule, 3 hỏi mở, 2 `C6`)
 
-- [ ] Đọc hết file
-- [ ] Đối chiếu §7.1 (cột bảng rollup) với
+- [x] Đọc hết file
+- [x] Đối chiếu §7.1 (cột bảng rollup) với
       [`schema-play-telemetry.md`](../specs/01-platform/schema-play-telemetry.md) §7.5 — spec
       schema **trỏ về đây** cho chi tiết cột, nên đây là nguồn sở hữu
-- [ ] Xác nhận không cột nào chứa PII, khớp
+- [x] Xác nhận không cột nào chứa PII, khớp
       [`child-data-compliance.md`](../specs/00-foundation/child-data-compliance.md) §7.3
-- [ ] Xác nhận mốc ngày dùng `date_ict` (múi giờ ICT), khớp `BR-ENT-10`
-- [ ] Xác nhận `telemetry_events` không partition ở P0 (`D-Z`) và không FK nào trỏ vào nó
-- [ ] Điền "vì sao" cho 2 rule còn trống
-- [ ] Checklist [`CONVENTIONS.md`](../specs/CONVENTIONS.md) §10
-- [ ] `status: approved`, cập nhật `reviewed`
-- [ ] `pnpm lint:specs` 0 lỗi
-- [ ] Commit `feat(specs): T6 bước 9 — approve telemetry-pipeline`
+- [x] Xác nhận mốc ngày dùng `date_ict` (múi giờ ICT), khớp `BR-ENT-10`
+- [x] Xác nhận `telemetry_events` không partition ở P0 (`D-Z`) và không FK nào trỏ vào nó
+- [x] Điền "vì sao" cho 2 rule còn trống
+- [x] Checklist [`CONVENTIONS.md`](../specs/CONVENTIONS.md) §10
+- [x] `status: approved`, cập nhật `reviewed`
+- [x] `pnpm lint:specs` 0 lỗi
+- [x] Commit `feat(specs): T6 bước 9 — approve telemetry-pipeline`
 
 ### Bước 10 — [`oauth-provider-registry.md`](../specs/01-platform/oauth-provider-registry.md) (254 dòng, 15 rule, 2 hỏi mở, 0 `C6`)
 
-- [ ] Đọc hết file
-- [ ] Đối chiếu với [`auth-tokens-sessions.md`](../specs/01-platform/auth-tokens-sessions.md),
+- [x] Đọc hết file
+- [x] Đối chiếu với [`auth-tokens-sessions.md`](../specs/01-platform/auth-tokens-sessions.md),
       [`schema-identity-billing.md`](../specs/01-platform/schema-identity-billing.md) §7.3a,
       [`error-codes.md`](../specs/00-foundation/error-codes.md),
       [`rate-limiting.md`](../specs/01-platform/rate-limiting.md) — cả bốn đã `approved`
-- [ ] Xác nhận `BR-OAP-06` (chỉ hai provider) khớp enum `social_identities.provider`
-- [ ] Xác nhận `BR-OAP-07` và `BR-OAP-15` (không lưu token provider) khớp `BR-SIB-10` — cột
+- [x] Xác nhận `BR-OAP-06` (chỉ hai provider) khớp enum `social_identities.provider`
+- [x] Xác nhận `BR-OAP-07` và `BR-OAP-15` (không lưu token provider) khớp `BR-SIB-10` — cột
       không tồn tại thì không rò được
-- [ ] Xác nhận PKCE bắt buộc và `nuxt-auth-utils` là thư viện nền
+- [x] Xác nhận PKCE bắt buộc và `nuxt-auth-utils` là thư viện nền
       ([`repo-bootstrap.md`](../specs/00-foundation/repo-bootstrap.md) §7.1), gọi qua
       `packages/auth` không import thẳng vào app (`BR-MPA-01`)
-- [ ] Xác nhận `apps/admin` **không đăng ký route OAuth nào** — cấm bằng việc không có file
-- [ ] Checklist [`CONVENTIONS.md`](../specs/CONVENTIONS.md) §10
-- [ ] `status: approved`, cập nhật `reviewed`
-- [ ] `pnpm lint:specs` 0 lỗi
-- [ ] Commit `feat(specs): T6 bước 10 — approve oauth-provider-registry`
+- [x] Xác nhận `apps/admin` **không đăng ký route OAuth nào** — cấm bằng việc không có file
+- [x] Checklist [`CONVENTIONS.md`](../specs/CONVENTIONS.md) §10
+- [x] `status: approved`, cập nhật `reviewed`
+- [x] `pnpm lint:specs` 0 lỗi
+- [x] Commit `feat(specs): T6 bước 10 — approve oauth-provider-registry`
 
 ### Bước 11 — [`monitoring-and-alerting.md`](../specs/01-platform/monitoring-and-alerting.md) (192 dòng, 7 rule, 3 hỏi mở, 2 `C6`)
 
-- [ ] Đọc hết file
-- [ ] Đối chiếu với [`health-check.md`](../specs/01-platform/health-check.md) và
+- [x] Đọc hết file
+- [x] Đối chiếu với [`health-check.md`](../specs/01-platform/health-check.md) và
       [`job-queue.md`](../specs/01-platform/job-queue.md), cả hai đã `approved`
-- [ ] Xác nhận kênh alert khớp [`repo-bootstrap.md`](../specs/00-foundation/repo-bootstrap.md) §7.1:
+- [x] Xác nhận kênh alert khớp [`repo-bootstrap.md`](../specs/00-foundation/repo-bootstrap.md) §7.1:
       Healthchecks.io cho liveness, Telegram Bot API cho ngưỡng và crash, email là dự phòng
-- [ ] Xác nhận Sentry là `@sentry/nuxt` và câu hỏi SaaS hay GlitchTip vẫn để hoãn
+- [x] Xác nhận Sentry là `@sentry/nuxt` và câu hỏi SaaS hay GlitchTip vẫn để hoãn
       ([`repo-bootstrap.md`](../specs/00-foundation/repo-bootstrap.md) §11 Q8)
-- [ ] Xác nhận "alert **tới người**" có nghĩa đo được — ai nhận, kênh nào, trong bao lâu
-- [ ] Điền "vì sao" cho 2 rule còn trống
-- [ ] Checklist [`CONVENTIONS.md`](../specs/CONVENTIONS.md) §10
-- [ ] `status: approved`, cập nhật `reviewed`
-- [ ] `pnpm lint:specs` 0 lỗi
-- [ ] Commit `feat(specs): T6 bước 11 — approve monitoring-and-alerting`
+- [x] Xác nhận "alert **tới người**" có nghĩa đo được — ai nhận, kênh nào, trong bao lâu
+- [x] Điền "vì sao" cho 2 rule còn trống
+- [x] Checklist [`CONVENTIONS.md`](../specs/CONVENTIONS.md) §10
+- [x] `status: approved`, cập nhật `reviewed`
+- [x] `pnpm lint:specs` 0 lỗi
+- [x] Commit `feat(specs): T6 bước 11 — approve monitoring-and-alerting`
 
 ---
 
