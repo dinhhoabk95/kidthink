@@ -2,10 +2,10 @@
 spec: OFFLINE-PLAY
 title: Chơi khi mất mạng
 area: platform
-status: draft
+status: approved
 mvp: true
 phase: P1
-reviewed: 2026-08-04
+reviewed: 2026-08-08
 owns:
   - Hành vi khi mất mạng giữa phiên
   - Buffer event offline và đồng bộ lại
@@ -65,9 +65,9 @@ hoàn toàn là P5.
 | `BR-OFF-01` | Phiên đang chạy Cấm — **NEVER bị ngắt** vì mất mạng | Cắt ngang lúc trẻ đang chơi là thiệt hại lớn nhất |
 | `BR-OFF-02` | Preload **toàn bộ** asset của phiên trước khi bắt đầu | Tải giữa chừng là nơi mất mạng gây hại |
 | `BR-OFF-03` | Buffer bền trong **IndexedDB**, không chỉ bộ nhớ | Đóng tab mất bộ nhớ |
-| `BR-OFF-04` | Flush theo thứ tự `seq`, server khử trùng | |
+| `BR-OFF-04` | Flush theo thứ tự `seq`, server khử trùng | Đảm bảo chuỗi sự kiện được khôi phục chính xác theo trình tự thời gian thật |
 | `BR-OFF-05` | Buffer quá **24 giờ** thì bỏ | Dữ liệu chơi quá cũ không còn giá trị phân tích và có thể lệch version nội dung |
-| `BR-OFF-06` | Guest cũng được buffer, nhưng không lưu tiến độ | |
+| `BR-OFF-06` | Guest cũng được buffer, nhưng không lưu tiến độ | Giữ trải nghiệm mượt mà cho khách chơi thử mà không tạo rác dữ liệu ở server |
 | `BR-OFF-07` | Cấm — **NEVER cache nội dung trả phí** trong service worker cho người không có quyền | Cache là đường rò nội dung |
 | `BR-OFF-08` | UI báo trạng thái offline **cho người lớn**, không làm trẻ hoảng | Biểu tượng nhỏ, không modal chặn màn hình |
 
@@ -156,7 +156,8 @@ Scenario: offline test dùng chế độ offline thật
 
 ## 11. Open questions
 
-| # | Câu hỏi | Chặn gì |
-|---|---|---|
-| 1 | Có cho tải trước một tuần curriculum để chơi offline không? Kéo theo cache nội dung trả phí | P5 |
-| 2 | 5 MB buffer đủ cho một phiên dài chưa? Cần đo | P1 |
+| # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
+|---|---|---|---|---|
+| 1 | Có cho tải trước một tuần curriculum để chơi offline không? | Tải trước gói học tập | P5 | Offline Infrastructure & Content Caching |
+| 2 | 5 MB buffer đủ cho một phiên dài chưa? | Dung lượng buffer local | P1 | Chốt: 5 MB hoàn toàn dư dả cho 1 phiên chơi (trung bình 1 phiên 10-15 phút chỉ cần 50-100 KB) |
+

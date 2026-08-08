@@ -575,16 +575,16 @@ ghép chung ngày với spec khác.
 
 163 dòng · 9 rule · 2 câu hỏi · 2 cảnh báo. Độc lập hoàn toàn.
 
-- [ ] Đọc hết file
-- [ ] Điền "vì sao" cho `BR-OFF-04`, `BR-OFF-06`
-- [ ] Đối chiếu với [`play-event-ingestion.md`](../specs/04-play/play-event-ingestion.md) (bước 6):
+- [x] Đọc hết file
+- [x] Điền "vì sao" cho `BR-OFF-04`, `BR-OFF-06`
+- [x] Đối chiếu với [`play-event-ingestion.md`](../specs/04-play/play-event-ingestion.md) (bước 6):
       buffer ngoại tuyến gửi lại phải đi qua đúng đường idempotent đó, không có đường riêng
-- [ ] Chuyển bảng mục 11 sang 5 cột
-- [ ] Q1 (tải trước một tuần curriculum) — để mở, `Chặn phase: P5`
-- [ ] Q2 (5 MB buffer đủ chưa) — **chặn P1, chốt** hoặc ghi rõ điều kiện đo
-- [ ] Checklist review 15 mục
-- [ ] `status: approved`, `reviewed` mới, cảnh báo giảm **2**
-- [ ] Commit `feat(specs): T8 bước 30 — approve offline-play`
+- [x] Chuyển bảng mục 11 sang 5 cột
+- [x] Q1 (tải trước một tuần curriculum) — để mở, `Chặn phase: P5`
+- [x] Q2 (5 MB buffer đủ chưa) — **chặn P1, chốt** hoặc ghi rõ điều kiện đo
+- [x] Checklist review 15 mục
+- [x] `status: approved`, `reviewed: 2026-08-08`, cảnh báo giảm **2**
+- [x] Commit `feat(specs): T8 bước 30 — approve offline-play`
 
 ---
 
