@@ -495,15 +495,15 @@ Lô đụng `play_sessions` và `play_events`. **Mọi cột phát sinh phải s
 
 149 dòng · 8 rule · 1 câu hỏi · 2 cảnh báo. Cần bước 13 và bước 24.
 
-- [ ] Đọc hết file
-- [ ] Điền "vì sao" cho `BR-CKB-06`, `BR-CKB-07`
-- [ ] Chuyển bảng mục 11 sang 5 cột
-- [ ] Q1 (analytics tự host có cần cookie không) — **cặp số 3**: tham chiếu quyết định đã chốt ở
-      bước 24, không quyết lại. Nếu có cookie thì phải là đồng ý thật, khớp
+- [x] Đọc hết file
+- [x] Điền "vì sao" cho `BR-CKB-06`, `BR-CKB-07`
+- [x] Chuyển bảng mục 11 sang 5 cột
+- [x] Q1 (analytics tự host có cần cookie không) — **cặp số 3**: tham chiếu quyết định đã chốt ở
+      bước 24 (D-AW), không quyết lại. Nếu có cookie thì phải là đồng ý thật, khớp
       [`consent-management.md`](../specs/03-account/consent-management.md)
-- [ ] Checklist review 15 mục
-- [ ] `status: approved`, `reviewed` mới, cảnh báo giảm **2**
-- [ ] Commit `feat(specs): T8 bước 26 — approve cookie-and-consent-banner`
+- [x] Checklist review 15 mục
+- [x] `status: approved`, `reviewed: 2026-08-08`, cảnh báo giảm **2**
+- [x] Commit `feat(specs): T8 bước 26 — approve cookie-and-consent-banner`
 
 ### Bước 27 — [`my-library.md`](../specs/03-account/my-library.md)
 

@@ -2,10 +2,10 @@
 spec: COOKIE-AND-CONSENT-BANNER
 title: Cookie và banner đồng ý
 area: public
-status: draft
+status: approved
 mvp: true
 phase: P1
-reviewed: 2026-08-04
+reviewed: 2026-08-08
 owns:
   - Danh sách cookie sử dụng
   - Hành vi banner đồng ý
@@ -56,8 +56,8 @@ Banner ở lần truy cập đầu · `/cookie`.
 | `BR-CKB-03` | Cấm — **NEVER hiện banner trên bề mặt trẻ** | Trẻ không cho đồng ý được |
 | `BR-CKB-04` | Cấm — **NEVER cookie bên thứ ba** | `BR-CDC-08` |
 | `BR-CKB-05` | Trang `/cookie` liệt kê **từng cookie**: tên, mục đích, thời hạn | Minh bạch cụ thể hơn tuyên bố chung |
-| `BR-CKB-06` | Thêm cookie không thiết yếu → **cần đồng ý thật**, không dùng banner thông báo | |
-| `BR-CKB-07` | Banner không hiện lại **12 tháng** sau khi đóng | |
+| `BR-CKB-06` | Thêm cookie không thiết yếu → **cần đồng ý thật**, không dùng banner thông báo | Tuân thủ quy định pháp lý privacy (GDPR / ePrivacy) và bảo vệ sự riêng tư của người dùng |
+| `BR-CKB-07` | Banner không hiện lại **12 tháng** sau khi đóng | Tránh gây phiền hà cho người dùng trong các lần truy cập tiếp theo |
 
 ## 7. Data
 
@@ -143,6 +143,7 @@ Scenario: BR-CKB-01 — chỉ cookie thiết yếu
 
 ## 11. Open questions
 
-| # | Câu hỏi | Chặn gì |
-|---|---|---|
-| 1 | Analytics tự host có cần thêm cookie không? Nếu có thì phải có đồng ý thật | [`landing-page.md`](landing-page.md) Q1 |
+| # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
+|---|---|---|---|---|
+| 1 | Analytics tự host có cần thêm cookie không? | Cookie analytics | P1 | Chốt D-AW (khớp với [`landing-page.md`](landing-page.md) Q1): P1 không dùng analytics tự host, không phát sinh thêm cookie |
+
