@@ -2,10 +2,10 @@
 spec: LANDING-PAGE
 title: Trang chủ
 area: public
-status: draft
+status: approved
 mvp: true
 phase: P1
-reviewed: 2026-08-04
+reviewed: 2026-08-08
 owns:
   - Nội dung và thứ tự khối trang chủ
 depends_on:
@@ -57,7 +57,7 @@ Guest (phụ huynh hoặc giáo viên). Cấm Trẻ không phải đối tượn
 | `BR-LND-05` | Giá lấy từ **`PACKAGE_CATALOG`** | `BR-PKG-02` |
 | `BR-LND-06` | Cấm — **NEVER hứa hẹn kết quả học tập** — không "giúp bé thông minh hơn", không "tăng IQ" | Vượt ranh giới của một sản phẩm giáo dục và có rủi ro pháp lý |
 | `BR-LND-07` | Cấm — **NEVER dùng ảnh trẻ em thật** làm minh hoạ | Nhất quán với ràng buộc dữ liệu trẻ |
-| `BR-LND-08` | LCP < **2,5 s** trên 4G | |
+| `BR-LND-08` | LCP < **2,5 s** trên 4G | Đảm bảo trải nghiệm tải trang nhanh và tối ưu điểm Core Web Vitals (LCP) |
 
 ## 7. Data
 
@@ -148,7 +148,8 @@ Scenario: BR-LND-05 — giá khớp catalog
 
 ## 11. Open questions
 
-| # | Câu hỏi | Chặn gì |
-|---|---|---|
-| 1 | Có dùng analytics tự host (Plausible/Umami) không? Cần đo phễu nhưng không được là bên thứ ba theo dõi | P1 |
-| 2 | 6 game nổi bật có trùng allow-list guest không? | [`access-ladder.md`](../00-foundation/access-ladder.md) Q1 |
+| # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
+|---|---|---|---|---|
+| 1 | Có dùng analytics tự host (Plausible/Umami) không? | Đo lường phễu | P1 | Chốt D-AW: Không dùng analytics tự host trong P1; theo dõi phễu qua server log & telemetry pipeline |
+| 2 | 6 game nổi bật có trùng allow-list guest không? | Danh sách game chơi thử | P1 | Chốt D-AY (khớp [`access-ladder.md`](../00-foundation/access-ladder.md) Q2): Trùng khớp 6 level mẫu đại diện D1-D6 template trong guest allow-list |
+

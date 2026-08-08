@@ -467,15 +467,15 @@ Lô đụng `play_sessions` và `play_events`. **Mọi cột phát sinh phải s
 
 155 dòng · 10 rule · 2 câu hỏi · 1 cảnh báo.
 
-- [ ] Đọc hết file
-- [ ] Điền "vì sao" cho `BR-LND-08`
-- [ ] Chuyển bảng mục 11 sang 5 cột
-- [ ] Q1 (analytics tự host) — **cặp số 3**: dùng câu trả lời số 5 của Cổng dừng A. Chốt tại đây,
+- [x] Đọc hết file
+- [x] Điền "vì sao" cho `BR-LND-08`
+- [x] Chuyển bảng mục 11 sang 5 cột
+- [x] Q1 (analytics tự host) — **cặp số 3**: dùng câu trả lời số 5 của Cổng dừng A (D-AW). Chốt tại đây,
       bước 26 tham chiếu lại
-- [ ] Q2 (6 game nổi bật có trùng allow-list guest không) — dùng câu trả lời số 7 của Cổng dừng A
-- [ ] Checklist review 15 mục
-- [ ] `status: approved`, `reviewed` mới, cảnh báo giảm **1**
-- [ ] Commit `feat(specs): T8 bước 24 — approve landing-page`
+- [x] Q2 (6 game nổi bật có trùng allow-list guest không) — dùng câu trả lời số 7 của Cổng dừng A (D-AY)
+- [x] Checklist review 15 mục
+- [x] `status: approved`, `reviewed: 2026-08-08`, cảnh báo giảm **1**
+- [x] Commit `feat(specs): T8 bước 24 — approve landing-page`
 
 ### Bước 25 — [`faq-and-help.md`](../specs/02-public/faq-and-help.md)
 
