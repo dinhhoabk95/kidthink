@@ -241,24 +241,24 @@ Xem lý do đầy đủ ở [`07-first-migration-plan.md`](07-first-migration-pl
 File: `packages/db/src/schema/content.ts` — theo
 [`schema-content-taxonomy.md`](../specs/01-platform/schema-content-taxonomy.md) §7.5, §7.7
 
-- [ ] `lessons` — Lớp 2, `entity_id` self-FK (D3)
-- [ ] `activities` — Lớp 2, `entity_id` self-FK; `ref_id` polymorphic theo `ref_type`
+- [x] `lessons` — Lớp 2, `entity_id` self-FK (D3)
+- [x] `activities` — Lớp 2, `entity_id` self-FK; `ref_id` polymorphic theo `ref_type`
       (`game_level`|`worksheet`) — **không** FK đơn bảng, giữ nguyên polymorphic (đã đóng ở
       Bước 8)
-- [ ] `lesson_activities` — `(lesson_id, position)` PK ghép, `lesson_id` FK `lessons(id)`
+- [x] `lesson_activities` — `(lesson_id, position)` PK ghép, `lesson_id` FK `lessons(id)`
       (cha-con, ghim), `activity_id` FK `activities(entity_id)` (D3 — many-to-one hợp lệ)
-- [ ] `worksheets` — Lớp 2, `entity_id` self-FK
-- [ ] `content_images` — theo [`image-storage.md`](../specs/01-platform/image-storage.md) §7.1
+- [x] `worksheets` — Lớp 2, `entity_id` self-FK
+- [x] `content_images` — theo [`image-storage.md`](../specs/01-platform/image-storage.md) §7.1
       (spec `draft` — chỉ tạo cột đã có acceptance criteria rõ ở [`data-model-overview.md`](../specs/01-platform/data-model-overview.md),
       **ask first** nếu cột nào không rõ nguồn)
-- [ ] Trigger `BR-SCT-05` mở rộng cho 3 bảng Lớp 2 mới (`lessons`·`activities`·`worksheets`)
-- [ ] `pnpm db:generate` (+ `--custom` cho trigger) → đọc SQL → `pnpm db:migrate`
-- [ ] Integration test:
-      - [ ] orphan `content_images.(owner_type, owner_id)` — 1 trong 9 chỗ đóng (DMO §7.2)
-      - [ ] orphan `activities.(ref_type, ref_id)` — 1 trong 9 chỗ đóng, đã ghi ở DMO §7.2 từ Task #6
-      - [ ] `BR-SCT-05` — trigger chặn sửa `lessons`/`activities`/`worksheets` khi `published`
-- [ ] `pnpm test` xanh
-- [ ] Commit `feat(db): P0 bước 8.9 — schema content`
+- [x] Trigger `BR-SCT-05` mở rộng cho 3 bảng Lớp 2 mới (`lessons`·`activities`·`worksheets`)
+- [x] `pnpm db:generate` (+ `--custom` cho trigger) → đọc SQL → `pnpm db:migrate`
+- [x] Integration test:
+      - [x] orphan `content_images.(owner_type, owner_id)` — 1 trong 9 chỗ đóng (DMO §7.2)
+      - [x] orphan `activities.(ref_type, ref_id)` — 1 trong 9 chỗ đóng, đã ghi ở DMO §7.2 từ Task #6
+      - [x] `BR-SCT-05` — trigger chặn sửa `lessons`/`activities`/`worksheets` khi `published`
+- [x] `pnpm test` xanh
+- [x] Commit `feat(db): P0 bước 8.9 — schema content`
 
 ## Bước 10 — `schema/curriculum.ts`
 
