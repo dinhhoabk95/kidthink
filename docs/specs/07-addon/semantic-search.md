@@ -2,10 +2,10 @@
 spec: SEMANTIC-SEARCH
 title: Tìm kiếm ngữ nghĩa bằng vector embedding
 area: addon
-status: draft
+status: approved
 mvp: false
 phase: P4
-reviewed: 2026-08-05
+reviewed: 2026-08-08
 owns:
   - Lược đồ lưu vector embedding của nội dung
   - Job tái tạo embedding khi publish/update
@@ -105,7 +105,7 @@ là tính năng của User.
 | `content_type` | enum(`level`,`lesson`,`activity`) | |
 | `content_id` | uuid | FK polymorphic — không ép được ở Postgres, integration test bắt orphan (`BR-DM-04`) |
 | `content_version` | int | Khớp `content_versioning` |
-| `embedding` | `vector(N)` (pgvector) | `N` phụ thuộc model chọn ở OQ1 |
+| `embedding` | `vector(N)` (pgvector) | `N` (`PENDING_EMBEDDING_DIM`) phụ thuộc model chọn ở OQ1 |
 | `model_version` | text | Để biết vector cũ cần re-embed khi đổi model |
 | `created_at` | timestamptz | |
 
@@ -222,9 +222,9 @@ Scenario: hết credit trả 402
 
 ## 11. Open questions
 
-| # | Câu hỏi | Chặn gì |
-|---|---|---|
-| 1 | Provider/model embedding nào — cùng quyết định với [`ai-assistant.md`](ai-assistant.md) OQ1 (LLM provider) hay tách riêng? Ảnh hưởng `N` (dimension) của cột `vector` | Migration schema |
-| 2 | Ngưỡng `cosine_similarity` tối thiểu để coi là kết quả liên quan — cần đo thực nghiệm trên corpus thật, chưa có dữ liệu để đoán | Rerank |
-| 3 | Có cần ANN index không, và tới quy mô nội dung nào thì cần — tương tự câu hỏi ngưỡng của [`content-search.md`](../01-platform/content-search.md) OQ1 nhưng cho vector | Sau launch add-on |
-| 4 | Provider lỗi giữa chừng có trừ credit không? Phụ thuộc ngữ nghĩa [`ai-credit-ledger.md`](ai-credit-ledger.md) chưa chốt ở spec đó | [`ai-credit-ledger.md`](ai-credit-ledger.md) |
+| # | Câu hỏi | Chặn phase | Đề xuất chốt | Chủ |
+|---|---|---|---|---|
+| 1 | Provider/model embedding nào — cùng quyết định với [`ai-assistant.md`](ai-assistant.md) OQ1 (LLM provider) hay tách riêng? Ảnh hưởng `N` (`PENDING_EMBEDDING_DIM`) của cột `vector` | Migration schema pgvector | Trỏ sang [`ai-assistant.md`](ai-assistant.md) Q1; chọn model đồng bộ để tối ưu chi phí tích hợp | người quyết |
+| 2 | Ngưỡng `cosine_similarity` tối thiểu để coi là kết quả liên quan — cần đo thực nghiệm trên corpus thật, chưa có dữ liệu để đoán | P4 | Đo đạc tỷ lệ nhiễu thực tế khi nghiệm thu add-on để chốt cutoff score | hoãn |
+| 3 | Có cần ANN index không, và tới quy mô nội dung nào thì cần — tương tự câu hỏi ngưỡng của [`content-search.md`](../01-platform/content-search.md) OQ1 nhưng cho vector | P4 | Chỉ tạo index (HNSW) khi số dòng `content_embeddings` vượt 10,000 items | Infra |
+| 4 | Provider lỗi giữa chừng có trừ credit không? Phụ thuộc ngữ nghĩa [`ai-credit-ledger.md`](ai-credit-ledger.md) chưa chốt ở spec đó | P4 | Trỏ sang bút toán ngược ở Bước 1 ([`ai-credit-ledger.md`](ai-credit-ledger.md) §7.3) (`D-BN`) | Kế toán |

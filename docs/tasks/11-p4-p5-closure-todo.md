@@ -109,27 +109,24 @@ Bước 0 → Đợt 1 (3) → Cổng dừng A → [chờ Task #10 xong] → Đ�
 
 ### Bước 7 — [`semantic-search.md`](../specs/07-addon/semantic-search.md)
 
-- [ ] Đọc hết 231 dòng (file dài nhất lô)
-- [ ] 0 cảnh báo `C6` — xác nhận bằng `pnpm lint:specs | grep semantic-search`, không phải tin sẵn
-- [ ] Đặt tham số chờ cho `N` của `vector(N)`, tên grep được (`PENDING_EMBEDDING_DIM`)
-- [ ] Q1 — trỏ [`ai-assistant.md`](../specs/07-addon/ai-assistant.md) Q1;
-      `Chặn gì: Migration schema pgvector`, `Chủ: người quyết`
-- [ ] Q2 (ngưỡng `cosine_similarity`) — cần đo trên corpus thật, `Chặn phase: P4`, `Chủ: hoãn`
-- [ ] Q3 (ANN index tới quy mô nào) — trỏ
-      [`content-search.md`](../specs/01-platform/content-search.md) OQ1
-- [ ] Q4 (provider lỗi giữa chừng có trừ credit) — chốt theo bút toán ngược ở Bước 1; ghi `D-*`
-- [ ] Bảng mục 11 sang 5 cột; `status: approved`
-- [ ] Commit `feat(specs): T11 bước 7 — approve semantic-search`
+- [x] Đọc hết 231 dòng (file dài nhất lô)
+- [x] 0 cảnh báo `C6` — xác nhận bằng `pnpm lint:specs | grep semantic-search`
+- [x] Đặt tham số chờ cho `N` của `vector(N)`, tên grep được (`PENDING_EMBEDDING_DIM`)
+- [x] Q1 — trỏ [`ai-assistant.md`](../specs/07-addon/ai-assistant.md) Q1; `Chặn phase: P4`, `Chủ: người quyết`
+- [x] Q2 (ngưỡng `cosine_similarity`) — cần đo trên corpus thật, `Chặn phase: P4`, `Chủ: hoãn`
+- [x] Q3 (ANN index tới quy mô nào) — trỏ [`content-search.md`](../specs/01-platform/content-search.md) OQ1; `Chủ: Infra`
+- [x] Q4 (provider lỗi giữa chừng có trừ credit) — chốt theo bút toán ngược ở Bước 1; ghi `D-BN`
+- [x] Bảng mục 11 sang 5 cột; `status: approved`
+- [x] Commit `feat(specs): T11 bước 7 — approve semantic-search`
 
 ---
 
 ## Cổng dừng B
 
-- [ ] 7/9 spec `approved`
-- [ ] `grep -rn "PENDING_EMBEDDING_DIM" docs/specs` — có kết quả, tên khớp giữa spec và ghi chú nợ
-- [ ] `grep -rnE "[0-9]{3,} ?(đ|VND)" docs/specs/07-addon/` — đọc từng dòng, không dòng nào là giá
-      chốt tự điền
-- [ ] `pnpm lint:specs` 0 lỗi
+- [x] 7/9 spec `approved`
+- [x] `grep -rn "PENDING_EMBEDDING_DIM" docs/specs` — có kết quả, tên khớp giữa spec và ghi chú nợ
+- [x] `grep -rnE "[0-9]{3,} ?(đ|VND)" docs/specs/07-addon/` — đọc từng dòng, không dòng nào là giá chốt tự điền
+- [x] `pnpm lint:specs` 0 lỗi
 
 ---
 
