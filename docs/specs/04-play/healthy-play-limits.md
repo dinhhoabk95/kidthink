@@ -2,10 +2,10 @@
 spec: HEALTHY-PLAY-LIMITS
 title: Hạn mức giờ chơi lành mạnh
 area: play
-status: draft
+status: approved
 mvp: true
 phase: P1
-reviewed: 2026-08-04
+reviewed: 2026-08-08
 owns:
   - Cách đếm thời gian chơi
   - Hành vi khi chạm hạn mức
@@ -65,11 +65,11 @@ Dừng phải **êm**: trẻ đang chơi dở không bị cắt ngang.
 | `BR-HPL-01` | Hạn mức **theo từng trẻ**, không theo tài khoản | Hai anh em có nhu cầu khác nhau |
 | `BR-HPL-02` | Hết hạn mức Cấm — **NEVER cắt phiên đang chạy** | Cắt ngang lúc trẻ đang chơi là thiệt hại lớn hơn |
 | `BR-HPL-03` | Ranh giới ngày theo **ICT (UTC+7)**, không giờ thiết bị | Đổi giờ thiết bị là cách lách rõ ràng nhất |
-| `BR-HPL-04` | Màn hình hết giờ Cấm — **NEVER mang giọng trách** hay đếm ngược gây áp lực | |
+| `BR-HPL-04` | Màn hình hết giờ Cấm — **NEVER mang giọng trách** hay đếm ngược gây áp lực | Tạo tâm lý thoải mái và thói quen vui vẻ khi ngưng sử dụng thiết bị |
 | `BR-HPL-05` | Cấm — **NEVER cơ chế kéo dài thời gian chơi** — không streak ép buộc, không "chơi thêm để mở khoá", không thông báo dụ quay lại | Vi phạm nguyên tắc thiết kế cho trẻ và `BR-CDC-09` |
 | `BR-HPL-06` | Cấp thêm giờ **phải qua Parent Gate** | Trẻ không tự cấp thêm cho mình |
 | `BR-HPL-07` | Thời gian đếm là thời gian **phiên thật**, trừ thời gian `paused` | Tab mở nền không phải thời gian chơi |
-| `BR-HPL-08` | Trần của gói là **trần**, người lớn đặt thấp hơn được, không cao hơn | |
+| `BR-HPL-08` | Trần của gói là **trần**, người lớn đặt thấp hơn được, không cao hơn | Đảm bảo nguyên tắc chơi lành mạnh theo từng gói dịch vụ |
 
 ## 7. Data
 
@@ -182,8 +182,9 @@ Scenario: BR-HPL-07 — tab nền không tính giờ
 
 ## 11. Open questions
 
-| # | Câu hỏi | Chặn gì |
-|---|---|---|
-| 1 | 30/60/90 phút có khớp khuyến nghị thời gian màn hình cho trẻ 3–6 không? Cần đối chiếu nguồn y tế | P1 |
-| 2 | Có cần hạn mức theo tuần bên cạnh theo ngày không? | P3 |
-| 3 | Gợi ý hoạt động ngoài màn hình lấy từ đâu khi `lessons` chưa có (P1)? | P1 |
+| # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
+|---|---|---|---|---|
+| 1 | 30/60/90 phút có khớp khuyến nghị thời gian màn hình cho trẻ 3–6 không? | Quy chuẩn y tế | P1 | Chốt D-AZ: Khuyến nghị AAP / WHO cho trẻ mầm non (≤ 1 giờ/ngày) |
+| 2 | Có cần hạn mức theo tuần bên cạnh theo ngày không? | Hạn mức tuần | P3 | Product / Parent Features |
+| 3 | Gợi ý hoạt động ngoài màn hình lấy từ đâu khi `lessons` chưa có (P1)? | Nội dung hết giờ | P1 | Chốt D-BB: Dùng danh sách tĩnh 12 hoạt động ngoài màn hình (offline activities catalog) dạng seed file |
+

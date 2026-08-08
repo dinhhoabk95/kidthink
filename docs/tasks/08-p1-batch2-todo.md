@@ -202,18 +202,16 @@ Lô đụng `play_sessions` và `play_events`. **Mọi cột phát sinh phải s
 
 190 dòng · 9 rule · 3 câu hỏi · 2 cảnh báo.
 
-- [ ] Đọc hết file
-- [ ] Điền "vì sao" cho `BR-HPL-04`, `BR-HPL-08`
-- [ ] Chuyển bảng mục 11 sang 5 cột
-- [ ] Q1 (30/60/90 phút khớp khuyến nghị y tế nào) — dùng câu trả lời số 8 của Cổng dừng A, ghi
-      nguồn trích dẫn được vào cột "vì sao" của rule tương ứng
-- [ ] Q2 (hạn mức theo tuần) — để mở, `Chặn phase: P3`
-- [ ] Q3 (gợi ý hoạt động ngoài màn hình lấy từ đâu khi chưa có `lessons`) — **cặp số 4**, dính
-      với [`basic-report.md`](../specs/03-account/basic-report.md) Q2 ở bước 18. Chốt tại đây,
-      bước 18 tham chiếu lại
-- [ ] Checklist review 15 mục
-- [ ] `status: approved`, `reviewed` mới, cảnh báo giảm **2**
-- [ ] Commit `feat(specs): T8 bước 8 — approve healthy-play-limits`
+- [x] Đọc hết file
+- [x] Điền "vì sao" cho `BR-HPL-04`, `BR-HPL-08`
+- [x] Chuyển bảng mục 11 sang 5 cột
+- [x] Q1 (30/60/90 phút khớp khuyến nghị y tế nào) — dùng câu trả lời số 8 của Cổng dừng A (D-AZ)
+- [x] Q2 (hạn mức theo tuần) — để mở, `Chặn phase: P3`
+- [x] Q3 (gợi ý hoạt động ngoài màn hình lấy từ đâu khi chưa có `lessons`) — **cặp số 4**, dính
+      với [`basic-report.md`](../specs/03-account/basic-report.md) Q2 ở bước 18. Chốt tại đây (D-BB)
+- [x] Checklist review 15 mục
+- [x] `status: approved`, `reviewed: 2026-08-08`, cảnh báo giảm **2**
+- [x] Commit `feat(specs): T8 bước 8 — approve healthy-play-limits`
 
 ### Bước 9 — [`feedback-and-celebration.md`](../specs/04-play/feedback-and-celebration.md)
 
