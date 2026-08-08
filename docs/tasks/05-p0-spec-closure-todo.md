@@ -14,9 +14,9 @@
 
 ## Đang chặn
 
-- [x] **`D-AF`** — chủ dự án xác nhận `notification-service` chuyển `P2` sang `P0` và được
+- [x] **`D-AF`** — chủ dự án xác nhận [`notification-service.md`](../specs/01-platform/notification-service.md) chuyển `P2` sang `P0` và được
       approve trong lô này. Chặn bước 1, 9, 10.
-- [x] **`D-AG`** — chủ dự án xác nhận cắt cạnh `security-checklist` → `ACCESS-GATING`.
+- [x] **`D-AG`** — chủ dự án xác nhận cắt cạnh [`security-checklist.md`](../specs/08-quality/security-checklist.md) → `ACCESS-GATING`.
       Chặn bước 2, 13.
 
 Bảy spec của nhóm A và nhóm C **không** bị hai câu này chặn. Bước 0 cũng không.
@@ -65,25 +65,25 @@ một spec".
 - [x] Xác minh ca âm thật sự bắt: xoá tạm thân `checkC8`, chạy lại, test phải đỏ, rồi khôi phục
 - [x] Commit `test(specs): ca âm cho cổng C8`
 
-## Bước 1 — `D-AF`: `notification-service`
+## Bước 1 — `D-AF`: [`notification-service.md`](../specs/01-platform/notification-service.md)
 
 File: [`01-platform/notification-service.md`](../specs/01-platform/notification-service.md) — 165 dòng, 11 rule
 
 - [x] Đọc hết file
 - [x] Đối chiếu với [`job-queue`](../specs/01-platform/job-queue.md) và
       [`child-data-compliance`](../specs/00-foundation/child-data-compliance.md), cả hai đã `approved`
-- [x] Xác nhận quy tắc "trẻ không nhận gì" khớp `child-data-compliance`
+- [x] Xác nhận quy tắc "trẻ không nhận gì" khớp [`child-data-compliance.md`](../specs/00-foundation/child-data-compliance.md)
 - [x] Điền "vì sao" cho `BR-NOT-03`
 - [x] Điền "vì sao" cho `BR-NOT-07`
 - [x] Điền "vì sao" cho `BR-NOT-08`
 - [x] Đổi `phase: P2` thành `phase: P0`
 - [x] Cập nhật [`index.md`](../specs/index.md) dòng 90 từ `P2` sang `P0`
-- [x] Chạy checklist `CONVENTIONS.md` §10
+- [x] Chạy checklist [`CONVENTIONS.md`](../specs/CONVENTIONS.md) §10
 - [x] Đổi `status` sang `approved`, `reviewed` sang ngày làm
 - [x] `pnpm lint:specs` 0 lỗi
 - [x] Commit `feat(specs): T1 — notification-service P2 sang P0 và approve (D-AF)`
 
-## Bước 2 — `D-AG`: cắt cạnh của `security-checklist`
+## Bước 2 — `D-AG`: cắt cạnh của [`security-checklist.md`](../specs/08-quality/security-checklist.md)
 
 File: [`08-quality/security-checklist.md`](../specs/08-quality/security-checklist.md)
 
@@ -105,37 +105,37 @@ File: [`08-quality/security-checklist.md`](../specs/08-quality/security-checklis
 
 ## Nhóm A — bốn spec `01-platform`
 
-### Bước 3 — `ai-codegen-pipeline` (274 dòng, 10 rule, 4 câu hỏi mở)
+### Bước 3 — [`ai-codegen-pipeline.md`](../specs/01-platform/ai-codegen-pipeline.md) (274 dòng, 10 rule, 4 câu hỏi mở)
 
 - [x] Đọc hết file
-- [x] Đối chiếu sáu vùng cấm section 5 với `SPEC.md` §0 quyết định `D8`
+- [x] Đối chiếu sáu vùng cấm section 5 với [`SPEC.md`](../SPEC.md) §0 quyết định `D8`
 - [x] Đối chiếu với [`game-template-contract`](../specs/01-platform/game-template-contract.md)
       và [`data-model-overview`](../specs/01-platform/data-model-overview.md), cả hai đã `approved`
 - [x] **Cảnh báo `C3`** — section 5 tên "Vùng cấm — AI không sinh code", chuẩn là
-      "Alternative flows". Chốt: đổi tên, hay ghi ngoại lệ vào `CONVENTIONS.md` §4
+      "Alternative flows". Chốt: đổi tên, hay ghi ngoại lệ vào [`CONVENTIONS.md`](../specs/CONVENTIONS.md) §4
 - [x] Điền "vì sao" cho `BR-AIG-01`
 - [x] Điền "vì sao" cho `BR-AIG-03`
 - [x] Bốn câu hỏi mở đều chặn P1 trở đi — xác nhận rồi để nguyên
-- [x] Checklist `CONVENTIONS.md` §10
+- [x] Checklist [`CONVENTIONS.md`](../specs/CONVENTIONS.md) §10
 - [x] `status: approved`, cập nhật `reviewed`
 - [x] `pnpm lint:specs` 0 lỗi
 - [x] Commit `feat(specs): T3 — approve ai-codegen-pipeline`
 
-### Bước 4 — `emoji-registry` (200 dòng, 10 rule, 3 câu hỏi mở)
+### Bước 4 — [`emoji-registry.md`](../specs/01-platform/emoji-registry.md) (200 dòng, 10 rule, 3 câu hỏi mở)
 
 - [x] Đọc hết file
 - [x] Đối chiếu mã emoji với regex [`id-conventions`](../specs/00-foundation/id-conventions.md) §7
-- [x] Xác nhận nó là dữ liệu Lớp 1, admin chỉ đọc, khớp `SPEC.md` §0 quyết định `D7`
+- [x] Xác nhận nó là dữ liệu Lớp 1, admin chỉ đọc, khớp [`SPEC.md`](../SPEC.md) §0 quyết định `D7`
 - [x] Xác nhận 32 nhóm khớp `packages/emoji` đã port từ v1
 - [x] Điền "vì sao" cho `BR-EMJ-06`
 - [x] Điền "vì sao" cho `BR-EMJ-07`
 - [x] Ba câu hỏi mở chặn P1 và P4 — để nguyên
-- [x] Checklist `CONVENTIONS.md` §10
+- [x] Checklist [`CONVENTIONS.md`](../specs/CONVENTIONS.md) §10
 - [x] `status: approved`, cập nhật `reviewed`
 - [x] `pnpm lint:specs` 0 lỗi
 - [x] Commit `feat(specs): T4 — approve emoji-registry`
 
-### Bước 5 — `rate-limiting` (151 dòng, 7 rule, 2 câu hỏi mở)
+### Bước 5 — [`rate-limiting.md`](../specs/01-platform/rate-limiting.md) (151 dòng, 7 rule, 2 câu hỏi mở)
 
 - [x] Đọc hết file
 - [x] Xác nhận tên `packages/cache` khớp
@@ -146,12 +146,12 @@ File: [`08-quality/security-checklist.md`](../specs/08-quality/security-checklis
       mâu thuẫn [`auth-tokens-sessions`](../specs/01-platform/auth-tokens-sessions.md)
 - [x] Điền "vì sao" cho `BR-RTL-07`
 - [x] Hai câu hỏi mở chặn P1 — để nguyên
-- [x] Checklist `CONVENTIONS.md` §10
+- [x] Checklist [`CONVENTIONS.md`](../specs/CONVENTIONS.md) §10
 - [x] `status: approved`, cập nhật `reviewed`
 - [x] `pnpm lint:specs` 0 lỗi
 - [x] Commit `feat(specs): T5 — approve rate-limiting`
 
-### Bước 6 — `health-check` (143 dòng, 6 rule, 1 câu hỏi mở)
+### Bước 6 — [`health-check.md`](../specs/01-platform/health-check.md) (143 dòng, 6 rule, 1 câu hỏi mở)
 
 - [x] Đọc hết file
 - [x] Xác nhận ba kiểm tra thật (`SELECT 1` qua Drizzle, `PING` Valkey, đếm queue BullMQ) khớp
@@ -159,7 +159,7 @@ File: [`08-quality/security-checklist.md`](../specs/08-quality/security-checklis
 - [x] Điền "vì sao" cho `BR-HLT-06`
 - [x] **Chốt câu hỏi 1** — tách `/health/live` và `/health/ready`, hay giữ một endpoint. Ghi
       quyết định vào sổ cái
-- [x] Checklist `CONVENTIONS.md` §10
+- [x] Checklist [`CONVENTIONS.md`](../specs/CONVENTIONS.md) §10
 - [x] `status: approved`, cập nhật `reviewed`
 - [x] `pnpm lint:specs` 0 lỗi
 - [x] Commit `feat(specs): T6 — approve health-check`
@@ -168,7 +168,7 @@ File: [`08-quality/security-checklist.md`](../specs/08-quality/security-checklis
 
 ## Nhóm B — chuỗi auth `03-account`
 
-### Bước 7 — `registration` (193 dòng, 11 rule, 2 câu hỏi mở)
+### Bước 7 — [`registration.md`](../specs/03-account/registration.md) (193 dòng, 11 rule, 2 câu hỏi mở)
 
 Phải xong trước bước 10.
 
@@ -180,12 +180,12 @@ Phải xong trước bước 10.
 - [x] Xác nhận câu hỏi 1 đã gạch bỏ đúng cách và phần chốt 2026-08-05 đọc rõ nghĩa
 - [x] Điền "vì sao" cho `BR-REG-07`
 - [x] Câu hỏi 2 chặn P1 — để nguyên
-- [x] Checklist `CONVENTIONS.md` §10
+- [x] Checklist [`CONVENTIONS.md`](../specs/CONVENTIONS.md) §10
 - [x] `status: approved`, cập nhật `reviewed`
 - [x] `pnpm lint:specs` 0 lỗi
 - [x] Commit `feat(specs): T7 — approve registration`
 
-### Bước 8 — `login-and-session` (188 dòng, 10 rule, 2 câu hỏi mở)
+### Bước 8 — [`login-and-session.md`](../specs/03-account/login-and-session.md) (188 dòng, 10 rule, 2 câu hỏi mở)
 
 **Bước rủi ro nhất của task.** File viết 2026-08-04, trước quyết định kiến trúc cookie
 2026-08-06. Đừng rút gọn việc đối chiếu.
@@ -195,36 +195,36 @@ Phải xong trước bước 10.
       [`auth-tokens-sessions`](../specs/01-platform/auth-tokens-sessions.md) §7.4
 - [x] Xác nhận cookie niêm phong `nuxt-auth-utils` được mô tả đúng là **lớp vận chuyển bọc
       quanh** refresh-token rotation, không phải thay thế nó
-- [x] Xác nhận `session.secure` mang `refreshTokenId`, khớp `auth-tokens-sessions`
+- [x] Xác nhận `session.secure` mang `refreshTokenId`, khớp [`auth-tokens-sessions.md`](../specs/01-platform/auth-tokens-sessions.md)
 - [x] Xác nhận tên cookie và secret của `apps/web` khác `apps/admin`
-- [x] Xác nhận reauth 5 phút có mặt và khớp `auth-tokens-sessions` §7.4
+- [x] Xác nhận reauth 5 phút có mặt và khớp [`auth-tokens-sessions.md`](../specs/01-platform/auth-tokens-sessions.md) §7.4
 - [x] Ghi mọi chỗ lệch tìm được vào sổ cái trước khi sửa, kể cả khi bên sai là spec đã `approved`
 - [x] Điền "vì sao" cho `BR-LGN-04`
 - [x] Điền "vì sao" cho `BR-LGN-06`
 - [x] Hai câu hỏi mở chặn P2 — để nguyên
-- [x] Checklist `CONVENTIONS.md` §10
+- [x] Checklist [`CONVENTIONS.md`](../specs/CONVENTIONS.md) §10
 - [x] `status: approved`, cập nhật `reviewed`
 - [x] `pnpm lint:specs` 0 lỗi
 - [x] Commit `feat(specs): T8 — approve login-and-session`
 
-### Bước 9 — `password-recovery` (169 dòng, 12 rule, 1 câu hỏi mở)
+### Bước 9 — [`password-recovery.md`](../specs/03-account/password-recovery.md) (169 dòng, 12 rule, 1 câu hỏi mở)
 
 Mở khoá bởi bước 1.
 
 - [x] Đọc hết file
-- [x] Xác nhận quy tắc "luôn trả 200" khớp `error-codes` và không rò sự tồn tại tài khoản
-- [x] Xác nhận "giết mọi phiên" khớp `login-and-session` sau bước 8
-- [x] Đối chiếu kênh gửi email với `notification-service` sau bước 1
+- [x] Xác nhận quy tắc "luôn trả 200" khớp [`error-codes.md`](../specs/00-foundation/error-codes.md) và không rò sự tồn tại tài khoản
+- [x] Xác nhận "giết mọi phiên" khớp [`login-and-session.md`](../specs/03-account/login-and-session.md) sau bước 8
+- [x] Đối chiếu kênh gửi email với [`notification-service.md`](../specs/01-platform/notification-service.md) sau bước 1
 - [x] Điền "vì sao" cho `BR-PWR-05`
 - [x] Điền "vì sao" cho `BR-PWR-06`
 - [x] Điền "vì sao" cho `BR-PWR-08`
-- [x] Câu hỏi 1 chặn `account-settings` — để nguyên
-- [x] Checklist `CONVENTIONS.md` §10
+- [x] Câu hỏi 1 chặn [`account-settings.md`](../specs/03-account/account-settings.md) — để nguyên
+- [x] Checklist [`CONVENTIONS.md`](../specs/CONVENTIONS.md) §10
 - [x] `status: approved`, cập nhật `reviewed`
 - [x] `pnpm lint:specs` 0 lỗi
 - [x] Commit `feat(specs): T9 — approve password-recovery`
 
-### Bước 10 — `email-verification` (141 dòng, 8 rule, 1 câu hỏi mở)
+### Bước 10 — [`email-verification.md`](../specs/03-account/email-verification.md) (141 dòng, 8 rule, 1 câu hỏi mở)
 
 Mở khoá bởi bước 1 và bước 7. `C8` sẽ đỏ nếu làm sớm hơn.
 
@@ -236,7 +236,7 @@ Mở khoá bởi bước 1 và bước 7. `C8` sẽ đỏ nếu làm sớm hơn.
 - [x] Điền "vì sao" cho `BR-EVF-05`
 - [x] Điền "vì sao" cho `BR-EVF-07`
 - [x] Câu hỏi 1 chặn P1 — để nguyên
-- [x] Checklist `CONVENTIONS.md` §10
+- [x] Checklist [`CONVENTIONS.md`](../specs/CONVENTIONS.md) §10
 - [x] `status: approved`, cập nhật `reviewed`
 - [x] `pnpm lint:specs` 0 lỗi
 - [x] Commit `feat(specs): T10 — approve email-verification`
@@ -245,7 +245,7 @@ Mở khoá bởi bước 1 và bước 7. `C8` sẽ đỏ nếu làm sớm hơn.
 
 ## Nhóm C
 
-### Bước 11 — `admin-auth` (168 dòng, 8 rule, 2 câu hỏi mở)
+### Bước 11 — [`admin-auth.md`](../specs/06-admin/admin-auth.md) (168 dòng, 8 rule, 2 câu hỏi mở)
 
 - [x] Đọc hết file
 - [x] Xác nhận TOTP dùng `otpauth`, không phải `nuxt-auth-utils`
@@ -258,37 +258,37 @@ Mở khoá bởi bước 1 và bước 7. `C8` sẽ đỏ nếu làm sớm hơn.
 - [x] **Chốt câu hỏi 2** — quy trình xoay mật khẩu Manager đầu tiên. Nó chặn script seed ở P0,
       không chỉ go-live
 - [x] Câu hỏi 1 chặn P2 — để nguyên
-- [x] Checklist `CONVENTIONS.md` §10
+- [x] Checklist [`CONVENTIONS.md`](../specs/CONVENTIONS.md) §10
 - [x] `status: approved`, cập nhật `reviewed`
 - [x] `pnpm lint:specs` 0 lỗi
 - [x] Commit `feat(specs): T11 — approve admin-auth`
 
-### Bước 12 — `testing-strategy` (187 dòng, 10 rule, 2 câu hỏi mở)
+### Bước 12 — [`testing-strategy.md`](../specs/08-quality/testing-strategy.md) (187 dòng, 10 rule, 2 câu hỏi mở)
 
 - [x] Đọc hết file
 - [x] **Chốt câu hỏi 1** — file tự ghi nó chặn P0. Đo thời gian cổng tự động chạy PG Docker,
       quyết định có tách suite không
 - [x] Xác nhận ngưỡng phủ test ở đây khớp cái mà mọi task sau phải đạt
-- [x] Xác nhận cách đặt tên test mang ID scenario, khớp `CONVENTIONS.md` §6
+- [x] Xác nhận cách đặt tên test mang ID scenario, khớp [`CONVENTIONS.md`](../specs/CONVENTIONS.md) §6
 - [x] Điền "vì sao" cho `BR-TST-01`
 - [x] Điền "vì sao" cho `BR-TST-05`
 - [x] Điền "vì sao" cho `BR-TST-08`
-- [x] Câu hỏi 2 chặn `game-engine-runtime` — để nguyên
-- [x] Checklist `CONVENTIONS.md` §10
+- [x] Câu hỏi 2 chặn [`game-engine-runtime.md`](../specs/01-platform/game-engine-runtime.md) — để nguyên
+- [x] Checklist [`CONVENTIONS.md`](../specs/CONVENTIONS.md) §10
 - [x] `status: approved`, cập nhật `reviewed`
 - [x] `pnpm lint:specs` 0 lỗi
 - [x] Commit `feat(specs): T12 — approve testing-strategy`
 
 ---
 
-## Bước 13 — `security-checklist` (180 dòng, 9 rule, 2 câu hỏi mở)
+## Bước 13 — [`security-checklist.md`](../specs/08-quality/security-checklist.md) (180 dòng, 9 rule, 2 câu hỏi mở)
 
 Sau `D-AG` ở bước 2 và sau mọi spec khác, vì nó tham chiếu nhiều spec nhất.
 
 - [x] Xác nhận `depends_on` còn đúng hai mục sau bước 2
 - [x] Đọc hết file
 - [x] **Cảnh báo `C3`** — section 7 tên "Checklist", chuẩn là "Data". Chốt: đổi tên, hay ghi
-      ngoại lệ vào `CONVENTIONS.md` §4. Quyết định phải giống bước 3
+      ngoại lệ vào [`CONVENTIONS.md`](../specs/CONVENTIONS.md) §4. Quyết định phải giống bước 3
 - [x] Điền "vì sao" cho `BR-SEC-01`
 - [x] Điền "vì sao" cho `BR-SEC-02`
 - [x] Điền "vì sao" cho `BR-SEC-05`
@@ -297,7 +297,7 @@ Sau `D-AG` ở bước 2 và sau mọi spec khác, vì nó tham chiếu nhiều 
 - [x] **Chốt câu hỏi 2** — khi chỉ có một dev thì "review người thứ hai" của `BR-SEC-08` thực
       hiện thế nào. Một rule chặn merge mà không ai biết cách thoả sẽ bị tắt trong lần đầu nó cản việc
 - [x] Câu hỏi 1 chặn go-live — để nguyên
-- [x] Checklist `CONVENTIONS.md` §10
+- [x] Checklist [`CONVENTIONS.md`](../specs/CONVENTIONS.md) §10
 - [x] `status: approved`, cập nhật `reviewed`
 - [x] `pnpm lint:specs` 0 lỗi
 - [x] Commit `feat(specs): T13 — approve security-checklist`
@@ -320,8 +320,8 @@ tự động bỏ qua.
 - [x] Đếm `phase: P0` — phải ra **35**
 - [x] Đếm `phase: P0` và `status: approved` — phải ra **35**
 - [x] Đếm `status: approved` toàn corpus — phải ra **38/130**
-- [x] [`index.md`](../specs/index.md) khớp `phase: P0` mới của `notification-service`
-- [x] [`roadmap.md`](../specs/roadmap.md) P0 bước 10 nhắc `notification-service` như phụ thuộc
+- [x] [`index.md`](../specs/index.md) khớp `phase: P0` mới của [`notification-service.md`](../specs/01-platform/notification-service.md)
+- [x] [`roadmap.md`](../specs/roadmap.md) P0 bước 10 nhắc [`notification-service.md`](../specs/01-platform/notification-service.md) như phụ thuộc
 - [x] Mọi `BR-*` vừa sửa có mặt trong
       [`business-rules.md`](../specs/00-foundation/business-rules.md)
 - [x] Đọc lại cả 30 cột "vì sao" vừa viết. Hỏi từng cái: người sau đọc câu này có hiểu vì sao

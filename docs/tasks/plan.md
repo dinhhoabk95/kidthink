@@ -323,7 +323,7 @@ quá tay, quy tắc tham chiếu file ở mục 4.5, quy tắc "mã hợp đồn
 "đường dẫn trong ví dụ phải resolve thật vì C4 quét cả khối mã", và **chín việc của quy trình
 chuẩn** ở trên.
 
-`CONVENTIONS.md` mục 8 hiện đã có một câu về việc này: *"Tiếng Việt cho prose; tiếng Anh chính
+[`CONVENTIONS.md`](../specs/CONVENTIONS.md) mục 8 hiện đã có một câu về việc này: *"Tiếng Việt cho prose; tiếng Anh chính
 xác cho path, enum, tên field, tên bảng."* Câu đó đúng nhưng chỉ nói về **định danh**, không nói
 về **thuật ngữ**. Đó chính là kẽ hở làm bản nháp đầu của kế hoạch dịch `partition` thành "phân
 mảnh". Chương mới phải bịt kẽ hở đó bằng danh sách thuật ngữ cụ thể.
@@ -332,13 +332,13 @@ mảnh". Chương mới phải bịt kẽ hở đó bằng danh sách thuật ng
 ước mới ở phần khác nếu có.
 
 **Tiêu chí chấp nhận**
-- `CONVENTIONS.md` có chương văn phong, và chính nó viết theo văn phong đó.
+- [`CONVENTIONS.md`](../specs/CONVENTIONS.md) có chương văn phong, và chính nó viết theo văn phong đó.
 - Chương đó có danh sách thuật ngữ giữ nguyên, đủ cả ba nhóm.
-- Danh sách kiểm tra review ở `CONVENTIONS.md` mục 10 thêm bốn ô: không còn ký hiệu · mọi tham
+- Danh sách kiểm tra review ở [`CONVENTIONS.md`](../specs/CONVENTIONS.md) mục 10 thêm bốn ô: không còn ký hiệu · mọi tham
   chiếu là liên kết · mọi mã hợp đồng kèm tên đọc được · không thuật ngữ nào bị dịch.
-- Mười một tên mục ở `CONVENTIONS.md` mục 4 và `TEMPLATE.md` **giữ nguyên tiếng Anh**.
+- Mười một tên mục ở [`CONVENTIONS.md`](../specs/CONVENTIONS.md) mục 4 và [`TEMPLATE.md`](../specs/TEMPLATE.md) **giữ nguyên tiếng Anh**.
 
-**Cách xác minh.** `pnpm lint:specs` exit 0 · đọc `CONVENTIONS.md` không thấy ký hiệu emoji nào
+**Cách xác minh.** `pnpm lint:specs` exit 0 · đọc [`CONVENTIONS.md`](../specs/CONVENTIONS.md) không thấy ký hiệu emoji nào
 ngoài khối mã · hằng số `FULL_SECTIONS` ở
 [`scripts/lint-specs-lib.ts:297`](../../scripts/lint-specs-lib.ts) không bị chạm.
 
@@ -354,7 +354,7 @@ ngoài khối mã · hằng số `FULL_SECTIONS` ở
 |---|---|---|
 | [`glossary.md:128`](../specs/00-foundation/glossary.md) | `## 8. Từ bị cấm` | `## 8. API contract` |
 | [`mvp-scope.md:105`](../specs/00-foundation/mvp-scope.md) | `## 8. Vĩnh viễn ngoài phạm vi` | `## 8. API contract` |
-| [`ai-codegen-pipeline.md:84`](../specs/01-platform/ai-codegen-pipeline.md) | `## 5. Vùng cấm — AI ❌ không sinh code` | `## 5. Alternative flows` |
+| [`ai-codegen-pipeline.md:84`](../specs/01-platform/ai-codegen-pipeline.md) | `## 5. Vùng cấm — AI không sinh code` | `## 5. Alternative flows` |
 | [`security-checklist.md:62`](../specs/08-quality/security-checklist.md) | `## 7. Checklist` | `## 7. Data` |
 
 Nội dung bên trong bốn mục đó **không đổi**. Chỉ đổi dòng tiêu đề. Tên riêng đang mang thông tin
@@ -584,10 +584,10 @@ file với filesystem — đổi cách viết không được làm lệch số.
 **Phụ thuộc.** Cổng dừng D.
 **Cỡ.** Vừa, 1 file lớn.
 
-### Bước 15 — `index.md`, `roadmap.md`, `AUDIT-v1.md`
+### Bước 15 — [`index.md`](../specs/index.md), [`roadmap.md`](../specs/roadmap.md), [`AUDIT-v1.md`](../specs/AUDIT-v1.md)
 
 **Đặc điểm.** Ba file này gần như không có ký hiệu (32, 1, 4) nhưng có **213 tham chiếu trần** —
-`roadmap.md` 104 chỗ và `AUDIT-v1.md` 104 chỗ. Đó là bản chất của chúng: cả hai đều là bảng liệt
+[`roadmap.md`](../specs/roadmap.md) 104 chỗ và [`AUDIT-v1.md`](../specs/AUDIT-v1.md) 104 chỗ. Đó là bản chất của chúng: cả hai đều là bảng liệt
 kê tên spec. Bước này chủ yếu là việc 6 của quy trình chuẩn, làm hàng loạt.
 
 [`index.md`](../specs/index.md) bị kiểm tra C11 đối chiếu số lượng spec — đổi cách viết không
@@ -615,7 +615,7 @@ dòng — mật độ cao nhất corpus, [`c2-spatial-thinking.md`](../taxonomy/
 **Phụ thuộc.** Bước 15.
 **Cỡ.** Lớn, 8 file.
 
-### Bước 17 — Thu gọn `READING-GUIDE.md`
+### Bước 17 — Thu gọn [`READING-GUIDE.md`](../specs/READING-GUIDE.md)
 
 **Nội dung.** File này viết ngày 2026-08-07 để **giải mã** ký hiệu. Sau bước 16 thì không còn ký
 hiệu để giải mã, nên mục 4 thành thừa. Các mục còn lại vẫn có giá trị: thứ tự đọc, cách hiểu

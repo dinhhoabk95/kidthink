@@ -97,7 +97,7 @@ Hệ quả trực tiếp: **không thể đảo thứ tự tuỳ ý**. Đồ th�
 
 ## Hai quyết định phải chốt trước khi bắt đầu
 
-### `D-AF` — `notification-service` chuyển từ `P2` sang `P0`, và được approve trong lô này
+### `D-AF` — [`notification-service.md`](../specs/01-platform/notification-service.md) chuyển từ `P2` sang `P0`, và được approve trong lô này
 
 **Vấn đề đo được.** [`email-verification`](../specs/03-account/email-verification.md) và
 [`password-recovery`](../specs/03-account/password-recovery.md) đều là `phase: P0` và đều
@@ -108,8 +108,8 @@ phụ thuộc còn `draft`, vì `C8` sẽ đỏ.
 
 **Vì sao phụ thuộc này là thật, không phải lỗi biên tập.** Xác thực email ở P0 nghĩa là gửi
 một email ở P0. Roadmap P0 bước 10 ghi rõ "Auth end-to-end **bằng email/mật khẩu**" với bốn
-spec `registration`, `email-verification`, `login-and-session`, `password-recovery`. Không có
-kênh gửi thì bước 10 không chạy được. `phase: P2` trên `notification-service` là **sai**, không
+spec [`registration.md`](../specs/03-account/registration.md), [`email-verification.md`](../specs/03-account/email-verification.md), [`login-and-session.md`](../specs/03-account/login-and-session.md), [`password-recovery.md`](../specs/03-account/password-recovery.md). Không có
+kênh gửi thì bước 10 không chạy được. `phase: P2` trên [`notification-service.md`](../specs/01-platform/notification-service.md) là **sai**, không
 phải phụ thuộc sai.
 
 **Quyết định.** Đổi `phase: P2` thành `phase: P0` trên
@@ -124,18 +124,18 @@ cách rẻ nhất trong ba cách xử lý.
 
 | Cách | Vì sao loại |
 |---|---|
-| Cắt cạnh, để `email-verification` tự tả việc gửi email | Contract gửi email bị chép ở hai chỗ. `CONVENTIONS.md` §2: "Contract bị copy sẽ drift" |
-| Tách một spec `email-channel` P0 mới ra khỏi `notification-service` | Thêm spec thứ 131 cho một việc mà spec sẵn có đã tả. `C11` kiểm số spec mỗi thư mục nên còn phải sửa `SPEC.md` §14 và `index.md` |
+| Cắt cạnh, để [`email-verification.md`](../specs/03-account/email-verification.md) tự tả việc gửi email | Contract gửi email bị chép ở hai chỗ. [`CONVENTIONS.md`](../specs/CONVENTIONS.md) §2: "Contract bị copy sẽ drift" |
+| Tách một spec `email-channel` P0 mới ra khỏi [`notification-service.md`](../specs/01-platform/notification-service.md) | Thêm spec thứ 131 cho một việc mà spec sẵn có đã tả. `C11` kiểm số spec mỗi thư mục nên còn phải sửa [`SPEC.md`](../SPEC.md) §14 và [`index.md`](../specs/index.md) |
 
-### `D-AG` — cắt cạnh `security-checklist` → `ACCESS-GATING`
+### `D-AG` — cắt cạnh [`security-checklist.md`](../specs/08-quality/security-checklist.md) → `ACCESS-GATING`
 
 **Vấn đề đo được.** [`security-checklist`](../specs/08-quality/security-checklist.md) là
 `phase: P0` nhưng `depends_on: ACCESS-GATING`, mà
 [`access-gating`](../specs/04-play/access-gating.md) là `phase: P1`, `status: draft`. Cùng kiểu
 đảo ngược phase như `D-AF`.
 
-**Vì sao đây lại là phụ thuộc sai, khác với `D-AF`.** `CONVENTIONS.md` §3 định nghĩa
-`depends_on` là "dùng để xếp thứ tự **implement**". `security-checklist` không implement gating
+**Vì sao đây lại là phụ thuộc sai, khác với `D-AF`.** [`CONVENTIONS.md`](../specs/CONVENTIONS.md) §3 định nghĩa
+`depends_on` là "dùng để xếp thứ tự **implement**". [`security-checklist.md`](../specs/08-quality/security-checklist.md) không implement gating
 — nó là danh sách kiểm mà reviewer chạy tay và cổng tự động chạy máy. Nó **nhắc tới** gating,
 và §2 của cùng file quy ước nói cách nhắc tới đúng là **link**, không phải copy contract và
 cũng không phải `depends_on`.
@@ -145,10 +145,10 @@ cũng không phải `depends_on`.
 gating trong phần văn xuôi và đổi chúng thành liên kết bấm được tới
 [`access-gating`](../specs/04-play/access-gating.md).
 
-**Cách thay thế nếu chủ dự án không đồng ý.** Kéo `access-gating` vào lô này và approve nó luôn.
+**Cách thay thế nếu chủ dự án không đồng ý.** Kéo [`access-gating.md`](../specs/04-play/access-gating.md) vào lô này và approve nó luôn.
 Chi phí thấp hơn tưởng: 204 dòng, và đồ thị phụ thuộc của nó (`ACCESS-LADDER`,
 `ENTITLEMENT-MODEL`, `ACTORS`) **đã `approved` hết** nên cũng không có dây chuyền. Rủi ro là
-approve sớm một contract gating chưa gặp `game-level-model` (vẫn `draft`, `P1`) — đúng loại rủi
+approve sớm một contract gating chưa gặp [`game-level-model.md`](../specs/05-content/game-level-model.md) (vẫn `draft`, `P1`) — đúng loại rủi
 ro mà Task #3 gọi tên: ký vào bản thiết kế mà bước sau chắc chắn phải đảo.
 
 **Giả định ghi vào file thay vì hỏi.** Task này đi theo `D-AF` và `D-AG` như viết ở trên. Nếu
@@ -168,7 +168,7 @@ gọn.
    [`auth-tokens-sessions`](../specs/01-platform/auth-tokens-sessions.md) §7.4, và bản đồ bảng
    ở [`data-model-overview`](../specs/01-platform/data-model-overview.md) §7.
 3. **Sửa cảnh báo `C6`** — điền cột "vì sao" cho mọi rule đang trống. Không xoá rule để hết
-   cảnh báo. `CONVENTIONS.md` §5: rule không có "vì sao" sẽ bị người sau xoá nhầm.
+   cảnh báo. [`CONVENTIONS.md`](../specs/CONVENTIONS.md) §5: rule không có "vì sao" sẽ bị người sau xoá nhầm.
 4. **Chạy checklist review** [`CONVENTIONS.md`](../specs/CONVENTIONS.md) §10, đủ mười một mục.
 5. **Xử lý từng câu hỏi mở ở section 11.** Câu nào chặn P0 thì phải chốt và ghi quyết định vào
    sổ cái. Câu nào chặn P1 trở đi thì để nguyên, ghi rõ nó chặn gì.
@@ -196,18 +196,18 @@ gọi `checkC8` với một spec giả `approved` phụ thuộc một spec giả
 **Vì sao đặt ở bước 0.** Nếu `C8` không hoạt động thì bước 1 và bước 2 giải một bài toán không
 tồn tại, và ba spec ở cuối lô có thể approve thẳng mà không cần `D-AF`.
 
-### Bước 1 — `D-AF`: `notification-service`
+### Bước 1 — `D-AF`: [`notification-service.md`](../specs/01-platform/notification-service.md)
 
 Đổi `phase`, sửa ba cảnh báo `C6` (`BR-NOT-03`, `BR-NOT-07`, `BR-NOT-08`), cập nhật
 [`index.md`](../specs/index.md) dòng 90, approve.
 
-**Tiêu chí chấp nhận.** `notification-service` có `status: approved` và `phase: P0`.
-`index.md` ghi `P0`. `pnpm lint:specs` còn 0 lỗi.
+**Tiêu chí chấp nhận.** [`notification-service.md`](../specs/01-platform/notification-service.md) có `status: approved` và `phase: P0`.
+[`index.md`](../specs/index.md) ghi `P0`. `pnpm lint:specs` còn 0 lỗi.
 
-### Bước 2 — `D-AG`: cắt cạnh của `security-checklist`
+### Bước 2 — `D-AG`: cắt cạnh của [`security-checklist.md`](../specs/08-quality/security-checklist.md)
 
 Xoá `ACCESS-GATING` khỏi `depends_on`. Đổi các tham chiếu gating trong văn xuôi thành liên kết.
-Chưa approve ở bước này — `security-checklist` còn năm cảnh báo `C6` và một cảnh báo `C3`, xử lý
+Chưa approve ở bước này — [`security-checklist.md`](../specs/08-quality/security-checklist.md) còn năm cảnh báo `C6` và một cảnh báo `C3`, xử lý
 ở bước 13.
 
 **Tiêu chí chấp nhận.** `depends_on` còn đúng hai mục. `C4` (link nội bộ resolve) vẫn xanh.
@@ -215,7 +215,7 @@ Chưa approve ở bước này — `security-checklist` còn năm cảnh báo `C
 ### Cổng dừng A — sau bước 0 đến 2
 
 `D-AF` và `D-AG` là thay đổi contract: một cái đổi `phase` của spec, một cái xoá cạnh phụ thuộc.
-`repo-bootstrap` `BR-RBS-08` nói đổi contract thì đổi spec trước, và cả hai đều đang làm đúng
+[`repo-bootstrap.md`](../specs/00-foundation/repo-bootstrap.md) `BR-RBS-08` nói đổi contract thì đổi spec trước, và cả hai đều đang làm đúng
 thế — nhưng chúng cũng là hai chỗ duy nhất trong task này mà **người phải đồng ý**, vì phần còn
 lại chỉ là đọc, điền "vì sao", và lật cờ.
 
@@ -228,21 +228,21 @@ Bốn spec này không phụ thuộc nhau, làm theo thứ tự khối lượng 
 
 | Bước | Spec | Điểm cần soi kỹ |
 |---|---|---|
-| 3 | [`ai-codegen-pipeline`](../specs/01-platform/ai-codegen-pipeline.md) (274 dòng) | Cảnh báo `C3`: section 5 đang tên "Vùng cấm — AI không sinh code" thay vì "Alternative flows". Phải chốt đổi tên về chuẩn hay ghi nhận ngoại lệ. Sáu vùng cấm ở section 5 phải khớp `SPEC.md` §0 `D8` |
-| 4 | [`emoji-registry`](../specs/01-platform/emoji-registry.md) (200 dòng) | Là dữ liệu Lớp 1, admin chỉ đọc. Mã emoji phải khớp regex `id-conventions` §7. Bước 9 roadmap P0 seed nó cùng taxonomy |
-| 5 | [`rate-limiting`](../specs/01-platform/rate-limiting.md) (151 dòng) | Nhắc `packages/cache` — phải khớp tên package thật ở [`monorepo-package-architecture`](../specs/00-foundation/monorepo-package-architecture.md) §7.1. Quy tắc fail-open cho route thường và fail-closed cho auth phải khớp `error-codes` |
+| 3 | [`ai-codegen-pipeline`](../specs/01-platform/ai-codegen-pipeline.md) (274 dòng) | Cảnh báo `C3`: section 5 đang tên "Vùng cấm — AI không sinh code" thay vì "Alternative flows". Phải chốt đổi tên về chuẩn hay ghi nhận ngoại lệ. Sáu vùng cấm ở section 5 phải khớp [`SPEC.md`](../SPEC.md) §0 `D8` |
+| 4 | [`emoji-registry`](../specs/01-platform/emoji-registry.md) (200 dòng) | Là dữ liệu Lớp 1, admin chỉ đọc. Mã emoji phải khớp regex [`id-conventions.md`](../specs/00-foundation/id-conventions.md) §7. Bước 9 roadmap P0 seed nó cùng taxonomy |
+| 5 | [`rate-limiting`](../specs/01-platform/rate-limiting.md) (151 dòng) | Nhắc `packages/cache` — phải khớp tên package thật ở [`monorepo-package-architecture`](../specs/00-foundation/monorepo-package-architecture.md) §7.1. Quy tắc fail-open cho route thường và fail-closed cho auth phải khớp [`error-codes.md`](../specs/00-foundation/error-codes.md) |
 | 6 | [`health-check`](../specs/01-platform/health-check.md) (143 dòng) | Câu hỏi 1 (tách `/health/live` và `/health/ready`) chặn vận hành, nên chốt luôn ở đây thay vì để mở |
 
 ### Bước 7 đến 10 — Nhóm B: chuỗi auth `03-account`
 
-Thứ tự trong nhóm này **không đảo được**: `email-verification` `depends_on: REGISTRATION`.
+Thứ tự trong nhóm này **không đảo được**: [`email-verification.md`](../specs/03-account/email-verification.md) `depends_on: REGISTRATION`.
 
 | Bước | Spec | Điểm cần soi kỹ |
 |---|---|---|
 | 7 | [`registration`](../specs/03-account/registration.md) (193 dòng) | Hai checkbox đồng ý phải khớp [`child-data-compliance`](../specs/00-foundation/child-data-compliance.md). Câu hỏi 1 đã gạch bỏ và chốt 2026-08-05, xác nhận phần gạch bỏ vẫn đọc được đúng |
 | 8 | [`login-and-session`](../specs/03-account/login-and-session.md) (188 dòng) | Đây là spec rủi ro nhất trong nhóm. Nó viết 2026-08-04, **trước** quyết định kiến trúc cookie niêm phong `nuxt-auth-utils` bọc quanh refresh-token rotation (chốt 2026-08-06). Phải đối chiếu từng dòng với [`auth-tokens-sessions`](../specs/01-platform/auth-tokens-sessions.md) §7.4 |
-| 9 | [`password-recovery`](../specs/03-account/password-recovery.md) (169 dòng) | Mở khoá bởi bước 1. Quy tắc "luôn trả 200" và "giết mọi phiên" phải khớp `login-and-session` sau khi bước 8 xong |
-| 10 | [`email-verification`](../specs/03-account/email-verification.md) (141 dòng) | Mở khoá bởi bước 1 và bước 7. Điều kiện tạo hồ sơ trẻ phải khớp `child-data-compliance` |
+| 9 | [`password-recovery`](../specs/03-account/password-recovery.md) (169 dòng) | Mở khoá bởi bước 1. Quy tắc "luôn trả 200" và "giết mọi phiên" phải khớp [`login-and-session.md`](../specs/03-account/login-and-session.md) sau khi bước 8 xong |
+| 10 | [`email-verification`](../specs/03-account/email-verification.md) (141 dòng) | Mở khoá bởi bước 1 và bước 7. Điều kiện tạo hồ sơ trẻ phải khớp [`child-data-compliance.md`](../specs/00-foundation/child-data-compliance.md) |
 
 ### Bước 11 và 12 — Nhóm C
 
@@ -251,7 +251,7 @@ Thứ tự trong nhóm này **không đảo được**: `email-verification` `de
 | 11 | [`admin-auth`](../specs/06-admin/admin-auth.md) (168 dòng) | Bốn cảnh báo `C6`, nhiều nhất nhóm. TOTP dùng `otpauth`, không phải `nuxt-auth-utils`. Cookie và secret của `apps/admin` phải khác `apps/web` ở tầng crypto. Câu hỏi 2 (xoay mật khẩu Manager đầu tiên) chặn go-live nhưng cũng chặn script seed ở P0 — chốt luôn |
 | 12 | [`testing-strategy`](../specs/08-quality/testing-strategy.md) (187 dòng) | Câu hỏi 1 tự ghi là chặn P0, nên bắt buộc chốt. Ba cảnh báo `C6`. Ngưỡng phủ test ở đây là ngưỡng mà mọi task sau phải đạt |
 
-### Bước 13 — `security-checklist`
+### Bước 13 — [`security-checklist.md`](../specs/08-quality/security-checklist.md)
 
 Làm sau cùng trong các spec vì nó tham chiếu nhiều spec khác nhất và vì `D-AG` phải xong trước.
 Năm cảnh báo `C6` và một cảnh báo `C3` (section 7 đang tên "Checklist" thay vì "Data").
@@ -274,8 +274,8 @@ lệch mà mười một kiểm tra tự động bỏ qua.
 
 1. Đếm lại: `phase: P0` phải ra **35** spec, `status: approved` trong nhóm đó phải ra **35**.
 2. Tổng `approved` toàn corpus phải ra **38/130**.
-3. [`index.md`](../specs/index.md) phải khớp `phase` mới của `notification-service`.
-4. [`roadmap.md`](../specs/roadmap.md) P0 bước 10 phải nhắc `notification-service` như phụ
+3. [`index.md`](../specs/index.md) phải khớp `phase` mới của [`notification-service.md`](../specs/01-platform/notification-service.md).
+4. [`roadmap.md`](../specs/roadmap.md) P0 bước 10 phải nhắc [`notification-service.md`](../specs/01-platform/notification-service.md) như phụ
    thuộc, hiện chưa nhắc.
 5. Mọi `BR-*` mới thêm cột "vì sao" phải có mặt trong
    [`business-rules.md`](../specs/00-foundation/business-rules.md).
@@ -317,20 +317,20 @@ chỉ là xác nhận.
 
 | Rủi ro | Mức | Cách giảm |
 |---|---|---|
-| Approve `login-and-session` mà chưa hoà giải với kiến trúc cookie chốt 2026-08-06, rồi phải đảo khi viết code auth | **Cao** | Bước 8 làm việc đối chiếu từng dòng với `auth-tokens-sessions` §7.4 trước khi lật cờ. Đây là bước đắt nhất trong task, đừng rút gọn |
+| Approve [`login-and-session.md`](../specs/03-account/login-and-session.md) mà chưa hoà giải với kiến trúc cookie chốt 2026-08-06, rồi phải đảo khi viết code auth | **Cao** | Bước 8 làm việc đối chiếu từng dòng với [`auth-tokens-sessions.md`](../specs/01-platform/auth-tokens-sessions.md) §7.4 trước khi lật cờ. Đây là bước đắt nhất trong task, đừng rút gọn |
 | Điền cột "vì sao" cho đủ cảnh báo `C6` thay vì để trả lời thật | **Cao** | Bước 14 mục 6 đọc lại cả 30 cột. Một câu "vì sao" chỉ diễn giải lại tên rule là một câu chưa viết |
 | `D-AF` bị đảo, phải quay lại kiến trúc kênh gửi email | Trung bình | Cổng dừng A đặt trước mọi việc khác. Nếu đảo thì chỉ mất bước 0 đến 2 |
-| Chốt vội câu hỏi mở chặn P0 chỉ để lật được cờ | Trung bình | Chỉ ba câu bắt buộc chốt: `testing-strategy` Q1, `admin-auth` Q2, `security-checklist` Q2. 19 câu còn lại chặn P1 trở đi, để nguyên là đúng |
+| Chốt vội câu hỏi mở chặn P0 chỉ để lật được cờ | Trung bình | Chỉ ba câu bắt buộc chốt: [`testing-strategy.md`](../specs/08-quality/testing-strategy.md) Q1, [`admin-auth.md`](../specs/06-admin/admin-auth.md) Q2, [`security-checklist.md`](../specs/08-quality/security-checklist.md) Q2. 19 câu còn lại chặn P1 trở đi, để nguyên là đúng |
 | Xung đột với Task #4 nếu ai đó chạy song song | Trung bình | Mục "Quan hệ với Task #4". Kiểm `git status` trước mỗi bước |
-| Hai cảnh báo `C3` (tên section lệch chuẩn) bị xử lý bằng cách nới `C3` thay vì sửa file | Thấp | Nới một kiểm tra để hết cảnh báo là đúng thứ mà bộ nhớ dự án ghi là không được làm. Sửa tên section, hoặc ghi ngoại lệ có lý do vào `CONVENTIONS.md` |
+| Hai cảnh báo `C3` (tên section lệch chuẩn) bị xử lý bằng cách nới `C3` thay vì sửa file | Thấp | Nới một kiểm tra để hết cảnh báo là đúng thứ mà bộ nhớ dự án ghi là không được làm. Sửa tên section, hoặc ghi ngoại lệ có lý do vào [`CONVENTIONS.md`](../specs/CONVENTIONS.md) |
 
 ## Câu hỏi mở của chính task này
 
-1. **`D-AG` — cắt cạnh, hay kéo `access-gating` vào lô?** Plan này đi theo hướng cắt cạnh. Chặn
+1. **`D-AG` — cắt cạnh, hay kéo [`access-gating.md`](../specs/04-play/access-gating.md) vào lô?** Plan này đi theo hướng cắt cạnh. Chặn
    bước 2 và bước 13.
 2. **Hai cảnh báo `C3` xử lý thế nào?** Đổi tên section về chuẩn mười một mục, hay thêm vào
-   `CONVENTIONS.md` §4 một danh sách đóng các ngoại lệ có lý do? Chặn bước 3 và bước 13.
-3. **Task này có ghi đè `plan.md` và `todo.md` không?** Hiện hai tên đó thuộc về Task #4. File
+   [`CONVENTIONS.md`](../specs/CONVENTIONS.md) §4 một danh sách đóng các ngoại lệ có lý do? Chặn bước 3 và bước 13.
+3. **Task này có ghi đè [`plan.md`](../tasks/plan.md) và [`todo.md`](../tasks/todo.md) không?** Hiện hai tên đó thuộc về Task #4. File
    này và checklist của nó dùng tên `05-p0-spec-closure-*` để không phá Task #4. Nếu muốn nó
    thành task đang chạy, cần `git mv docs/tasks/plan.md docs/tasks/04-readability-plan.md` và
-   tương tự cho `todo.md`, rồi đổi tên cặp `05-*`. Không chặn bước nào.
+   tương tự cho [`todo.md`](../tasks/todo.md), rồi đổi tên cặp `05-*`. Không chặn bước nào.

@@ -4,15 +4,15 @@
 > Task #3 lưu trữ: [`03-schema-contract-plan.md`](03-schema-contract-plan.md) ·
 > [`03-schema-contract-todo.md`](03-schema-contract-todo.md).
 
-## Chỗ để file này, và vì sao không phải `SPEC.md` ở gốc repo
+## Chỗ để file này, và vì sao không phải [`SPEC.md`](../SPEC.md) ở gốc repo
 
-Lệnh `/spec` mặc định ghi ra `SPEC.md` ở gốc dự án. Ở repo này **không làm vậy được**:
+Lệnh `/spec` mặc định ghi ra [`SPEC.md`](../SPEC.md) ở gốc dự án. Ở repo này **không làm vậy được**:
 `kidthink/SPEC.md` là symlink trỏ tới [`../SPEC.md`](../SPEC.md) — bản đặc tả sản phẩm dài
 1.286 dòng, được kiểm tra C11 đối chiếu số lượng spec, và là thứ 130 file trong `docs/specs/`
 tham chiếu tới. Ghi đè nó bằng spec của một task biên tập là phá hợp đồng sản phẩm.
 
 Spec của task nằm cùng chỗ với hồ sơ task, tức `docs/tasks/`. Đây là lần đầu repo có file dạng
-này; hai task trước chỉ có `plan` và `todo`.
+này; hai task trước chỉ có `plan` và [`todo.md`](../tasks/todo.md).
 
 ---
 
@@ -74,8 +74,8 @@ Corpus hiện tại đúng về nội dung nhưng đắt để đọc. Người 
 trước khi hiểu được câu đầu tiên. Bằng chứng cụ thể:
 
 - [`plan.md:8-9`](plan.md) nhồi sáu ký hiệu vào một dòng chú giải:
-  *"`Tn` = bước · `⛔` = cổng dừng · `⟂` = song song được · `Mn` = chỗ contract tự mâu thuẫn ·
-  `D-*` = ledger quyết định · `👤` = cần người."*
+  *"`Tn` = bước · cổng dừng · song song được · `Mn` = chỗ contract tự mâu thuẫn ·
+  `D-*` = ledger quyết định · cần người."*
 - [`plan.md:58`](plan.md) dùng sáu chữ viết tắt chưa từng định nghĩa ở đâu:
   *"OQ trong 6 spec đích | 17 (DMO 3 · SIB 2 · SCT 2 · SPT 2 · TAX 4 · GTC 4)"*.
 - [`../specs/READING-GUIDE.md`](../specs/READING-GUIDE.md) được viết ngày 2026-08-07 để **giải
@@ -205,24 +205,26 @@ kidthink/
 
 ### 4.1 Bảng thay thế ký hiệu
 
+```markdown
 | Ký hiệu | Số lượt | Viết thành |
 |---|---:|---|
-| `❌` | 1.890 | "Không …", "Cấm …", "… không phải là …" tuỳ ngữ cảnh. Trong ô bảng nhị phân: "Không" |
-| `✅` | 428 | Trong ô bảng nhị phân: "Có". Trong checklist: bỏ hẳn, vì ô tick đã nói điều đó |
-| `⚠️` | 57 | "Cảnh báo:" đầu câu |
-| `⛔` | 45 | "Cổng dừng" |
+| `Cấm` | 1.890 | "Không …", "Cấm …", "… không phải là …" tuỳ ngữ cảnh. Trong ô bảng nhị phân: "Không" |
+| `` | 428 | Trong ô bảng nhị phân: "Có". Trong checklist: bỏ hẳn, vì ô tick đã nói điều đó |
+| `Lưu ý` | 57 | "Cảnh báo:" đầu câu |
+| `` | 45 | "Cổng dừng" |
 | `⟂` | 34 | "làm song song được" |
 | `👤` | 39 | "cần người quyết" |
-| `🟡` | 96 | "Hoãn, chặn phase P1" — nêu rõ phase, không để màu thay lời |
+| `chờ` | 96 | "Hoãn, chặn phase P1" — nêu rõ phase, không để màu thay lời |
 | `🔴` | 26 | "Chặn cứng, không hoãn thêm được" |
 | `❗` | 6 | "Quan trọng:" |
 | `⏸` | 3 | "Đang chờ" |
 | `⟷` | 10 | "khớp hai chiều với" |
 | `⊂` | 7 | "bao hàm" — `free ⊂ login` thành "tier `login` bao hàm tier `free`" |
-| `⇒` | 97 | "dẫn tới", "nên", "thì" |
+| `thì` | 97 | "dẫn tới", "nên", "thì" |
 | `✱` | 24 | Đổi thành một cột riêng trong bảng, tên cột "Bắt buộc", giá trị "Có"/"Không" |
+```
 
-Lưu ý khi thay: chỉ đổi **ký hiệu**, không đổi thuật ngữ đứng cạnh nó. Dòng `⊂` ở trên là ví dụ
+Lưu ý khi thay: chỉ đổi **ký hiệu**, không đổi thuật ngữ đứng cạnh nó. Dòng bao hàm ở trên là ví dụ
 — `free` và `login` là giá trị enum `AccessTier` nên giữ nguyên trong dấu backtick, và chữ
 "tier" cũng giữ nguyên tiếng Anh theo mục 4.3.
 
@@ -354,9 +356,9 @@ business rule.
 ```markdown
 | ID | Rule | Vì sao |
 |---|---|---|
-| `BR-GAT-01` | Kiểm ở **server handler**, ❌ không ở component hay middleware client | Ẩn bằng CSS không phải paywall |
-| `BR-GAT-04` | Ownership `active_child_id` kiểm bằng **DB query**, ❌ không tin cookie | `BR-ACT-07` |
-| `BR-GAT-07` | Bỏ token/cookie ở client ❌ **không mở thêm gì** | |
+| `BR-GAT-01` | Kiểm ở **server handler**, không ở component hay middleware client | Ẩn bằng CSS không phải paywall |
+| `BR-GAT-04` | Ownership `active_child_id` kiểm bằng **DB query**, không tin cookie | `BR-ACT-07` |
+| `BR-GAT-07` | Bỏ token/cookie ở client **không mở thêm gì** | |
 ```
 
 **Sau**
@@ -437,8 +439,8 @@ test đang có.
 
 | Ca âm | Đầu vào | Kỳ vọng |
 |---|---|---|
-| C14 bắt được ký hiệu | Một dòng văn xuôi chứa `❌` | Báo lỗi, đúng số dòng |
-| C14 không bắt nhầm trong khối mã | `❌` nằm giữa cặp ba dấu backtick | Im lặng |
+| C14 bắt được ký hiệu | Một dòng văn xuôi chứa `Cấm` | Báo lỗi, đúng số dòng |
+| C14 không bắt nhầm trong khối mã | `Cấm` nằm giữa cặp ba dấu backtick | Im lặng |
 | C14 sạch thì xanh | Văn bản chỉ có chữ | Không báo gì |
 | C15 bắt được tên trần | `` `access-ladder.md` `` không có liên kết | Báo lỗi, gợi ý đường dẫn đúng |
 | C15 chấp nhận liên kết đúng | Cùng tên đó viết dưới dạng liên kết markdown, đường dẫn resolve được | Im lặng |

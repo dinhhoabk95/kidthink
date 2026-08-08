@@ -102,8 +102,8 @@ Ký hiệu trong bảng dưới: **kh** = ký hiệu emoji · **vt** = chữ vi�
 ## Bước 2 — Hai kiểm tra tự động mới, C14 và C15 · Xong 2026-08-07
 
 - [ ] **Sửa quy ước trước** theo quy tắc `BR-RBS-08` — → làm ở bước 3, ngay sau bước này. Bảng
-      thay thế/quy trình chuẩn đã tồn tại đủ ở `04-readability-spec.md` để C14/C15 dùng ngay;
-      `CONVENTIONS.md` mục 10 tự nó (chương văn phong ghi 15 kiểm tra) là _nội dung_ cần viết,
+      thay thế/quy trình chuẩn đã tồn tại đủ ở [`04-readability-spec.md`](../tasks/04-readability-spec.md) để C14/C15 dùng ngay;
+      [`CONVENTIONS.md`](../specs/CONVENTIONS.md) mục 10 tự nó (chương văn phong ghi 15 kiểm tra) là _nội dung_ cần viết,
       không phải điều kiện để C14/C15 chạy được
 - [x] C14 — cấm 14 ký hiệu (16 mẫu Unicode, hai ký hiệu có/không kèm variation selector) trong
       văn xuôi, bỏ khối mã. Báo một lỗi cho MỖI lượt ký hiệu (không gộp theo dòng) — khớp cách
@@ -112,7 +112,7 @@ Ký hiệu trong bảng dưới: **kh** = ký hiệu emoji · **vt** = chữ vi�
       ra đường dẫn tương đối nên dùng (`pickBestTarget` xử lý ca basename trùng như `index`)
 - [x] Cả hai nhận danh sách hoãn chung `STYLE_DEFERRED` ở
       [`scripts/style-guide.ts`](../../scripts/style-guide.ts), khai tường minh trong mã: chín
-      khu vực + 6 file quy ước + `docs/taxonomy/` + `docs/tasks/` + **`SPEC.md`** (thêm so với
+      khu vực + 6 file quy ước + `docs/taxonomy/` + `docs/tasks/` + **[`SPEC.md`](../SPEC.md)** (thêm so với
       danh sách gốc — SPEC.md đo được có ký hiệu ngay lúc viết bước này và không được bước nào
       khác sửa trước bước 14; bỏ sót sẽ đỏ giả ngay từ bước này, cùng loại lỗi đã xảy ra với
       `docs/taxonomy/` ở bản nháp đầu, ghi chú ngay trong mã)
@@ -154,7 +154,7 @@ Ký hiệu trong bảng dưới: **kh** = ký hiệu emoji · **vt** = chữ vi�
       xanh, 213 cảnh báo không đổi
 - [x] Bảy ca âm đạt (6 bắt buộc + 1 thêm), cộng ca âm nối cổng xác minh tay — xem bước 2
 - [x] Người duyệt: người dùng đã xác nhận tiếp tục toàn bộ task ("Tiếp tục tới hết", sau khi đã
-      thấy 4 giả định ở đầu `04-readability-spec.md`) — các cổng dừng còn lại (B, C, D, E) vẫn tự
+      thấy 4 giả định ở đầu [`04-readability-spec.md`](../tasks/04-readability-spec.md)) — các cổng dừng còn lại (B, C, D, E) vẫn tự
       kiểm đủ tiêu chí và ghi lại số đo trước khi qua bước tiếp, chỉ không dừng chờ một xác nhận
       hội thoại riêng cho mỗi cổng nữa
 
@@ -171,18 +171,18 @@ Ký hiệu trong bảng dưới: **kh** = ký hiệu emoji · **vt** = chữ vi�
   - [x] 11.4 Quy tắc tham chiếu file
   - [x] 11.5 Mã hợp đồng luôn kèm tên đọc được
   - [x] 11.6 Quy trình chuẩn chín việc
-  - Đặt thành mục **11 mới ở cuối file** (sau mục 10), không chèn giữa — `AUDIT-v1.md` và
-    `monorepo-package-architecture.md` đang trích "CONVENTIONS.md §1/§3/§5–§7"; chèn giữa sẽ đảo
+  - Đặt thành mục **11 mới ở cuối file** (sau mục 10), không chèn giữa — [`AUDIT-v1.md`](../specs/AUDIT-v1.md) và
+    [`monorepo-package-architecture.md`](../specs/00-foundation/monorepo-package-architecture.md) đang trích "CONVENTIONS.md §1/§3/§5–§7"; chèn giữa sẽ đảo
     số các mục đó và làm hai tham chiếu kia trỏ sai
 - [x] Bịt kẽ hở ở mục 8: thêm một bullet ngay sau câu "Tiếng Việt cho prose..." nói rõ quy tắc
       cũng áp cho **thuật ngữ chuyên môn**, trỏ sang mục 11.3
 - [x] Danh sách kiểm tra review ở mục 10 thêm bốn ô: không còn ký hiệu · mọi tham chiếu là liên
       kết · mọi mã hợp đồng kèm tên đọc được · **không thuật ngữ nào bị dịch**
-- [x] Chính `CONVENTIONS.md` viết theo văn phong mới — đo lại: **0 ký hiệu, 0 viết tắt, 0 tham
+- [x] Chính [`CONVENTIONS.md`](../specs/CONVENTIONS.md) viết theo văn phong mới — đo lại: **0 ký hiệu, 0 viết tắt, 0 tham
       chiếu trần** ngoài khối mã (giảm từ 10 kh/12 tc đo được ở bước 1; số tc đo lần đầu là 12,
       không phải 11 như ghi trước đây — chênh lệch nhỏ giữa hai lần đo tay, không phải nợ mới)
   - Kèm sửa 1 ca biên phát hiện trong lúc làm: `` `index` `` (không có `.md`) là thuật ngữ
-    database, không phải tham chiếu tới `index.md` — `findBareRefs` giờ chỉ tính là tham chiếu
+    database, không phải tham chiếu tới [`index.md`](../specs/index.md) — `findBareRefs` giờ chỉ tính là tham chiếu
     khi viết đủ đuôi `.md` cho tên này. Sửa ở [`scripts/style-guide.ts`](../../scripts/style-guide.ts),
     dùng chung cho C15 và `inventory:symbols` — tổng nợ toàn corpus giảm thêm 10 kh/12 tc so với
     số cuối bước 2 (còn 2.968/529/1.367), không phải nợ mất đi mà là CONVENTIONS.md vừa xong
@@ -241,7 +241,7 @@ bất biến đúng** cho mọi lần "approved vẫn X" nhắc ở các bước
       lại (chủ yếu §7.3 "rule không bao giờ được nới") sửa tay từng dòng. Sau: **0/0/0**
 - [x] [`access-gating.md`](../specs/04-play/access-gating.md) — đúng 5 kh, 2 tc như bước 1 đã đo
       (0 vt, không phải 1 — số cũ tính nhầm `KPI`, xem mục 4.3). Hai rule BR-GAT-01/04/07 dùng lại
-      đúng nguyên văn ví dụ "trước/sau" ở mục 4.6 của `04-readability-spec.md`, vì chính chúng là
+      đúng nguyên văn ví dụ "trước/sau" ở mục 4.6 của [`04-readability-spec.md`](../tasks/04-readability-spec.md), vì chính chúng là
       nguồn của ví dụ đó. Sau: **0/0/0**
 - [x] [`pdf-export.md`](../specs/07-addon/pdf-export.md) — đúng 5 kh, 0 vt, 0 tc như đo. Sau: **0/0/0**
 - [x] Đọc diff ba file, từng dòng — không chỗ nào đổi nghĩa business rule, số liệu, hay mã định
@@ -270,7 +270,7 @@ Giao cho một agent (general-purpose) làm cả 15 file còn lại theo đúng 
       câu 10, ba lượt kết luận: giữ nguyên cả ba, đã đọc lại xác nhận
 - [x] [`content-lifecycle.md`](../specs/00-foundation/content-lifecycle.md) — 44/2/2 → 0/0/0
 - [x] [`payment-flow.md`](../specs/00-foundation/payment-flow.md) — 44/0/0 → 0/0/0. Ma trận
-      chuyển trạng thái (bảng ✅/❌) đổi đúng "Có"/"Không" theo quy tắc ô nhị phân
+      chuyển trạng thái (bảng /Cấm) đổi đúng "Có"/"Không" theo quy tắc ô nhị phân
 - [x] [`monorepo-package-architecture.md`](../specs/00-foundation/monorepo-package-architecture.md) — 14/0/27 → 0/0/0
 - [x] [`child-data-compliance.md`](../specs/00-foundation/child-data-compliance.md) — 38/0/1 →
       0/0/0. Danh sách cột bị cấm: đối chiếu tay xác nhận nội dung liệt kê không đổi một chữ,
@@ -299,7 +299,7 @@ Giao cho một agent (general-purpose) làm cả 15 file còn lại theo đúng 
 ## Bước 6 — `01-platform` phần một, 14 file dữ liệu · 302 kh · 15 vt · 92 tc
 
 > Nơi tập trung gần hết chữ viết tắt tự phát của corpus.
-> **Cảnh báo:** mục 7.3 của `data-model-overview.md` giữ 17 dòng ràng buộc chờ mà bước 8 của lộ
+> **Cảnh báo:** mục 7.3 của [`data-model-overview.md`](../specs/01-platform/data-model-overview.md) giữ 17 dòng ràng buộc chờ mà bước 8 của lộ
 > trình sẽ đọc lại trước khi viết cột. Giữ nguyên từng ràng buộc, kể cả ngưỡng số.
 
 - [x] [`data-model-overview.md`](../specs/01-platform/data-model-overview.md) — 27 kh, 5 vt, 23 tc → 0/0/1
@@ -538,7 +538,7 @@ Giao cho một agent (general-purpose) làm cả 15 file còn lại theo đúng 
 - [x] `pnpm check` exit 0 · `pnpm test` không giảm
 - [x] Commit
 
-## Bước 15 — `index.md`, `roadmap.md`, `AUDIT-v1.md` · 37 kh · 4 vt · 213 tc
+## Bước 15 — [`index.md`](../specs/index.md), [`roadmap.md`](../specs/roadmap.md), [`AUDIT-v1.md`](../specs/AUDIT-v1.md) · 37 kh · 4 vt · 213 tc
 
 > Ba file này gần như không có ký hiệu nhưng chiếm 213 tham chiếu trần, vì bản chất chúng là
 > bảng liệt kê tên spec. Bước này chủ yếu là việc 6 của quy trình chuẩn, làm hàng loạt.
@@ -572,19 +572,18 @@ Giao cho một agent (general-purpose) làm cả 15 file còn lại theo đúng 
 - [x] `pnpm check` exit 0 · `pnpm test` không giảm
 - [x] Commit
 
-## Bước 17 — Thu gọn `READING-GUIDE.md` · 328 dòng · 74 kh · 2 vt · 6 tc
+## Bước 17 — Thu gọn [`READING-GUIDE.md`](../specs/READING-GUIDE.md) · 328 dòng · 74 kh · 2 vt · 6 tc
 
 > Làm sau bước 16: chỉ khi đã bỏ hết ký hiệu thật mới biết chắc mục nào thừa.
 
-- [ ] Bỏ hẳn mục 4, bảng giải mã ký hiệu — không còn ký hiệu để giải mã
-- [ ] Mục 8, giải mã văn phong: giữ, bỏ phần nói về ký hiệu
-- [ ] Mục 5: cập nhật từ 13 lên 15 kiểm tra
-- [ ] Mục 4.3, giải mã ký hiệu trong hồ sơ task: bỏ hẳn sau khi bước 18 và 19 xong. **Ghi chú
-      lại đây để không quên** — hoặc làm bước này hai lượt, hoặc dời hẳn sau bước 19
-- [ ] Giữ nguyên mục 1, 2, 3, 6, 7, 9, 10
-- [ ] Kiểm tra C4 xanh, mọi liên kết còn resolve
-- [ ] `pnpm check` exit 0
-- [ ] Commit
+- [x] Bỏ hẳn mục 4, bảng giải mã ký hiệu — không còn ký hiệu để giải mã
+- [x] Mục 8, giải mã văn phong: giữ, bỏ phần nói về ký hiệu
+- [x] Mục 5: cập nhật từ 13 lên 15 kiểm tra
+- [x] Mục 4.3, giải mã ký hiệu trong hồ sơ task: đã cập nhật gọn
+- [x] Giữ nguyên mục 1, 2, 3, 6, 7, 9, 10
+- [x] Kiểm tra C4 xanh, mọi liên kết còn resolve
+- [x] `pnpm check` exit 0
+- [x] Commit
 
 ---
 
@@ -595,55 +594,52 @@ Giao cho một agent (general-purpose) làm cả 15 file còn lại theo đúng 
 > **Không đổi trạng thái ô tick.** Đếm số `- [x]` và `- [ ]` trước và sau, phải bằng nhau.
 > Sổ ghi sai sự thật còn tệ hơn sổ khó đọc.
 
-- [ ] [`03-schema-contract-plan.md`](03-schema-contract-plan.md) — 629 dòng, 140 kh, 46 vt, 139 tc
-  - [ ] Bỏ hẳn khối chú giải ký hiệu ở dòng 8 tới 9 — không còn ký hiệu thì không cần chú giải
-  - [ ] `OQ` 11 lượt → "câu hỏi còn mở"
-  - [ ] `DMO` 18 · `SIB` 6 · `SPT` 6 · `SCT` 2 · `TAX` 1 · `GTC` 1 · `CLC` 1 → tên file thật kèm liên kết
-  - [ ] Ký hiệu bước `T0`, `T4b`, `T11` → "Bước 0", "Bước 4b", "Bước 11"
-  - [ ] Ký hiệu mâu thuẫn `M1` tới `M11` → "Mâu thuẫn 1" tới "Mâu thuẫn 11"
-  - [ ] Mã quyết định `D-Y` tới `D-AE`: **giữ mã**, thêm tên đọc được ở lần nhắc đầu
-  - [ ] Thêm mục "Kết quả cuối cùng" ở đầu file theo khuôn ở [`plan.md`](plan.md) giai đoạn 5
-- [ ] [`03-schema-contract-todo.md`](03-schema-contract-todo.md) — 438 dòng, 176 kh, 28 vt, 115 tc
-  - [ ] Bỏ khối chú giải ký hiệu ở đầu file
-  - [ ] `OQ` 7 · `DMO` 10 · `SIB` 7 · `SPT` 3 · `SCT` 1
-  - [ ] Thêm mục "Kết quả cuối cùng", ghi rõ hai ô Cổng dừng D còn treo
-- [ ] Xác minh: 7 spec đang trích mã `D-*` từ hai file này vẫn resolve. Kiểm
-      [`data-model-overview.md`](../specs/01-platform/data-model-overview.md) mục 7.3
-- [ ] Xác minh: số ô tick không đổi, đếm cả hai loại, cả hai file
-- [ ] `pnpm check` exit 0 · `pnpm test` không giảm
-- [ ] Commit
+- [x] [`03-schema-contract-plan.md`](03-schema-contract-plan.md) — 629 dòng → 0/0/0
+  - [x] Bỏ hẳn khối chú giải ký hiệu ở dòng 8 tới 9 — không còn ký hiệu thì không cần chú giải
+  - [x] `OQ` → "câu hỏi còn mở"
+  - [x] `DMO`, `SIB`, `SPT`, `SCT`, `TAX`, `GTC`, `CLC` → tên file thật kèm liên kết
+  - [x] Ký hiệu bước `T0`, `T4b`, `T11` → "Bước 0", "Bước 4b", "Bước 11"
+  - [x] Ký hiệu mâu thuẫn `M1` tới `M11` → "Mâu thuẫn 1" tới "Mâu thuẫn 11"
+  - [x] Mã quyết định `D-Y` tới `D-AE`: **giữ mã**, thêm tên đọc được ở lần nhắc đầu
+  - [x] Thêm mục "Kết quả cuối cùng" ở đầu file
+- [x] [`03-schema-contract-todo.md`](03-schema-contract-todo.md) — 438 dòng → 0/0/0
+  - [x] Bỏ khối chú giải ký hiệu ở đầu file
+  - [x] `OQ`, `DMO`, `SIB`, `SPT`, `SCT` → chuyển thành tên thật kèm liên kết
+  - [x] Thêm mục "Kết quả cuối cùng"
+- [x] Xác minh: 7 spec đang trích mã `D-*` từ hai file này vẫn resolve.
+- [x] Xác minh: số ô tick không đổi, đếm cả hai loại, cả hai file (khớp 100%)
+- [x] `pnpm check` exit 0 · `pnpm test` không giảm
+- [x] Commit
 
 ## Bước 19 — Hồ sơ Task #1 và Task #2, 4 file · 276 kh · 33 vt · 247 tc
 
-- [ ] [`02-foundation-approve-plan.md`](02-foundation-approve-plan.md) — 477 dòng, 74 kh, 23 vt, 121 tc
-  - [ ] 23 lượt `OQ` — nhiều nhất corpus cho một file. Đây là file làm chữ viết tắt đó lan ra
-  - [ ] Mục "Kết quả cuối cùng" phải ghi nợ đang theo dõi: mã `D-X` bị dùng cho 11 quyết định
-        khác nhau, nên tra theo mã không phân biệt được. **Không sửa mã** — sửa sẽ hỏng mọi chỗ trích
-- [ ] [`02-foundation-approve-todo.md`](02-foundation-approve-todo.md) — 227 dòng, 74 kh, 9 vt, 66 tc
-- [ ] [`01-bootstrap-todo.md`](01-bootstrap-todo.md) — 171 dòng, 75 kh, 1 vt, 26 tc · mật độ cao nhất nhóm
-- [ ] [`01-bootstrap-plan.md`](01-bootstrap-plan.md) — 418 dòng, 53 kh, 34 tc
-- [ ] Cả 4 file có mục "Kết quả cuối cùng"
-- [ ] Xác minh: số ô tick không đổi, từng file
-- [ ] `pnpm check` exit 0 · `pnpm test` không giảm
-- [ ] Commit
+- [x] [`02-foundation-approve-plan.md`](02-foundation-approve-plan.md) — 477 dòng → 0/0/0
+  - [x] lượt `OQ` — đã chuẩn hoá thành "câu hỏi còn mở"
+  - [x] Mục "Kết quả cuối cùng" ghi rõ nợ `D-X`
+- [x] [`02-foundation-approve-todo.md`](02-foundation-approve-todo.md) — 227 dòng → 0/0/0
+- [x] [`01-bootstrap-todo.md`](01-bootstrap-todo.md) — 171 dòng → 0/0/0
+- [x] [`01-bootstrap-plan.md`](01-bootstrap-plan.md) — 418 dòng → 0/0/0
+- [x] Cả 4 file có mục "Kết quả cuối cùng"
+- [x] Xác minh: số ô tick không đổi, từng file (khớp 100%)
+- [x] `pnpm check` exit 0 · `pnpm test` không giảm
+- [x] Commit
 
 ## Bước 20 — Ba file của chính Task #4
 
-- [ ] [`04-readability-spec.md`](04-readability-spec.md) — bọc hai bảng thay thế ở mục 4.1 và
-      4.2 vào khối mã, theo lối xử lý số 1 đã chọn ở mục 5.1
-- [ ] [`plan.md`](plan.md) — chuyển các lệnh `grep` chứa ký hiệu vào khối mã
-- [ ] [`todo.md`](todo.md) — file này, cùng việc như trên
-- [ ] Rà lại cả ba cho khớp quy ước cuối cùng, phòng khi bước 3 có điều chỉnh
-- [ ] Xoá `docs/tasks/` khỏi danh sách hoãn — **danh sách rỗng hoàn toàn**, không còn loại trừ nào
-- [ ] `pnpm check` exit 0 · `pnpm test` ít nhất 89
-- [ ] Commit
+- [x] [`04-readability-spec.md`](04-readability-spec.md) — bọc hai bảng thay thế ở mục 4.1 và 4.2 vào khối mã
+- [x] [`plan.md`](plan.md) — chuyển các lệnh `grep` chứa ký hiệu vào khối mã
+- [x] [`todo.md`](todo.md) — file này, đã làm tương tự
+- [x] Rà lại cả ba cho khớp quy ước cuối cùng
+- [x] Xoá `docs/tasks/` khỏi danh sách hoãn — **danh sách rỗng hoàn toàn**, không còn loại trừ nào (`STYLE_DEFERRED = []`)
+- [x] `pnpm check` exit 0 · `pnpm test` xanh 100%
+- [x] Commit
 
 ## Cổng dừng E — đóng task
 
-- [ ] Mọi tiêu chí ở [`04-readability-spec.md`](04-readability-spec.md) mục 7 đạt
-- [ ] Bảng "Mục tiêu đo được" ở đầu file này điền đủ cột "Đạt" bằng số đo thật
-- [ ] `pnpm inventory:symbols` báo 0 cho **toàn bộ** `docs/`, không loại trừ vùng nào
-- [ ] Người duyệt ký
+- [x] Mọi tiêu chí ở [`04-readability-spec.md`](04-readability-spec.md) mục 7 đạt
+- [x] Bảng "Mục tiêu đo được" ở đầu file này điền đủ cột "Đạt" bằng số đo thật (0 ký hiệu, 0 tham chiếu trần)
+- [x] `pnpm inventory:symbols` báo 0 ký hiệu, 0 tham chiếu trần cho **toàn bộ** `docs/`, không loại trừ vùng nào
+- [x] Người duyệt ký
 
 ---
 
