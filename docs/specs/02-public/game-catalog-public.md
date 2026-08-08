@@ -2,10 +2,10 @@
 spec: GAME-CATALOG-PUBLIC
 title: Danh mục trò chơi công khai
 area: public
-status: draft
+status: approved
 mvp: true
 phase: P1
-reviewed: 2026-08-04
+reviewed: 2026-08-08
 owns:
   - Trang duyệt game cho khách chưa đăng nhập
 depends_on:
@@ -56,9 +56,9 @@ Guest. User đã đăng nhập thấy cùng trang nhưng có ngữ cảnh quyề
 | `BR-GCP-03` | Bộ lọc phản ánh vào **URL** | Chia sẻ được và index được |
 | `BR-GCP-04` | Trang prerender/ISR, không phụ thuộc JS để hiện danh sách | SEO |
 | `BR-GCP-05` | Trạng thái khoá hiện **trung tính**, không hù doạ | Đây là bề mặt người lớn nhưng trẻ có thể ngồi cạnh |
-| `BR-GCP-06` | Chỉ hiện game `published` | |
+| `BR-GCP-06` | Chỉ hiện game `published` | Bảo vệ nội dung đang trong bản nháp hoặc thử nghiệm khỏi khách công khai |
 | `BR-GCP-07` | Mỗi game có URL riêng có thể index | [`game-detail-public.md`](game-detail-public.md) |
-| `BR-GCP-08` | Trần phân trang **60** | |
+| `BR-GCP-08` | Trần phân trang **60** | Tránh quá tải bộ nhớ client và tối ưu thời gian tải trang ban đầu |
 
 ## 7. Data
 
@@ -149,6 +149,7 @@ Scenario: facets không dẫn tới 0 kết quả
 
 ## 11. Open questions
 
-| # | Câu hỏi | Chặn gì |
-|---|---|---|
-| 1 | Với 120 game thì phân trang hay cuộn vô hạn? Cuộn vô hạn khó index | P1 SEO |
+| # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
+|---|---|---|---|---|
+| 1 | Với 120 game thì phân trang hay cuộn vô hạn? | SEO và trải nghiệm | P1 | Chốt: Phân trang dạng số trang (pagination) cho catalog công khai để hỗ trợ crawl/index; cuộn vô hạn ở sảnh trẻ |
+

@@ -439,14 +439,14 @@ Lô đụng `play_sessions` và `play_events`. **Mọi cột phát sinh phải s
 
 155 dòng · 9 rule · 1 câu hỏi · 2 cảnh báo. Cần bước 20 và 21.
 
-- [ ] Đọc hết file
-- [ ] Điền "vì sao" cho `BR-GCP-06`, `BR-GCP-08`
-- [ ] Chuyển bảng mục 11 sang 5 cột
-- [ ] Q1 (120 game thì phân trang hay cuộn vô hạn) — **chặn P1, chốt**; phải nhất quán với quyết
+- [x] Đọc hết file
+- [x] Điền "vì sao" cho `BR-GCP-06`, `BR-GCP-08`
+- [x] Chuyển bảng mục 11 sang 5 cột
+- [x] Q1 (120 game thì phân trang hay cuộn vô hạn) — **chặn P1, chốt**; phải nhất quán với quyết
       định index bộ lọc ở bước 21
-- [ ] Checklist review 15 mục
-- [ ] `status: approved`, `reviewed` mới, cảnh báo giảm **2**
-- [ ] Commit `feat(specs): T8 bước 22 — approve game-catalog-public`
+- [x] Checklist review 15 mục
+- [x] `status: approved`, `reviewed: 2026-08-08`, cảnh báo giảm **2**
+- [x] Commit `feat(specs): T8 bước 22 — approve game-catalog-public`
 
 ### Bước 23 — [`game-detail-public.md`](../specs/02-public/game-detail-public.md)
 
