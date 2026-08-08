@@ -2,10 +2,10 @@
 spec: PAYMENT-ORDER-CREATE
 title: Tạo đơn thanh toán
 area: account
-status: draft
+status: approved
 mvp: true
 phase: P2
-reviewed: 2026-08-04
+reviewed: 2026-08-08
 owns:
   - Luồng chọn gói và tạo đơn
   - Hiển thị VietQR và hướng dẫn
@@ -60,7 +60,7 @@ User đã đăng nhập và **đã xác thực email**.
 | `BR-POC-03` | Mỗi trường có **nút sao chép** | Gõ tay số tài khoản là gõ sai |
 | `BR-POC-04` | Một gói chỉ có **một đơn chưa xử lý** tại một thời điểm | Nhiều đơn cùng gói làm đối chiếu rối |
 | `BR-POC-05` | Nói rõ **cộng dồn** khi mua lúc còn hạn | Người dùng cần biết không mất phần đã trả |
-| `BR-POC-06` | Đơn hết hạn sau **48 giờ** không nộp chứng từ | |
+| `BR-POC-06` | Đơn hết hạn sau **48 giờ** không nộp chứng từ | Giải phóng đơn chờ và tránh tồn đọng đơn ảo quá thời gian xử lý |
 | `BR-POC-07` | Màn hình nói rõ **duyệt tay** và thời gian dự kiến | Kỳ vọng sai tạo ca hỗ trợ |
 | `BR-POC-08` | Cấm — **NEVER hiện luồng này trên bề mặt trẻ** | `BR-PEN-04` |
 
@@ -161,7 +161,7 @@ Scenario: chưa xác thực email thì chặn
 
 ## 11. Open questions
 
-| # | Câu hỏi | Chặn gì |
-|---|---|---|
-| 1 | Có hỗ trợ mã giảm giá ở MVP không? | P2 |
-| 2 | Thời gian duyệt cam kết là bao lâu? Con số này lên màn hình nên phải giữ được | SLA vận hành |
+| # | Câu hỏi | Chặn phase | Đề xuất chốt | Chủ |
+|---|---|---|---|---|
+| 1 | Có hỗ trợ mã giảm giá ở MVP không? | P2 | Không ở MVP — xem [`package-catalog.md`](../00-foundation/package-catalog.md) (chỉ có 2 SKU chính, chưa có hạ tầng discount) | người quyết |
+| 2 | Thời gian duyệt cam kết là bao lâu? Con số này lên màn hình nên phải giữ được | P2 | 12 giờ làm việc (kèm `SOFT_UNLOCK_DAYS = 3` cho phép dùng tạm ngay); trỏ sang [`payment-proof-upload.md`](payment-proof-upload.md) Q1 | người quyết |

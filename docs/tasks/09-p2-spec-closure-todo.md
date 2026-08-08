@@ -131,13 +131,13 @@ entitlement-grant · subscription-view · package-catalog-admin (độc lập)
 
 ### Bước 5 — [`payment-order-create.md`](../specs/03-account/payment-order-create.md)
 
-- [ ] Đọc hết 167 dòng; đọc cạnh [`payment-flow.md`](../specs/00-foundation/payment-flow.md)
+- [x] Đọc hết 167 dòng; đọc cạnh [`payment-flow.md`](../specs/00-foundation/payment-flow.md)
       (máy trạng thái là nguồn sự thật)
-- [ ] Điền "vì sao" cho **1** cảnh báo `C6`
-- [ ] Bảng mục 11 sang 5 cột; Q2 (SLA duyệt) dùng câu trả lời số 3 của Cổng dừng A, ghi `D-*`
-- [ ] Q1 (mã giảm giá ở MVP) — chốt từ [`package-catalog.md`](../specs/00-foundation/package-catalog.md)
+- [x] Điền "vì sao" cho **1** cảnh báo `C6`
+- [x] Bảng mục 11 sang 5 cột; Q2 (SLA duyệt) dùng câu trả lời số 3 của Cổng dừng A, ghi `D-*`
+- [x] Q1 (mã giảm giá ở MVP) — chốt từ [`package-catalog.md`](../specs/00-foundation/package-catalog.md)
       (2 SKU, không có cơ chế giảm giá) hoặc để mở với `Chủ` rõ
-- [ ] `status: approved`; commit `feat(specs): T9 bước 5 — approve payment-order-create`
+- [x] `status: approved`; commit `feat(specs): T9 bước 5 — approve payment-order-create`
 
 ### Bước 6 — [`payment-proof-upload.md`](../specs/03-account/payment-proof-upload.md)
 
