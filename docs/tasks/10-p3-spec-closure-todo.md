@@ -157,12 +157,12 @@ Bước 0 → Đợt 1 (2) → Đợt 2 (4) → Cổng dừng A → Đợt 3 (2)
 
 ### Bước 11 — [`curriculum-builder.md`](../specs/06-admin/curriculum-builder.md)
 
-- [ ] Đọc hết 176 dòng
-- [ ] Điền "vì sao" cho `BR-CBD-03`, `BR-CBD-08`
-- [ ] Q1 (ghim version lesson) — hàng **đã đóng**, trỏ `D-AE`
-- [ ] Q2 (42 tuần / 126 buổi) — **giống nguyên văn** hàng ở Bước 7, cùng `Chủ`
-- [ ] Bảng mục 11 sang 5 cột; `status: approved`
-- [ ] Commit `feat(specs): T10 bước 11 — approve curriculum-builder`
+- [x] Đọc hết 176 dòng
+- [x] Điền "vì sao" cho `BR-CBD-03`, `BR-CBD-08`
+- [x] Q1 (ghim version lesson) — trỏ [`content-versioning.md`](../specs/00-foundation/content-versioning.md) Q2 (`D-VER-02`); `Chủ: Studio UI`
+- [x] Q2 (42 tuần / 126 buổi) — **giống nguyên văn** hàng ở Bước 7 ([`curriculum-model.md`](../specs/05-content/curriculum-model.md)), cùng `Chủ: người quyết`
+- [x] Bảng mục 11 sang 5 cột; `status: approved`
+- [x] Commit `feat(specs): T10 bước 11 — approve curriculum-builder`
 
 ---
 

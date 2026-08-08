@@ -2,10 +2,10 @@
 spec: CURRICULUM-BUILDER
 title: Dựng chương trình học
 area: admin
-status: draft
+status: approved
 mvp: true
 phase: P3
-reviewed: 2026-08-04
+reviewed: 2026-08-08
 owns:
   - Luồng dựng và sắp xếp curriculum
   - Ràng buộc cấu trúc chương trình
@@ -58,12 +58,12 @@ Readiness — **không biên soạn lại nội dung**. Builder là công cụ �
 |---|---|---|
 | `BR-CBD-01` | Curriculum **tham chiếu** nội dung, không sở hữu | Một lesson xuất hiện trong nhiều curriculum, chỉ tồn tại một bản gốc |
 | `BR-CBD-02` | Cấm — **NEVER publish curriculum có tuần rỗng** | Tuần rỗng làm trẻ dừng lộ trình giữa chừng |
-| `BR-CBD-03` | Mọi item phải `published` khi curriculum publish | |
+| `BR-CBD-03` | Mọi item phải `published` khi curriculum publish | Đảm bảo người học không gặp lỗi gián đoạn do trỏ tới nội dung chưa phát hành |
 | `BR-CBD-04` | Mỗi tuần có **≥3 hoạt động** | Dưới đó không đủ cho một tuần |
 | `BR-CBD-05` | Chỉ báo cân bằng competency hiện thường trực | Chương trình lệch về một competency là lỗi sư phạm khó thấy bằng mắt |
 | `BR-CBD-06` | Prerequisite của item được kiểm: skill tiên quyết phải xuất hiện **trước** trong lộ trình | Dạy phép so sánh trước khi dạy đếm là sai thứ tự |
 | `BR-CBD-07` | Cấm — **NEVER gắn hạn thời gian** vào tuần | "Tuần 3" là thứ tự, không phải lịch — `BR-CUR-08` |
-| `BR-CBD-08` | Sửa curriculum đã published → version mới | |
+| `BR-CBD-08` | Sửa curriculum đã published → version mới | Giữ tính ổn định cho trẻ đang theo học bản cũ và bảo toàn lịch sử biên soạn |
 
 ## 7. Data
 
@@ -169,7 +169,7 @@ Scenario: BR-CBD-08 — sửa bản published tạo version mới
 
 ## 11. Open questions
 
-| # | Câu hỏi | Chặn gì |
-|---|---|---|
-| 1 | Curriculum item ghim version của lesson hay lấy bản mới nhất? | [`content-versioning.md`](../00-foundation/content-versioning.md) Q2 |
-| 2 | 42 tuần cần ~126 buổi — với ≥60 lesson MVP thì mỗi lesson dùng lại 2 lần. Chấp nhận được không? | P3 phạm vi |
+| # | Câu hỏi | Chặn phase | Đề xuất chốt | Chủ |
+|---|---|---|---|---|
+| 1 | Curriculum item ghim version của lesson hay lấy bản mới nhất? | P3 | Trỏ sang quyết định `D-VER-02` ở [`content-versioning.md`](../00-foundation/content-versioning.md): ghim version cụ thể ở thời điểm publish curriculum | Studio UI |
+| 2 | 42 tuần cần ~126 buổi — với ≥60 lesson MVP thì mỗi lesson dùng lại 2 lần. Chấp nhận được không? | P3 | Chấp nhận tái sử dụng lesson với biến thể hoặc bối cảnh luyện tập khác nhau theo thiết kế `BR-ACM-06` (đồng bộ với [`curriculum-model.md`](../05-content/curriculum-model.md)) | người quyết |
