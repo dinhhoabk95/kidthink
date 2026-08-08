@@ -2,10 +2,10 @@
 spec: LIVE-PREVIEW
 title: Xem trước bằng engine thật
 area: admin
-status: draft
+status: approved
 mvp: true
 phase: P2
-reviewed: 2026-08-04
+reviewed: 2026-08-08
 owns:
   - Cơ chế preview trong studio
   - Quy tắc hiển thị lỗi preview
@@ -61,7 +61,7 @@ Khung phải của `/studio/levels/{code}/{version}` · `GET /api/managers/level
 | `BR-LPV-01` | Preview dùng **engine thật**, cùng entry point với runtime của trẻ | Preview xấp xỉ để lọt level không chơi được |
 | `BR-LPV-02` | Preview kế thừa **toàn bộ** ràng buộc bề mặt trẻ: sàn touch 64–96px, không `dark:`, không đỏ | Nghĩa là preview **có thể trông quá lớn** trong khung 60% màn hình. Đó là **đúng** |
 | `BR-LPV-03` | Preview trống Cấm — **NEVER im lặng** — luôn nói lý do | Preview trống không giải thích là chỗ tệ nhất |
-| `BR-LPV-04` | Cập nhật khi field đổi, không cần bấm Lưu. Debounce 300ms | |
+| `BR-LPV-04` | Cập nhật khi field đổi, không cần bấm Lưu. Debounce 300ms | Đảm bảo phản hồi xem trước tức thì mà không gây quá tải tài nguyên dựng lại config |
 | `BR-LPV-05` | Phiên preview `is_preview = true`, không ghi mastery, không đếm KPI | `BR-PSL-05` |
 | `BR-LPV-06` | Preview cho chọn **band tuổi** để kiểm sàn touch và scaffolding | Level cho band 3–4 và 5–6 trông rất khác |
 | `BR-LPV-07` | Preview chạy trong **cùng trang**, không popup mới | Mất ngữ cảnh form |
@@ -155,6 +155,6 @@ Scenario: BR-LPV-02 — không dark mode trong preview
 
 ## 11. Open questions
 
-| # | Câu hỏi | Chặn gì |
-|---|---|---|
-| 1 | Có cần preview trên thiết bị thật (QR mở trên tablet) không? Khung desktop không thay được cảm giác chạm | P2 |
+| # | Câu hỏi | Chặn phase | Đề xuất chốt | Chủ |
+|---|---|---|---|---|
+| 1 | Có cần preview trên thiết bị thật (QR mở trên tablet) không? Khung desktop không thay được cảm giác chạm | P2 | Hoãn sang P4 — MVP hỗ trợ xem trước tỉ lệ 100% (960×540px) trực tiếp trên khung studio | người quyết |

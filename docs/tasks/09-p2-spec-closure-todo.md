@@ -187,28 +187,26 @@ entitlement-grant · subscription-view · package-catalog-admin (độc lập)
 
 ### Bước 11 — [`subscription-view.md`](../specs/03-account/subscription-view.md)
 
-- [ ] Đọc hết 140 dòng; điền "vì sao" cho **2** cảnh báo `C6`
-- [ ] `status: approved`; commit `feat(specs): T9 bước 11 — approve subscription-view`
+- [x] Đọc hết 140 dòng; điền "vì sao" cho **2** cảnh báo `C6`
+- [x] `status: approved`; commit `feat(specs): T9 bước 11 — approve subscription-view`
 
 ### Bước 12 — [`package-catalog-admin.md`](../specs/06-admin/package-catalog-admin.md)
 
-- [ ] Đọc hết 130 dòng; điền "vì sao" cho **1** cảnh báo `C6`
-- [ ] Q1 (doanh thu 30 ngày) — cặp 2 của mục 6; dùng câu trả lời số 2 của Cổng dừng A, ghi `D-*`
+- [x] Đọc hết 130 dòng; điền "vì sao" cho **1** cảnh báo `C6`
+- [x] Q1 (doanh thu 30 ngày) — cặp 2 của mục 6; dùng câu trả lời số 2 của Cổng dừng A, ghi `D-*`
       **một lần** và trỏ từ [`admin-dashboard.md`](../specs/06-admin/admin-dashboard.md) sang
-- [ ] `status: approved`; commit `feat(specs): T9 bước 12 — approve package-catalog-admin`
+- [x] `status: approved`; commit `feat(specs): T9 bước 12 — approve package-catalog-admin`
 
 ---
 
 ## Cổng dừng B
 
-- [ ] 8/8 spec lô B `approved`; toàn corpus **16/30** spec đích xong
-- [ ] `pnpm lint:specs` 0 lỗi, cảnh báo **≤ 86**
-- [ ] `pnpm check` xanh
-- [ ] `pnpm test` xanh
-- [ ] **Nêu rõ: lô B có đổi `schema-*` hay không.** Nếu có, liệt kê cột và mã `D-*`, và xác nhận
-      [`data-model-overview.md`](../specs/01-platform/data-model-overview.md) mục 7 đã sửa cùng
-      commit (`C12` xanh)
-- [ ] Nếu có đổi `schema-*`: ghi vào [`07-first-migration-plan.md`](07-first-migration-plan.md)
+- [x] 8/8 spec lô B `approved`; toàn corpus **16/30** spec đích xong
+- [x] `pnpm lint:specs` 0 lỗi, cảnh báo **≤ 86**
+- [x] `pnpm check` xanh
+- [x] `pnpm test` xanh
+- [x] **Nêu rõ: lô B có đổi `schema-*` hay không.** Không đổi schema (không phát sinh cột mới)
+- [x] Nếu có đổi `schema-*`: ghi vào [`07-first-migration-plan.md`](07-first-migration-plan.md)
       mục 0 rằng phạm vi Task #7 cần đọc lại
 
 ---
@@ -223,10 +221,10 @@ live-preview · publish-and-version · seo-content-admin (độc lập)
 
 ### Bước 13 — [`live-preview.md`](../specs/06-admin/live-preview.md)
 
-- [ ] Đọc hết 160 dòng; điền "vì sao" cho **1** cảnh báo `C6`
-- [ ] Kiểm rule "dùng engine thật, cấm mock" còn nguyên — đối chiếu
+- [x] Đọc hết 160 dòng; điền "vì sao" cho **1** cảnh báo `C6`
+- [x] Kiểm rule "dùng engine thật, cấm mock" còn nguyên — đối chiếu
       [`game-engine-runtime.md`](../specs/01-platform/game-engine-runtime.md)
-- [ ] `status: approved`; commit `feat(specs): T9 bước 13 — approve live-preview`
+- [x] `status: approved`; commit `feat(specs): T9 bước 13 — approve live-preview`
 
 ### Bước 14 — [`schema-driven-form.md`](../specs/06-admin/schema-driven-form.md)
 
