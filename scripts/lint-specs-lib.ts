@@ -12,7 +12,8 @@
  * C4  — link .md nội bộ resolve
  * C5  — mã lỗi SCREAMING_SNAKE trong §8 có trong error-codes.md
  * C6  — BR-* ID không trùng, cột "vì sao" không rỗng
- * C7  — depends_on không chu trình
+ * C7  — depends_on không chu trình (error kể từ Task #6, 2026-08-08 — trước đó
+ *       chỉ warn, và 8 chu trình sống sót lặng lẽ tới lúc đó)
  * C8  — spec approved ⇒ depends_on cũng approved
  * C9  — cấm token: classification, tenant_id, cột role trên users, persona enum
  * C10 — cấm chữ CI / "cổng CI" / "GitHub Actions" (trừ strikethrough history)
@@ -790,7 +791,11 @@ export function checkC7(specs: SpecFile[]) {
         const cycleKey = cycle.slice().sort().join(",");
         if (!reportedCycles.has(cycleKey)) {
           reportedCycles.add(cycleKey);
-          warn(
+          // fail(), not warn(): a cycle means every spec in it can never reach
+          // `approved` (C8 blocks approved-depends-on-draft in both directions).
+          // Task #6 (2026-08-08) found 8 live cycles that sat here silently as
+          // warnings — this is promoted only after that corpus was cleaned to 0.
+          fail(
             specToFile.get(node)?.rel ?? node,
             1,
             "C7",

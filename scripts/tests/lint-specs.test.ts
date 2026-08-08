@@ -102,8 +102,10 @@ describe("checkC7 (dependency cycle detection)", () => {
     return makeSpecFile(`/fake/${id}.md`, `fake/${id}.md`, content);
   }
 
-  // checkC7 reports via warn(), not fail() — a dependency cycle in the spec
-  // corpus is a design smell to flag, not a hard build-breaking error.
+  // checkC7 reports via fail(), not warn() — promoted at the end of Task #6
+  // (2026-08-08) once the corpus reached 0 live cycles. Before that, a cycle
+  // meant every spec in it could never reach `approved` (C8 blocks
+  // approved-depends-on-draft both ways) and it sat there silently.
   //
   // Assert the exact COUNT, not `.some(...)`, so both over- and under-reporting
   // fail. Measured on 2026-08-08 by mutating checkC7:
@@ -118,25 +120,25 @@ describe("checkC7 (dependency cycle detection)", () => {
   it("flags a real cycle (A -> B -> A) exactly once", () => {
     const specs = [spec("A", ["B"]), spec("B", ["A"])];
     checkC7(specs);
-    expect(getWarnings().filter((w) => w.check === "C7")).toHaveLength(1);
+    expect(getViolations().filter((w) => w.check === "C7")).toHaveLength(1);
   });
 
   it("does not flag a valid DAG (A -> B -> C, no cycle)", () => {
     const specs = [spec("A", ["B"]), spec("B", ["C"]), spec("C", [])];
     checkC7(specs);
-    expect(getWarnings()).toHaveLength(0);
+    expect(getViolations()).toHaveLength(0);
   });
 
   it("ignores deps pointing outside the known spec graph (e.g. CONVENTIONS)", () => {
     const specs = [spec("A", ["CONVENTIONS"])];
     checkC7(specs);
-    expect(getWarnings()).toHaveLength(0);
+    expect(getViolations()).toHaveLength(0);
   });
 
   it("flags a longer cycle (A -> B -> C -> A) exactly once", () => {
     const specs = [spec("A", ["B"]), spec("B", ["C"]), spec("C", ["A"])];
     checkC7(specs);
-    expect(getWarnings().filter((w) => w.check === "C7")).toHaveLength(1);
+    expect(getViolations().filter((w) => w.check === "C7")).toHaveLength(1);
   });
 
   // Two independent cycles must both be reported. De-duplication keys on the
@@ -150,7 +152,7 @@ describe("checkC7 (dependency cycle detection)", () => {
       spec("D", ["C"]),
     ];
     checkC7(specs);
-    expect(getWarnings().filter((w) => w.check === "C7")).toHaveLength(2);
+    expect(getViolations().filter((w) => w.check === "C7")).toHaveLength(2);
   });
 
   // A self-edge (A depends_on A) is the degenerate cycle. It is the easiest
@@ -158,7 +160,7 @@ describe("checkC7 (dependency cycle detection)", () => {
   it("flags a self-dependency (A -> A)", () => {
     const specs = [spec("A", ["A"])];
     checkC7(specs);
-    expect(getWarnings().filter((w) => w.check === "C7")).toHaveLength(1);
+    expect(getViolations().filter((w) => w.check === "C7")).toHaveLength(1);
   });
 });
 
