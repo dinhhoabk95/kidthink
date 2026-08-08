@@ -309,11 +309,11 @@ admin-dashboard (độc lập)
 
 ### Bước 21 — [`child-profile-admin.md`](../specs/06-admin/child-profile-admin.md)
 
-- [ ] Đọc hết 163 dòng **cạnh** [`child-data-compliance.md`](../specs/00-foundation/child-data-compliance.md)
-- [ ] Điền "vì sao" cho **1** cảnh báo `C6`
-- [ ] Kiểm ba rule không được nới: đúng 4 trường · cấm trang liệt kê toàn bộ trẻ · cấm tìm kiếm
+- [x] Đọc hết 163 dòng **cạnh** [`child-data-compliance.md`](../specs/00-foundation/child-data-compliance.md)
+- [x] Điền "vì sao" cho **1** cảnh báo `C6`
+- [x] Kiểm ba rule không được nới: đúng 4 trường · cấm trang liệt kê toàn bộ trẻ · cấm tìm kiếm
       trẻ theo tên. Nghị định 13/2023 là lý do, ghi lý do vào cột "vì sao"
-- [ ] `status: approved`; commit `feat(specs): T9 bước 21 — approve child-profile-admin`
+- [x] `status: approved`; commit `feat(specs): T9 bước 21 — approve child-profile-admin`
 
 ### Bước 22 — [`admin-dashboard.md`](../specs/06-admin/admin-dashboard.md)
 

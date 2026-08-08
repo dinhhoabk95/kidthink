@@ -2,10 +2,10 @@
 spec: CHILD-PROFILE-ADMIN
 title: Hồ sơ trẻ trên bề mặt quản trị
 area: admin
-status: draft
+status: approved
 mvp: true
 phase: P2
-reviewed: 2026-08-04
+reviewed: 2026-08-08
 owns:
   - Ranh giới dữ liệu trẻ mà admin thấy được
   - Thao tác vận hành trên hồ sơ trẻ
@@ -56,7 +56,7 @@ Nhóm "Hồ sơ trẻ" trong `/users/{uuid}`. Không có trang độc lập —
 |---|---|---|
 | `BR-CPA-01` | Cấm — **NEVER trang liệt kê toàn bộ trẻ trong hệ thống** | Một danh sách trẻ em là tài sản dữ liệu không có nhu cầu nghiệp vụ nào biện minh được |
 | `BR-CPA-02` | Admin thấy **đúng 4 trường**: `display_name` `age_band` `status` `created_at` | `BR-CDC-14` |
-| `BR-CPA-03` | Cấm — **NEVER telemetry, mastery, lịch sử chơi, hay `birth_year` chính xác** | |
+| `BR-CPA-03` | Cấm — **NEVER telemetry, mastery, lịch sử chơi, hay `birth_year` chính xác** | Tuân thủ các nguyên tắc bảo vệ quyền riêng tư dữ liệu trẻ em theo `BR-CDC-14` và ngăn ngừa nguy cơ khai thác dữ liệu nhạy cảm |
 | `BR-CPA-04` | `content_reviewer` không truy cập | `BR-CDC-13` |
 | `BR-CPA-05` | Mỗi lần xem hồ sơ trẻ ghi `audit_logs` | Truy cập dữ liệu trẻ phải truy được |
 | `BR-CPA-06` | Admin **không sửa** được `display_name`, `avatar_id`, hay bất kỳ trường nào | Đó là dữ liệu của phụ huynh |
@@ -158,6 +158,6 @@ Scenario: BR-CPA-05 — xem được audit
 
 ## 11. Open questions
 
-| # | Câu hỏi | Chặn gì |
-|---|---|---|
-| 1 | Khi hỗ trợ cần đối chiếu một phiên chơi cụ thể thì làm sao, nếu admin không thấy lịch sử? Có thể cần luồng "phụ huynh cấp quyền xem tạm" | Hỗ trợ P2 |
+| # | Câu hỏi | Chặn phase | Đề xuất chốt | Chủ |
+|---|---|---|---|---|
+| 1 | Khi hỗ trợ cần đối chiếu một phiên chơi cụ thể thì làm sao, nếu admin không thấy lịch sử? Có thể cần luồng "phụ huynh cấp quyền xem tạm" | P2 | MVP không hỗ trợ xem phiên chơi của trẻ kể cả khi phụ huynh đồng ý; tính năng cấp quyền tạm thời hoãn sang P4 | người quyết |
