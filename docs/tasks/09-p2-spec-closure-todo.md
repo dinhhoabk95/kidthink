@@ -400,19 +400,19 @@ admin-dashboard (độc lập)
 
 Bảng hiện nêu tên 22 spec; **31** spec mang `phase: P2`. Thiếu 9:
 
-- [ ] [`data-export.md`](../specs/06-admin/data-export.md)
-- [ ] [`feature-flag-service.md`](../specs/01-platform/feature-flag-service.md)
-- [ ] [`feature-flags.md`](../specs/06-admin/feature-flags.md)
-- [ ] [`image-storage.md`](../specs/01-platform/image-storage.md)
-- [ ] [`notification-admin.md`](../specs/06-admin/notification-admin.md)
-- [ ] [`payment-flow.md`](../specs/00-foundation/payment-flow.md)
-- [ ] [`pricing-page.md`](../specs/02-public/pricing-page.md)
-- [ ] [`seo-content-admin.md`](../specs/06-admin/seo-content-admin.md)
-- [ ] [`subscription-view.md`](../specs/03-account/subscription-view.md)
+- [x] [`data-export.md`](../specs/06-admin/data-export.md)
+- [x] [`feature-flag-service.md`](../specs/01-platform/feature-flag-service.md)
+- [x] [`feature-flags.md`](../specs/06-admin/feature-flags.md)
+- [x] [`image-storage.md`](../specs/01-platform/image-storage.md)
+- [x] [`notification-admin.md`](../specs/06-admin/notification-admin.md)
+- [x] [`payment-flow.md`](../specs/00-foundation/payment-flow.md)
+- [x] [`pricing-page.md`](../specs/02-public/pricing-page.md)
+- [x] [`seo-content-admin.md`](../specs/06-admin/seo-content-admin.md)
+- [x] [`subscription-view.md`](../specs/03-account/subscription-view.md)
 
-- [ ] Xếp đúng vị trí theo `depends_on`, **không nối vào cuối bảng**
-- [ ] Kiểm lại: số spec trong bảng P2 = số spec có `phase: P2` = **31**
-- [ ] Commit `docs(specs): T9 bước 31 — bảng P2 của roadmap đủ 31 spec`
+- [x] Xếp đúng vị trí theo `depends_on`, **không nối vào cuối bảng**
+- [x] Kiểm lại: số spec trong bảng P2 = số spec có `phase: P2` = **31**
+- [x] Commit `docs(specs): T9 bước 31 — bảng P2 của roadmap đủ 31 spec`
 
 ---
 

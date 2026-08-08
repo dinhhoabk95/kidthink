@@ -106,16 +106,17 @@ image-upload · emoji-picker ──→ game-level-studio
 
 | # | Việc | Spec sở hữu |
 |---|---|---|
-| 1 | Admin auth + shell | [`admin-auth.md`](06-admin/admin-auth.md) · [`admin-dashboard.md`](06-admin/admin-dashboard.md) |
+| 1 | Admin shell | [`admin-dashboard.md`](06-admin/admin-dashboard.md) |
 | 2 | Tra cứu vận hành | [`user-management.md`](06-admin/user-management.md) · [`user-detail.md`](06-admin/user-detail.md) · [`child-profile-admin.md`](06-admin/child-profile-admin.md) |
-| 3 | Luồng tiền, hai đầu | [`payment-order-create.md`](03-account/payment-order-create.md) → [`payment-proof-upload.md`](03-account/payment-proof-upload.md) → [`payment-queue.md`](06-admin/payment-queue.md) → [`payment-approval.md`](06-admin/payment-approval.md) |
-| 4 | Cấp quyền tay + xem catalog | [`entitlement-grant.md`](06-admin/entitlement-grant.md) · [`package-catalog-admin.md`](06-admin/package-catalog-admin.md) |
+| 3 | Luồng tiền, hai đầu | [`payment-flow.md`](00-foundation/payment-flow.md) · [`pricing-page.md`](02-public/pricing-page.md) · [`payment-order-create.md`](03-account/payment-order-create.md) → [`payment-proof-upload.md`](03-account/payment-proof-upload.md) → [`payment-queue.md`](06-admin/payment-queue.md) → [`payment-approval.md`](06-admin/payment-approval.md) |
+| 4 | Cấp quyền tay + xem catalog | [`entitlement-grant.md`](06-admin/entitlement-grant.md) · [`package-catalog-admin.md`](06-admin/package-catalog-admin.md) · [`subscription-view.md`](03-account/subscription-view.md) |
 | 5 | Studio: form sinh từ schema | [`schema-driven-form.md`](06-admin/schema-driven-form.md) |
 | 6 | Studio: soạn game level | [`game-level-studio.md`](06-admin/game-level-studio.md) · [`live-preview.md`](06-admin/live-preview.md) |
-| 7 | Asset | [`image-upload.md`](06-admin/image-upload.md) · [`emoji-picker.md`](06-admin/emoji-picker.md) · [`asset-usage-tracking.md`](06-admin/asset-usage-tracking.md) |
-| 8 | Duyệt và phát hành | [`content-review-queue.md`](06-admin/content-review-queue.md) · [`publish-and-version.md`](06-admin/publish-and-version.md) |
-| 9 | Nhật ký | [`audit-log-viewer.md`](06-admin/audit-log-viewer.md) · [`error-log-viewer.md`](06-admin/error-log-viewer.md) · [`system-activity.md`](06-admin/system-activity.md) |
-| 10 | MFA tuỳ chọn cho User | [`mfa.md`](03-account/mfa.md) |
+| 7 | Asset & Storage | [`image-storage.md`](01-platform/image-storage.md) · [`image-upload.md`](06-admin/image-upload.md) · [`emoji-picker.md`](06-admin/emoji-picker.md) · [`asset-usage-tracking.md`](06-admin/asset-usage-tracking.md) |
+| 8 | Duyệt và phát hành | [`content-review-queue.md`](06-admin/content-review-queue.md) · [`publish-and-version.md`](06-admin/publish-and-version.md) · [`seo-content-admin.md`](06-admin/seo-content-admin.md) |
+| 9 | Cờ & Quản trị dữ liệu | [`feature-flag-service.md`](01-platform/feature-flag-service.md) · [`feature-flags.md`](06-admin/feature-flags.md) · [`data-export.md`](06-admin/data-export.md) · [`notification-admin.md`](06-admin/notification-admin.md) |
+| 10 | Nhật ký | [`audit-log-viewer.md`](06-admin/audit-log-viewer.md) · [`error-log-viewer.md`](06-admin/error-log-viewer.md) · [`system-activity.md`](06-admin/system-activity.md) |
+| 11 | MFA tuỳ chọn cho User | [`mfa.md`](03-account/mfa.md) |
 
 ## P3 — Curriculum
 
