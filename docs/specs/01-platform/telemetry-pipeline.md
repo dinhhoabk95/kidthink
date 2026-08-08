@@ -179,8 +179,8 @@ Scenario: phiên bỏ dở được đóng
 
 ## 11. Open questions
 
-| # | Câu hỏi | Chặn gì | Chủ |
-|---|---|---|---|
-| ~~1~~ | ~~Partition `telemetry_events` theo tháng ngay từ đầu?~~ **Đóng — quyết định sống ở [`event-catalog.md`](../00-foundation/event-catalog.md) §11 Q2 (`D-Z`, 2026-08-07)**: không partition ở P0, giữ nguyên PK `(session_uuid, seq)` vì khoá partition sẽ phải nằm trong PK và phá `BR-EVT-03` (idempotent theo cặp đó). File này viết 2026-08-04, trước quyết định — câu hỏi lặp lại ở đây đã lỗi thời | — | đã đóng, xem [`event-catalog.md`](../00-foundation/event-catalog.md) §11 Q2 |
-| 2 | Retention 90 ngày đủ để tinh chỉnh adaptive bằng replay không? | [`adaptive-engine.md`](adaptive-engine.md) | hoãn — P3, engine chưa tồn tại |
-| 3 | Có cần bảng rollup theo tuần cho báo cáo xu hướng không? | [`advanced-report.md`](../03-account/advanced-report.md) | hoãn — P3 |
+| # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
+|---|---|---|---|---|
+| ~~1~~ | ~~Partition `telemetry_events` theo tháng ngay từ đầu?~~ **Đóng — quyết định sống ở [`event-catalog.md`](../00-foundation/event-catalog.md) §11 Q2 (`D-Z`, 2026-08-07)**: không partition ở P0, giữ nguyên PK `(session_uuid, seq)` vì khoá partition sẽ phải nằm trong PK và phá `BR-EVT-03` (idempotent theo cặp đó). File này viết 2026-08-04, trước quyết định — câu hỏi lặp lại ở đây đã lỗi thời | — | P0 | D-Z |
+| 2 | Retention 90 ngày đủ để tinh chỉnh adaptive bằng replay không? | [`adaptive-engine.md`](adaptive-engine.md) | P3 | hoãn — P3, engine chưa tồn tại |
+| 3 | Có cần bảng rollup theo tuần cho báo cáo xu hướng không? | [`advanced-report.md`](../03-account/advanced-report.md) | P3 | hoãn — P3 |
