@@ -140,8 +140,8 @@ Thứ tự bắt buộc, không đảo:
 - [ ] [`CONVENTIONS.md`](../specs/CONVENTIONS.md): thêm mục bảng mục 11 phải 5 cột + bộ giá trị
       `Chủ` (kế hoạch mục 3)
 - [ ] [`CORPUS-CLOSURE.md`](CORPUS-CLOSURE.md): tick bốn điều kiện "xong", ghi số đo cuối
-- [ ] [`README.md`](../../README.md) hoặc [`AGENTS.md`](../../.agents/AGENTS.md): trạng thái corpus
-      từ "135 spec, một outcome một file" sang "130 spec `approved`, cổng lint tự giữ"
+- [ ] `.agents/AGENTS.md` ở gốc workspace (ngoài `kidthink/`): sửa bảng "Trạng thái repo" từ
+      "135 spec, một outcome một file" sang "130 spec `approved`, cổng lint tự giữ"
 - [ ] Commit `docs: T12 — đóng chuỗi task corpus`
 
 ## Cổng dừng cuối

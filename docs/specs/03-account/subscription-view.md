@@ -2,10 +2,10 @@
 spec: SUBSCRIPTION-VIEW
 title: Xem gói và lịch sử thanh toán
 area: account
-status: draft
+status: approved
 mvp: true
 phase: P2
-reviewed: 2026-08-04
+reviewed: 2026-08-08
 owns:
   - Màn hình gói hiện tại và lịch sử giao dịch
 depends_on:
@@ -55,9 +55,9 @@ User đã đăng nhập.
 | `BR-SBV-01` | Quyền lợi sinh từ **`package_entitlements`**, không viết tay | `BR-PKG-06` |
 | `BR-SBV-02` | Nói rõ **dữ liệu không mất** khi hết hạn | Lo mất dữ liệu là rào cản gia hạn lớn |
 | `BR-SBV-03` | Lịch sử hiện **mọi đơn**, kể cả bị từ chối | Minh bạch |
-| `BR-SBV-04` | Cấm — **NEVER hiện `admin_note` nội bộ** — chỉ lý do rút gọn | |
+| `BR-SBV-04` | Cấm — **NEVER hiện `admin_note` nội bộ** — chỉ lý do rút gọn | Ghi chú nội bộ chứa thông tin xử lý của Manager, không dành cho người dùng cuối |
 | `BR-SBV-05` | Nhiều gói → **hợp** quyền lợi, không ghi đè | `BR-ENT-02` |
-| `BR-SBV-06` | Ownership: chỉ thấy đơn của chính mình | |
+| `BR-SBV-06` | Ownership: chỉ thấy đơn của chính mình | Bảo vệ quyền riêng tư thông tin tài chính theo `BR-ACT-03` |
 | `BR-SBV-07` | Một CTA nâng cấp | `BR-MDB-07` |
 
 ## 7. Data
@@ -135,6 +135,6 @@ Scenario: soft_unlock hiện rõ trạng thái tạm
 
 ## 11. Open questions
 
-| # | Câu hỏi | Chặn gì |
-|---|---|---|
-| 1 | Có hiện hoá đơn tải về được không? Cần nếu khách yêu cầu chứng từ | P2 |
+| # | Câu hỏi | Chặn phase | Đề xuất chốt | Chủ |
+|---|---|---|---|---|
+| 1 | Có hiện hoá đơn tải về được không? Cần nếu khách yêu cầu chứng từ | P2 | Hoãn sang P4 (xem [`pdf-export.md`](../07-addon/pdf-export.md)) — MVP chỉ hỗ trợ xem lịch sử giao dịch trực tiếp trên màn hình | người quyết |

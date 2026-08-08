@@ -1,0 +1,219 @@
+---
+doc: 10-P3-SPEC-CLOSURE-TODO
+title: Checklist — Task #10: Đóng corpus spec P3 (12 spec)
+---
+
+# Checklist — Task #10: Đóng corpus spec P3 (12 spec)
+
+> Kế hoạch: [`10-p3-spec-closure-plan.md`](10-p3-spec-closure-plan.md). Bản đồ liên task:
+> [`CORPUS-CLOSURE.md`](CORPUS-CLOSURE.md).
+>
+> Mỗi spec một commit. Mã `D-*` lấy bằng lệnh ở bước 0, không lấy từ kế hoạch — Task #9 đang
+> tiêu mã song song.
+>
+> ```
+> export PATH=/Users/macbook/.nvm/versions/node/v24.15.0/bin:$PATH
+> ```
+
+## Thứ tự làm
+
+```
+Bước 0 → Đợt 1 (2) → Đợt 2 (4) → Cổng dừng A → Đợt 3 (2) → Đợt 4 (3) → Cổng dừng B
+→ Đợt 5 (1) → Bước 13 (roadmap) → Bước 14 (đối chiếu tay) → Cổng dừng cuối
+```
+
+## Bước 0 — đo lại trước khi bắt đầu
+
+- [ ] `git status` sạch
+- [ ] `pnpm lint:specs 2>&1 | tail -2` — ghi lại số lỗi và cảnh báo vào đây: ______
+- [ ] `pnpm lint:specs 2>&1 | grep -oE "\[C[0-9]+\]" | sort | uniq -c` — ghi `C6`: ____ `C16`: ____
+- [ ] `grep -rhoE "D-B[A-Z]" docs/specs docs/tasks | sort -u | tail -1` — mã lớn nhất: ____
+- [ ] Đọc [`CONVENTIONS.md`](../specs/CONVENTIONS.md) mục 10 (checklist review spec)
+- [ ] Xác nhận 12 spec đích còn `draft`: `for f in $(grep -rl "^phase: P3" --include="*.md" docs/specs); do grep -q "^status: draft$" $f && echo $f; done | wc -l` ra **12**
+
+---
+
+## Đợt 1 — nền (2 spec)
+
+### Bước 1 — [`adaptive-engine.md`](../specs/01-platform/adaptive-engine.md)
+
+- [ ] Đọc hết 222 dòng
+- [ ] Đọc `packages/db/src/schema/taxonomy.ts` — kiểu cột `strength` thật là gì: ______
+- [ ] Chốt thang `strength` theo cột thật (kế hoạch mục 4.1); ghi `D-*`: ____
+- [ ] Sửa [`taxonomy-service.md`](../specs/01-platform/taxonomy-service.md) mục 11 Q3 sang trạng
+      thái đã đóng, trỏ [`adaptive-engine.md`](../specs/01-platform/adaptive-engine.md) và mã `D-*` vừa ghi
+- [ ] `pnpm lint:specs` ngay sau khi sửa [`taxonomy-service.md`](../specs/01-platform/taxonomy-service.md) — **0 lỗi** (spec `approved` thiếu
+      `Chủ` là `fail`, không phải cảnh báo)
+- [ ] Điền "vì sao" cho `BR-ADP-07` (trỏ `BR-PRG-06`) và `BR-ADP-09` (mặt đối xứng `BR-ADP-05`)
+- [ ] Q3 (chấm tay skill C5) — chốt luồng `assessed_by` theo kế hoạch mục 4.2, hoặc để
+      `Chặn phase: P3` + `Chủ: Studio UI`; ghi `D-*` kể cả khi câu trả lời là hoãn
+- [ ] Bảng mục 11 sang 5 cột
+- [ ] `status: approved`, `reviewed` sang ngày làm
+- [ ] `pnpm lint:specs | grep adaptive-engine` — không còn dòng nào
+- [ ] Commit `feat(specs): T10 bước 1 — approve adaptive-engine`
+
+### Bước 2 — [`activity-model.md`](../specs/05-content/activity-model.md)
+
+- [ ] Đọc hết 148 dòng
+- [ ] Điền "vì sao" cho `BR-ACM-02`
+- [ ] Q1 (danh sách an toàn cần nguồn tham chiếu nào) — hoạt động ngoài màn hình đụng an toàn
+      trẻ, **không tự chốt nguồn y tế**; `Chủ: người quyết`, `Chặn phase: P3`
+- [ ] Bảng mục 11 sang 5 cột
+- [ ] `status: approved`; `pnpm lint:specs | grep activity-model` trống
+- [ ] Commit `feat(specs): T10 bước 2 — approve activity-model`
+
+---
+
+## Đợt 2 — phụ thuộc nền (4 spec)
+
+### Bước 3 — [`progress-and-mastery.md`](../specs/04-play/progress-and-mastery.md)
+
+- [ ] Đọc hết 181 dòng
+- [ ] Điền "vì sao" cho `BR-PRG-05`, `BR-PRG-06`, `BR-PRG-08` (kế hoạch mục 5)
+- [ ] Q1 (chấm tay C5) — **trỏ** quyết định đã ghi ở Bước 1, không chốt lại
+- [ ] Q2 (bản đồ 6 vùng có quá nhiều cho trẻ 3 tuổi) — `Chủ: Studio UI`, `Chặn phase: P3`
+- [ ] Bảng mục 11 sang 5 cột; `status: approved`
+- [ ] Commit `feat(specs): T10 bước 3 — approve progress-and-mastery`
+
+### Bước 4 — [`advanced-report.md`](../specs/03-account/advanced-report.md)
+
+- [ ] Đọc hết 169 dòng
+- [ ] Điền "vì sao" cho `BR-ARP-01`
+- [ ] Đối chiếu [`content-versioning.md`](../specs/00-foundation/content-versioning.md) Q3 (loại
+      trừ dữ liệu từ version quá cũ) — hàng đó đang trỏ chính file này
+- [ ] Q1 (ngưỡng 3–10 phiên đủ chưa) — cần dữ liệu thật, `Chặn phase: P3`, `Chủ: hoãn`
+- [ ] Q2 (gợi ý hành động soạn tay hay sinh từ `home_activity`) — chốt được từ `D7`: không LLM
+      runtime, nên soạn tay theo skill; ghi `D-*`
+- [ ] Bảng mục 11 sang 5 cột; `status: approved`
+- [ ] Commit `feat(specs): T10 bước 4 — approve advanced-report`
+
+### Bước 5 — [`lesson-model.md`](../specs/05-content/lesson-model.md)
+
+- [ ] Đọc hết 143 dòng
+- [ ] Điền "vì sao" cho `BR-LSM-05`, `BR-LSM-07`, `BR-LSM-08`
+- [ ] Q1 (ai biên soạn ≥60 lesson) — trỏ nợ `D-W` ở [`mvp-scope.md`](../specs/00-foundation/mvp-scope.md)
+      Q1; `Chủ: người quyết`. Cấm tự nhận là seeder giải quyết xong
+- [ ] Q2 (bản cho giáo viên khác bản cho phụ huynh) — `Chặn phase: P4`, `Chủ: Nội dung`
+- [ ] Bảng mục 11 sang 5 cột; `status: approved`
+- [ ] Commit `feat(specs): T10 bước 5 — approve lesson-model`
+
+### Bước 6 — [`activity-authoring.md`](../specs/06-admin/activity-authoring.md)
+
+- [ ] Đọc hết 155 dòng
+- [ ] Điền "vì sao" cho `BR-ACA-04`, `BR-ACA-06`, `BR-ACA-07`
+- [ ] Q1 (activity ngoài màn hình có cần hình minh hoạ) — `Chủ: Nội dung`, `Chặn phase: P3`
+- [ ] Bảng mục 11 sang 5 cột; `status: approved`
+- [ ] Commit `feat(specs): T10 bước 6 — approve activity-authoring`
+
+---
+
+## Cổng dừng A
+
+- [ ] 6/6 spec đợt 1 và 2 `approved`
+- [ ] `pnpm lint:specs` — 0 lỗi; `C6` giảm đúng **10** so với bước 0 (2+1+3+1+3 của sáu file)
+- [ ] `C16` giảm đúng **6**
+- [ ] [`taxonomy-service.md`](../specs/01-platform/taxonomy-service.md) Q3 đã đóng, có mã `D-*`, spec vẫn `approved`, 0 lỗi
+- [ ] Ghi rõ vào kế hoạch: quyết định thang `strength` **có** hay **không** phát sinh migration
+- [ ] `pnpm check` xanh
+- [ ] `pnpm test` xanh
+
+---
+
+## Đợt 3 — curriculum (2 spec)
+
+### Bước 7 — [`curriculum-model.md`](../specs/05-content/curriculum-model.md)
+
+- [ ] Đọc hết 148 dòng
+- [ ] Điền "vì sao" cho `BR-CRM-04`, `BR-CRM-05`, `BR-CRM-08`, `BR-CRM-09`
+- [ ] Q1 (42 tuần / 126 buổi với ≥60 lesson) — `Chủ: người quyết`, `Chặn phase: P3`; ghi nguyên
+      văn để dùng lại y hệt ở Bước 11
+- [ ] Q2 (chu kỳ ôn lại 2–3 tuần dựa nguồn nào) — `Chủ: Nội dung`, `Chặn phase: P3`
+- [ ] Bảng mục 11 sang 5 cột; `status: approved`
+- [ ] Commit `feat(specs): T10 bước 7 — approve curriculum-model`
+
+### Bước 8 — [`lesson-authoring.md`](../specs/06-admin/lesson-authoring.md)
+
+- [ ] Đọc hết 163 dòng
+- [ ] Điền "vì sao" cho `BR-LSA-08`
+- [ ] Q1 (ai biên soạn) — trỏ đúng nội dung đã dùng ở Bước 5
+- [ ] Q2 (ghim version activity) — viết thành hàng **đã đóng**, trỏ
+      [`content-versioning.md`](../specs/00-foundation/content-versioning.md) Q2 và `D-AE`
+- [ ] Bảng mục 11 sang 5 cột; `status: approved`
+- [ ] Commit `feat(specs): T10 bước 8 — approve lesson-authoring`
+
+---
+
+## Đợt 4 — người dùng cuối của lộ trình (3 spec)
+
+### Bước 9 — [`curriculum-player.md`](../specs/04-play/curriculum-player.md)
+
+- [ ] Đọc hết 184 dòng
+- [ ] Điền "vì sao" cho `BR-CUR-03`
+- [ ] Q1 (ghim version) — hàng **đã đóng**, trỏ `D-AE`
+- [ ] Q2 (ghi danh nhiều curriculum cùng lúc) — `Chủ: Studio UI`, `Chặn phase: P3`
+- [ ] Bảng mục 11 sang 5 cột; `status: approved`
+- [ ] Commit `feat(specs): T10 bước 9 — approve curriculum-player`
+
+### Bước 10 — [`program-showcase.md`](../specs/02-public/program-showcase.md)
+
+- [ ] Đọc hết 147 dòng
+- [ ] Điền "vì sao" cho `BR-PSH-03`, `BR-PSH-04`, `BR-PSH-07`
+- [ ] Q1 (2 tuần miễn phí nhiều hay ít) — quyết định thương mại, `Chủ: người quyết`
+- [ ] Bảng mục 11 sang 5 cột; `status: approved`
+- [ ] Commit `feat(specs): T10 bước 10 — approve program-showcase`
+
+### Bước 11 — [`curriculum-builder.md`](../specs/06-admin/curriculum-builder.md)
+
+- [ ] Đọc hết 176 dòng
+- [ ] Điền "vì sao" cho `BR-CBD-03`, `BR-CBD-08`
+- [ ] Q1 (ghim version lesson) — hàng **đã đóng**, trỏ `D-AE`
+- [ ] Q2 (42 tuần / 126 buổi) — **giống nguyên văn** hàng ở Bước 7, cùng `Chủ`
+- [ ] Bảng mục 11 sang 5 cột; `status: approved`
+- [ ] Commit `feat(specs): T10 bước 11 — approve curriculum-builder`
+
+---
+
+## Cổng dừng B
+
+- [ ] 11/12 spec `approved`
+- [ ] Ba hàng "ghim version" (Bước 8, 9, 11) đều trỏ `D-AE`, không hàng nào tự chốt lại
+- [ ] Hai hàng "42 tuần / 126 buổi" (Bước 7, 11) trùng nội dung và trùng `Chủ`
+- [ ] `pnpm lint:specs` 0 lỗi
+
+---
+
+## Đợt 5 — cuối chuỗi (1 spec)
+
+### Bước 12 — [`next-game-recommendation.md`](../specs/04-play/next-game-recommendation.md)
+
+- [ ] Đọc hết 193 dòng
+- [ ] Điền "vì sao" cho `BR-REC-04`
+- [ ] Q1 (loại 3 level gần nhất có đủ với 120 level) — chốt được từ số đo corpus MVP (≥120 game
+      level); ghi `D-*` hoặc để `Chặn phase: P3` nếu cần đo thật
+- [ ] Q2 (`popular` có tạo vòng lặp tự củng cố) — `Chặn phase: P3`, `Chủ: Backend`
+- [ ] Bảng mục 11 sang 5 cột; `status: approved`
+- [ ] Commit `feat(specs): T10 bước 12 — approve next-game-recommendation`
+
+---
+
+## Bước 13 — vá bảng P3 của [`roadmap.md`](../specs/roadmap.md)
+
+- [ ] Đếm spec mang `phase: P3`: `grep -rl "^phase: P3" --include="*.md" docs/specs | wc -l`
+- [ ] So với số spec bảng P3 của roadmap nêu tên — lệch thì bổ sung
+- [ ] Commit `docs(specs): T10 bước 13 — vá bảng P3 roadmap`
+
+## Bước 14 — đối chiếu tay (không bỏ được)
+
+- [ ] Mở 12 spec, xem lại mục 11 từng file: đủ 5 cột, không hàng nào rỗng `Chặn phase` hoặc `Chủ`
+- [ ] Mọi mã `D-*` mới đều **duy nhất**: `grep -rhoE "D-B[A-Z]" docs/specs | sort | uniq -d` trống
+- [ ] Mọi "vì sao" mới không phải diễn giải lại rule
+- [ ] Commit `docs(tasks): T10 — đóng lô corpus P3` kèm số đo cuối
+
+---
+
+## Cổng dừng cuối
+
+- [ ] `for f in $(grep -rl "^phase: P3" --include="*.md" docs/specs); do grep -q "^status: draft$" $f && echo $f; done` — **không in gì**
+- [ ] `pnpm lint:specs` — 0 lỗi; `C6` giảm đúng **25**, `C16` giảm đúng **12** so với bước 0
+- [ ] `pnpm check && pnpm test` xanh
+- [ ] Task kế tiếp mở khoá: [`11-p4-p5-closure-plan.md`](11-p4-p5-closure-plan.md)

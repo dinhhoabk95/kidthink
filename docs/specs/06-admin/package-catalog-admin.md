@@ -2,10 +2,10 @@
 spec: PACKAGE-CATALOG-ADMIN
 title: Xem catalog gói trong quản trị
 area: admin
-status: draft
+status: approved
 mvp: true
 phase: P2
-reviewed: 2026-08-04
+reviewed: 2026-08-08
 owns:
   - Bề mặt xem catalog gói trong admin
 depends_on:
@@ -54,7 +54,7 @@ phải qua PR và review, không qua một ô input.
 | `BR-PCA-03` | Hiện **số người đang dùng** mỗi gói | Ngữ cảnh trước khi retire một gói |
 | `BR-PCA-04` | Add-on chưa bán nêu rõ **điều kiện lên catalog** | Tránh cấp nhầm gói chưa có tính năng |
 | `BR-PCA-05` | Chỉ `super_admin` | Dữ liệu doanh thu |
-| `BR-PCA-06` | Danh sách User theo gói **không hiện dữ liệu trẻ** | |
+| `BR-PCA-06` | Danh sách User theo gói **không hiện dữ liệu trẻ** | Tuân thủ quy định bảo vệ dữ liệu trẻ em theo `BR-CDC-14` — màn hình quản lý gói chỉ phục vụ mục đích tài chính |
 
 ## 7. Data
 
@@ -125,6 +125,6 @@ Scenario: BR-PCA-05 — content_reviewer bị chặn
 
 ## 11. Open questions
 
-| # | Câu hỏi | Chặn gì |
-|---|---|---|
-| 1 | Doanh thu 30 ngày tính theo đơn approved hay theo ngày hiệu lực? | [`admin-dashboard.md`](admin-dashboard.md) Q1 |
+| # | Câu hỏi | Chặn phase | Đề xuất chốt | Chủ |
+|---|---|---|---|---|
+| 1 | Doanh thu 30 ngày tính theo đơn approved hay theo ngày hiệu lực? | P2 | Tính theo đơn approved trong 30 ngày vừa qua (ghi nhận doanh thu theo giao dịch thực tế); trỏ sang [`admin-dashboard.md`](admin-dashboard.md) Q1 | người quyết |

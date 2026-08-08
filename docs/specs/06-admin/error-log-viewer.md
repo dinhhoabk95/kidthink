@@ -2,10 +2,10 @@
 spec: ERROR-LOG-VIEWER
 title: Xem nhật ký lỗi
 area: admin
-status: draft
+status: approved
 mvp: true
 phase: P2
-reviewed: 2026-08-04
+reviewed: 2026-08-08
 owns:
   - Bề mặt tra cứu lỗi server và client
 depends_on:
@@ -51,8 +51,8 @@ trả lời **"cái gì đang hỏng và với bao nhiêu người"**.
 | `BR-ELV-02` | Đếm **số người ảnh hưởng**, không chỉ số lần | Một lỗi 1.000 lần với 1 người khác một lỗi 1.000 lần với 1.000 người |
 | `BR-ELV-03` | Cấm — **NEVER PII trong `error_log`** — strip ở tầng nhận | `BR-MON-05` |
 | `BR-ELV-04` | Client error có **sampling**, không nhận toàn bộ | Một lỗi vòng lặp sẽ tự DDoS endpoint nhận |
-| `BR-ELV-05` | Endpoint nhận lỗi client có **rate limit** riêng | |
-| `BR-ELV-06` | Chỉ `super_admin` | |
+| `BR-ELV-05` | Endpoint nhận lỗi client có **rate limit** riêng | Ngăn ngừa nguy cơ bị tấn công từ chối dịch vụ (DDoS) hoặc cạn kiệt tài nguyên lưu trữ log |
+| `BR-ELV-06` | Chỉ `super_admin` | Giới hạn quyền tiếp cận thông tin nhạy cảm của hệ thống cho đúng vai trò quản trị tối cao |
 | `BR-ELV-07` | Nhóm lỗi đánh dấu **đã xử lý** được, kèm ghi chú | Không thì mọi lỗi cũ lẫn với lỗi mới |
 
 ## 7. Data
@@ -136,6 +136,6 @@ Scenario: BR-ELV-07 — đánh dấu đã xử lý
 
 ## 11. Open questions
 
-| # | Câu hỏi | Chặn gì |
-|---|---|---|
-| 1 | Dùng Sentry hay tự xây? Tự xây rẻ hơn nhưng thiếu source map và grouping tốt | Ngân sách |
+| # | Câu hỏi | Chặn phase | Đề xuất chốt | Chủ |
+|---|---|---|---|---|
+| 1 | Dùng Sentry hay tự xây? Tự xây rẻ hơn nhưng thiếu source map và grouping tốt | P2 | MVP tự xây bảng `error_logs` và grouping đơn giản để tiết kiệm chi phí; Sentry hoãn sang P4 | người quyết |
