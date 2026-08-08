@@ -2,10 +2,10 @@
 spec: FEEDBACK-AND-CELEBRATION
 title: Phản hồi và ăn mừng
 area: play
-status: draft
+status: approved
 mvp: true
 phase: P1
-reviewed: 2026-08-04
+reviewed: 2026-08-08
 owns:
   - Ngôn ngữ phản hồi đúng/sai
   - Quy tắc ăn mừng
@@ -64,7 +64,7 @@ Khoảng ở giữa hẹp và cần spec: phản hồi rõ, tích cực, không 
 | `BR-FBK-05` | Pop khi đúng phát ra **tại điểm chạm**, không từ toạ độ hardcode | Phản hồi phải gắn với hành động của trẻ |
 | `BR-FBK-06` | Cấm — **NEVER màu là kênh duy nhất** — kèm hình dạng, chuyển động, hoặc âm | Trẻ mù màu và màn hình kém |
 | `BR-FBK-07` | Cường độ phản hồi sai **không tăng** theo số lần sai | Tăng dần đọc thành trách móc |
-| `BR-FBK-08` | Lời khen Cấm — **NEVER so sánh trẻ với trẻ khác** | |
+| `BR-FBK-08` | Lời khen Cấm — **NEVER so sánh trẻ với trẻ khác** | Tránh gây áp lực đố kị và duy trì động lực nội tại cho trẻ |
 | `BR-FBK-09` | `reduced-motion` **giảm**, không bỏ ăn mừng | Bỏ ăn mừng là bỏ phần thưởng |
 | `BR-FBK-10` | Âm: ramp vào ≥20ms, ra ≥40ms, master ceiling cưỡng chế | Onset tức thì làm trẻ giật mình |
 
@@ -173,7 +173,8 @@ Scenario: BR-FBK-10 — âm không có onset tức thì
 
 ## 11. Open questions
 
-| # | Câu hỏi | Chặn gì |
-|---|---|---|
-| 1 | Lời khen thu âm người thật hay TTS? Ảnh hưởng bundle và cảm giác | P1 nội dung |
-| 2 | Mascot có nhất quán qua mọi theme không, hay đổi theo theme? | Design P1 |
+| # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
+|---|---|---|---|---|
+| 1 | Lời khen thu âm người thật hay TTS? | Âm thanh phản hồi | P1 | Chốt D-AV: P1 dùng audio clip tĩnh + Web Speech API (TTS), hoãn thu studio sang P2 |
+| 2 | Mascot có nhất quán qua mọi theme không, hay đổi theo theme? | Mascot thiết kế | P1 | Chốt: Mascot Thỏ Tini giữ vai trò chính ở mọi theme, background đổi theo theme |
+

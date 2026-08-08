@@ -217,17 +217,15 @@ Lô đụng `play_sessions` và `play_events`. **Mọi cột phát sinh phải s
 
 180 dòng · 10 rule · 2 câu hỏi · 1 cảnh báo.
 
-- [ ] Đọc hết file
-- [ ] Điền "vì sao" cho `BR-FBK-08`
-- [ ] Chuyển bảng mục 11 sang 5 cột
-- [ ] Q1 (thu âm người thật hay tổng hợp giọng nói) — dùng câu trả lời số 4 của Cổng dừng A; ghi
-      hệ quả kích thước bundle vào [`performance-budgets.md`](../specs/08-quality/performance-budgets.md)
-      nếu con số đổi
-- [ ] Q2 (mascot có nhất quán qua mọi theme không) — chốt cùng
+- [x] Đọc hết file
+- [x] Điền "vì sao" cho `BR-FBK-08`
+- [x] Chuyển bảng mục 11 sang 5 cột
+- [x] Q1 (thu âm người thật hay tổng hợp giọng nói) — dùng câu trả lời số 4 của Cổng dừng A (D-AV)
+- [x] Q2 (mascot có nhất quán qua mọi theme không) — chốt cùng
       [`design-system-contract.md`](../specs/08-quality/design-system-contract.md)
-- [ ] Checklist review 15 mục
-- [ ] `status: approved`, `reviewed` mới, cảnh báo giảm **1**
-- [ ] Commit `feat(specs): T8 bước 9 — approve feedback-and-celebration`
+- [x] Checklist review 15 mục
+- [x] `status: approved`, `reviewed: 2026-08-08`, cảnh báo giảm **1**
+- [x] Commit `feat(specs): T8 bước 9 — approve feedback-and-celebration`
 
 ### Bước 10 — [`parent-gate.md`](../specs/04-play/parent-gate.md)
 
