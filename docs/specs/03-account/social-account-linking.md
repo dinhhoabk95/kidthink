@@ -2,10 +2,10 @@
 spec: SOCIAL-ACCOUNT-LINKING
 title: Liên kết và gỡ mạng xã hội
 area: account
-status: draft
+status: approved
 mvp: true
 phase: P1
-reviewed: 2026-08-05
+reviewed: 2026-08-08
 owns:
   - Liên kết thêm SNS vào tài khoản đang dùng
   - Gỡ liên kết SNS
@@ -261,7 +261,8 @@ Scenario: BR-SLK-08 — Manager không có đường liên kết SNS
 
 ## 11. Open questions
 
-| # | Câu hỏi | Chặn gì |
-|---|---|---|
-| 1 | Khi User gỡ SNS mà đó là cách vào cuối, ta chỉ chỉ đường tới "đặt mật khẩu". Có nên **gộp** hai bước thành một màn hình (đặt mật khẩu rồi gỡ luôn) không? | P2 · UX |
-| 2 | Reauth 5 phút áp cho cả [`account-settings.md`](account-settings.md) và [`mfa.md`](mfa.md) — con số này nên nằm ở đâu để một chỗ đổi là mọi nơi đổi? Hiện đề xuất [`auth-tokens-sessions.md`](../01-platform/auth-tokens-sessions.md) §7.4 | P1 |
+| # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
+|---|---|---|---|---|
+| 1 | Khi User gỡ SNS mà đó là cách vào cuối, có nên gộp 2 bước (đặt mật khẩu rồi gỡ luôn) không? | Trải nghiệm UX gỡ phương thức cuối | P2 | Account Settings UX |
+| 2 | Cấu hình cửa sổ reauth (5 phút) nên đặt ở đâu để dùng chung toàn hệ thống? | Cấu hình reauth | P1 | Chốt: Đặt tại REAUTH_WINDOW_MINUTES = 5 trong [`auth-tokens-sessions.md`](../01-platform/auth-tokens-sessions.md) §7.4 |
+

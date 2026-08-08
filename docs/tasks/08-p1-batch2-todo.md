@@ -555,21 +555,21 @@ ghép chung ngày với spec khác.
 268 dòng · 14 rule · 2 câu hỏi · 0 cảnh báo. **Thứ tự sau bước 28 không đảo được** —
 [`roadmap.md`](../specs/roadmap.md) mục 12.
 
-- [ ] Đọc hết file
-- [ ] Xác nhận màn hình liên kết là lối thoát của nhánh 409 `BR-SCL-04` ở bước 28
-- [ ] Xác nhận `BR-SLK-04` (chặn gỡ phương thức đăng nhập cuối cùng) có ca hai tab đồng thời
+- [x] Đọc hết file
+- [x] Xác nhận màn hình liên kết là lối thoát của nhánh 409 `BR-SCL-04` ở bước 28
+- [x] Xác nhận `BR-SLK-04` (chặn gỡ phương thức đăng nhập cuối cùng) có ca hai tab đồng thời
       trong mục 9
-- [ ] Chuyển bảng mục 11 sang 5 cột
-- [ ] Q1 (gộp hai bước gỡ SNS và đặt mật khẩu) — để mở, `Chặn phase: P2`
-- [ ] Q2 (reauth 5 phút nên nằm ở đâu) — **chặn P1, chốt**; con số này đang dùng chung với
+- [x] Chuyển bảng mục 11 sang 5 cột
+- [x] Q1 (gộp hai bước gỡ SNS và đặt mật khẩu) — để mở, `Chặn phase: P2`
+- [x] Q2 (reauth 5 phút nên nằm ở đâu) — **chặn P1, chốt**; con số này đang dùng chung với
       [`account-settings.md`](../specs/03-account/account-settings.md) và
       [`mfa.md`](../specs/03-account/mfa.md), phải có **đúng một** chủ sở hữu, còn lại liên kết
       tới. Chủ hợp lý là
       [`auth-tokens-sessions.md`](../specs/01-platform/auth-tokens-sessions.md) mục 7.4 — nếu
       chuyển thì đó là sửa spec `P0` đã `approved`, ghi `D-*`
-- [ ] Checklist review 15 mục
-- [ ] `status: approved`, `reviewed` mới
-- [ ] Commit `feat(specs): T8 bước 29 — approve social-account-linking`
+- [x] Checklist review 15 mục
+- [x] `status: approved`, `reviewed: 2026-08-08`
+- [x] Commit `feat(specs): T8 bước 29 — approve social-account-linking`
 
 ### Bước 30 — [`offline-play.md`](../specs/01-platform/offline-play.md)
 
