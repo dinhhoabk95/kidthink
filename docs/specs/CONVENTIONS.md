@@ -311,3 +311,18 @@ spec khác trích nó.
 
 Cấm thay thế hàng loạt (`sed` trên toàn corpus) — dấu phủ định emoji không có một bản dịch duy
 nhất, mỗi câu cần đọc lại sau khi thay.
+
+### 11.7 Bảng câu hỏi mở ở mục 11 phải đủ 5 cột
+
+Mọi spec `status: approved` chứa bảng câu hỏi mở ở section "## 11. Open questions" bắt buộc phải sử dụng bảng 5 cột:
+
+| # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
+
+Cột `Chủ` phải thuộc bộ giá trị đóng:
+- `người quyết`: Cần quyết định thương mại, pháp lý, hoặc phạm vi — chủ dự án
+- `hoãn`: Chưa cần trả lời trước phase đã ghi; nên kèm điều kiện mở lại đo được
+- `Infra` · `Backend` · `Studio UI` · `Nội dung` · `Kế toán`: Quyết định kỹ thuật hoặc nghiệp vụ nội bộ
+- `D-*`: Hàng đã đóng; ghi mã quyết định tương ứng (ví dụ `D-AE`)
+
+Cấm để trống, cấm `-`, cấm `—`, cấm `TBD`. `checkC16` ở chặng 2 sẽ báo lỗi `fail` nếu bảng dưới 5 cột hoặc thiếu `Chặn phase`/`Chủ`.
+

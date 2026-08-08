@@ -29,15 +29,15 @@ Bốn điều kiện, thiếu một điều là chưa xong:
 [`content-versioning.md`](../specs/00-foundation/content-versioning.md) mục 11 — spec `approved`
 mang hai hàng `hoãn` với chủ ghi rõ.
 
-## Số đo hiện tại (sau Task #11, trước Task #12)
+## Số đo hiện tại (sau Task #12 — Hoàn tất đóng corpus)
 
 | Đo | Giá trị |
 |---|---|
 | Spec trong corpus | 130 |
 | `approved` | 130 (100% corpus closed) |
 | `draft` | 0 |
-| `pnpm lint:specs` | 0 lỗi, **31** cảnh báo = 8 `C6` + 23 `C16` |
-| Cảnh báo nằm trên spec đã `approved` từ task cũ | 31 nợ thuộc phạm vi dọn sạch của Task #12 |
+| `pnpm lint:specs` | 0 lỗi, **0** cảnh báo (15/15 checks green) |
+| Cổng tự giữ (`checkC16` & `checkC6` chặng 2) | Bật — bảng < 5 cột hoặc thiếu "vì sao" cho spec approved báo `fail` |
 
 Task #10 đang chạy nên các số này giảm liên tục. Đo lại trước mỗi task, đừng tin số in ở đây:
 
