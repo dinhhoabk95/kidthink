@@ -74,11 +74,11 @@ Mẫu commit: `feat(specs): T9 bước <n> — approve <tên-spec>`
 
 ### Bước 4 — [`asset-usage-tracking.md`](../specs/06-admin/asset-usage-tracking.md)
 
-- [ ] Đọc hết 156 dòng; 0 cảnh báo `C6`
-- [ ] `reviewed: 2026-08-07` — file duy nhất trong lô viết sau `D-AQ`, vẫn đối chiếu lại
-- [ ] Bảng mục 11 sang 5 cột
-- [ ] `status: approved`; cảnh báo giữ **99**
-- [ ] Commit `feat(specs): T9 bước 4 — approve asset-usage-tracking`
+- [x] Đọc hết 156 dòng; 0 cảnh báo `C6`
+- [x] `reviewed: 2026-08-07` — file duy nhất trong lô viết sau `D-AQ`, vẫn đối chiếu lại
+- [x] Bảng mục 11 sang 5 cột
+- [x] `status: approved`; cảnh báo giữ **99**
+- [x] Commit `feat(specs): T9 bước 4 — approve asset-usage-tracking`
 
 ---
 

@@ -2,10 +2,10 @@
 spec: ASSET-USAGE-TRACKING
 title: Theo dõi nơi asset đang được dùng
 area: admin
-status: draft
+status: approved
 mvp: true
 phase: P2
-reviewed: 2026-08-07
+reviewed: 2026-08-08
 owns:
   - Truy vấn ngược từ asset về nội dung dùng nó
   - Cảnh báo trước khi xoá asset
@@ -60,7 +60,7 @@ Modal xác nhận xoá asset · `/studio/assets/{id}/usage` ·
 | `BR-AUT2-03` | Quét ngược trên **`content_pack` JSONB**, có index hỗ trợ | Quét toàn bảng mỗi lần xoá là không chấp nhận được |
 | `BR-AUT2-04` | Danh sách nơi dùng hiện **trạng thái nội dung** | Dùng ở `draft` khác dùng ở `published` |
 | `BR-AUT2-05` | Ảnh `orphan` dọn tự động sau **30 ngày** | Giữ mãi tốn dung lượng; xoá ngay mất khả năng khôi phục |
-| `BR-AUT2-06` | Mọi xoá ghi `audit_logs` | |
+| `BR-AUT2-06` | Mọi xoá ghi `audit_logs` | Đảm bảo khả năng truy vết và giải trình theo `BR-AUD-01` đối với mọi thao tác xoá tài nguyên |
 
 ## 7. Data
 
@@ -151,6 +151,6 @@ Scenario: BR-AUT2-05 — ảnh orphan dọn sau 30 ngày
 
 ## 11. Open questions
 
-| # | Câu hỏi | Chặn gì |
-|---|---|---|
-| 1 | Chỉ mục ngược có cần rebuild định kỳ để chống lệch không? | Vận hành |
+| # | Câu hỏi | Chặn phase | Đề xuất chốt | Chủ |
+|---|---|---|---|---|
+| 1 | Chỉ mục ngược có cần rebuild định kỳ để chống lệch không? | P4 | Hoãn sang P4 — thêm script rebuild vào CLI vận hành khi có dữ liệu lớn | người quyết |
