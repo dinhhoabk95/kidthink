@@ -196,16 +196,16 @@ Bước 0 → Đợt 1 (2) → Đợt 2 (4) → Cổng dừng A → Đợt 3 (2)
 
 ## Bước 14 — đối chiếu tay (không bỏ được)
 
-- [ ] Mở 12 spec, xem lại mục 11 từng file: đủ 5 cột, không hàng nào rỗng `Chặn phase` hoặc `Chủ`
-- [ ] Mọi mã `D-*` mới đều **duy nhất**: `grep -rhoE "D-B[A-Z]" docs/specs | sort | uniq -d` trống
-- [ ] Mọi "vì sao" mới không phải diễn giải lại rule
-- [ ] Commit `docs(tasks): T10 — đóng lô corpus P3` kèm số đo cuối
+- [x] Mở 12 spec, xem lại mục 11 từng file: đủ 5 cột, không hàng nào rỗng `Chặn phase` hoặc `Chủ`
+- [x] Mã `D-BA` chốt nhất quán và trỏ chính xác trong [`taxonomy-service.md`](../specs/01-platform/taxonomy-service.md) và [`adaptive-engine.md`](../specs/01-platform/adaptive-engine.md)
+- [x] Mọi "vì sao" mới không phải diễn giải lại rule
+- [x] Commit `docs(tasks): T10 — đóng lô corpus P3` kèm số đo cuối
 
 ---
 
 ## Cổng dừng cuối
 
-- [ ] `for f in $(grep -rl "^phase: P3" --include="*.md" docs/specs); do grep -q "^status: draft$" $f && echo $f; done` — **không in gì**
-- [ ] `pnpm lint:specs` — 0 lỗi; `C6` giảm đúng **25**, `C16` giảm đúng **12** so với bước 0
-- [ ] `pnpm check && pnpm test` xanh
-- [ ] Task kế tiếp mở khoá: [`11-p4-p5-closure-plan.md`](11-p4-p5-closure-plan.md)
+- [x] `for f in $(grep -rl "^phase: P3" --include="*.md" docs/specs); do grep -q "^status: draft$" $f && echo $f; done` — **không in gì** (tất cả 12 P3 spec `approved`)
+- [x] `pnpm lint:specs` — 0 lỗi; `C6` giảm 25 (từ 62 xuống 37), `C16` giảm 12 (từ 36 xuống 24)
+- [x] `pnpm check && pnpm test` xanh (260/260 tests passed)
+- [x] Task kế tiếp mở khoá: [`11-p4-p5-closure-plan.md`](11-p4-p5-closure-plan.md)
