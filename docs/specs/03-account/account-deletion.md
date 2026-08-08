@@ -187,7 +187,7 @@ Scenario: đăng nhập trong 30 ngày dẫn tới huỷ
 
 ## 11. Open questions
 
-| # | Câu hỏi | Chặn gì | Chủ |
-|---|---|---|---|
-| 1 | Có hoàn tiền phần gói chưa dùng khi xoá không? | Chính sách hoàn tiền | cần **người** — quyết định thương mại |
-| 2 | Xoá **một hồ sơ trẻ** riêng lẻ có cần luồng 30 ngày không, hay xoá ngay? | [`child-profile-archive.md`](child-profile-archive.md) | hoãn — chủ là spec đó, còn `draft` |
+| # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
+|---|---|---|---|---|
+| 1 | Có hoàn tiền phần gói chưa dùng khi xoá không? | Chính sách hoàn tiền | P1 | người quyết |
+| 2 | Xoá **một hồ sơ trẻ** riêng lẻ có cần luồng 30 ngày không, hay xoá ngay? | [`child-profile-archive.md`](child-profile-archive.md) | P2 | hoãn — P2 |
