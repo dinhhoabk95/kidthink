@@ -136,15 +136,15 @@ Lô đụng `play_sessions` và `play_events`. **Mọi cột phát sinh phải s
 
 193 dòng · 10 rule · 2 câu hỏi · 0 cảnh báo. Nút chặn của cả nhánh phiên chơi.
 
-- [ ] Đọc hết file
-- [ ] Đối chiếu với [`access-gating.md`](../specs/04-play/access-gating.md) (đã `approved` ở
+- [x] Đọc hết file
+- [x] Đối chiếu với [`access-gating.md`](../specs/04-play/access-gating.md) (đã `approved` ở
       Task #6): config trả về phải đã lọc quyền, `content_pack` không được lọt cho guest
-- [ ] Chuyển bảng mục 11 sang 5 cột
-- [ ] Q1 (đáp án đúng nằm trong payload) — để mở, `Chặn phase: P4`
-- [ ] Q2 (adaptive params áp ở P3, P1 dùng tham số gốc) — **chặn P1, chốt**
-- [ ] Checklist review 15 mục
-- [ ] `status: approved`, `reviewed` mới, `pnpm lint:specs` 0 lỗi
-- [ ] Commit `feat(specs): T8 bước 4 — approve game-config-delivery`
+- [x] Chuyển bảng mục 11 sang 5 cột
+- [x] Q1 (đáp án đúng nằm trong payload) — để mở, `Chặn phase: P4`
+- [x] Q2 (adaptive params áp ở P3, P1 dùng tham số gốc) — **chặn P1, chốt**
+- [x] Checklist review 15 mục
+- [x] `status: approved`, `reviewed: 2026-08-08`, `pnpm lint:specs` 0 lỗi
+- [x] Commit `feat(specs): T8 bước 4 — approve game-config-delivery`
 
 ### Bước 5 — [`play-session-lifecycle.md`](../specs/04-play/play-session-lifecycle.md)
 
