@@ -50,6 +50,8 @@ describe("Identity Schema Integration Tests", () => {
     const db = getOwnerDb();
     const email1 = `sns-u1-${Date.now()}@example.com`;
     const email2 = `sns-u2-${Date.now()}@example.com`;
+    const sub1 = `g-12345-${Date.now()}`;
+    const sub2 = `g-67890-${Date.now()}`;
 
     const [u1] = await db
       .insert(users)
@@ -64,7 +66,7 @@ describe("Identity Schema Integration Tests", () => {
     await db.insert(socialIdentities).values({
       userId: u1.id,
       provider: "google",
-      providerUserId: "g-12345",
+      providerUserId: sub1,
       linkedAt: new Date(),
     });
 
@@ -73,7 +75,7 @@ describe("Identity Schema Integration Tests", () => {
       db.insert(socialIdentities).values({
         userId: u2.id,
         provider: "google",
-        providerUserId: "g-12345",
+        providerUserId: sub1,
         linkedAt: new Date(),
       })
     ).rejects.toThrow();
@@ -83,7 +85,7 @@ describe("Identity Schema Integration Tests", () => {
       db.insert(socialIdentities).values({
         userId: u1.id,
         provider: "google",
-        providerUserId: "g-67890",
+        providerUserId: sub2,
         linkedAt: new Date(),
       })
     ).rejects.toThrow();

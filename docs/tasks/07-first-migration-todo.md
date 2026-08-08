@@ -96,19 +96,19 @@ File: `packages/db/src/schema/identity.ts` — 8 bảng theo
 File: `packages/db/src/schema/billing.ts` — 6 bảng theo
 [`schema-identity-billing.md`](../specs/01-platform/schema-identity-billing.md) §7.5–7.9
 
-- [ ] `entitlement_keys` — PK `key` varchar, cột theo §7.5
-- [ ] `packages` · `package_entitlements` — cột theo §7.6, `offers` JSONB
-- [ ] `entitlements` — `entitlement_key` **FK thật** tới `entitlement_keys` (`BR-SIB-02`)
-- [ ] `payment_orders` — `amount_vnd` snapshot, không tính toán lại từ `packages` lúc đọc
+- [x] `entitlement_keys` — PK `key` varchar, cột theo §7.5
+- [x] `packages` · `package_entitlements` — cột theo §7.6, `offers` JSONB
+- [x] `entitlements` — `entitlement_key` **FK thật** tới `entitlement_keys` (`BR-SIB-02`)
+- [x] `payment_orders` — `amount_vnd` snapshot, không tính toán lại từ `packages` lúc đọc
       (`BR-SIB-03` — verify bằng test, không chỉ bằng kiểu cột)
-- [ ] `quota_usage` — PK ghép `(user_id, quota_key, period_start)`
-- [ ] `pnpm db:generate` → đọc SQL → `pnpm db:migrate`
-- [ ] Integration test:
-      - [ ] `BR-SIB-02` — insert `entitlements` với `entitlement_key` không tồn tại → FK từ chối
-      - [ ] `BR-SIB-03` — đổi giá trong `packages` sau khi đơn đã tạo, `amount_vnd` đơn cũ
+- [x] `quota_usage` — PK ghép `(user_id, quota_key, period_start)`
+- [x] `pnpm db:generate` → đọc SQL → `pnpm db:migrate`
+- [x] Integration test:
+      - [x] `BR-SIB-02` — insert `entitlements` với `entitlement_key` không tồn tại → FK từ chối
+      - [x] `BR-SIB-03` — đổi giá trong `packages` sau khi đơn đã tạo, `amount_vnd` đơn cũ
             không đổi
-- [ ] `pnpm test` xanh
-- [ ] Commit `feat(db): P0 bước 8.3 — schema billing`
+- [x] `pnpm test` xanh
+- [x] Commit `feat(db): P0 bước 8.3 — schema billing`
 
 ## Bước 4 — `schema/ops.ts`
 
