@@ -2,10 +2,10 @@
 spec: USER-MANAGEMENT
 title: Tra cứu và quản lý người dùng
 area: admin
-status: draft
+status: approved
 mvp: true
 phase: P2
-reviewed: 2026-08-04
+reviewed: 2026-08-08
 owns:
   - Danh sách User và bộ lọc
   - Thao tác khoá/mở tài khoản
@@ -60,7 +60,7 @@ Tìm một User để hỗ trợ, và thực hiện đúng ba thao tác vận h�
 |---|---|---|
 | `BR-USM-01` | Trần phân trang **100**, ép ở Zod | Query không trần hạ instance trên t3.small |
 | `BR-USM-02` | Zod parse **mọi** query param | Param đi vào `ilike` là đường vào injection |
-| `BR-USM-03` | Khoá/mở khoá **bắt buộc lý do** ≥10 ký tự, ghi audit | |
+| `BR-USM-03` | Khoá/mở khoá **bắt buộc lý do** ≥10 ký tự, ghi audit | Đảm bảo khả năng giải trình và truy vết trách nhiệm theo `BR-AUD-01` đối với thao tác ảnh hưởng đến quyền truy cập của người dùng |
 | `BR-USM-04` | Khoá **không** thu hồi entitlement đã mua | Khoá là biện pháp vận hành, không phải phạt tài chính |
 | `BR-USM-05` | Khoá thu hồi **mọi phiên** ngay | Khoá mà token cũ còn dùng được là không khoá |
 | `BR-USM-06` | Danh sách Cấm — **NEVER hiện dữ liệu trẻ** ngoài **số lượng** hồ sơ | `BR-CDC-14` |
@@ -172,7 +172,7 @@ Scenario: content_reviewer bị chặn
 
 ## 11. Open questions
 
-| # | Câu hỏi | Chặn gì |
-|---|---|---|
-| 1 | Có cần ghi chú hỗ trợ (support note) gắn với User không? | P2 |
-| 2 | Khoá có tự động sau N lần vi phạm không, hay luôn thủ công? | Chính sách |
+| # | Câu hỏi | Chặn phase | Đề xuất chốt | Chủ |
+|---|---|---|---|---|
+| 1 | Có cần ghi chú hỗ trợ (support note) gắn với User không? | P2 | Hoãn sang P4 (xem [`user-detail.md`](user-detail.md)) — MVP dùng `audit_logs` để theo dõi lịch sử thao tác | người quyết |
+| 2 | Khoá có tự động sau N lần vi phạm không, hay luôn thủ công? | P2 | MVP luôn thực hiện thủ công bởi `super_admin`; tính năng khoá tự động hoãn sang P4 | người quyết |

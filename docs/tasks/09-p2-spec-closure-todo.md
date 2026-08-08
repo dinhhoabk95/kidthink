@@ -293,12 +293,12 @@ admin-dashboard (độc lập)
 
 ### Bước 19 — [`user-management.md`](../specs/06-admin/user-management.md)
 
-- [ ] Đọc hết 178 dòng; điền "vì sao" cho **1** cảnh báo `C6`
-- [ ] Q1 (support note) — cặp 6 của mục 6; chốt **một lần** ở đây, [`user-detail.md`](../specs/06-admin/user-detail.md)
+- [x] Đọc hết 178 dòng; điền "vì sao" cho **1** cảnh báo `C6`
+- [x] Q1 (support note) — cặp 6 của mục 6; chốt **một lần** ở đây, [`user-detail.md`](../specs/06-admin/user-detail.md)
       trỏ sang
-- [ ] Kiểm rule "thu hồi phiên khi khoá" khớp mục 7.4 của
+- [x] Kiểm rule "thu hồi phiên khi khoá" khớp mục 7.4 của
       [`auth-tokens-sessions.md`](../specs/01-platform/auth-tokens-sessions.md)
-- [ ] `status: approved`; commit `feat(specs): T9 bước 19 — approve user-management`
+- [x] `status: approved`; commit `feat(specs): T9 bước 19 — approve user-management`
 
 ### Bước 20 — [`user-detail.md`](../specs/06-admin/user-detail.md)
 
