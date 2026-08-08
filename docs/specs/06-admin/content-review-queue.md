@@ -2,10 +2,10 @@
 spec: CONTENT-REVIEW-QUEUE
 title: Hàng đợi duyệt nội dung
 area: admin
-status: draft
+status: approved
 mvp: true
 phase: P2
-reviewed: 2026-08-04
+reviewed: 2026-08-08
 owns:
   - Hàng đợi và thứ tự ưu tiên duyệt
   - Checklist duyệt
@@ -67,7 +67,7 @@ Hàng đợi phải làm việc duyệt nhanh nhất có thể mà không làm n
 | `BR-CRQ-03` | Từ chối **bắt buộc lý do** ≥10 ký tự | Từ chối không lý do làm người soạn lặp lại đúng lỗi cũ |
 | `BR-CRQ-04` | Bản `origin = ai_assisted` gắn **nhãn rõ ràng** | Người duyệt cần biết để soi kỹ hơn |
 | `BR-CRQ-05` | Bản là version mới của hàng `authored_in = repo_seed` gắn **nhãn cảnh báo lệch seeder** | Sửa trong studio mà quên seeder = môi trường dựng mới mất bản sửa (`BR-CSA-11`) |
-| `BR-CRQ-06` | Mọi quyết định ghi `content_review_log` + `audit_logs` | |
+| `BR-CRQ-06` | Mọi quyết định ghi `content_review_log` + `audit_logs` | Đảm bảo khả năng truy vết và giải trình trách nhiệm của người duyệt theo `BR-AUD-01` đối với mọi quyết định phát hành nội dung |
 | `BR-CRQ-07` | Checklist §7.2 hiện **đầy đủ**, không rút gọn theo loại nội dung | Rút gọn checklist là cách bỏ sót có hệ thống |
 | `BR-CRQ-08` | Hàng đợi ưu tiên theo §7.1, không theo thứ tự tạo | Nội dung chặn một tuần curriculum quan trọng hơn nội dung lẻ |
 
@@ -187,8 +187,8 @@ Scenario: từ chối hàng loạt một lô cùng người soạn
 
 ## 11. Open questions
 
-| # | Câu hỏi | Chặn gì |
-|---|---|---|
-| 1 | **Một người duyệt được bao nhiêu bản/ngày?** Đây là ràng buộc thật của đường găng | Kế hoạch nội dung |
-| 2 | Khi có ≥2 manager, có chặn tự duyệt bản mình tạo không? | [`content-lifecycle.md`](../00-foundation/content-lifecycle.md) Q1 |
-| 3 | Có cần duyệt hai vòng cho nội dung `origin = ai_assisted` không? | [`content-seed-authoring.md`](../01-platform/content-seed-authoring.md) Q5 |
+| # | Câu hỏi | Chặn phase | Đề xuất chốt | Chủ |
+|---|---|---|---|---|
+| 1 | **Một người duyệt được bao nhiêu bản/ngày?** Đây là ràng buộc thật của đường găng | P2 | Ước tính 30–50 bản/ngày/người ở MVP; bổ sung quy trình mở rộng ở P3 | người quyết |
+| 2 | Khi có ≥2 manager, có chặn tự duyệt bản mình tạo không? | P2 | Đã hoãn ở [`content-lifecycle.md`](../00-foundation/content-lifecycle.md) Q1 — MVP 1 manager nên cho phép tự duyệt; khi có ≥2 manager sẽ bật 4-eyes principle | người quyết |
+| 3 | Có cần duyệt hai vòng cho nội dung `origin = ai_assisted` không? | P2 | Đã hoãn ở [`content-seed-authoring.md`](../01-platform/content-seed-authoring.md) Q5 — MVP 1 vòng duyệt có gắn nhãn `ai_assisted` để soi kỹ checklist | người quyết |

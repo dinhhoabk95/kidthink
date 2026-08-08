@@ -246,14 +246,14 @@ live-preview · publish-and-version · seo-content-admin (độc lập)
 
 ### Bước 16 — [`content-review-queue.md`](../specs/06-admin/content-review-queue.md)
 
-- [ ] Đọc hết 194 dòng; điền "vì sao" cho **1** cảnh báo `C6`
-- [ ] Q1 (bao nhiêu bản/ngày/người) — dùng câu trả lời số 6 của Cổng dừng A. Đây là ràng buộc
+- [x] Đọc hết 194 dòng; điền "vì sao" cho **1** cảnh báo `C6`
+- [x] Q1 (bao nhiêu bản/ngày/người) — dùng câu trả lời số 6 của Cổng dừng A. Đây là ràng buộc
       đường găng, cũng là câu hỏi mở #3 của [`SPEC.md`](../SPEC.md) — nếu chốt được thì cập nhật
       cả hai chỗ
-- [ ] Q2 — cặp 8 của mục 6, khớp [`content-lifecycle.md`](../specs/00-foundation/content-lifecycle.md) Q1
-- [ ] Q3 — trỏ [`content-seed-authoring.md`](../specs/01-platform/content-seed-authoring.md) Q5
-- [ ] Kiểm rule "cấm duyệt theo lô" còn nguyên
-- [ ] `status: approved`; commit `feat(specs): T9 bước 16 — approve content-review-queue`
+- [x] Q2 — cặp 8 của mục 6, khớp [`content-lifecycle.md`](../specs/00-foundation/content-lifecycle.md) Q1
+- [x] Q3 — trỏ [`content-seed-authoring.md`](../specs/01-platform/content-seed-authoring.md) Q5
+- [x] Kiểm rule "cấm duyệt theo lô" còn nguyên
+- [x] `status: approved`; commit `feat(specs): T9 bước 16 — approve content-review-queue`
 
 ### Bước 17 — [`publish-and-version.md`](../specs/06-admin/publish-and-version.md)
 
