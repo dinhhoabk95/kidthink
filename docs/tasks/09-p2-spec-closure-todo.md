@@ -65,12 +65,12 @@ Mẫu commit: `feat(specs): T9 bước <n> — approve <tên-spec>`
 
 ### Bước 3 — [`emoji-picker.md`](../specs/06-admin/emoji-picker.md)
 
-- [ ] Đọc hết 149 dòng; 0 cảnh báo `C6`
-- [ ] Đối chiếu 32 nhóm emoji với [`emoji-registry.md`](../specs/01-platform/emoji-registry.md) —
+- [x] Đọc hết 149 dòng; 0 cảnh báo `C6`
+- [x] Đối chiếu 32 nhóm emoji với [`emoji-registry.md`](../specs/01-platform/emoji-registry.md) —
       kho emoji là danh sách đóng, picker không được mở rộng nó
-- [ ] Bảng mục 11 sang 5 cột
-- [ ] `status: approved`; `pnpm lint:specs` cảnh báo giữ **99**
-- [ ] Commit `feat(specs): T9 bước 3 — approve emoji-picker`
+- [x] Bảng mục 11 sang 5 cột
+- [x] `status: approved`; `pnpm lint:specs` cảnh báo giữ **99**
+- [x] Commit `feat(specs): T9 bước 3 — approve emoji-picker`
 
 ### Bước 4 — [`asset-usage-tracking.md`](../specs/06-admin/asset-usage-tracking.md)
 

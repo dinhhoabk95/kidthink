@@ -2,10 +2,10 @@
 spec: EMOJI-PICKER
 title: Bộ chọn emoji
 area: admin
-status: draft
+status: approved
 mvp: true
 phase: P2
-reviewed: 2026-08-04
+reviewed: 2026-08-08
 owns:
   - Giao diện chọn emoji trong studio
 depends_on:
@@ -144,6 +144,6 @@ Scenario: emoji bị chặn theo tuổi không xuất hiện
 
 ## 11. Open questions
 
-| # | Câu hỏi | Chặn gì |
-|---|---|---|
-| 1 | Có cần chọn nhiều emoji cùng lúc cho field array không? | P2 năng suất |
+| # | Câu hỏi | Chặn phase | Đề xuất chốt | Chủ |
+|---|---|---|---|---|
+| 1 | Có cần chọn nhiều emoji cùng lúc cho field array không? | P2 | Không ở MVP — field array chọn từng item bằng cách mở picker nhiều lần (xem [`schema-driven-form.md`](schema-driven-form.md)) | người quyết |
