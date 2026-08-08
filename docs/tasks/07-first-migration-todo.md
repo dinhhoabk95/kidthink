@@ -145,11 +145,11 @@ P2→P0). Bỏ sót bảng này thì
 
 ## Cổng dừng A
 
-- [ ] 3 file schema tồn tại (`identity.ts`, `billing.ts`, `ops.ts`), mỗi file ≤400 dòng
-- [ ] `docker compose down -v && docker compose up -d && pnpm db:migrate` sạch từ đầu — exit 0
-- [ ] Mọi test Bước 2–4 xanh, chạy bằng PG Docker thật (không mock — `BR-TST-02`)
-- [ ] `pnpm check` xanh
-- [ ] `git status` sạch
+- [x] 3 file schema tồn tại (`identity.ts`, `billing.ts`, `ops.ts`), mỗi file ≤400 dòng
+- [x] `docker compose down -v && docker compose up -d && pnpm db:migrate` sạch từ đầu — exit 0
+- [x] Mọi test Bước 2–4 xanh, chạy bằng PG Docker thật (không mock — `BR-TST-02`)
+- [x] `pnpm check` xanh
+- [x] `git status` sạch
 
 ---
 
