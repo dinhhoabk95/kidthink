@@ -2,10 +2,10 @@
 spec: ACCOUNT-SETTINGS
 title: Cài đặt tài khoản
 area: account
-status: draft
+status: approved
 mvp: true
 phase: P1
-reviewed: 2026-08-05
+reviewed: 2026-08-08
 owns:
   - Đổi thông tin tài khoản, mật khẩu, email
   - Đặt mật khẩu lần đầu cho tài khoản chỉ có SNS
