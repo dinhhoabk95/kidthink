@@ -2,10 +2,10 @@
 spec: USER-DETAIL
 title: Chi tiết một người dùng
 area: admin
-status: draft
+status: approved
 mvp: true
 phase: P2
-reviewed: 2026-08-04
+reviewed: 2026-08-08
 owns:
   - Nội dung màn hình chi tiết User
   - Ranh giới dữ liệu được hiện
@@ -52,8 +52,8 @@ dữ liệu học tập của một đứa trẻ cụ thể — phụ huynh cầ
 |---|---|---|
 | `BR-USD-01` | Cấm — **NEVER hiện telemetry, mastery, hay lịch sử chơi của một trẻ** | `BR-CDC-14` — vận hành không có nhu cầu nghiệp vụ |
 | `BR-USD-02` | Hồ sơ trẻ hiện **`display_name` + `age_band`** để hỗ trợ được; không hơn | Đủ để nói chuyện với phụ huynh, không đủ để hồ sơ hoá đứa trẻ |
-| `BR-USD-03` | Màn hình **chỉ đọc**; hành động dẫn sang bề mặt có audit riêng | |
-| `BR-USD-04` | Cấm — **NEVER hiện mật khẩu hash hay token** | |
+| `BR-USD-03` | Màn hình **chỉ đọc**; hành động dẫn sang bề mặt có audit riêng | Ngăn ngừa nguy cơ thay đổi dữ liệu ngoài ý muốn và tách biệt trách nhiệm qua từng bề mặt có quy trình kiểm soát độc lập |
+| `BR-USD-04` | Cấm — **NEVER hiện mật khẩu hash hay token** | Bảo vệ bí mật xác thực của người dùng và tuân thủ các nguyên tắc an toàn thông tin theo `BR-SEC-01` |
 | `BR-USD-05` | Mở chi tiết User ghi `audit_logs` khi có xem hồ sơ trẻ | Truy cập dữ liệu trẻ phải truy được |
 | `BR-USD-06` | Lịch sử đơn hiện **đủ**, kể cả đơn bị từ chối | Ngữ cảnh hỗ trợ |
 
@@ -130,6 +130,6 @@ Scenario: BR-USD-06 — hiện cả đơn bị từ chối
 
 ## 11. Open questions
 
-| # | Câu hỏi | Chặn gì |
-|---|---|---|
-| 1 | Có cần ghi chú hỗ trợ gắn với User không? | [`user-management.md`](user-management.md) Q1 |
+| # | Câu hỏi | Chặn phase | Đề xuất chốt | Chủ |
+|---|---|---|---|---|
+| 1 | Có cần ghi chú hỗ trợ gắn với User không? | P2 | Hoãn sang P4 — MVP theo dõi lịch sử hỗ trợ qua `audit_logs` (xem [`user-management.md`](user-management.md) Q1) | người quyết |

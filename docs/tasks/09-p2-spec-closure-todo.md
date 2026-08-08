@@ -302,10 +302,10 @@ admin-dashboard (độc lập)
 
 ### Bước 20 — [`user-detail.md`](../specs/06-admin/user-detail.md)
 
-- [ ] Đọc hết 135 dòng; điền "vì sao" cho **2** cảnh báo `C6`
-- [ ] Q1 trỏ sang [`user-management.md`](../specs/06-admin/user-management.md) Q1, không lặp lại
-      quyết định
-- [ ] `status: approved`; commit `feat(specs): T9 bước 20 — approve user-detail`
+- [x] Đọc hết 135 dòng; điền "vì sao" cho **2** cảnh báo `C6`
+- [x] Q1 (ghi chú hỗ trợ) — trỏ [`user-management.md`](../specs/06-admin/user-management.md) Q1
+- [x] Kiểm rule "cấm hiện telemetry trẻ" khớp `BR-CDC-14`
+- [x] `status: approved`; commit `feat(specs): T9 bước 20 — approve user-detail`
 
 ### Bước 21 — [`child-profile-admin.md`](../specs/06-admin/child-profile-admin.md)
 
