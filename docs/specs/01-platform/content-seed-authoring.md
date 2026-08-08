@@ -2,10 +2,10 @@
 spec: CONTENT-SEED-AUTHORING
 title: Biên soạn nội dung nền bằng seeder trong repo
 area: platform
-status: draft
+status: approved
 mvp: true
 phase: P1
-reviewed: 2026-08-05
+reviewed: 2026-08-08
 owns:
   - Ranh giới giữa AI agent IDE hỗ trợ soạn và người phát hành
   - Vị trí, hình dạng, và quy ước đặt tên seeder nội dung
@@ -173,7 +173,7 @@ export const seed: ContentSeed<"GT-004"> = {
   batch: "SEED-C4-GT004-01",
   competency: "C4",
   items: [{
-    code: "G-04021",                 // bất biến sau merge
+    code: "GL-C4-CLS-SORT-0021",                 // bất biến sau merge
     content_version: 1,
     title_vi: "Xếp quả vào rổ đúng màu",
     instruction_vi: "Bé xếp mỗi quả vào rổ cùng màu nhé!",
@@ -269,16 +269,16 @@ Cổng tự động fail khi `gate_failures.length > 0` hoặc `drift.length > 0
 
 ```gherkin
 Scenario: BR-CSA-01 — seed không UPDATE bản đã published
-  Given một game level code G-04021 version 1 đang published
-  And seeder sửa content_pack của G-04021 mà giữ nguyên content_version
+  Given một game level code GL-C4-CLS-SORT-0021 version 1 đang published
+  And seeder sửa content_pack của GL-C4-CLS-SORT-0021 mà giữ nguyên content_version
   When chạy pnpm seed:content
   Then lệnh thoát khác 0
   And nội dung trong DB không đổi
   And thông báo chỉ ra phải khai content_version mới
 
 Scenario: BR-CSA-01 — version mới thì INSERT và archive bản cũ
-  Given G-04021 version 1 đang published
-  And seeder khai G-04021 content_version 2
+  Given GL-C4-CLS-SORT-0021 version 1 đang published
+  And seeder khai GL-C4-CLS-SORT-0021 content_version 2
   When chạy pnpm seed:content
   Then version 2 có status published
   And version 1 có status archived
@@ -312,7 +312,7 @@ Scenario: BR-CSA-06 — chạy lại là no-op
   And không hàng nào bị UPDATE
 
 Scenario: cổng 0 — code trùng giữa hai seeder file
-  Given hai file seeder cùng khai code G-04021
+  Given hai file seeder cùng khai code GL-C4-CLS-SORT-0021
   When chạy pnpm seed:check
   Then cổng 0 fail
   And thông báo nêu cả hai đường dẫn file
@@ -403,3 +403,4 @@ Scenario: dry-run không chạm DB thật
 | 4 | Cổng 4 (ngôn ngữ) cần từ điển vốn từ 3–6 tuổi tiếng Việt. Nguồn nào? | Xây cổng 4 |
 | 5 | Nội dung seeded có cần người thứ hai review khi có ≥2 manager không? | Chất lượng vs tốc độ |
 | 6 | Batch nền có `access_tier` phân bổ ra sao — bao nhiêu `free` cho allow-list guest? | [`SPEC.md`](../../SPEC.md) §15 Q2 |
+| 7 | **Branch protection GitHub (required PR review) bật thế nào?** [`repo-bootstrap.md`](../00-foundation/repo-bootstrap.md) §11 Q12 hoãn quyết định này với câu "trước khi spec đó chạy thật (P1) phải quyết định" — "spec đó" là file này, và approve nó 2026-08-08 làm câu hỏi tới hạn. Hôm nay `BR-CSA-02` đặt toàn bộ cổng người lên PR review, nhưng **không có gì cưỡng chế** điều đó: không cổng remote (`D-S`), và `--no-verify` bỏ qua được lefthook ở máy cá nhân. Một người có quyền push thẳng `main` phát hành được nội dung mà không ai đọc | `BR-CSA-02` — cổng người của toàn bộ đường găng nội dung. Cần **người** quyết, không phải quyết định kỹ thuật |
