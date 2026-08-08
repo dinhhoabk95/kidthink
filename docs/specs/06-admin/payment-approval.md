@@ -2,10 +2,10 @@
 spec: PAYMENT-APPROVAL
 title: Duyệt và từ chối đơn thanh toán
 area: admin
-status: draft
+status: approved
 mvp: true
 phase: P2
-reviewed: 2026-08-04
+reviewed: 2026-08-08
 owns:
   - Thao tác approve/reject và hậu quả
   - Cấp bù ngày
@@ -198,7 +198,7 @@ Scenario: E2E xuyên hai app
 
 ## 11. Open questions
 
-| # | Câu hỏi | Chặn gì |
-|---|---|---|
-| 1 | Luồng hoàn tiền thiết kế thế nào? Chưa có spec | Chính sách hoàn tiền |
-| 2 | Duyệt nhầm rồi phát hiện sau — có thao tác "huỷ duyệt" không, hay chỉ thu hồi entitlement tay? | P2 |
+| # | Câu hỏi | Chặn phase | Đề xuất chốt | Chủ |
+|---|---|---|---|---|
+| 1 | Luồng hoàn tiền thiết kế thế nào? | P5 | Hoãn sang P5 — trỏ sang [`payment-flow.md`](../00-foundation/payment-flow.md) Q3 | người quyết |
+| 2 | Duyệt nhầm rồi phát hiện sau — có thao tác "huỷ duyệt" không, hay chỉ thu hồi entitlement tay? | P2 | Không ở MVP — dùng thao tác thu hồi/điều chỉnh entitlement thủ công qua [`entitlement-grant.md`](entitlement-grant.md) | người quyết |

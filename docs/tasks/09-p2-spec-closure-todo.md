@@ -161,13 +161,13 @@ entitlement-grant · subscription-view · package-catalog-admin (độc lập)
 
 ### Bước 8 — [`payment-approval.md`](../specs/06-admin/payment-approval.md)
 
-- [ ] Đọc hết 204 dòng; 0 cảnh báo `C6`
-- [ ] Đối chiếu checklist 5 mục và ràng buộc "một transaction, có khoá hàng" với mục 8 của
+- [x] Đọc hết 204 dòng; 0 cảnh báo `C6`
+- [x] Đối chiếu checklist 5 mục và ràng buộc "một transaction, có khoá hàng" với mục 8 của
       [`SPEC.md`](../SPEC.md)
-- [ ] Q1 (luồng hoàn tiền) — cặp 5 của mục 6: [`payment-flow.md`](../specs/00-foundation/payment-flow.md)
+- [x] Q1 (luồng hoàn tiền) — cặp 5 của mục 6: [`payment-flow.md`](../specs/00-foundation/payment-flow.md)
       Q3 ghi **P5**. Điền `Chặn phase: P5`, không tự đặt phase khác
-- [ ] Q2 (huỷ duyệt) — chốt và ghi `D-*`, hoặc để mở với `Chủ` rõ
-- [ ] `status: approved`; commit `feat(specs): T9 bước 8 — approve payment-approval`
+- [x] Q2 (huỷ duyệt) — chốt và ghi `D-*`, hoặc để mở với `Chủ` rõ
+- [x] `status: approved`; commit `feat(specs): T9 bước 8 — approve payment-approval`
 
 ### Bước 9 — [`pricing-page.md`](../specs/02-public/pricing-page.md)
 
