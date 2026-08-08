@@ -395,12 +395,12 @@ Scenario: dry-run không chạm DB thật
 
 ## 11. Open questions
 
-| # | Câu hỏi | Chặn gì |
-|---|---|---|
-| 1 | **Một người review được bao nhiêu bản/ngày?** Cổng người đổi chỗ từ hàng đợi sang PR, không biến mất. Đây vẫn là đường găng | Kế hoạch nội dung |
-| 2 | Bố cục competency × template có đúng cho LO không, hay LO nên chia theo strand? | Seeder LO |
-| 3 | Cổng 6 (trùng lặp) dùng chuẩn hoá cấu trúc hay embedding? Chuẩn hoá rẻ và xác định; embedding bắt được nhiều hơn nhưng cần vector store | Chi phí hạ tầng |
-| 4 | Cổng 4 (ngôn ngữ) cần từ điển vốn từ 3–6 tuổi tiếng Việt. Nguồn nào? | Xây cổng 4 |
-| 5 | Nội dung seeded có cần người thứ hai review khi có ≥2 manager không? | Chất lượng vs tốc độ |
-| 6 | Batch nền có `access_tier` phân bổ ra sao — bao nhiêu `free` cho allow-list guest? | [`SPEC.md`](../../SPEC.md) §15 Q2 |
-| 7 | **Branch protection GitHub (required PR review) bật thế nào?** [`repo-bootstrap.md`](../00-foundation/repo-bootstrap.md) §11 Q12 hoãn quyết định này với câu "trước khi spec đó chạy thật (P1) phải quyết định" — "spec đó" là file này, và approve nó 2026-08-08 làm câu hỏi tới hạn. Hôm nay `BR-CSA-02` đặt toàn bộ cổng người lên PR review, nhưng **không có gì cưỡng chế** điều đó: không cổng remote (`D-S`), và `--no-verify` bỏ qua được lefthook ở máy cá nhân. Một người có quyền push thẳng `main` phát hành được nội dung mà không ai đọc | `BR-CSA-02` — cổng người của toàn bộ đường găng nội dung. Cần **người** quyết, không phải quyết định kỹ thuật |
+| # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
+|---|---|---|---|---|
+| 1 | **Một người review được bao nhiêu bản/ngày?** Cổng người đổi chỗ từ hàng đợi sang PR, không biến mất. Đây vẫn là đường găng | Kế hoạch nội dung | P1 | người quyết |
+| 2 | Bố cục competency × template có đúng cho LO không, hay LO nên chia theo strand? | Seeder LO | P1 | Nội dung |
+| 3 | Cổng 6 (trùng lặp) dùng chuẩn hoá cấu trúc hay embedding? Chuẩn hoá rẻ và xác định; embedding bắt được nhiều hơn nhưng cần vector store | Chi phí hạ tầng | P2 | Backend |
+| 4 | Cổng 4 (ngôn ngữ) cần từ điển vốn từ 3–6 tuổi tiếng Việt. Nguồn nào? | Xây cổng 4 | P2 | Nội dung |
+| 5 | Nội dung seeded có cần người thứ hai review khi có ≥2 manager không? | Chất lượng vs tốc độ | P2 | Nội dung |
+| 6 | Batch nền có `access_tier` phân bổ ra sao — bao nhiêu `free` cho allow-list guest? | [`SPEC.md`](../../SPEC.md) §15 Q2 | P1 | người quyết |
+| 7 | **Branch protection GitHub (required PR review) bật thế nào?** [`repo-bootstrap.md`](../00-foundation/repo-bootstrap.md) §11 Q12 hoãn quyết định này với câu "trước khi spec đó chạy thật (P1) phải quyết định" — "spec đó" là file này, và approve nó 2026-08-08 làm câu hỏi tới hạn. Hôm nay `BR-CSA-02` đặt toàn bộ cổng người lên PR review, nhưng **không có gì cưỡng chế** điều đó: không cổng remote (`D-S`), và `--no-verify` bỏ qua được lefthook ở máy cá nhân. Một người có quyền push thẳng `main` phát hành được nội dung mà không ai đọc | `BR-CSA-02` — cổng người của toàn bộ đường găng nội dung. Cần **người** quyết, không phải quyết định kỹ thuật | P1 | người quyết |
