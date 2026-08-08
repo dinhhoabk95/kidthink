@@ -2,10 +2,10 @@
 spec: PAYMENT-PROOF-UPLOAD
 title: Nộp chứng từ thanh toán
 area: account
-status: draft
+status: approved
 mvp: true
 phase: P2
-reviewed: 2026-08-04
+reviewed: 2026-08-08
 owns:
   - Luồng nộp chứng từ và nhận quyền tạm
 depends_on:
@@ -56,13 +56,13 @@ User sở hữu đơn.
 | ID | Rule | Vì sao |
 |---|---|---|
 | `BR-PPU-01` | Nộp chứng từ cấp `soft_unlock`, Cấm — **NEVER cấp `active`** | Ảnh chứng từ giả mạo được; duyệt tay là bước xác minh thật |
-| `BR-PPU-02` | `soft_unlock` **3 ngày** (`SOFT_UNLOCK_DAYS`) | |
+| `BR-PPU-02` | `soft_unlock` **3 ngày** (`SOFT_UNLOCK_DAYS`) | Cân bằng giữa trải nghiệm người mua không phải chờ với thời gian duyệt thực tế của đội vận hành |
 | `BR-PPU-03` | Ảnh lưu **private**, chỉ Manager mở qua signed URL | Chứa thông tin ngân hàng |
 | `BR-PPU-04` | Mã giao dịch **bắt buộc**; ảnh tuỳ chọn nhưng khuyến nghị mạnh | Mã giao dịch là thứ đối chiếu được với sao kê |
 | `BR-PPU-05` | Nộp lại **thay** ảnh cũ, không tạo đơn mới | Nhiều đơn cùng giao dịch làm đối chiếu rối |
-| `BR-PPU-06` | Upload dùng client có CSRF, Cấm — **NEVER raw `$fetch`** | |
-| `BR-PPU-07` | Màn hình xác nhận nói rõ **quyền tạm** và thời hạn | |
-| `BR-PPU-08` | Cấm — **NEVER hiện luồng này trên bề mặt trẻ** | |
+| `BR-PPU-06` | Upload dùng client có CSRF, Cấm — **NEVER raw `$fetch`** | Tránh tấn công CSRF khi tải tệp chứng từ và đảm bảo qua tầng wrapper quản lý token |
+| `BR-PPU-07` | Màn hình xác nhận nói rõ **quyền tạm** và thời hạn | Tránh khiếu nại hoặc hiểu nhầm gói đã được duyệt chính thức khi soft_unlock hết hạn |
+| `BR-PPU-08` | Cấm — **NEVER hiện luồng này trên bề mặt trẻ** | Quy tắc tuân thủ BR-PEN-04 — giao dịch tài chính chỉ thuộc về tài khoản phụ huynh |
 
 ## 7. Data
 
@@ -170,7 +170,7 @@ Scenario: lý do từ chối hiển thị lịch sự
 
 ## 11. Open questions
 
-| # | Câu hỏi | Chặn gì |
-|---|---|---|
-| 1 | 3 ngày soft unlock có đủ nếu nộp vào cuối tuần không? | SLA duyệt |
-| 2 | Có nên tự đọc mã giao dịch từ ảnh bằng OCR không? Giảm gõ sai nhưng thêm phụ thuộc | P4 |
+| # | Câu hỏi | Chặn phase | Đề xuất chốt | Chủ |
+|---|---|---|---|---|
+| 1 | 3 ngày soft unlock có đủ nếu nộp vào cuối tuần không? | P2 | Đủ cho MVP với quy trình trực cuối tuần; trỏ sang [`payment-flow.md`](../00-foundation/payment-flow.md) Q2 | người quyết |
+| 2 | Có nên tự đọc mã giao dịch từ ảnh bằng OCR không? Giảm gõ sai nhưng thêm phụ thuộc | P4 | Hoãn sang P4 — đánh giá khi có số lượng đơn lớn | người quyết |

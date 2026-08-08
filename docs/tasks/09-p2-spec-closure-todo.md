@@ -141,13 +141,13 @@ entitlement-grant · subscription-view · package-catalog-admin (độc lập)
 
 ### Bước 6 — [`payment-proof-upload.md`](../specs/03-account/payment-proof-upload.md)
 
-- [ ] Đọc hết 176 dòng
-- [ ] Điền "vì sao" cho **4** cảnh báo `C6`
-- [ ] Q1 (`SOFT_UNLOCK_DAYS = 3` đủ chưa) — cặp 3 của mục 6, phải khớp
+- [x] Đọc hết 176 dòng
+- [x] Điền "vì sao" cho **4** cảnh báo `C6`
+- [x] Q1 (`SOFT_UNLOCK_DAYS = 3` đủ chưa) — cặp 3 của mục 6, phải khớp
       [`payment-flow.md`](../specs/00-foundation/payment-flow.md) Q2. Nếu đổi con số thì sửa
       [`payment-flow.md`](../specs/00-foundation/payment-flow.md) **cùng commit** và ghi `D-*`
-- [ ] Q2 (OCR mã giao dịch) — `Chặn phase: P4`
-- [ ] `status: approved`; commit `feat(specs): T9 bước 6 — approve payment-proof-upload`
+- [x] Q2 (OCR mã giao dịch) — `Chặn phase: P4`
+- [x] `status: approved`; commit `feat(specs): T9 bước 6 — approve payment-proof-upload`
 
 ### Bước 7 — [`payment-queue.md`](../specs/06-admin/payment-queue.md)
 
