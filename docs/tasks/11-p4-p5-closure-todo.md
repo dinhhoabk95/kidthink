@@ -64,12 +64,10 @@ Bước 0 → Đợt 1 (3) → Cổng dừng A → [chờ Task #10 xong] → Đ�
 
 ## Cổng dừng A
 
-- [ ] 3/3 spec đợt 1 `approved`; `C6` giảm đúng **6**; `C16` giảm đúng **3**
-- [ ] `pnpm lint:specs` 0 lỗi
-- [ ] `pnpm check && pnpm test` xanh
-- [ ] Kiểm điều kiện vào đợt 2:
-      `for f in $(grep -rl "^phase: P3" --include="*.md" docs/specs); do grep -q "^status: draft$" $f && echo $f; done`
-      — **không in gì** (Task #10 đã xong). Nếu còn in, dừng ở đây
+- [x] 3/3 spec đợt 1 `approved`; `C6` giảm đúng **6** (từ 37 xuống 31); `C16` giảm đúng **3** (từ 24 xuống 21)
+- [x] `pnpm lint:specs` 0 lỗi
+- [x] `pnpm check && pnpm test` xanh
+- [x] Kiểm điều kiện vào đợt 2: `for f in $(grep -rl "^phase: P3" --include="*.md" docs/specs); do grep -q "^status: draft$" $f && echo $f; done` — **không in gì** (Task #10 đã xong)
 
 ---
 
@@ -77,17 +75,15 @@ Bước 0 → Đợt 1 (3) → Cổng dừng A → [chờ Task #10 xong] → Đ�
 
 ### Bước 4 — [`ai-assistant.md`](../specs/07-addon/ai-assistant.md)
 
-- [ ] Đọc hết 158 dòng
-- [ ] Điền "vì sao" cho `BR-AIA-06`, `BR-AIA-07`, `BR-AIA-09`, `BR-AIA-10`
-- [ ] Q1 (provider và model) — `Chặn gì: Lên catalog + migration vector`, `Chủ: người quyết`; ghi
-      rõ [`semantic-search.md`](../specs/07-addon/semantic-search.md) Q1 dùng **cùng** quyết định
-- [ ] Q2 (tỉ lệ trừ credit) — trỏ Bước 1, không ghi lại số
-- [ ] Q3 — đã đóng 2026-08-05 (pgvector), giữ nguyên dạng gạch ngang
-- [ ] Q4 (DPA với provider) — `Chủ: người quyết`, `Chặn gì: Pháp lý`
-- [ ] Đối chiếu sáu vùng AI cấm sinh code ở [`SPEC.md`](../SPEC.md) mục 0 D7 — add-on này gọi LLM
-      ở runtime cho **người lớn**, phải nói rõ nó không sinh nội dung cho trẻ
-- [ ] Bảng mục 11 sang 5 cột; `status: approved`
-- [ ] Commit `feat(specs): T11 bước 4 — approve ai-assistant`
+- [x] Đọc hết 158 dòng
+- [x] Điền "vì sao" cho `BR-AIA-06`, `BR-AIA-07`, `BR-AIA-09`, `BR-AIA-10`
+- [x] Q1 (provider và model) — `Chặn phase: P4`, `Chủ: người quyết`; ghi rõ [`semantic-search.md`](../specs/07-addon/semantic-search.md) Q1 dùng **cùng** quyết định
+- [x] Q2 (tỉ lệ trừ credit) — trỏ Bước 1, không ghi lại số
+- [x] Q3 — đã đóng 2026-08-05 (pgvector), giữ nguyên dạng gạch ngang
+- [x] Q4 (DPA với provider) — `Chủ: người quyết`, `Chặn phase: P4`
+- [x] Đối chiếu sáu vùng AI cấm sinh code ở [`SPEC.md`](../SPEC.md) mục 0 D7 — add-on này gọi LLM ở runtime cho **người lớn**, không sinh nội dung cho trẻ
+- [x] Bảng mục 11 sang 5 cột; `status: approved`
+- [x] Commit `feat(specs): T11 bước 4 — approve ai-assistant`
 
 ### Bước 5 — [`lesson-plan-creator.md`](../specs/07-addon/lesson-plan-creator.md)
 
