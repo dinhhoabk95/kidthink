@@ -150,17 +150,17 @@ Lô đụng `play_sessions` và `play_events`. **Mọi cột phát sinh phải s
 
 204 dòng · 11 rule · 2 câu hỏi · 3 cảnh báo. File dài nhất lô B.
 
-- [ ] Đọc hết file
-- [ ] Điền "vì sao" cho `BR-PSL-04`, `BR-PSL-05`, `BR-PSL-09`
-- [ ] Đối chiếu máy trạng thái phiên với
+- [x] Đọc hết file
+- [x] Điền "vì sao" cho `BR-PSL-04`, `BR-PSL-05`, `BR-PSL-09`
+- [x] Đối chiếu máy trạng thái phiên với
       [`schema-play-telemetry.md`](../specs/01-platform/schema-play-telemetry.md) mục 7 — mọi
       trạng thái trong spec phải có chỗ chứa trong bảng
-- [ ] Chuyển bảng mục 11 sang 5 cột
-- [ ] Q1 (30 phút đóng phiên bỏ dở có đúng không) — **chặn P1, chốt**
-- [ ] Q2 (trẻ quay lại phiên `abandoned` — tiếp tục hay bắt đầu mới) — **chặn P1, chốt**
-- [ ] Checklist review 15 mục
-- [ ] `status: approved`, `reviewed` mới, `pnpm lint:specs` cảnh báo giảm **3**
-- [ ] Commit `feat(specs): T8 bước 5 — approve play-session-lifecycle`
+- [x] Chuyển bảng mục 11 sang 5 cột
+- [x] Q1 (30 phút đóng phiên bỏ dở có đúng không) — **chặn P1, chốt**
+- [x] Q2 (trẻ quay lại phiên `abandoned` — tiếp tục hay bắt đầu mới) — **chặn P1, chốt**
+- [x] Checklist review 15 mục
+- [x] `status: approved`, `reviewed: 2026-08-08`, `pnpm lint:specs` cảnh báo giảm **3**
+- [x] Commit `feat(specs): T8 bước 5 — approve play-session-lifecycle`
 
 ### Bước 6 — [`play-event-ingestion.md`](../specs/04-play/play-event-ingestion.md)
 

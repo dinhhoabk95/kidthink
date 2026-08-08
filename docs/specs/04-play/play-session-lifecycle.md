@@ -2,10 +2,10 @@
 spec: PLAY-SESSION-LIFECYCLE
 title: Vòng đời phiên chơi
 area: play
-status: draft
+status: approved
 mvp: true
 phase: P1
-reviewed: 2026-08-04
+reviewed: 2026-08-08
 owns:
   - Máy trạng thái phiên chơi
   - Quy tắc tạo, hoàn tất, bỏ dở
@@ -71,13 +71,13 @@ nào.
 |---|---|---|
 | `BR-PSL-01` | Một phiên Cấm — **NEVER complete hai lần** | Complete lần hai nhân đôi mastery và KPI |
 | `BR-PSL-02` | `content_version` ghim lúc **tạo**, không đọc lại lúc complete | Version có thể đổi giữa chừng |
-| `BR-PSL-03` | Điểm tính ở **server** từ chuỗi event | không tin client |
-| `BR-PSL-04` | Phiên guest: `child_profile_id` NULL, không ghi `mastery_state` | |
-| `BR-PSL-05` | Phiên preview: `is_preview = true`, không ghi mastery, không đếm KPI | |
-| `BR-PSL-06` | Phiên đang mở **không bị ngắt** vì hết hạn mức hay hết gói | Cắt ngang lúc trẻ đang chơi |
+| `BR-PSL-03` | Điểm tính ở **server** từ chuỗi event | Không tin client gửi điểm trực tiếp |
+| `BR-PSL-04` | Phiên guest: `child_profile_id` NULL, không ghi `mastery_state` | Guest không có tài khoản và hồ sơ để lưu vết tiến độ học tập |
+| `BR-PSL-05` | Phiên preview: `is_preview = true`, không ghi mastery, không đếm KPI | Preview của Manager dùng để kiểm thử nội dung, không phải hành vi học của trẻ |
+| `BR-PSL-06` | Phiên đang mở **không bị ngắt** vì hết hạn mức hay hết gói | Cắt ngang lúc trẻ đang chơi gây trải nghiệm tiêu cực |
 | `BR-PSL-07` | Phiên bỏ dở vẫn **được đếm** vào thời gian chơi và KPI bỏ game | Tỉ lệ bỏ là tín hiệu chất lượng nội dung quan trọng nhất |
 | `BR-PSL-08` | `access_tier_at_start` ghim lúc tạo | Điều tra sau cần biết lúc đó quyền thế nào |
-| `BR-PSL-09` | Chỉ chủ sở hữu phiên gửi được event; người khác → **404** | |
+| `BR-PSL-09` | Chỉ chủ sở hữu phiên gửi được event; người khác → **404** | Bảo mật dữ liệu phiên chơi, tránh can thiệp kết quả từ tài khoản khác |
 | `BR-PSL-10` | Tạo phiên là **tác dụng phụ của lấy config**, không endpoint riêng | Hai bước tách rời sinh ra phiên mồ côi khi client bỏ giữa chừng |
 
 ## 7. Data
@@ -197,7 +197,7 @@ Scenario: BR-PSL-10 — không có endpoint tạo phiên riêng
 
 ## 11. Open questions
 
-| # | Câu hỏi | Chặn gì |
-|---|---|---|
-| 1 | 30 phút để đóng phiên bỏ dở có đúng không? Trẻ hay bị gián đoạn rồi quay lại | P1 |
-| 2 | Trẻ quay lại phiên `abandoned` — cho tiếp tục hay bắt đầu mới? | UX P1 |
+| # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
+|---|---|---|---|---|
+| 1 | 30 phút để đóng phiên bỏ dở có đúng không? | Quy chuẩn phiên | P1 | Chốt: Đúng, 30 phút là ngưỡng quét phù hợp cho phiên chơi mầm non; sau 30p không event hệ thống tự sweep sang abandoned |
+| 2 | Trẻ quay lại phiên `abandoned` — cho tiếp tục hay bắt đầu mới? | UX phiên chơi | P1 | Chốt: Bắt đầu mới; phiên abandoned là terminal state, không cho mở lại để bảo toàn telemetry |
