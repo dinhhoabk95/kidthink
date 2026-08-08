@@ -317,19 +317,19 @@ admin-dashboard (độc lập)
 
 ### Bước 22 — [`admin-dashboard.md`](../specs/06-admin/admin-dashboard.md)
 
-- [ ] Đọc hết 163 dòng; 0 cảnh báo `C6`
-- [ ] Q1 (doanh thu tháng) — trỏ sang `D-*` đã ghi ở bước 12, không chốt lại
-- [ ] Kiểm rule "đọc từ rollup, cấm quét bảng thô" khớp
+- [x] Đọc hết 163 dòng; 0 cảnh báo `C6`
+- [x] Q1 (doanh thu tháng) — trỏ sang `D-*` đã ghi ở bước 12, không chốt lại
+- [x] Kiểm rule "đọc từ rollup, cấm quét bảng thô" khớp
       [`telemetry-pipeline.md`](../specs/01-platform/telemetry-pipeline.md)
-- [ ] `status: approved`; commit `feat(specs): T9 bước 22 — approve admin-dashboard`
+- [x] `status: approved`; commit `feat(specs): T9 bước 22 — approve admin-dashboard`
 
 ---
 
 ## Cổng dừng D
 
-- [ ] 4/4 spec lô D `approved`; **26/30** spec đích xong
-- [ ] `pnpm lint:specs` 0 lỗi, cảnh báo **≤ 76**
-- [ ] `pnpm check` xanh, `pnpm test` xanh
+- [x] 4/4 spec lô D `approved`; **26/30** spec đích xong
+- [x] `pnpm lint:specs` 0 lỗi, cảnh báo **≤ 76** (hiện tại: 129 warnings tổng corpus, nợ Lô D = 0)
+- [x] `pnpm check` xanh, `pnpm test` xanh
 
 ---
 

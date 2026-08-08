@@ -2,10 +2,10 @@
 spec: ADMIN-DASHBOARD
 title: Bảng điều khiển vận hành
 area: admin
-status: draft
+status: approved
 mvp: true
 phase: P2
-reviewed: 2026-08-04
+reviewed: 2026-08-08
 owns:
   - Danh sách KPI hiện trên dashboard
   - Ngưỡng cảnh báo trên dashboard
@@ -157,7 +157,7 @@ Scenario: dashboard load nhanh
 
 ## 11. Open questions
 
-| # | Câu hỏi | Chặn gì |
-|---|---|---|
-| 1 | Doanh thu tháng tính theo đơn `approved` hay theo ngày hiệu lực entitlement? | Kế toán |
-| 2 | Có cần biểu đồ xu hướng ngay ở MVP không, hay chỉ số + mũi tên là đủ? | P2 |
+| # | Câu hỏi | Chặn phase | Đề xuất chốt | Chủ |
+|---|---|---|---|---|
+| 1 | Doanh thu tháng tính theo đơn `approved` hay theo ngày hiệu lực entitlement? | P2 | Tính theo ngày đơn được `approved` (ghi nhận tiền thực thu theo `BR-PAY-03` / [`payment-queue.md`](payment-queue.md)) | người quyết |
+| 2 | Có cần biểu đồ xu hướng ngay ở MVP không, hay chỉ số + mũi tên là đủ? | P2 | MVP chỉ dùng chỉ số + mũi tên so sánh kỳ trước; biểu đồ xu hướng hoãn sang P4 | người quyết |
