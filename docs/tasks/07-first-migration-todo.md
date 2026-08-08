@@ -298,16 +298,16 @@ File: `packages/db/src/schema/curriculum.ts` — theo
 File: `packages/db/src/schema/child.ts` — theo
 [`schema-play-telemetry.md`](../specs/01-platform/schema-play-telemetry.md) §7.1, §7.4
 
-- [ ] `child_profiles` — **đúng 12 cột**, `user_id` FK `users(id)` **ON DELETE CASCADE**,
+- [x] `child_profiles` — **đúng 12 cột**, `user_id` FK `users(id)` **ON DELETE CASCADE**,
       `birth_year` CHECK theo tuổi 3–6, **không** cột `full_name`/`birth_date`/`school`/
       `photo_path`/`age_band` (`BR-SPT-01`, `BR-SPT-02`)
-- [ ] `child_session_summaries` — theo §7.4
-- [ ] `pnpm db:generate` → đọc SQL → `pnpm db:migrate`
-- [ ] Integration test:
-      - [ ] `BR-SPT-01` — đếm cột `child_profiles` = 12 chính xác, kiểm danh sách tên cột
+- [x] `child_session_summaries` — theo §7.4
+- [x] `pnpm db:generate` → đọc SQL → `pnpm db:migrate`
+- [x] Integration test:
+      - [x] `BR-SPT-01` — đếm cột `child_profiles` = 12 chính xác, kiểm danh sách tên cột
             bằng `information_schema.columns` (không chỉ đếm số, phải xác nhận đúng tên cấm)
-- [ ] `pnpm test` xanh
-- [ ] Commit `feat(db): P0 bước 8.11 — schema child`
+- [x] `pnpm test` xanh
+- [x] Commit `feat(db): P0 bước 8.11 — schema child`
 
 ## Bước 12 — `schema/play.ts`
 

@@ -38,19 +38,30 @@ describe("Curriculum Schema Integration Tests", () => {
   it("BR-SCT-06: curriculum_items references entity_id (lineage anchor) so it sees new published versions automatically", async () => {
     const db = getOwnerDb();
 
-    // 1. Create Game Template & Published Game Level Version 1 (entity_id = 700)
-    const gtCode = `GT-${((Date.now() % 900) + 100).toString()}`;
-    const [gt] = await db
+    // 1. Create Game Template & Published Game Level Version 1
+    const gtCode = `GT-${(Math.floor(Math.random() * 899) + 100).toString()}`;
+    const [gtInserted] = await db
       .insert(gameTemplates)
       .values({
         code: gtCode,
         nameVi: "Template Lineage Test",
         mechanic: "drag_drop",
       })
+      .onConflictDoNothing()
       .returning();
 
-    const glCode = "GL-C1-NUM-DRAG-9999";
-    const lineageAnchorEntityId = 700;
+    const gtId = gtInserted
+      ? gtInserted.id
+      : (
+          await db
+            .select()
+            .from(gameTemplates)
+            .where(eq(gameTemplates.code, gtCode))
+        )[0].id;
+
+    const seq = (Math.floor(Math.random() * 9000) + 1000).toString();
+    const glCode = `GL-C1-NUM-DRAG-${seq}`;
+    const lineageAnchorEntityId = Math.floor(Math.random() * 900_000) + 100_000;
 
     const [glV1] = await db
       .insert(gameLevels)
@@ -58,7 +69,7 @@ describe("Curriculum Schema Integration Tests", () => {
         entityId: lineageAnchorEntityId,
         code: glCode,
         contentVersion: 1,
-        templateId: gt.id,
+        templateId: gtId,
         titleVi: "Version 1",
         contentPack: { v: 1 },
         difficultyParams: { speed: 1 },
@@ -67,7 +78,7 @@ describe("Curriculum Schema Integration Tests", () => {
       })
       .returning();
 
-    // 2. Create Curriculum and Curriculum Item pointing to lineage anchor (entity_id = 700)
+    // 2. Create Curriculum and Curriculum Item pointing to lineage anchor
     const curCode = `CUR-${(Math.floor(Math.random() * 800) + 100).toString()}`;
     const [cur] = await db
       .insert(curricula)
@@ -99,7 +110,7 @@ describe("Curriculum Schema Integration Tests", () => {
 
     expect(publishedBefore.titleVi).toBe("Version 1");
 
-    // 3. Archive V1 and create Published Game Level Version 2 with same lineageAnchorEntityId (700)
+    // 3. Archive V1 and create Published Game Level Version 2 with same lineageAnchorEntityId
     await db
       .update(gameLevels)
       .set({ status: "archived" })
@@ -109,7 +120,7 @@ describe("Curriculum Schema Integration Tests", () => {
       entityId: lineageAnchorEntityId,
       code: glCode,
       contentVersion: 2,
-      templateId: gt.id,
+      templateId: gtId,
       titleVi: "Version 2 (New Published)",
       contentPack: { v: 2 },
       difficultyParams: { speed: 2 },
