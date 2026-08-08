@@ -2,7 +2,7 @@
 spec: NEXT-GAME-RECOMMENDATION
 title: Gợi ý nội dung kế tiếp
 area: play
-status: draft
+status: approved
 mvp: true
 phase: P3
 reviewed: 2026-08-08
@@ -75,7 +75,7 @@ Mỗi ứng viên phải qua **gating** trước khi vào danh sách gợi ý.
 | `BR-REC-01` | Gợi ý phải qua **gating** trước khi hiện | Gợi ý thứ không chơi được là quảng cáo trá hình trên bề mặt trẻ |
 | `BR-REC-02` | Curriculum **luôn ưu tiên hơn** adaptive | Adaptive không phủ quyết thứ tự sư phạm — `BR-ADP-05` |
 | `BR-REC-03` | Loại 3 level chơi gần nhất | Lặp lại ngay làm trẻ chán |
-| `BR-REC-04` | Gợi ý luôn hợp **band tuổi** của trẻ | |
+| `BR-REC-04` | Gợi ý luôn hợp **band tuổi** của trẻ | Đảm bảo nội dung vừa sức phát triển nhận thức của từng nhóm tuổi mầm non |
 | `BR-REC-05` | Mỗi gợi ý có `reason_vi` giải thích được | Người lớn cần hiểu vì sao |
 | `BR-REC-06` | Cấm — **NEVER gợi ý dựa trên "trẻ khác cũng chơi"** | Không so sánh trẻ; và dữ liệu hành vi tập thể của trẻ là vùng nhạy cảm |
 | `BR-REC-07` | Ưu tiên nội dung **mở được**; nội dung khoá tối đa **1** trong danh sách | Danh sách toàn ổ khoá gây nản |
@@ -186,7 +186,7 @@ Scenario: không bao giờ trả rỗng
 
 ## 11. Open questions
 
-| # | Câu hỏi | Chặn gì |
-|---|---|---|
-| 1 | Loại 3 level gần nhất có đủ không? Với 120 level thì trẻ sẽ gặp lại khá nhanh | P1 |
-| 2 | `popular` dùng số lượt chơi tổng — có rủi ro tạo vòng lặp tự củng cố không? | P3 |
+| # | Câu hỏi | Chặn phase | Đề xuất chốt | Chủ |
+|---|---|---|---|---|
+| 1 | Loại 3 level gần nhất có đủ không? Với 120 level thì trẻ sẽ gặp lại khá nhanh | P3 | Giữ loại 3 level gần nhất cho MVP; mở rộng cửa sổ loại trừ nếu ghi nhận hiện tượng lặp lại quá nhanh ở P4 | Play Recommendation |
+| 2 | `popular` dùng số lượt chơi tổng — có rủi ro tạo vòng lặp tự củng cố không? | P3 | Kết hợp popular với trọng số xáo trộn ngẫu nhiên nhẹ (random noise) để tránh hiện tượng hiệu ứng đám đông | Play Recommendation |
