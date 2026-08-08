@@ -159,7 +159,7 @@ Scenario: opt-out được tôn trọng
 
 ## 11. Open questions
 
-| # | Câu hỏi | Chặn gì |
-|---|---|---|
-| 1 | Provider email nào? Cần domain đã xác thực SPF/DKIM trước go-live | P2 |
-| 2 | Báo cáo tuần gửi thứ mấy, giờ nào ICT? | P3 |
+| # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
+|---|---|---|---|---|
+| 1 | Provider email nào? Cần domain đã xác thực SPF/DKIM trước go-live | Deploy P2 | P2 | Infra |
+| 2 | Báo cáo tuần gửi thứ mấy, giờ nào ICT? | Gửi mail P3 | P3 | người quyết |
