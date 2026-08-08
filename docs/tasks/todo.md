@@ -531,13 +531,12 @@ Giao cho một agent (general-purpose) làm cả 15 file còn lại theo đúng 
 
 > File nhiều người đọc nhất, điểm vào dự án.
 
-- [ ] Viết lại toàn bộ văn xuôi theo chín việc
-- [ ] Mục 13, danh sách cổng ra từng phase: giữ nguyên **từng dòng**, kể cả ba dòng neo thêm ở
-      Task #3. Chỉ đổi cách viết
-- [ ] Kiểm tra C11 vẫn xanh — số spec khai trong file khớp filesystem
-- [ ] 6 lượt `ZPD` và `KPI`: **giữ nguyên**, chỉ chú giải một lần ở lần nhắc đầu
-- [ ] `pnpm check` exit 0 · `pnpm test` không giảm
-- [ ] Commit
+- [x] Viết lại toàn bộ văn xuôi theo chín việc
+- [x] Mục 13, danh sách cổng ra từng phase: giữ nguyên **từng dòng**, kể cả ba dòng neo thêm ở Task #3. Chỉ đổi cách viết
+- [x] Kiểm tra C11 vẫn xanh — số spec khai trong file khớp filesystem
+- [x] 6 lượt `ZPD` và `KPI`: **giữ nguyên**, chỉ chú giải một lần ở lần nhắc đầu
+- [x] `pnpm check` exit 0 · `pnpm test` không giảm
+- [x] Commit
 
 ## Bước 15 — `index.md`, `roadmap.md`, `AUDIT-v1.md` · 37 kh · 4 vt · 213 tc
 

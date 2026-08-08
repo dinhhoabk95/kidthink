@@ -138,7 +138,6 @@ export const STYLE_DEFERRED: string[] = [
   "specs/AUDIT-v1.md",
   "taxonomy/",
   "tasks/",
-  "SPEC.md",
 ];
 
 export function isDeferred(
