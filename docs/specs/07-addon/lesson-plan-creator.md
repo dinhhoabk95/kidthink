@@ -2,10 +2,10 @@
 spec: LESSON-PLAN-CREATOR
 title: Công cụ soạn giáo án cá nhân
 area: addon
-status: draft
+status: approved
 mvp: false
 phase: P4
-reviewed: 2026-08-04
+reviewed: 2026-08-08
 owns:
   - Luồng User tự lắp giáo án từ thư viện
 depends_on:
@@ -41,11 +41,11 @@ bản gốc của hệ thống, và **không** xuất bản vào catalog công k
 | `BR-LPC-01` | User tạo **bản copy**, Cấm — **NEVER sửa bản gốc hệ thống** | Bản gốc là tài sản chung có kiểm duyệt |
 | `BR-LPC-02` | Giáo án cá nhân Cấm — **NEVER vào catalog công khai** | Vào catalog cần kiểm duyệt; kiểm duyệt UGC ở quy mô là mô hình khác |
 | `BR-LPC-03` | Giáo án chỉ dùng nội dung **`published`** mà User **có quyền truy cập** | Cấm lách paywall bằng cách nhét nội dung premium vào giáo án |
-| `BR-LPC-04` | Cấm — **NEVER nhiều người cùng sửa** một giáo án ở MVP add-on | |
+| `BR-LPC-04` | Cấm — **NEVER nhiều người cùng sửa** một giáo án ở MVP add-on | Giảm thiểu độ phức tạp về xử lý đồng bộ trạng thái thực thời cho MVP |
 | `BR-LPC-05` | Chia sẻ giáo án **không có ở phiên bản đầu** | Chia sẻ kéo theo kiểm duyệt và bản quyền |
-| `BR-LPC-06` | Xuất PDF trừ quota `export_pdf` | |
+| `BR-LPC-06` | Xuất PDF trừ quota `export_pdf` | Kiểm soát tải cho hạ tầng render PDF và chi phí xuất bản tài liệu |
 | `BR-LPC-07` | Bản gốc đổi version → giáo án giữ **snapshot đã copy**, có thông báo có bản mới | Giáo án đã in ra không được đổi dưới chân người dùng |
-| `BR-LPC-08` | Quota `lesson_plans_per_month` theo gói add-on | |
+| `BR-LPC-08` | Quota `lesson_plans_per_month` theo gói add-on | Quản lý hạ tầng và khuyến khích người dùng đăng ký gói dịch vụ phù hợp |
 | `BR-LPC-09` | Giáo án Cấm — **NEVER chứa dữ liệu của trẻ** | Nó là tài liệu dạy, không phải hồ sơ học sinh |
 
 ## 7. Data
@@ -104,8 +104,8 @@ Scenario: BR-LPC-09 — không chứa dữ liệu trẻ
 
 ## 11. Open questions
 
-| # | Câu hỏi | Chặn gì |
-|---|---|---|
-| 1 | Giá add-on này là bao nhiêu và bán theo tháng hay năm? | Lên catalog |
-| 2 | Chia sẻ bằng link riêng tư có vào phiên bản hai không? | P5 |
-| 3 | Quota giáo án mỗi tháng là bao nhiêu? | Lên catalog |
+| # | Câu hỏi | Chặn phase | Đề xuất chốt | Chủ |
+|---|---|---|---|---|
+| 1 | Giá add-on này là bao nhiêu và bán theo tháng hay năm? | P4 | Định giá và chu kỳ thanh toán sẽ chốt khi lên catalog dịch vụ | người quyết |
+| 2 | Chia sẻ bằng link riêng tư có vào phiên bản hai không? | P5 | Hoãn sang P5 để đánh giá thêm nhu cầu chia sẻ nội bộ giữa các giáo viên | người quyết |
+| 3 | Quota giáo án mỗi tháng là bao nhiêu? | P4 | Định lượng theo gói bán khi lên catalog sản phẩm | người quyết |

@@ -87,12 +87,12 @@ Bước 0 → Đợt 1 (3) → Cổng dừng A → [chờ Task #10 xong] → Đ�
 
 ### Bước 5 — [`lesson-plan-creator.md`](../specs/07-addon/lesson-plan-creator.md)
 
-- [ ] Đọc hết 112 dòng
-- [ ] Điền "vì sao" cho `BR-LPC-04`, `BR-LPC-06`, `BR-LPC-08`
-- [ ] Q1 (giá, bán tháng hay năm) và Q3 (quota giáo án mỗi tháng) — khuôn `Lên catalog`
-- [ ] Q2 (chia sẻ bằng link riêng tư) — `Chặn phase: P5`, `Chủ: người quyết`
-- [ ] Bảng mục 11 sang 5 cột; `status: approved`
-- [ ] Commit `feat(specs): T11 bước 5 — approve lesson-plan-creator`
+- [x] Đọc hết 112 dòng
+- [x] Điền "vì sao" cho `BR-LPC-04`, `BR-LPC-06`, `BR-LPC-08`
+- [x] Q1 (giá, bán tháng hay năm) và Q3 (quota giáo án mỗi tháng) — khuôn `Lên catalog` / `P4` / `người quyết`
+- [x] Q2 (chia sẻ bằng link riêng tư) — `Chặn phase: P5`, `Chủ: người quyết`
+- [x] Bảng mục 11 sang 5 cột; `status: approved`
+- [x] Commit `feat(specs): T11 bước 5 — approve lesson-plan-creator`
 
 ---
 
