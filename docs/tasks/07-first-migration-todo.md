@@ -1,0 +1,399 @@
+# Checklist — Task #7: P0 bước 8, migration đầu tiên
+
+> Bối cảnh, đồ thị phụ thuộc, ba quyết định kỹ thuật (D1–D3), và lỗ hổng spec §2a:
+> [`07-first-migration-plan.md`](07-first-migration-plan.md).
+>
+> ```
+> export PATH=/Users/macbook/.nvm/versions/node/v24.15.0/bin:$PATH
+> ```
+>
+> **Tick ô ngay khi làm xong.** Một bước một commit — không gộp nhiều bảng vào một commit
+> (Task #5 nguyên tắc "Bảy việc phải làm cho mỗi spec" bước 7, áp dụng tương tự cho code: một
+> module một commit).
+
+## Thứ tự làm
+
+```
+Bước 1 -> Bước 2 -> Bước 3 -> Bước 4 -> Cổng dừng A
+                                            |
+              +-----------------------------+
+              |                             |
+         (đã xong ở trên)              Bước 5 -> 6 -> 7 -> Cổng dừng B
+                                            |
+                                       Bước 8 (spec, không code)
+                                            |
+                                       Bước 9 -> Bước 10 -> Cổng dừng C
+                                            |
+                              Bước 11 -> Bước 12 -> Bước 13
+                                            |
+                          Bước 14 (song song được, chỉ cần Bước 3)
+                                            |
+                              Bước 15 -> Cổng dừng cuối
+```
+
+---
+
+## Bước 1 — Hạ tầng `packages/db`: driver, role, script
+
+- [ ] Thêm `drizzle-orm` `^0.45`, `drizzle-kit` `^0.31` vào `catalog:` của
+      `pnpm-workspace.yaml` (lockstep — không lệch minor giữa hai gói, theo
+      [`repo-bootstrap.md`](../specs/00-foundation/repo-bootstrap.md) §7.1)
+- [ ] `packages/db/package.json` — thêm dependency `drizzle-orm`, `postgres` (`catalog:`);
+      devDependency `drizzle-kit` (`catalog:`)
+- [ ] Tạo `packages/db/drizzle.config.ts` — `schema: "./src/schema/*.ts"`,
+      `out: "./src/migrations"`, `dialect: "postgresql"`
+- [ ] `packages/db/src/index.ts` — hai factory kết nối (D1 trong plan):
+      - `getOwnerDb()` — dùng `DATABASE_URL` (role `postgres`, cho script migration)
+      - `getAppDb()` — dùng `DATABASE_URL_APP` (role `kidthink_app`, cho `apps/*` runtime)
+      - Cả hai lazy-init, không kết nối lúc import module (khớp
+        [`monorepo-package-architecture.md`](../specs/00-foundation/monorepo-package-architecture.md) §8 "side effect lúc import")
+- [ ] `.env` mẫu (`.env.example` ở gốc) — thêm `DATABASE_URL_APP`
+- [ ] Root `package.json` — thêm script `db:generate` (`drizzle-kit generate`),
+      `db:migrate` (script tự viết chạy migration bằng owner connection),
+      `db:seed` (chạy `packages/db/src/seed.ts`)
+- [ ] Migration custom đầu tiên (`pnpm db:generate --custom` hoặc tương đương của
+      `drizzle-kit`) — tạo role `kidthink_app` `NOLOGIN` → sau đó `ALTER ROLE ... LOGIN
+      PASSWORD ...` (đọc từ biến môi trường lúc chạy migration, không hardcode), `GRANT
+      CONNECT` lên DB `kidthink`
+- [ ] `docker compose up -d` (đã chạy sẵn nếu chưa dừng từ Task #5) → `pnpm db:migrate` exit 0
+      trên DB rỗng
+- [ ] `pnpm check` xanh (chưa có bảng nghiệp vụ nào, chỉ hạ tầng)
+- [ ] Commit `feat(db): P0 bước 8.1 — driver, role kidthink_app, script db:*`
+
+## Bước 2 — `schema/identity.ts`
+
+File: `packages/db/src/schema/identity.ts` — 8 bảng theo
+[`schema-identity-billing.md`](../specs/01-platform/schema-identity-billing.md) §7.1–7.4
+
+- [ ] `users` — đúng cột §7.1, **không** cột `role`/`persona`/`tier` (`BR-SIB-01`)
+- [ ] `email` kiểu `citext` UNIQUE (cần `CREATE EXTENSION citext` trong migration —
+      thêm vào migration custom Bước 1 hoặc migration riêng của bảng này)
+- [ ] `managers` — đúng cột §7.2
+- [ ] 4 bảng auth phụ polymorphic (`active_sessions`·`mfa_settings`·`mfa_recovery_codes`·
+      `verification_tokens`) — cột chung `(account_type, account_id)` theo §7.3
+- [ ] `social_identities` — FK thẳng `users(id)` **ON DELETE CASCADE** (`BR-SIB-11`), hai
+      UNIQUE `(provider, provider_user_id)` và `(user_id, provider)` (`BR-SIB-09`), **không**
+      cột `access_token`/`refresh_token`/`id_token`/`avatar_url` (`BR-SIB-10`)
+- [ ] `consent_logs` — INSERT-only: `REVOKE UPDATE, DELETE ... FROM kidthink_app` trong cùng
+      migration (`BR-SIB-06`)
+- [ ] `pnpm db:generate` — đọc file SQL sinh ra trước khi tiếp tục
+- [ ] `pnpm db:migrate` trên DB rỗng — exit 0
+- [ ] Integration test (`packages/db/tests/integration/identity.test.ts`, PG Docker thật,
+      không mock — `BR-TST-02`):
+      - [ ] `BR-SIB-04` — orphan `active_sessions.account_id` bị bắt
+      - [ ] `BR-SIB-07` — `A@X.com` trùng `a@x.com` → UNIQUE từ chối
+      - [ ] `BR-SIB-08` — `users` không `password_hash` vẫn INSERT được
+      - [ ] `BR-SIB-09` — cả hai UNIQUE của `social_identities` đều bị bắt (2 test)
+      - [ ] `BR-SIB-10` — đọc định nghĩa bảng, không có 4 cột token
+      - [ ] `BR-SIB-11` — xoá `users` → 0 hàng `social_identities` còn lại
+      - [ ] `BR-SIB-06` — `UPDATE`/`DELETE` trên `consent_logs` bằng role `kidthink_app` bị từ
+            chối (kết nối **bằng đúng role app**, không phải owner)
+- [ ] `pnpm test` xanh
+- [ ] Commit `feat(db): P0 bước 8.2 — schema identity`
+
+## Bước 3 — `schema/billing.ts`
+
+File: `packages/db/src/schema/billing.ts` — 6 bảng theo
+[`schema-identity-billing.md`](../specs/01-platform/schema-identity-billing.md) §7.5–7.9
+
+- [ ] `entitlement_keys` — PK `key` varchar, cột theo §7.5
+- [ ] `packages` · `package_entitlements` — cột theo §7.6, `offers` JSONB
+- [ ] `entitlements` — `entitlement_key` **FK thật** tới `entitlement_keys` (`BR-SIB-02`)
+- [ ] `payment_orders` — `amount_vnd` snapshot, không tính toán lại từ `packages` lúc đọc
+      (`BR-SIB-03` — verify bằng test, không chỉ bằng kiểu cột)
+- [ ] `quota_usage` — PK ghép `(user_id, quota_key, period_start)`
+- [ ] `pnpm db:generate` → đọc SQL → `pnpm db:migrate`
+- [ ] Integration test:
+      - [ ] `BR-SIB-02` — insert `entitlements` với `entitlement_key` không tồn tại → FK từ chối
+      - [ ] `BR-SIB-03` — đổi giá trong `packages` sau khi đơn đã tạo, `amount_vnd` đơn cũ
+            không đổi
+- [ ] `pnpm test` xanh
+- [ ] Commit `feat(db): P0 bước 8.3 — schema billing`
+
+## Bước 4 — `schema/ops.ts`
+
+File: `packages/db/src/schema/ops.ts` — theo
+[`schema-identity-billing.md`](../specs/01-platform/schema-identity-billing.md) §7.10/7.10a,
+[`audit-log.md`](../specs/01-platform/audit-log.md) §7.1, [`backup-and-restore.md`](../specs/01-platform/backup-and-restore.md) §7.2
+
+- [ ] `audit_logs` — cột theo [`audit-log.md`](../specs/01-platform/audit-log.md) §7.1, index ba cột theo §7.1
+- [ ] `content_review_log` — polymorphic `(entity_type, entity_id)`, đây là **1 trong 7** chỗ
+      đóng của [`data-model-overview.md`](../specs/01-platform/data-model-overview.md) §7.2
+- [ ] `backup_log` — cột theo [`backup-and-restore.md`](../specs/01-platform/backup-and-restore.md) §7.2
+- [ ] `REVOKE UPDATE, DELETE ... FROM kidthink_app` trên `audit_logs` và `content_review_log`
+      (`BR-AUD-01`, INSERT-only) — `backup_log` **không** insert-only (job ghi `finished_at`
+      sau khi đã ghi `started_at`, cần UPDATE)
+- [ ] `pnpm db:generate` → đọc SQL → `pnpm db:migrate`
+- [ ] Integration test:
+      - [ ] `BR-AUD-01` — `UPDATE`/`DELETE` trên `audit_logs` bằng role app bị từ chối
+      - [ ] orphan `content_review_log.entity_id` — 1 trong 7 test bắt buộc của `BR-DM-04`
+- [ ] `pnpm test` xanh
+- [ ] Commit `feat(db): P0 bước 8.4 — schema ops`
+
+## Cổng dừng A
+
+- [ ] 3 file schema tồn tại (`identity.ts`, `billing.ts`, `ops.ts`), mỗi file ≤400 dòng
+- [ ] `docker compose down -v && docker compose up -d && pnpm db:migrate` sạch từ đầu — exit 0
+- [ ] Mọi test Bước 2–4 xanh, chạy bằng PG Docker thật (không mock — `BR-TST-02`)
+- [ ] `pnpm check` xanh
+- [ ] `git status` sạch
+
+---
+
+## Bước 5 — `schema/taxonomy.ts`
+
+File: `packages/db/src/schema/taxonomy.ts` — 5 bảng theo
+[`schema-content-taxonomy.md`](../specs/01-platform/schema-content-taxonomy.md) §7.1
+
+- [ ] `competencies` · `strands` · `skills` · `skill_prerequisites` · `learning_objectives`
+- [ ] `strands.parent_strand_id` self-FK — CHECK/constraint đảm bảo lồng **≤1 tầng** (`BR-SCT`
+      boundaries — cấm lồng quá một tầng). Drizzle không diễn đạt "độ sâu tối đa" bằng CHECK
+      đơn giản trên một hàng — ghi rõ đây là ràng buộc **service-layer + integration test**,
+      không phải DB CHECK (khác với age/difficulty là CHECK được vì so sánh trong-hàng)
+- [ ] `skills.age_min`/`age_max` CHECK 3–6, `difficulty` CHECK 1–5
+- [ ] CHECK regex cho `code` mọi bảng — dùng đúng regex đã có ở
+      `packages/shared/src/ids.ts` (đừng viết regex thứ hai lệch bản gốc)
+- [ ] `pnpm db:generate` → đọc SQL → `pnpm db:migrate`
+- [ ] Integration/property test:
+      - [ ] `skills.code` sai định dạng (`"c1.cnt.3"`) → CHECK từ chối
+      - [ ] strand lồng 2 tầng → từ chối (service-layer test, không phải DB CHECK)
+      - [ ] property test: `skill_prerequisites` là DAG ở mọi trạng thái seed
+            ([`testing-strategy.md`](../specs/08-quality/testing-strategy.md) §7.2 — dùng `fast-check`)
+- [ ] `pnpm test` xanh
+- [ ] Commit `feat(db): P0 bước 8.5 — schema taxonomy`
+
+## Bước 6 — `schema/tagging.ts`
+
+File: `packages/db/src/schema/tagging.ts` — theo
+[`schema-content-taxonomy.md`](../specs/01-platform/schema-content-taxonomy.md) §7.2
+
+- [ ] `content_tags` · `content_tag_map` · `content_skill_map` · `user_tags`
+- [ ] `content_skill_map.weight` — `CHECK (weight > 0 AND weight <= 1)` (`BR-SCT-07` — cận
+      dưới loại trừ 0, đọc lại vì sao trong spec trước khi viết CHECK)
+- [ ] `pnpm db:generate` → đọc SQL → `pnpm db:migrate`
+- [ ] Integration test:
+      - [ ] `BR-SCT-07` — insert `weight = 1.5` → CHECK từ chối; `weight = 0` → CHECK từ chối
+      - [ ] orphan `content_tag_map.(entity_type, entity_id)` — 1 trong 7 (`BR-DM-04`)
+      - [ ] orphan `content_skill_map.(entity_type, entity_id)` — 1 trong 7 (`BR-DM-04`)
+- [ ] `pnpm test` xanh
+- [ ] Commit `feat(db): P0 bước 8.6 — schema tagging`
+
+## Bước 7 — `schema/game.ts`
+
+File: `packages/db/src/schema/game.ts` — theo
+[`schema-content-taxonomy.md`](../specs/01-platform/schema-content-taxonomy.md) §7.3–7.4
+
+- [ ] `game_templates` — Lớp 1, không `status` vòng đời nội dung (`BR-SCT-01`)
+- [ ] `game_levels` — Lớp 2: `entity_id` self-FK tới `game_levels(id)` (D3 trong plan),
+      UNIQUE `(code, content_version)`, partial UNIQUE `(code) WHERE status = 'published'`
+      (`BR-SCT-03`), `access_tier` NOT NULL **không default** (cấm mặc định `free`)
+- [ ] Trigger `BEFORE UPDATE` chặn sửa hàng `status = 'published'` (`BR-SCT-05`, D2 trong
+      plan — custom SQL migration, viết tay thân hàm trigger)
+- [ ] `pnpm db:generate --custom` cho phần trigger, `pnpm db:generate` cho phần bảng → đọc SQL
+      → `pnpm db:migrate`
+- [ ] Integration test:
+      - [ ] `BR-SCT-03` — insert version 2 `published` mà chưa archive version 1 → partial
+            unique index từ chối
+      - [ ] `BR-SCT-05` — `UPDATE content_pack` trên hàng `published` → trigger từ chối
+      - [ ] `access_tier` không nêu → NOT NULL từ chối (không âm thầm nhận default)
+- [ ] `pnpm test` xanh
+- [ ] Commit `feat(db): P0 bước 8.7 — schema game`
+
+## Cổng dừng B — dừng trước khi chạm `content.ts`/`curriculum.ts`
+
+- [ ] 7 file schema tồn tại, mỗi file ≤400 dòng
+- [ ] Trigger `BR-SCT-05` có test xanh (game_levels)
+- [ ] `pnpm check && pnpm test` xanh
+- [ ] **Đọc lại §2a của plan.md trước khi làm Bước 8** — đây là điểm quyết định thật, không
+      phải thủ tục
+
+---
+
+## Bước 8 — Đóng lỗ hổng spec: [`data-model-overview.md`](../specs/01-platform/data-model-overview.md) §7.2 (KHÔNG viết code)
+
+Xem lý do đầy đủ ở [`07-first-migration-plan.md`](07-first-migration-plan.md) §2a.
+
+- [ ] Đọc lại [`schema-content-taxonomy.md`](../specs/01-platform/schema-content-taxonomy.md) §7.5 (`activities.ref_id`) và §7.6
+      (`curriculum_items.entity_id`) — xác nhận cả hai polymorphic thật, không phải FK đơn
+- [ ] Thêm hai dòng vào bảng "danh sách đóng" ở [`data-model-overview.md`](../specs/01-platform/data-model-overview.md) §7.2:
+      `activities` `(ref_type, ref_id)` và `curriculum_items` `(entity_type, entity_id)`
+- [ ] Sửa "Bảy chỗ" → "Chín chỗ" trong văn xuôi ngay dưới bảng
+- [ ] Ghi quyết định mới vào §11 (hoặc mục quyết định tương ứng), đánh số tiếp theo dãy D- gần
+      nhất trong file
+- [ ] Cập nhật `reviewed` sang ngày làm việc này, giữ `status: approved`
+- [ ] `pnpm lint:specs` 0 lỗi
+- [ ] Commit `fix(specs): T7.8 — DMO §7.2 thêm 2 chỗ polymorphic (activities.ref_id, curriculum_items.entity_id)`
+
+## Bước 9 — `schema/content.ts`
+
+File: `packages/db/src/schema/content.ts` — theo
+[`schema-content-taxonomy.md`](../specs/01-platform/schema-content-taxonomy.md) §7.5, §7.7
+
+- [ ] `lessons` — Lớp 2, `entity_id` self-FK (D3)
+- [ ] `activities` — Lớp 2, `entity_id` self-FK; `ref_id` polymorphic theo `ref_type`
+      (`game_level`|`worksheet`) — **không** FK đơn bảng, giữ nguyên polymorphic (đã đóng ở
+      Bước 8)
+- [ ] `lesson_activities` — `(lesson_id, position)` PK ghép, `lesson_id` FK `lessons(id)`
+      (cha-con, ghim), `activity_id` FK `activities(entity_id)` (D3 — many-to-one hợp lệ)
+- [ ] `worksheets` — Lớp 2, `entity_id` self-FK
+- [ ] `content_images` — theo [`image-storage.md`](../specs/01-platform/image-storage.md) §7.1
+      (spec `draft` — chỉ tạo cột đã có acceptance criteria rõ ở [`data-model-overview.md`](../specs/01-platform/data-model-overview.md),
+      **ask first** nếu cột nào không rõ nguồn)
+- [ ] Trigger `BR-SCT-05` mở rộng cho 3 bảng Lớp 2 mới (`lessons`·`activities`·`worksheets`)
+- [ ] `pnpm db:generate` (+ `--custom` cho trigger) → đọc SQL → `pnpm db:migrate`
+- [ ] Integration test:
+      - [ ] orphan `content_images.(owner_type, owner_id)` — 1 trong 9 (sau Bước 8)
+      - [ ] orphan `activities.(ref_type, ref_id)` — mới, từ Bước 8
+      - [ ] `BR-SCT-05` — trigger chặn sửa `lessons`/`activities`/`worksheets` khi `published`
+- [ ] `pnpm test` xanh
+- [ ] Commit `feat(db): P0 bước 8.9 — schema content`
+
+## Bước 10 — `schema/curriculum.ts`
+
+File: `packages/db/src/schema/curriculum.ts` — theo
+[`schema-content-taxonomy.md`](../specs/01-platform/schema-content-taxonomy.md) §7.6
+
+- [ ] `curricula` — Lớp 2, `entity_id` self-FK
+- [ ] `curriculum_items` — `curriculum_id` FK `curricula(id)` (cha-con, ghim); `entity_id`
+      polymorphic theo `entity_type` (`lesson`|`game_level`) trỏ `entity_id` của bảng tương
+      ứng — **không** ghim version cụ thể (`BR-SCT-06`)
+- [ ] `curriculum_enrollments` — `(child_id, curriculum_id)`, FK `curricula(id)` (cha-con,
+      ghim đúng version lúc enroll)
+- [ ] `curriculum_item_progress` — `(child_id, curriculum_item_id)`
+- [ ] Trigger `BR-SCT-05` mở rộng cho `curricula`
+- [ ] `pnpm db:generate` (+ `--custom`) → đọc SQL → `pnpm db:migrate`
+- [ ] Integration test:
+      - [ ] orphan `curriculum_items.(entity_type, entity_id)` — mới, từ Bước 8
+      - [ ] `BR-SCT-06` — tạo version 2 của một game level (copy-on-write) rồi publish; xác
+            nhận `curriculum_items` trỏ `entity_id` cũ tự động thấy version mới
+- [ ] `pnpm test` xanh
+- [ ] Commit `feat(db): P0 bước 8.10 — schema curriculum`
+
+## Cổng dừng C
+
+- [ ] [`data-model-overview.md`](../specs/01-platform/data-model-overview.md) §7.2 có đúng 9 dòng, `pnpm lint:specs` 0 lỗi
+- [ ] 9/9 file schema tồn tại (identity, billing, ops, taxonomy, tagging, game, content,
+      curriculum — 8 vừa xong; child/play/adaptive còn ở Bước 11–13)
+- [ ] 6 test orphan polymorphic xanh (content_tag_map, content_skill_map, content_images,
+      content_review_log, activities.ref_id, curriculum_items.entity_id) — còn 2 (auth phụ +
+      auth phụ gộp 4 bảng) đã xanh từ Cổng dừng A, tổng cộng đủ 9 sau bước này
+- [ ] `pnpm check && pnpm test` xanh
+
+---
+
+## Bước 11 — `schema/child.ts`
+
+File: `packages/db/src/schema/child.ts` — theo
+[`schema-play-telemetry.md`](../specs/01-platform/schema-play-telemetry.md) §7.1, §7.4
+
+- [ ] `child_profiles` — **đúng 12 cột**, `user_id` FK `users(id)` **ON DELETE CASCADE**,
+      `birth_year` CHECK theo tuổi 3–6, **không** cột `full_name`/`birth_date`/`school`/
+      `photo_path`/`age_band` (`BR-SPT-01`, `BR-SPT-02`)
+- [ ] `child_session_summaries` — theo §7.4
+- [ ] `pnpm db:generate` → đọc SQL → `pnpm db:migrate`
+- [ ] Integration test:
+      - [ ] `BR-SPT-01` — đếm cột `child_profiles` = 12 chính xác, kiểm danh sách tên cột
+            bằng `information_schema.columns` (không chỉ đếm số, phải xác nhận đúng tên cấm)
+- [ ] `pnpm test` xanh
+- [ ] Commit `feat(db): P0 bước 8.11 — schema child`
+
+## Bước 12 — `schema/play.ts`
+
+File: `packages/db/src/schema/play.ts` — theo
+[`schema-play-telemetry.md`](../specs/01-platform/schema-play-telemetry.md) §7.2, §7.3, §7.5
+
+- [ ] `play_sessions` — CHECK `(child_profile_id IS NOT NULL) OR (guest_device_id IS NOT
+      NULL)`; FK `game_level_id`/`content_version`/`template_id` (D-AE — ghim đúng hàng version
+      lúc chơi, không dùng `entity_id`)
+- [ ] Trigger `BEFORE UPDATE` chặn sửa khi `OLD.completion_status = 'completed'` (`BR-SPT-07`,
+      D2 trong plan)
+- [ ] `telemetry_events` — PK ghép `(session_uuid, seq)`, INSERT-only (REVOKE UPDATE/DELETE
+      cho `kidthink_app`), **không** FK nào trỏ **vào** bảng này (D-Z)
+- [ ] `child_daily_stats` · `level_daily_stats` · `skill_daily_stats` — cột chi tiết theo
+      [`telemetry-pipeline.md`](../specs/01-platform/telemetry-pipeline.md) §7.1 (spec `draft`
+      — chỉ tạo cột khoá chính đã rõ trong [`schema-play-telemetry.md`](../specs/01-platform/schema-play-telemetry.md) §7.5, **ask first** nếu
+      cột nào chỉ có ở [`telemetry-pipeline.md`](../specs/01-platform/telemetry-pipeline.md) và chưa rõ ràng)
+- [ ] `pnpm db:generate` (+ `--custom` cho trigger) → đọc SQL → `pnpm db:migrate`
+- [ ] Integration test:
+      - [ ] `BR-SPT-03` — hai hàng `telemetry_events` cùng `(session_uuid, seq)` → PK từ chối
+      - [ ] `BR-SPT-06` — `play_sessions` không `content_version` → NOT NULL từ chối
+      - [ ] `BR-SPT-07` (trigger) — `UPDATE` trên `play_sessions` đã `completed` → từ chối;
+            `UPDATE` khi còn `in_progress` → cho phép (test cả hai nhánh, không chỉ nhánh chặn)
+      - [ ] CHECK `child_profile_id`/`guest_device_id` — thiếu cả hai → từ chối
+      - [ ] D-Z — quét toàn schema, không FK nào target `telemetry_events`
+      - [ ] `telemetry_events` INSERT-only — `UPDATE` bằng role app bị từ chối
+- [ ] `pnpm test` xanh
+- [ ] Commit `feat(db): P0 bước 8.12 — schema play`
+
+## Bước 13 — `schema/adaptive.ts`
+
+File: `packages/db/src/schema/adaptive.ts` — theo
+[`schema-play-telemetry.md`](../specs/01-platform/schema-play-telemetry.md) §7.6–7.7
+
+- [ ] `mastery_state` — `(child_profile_id, skill_id)` PK ghép, `skill_id` **FK thật** tới
+      `skills.id` (`BR-SPT-05` — không chuỗi tự do), `p_learn` CHECK `>= 0 AND <= 1`
+      (`BR-SPT-08`), `ema_correct` CHECK 0–1
+- [ ] `level_params` — `(child_profile_id, game_level_id)`
+- [ ] `pnpm db:generate` → đọc SQL → `pnpm db:migrate`
+- [ ] Integration/property test:
+      - [ ] `BR-SPT-05` — `mastery_state.skill_id` không tồn tại → FK từ chối
+      - [ ] `BR-SPT-08` — `p_learn = 1.5` → CHECK từ chối
+      - [ ] property test: `p_learn ∈ [0,1]` sau mọi chuỗi cập nhật giả lập
+            ([`testing-strategy.md`](../specs/08-quality/testing-strategy.md) §7.2)
+- [ ] `pnpm test` xanh
+- [ ] Commit `feat(db): P0 bước 8.13 — schema adaptive`
+
+## Bước 14 — Seed idempotent (song song được, chỉ cần Bước 3 xong)
+
+File: `packages/db/src/seed.ts`
+
+- [ ] Seed `entitlement_keys` — đúng 16 key theo
+      [`entitlement-model.md`](../specs/00-foundation/entitlement-model.md) §7.1, upsert theo
+      `key` (idempotent)
+- [ ] Seed `packages` — `PKG-standard`, `PKG-premium` theo
+      [`package-catalog.md`](../specs/00-foundation/package-catalog.md) §7.1, `offers[].price_vnd
+      = PENDING_PRICE_VND` (hằng số = 0, comment trỏ [`package-catalog.md`](../specs/00-foundation/package-catalog.md) §11 Q1 — **không**
+      bịa giá thật, xem plan.md §4), upsert theo `code`
+- [ ] Seed `package_entitlements` — bảng ánh xạ theo §7.1 của [`package-catalog.md`](../specs/00-foundation/package-catalog.md)
+      ("Entitlement mở" — `standard` 5 key, `premium` 7 key), upsert theo `(package_code,
+      entitlement_key)`
+- [ ] **Không** seed `game_templates`, taxonomy Lớp 1, hay bất kỳ bảng nào ngoài ba bảng trên
+      — đó là việc của roadmap P0 bước 9 / P1, ngoài phạm vi task này
+- [ ] `pnpm db:seed` — exit 0, đếm số hàng ba bảng
+- [ ] `pnpm db:seed` lần thứ hai — số hàng **không đổi** (test tự động, không chỉ chạy tay)
+- [ ] `pnpm test` xanh
+- [ ] Commit `feat(db): P0 bước 8.14 — seed idempotent entitlement_keys + packages`
+
+## Bước 15 — Sweep test toàn corpus + đóng task
+
+- [ ] Đếm dòng mỗi file `packages/db/src/schema/*.ts` — không file nào > 400 dòng (`BR-DM-11`)
+- [ ] Đếm test orphan polymorphic — đúng **9** ca (7 gốc + 2 mới từ Bước 8), khớp
+      `BR-DM-04`
+- [ ] Quét `packages/db/src` tìm chuỗi SQL thô ngoài Drizzle — chỉ còn `sql\`\`` cho tăng
+      nguyên tử/coalesce và trigger trong migration (`BR-DM-06`, D2)
+- [ ] `docker compose down -v && docker compose up -d` — khôi phục hoàn toàn từ đầu
+- [ ] `pnpm db:migrate` trên DB rỗng — exit 0, toàn bộ 11 module
+- [ ] `pnpm db:seed` — exit 0, chạy lại lần hai số hàng không đổi
+- [ ] `pnpm check` xanh
+- [ ] `pnpm test` xanh (toàn bộ integration test của 11 module)
+- [ ] `pnpm check:services` xanh
+- [ ] `lefthook run pre-push` xanh (chạy thật bằng `git push`, không chỉ lệnh thủ công — xem
+      cảnh báo ở [`repo-bootstrap.md`](../specs/00-foundation/repo-bootstrap.md) §9 về lệnh thủ công thiếu ref data)
+- [ ] Push `origin/main`
+- [ ] Commit cuối `docs(tasks): T6 — đóng task migration đầu tiên, đối chiếu tay`
+
+## Cổng dừng cuối — kết thúc task
+
+- [ ] 11/11 file schema tồn tại và migrate được từ DB rỗng
+- [ ] 9/9 test orphan polymorphic pass
+- [ ] INSERT-only verify bằng role `kidthink_app` thật (không phải owner) trên 4 bảng:
+      `audit_logs` · `consent_logs` · `content_review_log` · `telemetry_events`
+- [ ] 2 trigger (`published` bất biến, `play_sessions` hậu-completed bất biến) có test cả
+      nhánh chặn và nhánh cho phép
+- [ ] Seed idempotent verify bằng test tự động
+- [ ] `pnpm check && pnpm test && pnpm check:services` xanh
+- [ ] Đã push `origin/main`
+- [ ] Việc tiếp theo của dự án: roadmap P0 bước 9 — taxonomy service + seed Lớp 1
+      ([`taxonomy-service.md`](../specs/01-platform/taxonomy-service.md),
+      [`emoji-registry.md`](../specs/01-platform/emoji-registry.md)) — task riêng, không gộp
+      vào đây
