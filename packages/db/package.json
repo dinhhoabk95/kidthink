@@ -11,6 +11,7 @@
     "postgres": "catalog:"
   },
   "devDependencies": {
-    "drizzle-kit": "catalog:"
+    "drizzle-kit": "catalog:",
+    "fast-check": "catalog:"
   }
 }

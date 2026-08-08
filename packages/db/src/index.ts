@@ -4,6 +4,7 @@ import postgres from "postgres";
 export * from "./schema/billing.ts";
 export * from "./schema/identity.ts";
 export * from "./schema/ops.ts";
+export * from "./schema/taxonomy.ts";
 
 let ownerDbInstance: ReturnType<typeof drizzle> | undefined;
 let appDbInstance: ReturnType<typeof drizzle> | undefined;

@@ -158,22 +158,22 @@ P2→P0). Bỏ sót bảng này thì
 File: `packages/db/src/schema/taxonomy.ts` — 5 bảng theo
 [`schema-content-taxonomy.md`](../specs/01-platform/schema-content-taxonomy.md) §7.1
 
-- [ ] `competencies` · `strands` · `skills` · `skill_prerequisites` · `learning_objectives`
-- [ ] `strands.parent_strand_id` self-FK — CHECK/constraint đảm bảo lồng **≤1 tầng** (`BR-SCT`
+- [x] `competencies` · `strands` · `skills` · `skill_prerequisites` · `learning_objectives`
+- [x] `strands.parent_strand_id` self-FK — CHECK/constraint đảm bảo lồng **≤1 tầng** (`BR-SCT`
       boundaries — cấm lồng quá một tầng). Drizzle không diễn đạt "độ sâu tối đa" bằng CHECK
       đơn giản trên một hàng — ghi rõ đây là ràng buộc **service-layer + integration test**,
       không phải DB CHECK (khác với age/difficulty là CHECK được vì so sánh trong-hàng)
-- [ ] `skills.age_min`/`age_max` CHECK 3–6, `difficulty` CHECK 1–5
-- [ ] CHECK regex cho `code` mọi bảng — dùng đúng regex đã có ở
+- [x] `skills.age_min`/`age_max` CHECK 3–6, `difficulty` CHECK 1–5
+- [x] CHECK regex cho `code` mọi bảng — dùng đúng regex đã có ở
       `packages/shared/src/ids.ts` (đừng viết regex thứ hai lệch bản gốc)
-- [ ] `pnpm db:generate` → đọc SQL → `pnpm db:migrate`
-- [ ] Integration/property test:
-      - [ ] `skills.code` sai định dạng (`"c1.cnt.3"`) → CHECK từ chối
-      - [ ] strand lồng 2 tầng → từ chối (service-layer test, không phải DB CHECK)
-      - [ ] property test: `skill_prerequisites` là DAG ở mọi trạng thái seed
+- [x] `pnpm db:generate` → đọc SQL → `pnpm db:migrate`
+- [x] Integration/property test:
+      - [x] `skills.code` sai định dạng (`"c1.cnt.3"`) → CHECK từ chối
+      - [x] strand lồng 2 tầng → từ chối (service-layer test, không phải DB CHECK)
+      - [x] property test: `skill_prerequisites` là DAG ở mọi trạng thái seed
             ([`testing-strategy.md`](../specs/08-quality/testing-strategy.md) §7.2 — dùng `fast-check`)
-- [ ] `pnpm test` xanh
-- [ ] Commit `feat(db): P0 bước 8.5 — schema taxonomy`
+- [x] `pnpm test` xanh
+- [x] Commit `feat(db): P0 bước 8.5 — schema taxonomy`
 
 ## Bước 6 — `schema/tagging.ts`
 

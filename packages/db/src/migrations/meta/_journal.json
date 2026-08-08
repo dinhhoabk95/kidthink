@@ -29,6 +29,13 @@
       "when": 1786181433906,
       "tag": "0003_cold_eternity",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1786181543465,
+      "tag": "0004_fair_mole_man",
+      "breakpoints": true
     }
   ]
 }
