@@ -2,10 +2,10 @@
 spec: LESSON-AUTHORING
 title: Soạn bài học
 area: admin
-status: draft
+status: approved
 mvp: true
 phase: P3
-reviewed: 2026-08-04
+reviewed: 2026-08-08
 owns:
   - Luồng soạn một lesson
   - Ràng buộc lắp activity vào lesson
@@ -62,7 +62,7 @@ hoạt động ngoài màn hình.
 | `BR-LSA-05` | Activity dùng lại được ở nhiều lesson; sửa activity ảnh hưởng mọi lesson dùng nó | Đó là lý do tách activity ra |
 | `BR-LSA-06` | Lesson nên có **ít nhất một hoạt động ngoài màn hình** | Sản phẩm không tối ưu cho thời gian màn hình |
 | `BR-LSA-07` | Tag ba trục bắt buộc trước khi publish | `BR-TAG-02` |
-| `BR-LSA-08` | Cấm — **NEVER publish trực tiếp** — qua `in_review` | |
+| `BR-LSA-08` | Cấm — **NEVER publish trực tiếp** — qua `in_review` | Đảm bảo mọi kịch bản bài học đều qua kiểm duyệt chất lượng sư phạm và an toàn trước khi công khai |
 
 ## 7. Data
 
@@ -156,7 +156,7 @@ Scenario: kéo thả đổi thứ tự
 
 ## 11. Open questions
 
-| # | Câu hỏi | Chặn gì |
-|---|---|---|
-| 1 | **Ai biên soạn ≥60 lesson?** Seeder + AI agent IDE soạn khung được, nhưng phần sư phạm cần người | P3 |
-| 2 | Lesson có nên ghim version của activity không, hay luôn lấy bản mới nhất? | [`content-versioning.md`](../00-foundation/content-versioning.md) Q2 |
+| # | Câu hỏi | Chặn phase | Đề xuất chốt | Chủ |
+|---|---|---|---|---|
+| 1 | **Ai biên soạn ≥60 lesson?** Seeder + AI agent IDE soạn khung được, nhưng phần sư phạm cần người | P3 | Đồng bộ nợ `D-W` ở [`mvp-scope.md`](../00-foundation/mvp-scope.md) Q1 — Seeder + AI hỗ trợ bản thô, Chuyên gia sư phạm mầm non đọc và duyệt | người quyết |
+| 2 | Lesson có nên ghim version của activity không, hay luôn lấy bản mới nhất? | P3 | Trỏ sang quyết định `D-VER-02` ở [`content-versioning.md`](../00-foundation/content-versioning.md): ghim version cụ thể ở thời điểm publish | Studio UI |

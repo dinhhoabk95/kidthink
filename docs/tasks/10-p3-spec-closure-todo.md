@@ -127,13 +127,12 @@ Bước 0 → Đợt 1 (2) → Đợt 2 (4) → Cổng dừng A → Đợt 3 (2)
 
 ### Bước 8 — [`lesson-authoring.md`](../specs/06-admin/lesson-authoring.md)
 
-- [ ] Đọc hết 163 dòng
-- [ ] Điền "vì sao" cho `BR-LSA-08`
-- [ ] Q1 (ai biên soạn) — trỏ đúng nội dung đã dùng ở Bước 5
-- [ ] Q2 (ghim version activity) — viết thành hàng **đã đóng**, trỏ
-      [`content-versioning.md`](../specs/00-foundation/content-versioning.md) Q2 và `D-AE`
-- [ ] Bảng mục 11 sang 5 cột; `status: approved`
-- [ ] Commit `feat(specs): T10 bước 8 — approve lesson-authoring`
+- [x] Đọc hết 163 dòng
+- [x] Điền "vì sao" cho `BR-LSA-08`
+- [x] Q1 (ai biên soạn) — trỏ đúng nội dung đã dùng ở Bước 5
+- [x] Q2 (ghim version activity) — trỏ [`content-versioning.md`](../specs/00-foundation/content-versioning.md) Q2 (`D-VER-02`); `Chủ: Studio UI`, `Chặn phase: P3`
+- [x] Bảng mục 11 sang 5 cột; `status: approved`
+- [x] Commit `feat(specs): T10 bước 8 — approve lesson-authoring`
 
 ---
 
