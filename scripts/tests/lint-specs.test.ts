@@ -248,6 +248,63 @@ describe("checkC6 (BR-ID duplicate definitions + missing vì sao)", () => {
     checkC6(specs);
     expect(getViolations().filter((v) => v.check === "C6")).toHaveLength(0);
   });
+
+  // Column 1 is not always the bare code. Requiring it to be exactly
+  // `` `BR-XXX-NN` `` skipped 68 rows corpus-wide, in already-approved specs —
+  // both the missing-"vì sao" warning and the duplicate-ID error went with
+  // them. Measured 2026-08-08.
+  it("sees a row whose first cell carries a label after the code", () => {
+    const specs = [
+      specWithBrRow("A", "fake/a.md", "| `BR-ENG-01` (thuần TS) | Rule A |  |"),
+    ];
+    checkC6(specs);
+    const c6 = getWarnings().filter((w) => w.check === "C6");
+    expect(c6).toHaveLength(1);
+    expect(c6[0]?.message).toContain("BR-ENG-01");
+  });
+
+  it("sees a row whose first cell carries a second related code", () => {
+    const specs = [
+      specWithBrRow(
+        "A",
+        "fake/a.md",
+        "| `BR-CDC-02` `BR-CDC-03` | Rule A |  |"
+      ),
+      specWithBrRow("B", "fake/b.md", "| `BR-CDC-02` | Rule B | vì lý do B |"),
+    ];
+    checkC6(specs);
+    expect(
+      getViolations().filter((v) => v.check === "C6").length
+    ).toBeGreaterThan(0);
+  });
+
+  // A `| a | b |` row splits to 4 cells, the last being the text after the
+  // closing pipe — not a third column. Reading it as an empty "vì sao"
+  // produced 23 bogus warnings against the 2-column registry table in
+  // business-rules.md §7.3, 13% of the whole corpus total.
+  it("does not demand a vì sao column from a 2-column table", () => {
+    const content = [
+      "---",
+      "spec: REGISTRY",
+      "---",
+      "",
+      "## 7. Data",
+      "",
+      "| Rule | Nội dung |",
+      "|---|---|",
+      "| `BR-CDC-01` | Danh sách đóng |",
+    ].join("\n");
+    checkC6([makeSpecFile("/fake/reg.md", "fake/reg.md", content)]);
+    expect(getWarnings().filter((w) => w.check === "C6")).toHaveLength(0);
+  });
+
+  it("still demands a vì sao column from a real 3-column table", () => {
+    const specs = [
+      specWithBrRow("A", "fake/a.md", "| `BR-DM-01` | Rule A |  |"),
+    ];
+    checkC6(specs);
+    expect(getWarnings().filter((w) => w.check === "C6")).toHaveLength(1);
+  });
 });
 
 describe("checkC10 (banned CI wording, code-fence aware)", () => {

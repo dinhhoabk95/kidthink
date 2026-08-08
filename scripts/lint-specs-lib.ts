@@ -674,7 +674,14 @@ export function checkC6(specs: SpecFile[]) {
       // Match BR table rows: | `BR-XXX-NN` | rule text | vì sao |
       // Anchored to column 1 — a BR-ID cited in the "vì sao" column as a
       // cross-reference (col 3) must NOT be mistaken for a second definition.
-      const brMatch = line.match(/^\|\s*`(BR-[A-Z]+-\d+)`\s*\|/);
+      //
+      // `[^|]*` after the ID: column 1 often carries a short label after the
+      // code (`| \`BR-ENG-01\` (thuần TS) |`) or a second related code
+      // (`| \`BR-CDC-02\` \`BR-CDC-03\` |`). Requiring the cell to hold ONLY
+      // the backticked code skipped 68 rows corpus-wide — measured 2026-08-08 —
+      // which disabled BOTH checks below on them, in already-approved specs.
+      // Staying inside `[^|]*` keeps the match anchored to column 1.
+      const brMatch = line.match(/^\|\s*`(BR-[A-Z]+-\d+[a-z]?)`[^|]*\|/);
       if (!brMatch) {
         continue;
       }
@@ -687,11 +694,16 @@ export function checkC6(specs: SpecFile[]) {
       }
       allBrIds.get(brId)?.push({ file: s.rel, line: i + 1 });
 
-      // Check "vì sao" column (third column) is not empty
-      // Split by |, expect at least 4 segments (leading empty, col1, col2, col3)
+      // Check "vì sao" column (third column) is not empty.
+      // A `| a | b |` row splits to 4 cells: ["", "a", "b", ""]. The trailing
+      // "" is the text after the closing pipe, NOT a third column — so a
+      // 2-column table (the `| Rule | Nội dung |` registry in
+      // business-rules.md §7.3) read as "third column is empty" and produced
+      // 23 bogus warnings, 13% of the corpus total. Measured 2026-08-08.
+      // A genuine 3-column row splits to 5: ["", id, rule, vì sao, ""].
       const cells = line.split("|").map((c) => c.trim());
       // cells[0] = "", cells[1] = BR-ID, cells[2] = rule, cells[3] = vì sao
-      if (cells.length >= 4) {
+      if (cells.length >= 5) {
         const viSao = cells[3];
         if (!viSao || viSao === "" || viSao === "—" || viSao === "-") {
           warn(s.rel, i + 1, "C6", `BR rule "${brId}" missing "vì sao" column`);
