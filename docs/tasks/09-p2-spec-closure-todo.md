@@ -348,9 +348,9 @@ admin-dashboard (độc lập)
 
 ### Bước 25 — [`audit-log-viewer.md`](../specs/06-admin/audit-log-viewer.md)
 
-- [ ] Đọc hết 148 dòng; điền "vì sao" cho **2** cảnh báo `C6`
-- [ ] Đối chiếu 28 hành động bắt buộc audit với [`audit-log.md`](../specs/01-platform/audit-log.md)
-- [ ] `status: approved`; commit `feat(specs): T9 bước 25 — approve audit-log-viewer`
+- [x] Đọc hết 148 dòng; điền "vì sao" cho **2** cảnh báo `C6`
+- [x] Đối chiếu 28 hành động bắt buộc audit với [`audit-log.md`](../specs/01-platform/audit-log.md)
+- [x] `status: approved`; commit `feat(specs): T9 bước 25 — approve audit-log-viewer`
 
 ### Bước 26 — [`error-log-viewer.md`](../specs/06-admin/error-log-viewer.md)
 

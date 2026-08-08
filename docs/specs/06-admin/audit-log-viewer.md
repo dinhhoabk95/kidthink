@@ -2,10 +2,10 @@
 spec: AUDIT-LOG-VIEWER
 title: Xem nhật ký kiểm toán
 area: admin
-status: draft
+status: approved
 mvp: true
 phase: P2
-reviewed: 2026-08-04
+reviewed: 2026-08-08
 owns:
   - Bề mặt tra cứu audit
 depends_on:
@@ -51,10 +51,10 @@ thay vì để "sau này viết query tay".
 |---|---|---|
 | `BR-ALV-01` | **Chỉ đọc**. Cấm xoá, không sửa, không export tuỳ tiện | `audit_logs` là INSERT-only |
 | `BR-ALV-02` | Chỉ `super_admin` | `BR-AUD-09` |
-| `BR-ALV-03` | Trần phân trang **200** | |
+| `BR-ALV-03` | Trần phân trang **200** | Ngăn ngừa truy vấn quá lớn hạ gục instance DB trên t3.small |
 | `BR-ALV-04` | Hiện diff, không dump JSON thô | JSON thô không đọc được khi đang xử lý sự cố |
 | `BR-ALV-05` | Từ mọi entity có audit, có link "xem lịch sử" | Tra cứu bắt đầu từ đối tượng, không từ danh sách phẳng |
-| `BR-ALV-06` | Export audit **là hành động được audit** (`data_exported`) | |
+| `BR-ALV-06` | Export audit **là hành động được audit** (`data_exported`) | Đảm bảo mọi thao tác trích xuất dữ liệu nhạy cảm đều được ghi lại để chống lậu hoặc rò rỉ dữ liệu |
 | `BR-ALV-07` | Cấm — **NEVER hiện PII của trẻ**, mật khẩu, hay token — chúng vốn không có trong bảng | Lưới an toàn thứ hai |
 
 ## 7. Data
@@ -143,6 +143,6 @@ Scenario: khoảng thời gian quá rộng bị chặn
 
 ## 11. Open questions
 
-| # | Câu hỏi | Chặn gì |
-|---|---|---|
-| 1 | Khi `audit_logs` lớn, tìm theo `reason` có cần full-text index không? | Vận hành |
+| # | Câu hỏi | Chặn phase | Đề xuất chốt | Chủ |
+|---|---|---|---|---|
+| 1 | Khi `audit_logs` lớn, tìm theo `reason` có cần full-text index không? | P2 | MVP dùng `ilike` cơ bản với trần 90 ngày; full-text index hoãn sang P4 | người quyết |
