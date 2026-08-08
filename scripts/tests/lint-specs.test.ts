@@ -737,4 +737,114 @@ describe("checkC16 (open questions phase and owner check)", () => {
     expect(violations).toHaveLength(0);
     expect(warnings).toHaveLength(1);
   });
+
+  it("warns approved spec with 3-column table (< 5 columns)", () => {
+    const content = [
+      "---",
+      "spec: TEST_3COL",
+      "status: approved",
+      "---",
+      "",
+      "## 11. Open questions",
+      "",
+      "| # | Câu hỏi | Ghi chú |",
+      "|---|---|---|",
+      "| 1 | Test | Note |",
+    ].join("\n");
+    const specs = [
+      makeSpecFile("/fake/test_3col.md", "fake/test_3col.md", content),
+    ];
+    checkC16(specs);
+    const warnings = getWarnings().filter((w) => w.check === "C16");
+    expect(warnings).toHaveLength(1);
+    expect(warnings[0].message).toContain("< 5 cột");
+  });
+
+  it("warns approved spec with §11 having no table and body not 'Không có.'", () => {
+    const content = [
+      "---",
+      "spec: TEST_NOT_KHONGCO",
+      "status: approved",
+      "---",
+      "",
+      "## 11. Open questions",
+      "",
+      "Cần làm rõ sau.",
+    ].join("\n");
+    const specs = [
+      makeSpecFile(
+        "/fake/test_not_khongco.md",
+        "fake/test_not_khongco.md",
+        content
+      ),
+    ];
+    checkC16(specs);
+    const warnings = getWarnings().filter((w) => w.check === "C16");
+    expect(warnings).toHaveLength(1);
+    expect(warnings[0].message).toContain(
+      'không có bảng câu hỏi mở và không phải "Không có."'
+    );
+  });
+
+  it("warns approved spec missing §11", () => {
+    const content = [
+      "---",
+      "spec: TEST_NO_SEC11",
+      "status: approved",
+      "---",
+      "",
+      "## 1. Objective",
+      "Some objective.",
+    ].join("\n");
+    const specs = [
+      makeSpecFile("/fake/test_no_sec11.md", "fake/test_no_sec11.md", content),
+    ];
+    checkC16(specs);
+    const warnings = getWarnings().filter((w) => w.check === "C16");
+    expect(warnings).toHaveLength(1);
+    expect(warnings[0].message).toContain(
+      'thiếu section "## 11. Open questions"'
+    );
+  });
+
+  it("passes approved spec with §11 body 'Không có.' (e.g. glossary.md)", () => {
+    const content = [
+      "---",
+      "spec: GLOSSARY",
+      "status: approved",
+      "---",
+      "",
+      "## 11. Open questions",
+      "",
+      "Không có.",
+    ].join("\n");
+    const specs = [
+      makeSpecFile("/fake/test_glossary.md", "fake/test_glossary.md", content),
+    ];
+    checkC16(specs);
+    const warnings = getWarnings().filter((w) => w.check === "C16");
+    const violations = getViolations().filter((v) => v.check === "C16");
+    expect(warnings).toHaveLength(0);
+    expect(violations).toHaveLength(0);
+  });
+
+  it("exempts doc: frontmatter files (e.g. READING-GUIDE.md)", () => {
+    const content = [
+      "---",
+      "doc: READING-GUIDE",
+      "status: approved",
+      "---",
+      "",
+      "## 1. Objective",
+      "Guide content.",
+    ].join("\n");
+    const specs = [
+      makeSpecFile("/fake/reading_guide.md", "fake/reading_guide.md", content),
+    ];
+    checkC16(specs);
+    const warnings = getWarnings().filter((w) => w.check === "C16");
+    const violations = getViolations().filter((v) => v.check === "C16");
+    expect(warnings).toHaveLength(0);
+    expect(violations).toHaveLength(0);
+  });
 });

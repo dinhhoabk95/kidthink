@@ -311,7 +311,7 @@ nào**.
 
 Lô B của task này đọc lại toàn bộ đường chơi và có thể phát hiện cột thiếu trong
 [`schema-play-telemetry.md`](../specs/01-platform/schema-play-telemetry.md) — chuyện đã xảy ra
-đúng một lần: `D-AP` của Task #7 tìm ra bảng `notifications` bị bỏ sót khỏi migration số 1, và
+đúng một lần: `D-AP` (Task #6 bước 12b) tìm ra bảng `notifications` bị bỏ sót khỏi migration số 1, và
 tìm ra được là vì **có người đọc spec P1 trước**.
 
 Sửa một cột trong spec tốn một commit. Sửa một cột sau khi migration đã chạy tốn một migration

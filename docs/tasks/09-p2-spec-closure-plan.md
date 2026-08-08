@@ -10,12 +10,13 @@
 > [`05-p0-spec-closure-plan.md`](05-p0-spec-closure-plan.md) ·
 > [`06-p1-spec-closure-plan.md`](06-p1-spec-closure-plan.md) ·
 > [`08-p1-batch2-plan.md`](08-p1-batch2-plan.md).
-> Task viết code đầu tiên — migration P0 bước 8 — là **Task #7**:
-> [`07-first-migration-plan.md`](07-first-migration-plan.md), vẫn ở 3/179 ô. Quan hệ thứ tự
+> Task viết code đầu tiên — migration P0 — là **Task #7**:
+> [`07-first-migration-plan.md`](07-first-migration-plan.md) (đã đóng 179/179 ô). Quan hệ thứ tự
 > giữa Task #7 và task này: mục 9.
 >
 > Sổ cái quyết định `D-*` là sổ liên task, dùng từ Task #1. Mã cuối đã dùng là `D-BB`
-> (Task #8), nên task này bắt đầu từ **`D-BC`**.
+> (Task #8), bước 1 dùng `D-BD` (`D-BC` **bỏ trống, không dùng**), nên các quyết định tiếp theo
+> bắt đầu từ **`D-BE`**.
 >
 > Mọi lệnh chạy từ thư mục `kidthink/`. Đặt lại đường dẫn Node trước mỗi phiên shell mới, vì
 > shell mặc định của máy là v20.17.0 còn dự án cần v24:
@@ -26,14 +27,14 @@
 
 ## Tóm tắt
 
-Task #8 đóng **lô 2** của corpus P1: `phase: P1` đạt 43/43, toàn corpus **79/130 `approved`**.
-Số `draft` còn lại phân bố **30 P2 · 12 P3 · 8 P4 · 1 P5**.
+Task #8 đóng **lô 2** của corpus P1: `phase: P1` đạt 43/43, toàn corpus **81/130 `approved`**.
+Số `draft` còn lại phân bố **29 P2 · 12 P3 · 8 P4 · 1 P5**.
 
-Task này đóng **30 spec `phase: P2`** — theo [`roadmap.md`](../specs/roadmap.md) mục P2 là
+Task này đóng **29 spec `phase: P2`** đang `draft` (cộng rà soát [`payment-flow.md`](../specs/00-foundation/payment-flow.md)) — theo [`roadmap.md`](../specs/roadmap.md) mục P2 là
 **Commerce + Admin**. Đây là lô đầu tiên đụng **tiền thật** (`payment_orders` → `entitlements`,
 trong một transaction) và **studio soạn nội dung** — đường găng dài nhất của MVP đi qua nó.
 
-Sau task này: **109/130 `approved`**, và `phase: P2` đạt **31/31** (30 spec đích cộng
+Sau task này: **110/130 `approved`**, và `phase: P2` đạt **31/31** (29 spec đích cộng [`image-storage.md`](../specs/01-platform/image-storage.md) và
 [`payment-flow.md`](../specs/00-foundation/payment-flow.md) đã `approved` từ Task #5).
 
 ## 0. Điều kiện tiên quyết — đo lại trước khi bắt đầu
@@ -43,7 +44,7 @@ Sau task này: **109/130 `approved`**, và `phase: P2` đạt **31/31** (30 spec
 | `origin/main..HEAD` | **0** commit chờ |
 | `git status` | sạch |
 | Docker daemon | sống — `pnpm check:services` chạy được, hook `pre-push` (`services` job của [`lefthook.yml`](../../lefthook.yml)) không chặn |
-| `pnpm lint:specs` | 0 lỗi, **104** cảnh báo, 0 chu trình |
+| `pnpm lint:specs` | 0 lỗi, **101** cảnh báo, 0 chu trình |
 
 Không có nợ tồn từ Task #8. Bắt đầu được ngay.
 
@@ -51,12 +52,12 @@ Không có nợ tồn từ Task #8. Bắt đầu được ngay.
 
 **Trong phạm vi:**
 
-- 30 spec `phase: P2` đang `draft` → `approved`, **mỗi spec một commit**.
-- Điền cột "vì sao" cho **48 cảnh báo `C6`** (`C6` — mỗi `BR-*` phải có ID không trùng và cột
-  "vì sao" không rỗng) nằm trên 30 file này.
+- 29 spec `phase: P2` đang `draft` → `approved` (và rà soát [`payment-flow.md`](../specs/00-foundation/payment-flow.md) như file thứ 30), **mỗi spec một commit**.
+- Điền cột "vì sao" cho **45 cảnh báo `C6`** (`C6` — mỗi `BR-*` phải có ID không trùng và cột
+  "vì sao" không rỗng) nằm trên 29 file này cộng 2 cảnh báo trên [`payment-flow.md`](../specs/00-foundation/payment-flow.md).
 - Chuẩn hoá bảng mục 11 (Open questions) từ **3 cột sang 5 cột** (`#`, `Câu hỏi`, `Chặn gì`,
-  `Chặn phase`, `Chủ`) — dạng mà 79 spec đã `approved` đang dùng. Cả 30 file đích còn dạng 3 cột.
-- Xử lý **44 câu hỏi mở**; ghi quyết định vào sổ cái từ **`D-BC`**.
+  `Chặn phase`, `Chủ`) — dạng mà các spec đã `approved` đang dùng. Cả 29 file đích còn dạng 3 cột.
+- Xử lý **44 câu hỏi mở** trên 29 file; ghi quyết định vào sổ cái từ **`D-BE`** (`D-BC` bỏ trống).
 - Vá bảng P2 của [`roadmap.md`](../specs/roadmap.md): bảng nêu tên 22 spec, nhưng **31** spec
   mang `phase: P2` — thiếu 9. Cùng khuyết tật Task #8 đã vá cho P1.
 - Bịt lỗ hổng của kiểm tra `C16` (`C16` — mọi hàng câu hỏi mở phải có "Chặn phase" và "Chủ"
@@ -78,7 +79,7 @@ cũng phải `approved`) bắt phải `approved` trước.
 
 | Spec | Dòng | `BR-*` | Câu hỏi | `C6` | Chặn bởi |
 |---|---:|---:|---:|---:|---|
-| [`image-storage.md`](../specs/01-platform/image-storage.md) | 224 | 12 | 3 | 3 | — |
+| [`image-storage.md`](../specs/01-platform/image-storage.md) | 225 | 12 | 3 | 0 | [x] (đã `approved` ở Bước 1) |
 | [`image-upload.md`](../specs/06-admin/image-upload.md) | 168 | 9 | 1 | 2 | [`image-storage.md`](../specs/01-platform/image-storage.md) |
 | [`emoji-picker.md`](../specs/06-admin/emoji-picker.md) | 149 | 8 | 1 | 0 | — |
 | [`asset-usage-tracking.md`](../specs/06-admin/asset-usage-tracking.md) | 156 | 6 | 1 | 0 | [`image-storage.md`](../specs/01-platform/image-storage.md) |
@@ -108,7 +109,7 @@ cũng phải `approved`) bắt phải `approved` trước.
 | [`data-export.md`](../specs/06-admin/data-export.md) | 160 | 8 | 1 | 4 | — |
 | [`notification-admin.md`](../specs/06-admin/notification-admin.md) | 150 | 7 | 1 | 1 | — |
 | [`mfa.md`](../specs/03-account/mfa.md) | 213 | 11 | 2 | 5 | — |
-| **Tổng** | **4.924** | **234** | **44** | **48** | |
+| **Tổng** | **4.925** | **234** | **44** | **45** | |
 
 Nặng nhất: [`image-storage.md`](../specs/01-platform/image-storage.md) (224 dòng, 12 rule) ·
 [`mfa.md`](../specs/03-account/mfa.md) (213 dòng, 11 rule, 5 cảnh báo `C6` — nhiều nhất lô) ·
@@ -163,13 +164,13 @@ nói đúng chuyện này cho code, và nó đúng y hệt cho spec.
 ### Lô A — nền asset (4 spec)
 
 ```
-image-storage → image-upload → asset-usage-tracking
+image-storage → image-upload và image-storage → asset-usage-tracking (hai nhánh song song)
 emoji-picker (độc lập)
 ```
 
 [`image-storage.md`](../specs/01-platform/image-storage.md) là file dài nhất lô và là nút chặn
 của ba spec khác. Mục 7 của nó khai `owner_type` đa hình — đối chiếu với **danh sách đa hình 9
-mục** đã chốt ở `D-AQ` (Task #7 bước 12b) trước khi lật cờ.
+mục** đã chốt ở `D-AQ` (Task #6 bước 15) trước khi lật cờ.
 
 ### Lô B — luồng tiền, hai đầu (8 spec)
 
@@ -235,10 +236,10 @@ riêng của nó.
 Giữ nguyên vòng lặp của Task #5, Task #6 và Task #8.
 
 1. **Đọc hết file.** Không đọc lướt. Ghi lại số dòng, số rule, số câu hỏi mở.
-2. **Đối chiếu với quyết định đã chốt sau ngày `reviewed`.** 29/30 file có
+2. **Đối chiếu với quyết định đã chốt sau ngày `reviewed`.** 28/30 file có
    `reviewed: 2026-08-04` hoặc `2026-08-05`, tức viết **trước** toàn bộ `D-A` đến `D-BB`
-   (ngoại lệ: [`asset-usage-tracking.md`](../specs/06-admin/asset-usage-tracking.md),
-   `2026-08-07`). Danh sách bắt buộc đối chiếu: định dạng mã ở
+   (hai ngoại lệ: [`asset-usage-tracking.md`](../specs/06-admin/asset-usage-tracking.md),
+   `2026-08-07` và [`image-storage.md`](../specs/01-platform/image-storage.md), `2026-08-08`). Danh sách bắt buộc đối chiếu: định dạng mã ở
    [`id-conventions.md`](../specs/00-foundation/id-conventions.md) mục 7; khoá ngoại dùng `id`
    (`D-AE`); kiến trúc cookie niêm phong bọc quanh xoay refresh token ở
    [`auth-tokens-sessions.md`](../specs/01-platform/auth-tokens-sessions.md) mục 7.4; bản đồ bảng
@@ -274,7 +275,7 @@ nội dung spec, và chạy 30 lần là 30 lần chờ không đổi kết qu�
 | 7 | [`image-storage.md`](../specs/01-platform/image-storage.md) Q1 ↔ [`image-upload.md`](../specs/06-admin/image-upload.md) Q1 | Xoá nền tự động. Cả hai chặn P4 — **để mở**, nhưng phải trỏ vào nhau, không để hai câu hỏi mồ côi |
 | 8 | [`content-review-queue.md`](../specs/06-admin/content-review-queue.md) Q2 ↔ [`content-lifecycle.md`](../specs/00-foundation/content-lifecycle.md) Q1 | Chặn tự duyệt bản mình tạo khi có ≥2 manager. [`content-lifecycle.md`](../specs/00-foundation/content-lifecycle.md) là `P0` đã `approved` |
 | 9 | [`schema-driven-form.md`](../specs/06-admin/schema-driven-form.md) Q1 ↔ [`game-template-contract.md`](../specs/01-platform/game-template-contract.md) Q4 | [`game-template-contract.md`](../specs/01-platform/game-template-contract.md) ghi rõ "hoãn — chốt lúc [`schema-driven-form.md`](../specs/06-admin/schema-driven-form.md) thiết kế". **Lúc đó là lô C.** Đóng cả hai chỗ. Tiền lệ: `D-BA` đóng cặp Q3 ↔ [`scoring-and-result.md`](../specs/04-play/scoring-and-result.md) ở Task #8 |
-| 10 | [`publish-and-version.md`](../specs/06-admin/publish-and-version.md) Q1 ↔ [`content-lifecycle.md`](../specs/00-foundation/content-lifecycle.md) Q3 | **Tham chiếu chết.** [`content-lifecycle.md`](../specs/00-foundation/content-lifecycle.md) Q3 (trạng thái `scheduled`) đã **đóng** `D-X` ở Task #10 — "không ở MVP". [`publish-and-version.md`](../specs/06-admin/publish-and-version.md) Q1 vẫn trỏ sang nó như thể còn treo. Đóng theo, trích `D-X`, không mở lại quyết định |
+| 10 | [`publish-and-version.md`](../specs/06-admin/publish-and-version.md) Q1 ↔ [`content-lifecycle.md`](../specs/00-foundation/content-lifecycle.md) Q3 | **Tham chiếu chết.** [`content-lifecycle.md`](../specs/00-foundation/content-lifecycle.md) Q3 (trạng thái `scheduled`) đã **đóng** `D-X` (nhãn T10 trong khối `D-X` dùng lại của Task #2) — "không ở MVP". [`publish-and-version.md`](../specs/06-admin/publish-and-version.md) Q1 vẫn trỏ sang nó như thể còn treo. Đóng theo, trích `D-X`, không mở lại quyết định |
 
 Cặp 10 là lỗi **đo được lúc lập kế hoạch**, không phải giả định — đúng loại lệch mà bước đối
 chiếu tay của Task #3, #5, #6 và #8 vẫn bắt ra sau khi cổng máy đã xanh.
@@ -313,54 +314,32 @@ dừng việc.
 | 5 | Provider email có trạng thái bounce/delivery | [`notification-admin.md`](../specs/06-admin/notification-admin.md) | Ngân sách và chọn vendor; quyết định độ chính xác của nhật ký gửi |
 | 6 | Năng lực đọc review — bao nhiêu bản/ngày/người | [`content-review-queue.md`](../specs/06-admin/content-review-queue.md) Q1 | Ràng buộc thật của đường găng MVP; cũng là câu hỏi mở #3 của [`SPEC.md`](../SPEC.md) |
 
-## 8. Đề xuất bịt lỗ hổng `C16` — cần chủ dự án duyệt
+## 8. Đề xuất mở rộng kiểm tra `C16` — hai chặng
 
-`C16` được thêm ở Task #8 để giữ việc thứ 4 của quy trình (bảng câu hỏi mở 5 cột). Đo lại hôm
-nay thì nó **chưa giữ được**.
+`C16` được thêm ở Task #8 để giữ việc thứ 4 của quy trình (bảng câu hỏi mở 5 cột).
 
-`checkC16` ([`scripts/lint-specs-lib.ts`](../../scripts/lint-specs-lib.ts), dòng 1693) chỉ kiểm
-khi bảng **đã có ≥5 cột**:
+`checkC16` ([`scripts/lint-specs-lib.ts`](../../scripts/lint-specs-lib.ts)) trước đây chỉ kiểm tra khi bảng đã có ≥5 cột, khiến các bảng 3 cột rơi qua cổng mà không bị cảnh báo. Đồng thời 23 spec đã `approved` từ trước đang mang bảng <5 cột. Việc lật `fail` trực tiếp sẽ làm đỏ 23 spec `approved` và phong toả pipeline.
 
-```ts
-if (tableHas5Cols || cols.length >= 5) { … }
-```
+Để giải quyết, thực hiện thiết kế **hai chặng**:
 
-Bảng 3 cột **rơi thẳng qua cổng**. Bằng chứng đo được: cả 30 spec đích còn bảng 3 cột, và
-`pnpm lint:specs` báo **0 cảnh báo `C16`**. Lật 30 file sang `approved` mà quên việc thứ 4 thì
-cổng vẫn xanh — đúng hình dạng lỗi `ultracite` (một cổng chưa từng đỏ là một cổng chưa được
-chứng minh).
+**Chặng 1 (trong Task #9):**
+1. Mở rộng `checkC16` ở `scripts/lint-specs-lib.ts`: bảng mục 11 có <5 cột → **`warn`** cho mọi `status` (kể cả `approved`).
+2. Bịt điểm mù:
+   - `docs/specs/00-foundation/glossary.md` — §11 có, bảng không, thân là `Không có.` → hợp lệ, cho qua tường minh.
+   - `docs/specs/READING-GUIDE.md` — miễn trừ theo khoá frontmatter (`doc:` thay vì `spec:`).
+   - Spec `approved` có `spec:` mà không có §11, hoặc §11 rỗng không phải `Không có.` → **`warn`**.
+3. Thêm ca âm bắt buộc trong `scripts/tests/lint-specs.test.ts` (spec giả `approved` bảng 3 cột, không bảng/không `Không có.`, không §11).
 
-Sửa: bảng mục 11 của spec `approved` mà có <5 cột thì **fail**; `draft` thì **warn**. Cùng hình
-dạng phân mức mà `C8` và `C16` đang dùng, để 51 spec `draft` không làm đỏ cổng ngay hôm nay.
+**Chặng 2 (task sau):**
+Sau khi 23 spec `approved` được chuyển sang 5 cột, lật `warn` → `fail`.
 
-Kèm **ca âm** trong [`scripts/tests/lint-specs.test.ts`](../../scripts/tests/lint-specs.test.ts):
-một spec giả `approved` với bảng mục 11 dạng 3 cột phải sinh **đúng một** violation, và xoá thân
-nhánh mới phải làm test đó đỏ.
+## 9. Quan hệ với Task #7 — đối chiếu với migration đã chạy
 
-Đây là việc duy nhất trong task chạm `scripts/`. Nếu chủ dự án không duyệt, bỏ qua — 30 spec vẫn
-đóng được, chỉ là không có cổng giữ.
+Task #7 ([`07-first-migration-plan.md`](07-first-migration-plan.md)) đã hoàn thành 179/179 ô, migration P0 đã được tạo và chạy.
 
-## 9. Quan hệ với Task #7 — vì sao chạy task này trước
+Lô B của task này đọc lại đường `payment_orders` → `entitlements` đối chiếu trực tiếp với schema đã tồn tại trong `packages/db/src/schema/billing.ts`.
 
-[`07-first-migration-plan.md`](07-first-migration-plan.md) vẫn ở 3/179 ô, và 3 ô đó là bước 8
-(một bước **spec**, không phải code) đã đóng sớm ở Task #6. Tức Task #7 **chưa viết dòng code
-nào**; `packages/db/src/` còn rỗng.
-
-Đã kiểm: Task #8 **không** sửa file `schema-*` nào — trong `01-platform` nó chỉ chạm
-[`content-search.md`](../specs/01-platform/content-search.md) và
-[`offline-play.md`](../specs/01-platform/offline-play.md). Nên phạm vi mục 0 của Task #7 còn
-nguyên giá trị, không phải đọc lại.
-
-Lô B của task này đọc lại toàn bộ đường `payment_orders` → `entitlements` và có thể phát hiện
-cột thiếu trong [`schema-identity-billing.md`](../specs/01-platform/schema-identity-billing.md)
-— chuyện đã xảy ra đúng một lần: `D-AP` của Task #7 tìm ra bảng `notifications` bị bỏ sót khỏi
-migration số 1, và tìm ra được là vì **có người đọc spec trước**.
-
-Sửa một cột trong spec tốn một commit. Sửa một cột sau khi migration đã chạy tốn một migration
-mới, một lần đối chiếu `C12`, và một lần sửa test tích hợp.
-
-**Đề xuất: đóng Task #9 trước, rồi mở lại Task #7.** Nếu chủ dự án muốn ngược lại thì lô B phải
-tách ra chạy trước Task #7 — tám spec đó là phần duy nhất của P2 đụng schema.
+Mọi sai lệch phát hiện ở đây sẽ tốn một migration mới + một lần đối chiếu `C12` + sửa test tích hợp. Do đó, lô B phải nêu rõ tại Cổng dừng B là có phát sinh migration mới hay không.
 
 ## 10. Rủi ro
 
@@ -387,12 +366,12 @@ tách ra chạy trước Task #7 — tám spec đó là phần duy nhất của 
 
 ## 12. Tiêu chí hoàn thành
 
-- [ ] 30/30 spec đích `status: approved`, `reviewed` là ngày làm.
-- [ ] Toàn corpus **109/130 `approved`**; `phase: P2` đạt **31/31**.
-- [ ] `pnpm lint:specs` 0 lỗi, cảnh báo giảm từ **104 xuống ≤ 56**, 0 chu trình.
+- [ ] 29/29 spec đích `status: approved`, `reviewed` là ngày làm (cộng rà soát [`payment-flow.md`](../specs/00-foundation/payment-flow.md) như file thứ 30).
+- [ ] Toàn corpus **110/130 `approved`**; `phase: P2` đạt **31/31**.
+- [ ] `pnpm lint:specs` 0 lỗi, cảnh báo giảm từ **101 xuống ≤ 54** (trên 29 spec đích và payment-flow), 0 chu trình.
 - [ ] 0 cảnh báo `C6` nào còn nằm trên spec `phase: P2`.
-- [ ] 0 bảng mục 11 dạng 3 cột trên spec `approved`.
-- [ ] `pnpm check` xanh, `pnpm test` xanh (số test tăng nếu đề xuất mục 8 được duyệt).
+- [ ] 0 bảng mục 11 < 5 cột trong 30 file phạm vi (23 spec `approved` khác còn < 5 cột được ghi nhận nợ cho Chặng 2 mục 8).
+- [ ] `pnpm check` xanh, `pnpm test` xanh (số test tăng do thêm unit test cho C16 ở mục 8).
 - [ ] Mọi hàng câu hỏi mở của 31 spec `P2` có `Chặn phase` và `Chủ` không rỗng.
 - [ ] Mọi câu hỏi biến mất khỏi mục 11 có một mã `D-*` giải thích.
 - [ ] [`roadmap.md`](../specs/roadmap.md) bảng P2 liệt kê đủ 31 spec.

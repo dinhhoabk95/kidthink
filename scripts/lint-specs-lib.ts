@@ -1635,29 +1635,69 @@ export function checkC15(specs: SpecFile[]) {
 
 export function checkC16(specs: SpecFile[]) {
   for (const s of specs) {
-    let inSection11 = false;
-    let tableHas5Cols = false;
+    // Exempt files with `doc:` frontmatter key or without `spec:` key
+    if (s.frontmatter.doc !== undefined || !s.frontmatter.spec) {
+      continue;
+    }
+
+    let section11Line = -1;
+    let section11EndLine = s.lines.length;
 
     for (let i = 0; i < s.lines.length; i++) {
       const line = s.lines[i] ?? "";
       if (/^##\s+11\.\s+Open questions/i.test(line)) {
-        inSection11 = true;
-        tableHas5Cols = false;
-        continue;
+        section11Line = i + 1;
+        for (let j = i + 1; j < s.lines.length; j++) {
+          if (/^##\s+/.test(s.lines[j] ?? "")) {
+            section11EndLine = j;
+            break;
+          }
+        }
+        break;
       }
-      if (inSection11 && /^##\s+/.test(line)) {
-        inSection11 = false;
-        continue;
-      }
+    }
 
-      if (!inSection11) {
-        continue;
+    if (section11Line === -1) {
+      if (s.frontmatter.status === "approved") {
+        warn(
+          s.rel,
+          1,
+          "C16",
+          'Spec approved thiếu section "## 11. Open questions"'
+        );
       }
+      continue;
+    }
 
+    const sec11Lines = s.lines.slice(section11Line, section11EndLine);
+    const nonHeaderLines = sec11Lines.filter((l) => l.trim().length > 0);
+    const bodyText = nonHeaderLines.join("\n").trim();
+
+    if (/^Không có\.\s*$/i.test(bodyText)) {
+      continue;
+    }
+
+    const tableLines = sec11Lines.filter((l) => l.trim().startsWith("|"));
+    if (tableLines.length === 0) {
+      if (s.frontmatter.status === "approved") {
+        warn(
+          s.rel,
+          section11Line,
+          "C16",
+          'Section "## 11. Open questions" không có bảng câu hỏi mở và không phải "Không có."'
+        );
+      }
+      continue;
+    }
+
+    let tableHas5Cols = false;
+    let headerLineIdx = -1;
+
+    for (let k = 0; k < sec11Lines.length; k++) {
+      const line = sec11Lines[k] ?? "";
       if (!line.trim().startsWith("|")) {
         continue;
       }
-
       const cols = line
         .split("|")
         .map((c) => c.trim())
@@ -1667,45 +1707,68 @@ export function checkC16(specs: SpecFile[]) {
         continue;
       }
 
-      // Check header row
       if (cols[0] === "#" || cols[1]?.includes("Câu hỏi")) {
+        headerLineIdx = section11Line + k;
         tableHas5Cols =
           cols.length >= 5 &&
           line.includes("Chủ") &&
           line.includes("Chặn phase");
+        break;
+      }
+    }
+
+    if (!tableHas5Cols) {
+      warn(
+        s.rel,
+        headerLineIdx > 0 ? headerLineIdx : section11Line,
+        "C16",
+        'Bảng câu hỏi mở trong section "## 11. Open questions" có < 5 cột'
+      );
+      continue;
+    }
+
+    for (let k = 0; k < sec11Lines.length; k++) {
+      const line = sec11Lines[k] ?? "";
+      if (!line.trim().startsWith("|")) {
         continue;
       }
+      const cols = line
+        .split("|")
+        .map((c) => c.trim())
+        .filter((_, idx, arr) => idx > 0 && idx < arr.length - 1);
 
-      // Skip separator rows
+      if (cols.length < 5) {
+        continue;
+      }
       if (
+        cols[0] === "#" ||
+        cols[1]?.includes("Câu hỏi") ||
         cols[0]?.startsWith("---") ||
         cols.every((c) => /^[-:|\s]+$/.test(c))
       ) {
         continue;
       }
 
-      // Skip continuation rows (where q# is empty) or closed questions (~~3~~)
       const qNum = cols[0] ?? "";
       if (!qNum || qNum.startsWith("~~")) {
         continue;
       }
 
-      if (tableHas5Cols || cols.length >= 5) {
-        const phase = cols[3] ?? "";
-        const owner = cols[4] ?? "";
+      const phase = cols[3] ?? "";
+      const owner = cols[4] ?? "";
 
-        const isPhaseMissing =
-          !phase || phase === "" || phase === "-" || phase === "—";
-        const isOwnerMissing =
-          !owner || owner === "" || owner === "-" || owner === "—";
+      const isPhaseMissing =
+        !phase || phase === "" || phase === "-" || phase === "—";
+      const isOwnerMissing =
+        !owner || owner === "" || owner === "-" || owner === "—";
 
-        if (isPhaseMissing || isOwnerMissing) {
-          const msg = `Hàng câu hỏi mở (hàng ${qNum}) thiếu "Chặn phase" hoặc "Chủ"`;
-          if (s.frontmatter.status === "approved") {
-            fail(s.rel, i + 1, "C16", msg);
-          } else {
-            warn(s.rel, i + 1, "C16", msg);
-          }
+      if (isPhaseMissing || isOwnerMissing) {
+        const msg = `Hàng câu hỏi mở (hàng ${qNum}) thiếu "Chặn phase" hoặc "Chủ"`;
+        const lineNo = section11Line + k;
+        if (s.frontmatter.status === "approved") {
+          fail(s.rel, lineNo, "C16", msg);
+        } else {
+          warn(s.rel, lineNo, "C16", msg);
         }
       }
     }

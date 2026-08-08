@@ -7,7 +7,7 @@
 > export PATH=/Users/macbook/.nvm/versions/node/v24.15.0/bin:$PATH
 > ```
 >
-> Sổ cái quyết định bắt đầu từ **`D-BC`**.
+> Sổ cái quyết định bắt đầu từ **`D-BE`** (`D-BC` bỏ trống, bước 1 dùng `D-BD`).
 
 ## Thứ tự làm
 
@@ -29,9 +29,9 @@ Mẫu commit: `feat(specs): T9 bước <n> — approve <tên-spec>`
 - [ ] `git status` sạch, `origin/main..HEAD` ra **0**
 - [ ] `docker info` chạy được (hook `pre-push` job `services` của [`lefthook.yml`](../../lefthook.yml)
       sẽ chặn nếu Docker chết)
-- [ ] `pnpm lint:specs` — ghi lại con số: phải là **0 lỗi, 104 cảnh báo, 0 chu trình**
-- [ ] Đếm `status: approved` toàn corpus — phải ra **79**
-- [ ] Đếm spec `phase: P2` — phải ra **31**; trong đó `draft` ra **30**
+- [ ] `pnpm lint:specs` — ghi lại con số: phải là **0 lỗi, 101 cảnh báo, 0 chu trình**
+- [ ] Đếm `status: approved` toàn corpus — phải ra **81**
+- [ ] Đếm spec `phase: P2` — phải ra **31**; trong đó `draft` ra **29**
 - [ ] Đọc [`CONVENTIONS.md`](../specs/CONVENTIONS.md) mục 10 (checklist review 15 mục) và mục 11
       (văn phong) — hai mục này áp cho mọi dòng viết mới trong task
 
@@ -39,7 +39,7 @@ Mẫu commit: `feat(specs): T9 bước <n> — approve <tên-spec>`
 
 ## Lô A — nền asset (4 spec)
 
-Đồ thị: `image-storage → image-upload → asset-usage-tracking`; [`emoji-picker.md`](../specs/06-admin/emoji-picker.md) độc lập.
+Đồ thị: `image-storage → image-upload` và `image-storage → asset-usage-tracking` (hai nhánh song song); [`emoji-picker.md`](../specs/06-admin/emoji-picker.md) độc lập.
 
 ### Bước 1 — [`image-storage.md`](../specs/01-platform/image-storage.md)
 
@@ -97,7 +97,7 @@ Mẫu commit: `feat(specs): T9 bước <n> — approve <tên-spec>`
   - [ ] 6. Năng lực đọc review — bao nhiêu bản/ngày/người
 - [ ] Chủ dự án **duyệt hay bác** đề xuất bịt lỗ hổng `C16` (mục 8). Nếu duyệt: làm ngay ở
       bước 4b trước khi vào lô B, để 26 spec còn lại được cổng giữ
-- [ ] Ghi mọi câu trả lời vào sổ cái `D-*` (từ `D-BC`), kể cả câu trả lời là "hoãn"
+- [ ] Ghi mọi câu trả lời vào sổ cái `D-*` (từ `D-BE`), kể cả câu trả lời là "hoãn"
 
 ### Bước 4b — bịt lỗ hổng `C16` (chỉ chạy nếu Cổng dừng A duyệt)
 
@@ -423,10 +423,10 @@ Bảng hiện nêu tên 22 spec; **31** spec mang `phase: P2`. Thiếu 9:
 Cổng máy không bắt được mọi thứ. Task #3, #5, #6 và #8 đều chạy bước này và cả bốn lần đều tìm ra
 chỗ lệch mà kiểm tra tự động bỏ qua.
 
-- [ ] Đếm `status: approved` toàn corpus — phải ra **109/130**
+- [ ] Đếm `status: approved` toàn corpus — phải ra **110/130**
 - [ ] Đếm `phase: P2` và `approved` — phải ra **31/31**
 - [ ] Đếm cảnh báo `C6` còn nằm trên spec `phase: P2` — phải ra **0**
-- [ ] Đếm bảng mục 11 dạng 3 cột trên spec `approved` — phải ra **0**
+- [ ] Đếm bảng mục 11 dạng 3 cột trên 30 file phạm vi — phải ra **0** (23 spec `approved` khác còn < 5 cột ghi nhận nợ cho Chặng 2 mục 8)
 - [ ] Mọi `BR-*` vừa sửa hoặc vừa điền "vì sao" có mặt trong
       [`business-rules.md`](../specs/00-foundation/business-rules.md)
 - [ ] Mọi hàng câu hỏi mở của 31 spec `P2` có `Chặn phase` và `Chủ` không rỗng
@@ -449,15 +449,12 @@ chỗ lệch mà kiểm tra tự động bỏ qua.
 
 ## Cổng dừng cuối — kết thúc task
 
-- [ ] 30/30 spec đích `approved`, tổng corpus **109/130**
+- [ ] 29/29 spec đích `approved` (cộng rà soát [`payment-flow.md`](../specs/00-foundation/payment-flow.md)), tổng corpus **110/130**
 - [ ] `phase: P2` đạt **31/31**
-- [ ] `pnpm lint:specs` 0 lỗi, **0 chu trình**, cảnh báo **≤ 56**
+- [ ] `pnpm lint:specs` 0 lỗi, **0 chu trình**, cảnh báo **≤ 54** (trên 29 spec đích và payment-flow)
 - [ ] `pnpm check` xanh
-- [ ] `pnpm test` xanh (số test tăng nếu bước 4b chạy)
+- [ ] `pnpm test` xanh (số test tăng do thêm unit test cho C16)
 - [ ] `git push` sạch, `origin/main..HEAD` ra **0**
-- [ ] Việc tiếp theo: **Task #7** — [`07-first-migration-plan.md`](07-first-migration-plan.md),
-      mở lại từ Bước 1. Nếu Cổng dừng B ghi nhận có đổi `schema-*` thì đọc lại phạm vi Task #7
-      mục 0 trước khi chạy tiếp
 
 ---
 
