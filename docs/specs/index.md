@@ -145,7 +145,7 @@ v1 có **31** spec cho cùng phạm vi. Xé nhỏ là chủ ý — xem [`AUDIT-v
 | [parent-gate](04-play/parent-gate.md) | P1 | Long-press + phép nhân |
 | [healthy-play-limits](04-play/healthy-play-limits.md) | P1 | Hạn mức theo trẻ, theo ICT |
 | [play-entry-and-profile-select](04-play/play-entry-and-profile-select.md) | P1 | Sảnh trẻ, không bộ lọc chữ |
-| [next-game-recommendation](04-play/next-game-recommendation.md) | P1 | Luật, không ML |
+| [next-game-recommendation](04-play/next-game-recommendation.md) | P3 | Luật, không ML |
 | [curriculum-player](04-play/curriculum-player.md) | P3 | Ghim version, mở khoá tuần |
 | [progress-and-mastery](04-play/progress-and-mastery.md) | P3 | Bản đồ, huy hiệu không mất |
 

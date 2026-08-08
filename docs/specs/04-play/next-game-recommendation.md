@@ -4,8 +4,8 @@ title: Gợi ý nội dung kế tiếp
 area: play
 status: draft
 mvp: true
-phase: P1
-reviewed: 2026-08-04
+phase: P3
+reviewed: 2026-08-08
 owns:
   - Luật gợi ý theo rule
   - Thứ tự ưu tiên nguồn gợi ý
@@ -21,8 +21,15 @@ depends_on:
 
 Sau khi hoàn thành một level, trẻ phải biết **chơi gì tiếp** mà không cần người lớn chọn.
 
-P1 dùng **luật**, không dùng ML. Luật giải thích được, test được, và đủ tốt ở quy mô 120
-level.
+Gợi ý chạy bằng **luật**, không dùng ML. Luật giải thích được, test được, và đủ tốt ở quy mô
+120 level.
+
+Spec này thuộc **P3**, không phải P1 (`D-AM`). Hai trong ba `depends_on` của nó —
+[`adaptive-engine.md`](../01-platform/adaptive-engine.md) và
+[`curriculum-player.md`](curriculum-player.md) — đều là spec P3, và đều là phụ thuộc thật:
+gợi ý theo mức thành thạo cần `mastery_state` được engine adaptive nuôi.
+[`roadmap.md`](../roadmap.md) §P3 mục 6 đã xếp nó đúng từ đầu; `phase: P1` trong frontmatter
+và dòng tương ứng ở [`index.md`](../index.md) là chỗ lệch, đã sửa 2026-08-08.
 
 ## 2. Actors
 
