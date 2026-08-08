@@ -129,16 +129,7 @@ export function computeSkipLines(lines: string[]): boolean[] {
 // đỏ giả ngay từ bước 2, trước khi có bước nào chạm tới nó. Cùng loại lỗi đã
 // từng xảy ra với `docs/taxonomy/` ở bản nháp đầu — ghi lại ở đây để không
 // lặp lại lần hai.
-export const STYLE_DEFERRED: string[] = [
-  "specs/CONVENTIONS.md",
-  "specs/TEMPLATE.md",
-  "specs/READING-GUIDE.md",
-  "specs/index.md",
-  "specs/roadmap.md",
-  "specs/AUDIT-v1.md",
-  "taxonomy/",
-  "tasks/",
-];
+export const STYLE_DEFERRED: string[] = ["taxonomy/", "tasks/"];
 
 export function isDeferred(
   docsRel: string,

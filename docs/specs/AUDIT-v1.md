@@ -15,7 +15,7 @@ audited: tinimath/docs/specs/ (26 module + 3 foundation, v1.0.0, verified 2026-0
 
 ### 1.1 Spec v1 là tài liệu khảo cổ code, không phải contract
 
-`CONVENTIONS.md` §5–§7 ép mỗi spec mang `classification` (`Running` / `Partial running` /
+[`CONVENTIONS.md`](CONVENTIONS.md) §5–§7 ép mỗi spec mang `classification` (`Running` / `Partial running` /
 `Planned` …), `verified: <ngày đọc code>`, và một section **Current state** đối chiếu từng
 file source.
 
@@ -26,16 +26,16 @@ Với **greenfield v2**, nó vô nghĩa: mọi module đều `Planned`, mọi Cu
 
 | Phần | Dòng | Còn dùng được ở v2 |
 |---|---:|---|
-| Objective · API surface · Data ownership · Contract · Boundaries | ~70 | ✅ |
-| **Current state** (bảng 9 file + 2 đoạn phân tích bug) | **31** | ❌ nói về code sẽ bị bỏ |
-| **Known gaps** (5 hàng, đều là bug v1) | **7** | ❌ |
-| Acceptance criteria có 2 tiêu chí "Hiện **fail**" trỏ bug v1 | ~4 | ❌ |
+| Objective · API surface · Data ownership · Contract · Boundaries | ~70 | |
+| **Current state** (bảng 9 file + 2 đoạn phân tích bug) | **31** | Cấm nói về code sẽ bị bỏ |
+| **Known gaps** (5 hàng, đều là bug v1) | **7** | Cấm |
+| Acceptance criteria có 2 tiêu chí "Hiện **fail**" trỏ bug v1 | ~4 | Cấm |
 
 **~42/162 dòng = 26% là nội dung chết.** Tỉ lệ tương tự ở 15 module `Partial running` khác.
 
 ### 1.2 Gộp nhiều outcome vào một spec
 
-`CONVENTIONS.md` §3 nói *"mỗi outcome có đúng một spec sở hữu"* — nhưng chính corpus vi
+[`CONVENTIONS.md`](CONVENTIONS.md) §3 nói *"mỗi outcome có đúng một spec sở hữu"* — nhưng chính corpus vi
 phạm nó ở 11/26 module. Tên file có chữ `and` là dấu hiệu đọc được bằng mắt:
 
 | Spec v1 | Thực chất chứa | Số outcome |
@@ -82,65 +82,65 @@ Không có file nào sở hữu những thứ sau, nên chúng bị copy rải r
 
 | v1 | Verdict | Sang v2 thành |
 |---|---|---|
-| `mvp-scope.md` | **VIẾT LẠI** | `00-foundation/mvp-scope.md` — phase gate P0–P3, điểm cắt. Bỏ hết đoạn 134 lỗi typecheck |
-| `actors.md` | **TÁCH 3** | `actors.md` · `auth-tokens-sessions.md` (platform) · `child-data-compliance.md` |
-| `monetization.md` | **TÁCH 4** | `package-catalog.md` · `entitlement-model.md` · `access-ladder.md` · `payment-flow.md`. Bỏ toàn bộ lịch sử `teacher_pro`/`ai_credit`/`TIERS` |
+| [`mvp-scope.md`](00-foundation/mvp-scope.md) | **VIẾT LẠI** | `00-foundation/mvp-scope.md` — phase gate P0–P3, điểm cắt. Bỏ hết đoạn 134 lỗi typecheck |
+| [[`actors.md`](00-foundation/actors.md)](00-foundation/actors.md) | **TÁCH 3** | [[`actors.md`](00-foundation/actors.md)](00-foundation/actors.md) · [`auth-tokens-sessions.md`](01-platform/auth-tokens-sessions.md) (platform) · [`child-data-compliance.md`](00-foundation/child-data-compliance.md) |
+| `monetization.md` | **TÁCH 4** | [`package-catalog.md`](00-foundation/package-catalog.md) · [`entitlement-model.md`](00-foundation/entitlement-model.md) · [`access-ladder.md`](00-foundation/access-ladder.md) · [`payment-flow.md`](00-foundation/payment-flow.md). Bỏ toàn bộ lịch sử `teacher_pro`/`ai_credit`/`TIERS` |
 
 ### Admin — 6 spec v1 → 21 spec v2
 
 | v1 | Verdict | Sang v2 thành |
 |---|---|---|
-| `dashboard-and-users` | **TÁCH 4** | `admin-dashboard` · `user-management` · `user-detail` · `child-profile-admin` |
-| `content-authoring-studio` | **TÁCH 6** | `game-level-studio` · `schema-driven-form` · `live-preview` · `content-review-queue` · `publish-and-version` · `lesson-authoring` |
-| `asset-pipeline` | **TÁCH 3** | `image-upload` · `emoji-picker` · `asset-usage-tracking` |
-| `payment-review` | **TÁCH 2** | `payment-queue` · `payment-approval` |
-| `package-catalog-admin` | **GIỮ** | `package-catalog-admin` (read-only ở v2 — package là Lớp 1) |
-| `activity-and-audit` | **TÁCH 3** | `audit-log-viewer` · `error-log-viewer` · `system-activity` |
-| — | **MỚI** | `admin-auth` · `entitlement-grant` · `taxonomy-browser` · `curriculum-builder` · `activity-authoring` · `seo-content-admin` · `notification-admin` · `feature-flags` · `data-export` |
+| `dashboard-and-users` | **TÁCH 4** | [`admin-dashboard.md`](06-admin/admin-dashboard.md) · [`user-management.md`](06-admin/user-management.md) · [`user-detail.md`](06-admin/user-detail.md) · [`child-profile-admin.md`](06-admin/child-profile-admin.md) |
+| `content-authoring-studio` | **TÁCH 6** | [`game-level-studio.md`](06-admin/game-level-studio.md) · [`schema-driven-form.md`](06-admin/schema-driven-form.md) · [`live-preview.md`](06-admin/live-preview.md) · [`content-review-queue.md`](06-admin/content-review-queue.md) · [`publish-and-version.md`](06-admin/publish-and-version.md) · [`lesson-authoring.md`](06-admin/lesson-authoring.md) |
+| `asset-pipeline` | **TÁCH 3** | [`image-upload.md`](06-admin/image-upload.md) · [`emoji-picker.md`](06-admin/emoji-picker.md) · [`asset-usage-tracking.md`](06-admin/asset-usage-tracking.md) |
+| `payment-review` | **TÁCH 2** | [`payment-queue.md`](06-admin/payment-queue.md) · [`payment-approval.md`](06-admin/payment-approval.md) |
+| [`package-catalog-admin.md`](06-admin/package-catalog-admin.md) | **GIỮ** | [`package-catalog-admin.md`](06-admin/package-catalog-admin.md) (read-only ở v2 — package là Lớp 1) |
+| `activity-and-audit` | **TÁCH 3** | [`audit-log-viewer.md`](06-admin/audit-log-viewer.md) · [`error-log-viewer.md`](06-admin/error-log-viewer.md) · [`system-activity.md`](06-admin/system-activity.md) |
+| — | **MỚI** | [`admin-auth.md`](06-admin/admin-auth.md) · [`entitlement-grant.md`](06-admin/entitlement-grant.md) · [`taxonomy-browser.md`](06-admin/taxonomy-browser.md) · [`curriculum-builder.md`](06-admin/curriculum-builder.md) · [`activity-authoring.md`](06-admin/activity-authoring.md) · [`seo-content-admin.md`](06-admin/seo-content-admin.md) · [`notification-admin.md`](06-admin/notification-admin.md) · [`feature-flags.md`](06-admin/feature-flags.md) · [`data-export.md`](06-admin/data-export.md) |
 
 ### Public — 3 → 8
 
 | v1 | Verdict | Sang v2 thành |
 |---|---|---|
-| `landing-and-seo` | **TÁCH 2** | `landing-page` · `seo-and-structured-data` |
-| `program-showcase` | **TÁCH 3** | `program-showcase` · `game-catalog-public` · `game-detail-public` |
-| `legal-and-compliance` | **TÁCH 2** | `legal-pages` · `cookie-and-consent-banner` |
-| — | **MỚI** | `pricing-page` · `faq-and-help` |
+| `landing-and-seo` | **TÁCH 2** | [`landing-page.md`](02-public/landing-page.md) · [`seo-and-structured-data.md`](02-public/seo-and-structured-data.md) |
+| [`program-showcase.md`](02-public/program-showcase.md) | **TÁCH 3** | [`program-showcase.md`](02-public/program-showcase.md) · [`game-catalog-public.md`](02-public/game-catalog-public.md) · [`game-detail-public.md`](02-public/game-detail-public.md) |
+| `legal-and-compliance` | **TÁCH 2** | [`legal-pages.md`](02-public/legal-pages.md) · [`cookie-and-consent-banner.md`](02-public/cookie-and-consent-banner.md) |
+| — | **MỚI** | [`pricing-page.md`](02-public/pricing-page.md) · [`faq-and-help.md`](02-public/faq-and-help.md) |
 
 ### Play — 4 → 13
 
 | v1 | Verdict | Sang v2 thành |
 |---|---|---|
-| `game-catalog-and-gating` | **TÁCH 2** | `access-gating` · `game-config-delivery` |
-| `gameplay-session` | **TÁCH 5** | `play-session-lifecycle` · `play-event-ingestion` · `scoring-and-result` · `scaffolding-and-hints` · `feedback-and-celebration` |
-| `adaptive-and-curriculum` | **TÁCH 3** | `adaptive-selector` · `curriculum-player` · `progress-and-mastery` |
-| `healthy-play` | **GIỮ** | `healthy-play-limits` |
-| — | **MỚI** | `play-entry-and-profile-select` · `parent-gate` · `next-game-recommendation` |
+| `game-catalog-and-gating` | **TÁCH 2** | [`access-gating.md`](04-play/access-gating.md) · [`game-config-delivery.md`](04-play/game-config-delivery.md) |
+| `gameplay-session` | **TÁCH 5** | [`play-session-lifecycle.md`](04-play/play-session-lifecycle.md) · [`play-event-ingestion.md`](04-play/play-event-ingestion.md) · [`scoring-and-result.md`](04-play/scoring-and-result.md) · [`scaffolding-and-hints.md`](04-play/scaffolding-and-hints.md) · [`feedback-and-celebration.md`](04-play/feedback-and-celebration.md) |
+| `adaptive-and-curriculum` | **TÁCH 3** | `adaptive-selector` · [`curriculum-player.md`](04-play/curriculum-player.md) · [`progress-and-mastery.md`](04-play/progress-and-mastery.md) |
+| `healthy-play` | **GIỮ** | [`healthy-play-limits.md`](04-play/healthy-play-limits.md) |
+| — | **MỚI** | [`play-entry-and-profile-select.md`](04-play/play-entry-and-profile-select.md) · [`parent-gate.md`](04-play/parent-gate.md) · [`next-game-recommendation.md`](04-play/next-game-recommendation.md) |
 
 ### Account — 6 → 17
 
 | v1 | Verdict | Sang v2 thành |
 |---|---|---|
-| `identity-and-security` | **TÁCH 7** | `registration` · `login-and-session` · `email-verification` · `password-recovery` · `mfa` · `account-settings` · `account-deletion` |
-| `child-profiles` | **TÁCH 3** | `child-profile-crud` · `child-profile-switching` · `child-profile-archive` |
-| `parent-reports` | **TÁCH 2** | `basic-report` · `advanced-report` |
-| `payments-and-entitlements` | **TÁCH 3** | `payment-order-create` · `payment-proof-upload` · `subscription-view` |
-| `teacher-workspace` | **BỎ → 07-addon** | Tách thành `lesson-plan-creator` · `personal-curriculum` · `custom-game-builder` · `pdf-export` |
-| `ai-assistant` | **BỎ → 07-addon** | `ai-assistant` · `ai-credit-ledger` |
-| — | **MỚI** | `member-dashboard` · `my-library` · `consent-management` |
+| `identity-and-security` | **TÁCH 7** | [`registration.md`](03-account/registration.md) · [`login-and-session.md`](03-account/login-and-session.md) · [`email-verification.md`](03-account/email-verification.md) · [`password-recovery.md`](03-account/password-recovery.md) · [`mfa.md`](03-account/mfa.md) · [`account-settings.md`](03-account/account-settings.md) · [`account-deletion.md`](03-account/account-deletion.md) |
+| `child-profiles` | **TÁCH 3** | [`child-profile-crud.md`](03-account/child-profile-crud.md) · [`child-profile-switching.md`](03-account/child-profile-switching.md) · [`child-profile-archive.md`](03-account/child-profile-archive.md) |
+| `parent-reports` | **TÁCH 2** | [`basic-report.md`](03-account/basic-report.md) · [`advanced-report.md`](03-account/advanced-report.md) |
+| `payments-and-entitlements` | **TÁCH 3** | [`payment-order-create.md`](03-account/payment-order-create.md) · [`payment-proof-upload.md`](03-account/payment-proof-upload.md) · [`subscription-view.md`](03-account/subscription-view.md) |
+| `teacher-workspace` | **BỎ → 07-addon** | Tách thành [`lesson-plan-creator.md`](07-addon/lesson-plan-creator.md) · [`personal-curriculum.md`](07-addon/personal-curriculum.md) · [`custom-game-builder.md`](07-addon/custom-game-builder.md) · [`pdf-export.md`](07-addon/pdf-export.md) |
+| [`ai-assistant.md`](07-addon/ai-assistant.md) | **BỎ → 07-addon** | [`ai-assistant.md`](07-addon/ai-assistant.md) · [`ai-credit-ledger.md`](07-addon/ai-credit-ledger.md) |
+| — | **MỚI** | [`member-dashboard.md`](03-account/member-dashboard.md) · [`my-library.md`](03-account/my-library.md) · [`consent-management.md`](03-account/consent-management.md) |
 
 ### Platform — 7 → 16
 
 | v1 | Verdict | Sang v2 thành |
 |---|---|---|
-| `data-model` | **TÁCH 4** | `data-model-overview` · `schema-identity-billing` · `schema-content-taxonomy` · `schema-play-telemetry` |
-| `taxonomy-service` | **GIỮ** | `taxonomy-service` |
-| `game-id-migration` | **BỎ** | Greenfield không có id cũ để migrate. `LEGACY_GAME_TYPE_MAP` chỉ còn dùng khi port 60 game type v1 → ghi trong `game-template-contract` |
-| `telemetry-and-health` | **TÁCH 4** | `telemetry-pipeline` · `health-and-ops` · `backup-and-restore` · `monitoring-and-alerting` |
-| `template-and-tagging` | **TÁCH 2** | `game-template-contract` · `search-and-tagging` |
+| `data-model` | **TÁCH 4** | [`data-model-overview.md`](01-platform/data-model-overview.md) · [`schema-identity-billing.md`](01-platform/schema-identity-billing.md) · [`schema-content-taxonomy.md`](01-platform/schema-content-taxonomy.md) · [`schema-play-telemetry.md`](01-platform/schema-play-telemetry.md) |
+| [`taxonomy-service.md`](01-platform/taxonomy-service.md) | **GIỮ** | [`taxonomy-service.md`](01-platform/taxonomy-service.md) |
+| `game-id-migration` | **BỎ** | Greenfield không có id cũ để migrate. `LEGACY_GAME_TYPE_MAP` chỉ còn dùng khi port 60 game type v1 → ghi trong [`game-template-contract.md`](01-platform/game-template-contract.md) |
+| `telemetry-and-health` | **TÁCH 4** | [`telemetry-pipeline.md`](01-platform/telemetry-pipeline.md) · `health-and-ops` · [`backup-and-restore.md`](01-platform/backup-and-restore.md) · [`monitoring-and-alerting.md`](01-platform/monitoring-and-alerting.md) |
+| `template-and-tagging` | **TÁCH 2** | [`game-template-contract.md`](01-platform/game-template-contract.md) · `search-and-tagging` |
 | `ui-migration` | **BỎ** | Là sổ nợ giữa design system và code v1. Greenfield không mang nợ sang |
-| `notifications-and-offline` | **TÁCH 3** | `notification-service` · `job-queue` · `pwa-and-offline` |
-| — | **MỚI** | `game-engine-runtime` · `adaptive-engine` · `audit-log` · `auth-tokens-sessions` · `storage-and-images` · `emoji-registry` · **`content-seed-authoring`** |
+| `notifications-and-offline` | **TÁCH 3** | [`notification-service.md`](01-platform/notification-service.md) · [`job-queue.md`](01-platform/job-queue.md) · `pwa-and-offline` |
+| — | **MỚI** | [`game-engine-runtime.md`](01-platform/game-engine-runtime.md) · [`adaptive-engine.md`](01-platform/adaptive-engine.md) · [`audit-log.md`](01-platform/audit-log.md) · [`auth-tokens-sessions.md`](01-platform/auth-tokens-sessions.md) · `storage-and-images` · [`emoji-registry.md`](01-platform/emoji-registry.md) · **[`content-seed-authoring.md`](01-platform/content-seed-authoring.md)** |
 
 ---
 

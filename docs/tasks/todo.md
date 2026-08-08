@@ -543,12 +543,12 @@ Giao cho một agent (general-purpose) làm cả 15 file còn lại theo đúng 
 > Ba file này gần như không có ký hiệu nhưng chiếm 213 tham chiếu trần, vì bản chất chúng là
 > bảng liệt kê tên spec. Bước này chủ yếu là việc 6 của quy trình chuẩn, làm hàng loạt.
 
-- [ ] [`AUDIT-v1.md`](../specs/AUDIT-v1.md) — 4 kh, 2 vt, 104 tc
-- [ ] [`roadmap.md`](../specs/roadmap.md) — 1 kh, 104 tc
-- [ ] [`index.md`](../specs/index.md) — 32 kh, 2 vt, 5 tc · kiểm tra C11 đối chiếu số lượng spec, đổi cách viết không được làm lệch số
-- [ ] Xoá 6 file quy ước khỏi danh sách hoãn, **cùng commit** (CONVENTIONS và TEMPLATE đã xong ở bước 3)
-- [ ] `pnpm check` exit 0 · `pnpm test` không giảm
-- [ ] Commit
+- [x] [`AUDIT-v1.md`](../specs/AUDIT-v1.md) — 4 kh, 2 vt, 104 tc → 0/0/0
+- [x] [`roadmap.md`](../specs/roadmap.md) — 1 kh, 104 tc → 0/0/0
+- [x] [`index.md`](../specs/index.md) — 32 kh, 2 vt, 5 tc → 0/0/0
+- [x] Xoá 6 file quy ước khỏi danh sách hoãn, **cùng commit** (CONVENTIONS và TEMPLATE đã xong ở bước 3)
+- [x] `pnpm check` exit 0 · `pnpm test` không giảm
+- [x] Commit
 
 ## Bước 16 — `docs/taxonomy/`, 8 file · 221 kh · 0 vt · 0 tc
 

@@ -40,24 +40,24 @@ Thứ tự làm:
 
 | # | Việc | Spec sở hữu |
 |---|---|---|
-| 1 | Dựng khung repo trong `kidthink/` + chốt dependency baseline + port có chọn lọc từ v1 | `repo-bootstrap` · `monorepo-package-architecture` |
-| 2 | Chốt từ vựng và ID | `glossary` · `id-conventions` |
-| 3 | Chốt tác nhân và guard | `actors` · `auth-tokens-sessions` |
-| 4 | Chốt ràng buộc pháp lý **trước** khi thiết kế bảng trẻ | `child-data-compliance` |
-| 5 | Chốt ladder + entitlement + package | `access-ladder` → `entitlement-model` → `package-catalog` |
-| 6 | Chốt vòng đời + version nội dung | `content-lifecycle` → `content-versioning` |
-| 7 | Thiết kế schema | `data-model-overview` → `schema-identity-billing` · `schema-content-taxonomy` · `schema-play-telemetry` |
-| 8 | Chạy migration đầu tiên, gate local xanh trên schema thật | `repo-bootstrap` (cơ chế) + `schema-*` (cột) |
-| 9 | Taxonomy service + seed Lớp 1 | `taxonomy-service` · `emoji-registry` |
-| 10 | Auth end-to-end **bằng email/mật khẩu** | `registration` · `email-verification` · `login-and-session` · `password-recovery` |
-| 11 | Audit log (trước mọi hành động cần audit) | `audit-log` |
+| 1 | Dựng khung repo trong `kidthink/` + chốt dependency baseline + port có chọn lọc từ v1 | [`repo-bootstrap.md`](00-foundation/repo-bootstrap.md) · [`monorepo-package-architecture.md`](00-foundation/monorepo-package-architecture.md) |
+| 2 | Chốt từ vựng và ID | [`glossary.md`](00-foundation/glossary.md) · [`id-conventions.md`](00-foundation/id-conventions.md) |
+| 3 | Chốt tác nhân và guard | [`actors.md`](00-foundation/actors.md) · [`auth-tokens-sessions.md`](01-platform/auth-tokens-sessions.md) |
+| 4 | Chốt ràng buộc pháp lý **trước** khi thiết kế bảng trẻ | [`child-data-compliance.md`](00-foundation/child-data-compliance.md) |
+| 5 | Chốt ladder + entitlement + package | [`access-ladder.md`](00-foundation/access-ladder.md) → [`entitlement-model.md`](00-foundation/entitlement-model.md) → [`package-catalog.md`](00-foundation/package-catalog.md) |
+| 6 | Chốt vòng đời + version nội dung | [`content-lifecycle.md`](00-foundation/content-lifecycle.md) → [`content-versioning.md`](00-foundation/content-versioning.md) |
+| 7 | Thiết kế schema | [`data-model-overview.md`](01-platform/data-model-overview.md) → [`schema-identity-billing.md`](01-platform/schema-identity-billing.md) · [`schema-content-taxonomy.md`](01-platform/schema-content-taxonomy.md) · [`schema-play-telemetry.md`](01-platform/schema-play-telemetry.md) |
+| 8 | Chạy migration đầu tiên, gate local xanh trên schema thật | [`repo-bootstrap.md`](00-foundation/repo-bootstrap.md) (cơ chế) + `schema-*` (cột) |
+| 9 | Taxonomy service + seed Lớp 1 | [`taxonomy-service.md`](01-platform/taxonomy-service.md) · [`emoji-registry.md`](01-platform/emoji-registry.md) |
+| 10 | Auth end-to-end **bằng email/mật khẩu** | [`registration.md`](03-account/registration.md) · [`email-verification.md`](03-account/email-verification.md) · [`login-and-session.md`](03-account/login-and-session.md) · [`password-recovery.md`](03-account/password-recovery.md) |
+| 11 | Audit log (trước mọi hành động cần audit) | [`audit-log.md`](01-platform/audit-log.md) |
 
-Bước 1 **không phụ thuộc** bất kỳ spec nào khác — đó là lý do nó chạy trước cả `glossary`.
+Bước 1 **không phụ thuộc** bất kỳ spec nào khác — đó là lý do nó chạy trước cả [`glossary.md`](00-foundation/glossary.md).
 Nó cũng là bước duy nhất mà bản roadmap gốc (trước 2026-08-05) bỏ trống spec sở hữu (từng
 ghi "Dựng repo, migration, cổng tự động | —") — xem [`00-foundation/repo-bootstrap.md`](00-foundation/repo-bootstrap.md) §1.
 
-Reauth (`auth-tokens-sessions` §7.4) và cột `social_identities`
-(`schema-identity-billing` §7.3a) thuộc **P0** dù SNS chỉ chạy ở P1 — cả hai đụng schema và
+Reauth ([`auth-tokens-sessions.md`](01-platform/auth-tokens-sessions.md) §7.4) và cột `social_identities`
+([`schema-identity-billing.md`](01-platform/schema-identity-billing.md) §7.3a) thuộc **P0** dù SNS chỉ chạy ở P1 — cả hai đụng schema và
 migration, và thêm cột vào bảng danh tính sau khi có dữ liệu thật là việc khác hẳn.
 
 **Cổng ra P0:** `../SPEC.md` §13.
@@ -74,21 +74,21 @@ access-gating ──→ game-config-delivery ──→ play-session-lifecycle
 
 | # | Việc | Spec sở hữu |
 |---|---|---|
-| 1 | Contract template + 6 template chạy được | `game-template-contract` · `game-engine-runtime` |
-| 2 | **Gating trước nội dung** | `access-gating` |
-| 3 | Giao config game đã lọc quyền | `game-config-delivery` |
-| 4 | Vòng đời phiên + nạp event idempotent | `play-session-lifecycle` · `play-event-ingestion` |
-| 5 | Tính điểm ở server | `scoring-and-result` |
-| 6 | Scaffolding, phản hồi, parent gate, hạn mức giờ | `scaffolding-and-hints` · `feedback-and-celebration` · `parent-gate` · `healthy-play-limits` |
-| 7 | Child profile + chọn trẻ | `child-profile-crud` · `child-profile-switching` · `play-entry-and-profile-select` |
-| 8 | **Seeder nội dung nền** (8 cổng tự động + PR review) | `content-seed-authoring` |
-| 9 | ≥120 game level `published` | `game-level-model` |
-| 10 | Báo cáo cơ bản | `basic-report` |
-| 11 | Public site + SEO | `landing-page` · `game-catalog-public` · `game-detail-public` · `seo-and-structured-data` · `legal-pages` |
-| 12 | **Đăng nhập SNS** — Google trước, Facebook sau | `oauth-provider-registry` → `social-login` → `social-account-linking` |
+| 1 | Contract template + 6 template chạy được | [`game-template-contract.md`](01-platform/game-template-contract.md) · [`game-engine-runtime.md`](01-platform/game-engine-runtime.md) |
+| 2 | **Gating trước nội dung** | [`access-gating.md`](04-play/access-gating.md) |
+| 3 | Giao config game đã lọc quyền | [`game-config-delivery.md`](04-play/game-config-delivery.md) |
+| 4 | Vòng đời phiên + nạp event idempotent | [`play-session-lifecycle.md`](04-play/play-session-lifecycle.md) · [`play-event-ingestion.md`](04-play/play-event-ingestion.md) |
+| 5 | Tính điểm ở server | [`scoring-and-result.md`](04-play/scoring-and-result.md) |
+| 6 | Scaffolding, phản hồi, parent gate, hạn mức giờ | [`scaffolding-and-hints.md`](04-play/scaffolding-and-hints.md) · [`feedback-and-celebration.md`](04-play/feedback-and-celebration.md) · [`parent-gate.md`](04-play/parent-gate.md) · [`healthy-play-limits.md`](04-play/healthy-play-limits.md) |
+| 7 | Child profile + chọn trẻ | [`child-profile-crud.md`](03-account/child-profile-crud.md) · [`child-profile-switching.md`](03-account/child-profile-switching.md) · [`play-entry-and-profile-select.md`](04-play/play-entry-and-profile-select.md) |
+| 8 | **Seeder nội dung nền** (8 cổng tự động + PR review) | [`content-seed-authoring.md`](01-platform/content-seed-authoring.md) |
+| 9 | ≥120 game level `published` | [`game-level-model.md`](05-content/game-level-model.md) |
+| 10 | Báo cáo cơ bản | [`basic-report.md`](03-account/basic-report.md) |
+| 11 | Public site + SEO | [`landing-page.md`](02-public/landing-page.md) · [`game-catalog-public.md`](02-public/game-catalog-public.md) · [`game-detail-public.md`](02-public/game-detail-public.md) · [`seo-and-structured-data.md`](02-public/seo-and-structured-data.md) · [`legal-pages.md`](02-public/legal-pages.md) |
+| 12 | **Đăng nhập SNS** — Google trước, Facebook sau | [`oauth-provider-registry.md`](01-platform/oauth-provider-registry.md) → [`social-login.md`](03-account/social-login.md) → [`social-account-linking.md`](03-account/social-account-linking.md) |
 
-Thứ tự ở #12 **❌ không đảo được**: `social-account-linking` là lối thoát duy nhất cho nhánh
-409 `SOCIAL_EMAIL_CONFLICT` của `social-login` (`BR-SCL-04`). Ship `social-login` mà chưa có
+Thứ tự ở #12 **không đảo được**: [`social-account-linking.md`](03-account/social-account-linking.md) là lối thoát duy nhất cho nhánh
+409 `SOCIAL_EMAIL_CONFLICT` của [`social-login.md`](03-account/social-login.md) (`BR-SCL-04`). Ship [`social-login.md`](03-account/social-login.md) mà chưa có
 màn hình liên kết là đẩy mọi người dùng trùng email vào ngõ cụt.
 
 ## P2 — Commerce + Admin
@@ -101,52 +101,52 @@ image-upload · emoji-picker ──→ game-level-studio
 
 | # | Việc | Spec sở hữu |
 |---|---|---|
-| 1 | Admin auth + shell | `admin-auth` · `admin-dashboard` |
-| 2 | Tra cứu vận hành | `user-management` · `user-detail` · `child-profile-admin` |
-| 3 | Luồng tiền, hai đầu | `payment-order-create` → `payment-proof-upload` → `payment-queue` → `payment-approval` |
-| 4 | Cấp quyền tay + xem catalog | `entitlement-grant` · `package-catalog-admin` |
-| 5 | Studio: form sinh từ schema | `schema-driven-form` |
-| 6 | Studio: soạn game level | `game-level-studio` · `live-preview` |
-| 7 | Asset | `image-upload` · `emoji-picker` · `asset-usage-tracking` |
-| 8 | Duyệt và phát hành | `content-review-queue` · `publish-and-version` |
-| 9 | Nhật ký | `audit-log-viewer` · `error-log-viewer` · `system-activity` |
-| 10 | MFA tuỳ chọn cho User | `mfa` |
+| 1 | Admin auth + shell | [`admin-auth.md`](06-admin/admin-auth.md) · [`admin-dashboard.md`](06-admin/admin-dashboard.md) |
+| 2 | Tra cứu vận hành | [`user-management.md`](06-admin/user-management.md) · [`user-detail.md`](06-admin/user-detail.md) · [`child-profile-admin.md`](06-admin/child-profile-admin.md) |
+| 3 | Luồng tiền, hai đầu | [`payment-order-create.md`](03-account/payment-order-create.md) → [`payment-proof-upload.md`](03-account/payment-proof-upload.md) → [`payment-queue.md`](06-admin/payment-queue.md) → [`payment-approval.md`](06-admin/payment-approval.md) |
+| 4 | Cấp quyền tay + xem catalog | [`entitlement-grant.md`](06-admin/entitlement-grant.md) · [`package-catalog-admin.md`](06-admin/package-catalog-admin.md) |
+| 5 | Studio: form sinh từ schema | [`schema-driven-form.md`](06-admin/schema-driven-form.md) |
+| 6 | Studio: soạn game level | [`game-level-studio.md`](06-admin/game-level-studio.md) · [`live-preview.md`](06-admin/live-preview.md) |
+| 7 | Asset | [`image-upload.md`](06-admin/image-upload.md) · [`emoji-picker.md`](06-admin/emoji-picker.md) · [`asset-usage-tracking.md`](06-admin/asset-usage-tracking.md) |
+| 8 | Duyệt và phát hành | [`content-review-queue.md`](06-admin/content-review-queue.md) · [`publish-and-version.md`](06-admin/publish-and-version.md) |
+| 9 | Nhật ký | [`audit-log-viewer.md`](06-admin/audit-log-viewer.md) · [`error-log-viewer.md`](06-admin/error-log-viewer.md) · [`system-activity.md`](06-admin/system-activity.md) |
+| 10 | MFA tuỳ chọn cho User | [`mfa.md`](03-account/mfa.md) |
 
 ## P3 — Curriculum
 
 | # | Việc | Spec sở hữu |
 |---|---|---|
-| 1 | Mô hình lesson + activity | `lesson-model` · `activity-model` |
-| 2 | Soạn lesson và activity | `lesson-authoring` · `activity-authoring` |
-| 3 | Mô hình + builder curriculum | `curriculum-model` · `curriculum-builder` |
-| 4 | Player curriculum | `curriculum-player` |
-| 5 | Mastery + adaptive | `adaptive-engine` · `adaptive-selector` · `progress-and-mastery` |
-| 6 | Gợi ý game kế tiếp | `next-game-recommendation` |
-| 7 | Báo cáo nâng cao | `advanced-report` |
-| 8 | Trưng bày chương trình ra public | `program-showcase` |
+| 1 | Mô hình lesson + activity | [`lesson-model.md`](05-content/lesson-model.md) · [`activity-model.md`](05-content/activity-model.md) |
+| 2 | Soạn lesson và activity | [`lesson-authoring.md`](06-admin/lesson-authoring.md) · [`activity-authoring.md`](06-admin/activity-authoring.md) |
+| 3 | Mô hình + builder curriculum | [`curriculum-model.md`](05-content/curriculum-model.md) · [`curriculum-builder.md`](06-admin/curriculum-builder.md) |
+| 4 | Player curriculum | [`curriculum-player.md`](04-play/curriculum-player.md) |
+| 5 | Mastery + adaptive | [`adaptive-engine.md`](01-platform/adaptive-engine.md) · `adaptive-selector` · [`progress-and-mastery.md`](04-play/progress-and-mastery.md) |
+| 6 | Gợi ý game kế tiếp | [`next-game-recommendation.md`](04-play/next-game-recommendation.md) |
+| 7 | Báo cáo nâng cao | [`advanced-report.md`](03-account/advanced-report.md) |
+| 8 | Trưng bày chương trình ra public | [`program-showcase.md`](02-public/program-showcase.md) |
 
 ## P4 — Add-on (ngoài MVP)
 
 Chỉ bắt đầu khi P0–P3 đã `implemented`. Mỗi add-on **lên catalog cùng lúc với tính năng
 của nó**, không trước.
 
-`lesson-plan-creator` → `pdf-export` · `personal-curriculum` · `custom-game-builder` ·
-`ai-credit-ledger` → `ai-assistant`
+[`lesson-plan-creator.md`](07-addon/lesson-plan-creator.md) → [`pdf-export.md`](07-addon/pdf-export.md) · [`personal-curriculum.md`](07-addon/personal-curriculum.md) · [`custom-game-builder.md`](07-addon/custom-game-builder.md) ·
+[`ai-credit-ledger.md`](07-addon/ai-credit-ledger.md) → [`ai-assistant.md`](07-addon/ai-assistant.md)
 
 ## P5 — Scale (ngoài MVP)
 
-Cổng thanh toán tự động · `pwa-install` · `offline-play` nâng cao · classroom · mobile app ·
+Cổng thanh toán tự động · [`pwa-install.md`](01-platform/pwa-install.md) · [`offline-play.md`](01-platform/offline-play.md) nâng cao · classroom · mobile app ·
 licensing.
 
 ## Việc chạy song song được
 
 | Nhóm | Không phụ thuộc nhau |
 |---|---|
-| A | `game-engine-runtime` (6 template) |
-| B | `access-gating` + `entitlement-model` |
+| A | [`game-engine-runtime.md`](01-platform/game-engine-runtime.md) (6 template) |
+| B | [`access-gating.md`](04-play/access-gating.md) + [`entitlement-model.md`](00-foundation/entitlement-model.md) |
 | C | Public site + SEO |
-| E | `oauth-provider-registry` (chỉ cần schema P0 xong) |
-| D | Biên soạn seeder nội dung qua `content-seed-authoring` (chỉ cần `game-template-contract` xong) |
+| E | [`oauth-provider-registry.md`](01-platform/oauth-provider-registry.md) (chỉ cần schema P0 xong) |
+| D | Biên soạn seeder nội dung qua [`content-seed-authoring.md`](01-platform/content-seed-authoring.md) (chỉ cần [`game-template-contract.md`](01-platform/game-template-contract.md) xong) |
 
 Nhóm D là đường găng dài nhất của MVP — **bắt đầu sớm nhất có thể**. Xem
 [`01-platform/content-seed-authoring.md`](01-platform/content-seed-authoring.md).
@@ -158,4 +158,4 @@ game-template-contract → content-seed-authoring → seeder ≥120 level + ≥6
 ```
 
 Đây là chuỗi dài nhất và **không rút ngắn được bằng cách thêm dev**. Nó bị chặn bởi năng
-lực **đọc review** của người, không phải tốc độ soạn thảo — xem `content-seed-authoring` §6.
+lực **đọc review** của người, không phải tốc độ soạn thảo — xem [`content-seed-authoring.md`](01-platform/content-seed-authoring.md) §6.
