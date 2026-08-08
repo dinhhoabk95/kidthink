@@ -2,10 +2,10 @@
 spec: CHILD-PROFILE-CRUD
 title: Tạo và sửa hồ sơ trẻ
 area: account
-status: draft
+status: approved
 mvp: true
 phase: P1
-reviewed: 2026-08-04
+reviewed: 2026-08-08
 owns:
   - Luồng tạo và sửa child profile
   - Ép danh sách đóng ở tầng người dùng
@@ -62,8 +62,8 @@ User (người lớn). Cấm Trẻ không tạo và không sửa.
 | `BR-CPC-04` | Avatar **chỉ** từ preset. Cấm upload | `BR-CDC-04` |
 | `BR-CPC-05` | Đồng ý `child_data` trước khi tạo hồ sơ đầu tiên | `BR-CDC` §4 |
 | `BR-CPC-06` | Form hiện **giải thích ngắn** vì sao chỉ hỏi từng ấy | Minh bạch tạo niềm tin |
-| `BR-CPC-07` | Quota kiểm ở **server** | |
-| `BR-CPC-08` | `age_band` **suy tự động**, không nhập | |
+| `BR-CPC-07` | Quota kiểm ở **server** | Đảm bảo thực thi đúng giới hạn entitlement của từng gói dịch vụ |
+| `BR-CPC-08` | `age_band` **suy tự động**, không nhập | Đảm bảo tính chính xác của phân nhóm tuổi và tránh lỗi nhập tay từ người dùng |
 | `BR-CPC-09` | Ownership kiểm ở DB mọi thao tác sửa | `BR-ACT-07` |
 | `BR-CPC-10` | Tuổi ngoài 3–6 → từ chối kèm giải thích, không im lặng cắt | Phụ huynh cần biết vì sao |
 
@@ -180,7 +180,8 @@ Scenario: BR-CPC-08 — age_band suy tự động
 
 ## 11. Open questions
 
-| # | Câu hỏi | Chặn gì |
-|---|---|---|
-| 1 | Bao nhiêu avatar preset là đủ để trẻ thấy mình được đại diện? | P1 design |
-| 2 | Trẻ sang 7 tuổi thì hồ sơ xử lý thế nào — vẫn chơi được hay khoá? | P3 |
+| # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
+|---|---|---|---|---|
+| 1 | Bao nhiêu avatar preset là đủ để trẻ thấy mình được đại diện? | Preset thiết kế | P1 | Chốt D-AU: 12 avatar preset SVG do UI Designer vẽ (khớp với [`design-system-contract.md`](../08-quality/design-system-contract.md) Q1) |
+| 2 | Trẻ sang 7 tuổi thì hồ sơ xử lý thế nào — vẫn chơi được hay khoá? | Giới hạn độ tuổi | P3 | [`child-profile-archive.md`](child-profile-archive.md) Q1 |
+

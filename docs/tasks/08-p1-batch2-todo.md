@@ -318,21 +318,21 @@ Lô đụng `play_sessions` và `play_events`. **Mọi cột phát sinh phải s
 
 187 dòng · 16 rule · 2 câu hỏi · 2 cảnh báo. Nhiều rule nhất lô C.
 
-- [ ] Đọc hết file **cạnh**
+- [x] Đọc hết file **cạnh**
       [`child-data-compliance.md`](../specs/00-foundation/child-data-compliance.md) — mọi ràng
       buộc pháp lý phải có rule tương ứng, hoặc phải giải thích vì sao không cần
-- [ ] Điền "vì sao" cho `BR-CPC-07`, `BR-CPC-08`
-- [ ] Đối chiếu cột bảng `child_profiles` với
+- [x] Điền "vì sao" cho `BR-CPC-07`, `BR-CPC-08`
+- [x] Đối chiếu cột bảng `child_profiles` với
       [`schema-identity-billing.md`](../specs/01-platform/schema-identity-billing.md)
-- [ ] Chuyển bảng mục 11 sang 5 cột
-- [ ] Q1 (bao nhiêu avatar preset) — **cặp số 2**: dùng câu trả lời số 3 của Cổng dừng A, cùng
+- [x] Chuyển bảng mục 11 sang 5 cột
+- [x] Q1 (bao nhiêu avatar preset) — **cặp số 2**: dùng câu trả lời số 3 của Cổng dừng A (D-AU), cùng
       quyết định với [`design-system-contract.md`](../specs/08-quality/design-system-contract.md)
       Q1 đã chốt ở bước 2
-- [ ] Q2 (trẻ sang 7 tuổi xử lý thế nào) — **cặp số 7**: để mở, `Chặn phase: P3`, và **thêm liên
+- [x] Q2 (trẻ sang 7 tuổi xử lý thế nào) — **cặp số 7**: để mở, `Chặn phase: P3`, và **thêm liên
       kết chéo** tới [`child-profile-archive.md`](../specs/03-account/child-profile-archive.md) Q1
-- [ ] Checklist review 15 mục
-- [ ] `status: approved`, `reviewed` mới, cảnh báo giảm **2**
-- [ ] Commit `feat(specs): T8 bước 15 — approve child-profile-crud`
+- [x] Checklist review 15 mục
+- [x] `status: approved`, `reviewed: 2026-08-08`, cảnh báo giảm **2**
+- [x] Commit `feat(specs): T8 bước 15 — approve child-profile-crud`
 
 ### Bước 16 — [`child-profile-archive.md`](../specs/03-account/child-profile-archive.md)
 
