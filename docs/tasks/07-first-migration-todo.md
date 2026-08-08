@@ -265,31 +265,31 @@ File: `packages/db/src/schema/content.ts` — theo
 File: `packages/db/src/schema/curriculum.ts` — theo
 [`schema-content-taxonomy.md`](../specs/01-platform/schema-content-taxonomy.md) §7.6
 
-- [ ] `curricula` — Lớp 2, `entity_id` self-FK
-- [ ] `curriculum_items` — `curriculum_id` FK `curricula(id)` (cha-con, ghim); `entity_id`
+- [x] `curricula` — Lớp 2, `entity_id` self-FK
+- [x] `curriculum_items` — `curriculum_id` FK `curricula(id)` (cha-con, ghim); `entity_id`
       polymorphic theo `entity_type` (`lesson`|`game_level`) trỏ `entity_id` của bảng tương
       ứng — **không** ghim version cụ thể (`BR-SCT-06`)
-- [ ] `curriculum_enrollments` — `(child_id, curriculum_id)`, FK `curricula(id)` (cha-con,
+- [x] `curriculum_enrollments` — `(child_id, curriculum_id)`, FK `curricula(id)` (cha-con,
       ghim đúng version lúc enroll)
-- [ ] `curriculum_item_progress` — `(child_id, curriculum_item_id)`
-- [ ] Trigger `BR-SCT-05` mở rộng cho `curricula`
-- [ ] `pnpm db:generate` (+ `--custom`) → đọc SQL → `pnpm db:migrate`
-- [ ] Integration test:
-      - [ ] orphan `curriculum_items.(entity_type, entity_id)` — 1 trong 9 chỗ đóng, đã ghi ở DMO §7.2 từ Task #6
-      - [ ] `BR-SCT-06` — tạo version 2 của một game level (copy-on-write) rồi publish; xác
+- [x] `curriculum_item_progress` — `(child_id, curriculum_item_id)`
+- [x] Trigger `BR-SCT-05` mở rộng cho `curricula`
+- [x] `pnpm db:generate` (+ `--custom`) → đọc SQL → `pnpm db:migrate`
+- [x] Integration test:
+      - [x] orphan `curriculum_items.(entity_type, entity_id)` — 1 trong 9 chỗ đóng, đã ghi ở DMO §7.2 từ Task #6
+      - [x] `BR-SCT-06` — tạo version 2 của một game level (copy-on-write) rồi publish; xác
             nhận `curriculum_items` trỏ `entity_id` cũ tự động thấy version mới
-- [ ] `pnpm test` xanh
-- [ ] Commit `feat(db): P0 bước 8.10 — schema curriculum`
+- [x] `pnpm test` xanh
+- [x] Commit `feat(db): P0 bước 8.10 — schema curriculum`
 
 ## Cổng dừng C
 
-- [ ] [`data-model-overview.md`](../specs/01-platform/data-model-overview.md) §7.2 có đúng 9 dòng, `pnpm lint:specs` 0 lỗi
-- [ ] 9/9 file schema tồn tại (identity, billing, ops, taxonomy, tagging, game, content,
+- [x] [`data-model-overview.md`](../specs/01-platform/data-model-overview.md) §7.2 có đúng 9 dòng, `pnpm lint:specs` 0 lỗi
+- [x] 9/9 file schema tồn tại (identity, billing, ops, taxonomy, tagging, game, content,
       curriculum — 8 vừa xong; child/play/adaptive còn ở Bước 11–13)
-- [ ] 6 test orphan polymorphic xanh (content_tag_map, content_skill_map, content_images,
+- [x] 6 test orphan polymorphic xanh (content_tag_map, content_skill_map, content_images,
       content_review_log, activities.ref_id, curriculum_items.entity_id) — còn 2 (auth phụ +
       auth phụ gộp 4 bảng) đã xanh từ Cổng dừng A, tổng cộng đủ 9 sau bước này
-- [ ] `pnpm check && pnpm test` xanh
+- [x] `pnpm check && pnpm test` xanh
 
 ---
 

@@ -57,6 +57,13 @@
       "when": 1786181852907,
       "tag": "0007_nebulous_gwen_stacy",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1786181922380,
+      "tag": "0008_petite_lethal_legion",
+      "breakpoints": true
     }
   ]
 }

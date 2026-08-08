@@ -3,6 +3,7 @@ import postgres from "postgres";
 
 export * from "./schema/billing.ts";
 export * from "./schema/content.ts";
+export * from "./schema/curriculum.ts";
 export * from "./schema/game.ts";
 export * from "./schema/identity.ts";
 export * from "./schema/ops.ts";
