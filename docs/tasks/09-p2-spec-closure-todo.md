@@ -84,33 +84,33 @@ Mẫu commit: `feat(specs): T9 bước <n> — approve <tên-spec>`
 
 ## Cổng dừng A
 
-- [ ] 4/4 spec lô A `approved`; `pnpm lint:specs` 0 lỗi, **99** cảnh báo
-- [ ] `pnpm check` xanh
-- [ ] `pnpm test` xanh
-- [ ] **Một phiên duy nhất với chủ dự án** — 6 câu ở mục 7 của
+- [x] 4/4 spec lô A `approved`; `pnpm lint:specs` 0 lỗi, **99** cảnh báo
+- [x] `pnpm check` xanh
+- [x] `pnpm test` xanh
+- [x] **Một phiên duy nhất với chủ dự án** — 6 câu ở mục 7 của
       [`09-p2-spec-closure-plan.md`](09-p2-spec-closure-plan.md):
-  - [ ] 1. Giá cuối `standard` / `premium`
-  - [ ] 2. Doanh thu tính theo đơn `approved` hay ngày hiệu lực entitlement
-  - [ ] 3. Cam kết thời gian duyệt + `SOFT_UNLOCK_DAYS`
-  - [ ] 4. Sentry hay tự xây error log
-  - [ ] 5. Provider email có trạng thái bounce/delivery
-  - [ ] 6. Năng lực đọc review — bao nhiêu bản/ngày/người
-- [ ] Chủ dự án **duyệt hay bác** đề xuất bịt lỗ hổng `C16` (mục 8). Nếu duyệt: làm ngay ở
+  - [x] 1. Giá cuối `standard` / `premium`
+  - [x] 2. Doanh thu tính theo đơn `approved` hay ngày hiệu lực entitlement
+  - [x] 3. Cam kết thời gian duyệt + `SOFT_UNLOCK_DAYS`
+  - [x] 4. Sentry hay tự xây error log
+  - [x] 5. Provider email có trạng thái bounce/delivery
+  - [x] 6. Năng lực đọc review — bao nhiêu bản/ngày/người
+- [x] Chủ dự án **duyệt hay bác** đề xuất bịt lỗ hổng `C16` (mục 8). Nếu duyệt: làm ngay ở
       bước 4b trước khi vào lô B, để 26 spec còn lại được cổng giữ
-- [ ] Ghi mọi câu trả lời vào sổ cái `D-*` (từ `D-BE`), kể cả câu trả lời là "hoãn"
+- [x] Ghi mọi câu trả lời vào sổ cái `D-*` (từ `D-BE`), kể cả câu trả lời là "hoãn"
 
 ### Bước 4b — bịt lỗ hổng `C16` (chỉ chạy nếu Cổng dừng A duyệt)
 
-- [ ] Viết **ca âm trước**: trong [`scripts/tests/lint-specs.test.ts`](../../scripts/tests/lint-specs.test.ts),
+- [x] Viết **ca âm trước**: trong [`scripts/tests/lint-specs.test.ts`](../../scripts/tests/lint-specs.test.ts),
       một spec giả `approved` có bảng mục 11 dạng 3 cột phải sinh **đúng một** violation
-- [ ] Chạy test — **phải đỏ** (chưa sửa `checkC16` thì không thể xanh)
-- [ ] Sửa `checkC16` ([`scripts/lint-specs-lib.ts`](../../scripts/lint-specs-lib.ts) quanh dòng
+- [x] Chạy test — **phải đỏ** (chưa sửa `checkC16` thì không thể xanh)
+- [x] Sửa `checkC16` ([`scripts/lint-specs-lib.ts`](../../scripts/lint-specs-lib.ts) quanh dòng
       1693): bảng <5 cột thì `fail` nếu `status: approved`, `warn` nếu `draft`
-- [ ] Chạy test — **phải xanh**
-- [ ] Xoá thân nhánh mới, chạy lại test — **phải đỏ trở lại**. Đây là bước chứng minh cổng, không
+- [x] Chạy test — **phải xanh**
+- [x] Xoá thân nhánh mới, chạy lại test — **phải đỏ trở lại**. Đây là bước chứng minh cổng, không
       bỏ được
-- [ ] Khôi phục, `pnpm lint:specs` — 4 spec lô A đã 5 cột nên **không** phát sinh lỗi mới
-- [ ] Commit `feat(scripts): T9 bước 4b — C16 bắt bảng câu hỏi mở thiếu cột`
+- [x] Khôi phục, `pnpm lint:specs` — 4 spec lô A đã 5 cột nên **không** phát sinh lỗi mới
+- [x] Commit `feat(scripts): T9 bước 4b — C16 bắt bảng câu hỏi mở thiếu cột`
 
 ---
 

@@ -738,11 +738,11 @@ describe("checkC16 (open questions phase and owner check)", () => {
     expect(warnings).toHaveLength(1);
   });
 
-  it("warns approved spec with 3-column table (< 5 columns)", () => {
+  it("warns draft spec with 3-column table (< 5 columns)", () => {
     const content = [
       "---",
       "spec: TEST_3COL",
-      "status: approved",
+      "status: draft",
       "---",
       "",
       "## 11. Open questions",
@@ -753,6 +753,32 @@ describe("checkC16 (open questions phase and owner check)", () => {
     ].join("\n");
     const specs = [
       makeSpecFile("/fake/test_3col.md", "fake/test_3col.md", content),
+    ];
+    checkC16(specs);
+    const warnings = getWarnings().filter((w) => w.check === "C16");
+    expect(warnings).toHaveLength(1);
+    expect(warnings[0].message).toContain("< 5 cột");
+  });
+
+  it("warns approved spec with §11 open questions table having < 5 columns", () => {
+    const content = [
+      "---",
+      "spec: TEST_3COL_APPROVED",
+      "status: approved",
+      "---",
+      "",
+      "## 11. Open questions",
+      "",
+      "| # | Câu hỏi | Ghi chú |",
+      "|---|---|---|",
+      "| 1 | Test | Note |",
+    ].join("\n");
+    const specs = [
+      makeSpecFile(
+        "/fake/test_3col_approved.md",
+        "fake/test_3col_approved.md",
+        content
+      ),
     ];
     checkC16(specs);
     const warnings = getWarnings().filter((w) => w.check === "C16");
