@@ -33,7 +33,7 @@ tin vào nó, nên nó không được nói dối.
 
 ## 3. Entry points
 
-`GET /api/guest/health` — công khai, ❌ không rate limit, ❌ không auth.
+`GET /api/guest/health` — công khai, không rate limit, không auth.
 
 ## 4. Main flow
 
@@ -53,10 +53,10 @@ tin vào nó, nên nó không được nói dối.
 
 | ID | Rule | Vì sao |
 |---|---|---|
-| `BR-HLT-01` | ❌ **NEVER trả 200 cứng** | Làm LB tin vào instance đã chết |
+| `BR-HLT-01` | Cấm — **NEVER trả 200 cứng** | Làm LB tin vào instance đã chết |
 | `BR-HLT-02` | Kiểm dịch vụ **thật** — `SELECT 1` qua Drizzle, `PING` Valkey, đếm queue | Kiểm biến môi trường không chứng minh gì |
 | `BR-HLT-03` | 503 **phải được thông báo cho người** | Health check không alerting chỉ là một endpoint |
-| `BR-HLT-04` | Response ❌ **không lộ** version, hostname, hay chuỗi kết nối | Bề mặt công khai |
+| `BR-HLT-04` | Response **không lộ** version, hostname, hay chuỗi kết nối | Bề mặt công khai |
 | `BR-HLT-05` | Timeout mỗi dịch vụ ≤ 2s, tổng ≤ 3s | Health check chậm bị LB coi là fail |
 | `BR-HLT-06` | Deploy **abort và revert** khi smoke non-200 | Tiếp deploy lên instance hỏng là tản traffic vào ổ đã biết chết |
 
@@ -66,9 +66,9 @@ tin vào nó, nên nó không được nói dối.
 
 | Dịch vụ | Cách kiểm | Critical |
 |---|---|---|
-| PostgreSQL | `SELECT 1` qua Drizzle | ✅ |
-| Valkey | `PING` | ✅ |
-| BullMQ | Đếm `waiting` | ✅ |
+| PostgreSQL | `SELECT 1` qua Drizzle | |
+| Valkey | `PING` | |
+| BullMQ | Đếm `waiting` | |
 
 ### 7.2 Response
 
@@ -79,7 +79,7 @@ tin vào nó, nên nó không được nói dối.
 { "status": "degraded", "checks": { "db": "ok", "cache": "fail", "queue": "unknown" } }
 ```
 
-❌ Không `version`, không `hostname`, không thời gian uptime.
+Cấm `version`, không `hostname`, không thời gian uptime.
 
 ## 8. API contract
 

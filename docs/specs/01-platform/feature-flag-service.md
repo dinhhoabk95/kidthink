@@ -21,7 +21,7 @@ depends_on:
 Tắt nhanh một tính năng hỏng mà không cần deploy, và bật dần tính năng mới cho một nhóm nhỏ
 trước.
 
-Cờ ❌ **không phải** cơ chế phân quyền. Quyền là entitlement. Trộn hai thứ tạo ra hai nguồn
+Cờ **không phải** cơ chế phân quyền. Quyền là entitlement. Trộn hai thứ tạo ra hai nguồn
 sự thật cho cùng một câu hỏi.
 
 ## 2. Actors
@@ -29,7 +29,7 @@ sự thật cho cùng một câu hỏi.
 | Actor | Làm gì |
 |---|---|
 | Manager `super_admin` | Bật/tắt, có lý do bắt buộc |
-| Manager `content_reviewer` | ❌ Không thấy |
+| Manager `content_reviewer` | Cấm thấy |
 | Ứng dụng | Đọc cờ, cache ngắn |
 
 ## 3. Entry points
@@ -59,12 +59,12 @@ sự thật cho cùng một câu hỏi.
 
 | ID | Rule | Vì sao |
 |---|---|---|
-| `BR-FLG-01` | Cờ ❌ **NEVER dùng thay entitlement** | Hai nguồn sự thật cho "được dùng không" là hai câu trả lời khác nhau |
+| `BR-FLG-01` | Cờ Cấm — **NEVER dùng thay entitlement** | Hai nguồn sự thật cho "được dùng không" là hai câu trả lời khác nhau |
 | `BR-FLG-02` | Mọi cờ có **mặc định an toàn** — thường là `off` | Cờ thiếu mặc định làm sự cố cache thành sự cố tính năng |
 | `BR-FLG-03` | Mọi cờ có **ngày hết hạn** khi tạo | Cờ vĩnh viễn là nhánh code chết không ai dám xoá |
 | `BR-FLG-04` | Đổi cờ ghi `audit_logs` kèm **lý do bắt buộc** | |
-| `BR-FLG-05` | ❌ **NEVER cờ trên bề mặt trẻ** làm đổi độ khó hay cách tính điểm giữa chừng | Đổi luật giữa lúc trẻ đang chơi |
-| `BR-FLG-06` | Cờ ❌ **NEVER gate ràng buộc tuân thủ** — `child-data-compliance` không có công tắc | |
+| `BR-FLG-05` | Cấm — **NEVER cờ trên bề mặt trẻ** làm đổi độ khó hay cách tính điểm giữa chừng | Đổi luật giữa lúc trẻ đang chơi |
+| `BR-FLG-06` | Cờ Cấm — **NEVER gate ràng buộc tuân thủ** — [`child-data-compliance.md`](../00-foundation/child-data-compliance.md) không có công tắc | |
 | `BR-FLG-07` | Chỉ `super_admin` thấy và đổi | |
 
 ## 7. Data
@@ -95,7 +95,7 @@ sự thật cho cùng một câu hỏi.
 isEnabled(key: FlagKey, ctx?: { user_id?: number }): Promise<boolean>;
 ```
 
-`FlagKey` là union type sinh từ khai báo — key lạ ❌ không compile.
+`FlagKey` là union type sinh từ khai báo — key lạ không compile.
 
 ### `GET /api/managers/feature-flags` · `PATCH /api/managers/feature-flags/{key}`
 

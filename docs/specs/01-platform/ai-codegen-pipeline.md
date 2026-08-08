@@ -46,7 +46,7 @@ nhau.
 
 ## 2. Actors
 
-| Actor | Làm gì | ❌ Không làm được |
+| Actor | Làm gì | Cấm làm được |
 |---|---|---|
 | Dev | Chạy generator, review diff, viết logic, mở PR | — |
 | Generator (máy, không LLM) | Sinh từ artefact xác định: Zod, Drizzle, barrel, type | — |
@@ -92,9 +92,9 @@ Nhánh rẽ ở đây không phải lỗi runtime — là vùng cấm AI sinh co
 | **Gating** — `allowedTiers`, kiểm ownership | Bug ở đây cho không toàn bộ nội dung |
 | **Dữ liệu trẻ** — mọi thứ chạm `child_profiles`, `consent_logs`, telemetry PII | Ràng buộc pháp lý, không sửa ngược được |
 | **Migration chạy tự động** | Migration sai làm hỏng dữ liệu production |
-| **Nội dung đã published** | `content-lifecycle` `BR-CLC-01` |
+| **Nội dung đã published** | [`content-lifecycle.md`](../00-foundation/content-lifecycle.md) `BR-CLC-01` |
 
-Ở sáu vùng này AI được **đọc, giải thích, đề xuất, review** — ❌ không được **sinh code sẽ
+Ở sáu vùng này AI được **đọc, giải thích, đề xuất, review** — không được **sinh code sẽ
 merge**.
 
 Ranh giới đặt theo *hậu quả khi sai*, không theo *độ khó khi viết*.
@@ -103,15 +103,15 @@ Ranh giới đặt theo *hậu quả khi sai*, không theo *độ khó khi viế
 
 | ID | Rule | Vì sao |
 |---|---|---|
-| `BR-AIG-01` | Code sinh ra ❌ **NEVER** merge tự động. Luôn qua PR có người review | AI sinh sai thì người bắt; merge tự động thì không ai bắt |
+| `BR-AIG-01` | Code sinh ra Cấm — **NEVER** merge tự động. Luôn qua PR có người review | AI sinh sai thì người bắt; merge tự động thì không ai bắt |
 | `BR-AIG-02` | Ưu tiên generator **xác định** hơn LLM. Dùng LLM chỉ khi output không suy ra máy móc được | Generator xác định tái lập được, diff sạch, không tốn tiền |
-| `BR-AIG-03` | AI ❌ **NEVER** sinh code trong vùng cấm §5 | Hậu quả khi sai ở sáu vùng đó (lỗ hổng, mất tiền, rò dữ liệu trẻ) lớn hơn lợi ích tiết kiệm thời gian |
-| `BR-AIG-04` | Code sinh ra mang header `@generated from <spec-id>@<sha>`; ❌ **NEVER sửa tay** file `@generated` | Sửa tay file sinh ra sẽ mất ở lần sinh sau |
-| `BR-AIG-05` | Test sinh từ Gherkin ra dưới dạng `test.todo`, ❌ **không** dưới dạng test rỗng pass | Test rỗng pass là tệ hơn không có test — nó báo xanh giả |
+| `BR-AIG-03` | AI Cấm — **NEVER** sinh code trong vùng cấm §5 | Hậu quả khi sai ở sáu vùng đó (lỗ hổng, mất tiền, rò dữ liệu trẻ) lớn hơn lợi ích tiết kiệm thời gian |
+| `BR-AIG-04` | Code sinh ra mang header `@generated from <spec-id>@<sha>`; Cấm — **NEVER sửa tay** file `@generated` | Sửa tay file sinh ra sẽ mất ở lần sinh sau |
+| `BR-AIG-05` | Test sinh từ Gherkin ra dưới dạng `test.todo`, **không** dưới dạng test rỗng pass | Test rỗng pass là tệ hơn không có test — nó báo xanh giả |
 | `BR-AIG-06` | `pnpm gen:check` chạy trong cổng tự động, **chặn merge** khi spec và code lệch | Không có cổng này thì spec trôi khỏi code trong 3 sprint |
-| `BR-AIG-07` | Đổi contract → sửa **spec trước**, sinh lại, rồi sửa code. ❌ Không sửa code trước | Nếu code đi trước, spec thành tài liệu chết |
+| `BR-AIG-07` | Đổi contract → sửa **spec trước**, sinh lại, rồi sửa code. Cấm sửa code trước | Nếu code đi trước, spec thành tài liệu chết |
 | `BR-AIG-08` | Prompt của `gen:session` version trong repo | Prompt là code |
-| `BR-AIG-09` | Session class sinh ra phải qua `pnpm lint:tokens` — ❌ không hex literal | LLM rất hay sinh hex literal |
+| `BR-AIG-09` | Session class sinh ra phải qua `pnpm lint:tokens` — không hex literal | LLM rất hay sinh hex literal |
 | `BR-AIG-10` | Mọi PR có code sinh ra ghi rõ trong mô tả: lệnh nào sinh, spec nào, phần nào người viết | Review cần biết soi chỗ nào |
 
 ## 7. Data
@@ -142,7 +142,7 @@ Ranh giới đặt theo *hậu quả khi sai*, không theo *độ khó khi viế
 }
 ```
 
-Sinh bằng parse Markdown — **xác định, không LLM**. Đây là lý do `CONVENTIONS.md` ép cấu
+Sinh bằng parse Markdown — **xác định, không LLM**. Đây là lý do [`CONVENTIONS.md`](../CONVENTIONS.md) ép cấu
 trúc 11 section và bảng cố định: cấu trúc đó tồn tại để máy đọc được.
 
 ### 7.2 Cái gì sinh ra từ cái gì
@@ -162,7 +162,7 @@ trúc 11 section và bảng cố định: cấu trúc đó tồn tại để má
 ```ts
 /**
  * @generated from ACCESS-LADDER@a3f9c21 by `pnpm gen:routes`
- * ❌ KHÔNG sửa tay file này — sửa spec rồi sinh lại.
+ * Cấm KHÔNG sửa tay file này — sửa spec rồi sinh lại.
  * Logic nghiệp vụ viết ở ./access-ladder.impl.ts
  */
 ```
@@ -176,7 +176,7 @@ Tách `*.gen.ts` (sinh, không sửa) khỏi `*.impl.ts` (người viết). `gen
 |---|---|
 | Route có trong spec, không có trong code | **error** |
 | Route có trong code, không có trong spec | **error** — code đi trước spec |
-| Mã lỗi dùng trong code không có trong `error-codes.md` | **error** |
+| Mã lỗi dùng trong code không có trong [`error-codes.md`](../00-foundation/error-codes.md) | **error** |
 | Gherkin scenario không có test tương ứng | **error** |
 | Test `test.todo` chưa implement | **warn**, đếm và báo |
 | BR không được tham chiếu ở đâu trong code | **warn** |

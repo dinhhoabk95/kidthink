@@ -62,7 +62,7 @@ phải việc để sau.
 
 | Nhánh | Hành vi |
 |---|---|
-| Dump fail | Retry 2 lần; fail tiếp → **alert**, ❌ không bỏ qua |
+| Dump fail | Retry 2 lần; fail tiếp → **alert**, không bỏ qua |
 | Verify fail | **Alert mức cao** — backup không dùng được là tình trạng khẩn cấp |
 | S3 không tới được | Giữ dump local, alert, thử lại giờ sau |
 | Khôi phục thật | Runbook §7.3, có checklist người ký |
@@ -72,12 +72,12 @@ phải việc để sau.
 | ID | Rule | Vì sao |
 |---|---|---|
 | `BR-BAK-01` | Backup **verify hàng tuần** bằng restore thật | Dump không restore được là dump vô dụng, và chỉ phát hiện lúc cần nhất |
-| `BR-BAK-02` | Dump **mã hoá at rest**; khoá ❌ không nằm cùng chỗ với dump | Một dump là **toàn bộ** dữ liệu trẻ trong một file di chuyển được — nó rời khỏi vành đai bảo vệ của DB. Khoá để cùng chỗ với dump thì mã hoá ❌ không mua thêm gì: ai lấy được file cũng lấy được khoá |
+| `BR-BAK-02` | Dump **mã hoá at rest**; khoá không nằm cùng chỗ với dump | Một dump là **toàn bộ** dữ liệu trẻ trong một file di chuyển được — nó rời khỏi vành đai bảo vệ của DB. Khoá để cùng chỗ với dump thì mã hoá không mua thêm gì: ai lấy được file cũng lấy được khoá |
 | `BR-BAK-03` | Mỗi lần chạy ghi `backup_log` kèm `sha256` | Không có bản ghi thì không chứng minh được đã chạy |
-| `BR-BAK-04` | Fail ❌ **NEVER im lặng** | v1 có `backup_log` rỗng và không ai biết |
+| `BR-BAK-04` | Fail Cấm — **NEVER im lặng** | v1 có `backup_log` rỗng và không ai biết |
 | `BR-BAK-05` | Retention **30 daily / 12 weekly / 24 monthly** | Hỏng dữ liệu âm thầm (bug ghi sai, xoá nhầm) thường chỉ lộ ra sau nhiều tuần — chỉ giữ bản mới nhất nghĩa là mọi bản backup đều đã nhiễm lúc phát hiện. Ba tầng thưa dần đổi dung lượng lấy chiều sâu thời gian |
-| `BR-BAK-06` | Go-live ❌ **không được** khi chưa có ít nhất **một** lần verify restore thành công | Đây là chỗ biến `BR-BAK-01` từ ý định thành cổng. v1 có bảng `backup_log` mà rỗng — nghĩa là "đã có backup" chưa bao giờ được kiểm chứng. Một lần restore thật là bằng chứng rẻ nhất rằng đường khôi phục tồn tại |
-| `BR-BAK-07` | Dump ❌ **NEVER** để trên máy cá nhân hoặc bucket công khai | Chứa dữ liệu trẻ |
+| `BR-BAK-06` | Go-live **không được** khi chưa có ít nhất **một** lần verify restore thành công | Đây là chỗ biến `BR-BAK-01` từ ý định thành cổng. v1 có bảng `backup_log` mà rỗng — nghĩa là "đã có backup" chưa bao giờ được kiểm chứng. Một lần restore thật là bằng chứng rẻ nhất rằng đường khôi phục tồn tại |
+| `BR-BAK-07` | Dump Cấm — **NEVER** để trên máy cá nhân hoặc bucket công khai | Chứa dữ liệu trẻ |
 | `BR-BAK-08` | DR drill hàng quý, ghi RTO đo được | RTO không đo là RTO không biết |
 
 ## 7. Data
@@ -105,7 +105,7 @@ phá sản.
 
 1. Xác nhận phạm vi mất mát và mốc thời gian cần về.
 2. Chọn dump gần nhất **đã verify**.
-3. Dừng ứng dụng — ❌ không restore lên DB đang nhận ghi.
+3. Dừng ứng dụng — không restore lên DB đang nhận ghi.
 4. `bash infra/scripts/restore.sh <s3_key>`.
 5. Chạy smoke: đăng nhập, mở một phiên chơi, mở một báo cáo.
 6. Bật lại ứng dụng.
@@ -172,16 +172,16 @@ Scenario: RTO đo được trong DR drill
 
 ## 11. Open questions
 
-> ⚠️ Trước 2026-08-07 bảng này có **hai dòng cùng đánh số 3** — "Q3" thành tham chiếu mơ hồ.
+> Lưu ý: Trước 2026-08-07 bảng này có **hai dòng cùng đánh số 3** — "Q3" thành tham chiếu mơ hồ.
 > Đã đánh số lại: câu hỏi `pgvector` giữ **3**, câu hỏi cross-region thành **4**.
 >
-> ❌ **Không câu nào chặn migration #1**: cả 4 đều là quyết định vận hành/chi phí, ❌ không
+> Không câu nào chặn migration #1: cả 4 đều là quyết định vận hành/chi phí, không
 > đụng cột nào ở §7.2 `backup_log`. Điều kiện chặn của **D-AD** là spec này `approved` — đã
-> đạt; ❌ không đòi 4 câu này đóng.
-
+> đạt.
+>
 | # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
 |---|---|---|---|---|
-| 1 | Ai sở hữu khoá mã hoá backup và quy trình xoay khoá? Không có chủ thì `BR-BAK-02` ❌ không thi hành được — và mất khoá = mất toàn bộ backup | Go-live | 🔴 **go-live, ❌ không hoãn thêm được** | cần **người** — ❌ không phải quyết định kỹ thuật |
-| 2 | RPO 24h có chấp nhận được về mặt thương mại không, hay cần WAL archiving? | Ngân sách hạ tầng | 🟡 P1 | hoãn — §7.1 đã ghi rõ đánh đổi; mở lại nếu thương mại bác RPO 24h |
-| 3 | Nếu `07-addon/semantic-search` triển khai (extension `pgvector`), container restore tạm ở §4 bước 4 cần `CREATE EXTENSION vector` trước khi restore — bổ sung bước nào, và `backup:verify` có cần smoke query trên cột `vector` không? | Khi `semantic-search` chuyển `implemented` | 🟡 P4 | hoãn — điều kiện kích hoạt viết bằng câu đo được: mở lại **khi** `semantic-search` rời `draft` |
-| 4 | Backup S3 có cần cross-region không? | Chi phí | 🟡 P2 | hoãn — mở lại khi có ước tính chi phí S3 thật |
+| 1 | Ai sở hữu khoá mã hoá backup và quy trình xoay khoá? Không có chủ thì `BR-BAK-02` không thi hành được — và mất khoá = mất toàn bộ backup | Go-live | go-live, không hoãn thêm được | cần **người** — không phải quyết định kỹ thuật |
+| 2 | RPO 24h có chấp nhận được về mặt thương mại không, hay cần WAL archiving? | Ngân sách hạ tầng | chờ P1 | hoãn — §7.1 đã ghi rõ đánh đổi; mở lại nếu thương mại bác RPO 24h |
+| 3 | Nếu `07-addon/semantic-search` triển khai (extension `pgvector`), container restore tạm ở §4 bước 4 cần `CREATE EXTENSION vector` trước khi restore — bổ sung bước nào, và `backup:verify` có cần smoke query trên cột `vector` không? | Khi [`semantic-search.md`](../07-addon/semantic-search.md) chuyển `implemented` | chờ P4 | hoãn — điều kiện kích hoạt viết bằng câu đo được: mở lại **khi** [`semantic-search.md`](../07-addon/semantic-search.md) rời `draft` |
+| 4 | Backup S3 có cần cross-region không? | Chi phí | chờ P2 | hoãn — mở lại khi có ước tính chi phí S3 thật |

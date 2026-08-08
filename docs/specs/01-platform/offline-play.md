@@ -18,7 +18,7 @@ depends_on:
 
 ## 1. Objective
 
-Trẻ chơi trên tablet, thường trên Wi-Fi nhà hoặc 4G chập chờn. Mạng rớt giữa chừng ❌ không
+Trẻ chơi trên tablet, thường trên Wi-Fi nhà hoặc 4G chập chờn. Mạng rớt giữa chừng không
 được làm mất phiên chơi hay làm đứng màn hình.
 
 Phạm vi MVP: **phiên đang chạy sống sót qua mất mạng**. Tải trước cả thư viện để chơi offline
@@ -43,7 +43,7 @@ hoàn toàn là P5.
 ## 4. Main flow
 
 1. Mở game → tải config + asset của **mọi round** trước khi bắt đầu.
-2. Mất mạng → engine ❌ không gọi mạng (vốn đã vậy — `BR-ENG-03`), tiếp tục bình thường.
+2. Mất mạng → engine không gọi mạng (vốn đã vậy — `BR-ENG-03`), tiếp tục bình thường.
 3. Event vào buffer bộ nhớ, đồng thời ghi IndexedDB mỗi 10 giây.
 4. Có mạng lại → flush theo thứ tự `seq`.
 5. Trang đóng khi vẫn offline → buffer còn trong IndexedDB, flush ở lần mở sau.
@@ -53,7 +53,7 @@ hoàn toàn là P5.
 | Nhánh | Hành vi |
 |---|---|
 | Offline khi **mở** game | Chỉ chơi được level đã cache; còn lại hiện màn hình "cần kết nối" thân thiện |
-| Buffer quá 24 giờ | Bỏ, ❌ không gửi. Ghi log local |
+| Buffer quá 24 giờ | Bỏ, không gửi. Ghi log local |
 | Buffer quá 5 MB | Bỏ event cũ nhất, giữ `game_started` và `game_completed` |
 | Phiên đã bị server đóng (`abandoned`) | Event trễ bị bỏ, trả 200 |
 | Xung đột `seq` | Server khử trùng, client xoá buffer đã gửi |
@@ -62,14 +62,14 @@ hoàn toàn là P5.
 
 | ID | Rule | Vì sao |
 |---|---|---|
-| `BR-OFF-01` | Phiên đang chạy ❌ **NEVER bị ngắt** vì mất mạng | Cắt ngang lúc trẻ đang chơi là thiệt hại lớn nhất |
+| `BR-OFF-01` | Phiên đang chạy Cấm — **NEVER bị ngắt** vì mất mạng | Cắt ngang lúc trẻ đang chơi là thiệt hại lớn nhất |
 | `BR-OFF-02` | Preload **toàn bộ** asset của phiên trước khi bắt đầu | Tải giữa chừng là nơi mất mạng gây hại |
 | `BR-OFF-03` | Buffer bền trong **IndexedDB**, không chỉ bộ nhớ | Đóng tab mất bộ nhớ |
 | `BR-OFF-04` | Flush theo thứ tự `seq`, server khử trùng | |
 | `BR-OFF-05` | Buffer quá **24 giờ** thì bỏ | Dữ liệu chơi quá cũ không còn giá trị phân tích và có thể lệch version nội dung |
-| `BR-OFF-06` | Guest cũng được buffer, nhưng ❌ không lưu tiến độ | |
-| `BR-OFF-07` | ❌ **NEVER cache nội dung trả phí** trong service worker cho người không có quyền | Cache là đường rò nội dung |
-| `BR-OFF-08` | UI báo trạng thái offline **cho người lớn**, ❌ không làm trẻ hoảng | Biểu tượng nhỏ, ❌ không modal chặn màn hình |
+| `BR-OFF-06` | Guest cũng được buffer, nhưng không lưu tiến độ | |
+| `BR-OFF-07` | Cấm — **NEVER cache nội dung trả phí** trong service worker cho người không có quyền | Cache là đường rò nội dung |
+| `BR-OFF-08` | UI báo trạng thái offline **cho người lớn**, không làm trẻ hoảng | Biểu tượng nhỏ, không modal chặn màn hình |
 
 ## 7. Data
 
@@ -88,8 +88,8 @@ Giới hạn 5 MB, TTL 24 giờ.
 |---|---|
 | App shell, JS, CSS | Cache-first, version theo build |
 | Asset của phiên hiện tại | Cache-first, xoá khi phiên kết thúc |
-| Config game | Network-first, ❌ không cache nội dung trả phí |
-| API | ❌ Không cache |
+| Config game | Network-first, không cache nội dung trả phí |
+| API | Cấm cache |
 
 ## 8. API contract
 

@@ -26,7 +26,7 @@ lớp **access** dùng **session cookie niêm phong** qua `nuxt-auth-utils`, kh�
 JWT tự ký. `jose` giữ lại **chỉ** cho JWT service-to-service (`apps/worker` gọi API nội bộ) —
 không dùng cho session trình duyệt nữa. Lớp **refresh** (cookie opaque, path-scoped, hash
 trong `active_sessions`, xoay mỗi lần dùng) **không đổi** — `nuxt-auth-utils` không có khái
-niệm refresh token, đây vẫn là cơ chế tự quản như thiết kế gốc. ❌ Không Supabase Auth, ❌
+niệm refresh token, đây vẫn là cơ chế tự quản như thiết kế gốc. Cấm Supabase Auth, Cấm
 không Better-Auth — cả hai mang theo mô hình role và tenant mà kiến trúc này cố ý không có;
 `nuxt-auth-utils` không mang giả định đó (chỉ session primitive, không role/tenant).
 
@@ -35,7 +35,7 @@ Trong toàn bộ §6–§9 dưới đây, chữ **"token"/"JWT"** khi nói về 
 cơ chế mang. Payload/cookie cụ thể đã cập nhật ở §7.1–§7.2.
 
 Hai namespace **tách biệt hoàn toàn** — tên cookie khác, secret niêm phong khác giữa
-`apps/web` (User) và `apps/admin` (Manager). Session của User ❌ không bao giờ mở được bề mặt
+`apps/web` (User) và `apps/admin` (Manager). Session của User không bao giờ mở được bề mặt
 Manager và ngược lại.
 
 ## 2. Actors
@@ -43,7 +43,7 @@ Manager và ngược lại.
 | Actor | Token | MFA | Cách xác thực yếu tố thứ nhất |
 |---|---|---|---|
 | User | `aud: "kidthink:user"` | Tuỳ chọn, P2 — [`../03-account/mfa.md`](../03-account/mfa.md) | Mật khẩu **hoặc** SNS — [`../03-account/social-login.md`](../03-account/social-login.md) |
-| Manager | `aud: "kidthink:manager"` | ✅ bắt buộc | Mật khẩu. ❌ **NEVER SNS** (`BR-AUT-15`) |
+| Manager | `aud: "kidthink:manager"` | bắt buộc | Mật khẩu. Cấm — **NEVER SNS** (`BR-AUT-15`) |
 | Guest | không token, chỉ cookie thiết bị | — | — |
 
 ## 3. Entry points
@@ -86,30 +86,30 @@ nào tồn tại ở trạng thái "chưa qua MFA" (§5).
 | `refresh_token_version` lệch | `SESSION_REVOKED` 401 |
 | Đổi mật khẩu | `refresh_token_version` **+1** → mọi phiên khác chết |
 | Manager chưa qua MFA | `MFA_REQUIRED` 428. **Không** tạo session/`active_sessions` — client gửi lại mã TOTP kèm định danh đăng nhập tạm để hoàn tất |
-| Token sai audience | **401**, ❌ không phải 403 |
+| Token sai audience | **401**, không phải 403 |
 
 ## 6. Business rules
 
 | ID | Rule | Vì sao |
 |---|---|---|
 | `BR-AUT-01` | Verify **audience** tường minh, không chỉ chữ ký | Cùng khoá ký thì token namespace này dùng được ở namespace kia |
-| `BR-AUT-02` | Guard là hàm **sync**, đọc `event.context`. ❌ NEVER `await requireUserAuth()` | Guard trả Promise mời quên `await`, và quên `await` nghĩa là không có guard |
+| `BR-AUT-02` | Guard là hàm **sync**, đọc `event.context`. Cấm — NEVER `await requireUserAuth()` | Guard trả Promise mời quên `await`, và quên `await` nghĩa là không có guard |
 | `BR-AUT-03` | Refresh cookie **path-scoped** tới đúng route refresh | Refresh token không được gửi kèm mọi request |
 | `BR-AUT-04` | Refresh token **xoay** mỗi lần dùng; tái dùng → thu hồi toàn bộ phiên | Phát hiện token bị đánh cắp |
-| `BR-AUT-05` | `refresh_token_version` **+1** khi đổi mật khẩu và khi thu hồi phiên | Đổi mật khẩu mà refresh token cũ vẫn dùng được thì việc đổi ❌ không đuổi được kẻ đã vào. Version là cách vô hiệu hoá **mọi** token đã phát bằng một phép ghi, ❌ không phải đi xoá từng hàng |
-| `BR-AUT-06` | CSRF token **không** HttpOnly, gửi qua header `x-csrf-token` trên **mọi** route đổi trạng thái | Cookie phiên tự động đi kèm request từ site khác; header thì ❌ không. Token phải đọc được bằng JS để gắn vào header — đó là lý do nó cố ý ❌ **không** HttpOnly, khác với cookie phiên |
-| `BR-AUT-07` | JWT ❌ **không** chứa entitlement, `tenant_id`, hay `role` của User | Năng lực đọc từ DB — thu hồi phải có hiệu lực ngay |
-| `BR-AUT-08` | Mật khẩu hash bằng **argon2id**; ❌ không bcrypt, ❌ không MD5/SHA | MD5/SHA là hash **nhanh** — chính thứ giúp kẻ có DB dò tỉ tổ hợp mỗi giây. argon2id tốn cả bộ nhớ nên GPU/ASIC ❌ không nhân được thông lượng; bcrypt chậm nhưng ❌ không tốn bộ nhớ và trần 72 byte |
+| `BR-AUT-05` | `refresh_token_version` **+1** khi đổi mật khẩu và khi thu hồi phiên | Đổi mật khẩu mà refresh token cũ vẫn dùng được thì việc đổi không đuổi được kẻ đã vào. Version là cách vô hiệu hoá **mọi** token đã phát bằng một phép ghi, không phải đi xoá từng hàng |
+| `BR-AUT-06` | CSRF token **không** HttpOnly, gửi qua header `x-csrf-token` trên **mọi** route đổi trạng thái | Cookie phiên tự động đi kèm request từ site khác; header thì không. Token phải đọc được bằng JS để gắn vào header — đó là lý do nó cố ý **không** HttpOnly, khác với cookie phiên |
+| `BR-AUT-07` | JWT **không** chứa entitlement hay vai trò của User | Năng lực đọc từ DB — thu hồi phải có hiệu lực ngay |
+| `BR-AUT-08` | Mật khẩu hash bằng **argon2id**; không bcrypt, không MD5/SHA | MD5/SHA là hash **nhanh** — chính thứ giúp kẻ có DB dò tỉ tổ hợp mỗi giây. argon2id tốn cả bộ nhớ nên GPU/ASIC không nhân được thông lượng; bcrypt chậm nhưng không tốn bộ nhớ và trần 72 byte |
 | `BR-AUT-09` | Rate limit đăng nhập theo **IP và theo account** — hai trục | Khoá account chặn nhắm mục tiêu; giới hạn IP chặn quét diện rộng |
-| `BR-AUT-10` | Thông báo lỗi đăng nhập ❌ không tiết lộ tài khoản tồn tại; thời gian phản hồi không lệch | Enumeration email |
-| `BR-AUT-11` | Manager ❌ không có endpoint đăng ký công khai | Manager là tài khoản vận hành, tạo bằng seed/mời từ super admin. Một route đăng ký công khai — kể cả có duyệt phía sau — là bề mặt để tự tạo tài khoản chờ leo quyền, và nó ❌ không mua lại được lợi ích gì vì số Manager đếm trên đầu ngón tay |
+| `BR-AUT-10` | Thông báo lỗi đăng nhập không tiết lộ tài khoản tồn tại; thời gian phản hồi không lệch | Enumeration email |
+| `BR-AUT-11` | Manager không có endpoint đăng ký công khai | Manager là tài khoản vận hành, tạo bằng seed/mời từ super admin. Một route đăng ký công khai — kể cả có duyệt phía sau — là bề mặt để tự tạo tài khoản chờ leo quyền, và nó không mua lại được lợi ích gì vì số Manager đếm trên đầu ngón tay |
 | `BR-AUT-12` | Cookie Manager giới hạn domain `admin.{domain}` | Tách bề mặt |
-| `BR-AUT-13` | Thao tác nhạy cảm §7.4 cần **reauth trong 5 phút**. Phiên hợp lệ một mình ❌ **không đủ** | Phiên bị chiếm ❌ không được đổi khoá vào tài khoản. Đây là ranh giới giữa "đọc được dữ liệu" và "chiếm vĩnh viễn" |
-| `BR-AUT-14` | Reauth chấp nhận **bất kỳ** cách nào ở §7.4, ❌ không cứng mật khẩu | `password_hash` nullable từ `BR-AUT-16`. Ép mật khẩu làm tài khoản chỉ-SNS ❌ không đổi được cài đặt nào |
-| `BR-AUT-15` | Manager ❌ **NEVER đăng nhập bằng SNS** | Bề mặt quản trị ❌ không nhận danh tính từ bên thứ ba. Một sự cố ở provider ❌ không được thành sự cố quản trị của ta |
+| `BR-AUT-13` | Thao tác nhạy cảm §7.4 cần **reauth trong 5 phút**. Phiên hợp lệ một mình **không đủ** | Phiên bị chiếm không được đổi khoá vào tài khoản. Đây là ranh giới giữa "đọc được dữ liệu" và "chiếm vĩnh viễn" |
+| `BR-AUT-14` | Reauth chấp nhận **bất kỳ** cách nào ở §7.4, không cứng mật khẩu | `password_hash` nullable từ `BR-AUT-16`. Ép mật khẩu làm tài khoản chỉ-SNS không đổi được cài đặt nào |
+| `BR-AUT-15` | Manager **cấm đăng nhập bằng SNS** | Bề mặt quản trị không nhận danh tính từ bên thứ ba. Một sự cố ở provider không được thành sự cố quản trị của ta |
 | `BR-AUT-16` | `users.password_hash` **nullable**. Tài khoản chỉ có SNS là hợp lệ | `BR-SCL-08`. Bất biến thay thế: `login_methods ≥ 1` (`BR-SLK-04`) |
-| `BR-AUT-17` | SNS là yếu tố **thứ nhất**, ❌ không phải yếu tố thứ hai. MFA đã bật thì vẫn phải qua | `BR-SCL-07`. "Đã đăng nhập Google" ❌ không chứng minh gì về thiết bị thứ hai |
-| `BR-AUT-18` | ❌ **NEVER lưu token của nhà cung cấp OAuth** trong `active_sessions` hay bất kỳ bảng nào | `BR-OAP-07` |
+| `BR-AUT-17` | SNS là yếu tố **thứ nhất**, không phải yếu tố thứ hai. MFA đã bật thì vẫn phải qua | `BR-SCL-07`. "Đã đăng nhập Google" không chứng minh gì về thiết bị thứ hai |
+| `BR-AUT-18` | Cấm — **NEVER lưu token của nhà cung cấp OAuth** trong `active_sessions` hay bất kỳ bảng nào | `BR-OAP-07` |
 
 ## 7. Data
 
@@ -135,11 +135,11 @@ không phải quy ước tự đặt.
 
 | Cookie | Cơ chế | HttpOnly | SameSite | Path | TTL |
 |---|---|:--:|---|---|---|
-| `kidthink-user-session` / `kidthink-manager-session` | `nuxt-auth-utils`, secret riêng mỗi app | ✅ | Lax | `/` | 15 phút |
-| `tm_u_rt` / `tm_m_rt` | Cookie opaque tự đặt (`setCookie()`), hash so `active_sessions` | ✅ | Strict | `/api/users/auth/refresh` / `/api/managers/auth/refresh` | 7 ngày |
-| `tm_u_csrf` / `tm_m_csrf` | Tự đặt | ❌ | Strict | `/` | 7 ngày |
-| `active_child_id` | Tự đặt | ❌ | Lax | `/` | 30 ngày |
-| `tm_did` (guest) | Tự đặt | ❌ | Lax | `/` | 1 năm |
+| `kidthink-user-session` / `kidthink-manager-session` | `nuxt-auth-utils`, secret riêng mỗi app | | Lax | `/` | 15 phút |
+| `tm_u_rt` / `tm_m_rt` | Cookie opaque tự đặt (`setCookie()`), hash so `active_sessions` | | Strict | `/api/users/auth/refresh` / `/api/managers/auth/refresh` | 7 ngày |
+| `tm_u_csrf` / `tm_m_csrf` | Tự đặt | Cấm | Strict | `/` | 7 ngày |
+| `active_child_id` | Tự đặt | Cấm | Lax | `/` | 30 ngày |
+| `tm_did` (guest) | Tự đặt | Cấm | Lax | `/` | 1 năm |
 
 Mọi cookie `Secure` ở production. Cookie session **không đặt thuộc tính `Domain`** — mặc định
 host-only, nên `admin.{domain}` và `{domain}` tự động không chia sẻ được cookie của nhau
@@ -163,7 +163,7 @@ Cửa sổ **5 phút** tính từ `active_sessions.reauth_at`. Quá hạn → **
 | Cách | Điều kiện | Ghi chú |
 |---|---|---|
 | Mật khẩu hiện tại | `password_hash` NOT NULL | Cách mặc định |
-| Vượt lại OAuth với provider **đã liên kết** | ≥1 hàng `social_identities` | `intent=reauth`; ❌ không tạo, ❌ không liên kết gì |
+| Vượt lại OAuth với provider **đã liên kết** | ≥1 hàng `social_identities` | `intent=reauth`; không tạo, không liên kết gì |
 | Mã TOTP hợp lệ | MFA đã bật | |
 
 **Thao tác cần reauth:**
@@ -175,7 +175,7 @@ Cửa sổ **5 phút** tính từ `active_sessions.reauth_at`. Quá hạn → **
 | Liên kết / gỡ SNS | [`../03-account/social-account-linking.md`](../03-account/social-account-linking.md) |
 | Yêu cầu xoá tài khoản | [`../03-account/account-deletion.md`](../03-account/account-deletion.md) |
 
-Reauth thành công đặt `reauth_at = now()` cho **phiên hiện tại**, ❌ không cho phiên khác —
+Reauth thành công đặt `reauth_at = now()` cho **phiên hiện tại**, không cho phiên khác —
 phiên khác có thể là của kẻ tấn công.
 
 ## 8. API contract
@@ -316,7 +316,7 @@ Scenario: BR-AUT-18 — không token nào của provider được lưu
 
 | # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
 |---|---|---|---|---|
-| ~~1~~ | ~~MFA cho Manager bắt buộc từ P0 hay bật ở P2?~~ **Đóng 2026-08-07 (T11)**: trùng câu hỏi với [`../00-foundation/actors.md`](../00-foundation/actors.md) §11 Q1 — đã đóng ở đó: **bắt buộc từ P0**. Cột thật `mfa_settings.secret_encrypted` + `managers.mfa_enabled` ([`schema-identity-billing.md`](schema-identity-billing.md) §7.3). Bất biến "Manager ❌ không hoạt động khi `mfa_settings.confirmed_at IS NULL`" ép ở **tầng service** | — | ✅ đóng | `actors` Q1 (D-X/T9 · M9) |
-| ~~2~~ | ~~Social login (Google) có vào MVP không?~~ **Chốt 2026-08-05: có, P1.** Google và Facebook — [`oauth-provider-registry.md`](oauth-provider-registry.md) | — | ✅ đóng | D-X |
-| ~~3~~ | ~~Khoá tạm account sau bao nhiêu lần sai, và bao lâu?~~ **Đóng 2026-08-07 (T11)**: số cụ thể sống ở [`rate-limiting.md`](rate-limiting.md) §7 (`BR-RTL-05`) — **5 lần → 1 phút · 10 → 5 phút · 15 → 30 phút · reset sau 24 giờ không sai**, khoá tăng dần ❌ không vĩnh viễn. ⚠️ `rate-limiting` còn `draft`: con số có thể đổi khi nó được approve, nhưng *chủ sở hữu* câu hỏi đã rõ và ❌ không còn nằm ở file này | — | ✅ đóng (chủ chuyển) | `rate-limiting` §7 |
-| 4 | Reauth bằng OAuth cần vượt lại **màn hình đồng ý** của provider hay chấp nhận phiên SSO đang mở? Chấp nhận phiên đang mở làm reauth gần như vô nghĩa trên máy dùng chung | Reauth trên tài khoản social — ❌ không chặn reauth password (P0 đã đủ) | 🟡 P1 | hoãn — chốt cùng lúc `oauth-provider-registry` vào P1 |
+| ~~1~~ | ~~MFA cho Manager bắt buộc từ P0 hay bật ở P2?~~ **Đóng 2026-08-07 (T11)**: trùng câu hỏi với [`../00-foundation/actors.md`](../00-foundation/actors.md) §11 Q1 — đã đóng ở đó: **bắt buộc từ P0**. Cột thật `mfa_settings.secret_encrypted` + `managers.mfa_enabled` ([`schema-identity-billing.md`](schema-identity-billing.md) §7.3). Bất biến "Manager không hoạt động khi `mfa_settings.confirmed_at IS NULL`" ép ở **tầng service** | — | đã đóng | [`actors.md`](../00-foundation/actors.md) Q1 (D-X/T9 · M9) |
+| ~~2~~ | ~~Social login (Google) có vào MVP không?~~ **Chốt 2026-08-05: có, P1.** Google và Facebook — [`oauth-provider-registry.md`](oauth-provider-registry.md) | — | đã đóng | D-X |
+| ~~3~~ | ~~Khoá tạm account sau bao nhiêu lần sai, và bao lâu?~~ **Đóng 2026-08-07 (T11)**: số cụ thể sống ở [`rate-limiting.md`](rate-limiting.md) §7 (`BR-RTL-05`) — **5 lần → 1 phút · 10 → 5 phút · 15 → 30 phút · reset sau 24 giờ không sai**, khoá tăng dần không vĩnh viễn. Lưu ý: [`rate-limiting.md`](rate-limiting.md) còn `draft`: con số có thể đổi khi nó được approve, nhưng *chủ sở hữu* câu hỏi đã rõ và không còn nằm ở file này | — | đã đóng (chủ chuyển) | [`rate-limiting.md`](rate-limiting.md) §7 |
+| 4 | Reauth bằng OAuth cần vượt lại **màn hình đồng ý** của provider hay chấp nhận phiên SSO đang mở? Chấp nhận phiên đang mở làm reauth gần như vô nghĩa trên máy dùng chung | Reauth trên tài khoản social — không chặn reauth password (P0 đã đủ) | chờ P1 | hoãn — chốt cùng lúc [`oauth-provider-registry.md`](oauth-provider-registry.md) vào P1 |

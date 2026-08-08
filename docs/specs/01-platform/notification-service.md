@@ -31,7 +31,7 @@ là xây hạ tầng cho việc chưa tồn tại.
 |---|---|
 | User | Email giao dịch + email định kỳ (opt-out được) |
 | Manager | Email vận hành |
-| Trẻ | ❌ **Không nhận gì.** Không email, không push |
+| Trẻ | Cấm **Không nhận gì.** Không email, không push |
 
 ## 3. Entry points
 
@@ -52,23 +52,23 @@ là xây hạ tầng cho việc chưa tồn tại.
 
 | Nhánh | Hành vi |
 |---|---|
-| User đã opt-out loại đó | Ghi `notifications` với `suppressed_reason`, ❌ không gửi |
+| User đã opt-out loại đó | Ghi `notifications` với `suppressed_reason`, không gửi |
 | Email bounce cứng | Đánh dấu địa chỉ `bouncing`, dừng gửi loại định kỳ, giữ giao dịch |
 | Provider lỗi | Retry; backlog cao → alert |
-| Tài khoản `deleted` | ❌ Không gửi gì |
+| Tài khoản `deleted` | Cấm gửi gì |
 
 ## 6. Business rules
 
 | ID | Rule | Vì sao |
 |---|---|---|
-| `BR-NOT-01` | Email **giao dịch** ❌ không opt-out được; email **định kỳ** phải opt-out được | Xác thực email và duyệt thanh toán là một phần của dịch vụ |
-| `BR-NOT-02` | ❌ **NEVER gửi bất cứ gì tới trẻ** | Trẻ không có tài khoản, không có email |
-| `BR-NOT-03` | ❌ **NEVER PII của trẻ trong nội dung email** ngoài `display_name` mà chính phụ huynh đặt | `child-data-compliance` cấm mọi PII trẻ ra ngoài hệ thống; email là ngoài hệ thống |
+| `BR-NOT-01` | Email **giao dịch** không opt-out được; email **định kỳ** phải opt-out được | Xác thực email và duyệt thanh toán là một phần của dịch vụ |
+| `BR-NOT-02` | Cấm — **NEVER gửi bất cứ gì tới trẻ** | Trẻ không có tài khoản, không có email |
+| `BR-NOT-03` | Cấm — **NEVER PII của trẻ trong nội dung email** ngoài `display_name` mà chính phụ huynh đặt | [`child-data-compliance.md`](../00-foundation/child-data-compliance.md) cấm mọi PII trẻ ra ngoài hệ thống; email là ngoài hệ thống |
 | `BR-NOT-04` | INSERT `notifications` trong **cùng transaction** với sự kiện | Đơn được duyệt mà không có thông báo là ca hỗ trợ |
 | `BR-NOT-05` | `jobId = notification_id` — idempotent | Không gửi hai lần |
-| `BR-NOT-06` | ❌ **NEVER email tiếp thị ở MVP** | Chưa có cơ chế đồng ý tiếp thị tách riêng |
+| `BR-NOT-06` | Cấm — **NEVER email tiếp thị ở MVP** | Chưa có cơ chế đồng ý tiếp thị tách riêng |
 | `BR-NOT-07` | Mọi email có link huỷ đăng ký cho loại định kỳ | CAN-SPAM và GDPR bắt buộc; thiếu link là rủi ro pháp lý |
-| `BR-NOT-08` | ❌ **NEVER tracking pixel** trong email tới người dùng của sản phẩm trẻ em | COPPA cấm thu thập dữ liệu hành vi từ sản phẩm hướng trẻ em; tracking pixel thu chính dữ liệu đó |
+| `BR-NOT-08` | Cấm — **NEVER tracking pixel** trong email tới người dùng của sản phẩm trẻ em | COPPA cấm thu thập dữ liệu hành vi từ sản phẩm hướng trẻ em; tracking pixel thu chính dữ liệu đó |
 
 ## 7. Data
 
@@ -76,17 +76,17 @@ là xây hạ tầng cho việc chưa tồn tại.
 
 | Code | Loại | Opt-out |
 |---|---|:--:|
-| `email_verification` | giao dịch | ❌ |
-| `password_reset` | giao dịch | ❌ |
-| `order_submitted` | giao dịch | ❌ |
-| `order_approved` | giao dịch | ❌ |
-| `order_rejected` | giao dịch | ❌ |
-| `subscription_expiring` (trước 7 ngày) | giao dịch | ❌ |
-| `subscription_expired` | giao dịch | ❌ |
-| `weekly_progress` | định kỳ | ✅ |
-| `content_new` | định kỳ | ✅ |
-| `admin_order_pending` (tới Manager) | vận hành | ❌ |
-| `admin_alert` (tới Manager) | vận hành | ❌ |
+| `email_verification` | giao dịch | Cấm |
+| `password_reset` | giao dịch | Cấm |
+| `order_submitted` | giao dịch | Cấm |
+| `order_approved` | giao dịch | Cấm |
+| `order_rejected` | giao dịch | Cấm |
+| `subscription_expiring` (trước 7 ngày) | giao dịch | Cấm |
+| `subscription_expired` | giao dịch | Cấm |
+| `weekly_progress` | định kỳ | |
+| `content_new` | định kỳ | |
+| `admin_order_pending` (tới Manager) | vận hành | Cấm |
+| `admin_alert` (tới Manager) | vận hành | Cấm |
 
 **11 loại.** Thêm loại mới = thêm vào bảng này trước.
 
@@ -98,14 +98,14 @@ là xây hạ tầng cho việc chưa tồn tại.
 
 ### 7.3 Quy tắc nội dung
 
-Tiếng Việt · nói rõ **làm gì tiếp** · ❌ không giọng ép buộc ("đừng bỏ lỡ!", đếm ngược) ·
-❌ không so sánh trẻ với trẻ khác · có link tới trang liên quan.
+Tiếng Việt · nói rõ **làm gì tiếp** · không giọng ép buộc ("đừng bỏ lỡ!", đếm ngược) ·
+không so sánh trẻ với trẻ khác · có link tới trang liên quan.
 
 ## 8. API contract
 
 ### `GET /api/users/notification-preferences` · `PUT` cùng path
 
-Body `{ weekly_progress: bool, content_new: bool }`. Loại giao dịch ❌ không xuất hiện.
+Body `{ weekly_progress: bool, content_new: bool }`. Loại giao dịch không xuất hiện.
 
 ## 9. Acceptance criteria
 

@@ -39,7 +39,7 @@ với hệ thống, kể cả khi biến môi trường của nó được đặ
 |---|---|---|
 | Dev | — | Đọc contract, thêm provider qua PR |
 | Server runtime | — | Đọc cấu hình, dựng URL, đổi token |
-| User · Guest | — | ❌ Không chạm trực tiếp. Đi qua hai spec `03-account/` |
+| User · Guest | — | Cấm chạm trực tiếp. Đi qua hai spec `03-account/` |
 
 ## 3. Entry points
 
@@ -57,55 +57,55 @@ với hệ thống, kể cả khi biến môi trường của nó được đặ
    `tm_oauth` (HttpOnly, SameSite=Lax, TTL **10 phút**), kèm `intent` và `return_to`.
 3. Redirect 302 tới `authorization_endpoint` của provider với `code_challenge` (S256).
 4. Provider trả về `callback` kèm `code` + `state`.
-5. Server đối chiếu `state` với cookie — lệch thì dừng, ❌ không đổi token.
+5. Server đối chiếu `state` với cookie — lệch thì dừng, không đổi token.
 6. Đổi `code` lấy token **ở server**, đọc hồ sơ, ánh xạ theo §7.2.
-7. Trả `NormalizedProfile` cho spec gọi (`social-login` hoặc `social-account-linking`) xử lý
-   tiếp. File này ❌ **không** tạo user, ❌ không cấp phiên.
+7. Trả `NormalizedProfile` cho spec gọi ([`social-login.md`](../03-account/social-login.md) hoặc [`social-account-linking.md`](../03-account/social-account-linking.md)) xử lý
+   tiếp. File này **không** tạo user, không cấp phiên.
 
 ## 5. Alternative flows
 
 | Nhánh | Điều kiện | Hành vi |
 |---|---|---|
-| `state` lệch hoặc thiếu | Cookie hết hạn, CSRF, hoặc mở lại link cũ | **400** `OAUTH_STATE_INVALID`, ❌ không đổi token |
-| Provider trả `error=access_denied` | User bấm Huỷ ở màn hình provider | Redirect về `return_to` kèm cờ huỷ, ❌ không phải trang lỗi |
+| `state` lệch hoặc thiếu | Cookie hết hạn, CSRF, hoặc mở lại link cũ | **400** `OAUTH_STATE_INVALID`, không đổi token |
+| Provider trả `error=access_denied` | User bấm Huỷ ở màn hình provider | Redirect về `return_to` kèm cờ huỷ, không phải trang lỗi |
 | Provider 5xx hoặc timeout | Sự cố phía họ | **502** `OAUTH_PROVIDER_ERROR`, log đầy đủ, thông báo tiếng Việt gợi ý dùng email/mật khẩu |
-| Provider ❌ không trả email | Facebook cho phép tài khoản ❌ không có email | Vẫn tiếp tục — `email_at_provider = NULL`. Xem `BR-OAP-08` |
+| Provider không trả email | Facebook cho phép tài khoản không có email | Vẫn tiếp tục — `email_at_provider = NULL`. Xem `BR-OAP-08` |
 | Provider bị tắt cờ | `is_enabled = false` | **404** `OAUTH_PROVIDER_DISABLED` ở cả `start` và `callback` |
-| `provider` ❌ không trong §7.1 | Path bịa | **404** `OAUTH_PROVIDER_DISABLED` — ❌ không phân biệt với "tắt" |
+| `provider` không trong §7.1 | Path bịa | **404** `OAUTH_PROVIDER_DISABLED` — không phân biệt với "tắt" |
 
 ## 6. Business rules
 
 | ID | Rule | Vì sao |
 |---|---|---|
-| `BR-OAP-01` | Chỉ **authorization code + PKCE (S256)**. ❌ **NEVER implicit flow**, ❌ NEVER nhận `id_token` gửi thẳng từ client | Token đi qua trình duyệt là token đã lộ. Client gửi `id_token` lên thì server ❌ không biết nó được cấp cho ai |
-| `BR-OAP-02` | Đổi `code` lấy token **chỉ ở server**. Client secret ❌ **NEVER** rời server | Secret trong bundle là secret công khai |
+| `BR-OAP-01` | Chỉ **authorization code + PKCE (S256)**. Cấm — **NEVER implicit flow**, Cấm — NEVER nhận `id_token` gửi thẳng từ client | Token đi qua trình duyệt là token đã lộ. Client gửi `id_token` lên thì server không biết nó được cấp cho ai |
+| `BR-OAP-02` | Đổi `code` lấy token **chỉ ở server**. Client secret Cấm — **NEVER** rời server | Secret trong bundle là secret công khai |
 | `BR-OAP-03` | `state` ngẫu nhiên ≥32 byte, so khớp trước mọi thao tác; TTL **10 phút** | CSRF trên callback là cách gắn tài khoản nạn nhân vào SNS của kẻ tấn công |
-| `BR-OAP-04` | `redirect_uri` lấy từ cấu hình server, so khớp **tuyệt đối**. ❌ **NEVER dựng từ input người dùng**, ❌ không wildcard | Open redirect ở đây trả `code` cho tên miền của kẻ tấn công |
+| `BR-OAP-04` | `redirect_uri` lấy từ cấu hình server, so khớp **tuyệt đối**. Cấm — **NEVER dựng từ input người dùng**, không wildcard | Open redirect ở đây trả `code` cho tên miền của kẻ tấn công |
 | `BR-OAP-05` | `return_to` phải nằm trong **whitelist đường dẫn nội bộ**; ngoài whitelist → về `/me` | Open redirect |
-| `BR-OAP-06` | Provider là **danh sách đóng** §7.1. Thêm provider = sửa spec này + PR | Provider thêm lén ❌ không ai review được luồng đồng ý của nó |
-| `BR-OAP-07` | ❌ **NEVER lưu access token / refresh token của provider** | Ta ❌ không gọi API của họ sau khi đăng nhập. Token ❌ không lưu thì ❌ không rò được |
-| `BR-OAP-08` | Email do provider trả về **❌ không được coi là đã xác minh** trừ khi provider khẳng định tường minh, và nó ❌ **không bao giờ** tự khớp sang tài khoản sẵn có | `social-login` `BR-SCL-04`. Facebook cho đổi email ❌ không cần xác minh lại |
-| `BR-OAP-09` | Chỉ xin scope **tối thiểu**: định danh + email. ❌ **NEVER xin bạn bè, ảnh, ngày sinh, danh bạ** | Thu tối thiểu — `child-data-compliance`. Scope thừa cũng làm màn hình đồng ý đáng sợ hơn |
-| `BR-OAP-10` | `provider_user_id` là **khoá định danh duy nhất**, ❌ không phải email | Email đổi được; `sub` của provider thì không |
-| `BR-OAP-11` | ❌ **NEVER gửi bất kỳ dữ liệu trẻ em nào** tới provider — kể cả tên gọi hay `child_uuid` | `BR-CDC-05` `BR-CDC-06` |
+| `BR-OAP-06` | Provider là **danh sách đóng** §7.1. Thêm provider = sửa spec này + PR | Provider thêm lén không ai review được luồng đồng ý của nó |
+| `BR-OAP-07` | Cấm — **NEVER lưu access token / refresh token của provider** | Ta không gọi API của họ sau khi đăng nhập. Token không lưu thì không rò được |
+| `BR-OAP-08` | Email do provider trả về **không được coi là đã xác minh** trừ khi provider khẳng định tường minh, và nó **không bao giờ** tự khớp sang tài khoản sẵn có | [`social-login.md`](../03-account/social-login.md) `BR-SCL-04`. Facebook cho đổi email không cần xác minh lại |
+| `BR-OAP-09` | Chỉ xin scope **tối thiểu**: định danh + email. Cấm — **NEVER xin bạn bè, ảnh, ngày sinh, danh bạ** | Thu tối thiểu — [`child-data-compliance.md`](../00-foundation/child-data-compliance.md). Scope thừa cũng làm màn hình đồng ý đáng sợ hơn |
+| `BR-OAP-10` | `provider_user_id` là **khoá định danh duy nhất**, không phải email | Email đổi được; `sub` của provider thì không |
+| `BR-OAP-11` | Cấm — **NEVER gửi bất kỳ dữ liệu trẻ em nào** tới provider — kể cả tên gọi hay `child_uuid` | `BR-CDC-05` `BR-CDC-06` |
 | `BR-OAP-12` | Rate limit `start` và `callback` theo **IP và theo `provider_user_id`** | `BR-RTL-01`, hai trục |
-| `BR-OAP-13` | Client secret đọc từ biến môi trường, kiểm **có mặt lúc startup**; thiếu → provider tự tắt, ❌ không crash app | Một provider hỏng ❌ không được kéo sập đăng nhập bằng email |
-| `BR-OAP-14` | Cookie `tm_oauth` bị **xoá ngay** sau callback, thành công hay thất bại | State dùng lại được là state ❌ không bảo vệ gì |
-| `BR-OAP-15` | Ảnh đại diện từ provider **❌ không tải về, ❌ không lưu, ❌ không hiển thị** | Ảnh người lớn là PII ta ❌ không cần. Hotlink lên CDN của họ là rò referrer |
+| `BR-OAP-13` | Client secret đọc từ biến môi trường, kiểm **có mặt lúc startup**; thiếu → provider tự tắt, không crash app | Một provider hỏng không được kéo sập đăng nhập bằng email |
+| `BR-OAP-14` | Cookie `tm_oauth` bị **xoá ngay** sau callback, thành công hay thất bại | State dùng lại được là state không bảo vệ gì |
+| `BR-OAP-15` | Ảnh đại diện từ provider **không tải về, không lưu, không hiển thị** | Ảnh người lớn là PII ta không cần. Hotlink lên CDN của họ là rò referrer |
 
 ## 7. Data
 
 **Đọc:** biến môi trường, `social_identities` (chỉ để trả về cho caller).
-**Ghi:** không có. File này ❌ **không** ghi bảng nào — caller ghi.
+**Ghi:** không có. File này **không** ghi bảng nào — caller ghi.
 
 ### 7.1 Danh sách provider — đóng
 
 | `provider` | Ưu tiên | Endpoint | Scope | Email đã xác minh? |
 |---|:--:|---|---|---|
-| `google` | 1 | OIDC discovery `accounts.google.com` | `openid email profile` | ✅ khi `email_verified = true` |
-| `facebook` | 2 | Facebook Login v-hiện-hành | `public_profile email` | ❌ **không bao giờ** — họ ❌ không khẳng định |
+| `google` | 1 | OIDC discovery `accounts.google.com` | `openid email profile` | khi `email_verified = true` |
+| `facebook` | 2 | Facebook Login v-hiện-hành | `public_profile email` | **không bao giờ** — họ không khẳng định |
 
-❌ Chưa có: Apple, Zalo, TikTok. Thêm = sửa file này (`BR-OAP-06`).
+Cấm Chưa có: Apple, Zalo, TikTok. Thêm = sửa file này (`BR-OAP-06`).
 
 ### 7.2 Ánh xạ hồ sơ
 
@@ -115,7 +115,7 @@ với hệ thống, kể cả khi biến môi trường của nó được đặ
 | `email_at_provider` | `email` | `email` (có thể vắng) | citext, nullable |
 | `email_verified_at_provider` | `email_verified` | **luôn `false`** | `BR-OAP-08` |
 | `display_name_at_provider` | `name` | `name` | Cắt còn 60 ký tự |
-| avatar | — | — | ❌ Bỏ (`BR-OAP-15`) |
+| avatar | — | — | Cấm Bỏ (`BR-OAP-15`) |
 
 ```ts
 interface NormalizedProfile {
@@ -131,9 +131,9 @@ interface NormalizedProfile {
 
 | Khoá | Nguồn |
 |---|---|
-| `client_id` · `client_secret` | Biến môi trường. ❌ NEVER trong repo |
+| `client_id` · `client_secret` | Biến môi trường. Cấm — NEVER trong repo |
 | `redirect_uri` | Dựng từ `NUXT_SITE_URL` + path cố định |
-| `is_enabled` | Bật khi đủ `client_id` + `client_secret`; đảo được bằng cờ `feature-flag-service` |
+| `is_enabled` | Bật khi đủ `client_id` + `client_secret`; đảo được bằng cờ [`feature-flag-service.md`](feature-flag-service.md) |
 
 ## 8. API contract
 
@@ -142,7 +142,7 @@ interface NormalizedProfile {
 | | |
 |---|---|
 | Auth | không |
-| 200 | `[{ provider, label_vi, is_enabled }]` — ❌ không có `client_id` |
+| 200 | `[{ provider, label_vi, is_enabled }]` — không có `client_id` |
 
 ### `GET /api/guest/auth/oauth/{provider}/start`
 
@@ -160,7 +160,7 @@ interface NormalizedProfile {
 |---|---|
 | Auth | cookie `tm_oauth` |
 | Query | `code` · `state` — hoặc `error` |
-| 302 | Bàn giao cho `social-login` (đăng nhập) hoặc `social-account-linking` (liên kết) |
+| 302 | Bàn giao cho [`social-login.md`](../03-account/social-login.md) (đăng nhập) hoặc [`social-account-linking.md`](../03-account/social-account-linking.md) (liên kết) |
 | 400 | `OAUTH_STATE_INVALID` |
 | 404 | `OAUTH_PROVIDER_DISABLED` |
 | 502 | `OAUTH_PROVIDER_ERROR` |
@@ -242,7 +242,7 @@ Scenario: BR-OAP-15 — không lưu ảnh đại diện
 - Client secret rời server.
 - Lưu token của provider.
 - Dựng `redirect_uri` từ input người dùng.
-- Coi email của provider là đã xác minh khi họ ❌ không khẳng định.
+- Coi email của provider là đã xác minh khi họ không khẳng định.
 - Gửi dữ liệu trẻ em tới provider.
 - Lưu hay hiển thị ảnh đại diện từ provider.
 
@@ -250,5 +250,5 @@ Scenario: BR-OAP-15 — không lưu ảnh đại diện
 
 | # | Câu hỏi | Chặn gì |
 |---|---|---|
-| 1 | Zalo có nên là provider thứ ba ❌ không? Thị phần VN cao, nhưng luồng đồng ý và tài liệu khác hẳn hai provider hiện có | Sau P1 |
-| 2 | Apple Sign-In bắt buộc nếu lên App Store — có làm PWA/native ở P5 ❌ không? | `pwa-install` |
+| 1 | Zalo có nên là provider thứ ba không? Thị phần VN cao, nhưng luồng đồng ý và tài liệu khác hẳn hai provider hiện có | Sau P1 |
+| 2 | Apple Sign-In bắt buộc nếu lên App Store — có làm PWA/native ở P5 không? | [`pwa-install.md`](pwa-install.md) |

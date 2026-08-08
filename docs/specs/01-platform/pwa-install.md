@@ -16,10 +16,10 @@ depends_on:
 
 ## 1. Objective
 
-Cho phụ huynh thêm ứng dụng vào màn hình chính tablet, mở toàn màn hình, ❌ không thanh
+Cho phụ huynh thêm ứng dụng vào màn hình chính tablet, mở toàn màn hình, không thanh
 địa chỉ — giảm khả năng trẻ chạm nhầm ra ngoài.
 
-**Ngoài MVP.** Web trong trình duyệt đủ cho P0–P3. Spec viết trước để `offline-play` và
+**Ngoài MVP.** Web trong trình duyệt đủ cho P0–P3. Spec viết trước để [`offline-play.md`](offline-play.md) và
 service worker không phải làm lại khi tới lúc.
 
 ## 2. Actors
@@ -27,7 +27,7 @@ service worker không phải làm lại khi tới lúc.
 | Actor | Vai trò |
 |---|---|
 | Người lớn | Người duy nhất được thấy lời mời cài đặt |
-| Trẻ | ❌ Không thấy lời mời |
+| Trẻ | Cấm thấy lời mời |
 
 ## 3. Entry points
 
@@ -35,10 +35,10 @@ service worker không phải làm lại khi tới lúc.
 
 ## 4. Main flow
 
-1. Trình duyệt phát `beforeinstallprompt`, ứng dụng **giữ lại**, ❌ không hiện ngay.
+1. Trình duyệt phát `beforeinstallprompt`, ứng dụng **giữ lại**, không hiện ngay.
 2. Sau khi User đã tạo ≥1 child profile và có ≥3 phiên chơi hoàn thành → hiện lời mời
    trong `/me`.
-3. Chấp nhận → gọi `prompt()`. Từ chối → ❌ không hỏi lại trong 30 ngày.
+3. Chấp nhận → gọi `prompt()`. Từ chối → không hỏi lại trong 30 ngày.
 
 ## 5. Alternative flows
 
@@ -46,17 +46,17 @@ service worker không phải làm lại khi tới lúc.
 |---|---|
 | iOS Safari | Không có `beforeinstallprompt` — hiện hướng dẫn thủ công |
 | Đã cài | Ẩn lời mời |
-| Từ chối 2 lần | ❌ Không hỏi lại |
+| Từ chối 2 lần | Cấm hỏi lại |
 
 ## 6. Business rules
 
 | ID | Rule | Vì sao |
 |---|---|---|
 | `BR-PWA-01` | Lời mời **chỉ** trên bề mặt người lớn | Trẻ không nên chạm vào cài đặt hệ thống |
-| `BR-PWA-02` | ❌ **NEVER hiện lời mời trong lúc trẻ đang chơi** | Ngắt phiên |
+| `BR-PWA-02` | Cấm — **NEVER hiện lời mời trong lúc trẻ đang chơi** | Ngắt phiên |
 | `BR-PWA-03` | Chỉ mời sau khi User đã dùng thật (≥3 phiên) | Mời quá sớm bị từ chối và mất cơ hội |
 | `BR-PWA-04` | `display: standalone`, `orientation: landscape` cho bề mặt trẻ | Tablet ngang là tư thế chơi |
-| `BR-PWA-05` | Từ chối 2 lần thì ❌ không hỏi nữa | |
+| `BR-PWA-05` | Từ chối 2 lần thì không hỏi nữa | |
 
 ## 7. Data
 
@@ -70,7 +70,7 @@ service worker không phải làm lại khi tới lúc.
 }
 ```
 
-`start_url` là `/me` — bề mặt người lớn, ❌ không mở thẳng vào khu vực chơi.
+`start_url` là `/me` — bề mặt người lớn, không mở thẳng vào khu vực chơi.
 
 `install_prompt_state` lưu localStorage: `{ dismissed_count, last_dismissed_at }`.
 
