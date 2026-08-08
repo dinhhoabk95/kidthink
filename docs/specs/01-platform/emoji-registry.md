@@ -193,8 +193,8 @@ Scenario: BR-EMJ-05 — ô picker đủ lớn
 
 ## 11. Open questions
 
-| # | Câu hỏi | Chặn gì |
-|---|---|---|
-| 1 | Registry cần bao nhiêu emoji để phủ 120 game level? Chưa đếm | P1 nội dung |
-| 2 | Có cần bộ emoji vẽ riêng (SVG) cho những khái niệm Unicode không có không? | P4 |
-| 3 | `what_axis` gợi ý tự động có đủ chính xác để người soạn seeder dựa vào không? | [`content-seed-authoring.md`](content-seed-authoring.md) |
+| # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
+|---|---|---|---|---|
+| 1 | Registry cần bao nhiêu emoji để phủ 120 game level? Chưa đếm | P1 nội dung | P1 | Nội dung |
+| 2 | Có cần bộ emoji vẽ riêng (SVG) cho những khái niệm Unicode không có không? | P4 UI | P4 | Studio UI |
+| 3 | `what_axis` gợi ý tự động có đủ chính xác để người soạn seeder dựa vào không? | [`content-seed-authoring.md`](content-seed-authoring.md) | P1 | Nội dung |
