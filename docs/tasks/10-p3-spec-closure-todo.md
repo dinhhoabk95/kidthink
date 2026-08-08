@@ -149,11 +149,11 @@ Bước 0 → Đợt 1 (2) → Đợt 2 (4) → Cổng dừng A → Đợt 3 (2)
 
 ### Bước 10 — [`program-showcase.md`](../specs/02-public/program-showcase.md)
 
-- [ ] Đọc hết 147 dòng
-- [ ] Điền "vì sao" cho `BR-PSH-03`, `BR-PSH-04`, `BR-PSH-07`
-- [ ] Q1 (2 tuần miễn phí nhiều hay ít) — quyết định thương mại, `Chủ: người quyết`
-- [ ] Bảng mục 11 sang 5 cột; `status: approved`
-- [ ] Commit `feat(specs): T10 bước 10 — approve program-showcase`
+- [x] Đọc hết 147 dòng
+- [x] Điền "vì sao" cho `BR-PSH-03`, `BR-PSH-04`, `BR-PSH-07`
+- [x] Q1 (2 tuần miễn phí nhiều hay ít) — quyết định thương mại, `Chủ: người quyết`
+- [x] Bảng mục 11 sang 5 cột; `status: approved`
+- [x] Commit `feat(specs): T10 bước 10 — approve program-showcase`
 
 ### Bước 11 — [`curriculum-builder.md`](../specs/06-admin/curriculum-builder.md)
 

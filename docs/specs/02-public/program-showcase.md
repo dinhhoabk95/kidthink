@@ -2,10 +2,10 @@
 spec: PROGRAM-SHOWCASE
 title: Trưng bày chương trình học
 area: public
-status: draft
+status: approved
 mvp: true
 phase: P3
-reviewed: 2026-08-04
+reviewed: 2026-08-08
 owns:
   - Trang giới thiệu chương trình cho khách
 depends_on:
@@ -52,11 +52,11 @@ Guest · User.
 |---|---|---|
 | `BR-PSH-01` | Hiện **cấu trúc đầy đủ** (bao nhiêu tuần, mỗi tuần mấy hoạt động), giấu **nội dung chi tiết** | Cấu trúc bán được; nội dung là thứ trả tiền |
 | `BR-PSH-02` | Hiện chi tiết **2 tuần đầu** kể cả với chương trình trả phí | Mẫu đủ để đánh giá chất lượng |
-| `BR-PSH-03` | Cấm — **NEVER trả `content_pack`** của item trong chương trình | |
-| `BR-PSH-04` | Structured data `Course` sinh từ dữ liệu | |
+| `BR-PSH-03` | Cấm — **NEVER trả `content_pack`** của item trong chương trình | Bảo vệ sở hữu trí tuệ và ngăn chặn việc tải toàn bộ nội dung học tập mà không qua mua gói |
+| `BR-PSH-04` | Structured data `Course` sinh từ dữ liệu | Cung cấp dữ liệu cấu trúc chuẩn cho công cụ tìm kiếm giúp tăng thứ hạng SEO tự nhiên |
 | `BR-PSH-05` | Chương trình archived → **410** | `BR-GDP-03` |
 | `BR-PSH-06` | Cấm — **NEVER hứa hẹn kết quả** — mô tả **hoạt động**, không mô tả **thành tựu** | `BR-LND-06` |
-| `BR-PSH-07` | Prerender, không phụ thuộc JS | |
+| `BR-PSH-07` | Prerender, không phụ thuộc JS | Tối ưu hóa thời gian tải trang đầu tiên và đảm bảo công cụ tìm kiếm cào được nội dung đầy đủ |
 
 ## 7. Data
 
@@ -141,6 +141,6 @@ Scenario: BR-PSH-04 — structured data Course
 
 ## 11. Open questions
 
-| # | Câu hỏi | Chặn gì |
-|---|---|---|
-| 1 | 2 tuần miễn phí có quá nhiều hay quá ít? | P3 conversion |
+| # | Câu hỏi | Chặn phase | Đề xuất chốt | Chủ |
+|---|---|---|---|---|
+| 1 | 2 tuần miễn phí có quá nhiều hay quá ít? | P3 | Giữ 2 tuần xem thử cho MVP để phụ huynh có đủ trải nghiệm đánh giá trước khi nâng cấp | người quyết |
