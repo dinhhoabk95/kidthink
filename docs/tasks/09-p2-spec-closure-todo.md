@@ -239,10 +239,10 @@ live-preview · publish-and-version · seo-content-admin (độc lập)
 
 ### Bước 15 — [`game-level-studio.md`](../specs/06-admin/game-level-studio.md)
 
-- [ ] Đọc hết 197 dòng; 0 cảnh báo `C6`
-- [ ] Đối chiếu "validate `content_pack` ở server" với
+- [x] Đọc hết 197 dòng; 0 cảnh báo `C6`
+- [x] Đối chiếu "validate `content_pack` ở server" với
       [`game-template-contract.md`](../specs/01-platform/game-template-contract.md)
-- [ ] `status: approved`; commit `feat(specs): T9 bước 15 — approve game-level-studio`
+- [x] `status: approved`; commit `feat(specs): T9 bước 15 — approve game-level-studio`
 
 ### Bước 16 — [`content-review-queue.md`](../specs/06-admin/content-review-queue.md)
 

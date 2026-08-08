@@ -2,10 +2,10 @@
 spec: GAME-LEVEL-STUDIO
 title: Studio soạn màn chơi
 area: admin
-status: draft
+status: approved
 mvp: true
 phase: P2
-reviewed: 2026-08-04
+reviewed: 2026-08-08
 owns:
   - Luồng soạn một game level
   - Ràng buộc soạn thảo và lưu nháp
@@ -191,7 +191,7 @@ Scenario: sửa level published tạo version mới
 
 ## 11. Open questions
 
-| # | Câu hỏi | Chặn gì |
-|---|---|---|
-| 1 | Có cần chế độ soạn hàng loạt (nhập bảng) cho 120 level không? Từng bản một sẽ rất chậm | P2 năng suất |
-| 2 | Sao chép một level làm bản mới — có ở MVP không? | P2 |
+| # | Câu hỏi | Chặn phase | Đề xuất chốt | Chủ |
+|---|---|---|---|---|
+| 1 | Có cần chế độ soạn hàng loạt (nhập bảng) cho 120 level không? Từng bản một sẽ rất chậm | P2 | Chưa ở MVP — MVP dùng seeder [`content-seed-authoring.md`](../01-platform/content-seed-authoring.md) để nạp lô; studio dùng để sửa/tạo từng bản | người quyết |
+| 2 | Sao chép một level làm bản mới — có ở MVP không? | P2 | Có — tính năng "Nhân bản" (Duplicate) tạo một bản nháp mới kế thừa toàn bộ `content_pack` | người quyết |
