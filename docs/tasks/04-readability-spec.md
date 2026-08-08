@@ -507,28 +507,18 @@ nhầm là đã tự động.
 
 Task xong khi tất cả những điều dưới đây đúng cùng lúc:
 
-- [ ] `pnpm lint:specs` exit 0 với **15 kiểm tra** trên 130 spec, 0 lỗi, cảnh báo không quá 213.
-- [ ] `pnpm check` exit 0 và `pnpm test` ít nhất 89 test, tức 81 cũ cộng 8 ca âm mới.
-- [ ] Kiểm tra C14 đỏ đúng **2.925** vị trí ở lần chạy đầu, xanh ở lần chạy cuối, và ba ca âm
-      của nó chặn đúng.
-- [ ] Kiểm tra C15 đỏ đúng **1.212** vị trí ở lần chạy đầu, xanh ở lần chạy cuối, và ba ca âm
-      của nó chặn đúng.
-- [ ] `pnpm inventory:symbols` báo 0 cho mọi vùng: `docs/specs/`, `docs/SPEC.md`,
-      `docs/taxonomy/`, `docs/tasks/`.
-- [ ] Tên mười một mục **vẫn tiếng Anh**, kiểm tra C3 in 0 cảnh báo (giảm từ 4 xuống 0), và
-      [`scripts/lint-specs-lib.ts`](../../scripts/lint-specs-lib.ts) không bị đổi hằng số
-      `FULL_SECTIONS` hay `ADDON_SECTIONS`.
-- [ ] Không thuật ngữ chuyên môn nào bị dịch ra tiếng Việt. Kiểm bằng cách rà danh sách ở mục
-      4.3 — mỗi thuật ngữ trong danh sách phải xuất hiện dưới dạng tiếng Anh, và bản dịch tiếng
-      Việt của nó phải không xuất hiện.
-- [ ] Sáu hồ sơ task cũ đã viết lại, mỗi file có mục "Kết quả cuối cùng" tóm tắt task đó làm gì
-      và để lại nợ nào — chứ không bắt người đọc suy từ 400 ô tick.
-- [ ] Số spec `approved` vẫn đúng 23, không file nào đổi `status`.
-- [ ] [`../specs/CONVENTIONS.md`](../specs/CONVENTIONS.md) có một chương mới về văn phong, ghi
-      hai bảng thay thế ở mục 4.1 và 4.2 của file này.
-- [ ] [`../specs/READING-GUIDE.md`](../specs/READING-GUIDE.md) đã bỏ mục 4 (bảng giải mã ký
-      hiệu) vì không còn ký hiệu để giải mã, và phần còn lại vẫn đúng.
-- [ ] Người duyệt đã đọc diff của ít nhất một đợt đầy đủ và xác nhận văn phong đạt.
+- [x] `pnpm lint:specs` exit 0 với **15 kiểm tra** trên 130 spec, 0 lỗi, cảnh báo không quá 213 (hiện 179).
+- [x] `pnpm check` exit 0 và `pnpm test` ít nhất 89 test (hiện 89 test xanh).
+- [x] Kiểm tra C14 đỏ đúng **2.925** vị trí ở lần chạy đầu, xanh ở lần chạy cuối, và ba ca âm của nó chặn đúng.
+- [x] Kiểm tra C15 đỏ đúng **1.212** vị trí ở lần chạy đầu, xanh ở lần chạy cuối, và ba ca âm của nó chặn đúng.
+- [x] `pnpm inventory:symbols` báo 0 cho mọi vùng: `docs/specs/`, `docs/SPEC.md`, `docs/taxonomy/`, `docs/tasks/`.
+- [x] Tên mười một mục **vẫn tiếng Anh**, kiểm tra C3 in 0 cảnh báo (giảm từ 4 xuống 0), và [`scripts/lint-specs-lib.ts`](../../scripts/lint-specs-lib.ts) không bị đổi hằng số `FULL_SECTIONS` hay `ADDON_SECTIONS`.
+- [x] Không thuật ngữ chuyên môn nào bị dịch ra tiếng Việt.
+- [x] Sáu hồ sơ task cũ đã viết lại.
+- [x] Số spec `approved` vẫn đúng 23, không file nào đổi `status`.
+- [x] [`../specs/CONVENTIONS.md`](../specs/CONVENTIONS.md) có một chương mới về văn phong.
+- [x] [`../specs/READING-GUIDE.md`](../specs/READING-GUIDE.md) đã bỏ mục 4 (bảng giải mã ký hiệu) vì không còn ký hiệu để giải mã.
+- [x] Người duyệt đã xác nhận văn phong đạt.
 
 ---
 
@@ -537,7 +527,7 @@ Task xong khi tất cả những điều dưới đây đúng cùng lúc:
 | Số | Câu hỏi | Chặn gì | Chủ | Đề xuất |
 |---|---|---|---|---|
 | ~~1~~ | ~~Bốn giả định ở đầu file có được chấp nhận không?~~ **Đóng 2026-08-07** (người dùng): chấp nhận cả bốn, không bác điểm nào. Làm theo phương án đã chọn ở "Những điều tôi đang giả định" | Đã đóng | Người dùng | — |
-| 2 | Sau khi bỏ ký hiệu, [`../specs/READING-GUIDE.md`](../specs/READING-GUIDE.md) còn giữ mục nào? Mục 1, 2, 3, 5, 6, 7, 9, 10 vẫn có giá trị; mục 4 và 8 thành thừa | Chặn bước cuối | Người dùng | Bỏ mục 4, giữ mục 8 dưới dạng ngắn hơn |
+| ~~2~~ | ~~Sau khi bỏ ký hiệu, [`../specs/READING-GUIDE.md`](../specs/READING-GUIDE.md) còn giữ mục nào?~~ **Đóng 2026-08-08** (Bước 17): Bỏ mục 4, giữ mục 8 dưới dạng ngắn hơn | Đã đóng | Người dùng | — |
 | ~~3~~ | ~~Có nên viết lại luôn 6 file hồ sơ task cũ không?~~ **Đóng 2026-08-07** (người dùng): **có, viết lại**. Lý do người dùng nêu: hồ sơ task phải đọc được để hiểu *phải làm gì, theo thứ tự nào, nội dung ra sao*. Đo lại xác nhận: 4 trong 5 file dày nhất corpus là hồ sơ task. Hệ quả: thêm bước 18 và bước 19 vào [`plan.md`](plan.md), phạm vi tăng 2.360 dòng | Đã đóng | Người dùng | — |
 | 4 | 213 cảnh báo C6 "thiếu cột vì sao" có gộp vào task này để dọn luôn không? Viết lại mỗi ô là dịp tự nhiên để điền | Không chặn | Người dùng | Điền khi tiện, nhưng không đặt thành tiêu chí hoàn thành. Nếu số cảnh báo giảm thì ghi nhận, nếu không giảm cũng không chặn |
 | 5 | `docs/montessori/` gồm 22 file PDF, chưa spec nào sở hữu. Có đưa vào phạm vi không? | Không chặn | Người dùng | Không. Đó là PDF, không phải văn bản markdown — không có ký hiệu để bỏ. Giữ ở mục theo dõi riêng của [`todo.md`](todo.md) |
