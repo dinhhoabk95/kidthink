@@ -2,10 +2,10 @@
 spec: PUBLISH-AND-VERSION
 title: Phát hành và quản lý phiên bản
 area: admin
-status: draft
+status: approved
 mvp: true
 phase: P2
-reviewed: 2026-08-04
+reviewed: 2026-08-08
 owns:
   - Thao tác publish, archive, rollback trong admin
   - Màn hình lịch sử version
@@ -65,7 +65,7 @@ depends_on:
 | `BR-PUB-05` | Archive nội dung đang dùng → **409** kèm danh sách | Xoá cứng làm mồ côi dữ liệu học tập |
 | `BR-PUB-06` | Publish **không ngắt phiên đang chạy** | `BR-VER-04` |
 | `BR-PUB-07` | Màn hình publish hiện **diff so với bản đang chạy** | Publish mà không biết đổi gì là publish mù |
-| `BR-PUB-08` | Mọi thao tác ghi audit | |
+| `BR-PUB-08` | Mọi thao tác ghi audit | Đảm bảo khả năng giải trình và truy vết theo `BR-AUD-01` đối với thao tác thay đổi trực tiếp nội dung trên môi trường production |
 
 ## 7. Data
 
@@ -171,7 +171,7 @@ Scenario: lịch sử hiện lượt chơi mỗi version
 
 ## 11. Open questions
 
-| # | Câu hỏi | Chặn gì |
-|---|---|---|
-| 1 | Có cần publish theo lịch (hẹn giờ) không? | [`content-lifecycle.md`](../00-foundation/content-lifecycle.md) Q3 |
-| 2 | Rollback có nên cảnh báo mạnh hơn khi version đang chạy có nhiều lượt chơi không? | P2 UX |
+| # | Câu hỏi | Chặn phase | Đề xuất chốt | Chủ |
+|---|---|---|---|---|
+| 1 | Có cần publish theo lịch (hẹn giờ) không? | P2 | Hoãn sang P4 (xem [`notification-admin.md`](notification-admin.md)) — MVP chỉ hỗ trợ phát hành tức thì theo thao tác thủ công của Manager | người quyết |
+| 2 | Rollback có nên cảnh báo mạnh hơn khi version đang chạy có nhiều lượt chơi không? | P2 | Có — hiện modal xác nhận đỏ kèm cảnh báo số phiên chơi bị ảnh hưởng trước khi thực hiện rollback | người quyết |

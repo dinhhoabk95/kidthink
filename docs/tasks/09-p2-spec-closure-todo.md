@@ -257,11 +257,11 @@ live-preview · publish-and-version · seo-content-admin (độc lập)
 
 ### Bước 17 — [`publish-and-version.md`](../specs/06-admin/publish-and-version.md)
 
-- [ ] Đọc hết 177 dòng; điền "vì sao" cho **1** cảnh báo `C6`
-- [ ] **Q1 — cặp 10 của mục 6, tham chiếu chết.** [`content-lifecycle.md`](../specs/00-foundation/content-lifecycle.md)
+- [x] Đọc hết 177 dòng; điền "vì sao" cho **1** cảnh báo `C6`
+- [x] **Q1 — cặp 10 của mục 6, tham chiếu chết.** [`content-lifecycle.md`](../specs/00-foundation/content-lifecycle.md)
       Q3 (trạng thái `scheduled`) đã **đóng** `D-X` ở Task #10 — "không ở MVP". Đóng Q1 theo,
       trích `D-X`, **không mở lại quyết định**
-- [ ] `status: approved`; commit `feat(specs): T9 bước 17 — approve publish-and-version`
+- [x] `status: approved`; commit `feat(specs): T9 bước 17 — approve publish-and-version`
 
 ### Bước 18 — [`seo-content-admin.md`](../specs/06-admin/seo-content-admin.md)
 
