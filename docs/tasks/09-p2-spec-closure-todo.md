@@ -383,16 +383,16 @@ admin-dashboard (độc lập)
 
 ### Bước 30 — [`mfa.md`](../specs/03-account/mfa.md)
 
-- [ ] Đọc hết 213 dòng — file nhiều cảnh báo `C6` nhất lô, để riêng, không ghép chung ngày
-- [ ] Điền "vì sao" cho **5** cảnh báo `C6`
-- [ ] Đối chiếu reauth 5 phút ở mục 7.4 của
+- [x] Đọc hết 213 dòng — file nhiều cảnh báo `C6` nhất lô, để riêng, không ghép chung ngày
+- [x] Điền "vì sao" cho **5** cảnh báo `C6`
+- [x] Đối chiếu reauth 5 phút ở mục 7.4 của
       [`auth-tokens-sessions.md`](../specs/01-platform/auth-tokens-sessions.md) — MFA dựa vào cơ
       chế đó, không tự định nghĩa
-- [ ] Đối chiếu [`social-login.md`](../specs/03-account/social-login.md) (vừa `approved` ở Task #8)
+- [x] Đối chiếu [`social-login.md`](../specs/03-account/social-login.md) (vừa `approved` ở Task #8)
       — rule "cấm coi SNS là yếu tố thứ hai" phải còn nguyên
-- [ ] Q1, Q2 (mất cả thiết bị lẫn mã khôi phục / tài khoản chỉ có SNS) — chốt hoặc để mở với
+- [x] Q1, Q2 (mất cả thiết bị lẫn mã khôi phục / tài khoản chỉ có SNS) — chốt hoặc để mở với
       `Chủ` rõ; cả hai là chính sách hỗ trợ
-- [ ] `status: approved`; commit `feat(specs): T9 bước 30 — approve mfa`
+- [x] `status: approved`; commit `feat(specs): T9 bước 30 — approve mfa`
 
 ---
 

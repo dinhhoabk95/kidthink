@@ -2,10 +2,10 @@
 spec: MFA
 title: Xác thực hai lớp
 area: account
-status: draft
+status: approved
 mvp: false
 phase: P2
-reviewed: 2026-08-05
+reviewed: 2026-08-08
 owns:
   - Thiết lập và dùng MFA cho tài khoản User
 depends_on:
@@ -71,14 +71,14 @@ nhập, dùng chung cho cả mật khẩu và SNS).
 
 | ID | Rule | Vì sao |
 |---|---|---|
-| `BR-MFA-01` | Secret lưu **mã hoá**, không plaintext | |
-| `BR-MFA-02` | Mã khôi phục lưu **hash**, dùng **một lần** | |
+| `BR-MFA-01` | Secret lưu **mã hoá**, không plaintext | Ngăn ngừa rò rỉ secret TOTP khi cơ sở dữ liệu bị truy cập trái phép |
+| `BR-MFA-02` | Mã khôi phục lưu **hash**, dùng **một lần** | Đảm bảo mã khôi phục không thể bị đọc lén hoặc tái sử dụng sau khi đã tiêu thụ |
 | `BR-MFA-03` | Tắt MFA cần **reauth §7.4 và một mã hợp lệ** — hai thứ, không phải một | Phiên bị chiếm không được tắt MFA. Trước đây rule này ghi "mật khẩu"; `password_hash` nullable từ `BR-SIB-08` làm tài khoản chỉ-SNS không tắt được MFA của chính mình — reauth là dạng tổng quát đúng |
 | `BR-MFA-04` | Cửa sổ TOTP ±1 bước (±30s) | Lệch đồng hồ là chuyện thường |
 | `BR-MFA-05` | Cấm — **NEVER SMS OTP** | SIM swap; và số điện thoại là dữ liệu ta không thu |
-| `BR-MFA-06` | Bật MFA → **thu hồi phiên khác** | |
-| `BR-MFA-07` | Mã khôi phục hiện **đúng một lần** lúc sinh | |
-| `BR-MFA-08` | MFA cho User là **tuỳ chọn**; cho Manager là **bắt buộc** | |
+| `BR-MFA-06` | Bật MFA → **thu hồi phiên khác** | Đảm bảo mọi phiên đăng nhập chưa xác thực hai lớp trước đó bị chấm dứt lập tức |
+| `BR-MFA-07` | Mã khôi phục hiện **đúng một lần** lúc sinh | Buộc người dùng lưu trữ mã khôi phục an toàn ngay lập tức và tránh rò rỉ qua màn hình |
+| `BR-MFA-08` | MFA cho User là **tuỳ chọn**; cho Manager là **bắt buộc** | Tối ưu trải nghiệm cho phụ huynh nhưng bắt buộc bảo mật tối đa cho tài khoản quản trị hệ thống |
 | `BR-MFA-09` | SNS Cấm — **NEVER thay được MFA.** Thử thách chạy sau mọi yếu tố thứ nhất | `BR-AUT-17`. "Đã đăng nhập Google" chứng minh danh tính, không chứng minh thiết bị thứ hai. Coi nó là yếu tố thứ hai là hạ MFA xuống một yếu tố |
 | `BR-MFA-10` | Bật MFA cũng cần **reauth**, không chỉ phiên hợp lệ | Kẻ chiếm phiên bật MFA bằng thiết bị của họ sẽ khoá chủ tài khoản ra ngoài vĩnh viễn |
 | `BR-MFA-11` | Sinh lại mã khôi phục cần **reauth + một mã hợp lệ**, và **vô hiệu toàn bộ** bộ cũ | Hai bộ mã cùng sống là hai cửa vào |
@@ -207,7 +207,7 @@ Scenario: BR-MFA-07 — mã khôi phục hiện một lần
 
 ## 11. Open questions
 
-| # | Câu hỏi | Chặn gì |
-|---|---|---|
-| 1 | Quy trình khôi phục khi User mất cả thiết bị lẫn mã khôi phục là gì? | P2 |
-| 2 | Tài khoản chỉ có SNS và đã bật MFA: nếu mất luôn tài khoản SNS thì reauth bằng gì? Hiện không có đường nào ngoài hỗ trợ thủ công | P2 |
+| # | Câu hỏi | Chặn phase | Đề xuất chốt | Chủ |
+|---|---|---|---|---|
+| 1 | Quy trình khôi phục khi User mất cả thiết bị lẫn mã khôi phục là gì? | P2 | Yêu cầu xác minh danh tính qua email chính chủ kèm thời gian chờ 48 giờ trước khi reset MFA thủ công bởi `super_admin` | người quyết |
+| 2 | Tài khoản chỉ có SNS và đã bật MFA: nếu mất luôn tài khoản SNS thì reauth bằng gì? Hiện không có đường nào ngoài hỗ trợ thủ công | P2 | Phụ thuộc hoàn toàn vào hỗ trợ thủ công bởi `super_admin` sau khi xác minh chủ sở hữu | người quyết |
