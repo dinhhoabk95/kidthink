@@ -131,7 +131,6 @@ export function computeSkipLines(lines: string[]): boolean[] {
 // lặp lại lần hai.
 export const STYLE_DEFERRED: string[] = [
   "specs/02-public/",
-  "specs/03-account/",
   "specs/06-admin/",
   "specs/07-addon/",
   "specs/08-quality/",

@@ -23,7 +23,7 @@ depends_on:
 hướng theo tuần.
 
 Nó cũng là nơi rủi ro lớn nhất về ngôn ngữ — càng chi tiết càng dễ đọc thành chẩn đoán. Mọi
-ràng buộc của `basic-report` áp ở đây **chặt hơn**.
+ràng buộc của [`basic-report.md`](basic-report.md) áp ở đây **chặt hơn**.
 
 ## 2. Actors
 
@@ -47,20 +47,20 @@ User có `view_advanced_report` (gói `standard` và `premium`).
 |---|---|
 | Không có entitlement | **403** kèm mời nâng cấp, hiện **mẫu** báo cáo với dữ liệu ẩn |
 | Dữ liệu trải nhiều version nội dung | Ghi chú tại mốc đổi — `BR-VER-05` |
-| Skill chỉ chơi 1 lần | Hiện trong "đã tiếp xúc", ❌ không trong đánh giá |
+| Skill chỉ chơi 1 lần | Hiện trong "đã tiếp xúc", không trong đánh giá |
 | Xuất PDF | Add-on, ngoài MVP |
 
 ## 6. Business rules
 
 | ID | Rule | Vì sao |
 |---|---|---|
-| `BR-ARP-01` | Mọi ràng buộc ngôn ngữ của `basic-report` áp ở đây | |
-| `BR-ARP-02` | Ngưỡng dữ liệu tối thiểu §7.2 — dưới ngưỡng ❌ **không kết luận** | Chi tiết hơn ❌ không có nghĩa là chắc chắn hơn |
+| `BR-ARP-01` | Mọi ràng buộc ngôn ngữ của [`basic-report.md`](basic-report.md) áp ở đây | |
+| `BR-ARP-02` | Ngưỡng dữ liệu tối thiểu §7.2 — dưới ngưỡng **không kết luận** | Chi tiết hơn không có nghĩa là chắc chắn hơn |
 | `BR-ARP-03` | Biểu đồ **luôn có nhãn văn bản thay thế** | A11y, và biểu đồ một mình dễ đọc sai |
-| `BR-ARP-04` | Xu hướng hiện **hướng đi**, ❌ không hiện độ dốc chính xác | Độ dốc chính xác từ dữ liệu thưa là chính xác giả tạo |
-| `BR-ARP-05` | ❌ **NEVER dự đoán tương lai** — không "bé sẽ đạt X vào tháng sau" | Vượt ranh giới của một sản phẩm giáo dục |
-| `BR-ARP-06` | Mục "cần củng cố" nói **hành động cụ thể**, ❌ không chỉ nêu vấn đề | Nêu thiếu sót mà không nói làm gì tiếp là gây lo lắng vô ích |
-| `BR-ARP-07` | ❌ **NEVER so sánh với chuẩn độ tuổi bên ngoài** | Không có chuẩn nào áp được cho một tập bài tập cụ thể |
+| `BR-ARP-04` | Xu hướng hiện **hướng đi**, không hiện độ dốc chính xác | Độ dốc chính xác từ dữ liệu thưa là chính xác giả tạo |
+| `BR-ARP-05` | Cấm — **NEVER dự đoán tương lai** — không "bé sẽ đạt X vào tháng sau" | Vượt ranh giới của một sản phẩm giáo dục |
+| `BR-ARP-06` | Mục "cần củng cố" nói **hành động cụ thể**, không chỉ nêu vấn đề | Nêu thiếu sót mà không nói làm gì tiếp là gây lo lắng vô ích |
+| `BR-ARP-07` | Cấm — **NEVER so sánh với chuẩn độ tuổi bên ngoài** | Không có chuẩn nào áp được cho một tập bài tập cụ thể |
 | `BR-ARP-08` | Cảnh báo khi dữ liệu trải nhiều version nội dung | `BR-VER-05` |
 
 ## 7. Data
@@ -79,7 +79,7 @@ User có `view_advanced_report` (gói `standard` và `premium`).
 
 ### 7.2 Nguyên tắc ngưỡng
 
-Dưới ngưỡng → hiện `Chưa có đủ dữ liệu` kèm số phiên còn thiếu. ❌ **NEVER** ẩn mục — ẩn đi
+Dưới ngưỡng → hiện `Chưa có đủ dữ liệu` kèm số phiên còn thiếu. Cấm — **NEVER** ẩn mục — ẩn đi
 làm phụ huynh tưởng tính năng hỏng.
 
 ### 7.3 Mục "cần củng cố" — mẫu
@@ -88,7 +88,7 @@ làm phụ huynh tưởng tính năng hỏng.
 > Bé đã thử 6 lần, hoàn thành 2 lần không cần trợ giúp.
 > **Có thể thử:** cùng bé đếm đồ vật thật khi dọn bàn ăn · trò chơi "Đếm quả táo" (mức dễ hơn)
 
-Cấu trúc cố định: nhãn → dữ liệu → **hành động**. ❌ Không có mục nào dừng ở "dữ liệu".
+Cấu trúc cố định: nhãn → dữ liệu → **hành động**. Cấm có mục nào dừng ở "dữ liệu".
 
 ## 8. API contract
 

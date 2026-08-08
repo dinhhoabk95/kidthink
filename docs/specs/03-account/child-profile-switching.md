@@ -28,7 +28,7 @@ thì không tách ra được. Vì vậy đổi trẻ đi qua Parent Gate.
 | Actor | Làm gì |
 |---|---|
 | Người lớn | Chọn và đổi |
-| Trẻ | ❌ Không đổi được |
+| Trẻ | Cấm đổi được |
 
 ## 3. Entry points
 
@@ -46,7 +46,7 @@ thì không tách ra được. Vì vậy đổi trẻ đi qua Parent Gate.
 | Nhánh | Hành vi |
 |---|---|
 | Đã có trẻ đang hoạt động, chọn trẻ khác | **Parent Gate** trước |
-| Trẻ `archived` | ❌ Không chọn được |
+| Trẻ `archived` | Cấm chọn được |
 | Cookie trỏ trẻ không tồn tại hoặc không thuộc User | Xoá cookie, yêu cầu chọn lại |
 | Đang trong phiên chơi | Phiên hiện tại → `abandoned`, phiên mới cho trẻ mới |
 | Chỉ có một trẻ | Vẫn phải chọn tường minh lần đầu; sau đó nhớ 30 ngày |
@@ -56,10 +56,10 @@ thì không tách ra được. Vì vậy đổi trẻ đi qua Parent Gate.
 | ID | Rule | Vì sao |
 |---|---|---|
 | `BR-CPS-01` | Đổi trẻ **phải qua Parent Gate** | Trẻ đổi sang hồ sơ anh chị làm hỏng dữ liệu cả hai |
-| `BR-CPS-02` | Ownership kiểm ở **DB mỗi request**, ❌ không tin cookie | `BR-ACT-07` |
-| `BR-CPS-03` | Cookie ❌ **không phải nguồn quyền** — chỉ là ngữ cảnh | |
+| `BR-CPS-02` | Ownership kiểm ở **DB mỗi request**, không tin cookie | `BR-ACT-07` |
+| `BR-CPS-03` | Cookie **không phải nguồn quyền** — chỉ là ngữ cảnh | |
 | `BR-CPS-04` | Đổi trẻ giữa phiên → phiên cũ `abandoned` | Dữ liệu phiên phải thuộc đúng một trẻ |
-| `BR-CPS-05` | Trẻ `archived` ❌ không chọn được | |
+| `BR-CPS-05` | Trẻ `archived` không chọn được | |
 | `BR-CPS-06` | Bề mặt trẻ hiện **avatar + tên** của trẻ đang hoạt động | Xác nhận trực quan đang chơi với hồ sơ nào |
 | `BR-CPS-07` | Lần đầu **phải chọn tường minh**, kể cả khi chỉ có một trẻ | Tạo thói quen đúng |
 

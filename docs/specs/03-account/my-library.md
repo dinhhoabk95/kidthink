@@ -19,7 +19,7 @@ depends_on:
 
 Nơi User lưu lại nội dung muốn dùng sau — game hay, bài học phù hợp, chương trình định theo.
 
-Ở MVP đây là **bookmark có tổ chức**, ❌ không phải nơi chứa nội dung do User tạo. Nội dung
+Ở MVP đây là **bookmark có tổ chức**, không phải nơi chứa nội dung do User tạo. Nội dung
 tự tạo là add-on, ngoài MVP.
 
 ## 2. Actors
@@ -44,20 +44,20 @@ User đã đăng nhập.
 |---|---|
 | Nội dung đã lưu bị archive | Vẫn hiện, gắn nhãn "không còn khả dụng" |
 | Nội dung đã lưu bị khoá bậc (gói hết hạn) | Vẫn hiện, gắn khoá + CTA nâng cấp |
-| Xoá item khỏi thư viện | Chỉ xoá bookmark, ❌ không ảnh hưởng nội dung |
+| Xoá item khỏi thư viện | Chỉ xoá bookmark, không ảnh hưởng nội dung |
 | Chưa lưu gì | Gợi ý 5 nội dung phù hợp trẻ đang hoạt động |
 
 ## 6. Business rules
 
 | ID | Rule | Vì sao |
 |---|---|---|
-| `BR-MLB-01` | Thư viện lưu **tham chiếu**, ❌ không copy nội dung | Copy sẽ drift khi bản gốc đổi |
+| `BR-MLB-01` | Thư viện lưu **tham chiếu**, không copy nội dung | Copy sẽ drift khi bản gốc đổi |
 | `BR-MLB-02` | Lưu được nội dung **chưa mở khoá** | Lưu thứ muốn mua là tín hiệu ý định mua |
 | `BR-MLB-03` | `user_tags` **tách hoàn toàn** khỏi `content_tags` | `BR-TAG-05` |
-| `BR-MLB-04` | Thư viện **riêng tư**, ❌ không chia sẻ được ở MVP | Chia sẻ kéo theo kiểm duyệt |
+| `BR-MLB-04` | Thư viện **riêng tư**, không chia sẻ được ở MVP | Chia sẻ kéo theo kiểm duyệt |
 | `BR-MLB-05` | Nội dung archived vẫn hiện, gắn nhãn | Xoá âm thầm khỏi thư viện làm người dùng tưởng mất |
 | `BR-MLB-06` | Quota collection: **20** ở MVP | |
-| `BR-MLB-07` | ❌ **NEVER chứa nội dung do User tạo** ở MVP | Đó là add-on, chưa có |
+| `BR-MLB-07` | Cấm — **NEVER chứa nội dung do User tạo** ở MVP | Đó là add-on, chưa có |
 
 ## 7. Data
 

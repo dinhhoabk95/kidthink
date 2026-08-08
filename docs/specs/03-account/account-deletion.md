@@ -18,7 +18,7 @@ depends_on:
 
 ## 1. Objective
 
-Quyền xoá dữ liệu là **nghĩa vụ pháp lý** theo Nghị định 13/2023, ❌ không phải tính năng
+Quyền xoá dữ liệu là **nghĩa vụ pháp lý** theo Nghị định 13/2023, không phải tính năng
 tuỳ chọn. Nó phải thực sự xảy ra, trong thời hạn kiểm được.
 
 Nó cũng phải **hoàn tác được trong 30 ngày** — xoá nhầm tài khoản có 8 tuần dữ liệu học của
@@ -26,7 +26,7 @@ con là mất mát không thay thế được.
 
 ## 2. Actors
 
-User. Admin ❌ **không** xoá thay — `BR-USM-07`.
+User. Admin **không** xoá thay — `BR-USM-07`.
 
 ## 3. Entry points
 
@@ -50,8 +50,8 @@ job `account:purge`.
 |---|---|
 | Huỷ yêu cầu trong 30 ngày | Khôi phục **toàn bộ**, `status = active` |
 | Đăng nhập trong 30 ngày | 403 kèm nút huỷ yêu cầu xoá |
-| Còn entitlement hiệu lực | Cảnh báo mất quyền còn lại, ❌ không tự hoàn tiền |
-| Purge fail | **Alert**, retry một lần, ❌ không im lặng |
+| Còn entitlement hiệu lực | Cảnh báo mất quyền còn lại, không tự hoàn tiền |
+| Purge fail | **Alert**, retry một lần, không im lặng |
 | Yêu cầu bản sao dữ liệu trước khi xoá | Gợi ý export trước, không ép |
 
 ## 6. Business rules
@@ -60,14 +60,14 @@ job `account:purge`.
 |---|---|---|
 | `BR-ADL-01` | Xoá thực sự xảy ra trong **30 ngày** | `BR-CDC-10` |
 | `BR-ADL-02` | Hoàn tác được **trong 30 ngày** | Xoá nhầm là mất dữ liệu học không thay thế được |
-| `BR-ADL-03` | Xác nhận bằng **reauth §7.4**, ❌ không chỉ một nút | Thao tác không hoàn tác sau 30 ngày. Reauth thay cho "mật khẩu" vì tài khoản chỉ-SNS ❌ không có mật khẩu (`BR-SIB-08`) — và ❌ không được vì thế mà xoá dễ hơn |
-| `BR-ADL-04` | `telemetry_events` **ẩn danh hoá** (`child_uuid = NULL`), ❌ không xoá cứng | Giữ khả năng phân tích tổng hợp mà ❌ không giữ liên kết cá nhân |
-| `BR-ADL-05` | `audit_logs` và `consent_logs` **giữ lại** | Nghĩa vụ pháp lý; chúng ❌ không chứa PII của trẻ |
-| `BR-ADL-06` | Admin ❌ **NEVER xoá thay** User | Quyền của chủ thể dữ liệu |
+| `BR-ADL-03` | Xác nhận bằng **reauth §7.4**, không chỉ một nút | Thao tác không hoàn tác sau 30 ngày. Reauth thay cho "mật khẩu" vì tài khoản chỉ-SNS không có mật khẩu (`BR-SIB-08`) — và không được vì thế mà xoá dễ hơn |
+| `BR-ADL-04` | `telemetry_events` **ẩn danh hoá** (`child_uuid = NULL`), không xoá cứng | Giữ khả năng phân tích tổng hợp mà không giữ liên kết cá nhân |
+| `BR-ADL-05` | `audit_logs` và `consent_logs` **giữ lại** | Nghĩa vụ pháp lý; chúng không chứa PII của trẻ |
+| `BR-ADL-06` | Admin Cấm — **NEVER xoá thay** User | Quyền của chủ thể dữ liệu |
 | `BR-ADL-07` | Trang xoá liệt kê **cụ thể** cái gì sẽ mất | Xoá mù là xoá nhầm |
-| `BR-ADL-08` | Purge fail → **alert**, ❌ không retry mù | Thao tác phá huỷ ❌ không retry tự động nhiều lần |
-| `BR-ADL-09` | Sau purge, email đó **đăng ký lại được** | ❌ Không giữ danh sách cấm |
-| `BR-ADL-10` | Purge **xoá cứng** `social_identities` | `users` chỉ được ẩn danh chứ ❌ không xoá hàng, nên `ON DELETE CASCADE` ❌ không chạy. Bỏ sót thì `UNIQUE (provider, provider_user_id)` khoá vĩnh viễn tài khoản Google đó khỏi KidThink — người dùng ❌ không đăng ký lại được, và ❌ không có cách nào tự sửa |
+| `BR-ADL-08` | Purge fail → **alert**, không retry mù | Thao tác phá huỷ không retry tự động nhiều lần |
+| `BR-ADL-09` | Sau purge, email đó **đăng ký lại được** | Cấm giữ danh sách cấm |
+| `BR-ADL-10` | Purge **xoá cứng** `social_identities` | `users` chỉ được ẩn danh chứ không xoá hàng, nên `ON DELETE CASCADE` không chạy. Bỏ sót thì `UNIQUE (provider, provider_user_id)` khoá vĩnh viễn tài khoản Google đó khỏi KidThink — người dùng không đăng ký lại được, và không có cách nào tự sửa |
 
 ## 7. Data
 
@@ -190,4 +190,4 @@ Scenario: đăng nhập trong 30 ngày dẫn tới huỷ
 | # | Câu hỏi | Chặn gì |
 |---|---|---|
 | 1 | Có hoàn tiền phần gói chưa dùng khi xoá không? | Chính sách hoàn tiền |
-| 2 | Xoá **một hồ sơ trẻ** riêng lẻ có cần luồng 30 ngày không, hay xoá ngay? | `child-profile-archive` |
+| 2 | Xoá **một hồ sơ trẻ** riêng lẻ có cần luồng 30 ngày không, hay xoá ngay? | [`child-profile-archive.md`](child-profile-archive.md) |

@@ -29,7 +29,7 @@ một phụ huynh không thấy gì sẽ rời đi sau hai tuần.
 | Actor | Cần entitlement |
 |---|---|
 | User đã đăng nhập | `view_basic_report` — mọi User có |
-| Trẻ | ❌ Không thấy màn hình này |
+| Trẻ | Cấm thấy màn hình này |
 
 ## 3. Entry points
 
@@ -38,9 +38,9 @@ một phụ huynh không thấy gì sẽ rời đi sau hai tuần.
 ## 4. Main flow
 
 1. Chọn trẻ và khoảng thời gian (7 / 30 ngày).
-2. Server đọc **bảng rollup**, ❌ không quét event thô.
+2. Server đọc **bảng rollup**, không quét event thô.
 3. Hiện sáu mục §7.1.
-4. Mỗi mục kèm một câu **giải thích bằng ngôn ngữ thường**, ❌ không thuật ngữ.
+4. Mỗi mục kèm một câu **giải thích bằng ngôn ngữ thường**, không thuật ngữ.
 
 ## 5. Alternative flows
 
@@ -55,14 +55,14 @@ một phụ huynh không thấy gì sẽ rời đi sau hai tuần.
 
 | ID | Rule | Vì sao |
 |---|---|---|
-| `BR-BRP-01` | Đọc từ **rollup**, ❌ không quét `telemetry_events` | `BR-TLM-01` |
-| `BR-BRP-02` | ❌ **NEVER ngôn ngữ chẩn đoán** — dùng đúng bảng nhãn `adaptive-engine` §7.4 | Báo cáo phản ánh **hiệu suất trong hệ thống**, ❌ không phải năng lực của đứa trẻ |
+| `BR-BRP-01` | Đọc từ **rollup**, không quét `telemetry_events` | `BR-TLM-01` |
+| `BR-BRP-02` | Cấm — **NEVER ngôn ngữ chẩn đoán** — dùng đúng bảng nhãn [`adaptive-engine.md`](../01-platform/adaptive-engine.md) §7.4 | Báo cáo phản ánh **hiệu suất trong hệ thống**, không phải năng lực của đứa trẻ |
 | `BR-BRP-03` | Mọi màn hình báo cáo mang câu **miễn trừ** §7.2 | |
-| `BR-BRP-04` | ❌ **NEVER so sánh với trẻ khác** hay với "chuẩn độ tuổi" | `BR-CDC-09` và ranh giới sư phạm |
+| `BR-BRP-04` | Cấm — **NEVER so sánh với trẻ khác** hay với "chuẩn độ tuổi" | `BR-CDC-09` và ranh giới sư phạm |
 | `BR-BRP-05` | Ownership kiểm ở DB | |
 | `BR-BRP-06` | Dữ liệu < 3 phiên → nhãn `Chưa có đủ dữ liệu` | Kết luận từ 1 phiên là kết luận sai |
 | `BR-BRP-07` | Mỗi chỉ số kèm **một câu giải thích thường** | Số không giải thích được là số vô dụng với phụ huynh |
-| `BR-BRP-08` | ❌ **NEVER hiện `p_learn` thô hay phần trăm thành thạo** | Số chính xác giả tạo mời so sánh |
+| `BR-BRP-08` | Cấm — **NEVER hiện `p_learn` thô hay phần trăm thành thạo** | Số chính xác giả tạo mời so sánh |
 
 ## 7. Data
 
@@ -87,7 +87,7 @@ một phụ huynh không thấy gì sẽ rời đi sau hai tuần.
 `Chưa có đủ dữ liệu` · `Mới làm quen` · `Đang phát triển` · `Khá ổn định` ·
 `Thành thạo trong phạm vi bài tập`.
 
-❌ Tuyệt đối không: "chậm", "kém", "có vấn đề", "dưới chuẩn", "IQ", bất kỳ chẩn đoán nào.
+Cấm Tuyệt đối không: "chậm", "kém", "có vấn đề", "dưới chuẩn", "IQ", bất kỳ chẩn đoán nào.
 
 ## 8. API contract
 
@@ -165,5 +165,5 @@ Scenario: chưa chơi lần nào
 
 | # | Câu hỏi | Chặn gì |
 |---|---|---|
-| 1 | Có gửi báo cáo tuần qua email không, và mặc định bật hay tắt? | `notification-service` |
+| 1 | Có gửi báo cáo tuần qua email không, và mặc định bật hay tắt? | [`notification-service.md`](../01-platform/notification-service.md) |
 | 2 | Gợi ý hoạt động ngoài màn hình lấy từ đâu khi `lessons` chưa có ở P1? | P1 |

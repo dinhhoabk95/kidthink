@@ -18,14 +18,14 @@ depends_on:
 
 ## 1. Objective
 
-Đồng ý phải **xem lại được và rút lại được** — đó là yêu cầu của Nghị định 13/2023, ❌ không
+Đồng ý phải **xem lại được và rút lại được** — đó là yêu cầu của Nghị định 13/2023, không
 phải tuỳ chọn thiết kế.
 
-Và khi chính sách đổi, User phải được hỏi lại, ❌ không phải bị coi là đã đồng ý ngầm.
+Và khi chính sách đổi, User phải được hỏi lại, không phải bị coi là đã đồng ý ngầm.
 
 ## 2. Actors
 
-User (người lớn). ❌ Trẻ không cho đồng ý.
+User (người lớn). Cấm Trẻ không cho đồng ý.
 
 ## 3. Entry points
 
@@ -43,7 +43,7 @@ User (người lớn). ❌ Trẻ không cho đồng ý.
 
 | Nhánh | Hành vi |
 |---|---|
-| Chính sách có version mới | Banner ở `/me`; chặn **tạo hồ sơ trẻ mới**, ❌ không chặn truy cập dữ liệu đã có |
+| Chính sách có version mới | Banner ở `/me`; chặn **tạo hồ sơ trẻ mới**, không chặn truy cập dữ liệu đã có |
 | Rút `child_data` | Hồ sơ trẻ → `archived`, dừng thu dữ liệu mới, giữ 30 ngày rồi xoá |
 | Rút `privacy` | Tương đương yêu cầu xoá tài khoản — dẫn sang luồng đó |
 | Đồng ý lại sau khi rút | Được, tạo hàng mới |
@@ -53,13 +53,13 @@ User (người lớn). ❌ Trẻ không cho đồng ý.
 | ID | Rule | Vì sao |
 |---|---|---|
 | `BR-CSM-01` | `consent_logs` **INSERT-only**. Rút = **thêm hàng** | `BR-CDC-07` — sửa hàng cũ làm mất bằng chứng đã từng đồng ý |
-| `BR-CSM-02` | Đồng ý **tường minh**, ❌ không tick sẵn, ❌ không suy từ hành vi | |
-| `BR-CSM-03` | Chính sách đổi version → hỏi lại, ❌ **NEVER coi là đồng ý ngầm** | |
-| `BR-CSM-04` | Version mới chặn **tạo hồ sơ mới**, ❌ không chặn truy cập dữ liệu đã có | Khoá dữ liệu của người dùng để ép đồng ý là ép buộc |
-| `BR-CSM-05` | Trang hiện **thay đổi so với version trước**, ❌ không chỉ toàn văn | Không ai đọc lại 10 trang để tìm đoạn đổi |
+| `BR-CSM-02` | Đồng ý **tường minh**, không tick sẵn, không suy từ hành vi | |
+| `BR-CSM-03` | Chính sách đổi version → hỏi lại, Cấm — **NEVER coi là đồng ý ngầm** | |
+| `BR-CSM-04` | Version mới chặn **tạo hồ sơ mới**, không chặn truy cập dữ liệu đã có | Khoá dữ liệu của người dùng để ép đồng ý là ép buộc |
+| `BR-CSM-05` | Trang hiện **thay đổi so với version trước**, không chỉ toàn văn | Không ai đọc lại 10 trang để tìm đoạn đổi |
 | `BR-CSM-06` | Rút đồng ý nêu **hậu quả cụ thể** trước khi xác nhận | |
 | `BR-CSM-07` | Mỗi hàng ghi `policy_version`, IP, user agent, thời điểm | Bằng chứng |
-| `BR-CSM-08` | Rút `child_data` ❌ **không xoá ngay** — archive rồi xoá sau 30 ngày | Cho phép đổi ý |
+| `BR-CSM-08` | Rút `child_data` **không xoá ngay** — archive rồi xoá sau 30 ngày | Cho phép đổi ý |
 
 ## 7. Data
 
@@ -67,11 +67,11 @@ User (người lớn). ❌ Trẻ không cho đồng ý.
 
 | Loại | Bắt buộc để dùng | Rút được |
 |---|:--:|:--:|
-| `terms` | ✅ | rút = xoá tài khoản |
-| `privacy` | ✅ | rút = xoá tài khoản |
-| `child_data` | để tạo hồ sơ trẻ | ✅ |
+| `terms` | | rút = xoá tài khoản |
+| `privacy` | | rút = xoá tài khoản |
+| `child_data` | để tạo hồ sơ trẻ | |
 
-Ba loại. ❌ **Không có** đồng ý tiếp thị ở MVP — vì ❌ không có email tiếp thị (`BR-NOT-06`).
+Ba loại. Cấm **Không có** đồng ý tiếp thị ở MVP — vì không có email tiếp thị (`BR-NOT-06`).
 
 ### 7.2 Màn hình
 

@@ -46,17 +46,17 @@ User đã đăng nhập.
 | Nhiều gói cùng lúc | Liệt kê tất cả, hợp quyền lợi |
 | Gói `soft_unlock` | Nhãn "đang chờ xác nhận", nêu thời hạn tạm |
 | Gói hết hạn | Nhãn hết hạn + CTA gia hạn; **dữ liệu vẫn còn** |
-| Có entitlement cấp tay | Hiện nguồn "được cấp", ❌ không hiện lý do nội bộ |
+| Có entitlement cấp tay | Hiện nguồn "được cấp", không hiện lý do nội bộ |
 
 ## 6. Business rules
 
 | ID | Rule | Vì sao |
 |---|---|---|
-| `BR-SBV-01` | Quyền lợi sinh từ **`package_entitlements`**, ❌ không viết tay | `BR-PKG-06` |
+| `BR-SBV-01` | Quyền lợi sinh từ **`package_entitlements`**, không viết tay | `BR-PKG-06` |
 | `BR-SBV-02` | Nói rõ **dữ liệu không mất** khi hết hạn | Lo mất dữ liệu là rào cản gia hạn lớn |
 | `BR-SBV-03` | Lịch sử hiện **mọi đơn**, kể cả bị từ chối | Minh bạch |
-| `BR-SBV-04` | ❌ **NEVER hiện `admin_note` nội bộ** — chỉ lý do rút gọn | |
-| `BR-SBV-05` | Nhiều gói → **hợp** quyền lợi, ❌ không ghi đè | `BR-ENT-02` |
+| `BR-SBV-04` | Cấm — **NEVER hiện `admin_note` nội bộ** — chỉ lý do rút gọn | |
+| `BR-SBV-05` | Nhiều gói → **hợp** quyền lợi, không ghi đè | `BR-ENT-02` |
 | `BR-SBV-06` | Ownership: chỉ thấy đơn của chính mình | |
 | `BR-SBV-07` | Một CTA nâng cấp | `BR-MDB-07` |
 

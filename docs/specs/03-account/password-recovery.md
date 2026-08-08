@@ -43,11 +43,11 @@ User. Manager dùng luồng riêng có MFA.
 
 | Nhánh | Hành vi |
 |---|---|
-| Email không tồn tại | **200**, ❌ không gửi email, ❌ không nói gì khác |
+| Email không tồn tại | **200**, không gửi email, không nói gì khác |
 | Token hết hạn | Trang hiện nút yêu cầu lại |
 | Token đã dùng | Như hết hạn |
 | Yêu cầu nhiều lần | Vô hiệu token cũ, hạn 3 lần/giờ |
-| Tài khoản `suspended` | ❌ Không gửi email đặt lại |
+| Tài khoản `suspended` | Cấm gửi email đặt lại |
 | Tài khoản `password_hash` NULL (chỉ có SNS) | **Vẫn gửi** — luồng này **đặt** mật khẩu lần đầu. Xem `BR-PWR-10` |
 
 ## 6. Business rules
@@ -60,12 +60,12 @@ User. Manager dùng luồng riêng có MFA.
 | `BR-PWR-04` | Gửi **email thông báo** sau khi đổi thành công | Người thật biết ngay nếu không phải họ đổi |
 | `BR-PWR-05` | Yêu cầu mới **vô hiệu token cũ** | Hai token cùng hợp lệ nghĩa là kẻ tấn công dùng token đánh cắp trong khi người thật đang yêu cầu lại |
 | `BR-PWR-06` | Rate limit theo **IP và email** | Chặn brute force token và enumeration email cùng lúc |
-| `BR-PWR-07` | ❌ **NEVER cho đặt lại mà không có token** — không có "câu hỏi bí mật" | Câu hỏi bí mật là mật khẩu yếu hơn |
+| `BR-PWR-07` | Cấm — **NEVER cho đặt lại mà không có token** — không có "câu hỏi bí mật" | Câu hỏi bí mật là mật khẩu yếu hơn |
 | `BR-PWR-08` | Mật khẩu mới theo cùng quy tắc đăng ký | Hai chuẩn khác nhau là lỗ hổng — đặt lại với mật khẩu yếu hơn lúc đăng ký thì bảo vệ giảm |
-| `BR-PWR-09` | ❌ **NEVER tự đăng nhập** sau khi đặt lại | Buộc dùng mật khẩu mới xác nhận người dùng nhớ nó |
-| `BR-PWR-10` | Tài khoản chỉ có SNS **vẫn dùng được** luồng này — nó **đặt** mật khẩu thay vì đặt lại. Thông báo và mã trả về giống hệt | `BR-PWR-01`. Rẽ nhánh theo `password_hash IS NULL` sẽ tiết lộ tài khoản đăng ký bằng cách nào. Mô hình tin cậy ❌ không đổi: cả hai đều dựa trên kiểm soát hộp thư |
-| `BR-PWR-11` | Luồng này ❌ **NEVER gỡ hay đụng tới** `social_identities` | Đặt mật khẩu là **thêm** một cách vào, ❌ không phải thay cách cũ. Gỡ SNS là thao tác tường minh ở [`social-account-linking.md`](social-account-linking.md) |
-| `BR-PWR-12` | Đặt mật khẩu qua luồng này **vẫn** tăng `refresh_token_version` — khác `BR-ACS-10` | Ở đây ta ❌ không biết ai yêu cầu. Ở `account-settings` người dùng đã reauth trong phiên đang dùng |
+| `BR-PWR-09` | Cấm — **NEVER tự đăng nhập** sau khi đặt lại | Buộc dùng mật khẩu mới xác nhận người dùng nhớ nó |
+| `BR-PWR-10` | Tài khoản chỉ có SNS **vẫn dùng được** luồng này — nó **đặt** mật khẩu thay vì đặt lại. Thông báo và mã trả về giống hệt | `BR-PWR-01`. Rẽ nhánh theo `password_hash IS NULL` sẽ tiết lộ tài khoản đăng ký bằng cách nào. Mô hình tin cậy không đổi: cả hai đều dựa trên kiểm soát hộp thư |
+| `BR-PWR-11` | Luồng này Cấm — **NEVER gỡ hay đụng tới** `social_identities` | Đặt mật khẩu là **thêm** một cách vào, không phải thay cách cũ. Gỡ SNS là thao tác tường minh ở [`social-account-linking.md`](social-account-linking.md) |
+| `BR-PWR-12` | Đặt mật khẩu qua luồng này **vẫn** tăng `refresh_token_version` — khác `BR-ACS-10` | Ở đây ta không biết ai yêu cầu. Ở [`account-settings.md`](account-settings.md) người dùng đã reauth trong phiên đang dùng |
 
 ## 7. Data
 
@@ -166,4 +166,4 @@ Scenario: BR-PWR-11 — đặt mật khẩu không gỡ SNS
 
 | # | Câu hỏi | Chặn gì |
 |---|---|---|
-| 1 | Có cần thông báo cho email cũ khi User đổi email không? | `account-settings` |
+| 1 | Có cần thông báo cho email cũ khi User đổi email không? | [`account-settings.md`](account-settings.md) |

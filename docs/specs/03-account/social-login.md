@@ -25,7 +25,7 @@ depends_on:
 Vào được KidThink bằng **một lần bấm** thay vì điền form và chờ email xác thực.
 
 Đây là đòn bẩy chuyển đổi lớn nhất còn lại của phễu:
-[`registration.md`](registration.md) §1 đã cắt form xuống 3 trường, và bước tốn thời gian
+[[`registration.md`](registration.md)](registration.md) §1 đã cắt form xuống 3 trường, và bước tốn thời gian
 nhất còn lại là vòng xác thực email. SNS bỏ được vòng đó khi provider đã xác minh email.
 
 Spec này sở hữu **đăng ký lần đầu và đăng nhập lại**. Việc gắn thêm SNS thứ hai vào tài
@@ -43,7 +43,7 @@ File này bắt đầu từ `NormalizedProfile` trở đi.
 |---|---|---|
 | Guest | — | Đăng ký mới hoặc đăng nhập bằng Google / Facebook |
 | User | phiên hợp lệ | Đăng nhập lại bằng SNS đã liên kết |
-| Trẻ | — | ❌ Không. `BR-CDC-11` — trẻ ❌ không có credential |
+| Trẻ | — | Cấm. `BR-CDC-11` — trẻ không có credential |
 
 ## 3. Entry points
 
@@ -69,7 +69,7 @@ File này bắt đầu từ `NormalizedProfile` trở đi.
 1. Tra `(provider, provider_user_id)` → **không thấy**.
 2. Tra `users.email` = `email_at_provider` → **không thấy**.
 3. Hiện màn hình đồng ý `/dang-ky/dong-y`: tên hiển thị (điền sẵn từ provider, sửa được) +
-   **hai checkbox riêng**, ❌ không tick sẵn — `BR-REG-02`.
+   **hai checkbox riêng**, không tick sẵn — `BR-REG-02`.
 4. Tạo `users` + hàng `social_identities` + 2 hàng `consent_logs` trong **một transaction**.
 5. `users.status` = `active` nếu provider khẳng định email đã xác minh; ngược lại
    `pending_verification` và gửi email xác thực — `BR-SCL-05`.
@@ -78,7 +78,7 @@ File này bắt đầu từ `NormalizedProfile` trở đi.
 **C — chưa liên kết, email đã có tài khoản**
 
 1. Bước 1–2 như trên, nhưng tra `users.email` → **thấy**.
-2. **Dừng.** ❌ Không tạo tài khoản, ❌ không liên kết, ❌ không cấp phiên.
+2. **Dừng.** Cấm tạo tài khoản, không liên kết, không cấp phiên.
 3. **409** `SOCIAL_EMAIL_CONFLICT`, đưa về `/dang-nhap` kèm thông báo chỉ đường:
    *"Email này đã có tài khoản KidThink. Hãy đăng nhập rồi liên kết {provider} trong
    Cài đặt → Bảo mật."* Xem `BR-SCL-04`.
@@ -87,33 +87,33 @@ File này bắt đầu từ `NormalizedProfile` trở đi.
 
 | Nhánh | Điều kiện | Hành vi |
 |---|---|---|
-| User huỷ ở màn hình provider | `error=access_denied` | Về `/dang-nhap`, ❌ không thông báo lỗi đỏ |
-| Provider ❌ không trả email | Facebook cho phép | Màn hình đồng ý **bắt nhập email**; `users.email` NOT NULL như mọi tài khoản, `status = pending_verification` — `BR-SCL-06` |
-| ❌ Chưa tick đồng ý | Nhánh B bước 3 | **422**, ❌ không tạo tài khoản, ❌ không cấp phiên |
+| User huỷ ở màn hình provider | `error=access_denied` | Về `/dang-nhap`, không thông báo lỗi đỏ |
+| Provider không trả email | Facebook cho phép | Màn hình đồng ý **bắt nhập email**; `users.email` NOT NULL như mọi tài khoản, `status = pending_verification` — `BR-SCL-06` |
+| Cấm Chưa tick đồng ý | Nhánh B bước 3 | **422**, không tạo tài khoản, không cấp phiên |
 | `users.status = suspended` | Nhánh A | **403** `ACCOUNT_SUSPENDED` — giống luồng mật khẩu |
 | `users.status = deleted` trong 30 ngày | Nhánh A | **403** kèm nút huỷ yêu cầu xoá — `BR-LGN` nhánh tương ứng |
 | MFA đã bật | Nhánh A | **428** `MFA_REQUIRED` → nhập mã → cấp token đầy đủ. Xem `BR-SCL-07` |
 | `provider_user_id` đã gắn user khác | Nhánh B | **409** `SOCIAL_IDENTITY_ALREADY_LINKED`. Chỉ xảy ra nếu provider tái dùng `sub` — bất thường, log mức cao |
-| Bỏ dở giữa màn hình đồng ý | Đóng tab ở nhánh B bước 3 | ❌ Không hàng `users` nào được tạo. Transaction ở bước 4 |
+| Bỏ dở giữa màn hình đồng ý | Đóng tab ở nhánh B bước 3 | Cấm hàng `users` nào được tạo. Transaction ở bước 4 |
 
 ## 6. Business rules
 
 | ID | Rule | Vì sao |
 |---|---|---|
-| `BR-SCL-01` | Đăng ký bằng SNS **vẫn phải** thu hai đồng ý riêng, ❌ không tick sẵn | `BR-REG-02`. Đồng ý của provider ❌ không phải đồng ý với **ta**; Nghị định 13 yêu cầu đồng ý cụ thể, tự nguyện |
-| `BR-SCL-02` | Ghi `consent_logs` kèm `policy_version`, IP, user agent — y hệt đăng ký thường | `BR-REG-03`. Bằng chứng ❌ không được yếu đi vì đổi cách đăng ký |
-| `BR-SCL-03` | Tra danh tính theo `(provider, provider_user_id)`, ❌ **NEVER theo email** | `BR-OAP-10`. Email đổi được ở phía provider; `sub` thì không |
-| `BR-SCL-04` | ❌ **NEVER tự liên kết SNS vào tài khoản sẵn có chỉ vì trùng email.** Trả 409 và bắt đăng nhập rồi liên kết ở [`social-account-linking.md`](social-account-linking.md) | Đây là đường chiếm tài khoản trực tiếp: ai tạo được tài khoản SNS mang email của nạn nhân sẽ vào được tài khoản KidThink của họ. Facebook ❌ không khẳng định email đã xác minh (`BR-OAP-08`) |
+| `BR-SCL-01` | Đăng ký bằng SNS **vẫn phải** thu hai đồng ý riêng, không tick sẵn | `BR-REG-02`. Đồng ý của provider không phải đồng ý với **ta**; Nghị định 13 yêu cầu đồng ý cụ thể, tự nguyện |
+| `BR-SCL-02` | Ghi `consent_logs` kèm `policy_version`, IP, user agent — y hệt đăng ký thường | `BR-REG-03`. Bằng chứng không được yếu đi vì đổi cách đăng ký |
+| `BR-SCL-03` | Tra danh tính theo `(provider, provider_user_id)`, Cấm — **NEVER theo email** | `BR-OAP-10`. Email đổi được ở phía provider; `sub` thì không |
+| `BR-SCL-04` | Cấm — **NEVER tự liên kết SNS vào tài khoản sẵn có chỉ vì trùng email.** Trả 409 và bắt đăng nhập rồi liên kết ở [`social-account-linking.md`](social-account-linking.md) | Đây là đường chiếm tài khoản trực tiếp: ai tạo được tài khoản SNS mang email của nạn nhân sẽ vào được tài khoản KidThink của họ. Facebook không khẳng định email đã xác minh (`BR-OAP-08`) |
 | `BR-SCL-05` | `status = active` ngay **chỉ khi** provider khẳng định email đã xác minh; ngược lại `pending_verification` + gửi email xác thực | Bỏ vòng xác thực chỉ hợp lệ khi có bên khác đã làm việc đó thật |
-| `BR-SCL-06` | Tài khoản SNS ❌ không có email → bắt nhập email ở màn hình đồng ý, `status = pending_verification` | Email là khoá khôi phục tài khoản (`BR-ACS-03`). Tài khoản ❌ không có email là tài khoản ❌ không khôi phục được |
-| `BR-SCL-07` | MFA đã bật thì SNS **❌ không bỏ qua được** — vẫn 428 `MFA_REQUIRED` | SNS là yếu tố thứ nhất, ❌ không phải yếu tố thứ hai |
-| `BR-SCL-08` | Tài khoản tạo bằng SNS có `password_hash` **NULL** — hợp lệ, ❌ không bắt đặt mật khẩu | Ma sát tối thiểu (`BR-REG-01`). Hệ quả về gỡ liên kết ở `BR-SLK-04` |
-| `BR-SCL-09` | Thông báo lỗi ❌ **không tiết lộ** tài khoản có tồn tại — trừ nhánh C, nơi caller **đã chứng minh** kiểm soát hộp thư đó | `BR-ERR-02`. Nhánh C ❌ không phải kênh liệt kê: muốn thấy thông báo đó phải đăng nhập được vào chính SNS mang email ấy |
-| `BR-SCL-10` | ❌ **NEVER gộp phiên chơi guest** vào tài khoản mới tạo bằng SNS | `BR-REG-06`. Cùng lý do: thiết bị dùng chung |
+| `BR-SCL-06` | Tài khoản SNS không có email → bắt nhập email ở màn hình đồng ý, `status = pending_verification` | Email là khoá khôi phục tài khoản (`BR-ACS-03`). Tài khoản không có email là tài khoản không khôi phục được |
+| `BR-SCL-07` | MFA đã bật thì SNS **không bỏ qua được** — vẫn 428 `MFA_REQUIRED` | SNS là yếu tố thứ nhất, không phải yếu tố thứ hai |
+| `BR-SCL-08` | Tài khoản tạo bằng SNS có `password_hash` **NULL** — hợp lệ, không bắt đặt mật khẩu | Ma sát tối thiểu (`BR-REG-01`). Hệ quả về gỡ liên kết ở `BR-SLK-04` |
+| `BR-SCL-09` | Thông báo lỗi **không tiết lộ** tài khoản có tồn tại — trừ nhánh C, nơi caller **đã chứng minh** kiểm soát hộp thư đó | `BR-ERR-02`. Nhánh C không phải kênh liệt kê: muốn thấy thông báo đó phải đăng nhập được vào chính SNS mang email ấy |
+| `BR-SCL-10` | Cấm — **NEVER gộp phiên chơi guest** vào tài khoản mới tạo bằng SNS | `BR-REG-06`. Cùng lý do: thiết bị dùng chung |
 | `BR-SCL-11` | Rate limit theo **IP và `provider_user_id`** | `BR-RTL-01` |
-| `BR-SCL-12` | Tạo `users` + `social_identities` + `consent_logs` trong **một transaction** | Tài khoản ❌ không có consent là tài khoản ❌ không dùng hợp pháp được |
+| `BR-SCL-12` | Tạo `users` + `social_identities` + `consent_logs` trong **một transaction** | Tài khoản không có consent là tài khoản không dùng hợp pháp được |
 | `BR-SCL-13` | Nút SNS chỉ hiện khi `is_enabled` | Nút dẫn tới 404 làm người dùng nghĩ sản phẩm hỏng |
-| `BR-SCL-14` | Sau đăng nhập SNS, ❌ **không tự vào khu vực chơi** — vào `/me` | `BR-LGN-08` |
+| `BR-SCL-14` | Sau đăng nhập SNS, **không tự vào khu vực chơi** — vào `/me` | `BR-LGN-08` |
 
 ## 7. Data
 
@@ -125,7 +125,7 @@ File này bắt đầu từ `NormalizedProfile` trở đi.
 
 Cột đầy đủ ở
 [`../01-platform/schema-identity-billing.md`](../01-platform/schema-identity-billing.md)
-§7.3a. File này ❌ không lặp lại.
+§7.3a. File này không lặp lại.
 
 Ràng buộc quan trọng với luồng này: `UNIQUE (provider, provider_user_id)` — một tài khoản
 SNS gắn được vào **đúng một** User.
@@ -135,21 +135,21 @@ SNS gắn được vào **đúng một** User.
 | Trường | Nguồn | Ràng buộc |
 |---|---|---|
 | `display_name` | Điền sẵn từ provider, sửa được | 2–60 ký tự |
-| `email` | Điền sẵn, **chỉ đọc** khi provider có trả; nhập tay khi ❌ không có | citext, hợp lệ |
-| `accept_terms` | — | true bắt buộc, ❌ không tick sẵn |
-| `accept_privacy` | — | true bắt buộc, ❌ không tick sẵn |
+| `email` | Điền sẵn, **chỉ đọc** khi provider có trả; nhập tay khi không có | citext, hợp lệ |
+| `accept_terms` | — | true bắt buộc, không tick sẵn |
+| `accept_privacy` | — | true bắt buộc, không tick sẵn |
 
-❌ Không ô tuổi, giới tính, số điện thoại, địa chỉ — `BR-REG-08`.
+Cấm ô tuổi, giới tính, số điện thoại, địa chỉ — `BR-REG-08`.
 
 ### 7.3 Trạng thái sau đăng ký
 
 | Provider khẳng định email đã xác minh | `users.status` | Gửi email xác thực |
 |---|---|---|
-| ✅ (Google, `email_verified = true`) | `active` | ❌ không |
-| ❌ (Facebook, luôn) | `pending_verification` | ✅ |
-| Provider ❌ không trả email | `pending_verification` | ✅ tới email người dùng tự nhập |
+| (Google, `email_verified = true`) | `active` | không |
+| Cấm (Facebook, luôn) | `pending_verification` | |
+| Provider không trả email | `pending_verification` | tới email người dùng tự nhập |
 
-`pending_verification` giữ nguyên **chế độ hạn chế** ở `registration.md` §7.3 — chưa tạo
+`pending_verification` giữ nguyên **chế độ hạn chế** ở [`registration.md`](registration.md) §7.3 — chưa tạo
 được hồ sơ trẻ.
 
 ## 8. API contract
@@ -170,13 +170,13 @@ Xem [`../01-platform/oauth-provider-registry.md`](../01-platform/oauth-provider-
 | 403 | `ACCOUNT_SUSPENDED` |
 | 409 | `SOCIAL_EMAIL_CONFLICT` — `details.provider`, `details.masked_email` |
 | 409 | `SOCIAL_IDENTITY_ALREADY_LINKED` |
-| 422 | `VALIDATION_FAILED` — thiếu đồng ý hoặc email ❌ không hợp lệ |
+| 422 | `VALIDATION_FAILED` — thiếu đồng ý hoặc email không hợp lệ |
 | 428 | `MFA_REQUIRED` |
 | 429 | `RATE_LIMITED` |
 
 ### `POST /api/guest/auth/users/mfa`
 
-Dùng lại route ở [`mfa.md`](mfa.md) §8. SNS ❌ không có route MFA riêng.
+Dùng lại route ở [`mfa.md`](mfa.md) §8. SNS không có route MFA riêng.
 
 ## 9. Acceptance criteria
 
@@ -261,7 +261,7 @@ Scenario: BR-SCL-13 — provider tắt thì không hiện nút
 
 **Ask first**
 - Bỏ màn hình đồng ý cho một provider nào đó.
-- Cho `status = active` khi provider ❌ không khẳng định email.
+- Cho `status = active` khi provider không khẳng định email.
 - Thêm trường vào màn hình đồng ý.
 
 **Never**
@@ -276,5 +276,5 @@ Scenario: BR-SCL-13 — provider tắt thì không hiện nút
 
 | # | Câu hỏi | Chặn gì |
 |---|---|---|
-| 1 | Nhánh C trả 409 là đúng bảo mật nhưng là ngõ cụt của phễu. Có nên gửi email "ai đó vừa thử đăng nhập bằng Google vào tài khoản của bạn — bấm đây để liên kết" ❌ không? Thêm một kênh xác minh thật, nhưng cũng thêm một email do người lạ kích hoạt được | P2 · `notification-service` |
-| 2 | Ở nhánh B khi provider ❌ không trả email, ta bắt nhập email nhưng ❌ chưa biết người dùng có kiểm soát nó ❌ không cho tới khi họ xác thực. Có nên chặn tạo `users` cho tới lúc đó ❌ không? | P1 |
+| 1 | Nhánh C trả 409 là đúng bảo mật nhưng là ngõ cụt của phễu. Có nên gửi email "ai đó vừa thử đăng nhập bằng Google vào tài khoản của bạn — bấm đây để liên kết" không? Thêm một kênh xác minh thật, nhưng cũng thêm một email do người lạ kích hoạt được | P2 · [`notification-service.md`](../01-platform/notification-service.md) |
+| 2 | Ở nhánh B khi provider không trả email, ta bắt nhập email nhưng Cấm chưa biết người dùng có kiểm soát nó không cho tới khi họ xác thực. Có nên chặn tạo `users` cho tới lúc đó không? | P1 |

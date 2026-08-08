@@ -25,7 +25,7 @@ liệu.
 
 ## 2. Actors
 
-User sở hữu hồ sơ. Admin ❌ chỉ lưu trữ theo yêu cầu, ❌ không xoá.
+User sở hữu hồ sơ. Admin Cấm chỉ lưu trữ theo yêu cầu, không xoá.
 
 ## 3. Entry points
 
@@ -56,10 +56,10 @@ User sở hữu hồ sơ. Admin ❌ chỉ lưu trữ theo yêu cầu, ❌ không
 | `BR-CPR-02` | Lưu trữ **giải phóng quota** | Nếu không thì lưu trữ vô nghĩa với người tới hạn |
 | `BR-CPR-03` | Xoá vĩnh viễn có **30 ngày hoàn tác** | Đối xứng với xoá tài khoản |
 | `BR-CPR-04` | Xoá xác nhận bằng **gõ tên trẻ** | Một nút "Xoá" là quá dễ bấm cho thao tác này |
-| `BR-CPR-05` | Xoá → `telemetry_events` **ẩn danh**, ❌ không xoá cứng | `BR-CDC-10` |
-| `BR-CPR-06` | Admin ❌ **NEVER xoá** hồ sơ trẻ | `BR-CPA-07` |
-| `BR-CPR-07` | Trẻ `archived` ❌ không chơi được, nhưng **báo cáo vẫn xem được** | Phụ huynh vẫn có quyền với dữ liệu đã thu |
-| `BR-CPR-08` | Lưu trữ ❌ **không cần** Parent Gate; **xoá thì cần mật khẩu** | Mức độ hậu quả khác nhau |
+| `BR-CPR-05` | Xoá → `telemetry_events` **ẩn danh**, không xoá cứng | `BR-CDC-10` |
+| `BR-CPR-06` | Admin Cấm — **NEVER xoá** hồ sơ trẻ | `BR-CPA-07` |
+| `BR-CPR-07` | Trẻ `archived` không chơi được, nhưng **báo cáo vẫn xem được** | Phụ huynh vẫn có quyền với dữ liệu đã thu |
+| `BR-CPR-08` | Lưu trữ **không cần** Parent Gate; **xoá thì cần mật khẩu** | Mức độ hậu quả khác nhau |
 
 ## 7. Data
 
@@ -67,9 +67,9 @@ User sở hữu hồ sơ. Admin ❌ chỉ lưu trữ theo yêu cầu, ❌ không
 
 | `status` | Chơi được | Trong danh sách | Tính quota | Dữ liệu |
 |---|:--:|:--:|:--:|---|
-| `active` | ✅ | ✅ | ✅ | nguyên |
-| `archived` | ❌ | mục "đã lưu trữ" | ❌ | nguyên |
-| `pending_deletion` | ❌ | mục "sắp xoá" + đếm ngược | ❌ | xoá sau 30 ngày |
+| `active` | | | | nguyên |
+| `archived` | Cấm | mục "đã lưu trữ" | Cấm | nguyên |
+| `pending_deletion` | Cấm | mục "sắp xoá" + đếm ngược | Cấm | xoá sau 30 ngày |
 
 ### 7.2 Phạm vi xoá
 
@@ -156,4 +156,4 @@ Scenario: BR-CPR-06 — admin không xoá được
 
 | # | Câu hỏi | Chặn gì |
 |---|---|---|
-| 1 | Trẻ sang 7 tuổi có tự động archive không, hay để phụ huynh quyết định? | `child-profile-crud` Q2 |
+| 1 | Trẻ sang 7 tuổi có tự động archive không, hay để phụ huynh quyết định? | [`child-profile-crud.md`](child-profile-crud.md) Q2 |

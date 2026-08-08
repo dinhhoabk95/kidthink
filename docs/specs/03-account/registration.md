@@ -31,7 +31,7 @@ cho **cả hai** (`BR-SCL-01`).
 
 ## 2. Actors
 
-Guest → User. ❌ Trẻ không đăng ký.
+Guest → User. Cấm Trẻ không đăng ký.
 
 ## 3. Entry points
 
@@ -40,7 +40,7 @@ Guest → User. ❌ Trẻ không đăng ký.
 ## 4. Main flow
 
 1. Nhập email + mật khẩu + tên hiển thị.
-2. Tick đồng ý **Điều khoản** và **Chính sách quyền riêng tư** — hai checkbox riêng, ❌ không
+2. Tick đồng ý **Điều khoản** và **Chính sách quyền riêng tư** — hai checkbox riêng, không
    tick sẵn.
 3. Tạo `users` `status = pending_verification`.
 4. Ghi `consent_logs` cho cả hai loại, kèm `policy_version`.
@@ -53,27 +53,27 @@ Guest → User. ❌ Trẻ không đăng ký.
 |---|---|
 | Email đã đăng ký | **409** `EMAIL_ALREADY_REGISTERED` — chỉ ở luồng này |
 | Mật khẩu yếu | 422 kèm yêu cầu cụ thể |
-| Chưa tick đồng ý | 422, ❌ không tạo tài khoản |
-| Guest có phiên chơi ẩn danh | Sau đăng ký, ❌ **không** gộp dữ liệu — xem `BR-REG-06` |
+| Chưa tick đồng ý | 422, không tạo tài khoản |
+| Guest có phiên chơi ẩn danh | Sau đăng ký, **không** gộp dữ liệu — xem `BR-REG-06` |
 | Đăng ký từ trang giá | Sau xác thực → chuyển thẳng tới luồng thanh toán |
 | Chọn "Tiếp tục với Google / Facebook" | Rời luồng này sang [`social-login.md`](social-login.md) §4 nhánh B. Hai checkbox đồng ý **vẫn bắt buộc** |
-| Email đã đăng ký, nhưng bằng SNS | **409** `EMAIL_ALREADY_REGISTERED` như mọi trùng email. Thông báo gợi ý thử nút SNS — ❌ không nói provider nào (`BR-REG-10`) |
+| Email đã đăng ký, nhưng bằng SNS | **409** `EMAIL_ALREADY_REGISTERED` như mọi trùng email. Thông báo gợi ý thử nút SNS — không nói provider nào (`BR-REG-10`) |
 
 ## 6. Business rules
 
 | ID | Rule | Vì sao |
 |---|---|---|
 | `BR-REG-01` | Form đúng **3 trường**: email, mật khẩu, tên hiển thị | Mỗi trường thêm giảm tỉ lệ hoàn thành |
-| `BR-REG-02` | Hai checkbox đồng ý **riêng**, ❌ không tick sẵn, ❌ không gộp | Đồng ý gộp không phải đồng ý tự nguyện, cụ thể |
+| `BR-REG-02` | Hai checkbox đồng ý **riêng**, không tick sẵn, không gộp | Đồng ý gộp không phải đồng ý tự nguyện, cụ thể |
 | `BR-REG-03` | Ghi `consent_logs` kèm `policy_version`, IP, user agent | Bằng chứng |
-| `BR-REG-04` | `pending_verification` ❌ **không tạo được child profile** | Không thu dữ liệu trẻ trước khi xác minh người lớn |
-| `BR-REG-05` | Mật khẩu ≥8 ký tự, ❌ **NEVER** ép ký tự đặc biệt | Quy tắc phức tạp làm người dùng viết mật khẩu ra giấy |
-| `BR-REG-06` | ❌ **NEVER tự gộp phiên chơi guest** vào tài khoản mới | Không xác định được phiên đó là của ai — thiết bị dùng chung là chuyện thường |
+| `BR-REG-04` | `pending_verification` **không tạo được child profile** | Không thu dữ liệu trẻ trước khi xác minh người lớn |
+| `BR-REG-05` | Mật khẩu ≥8 ký tự, Cấm — **NEVER** ép ký tự đặc biệt | Quy tắc phức tạp làm người dùng viết mật khẩu ra giấy |
+| `BR-REG-06` | Cấm — **NEVER tự gộp phiên chơi guest** vào tài khoản mới | Không xác định được phiên đó là của ai — thiết bị dùng chung là chuyện thường |
 | `BR-REG-07` | Email so sánh **không phân biệt hoa thường** | Người dùng không nhớ mình gõ hoa hay thường lúc đăng ký; hai tài khoản cùng email là sự cố |
-| `BR-REG-08` | ❌ **NEVER thu tuổi, giới tính, số điện thoại, hay địa chỉ** khi đăng ký | Thu tối thiểu |
-| `BR-REG-09` | Rate limit theo IP | `rate-limiting` |
-| `BR-REG-10` | 409 trùng email ❌ **không** nói tài khoản đó đăng ký bằng cách nào | Biết "email này dùng Google" là một mẩu thông tin cho kẻ tấn công chọn hướng, và ta ❌ không đổi được nó cho người dùng |
-| `BR-REG-11` | Trang đăng ký hiện nút SNS **trước** form email khi provider đang bật | Đường ít ma sát nhất phải là đường dễ thấy nhất. Form vẫn đầy đủ ngay dưới, ❌ không giấu sau một cú bấm |
+| `BR-REG-08` | Cấm — **NEVER thu tuổi, giới tính, số điện thoại, hay địa chỉ** khi đăng ký | Thu tối thiểu |
+| `BR-REG-09` | Rate limit theo IP | [`rate-limiting.md`](../01-platform/rate-limiting.md) |
+| `BR-REG-10` | 409 trùng email **không** nói tài khoản đó đăng ký bằng cách nào | Biết "email này dùng Google" là một mẩu thông tin cho kẻ tấn công chọn hướng, và ta không đổi được nó cho người dùng |
+| `BR-REG-11` | Trang đăng ký hiện nút SNS **trước** form email khi provider đang bật | Đường ít ma sát nhất phải là đường dễ thấy nhất. Form vẫn đầy đủ ngay dưới, không giấu sau một cú bấm |
 
 ## 7. Data
 
@@ -82,7 +82,7 @@ Guest → User. ❌ Trẻ không đăng ký.
 | Trường | Ràng buộc |
 |---|---|
 | `email` | citext, hợp lệ, chưa tồn tại |
-| `password` | ≥8 ký tự, ❌ không ép ký tự đặc biệt, kiểm danh sách mật khẩu phổ biến |
+| `password` | ≥8 ký tự, không ép ký tự đặc biệt, kiểm danh sách mật khẩu phổ biến |
 | `display_name` | 2–60 ký tự |
 | `accept_terms` | true bắt buộc |
 | `accept_privacy` | true bắt buộc |
@@ -94,7 +94,7 @@ Guest → User. ❌ Trẻ không đăng ký.
 
 ### 7.3 Chế độ hạn chế
 
-| Làm được | ❌ Không làm được |
+| Làm được | Cấm làm được |
 |---|---|
 | Xem catalog · chơi game `free` · xem giá | Tạo child profile · tạo đơn thanh toán · lưu tiến độ |
 

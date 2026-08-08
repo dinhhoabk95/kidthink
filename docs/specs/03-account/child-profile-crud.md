@@ -26,7 +26,7 @@ hỏi từng ấy thứ — minh bạch là thứ tạo niềm tin ở sản ph�
 
 ## 2. Actors
 
-User (người lớn). ❌ Trẻ không tạo và không sửa.
+User (người lớn). Cấm Trẻ không tạo và không sửa.
 
 ## 3. Entry points
 
@@ -57,15 +57,15 @@ User (người lớn). ❌ Trẻ không tạo và không sửa.
 | ID | Rule | Vì sao |
 |---|---|---|
 | `BR-CPC-01` | Form đúng **4 trường** §7.1 | Danh sách đóng — `BR-CDC-01` |
-| `BR-CPC-02` | ❌ **NEVER hỏi họ tên đầy đủ.** Nhãn ghi rõ "tên gọi ở nhà" | `BR-CDC-03` |
-| `BR-CPC-03` | ❌ **NEVER hỏi ngày sinh.** Chỉ **năm sinh** | `BR-CDC-02` |
-| `BR-CPC-04` | Avatar **chỉ** từ preset. ❌ Không upload | `BR-CDC-04` |
+| `BR-CPC-02` | Cấm — **NEVER hỏi họ tên đầy đủ.** Nhãn ghi rõ "tên gọi ở nhà" | `BR-CDC-03` |
+| `BR-CPC-03` | Cấm — **NEVER hỏi ngày sinh.** Chỉ **năm sinh** | `BR-CDC-02` |
+| `BR-CPC-04` | Avatar **chỉ** từ preset. Cấm upload | `BR-CDC-04` |
 | `BR-CPC-05` | Đồng ý `child_data` trước khi tạo hồ sơ đầu tiên | `BR-CDC` §4 |
 | `BR-CPC-06` | Form hiện **giải thích ngắn** vì sao chỉ hỏi từng ấy | Minh bạch tạo niềm tin |
 | `BR-CPC-07` | Quota kiểm ở **server** | |
-| `BR-CPC-08` | `age_band` **suy tự động**, ❌ không nhập | |
+| `BR-CPC-08` | `age_band` **suy tự động**, không nhập | |
 | `BR-CPC-09` | Ownership kiểm ở DB mọi thao tác sửa | `BR-ACT-07` |
-| `BR-CPC-10` | Tuổi ngoài 3–6 → từ chối kèm giải thích, ❌ không im lặng cắt | Phụ huynh cần biết vì sao |
+| `BR-CPC-10` | Tuổi ngoài 3–6 → từ chối kèm giải thích, không im lặng cắt | Phụ huynh cần biết vì sao |
 
 ## 7. Data
 
@@ -83,13 +83,13 @@ tôi không thu thập họ tên đầy đủ, ngày sinh, ảnh chụp, hay th�
 
 ### 7.2 Preset avatar
 
-Bộ minh hoạ do hệ thống cung cấp — con vật, hình khối, mascot. ❌ Không ảnh người thật,
-❌ không upload.
+Bộ minh hoạ do hệ thống cung cấp — con vật, hình khối, mascot. Cấm ảnh người thật,
+không upload.
 
 ### 7.3 Sau khi tạo
 
 `age_band` suy · `daily_play_cap_minutes` mặc định theo gói ·
-`status = active` · ❌ **không** tự ghi danh curriculum.
+`status = active` · **không** tự ghi danh curriculum.
 
 ## 8. API contract
 

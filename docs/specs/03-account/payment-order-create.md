@@ -39,7 +39,7 @@ User đã đăng nhập và **đã xác thực email**.
    - **Mã QR VietQR** (đã điền sẵn số tiền và nội dung)
    - Số tài khoản, tên chủ tài khoản, số tiền — **mỗi thứ một nút sao chép**
    - **Nội dung chuyển khoản** nổi bật nhất trên màn hình
-4. Nút "Tôi đã chuyển khoản" → `payment-proof-upload`.
+4. Nút "Tôi đã chuyển khoản" → [`payment-proof-upload.md`](payment-proof-upload.md).
 
 ## 5. Alternative flows
 
@@ -55,14 +55,14 @@ User đã đăng nhập và **đã xác thực email**.
 
 | ID | Rule | Vì sao |
 |---|---|---|
-| `BR-POC-01` | Số tiền đọc từ **`PACKAGE_CATALOG`**, ❌ không từ client | `BR-PKG-03` |
+| `BR-POC-01` | Số tiền đọc từ **`PACKAGE_CATALOG`**, không từ client | `BR-PKG-03` |
 | `BR-POC-02` | **Nội dung chuyển khoản là mã đơn**, hiện nổi bật nhất | Sai nội dung là nguyên nhân số một của đối chiếu thất bại |
 | `BR-POC-03` | Mỗi trường có **nút sao chép** | Gõ tay số tài khoản là gõ sai |
 | `BR-POC-04` | Một gói chỉ có **một đơn chưa xử lý** tại một thời điểm | Nhiều đơn cùng gói làm đối chiếu rối |
 | `BR-POC-05` | Nói rõ **cộng dồn** khi mua lúc còn hạn | Người dùng cần biết không mất phần đã trả |
 | `BR-POC-06` | Đơn hết hạn sau **48 giờ** không nộp chứng từ | |
 | `BR-POC-07` | Màn hình nói rõ **duyệt tay** và thời gian dự kiến | Kỳ vọng sai tạo ca hỗ trợ |
-| `BR-POC-08` | ❌ **NEVER hiện luồng này trên bề mặt trẻ** | `BR-PEN-04` |
+| `BR-POC-08` | Cấm — **NEVER hiện luồng này trên bề mặt trẻ** | `BR-PEN-04` |
 
 ## 7. Data
 

@@ -19,7 +19,7 @@ depends_on:
 ## 1. Objective
 
 Chuyển từ "đã chuyển khoản" sang "đang chờ duyệt", và **mở quyền tạm ngay** để người đã trả
-tiền ❌ không phải chờ.
+tiền không phải chờ.
 
 Soft unlock tồn tại vì duyệt tay có độ trễ người. Nó là **tin tưởng có thời hạn** — 3 ngày,
 và bị rút ngay nếu đơn bị từ chối.
@@ -46,23 +46,23 @@ User sở hữu đơn.
 |---|---|
 | Ảnh > 5 MB | Chặn ở client, nén hoặc yêu cầu chọn lại |
 | Không có ảnh | Cho gửi **chỉ mã giao dịch**, cảnh báo duyệt sẽ chậm hơn |
-| Nộp lại chứng từ | Cho phép khi còn `submitted`; thay ảnh, ❌ không tạo đơn mới |
+| Nộp lại chứng từ | Cho phép khi còn `submitted`; thay ảnh, không tạo đơn mới |
 | `soft_unlock` hết 3 ngày chưa duyệt | Quyền hết; đơn vẫn duyệt được và cấp lại đủ hạn |
-| Đơn đã `approved` | ❌ Không nộp lại được |
-| Đơn `expired` | ❌ Không nộp được, tạo đơn mới |
+| Đơn đã `approved` | Cấm nộp lại được |
+| Đơn `expired` | Cấm nộp được, tạo đơn mới |
 
 ## 6. Business rules
 
 | ID | Rule | Vì sao |
 |---|---|---|
-| `BR-PPU-01` | Nộp chứng từ cấp `soft_unlock`, ❌ **NEVER cấp `active`** | Ảnh chứng từ giả mạo được; duyệt tay là bước xác minh thật |
+| `BR-PPU-01` | Nộp chứng từ cấp `soft_unlock`, Cấm — **NEVER cấp `active`** | Ảnh chứng từ giả mạo được; duyệt tay là bước xác minh thật |
 | `BR-PPU-02` | `soft_unlock` **3 ngày** (`SOFT_UNLOCK_DAYS`) | |
 | `BR-PPU-03` | Ảnh lưu **private**, chỉ Manager mở qua signed URL | Chứa thông tin ngân hàng |
 | `BR-PPU-04` | Mã giao dịch **bắt buộc**; ảnh tuỳ chọn nhưng khuyến nghị mạnh | Mã giao dịch là thứ đối chiếu được với sao kê |
-| `BR-PPU-05` | Nộp lại **thay** ảnh cũ, ❌ không tạo đơn mới | Nhiều đơn cùng giao dịch làm đối chiếu rối |
-| `BR-PPU-06` | Upload dùng client có CSRF, ❌ **NEVER raw `$fetch`** | |
+| `BR-PPU-05` | Nộp lại **thay** ảnh cũ, không tạo đơn mới | Nhiều đơn cùng giao dịch làm đối chiếu rối |
+| `BR-PPU-06` | Upload dùng client có CSRF, Cấm — **NEVER raw `$fetch`** | |
 | `BR-PPU-07` | Màn hình xác nhận nói rõ **quyền tạm** và thời hạn | |
-| `BR-PPU-08` | ❌ **NEVER hiện luồng này trên bề mặt trẻ** | |
+| `BR-PPU-08` | Cấm — **NEVER hiện luồng này trên bề mặt trẻ** | |
 
 ## 7. Data
 
@@ -89,7 +89,7 @@ entitlement `soft_unlock` với `expires_at = now + 3 ngày` · notification.
 | `rejected` | "Chưa xác nhận được" + lý do rút gọn + cách xử lý |
 | `expired` | "Đơn đã hết hạn" + nút tạo đơn mới |
 
-Lý do từ chối hiển thị **rút gọn và lịch sự** — ❌ không copy nguyên `admin_note` nội bộ.
+Lý do từ chối hiển thị **rút gọn và lịch sự** — không copy nguyên `admin_note` nội bộ.
 
 ## 8. API contract
 
@@ -153,7 +153,7 @@ Scenario: lý do từ chối hiển thị lịch sự
 ## 10. Boundaries
 
 **Always**
-- Cấp `soft_unlock`, ❌ không `active`.
+- Cấp `soft_unlock`, không `active`.
 - Lưu ảnh private.
 - Bắt buộc mã giao dịch.
 - Nói rõ quyền tạm và thời hạn.

@@ -26,7 +26,7 @@ Trang đầu tiên sau đăng nhập. Trả lời ba câu trong một lần nhì
 
 ## 2. Actors
 
-User đã đăng nhập. ❌ Trẻ không thấy trang này.
+User đã đăng nhập. Cấm Trẻ không thấy trang này.
 
 ## 3. Entry points
 
@@ -44,7 +44,7 @@ User đã đăng nhập. ❌ Trẻ không thấy trang này.
 |---|---|
 | Chưa xác thực email | Banner nhắc trên cùng |
 | Chưa có hồ sơ trẻ | Khối đầu tiên là CTA tạo hồ sơ, ẩn các khối khác |
-| Gói sắp hết hạn (<7 ngày) | Banner nhắc, ❌ không chặn |
+| Gói sắp hết hạn (<7 ngày) | Banner nhắc, không chặn |
 | Gói đã hết hạn | Banner + nội dung trả phí hiện dạng khoá |
 | Có đơn thanh toán chờ | Khối trạng thái đơn hiện trên cùng |
 
@@ -54,10 +54,10 @@ User đã đăng nhập. ❌ Trẻ không thấy trang này.
 |---|---|---|
 | `BR-MDB-01` | Chưa có hồ sơ trẻ → **chỉ** hiện CTA tạo hồ sơ | Trang đầy widget rỗng làm người mới bối rối |
 | `BR-MDB-02` | Vào khu vực chơi **phải chọn trẻ** trước | `BR-PEN-02` |
-| `BR-MDB-03` | Thông tin thương mại được phép ở đây, ❌ **NEVER trên bề mặt trẻ** | `BR-PEN-04` |
-| `BR-MDB-04` | Đọc từ **rollup**, ❌ không quét event thô | |
-| `BR-MDB-05` | Hiện quota còn lại khi **gần hết** (>80%), ❌ không phải lúc nào | Hiện thường trực tạo cảm giác bị giới hạn |
-| `BR-MDB-06` | ❌ **NEVER so sánh giữa các trẻ** trong cùng tài khoản | `BR-PRG-05` |
+| `BR-MDB-03` | Thông tin thương mại được phép ở đây, Cấm — **NEVER trên bề mặt trẻ** | `BR-PEN-04` |
+| `BR-MDB-04` | Đọc từ **rollup**, không quét event thô | |
+| `BR-MDB-05` | Hiện quota còn lại khi **gần hết** (>80%), không phải lúc nào | Hiện thường trực tạo cảm giác bị giới hạn |
+| `BR-MDB-06` | Cấm — **NEVER so sánh giữa các trẻ** trong cùng tài khoản | `BR-PRG-05` |
 | `BR-MDB-07` | Nhắc nâng cấp tối đa **một chỗ** mỗi trang | Nhiều lời mời cùng lúc đọc thành ép mua |
 
 ## 7. Data
@@ -77,7 +77,7 @@ User đã đăng nhập. ❌ Trẻ không thấy trang này.
 Avatar · tên · band tuổi · số ngày chơi trong 7 ngày · level gần nhất ·
 nút **"Cho bé chơi"** (đặt `active_child_id` rồi chuyển `/play`).
 
-❌ Không hiện điểm số, ❌ không hiện xếp hạng giữa các trẻ.
+Cấm hiện điểm số, không hiện xếp hạng giữa các trẻ.
 
 ## 8. API contract
 

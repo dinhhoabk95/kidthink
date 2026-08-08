@@ -410,29 +410,29 @@ Giao cho một agent (general-purpose) làm cả 15 file còn lại theo đúng 
 > Khu vực **sạch nhất** về chữ viết tắt: 0 lượt. Hai file đầu chiếm một phần ba khối lượng;
 > 18 file còn lại trung bình 10 ký hiệu mỗi file, làm rất nhanh.
 
-- [ ] [`social-login.md`](../specs/03-account/social-login.md) — 49 kh, 2 tc · 281 dòng
-- [ ] [`social-account-linking.md`](../specs/03-account/social-account-linking.md) — 37 kh, 3 tc · 268 dòng
-- [ ] [`account-deletion.md`](../specs/03-account/account-deletion.md) — 18 kh, 1 tc
-- [ ] [`account-settings.md`](../specs/03-account/account-settings.md) — 17 kh, 2 tc
-- [ ] [`mfa.md`](../specs/03-account/mfa.md) — 18 kh, 1 tc
-- [ ] [`registration.md`](../specs/03-account/registration.md) — 16 kh, 1 tc
-- [ ] [`consent-management.md`](../specs/03-account/consent-management.md) — 15 kh
-- [ ] [`child-profile-archive.md`](../specs/03-account/child-profile-archive.md) — 13 kh, 1 tc
-- [ ] [`advanced-report.md`](../specs/03-account/advanced-report.md) — 9 kh, 2 tc · giữ nguyên ranh giới "không chẩn đoán, không nhãn phát triển"
-- [ ] [`basic-report.md`](../specs/03-account/basic-report.md) — 9 kh, 2 tc
-- [ ] [`login-and-session.md`](../specs/03-account/login-and-session.md) — 11 kh
-- [ ] [`password-recovery.md`](../specs/03-account/password-recovery.md) — 9 kh, 2 tc
-- [ ] [`email-verification.md`](../specs/03-account/email-verification.md) — 10 kh
-- [ ] [`payment-proof-upload.md`](../specs/03-account/payment-proof-upload.md) — 10 kh
-- [ ] [`child-profile-crud.md`](../specs/03-account/child-profile-crud.md) — 9 kh
-- [ ] [`member-dashboard.md`](../specs/03-account/member-dashboard.md) — 8 kh
-- [ ] [`child-profile-switching.md`](../specs/03-account/child-profile-switching.md) — 5 kh
-- [ ] [`my-library.md`](../specs/03-account/my-library.md) — 5 kh
-- [ ] [`subscription-view.md`](../specs/03-account/subscription-view.md) — 4 kh
-- [ ] [`payment-order-create.md`](../specs/03-account/payment-order-create.md) — 2 kh, 1 tc
-- [ ] Xoá `03-account` khỏi danh sách hoãn, **cùng commit**
-- [ ] `pnpm check` exit 0 · `pnpm test` không giảm · `approved` vẫn 23
-- [ ] Commit
+- [x] [`social-login.md`](../specs/03-account/social-login.md) — 49 kh, 2 tc · 281 dòng → 0/0/0
+- [x] [`social-account-linking.md`](../specs/03-account/social-account-linking.md) — 37 kh, 3 tc · 268 dòng → 0/0/0
+- [x] [`account-deletion.md`](../specs/03-account/account-deletion.md) — 18 kh, 1 tc → 0/0/0
+- [x] [`account-settings.md`](../specs/03-account/account-settings.md) — 17 kh, 2 tc → 0/0/0
+- [x] [`mfa.md`](../specs/03-account/mfa.md) — 18 kh, 1 tc → 0/0/0
+- [x] [`registration.md`](../specs/03-account/registration.md) — 16 kh, 1 tc → 0/0/0
+- [x] [`consent-management.md`](../specs/03-account/consent-management.md) — 15 kh → 0/0/0
+- [x] [`child-profile-archive.md`](../specs/03-account/child-profile-archive.md) — 13 kh, 1 tc → 0/0/0
+- [x] [`advanced-report.md`](../specs/03-account/advanced-report.md) — 9 kh, 2 tc → 0/0/0
+- [x] [`basic-report.md`](../specs/03-account/basic-report.md) — 9 kh, 2 tc → 0/0/0
+- [x] [`login-and-session.md`](../specs/03-account/login-and-session.md) — 11 kh → 0/0/0
+- [x] [`password-recovery.md`](../specs/03-account/password-recovery.md) — 9 kh, 2 tc → 0/0/0
+- [x] [`email-verification.md`](../specs/03-account/email-verification.md) — 10 kh → 0/0/0
+- [x] [`payment-proof-upload.md`](../specs/03-account/payment-proof-upload.md) — 10 kh → 0/0/0
+- [x] [`child-profile-crud.md`](../specs/03-account/child-profile-crud.md) — 9 kh → 0/0/0
+- [x] [`member-dashboard.md`](../specs/03-account/member-dashboard.md) — 8 kh → 0/0/0
+- [x] [`child-profile-switching.md`](../specs/03-account/child-profile-switching.md) — 5 kh → 0/0/0
+- [x] [`my-library.md`](../specs/03-account/my-library.md) — 5 kh → 0/0/0
+- [x] [`subscription-view.md`](../specs/03-account/subscription-view.md) — 4 kh → 0/0/0
+- [x] [`payment-order-create.md`](../specs/03-account/payment-order-create.md) — 2 kh, 1 tc → 0/0/0
+- [x] Xoá `03-account` khỏi danh sách hoãn, **cùng commit**
+- [x] `pnpm check` exit 0 · `pnpm test` không giảm · `approved` vẫn 38
+- [x] Commit
 
 ## Bước 10 — `02-public` 9 file và `08-quality` 5 file · 204 kh · 23 tc
 

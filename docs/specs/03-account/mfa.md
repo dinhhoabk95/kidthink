@@ -19,15 +19,15 @@ depends_on:
 ## 1. Objective
 
 MFA cho **User** là **tuỳ chọn**, phase **P2** — User tự bật ở
-`/me/settings/security`. ❌ Không chặn go-live MVP. MFA cho **Manager** là bắt buộc và đã
+`/me/settings/security`. Cấm chặn go-live MVP. MFA cho **Manager** là bắt buộc và đã
 spec ở [`../06-admin/admin-auth.md`](../06-admin/admin-auth.md).
 
-Lý do ❌ không bắt buộc: tài khoản User giữ dữ liệu học của trẻ, ❌ không giữ tiền hay quyền
+Lý do không bắt buộc: tài khoản User giữ dữ liệu học của trẻ, không giữ tiền hay quyền
 quản trị. Rủi ro thấp hơn, và ép thêm một bước cho phụ huynh làm giảm tỉ lệ hoàn thành
 onboarding.
 
-Lý do ❌ không chặn MVP: hạ tầng đã có sẵn ở `auth-tokens-sessions` và `mfa_settings`, nên
-bật sau ❌ không phải làm lại. Chốt 2026-08-05.
+Lý do không chặn MVP: hạ tầng đã có sẵn ở [`auth-tokens-sessions.md`](../01-platform/auth-tokens-sessions.md) và `mfa_settings`, nên
+bật sau không phải làm lại. Chốt 2026-08-05.
 
 MFA đứng **sau** mọi cách xác thực yếu tố thứ nhất — mật khẩu hay SNS đều như nhau
 (`BR-MFA-09`).
@@ -65,22 +65,22 @@ nhập, dùng chung cho cả mật khẩu và SNS).
 | Hết mã khôi phục | Liên hệ hỗ trợ; quy trình xác minh ngoài hệ thống |
 | Tắt MFA | Cần **reauth** + một mã hợp lệ — `BR-MFA-03` |
 | Đăng nhập bằng SNS | Vẫn qua thử thách MFA, cùng route — `BR-MFA-09` |
-| Tài khoản chỉ có SNS | Reauth bằng OAuth với provider đã liên kết, ❌ không cần mật khẩu |
+| Tài khoản chỉ có SNS | Reauth bằng OAuth với provider đã liên kết, không cần mật khẩu |
 
 ## 6. Business rules
 
 | ID | Rule | Vì sao |
 |---|---|---|
-| `BR-MFA-01` | Secret lưu **mã hoá**, ❌ không plaintext | |
+| `BR-MFA-01` | Secret lưu **mã hoá**, không plaintext | |
 | `BR-MFA-02` | Mã khôi phục lưu **hash**, dùng **một lần** | |
-| `BR-MFA-03` | Tắt MFA cần **reauth §7.4 và một mã hợp lệ** — hai thứ, ❌ không phải một | Phiên bị chiếm ❌ không được tắt MFA. Trước đây rule này ghi "mật khẩu"; `password_hash` nullable từ `BR-SIB-08` làm tài khoản chỉ-SNS ❌ không tắt được MFA của chính mình — reauth là dạng tổng quát đúng |
+| `BR-MFA-03` | Tắt MFA cần **reauth §7.4 và một mã hợp lệ** — hai thứ, không phải một | Phiên bị chiếm không được tắt MFA. Trước đây rule này ghi "mật khẩu"; `password_hash` nullable từ `BR-SIB-08` làm tài khoản chỉ-SNS không tắt được MFA của chính mình — reauth là dạng tổng quát đúng |
 | `BR-MFA-04` | Cửa sổ TOTP ±1 bước (±30s) | Lệch đồng hồ là chuyện thường |
-| `BR-MFA-05` | ❌ **NEVER SMS OTP** | SIM swap; và số điện thoại là dữ liệu ta ❌ không thu |
+| `BR-MFA-05` | Cấm — **NEVER SMS OTP** | SIM swap; và số điện thoại là dữ liệu ta không thu |
 | `BR-MFA-06` | Bật MFA → **thu hồi phiên khác** | |
 | `BR-MFA-07` | Mã khôi phục hiện **đúng một lần** lúc sinh | |
 | `BR-MFA-08` | MFA cho User là **tuỳ chọn**; cho Manager là **bắt buộc** | |
-| `BR-MFA-09` | SNS ❌ **NEVER thay được MFA.** Thử thách chạy sau mọi yếu tố thứ nhất | `BR-AUT-17`. "Đã đăng nhập Google" chứng minh danh tính, ❌ không chứng minh thiết bị thứ hai. Coi nó là yếu tố thứ hai là hạ MFA xuống một yếu tố |
-| `BR-MFA-10` | Bật MFA cũng cần **reauth**, ❌ không chỉ phiên hợp lệ | Kẻ chiếm phiên bật MFA bằng thiết bị của họ sẽ khoá chủ tài khoản ra ngoài vĩnh viễn |
+| `BR-MFA-09` | SNS Cấm — **NEVER thay được MFA.** Thử thách chạy sau mọi yếu tố thứ nhất | `BR-AUT-17`. "Đã đăng nhập Google" chứng minh danh tính, không chứng minh thiết bị thứ hai. Coi nó là yếu tố thứ hai là hạ MFA xuống một yếu tố |
+| `BR-MFA-10` | Bật MFA cũng cần **reauth**, không chỉ phiên hợp lệ | Kẻ chiếm phiên bật MFA bằng thiết bị của họ sẽ khoá chủ tài khoản ra ngoài vĩnh viễn |
 | `BR-MFA-11` | Sinh lại mã khôi phục cần **reauth + một mã hợp lệ**, và **vô hiệu toàn bộ** bộ cũ | Hai bộ mã cùng sống là hai cửa vào |
 
 ## 7. Data
@@ -109,8 +109,8 @@ Body `{ code }`. 200 → `{ recovery_codes: string[] }` — **hiện một lần
 Auth `requireUserAuth()` + **reauth ≤5 phút**. Body `{ code }`. 200.
 401 `MFA_INVALID_CODE` · 422 khi thiếu `code` · 428 `REAUTH_REQUIRED`.
 
-❌ Không nhận `password` ở body — reauth đã làm việc đó và nó chấp nhận cả tài khoản
-❌ không có mật khẩu (`BR-MFA-03`).
+Cấm nhận `password` ở body — reauth đã làm việc đó và nó chấp nhận cả tài khoản
+không có mật khẩu (`BR-MFA-03`).
 
 ### `POST /api/users/mfa/recovery-codes`
 
@@ -210,4 +210,4 @@ Scenario: BR-MFA-07 — mã khôi phục hiện một lần
 | # | Câu hỏi | Chặn gì |
 |---|---|---|
 | 1 | Quy trình khôi phục khi User mất cả thiết bị lẫn mã khôi phục là gì? | P2 |
-| 2 | Tài khoản chỉ có SNS và đã bật MFA: nếu mất luôn tài khoản SNS thì reauth bằng gì? Hiện ❌ không có đường nào ngoài hỗ trợ thủ công | P2 |
+| 2 | Tài khoản chỉ có SNS và đã bật MFA: nếu mất luôn tài khoản SNS thì reauth bằng gì? Hiện không có đường nào ngoài hỗ trợ thủ công | P2 |
