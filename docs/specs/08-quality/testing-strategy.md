@@ -181,7 +181,7 @@ Scenario: E2E chạy đúng viewport
 
 ## 11. Open questions
 
-| # | Câu hỏi | Chặn gì |
-|---|---|---|
-| 1 | Cổng tự động chạy PG Docker mất bao lâu? Nếu quá chậm cần tách suite | P0 |
-| 2 | Thiết bị chuẩn đo 60 fps trong E2E là gì? | [`game-engine-runtime.md`](../01-platform/game-engine-runtime.md) Q1 |
+| # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
+|---|---|---|---|---|
+| 1 | Cổng tự động chạy PG Docker mất bao lâu? Nếu quá chậm cần tách suite | P0 | P0 | Infra |
+| 2 | Thiết bị chuẩn đo 60 fps trong E2E là gì? | [`game-engine-runtime.md`](../01-platform/game-engine-runtime.md) Q1 | P1 | người quyết |
