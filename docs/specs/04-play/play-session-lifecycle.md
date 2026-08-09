@@ -199,5 +199,5 @@ Scenario: BR-PSL-10 — không có endpoint tạo phiên riêng
 
 | # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
 |---|---|---|---|---|
-| 1 | 30 phút để đóng phiên bỏ dở có đúng không? | Quy chuẩn phiên | P1 | Chốt: Đúng, 30 phút là ngưỡng quét phù hợp cho phiên chơi mầm non; sau 30p không event hệ thống tự sweep sang abandoned |
-| 2 | Trẻ quay lại phiên `abandoned` — cho tiếp tục hay bắt đầu mới? | UX phiên chơi | P1 | Chốt: Bắt đầu mới; phiên abandoned là terminal state, không cho mở lại để bảo toàn telemetry |
+| ~~1~~ | ~~30 phút để đóng phiên bỏ dở có đúng không?~~ **Đóng 2026-08-09 (T13, `D-DF`)**: đúng, 30 phút là ngưỡng quét phù hợp cho phiên chơi mầm non; sau 30p không event hệ thống tự sweep sang abandoned | Quy chuẩn phiên | Đã đóng | D-DF |
+| ~~2~~ | ~~Trẻ quay lại phiên `abandoned` — cho tiếp tục hay bắt đầu mới?~~ **Đóng 2026-08-09 (T13, `D-DG`)**: bắt đầu mới; phiên abandoned là terminal state, không cho mở lại để bảo toàn telemetry | UX phiên chơi | Đã đóng | D-DG |
