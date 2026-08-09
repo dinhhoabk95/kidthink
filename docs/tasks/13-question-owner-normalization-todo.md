@@ -140,18 +140,30 @@ Lô nặng nhất, gần như toàn nhóm A.
 - [x] [`curriculum-player.md`](../specs/04-play/curriculum-player.md) — đã sạch từ trước, không có hàng nợ
 - [x] Sau lô: `C17` 46 → 25 (giảm đúng 21, không phải 22 — curriculum-player không có hàng)
 
-## Lô 6 — `08-quality`, 3 file / 6 hàng
+## Lô 6 — `08-quality`, 3 file / 6 hàng (+ mở rộng)
 
-- [ ] [`accessibility.md`](../specs/08-quality/accessibility.md) — A1+B1
-- [ ] [`design-system-contract.md`](../specs/08-quality/design-system-contract.md) — A2
-- [ ] [`performance-budgets.md`](../specs/08-quality/performance-budgets.md) — A1+B1
+- [x] [`accessibility.md`](../specs/08-quality/accessibility.md) — A1+B1, tái dùng D-AR
+- [x] [`design-system-contract.md`](../specs/08-quality/design-system-contract.md) — A2, tái dùng D-AU
+      (trùng câu hỏi child-profile-crud.md Q1), cấp D-DM
+- [x] [`performance-budgets.md`](../specs/08-quality/performance-budgets.md) — A1+B1, tái dùng D-CH
+
+**Mở rộng ngoài kế hoạch** — corpus trôi qua T14/T15 để lộ nợ `C17` ở 13 file khác không nằm
+trong 42 file gốc (`pnpm lint:specs` là nguồn sự thật, không phải danh sách kế hoạch mục 6):
+
+- [x] `08-quality/security-checklist.md`, `testing-strategy.md` — câu trả lời đã có mã sẵn, chỉ
+      cập nhật Chủ
+- [x] `00-foundation/actors.md`, `content-versioning.md`, `monorepo-package-architecture.md`
+- [x] `01-platform/auth-tokens-sessions.md`, `content-seed-authoring.md`, `game-engine-runtime.md`,
+      `schema-content-taxonomy.md`, `taxonomy-service.md`
+- [x] `03-account/account-settings.md`, `registration.md` — câu hỏi gạch tay nhưng số hàng chưa gạch
+- [x] `07-addon/ai-assistant.md` — Chủ/Chặn phase đều là placeholder "đã chốt", cấp mã thật D-DL
 
 ## Cổng dừng C — hết nợ
 
-- [ ] `pnpm lint:specs 2>&1 | tail -2` — **0 lỗi, 0 cảnh báo**
-- [ ] Không ô `Chủ` nào ngoài bộ đóng:
-      `grep -rh "^| [0-9~]" docs/specs --include="*.md" | awk -F'|' 'NF>=6 {print $6}' | sed 's/^ *//;s/ *$//' | sort -u`
-- [ ] `pnpm check && pnpm test` xanh
+- [x] `pnpm lint:specs 2>&1 | tail -2` — **0 lỗi, 0 cảnh báo** ✓ (toàn corpus, không chỉ 42 file gốc)
+- [x] Không ô `Chủ` nào ngoài bộ đóng — xác nhận qua `checkC17` chặng 1 (mọi hàng qua cổng)
+- [ ] `pnpm check && pnpm test` — vẫn đỏ do `packages/auth` (T16, người khác code sống, ngoài phạm
+      vi agent). `pnpm lint:specs`, `pnpm test scripts/tests/lint-specs.test.ts` (58/58) xanh.
 
 ---
 
