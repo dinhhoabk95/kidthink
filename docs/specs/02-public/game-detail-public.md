@@ -156,5 +156,5 @@ Scenario: URL bền khi đổi tiêu đề
 
 | # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
 |---|---|---|---|---|
-| 1 | Có nên có ảnh chụp màn hình game không? | Media hiển thị trang chi tiết | P1 | Chốt: P1 dùng 3 ảnh xem trước tĩnh (static preview) do Designer cung cấp; P2 mới tự động chụp |
+| ~~1~~ | ~~Có nên có ảnh chụp màn hình game không?~~ **Đóng 2026-08-09 (T13, `D-CV`)**: P1 dùng 3 ảnh xem trước tĩnh (static preview) do Designer cung cấp; P2 mới tự động chụp | Media hiển thị trang chi tiết | Đã đóng | D-CV |
 
