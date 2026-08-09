@@ -181,7 +181,7 @@ Scenario: RTO đo được trong DR drill
 >
 | # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
 |---|---|---|---|---|
-| 1 | Ai sở hữu khoá mã hoá backup và quy trình xoay khoá? Không có chủ thì `BR-BAK-02` không thi hành được — và mất khoá = mất toàn bộ backup | Go-live | go-live, không hoãn thêm được | cần **người** — không phải quyết định kỹ thuật |
+| 1 | Ai sở hữu khoá mã hoá backup và quy trình xoay khoá? Không có chủ thì `BR-BAK-02` không thi hành được — và mất khoá = mất toàn bộ backup | Go-live | go-live, không hoãn thêm được | người quyết |
 | 2 | RPO 24h có chấp nhận được về mặt thương mại không, hay cần WAL archiving? | Ngân sách hạ tầng | chờ P1 | hoãn — §7.1 đã ghi rõ đánh đổi; mở lại nếu thương mại bác RPO 24h |
 | 3 | Nếu `07-addon/semantic-search` triển khai (extension `pgvector`), container restore tạm ở §4 bước 4 cần `CREATE EXTENSION vector` trước khi restore — bổ sung bước nào, và `backup:verify` có cần smoke query trên cột `vector` không? | Khi [`semantic-search.md`](../07-addon/semantic-search.md) chuyển `implemented` | chờ P4 | hoãn — điều kiện kích hoạt viết bằng câu đo được: mở lại **khi** [`semantic-search.md`](../07-addon/semantic-search.md) rời `draft` |
 | 4 | Backup S3 có cần cross-region không? | Chi phí | chờ P2 | hoãn — mở lại khi có ước tính chi phí S3 thật |
