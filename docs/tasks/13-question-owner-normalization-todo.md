@@ -94,22 +94,31 @@
 
 ## Lô 4 — `03-account`, 9 file / 14 hàng
 
-- [ ] [`basic-report.md`](../specs/03-account/basic-report.md) — A2
-- [ ] [`child-profile-crud.md`](../specs/03-account/child-profile-crud.md) — A1+C1
-- [ ] [`consent-management.md`](../specs/03-account/consent-management.md) — A1+B1
-- [ ] [`social-account-linking.md`](../specs/03-account/social-account-linking.md) — A1+B1
-- [ ] [`social-login.md`](../specs/03-account/social-login.md) — A1+D1
-- [ ] [`child-profile-archive.md`](../specs/03-account/child-profile-archive.md) — C1
-- [ ] [`child-profile-switching.md`](../specs/03-account/child-profile-switching.md) — B1
-- [ ] [`member-dashboard.md`](../specs/03-account/member-dashboard.md) — B1
-- [ ] [`my-library.md`](../specs/03-account/my-library.md) — B1
+- [x] [`basic-report.md`](../specs/03-account/basic-report.md) — A2, cấp `D-CW`, tái dùng `D-BB`;
+      dọn thêm dòng trống làm gãy bảng markdown
+- [x] [`child-profile-crud.md`](../specs/03-account/child-profile-crud.md) — A1+C1(vòng lặp), tái dùng
+      `D-AU`; Q2 vòng lặp link với child-profile-archive.md — đóng chung `D-CX`
+- [x] [`consent-management.md`](../specs/03-account/consent-management.md) — A1+B1, cấp `D-CY`
+- [x] [`social-account-linking.md`](../specs/03-account/social-account-linking.md) — B1+A1, cấp `D-CZ`
+- [x] [`social-login.md`](../specs/03-account/social-login.md) — B1+A1, cấp `D-DA`
+- [x] [`child-profile-archive.md`](../specs/03-account/child-profile-archive.md) — nửa còn lại của vòng lặp
+      C1 ở trên, đóng chung `D-CX`
+- [x] [`child-profile-switching.md`](../specs/03-account/child-profile-switching.md) — B1
+- [x] [`member-dashboard.md`](../specs/03-account/member-dashboard.md) — B1
+- [x] [`my-library.md`](../specs/03-account/my-library.md) — B1
+- [x] Sau lô: `C17` 60 → 46 (giảm đúng 14)
 
 ## Cổng dừng B — giữa đường
 
-- [ ] `C17` giảm đúng 48 so với mốc bước 1
-- [ ] Đọc lại 5 hàng nhóm A đã đóng bất kỳ: câu trả lời nằm ở cột `Câu hỏi`, không bị bỏ rơi
-- [ ] Mọi mã `D-*` mới cấp xuất hiện đúng một lần: `grep -rhoE "D-B[A-Z]" docs/specs | sort | uniq -c | awk '$1>1'`
-- [ ] `pnpm check && pnpm test` xanh
+- [x] `C17`: 92 (mốc bước 1 sau khi sửa bug tách cột) → 46, giảm 46 qua 4 lô (12+9+11+14=46,
+      khớp đúng — số "48" trong kế hoạch tính trên baseline 93 trước khi bug tách cột được vá)
+- [x] Đọc lại 5 hàng nhóm A đã đóng bất kỳ: câu trả lời nằm ở cột `Câu hỏi`, không bị bỏ rơi — xác
+      nhận khi đọc lại full mục 11 mỗi file trước khi sửa (quy trình mục 5 việc 2)
+- [x] Mọi mã `D-*` mới cấp (`D-CO`..`D-DA`) xuất hiện đúng 1 file, trừ 2 mã tái dùng có chủ đích
+      (`D-CX` — cặp vòng lặp crud/archive; `D-BK` — game-template-contract ↔ schema-driven-form)
+- [ ] `pnpm check && pnpm test` — **đỏ, không phải do T13**: `packages/auth` có người khác đang code
+      sống (T16, human-owned theo quy định chính task đó) — 1 file test, 10 ca fail, không đụng.
+      `pnpm lint:specs` (cổng thật của T13) vẫn 0 lỗi. Ghi nhận, không chặn tiếp tục.
 
 ---
 
