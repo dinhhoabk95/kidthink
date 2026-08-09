@@ -1,1 +1,38 @@
-export {};
+export {
+  type AuthContext,
+  type AuthEvent,
+  createAuthContext,
+  type GuestAuthContext,
+  type ManagerAuthContext,
+  type ManagerRole,
+  type ManagerTokenPayload,
+  requireManagerAuth,
+  requireRole,
+  requireUserAuth,
+  type UserAuthContext,
+  type UserTokenPayload,
+} from "./contracts";
+export {
+  AppError,
+  AUTH_ERROR_DEFINITIONS,
+  type AuthErrorCode,
+  type AuthErrorDetails,
+  type AuthErrorResponse,
+  appError,
+} from "./errors";
+export type {
+  AccountReference,
+  AccountType,
+  AuditPort,
+  AuthAuditEvent,
+  AuthMethod,
+  ChildOwnershipPort,
+  EntitlementPort,
+  RateLimitAxis,
+  RateLimitDecision,
+  RateLimitPort,
+  RotateSessionInput,
+  RotateSessionResult,
+  SessionRecord,
+  SessionStorePort,
+} from "./ports";

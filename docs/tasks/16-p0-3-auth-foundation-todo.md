@@ -40,12 +40,12 @@
 
 ## Task 2 — Định nghĩa public contract `@kidthink/auth`
 
-- [ ] Viết domain types User/Manager loại trừ nhau.
-- [ ] Viết structured error mapping theo registry.
-- [ ] Viết port cho session store, rate limit, audit, ownership và entitlement.
-- [ ] Viết test âm trước cho cross-audience, Promise guard và dual context.
-- [ ] `pnpm --filter @kidthink/auth test -- contracts`
-- [ ] `pnpm --filter @kidthink/auth typecheck`
+- [x] Viết domain types User/Manager loại trừ nhau.
+- [x] Viết structured error mapping theo registry.
+- [x] Viết port cho session store, rate limit, audit, ownership và entitlement.
+- [x] Viết test âm trước cho cross-audience, Promise guard và dual context.
+- [x] `pnpm --filter @kidthink/auth test -- contracts`
+- [x] `pnpm --filter @kidthink/auth typecheck`
 
 ## Task 3 — Làm User session slice
 
