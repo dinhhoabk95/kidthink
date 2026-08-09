@@ -82,14 +82,15 @@
 
 ## Lô 3 — `02-public`, 7 file / 11 hàng
 
-- [ ] [`landing-page.md`](../specs/02-public/landing-page.md) — A2
-- [ ] [`seo-and-structured-data.md`](../specs/02-public/seo-and-structured-data.md) — A2
-- [ ] [`legal-pages.md`](../specs/02-public/legal-pages.md) — A1+C2
-- [ ] [`cookie-and-consent-banner.md`](../specs/02-public/cookie-and-consent-banner.md) — A1
-- [ ] [`faq-and-help.md`](../specs/02-public/faq-and-help.md) — A1
-- [ ] [`game-catalog-public.md`](../specs/02-public/game-catalog-public.md) — A1
-- [ ] [`game-detail-public.md`](../specs/02-public/game-detail-public.md) — A1
-- [ ] Sau lô: `C17` giảm đúng 11
+- [x] [`landing-page.md`](../specs/02-public/landing-page.md) — A2, tái dùng `D-AW`/`D-AY`
+- [x] [`seo-and-structured-data.md`](../specs/02-public/seo-and-structured-data.md) — A2, cấp `D-CS`/`D-CT`
+- [x] [`legal-pages.md`](../specs/02-public/legal-pages.md) — A1+C2, tái dùng `D-AS`; Q2/Q3 chép Chủ từ
+      child-data-compliance.md và payment-approval.md
+- [x] [`cookie-and-consent-banner.md`](../specs/02-public/cookie-and-consent-banner.md) — A1, tái dùng `D-AW`
+- [x] [`faq-and-help.md`](../specs/02-public/faq-and-help.md) — A1, tái dùng `D-AX`
+- [x] [`game-catalog-public.md`](../specs/02-public/game-catalog-public.md) — A1, cấp `D-CU`
+- [x] [`game-detail-public.md`](../specs/02-public/game-detail-public.md) — A1, cấp `D-CV`
+- [x] Sau lô: `C17` 71 → 60 (giảm đúng 11)
 
 ## Lô 4 — `03-account`, 9 file / 14 hàng
 
