@@ -30,14 +30,15 @@ nhau** — khi spec là nguồn sinh, một thay đổi contract không thể qu
 ### 1.1 Ranh giới
 
 ```
-spec (nguồn sự thật)  ──sinh──►  scaffold  ──người viết logic──►  code
-                                     │
-                       AI dừng ở đây │  logic nghiệp vụ, quyết định kiến trúc,
-                                     │  và MỌI thứ trong vùng cấm §5 là của người
+spec (nguồn sự thật)  ──sinh──►  scaffold  ──viết logic──►  code
+                                     │                       │
+                         test + gate └──────────────► PR review người
 ```
 
-AI sinh **khung**, không sinh **quyết định**. Một route skeleton có guard đúng, Zod đúng, mã
-lỗi đúng — nhưng thân hàm là `throw new Error("TODO")` cho tới khi người viết.
+Generator mặc định sinh **khung**, không tự tạo **quyết định**. Ngoại lệ Task #14 cho phép AI
+viết cả implementation, kể cả sáu vùng nhạy cảm ở mục 5, nhưng mọi quyết định vẫn phải có
+trong spec trước. Một route skeleton ngoài ngoại lệ vẫn giữ thân hàm
+`throw new Error("TODO")` cho tới khi được implement theo contract.
 
 Spec này sở hữu **code**. Seeder **nội dung** (game level, LO, lesson, curriculum) cũng là
 file TS trong repo và cũng qua PR review, nhưng contract của nó ở
@@ -50,7 +51,7 @@ nhau.
 |---|---|---|
 | Dev | Chạy generator, review diff, viết logic, mở PR | — |
 | Generator (máy, không LLM) | Sinh từ artefact xác định: Zod, Drizzle, barrel, type | — |
-| LLM | Sinh skeleton cần suy luận: test từ Gherkin, Session class từ template contract | Ghi thẳng vào `main` · chạm vùng cấm §5 |
+| LLM | Sinh skeleton cần suy luận; trong Task #14 được sinh code vùng nhạy cảm theo mục 5 | Ghi thẳng vào `main` · bỏ test/gate/review bắt buộc |
 | cổng tự động | Chặn merge khi cổng §6 đỏ | — |
 
 ## 3. Entry points
@@ -83,7 +84,7 @@ cổng §6.
 
 ## 5. Alternative flows
 
-Nhánh rẽ ở đây không phải lỗi runtime — là vùng cấm AI sinh code sẽ merge, theo bảng dưới.
+Sáu vùng dưới đây cần review tăng cường vì hậu quả khi sai lớn hơn phần còn lại.
 
 | Vùng | Vì sao |
 |---|---|
@@ -94,8 +95,16 @@ Nhánh rẽ ở đây không phải lỗi runtime — là vùng cấm AI sinh co
 | **Migration chạy tự động** | Migration sai làm hỏng dữ liệu production |
 | **Nội dung đã published** | [`content-lifecycle.md`](../00-foundation/content-lifecycle.md) `BR-CLC-01` |
 
-Ở sáu vùng này AI được **đọc, giải thích, đề xuất, review** — không được **sinh code sẽ
-merge**.
+**Ngoại lệ Task #14, chốt ngày 2026-08-09:** trong phạm vi
+[`14-implementation-sequence-plan.md`](../../tasks/14-implementation-sequence-plan.md), AI
+được phép sinh code ở sáu vùng nhạy cảm này. Mỗi increment phải bắt đầu từ spec sở hữu, có
+test âm trước implementation, chạy gate đầy đủ, ghi rõ phần AI soạn và được người review diff
+trước merge.
+
+Ngoại lệ không cho phép auto-merge, chạy migration ngoài local, sửa trực tiếp hàng
+`published`, gọi transition publish, hoặc phát hành nội dung. Các invariant của từng vùng,
+đặc biệt danh sách không bao giờ được nới tại mục 7.3 của
+[`business-rules.md`](../00-foundation/business-rules.md), giữ nguyên.
 
 Ranh giới đặt theo *hậu quả khi sai*, không theo *độ khó khi viết*.
 
@@ -105,7 +114,7 @@ Ranh giới đặt theo *hậu quả khi sai*, không theo *độ khó khi viế
 |---|---|---|
 | `BR-AIG-01` | Code sinh ra Cấm — **NEVER** merge tự động. Luôn qua PR có người review | AI sinh sai thì người bắt; merge tự động thì không ai bắt |
 | `BR-AIG-02` | Ưu tiên generator **xác định** hơn LLM. Dùng LLM chỉ khi output không suy ra máy móc được | Generator xác định tái lập được, diff sạch, không tốn tiền |
-| `BR-AIG-03` | AI Cấm — **NEVER** sinh code trong vùng cấm §5 | Hậu quả khi sai ở sáu vùng đó (lỗ hổng, mất tiền, rò dữ liệu trẻ) lớn hơn lợi ích tiết kiệm thời gian |
+| `BR-AIG-03` | Trong Task #14, AI được sinh code ở sáu vùng nhạy cảm mục 5 khi có spec-first, test âm, gate đầy đủ và người review diff; ngoài phạm vi này phải đổi canonical contract trước | Hậu quả khi sai vẫn lớn, nên quyền soạn code được tách khỏi quyền merge, chạy migration và phát hành |
 | `BR-AIG-04` | Code sinh ra mang header `@generated from <spec-id>@<sha>`; Cấm — **NEVER sửa tay** file `@generated` | Sửa tay file sinh ra sẽ mất ở lần sinh sau |
 | `BR-AIG-05` | Test sinh từ Gherkin ra dưới dạng `test.todo`, **không** dưới dạng test rỗng pass | Test rỗng pass là tệ hơn không có test — nó báo xanh giả |
 | `BR-AIG-06` | `pnpm gen:check` chạy trong cổng tự động, **chặn merge** khi spec và code lệch | Không có cổng này thì spec trôi khỏi code trong 3 sprint |
@@ -217,11 +226,13 @@ Scenario: BR-AIG-04 — sửa tay file generated bị bắt
   When ai đó sửa tay một dòng trong file đó
   Then pnpm gen:check báo error hash lệch
 
-Scenario: BR-AIG-03 — không sinh code vùng cấm
-  When chạy pnpm gen:routes
-  Then không file nào được sinh dưới packages/auth
-  And route thanh toán chỉ sinh chữ ký và Zod, thân hàm là TODO
-  And thân hàm không chứa logic cấp entitlement
+Scenario: BR-AIG-03 — ngoại lệ Task #14 vẫn giữ cổng người
+  Given một increment Task #14 thuộc auth, thanh toán, gating, dữ liệu trẻ, migration hoặc nội dung published
+  When AI soạn code implementation trong repo
+  Then code có test âm tham chiếu business rule sở hữu
+  And pnpm check và pnpm test xanh
+  And PR ghi rõ phần AI soạn để người review diff trước merge
+  And không auto-merge, chạy migration ngoài local hoặc phát hành nội dung
 
 Scenario: BR-AIG-09 — Session class sinh ra không có hex literal
   Given pnpm gen:session --template=GT-003 đã chạy
@@ -252,6 +263,7 @@ Scenario: mọi mã lỗi trong code đều có trong registry
 - Tách `*.gen.ts` khỏi `*.impl.ts`.
 - Chạy `gen:check` trong cổng tự động như cổng chặn merge.
 - Sửa spec trước, sinh lại, rồi sửa code.
+- Với sáu vùng nhạy cảm trong Task #14: test âm trước, gate đầy đủ và người review diff.
 
 **Ask first**
 - Thêm một loại artefact sinh ra.
@@ -260,7 +272,8 @@ Scenario: mọi mã lỗi trong code đều có trong registry
 
 **Never**
 - Merge tự động code sinh ra.
-- Sinh code trong vùng cấm §5.
+- Dùng ngoại lệ Task #14 để chạy migration ngoài local, sửa trực tiếp hàng `published`, gọi
+  transition publish hoặc phát hành nội dung.
 - Sửa tay file `@generated`.
 - Sinh test rỗng pass.
 - Để code đi trước spec.

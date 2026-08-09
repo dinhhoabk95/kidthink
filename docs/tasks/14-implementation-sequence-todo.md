@@ -54,7 +54,7 @@ Năm cạnh `depends_on` đảo phase — quyết định từng cái, cấp mã
 
 Mỗi bước: tám việc ở kế hoạch mục 5, một PR.
 
-- [x] **P0.0** Cổng chất lượng và vùng cấm — [`testing-strategy.md`](../specs/08-quality/testing-strategy.md) · [`ai-codegen-pipeline.md`](../specs/01-platform/ai-codegen-pipeline.md) · [`mvp-scope.md`](../specs/00-foundation/mvp-scope.md)
+- [x] **P0.0** Cổng chất lượng và review vùng nhạy cảm — [`testing-strategy.md`](../specs/08-quality/testing-strategy.md) · [`ai-codegen-pipeline.md`](../specs/01-platform/ai-codegen-pipeline.md) · [`mvp-scope.md`](../specs/00-foundation/mvp-scope.md)
 - [x] **P0.0b** Cổng chống tick khống `pnpm check:progress` — kế hoạch mục 10; ca âm trước: commit chỉ đổi `[ ]` thành `[x]` phải làm cổng đỏ
 - [x] **P0.1** Khung repo + dependency baseline — [`repo-bootstrap.md`](../specs/00-foundation/repo-bootstrap.md) · [`monorepo-package-architecture.md`](../specs/00-foundation/monorepo-package-architecture.md)
 - [x] **P0.2** Từ vựng và ID — [`glossary.md`](../specs/00-foundation/glossary.md) · [`id-conventions.md`](../specs/00-foundation/id-conventions.md)

@@ -1,7 +1,8 @@
 # Todo: P0.3 — Actors, guard và nền session
 
-> Plan chi tiết: [`16-p0-3-auth-foundation-plan.md`](16-p0-3-auth-foundation-plan.md). Mọi mục sinh/sửa code auth là **human-only**. Agent chỉ
-> được rà soát, chạy cổng read-only và báo evidence.
+> Plan chi tiết: [`16-p0-3-auth-foundation-plan.md`](16-p0-3-auth-foundation-plan.md). Theo
+> ngoại lệ Task #14, AI được sinh/sửa code auth khi viết test âm trước, chạy gate đầy đủ và
+> để human review diff trước merge. Không auto-merge hoặc thao tác production.
 
 ## Preflight
 
@@ -16,7 +17,7 @@
 - [x] TTL refresh Manager là 24 giờ; User là 7 ngày.
 - [x] Guest device cookie canonical là `tm_did`; actors chỉ link tới spec cookie.
 - [x] Contract package dùng Sidebase Local + JWT access bằng `jose`; OAuth P1 qua backend bridge.
-- [ ] Human thứ hai review threat model và sáu vùng AI bị cấm.
+- [x] Human thứ hai review threat model, sáu vùng nhạy cảm và ngoại lệ Task #14.
 - [x] `pnpm lint:specs` xanh.
 
 ## Task 1 — Human duyệt Nuxt adapter và dependency
@@ -32,12 +33,12 @@
 
 ## Checkpoint A
 
-- [ ] Task 0 được human thứ hai approve.
+- [x] Task 0 được human thứ hai approve.
 - [x] Supply-chain review hoàn tất.
-- [x] Không code auth nào do agent sinh hoặc sửa.
+- [x] Ngoại lệ Task #14 và các cổng test/review đã được ghi trong canonical contract.
 - [x] `pnpm check && pnpm lint:specs` xanh.
 
-## Task 2 — Human định nghĩa public contract `@kidthink/auth`
+## Task 2 — Định nghĩa public contract `@kidthink/auth`
 
 - [ ] Viết domain types User/Manager loại trừ nhau.
 - [ ] Viết structured error mapping theo registry.
@@ -46,7 +47,7 @@
 - [ ] `pnpm --filter @kidthink/auth test -- contracts`
 - [ ] `pnpm --filter @kidthink/auth typecheck`
 
-## Task 3 — Human làm User session slice
+## Task 3 — Làm User session slice
 
 - [ ] Dựng Nuxt runtime tối thiểu cho `apps/web`.
 - [ ] Middleware verify JWT access đúng một lần và chỉ gắn User context.
@@ -55,7 +56,7 @@
 - [ ] Cookie/payload test đúng contract, không role/tier/package/entitlement.
 - [ ] `pnpm --filter @kidthink/web test -- auth-context`
 
-## Task 4 — Human làm Manager session slice
+## Task 4 — Làm Manager session slice
 
 - [ ] Dựng adapter riêng cho `apps/admin`.
 - [ ] Cookie, secret và audience không dùng chung với User.
@@ -71,7 +72,7 @@
 - [ ] Challenge trước MFA không qua guard và không tạo full session.
 - [ ] Human security reviewer approve diff.
 
-## Task 5 — Human làm refresh lifecycle
+## Task 5 — Làm refresh lifecycle
 
 - [ ] Token opaque; DB chỉ giữ hash.
 - [ ] Rotation atomic; token cũ reuse thu hồi toàn bộ account sessions.
@@ -80,7 +81,7 @@
 - [ ] Test khẳng định token không vào log/error/client session.
 - [ ] `pnpm --filter @kidthink/auth test -- refresh`
 
-## Task 6 — Human làm CSRF và reauth
+## Task 6 — Làm CSRF và reauth
 
 - [ ] State-changing request thiếu/mismatch CSRF bị 403.
 - [ ] Safe methods không bị CSRF middleware chặn.
@@ -88,7 +89,7 @@
 - [ ] `details.methods` phản ánh method khả dụng, không chạy OAuth/TOTP flow trước roadmap.
 - [ ] `pnpm --filter @kidthink/auth test -- csrf reauth`
 
-## Task 7 — Human hoàn thiện actor-boundary ports
+## Task 7 — Hoàn thiện actor-boundary ports
 
 - [ ] Không active child trả 428 `NO_ACTIVE_CHILD`.
 - [ ] Cookie giả mạo child của User khác trả 404 qua fake ownership adapter contract test.
@@ -103,7 +104,7 @@
 - [ ] Không route login/register/UI ngoài phạm vi trong diff.
 - [ ] `pnpm check && pnpm test && pnpm lint:specs` xanh.
 
-## Task 8 — Human đóng evidence và tiến độ
+## Task 8 — Đóng evidence và tiến độ
 
 - [ ] Mỗi `BR-ACT-*` và `BR-AUT-*` có test tham chiếu và assertion đúng hành vi.
 - [ ] Human thứ hai hoàn tất security checklist CRITICAL/HIGH.

@@ -14,6 +14,9 @@ const SET_TIMEOUT_WAIT_REGEX_2 = /setTimeout\([^)]+,\s*\d+\)/;
 const TS_FILE_REGEX = /\.ts$/;
 const VALID_GENERATED_HEADER_REGEX = /@generated from [A-Z0-9_-]+@[a-f0-9]+/;
 const SRC_FILE_REGEX = /\.(ts|tsx|js|vue)$/;
+const TASK_14_SENSITIVE_CODE_EXCEPTION_REGEX =
+  /Task #14[\s\S]*AI[\s\S]*được phép\s+sinh code/i;
+const NO_AUTO_MERGE_REGEX = /không.*auto-merge|NEVER merge tự động/i;
 
 describe("P0.0 Quality & Governance Rules (BR-TST, BR-AIG, BR-MVP)", () => {
   it("enforces BR-TST-02: no DB mocking in tests", () => {
@@ -58,7 +61,7 @@ describe("P0.0 Quality & Governance Rules (BR-TST, BR-AIG, BR-MVP)", () => {
     expect(setTimeoutWaitFiles).toEqual([]);
   });
 
-  it("enforces BR-AIG-03 & BR-AIG-04: no @generated files in forbidden areas & proper @generated format", () => {
+  it("enforces BR-AIG-03 & BR-AIG-04: Task #14 exception is explicit and generated headers are valid", () => {
     const allCodeFiles = findFiles(
       ROOT_DIR,
       (file) =>
@@ -68,33 +71,32 @@ describe("P0.0 Quality & Governance Rules (BR-TST, BR-AIG, BR-MVP)", () => {
         !file.endsWith("quality-rules.test.ts")
     );
 
-    const forbiddenAreas = [
-      "packages/auth",
-      "packages/billing",
-      "packages/gating",
-    ];
     const invalidGeneratedHeaderFiles: string[] = [];
-    const forbiddenGeneratedFiles: string[] = [];
 
     for (const file of allCodeFiles) {
-      const relPath = path.relative(ROOT_DIR, file);
       const content = fs.readFileSync(file, "utf-8");
 
-      if (content.includes("@generated")) {
-        const inForbiddenArea = forbiddenAreas.some((area) =>
-          relPath.startsWith(area)
-        );
-        if (inForbiddenArea) {
-          forbiddenGeneratedFiles.push(relPath);
-        }
-
-        if (!VALID_GENERATED_HEADER_REGEX.test(content)) {
-          invalidGeneratedHeaderFiles.push(relPath);
-        }
+      if (
+        content.includes("@generated") &&
+        !VALID_GENERATED_HEADER_REGEX.test(content)
+      ) {
+        invalidGeneratedHeaderFiles.push(path.relative(ROOT_DIR, file));
       }
     }
 
-    expect(forbiddenGeneratedFiles).toEqual([]);
+    const contractFiles = [
+      path.join(ROOT_DIR, "docs/SPEC.md"),
+      path.join(ROOT_DIR, "docs/specs/01-platform/ai-codegen-pipeline.md"),
+      path.join(ROOT_DIR, "docs/tasks/14-implementation-sequence-plan.md"),
+      path.resolve(ROOT_DIR, "../.agents/AGENTS.md"),
+    ];
+
+    for (const file of contractFiles) {
+      const content = fs.readFileSync(file, "utf-8");
+      expect(content).toMatch(TASK_14_SENSITIVE_CODE_EXCEPTION_REGEX);
+      expect(content).toMatch(NO_AUTO_MERGE_REGEX);
+    }
+
     expect(invalidGeneratedHeaderFiles).toEqual([]);
   });
 

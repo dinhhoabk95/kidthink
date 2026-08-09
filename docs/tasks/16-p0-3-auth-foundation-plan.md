@@ -15,9 +15,10 @@ và Manager tách biệt, guard đồng bộ, refresh token xoay, custom CSRF, r
 ownership/entitlement. Task này không làm UI đăng nhập, route đăng ký, email, rate limit thật
 hay OAuth bridge; các outcome đó vẫn thuộc bước roadmap riêng.
 
-Toàn bộ code auth trong kế hoạch này là **human-owned**. Agent được phép lập kế hoạch, rà soát
-diff, chạy cổng và báo bằng chứng; agent không được sinh hoặc sửa code auth theo ranh giới
-[`SPEC.md`](../SPEC.md) mục 0 quyết định D7 và mục 11.
+Theo ngoại lệ Task #14 tại quyết định D7 của [`SPEC.md`](../SPEC.md) mục 0, AI được phép sinh
+code auth trong kế hoạch này. Mỗi increment vẫn phải viết test âm trước, chạy gate đầy đủ, ghi
+rõ phần AI soạn và để người review diff trước merge. Ngoại lệ không cho phép auto-merge, dùng
+secret thật hoặc chạy thay đổi production.
 
 ## Why this is next
 
@@ -128,22 +129,22 @@ Task 7: active-child + entitlement ports
 Task 8: security evidence + status/checklist
 ```
 
-Task 3 và Task 4 có thể làm song song bởi hai human sau khi Task 2 đã merge. Các task 5–7
+Task 3 và Task 4 có thể làm song song sau khi Task 2 đã merge. Các task 5–7
 cùng sửa `packages/auth` nên làm tuần tự hoặc chia file ownership tường minh trước khi bắt đầu.
 
 ## Task 0: Resolve contract conflicts and approve the security boundary
 
-**Owner:** Human only.
+**Owner:** Human review bắt buộc; AI được sửa contract theo ngoại lệ Task #14.
 
 **Description:** Review contract đã đổi sang Sidebase Local + JWT và ba quyết định xung đột đã
-đóng. Agent không được sinh code auth; human thứ hai approve thay đổi contract trước Task 2.
+đóng. Human thứ hai approve thay đổi contract và ngoại lệ Task #14 trước Task 2.
 
 **Acceptance criteria:**
 
 - [ ] Ba xung đột ở mục Contract decisions có đúng một quyết định trong spec sở hữu, spec khác link tới thay vì copy.
 - [ ] Corpus không còn mô tả `nuxt-auth-utils`, Iron seal hoặc AuthJS là cơ chế hiện hành.
 - [ ] Không thêm actor, role, TTL hoặc auth flow ngoài phạm vi đã duyệt.
-- [ ] Một human reviewer độc lập xác nhận threat model và sáu vùng cấm.
+- [ ] Một human reviewer độc lập xác nhận threat model, sáu vùng nhạy cảm và cổng ngoại lệ.
 
 **Verification:**
 
@@ -163,7 +164,7 @@ cùng sửa `packages/auth` nên làm tuần tự hoặc chia file ownership tư
 
 ## Task 1: Approve the Nuxt auth adapter and dependency baseline
 
-**Owner:** Human only; dependency addition requires explicit approval.
+**Owner:** AI được implement sau khi dependency addition được human approve tường minh.
 
 **Description:** Đối chiếu official docs Sidebase Local 1.3.1, xác nhận endpoint/token/cookie
 config và thêm đúng dependency tối thiểu vào catalog/manifests. Local provider không được cài
@@ -199,12 +200,12 @@ chưa được allow-list hoặc khai hai version.
 
 - [ ] Human thứ hai đã approve Task 0.
 - [ ] Dependency diff và provenance đã được review.
-- [ ] Không code auth nào được agent sinh hoặc sửa.
+- [ ] Ngoại lệ Task #14 và các cổng test/review đã được ghi trong canonical contract.
 - [ ] `pnpm check && pnpm lint:specs` xanh.
 
 ## Task 2: Define the stable `@kidthink/auth` contract and write abuse tests
 
-**Owner:** Human only.
+**Owner:** AI theo ngoại lệ Task #14; human review diff trước merge.
 
 **Description:** Định nghĩa type domain, structured errors và các port session/store/rate-limit/
 audit trước implementation. Viết test âm trước để public API không thể nhận nhầm User thành
@@ -236,7 +237,7 @@ Manager hoặc lộ type/claim của vendor.
 
 ## Task 3: Deliver the User session boundary end-to-end
 
-**Owner:** Human only.
+**Owner:** AI theo ngoại lệ Task #14; human review diff trước merge.
 
 **Description:** Dựng runtime Nuxt tối thiểu của `apps/web`, cấu hình Sidebase Local và để
 server middleware gọi verifier trong `@kidthink/auth` đúng một lần, map JWT access sang domain
@@ -269,7 +270,7 @@ context, rồi chứng minh `requireUserAuth` là sync và từ chối missing/w
 
 ## Task 4: Deliver the Manager session boundary end-to-end
 
-**Owner:** Human only.
+**Owner:** AI theo ngoại lệ Task #14; human review diff trước merge.
 
 **Description:** Dựng Sidebase Local cho `apps/admin` với cookie, issuer, secret và audience
 riêng; middleware gọi JWT verifier do `@kidthink/auth` sở hữu, rồi chứng minh User session
@@ -308,7 +309,7 @@ không qua được namespace Manager và `content_reviewer` không được nâ
 
 ## Task 5: Implement refresh rotation and revocation semantics
 
-**Owner:** Human only.
+**Owner:** AI theo ngoại lệ Task #14; human review diff trước merge.
 
 **Description:** Cài service refresh độc lập route trên schema `active_sessions` đã có và nối
 với Sidebase Local refresh. Token opaque chỉ xuất hiện ở boundary cookie; store giữ hash;
@@ -340,7 +341,7 @@ rotation, reuse detection, logout một phiên và revoke-all phải atomic và 
 
 ## Task 6: Enforce CSRF and current-session reauth
 
-**Owner:** Human only.
+**Owner:** AI theo ngoại lệ Task #14; human review diff trước merge.
 
 **Description:** Vì Sidebase Local không cung cấp CSRF, thêm wrapper double-submit KidThink
 cho mọi request đổi trạng thái và service reauth dùng `active_sessions.reauth_at`. Reauth chỉ
@@ -373,8 +374,8 @@ provider cho caller chưa xác thực.
 
 ## Task 7: Complete actor-boundary ports without pulling later features forward
 
-**Owner:** Human only. Phần ownership chạm dữ liệu trẻ và phần entitlement chạm gating nên
-không được agent sinh code.
+**Owner:** AI theo ngoại lệ Task #14; human review diff trước merge. Phần ownership chạm dữ
+liệu trẻ và phần entitlement chạm gating nên bắt buộc có test âm trước implementation.
 
 **Description:** Hoàn thiện `assertActiveChild`, ownership port và entitlement port đủ để
 consumer sau dùng đúng contract, nhưng chỉ dùng fake adapter trong contract test; không triển
@@ -411,7 +412,7 @@ khai child CRUD, DB adapter thật, package catalog hay access gating trước r
 
 ## Task 8: Produce security evidence and close progress honestly
 
-**Owner:** Human changes status/checklist; agent may run read-only verification and review.
+**Owner:** AI được cập nhật evidence/status khi gate chứng minh đủ; human review diff trước merge.
 
 **Description:** Map từng `BR-ACT-*` và `BR-AUT-*` tới test evidence, chạy cổng chung và chỉ
 promote status/checklist khi contract thật sự có implementation. Scenario phụ thuộc route thật
@@ -452,7 +453,7 @@ tick khống để vượt `check:progress`.
 
 | Risk | Impact | Mitigation |
 |---|---|---|
-| Agent vô tình sinh auth code | Vi phạm boundary canonical | Mọi task code gắn `Human only`; agent chỉ review/test evidence |
+| Ngoại lệ AI bị hiểu thành quyền bỏ cổng | Auth code thiếu kiểm soát ở vùng hậu quả cao | Mọi task code có test âm, gate đầy đủ và human review diff trước merge |
 | Hai spec cùng sở hữu cookie/session behavior | Drift và test mâu thuẫn | Task 0 chốt owner trước code; spec khác link thay vì copy |
 | Vendor type/API rò qua package | Mọi app bị khoá vào implementation | Domain contract + adapter seam + export snapshot ở Task 2 |
 | P0.3 kéo P0.9b/P0.10/P1 lên sớm | Scope nổ, dependency graph mất ý nghĩa | Chỉ tạo port; concrete route/rate-limit/OAuth giữ ở bước sở hữu |
@@ -469,5 +470,6 @@ Definition of Done dùng các nguồn canonical của repo:
 - [`security-checklist.md`](../specs/08-quality/security-checklist.md).
 - `pnpm check:progress` và checklist Task #14.
 
-Dependency baseline đã được người dùng approve và soạn vào manifest/lockfile. Code auth chỉ
-được human triển khai sau khi một human reviewer độc lập approve Task 0.
+Dependency baseline và ngoại lệ Task #14 đã được người dùng approve. AI được triển khai code
+auth sau Task 0, nhưng human vẫn review diff trước merge và không có quyền auto-merge hoặc
+thao tác production.

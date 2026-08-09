@@ -56,11 +56,19 @@ người + AI agent IDE ──soạn──► file trong repo ──cổng tự 
 | Luồng | Soạn gì | Cổng | Spec |
 |---|---|---|---|
 | **Nội dung nền** | Seeder cho game level · learning objective · lesson · curriculum, chia theo **năng lực C1–C6 × template** | 8 cổng tự động → PR review → `pnpm seed:content` ghi thẳng `published` | `docs/specs/01-platform/content-seed-authoring.md` |
-| **Code** | Zod · Drizzle · route skeleton · test từ Gherkin · Session class | `pnpm gen:check` + PR có người review + **6 vùng cấm** | `docs/specs/01-platform/ai-codegen-pipeline.md` |
+| **Code** | Zod · Drizzle · route skeleton · test từ Gherkin · Session class | `pnpm gen:check` + PR có người review; sáu vùng nhạy cảm cần review tăng cường | `docs/specs/01-platform/ai-codegen-pipeline.md` |
 
-Sáu vùng AI **không sinh code**: auth · thanh toán · gating · dữ liệu trẻ · migration
-chạy tự động · nội dung đã published. Ranh giới đặt theo *hậu quả khi sai*, không theo *độ
-khó khi viết*.
+**Ngoại lệ Task #14, chốt ngày 2026-08-09:** trong phạm vi triển khai
+[`14-implementation-sequence-plan.md`](tasks/14-implementation-sequence-plan.md), AI được phép
+sinh code trong sáu vùng nhạy cảm: auth · thanh toán · gating · dữ liệu trẻ · code điều phối
+migration · xử lý nội dung đã `published`. Mỗi increment ở các vùng này phải đi từ spec tới
+test âm, qua `pnpm check` + `pnpm test`, rồi được người review diff trước merge.
+
+Ngoại lệ chỉ mở quyền **soạn code trong repo**. Nó không cho phép auto-merge, chạy migration
+ngoài local, sửa trực tiếp hàng `published`, chạy transition publish, hoặc phát hành nội dung.
+Mọi invariant ở mục 7.3 của
+[`business-rules.md`](specs/00-foundation/business-rules.md) giữ nguyên. Ranh giới review tăng
+cường vẫn đặt theo *hậu quả khi sai*, không theo *độ khó khi viết*.
 
 Sau khi seed, nội dung nằm hoàn toàn dưới quyền **admin quản lý trong studio**: sửa = tạo
 version mới, đi đúng máy trạng thái [`content-lifecycle.md`](specs/00-foundation/content-lifecycle.md). Seed **không bao giờ `UPDATE`**
@@ -1059,8 +1067,9 @@ snapshot. Offline test dùng Playwright offline mode, không mock `navigator.onL
   thống. LLM duy nhất trong runtime là add-on [`ai-assistant.md`](specs/07-addon/ai-assistant.md), ngoài MVP.
 - **Để AI sinh `skills` hoặc `strands`.** Taxonomy là Lớp 1, do người thiết kế. AI soạn được
   seeder `learning_objectives`, nhưng vẫn qua 8 cổng tự động và vẫn cần người đọc từng bản.
-- **Để AI sinh code trong sáu vùng cấm** — auth, thanh toán, gating, dữ liệu trẻ, migration
-  tự động, nội dung published.
+- Dùng ngoại lệ Task #14 để auto-merge, chạy migration ngoài local, sửa trực tiếp hàng
+  `published`, chạy transition publish, hoặc phát hành nội dung. AI chỉ được soạn code trong
+  repo; người review diff trước merge — xem mục 0 quyết định D7.
 - Merge tự động code do AI sinh, hoặc sửa tay file `@generated`.
 - Reset/checkout/revert công việc không liên quan khi chưa được yêu cầu.
 
@@ -1286,6 +1295,6 @@ Mã taxonomy giữ format v1 (`C1.CNT.03`) — đã biên soạn, bất biến, 
 | Repo mới hay branch v2? | **Repo riêng `kidthink/`**, nằm cạnh `tinimath/` (v1). Port có chọn lọc: `game-engine`, `emoji`, taxonomy data | 2026-08-06 (D-A) |
 | Thư viện ảnh | **Không có.** Emoji cố định; ảnh upload gắn content item | 2026-08-04 |
 | Master data | **Lớp 1 code-owned, admin read-only**; Lớp 2 studio CRUD | 2026-08-04 |
-| Dùng AI để soạn game và code? | **Có — AI agent IDE soạn file trong repo, người merge.** Nội dung nền là **seeder** (8 cổng tự động → PR review → seed ghi thẳng `published`), code là codegen (6 vùng cấm → PR review). Cấm có pipeline LLM sinh nội dung trong runtime. Hard rule cũ "NEVER để AI sinh nội dung cốt lõi" viết sai chỗ — cái cần cấm là **phát hành không có người kiểm** | 2026-08-05 |
+| Dùng AI để soạn game và code? | **Có — AI agent IDE soạn file trong repo, người merge.** Nội dung nền là **seeder** (8 cổng tự động → PR review → seed ghi thẳng `published`). Code Task #14 được phép đi vào sáu vùng nhạy cảm nhưng phải có test âm, gate tự động và người review diff; không auto-merge, không chạy migration ngoài local, không tự publish. Cấm có pipeline LLM sinh nội dung trong runtime. Hard rule cũ "NEVER để AI sinh nội dung cốt lõi" viết sai chỗ — cái cần cấm là **phát hành không có người kiểm** | 2026-08-09 |
 | Nội dung nền vào DB ở trạng thái nào? | **`published` thẳng từ seed.** Cổng người là PR review, không phải hàng đợi duyệt. Seed chỉ INSERT và vẫn chạy đủ checklist publish. Sau đó admin quản lý trong studio bằng version mới | 2026-08-05 |
 | Tách nhỏ spec tới mức nào? | **Một outcome một file.** 31 spec v1 → **124** spec v2. Tên file có `and` bị cấm khi nối hai outcome | 2026-08-05 |

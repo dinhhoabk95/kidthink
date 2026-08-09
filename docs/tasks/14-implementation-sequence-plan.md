@@ -54,7 +54,7 @@ Chín spec **không xuất hiện ở bất kỳ đâu** trong [`roadmap.md`](..
 | [`security-checklist.md`](../specs/08-quality/security-checklist.md) | Cổng bảo mật trước go-live |
 | [`health-check.md`](../specs/01-platform/health-check.md) | Điều kiện để deploy có thể quan sát được |
 | [`backup-and-restore.md`](../specs/01-platform/backup-and-restore.md) | Phải có **trước** dữ liệu thật, không phải sau |
-| [`ai-codegen-pipeline.md`](../specs/01-platform/ai-codegen-pipeline.md) | 6 vùng cấm của AI codegen; luật này áp lên chính cách task này viết code |
+| [`ai-codegen-pipeline.md`](../specs/01-platform/ai-codegen-pipeline.md) | Sáu vùng nhạy cảm của AI codegen và cổng review tăng cường áp lên chính task này |
 | [`mvp-scope.md`](../specs/00-foundation/mvp-scope.md) | Định nghĩa cắt MVP mà mọi cổng ra phase đối chiếu |
 
 Ba spec nữa — [`business-rules.md`](../specs/00-foundation/business-rules.md),
@@ -100,11 +100,11 @@ Năm cạnh đảo phase đã được xử lý, bốn cạnh đầu ở bước
 |---|---|
 | [`schema-identity-billing.md`](../specs/01-platform/schema-identity-billing.md) (P0) → [`payment-flow.md`](../specs/00-foundation/payment-flow.md) (P2) | `D-BQ`: contract-only; P0 tạo cột theo enum `status`, P2 làm luồng thanh toán |
 | [`schema-content-taxonomy.md`](../specs/01-platform/schema-content-taxonomy.md) (P0) → [`game-template-contract.md`](../specs/01-platform/game-template-contract.md) (P1) | `D-BR`: contract-only; taxonomy schema P0 đứng trước template contract P1 |
-| [`ai-codegen-pipeline.md`](../specs/01-platform/ai-codegen-pipeline.md) (P0) → [`game-template-contract.md`](../specs/01-platform/game-template-contract.md) (P1) | `D-BS`: contract-only; vùng cấm codegen phải có trước implementation P1 |
+| [`ai-codegen-pipeline.md`](../specs/01-platform/ai-codegen-pipeline.md) (P0) → [`game-template-contract.md`](../specs/01-platform/game-template-contract.md) (P1) | `D-BS`: contract-only; ranh giới codegen và cổng review phải có trước implementation P1 |
 | [`backup-and-restore.md`](../specs/01-platform/backup-and-restore.md) (P0) → [`job-queue.md`](../specs/01-platform/job-queue.md) (P1) | `D-BT`: P0 dựng khung queue/worker tối thiểu cho `backup:postgres`; job queue đầy đủ vẫn ở P1 |
 | [`notification-service.md`](../specs/01-platform/notification-service.md) (P0) → [`job-queue.md`](../specs/01-platform/job-queue.md) (P1) | `D-BU`: P0 dùng lại khung tối thiểu của `D-BT` cho `email:send`; catalog/retry/alerting đầy đủ vẫn ở P1 |
 
-## 4. Bốn quyết định thiết kế
+## 4. Năm quyết định thiết kế
 
 **D1 — Đơn vị làm việc là một bước roadmap, không phải một spec.** Nhiều bước gộp 3–8 spec chỉ
 có nghĩa khi đi cùng nhau (bước P0 #10 gộp 4 spec auth; tách ra thì không có gì chạy được giữa
@@ -124,6 +124,13 @@ Lý do đo được: 9 trong 22 câu hỏi mở của P4/P5 là giá và quota *
 **D4 — Không spec nào được coi là "xong" khi chưa có test.** [`testing-strategy.md`](../specs/08-quality/testing-strategy.md)
 là spec P0 và là một trong 9 lỗ hổng — nó phải vào sớm, vì nó định nghĩa "xong" cho mọi bước sau.
 
+**D5 — Ngoại lệ codegen chỉ thuộc Task #14.** Theo quyết định D7 của
+[`SPEC.md`](../SPEC.md) mục 0, AI được phép sinh code trong sáu vùng nhạy cảm của Task #14:
+auth, thanh toán, gating, dữ liệu trẻ, code điều phối migration và xử lý nội dung đã
+`published`. Mỗi increment phải có test âm tham chiếu business rule sở hữu, gate đầy đủ và
+người review diff trước merge. Không auto-merge, không chạy migration ngoài local, không sửa
+trực tiếp hàng `published`, không gọi transition publish và không phát hành nội dung.
+
 ## 5. Quy trình chuẩn cho một bước — tám việc, đúng thứ tự
 
 1. Đọc **toàn bộ** spec của bước, không chỉ mục 7. Mục 11 (câu hỏi mở) đọc trước tiên: câu chưa
@@ -133,7 +140,9 @@ là spec P0 và là một trong 9 lỗ hổng — nó phải vào sớm, vì nó
 3. Liệt kê mã `BR-*` mà bước phải thực thi; đối chiếu [`business-rules.md`](../specs/00-foundation/business-rules.md)
    để không bỏ rule nào và không tự chế rule mới.
 4. Viết test trước theo [`testing-strategy.md`](../specs/08-quality/testing-strategy.md) — **phải đỏ**.
-5. Code tới khi test xanh. Không đụng 6 vùng cấm của [`ai-codegen-pipeline.md`](../specs/01-platform/ai-codegen-pipeline.md).
+5. Code tới khi test xanh. Với sáu vùng nhạy cảm, áp ngoại lệ D5: test âm trước, ghi rõ phần
+   AI soạn và giữ cổng người review diff; không dùng ngoại lệ để auto-merge, chạy migration
+   ngoài local hoặc phát hành nội dung.
 6. `pnpm check && pnpm test && pnpm lint:specs` xanh.
 7. Nếu bước làm lộ ra spec sai: sửa spec **trong cùng PR**, kèm lý do. Spec là hợp đồng — code
    lệch spec mà spec không đổi là nợ im lặng.
@@ -159,7 +168,7 @@ Chín spec vá vào P0 xếp thế này, suy từ cái chúng chặn:
 
 | Chèn vào | Spec | Vì sao đúng chỗ đó |
 |---|---|---|
-| Trước bước 1 | [`testing-strategy.md`](../specs/08-quality/testing-strategy.md) · [`ai-codegen-pipeline.md`](../specs/01-platform/ai-codegen-pipeline.md) · [`mvp-scope.md`](../specs/00-foundation/mvp-scope.md) | Định nghĩa "xong", vùng cấm, và cắt phạm vi — ba thứ áp lên mọi bước sau |
+| Trước bước 1 | [`testing-strategy.md`](../specs/08-quality/testing-strategy.md) · [`ai-codegen-pipeline.md`](../specs/01-platform/ai-codegen-pipeline.md) · [`mvp-scope.md`](../specs/00-foundation/mvp-scope.md) | Định nghĩa "xong", cổng review vùng nhạy cảm, và cắt phạm vi — ba thứ áp lên mọi bước sau |
 | Sau bước 8 (migration đầu) | [`backup-and-restore.md`](../specs/01-platform/backup-and-restore.md) · [`health-check.md`](../specs/01-platform/health-check.md) | Có dữ liệu thật rồi mới có cái để sao lưu; deploy phải quan sát được |
 | Trước bước 10 (auth) | [`notification-service.md`](../specs/01-platform/notification-service.md) · [`rate-limiting.md`](../specs/01-platform/rate-limiting.md) | Auth P0 gửi email và cần guard ngay lần chạy đầu, không vá sau |
 | Sau bước 11 (audit) | [`admin-auth.md`](../specs/06-admin/admin-auth.md) | Cần audit trước, và mở khoá cả vùng admin P2 |
