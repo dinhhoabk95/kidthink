@@ -145,5 +145,5 @@ Scenario: BR-CKB-01 — chỉ cookie thiết yếu
 
 | # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
 |---|---|---|---|---|
-| 1 | Analytics tự host có cần thêm cookie không? | Cookie analytics | P1 | Chốt D-AW (khớp với [`landing-page.md`](landing-page.md) Q1): P1 không dùng analytics tự host, không phát sinh thêm cookie |
+| ~~1~~ | ~~Analytics tự host có cần thêm cookie không?~~ **Đóng 2026-08-09 (T13, `D-AW`)**: P1 không dùng analytics tự host, không phát sinh thêm cookie — khớp [`landing-page.md`](landing-page.md) Q1 | Cookie analytics | Đã đóng | D-AW |
 
