@@ -184,7 +184,7 @@ Scenario: BR-HPL-07 — tab nền không tính giờ
 
 | # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
 |---|---|---|---|---|
-| 1 | 30/60/90 phút có khớp khuyến nghị thời gian màn hình cho trẻ 3–6 không? | Quy chuẩn y tế | P1 | Chốt D-AZ: Khuyến nghị AAP / WHO cho trẻ mầm non (≤ 1 giờ/ngày) |
-| 2 | Có cần hạn mức theo tuần bên cạnh theo ngày không? | Hạn mức tuần | P3 | Product / Parent Features |
-| 3 | Gợi ý hoạt động ngoài màn hình lấy từ đâu khi `lessons` chưa có (P1)? | Nội dung hết giờ | P1 | Chốt D-BB: Dùng danh sách tĩnh 12 hoạt động ngoài màn hình (offline activities catalog) dạng seed file |
+| ~~1~~ | ~~30/60/90 phút có khớp khuyến nghị thời gian màn hình cho trẻ 3–6 không?~~ **Đóng 2026-08-09 (T13, `D-AZ`)**: khuyến nghị AAP / WHO cho trẻ mầm non (≤ 1 giờ/ngày) | Quy chuẩn y tế | Đã đóng | D-AZ |
+| 2 | Có cần hạn mức theo tuần bên cạnh theo ngày không? | Hạn mức tuần | P3 | người quyết |
+| ~~3~~ | ~~Gợi ý hoạt động ngoài màn hình lấy từ đâu khi `lessons` chưa có (P1)?~~ **Đóng 2026-08-09 (T13, `D-BB`)**: dùng danh sách tĩnh 12 hoạt động ngoài màn hình (offline activities catalog) dạng seed file | Nội dung hết giờ | Đã đóng | D-BB |
 
