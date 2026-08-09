@@ -188,5 +188,5 @@ Scenario: không bao giờ trả rỗng
 
 | # | Câu hỏi | Chặn phase | Đề xuất chốt | Chủ |
 |---|---|---|---|---|
-| 1 | Loại 3 level gần nhất có đủ không? Với 120 level thì trẻ sẽ gặp lại khá nhanh | P3 | Giữ loại 3 level gần nhất cho MVP; mở rộng cửa sổ loại trừ nếu ghi nhận hiện tượng lặp lại quá nhanh ở P4 | Play Recommendation |
-| 2 | `popular` dùng số lượt chơi tổng — có rủi ro tạo vòng lặp tự củng cố không? | P3 | Kết hợp popular với trọng số xáo trộn ngẫu nhiên nhẹ (random noise) để tránh hiện tượng hiệu ứng đám đông | Play Recommendation |
+| 1 | Loại 3 level gần nhất có đủ không? Với 120 level thì trẻ sẽ gặp lại khá nhanh | P3 | Giữ loại 3 level gần nhất cho MVP; mở rộng cửa sổ loại trừ nếu ghi nhận hiện tượng lặp lại quá nhanh ở P4 | Backend |
+| 2 | `popular` dùng số lượt chơi tổng — có rủi ro tạo vòng lặp tự củng cố không? | P3 | Kết hợp popular với trọng số xáo trộn ngẫu nhiên nhẹ (random noise) để tránh hiện tượng hiệu ứng đám đông | Backend |
