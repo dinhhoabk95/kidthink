@@ -70,13 +70,15 @@
 
 ## Lô 2 — `01-platform`, 6 file / 9 hàng
 
-- [ ] [`content-search.md`](../specs/01-platform/content-search.md) — B2
-- [ ] [`game-template-contract.md`](../specs/01-platform/game-template-contract.md) — A2
-- [ ] [`offline-play.md`](../specs/01-platform/offline-play.md) — A1+B1
-- [ ] [`backup-and-restore.md`](../specs/01-platform/backup-and-restore.md) — B1
-- [ ] [`data-model-overview.md`](../specs/01-platform/data-model-overview.md) — B1
-- [ ] [`pwa-install.md`](../specs/01-platform/pwa-install.md) — B1
-- [ ] Sau lô: `C17` giảm đúng 9
+- [x] [`content-search.md`](../specs/01-platform/content-search.md) — B1+A1, cấp `D-CQ`
+- [x] [`game-template-contract.md`](../specs/01-platform/game-template-contract.md) — A2, tái dùng `D-BA`/`D-BK`;
+      Q4 còn lỗi bảng 6 cột, đã dọn
+- [x] [`offline-play.md`](../specs/01-platform/offline-play.md) — A1+B1, cấp `D-CR`
+- [x] [`backup-and-restore.md`](../specs/01-platform/backup-and-restore.md) — B1
+- [x] [`data-model-overview.md`](../specs/01-platform/data-model-overview.md) — C1, hàng lỗi 6 cột (đã dọn),
+      chép Chủ thật từ audit-log.md §11 Q1
+- [x] [`pwa-install.md`](../specs/01-platform/pwa-install.md) — B1
+- [x] Sau lô: `C17` 80 → 71 (giảm đúng 9)
 
 ## Lô 3 — `02-public`, 7 file / 11 hàng
 
