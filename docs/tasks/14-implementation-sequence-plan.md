@@ -75,7 +75,7 @@ Cám dỗ tự nhiên là topo-sort `depends_on` rồi lấy đó làm thứ t�
 |---|---|
 | Cạnh mà **thân spec không nhắc file dep lần nào** | **133** (78%) |
 | Liên kết trong thân spec mà **không** được khai ở `depends_on` | **448** |
-| Cạnh trỏ tới spec ở phase **sau** | 4 |
+| Cạnh trỏ tới spec ở phase **sau** | 4 tại `be75db4`; Task #15 phát hiện thêm 1 cạnh |
 
 Ví dụ đo được: [`registration.md`](../specs/03-account/registration.md) khai `depends_on`
 `ERROR-CODES`, nhưng thân spec không nhắc file registry mã lỗi lần nào;
@@ -94,14 +94,15 @@ và xác nhận chúng đã `implemented`. Lệch thì dừng lại, sửa một
 Sóng topo tính từ `depends_on` (P0 11/9/9/6 · P1 23/15/5 · P2 24/6/1 · P3 8/3/1 · P4 6/2 · P5 1)
 dùng làm **cảnh báo**: nếu roadmap xếp một spec trước dep của nó, sóng sẽ lệch và phải giải thích.
 
-Bốn cạnh đảo phase, xử lý từng cái ở bước 1:
+Năm cạnh đảo phase đã được xử lý, bốn cạnh đầu ở bước 1 và cạnh thứ năm ở Task #15:
 
 | Cạnh | Đọc được gì |
 |---|---|
-| [`schema-identity-billing.md`](../specs/01-platform/schema-identity-billing.md) (P0) → [`payment-flow.md`](../specs/00-foundation/payment-flow.md) (P2) | Chỉ mượn enum `status` §7. Contract-only: P0 tạo cột, P2 làm luồng. Giữ nguyên |
-| [`schema-content-taxonomy.md`](../specs/01-platform/schema-content-taxonomy.md) (P0) → [`game-template-contract.md`](../specs/01-platform/game-template-contract.md) (P1) | Thân không nhắc. Cạnh cần xác minh hoặc bỏ |
-| [`ai-codegen-pipeline.md`](../specs/01-platform/ai-codegen-pipeline.md) (P0) → [`game-template-contract.md`](../specs/01-platform/game-template-contract.md) (P1) | Thân không nhắc. Cạnh cần xác minh hoặc bỏ |
-| [`backup-and-restore.md`](../specs/01-platform/backup-and-restore.md) (P0) → [`job-queue.md`](../specs/01-platform/job-queue.md) (P1) | Thân không nhắc. Nếu backup chạy bằng job định kỳ thì đây là dep thật và một trong hai spec sai phase |
+| [`schema-identity-billing.md`](../specs/01-platform/schema-identity-billing.md) (P0) → [`payment-flow.md`](../specs/00-foundation/payment-flow.md) (P2) | `D-BQ`: contract-only; P0 tạo cột theo enum `status`, P2 làm luồng thanh toán |
+| [`schema-content-taxonomy.md`](../specs/01-platform/schema-content-taxonomy.md) (P0) → [`game-template-contract.md`](../specs/01-platform/game-template-contract.md) (P1) | `D-BR`: contract-only; taxonomy schema P0 đứng trước template contract P1 |
+| [`ai-codegen-pipeline.md`](../specs/01-platform/ai-codegen-pipeline.md) (P0) → [`game-template-contract.md`](../specs/01-platform/game-template-contract.md) (P1) | `D-BS`: contract-only; vùng cấm codegen phải có trước implementation P1 |
+| [`backup-and-restore.md`](../specs/01-platform/backup-and-restore.md) (P0) → [`job-queue.md`](../specs/01-platform/job-queue.md) (P1) | `D-BT`: P0 dựng khung queue/worker tối thiểu cho `backup:postgres`; job queue đầy đủ vẫn ở P1 |
+| [`notification-service.md`](../specs/01-platform/notification-service.md) (P0) → [`job-queue.md`](../specs/01-platform/job-queue.md) (P1) | `D-BU`: P0 dùng lại khung tối thiểu của `D-BT` cho `email:send`; catalog/retry/alerting đầy đủ vẫn ở P1 |
 
 ## 4. Bốn quyết định thiết kế
 
@@ -145,7 +146,7 @@ hoặc một rule dữ liệu trẻ là loại lỗi không lộ ra ở test h�
 ## 6. Thứ tự — toàn bộ 130 spec
 
 ```
-Bước 1  : Vá 12 lỗ hổng roadmap + xử lý 4 cạnh đảo phase   → Cổng dừng A
+Bước 1  : Vá 12 lỗ hổng roadmap + xử lý 5 cạnh đảo phase   → Cổng dừng A
 P0      : 11 bước roadmap + 9 spec mới vá vào (35 spec)     → Cổng ra P0 (SPEC.md §13)
 P1      : 16 bước roadmap (43 spec)                         → Cổng ra P1
 P2      : 11 bước roadmap (31 spec)                         → Cổng ra P2
@@ -174,7 +175,7 @@ Ba registry ([`business-rules.md`](../specs/00-foundation/business-rules.md),
 ### Cổng dừng A — sau bước 1, trước dòng code đầu tiên
 
 - [`roadmap.md`](../specs/roadmap.md) phủ **130/130** spec; lệnh đếm ở mục 9 ra 0 spec thiếu.
-- Bốn cạnh đảo phase đã xử lý: mỗi cái hoặc được xác minh là contract-only, hoặc bị bỏ, hoặc
+- Năm cạnh đảo phase đã xử lý: mỗi cái hoặc được xác minh là contract-only, hoặc bị bỏ, hoặc
   spec đổi phase — kèm mã `D-*` cho từng cái.
 - `pnpm lint:specs` 0 lỗi 0 cảnh báo (roadmap cũng bị lint chấm).
 
@@ -198,17 +199,25 @@ không kiểm được bằng máy. Task #13 nên chạy trước hoặc song so
 | Code lệch spec, spec không đổi | Nợ im lặng: spec thành tài liệu chết trong khi nó là hợp đồng | Việc 7 mục 5 — sửa spec trong cùng PR |
 | Viết tiêu chí nghiệm thu cho P4/P5 ngay bây giờ | Bịa số cho 9 câu hỏi giá/quota chưa chốt | D3 — độ chi tiết giảm dần; P4/P5 chỉ giữ thứ tự |
 | Bắt đầu code khi Task #13 chưa xong | Điều kiện 3 của cổng ra phase không kiểm được bằng máy | Task #13 chạy trước hoặc song song bước 1; hai task không đụng cùng file |
-| Nội dung là đường găng, không phải code | ≥120 game level + ≥690 LO cần **người đọc review**; seeder không giảm chi phí đó | Nhóm D của [`roadmap.md`](../specs/roadmap.md) — bắt đầu biên soạn seeder sớm nhất có thể, song song P0 |
+| Nội dung là đường găng, không phải code | P0 cần review ≥690 LO; P1 cần review ≥120 game level. Seeder không giảm chi phí đọc review | Seed LO chạy trong P0; nhóm D của [`roadmap.md`](../specs/roadmap.md) bắt đầu level ngay sau P1.2 |
 
 ## 9. Kiểm chứng
 
 Roadmap phủ hết 130 spec (phải in ra rỗng sau bước 1):
 
 ```
-for f in $(grep -rl "^spec: " --include="*.md" docs/specs | grep -v TEMPLATE); do
+for f in $(grep -rl "^phase: P" --include="*.md" docs/specs | grep -v TEMPLATE); do
+  grep -q "^doc: " "$f" && continue
   b=$(basename "$f"); grep -q -- "$b" docs/specs/roadmap.md || echo "THIẾU: $f";
 done
 ```
+
+Hai lớp lọc, cả hai đều cần — đo được 2026-08-09 sau khi bước 1 đã làm **đúng** mà lệnh vẫn báo
+thiếu 2 file. [`CONVENTIONS.md`](../specs/CONVENTIONS.md) và
+[`READING-GUIDE.md`](../specs/READING-GUIDE.md) khớp cả `^spec: ` lẫn `^phase: P`, vì chúng in
+khuôn frontmatter làm ví dụ trong thân tài liệu. Chúng không phải spec. Dấu hiệu phân biệt duy
+nhất đáng tin là khoá `doc:` — cũng chính là dấu hiệu mà `checkC16` trong
+[`lint-specs-lib.ts`](../../scripts/lint-specs-lib.ts) dùng để miễn trừ.
 
 Đếm tiến độ theo `status`:
 
@@ -222,7 +231,39 @@ Cổng chung mỗi bước:
 pnpm check && pnpm test && pnpm lint:specs
 ```
 
-## 10. Ngoài phạm vi
+## 10. Cổng chống tick khống — `pnpm check:progress`
+
+Đo được 2026-08-09, sau khi checklist của chính task này chạy một vòng: **khoảng 50 ô đã tick,
+đúng một ô có việc thật đằng sau**. Commit `1b063d8` (P0.0) thêm
+[`quality-rules.test.ts`](../../packages/shared/tests/quality-rules.test.ts) 156 dòng — thật.
+Tám commit sau đó (`da8f7d1` P0.1 → `01622e9` "toàn bộ P0–P5") **chỉ đổi ký tự `[ ]` thành `[x]`
+trong chính file checklist**, không đụng file nào khác. Cùng lúc `status: implemented` trong
+corpus vẫn là **0/130**.
+
+Bài học lặp lại đúng cái nợ `ultracite` đã ghi: **cổng không đo gì là cổng chưa tồn tại**. Một ô
+tick là lời khai của người viết, không phải bằng chứng. Checklist markdown không tự nó là cổng.
+
+Cổng đã có tại [`check-progress.ts`](../../scripts/check-progress.ts), được `pnpm check` và
+lefthook `pre-commit`/`pre-push` gọi. Khi có staged changes, cổng đọc đúng snapshot trong index;
+khi chạy tay, cổng đọc worktree:
+
+| Ô được tick | Bằng chứng máy đọc được |
+|---|---|
+| Một bước `PN.x` mới được tick | Mọi spec link trong bước mang `status: implemented` |
+| `status: implemented` của một spec | Tồn tại ít nhất một test tham chiếu một mã `BR-*` mà spec đó sở hữu |
+| Một ô trong cổng ra phase mới được tick | Mọi spec của phase `implemented` |
+| Bất kỳ ô nào mới được tick | Diff worktree so với `HEAD` phải chạm ít nhất một file ngoài `docs/` |
+
+Luật cuối là luật rẻ nhất và bắt được đúng ca vừa xảy ra: commit chỉ sửa checklist thì không
+được phép tăng số ô tick. Viết ca âm trước — một commit giả chỉ đổi `[ ]` thành `[x]` phải làm
+cổng đỏ — rồi mới viết thân cổng, đúng sáu bước đã dùng cho `C16` và `C17`.
+
+Cổng này là **việc P0.0b**, chèn ngay sau P0.0: nó định nghĩa "xong" ở tầng tiến độ, đúng như
+[`testing-strategy.md`](../specs/08-quality/testing-strategy.md) định nghĩa "xong" ở tầng code.
+Ca âm và các nhánh kiểm tra nằm ở
+[`check-progress.test.ts`](../../scripts/tests/check-progress.test.ts).
+
+## 11. Ngoài phạm vi
 
 - Trả lời câu hỏi mở về giá, quota, provider AI. Task này xếp thứ tự, không quyết định thương mại.
 - Chuẩn hoá cột `Chủ` ở mục 11 — đó là [`13-question-owner-normalization-plan.md`](13-question-owner-normalization-plan.md).

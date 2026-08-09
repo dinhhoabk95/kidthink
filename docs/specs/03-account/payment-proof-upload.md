@@ -11,7 +11,6 @@ owns:
 depends_on:
   - PAYMENT-ORDER-CREATE
   - PAYMENT-FLOW
-  - IMAGE-STORAGE
 ---
 
 # Nộp chứng từ thanh toán
@@ -23,6 +22,12 @@ tiền không phải chờ.
 
 Soft unlock tồn tại vì duyệt tay có độ trễ người. Nó là **tin tưởng có thời hạn** — 3 ngày,
 và bị rút ngay nếu đơn bị từ chối.
+
+**D-CB** (T15, 2026-08-09): bỏ `depends_on: IMAGE-STORAGE` — cạnh ngược (bước 3 trước bước
+7 ở [`roadmap.md`](../roadmap.md)) và sai về bản chất: [`image-storage.md`](../01-platform/image-storage.md)
+là pipeline WebP/crop cho ảnh nội dung công khai gắn content item, Manager mới được upload.
+Ảnh chứng từ là **private**, không phải content item, User upload — dùng S3 client thô ở
+`packages/storage`, không cần spec đó `implemented` trước.
 
 ## 2. Actors
 
@@ -57,7 +62,7 @@ User sở hữu đơn.
 |---|---|---|
 | `BR-PPU-01` | Nộp chứng từ cấp `soft_unlock`, Cấm — **NEVER cấp `active`** | Ảnh chứng từ giả mạo được; duyệt tay là bước xác minh thật |
 | `BR-PPU-02` | `soft_unlock` **3 ngày** (`SOFT_UNLOCK_DAYS`) | Cân bằng giữa trải nghiệm người mua không phải chờ với thời gian duyệt thực tế của đội vận hành |
-| `BR-PPU-03` | Ảnh lưu **private**, chỉ Manager mở qua signed URL | Chứa thông tin ngân hàng |
+| `BR-PPU-03` | Ảnh lưu **private**, chỉ Manager mở qua signed URL — dùng S3 client chung ở `packages/storage`, **không** qua pipeline chuẩn hoá/crop của [`image-storage.md`](../01-platform/image-storage.md) | Chứa thông tin ngân hàng; pipeline đó là cho ảnh nội dung công khai, gắn content item — ảnh chứng từ private, không phải content item, và spec đó §2 cấm User upload |
 | `BR-PPU-04` | Mã giao dịch **bắt buộc**; ảnh tuỳ chọn nhưng khuyến nghị mạnh | Mã giao dịch là thứ đối chiếu được với sao kê |
 | `BR-PPU-05` | Nộp lại **thay** ảnh cũ, không tạo đơn mới | Nhiều đơn cùng giao dịch làm đối chiếu rối |
 | `BR-PPU-06` | Upload dùng client có CSRF, Cấm — **NEVER raw `$fetch`** | Tránh tấn công CSRF khi tải tệp chứng từ và đảm bảo qua tầng wrapper quản lý token |

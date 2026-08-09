@@ -171,5 +171,5 @@ Scenario: BR-CBD-08 — sửa bản published tạo version mới
 
 | # | Câu hỏi | Chặn phase | Đề xuất chốt | Chủ |
 |---|---|---|---|---|
-| 1 | Curriculum item ghim version của lesson hay lấy bản mới nhất? | P3 | Trỏ sang quyết định `D-VER-02` ở [`content-versioning.md`](../00-foundation/content-versioning.md): ghim version cụ thể ở thời điểm publish curriculum | Studio UI |
+| ~~1~~ | ~~Curriculum item ghim version của lesson hay lấy bản mới nhất?~~ **Đóng 2026-08-09 (D-VER-02 không tồn tại, dùng D-AE, T15)**: `D-VER-02` không có trong corpus — trích dẫn sai. Quyết định thật là **`D-AE`** ở [`content-versioning.md`](../00-foundation/content-versioning.md) §7.4: curriculum item **luôn theo bản `published` mới nhất** qua `entity_id`, **không ghim**. Ghim chỉ áp cho dữ liệu chơi đã xảy ra (`play_sessions`), không áp cho tham chiếu nội dung sang nội dung | P3 | Đã đóng | D-AE |
 | 2 | 42 tuần cần ~126 buổi — với ≥60 lesson MVP thì mỗi lesson dùng lại 2 lần. Chấp nhận được không? | P3 | Chấp nhận tái sử dụng lesson với biến thể hoặc bối cảnh luyện tập khác nhau theo thiết kế `BR-ACM-06` (đồng bộ với [`curriculum-model.md`](../05-content/curriculum-model.md)) | người quyết |

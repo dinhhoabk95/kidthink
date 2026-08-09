@@ -227,7 +227,7 @@ Scenario: skill planned không vào DB
 
 | # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
 |---|---|---|---|---|
-| ~~1~~ | ~~Ai biên soạn ≥690 LO?~~ Seeder + AI agent IDE soạn nhanh được, nhưng vẫn cần người đọc review từng bản. **Đóng 2026-08-07 (T9)**: đồng bộ theo [`mvp-scope.md`](../00-foundation/mvp-scope.md) Q1 — hạ từ chặn P0 xuống chờ P1, cùng nhãn D-W | — | đã đóng | D-W (chủ thật chưa chốt ở [`mvp-scope.md`](../00-foundation/mvp-scope.md) Q1 — Nợ #4, chưa đóng) |
+| ~~1~~ | ~~Ai biên soạn ≥690 LO?~~ **Đóng dứt điểm 2026-08-09 (`D-CN`, thay thế quyết định hoãn `D-W`)**: nhóm Nội dung sở hữu, AI agent IDE chỉ hỗ trợ soạn file; baseline 20 LO/người review/ngày và đo lại sau pilot 30 LO. Đây là P0 taxonomy master seed, không chờ P1 | — | Đã đóng | Nội dung |
 | 2 | 120 skill còn thiếu (230 → 350) biên soạn khi nào và bởi ai? | Nội dung sau MVP | chờ sau MVP | hoãn |
 | ~~3~~ | ~~`strength` của prerequisite dùng thang nào — nhị phân hay 0–1? Adaptive cần biết để cân nhắc~~ **Đóng 2026-08-08 (T10)**: dùng `numeric(3,2)` range `[0.00, 1.00]`, default `1.00` theo `schema/taxonomy.ts` và [`adaptive-engine.md`](adaptive-engine.md) | — | đã đóng | D-BA |
 | 4 | C5 Language cần audio tiếng Việt cho ~21 skill — thu âm người thật hay TTS? | Nội dung P1 | chờ P1 | hoãn |

@@ -2,7 +2,7 @@
 spec: SCHEMA-CONTENT-TAXONOMY
 title: Schema — taxonomy, nội dung, curriculum
 area: platform
-status: approved
+status: implemented
 mvp: true
 phase: P0
 reviewed: 2026-08-07

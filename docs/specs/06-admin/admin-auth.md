@@ -5,7 +5,7 @@ area: admin
 status: approved
 mvp: true
 phase: P0
-reviewed: 2026-08-08
+reviewed: 2026-08-09
 owns:
   - Luồng đăng nhập Manager
   - Phân quyền theo role ở tầng route
@@ -38,8 +38,9 @@ Manager có quyền chạm tiền và nội dung mà trẻ sẽ chơi. Đó là 
 ## 4. Main flow
 
 1. Nhập email + mật khẩu → xác thực.
-2. Đúng → cấp token mang `mfa_pending: true`, trả **428** `MFA_REQUIRED`.
-3. Nhập mã TOTP → xác thực → cấp cặp token đầy đủ.
+2. Đúng → cấp challenge credential một mục đích, TTL ngắn, trả **428** `MFA_REQUIRED`.
+   Credential này không phải access token, không qua guard và không tạo `active_sessions`.
+3. Nhập mã TOTP kèm challenge credential → xác thực → cấp cặp token đầy đủ.
 4. Ghi `active_sessions` + audit `manager_login`.
 5. Mỗi route admin kiểm `requireManagerAuth()` và `requireRole()` khi cần.
 
@@ -72,8 +73,9 @@ Manager có quyền chạm tiền và nội dung mà trẻ sẽ chơi. Đó là 
 
 ```ts
 interface ManagerTokenPayload {
-  sub: number; aud: "kidthink:manager"; name: string;
-  ver: number; role: "super_admin" | "content_reviewer"; mfa_pending?: boolean;
+  sub: string; aud: "kidthink:manager"; iss: "kidthink:admin"; sid: string;
+  name: string; ver: number; role: "super_admin" | "content_reviewer";
+  iat: number; exp: number;
 }
 ```
 
@@ -99,11 +101,12 @@ interface ManagerTokenPayload {
 
 ### `POST /api/guest/auth/managers/login`
 
-Body `{ email, password }`. **428** `MFA_REQUIRED` + token tạm. 401 `INVALID_CREDENTIALS`.
+Body `{ email, password }`. **428** `MFA_REQUIRED` + challenge credential một mục đích.
+401 `INVALID_CREDENTIALS`.
 
 ### `POST /api/guest/auth/managers/mfa`
 
-Body `{ code }` — TOTP hoặc mã khôi phục. 200 → cặp token đầy đủ.
+Body `{ code, challenge }` — TOTP hoặc mã khôi phục. 200 → cặp token đầy đủ.
 
 ## 9. Acceptance criteria
 
@@ -112,6 +115,8 @@ Scenario: BR-ADA-01 — MFA bắt buộc
   Given manager nhập đúng email và mật khẩu
   Then trả 428 MFA_REQUIRED
   And chưa vào được bất kỳ trang admin nào
+  And challenge trả về không qua được requireManagerAuth
+  And chưa có hàng active_sessions
 
 Scenario: BR-ADA-04 — phân quyền ở server
   Given manager content_reviewer

@@ -12,7 +12,6 @@ owns:
 depends_on:
   - CHILD-DATA-COMPLIANCE
   - ENTITLEMENT-MODEL
-  - CONSENT-MANAGEMENT
 ---
 
 # Tạo và sửa hồ sơ trẻ
@@ -32,6 +31,13 @@ User (người lớn). Cấm Trẻ không tạo và không sửa.
 
 `/me/children` · `/me/children/new` · `/me/children/{uuid}/edit` ·
 `POST /api/users/children` · `PATCH /api/users/children/{uuid}`.
+
+**D-BZ** (T15, 2026-08-09): `depends_on` trước đây có `CONSENT-MANAGEMENT` (P1) — cạnh ngược
+trong cùng phase vì [`roadmap.md`](../roadmap.md) đặt bước 9 (hồ sơ trẻ) trước bước 14 (đồng
+ý). Bỏ — cơ chế gate + INSERT `consent_logs` mà bước 2 dưới đây dùng thuộc
+[`child-data-compliance.md`](../00-foundation/child-data-compliance.md) §7.2 (P0, đã có sẵn
+trong `depends_on`), không thuộc [`consent-management.md`](consent-management.md) (P1 — luồng
+tự phục vụ xem/sửa/rút, không cần để **tạo** hồ sơ lần đầu).
 
 ## 4. Main flow
 

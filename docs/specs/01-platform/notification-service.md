@@ -41,6 +41,11 @@ là xây hạ tầng cho việc chưa tồn tại.
 | Job `email:send` | Consumer |
 | `/me/settings/notifications` | User bật/tắt loại định kỳ |
 
+**D-BU** (T15, 2026-08-09): `depends_on: JOB-QUEUE` (P1) là cạnh đảo phase thật, đã xử lý ở
+[`roadmap.md`](../roadmap.md) — job `email:send` chạy trên khung `packages/queue`/`apps/worker`
+tối thiểu mà [`backup-and-restore.md`](backup-and-restore.md) (`D-BT`) đã bắt buộc dựng từ bước
+8b. Không chờ [`job-queue.md`](job-queue.md) đầy đủ ở P1.
+
 ## 4. Main flow
 
 1. Sự kiện nghiệp vụ xảy ra → INSERT `notifications` **trong cùng transaction**.

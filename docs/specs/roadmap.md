@@ -55,7 +55,7 @@ Thứ tự làm:
 | 7 | Thiết kế schema | [`data-model-overview.md`](01-platform/data-model-overview.md) → [`schema-identity-billing.md`](01-platform/schema-identity-billing.md) · [`schema-content-taxonomy.md`](01-platform/schema-content-taxonomy.md) · [`schema-play-telemetry.md`](01-platform/schema-play-telemetry.md) |
 | 8 | Chạy migration đầu tiên, gate local xanh trên schema thật | [`repo-bootstrap.md`](00-foundation/repo-bootstrap.md) (cơ chế) + `schema-*` (cột) |
 | 8b | Sao lưu và quan sát | [`backup-and-restore.md`](01-platform/backup-and-restore.md) · [`health-check.md`](01-platform/health-check.md) |
-| 9 | Taxonomy service + seed Lớp 1 | [`taxonomy-service.md`](01-platform/taxonomy-service.md) · [`emoji-registry.md`](01-platform/emoji-registry.md) |
+| 9 | Taxonomy service + seed Lớp 1, gồm ≥690 LO | [`taxonomy-service.md`](01-platform/taxonomy-service.md) · [`emoji-registry.md`](01-platform/emoji-registry.md) |
 | 9b | Email và guard | [`notification-service.md`](01-platform/notification-service.md) · [`rate-limiting.md`](01-platform/rate-limiting.md) |
 | 10 | Auth end-to-end **bằng email/mật khẩu** | [`registration.md`](03-account/registration.md) · [`email-verification.md`](03-account/email-verification.md) · [`login-and-session.md`](03-account/login-and-session.md) · [`password-recovery.md`](03-account/password-recovery.md) |
 | 11 | Audit log (trước mọi hành động cần audit) | [`audit-log.md`](01-platform/audit-log.md) |
@@ -65,11 +65,12 @@ Ghi chú:
 - Registry: [`business-rules.md`](00-foundation/business-rules.md), [`error-codes.md`](00-foundation/error-codes.md), [`event-catalog.md`](00-foundation/event-catalog.md) không thành bước riêng mà được tra cứu và tuân thủ ở **mọi** bước.
 - Cổng ra P0: [`security-checklist.md`](08-quality/security-checklist.md) là checklist nghiệm thu cổng ra, không thành bước code riêng.
 
-**Quyết định xử lý 4 cạnh `depends_on` đảo phase:**
+**Quyết định xử lý 5 cạnh `depends_on` đảo phase:**
 - `D-BQ`: [`schema-identity-billing.md`](01-platform/schema-identity-billing.md) (P0) → [`payment-flow.md`](00-foundation/payment-flow.md) (P2) — Contract-only (chỉ dùng enum `status` §7, P0 tạo cột, P2 làm luồng thanh toán).
 - `D-BR`: [`schema-content-taxonomy.md`](01-platform/schema-content-taxonomy.md) (P0) → [`game-template-contract.md`](01-platform/game-template-contract.md) (P1) — Contract-only (taxonomy schema P0 đứng trước template contract P1).
 - `D-BS`: [`ai-codegen-pipeline.md`](01-platform/ai-codegen-pipeline.md) (P0) → [`game-template-contract.md`](01-platform/game-template-contract.md) (P1) — Contract-only (xác lập quy tắc vùng cấm P0 trước khi triển khai template contract).
 - `D-BT`: [`backup-and-restore.md`](01-platform/backup-and-restore.md) (P0) → [`job-queue.md`](01-platform/job-queue.md) (P1) — Contract & script P0 (định nghĩa quy trình backup/restore), job-queue P1 thực thi job định kỳ.
+- `D-BU` (T15, 2026-08-09): [`notification-service.md`](01-platform/notification-service.md) (P0) → [`job-queue.md`](01-platform/job-queue.md) (P1) — cạnh thật, `BR-NOT-05` cần `jobId = notification_id` idempotent qua BullMQ. Không kéo spec đó nguyên khối lên P0 — dùng lại đúng khung tối thiểu mà `D-BT` đã bắt buộc phải có ở bước 8b (`apps/worker` job `backup:postgres`, `packages/queue` producer). Bước 9b build thêm job `email:send` trên khung đó; phần **đầy đủ** danh mục job, retry policy và alerting backlog vẫn ở P1.
 
 Bước 1 **không phụ thuộc** bất kỳ spec nào khác — đó là lý do nó chạy trước cả [`glossary.md`](00-foundation/glossary.md).
 Nó cũng là bước duy nhất mà bản roadmap gốc (trước 2026-08-05) bỏ trống spec sở hữu (từng
@@ -78,6 +79,10 @@ ghi "Dựng repo, migration, cổng tự động | —") — xem [`00-foundation
 Reauth ([`auth-tokens-sessions.md`](01-platform/auth-tokens-sessions.md) §7.4) và cột `social_identities`
 ([`schema-identity-billing.md`](01-platform/schema-identity-billing.md) §7.3a) thuộc **P0** dù SNS chỉ chạy ở P1 — cả hai đụng schema và
 migration, và thêm cột vào bảng danh tính sau khi có dữ liệu thật là việc khác hẳn.
+
+**D-CG** (2026-08-09): P0 không seed sáu hàng `game_templates` rỗng chỉ để đạt số đếm.
+Template chỉ tồn tại khi có `content_contract` và runtime thật ở P1. P0 vẫn seed đủ taxonomy,
+gồm ≥690 LO; [`taxonomy-service.md`](01-platform/taxonomy-service.md) sở hữu dữ liệu này.
 
 **Cổng ra P0:** `../SPEC.md` §13 + [`security-checklist.md`](08-quality/security-checklist.md).
 
@@ -104,8 +109,9 @@ access-gating ──→ game-config-delivery ──→ play-session-lifecycle
 | 9 | Quản lý hồ sơ trẻ, lưu trữ & chọn trẻ chơi | [`child-profile-crud.md`](03-account/child-profile-crud.md) · [`child-profile-switching.md`](03-account/child-profile-switching.md) · [`child-profile-archive.md`](03-account/child-profile-archive.md) · [`play-entry-and-profile-select.md`](04-play/play-entry-and-profile-select.md) |
 | 10 | Gắn tag nội dung & **Seeder nội dung nền** | [`content-tagging.md`](01-platform/content-tagging.md) · [`content-seed-authoring.md`](01-platform/content-seed-authoring.md) |
 | 11 | ≥120 game level `published` | [`game-level-model.md`](05-content/game-level-model.md) |
+| 11b | Tìm kiếm nội dung — chung cho catalog công khai, thư viện, studio | [`content-search.md`](01-platform/content-search.md) |
 | 12 | Báo cáo cơ bản, trang chính phụ huynh & thư viện cá nhân | [`basic-report.md`](03-account/basic-report.md) · [`member-dashboard.md`](03-account/member-dashboard.md) · [`my-library.md`](03-account/my-library.md) |
-| 13 | Tìm kiếm nội dung, Public site, SEO & Trang pháp lý | [`content-search.md`](01-platform/content-search.md) · [`landing-page.md`](02-public/landing-page.md) · [`game-catalog-public.md`](02-public/game-catalog-public.md) · [`game-detail-public.md`](02-public/game-detail-public.md) · [`seo-and-structured-data.md`](02-public/seo-and-structured-data.md) · [`legal-pages.md`](02-public/legal-pages.md) · [`faq-and-help.md`](02-public/faq-and-help.md) · [`cookie-and-consent-banner.md`](02-public/cookie-and-consent-banner.md) |
+| 13 | Public site, SEO & Trang pháp lý | [`landing-page.md`](02-public/landing-page.md) · [`game-catalog-public.md`](02-public/game-catalog-public.md) · [`game-detail-public.md`](02-public/game-detail-public.md) · [`seo-and-structured-data.md`](02-public/seo-and-structured-data.md) · [`legal-pages.md`](02-public/legal-pages.md) · [`faq-and-help.md`](02-public/faq-and-help.md) · [`cookie-and-consent-banner.md`](02-public/cookie-and-consent-banner.md) |
 | 14 | Cài đặt tài khoản, đồng ý pháp lý & xoá tài khoản | [`account-settings.md`](03-account/account-settings.md) · [`consent-management.md`](03-account/consent-management.md) · [`account-deletion.md`](03-account/account-deletion.md) |
 | 15 | **Đăng nhập SNS** — Google trước, Facebook sau | [`oauth-provider-registry.md`](01-platform/oauth-provider-registry.md) → [`social-login.md`](03-account/social-login.md) → [`social-account-linking.md`](03-account/social-account-linking.md) |
 | 16 | Trình duyệt taxonomy admin & Giám sát hệ thống | [`taxonomy-browser.md`](06-admin/taxonomy-browser.md) · [`monitoring-and-alerting.md`](01-platform/monitoring-and-alerting.md) |
@@ -113,6 +119,13 @@ access-gating ──→ game-config-delivery ──→ play-session-lifecycle
 Thứ tự ở #15 **không đảo được**: [`social-account-linking.md`](03-account/social-account-linking.md) là lối thoát duy nhất cho nhánh
 409 `SOCIAL_EMAIL_CONFLICT` của [`social-login.md`](03-account/social-login.md) (`BR-SCL-04`). Ship [`social-login.md`](03-account/social-login.md) mà chưa có
 màn hình liên kết là đẩy mọi người dùng trùng email vào ngõ cụt.
+
+**D-CA** (T15, 2026-08-09): [`my-library.md`](03-account/my-library.md) (bước 12) khai
+`depends_on: CONTENT-SEARCH`, nhưng bản trước xếp [`content-search.md`](01-platform/content-search.md)
+ở bước 13 — **sau** my-library. Cạnh là thật: Objective của spec đó tự khai là mặt tìm kiếm
+dùng chung cho "catalog công khai, thư viện của User, và studio của Manager" — my-library
+chính là một trong ba bề mặt đó, không phải phụ thuộc thừa. Sửa bằng tách nó thành bước riêng
+11b, chạy trước bước 12, thay vì sửa `depends_on`.
 
 
 ## P2 — Commerce + Admin
@@ -176,8 +189,10 @@ Nhóm D là đường găng dài nhất của MVP — **bắt đầu sớm nhấ
 ## Đường găng
 
 ```
-game-template-contract → content-seed-authoring → seeder ≥120 level + ≥690 LO → PR review
+game-template-contract → content-seed-authoring → seeder ≥120 level → PR review
 ```
 
-Đây là chuỗi dài nhất và **không rút ngắn được bằng cách thêm dev**. Nó bị chặn bởi năng
-lực **đọc review** của người, không phải tốc độ soạn thảo — xem [`content-seed-authoring.md`](01-platform/content-seed-authoring.md) §6.
+Đây là chuỗi dài nhất của P1 và **không rút ngắn được bằng cách thêm dev**. Nó bị chặn bởi
+năng lực **đọc review** của người, không phải tốc độ soạn thảo. ≥690 LO đã được review và seed
+ở P0 theo [`taxonomy-service.md`](01-platform/taxonomy-service.md); xem
+[`content-seed-authoring.md`](01-platform/content-seed-authoring.md) §6 cho lô game level.

@@ -604,7 +604,7 @@ giữ lại (nghĩa vụ pháp lý), không chứa PII của trẻ.
 | **Game** | `game_templates` (L1) · `game_levels` `game_level_versions` (L2) |
 | **Content** | `lessons` `activities` `lesson_activities` `worksheets` `content_images` |
 | **Curriculum** | `curricula` `curriculum_items` `curriculum_enrollments` `curriculum_item_progress` |
-| **Play** | `play_sessions` `play_events` |
+| **Play** | `play_sessions` `telemetry_events` |
 | **Adaptive** | `mastery_state` `level_params` |
 | **Ops** | `audit_logs` `content_review_log` `notifications` `error_log` `feature_flags` |
 | **Add-on (spec-only)** | `lesson_plans` `lesson_plan_items` `custom_games` `ai_usage_log` |
@@ -661,7 +661,12 @@ sách · đổi cấu hình game · đổi feature flag.
 4. **FK polymorphic không ép được ở Postgres** (`content_tag_map`, `content_skill_map`,
    `content_images`, bảng auth phụ). Toàn vẹn do tầng service giữ + **bắt buộc** integration
    test bắt orphan.
-5. **`audit_logs` · `consent_logs` · `content_review_log` · `play_events` là INSERT-only.**
+5. **`audit_logs` · `consent_logs` · `content_review_log` · `telemetry_events` là INSERT-only**
+   (`play_sessions` cũng vậy, chỉ sau khi `status = completed` — xem `BR-SPT-07`).
+   (**D-BV**, T15, 2026-08-09: SPEC.md gọi bảng này `play_events` từ v2.0.0, nhưng
+   [`schema-play-telemetry.md`](specs/01-platform/schema-play-telemetry.md) — spec sở hữu
+   schema, review sau — và code thật đều dùng `telemetry_events`. Sửa SPEC.md cho khớp,
+   không đổi schema.)
 6. `strands.parent_strand_id` cho **đúng một** tầng lồng. Sâu hơn bị cấm.
 
 ---
@@ -678,7 +683,7 @@ sách · đổi cấu hình game · đổi feature flag.
 | ORM | **Drizzle** (`^0.45`) qua driver **`postgres.js`** | Không đứng sau pooler transaction-mode nên bỏ qua caveat prepared statement của `postgres.js`. Cấm raw SQL, trừ `sql\`\`` cho tăng nguyên tử và `coalesce` |
 | Cache / rate limit | **Valkey 9** qua **unstorage** (driver `redis`) | Client nền: xem [`repo-bootstrap.md`](specs/00-foundation/repo-bootstrap.md) §7.1 |
 | Queue | **BullMQ** (`^6.0`) nối trực tiếp qua Nitro plugin, KHÔNG qua wrapper Nuxt | Cấm `nuxt-simple-bullmq` — solo-maintainer, README tự nhận "chỉ test với Node 21", tác giả khuyên dùng lựa chọn khác cho production |
-| Auth | **`nuxt-auth-utils`** — dùng chung cho **cả `apps/web` và `apps/admin`** (cookie niêm phong bọc quanh refresh-token rotation tự quản, xem [`auth-tokens-sessions.md`](specs/01-platform/auth-tokens-sessions.md)); `admin` không đăng ký OAuth route nào. TOTP Manager: `otpauth`. JWT service-to-service vẫn `jose` | Cấm Supabase Auth, Cấm Better-Auth. Mô hình session lõi **chốt 2026-08-06** — xem [`repo-bootstrap.md`](specs/00-foundation/repo-bootstrap.md) §11 |
+| Auth | **`@sidebase/nuxt-auth` Local provider** — dùng chung cho **cả `apps/web` và `apps/admin`** để quản lý trạng thái auth phía Nuxt; backend tự phát JWT access 15 phút bằng `jose`, refresh token opaque xoay vòng và CSRF double-submit theo [`auth-tokens-sessions.md`](specs/01-platform/auth-tokens-sessions.md). OAuth P1 đi qua backend bridge rồi phát cùng token pair; `admin` không có OAuth route. TOTP Manager: `otpauth` | Cấm Supabase Auth, Cấm Better-Auth, Cấm Sidebase AuthJS/`next-auth`. Mô hình session lõi **đổi 2026-08-09** — xem [`repo-bootstrap.md`](specs/00-foundation/repo-bootstrap.md) §11 |
 | SEO | **`@nuxtjs/seo`** (sitemap · robots · og-image renderer Takumi · schema.org) | thay hand-build sitemap/JSON-LD |
 | UI kit | **Nuxt UI v4** + Tailwind v4 | Cấm tái sinh shadcn-vue |
 | Icon | `i-lucide-*` qua `<UIcon>` | một library duy nhất |
@@ -729,7 +734,7 @@ pnpm check:services                           # verify PG + Valkey kết nối �
 pnpm db:generate                              # sinh migration Drizzle
 pnpm db:migrate
 pnpm db:seed                                  # seed đầy đủ (Lớp 1 + lô Lớp 2)
-pnpm db:seed:master                           # CHỈ Lớp 1 — taxonomy, template, emoji, package
+pnpm db:seed:master                           # CHỈ Lớp 1 P0 — taxonomy, emoji, package, entitlement
 pnpm db:seed:content --competency=C1          # Lớp 2, tăng dần
 pnpm db:studio
 
@@ -756,7 +761,7 @@ kidthink/
 │   ├── db/           Drizzle schema, migration, seed
 │   │   └── src/seed-master/    Lớp 1 — taxonomy, template, emoji, package
 │   │   └── src/seed-content/   Lớp 2 — game level, lesson, curriculum
-│   ├── auth/         nuxt-auth-utils (OAuth+session) + jose (JWT service-to-service), guard, hash
+│   ├── auth/         jose (JWT browser + service-to-service), guard, refresh rotation, CSRF
 │   ├── cache/        unstorage driver redis (Valkey 9) + cache util + rate limit
 │   ├── storage/      S3 operation, ảnh WebP pipeline
 │   ├── queue/        BullMQ job definition + producer (consumer ở apps/worker)
@@ -1067,8 +1072,8 @@ snapshot. Offline test dùng Playwright offline mode, không mock `navigator.onL
 
 | Phase | Nội dung | Cắt được không |
 |---|---|---|
-| **P0 — Foundation** | Repo, schema, migration, auth, Lớp 1 seed (taxonomy 230 skill + 690 LO + 6 template + emoji + package + entitlement key), cổng tự động | Cấm chặn mọi thứ |
-| **P1 — Play core** | Game engine 6 template, catalog + gating 4 bậc, play session + event, healthy-play cap, báo cáo cơ bản, ≥120 game level seed, Public Site + SEO | Cấm core business |
+| **P0 — Foundation** | Repo, schema, migration, auth, Lớp 1 seed (taxonomy 230 skill + ≥690 LO + emoji + package + entitlement key), cổng tự động | Cấm chặn mọi thứ |
+| **P1 — Play core** | Registry + game engine 6 template đầy đủ contract, catalog + gating 4 bậc, play session + event, healthy-play cap, báo cáo cơ bản, ≥120 game level seed, Public Site + SEO | Cấm core business |
 | **P2 — Commerce + Admin** | Package catalog, VietQR order, duyệt tay, entitlement, Admin dashboard, **Authoring Studio**, asset pipeline, audit log | Lưu ý: Studio có thể thu về "sửa level đã có" nếu thiếu nguồn lực |
 | **P3 — Curriculum** | Lesson library (≥60), activity, 5 curriculum, curriculum player, mastery + adaptive ZPD, báo cáo nâng cao | Lưu ý: Có thể ship 1 curriculum theo tuổi thay vì 5 |
 | **P4 — Add-on** | Lesson Plan Creator, Custom Game Builder, Curriculum cá nhân, AI + credit ledger, export PDF. **Lên catalog cùng lúc với tính năng** | ngoài MVP |
@@ -1090,7 +1095,7 @@ Cấm cắt: gating, audit, tuân thủ §4, versioning nội dung. Bốn thứ 
 
 - [ ] `pnpm check` exit 0 · 0 lỗi typecheck mọi package.
 - [ ] `pnpm db:migrate && pnpm db:seed:master` chạy sạch trên DB rỗng, **chạy lại được**.
-- [ ] Seed đúng: 6 competency · 41 strand · **230 skill** · **≥690 LO** · **6 template**.
+- [ ] Seed đúng: 6 competency · 41 strand · **230 skill** · **≥690 LO**.
 - [ ] Mọi skill `seeded` có ≥ 3 LO; `age_min ≤ age_max ∈ [3,6]`; `difficulty ∈ [1,5]`.
 - [ ] `skill_prerequisites` là DAG — property test xanh trên toàn bộ seed.
 - [ ] Truy vấn `skill → LO → asset` < 100 ms P95.
@@ -1164,7 +1169,7 @@ hình báo cáo mang câu này.
 - Curriculum liên kết lesson và game thành lộ trình.
 - Có đủ nội dung để một trẻ quay lại **4–8 tuần**.
 - Không có dữ liệu trẻ nào vượt danh sách đóng §4.1.
-- **Cổng ra P0**: [`mvp-scope.md`](specs/00-foundation/mvp-scope.md) Q1 có chủ có tên trước khi mở P1 (neo D-W).
+- **Cổng ra P0**: nhóm Nội dung hoàn tất review ≥690 LO trong master seed; chủ và baseline năng lực đã chốt tại [`mvp-scope.md`](specs/00-foundation/mvp-scope.md) Q1 (`D-CN`, thay thế quyết định hoãn `D-W`).
 - **Cổng ra P0**: [`backup-and-restore.md`](specs/01-platform/backup-and-restore.md) + [`monitoring-and-alerting.md`](specs/01-platform/monitoring-and-alerting.md) approved và `backup_log`
   trong migration P0 (neo Q4/T9).
 - **Cổng ra P1**: [`event-catalog.md`](specs/00-foundation/event-catalog.md) Q2 (partition) đóng lại trước khi `telemetry_events`
@@ -1260,12 +1265,10 @@ Mã taxonomy giữ format v1 (`C1.CNT.03`) — đã biên soạn, bất biến, 
 |---|---|---|
 | 1 | **Giá cuối** của `standard` và `premium` (365 ngày / vĩnh viễn) | Mở thanh toán |
 | 2 | 6 game level nào vào allow-list guest? 1 mỗi competency, difficulty 1–2 | P1 gating |
-| 3 | **Năng lực đọc review là bao nhiêu bản/ngày/người?** Seeder (§0 D7) giải quyết phần *soạn* ≥690 LO + ≥120 game level + ≥60 lesson. Nó **không** giải quyết phần *đọc review* — và đó mới là đường găng. Soạn 500 bản mà review được 20/ngày thì seeder không giúp gì | P0 · P1 · P3 |
 | 4 | Ai là người review nội dung, và người đó có nền sư phạm mầm non không? | P1 · P3 |
 | 5 | C5 Language cần audio tiếng Việt cho ~21 skill — thu âm người thật hay TTS? | P1 nội dung |
 | 7 | Có giữ 60 game type v1 làm backlog port, hay bỏ hẳn và chỉ dùng 6 template? | P1 phạm vi |
 | 8 | Ngân sách pháp lý rà soát ToS / Privacy / Chính sách trẻ em theo ND 13/2023 | Go-live |
-| 9 | Model tablet Android 2GB nào làm chuẩn đo 60 fps | P1 nghiệm thu |
 | 10 | Giữ VietQR duyệt tay vĩnh viễn hay thêm cổng thanh toán ở P5? | Payment roadmap |
 | 11 | Backup + monitoring: v1 **không có gì**. Ai sở hữu và ngân sách bao nhiêu? | Go-live |
 
@@ -1278,6 +1281,8 @@ Mã taxonomy giữ format v1 (`C1.CNT.03`) — đã biên soạn, bất biến, 
 | Add-on ở MVP | **Chỉ spec, không lên catalog.** MVP bán đúng `standard` + `premium` | 2026-08-04 |
 | Premium vs Creator | **Gộp.** Premium bao hàm quyền học của Creator; quyền tạo nằm ở add-on | 2026-08-04 |
 | Pháp lý | **Việt Nam** — Nghị định 13/2023 + Luật Trẻ em. Không COPPA/GDPR-K ở MVP | 2026-08-04 |
+| Chủ và năng lực review nội dung (`D-CN`, thay thế `D-W`) | Nhóm Nội dung sở hữu; baseline 20 LO, 6 game level hoặc 3 lesson/người/ngày, đo lại sau pilot 30 LO + 6 level | 2026-08-09 |
+| Thiết bị chuẩn 60 fps (`D-CH`) | Lenovo Tab M8 2 GB RAM; Chrome ổn định mới nhất, pin >30%, tắt tiết kiệm pin; chạy ba lần lấy median | 2026-08-09 |
 | Repo mới hay branch v2? | **Repo riêng `kidthink/`**, nằm cạnh `tinimath/` (v1). Port có chọn lọc: `game-engine`, `emoji`, taxonomy data | 2026-08-06 (D-A) |
 | Thư viện ảnh | **Không có.** Emoji cố định; ảnh upload gắn content item | 2026-08-04 |
 | Master data | **Lớp 1 code-owned, admin read-only**; Lớp 2 studio CRUD | 2026-08-04 |

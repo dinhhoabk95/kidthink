@@ -193,9 +193,9 @@ Phải xong trước bước 10.
 - [x] Đọc hết file
 - [x] Đối chiếu **từng dòng** phần token và cookie với
       [`auth-tokens-sessions`](../specs/01-platform/auth-tokens-sessions.md) §7.4
-- [x] Xác nhận cookie niêm phong `nuxt-auth-utils` được mô tả đúng là **lớp vận chuyển bọc
-      quanh** refresh-token rotation, không phải thay thế nó
-- [x] Xác nhận `session.secure` mang `refreshTokenId`, khớp [`auth-tokens-sessions.md`](../specs/01-platform/auth-tokens-sessions.md)
+- [x] Quyết định vận chuyển cũ đã được thay thế ngày 2026-08-09 bằng Sidebase Local + JWT
+      access; refresh-token rotation vẫn là contract backend tự quản
+- [x] Xác nhận JWT access chỉ mang `sid`, không mang refresh token, khớp [`auth-tokens-sessions.md`](../specs/01-platform/auth-tokens-sessions.md)
 - [x] Xác nhận tên cookie và secret của `apps/web` khác `apps/admin`
 - [x] Xác nhận reauth 5 phút có mặt và khớp [`auth-tokens-sessions.md`](../specs/01-platform/auth-tokens-sessions.md) §7.4
 - [x] Ghi mọi chỗ lệch tìm được vào sổ cái trước khi sửa, kể cả khi bên sai là spec đã `approved`
@@ -248,7 +248,7 @@ Mở khoá bởi bước 1 và bước 7. `C8` sẽ đỏ nếu làm sớm hơn.
 ### Bước 11 — [`admin-auth.md`](../specs/06-admin/admin-auth.md) (168 dòng, 8 rule, 2 câu hỏi mở)
 
 - [x] Đọc hết file
-- [x] Xác nhận TOTP dùng `otpauth`, không phải `nuxt-auth-utils`
+- [x] Xác nhận TOTP dùng `otpauth`, tách khỏi Sidebase Local
 - [x] Xác nhận cookie và secret của `apps/admin` khác `apps/web` ở tầng crypto, không chỉ policy
 - [x] Đối chiếu hai guard với [`actors`](../specs/00-foundation/actors.md)
 - [x] Điền "vì sao" cho `BR-ADA-03`

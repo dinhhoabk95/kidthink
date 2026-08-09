@@ -23,6 +23,11 @@ pre-commit:
     - name: lint-tokens
       run: pnpm lint:tokens
 
+    # So sánh snapshot staged với HEAD để checkbox tiến độ chỉ được tick khi
+    # cùng commit có bằng chứng code/test và spec liên quan đã implemented.
+    - name: check-progress
+      run: pnpm check:progress
+
 pre-push:
   parallel: false
   jobs:

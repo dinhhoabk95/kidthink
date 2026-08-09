@@ -232,7 +232,7 @@ Bảy việc đầu là vòng lặp của Task #5 và Task #6, giữ nguyên. Vi
 2. **Đối chiếu với quyết định đã chốt sau ngày `reviewed`.** Cả 30 file có `reviewed: 2026-08-04`
    hoặc `2026-08-05`, tức viết **trước** toàn bộ `D-A` đến `D-AQ`. Danh sách bắt buộc đối chiếu:
    định dạng mã ở [`id-conventions.md`](../specs/00-foundation/id-conventions.md) mục 7; khoá
-   ngoại dùng `id` (`D-AE`); kiến trúc cookie niêm phong bọc quanh xoay refresh token ở
+   ngoại dùng `id` (`D-AE`); kiến trúc Sidebase Local + JWT access + xoay refresh token ở
    [`auth-tokens-sessions.md`](../specs/01-platform/auth-tokens-sessions.md) mục 7.4; bản đồ
    bảng ở [`data-model-overview.md`](../specs/01-platform/data-model-overview.md) mục 7; danh
    sách đa hình 9 mục (`D-AQ`).

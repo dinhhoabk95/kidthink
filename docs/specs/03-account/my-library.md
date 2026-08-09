@@ -22,6 +22,9 @@ Nơi User lưu lại nội dung muốn dùng sau — game hay, bài học phù h
 Ở MVP đây là **bookmark có tổ chức**, không phải nơi chứa nội dung do User tạo. Nội dung
 tự tạo là add-on, ngoài MVP.
 
+**D-CA** (T15, 2026-08-09): `depends_on: CONTENT-SEARCH` là cạnh thật — xem
+[`roadmap.md`](../roadmap.md), bước 11b chạy trước bước 12 (spec này) đúng vì lý do đó.
+
 ## 2. Actors
 
 User đã đăng nhập.

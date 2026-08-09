@@ -23,6 +23,13 @@ depends_on:
 Manager tạo và sửa game level **không viết một dòng code nào**. Đây là điều kiện để nội dung
 lớn nhanh hơn tốc độ tuyển được lập trình viên — và là một trong sáu tiêu chí MVP hoàn thành.
 
+**D-CC** (T15, 2026-08-09): field `thumbnail_emoji` và ảnh trong form do
+[`schema-driven-form.md`](schema-driven-form.md) sinh ra lắp widget từ
+[`emoji-picker.md`](emoji-picker.md) và [`image-upload.md`](image-upload.md) — cả hai ở
+bước 7 của [`roadmap.md`](../roadmap.md), **sau** bước 6 (spec này). Không chặn: hai field đó
+build sau cùng slice trong bước 6, khi bước 7 đã xong; phần còn lại của form (field text/số/
+select) không cần chờ.
+
 Studio ghi `game_levels` ở trạng thái `draft`. Publish là bề mặt khác
 ([`publish-and-version.md`](publish-and-version.md)), có cổng duyệt riêng.
 

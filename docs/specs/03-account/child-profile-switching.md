@@ -35,6 +35,11 @@ thì không tách ra được. Vì vậy đổi trẻ đi qua Parent Gate.
 `/me` thẻ trẻ · `/me/children` · `POST /api/users/children/{uuid}/activate` ·
 `DELETE /api/users/children/active`.
 
+**D-BY** (T15, 2026-08-09): spec này là **chủ duy nhất** của
+`POST /api/users/children/{uuid}/activate` và cơ chế đặt `active_child_id`.
+[`play-entry-and-profile-select.md`](../04-play/play-entry-and-profile-select.md) gọi lại
+endpoint này khi cần chọn trẻ trước lúc vào khu vực chơi — không định nghĩa lại.
+
 ## 4. Main flow
 
 1. Người lớn bấm "Cho bé chơi" trên thẻ một trẻ.

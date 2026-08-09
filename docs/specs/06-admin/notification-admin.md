@@ -147,4 +147,4 @@ Scenario: BR-NTA-05 — content_reviewer bị chặn
 
 | # | Câu hỏi | Chặn phase | Đề xuất chốt | Chủ |
 |---|---|---|---|---|
-| 1 | Provider nào cung cấp trạng thái bounce/delivery? Ảnh hưởng độ chính xác của nhật ký | P2 | MVP dùng webhook của Resend/SES để nhận sự kiện delivery/bounce; lưu trong `notification_logs` | người quyết |
+| ~~1~~ | ~~Provider nào cung cấp trạng thái bounce/delivery?~~ **Đóng 2026-08-09 (D-CE, T15)**: đã chốt ở [`repo-bootstrap.md`](../00-foundation/repo-bootstrap.md) §7.1 — **AWS SES** qua `@aws-sdk/client-ses` (đã ở AWS EC2, IAM role, không secret SMTP để xoay), không phải Resend. MVP dùng **SNS bounce/complaint webhook** của SES (baseline đã ghi rõ "cần xin production access sớm + SNS bounce/complaint webhook trước go-live") để nhận sự kiện delivery/bounce; lưu trong `notification_logs` | P2 | Đã đóng | D-CE |

@@ -241,7 +241,7 @@ Giữ nguyên vòng lặp của Task #5, Task #6 và Task #8.
    (hai ngoại lệ: [`asset-usage-tracking.md`](../specs/06-admin/asset-usage-tracking.md),
    `2026-08-07` và [`image-storage.md`](../specs/01-platform/image-storage.md), `2026-08-08`). Danh sách bắt buộc đối chiếu: định dạng mã ở
    [`id-conventions.md`](../specs/00-foundation/id-conventions.md) mục 7; khoá ngoại dùng `id`
-   (`D-AE`); kiến trúc cookie niêm phong bọc quanh xoay refresh token ở
+   (`D-AE`); kiến trúc Sidebase Local + JWT access + xoay refresh token ở
    [`auth-tokens-sessions.md`](../specs/01-platform/auth-tokens-sessions.md) mục 7.4; bản đồ bảng
    ở [`data-model-overview.md`](../specs/01-platform/data-model-overview.md) mục 7; danh sách đa
    hình 9 mục (`D-AQ`); `scoring` schema chung (`D-BA`).

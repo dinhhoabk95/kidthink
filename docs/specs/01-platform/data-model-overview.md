@@ -2,7 +2,7 @@
 spec: DATA-MODEL-OVERVIEW
 title: Tổng quan mô hình dữ liệu
 area: platform
-status: approved
+status: implemented
 mvp: true
 phase: P0
 reviewed: 2026-08-08
@@ -66,7 +66,7 @@ Bốn quyết định định hình toàn bộ schema, mỗi cái là một ràn
 | `BR-DM-02` | **`content_pack` tách khỏi `difficulty_params`** | Đổi nội dung không cần code; đổi độ khó không cần biên tập |
 | `BR-DM-03` | **`content_skill_map.weight ∈ [0,1]`** — 1.0 mục tiêu chính, 0.3 có chạm tới | Không có nó, một game đếm vô tình "dạy" mọi skill nó chạm tới |
 | `BR-DM-04` | **FK polymorphic không ép được ở Postgres** → toàn vẹn do tầng service giữ, **bắt buộc** integration test bắt orphan | Ràng buộc không ép được ở DB là ràng buộc sẽ bị vi phạm |
-| `BR-DM-05` | Bảng INSERT-only: `audit_logs` `consent_logs` `content_review_log` `telemetry_events` `play_events` — ép bằng **quyền DB** | Ép bằng quy ước là không ép |
+| `BR-DM-05` | Bảng INSERT-only: `audit_logs` `consent_logs` `content_review_log` `telemetry_events` `play_sessions` (chỉ sau `completed`) — ép bằng **quyền DB** | Ép bằng quy ước là không ép |
 | `BR-DM-06` | **NEVER raw SQL** — chỉ Drizzle. Ngoại lệ: `sql\`\`` cho tăng nguyên tử và `coalesce` cross-table | Chuỗi SQL nối tay là đường vào injection, và né được typecheck nên đổi schema không làm nó đỏ. Hai ngoại lệ là chỗ Drizzle không diễn đạt được — giữ hẹp, không mở thành cửa chung |
 | `BR-DM-07` | Cột và bảng `snake_case`. Payload API giữ nguyên `snake_case`, không transform | Transform hai chiều là hai chỗ để lệch |
 | `BR-DM-08` | Mọi bảng có `created_at`; bảng sửa được có `updated_at` | Không có mốc thời gian thì không trả lời được "hàng này có từ bao giờ" lúc điều tra sự cố — và thêm cột sau khi đã có dữ liệu thì mọi hàng cũ mang giá trị bịa |
@@ -145,6 +145,7 @@ văn xuôi và test thật.
 | [`actors.md`](../00-foundation/actors.md) Q2 (T9) | `pending_verification` không tạo child | 2026-08-06 | Guard ở tầng service, không ảnh hưởng cột |
 | [`mvp-scope.md`](../00-foundation/mvp-scope.md) Q4 (T9) | Backup/monitoring vào P0 | 2026-08-06 | `backup_log` vào migration #1 |
 | [`monorepo-package-architecture.md`](../00-foundation/monorepo-package-architecture.md) Q3 (T9) | `payment`/`notification` inline | 2026-08-06 | Không đụng cột — ảnh hưởng cấu trúc package |
+| Task #15 mục 4 phát hiện #2 (T15) | **D-BV**: `BR-DM-05` gọi nhầm `play_events` — bảng thật là `telemetry_events` (khớp [`schema-play-telemetry.md`](schema-play-telemetry.md) BR-SPT-07 và code); thêm `play_sessions` vào danh sách INSERT-only cho khớp BR-SPT-07 | 2026-08-09 | Không đụng cột — sửa tên trong `BR-DM-05` và `../../SPEC.md` §5.1/§5.5 |
 | [`access-ladder.md`](../00-foundation/access-ladder.md) Q3 (T10) | Enum 4 bậc | 2026-08-06 | `access_tier` enum (`free`·`login`·`standard`·`premium`) mọi bảng Lớp 2 |
 | [`content-lifecycle.md`](../00-foundation/content-lifecycle.md) Q3 (T10) | Không `scheduled` | 2026-08-06 | `status` enum 6 giá trị (`draft`·`review`·`approved`·`published`·`archived`·`rejected`) |
 | [`content-versioning.md`](../00-foundation/content-versioning.md) Q2 (T11) | Luôn theo bản published mới nhất (không ghim version) | 2026-08-06, cơ chế sửa 2026-08-07 (D-AE) | `curriculum_items.entity_id` bigint FK `entity_id` (neo dòng dõi) của bảng đích — không `entity_code`, không cần `entity_version` |

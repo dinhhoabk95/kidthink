@@ -19,6 +19,11 @@ catalog:
   zod: ^3.25.0 # Zod 4 (Standard Schema) — id-conventions §7.1, BR-ID-05
   dependency-cruiser: ^18.1.1 # cưỡng chế BR-MPA-01/06/07 trong gate local
 
+  # Auth — P0.3. Sidebase Local được khai trực tiếp như Nuxt module ở mỗi app;
+  # jose chỉ được import trong packages/auth.
+  "@sidebase/nuxt-auth": ^1.3.1
+  jose: ^6.2.4
+
   # Driver hạ tầng — hiện chỉ scripts/check-services.ts dùng (repo-bootstrap §4
   # bước 5: "verify kết nối được từ Node"). Chuyển vào packages/db và
   # packages/cache khi hai package đó được dựng thật.

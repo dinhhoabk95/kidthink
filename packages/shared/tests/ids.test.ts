@@ -36,7 +36,7 @@ function fail(schema: { parse: (v: string) => unknown }, value: string) {
 
 // ─── CompetencyCode ──────────────────────────────────────────────────
 
-describe("CompetencyCodeSchema", () => {
+describe("BR-ID-05: CompetencyCodeSchema", () => {
   it.each(["C1", "C2", "C3", "C4", "C5", "C6"])("accepts %s", (v) => {
     ok(CompetencyCodeSchema, v);
   });

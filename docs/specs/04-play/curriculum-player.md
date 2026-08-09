@@ -179,5 +179,5 @@ Scenario: BR-CUR-08 — nghỉ lâu không bị phạt
 
 | # | Câu hỏi | Chặn phase | Đề xuất chốt | Chủ |
 |---|---|---|---|---|
-| 1 | Curriculum item trỏ tới bản `published` mới nhất hay ghim version của item? | P3 | Trỏ sang quyết định `D-VER-02` ở [`content-versioning.md`](../00-foundation/content-versioning.md): ghim version cụ thể ở thời điểm publish curriculum | Play Player |
+| ~~1~~ | ~~Curriculum item trỏ tới bản `published` mới nhất hay ghim version của item?~~ **Đóng 2026-08-09 (D-VER-02 không tồn tại, dùng D-AE, T15)**: `D-VER-02` không có trong corpus — trích dẫn sai. Quyết định thật là **`D-AE`** ở [`content-versioning.md`](../00-foundation/content-versioning.md) §7.4: player đọc curriculum item **luôn theo bản `published` mới nhất** qua `entity_id`, **không ghim**. Khi trẻ **chơi xong** một item, `play_sessions` mới ghim đúng version đã chơi — đó là dữ liệu chơi, khác với tham chiếu cấu trúc curriculum | P3 | Đã đóng | D-AE |
 | 2 | Trẻ ghi danh nhiều curriculum cùng lúc có gây rối không? Cân nhắc giới hạn 1 | P3 | Giới hạn tối đa 1 curriculum hoạt động đồng thời cho mỗi trẻ trong MVP để tránh phân tán tiến độ | người quyết |

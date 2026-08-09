@@ -5,7 +5,7 @@ area: platform
 status: approved
 mvp: true
 phase: P0
-reviewed: 2026-08-07
+reviewed: 2026-08-09
 owns:
   - Hình dạng JWT và audience
   - Thuộc tính cookie
@@ -21,21 +21,19 @@ depends_on:
 
 ## 1. Objective
 
-**Cập nhật 2026-08-06** (nghiên cứu package, xem `../00-foundation/repo-bootstrap.md` §7.1):
-lớp **access** dùng **session cookie niêm phong** qua `nuxt-auth-utils`, không phải `jose`
-JWT tự ký. `jose` giữ lại **chỉ** cho JWT service-to-service (`apps/worker` gọi API nội bộ) —
-không dùng cho session trình duyệt nữa. Lớp **refresh** (cookie opaque, path-scoped, hash
-trong `active_sessions`, xoay mỗi lần dùng) **không đổi** — `nuxt-auth-utils` không có khái
-niệm refresh token, đây vẫn là cơ chế tự quản như thiết kế gốc. Cấm Supabase Auth, Cấm
-không Better-Auth — cả hai mang theo mô hình role và tenant mà kiến trúc này cố ý không có;
-`nuxt-auth-utils` không mang giả định đó (chỉ session primitive, không role/tenant).
+**Cập nhật 2026-08-09** (quyết định package, xem
+[`repo-bootstrap.md`](../00-foundation/repo-bootstrap.md) §7.1): lớp **access** dùng JWT 15
+phút do backend ký bằng `jose`; `@sidebase/nuxt-auth` Local provider quản lý trạng thái auth
+phía Nuxt và gọi các endpoint backend canonical. Lớp **refresh** vẫn là cookie opaque,
+path-scoped, chỉ lưu hash trong `active_sessions` và xoay mỗi lần dùng. Local provider không
+cung cấp CSRF như AuthJS, nên double-submit CSRF vẫn là contract tự quản của backend.
 
-Trong toàn bộ §6–§9 dưới đây, chữ **"token"/"JWT"** khi nói về session trình duyệt đọc là
-**"session cookie niêm phong"** — nội dung rule, ngưỡng, và hành vi **không đổi**, chỉ đổi
-cơ chế mang. Payload/cookie cụ thể đã cập nhật ở §7.1–§7.2.
+OAuth Google/Facebook ở P1 không đổi app sang AuthJS. Backend OAuth bridge hoàn tất
+Authorization Code + PKCE rồi phát cùng access/refresh token pair của local flow. Cấm
+Supabase Auth, Better-Auth, Sidebase AuthJS và `next-auth`.
 
-Hai namespace **tách biệt hoàn toàn** — tên cookie khác, secret niêm phong khác giữa
-`apps/web` (User) và `apps/admin` (Manager). Session của User không bao giờ mở được bề mặt
+Hai namespace **tách biệt hoàn toàn** — tên cookie, issuer, audience và secret ký khác nhau
+giữa `apps/web` (User) và `apps/admin` (Manager). Token của User không bao giờ mở được bề mặt
 Manager và ngược lại.
 
 ## 2. Actors
@@ -50,8 +48,9 @@ Manager và ngược lại.
 
 | Nơi | |
 |---|---|
-| `packages/auth/` | Bọc `nuxt-auth-utils` (session, OAuth, hash mật khẩu) + `otpauth` (TOTP Manager) + `jose` (JWT service-to-service) |
-| `apps/web/server/middleware/auth.ts`, `apps/admin/server/middleware/auth.ts` | `await getUserSession(event)` **một lần** mỗi request, gắn `event.context` — guard đọc lại sau đó là **sync** |
+| `packages/auth/` | Sở hữu domain claim, ký/xác minh JWT bằng `jose`, refresh rotation, CSRF, hash mật khẩu; `otpauth` phục vụ TOTP Manager |
+| `apps/web/nuxt.config.ts`, `apps/admin/nuxt.config.ts` | Khai `@sidebase/nuxt-auth` Local provider với endpoint/cookie namespace riêng; không export type vendor |
+| `apps/web/server/middleware/auth.ts`, `apps/admin/server/middleware/auth.ts` | Xác minh JWT access **một lần** mỗi request, gắn `event.context`; guard đọc context đồng bộ |
 | `POST /api/guest/auth/{users\|managers}/login` | Pre-auth |
 | `POST /api/{users\|managers}/auth/refresh` | Post-auth, path-scoped cookie |
 | `POST /api/{users\|managers}/auth/logout` | |
@@ -59,24 +58,22 @@ Manager và ngược lại.
 ## 4. Main flow
 
 1. Login thành công (User: mật khẩu **hoặc** SNS; Manager: mật khẩu **+ TOTP bắt buộc**) →
-   ghi hàng `active_sessions` (`refresh_token_hash`, thiết bị, IP) → `setUserSession()` ghi
-   **session cookie niêm phong** (15 phút) mang `user` (lộ ra client — §7.1) + `secure`
-   (`refreshTokenId`, `deviceId` — chỉ server đọc được, `nuxt-auth-utils` tách hai vùng theo
-   thiết kế của nó).
-2. Refresh token vẫn là **cookie opaque riêng** (HttpOnly, `path`-scoped tới route refresh,
-   giá trị hash so khớp `active_sessions.refresh_token_hash`) — `nuxt-auth-utils` không quản
-   lý phần này, đặt bằng `setCookie()` thủ công như thiết kế gốc.
-3. Đặt 3 cookie: session (HttpOnly, `nuxt-auth-utils`), refresh (HttpOnly, **path-scoped**,
-   thủ công), csrf (không HttpOnly, thủ công).
-4. Mỗi request: middleware `await getUserSession(event)`, verify **audience**, gắn context.
-5. Session hết hạn (15 phút) → client gọi refresh → verify `refreshTokenId` với DB, **xoay**
-   hàng `active_sessions`, `setUserSession()` ghi session mới.
-6. Logout → xoá hàng `active_sessions`, `clearUserSession()` xoá cookie session, xoá cookie
-   refresh.
+   ghi hàng `active_sessions` (`refresh_token_hash`, thiết bị, IP) → backend phát JWT access
+   15 phút có `sid` và refresh token opaque.
+2. Sidebase Local nhận access token theo `signInResponseTokenPointer`, lưu vào cookie access
+   `HttpOnly`; backend đặt refresh cookie opaque `HttpOnly`, path-scoped và không trả refresh
+   token trong JSON.
+3. Đặt 3 cookie: access JWT (`HttpOnly`), refresh opaque (`HttpOnly`, path-scoped) và csrf
+   double-submit (không `HttpOnly`).
+4. Mỗi request: middleware xác minh chữ ký, `issuer`, **audience** và expiry đúng một lần,
+   sau đó gắn context domain.
+5. Access hết hạn → Sidebase Local gọi endpoint refresh; backend so hash refresh token,
+   **xoay** hàng `active_sessions`, đặt refresh cookie mới và trả access token mới.
+6. Logout → xoá hàng `active_sessions` và xoá cả ba cookie đúng namespace.
 
-Manager qua MFA: bước 1 **không** gọi `setUserSession()` ngay sau khi mật khẩu đúng — chỉ sau
-khi TOTP xác minh thành công mới tạo hàng `active_sessions` và ghi session. Không có session
-nào tồn tại ở trạng thái "chưa qua MFA" (§5).
+Manager qua MFA: bước 1 chỉ chạy sau khi TOTP xác minh thành công. Bước mật khẩu chỉ cấp
+challenge credential một mục đích, TTL ngắn; credential này không phải access token, không
+qua guard và không tạo `active_sessions` (§5).
 
 ## 5. Alternative flows
 
@@ -85,7 +82,7 @@ nào tồn tại ở trạng thái "chưa qua MFA" (§5).
 | Refresh token đã dùng lại (token reuse) | **Thu hồi toàn bộ phiên** của tài khoản đó, buộc đăng nhập lại. Dấu hiệu bị đánh cắp |
 | `refresh_token_version` lệch | `SESSION_REVOKED` 401 |
 | Đổi mật khẩu | `refresh_token_version` **+1** → mọi phiên khác chết |
-| Manager chưa qua MFA | `MFA_REQUIRED` 428. **Không** tạo session/`active_sessions` — client gửi lại mã TOTP kèm định danh đăng nhập tạm để hoàn tất |
+| Manager chưa qua MFA | `MFA_REQUIRED` 428. **Không** tạo access token/`active_sessions` — client gửi mã TOTP kèm challenge credential một mục đích để hoàn tất |
 | Token sai audience | **401**, không phải 403 |
 
 ## 6. Business rules
@@ -113,37 +110,52 @@ nào tồn tại ở trạng thái "chưa qua MFA" (§5).
 
 ## 7. Data
 
-### 7.1 Payload — nội dung session (`nuxt-auth-utils`)
+### 7.1 JWT access payload
 
 ```ts
-interface UserSessionData {
-  user:   { sub: number; aud: "kidthink:user";    name: string; ver: number; active_child_id?: number }; // lộ ra client, useUserSession()
-  secure: { refreshTokenId: string; deviceId: string };                                                    // CHỈ server đọc, không serialize ra client
+interface UserAccessPayload {
+  sub: string;
+  aud: "kidthink:user";
+  iss: "kidthink:web";
+  sid: string;
+  name: string;
+  ver: number;
+  active_child_id?: number;
+  iat: number;
+  exp: number;
 }
-interface ManagerSessionData {
-  user:   { sub: number; aud: "kidthink:manager"; name: string; ver: number; role: ManagerRole };
-  secure: { refreshTokenId: string; deviceId: string };
+interface ManagerAccessPayload {
+  sub: string;
+  aud: "kidthink:manager";
+  iss: "kidthink:admin";
+  sid: string;
+  name: string;
+  ver: number;
+  role: ManagerRole;
+  iat: number;
+  exp: number;
 }
 ```
 
-`ver` = `refresh_token_version`. So với DB **chỉ ở endpoint refresh**, không mỗi request —
-session sống 15 phút là ngưỡng chấp nhận được (giữ nguyên ngưỡng gốc, đổi cơ chế mang).
-`secure` là vùng nội bộ của `nuxt-auth-utils` — tách khỏi `user` theo thiết kế của thư viện,
-không phải quy ước tự đặt.
+JWT ký HS256 bằng secret tối thiểu 32 byte, secret riêng từng app. `sid` là ID opaque của
+`active_sessions`; không phải refresh token. `ver` = `refresh_token_version` và chỉ so với DB
+ở endpoint refresh, không mỗi request. JWT access không chứa entitlement, package, tier,
+provider token, refresh token hoặc dữ liệu trẻ ngoài candidate `active_child_id`.
 
 ### 7.2 Cookie
 
 | Cookie | Cơ chế | HttpOnly | SameSite | Path | TTL |
 |---|---|:--:|---|---|---|
-| `kidthink-user-session` / `kidthink-manager-session` | `nuxt-auth-utils`, secret riêng mỗi app | | Lax | `/` | 15 phút |
-| `tm_u_rt` / `tm_m_rt` | Cookie opaque tự đặt (`setCookie()`), hash so `active_sessions` | | Strict | `/api/users/auth/refresh` / `/api/managers/auth/refresh` | 7 ngày |
+| `kidthink-user-access` / `kidthink-manager-access` | Sidebase Local lưu JWT backend phát; secret ký riêng mỗi app | | Lax | `/` | 15 phút |
+| `tm_u_rt` | Cookie opaque backend đặt, hash so `active_sessions` | | Strict | `/api/users/auth/refresh` | 7 ngày |
+| `tm_m_rt` | Cookie opaque backend đặt, hash so `active_sessions` | | Strict | `/api/managers/auth/refresh` | 24 giờ |
 | `tm_u_csrf` / `tm_m_csrf` | Tự đặt | Cấm | Strict | `/` | 7 ngày |
 | `active_child_id` | Tự đặt | Cấm | Lax | `/` | 30 ngày |
 | `tm_did` (guest) | Tự đặt | Cấm | Lax | `/` | 1 năm |
 
 Mọi cookie `Secure` ở production. Cookie session **không đặt thuộc tính `Domain`** — mặc định
 host-only, nên `admin.{domain}` và `{domain}` tự động không chia sẻ được cookie của nhau
-(RFC 6265), cộng thêm secret niêm phong khác nhau mỗi app (double-guard, không chỉ một lớp).
+(RFC 6265), cộng thêm issuer, audience và secret ký khác nhau (nhiều lớp kiểm soát độc lập).
 
 ### 7.3 `active_sessions`
 
@@ -180,9 +192,9 @@ phiên khác có thể là của kẻ tấn công.
 
 ## 8. API contract
 
-Guard vẫn **sync** — middleware đã `await getUserSession(event)` một lần đầu request lifecycle
-(§3, §4 bước 4); guard chỉ đọc `event.context` đã gắn sẵn, không tự làm crypto/`await` (`BR-AUT-02`
-không đổi).
+Guard vẫn **sync** — middleware đã xác minh JWT access một lần đầu request lifecycle (§3, §4
+bước 4); guard chỉ đọc `event.context` đã gắn sẵn, không tự làm crypto/`await`
+(`BR-AUT-02` không đổi).
 
 | Route | Auth | Ghi chú |
 |---|---|---|

@@ -2,7 +2,7 @@
 spec: ID-CONVENTIONS
 title: Quy ước định danh và mã bất biến
 area: foundation
-status: approved
+status: implemented
 mvp: true
 phase: P0
 reviewed: 2026-08-06

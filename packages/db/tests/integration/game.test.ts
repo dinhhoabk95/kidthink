@@ -131,7 +131,7 @@ describe("Game Schema Integration Tests", () => {
     const [gl] = await db
       .insert(gameLevels)
       .values({
-        entityId: 200,
+        entityId: Math.floor(Math.random() * 800_000) + 100_000,
         code,
         contentVersion: 1,
         templateId: gtId,

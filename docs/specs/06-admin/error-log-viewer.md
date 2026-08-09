@@ -138,4 +138,4 @@ Scenario: BR-ELV-07 — đánh dấu đã xử lý
 
 | # | Câu hỏi | Chặn phase | Đề xuất chốt | Chủ |
 |---|---|---|---|---|
-| 1 | Dùng Sentry hay tự xây? Tự xây rẻ hơn nhưng thiếu source map và grouping tốt | P2 | MVP tự xây bảng `error_logs` và grouping đơn giản để tiết kiệm chi phí; Sentry hoãn sang P4 | người quyết |
+| ~~1~~ | ~~Dùng Sentry hay tự xây?~~ **Đóng 2026-08-09 (D-CD, T15)**: câu hỏi sai tiền đề — `@sentry/nuxt` đã là SDK baseline từ P0 ([`repo-bootstrap.md`](../00-foundation/repo-bootstrap.md) §7.1, [`monitoring-and-alerting.md`](../01-platform/monitoring-and-alerting.md)), không phải lựa chọn còn mở ở P2. Câu hỏi thật: bảng `error_log` §7.1 dưới đây là **UI tiện dụng cho Manager** trong app, đọc từ cùng lỗi mà `pino`/Nitro plugin ghi — **không thay** Sentry, Sentry vẫn chạy song song cho alerting kỹ sư. Giữ nguyên thiết kế tự xây ở phần còn lại của spec | P2 | Đã đóng | D-CD |

@@ -25,8 +25,9 @@ depends_on:
 
 ## 1. Objective
 
-MVP cần **≥690 learning objective, ≥120 game level, ≥60 lesson**. Đó là khối lượng biên
-soạn lớn nhất của dự án và nó không rút ngắn được bằng cách thêm dev.
+MVP cần **≥690 learning objective, ≥120 game level, ≥60 lesson**. ≥690 LO là dữ liệu taxonomy
+Lớp 1 do [`taxonomy-service.md`](taxonomy-service.md) sở hữu và phải hoàn tất ở P0. Spec này
+sở hữu đường ống biên soạn Lớp 2 từ P1: game level trước, lesson/curriculum ở P3.
 
 Cách giải: nội dung nền được viết thành **seeder file trong repo**, người biên soạn dùng
 **AI agent IDE** (Claude Code / Cursor) làm trợ lý soạn thảo, và **PR review là cổng người**.
@@ -86,7 +87,7 @@ cũng là tài sản và cũng cần review: code.
 | Nơi | Ghi chú |
 |---|---|
 | `packages/db/src/seed-content/c1..c6/gt-001..gt-006.ts` | Game level, chia theo **năng lực đã chốt C1–C6** × template |
-| `packages/db/src/seed-content/learning-objectives/c1..c6.ts` | LO theo competency |
+| `packages/db/src/seed-master/taxonomy/learning-objectives/c1..c6.ts` | LO Lớp 1 do [`taxonomy-service.md`](taxonomy-service.md) sở hữu; P0 dùng cùng quy tắc PR review, không tính là lô Lớp 2 của spec này |
 | `packages/db/src/seed-content/lessons/*.ts` · `curricula/*.ts` | P3 |
 | `pnpm seed:check` | Chạy 8 cổng, không chạm DB |
 | `pnpm seed:content --dry-run` | DB tạm → seed → checklist publish → rollback |
@@ -397,10 +398,10 @@ Scenario: dry-run không chạm DB thật
 
 | # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
 |---|---|---|---|---|
-| 1 | **Một người review được bao nhiêu bản/ngày?** Cổng người đổi chỗ từ hàng đợi sang PR, không biến mất. Đây vẫn là đường găng | Kế hoạch nội dung | P1 | người quyết |
-| 2 | Bố cục competency × template có đúng cho LO không, hay LO nên chia theo strand? | Seeder LO | P1 | Nội dung |
+| ~~1~~ | ~~Một người review được bao nhiêu bản/ngày?~~ **Đóng 2026-08-09 (`D-CN`, thay thế quyết định hoãn `D-W`)**: baseline lập kế hoạch 20 LO, 6 game level hoặc 3 lesson/ngày; đo lại sau pilot 30 LO + 6 level, quota không thay checklist chất lượng | — | Đã đóng | Nội dung |
+| ~~2~~ | ~~LO chia theo competency × template hay strand?~~ **Đóng 2026-08-09 (`D-CK`)**: file chia theo competency, bên trong nhóm theo strand rồi skill; template không tham gia taxonomy LO | — | Đã đóng | Nội dung |
 | 3 | Cổng 6 (trùng lặp) dùng chuẩn hoá cấu trúc hay embedding? Chuẩn hoá rẻ và xác định; embedding bắt được nhiều hơn nhưng cần vector store | Chi phí hạ tầng | P2 | Backend |
 | 4 | Cổng 4 (ngôn ngữ) cần từ điển vốn từ 3–6 tuổi tiếng Việt. Nguồn nào? | Xây cổng 4 | P2 | Nội dung |
 | 5 | Nội dung seeded có cần người thứ hai review khi có ≥2 manager không? | Chất lượng vs tốc độ | P2 | Nội dung |
 | 6 | Batch nền có `access_tier` phân bổ ra sao — bao nhiêu `free` cho allow-list guest? | [`SPEC.md`](../../SPEC.md) §15 Q2 | P1 | người quyết |
-| 7 | **Branch protection GitHub (required PR review) bật thế nào?** [`repo-bootstrap.md`](../00-foundation/repo-bootstrap.md) §11 Q12 hoãn quyết định này với câu "trước khi spec đó chạy thật (P1) phải quyết định" — "spec đó" là file này, và approve nó 2026-08-08 làm câu hỏi tới hạn. Hôm nay `BR-CSA-02` đặt toàn bộ cổng người lên PR review, nhưng **không có gì cưỡng chế** điều đó: không cổng remote (`D-S`), và `--no-verify` bỏ qua được lefthook ở máy cá nhân. Một người có quyền push thẳng `main` phát hành được nội dung mà không ai đọc | `BR-CSA-02` — cổng người của toàn bộ đường găng nội dung. Cần **người** quyết, không phải quyết định kỹ thuật | P1 | người quyết |
+| ~~7~~ | ~~Branch protection GitHub bật thế nào?~~ **Đóng 2026-08-09 (`D-CL`)**: `main` cấm direct push và force-push; merge bắt buộc PR + ít nhất một approving human review; dismiss approval khi có commit mới. Người bật rule ngoài repo trước PR seeder đầu tiên | — | Đã đóng | Product |

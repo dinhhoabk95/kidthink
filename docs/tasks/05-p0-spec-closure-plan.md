@@ -164,7 +164,7 @@ gọn.
    `reviewed: 2026-08-04` hoặc `2026-08-05`, tức viết **trước** 30 quyết định `D-A` đến `D-AE`
    của Task #2 và Task #3. Danh sách cần đối chiếu: định dạng mã ở
    [`id-conventions`](../specs/00-foundation/id-conventions.md) §7, quy tắc khoá ngoại dùng
-   `id` (`D-AE`), kiến trúc cookie niêm phong bọc quanh refresh-token rotation ở
+   `id` (`D-AE`), kiến trúc Sidebase Local + JWT access + refresh-token rotation hiện hành ở
    [`auth-tokens-sessions`](../specs/01-platform/auth-tokens-sessions.md) §7.4, và bản đồ bảng
    ở [`data-model-overview`](../specs/01-platform/data-model-overview.md) §7.
 3. **Sửa cảnh báo `C6`** — điền cột "vì sao" cho mọi rule đang trống. Không xoá rule để hết
@@ -240,7 +240,7 @@ Thứ tự trong nhóm này **không đảo được**: [`email-verification.md`
 | Bước | Spec | Điểm cần soi kỹ |
 |---|---|---|
 | 7 | [`registration`](../specs/03-account/registration.md) (193 dòng) | Hai checkbox đồng ý phải khớp [`child-data-compliance`](../specs/00-foundation/child-data-compliance.md). Câu hỏi 1 đã gạch bỏ và chốt 2026-08-05, xác nhận phần gạch bỏ vẫn đọc được đúng |
-| 8 | [`login-and-session`](../specs/03-account/login-and-session.md) (188 dòng) | Đây là spec rủi ro nhất trong nhóm. Nó viết 2026-08-04, **trước** quyết định kiến trúc cookie niêm phong `nuxt-auth-utils` bọc quanh refresh-token rotation (chốt 2026-08-06). Phải đối chiếu từng dòng với [`auth-tokens-sessions`](../specs/01-platform/auth-tokens-sessions.md) §7.4 |
+| 8 | [`login-and-session`](../specs/03-account/login-and-session.md) (188 dòng) | Đây là spec rủi ro nhất trong nhóm. Quyết định vận chuyển cũ ngày 2026-08-06 đã được Sidebase Local + JWT thay thế ngày 2026-08-09; phải đối chiếu từng dòng với [`auth-tokens-sessions`](../specs/01-platform/auth-tokens-sessions.md) §7.4 |
 | 9 | [`password-recovery`](../specs/03-account/password-recovery.md) (169 dòng) | Mở khoá bởi bước 1. Quy tắc "luôn trả 200" và "giết mọi phiên" phải khớp [`login-and-session.md`](../specs/03-account/login-and-session.md) sau khi bước 8 xong |
 | 10 | [`email-verification`](../specs/03-account/email-verification.md) (141 dòng) | Mở khoá bởi bước 1 và bước 7. Điều kiện tạo hồ sơ trẻ phải khớp [`child-data-compliance.md`](../specs/00-foundation/child-data-compliance.md) |
 
@@ -248,7 +248,7 @@ Thứ tự trong nhóm này **không đảo được**: [`email-verification.md`
 
 | Bước | Spec | Điểm cần soi kỹ |
 |---|---|---|
-| 11 | [`admin-auth`](../specs/06-admin/admin-auth.md) (168 dòng) | Bốn cảnh báo `C6`, nhiều nhất nhóm. TOTP dùng `otpauth`, không phải `nuxt-auth-utils`. Cookie và secret của `apps/admin` phải khác `apps/web` ở tầng crypto. Câu hỏi 2 (xoay mật khẩu Manager đầu tiên) chặn go-live nhưng cũng chặn script seed ở P0 — chốt luôn |
+| 11 | [`admin-auth`](../specs/06-admin/admin-auth.md) (168 dòng) | Bốn cảnh báo `C6`, nhiều nhất nhóm. TOTP dùng `otpauth`, tách khỏi Sidebase Local. Cookie, issuer và secret của `apps/admin` phải khác `apps/web` ở tầng crypto. Câu hỏi 2 (xoay mật khẩu Manager đầu tiên) chặn go-live nhưng cũng chặn script seed ở P0 — chốt luôn |
 | 12 | [`testing-strategy`](../specs/08-quality/testing-strategy.md) (187 dòng) | Câu hỏi 1 tự ghi là chặn P0, nên bắt buộc chốt. Ba cảnh báo `C6`. Ngưỡng phủ test ở đây là ngưỡng mà mọi task sau phải đạt |
 
 ### Bước 13 — [`security-checklist.md`](../specs/08-quality/security-checklist.md)

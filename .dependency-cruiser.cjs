@@ -35,7 +35,17 @@ module.exports = {
       severity: "error",
       from: { path: "^apps/" },
       to: {
-        path: "node_modules/(ioredis|iovalkey|bullmq|nuxt-auth-utils|unstorage)(/|$)",
+        path: "node_modules/(ioredis|iovalkey|bullmq|jose|otpauth|unstorage)(/|$)",
+      },
+    },
+    {
+      name: "no-obsolete-auth-provider",
+      comment:
+        "P0.3 chốt Sidebase Local; nuxt-auth-utils và AuthJS/next-auth không còn thuộc stack.",
+      severity: "error",
+      from: {},
+      to: {
+        path: "node_modules/(nuxt-auth-utils|next-auth)(/|$)",
       },
     },
     {

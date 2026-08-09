@@ -278,9 +278,9 @@ Spec mà `D-AG` của Task #5 đã cắt cạnh để không phải kéo vào l�
 - [x] Xác nhận `BR-OAP-06` (chỉ hai provider) khớp enum `social_identities.provider`
 - [x] Xác nhận `BR-OAP-07` và `BR-OAP-15` (không lưu token provider) khớp `BR-SIB-10` — cột
       không tồn tại thì không rò được
-- [x] Xác nhận PKCE bắt buộc và `nuxt-auth-utils` là thư viện nền
-      ([`repo-bootstrap.md`](../specs/00-foundation/repo-bootstrap.md) §7.1), gọi qua
-      `packages/auth` không import thẳng vào app (`BR-MPA-01`)
+- [x] Xác nhận PKCE bắt buộc và OAuth bridge phát token pair cho Sidebase Local
+      ([`repo-bootstrap.md`](../specs/00-foundation/repo-bootstrap.md) §7.1); bridge/JWT đi qua
+      `packages/auth`, còn Sidebase chỉ khai như Nuxt module ở app (`BR-MPA-01`)
 - [x] Xác nhận `apps/admin` **không đăng ký route OAuth nào** — cấm bằng việc không có file
 - [x] Checklist [`CONVENTIONS.md`](../specs/CONVENTIONS.md) §10
 - [x] `status: approved`, cập nhật `reviewed`

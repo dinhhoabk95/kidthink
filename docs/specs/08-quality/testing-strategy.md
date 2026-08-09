@@ -2,7 +2,7 @@
 spec: TESTING-STRATEGY
 title: Chiến lược kiểm thử
 area: quality
-status: approved
+status: implemented
 mvp: true
 phase: P0
 reviewed: 2026-08-08
@@ -67,11 +67,20 @@ Dev · cổng tự động.
 | Tầng | Framework | Vị trí | Ngưỡng |
 |---|---|---|---|
 | Unit | Vitest | `*.test.ts` cạnh source | ≥80% |
-| Integration | Vitest + PG Docker | `apps/web/tests/integration/` | critical ≥85% |
+| Integration | Vitest + PG Docker | `packages/<tên>/tests/integration/` cho schema/service của package đó; `apps/web/tests/integration/` chỉ cho route/API của app | critical ≥85% |
 | Property | `fast-check` | cạnh source | mọi bất biến §7.2 |
 | E2E | Playwright | `apps/web/tests/e2e/` | mỗi template ≥1 journey |
 | A11y | `@axe-core/playwright` | mọi page object | 0 violation |
 | Load | k6 | `infra/load/` | API P95 < 800 ms |
+
+**D-BW** (2026-08-09, T15): dòng Integration sửa lại — bản gốc chỉ ghi
+`apps/web/tests/integration/`, nhưng 12 integration test schema thật đã nằm ở
+`packages/db/tests/integration/` từ trước, đúng vị trí (test schema thuộc về package sở
+hữu schema, không thuộc app). Sửa spec cho khớp thực tế, không di chuyển 12 file.
+
+`packages/db/tests/global-setup.ts` dọn database Docker local trước mỗi lần chạy và từ chối
+URL có host không phải loopback (`BR-TST-05`). Vì cleanup là `TRUNCATE`, dữ liệu trong DB local
+này được xem là disposable khi chạy test.
 
 ### 7.2 Bất biến kiểm bằng property test
 
@@ -183,5 +192,5 @@ Scenario: E2E chạy đúng viewport
 
 | # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
 |---|---|---|---|---|
-| 1 | Cổng tự động chạy PG Docker mất bao lâu? Nếu quá chậm cần tách suite | P0 | P0 | Infra |
-| 2 | Thiết bị chuẩn đo 60 fps trong E2E là gì? | [`game-engine-runtime.md`](../01-platform/game-engine-runtime.md) Q1 | P1 | người quyết |
+| ~~1~~ | ~~Cổng tự động chạy PG Docker mất bao lâu?~~ **Đóng 2026-08-09 (`D-CM`)**: full suite 22 file/278 test, gồm PG Docker thật, chạy **4,15 giây** trên máy dev. Giữ một suite; chỉ tách khi P95 của 10 lần chạy vượt 120 giây | — | Đã đóng | Infra |
+| ~~2~~ | ~~Thiết bị chuẩn đo 60 fps trong E2E là gì?~~ **Đóng 2026-08-09 (`D-CH`)**: Lenovo Tab M8 bản 2 GB RAM là thiết bị chuẩn; Chrome ổn định mới nhất, pin >30%, tắt tiết kiệm pin, chạy ba lần lấy median | — | Đã đóng | Studio UI |

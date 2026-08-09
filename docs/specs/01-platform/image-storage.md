@@ -85,7 +85,7 @@ Chọn/kéo ảnh
 | `BR-IMG-08` | Preview ở **cỡ thật trong game** | Ảnh ổn ở 400px có thể vô nghĩa ở 96px |
 | `BR-IMG-09` | Cấm — **NEVER ảnh chụp trẻ em** ở bất kỳ đâu, kể cả avatar | [`child-data-compliance.md`](../00-foundation/child-data-compliance.md) `BR-CDC-04` |
 | `BR-IMG-10` | Ảnh chứng từ thanh toán lưu **private**, signed URL 15 phút | Chứa thông tin ngân hàng |
-| `BR-IMG-11` | Cấm — **NEVER raw `$fetch` cho route upload** — mất `x-csrf-token` | $fetch mặc định không đính kèm CSRF token từ nuxt-auth-utils, dễ bị tấn công CSRF upload file độc hại |
+| `BR-IMG-11` | Cấm — **NEVER raw `$fetch` cho route upload** — mất `x-csrf-token` | Sidebase Local không tự cung cấp CSRF; raw `$fetch` không đi qua wrapper double-submit của KidThink, dễ bị tấn công CSRF upload file độc hại |
 | `BR-IMG-12` | Mọi upload/xoá ghi `audit_logs` | Bắt buộc để vết trách nhiệm quản trị viên khi có sự cố phát tán ảnh hoặc xoá nhầm asset của content published (`BR-AUD-01`) |
 
 ## 7. Data
@@ -222,4 +222,3 @@ Scenario: alt_vi bắt buộc
 | 1 | Xoá nền tự động có vào P4 không? Trỏ sang [`image-upload.md`](../06-admin/image-upload.md) Q1 | Chất lượng nội dung | P4 | Studio UI |
 | 2 | CDN trước S3 ngay từ đầu hay sau? Ảnh hưởng độ trễ tải asset trên 4G | Hạ tầng | P2 | Infra |
 | 3 | Job dọn ảnh `orphan` chạy tần suất nào? (D-BD: 01:00 UTC hàng ngày, dọn ảnh orphan > 30 ngày) | Vận hành | P2 | Backend |
-

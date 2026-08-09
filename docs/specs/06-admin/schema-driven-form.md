@@ -11,8 +11,6 @@ owns:
   - Quy ước đặt tên field
 depends_on:
   - GAME-TEMPLATE-CONTRACT
-  - EMOJI-PICKER
-  - IMAGE-UPLOAD
 ---
 
 # Form sinh từ schema
@@ -23,6 +21,14 @@ depends_on:
 
 Viết form riêng cho từng template là 6 chỗ để lệch hôm nay và 30 chỗ khi thư viện template
 lớn lên. Form sinh từ schema giữ studio và engine không bao giờ nói hai điều khác nhau.
+
+**D-CC** (T15, 2026-08-09): bỏ `depends_on: EMOJI-PICKER, IMAGE-UPLOAD` — cạnh ngược (bước 5
+trước bước 7 ở [`roadmap.md`](../roadmap.md)) và không thứ nào trong hai spec đó được nhắc ở
+đâu trong thân file này; cơ chế suy widget ở đây là generic (Zod type → widget), không cần
+biết trước hai widget cụ thể tồn tại. Widget emoji/ảnh được lắp khi
+[`game-level-studio.md`](game-level-studio.md) build field thật cần chúng — theo đúng sơ đồ
+P2 ở [`roadmap.md`](../roadmap.md) (`image-upload · emoji-picker ──→ game-level-studio`,
+không phải `──→ schema-driven-form`).
 
 ## 2. Actors
 

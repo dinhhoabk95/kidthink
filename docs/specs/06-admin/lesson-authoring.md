@@ -159,4 +159,4 @@ Scenario: kéo thả đổi thứ tự
 | # | Câu hỏi | Chặn phase | Đề xuất chốt | Chủ |
 |---|---|---|---|---|
 | 1 | **Ai biên soạn ≥60 lesson?** Seeder + AI agent IDE soạn khung được, nhưng phần sư phạm cần người | P3 | Đồng bộ nợ `D-W` ở [`mvp-scope.md`](../00-foundation/mvp-scope.md) Q1 — Seeder + AI hỗ trợ bản thô, Chuyên gia sư phạm mầm non đọc và duyệt | người quyết |
-| 2 | Lesson có nên ghim version của activity không, hay luôn lấy bản mới nhất? | P3 | Trỏ sang quyết định `D-VER-02` ở [`content-versioning.md`](../00-foundation/content-versioning.md): ghim version cụ thể ở thời điểm publish | Studio UI |
+| ~~2~~ | ~~Lesson có nên ghim version của activity không, hay luôn lấy bản mới nhất?~~ **Đóng 2026-08-09 (D-VER-02 không tồn tại, dùng D-AE, T15)**: `D-VER-02` không có trong corpus — trích dẫn sai. Quyết định thật là **`D-AE`** ở [`content-versioning.md`](../00-foundation/content-versioning.md) §7.4: lesson tham chiếu activity **luôn theo bản `published` mới nhất** qua `entity_id`, **không ghim**. Ghim chỉ áp cho dữ liệu chơi đã xảy ra, không áp cho tham chiếu nội dung sang nội dung | P3 | Đã đóng | D-AE |

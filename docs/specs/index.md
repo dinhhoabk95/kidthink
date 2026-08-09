@@ -219,20 +219,20 @@ v1 có **31** spec cho cùng phạm vi. Xé nhỏ là chủ ý — xem [`AUDIT-v
 ## Đường găng của MVP
 
 ```
-game-template-contract → content-seed-authoring → seeder ≥120 level + ≥690 LO → PR review
+P0: taxonomy-service → master seed ≥690 LO → human review
+P1: game-template-contract → content-seed-authoring → seeder ≥120 level → human review
 ```
 
 Chuỗi này **không rút ngắn được bằng cách thêm dev**. Nó bị chặn bởi năng lực **đọc
 review** của người, không phải tốc độ soạn thảo —
 [`01-platform/content-seed-authoring.md`](01-platform/content-seed-authoring.md) §11 Q1.
+Chủ và baseline năng lực đã chốt ở `D-CN`; rủi ro còn lại là thực thi đủ khối lượng.
 
-## Ba câu hỏi mở chặn nhiều nhất
+## Câu hỏi mở chặn nhiều nhất
 
 | # | Câu hỏi | Chặn |
 |---|---|---|
-| 1 | **Ai biên soạn ≥690 LO, ≥120 game level, ≥60 lesson?** | P0 · P1 · P3 |
-| 2 | **Giá cuối** của `standard` và `premium` | P2 · trang giá |
-| 3 | **Thiết bị chuẩn** đo 60 fps | Cổng ra P1 |
+| 1 | **Giá cuối** của `standard` và `premium` | P2 · trang giá |
 
 ## Đổi contract thì đổi spec trước
 

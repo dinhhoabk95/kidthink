@@ -290,8 +290,9 @@ Scenario: mỗi template có E2E journey
 > `phase: P1` ở trên là phase **implement** (khi 6 template MVP thật sự được build), không
 > phải phase **approve**. File này approve **bây giờ**, ở P0, vì [`schema-content-taxonomy.md`](schema-content-taxonomy.md)
 > (P0, `depends_on` nó) cần hình dạng `GameTemplate` ổn định trước. Approve = *hình dạng*
-> contract (§7.1, §7.4) đã chốt; **không** có nghĩa 6 template hay phạm vi khảo sát Q1 đã chốt
-> — đổi hình dạng sau này là version mới của spec, không phải sửa im lặng.
+> contract (§7.1, §7.4) đã chốt. Sáu template chỉ được seed ở P1 cùng contract và runtime thật;
+> P0 không tạo hàng `active` rỗng để đạt số đếm (`D-CG`). Đổi hình dạng sau này là version mới
+> của spec, không phải sửa im lặng.
 
 | # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
 |---|---|---|---|---|

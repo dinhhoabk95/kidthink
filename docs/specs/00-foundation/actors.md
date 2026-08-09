@@ -5,7 +5,7 @@ area: foundation
 status: approved
 mvp: true
 phase: P0
-reviewed: 2026-08-07
+reviewed: 2026-08-09
 owns:
   - Danh sách tác nhân và định nghĩa của từng loại
   - Ranh giới giữa hai guard
@@ -40,7 +40,7 @@ Chưa đăng nhập. Không có record trong DB.
 
 | | |
 |---|---|
-| Định danh | Cookie thiết bị `kidthink_did` (uuid, không HttpOnly, 1 năm) |
+| Định danh | Cookie thiết bị `tm_did` theo [`auth-tokens-sessions.md`](../01-platform/auth-tokens-sessions.md) §7.2 (uuid, không HttpOnly, 1 năm) |
 | Chơi được | Allow-list 6 game level `access_tier='free'`, một cho mỗi competency, difficulty 1–2 |
 | Giới hạn lượt | **Không có** |
 | Lưu tiến độ | Không — `play_sessions.child_profile_id IS NULL`, không ghi `mastery_state` |

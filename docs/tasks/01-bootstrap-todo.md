@@ -76,7 +76,7 @@
 - [x] `dependency-cruiser@^18.1.1` + `.dependency-cruiser.cjs` + script `lint:deps`
 - [x] Rule `no-packages-to-apps` (`BR-MPA-06`)
 - [x] Rule `no-app-to-app` (`BR-MPA-07`)
-- [x] Rule `no-app-direct-base-lib` — ioredis/iovalkey/bullmq/nuxt-auth-utils/unstorage (`BR-MPA-01`)
+- [x] Rule `no-app-direct-base-lib` — ioredis/iovalkey/bullmq/jose/otpauth/unstorage (`BR-MPA-01`); Sidebase chỉ được khai như Nuxt module ở app
 - [x] Rule `no-circular`
 - [x] ca dương: 50 module, 0 vi phạm
 - [x] **ca âm × 3**: cả 3 rule đều bắt đúng `from → to`
@@ -121,10 +121,9 @@
 - [x] Sửa 7 file corpus còn viết "cổng CI"/"CI xanh" → "cổng tự động": [`mvp-scope.md`](../specs/00-foundation/mvp-scope.md) ·
   [`content-lifecycle.md`](../specs/00-foundation/content-lifecycle.md) · [`content-seed-authoring.md`](../specs/01-platform/content-seed-authoring.md) (2 chỗ) · [`roadmap.md`](../specs/roadmap.md) · [`index.md`](../specs/index.md) ·
   [`SPEC.md`](../SPEC.md) (4 chỗ)
-- [ ] Tạm dừng Rủi ro nhận biết, chưa xử lý: `git commit --no-verify` bỏ qua được, không gì
-  server-side chặn lại — **chấp nhận đến P1** (quyết định người dùng). Trước
-  [`content-seed-authoring.md`](../specs/01-platform/content-seed-authoring.md) chạy thật phải quyết định branch protection GitHub (required PR
-  review). [`repo-bootstrap.md`](../specs/00-foundation/repo-bootstrap.md) §11 Q12
+- [x] Quyết định `D-CL`: lefthook vẫn bỏ qua được local, nên `main` cấm direct/force push và
+  bắt buộc PR + ít nhất một approving human review; dismiss approval khi có commit mới.
+  Người bật rule trước PR seeder đầu tiên.
 
 ## T9 — GATE (sau T2·T3·T4·T5·T6·T7·T8·T8b·T10 — 3 điều kiện xanh **cùng lúc**)
 - [x] `pnpm check` exit 0 local (4 bước: lint · lint:tokens · lint:deps · typecheck)
@@ -155,7 +154,10 @@
 
 ## Ngoài plan này (theo dõi riêng)
 - [x] ~~Bật lại CI + xanh remote~~ — **không còn áp dụng 2026-08-06**: không có CI để bật lại (D-S, T8b). `BR-RBS-03` đã thoả bằng lefthook + `git push` thật, xem T9
-- [ ] **Quyết định branch protection GitHub trước [`content-seed-authoring.md`](../specs/01-platform/content-seed-authoring.md) (P1)** — lefthook bỏ qua được bằng `--no-verify`, không gì server-side chặn. Chấp nhận đến P1 (quyết định người dùng), nhưng phải quyết định thật (required PR review) trước khi seeder nội dung nền chạy. [`repo-bootstrap.md`](../specs/00-foundation/repo-bootstrap.md) §11 Q12
+- [x] **Quyết định branch protection GitHub** — chốt `D-CL`: required PR + một human approval,
+  cấm direct/force push, dismiss stale approvals.
+- [ ] **Người bật branch protection trên GitHub** trước PR seeder đầu tiên — đây là hành động
+  ngoài repo, agent không tự thực hiện.
 - [ ] **Task #2** — 16 spec `00-foundation` `draft` → `approved` thì mở khoá `BR-RBS-04`
   - Đã đo trước 2026-08-06: corpus sạch cơ học (130/130 đủ 9 field frontmatter · 0/267 `owns` trùng · 0/167 link vỡ · 11 section đúng, 6 spec `07-addon` = 7 section theo [`CONVENTIONS.md`](../specs/CONVENTIONS.md) §4 cho phép)
   - Cấm **1 vi phạm [`CONVENTIONS.md`](../specs/CONVENTIONS.md) §10 phải sửa**: `PARENT_GATE_REQUIRED` dùng ở `03-account/child-profile-switching.md:81` + `04-play/play-entry-and-profile-select.md:102` mà **không** có trong `00-foundation/error-codes.md`

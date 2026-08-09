@@ -7,12 +7,12 @@ mvp: true
 phase: P1
 reviewed: 2026-08-08
 owns:
-  - Luồng vào khu vực chơi
-  - Cơ chế chọn và đổi child profile
+  - Luồng vào khu vực chơi (guest và có hồ sơ)
 depends_on:
   - ACTORS
   - ACCESS-GATING
   - PARENT-GATE
+  - CHILD-PROFILE-SWITCHING
 ---
 
 # Vào khu vực chơi và chọn trẻ
@@ -38,13 +38,18 @@ và không đổi được bởi trẻ.
 |---|---|
 | `/play` | Sảnh — catalog game cho trẻ |
 | `/play/{code}` | Một level |
-| `/me/children` | Chọn trẻ rồi vào chơi |
-| `POST /api/users/children/{uuid}/activate` | Đặt `active_child_id` |
+| `/me/children` | Chọn trẻ rồi vào chơi — route hiển thị; cơ chế đặt `active_child_id` sở hữu bởi [`child-profile-switching.md`](../03-account/child-profile-switching.md) (`D-BY`) |
+
+**D-BY** (T15, 2026-08-09): `POST /api/users/children/{uuid}/activate` và cơ chế đặt
+`active_child_id` **không** thuộc spec này — sở hữu duy nhất bởi
+[`child-profile-switching.md`](../03-account/child-profile-switching.md). Spec này chỉ **gọi
+lại** endpoint đó khi luồng vào khu vực chơi cần chọn trẻ trước, đúng "một outcome một file"
+([`AUDIT-v1.md`](../AUDIT-v1.md)). Trước sửa, cả hai spec cùng khai `owns` mảnh cơ chế này.
 
 ## 4. Main flow
 
 1. Người lớn ở `/me/children`, chọn một trẻ.
-2. Server kiểm ownership, đặt cookie `active_child_id`.
+2. Gọi cơ chế đặt `active_child_id` của [`child-profile-switching.md`](../03-account/child-profile-switching.md) (kiểm ownership, đặt cookie — chi tiết ở spec đó).
 3. Chuyển sang `/play` — giao diện đổi hoàn toàn sang bề mặt trẻ.
 4. Trẻ duyệt catalog (ít chữ, hình lớn, không bộ lọc phức tạp).
 5. Chọn game → gating → config → chơi.
