@@ -194,6 +194,6 @@ Scenario: BR-SCO-04 — thang chung giữa template
 
 | # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
 |---|---|---|---|---|
-| 1 | Trọng số 0,6/0,4 đã đúng chưa? | Tinh chỉnh adaptive | P3 | Data / Adaptive |
-| 2 | Template `sequence-order` chấm từng vị trí hay cả chuỗi? | Tinh chỉnh scoring | P1 | Chốt D-BA: P1 chấm cả chuỗi; hoãn chấm từng vị trí sang P3 khi adaptive engine cần |
+| 1 | Trọng số 0,6/0,4 đã đúng chưa? | Tinh chỉnh adaptive | P3 | Backend |
+| ~~2~~ | ~~Template `sequence-order` chấm từng vị trí hay cả chuỗi?~~ **Đóng 2026-08-09 (T13, `D-BA`)**: P1 chấm cả chuỗi; hoãn chấm từng vị trí sang P3 khi adaptive engine cần | Tinh chỉnh scoring | Đã đóng | D-BA |
 
