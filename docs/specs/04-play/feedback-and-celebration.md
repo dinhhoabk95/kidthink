@@ -175,6 +175,6 @@ Scenario: BR-FBK-10 — âm không có onset tức thì
 
 | # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
 |---|---|---|---|---|
-| 1 | Lời khen thu âm người thật hay TTS? | Âm thanh phản hồi | P1 | Chốt D-AV: P1 dùng audio clip tĩnh + Web Speech API (TTS), hoãn thu studio sang P2 |
-| 2 | Mascot có nhất quán qua mọi theme không, hay đổi theo theme? | Mascot thiết kế | P1 | Chốt: Mascot Thỏ Tini giữ vai trò chính ở mọi theme, background đổi theo theme |
+| ~~1~~ | ~~Lời khen thu âm người thật hay TTS?~~ **Đóng 2026-08-09 (T13, `D-AV`)**: P1 dùng audio clip tĩnh + Web Speech API (TTS), hoãn thu studio sang P2 | Âm thanh phản hồi | Đã đóng | D-AV |
+| ~~2~~ | ~~Mascot có nhất quán qua mọi theme không, hay đổi theo theme?~~ **Đóng 2026-08-09 (T13, `D-DB`)**: Mascot Thỏ Tini giữ vai trò chính ở mọi theme, background đổi theo theme | Mascot thiết kế | Đã đóng | D-DB |
 
