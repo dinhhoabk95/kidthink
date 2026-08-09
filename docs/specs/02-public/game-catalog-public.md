@@ -151,5 +151,5 @@ Scenario: facets không dẫn tới 0 kết quả
 
 | # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
 |---|---|---|---|---|
-| 1 | Với 120 game thì phân trang hay cuộn vô hạn? | SEO và trải nghiệm | P1 | Chốt: Phân trang dạng số trang (pagination) cho catalog công khai để hỗ trợ crawl/index; cuộn vô hạn ở sảnh trẻ |
+| ~~1~~ | ~~Với 120 game thì phân trang hay cuộn vô hạn?~~ **Đóng 2026-08-09 (T13, `D-CU`)**: phân trang dạng số trang (pagination) cho catalog công khai để hỗ trợ crawl/index; cuộn vô hạn ở sảnh trẻ | SEO và trải nghiệm | Đã đóng | D-CU |
 
