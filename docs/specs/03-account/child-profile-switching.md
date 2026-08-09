@@ -144,5 +144,5 @@ Scenario: BR-CPS-07 — chọn tường minh lần đầu
 
 | # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
 |---|---|---|---|---|
-| 1 | Có nên có PIN riêng cho từng trẻ (trẻ lớn tự chọn) không? | Bảo mật hồ sơ | P4 | Product / Profile Security |
+| 1 | Có nên có PIN riêng cho từng trẻ (trẻ lớn tự chọn) không? | Bảo mật hồ sơ | P4 | người quyết |
 
