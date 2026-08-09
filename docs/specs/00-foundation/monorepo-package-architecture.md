@@ -212,6 +212,6 @@ Scenario: BR-MPA-04 — module cấu hình thuần không bị ép bọc driver
 
 | # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
 |---|---|---|---|---|
-| ~~1~~ | ~~Dependency-graph check chạy bằng công cụ nào~~ **Đóng 2026-08-06**: `dependency-cruiser ^18.1` — duy nhất hỗ trợ cấm thư viện ngoài cụ thể theo zone (`BR-MPA-01`), không chỉ graph nội bộ. Xem mục 7.1 của [`repo-bootstrap.md`](repo-bootstrap.md) | — | Hoãn, chặn phase P1 | hoãn |
-| ~~2~~ | ~~Tách `packages/auth-oauth`/`packages/auth-jwt`?~~ **Đóng lại 2026-08-09**: giữ **một** `packages/auth` sở hữu JWT browser/service, refresh, CSRF và OAuth bridge. `@sidebase/nuxt-auth` Local provider phải khai ở từng Nuxt app để module integration hoạt động, nhưng không sở hữu domain contract và không làm phát sinh package auth thứ hai | — | Đã đóng | Product |
+| ~~1~~ | ~~Dependency-graph check chạy bằng công cụ nào~~ **Đóng 2026-08-06 (`D-DI`)**: `dependency-cruiser ^18.1` — duy nhất hỗ trợ cấm thư viện ngoài cụ thể theo zone (`BR-MPA-01`), không chỉ graph nội bộ. Xem mục 7.1 của [`repo-bootstrap.md`](repo-bootstrap.md) | — | Đã đóng | D-DI |
+| ~~2~~ | ~~Tách `packages/auth-oauth`/`packages/auth-jwt`?~~ **Đóng lại 2026-08-09 (`D-DJ`)**: giữ **một** `packages/auth` sở hữu JWT browser/service, refresh, CSRF và OAuth bridge. `@sidebase/nuxt-auth` Local provider phải khai ở từng Nuxt app để module integration hoạt động, nhưng không sở hữu domain contract và không làm phát sinh package auth thứ hai | — | Đã đóng | D-DJ |
 | ~~3~~ | ~~Tách `packages/payment` và `packages/notification` ngay từ đầu hay inline~~ **Đóng 2026-08-06 (T9)**: **inline** tới khi `apps/admin` cần dùng lại. Tách sớm tạo package rỗng; inline trước rồi extract khi có 2 consumer | — | Đã đóng | D-X (T9) |
