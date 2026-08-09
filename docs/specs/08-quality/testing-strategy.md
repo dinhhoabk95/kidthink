@@ -192,5 +192,5 @@ Scenario: E2E chạy đúng viewport
 
 | # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
 |---|---|---|---|---|
-| ~~1~~ | ~~Cổng tự động chạy PG Docker mất bao lâu?~~ **Đóng 2026-08-09 (`D-CM`)**: full suite 22 file/278 test, gồm PG Docker thật, chạy **4,15 giây** trên máy dev. Giữ một suite; chỉ tách khi P95 của 10 lần chạy vượt 120 giây | — | Đã đóng | Infra |
-| ~~2~~ | ~~Thiết bị chuẩn đo 60 fps trong E2E là gì?~~ **Đóng 2026-08-09 (`D-CH`)**: Lenovo Tab M8 bản 2 GB RAM là thiết bị chuẩn; Chrome ổn định mới nhất, pin >30%, tắt tiết kiệm pin, chạy ba lần lấy median | — | Đã đóng | Studio UI |
+| ~~1~~ | ~~Cổng tự động chạy PG Docker mất bao lâu?~~ **Đóng 2026-08-09 (`D-CM`)**: full suite 22 file/278 test, gồm PG Docker thật, chạy **4,15 giây** trên máy dev. Giữ một suite; chỉ tách khi P95 của 10 lần chạy vượt 120 giây | — | Đã đóng | D-CM |
+| ~~2~~ | ~~Thiết bị chuẩn đo 60 fps trong E2E là gì?~~ **Đóng 2026-08-09 (`D-CH`)**: Lenovo Tab M8 bản 2 GB RAM là thiết bị chuẩn; Chrome ổn định mới nhất, pin >30%, tắt tiết kiệm pin, chạy ba lần lấy median | — | Đã đóng | D-CH |
