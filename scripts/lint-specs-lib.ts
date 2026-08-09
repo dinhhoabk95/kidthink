@@ -1834,8 +1834,8 @@ export function checkC16(specs: SpecFile[]) {
 // So khớp toàn chuỗi, không so khớp chuỗi con — "người quyết — chặn P2" phải
 // warn vì phase bị nhét sai chỗ (cấm), dù chứa "người quyết".
 //
-// Chặng 1 (task #13 bước 1): warn cho mọi status. Chặng 2 (bước cuối): fail
-// khi status: approved, giữ warn cho draft — cùng khuôn C16.
+// Chặng 2 (task #13 bước cuối, đang hiệu lực): fail khi status: approved,
+// giữ warn cho draft — cùng khuôn C16.
 
 const C17_TEAM_SET = new Set([
   "Infra",
@@ -1923,7 +1923,11 @@ export function checkC17(specs: SpecFile[]) {
       if (!isValidC17Owner(owner, isStruck)) {
         const msg = `Hàng câu hỏi mở (hàng ${qNum}) có "Chủ" ngoài bộ giá trị đóng: "${owner}"`;
         const lineNo = section11Line + k;
-        warn(s.rel, lineNo, "C17", msg);
+        if (s.frontmatter.status === "approved") {
+          fail(s.rel, lineNo, "C17", msg);
+        } else {
+          warn(s.rel, lineNo, "C17", msg);
+        }
       }
     }
   }

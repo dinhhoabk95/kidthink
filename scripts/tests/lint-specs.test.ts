@@ -876,7 +876,7 @@ describe("checkC16 (open questions phase and owner check)", () => {
   });
 });
 
-describe("checkC17 (bộ giá trị đóng cho cột Chủ) — chặng 1, warn", () => {
+describe("checkC17 (bộ giá trị đóng cho cột Chủ) — phát hiện giá trị sai", () => {
   function specWithOwnerRow(status: string, ownerRow: string) {
     const content = [
       "---",
@@ -893,10 +893,10 @@ describe("checkC17 (bộ giá trị đóng cho cột Chủ) — chặng 1, warn"
     return makeSpecFile("/fake/test_c17.md", "fake/test_c17.md", content);
   }
 
-  it("warns approved spec when Chủ is an ad-hoc team name outside the closed set", () => {
+  it("warns draft spec when Chủ is an ad-hoc team name outside the closed set", () => {
     const specs = [
       specWithOwnerRow(
-        "approved",
+        "draft",
         "| 1 | Test question | Blocked feature | P1 | Product / QA |"
       ),
     ];
@@ -922,7 +922,7 @@ describe("checkC17 (bộ giá trị đóng cho cột Chủ) — chặng 1, warn"
   it("warns on 'người quyết — chặn P2' — loose substring match would be a fake gate", () => {
     const specs = [
       specWithOwnerRow(
-        "approved",
+        "draft",
         "| 1 | Test question | Blocked feature | P1 | người quyết — chặn P2 |"
       ),
     ];
@@ -946,7 +946,7 @@ describe("checkC17 (bộ giá trị đóng cho cột Chủ) — chặng 1, warn"
   it("warns on a struck row when Chủ is a team name instead of a D-* code", () => {
     const specs = [
       specWithOwnerRow(
-        "approved",
+        "draft",
         "| ~~2~~ | ~~Test question~~ | — | Đã đóng | Infra |"
       ),
     ];
@@ -983,5 +983,55 @@ describe("checkC17 (bộ giá trị đóng cho cột Chủ) — chặng 1, warn"
     checkC17(specs);
     const warnings = getWarnings().filter((w) => w.check === "C17");
     expect(warnings).toHaveLength(0);
+  });
+});
+
+describe("checkC17 (bộ giá trị đóng cho cột Chủ) — chặng 2, fail cho approved", () => {
+  function specWithOwnerRow(status: string, ownerRow: string) {
+    const content = [
+      "---",
+      "spec: TEST_C17_STAGE2",
+      `status: ${status}`,
+      "---",
+      "",
+      "## 11. Open questions",
+      "",
+      "| # | Câu hỏi | Chặn gì | Chặn phase | Chủ |",
+      "|---|---|---|---|---|",
+      ownerRow,
+    ].join("\n");
+    return makeSpecFile(
+      "/fake/test_c17_stage2.md",
+      "fake/test_c17_stage2.md",
+      content
+    );
+  }
+
+  it("fails (not just warns) an approved spec with Chủ outside the closed set", () => {
+    const specs = [
+      specWithOwnerRow(
+        "approved",
+        "| 1 | Test question | Blocked feature | P1 | Product / QA |"
+      ),
+    ];
+    checkC17(specs);
+    const violations = getViolations().filter((v) => v.check === "C17");
+    const warnings = getWarnings().filter((w) => w.check === "C17");
+    expect(violations).toHaveLength(1);
+    expect(warnings).toHaveLength(0);
+  });
+
+  it("still only warns a draft spec with the same defect", () => {
+    const specs = [
+      specWithOwnerRow(
+        "draft",
+        "| 1 | Test question | Blocked feature | P1 | Product / QA |"
+      ),
+    ];
+    checkC17(specs);
+    const violations = getViolations().filter((v) => v.check === "C17");
+    const warnings = getWarnings().filter((w) => w.check === "C17");
+    expect(violations).toHaveLength(0);
+    expect(warnings).toHaveLength(1);
   });
 });
