@@ -184,6 +184,6 @@ Scenario: BR-DSC-13 — file .vue đủ nhỏ
 
 | # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
 |---|---|---|---|---|
-| 1 | Bộ avatar preset cho trẻ do ai vẽ và bao nhiêu cái? | Tạo hồ sơ trẻ | P1 | Cặp Q2/D-AS: Hỏi Cổng dừng A (dính [`child-profile-crud.md`](../03-account/child-profile-crud.md) Q1) |
-| 2 | Font chữ số trên canvas có cần giấy phép riêng không? | Giấy phép font | P1 | Chốt: Dùng Google Fonts open-source (OFL license), không tốn phí bản quyền riêng |
+| ~~1~~ | ~~Bộ avatar preset cho trẻ do ai vẽ và bao nhiêu cái?~~ **Đóng 2026-08-09 (T13, `D-AU`)**: cùng câu hỏi với [`child-profile-crud.md`](../03-account/child-profile-crud.md) Q1 — 12 avatar preset SVG do UI Designer vẽ | Tạo hồ sơ trẻ | Đã đóng | D-AU |
+| ~~2~~ | ~~Font chữ số trên canvas có cần giấy phép riêng không?~~ **Đóng 2026-08-09 (T13, `D-DM`)**: dùng Google Fonts open-source (OFL license), không tốn phí bản quyền riêng | Giấy phép font | Đã đóng | D-DM |
 
