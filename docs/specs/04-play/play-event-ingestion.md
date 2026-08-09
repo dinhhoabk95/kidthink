@@ -188,6 +188,6 @@ Scenario: offline flush đúng thứ tự
 
 | # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
 |---|---|---|---|---|
-| 1 | Khoảng trống `seq` có cần cảnh báo mức nào không? | Giám sát thất thoát dữ liệu | P1 | Chốt: Cảnh báo WARN ở server log khi gap > 1; không fail request để tránh đứt mạch client |
-| 2 | Có nén payload event không? | Hiệu năng truyền tải | P1 | Chốt: Không nén custom ở P1 (dùng HTTP/2 header compression); hoãn nén custom sang P3 |
+| ~~1~~ | ~~Khoảng trống `seq` có cần cảnh báo mức nào không?~~ **Đóng 2026-08-09 (T13, `D-DD`)**: cảnh báo WARN ở server log khi gap > 1; không fail request để tránh đứt mạch client | Giám sát thất thoát dữ liệu | Đã đóng | D-DD |
+| ~~2~~ | ~~Có nén payload event không?~~ **Đóng 2026-08-09 (T13, `D-DE`)**: không nén custom ở P1 (dùng HTTP/2 header compression); hoãn nén custom sang P3 | Hiệu năng truyền tải | Đã đóng | D-DE |
 
