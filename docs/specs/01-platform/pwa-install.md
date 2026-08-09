@@ -120,4 +120,4 @@ Scenario: start_url mở vào bề mặt người lớn
 
 | # | Câu hỏi | Chặn phase | Đề xuất chốt | Chủ |
 |---|---|---|---|---|
-| 1 | Có cần push notification qua PWA không? Đụng ràng buộc không gửi gì tới trẻ | P5 | Không dùng push notification PWA cho trẻ em; chỉ gửi thông báo tới phụ huynh qua email/SMS theo `BR-CHI-04` ở [`child-data-compliance.md`](../00-foundation/child-data-compliance.md) (`D-BM`) | PWA / Compliance |
+| 1 | Có cần push notification qua PWA không? Đụng ràng buộc không gửi gì tới trẻ | P5 | Không dùng push notification PWA cho trẻ em; chỉ gửi thông báo tới phụ huynh qua email/SMS theo `BR-CHI-04` ở [`child-data-compliance.md`](../00-foundation/child-data-compliance.md) (`D-BM`) | Infra |
