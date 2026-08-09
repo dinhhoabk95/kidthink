@@ -7,6 +7,10 @@ export const AUTH_ERROR_DEFINITIONS = {
     status: 403,
     message: "Bạn không có quyền truy cập mục này.",
   },
+  CSRF_INVALID: {
+    status: 403,
+    message: "Phiên bảo mật không hợp lệ. Vui lòng tải lại trang và thử lại.",
+  },
   NO_ACTIVE_CHILD: {
     status: 428,
     message: "Hãy chọn hồ sơ bé trước khi tiếp tục.",

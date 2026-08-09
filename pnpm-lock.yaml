@@ -92,6 +92,9 @@ importers:
       '@kidthink/auth':
         specifier: workspace:*
         version: link:../../packages/auth
+      '@kidthink/db':
+        specifier: workspace:*
+        version: link:../../packages/db
     devDependencies:
       '@sidebase/nuxt-auth':
         specifier: 'catalog:'
@@ -114,6 +117,9 @@ importers:
       '@kidthink/auth':
         specifier: workspace:*
         version: link:../../packages/auth
+      '@kidthink/db':
+        specifier: workspace:*
+        version: link:../../packages/db
     devDependencies:
       '@sidebase/nuxt-auth':
         specifier: 'catalog:'
@@ -144,6 +150,9 @@ importers:
       '@kidthink/config':
         specifier: workspace:*
         version: link:../config
+      fast-check:
+        specifier: 'catalog:'
+        version: 3.23.2
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
@@ -157,6 +166,9 @@ importers:
 
   packages/db:
     dependencies:
+      '@kidthink/auth':
+        specifier: workspace:*
+        version: link:../auth
       drizzle-orm:
         specifier: 'catalog:'
         version: 0.45.2(postgres@3.4.9)

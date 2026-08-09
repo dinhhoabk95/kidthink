@@ -12,11 +12,12 @@ export function assertActiveChild(event: AuthEvent): number {
 }
 
 export async function verifyChildOwnership(
-  userId: number,
+  event: AuthEvent,
   childId: number,
   ownershipPort: ChildOwnershipPort
 ): Promise<void> {
-  const isOwned = await ownershipPort.isOwnedByUser(userId, childId);
+  const user = requireUserAuth(event);
+  const isOwned = await ownershipPort.isOwnedByUser(user.user_id, childId);
   if (!isOwned) {
     throw appError("NOT_FOUND");
   }

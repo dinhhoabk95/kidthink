@@ -2,7 +2,7 @@
 spec: AUTH-TOKENS-SESSIONS
 title: Token, cookie và vòng đời phiên
 area: platform
-status: implemented
+status: approved
 mvp: true
 phase: P0
 reviewed: 2026-08-09
@@ -24,8 +24,10 @@ depends_on:
 **Cập nhật 2026-08-09** (quyết định package, xem
 [`repo-bootstrap.md`](../00-foundation/repo-bootstrap.md) §7.1): lớp **access** dùng JWT 15
 phút do backend ký bằng `jose`; `@sidebase/nuxt-auth` Local provider quản lý trạng thái auth
-phía Nuxt và gọi các endpoint backend canonical. Lớp **refresh** vẫn là cookie opaque,
-path-scoped, chỉ lưu hash trong `active_sessions` và xoay mỗi lần dùng. Local provider không
+phía Nuxt và gọi các endpoint backend canonical. Lớp **refresh** vẫn opaque đối với client:
+giá trị nội bộ là envelope `v1` chứa namespace, `sid`, phiên bản thu hồi và nonce, được xác
+thực bằng HMAC với khoá tách miền từ secret của đúng namespace. Cookie path-scoped chỉ lưu
+hash của toàn envelope trong `active_sessions` và xoay mỗi lần dùng. Local provider không
 cung cấp CSRF như AuthJS, nên double-submit CSRF vẫn là contract tự quản của backend.
 
 OAuth Google/Facebook ở P1 không đổi app sang AuthJS. Backend OAuth bridge hoàn tất
@@ -52,8 +54,10 @@ Manager và ngược lại.
 | `apps/web/nuxt.config.ts`, `apps/admin/nuxt.config.ts` | Khai `@sidebase/nuxt-auth` Local provider với endpoint/cookie namespace riêng; không export type vendor |
 | `apps/web/server/middleware/auth.ts`, `apps/admin/server/middleware/auth.ts` | Xác minh JWT access **một lần** mỗi request, gắn `event.context`; guard đọc context đồng bộ |
 | `POST /api/guest/auth/{users\|managers}/login` | Pre-auth |
-| `POST /api/{users\|managers}/auth/refresh` | Post-auth, path-scoped cookie |
-| `POST /api/{users\|managers}/auth/logout` | |
+| `GET /api/{users\|managers}/auth/session` | Trả safe session payload cho Sidebase; bảo đảm CSRF cookie đúng namespace tồn tại |
+| `POST /api/{users\|managers}/auth/refresh` | Post-auth, path-scoped refresh cookie và CSRF bắt buộc |
+| `POST /api/{users\|managers}/auth/logout` | Thu hồi phiên hiện tại, CSRF bắt buộc |
+| `POST /api/{users\|managers}/auth/logout-all` | Tăng version và thu hồi toàn bộ phiên của account, CSRF bắt buộc |
 
 ## 4. Main flow
 
@@ -67,9 +71,13 @@ Manager và ngược lại.
    double-submit (không `HttpOnly`).
 4. Mỗi request: middleware xác minh chữ ký, `issuer`, **audience** và expiry đúng một lần,
    sau đó gắn context domain.
-5. Access hết hạn → Sidebase Local gọi endpoint refresh; backend so hash refresh token,
-   **xoay** hàng `active_sessions`, đặt refresh cookie mới và trả access token mới.
-6. Logout → xoá hàng `active_sessions` và xoá cả ba cookie đúng namespace.
+5. Access hết hạn → bridge của app gọi endpoint refresh. Backend xác thực MAC và namespace
+   trước khi dùng `sid`, khoá hàng phiên trong transaction, so hash, **xoay** hàng
+   `active_sessions`, rồi đặt access/refresh cookie mới. Response chỉ chứa safe session
+   payload; raw access JWT và refresh token không đi qua JSON hoặc JavaScript.
+6. Bridge gọi lại `getSession({ force: true })` để Sidebase đồng bộ trạng thái. Cơ chế refresh
+   tích hợp sẵn của Sidebase giữ tắt vì nó yêu cầu serialize refresh token ở client.
+7. Logout → xoá hàng `active_sessions` và xoá cả ba cookie đúng namespace.
 
 Manager qua MFA: bước 1 chỉ chạy sau khi TOTP xác minh thành công. Bước mật khẩu chỉ cấp
 challenge credential một mục đích, TTL ngắn; credential này không phải access token, không
@@ -141,6 +149,18 @@ JWT ký HS256 bằng secret tối thiểu 32 byte, secret riêng từng app. `si
 `active_sessions`; không phải refresh token. `ver` = `refresh_token_version` và chỉ so với DB
 ở endpoint refresh, không mỗi request. JWT access không chứa entitlement, package, tier,
 provider token, refresh token hoặc dữ liệu trẻ ngoài candidate `active_child_id`.
+
+### 7.1a Refresh envelope
+
+Refresh token có dạng `v1.<payload-base64url>.<mac-base64url>`. Payload chỉ chứa namespace,
+`sid`, `ver` nguyên không âm và nonce ngẫu nhiên 32 byte. MAC dùng HMAC-SHA256 với khoá được
+HKDF từ secret của namespace và nhãn miền cố định. Backend phải kiểm format, namespace, MAC
+constant-time, `sid` và `ver` trước khi truy vấn phiên; envelope sai không được dùng `sid` giả
+mạo để thu hồi account. DB chỉ lưu SHA-256 của **toàn bộ raw envelope**, không lưu plaintext.
+
+Envelope đã qua MAC nhưng hash không còn khớp hàng phiên là bằng chứng reuse của token từng
+hợp lệ: transaction tăng `refresh_token_version` của đúng account và xoá toàn bộ phiên account
+đó. Hai rotation đồng thời từ cùng token chỉ có tối đa một response thành công.
 
 ### 7.2 Cookie
 

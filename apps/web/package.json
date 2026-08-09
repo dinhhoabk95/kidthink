@@ -10,7 +10,8 @@
     "typecheck": "nuxt typecheck"
   },
   "dependencies": {
-    "@kidthink/auth": "workspace:*"
+    "@kidthink/auth": "workspace:*",
+    "@kidthink/db": "workspace:*"
   },
   "devDependencies": {
     "@sidebase/nuxt-auth": "catalog:",

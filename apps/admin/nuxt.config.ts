@@ -2,6 +2,9 @@ import { defineNuxtConfig } from "nuxt/config";
 
 export default defineNuxtConfig({
   modules: ["@sidebase/nuxt-auth"],
+  runtimeConfig: {
+    adminJwtSecret: "",
+  },
   auth: {
     baseURL: "/api",
     disableInternalRouting: false,

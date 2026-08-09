@@ -12,6 +12,7 @@
   },
   "devDependencies": {
     "@kidthink/config": "workspace:*",
+    "fast-check": "catalog:",
     "typescript": "catalog:",
     "vitest": "catalog:"
   },

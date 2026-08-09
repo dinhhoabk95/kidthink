@@ -55,18 +55,34 @@ describe("Actor-boundary ports and active-child helpers", () => {
   });
 
   it("verifyChildOwnership throws NOT_FOUND (404) when candidate child is not owned by user", async () => {
-    // User 101 trying to access child 999 (not owned)
+    const event = { context: createAuthContext({ user: userWithChild }) };
     await expect(
-      verifyChildOwnership(101, 999, fakeOwnershipPort)
+      verifyChildOwnership(event, 999, fakeOwnershipPort)
     ).rejects.toThrowError(
       expect.objectContaining({ code: "NOT_FOUND", status: 404 })
     );
   });
 
   it("verifyChildOwnership succeeds when candidate child is owned by user", async () => {
+    const event = { context: createAuthContext({ user: userWithChild }) };
     await expect(
-      verifyChildOwnership(101, 301, fakeOwnershipPort)
+      verifyChildOwnership(event, 301, fakeOwnershipPort)
     ).resolves.toBeUndefined();
+  });
+
+  it("derives the ownership user ID from authenticated context, never caller input", async () => {
+    const seen: [number, number][] = [];
+    const ownershipPort: ChildOwnershipPort = {
+      isOwnedByUser(userId, childId) {
+        seen.push([userId, childId]);
+        return Promise.resolve(true);
+      },
+    };
+    const event = { context: createAuthContext({ user: userWithChild }) };
+
+    await verifyChildOwnership(event, 777, ownershipPort);
+
+    expect(seen).toEqual([[101, 777]]);
   });
 
   it("checkUserEntitlement queries EntitlementPort asynchronously at request time", async () => {

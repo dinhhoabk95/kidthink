@@ -1,7 +1,8 @@
-import { randomBytes } from "node:crypto";
+import { randomBytes, timingSafeEqual } from "node:crypto";
 import { appError } from "./errors";
 
-export const CSRF_COOKIE_NAME = "tm_csrf_token";
+export const USER_CSRF_COOKIE_NAME = "tm_u_csrf";
+export const MANAGER_CSRF_COOKIE_NAME = "tm_m_csrf";
 export const CSRF_HEADER_NAME = "x-csrf-token";
 
 export function generateCsrfToken(): string {
@@ -23,9 +24,21 @@ export function validateCsrfToken(options: ValidateCsrfOptions): void {
   }
 
   if (
-    !(options.cookieToken && options.headerToken) ||
-    options.cookieToken !== options.headerToken
+    !(
+      options.cookieToken &&
+      options.headerToken &&
+      constantTimeEqual(options.cookieToken, options.headerToken)
+    )
   ) {
-    throw appError("INSUFFICIENT_ROLE");
+    throw appError("CSRF_INVALID");
   }
+}
+
+function constantTimeEqual(left: string, right: string): boolean {
+  const leftBytes = Buffer.from(left, "utf8");
+  const rightBytes = Buffer.from(right, "utf8");
+  return (
+    leftBytes.byteLength === rightBytes.byteLength &&
+    timingSafeEqual(leftBytes, rightBytes)
+  );
 }

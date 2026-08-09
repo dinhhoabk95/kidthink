@@ -1,5 +1,6 @@
 import { type UserTokenPayload, verifyWebUserToken } from "@kidthink/auth";
 import { defineEventHandler, getCookie, getHeader } from "h3";
+import { useRuntimeConfig } from "#imports";
 
 declare module "h3" {
   interface H3EventContext {
@@ -7,10 +8,6 @@ declare module "h3" {
     manager?: undefined;
   }
 }
-
-const WEB_JWT_SECRET =
-  process.env.KIDTHINK_WEB_JWT_SECRET ||
-  "dev-web-jwt-secret-must-be-at-least-32-chars-long!!";
 
 export default defineEventHandler(async (event) => {
   const tokenFromCookie = getCookie(event, "kidthink-user-access");
@@ -29,9 +26,10 @@ export default defineEventHandler(async (event) => {
   }
 
   try {
+    const { webJwtSecret } = useRuntimeConfig(event);
     const payload = await verifyWebUserToken({
       token,
-      secret: WEB_JWT_SECRET,
+      secret: webJwtSecret,
     });
     event.context.user = payload;
   } catch {

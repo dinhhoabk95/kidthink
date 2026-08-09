@@ -20,6 +20,15 @@ code auth trong kế hoạch này. Mỗi increment vẫn phải viết test âm 
 rõ phần AI soạn và để người review diff trước merge. Ngoại lệ không cho phép auto-merge, dùng
 secret thật hoặc chạy thay đổi production.
 
+## Remediation sau security review
+
+Review commit triển khai đầu tiên phát hiện evidence bị đóng sớm và bốn khoảng trống có hậu
+quả bảo mật: secret fallback công khai, refresh input tin dữ liệu caller, thiếu adapter
+PostgreSQL/route runtime thật, và CSRF/reauth/ownership chưa gắn đúng authenticated context.
+Vì vậy P0.3 và hai spec sở hữu được mở lại cho tới khi các increment sửa lỗi có test âm,
+integration PostgreSQL thật, route Nuxt tối thiểu và human security review mới. Các checkbox
+đã hoàn thành về dependency/supply chain vẫn giữ nguyên; checkbox hành vi được chứng minh lại.
+
 ## Why this is next
 
 | Bước roadmap | Spec sở hữu | Trạng thái hiện tại | Kết luận |
@@ -97,8 +106,9 @@ API từ trí nhớ hoặc export type vendor qua `@kidthink/auth`.
 - User/Manager dùng discriminated session context; một request không thể có cả hai.
 - User access claim gồm `sub`, `aud`, `iss`, `sid`, `name`, `ver`, `active_child_id?`, `iat`,
   `exp`; Manager thay `active_child_id` bằng `role`. Hai app dùng issuer và HS256 secret riêng.
-- Refresh token là opaque secret chỉ gửi bằng cookie path-scoped; DB chỉ giữ hash. Rotation
-  và phát hiện reuse phải nằm trong transaction/service boundary có test concurrency.
+- Refresh token opaque đối với client nhưng là envelope `v1` MAC-bound chứa namespace, `sid`,
+  version và nonce. Backend xác thực MAC trước DB; DB chỉ giữ hash toàn envelope. Rotation và
+  phát hiện reuse nằm trong transaction/service boundary có test concurrency PostgreSQL thật.
 - `active_child_id` là context, không phải quyền. `assertActiveChild` chỉ xác nhận có context;
   mọi đọc dữ liệu thật vẫn cần ownership query qua port và trả 404 khi không thuộc caller.
 - Entitlement không nằm trong JWT access. `hasEntitlement` là port async để P0.5 gắn

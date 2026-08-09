@@ -3,6 +3,7 @@ import {
   verifyAdminManagerToken,
 } from "@kidthink/auth";
 import { defineEventHandler, getCookie, getHeader } from "h3";
+import { useRuntimeConfig } from "#imports";
 
 declare module "h3" {
   interface H3EventContext {
@@ -10,10 +11,6 @@ declare module "h3" {
     manager?: ManagerTokenPayload;
   }
 }
-
-const ADMIN_JWT_SECRET =
-  process.env.KIDTHINK_ADMIN_JWT_SECRET ||
-  "dev-admin-jwt-secret-must-be-at-least-32-chars-long!!";
 
 export default defineEventHandler(async (event) => {
   const tokenFromCookie = getCookie(event, "kidthink-manager-access");
@@ -32,9 +29,10 @@ export default defineEventHandler(async (event) => {
   }
 
   try {
+    const { adminJwtSecret } = useRuntimeConfig(event);
     const payload = await verifyAdminManagerToken({
       token,
-      secret: ADMIN_JWT_SECRET,
+      secret: adminJwtSecret,
     });
     event.context.manager = payload;
   } catch {

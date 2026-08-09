@@ -1,32 +1,27 @@
 import { jwtVerify, SignJWT } from "jose";
 import type { UserTokenPayload } from "./contracts";
 import { appError } from "./errors";
+import { encodeAuthSecret } from "./secret";
 
-export const KIDTHINK_WEB_AUDIENCE = "kidthink-web";
-export const KIDTHINK_ISSUER = "kidthink-auth";
+export const KIDTHINK_USER_AUDIENCE = "kidthink:user";
+export const KIDTHINK_WEB_ISSUER = "kidthink:web";
 export const USER_ACCESS_TOKEN_TTL_SECONDS = 15 * 60; // 15 minutes
 
 export interface CreateUserTokenOptions {
   readonly payload: UserTokenPayload;
   readonly secret: string;
-  readonly issuer?: string;
-  readonly audience?: string;
   readonly expiresInSeconds?: number;
 }
 
 export interface VerifyUserTokenOptions {
   readonly token: string;
   readonly secret: string;
-  readonly issuer?: string;
-  readonly audience?: string;
 }
 
 export async function createWebUserToken(
   options: CreateUserTokenOptions
 ): Promise<string> {
-  const secretKey = new TextEncoder().encode(options.secret);
-  const iss = options.issuer ?? KIDTHINK_ISSUER;
-  const aud = options.audience ?? KIDTHINK_WEB_AUDIENCE;
+  const secretKey = encodeAuthSecret(options.secret);
   const ttl = options.expiresInSeconds ?? USER_ACCESS_TOKEN_TTL_SECONDS;
 
   const rawPayload = options.payload as unknown as Record<string, unknown>;
@@ -49,8 +44,8 @@ export async function createWebUserToken(
   })
     .setProtectedHeader({ alg: "HS256" })
     .setSubject(String(options.payload.user_id))
-    .setIssuer(iss)
-    .setAudience(aud)
+    .setIssuer(KIDTHINK_WEB_ISSUER)
+    .setAudience(KIDTHINK_USER_AUDIENCE)
     .setIssuedAt()
     .setExpirationTime(`${ttl}s`)
     .sign(secretKey);
@@ -66,7 +61,7 @@ function extractUserPayload(
   }
 
   const userId = Number(payload.sub);
-  if (Number.isNaN(userId) || userId <= 0) {
+  if (!Number.isInteger(userId) || userId <= 0) {
     throw appError("UNAUTHENTICATED");
   }
 
@@ -78,7 +73,12 @@ function extractUserPayload(
       ? payload.active_child_id
       : undefined;
 
-  if (!(displayName && sessionId && refreshTokenVersion)) {
+  if (
+    !(displayName && sessionId && Number.isInteger(refreshTokenVersion)) ||
+    refreshTokenVersion < 0 ||
+    (activeChildId !== undefined &&
+      (!Number.isInteger(activeChildId) || activeChildId <= 0))
+  ) {
     throw appError("UNAUTHENTICATED");
   }
 
@@ -94,14 +94,11 @@ function extractUserPayload(
 export async function verifyWebUserToken(
   options: VerifyUserTokenOptions
 ): Promise<UserTokenPayload> {
-  const secretKey = new TextEncoder().encode(options.secret);
-  const expectedAud = options.audience ?? KIDTHINK_WEB_AUDIENCE;
-  const expectedIss = options.issuer ?? KIDTHINK_ISSUER;
-
   try {
+    const secretKey = encodeAuthSecret(options.secret);
     const { payload } = await jwtVerify(options.token, secretKey, {
-      issuer: expectedIss,
-      audience: expectedAud,
+      issuer: KIDTHINK_WEB_ISSUER,
+      audience: KIDTHINK_USER_AUDIENCE,
       algorithms: ["HS256"],
     });
 

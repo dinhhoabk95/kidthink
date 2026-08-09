@@ -1,5 +1,6 @@
+import { readFileSync } from "node:fs";
 import {
-  createWebUserToken,
+  createAdminManagerToken,
   type ManagerTokenPayload,
   requireUserAuth,
   type UserTokenPayload,
@@ -72,11 +73,17 @@ describe("apps/web auth-context integration", () => {
     expect(sampleUserPayload).not.toHaveProperty("entitlement");
   });
 
-  it("rejects token with wrong audience (e.g. kidthink-admin token)", async () => {
-    const tokenForAdmin = await createWebUserToken({
-      payload: sampleUserPayload,
+  it("rejects a canonical Manager token even if both namespaces are misconfigured with one secret", async () => {
+    const managerPayload: ManagerTokenPayload = {
+      manager_id: 7,
+      display_name: "Quản trị viên",
+      session_id: "manager-session-7",
+      refresh_token_version: 0,
+      role: "content_reviewer",
+    };
+    const tokenForAdmin = await createAdminManagerToken({
+      payload: managerPayload,
       secret: WEB_SECRET,
-      audience: "kidthink-admin",
     });
 
     // Attempting to verify tokenForAdmin with default web audience should fail
@@ -86,5 +93,21 @@ describe("apps/web auth-context integration", () => {
     ).rejects.toThrowError(
       expect.objectContaining({ code: "UNAUTHENTICATED", status: 401 })
     );
+  });
+
+  it("loads the JWT secret only from private Nuxt runtime config without a public fallback", () => {
+    const middleware = readFileSync(
+      new URL("../../server/middleware/auth.ts", import.meta.url),
+      "utf8"
+    );
+    const nuxtConfig = readFileSync(
+      new URL("../../nuxt.config.ts", import.meta.url),
+      "utf8"
+    );
+
+    expect(middleware).toContain("useRuntimeConfig(event)");
+    expect(middleware).not.toContain("process.env");
+    expect(middleware).not.toContain("dev-web-jwt-secret");
+    expect(nuxtConfig).toContain('webJwtSecret: ""');
   });
 });

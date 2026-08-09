@@ -4,6 +4,10 @@ export {
   verifyChildOwnership,
 } from "./actor-boundaries";
 export {
+  type AuthNamespaceConfig,
+  getAuthNamespaceConfig,
+} from "./auth-namespace";
+export {
   type AuthContext,
   type AuthEvent,
   createAuthContext,
@@ -18,9 +22,10 @@ export {
   type UserTokenPayload,
 } from "./contracts";
 export {
-  CSRF_COOKIE_NAME,
   CSRF_HEADER_NAME,
   generateCsrfToken,
+  MANAGER_CSRF_COOKIE_NAME,
+  USER_CSRF_COOKIE_NAME,
   type ValidateCsrfOptions,
   validateCsrfToken,
 } from "./csrf";
@@ -35,7 +40,8 @@ export {
 export {
   type CreateManagerTokenOptions,
   createAdminManagerToken,
-  KIDTHINK_ADMIN_AUDIENCE,
+  KIDTHINK_ADMIN_ISSUER,
+  KIDTHINK_MANAGER_AUDIENCE,
   type VerifyManagerTokenOptions,
   verifyAdminManagerToken,
 } from "./manager-session";
@@ -47,33 +53,40 @@ export type {
   AuthMethod,
   ChildOwnershipPort,
   EntitlementPort,
+  ManagerSessionRecord,
   RateLimitAxis,
   RateLimitDecision,
   RateLimitPort,
+  ReauthMethod,
+  ReauthMethodAvailabilityPort,
   RotateSessionInput,
   RotateSessionResult,
   SessionRecord,
   SessionStorePort,
+  UserSessionRecord,
 } from "./ports";
 export {
-  type AvailableReauthMethodsResult,
-  getAvailableReauthMethods,
+  CurrentSessionReauthService,
   REAUTH_MAX_AGE_SECONDS,
   verifyReauthWindow,
 } from "./reauth";
 export {
-  generateOpaqueRefreshToken,
+  type AuthNamespace,
+  type CreateRefreshTokenOptions,
+  createRefreshToken,
   hashRefreshToken,
   RefreshService,
   type RefreshServiceOptions,
   type RotateTokenInput,
   type RotateTokenResult,
+  type VerifiedRefreshToken,
+  verifyRefreshToken,
 } from "./refresh";
 export {
   type CreateUserTokenOptions,
   createWebUserToken,
-  KIDTHINK_ISSUER,
-  KIDTHINK_WEB_AUDIENCE,
+  KIDTHINK_USER_AUDIENCE,
+  KIDTHINK_WEB_ISSUER,
   USER_ACCESS_TOKEN_TTL_SECONDS,
   type VerifyUserTokenOptions,
   verifyWebUserToken,

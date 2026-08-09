@@ -1,7 +1,18 @@
 import { describe, expect, it } from "vitest";
-import { generateCsrfToken, validateCsrfToken } from "../src/csrf";
+import {
+  generateCsrfToken,
+  MANAGER_CSRF_COOKIE_NAME,
+  USER_CSRF_COOKIE_NAME,
+  validateCsrfToken,
+} from "../src/csrf";
 
 describe("CSRF Double-Submit Protection", () => {
+  it("uses separate cookie namespaces for User and Manager", () => {
+    expect(USER_CSRF_COOKIE_NAME).toBe("tm_u_csrf");
+    expect(MANAGER_CSRF_COOKIE_NAME).toBe("tm_m_csrf");
+    expect(USER_CSRF_COOKIE_NAME).not.toBe(MANAGER_CSRF_COOKIE_NAME);
+  });
+
   it("generates 32-byte hex CSRF tokens", () => {
     const token1 = generateCsrfToken();
     const token2 = generateCsrfToken();
@@ -50,7 +61,7 @@ describe("CSRF Double-Submit Protection", () => {
         headerToken: undefined,
       })
     ).toThrowError(
-      expect.objectContaining({ code: "INSUFFICIENT_ROLE", status: 403 })
+      expect.objectContaining({ code: "CSRF_INVALID", status: 403 })
     );
 
     expect(() =>
@@ -60,7 +71,19 @@ describe("CSRF Double-Submit Protection", () => {
         headerToken: "mismatched-token",
       })
     ).toThrowError(
-      expect.objectContaining({ code: "INSUFFICIENT_ROLE", status: 403 })
+      expect.objectContaining({ code: "CSRF_INVALID", status: 403 })
+    );
+  });
+
+  it("rejects different-length values without throwing a crypto range error", () => {
+    expect(() =>
+      validateCsrfToken({
+        method: "POST",
+        cookieToken: generateCsrfToken(),
+        headerToken: "short",
+      })
+    ).toThrowError(
+      expect.objectContaining({ code: "CSRF_INVALID", status: 403 })
     );
   });
 });

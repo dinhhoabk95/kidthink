@@ -1,3 +1,5 @@
+import fc from "fast-check";
+import { decodeJwt } from "jose";
 import { describe, expect, it, vi } from "vitest";
 import type {
   AccountReference,
@@ -7,240 +9,350 @@ import type {
   SessionStorePort,
 } from "../src/ports";
 import {
-  generateOpaqueRefreshToken,
+  createRefreshToken,
   hashRefreshToken,
   RefreshService,
 } from "../src/refresh";
 
 class InMemorySessionStore implements SessionStorePort {
   private readonly sessions = new Map<string, SessionRecord>();
+  private readonly accountVersions = new Map<string, number>();
 
   constructor(initialSessions: SessionRecord[] = []) {
-    for (const s of initialSessions) {
-      this.sessions.set(s.session_id, s);
+    for (const session of initialSessions) {
+      this.sessions.set(session.session_id, session);
+      this.accountVersions.set(
+        this.accountKey(session),
+        session.refresh_token_version
+      );
     }
   }
 
-  async findByRefreshTokenHash(hash: string): Promise<SessionRecord | null> {
-    await Promise.resolve();
-    for (const s of this.sessions.values()) {
-      if (s.refresh_token_hash === hash) {
-        return s;
-      }
-    }
-    return null;
-  }
-
-  async rotate(input: RotateSessionInput): Promise<RotateSessionResult> {
-    await Promise.resolve();
-    let target: SessionRecord | undefined;
-    for (const s of this.sessions.values()) {
-      if (s.session_id === input.session_id) {
-        target = s;
-        break;
-      }
+  rotate(input: RotateSessionInput): Promise<RotateSessionResult> {
+    const target = this.sessions.get(input.session_id);
+    if (!target || target.account_type !== input.account_type) {
+      return Promise.resolve({ outcome: "not_found" });
     }
 
-    if (!target) {
-      return { outcome: "not_found" };
+    const accountKey = this.accountKey(target);
+    const currentVersion = this.accountVersions.get(accountKey);
+    if (
+      target.expires_at <= input.used_at ||
+      target.refresh_token_version !== input.refresh_token_version ||
+      currentVersion !== input.refresh_token_version
+    ) {
+      return Promise.resolve({ outcome: "revoked" });
     }
 
     if (target.refresh_token_hash !== input.current_refresh_token_hash) {
-      // Reuse detected!
-      return {
-        outcome: "reused",
-        account: {
-          account_type: target.account_type,
-          account_id: target.account_id,
-        },
-      };
+      this.accountVersions.set(accountKey, input.refresh_token_version + 1);
+      this.deleteAccountSessions(target);
+      return Promise.resolve({ outcome: "reused" });
     }
 
-    const updated: SessionRecord = {
+    const updated = {
       ...target,
       refresh_token_hash: input.next_refresh_token_hash,
       expires_at: input.next_expires_at,
-    };
+    } satisfies SessionRecord;
     this.sessions.set(target.session_id, updated);
-
-    return { outcome: "rotated", session: updated };
+    return Promise.resolve({ outcome: "rotated", session: updated });
   }
 
-  async revokeSession(sessionId: string): Promise<void> {
-    await Promise.resolve();
-    this.sessions.delete(sessionId);
-  }
-
-  async revokeAll(account: AccountReference): Promise<void> {
-    await Promise.resolve();
-    for (const [id, s] of this.sessions.entries()) {
-      if (
-        s.account_type === account.account_type &&
-        s.account_id === account.account_id
-      ) {
-        this.sessions.delete(id);
-      }
+  revokeSession(sessionId: string, account: AccountReference): Promise<void> {
+    const session = this.sessions.get(sessionId);
+    if (
+      session?.account_type === account.account_type &&
+      session.account_id === account.account_id
+    ) {
+      this.sessions.delete(sessionId);
     }
+    return Promise.resolve();
   }
 
-  async markReauthenticated(sessionId: string, at: Date): Promise<void> {
-    await Promise.resolve();
-    const s = this.sessions.get(sessionId);
-    if (s) {
-      this.sessions.set(sessionId, { ...s, reauth_at: at });
+  revokeAll(account: AccountReference): Promise<void> {
+    const key = this.accountKey(account);
+    this.accountVersions.set(key, (this.accountVersions.get(key) ?? 0) + 1);
+    this.deleteAccountSessions(account);
+    return Promise.resolve();
+  }
+
+  getReauthState(
+    sessionId: string,
+    account: AccountReference
+  ): Promise<{ readonly reauth_at: Date | null } | null> {
+    const session = this.sessions.get(sessionId);
+    if (
+      session?.account_type !== account.account_type ||
+      session.account_id !== account.account_id
+    ) {
+      return Promise.resolve(null);
     }
+    return Promise.resolve({ reauth_at: session.reauth_at });
+  }
+
+  markReauthenticated(
+    sessionId: string,
+    account: AccountReference,
+    at: Date
+  ): Promise<void> {
+    const session = this.sessions.get(sessionId);
+    if (
+      session?.account_type === account.account_type &&
+      session.account_id === account.account_id
+    ) {
+      this.sessions.set(sessionId, { ...session, reauth_at: at });
+    }
+    return Promise.resolve();
   }
 
   getSessionsCount(): number {
     return this.sessions.size;
   }
+
+  getAccountVersion(account: AccountReference): number | undefined {
+    return this.accountVersions.get(this.accountKey(account));
+  }
+
+  private accountKey(account: AccountReference): string {
+    return `${account.account_type}:${account.account_id}`;
+  }
+
+  private deleteAccountSessions(account: AccountReference): void {
+    for (const [id, session] of this.sessions) {
+      if (
+        session.account_type === account.account_type &&
+        session.account_id === account.account_id
+      ) {
+        this.sessions.delete(id);
+      }
+    }
+  }
 }
 
-const JWT_SECRET = "super-secret-jwt-key-at-least-32-chars-long!!";
+const USER_SECRET = "user-refresh-service-secret-at-least-32-bytes";
+const MANAGER_SECRET = "manager-refresh-service-secret-at-least-32-bytes";
+
+function createUserFixture(version = 0) {
+  const rawToken = createRefreshToken({
+    namespace: "user",
+    sessionId: "session_user_101",
+    refreshTokenVersion: version,
+    secret: USER_SECRET,
+  });
+  const session: SessionRecord = {
+    session_id: "session_user_101",
+    account_type: "user",
+    account_id: 101,
+    display_name: "Tên tin cậy từ DB",
+    refresh_token_hash: hashRefreshToken(rawToken),
+    refresh_token_version: version,
+    auth_method: "password",
+    reauth_at: null,
+    expires_at: new Date(Date.now() + 86_400_000),
+  };
+  return { rawToken, session };
+}
 
 describe("Refresh token rotation and revocation semantics", () => {
-  it("hashes refresh tokens deterministically using sha256", () => {
-    const rawToken = "raw-token-abc123xyz";
-    const hash1 = hashRefreshToken(rawToken);
-    const hash2 = hashRefreshToken(rawToken);
-
-    expect(hash1).toBe(hash2);
-    expect(hash1.length).toBe(64); // hex sha256
-    expect(hash1).not.toBe(rawToken);
-  });
-
-  it("generates 32-byte opaque random refresh tokens", () => {
-    const token1 = generateOpaqueRefreshToken();
-    const token2 = generateOpaqueRefreshToken();
-
-    expect(token1).not.toBe(token2);
-    expect(token1.length).toBeGreaterThanOrEqual(32);
-  });
-
-  it("rotates valid refresh token and returns new token pair", async () => {
-    const rawToken = "current-refresh-token-123";
-    const currentHash = hashRefreshToken(rawToken);
-    const initialSession: SessionRecord = {
-      session_id: "sess-1",
-      account_type: "user",
-      account_id: 101,
-      refresh_token_hash: currentHash,
-      refresh_token_version: 1,
-      auth_method: "password",
-      reauth_at: null,
-      expires_at: new Date(Date.now() + 86_400_000),
-    };
-
-    const store = new InMemorySessionStore([initialSession]);
+  it("rotates using only the raw envelope and signs trusted principal data returned by the store", async () => {
+    const { rawToken, session } = createUserFixture();
+    const store = new InMemorySessionStore([session]);
     const service = new RefreshService(store, {
-      jwtSecret: JWT_SECRET,
-      jwtAudience: "kidthink-web",
+      namespace: "user",
+      jwtSecret: USER_SECRET,
     });
 
     const result = await service.rotateRefreshToken({
-      sessionId: "sess-1",
-      currentRefreshToken: rawToken,
-      displayName: "Phụ huynh An",
+      refreshToken: rawToken,
+      activeChildCandidateId: 301,
     });
 
-    expect(result.accessToken).toBeDefined();
-    expect(result.nextRefreshToken).toBeDefined();
     expect(result.nextRefreshToken).not.toBe(rawToken);
-
-    // Old token should no longer match current hash in store
-    const oldTokenCheck = await store.findByRefreshTokenHash(currentHash);
-    expect(oldTokenCheck).toBeNull();
+    expect(result.session).toEqual({
+      user_id: 101,
+      display_name: "Tên tin cậy từ DB",
+      session_id: "session_user_101",
+      refresh_token_version: 0,
+      active_child_id: 301,
+    });
+    expect(decodeJwt(result.accessToken)).toMatchObject({
+      sub: "101",
+      name: "Tên tin cậy từ DB",
+      sid: "session_user_101",
+      ver: 0,
+      active_child_id: 301,
+      aud: "kidthink:user",
+      iss: "kidthink:web",
+    });
   });
 
-  it("detects reuse of old refresh token and revokes ALL sessions for account", async () => {
-    const rawTokenV1 = "token-version-1";
-
-    const session1: SessionRecord = {
-      session_id: "sess-1",
-      account_type: "user",
-      account_id: 101,
-      refresh_token_hash: "hash-already-rotated-to-v2",
-      refresh_token_version: 2,
-      auth_method: "password",
-      reauth_at: null,
-      expires_at: new Date(Date.now() + 86_400_000),
-    };
-
-    const session2: SessionRecord = {
-      session_id: "sess-2",
-      account_type: "user",
-      account_id: 101,
-      refresh_token_hash: "another-device-token",
-      refresh_token_version: 2,
-      auth_method: "password",
-      reauth_at: null,
-      expires_at: new Date(Date.now() + 86_400_000),
-    };
-
-    const store = new InMemorySessionStore([session1, session2]);
-    const revokeAllSpy = vi.spyOn(store, "revokeAll");
-
+  it("rejects a forged envelope before querying or revoking any account", async () => {
+    const { rawToken, session } = createUserFixture();
+    const store = new InMemorySessionStore([session]);
+    const rotateSpy = vi.spyOn(store, "rotate");
     const service = new RefreshService(store, {
-      jwtSecret: JWT_SECRET,
-      jwtAudience: "kidthink-web",
+      namespace: "user",
+      jwtSecret: USER_SECRET,
     });
 
-    // Attempting to rotate sess-1 using old v1 token when store already moved to v2
     await expect(
-      service.rotateRefreshToken({
-        sessionId: "sess-1",
-        currentRefreshToken: rawTokenV1,
-        displayName: "Phụ huynh An",
-      })
+      service.rotateRefreshToken({ refreshToken: `${rawToken}tampered` })
+    ).rejects.toThrowError(
+      expect.objectContaining({ code: "SESSION_REVOKED", status: 401 })
+    );
+    expect(rotateSpy).not.toHaveBeenCalled();
+    expect(store.getSessionsCount()).toBe(1);
+  });
+
+  it("detects a MAC-valid old token reuse and atomically revokes every account session", async () => {
+    const { rawToken, session } = createUserFixture(2);
+    const otherSession: SessionRecord = {
+      ...session,
+      session_id: "session_user_other",
+      refresh_token_hash: "other-device-hash",
+    };
+    const store = new InMemorySessionStore([session, otherSession]);
+    const service = new RefreshService(store, {
+      namespace: "user",
+      jwtSecret: USER_SECRET,
+    });
+
+    await service.rotateRefreshToken({ refreshToken: rawToken });
+    await expect(
+      service.rotateRefreshToken({ refreshToken: rawToken })
     ).rejects.toThrowError(
       expect.objectContaining({ code: "SESSION_REVOKED", status: 401 })
     );
 
-    expect(revokeAllSpy).toHaveBeenCalledWith({
-      account_type: "user",
-      account_id: 101,
-    });
-    expect(store.getSessionsCount()).toBe(0); // all sessions revoked
+    expect(store.getSessionsCount()).toBe(0);
+    expect(
+      store.getAccountVersion({ account_type: "user", account_id: 101 })
+    ).toBe(3);
   });
 
-  it("property check: a single refresh token succeeds at most once", async () => {
-    const rawToken = "single-use-token-xyz";
-    const hash = hashRefreshToken(rawToken);
-
-    const initialSession: SessionRecord = {
-      session_id: "sess-100",
-      account_type: "user",
-      account_id: 200,
-      refresh_token_hash: hash,
-      refresh_token_version: 1,
+  it("signs Manager role and display name only from the trusted store result", async () => {
+    const rawToken = createRefreshToken({
+      namespace: "manager",
+      sessionId: "session_manager_201",
+      refreshTokenVersion: 0,
+      secret: MANAGER_SECRET,
+    });
+    const session: SessionRecord = {
+      session_id: "session_manager_201",
+      account_type: "manager",
+      account_id: 201,
+      display_name: "Reviewer từ DB",
+      role: "content_reviewer",
+      refresh_token_hash: hashRefreshToken(rawToken),
+      refresh_token_version: 0,
       auth_method: "password",
       reauth_at: null,
       expires_at: new Date(Date.now() + 86_400_000),
     };
+    const service = new RefreshService(new InMemorySessionStore([session]), {
+      namespace: "manager",
+      jwtSecret: MANAGER_SECRET,
+    });
 
-    const store = new InMemorySessionStore([initialSession]);
+    const result = await service.rotateRefreshToken({ refreshToken: rawToken });
+
+    expect(decodeJwt(result.accessToken)).toMatchObject({
+      sub: "201",
+      name: "Reviewer từ DB",
+      role: "content_reviewer",
+      aud: "kidthink:manager",
+      iss: "kidthink:admin",
+    });
+  });
+
+  it("logout-all increments the account version and deletes only that account's sessions", async () => {
+    const { session } = createUserFixture(4);
+    const otherAccount: SessionRecord = {
+      ...session,
+      session_id: "session_user_202",
+      account_id: 202,
+      refresh_token_hash: "other-account-hash",
+    };
+    const store = new InMemorySessionStore([session, otherAccount]);
     const service = new RefreshService(store, {
-      jwtSecret: JWT_SECRET,
-      jwtAudience: "kidthink-web",
+      namespace: "user",
+      jwtSecret: USER_SECRET,
     });
 
-    // First rotation succeeds
-    const firstResult = await service.rotateRefreshToken({
-      sessionId: "sess-100",
-      currentRefreshToken: rawToken,
-      displayName: "User",
-    });
-    expect(firstResult.nextRefreshToken).toBeDefined();
+    await service.logoutAll("user", 101);
 
-    // Second rotation with same token fails
+    expect(store.getSessionsCount()).toBe(1);
+    expect(
+      store.getAccountVersion({ account_type: "user", account_id: 101 })
+    ).toBe(5);
+  });
+
+  it("property: one MAC-valid token succeeds at most once", async () => {
+    await fc.assert(
+      fc.asyncProperty(fc.integer({ min: 2, max: 12 }), async (attempts) => {
+        const { rawToken, session } = createUserFixture();
+        const service = new RefreshService(
+          new InMemorySessionStore([session]),
+          { namespace: "user", jwtSecret: USER_SECRET }
+        );
+        let successes = 0;
+
+        for (let attempt = 0; attempt < attempts; attempt += 1) {
+          try {
+            await service.rotateRefreshToken({ refreshToken: rawToken });
+            successes += 1;
+          } catch {
+            // Expected after the first successful rotation.
+          }
+        }
+
+        expect(successes).toBeLessThanOrEqual(1);
+      }),
+      { numRuns: 25 }
+    );
+  });
+
+  it("rejects non-positive integer active child candidate before querying or rotating", async () => {
+    const { rawToken, session } = createUserFixture();
+    const store = new InMemorySessionStore([session]);
+    const service = new RefreshService(store, {
+      namespace: "user",
+      jwtSecret: USER_SECRET,
+    });
+
     await expect(
       service.rotateRefreshToken({
-        sessionId: "sess-100",
-        currentRefreshToken: rawToken,
-        displayName: "User",
+        refreshToken: rawToken,
+        activeChildCandidateId: -5,
       })
     ).rejects.toThrowError(
-      expect.objectContaining({ code: "SESSION_REVOKED", status: 401 })
+      expect.objectContaining({ code: "UNAUTHENTICATED", status: 401 })
     );
+
+    expect(store.getSessionsCount()).toBe(1);
+  });
+
+  it("revokes session if access token signing fails after store rotation", async () => {
+    const { rawToken, session } = createUserFixture();
+    const store = new InMemorySessionStore([session]);
+    const userSessionModule = await import("../src/user-session");
+    const spy = vi
+      .spyOn(userSessionModule, "createWebUserToken")
+      .mockRejectedValueOnce(new Error("Signing failed"));
+
+    const service = new RefreshService(store, {
+      namespace: "user",
+      jwtSecret: USER_SECRET,
+    });
+
+    await expect(
+      service.rotateRefreshToken({
+        refreshToken: rawToken,
+      })
+    ).rejects.toThrow("Signing failed");
+
+    expect(store.getSessionsCount()).toBe(0);
+    spy.mockRestore();
   });
 });

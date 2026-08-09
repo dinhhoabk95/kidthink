@@ -83,6 +83,7 @@ Mọi handler API. Mọi spec khai báo mã lỗi phải đăng ký ở đây.
 | `TOKEN_EXPIRED` | 401 | Access token hết hạn, refresh được | — client tự refresh |
 | `SESSION_REVOKED` | 401 | `refresh_token_version` lệch | "Phiên đăng nhập đã kết thúc. Vui lòng đăng nhập lại." |
 | `INSUFFICIENT_ROLE` | 403 | Manager role không đủ | "Bạn không có quyền truy cập mục này." |
+| `CSRF_INVALID` | 403 | Thiếu hoặc sai double-submit CSRF token trên request đổi trạng thái | "Phiên bảo mật không hợp lệ. Vui lòng tải lại trang và thử lại." |
 | `ENTITLEMENT_REQUIRED` | 403 | Thiếu entitlement key | "Tính năng này thuộc gói {tên gói}." |
 | `TIER_LOCKED` | 403 | Content bậc cao hơn quyền | "Nội dung này thuộc gói {tên gói}." |
 | `ACCOUNT_SUSPENDED` | 403 | `users.status = 'suspended'` | "Tài khoản đang tạm khoá. Liên hệ hỗ trợ." |

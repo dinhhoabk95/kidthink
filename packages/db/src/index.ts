@@ -1,6 +1,9 @@
 import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
 
+export * from "./auth-reauth-methods.ts";
+export * from "./auth-session-store.ts";
+
 export * from "./purge.ts";
 export * from "./schema/adaptive.ts";
 export * from "./schema/billing.ts";
@@ -16,6 +19,28 @@ export * from "./schema/taxonomy.ts";
 
 let ownerDbInstance: ReturnType<typeof drizzle> | undefined;
 let appDbInstance: ReturnType<typeof drizzle> | undefined;
+let ownerSqlInstance: ReturnType<typeof postgres> | undefined;
+let appSqlInstance: ReturnType<typeof postgres> | undefined;
+
+export function getOwnerSql(): ReturnType<typeof postgres> {
+  if (!ownerSqlInstance) {
+    const url =
+      process.env.DATABASE_URL ??
+      "postgres://postgres:postgres@localhost:5433/kidthink";
+    ownerSqlInstance = postgres(url);
+  }
+  return ownerSqlInstance;
+}
+
+export function getAppSql(): ReturnType<typeof postgres> {
+  if (!appSqlInstance) {
+    const url =
+      process.env.DATABASE_URL_APP ??
+      "postgres://kidthink_app:kidthink_app_password@localhost:5433/kidthink";
+    appSqlInstance = postgres(url);
+  }
+  return appSqlInstance;
+}
 
 /**
  * Returns Drizzle database instance connected with owner (postgres) role.
@@ -24,11 +49,7 @@ let appDbInstance: ReturnType<typeof drizzle> | undefined;
  */
 export function getOwnerDb() {
   if (!ownerDbInstance) {
-    const url =
-      process.env.DATABASE_URL ??
-      "postgres://postgres:postgres@localhost:5433/kidthink";
-    const client = postgres(url);
-    ownerDbInstance = drizzle(client);
+    ownerDbInstance = drizzle(getOwnerSql());
   }
   return ownerDbInstance;
 }
@@ -40,11 +61,7 @@ export function getOwnerDb() {
  */
 export function getAppDb() {
   if (!appDbInstance) {
-    const url =
-      process.env.DATABASE_URL_APP ??
-      "postgres://kidthink_app:kidthink_app_password@localhost:5433/kidthink";
-    const client = postgres(url);
-    appDbInstance = drizzle(client);
+    appDbInstance = drizzle(getAppSql());
   }
   return appDbInstance;
 }

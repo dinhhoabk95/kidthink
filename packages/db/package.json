@@ -7,6 +7,7 @@
     ".": "./src/index.ts"
   },
   "dependencies": {
+    "@kidthink/auth": "workspace:*",
     "drizzle-orm": "catalog:",
     "postgres": "catalog:"
   },

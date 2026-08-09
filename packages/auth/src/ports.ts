@@ -2,13 +2,14 @@ import type { ManagerRole } from "./contracts";
 
 export type AccountType = "user" | "manager";
 export type AuthMethod = "password" | "social";
+export type ReauthMethod = AuthMethod | "totp";
 
 export interface AccountReference {
   readonly account_type: AccountType;
   readonly account_id: number;
 }
 
-export interface SessionRecord extends AccountReference {
+interface BaseSessionRecord extends AccountReference {
   readonly session_id: string;
   readonly refresh_token_hash: string;
   readonly refresh_token_version: number;
@@ -17,8 +18,23 @@ export interface SessionRecord extends AccountReference {
   readonly expires_at: Date;
 }
 
+export interface UserSessionRecord extends BaseSessionRecord {
+  readonly account_type: "user";
+  readonly display_name: string;
+}
+
+export interface ManagerSessionRecord extends BaseSessionRecord {
+  readonly account_type: "manager";
+  readonly display_name: string;
+  readonly role: ManagerRole;
+}
+
+export type SessionRecord = UserSessionRecord | ManagerSessionRecord;
+
 export interface RotateSessionInput {
   readonly session_id: string;
+  readonly account_type: AccountType;
+  readonly refresh_token_version: number;
   readonly current_refresh_token_hash: string;
   readonly next_refresh_token_hash: string;
   readonly next_expires_at: Date;
@@ -27,15 +43,29 @@ export interface RotateSessionInput {
 
 export type RotateSessionResult =
   | { readonly outcome: "rotated"; readonly session: SessionRecord }
-  | { readonly outcome: "reused"; readonly account: AccountReference }
+  | { readonly outcome: "reused" | "revoked" }
   | { readonly outcome: "not_found" };
 
 export interface SessionStorePort {
-  findByRefreshTokenHash(hash: string): Promise<SessionRecord | null>;
   rotate(input: RotateSessionInput): Promise<RotateSessionResult>;
-  revokeSession(sessionId: string): Promise<void>;
+  revokeSession(sessionId: string, account: AccountReference): Promise<void>;
+  /** Atomically increments refresh_token_version and deletes all sessions. */
   revokeAll(account: AccountReference): Promise<void>;
-  markReauthenticated(sessionId: string, at: Date): Promise<void>;
+  getReauthState(
+    sessionId: string,
+    account: AccountReference
+  ): Promise<{ readonly reauth_at: Date | null } | null>;
+  markReauthenticated(
+    sessionId: string,
+    account: AccountReference,
+    at: Date
+  ): Promise<void>;
+}
+
+export interface ReauthMethodAvailabilityPort {
+  getAvailableMethods(
+    account: AccountReference
+  ): Promise<readonly ReauthMethod[]>;
 }
 
 export type RateLimitAxis = "ip" | "account";

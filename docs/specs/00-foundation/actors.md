@@ -2,7 +2,7 @@
 spec: ACTORS
 title: Tác nhân hệ thống và ranh giới quyền
 area: foundation
-status: implemented
+status: approved
 mvp: true
 phase: P0
 reviewed: 2026-08-09

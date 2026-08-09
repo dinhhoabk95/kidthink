@@ -2,10 +2,9 @@ import { describe, expect, it } from "vitest";
 import {
   assertActiveChild,
   type ChildOwnershipPort,
+  createAdminManagerToken,
   createAuthContext,
-  createWebUserToken,
   generateCsrfToken,
-  getAvailableReauthMethods,
   hashRefreshToken,
   type ManagerTokenPayload,
   requireManagerAuth,
@@ -52,13 +51,12 @@ describe("P0.3 Security Evidence — Business Rule Verification", () => {
     );
 
     // JWT audience validation failure
-    const userTokenForAdmin = await createWebUserToken({
-      payload: userPayload,
+    const managerToken = await createAdminManagerToken({
+      payload: managerPayload,
       secret: TEST_SECRET,
-      audience: "kidthink-admin",
     });
     await expect(
-      verifyWebUserToken({ token: userTokenForAdmin, secret: TEST_SECRET })
+      verifyWebUserToken({ token: managerToken, secret: TEST_SECRET })
     ).rejects.toThrowError(
       expect.objectContaining({ code: "UNAUTHENTICATED", status: 401 })
     );
@@ -73,8 +71,18 @@ describe("P0.3 Security Evidence — Business Rule Verification", () => {
     };
 
     // User 20 trying to access child 100 -> returns 404 (NOT_FOUND)
+    const event = {
+      context: createAuthContext({
+        user: {
+          user_id: 20,
+          display_name: "User Twenty",
+          session_id: "s-user-20",
+          refresh_token_version: 0,
+        },
+      }),
+    };
     await expect(
-      verifyChildOwnership(20, 100, fakeOwnershipPort)
+      verifyChildOwnership(event, 100, fakeOwnershipPort)
     ).rejects.toThrowError(
       expect.objectContaining({ code: "NOT_FOUND", status: 404 })
     );
@@ -171,7 +179,7 @@ describe("P0.3 Security Evidence — Business Rule Verification", () => {
         headerToken: undefined,
       })
     ).toThrowError(
-      expect.objectContaining({ code: "INSUFFICIENT_ROLE", status: 403 })
+      expect.objectContaining({ code: "CSRF_INVALID", status: 403 })
     );
 
     // POST succeeds with matching header
@@ -187,11 +195,12 @@ describe("P0.3 Security Evidence — Business Rule Verification", () => {
   it("BR-AUT-13 & BR-AUT-14: Reauth required after 5 mins and provides available methods", () => {
     const oldReauthAt = new Date(Date.now() - 6 * 60 * 1000); // 6 mins ago
 
-    expect(() => verifyReauthWindow(oldReauthAt)).toThrowError(
-      expect.objectContaining({ code: "REAUTH_REQUIRED", status: 428 })
+    expect(() => verifyReauthWindow(oldReauthAt, ["password"])).toThrowError(
+      expect.objectContaining({
+        code: "REAUTH_REQUIRED",
+        status: 428,
+        details: { methods: ["password"] },
+      })
     );
-
-    const methods = getAvailableReauthMethods("password");
-    expect(methods).toEqual({ methods: ["password"] });
   });
 });

@@ -1,3 +1,4 @@
+import { readFileSync } from "node:fs";
 import {
   type ManagerTokenPayload,
   requireManagerAuth,
@@ -104,5 +105,21 @@ describe("apps/admin auth-context integration", () => {
     expect(() => requireManagerAuth(userEvent as never)).toThrowError(
       expect.objectContaining({ code: "UNAUTHENTICATED", status: 401 })
     );
+  });
+
+  it("loads the JWT secret only from private Nuxt runtime config without a public fallback", () => {
+    const middleware = readFileSync(
+      new URL("../../server/middleware/auth.ts", import.meta.url),
+      "utf8"
+    );
+    const nuxtConfig = readFileSync(
+      new URL("../../nuxt.config.ts", import.meta.url),
+      "utf8"
+    );
+
+    expect(middleware).toContain("useRuntimeConfig(event)");
+    expect(middleware).not.toContain("process.env");
+    expect(middleware).not.toContain("dev-admin-jwt-secret");
+    expect(nuxtConfig).toContain('adminJwtSecret: ""');
   });
 });
