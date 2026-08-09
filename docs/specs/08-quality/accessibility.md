@@ -167,6 +167,6 @@ Scenario: BR-A11-12 — modal trả focus
 
 | # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
 |---|---|---|---|---|
-| 1 | Có kiểm thử với trẻ thật và với người dùng công nghệ trợ giúp trước go-live không? | Chất lượng | Go-live | Product / QA |
-| 2 | Sàn 96px cho band 3–4 dựa trên nguồn nào? | Quy chuẩn UI | P1 | Chốt D-AR: Ước lượng nội bộ dựa trên kích thước vân tay trẻ 3–4 tuổi (15–20mm ở ~160ppi); sẽ điều chỉnh nếu kiểm thử thực tế có tỉ lệ tap hụt > 5% |
+| 1 | Có kiểm thử với trẻ thật và với người dùng công nghệ trợ giúp trước go-live không? | Chất lượng | Go-live | người quyết |
+| ~~2~~ | ~~Sàn 96px cho band 3–4 dựa trên nguồn nào?~~ **Đóng 2026-08-09 (T13, `D-AR`)**: ước lượng nội bộ dựa trên kích thước vân tay trẻ 3–4 tuổi (15–20mm ở ~160ppi); sẽ điều chỉnh nếu kiểm thử thực tế có tỉ lệ tap hụt > 5% | Quy chuẩn UI | Đã đóng | D-AR |
 
