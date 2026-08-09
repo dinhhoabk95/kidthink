@@ -173,6 +173,6 @@ Scenario: BR-PRF-08 — ảnh đúng định dạng và cỡ
 
 | # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
 |---|---|---|---|---|
-| ~~1~~ | ~~Thiết bị chuẩn đo 60 fps là model nào?~~ **Đóng 2026-08-09 (`D-CH`)**: Lenovo Tab M8 bản 2 GB RAM; Chrome ổn định mới nhất, pin >30%, tắt tiết kiệm pin; ba lần chạy lấy median | — | Đã đóng | Studio UI |
-| 2 | t3.small đủ cho MVP không, hay cần nâng trước go-live? | Ngân sách hạ tầng | Go-live | DevOps / Infra |
+| ~~1~~ | ~~Thiết bị chuẩn đo 60 fps là model nào?~~ **Đóng 2026-08-09 (`D-CH`)**: Lenovo Tab M8 bản 2 GB RAM; Chrome ổn định mới nhất, pin >30%, tắt tiết kiệm pin; ba lần chạy lấy median | — | Đã đóng | D-CH |
+| 2 | t3.small đủ cho MVP không, hay cần nâng trước go-live? | Ngân sách hạ tầng | Go-live | Infra |
 | 3 | CDN trước S3 từ đầu hay sau? | Tốc độ tải 4G | P2 | Infra |
