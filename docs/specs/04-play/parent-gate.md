@@ -162,6 +162,6 @@ Scenario: sai 3 lần thì khoá tạm
 
 | # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
 |---|---|---|---|---|
-| 1 | Nút back của trình duyệt không chặn được — có bắt buộc PWA toàn màn hình cho trải nghiệm trẻ không? | PWA toàn màn hình | P5 | [`pwa-install.md`](../01-platform/pwa-install.md) |
-| 2 | Tỉ lệ fail bao nhiêu thì coi là thử thách quá khó? | KPI trải nghiệm | P1 | Product / Analytics (Tỉ lệ fail > 15% là tín hiệu cần hạ độ khó thử thách) |
+| 1 | Nút back của trình duyệt không chặn được — có bắt buộc PWA toàn màn hình cho trải nghiệm trẻ không? | PWA toàn màn hình — xem [`pwa-install.md`](../01-platform/pwa-install.md) | P5 | người quyết |
+| 2 | Tỉ lệ fail bao nhiêu thì coi là thử thách quá khó? | KPI trải nghiệm — tỉ lệ fail > 15% là tín hiệu cần hạ độ khó thử thách | P1 | người quyết |
 
