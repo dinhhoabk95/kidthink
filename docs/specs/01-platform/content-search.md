@@ -186,6 +186,6 @@ Scenario: BR-SRC-06 — không cache kết quả trả phí
 
 | # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
 |---|---|---|---|---|
-| 1 | Postgres full-text đủ tới bao nhiêu nội dung? | Ngưỡng nâng cấp search engine | Sau MVP | Search Infra / Database (Chịu tải tốt tới 50.000 items) |
-| 2 | ~~Tìm kiếm ngữ nghĩa (embedding) thuộc add-on AI hay tính năng chung?~~ **Đã chốt 2026-08-05**: add-on AI (`use_ai_search`), không đưa vào tìm kiếm cơ bản này. Spec: [`07-addon/semantic-search`](../07-addon/semantic-search.md) | — | Đã đóng | AI Addon |
+| 1 | Postgres full-text đủ tới bao nhiêu nội dung? | Ngưỡng nâng cấp search engine — chịu tải tốt tới 50.000 items | Sau MVP | Infra |
+| ~~2~~ | ~~Tìm kiếm ngữ nghĩa (embedding) thuộc add-on AI hay tính năng chung?~~ **Đã chốt 2026-08-05 (`D-CQ`)**: add-on AI (`use_ai_search`), không đưa vào tìm kiếm cơ bản này. Spec: [`07-addon/semantic-search`](../07-addon/semantic-search.md) | — | Đã đóng | D-CQ |
 
