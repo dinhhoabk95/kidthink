@@ -54,13 +54,19 @@
 
 ## Lô 1 — `00-foundation`, 6 file / 14 hàng
 
-- [ ] [`event-catalog.md`](../specs/00-foundation/event-catalog.md) — B4
-- [ ] [`repo-bootstrap.md`](../specs/00-foundation/repo-bootstrap.md) — B4
-- [ ] [`access-ladder.md`](../specs/00-foundation/access-ladder.md) — A1+B1
-- [ ] [`child-data-compliance.md`](../specs/00-foundation/child-data-compliance.md) — B2
-- [ ] [`mvp-scope.md`](../specs/00-foundation/mvp-scope.md) — B1; **không** đụng Q1 (nợ `D-W`)
-- [ ] [`package-catalog.md`](../specs/00-foundation/package-catalog.md) — B1
-- [ ] Sau lô: `pnpm lint:specs 2>&1 | grep -F "[C17]" | wc -l` giảm đúng 14
+- [x] [`event-catalog.md`](../specs/00-foundation/event-catalog.md) — 1 hàng thật (không phải B4;
+      số kế hoạch đã trôi). Q2: `D-Z` → `hoãn — vượt 5M hàng hoặc 2GB thì đóng lại`
+- [x] [`repo-bootstrap.md`](../specs/00-foundation/repo-bootstrap.md) — 5 hàng thật (không phải B4).
+      ~~3~~/~~4~~ cấp mã mới `D-CO`/`D-CP`; 7 → người quyết; 10 gạch + `D-U`; ~~12~~ → `D-CL`
+- [x] [`access-ladder.md`](../specs/00-foundation/access-ladder.md) — A1+B1. Q1 → `Nội dung`; Q2 đóng
+      theo khuôn nhóm A, tái dùng `D-AY`
+- [x] [`child-data-compliance.md`](../specs/00-foundation/child-data-compliance.md) — B2, cả hai → người quyết
+- [x] [`mvp-scope.md`](../specs/00-foundation/mvp-scope.md) — Q1 đã đóng bằng `D-CN` (từ T15, hôm nay) —
+      chỉ sửa Chủ cho khớp mã đã có, không đụng nội dung quyết định
+- [x] [`package-catalog.md`](../specs/00-foundation/package-catalog.md) — tách phase khỏi Chủ, → người quyết
+- [x] Sau lô: `C17` 92 → 80 (giảm đúng 12 hàng thật đã sửa; số 14 trong kế hoạch đã trôi do T14/T15)
+- [x] Lưu ý: `pnpm check`/`pnpm test` hiện đỏ vì `packages/auth` có người khác đang code sống
+      (T16, ngoài phạm vi agent) — không phải lỗi từ T13. Xem ghi chú Cổng dừng A dưới.
 
 ## Lô 2 — `01-platform`, 6 file / 9 hàng
 
