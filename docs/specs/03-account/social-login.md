@@ -276,6 +276,6 @@ Scenario: BR-SCL-13 — provider tắt thì không hiện nút
 
 | # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
 |---|---|---|---|---|
-| 1 | Nhánh C trả 409: Có nên gửi email thông báo khi trùng email không? | Kênh thông báo bảo mật | P2 | Security / Notification Service ([`notification-service.md`](../01-platform/notification-service.md)) |
-| 2 | Nhánh B khi provider không trả email: Có nên chặn tạo `users` cho tới lúc xác thực không? | Luồng xác minh email SNS | P1 | Chốt: Tạo `users` với `status = pending_verification`, hạn chế quyền tạo hồ sơ trẻ cho đến khi xác minh |
+| 1 | Nhánh C trả 409: Có nên gửi email thông báo khi trùng email không? | Kênh thông báo bảo mật — xem [`notification-service.md`](../01-platform/notification-service.md) | P2 | Backend |
+| ~~2~~ | ~~Nhánh B khi provider không trả email: Có nên chặn tạo `users` cho tới lúc xác thực không?~~ **Đóng 2026-08-09 (T13, `D-DA`)**: tạo `users` với `status = pending_verification`, hạn chế quyền tạo hồ sơ trẻ cho đến khi xác minh | Luồng xác minh email SNS | Đã đóng | D-DA |
 
