@@ -159,5 +159,5 @@ Scenario: xoá bookmark không ảnh hưởng nội dung
 
 | # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
 |---|---|---|---|---|
-| 1 | Có cần thư viện riêng theo từng trẻ không, hay chung cho tài khoản? | Phân chia thư viện đa hồ sơ | P3 | Account & Child Multi-Profile |
+| 1 | Có cần thư viện riêng theo từng trẻ không, hay chung cho tài khoản? | Phân chia thư viện đa hồ sơ | P3 | Backend |
 
