@@ -150,6 +150,6 @@ Scenario: BR-LND-05 — giá khớp catalog
 
 | # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
 |---|---|---|---|---|
-| 1 | Có dùng analytics tự host (Plausible/Umami) không? | Đo lường phễu | P1 | Chốt D-AW: Không dùng analytics tự host trong P1; theo dõi phễu qua server log & telemetry pipeline |
-| 2 | 6 game nổi bật có trùng allow-list guest không? | Danh sách game chơi thử | P1 | Chốt D-AY (khớp [`access-ladder.md`](../00-foundation/access-ladder.md) Q2): Trùng khớp 6 level mẫu đại diện D1-D6 template trong guest allow-list |
+| ~~1~~ | ~~Có dùng analytics tự host (Plausible/Umami) không?~~ **Đóng 2026-08-09 (T13, `D-AW`)**: không dùng analytics tự host trong P1; theo dõi phễu qua server log & telemetry pipeline | Đo lường phễu | Đã đóng | D-AW |
+| ~~2~~ | ~~6 game nổi bật có trùng allow-list guest không?~~ **Đóng 2026-08-09 (T13, `D-AY`)**: trùng khớp 6 level mẫu đại diện D1-D6 template trong guest allow-list — khớp [`access-ladder.md`](../00-foundation/access-ladder.md) Q2 | Danh sách game chơi thử | Đã đóng | D-AY |
 
