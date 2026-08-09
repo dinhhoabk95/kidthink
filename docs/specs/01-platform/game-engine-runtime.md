@@ -227,6 +227,6 @@ Scenario: asset lỗi không làm đứng game
 
 | # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
 |---|---|---|---|---|
-| ~~1~~ | ~~Model tablet Android 2GB nào làm chuẩn đo 60 fps?~~ **Đóng 2026-08-09 (`D-CH`)**: Lenovo Tab M8 bản 2 GB RAM; Chrome ổn định mới nhất, pin >30%, tắt tiết kiệm pin; ba lần chạy lấy median | — | Đã đóng | Studio UI |
+| ~~1~~ | ~~Model tablet Android 2GB nào làm chuẩn đo 60 fps?~~ **Đóng 2026-08-09 (`D-CH`)**: Lenovo Tab M8 bản 2 GB RAM; Chrome ổn định mới nhất, pin >30%, tắt tiết kiệm pin; ba lần chạy lấy median | — | Đã đóng | D-CH |
 | 2 | WebGL cho template về sau? Canvas 2D đủ cho 6 template MVP | P4 | P4 | Studio UI |
 | 3 | Audio narration tiếng Việt — thu âm người thật hay TTS? Ảnh hưởng kích thước bundle và chất lượng | Nội dung P1 | P1 | người quyết |
