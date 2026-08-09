@@ -10,6 +10,7 @@ import {
   checkC14,
   checkC15,
   checkC16,
+  checkC17,
   collectSpecFiles,
   getViolations,
   getWarnings,
@@ -872,5 +873,99 @@ describe("checkC16 (open questions phase and owner check)", () => {
     const violations = getViolations().filter((v) => v.check === "C16");
     expect(warnings).toHaveLength(0);
     expect(violations).toHaveLength(0);
+  });
+});
+
+describe("checkC17 (bộ giá trị đóng cho cột Chủ) — chặng 1, warn", () => {
+  function specWithOwnerRow(status: string, ownerRow: string) {
+    const content = [
+      "---",
+      "spec: TEST_C17",
+      `status: ${status}`,
+      "---",
+      "",
+      "## 11. Open questions",
+      "",
+      "| # | Câu hỏi | Chặn gì | Chặn phase | Chủ |",
+      "|---|---|---|---|---|",
+      ownerRow,
+    ].join("\n");
+    return makeSpecFile("/fake/test_c17.md", "fake/test_c17.md", content);
+  }
+
+  it("warns approved spec when Chủ is an ad-hoc team name outside the closed set", () => {
+    const specs = [
+      specWithOwnerRow(
+        "approved",
+        "| 1 | Test question | Blocked feature | P1 | Product / QA |"
+      ),
+    ];
+    checkC17(specs);
+    const violations = getViolations().filter((v) => v.check === "C17");
+    const warnings = getWarnings().filter((w) => w.check === "C17");
+    expect(violations).toHaveLength(0);
+    expect(warnings).toHaveLength(1);
+  });
+
+  it("stays silent when Chủ is 'người quyết'", () => {
+    const specs = [
+      specWithOwnerRow(
+        "approved",
+        "| 1 | Test question | Blocked feature | P1 | người quyết |"
+      ),
+    ];
+    checkC17(specs);
+    const warnings = getWarnings().filter((w) => w.check === "C17");
+    expect(warnings).toHaveLength(0);
+  });
+
+  it("warns on 'người quyết — chặn P2' — loose substring match would be a fake gate", () => {
+    const specs = [
+      specWithOwnerRow(
+        "approved",
+        "| 1 | Test question | Blocked feature | P1 | người quyết — chặn P2 |"
+      ),
+    ];
+    checkC17(specs);
+    const warnings = getWarnings().filter((w) => w.check === "C17");
+    expect(warnings).toHaveLength(1);
+  });
+
+  it("stays silent on a struck row with a decision code (D-AE (T11))", () => {
+    const specs = [
+      specWithOwnerRow(
+        "approved",
+        "| ~~2~~ | ~~Test question~~ | — | Đã đóng | D-AE (T11) |"
+      ),
+    ];
+    checkC17(specs);
+    const warnings = getWarnings().filter((w) => w.check === "C17");
+    expect(warnings).toHaveLength(0);
+  });
+
+  it("warns on a struck row when Chủ is a team name instead of a D-* code", () => {
+    const specs = [
+      specWithOwnerRow(
+        "approved",
+        "| ~~2~~ | ~~Test question~~ | — | Đã đóng | Infra |"
+      ),
+    ];
+    checkC17(specs);
+    const warnings = getWarnings().filter((w) => w.check === "C17");
+    expect(warnings).toHaveLength(1);
+  });
+
+  it("warns on a draft spec too — chặng 1 is warn for every status", () => {
+    const specs = [
+      specWithOwnerRow(
+        "draft",
+        "| 1 | Test question | Blocked feature | P1 | DevOps / Infra |"
+      ),
+    ];
+    checkC17(specs);
+    const violations = getViolations().filter((v) => v.check === "C17");
+    const warnings = getWarnings().filter((w) => w.check === "C17");
+    expect(violations).toHaveLength(0);
+    expect(warnings).toHaveLength(1);
   });
 });

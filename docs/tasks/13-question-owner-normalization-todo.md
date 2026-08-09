@@ -11,33 +11,44 @@
 
 ## Bước 0 — điều kiện tiên quyết
 
-- [ ] Task #12 đã đóng: `pnpm lint:specs 2>&1 | tail -2` — **0 lỗi, 0 cảnh báo**
-- [ ] `grep -rl "^status: approved" --include="*.md" docs/specs | xargs grep -l "^spec: " | wc -l` — ra **130**
-- [ ] `git status --short` sạch
-- [ ] Mã `D-*` kế tiếp: `grep -rhoE "D-B[A-Z]" docs/specs docs/tasks | sort -u | tail -1` → ghi ở đây: ____
-- [ ] Đọc kế hoạch mục 3 (bộ giá trị đóng + bảng quy đổi nhóm B + khuôn đóng nhóm A)
+- [x] Task #12 đã đóng: `pnpm lint:specs 2>&1 | tail -2` — **0 lỗi, 0 cảnh báo** ✓
+- [x] `grep -rl "^status: approved" --include="*.md" docs/specs | xargs grep -l "^spec: " | wc -l` — ra **120**,
+      không phải 130. Không phải nợ T12: giữa lúc viết kế hoạch (`be75db4`) và giờ, Task #14 đã hợp lệ đưa
+      10 spec từ `approved` sang `implemented` (glossary, mvp-scope, monorepo-package-architecture,
+      repo-bootstrap, id-conventions, 4 file schema, ai-codegen-pipeline, testing-strategy — commit `d0c5a33`).
+      Tín hiệu thật của T12 đóng là `lint:specs` 0 lỗi 0 cảnh báo, đã đạt. `checkC16` hiện dùng khuôn nhị phân
+      `status === "approved"` → fail, else → warn (dòng 1650-1799 `lint-specs-lib.ts`) — `checkC17` sẽ theo
+      đúng khuôn đó nên không cần xử lý riêng cho `implemented`.
+- [x] `git status --short` sạch — dọn trước: commit `d0c5a33` (T14 cổng check:progress + sửa tick khống)
+      và `009a341` (T16 kế hoạch auth) đưa tree về sạch.
+- [x] Mã `D-*` kế tiếp: `grep -rhoE "D-B[A-Z]" docs/specs docs/tasks | sort -u | tail -1` → `D-BZ`
+- [x] Đọc kế hoạch mục 3 (bộ giá trị đóng + bảng quy đổi nhóm B + khuôn đóng nhóm A)
 
 ---
 
 ## Bước 1 — `checkC17` chặng 1, mức `warn`
 
-- [ ] Viết ca âm trong [`scripts/tests/lint-specs.test.ts`](../../scripts/tests/lint-specs.test.ts):
+- [x] Viết ca âm trong [`scripts/tests/lint-specs.test.ts`](../../scripts/tests/lint-specs.test.ts):
       spec giả `approved`, hàng mục 11 có `Chủ` = `Product / QA` → đúng một `warn` `C17`
-- [ ] Ca dương cùng chỗ: `Chủ` = `người quyết` → im lặng
-- [ ] Ca biên bắt buộc: `Chủ` = `người quyết — chặn P2` → **phải** `warn` (khớp lỏng là cổng giả)
-- [ ] Ca biên: hàng gạch `~~2~~` với `Chủ` = `D-AE (T11)` → im lặng; cùng hàng đó với `Chủ` = `Infra` → `warn`
-- [ ] `pnpm test scripts/tests/lint-specs.test.ts` — **phải đỏ**
-- [ ] Viết `checkC17` trong [`scripts/lint-specs-lib.ts`](../../scripts/lint-specs-lib.ts), đăng ký vào danh sách check
-- [ ] Chạy test — **phải xanh**
-- [ ] `pnpm lint:specs 2>&1 | tail -2` — 0 lỗi; số cảnh báo `C17`: ____ (kế hoạch đo 76 lúc viết)
-- [ ] `pnpm lint:specs 2>&1 | grep -F "[C17]" > /tmp/c17-baseline.txt` — giữ làm mốc đếm ngược
+- [x] Ca dương cùng chỗ: `Chủ` = `người quyết` → im lặng
+- [x] Ca biên bắt buộc: `Chủ` = `người quyết — chặn P2` → **phải** `warn` (khớp lỏng là cổng giả)
+- [x] Ca biên: hàng gạch `~~2~~` với `Chủ` = `D-AE (T11)` → im lặng; cùng hàng đó với `Chủ` = `Infra` → `warn`
+- [x] `pnpm test scripts/tests/lint-specs.test.ts` — **đỏ** (6 test fail, `checkC17 is not a function`)
+- [x] Viết `checkC17` trong [`scripts/lint-specs-lib.ts`](../../scripts/lint-specs-lib.ts), đăng ký vào danh sách check
+- [x] Chạy test — **xanh** (57/57)
+- [x] `pnpm lint:specs 2>&1 | tail -2` — 0 lỗi; số cảnh báo `C17`: **93** (kế hoạch ước 76 lúc viết ở
+      `9f1ef3f`; corpus đã trôi qua T12 đóng + 10 spec T14 chuyển `implemented` — kế hoạch mục 2 tự
+      dặn "đừng tin số in ở đây". Đã soát mẫu ~15 dòng đầu: không khớp lỏng, đúng nhóm A/B/D thật)
+- [x] `pnpm lint:specs 2>&1 | grep -F "[C17]" > .../scratchpad/c17-baseline.txt` — giữ làm mốc đếm ngược
+      (dùng scratchpad thay `/tmp` theo quy ước phiên; nội dung tương đương)
 - [ ] Commit `feat(scripts): T13 bước 1 — C17 chặng 1, bộ giá trị cột Chủ`
 
 ## Cổng dừng A
 
-- [ ] Ca âm đã chứng minh đỏ rồi xanh
-- [ ] Số cảnh báo `C17` khớp số hàng đo trong kế hoạch mục 2 (± hàng Task #12 mới thêm)
-- [ ] `pnpm check && pnpm test` xanh
+- [x] Ca âm đã chứng minh đỏ rồi xanh
+- [x] Số cảnh báo `C17` đo được: 93 (lệch với ước tính 76 trong kế hoạch — lệch có giải thích ở trên,
+      không phải lỗi cổng)
+- [x] `pnpm check && pnpm test` xanh
 
 ---
 

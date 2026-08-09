@@ -1798,6 +1798,115 @@ export function checkC16(specs: SpecFile[]) {
   }
 }
 
+// ─── C17 — cột "Chủ" phải khớp bộ giá trị đóng ───────────────────────────────
+//
+// Task #13 — kế hoạch mục 3. Khác C16 (chỉ hỏi ô có rỗng không), C17 hỏi ô
+// *chứa gì*: "Chủ" phải khớp đúng một trong bốn dạng —
+//   - "người quyết"                          (chủ dự án)
+//   - "hoãn" hoặc "hoãn — <điều kiện đo được>" (hoãn)
+//   - một trong 5 đội đóng: Infra / Backend / Studio UI / Nội dung / Kế toán
+//   - "D-XX" (kèm "(T..)" tuỳ chọn) — CHỈ hợp lệ trên hàng đã gạch "~~n~~"
+// So khớp toàn chuỗi, không so khớp chuỗi con — "người quyết — chặn P2" phải
+// warn vì phase bị nhét sai chỗ (cấm), dù chứa "người quyết".
+//
+// Chặng 1 (task #13 bước 1): warn cho mọi status. Chặng 2 (bước cuối): fail
+// khi status: approved, giữ warn cho draft — cùng khuôn C16.
+
+const C17_TEAM_SET = new Set([
+  "Infra",
+  "Backend",
+  "Studio UI",
+  "Nội dung",
+  "Kế toán",
+]);
+const C17_HOAN_PATTERN = /^hoãn(\s+—\s+.+)?$/;
+const C17_DECISION_CODE_PATTERN = /^D-[A-Z]{1,4}(\s*\([^)]*\))?$/;
+
+function isValidC17Owner(owner: string, isStruck: boolean): boolean {
+  if (isStruck) {
+    return C17_DECISION_CODE_PATTERN.test(owner);
+  }
+  return (
+    owner === "người quyết" ||
+    C17_HOAN_PATTERN.test(owner) ||
+    C17_TEAM_SET.has(owner)
+  );
+}
+
+export function checkC17(specs: SpecFile[]) {
+  for (const s of specs) {
+    if (s.frontmatter.doc !== undefined || !s.frontmatter.spec) {
+      continue;
+    }
+
+    let section11Line = -1;
+    let section11EndLine = s.lines.length;
+
+    for (let i = 0; i < s.lines.length; i++) {
+      const line = s.lines[i] ?? "";
+      if (/^##\s+11\.\s+Open questions/i.test(line)) {
+        section11Line = i + 1;
+        for (let j = i + 1; j < s.lines.length; j++) {
+          if (/^##\s+/.test(s.lines[j] ?? "")) {
+            section11EndLine = j;
+            break;
+          }
+        }
+        break;
+      }
+    }
+
+    if (section11Line === -1) {
+      continue;
+    }
+
+    const sec11Lines = s.lines.slice(section11Line, section11EndLine);
+    const nonHeaderLines = sec11Lines.filter((l) => l.trim().length > 0);
+    const bodyText = nonHeaderLines.join("\n").trim();
+
+    if (/^Không có\.\s*$/i.test(bodyText)) {
+      continue;
+    }
+
+    for (let k = 0; k < sec11Lines.length; k++) {
+      const line = sec11Lines[k] ?? "";
+      if (!line.trim().startsWith("|")) {
+        continue;
+      }
+      const cols = line
+        .split("|")
+        .map((c) => c.trim())
+        .filter((_, idx, arr) => idx > 0 && idx < arr.length - 1);
+
+      if (cols.length < 5) {
+        continue;
+      }
+      if (
+        cols[0] === "#" ||
+        cols[1]?.includes("Câu hỏi") ||
+        cols[0]?.startsWith("---") ||
+        cols.every((c) => /^[-:|\s]+$/.test(c))
+      ) {
+        continue;
+      }
+
+      const qNum = cols[0] ?? "";
+      if (!qNum) {
+        continue;
+      }
+
+      const isStruck = qNum.startsWith("~~");
+      const owner = cols[4] ?? "";
+
+      if (!isValidC17Owner(owner, isStruck)) {
+        const msg = `Hàng câu hỏi mở (hàng ${qNum}) có "Chủ" ngoài bộ giá trị đóng: "${owner}"`;
+        const lineNo = section11Line + k;
+        warn(s.rel, lineNo, "C17", msg);
+      }
+    }
+  }
+}
+
 export const ALL_CHECKS = [
   checkC1,
   checkC2,
@@ -1815,4 +1924,5 @@ export const ALL_CHECKS = [
   checkC14,
   checkC15,
   checkC16,
+  checkC17,
 ];
