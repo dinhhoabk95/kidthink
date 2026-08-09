@@ -178,7 +178,7 @@ Scenario: BR-MVP-04 — không có dấu vết của thứ ngoài phạm vi
 
 | # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
 |---|---|---|---|---|
-| ~~1~~ | ~~Ai biên soạn ≥690 LO, ≥120 game level, ≥60 lesson?~~ **Đóng 2026-08-09 (`D-CN`, thay thế quyết định hoãn `D-W`)**: nhóm Nội dung sở hữu; AI agent IDE chỉ soạn file. Baseline lập kế hoạch là 20 LO, 6 game level hoặc 3 lesson/người review/ngày; đo lại sau lô pilot 30 LO + 6 level, không hạ checklist để đạt quota | — | Đã đóng | Nội dung |
+| ~~1~~ | ~~Ai biên soạn ≥690 LO, ≥120 game level, ≥60 lesson?~~ **Đóng 2026-08-09 (`D-CN`, thay thế quyết định hoãn `D-W`)**: nhóm Nội dung sở hữu; AI agent IDE chỉ soạn file. Baseline lập kế hoạch là 20 LO, 6 game level hoặc 3 lesson/người review/ngày; đo lại sau lô pilot 30 LO + 6 level, không hạ checklist để đạt quota | — | Đã đóng | D-CN |
 | 2 | Ngân sách và lịch cho P0→P3 là bao nhiêu? Chưa có ước lượng nào | Toàn bộ kế hoạch | cần người quyết | người quyết |
 | 3 | Có mốc phát hành cứng không, hay ship khi xong? Nếu có mốc cứng thì §5 phải được kích hoạt sớm | Ưu tiên | cần người quyết | người quyết |
 | ~~4~~ | ~~Backup và monitoring thuộc phase nào~~ **Đóng 2026-08-06 (T9)**: **P0** — [`backup-and-restore.md`](../01-platform/backup-and-restore.md) spec gắn vào cổng ra P0. Go-live không có backup là không chấp nhận được | — | Đã đóng | D-X (T9) |
