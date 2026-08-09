@@ -126,18 +126,19 @@
 
 Lô nặng nhất, gần như toàn nhóm A.
 
-- [ ] [`healthy-play-limits.md`](../specs/04-play/healthy-play-limits.md) — A2+B1
-- [ ] [`feedback-and-celebration.md`](../specs/04-play/feedback-and-celebration.md) — A2
-- [ ] [`play-entry-and-profile-select.md`](../specs/04-play/play-entry-and-profile-select.md) — A2
-- [ ] [`play-event-ingestion.md`](../specs/04-play/play-event-ingestion.md) — A2
-- [ ] [`play-session-lifecycle.md`](../specs/04-play/play-session-lifecycle.md) — A2
-- [ ] [`game-config-delivery.md`](../specs/04-play/game-config-delivery.md) — A1+B1
-- [ ] [`scoring-and-result.md`](../specs/04-play/scoring-and-result.md) — A1+B1
-- [ ] [`parent-gate.md`](../specs/04-play/parent-gate.md) — C1+D1
-- [ ] [`scaffolding-and-hints.md`](../specs/04-play/scaffolding-and-hints.md) — D2
-- [ ] [`next-game-recommendation.md`](../specs/04-play/next-game-recommendation.md) — B2
-- [ ] [`curriculum-player.md`](../specs/04-play/curriculum-player.md) — B1
-- [ ] Sau mỗi 5 file: `pnpm lint:specs 2>&1 | tail -2` — 0 lỗi, `C17` giảm đúng số hàng đã làm
+- [x] [`healthy-play-limits.md`](../specs/04-play/healthy-play-limits.md) — A2+B1, tái dùng D-AZ/D-BB
+- [x] [`feedback-and-celebration.md`](../specs/04-play/feedback-and-celebration.md) — A2, tái dùng D-AV, cấp D-DB
+- [x] [`play-entry-and-profile-select.md`](../specs/04-play/play-entry-and-profile-select.md) — A2, tái dùng D-AY, cấp D-DC
+- [x] [`play-event-ingestion.md`](../specs/04-play/play-event-ingestion.md) — A2, cấp D-DD/D-DE
+- [x] [`play-session-lifecycle.md`](../specs/04-play/play-session-lifecycle.md) — A2, cấp D-DF/D-DG
+- [x] [`game-config-delivery.md`](../specs/04-play/game-config-delivery.md) — A1+B1, cấp D-DH
+- [x] [`scoring-and-result.md`](../specs/04-play/scoring-and-result.md) — A1+B1, tái dùng D-BA
+- [x] [`parent-gate.md`](../specs/04-play/parent-gate.md) — không ép nhóm C (câu hỏi không khớp phía
+      pwa-install.md) — để người quyết cả hai hàng
+- [x] [`scaffolding-and-hints.md`](../specs/04-play/scaffolding-and-hints.md) — D2 → Studio UI / Nội dung
+- [x] [`next-game-recommendation.md`](../specs/04-play/next-game-recommendation.md) — B2 → Backend
+- [x] [`curriculum-player.md`](../specs/04-play/curriculum-player.md) — đã sạch từ trước, không có hàng nợ
+- [x] Sau lô: `C17` 46 → 25 (giảm đúng 21, không phải 22 — curriculum-player không có hàng)
 
 ## Lô 6 — `08-quality`, 3 file / 6 hàng
 
