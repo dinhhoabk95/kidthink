@@ -263,6 +263,6 @@ Scenario: BR-SLK-08 — Manager không có đường liên kết SNS
 
 | # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
 |---|---|---|---|---|
-| 1 | Khi User gỡ SNS mà đó là cách vào cuối, có nên gộp 2 bước (đặt mật khẩu rồi gỡ luôn) không? | Trải nghiệm UX gỡ phương thức cuối | P2 | Account Settings UX |
-| 2 | Cấu hình cửa sổ reauth (5 phút) nên đặt ở đâu để dùng chung toàn hệ thống? | Cấu hình reauth | P1 | Chốt: Đặt tại REAUTH_WINDOW_MINUTES = 5 trong [`auth-tokens-sessions.md`](../01-platform/auth-tokens-sessions.md) §7.4 |
+| 1 | Khi User gỡ SNS mà đó là cách vào cuối, có nên gộp 2 bước (đặt mật khẩu rồi gỡ luôn) không? | Trải nghiệm UX gỡ phương thức cuối | P2 | Studio UI |
+| ~~2~~ | ~~Cấu hình cửa sổ reauth (5 phút) nên đặt ở đâu để dùng chung toàn hệ thống?~~ **Đóng 2026-08-09 (T13, `D-CZ`)**: đặt tại `REAUTH_WINDOW_MINUTES = 5` trong [`auth-tokens-sessions.md`](../01-platform/auth-tokens-sessions.md) §7.4 | Cấu hình reauth | Đã đóng | D-CZ |
 
