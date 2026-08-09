@@ -312,17 +312,40 @@ spec khác trích nó.
 Cấm thay thế hàng loạt (`sed` trên toàn corpus) — dấu phủ định emoji không có một bản dịch duy
 nhất, mỗi câu cần đọc lại sau khi thay.
 
-### 11.7 Bảng câu hỏi mở ở mục 11 phải đủ 5 cột
+### 11.7 Bảng câu hỏi mở ở mục 11 phải đủ 5 cột, và `Chủ` phải thuộc bộ giá trị đóng
 
 Mọi spec `status: approved` chứa bảng câu hỏi mở ở section "## 11. Open questions" bắt buộc phải sử dụng bảng 5 cột:
 
 | # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
 
-Cột `Chủ` phải thuộc bộ giá trị đóng:
-- `người quyết`: Cần quyết định thương mại, pháp lý, hoặc phạm vi — chủ dự án
-- `hoãn`: Chưa cần trả lời trước phase đã ghi; nên kèm điều kiện mở lại đo được
-- `Infra` · `Backend` · `Studio UI` · `Nội dung` · `Kế toán`: Quyết định kỹ thuật hoặc nghiệp vụ nội bộ
-- `D-*`: Hàng đã đóng; ghi mã quyết định tương ứng (ví dụ `D-AE`)
+`checkC16` báo lỗi `fail` nếu bảng dưới 5 cột hoặc ô `Chặn phase`/`Chủ` rỗng — nhưng `checkC16` chỉ
+hỏi ô có rỗng không, không hỏi ô **chứa gì**. `checkC17` (Task #13) hỏi tiếp câu đó: ô `Chủ` phải
+khớp đúng **một** trong bốn dạng sau, so khớp **toàn chuỗi** (không phải chuỗi con — `"người quyết —
+chặn P2"` không hợp lệ dù chứa `"người quyết"`, vì phase bị nhét sai cột):
 
-Cấm để trống, cấm `-`, cấm `—`, cấm `TBD`. `checkC16` ở chặng 2 sẽ báo lỗi `fail` nếu bảng dưới 5 cột hoặc thiếu `Chặn phase`/`Chủ`.
+| Dạng | Viết thế nào | Dùng khi |
+|---|---|---|
+| Chủ dự án | `người quyết` | Quyết định thương mại, pháp lý, hoặc phạm vi |
+| Hoãn | `hoãn` hoặc `hoãn — <điều kiện mở lại đo được>` | Không ai cần trả lời trước phase đã ghi ở cột `Chặn phase` |
+| Đội | `Infra` · `Backend` · `Studio UI` · `Nội dung` · `Kế toán` | Quyết định kỹ thuật hoặc nghiệp vụ nội bộ |
+| Mã quyết định | `D-XX`, kèm task trong ngoặc nếu cần: `D-AE (T11)` | **Chỉ** cho hàng đã gạch `~~n~~` — hàng chưa gạch không được dùng mã |
+
+Cấm: rỗng, `-`, `—`, `TBD`, tên đội tự phát (`Product / QA`, `DevOps / Infra`…), văn xuôi, phase
+lẫn vào cột `Chủ`. `checkC17` `fail` khi `status: approved`, `warn` khi `draft`.
+
+**Khuôn đóng một hàng nhóm A** (câu hỏi đã có câu trả lời nằm sai chỗ — ở cột `Chủ` thay vì đã
+đóng đúng cách). Mẫu, hàng 2 của [`content-versioning.md`](00-foundation/content-versioning.md)
+mục 11:
+
+- Số hàng: gạch `~~n~~`
+- Cột `Câu hỏi`: câu hỏi gốc gạch ngang, rồi **`Đóng <ngày> (T<task>)`: <câu trả lời chuyển từ cột `Chủ` sang>**
+- Cột `Chặn gì`: `—`
+- Cột `Chặn phase`: `Đã đóng`
+- Cột `Chủ`: mã `D-*` — mã mới nếu chưa có, hoặc tái dùng mã đã xuất hiện trong chính câu trả lời
+  hay ở spec khác đóng cùng một quyết định (không mint trùng cho cùng một quyết định)
+
+Nhóm C (`Chủ` là liên kết trỏ spec khác): chủ thật là chủ của câu hỏi được trỏ tới — mở file đó,
+chép giá trị `Chủ` của nó về, liên kết dời sang cột `Chặn gì`. Nếu liên kết không khớp câu hỏi
+tương ứng nào ở file kia (câu hỏi khác nhau), đừng ép — để `người quyết` và giữ liên kết ở `Chặn gì`
+làm ngữ cảnh.
 

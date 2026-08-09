@@ -29,17 +29,22 @@ Bốn điều kiện, thiếu một điều là chưa xong:
 [`content-versioning.md`](../specs/00-foundation/content-versioning.md) mục 11 — spec `approved`
 mang hai hàng `hoãn` với chủ ghi rõ.
 
-## Số đo hiện tại (sau Task #12 — Hoàn tất đóng corpus)
+## Số đo hiện tại (sau Task #13 — chuẩn hoá cột Chủ)
 
 | Đo | Giá trị |
 |---|---|
 | Spec trong corpus | 130 |
-| `approved` | 130 (100% corpus closed) |
-| `draft` | 0 |
-| `pnpm lint:specs` | 0 lỗi, **0** cảnh báo (15/15 checks green) |
-| Cổng tự giữ (`checkC16` & `checkC6` chặng 2) | Bật — bảng < 5 cột hoặc thiếu "vì sao" cho spec approved báo `fail` |
+| `approved` | 120 — 10 spec đã tiến thêm lên `implemented` qua Task #14 (không lùi; xem
+  [`13-question-owner-normalization-todo.md`](13-question-owner-normalization-todo.md) bước 0) |
+| `pnpm lint:specs` | 0 lỗi, 0 cảnh báo (16/16 checks green, gồm `C17` chặng 2) |
+| Cổng tự giữ (`checkC16`, `checkC17` chặng 2) | Bật — bảng < 5 cột, thiếu `Chặn phase`/`Chủ`, hoặc `Chủ` ngoài bộ giá trị đóng cho spec `approved` đều báo `fail` |
+| Hàng câu hỏi mục 11 — **đã gạch** (đóng) | 88, đo bằng `awk` giữa `## 11.` và header `## ` kế tiếp, khớp `^\| ~~[0-9]+~~ \|` |
+| Hàng câu hỏi mục 11 — **còn mở** (chưa gạch) | 195, cùng phép đo, khớp `^\| [0-9]+ \|` — đây là số việc thật, không phải 257 (baseline `9f1ef3f`) hay 458 (đếm ngây thơ `grep "^| [0-9]"` toàn corpus, dính cả bảng §7 không phải câu hỏi mở) |
 
-Task #10 đang chạy nên các số này giảm liên tục. Đo lại trước mỗi task, đừng tin số in ở đây:
+Task #13 đóng 76 hàng nhóm A (câu đã có trả lời nằm sai chỗ ở cột `Chủ`) và chuẩn hoá toàn bộ giá
+trị `Chủ` còn lại về bộ đóng — cổng `C17` từ đây đo được **nội dung** cột `Chủ`, không chỉ độ rỗng.
+Bảng #9–#12 dưới đây viết trước Task #13-#16 và đã lỗi thời về số liệu; giữ lại vì đồ thị phụ thuộc
+và rủi ro xuyên task vẫn đúng nguyên tắc. Đo lại trước mỗi task, đừng tin số in ở đây:
 
 ```
 export PATH=/Users/macbook/.nvm/versions/node/v24.15.0/bin:$PATH
