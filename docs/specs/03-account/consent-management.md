@@ -168,6 +168,6 @@ Scenario: BR-CSM-02 — không tick sẵn
 
 | # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
 |---|---|---|---|---|
-| 1 | Diff chính sách sinh tự động hay soạn tay tóm tắt thay đổi? | Trải nghiệm đồng ý | P1 | Chốt: Soạn tay tóm tắt thay đổi (`summary_vi`) cho phụ huynh; diff toàn văn ở chế độ xem chi tiết |
-| 2 | Version chính sách đổi bao lâu một lần và ai quyết định? | Quy trình vận hành | P1 | Chuyên gia pháp lý / Ban điều hành |
+| ~~1~~ | ~~Diff chính sách sinh tự động hay soạn tay tóm tắt thay đổi?~~ **Đóng 2026-08-09 (T13, `D-CY`)**: soạn tay tóm tắt thay đổi (`summary_vi`) cho phụ huynh; diff toàn văn ở chế độ xem chi tiết | Trải nghiệm đồng ý | Đã đóng | D-CY |
+| 2 | Version chính sách đổi bao lâu một lần và ai quyết định? | Quy trình vận hành | P1 | người quyết |
 
