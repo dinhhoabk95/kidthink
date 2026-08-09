@@ -158,6 +158,6 @@ Scenario: offline test dùng chế độ offline thật
 
 | # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
 |---|---|---|---|---|
-| 1 | Có cho tải trước một tuần curriculum để chơi offline không? | Tải trước gói học tập | P5 | Offline Infrastructure & Content Caching |
-| 2 | 5 MB buffer đủ cho một phiên dài chưa? | Dung lượng buffer local | P1 | Chốt: 5 MB hoàn toàn dư dả cho 1 phiên chơi (trung bình 1 phiên 10-15 phút chỉ cần 50-100 KB) |
+| 1 | Có cho tải trước một tuần curriculum để chơi offline không? | Tải trước gói học tập | P5 | Infra |
+| ~~2~~ | ~~5 MB buffer đủ cho một phiên dài chưa?~~ **Đóng 2026-08-09 (T13, `D-CR`)**: 5 MB hoàn toàn dư dả cho 1 phiên chơi (trung bình 1 phiên 10-15 phút chỉ cần 50-100 KB) | — | Đã đóng | D-CR |
 
