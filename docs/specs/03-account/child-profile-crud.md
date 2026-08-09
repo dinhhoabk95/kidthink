@@ -188,6 +188,6 @@ Scenario: BR-CPC-08 — age_band suy tự động
 
 | # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
 |---|---|---|---|---|
-| 1 | Bao nhiêu avatar preset là đủ để trẻ thấy mình được đại diện? | Preset thiết kế | P1 | Chốt D-AU: 12 avatar preset SVG do UI Designer vẽ (khớp với [`design-system-contract.md`](../08-quality/design-system-contract.md) Q1) |
-| 2 | Trẻ sang 7 tuổi thì hồ sơ xử lý thế nào — vẫn chơi được hay khoá? | Giới hạn độ tuổi | P3 | [`child-profile-archive.md`](child-profile-archive.md) Q1 |
+| ~~1~~ | ~~Bao nhiêu avatar preset là đủ để trẻ thấy mình được đại diện?~~ **Đóng 2026-08-09 (T13, `D-AU`)**: 12 avatar preset SVG do UI Designer vẽ — khớp [`design-system-contract.md`](../08-quality/design-system-contract.md) Q1 | Preset thiết kế | Đã đóng | D-AU |
+| ~~2~~ | ~~Trẻ sang 7 tuổi thì hồ sơ xử lý thế nào — vẫn chơi được hay khoá?~~ **Đóng 2026-08-09 (T13, `D-CX`)**: để phụ huynh quyết định, không tự động archive — cùng quyết định với [`child-profile-archive.md`](child-profile-archive.md) Q1 | Giới hạn độ tuổi | Đã đóng | D-CX |
 
