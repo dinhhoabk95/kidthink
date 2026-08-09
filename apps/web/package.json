@@ -3,10 +3,20 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
+  "scripts": {
+    "build": "nuxt build",
+    "dev": "nuxt dev",
+    "test": "vitest run",
+    "typecheck": "nuxt typecheck"
+  },
   "dependencies": {
     "@kidthink/auth": "workspace:*"
   },
   "devDependencies": {
-    "@sidebase/nuxt-auth": "catalog:"
+    "@sidebase/nuxt-auth": "catalog:",
+    "nuxt": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:",
+    "vue-tsc": "catalog:"
   }
 }

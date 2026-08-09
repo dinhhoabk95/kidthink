@@ -58,7 +58,7 @@ Mỗi bước: tám việc ở kế hoạch mục 5, một PR.
 - [x] **P0.0b** Cổng chống tick khống `pnpm check:progress` — kế hoạch mục 10; ca âm trước: commit chỉ đổi `[ ]` thành `[x]` phải làm cổng đỏ
 - [x] **P0.1** Khung repo + dependency baseline — [`repo-bootstrap.md`](../specs/00-foundation/repo-bootstrap.md) · [`monorepo-package-architecture.md`](../specs/00-foundation/monorepo-package-architecture.md)
 - [x] **P0.2** Từ vựng và ID — [`glossary.md`](../specs/00-foundation/glossary.md) · [`id-conventions.md`](../specs/00-foundation/id-conventions.md)
-- [ ] **P0.3** Tác nhân và guard — [`actors.md`](../specs/00-foundation/actors.md) · [`auth-tokens-sessions.md`](../specs/01-platform/auth-tokens-sessions.md)
+- [x] **P0.3** Tác nhân và guard — [`actors.md`](../specs/00-foundation/actors.md) · [`auth-tokens-sessions.md`](../specs/01-platform/auth-tokens-sessions.md)
 - [ ] **P0.4** Ràng buộc pháp lý trước khi thiết kế bảng trẻ — [`child-data-compliance.md`](../specs/00-foundation/child-data-compliance.md)
 - [ ] **P0.5** Ladder + entitlement + package — [`access-ladder.md`](../specs/00-foundation/access-ladder.md) → [`entitlement-model.md`](../specs/00-foundation/entitlement-model.md) → [`package-catalog.md`](../specs/00-foundation/package-catalog.md)
 - [ ] **P0.6** Vòng đời + version nội dung — [`content-lifecycle.md`](../specs/00-foundation/content-lifecycle.md) → [`content-versioning.md`](../specs/00-foundation/content-versioning.md)

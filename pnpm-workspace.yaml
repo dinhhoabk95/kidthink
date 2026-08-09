@@ -19,6 +19,10 @@ catalog:
   zod: ^3.25.0 # Zod 4 (Standard Schema) — id-conventions §7.1, BR-ID-05
   dependency-cruiser: ^18.1.1 # cưỡng chế BR-MPA-01/06/07 trong gate local
 
+  # Nuxt app runtime — P0.3. Pin the current 4.5 security-patched line.
+  nuxt: ^4.5.1
+  vue-tsc: ^3.3.9
+
   # Auth — P0.3. Sidebase Local được khai trực tiếp như Nuxt module ở mỗi app;
   # jose chỉ được import trong packages/auth.
   "@sidebase/nuxt-auth": ^1.3.1

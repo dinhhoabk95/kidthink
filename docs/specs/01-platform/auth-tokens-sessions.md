@@ -2,7 +2,7 @@
 spec: AUTH-TOKENS-SESSIONS
 title: Token, cookie và vòng đời phiên
 area: platform
-status: approved
+status: implemented
 mvp: true
 phase: P0
 reviewed: 2026-08-09
