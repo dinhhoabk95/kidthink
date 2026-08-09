@@ -153,5 +153,5 @@ Scenario: BR-AIA-10 — bỏ qua được gợi ý
 |---|---|---|---|---|
 | 1 | Provider và model nào? Ảnh hưởng chi phí và chất lượng tiếng Việt | P4 | Đánh giá Benchmark các model hỗ trợ tiếng Việt tốt (Claude 3.5 Sonnet / GPT-4o) trước khi chốt; [`semantic-search.md`](semantic-search.md) Q1 dùng chung quyết định | người quyết |
 | 2 | Tỉ lệ trừ credit mỗi loại lời gọi | P4 | Trỏ sang [`ai-credit-ledger.md`](ai-credit-ledger.md) Q1 | người quyết |
-| ~~3~~ | ~~Tìm kiếm ngữ nghĩa cần vector store — dùng pgvector hay dịch vụ ngoài?~~ Đã chốt 2026-08-05: pgvector trong Postgres 17 hiện có, add-on trả credit (không base search). Spec chi tiết: [`semantic-search.md`](semantic-search.md) | P4 | đã chốt | đã chốt |
+| ~~3~~ | ~~Tìm kiếm ngữ nghĩa cần vector store — dùng pgvector hay dịch vụ ngoài?~~ **Đóng 2026-08-05 (`D-DL`)**: pgvector trong Postgres 17 hiện có, add-on trả credit (không base search). Spec chi tiết: [`semantic-search.md`](semantic-search.md) | P4 | Đã đóng | D-DL |
 | 4 | Có cần thoả thuận xử lý dữ liệu (DPA) với provider không, dù không gửi PII? | P4 | Rà soát tiêu chuẩn tuân thủ bảo vệ dữ liệu trẻ em GDPR-K / COPPA để ký kết DPA nếu cần | người quyết |
