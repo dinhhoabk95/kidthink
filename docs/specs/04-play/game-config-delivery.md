@@ -188,6 +188,6 @@ Scenario: asset thiếu không chặn phiên
 
 | # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
 |---|---|---|---|---|
-| 1 | Đáp án đúng nằm trong payload — trẻ 3–6 không mở devtools, nhưng người lớn thì có. Có cần chấm ở server cho một số template không? | Chống gian lận | P4 | Security / Anti-cheat |
-| 2 | Adaptive params áp ở P3 — P1 dùng tham số gốc, đúng chưa? | Phạm vi P1 | P1 | Chốt: Đúng, P1 dùng difficulty_params gốc trong game_levels; hoãn adaptive sang P3 |
+| 1 | Đáp án đúng nằm trong payload — trẻ 3–6 không mở devtools, nhưng người lớn thì có. Có cần chấm ở server cho một số template không? | Chống gian lận | P4 | Backend |
+| ~~2~~ | ~~Adaptive params áp ở P3 — P1 dùng tham số gốc, đúng chưa?~~ **Đóng 2026-08-09 (T13, `D-DH`)**: đúng, P1 dùng difficulty_params gốc trong game_levels; hoãn adaptive sang P3 | Phạm vi P1 | Đã đóng | D-DH |
 
