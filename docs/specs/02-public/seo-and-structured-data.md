@@ -171,6 +171,6 @@ Scenario: BR-SEO2-08 — trang pháp lý sạch script
 
 | # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
 |---|---|---|---|---|
-| 1 | Tổ hợp bộ lọc nào đáng index riêng? | Cấu hình index bộ lọc | P1 | Chốt: Chỉ index 6 trang competency (`C1..C6`) và 3 trang độ tuổi; bộ lọc khác dùng canonical hoặc noindex |
-| 2 | `og:image` sinh động cho từng game hay dùng ảnh chung? | Render og:image | P1 | Chốt: Sinh og:image động từ emoji + tiêu đề + background template bằng Nuxt OgImage |
+| ~~1~~ | ~~Tổ hợp bộ lọc nào đáng index riêng?~~ **Đóng 2026-08-09 (T13, `D-CS`)**: chỉ index 6 trang competency (`C1..C6`) và 3 trang độ tuổi; bộ lọc khác dùng canonical hoặc noindex | Cấu hình index bộ lọc | Đã đóng | D-CS |
+| ~~2~~ | ~~`og:image` sinh động cho từng game hay dùng ảnh chung?~~ **Đóng 2026-08-09 (T13, `D-CT`)**: sinh og:image động từ emoji + tiêu đề + background template bằng Nuxt OgImage | Render og:image | Đã đóng | D-CT |
 
