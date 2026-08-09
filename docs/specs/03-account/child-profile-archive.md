@@ -156,5 +156,5 @@ Scenario: BR-CPR-06 — admin không xoá được
 
 | # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
 |---|---|---|---|---|
-| 1 | Trẻ sang 7 tuổi có tự động archive không, hay để phụ huynh quyết định? | Quy tắc tuổi tác | P3 | [`child-profile-crud.md`](child-profile-crud.md) Q2 (Để phụ huynh quyết định, không tự động archive) |
+| ~~1~~ | ~~Trẻ sang 7 tuổi có tự động archive không, hay để phụ huynh quyết định?~~ **Đóng 2026-08-09 (T13, `D-CX`)**: để phụ huynh quyết định, không tự động archive — cùng quyết định với [`child-profile-crud.md`](child-profile-crud.md) Q2 | Quy tắc tuổi tác | Đã đóng | D-CX |
 
