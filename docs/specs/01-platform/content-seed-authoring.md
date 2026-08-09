@@ -398,10 +398,10 @@ Scenario: dry-run không chạm DB thật
 
 | # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
 |---|---|---|---|---|
-| ~~1~~ | ~~Một người review được bao nhiêu bản/ngày?~~ **Đóng 2026-08-09 (`D-CN`, thay thế quyết định hoãn `D-W`)**: baseline lập kế hoạch 20 LO, 6 game level hoặc 3 lesson/ngày; đo lại sau pilot 30 LO + 6 level, quota không thay checklist chất lượng | — | Đã đóng | Nội dung |
-| ~~2~~ | ~~LO chia theo competency × template hay strand?~~ **Đóng 2026-08-09 (`D-CK`)**: file chia theo competency, bên trong nhóm theo strand rồi skill; template không tham gia taxonomy LO | — | Đã đóng | Nội dung |
+| ~~1~~ | ~~Một người review được bao nhiêu bản/ngày?~~ **Đóng 2026-08-09 (`D-CN`, thay thế quyết định hoãn `D-W`)**: baseline lập kế hoạch 20 LO, 6 game level hoặc 3 lesson/ngày; đo lại sau pilot 30 LO + 6 level, quota không thay checklist chất lượng | — | Đã đóng | D-CN |
+| ~~2~~ | ~~LO chia theo competency × template hay strand?~~ **Đóng 2026-08-09 (`D-CK`)**: file chia theo competency, bên trong nhóm theo strand rồi skill; template không tham gia taxonomy LO | — | Đã đóng | D-CK |
 | 3 | Cổng 6 (trùng lặp) dùng chuẩn hoá cấu trúc hay embedding? Chuẩn hoá rẻ và xác định; embedding bắt được nhiều hơn nhưng cần vector store | Chi phí hạ tầng | P2 | Backend |
 | 4 | Cổng 4 (ngôn ngữ) cần từ điển vốn từ 3–6 tuổi tiếng Việt. Nguồn nào? | Xây cổng 4 | P2 | Nội dung |
 | 5 | Nội dung seeded có cần người thứ hai review khi có ≥2 manager không? | Chất lượng vs tốc độ | P2 | Nội dung |
 | 6 | Batch nền có `access_tier` phân bổ ra sao — bao nhiêu `free` cho allow-list guest? | [`SPEC.md`](../../SPEC.md) §15 Q2 | P1 | người quyết |
-| ~~7~~ | ~~Branch protection GitHub bật thế nào?~~ **Đóng 2026-08-09 (`D-CL`)**: `main` cấm direct push và force-push; merge bắt buộc PR + ít nhất một approving human review; dismiss approval khi có commit mới. Người bật rule ngoài repo trước PR seeder đầu tiên | — | Đã đóng | Product |
+| ~~7~~ | ~~Branch protection GitHub bật thế nào?~~ **Đóng 2026-08-09 (`D-CL`)**: `main` cấm direct push và force-push; merge bắt buộc PR + ít nhất một approving human review; dismiss approval khi có commit mới. Người bật rule ngoài repo trước PR seeder đầu tiên | — | Đã đóng | D-CL |
