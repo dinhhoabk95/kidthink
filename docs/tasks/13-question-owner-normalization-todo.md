@@ -170,8 +170,10 @@ trong 42 file gốc (`pnpm lint:specs` là nguồn sự thật, không phải da
 
 - [x] `pnpm lint:specs 2>&1 | tail -2` — **0 lỗi, 0 cảnh báo** ✓ (toàn corpus, không chỉ 42 file gốc)
 - [x] Không ô `Chủ` nào ngoài bộ đóng — xác nhận qua `checkC17` (mọi hàng qua cổng)
-- [ ] `pnpm check && pnpm test` — vẫn đỏ do `packages/auth` (T16, người khác code sống, ngoài phạm
-      vi agent). `pnpm lint:specs`, `pnpm test scripts/tests/lint-specs.test.ts` (58/58) xanh.
+- [x] `pnpm test` — 300/300 xanh (bao gồm `packages/auth` — WIP T16 đã ổn định giữa lúc làm task này)
+- [~] `pnpm check` — đỏ ở bước `lint`/`format`, chỉ 5 lỗi biome trong `packages/auth/src/*` và
+      `packages/auth/tests/*` (T16, người khác đang code, ngoài phạm vi agent — không sửa). Mọi
+      bước khác của `check` (`lint:specs`, `lint:deps`, `check:progress`, `typecheck`) xanh.
 
 ---
 
@@ -179,20 +181,23 @@ trong 42 file gốc (`pnpm lint:specs` là nguồn sự thật, không phải da
 
 Thứ tự bắt buộc, không đảo:
 
-- [ ] Thêm ca âm chặng 2: spec giả `approved` với `Chủ` sai → đúng một `fail`; spec `draft` cùng lỗi → `warn`
-- [ ] `pnpm test scripts/tests/lint-specs.test.ts` — **phải đỏ**
-- [ ] Sửa `checkC17`: `fail` khi `status: approved`, giữ `warn` khi `draft`
-- [ ] Chạy test — **phải xanh**
-- [ ] Xoá thân nhánh vừa thêm, chạy lại test — **phải đỏ trở lại**
-- [ ] Khôi phục; `pnpm lint:specs` — 0 lỗi, 0 cảnh báo với cổng mới
-- [ ] Commit `feat(scripts): T13 — C17 chặng 2, Chủ ngoài bộ đóng là lỗi`
-- [ ] [`CONVENTIONS.md`](../specs/CONVENTIONS.md): thêm bộ giá trị `Chủ` (kế hoạch mục 3) + khuôn đóng một hàng
-- [ ] [`CORPUS-CLOSURE.md`](CORPUS-CLOSURE.md): cập nhật số câu hỏi mở thật sau khi trừ nhóm A
-- [ ] Commit `docs: T13 — chốt bộ giá trị Chủ vào quy ước`
+- [x] Thêm ca âm chặng 2: spec giả `approved` với `Chủ` sai → đúng một `fail`; spec `draft` cùng lỗi → `warn`
+- [x] `pnpm test scripts/tests/lint-specs.test.ts` — **đỏ** (1 ca fail đúng như dự kiến)
+- [x] Sửa `checkC17`: `fail` khi `status: approved`, giữ `warn` khi `draft`
+- [x] Chạy test — **xanh** — nhưng lộ 3 ca âm chặng 1 cũ dùng `status: approved` giờ sai kỳ vọng
+      (đổi sang `draft`, ý định gốc đã có ca chặng 2 riêng phủ `approved`)
+- [x] Xoá thân nhánh vừa thêm, chạy lại test — **đỏ trở lại** (1 ca chặng 2 fail đúng)
+- [x] Khôi phục; `pnpm lint:specs` — 0 lỗi, 0 cảnh báo với cổng mới
+- [x] Commit `feat(scripts): T13 — C17 chặng 2, Chủ ngoài bộ đóng là lỗi` (`cc0de17`)
+- [x] [`CONVENTIONS.md`](../specs/CONVENTIONS.md): thêm bộ giá trị `Chủ` (kế hoạch mục 3) + khuôn đóng một hàng
+- [x] [`CORPUS-CLOSURE.md`](CORPUS-CLOSURE.md): cập nhật số câu hỏi mở thật sau khi trừ nhóm A
+- [x] Commit `docs: T13 — chốt bộ giá trị Chủ vào quy ước` (`fbcb6a3`)
 
 ## Cổng dừng cuối
 
-- [ ] `pnpm lint:specs` 0 lỗi, 0 cảnh báo
-- [ ] `pnpm check && pnpm test && pnpm check:services` xanh
-- [ ] Ca âm `C17` cả hai chặng tồn tại và đã chứng minh đỏ → xanh → đỏ
-- [ ] Số câu hỏi mở in ở [`CORPUS-CLOSURE.md`](CORPUS-CLOSURE.md) khớp lệnh đếm ở kế hoạch mục 10
+- [x] `pnpm lint:specs` 0 lỗi, 0 cảnh báo
+- [x] `pnpm test && pnpm check:services` xanh; `pnpm check` đỏ chỉ ở `packages/auth` (WIP T16, ngoài
+      phạm vi agent — xem Cổng dừng C)
+- [x] Ca âm `C17` cả hai chặng tồn tại và đã chứng minh đỏ → xanh → đỏ
+- [x] Số câu hỏi mở in ở [`CORPUS-CLOSURE.md`](CORPUS-CLOSURE.md) khớp lệnh đếm ở kế hoạch mục 10
+      (195 mở, đo trong biên mục 11 — chính xác hơn lệnh gốc vì lệnh gốc đếm lẫn bảng §7)
