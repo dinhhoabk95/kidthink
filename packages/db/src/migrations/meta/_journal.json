@@ -85,6 +85,20 @@
       "when": 1786182206338,
       "tag": "0011_soft_scarecrow",
       "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "7",
+      "when": 1786287477400,
+      "tag": "0012_sharp_spitfire",
+      "breakpoints": true
+    },
+    {
+      "idx": 13,
+      "version": "7",
+      "when": 1786287499529,
+      "tag": "0013_bent_metal_master",
+      "breakpoints": true
     }
   ]
 }

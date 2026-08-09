@@ -11,6 +11,7 @@
     "postgres": "catalog:"
   },
   "devDependencies": {
+    "@kidthink/shared": "workspace:*",
     "drizzle-kit": "catalog:",
     "fast-check": "catalog:"
   }

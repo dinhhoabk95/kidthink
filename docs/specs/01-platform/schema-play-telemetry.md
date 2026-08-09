@@ -208,3 +208,12 @@ Scenario: D-Z — không FK trỏ vào telemetry_events
 |---|---|---|---|---|
 | ~~1~~ | ~~Partition `telemetry_events` theo tháng ngay từ P0?~~ **Đóng 2026-08-07 (T6)**: quyết định sống ở [`event-catalog.md`](../00-foundation/event-catalog.md) Q2. Cấm partition ở P0; PK giữ nguyên (D-Z) | — | đã đóng | D-Z |
 | ~~2~~ | ~~`age_band` là cột sinh hay tính lúc đọc?~~ **Đóng 2026-08-07 (T6)**: tính lúc đọc từ `birth_year` (D-AA). Không cần cập nhật khi sang năm | — | đã đóng | D-AA |
+
+### 11.1 Bảng nợ schema (Debt)
+
+| Bảng | Lệch | Bước sở hữu |
+|---|---|---|
+| `play_sessions` | Thiếu `user_id` `curriculum_id` `curriculum_item_id` `lesson_id` `access_tier_at_start` `duration_ms` `rounds_*` `attempt_count` `correct_count` `incorrect_count` `hint_count` `retry_count` `raw_score` `normalized_score` `difficulty` `device` `is_preview`; thừa `stars_earned` `score` `duration_seconds` | P1.6 · P1.7 |
+| `child_session_summaries` | Hợp đồng §7.4 đòi PK `(child_profile_id, session_uuid)` · `date_ict` · `skill_ids` bigint[]; schema dùng `id` + `date` varchar(10) + `total_play_time_seconds` | P1.6 |
+| `child_daily_stats` `level_daily_stats` `skill_daily_stats` | Cột không khớp [`telemetry-pipeline.md`](telemetry-pipeline.md) §7.1 | P1.5 |
+

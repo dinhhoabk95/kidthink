@@ -57,6 +57,7 @@ describe("Play Schema Integration Tests", () => {
         userId: u.id,
         displayName: "Bé An",
         birthYear: 2020,
+        avatarId: "preset_01",
       })
       .returning();
 
@@ -148,6 +149,71 @@ describe("Play Schema Integration Tests", () => {
         "BR-SPT-07"
       );
     });
+  });
+
+  it("BR-CDC-05 & §7.3: telemetry_events columns match allow-list strictly", async () => {
+    const db = getOwnerDb();
+
+    const result = await db.execute<{ column_name: string }>(sql`
+      SELECT column_name 
+      FROM information_schema.columns 
+      WHERE table_name = 'telemetry_events' AND table_schema = 'public'
+    `);
+
+    const columnNames = Array.from(result).map((r) => r.column_name);
+
+    const allowedColumns = [
+      "session_uuid",
+      "seq",
+      "child_uuid",
+      "game_level_id",
+      "content_version",
+      "template_id",
+      "event_name",
+      "occurred_at_ms",
+      "payload",
+      "client_timestamp",
+      "ingested_at",
+      "created_at",
+    ];
+
+    const allowedSet = new Set(allowedColumns);
+    for (const col of columnNames) {
+      expect(allowedSet.has(col)).toBe(true);
+    }
+  });
+
+  it("BR-SPT-04 & BR-CDC-05: SET child_uuid = NULL anonymizes telemetry events without deleting rows", async () => {
+    const db = getOwnerDb();
+    const sessionUuid = "b0eebc99-9c0b-4ef8-bb6d-6bb9bd380a22";
+    const childUuid = "c0eebc99-9c0b-4ef8-bb6d-6bb9bd380a33";
+
+    await db.insert(telemetryEvents).values({
+      sessionUuid,
+      seq: 1,
+      childUuid,
+      eventName: "step_complete",
+    });
+
+    const [before] = await db
+      .select({ count: sql<number>`count(*)::int` })
+      .from(telemetryEvents)
+      .where(eq(telemetryEvents.sessionUuid, sessionUuid));
+
+    expect(before.count).toBe(1);
+
+    // Anonymize by setting child_uuid = NULL
+    await db
+      .update(telemetryEvents)
+      .set({ childUuid: null })
+      .where(eq(telemetryEvents.sessionUuid, sessionUuid));
+
+    const [after] = await db
+      .select({ childUuid: telemetryEvents.childUuid })
+      .from(telemetryEvents)
+      .where(eq(telemetryEvents.sessionUuid, sessionUuid));
+
+    expect(after.childUuid).toBeNull();
   });
 
   it("D-Z: schema has no foreign key pointing to telemetry_events table", async () => {

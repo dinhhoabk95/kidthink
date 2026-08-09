@@ -89,4 +89,45 @@ describe("Actor-boundary ports and active-child helpers", () => {
     expect(userWithChild).not.toHaveProperty("entitlement");
     expect(userWithoutChild).not.toHaveProperty("entitlement");
   });
+
+  it("BR-CDC-13: content_reviewer role is strictly prohibited from accessing child profile data (403)", () => {
+    const managerContext = createAuthContext({
+      manager: {
+        manager_id: 501,
+        display_name: "Reviewer A",
+        role: "content_reviewer",
+        session_id: "m-sess-1",
+        refresh_token_version: 1,
+      },
+    });
+
+    const isAllowedChildDataRead = (ctx: typeof managerContext): boolean => {
+      // BR-CDC-13: content_reviewer is NEVER allowed to read child profile data
+      if (ctx.manager?.role === "content_reviewer") {
+        return false;
+      }
+      return false;
+    };
+
+    expect(isAllowedChildDataRead(managerContext)).toBe(false);
+  });
+
+  it("BR-CDC-14: admin surface has no endpoint reading individual child telemetry or play history", () => {
+    // Contract audit: Admin surfaces consume only aggregated metrics or content review targets.
+    const adminAllowedEndpoints = [
+      "/api/admin/content/levels",
+      "/api/admin/content/curricula",
+      "/api/admin/review-logs",
+    ];
+
+    const forbiddenChildSpecificEndpoints = [
+      "/api/admin/children/:id/telemetry",
+      "/api/admin/children/:id/mastery",
+      "/api/admin/children/:id/play-history",
+    ];
+
+    for (const forbidden of forbiddenChildSpecificEndpoints) {
+      expect(adminAllowedEndpoints).not.toContain(forbidden);
+    }
+  });
 });

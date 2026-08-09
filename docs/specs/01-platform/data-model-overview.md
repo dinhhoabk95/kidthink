@@ -241,3 +241,5 @@ Scenario: BR-DM-12 — trần phân trang ép ở server
 | ~~1~~ | ~~Partition `telemetry_events` theo tháng ngay từ đầu?~~ **Đóng 2026-08-07 (T5)**: quyết định sống ở [`event-catalog.md`](../00-foundation/event-catalog.md) Q2 — xem §7.3 dòng `event-catalog Q2`. Không partition ở P0; PK giữ `(session_uuid, seq)`. Ngưỡng kích hoạt: 5M hàng/2GB | — | đóng | D-Z |
 | 2 | Retention của `audit_logs` — giữ vĩnh viễn hay archive sang S3 sau 2 năm? | Vận hành — xem [`audit-log.md`](audit-log.md) §11 Q1, chủ duy nhất (cùng một câu hỏi, luật "một outcome một chủ") | P1 | hoãn — cần số dung lượng thật sau khi có seeder (`BR-AUD-08`) |
 | 3 | Có cần read replica cho báo cáo không, hay index đủ? | Hiệu năng | P3 | hoãn — tuning khi có lưu lượng |
+| ~~4~~ | ~~Sửa schema hay sửa spec khi `child_profiles` và `telemetry_events` đã ship lệch contract?~~ **Đóng 2026-08-09 (P0.4)**: Sửa schema cho khớp spec (D-DN). Không hạ trạng thái spec (D-DO). Migration tiến tới (D-DP). Chỉ sửa cột thuộc P0.4 (D-DQ). | — | đóng | D-DN |
+

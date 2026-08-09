@@ -61,9 +61,17 @@ export const telemetryEvents = pgTable(
   {
     sessionUuid: uuid("session_uuid").notNull(),
     seq: integer("seq").notNull(),
+    childUuid: uuid("child_uuid"),
+    gameLevelId: bigint("game_level_id", { mode: "number" }),
+    contentVersion: integer("content_version"),
+    templateId: bigint("template_id", { mode: "number" }),
     eventName: varchar("event_name", { length: 100 }).notNull(),
+    occurredAtMs: integer("occurred_at_ms"),
     payload: jsonb("payload"),
     clientTimestamp: timestamp("client_timestamp", { withTimezone: true }),
+    ingestedAt: timestamp("ingested_at", { withTimezone: true })
+      .defaultNow()
+      .notNull(),
     createdAt: timestamp("created_at", { withTimezone: true })
       .defaultNow()
       .notNull(),

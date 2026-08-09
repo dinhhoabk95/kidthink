@@ -1,17 +1,30 @@
 import { sql } from "drizzle-orm";
 import {
   bigint,
-  boolean,
   check,
+  index,
   integer,
+  pgEnum,
   pgTable,
   smallint,
-  text,
   timestamp,
   unique,
+  uuid,
   varchar,
 } from "drizzle-orm/pg-core";
 import { users } from "./identity.ts";
+
+export const childRelationshipEnum = pgEnum("child_relationship", [
+  "child",
+  "student",
+  "other",
+]);
+
+export const childStatusEnum = pgEnum("child_status", [
+  "active",
+  "archived",
+  "pending_deletion",
+]);
 
 export const childProfiles = pgTable(
   "child_profiles",
@@ -19,17 +32,19 @@ export const childProfiles = pgTable(
     id: bigint("id", { mode: "number" })
       .primaryKey()
       .generatedAlwaysAsIdentity(),
+    uuid: uuid("uuid").defaultRandom().notNull().unique(),
     userId: bigint("user_id", { mode: "number" })
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
-    displayName: varchar("display_name", { length: 50 }).notNull(),
-    gender: varchar("gender", { length: 20 }),
+    displayName: varchar("display_name", { length: 40 }).notNull(),
     birthYear: smallint("birth_year").notNull(),
-    avatarUrl: text("avatar_url"),
-    avatarEmoji: varchar("avatar_emoji", { length: 10 }),
-    themePreference: varchar("theme_preference", { length: 50 }),
-    isActive: boolean("is_active").notNull().default(true),
-    archivedAt: timestamp("archived_at", { withTimezone: true }),
+    avatarId: varchar("avatar_id", { length: 24 }).notNull(),
+    relationship: childRelationshipEnum("relationship"),
+    currentCurriculumId: bigint("current_curriculum_id", { mode: "number" }),
+    dailyPlayCapMinutes: smallint("daily_play_cap_minutes")
+      .notNull()
+      .default(60),
+    status: childStatusEnum("status").notNull().default("active"),
     createdAt: timestamp("created_at", { withTimezone: true })
       .defaultNow()
       .notNull(),
@@ -42,6 +57,7 @@ export const childProfiles = pgTable(
       "check_child_profiles_birth_year",
       sql`${table.birthYear} >= 2010 AND ${table.birthYear} <= 2035`
     ),
+    index("child_profiles_birth_year_idx").on(table.birthYear),
   ]
 );
 

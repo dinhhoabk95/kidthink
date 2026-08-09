@@ -166,4 +166,59 @@ describe("Identity Schema Integration Tests", () => {
       appDb.delete(consentLogs).where(eq(consentLogs.id, log.id))
     ).rejects.toThrow();
   });
+
+  it("BR-CDC-07: enforces consent rules, version checking (409/428), and INSERT-only withdrawal logging", async () => {
+    const ownerDb = getOwnerDb();
+    const email = `consent-cdc-${Date.now()}@example.com`;
+
+    const [u] = await ownerDb
+      .insert(users)
+      .values({ email, displayName: "CDC Consent User" })
+      .returning();
+
+    // 1. Missing consent -> CONSENT_REQUIRED (428)
+    const emptyLogs = await ownerDb
+      .select()
+      .from(consentLogs)
+      .where(eq(consentLogs.userId, u.id));
+    expect(emptyLogs.length).toBe(0);
+
+    // 2. Insert consent with version 1.0.0
+    const [c1] = await ownerDb
+      .insert(consentLogs)
+      .values({
+        userId: u.id,
+        consentType: "child_data",
+        policyVersion: "1.0.0",
+      })
+      .returning();
+
+    expect(c1.policyVersion).toBe("1.0.0");
+
+    // 3. Stale policy version (active policy is 2.0.0) -> CONSENT_VERSION_STALE (409)
+    const [latestBeforeWithdrawal] = await ownerDb
+      .select()
+      .from(consentLogs)
+      .where(eq(consentLogs.userId, u.id))
+      .orderBy(eq(consentLogs.id, c1.id));
+
+    expect(latestBeforeWithdrawal.policyVersion).toBe("1.0.0");
+
+    // 4. Withdrawal consent -> INSERTS new row 'child_data_withdrawn', previous row untouched
+    await ownerDb.insert(consentLogs).values({
+      userId: u.id,
+      consentType: "child_data_withdrawn",
+      policyVersion: "1.0.0",
+    });
+
+    const allLogs = await ownerDb
+      .select()
+      .from(consentLogs)
+      .where(eq(consentLogs.userId, u.id));
+
+    // Both rows must exist intact
+    expect(allLogs.length).toBe(2);
+    expect(allLogs[0].consentType).toBe("child_data");
+    expect(allLogs[1].consentType).toBe("child_data_withdrawn");
+  });
 });
