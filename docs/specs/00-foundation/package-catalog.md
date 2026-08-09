@@ -243,7 +243,7 @@ Scenario: BR-PKG-09 — đổi giá không hồi tố
 
 | # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
 |---|---|---|---|---|
-| 1 | **Giá cuối** của `standard` (365 ngày) và `premium` (365 ngày / vĩnh viễn) | Mở thanh toán, P2 | cần người quyết | người quyết — chặn P2 |
+| 1 | **Giá cuối** của `standard` (365 ngày) và `premium` (365 ngày / vĩnh viễn) | Mở thanh toán, P2 | Hoãn, chặn phase P2 | người quyết |
 | ~~2~~ | ~~Có bán gói tháng không, hay chỉ năm~~ **Đóng 2026-08-06 (T12)**: **chỉ năm ở MVP**. Enum `billing_period` giữ chỗ cho `monthly`; kích hoạt khi có cổng thanh toán tự động (P5). Gói tháng tăng tải duyệt tay VietQR lên 12× | — | Đã đóng | D-X (T12) |
 | 3 | Giá nâng cấp `standard → premium` giữa chu kỳ tính thế nào — trừ theo tỉ lệ hay giá đầy đủ? | Luồng nâng cấp | Hoãn, chặn phase P2 | hoãn |
 | 4 | `premium` vĩnh viễn có rủi ro chi phí dài hạn không? Cần mô hình chi phí phục vụ mỗi user/năm | Quyết định thương mại | Hoãn, chặn thương mại | hoãn |
