@@ -178,5 +178,5 @@ Scenario: BR-SEC-01 — CRITICAL chặn merge
 
 | # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
 |---|---|---|---|---|
-| ~~1~~ | ~~Có thuê kiểm thử xâm nhập trước go-live không?~~ **Đóng 2026-08-09 (`D-CI`)**: có; thuê review độc lập có phạm vi auth, dữ liệu trẻ, gating và upload trước go-live P1. CRITICAL/HIGH phải đóng trước phát hành | — | Đã đóng | Security |
-| ~~2~~ | ~~Khi chỉ có một dev thì "review người thứ hai" thực hiện thế nào?~~ **Đóng 2026-08-09 (`D-CJ`)**: mọi PR vùng nhạy cảm cần một người khác approve; khi chỉ có một dev, Product Owner review contract/diff và reviewer Security độc lập review phần bảo mật. Tác giả không tự approve | — | Đã đóng | Security |
+| ~~1~~ | ~~Có thuê kiểm thử xâm nhập trước go-live không?~~ **Đóng 2026-08-09 (`D-CI`)**: có; thuê review độc lập có phạm vi auth, dữ liệu trẻ, gating và upload trước go-live P1. CRITICAL/HIGH phải đóng trước phát hành | — | Đã đóng | D-CI |
+| ~~2~~ | ~~Khi chỉ có một dev thì "review người thứ hai" thực hiện thế nào?~~ **Đóng 2026-08-09 (`D-CJ`)**: mọi PR vùng nhạy cảm cần một người khác approve; khi chỉ có một dev, Product Owner review contract/diff và reviewer Security độc lập review phần bảo mật. Tác giả không tự approve | — | Đã đóng | D-CJ |
