@@ -146,7 +146,7 @@ Scenario: chính sách trẻ em nêu đủ mục bắt buộc
 
 | # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
 |---|---|---|---|---|
-| 1 | Ngân sách và đơn vị rà soát pháp lý? | Go-live | P1 | Chốt D-AS: Ngân sách 50M VND tư vấn pháp lý IP/Bảo vệ dữ liệu trước go-live |
-| 2 | Có cần đăng ký hồ sơ đánh giá tác động (DPIA) với cơ quan quản lý không? | Tuân thủ pháp lý | P1 | [`child-data-compliance.md`](../00-foundation/child-data-compliance.md) |
-| 3 | Chính sách hoàn tiền chưa có nội dung — chính sách thương mại là gì? | Quy trình thanh toán | P2 | [`payment-approval.md`](../06-admin/payment-approval.md) |
+| ~~1~~ | ~~Ngân sách và đơn vị rà soát pháp lý?~~ **Đóng 2026-08-09 (T13, `D-AS`)**: ngân sách 50M VND tư vấn pháp lý IP/Bảo vệ dữ liệu trước go-live | Go-live | Đã đóng | D-AS |
+| 2 | Có cần đăng ký hồ sơ đánh giá tác động (DPIA) với cơ quan quản lý không? | Tuân thủ pháp lý — cùng câu hỏi với [`child-data-compliance.md`](../00-foundation/child-data-compliance.md) Q2 | P1 | người quyết |
+| 3 | Chính sách hoàn tiền chưa có nội dung — chính sách thương mại là gì? | Quy trình thanh toán — xem [`payment-approval.md`](../06-admin/payment-approval.md) §11 Q1 | P2 | người quyết |
 
