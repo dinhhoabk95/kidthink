@@ -1639,6 +1639,37 @@ export function checkC15(specs: SpecFile[]) {
   }
 }
 
+/**
+ * Tách một hàng bảng markdown thành các cột theo "|", nhưng bỏ qua "|" nằm
+ * trong code span backtick (`...`) — một code span có thể chứa "|" thật (ví
+ * dụ `\|` trong pattern shell/regex) mà không phải dấu phân cách cột. Tách
+ * ngây thơ bằng `line.split("|")` cắt nhầm vào giữa code span đó, dịch lệch
+ * mọi cột phía sau (T13 — bắt được qua ô "Chủ" đọc sai giá trị ở
+ * repo-bootstrap.md §11 hàng ~~13~~).
+ */
+function splitTableCols(line: string): string[] {
+  const raw: string[] = [];
+  let current = "";
+  let inCode = false;
+  for (const ch of line) {
+    if (ch === "`") {
+      inCode = !inCode;
+      current += ch;
+      continue;
+    }
+    if (ch === "|" && !inCode) {
+      raw.push(current);
+      current = "";
+      continue;
+    }
+    current += ch;
+  }
+  raw.push(current);
+  return raw
+    .map((c) => c.trim())
+    .filter((_, idx, arr) => idx > 0 && idx < arr.length - 1);
+}
+
 // ─── C16 — câu hỏi mở phải có "Chặn phase" và "Chủ" không rỗng ───────────────
 //
 // Đề xuất C16 (Task #8, 2026-08-08).
@@ -1712,10 +1743,7 @@ export function checkC16(specs: SpecFile[]) {
       if (!line.trim().startsWith("|")) {
         continue;
       }
-      const cols = line
-        .split("|")
-        .map((c) => c.trim())
-        .filter((_, idx, arr) => idx > 0 && idx < arr.length - 1);
+      const cols = splitTableCols(line);
 
       if (cols.length === 0) {
         continue;
@@ -1755,10 +1783,7 @@ export function checkC16(specs: SpecFile[]) {
       if (!line.trim().startsWith("|")) {
         continue;
       }
-      const cols = line
-        .split("|")
-        .map((c) => c.trim())
-        .filter((_, idx, arr) => idx > 0 && idx < arr.length - 1);
+      const cols = splitTableCols(line);
 
       if (cols.length < 5) {
         continue;
@@ -1873,10 +1898,7 @@ export function checkC17(specs: SpecFile[]) {
       if (!line.trim().startsWith("|")) {
         continue;
       }
-      const cols = line
-        .split("|")
-        .map((c) => c.trim())
-        .filter((_, idx, arr) => idx > 0 && idx < arr.length - 1);
+      const cols = splitTableCols(line);
 
       if (cols.length < 5) {
         continue;

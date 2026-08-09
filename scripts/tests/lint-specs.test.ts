@@ -968,4 +968,20 @@ describe("checkC17 (bộ giá trị đóng cho cột Chủ) — chặng 1, warn"
     expect(violations).toHaveLength(0);
     expect(warnings).toHaveLength(1);
   });
+
+  it("stays silent when a code span contains an escaped pipe (\\|) — must not shift columns", () => {
+    // Regression: repo-bootstrap.md §11 row ~~13~~ has Chủ = "D-V (T4)" (valid)
+    // but the question cell contains `grep -rn "a\|b\|c" ...` — a naive
+    // line.split("|") cuts inside that code span and shifts every column
+    // after it, so the real owner is read from the wrong index.
+    const specs = [
+      specWithOwnerRow(
+        "approved",
+        '| ~~1~~ | ~~Q~~ **Đóng**: `grep -rn "a\\|b\\|c" docs/` xong | — | Đã đóng | D-V (T4) |'
+      ),
+    ];
+    checkC17(specs);
+    const warnings = getWarnings().filter((w) => w.check === "C17");
+    expect(warnings).toHaveLength(0);
+  });
 });
