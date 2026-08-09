@@ -170,6 +170,6 @@ Scenario: BR-SCF-08 — không có giọng chê
 
 | # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
 |---|---|---|---|---|
-| 1 | Ngưỡng thời gian cần kiểm chứng với trẻ thật | Kiểm chứng UX | P1 nghiệm thu | UX Research / Content (Lưu ý: Ngưỡng §7.1 là số ước lượng, cần đo đạc thực tế) |
-| 2 | `hint_rate` cao trên một level nên coi là nội dung khó hay nội dung sai? | Phân tích KPI | P1 | Content Analytics (`hint_rate` > 40% + `drop_rate` > 20% là tín hiệu level bị sai độ khó) |
+| 1 | Ngưỡng thời gian cần kiểm chứng với trẻ thật | Kiểm chứng UX — ngưỡng §7.1 hiện là số ước lượng, cần đo đạc thực tế | P1 nghiệm thu | Studio UI |
+| 2 | `hint_rate` cao trên một level nên coi là nội dung khó hay nội dung sai? | Phân tích KPI — `hint_rate` > 40% + `drop_rate` > 20% là tín hiệu level bị sai độ khó | P1 | Nội dung |
 
