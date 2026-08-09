@@ -232,7 +232,7 @@ Scenario: offline buffer flush khi có mạng lại
 | # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
 |---|---|---|---|---|
 | 1 | `fps_sample` mỗi 30s có quá dày không trên 3.000 phiên/ngày? Cân nhắc chỉ gửi khi p95 dưới ngưỡng | Chi phí lưu trữ | Hoãn, chặn phase P1 | hoãn — tuning sau khi có lưu lượng |
-| 2 | Partition `telemetry_events` theo tháng ngay từ đầu? **Hai lượt quyết định:** | Thiết kế bảng | Hoãn, chặn phase P1 | D-Z |
+| 2 | Partition `telemetry_events` theo tháng ngay từ đầu? **Hai lượt quyết định:** | Thiết kế bảng | Hoãn, chặn phase P1 | hoãn — `telemetry_events` vượt 5M hàng hoặc 2GB thì đóng lại |
 | | **Lượt 1 — 2026-08-06 (T11)**: chốt **có** — partition quyết định lúc `CREATE TABLE`. Trên t3.small bảng này lớn nhất, partition giúp prune query và vacuum hiệu quả. | | | |
 | | **Lượt 2 — 2026-08-07 (T4b, D-Z)**: **mở lại** — khoá partition (`session_month`) phải nằm trong PK, dẫn tới PK thay đổi, dẫn tới ảnh hưởng quy tắc `BR-EVT-03` (idempotent theo `(session_uuid, seq)`). Chọn giữ bất biến PK `(session_uuid, seq)` ở P0, hoãn partition sang P1. | | | |
 | | **Ngưỡng kích hoạt**: `telemetry_events` vượt **5M hàng** hoặc **2GB** trên t3.small thì phải đóng lại quyết định trước khi vượt. | | | |
