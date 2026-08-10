@@ -2,7 +2,7 @@
 spec: HEALTH-CHECK
 title: Health check dịch vụ
 area: platform
-status: approved
+status: implemented
 mvp: true
 phase: P0
 reviewed: 2026-08-08

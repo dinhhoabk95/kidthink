@@ -11,7 +11,10 @@
   },
   "dependencies": {
     "@kidthink/auth": "workspace:*",
-    "@kidthink/db": "workspace:*"
+    "@kidthink/cache": "workspace:*",
+    "@kidthink/db": "workspace:*",
+    "@kidthink/queue": "workspace:*",
+    "drizzle-orm": "catalog:"
   },
   "devDependencies": {
     "@sidebase/nuxt-auth": "catalog:",

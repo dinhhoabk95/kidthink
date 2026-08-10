@@ -2,5 +2,27 @@
   "name": "@kidthink/worker",
   "version": "0.0.0",
   "private": true,
-  "type": "module"
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "build": "tsc",
+    "start": "tsx src/index.ts",
+    "restore": "tsx src/backup/restore.ts",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@kidthink/cache": "workspace:*",
+    "@kidthink/db": "workspace:*",
+    "@kidthink/queue": "workspace:*",
+    "bullmq": "catalog:",
+    "drizzle-orm": "catalog:",
+    "ioredis": "catalog:",
+    "postgres": "catalog:"
+  },
+  "devDependencies": {
+    "@types/node": "catalog:",
+    "tsx": "^4.23.11",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  }
 }

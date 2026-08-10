@@ -27,7 +27,11 @@ export const reviewEntityTypeEnum = pgEnum("review_entity_type", [
   "worksheet",
 ]);
 
-export const backupTypeEnum = pgEnum("backup_type", ["database", "storage"]);
+export const backupTypeEnum = pgEnum("backup_type", [
+  "dump",
+  "verify",
+  "drill",
+]);
 
 export const backupStatusEnum = pgEnum("backup_status", [
   "started",
@@ -101,6 +105,7 @@ export const backupLog = pgTable("backup_log", {
   sizeBytes: bigint("size_bytes", { mode: "number" }),
   storagePath: text("storage_path"),
   checksum: varchar("checksum", { length: 64 }),
+  restoredRows: integer("restored_rows"),
   startedAt: timestamp("started_at", { withTimezone: true }).notNull(),
   finishedAt: timestamp("finished_at", { withTimezone: true }),
   errorMessage: text("error_message"),

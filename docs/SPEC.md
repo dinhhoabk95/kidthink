@@ -1104,6 +1104,7 @@ Cấm cắt: gating, audit, tuân thủ §4, versioning nội dung. Bốn thứ 
 
 - [ ] `pnpm check` exit 0 · 0 lỗi typecheck mọi package.
 - [ ] `pnpm db:migrate && pnpm db:seed:master` chạy sạch trên DB rỗng, **chạy lại được**.
+- [ ] Đã chốt chủ sở hữu và cách lưu trữ an toàn của khoá mã hoá backup (`BACKUP_ENCRYPTION_KEY`) — chưa chốt thì chưa go-live.
 - [ ] Seed đúng: 6 competency · 41 strand · **230 skill** · **≥690 LO**.
 - [ ] Mọi skill `seeded` có ≥ 3 LO; `age_min ≤ age_max ∈ [3,6]`; `difficulty ∈ [1,5]`.
 - [ ] `skill_prerequisites` là DAG — property test xanh trên toàn bộ seed.

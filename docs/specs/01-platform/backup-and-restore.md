@@ -2,7 +2,7 @@
 spec: BACKUP-AND-RESTORE
 title: Sao lưu và khôi phục
 area: platform
-status: approved
+status: implemented
 mvp: true
 phase: P0
 reviewed: 2026-08-07
@@ -98,8 +98,8 @@ phá sản.
 
 ### 7.2 `backup_log`
 
-`id` · `kind` (`dump` \| `verify` \| `drill`) · `started_at` `finished_at` · `bytes` ·
-`sha256` · `s3_key` · `status` (`success` \| `failed`) · `error` · `restored_rows` (verify).
+`id` · `backup_type` (`dump` \| `verify` \| `drill`) · `started_at` `finished_at` · `size_bytes` ·
+`checksum` (SHA-256) · `storage_path` (S3 key) · `status` (`started` \| `success` \| `failed`) · `error_message` · `restored_rows` (verify).
 
 ### 7.3 Runbook khôi phục
 

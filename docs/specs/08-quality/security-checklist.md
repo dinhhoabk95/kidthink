@@ -117,7 +117,7 @@ dung là checklist an ninh áp cho mọi PR, chia theo mức độ chặn merge.
 
 ### 7.5 Trước release
 
-- [ ] Backup đã verify restore ít nhất một lần
+- [ ] `BR-BAK-06`: Backup đã verify restore ít nhất một lần
 - [ ] Alert P0 đã cấu hình và tới được người
 - [ ] Chính sách pháp lý đã rà soát
 - [ ] Secret production khác secret dev
