@@ -109,7 +109,6 @@ export const EntitlementKeySchema = z
   .string()
   .regex(ENTITLEMENT_KEY_REGEX)
   .brand("EntitlementKey");
-export type EntitlementKey = z.infer<typeof EntitlementKeySchema>;
 
 // ─── Theme ───────────────────────────────────────────────────────────
 export const THEME_CODE_REGEX = /^[a-z][a-z0-9-]{2,24}$/;
