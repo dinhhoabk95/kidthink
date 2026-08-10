@@ -23,7 +23,7 @@ export const gameTemplateStatusEnum = pgEnum("game_template_status", [
 
 export const contentLifecycleStatusEnum = pgEnum("content_lifecycle_status", [
   "draft",
-  "submitted",
+  "in_review",
   "approved",
   "published",
   "archived",

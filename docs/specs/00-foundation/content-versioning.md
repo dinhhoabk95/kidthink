@@ -2,7 +2,7 @@
 spec: CONTENT-VERSIONING
 title: Phiên bản nội dung và neo lịch sử
 area: foundation
-status: approved
+status: implemented
 mvp: true
 phase: P0
 reviewed: 2026-08-07

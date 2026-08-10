@@ -2,7 +2,7 @@
 spec: CONTENT-LIFECYCLE
 title: Vòng đời nội dung và cổng duyệt
 area: foundation
-status: approved
+status: implemented
 mvp: true
 phase: P0
 reviewed: 2026-08-07

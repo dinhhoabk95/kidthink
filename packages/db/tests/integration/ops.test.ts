@@ -48,8 +48,9 @@ describe("Ops Schema Integration Tests", () => {
         entityType: "game_level",
         entityId: 999_999_999,
         contentVersion: 1,
-        action: "submitted",
-        reviewNotes: "Test review",
+        fromStatus: "draft",
+        toStatus: "in_review",
+        reason: "Test review submission",
       })
       .returning();
 

@@ -129,12 +129,7 @@ export interface GameLevelMeta {
 
 // ─── Enums ───────────────────────────────────────────────────────────
 
-/** Content lifecycle status (glossary §7.6 + id-conventions §7.2). */
-export type ContentLifecycleStatus =
-  | "draft"
-  | "in_review"
-  | "published"
-  | "archived";
+export type { ContentLifecycleStatus } from "./lifecycle.js";
 
 /** Access tier — applied to content, NOT to users (BR-GLOS-03). */
 export type AccessTier = "free" | "login" | "standard" | "premium";

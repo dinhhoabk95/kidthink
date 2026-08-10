@@ -10,7 +10,8 @@ import {
   uuid,
   varchar,
 } from "drizzle-orm/pg-core";
-import { managers } from "./identity.ts";
+import { contentLifecycleStatusEnum } from "./game.ts";
+import { managerRoleEnum, managers } from "./identity.ts";
 
 export const actorTypeEnum = pgEnum("actor_type", [
   "user",
@@ -24,12 +25,6 @@ export const reviewEntityTypeEnum = pgEnum("review_entity_type", [
   "activity",
   "curriculum",
   "worksheet",
-]);
-
-export const reviewActionEnum = pgEnum("review_action", [
-  "submitted",
-  "approved",
-  "rejected",
 ]);
 
 export const backupTypeEnum = pgEnum("backup_type", ["database", "storage"]);
@@ -86,11 +81,14 @@ export const contentReviewLog = pgTable("content_review_log", {
   entityType: reviewEntityTypeEnum("entity_type").notNull(),
   entityId: bigint("entity_id", { mode: "number" }).notNull(),
   contentVersion: integer("content_version").notNull(),
-  action: reviewActionEnum("action").notNull(),
-  reviewerManagerId: bigint("reviewer_manager_id", {
+  fromStatus: contentLifecycleStatusEnum("from_status").notNull(),
+  toStatus: contentLifecycleStatusEnum("to_status").notNull(),
+  actorManagerId: bigint("actor_manager_id", {
     mode: "number",
   }).references(() => managers.id),
-  reviewNotes: text("review_notes"),
+  actorRole: managerRoleEnum("actor_role"),
+  reason: text("reason"),
+  checklistSnapshot: jsonb("checklist_snapshot"),
   createdAt: timestamp("created_at", { withTimezone: true })
     .defaultNow()
     .notNull(),
