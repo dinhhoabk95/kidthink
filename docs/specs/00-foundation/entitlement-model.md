@@ -2,7 +2,7 @@
 spec: ENTITLEMENT-MODEL
 title: Mô hình quyền sử dụng và hạn mức
 area: foundation
-status: approved
+status: implemented
 mvp: true
 phase: P0
 reviewed: 2026-08-06

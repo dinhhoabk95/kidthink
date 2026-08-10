@@ -2,7 +2,7 @@
 spec: ACCESS-LADDER
 title: Bậc truy cập nội dung
 area: foundation
-status: approved
+status: implemented
 mvp: true
 phase: P0
 reviewed: 2026-08-06

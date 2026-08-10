@@ -60,7 +60,7 @@ Mỗi bước: tám việc ở kế hoạch mục 5, một PR.
 - [x] **P0.2** Từ vựng và ID — [`glossary.md`](../specs/00-foundation/glossary.md) · [`id-conventions.md`](../specs/00-foundation/id-conventions.md)
 - [ ] **P0.3** Tác nhân và guard — [`actors.md`](../specs/00-foundation/actors.md) · [`auth-tokens-sessions.md`](../specs/01-platform/auth-tokens-sessions.md)
 - [x] **P0.4** Ràng buộc pháp lý trước khi thiết kế bảng trẻ — [`child-data-compliance.md`](../specs/00-foundation/child-data-compliance.md)
-- [ ] **P0.5** Ladder + entitlement + package — [`access-ladder.md`](../specs/00-foundation/access-ladder.md) → [`entitlement-model.md`](../specs/00-foundation/entitlement-model.md) → [`package-catalog.md`](../specs/00-foundation/package-catalog.md)
+- [x] **P0.5** Ladder + entitlement + package — [`access-ladder.md`](../specs/00-foundation/access-ladder.md) → [`entitlement-model.md`](../specs/00-foundation/entitlement-model.md) → [`package-catalog.md`](../specs/00-foundation/package-catalog.md)
 - [ ] **P0.6** Vòng đời + version nội dung — [`content-lifecycle.md`](../specs/00-foundation/content-lifecycle.md) → [`content-versioning.md`](../specs/00-foundation/content-versioning.md)
 - [x] **P0.7** Thiết kế schema — [`data-model-overview.md`](../specs/01-platform/data-model-overview.md) → [`schema-identity-billing.md`](../specs/01-platform/schema-identity-billing.md) · [`schema-content-taxonomy.md`](../specs/01-platform/schema-content-taxonomy.md) · [`schema-play-telemetry.md`](../specs/01-platform/schema-play-telemetry.md)
 - [x] **P0.8** Migration đầu tiên, gate local xanh trên schema thật

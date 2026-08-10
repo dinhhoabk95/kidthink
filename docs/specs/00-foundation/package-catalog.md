@@ -2,7 +2,7 @@
 spec: PACKAGE-CATALOG
 title: Catalog gói cước và giá
 area: foundation
-status: approved
+status: implemented
 mvp: true
 phase: P0
 reviewed: 2026-08-06
