@@ -32,6 +32,7 @@ export const contentLifecycleStatusEnum = pgEnum("content_lifecycle_status", [
 
 export const accessTierEnum = pgEnum("access_tier", [
   "free",
+  "login",
   "standard",
   "premium",
 ]);
