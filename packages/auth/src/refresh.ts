@@ -191,6 +191,10 @@ export class RefreshService {
       (this.options.namespace === "manager" ? 24 * 60 * 60 : 7 * 24 * 60 * 60);
     const expiresAt = new Date(Date.now() + ttlSeconds * 1000);
 
+    if (!this.store.createSession) {
+      throw appError("UNAUTHENTICATED");
+    }
+
     const { session_id } = await this.store.createSession({
       account_type: input.account.type,
       account_id: input.account.id,
@@ -209,7 +213,9 @@ export class RefreshService {
     });
 
     const finalHash = hashRefreshToken(refreshEnvelope);
-    await this.store.updateSessionTokenHash(session_id, finalHash);
+    if (this.store.updateSessionTokenHash) {
+      await this.store.updateSessionTokenHash(session_id, finalHash);
+    }
 
     return { sessionId: session_id, refreshEnvelope };
   }

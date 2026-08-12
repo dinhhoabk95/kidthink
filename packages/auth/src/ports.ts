@@ -47,7 +47,7 @@ export type RotateSessionResult =
   | { readonly outcome: "not_found" };
 
 export interface SessionStorePort {
-  createSession(input: {
+  createSession?(input: {
     account_type: AccountType;
     account_id: number;
     refresh_token_hash: string;
@@ -56,7 +56,7 @@ export interface SessionStorePort {
     auth_method: AuthMethod;
     expires_at: Date;
   }): Promise<{ session_id: string }>;
-  updateSessionTokenHash(
+  updateSessionTokenHash?(
     sessionId: string,
     refreshTokenHash: string
   ): Promise<void>;
