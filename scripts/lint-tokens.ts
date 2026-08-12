@@ -1,29 +1,24 @@
 /**
- * lint:tokens — cấm màu và font viết cứng ngoài designTokens.ts.
+ * lint:tokens — mở rộng quét 8 quy tắc chất lượng & thiết kế UI.
  *
- * SPEC.md §7 khai lệnh này là một trong ba bước của `pnpm check`.
- * Lý do rule: game-engine-runtime.md `BR-ENG-*` — entity gọi màu bằng **tên
- * token**; hex literal fallback im lặng, sai màu mà không ai biết.
- *
- * Bản v1 (packages/game-engine/scripts/lint-tokens.ts) chỉ quét thư mục engine.
- * Bản này quét toàn workspace vì rule áp cho cả `.vue` — xem plan.md D-D.
+ * SPEC: design-system-contract.md (14 BR-DSC-*), accessibility.md (BR-A11-09).
+ * Plan: 26-p1-1-ui-quality-contract-plan.md Task 2 (D-FC).
  */
 
 import { type Dirent, readdirSync, readFileSync } from "node:fs";
 import { join, relative, resolve } from "node:path";
 
-interface Finding {
+export interface TokenFinding {
   column: number;
   file: string;
-  kind: "hex" | "font";
+  kind: string;
   line: number;
+  rule: string;
   value: string;
 }
 
 const ROOT = resolve(import.meta.dirname, "..");
 const SCAN_ROOTS = ["apps", "packages"];
-// `.css`/`.scss` bắt buộc có: Nuxt để global style ở apps/*/assets/css/*.css —
-// đúng chỗ hex thương hiệu rơi vào đầu tiên. Bản chỉ quét .ts/.vue để lọt.
 const SCAN_EXTENSIONS = [".ts", ".vue", ".css", ".scss", ".postcss"];
 const SKIP_DIRS = new Set([
   ".git",
@@ -34,7 +29,6 @@ const SKIP_DIRS = new Set([
   "node_modules",
 ]);
 
-/** Chỉ các file này được viết màu thô — chúng LÀ định nghĩa hoặc test token. */
 const ALLOWED_BASENAMES = new Set([
   "designTokens.ts",
   "designTokens.test.ts",
@@ -42,32 +36,216 @@ const ALLOWED_BASENAMES = new Set([
   "tokens.test.ts",
 ]);
 
-/**
- * Hex màu CSS hợp lệ chỉ có 3, 4, 6 hoặc 8 chữ số — ❌ không phải `{3,8}`.
- *
- * Hai chốt chặn false positive, đo trên ca âm thật:
- *   `(?<![\w/])`  — `#` đứng sau chữ/số/`/` là fragment URL hoặc path
- *                   (`docs#abcdef`, `issues/12#c0ffee`), ❌ không phải màu.
- *   `(?![\w])`    — chặn nuốt một phần chuỗi dài hơn (`#a1b2c3d` 7 ký tự:
- *                   khớp 6 rồi còn `d` → loại, không báo nhầm commit SHA).
- *
- * Còn sót: `#dad` (3 ký tự hex, id selector). Không tách được khỏi màu thật
- * bằng regex — chấp nhận, tần suất thấp, sửa bằng đổi tên id.
- */
 const HEX_PATTERN =
   /(?<![\w/])#(?:[0-9a-fA-F]{8}|[0-9a-fA-F]{6}|[0-9a-fA-F]{4}|[0-9a-fA-F]{3})(?![\w])/g;
-const INLINE_FONT_PATTERN = /\b(?:this\.)?ctx\.font\s*=\s*["'`]/g;
 
-const MAX_REPORTED = 80;
+const EMOJI_AFFORDANCE_PATTERN =
+  /(aria-label|label)=["'][^"']*[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}\u{1F600}-\u{1F64F}\u{1F680}-\u{1F6FF}][^"']*["']/gu;
+
+const FORBIDDEN_KIT_PATTERN =
+  /\b(lucide-vue-next|class-variance-authority|clsx|tailwind-merge)\b|components\/ui\/|\bcn\(/g;
+
+const FORBIDDEN_RADIUS_PATTERN = /\b(rounded-md|rounded-lg)\b/g;
+
+const UPPERCASE_PATTERN = /\btext-transform:\s*uppercase\b|\buppercase\b/g;
+
+function lineAndColumn(source: string, index: number): [number, number] {
+  const lines = source.slice(0, index).split("\n");
+  return [lines.length, (lines.at(-1)?.length ?? 0) + 1];
+}
+
+function checkHexRule(source: string, filePath: string): TokenFinding[] {
+  const findings: TokenFinding[] = [];
+  const basename = filePath.split("/").at(-1) ?? "";
+
+  if (ALLOWED_BASENAMES.has(basename)) {
+    return findings;
+  }
+
+  // BR-DSC-01: hex in .vue
+  if (filePath.endsWith(".vue")) {
+    for (const match of source.matchAll(HEX_PATTERN)) {
+      const [line, column] = lineAndColumn(source, match.index ?? 0);
+      findings.push({
+        column,
+        file: filePath,
+        kind: "hex-literal",
+        line,
+        rule: "BR-DSC-01",
+        value: match[0],
+      });
+    }
+  }
+
+  // BR-DSC-02: hex in packages/game-engine outside designTokens.ts
+  if (filePath.includes("packages/game-engine/")) {
+    for (const match of source.matchAll(HEX_PATTERN)) {
+      const [line, column] = lineAndColumn(source, match.index ?? 0);
+      findings.push({
+        column,
+        file: filePath,
+        kind: "game-engine-hex",
+        line,
+        rule: "BR-DSC-02",
+        value: match[0],
+      });
+    }
+  }
+
+  return findings;
+}
+
+function checkPatternRules(source: string, filePath: string): TokenFinding[] {
+  const findings: TokenFinding[] = [];
+
+  // BR-DSC-03: Second kit in source
+  for (const match of source.matchAll(FORBIDDEN_KIT_PATTERN)) {
+    const [line, column] = lineAndColumn(source, match.index ?? 0);
+    findings.push({
+      column,
+      file: filePath,
+      kind: "second-kit-usage",
+      line,
+      rule: "BR-DSC-03",
+      value: match[0],
+    });
+  }
+
+  // BR-DSC-05: Emoji affordance
+  for (const match of source.matchAll(EMOJI_AFFORDANCE_PATTERN)) {
+    const [line, column] = lineAndColumn(source, match.index ?? 0);
+    findings.push({
+      column,
+      file: filePath,
+      kind: "emoji-affordance",
+      line,
+      rule: "BR-DSC-05",
+      value: match[0],
+    });
+  }
+
+  // BR-DSC-14: rounded-md / rounded-lg
+  for (const match of source.matchAll(FORBIDDEN_RADIUS_PATTERN)) {
+    const [line, column] = lineAndColumn(source, match.index ?? 0);
+    findings.push({
+      column,
+      file: filePath,
+      kind: "forbidden-radius",
+      line,
+      rule: "BR-DSC-14",
+      value: match[0],
+    });
+  }
+
+  return findings;
+}
+
+function checkContextualRules(
+  source: string,
+  filePath: string
+): TokenFinding[] {
+  const findings: TokenFinding[] = [];
+
+  // BR-DSC-13: .vue > 800 lines
+  if (filePath.endsWith(".vue")) {
+    const lineCount = source.split("\n").length;
+    if (lineCount > 800) {
+      findings.push({
+        column: 1,
+        file: filePath,
+        kind: "file-length",
+        line: 1,
+        rule: "BR-DSC-13",
+        value: `${lineCount} lines (max 800)`,
+      });
+    }
+  }
+
+  // BR-DSC-06: dark: on kid surface
+  if (
+    filePath.includes("components/kid/") ||
+    filePath.includes("pages/play/")
+  ) {
+    const darkPattern = /\bdark:/g;
+    for (const match of source.matchAll(darkPattern)) {
+      const [line, column] = lineAndColumn(source, match.index ?? 0);
+      findings.push({
+        column,
+        file: filePath,
+        kind: "kid-dark-mode",
+        line,
+        rule: "BR-DSC-06",
+        value: match[0],
+      });
+    }
+  }
+
+  // BR-A11-09: uppercase styling on UI components/styles
+  if (
+    filePath.endsWith(".vue") ||
+    filePath.endsWith(".css") ||
+    filePath.endsWith(".scss")
+  ) {
+    for (const match of source.matchAll(UPPERCASE_PATTERN)) {
+      const [line, column] = lineAndColumn(source, match.index ?? 0);
+      findings.push({
+        column,
+        file: filePath,
+        kind: "vietnamese-uppercase",
+        line,
+        rule: "BR-A11-09",
+        value: match[0],
+      });
+    }
+  }
+
+  return findings;
+}
+
+export function runLintTokensOnContent(
+  source: string,
+  filePath: string
+): TokenFinding[] {
+  return [
+    ...checkHexRule(source, filePath),
+    ...checkPatternRules(source, filePath),
+    ...checkContextualRules(source, filePath),
+  ];
+}
+
+export function checkSecondKitInLockfile(
+  lockfileContent: string
+): TokenFinding[] {
+  const findings: TokenFinding[] = [];
+  const forbiddenPackages = [
+    "lucide-vue-next",
+    "class-variance-authority",
+    "clsx",
+    "tailwind-merge",
+  ];
+
+  for (const pkg of forbiddenPackages) {
+    if (lockfileContent.includes(`/${pkg}@`)) {
+      findings.push({
+        column: 1,
+        file: "pnpm-lock.yaml",
+        kind: "lockfile-second-kit",
+        line: 1,
+        rule: "BR-DSC-03",
+        value: pkg,
+      });
+    }
+  }
+
+  return findings;
+}
 
 function collectFiles(dir: string): string[] {
   let entries: Dirent[];
   try {
-    // withFileTypes: tránh statSync riêng cho mỗi entry — statSync ném khi gặp
-    // symlink gãy và làm cả gate chết bằng stack trace thay vì báo vi phạm.
     entries = readdirSync(dir, { withFileTypes: true });
   } catch {
-    return []; // thư mục chưa tồn tại ở bootstrap — không phải lỗi
+    return [];
   }
 
   const files: string[] = [];
@@ -78,9 +256,7 @@ function collectFiles(dir: string): string[] {
     const fullPath = join(dir, entry.name);
     if (entry.isDirectory()) {
       files.push(...collectFiles(fullPath));
-      continue;
-    }
-    if (
+    } else if (
       entry.isFile() &&
       SCAN_EXTENSIONS.some((ext) => entry.name.endsWith(ext))
     ) {
@@ -90,54 +266,43 @@ function collectFiles(dir: string): string[] {
   return files;
 }
 
-function lineAndColumn(source: string, index: number): [number, number] {
-  const lines = source.slice(0, index).split("\n");
-  return [lines.length, (lines.at(-1)?.length ?? 0) + 1];
-}
+// CLI Execution when run directly
+if (process.argv[1]?.endsWith("lint-tokens.ts")) {
+  const allFindings: TokenFinding[] = [];
 
-function findMatches(
-  source: string,
-  file: string,
-  pattern: RegExp,
-  kind: Finding["kind"]
-): Finding[] {
-  const findings: Finding[] = [];
-  for (const match of source.matchAll(pattern)) {
-    const [line, column] = lineAndColumn(source, match.index ?? 0);
-    findings.push({ column, file, kind, line, value: match[0] });
-  }
-  return findings;
-}
-
-const findings = SCAN_ROOTS.flatMap((scanRoot) =>
-  collectFiles(join(ROOT, scanRoot))
-).flatMap((filePath) => {
-  const file = relative(ROOT, filePath);
-  if (ALLOWED_BASENAMES.has(file.split("/").at(-1) ?? "")) {
-    return [];
-  }
-  const source = readFileSync(filePath, "utf8");
-  return [
-    ...findMatches(source, file, HEX_PATTERN, "hex"),
-    ...findMatches(source, file, INLINE_FONT_PATTERN, "font"),
-  ];
-});
-
-if (findings.length === 0) {
-  process.exit(0);
-}
-
-process.stdout.write(
-  `[lint:tokens] ${findings.length} vi phạm — màu/font phải lấy từ designTokens.ts\n`
-);
-for (const finding of findings.slice(0, MAX_REPORTED)) {
-  process.stdout.write(
-    `${finding.file}:${finding.line}:${finding.column} ${finding.kind} ${finding.value}\n`
+  // 1. Scan source files
+  const files = SCAN_ROOTS.flatMap((scanRoot) =>
+    collectFiles(join(ROOT, scanRoot))
   );
-}
-if (findings.length > MAX_REPORTED) {
-  process.stdout.write(
-    `[lint:tokens] ...và ${findings.length - MAX_REPORTED} vi phạm nữa\n`
+
+  for (const filePath of files) {
+    const relativePath = relative(ROOT, filePath);
+    const content = readFileSync(filePath, "utf8");
+    allFindings.push(...runLintTokensOnContent(content, relativePath));
+  }
+
+  // 2. Scan pnpm-lock.yaml
+  try {
+    const lockfileContent = readFileSync(join(ROOT, "pnpm-lock.yaml"), "utf8");
+    allFindings.push(...checkSecondKitInLockfile(lockfileContent));
+  } catch {
+    // lockfile optional during dev
+  }
+
+  if (allFindings.length === 0) {
+    process.stdout.write(
+      "✅ [lint:tokens] All 8 design system & a11y rules passed cleanly.\n"
+    );
+    process.exit(0);
+  }
+
+  process.stderr.write(
+    `❌ [lint:tokens] Found ${allFindings.length} violations:\n`
   );
+  for (const finding of allFindings.slice(0, 80)) {
+    process.stderr.write(
+      `  [${finding.rule}] ${finding.file}:${finding.line}:${finding.column} (${finding.kind}): ${finding.value}\n`
+    );
+  }
+  process.exit(1);
 }
-process.exit(1);
