@@ -4,6 +4,7 @@ export * from "./entitlement-catalog.js";
 export * from "./glossary.js";
 export * from "./ids.js";
 export * from "./lifecycle.js";
+export * from "./notifications.js";
 export * from "./publish-checklist.js";
 export * from "./taxonomy-types.js";
 export * from "./versioning.js";
