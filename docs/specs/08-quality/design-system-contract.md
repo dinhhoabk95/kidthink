@@ -2,7 +2,7 @@
 spec: DESIGN-SYSTEM-CONTRACT
 title: Contract design system
 area: quality
-status: approved
+status: implemented
 mvp: true
 phase: P1
 reviewed: 2026-08-08

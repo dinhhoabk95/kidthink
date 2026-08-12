@@ -30,7 +30,7 @@ export function checkBundleBudget(
   actualKb: number,
   category: "appShell" | "gameTemplate" | "levelConfig" | "publicPage"
 ): boolean {
-  let maxKb = PERFORMANCE_BUDGETS.appShellGzipMaxKb;
+  let maxKb: number = PERFORMANCE_BUDGETS.appShellGzipMaxKb;
   if (category === "gameTemplate") {
     maxKb = PERFORMANCE_BUDGETS.gameTemplateGzipMaxKb;
   } else if (category === "levelConfig") {

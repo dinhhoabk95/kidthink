@@ -18,7 +18,16 @@
     // (`./lint-specs-lib.ts`), nên import trong scripts/ khai `.ts` tường minh.
     // Flag này yêu cầu noEmit (đã set ở trên) — an toàn vì đây là single-project
     // config, không có package nào dưới cây này thực sự emit output.
-    "allowImportingTsExtensions": true
+    "allowImportingTsExtensions": true,
+    "baseUrl": ".",
+    "paths": {
+      "@kidthink/shared": ["./packages/shared/src/index.ts"],
+      "@kidthink/taxonomy": ["./packages/taxonomy/src/index.ts"],
+      "@kidthink/emoji": ["./packages/emoji/src/index.ts"],
+      "@kidthink/db": ["./packages/db/src/index.ts"],
+      "@kidthink/game-engine": ["./packages/game-engine/src/index.ts"],
+      "@kidthink/ui": ["./packages/ui/src/index.ts"]
+    }
   },
   "include": [
     "scripts/**/*.ts",

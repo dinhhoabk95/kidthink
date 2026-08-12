@@ -7,6 +7,9 @@
     "test": "vitest run",
     "typecheck": "tsc --noEmit"
   },
+  "dependencies": {
+    "@kidthink/game-engine": "workspace:*"
+  },
   "devDependencies": {
     "@kidthink/config": "workspace:*",
     "typescript": "catalog:",
