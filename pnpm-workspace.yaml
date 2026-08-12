@@ -21,6 +21,7 @@ catalog:
 
   # Nuxt app runtime — P0.3. Pin the current 4.5 security-patched line.
   nuxt: ^4.5.1
+  h3: ^1.15.4
   vue-tsc: ^3.3.9
 
   # Auth — P0.3. Sidebase Local được khai trực tiếp như Nuxt module ở mỗi app;

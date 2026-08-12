@@ -47,6 +47,19 @@ export type RotateSessionResult =
   | { readonly outcome: "not_found" };
 
 export interface SessionStorePort {
+  createSession(input: {
+    account_type: AccountType;
+    account_id: number;
+    refresh_token_hash: string;
+    device_label?: string;
+    ip_address?: string;
+    auth_method: AuthMethod;
+    expires_at: Date;
+  }): Promise<{ session_id: string }>;
+  updateSessionTokenHash(
+    sessionId: string,
+    refreshTokenHash: string
+  ): Promise<void>;
   rotate(input: RotateSessionInput): Promise<RotateSessionResult>;
   revokeSession(sessionId: string, account: AccountReference): Promise<void>;
   /** Atomically increments refresh_token_version and deletes all sessions. */

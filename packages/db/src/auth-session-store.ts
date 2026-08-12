@@ -45,6 +45,52 @@ export class PostgresSessionStore implements SessionStorePort {
     this.sql = sql;
   }
 
+  async createSession(input: {
+    account_type: "user" | "manager";
+    account_id: number;
+    refresh_token_hash: string;
+    device_label?: string;
+    ip_address?: string;
+    auth_method: AuthMethod;
+    expires_at: Date;
+  }): Promise<{ session_id: string }> {
+    const [row] = await this.sql<{ id: string }[]>`
+      insert into active_sessions (
+        account_type,
+        account_id,
+        refresh_token_hash,
+        device_label,
+        ip_address,
+        auth_method,
+        expires_at
+      ) values (
+        ${input.account_type},
+        ${input.account_id},
+        ${input.refresh_token_hash},
+        ${input.device_label ?? null},
+        ${input.ip_address ?? null},
+        ${input.auth_method},
+        ${input.expires_at.toISOString()}
+      )
+      returning id::text
+    `;
+    return { session_id: row.id };
+  }
+
+  async updateSessionTokenHash(
+    sessionId: string,
+    refreshTokenHash: string
+  ): Promise<void> {
+    if (!DATABASE_SESSION_ID.test(sessionId)) {
+      return;
+    }
+    await this.sql`
+      update active_sessions
+      set refresh_token_hash = ${refreshTokenHash}
+      where id = ${sessionId}::bigint
+    `;
+  }
+
   rotate(input: RotateSessionInput): Promise<RotateSessionResult> {
     if (!DATABASE_SESSION_ID.test(input.session_id)) {
       return Promise.resolve({ outcome: "not_found" });

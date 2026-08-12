@@ -165,14 +165,39 @@ function parseSkillTableRow(
   };
 }
 
+function resolveTaxonomyDocsDir(docsDir: string): string {
+  const resolvedDir = path.isAbsolute(docsDir)
+    ? docsDir
+    : path.resolve(process.cwd(), docsDir);
+
+  if (fs.existsSync(path.join(resolvedDir, COMPETENCY_FILES[0]))) {
+    return resolvedDir;
+  }
+
+  let curr = process.cwd();
+  for (let i = 0; i < 4; i++) {
+    const candidate = path.resolve(curr, "docs/taxonomy");
+    if (fs.existsSync(path.join(candidate, COMPETENCY_FILES[0]))) {
+      return candidate;
+    }
+    const parent = path.dirname(curr);
+    if (parent === curr) {
+      break;
+    }
+    curr = parent;
+  }
+  return resolvedDir;
+}
+
 /**
  * Parses markdown files in `docs/taxonomy/` to extract all skills & LOs.
  */
 export function parseTaxonomyDocs(docsDir: string): ParsedSkill[] {
   const parsedSkills: ParsedSkill[] = [];
+  const resolvedDir = resolveTaxonomyDocsDir(docsDir);
 
   for (const filename of COMPETENCY_FILES) {
-    const filePath = path.join(docsDir, filename);
+    const filePath = path.join(resolvedDir, filename);
     if (!fs.existsSync(filePath)) {
       continue;
     }

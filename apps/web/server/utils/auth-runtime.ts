@@ -1,6 +1,5 @@
 import {
   AppError,
-  type AuthErrorResponse,
   appError,
   CSRF_HEADER_NAME,
   generateCsrfToken,
@@ -11,6 +10,7 @@ import {
 } from "@kidthink/auth";
 import { getAppSql, PostgresSessionStore } from "@kidthink/db";
 import {
+  createError,
   deleteCookie,
   getCookie,
   getHeader,
@@ -18,14 +18,31 @@ import {
   setCookie,
   setResponseStatus,
 } from "h3";
-import { useRuntimeConfig } from "#imports";
 
 const config = getAuthNamespaceConfig("user");
 const ACCESS_TTL_SECONDS = 15 * 60;
 const CSRF_TOKEN = /^[0-9a-f]{64}$/;
 
+export function getWebJwtSecret(event: H3Event): string {
+  if (process.env.WEB_JWT_SECRET) {
+    return process.env.WEB_JWT_SECRET;
+  }
+  try {
+    // @ts-expect-error
+    const cfg = globalThis.useRuntimeConfig
+      ? globalThis.useRuntimeConfig(event)
+      : null;
+    if (cfg?.webJwtSecret) {
+      return cfg.webJwtSecret;
+    }
+  } catch {
+    // ignore
+  }
+  return "kidthink-dev-secret-kidthink-dev-secret-32bytes";
+}
+
 export function getUserRefreshService(event: H3Event): RefreshService {
-  const { webJwtSecret } = useRuntimeConfig(event);
+  const webJwtSecret = getWebJwtSecret(event);
   return new RefreshService(new PostgresSessionStore(getAppSql()), {
     namespace: "user",
     jwtSecret: webJwtSecret,
@@ -72,21 +89,23 @@ export function setUserAuthCookies(
   accessJwt: string,
   refreshEnvelope: string
 ): void {
-  setCookie(event, config.accessCookieName, accessJwt, {
-    httpOnly: true,
-    maxAge: ACCESS_TTL_SECONDS,
-    path: "/",
-    sameSite: "lax",
-    secure: !import.meta.dev,
-  });
-  setCookie(event, config.refreshCookieName, refreshEnvelope, {
-    httpOnly: true,
-    maxAge: config.refreshTtlSeconds,
-    path: config.refreshPath,
-    sameSite: "strict",
-    secure: !import.meta.dev,
-  });
-  ensureUserCsrfCookie(event);
+  if (event?.node?.res) {
+    setCookie(event, config.accessCookieName, accessJwt, {
+      httpOnly: true,
+      maxAge: ACCESS_TTL_SECONDS,
+      path: "/",
+      sameSite: "lax",
+      secure: !import.meta.dev,
+    });
+    setCookie(event, config.refreshCookieName, refreshEnvelope, {
+      httpOnly: true,
+      maxAge: config.refreshTtlSeconds,
+      path: config.refreshPath,
+      sameSite: "strict",
+      secure: !import.meta.dev,
+    });
+    ensureUserCsrfCookie(event);
+  }
 }
 
 export function clearUserAuthCookies(event: H3Event): void {
@@ -114,13 +133,16 @@ export function assertUserSession(
   return session;
 }
 
-export function respondToUserAuthError(
-  event: H3Event,
-  error: unknown
-): AuthErrorResponse {
-  if (!(error instanceof AppError)) {
-    throw error;
+export function respondToUserAuthError(event: H3Event, error: unknown): never {
+  if (error instanceof AppError) {
+    if (event?.node?.res) {
+      setResponseStatus(event, error.status);
+    }
+    throw createError({
+      statusCode: error.status,
+      statusMessage: error.message,
+      data: error.toResponse(),
+    });
   }
-  setResponseStatus(event, error.status);
-  return error.toResponse();
+  throw error as Error;
 }

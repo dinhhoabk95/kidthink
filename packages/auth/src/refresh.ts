@@ -175,6 +175,45 @@ export class RefreshService {
     this.options = options;
   }
 
+  async createSession(input: {
+    account: { type: AuthNamespace; id: number };
+    deviceLabel?: string;
+    ipAddress?: string;
+    authMethod: "password" | "social";
+    refreshTokenVersion?: number;
+  }): Promise<{ sessionId: string; refreshEnvelope: string }> {
+    const version = input.refreshTokenVersion ?? 0;
+    const placeholderHash = createHash("sha256")
+      .update(randomBytes(32))
+      .digest("hex");
+    const ttlSeconds =
+      this.options.refreshTtlSeconds ??
+      (this.options.namespace === "manager" ? 24 * 60 * 60 : 7 * 24 * 60 * 60);
+    const expiresAt = new Date(Date.now() + ttlSeconds * 1000);
+
+    const { session_id } = await this.store.createSession({
+      account_type: input.account.type,
+      account_id: input.account.id,
+      refresh_token_hash: placeholderHash,
+      device_label: input.deviceLabel,
+      ip_address: input.ipAddress,
+      auth_method: input.authMethod,
+      expires_at: expiresAt,
+    });
+
+    const refreshEnvelope = createRefreshToken({
+      namespace: this.options.namespace,
+      sessionId: session_id,
+      refreshTokenVersion: version,
+      secret: this.options.jwtSecret,
+    });
+
+    const finalHash = hashRefreshToken(refreshEnvelope);
+    await this.store.updateSessionTokenHash(session_id, finalHash);
+
+    return { sessionId: session_id, refreshEnvelope };
+  }
+
   async rotateRefreshToken(
     input: RotateTokenInput
   ): Promise<RotateTokenResult> {

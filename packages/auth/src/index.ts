@@ -45,6 +45,13 @@ export {
   type VerifyManagerTokenOptions,
   verifyAdminManagerToken,
 } from "./manager-session";
+export {
+  generateSecureToken,
+  hashPassword,
+  hashSecureToken,
+  validatePasswordStrength,
+  verifyPassword,
+} from "./password";
 export type {
   AccountReference,
   AccountType,
