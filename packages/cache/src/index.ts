@@ -1,6 +1,5 @@
 import { Redis } from "ioredis";
 
-export * from "./alert.js";
 export * from "./token-bucket.js";
 
 let client: Redis | undefined;

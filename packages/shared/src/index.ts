@@ -7,6 +7,7 @@ export * from "./ids.js";
 export * from "./lifecycle.js";
 export * from "./notifications.js";
 export * from "./publish-checklist.js";
+export * from "./rate-limit-middleware.js";
 export * from "./rate-limiting.js";
 export * from "./taxonomy-types.js";
 export * from "./versioning.js";
