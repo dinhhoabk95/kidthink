@@ -134,6 +134,12 @@ export function assertUserSession(
   return session;
 }
 
+export function assertUnrestrictedUser(userStatus: string): void {
+  if (userStatus === "pending_verification") {
+    throw appError("RESTRICTED_MODE");
+  }
+}
+
 export async function requireWebUserSession(
   event: H3Event
 ): Promise<UserTokenPayload> {
