@@ -33,7 +33,7 @@ describe("Task 7 — GET /api/managers/analytics/levels (BR-TLM-01, BR-PRF-06)",
       .values({
         email,
         displayName: "Analytics Manager",
-        role: "system_admin",
+        role: "super_admin",
       })
       .returning();
 
