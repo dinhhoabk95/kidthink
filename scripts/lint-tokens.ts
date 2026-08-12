@@ -34,8 +34,13 @@ const SKIP_DIRS = new Set([
   "node_modules",
 ]);
 
-/** Chỉ hai file này được viết màu thô — chúng LÀ định nghĩa token. */
-const ALLOWED_BASENAMES = new Set(["designTokens.ts", "designTokens.test.ts"]);
+/** Chỉ các file này được viết màu thô — chúng LÀ định nghĩa hoặc test token. */
+const ALLOWED_BASENAMES = new Set([
+  "designTokens.ts",
+  "designTokens.test.ts",
+  "tailwind.css",
+  "tokens.test.ts",
+]);
 
 /**
  * Hex màu CSS hợp lệ chỉ có 3, 4, 6 hoặc 8 chữ số — ❌ không phải `{3,8}`.

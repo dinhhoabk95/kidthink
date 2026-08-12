@@ -3,7 +3,17 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
+  "scripts": {
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@kidthink/config": "workspace:*",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  },
   "exports": {
-    ".": "./src/index.ts"
+    ".": "./src/index.ts",
+    "./css": "./assets/css/tailwind.css"
   }
 }
