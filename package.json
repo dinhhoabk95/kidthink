@@ -21,6 +21,7 @@
     "check": "pnpm lint && pnpm lint:tokens && pnpm lint:deps && pnpm lint:specs && pnpm lint:emoji && pnpm lint:email && pnpm check:progress && pnpm typecheck",
     "check:progress": "node scripts/check-progress.ts",
     "check:services": "node scripts/check-services.ts",
+    "perf:budget": "node scripts/lint-perf-budget.ts",
     "format": "biome format --write .",
     "test": "vitest run",
     "test:a11y": "vitest run packages/ui/tests/a11y.test.ts",
