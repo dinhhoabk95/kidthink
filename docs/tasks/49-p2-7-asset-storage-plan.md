@@ -29,7 +29,9 @@ Ba việc còn lại là ba loại rủi ro:
 3. **Đường dẫn ảnh sống lâu hơn hạ tầng.** Ghi URL tuyệt đối vào DB là khoá chặt vào bucket
    hôm nay.
 
-Bước này cũng đóng **slice cuối của P2.6**: widget ảnh trong studio (`D-CC`).
+Bước này cũng đóng **slice cuối của P2.6**: widget ảnh trong studio (`D-CC`). Nó **không** sở
+hữu audio storage/picker/upload; lời hứa cũ của Task #47 được chuyển sang contract-first ở
+[`Task #80`](80-audio-contract-closure-plan.md).
 
 ## 0. Điều kiện tiên quyết
 
@@ -142,7 +144,7 @@ T1 packages/storage: pipeline · magic bytes · bảng content_images (D-KC, D-K
 **Kiểm chứng**
 - [ ] `pnpm test -- image-pipeline` xanh, assertion tham chiếu `BR-IMG-02` `BR-IMG-03` `BR-IMG-05` `BR-IMG-06`.
 
-**Phụ thuộc:** P0.4 · P0.6 · **Cỡ:** L
+**Phụ thuộc:** P0.4 · P0.6 · **Cỡ:** 3 work package M — schema + URL builder; pipeline chuẩn hoá; security/orphan integration tests
 
 ### Task 2 — API ảnh
 
@@ -177,7 +179,7 @@ T1 packages/storage: pipeline · magic bytes · bảng content_images (D-KC, D-K
 **Kiểm chứng**
 - [ ] `pnpm test -- asset-usage` xanh, gồm test hiệu năng trên dữ liệu 3000 level.
 
-**Phụ thuộc:** T1 · **Cỡ:** L
+**Phụ thuộc:** T1 · **Cỡ:** 3 work package M — transaction writer; reconciliation/index; usage API + performance gate
 
 ### Task 4 — Widget crop trong studio
 
@@ -286,3 +288,4 @@ T1 packages/storage: pipeline · magic bytes · bảng content_images (D-KC, D-K
 - Script rebuild chỉ mục ngược — P4.
 - CDN — Infra quyết sau, không đụng DB.
 - Duyệt nội dung có ảnh — P2.8.
+- Audio storage/picker/upload — Task #80 phải tạo spec owner và implementation task riêng; không gộp vào pipeline ảnh.

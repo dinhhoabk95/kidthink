@@ -58,6 +58,10 @@
 
 ### Task 4 — Tám cổng (mỗi cổng một ca âm)
 
+- [ ] `T4a` (M): cổng 0–3 + fail-before-DB, một PR và fixture âm từng cổng.
+- [ ] `T4b` (M): cổng 4–5 + ca band tuổi âm, một PR.
+- [ ] `T4c` (M): cổng 6–7 + blocklist + nhãn heuristic/stop-first, một PR.
+- [ ] T4a → T4b → T4c; package trước xanh mới mở package sau.
 - [ ] Cổng 0 **Định danh** — `code` duy nhất, đúng format, không đụng version cũ.
 - [ ] Ca âm cổng 0: hai file cùng `code` → fail **trước khi mở kết nối DB**.
 - [ ] Cổng 1 **Schema** — Zod thật, còn đủ `refine`, cả hai contract.
@@ -74,6 +78,10 @@
 
 ### Task 5 — Ba lệnh CLI và đường ghi
 
+- [ ] `T5a` (M): `seed:check` + dry-run/rollback, không persistent write.
+- [ ] `T5b` (M): transaction + INSERT/version/archive + review log + idempotency.
+- [ ] `T5c` (M): against-db/report + studio conflict + agent/request guards.
+- [ ] T5a → T5b → T5c; mỗi package có negative test RED và PR riêng.
 - [ ] `pnpm seed:check` — 8 cổng, **không chạm DB**.
 - [ ] `pnpm seed:content --dry-run` — DB tạm → seed → checklist → rollback.
 - [ ] `pnpm seed:content --batch=SEED-*` — ghi thật.

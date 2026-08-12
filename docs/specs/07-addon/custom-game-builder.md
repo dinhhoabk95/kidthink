@@ -5,7 +5,7 @@ area: addon
 status: approved
 mvp: false
 phase: P4
-reviewed: 2026-08-08
+reviewed: 2026-08-11
 owns:
   - Luồng User tạo game từ template
   - Ràng buộc validation cho game do User tạo
@@ -120,7 +120,7 @@ Scenario: BR-CGB-09 — qua kiểm duyệt nội dung
 
 | # | Câu hỏi | Chặn phase | Đề xuất chốt | Chủ |
 |---|---|---|---|---|
-| 1 | Có luồng gửi game custom lên duyệt để vào catalog công khai không? | P5 | Chưa hỗ trợ luồng gửi duyệt từ người dùng ở P4; quy trình duyệt nội dung tuân thủ [`content-lifecycle.md`](../00-foundation/content-lifecycle.md) | người quyết |
+| ~~1~~ | ~~Có luồng gửi game custom lên duyệt để vào catalog công khai không?~~ **Đóng 2026-08-11 (`D-NM`, triển khai D11)**: không. Game custom là tài sản riêng của User; marketplace/UGC công khai ngoài scope hiện hành. Muốn mở lại phải có spec outcome mới, không mở rộng file này. | Đã đóng | Không áp dụng | D-NM |
 | 2 | Quota `custom_games_saved` là bao nhiêu? | P4 | Định lượng theo gói bán khi lên catalog sản phẩm | người quyết |
 | 3 | Game custom có nên gắn skill để ít nhất hiện trong "đã tiếp xúc" của báo cáo không? | P4 | Cho phép gắn `skill_ids` để báo cáo ghi nhận lịch sử tiếp xúc nhưng không tính mastery score (`D-BL`) | Studio UI |
 | 4 | `BR-CGB-09` gọi `packages/moderation` — bộ lọc từ ngữ tự xây (danh sách đóng tiếng Việt) hay gọi API bên thứ ba? Ảnh hưởng chi phí và độ trễ lưu | P4 | Chưa chốt — thêm vào bảng capability của [`monorepo-package-architecture.md`](../00-foundation/monorepo-package-architecture.md) §7.1 (`D-CF`, T15) như package tồn tại nhưng chưa chọn thư viện nền, tránh package "ma" bị rule trỏ vào mà không khai ở đâu | người quyết |

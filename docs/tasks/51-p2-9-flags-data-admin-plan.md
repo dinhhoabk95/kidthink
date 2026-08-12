@@ -168,7 +168,12 @@ T4 nhật ký thông báo + gửi lại + webhook SNS (D-KQ)
 **Kiểm chứng**
 - [ ] `pnpm test -- data-export` xanh, assertion tham chiếu `BR-EXP-01`…`BR-EXP-08`.
 
-**Phụ thuộc:** P0.4 · P0.11 · **Cỡ:** L
+**Ranh giới work package:** `T3a` (M) typed export registry/query, role/reason/rate/row-limit và
+privacy projection negative tests; `T3b` (M) CSV/BOM/ICT serialization, background job,
+private signed URL, notification/audit và integration tests. T3a → T3b; mọi sáu loại phải qua
+privacy test ở T3a trước khi sinh file.
+
+**Phụ thuộc:** P0.4 · P0.11 · **Cỡ:** 2 work package M
 
 ### Task 4 — Nhật ký thông báo
 

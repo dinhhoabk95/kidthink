@@ -61,7 +61,7 @@
 - [ ] Ca âm: không input hex tự do, không color wheel.
 - [ ] `pnpm lint:tokens` phủ cả widget màu.
 - [ ] `D-JV`: hint `emoji` render bộ chọn thật (spec kéo lên P2.6).
-- [ ] `D-JV`: hint `image` và `audio` render **placeholder có nhãn "P2.7"**.
+- [ ] `D-JV`: hint `image` render placeholder **"P2.7"**; hint `audio` render placeholder **"chờ contract Task #80"**.
 - [ ] `BR-SDF-04` ca âm: không đường nào nhập emoji bằng input text.
 - [ ] Nhóm §7.3 đúng **thứ tự cố định**: Thông tin · Nội dung · Độ khó · Phân loại · Quyền.
 - [ ] `BR-SDF-07` ca âm: không input nào dưới **16px**.
@@ -99,7 +99,8 @@
 - [ ] `D-JV`: cập nhật cùng thay đổi trong [`14-implementation-sequence-todo.md`](14-implementation-sequence-todo.md).
 - [ ] Ghi rõ lý do và khẳng định **không** cạnh `depends_on` nào bị đảo.
 - [ ] Nợ sang **P2.6**: lắp bộ chọn emoji thật vào hint `emoji`.
-- [ ] Nợ sang **P2.7**: lắp widget ảnh và audio, gỡ placeholder.
+- [ ] Nợ sang **P2.7**: lắp widget ảnh, gỡ placeholder ảnh.
+- [ ] Nợ sang [`Task #80`](80-audio-contract-closure-plan.md): tạo spec owner và implementation task trước khi gỡ placeholder audio.
 - [ ] Tick **P2.5** ở [`14-implementation-sequence-todo.md`](14-implementation-sequence-todo.md) khi `check:progress` tự xanh.
 
 ## Câu hỏi mở chuyển tiếp

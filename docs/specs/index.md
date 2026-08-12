@@ -90,7 +90,7 @@ v1 có **31** spec cho cùng phạm vi. Xé nhỏ là chủ ý — xem [`AUDIT-v
 | [notification-service](01-platform/notification-service.md) | P0 | 11 loại, một kênh email |
 | [feature-flag-service](01-platform/feature-flag-service.md) | P2 | Cờ có hạn, mặc định an toàn |
 | [adaptive-engine](01-platform/adaptive-engine.md) | P3 | BKT, ZPD, nhãn báo cáo |
-| [pwa-install](01-platform/pwa-install.md) | P5 | Ngoài MVP |
+| [pwa-install](01-platform/pwa-install.md) | P5 | Web install ngoài MVP; không phải native mobile app |
 
 ## 02-public — khách chưa đăng nhập
 

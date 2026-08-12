@@ -164,8 +164,9 @@ Mỗi scenario map được sang **đúng một** test. Tên test mang ID scenar
   ba nhóm phân biệt (thuật ngữ · định danh · câu văn thường), và bảng lỗi dịch quá tay đã từng
   mắc: mục 11.3.
 - Bảng hơn danh sách gạch đầu dòng khi có từ 3 thuộc tính trở lên.
-- Không viết như thể B2B, classroom, school-admin, multi-tenant, `tenant_id` đang tồn tại
-  — chúng **vĩnh viễn ngoài phạm vi**.
+- Không viết như thể B2B, classroom, school-admin, multi-tenant, `tenant_id`, native mobile,
+  licensing hay marketplace đang tồn tại — chúng ngoài scope hiện hành và chỉ quay lại sau
+  quyết định sản phẩm + spec mới, không qua placeholder.
 
 ## 9. Thêm một spec mới
 
@@ -348,4 +349,3 @@ Nhóm C (`Chủ` là liên kết trỏ spec khác): chủ thật là chủ của
 chép giá trị `Chủ` của nó về, liên kết dời sang cột `Chặn gì`. Nếu liên kết không khớp câu hỏi
 tương ứng nào ở file kia (câu hỏi khác nhau), đừng ép — để `người quyết` và giữ liên kết ở `Chặn gì`
 làm ngữ cảnh.
-

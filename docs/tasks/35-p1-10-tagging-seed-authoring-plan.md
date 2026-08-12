@@ -181,7 +181,11 @@ T1 đối chiếu từ vựng ba trục × 230 skill (D-HC) — trước mọi v
 **Kiểm chứng**
 - [ ] `pnpm seed:check` xanh trên lô sạch, đỏ trên **tám** fixture, mỗi fixture một cổng.
 
-**Phụ thuộc:** T3 · **Cỡ:** L — **tách nhỏ khi thực thi** (cổng 0–3 / 4–5 / 6–7)
+**Ranh giới work package:** `T4a` (M) cổng 0–3 + fail-before-DB; `T4b` (M) cổng 4–5 + band
+âm; `T4c` (M) cổng 6–7 + blocklist + báo cáo nhãn heuristic/stop-first. T4a → T4b → T4c;
+mỗi package có fixture âm của chính cổng đó và một PR riêng.
+
+**Phụ thuộc:** T3 · **Cỡ:** 3 work package M
 
 ### Task 5 — Ba lệnh CLI và đường ghi
 
@@ -204,7 +208,15 @@ T1 đối chiếu từ vựng ba trục × 230 skill (D-HC) — trước mọi v
 **Kiểm chứng**
 - [ ] `pnpm test -- seed-cli` xanh, assertion tham chiếu `BR-CSA-01` `BR-CSA-04` `BR-CSA-06`.
 
-**Phụ thuộc:** T4 · **Cỡ:** L
+**Ranh giới work package**
+
+- `T5a` (M): `seed:check` + dry-run DB tạm/rollback, không persistent write.
+- `T5b` (M): batch transaction, INSERT/version/archive, review log, rollback và idempotency.
+- `T5c` (M): `--against-db`, report coverage, studio conflict và cổng agent/request.
+
+T5a → T5b → T5c; mỗi package viết ca âm trước và chạm khoảng 1–5 file.
+
+**Phụ thuộc:** T4 · **Cỡ:** 3 work package M
 
 ### Task 6 — Lô mẫu và đo tốc độ review
 

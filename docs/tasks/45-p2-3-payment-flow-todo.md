@@ -36,6 +36,8 @@
 
 ### Task 2 — Tạo đơn và màn hình chuyển khoản
 
+- [ ] `T2a` (M): order domain/API + catalog snapshot/cancel/server VietQR payload, PR riêng.
+- [ ] `T2b` (M): transfer UI/copy/summary/child-surface guard + E2E, sau T2a.
 - [ ] `POST /api/users/orders` cần auth **và email đã xác thực**; chưa xác thực → **403**.
 - [ ] `BR-POC-01` ca âm: body `amount_vnd = 1000` → dùng giá catalog.
 - [ ] `amount_vnd` · `package_code` · `offer_code` snapshot lên đơn.
@@ -51,6 +53,8 @@
 
 ### Task 3 — Nộp chứng từ và quyền tạm
 
+- [ ] `T3a` (M): proof API/security/private storage/re-submit + soft-unlock transaction.
+- [ ] `T3b` (M): User status/confirmation/rejection projection + notification/E2E, sau T3a.
 - [ ] Auth + **ownership** + CSRF.
 - [ ] `BR-PPU-06` ca âm: không `$fetch` thô cho upload này.
 - [ ] `bank_txn_ref` bắt buộc 4–64 ký tự; thiếu → **422** `PAYMENT_PROOF_REQUIRED`.
@@ -66,6 +70,8 @@
 
 ### Task 4 — Hàng đợi đơn
 
+- [ ] `T4a` (M): list/query/stats/role/child projection/claim, contract tests trong PR riêng.
+- [ ] `T4b` (M): proof URL/audit/duplicate warning + queue UI/E2E, sau T4a.
 - [ ] `GET /api/managers/orders` cần `super_admin`; `content_reviewer` → **403**.
 - [ ] `BR-PQU-02` mặc định `submitted,under_review`, sắp **cũ nhất trước**.
 - [ ] Bộ lọc §7.1 đủ, Zod parse, trần **100** ép trong schema.
@@ -83,6 +89,10 @@
 
 ### Task 5 — Duyệt và từ chối
 
+- [ ] `T5a` (M): approve transaction/row lock/duration/bonus + real-Postgres concurrency.
+- [ ] `T5b` (M): reject/checklist/rollback/cache invalidation + negative tests, sau T5a.
+- [ ] `T5c` (M): decision UI/audit/notification + E2E, sau T5b.
+- [ ] Không hoãn concurrency/rollback test tới T5c; mỗi package có test RED riêng.
 - [ ] `D-JH`: `SELECT … FOR UPDATE` là bước **đầu tiên** trong transaction.
 - [ ] Kiểm `status` **sau** khi khoá, không trước.
 - [ ] `BR-PAP-01` ca âm đồng thời, **hai kết nối Postgres thật**: một 200, một **409**.

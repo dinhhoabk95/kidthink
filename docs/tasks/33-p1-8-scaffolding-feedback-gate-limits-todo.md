@@ -13,6 +13,7 @@
 - [ ] **P1.7 đã đóng** — `celebration`, `stars`, hint không trừ điểm.
 - [ ] **P1.6 đã đóng** — `duration_ms`, `paused_ms`.
 - [ ] **P1.3 đã đóng** — bước 6 quota đã có đường 402.
+- [ ] [`Task #80`](80-audio-contract-closure-plan.md) đã duyệt ma trận audio/fallback; không dùng Web Speech như giả định không test.
 - [ ] Human approve kế hoạch và sáu quyết định D-GN · D-GO · D-GP · D-GQ · D-GR · D-GS.
 - [ ] Đối chiếu `BR-SCF-*` `BR-FBK-*` `BR-PGT-*` `BR-HPL-*` với [`business-rules.md`](../specs/00-foundation/business-rules.md).
 - [ ] Tạo nhánh riêng.
@@ -37,6 +38,7 @@
 - [ ] `BR-FBK-08` không so sánh trẻ với trẻ khác.
 - [ ] Cấm chuỗi "Sai rồi" · "Không đúng" · "Bé chưa giỏi".
 - [ ] Audio theo `D-AV`: clip tĩnh + Web Speech TTS.
+- [ ] Không có `vi-VN`/Web Speech fail → fallback đã duyệt vẫn phát chỉ dẫn hoặc trình diễn hình; phiên không crash, không im lặng.
 
 ### Task 2 — Scaffolding leo thang
 
@@ -123,6 +125,7 @@
 - [ ] [`parent-gate.md`](../specs/04-play/parent-gate.md) → `implemented`.
 - [ ] [`healthy-play-limits.md`](../specs/04-play/healthy-play-limits.md) → `implemented`.
 - [ ] Đóng §11 Q3 của [`game-engine-runtime.md`](../specs/01-platform/game-engine-runtime.md) bằng `D-GR`.
+- [ ] Task #80 đã tạo owner cho storage/authoring; không gán nhầm audio vào Task #49 ảnh.
 - [ ] Tick **P1.8** ở [`14-implementation-sequence-todo.md`](14-implementation-sequence-todo.md) khi `check:progress` tự xanh.
 
 ## Câu hỏi mở chuyển tiếp

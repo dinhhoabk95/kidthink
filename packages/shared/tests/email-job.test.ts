@@ -1,9 +1,6 @@
 import fs from "node:fs";
 import { beforeEach, describe, expect, it } from "vitest";
-import {
-  clearExecutedJobIds,
-  runSendEmail,
-} from "../../../apps/worker/src/email/send.js";
+import { clearExecutedJobIds, runSendEmail } from "../src/email-job.js";
 import { LocalFileEmailAdapter } from "../src/email-sender.js";
 
 describe("Job email:send Runner (Task 4 / BR-NOT-04..05)", () => {

@@ -1,8 +1,9 @@
-# Kế hoạch — Task #53: P2.11 — MFA tuỳ chọn cho User, và cổng ra P2
+# Kế hoạch — Task #53: P2.11 — MFA tuỳ chọn cho User
 
-> Viết 2026-08-10. Bước sở hữu: **P2.11** của
-> [`14-implementation-sequence-todo.md`](14-implementation-sequence-todo.md) — bước **cuối** của P2.
-> Spec sở hữu: [`mfa.md`](../specs/03-account/mfa.md).
+> Viết 2026-08-10 · cập nhật sau review bảo mật 2026-08-11.
+> Bước sở hữu: **P2.11** của
+> [`14-implementation-sequence-todo.md`](14-implementation-sequence-todo.md).
+> Contract chính: [`mfa.md`](../specs/03-account/mfa.md).
 >
 > ```
 > export PATH=/Users/macbook/.nvm/versions/node/v24.15.0/bin:$PATH
@@ -10,238 +11,483 @@
 
 ## Tóm tắt
 
-Một spec, và nó là spec **duy nhất của P2 mang `mvp: false`**. Điều đó đổi cách đọc cả bước:
-MFA cho User là tuỳ chọn, không chặn go-live, và **không** nằm trong điều kiện cổng ra P2.
+MFA cho User là tính năng **tuỳ chọn**, `mvp: false`. Nó không được trở thành điều kiện
+go-live chỉ vì nằm ở P2.11. Tuy nhiên, quyết định đó hiện chưa được cổng máy thực thi:
+`check:progress` vẫn chặn cổng phase nếu **bất kỳ** spec nào của phase chưa
+`implemented`, kể cả `mvp: false`. Vì vậy việc bắt buộc đầu tiên của kế hoạch là sửa
+ngữ nghĩa cổng và viết test chống hồi quy; phần MFA có thể được hoãn sau khi cổng P2 đạt.
 
-Lý do đã chốt từ 2026-08-05 và không mở lại: tài khoản User giữ dữ liệu học của trẻ, **không**
-giữ tiền hay quyền quản trị; ép thêm một bước cho phụ huynh làm giảm tỉ lệ hoàn thành
-onboarding. Hạ tầng reauth và bảng `mfa_settings` đã có từ P0, nên bật sau không phải làm lại.
+Hai rủi ro bảo mật chi phối thứ tự triển khai:
 
-Rủi ro thật của bước này không phải cài TOTP sai — thư viện làm việc đó. Rủi ro là **khoá chủ
-tài khoản ra ngoài vĩnh viễn**: mất thiết bị và mất mã khôi phục, hoặc tài khoản chỉ có SNS mà
-mất luôn tài khoản SNS. Spec đề xuất "reset thủ công bởi `super_admin`" — nhưng thao tác đó
-**chưa tồn tại**: P2.2 đã chốt bề mặt quản lý User có **đúng ba** thao tác, và cổng quét `D-JB`
-đang canh đúng điều đó. Bước này phải mở thêm một lỗ, và mở đúng một lỗ.
+1. Sau yếu tố thứ nhất, MFA challenge phải gắn với đúng User và đúng lần đăng nhập bằng một
+   challenge credential ngắn hạn, một mục đích, dùng một lần. Chỉ kiểm “không phát access
+   cookie” là chưa đủ.
+2. Reset MFA khi mất mọi yếu tố là **một đường xác thực thay thế**, không phải một nút admin.
+   Luồng này cần contract được người sở hữu phê duyệt, trạng thái lưu bền, email verification,
+   thời gian chờ, audit, thông báo và chuyển trạng thái nguyên tử.
 
 ## 0. Điều kiện tiên quyết
 
-| Dep | Trạng thái | Ghi chú |
-|---|---|---|
-| `AUTH-TOKENS-SESSIONS` | P0.3 | **reauth §7.4** — nền của mọi thao tác MFA |
-| `ACCOUNT-SETTINGS` | P1.14 | `/me/settings` — nơi trang bảo mật sống |
-| `SOCIAL-LOGIN` | P1.15 | yếu tố thứ nhất thứ hai; `password_hash` nullable (`BR-SIB-08`) |
-| `ADMIN-AUTH` | P0.11b | MFA của Manager đã bắt buộc, luồng riêng |
-| Bề mặt quản lý User | P2.2 | nơi thao tác reset MFA sẽ thêm vào |
-| Cổng quét route | P2.2 | `D-JB` — phải mở đúng một lỗ |
-| `NOTIFICATION-SERVICE` | P0.9b | email xác minh cho luồng khôi phục |
+### 0.1 Trạng thái hiện tại
 
-## 1. Đo được
+Đo ngày 2026-08-11: các spec phụ thuộc dưới đây vẫn mang `status: approved`, chưa phải
+`implemented`. Vì đây là kế hoạch tương lai, tên phase chỉ nói thứ tự dự kiến; **không**
+được đọc mục “đã có” như bằng chứng code đã tồn tại.
 
-### 1.1 Đã có
+| Dependency                           | Bước dự kiến | Điều kiện vào Task 3 trở đi                                                     |
+| ------------------------------------ | -----------: | ------------------------------------------------------------------------------- |
+| `AUTH-TOKENS-SESSIONS`               |         P0.3 | reauth §7.4 chạy với password, SNS và TOTP                                      |
+| Schema identity                      |         P0.7 | `mfa_settings`, `mfa_recovery_codes`, token/session primitives đã migrate local |
+| `ADMIN-AUTH`                         |       P0.11b | challenge credential và TOTP dùng lại được, không viết bản thứ hai              |
+| `NOTIFICATION-SERVICE` · `AUDIT-LOG` |           P0 | registry và dispatcher chạy được                                                |
+| `ACCOUNT-SETTINGS`                   |        P1.14 | `/me/settings` và reauth UX đã có                                               |
+| `SOCIAL-LOGIN`                       |        P1.15 | nhánh SNS thật để kiểm `BR-MFA-09`                                              |
+| P2.2 User management                 |         P2.2 | User detail read-only và cổng route `D-JB` đã có                                |
 
-Reauth ≤5 phút của P0.3, chấp nhận **cả** mật khẩu lẫn OAuth với provider đã liên kết; bảng
-`mfa_settings` và `mfa_recovery_codes` từ P0.7; MFA bắt buộc của Manager đã chạy từ P0.11b —
-tức TOTP, khoá 5 lần / 15 phút, và mã khôi phục **đã có bản cài đặt tham chiếu**; `/me/settings`
-của P1.14; đăng nhập SNS của P1.15.
+**Stop condition:** trước Task 3, nếu một dependency trên chưa `implemented` hoặc gate của
+nó chưa xanh thì dừng Task #53; sửa ở task sở hữu dependency, không vá tắt trong P2.11.
 
-### 1.2 Chưa có
+### 0.2 Contract phải chốt trước code
 
-Luồng bật/tắt cho User; thử thách MFA lúc đăng nhập dùng chung cho mật khẩu và SNS; sinh lại mã
-khôi phục; trang `/me/settings/security`; và **đường khôi phục cuối cùng** khi mất hết.
+- Người sở hữu phê duyệt lại `D-KW`…`D-KZ`, đặc biệt assurance của recovery.
+- [`mfa.md`](../specs/03-account/mfa.md) không còn câu hỏi mở chặn P2 trước khi tạo migration/route.
+- Public API, data state, error code, audit action và notification code đều đã vào canonical
+  spec/registry.
+- [`user-detail.md`](../specs/06-admin/user-detail.md) vẫn read-only: chỉ link sang surface recovery riêng, không mutation trực tiếp.
 
-### 1.3 Đã chốt, không mở lại
+## 1. Quyết định
 
-`BR-MFA-08` MFA cho User là **tuỳ chọn**, cho Manager là bắt buộc · `BR-MFA-05` **không** SMS
-OTP · `BR-MFA-09` SNS **không** thay được MFA · `BR-MFA-03` reauth là dạng tổng quát đúng, thay
-cho "mật khẩu" vì `password_hash` nullable · TOTP SHA-1, 6 số, bước 30 giây.
+### D-KW — P2.11 không chặn cổng P2, và cổng máy phải phản ánh điều đó
 
-## 2. Quyết định
+[`mfa.md`](../specs/03-account/mfa.md) mang `mvp: false`. Cổng phase chỉ chờ các spec `mvp: true`; checkbox
+**P2.11** vẫn chỉ được tick khi chính MFA đã `implemented`.
 
-**D-KW — P2.11 **không** nằm trong cổng ra P2.** [`mfa.md`](../specs/03-account/mfa.md) mang
-`mvp: false`; ba điều kiện cổng ra P2 ở
-[`14-implementation-sequence-todo.md`](14-implementation-sequence-todo.md) không nhắc tới MFA.
-Xử: bước này chạy **sau** khi ba điều kiện đó đã đạt, hoặc song song nếu có người rảnh, nhưng
-việc P2.11 chưa xong **không** chặn go-live. Đưa MFA vào MVP là mục `Ask first` của chính spec —
-nếu chủ muốn thì đó là quyết định của chủ, không phải của bước này. Ghi rõ ở đây để không ai
-"tiện tay" nâng nó thành điều kiện chặn.
+Task 0 phải:
 
-**D-KX — Reauth là **cách duy nhất** xác thực lại; route MFA không nhận `password`.**
-`BR-MFA-03` đã ghi rõ vì sao: `password_hash` nullable từ `BR-SIB-08` làm tài khoản chỉ-SNS
-**không tắt được MFA của chính mình** nếu rule đòi mật khẩu. Cạm bẫy còn lại là ai đó thêm
-`password` vào body "cho tiện" ở một route MFA. Xử: cổng quét — **không** route nào dưới
-`/api/users/mfa/*` nhận trường `password`; mọi thao tác nhạy cảm gọi reauth §7.4. Ca âm ba vế:
-tài khoản chỉ có SNS, đã bật MFA → reauth bằng Google → tắt được MFA (**200**).
+- Thêm `mvp` vào model mà `check:progress` dùng.
+- Cho `validatePhaseGates` bỏ qua spec `mvp: false`, nhưng giữ
+  `validateStepSpecs`: tick P2.11 khi [`mfa.md`](../specs/03-account/mfa.md) chưa implemented vẫn đỏ.
+- Sửa câu “mọi spec của phase” trong Task #14 thành “mọi spec `mvp: true` của phase”.
+- Có test dương cho optional spec và test âm cho một spec `mvp: true` chưa xong.
 
-**D-KY — Thử thách MFA chạy sau **mọi** yếu tố thứ nhất, qua **một** route dùng chung.**
-`BR-MFA-09` nói "đã đăng nhập Google" chứng minh danh tính, **không** chứng minh thiết bị thứ
-hai. Cách hỏng cụ thể: nhánh SNS phát cookie access rồi mới hỏi mã — lúc đó MFA đã thành hình
-thức. Xử: `POST /api/guest/auth/users/mfa` là route duy nhất cho thử thách; cả nhánh mật khẩu
-lẫn nhánh SNS trả **428** `MFA_REQUIRED` **trước khi** đặt bất kỳ cookie access nào. Ca âm cho
-**cả hai** nhánh: kiểm response header — không `Set-Cookie` access trước khi nhập đúng mã.
+Đây là increment độc lập và **phải làm trước khi kiểm cổng P2**, kể cả khi toàn bộ MFA được hoãn.
 
-**D-KZ — Đường khôi phục cuối cùng cần một thao tác admin **có thật**, và nó là **thao tác thứ
-tư** của bề mặt quản lý User.** §11 Q1 và Q2 cùng kết thúc ở "hỗ trợ thủ công bởi
-`super_admin`" — nhưng P2.2 chốt bề mặt đó có đúng ba thao tác (khoá · mở khoá · gửi link đặt
-lại), và `D-JB` đang canh. Một quy trình khôi phục trỏ tới thao tác không tồn tại là một quy
-trình không chạy được, và nó chỉ lộ ra khi có người thật bị khoá ngoài. Xử: thêm
-`POST /api/managers/users/{uuid}/mfa-reset` với **bốn** ràng buộc — xác minh qua email chính
-chủ, **chờ 48 giờ** kể từ lúc yêu cầu, `reason` bắt buộc ≥20 ký tự, ghi `audit_logs`; cập nhật
-cổng `D-JB` để cho phép **đúng** route này, không nới rộng hơn. Reset **không** đặt lại mật
-khẩu và **không** mở khoá tài khoản — nó chỉ tắt MFA.
+### D-KX — Reauth là cách duy nhất xác thực lại
 
-## 3. Đồ thị
+Route dưới `/api/users/mfa/*` không nhận `password`. Bật, tắt và sinh lại mã
+khôi phục gọi reauth §7.4, nên tài khoản chỉ-SNS vẫn tự quản lý được MFA. Cổng quét phải đỏ nếu
+fixture route nhận `password` hoặc gửi SMS OTP.
 
+### D-KY — Mọi yếu tố thứ nhất trả một challenge credential bị ràng buộc
+
+Password và SNS dùng chung một state machine:
+
+1. Yếu tố thứ nhất đúng và User đã bật MFA.
+2. Server tạo challenge credential **một mục đích, TTL ngắn, dùng một lần**, ràng buộc ít nhất
+   với `user_id`, auth method, audience và nonce.
+3. Trả **428** `MFA_REQUIRED` cùng challenge; không access token, refresh cookie hay
+   `active_sessions`.
+4. `POST /api/guest/auth/users/mfa` nhận `{ code, challenge }`.
+5. Chỉ sau khi consume challenge nguyên tử và verify code mới cấp session/token đầy đủ.
+
+Challenge hết hạn, đã dùng, sai audience, sai User hoặc bị replay đều thất bại chung, không lộ
+tài khoản. Dùng lại primitive của Manager; không tạo định dạng challenge thứ hai.
+
+### D-KZ — Recovery là state machine; email + 48 giờ là đề xuất cần người phê duyệt
+
+Không implement route reset cho đến khi người sở hữu chốt hai câu hỏi trong [`mfa.md`](../specs/03-account/mfa.md) §11.
+Q1 (còn truy cập email chính chủ) và Q2 (mất cả SNS/email) **không tự động là cùng một ca**.
+Nếu chưa có phương thức proofing được duyệt cho Q2, spec phải ghi rõ manual escalation ngoài hệ
+thống; không được giả vờ rằng email verification giải quyết ca không còn truy cập email.
+
+Contract đề xuất cho Q1:
+
+```text
+super_admin tạo request có reason
+  → gửi token hash, một lần, TTL đã chốt tới email chính chủ
+  → User xác minh email
+  → chờ đủ 48 giờ từ requested_at
+  → super_admin hoàn tất hoặc huỷ trên surface riêng
+  → transaction tắt MFA + vô hiệu recovery codes + thu hồi sessions
+  → audit từng transition + thông báo User
 ```
-T1 setup + verify + 10 mã khôi phục (reauth §7.4)
-      ├──→ T2 thử thách lúc đăng nhập, dùng chung mật khẩu + SNS (D-KY)
-      ├──→ T3 disable + sinh lại mã khôi phục (D-KX)
-      └──→ T5 trang /me/settings/security
-  T4 thao tác reset MFA phía admin, chờ 48 giờ (D-KZ)
-                              ── Cổng dừng ──
-                                    T6 evidence, promote, kiểm cổng ra P2
+
+State tối thiểu:
+
+```text
+pending_verification → waiting → completed
+                       ├──────→ cancelled
+                       └──────→ expired
+```
+
+`complete` chỉ hợp lệ khi token email đã xác minh, `now >= requested_at + 48h`,
+request vẫn `waiting` và MFA còn bật. Hai request complete đồng thời phải đúng một thành
+công. Reset không đổi password, email hay status tài khoản, nhưng phải thu hồi mọi session cũ.
+
+API đề xuất để Task 1 chốt:
+
+- `POST /api/managers/users/{uuid}/mfa-recovery-requests` — tạo request, cần
+  `super_admin` + `reason`.
+- `GET /api/guest/auth/users/mfa-recovery/verify?token=...` — consume token email.
+- `POST /api/managers/users/{uuid}/mfa-recovery-requests/{request_uuid}/complete`.
+- `POST /api/managers/users/{uuid}/mfa-recovery-requests/{request_uuid}/cancel`.
+
+`D-JB` chỉ cho phép closed list đã chốt, không mở wildcard “admin được sửa auth User”.
+User detail chỉ dẫn tới surface recovery có audit riêng.
+
+Nguồn kiểm chiếu khi chốt contract:
+[OWASP MFA Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Multifactor_Authentication_Cheat_Sheet.html)
+và [NIST SP 800-63B](https://pages.nist.gov/800-63-4/sp800-63b.html).
+
+## 2. Data và API invariants
+
+### 2.1 MFA hiện có
+
+- `mfa_settings.secret_encrypted` không plaintext.
+- `mfa_recovery_codes.code_hash` không lưu code thô; consume bằng conditional update
+  trong transaction.
+- Bật MFA: bump `refresh_token_version` để thu hồi phiên khác, rồi cấp lại token/session
+  hiện tại ở version mới; thiết bị đang bật MFA không bị logout ngoài ý muốn.
+- Sinh bộ recovery mới: vô hiệu bộ cũ và insert bộ mới trong cùng transaction.
+
+### 2.2 Metadata cho UI
+
+Không có API đọc lại recovery code. Endpoint trạng thái chỉ được trả:
+
+```ts
+{
+  enabled: boolean;
+  confirmed_at: string | null;
+  recovery_codes_remaining: number;
+}
+```
+
+Không response nào sau lần sinh chứa secret, code cũ, code hash hay MFA challenge nội bộ.
+Task 1 phải sửa entry point `GET /api/users/mfa/recovery-codes` đang gây hiểu nhầm thành
+contract metadata rõ tên/shape.
+
+### 2.3 Recovery request
+
+Task 1 chốt tên cột và retention trước migration. Tối thiểu cần:
+`uuid`, `user_id`, `status`, `requested_by_manager_id`,
+`reason`, `requested_at`, `email_verified_at`, `eligible_at`,
+`completed_at`, `completed_by_manager_id`, `cancelled_at`,
+`expires_at`. Token verification lưu hash, expiry và consumed state; không lưu token thô.
+
+## 3. Đồ thị phụ thuộc
+
+```text
+T0 sửa semantics cổng P2
+T1 freeze contract + human approval
+ └──→ T2 registry
+       ├──→ T3 setup/verify
+       │     ├──→ T4 login challenge
+       │     └──→ T5 disable/regenerate/metadata
+       └──→ T6 recovery request + email verification
+             └──→ T7 recovery complete/cancel
+                   └──→ T8 admin recovery surface
+
+T3 + T5 ──→ T9 /me/settings/security
+T4 + T5 + T7 + T8 + T9 ──→ T10 evidence/promote
+
+T0 ──→ cổng P2 độc lập; T1…T10 không chặn cổng P2
 ```
 
 ## 4. Task
 
-### Task 1 — Bật MFA
+### Task 0 — Sửa semantics cổng phase cho spec optional
+
+**Mô tả:** Làm `D-KW` có hiệu lực trong Task #14 và `check:progress`.
 
 **Tiêu chí nghiệm thu**
-- [ ] `POST /api/users/mfa/setup` cần `requireUserAuth()` + **reauth ≤5 phút**; body rỗng; trả `{ secret, otpauth_url }`.
-- [ ] `BR-MFA-10` ca âm: đăng nhập 30 phút trước, chưa reauth → **428** `REAUTH_REQUIRED`.
-- [ ] `POST /api/users/mfa/verify` nhận `{ code }`; đúng → đặt `confirmed_at` và sinh **10** mã khôi phục.
-- [ ] `BR-MFA-01` ca âm: đọc hàng `mfa_settings` → `secret_encrypted` **đã mã hoá**, không plaintext.
-- [ ] `BR-MFA-02`: mã khôi phục lưu **hash**, dùng **một lần**; ca âm — dùng lại một mã đã dùng → **401**.
-- [ ] `BR-MFA-07` ca âm: mã khôi phục hiện **đúng một lần**; mở lại trang bảo mật → không xem lại được, chỉ có nút sinh bộ mới.
-- [ ] `BR-MFA-04`: cửa sổ TOTP **±1 bước (±30s)**; ca dương với đồng hồ lệch 25 giây.
-- [ ] `BR-MFA-06` ca âm: đăng nhập 2 thiết bị → bật MFA ở thiết bị A → thiết bị B **mất phiên**; cơ chế là `refresh_token_version` +1, dùng lại đường của P0.10.
-- [ ] Sai mã 5 lần → **429** `MFA_LOCKED`, khoá **15 phút**; sai lẻ → **401** `MFA_INVALID_CODE`.
-- [ ] Dùng lại cài đặt TOTP của [`admin-auth.md`](../specs/06-admin/admin-auth.md) (P0.11b); **không** viết bản thứ hai.
+
+- [ ] Phase gate bỏ qua spec `mvp: false`, nhưng step checkbox của chính spec vẫn cần
+      `implemented`.
+- [ ] Test: P2 còn một optional spec approved → gate được phép xanh; đổi spec đó thành
+      `mvp: true` → gate đỏ.
+- [ ] Wording Task #14 và hành vi script khớp nhau; không nới gate BR test của spec implemented.
 
 **Kiểm chứng**
-- [ ] `pnpm test -- mfa-setup` xanh, assertion tham chiếu `BR-MFA-01` `BR-MFA-02` `BR-MFA-06` `BR-MFA-07` `BR-MFA-10`.
 
-**Phụ thuộc:** P0.3 · P0.11b · **Cỡ:** M
+- [ ] `pnpm test -- check-progress` · `pnpm check:progress` xanh.
 
-### Task 2 — Thử thách lúc đăng nhập
+**Bề mặt dự kiến:** `scripts/check-progress-lib.ts` ·
+`scripts/check-progress.ts` · `scripts/tests/check-progress.test.ts` ·
+`docs/tasks/14-implementation-sequence-plan.md`.
+
+**Phụ thuộc:** không · **Cỡ:** M
+
+### Task 1 — Freeze contract MFA và recovery
+
+**Mô tả:** Người sở hữu chốt challenge, metadata và recovery trước code; không đóng câu hỏi mở
+sau implementation.
 
 **Tiêu chí nghiệm thu**
-- [ ] `POST /api/guest/auth/users/mfa` là route **duy nhất** cho thử thách; dùng chung cho mật khẩu và SNS.
-- [ ] `D-KY` ca âm nhánh mật khẩu: mật khẩu đúng → **428** `MFA_REQUIRED`, và **không** `Set-Cookie` access trong response.
-- [ ] `D-KY` + `BR-MFA-09` ca âm nhánh SNS: đăng nhập Google thành công → **428** `MFA_REQUIRED`, và **không** cookie access nào được đặt trước khi nhập đúng mã.
-- [ ] Nhập đúng mã → cấp token đầy đủ; nhập sai → **401**; sai 5 lần → **429** `MFA_LOCKED`.
-- [ ] Mã khôi phục dùng được ở chính route này khi mất thiết bị.
-- [ ] Cổng: không nhánh đăng nhập nào bỏ qua thử thách khi `mfa_settings.confirmed_at` không null.
+
+- [ ] Human approve `D-KW`…`D-KZ`; tách rõ Q1 và Q2, ghi risk acceptance nếu
+      recovery dựa vào email + chờ 48 giờ.
+- [ ] [`mfa.md`](../specs/03-account/mfa.md) có actors, state/data, API request/response, TTL/expiry, error behavior,
+      concurrency và negative acceptance criteria đầy đủ.
+- [ ] [`auth-tokens-sessions.md`](../specs/01-platform/auth-tokens-sessions.md) sở hữu challenge/session invariant; [`user-detail.md`](../specs/06-admin/user-detail.md)
+      chỉ thêm link sang surface riêng; schema spec sở hữu recovery request/token purpose.
 
 **Kiểm chứng**
-- [ ] `pnpm test -- mfa-challenge` xanh · `pnpm test:e2e -- login-with-mfa` xanh cho **cả hai** nhánh.
 
-**Phụ thuộc:** T1 · P1.15 · **Cỡ:** M
+- [ ] `pnpm lint:specs` xanh; §11 không còn câu hỏi chặn P2 chưa được quyết.
 
-### Task 3 — Tắt MFA và sinh lại mã khôi phục
+**Bề mặt dự kiến:** [`mfa.md`](../specs/03-account/mfa.md) · [`auth-tokens-sessions.md`](../specs/01-platform/auth-tokens-sessions.md) ·
+[`user-detail.md`](../specs/06-admin/user-detail.md) · [`schema-identity-billing.md`](../specs/01-platform/schema-identity-billing.md).
+
+**Phụ thuộc:** human decision · **Cỡ:** M
+
+### Task 2 — Đăng ký error, audit và notification
+
+**Mô tả:** Đưa mọi identifier mới vào registry trước khi route dùng.
 
 **Tiêu chí nghiệm thu**
-- [ ] `POST /api/users/mfa/disable` cần **reauth ≤5 phút** **và** `{ code }` — hai thứ, không phải một.
-- [ ] `BR-MFA-03` ca âm 1: đã reauth nhưng thiếu `code` → **422**, MFA **vẫn bật**.
-- [ ] `BR-MFA-03` ca âm 2: có `code` hợp lệ nhưng **chưa reauth** → **428** `REAUTH_REQUIRED`, MFA **vẫn bật**.
-- [ ] `BR-MFA-03` ca dương 3: tài khoản `password_hash` NULL, đã liên kết Google → reauth bằng Google rồi disable kèm code → **200**, MFA tắt.
-- [ ] `D-KX` cổng: không route nào dưới `/api/users/mfa/` nhận trường `password`; ca âm fixture → **đỏ**.
-- [ ] `BR-MFA-11` ca âm: có 10 mã chưa dùng → reauth rồi sinh bộ mới → một mã của bộ **cũ** dùng không được nữa.
-- [ ] `BR-MFA-05` cổng: quét route auth → **không** route nào gửi mã qua SMS.
+
+- [ ] Có error riêng cho token recovery sai/hết hạn, request chưa đủ 48 giờ, request terminal
+      hoặc conflict; không tái dùng `ADMIN_NOTE_REQUIRED` sai ngữ nghĩa.
+- [ ] Audit registry có action tạo, xác minh, hoàn tất và huỷ recovery; action admin mang reason.
+- [ ] Notification registry có loại request/verification và completed/cancelled cần thiết, không
+      tracking pixel và không opt-out cho email bảo mật.
 
 **Kiểm chứng**
-- [ ] `pnpm test -- mfa-disable` xanh, assertion tham chiếu `BR-MFA-03` `BR-MFA-05` `BR-MFA-11`.
+
+- [ ] `pnpm lint:specs` xanh; quét route fixture dùng code chưa đăng ký → đỏ.
+
+**Bề mặt dự kiến:** [`error-codes.md`](../specs/00-foundation/error-codes.md) · [`audit-log.md`](../specs/01-platform/audit-log.md) ·
+[`notification-service.md`](../specs/01-platform/notification-service.md) · test registry.
 
 **Phụ thuộc:** T1 · **Cỡ:** M
 
-### Task 4 — Reset MFA phía admin
+### Checkpoint A — Contract
+
+- [ ] Human đã review diff contract và quyết định recovery.
+- [ ] T0–T2 xanh; không migration, route hay UI MFA nào được viết trước checkpoint này.
+- [ ] Mọi dependency ở §0.1 mang `implemented`; nếu chưa thì dừng.
+
+### Task 3 — Bật và xác nhận MFA
+
+**Mô tả:** Vertical slice setup → verify → hiển thị recovery code đúng một lần.
 
 **Tiêu chí nghiệm thu**
-- [ ] `D-KZ`: `POST /api/managers/users/{uuid}/mfa-reset` cần `super_admin`.
-- [ ] Bốn ràng buộc đủ: xác minh qua **email chính chủ** · chờ **48 giờ** kể từ lúc yêu cầu · `reason` ≥20 ký tự · ghi `audit_logs`.
-- [ ] Ca âm thời gian: gọi reset trước khi đủ 48 giờ → **409**, nêu thời điểm sớm nhất có thể.
-- [ ] Ca âm lý do: `reason` < 20 ký tự → **422** `ADMIN_NOTE_REQUIRED`.
-- [ ] Reset **chỉ** tắt MFA: `password_hash` **không đổi**, trạng thái tài khoản **không đổi** — ca âm khẳng định cả hai.
-- [ ] `D-KZ` cổng: cập nhật cổng `D-JB` của P2.2 để cho phép **đúng** route này; ca âm — thêm một route admin thứ hai đụng vào xác thực của User → cổng **đỏ**.
-- [ ] Thao tác hiện trên [`user-detail.md`](../specs/06-admin/user-detail.md) như **thao tác thứ tư**, kèm mô tả quy trình 48 giờ.
-- [ ] User nhận thông báo khi MFA của mình bị reset.
+
+- [ ] `POST /api/users/mfa/setup` cần auth + reauth ≤5 phút; secret lưu mã hoá;
+      `verify` đúng mã mới set `confirmed_at` và sinh 10 code hash.
+- [ ] TOTP ±1 bước; sai lẻ trả `MFA_INVALID_CODE`, 5 lần khoá 15 phút; test âm viết
+      trước code và tham chiếu `BR-MFA-01/02/04/10`.
+- [ ] Bật MFA thu hồi phiên khác nhưng cấp lại phiên hiện tại ở `refresh_token_version`
+      mới; test hai thiết bị chứng minh A còn dùng được, B nhận `SESSION_REVOKED`.
 
 **Kiểm chứng**
-- [ ] `pnpm test -- mfa-admin-reset` xanh · cổng quét route xanh với đúng một ngoại lệ.
 
-**Phụ thuộc:** T1 · P2.2 · **Cỡ:** M
+- [ ] `pnpm test -- mfa-setup` xanh.
 
-### Task 5 — Trang bảo mật của User
+**Bề mặt dự kiến:** shared MFA service · setup/verify routes · session store · integration test.
+
+**Phụ thuộc:** Checkpoint A · **Cỡ:** M
+
+### Task 4 — Challenge MFA sau password hoặc SNS
+
+**Mô tả:** Dùng một challenge primitive cho cả hai yếu tố thứ nhất.
 
 **Tiêu chí nghiệm thu**
-- [ ] `/me/settings/security` sống trong [`account-settings.md`](../specs/03-account/account-settings.md) của P1.14.
-- [ ] Trạng thái MFA hiện rõ: chưa bật · đã bật (kèm ngày) · số mã khôi phục còn lại.
-- [ ] Luồng bật: reauth → QR + secret dạng chữ (cho app không quét được) → nhập mã → hiện 10 mã khôi phục **một lần** kèm nút tải về.
-- [ ] Cảnh báo trước khi bật: "bật MFA sẽ đăng xuất các thiết bị khác" (`BR-MFA-06`).
-- [ ] Nút tắt MFA và nút sinh lại mã khôi phục, cả hai đi qua reauth.
-- [ ] Hết mã khôi phục → hiện đường liên hệ hỗ trợ và **nêu rõ quy trình 48 giờ** của `D-KZ`.
-- [ ] `BR-MFA-08`: trang nói rõ MFA là **tuỳ chọn**; không nag, không popup ép bật.
-- [ ] Bàn phím và trình đọc màn hình đi hết luồng — [`accessibility.md`](../specs/08-quality/accessibility.md).
+
+- [ ] Password và SNS đúng trả 428 + challenge; không access/refresh cookie và không
+      `active_sessions` trước MFA.
+- [ ] `POST /api/guest/auth/users/mfa` nhận `{ code, challenge }`, consume
+      challenge nguyên tử rồi mới cấp session.
+- [ ] Expired, replay, wrong audience, cross-account và challenge dùng qua auth guard đều thất
+      bại; TOTP và recovery code đều đi qua cùng route.
 
 **Kiểm chứng**
+
+- [ ] `pnpm test -- mfa-challenge` ·
+      `pnpm test:e2e -- login-with-mfa` xanh cho password và SNS.
+
+**Bề mặt dự kiến:** shared challenge service · password/SNS login branches · User MFA route · tests.
+
+**Phụ thuộc:** T3 · P1.15 · **Cỡ:** M
+
+### Task 5 — Tắt MFA, sinh lại code và đọc metadata
+
+**Mô tả:** Hoàn tất lifecycle tự phục vụ với thao tác nguyên tử.
+
+**Tiêu chí nghiệm thu**
+
+- [ ] Disable và regenerate cần reauth ≤5 phút + code hợp lệ; không route nào nhận
+      `password`, không SMS OTP.
+- [ ] Hai request đồng thời dùng cùng recovery code → đúng một thành công; regenerate vô hiệu
+      bộ cũ và tạo bộ mới trong cùng transaction.
+- [ ] Endpoint status chỉ trả `enabled`, `confirmed_at`,
+      `recovery_codes_remaining`; test response không chứa secret/code/hash.
+
+**Kiểm chứng**
+
+- [ ] `pnpm test -- mfa-lifecycle` xanh, gồm race test và
+      `BR-MFA-03/05/07/11`.
+
+**Bề mặt dự kiến:** MFA service · disable/regenerate/status routes · integration test · route gate.
+
+**Phụ thuộc:** T3 · **Cỡ:** M
+
+### Checkpoint B — MFA core
+
+- [ ] T3–T5 xanh; password và SNS đều không bypass MFA.
+- [ ] Challenge/recovery code replay và hai race test đều đúng một winner.
+- [ ] `pnpm check && pnpm test` xanh; human review diff auth trước recovery.
+
+### Task 6 — Tạo recovery request và xác minh email
+
+**Mô tả:** Vertical slice từ admin tạo request đến User xác minh email; chưa được tắt MFA.
+
+**Tiêu chí nghiệm thu**
+
+- [ ] Migration local tạo recovery request/token purpose theo contract; token ngẫu nhiên, lưu
+      hash, TTL và single-use; tạo request cần `super_admin` + reason.
+- [ ] Email verification chuyển đúng request từ `pending_verification` sang
+      `waiting`; token sai/hết hạn/replay trả lỗi đã đăng ký và không lộ User.
+- [ ] Tạo/gửi lại đồng thời không tạo hai request active hoặc hai token sống; audit và
+      notification ghi đúng transition.
+
+**Kiểm chứng**
+
+- [ ] `pnpm test -- mfa-recovery-request` · migration test xanh.
+
+**Bề mặt dự kiến:** identity schema/migration · recovery service · create/verify routes · tests.
+
+**Phụ thuộc:** T2 · Checkpoint A · **Cỡ:** M
+
+### Task 7 — Hoàn tất hoặc huỷ recovery nguyên tử
+
+**Mô tả:** Chỉ complete request đủ điều kiện; không gộp create và complete trong một route.
+
+**Tiêu chí nghiệm thu**
+
+- [ ] Complete trước email verification hoặc trước 48 giờ thất bại với error đã đăng ký và
+      `details.eligible_at`; request terminal không dùng lại.
+- [ ] Hai complete đồng thời → đúng một thành công; transaction tắt MFA, xoá/vô hiệu recovery
+      codes, thu hồi sessions và terminalize request cùng lúc.
+- [ ] Password, email và status User không đổi; complete/cancel đều audit, User nhận notification.
+
+**Kiểm chứng**
+
+- [ ] `pnpm test -- mfa-recovery-complete` xanh, gồm time boundary và race test.
+
+**Bề mặt dự kiến:** recovery service · complete/cancel routes · session store · integration test.
+
+**Phụ thuộc:** T6 · **Cỡ:** M
+
+### Task 8 — Surface recovery riêng cho admin
+
+**Mô tả:** Giữ User detail read-only và dẫn sang workflow có audit riêng.
+
+**Tiêu chí nghiệm thu**
+
+- [ ] User detail chỉ hiển thị link khi User đã bật MFA; không gọi mutation trực tiếp.
+- [ ] Surface riêng hiển thị state, thời điểm đủ 48 giờ, reason và nút complete/cancel đúng role;
+      UI không cho thao tác sớm nhưng server vẫn là nguồn quyền.
+- [ ] `D-JB` cho phép đúng closed list recovery routes; fixture route admin khác sửa
+      auth User làm gate đỏ.
+
+**Kiểm chứng**
+
+- [ ] `pnpm test:e2e -- admin-mfa-recovery` · route gate xanh.
+
+**Bề mặt dự kiến:** User detail link · recovery page/component · API client · E2E test.
+
+**Phụ thuộc:** T7 · P2.2 · **Cỡ:** M
+
+### Checkpoint C — Recovery
+
+- [ ] Request → email verify → 48 giờ giả lập → complete chạy end-to-end.
+- [ ] Early, expired, replay, cancelled, duplicate active request và concurrent complete đều đỏ.
+- [ ] Human review diff auth/admin/data; không chạy migration ngoài local.
+
+### Task 9 — Trang bảo mật của User
+
+**Mô tả:** Hoàn tất UX tự phục vụ ở `/me/settings/security`.
+
+**Tiêu chí nghiệm thu**
+
+- [ ] Hiện trạng thái/metadata an toàn; setup có QR + secret chữ; 10 recovery code chỉ hiện
+      trong response verify một lần và có tải về.
+- [ ] Disable/regenerate đều qua reauth; cảnh báo bật MFA thu hồi thiết bị khác; MFA được diễn
+      đạt là tuỳ chọn, không nag/popup.
+- [ ] Khi hết code, chỉ dẫn đúng recovery contract đã duyệt; keyboard và screen reader đi hết
+      flow, không lộ secret qua log/analytics.
+
+**Kiểm chứng**
+
 - [ ] `pnpm test:e2e -- me-security` xanh.
 
-**Phụ thuộc:** T3 · P1.14 · **Cỡ:** M
+**Bề mặt dự kiến:** settings page · MFA components · API client · E2E/accessibility test.
 
-### Cổng dừng
+**Phụ thuộc:** T3 · T5 · contract recovery đã duyệt · **Cỡ:** M
 
-- [ ] Bật MFA → đăng xuất thiết bị khác → đăng nhập lại phải nhập mã.
-- [ ] Đăng nhập **bằng Google** vẫn bị 428; không cookie access trước khi verify.
-- [ ] Tài khoản chỉ có SNS tắt được MFA của chính mình qua reauth Google.
-- [ ] Thiếu reauth hoặc thiếu mã → không tắt được MFA.
-- [ ] Sinh bộ mã mới giết bộ cũ.
-- [ ] Không route MFA nào nhận `password`; không route auth nào gửi SMS.
-- [ ] Reset MFA phía admin chỉ chạy sau 48 giờ, có lý do, và không đụng mật khẩu.
-- [ ] `pnpm check && pnpm test && pnpm test:e2e && pnpm lint:specs && pnpm check:progress` xanh.
+### Task 10 — Evidence và promote P2.11
 
-### Task 6 — Evidence, promote và cổng ra P2
+**Mô tả:** Chỉ promote feature, không buộc cổng P2 chờ feature optional.
 
 **Tiêu chí nghiệm thu**
-- [ ] Mỗi `BR-MFA-*` có ít nhất một test tham chiếu mã rule.
-- [ ] [`mfa.md`](../specs/03-account/mfa.md) sang `implemented`.
-- [ ] §11 Q1 (mất cả thiết bị lẫn mã khôi phục) — đóng theo `D-KZ`: xác minh email chính chủ + chờ 48 giờ + reset thủ công. Quy trình này **chạy được** vì T4 đã tạo thao tác tương ứng.
-- [ ] §11 Q2 (tài khoản chỉ có SNS mất luôn tài khoản SNS) — cùng đường với Q1; đóng một lần. Nêu cho chủ vì nó là ca hỗ trợ tốn người nhất.
-- [ ] `D-KW` khẳng định lại: P2.11 **không** là điều kiện cổng ra P2.
-- [ ] **Kiểm cổng ra P2** ([`14-implementation-sequence-todo.md`](14-implementation-sequence-todo.md)): một đơn hàng thật đi hết tạo → nộp chứng từ → duyệt → entitlement cấp → quyền mở.
-- [ ] **Kiểm cổng ra P2**: Manager tạo được một game level mới trong studio, **0 dòng code**.
-- [ ] **Kiểm cổng ra P2**: giá `standard`/`premium` **đã chốt** — không còn `PENDING_PRICE_VND` ở gói `sellable`, và `D-JG` không còn chặn trang giá.
-- [ ] **Kiểm cổng ra P2**: điều kiện ở [`SPEC.md`](../SPEC.md) §13.
-- [ ] Tổng hợp nợ P2 chuyển sang P3: bật thẻ dashboard lesson và tuần curriculum (`D-IX`) · bật tầng ưu tiên 1 của hàng đợi duyệt (`D-KK`) · bật loại xuất `curriculum_health` (`D-KP`) · ngưỡng cảnh báo cấp tay (P2.4 §11 Q2).
-- [ ] Tick **P2.11** ở [`14-implementation-sequence-todo.md`](14-implementation-sequence-todo.md) khi `check:progress` tự xanh.
 
-**Cỡ:** S
+- [ ] Mỗi `BR-MFA-*` và BR recovery mới có test tham chiếu; mọi negative/race case ở
+      các checkpoint xanh.
+- [ ] [`mfa.md`](../specs/03-account/mfa.md) sang `implemented`; không còn câu hỏi mở chặn phase; tick P2.11
+      chỉ sau khi `check:progress` chấp nhận evidence thật.
+- [ ] Chạy full gate và lưu evidence review; không auto-merge, không chạy migration ngoài local.
 
-## 5. Rủi ro
+**Kiểm chứng**
 
-| Rủi ro | Ảnh hưởng | Giảm thiểu |
-|---|---|---|
-| Chủ tài khoản bị khoá ngoài vĩnh viễn | Mất toàn bộ dữ liệu học của con; không có đường vào | `D-KZ` — thao tác reset có thật, 48 giờ |
-| Quy trình khôi phục trỏ tới thao tác không tồn tại | Chỉ lộ ra khi có người thật bị khoá | `D-KZ` — tạo thao tác trong cùng bước |
-| Nhánh SNS phát cookie trước khi verify | MFA thành hình thức | `D-KY` — ca âm kiểm `Set-Cookie` |
-| Route MFA nhận `password` "cho tiện" | Tài khoản chỉ-SNS không tắt được MFA của mình | `D-KX` — cổng quét |
-| Kẻ chiếm phiên bật MFA | Khoá chủ tài khoản ra ngoài vĩnh viễn | `BR-MFA-10` — bật cũng cần reauth |
-| Hai bộ mã khôi phục cùng sống | Hai cửa vào | `BR-MFA-11` — sinh mới giết cũ |
-| Nâng P2.11 thành điều kiện chặn go-live | Trì hoãn ra mắt vì một tính năng `mvp: false` | `D-KW` — ghi rõ, không tự nâng |
-| Viết bản TOTP thứ hai | Hai cách cài đặt, một cái sai | T1 — dùng lại cài đặt của P0.11b |
-| Reset MFA thành cửa sau vào tài khoản | Admin mở được tài khoản bất kỳ | `D-KZ` — 48 giờ + email chính chủ + audit, và **không** đụng mật khẩu |
+- [ ] `pnpm check && pnpm test && pnpm test:e2e && pnpm lint:specs && pnpm check:progress`
+      xanh.
 
-## 6. Giả định
+**Bề mặt dự kiến:** tests/evidence · [`mfa.md`](../specs/03-account/mfa.md) ·
+[`14-implementation-sequence-todo.md`](14-implementation-sequence-todo.md).
 
-1. **Cổng ra P2 đã hoặc sắp đạt** — bước này không chặn nó (`D-KW`).
-2. **P0.3 reauth chạy được** với cả mật khẩu lẫn OAuth.
-3. **P0.11b đã cài TOTP** cho Manager — bước này dùng lại, không viết mới.
-4. **P1.15 đã đóng** — có nhánh SNS thật để kiểm `BR-MFA-09`.
-5. **Một `super_admin`** — người duy nhất chạy được reset MFA, và cũng là điểm nghẽn của quy trình 48 giờ.
+**Phụ thuộc:** T4 · T5 · T7 · T8 · T9 · **Cỡ:** S
 
-## 7. Ngoài phạm vi
+## 5. Cổng P2 chạy độc lập
 
-- MFA bắt buộc cho User — **không**; đưa vào MVP là quyết định của chủ (`Ask first`).
-- SMS OTP — **không bao giờ**.
-- Passkey / WebAuthn — chưa có spec; không làm ở đây.
-- MFA cho Manager — đã xong ở P0.11b.
-- Đổi mật khẩu hộ User từ admin — **không bao giờ** (`BR-USM-08`).
-- Mở khoá tài khoản qua reset MFA — hai việc khác nhau, giữ tách.
+Sau T0, cổng P2 được kiểm khi toàn bộ spec `mvp: true` của P2 và các điều kiện
+[`SPEC.md`](../SPEC.md) §13 đã đạt. Không chờ T1–T10:
+
+- [ ] Một order thật đi hết create → proof → approval → entitlement.
+- [ ] Manager tạo và publish game level từ emoji, không viết code.
+- [ ] Giá sellable đã chốt; không `PENDING_PRICE_VND`.
+- [ ] Mọi điều kiện khác của [`SPEC.md`](../SPEC.md) §13 xanh.
+- [ ] Test `check:progress` chứng minh [`mfa.md`](../specs/03-account/mfa.md) approved +
+      `mvp: false` không chặn gate.
+
+## 6. Rủi ro
+
+| Rủi ro                                    | Ảnh hưởng                                 | Giảm thiểu                                                           |
+| ----------------------------------------- | ----------------------------------------- | -------------------------------------------------------------------- |
+| Cổng máy vẫn coi optional là bắt buộc     | P2/go-live bị chặn sai                    | T0 sửa semantics + test hai chiều                                    |
+| Challenge không bind với lần login        | Dùng code cho sai User hoặc replay        | `D-KY`: credential single-purpose, TTL, single-use, atomic consume   |
+| Recovery yếu hơn đăng nhập thường         | Reset thành cửa sau chiếm tài khoản       | Human approve assurance; email verify + delay + audit; Q2 tách riêng |
+| Hai request/complete cùng thắng           | Hai transition hoặc hai bộ code cùng sống | Conditional update + transaction + race tests                        |
+| Bump token version giết cả phiên hiện tại | User bật MFA rồi bị logout ngoài dự kiến  | Reissue current session ở version mới                                |
+| User detail biến thành màn hình mutation  | Vi phạm `BR-USD-03`                       | Link sang surface recovery riêng                                     |
+| Error/audit/notification tự phát          | Contract drift và không truy vết được     | T2 registry-first                                                    |
+| Plan giả định dependency đã có            | Vá chéo phase, tạo implementation thứ hai | Stop condition §0.1                                                  |
+
+## 7. Giả định và điều kiện dừng
+
+1. `D-KW` chỉ có hiệu lực sau T0; câu văn trong plan không thay được cổng máy.
+2. T1–T10 là optional và có thể chạy sau cổng P2.
+3. Mọi dependency phải `implemented` trước Task 3; trạng thái `approved` không đủ.
+4. Recovery email + 48 giờ là **đề xuất**, không phải quyết định đã đóng cho tới human approval.
+5. Nếu người sở hữu chưa chốt cách xử lý Q2, dừng recovery implementation; không tự suy ra
+   identity proofing hoặc bằng chứng hỗ trợ.
+
+## 8. Ngoài phạm vi
+
+- Bắt buộc MFA cho User hoặc đưa vào MVP.
+- SMS OTP.
+- Passkey/WebAuthn.
+- Viết lại MFA Manager hoặc tạo challenge format thứ hai.
+- Admin đổi mật khẩu, email hay status User trong recovery.
+- Mutation MFA trực tiếp từ User detail.
+- Auto-merge, migration ngoài local hoặc phát hành.

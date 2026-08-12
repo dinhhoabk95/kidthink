@@ -5,7 +5,7 @@ area: foundation
 status: approved
 mvp: true
 phase: P0
-reviewed: 2026-08-06
+reviewed: 2026-08-11
 owns:
   - Danh sách mã lỗi nghiệp vụ
   - Ánh xạ mã lỗi → HTTP status
@@ -271,5 +271,5 @@ Scenario: REAUTH_REQUIRED nói được làm gì tiếp
 
 | # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
 |---|---|---|---|---|
-| 1 | Có cần i18n cho `message` không, hay tiếng Việt là đủ ở MVP? | Mở thị trường | Hoãn, chặn phase P5 | hoãn |
+| ~~1~~ | ~~Có cần i18n cho `message` không, hay tiếng Việt là đủ ở MVP?~~ **Đóng 2026-08-11 (`D-NM`, triển khai D11)**: tiếng Việt là ngôn ngữ hiển thị duy nhất trong scope hiện hành. Nếu mở localization sau này, spec localization phải sở hữu catalog/fallback; mã lỗi máy vẫn bất biến. | — | Đã đóng | D-NM |
 | 2 | `EVENT_DUPLICATE` trả 200 — client có cần biết là trùng không, hay im lặng là đủ? | [`play-event-ingestion.md`](../04-play/play-event-ingestion.md) | Hoãn, chặn phase P1 | hoãn |

@@ -5,7 +5,7 @@ area: platform
 status: approved
 mvp: false
 phase: P5
-reviewed: 2026-08-08
+reviewed: 2026-08-11
 owns:
   - Manifest và tiêu chí mời cài đặt
 depends_on:
@@ -120,4 +120,4 @@ Scenario: start_url mở vào bề mặt người lớn
 
 | # | Câu hỏi | Chặn phase | Đề xuất chốt | Chủ |
 |---|---|---|---|---|
-| 1 | Có cần push notification qua PWA không? Đụng ràng buộc không gửi gì tới trẻ | P5 | Không dùng push notification PWA cho trẻ em; chỉ gửi thông báo tới phụ huynh qua email/SMS theo `BR-CHI-04` ở [`child-data-compliance.md`](../00-foundation/child-data-compliance.md) (`D-BM`) | Infra |
+| ~~1~~ | ~~Có cần push notification qua PWA không?~~ **Đóng 2026-08-11 (khôi phục quyết định `D-BM`)**: không có PWA push trong scope hiện hành; thông báo cho phụ huynh đi qua email do [`notification-service.md`](notification-service.md) sở hữu. | Đã đóng | Không áp dụng | D-BM |

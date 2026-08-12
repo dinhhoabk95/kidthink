@@ -106,20 +106,22 @@ Năm cạnh đảo phase đã được xử lý, bốn cạnh đầu ở bước
 
 ## 4. Năm quyết định thiết kế
 
-**D1 — Đơn vị làm việc là một bước roadmap, không phải một spec.** Nhiều bước gộp 3–8 spec chỉ
-có nghĩa khi đi cùng nhau (bước P0 #10 gộp 4 spec auth; tách ra thì không có gì chạy được giữa
-chừng). Một bước = một nhánh = một PR.
+**D1 — Bước roadmap sở hữu outcome; work package S/M mới là đơn vị implementation.** Nhiều
+bước gộp 3–8 spec chỉ có nghĩa khi nghiệm thu cùng nhau (bước P0 #10 gộp 4 spec auth), nhưng
+không vì thế mà ép toàn bộ bước vào một nhánh hoặc một PR. Mỗi bước phải tách thành các work
+package dọc, khoảng 1–5 file, có test và để hệ thống chạy được; bước chỉ được tick khi mọi work
+package đã hợp lại và acceptance end-to-end xanh.
 
 **D2 — Mỗi bước là một lát dọc.** Schema → API → UI → test trong cùng một bước, không phải làm
 hết schema toàn dự án rồi mới tới API. Đây là nguyên tắc 5 của chính
 [`roadmap.md`](../specs/roadmap.md), và là lý do bước P0 #10 tồn tại dưới dạng "auth end-to-end"
 chứ không phải "bảng `users`".
 
-**D3 — Độ chi tiết giảm dần theo phase.** P0 viết chi tiết tới từng spec ngay bây giờ. P1–P2
-viết ở mức bước, danh sách spec đầy đủ, tiêu chí nghiệm thu viết khi vào phase. P3–P5 chỉ giữ
-thứ tự và điều kiện mở.
-Lý do đo được: 9 trong 22 câu hỏi mở của P4/P5 là giá và quota **chưa chốt**
-([`CORPUS-CLOSURE.md`](CORPUS-CLOSURE.md)); viết tiêu chí nghiệm thu cho chúng bây giờ là bịa số.
+**D3 — Master plan giảm chi tiết theo phase; increment plan tăng chi tiết khi contract tới
+hạn.** File này giữ thứ tự và phase gate. Task #16–#69 hiện đã có plan/todo riêng với acceptance
+criteria; Task #70–#72 và #78 giữ P5 ở contract-first. Các contract gap tìm thấy ngày
+2026-08-12 đi qua Task #80–#82 trước implementation. Không viết số giá, quota, provider hay
+ngưỡng sư phạm chưa được người sở hữu duyệt chỉ để làm plan trông hoàn chỉnh.
 
 **D4 — Không spec nào được coi là "xong" khi chưa có test.** [`testing-strategy.md`](../specs/08-quality/testing-strategy.md)
 là spec P0 và là một trong 9 lỗ hổng — nó phải vào sớm, vì nó định nghĩa "xong" cho mọi bước sau.
@@ -131,24 +133,27 @@ auth, thanh toán, gating, dữ liệu trẻ, code điều phối migration và 
 người review diff trước merge. Không auto-merge, không chạy migration ngoài local, không sửa
 trực tiếp hàng `published`, không gọi transition publish và không phát hành nội dung.
 
-## 5. Quy trình chuẩn cho một bước — tám việc, đúng thứ tự
+## 5. Quy trình chuẩn cho một bước — chín việc, đúng thứ tự
 
 1. Đọc **toàn bộ** spec của bước, không chỉ mục 7. Mục 11 (câu hỏi mở) đọc trước tiên: câu chưa
    chốt trong bước này là rủi ro phải nêu ngay, không phải phát hiện lúc code.
 2. Liệt kê `depends_on` của mọi spec trong bước; xác nhận từng dep đã `implemented`. Lệch với
    roadmap thì dừng, theo mục 3.
-3. Liệt kê mã `BR-*` mà bước phải thực thi; đối chiếu [`business-rules.md`](../specs/00-foundation/business-rules.md)
+3. Tách mọi phần cỡ `L`/`XL` thành work package S/M, mỗi package khoảng 1–5 file, acceptance
+   criteria và verification riêng. Không bắt đầu test RED khi work package vẫn mang nhãn L/XL.
+4. Liệt kê mã `BR-*` mà bước phải thực thi; đối chiếu [`business-rules.md`](../specs/00-foundation/business-rules.md)
    để không bỏ rule nào và không tự chế rule mới.
-4. Viết test trước theo [`testing-strategy.md`](../specs/08-quality/testing-strategy.md) — **phải đỏ**.
-5. Code tới khi test xanh. Với sáu vùng nhạy cảm, áp ngoại lệ D5: test âm trước, ghi rõ phần
+5. Viết test trước theo [`testing-strategy.md`](../specs/08-quality/testing-strategy.md) — **phải đỏ**.
+6. Code tới khi test xanh. Với sáu vùng nhạy cảm, áp ngoại lệ D5: test âm trước, ghi rõ phần
    AI soạn và giữ cổng người review diff; không dùng ngoại lệ để auto-merge, chạy migration
    ngoài local hoặc phát hành nội dung.
-6. `pnpm check && pnpm test && pnpm lint:specs` xanh.
-7. Nếu bước làm lộ ra spec sai: sửa spec **trong cùng PR**, kèm lý do. Spec là hợp đồng — code
+7. `pnpm check && pnpm test && pnpm lint:specs` xanh.
+8. Nếu bước làm lộ ra spec sai: sửa spec **trong cùng PR**, kèm lý do. Spec là hợp đồng — code
    lệch spec mà spec không đổi là nợ im lặng.
-8. Một commit cho mỗi lát chạy được; PR gộp cả bước.
+9. Một commit cho mỗi lát chạy được; mỗi PR chỉ mang một work package. PR cuối của bước chạy
+   acceptance end-to-end và phase gate liên quan.
 
-Việc 3 là việc hay bị bỏ nhất. [`business-rules.md`](../specs/00-foundation/business-rules.md)
+Việc 4 là việc hay bị bỏ nhất. [`business-rules.md`](../specs/00-foundation/business-rules.md)
 có 126 tiền tố `BR`; bỏ sót một rule gating
 hoặc một rule dữ liệu trẻ là loại lỗi không lộ ra ở test hạnh phúc.
 
@@ -157,11 +162,11 @@ hoặc một rule dữ liệu trẻ là loại lỗi không lộ ra ở test h�
 ```
 Bước 1  : Vá 12 lỗ hổng roadmap + xử lý 5 cạnh đảo phase   → Cổng dừng A
 P0      : 11 bước roadmap + 9 spec mới vá vào (35 spec)     → Cổng ra P0 (SPEC.md §13)
-P1      : 16 bước roadmap (43 spec)                         → Cổng ra P1
+P1      : 16 bước hiện có (43 spec) + 2 contract gate       → Cổng ra P1
 P2      : 11 bước roadmap (31 spec)                         → Cổng ra P2
-P3      :  8 bước roadmap (12 spec)                         → Cổng ra P3 = hết MVP
+P3      :  9 bước roadmap (12 spec; bước 9 tích hợp account)→ Cổng ra P3 = hết MVP
 P4      :  8 spec add-on, mỗi cái lên catalog cùng tính năng
-P5      :  1 spec + hạng mục scale
+P5      :  1 spec hiện có + contract-first cho Web scale
 ```
 
 Chín spec vá vào P0 xếp thế này, suy từ cái chúng chặn:
@@ -177,7 +182,7 @@ Chín spec vá vào P0 xếp thế này, suy từ cái chúng chặn:
 Ba registry ([`business-rules.md`](../specs/00-foundation/business-rules.md),
 [`error-codes.md`](../specs/00-foundation/error-codes.md),
 [`event-catalog.md`](../specs/00-foundation/event-catalog.md)) không nhận bước riêng. Thay vào
-đó, việc 3 của quy trình mục 5 bắt buộc tra chúng ở **mọi** bước.
+đó, việc 4 của quy trình mục 5 bắt buộc tra chúng ở **mọi** bước.
 
 ## 7. Cổng dừng
 
@@ -205,8 +210,9 @@ không kiểm được bằng máy. Task #13 nên chạy trước hoặc song so
 |---|---|---|
 | Tin `depends_on` như thứ tự build | 133 cạnh không có dấu vết trong văn xuôi — build sai thứ tự mà vẫn thấy "đúng đồ thị" | Mục 3: roadmap là nguồn, `depends_on` là kiểm tra chéo, lệch thì dừng |
 | Chín spec vá vào bị rơi lại | Chúng vô hình vì không có màn hình; rơi lần nữa là rơi ở đúng chỗ chặn nhất | Bước 1 vá vào roadmap **trước** khi code; cổng dừng A đếm bằng lệnh |
-| Code lệch spec, spec không đổi | Nợ im lặng: spec thành tài liệu chết trong khi nó là hợp đồng | Việc 7 mục 5 — sửa spec trong cùng PR |
-| Viết tiêu chí nghiệm thu cho P4/P5 ngay bây giờ | Bịa số cho 9 câu hỏi giá/quota chưa chốt | D3 — độ chi tiết giảm dần; P4/P5 chỉ giữ thứ tự |
+| Code lệch spec, spec không đổi | Nợ im lặng: spec thành tài liệu chết trong khi nó là hợp đồng | Việc 8 mục 5 — sửa spec trong cùng PR |
+| Plan mới tái xuất hiện work package cỡ L/XL rồi vẫn bắt đầu code | Diff quá rộng, acceptance không cô lập được, review người mất hiệu lực | Việc 3 mục 5 — tách S/M trước test RED; Task #79 đã đưa inventory 19 package về 0 và giữ query regression |
+| Viết tiêu chí nghiệm thu cho outcome P4/P5 chưa có quyết định | Bịa số hoặc tạo contract giả | D3 — P4 giữ thứ tự; P5 qua Task #70 và spec owner trước implementation |
 | Bắt đầu code khi Task #13 chưa xong | Điều kiện 3 của cổng ra phase không kiểm được bằng máy | Task #13 chạy trước hoặc song song bước 1; hai task không đụng cùng file |
 | Nội dung là đường găng, không phải code | P0 cần review ≥690 LO; P1 cần review ≥120 game level. Seeder không giảm chi phí đọc review | Seed LO chạy trong P0; nhóm D của [`roadmap.md`](../specs/roadmap.md) bắt đầu level ngay sau P1.2 |
 
@@ -276,6 +282,6 @@ Ca âm và các nhánh kiểm tra nằm ở
 
 - Trả lời câu hỏi mở về giá, quota, provider AI. Task này xếp thứ tự, không quyết định thương mại.
 - Chuẩn hoá cột `Chủ` ở mục 11 — đó là [`13-question-owner-normalization-plan.md`](13-question-owner-normalization-plan.md).
-- Viết lại nội dung spec. Spec chỉ đổi khi code chứng minh nó sai (việc 7 mục 5).
+- Viết lại nội dung spec. Spec chỉ đổi khi code chứng minh nó sai (việc 8 mục 5).
 - Hạ tầng production (domain, CDN, instance type) — chặn bởi câu hỏi hạ tầng ở
   [`CORPUS-CLOSURE.md`](CORPUS-CLOSURE.md), không chặn P0.

@@ -50,6 +50,9 @@
 
 ### Task 3 — Xuất dữ liệu
 
+- [ ] `T3a` (M): registry/query + role/reason/rate/row-limit/privacy tests, PR riêng.
+- [ ] `T3b` (M): CSV/BOM/ICT + background job/private URL/notification/audit, sau T3a.
+- [ ] Cả sáu loại qua privacy projection negative test ở T3a trước khi T3b sinh file.
 - [ ] Sáu loại §7.1 và **chỉ** sáu.
 - [ ] `D-KP` ca âm: `kind` ngoài danh sách → **404**, **không** mở kết nối DB.
 - [ ] Mỗi loại có truy vấn riêng; **không** truy vấn tổng quát.

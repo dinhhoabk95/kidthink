@@ -43,6 +43,10 @@
 
 ### Task 3 — Core engine
 
+- [ ] `T3a` (M): public entry + RAF + canvas/resize; test loop/import boundary xanh trong PR riêng.
+- [ ] `T3b` (M): config + session purity + no DB/network + asset fallback; negative tests xanh.
+- [ ] `T3c` (M): pool + systems + pause/sendBeacon + destroy; allocation/leak tests xanh.
+- [ ] Chỉ mở T3b sau T3a xanh, T3c sau T3b; không gộp ba package vào một PR.
 - [ ] Thư mục đúng §7.4; `index.ts` là entry public duy nhất.
 - [ ] `BR-ENG-01` không `vue`/`pinia`/`@vueuse`; ca âm thêm import → đỏ.
 - [ ] `BR-ENG-14` RAF; ca âm `setInterval` làm loop → cổng chặn.
@@ -78,6 +82,9 @@
 
 ### Task 6 — Năm template còn lại (một PR mỗi template)
 
+- [ ] Mỗi template là một work package M có contract, Session, ≥3 fixture, E2E, bundle và FPS.
+- [ ] Thứ tự bắt buộc: `GT-003` → `GT-005` → `GT-002` → `GT-004` → `GT-006`; package trước
+      xanh mới mở package sau.
 - [ ] `GT-003` drag-to-container — hit band khoan dung + fallback tap-tap band 3–4.
 - [ ] `GT-005` pair-match — 2–6 cặp, fallback tap.
 - [ ] `GT-002` tap-select-multi — band 4–6, chặn band 3–4 ở server.

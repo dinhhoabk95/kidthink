@@ -3,6 +3,8 @@
 > Kế hoạch: [`49-p2-7-asset-storage-plan.md`](49-p2-7-asset-storage-plan.md).
 > [`emoji-picker.md`](../specs/06-admin/emoji-picker.md) **không** thuộc bước này nữa — đã sang
 > P2.6 theo `D-JV`. Bước này cũng đóng **slice cuối của P2.6** (widget ảnh, `D-CC`).
+> Audio không thuộc Task #49; [`Task #80`](80-audio-contract-closure-plan.md) phải đóng spec owner
+> trước khi có implementation task audio.
 > Tuyệt đối: không thư viện ảnh dùng chung (`D4`) · ba lớp chặn upload đứng ở server (`D-KC`).
 >
 > ```

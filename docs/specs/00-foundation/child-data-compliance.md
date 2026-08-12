@@ -5,7 +5,7 @@ area: foundation
 status: implemented
 mvp: true
 phase: P0
-reviewed: 2026-08-09
+reviewed: 2026-08-11
 
 owns:
   - Danh sách đóng trường dữ liệu được phép thu của trẻ
@@ -239,4 +239,4 @@ Scenario: BR-CDC-08 — không có tracking bên thứ ba trên bề mặt trẻ
 | 1 | Ngân sách và người rà soát pháp lý cho ToS / Privacy / Chính sách trẻ em theo ND 13/2023 | Go-live | Hoãn, chặn go-live | người quyết |
 | 2 | Có cần đăng ký hồ sơ đánh giá tác động xử lý dữ liệu (DPIA) với Bộ Công an không? ND13 Điều 24 yêu cầu với dữ liệu nhạy cảm | Go-live | Hoãn, chặn go-live | người quyết |
 | 3 | Retention của `telemetry_events` đã ẩn danh — giữ vĩnh viễn hay cắt sau N năm? | Chi phí lưu trữ | Hoãn, chặn phase P5 | hoãn |
-| 4 | Nếu mở thị trường ngoài VN thì COPPA hay GDPR-K trước? Hai chuẩn ràng buộc khác nhau | Roadmap P5 | Hoãn, chặn phase P5 | hoãn |
+| ~~4~~ | ~~Nếu mở thị trường ngoài VN thì COPPA hay GDPR-K trước?~~ **Đóng 2026-08-11 (`D-NM`, triển khai D11)**: roadmap hiện hành chỉ vận hành tại Việt Nam, không chọn jurisdiction giả. Mở thị trường là chương trình scope mới và phải viết lại spec này trước khi lập task. | — | Đã đóng | D-NM |

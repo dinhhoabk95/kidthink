@@ -5,7 +5,7 @@ area: addon
 status: approved
 mvp: false
 phase: P4
-reviewed: 2026-08-08
+reviewed: 2026-08-11
 owns:
   - Luồng User tự lắp giáo án từ thư viện
 depends_on:
@@ -107,5 +107,5 @@ Scenario: BR-LPC-09 — không chứa dữ liệu trẻ
 | # | Câu hỏi | Chặn phase | Đề xuất chốt | Chủ |
 |---|---|---|---|---|
 | 1 | Giá add-on này là bao nhiêu và bán theo tháng hay năm? | P4 | Định giá và chu kỳ thanh toán sẽ chốt khi lên catalog dịch vụ | người quyết |
-| 2 | Chia sẻ bằng link riêng tư có vào phiên bản hai không? | P5 | Hoãn sang P5 để đánh giá thêm nhu cầu chia sẻ nội bộ giữa các giáo viên | người quyết |
+| ~~2~~ | ~~Chia sẻ bằng link riêng tư có vào phiên bản hai không?~~ **Đóng 2026-08-11 (`D-NM`, triển khai D11)**: không có sharing/classroom trong scope hiện hành; lesson plan chỉ chủ sở hữu truy cập. Nếu sau này có sharing, đó là outcome và spec riêng. | Đã đóng | Không áp dụng | D-NM |
 | 3 | Quota giáo án mỗi tháng là bao nhiêu? | P4 | Định lượng theo gói bán khi lên catalog sản phẩm | người quyết |

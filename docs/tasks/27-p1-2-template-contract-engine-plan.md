@@ -176,7 +176,17 @@ T2 hình dạng GameTemplate + Zod contract + xuất JSON Schema + z.infer
 **Kiểm chứng**
 - [ ] `pnpm --filter @kidthink/game-engine test -- core` xanh, assertion tham chiếu `BR-ENG-01` `BR-ENG-13` `BR-ENG-14` `BR-ENG-15`.
 
-**Phụ thuộc:** T2 · **Cỡ:** L — **tách nhỏ khi thực thi** (core loop / interaction / systems)
+**Ranh giới work package**
+
+| Package | Cỡ | Phạm vi | Gate riêng |
+|---|---:|---|---|
+| T3a | M | Public entry, RAF, canvas 960×540/DPR, resize và dependency boundary | Loop/canvas tests + cổng import xanh |
+| T3b | M | `EngineConfig`, session purity, no DB/network, asset fallback | Pure/no-network/asset negative tests xanh |
+| T3c | M | Object pool, systems lifecycle, pause/sendBeacon và `destroy()` | Allocation + 10× load/destroy leak tests xanh |
+
+T3a → T3b → T3c; mỗi package khoảng 1–5 file và một PR. Không chờ T3c mới viết test cho T3a.
+
+**Phụ thuộc:** T2 · **Cỡ:** 3 work package M
 
 ### Task 4 — `GT-001` hết đường
 
@@ -224,7 +234,11 @@ T2 hình dạng GameTemplate + Zod contract + xuất JSON Schema + z.infer
 **Kiểm chứng**
 - [ ] `pnpm test:e2e` — mỗi `GT-001`…`GT-006` có ít nhất một journey xanh.
 
-**Phụ thuộc:** T5 · **Cỡ:** L — **một PR mỗi template**
+**Ranh giới work package:** năm package M tuần tự `T6-GT003` → `T6-GT005` → `T6-GT002` →
+`T6-GT004` → `T6-GT006`. Mỗi package sở hữu contract, Session, ≥3 fixture, E2E, bundle và FPS
+của đúng một template; gate package trước phải xanh trước package sau.
+
+**Phụ thuộc:** T5 · **Cỡ:** 5 work package M — một PR mỗi template
 
 ### Task 7 — Ràng buộc bề mặt trẻ trong runtime
 

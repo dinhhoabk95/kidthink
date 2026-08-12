@@ -94,8 +94,9 @@ xong từ **P0.9**. Và emoji là **vật liệu chính** của game: một stud
 không soạn được level nào. Xử: dời [`emoji-picker.md`](../specs/06-admin/emoji-picker.md) từ
 P2.7 sang **P2.6**, cập nhật [`roadmap.md`](../specs/roadmap.md) và
 [`14-implementation-sequence-todo.md`](14-implementation-sequence-todo.md) — không cạnh
-`depends_on` nào bị đảo. Hint `image` và `audio` render **placeholder có nhãn bước P2.7**;
-`BR-SDF-04` giữ nguyên: **cấm** rơi về input text. Lý do ghi rõ ở đây thay vì P2.6: sơ đồ P2 của
+`depends_on` nào bị đảo. Hint `image` render **placeholder có nhãn bước P2.7**; hint `audio`
+render placeholder **“chờ contract Task #80”** vì P2.7 chỉ sở hữu ảnh. `BR-SDF-04` giữ nguyên:
+**cấm** rơi về input text. Lý do ghi rõ ở đây thay vì P2.6: sơ đồ P2 của
 roadmap vẽ `image-upload · emoji-picker ──→ game-level-studio` trong khi bảng thứ tự đặt chúng
 **sau** studio; hai chỗ trong cùng một file nói ngược nhau, và bước này là chỗ đầu tiên chạm vào
 mâu thuẫn đó.
@@ -164,7 +165,7 @@ T1 zodIntrospect ở server: bảng §7.1 đủ 12 dòng (D-JR)
 **Tiêu chí nghiệm thu**
 - [ ] Mỗi hint có đúng **một** widget; bảng hint → widget khai một chỗ.
 - [ ] `BR-SDF-03` ca âm: field `_color` chỉ chọn được từ **token**; không input hex tự do, không color wheel; `pnpm lint:tokens` phủ cả widget này.
-- [ ] `D-JV`: hint `emoji` render bộ chọn thật (spec kéo lên P2.6 — xem T6); hint `image` và `audio` render **placeholder có nhãn "P2.7"**.
+- [ ] `D-JV`: hint `emoji` render bộ chọn thật (spec kéo lên P2.6 — xem T6); hint `image` render placeholder **"P2.7"**; hint `audio` render placeholder **"chờ contract Task #80"**.
 - [ ] `BR-SDF-04` ca âm: **không** đường nào để nhập emoji bằng input text.
 - [ ] Nhóm field đúng §7.3 và **thứ tự cố định**: Thông tin · Nội dung · Độ khó · Phân loại · Quyền.
 - [ ] `BR-SDF-07` ca âm: đo `font-size` mọi input → không cái nào dưới **16px**.
@@ -175,7 +176,7 @@ T1 zodIntrospect ở server: bảng §7.1 đủ 12 dòng (D-JR)
 **Kiểm chứng**
 - [ ] `pnpm --filter @kidthink/admin test -- form-renderer` xanh · render cả 6 template không lỗi.
 
-**Phụ thuộc:** T3 · **Cỡ:** L
+**Phụ thuộc:** T3 · **Cỡ:** 3 work package M — widget primitive + nhóm; array/object; a11y + sáu contract fixture
 
 ### Task 5 — Validate hai đầu
 
@@ -209,7 +210,7 @@ T1 zodIntrospect ở server: bảng §7.1 đủ 12 dòng (D-JR)
 - [ ] `D-JV` vá roadmap: chuyển [`emoji-picker.md`](../specs/06-admin/emoji-picker.md) từ bước 7 sang bước **6** trong [`roadmap.md`](../specs/roadmap.md) và trong [`14-implementation-sequence-todo.md`](14-implementation-sequence-todo.md); ghi rõ lý do và khẳng định không cạnh `depends_on` nào bị đảo.
 - [ ] §11 Q1 — đóng bằng `D-JS` + `D-BK`: client import Zod thật nên không mất `refine`; `refine` quan hệ phức tạp vẫn để server làm trọng tài.
 - [ ] §11 Q2 — đóng bằng `D-JU`: trần **3 tầng** là cổng, tầng 2–3 render sub-drawer.
-- [ ] Nợ ghi sang **P2.6**: lắp bộ chọn emoji thật vào hint `emoji` · **P2.7**: lắp widget ảnh và audio, gỡ placeholder.
+- [ ] Nợ ghi sang **P2.6**: lắp bộ chọn emoji thật vào hint `emoji` · **P2.7**: lắp widget ảnh · **Task #80**: tạo spec owner rồi mới lập task lắp widget audio.
 - [ ] Tick **P2.5** ở [`14-implementation-sequence-todo.md`](14-implementation-sequence-todo.md) khi `check:progress` tự xanh.
 
 **Cỡ:** S
@@ -232,7 +233,7 @@ T1 zodIntrospect ở server: bảng §7.1 đủ 12 dòng (D-JR)
 1. **P1.2 đã đóng** — 6 contract Zod tồn tại và engine đọc chính chúng.
 2. **P2.1 đã đóng** — form sống trong layout `manager`.
 3. **`EMOJI-REGISTRY` đã có từ P0.9** — điều kiện duy nhất để kéo bộ chọn emoji lên P2.6.
-4. **Chưa có lưu trữ ảnh** — widget ảnh và audio là placeholder tới P2.7.
+4. **Chưa có lưu trữ ảnh** — widget ảnh là placeholder tới P2.7. Audio chưa có owner; placeholder tồn tại tới khi Task #80 đóng contract.
 5. **Chỉ 6 template ở MVP** — nhưng cổng phải đúng với template thứ 30, đó là lý do bước này tồn tại.
 
 ## 7. Ngoài phạm vi
@@ -241,5 +242,6 @@ T1 zodIntrospect ở server: bảng §7.1 đủ 12 dòng (D-JR)
 - Xem trước bằng engine thật — P2.6.
 - Bộ chọn emoji (spec riêng, kéo lên P2.6 theo `D-JV`).
 - Tải và cắt ảnh — P2.7.
+- Audio storage/picker/upload — chưa có spec owner; Task #80 contract-first.
 - Thêm `uiHint` mới hoặc đổi quy ước đặt tên — hỏi trước, không làm ở bước này.
 - Form cho lesson và activity — P3.

@@ -156,7 +156,11 @@ T1 hàng đợi + bốn tầng ưu tiên + bộ lọc (D-KK)
 **Kiểm chứng**
 - [ ] `pnpm test -- review-screen` xanh · `pnpm test:e2e -- content-review` xanh.
 
-**Phụ thuộc:** T1 · **Cỡ:** L
+**Ranh giới work package:** `T2a` (M) preview-token API/binding, review projection và six-group
+checklist contract; `T2b` (M) review UI, AI/repo-seed labels, previous reason/dual-role display
+và E2E. T2a → T2b; API curl negative test nằm ở T2a.
+
+**Phụ thuộc:** T1 · **Cỡ:** 2 work package M
 
 ### Task 3 — Quyết định duyệt và từ chối
 
@@ -192,7 +196,11 @@ T1 hàng đợi + bốn tầng ưu tiên + bộ lọc (D-KK)
 **Kiểm chứng**
 - [ ] `pnpm test -- publish-version` xanh, assertion tham chiếu `BR-PUB-01`…`BR-PUB-07`.
 
-**Phụ thuộc:** T3 · P2.7 · **Cỡ:** L
+**Ranh giới work package:** `T4a` (M) partial unique index + publish/archive/checklist transaction;
+`T4b` (M) rollback/in-use/active-session semantics, diff/delete/audit và integration tests.
+T4a → T4b; SQL-thô invariant test ship cùng T4a, không ở PR cuối.
+
+**Phụ thuộc:** T3 · P2.7 · **Cỡ:** 2 work package M
 
 ### Task 5 — Lịch sử version
 
@@ -228,7 +236,11 @@ T1 hàng đợi + bốn tầng ưu tiên + bộ lọc (D-KK)
 **Kiểm chứng**
 - [ ] `pnpm test -- seo-content-admin` xanh, assertion tham chiếu `BR-SEO-01` `BR-SEO-02` `BR-SEO-03` `BR-SEO-06`.
 
-**Phụ thuộc:** T3 · P1.13 · **Cỡ:** L
+**Ranh giới work package:** `T6a` (M) model/API, sanitizer, slug redirect, embed resolution và
+structured-data contract; `T6b` (M) studio form/three previews, review-queue integration,
+archived-embed warning và E2E. T6a → T6b; write/render sanitizer tests nằm ở T6a.
+
+**Phụ thuộc:** T3 · P1.13 · **Cỡ:** 2 work package M
 
 ### Task 7 — Trả nợ dashboard và alert
 

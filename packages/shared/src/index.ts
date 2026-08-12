@@ -1,5 +1,6 @@
 export * from "./access-ladder.js";
 export * from "./child-data.js";
+export * from "./email-job.js";
 export * from "./email-sender.js";
 export * from "./entitlement-catalog.js";
 export * from "./glossary.js";

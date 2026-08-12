@@ -162,7 +162,11 @@ T3 API level: create · patch có expected_version · validate server (D-JZ)
 **Kiểm chứng**
 - [ ] `pnpm test -- live-preview` xanh · `pnpm test:e2e -- studio-preview` xanh.
 
-**Phụ thuộc:** P1.2 · **Cỡ:** L
+**Ranh giới work package:** `T2a` (M) preview config/API + `is_preview`, no mastery/stats và
+preview-token boundary; `T2b` (M) iframe engine bridge, debounce, controls, error surfaces và
+E2E. T2a → T2b; mỗi package dùng entry runtime thật và có negative test riêng.
+
+**Phụ thuộc:** P1.2 · **Cỡ:** 2 work package M
 
 ### Task 3 — API level
 
@@ -181,7 +185,11 @@ T3 API level: create · patch có expected_version · validate server (D-JZ)
 **Kiểm chứng**
 - [ ] `pnpm test -- level-api` xanh, assertion tham chiếu `BR-STU-01` `BR-STU-02` `BR-STU-06` `BR-STU-07`.
 
-**Phụ thuộc:** P0.6 · P1.11 · P2.2 · **Cỡ:** L
+**Ranh giới work package:** `T3a` (M) create/patch, server validation, optimistic version và
+audit; `T3b` (M) immutable published → new draft, template reset và three forbidden-write
+gates. T3a → T3b; contract/error tests không chờ UI.
+
+**Phụ thuộc:** P0.6 · P1.11 · P2.2 · **Cỡ:** 2 work package M
 
 ### Task 4 — Bố cục studio
 

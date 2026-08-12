@@ -164,7 +164,11 @@ T1 máy trạng thái + hằng số + cổng "không xoá đơn" (D-JL, BR-PAY-0
 **Kiểm chứng**
 - [ ] `pnpm test -- order-create` xanh · `pnpm test:e2e -- checkout-transfer` xanh.
 
-**Phụ thuộc:** T1 · **Cỡ:** L
+**Ranh giới work package:** `T2a` (M) order domain/API — auth, catalog snapshot, idempotent
+pending order, cancel và server VietQR payload; `T2b` (M) transfer UI — QR/copy/summary/manual
+review, child-surface guard và E2E. T2a → T2b, mỗi package một PR và test RED riêng.
+
+**Phụ thuộc:** T1 · **Cỡ:** 2 work package M
 
 ### Task 3 — Nộp chứng từ và quyền tạm
 
@@ -183,7 +187,11 @@ T1 máy trạng thái + hằng số + cổng "không xoá đơn" (D-JL, BR-PAY-0
 **Kiểm chứng**
 - [ ] `pnpm test -- proof-upload` xanh, assertion tham chiếu `BR-PPU-01` `BR-PPU-03` `BR-PPU-04` `BR-PPU-05`.
 
-**Phụ thuộc:** T2 · **Cỡ:** L
+**Ranh giới work package:** `T3a` (M) proof API/security/private storage/re-submit + transaction
+soft unlock; `T3b` (M) User status projection, polite rejection text, confirmation UI và
+notification. T3a → T3b; signed/private asset negative tests ở T3a, E2E User ở T3b.
+
+**Phụ thuộc:** T2 · **Cỡ:** 2 work package M
 
 ### Task 4 — Hàng đợi đơn
 
@@ -203,7 +211,11 @@ T1 máy trạng thái + hằng số + cổng "không xoá đơn" (D-JL, BR-PAY-0
 **Kiểm chứng**
 - [ ] `pnpm test -- payment-queue` xanh · `pnpm test:e2e -- admin-payments` xanh.
 
-**Phụ thuộc:** T3 · P2.1 · **Cỡ:** L
+**Ranh giới work package:** `T4a` (M) list/query/stats/role/child projection/claim; `T4b` (M)
+private proof URL + expiry/audit, duplicate warnings và admin queue UI/E2E. T4a → T4b; danh
+sách không có approve/reject được kiểm từ T4a.
+
+**Phụ thuộc:** T3 · P2.1 · **Cỡ:** 2 work package M
 
 ### Task 5 — Duyệt và từ chối
 
@@ -223,7 +235,15 @@ T1 máy trạng thái + hằng số + cổng "không xoá đơn" (D-JL, BR-PAY-0
 **Kiểm chứng**
 - [ ] `pnpm test -- payment-approval` xanh, assertion tham chiếu `BR-PAP-01`…`BR-PAP-08`; test đồng thời **không** dùng mock transaction.
 
-**Phụ thuộc:** T4 · **Cỡ:** L
+**Ranh giới work package**
+
+- `T5a` (M): approve transaction/row lock, duration/bonus và real-Postgres concurrency tests.
+- `T5b` (M): reject/checklist, rollback, entitlement cache invalidation và negative tests.
+- `T5c` (M): decision UI, audit/notification và E2E approve/reject.
+
+T5a → T5b → T5c; không dồn integration test đồng thời sang PR cuối.
+
+**Phụ thuộc:** T4 · **Cỡ:** 3 work package M
 
 ### Task 6 — Hai job hết hạn
 

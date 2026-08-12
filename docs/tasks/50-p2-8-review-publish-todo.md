@@ -33,6 +33,8 @@
 
 ### Task 2 — Màn hình duyệt
 
+- [ ] `T2a` (M): preview-token binding + review projection/six-group contract, PR riêng.
+- [ ] `T2b` (M): review UI/labels/reason/dual-role + E2E, sau T2a.
 - [ ] Ba vùng: preview engine thật · checklist §7.2 · metadata.
 - [ ] `D-KG`: preview cấp `preview_token` gắn `(entity_type, id, version, manager_id)`.
 - [ ] `BR-CRQ-02` ca âm UI: chưa mở preview → nút duyệt **vô hiệu**.
@@ -61,6 +63,8 @@
 
 ### Task 4 — Publish, archive, rollback
 
+- [ ] `T4a` (M): DB invariant + publish/archive/checklist transaction, SQL-thô test cùng PR.
+- [ ] `T4b` (M): rollback/in-use/active-session + diff/delete/audit integration, sau T4a.
 - [ ] `D-KI`: partial unique index `(code) WHERE status = 'published'` trong migration.
 - [ ] `D-KI` ca âm: ghi bản thứ hai thành `published` bằng **SQL thô** → DB từ chối.
 - [ ] `BR-PUB-02` ca dương: publish v2 → đúng **một** hàng `published` là v2; v1 `archived`.
@@ -84,6 +88,8 @@
 
 ### Task 6 — Nội dung SEO
 
+- [ ] `T6a` (M): model/API/sanitizer/slug/embed/structured-data contract, PR riêng.
+- [ ] `T6b` (M): studio/three previews/review queue/archive warning + E2E, sau T6a.
 - [ ] Năm loại trang: `competency` · `skill` · `age_program` · `topic` · `static`.
 - [ ] Trường §7.1 đủ gồm `faq_items[]`; `access_tier` luôn **`free`**.
 - [ ] `BR-SEO-01` ca âm: đổi slug đã published → slug cũ trả **301**.

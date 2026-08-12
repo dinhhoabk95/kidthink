@@ -62,7 +62,8 @@
 - [ ] Báo cáo in level mỗi template.
 - [ ] Lô kế tiếp chọn từ khoảng trống báo cáo chỉ ra.
 - [ ] Cân bằng band: 3–4 / 4–5 / 5–6 đều có nội dung ở mọi competency.
-- [ ] Cân bằng bậc: đủ level `free` cho lối vào guest; có `login`/`standard`/`premium`.
+- [ ] Cân bằng bậc: **đúng 6** level `free`, một mã `published` mỗi competency, difficulty 1–2; có `login`/`standard`/`premium` cho phần còn lại.
+- [ ] `seed:report` in tường minh sáu mã guest đã được nhóm Nội dung duyệt.
 
 ### Task 5 — Ba cổng quy mô
 
@@ -78,7 +79,7 @@
 - [ ] 100% round-trip · 100% payload trong ngân sách · 0 drift.
 - [ ] Mỗi lô có `content_review_log` và batch row thật.
 - [ ] Không level nào là bản sao đổi số của level khác.
-- [ ] Trẻ thật chơi được ít nhất một level của **mỗi** template, điểm về server.
+- [ ] Trẻ thật chơi được ít nhất một level của **mỗi** template, điểm về server, theo protocol đã duyệt ở [`Task #81`](81-pedagogical-evidence-contract-plan.md).
 - [ ] `pnpm check && pnpm test && pnpm test:e2e && pnpm lint:specs && pnpm check:progress` xanh.
 
 ---
@@ -90,4 +91,5 @@
 - [ ] §11 Q1 (nguồn trần item) đóng theo `D-HG`.
 - [ ] §11 Q2 (bao nhiêu level mỗi skill) đóng bằng số thật.
 - [ ] **Công bố % phủ skill** vào evidence cổng ra P1.
+- [ ] Đóng câu hỏi allow-list bằng đúng sáu mã đã seed; không để “đủ level free” ở dạng định tính.
 - [ ] Tick **P1.11** ở [`14-implementation-sequence-todo.md`](14-implementation-sequence-todo.md) khi `check:progress` tự xanh.

@@ -100,6 +100,7 @@ access-gating ──→ game-config-delivery ──→ play-session-lifecycle
 |---|---|---|
 | 1 | Ràng buộc chất lượng & thiết kế UI | [`design-system-contract.md`](08-quality/design-system-contract.md) · [`accessibility.md`](08-quality/accessibility.md) · [`performance-budgets.md`](08-quality/performance-budgets.md) |
 | 2 | Contract template + 6 template chạy được | [`game-template-contract.md`](01-platform/game-template-contract.md) · [`game-engine-runtime.md`](01-platform/game-engine-runtime.md) |
+| 2b | Đóng contract audio tiếng Việt, fallback trên thiết bị chuẩn và owner của đường asset/authoring trước khi sản xuất nội dung hàng loạt | Runtime hiện thuộc [`game-engine-runtime.md`](01-platform/game-engine-runtime.md) và [`game-config-delivery.md`](04-play/game-config-delivery.md); storage/authoring chưa có spec owner — [`Task #80`](../tasks/80-audio-contract-closure-plan.md) phải đóng trước code tương ứng |
 | 3 | **Gating trước nội dung** | [`access-gating.md`](04-play/access-gating.md) |
 | 4 | Giao config game đã lọc quyền | [`game-config-delivery.md`](04-play/game-config-delivery.md) |
 | 5 | Hạ tầng hàng đợi công việc & đường ống telemetry | [`job-queue.md`](01-platform/job-queue.md) · [`telemetry-pipeline.md`](01-platform/telemetry-pipeline.md) |
@@ -110,6 +111,7 @@ access-gating ──→ game-config-delivery ──→ play-session-lifecycle
 | 10 | Gắn tag nội dung & **Seeder nội dung nền** | [`content-tagging.md`](01-platform/content-tagging.md) · [`content-seed-authoring.md`](01-platform/content-seed-authoring.md) |
 | 11 | ≥120 game level `published` | [`game-level-model.md`](05-content/game-level-model.md) |
 | 11b | Tìm kiếm nội dung — chung cho catalog công khai, thư viện, studio | [`content-search.md`](01-platform/content-search.md) |
+| 11c | Đóng claim, KPI và protocol evidence sư phạm/kiểm thử với trẻ trước cổng ra P1 | Chưa có spec owner; [`Task #81`](../tasks/81-pedagogical-evidence-contract-plan.md) tạo contract trước khi các ca “trẻ thật” được dùng làm bằng chứng sản phẩm |
 | 12 | Báo cáo cơ bản, trang chính phụ huynh & thư viện cá nhân | [`basic-report.md`](03-account/basic-report.md) · [`member-dashboard.md`](03-account/member-dashboard.md) · [`my-library.md`](03-account/my-library.md) |
 | 13 | Public site, SEO & Trang pháp lý | [`landing-page.md`](02-public/landing-page.md) · [`game-catalog-public.md`](02-public/game-catalog-public.md) · [`game-detail-public.md`](02-public/game-detail-public.md) · [`seo-and-structured-data.md`](02-public/seo-and-structured-data.md) · [`legal-pages.md`](02-public/legal-pages.md) · [`faq-and-help.md`](02-public/faq-and-help.md) · [`cookie-and-consent-banner.md`](02-public/cookie-and-consent-banner.md) |
 | 14 | Cài đặt tài khoản, đồng ý pháp lý & xoá tài khoản | [`account-settings.md`](03-account/account-settings.md) · [`consent-management.md`](03-account/consent-management.md) · [`account-deletion.md`](03-account/account-deletion.md) |
@@ -143,8 +145,8 @@ image-upload · emoji-picker ──→ game-level-studio
 | 3 | Luồng tiền, hai đầu | [`payment-flow.md`](00-foundation/payment-flow.md) · [`pricing-page.md`](02-public/pricing-page.md) · [`payment-order-create.md`](03-account/payment-order-create.md) → [`payment-proof-upload.md`](03-account/payment-proof-upload.md) → [`payment-queue.md`](06-admin/payment-queue.md) → [`payment-approval.md`](06-admin/payment-approval.md) |
 | 4 | Cấp quyền tay + xem catalog | [`entitlement-grant.md`](06-admin/entitlement-grant.md) · [`package-catalog-admin.md`](06-admin/package-catalog-admin.md) · [`subscription-view.md`](03-account/subscription-view.md) |
 | 5 | Studio: form sinh từ schema | [`schema-driven-form.md`](06-admin/schema-driven-form.md) |
-| 6 | Studio: soạn game level | [`game-level-studio.md`](06-admin/game-level-studio.md) · [`live-preview.md`](06-admin/live-preview.md) |
-| 7 | Asset & Storage | [`image-storage.md`](01-platform/image-storage.md) · [`image-upload.md`](06-admin/image-upload.md) · [`emoji-picker.md`](06-admin/emoji-picker.md) · [`asset-usage-tracking.md`](06-admin/asset-usage-tracking.md) |
+| 6 | Studio: soạn game level + bộ chọn emoji là vật liệu chính | [`game-level-studio.md`](06-admin/game-level-studio.md) · [`live-preview.md`](06-admin/live-preview.md) · [`emoji-picker.md`](06-admin/emoji-picker.md) |
+| 7 | Asset & Storage ảnh | [`image-storage.md`](01-platform/image-storage.md) · [`image-upload.md`](06-admin/image-upload.md) · [`asset-usage-tracking.md`](06-admin/asset-usage-tracking.md) |
 | 8 | Duyệt và phát hành | [`content-review-queue.md`](06-admin/content-review-queue.md) · [`publish-and-version.md`](06-admin/publish-and-version.md) · [`seo-content-admin.md`](06-admin/seo-content-admin.md) |
 | 9 | Cờ & Quản trị dữ liệu | [`feature-flag-service.md`](01-platform/feature-flag-service.md) · [`feature-flags.md`](06-admin/feature-flags.md) · [`data-export.md`](06-admin/data-export.md) · [`notification-admin.md`](06-admin/notification-admin.md) |
 | 10 | Nhật ký | [`audit-log-viewer.md`](06-admin/audit-log-viewer.md) · [`error-log-viewer.md`](06-admin/error-log-viewer.md) · [`system-activity.md`](06-admin/system-activity.md) |
@@ -162,6 +164,7 @@ image-upload · emoji-picker ──→ game-level-studio
 | 6 | Gợi ý game kế tiếp | [`next-game-recommendation.md`](04-play/next-game-recommendation.md) |
 | 7 | Báo cáo nâng cao | [`advanced-report.md`](03-account/advanced-report.md) |
 | 8 | Trưng bày chương trình ra public | [`program-showcase.md`](02-public/program-showcase.md) |
+| 9 | Tích hợp curriculum vào account: bật khối chương trình đang học, chốt bố cục nhiều trẻ và phạm vi thư viện theo trẻ | [`member-dashboard.md`](03-account/member-dashboard.md) · [`my-library.md`](03-account/my-library.md) · [`curriculum-player.md`](04-play/curriculum-player.md) — [`Task #82`](../tasks/82-p3-account-curriculum-integration-plan.md) |
 
 ## P4 — Add-on (ngoài MVP)
 
@@ -169,9 +172,46 @@ Chỉ bắt đầu khi P0–P3 đã `implemented`. Mỗi add-on **lên catalog c
 
 [`worksheet-model.md`](05-content/worksheet-model.md) · [`lesson-plan-creator.md`](07-addon/lesson-plan-creator.md) → [`pdf-export.md`](07-addon/pdf-export.md) · [`personal-curriculum.md`](07-addon/personal-curriculum.md) · [`custom-game-builder.md`](07-addon/custom-game-builder.md) · [`ai-credit-ledger.md`](07-addon/ai-credit-ledger.md) → [`ai-assistant.md`](07-addon/ai-assistant.md) · [`semantic-search.md`](07-addon/semantic-search.md)
 
-## P5 — Scale (ngoài MVP)
+## P5 — Web scale (ngoài MVP)
 
-Cổng thanh toán tự động · [`pwa-install.md`](01-platform/pwa-install.md) · [`offline-play.md`](01-platform/offline-play.md) nâng cao · classroom · mobile app · licensing.
+P5 chỉ mở sau khi P0–P4 `implemented`. Đây là scale cho **cùng sản phẩm web tại Việt Nam**,
+không phải nơi giữ chỗ cho mô hình sản phẩm khác.
+
+| # | Việc | Spec sở hữu | Hồ sơ task |
+|---|---|---|---|
+| 0 | Đóng contract Web scale và tạo spec owner còn thiếu | [`pwa-install.md`](01-platform/pwa-install.md) đã có; automated payment và offline curriculum pack phải có spec riêng trước code | Task #70 |
+| 1 | Cổng thanh toán tự động, đối soát và refund theo outcome đã duyệt | Spec mới do Task #70 chốt; không gộp các outcome ship độc lập | Task #71 |
+| 2 | PWA install và offline curriculum pack | [`pwa-install.md`](01-platform/pwa-install.md) · [`offline-play.md`](01-platform/offline-play.md); pack tải trước cần owner riêng nếu được nhận | Task #72 |
+| 3 | Cổng ra Web scale dựa trên evidence | Spec/task manifest được duyệt ở Task #70 | Task #78 |
+
+Task #73–#77 đã loại khỏi backlog hiện hành: classroom, native mobile app, licensing,
+localization và mở thị trường không có spec/task placeholder. ID task không tái sử dụng. Nếu
+sau này Product mở một outcome, bắt đầu bằng quyết định scope + spec mới + task số mới.
+
+## Coverage plan, task và mức sẵn sàng
+
+“Có file plan” chỉ chứng minh **coverage cấu trúc**. Một phase chỉ sẵn sàng implement khi spec
+owner đã tồn tại, câu hỏi chặn phase đã có quyết định người, mọi dependency đứng trước, và work
+package đã được tách xuống cỡ S/M. Audit ngày 2026-08-12 cho kết quả:
+
+| Phase | Coverage hồ sơ hiện hành | Mức sẵn sàng sau audit |
+|---|---|---|
+| P0 | Task #1, #2, #3, #7, #14 và các increment #16–#25 | Đủ coverage; bước chưa tick vẫn phải qua gate của Task #14 |
+| P1 | Task #26–#42; contract closure mới ở [`Task #80`](../tasks/80-audio-contract-closure-plan.md) và [`Task #81`](../tasks/81-pedagogical-evidence-contract-plan.md) | **Chưa đủ để tuyên bố implementation-ready**: audio storage/authoring chưa có owner; evidence sư phạm chưa có contract; sáu mã allow-list guest chưa chốt |
+| P2 | Task #43–#53 | Đủ cho 11 bước hiện có, nhưng lời hứa “audio widget ở P2.7” không có trong Task #49; chỉ mở lại sau Task #80 |
+| P3 | Task #54–#61 và lát account bổ sung [`Task #82`](../tasks/82-p3-account-curriculum-integration-plan.md) | Coverage cũ thiếu ba debt account từ P1.12; còn chặn người ở quyết định ≥60 hay ≥126 lesson và bố cục nhiều trẻ |
+| P4 | Task #62–#69 | Đủ 8 outcome add-on hiện hành; giá, quota, provider và schema vector vẫn là contract gate, không được thay bằng số placeholder |
+| P5 | Task #70–#72 và #78 | Đủ ở mức contract-first cho Web scale; implementation bị chặn tới khi Task #70 tạo đủ spec owner |
+
+Task #14 là master dependency graph và phase gate; các task increment là lát dọc có acceptance
+criteria. Hai lớp bổ sung nhau, không phải hai implementation plan cạnh tranh. Task #1–#13 và
+[`plan.md`](../tasks/plan.md)/[`todo.md`](../tasks/todo.md) là hồ sơ đã hoàn tất, không phải
+backlog đang hoạt động.
+
+Audit task sizing ban đầu tìm thấy **19** work package tự gắn cỡ `L`/`XL` trong 10 plan active.
+[`Task #79`](../tasks/79-roadmap-scope-audit-plan.md) đã tách cả 19 thành work package S/M có
+dependency, gate và ranh giới PR; query `**Cỡ:** L|XL` hiện trả rỗng. Plan mới không được thêm
+lại nhãn L/XL không có lát con; mỗi package tiếp tục giữ khoảng 1–5 file và test RED riêng.
 
 ## Việc chạy song song được
 

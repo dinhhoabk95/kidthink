@@ -39,6 +39,8 @@
 
 ### Task 2 — Preview bằng engine thật
 
+- [ ] `T2a` (M): preview config/API + no-write boundary/token, contract tests trong PR riêng.
+- [ ] `T2b` (M): iframe bridge/debounce/controls/errors + E2E, sau T2a.
 - [ ] `D-JW`: iframe **cùng trang**, không popup.
 - [ ] `BR-LPV-01` cổng: import trùng entry point runtime trẻ.
 - [ ] Ca âm: engine mock hoặc ảnh tĩnh → **đỏ**.
@@ -57,6 +59,8 @@
 
 ### Task 3 — API level
 
+- [ ] `T3a` (M): create/patch + server validation/version conflict/audit, PR riêng.
+- [ ] `T3b` (M): immutable→new draft/template reset + forbidden-write gates, sau T3a.
 - [ ] `POST /api/managers/levels` → **201** level `draft`, mã sinh bởi **server**.
 - [ ] `PATCH .../{code}/{version}` nhận field + `expected_version`.
 - [ ] Ca âm ghi đè: B lưu với `expected_version` cũ → **409** `VERSION_CONFLICT`.

@@ -2,7 +2,7 @@
 spec: TAXONOMY-SERVICE
 title: Dịch vụ taxonomy — cây 5 tầng
 area: platform
-status: approved
+status: implemented
 mvp: true
 phase: P0
 reviewed: 2026-08-07

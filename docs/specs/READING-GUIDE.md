@@ -193,7 +193,7 @@ Nên viết `không dùng tenant_id` là hợp lệ, viết `dùng tenant_id` th
 | **P2** Commerce + Admin | Package, VietQR, entitlement, Studio, audit log | Studio thu hẹp được |
 | **P3** Curriculum | Lesson ≥60, curriculum, mastery + adaptive, báo cáo nâng cao | 1 curriculum thay vì 5 |
 | **P4** Add-on | AI, export PDF, Custom Game Builder | ngoài MVP |
-| **P5** Scale | Thanh toán tự động, PWA, mobile | ngoài MVP |
+| **P5** Web scale | Thanh toán tự động, PWA install, offline curriculum pack | ngoài MVP |
 
 **4 thứ cấm bao giờ cắt:** gating · audit · tuân thủ dữ liệu trẻ · versioning nội dung.
 Lý do: rẻ khi làm đúng lúc, rất đắt khi vá sau.
@@ -204,8 +204,9 @@ Lý do: rẻ khi làm đúng lúc, rất đắt khi vá sau.
 
 | Cấm | Dùng gì | Vì sao |
 |---|---|---|
-| `tenant`, `tenant_id` | — | Multi-tenancy **vĩnh viễn** ngoài phạm vi |
-| `school`, `classroom` | — | B2B ngoài phạm vi MVP |
+| `tenant`, `tenant_id` | — | Multi-tenancy ngoài scope hiện hành |
+| `school`, `classroom` | — | B2B ngoài scope hiện hành |
+| `native mobile`, `licensing`, `marketplace` | — | Không có plan/spec triển khai; mở lại phải đổi canonical scope trước |
 | `persona`, `role` (trên `users`) | `entitlement` | Năng lực suy từ quyền, không từ nhãn |
 | `tier` (cho **người**) | `package` | `tier` chỉ mô tả **content** |
 | `domain` (tầng 2 taxonomy) | `strand` | Trùng nghĩa với domain module |

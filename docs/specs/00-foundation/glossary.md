@@ -5,7 +5,7 @@ area: foundation
 status: implemented
 mvp: true
 phase: P0
-reviewed: 2026-08-06
+reviewed: 2026-08-11
 owns:
   - Định nghĩa duy nhất của mọi thuật ngữ domain
   - Ánh xạ thuật ngữ PRD ↔ thuật ngữ code
@@ -132,8 +132,9 @@ trong corpus, không phải hợp đồng API.
 
 | Từ | Vì sao cấm | Dùng gì thay |
 |---|---|---|
-| `tenant`, `tenant_id` | Multi-tenancy vĩnh viễn ngoài phạm vi | — |
-| `school`, `school_admin`, `classroom` | B2B ngoài phạm vi MVP | — |
+| `tenant`, `tenant_id` | Multi-tenancy ngoài scope hiện hành | — |
+| `school`, `school_admin`, `classroom` | B2B ngoài scope hiện hành | — |
+| `native_mobile`, `licensing`, `marketplace` | Outcome ngoài scope hiện hành; không tạo placeholder | — |
 | `persona`, `role` (trên `users`) | Năng lực suy từ entitlement, không từ nhãn | `entitlement` |
 | `tier` (cho **người dùng**) | `tier` chỉ mô tả **content** | `package`, `entitlement` |
 | `domain` (cho tầng 2 taxonomy) | Trùng nghĩa với domain module | `strand` |

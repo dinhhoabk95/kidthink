@@ -7,7 +7,9 @@ vi.mock("../../cache/src/index.js", async (importOriginal) => {
     await importOriginal<typeof import("../../cache/src/index.js")>();
   return {
     ...actual,
-    checkRateLimit: vi.fn((...args) => actual.checkRateLimit(...args)),
+    checkRateLimit: vi.fn((key: string, limit: number, windowSeconds: number) =>
+      actual.checkRateLimit(key, limit, windowSeconds)
+    ),
   };
 });
 

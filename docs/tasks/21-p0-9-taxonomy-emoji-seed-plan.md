@@ -206,7 +206,13 @@ mỗi skill.
 - [ ] Mỗi lô qua cổng T3/T4 **ngay khi soạn xong**, không dồn tới cuối.
 - [ ] Người review ký từng lô.
 
-**Phụ thuộc:** H1 · T4 · **Cỡ:** XL (người — chia lô, không chia nhỏ được về mặt kỹ thuật)
+**Ranh giới work package:** sau pilot, chia phần còn lại thành các batch `LO-BATCH-NNN` tối đa
+30 LO. Với pilot đủ 30, cần ít nhất 22 batch tiếp theo để đạt 690. Mỗi batch là một work
+package M của Nhóm Nội dung: chọn skill → soạn → chạy T3/T4 → sửa → một người ký review; không
+được mở batch kế tiếp khi batch trước chưa qua gate. Nếu đo H1 làm lịch lệch >30%, tính lại số
+batch trước khi tiếp tục, không tăng kích thước batch.
+
+**Phụ thuộc:** H1 · T4 · **Cỡ:** ≥22 work package M (người), mỗi package ≤30 LO
 
 ### T5 — Migration `emoji_registry`
 

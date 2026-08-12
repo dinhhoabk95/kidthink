@@ -5,7 +5,7 @@ area: platform
 status: approved
 mvp: true
 phase: P1
-reviewed: 2026-08-08
+reviewed: 2026-08-11
 owns:
   - Danh sách nhà cung cấp OAuth được phép
   - Hình dạng luồng authorization code + PKCE
@@ -251,4 +251,4 @@ Scenario: BR-OAP-15 — không lưu ảnh đại diện
 | # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
 |---|---|---|---|---|
 | 1 | Zalo có nên là provider thứ ba không? Thị phần VN cao, nhưng luồng đồng ý và tài liệu khác hẳn hai provider hiện có | Sau P1 | P2 | hoãn — thêm provider là sửa §7.1 qua PR |
-| 2 | Apple Sign-In bắt buộc nếu lên App Store — có làm PWA/native ở P5 không? | [`pwa-install.md`](pwa-install.md) | P5 | hoãn — P5, ngoài MVP |
+| ~~2~~ | ~~Apple Sign-In bắt buộc nếu lên App Store — có làm PWA/native ở P5 không?~~ **Đóng 2026-08-11 (`D-NM`, triển khai D11)**: không có native app/App Store trong scope hiện hành. PWA là web delivery và không tạo yêu cầu Apple Sign-In. | — | Đã đóng | D-NM |

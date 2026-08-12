@@ -50,7 +50,9 @@ hình hết giờ, và bộ lời khen tiếng Việt.
 
 ### 1.3 Đã chốt, không mở lại
 
-`D-AV` lời khen: P1 dùng **audio clip tĩnh + Web Speech API (TTS)**, thu studio hoãn P2 ·
+`D-AV` lời khen: P1 dùng **audio clip tĩnh + Web Speech API (TTS)**; fallback và đường
+storage/authoring phải được đóng ở [`Task #80`](80-audio-contract-closure-plan.md), không mặc
+định gán cho P2.7 ảnh ·
 `D-DB` mascot Thỏ Tini ở mọi theme, background đổi theo theme · `D-AZ` trần 30/60/90 phút khớp
 khuyến nghị AAP/WHO · `D-BB` gợi ý ngoài màn hình dùng **danh sách tĩnh 12 hoạt động** dạng seed.
 
@@ -87,7 +89,8 @@ cùng một cổng, có ca âm riêng. Rải ra thì mục thứ chín (thêm �
 [`game-engine-runtime.md`](../specs/01-platform/game-engine-runtime.md).** `D-AV` đã chốt cho
 lời khen: clip tĩnh + Web Speech TTS ở P1. Câu hỏi narration mà `D-FI` nêu lên ở P1.2 là **cùng
 một câu hỏi**; trả lời khác nhau cho hai chỗ là hai đường audio phải bảo trì. Áp `D-AV` cho cả
-chỉ dẫn level. Thu âm người thật là việc của P2, không chặn P1.
+chỉ dẫn level. P1 chỉ nghiệm thu khi fallback trên thiết bị chuẩn đã có test; thu âm người thật
+và audio authoring chưa có spec owner, phải đi qua Task #80 trước code.
 
 **D-GS — hạn mức nối vào **đường 402 đã có**, không tạo đường thứ hai.** P1.3 đã cắm bước 6 vào
 `assertContentAccess`. Bước này thay hàm quota "chưa giới hạn" bằng số thật đọc từ
@@ -122,6 +125,7 @@ T1 feedbackSystem: bảng phản hồi §7.1 · lời khen xoay vòng · ngân s
 - [ ] Ngân sách §7.3: 1,2s / ≤40 hạt (object pool) / reduced-motion 400ms, 0 hạt.
 - [ ] Bộ lời khen §7.2 xoay vòng, **không lặp liên tiếp**; `BR-FBK-08` không so sánh trẻ với trẻ khác; cấm "Sai rồi", "Không đúng", "Bé chưa giỏi".
 - [ ] Audio theo `D-AV`: clip tĩnh + Web Speech TTS (`D-GR`).
+- [ ] Ca âm từ Task #80: thiết bị không có giọng `vi-VN` hoặc `speechSynthesis` fail → dùng asset tĩnh hay trình diễn hình đã duyệt; không im lặng và không crash phiên.
 
 **Kiểm chứng**
 - [ ] `pnpm test -- feedback` xanh, assertion tham chiếu `BR-FBK-01` `BR-FBK-02` `BR-FBK-07`.
@@ -216,6 +220,7 @@ T1 feedbackSystem: bảng phản hồi §7.1 · lời khen xoay vòng · ngân s
 - [ ] Mỗi `BR-SCF-*` `BR-FBK-*` `BR-PGT-*` `BR-HPL-*` có ít nhất một test tham chiếu mã rule.
 - [ ] Bốn spec sang `implemented`.
 - [ ] Đóng §11 Q3 của [`game-engine-runtime.md`](../specs/01-platform/game-engine-runtime.md) bằng `D-GR` (áp `D-AV`).
+- [ ] Task #80 đã đồng bộ câu hỏi audio ở taxonomy/engine, owner storage/authoring và ma trận fallback; không còn lời hứa trần “thu studio ở P2”.
 - [ ] Ghi lại §11 Q1 của scaffolding: ngưỡng cần đo với trẻ thật — **chặn nghiệm thu P1**, chủ Studio UI.
 - [ ] Ghi lại §11 Q2 của scaffolding (hint_rate cao = khó hay sai?) và Q2 của parent-gate (fail > 15%) thành **ngưỡng KPI** theo dõi ở P1.16.
 - [ ] Tick **P1.8** ở [`14-implementation-sequence-todo.md`](14-implementation-sequence-todo.md) khi `check:progress` tự xanh.
@@ -249,6 +254,6 @@ T1 feedbackSystem: bảng phản hồi §7.1 · lời khen xoay vòng · ngân s
 
 - Quản lý hồ sơ trẻ, chọn trẻ chơi — P1.9.
 - Báo cáo thời gian chơi cho người lớn — P1.12.
-- Thu âm studio cho lời khen và chỉ dẫn — P2.
+- Thu âm studio và audio picker/upload — ngoài bước này; chỉ nhận phase sau khi Task #80 tạo spec owner và implementation task được người duyệt.
 - Hạn mức theo tuần — P3 (§11 Q2).
 - PWA toàn màn hình để chặn nút back — P5 (parent-gate §11 Q1).

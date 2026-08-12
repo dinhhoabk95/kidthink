@@ -147,6 +147,7 @@ T1 guard reauth dùng chung + danh sách route nhạy cảm (D-IJ)
 - [ ] `BR-ACS-05`: đổi email thành công → thông báo tới địa chỉ **cũ**.
 - [ ] **409** khi email mới đã có người dùng.
 - [ ] `BR-ACS-06`: `PUT /api/users/notification-preferences` chỉ nhận `weekly_progress` và `content_new`; gửi loại giao dịch → **422**.
+- [ ] Trả nợ P1.12: toggle `weekly_progress` đọc/ghi đúng `weekly_digest_enabled`, mặc định `true`; job digest tuần tôn trọng thay đổi ngay từ lần chạy kế tiếp.
 - [ ] `BR-ACS-07` ca âm: quét form — không ô tuổi, giới tính, số điện thoại, địa chỉ.
 - [ ] `BR-ACS-08` ca âm: không cài đặt nào của trẻ trên trang này.
 
@@ -246,6 +247,7 @@ T1 guard reauth dùng chung + danh sách route nhạy cảm (D-IJ)
 - [ ] §11 Q2 của [`consent-management.md`](../specs/03-account/consent-management.md) (ai quyết version chính sách, bao lâu một lần) nêu lại cho chủ — vận hành, **không chặn code**.
 - [ ] Nợ ghi sang **P1.15**: chèn khối SNS vào nhóm Bảo mật (`BR-ACS-11`) và thêm hai route vào danh sách reauth.
 - [ ] Nợ ghi sang **P2.11**: chèn MFA vào nhóm Bảo mật.
+- [ ] Xác nhận nợ digest tuần của [`38-p1-12-report-dashboard-library-plan.md`](38-p1-12-report-dashboard-library-plan.md) đã đóng bằng toggle `weekly_progress`; không còn debt P1.14 vô chủ.
 - [ ] Tick **P1.14** ở [`14-implementation-sequence-todo.md`](14-implementation-sequence-todo.md) khi `check:progress` tự xanh.
 
 **Cỡ:** S

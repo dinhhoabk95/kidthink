@@ -5,11 +5,11 @@ area: foundation
 status: implemented
 mvp: true
 phase: P0
-reviewed: 2026-08-06
+reviewed: 2026-08-11
 owns:
   - Định nghĩa cái gì thuộc MVP
   - Thứ tự hy sinh khi thiếu nguồn lực
-  - Danh sách vĩnh viễn ngoài phạm vi
+  - Danh sách ngoài phạm vi hiện hành và cổng đưa một outcome trở lại
 depends_on:
   - GLOSSARY
 ---
@@ -31,6 +31,11 @@ Bất cứ thứ gì không nằm trên chu trình đó đều là P4 trở đi.
 
 **MVP = P0 → P3.** Quyết định 2026-08-04: code viết mới từ đầu, và Authoring Studio đầy đủ
 nằm trong MVP. Đây là tổ hợp đắt — §5 nói rõ cắt gì nếu nguồn lực không đủ.
+
+Phạm vi sản phẩm hiện hành là **web-only, Việt Nam-only**. PWA là cách phân phối web, không
+phải native mobile app. Classroom/B2B, licensing/white-label, marketplace và mở thị trường
+không được giữ dưới dạng task hay placeholder “để sau”; nếu nhu cầu xuất hiện, người quyết mở
+một chương trình scope mới và spec đi trước plan.
 
 ## 2. Actors
 
@@ -82,7 +87,7 @@ Bốn thứ này rẻ khi làm đúng lúc và rất đắt khi vá sau. Chúng 
 | `BR-MVP-01` | Phase không xong khi cổng ra chưa xanh toàn bộ | 90% xong của một cổng an toàn là 0% an toàn |
 | `BR-MVP-02` | **NEVER bán một gói chưa mở được tính năng nào** | Vấn đề đạo đức thương mại, không chỉ là gap kỹ thuật |
 | `BR-MVP-03` | Add-on lên catalog **cùng lúc** với tính năng của nó, không trước | idem |
-| `BR-MVP-04` | Thứ ở §8 **vĩnh viễn ngoài phạm vi** — không viết code, không viết spec, không để lại chỗ trống trong schema cho nó | Chỗ trống "để sau này dùng" là nợ không ai trả |
+| `BR-MVP-04` | Thứ ở §8 **ngoài phạm vi hiện hành** — không viết code, spec triển khai, task hay chỗ trống schema cho nó. Muốn đưa lại phải có quyết định sản phẩm mới, sửa canonical scope rồi viết spec trước plan. | Chỗ trống “để sau này dùng” biến giả định thành contract và kéo kiến trúc hiện tại theo một mô hình chưa được chọn |
 | `BR-MVP-05` | Bốn thứ ở §5 không được cắt dù nguồn lực thế nào | Bốn yếu tố này (dữ liệu trẻ, audit thanh toán, isolation, logging) bảo vệ pháp lý và nền tảng hệ thống |
 | `BR-MVP-06` | Nội dung MVP đủ cho **4–8 tuần** quay lại | Dưới ngưỡng đó thì retention không đo được, và KPI không có nghĩa |
 
@@ -104,23 +109,24 @@ năng đo, và không thêm lại được cho dữ liệu đã thu.
 
 ## 8. API contract
 
-Spec này không có route — mục này giữ số thứ tự chuẩn nhưng nội dung là danh sách vĩnh viễn
-ngoài phạm vi. Không phải "sau MVP" — là **không bao giờ**, trừ khi có quyết định sản phẩm mới
-viết lại spec này.
+Spec này không có route — mục này giữ số thứ tự chuẩn nhưng nội dung là danh sách **ngoài phạm
+vi hiện hành**. Đây không phải backlog “sau MVP”. Chỉ một quyết định sản phẩm mới sửa canonical
+scope mới được đưa một outcome trở lại; khi đó viết spec sở hữu rồi mới lập plan/task.
 
 | Ngoài phạm vi | Vì sao |
 |---|---|
 | Multi-tenancy, `tenant_id` | B2C. Thêm trục tenant vào mọi query để phục vụ khách hàng chưa tồn tại |
-| School admin, class roster, classroom lockdown | B2B khác mô hình bán, khác mô hình hỗ trợ, khác nghĩa vụ pháp lý |
+| School admin, class roster, classroom | B2B khác mô hình bán, khác mô hình hỗ trợ, khác nghĩa vụ pháp lý |
 | Marketplace nội dung | Kéo theo kiểm duyệt UGC ở quy mô, thanh toán cho người bán, tranh chấp bản quyền |
 | Leaderboard công khai | Vi phạm nguyên tắc thiết kế cho trẻ 3–6 và ranh giới [`child-data-compliance.md`](child-data-compliance.md) |
 | Mạng xã hội, bình luận, chia sẻ công khai | idem |
 | Nhiều cấp admin, phân quyền tuỳ biến | Hai role là đủ cho một đội vận hành |
-| White-label, licensing | |
+| White-label, licensing | Đổi mô hình phân phối, quyền nội dung, hợp đồng và thường kéo theo tenant/B2B |
 | Realtime collaboration | |
 | AI tự sinh và **tự phát hành** nội dung; LLM chạy trong hệ thống để sinh nội dung | Ranh giới cứng — nội dung nền soạn bằng seeder trong repo, người merge PR mới là phát hành. `01-platform/content-seed-authoring.md` |
 | Multiplayer | |
-| Native mobile app | Web + PWA đủ cho tablet |
+| Native mobile app, App Store, Google Play | Web responsive + PWA đủ cho tablet; không duy trì thêm native client và store release pipeline |
+| Localization và tuân thủ thị trường ngoài Việt Nam | Chưa có thị trường đích; không chọn locale/jurisdiction giả trước nhu cầu thật |
 
 ## 9. Acceptance criteria — MVP hoàn thành khi
 
@@ -153,7 +159,7 @@ Scenario: Manager tạo nội dung không cần code
   And không có deploy nào xảy ra
 
 Scenario: BR-MVP-04 — không có dấu vết của thứ ngoài phạm vi
-  When grep tìm tenant_id, school_admin, classroom, leaderboard trong toàn bộ source
+  When grep tìm tenant_id, school_admin, classroom, native_mobile, licensing, marketplace trong toàn bộ source
   Then không kết quả nào ngoài file spec liệt kê chúng như bị cấm
 ```
 

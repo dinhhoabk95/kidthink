@@ -3,9 +3,9 @@
 > Kế hoạch: [`14-implementation-sequence-plan.md`](14-implementation-sequence-plan.md).
 > Thứ tự gốc: [`roadmap.md`](../specs/roadmap.md). Cổng ra phase: [`SPEC.md`](../SPEC.md) §13.
 >
-> Đơn vị làm việc là **một bước**, không phải một spec (quyết định D1). Mỗi bước chạy đủ tám việc
-> ở kế hoạch mục 5. Độ chi tiết giảm dần theo phase (quyết định D3): P0 chi tiết tới spec, P1–P2
-> mức bước, P3–P5 chỉ thứ tự.
+> Bước roadmap sở hữu outcome; work package S/M mới là đơn vị implementation (quyết định D1).
+> Mỗi bước chạy đủ chín việc ở kế hoạch mục 5. Increment plan #16–#69 giữ acceptance chi tiết;
+> P5 contract-first qua Task #70, và contract gap mới đi qua Task #80–#82.
 >
 > ```
 > export PATH=/Users/macbook/.nvm/versions/node/v24.15.0/bin:$PATH
@@ -16,7 +16,7 @@
 - [x] `pnpm lint:specs 2>&1 | tail -2` — 0 lỗi, 0 cảnh báo
 - [x] `grep -rl "^status: approved" --include="*.md" docs/specs | xargs grep -l "^spec: " | wc -l` — ra **130**
 - [x] `pnpm check && pnpm test` xanh
-- [x] Đọc kế hoạch mục 3 (vì sao không dùng `depends_on` làm nguồn thứ tự) và mục 5 (tám việc)
+- [x] Đọc kế hoạch mục 3 (vì sao không dùng `depends_on` làm nguồn thứ tự) và mục 5 (chín việc)
 
 ---
 
@@ -52,7 +52,7 @@ Năm cạnh `depends_on` đảo phase — quyết định từng cái, cấp mã
 
 ## P0 — Foundation, 35 spec
 
-Mỗi bước: tám việc ở kế hoạch mục 5, một PR.
+Mỗi bước: chín việc ở kế hoạch mục 5; mỗi work package S/M một PR.
 
 - [x] **P0.0** Cổng chất lượng và review vùng nhạy cảm — [`testing-strategy.md`](../specs/08-quality/testing-strategy.md) · [`ai-codegen-pipeline.md`](../specs/01-platform/ai-codegen-pipeline.md) · [`mvp-scope.md`](../specs/00-foundation/mvp-scope.md)
 - [x] **P0.0b** Cổng chống tick khống `pnpm check:progress` — kế hoạch mục 10; ca âm trước: commit chỉ đổi `[ ]` thành `[x]` phải làm cổng đỏ
@@ -65,8 +65,8 @@ Mỗi bước: tám việc ở kế hoạch mục 5, một PR.
 - [x] **P0.7** Thiết kế schema — [`data-model-overview.md`](../specs/01-platform/data-model-overview.md) → [`schema-identity-billing.md`](../specs/01-platform/schema-identity-billing.md) · [`schema-content-taxonomy.md`](../specs/01-platform/schema-content-taxonomy.md) · [`schema-play-telemetry.md`](../specs/01-platform/schema-play-telemetry.md)
 - [x] **P0.8** Migration đầu tiên, gate local xanh trên schema thật
 - [x] **P0.8b** Sao lưu và quan sát; dựng khung tối thiểu `packages/queue` + `apps/worker` cho job `backup:postgres` (`D-BT`, `D-BU`) — [`backup-and-restore.md`](../specs/01-platform/backup-and-restore.md) · [`health-check.md`](../specs/01-platform/health-check.md)
-- [ ] **P0.9** Taxonomy service + seed Lớp 1 — [`taxonomy-service.md`](../specs/01-platform/taxonomy-service.md) · [`emoji-registry.md`](../specs/01-platform/emoji-registry.md)
-- [ ] **P0.9b** Email và guard; thêm job `email:send` lên khung queue tối thiểu (`D-BU`) — [`notification-service.md`](../specs/01-platform/notification-service.md) · [`rate-limiting.md`](../specs/01-platform/rate-limiting.md)
+- [x] **P0.9** Taxonomy service + seed Lớp 1 — [`taxonomy-service.md`](../specs/01-platform/taxonomy-service.md) · [`emoji-registry.md`](../specs/01-platform/emoji-registry.md)
+- [x] **P0.9b** Email và guard; thêm job `email:send` lên khung queue tối thiểu (`D-BU`) — [`notification-service.md`](../specs/01-platform/notification-service.md) · [`rate-limiting.md`](../specs/01-platform/rate-limiting.md)
 - [ ] **P0.10** Auth end-to-end bằng email/mật khẩu — [`registration.md`](../specs/03-account/registration.md) · [`email-verification.md`](../specs/03-account/email-verification.md) · [`login-and-session.md`](../specs/03-account/login-and-session.md) · [`password-recovery.md`](../specs/03-account/password-recovery.md)
 - [ ] **P0.11** Audit log, trước mọi hành động cần audit — [`audit-log.md`](../specs/01-platform/audit-log.md)
 - [ ] **P0.11b** Đăng nhập admin — [`admin-auth.md`](../specs/06-admin/admin-auth.md)
@@ -94,6 +94,7 @@ MVP, và nó chỉ cần bước P1.2 xong.
 
 - [ ] **P1.1** Ràng buộc chất lượng & thiết kế UI — [`design-system-contract.md`](../specs/08-quality/design-system-contract.md) · [`accessibility.md`](../specs/08-quality/accessibility.md) · [`performance-budgets.md`](../specs/08-quality/performance-budgets.md)
 - [ ] **P1.2** Contract template + 6 template chạy được — [`game-template-contract.md`](../specs/01-platform/game-template-contract.md) · [`game-engine-runtime.md`](../specs/01-platform/game-engine-runtime.md)
+- [ ] **P1.2b** Đóng contract audio tiếng Việt, fallback và spec owner asset/authoring — [`Task #80`](80-audio-contract-closure-plan.md); chưa có contract thì không được coi placeholder P2.7 là coverage
 - [ ] **P1.3** Gating trước nội dung — [`access-gating.md`](../specs/04-play/access-gating.md)
 - [ ] **P1.4** Giao config game đã lọc quyền — [`game-config-delivery.md`](../specs/04-play/game-config-delivery.md)
 - [ ] **P1.5** Hàng đợi công việc & telemetry — [`job-queue.md`](../specs/01-platform/job-queue.md) · [`telemetry-pipeline.md`](../specs/01-platform/telemetry-pipeline.md)
@@ -104,6 +105,7 @@ MVP, và nó chỉ cần bước P1.2 xong.
 - [ ] **P1.10** Gắn tag nội dung & seeder nội dung nền — [`content-tagging.md`](../specs/01-platform/content-tagging.md) · [`content-seed-authoring.md`](../specs/01-platform/content-seed-authoring.md)
 - [ ] **P1.11** ≥120 game level `published` — [`game-level-model.md`](../specs/05-content/game-level-model.md)
 - [ ] **P1.11b** Tìm kiếm nội dung — [`content-search.md`](../specs/01-platform/content-search.md)
+- [ ] **P1.11c** Đóng claim/KPI evidence sư phạm và protocol kiểm thử với trẻ — [`Task #81`](81-pedagogical-evidence-contract-plan.md)
 - [ ] **P1.12** Báo cáo cơ bản, trang chính phụ huynh, thư viện — [`basic-report.md`](../specs/03-account/basic-report.md) · [`member-dashboard.md`](../specs/03-account/member-dashboard.md) · [`my-library.md`](../specs/03-account/my-library.md)
 - [ ] **P1.13** Public site, SEO, trang pháp lý — [`landing-page.md`](../specs/02-public/landing-page.md) · [`game-catalog-public.md`](../specs/02-public/game-catalog-public.md) · [`game-detail-public.md`](../specs/02-public/game-detail-public.md) · [`seo-and-structured-data.md`](../specs/02-public/seo-and-structured-data.md) · [`legal-pages.md`](../specs/02-public/legal-pages.md) · [`faq-and-help.md`](../specs/02-public/faq-and-help.md) · [`cookie-and-consent-banner.md`](../specs/02-public/cookie-and-consent-banner.md)
 - [ ] **P1.14** Cài đặt tài khoản, đồng ý pháp lý, xoá tài khoản — [`account-settings.md`](../specs/03-account/account-settings.md) · [`consent-management.md`](../specs/03-account/consent-management.md) · [`account-deletion.md`](../specs/03-account/account-deletion.md)
@@ -114,6 +116,8 @@ MVP, và nó chỉ cần bước P1.2 xong.
 
 - [ ] Điều kiện ở [`SPEC.md`](../SPEC.md) §13
 - [ ] Một trẻ chơi hết một game level thật, điểm về server, phụ huynh thấy trong báo cáo
+- [ ] Audio tiếng Việt có fallback đo trên thiết bị chuẩn; không dùng Web Speech/TTS như một giả định không test
+- [ ] Ca “trẻ thật” tuân theo contract evidence/an toàn của Task #81; chưa có protocol thì không dùng để claim hiệu quả sư phạm
 - [ ] 43 spec P1 `implemented`; không câu hỏi mở nào còn `Chặn phase: P1`
 
 ---
@@ -125,8 +129,8 @@ MVP, và nó chỉ cần bước P1.2 xong.
 - [ ] **P2.3** Luồng tiền hai đầu — [`payment-flow.md`](../specs/00-foundation/payment-flow.md) · [`pricing-page.md`](../specs/02-public/pricing-page.md) · [`payment-order-create.md`](../specs/03-account/payment-order-create.md) → [`payment-proof-upload.md`](../specs/03-account/payment-proof-upload.md) → [`payment-queue.md`](../specs/06-admin/payment-queue.md) → [`payment-approval.md`](../specs/06-admin/payment-approval.md)
 - [ ] **P2.4** Cấp quyền tay + xem catalog — [`entitlement-grant.md`](../specs/06-admin/entitlement-grant.md) · [`package-catalog-admin.md`](../specs/06-admin/package-catalog-admin.md) · [`subscription-view.md`](../specs/03-account/subscription-view.md)
 - [ ] **P2.5** Studio: form sinh từ schema — [`schema-driven-form.md`](../specs/06-admin/schema-driven-form.md)
-- [ ] **P2.6** Studio: soạn game level — [`game-level-studio.md`](../specs/06-admin/game-level-studio.md) · [`live-preview.md`](../specs/06-admin/live-preview.md)
-- [ ] **P2.7** Asset & storage — [`image-storage.md`](../specs/01-platform/image-storage.md) · [`image-upload.md`](../specs/06-admin/image-upload.md) · [`emoji-picker.md`](../specs/06-admin/emoji-picker.md) · [`asset-usage-tracking.md`](../specs/06-admin/asset-usage-tracking.md)
+- [ ] **P2.6** Studio: soạn game level + bộ chọn emoji — [`game-level-studio.md`](../specs/06-admin/game-level-studio.md) · [`live-preview.md`](../specs/06-admin/live-preview.md) · [`emoji-picker.md`](../specs/06-admin/emoji-picker.md)
+- [ ] **P2.7** Asset & storage ảnh — [`image-storage.md`](../specs/01-platform/image-storage.md) · [`image-upload.md`](../specs/06-admin/image-upload.md) · [`asset-usage-tracking.md`](../specs/06-admin/asset-usage-tracking.md)
 - [ ] **P2.8** Duyệt và phát hành — [`content-review-queue.md`](../specs/06-admin/content-review-queue.md) · [`publish-and-version.md`](../specs/06-admin/publish-and-version.md) · [`seo-content-admin.md`](../specs/06-admin/seo-content-admin.md)
 - [ ] **P2.9** Cờ & quản trị dữ liệu — [`feature-flag-service.md`](../specs/01-platform/feature-flag-service.md) · [`feature-flags.md`](../specs/06-admin/feature-flags.md) · [`data-export.md`](../specs/06-admin/data-export.md) · [`notification-admin.md`](../specs/06-admin/notification-admin.md)
 - [ ] **P2.10** Nhật ký — [`audit-log-viewer.md`](../specs/06-admin/audit-log-viewer.md) · [`error-log-viewer.md`](../specs/06-admin/error-log-viewer.md) · [`system-activity.md`](../specs/06-admin/system-activity.md)
@@ -137,6 +141,7 @@ MVP, và nó chỉ cần bước P1.2 xong.
 - [ ] Điều kiện ở [`SPEC.md`](../SPEC.md) §13
 - [ ] Một đơn hàng thật đi hết: tạo → nộp chứng từ → duyệt → entitlement cấp → quyền mở
 - [ ] Manager tạo được một game level mới trong studio, 0 dòng code (quyết định D2 của [`SPEC.md`](../SPEC.md) §0)
+- [ ] Không còn lời hứa audio picker/upload trỏ vào P2.7 ảnh; đường audio chỉ được tick theo implementation task sinh sau Task #80
 - [ ] Giá `standard`/`premium` đã chốt — trước đó dùng hằng số tên `PENDING_*`, không phải số bịa
 
 ---
@@ -151,15 +156,17 @@ MVP, và nó chỉ cần bước P1.2 xong.
 - [ ] **P3.6** Gợi ý game kế tiếp — [`next-game-recommendation.md`](../specs/04-play/next-game-recommendation.md)
 - [ ] **P3.7** Báo cáo nâng cao — [`advanced-report.md`](../specs/03-account/advanced-report.md)
 - [ ] **P3.8** Trưng bày chương trình ra public — [`program-showcase.md`](../specs/02-public/program-showcase.md)
+- [ ] **P3.9** Tích hợp curriculum vào account, bố cục nhiều trẻ và phạm vi thư viện — [`Task #82`](82-p3-account-curriculum-integration-plan.md)
 
-Chặn bởi người, hỏi **trước** P3.1: ai biên soạn ≥60 lesson (nền sư phạm mầm non), và 42 tuần cần
-khoảng 126 buổi trong khi MVP có ≥60 lesson — chấp nhận dùng lại mỗi lesson 2 lần không.
+Chặn bởi người, hỏi **trước** P3.1: ai biên soạn lesson (nền sư phạm mầm non), và chốt một trong
+hai contract: giữ ≥60 lesson có tái sử dụng, hoặc nhận đề xuất ≥126 lesson distinct của Task #54.
 
 ## Cổng ra P3 — hết MVP
 
 - [ ] Điều kiện ở [`SPEC.md`](../SPEC.md) §13
 - [ ] 120 spec `mvp: true` đều `implemented`
 - [ ] Một trẻ đi hết một curriculum thật từ đầu tới cuối
+- [ ] Dashboard hiện đúng curriculum của trẻ đang active; không trộn tiến độ/thư viện giữa hai hồ sơ trẻ
 
 ---
 
@@ -173,10 +180,15 @@ Chỉ bắt đầu khi P0–P3 `implemented`. Mỗi add-on **lên catalog cùng 
 - [ ] [`semantic-search.md`](../specs/07-addon/semantic-search.md) — **chặn migration**: `N` của cột `vector` phụ thuộc embedding model, đổi `N` là đổi migration
 - [ ] Chín câu hỏi giá/quota ở [`CORPUS-CLOSURE.md`](CORPUS-CLOSURE.md) đã chốt trước khi lên catalog
 
-## P5 — Scale, 1 spec
+## P5 — Web scale, 1 spec hiện có
 
-- [ ] [`pwa-install.md`](../specs/01-platform/pwa-install.md)
-- [ ] Cổng thanh toán tự động · offline nâng cao · classroom · mobile app · licensing — chưa có spec sở hữu, viết spec trước khi làm
+- [ ] **P5.0** Đóng scope và spec owner cho đúng sản phẩm web — Task #70
+- [ ] **P5.1** Cổng thanh toán tự động/đối soát/refund theo contract đã duyệt — Task #71
+- [ ] **P5.2** [`pwa-install.md`](../specs/01-platform/pwa-install.md) + offline curriculum pack có spec owner — Task #72
+- [ ] **P5.3** Cổng evidence Web scale — Task #78
+
+Task #73–#77 đã loại khỏi backlog; không tái dùng ID. Classroom, native mobile, licensing,
+localization và mở thị trường chỉ quay lại sau quyết định scope + spec mới + task số mới.
 
 ---
 

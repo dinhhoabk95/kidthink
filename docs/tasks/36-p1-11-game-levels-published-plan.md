@@ -154,7 +154,7 @@ T1 đối chiếu nguồn trần item + kế hoạch phủ theo competency (D-HG
 **Kiểm chứng**
 - [ ] `pnpm seed:report` in ≥120 level `published`, chia theo competency.
 
-**Phụ thuộc:** T2 · **Cỡ:** XL — **chia thành ≥4 lô, mỗi lô một PR**
+**Phụ thuộc:** T2 · **Cỡ:** ≥4 work package M — mỗi lô ≤30 level, một PR, acceptance và evidence riêng
 
 ### Task 4 — Đo phủ sau mỗi lô
 
@@ -162,7 +162,8 @@ T1 đối chiếu nguồn trần item + kế hoạch phủ theo competency (D-HG
 - [ ] `pnpm seed:report` in: level mỗi competency · skill có ≥1 level · skill chưa có level · level mỗi template.
 - [ ] Lô kế tiếp chọn từ **khoảng trống** báo cáo chỉ ra, không chọn theo cảm hứng.
 - [ ] Cân bằng band tuổi: mỗi band 3–4 / 4–5 / 5–6 đều có nội dung ở mọi competency.
-- [ ] Cân bằng bậc: có level `free` đủ cho lối vào guest (allow-list của P1.9), có level `login`/`standard`/`premium`.
+- [ ] Cân bằng bậc: **đúng 6** level `free`, một mã `published` cho mỗi competency C1–C6, difficulty 1–2; các level còn lại dùng `login`/`standard`/`premium` theo plan nội dung.
+- [ ] Sáu mã guest được nhóm Nội dung duyệt và `seed:report` in tường minh; không còn câu hỏi “level nào vào allow-list” ở cổng ra P1.
 
 **Kiểm chứng**
 - [ ] Báo cáo cuối bước là **đầu vào** của cổng ra P1.
@@ -189,7 +190,7 @@ T1 đối chiếu nguồn trần item + kế hoạch phủ theo competency (D-HG
 - [ ] 100% level round-trip được; 100% payload ≤200 KB gz; 0 drift.
 - [ ] Mỗi lô có `content_review_log` và hàng `content_seed_batches` với `pr_url` thật.
 - [ ] Không level nào là bản sao của level khác chỉ đổi số lượng.
-- [ ] Một trẻ thật chơi được ít nhất một level của **mỗi** template, điểm về server.
+- [ ] Một trẻ thật chơi được ít nhất một level của **mỗi** template, điểm về server, theo protocol an toàn/evidence đã duyệt ở [`Task #81`](81-pedagogical-evidence-contract-plan.md).
 - [ ] `pnpm check && pnpm test && pnpm test:e2e && pnpm lint:specs && pnpm check:progress` xanh.
 
 ### Task 6 — Evidence và promote
@@ -200,6 +201,7 @@ T1 đối chiếu nguồn trần item + kế hoạch phủ theo competency (D-HG
 - [ ] §11 Q1 đóng theo `D-HG` (có trích dẫn hoặc ghi rõ là phán đoán chuyên môn).
 - [ ] §11 Q2 đóng bằng số thật: bao nhiêu level mỗi skill đã đạt được, và mức nào là đủ đa dạng.
 - [ ] **Công bố % phủ skill** — đưa vào evidence cổng ra P1 (`D-HH`).
+- [ ] Đóng câu hỏi allow-list ở [`access-ladder.md`](../specs/00-foundation/access-ladder.md) §11 bằng đúng sáu mã đã seed; mỗi competency đúng một mã, difficulty 1–2.
 - [ ] Tick **P1.11** ở [`14-implementation-sequence-todo.md`](14-implementation-sequence-todo.md) khi `check:progress` tự xanh.
 
 **Cỡ:** S
@@ -225,6 +227,7 @@ T1 đối chiếu nguồn trần item + kế hoạch phủ theo competency (D-HG
 4. **Ảnh chưa có ở P1** — nội dung dùng emoji từ registry.
 5. **Lesson và curriculum ở P3** — bước này chỉ game level.
 6. **Studio chưa tồn tại** — mọi bản đi qua seeder.
+7. **Ca kiểm với trẻ thật chỉ chạy sau Task #81** — chưa có consent/protocol thì không được dùng kết quả làm evidence sản phẩm.
 
 ## 7. Ngoài phạm vi
 

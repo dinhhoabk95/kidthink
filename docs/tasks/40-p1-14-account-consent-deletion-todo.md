@@ -46,6 +46,7 @@
 - [ ] `BR-ACS-05` đổi xong → thông báo tới địa chỉ **cũ**.
 - [ ] Email mới đã có người dùng → **409**.
 - [ ] `BR-ACS-06` gửi loại giao dịch vào notification-preferences → **422**.
+- [ ] Toggle `weekly_progress` đọc/ghi `weekly_digest_enabled`, mặc định `true`; job digest tôn trọng giá trị mới.
 - [ ] `BR-ACS-07` ca âm quét form: không tuổi · giới tính · số điện thoại · địa chỉ.
 - [ ] `BR-ACS-08` ca âm: không cài đặt của trẻ trên trang này.
 
@@ -126,6 +127,7 @@
 - [ ] [`account-deletion.md`](../specs/03-account/account-deletion.md) → `implemented`.
 - [ ] Nợ sang **P1.15**: khối SNS trong nhóm Bảo mật + hai route vào danh sách reauth.
 - [ ] Nợ sang **P2.11**: MFA trong nhóm Bảo mật.
+- [ ] Nợ digest tuần từ Task #38 đã đóng; không còn mục P1.14 chỉ được ghi ở plan nguồn.
 - [ ] Tick **P1.14** ở [`14-implementation-sequence-todo.md`](14-implementation-sequence-todo.md) khi `check:progress` tự xanh.
 
 ## Câu hỏi mở chuyển tiếp
