@@ -76,6 +76,8 @@ export type CurriculumTheme =
 
 // ── Emoji entry ──────────────────────────────────────────────────
 export interface EmojiEntry {
+  /** Optional EMJ-<slug> code */
+  code?: string;
   /** Minimum recommended age (3–6) */
   age_min: number;
   /** Category this emoji belongs to */

@@ -1,12 +1,13 @@
 import { type Job, Queue } from "bullmq";
+import { Redis } from "ioredis";
+import { buildDeterministicJobId, getJobDefinition } from "./registry.js";
 
 export * from "./alert.js";
-
-import { Redis } from "ioredis"; // ioredis is the default export, but we can also import Redis
+export * from "./registry.js";
 
 export interface JobPayloads {
-  "backup:postgres": Record<string, never>;
-  "backup:verify": { source?: string };
+  "backup:postgres": { dateIct?: string };
+  "backup:verify": { source?: string; week?: string };
   "email:send": {
     notificationId: number;
     to: string;
@@ -15,6 +16,28 @@ export interface JobPayloads {
     recipientStatus?: "active" | "deleted";
     userOptOut?: boolean;
     isBouncing?: boolean;
+  };
+  "rollup:session": {
+    sessionUuid: string;
+  };
+  "rollup:daily": {
+    dateIct: string;
+  };
+  "sweep:abandoned": {
+    windowStart: string;
+  };
+  "entitlement:expire": {
+    dateIct: string;
+  };
+  "order:expire": {
+    hour: string;
+  };
+  "account:purge": {
+    dateIct: string;
+    userId?: number;
+  };
+  "image:cleanup-orphan": {
+    week: string;
   };
 }
 
@@ -27,8 +50,9 @@ export const QUEUE_NAME = "kidthink-jobs";
 
 function getQueue() {
   if (!queue) {
-    connection = new Redis(process.env.VALKEY_URL || "redis://localhost:6379", {
+    connection = new Redis(process.env.VALKEY_URL || "redis://localhost:6380", {
       maxRetriesPerRequest: null,
+      enableOfflineQueue: false,
     });
     queue = new Queue(QUEUE_NAME, { connection });
   }
@@ -36,22 +60,77 @@ function getQueue() {
 }
 
 export interface EnqueueOptions {
-  jobId: string;
+  jobId?: string;
+  businessKey?: string | number;
+}
+
+function extractKeyFromPayload(payload: unknown): string | number | undefined {
+  const p = payload as Record<string, unknown>;
+  if (p.dateIct) {
+    return p.dateIct as string;
+  }
+  if (p.sessionUuid) {
+    return p.sessionUuid as string;
+  }
+  if (p.notificationId) {
+    return p.notificationId as number;
+  }
+  if (p.windowStart) {
+    return p.windowStart as string;
+  }
+  if (p.hour) {
+    return p.hour as string;
+  }
+  if (p.week) {
+    return p.week as string;
+  }
+  return undefined;
+}
+
+function resolveJobId(
+  name: string,
+  payload: unknown,
+  options?: EnqueueOptions
+): string {
+  if (options?.jobId) {
+    return options.jobId;
+  }
+  if (options?.businessKey !== undefined) {
+    return buildDeterministicJobId(name, options.businessKey);
+  }
+  const key = extractKeyFromPayload(payload);
+  if (key !== undefined) {
+    return buildDeterministicJobId(name, key);
+  }
+  return `${name}:default`;
+}
+
+function resolveRetryOptions(name: JobName) {
+  const def = getJobDefinition(name);
+  const attempts = def ? def.retryPolicy.maxAttempts : 3;
+  const backoff =
+    def && def.retryPolicy.backoffType !== "none"
+      ? {
+          type: def.retryPolicy.backoffType,
+          delay: def.retryPolicy.backoffDelayMs,
+        }
+      : undefined;
+  return { attempts, backoff };
 }
 
 export function enqueue<T extends JobName>(
   name: T,
   payload: JobPayloads[T],
-  options: EnqueueOptions
+  options?: EnqueueOptions
 ): Promise<Job | undefined> {
   const q = getQueue();
+  const jobId = resolveJobId(name, payload, options);
+  const { attempts, backoff } = resolveRetryOptions(name);
+
   return q.add(name, payload, {
-    jobId: options.jobId,
-    attempts: 3,
-    backoff: {
-      type: "exponential",
-      delay: 1000,
-    },
+    jobId,
+    attempts,
+    backoff,
   });
 }
 
@@ -69,4 +148,9 @@ export async function disconnectQueue(): Promise<void> {
 export function getWaitingCount(): Promise<number> {
   const q = getQueue();
   return q.getWaitingCount();
+}
+
+export function getFailedCount(): Promise<number> {
+  const q = getQueue();
+  return q.getFailedCount();
 }

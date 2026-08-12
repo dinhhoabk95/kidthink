@@ -1,3 +1,4 @@
+import { hashPassword } from "@kidthink/auth";
 import {
   ENTITLEMENT_KEYS,
   PACKAGE_CATALOG,
@@ -9,6 +10,7 @@ import {
   packageEntitlements,
   packages,
 } from "./schema/billing.ts";
+import { managers } from "./schema/identity.ts";
 
 export const PENDING_PRICE_VND = PENDING_PRICE;
 
@@ -38,6 +40,10 @@ export const SEED_PACKAGE_ENTITLEMENTS = Object.values(PACKAGE_CATALOG).flatMap(
       entitlementKey: key,
     }))
 );
+
+import { seedEmojiMasterData } from "./seed-master/emoji.ts";
+import { seedGameTemplatesMasterData } from "./seed-master/game-templates.ts";
+import { seedTaxonomyMasterData } from "./seed-master/taxonomy/index.ts";
 
 export async function seed() {
   const db = getOwnerDb();
@@ -78,6 +84,41 @@ export async function seed() {
   for (const item of SEED_PACKAGE_ENTITLEMENTS) {
     await db.insert(packageEntitlements).values(item).onConflictDoNothing();
   }
+
+  // 4. Seed Taxonomy master data
+  const taxStats = await seedTaxonomyMasterData(db);
+  console.log(
+    `[db:seed] Taxonomy seeded: ${taxStats.competencyCount} competencies, ${taxStats.strandCount} strands, ${taxStats.skillCount} skills, ${taxStats.loCount} LOs.`
+  );
+
+  // 5. Seed Emoji master data
+  const emojiStats = await seedEmojiMasterData(db);
+  console.log(`[db:seed] Emoji seeded: ${emojiStats.emojiCount} emojis.`);
+
+  // 6. Seed Game Templates master data
+  const templateStats = await seedGameTemplatesMasterData(db);
+  console.log(
+    `[db:seed] Game Templates seeded: ${templateStats.templateCount} templates.`
+  );
+
+  // 7. Seed initial super_admin manager
+  const initialAdminEmail =
+    process.env.INITIAL_ADMIN_EMAIL || "admin@tinimath.test";
+  const initialAdminPassword =
+    process.env.INITIAL_ADMIN_PASSWORD || "Admin123456!";
+  const initialAdminHash = await hashPassword(initialAdminPassword);
+
+  await db
+    .insert(managers)
+    .values({
+      email: initialAdminEmail,
+      passwordHash: initialAdminHash,
+      displayName: "Super Admin",
+      role: "super_admin",
+      mfaEnabled: false,
+      isActive: true,
+    })
+    .onConflictDoNothing({ target: managers.email });
 
   console.log("✅ [db:seed] Seed completed successfully.");
 }

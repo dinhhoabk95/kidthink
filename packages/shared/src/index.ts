@@ -1,5 +1,9 @@
+export * from "./access-gating.js";
 export * from "./access-ladder.js";
+export * from "./asset-resolver.js";
+export * from "./audit.js";
 export * from "./child-data.js";
+export * from "./date-ict.js";
 export * from "./email-job.js";
 export * from "./email-sender.js";
 export * from "./entitlement-catalog.js";
@@ -10,6 +14,7 @@ export * from "./notifications.js";
 export * from "./publish-checklist.js";
 export * from "./rate-limit-middleware.js";
 export * from "./rate-limiting.js";
+export * from "./scoring.js";
 export * from "./taxonomy-types.js";
 export * from "./versioning.js";
 export * from "./versioning-report.js";

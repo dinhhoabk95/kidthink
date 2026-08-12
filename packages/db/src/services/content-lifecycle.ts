@@ -3,8 +3,9 @@ import { canTransition, validatePublishChecklist } from "@kidthink/shared";
 import { eq, sql } from "drizzle-orm";
 import { getOwnerDb } from "../client.ts";
 import { gameLevels } from "../schema/game.ts";
-import { auditLogs, contentReviewLog } from "../schema/ops.ts";
+import { contentReviewLog } from "../schema/ops.ts";
 import { contentSkillMap } from "../schema/tagging.ts";
+import { writeAudit } from "./audit.ts";
 
 export interface TransitionRequest {
   entityType: "game_level" | "lesson" | "activity" | "curriculum" | "worksheet";
@@ -49,6 +50,35 @@ export class LifecycleError extends Error {
     this.code = code;
     this.statusCode = statusCode;
     this.details = details;
+  }
+}
+
+function getAuditActionForTransition(
+  fromStatus: ContentLifecycleStatus,
+  toStatus: ContentLifecycleStatus
+):
+  | "content_submitted"
+  | "content_approved"
+  | "content_rejected"
+  | "content_published"
+  | "content_archived"
+  | "content_rolled_back"
+  | "content_created" {
+  switch (toStatus) {
+    case "approved":
+      return "content_approved";
+    case "rejected":
+      return "content_rejected";
+    case "published":
+      return "content_published";
+    case "archived":
+      return "content_archived";
+    case "draft":
+      return fromStatus === "rejected"
+        ? "content_created"
+        : "content_rolled_back";
+    default:
+      return "content_submitted";
   }
 }
 
@@ -227,17 +257,23 @@ export async function transitionContent(
       })
       .returning();
 
-    await tx.insert(auditLogs).values({
-      actorType: "manager",
-      actorId: req.actorManagerId,
-      action: "CONTENT_TRANSITION",
-      entityType: req.entityType,
-      entityId: level.id.toString(),
-      changes: {
-        from: currentStatus,
-        to: req.toStatus,
-        version: level.contentVersion,
-      },
+    const auditAction = getAuditActionForTransition(
+      currentStatus,
+      req.toStatus
+    );
+    await writeAudit(tx, {
+      actor_type: "manager",
+      actor_id: req.actorManagerId,
+      action: auditAction,
+      entity_type: req.entityType,
+      entity_id: level.id.toString(),
+      before_data: { status: currentStatus, version: level.contentVersion },
+      after_data: { status: req.toStatus, version: level.contentVersion },
+      reason:
+        req.reason ??
+        (auditAction === "content_rejected"
+          ? "Rejected by manager"
+          : undefined),
     });
 
     return {

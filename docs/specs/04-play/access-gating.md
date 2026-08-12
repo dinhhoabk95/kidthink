@@ -2,7 +2,7 @@
 spec: ACCESS-GATING
 title: Chặn quyền truy cập nội dung
 area: play
-status: approved
+status: implemented
 mvp: true
 phase: P1
 reviewed: 2026-08-08

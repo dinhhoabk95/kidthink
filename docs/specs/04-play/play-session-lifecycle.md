@@ -2,7 +2,7 @@
 spec: PLAY-SESSION-LIFECYCLE
 title: Vòng đời phiên chơi
 area: play
-status: approved
+status: implemented
 mvp: true
 phase: P1
 reviewed: 2026-08-08

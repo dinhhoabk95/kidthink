@@ -82,3 +82,37 @@ export function getAllCategories(): EmojiCategory[] {
 export function getTotalEmojiCount(): number {
   return ALL_EMOJIS.length;
 }
+
+/**
+ * Get the EMJ-<slug> code for an emoji entry.
+ */
+export function getEmojiCode(entry: EmojiEntry): string {
+  if (entry.code) {
+    return entry.code;
+  }
+  const primaryEn = entry.keywords_en[0] || entry.name_vi;
+  const slug = primaryEn
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/đ/g, "d")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "");
+  return `EMJ-${slug}`;
+}
+
+/**
+ * Get an emoji entry by code (EMJ-<slug>).
+ */
+export function getByCode(code: string): EmojiEntry | null {
+  return (
+    ALL_EMOJIS.find((e) => e.code === code || getEmojiCode(e) === code) ?? null
+  );
+}
+
+/**
+ * Validates if an emoji code exists in the registry.
+ */
+export function isValidRef(code: string): boolean {
+  return getByCode(code) !== null;
+}

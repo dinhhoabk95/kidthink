@@ -28,7 +28,7 @@ Quy tắc thô: nếu có người sẽ ngạc nhiên vì kết quả, việc đ
 
 ---
 
-## 0. Mười quyết định định hình v2
+## 0. Mười một quyết định định hình v2
 
 Đây là delta so với v1. Mỗi dòng là một quyết định đã chốt, kèm lý do.
 
@@ -44,6 +44,7 @@ Quy tắc thô: nếu có người sẽ ngạc nhiên vì kết quả, việc đ
 | **D8** | **Đổi tên dự án: TiniMath → KidThink.** Package scope, domain, chuỗi hiển thị người dùng đổi theo. Thư mục repo v1 cũ (`tinimath/`) giữ nguyên tên — đó là tên lịch sử của thư mục tham khảo đọc-only, không phải thương hiệu | Product owner chốt định vị lại thương hiệu trước khi viết dòng code v2 đầu tiên, tránh phải rename giữa chừng khi đã có package đã publish, domain đã trỏ DNS |
 | **D9** | **Khởi tạo source mới từ đầu trong `kidthink/`**, nằm cạnh `tinimath/` (v1) trong cùng workspace — thay vì update dần code cũ. Port có chọn lọc theo [`docs/specs/00-foundation/repo-bootstrap.md`](specs/00-foundation/repo-bootstrap.md) | Update dần trên nền v1 mang theo nợ kỹ thuật đã ghi nhận ở [`AUDIT-v1.md`](specs/AUDIT-v1.md) — 31 spec gộp nhiều outcome, thiếu 8 loại spec. Greenfield cho phép áp toàn bộ 130 spec v2 sạch từ dòng code đầu tiên |
 | **D10** | **Ưu tiên adopt thư viện Nuxt ecosystem đã kiểm chứng** (auth, sitemap/SEO, cache, queue) thay vì tự xây từ đầu. Khi cần dùng chung nhiều app, bọc lại thành **package driver nội bộ** — xem [`docs/specs/00-foundation/monorepo-package-architecture.md`](specs/00-foundation/monorepo-package-architecture.md) | Tự xây auth/queue/sitemap không tạo khác biệt cạnh tranh, chỉ tốn thời gian dev và mang rủi ro bảo mật tự phát hiện. Thư viện phổ biến có test, security patch, cộng đồng review. Driver nội bộ giữ interface ổn định cho nhiều app và không khoá cứng vào một thư viện |
+| **D11** | **Phạm vi hiện hành là web-only và vận hành tại Việt Nam.** PWA vẫn là web delivery; native mobile app, classroom/B2B, licensing/white-label, marketplace và mở thị trường ngoài Việt Nam không có spec triển khai, task hay placeholder schema trong roadmap hiện hành. | Lập kế hoạch cho một mô hình sản phẩm chưa được chọn tạo contract giả và kéo theo actor, pháp lý, thanh toán, store review hoặc multi-tenancy không cần thiết. Nếu sau này mở rộng, người quyết phải mở một chương trình scope mới và viết spec sở hữu trước khi lập task. |
 
 ### D7 chi tiết — hai luồng, cùng một cổng
 
@@ -77,8 +78,10 @@ một hàng đã có.
 Đây là câu trả lời một phần cho §15 Q3 — nó giảm chi phí **soạn**, không giảm chi phí
 **đọc review**.
 
-**Vĩnh viễn ngoài phạm vi:** multi-tenancy, `tenant_id`, school admin, class roster,
-marketplace, leaderboard công khai, mạng xã hội, nhiều cấp admin, white-label.
+**Ngoài phạm vi hiện hành:** multi-tenancy, `tenant_id`, school admin, class roster,
+classroom, marketplace, leaderboard công khai, mạng xã hội, nhiều cấp admin, native mobile app,
+licensing và white-label. Không giữ task hay placeholder để “làm sau”; mở lại mục nào phải đổi
+canonical scope và viết spec trước.
 
 ---
 
@@ -105,7 +108,7 @@ lộ trình mà không phải làm lại nội dung.
 | **Trẻ** | Game hợp tuổi, ít chữ, thao tác lớn, phản hồi tích cực, không áp lực điểm số |
 | **Phụ huynh** | Biết con chơi gì, tiến bộ ra sao; chọn được chương trình; quản lý giờ chơi và nhiều hồ sơ trẻ |
 | **Giáo viên** | Dùng kho giáo án và trò chơi đã kiểm duyệt; theo dõi nhiều trẻ. *(Công cụ tạo nội dung là add-on, ngoài MVP)* |
-| **Doanh nghiệp** | Thư viện nội dung sở hữu riêng, tái dùng cho nhiều chương trình, bán được theo gói, mở rộng được sang mobile và licensing |
+| **Doanh nghiệp** | Thư viện nội dung sở hữu riêng, tái dùng cho nhiều chương trình và bán được theo gói trên web |
 
 ### 1.3 Tác nhân hệ thống
 
@@ -546,8 +549,9 @@ Soft unlock tồn tại vì duyệt tay có độ trễ người — người đ
 
 ## 4. Tuân thủ dữ liệu trẻ em — Nghị định 13/2023 + Luật Trẻ em — quyết định D6
 
-Thị trường vận hành: **Việt Nam**. Không áp COPPA/GDPR-K ở MVP; nếu mở thị trường ngoài,
-spec này phải được viết lại trước, không phải sau.
+Thị trường vận hành: **Việt Nam**. Không áp COPPA/GDPR-K trong roadmap hiện hành. Nếu sau này
+mở thị trường ngoài Việt Nam, đó là một chương trình mở rộng mới: đổi scope và viết lại spec
+này trước khi lập task, không giữ sẵn nhánh triển khai trong P5.
 
 ### 4.1 Thu tối thiểu — danh sách đóng
 
@@ -1086,7 +1090,7 @@ snapshot. Offline test dùng Playwright offline mode, không mock `navigator.onL
 | **P2 — Commerce + Admin** | Package catalog, VietQR order, duyệt tay, entitlement, Admin dashboard, **Authoring Studio**, asset pipeline, audit log | Lưu ý: Studio có thể thu về "sửa level đã có" nếu thiếu nguồn lực |
 | **P3 — Curriculum** | Lesson library (≥60), activity, 5 curriculum, curriculum player, mastery + adaptive ZPD, báo cáo nâng cao | Lưu ý: Có thể ship 1 curriculum theo tuổi thay vì 5 |
 | **P4 — Add-on** | Lesson Plan Creator, Custom Game Builder, Curriculum cá nhân, AI + credit ledger, export PDF. **Lên catalog cùng lúc với tính năng** | ngoài MVP |
-| **P5 — Scale** | Cổng thanh toán tự động, PWA nâng cao, classroom, mobile app, licensing | ngoài MVP |
+| **P5 — Web scale** | Cổng thanh toán tự động, PWA install và offline curriculum pack nâng cao trên web | ngoài MVP; không gồm mở rộng mô hình sản phẩm |
 
 **Điểm cắt nếu nguồn lực căng** (theo thứ tự hy sinh):
 1. P3 → 1 curriculum thay vì 5.
@@ -1275,12 +1279,11 @@ Mã taxonomy giữ format v1 (`C1.CNT.03`) — đã biên soạn, bất biến, 
 |---|---|---|
 | 1 | **Giá cuối** của `standard` và `premium` (365 ngày / vĩnh viễn) | Mở thanh toán |
 | 2 | 6 game level nào vào allow-list guest? 1 mỗi competency, difficulty 1–2 | P1 gating |
-| 4 | Ai là người review nội dung, và người đó có nền sư phạm mầm non không? | P1 · P3 |
 | 5 | C5 Language cần audio tiếng Việt cho ~21 skill — thu âm người thật hay TTS? | P1 nội dung |
-| 7 | Có giữ 60 game type v1 làm backlog port, hay bỏ hẳn và chỉ dùng 6 template? | P1 phạm vi |
-| 8 | Ngân sách pháp lý rà soát ToS / Privacy / Chính sách trẻ em theo ND 13/2023 | Go-live |
 | 10 | Giữ VietQR duyệt tay vĩnh viễn hay thêm cổng thanh toán ở P5? | Payment roadmap |
 | 11 | Backup + monitoring: v1 **không có gì**. Ai sở hữu và ngân sách bao nhiêu? | Go-live |
+| 12 | Bằng chứng nào đủ để nói sản phẩm **rèn luyện, khai phá tư duy**, thay vì chỉ chứng minh trẻ chơi được và quay lại? Cần chốt claim, KPI sư phạm và protocol kiểm thử với trẻ trước khi dùng kết quả đó làm thông điệp sản phẩm. | P1 nghiệm thu · Go-live |
+| 13 | Giữ contract **≥60 lesson** và cho phép tái sử dụng trong chương trình 42 tuần, hay nâng lên **≥126 lesson distinct** như đề xuất ở Task #54? | P3.1 · lịch nội dung |
 
 ### Đã chốt
 
@@ -1292,6 +1295,8 @@ Mã taxonomy giữ format v1 (`C1.CNT.03`) — đã biên soạn, bất biến, 
 | Premium vs Creator | **Gộp.** Premium bao hàm quyền học của Creator; quyền tạo nằm ở add-on | 2026-08-04 |
 | Pháp lý | **Việt Nam** — Nghị định 13/2023 + Luật Trẻ em. Không COPPA/GDPR-K ở MVP | 2026-08-04 |
 | Chủ và năng lực review nội dung (`D-CN`, thay thế `D-W`) | Nhóm Nội dung sở hữu; baseline 20 LO, 6 game level hoặc 3 lesson/người/ngày, đo lại sau pilot 30 LO + 6 level | 2026-08-09 |
+| Port 60 game type v1 | Giữ làm backlog **nội dung**, map dần thành `content_pack`; không port 60 Session class thành backlog code. Sáu template vẫn là phạm vi MVP | Đối chiếu §2.4 ngày 2026-08-12 |
+| Ngân sách rà soát pháp lý (`D-AS`) | 50M VND cho tư vấn IP/Bảo vệ dữ liệu trước go-live; owner chi tiết ở [`legal-pages.md`](specs/02-public/legal-pages.md) | 2026-08-09 |
 | Thiết bị chuẩn 60 fps (`D-CH`) | Lenovo Tab M8 2 GB RAM; Chrome ổn định mới nhất, pin >30%, tắt tiết kiệm pin; chạy ba lần lấy median | 2026-08-09 |
 | Repo mới hay branch v2? | **Repo riêng `kidthink/`**, nằm cạnh `tinimath/` (v1). Port có chọn lọc: `game-engine`, `emoji`, taxonomy data | 2026-08-06 (D-A) |
 | Thư viện ảnh | **Không có.** Emoji cố định; ảnh upload gắn content item | 2026-08-04 |

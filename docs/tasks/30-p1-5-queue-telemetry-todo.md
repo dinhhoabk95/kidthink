@@ -10,94 +10,94 @@
 
 ## Preflight
 
-- [ ] **P0.8b / P0.9b đã đóng** — khung queue + `backup:postgres` + `email:send` chạy được.
-- [ ] **P0.7 đã đóng** — `telemetry_events`, `play_sessions` có cột.
-- [ ] Human approve kế hoạch và sáu quyết định D-FW · D-FX · D-FY · D-FZ · D-GA · D-GB.
-- [ ] Đối chiếu `BR-JOB-*` `BR-TLM-*` với [`business-rules.md`](../specs/00-foundation/business-rules.md).
-- [ ] Đọc [`child-data-compliance.md`](../specs/00-foundation/child-data-compliance.md) §7.3 trước khi khai event schema.
-- [ ] Tạo nhánh riêng.
+- [x] **P0.8b / P0.9b đã đóng** — khung queue + `backup:postgres` + `email:send` chạy được.
+- [x] **P0.7 đã đóng** — `telemetry_events`, `play_sessions` có cột.
+- [x] Human approve kế hoạch và sáu quyết định D-FW · D-FX · D-FY · D-FZ · D-GA · D-GB.
+- [x] Đối chiếu `BR-JOB-*` `BR-TLM-*` với [`business-rules.md`](../specs/00-foundation/business-rules.md).
+- [x] Đọc [`child-data-compliance.md`](../specs/00-foundation/child-data-compliance.md) §7.3 trước khi khai event schema.
+- [x] Tạo nhánh riêng.
 
 ---
 
 ### Task 1 — Registry job và ranh giới
 
-- [ ] Mười job khai dạng dữ liệu: tên · lịch · idempotency key · timeout · `owner_step`.
-- [ ] Cổng: consumer ngoài registry → đỏ.
-- [ ] Cổng: `owner_step` đã qua mà thiếu consumer → đỏ.
-- [ ] `BR-JOB-04` ca âm: consumer trong `packages/queue` → đỏ.
-- [ ] `BR-JOB-04` ca âm: route HTTP trong `apps/worker` → đỏ.
-- [ ] Rule `dependency-cruiser` ép hai ranh giới trên.
-- [ ] `BR-JOB-07` cổng đọc cấu hình process manager production.
-- [ ] Ca âm `BR-JOB-07`: comment mục worker → cổng đỏ.
+- [x] Mười job khai dạng dữ liệu: tên · lịch · idempotency key · timeout · `owner_step`.
+- [x] Cổng: consumer ngoài registry → đỏ.
+- [x] Cổng: `owner_step` đã qua mà thiếu consumer → đỏ.
+- [x] `BR-JOB-04` ca âm: consumer trong `packages/queue` → đỏ.
+- [x] `BR-JOB-04` ca âm: route HTTP trong `apps/worker` → đỏ.
+- [x] Rule `dependency-cruiser` ép hai ranh giới trên.
+- [x] `BR-JOB-07` cổng đọc cấu hình process manager production.
+- [x] Ca âm `BR-JOB-07`: comment mục worker → cổng đỏ.
 
 ### Task 2 — Idempotency và retry
 
-- [ ] `BR-JOB-02` `jobId` suy xác định từ khoá nghiệp vụ §7.1.
-- [ ] Ca âm: enqueue hai lần cùng khoá → queue có **một** job.
-- [ ] `BR-JOB-01` consumer idempotent — chạy lại không tạo hàng trùng.
-- [ ] Bảng retry khai dạng dữ liệu: rollup/sweep 3× exp 5s.
-- [ ] email 5× exp 30s.
-- [ ] backup 2× fixed 5m.
-- [ ] purge **1×**, fail → alert ngay, không tự retry.
-- [ ] `BR-JOB-08` job dài có checkpoint; ca âm chạy lại không làm lại từ đầu.
-- [ ] Valkey mất → producer fail nhanh, request đồng bộ vẫn 200, health 503.
+- [x] `BR-JOB-02` `jobId` suy xác định từ khoá nghiệp vụ §7.1.
+- [x] Ca âm: enqueue hai lần cùng khoá → queue có **một** job.
+- [x] `BR-JOB-01` consumer idempotent — chạy lại không tạo hàng trùng.
+- [x] Bảng retry khai dạng dữ liệu: rollup/sweep 3× exp 5s.
+- [x] email 5× exp 30s.
+- [x] backup 2× fixed 5m.
+- [x] purge **1×**, fail → alert ngay, không tự retry.
+- [x] `BR-JOB-08` job dài có checkpoint; ca âm chạy lại không làm lại từ đầu.
+- [x] Valkey mất → producer fail nhanh, request đồng bộ vẫn 200, health 503.
 
 ### Task 3 — Alert tới được người
 
-- [ ] `AlertPort` interface + adapter email vận hành qua `email:send`.
-- [ ] **Ca âm: adapter chỉ ghi log → test đỏ** (`D-FX`).
-- [ ] Ngưỡng: backlog `waiting` > 500 trong 5 phút.
-- [ ] Ngưỡng: `failed` > 10 trong 1 giờ.
-- [ ] Ngưỡng: không job nào hoàn thành trong 15 phút.
-- [ ] Ngưỡng: tuổi job cũ nhất > 30 phút.
-- [ ] `BR-JOB-03` ca âm: dừng worker, đẩy > 500 job → alert trong 5 phút.
-- [ ] `BR-JOB-05` ca âm: job vượt retry → `failed` queue **và** alert.
-- [ ] `BR-TLM-06` worker chết 10 phút → alert tới kênh.
-- [ ] Gom alert theo cửa sổ nhưng **không** mất alert đầu tiên.
+- [x] `AlertPort` interface + adapter email vận hành qua `email:send`.
+- [x] **Ca âm: adapter chỉ ghi log → test đỏ** (`D-FX`).
+- [x] Ngưỡng: backlog `waiting` > 500 trong 5 phút.
+- [x] Ngưỡng: `failed` > 10 trong 1 giờ.
+- [x] Ngưỡng: không job nào hoàn thành trong 15 phút.
+- [x] Ngưỡng: tuổi job cũ nhất > 30 phút.
+- [x] `BR-JOB-03` ca âm: dừng worker, đẩy > 500 job → alert trong 5 phút.
+- [x] `BR-JOB-05` ca âm: job vượt retry → `failed` queue **và** alert.
+- [x] `BR-TLM-06` worker chết 10 phút → alert tới kênh.
+- [x] Gom alert theo cửa sổ nhưng **không** mất alert đầu tiên.
 
 ### Task 4 — Bốn bảng rollup và ranh giới ngày
 
-- [ ] `child_session_summaries` khoá `(child_id, session_uuid)`.
-- [ ] `child_daily_stats` khoá `(child_id, date_ict)`.
-- [ ] `level_daily_stats` khoá `(level_code, content_version, date_ict)`.
-- [ ] `skill_daily_stats` khoá `(skill_id, date_ict)`.
-- [ ] `BR-TLM-08` một hàm ranh giới ngày ICT (`D-GB`).
-- [ ] Ca âm: phiên 23:50 và 00:10 rơi vào hai `date_ict` khác nhau.
-- [ ] Migration chạy được **từ đầu** trên DB rỗng.
+- [x] `child_session_summaries` khoá `(child_id, session_uuid)`.
+- [x] `child_daily_stats` khoá `(child_id, date_ict)`.
+- [x] `level_daily_stats` khoá `(level_code, content_version, date_ict)`.
+- [x] `skill_daily_stats` khoá `(skill_id, date_ict)`.
+- [x] `BR-TLM-08` một hàm ranh giới ngày ICT (`D-GB`).
+- [x] Ca âm: phiên 23:50 và 00:10 rơi vào hai `date_ict` khác nhau.
+- [x] Migration chạy được **từ đầu** trên DB rỗng.
 
 ### Task 5 — `rollup:daily` và `entitlement:expire`
 
-- [ ] `rollup:daily` 02:00 ICT, `jobId = date_ict`, timeout 10m.
-- [ ] `BR-TLM-02` chạy ba lần cùng ngày → kết quả không đổi (so từng hàng).
-- [ ] `entitlement:expire` 00:05 ICT, `jobId = date_ict`.
-- [ ] Event tới muộn ≤ 24h vẫn nhận; rollup ngày đó chạy lại được.
-- [ ] `BR-TLM-05` phiên guest: `child_uuid` NULL, không vào `mastery_state`, không đếm KPI trẻ.
-- [ ] Rollup fail 3 lần → alert, không âm thầm bỏ.
+- [x] `rollup:daily` 02:00 ICT, `jobId = date_ict`, timeout 10m.
+- [x] `BR-TLM-02` chạy ba lần cùng ngày → kết quả không đổi (so từng hàng).
+- [x] `entitlement:expire` 00:05 ICT, `jobId = date_ict`.
+- [x] Event tới muộn ≤ 24h vẫn nhận; rollup ngày đó chạy lại được.
+- [x] `BR-TLM-05` phiên guest: `child_uuid` NULL, không vào `mastery_state`, không đếm KPI trẻ.
+- [x] Rollup fail 3 lần → alert, không âm thầm bỏ.
 
 ### Task 6 — Cổng PII đầu đường ống
 
-- [ ] `BR-TLM-03` cổng quét schema event.
-- [ ] `BR-TLM-03` cổng quét cột bảng rollup.
-- [ ] Ca âm: thêm `child_name` vào event schema → đỏ.
-- [ ] Định danh trẻ trong telemetry là `child_uuid`; ca âm dùng tên hoặc `child_id` thô → đỏ.
-- [ ] `BR-JOB-06` job chạm dữ liệu trẻ đi qua guard compliance; ca âm bỏ guard → đỏ.
-- [ ] Cổng nằm trong `pnpm check`, không phải script chạy tay.
+- [x] `BR-TLM-03` cổng quét schema event.
+- [x] `BR-TLM-03` cổng quét cột bảng rollup.
+- [x] Ca âm: thêm `child_name` vào event schema → đỏ.
+- [x] Định danh trẻ trong telemetry là `child_uuid`; ca âm dùng tên hoặc `child_id` thô → đỏ.
+- [x] `BR-JOB-06` job chạm dữ liệu trẻ đi qua guard compliance; ca âm bỏ guard → đỏ.
+- [x] Cổng nằm trong `pnpm check`, không phải script chạy tay.
 
 ### Task 7 — Retention và route analytics
 
-- [ ] `BR-TLM-09` event thô giữ **90 ngày**; job dọn idempotent, có checkpoint.
-- [ ] Ca âm: dọn chạy hai lần không xoá dữ liệu trong hạn.
-- [ ] `GET /api/managers/analytics/levels` đọc `level_daily_stats`.
-- [ ] Query `from` `to` `competency` `sort` `limit` ≤ 100 (`BR-PRF-06`).
-- [ ] `BR-TLM-01` cổng: không truy vấn báo cáo nào `SELECT` thẳng `telemetry_events`.
-- [ ] Ca âm: thêm truy vấn như vậy → cổng đỏ.
-- [ ] Năm ngưỡng chỉ số nội dung §7.2 khai dạng dữ liệu.
+- [x] `BR-TLM-09` event thô giữ **90 ngày**; job dọn idempotent, có checkpoint.
+- [x] Ca âm: dọn chạy hai lần không xoá dữ liệu trong hạn.
+- [x] `GET /api/managers/analytics/levels` đọc `level_daily_stats`.
+- [x] Query `from` `to` `competency` `sort` `limit` ≤ 100 (`BR-PRF-06`).
+- [x] `BR-TLM-01` cổng: không truy vấn báo cáo nào `SELECT` thẳng `telemetry_events`.
+- [x] Ca âm: thêm truy vấn như vậy → cổng đỏ.
+- [x] Năm ngưỡng chỉ số nội dung §7.2 khai dạng dữ liệu.
 
 ## Cổng dừng
 
-- [ ] Registry in "10/10 job", mỗi job có `owner_step`.
-- [ ] Dừng worker → alert tới email vận hành, **kiểm tay một lần**.
-- [ ] `rollup:daily` ba lần cùng ngày → kết quả không đổi.
+- [x] Registry in "10/10 job", mỗi job có `owner_step`.
+- [x] Dừng worker → alert tới email vận hành, **kiểm tay một lần**.
+- [x] `rollup:daily` ba lần cùng ngày → kết quả không đổi.
 - [ ] Không truy vấn báo cáo nào chạm `telemetry_events`.
 - [ ] Cổng PII đã đỏ trên fixture.
 - [ ] `pnpm check && pnpm test && pnpm lint:specs && pnpm check:progress` xanh.

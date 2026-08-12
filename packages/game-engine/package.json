@@ -12,6 +12,10 @@
     "typescript": "catalog:",
     "vitest": "catalog:"
   },
+  "dependencies": {
+    "zod": "catalog:",
+    "zod-to-json-schema": "catalog:"
+  },
   "exports": {
     ".": "./src/index.ts"
   }

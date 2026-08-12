@@ -61,11 +61,13 @@ export const auditLogs = pgTable(
       .generatedAlwaysAsIdentity(),
     uuid: uuid("uuid").defaultRandom().notNull().unique(),
     actorType: actorTypeEnum("actor_type").notNull(),
-    actorId: bigint("actor_id", { mode: "number" }).notNull(),
+    actorId: bigint("actor_id", { mode: "number" }),
     action: varchar("action", { length: 100 }).notNull(),
     entityType: varchar("entity_type", { length: 100 }).notNull(),
     entityId: varchar("entity_id", { length: 100 }).notNull(),
-    changes: jsonb("changes"),
+    beforeData: jsonb("before_data"),
+    afterData: jsonb("after_data"),
+    reason: text("reason"),
     ipAddress: text("ip_address"),
     userAgent: text("user_agent"),
     createdAt: timestamp("created_at", { withTimezone: true })
@@ -78,6 +80,12 @@ export const auditLogs = pgTable(
       table.actorId,
       table.createdAt
     ),
+    index("idx_audit_logs_entity_created").on(
+      table.entityType,
+      table.entityId,
+      table.createdAt
+    ),
+    index("idx_audit_logs_action_created").on(table.action, table.createdAt),
   ]
 );
 

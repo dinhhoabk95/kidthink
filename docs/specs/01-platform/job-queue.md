@@ -2,7 +2,7 @@
 spec: JOB-QUEUE
 title: Hàng đợi job nền
 area: platform
-status: approved
+status: implemented
 mvp: true
 phase: P1
 reviewed: 2026-08-07

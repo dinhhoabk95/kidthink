@@ -35,6 +35,7 @@ const TABLES = [
   "curriculum_enrollments",
   "curriculum_item_progress",
   "curriculum_items",
+  "emoji_registry",
   "entitlement_keys",
   "entitlements",
   "game_levels",

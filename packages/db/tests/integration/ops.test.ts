@@ -15,7 +15,7 @@ describe("Ops Schema Integration Tests", () => {
       .insert(auditLogs)
       .values({
         actorType: "system",
-        actorId: 0,
+        actorId: null,
         action: "TEST_ACTION",
         entityType: "system",
         entityId: "1",

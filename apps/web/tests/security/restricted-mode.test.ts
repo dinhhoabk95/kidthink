@@ -16,10 +16,11 @@ describe("Task 6 — Server-Enforced Restricted Mode (D-EQ)", () => {
     const db = getAppDb();
     const passHash = await hashPassword("chuoixanh123");
 
+    const email = `pending-${Date.now()}-${Math.floor(Math.random() * 10_000)}@example.com`;
     const [user] = await db
       .insert(users)
       .values({
-        email: "pending@example.com",
+        email,
         passwordHash: passHash,
         displayName: "Pending User",
         status: "pending_verification",
@@ -77,10 +78,11 @@ describe("Task 6 — Server-Enforced Restricted Mode (D-EQ)", () => {
     const db = getAppDb();
     const passHash = await hashPassword("chuoixanh123");
 
+    const email = `active-${Date.now()}-${Math.floor(Math.random() * 10_000)}@example.com`;
     const [user] = await db
       .insert(users)
       .values({
-        email: "active@example.com",
+        email,
         passwordHash: passHash,
         displayName: "Active User",
         status: "active",

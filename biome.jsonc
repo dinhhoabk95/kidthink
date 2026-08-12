@@ -2,6 +2,11 @@
   "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
   "root": true,
   "extends": ["ultracite/core", "ultracite/vue"],
+  "vcs": {
+    "enabled": true,
+    "clientKind": "git",
+    "useIgnoreFile": true
+  },
 
   // Zero-config là mặc định. Mỗi override dưới đây phải trỏ được về một contract
   // trong docs/specs/ — ❌ NEVER nới rule chỉ vì code hiện tại đang vi phạm.
@@ -16,6 +21,16 @@
         "rules": {
           "performance": {
             "noBarrelFile": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": ["packages/auth/src/totp.ts"],
+      "linter": {
+        "rules": {
+          "suspicious": {
+            "noBitwiseOperators": "off"
           }
         }
       }

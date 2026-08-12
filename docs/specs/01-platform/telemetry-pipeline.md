@@ -2,7 +2,7 @@
 spec: TELEMETRY-PIPELINE
 title: Đường ống telemetry và rollup
 area: platform
-status: approved
+status: implemented
 mvp: true
 phase: P1
 reviewed: 2026-08-08

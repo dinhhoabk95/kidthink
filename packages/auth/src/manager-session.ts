@@ -104,3 +104,54 @@ export async function verifyAdminManagerToken(
     throw appError("UNAUTHENTICATED");
   }
 }
+
+export async function createMfaChallengeToken(options: {
+  readonly managerId: number;
+  readonly email: string;
+  readonly secret: string;
+}): Promise<string> {
+  const secretKey = encodeAuthSecret(options.secret);
+  return await new SignJWT({
+    purpose: "mfa_challenge",
+    email: options.email,
+  })
+    .setProtectedHeader({ alg: "HS256" })
+    .setSubject(String(options.managerId))
+    .setIssuer(KIDTHINK_ADMIN_ISSUER)
+    .setAudience(KIDTHINK_MANAGER_AUDIENCE)
+    .setIssuedAt()
+    .setExpirationTime("5m")
+    .sign(secretKey);
+}
+
+export async function verifyMfaChallengeToken(options: {
+  readonly token: string;
+  readonly secret: string;
+}): Promise<{ managerId: number; email: string }> {
+  try {
+    const secretKey = encodeAuthSecret(options.secret);
+    const { payload } = await jwtVerify(options.token, secretKey, {
+      issuer: KIDTHINK_ADMIN_ISSUER,
+      audience: KIDTHINK_MANAGER_AUDIENCE,
+      algorithms: ["HS256"],
+    });
+
+    if (payload.purpose !== "mfa_challenge") {
+      throw appError("UNAUTHENTICATED");
+    }
+
+    const managerId = Number(payload.sub);
+    const email = typeof payload.email === "string" ? payload.email : "";
+
+    if (!Number.isInteger(managerId) || managerId <= 0 || !email) {
+      throw appError("UNAUTHENTICATED");
+    }
+
+    return { managerId, email };
+  } catch (err) {
+    if (err instanceof Error && err.name === "AppError") {
+      throw err;
+    }
+    throw appError("UNAUTHENTICATED");
+  }
+}

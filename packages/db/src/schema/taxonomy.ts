@@ -142,3 +142,36 @@ export const learningObjectives = pgTable(
     ),
   ]
 );
+
+export const emojiAgeSuitabilityEnum = pgEnum("emoji_age_suitability", [
+  "all",
+  "4plus",
+  "blocked",
+]);
+
+export const emojiStatusEnum = pgEnum("emoji_status", ["active", "deprecated"]);
+
+export const emojiRegistry = pgTable(
+  "emoji_registry",
+  {
+    id: bigint("id", { mode: "number" })
+      .primaryKey()
+      .generatedAlwaysAsIdentity(),
+    code: varchar("code", { length: 50 }).notNull().unique(),
+    unicode: varchar("unicode", { length: 20 }).notNull(),
+    nameVi: varchar("name_vi", { length: 100 }).notNull(),
+    category: varchar("category", { length: 50 }).notNull(),
+    searchKeywordsVi: text("search_keywords_vi").array(),
+    ageSuitability: emojiAgeSuitabilityEnum("age_suitability")
+      .notNull()
+      .default("all"),
+    whatAxis: varchar("what_axis", { length: 50 }),
+    status: emojiStatusEnum("status").notNull().default("active"),
+  },
+  (table) => [
+    check(
+      "check_emoji_registry_code_format",
+      sql`${table.code} ~ '^EMJ-[a-z0-9-]+$'`
+    ),
+  ]
+);

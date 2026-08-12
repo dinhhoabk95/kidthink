@@ -82,11 +82,12 @@ describe("Health Check API", () => {
     vi.useFakeTimers();
 
     (getOwnerDb as any).mockReturnValue({
-      execute: vi
-        .fn()
-        .mockImplementation(
-          () => new Promise((resolve) => setTimeout(resolve, 3000))
-        ),
+      execute: vi.fn().mockImplementation(
+        () =>
+          new Promise(() => {
+            /* never resolves */
+          })
+      ),
     });
     (ping as any).mockResolvedValue(true);
     (getWaitingCount as any).mockResolvedValue(0);

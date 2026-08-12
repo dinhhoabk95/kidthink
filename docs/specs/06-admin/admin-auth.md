@@ -2,7 +2,7 @@
 spec: ADMIN-AUTH
 title: Đăng nhập quản trị
 area: admin
-status: approved
+status: implemented
 mvp: true
 phase: P0
 reviewed: 2026-08-09

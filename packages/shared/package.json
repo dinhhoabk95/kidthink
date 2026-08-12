@@ -6,7 +6,19 @@
   "exports": {
     ".": "./src/index.ts"
   },
+  "scripts": {
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
+  },
   "dependencies": {
+    "@kidthink/auth": "workspace:*",
+    "@kidthink/emoji": "workspace:*",
     "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@kidthink/config": "workspace:*",
+    "fast-check": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
   }
 }

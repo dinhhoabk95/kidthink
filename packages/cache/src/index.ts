@@ -6,7 +6,7 @@ let client: Redis | undefined;
 
 function getClient() {
   if (!client) {
-    client = new Redis(process.env.VALKEY_URL || "redis://localhost:6379", {
+    client = new Redis(process.env.VALKEY_URL || "redis://localhost:6380", {
       connectTimeout: 2000,
       commandTimeout: 2000,
       maxRetriesPerRequest: 1, // Fail fast for ping

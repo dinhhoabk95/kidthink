@@ -8,6 +8,9 @@
   },
   "dependencies": {
     "@kidthink/auth": "workspace:*",
+    "@kidthink/game-engine": "workspace:*",
+    "@kidthink/queue": "workspace:*",
+    "@kidthink/shared": "workspace:*",
     "drizzle-orm": "catalog:",
     "postgres": "catalog:"
   },

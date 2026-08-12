@@ -2,7 +2,7 @@
 spec: GAME-CONFIG-DELIVERY
 title: Giao cấu hình game cho client
 area: play
-status: approved
+status: implemented
 mvp: true
 phase: P1
 reviewed: 2026-08-08

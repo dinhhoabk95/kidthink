@@ -15,11 +15,14 @@ export {
 // Query
 export {
   getAllCategories,
+  getByCode,
+  getEmojiCode,
   getEmojisByCategory,
   getEmojisByCurriculumTheme,
   getEmojisByGroup,
   getRandomEmojis,
   getTotalEmojiCount,
+  isValidRef,
 } from "./query";
 
 // Registry

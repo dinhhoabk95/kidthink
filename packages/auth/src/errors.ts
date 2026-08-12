@@ -63,6 +63,46 @@ export const AUTH_ERROR_DEFINITIONS = {
     status: 428,
     message: "Vui lòng đọc và đồng ý chính sách bảo vệ dữ liệu trẻ em.",
   },
+  TIER_LOCKED: {
+    status: 403,
+    message: "Nội dung này thuộc gói cao hơn.",
+  },
+  DAILY_PLAY_CAP_REACHED: {
+    status: 402,
+    message: "Đã đạt giới hạn thời gian chơi trong ngày.",
+  },
+  SESSION_ALREADY_COMPLETED: {
+    status: 409,
+    message: "Phiên chơi đã hoàn thành.",
+  },
+  SESSION_EXPIRED: {
+    status: 410,
+    message: "Phiên chơi đã hết hạn.",
+  },
+  EVENT_OUT_OF_ORDER: {
+    status: 409,
+    message: "Thứ tự sự kiện không hợp lệ.",
+  },
+  UNKNOWN_EVENT_NAME: {
+    status: 422,
+    message: "Tên sự kiện không hợp lệ.",
+  },
+  BATCH_TOO_LARGE: {
+    status: 413,
+    message: "Kích thước lô sự kiện vượt quá giới hạn.",
+  },
+  PAYLOAD_TOO_LARGE: {
+    status: 413,
+    message: "Dữ liệu sự kiện vượt quá giới hạn.",
+  },
+  INVALID_SEQUENCE: {
+    status: 400,
+    message: "Mã thứ tự sự kiện không hợp lệ.",
+  },
+  SESSION_NOT_FOUND: {
+    status: 404,
+    message: "Không tìm thấy phiên chơi.",
+  },
 } as const;
 
 export type AuthErrorCode = keyof typeof AUTH_ERROR_DEFINITIONS;

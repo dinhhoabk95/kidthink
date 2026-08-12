@@ -68,8 +68,8 @@ Mỗi bước: chín việc ở kế hoạch mục 5; mỗi work package S/M m�
 - [x] **P0.9** Taxonomy service + seed Lớp 1 — [`taxonomy-service.md`](../specs/01-platform/taxonomy-service.md) · [`emoji-registry.md`](../specs/01-platform/emoji-registry.md)
 - [x] **P0.9b** Email và guard; thêm job `email:send` lên khung queue tối thiểu (`D-BU`) — [`notification-service.md`](../specs/01-platform/notification-service.md) · [`rate-limiting.md`](../specs/01-platform/rate-limiting.md)
 - [x] **P0.10** Auth end-to-end bằng email/mật khẩu — [`registration.md`](../specs/03-account/registration.md) · [`email-verification.md`](../specs/03-account/email-verification.md) · [`login-and-session.md`](../specs/03-account/login-and-session.md) · [`password-recovery.md`](../specs/03-account/password-recovery.md)
-- [ ] **P0.11** Audit log, trước mọi hành động cần audit — [`audit-log.md`](../specs/01-platform/audit-log.md)
-- [ ] **P0.11b** Đăng nhập admin — [`admin-auth.md`](../specs/06-admin/admin-auth.md)
+- [x] **P0.11** Audit log, trước mọi hành động cần audit — [`audit-log.md`](../specs/01-platform/audit-log.md)
+- [x] **P0.11b** Đăng nhập admin — [`admin-auth.md`](../specs/06-admin/admin-auth.md)
 
 Kiểm giữa phase:
 
@@ -92,14 +92,14 @@ Kiểm giữa phase:
 Bắt đầu **nhóm D song song ngay từ đầu P1**: biên soạn seeder nội dung là đường găng dài nhất của
 MVP, và nó chỉ cần bước P1.2 xong.
 
-- [ ] **P1.1** Ràng buộc chất lượng & thiết kế UI — [`design-system-contract.md`](../specs/08-quality/design-system-contract.md) · [`accessibility.md`](../specs/08-quality/accessibility.md) · [`performance-budgets.md`](../specs/08-quality/performance-budgets.md)
-- [ ] **P1.2** Contract template + 6 template chạy được — [`game-template-contract.md`](../specs/01-platform/game-template-contract.md) · [`game-engine-runtime.md`](../specs/01-platform/game-engine-runtime.md)
+- [x] **P1.1** Ràng buộc chất lượng & thiết kế UI — [`design-system-contract.md`](../specs/08-quality/design-system-contract.md) · [`accessibility.md`](../specs/08-quality/accessibility.md) · [`performance-budgets.md`](../specs/08-quality/performance-budgets.md)
+- [x] **P1.2** Contract template + 6 template chạy được — [`game-template-contract.md`](../specs/01-platform/game-template-contract.md) · [`game-engine-runtime.md`](../specs/01-platform/game-engine-runtime.md)
 - [ ] **P1.2b** Đóng contract audio tiếng Việt, fallback và spec owner asset/authoring — [`Task #80`](80-audio-contract-closure-plan.md); chưa có contract thì không được coi placeholder P2.7 là coverage
-- [ ] **P1.3** Gating trước nội dung — [`access-gating.md`](../specs/04-play/access-gating.md)
-- [ ] **P1.4** Giao config game đã lọc quyền — [`game-config-delivery.md`](../specs/04-play/game-config-delivery.md)
-- [ ] **P1.5** Hàng đợi công việc & telemetry — [`job-queue.md`](../specs/01-platform/job-queue.md) · [`telemetry-pipeline.md`](../specs/01-platform/telemetry-pipeline.md)
-- [ ] **P1.6** Vòng đời phiên, nạp event idempotent, mất mạng — [`play-session-lifecycle.md`](../specs/04-play/play-session-lifecycle.md) · [`play-event-ingestion.md`](../specs/04-play/play-event-ingestion.md) · [`offline-play.md`](../specs/01-platform/offline-play.md)
-- [ ] **P1.7** Tính điểm ở server — [`scoring-and-result.md`](../specs/04-play/scoring-and-result.md)
+- [x] **P1.3** Gating trước nội dung — [`access-gating.md`](../specs/04-play/access-gating.md)
+- [x] **P1.4** Giao config game đã lọc quyền — [`game-config-delivery.md`](../specs/04-play/game-config-delivery.md)
+- [x] **P1.5** Hàng đợi công việc & telemetry — [`job-queue.md`](../specs/01-platform/job-queue.md) · [`telemetry-pipeline.md`](../specs/01-platform/telemetry-pipeline.md)
+- [x] **P1.6** Vòng đời phiên, nạp event idempotent, mất mạng — [`play-session-lifecycle.md`](../specs/04-play/play-session-lifecycle.md) · [`play-event-ingestion.md`](../specs/04-play/play-event-ingestion.md) · [`offline-play.md`](../specs/01-platform/offline-play.md)
+- [x] **P1.7** Tính điểm ở server — [`scoring-and-result.md`](../specs/04-play/scoring-and-result.md)
 - [ ] **P1.8** Scaffolding, phản hồi, parent gate, hạn mức giờ — [`scaffolding-and-hints.md`](../specs/04-play/scaffolding-and-hints.md) · [`feedback-and-celebration.md`](../specs/04-play/feedback-and-celebration.md) · [`parent-gate.md`](../specs/04-play/parent-gate.md) · [`healthy-play-limits.md`](../specs/04-play/healthy-play-limits.md)
 - [ ] **P1.9** Hồ sơ trẻ và chọn trẻ chơi — [`child-profile-crud.md`](../specs/03-account/child-profile-crud.md) · [`child-profile-switching.md`](../specs/03-account/child-profile-switching.md) · [`child-profile-archive.md`](../specs/03-account/child-profile-archive.md) · [`play-entry-and-profile-select.md`](../specs/04-play/play-entry-and-profile-select.md)
 - [ ] **P1.10** Gắn tag nội dung & seeder nội dung nền — [`content-tagging.md`](../specs/01-platform/content-tagging.md) · [`content-seed-authoring.md`](../specs/01-platform/content-seed-authoring.md)

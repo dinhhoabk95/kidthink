@@ -2,7 +2,7 @@
 spec: SCORING-AND-RESULT
 title: Tính điểm và kết quả phiên
 area: play
-status: approved
+status: implemented
 mvp: true
 phase: P1
 reviewed: 2026-08-08

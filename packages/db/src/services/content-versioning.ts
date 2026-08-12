@@ -2,9 +2,10 @@ import type { ContentLifecycleStatus, ManagerRole } from "@kidthink/shared";
 import { eq, sql } from "drizzle-orm";
 import { getOwnerDb } from "../client.ts";
 import { gameLevels } from "../schema/game.ts";
-import { auditLogs, contentReviewLog } from "../schema/ops.ts";
+import { contentReviewLog } from "../schema/ops.ts";
 import { playSessions } from "../schema/play.ts";
 import { contentSkillMap } from "../schema/tagging.ts";
+import { writeAudit } from "./audit.ts";
 import { LifecycleError } from "./content-lifecycle.ts";
 
 export interface CreateVersionResult {
@@ -222,16 +223,17 @@ export async function rollbackVersion(
     });
 
     // Write audit log
-    await tx.insert(auditLogs).values({
-      actorType: "manager",
-      actorId: actorManagerId,
-      action: "CONTENT_ROLLBACK",
-      entityType,
-      entityId: targetLevel.id.toString(),
-      changes: {
+    await writeAudit(tx, {
+      actor_type: "manager",
+      actor_id: actorManagerId,
+      action: "content_rolled_back",
+      entity_type: entityType,
+      entity_id: targetLevel.id.toString(),
+      after_data: {
         code,
         rollbackToVersion: targetLevel.contentVersion,
       },
+      reason: `Rollback to version ${targetVersion}`,
     });
 
     return {

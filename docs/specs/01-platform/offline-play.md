@@ -2,7 +2,7 @@
 spec: OFFLINE-PLAY
 title: Chơi khi mất mạng
 area: platform
-status: approved
+status: implemented
 mvp: true
 phase: P1
 reviewed: 2026-08-08

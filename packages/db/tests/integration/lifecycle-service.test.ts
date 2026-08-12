@@ -87,7 +87,17 @@ async function setupTestData() {
       nameVi: "Template Lifecycle Test",
       mechanic: "drag_drop",
     })
+    .onConflictDoNothing()
     .returning();
+
+  const templateId = gt
+    ? gt.id
+    : (
+        await db
+          .select()
+          .from(gameTemplates)
+          .where(eq(gameTemplates.code, gtCode))
+      )[0].id;
 
   // Insert manager
   const [mgr] = await db
@@ -118,7 +128,7 @@ async function setupTestData() {
       entityId: seqNum * 10,
       code: glCode,
       contentVersion: 1,
-      templateId: gt.id,
+      templateId,
       titleVi: "Mức chơi thử nghiệm 1",
       descriptionVi: "Mô tả",
       accessTier: "standard",

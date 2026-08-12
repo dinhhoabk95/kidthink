@@ -3,12 +3,10 @@ import {
   bigint,
   check,
   index,
-  integer,
   pgEnum,
   pgTable,
   smallint,
   timestamp,
-  unique,
   uuid,
   varchar,
 } from "drizzle-orm/pg-core";
@@ -58,34 +56,5 @@ export const childProfiles = pgTable(
       sql`${table.birthYear} >= 2010 AND ${table.birthYear} <= 2035`
     ),
     index("child_profiles_birth_year_idx").on(table.birthYear),
-  ]
-);
-
-export const childSessionSummaries = pgTable(
-  "child_session_summaries",
-  {
-    id: bigint("id", { mode: "number" })
-      .primaryKey()
-      .generatedAlwaysAsIdentity(),
-    childProfileId: bigint("child_profile_id", { mode: "number" })
-      .notNull()
-      .references(() => childProfiles.id, { onDelete: "cascade" }),
-    date: varchar("date", { length: 10 }).notNull(),
-    totalPlayTimeSeconds: integer("total_play_time_seconds")
-      .notNull()
-      .default(0),
-    levelsCompleted: integer("levels_completed").notNull().default(0),
-    createdAt: timestamp("created_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
-    updatedAt: timestamp("updated_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
-  },
-  (table) => [
-    unique("child_session_summaries_child_date_unique").on(
-      table.childProfileId,
-      table.date
-    ),
   ]
 );

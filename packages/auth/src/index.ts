@@ -40,10 +40,12 @@ export {
 export {
   type CreateManagerTokenOptions,
   createAdminManagerToken,
+  createMfaChallengeToken,
   KIDTHINK_ADMIN_ISSUER,
   KIDTHINK_MANAGER_AUDIENCE,
   type VerifyManagerTokenOptions,
   verifyAdminManagerToken,
+  verifyMfaChallengeToken,
 } from "./manager-session";
 export {
   generateSecureToken,
@@ -89,6 +91,15 @@ export {
   type VerifiedRefreshToken,
   verifyRefreshToken,
 } from "./refresh";
+export {
+  base32Decode,
+  base32Encode,
+  generateRecoveryCodes,
+  generateTotpCode,
+  generateTotpSecret,
+  hashRecoveryCode,
+  verifyTotpCode,
+} from "./totp";
 export {
   type CreateUserTokenOptions,
   createWebUserToken,

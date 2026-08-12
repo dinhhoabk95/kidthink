@@ -13,6 +13,7 @@
     "@kidthink/auth": "workspace:*",
     "@kidthink/cache": "workspace:*",
     "@kidthink/db": "workspace:*",
+    "@kidthink/game-engine": "workspace:*",
     "@kidthink/queue": "workspace:*",
     "@kidthink/shared": "workspace:*",
     "@kidthink/taxonomy": "workspace:*",

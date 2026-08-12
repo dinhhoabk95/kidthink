@@ -2,7 +2,7 @@
 spec: GAME-ENGINE-RUNTIME
 title: Runtime game engine trên canvas
 area: platform
-status: approved
+status: implemented
 mvp: true
 phase: P1
 reviewed: 2026-08-08

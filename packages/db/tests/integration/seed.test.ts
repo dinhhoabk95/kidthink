@@ -9,8 +9,11 @@ import {
 } from "../../src/schema/billing.ts";
 import { seed } from "../../src/seed.ts";
 
+import { truncateAllTestTables } from "../global-setup.ts";
+
 describe("BR-ENT-03 & BR-PKG-04 & BR-PKG-05: Seed Integration & Two-way Matching", () => {
   it("seed() is idempotent and matches registry exactly (BR-ENT-03)", async () => {
+    await truncateAllTestTables();
     const db = getOwnerDb();
 
     // 1. Run seed first time
@@ -54,5 +57,5 @@ describe("BR-ENT-03 & BR-PKG-04 & BR-PKG-05: Seed Integration & Two-way Matching
     expect(keyCount2.value).toBe(keyCount1.value);
     expect(pkgCount2.value).toBe(pkgCount1.value);
     expect(mapCount2.value).toBe(mapCount1.value);
-  });
+  }, 30_000);
 });

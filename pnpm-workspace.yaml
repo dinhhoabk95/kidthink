@@ -17,6 +17,7 @@ catalog:
   vitest: ^4.1.10
   fast-check: ^3.23.2
   zod: ^3.25.0 # Zod 4 (Standard Schema) — id-conventions §7.1, BR-ID-05
+  zod-to-json-schema: ^3.24.3
   dependency-cruiser: ^18.1.1 # cưỡng chế BR-MPA-01/06/07 trong gate local
 
   # Nuxt app runtime — P0.3. Pin the current 4.5 security-patched line.
