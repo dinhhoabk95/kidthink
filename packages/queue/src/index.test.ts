@@ -1,4 +1,3 @@
-import { Queue } from "bullmq";
 import { afterAll, describe, expect, it } from "vitest";
 import { disconnectQueue, enqueue } from "./index.js";
 
@@ -44,21 +43,5 @@ describe("packages/queue", () => {
     // BullMQ `add` returns the existing job if jobId matches an active/waiting one.
     expect(job1).toBeDefined();
     expect(job2?.id).toBe(job1?.id);
-
-    // We can also verify count in queue
-    const q = new Queue("kidthink-jobs", {
-      connection: { host: "localhost", port: 6379 },
-    });
-    const _count = await q.getJobCounts(
-      "wait",
-      "active",
-      "delayed",
-      "completed",
-      "failed"
-    );
-
-    // We expect the count to be reflective, but testing exact counts across tests is flaky
-    // Just knowing job2 didn't throw and returned the same ID is good enough for BullMQ's deduplication.
-    await q.close();
   });
 });

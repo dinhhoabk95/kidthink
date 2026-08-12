@@ -2,6 +2,7 @@ import { alert, type JobName, QUEUE_NAME } from "@kidthink/queue";
 import { type Job, Worker } from "bullmq";
 import { runPostgresBackup } from "./backup/postgres.js";
 import { runVerifyBackup } from "./backup/verify.js";
+import { runSendEmail } from "./email/send.js";
 
 let worker: Worker | undefined;
 
@@ -15,6 +16,9 @@ export async function processJob(job: Job) {
         break;
       case "backup:verify":
         await runVerifyBackup(job.id as string);
+        break;
+      case "email:send":
+        await runSendEmail(job.id as string, job.data);
         break;
       default:
         // Tên job không đăng ký → fail rõ ràng

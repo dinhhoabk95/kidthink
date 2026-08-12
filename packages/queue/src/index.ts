@@ -7,6 +7,15 @@ import { Redis } from "ioredis"; // ioredis is the default export, but we can al
 export interface JobPayloads {
   "backup:postgres": Record<string, never>;
   "backup:verify": { source?: string };
+  "email:send": {
+    notificationId: number;
+    to: string;
+    code: string;
+    payload: Record<string, unknown>;
+    recipientStatus?: "active" | "deleted";
+    userOptOut?: boolean;
+    isBouncing?: boolean;
+  };
 }
 
 export type JobName = keyof JobPayloads;
