@@ -7,6 +7,7 @@ import {
   RefreshService,
   type UserTokenPayload,
   validateCsrfToken,
+  verifyWebUserToken,
 } from "@kidthink/auth";
 import { getAppSql, PostgresSessionStore } from "@kidthink/db";
 import {
@@ -131,6 +132,29 @@ export function assertUserSession(
     throw appError("UNAUTHENTICATED");
   }
   return session;
+}
+
+export async function requireWebUserSession(
+  event: H3Event
+): Promise<UserTokenPayload> {
+  if (event.context?.userSession) {
+    return event.context.userSession as UserTokenPayload;
+  }
+
+  const authHeader = getHeader(event, "authorization");
+  const bearerToken = authHeader?.startsWith("Bearer ")
+    ? authHeader.slice(7).trim()
+    : undefined;
+
+  const cookieToken = getCookie(event, config.accessCookieName);
+  const token = bearerToken || cookieToken;
+
+  if (!token) {
+    throw appError("UNAUTHENTICATED");
+  }
+
+  const secret = getWebJwtSecret(event);
+  return await verifyWebUserToken({ token, secret });
 }
 
 export function respondToUserAuthError(event: H3Event, error: unknown): never {

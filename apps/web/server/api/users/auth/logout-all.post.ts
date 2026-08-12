@@ -1,21 +1,23 @@
-import { requireUserAuth } from "@kidthink/auth";
-import { defineEventHandler, setResponseStatus } from "h3";
+import { defineEventHandler, type H3Event } from "h3";
 import {
   clearUserAuthCookies,
   getUserRefreshService,
+  requireWebUserSession,
   respondToUserAuthError,
-  validateUserCsrf,
 } from "../../../utils/auth-runtime";
 
-export default defineEventHandler(async (event) => {
+export async function handleLogoutAll(event: H3Event) {
   try {
-    validateUserCsrf(event);
-    const user = requireUserAuth(event);
-    await getUserRefreshService(event).logoutAll("user", user.user_id);
+    const userSession = await requireWebUserSession(event);
+    const refreshService = getUserRefreshService(event);
+
+    await refreshService.logoutAll("user", userSession.user_id);
+
     clearUserAuthCookies(event);
-    setResponseStatus(event, 204);
-    return null;
+    return { ok: true };
   } catch (error) {
     return respondToUserAuthError(event, error);
   }
-});
+}
+
+export default defineEventHandler((event) => handleLogoutAll(event));
