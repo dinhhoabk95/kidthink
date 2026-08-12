@@ -57,8 +57,8 @@ export type SurfaceName = keyof typeof SURFACE_RULES.surfaces;
 export type IconName = `i-lucide-${string}`;
 
 export interface IconConfig {
-  name: IconName;
   ariaLabel?: string;
+  name: IconName;
 }
 
 export function validateIconName(icon: unknown): icon is IconName {
@@ -67,3 +67,12 @@ export function validateIconName(icon: unknown): icon is IconName {
   }
   return icon.startsWith("i-lucide-");
 }
+
+export {
+  applyRuleOverride,
+  auditDOMAccessibility,
+  type PageObjectDefinition,
+  REGISTERED_SURFACES,
+  type RuleOverride,
+  validatePageObjectRegistry,
+} from "./a11y/harness.js";
