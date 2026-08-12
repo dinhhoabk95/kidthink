@@ -44,7 +44,7 @@ describe("Purge and Anonymization Integration Tests — Task 10", () => {
       .returning();
 
     // 4. Create Telemetry Events
-    const sessionUuid = "d0eebc99-9c0b-4ef8-bb6d-6bb9bd380a44";
+    const sessionUuid = crypto.randomUUID();
     await db.insert(telemetryEvents).values({
       sessionUuid,
       seq: 1,

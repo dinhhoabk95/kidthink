@@ -1,4 +1,5 @@
-CREATE TABLE IF NOT EXISTS "child_session_summaries" (
+DROP TABLE IF EXISTS "child_session_summaries" CASCADE;
+CREATE TABLE "child_session_summaries" (
 	"child_profile_id" bigint NOT NULL,
 	"session_uuid" uuid NOT NULL,
 	"game_level_id" bigint NOT NULL,
@@ -42,7 +43,7 @@ END $$;
 ALTER TABLE "child_daily_stats" ADD COLUMN IF NOT EXISTS "sessions_count" integer DEFAULT 0 NOT NULL;
 ALTER TABLE "child_daily_stats" ADD COLUMN IF NOT EXISTS "skills_touched" integer DEFAULT 0 NOT NULL;
 
-DROP TABLE IF EXISTS "level_daily_stats";
+DROP TABLE IF EXISTS "level_daily_stats" CASCADE;
 CREATE TABLE "level_daily_stats" (
 	"level_code" varchar(40) NOT NULL,
 	"content_version" integer NOT NULL,

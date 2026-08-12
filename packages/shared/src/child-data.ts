@@ -33,6 +33,29 @@ export const CHILD_STATUS_VALUES = [
 ] as const;
 export type ChildStatus = (typeof CHILD_STATUS_VALUES)[number];
 
+export const AVATAR_PRESET_IDS = Array.from(
+  { length: 12 },
+  (_, i) => `avatar-preset-${String(i + 1).padStart(2, "0")}`
+) as string[];
+
+export function isValidAvatarPreset(avatarId: string): boolean {
+  return AVATAR_PRESET_IDS.includes(avatarId);
+}
+
+export function deriveAgeBand(
+  birthYear: number,
+  currentYear: number = new Date().getFullYear()
+): "3-4" | "4-5" | "5-6" {
+  const age = currentYear - birthYear;
+  if (age <= 3) {
+    return "3-4";
+  }
+  if (age === 4) {
+    return "4-5";
+  }
+  return "5-6";
+}
+
 /**
  * BR-CDC-04: avatar_id must be a preset ID, never an image path, URL, or data URI.
  */

@@ -22,7 +22,11 @@ export default defineConfig({
     },
   },
   test: {
-    globalSetup: ["./tests/global-setup.ts"],
+    globalSetup: [path.resolve(import.meta.dirname, "./tests/global-setup.ts")],
     fileParallelism: false,
+    maxWorkers: 1,
+    sequence: {
+      concurrent: false,
+    },
   },
 });

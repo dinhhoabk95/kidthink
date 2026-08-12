@@ -1,9 +1,11 @@
+import { enforceTwoAxisRateLimit } from "@kidthink/shared";
 import { defineEventHandler } from "h3";
 import {
+  assertRateLimitAllowed,
   assertUserSession,
-  getActiveChildCandidate,
   getUserRefreshCookie,
   getUserRefreshService,
+  getVerifiedRemoteIp,
   respondToUserAuthError,
   setUserAuthCookies,
   validateUserCsrf,
@@ -12,10 +14,14 @@ import {
 export default defineEventHandler(async (event) => {
   try {
     validateUserCsrf(event);
+    const rateLimit = await enforceTwoAxisRateLimit({
+      routeClass: "auth:refresh",
+      remoteIp: getVerifiedRemoteIp(event),
+    });
+    assertRateLimitAllowed(rateLimit.statusCode);
     const service = getUserRefreshService(event);
     const result = await service.rotateRefreshToken({
       refreshToken: getUserRefreshCookie(event),
-      activeChildCandidateId: getActiveChildCandidate(event),
     });
     const session = assertUserSession(result.session);
     setUserAuthCookies(event, result.accessToken, result.nextRefreshToken);

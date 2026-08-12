@@ -339,7 +339,10 @@ async function seedCompetenciesStep(
         icon: `icon-${comp.code.toLowerCase()}`,
         position: Number.parseInt(comp.code.replace("C", ""), 10),
       })
-      .onConflictDoNothing({ target: competencies.code });
+      .onConflictDoUpdate({
+        target: competencies.code,
+        set: { nameVi: comp.name_vi, descriptionVi: comp.name_en },
+      });
   }
 
   const dbComps = await db.select().from(competencies);
@@ -367,7 +370,10 @@ async function seedStrandsStep(
           descriptionVi: str.name_en,
           position: idx + 1,
         })
-        .onConflictDoNothing({ target: strands.code });
+        .onConflictDoUpdate({
+          target: strands.code,
+          set: { competencyId: compId, nameVi: str.name_vi },
+        });
     }
   }
 
@@ -401,7 +407,19 @@ async function seedSkillsStep(
           status: "seeded",
           position: idx + 1,
         })
-        .onConflictDoNothing({ target: skills.code });
+        .onConflictDoUpdate({
+          target: skills.code,
+          set: {
+            strandId,
+            nameVi: sk.name_vi,
+            ageMin: sk.age_min,
+            ageMax: sk.age_max,
+            difficulty: sk.difficulty,
+            thinkingProcesses: sk.thinking_processes,
+            status: "seeded",
+            position: idx + 1,
+          },
+        });
     }
   }
 
@@ -462,7 +480,15 @@ async function seedLearningObjectivesStep(
           observableCriteriaVi: lo.observable_criteria_vi,
           position: lo.position,
         })
-        .onConflictDoNothing({ target: learningObjectives.code });
+        .onConflictDoUpdate({
+          target: learningObjectives.code,
+          set: {
+            skillId,
+            behaviourVi: lo.behaviour_vi,
+            observableCriteriaVi: lo.observable_criteria_vi,
+            position: lo.position,
+          },
+        });
       totalLOsInserted++;
     }
   }
@@ -493,7 +519,6 @@ export async function seedTaxonomyMasterData(
   const compIdMap = await seedCompetenciesStep(db);
   const strandIdMap = await seedStrandsStep(db, compIdMap);
   const skillIdMap = await seedSkillsStep(db, seededSkills, strandIdMap);
-
   await seedPrerequisitesStep(db, seededSkills, skillIdMap);
   const loCount = await seedLearningObjectivesStep(
     db,

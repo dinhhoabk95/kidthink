@@ -1,5 +1,6 @@
 import { defineEventHandler } from "h3";
 import {
+  assertManagerRefreshRateLimit,
   assertManagerSession,
   getManagerRefreshCookie,
   getManagerRefreshService,
@@ -11,6 +12,7 @@ import {
 export default defineEventHandler(async (event) => {
   try {
     validateManagerCsrf(event);
+    await assertManagerRefreshRateLimit(event);
     const service = getManagerRefreshService(event);
     const result = await service.rotateRefreshToken({
       refreshToken: getManagerRefreshCookie(event),

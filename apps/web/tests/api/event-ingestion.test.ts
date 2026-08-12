@@ -10,19 +10,22 @@ import { eq } from "drizzle-orm";
 import { describe, expect, it } from "vitest";
 
 async function createTestLevel(db: ReturnType<typeof getOwnerDb>) {
-  const templates = await db.select().from(gameTemplates).limit(1);
-  let templateId = templates[0]?.id;
+  const num3 = Math.floor(Math.random() * 899) + 100;
+  const [gt] = await db
+    .insert(gameTemplates)
+    .values({
+      code: `GT-${num3}`,
+      nameVi: "Template test",
+      mechanic: "tap_target",
+      scoring: {},
+    })
+    .onConflictDoNothing()
+    .returning();
+
+  let templateId = gt?.id;
   if (!templateId) {
-    const [gt] = await db
-      .insert(gameTemplates)
-      .values({
-        code: "GT-999",
-        nameVi: "Template test",
-        mechanic: "tap_target",
-        scoring: {},
-      })
-      .returning();
-    templateId = gt.id;
+    const existing = await db.select().from(gameTemplates).limit(1);
+    templateId = existing[0]?.id ?? 1;
   }
 
   const num4 = Math.floor(Math.random() * 8999) + 1000;
@@ -105,11 +108,17 @@ describe("Task P1.6 — Event Ingestion (BR-ING-01..08, BR-EVT-01..08)", () => {
       { seq: 2, event_name: "round_started", payload: { round_index: 0 } },
     ];
 
-    const res1 = await ingestPlayEvents(uuid, events, { isUserCall: false });
+    const res1 = await ingestPlayEvents(uuid, events, {
+      isUserCall: false,
+      guestDeviceId: "device-ingest-batch",
+    });
     expect(res1.accepted).toBe(2);
     expect(res1.skipped).toBe(0);
 
-    const res2 = await ingestPlayEvents(uuid, events, { isUserCall: false });
+    const res2 = await ingestPlayEvents(uuid, events, {
+      isUserCall: false,
+      guestDeviceId: "device-ingest-batch",
+    });
     expect(res2.accepted).toBe(0);
     expect(res2.skipped).toBe(2);
   });
@@ -136,7 +145,10 @@ describe("Task P1.6 — Event Ingestion (BR-ING-01..08, BR-EVT-01..08)", () => {
     ];
 
     await expect(
-      ingestPlayEvents(uuid, events, { isUserCall: false })
+      ingestPlayEvents(uuid, events, {
+        isUserCall: false,
+        guestDeviceId: "device-unknown-evt",
+      })
     ).rejects.toSatisfy((err: unknown) => {
       const e = err as { code?: string; status?: number };
       return e.code === "UNKNOWN_EVENT_NAME" && e.status === 422;
@@ -167,7 +179,10 @@ describe("Task P1.6 — Event Ingestion (BR-ING-01..08, BR-EVT-01..08)", () => {
       },
     ];
 
-    await ingestPlayEvents(uuid, events, { isUserCall: false });
+    await ingestPlayEvents(uuid, events, {
+      isUserCall: false,
+      guestDeviceId: "device-score-strip",
+    });
 
     const savedEvents = await db
       .select()
@@ -198,7 +213,10 @@ describe("Task P1.6 — Event Ingestion (BR-ING-01..08, BR-EVT-01..08)", () => {
     const uuid = session.sessionUuid;
     const events = [{ seq: 1, event_name: "game_started" }];
 
-    const res = await ingestPlayEvents(uuid, events, { isUserCall: false });
+    const res = await ingestPlayEvents(uuid, events, {
+      isUserCall: false,
+      guestDeviceId: "device-terminal-ingest",
+    });
     expect(res.accepted).toBe(0);
     expect(res.skipped).toBe(1);
   });

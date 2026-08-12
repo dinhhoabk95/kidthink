@@ -1,6 +1,12 @@
-import { type UserTokenPayload, verifyWebUserToken } from "@kidthink/auth";
+import {
+  getAuthNamespaceConfig,
+  type UserTokenPayload,
+  verifyWebUserToken,
+} from "@kidthink/auth";
 import { defineEventHandler, getCookie, getHeader } from "h3";
 import { useRuntimeConfig } from "#imports";
+
+const userAuthConfig = getAuthNamespaceConfig("user");
 
 declare module "h3" {
   interface H3EventContext {
@@ -10,7 +16,7 @@ declare module "h3" {
 }
 
 export default defineEventHandler(async (event) => {
-  const tokenFromCookie = getCookie(event, "kidthink-user-access");
+  const tokenFromCookie = getCookie(event, userAuthConfig.accessCookieName);
   const authHeader = getHeader(event, "authorization");
   const tokenFromHeader = authHeader?.startsWith("Bearer ")
     ? authHeader.slice(7).trim()

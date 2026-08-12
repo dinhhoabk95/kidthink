@@ -26,7 +26,7 @@ describe("password utilities (BR-REG-05, BR-EVF-01, BR-PWR-02, BR-PWR-08)", () =
     const pass = "chuoixanh123";
     const hash = await hashPassword(pass);
 
-    expect(hash).toContain("scrypt$");
+    expect(hash).toContain("$argon2id$");
     expect(await verifyPassword(pass, hash)).toBe(true);
     expect(await verifyPassword("wrongpassword", hash)).toBe(false);
   });

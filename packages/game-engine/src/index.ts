@@ -30,6 +30,15 @@ export {
 } from "./offline-buffer";
 export { AudioController } from "./systems/audio-controller";
 export { designTokens } from "./systems/designTokens";
+export {
+  COMPLIMENTS,
+  FEEDBACK_TABLE,
+  type FeedbackConfig,
+  type FeedbackState,
+  FeedbackSystem,
+  FORBIDDEN_WORDS,
+  RETRY_ENCOURAGEMENTS,
+} from "./systems/feedback-system";
 export { type Particle, RenderSystem } from "./systems/render-system";
 export { ScaffoldingSystem } from "./systems/scaffolding";
 export { SFXEngine, type SFXType } from "./systems/sfx-engine";

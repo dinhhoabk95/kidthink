@@ -1,11 +1,22 @@
 import { appError, hashSecureToken } from "@kidthink/auth";
 import { getAppDb, users, verificationTokens } from "@kidthink/db";
-import { eq } from "drizzle-orm";
+import { and, eq, isNull } from "drizzle-orm";
 import { defineEventHandler, type H3Event, readBody } from "h3";
-import { respondToUserAuthError } from "../../../../utils/auth-runtime";
+import { z } from "zod";
+import {
+  assertRequestBodySize,
+  assertSameOriginRequest,
+  respondToUserAuthError,
+} from "../../../../utils/auth-runtime";
+
+const VerifyEmailSchema = z
+  .object({ token: z.string().trim().min(1).max(512) })
+  .strict();
 
 export async function handleVerifyEmail(event: H3Event, testBody?: unknown) {
   try {
+    assertSameOriginRequest(event);
+    assertRequestBodySize(event, 16 * 1024);
     const rawBody =
       testBody ??
       event.context?.body ??
@@ -17,22 +28,25 @@ export async function handleVerifyEmail(event: H3Event, testBody?: unknown) {
       });
     }
 
-    const payload = rawBody as Record<string, unknown>;
-    const token = payload.token;
-
-    if (!token || typeof token !== "string" || token.trim().length === 0) {
-      throw appError("VALIDATION_FAILED", {
-        reason: "Mã xác thực là bắt buộc.",
-      });
+    const parsed = VerifyEmailSchema.safeParse(rawBody);
+    if (!parsed.success) {
+      throw appError("VALIDATION_FAILED");
     }
+    const token = parsed.data.token;
 
     const db = getAppDb();
-    const tokenHash = hashSecureToken(token.trim());
+    const tokenHash = hashSecureToken(token);
 
     const tokenRows = await db
       .select()
       .from(verificationTokens)
-      .where(eq(verificationTokens.tokenHash, tokenHash));
+      .where(
+        and(
+          eq(verificationTokens.tokenHash, tokenHash),
+          eq(verificationTokens.accountType, "user"),
+          eq(verificationTokens.purpose, "email_verify")
+        )
+      );
 
     if (tokenRows.length === 0) {
       // BR-EVF-05: Generic NOT_FOUND error, never leak token or email
@@ -40,10 +54,6 @@ export async function handleVerifyEmail(event: H3Event, testBody?: unknown) {
     }
 
     const vToken = tokenRows[0];
-    if (vToken.purpose !== "email_verify") {
-      throw appError("NOT_FOUND");
-    }
-
     const now = new Date();
     const [user] = await db
       .select()
@@ -67,20 +77,35 @@ export async function handleVerifyEmail(event: H3Event, testBody?: unknown) {
       throw appError("TOKEN_EXPIRED");
     }
 
-    // Update user status and token usedAt
-    await db
-      .update(users)
-      .set({
-        status: "active",
-        emailVerifiedAt: now,
-        updatedAt: now,
-      })
-      .where(eq(users.id, user.id));
+    await db.transaction(async (tx) => {
+      const [claimed] = await tx
+        .update(verificationTokens)
+        .set({ usedAt: now })
+        .where(
+          and(
+            eq(verificationTokens.id, vToken.id),
+            eq(verificationTokens.accountType, "user"),
+            eq(verificationTokens.purpose, "email_verify"),
+            isNull(verificationTokens.usedAt)
+          )
+        )
+        .returning({ id: verificationTokens.id });
+      if (!claimed) {
+        if (user.status === "active") {
+          return;
+        }
+        throw appError("TOKEN_EXPIRED");
+      }
 
-    await db
-      .update(verificationTokens)
-      .set({ usedAt: now })
-      .where(eq(verificationTokens.id, vToken.id));
+      await tx
+        .update(users)
+        .set({
+          status: "active",
+          emailVerifiedAt: now,
+          updatedAt: now,
+        })
+        .where(eq(users.id, user.id));
+    });
 
     return { status: "active" };
   } catch (error) {

@@ -1,0 +1,204 @@
+import { createParentGateToken, createWebUserToken } from "@kidthink/auth";
+import {
+  childDailyStats,
+  childProfiles,
+  getOwnerDb,
+  users,
+} from "@kidthink/db";
+import { getDateIct } from "@kidthink/shared";
+import { describe, expect, it } from "vitest";
+import grantExtraTimeHandler from "../../server/api/users/children/[uuid]/grant-extra-time.post";
+import playBudgetHandler from "../../server/api/users/children/[uuid]/play-budget.get";
+import updateSettingsHandler from "../../server/api/users/children/[uuid]/settings.patch";
+
+const PARENT_GATE_SECRET =
+  process.env.PARENT_GATE_SECRET ||
+  "kidthink-parent-gate-secret-key-default-2026";
+const JWT_SECRET =
+  process.env.JWT_SECRET || "kidthink-dev-secret-kidthink-dev-secret-32bytes";
+
+async function createAuthUserHeader(userId: number) {
+  const token = await createWebUserToken({
+    payload: {
+      user_id: userId,
+      display_name: "Parent User",
+      session_id: `sess_${userId}_${Date.now()}`,
+      refresh_token_version: 0,
+    },
+    secret: JWT_SECRET,
+  });
+  return `Bearer ${token}`;
+}
+
+function mockEvent(
+  method: string,
+  headers: Record<string, string> = {},
+  params: Record<string, string> = {},
+  body: any = {}
+) {
+  const responseHeaders: Record<string, string> = {};
+  return {
+    method,
+    node: {
+      req: { headers, url: "/", originalUrl: "/" },
+      res: {
+        setHeader: (name: string, value: string) => {
+          responseHeaders[name.toLowerCase()] = value;
+        },
+        getHeader: (name: string) => responseHeaders[name.toLowerCase()],
+        statusCode: 200,
+      },
+    },
+    context: {
+      params,
+      body,
+    },
+    routerParams: params,
+    _body: body,
+  } as any;
+}
+
+async function createTestUserWithChildren() {
+  const db = getOwnerDb();
+  const email = `play_limits_user_${Date.now()}_${Math.random()}@tinimath.test`;
+
+  const [user] = await db
+    .insert(users)
+    .values({
+      email,
+      passwordHash: "hash123",
+      displayName: "Parent User",
+    })
+    .returning();
+
+  const [childA] = await db
+    .insert(childProfiles)
+    .values({
+      userId: user.id,
+      displayName: "Bé A",
+      birthYear: 2020,
+      avatarId: "bunny_1",
+      dailyPlayCapMinutes: 30,
+    })
+    .returning();
+
+  const [childB] = await db
+    .insert(childProfiles)
+    .values({
+      userId: user.id,
+      displayName: "Bé B",
+      birthYear: 2021,
+      avatarId: "bear_1",
+      dailyPlayCapMinutes: 30,
+    })
+    .returning();
+
+  const authHeader = await createAuthUserHeader(user.id);
+  const headers = { authorization: authHeader };
+
+  return { user, childA, childB, headers };
+}
+
+describe("Healthy Play Limits API (BR-HPL-01..08 & HEALTHY-PLAY-LIMITS spec)", () => {
+  it("GET /play-budget returns correct budget and ICT reset time", async () => {
+    const db = getOwnerDb();
+    const { childA, headers } = await createTestUserWithChildren();
+    const dateIct = getDateIct();
+
+    // Insert 10 minutes played (600 seconds)
+    await db.insert(childDailyStats).values({
+      childProfileId: childA.id,
+      dateIct,
+      totalPlayTimeSeconds: 600,
+    });
+
+    const event = mockEvent("GET", headers, { uuid: childA.uuid });
+
+    const res = await playBudgetHandler(event);
+    expect(res.cap_minutes).toBe(30);
+    expect(res.used_minutes).toBe(10);
+    expect(res.remaining_minutes).toBe(20);
+    expect(res.resets_at).toBeDefined();
+  });
+
+  it("BR-HPL-08: PATCH /settings rejects cap > package cap with 422", async () => {
+    const { childA, headers } = await createTestUserWithChildren();
+
+    const event = mockEvent(
+      "PATCH",
+      headers,
+      { uuid: childA.uuid },
+      { daily_play_cap_minutes: 90 }
+    );
+
+    try {
+      await updateSettingsHandler(event);
+      expect.fail("Should have thrown 422");
+    } catch (err: any) {
+      const status = err.statusCode || err.status;
+      expect(status).toBe(422);
+    }
+  });
+
+  it("BR-HPL-06: POST /grant-extra-time rejects request without valid gate_token with 403", async () => {
+    const { childA, headers } = await createTestUserWithChildren();
+
+    const eventNoToken = mockEvent(
+      "POST",
+      headers,
+      { uuid: childA.uuid },
+      { minutes: 15 }
+    );
+
+    try {
+      await grantExtraTimeHandler(eventNoToken);
+      expect.fail("Should have thrown 403");
+    } catch (err: any) {
+      const status = err.statusCode || err.status;
+      expect(status).toBe(403);
+    }
+  });
+
+  it("POST /grant-extra-time accepts valid gate_token and grants up to 30 mins", async () => {
+    const { user, childA, headers } = await createTestUserWithChildren();
+    const validGateToken = createParentGateToken(
+      user.id,
+      Date.now() + 300_000,
+      PARENT_GATE_SECRET
+    );
+
+    const event = mockEvent(
+      "POST",
+      headers,
+      { uuid: childA.uuid },
+      { minutes: 15, gate_token: validGateToken }
+    );
+
+    const res = await grantExtraTimeHandler(event);
+    expect(res.success).toBe(true);
+    expect(res.granted_minutes).toBe(15);
+  });
+
+  it("BR-HPL-01: limits are enforced per child (child A exhausted does not affect child B)", async () => {
+    const db = getOwnerDb();
+    const { childA, childB, headers } = await createTestUserWithChildren();
+    const dateIct = getDateIct();
+
+    // Exhaust Child A (30 mins = 1800 seconds)
+    await db.insert(childDailyStats).values({
+      childProfileId: childA.id,
+      dateIct,
+      totalPlayTimeSeconds: 1800,
+    });
+
+    // Check Child A budget
+    const eventA = mockEvent("GET", headers, { uuid: childA.uuid });
+    const resA = await playBudgetHandler(eventA);
+    expect(resA.remaining_minutes).toBe(0);
+
+    // Check Child B budget (0 seconds used)
+    const eventB = mockEvent("GET", headers, { uuid: childB.uuid });
+    const resB = await playBudgetHandler(eventB);
+    expect(resB.remaining_minutes).toBe(30);
+  });
+});

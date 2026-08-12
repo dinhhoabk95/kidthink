@@ -5,12 +5,13 @@ import levelsAnalyticsHandler from "../../../server/api/managers/analytics/level
 
 function mockEvent(
   headers: Record<string, string> = {},
-  _query: Record<string, unknown> = {}
+  url = "/api/managers/analytics/levels"
 ) {
   const responseHeaders: Record<string, string> = {};
   return {
     method: "GET",
-    node: { req: { headers } },
+    path: url,
+    node: { req: { headers, url }, res: {} },
     context: {},
     responseHeaders,
   } as any;
@@ -32,6 +33,7 @@ describe("Task 7 — GET /api/managers/analytics/levels (BR-TLM-01, BR-PRF-06)",
       .insert(managers)
       .values({
         email,
+        passwordHash: "scrypt$mockhash",
         displayName: "Analytics Manager",
         role: "super_admin",
       })
@@ -54,17 +56,18 @@ describe("Task 7 — GET /api/managers/analytics/levels (BR-TLM-01, BR-PRF-06)",
     const token = await createAdminManagerToken({
       payload: {
         manager_id: mgr.id,
-        email: mgr.email,
-        role: mgr.role as "system_admin",
+        display_name: mgr.displayName,
         session_id: "m_session_analytics",
+        refresh_token_version: mgr.refreshTokenVersion,
+        role: "super_admin",
       },
-      secret: "test_secret_32_bytes_minimum_length_key!!",
+      secret: "kidthink-dev-secret-kidthink-dev-secret-32bytes",
     });
 
     // Request with limit 200 (should be capped to 100 per BR-PRF-06)
     const event = mockEvent(
       { authorization: `Bearer ${token}` },
-      { limit: "200" }
+      "/api/managers/analytics/levels?limit=200"
     );
 
     const res = await levelsAnalyticsHandler(event);

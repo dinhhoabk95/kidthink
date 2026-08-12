@@ -8,19 +8,22 @@ import {
 import { describe, expect, it } from "vitest";
 
 async function createTestLevel(db: ReturnType<typeof getOwnerDb>) {
-  const templates = await db.select().from(gameTemplates).limit(1);
-  let templateId = templates[0]?.id;
+  const num3 = Math.floor(Math.random() * 899) + 100;
+  const [gt] = await db
+    .insert(gameTemplates)
+    .values({
+      code: `GT-${num3}`,
+      nameVi: "Template test",
+      mechanic: "tap_target",
+      scoring: {},
+    })
+    .onConflictDoNothing()
+    .returning();
+
+  let templateId = gt?.id;
   if (!templateId) {
-    const [gt] = await db
-      .insert(gameTemplates)
-      .values({
-        code: "GT-999",
-        nameVi: "Template test",
-        mechanic: "tap_target",
-        scoring: {},
-      })
-      .returning();
-    templateId = gt.id;
+    const existing = await db.select().from(gameTemplates).limit(1);
+    templateId = existing[0]?.id ?? 1;
   }
 
   const num4 = Math.floor(Math.random() * 8999) + 1000;
@@ -64,6 +67,7 @@ describe("Task P1.6 — Session Complete Route & Contracts (BR-PSL-01, BR-PSL-03
 
     const res = await completePlaySession(uuid, undefined, {
       isUserCall: false,
+      guestDeviceId: "device-complete-1",
     });
     expect(res.stars).toBeNull();
     expect(res.rounds_correct).toBe(0);
@@ -88,7 +92,10 @@ describe("Task P1.6 — Session Complete Route & Contracts (BR-PSL-01, BR-PSL-03
     const uuid = session.sessionUuid;
 
     await expect(
-      completePlaySession(uuid, undefined, { isUserCall: false })
+      completePlaySession(uuid, undefined, {
+        isUserCall: false,
+        guestDeviceId: "device-complete-2",
+      })
     ).rejects.toSatisfy((err: unknown) => {
       const e = err as { code?: string; status?: number };
       return e.code === "SESSION_ALREADY_COMPLETED" && e.status === 409;
@@ -115,7 +122,10 @@ describe("Task P1.6 — Session Complete Route & Contracts (BR-PSL-01, BR-PSL-03
     const uuid = session.sessionUuid;
 
     await expect(
-      completePlaySession(uuid, undefined, { isUserCall: false })
+      completePlaySession(uuid, undefined, {
+        isUserCall: false,
+        guestDeviceId: "device-expired",
+      })
     ).rejects.toSatisfy((err: unknown) => {
       const e = err as { code?: string; status?: number };
       return e.code === "SESSION_EXPIRED" && e.status === 410;

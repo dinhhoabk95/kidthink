@@ -56,6 +56,7 @@ onlyBuiltDependencies:
 # Khai tường minh ở đây vì không khai thì `pnpm install` trên clone MỚI exit 1
 # (ERR_PNPM_IGNORED_BUILDS) — vỡ onboarding. Xem repo-bootstrap §7.1.
 allowBuilds:
+  argon2: true
   esbuild: true
   lefthook: false
   msgpackr-extract: false

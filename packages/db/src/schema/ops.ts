@@ -107,6 +107,22 @@ export const contentReviewLog = pgTable("content_review_log", {
     .notNull(),
 });
 
+export const contentSeedBatches = pgTable("content_seed_batches", {
+  id: bigint("id", { mode: "number" }).primaryKey().generatedAlwaysAsIdentity(),
+  batchCode: varchar("batch_code", { length: 60 }).notNull().unique(),
+  kind: varchar("kind", { length: 40 }).notNull(),
+  gitSha: varchar("git_sha", { length: 40 }),
+  prUrl: varchar("pr_url", { length: 255 }),
+  approvedByManagerId: bigint("approved_by_manager_id", {
+    mode: "number",
+  }).references(() => managers.id),
+  rowsInserted: integer("rows_inserted").notNull().default(0),
+  gateResults: jsonb("gate_results"),
+  seededAt: timestamp("seeded_at", { withTimezone: true })
+    .defaultNow()
+    .notNull(),
+});
+
 export const backupLog = pgTable("backup_log", {
   id: bigint("id", { mode: "number" }).primaryKey().generatedAlwaysAsIdentity(),
   backupType: backupTypeEnum("backup_type").notNull(),

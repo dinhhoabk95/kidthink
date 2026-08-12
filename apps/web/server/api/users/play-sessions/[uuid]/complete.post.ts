@@ -7,30 +7,35 @@ import {
   readBody,
   setResponseStatus,
 } from "h3";
+import { z } from "zod";
 import {
-  getActiveChildCandidate,
+  assertRequestBodySize,
   requireWebUserSession,
   respondToUserAuthError,
 } from "../../../../utils/auth-runtime.js";
 
+const CompleteSchema = z
+  .object({ last_seq: z.number().int().positive().optional() })
+  .strict();
+
 export default defineEventHandler(async (event) => {
   try {
+    assertRequestBodySize(event, 16 * 1024);
     const user = await requireWebUserSession(event);
-    const activeChildId = getActiveChildCandidate(event);
     const uuid = getRouterParam(event, "uuid");
     if (!uuid) {
       throw createError({ statusCode: 404, statusMessage: "NOT_FOUND" });
     }
 
-    const body = (await readBody(event)) || {};
-    const lastSeq = body.last_seq;
+    const parsed = CompleteSchema.safeParse((await readBody(event)) || {});
+    if (!parsed.success) {
+      throw new AppError("VALIDATION_FAILED");
+    }
+    const lastSeq = parsed.data.last_seq;
 
     const result = await completePlaySession(uuid, lastSeq, {
       isUserCall: true,
-      callerChildProfileId: activeChildId ? Number(activeChildId) : null,
-      accountChildIds: user.child_profiles
-        ? user.child_profiles.map((cp: { id: number }) => Number(cp.id))
-        : undefined,
+      callerAccountId: user.user_id,
     });
 
     return result;

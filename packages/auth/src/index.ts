@@ -48,6 +48,14 @@ export {
   verifyMfaChallengeToken,
 } from "./manager-session";
 export {
+  createParentGateToken,
+  generateParentGateChallenge,
+  isValidParentGateToken,
+  type ParentGateChallenge,
+  type ParentGateTokenPayload,
+  verifyParentGateChallenge,
+} from "./parent-gate";
+export {
   generateSecureToken,
   hashPassword,
   hashSecureToken,
@@ -94,6 +102,8 @@ export {
 export {
   base32Decode,
   base32Encode,
+  decryptTotpSecret,
+  encryptTotpSecret,
   generateRecoveryCodes,
   generateTotpCode,
   generateTotpSecret,

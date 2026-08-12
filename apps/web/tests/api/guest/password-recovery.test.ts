@@ -22,11 +22,12 @@ describe("Task 4 — Password Recovery (BR-PWR-01..09)", () => {
   it("handles forgot password and returns 200 without leaking email presence (BR-PWR-01..03)", async () => {
     const db = getAppDb();
     const passHash = await hashPassword("chuoixanh123");
+    const email = `forgot-${Date.now()}-${Math.floor(Math.random() * 10_000)}@example.com`;
 
     const [user] = await db
       .insert(users)
       .values({
-        email: "forgot@example.com",
+        email,
         passwordHash: passHash,
         displayName: "Forgot User",
         status: "active",
@@ -40,7 +41,7 @@ describe("Task 4 — Password Recovery (BR-PWR-01..09)", () => {
     const event = {
       method: "POST",
       node: { req: { headers: { "x-forwarded-for": "127.0.0.1" } } },
-      context: { body: { email: "forgot@example.com" } },
+      context: { body: { email } },
     } as any;
 
     const res = await forgotHandler(event);
@@ -64,7 +65,7 @@ describe("Task 4 — Password Recovery (BR-PWR-01..09)", () => {
     const noUserEvent = {
       method: "POST",
       node: { req: { headers: { "x-forwarded-for": "127.0.0.1" } } },
-      context: { body: { email: "nonexistent@example.com" } },
+      context: { body: { email: `nonexistent-${Date.now()}@example.com` } },
     } as any;
 
     const noUserRes = await forgotHandler(noUserEvent);
@@ -74,11 +75,12 @@ describe("Task 4 — Password Recovery (BR-PWR-01..09)", () => {
   it("resets password with valid token and revokes all active sessions (BR-PWR-05..07)", async () => {
     const db = getAppDb();
     const passHash = await hashPassword("chuoixanh123");
+    const email = `reset-${Date.now()}-${Math.floor(Math.random() * 10_000)}@example.com`;
 
     const [user] = await db
       .insert(users)
       .values({
-        email: "reset@example.com",
+        email,
         passwordHash: passHash,
         displayName: "Reset User",
         status: "active",

@@ -30,8 +30,8 @@ Bắt đầu từ [`../SPEC.md`](../SPEC.md) — contract toàn dự án. Rồi 
 | `05-content` | 5 | 4 |
 | `06-admin` | 28 | 28 |
 | `07-addon` | 7 | 0 |
-| `08-quality` | 5 | 5 |
-| **Tổng** | **130** | **120** |
+| `08-quality` | 6 | 6 |
+| **Tổng** | **131** | **121** |
 
 v1 có **31** spec cho cùng phạm vi. Xé nhỏ là chủ ý — xem [`AUDIT-v1.md`](AUDIT-v1.md) §1.2.
 2 spec cộng thêm 2026-08-05 ([`repo-bootstrap.md`](00-foundation/repo-bootstrap.md), [`monorepo-package-architecture.md`](00-foundation/monorepo-package-architecture.md)) lấp lỗ hổng
@@ -213,6 +213,7 @@ v1 có **31** spec cho cùng phạm vi. Xé nhỏ là chủ ý — xem [`AUDIT-v
 | [accessibility](08-quality/accessibility.md) | P1 | 4 bề mặt, 4 ngưỡng |
 | [performance-budgets](08-quality/performance-budgets.md) | P1 | Ngân sách chặn merge |
 | [design-system-contract](08-quality/design-system-contract.md) | P1 | Token, một kit, 4 bề mặt |
+| [pedagogical-evidence](08-quality/pedagogical-evidence.md) | P1 | Tiêu chuẩn bằng chứng sư phạm |
 
 ---
 

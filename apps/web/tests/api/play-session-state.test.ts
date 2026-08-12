@@ -8,19 +8,22 @@ import { eq } from "drizzle-orm";
 import { describe, expect, it } from "vitest";
 
 async function createTestLevel(db: ReturnType<typeof getOwnerDb>) {
-  const templates = await db.select().from(gameTemplates).limit(1);
-  let templateId = templates[0]?.id;
+  const num3 = Math.floor(Math.random() * 899) + 100;
+  const [gt] = await db
+    .insert(gameTemplates)
+    .values({
+      code: `GT-${num3}`,
+      nameVi: "Template test",
+      mechanic: "tap_target",
+      scoring: {},
+    })
+    .onConflictDoNothing()
+    .returning();
+
+  let templateId = gt?.id;
   if (!templateId) {
-    const [gt] = await db
-      .insert(gameTemplates)
-      .values({
-        code: "GT-999",
-        nameVi: "Template test",
-        mechanic: "tap_target",
-        scoring: {},
-      })
-      .returning();
-    templateId = gt.id;
+    const existing = await db.select().from(gameTemplates).limit(1);
+    templateId = existing[0]?.id ?? 1;
   }
 
   const num4 = Math.floor(Math.random() * 8999) + 1000;
@@ -29,7 +32,7 @@ async function createTestLevel(db: ReturnType<typeof getOwnerDb>) {
     .insert(gameLevels)
     .values({
       entityId: uid,
-      code: `GL-C1-CNT-TEST-${num4}`,
+      code: `GL-C1-CNT-TST-${num4}`,
       templateId,
       titleVi: "Level Test",
       instructionVi: "Instruction",

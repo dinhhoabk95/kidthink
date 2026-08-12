@@ -2,7 +2,7 @@
 spec: CONTENT-TAGGING
 title: Gắn thẻ nội dung ba trục
 area: platform
-status: approved
+status: implemented
 mvp: true
 phase: P1
 reviewed: 2026-08-08

@@ -23,7 +23,11 @@ import {
   setResponseStatus,
 } from "h3";
 import {
+  assertRateLimitAllowed,
+  assertRequestBodySize,
+  assertSameOriginRequest,
   getUserRefreshService,
+  getVerifiedRemoteIp,
   getWebJwtSecret,
   respondToUserAuthError,
   setUserAuthCookies,
@@ -111,19 +115,15 @@ function parseAndValidateRegisterBody(body: unknown): RegisterPayload {
 
 export async function handleRegister(event: H3Event, testBody?: unknown) {
   try {
-    const rawIp =
-      getHeader(event, "x-forwarded-for")?.split(",")[0] ||
-      getHeader(event, "x-real-ip") ||
-      "127.0.0.1";
-
+    assertSameOriginRequest(event);
+    assertRequestBodySize(event, 32 * 1024);
+    const rawIp = getVerifiedRemoteIp(event);
     const rateLimitRes = await enforceTwoAxisRateLimit({
       routeClass: "auth:register",
       remoteIp: rawIp,
     });
 
-    if (rateLimitRes.statusCode === 429) {
-      throw appError("RATE_LIMITED");
-    }
+    assertRateLimitAllowed(rateLimitRes.statusCode);
 
     const rawBody =
       testBody ??

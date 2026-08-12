@@ -2,7 +2,7 @@
 spec: CONTENT-SEARCH
 title: Tìm kiếm và lọc nội dung
 area: platform
-status: approved
+status: implemented
 mvp: true
 phase: P1
 reviewed: 2026-08-08

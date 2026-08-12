@@ -141,6 +141,20 @@
       "when": 1786550000000,
       "tag": "0019_play_sessions_is_preview",
       "breakpoints": true
+    },
+    {
+      "idx": 20,
+      "version": "7",
+      "when": 1786560000000,
+      "tag": "0020_telemetry_rollup_tables",
+      "breakpoints": true
+    },
+    {
+      "idx": 21,
+      "version": "7",
+      "when": 1786570000000,
+      "tag": "0021_content_seed_batches",
+      "breakpoints": true
     }
   ]
 }

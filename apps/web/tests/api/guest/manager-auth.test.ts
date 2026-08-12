@@ -1,4 +1,5 @@
 import {
+  encryptTotpSecret,
   generateTotpCode,
   generateTotpSecret,
   hashPassword,
@@ -13,7 +14,7 @@ import {
   mfaSettings,
 } from "@kidthink/db";
 
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import { describe, expect, it } from "vitest";
 import loginHandler from "../../../server/api/guest/auth/managers/login.post";
 import mfaHandler from "../../../server/api/guest/auth/managers/mfa.post";
@@ -54,7 +55,12 @@ describe("Task 2 & 3 — Manager Login & MFA Handler (BR-ADA-01..08)", () => {
     const sessions = await db
       .select()
       .from(activeSessions)
-      .where(eq(activeSessions.accountId, manager.id));
+      .where(
+        and(
+          eq(activeSessions.accountType, "manager"),
+          eq(activeSessions.accountId, manager.id)
+        )
+      );
     expect(sessions).toHaveLength(0);
   });
 
@@ -95,7 +101,7 @@ describe("Task 2 & 3 — Manager Login & MFA Handler (BR-ADA-01..08)", () => {
     expect(logs.length).toBeGreaterThan(0);
   });
 
-  it("Task 3: valid TOTP code completes login, returns tokens + audits manager_login", async () => {
+  it("Task 3: valid TOTP code completes login without JSON tokens + audits manager_login", async () => {
     const db = getOwnerDb();
     const testEmail = `admin_mfa_success_${Date.now()}@tinimath.test`;
     const passwordHash = await hashPassword("AdminSecret123!");
@@ -115,7 +121,11 @@ describe("Task 2 & 3 — Manager Login & MFA Handler (BR-ADA-01..08)", () => {
     await db.insert(mfaSettings).values({
       accountType: "manager",
       accountId: manager.id,
-      secretEncrypted: secret,
+      secretEncrypted: encryptTotpSecret(
+        secret,
+        process.env.NUXT_ADMIN_JWT_SECRET ??
+          "kidthink-dev-secret-kidthink-dev-secret-32bytes"
+      ),
       confirmedAt: new Date(),
     });
 
@@ -142,7 +152,7 @@ describe("Task 2 & 3 — Manager Login & MFA Handler (BR-ADA-01..08)", () => {
 
     const mfaRes = await mfaHandler(mfaEvent);
     expect(mfaRes.status).toBe("ok");
-    expect(mfaRes.access_token).toBeDefined();
+    expect(mfaRes.access_token).toBeUndefined();
 
     // Verify active_sessions row created
     const sessions = await db

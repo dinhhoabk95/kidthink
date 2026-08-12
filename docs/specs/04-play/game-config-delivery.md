@@ -68,7 +68,7 @@ Payload phải nhỏ (tablet trên 4G) và đã qua gating (không rò nội dun
 | `BR-CFG-02` | `content_version` **luôn** có trong payload | Client ghim vào phiên và mọi event |
 | `BR-CFG-03` | Server **parse lại** `content_pack` bằng contract trước khi trả | Dữ liệu hỏng phải chặn ở server, không để engine crash trước mặt trẻ |
 | `BR-CFG-04` | Config bậc ≥ `login` gắn `Cache-Control: private, no-store` | `BR-LAD-09` |
-| `BR-CFG-05` | Config `free` được cache **public** ngắn (5 phút) | Giảm tải cho lối vào đông nhất |
+| `BR-CFG-05` | Nội dung bất biến của level `free` có thể cache **public** ngắn (5 phút); response delivery có `session.uuid` phải `private, no-store` | UUID phiên là định danh phiên của một caller, không được chia sẻ qua browser/CDN cache |
 | `BR-CFG-06` | Payload **không chứa đáp án ở dạng lộ liễu** khi template cho phép chấm ở server | Xem §11 Q1 |
 | `BR-CFG-07` | Asset ref phân giải ở **server**, client không tự dựng URL | Đổi CDN không phải sửa client |
 | `BR-CFG-08` | Payload ≤ **200 KB** gzipped | Tablet trên 4G |
@@ -145,9 +145,10 @@ Scenario: BR-CFG-04 — config trả phí không cache
   Given user premium gọi config một level premium
   Then header Cache-Control chứa no-store
 
-Scenario: BR-CFG-05 — config free được cache ngắn
+Scenario: BR-CFG-05 — nội dung free không làm lộ session envelope
   Given guest gọi config một level free
-  Then header Cache-Control là public với max-age không quá 300
+  Then response chứa session.uuid
+  And header Cache-Control là private, no-store
 
 Scenario: BR-CFG-07 — asset phân giải ở server
   When đọc payload config
@@ -190,4 +191,3 @@ Scenario: asset thiếu không chặn phiên
 |---|---|---|---|---|
 | 1 | Đáp án đúng nằm trong payload — trẻ 3–6 không mở devtools, nhưng người lớn thì có. Có cần chấm ở server cho một số template không? | Chống gian lận | P4 | Backend |
 | ~~2~~ | ~~Adaptive params áp ở P3 — P1 dùng tham số gốc, đúng chưa?~~ **Đóng 2026-08-09 (T13, `D-DH`)**: đúng, P1 dùng difficulty_params gốc trong game_levels; hoãn adaptive sang P3 | Phạm vi P1 | Đã đóng | D-DH |
-

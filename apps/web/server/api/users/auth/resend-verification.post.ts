@@ -7,49 +7,52 @@ import {
 } from "@kidthink/db";
 import { enforceTwoAxisRateLimit } from "@kidthink/shared";
 import { and, eq, isNull } from "drizzle-orm";
-import { defineEventHandler, getHeader, type H3Event, readBody } from "h3";
-import { respondToUserAuthError } from "../../../utils/auth-runtime";
+import { defineEventHandler, type H3Event, readBody } from "h3";
+import { z } from "zod";
+import {
+  assertRateLimitAllowed,
+  assertRequestBodySize,
+  assertSameOriginRequest,
+  getVerifiedRemoteIp,
+  respondToUserAuthError,
+} from "../../../utils/auth-runtime";
+
+const EmailSchema = z
+  .object({ email: z.string().trim().email().max(255) })
+  .strict();
 
 export async function handleResendVerification(
   event: H3Event,
   testBody?: unknown
 ) {
   try {
-    const rawIp =
-      getHeader(event, "x-forwarded-for")?.split(",")[0] ||
-      getHeader(event, "x-real-ip") ||
-      "127.0.0.1";
+    assertSameOriginRequest(event);
+    assertRequestBodySize(event, 16 * 1024);
+    const ipRateLimit = await enforceTwoAxisRateLimit({
+      routeClass: "auth:forgot-password",
+      remoteIp: getVerifiedRemoteIp(event),
+    });
+    assertRateLimitAllowed(ipRateLimit.statusCode);
 
     const rawBody =
       testBody ??
       event.context?.body ??
       (await readBody(event).catch(() => null));
 
-    const payload = (
-      rawBody && typeof rawBody === "object" ? rawBody : {}
-    ) as Record<string, unknown>;
-
-    const email =
-      typeof payload.email === "string"
-        ? payload.email.trim().toLowerCase()
-        : undefined;
-
-    if (!email?.includes("@")) {
-      throw appError("VALIDATION_FAILED", {
-        reason: "Địa chỉ email không hợp lệ.",
-      });
+    const parsed = EmailSchema.safeParse(rawBody);
+    if (!parsed.success) {
+      throw appError("VALIDATION_FAILED");
     }
+    const email = parsed.data.email.toLowerCase();
 
     // BR-EVF-07: Rate limit resend
     const rateLimitRes = await enforceTwoAxisRateLimit({
-      routeClass: "auth:register",
-      remoteIp: rawIp,
+      routeClass: "auth:forgot-password",
+      remoteIp: getVerifiedRemoteIp(event),
       accountIdentifier: email,
     });
 
-    if (rateLimitRes.statusCode === 429) {
-      throw appError("RATE_LIMITED");
-    }
+    assertRateLimitAllowed(rateLimitRes.statusCode);
 
     const db = getAppDb();
     const [user] = await db.select().from(users).where(eq(users.email, email));
@@ -68,6 +71,7 @@ export async function handleResendVerification(
       .where(
         and(
           eq(verificationTokens.accountId, user.id),
+          eq(verificationTokens.accountType, "user"),
           eq(verificationTokens.purpose, "email_verify"),
           isNull(verificationTokens.usedAt)
         )

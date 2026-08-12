@@ -11,29 +11,35 @@ import {
   users,
   verificationTokens,
 } from "@kidthink/db";
-import { eq } from "drizzle-orm";
+import { and, eq, isNull } from "drizzle-orm";
 import { defineEventHandler, type H3Event, readBody } from "h3";
-import { respondToUserAuthError } from "../../../../utils/auth-runtime";
+import { z } from "zod";
+import {
+  assertRequestBodySize,
+  assertSameOriginRequest,
+  respondToUserAuthError,
+} from "../../../../utils/auth-runtime";
+
+const ResetPasswordSchema = z
+  .object({
+    token: z.string().trim().min(1).max(512),
+    new_password: z.string().min(8).max(1024),
+  })
+  .strict();
 
 export async function handleResetPassword(event: H3Event, testBody?: unknown) {
   try {
+    assertSameOriginRequest(event);
+    assertRequestBodySize(event, 16 * 1024);
     const rawBody =
       testBody ??
       event.context?.body ??
       (await readBody(event).catch(() => null));
-    const payload = (
-      rawBody && typeof rawBody === "object" ? rawBody : {}
-    ) as Record<string, unknown>;
-
-    const token = typeof payload.token === "string" ? payload.token.trim() : "";
-    const newPassword =
-      typeof payload.new_password === "string" ? payload.new_password : "";
-
-    if (!token) {
-      throw appError("VALIDATION_FAILED", {
-        reason: "Mã xác thực là bắt buộc.",
-      });
+    const parsed = ResetPasswordSchema.safeParse(rawBody);
+    if (!parsed.success) {
+      throw appError("VALIDATION_FAILED");
     }
+    const { token, new_password: newPassword } = parsed.data;
 
     const passVal = validatePasswordStrength(newPassword);
     if (!passVal.valid) {
@@ -48,9 +54,15 @@ export async function handleResetPassword(event: H3Event, testBody?: unknown) {
     const tokenRows = await db
       .select()
       .from(verificationTokens)
-      .where(eq(verificationTokens.tokenHash, tokenHash));
+      .where(
+        and(
+          eq(verificationTokens.tokenHash, tokenHash),
+          eq(verificationTokens.accountType, "user"),
+          eq(verificationTokens.purpose, "password_reset")
+        )
+      );
 
-    if (tokenRows.length === 0 || tokenRows[0].purpose !== "password_reset") {
+    if (tokenRows.length === 0) {
       throw appError("NOT_FOUND");
     }
 
@@ -71,37 +83,53 @@ export async function handleResetPassword(event: H3Event, testBody?: unknown) {
     const newPassHash = await hashPassword(newPassword);
     const now = new Date();
 
-    // BR-PWR-07: Update password, bump refresh_token_version, mark token used
-    await db
-      .update(users)
-      .set({
-        passwordHash: newPassHash,
-        refreshTokenVersion: user.refreshTokenVersion + 1,
-        updatedAt: now,
-      })
-      .where(eq(users.id, user.id));
+    await db.transaction(async (tx) => {
+      // Claim the token atomically before changing any account state.
+      const [claimed] = await tx
+        .update(verificationTokens)
+        .set({ usedAt: now })
+        .where(
+          and(
+            eq(verificationTokens.id, vToken.id),
+            eq(verificationTokens.accountType, "user"),
+            eq(verificationTokens.purpose, "password_reset"),
+            isNull(verificationTokens.usedAt)
+          )
+        )
+        .returning({ id: verificationTokens.id });
+      if (!claimed) {
+        throw appError("TOKEN_EXPIRED");
+      }
 
-    await db
-      .update(verificationTokens)
-      .set({ usedAt: now })
-      .where(eq(verificationTokens.id, vToken.id));
+      await tx
+        .update(users)
+        .set({
+          passwordHash: newPassHash,
+          refreshTokenVersion: user.refreshTokenVersion + 1,
+          updatedAt: now,
+        })
+        .where(eq(users.id, user.id));
 
-    // BR-PWR-07: Revoke all active sessions for this account
-    await db
-      .delete(activeSessions)
-      .where(eq(activeSessions.accountId, user.id));
+      await tx
+        .delete(activeSessions)
+        .where(
+          and(
+            eq(activeSessions.accountType, "user"),
+            eq(activeSessions.accountId, user.id)
+          )
+        );
 
-    // Queue notification
-    await db.insert(notifications).values({
-      recipientType: "user",
-      recipientId: user.id,
-      channel: "email",
-      templateCode: "password_changed",
-      payload: {
-        email: user.email,
-        displayName: user.displayName,
-      },
-      status: "queued",
+      await tx.insert(notifications).values({
+        recipientType: "user",
+        recipientId: user.id,
+        channel: "email",
+        templateCode: "password_changed",
+        payload: {
+          email: user.email,
+          displayName: user.displayName,
+        },
+        status: "queued",
+      });
     });
 
     return { ok: true };

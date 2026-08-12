@@ -4,7 +4,7 @@ import {
   RefreshService,
 } from "@kidthink/auth";
 import { and, eq } from "drizzle-orm";
-import { describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it } from "vitest";
 import {
   getAppSql,
   getOwnerDb,
@@ -18,6 +18,7 @@ import {
   socialIdentities,
   users,
 } from "../../src/schema/identity.ts";
+import { truncateAllTestTables } from "../global-setup.ts";
 
 const USER_SECRET = "postgres-refresh-test-secret-at-least-32-bytes";
 
@@ -56,6 +57,10 @@ async function createUserSession(label: string) {
 }
 
 describe("PostgresSessionStore", () => {
+  beforeEach(async () => {
+    await truncateAllTestTables();
+  });
+
   it("BR-AUT-04: serializes concurrent rotation so one succeeds and reuse revokes the account", async () => {
     const fixture = await createUserSession("concurrent");
     const service = new RefreshService(new PostgresSessionStore(getAppSql()), {

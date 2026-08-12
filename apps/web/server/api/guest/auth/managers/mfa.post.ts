@@ -1,42 +1,101 @@
+import { createHash } from "node:crypto";
 import {
   appError,
   createAdminManagerToken,
-  createRefreshToken,
+  decryptTotpSecret,
   hashRecoveryCode,
-  hashRefreshToken,
   verifyMfaChallengeToken,
   verifyTotpCode,
 } from "@kidthink/auth";
+import { checkRateLimit } from "@kidthink/cache";
 import {
-  activeSessions,
   getOwnerDb,
   managers,
   mfaRecoveryCodes,
   mfaSettings,
   writeAudit,
 } from "@kidthink/db";
+import { enforceTwoAxisRateLimit } from "@kidthink/shared";
 
 import { and, eq, isNull } from "drizzle-orm";
-import { defineEventHandler, readBody, setCookie } from "h3";
+import { defineEventHandler, readBody } from "h3";
+import { z } from "zod";
 import {
+  assertManagerRateLimitAllowed,
+  assertManagerRequestBodySize,
+  assertManagerSameOriginRequest,
   getAdminJwtSecret,
+  getManagerRefreshService,
+  getManagerRemoteIp,
   respondToManagerAuthError,
+  setManagerAuthCookies,
 } from "../../../../utils/admin-auth-runtime.js";
 
-const MANAGER_REFRESH_TTL_SECONDS = 24 * 60 * 60; // 24 hours max (BR-ADA-07)
+const MfaSchema = z
+  .object({
+    challenge: z.string().min(1).max(4096),
+    code: z.string().min(1).max(64),
+  })
+  .strict();
+
+async function verifyManagerMfa(
+  db: ReturnType<typeof getOwnerDb>,
+  managerId: number,
+  code: string,
+  encryptionSecret: string
+): Promise<{ verified: boolean; recoveryCodeId: number | null }> {
+  const [mfaSetting] = await db
+    .select()
+    .from(mfaSettings)
+    .where(
+      and(
+        eq(mfaSettings.accountType, "manager"),
+        eq(mfaSettings.accountId, managerId)
+      )
+    );
+
+  if (mfaSetting?.secretEncrypted) {
+    try {
+      const secret = decryptTotpSecret(
+        mfaSetting.secretEncrypted,
+        encryptionSecret
+      );
+      if (verifyTotpCode(code, secret)) {
+        return { verified: true, recoveryCodeId: null };
+      }
+    } catch {
+      // Plaintext TOTP rows are deliberately rejected. They must be migrated
+      // with encryptTotpSecret before production login is enabled.
+    }
+  }
+
+  const [recoveryCode] = await db
+    .select({ id: mfaRecoveryCodes.id })
+    .from(mfaRecoveryCodes)
+    .where(
+      and(
+        eq(mfaRecoveryCodes.accountType, "manager"),
+        eq(mfaRecoveryCodes.accountId, managerId),
+        eq(mfaRecoveryCodes.codeHash, hashRecoveryCode(code)),
+        isNull(mfaRecoveryCodes.usedAt)
+      )
+    );
+  return {
+    verified: recoveryCode !== undefined,
+    recoveryCodeId: recoveryCode?.id ?? null,
+  };
+}
 
 export default defineEventHandler(async (event) => {
   try {
+    assertManagerSameOriginRequest(event);
+    assertManagerRequestBodySize(event, 16 * 1024);
     const body = (await readBody(event).catch(() => null)) || event._body || {};
-    const { challenge, code } = body;
-
-    if (
-      !(challenge && code) ||
-      typeof challenge !== "string" ||
-      typeof code !== "string"
-    ) {
+    const parsed = MfaSchema.safeParse(body);
+    if (!parsed.success) {
       throw appError("INVALID_CREDENTIALS");
     }
+    const { challenge, code } = parsed.data;
 
     const { managerId } = await verifyMfaChallengeToken({
       token: challenge,
@@ -53,46 +112,20 @@ export default defineEventHandler(async (event) => {
       throw appError("INSUFFICIENT_ROLE");
     }
 
-    let mfaVerified = false;
-    let usedRecoveryCodeId: number | null = null;
+    const rateLimit = await enforceTwoAxisRateLimit({
+      routeClass: "auth:mfa",
+      remoteIp: getManagerRemoteIp(event),
+      accountIdentifier: String(managerId),
+    });
+    assertManagerRateLimitAllowed(rateLimit.statusCode);
 
-    // 1. Check TOTP settings
-    const [mfaSetting] = await db
-      .select()
-      .from(mfaSettings)
-      .where(
-        and(
-          eq(mfaSettings.accountType, "manager"),
-          eq(mfaSettings.accountId, managerId)
-        )
-      );
-
-    if (mfaSetting?.secretEncrypted) {
-      mfaVerified = verifyTotpCode(code, mfaSetting.secretEncrypted);
-    }
-
-    // 2. If TOTP failed, check recovery codes
-    if (!mfaVerified) {
-      const inputHash = hashRecoveryCode(code);
-      const [recCode] = await db
-        .select()
-        .from(mfaRecoveryCodes)
-        .where(
-          and(
-            eq(mfaRecoveryCodes.accountType, "manager"),
-            eq(mfaRecoveryCodes.accountId, managerId),
-            eq(mfaRecoveryCodes.codeHash, inputHash),
-            isNull(mfaRecoveryCodes.usedAt)
-          )
-        );
-
-      if (recCode) {
-        mfaVerified = true;
-        usedRecoveryCodeId = recCode.id;
-      }
-    }
-
-    if (!mfaVerified) {
+    const mfaResult = await verifyManagerMfa(
+      db,
+      managerId,
+      code,
+      getAdminJwtSecret(event)
+    );
+    if (!mfaResult.verified) {
       await db.transaction(async (tx) => {
         await writeAudit(tx, {
           actor_type: "manager",
@@ -106,49 +139,48 @@ export default defineEventHandler(async (event) => {
       throw appError("INVALID_CREDENTIALS");
     }
 
-    // Update recovery code if used
-    if (usedRecoveryCodeId) {
-      await db
-        .update(mfaRecoveryCodes)
-        .set({ usedAt: new Date() })
-        .where(eq(mfaRecoveryCodes.id, usedRecoveryCodeId));
+    const challengeKey = createHash("sha256").update(challenge).digest("hex");
+    let challengeReplayCheck: Awaited<ReturnType<typeof checkRateLimit>>;
+    try {
+      challengeReplayCheck = await checkRateLimit(
+        `auth:mfa:challenge:${challengeKey}`,
+        1,
+        5 * 60
+      );
+    } catch {
+      throw appError("SERVICE_UNAVAILABLE");
+    }
+    if (!challengeReplayCheck.allowed) {
+      throw appError("INVALID_CREDENTIALS");
     }
 
-    const sessionId = `m_sess_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`;
-
-    const secret = getAdminJwtSecret(event);
-
-    const accessToken = await createAdminManagerToken({
-      payload: {
-        manager_id: manager.id,
-        display_name: manager.displayName,
-        session_id: sessionId,
-        refresh_token_version: manager.refreshTokenVersion,
-        role: manager.role,
-      },
-      secret,
-    });
-
-    const rawRefreshToken = createRefreshToken({
-      namespace: "manager",
-      sessionId,
-      refreshTokenVersion: manager.refreshTokenVersion,
-      secret,
-    });
-    const refreshTokenHash = hashRefreshToken(rawRefreshToken);
-
-    const expiresAt = new Date(Date.now() + MANAGER_REFRESH_TTL_SECONDS * 1000);
-
-    // Save active_sessions row & write audit manager_login in transaction
-    await db.transaction(async (tx) => {
-      await tx.insert(activeSessions).values({
-        accountType: "manager",
-        accountId: manager.id,
-        refreshTokenHash,
-        authMethod: "password",
-        expiresAt,
+    if (mfaResult.recoveryCodeId !== null) {
+      await db.transaction(async (tx) => {
+        const [claimed] = await tx
+          .update(mfaRecoveryCodes)
+          .set({ usedAt: new Date() })
+          .where(
+            and(
+              eq(mfaRecoveryCodes.id, mfaResult.recoveryCodeId),
+              isNull(mfaRecoveryCodes.usedAt)
+            )
+          )
+          .returning({ id: mfaRecoveryCodes.id });
+        if (!claimed) {
+          throw appError("INVALID_CREDENTIALS");
+        }
       });
+    }
 
+    const sessionResult = await getManagerRefreshService(event).createSession({
+      account: { type: "manager", id: manager.id },
+      authMethod: "password",
+      deviceLabel: "manager-mfa",
+      ipAddress: getManagerRemoteIp(event),
+      refreshTokenVersion: manager.refreshTokenVersion,
+    });
+
+    await db.transaction(async (tx) => {
       await writeAudit(tx, {
         actor_type: "manager",
         actor_id: manager.id,
@@ -158,20 +190,20 @@ export default defineEventHandler(async (event) => {
       });
     });
 
-    if (event?.node?.res?.setHeader) {
-      setCookie(event, "kidthink_admin_token", accessToken, {
-        httpOnly: true,
-        maxAge: MANAGER_REFRESH_TTL_SECONDS,
-        path: "/",
-        sameSite: "strict",
-        secure: !import.meta.dev,
-      });
-    }
+    const accessToken = await createAdminManagerToken({
+      payload: {
+        manager_id: manager.id,
+        display_name: manager.displayName,
+        session_id: sessionResult.sessionId,
+        refresh_token_version: manager.refreshTokenVersion,
+        role: manager.role,
+      },
+      secret: getAdminJwtSecret(event),
+    });
+    setManagerAuthCookies(event, accessToken, sessionResult.refreshEnvelope);
 
     return {
       status: "ok",
-      access_token: accessToken,
-      refresh_token: rawRefreshToken,
       manager: {
         id: manager.id,
         email: manager.email,

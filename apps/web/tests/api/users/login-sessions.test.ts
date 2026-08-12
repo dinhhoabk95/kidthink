@@ -12,9 +12,10 @@ describe("Task 3 — Login & Session Management (BR-LGN-01..12)", () => {
   it("authenticates valid credentials and creates active session + auth cookies (BR-LGN-01, BR-LGN-06)", async () => {
     const db = getAppDb();
     const passHash = await hashPassword("chuoixanh123");
+    const email = `login1-${Date.now()}-${Math.floor(Math.random() * 10_000)}@example.com`;
 
     await db.insert(users).values({
-      email: "login1@example.com",
+      email,
       passwordHash: passHash,
       displayName: "Login User 1",
       status: "active",
@@ -28,7 +29,7 @@ describe("Task 3 — Login & Session Management (BR-LGN-01..12)", () => {
       method: "POST",
       node: { req: { headers: { "x-forwarded-for": "127.0.0.1" } } },
       context: {
-        body: { email: "LOGIN1@example.com", password: "chuoixanh123" },
+        body: { email, password: "chuoixanh123" },
       },
     } as any;
 
@@ -43,9 +44,10 @@ describe("Task 3 — Login & Session Management (BR-LGN-01..12)", () => {
   it("rejects wrong password or non-existent email with 401 INVALID_CREDENTIALS (BR-LGN-02)", async () => {
     const db = getAppDb();
     const passHash = await hashPassword("chuoixanh123");
+    const email = `login2-${Date.now()}-${Math.floor(Math.random() * 10_000)}@example.com`;
 
     await db.insert(users).values({
-      email: "login2@example.com",
+      email,
       passwordHash: passHash,
       displayName: "Login User 2",
       status: "active",
@@ -59,7 +61,7 @@ describe("Task 3 — Login & Session Management (BR-LGN-01..12)", () => {
       method: "POST",
       node: { req: { headers: { "x-forwarded-for": "127.0.0.1" } } },
       context: {
-        body: { email: "login2@example.com", password: "wrongpassword123" },
+        body: { email, password: "wrongpassword123" },
       },
     } as any;
 
@@ -69,7 +71,10 @@ describe("Task 3 — Login & Session Management (BR-LGN-01..12)", () => {
       method: "POST",
       node: { req: { headers: { "x-forwarded-for": "127.0.0.1" } } },
       context: {
-        body: { email: "nonexistent@example.com", password: "chuoixanh123" },
+        body: {
+          email: `nonexistent-${Date.now()}@example.com`,
+          password: "chuoixanh123",
+        },
       },
     } as any;
 
@@ -79,11 +84,12 @@ describe("Task 3 — Login & Session Management (BR-LGN-01..12)", () => {
   it("lists sessions and revokes session or logout-all (BR-LGN-07..10)", async () => {
     const db = getAppDb();
     const passHash = await hashPassword("chuoixanh123");
+    const email = `sessions-${Date.now()}-${Math.floor(Math.random() * 10_000)}@example.com`;
 
     const [user] = await db
       .insert(users)
       .values({
-        email: "sessions@example.com",
+        email,
         passwordHash: passHash,
         displayName: "Sessions User",
         status: "active",
@@ -96,7 +102,7 @@ describe("Task 3 — Login & Session Management (BR-LGN-01..12)", () => {
       .values({
         accountType: "user",
         accountId: user.id,
-        refreshTokenHash: "hash1",
+        refreshTokenHash: `hash1-${Date.now()}`,
         authMethod: "password",
         expiresAt: new Date(Date.now() + 86_400_000),
       })
@@ -107,7 +113,7 @@ describe("Task 3 — Login & Session Management (BR-LGN-01..12)", () => {
       .values({
         accountType: "user",
         accountId: user.id,
-        refreshTokenHash: "hash2",
+        refreshTokenHash: `hash2-${Date.now()}`,
         authMethod: "password",
         expiresAt: new Date(Date.now() + 86_400_000),
       })

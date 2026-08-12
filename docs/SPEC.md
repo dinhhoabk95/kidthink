@@ -1195,7 +1195,7 @@ hình báo cáo mang câu này.
 
 Mỗi outcome có **đúng một** spec sở hữu. Spec khác **link tới**, không copy contract.
 
-**130 spec module.** Bản đồ đầy đủ: [`docs/specs/index.md`](specs/index.md).
+**131 spec module.** Bản đồ đầy đủ: [`docs/specs/index.md`](specs/index.md).
 
 ```
 docs/
@@ -1212,7 +1212,7 @@ docs/
     ├── 05-content/      5     ràng buộc biên tập nội dung
     ├── 06-admin/       28     Manager
     ├── 07-addon/        7     spec đủ, KHÔNG bán ở MVP
-    └── 08-quality/      5     test · bảo mật · a11y · hiệu năng · design
+    └── 08-quality/      6     test · bảo mật · a11y · hiệu năng · design
 ```
 
 ### 14.1 Luật cứng: một outcome, một file

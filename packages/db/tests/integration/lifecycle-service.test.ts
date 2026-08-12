@@ -1,5 +1,5 @@
 import { eq } from "drizzle-orm";
-import { describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it } from "vitest";
 import {
   createNewVersion,
   deleteContentEntity,
@@ -11,6 +11,7 @@ import { gameLevels, gameTemplates } from "../../src/schema/game.ts";
 import { managers } from "../../src/schema/identity.ts";
 import { contentSkillMap } from "../../src/schema/tagging.ts";
 import { competencies, skills, strands } from "../../src/schema/taxonomy.ts";
+import { truncateAllTestTables } from "../global-setup.ts";
 
 async function setupTestData() {
   const db = getOwnerDb();
@@ -35,7 +36,10 @@ async function setupTestData() {
       colorToken: "blue",
       icon: "math",
     })
-    .onConflictDoNothing()
+    .onConflictDoUpdate({
+      target: competencies.code,
+      set: { nameVi: "Năng lực toán" },
+    })
     .returning();
 
   const compId = comp
@@ -54,7 +58,10 @@ async function setupTestData() {
       competencyId: compId,
       nameVi: "Mạch kiến thức",
     })
-    .onConflictDoNothing()
+    .onConflictDoUpdate({
+      target: strands.code,
+      set: { competencyId: compId, nameVi: "Mạch kiến thức" },
+    })
     .returning();
 
   const strdId = strd
@@ -72,7 +79,10 @@ async function setupTestData() {
       ageMax: 5,
       difficulty: 1,
     })
-    .onConflictDoNothing()
+    .onConflictDoUpdate({
+      target: skills.code,
+      set: { strandId: strdId, nameVi: "Kỹ năng đếm" },
+    })
     .returning();
 
   const skillId = sk
@@ -157,6 +167,10 @@ async function setupTestData() {
 }
 
 describe("P0.6 Tasks 5, 6, 7 — Lifecycle & Versioning Services Integration Tests", () => {
+  beforeEach(async () => {
+    await truncateAllTestTables();
+  });
+
   it("Task 5: transition flow draft -> in_review -> approved -> published with permissions", async () => {
     const { mgr, level } = await setupTestData();
 

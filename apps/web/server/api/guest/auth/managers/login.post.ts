@@ -4,25 +4,46 @@ import {
   verifyPassword,
 } from "@kidthink/auth";
 import { getOwnerDb, managers, writeAudit } from "@kidthink/db";
+import { enforceTwoAxisRateLimit } from "@kidthink/shared";
 import { eq } from "drizzle-orm";
 import { defineEventHandler, readBody, setResponseStatus } from "h3";
+import { z } from "zod";
 import {
+  assertManagerRateLimitAllowed,
+  assertManagerRequestBodySize,
+  assertManagerSameOriginRequest,
   getAdminJwtSecret,
+  getManagerRemoteIp,
   respondToManagerAuthError,
 } from "../../../../utils/admin-auth-runtime.js";
 
+const DUMMY_HASH =
+  "$argon2id$v=19$m=19456,p=1,t=2$Zmx0piJSIcdd2b8oaF8ZUg$U60ArJk0sNteiIdlfZyr7G0shEXA+IqCyWIKs1La4WE";
+
+const ManagerLoginSchema = z
+  .object({
+    email: z.string().trim().email().max(255),
+    password: z.string().min(1).max(1024),
+  })
+  .strict();
+
 export default defineEventHandler(async (event) => {
   try {
+    assertManagerSameOriginRequest(event);
+    assertManagerRequestBodySize(event, 16 * 1024);
     const body = (await readBody(event).catch(() => null)) || event._body || {};
-    const { email, password } = body;
-
-    if (
-      !(email && password) ||
-      typeof email !== "string" ||
-      typeof password !== "string"
-    ) {
+    const parsed = ManagerLoginSchema.safeParse(body);
+    if (!parsed.success) {
       throw appError("INVALID_CREDENTIALS");
     }
+    const { email, password } = parsed.data;
+
+    const rateLimit = await enforceTwoAxisRateLimit({
+      routeClass: "auth:login",
+      remoteIp: getManagerRemoteIp(event),
+      accountIdentifier: email,
+    });
+    assertManagerRateLimitAllowed(rateLimit.statusCode);
 
     const db = getOwnerDb();
     const [manager] = await db
@@ -31,6 +52,7 @@ export default defineEventHandler(async (event) => {
       .where(eq(managers.email, email.trim().toLowerCase()));
 
     if (!manager?.passwordHash) {
+      await verifyPassword(password, DUMMY_HASH).catch(() => false);
       // Record audit for failed login
       await db.transaction(async (tx) => {
         await writeAudit(tx, {

@@ -70,6 +70,7 @@ Middleware trước mọi route. Token bucket trên Valkey (`packages/cache`).
 | `auth:login` | 20 | 5 | 15 phút |
 | `auth:register` | 10 | — | 1 giờ |
 | `auth:forgot-password` | 10 | 3 | 1 giờ |
+| `auth:mfa` | 10 | 5 | 15 phút |
 | `auth:refresh` | 60 | 60 | 15 phút |
 | `payment:create` | 20 | 5 | 1 giờ |
 | `payment:proof` | 20 | 10 | 1 giờ |

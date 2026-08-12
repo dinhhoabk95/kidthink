@@ -2,7 +2,7 @@
 spec: GAME-LEVEL-MODEL
 title: Mô hình màn chơi — ràng buộc biên tập
 area: content
-status: approved
+status: implemented
 mvp: true
 phase: P1
 reviewed: 2026-08-08

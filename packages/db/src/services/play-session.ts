@@ -2,6 +2,7 @@ import { AppError } from "@kidthink/auth";
 import { enqueue } from "@kidthink/queue";
 import { computeSessionResult, computeStars } from "@kidthink/shared";
 import { and, desc, eq, sql } from "drizzle-orm";
+import { z } from "zod";
 import { getOwnerDb } from "../client.ts";
 import { childProfiles } from "../schema/child.ts";
 
@@ -44,6 +45,163 @@ const PII_FIELDS = new Set([
   "ip",
   "score",
 ]);
+
+const EVENT_PAYLOAD_FIELDS: Readonly<Record<string, ReadonlySet<string>>> = {
+  game_started: new Set([
+    "template_code",
+    "difficulty",
+    "age_band",
+    "device",
+    "reduced_motion",
+    "round_index",
+  ]),
+  instruction_viewed: new Set(["modality", "replay_count"]),
+  game_paused: new Set(["reason"]),
+  game_resumed: new Set(["paused_ms"]),
+  game_completed: new Set(["duration_ms", "rounds_total", "rounds_correct"]),
+  game_abandoned: new Set(["duration_ms", "last_round_index", "reason"]),
+  round_started: new Set(["round_index", "item_count", "distractor_count"]),
+  question_shown: new Set(["round_index", "prompt_kind"]),
+  answer_selected: new Set([
+    "round_index",
+    "attempt_index",
+    "target_slot",
+    "elapsed_ms",
+  ]),
+  answer_correct: new Set(["round_index", "attempt_index", "elapsed_ms"]),
+  answer_incorrect: new Set([
+    "round_index",
+    "attempt_index",
+    "elapsed_ms",
+    "error_kind",
+  ]),
+  round_completed: new Set([
+    "round_index",
+    "attempts",
+    "hints_used",
+    "duration_ms",
+  ]),
+  round_retried: new Set(["round_index", "retry_index"]),
+  round_skipped: new Set(["round_index", "reason"]),
+  hint_requested: new Set(["round_index", "source"]),
+  scaffold_escalated: new Set([
+    "round_index",
+    "level",
+    "trigger",
+    "elapsed_ms",
+  ]),
+  demo_shown: new Set(["round_index", "speed"]),
+  asset_load_failed: new Set(["asset_kind", "asset_ref", "retry_count"]),
+  fps_sample: new Set(["p50", "p95", "min", "sample_count"]),
+  parent_gate_shown: new Set(["trigger"]),
+  parent_gate_passed: new Set(["attempts"]),
+  parent_gate_failed: new Set(["attempts"]),
+};
+
+const NON_NEGATIVE_INT = z.number().int().nonnegative();
+const EVENT_PAYLOAD_SCHEMAS: Readonly<Record<string, z.AnyZodObject>> = {
+  game_started: z.object({
+    template_code: z.string().max(64),
+    difficulty: z.union([z.string().max(32), NON_NEGATIVE_INT]),
+    age_band: z.string().regex(/^\d-\d$/),
+    device: z.enum(["tablet", "desktop", "mobile"]),
+    reduced_motion: z.boolean(),
+    round_index: NON_NEGATIVE_INT,
+  }),
+  instruction_viewed: z.object({
+    modality: z.enum(["audio", "visual", "both"]),
+    replay_count: NON_NEGATIVE_INT,
+  }),
+  game_paused: z.object({
+    reason: z.enum(["user", "visibility", "parent_gate"]),
+  }),
+  game_resumed: z.object({ paused_ms: NON_NEGATIVE_INT }),
+  game_completed: z.object({
+    duration_ms: NON_NEGATIVE_INT,
+    rounds_total: NON_NEGATIVE_INT,
+    rounds_correct: NON_NEGATIVE_INT,
+  }),
+  game_abandoned: z.object({
+    duration_ms: NON_NEGATIVE_INT,
+    last_round_index: NON_NEGATIVE_INT,
+    reason: z.enum(["exit", "timeout", "cap_reached"]),
+  }),
+  round_started: z.object({
+    round_index: NON_NEGATIVE_INT,
+    item_count: NON_NEGATIVE_INT,
+    distractor_count: NON_NEGATIVE_INT,
+  }),
+  question_shown: z.object({
+    round_index: NON_NEGATIVE_INT,
+    prompt_kind: z.enum([
+      "count",
+      "compare",
+      "sort",
+      "match",
+      "sequence",
+      "select",
+    ]),
+  }),
+  answer_selected: z.object({
+    round_index: NON_NEGATIVE_INT,
+    attempt_index: NON_NEGATIVE_INT,
+    target_slot: z.number().int().nullable(),
+    elapsed_ms: NON_NEGATIVE_INT,
+  }),
+  answer_correct: z.object({
+    round_index: NON_NEGATIVE_INT,
+    attempt_index: NON_NEGATIVE_INT,
+    elapsed_ms: NON_NEGATIVE_INT,
+  }),
+  answer_incorrect: z.object({
+    round_index: NON_NEGATIVE_INT,
+    attempt_index: NON_NEGATIVE_INT,
+    elapsed_ms: NON_NEGATIVE_INT,
+    error_kind: z.enum(["wrong_target", "wrong_item", "incomplete", "timeout"]),
+  }),
+  round_completed: z.object({
+    round_index: NON_NEGATIVE_INT,
+    attempts: NON_NEGATIVE_INT,
+    hints_used: NON_NEGATIVE_INT,
+    duration_ms: NON_NEGATIVE_INT,
+  }),
+  round_retried: z.object({
+    round_index: NON_NEGATIVE_INT,
+    retry_index: NON_NEGATIVE_INT,
+  }),
+  round_skipped: z.object({
+    round_index: NON_NEGATIVE_INT,
+    reason: z.enum(["scaffold_exhausted", "user"]),
+  }),
+  hint_requested: z.object({
+    round_index: NON_NEGATIVE_INT,
+    source: z.enum(["auto_timer", "auto_miss"]),
+  }),
+  scaffold_escalated: z.object({
+    round_index: NON_NEGATIVE_INT,
+    level: z.union([z.literal(1), z.literal(2), z.literal(3)]),
+    trigger: z.enum(["timer", "miss_streak"]),
+    elapsed_ms: NON_NEGATIVE_INT,
+  }),
+  demo_shown: z.object({
+    round_index: NON_NEGATIVE_INT,
+    speed: z.union([z.literal(1), z.literal(0.5)]),
+  }),
+  asset_load_failed: z.object({
+    asset_kind: z.enum(["emoji", "image", "audio"]),
+    asset_ref: z.string().regex(/^[a-zA-Z0-9_./:-]{1,128}$/),
+    retry_count: NON_NEGATIVE_INT,
+  }),
+  fps_sample: z.object({
+    p50: NON_NEGATIVE_INT,
+    p95: NON_NEGATIVE_INT,
+    min: NON_NEGATIVE_INT,
+    sample_count: NON_NEGATIVE_INT,
+  }),
+  parent_gate_shown: z.object({ trigger: z.enum(["exit", "settings"]) }),
+  parent_gate_passed: z.object({ attempts: NON_NEGATIVE_INT }),
+  parent_gate_failed: z.object({ attempts: NON_NEGATIVE_INT }),
+};
 
 export interface MasteryEligibilityResult {
   eligible: boolean;
@@ -91,9 +249,10 @@ export interface IngestEventItem {
 
 export interface IngestOptions {
   callerChildProfileId?: number | null;
+  /** Authenticated user id; ownership is always resolved in the DB. */
+  callerAccountId?: number;
   guestDeviceId?: string;
   isUserCall?: boolean;
-  accountChildIds?: number[];
 }
 
 function validateBatchPayload(events: IngestEventItem[]) {
@@ -116,55 +275,81 @@ function validateBatchPayload(events: IngestEventItem[]) {
   }
 }
 
-function checkUserSessionOwnership(
+async function checkUserSessionOwnership(
+  db: ReturnType<typeof getOwnerDb>,
   session: typeof playSessions.$inferSelect,
   options: IngestOptions
-) {
+): Promise<void> {
   if (!session.childProfileId) {
     throw new AppError("NOT_FOUND");
   }
+  const callerAccountId = options.callerAccountId;
   if (
-    options.callerChildProfileId !== undefined &&
-    options.callerChildProfileId !== null &&
-    Number(session.childProfileId) !== Number(options.callerChildProfileId)
+    typeof callerAccountId !== "number" ||
+    !Number.isInteger(callerAccountId) ||
+    callerAccountId <= 0
   ) {
     throw new AppError("NOT_FOUND");
   }
-  if (
-    options.accountChildIds &&
-    options.accountChildIds.length > 0 &&
-    !options.accountChildIds.includes(Number(session.childProfileId))
-  ) {
+
+  const [ownedChild] = await db
+    .select({ id: childProfiles.id })
+    .from(childProfiles)
+    .where(
+      and(
+        eq(childProfiles.id, Number(session.childProfileId)),
+        eq(childProfiles.userId, callerAccountId),
+        eq(childProfiles.status, "active")
+      )
+    )
+    .limit(1);
+
+  if (!ownedChild) {
     throw new AppError("NOT_FOUND");
   }
 }
 
-function checkSessionOwnership(
+async function checkSessionOwnership(
+  db: ReturnType<typeof getOwnerDb>,
   session: typeof playSessions.$inferSelect,
   options: IngestOptions
-) {
+): Promise<void> {
   if (options.isUserCall) {
-    checkUserSessionOwnership(session, options);
+    await checkUserSessionOwnership(db, session, options);
   } else if (
     session.childProfileId !== null &&
     session.childProfileId !== undefined
   ) {
     throw new AppError("NOT_FOUND");
+  } else if (
+    !(options.guestDeviceId && session.guestDeviceId) ||
+    session.guestDeviceId !== options.guestDeviceId
+  ) {
+    // A guest session is bearer-bound to its device cookie. Omitting the
+    // device id must never degrade into "any guest session" access.
+    throw new AppError("NOT_FOUND");
   }
 }
 
 function cleanEventPayload(
+  eventName: string,
   payload?: Record<string, unknown>
 ): Record<string, unknown> {
   const cleaned: Record<string, unknown> = {};
+  const allowed = EVENT_PAYLOAD_FIELDS[eventName] ?? new Set<string>();
   if (payload && typeof payload === "object") {
     for (const [key, value] of Object.entries(payload)) {
-      if (!PII_FIELDS.has(key.toLowerCase())) {
+      if (allowed.has(key) && !PII_FIELDS.has(key.toLowerCase())) {
         cleaned[key] = value;
       }
     }
   }
-  return cleaned;
+  const schema = EVENT_PAYLOAD_SCHEMAS[eventName];
+  if (!schema) {
+    return {};
+  }
+  const parsed = schema.partial().safeParse(cleaned);
+  return parsed.success ? parsed.data : {};
 }
 
 function validateSequenceNumbers(
@@ -213,7 +398,7 @@ async function insertIngestedEventsBatch(
           templateId: session.templateId,
           eventName: ev.event_name,
           occurredAtMs: ev.occurred_at_ms ?? null,
-          payload: cleanEventPayload(ev.payload),
+          payload: cleanEventPayload(ev.event_name, ev.payload),
           clientTimestamp: ev.client_timestamp
             ? new Date(ev.client_timestamp)
             : null,
@@ -255,7 +440,7 @@ export async function ingestPlayEvents(
     throw new AppError("NOT_FOUND");
   }
 
-  checkSessionOwnership(session, options);
+  await checkSessionOwnership(db, session, options);
 
   const existingEvents = await db
     .select({ seq: telemetryEvents.seq })
@@ -326,7 +511,7 @@ export async function completePlaySession(
     throw new AppError("NOT_FOUND");
   }
 
-  checkSessionOwnership(session, options);
+  await checkSessionOwnership(db, session, options);
 
   if (
     session.completionStatus === "completed" ||
@@ -366,7 +551,7 @@ export async function completePlaySession(
   const durationSeconds = Math.round(scoringResult.metrics.duration_ms / 1000);
   const stars = computeStars(scoringResult.normalized_score, "completed");
 
-  await db
+  const [completed] = await db
     .update(playSessions)
     .set({
       completionStatus: "completed",
@@ -376,7 +561,17 @@ export async function completePlaySession(
       starsEarned: stars ?? 0,
       updatedAt: now,
     })
-    .where(eq(playSessions.id, session.id));
+    .where(
+      and(
+        eq(playSessions.id, session.id),
+        eq(playSessions.completionStatus, "in_progress")
+      )
+    )
+    .returning({ id: playSessions.id });
+
+  if (!completed) {
+    throw new AppError("SESSION_ALREADY_COMPLETED");
+  }
 
   try {
     await enqueue("rollup:session", { sessionUuid }, { jobId: sessionUuid });

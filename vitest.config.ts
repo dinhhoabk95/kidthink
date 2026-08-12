@@ -34,6 +34,15 @@ export default defineConfig({
     },
   },
   test: {
-    projects: ["apps/*", "packages/*", "scripts"],
+    projects: [
+      path.resolve(import.meta.dirname, "apps/*"),
+      path.resolve(import.meta.dirname, "packages/*"),
+      path.resolve(import.meta.dirname, "scripts"),
+    ],
+    fileParallelism: false,
+    maxWorkers: 1,
+    sequence: {
+      concurrent: false,
+    },
   },
 });

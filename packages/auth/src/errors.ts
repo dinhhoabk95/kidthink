@@ -51,6 +51,10 @@ export const AUTH_ERROR_DEFINITIONS = {
     status: 429,
     message: "Bạn thao tác hơi nhanh. Vui lòng thử lại sau ít phút.",
   },
+  SERVICE_UNAVAILABLE: {
+    status: 503,
+    message: "Hệ thống tạm thời không khả dụng. Vui lòng thử lại sau.",
+  },
   TOKEN_EXPIRED: {
     status: 410,
     message: "Mã xác thực đã hết hạn hoặc không còn hiệu lực.",
@@ -103,10 +107,22 @@ export const AUTH_ERROR_DEFINITIONS = {
     status: 404,
     message: "Không tìm thấy phiên chơi.",
   },
+  PARENT_GATE_INVALID: {
+    status: 400,
+    message: "Thử thách phụ huynh không hợp lệ.",
+  },
+  PARENT_GATE_EXPIRED: {
+    status: 410,
+    message: "Thử thách phụ huynh đã hết hạn.",
+  },
+  PARENT_GATE_FAILED: {
+    status: 403,
+    message: "Câu trả lời thử thách phụ huynh không chính xác.",
+  },
 } as const;
 
 export type AuthErrorCode = keyof typeof AUTH_ERROR_DEFINITIONS;
-export type AuthErrorDetails = Readonly<Record<string, unknown>>;
+export type AuthErrorDetails = Readonly<Record<string, unknown>> | string;
 
 export interface AuthErrorResponse {
   readonly code: AuthErrorCode;
@@ -121,7 +137,11 @@ export class AppError extends Error {
 
   constructor(code: AuthErrorCode, details?: AuthErrorDetails) {
     const definition = AUTH_ERROR_DEFINITIONS[code];
-    super(definition?.message ?? "Đã xảy ra lỗi.");
+    const msg =
+      typeof details === "string"
+        ? details
+        : (definition?.message ?? "Đã xảy ra lỗi.");
+    super(msg);
     this.name = "AppError";
     this.code = code;
     this.status = definition?.status ?? 500;

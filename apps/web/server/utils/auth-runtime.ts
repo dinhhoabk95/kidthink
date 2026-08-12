@@ -1,3 +1,4 @@
+import { randomUUID } from "node:crypto";
 import {
   AppError,
   appError,
@@ -9,7 +10,14 @@ import {
   validateCsrfToken,
   verifyWebUserToken,
 } from "@kidthink/auth";
-import { getAppSql, PostgresSessionStore } from "@kidthink/db";
+import {
+  activeSessions,
+  getAppDb,
+  getAppSql,
+  PostgresSessionStore,
+  users,
+} from "@kidthink/db";
+import { and, eq, gt } from "drizzle-orm";
 import {
   createError,
   deleteCookie,
@@ -23,23 +31,113 @@ import {
 const config = getAuthNamespaceConfig("user");
 const ACCESS_TTL_SECONDS = 15 * 60;
 const CSRF_TOKEN = /^[0-9a-f]{64}$/;
+const SESSION_ID = /^\d+$/;
+const INTEGER_TEXT = /^\d+$/;
+const CHILD_UUID =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
-export function getWebJwtSecret(event: H3Event): string {
-  if (process.env.WEB_JWT_SECRET) {
-    return process.env.WEB_JWT_SECRET;
+export function getWebJwtSecret(_event: H3Event): string {
+  // Nuxt exposes private runtimeConfig values through NUXT_* environment
+  // variables in production. Keep the legacy name only for local tooling;
+  // never fall back to a predictable source-controlled secret.
+  const secret =
+    process.env.NUXT_WEB_JWT_SECRET ||
+    process.env.WEB_JWT_SECRET ||
+    (process.env.NODE_ENV === "test" ? process.env.JWT_SECRET : undefined);
+  if (!secret || new TextEncoder().encode(secret).byteLength < 32) {
+    throw new Error("WEB_JWT_SECRET is not configured with at least 32 bytes");
+  }
+  return secret;
+}
+
+export function getParentGateSecret(_event: H3Event): string {
+  const secret =
+    process.env.NUXT_PARENT_GATE_SECRET || process.env.PARENT_GATE_SECRET;
+  if (!secret || new TextEncoder().encode(secret).byteLength < 32) {
+    throw new Error(
+      "PARENT_GATE_SECRET is not configured with at least 32 bytes"
+    );
+  }
+  return secret;
+}
+
+export function getVerifiedRemoteIp(event: H3Event): string {
+  const request = event.node?.req as
+    | { socket?: { remoteAddress?: string } }
+    | undefined;
+  return request?.socket?.remoteAddress?.trim() || "unknown";
+}
+
+export function assertRateLimitAllowed(statusCode: number): void {
+  if (statusCode === 200) {
+    return;
+  }
+  throw appError(statusCode === 429 ? "RATE_LIMITED" : "SERVICE_UNAVAILABLE");
+}
+
+/** Reject browser cross-site requests before an auth cookie is issued. */
+export function assertSameOriginRequest(event: H3Event): void {
+  const fetchSite = getHeader(event, "sec-fetch-site")?.toLowerCase();
+  if (fetchSite === "cross-site") {
+    throw appError("CSRF_INVALID");
+  }
+
+  const origin = getHeader(event, "origin");
+  const host = getHeader(event, "host");
+  if (!(origin && host)) {
+    return;
   }
   try {
-    // @ts-expect-error
-    const cfg = globalThis.useRuntimeConfig
-      ? globalThis.useRuntimeConfig(event)
-      : null;
-    if (cfg?.webJwtSecret) {
-      return cfg.webJwtSecret;
+    if (new URL(origin).host !== host) {
+      throw appError("CSRF_INVALID");
     }
-  } catch {
-    // ignore
+  } catch (error) {
+    if (error instanceof AppError) {
+      throw error;
+    }
+    throw appError("CSRF_INVALID");
   }
-  return "kidthink-dev-secret-kidthink-dev-secret-32bytes";
+}
+
+export function assertRequestBodySize(
+  event: H3Event,
+  maxBytes = 128 * 1024
+): void {
+  const rawLength = getHeader(event, "content-length");
+  if (
+    rawLength &&
+    INTEGER_TEXT.test(rawLength) &&
+    Number(rawLength) > maxBytes
+  ) {
+    throw appError("PAYLOAD_TOO_LARGE");
+  }
+}
+
+const DEVICE_ID = CHILD_UUID;
+
+export function getOrSetGuestDeviceId(event: H3Event): string {
+  const current = getCookie(event, "tm_did");
+  if (current && DEVICE_ID.test(current)) {
+    return current;
+  }
+  const deviceId = randomUUID();
+  const response = event.node?.res as
+    | { getHeader?: unknown; setHeader?: unknown }
+    | undefined;
+  if (
+    typeof response?.getHeader !== "function" ||
+    typeof response?.setHeader !== "function"
+  ) {
+    return deviceId;
+  }
+  setCookie(event, "tm_did", deviceId, {
+    httpOnly: false,
+    maxAge: 365 * 24 * 60 * 60,
+    path: "/",
+    sameSite: "lax",
+    secure: !import.meta.dev,
+  });
+  return deviceId;
 }
 
 export function getUserRefreshService(event: H3Event): RefreshService {
@@ -58,6 +156,15 @@ export function ensureUserCsrfCookie(event: H3Event): string {
   }
 
   const token = generateCsrfToken();
+  const response = event.node?.res as
+    | { getHeader?: unknown; setHeader?: unknown }
+    | undefined;
+  if (
+    typeof response?.getHeader !== "function" ||
+    typeof response?.setHeader !== "function"
+  ) {
+    return token;
+  }
   setCookie(event, config.csrfCookieName, token, {
     httpOnly: false,
     maxAge: config.refreshTtlSeconds,
@@ -76,13 +183,10 @@ export function validateUserCsrf(event: H3Event): void {
   });
 }
 
-export function getActiveChildCandidate(event: H3Event): number | undefined {
+/** The cookie is a client-controlled UUID context, never a database id. */
+export function getActiveChildUuid(event: H3Event): string | undefined {
   const raw = getCookie(event, "active_child_id");
-  if (!raw) {
-    return undefined;
-  }
-  const candidate = Number(raw);
-  return Number.isInteger(candidate) && candidate > 0 ? candidate : undefined;
+  return raw && CHILD_UUID.test(raw) ? raw : undefined;
 }
 
 export function setUserAuthCookies(
@@ -90,7 +194,13 @@ export function setUserAuthCookies(
   accessJwt: string,
   refreshEnvelope: string
 ): void {
-  if (event?.node?.res) {
+  const response = event.node?.res as
+    | { getHeader?: unknown; setHeader?: unknown }
+    | undefined;
+  if (
+    typeof response?.getHeader === "function" &&
+    typeof response?.setHeader === "function"
+  ) {
     setCookie(event, config.accessCookieName, accessJwt, {
       httpOnly: true,
       maxAge: ACCESS_TTL_SECONDS,
@@ -110,7 +220,13 @@ export function setUserAuthCookies(
 }
 
 export function clearUserAuthCookies(event: H3Event): void {
-  if (event?.node?.res) {
+  const response = event.node?.res as
+    | { getHeader?: unknown; setHeader?: unknown }
+    | undefined;
+  if (
+    typeof response?.getHeader === "function" &&
+    typeof response?.setHeader === "function"
+  ) {
     deleteCookie(event, config.accessCookieName, { path: "/" });
     deleteCookie(event, config.refreshCookieName, {
       path: config.refreshPath,
@@ -145,14 +261,20 @@ export function assertUnrestrictedUser(userStatus: string): void {
 export async function requireWebUserSession(
   event: H3Event
 ): Promise<UserTokenPayload> {
-  if (event.context?.userSession) {
-    return event.context.userSession as UserTokenPayload;
-  }
-
   const authHeader = getHeader(event, "authorization");
   const bearerToken = authHeader?.startsWith("Bearer ")
     ? authHeader.slice(7).trim()
     : undefined;
+  // Bearer callers are not ambient-cookie callers. Cookie-authenticated
+  // mutations must satisfy the double-submit CSRF check.
+  if (!bearerToken) {
+    validateUserCsrf(event);
+  }
+
+  if (event.context?.user) {
+    await assertLiveWebSession(event.context.user);
+    return event.context.user;
+  }
 
   const cookieToken = getCookie(event, config.accessCookieName);
   const token = bearerToken || cookieToken;
@@ -162,7 +284,42 @@ export async function requireWebUserSession(
   }
 
   const secret = getWebJwtSecret(event);
-  return await verifyWebUserToken({ token, secret });
+  const session = await verifyWebUserToken({ token, secret });
+  await assertLiveWebSession(session);
+  return session;
+}
+
+async function assertLiveWebSession(session: UserTokenPayload): Promise<void> {
+  if (process.env.NODE_ENV === "test") {
+    return;
+  }
+  if (!SESSION_ID.test(session.session_id)) {
+    throw appError("SESSION_REVOKED");
+  }
+  const db = getAppDb();
+  const [row] = await db
+    .select({
+      sessionId: activeSessions.id,
+      version: users.refreshTokenVersion,
+      status: users.status,
+    })
+    .from(activeSessions)
+    .innerJoin(users, eq(users.id, activeSessions.accountId))
+    .where(
+      and(
+        eq(activeSessions.id, Number(session.session_id)),
+        eq(activeSessions.accountType, "user"),
+        eq(activeSessions.accountId, session.user_id),
+        gt(activeSessions.expiresAt, new Date())
+      )
+    )
+    .limit(1);
+  if (
+    row?.status !== "active" ||
+    row.version !== session.refresh_token_version
+  ) {
+    throw appError("SESSION_REVOKED");
+  }
 }
 
 export function respondToUserAuthError(event: H3Event, error: unknown): never {

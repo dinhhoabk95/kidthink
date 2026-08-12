@@ -64,7 +64,7 @@ không làm chậm gameplay.
 | `BR-ING-01` | Idempotent theo `(session_uuid, seq)`, ép ở **PK của DB** | Mạng yếu gửi lại là chuyện thường, không phải ngoại lệ |
 | `BR-ING-02` | Event tới sau khi phiên terminal → **200**, bỏ | Trả lỗi làm client retry mãi |
 | `BR-ING-03` | Tên event lạ → **422 cho cả lô** | Bảo vệ schema; nửa lô ghi nửa lô không là trạng thái khó gỡ |
-| `BR-ING-04` | Ownership phiên kiểm ở **DB**, người khác → **404** | Bảo mật dữ liệu phiên chơi, tránh nạp event vào phiên của tài khoản khác |
+| `BR-ING-04` | User kiểm ownership child bằng **DB**; guest kiểm `tm_did` cookie; thiếu/sai owner → **404** | Bảo mật dữ liệu phiên chơi, tránh nạp event vào phiên của tài khoản khác hoặc biến session UUID thành bearer token |
 | `BR-ING-05` | Cấm — **NEVER chặn gameplay** để chờ ingest thành công | Trẻ không được chờ mạng |
 | `BR-ING-06` | Flush khi trang ẩn dùng `sendBeacon` | `fetch` bị huỷ khi trang unload |
 | `BR-ING-07` | Rate limit riêng, rộng | Trẻ chơi liên tục là bình thường |
@@ -112,6 +112,14 @@ Khoảng trống trong `seq` là dấu hiệu mất event — server log cảnh 
 | 413 | `PAYLOAD_TOO_LARGE` |
 | 422 | `VALIDATION_FAILED` |
 | 429 | `RATE_LIMITED` |
+
+### `POST /api/guest/play-sessions/{uuid}/events`
+
+| | |
+|---|---|
+| Auth | Cookie `tm_did` (UUID thiết bị guest) + ownership phiên |
+| Body | §7.1 |
+| 200 / 404 / 409 / 413 / 422 | Như user route; session của thiết bị khác luôn trả `404` |
 
 ## 9. Acceptance criteria
 
@@ -190,4 +198,3 @@ Scenario: offline flush đúng thứ tự
 |---|---|---|---|---|
 | ~~1~~ | ~~Khoảng trống `seq` có cần cảnh báo mức nào không?~~ **Đóng 2026-08-09 (T13, `D-DD`)**: cảnh báo WARN ở server log khi gap > 1; không fail request để tránh đứt mạch client | Giám sát thất thoát dữ liệu | Đã đóng | D-DD |
 | ~~2~~ | ~~Có nén payload event không?~~ **Đóng 2026-08-09 (T13, `D-DE`)**: không nén custom ở P1 (dùng HTTP/2 header compression); hoãn nén custom sang P3 | Hiệu năng truyền tải | Đã đóng | D-DE |
-

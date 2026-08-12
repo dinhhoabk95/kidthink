@@ -98,3 +98,20 @@ export async function hardPurgeUser(
 
   return { purged: true };
 }
+
+/**
+ * Task #34: P1.9 — Hard purge a single child profile after 30-day grace period.
+ * BR-CPR-05: Anonymizes telemetry_events (child_uuid = NULL) and hard deletes child_profile.
+ */
+export async function hardPurgeChildProfile(
+  db: PostgresJsDatabase<Record<string, unknown>>,
+  childId: number,
+  childUuid: string
+): Promise<void> {
+  await db
+    .update(telemetryEvents)
+    .set({ childUuid: null })
+    .where(eq(telemetryEvents.childUuid, childUuid));
+
+  await db.delete(childProfiles).where(eq(childProfiles.id, childId));
+}

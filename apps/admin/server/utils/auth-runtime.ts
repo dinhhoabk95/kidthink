@@ -10,6 +10,7 @@ import {
   validateCsrfToken,
 } from "@kidthink/auth";
 import { getAppSql, PostgresSessionStore } from "@kidthink/db";
+import { enforceTwoAxisRateLimit } from "@kidthink/shared";
 import {
   deleteCookie,
   getCookie,
@@ -23,6 +24,27 @@ import { useRuntimeConfig } from "#imports";
 const config = getAuthNamespaceConfig("manager");
 const ACCESS_TTL_SECONDS = 15 * 60;
 const CSRF_TOKEN = /^[0-9a-f]{64}$/;
+
+export function getManagerRemoteIp(event: H3Event): string {
+  const request = event.node?.req as
+    | { socket?: { remoteAddress?: string } }
+    | undefined;
+  return request?.socket?.remoteAddress?.trim() || "unknown";
+}
+
+export async function assertManagerRefreshRateLimit(
+  event: H3Event
+): Promise<void> {
+  const result = await enforceTwoAxisRateLimit({
+    routeClass: "auth:refresh",
+    remoteIp: getManagerRemoteIp(event),
+  });
+  if (result.statusCode !== 200) {
+    throw appError(
+      result.statusCode === 429 ? "RATE_LIMITED" : "SERVICE_UNAVAILABLE"
+    );
+  }
+}
 
 export function getManagerRefreshService(event: H3Event): RefreshService {
   const { adminJwtSecret } = useRuntimeConfig(event);
@@ -40,6 +62,15 @@ export function ensureManagerCsrfCookie(event: H3Event): string {
   }
 
   const token = generateCsrfToken();
+  const response = event.node?.res as
+    | { getHeader?: unknown; setHeader?: unknown }
+    | undefined;
+  if (
+    typeof response?.getHeader !== "function" ||
+    typeof response?.setHeader !== "function"
+  ) {
+    return token;
+  }
   setCookie(event, config.csrfCookieName, token, {
     httpOnly: false,
     maxAge: config.refreshTtlSeconds,
@@ -63,6 +94,15 @@ export function setManagerAuthCookies(
   accessJwt: string,
   refreshEnvelope: string
 ): void {
+  const response = event.node?.res as
+    | { getHeader?: unknown; setHeader?: unknown }
+    | undefined;
+  if (
+    typeof response?.getHeader !== "function" ||
+    typeof response?.setHeader !== "function"
+  ) {
+    return;
+  }
   setCookie(event, config.accessCookieName, accessJwt, {
     httpOnly: true,
     maxAge: ACCESS_TTL_SECONDS,
@@ -81,6 +121,15 @@ export function setManagerAuthCookies(
 }
 
 export function clearManagerAuthCookies(event: H3Event): void {
+  const response = event.node?.res as
+    | { getHeader?: unknown; setHeader?: unknown }
+    | undefined;
+  if (
+    typeof response?.getHeader !== "function" ||
+    typeof response?.setHeader !== "function"
+  ) {
+    return;
+  }
   deleteCookie(event, config.accessCookieName, { path: "/" });
   deleteCookie(event, config.refreshCookieName, {
     path: config.refreshPath,

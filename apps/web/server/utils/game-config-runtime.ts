@@ -1,6 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { AppError } from "@kidthink/auth";
 import {
+  childProfiles,
   gameLevels,
   gameTemplates,
   getOwnerDb,
@@ -28,6 +29,33 @@ export interface GameConfigDeliveryOptions {
 interface LevelTemplateRow {
   level: typeof gameLevels.$inferSelect;
   template: typeof gameTemplates.$inferSelect;
+}
+
+async function resolveOwnedChild(
+  db: ReturnType<typeof getOwnerDb>,
+  caller: CallerIdentity
+): Promise<typeof childProfiles.$inferSelect | null> {
+  if (caller.kind !== "user" || !caller.active_child_id) {
+    return null;
+  }
+  const userId = Number(caller.user_id);
+  if (!Number.isInteger(userId) || userId <= 0) {
+    throw createError({ statusCode: 404, statusMessage: "NOT_FOUND" });
+  }
+  const [child] = await db
+    .select()
+    .from(childProfiles)
+    .where(
+      and(
+        eq(childProfiles.uuid, caller.active_child_id),
+        eq(childProfiles.userId, userId)
+      )
+    )
+    .limit(1);
+  if (!child || child.status === "archived") {
+    throw createError({ statusCode: 404, statusMessage: "NOT_FOUND" });
+  }
+  return child;
 }
 
 async function fetchLevelAndTemplate(
@@ -78,7 +106,8 @@ async function fetchLevelAndTemplate(
 async function performAccessControl(
   level: typeof gameLevels.$inferSelect,
   options: GameConfigDeliveryOptions,
-  event: H3Event
+  event: H3Event,
+  ownedChild: typeof childProfiles.$inferSelect | null
 ): Promise<AssetAccessResult> {
   try {
     return await assertContentAccess(
@@ -97,6 +126,10 @@ async function performAccessControl(
         managerAudience: options.isManagerPreview,
         requiresChild: options.requiresChild,
         callerChildAge: options.callerChildAge,
+        verifyChildOwnership: async (userId, childUuid) =>
+          ownedChild !== null &&
+          String(ownedChild.uuid) === childUuid &&
+          String(ownedChild.userId) === userId,
       }
     );
   } catch (err) {
@@ -121,7 +154,14 @@ export async function deliverGameConfig(
 ) {
   const db = getOwnerDb();
   const { level, template } = await fetchLevelAndTemplate(code, options);
-  const accessResult = await performAccessControl(level, options, event);
+  const ownedChild = await resolveOwnedChild(db, options.caller);
+
+  const accessResult = await performAccessControl(
+    level,
+    options,
+    event,
+    ownedChild
+  );
 
   // 3. Validate content_pack using Zod schema (BR-CFG-03 / D-FS)
   const validation = validateContentPack(template.code, level.contentPack);
@@ -145,9 +185,7 @@ export async function deliverGameConfig(
   // 4. Create minimum play_sessions row (D-FR)
   const sessionUuid = randomUUID();
   const startedAt = new Date();
-  const childProfileId = accessResult.child_id
-    ? Number(accessResult.child_id)
-    : null;
+  const childProfileId = ownedChild?.id ?? null;
   const guestDeviceId = childProfileId
     ? null
     : options.guestDeviceId ||
@@ -170,11 +208,9 @@ export async function deliverGameConfig(
   const assets = resolveAssets(level.contentPack);
 
   // 6. Set Cache-Control header (BR-CFG-04 & BR-CFG-05 / D-FT)
-  if (level.accessTier === "free") {
-    setHeader(event, "Cache-Control", "public, max-age=300");
-  } else {
-    setHeader(event, "Cache-Control", "private, no-store");
-  }
+  // The response contains a newly-created session UUID. It is never safe to
+  // place this envelope in a shared/browser cache, even for free content.
+  setHeader(event, "Cache-Control", "private, no-store");
 
   // 7. Construct payload §7.1
   return {

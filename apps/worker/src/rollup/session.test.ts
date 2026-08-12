@@ -148,7 +148,7 @@ describe("Task 5 — rollup:session Integration Suite (BR-TLM-04 & BR-JOB-01)", 
 
     expect(summaries1.length).toBeGreaterThanOrEqual(1);
     expect(summaries1[0]).toBeDefined();
-    expect(summaries1[0].levelsCompleted).toBe(1);
+    expect(summaries1[0].completionStatus).toBe("completed");
 
     // 6. Run rollup:session job second time -> IDEMPOTENT (BR-JOB-01)
     await runSessionRollup(sessionUuid);

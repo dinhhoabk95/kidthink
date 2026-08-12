@@ -6,15 +6,16 @@ import {
 } from "../src/rate-limiting.js";
 
 describe("Rate Limiting Registry (Task 6 / BR-RTL-01..05)", () => {
-  it("defines exactly 12 route classes matching spec §7", () => {
+  it("defines exactly 13 route classes matching spec §7", () => {
     const keys = Object.keys(RATE_LIMIT_CONFIGS);
-    expect(keys).toHaveLength(12);
+    expect(keys).toHaveLength(13);
   });
 
   it("auth and payment route classes failMode is 'closed'", () => {
     expect(RATE_LIMIT_CONFIGS["auth:login"].failMode).toBe("closed");
     expect(RATE_LIMIT_CONFIGS["auth:register"].failMode).toBe("closed");
     expect(RATE_LIMIT_CONFIGS["auth:forgot-password"].failMode).toBe("closed");
+    expect(RATE_LIMIT_CONFIGS["auth:mfa"].failMode).toBe("closed");
     expect(RATE_LIMIT_CONFIGS["auth:refresh"].failMode).toBe("closed");
     expect(RATE_LIMIT_CONFIGS["payment:create"].failMode).toBe("closed");
     expect(RATE_LIMIT_CONFIGS["payment:proof"].failMode).toBe("closed");

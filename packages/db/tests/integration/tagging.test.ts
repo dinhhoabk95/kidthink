@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it } from "vitest";
 import { getOwnerDb } from "../../src/index.ts";
 import {
   contentSkillMap,
@@ -6,8 +6,12 @@ import {
   contentTags,
 } from "../../src/schema/tagging.ts";
 import { skills } from "../../src/schema/taxonomy.ts";
+import { truncateAllTestTables } from "../global-setup.ts";
 
 describe("Tagging Schema Integration Tests", () => {
+  beforeEach(async () => {
+    await truncateAllTestTables();
+  });
   it("BR-SCT-07: content_skill_map.weight must be > 0 and <= 1", async () => {
     const db = getOwnerDb();
 

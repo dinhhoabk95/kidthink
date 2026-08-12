@@ -23,6 +23,7 @@
   "devDependencies": {
     "@sidebase/nuxt-auth": "catalog:",
     "nuxt": "catalog:",
+    "zod": "catalog:",
     "typescript": "catalog:",
     "vitest": "catalog:",
     "vue-tsc": "catalog:"

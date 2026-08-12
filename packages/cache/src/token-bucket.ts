@@ -4,9 +4,7 @@ export interface RateLimitCheckResult {
   resetSeconds: number;
 }
 
-/**
- * In-memory token bucket store for local testing and fallback.
- */
+/** Local-only bucket used by unit tests. Production uses Valkey below. */
 const inMemoryBucket = new Map<string, { count: number; expiresAt: number }>();
 
 export function clearInMemoryBuckets(): void {
@@ -22,7 +20,34 @@ export async function checkRateLimit(
   limit: number,
   windowSeconds: number
 ): Promise<RateLimitCheckResult> {
-  await Promise.resolve();
+  if (process.env.NODE_ENV !== "test") {
+    const { Redis } = await import("ioredis");
+    const client = new Redis(
+      process.env.VALKEY_URL || "redis://localhost:6380",
+      {
+        connectTimeout: 2000,
+        commandTimeout: 2000,
+        maxRetriesPerRequest: 1,
+        retryStrategy: () => null,
+      }
+    );
+    client.on("error", () => undefined);
+    try {
+      const count = await client.incr(key);
+      if (count === 1) {
+        await client.expire(key, windowSeconds);
+      }
+      const ttl = Math.max(1, await client.ttl(key));
+      return {
+        allowed: count <= limit,
+        remaining: Math.max(0, limit - count),
+        resetSeconds: ttl,
+      };
+    } finally {
+      client.disconnect();
+    }
+  }
+
   const now = Date.now();
   const existing = inMemoryBucket.get(key);
 

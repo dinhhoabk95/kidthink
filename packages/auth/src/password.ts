@@ -5,6 +5,7 @@ import {
   timingSafeEqual,
 } from "node:crypto";
 import { promisify } from "node:util";
+import argon2 from "argon2";
 
 const scrypt = promisify(scryptCb);
 
@@ -46,16 +47,30 @@ export function validatePasswordStrength(
 }
 
 export async function hashPassword(password: string): Promise<string> {
-  const salt = randomBytes(16).toString("hex");
-  const derivedKey = (await scrypt(password, salt, 64)) as Buffer;
-  return `scrypt$${salt}$${derivedKey.toString("hex")}`;
+  return await argon2.hash(password, {
+    type: argon2.argon2id,
+    memoryCost: 19_456,
+    timeCost: 2,
+    parallelism: 1,
+    hashLength: 32,
+  });
 }
 
 export async function verifyPassword(
   password: string,
   hash: string
 ): Promise<boolean> {
-  if (!hash?.startsWith("scrypt$")) {
+  if (!hash) {
+    return false;
+  }
+  if (hash.startsWith("$argon2id$")) {
+    try {
+      return await argon2.verify(hash, password);
+    } catch {
+      return false;
+    }
+  }
+  if (!hash.startsWith("scrypt$")) {
     return false;
   }
   const parts = hash.split("$");

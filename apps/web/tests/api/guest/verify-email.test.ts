@@ -16,11 +16,12 @@ describe("Task 2 — Email Verification (BR-EVF-01..08)", () => {
   it("verifies user email with valid token and sets status to active (BR-EVF-01, BR-EVF-02, BR-EVF-08)", async () => {
     const db = getAppDb();
     const passHash = await hashPassword("chuoixanh123");
+    const email = `verify1-${Date.now()}-${Math.floor(Math.random() * 10_000)}@example.com`;
 
     const [user] = await db
       .insert(users)
       .values({
-        email: "verify1@example.com",
+        email,
         passwordHash: passHash,
         displayName: "User Verify 1",
         status: "pending_verification",
@@ -63,11 +64,12 @@ describe("Task 2 — Email Verification (BR-EVF-01..08)", () => {
   it("returns status active when token is already used but user is active (BR-EVF-04)", async () => {
     const db = getAppDb();
     const passHash = await hashPassword("chuoixanh123");
+    const email = `verify2-${Date.now()}-${Math.floor(Math.random() * 10_000)}@example.com`;
 
     const [user] = await db
       .insert(users)
       .values({
-        email: "verify2@example.com",
+        email,
         passwordHash: passHash,
         displayName: "User Verify 2",
         status: "active",
@@ -105,11 +107,12 @@ describe("Task 2 — Email Verification (BR-EVF-01..08)", () => {
   it("invalidates old token on resend verification (BR-EVF-03, BR-EVF-07)", async () => {
     const db = getAppDb();
     const passHash = await hashPassword("chuoixanh123");
+    const email = `resend-${Date.now()}-${Math.floor(Math.random() * 10_000)}@example.com`;
 
     const [user] = await db
       .insert(users)
       .values({
-        email: "resend@example.com",
+        email,
         passwordHash: passHash,
         displayName: "User Resend",
         status: "pending_verification",
@@ -134,7 +137,7 @@ describe("Task 2 — Email Verification (BR-EVF-01..08)", () => {
     const event = {
       method: "POST",
       node: { req: { headers: { "x-forwarded-for": "127.0.0.1" } } },
-      context: { body: { email: "resend@example.com" } },
+      context: { body: { email } },
     } as any;
 
     const resendRes = await resendHandler(event);

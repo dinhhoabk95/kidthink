@@ -29,6 +29,13 @@ export const RATE_LIMIT_CONFIGS: Record<string, RouteClassConfig> = {
     windowSeconds: 3600, // 1 hour
     failMode: "closed",
   },
+  "auth:mfa": {
+    className: "auth:mfa",
+    ipLimit: 10,
+    accountLimit: 5,
+    windowSeconds: 900,
+    failMode: "closed",
+  },
   "auth:refresh": {
     className: "auth:refresh",
     ipLimit: 60,

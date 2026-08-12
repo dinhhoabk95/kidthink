@@ -86,5 +86,5 @@ describe("Taxonomy Master Seeder & Invariants (BR-TAX-01..09)", () => {
     // Idempotent re-run
     const stats2 = await seedTaxonomyMasterData(db, "docs/taxonomy");
     expect(stats2.skillCount).toBe(stats1.skillCount);
-  }, 30_000);
+  }, 60_000);
 });

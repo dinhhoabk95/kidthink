@@ -123,6 +123,15 @@ Thiếu bất kỳ điều kiện nào → không ghi. Đây là hàng rào ch�
 `stars` là biểu diễn **thân thiện với trẻ**, không phải điểm số — xem
 [`feedback-and-celebration.md`](feedback-and-celebration.md).
 
+### `POST /api/guest/play-sessions/{uuid}/complete`
+
+| | |
+|---|---|
+| Auth | Cookie `tm_did` (UUID thiết bị guest) + ownership phiên |
+| Body | `{ last_seq }` |
+| 404 | Phiên không tồn tại hoặc không thuộc thiết bị guest |
+| 409 / 410 | Như user route |
+
 ## 9. Acceptance criteria
 
 ```gherkin

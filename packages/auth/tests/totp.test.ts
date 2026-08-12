@@ -2,6 +2,8 @@ import { describe, expect, it } from "vitest";
 import {
   base32Decode,
   base32Encode,
+  decryptTotpSecret,
+  encryptTotpSecret,
   generateRecoveryCodes,
   generateTotpCode,
   generateTotpSecret,
@@ -43,5 +45,12 @@ describe("Task 1 — TOTP & Recovery Codes Primitive (D-EX)", () => {
       const hash = hashRecoveryCode(code);
       expect(hash).toHaveLength(64); // SHA-256 hex string
     }
+  });
+
+  it("encrypts TOTP secrets so the database value is not usable plaintext", () => {
+    const stored = encryptTotpSecret("JBSWY3DPEHPK3PXP", "a".repeat(32));
+    expect(stored.startsWith("v1.")).toBe(true);
+    expect(stored).not.toContain("JBSWY3DPEHPK3PXP");
+    expect(decryptTotpSecret(stored, "a".repeat(32))).toBe("JBSWY3DPEHPK3PXP");
   });
 });

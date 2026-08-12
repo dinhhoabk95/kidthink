@@ -11,7 +11,8 @@
   },
   "dependencies": {
     "@kidthink/auth": "workspace:*",
-    "@kidthink/db": "workspace:*"
+    "@kidthink/db": "workspace:*",
+    "@kidthink/shared": "workspace:*"
   },
   "devDependencies": {
     "@sidebase/nuxt-auth": "catalog:",

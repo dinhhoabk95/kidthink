@@ -3,55 +3,64 @@ import { getAppDb, users } from "@kidthink/db";
 import { enforceTwoAxisRateLimit } from "@kidthink/shared";
 import { eq } from "drizzle-orm";
 import { defineEventHandler, getHeader, type H3Event, readBody } from "h3";
+import { z } from "zod";
 import {
+  assertRateLimitAllowed,
+  assertRequestBodySize,
+  assertSameOriginRequest,
   getUserRefreshService,
+  getVerifiedRemoteIp,
   getWebJwtSecret,
   respondToUserAuthError,
   setUserAuthCookies,
 } from "../../../../utils/auth-runtime";
 
 const DUMMY_HASH =
-  "scrypt$16384$8$1$66616b6573616c74$66616b656861736866616b656861736866616b6568617368";
+  "$argon2id$v=19$m=19456,p=1,t=2$Zmx0piJSIcdd2b8oaF8ZUg$U60ArJk0sNteiIdlfZyr7G0shEXA+IqCyWIKs1La4WE";
+
+const LoginSchema = z
+  .object({
+    email: z.string().trim().email().max(255),
+    password: z.string().min(1).max(1024),
+  })
+  .strict();
 
 function parseLoginCredentials(rawBody: unknown): {
   email: string;
   password: string;
 } {
-  const payload = (
-    rawBody && typeof rawBody === "object" ? rawBody : {}
-  ) as Record<string, unknown>;
-  const email =
-    typeof payload.email === "string" ? payload.email.trim().toLowerCase() : "";
-  const password = typeof payload.password === "string" ? payload.password : "";
-
-  if (!(email?.includes("@") && password)) {
+  const parsed = LoginSchema.safeParse(rawBody);
+  if (!parsed.success) {
     throw appError("INVALID_CREDENTIALS");
   }
-
-  return { email, password };
+  return {
+    email: parsed.data.email.toLowerCase(),
+    password: parsed.data.password,
+  };
 }
 
 export async function handleLogin(event: H3Event, testBody?: unknown) {
   try {
-    const rawIp =
-      getHeader(event, "x-forwarded-for")?.split(",")[0] ||
-      getHeader(event, "x-real-ip") ||
-      "127.0.0.1";
-
-    const rateLimitRes = await enforceTwoAxisRateLimit({
-      routeClass: "auth:register",
-      remoteIp: rawIp,
+    assertSameOriginRequest(event);
+    assertRequestBodySize(event, 16 * 1024);
+    const ipRateLimit = await enforceTwoAxisRateLimit({
+      routeClass: "auth:login",
+      remoteIp: getVerifiedRemoteIp(event),
     });
-
-    if (rateLimitRes.statusCode === 429) {
-      throw appError("RATE_LIMITED");
-    }
+    assertRateLimitAllowed(ipRateLimit.statusCode);
 
     const rawBody =
       testBody ??
       event.context?.body ??
       (await readBody(event).catch(() => null));
     const { email, password } = parseLoginCredentials(rawBody);
+
+    const rateLimitRes = await enforceTwoAxisRateLimit({
+      routeClass: "auth:login",
+      remoteIp: getVerifiedRemoteIp(event),
+      accountIdentifier: email,
+    });
+    assertRateLimitAllowed(rateLimitRes.statusCode);
 
     const db = getAppDb();
     const [user] = await db.select().from(users).where(eq(users.email, email));
@@ -80,7 +89,7 @@ export async function handleLogin(event: H3Event, testBody?: unknown) {
     const sessionResult = await refreshService.createSession({
       account: { type: "user", id: user.id },
       deviceLabel: userAgent,
-      ipAddress: rawIp,
+      ipAddress: getVerifiedRemoteIp(event),
       authMethod: "password",
     });
 

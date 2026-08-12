@@ -4,7 +4,7 @@ import {
   PACKAGE_CATALOG,
   PENDING_PRICE_VND as PENDING_PRICE,
 } from "@kidthink/shared";
-import { getOwnerDb } from "./index.ts";
+import { getOwnerDb } from "./client.ts";
 import {
   entitlementKeys,
   packageEntitlements,
@@ -41,6 +41,7 @@ export const SEED_PACKAGE_ENTITLEMENTS = Object.values(PACKAGE_CATALOG).flatMap(
     }))
 );
 
+import { seedContentTags } from "./seed-master/content-tags.ts";
 import { seedEmojiMasterData } from "./seed-master/emoji.ts";
 import { seedGameTemplatesMasterData } from "./seed-master/game-templates.ts";
 import { seedTaxonomyMasterData } from "./seed-master/taxonomy/index.ts";
@@ -101,6 +102,10 @@ export async function seed() {
     `[db:seed] Game Templates seeded: ${templateStats.templateCount} templates.`
   );
 
+  // 7. Seed Content Tags master vocabulary
+  await seedContentTags(db);
+  console.log("[db:seed] Content Tags vocabulary seeded.");
+
   // 7. Seed initial super_admin manager
   const initialAdminEmail =
     process.env.INITIAL_ADMIN_EMAIL || "admin@tinimath.test";
@@ -121,4 +126,11 @@ export async function seed() {
     .onConflictDoNothing({ target: managers.email });
 
   console.log("✅ [db:seed] Seed completed successfully.");
+}
+
+if (process.argv[1]?.endsWith("seed.ts")) {
+  seed().catch((err) => {
+    console.error("Fatal error in seed:", err);
+    process.exit(1);
+  });
 }

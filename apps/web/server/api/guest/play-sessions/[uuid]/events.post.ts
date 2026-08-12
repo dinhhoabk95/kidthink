@@ -3,11 +3,35 @@ import { ingestPlayEvents } from "@kidthink/db";
 import {
   createError,
   defineEventHandler,
-  getHeader,
   getRouterParam,
   readBody,
   setResponseStatus,
 } from "h3";
+import { z } from "zod";
+import {
+  assertRequestBodySize,
+  assertSameOriginRequest,
+  getOrSetGuestDeviceId,
+} from "../../../../utils/auth-runtime.js";
+
+const EventsSchema = z
+  .object({
+    events: z
+      .array(
+        z
+          .object({
+            seq: z.number().int().positive(),
+            event_name: z.string().min(1).max(64),
+            occurred_at_ms: z.number().int().nonnegative().optional(),
+            payload: z.record(z.unknown()).optional(),
+            client_timestamp: z.string().datetime().optional(),
+          })
+          .strict()
+      )
+      .max(100)
+      .default([]),
+  })
+  .strict();
 
 export default defineEventHandler(async (event) => {
   try {
@@ -15,11 +39,15 @@ export default defineEventHandler(async (event) => {
     if (!uuid) {
       throw createError({ statusCode: 404, statusMessage: "NOT_FOUND" });
     }
+    assertSameOriginRequest(event);
+    assertRequestBodySize(event, 64 * 1024);
 
-    const guestDeviceId =
-      getHeader(event, "x-guest-device-id") || "guest-device";
-    const body = (await readBody(event)) || {};
-    const events = body.events || [];
+    const guestDeviceId = getOrSetGuestDeviceId(event);
+    const parsed = EventsSchema.safeParse((await readBody(event)) || {});
+    if (!parsed.success) {
+      throw new AppError("VALIDATION_FAILED");
+    }
+    const events = parsed.data.events;
 
     const result = await ingestPlayEvents(uuid, events, {
       isUserCall: false,

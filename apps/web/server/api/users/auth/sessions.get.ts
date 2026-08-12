@@ -6,6 +6,17 @@ import {
   respondToUserAuthError,
 } from "../../../utils/auth-runtime";
 
+function redactIpAddress(ipAddress: string | null): string | null {
+  if (!ipAddress) {
+    return null;
+  }
+  if (ipAddress.includes(":")) {
+    return "IPv6";
+  }
+  const octets = ipAddress.split(".");
+  return octets.length >= 2 ? `${octets[0]}.${octets[1]}.x.x` : "redacted";
+}
+
 export async function handleGetSessions(event: H3Event) {
   try {
     const userSession = await requireWebUserSession(event);
@@ -26,7 +37,8 @@ export async function handleGetSessions(event: H3Event) {
       sessions: rows.map((r) => ({
         id: String(r.id),
         deviceLabel: r.deviceLabel,
-        ipAddress: r.ipAddress,
+        // Never expose the raw address stored for security/audit purposes.
+        ipAddress: redactIpAddress(r.ipAddress),
         authMethod: r.authMethod,
         lastUsedAt: r.lastUsedAt,
         createdAt: r.createdAt,
