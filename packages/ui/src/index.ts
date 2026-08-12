@@ -49,3 +49,21 @@ export const SURFACE_RULES = {
 } as const;
 
 export type SurfaceName = keyof typeof SURFACE_RULES.surfaces;
+
+/**
+ * BR-DSC-04: Icon data MUST be a string starting with "i-lucide-".
+ * Component references via <component :is> are strictly forbidden and fail type/runtime checks.
+ */
+export type IconName = `i-lucide-${string}`;
+
+export interface IconConfig {
+  name: IconName;
+  ariaLabel?: string;
+}
+
+export function validateIconName(icon: unknown): icon is IconName {
+  if (typeof icon !== "string") {
+    return false;
+  }
+  return icon.startsWith("i-lucide-");
+}

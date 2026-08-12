@@ -24,6 +24,10 @@ catalog:
   h3: ^1.15.4
   vue-tsc: ^3.3.9
 
+  # UI Kit & Styling — Task 3 (BR-DSC-03, D-FE)
+  "@nuxt/ui": ^3.0.0
+  tailwindcss: ^4.0.0
+
   # Auth — P0.3. Sidebase Local được khai trực tiếp như Nuxt module ở mỗi app;
   # jose chỉ được import trong packages/auth.
   "@sidebase/nuxt-auth": ^1.3.1
