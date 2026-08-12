@@ -76,3 +76,15 @@ export {
   type RuleOverride,
   validatePageObjectRegistry,
 } from "./a11y/harness.js";
+
+export {
+  type GestureType,
+  type KidFeedback,
+  type KidInstruction,
+  validateKidColorToken,
+  validateKidFeedback,
+  validateKidGesture,
+  validateKidInstruction,
+  validateKidTextSize,
+  validateTouchTargetSize,
+} from "./kid-surface/contracts.js";
