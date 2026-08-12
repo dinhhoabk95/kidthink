@@ -2,7 +2,7 @@
 spec: EMAIL-VERIFICATION
 title: Xác thực email
 area: account
-status: approved
+status: implemented
 mvp: true
 phase: P0
 reviewed: 2026-08-08

@@ -58,7 +58,7 @@ Mỗi bước: chín việc ở kế hoạch mục 5; mỗi work package S/M m�
 - [x] **P0.0b** Cổng chống tick khống `pnpm check:progress` — kế hoạch mục 10; ca âm trước: commit chỉ đổi `[ ]` thành `[x]` phải làm cổng đỏ
 - [x] **P0.1** Khung repo + dependency baseline — [`repo-bootstrap.md`](../specs/00-foundation/repo-bootstrap.md) · [`monorepo-package-architecture.md`](../specs/00-foundation/monorepo-package-architecture.md)
 - [x] **P0.2** Từ vựng và ID — [`glossary.md`](../specs/00-foundation/glossary.md) · [`id-conventions.md`](../specs/00-foundation/id-conventions.md)
-- [ ] **P0.3** Tác nhân và guard — [`actors.md`](../specs/00-foundation/actors.md) · [`auth-tokens-sessions.md`](../specs/01-platform/auth-tokens-sessions.md)
+- [x] **P0.3** Tác nhân và guard — [`actors.md`](../specs/00-foundation/actors.md) · [`auth-tokens-sessions.md`](../specs/01-platform/auth-tokens-sessions.md)
 - [x] **P0.4** Ràng buộc pháp lý trước khi thiết kế bảng trẻ — [`child-data-compliance.md`](../specs/00-foundation/child-data-compliance.md)
 - [x] **P0.5** Ladder + entitlement + package — [`access-ladder.md`](../specs/00-foundation/access-ladder.md) → [`entitlement-model.md`](../specs/00-foundation/entitlement-model.md) → [`package-catalog.md`](../specs/00-foundation/package-catalog.md)
 - [x] **P0.6** Vòng đời + version nội dung — [`content-lifecycle.md`](../specs/00-foundation/content-lifecycle.md) → [`content-versioning.md`](../specs/00-foundation/content-versioning.md)
@@ -67,7 +67,7 @@ Mỗi bước: chín việc ở kế hoạch mục 5; mỗi work package S/M m�
 - [x] **P0.8b** Sao lưu và quan sát; dựng khung tối thiểu `packages/queue` + `apps/worker` cho job `backup:postgres` (`D-BT`, `D-BU`) — [`backup-and-restore.md`](../specs/01-platform/backup-and-restore.md) · [`health-check.md`](../specs/01-platform/health-check.md)
 - [x] **P0.9** Taxonomy service + seed Lớp 1 — [`taxonomy-service.md`](../specs/01-platform/taxonomy-service.md) · [`emoji-registry.md`](../specs/01-platform/emoji-registry.md)
 - [x] **P0.9b** Email và guard; thêm job `email:send` lên khung queue tối thiểu (`D-BU`) — [`notification-service.md`](../specs/01-platform/notification-service.md) · [`rate-limiting.md`](../specs/01-platform/rate-limiting.md)
-- [ ] **P0.10** Auth end-to-end bằng email/mật khẩu — [`registration.md`](../specs/03-account/registration.md) · [`email-verification.md`](../specs/03-account/email-verification.md) · [`login-and-session.md`](../specs/03-account/login-and-session.md) · [`password-recovery.md`](../specs/03-account/password-recovery.md)
+- [x] **P0.10** Auth end-to-end bằng email/mật khẩu — [`registration.md`](../specs/03-account/registration.md) · [`email-verification.md`](../specs/03-account/email-verification.md) · [`login-and-session.md`](../specs/03-account/login-and-session.md) · [`password-recovery.md`](../specs/03-account/password-recovery.md)
 - [ ] **P0.11** Audit log, trước mọi hành động cần audit — [`audit-log.md`](../specs/01-platform/audit-log.md)
 - [ ] **P0.11b** Đăng nhập admin — [`admin-auth.md`](../specs/06-admin/admin-auth.md)
 

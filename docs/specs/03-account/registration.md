@@ -2,7 +2,7 @@
 spec: REGISTRATION
 title: Đăng ký tài khoản
 area: account
-status: approved
+status: implemented
 mvp: true
 phase: P0
 reviewed: 2026-08-08
