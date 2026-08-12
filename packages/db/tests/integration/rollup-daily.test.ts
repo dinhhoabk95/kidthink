@@ -40,7 +40,8 @@ describe("Task 5 — Daily Rollup & Entitlement Expire (BR-TLM-02, BR-TLM-05, BR
       .returning();
 
     // 2. Create Game Template & Level
-    const gtCode = `GT-ROLLUP-${Date.now()}`;
+    const num3 = Math.floor(Math.random() * 899) + 100;
+    const gtCode = `GT-${num3}`;
     const [gt] = await db
       .insert(gameTemplates)
       .values({
@@ -50,7 +51,8 @@ describe("Task 5 — Daily Rollup & Entitlement Expire (BR-TLM-02, BR-TLM-05, BR
       })
       .returning();
 
-    const glCode = `GL-ROLLUP-${Date.now()}`;
+    const num4 = Math.floor(Math.random() * 8999) + 1000;
+    const glCode = `GL-C1-CNT-RLLP-${num4}`;
     const [gl] = await db
       .insert(gameLevels)
       .values({

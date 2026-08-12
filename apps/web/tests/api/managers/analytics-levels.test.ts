@@ -2,7 +2,6 @@ import { createAdminManagerToken } from "@kidthink/auth";
 import { getOwnerDb, levelDailyStats, managers } from "@kidthink/db";
 import { describe, expect, it } from "vitest";
 import levelsAnalyticsHandler from "../../../server/api/managers/analytics/levels.get.ts";
-import { respondToManagerAuthError } from "../../../server/utils/admin-auth-runtime.ts";
 
 function mockEvent(
   headers: Record<string, string> = {},
@@ -20,14 +19,9 @@ function mockEvent(
 describe("Task 7 — GET /api/managers/analytics/levels (BR-TLM-01, BR-PRF-06)", () => {
   it("rejects unauthenticated request with 401", async () => {
     const event = mockEvent();
-    let err: any;
-    try {
-      await levelsAnalyticsHandler(event);
-    } catch (e) {
-      err = e;
-    }
-    const res = respondToManagerAuthError(event, err);
-    expect(res.statusCode).toBe(401);
+    await expect(levelsAnalyticsHandler(event)).rejects.toSatisfy(
+      (err: any) => err.statusCode === 401
+    );
   });
 
   it("returns level stats with KPI flags for authenticated manager and enforces limit <= 100 (BR-PRF-06)", async () => {
@@ -39,12 +33,13 @@ describe("Task 7 — GET /api/managers/analytics/levels (BR-TLM-01, BR-PRF-06)",
       .values({
         email,
         displayName: "Analytics Manager",
-        role: "admin",
+        role: "system_admin",
       })
       .returning();
 
     // Insert sample rollup row
-    const glCode = `GL-ANALYTICS-${Date.now()}`;
+    const num4 = Math.floor(Math.random() * 8999) + 1000;
+    const glCode = `GL-C1-CNT-ANLY-${num4}`;
     await db.insert(levelDailyStats).values({
       levelCode: glCode,
       contentVersion: 1,
@@ -60,7 +55,7 @@ describe("Task 7 — GET /api/managers/analytics/levels (BR-TLM-01, BR-PRF-06)",
       payload: {
         manager_id: mgr.id,
         email: mgr.email,
-        role: mgr.role as "admin",
+        role: mgr.role as "system_admin",
         session_id: "m_session_analytics",
       },
       secret: "test_secret_32_bytes_minimum_length_key!!",
