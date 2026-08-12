@@ -50,6 +50,7 @@ export const notificationStatusEnum = pgEnum("notification_status", [
   "queued",
   "dispatched",
   "failed",
+  "suppressed",
 ]);
 
 export const auditLogs = pgTable(
@@ -116,12 +117,15 @@ export const backupLog = pgTable("backup_log", {
 
 export const notifications = pgTable("notifications", {
   id: bigint("id", { mode: "number" }).primaryKey().generatedAlwaysAsIdentity(),
+  uuid: uuid("uuid").defaultRandom().notNull().unique(),
   recipientType: recipientTypeEnum("recipient_type").notNull(),
   recipientId: bigint("recipient_id", { mode: "number" }).notNull(),
   channel: notificationChannelEnum("channel").notNull(),
   templateCode: varchar("template_code", { length: 60 }).notNull(),
   payload: jsonb("payload"),
   status: notificationStatusEnum("status").notNull().default("queued"),
+  suppressedReason: text("suppressed_reason"),
+  providerMessageId: varchar("provider_message_id", { length: 100 }),
   dispatchedAt: timestamp("dispatched_at", { withTimezone: true }),
   error: text("error"),
   createdAt: timestamp("created_at", { withTimezone: true })
