@@ -110,11 +110,13 @@ export function setUserAuthCookies(
 }
 
 export function clearUserAuthCookies(event: H3Event): void {
-  deleteCookie(event, config.accessCookieName, { path: "/" });
-  deleteCookie(event, config.refreshCookieName, {
-    path: config.refreshPath,
-  });
-  deleteCookie(event, config.csrfCookieName, { path: "/" });
+  if (event?.node?.res) {
+    deleteCookie(event, config.accessCookieName, { path: "/" });
+    deleteCookie(event, config.refreshCookieName, {
+      path: config.refreshPath,
+    });
+    deleteCookie(event, config.csrfCookieName, { path: "/" });
+  }
 }
 
 export function getUserRefreshCookie(event: H3Event): string {
