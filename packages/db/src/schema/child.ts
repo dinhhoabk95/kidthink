@@ -43,6 +43,7 @@ export const childProfiles = pgTable(
       .notNull()
       .default(60),
     status: childStatusEnum("status").notNull().default("active"),
+    purgeAt: timestamp("purge_at", { withTimezone: true }),
     createdAt: timestamp("created_at", { withTimezone: true })
       .defaultNow()
       .notNull(),

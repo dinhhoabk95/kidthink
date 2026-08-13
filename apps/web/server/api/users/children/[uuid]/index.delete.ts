@@ -100,6 +100,7 @@ export default defineEventHandler(async (event) => {
       .update(childProfiles)
       .set({
         status: "pending_deletion",
+        purgeAt,
         updatedAt: now,
       })
       .where(eq(childProfiles.id, child.id));

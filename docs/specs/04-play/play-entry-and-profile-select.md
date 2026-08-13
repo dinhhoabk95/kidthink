@@ -2,7 +2,7 @@
 spec: PLAY-ENTRY-AND-PROFILE-SELECT
 title: Vào khu vực chơi và chọn trẻ
 area: play
-status: approved
+status: implemented
 mvp: true
 phase: P1
 reviewed: 2026-08-08
@@ -58,7 +58,7 @@ lại** endpoint đó khi luồng vào khu vực chơi cần chọn trẻ trư�
 
 | Nhánh | Hành vi |
 |---|---|
-| Guest vào thẳng `/play` | Thấy allow-list 6 game free. Cấm lưu tiến độ. Sau 3 lượt hiện lời mời đăng ký **trên bề mặt người lớn**, không giữa lúc chơi |
+| Guest vào thẳng `/play` | Thấy allow-list 6 game free. Cấm lưu tiến độ. Sau 5 lượt hiện lời mời đăng ký **trên bề mặt người lớn**, không giữa lúc chơi (`D-GX`) |
 | User chưa có trẻ nào | Chuyển về `/me/children/new` |
 | User chưa chọn trẻ, vào thẳng `/play/{code}` bậc ≥ login | **428** → màn hình chọn trẻ |
 | Cookie trẻ trỏ tới trẻ đã archive | Xoá cookie, yêu cầu chọn lại |
@@ -136,7 +136,7 @@ Scenario: BR-PEN-06 — nội dung khoá hiện trung tính
   And không hiện số tiền
 
 Scenario: BR-PEN-05 — không ngắt trẻ để mời đăng ký
-  Given guest đang chơi lượt thứ 3
+  Given guest đang chơi lượt thứ 5
   When lượt chơi đang diễn ra
   Then không lời mời nào hiện ra
   When lượt chơi kết thúc

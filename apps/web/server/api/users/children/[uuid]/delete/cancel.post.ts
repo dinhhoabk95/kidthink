@@ -54,6 +54,7 @@ export default defineEventHandler(async (event) => {
       .update(childProfiles)
       .set({
         status: "archived",
+        purgeAt: null,
         updatedAt: new Date(),
       })
       .where(eq(childProfiles.id, child.id))

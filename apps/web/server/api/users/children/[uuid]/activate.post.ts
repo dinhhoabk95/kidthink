@@ -96,14 +96,14 @@ export default defineEventHandler(async (event) => {
         await db
           .update(playSessions)
           .set({
-            status: "abandoned",
-            endedAt: new Date(),
+            completionStatus: "abandoned",
+            completedAt: new Date(),
             updatedAt: new Date(),
           })
           .where(
             and(
               eq(playSessions.childProfileId, previousChild.id),
-              eq(playSessions.status, "in_progress")
+              eq(playSessions.completionStatus, "in_progress")
             )
           );
       }

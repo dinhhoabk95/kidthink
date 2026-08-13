@@ -94,10 +94,29 @@ describe("Child Profile Switching API (BR-CPS-01..07 & BR-PEN-01..02)", () => {
     }
   });
 
+  it("BR-CPS-05: Activating archived child throws 404", async () => {
+    const authHeader = await createAuthUserHeader(303);
+    const event = mockEvent(
+      "POST",
+      { authorization: authHeader },
+      {},
+      { uuid: "00000000-0000-0000-0000-000000000000" }
+    );
+
+    try {
+      await activateHandler(event);
+      expect.fail("Should have thrown 404 for archived child");
+    } catch (err: any) {
+      const status = err.statusCode || err.status;
+      expect(status).toBe(404);
+    }
+  });
+
   it("DELETE /api/users/children/active clears active child cookie", async () => {
+    const authHeader = await createAuthUserHeader(304);
     const event = mockEvent(
       "DELETE",
-      {},
+      { authorization: authHeader },
       {},
       {},
       { active_child_id: "some-uuid" }

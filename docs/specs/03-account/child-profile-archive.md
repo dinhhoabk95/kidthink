@@ -2,7 +2,7 @@
 spec: CHILD-PROFILE-ARCHIVE
 title: Lưu trữ và xoá hồ sơ trẻ
 area: account
-status: approved
+status: implemented
 mvp: true
 phase: P1
 reviewed: 2026-08-08

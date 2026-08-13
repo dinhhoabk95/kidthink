@@ -103,9 +103,9 @@ async function verifyChildConsentAndQuota(event: H3Event, userId: number) {
     );
   const entitlementKeys = new Set(activeEntitlements.map((row) => row.key));
   let maxAllowedChildren = 1;
-  if (entitlementKeys.includes("play_premium_games")) {
+  if (entitlementKeys.has("play_premium_games")) {
     maxAllowedChildren = 5;
-  } else if (entitlementKeys.includes("play_standard_games")) {
+  } else if (entitlementKeys.has("play_standard_games")) {
     maxAllowedChildren = 3;
   }
 

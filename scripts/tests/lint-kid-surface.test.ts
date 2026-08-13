@@ -6,6 +6,8 @@ const RE_PGT_05 = /BR-PGT-05/;
 const RE_SCO_02 = /BR-SCO-02/;
 const RE_FBK_01 = /BR-FBK-01/;
 const RE_FBK_08 = /BR-FBK-08/;
+const RE_PEN_03 = /BR-PEN-03/;
+const RE_PEN_04 = /BR-PEN-04/;
 
 describe("Task 3 — Cổng quét 'cấm trên bề mặt trẻ' (D-GQ)", () => {
   it("passes clean kid surface files", () => {
@@ -103,5 +105,45 @@ describe("Task 3 — Cổng quét 'cấm trên bề mặt trẻ' (D-GQ)", () => 
       },
     ];
     expect(() => scanKidSurfaceRules(dirtyFiles)).toThrowError(RE_FBK_08);
+  });
+
+  it("RED fixture: fails on text search input in kid catalog (BR-PEN-03)", () => {
+    const dirtyFiles: FileItem[] = [
+      {
+        filePath: "apps/web/app/pages/play/index.vue",
+        content: '<input v-model="search_input_text" />',
+      },
+    ];
+    expect(() => scanKidSurfaceRules(dirtyFiles)).toThrowError(RE_PEN_03);
+  });
+
+  it("RED fixture: fails on filter dropdown in kid catalog (BR-PEN-03)", () => {
+    const dirtyFiles: FileItem[] = [
+      {
+        filePath: "apps/web/app/pages/play/index.vue",
+        content: '<select name="filter_dropdown_text">',
+      },
+    ];
+    expect(() => scanKidSurfaceRules(dirtyFiles)).toThrowError(RE_PEN_03);
+  });
+
+  it("RED fixture: fails on upgrade plan button on kid surface (BR-PEN-04)", () => {
+    const dirtyFiles: FileItem[] = [
+      {
+        filePath: "apps/web/app/pages/play/index.vue",
+        content: '<button class="upgrade_plan_button">Nâng cấp</button>',
+      },
+    ];
+    expect(() => scanKidSurfaceRules(dirtyFiles)).toThrowError(RE_PEN_04);
+  });
+
+  it("RED fixture: fails on price tag on kid surface (BR-PEN-04)", () => {
+    const dirtyFiles: FileItem[] = [
+      {
+        filePath: "apps/web/app/pages/play/index.vue",
+        content: '<span class="plan_price_tag">50.000đ</span>',
+      },
+    ];
+    expect(() => scanKidSurfaceRules(dirtyFiles)).toThrowError(RE_PEN_04);
   });
 });

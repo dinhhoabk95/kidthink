@@ -16,6 +16,7 @@ export const CHILD_PROFILE_CLOSED_COLUMNS = [
   "current_curriculum_id",
   "daily_play_cap_minutes",
   "status",
+  "purge_at",
   "created_at",
   "updated_at",
 ] as const;

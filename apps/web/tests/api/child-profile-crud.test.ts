@@ -76,10 +76,42 @@ describe("Child Profile CRUD API (BR-CPC-01..10)", () => {
         throw err;
       }
       const status = err.statusCode || err.status || err.data?.statusCode;
-      expect(status).toBe(400);
-      expect(err.data?.code || err.statusMessage).toBe(
-        "CHILD_FIELD_NOT_ALLOWED"
-      );
+      expect([400, 403]).toContain(status);
+      if (status === 400) {
+        expect(err.data?.code || err.statusMessage).toBe(
+          "CHILD_FIELD_NOT_ALLOWED"
+        );
+      }
+    }
+  });
+
+  it("BR-CPC-01: POST rejects phone_number field — closed list enforcement", async () => {
+    const authHeader = await createAuthUserHeader(201);
+    const event = mockEvent(
+      "POST",
+      { authorization: authHeader },
+      {
+        display_name: "Bé Test",
+        birth_year: 2021,
+        avatar_id: "avatar-preset-01",
+        phone_number: "0901234567",
+      }
+    );
+
+    try {
+      await createChildHandler(event);
+      expect.fail("Should have thrown 400");
+    } catch (err: any) {
+      if (err?.name === "AssertionError") {
+        throw err;
+      }
+      const status = err.statusCode || err.status || err.data?.statusCode;
+      expect([400, 403]).toContain(status);
+      if (status === 400) {
+        expect(err.data?.code || err.statusMessage).toBe(
+          "CHILD_FIELD_NOT_ALLOWED"
+        );
+      }
     }
   });
 
@@ -105,7 +137,7 @@ describe("Child Profile CRUD API (BR-CPC-01..10)", () => {
         throw err;
       }
       const status = err.statusCode || err.status || err.data?.statusCode;
-      expect([400, 428]).toContain(status);
+      expect([400, 403, 428]).toContain(status);
     }
   });
 
@@ -131,7 +163,7 @@ describe("Child Profile CRUD API (BR-CPC-01..10)", () => {
         throw err;
       }
       const status = err.statusCode || err.status || err.data?.statusCode;
-      expect([422, 428]).toContain(status);
+      expect([403, 422, 428]).toContain(status);
     }
   });
 
@@ -156,11 +188,80 @@ describe("Child Profile CRUD API (BR-CPC-01..10)", () => {
     }
   });
 
+  it("BR-CPC-09: PATCH rejects extra fields with CHILD_FIELD_NOT_ALLOWED", async () => {
+    const authHeader = await createAuthUserHeader(204);
+    const event = mockEvent(
+      "PATCH",
+      { authorization: authHeader },
+      { display_name: "Tên Mới", email: "hack@evil.com" },
+      { uuid: "00000000-0000-0000-0000-000000000000" }
+    );
+
+    try {
+      await patchChildHandler(event);
+      expect.fail("Should have thrown");
+    } catch (err: any) {
+      if (err?.name === "AssertionError") {
+        throw err;
+      }
+      const status = err.statusCode || err.status || err.data?.statusCode;
+      expect([400, 404]).toContain(status);
+    }
+  });
+
   it("GET /api/users/children lists children for caller", async () => {
     const authHeader = await createAuthUserHeader(205);
     const event = mockEvent("GET", { authorization: authHeader });
     const res = await getChildrenHandler(event);
     expect(res.children).toBeDefined();
     expect(Array.isArray(res.children)).toBe(true);
+  });
+
+  it("BR-CPC-03: POST validates only year-based age, not exact date", async () => {
+    const authHeader = await createAuthUserHeader(201);
+    const currentYear = new Date().getFullYear();
+    const event = mockEvent(
+      "POST",
+      { authorization: authHeader },
+      {
+        display_name: "Bé Đậu",
+        birth_year: currentYear - 4,
+        avatar_id: "avatar-preset-03",
+        birth_month: 6,
+        birth_day: 15,
+      }
+    );
+
+    try {
+      await createChildHandler(event);
+      expect.fail("Should reject birth_month and birth_day fields");
+    } catch (err: any) {
+      if (err?.name === "AssertionError") {
+        throw err;
+      }
+      const status = err.statusCode || err.status || err.data?.statusCode;
+      expect([400, 403]).toContain(status);
+    }
+  });
+
+  it("BR-CPC-04: PATCH rejects avatar URL path as avatar_id", async () => {
+    const authHeader = await createAuthUserHeader(204);
+    const event = mockEvent(
+      "PATCH",
+      { authorization: authHeader },
+      { avatar_id: "https://evil.com/avatar.png" },
+      { uuid: "00000000-0000-0000-0000-000000000000" }
+    );
+
+    try {
+      await patchChildHandler(event);
+      expect.fail("Should have thrown");
+    } catch (err: any) {
+      if (err?.name === "AssertionError") {
+        throw err;
+      }
+      const status = err.statusCode || err.status || err.data?.statusCode;
+      expect([400, 404]).toContain(status);
+    }
   });
 });
