@@ -127,6 +127,9 @@ export const childDailyStats = pgTable(
     levelsCompleted: integer("levels_completed").notNull().default(0),
     skillsTouched: integer("skills_touched").notNull().default(0),
     starsEarned: integer("stars_earned").notNull().default(0),
+    extraTimeGrantedMinutes: integer("extra_time_granted_minutes")
+      .notNull()
+      .default(0),
     updatedAt: timestamp("updated_at", { withTimezone: true })
       .defaultNow()
       .notNull(),

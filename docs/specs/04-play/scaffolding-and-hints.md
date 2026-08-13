@@ -2,7 +2,7 @@
 spec: SCAFFOLDING-AND-HINTS
 title: Trợ giúp leo thang
 area: play
-status: approved
+status: implemented
 mvp: true
 phase: P1
 reviewed: 2026-08-08

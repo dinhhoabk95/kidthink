@@ -12,6 +12,7 @@ import playBudgetHandler from "../../server/api/users/children/[uuid]/play-budge
 import updateSettingsHandler from "../../server/api/users/children/[uuid]/settings.patch";
 
 const PARENT_GATE_SECRET =
+  process.env.NUXT_PARENT_GATE_SECRET ||
   process.env.PARENT_GATE_SECRET ||
   "kidthink-parent-gate-secret-key-default-2026";
 const JWT_SECRET =
@@ -99,7 +100,7 @@ async function createTestUserWithChildren() {
   return { user, childA, childB, headers };
 }
 
-describe("Healthy Play Limits API (BR-HPL-01..08 & HEALTHY-PLAY-LIMITS spec)", () => {
+describe.sequential("Healthy Play Limits API (BR-HPL-01..08 & HEALTHY-PLAY-LIMITS spec)", () => {
   it("GET /play-budget returns correct budget and ICT reset time", async () => {
     const db = getOwnerDb();
     const { childA, headers } = await createTestUserWithChildren();
@@ -200,5 +201,40 @@ describe("Healthy Play Limits API (BR-HPL-01..08 & HEALTHY-PLAY-LIMITS spec)", (
     const eventB = mockEvent("GET", headers, { uuid: childB.uuid });
     const resB = await playBudgetHandler(eventB);
     expect(resB.remaining_minutes).toBe(30);
+  });
+
+  it("BR-HPL-06: daily extra-time accumulation capped at 30 minutes total", async () => {
+    const { user, childA, headers } = await createTestUserWithChildren();
+    const validGateToken = createParentGateToken(
+      user.id,
+      Date.now() + 300_000,
+      PARENT_GATE_SECRET
+    );
+
+    // First grant: 20 minutes — should succeed
+    const event1 = mockEvent(
+      "POST",
+      headers,
+      { uuid: childA.uuid },
+      { minutes: 20, gate_token: validGateToken }
+    );
+    const res1 = await grantExtraTimeHandler(event1);
+    expect(res1.success).toBe(true);
+    expect(res1.daily_granted_total).toBe(20);
+
+    // Second grant: 15 minutes — total 35 > 30, should reject with 422
+    const event2 = mockEvent(
+      "POST",
+      headers,
+      { uuid: childA.uuid },
+      { minutes: 15, gate_token: validGateToken }
+    );
+    try {
+      await grantExtraTimeHandler(event2);
+      expect.fail("Should have thrown 422 for exceeding daily grant limit");
+    } catch (err: any) {
+      const status = err.statusCode || err.status;
+      expect(status).toBe(422);
+    }
   });
 });

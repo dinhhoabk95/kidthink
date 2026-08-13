@@ -2,7 +2,7 @@
 spec: FEEDBACK-AND-CELEBRATION
 title: Phản hồi và ăn mừng
 area: play
-status: approved
+status: implemented
 mvp: true
 phase: P1
 reviewed: 2026-08-08

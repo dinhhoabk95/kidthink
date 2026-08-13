@@ -2,7 +2,7 @@
 spec: HEALTHY-PLAY-LIMITS
 title: Hạn mức giờ chơi lành mạnh
 area: play
-status: approved
+status: implemented
 mvp: true
 phase: P1
 reviewed: 2026-08-08

@@ -65,9 +65,9 @@ export default defineEventHandler(async (event) => {
         )
       );
     const keys = new Set(activeEntitlements.map((row) => row.key));
-    if (keys.includes("play_premium_games")) {
+    if (keys.has("play_premium_games")) {
       tier = "premium";
-    } else if (keys.includes("play_standard_games")) {
+    } else if (keys.has("play_standard_games")) {
       tier = "standard";
     }
 

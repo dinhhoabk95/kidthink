@@ -52,7 +52,12 @@ export function getWebJwtSecret(_event: H3Event): string {
 
 export function getParentGateSecret(_event: H3Event): string {
   const secret =
-    process.env.NUXT_PARENT_GATE_SECRET || process.env.PARENT_GATE_SECRET;
+    process.env.NUXT_PARENT_GATE_SECRET ||
+    process.env.PARENT_GATE_SECRET ||
+    (process.env.NODE_ENV === "test"
+      ? process.env.PARENT_GATE_SECRET_TEST ||
+        "kidthink-parent-gate-secret-key-default-2026"
+      : undefined);
   if (!secret || new TextEncoder().encode(secret).byteLength < 32) {
     throw new Error(
       "PARENT_GATE_SECRET is not configured with at least 32 bytes"

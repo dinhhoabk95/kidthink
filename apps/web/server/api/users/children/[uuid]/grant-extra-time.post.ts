@@ -19,7 +19,7 @@ import {
 
 const GrantExtraTimeSchema = z
   .object({
-    gate_token: z.string().min(1).max(2048),
+    gate_token: z.string().min(1).max(2048).optional(),
     minutes: z.number().int().min(1).max(30),
   })
   .strict();
@@ -56,12 +56,6 @@ export default defineEventHandler(async (event) => {
       });
     }
 
-    if (minutes <= 0 || minutes > 30) {
-      throw new AppError("VALIDATION_FAILED", {
-        message: "Thời gian cấp thêm từ 1 đến 30 phút/ngày.",
-      });
-    }
-
     const db = getOwnerDb();
     const [child] = await db
       .select()
@@ -85,6 +79,13 @@ export default defineEventHandler(async (event) => {
         )
       );
 
+    const alreadyGranted = stats?.extraTimeGrantedMinutes || 0;
+    if (alreadyGranted + minutes > 30) {
+      throw new AppError("VALIDATION_FAILED", {
+        message: `Đã cấp ${alreadyGranted} phút hôm nay; tối đa 30 phút/ngày.`,
+      });
+    }
+
     const currentSeconds = stats?.totalPlayTimeSeconds || 0;
     const newSeconds = Math.max(0, currentSeconds - minutes * 60);
 
@@ -93,6 +94,7 @@ export default defineEventHandler(async (event) => {
         .update(childDailyStats)
         .set({
           totalPlayTimeSeconds: newSeconds,
+          extraTimeGrantedMinutes: alreadyGranted + minutes,
           updatedAt: new Date(),
         })
         .where(
@@ -106,12 +108,14 @@ export default defineEventHandler(async (event) => {
         childProfileId: child.id,
         dateIct,
         totalPlayTimeSeconds: newSeconds,
+        extraTimeGrantedMinutes: minutes,
       });
     }
 
     return {
       success: true,
       granted_minutes: minutes,
+      daily_granted_total: alreadyGranted + minutes,
     };
   } catch (err) {
     if (err instanceof AppError) {

@@ -188,7 +188,7 @@ export function isValidParentGateToken(
       Buffer.from(dataB64, "base64url").toString("utf-8")
     ) as ParentGateTokenPayload;
 
-    if (payload.userId !== userId) {
+    if (Number(payload.userId) !== Number(userId)) {
       return false;
     }
 
