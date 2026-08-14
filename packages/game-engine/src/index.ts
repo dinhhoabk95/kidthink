@@ -29,6 +29,10 @@ export {
   type SessionMeta,
 } from "./offline-buffer";
 export { AudioController } from "./systems/audio-controller";
+export {
+  DegradationManager,
+  type DegradationState,
+} from "./systems/degradation";
 export { designTokens } from "./systems/designTokens";
 export {
   COMPLIMENTS,

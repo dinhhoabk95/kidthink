@@ -5,7 +5,7 @@ import { GT003Template } from "./templates/gt003";
 import { GT004Template } from "./templates/gt004";
 import { GT005Template } from "./templates/gt005";
 import { GT006Template } from "./templates/gt006";
-import type { GameTemplate } from "./types";
+import type { AgeBand, GameTemplate } from "./types";
 
 export const MVP_TEMPLATES: Record<string, GameTemplate> = {
   "GT-001": GT001Template,
@@ -82,21 +82,13 @@ export function validateAgeBandForTemplate(
     return false;
   }
   if (template.banned_age_bands) {
-    if (targetAge === 3 && template.banned_age_bands.includes("3-4")) {
-      return false;
+    let ageBand: AgeBand = "5-6";
+    if (targetAge <= 3) {
+      ageBand = "3-4";
+    } else if (targetAge <= 4) {
+      ageBand = "4-5";
     }
-    if (
-      targetAge === 4 &&
-      template.banned_age_bands.includes("3-4") &&
-      template.age_min > 4
-    ) {
-      return false;
-    }
-    if (
-      targetAge === 4 &&
-      template.banned_age_bands.includes("4-5") &&
-      template.age_min > 4
-    ) {
+    if (template.banned_age_bands.includes(ageBand)) {
       return false;
     }
   }

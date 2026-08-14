@@ -10,9 +10,8 @@ export class AudioController {
 
   setEnabled(enabled: boolean): void {
     this.enabled = enabled;
-    if (!(enabled || this.sfxEngine.muted)) {
-      this.sfxEngine.toggleMute();
-    } else if (enabled && this.sfxEngine.muted) {
+    const shouldMute = !enabled;
+    if (shouldMute !== this.sfxEngine.muted) {
       this.sfxEngine.toggleMute();
     }
   }

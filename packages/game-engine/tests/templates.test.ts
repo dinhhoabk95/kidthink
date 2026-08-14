@@ -247,4 +247,24 @@ describe("Task 6 & Task 7 — All 6 Template Sessions & Kid Surface Rules", () =
     expect(res.valid).toBe(false);
     expect(res.feedback).toBe("amber_soft"); // Non-punitive amber soft feedback
   });
+
+  it("BR-ENG-07 (negative): wrong answer NEVER returns 'none' feedback", () => {
+    const session = new GT001Session(
+      GT001_FIXTURES[0].content,
+      GT001_FIXTURES[0].difficulty
+    );
+    session.setupEntities();
+
+    const wrongItems = GT001_FIXTURES[0].content.options.filter(
+      (o) => !o.is_correct
+    );
+    for (const item of wrongItems) {
+      const res = session.validateAction({
+        type: "tap_option",
+        data: { item_id: item.item_id },
+      });
+      expect(res.feedback).not.toBe("none");
+      expect(res.feedback).toBeDefined();
+    }
+  });
 });

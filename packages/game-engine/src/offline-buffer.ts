@@ -23,11 +23,16 @@ export class OfflineEventBuffer {
   private flushTimer: ReturnType<typeof setInterval> | null = null;
   private isFlushing = false;
   private apiEndpoint = "/api/users/play-sessions";
+  private readonly getCsrfToken: (() => string | null) | null;
 
-  constructor(options?: { isGuest?: boolean }) {
+  constructor(options?: {
+    isGuest?: boolean;
+    getCsrfToken?: () => string | null;
+  }) {
     if (options?.isGuest) {
       this.apiEndpoint = "/api/guest/play-sessions";
     }
+    this.getCsrfToken = options?.getCsrfToken ?? null;
   }
 
   initSession(meta: SessionMeta) {
@@ -150,9 +155,16 @@ export class OfflineEventBuffer {
     const url = `${this.apiEndpoint}/${this.sessionMeta.session_uuid}/events`;
 
     try {
+      const headers: Record<string, string> = {
+        "Content-Type": "application/json",
+      };
+      const csrfToken = this.getCsrfToken?.();
+      if (csrfToken) {
+        headers["x-csrf-token"] = csrfToken;
+      }
       const res = await fetch(url, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers,
         body: JSON.stringify({ events: batch }),
       });
 

@@ -1,7 +1,6 @@
 /**
  * ScaffoldingSystem — Escalate hints automatically based on age-band timer or miss streak.
  * Implements BR-SCF-01..08 & spec SCAFFOLDING-AND-HINTS.
- * Supports both internal stateful instance methods and stateless functional ScaffoldState.
  */
 
 export type ScaffoldingLevel = 0 | 1 | 2 | 3;
@@ -30,7 +29,7 @@ export interface ScaffoldAction {
   level: ScaffoldingLevel;
   trigger: "timer" | "miss_streak";
   focusIndex: number;
-  ghostHandSpeed?: number; // 1.0 for L2, 0.5 for L3
+  ghostHandSpeed?: number;
   reducedMotion?: boolean;
   roundSkippedSuggested?: boolean;
 }
@@ -90,56 +89,6 @@ function computeTargetLevel(
   return { targetLevel: 0, triggerType: "timer" };
 }
 
-interface TickContext {
-  deltaMs: number;
-  state: ScaffoldState;
-  ageBand: AgeBand;
-  targetFocusIndex: number;
-  prefersReducedMotion: boolean;
-  isInternalCall: boolean;
-}
-
-function resolveTickContext(
-  defaultState: ScaffoldState,
-  defaultAgeBand: AgeBand,
-  arg1?: number | ScaffoldState,
-  arg2?: ScaffoldState | AgeBand,
-  arg3?: AgeBand | number,
-  arg4?: number,
-  arg5?: boolean
-): TickContext {
-  if (typeof arg1 === "number" && typeof arg2 === "object" && arg2 !== null) {
-    return {
-      deltaMs: arg1,
-      state: arg2,
-      ageBand: typeof arg3 === "string" ? arg3 : defaultAgeBand,
-      targetFocusIndex: typeof arg4 === "number" ? arg4 : 0,
-      prefersReducedMotion: Boolean(arg5),
-      isInternalCall: false,
-    };
-  }
-
-  if (typeof arg1 === "object" && arg1 !== null) {
-    return {
-      deltaMs: 16.6,
-      state: arg1,
-      ageBand: typeof arg2 === "string" ? arg2 : defaultAgeBand,
-      targetFocusIndex: typeof arg3 === "number" ? arg3 : 0,
-      prefersReducedMotion: Boolean(arg4),
-      isInternalCall: false,
-    };
-  }
-
-  return {
-    deltaMs: typeof arg1 === "number" ? arg1 : 16.6,
-    state: defaultState,
-    ageBand: defaultAgeBand,
-    targetFocusIndex: 0,
-    prefersReducedMotion: false,
-    isInternalCall: true,
-  };
-}
-
 export class ScaffoldingSystem {
   private readonly internalAgeBand: AgeBand;
   private readonly internalState: ScaffoldState;
@@ -161,59 +110,93 @@ export class ScaffoldingSystem {
     };
   }
 
+  /** Internal stateful tick — advances internal state, returns current level. */
+  tick(deltaMs?: number): ScaffoldingLevel;
+  /** Stateless tick — advances provided state, returns action on change. */
   tick(
-    arg1?: number | ScaffoldState,
-    arg2?: ScaffoldState | AgeBand,
-    arg3?: AgeBand | number,
-    arg4?: number,
-    arg5?: boolean
+    deltaMs: number,
+    state: ScaffoldState,
+    ageBand: AgeBand,
+    targetFocusIndex: number,
+    prefersReducedMotion?: boolean
+  ): ScaffoldAction | null;
+  tick(
+    deltaMs?: number,
+    state?: ScaffoldState,
+    ageBand?: AgeBand,
+    targetFocusIndex?: number,
+    prefersReducedMotion?: boolean
   ): ScaffoldAction | ScaffoldingLevel | null {
-    const ctx = resolveTickContext(
-      this.internalState,
-      this.internalAgeBand,
-      arg1,
-      arg2,
-      arg3,
-      arg4,
-      arg5
-    );
+    if (state !== undefined) {
+      return this.tickStateless(
+        deltaMs ?? 16.6,
+        state,
+        ageBand ?? this.internalAgeBand,
+        targetFocusIndex ?? 0,
+        prefersReducedMotion ?? false
+      );
+    }
+    return this.tickInternal(deltaMs ?? 16.6);
+  }
 
-    ctx.state.sinceMs += ctx.deltaMs;
-    const config = SCAFFOLDING_BY_BAND[ctx.ageBand];
-    const { targetLevel, triggerType } = computeTargetLevel(ctx.state, config);
+  private tickInternal(deltaMs: number): ScaffoldingLevel {
+    this.internalState.sinceMs += deltaMs;
+    const config = SCAFFOLDING_BY_BAND[this.internalAgeBand];
+    const { targetLevel } = computeTargetLevel(this.internalState, config);
 
     if (targetLevel === 3) {
-      ctx.state.l3DurationMs += ctx.deltaMs;
+      this.internalState.l3DurationMs += deltaMs;
+    }
+    if (
+      this.internalState.l3DurationMs >= 60_000 &&
+      !this.internalState.skipSuggested
+    ) {
+      this.internalState.skipSuggested = true;
+    }
+
+    this.internalState.level = targetLevel;
+    return this.internalState.level;
+  }
+
+  private tickStateless(
+    deltaMs: number,
+    state: ScaffoldState,
+    ageBand: AgeBand,
+    targetFocusIndex: number,
+    prefersReducedMotion: boolean
+  ): ScaffoldAction | null {
+    state.sinceMs += deltaMs;
+    const config = SCAFFOLDING_BY_BAND[ageBand];
+    const { targetLevel, triggerType } = computeTargetLevel(state, config);
+
+    if (targetLevel === 3) {
+      state.l3DurationMs += deltaMs;
     }
 
     let roundSkippedSuggested = false;
-    if (ctx.state.l3DurationMs >= 60_000 && !ctx.state.skipSuggested) {
-      ctx.state.skipSuggested = true;
+    if (state.l3DurationMs >= 60_000 && !state.skipSuggested) {
+      state.skipSuggested = true;
       roundSkippedSuggested = true;
     }
 
-    ctx.state.focusIndex = ctx.targetFocusIndex;
-    const levelChanged = targetLevel !== ctx.state.level;
-    ctx.state.level = targetLevel;
-
-    if (ctx.isInternalCall) {
-      return ctx.state.level;
-    }
+    state.focusIndex = targetFocusIndex;
+    const levelChanged = targetLevel !== state.level;
+    state.level = targetLevel;
 
     if (levelChanged || roundSkippedSuggested) {
       let ghostHandSpeed: number | undefined;
-      if (ctx.state.level === 3) {
+      if (state.level === 3) {
         ghostHandSpeed = 0.5;
-      } else if (ctx.state.level === 2) {
+      } else if (state.level === 2) {
         ghostHandSpeed = 1.0;
       }
 
       return {
-        level: ctx.state.level,
+        level: state.level,
         trigger: triggerType,
-        focusIndex: ctx.targetFocusIndex,
+        focusIndex: targetFocusIndex,
         ghostHandSpeed,
-        reducedMotion: ctx.prefersReducedMotion,
+        reducedMotion: prefersReducedMotion,
         roundSkippedSuggested,
       };
     }

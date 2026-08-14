@@ -5,8 +5,8 @@ import type {
 import { BaseGameSession, type FeedbackKind } from "../../game-session";
 
 export class GT003Session extends BaseGameSession {
-  content: GT003Content;
-  difficulty: GT003Difficulty;
+  readonly content: GT003Content;
+  readonly difficulty: GT003Difficulty;
   private readonly itemsInContainer: Set<string> = new Set();
   private isWon = false;
 

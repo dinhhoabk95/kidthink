@@ -123,6 +123,24 @@ function checkKidCatalogRules(file: FileItem, violations: string[]): void {
   }
 }
 
+function checkNotificationProhibition(
+  file: FileItem,
+  violations: string[]
+): void {
+  const contentLower = file.content.toLowerCase();
+  if (
+    contentLower.includes("notificationbell") ||
+    contentLower.includes("notification-bell") ||
+    contentLower.includes("notification_inbox") ||
+    contentLower.includes("requestpermission") ||
+    contentLower.includes("fcm_token")
+  ) {
+    violations.push(
+      `BR-NIB-05 / BR-BPS-03 VIOLATION: "${file.filePath}" contains prohibited notification control on kid play surface.`
+    );
+  }
+}
+
 export function scanKidSurfaceRules(files: FileItem[]): void {
   const violations: string[] = [];
 
@@ -132,6 +150,7 @@ export function scanKidSurfaceRules(files: FileItem[]): void {
       checkPaymentAndScores(file, violations);
       checkTokensAndPhrases(file, violations);
       checkKidCatalogRules(file, violations);
+      checkNotificationProhibition(file, violations);
     }
   }
 

@@ -5,8 +5,8 @@ import type {
 import { BaseGameSession, type FeedbackKind } from "../../game-session";
 
 export class GT006Session extends BaseGameSession {
-  content: GT006Content;
-  difficulty: GT006Difficulty;
+  readonly content: GT006Content;
+  readonly difficulty: GT006Difficulty;
   private currentSequence: string[] = []; // Array of step_ids in current user order
   private isWon = false;
 
@@ -30,8 +30,16 @@ export class GT006Session extends BaseGameSession {
       return;
     }
 
-    const [moved] = this.currentSequence.splice(fromIndex, 1);
-    this.currentSequence.splice(toIndex, 0, moved);
+    const moved = this.currentSequence[fromIndex];
+    const without = [
+      ...this.currentSequence.slice(0, fromIndex),
+      ...this.currentSequence.slice(fromIndex + 1),
+    ];
+    this.currentSequence = [
+      ...without.slice(0, toIndex),
+      moved,
+      ...without.slice(toIndex),
+    ];
     this.recordEvent("step_reordered", {
       from_index: fromIndex,
       to_index: toIndex,

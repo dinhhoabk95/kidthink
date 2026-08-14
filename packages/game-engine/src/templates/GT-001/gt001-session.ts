@@ -5,8 +5,8 @@ import type {
 import { BaseGameSession, type FeedbackKind } from "../../game-session";
 
 export class GT001Session extends BaseGameSession {
-  content: GT001Content;
-  difficulty: GT001Difficulty;
+  readonly content: GT001Content;
+  readonly difficulty: GT001Difficulty;
   selectedItemId: string | null = null;
   private isWon = false;
 

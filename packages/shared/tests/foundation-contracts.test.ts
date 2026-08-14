@@ -39,6 +39,23 @@ describe("P0 foundation contracts", () => {
     expect(config).toContain("no-app-direct-base-lib");
     expect(config).toContain("no-packages-to-apps");
     expect(config).toContain("no-app-to-app");
+    expect(config).toContain("nodemailer");
+    expect(config).toContain("mjml");
+    expect(config).toContain("rate-limiter-flexible");
+    expect(config).toContain("otpauth");
+  });
+
+  it("Task #83: pnpm-workspace.yaml pins all required core packages in catalog", () => {
+    const workspace = readFileSync(
+      resolve(ROOT, "pnpm-workspace.yaml"),
+      "utf8"
+    );
+    expect(workspace).toContain("nodemailer: ^6.10.0");
+    expect(workspace).toContain("mjml: ^5.4.0");
+    expect(workspace).toContain("rate-limiter-flexible: ^11.2.0");
+    expect(workspace).toContain("nuxt-security: ^2.6.0");
+    expect(workspace).toContain("otpauth: ^9.5.0");
+    expect(workspace).toContain("openid-client: ^6.8.0");
   });
 
   it("BR-GLOS-03: the tooling glossary exposes every banned foundation term", () => {
