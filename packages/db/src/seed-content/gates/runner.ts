@@ -98,7 +98,7 @@ function checkGate2(seed: ContentSeed<unknown, unknown>): GateResult {
     });
   }
   if (
-    header.age_min <= 4 &&
+    header.age_max <= 4 &&
     Array.isArray((seed.content_pack as Record<string, unknown>)?.items) &&
     ((seed.content_pack as Record<string, unknown>).items as unknown[]).length >
       4
