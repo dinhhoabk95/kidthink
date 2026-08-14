@@ -9,14 +9,15 @@ import {
 } from "../src/index.ts";
 
 describe("Child Data Compliance Tests — Tasks 5, 6, 7", () => {
-  it("BR-CDC-01 & BR-SPT-01: CHILD_PROFILE_CLOSED_COLUMNS contains exact 12 columns", () => {
-    expect(CHILD_PROFILE_CLOSED_COLUMNS.length).toBe(12);
+  it("BR-CDC-01 & BR-SPT-01: CHILD_PROFILE_CLOSED_COLUMNS contains exact 13 columns", () => {
+    expect(CHILD_PROFILE_CLOSED_COLUMNS.length).toBe(13);
     expect(CHILD_PROFILE_CLOSED_COLUMNS).toContain("uuid");
     expect(CHILD_PROFILE_CLOSED_COLUMNS).toContain("avatar_id");
     expect(CHILD_PROFILE_CLOSED_COLUMNS).toContain("relationship");
     expect(CHILD_PROFILE_CLOSED_COLUMNS).toContain("current_curriculum_id");
     expect(CHILD_PROFILE_CLOSED_COLUMNS).toContain("daily_play_cap_minutes");
     expect(CHILD_PROFILE_CLOSED_COLUMNS).toContain("status");
+    expect(CHILD_PROFILE_CLOSED_COLUMNS).toContain("purge_at");
   });
 
   it("BR-CDC-01: parseChildProfileInput accepts valid closed fields and rejects unallowed fields with CHILD_FIELD_NOT_ALLOWED (400)", () => {

@@ -1,42 +1,28 @@
-import { createWebUserToken } from "@kidthink/auth";
 import { describe, expect, it } from "vitest";
 import patchChildHandler from "../../server/api/users/children/[uuid]/index.patch";
 import getChildrenHandler from "../../server/api/users/children/index.get";
 import createChildHandler from "../../server/api/users/children/index.post";
 
-const JWT_SECRET =
-  process.env.JWT_SECRET || "kidthink-dev-secret-kidthink-dev-secret-32bytes";
-
-async function createAuthUserHeader(
-  userId = 101,
-  entitlementKeys: string[] = ["play_standard_games"]
-) {
-  const token = await createWebUserToken({
-    payload: {
-      user_id: userId,
-      display_name: "Parent User",
-      session_id: `sess_${userId}_${Date.now()}`,
-      refresh_token_version: 0,
-      entitlement_keys: entitlementKeys,
-      user_status: "active",
-      email_verified: true,
-    },
-    secret: JWT_SECRET,
-  });
-  return `Bearer ${token}`;
-}
-
 function mockEvent(
   method: string,
-  headers: Record<string, string> = {},
+  userId = 101,
   body: any = {},
   routerParams: Record<string, string> = {}
 ) {
   const responseHeaders: Record<string, string> = {};
+  const csrfToken = "a".repeat(64);
   return {
     method,
     node: {
-      req: { headers, url: "/", originalUrl: "/" },
+      req: {
+        headers: {
+          "x-csrf-token": csrfToken,
+          cookie: `tm_u_csrf=${csrfToken}`,
+          "sec-fetch-site": "same-origin",
+        },
+        url: "/",
+        originalUrl: "/",
+      },
       res: {
         setHeader: (name: string, value: string) => {
           responseHeaders[name.toLowerCase()] = value;
@@ -46,6 +32,12 @@ function mockEvent(
       },
     },
     context: {
+      user: {
+        user_id: userId,
+        display_name: "Parent User",
+        session_id: `sess_${userId}`,
+        refresh_token_version: 0,
+      },
       body,
       params: routerParams,
     },
@@ -55,18 +47,13 @@ function mockEvent(
 
 describe("Child Profile CRUD API (BR-CPC-01..10)", () => {
   it("BR-CPC-01: POST /api/users/children rejects unallowed extra fields with 400 CHILD_FIELD_NOT_ALLOWED", async () => {
-    const authHeader = await createAuthUserHeader(201);
-    const event = mockEvent(
-      "POST",
-      { authorization: authHeader },
-      {
-        display_name: "Bé Bo",
-        birth_year: 2021,
-        avatar_id: "avatar-preset-01",
-        full_name: "Nguyễn Văn Bo",
-        school: "Mầm Non Sao Mai",
-      }
-    );
+    const event = mockEvent("POST", 201, {
+      display_name: "Bé Bo",
+      birth_year: 2021,
+      avatar_id: "avatar-preset-01",
+      full_name: "Nguyễn Văn Bo",
+      school: "Mầm Non Sao Mai",
+    });
 
     try {
       await createChildHandler(event);
@@ -86,17 +73,12 @@ describe("Child Profile CRUD API (BR-CPC-01..10)", () => {
   });
 
   it("BR-CPC-01: POST rejects phone_number field — closed list enforcement", async () => {
-    const authHeader = await createAuthUserHeader(201);
-    const event = mockEvent(
-      "POST",
-      { authorization: authHeader },
-      {
-        display_name: "Bé Test",
-        birth_year: 2021,
-        avatar_id: "avatar-preset-01",
-        phone_number: "0901234567",
-      }
-    );
+    const event = mockEvent("POST", 201, {
+      display_name: "Bé Test",
+      birth_year: 2021,
+      avatar_id: "avatar-preset-01",
+      phone_number: "0901234567",
+    });
 
     try {
       await createChildHandler(event);
@@ -116,16 +98,11 @@ describe("Child Profile CRUD API (BR-CPC-01..10)", () => {
   });
 
   it("BR-CPC-04: POST /api/users/children rejects avatar not in preset with 400 AVATAR_NOT_IN_PRESET", async () => {
-    const authHeader = await createAuthUserHeader(202);
-    const event = mockEvent(
-      "POST",
-      { authorization: authHeader },
-      {
-        display_name: "Bé Na",
-        birth_year: 2021,
-        avatar_id: "custom-avatar-url.jpg",
-      }
-    );
+    const event = mockEvent("POST", 202, {
+      display_name: "Bé Na",
+      birth_year: 2021,
+      avatar_id: "custom-avatar-url.jpg",
+    });
 
     try {
       await createChildHandler(event);
@@ -142,16 +119,11 @@ describe("Child Profile CRUD API (BR-CPC-01..10)", () => {
   });
 
   it("BR-CPC-10: POST /api/users/children rejects age outside 3-6 range with 422 CHILD_AGE_OUT_OF_RANGE", async () => {
-    const authHeader = await createAuthUserHeader(203);
-    const event = mockEvent(
-      "POST",
-      { authorization: authHeader },
-      {
-        display_name: "Bé Su",
-        birth_year: 2010, // Age 16 in 2026
-        avatar_id: "avatar-preset-02",
-      }
-    );
+    const event = mockEvent("POST", 203, {
+      display_name: "Bé Su",
+      birth_year: 2010, // Age 16 in 2026
+      avatar_id: "avatar-preset-02",
+    });
 
     try {
       await createChildHandler(event);
@@ -168,10 +140,9 @@ describe("Child Profile CRUD API (BR-CPC-01..10)", () => {
   });
 
   it("BR-CPC-09: PATCH /api/users/children/{uuid} throws 404 when profile belongs to another user", async () => {
-    const authHeader = await createAuthUserHeader(204);
     const event = mockEvent(
       "PATCH",
-      { authorization: authHeader },
+      204,
       { display_name: "Tên Mới" },
       { uuid: "00000000-0000-0000-0000-000000000000" }
     );
@@ -189,10 +160,9 @@ describe("Child Profile CRUD API (BR-CPC-01..10)", () => {
   });
 
   it("BR-CPC-09: PATCH rejects extra fields with CHILD_FIELD_NOT_ALLOWED", async () => {
-    const authHeader = await createAuthUserHeader(204);
     const event = mockEvent(
       "PATCH",
-      { authorization: authHeader },
+      204,
       { display_name: "Tên Mới", email: "hack@evil.com" },
       { uuid: "00000000-0000-0000-0000-000000000000" }
     );
@@ -210,27 +180,21 @@ describe("Child Profile CRUD API (BR-CPC-01..10)", () => {
   });
 
   it("GET /api/users/children lists children for caller", async () => {
-    const authHeader = await createAuthUserHeader(205);
-    const event = mockEvent("GET", { authorization: authHeader });
+    const event = mockEvent("GET", 205);
     const res = await getChildrenHandler(event);
     expect(res.children).toBeDefined();
     expect(Array.isArray(res.children)).toBe(true);
   });
 
   it("BR-CPC-03: POST validates only year-based age, not exact date", async () => {
-    const authHeader = await createAuthUserHeader(201);
     const currentYear = new Date().getFullYear();
-    const event = mockEvent(
-      "POST",
-      { authorization: authHeader },
-      {
-        display_name: "Bé Đậu",
-        birth_year: currentYear - 4,
-        avatar_id: "avatar-preset-03",
-        birth_month: 6,
-        birth_day: 15,
-      }
-    );
+    const event = mockEvent("POST", 201, {
+      display_name: "Bé Đậu",
+      birth_year: currentYear - 4,
+      avatar_id: "avatar-preset-03",
+      birth_month: 6,
+      birth_day: 15,
+    });
 
     try {
       await createChildHandler(event);
@@ -245,10 +209,9 @@ describe("Child Profile CRUD API (BR-CPC-01..10)", () => {
   });
 
   it("BR-CPC-04: PATCH rejects avatar URL path as avatar_id", async () => {
-    const authHeader = await createAuthUserHeader(204);
     const event = mockEvent(
       "PATCH",
-      { authorization: authHeader },
+      204,
       { avatar_id: "https://evil.com/avatar.png" },
       { uuid: "00000000-0000-0000-0000-000000000000" }
     );

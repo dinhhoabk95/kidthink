@@ -138,7 +138,8 @@ T1 bảng nhãn + cổng quét ngôn ngữ (D-HS)
 - [ ] Nội dung digest dựng từ **cùng** dữ liệu báo cáo 7 ngày, dùng **cùng** bảng nhãn và câu miễn trừ.
 - [ ] Cờ `weekly_digest_enabled` mặc định **true** khi đăng ký (`D-CW`).
 - [ ] Ca âm: cờ `false` → **không** gửi.
-- [ ] Gửi qua `email:send` (`jobId = notification_id`, idempotent — `BR-NOT-05`).
+- [ ] Tạo logical notification + email delivery; gửi qua `email:send`
+      (`jobId = notification_delivery_id`, conditional claim — `BR-NOT-04/05`).
 - [ ] Trẻ chưa chơi gì trong tuần → **không** gửi email rỗng.
 - [ ] Ghi nợ: màn hình tắt/bật ở **P1.14** (`D-HU`).
 
@@ -217,7 +218,7 @@ T1 bảng nhãn + cổng quét ngôn ngữ (D-HS)
 | Số CTA nâng cấp tăng dần | Trang đọc thành ép mua | `D-HX` — cổng đếm |
 | Dựng khối curriculum giả | Widget rỗng làm người mới bối rối | `D-HV` — ẩn hoàn toàn |
 | Truy vấn tìm kiếm riêng cho thư viện | Chỗ thứ tư để quên luật `locked` và cache | `D-HW` — dùng lớp chung |
-| Digest gửi trùng | Phụ huynh nhận hai email giống nhau | `BR-NOT-05` — `jobId = notification_id` |
+| Digest gửi trùng | Phụ huynh nhận hai email giống nhau | `BR-NOT-05` — delivery id + conditional claim + stable Message-ID; không hứa exactly-once SMTP |
 | Kết luận từ 1–2 phiên | Nói sai về con của một phụ huynh thật | `BR-BRP-06` — nhãn `Chưa có đủ dữ liệu` |
 | Báo cáo quét event thô | Hạ instance đúng lúc nhiều người xem | `BR-BRP-01` — dùng lại cổng `BR-TLM-01` |
 

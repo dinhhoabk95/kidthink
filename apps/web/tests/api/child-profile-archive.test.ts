@@ -1,37 +1,29 @@
-import { createWebUserToken } from "@kidthink/auth";
 import { describe, expect, it } from "vitest";
 import archiveHandler from "../../server/api/users/children/[uuid]/archive.post";
 import cancelDeleteHandler from "../../server/api/users/children/[uuid]/delete/cancel.post";
 import deleteChildHandler from "../../server/api/users/children/[uuid]/index.delete";
 import restoreHandler from "../../server/api/users/children/[uuid]/restore.post";
 
-const JWT_SECRET =
-  process.env.JWT_SECRET || "kidthink-dev-secret-kidthink-dev-secret-32bytes";
-
-async function createAuthUserHeader(userId = 401) {
-  const token = await createWebUserToken({
-    payload: {
-      user_id: userId,
-      display_name: "Parent User",
-      session_id: `sess_${userId}_${Date.now()}`,
-      refresh_token_version: 0,
-    },
-    secret: JWT_SECRET,
-  });
-  return `Bearer ${token}`;
-}
-
 function mockEvent(
   method: string,
-  headers: Record<string, string> = {},
+  userId = 401,
   body: any = {},
   routerParams: Record<string, string> = {}
 ) {
   const responseHeaders: Record<string, string> = {};
+  const csrfToken = "a".repeat(64);
   return {
     method,
     node: {
-      req: { headers, url: "/", originalUrl: "/" },
+      req: {
+        headers: {
+          "x-csrf-token": csrfToken,
+          cookie: `tm_u_csrf=${csrfToken}`,
+          "sec-fetch-site": "same-origin",
+        },
+        url: "/",
+        originalUrl: "/",
+      },
       res: {
         setHeader: (name: string, value: string) => {
           responseHeaders[name.toLowerCase()] = value;
@@ -41,6 +33,12 @@ function mockEvent(
       },
     },
     context: {
+      user: {
+        user_id: userId,
+        display_name: "Parent User",
+        session_id: `sess_${userId}`,
+        refresh_token_version: 0,
+      },
       body,
       params: routerParams,
     },
@@ -50,10 +48,9 @@ function mockEvent(
 
 describe("Child Profile Archive and Delete API (BR-CPR-01..08)", () => {
   it("BR-CPR-08: DELETE /api/users/children/{uuid} throws 404 for non-existent profile", async () => {
-    const authHeader = await createAuthUserHeader(401);
     const event = mockEvent(
       "DELETE",
-      { authorization: authHeader },
+      401,
       { password: "Password123!", confirm_name: "Bé Bo" },
       { uuid: "00000000-0000-0000-0000-000000000000" }
     );
@@ -68,10 +65,9 @@ describe("Child Profile Archive and Delete API (BR-CPR-01..08)", () => {
   });
 
   it("POST /api/users/children/{uuid}/archive throws 404 for non-existent profile", async () => {
-    const authHeader = await createAuthUserHeader(402);
     const event = mockEvent(
       "POST",
-      { authorization: authHeader },
+      402,
       {},
       { uuid: "00000000-0000-0000-0000-000000000000" }
     );
@@ -86,10 +82,9 @@ describe("Child Profile Archive and Delete API (BR-CPR-01..08)", () => {
   });
 
   it("POST /api/users/children/{uuid}/restore throws 404 for non-existent profile", async () => {
-    const authHeader = await createAuthUserHeader(403);
     const event = mockEvent(
       "POST",
-      { authorization: authHeader },
+      403,
       {},
       { uuid: "00000000-0000-0000-0000-000000000000" }
     );
@@ -104,10 +99,9 @@ describe("Child Profile Archive and Delete API (BR-CPR-01..08)", () => {
   });
 
   it("POST /api/users/children/{uuid}/delete/cancel throws 404 for non-existent profile", async () => {
-    const authHeader = await createAuthUserHeader(404);
     const event = mockEvent(
       "POST",
-      { authorization: authHeader },
+      404,
       {},
       { uuid: "00000000-0000-0000-0000-000000000000" }
     );

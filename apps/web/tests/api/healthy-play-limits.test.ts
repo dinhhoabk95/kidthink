@@ -1,4 +1,4 @@
-import { createParentGateToken, createWebUserToken } from "@kidthink/auth";
+import { createParentGateToken } from "@kidthink/auth";
 import {
   childDailyStats,
   childProfiles,
@@ -15,25 +15,10 @@ const PARENT_GATE_SECRET =
   process.env.NUXT_PARENT_GATE_SECRET ||
   process.env.PARENT_GATE_SECRET ||
   "kidthink-parent-gate-secret-key-default-2026";
-const JWT_SECRET =
-  process.env.JWT_SECRET || "kidthink-dev-secret-kidthink-dev-secret-32bytes";
-
-async function createAuthUserHeader(userId: number) {
-  const token = await createWebUserToken({
-    payload: {
-      user_id: userId,
-      display_name: "Parent User",
-      session_id: `sess_${userId}_${Date.now()}`,
-      refresh_token_version: 0,
-    },
-    secret: JWT_SECRET,
-  });
-  return `Bearer ${token}`;
-}
 
 function mockEvent(
   method: string,
-  headers: Record<string, string> = {},
+  user: { id: number; displayName: string },
   params: Record<string, string> = {},
   body: any = {}
 ) {
@@ -41,7 +26,7 @@ function mockEvent(
   return {
     method,
     node: {
-      req: { headers, url: "/", originalUrl: "/" },
+      req: { headers: {}, url: "/", originalUrl: "/" },
       res: {
         setHeader: (name: string, value: string) => {
           responseHeaders[name.toLowerCase()] = value;
@@ -51,6 +36,12 @@ function mockEvent(
       },
     },
     context: {
+      user: {
+        user_id: user.id,
+        display_name: user.displayName,
+        session_id: `sess_${user.id}`,
+        refresh_token_version: 0,
+      },
       params,
       body,
     },
@@ -94,16 +85,13 @@ async function createTestUserWithChildren() {
     })
     .returning();
 
-  const authHeader = await createAuthUserHeader(user.id);
-  const headers = { authorization: authHeader };
-
-  return { user, childA, childB, headers };
+  return { user, childA, childB };
 }
 
 describe.sequential("Healthy Play Limits API (BR-HPL-01..08 & HEALTHY-PLAY-LIMITS spec)", () => {
   it("GET /play-budget returns correct budget and ICT reset time", async () => {
     const db = getOwnerDb();
-    const { childA, headers } = await createTestUserWithChildren();
+    const { user, childA } = await createTestUserWithChildren();
     const dateIct = getDateIct();
 
     // Insert 10 minutes played (600 seconds)
@@ -113,7 +101,7 @@ describe.sequential("Healthy Play Limits API (BR-HPL-01..08 & HEALTHY-PLAY-LIMIT
       totalPlayTimeSeconds: 600,
     });
 
-    const event = mockEvent("GET", headers, { uuid: childA.uuid });
+    const event = mockEvent("GET", user, { uuid: childA.uuid });
 
     const res = await playBudgetHandler(event);
     expect(res.cap_minutes).toBe(30);
@@ -123,11 +111,11 @@ describe.sequential("Healthy Play Limits API (BR-HPL-01..08 & HEALTHY-PLAY-LIMIT
   });
 
   it("BR-HPL-08: PATCH /settings rejects cap > package cap with 422", async () => {
-    const { childA, headers } = await createTestUserWithChildren();
+    const { user, childA } = await createTestUserWithChildren();
 
     const event = mockEvent(
       "PATCH",
-      headers,
+      user,
       { uuid: childA.uuid },
       { daily_play_cap_minutes: 90 }
     );
@@ -142,11 +130,11 @@ describe.sequential("Healthy Play Limits API (BR-HPL-01..08 & HEALTHY-PLAY-LIMIT
   });
 
   it("BR-HPL-06: POST /grant-extra-time rejects request without valid gate_token with 403", async () => {
-    const { childA, headers } = await createTestUserWithChildren();
+    const { user, childA } = await createTestUserWithChildren();
 
     const eventNoToken = mockEvent(
       "POST",
-      headers,
+      user,
       { uuid: childA.uuid },
       { minutes: 15 }
     );
@@ -161,7 +149,7 @@ describe.sequential("Healthy Play Limits API (BR-HPL-01..08 & HEALTHY-PLAY-LIMIT
   });
 
   it("POST /grant-extra-time accepts valid gate_token and grants up to 30 mins", async () => {
-    const { user, childA, headers } = await createTestUserWithChildren();
+    const { user, childA } = await createTestUserWithChildren();
     const validGateToken = createParentGateToken(
       user.id,
       Date.now() + 300_000,
@@ -170,7 +158,7 @@ describe.sequential("Healthy Play Limits API (BR-HPL-01..08 & HEALTHY-PLAY-LIMIT
 
     const event = mockEvent(
       "POST",
-      headers,
+      user,
       { uuid: childA.uuid },
       { minutes: 15, gate_token: validGateToken }
     );
@@ -182,7 +170,7 @@ describe.sequential("Healthy Play Limits API (BR-HPL-01..08 & HEALTHY-PLAY-LIMIT
 
   it("BR-HPL-01: limits are enforced per child (child A exhausted does not affect child B)", async () => {
     const db = getOwnerDb();
-    const { childA, childB, headers } = await createTestUserWithChildren();
+    const { user, childA, childB } = await createTestUserWithChildren();
     const dateIct = getDateIct();
 
     // Exhaust Child A (30 mins = 1800 seconds)
@@ -193,18 +181,18 @@ describe.sequential("Healthy Play Limits API (BR-HPL-01..08 & HEALTHY-PLAY-LIMIT
     });
 
     // Check Child A budget
-    const eventA = mockEvent("GET", headers, { uuid: childA.uuid });
+    const eventA = mockEvent("GET", user, { uuid: childA.uuid });
     const resA = await playBudgetHandler(eventA);
     expect(resA.remaining_minutes).toBe(0);
 
     // Check Child B budget (0 seconds used)
-    const eventB = mockEvent("GET", headers, { uuid: childB.uuid });
+    const eventB = mockEvent("GET", user, { uuid: childB.uuid });
     const resB = await playBudgetHandler(eventB);
     expect(resB.remaining_minutes).toBe(30);
   });
 
   it("BR-HPL-06: daily extra-time accumulation capped at 30 minutes total", async () => {
-    const { user, childA, headers } = await createTestUserWithChildren();
+    const { user, childA } = await createTestUserWithChildren();
     const validGateToken = createParentGateToken(
       user.id,
       Date.now() + 300_000,
@@ -214,7 +202,7 @@ describe.sequential("Healthy Play Limits API (BR-HPL-01..08 & HEALTHY-PLAY-LIMIT
     // First grant: 20 minutes — should succeed
     const event1 = mockEvent(
       "POST",
-      headers,
+      user,
       { uuid: childA.uuid },
       { minutes: 20, gate_token: validGateToken }
     );
@@ -225,7 +213,7 @@ describe.sequential("Healthy Play Limits API (BR-HPL-01..08 & HEALTHY-PLAY-LIMIT
     // Second grant: 15 minutes — total 35 > 30, should reject with 422
     const event2 = mockEvent(
       "POST",
-      headers,
+      user,
       { uuid: childA.uuid },
       { minutes: 15, gate_token: validGateToken }
     );
