@@ -165,6 +165,9 @@ importers:
       '@kidthink/cache':
         specifier: workspace:*
         version: link:../../packages/cache
+      '@kidthink/config':
+        specifier: workspace:*
+        version: link:../../packages/config
       '@kidthink/db':
         specifier: workspace:*
         version: link:../../packages/db
@@ -180,6 +183,9 @@ importers:
       '@kidthink/shared':
         specifier: workspace:*
         version: link:../../packages/shared
+      '@kidthink/storage':
+        specifier: workspace:*
+        version: link:../../packages/storage
       '@kidthink/taxonomy':
         specifier: workspace:*
         version: link:../../packages/taxonomy

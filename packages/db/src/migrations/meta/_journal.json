@@ -218,6 +218,13 @@
       "when": 1786660000000,
       "tag": "0030_consent_action_and_requirements",
       "breakpoints": true
+    },
+    {
+      "idx": 31,
+      "version": "7",
+      "when": 1786670000000,
+      "tag": "0031_payment_orders_status_and_indices",
+      "breakpoints": true
     }
   ]
 }

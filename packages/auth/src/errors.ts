@@ -187,6 +187,46 @@ export const AUTH_ERROR_DEFINITIONS = {
     message:
       "Hồ sơ trẻ đang trong thời gian chờ xoá và không thể thực hiện thao tác.",
   },
+  PACKAGE_NOT_FOUND: {
+    status: 404,
+    message: "Không tìm thấy gói dịch vụ.",
+  },
+  UNKNOWN_ENTITLEMENT_KEY: {
+    status: 500,
+    message: "Khóa quyền lợi không hợp lệ.",
+  },
+  PACKAGE_NOT_SELLABLE: {
+    status: 400,
+    message: "Gói dịch vụ hiện không mở bán.",
+  },
+  OFFER_NOT_FOUND: {
+    status: 400,
+    message: "Không tìm thấy gói ưu đãi tương ứng.",
+  },
+  ORDER_ALREADY_PENDING: {
+    status: 409,
+    message: "Bạn đã có đơn hàng chưa xử lý cho gói này.",
+  },
+  ORDER_ALREADY_PROCESSED: {
+    status: 409,
+    message: "Đơn hàng đã được xử lý trước đó.",
+  },
+  PAYMENT_PROOF_REQUIRED: {
+    status: 422,
+    message: "Vui lòng nhập mã giao dịch để nộp chứng từ.",
+  },
+  INVALID_STATUS_TRANSITION: {
+    status: 409,
+    message: "Chuyển trạng thái đơn không hợp lệ.",
+  },
+  UNSUPPORTED_MEDIA_TYPE: {
+    status: 415,
+    message: "Định dạng tệp không được hỗ trợ (chỉ chấp nhận JPEG, PNG, WEBP).",
+  },
+  ORDER_CANNOT_BE_CANCELLED: {
+    status: 409,
+    message: "Chỉ có thể huỷ đơn hàng ở trạng thái chờ thanh toán.",
+  },
 } as const;
 
 export type AuthErrorCode = keyof typeof AUTH_ERROR_DEFINITIONS;

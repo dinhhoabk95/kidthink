@@ -9,6 +9,7 @@ import {
   primaryKey,
   text,
   timestamp,
+  uniqueIndex,
   uuid,
   varchar,
 } from "drizzle-orm/pg-core";
@@ -44,8 +45,11 @@ export const entitlementStatusEnum = pgEnum("entitlement_status", [
 ]);
 
 export const paymentOrderStatusEnum = pgEnum("payment_order_status", [
+  "draft",
+  "pending",
   "pending_proof",
   "submitted",
+  "under_review",
   "approved",
   "rejected",
   "expired",
@@ -135,36 +139,50 @@ export const entitlements = pgTable(
   ]
 );
 
-export const paymentOrders = pgTable("payment_orders", {
-  id: bigint("id", { mode: "number" }).primaryKey().generatedAlwaysAsIdentity(),
-  uuid: uuid("uuid").defaultRandom().notNull().unique(),
-  userId: bigint("user_id", { mode: "number" })
-    .notNull()
-    .references(() => users.id, { onDelete: "cascade" }),
-  packageCode: varchar("package_code", { length: 40 })
-    .notNull()
-    .references(() => packages.code),
-  offerCode: varchar("offer_code", { length: 40 }).notNull(),
-  amountVnd: bigint("amount_vnd", { mode: "number" }).notNull(),
-  currency: varchar("currency", { length: 3 }).notNull().default("VND"),
-  status: paymentOrderStatusEnum("status").notNull().default("pending_proof"),
-  transferNote: varchar("transfer_note", { length: 100 }),
-  bankTxnRef: varchar("bank_txn_ref", { length: 100 }),
-  proofPath: text("proof_path"),
-  submittedAt: timestamp("submitted_at", { withTimezone: true }),
-  reviewedAt: timestamp("reviewed_at", { withTimezone: true }),
-  reviewedByManagerId: bigint("reviewed_by_manager_id", {
-    mode: "number",
-  }).references(() => managers.id),
-  adminNote: text("admin_note"),
-  expiresAt: timestamp("expires_at", { withTimezone: true }),
-  createdAt: timestamp("created_at", { withTimezone: true })
-    .defaultNow()
-    .notNull(),
-  updatedAt: timestamp("updated_at", { withTimezone: true })
-    .defaultNow()
-    .notNull(),
-});
+export const paymentOrders = pgTable(
+  "payment_orders",
+  {
+    id: bigint("id", { mode: "number" })
+      .primaryKey()
+      .generatedAlwaysAsIdentity(),
+    uuid: uuid("uuid").defaultRandom().notNull().unique(),
+    userId: bigint("user_id", { mode: "number" })
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    packageCode: varchar("package_code", { length: 40 })
+      .notNull()
+      .references(() => packages.code),
+    offerCode: varchar("offer_code", { length: 40 }).notNull(),
+    amountVnd: bigint("amount_vnd", { mode: "number" }).notNull(),
+    currency: varchar("currency", { length: 3 }).notNull().default("VND"),
+    status: paymentOrderStatusEnum("status").notNull().default("pending"),
+    transferNote: varchar("transfer_note", { length: 100 }).unique(),
+    bankTxnRef: varchar("bank_txn_ref", { length: 100 }),
+    proofPath: text("proof_path"),
+    submittedAt: timestamp("submitted_at", { withTimezone: true }),
+    reviewedAt: timestamp("reviewed_at", { withTimezone: true }),
+    reviewedByManagerId: bigint("reviewed_by_manager_id", {
+      mode: "number",
+    }).references(() => managers.id),
+    adminNote: text("admin_note"),
+    expiresAt: timestamp("expires_at", { withTimezone: true }),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+    updatedAt: timestamp("updated_at", { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+  },
+  (table) => [
+    uniqueIndex("idx_payment_orders_transfer_note").on(table.transferNote),
+    index("idx_payment_orders_bank_txn_ref").on(table.bankTxnRef),
+    index("idx_payment_orders_status_submitted_at").on(
+      table.status,
+      table.submittedAt
+    ),
+    index("idx_payment_orders_user_id_status").on(table.userId, table.status),
+  ]
+);
 
 export const quotaUsage = pgTable(
   "quota_usage",

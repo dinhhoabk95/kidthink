@@ -39,3 +39,5 @@ export function getAppDb() {
   }
   return appDbInstance;
 }
+
+export const getDb = getOwnerDb;

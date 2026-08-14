@@ -2,7 +2,7 @@
 spec: PAYMENT-FLOW
 title: Luồng thanh toán VietQR duyệt tay
 area: foundation
-status: approved
+status: implemented
 mvp: true
 phase: P2
 reviewed: 2026-08-06

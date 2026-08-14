@@ -308,7 +308,37 @@ export function scanAdminQueryNoChildNameParam(files: CodeFileFixture[]): void {
 }
 
 /**
- * D-JB: Master gate scanning admin routes against all 6 forbidden capabilities.
+ * BR-PAY-08: Ensures no route performs a hard delete on payment_orders table.
+ */
+const DELETE_FROM_PAYMENT_ORDERS_REGEX = /delete\s+from\s+payment_orders/i;
+
+export function scanPaymentOrdersNoDelete(files: CodeFileFixture[]): void {
+  for (const f of files) {
+    const lowerPath = f.filePath.toLowerCase();
+    if (
+      (lowerPath.includes("/orders") || lowerPath.includes("/payments")) &&
+      (lowerPath.includes("delete") || lowerPath.includes(".delete.ts"))
+    ) {
+      throw new Error(
+        `BR-PAY-08 VIOLATION: Hard delete route on payment_orders table found in ${f.filePath}`
+      );
+    }
+
+    const content = f.content;
+    if (
+      content.includes("delete(paymentOrders)") ||
+      content.includes(".delete(paymentOrders)") ||
+      DELETE_FROM_PAYMENT_ORDERS_REGEX.test(content)
+    ) {
+      throw new Error(
+        `BR-PAY-08 VIOLATION: Hard delete query on payment_orders table found in ${f.filePath}`
+      );
+    }
+  }
+}
+
+/**
+ * D-JB / BR-PAY-08: Master gate scanning admin & api routes against forbidden capabilities.
  */
 export function scanAdminRouteGates(routeFiles: CodeFileFixture[]): void {
   scanAdminUsersNoDelete(routeFiles);
@@ -317,6 +347,7 @@ export function scanAdminRouteGates(routeFiles: CodeFileFixture[]): void {
   scanAdminChildProfilesNoPatchExceptArchive(routeFiles);
   scanAdminChildProfilesNoDelete(routeFiles);
   scanAdminQueryNoChildNameParam(routeFiles);
+  scanPaymentOrdersNoDelete(routeFiles);
 }
 
 // Scanner utility for real directories
@@ -346,13 +377,15 @@ export function scanDirectoryFiles(dir: string): CodeFileFixture[] {
 
 // CLI execution
 if (import.meta.url === `file://${process.argv[1]}`) {
-  const managerRoutes = scanDirectoryFiles(
-    join(process.cwd(), "apps/web/server/api/managers")
-  );
+  const apiRoutes = [
+    ...scanDirectoryFiles(join(process.cwd(), "apps/web/server/api/managers")),
+    ...scanDirectoryFiles(join(process.cwd(), "apps/web/server/api/users")),
+    ...scanDirectoryFiles(join(process.cwd(), "apps/web/server/api/guest")),
+  ];
   try {
-    scanAdminRouteGates(managerRoutes);
+    scanAdminRouteGates(apiRoutes);
     console.log(
-      "✅ [lint:admin-route-gates] 0 violations across admin routes (BR-USM-07, BR-USM-08, BR-CPA-01, BR-CPA-06, BR-CPA-07, BR-CPA-08)."
+      "✅ [lint:admin-route-gates] 0 violations across admin/api routes (BR-USM-07, BR-USM-08, BR-CPA-01, BR-CPA-06, BR-CPA-07, BR-CPA-08, BR-PAY-08)."
     );
   } catch (err: unknown) {
     console.error(`❌ ${(err as Error).message}`);

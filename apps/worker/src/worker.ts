@@ -4,6 +4,8 @@ import { runPostgresBackup } from "./backup/postgres.js";
 import { runVerifyBackup } from "./backup/verify.js";
 import { runSendEmail } from "./email/send.js";
 import { runEntitlementExpireJob } from "./entitlement/expire.js";
+import { runSoftUnlockExpireJob } from "./entitlement/soft-unlock-expire.js";
+import { runOrderExpireJob } from "./orders/expire.js";
 import { runDailyRollupJob } from "./rollup/daily.js";
 import { runSessionRollup } from "./rollup/session.js";
 import { runSweepAbandoned } from "./sweep/abandoned.js";
@@ -32,6 +34,12 @@ export async function processJob(job: Job) {
         break;
       case "entitlement:expire":
         await runEntitlementExpireJob(job.id as string, job.data);
+        break;
+      case "entitlement:soft-unlock-expire":
+        await runSoftUnlockExpireJob(job.id as string);
+        break;
+      case "order:expire":
+        await runOrderExpireJob(job.id as string);
         break;
       case "sweep:abandoned":
         await runSweepAbandoned(job.id as string);

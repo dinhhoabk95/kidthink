@@ -130,16 +130,14 @@ describe("Task 4 — GET /api/managers/dashboard (BR-DSH-01..06, D-IY, D-IZ, D-I
     const res = (await handler(event)) as any;
 
     expect(res.todo.pending_payments).toEqual({
-      status: "pending_source",
-      owner_step: "P2.3",
+      count: expect.any(Number),
     });
     expect(res.todo.pending_content).toEqual({
       status: "pending_source",
       owner_step: "P2.8",
     });
     expect(res.growth.monthly_revenue).toEqual({
-      status: "pending_source",
-      owner_step: "P2.3",
+      current_vnd: expect.any(Number),
     });
     expect(res.content.curriculum_weeks_incomplete).toEqual({
       status: "pending_source",

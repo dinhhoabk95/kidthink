@@ -7,6 +7,10 @@ import { defineConfig } from "vitest/config";
 export default defineConfig({
   resolve: {
     alias: {
+      "@kidthink/config": path.resolve(
+        import.meta.dirname,
+        "./packages/config/src/index.ts"
+      ),
       "@kidthink/shared": path.resolve(
         import.meta.dirname,
         "./packages/shared/src/index.ts"
@@ -30,6 +34,10 @@ export default defineConfig({
       "@kidthink/notification": path.resolve(
         import.meta.dirname,
         "./packages/notification/src/index.ts"
+      ),
+      "@kidthink/storage": path.resolve(
+        import.meta.dirname,
+        "./packages/storage/src/index.ts"
       ),
       "@kidthink/ui": path.resolve(
         import.meta.dirname,

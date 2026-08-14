@@ -23,6 +23,7 @@ export * from "./services/audit.ts";
 export * from "./services/content-lifecycle.ts";
 export * from "./services/content-search.ts";
 export * from "./services/content-versioning.ts";
+export * from "./services/payment-jobs.ts";
 export * from "./services/play-session.ts";
 export * from "./services/rollup.ts";
 export * from "./services/tagging.ts";

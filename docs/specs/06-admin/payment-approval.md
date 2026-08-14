@@ -2,7 +2,7 @@
 spec: PAYMENT-APPROVAL
 title: Duyệt và từ chối đơn thanh toán
 area: admin
-status: approved
+status: implemented
 mvp: true
 phase: P2
 reviewed: 2026-08-08

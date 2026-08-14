@@ -2,7 +2,7 @@
 spec: PAYMENT-ORDER-CREATE
 title: Tạo đơn thanh toán
 area: account
-status: approved
+status: implemented
 mvp: true
 phase: P2
 reviewed: 2026-08-08

@@ -131,7 +131,6 @@ groups:
           - email
           - dashboard
         runbook: "https://docs.tinimath.vn/runbooks/payment-queue"
-        pending_source: "P2.3"
         enabled: true
 
       - name: ReviewQueueBacklog

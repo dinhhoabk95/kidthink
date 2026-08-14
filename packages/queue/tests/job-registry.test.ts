@@ -6,8 +6,8 @@ import {
 } from "../src/registry.ts";
 
 describe("Task 1 — Job Registry & Boundaries (BR-JOB-04, BR-JOB-07)", () => {
-  it("defines all 10 MVP jobs with exact specs (BR-JOB-01..08)", () => {
-    expect(JOB_REGISTRY).toHaveLength(10);
+  it("defines all 11 MVP jobs with exact specs (BR-JOB-01..08)", () => {
+    expect(JOB_REGISTRY).toHaveLength(11);
 
     const jobNames = JOB_REGISTRY.map((j) => j.name);
     expect(jobNames).toContain("rollup:session");
@@ -15,6 +15,7 @@ describe("Task 1 — Job Registry & Boundaries (BR-JOB-04, BR-JOB-07)", () => {
     expect(jobNames).toContain("sweep:abandoned");
     expect(jobNames).toContain("entitlement:expire");
     expect(jobNames).toContain("order:expire");
+    expect(jobNames).toContain("entitlement:soft-unlock-expire");
     expect(jobNames).toContain("account:purge");
     expect(jobNames).toContain("email:send");
     expect(jobNames).toContain("image:cleanup-orphan");

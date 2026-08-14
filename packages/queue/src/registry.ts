@@ -76,6 +76,18 @@ export const JOB_REGISTRY: readonly JobDefinition[] = [
     },
   },
   {
+    name: "entitlement:soft-unlock-expire",
+    schedule: "every 1 hour",
+    idempotencyKeyFormat: "hour",
+    timeoutSeconds: 120,
+    ownerStep: "P2.3",
+    retryPolicy: {
+      maxAttempts: 3,
+      backoffType: "exponential",
+      backoffDelayMs: 5000,
+    },
+  },
+  {
     name: "account:purge",
     schedule: "03:00 ICT",
     idempotencyKeyFormat: "date_ict",

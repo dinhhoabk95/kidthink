@@ -2,7 +2,7 @@
 spec: PRICING-PAGE
 title: Trang giá
 area: public
-status: approved
+status: implemented
 mvp: true
 phase: P2
 reviewed: 2026-08-08

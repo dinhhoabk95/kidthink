@@ -15,6 +15,7 @@ const ERR_CPA_01 = /BR-CPA-01 VIOLATION/;
 const ERR_CPA_06 = /BR-CPA-06 VIOLATION/;
 const ERR_CPA_07 = /BR-CPA-07 VIOLATION/;
 const ERR_CPA_08 = /BR-CPA-08 VIOLATION/;
+const ERR_PAY_08 = /BR-PAY-08 VIOLATION/;
 
 describe("Admin Route Compliance Gates — Task 1 / D-JB (BR-USM-07, BR-USM-08, BR-CPA-01, BR-CPA-06, BR-CPA-07, BR-CPA-08)", () => {
   const cleanAdminRoutes = [
@@ -160,5 +161,32 @@ describe("Admin Route Compliance Gates — Task 1 / D-JB (BR-USM-07, BR-USM-08, 
       ERR_CPA_08
     );
     expect(() => scanAdminRouteGates(dirtyRoutes)).toThrowError(ERR_CPA_08);
+  });
+
+  // BR-PAY-08 / BR-PAP-09: No DELETE route or query on payment_orders
+  it("BR-PAY-08 ca âm: red when route or query hard-deletes payment_orders", () => {
+    const dirtyRoute1 = [
+      {
+        filePath: "apps/web/server/api/users/orders/[uuid].delete.ts",
+        content: `
+          export default defineEventHandler(async (event) => {
+            return { cancelled: true };
+          });
+        `,
+      },
+    ];
+    expect(() => scanAdminRouteGates(dirtyRoute1)).toThrowError(ERR_PAY_08);
+
+    const dirtyRoute2 = [
+      {
+        filePath: "apps/web/server/api/managers/orders/[uuid]/cancel.post.ts",
+        content: `
+          export default defineEventHandler(async (event) => {
+            await db.delete(paymentOrders).where(eq(paymentOrders.uuid, uuid));
+          });
+        `,
+      },
+    ];
+    expect(() => scanAdminRouteGates(dirtyRoute2)).toThrowError(ERR_PAY_08);
   });
 });

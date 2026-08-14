@@ -6,10 +6,11 @@ import {
   gameLevels,
   getOwnerDb,
   levelDailyStats,
+  paymentOrders,
   skills,
   users,
 } from "@kidthink/db";
-import { and, count, desc, eq, gt, gte, lt, sql } from "drizzle-orm";
+import { and, count, desc, eq, gt, gte, inArray, lt, sql } from "drizzle-orm";
 import { defineEventHandler } from "h3";
 import {
   requireManagerSession,
@@ -30,7 +31,7 @@ export interface MetricWithComparison {
 export interface DashboardResponseSuperAdmin {
   as_of: string;
   todo: {
-    pending_payments: PendingSourceMetric;
+    pending_payments: { count: number };
     pending_content: PendingSourceMetric;
     open_alerts: {
       count: number;
@@ -47,7 +48,7 @@ export interface DashboardResponseSuperAdmin {
     active_users_7d: MetricWithComparison;
     active_child_profiles: MetricWithComparison;
     active_subscriptions: { current: number };
-    monthly_revenue: PendingSourceMetric;
+    monthly_revenue: { current_vnd: number };
   };
   content: {
     skills_without_levels: { count: number; is_feedback: true };
@@ -235,6 +236,22 @@ async function queryGrowthMetrics(db: OwnerDb) {
     .where(eq(entitlements.status, "active"));
   const activeSubsCurrent = activeSubsRows[0]?.count ?? 0;
 
+  // Monthly revenue from approved payment orders
+  const now = new Date();
+  const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+  const revenueRows = await db
+    .select({
+      totalRevenue: sql<string>`coalesce(sum(${paymentOrders.amountVnd}), 0)`,
+    })
+    .from(paymentOrders)
+    .where(
+      and(
+        eq(paymentOrders.status, "approved"),
+        gte(paymentOrders.reviewedAt, startOfMonth)
+      )
+    );
+  const monthlyRevenueVnd = Number(revenueRows[0]?.totalRevenue || 0);
+
   return {
     new_users_7d: {
       current: newUsersCurrent,
@@ -255,8 +272,7 @@ async function queryGrowthMetrics(db: OwnerDb) {
       current: activeSubsCurrent,
     },
     monthly_revenue: {
-      status: "pending_source" as const,
-      owner_step: "P2.3",
+      current_vnd: monthlyRevenueVnd,
     },
   };
 }
@@ -322,10 +338,15 @@ export default defineEventHandler(
       const growth = await queryGrowthMetrics(db);
       const system = await querySystemMetrics(db);
 
+      const pendingOrdersRows = await db
+        .select({ count: count() })
+        .from(paymentOrders)
+        .where(inArray(paymentOrders.status, ["submitted", "under_review"]));
+      const pendingPaymentsCount = Number(pendingOrdersRows[0]?.count || 0);
+
       const todo = {
         pending_payments: {
-          status: "pending_source" as const,
-          owner_step: "P2.3",
+          count: pendingPaymentsCount,
         },
         pending_content: {
           status: "pending_source" as const,
