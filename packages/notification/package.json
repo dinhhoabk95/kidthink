@@ -1,0 +1,27 @@
+{
+  "name": "@kidthink/notification",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@kidthink/shared": "workspace:*",
+    "firebase-admin": "catalog:",
+    "mjml": "catalog:",
+    "nodemailer": "catalog:"
+  },
+  "devDependencies": {
+    "@kidthink/config": "workspace:*",
+    "@types/mjml": "catalog:",
+    "@types/nodemailer": "catalog:",
+    "fast-check": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  },
+  "exports": {
+    ".": "./src/index.ts"
+  }
+}

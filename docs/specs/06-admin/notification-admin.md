@@ -5,7 +5,7 @@ area: admin
 status: approved
 mvp: true
 phase: P2
-reviewed: 2026-08-08
+reviewed: 2026-08-13
 owns:
   - Bề mặt theo dõi thông báo đã gửi
   - Soạn nội dung template thông báo
@@ -147,4 +147,4 @@ Scenario: BR-NTA-05 — content_reviewer bị chặn
 
 | # | Câu hỏi | Chặn phase | Đề xuất chốt | Chủ |
 |---|---|---|---|---|
-| ~~1~~ | ~~Provider nào cung cấp trạng thái bounce/delivery?~~ **Đóng 2026-08-09 (D-CE, T15)**: đã chốt ở [`repo-bootstrap.md`](../00-foundation/repo-bootstrap.md) §7.1 — **AWS SES** qua `@aws-sdk/client-ses` (đã ở AWS EC2, IAM role, không secret SMTP để xoay), không phải Resend. MVP dùng **SNS bounce/complaint webhook** của SES (baseline đã ghi rõ "cần xin production access sớm + SNS bounce/complaint webhook trước go-live") để nhận sự kiện delivery/bounce; lưu trong `notification_logs` | P2 | Đã đóng | D-CE |
+| ~~1~~ | ~~Provider nào cung cấp trạng thái bounce/delivery?~~ **Đóng lại 2026-08-13**: AWS SES qua **SMTP**; `packages/notification` dùng Nodemailer pool + MJML, không dùng `@aws-sdk/client-ses` cho đường gửi. SES→SNS cung cấp delivery/bounce/complaint, webhook xác minh chữ ký rồi lưu ở `notification_deliveries` | P2 | Đã đóng | D-CE |
