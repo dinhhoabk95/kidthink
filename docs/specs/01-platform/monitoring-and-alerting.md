@@ -2,7 +2,7 @@
 spec: MONITORING-AND-ALERTING
 title: Giám sát và cảnh báo
 area: platform
-status: approved
+status: implemented
 mvp: true
 phase: P1
 reviewed: 2026-08-13

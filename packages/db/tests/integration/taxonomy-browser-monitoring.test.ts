@@ -1,3 +1,5 @@
+import { resolve } from "node:path";
+import { loadAndValidateAlertsFile, redactPii } from "@kidthink/shared";
 import { describe, expect, it } from "vitest";
 
 describe("P1.16 Taxonomy Browser & Monitoring Invariants (BR-TXB, BR-MON)", () => {
@@ -52,17 +54,15 @@ describe("P1.16 Taxonomy Browser & Monitoring Invariants (BR-TXB, BR-MON)", () =
       expect(isAlertDispatched).toBe(true);
     });
 
-    it("Scenario: BR-MON-02 — every alert rule in alerts.yml references a valid runbook link", () => {
-      const alertRule = {
-        name: "DatabaseDisconnected",
-        runbook: "https://docs.tinimath.vn/runbooks/db-disconnected",
-      };
-      expect(alertRule.runbook).toContain("https://");
-    });
-
-    it("Scenario: BR-MON-03 — forbids disabling alert rules (only threshold tuning permitted)", () => {
-      const ruleState = "enabled";
-      expect(ruleState).toBe("enabled");
+    it("Scenario: BR-MON-02 & BR-MON-03 & BR-MON-07 — alerts.yml validation passes go-live gate", () => {
+      const alertsYmlPath = resolve(
+        import.meta.dirname,
+        "../../../../infra/monitoring/alerts.yml"
+      );
+      const result = loadAndValidateAlertsFile(alertsYmlPath);
+      expect(result.valid).toBe(true);
+      expect(result.stats.p0Ready).toBeGreaterThanOrEqual(7);
+      expect(result.errors).toEqual([]);
     });
 
     it("Scenario: BR-MON-04 — dead-man switch triggers alert when heartbeat fails for 10 minutes", () => {
@@ -80,37 +80,24 @@ describe("P1.16 Taxonomy Browser & Monitoring Invariants (BR-TXB, BR-MON)", () =
         password: "secretpassword",
         token: "jwt_token_here",
         authorization: "Bearer xyz",
+        valid_field: "safe_metric",
       };
 
-      const piiFields = [
-        "display_name",
-        "email",
-        "child_uuid",
-        "password",
-        "token",
-        "authorization",
-      ];
-      const redactedLog: any = { ...rawLog };
-      for (const field of piiFields) {
-        delete redactedLog[field];
-      }
+      const redacted = redactPii(rawLog);
 
-      for (const field of piiFields) {
-        expect(redactedLog).not.toHaveProperty(field);
-      }
+      expect(redacted).not.toHaveProperty("display_name");
+      expect(redacted).not.toHaveProperty("email");
+      expect(redacted).not.toHaveProperty("child_uuid");
+      expect(redacted).not.toHaveProperty("password");
+      expect(redacted).not.toHaveProperty("token");
+      expect(redacted).not.toHaveProperty("authorization");
+      expect(redacted.valid_field).toBe("safe_metric");
     });
 
     it("Scenario: BR-MON-06 — collects client error logs with configurable sampling rate", () => {
-      const samplingRate = 0.1; // 10% sampling
+      const samplingRate = 0.2; // 20% sampling
       expect(samplingRate).toBeGreaterThan(0);
       expect(samplingRate).toBeLessThanOrEqual(1.0);
-    });
-
-    it("Scenario: BR-MON-07 — go-live gate checks that all 7 P0 alert rules are fully configured", () => {
-      const p0RulesCount = 7;
-      const configuredP0Rules = 7;
-      const isGoLivePermitted = configuredP0Rules === p0RulesCount;
-      expect(isGoLivePermitted).toBe(true);
     });
   });
 });

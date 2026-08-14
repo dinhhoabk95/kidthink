@@ -2,7 +2,7 @@
 spec: TAXONOMY-BROWSER
 title: Duyệt cây taxonomy
 area: admin
-status: approved
+status: implemented
 mvp: true
 phase: P1
 reviewed: 2026-08-08
