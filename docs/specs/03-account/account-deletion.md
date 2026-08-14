@@ -5,7 +5,7 @@ area: account
 status: implemented
 mvp: true
 phase: P1
-reviewed: 2026-08-14
+reviewed: 2026-08-08
 owns:
   - Luồng yêu cầu xoá và huỷ yêu cầu
   - Phạm vi dữ liệu bị xoá
@@ -18,9 +18,8 @@ depends_on:
 
 ## 1. Objective
 
-Quyền xoá dữ liệu là **nghĩa vụ pháp lý** theo Luật Bảo vệ dữ liệu cá nhân 91/2025/QH15
-và văn bản áp dụng, gồm Nghị định 13/2023 ở phần còn hiệu lực, không phải tính năng tuỳ chọn.
-Nó phải thực sự xảy ra, trong thời hạn kiểm được.
+Quyền xoá dữ liệu là **nghĩa vụ pháp lý** theo Nghị định 13/2023, không phải tính năng
+tuỳ chọn. Nó phải thực sự xảy ra, trong thời hạn kiểm được.
 
 Nó cũng phải **hoàn tác được trong 30 ngày** — xoá nhầm tài khoản có 8 tuần dữ liệu học của
 con là mất mát không thay thế được.

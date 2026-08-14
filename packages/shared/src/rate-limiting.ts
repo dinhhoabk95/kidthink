@@ -43,6 +43,24 @@ export const RATE_LIMIT_CONFIGS: Record<string, RouteClassConfig> = {
     windowSeconds: 900, // 15 min
     failMode: "closed",
   },
+  "auth:social-login": {
+    className: "auth:social-login",
+    ipLimit: 20,
+    windowSeconds: 900, // 15 min
+    failMode: "closed",
+  },
+  "auth:oauth:start": {
+    className: "auth:oauth:start",
+    ipLimit: 30,
+    windowSeconds: 900,
+    failMode: "closed",
+  },
+  "auth:oauth:callback": {
+    className: "auth:oauth:callback",
+    ipLimit: 30,
+    windowSeconds: 900,
+    failMode: "closed",
+  },
   "payment:create": {
     className: "payment:create",
     ipLimit: 20,

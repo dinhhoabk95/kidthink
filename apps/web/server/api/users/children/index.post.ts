@@ -1,5 +1,11 @@
 import { AppError } from "@kidthink/auth";
-import { childProfiles, entitlements, getOwnerDb, users } from "@kidthink/db";
+import {
+  childProfiles,
+  consentLogs,
+  entitlements,
+  getOwnerDb,
+  users,
+} from "@kidthink/db";
 import {
   deriveAgeBand,
   isValidAvatarPreset,
@@ -18,7 +24,6 @@ import {
   requireWebUserSession,
   respondToUserAuthError,
 } from "../../../utils/auth-runtime.js";
-import { requireCurrentConsent } from "../../../utils/consent-guard.js";
 
 function parseAndValidateInput(rawBody: unknown, currentYear: number) {
   try {
@@ -58,8 +63,29 @@ function parseAndValidateInput(rawBody: unknown, currentYear: number) {
 async function verifyChildConsentAndQuota(event: H3Event, userId: number) {
   const db = getOwnerDb();
 
-  // Check current child_data consent version (BR-CPC-05, BR-CSM-04 & D-II)
-  await requireCurrentConsent(userId, "child_data");
+  // Check child_data consent (BR-CPC-05)
+  const [existingConsent] = await db
+    .select()
+    .from(consentLogs)
+    .where(
+      and(
+        eq(consentLogs.userId, userId),
+        eq(consentLogs.consentType, "child_data")
+      )
+    )
+    .limit(1);
+
+  if (!existingConsent) {
+    setResponseStatus(event, 428);
+    throw createError({
+      statusCode: 428,
+      statusMessage: "CONSENT_REQUIRED",
+      data: {
+        code: "CONSENT_REQUIRED",
+        message: "Cần đồng ý thu thập dữ liệu trẻ em trước khi tạo hồ sơ.",
+      },
+    });
+  }
 
   // Quota check (BR-CPC-07)
   const activeEntitlements = await db

@@ -105,7 +105,7 @@ describe("Task 7 — Real Human End-to-End Test Scenario", () => {
       },
       context: {
         user: {
-          user_id: createdUser.id,
+          user_id: createdUser?.id ?? 0,
           display_name: "Human Tester",
           session_id: "1",
           refresh_token_version: 0,

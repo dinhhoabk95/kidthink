@@ -48,7 +48,11 @@ export const consentTypeEnum = pgEnum("consent_type", [
   "terms",
   "privacy",
   "child_data",
-  "child_data_withdrawn",
+]);
+
+export const consentActionEnum = pgEnum("consent_action", [
+  "accepted",
+  "withdrawn",
 ]);
 
 export const users = pgTable("users", {
@@ -97,7 +101,6 @@ export const activeSessions = pgTable("active_sessions", {
   deviceLabel: text("device_label"),
   ipAddress: text("ip_address"),
   authMethod: authMethodEnum("auth_method").notNull(),
-  reauthAt: timestamp("reauth_at", { withTimezone: true }),
   revokedAt: timestamp("revoked_at", { withTimezone: true }),
   lastUsedAt: timestamp("last_used_at", { withTimezone: true })
     .defaultNow()
@@ -188,10 +191,21 @@ export const consentLogs = pgTable("consent_logs", {
     .notNull()
     .references(() => users.id, { onDelete: "cascade" }),
   consentType: consentTypeEnum("consent_type").notNull(),
-  policyVersion: varchar("policy_version", { length: 20 }).notNull(),
-  ipAddress: text("ip_address"),
-  userAgent: text("user_agent"),
+  action: consentActionEnum("action").notNull().default("accepted"),
+  ipAddress: text("ip_address").notNull(),
+  userAgent: text("user_agent").notNull(),
   createdAt: timestamp("created_at", { withTimezone: true })
+    .defaultNow()
+    .notNull(),
+});
+
+export const consentRequirements = pgTable("consent_requirements", {
+  consentType: consentTypeEnum("consent_type").primaryKey(),
+  reconsentRequiredAt: timestamp("reconsent_required_at", {
+    withTimezone: true,
+  }),
+  noticeVi: varchar("notice_vi", { length: 500 }),
+  updatedAt: timestamp("updated_at", { withTimezone: true })
     .defaultNow()
     .notNull(),
 });

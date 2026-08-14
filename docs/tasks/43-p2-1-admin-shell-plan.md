@@ -33,13 +33,15 @@ Hai việc, một bước:
 | `AUDIT-LOG` | P0.11 | shell không ghi audit, nhưng mọi trang admin sau này ghi |
 | `MONITORING-AND-ALERTING` | P1.16 | `alerts.yml`, danh sách alert đang mở → thẻ §7.1 |
 | Trang taxonomy | P1.16 | đang chạy dưới layout tối thiểu, chờ re-host |
+| Trang legal consent | P1.14 revision | `/legal-consents` tối thiểu, chỉ `super_admin`, chờ nav/shell chuẩn |
 | `DESIGN-SYSTEM-CONTRACT` | P1.1 | token và component — shell không phát minh token mới |
 
 ## 1. Đo được
 
 ### 1.1 Đã có
 
-`apps/admin` với đăng nhập Manager và một layout tối thiểu; hai role phân biệt được ở server;
+`apps/admin` với đăng nhập Manager và một layout tối thiểu; trang taxonomy và legal consent;
+hai role phân biệt được ở server;
 bảng rollup của P1.5; `GET /api/managers/system/metrics` và danh sách alert đang mở của P1.16;
 token thiết kế của P1.1.
 
@@ -56,11 +58,12 @@ Layout thật với nav theo role; breadcrumb; trạng thái rỗng/lỗi dùng 
 
 ## 2. Quyết định
 
-**D-IW — Shell là **một** layout, và P2.1 re-host trang taxonomy vào nó.** Chín bước sau đều
+**D-IW — Shell là **một** layout, và P2.1 re-host trang taxonomy cùng legal consent vào nó.** Chín bước sau đều
 thêm trang vào `apps/admin`. Nếu shell không xong trước, mỗi bước tự dựng nav của mình và tới
 P2.10 việc gỡ là mười lần sửa. Xử: `apps/admin/layouts/manager.vue` sở hữu nav, breadcrumb,
-menu theo role, trạng thái rỗng và trạng thái lỗi; trang taxonomy của P1.16 chuyển sang layout
-này trong **cùng** PR. Cổng: mọi trang dưới `apps/admin/pages/` dùng layout `manager`; trang
+menu theo role, trạng thái rỗng và trạng thái lỗi; trang taxonomy của P1.16 và legal consent
+của P1.14 chuyển sang layout này trong **cùng** PR. Cổng: mọi trang dưới `apps/admin/pages/`
+dùng layout `manager`; trang
 định nghĩa nav riêng → **đỏ**.
 
 **D-IX — Danh sách thẻ và ngưỡng là **dữ liệu**, và thẻ chưa có nguồn khai `pending_source`.**
@@ -96,7 +99,7 @@ kéo theo ngân sách hiệu năng, và không đổi được quyết định n
 
 ```
 T1 shell: layout · nav theo role · breadcrumb · rỗng/lỗi (D-IW)
-      ├──→ T2 re-host trang taxonomy P1.16 vào shell (D-IW, trả nợ)
+      ├──→ T2 re-host trang taxonomy P1.16 + legal consent P1.14 vào shell (D-IW, trả nợ)
       └──→ T3 registry dashboard-cards + pending_source (D-IX)
                 └──→ T4 GET /api/managers/dashboard: rollup · as_of · lọc role (D-IY, D-IZ)
                           └──→ T5 UI bốn nhóm thẻ · link hành động · read-only (D-JA)
@@ -122,11 +125,14 @@ T1 shell: layout · nav theo role · breadcrumb · rỗng/lỗi (D-IW)
 
 **Phụ thuộc:** P0.11b · P1.1 · **Cỡ:** M
 
-### Task 2 — Re-host trang taxonomy (trả nợ P1.16)
+### Task 2 — Re-host trang P1 (trả nợ P1.14 và P1.16)
 
 **Tiêu chí nghiệm thu**
 - [ ] Cây taxonomy và chi tiết skill chạy dưới layout `manager`, vào được từ nav.
+- [ ] `/legal-consents` chạy dưới layout `manager`; nav chỉ hiện cho `super_admin`, nhưng server
+      guard vẫn là nguồn quyền.
 - [ ] Chrome tối thiểu mà `D-IV` dựng tạm bị **xoá**, không để lại hai đường vào cùng một trang.
+- [ ] Chrome tối thiểu của trang force cũng bị xoá; hành vi recent reauth/audit không đổi.
 - [ ] Mọi ca âm của P1.16 còn xanh: không route ghi dưới `/api/managers/taxonomy`; `as_of` còn cạnh số; ngưỡng "đủ" vẫn là **3**.
 - [ ] Nút "soạn level cho skill này" vẫn không dẫn tới 404 — vẫn trỏ seeder cho tới khi P2.6 đổi.
 
@@ -191,7 +197,7 @@ T1 shell: layout · nav theo role · breadcrumb · rỗng/lỗi (D-IW)
 - [ ] `content_reviewer` đăng nhập: response API **không chứa** khoá tiền; nav không có mục tiền.
 - [ ] Không truy vấn nào của dashboard chạm bảng thô.
 - [ ] Không lời gọi mutation nào phát ra từ dashboard.
-- [ ] Trang taxonomy của P1.16 chạy trong shell; test cũ xanh không sửa assertion.
+- [ ] Trang taxonomy P1.16 và legal consent P1.14 chạy trong shell; test hành vi cũ xanh không sửa assertion.
 - [ ] `pnpm check && pnpm test && pnpm test:e2e && pnpm lint:specs && pnpm check:progress` xanh.
 
 ### Task 6 — Evidence, promote và nợ chuyển tiếp

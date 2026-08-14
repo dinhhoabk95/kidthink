@@ -41,6 +41,7 @@ sát nhau:
 | `REGISTRATION` | P0.10 | form 3 trường, hai đồng ý riêng, `BR-REG-02` |
 | `CHILD-DATA-COMPLIANCE` | P0.4 | `BR-CDC-05` `BR-CDC-06` — không gửi gì của trẻ ra ngoài |
 | `ACCOUNT-SETTINGS` | **P1.14** | nhóm Bảo mật là chỗ khối liên kết được chèn vào (`BR-ACS-11`) |
+| Consent singleton + marker gate | **P1.14 revision 2026-08-14** | `D-QV`–`D-QY`; SNS echo marker và dùng `/consent-required` |
 | Danh sách route reauth | **P1.14** | `D-IJ` chừa sẵn hai route của bước này |
 | [`Task #85`](85-nuxt-auth-utils-migration-plan.md) | P0 auth architecture | Opaque session Redis đã xanh; OAuth bridge chỉ cấp cùng session/remember contract, không first-party JWT |
 
@@ -172,6 +173,8 @@ T1 registry provider: PKCE S256 · state một lần · redirect_uri từ cấu 
 - [ ] Tra `(provider, provider_user_id)` thấy → cấp opaque session/remember theo preference đã bind, ghi metadata `active_sessions`, cập nhật `last_login_at`.
 - [ ] `BR-SCL-03` ca âm: provider đổi email nhưng cùng `sub` → vào **đúng** tài khoản cũ, `users.email` **không** bị ghi đè.
 - [ ] `BR-SCL-14`: đích đến là `/me`, không phải `/play`.
+- [ ] `BR-LGN-11`: User cũ thiếu Terms/Privacy sau marker vẫn được cấp session nhưng đích là
+      `/consent-required`; `return_to` chỉ dùng sau khi đồng ý.
 - [ ] `status = suspended` → **403** `ACCOUNT_SUSPENDED`; `status = deleted` trong 30 ngày → 403 kèm nút huỷ yêu cầu xoá (nối P1.14).
 - [ ] `D-IN` + `BR-SCL-07` ca âm: seed một hàng `mfa_settings` → **428** `MFA_REQUIRED`, và **không** cookie access nào được đặt trước đó.
 - [ ] `BR-SCL-13`: provider `is_enabled = false` → không hiện nút ở `/dang-nhap`.
@@ -188,8 +191,11 @@ T1 registry provider: PKCE S256 · state một lần · redirect_uri từ cấu 
 - [ ] Màn hình `/dang-ky/dong-y` đúng §7.2: tên điền sẵn sửa được, email chỉ đọc khi provider trả, **hai** checkbox riêng chưa tick.
 - [ ] `BR-SCL-01` + `BR-REG-08` ca âm: không ô tuổi, giới tính, số điện thoại, địa chỉ.
 - [ ] `BR-SCL-12` ca âm: đóng tab giữa màn hình đồng ý → **0 hàng** `users` và `social_identities` được tạo.
-- [ ] `users` + `social_identities` + **2 hàng** `consent_logs` trong một transaction.
-- [ ] `BR-SCL-02`: mỗi hàng consent có `policy_version`, IP, user agent.
+- [ ] Tải marker Terms/Privacy hiện hành; form gửi lại nguyên `requirement_at` cho cả hai loại.
+- [ ] `users` + `social_identities` + **2 hàng** `consent_logs` action `accepted` trong một transaction.
+- [ ] `BR-SCL-02`: mỗi hàng consent có action, IP, user agent; không `policy_version`.
+- [ ] `BR-SCL-02` + `D-QY`: force giữa lúc form mở → **409**
+      `CONSENT_REQUIREMENT_CHANGED`, không tạo `users`, `social_identities` hay log.
 - [ ] `BR-SCL-05` ca âm: Google `email_verified = true` → `status = active`, **không** gửi email xác thực.
 - [ ] `BR-SCL-05` ca âm: Facebook → `status = pending_verification` **và** gửi email xác thực.
 - [ ] `BR-SCL-06` + `D-DA`: provider không trả email → bắt nhập email, `status = pending_verification`, giữ chế độ hạn chế của [`registration.md`](../specs/03-account/registration.md) §7.3.
@@ -280,7 +286,8 @@ T1 registry provider: PKCE S256 · state một lần · redirect_uri từ cấu 
 
 ## 6. Giả định
 
-1. **P1.14 đã đóng** — nhóm Bảo mật và danh sách route reauth có sẵn chỗ cắm.
+1. **P1.14 revision singleton đã đóng** — marker API/gate, nhóm Bảo mật và danh sách route
+   reauth có sẵn chỗ cắm; không dùng policy version của baseline cũ.
 2. **`social_identities` đã có từ P0.7** — bước này không đụng migration bảng danh tính.
 3. **App Google đã cấu hình** — client id/secret có trong biến môi trường môi trường staging.
 4. **Facebook có thể chưa xong app review** — ship với provider tắt là kết quả hợp lệ của bước này.

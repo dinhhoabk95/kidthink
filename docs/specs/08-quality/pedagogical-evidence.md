@@ -5,7 +5,7 @@ area: quality
 status: implemented
 mvp: true
 phase: P1
-reviewed: 2026-08-09
+reviewed: 2026-08-14
 owns:
   - Khung bằng chứng sư phạm và quy trình kiểm thử với trẻ
   - Tiêu chuẩn thu thập dữ liệu an toàn khi playtest
@@ -47,7 +47,7 @@ Quy định khung bằng chứng sư phạm (pedagogical evidence) và quy trìn
 |---|---|---|
 | `BR-PED-01` | Mọi tuyên bố hiệu quả sư phạm phải dựa trên chỉ số tiến bộ thực tế (mastery/telemetry) | Tránh tuyên bố tiếp thị vượt quá bằng chứng |
 | `BR-PED-02` | Playtest với trẻ phải đạt 100% sự đồng ý của phụ huynh và tuân thủ tiêu chuẩn dừng phiên | Bảo vệ tâm lý và an toàn cho trẻ |
-| `BR-PED-03` | Cấm thu thập hình ảnh, âm thanh hoặc thông tin định danh cá nhân của trẻ trong phiên playtest | Tuân thủ Nghị định 13/2023 và tiêu chuẩn bảo vệ dữ liệu trẻ em |
+| `BR-PED-03` | Cấm thu thập hình ảnh, âm thanh hoặc thông tin định danh cá nhân của trẻ trong phiên playtest | Tuân thủ Luật 91/2025/QH15, văn bản áp dụng và tiêu chuẩn bảo vệ dữ liệu trẻ em |
 
 ## 7. Data
 

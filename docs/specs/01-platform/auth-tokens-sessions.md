@@ -5,7 +5,7 @@ area: platform
 status: approved
 mvp: true
 phase: P0
-reviewed: 2026-08-13
+reviewed: 2026-08-14
 owns:
   - Cookie session opaque của User và Manager
   - Vòng đời session một giờ và remember-me một năm
@@ -269,6 +269,7 @@ function requireRole(e: H3Event, role: ManagerRole): void;
 | `POST /api/guest/auth/{users\|managers}/mfa` | opaque challenge one-time đúng namespace | 200 tạo session; remember chỉ khi challenge cho phép |
 | `POST /api/guest/auth/users/remember` | remember cookie + CSRF | rotate + session mới; body rỗng |
 | `POST /api/guest/auth/managers/remember` | remember cookie + CSRF | rotate + session mới; body rỗng |
+| `POST /api/{users\|managers}/auth/reauth` | session + CSRF | Xác minh một method hiện có; chỉ cập nhật `reauthAt` của Redis session hiện tại, không gia hạn credential |
 | `POST /api/{users\|managers}/auth/logout` | session + CSRF | revoke thiết bị hiện tại |
 | `POST /api/{users\|managers}/auth/logout-all` | session + CSRF | revoke mọi thiết bị |
 | `GET /api/{users\|managers}/auth/sessions` | session | danh sách device metadata |
@@ -278,6 +279,9 @@ function requireRole(e: H3Event, role: ManagerRole): void;
 
 Hai route `/auth/refresh` cũ bị xoá. Không route nào chấp nhận first-party JWT/JWS hoặc
 `Authorization: Bearer`. Redis outage trả 503, credential thiếu/sai/hết hạn trả 401.
+
+Manager reauth chỉ nhận password hoặc TOTP/mã khôi phục; cấm SNS theo `BR-AUT-15`. Body cụ thể
+và thao tác toàn hệ thống cần guard thuộc [`admin-auth.md`](../06-admin/admin-auth.md) `BR-ADA-09`.
 
 ## 9. Acceptance criteria
 

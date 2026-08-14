@@ -5,7 +5,7 @@ area: foundation
 status: approved
 mvp: true
 phase: P0
-reviewed: 2026-08-13
+reviewed: 2026-08-14
 owns:
   - Bản đồ prefix BR → spec sở hữu
   - Danh sách rule không bao giờ được vi phạm
@@ -17,7 +17,7 @@ depends_on:
 
 ## 1. Objective
 
-Corpus có **~1000 business rule** trên 127 spec. Registry này **không** liệt kê lại từng rule —
+Corpus có **~1230 business rule** trên 134 spec. Registry này **không** liệt kê lại từng rule —
 nó ánh xạ **prefix → spec sở hữu**, để tra ngược từ một ID trong code hoặc test về nơi định
 nghĩa.
 
@@ -162,6 +162,7 @@ Mọi `BR-*` trong code, test, và PR. `pnpm gen:check` cảnh báo BR không đ
 | `BR-NTA` | [`notification-admin.md`](../06-admin/notification-admin.md) | | `BR-ALV` | [`audit-log-viewer.md`](../06-admin/audit-log-viewer.md) |
 | `BR-ELV` | [`error-log-viewer.md`](../06-admin/error-log-viewer.md) | | `BR-SYS` | [`system-activity.md`](../06-admin/system-activity.md) |
 | `BR-FFA` | [`feature-flags.md`](../06-admin/feature-flags.md) | | `BR-EXP` | [`data-export.md`](../06-admin/data-export.md) |
+| `BR-LCA` | [`legal-consent-admin.md`](../06-admin/legal-consent-admin.md) | | | |
 
 **Add-on**
 
@@ -184,9 +185,9 @@ Mọi `BR-*` trong code, test, và PR. `pnpm gen:check` cảnh báo BR không đ
 
 | | Số |
 |---|---:|
-| Spec module | 130 |
-| Prefix BR | 126 |
-| Business rule | ~1015 |
+| Spec module | 134 |
+| Prefix BR | 133 |
+| Business rule | ~1230 |
 
 **Cảnh báo:** con số "spec module" trước 2026-08-05 ghi **123**, trong khi
 [`../index.md`](../index.md) đếm **124**. Lệch có từ trước, chưa truy nguyên. Đã đặt lại theo
@@ -246,6 +247,17 @@ Nếu chỉ đọc một mục trong toàn corpus, đọc mục này.
 | `BR-AUT-29` | Remember reuse thu hồi toàn bộ session/credential của account |
 | `BR-AUT-34` | Manager chỉ nhận remember credential sau khi MFA thành công |
 | `BR-ERR-08` | Thông báo lỗi không tiết lộ tài khoản đăng nhập bằng cách nào |
+
+**Đồng ý pháp lý**
+
+| Rule | Nội dung |
+|---|---|
+| `BR-LGL-02` `BR-LGL-09` | Tài liệu pháp lý là singleton code-owned; không policy version, lịch sử sản phẩm hay editor admin |
+| `BR-CSM-01` `BR-CDC-07` | Consent log INSERT-only; đồng ý/rút là action mới, không sửa lịch sử |
+| `BR-CSM-04` | Force không được chặn legal document, export, withdrawal, reauth, logout hay account deletion |
+| `BR-CSM-09` | Acceptance phải đối chiếu marker User đã xem trong cùng transaction |
+| `BR-LCA-03` | Force marker và audit phải commit trong cùng transaction |
+| `BR-LCA-06` `BR-LCA-08` | Không auto-force từ deploy và không clear, giảm hay rollback marker |
 
 **Nội dung**
 

@@ -17,20 +17,11 @@ export default defineEventHandler((event) => {
   return {
     slug: doc.slug,
     title: doc.title,
-    version: doc.version,
-    effective_date: doc.effectiveDate,
+    last_updated_on: doc.effectiveDate,
     review_status: doc.reviewStatus,
     summary: doc.summary,
     requires_consent: doc.requiresConsent,
     is_child_specific: doc.isChildSpecific,
     sections: doc.sections,
-    all_versions: [
-      {
-        version: doc.version,
-        effective_date: doc.effectiveDate,
-        is_current: true,
-        url: `/${doc.slug}`,
-      },
-    ],
   };
 });

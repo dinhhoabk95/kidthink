@@ -5,7 +5,7 @@ area: foundation
 status: approved
 mvp: true
 phase: P0
-reviewed: 2026-08-13
+reviewed: 2026-08-14
 owns:
   - Danh sách tác nhân và định nghĩa của từng loại
   - Ranh giới giữa hai guard
@@ -100,7 +100,7 @@ interface ManagerTokenPayload {
 
 | Role | Làm được | Không làm được |
 |---|---|---|
-| `super_admin` | Mọi thứ ở admin | — |
+| `super_admin` | Mọi thứ ở admin, gồm force đồng ý lại tài liệu pháp lý sau khi code đã deploy | — |
 | `content_reviewer` | Soạn, duyệt, publish nội dung; xem taxonomy | thanh toán, quản lý User, cấp entitlement, feature flag, export dữ liệu |
 
 Manager **không tự đăng ký** — không endpoint public nào tạo manager. Tạo qua seed hoặc

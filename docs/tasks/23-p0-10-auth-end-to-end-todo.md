@@ -4,6 +4,9 @@
 > Vùng nhạy cảm **auth** theo [`ai-codegen-pipeline.md`](../specs/01-platform/ai-codegen-pipeline.md):
 > test âm trước, human security reviewer duyệt diff, không auto-merge.
 >
+> **Superseded một phần 2026-08-14:** checkbox `policy_version` là evidence lịch sử. Task #40
+> revision sở hữu registration marker và migration consent mới.
+>
 > ```
 > export PATH=/Users/macbook/.nvm/versions/node/v24.15.0/bin:$PATH
 > ```

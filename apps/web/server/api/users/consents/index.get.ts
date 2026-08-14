@@ -1,5 +1,5 @@
 import { AppError } from "@kidthink/auth";
-import { consentLogs, getOwnerDb } from "@kidthink/db";
+import { consentLogs, consentRequirements, getOwnerDb } from "@kidthink/db";
 import { CONSENT_POLICY_MAP, type ConsentType } from "@kidthink/shared";
 import { desc, eq } from "drizzle-orm";
 import { defineEventHandler, setResponseStatus } from "h3";
@@ -14,60 +14,65 @@ const CONSENT_TYPES: readonly ConsentType[] = [
   "child_data",
 ];
 
+type ConsentLogRecord = typeof consentLogs.$inferSelect;
+type ConsentReqRecord = typeof consentRequirements.$inferSelect;
+
+function computeConsentState(
+  latestLog: ConsentLogRecord | undefined,
+  req: ConsentReqRecord | undefined
+): { status: "active" | "required" | "withdrawn"; acceptedAt: string | null } {
+  if (!latestLog) {
+    return { status: "required", acceptedAt: null };
+  }
+
+  if (latestLog.action === "withdrawn") {
+    return { status: "withdrawn", acceptedAt: null };
+  }
+
+  const acceptedAt = latestLog.createdAt.toISOString();
+  if (!req?.reconsentRequiredAt) {
+    return { status: "active", acceptedAt };
+  }
+
+  const isActive =
+    latestLog.createdAt.getTime() >= req.reconsentRequiredAt.getTime();
+  return {
+    status: isActive ? "active" : "required",
+    acceptedAt,
+  };
+}
+
 export default defineEventHandler(async (event) => {
   try {
     const userSession = await requireWebUserSession(event);
     const userId = Number(userSession.user_id);
 
     const db = getOwnerDb();
-    const logs = await db
-      .select()
-      .from(consentLogs)
-      .where(eq(consentLogs.userId, userId))
-      .orderBy(desc(consentLogs.createdAt));
+    const [logs, reqs] = await Promise.all([
+      db
+        .select()
+        .from(consentLogs)
+        .where(eq(consentLogs.userId, userId))
+        .orderBy(desc(consentLogs.createdAt), desc(consentLogs.id)),
+      db.select().from(consentRequirements),
+    ]);
 
     const consents = CONSENT_TYPES.map((type) => {
       const meta = CONSENT_POLICY_MAP[type];
-
-      // Find latest entry for this type (including child_data_withdrawn for child_data)
-      const relevantLogs = logs.filter((l) =>
-        type === "child_data"
-          ? l.consentType === "child_data" ||
-            l.consentType === "child_data_withdrawn"
-          : l.consentType === type
-      );
-
-      const latestLog = relevantLogs[0];
-
-      let status: "active" | "stale" | "withdrawn" | "unconsented" =
-        "unconsented";
-      let agreedVersion: string | null = null;
-      let agreedAt: string | null = null;
-
-      if (latestLog) {
-        agreedVersion = latestLog.policyVersion;
-        agreedAt = latestLog.createdAt.toISOString();
-
-        if (latestLog.consentType === "child_data_withdrawn") {
-          status = "withdrawn";
-        } else if (latestLog.policyVersion === meta.currentVersion) {
-          status = "active";
-        } else {
-          status = "stale";
-        }
-      }
+      const req = reqs.find((r) => r.consentType === type);
+      const latestLog = logs.find((l) => l.consentType === type);
+      const { status, acceptedAt } = computeConsentState(latestLog, req);
 
       return {
         consent_type: type,
         title_vi: meta.titleVi,
-        slug: meta.slug,
-        current_version: meta.currentVersion,
-        agreed_version: agreedVersion,
-        agreed_at: agreedAt,
+        document_url: `/${meta.slug}`,
+        accepted_at: acceptedAt,
+        requirement_at: req?.reconsentRequiredAt
+          ? req.reconsentRequiredAt.toISOString()
+          : null,
+        notice_vi: req?.noticeVi ?? null,
         status,
-        summary_vi: meta.summaryVi,
-        url: `/${meta.slug}`,
-        requires_consent: meta.requiresConsent ?? true,
       };
     });
 

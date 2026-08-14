@@ -5,6 +5,11 @@
 > Spec sở hữu: [`child-data-compliance.md`](../specs/00-foundation/child-data-compliance.md).
 > Quy trình tám việc: [`14-implementation-sequence-plan.md`](14-implementation-sequence-plan.md) mục 5.
 >
+> **Ghi chú lịch sử 2026-08-14:** phần `policy_version`, `child_data_withdrawn` và
+> `CONSENT_VERSION_STALE` dưới đây mô tả evidence tại thời điểm Task #17 chạy. Contract hiện
+> hành đã được `D-QV`–`D-QZ` của [Task #40](40-p1-14-account-consent-deletion-plan.md) thay thế;
+> không dùng các mục cũ làm hướng dẫn triển khai mới.
+>
 > ```
 > export PATH=/Users/macbook/.nvm/versions/node/v24.15.0/bin:$PATH
 > ```

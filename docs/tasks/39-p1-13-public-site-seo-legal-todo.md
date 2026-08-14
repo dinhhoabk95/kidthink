@@ -4,6 +4,9 @@
 > Thứ tự: SEO → catalog → detail → landing → legal → FAQ → banner (`D-HY`).
 > Tuyệt đối: **không script bên thứ ba** trên trang công khai (`D-IC`).
 >
+> **Superseded một phần 2026-08-14:** checkbox legal version bên dưới là evidence lịch sử;
+> Task #40 revision sở hữu việc xoá version surface và chuyển sang singleton.
+>
 > ```
 > export PATH=/Users/macbook/.nvm/versions/node/v24.15.0/bin:$PATH
 > ```

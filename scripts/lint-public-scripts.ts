@@ -1,5 +1,5 @@
-import { readdirSync, readFileSync, statSync } from "node:fs";
-import { join } from "node:path";
+import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
+import { isAbsolute, join } from "node:path";
 
 /**
  * BR-SEO2-08 & BR-LND-04 & D-IC:
@@ -55,12 +55,17 @@ function checkFile(
   }
 }
 
+const APPS_WEB_PREFIX_REGEX = /^apps\/web\//;
+
 export function scanDirectoryForThirdPartyScripts(
   dir: string
 ): ScriptLintViolation[] {
   const violations: ScriptLintViolation[] = [];
 
   function walk(currentPath: string) {
+    if (!existsSync(currentPath)) {
+      return;
+    }
     const entries = readdirSync(currentPath);
     for (const entry of entries) {
       const fullPath = join(currentPath, entry);
@@ -75,7 +80,18 @@ export function scanDirectoryForThirdPartyScripts(
     }
   }
 
-  walk(join(process.cwd(), dir));
+  let targetPath = dir;
+  if (!isAbsolute(dir)) {
+    if (existsSync(join(process.cwd(), dir))) {
+      targetPath = join(process.cwd(), dir);
+    } else if (existsSync(join(process.cwd(), "..", "..", dir))) {
+      targetPath = join(process.cwd(), "..", "..", dir);
+    } else {
+      targetPath = join(process.cwd(), dir.replace(APPS_WEB_PREFIX_REGEX, ""));
+    }
+  }
+
+  walk(targetPath);
   return violations;
 }
 

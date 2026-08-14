@@ -1,6 +1,10 @@
 import { AppError, appError } from "@kidthink/auth";
-import { childProfiles, consentLogs, getOwnerDb } from "@kidthink/db";
-import { CONSENT_POLICY_MAP, type ConsentType } from "@kidthink/shared";
+import {
+  childProfiles,
+  consentLogs,
+  consentRequirements,
+  getOwnerDb,
+} from "@kidthink/db";
 import { and, eq } from "drizzle-orm";
 import {
   createError,
@@ -20,7 +24,8 @@ import {
 const SubmitConsentSchema = z
   .object({
     consent_type: z.enum(["terms", "privacy", "child_data"]),
-    policy_version: z.string().min(1).max(20),
+    requirement_at: z.string().nullable().optional(),
+    accept: z.literal(true),
   })
   .strict();
 
@@ -37,7 +42,6 @@ export default defineEventHandler(async (event) => {
 
     const parsed = SubmitConsentSchema.safeParse(rawBody);
     if (!parsed.success) {
-      setResponseStatus(event, 422);
       throw createError({
         statusCode: 422,
         statusMessage: "VALIDATION_FAILED",
@@ -48,14 +52,8 @@ export default defineEventHandler(async (event) => {
       });
     }
 
-    const { consent_type: consentType, policy_version: policyVersion } =
+    const { consent_type: consentType, requirement_at: clientReqAt } =
       parsed.data;
-    const meta = CONSENT_POLICY_MAP[consentType as ConsentType];
-
-    // Check version matches current policy version (BR-CSM-01)
-    if (policyVersion !== meta.currentVersion) {
-      throw appError("CONSENT_VERSION_STALE");
-    }
 
     const ipAddress = getVerifiedRemoteIp(event);
     const userAgent = getHeader(event, "user-agent") || "unknown";
@@ -63,41 +61,63 @@ export default defineEventHandler(async (event) => {
 
     const db = getOwnerDb();
 
-    // BR-CSM-01 & BR-CSM-07: INSERT-only into consent_logs with metadata
-    await db.insert(consentLogs).values({
-      userId,
-      consentType,
-      policyVersion,
-      ipAddress,
-      userAgent,
-      createdAt: now,
+    const result = await db.transaction(async (tx) => {
+      // Lock requirement row for update to ensure atomic marker check (BR-CSM-09, D-QY)
+      const [req] = await tx
+        .select()
+        .from(consentRequirements)
+        .where(eq(consentRequirements.consentType, consentType))
+        .for("update");
+
+      const dbMarker = req?.reconsentRequiredAt
+        ? req.reconsentRequiredAt.toISOString()
+        : null;
+
+      // Verify requirement_at matches current DB marker
+      const clientMarkerNorm = clientReqAt
+        ? new Date(clientReqAt).toISOString()
+        : null;
+
+      if (dbMarker !== clientMarkerNorm) {
+        throw appError("CONSENT_REQUIREMENT_CHANGED");
+      }
+
+      // BR-CSM-01 & BR-CSM-07: INSERT-only into consent_logs
+      await tx.insert(consentLogs).values({
+        userId,
+        consentType,
+        action: "accepted",
+        ipAddress,
+        userAgent,
+        createdAt: now,
+      });
+
+      // BR-CSM-08: If re-consenting to child_data within 30 days, restore archived child profiles
+      if (consentType === "child_data") {
+        await tx
+          .update(childProfiles)
+          .set({
+            status: "active",
+            purgeAt: null,
+            updatedAt: now,
+          })
+          .where(
+            and(
+              eq(childProfiles.userId, userId),
+              eq(childProfiles.status, "archived")
+            )
+          );
+      }
+
+      return {
+        consent_type: consentType,
+        accepted_at: now.toISOString(),
+        status: "active" as const,
+      };
     });
 
-    // BR-CSM-08: If re-consenting to child_data within 30 days, restore archived child profiles
-    if (consentType === "child_data") {
-      await db
-        .update(childProfiles)
-        .set({
-          status: "active",
-          purgeAt: null,
-          updatedAt: now,
-        })
-        .where(
-          and(
-            eq(childProfiles.userId, userId),
-            eq(childProfiles.status, "archived")
-          )
-        )
-        .catch(() => null);
-    }
-
     setResponseStatus(event, 201);
-    return {
-      ok: true,
-      consent_type: consentType,
-      policy_version: policyVersion,
-      agreed_at: now.toISOString(),
-    };
+    return result;
   } catch (err: unknown) {
     if (err instanceof AppError) {
       setResponseStatus(event, err.status);

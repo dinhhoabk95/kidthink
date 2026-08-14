@@ -1,4 +1,4 @@
-# Checklist — Task #14: Thứ tự implement (baseline 130; hiện 134 spec)
+# Checklist — Task #14: Thứ tự implement 130 spec
 
 > Kế hoạch: [`14-implementation-sequence-plan.md`](14-implementation-sequence-plan.md).
 > Thứ tự gốc: [`roadmap.md`](../specs/roadmap.md). Cổng ra phase: [`SPEC.md`](../SPEC.md) §13.
@@ -109,7 +109,7 @@ MVP, và nó chỉ cần bước P1.2 xong.
 - [x] **P1.12** Báo cáo cơ bản, trang chính phụ huynh, thư viện — [`basic-report.md`](../specs/03-account/basic-report.md) · [`member-dashboard.md`](../specs/03-account/member-dashboard.md) · [`my-library.md`](../specs/03-account/my-library.md)
 - [x] **P1.13** Public site, SEO, trang pháp lý — [`landing-page.md`](../specs/02-public/landing-page.md) · [`game-catalog-public.md`](../specs/02-public/game-catalog-public.md) · [`game-detail-public.md`](../specs/02-public/game-detail-public.md) · [`seo-and-structured-data.md`](../specs/02-public/seo-and-structured-data.md) · [`legal-pages.md`](../specs/02-public/legal-pages.md) · [`faq-and-help.md`](../specs/02-public/faq-and-help.md) · [`cookie-and-consent-banner.md`](../specs/02-public/cookie-and-consent-banner.md)
 - [x] **P1.14** Cài đặt tài khoản, đồng ý pháp lý, xoá tài khoản — [`account-settings.md`](../specs/03-account/account-settings.md) · [`consent-management.md`](../specs/03-account/consent-management.md) · [`account-deletion.md`](../specs/03-account/account-deletion.md)
-- [ ] **P1.15** Đăng nhập SNS, **thứ tự không đảo được** — [`oauth-provider-registry.md`](../specs/01-platform/oauth-provider-registry.md) → [`social-login.md`](../specs/03-account/social-login.md) → [`social-account-linking.md`](../specs/03-account/social-account-linking.md)
+- [x] **P1.15** Đăng nhập SNS, **thứ tự không đảo được** — [`oauth-provider-registry.md`](../specs/01-platform/oauth-provider-registry.md) → [`social-login.md`](../specs/03-account/social-login.md) → [`social-account-linking.md`](../specs/03-account/social-account-linking.md)
 - [ ] **P1.16** Taxonomy admin & giám sát — [`taxonomy-browser.md`](../specs/06-admin/taxonomy-browser.md) · [`monitoring-and-alerting.md`](../specs/01-platform/monitoring-and-alerting.md)
 
 ## Cổng ra P1
@@ -194,6 +194,6 @@ localization và mở thị trường chỉ quay lại sau quyết định scope
 
 ## Cổng dừng cuối
 
-- [ ] `grep -rh "^status: " --include="*.md" docs/specs | sort | uniq -c` — 134 `implemented`
+- [ ] `grep -rh "^status: " --include="*.md" docs/specs | sort | uniq -c` — 130 `implemented`
 - [ ] `pnpm check && pnpm test && pnpm lint:specs && pnpm check:services` xanh
 - [ ] Không spec nào còn câu hỏi mở mang `Chặn phase` là một phase đã qua

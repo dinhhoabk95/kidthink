@@ -312,7 +312,7 @@ admin-dashboard (độc lập)
 - [x] Đọc hết 163 dòng **cạnh** [`child-data-compliance.md`](../specs/00-foundation/child-data-compliance.md)
 - [x] Điền "vì sao" cho **1** cảnh báo `C6`
 - [x] Kiểm ba rule không được nới: đúng 4 trường · cấm trang liệt kê toàn bộ trẻ · cấm tìm kiếm
-      trẻ theo tên. Nghị định 13/2023 là lý do, ghi lý do vào cột "vì sao"
+      trẻ theo tên. Luật 91/2025/QH15 cùng Nghị định 13/2023 là lý do, ghi lý do vào cột "vì sao"
 - [x] `status: approved`; commit `feat(specs): T9 bước 21 — approve child-profile-admin`
 
 ### Bước 22 — [`admin-dashboard.md`](../specs/06-admin/admin-dashboard.md)

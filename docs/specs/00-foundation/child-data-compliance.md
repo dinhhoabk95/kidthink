@@ -1,11 +1,11 @@
 ---
 spec: CHILD-DATA-COMPLIANCE
-title: Tuân thủ dữ liệu trẻ em — Nghị định 13/2023 và Luật Trẻ em
+title: Tuân thủ dữ liệu trẻ em — Luật 91/2025, Nghị định 13/2023 và Luật Trẻ em
 area: foundation
-status: implemented
+status: approved
 mvp: true
 phase: P0
-reviewed: 2026-08-11
+reviewed: 2026-08-14
 
 owns:
   - Danh sách đóng trường dữ liệu được phép thu của trẻ
@@ -20,8 +20,15 @@ depends_on:
 
 ## 1. Objective
 
-Thị trường vận hành: **Việt Nam**. Ràng buộc pháp lý: **Nghị định 13/2023/NĐ-CP** về bảo vệ
-dữ liệu cá nhân và **Luật Trẻ em 2016**.
+Thị trường vận hành: **Việt Nam**. Ràng buộc pháp lý: **Luật Bảo vệ dữ liệu cá nhân
+91/2025/QH15** (hiệu lực 2026-01-01), **Nghị định 13/2023/NĐ-CP** và **Luật Trẻ em 2016**.
+Luật 91 là căn cứ hiện hành; Nghị định 13 chỉ được áp dụng ở phần còn hiệu lực và không trái
+luật. Trước go-live, người rà soát pháp lý phải xác nhận nghĩa vụ cụ thể và văn bản hướng dẫn
+đang hiệu lực — đây là contract sản phẩm, không phải ý kiến pháp lý.
+
+Căn cứ nghiên cứu chính: [Luật 91/2025/QH15](https://vanban.chinhphu.vn/?docid=214590&pageid=27160) ·
+[Nghị định 13/2023/NĐ-CP](https://vanban.chinhphu.vn/default.aspx?docid=207759&pageid=27160) ·
+[hướng dẫn của Chính phủ về dữ liệu cá nhân trẻ em](https://xaydungchinhsach.chinhphu.vn/quy-dinh-bao-ve-du-lieu-ca-nhan-cua-tre-em-nguoi-bi-mat-hoac-han-che-nang-luc-hanh-vi-dan-su-119250725165056743.htm).
 
 Đây là **ràng buộc thiết kế, không phải checklist cuối**. Thu dữ liệu trẻ vượt nhu cầu là
 thứ không rút lại được sau khi đã ghi — xoá bản ghi không xoá được bản backup, log, và bản
@@ -30,7 +37,7 @@ sao đã chảy sang bên thứ ba.
 Spec này ép ràng buộc lên schema **trước** khi bảng được tạo.
 
 > Không áp COPPA (Mỹ) hay GDPR-K (EU) ở MVP. Mở thị trường ngoài Việt Nam thì spec này phải
-> được viết lại **trước**, không phải sau — xem §11.
+> được viết lại **trước**, không phải sau — xem mục 11.
 
 ## 2. Actors
 
@@ -58,15 +65,16 @@ Spec này ép ràng buộc lên schema **trước** khi bảng được tạo.
 2. User mở luồng tạo child profile lần đầu.
 3. Hệ thống hiện **bản tóm tắt** những gì sẽ thu và vì sao, kèm link chính sách đầy đủ.
 4. User tick đồng ý **tường minh** — không tick sẵn, không "tiếp tục nghĩa là đồng ý".
-5. Hệ thống INSERT `consent_logs` `{user_id, consent_type:'child_data', policy_version, ip, ua, created_at}`.
+5. Hệ thống INSERT `consent_logs` `{user_id, consent_type:'child_data', action:'accepted',
+   ip_address, user_agent, created_at}` sau khi xác nhận mốc yêu cầu vẫn chưa đổi.
 6. Chỉ khi bước 5 thành công, form tạo child profile mới mở.
 
 ## 5. Alternative flows
 
 | Nhánh | Hành vi |
 |---|---|
-| Chính sách đổi version | Lần đăng nhập kế tiếp yêu cầu đồng ý lại. Chưa đồng ý → chặn tạo trẻ mới, **không** chặn truy cập dữ liệu đã có |
-| User rút đồng ý | INSERT hàng `consent_type='child_data_withdrawn'`. Hồ sơ trẻ chuyển `archived`, dừng thu dữ liệu mới, giữ dữ liệu cũ 30 ngày rồi xoá |
+| Nội dung child-data đổi và `super_admin` force | Cập nhật marker `child_data`. Chưa đồng ý sau marker → chặn tạo hồ sơ, bắt đầu phiên chơi mới và ghi telemetry/progress mới; cho phiên đang chạy hoàn tất, vẫn cho đọc, sửa đúng dữ liệu cũ, archive, export và xoá |
+| User rút đồng ý | INSERT hàng `{consent_type:'child_data', action:'withdrawn'}`. Hồ sơ trẻ chuyển `archived`, dừng thu dữ liệu mới, giữ dữ liệu cũ 30 ngày rồi xoá |
 | User yêu cầu xoá tài khoản | §7.4 |
 | User yêu cầu bản sao dữ liệu | Export JSON trong 30 ngày |
 
@@ -80,7 +88,7 @@ Spec này ép ràng buộc lên schema **trước** khi bảng được tạo.
 | `BR-CDC-04` | Avatar chỉ chọn từ **bộ preset**. **NEVER upload ảnh chụp trẻ** | Ảnh khuôn mặt trẻ là dữ liệu sinh trắc. Không có ca dùng nào ở MVP biện minh được |
 | `BR-CDC-05` | **NEVER PII trong `telemetry_events`** — chỉ `child_uuid` | Bảng telemetry lớn nhất, giữ lâu nhất, và là bảng dễ export nhầm nhất |
 | `BR-CDC-06` | **NEVER gửi tên, `child_uuid`, hay tuổi chính xác của trẻ tới LLM provider** | Dữ liệu rời khỏi hạ tầng là rủi ro không định lượng được |
-| `BR-CDC-07` | `consent_logs` **INSERT-only**. Rút đồng ý = thêm hàng | Sửa hàng cũ làm mất bằng chứng đã từng đồng ý |
+| `BR-CDC-07` | `consent_logs` **INSERT-only**. Đồng ý và rút đồng ý là các hàng `action` mới; cấm sửa hàng cũ | Sửa hàng cũ làm mất bằng chứng đã từng đồng ý |
 | `BR-CDC-08` | **NEVER tracking script bên thứ ba** trên bề mặt trẻ và trang pháp lý | Trang giải thích quyền riêng tư mà tự nó theo dõi là mâu thuẫn không giải thích được |
 | `BR-CDC-09` | **NEVER quảng cáo, nhắm mục tiêu, leaderboard công khai, hay cơ chế gây nghiện** | Luật Trẻ em cấm khai thác thương mại nhắm vào trẻ |
 | `BR-CDC-10` | Xoá tài khoản → cascade xoá dữ liệu trẻ trong **30 ngày**; `telemetry_events` ẩn danh hoá | Xoá phải thực sự xảy ra, có thời hạn kiểm được |
@@ -116,11 +124,15 @@ vân tay) · định vị · danh bạ · nội dung tự do do trẻ nhập.
 | Field | Ghi chú |
 |---|---|
 | `user_id` | Người lớn cho đồng ý |
-| `consent_type` | `terms` \| `privacy` \| `child_data` \| `child_data_withdrawn` |
-| `policy_version` | Bản chính sách tại thời điểm đồng ý |
+| `consent_type` | `terms` \| `privacy` \| `child_data` |
+| `action` | `accepted` \| `withdrawn` |
 | `ip_address` `user_agent` `created_at` | Bằng chứng |
 
-Không `UPDATE`, không `DELETE`. Ép bằng quyền DB, không chỉ bằng quy ước.
+Không `policy_version`; hệ thống chỉ có một bản tài liệu hiện hành trong code. Consent hợp lệ
+khi action mới nhất là `accepted` và thời điểm nhận không trước
+`consent_requirements.reconsent_required_at` của loại tương ứng. Không `UPDATE`, không
+`DELETE` log sau cutover; ép bằng quyền DB, không chỉ bằng quy ước. Schema canonical ở
+[`schema-identity-billing.md`](../01-platform/schema-identity-billing.md) mục 7.4.
 
 ### 7.3 `telemetry_events`
 
@@ -147,16 +159,16 @@ User yêu cầu xoá
 
 | Route | Ràng buộc bổ sung |
 |---|---|
-| `POST /api/users/children` | 428 `CONSENT_REQUIRED` nếu chưa có `consent_logs` hợp lệ với `policy_version` hiện hành |
+| `POST /api/users/children` | 428 `CONSENT_REQUIRED` nếu action mới nhất không phải `accepted` sau marker `child_data` hiện hành |
 | `GET /api/users/data-export` | Trả JSON toàn bộ dữ liệu trẻ của caller. Rate limit 1 lần / 24h |
 | `POST /api/users/account/delete` | Đặt `pending_deletion`, trả `{ purge_at }` |
 | `POST /api/users/account/delete/cancel` | Chỉ trong 30 ngày |
-| `POST /api/users/consent/withdraw` | INSERT hàng mới, không sửa hàng cũ |
+| `POST /api/users/consents/withdraw` | INSERT action `withdrawn`, không sửa hàng cũ |
 
 | Mã lỗi | HTTP |
 |---|---|
 | `CONSENT_REQUIRED` | 428 |
-| `CONSENT_VERSION_STALE` | 409 |
+| `CONSENT_REQUIREMENT_CHANGED` | 409 |
 | `CHILD_FIELD_NOT_ALLOWED` | 400 |
 | `EXPORT_RATE_LIMITED` | 429 |
 
@@ -191,6 +203,18 @@ Scenario: BR-CDC-07 — rút đồng ý không sửa hàng cũ
   When user rút đồng ý
   Then consent_logs có 2 hàng
   And hàng đầu tiên không đổi
+
+Scenario: force child-data dừng thu mới nhưng không khoá quyền của user
+  Given super_admin đã force child_data sau lần user đồng ý gần nhất
+  When user bắt đầu phiên chơi mới hoặc tạo hồ sơ trẻ
+  Then trả 428 CONSENT_REQUIRED
+  But user vẫn đọc, sửa đúng, archive, export và yêu cầu xoá dữ liệu cũ được
+
+Scenario: phiên đang chạy được hoàn tất khi marker đổi
+  Given một phiên chơi đã bắt đầu trước lúc super_admin force child_data
+  When phiên gửi kết quả kết thúc hợp lệ
+  Then hệ thống nhận kết quả của phiên đó
+  And lần bắt đầu phiên kế tiếp trả 428 CONSENT_REQUIRED
 
 Scenario: BR-CDC-10 — xoá thực sự xảy ra sau 30 ngày
   Given user yêu cầu xoá tài khoản vào ngày D
@@ -236,7 +260,7 @@ Scenario: BR-CDC-08 — không có tracking bên thứ ba trên bề mặt trẻ
 
 | # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
 |---|---|---|---|---|
-| 1 | Ngân sách và người rà soát pháp lý cho ToS / Privacy / Chính sách trẻ em theo ND 13/2023 | Go-live | Hoãn, chặn go-live | người quyết |
-| 2 | Có cần đăng ký hồ sơ đánh giá tác động xử lý dữ liệu (DPIA) với Bộ Công an không? ND13 Điều 24 yêu cầu với dữ liệu nhạy cảm | Go-live | Hoãn, chặn go-live | người quyết |
+| 1 | Ngân sách và người rà soát pháp lý cho ToS / Privacy / Chính sách trẻ em theo Luật 91/2025/QH15, Nghị định 13/2023 và văn bản hướng dẫn hiện hành | Go-live | Hoãn, chặn go-live | người quyết |
+| 2 | Hồ sơ đánh giá tác động xử lý dữ liệu và thủ tục với cơ quan chuyên trách phải làm theo căn cứ, biểu mẫu và thời hạn nào đang hiệu lực tại ngày go-live? | Go-live | Hoãn, chặn go-live | người quyết |
 | 3 | Retention của `telemetry_events` đã ẩn danh — giữ vĩnh viễn hay cắt sau N năm? | Chi phí lưu trữ | Hoãn, chặn phase P5 | hoãn |
 | ~~4~~ | ~~Nếu mở thị trường ngoài VN thì COPPA hay GDPR-K trước?~~ **Đóng 2026-08-11 (`D-NM`, triển khai D11)**: roadmap hiện hành chỉ vận hành tại Việt Nam, không chọn jurisdiction giả. Mở thị trường là chương trình scope mới và phải viết lại spec này trước khi lập task. | — | Đã đóng | D-NM |

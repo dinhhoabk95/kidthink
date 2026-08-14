@@ -2,7 +2,7 @@
 spec: OAUTH-PROVIDER-REGISTRY
 title: Đăng ký nhà cung cấp OAuth
 area: platform
-status: approved
+status: implemented
 mvp: true
 phase: P1
 reviewed: 2026-08-13

@@ -3,6 +3,9 @@
 > Lý do, đồ thị phụ thuộc, bảy quyết định `D-AH`–`D-AN` và quy trình chuẩn bảy việc:
 > [`06-p1-spec-closure-plan.md`](06-p1-spec-closure-plan.md).
 >
+> **Superseded một phần 2026-08-14:** policy version là quyết định lịch sử; root D12 và Task #40
+> revision là contract singleton + force marker hiện hành.
+>
 > Mọi lệnh chạy từ thư mục `kidthink/`. Đặt lại đường dẫn Node trước mỗi phiên shell mới —
 > **kể cả trước mỗi lệnh `git commit`**, vì lefthook chạy `pnpm` và shell mặc định là v20:
 >

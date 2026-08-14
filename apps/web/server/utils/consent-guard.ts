@@ -1,47 +1,99 @@
 import { appError } from "@kidthink/auth";
-import { consentLogs, getOwnerDb } from "@kidthink/db";
-import { CONSENT_POLICY_MAP, type ConsentType } from "@kidthink/shared";
-import { and, desc, eq, or } from "drizzle-orm";
+import { consentLogs, consentRequirements, getOwnerDb } from "@kidthink/db";
+import type { ConsentType } from "@kidthink/shared";
+import { desc, eq } from "drizzle-orm";
 
 /**
- * BR-CSM-04 & D-II: Guard attached ONLY to child profile creation route,
- * verifying that the user has consented to the current policy version.
- * Read routes (reports, dashboard, history) are strictly NOT blocked by this guard.
+ * Closed allow-list of exempt paths when terms or privacy requires re-consent (D-QX, BR-CSM-05).
+ * All other /api/users/** routes must return 428 CONSENT_REQUIRED.
  */
+const EXEMPT_PATH_PREFIXES = [
+  "/api/guest/",
+  "/api/managers/",
+  "/api/users/consents",
+  "/api/users/auth/reauth",
+  "/api/users/auth/logout",
+  "/api/users/auth/logout-all",
+  "/api/users/auth/me",
+  "/api/users/auth/session",
+  "/api/users/data-export",
+  "/api/users/account/delete",
+];
+
+const CONSENT_NAMES: Record<ConsentType, string> = {
+  terms: "điều khoản dịch vụ",
+  privacy: "chính sách quyền riêng tư",
+  child_data: "chính sách bảo vệ dữ liệu trẻ em",
+};
+
+export function isAllowedConsentExemptPath(pathname: string): boolean {
+  return EXEMPT_PATH_PREFIXES.some(
+    (prefix) => pathname === prefix || pathname.startsWith(prefix)
+  );
+}
+
+/**
+ * Verifies that the user has an active consent for the given type.
+ * Throws 428 CONSENT_REQUIRED if missing, withdrawn, or older than the requirement marker.
+ */
+export async function requireConsentActive(
+  userId: number,
+  type: ConsentType
+): Promise<void> {
+  const db = getOwnerDb();
+
+  const [latestLog, req] = await Promise.all([
+    db
+      .select()
+      .from(consentLogs)
+      .where(eq(consentLogs.userId, userId))
+      .where(eq(consentLogs.consentType, type))
+      .orderBy(desc(consentLogs.createdAt), desc(consentLogs.id))
+      .limit(1)
+      .then((rows) => rows[0]),
+    db
+      .select()
+      .from(consentRequirements)
+      .where(eq(consentRequirements.consentType, type))
+      .limit(1)
+      .then((rows) => rows[0]),
+  ]);
+
+  if (!latestLog || latestLog.action === "withdrawn") {
+    const consentName = CONSENT_NAMES[type] || "văn bản pháp lý";
+    throw appError("CONSENT_REQUIRED", {
+      reason: `Chưa đồng ý với ${consentName}.`,
+      consent_type: type,
+    });
+  }
+
+  if (
+    req?.reconsentRequiredAt &&
+    latestLog.createdAt.getTime() < req.reconsentRequiredAt.getTime()
+  ) {
+    throw appError("CONSENT_REQUIRED", {
+      reason: "Chính sách đã cập nhật yêu cầu tái đồng ý.",
+      consent_type: type,
+      requirement_at: req.reconsentRequiredAt.toISOString(),
+      notice_vi: req.noticeVi,
+    });
+  }
+}
+
+/** Alias for backward compatibility */
 export async function requireCurrentConsent(
   userId: number,
   type: ConsentType = "child_data"
 ): Promise<void> {
-  const db = getOwnerDb();
-  const meta = CONSENT_POLICY_MAP[type];
+  await requireConsentActive(userId, type);
+}
 
-  const [latestLog] = await db
-    .select()
-    .from(consentLogs)
-    .where(
-      and(
-        eq(consentLogs.userId, userId),
-        type === "child_data"
-          ? or(
-              eq(consentLogs.consentType, "child_data"),
-              eq(consentLogs.consentType, "child_data_withdrawn")
-            )
-          : eq(consentLogs.consentType, type)
-      )
-    )
-    .orderBy(desc(consentLogs.createdAt))
-    .limit(1);
-
-  if (!latestLog || latestLog.consentType === "child_data_withdrawn") {
-    throw appError("CONSENT_REQUIRED");
-  }
-
-  if (latestLog.policyVersion !== meta.currentVersion) {
-    throw appError("CONSENT_REQUIRED", {
-      reason:
-        "Chính sách đã cập nhật phiên bản mới. Vui lòng xem và đồng ý trước khi tạo hồ sơ trẻ.",
-      stale_version: latestLog.policyVersion,
-      current_version: meta.currentVersion,
-    });
-  }
+/**
+ * Verifies both terms and privacy consents are active.
+ */
+export async function assertUserTermsAndPrivacyConsent(
+  userId: number
+): Promise<void> {
+  await requireConsentActive(userId, "terms");
+  await requireConsentActive(userId, "privacy");
 }

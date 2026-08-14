@@ -1,7 +1,12 @@
-# Kế hoạch — Task #14: Thứ tự implement cho toàn bộ 130 spec
+# Kế hoạch — Task #14: Thứ tự implement (baseline 130 spec; hiện 134)
 
 > Viết 2026-08-08, đo tại commit `be75db4` (Task #12 đóng, corpus 130/130 `approved`, lint 0 lỗi
 > 0 cảnh báo). Bản đồ liên task: [`CORPUS-CLOSURE.md`](CORPUS-CLOSURE.md).
+>
+> **Cập nhật 2026-08-14:** corpus hiện có **134** module. Bốn spec thêm sau baseline đã được
+> gắn vào task sở hữu; [`legal-consent-admin.md`](../specs/06-admin/legal-consent-admin.md) thuộc
+> P1.14 revision của [Task #40](40-p1-14-account-consent-deletion-plan.md). Các số 130 bên dưới
+> là phép đo lịch sử tại commit, không được viết lại.
 >
 > Đây là task đầu tiên **viết code sản phẩm**. Mọi task từ #1 tới #13 là spec và tooling.
 >
@@ -157,7 +162,7 @@ Việc 4 là việc hay bị bỏ nhất. [`business-rules.md`](../specs/00-foun
 có 126 tiền tố `BR`; bỏ sót một rule gating
 hoặc một rule dữ liệu trẻ là loại lỗi không lộ ra ở test hạnh phúc.
 
-## 6. Thứ tự — toàn bộ 130 spec
+## 6. Thứ tự — baseline 130 spec, mở rộng theo task sở hữu tới 134
 
 ```
 Bước 1  : Vá 12 lỗ hổng roadmap + xử lý 5 cạnh đảo phase   → Cổng dừng A
@@ -188,7 +193,8 @@ Ba registry ([`business-rules.md`](../specs/00-foundation/business-rules.md),
 
 ### Cổng dừng A — sau bước 1, trước dòng code đầu tiên
 
-- [`roadmap.md`](../specs/roadmap.md) phủ **130/130** spec; lệnh đếm ở mục 9 ra 0 spec thiếu.
+- [`roadmap.md`](../specs/roadmap.md) phủ **134/134** spec ở corpus hiện hành; baseline tại
+  commit kế hoạch là 130/130.
 - Năm cạnh đảo phase đã xử lý: mỗi cái hoặc được xác minh là contract-only, hoặc bị bỏ, hoặc
   spec đổi phase — kèm mã `D-*` cho từng cái.
 - `pnpm lint:specs` 0 lỗi 0 cảnh báo (roadmap cũng bị lint chấm).

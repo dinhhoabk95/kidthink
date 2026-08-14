@@ -16,7 +16,7 @@ import {
 const ParentGateVerifySchema = z
   .object({
     challenge_payload: z.string().min(1).max(2048),
-    answer: z.number().int().min(4).max(81),
+    answer: z.number().int(),
   })
   .strict();
 

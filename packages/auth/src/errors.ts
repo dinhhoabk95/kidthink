@@ -119,30 +119,23 @@ export const AUTH_ERROR_DEFINITIONS = {
     status: 403,
     message: "Câu trả lời thử thách phụ huynh không chính xác.",
   },
-  PASSWORD_NOT_SET: {
-    status: 409,
-    message: "Tài khoản chưa có mật khẩu. Hãy dùng Đặt mật khẩu.",
-  },
-  PASSWORD_ALREADY_SET: {
+  SOCIAL_EMAIL_CONFLICT: {
     status: 409,
     message:
-      "Tài khoản đã có mật khẩu. Vui lòng sử dụng tính năng Đổi mật khẩu.",
+      "Email này đã được sử dụng bởi tài khoản khác. Vui lòng đăng nhập bằng mật khẩu.",
   },
-  EMAIL_ALREADY_IN_USE: {
+  SOCIAL_IDENTITY_ALREADY_LINKED: {
     status: 409,
-    message: "Địa chỉ email này đã được sử dụng bởi tài khoản khác.",
+    message: "Tài khoản mạng xã hội này đã được liên kết với người dùng khác.",
   },
-  CONSENT_VERSION_STALE: {
+  SOCIAL_PROVIDER_ALREADY_LINKED: {
     status: 409,
-    message: "Chính sách đã cập nhật. Vui lòng xem lại.",
+    message: "Bạn đã liên kết với nhà cung cấp mạng xã hội này rồi.",
   },
-  TRANSACTIONAL_NOTIFICATION_CANNOT_BE_DISABLED: {
-    status: 422,
-    message: "Thông báo giao dịch và bảo mật là bắt buộc, không thể tắt.",
-  },
-  ACCOUNT_PURGED: {
-    status: 410,
-    message: "Tài khoản đã bị xoá vĩnh viễn và không thể khôi phục.",
+  LAST_LOGIN_METHOD: {
+    status: 409,
+    message:
+      "Không thể huỷ liên kết vì đây là phương thức đăng nhập duy nhất của tài khoản.",
   },
   OAUTH_PROVIDER_DISABLED: {
     status: 404,
@@ -154,31 +147,35 @@ export const AUTH_ERROR_DEFINITIONS = {
   },
   OAUTH_PROVIDER_ERROR: {
     status: 502,
-    message:
-      "Không thể kết nối tới nhà cung cấp đăng nhập. Vui lòng thử lại sau hoặc dùng mật khẩu.",
+    message: "Lỗi kết nối từ nhà cung cấp đăng nhập mạng xã hội.",
   },
-  SOCIAL_EMAIL_CONFLICT: {
+  CONSENT_REQUIREMENT_CHANGED: {
     status: 409,
-    message:
-      "Email này đã có tài khoản KidThink. Hãy đăng nhập rồi liên kết trong Cài đặt → Bảo mật.",
+    message: "Yêu cầu đồng ý vừa được cập nhật. Vui lòng xem lại.",
   },
-  SOCIAL_IDENTITY_ALREADY_LINKED: {
+  CONSENT_VERSION_STALE: {
     status: 409,
-    message:
-      "Tài khoản mạng xã hội này đã được liên kết với một tài khoản khác.",
+    message: "Phiên bản chính sách không khớp với phiên bản hiện hành.",
   },
-  SOCIAL_PROVIDER_ALREADY_LINKED: {
+  PASSWORD_NOT_SET: {
     status: 409,
-    message: "Bạn đã liên kết với nhà cung cấp này rồi.",
+    message: "Tài khoản chưa có mật khẩu. Hãy dùng Đặt mật khẩu.",
   },
-  LAST_LOGIN_METHOD: {
+  PASSWORD_ALREADY_SET: {
     status: 409,
-    message:
-      "Không thể gỡ phương thức đăng nhập cuối cùng. Vui lòng đặt mật khẩu trước khi gỡ.",
+    message: "Tài khoản đã có mật khẩu. Hãy dùng Đổi mật khẩu.",
   },
-  MFA_REQUIRED: {
-    status: 428,
-    message: "Vui lòng hoàn tất xác thực đa yếu tố để tiếp tục.",
+  TRANSACTIONAL_NOTIFICATION_CANNOT_BE_DISABLED: {
+    status: 422,
+    message: "Thông báo giao dịch là bắt buộc và không thể tắt.",
+  },
+  ACCOUNT_PURGED: {
+    status: 410,
+    message: "Tài khoản đã bị xoá vĩnh viễn và không thể khôi phục.",
+  },
+  EMAIL_ALREADY_IN_USE: {
+    status: 409,
+    message: "Địa chỉ email này đã được sử dụng bởi một tài khoản khác.",
   },
 } as const;
 
@@ -192,7 +189,6 @@ export interface AuthErrorResponse {
 }
 
 export class AppError extends Error {
-  readonly isAppError = true;
   readonly code: AuthErrorCode;
   readonly status: number;
   readonly details?: AuthErrorDetails;

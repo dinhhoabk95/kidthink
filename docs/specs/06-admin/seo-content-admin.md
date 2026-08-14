@@ -5,7 +5,7 @@ area: admin
 status: approved
 mvp: true
 phase: P2
-reviewed: 2026-08-08
+reviewed: 2026-08-14
 owns:
   - Soạn nội dung trang SEO
   - Ràng buộc meta và structured data
@@ -62,6 +62,7 @@ sửa được **không cần deploy**.
 | `BR-SEO-06` | Structured data sinh **từ dữ liệu**, không gõ tay JSON-LD | JSON-LD gõ tay sẽ lệch khỏi nội dung thật |
 | `BR-SEO-07` | Trang SEO đi qua cùng vòng đời duyệt như nội dung khác | Kiểm soát chất lượng nội dung công khai và ngăn ngừa thông tin không chính xác hoặc vi phạm quy định |
 | `BR-SEO-08` | Cấm — **NEVER nội dung nhắm tới trẻ** trên trang SEO | Trang SEO là bề mặt người lớn |
+| `BR-SEO-09` | `/terms`, `/privacy`, `/child-privacy` và mọi tài liệu pháp lý cấm nằm trong `seo_pages` hay editor này | Legal document là singleton code-owned cần diff PR và legal review; editor runtime sẽ tạo một nguồn contract thứ hai |
 
 ## 7. Data
 
@@ -71,6 +72,9 @@ sửa được **không cần deploy**.
 `og_image_path` · `canonical_url` · `noindex` · `related_content_refs[]` ·
 `faq_items[]` (câu hỏi + trả lời, sinh FAQPage schema) · `access_tier` = luôn `free` ·
 `status` · `content_version`.
+
+`page_type='static'` chỉ dành cho trang marketing tĩnh. Danh sách slug legal thuộc
+[`legal-pages.md`](../02-public/legal-pages.md) bị schema/handler từ chối, không chỉ ẩn khỏi UI.
 
 ### 7.2 Structured data sinh tự động
 
@@ -126,6 +130,11 @@ Scenario: BR-SEO-05 — cảnh báo độ dài
   When title dài 90 ký tự
   Then hiện cảnh báo
   And vẫn lưu được
+
+Scenario: BR-SEO-09 — editor không nhận slug pháp lý
+  When manager tạo seo_page với slug privacy
+  Then trả 422
+  And không tạo record
 
 Scenario: preview snippet đúng độ dài thật
   When mở preview

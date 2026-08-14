@@ -2,10 +2,10 @@
 spec: AUDIT-LOG
 title: Nhật ký kiểm toán
 area: platform
-status: implemented
+status: approved
 mvp: true
 phase: P0
-reviewed: 2026-08-07
+reviewed: 2026-08-14
 owns:
   - Danh sách hành động bắt buộc audit
   - Hình dạng bản ghi audit
@@ -101,11 +101,11 @@ Index: `(entity_type, entity_id, created_at)` · `(actor_type, actor_id, created
 | Tiền | `order_approved` · `order_rejected` · `bonus_days_granted` | có |
 | Nội dung | `content_created` · `content_submitted` · `content_approved` · `content_rejected` · `content_published` · `content_archived` · `content_rolled_back` · `content_deleted` | có (`content_rejected`, `content_rolled_back`, `content_deleted`) |
 | Asset | `image_uploaded` · `image_deleted` | có (`image_deleted`) |
-| Cấu hình | `feature_flag_changed` · `package_catalog_deployed` | có (`feature_flag_changed`) |
+| Cấu hình | `feature_flag_changed` · `package_catalog_deployed` · `legal_reconsent_forced` | có (`feature_flag_changed`, `legal_reconsent_forced`) |
 | Dữ liệu | `data_exported` · `consent_withdrawn` | có (`data_exported`) |
 | Trẻ | `child_profile_archived` · `child_data_purged` | không |
 
-**28 hành động.** Thêm hành động mới vào bảng này **trước** khi implement nó.
+**29 hành động.** Thêm hành động mới vào bảng này **trước** khi implement nó.
 
 ### 7.3 Cái gì không audit
 
@@ -154,7 +154,7 @@ Scenario: BR-AUD-02 — audit fail thì hành động không xảy ra
   And không entitlement nào được cấp
 
 Scenario: BR-AUD-03 — mọi hành động trong danh sách đều có audit
-  Given lần lượt thực hiện đủ 28 hành động ở §7.2
+  Given lần lượt thực hiện đủ 29 hành động ở §7.2
   Then mỗi hành động sinh đúng một hàng audit_logs với action tương ứng
 
 Scenario: BR-AUD-04 — có before và after
@@ -188,6 +188,13 @@ Scenario: BR-AUD-06 — không bí mật trong audit
   Given user đổi mật khẩu
   When đọc hàng audit
   Then before_data và after_data không chứa password hay hash
+
+Scenario: force đồng ý lại có audit nguyên tử
+  Given super_admin force privacy với lý do hợp lệ
+  When transaction commit
+  Then có một audit action legal_reconsent_forced cho consent_requirement privacy
+  And before_data và after_data chứa marker tương ứng
+  And reason chứa lý do nội bộ
 ```
 
 ## 10. Boundaries

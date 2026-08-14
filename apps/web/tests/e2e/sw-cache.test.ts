@@ -4,9 +4,7 @@ import { describe, expect, it } from "vitest";
 
 describe("Task P1.6 — Service Worker & Cache Policy (D-GG, BR-OFF-07, BR-OFF-08)", () => {
   function getSwPath(): string {
-    return process.cwd().endsWith("apps/web")
-      ? path.join(process.cwd(), "public/sw.js")
-      : path.join(process.cwd(), "apps/web/public/sw.js");
+    return path.resolve(import.meta.dirname, "../../public/sw.js");
   }
 
   it("BR-OFF-07: sw.js exists, handles fetch events, and NEVER caches API or paid content routes", () => {

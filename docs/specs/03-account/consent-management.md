@@ -86,7 +86,7 @@ Một consent hợp lệ khi hàng mới nhất của loại đó có `action='a
 | `BR-CSM-07` | Mỗi hàng ghi `consent_type`, `action`, IP, user agent và thời điểm; cấm `policy_version` | Đây là bằng chứng hành động trong mô hình marker, không phải bằng chứng policy version |
 | `BR-CSM-08` | Rút `child_data` **không xoá ngay** — archive rồi purge sau 30 ngày | Cho phép đổi ý và khôi phục trước khi dữ liệu bị xoá |
 | `BR-CSM-09` | POST đồng ý phải so `requirement_at` client đã xem với marker hiện hành trong cùng transaction; lệch trả 409 | Admin có thể force lúc form đang mở; không đối chiếu sẽ ghi nhận đồng ý cho nội dung User chưa đọc |
-| `BR-CSM-10` | Force `child_data` chặn tạo hồ sơ, session và learning-data mới nhưng không cắt session đang chạy hay chặn đọc, sửa đúng, archive, export, xoá dữ liệu cũ | Dừng thu thập mới mà không gây hại trải nghiệm của trẻ hoặc giữ quyền chủ thể dữ liệu làm con tin |
+| `BR-CSM-10` | Force `child_data` chặn mọi **thu thập mới** nhưng không cắt session đang chạy và không chặn đọc dữ liệu cũ | Dừng xử lý mới mà không gây hại trải nghiệm của trẻ hoặc giữ dữ liệu làm con tin |
 
 ## 7. Data
 
@@ -96,7 +96,7 @@ Một consent hợp lệ khi hàng mới nhất của loại đó có `action='a
 |---|---|---|:--:|
 | `terms` | Đăng ký | Product access ngoài allow-list mục 7.4 | Có; dẫn sang xoá tài khoản |
 | `privacy` | Đăng ký | Product access ngoài allow-list mục 7.4 | Có; dẫn sang xoá tài khoản |
-| `child_data` | Trước lần thu dữ liệu trẻ đầu tiên | Tạo hồ sơ, session chơi và learning-data mới; không chặn thao tác thực hiện quyền trên dữ liệu cũ | Có |
+| `child_data` | Trước lần thu dữ liệu trẻ đầu tiên | Session chơi và mutation thu dữ liệu trẻ mới | Có |
 
 Ba loại là danh sách đóng. Không có consent tiếp thị ở MVP vì không có email tiếp thị theo
 quy tắc `BR-NOT-06` của [`notification-service.md`](../01-platform/notification-service.md).
@@ -251,5 +251,6 @@ Scenario: BR-CSM-02 — không tick sẵn
 
 | # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
 |---|---|---|---|---|
-| ~~1~~ | ~~Diff chính sách sinh tự động hay soạn tay?~~ **Đóng 2026-08-14 (`D-QV`, root D12)**: không có policy version nên không sinh diff; `super_admin` nhập `notice_vi` cho lần force và User đọc toàn văn singleton | — | Đã đóng | D-QV (T40) |
-| ~~2~~ | ~~Version chính sách đổi bao lâu một lần và ai quyết định?~~ **Đóng 2026-08-14 (`D-QV`, root D12)**: không có version; nội dung đổi bằng PR, còn `super_admin` quyết định force sau deploy | — | Đã đóng | D-QV (T40) |
+| ~~1~~ | ~~Diff chính sách sinh tự động hay soạn tay?~~ **Đóng 2026-08-14 (`D-QV`)**: không có policy version nên không sinh diff; `super_admin` nhập `notice_vi` cho lần force và User đọc toàn văn singleton | — | Đã đóng | D-QV |
+| ~~2~~ | ~~Version chính sách đổi bao lâu một lần và ai quyết định?~~ **Đóng 2026-08-14 (`D-QV`)**: không có version; nội dung đổi bằng PR, còn `super_admin` quyết định force sau deploy | — | Đã đóng | D-QV |
+

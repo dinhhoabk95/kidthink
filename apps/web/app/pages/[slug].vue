@@ -13,12 +13,11 @@
 
         <!-- Legal Document Content -->
         <article class="legal-article" v-else>
-          <!-- Header with Version (BR-LGL-01) -->
+          <!-- Header (BR-LGL-01) -->
           <header class="legal-header">
             <div class="meta-badges">
-              <span class="badge-version">Phiên bản {{ doc.version }}</span>
               <span class="badge-date"
-                >Ngày hiệu lực: {{ formatDate(doc.effectiveDate) }}</span
+                >Cập nhật ngày: {{ formatDate(doc.effectiveDate) }}</span
               >
               <span class="badge-child-safety" v-if="doc.isChildSpecific"
                 >🛡️ Bảo vệ trẻ em</span
@@ -46,28 +45,6 @@
               </div>
             </section>
           </div>
-
-          <!-- Version History Footer (BR-LGL-02) -->
-          <footer class="legal-footer-meta">
-            <div class="version-history-box">
-              <h3 class="history-title">Lịch sử các phiên bản</h3>
-              <p class="history-note">
-                Theo quy định, mọi phiên bản chính sách cũ đều được lưu trữ vĩnh
-                viễn và có thể tra cứu minh bạch:
-              </p>
-              <ul class="version-list">
-                <li>
-                  <strong>v{{ doc.version }} (Hiện hành)</strong>
-                  — Có hiệu lực từ {{ formatDate(doc.effectiveDate) }}
-                </li>
-                <li>
-                  <NuxtLink class="version-link" :to="`/${doc.slug}/v/1.0`">
-                    v1.0 (Lưu trữ) ➔
-                  </NuxtLink>
-                </li>
-              </ul>
-            </div>
-          </footer>
         </article>
       </div>
     </main>
@@ -100,7 +77,7 @@
 
   useSeoMeta({
     title: doc.value
-      ? `${doc.value.title} (v${doc.value.version}) — KidThink`
+      ? `${doc.value.title} — KidThink`
       : "Trang pháp lý — KidThink",
     description:
       doc.value?.summary || "Văn bản pháp lý và chính sách nền tảng KidThink.",

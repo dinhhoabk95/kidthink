@@ -5,7 +5,7 @@ area: account
 status: approved
 mvp: true
 phase: P0
-reviewed: 2026-08-13
+reviewed: 2026-08-14
 owns:
   - Luồng đăng ký bằng email
   - Ràng buộc đồng ý điều khoản
@@ -39,11 +39,12 @@ Guest → User. Cấm Trẻ không đăng ký.
 
 ## 4. Main flow
 
-1. Nhập email + mật khẩu + tên hiển thị.
+1. Tải marker `terms` và `privacy` hiện hành, rồi nhập email + mật khẩu + tên hiển thị.
 2. Tick đồng ý **Điều khoản** và **Chính sách quyền riêng tư** — hai checkbox riêng, không
    tick sẵn.
 3. Tạo `users` `status = pending_verification`.
-4. Ghi `consent_logs` cho cả hai loại, kèm `policy_version`.
+4. Trong cùng transaction, khoá và đối chiếu hai marker User đã xem, rồi ghi hai hàng
+   `consent_logs` với `action='accepted'`.
 5. Gửi email xác thực.
 6. Đăng nhập được ngay ở chế độ **hạn chế** — chưa tạo được child profile.
 
@@ -54,6 +55,7 @@ Guest → User. Cấm Trẻ không đăng ký.
 | Email đã đăng ký | **409** `EMAIL_ALREADY_REGISTERED` — chỉ ở luồng này |
 | Mật khẩu yếu | 422 kèm yêu cầu cụ thể |
 | Chưa tick đồng ý | 422, không tạo tài khoản |
+| Marker đổi khi form đang mở | **409** `CONSENT_REQUIREMENT_CHANGED`; không tạo tài khoản, tải lại tài liệu và hai checkbox |
 | Guest có phiên chơi ẩn danh | Sau đăng ký, **không** gộp dữ liệu — xem `BR-REG-06` |
 | Đăng ký từ trang giá | Sau xác thực → chuyển thẳng tới luồng thanh toán |
 | Chọn "Tiếp tục với Google / Facebook" | Rời luồng này sang [`social-login.md`](social-login.md) §4 nhánh B. Hai checkbox đồng ý **vẫn bắt buộc** |
@@ -65,7 +67,7 @@ Guest → User. Cấm Trẻ không đăng ký.
 |---|---|---|
 | `BR-REG-01` | Form đúng **3 trường**: email, mật khẩu, tên hiển thị | Mỗi trường thêm giảm tỉ lệ hoàn thành |
 | `BR-REG-02` | Hai checkbox đồng ý **riêng**, không tick sẵn, không gộp | Đồng ý gộp không phải đồng ý tự nguyện, cụ thể |
-| `BR-REG-03` | Ghi `consent_logs` kèm `policy_version`, IP, user agent | Bằng chứng |
+| `BR-REG-03` | Ghi hai hàng `consent_logs` với `action='accepted'`, IP, user agent; đối chiếu marker đã xem trong cùng transaction tạo User | Bằng chứng phải gắn với yêu cầu hiện hành và không để tài khoản được tạo ở giữa một lần force |
 | `BR-REG-04` | `pending_verification` **không tạo được child profile** | Không thu dữ liệu trẻ trước khi xác minh người lớn |
 | `BR-REG-05` | Mật khẩu ≥8 ký tự, Cấm — **NEVER** ép ký tự đặc biệt | Quy tắc phức tạp làm người dùng viết mật khẩu ra giấy |
 | `BR-REG-06` | Cấm — **NEVER tự gộp phiên chơi guest** vào tài khoản mới | Không xác định được phiên đó là của ai — thiết bị dùng chung là chuyện thường |
@@ -86,6 +88,8 @@ Guest → User. Cấm Trẻ không đăng ký.
 | `display_name` | 2–60 ký tự |
 | `accept_terms` | true bắt buộc |
 | `accept_privacy` | true bắt buộc |
+| `terms_requirement_at` | `timestamptz \| null` từ `GET /api/guest/consent-requirements`; bắt buộc gửi lại nguyên giá trị |
+| `privacy_requirement_at` | `timestamptz \| null` từ cùng response; bắt buộc gửi lại nguyên giá trị |
 
 ### 7.2 Sau đăng ký
 
@@ -106,9 +110,10 @@ khi người đăng ký chủ động chọn.
 | | |
 |---|---|
 | Auth | không |
-| Body | `{ email, password, display_name, accept_terms, accept_privacy }` |
+| Body | `{ email, password, display_name, accept_terms, accept_privacy, terms_requirement_at, privacy_requirement_at }` |
 | 201 | Đặt cookie, trả `{ user: { uuid, display_name, status } }` |
 | 409 | `EMAIL_ALREADY_REGISTERED` |
+| 409 | `CONSENT_REQUIREMENT_CHANGED` |
 | 422 | `VALIDATION_FAILED` |
 | 429 | `RATE_LIMITED` |
 
@@ -123,7 +128,14 @@ Scenario: BR-REG-02 — đồng ý không tick sẵn
 Scenario: BR-REG-03 — ghi consent
   When đăng ký thành công
   Then consent_logs có 2 hàng cho user đó
-  And mỗi hàng có policy_version, ip_address, user_agent
+  And mỗi hàng có action accepted, ip_address, user_agent
+
+Scenario: BR-REG-03 — force giữa lúc đăng ký không nhận consent cũ
+  Given form được tải với marker A
+  And super_admin force privacy tạo marker B
+  When đăng ký gửi marker A
+  Then trả 409 CONSENT_REQUIREMENT_CHANGED
+  And không tạo users hay consent_logs
 
 Scenario: BR-REG-04 — chưa xác thực không tạo được trẻ
   Given user vừa đăng ký, chưa xác thực email
@@ -171,7 +183,7 @@ Scenario: BR-REG-11 — nút SNS đứng trước form
 
 **Always**
 - Hai checkbox đồng ý riêng, không tick sẵn.
-- Ghi `consent_logs` với `policy_version`.
+- Đối chiếu marker và ghi `consent_logs` action `accepted` trong cùng transaction tạo User.
 - Rate limit theo IP.
 
 **Ask first**

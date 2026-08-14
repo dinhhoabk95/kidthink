@@ -11,7 +11,7 @@ export function getOwnerSql(): ReturnType<typeof postgres> {
     const url =
       process.env.DATABASE_URL ??
       "postgres://postgres:postgres@localhost:5433/kidthink";
-    ownerSqlInstance = postgres(url);
+    ownerSqlInstance = postgres(url, { max: 1 });
   }
   return ownerSqlInstance;
 }
@@ -21,7 +21,7 @@ export function getAppSql(): ReturnType<typeof postgres> {
     const url =
       process.env.DATABASE_URL_APP ??
       "postgres://kidthink_app:kidthink_app_password@localhost:5433/kidthink";
-    appSqlInstance = postgres(url);
+    appSqlInstance = postgres(url, { max: 1 });
   }
   return appSqlInstance;
 }

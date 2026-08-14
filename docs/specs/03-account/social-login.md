@@ -2,10 +2,10 @@
 spec: SOCIAL-LOGIN
 title: Đăng ký và đăng nhập bằng mạng xã hội
 area: account
-status: approved
+status: implemented
 mvp: true
 phase: P1
-reviewed: 2026-08-13
+reviewed: 2026-08-14
 owns:
   - Luồng đăng ký lần đầu bằng SNS
   - Luồng đăng nhập lại bằng SNS
@@ -70,8 +70,9 @@ File này bắt đầu từ `NormalizedProfile` trở đi.
 1. Tra `(provider, provider_user_id)` → **không thấy**.
 2. Tra `users.email` = `email_at_provider` → **không thấy**.
 3. Hiện màn hình đồng ý `/dang-ky/dong-y`: tên hiển thị (điền sẵn từ provider, sửa được) +
-   **hai checkbox riêng**, không tick sẵn — `BR-REG-02`.
-4. Tạo `users` + hàng `social_identities` + 2 hàng `consent_logs` trong **một transaction**.
+   **hai checkbox riêng**, không tick sẵn, cùng marker Terms/Privacy hiện hành — `BR-REG-02`.
+4. Khoá và đối chiếu marker User đã xem; tạo `users` + hàng `social_identities` + 2 hàng
+   `consent_logs` action `accepted` trong **một transaction**.
 5. `users.status` = `active` nếu provider khẳng định email đã xác minh; ngược lại
    `pending_verification` và gửi email xác thực — `BR-SCL-05`.
 6. Cấp opaque session, về `/me`.
@@ -96,13 +97,15 @@ File này bắt đầu từ `NormalizedProfile` trở đi.
 | MFA đã bật | Nhánh A | **428** `MFA_REQUIRED` → nhập mã → mới cấp session/remember. Xem `BR-SCL-07` |
 | `provider_user_id` đã gắn user khác | Nhánh B | **409** `SOCIAL_IDENTITY_ALREADY_LINKED`. Chỉ xảy ra nếu provider tái dùng `sub` — bất thường, log mức cao |
 | Bỏ dở giữa màn hình đồng ý | Đóng tab ở nhánh B bước 3 | Cấm hàng `users` nào được tạo. Transaction ở bước 4 |
+| Marker đổi khi màn hình đồng ý đang mở | Marker gửi lại khác DB | **409** `CONSENT_REQUIREMENT_CHANGED`; không tạo `users`, `social_identities` hay consent log |
+| User cũ thiếu Terms/Privacy sau marker | Nhánh A đăng nhập thành công | Cấp phiên rồi đi `/consent-required`, giống `BR-LGN-11` |
 
 ## 6. Business rules
 
 | ID | Rule | Vì sao |
 |---|---|---|
-| `BR-SCL-01` | Đăng ký bằng SNS **vẫn phải** thu hai đồng ý riêng, không tick sẵn | `BR-REG-02`. Đồng ý của provider không phải đồng ý với **ta**; Nghị định 13 yêu cầu đồng ý cụ thể, tự nguyện |
-| `BR-SCL-02` | Ghi `consent_logs` kèm `policy_version`, IP, user agent — y hệt đăng ký thường | `BR-REG-03`. Bằng chứng không được yếu đi vì đổi cách đăng ký |
+| `BR-SCL-01` | Đăng ký bằng SNS **vẫn phải** thu hai đồng ý riêng, không tick sẵn | `BR-REG-02`. Đồng ý của provider không phải đồng ý với **ta**; Luật 91/2025/QH15 và Nghị định 13 yêu cầu việc đồng ý được thể hiện rõ ràng, tự nguyện |
+| `BR-SCL-02` | Ghi `consent_logs` action `accepted` kèm IP, user agent và đối chiếu hai marker đã xem — y hệt đăng ký thường | `BR-REG-03`. Bằng chứng không được yếu đi vì đổi cách đăng ký |
 | `BR-SCL-03` | Tra danh tính theo `(provider, provider_user_id)`, Cấm — **NEVER theo email** | `BR-OAP-10`. Email đổi được ở phía provider; `sub` thì không |
 | `BR-SCL-04` | Cấm — **NEVER tự liên kết SNS vào tài khoản sẵn có chỉ vì trùng email.** Trả 409 và bắt đăng nhập rồi liên kết ở [`social-account-linking.md`](social-account-linking.md) | Đây là đường chiếm tài khoản trực tiếp: ai tạo được tài khoản SNS mang email của nạn nhân sẽ vào được tài khoản KidThink của họ. Facebook không khẳng định email đã xác minh (`BR-OAP-08`) |
 | `BR-SCL-05` | `status = active` ngay **chỉ khi** provider khẳng định email đã xác minh; ngược lại `pending_verification` + gửi email xác thực | Bỏ vòng xác thực chỉ hợp lệ khi có bên khác đã làm việc đó thật |
@@ -139,6 +142,8 @@ SNS gắn được vào **đúng một** User.
 | `email` | Điền sẵn, **chỉ đọc** khi provider có trả; nhập tay khi không có | citext, hợp lệ |
 | `accept_terms` | — | true bắt buộc, không tick sẵn |
 | `accept_privacy` | — | true bắt buộc, không tick sẵn |
+| `terms_requirement_at` | `GET /api/guest/consent-requirements` | Gửi lại nguyên `timestamptz \| null` |
+| `privacy_requirement_at` | cùng response | Gửi lại nguyên `timestamptz \| null` |
 
 Cấm ô tuổi, giới tính, số điện thoại, địa chỉ — `BR-REG-08`.
 
@@ -165,12 +170,13 @@ Xem [`../01-platform/oauth-provider-registry.md`](../01-platform/oauth-provider-
 | | |
 |---|---|
 | Auth | không — cookie `tm_oauth` đã được xác thực ở callback |
-| Body | `{ provider, consent?: { display_name, email?, accept_terms, accept_privacy } }` |
+| Body | `{ provider, consent?: { display_name, email?, accept_terms, accept_privacy, terms_requirement_at, privacy_requirement_at } }` |
 | 200 | Nhánh A — đặt cookie, trả `{ user: { uuid, display_name, status } }` |
 | 201 | Nhánh B — như trên, tài khoản vừa tạo |
 | 403 | `ACCOUNT_SUSPENDED` |
 | 409 | `SOCIAL_EMAIL_CONFLICT` — `details.provider`, `details.masked_email` |
 | 409 | `SOCIAL_IDENTITY_ALREADY_LINKED` |
+| 409 | `CONSENT_REQUIREMENT_CHANGED` |
 | 422 | `VALIDATION_FAILED` — thiếu đồng ý hoặc email không hợp lệ |
 | 428 | `MFA_REQUIRED` |
 | 429 | `RATE_LIMITED` |
@@ -199,7 +205,14 @@ Scenario: BR-SCL-01 — đăng ký SNS vẫn phải tick hai đồng ý
 Scenario: BR-SCL-02 — consent được ghi đủ
   When đăng ký bằng Google thành công
   Then consent_logs có 2 hàng cho user đó
-  And mỗi hàng có policy_version, ip_address, user_agent
+  And mỗi hàng có action accepted, ip_address, user_agent
+
+Scenario: BR-SCL-02 — force giữa màn hình đồng ý SNS
+  Given màn hình đồng ý được tải với marker A
+  And super_admin force terms tạo marker B
+  When hoàn tất với marker A
+  Then trả 409 CONSENT_REQUIREMENT_CHANGED
+  And không tạo users, social_identities hay consent_logs
 
 Scenario: BR-SCL-05 — Facebook không được vào thẳng active
   Given Facebook trả email b@example.com

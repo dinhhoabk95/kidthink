@@ -247,14 +247,22 @@ export function getUserRefreshService(_event?: H3Event) {
 }
 
 export function respondToUserAuthError(event: H3Event, error: unknown): never {
-  if (error instanceof AppError) {
+  if (
+    error instanceof AppError ||
+    (typeof error === "object" &&
+      error !== null &&
+      "isAppError" in error &&
+      "status" in error &&
+      "toResponse" in error)
+  ) {
+    const err = error as AppError;
     if (event?.node?.res) {
-      setResponseStatus(event, error.status);
+      setResponseStatus(event, err.status);
     }
     throw createError({
-      statusCode: error.status,
-      statusMessage: error.message,
-      data: error.toResponse(),
+      statusCode: err.status,
+      statusMessage: err.message,
+      data: err.toResponse(),
     });
   }
   throw error as Error;

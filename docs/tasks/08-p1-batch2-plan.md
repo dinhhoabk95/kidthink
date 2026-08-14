@@ -2,6 +2,9 @@
 
 > Viết 2026-08-08. Checklist thực thi: [`08-p1-batch2-todo.md`](08-p1-batch2-todo.md).
 >
+> **Ghi chú lịch sử 2026-08-14:** phần policy version của lô này đã được root D12 và
+> `D-QV`–`D-QZ` trong [Task #40](40-p1-14-account-consent-deletion-plan.md) thay thế.
+>
 > Task đã lưu trữ:
 > [`01-bootstrap-plan.md`](01-bootstrap-plan.md) ·
 > [`02-foundation-approve-plan.md`](02-foundation-approve-plan.md) ·

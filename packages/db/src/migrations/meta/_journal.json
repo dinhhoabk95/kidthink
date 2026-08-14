@@ -211,6 +211,13 @@
       "when": 1786650000000,
       "tag": "0029_active_sessions_drop_not_null",
       "breakpoints": true
+    },
+    {
+      "idx": 30,
+      "version": "7",
+      "when": 1786660000000,
+      "tag": "0030_consent_action_and_requirements",
+      "breakpoints": true
     }
   ]
 }

@@ -5,10 +5,11 @@ area: admin
 status: approved
 mvp: true
 phase: P0
-reviewed: 2026-08-13
+reviewed: 2026-08-14
 owns:
   - Luồng đăng nhập Manager
   - Phân quyền theo role ở tầng route
+  - Reauth Manager cho thao tác toàn hệ thống
 depends_on:
   - AUTH-TOKENS-SESSIONS
   - ACTORS
@@ -33,7 +34,8 @@ Manager có quyền chạm tiền và nội dung mà trẻ sẽ chơi. Đó là 
 ## 3. Entry points
 
 `admin.{domain}/login` · `POST /api/guest/auth/managers/login` ·
-`POST /api/guest/auth/managers/mfa` · `POST /api/guest/auth/managers/remember` · `/logout`.
+`POST /api/guest/auth/managers/mfa` · `POST /api/guest/auth/managers/remember` ·
+`POST /api/managers/auth/reauth` · `/logout`.
 
 ## 4. Main flow
 
@@ -56,6 +58,7 @@ Manager có quyền chạm tiền và nội dung mà trẻ sẽ chơi. Đó là 
 | Chưa bật MFA | Bắt buộc thiết lập **trước khi** vào bất kỳ trang nào |
 | Mất thiết bị MFA | Mã khôi phục dùng một lần; hết mã → `super_admin` khác reset |
 | `is_active = false` | 403, không nói lý do chi tiết |
+| Thao tác toàn hệ thống, reauth cũ hơn 5 phút | 428 `REAUTH_REQUIRED`; nhập lại mật khẩu hoặc TOTP/mã khôi phục hợp lệ trên chính session hiện tại |
 
 ## 6. Business rules
 
@@ -69,6 +72,7 @@ Manager có quyền chạm tiền và nội dung mà trẻ sẽ chơi. Đó là 
 | `BR-ADA-06` | Manager **không tự đổi được `role` của mình** | Leo thang đặc quyền |
 | `BR-ADA-07` | Session Manager tuyệt đối **1 giờ**; remember mặc định tắt, chỉ cấp sau MFA và tuyệt đối tối đa 365 ngày | Session làm việc ngắn; quyết định ghi nhớ phải rõ ràng và không bypass MFA ban đầu |
 | `BR-ADA-08` | Reset MFA của Manager khác **phải** do `super_admin` và ghi audit | Ngăn chặn bypass MFA trái phép giữa các tài khoản quản trị |
+| `BR-ADA-09` | Force re-consent và thao tác toàn hệ thống khác phải có `reauthAt` trong 5 phút; remember restore không làm mới mốc | Session Manager bị chiếm không được dùng ngay để tác động toàn bộ User |
 
 ## 7. Data
 
@@ -99,6 +103,7 @@ interface AuthenticatedManager {
 | Audit log · error log · system activity | | Cấm |
 | Feature flags · data export | | Cấm |
 | Notification admin | | Cấm |
+| Legal consent force | | Cấm |
 
 ## 8. API contract
 
@@ -111,6 +116,13 @@ Body `{ email, password, rememberMe?: boolean }`. **428** `MFA_REQUIRED` + chall
 
 Body `{ code, challenge }` — TOTP hoặc mã khôi phục. 200 → session một giờ; remember chỉ theo
 preference đã bind trong challenge.
+
+### `POST /api/managers/auth/reauth`
+
+Auth Manager session + CSRF. Body là đúng một trong `{ method:'password', password }` hoặc
+`{ method:'totp', code }`; mã khôi phục dùng một lần đi qua nhánh `totp`. Thành công cập nhật
+`reauthAt` **chỉ trong Redis session hiện tại** và trả `{ reauthenticated_at }`; sai credential
+trả 401. Cấm tạo session mới, cấm gia hạn session/remember và cấm cập nhật thiết bị khác.
 
 ## 9. Acceptance criteria
 
@@ -152,6 +164,14 @@ Scenario: BR-ADA-07 — Manager remember không bypass MFA
   When hoàn tất MFA hợp lệ
   Then session hết hạn sau một giờ
   And remember hết hạn tuyệt đối không quá 365 ngày
+
+Scenario: BR-ADA-09 — force cần reauth gần nhất trên đúng session
+  Given super_admin có session hợp lệ nhưng reauthAt đã quá 5 phút
+  When gọi force legal re-consent
+  Then trả 428 REAUTH_REQUIRED
+  When reauth bằng TOTP đúng trên session A
+  Then force trên session A được phép trong 5 phút
+  But session B vẫn nhận 428
 ```
 
 ## 10. Boundaries
@@ -160,6 +180,7 @@ Scenario: BR-ADA-07 — Manager remember không bypass MFA
 - MFA trước khi vào bất kỳ trang nào.
 - `requireRole()` ở server route.
 - Audit mọi đăng nhập và thất bại.
+- Reauth gần nhất cho mọi thao tác toàn hệ thống.
 
 **Ask first**
 - Đổi TTL phiên Manager.
@@ -171,6 +192,7 @@ Scenario: BR-ADA-07 — Manager remember không bypass MFA
 - Ẩn menu thay cho phân quyền.
 - Cho Manager tự đổi role.
 - Cookie Manager dùng chung domain với người dùng.
+- Remember restore tự làm mới `reauthAt`.
 
 ## 11. Open questions
 

@@ -10,7 +10,7 @@ import {
   packageEntitlements,
   packages,
 } from "./schema/billing.ts";
-import { managers } from "./schema/identity.ts";
+import { consentRequirements, managers } from "./schema/identity.ts";
 
 export const PENDING_PRICE_VND = PENDING_PRICE;
 
@@ -124,6 +124,19 @@ export async function seed() {
       isActive: true,
     })
     .onConflictDoNothing({ target: managers.email });
+
+  // 8. Seed consent_requirements 3 singleton rows (D-QW, D-QZ)
+  const CONSENT_TYPES = ["terms", "privacy", "child_data"] as const;
+  for (const consentType of CONSENT_TYPES) {
+    await db
+      .insert(consentRequirements)
+      .values({
+        consentType,
+        reconsentRequiredAt: null,
+        noticeVi: null,
+      })
+      .onConflictDoNothing({ target: consentRequirements.consentType });
+  }
 
   console.log("✅ [db:seed] Seed completed successfully.");
 }

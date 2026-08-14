@@ -5,7 +5,7 @@ area: foundation
 status: approved
 mvp: true
 phase: P0
-reviewed: 2026-08-13
+reviewed: 2026-08-14
 owns:
   - Danh sách mã lỗi nghiệp vụ
   - Ánh xạ mã lỗi → HTTP status
@@ -89,8 +89,8 @@ Mọi handler API. Mọi spec khai báo mã lỗi phải đăng ký ở đây.
 | `ACCOUNT_SUSPENDED` | 403 | `users.status = 'suspended'` | "Tài khoản đang tạm khoá. Liên hệ hỗ trợ." |
 | `NO_ACTIVE_CHILD` | 428 | Route cần trẻ, chưa chọn | "Hãy chọn hồ sơ bé trước khi tiếp tục." |
 | `PARENT_GATE_REQUIRED` | 403 | Đổi `active_child_id` sang trẻ khác không kèm `gate_token` hợp lệ ([`child-profile-switching.md`](../03-account/child-profile-switching.md), [`play-entry-and-profile-select.md`](../04-play/play-entry-and-profile-select.md)) | "Cần xác nhận của phụ huynh để tiếp tục." |
-| `CONSENT_REQUIRED` | 428 | Chưa đồng ý chính sách hiện hành | "Vui lòng đọc và đồng ý chính sách bảo vệ dữ liệu trẻ em." |
-| `CONSENT_VERSION_STALE` | 409 | Chính sách đã có bản mới | "Chính sách đã cập nhật. Vui lòng xem lại." |
+| `CONSENT_REQUIRED` | 428 | Thiếu consent hợp lệ sau marker bắt buộc của một hay nhiều loại; `details.types[]` và `details.url` chỉ ra việc cần làm | "Vui lòng xem và đồng ý điều khoản hiện hành để tiếp tục." |
+| `CONSENT_REQUIREMENT_CHANGED` | 409 | Marker bắt buộc đã đổi sau khi form được tải; client phải tải lại tài liệu và trạng thái mới | "Yêu cầu đồng ý vừa được cập nhật. Vui lòng xem lại." |
 | `MFA_REQUIRED` | 428 | Manager chưa qua MFA; hoặc User đã bật MFA và mới qua yếu tố thứ nhất — kể cả khi yếu tố đó là SNS (`BR-MFA-09`) | — |
 | `MFA_INVALID_CODE` | 401 | Mã TOTP sai, hoặc mã khôi phục sai / đã dùng | "Mã không đúng. Thử lại hoặc dùng mã khôi phục." |
 | `MFA_LOCKED` | 429 | Sai mã 5 lần, `details.retry_after_s` | "Sai mã quá nhiều lần. Thử lại sau 15 phút." |

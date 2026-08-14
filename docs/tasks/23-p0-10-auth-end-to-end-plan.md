@@ -7,6 +7,10 @@
 > [`login-and-session.md`](../specs/03-account/login-and-session.md) ·
 > [`password-recovery.md`](../specs/03-account/password-recovery.md).
 >
+> **Ghi chú lịch sử 2026-08-14:** registration `policy_version` dưới đây đã được root D12 và
+> `D-QY` của [Task #40](40-p1-14-account-consent-deletion-plan.md) thay thế bằng action
+> `accepted` + echo marker. Giữ nội dung cũ để bảo toàn evidence P0.10.
+>
 > ```
 > export PATH=/Users/macbook/.nvm/versions/node/v24.15.0/bin:$PATH
 > ```

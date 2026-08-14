@@ -63,6 +63,9 @@ catalogs:
     nuxt-security:
       specifier: ^2.6.0
       version: 2.6.0
+    openid-client:
+      specifier: ^6.8.0
+      version: 6.8.5
     otpauth:
       specifier: ^9.5.0
       version: 9.5.1
@@ -265,6 +268,9 @@ importers:
       jose:
         specifier: 'catalog:'
         version: 6.2.8
+      openid-client:
+        specifier: 'catalog:'
+        version: 6.8.5
       otpauth:
         specifier: 'catalog:'
         version: 9.5.1

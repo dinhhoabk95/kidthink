@@ -2,7 +2,7 @@
 spec: LEGAL-PAGES
 title: Trang pháp lý và chính sách
 area: public
-status: approved
+status: implemented
 mvp: true
 phase: P1
 reviewed: 2026-08-14

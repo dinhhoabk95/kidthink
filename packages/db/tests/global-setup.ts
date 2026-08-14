@@ -26,6 +26,7 @@ const TABLES = [
   "child_session_summaries",
   "competencies",
   "consent_logs",
+  "consent_requirements",
   "content_images",
   "content_review_log",
   "content_skill_map",
@@ -92,9 +93,21 @@ export async function truncateAllTestTables(
     process.env.DATABASE_URL ??
     "postgres://postgres:postgres@localhost:5433/kidthink";
   assertDisposableDatabaseUrl(url);
-  const sql = postgres(url);
+  const sql = postgres(url, { max: 1 });
   try {
-    await sql`truncate table ${sql(tables)} restart identity cascade`;
+    for (let attempt = 1; attempt <= 3; attempt++) {
+      try {
+        await sql`truncate table ${sql(tables)} restart identity cascade`;
+        break;
+      } catch (err: unknown) {
+        const pgErr = err as { code?: string };
+        if (pgErr?.code === "40P01" && attempt < 3) {
+          await new Promise((resolve) => setTimeout(resolve, 100 * attempt));
+          continue;
+        }
+        throw err;
+      }
+    }
   } finally {
     await sql.end();
   }

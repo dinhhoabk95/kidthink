@@ -28,7 +28,9 @@ describe("Purge and Anonymization Integration Tests — Task 10", () => {
       .values({
         userId: u.id,
         consentType: "child_data",
-        policyVersion: "1.0.0",
+        action: "accepted",
+        ipAddress: "127.0.0.1",
+        userAgent: "test-agent",
       })
       .returning();
 

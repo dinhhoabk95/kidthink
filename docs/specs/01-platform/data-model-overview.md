@@ -5,7 +5,7 @@ area: platform
 status: approved
 mvp: true
 phase: P0
-reviewed: 2026-08-13
+reviewed: 2026-08-14
 owns:
   - Danh mục module schema và ranh giới giữa chúng
   - Quy tắc chung áp cho mọi bảng
@@ -80,7 +80,7 @@ Bốn quyết định định hình toàn bộ schema, mỗi cái là một ràn
 
 | Module | Bảng | Spec chi tiết |
 |---|---|---|
-| `identity` | `users` `managers` `active_sessions` `mfa_settings` `mfa_recovery_codes` `verification_tokens` `consent_logs` `social_identities` | [`schema-identity-billing.md`](schema-identity-billing.md) |
+| `identity` | `users` `managers` `active_sessions` `mfa_settings` `mfa_recovery_codes` `verification_tokens` `consent_logs` `consent_requirements` `social_identities` | [`schema-identity-billing.md`](schema-identity-billing.md) |
 | `billing` | `packages` `package_entitlements` `entitlement_keys` `entitlements` `payment_orders` `quota_usage` | idem |
 | `child` | `child_profiles` `child_session_summaries` | [`schema-play-telemetry.md`](schema-play-telemetry.md) |
 | `taxonomy` | `competencies` `strands` `skills` `skill_prerequisites` `learning_objectives` | [`schema-content-taxonomy.md`](schema-content-taxonomy.md) |

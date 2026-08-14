@@ -14,6 +14,9 @@
 > repo này ([`lefthook.yml`](../../lefthook.yml)).
 >
 > Sổ cái quyết định bắt đầu từ **`D-AR`** (mã cuối đã dùng: `D-AQ`).
+>
+> **Superseded một phần 2026-08-14:** các checkbox policy version là lịch sử closure. Root D12
+> và Task #40 revision sở hữu contract singleton + force marker hiện hành.
 
 ## Thứ tự làm
 

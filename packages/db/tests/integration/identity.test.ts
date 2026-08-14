@@ -147,7 +147,9 @@ describe("Identity Schema Integration Tests", () => {
       .values({
         userId: u.id,
         consentType: "terms",
-        policyVersion: "1.0.0",
+        action: "accepted",
+        ipAddress: "127.0.0.1",
+        userAgent: "test-agent",
       })
       .returning();
 
@@ -157,7 +159,7 @@ describe("Identity Schema Integration Tests", () => {
     await expect(
       appDb
         .update(consentLogs)
-        .set({ policyVersion: "2.0.0" })
+        .set({ action: "withdrawn" })
         .where(eq(consentLogs.id, log.id))
     ).rejects.toThrow();
 
@@ -183,32 +185,28 @@ describe("Identity Schema Integration Tests", () => {
       .where(eq(consentLogs.userId, u.id));
     expect(emptyLogs.length).toBe(0);
 
-    // 2. Insert consent with version 1.0.0
+    // 2. Insert consent with action accepted
     const [c1] = await ownerDb
       .insert(consentLogs)
       .values({
         userId: u.id,
         consentType: "child_data",
-        policyVersion: "1.0.0",
+        action: "accepted",
+        ipAddress: "127.0.0.1",
+        userAgent: "test-agent",
       })
       .returning();
 
-    expect(c1.policyVersion).toBe("1.0.0");
+    expect(c1.action).toBe("accepted");
+    expect(c1.consentType).toBe("child_data");
 
-    // 3. Stale policy version (active policy is 2.0.0) -> CONSENT_VERSION_STALE (409)
-    const [latestBeforeWithdrawal] = await ownerDb
-      .select()
-      .from(consentLogs)
-      .where(eq(consentLogs.userId, u.id))
-      .orderBy(eq(consentLogs.id, c1.id));
-
-    expect(latestBeforeWithdrawal.policyVersion).toBe("1.0.0");
-
-    // 4. Withdrawal consent -> INSERTS new row 'child_data_withdrawn', previous row untouched
+    // 3. Withdrawal consent -> INSERTS new row with action 'withdrawn', previous row untouched (BR-CSM-01)
     await ownerDb.insert(consentLogs).values({
       userId: u.id,
-      consentType: "child_data_withdrawn",
-      policyVersion: "1.0.0",
+      consentType: "child_data",
+      action: "withdrawn",
+      ipAddress: "127.0.0.1",
+      userAgent: "test-agent",
     });
 
     const allLogs = await ownerDb
@@ -216,9 +214,9 @@ describe("Identity Schema Integration Tests", () => {
       .from(consentLogs)
       .where(eq(consentLogs.userId, u.id));
 
-    // Both rows must exist intact
+    // Both rows must exist intact (INSERT-only)
     expect(allLogs.length).toBe(2);
-    expect(allLogs[0].consentType).toBe("child_data");
-    expect(allLogs[1].consentType).toBe("child_data_withdrawn");
+    expect(allLogs[0].action).toBe("accepted");
+    expect(allLogs[1].action).toBe("withdrawn");
   });
 });

@@ -1,283 +1,220 @@
-# Kế hoạch — Task #40: P1.14 — Cài đặt tài khoản, đồng ý pháp lý & xoá tài khoản
+# Kế hoạch — Task #40: P1.14 — Account, legal consent singleton, force & deletion
 
-> Viết 2026-08-10. Bước sở hữu: **P1.14** của
+> Viết 2026-08-10; **thiết kế lại 2026-08-14** theo root D12.
+> Bước sở hữu: **P1.14** của
 > [`14-implementation-sequence-todo.md`](14-implementation-sequence-todo.md).
-> Spec sở hữu: [`account-settings.md`](../specs/03-account/account-settings.md) ·
+> Spec sở hữu chính: [`legal-pages.md`](../specs/02-public/legal-pages.md) ·
 > [`consent-management.md`](../specs/03-account/consent-management.md) ·
+> [`legal-consent-admin.md`](../specs/06-admin/legal-consent-admin.md) ·
+> [`account-settings.md`](../specs/03-account/account-settings.md) ·
 > [`account-deletion.md`](../specs/03-account/account-deletion.md).
->
-> ```
-> export PATH=/Users/macbook/.nvm/versions/node/v24.15.0/bin:$PATH
-> ```
 
 ## Tóm tắt
 
-Ba spec, một chủ đề: **quyền của người lớn trên dữ liệu của chính họ và của con họ**. Không
-phải ba màn hình tiện ích — hai trong ba là nghĩa vụ theo Nghị định 13/2023, và cả ba đều là
-thao tác không hoàn tác được nếu làm sai.
+Task #40 đã hoàn tất account settings, withdrawal và deletion theo contract cũ có
+`policy_version`. Quyết định sản phẩm mới bỏ toàn bộ policy version: Terms, Privacy và
+Child Privacy là các document singleton trong code. Khi nội dung cần đổi, đội sửa code qua PR;
+deploy tự nó không hỏi lại. Sau khi xác nhận bản mới đã qua legal review và deploy,
+`super_admin` có thể force một loại bằng cách dịch marker toàn cục và ghi audit.
 
-Ba loại rủi ro khác nhau, cần ba cơ chế khác nhau:
-
-1. **Chiếm phiên.** Đổi mật khẩu, đổi email, xoá tài khoản, và (từ P1.15) gắn SNS — bốn cửa
-   dẫn tới mất tài khoản vĩnh viễn. Chống bằng reauth, và reauth phải là **một** guard, không
-   phải bốn lần nhớ.
-2. **Đồng ý giả.** Tick sẵn, suy từ hành vi, hoặc khoá dữ liệu để ép đồng ý bản mới — cả ba đều
-   làm bằng chứng đồng ý mất giá trị pháp lý.
-3. **Xoá sót.** `BR-ADL-10` là ví dụ đắt nhất trong corpus: quên xoá `social_identities` thì
-   `UNIQUE (provider, provider_user_id)` khoá vĩnh viễn tài khoản Google đó khỏi KidThink, và
-   người dùng **không có cách nào tự sửa**.
+Revision này **giữ nguyên evidence của phần account/deletion đã hoàn thành**, nhưng mở lại
+P1.14 cho migration consent, gate User, admin force và dọn bề mặt version cũ. Các quyết định
+`D-IH` và `D-II` của bản kế hoạch 2026-08-10 bị thay thế bởi `D-QV`–`D-QZ` dưới đây; không dùng
+`summary_vi`, version URL hay `CONSENT_VERSION_STALE` cho legal consent nữa.
 
 ## 0. Điều kiện tiên quyết
 
-| Dep | Trạng thái | Ghi chú |
+| Dep | Trạng thái cần | Ghi chú |
 |---|---|---|
-| `AUTH-TOKENS-SESSIONS` §7.4 | P0.3 | `packages/auth/src/reauth.ts`, `active_sessions.reauth_at`, `REAUTH_WINDOW_MINUTES = 5` (`D-CZ`) |
-| `LOGIN-AND-SESSION` · `PASSWORD-RECOVERY` | P0.10 | phiên, `refresh_token_version`, token xác thực |
-| `NOTIFICATION-SERVICE` | P0.9b | `email:send` cho thông báo đổi email/mật khẩu |
-| `CHILD-DATA-COMPLIANCE` | P0.4 | `consent_logs` INSERT-only, `BR-CDC-07` `BR-CDC-10` |
-| `LEGAL-PAGES` | P1.13 | version chính sách, URL vĩnh viễn, `legal_review_status` (`D-HZ`) |
-| `JOB-QUEUE` | P1.5 | registry khai `account:purge` với `owner_step` là **bước này** |
-| `CHILD-PROFILE-ARCHIVE` | P1.9 | ba trạng thái hồ sơ; purge trẻ chạy **trong** `account:purge` (`D-GY`) |
+| Account settings, withdrawal, deletion baseline | Đã có từ lần chạy Task #40 đầu | Không viết lại; chỉ sửa integration bị contract mới tác động |
+| `LEGAL-PAGES` | P1.13 đã có code | Phải chuyển từ versioned sang current-only |
+| `AUDIT-LOG` · `ADMIN-AUTH` | P0 | Force cần action mới, role `super_admin`, recent reauth |
+| `CHILD-DATA-COMPLIANCE` | P0 | Consent log INSERT-only và closed child-data boundary |
+| `LOGIN-AND-SESSION` · `REGISTRATION` | P0 | Cần marker gate và optimistic echo khi đăng ký |
+| `SOCIAL-LOGIN` | P1.15 | Task #41 nhận handoff marker; không kéo OAuth implementation vào Task #40 |
 
-## 1. Đo được
+## 1. Outcome đo được
 
-### 1.1 Đã có
-
-Guard reauth và cửa sổ 5 phút (P0.3); `consent_logs` và ràng buộc INSERT-only (P0.4);
-`email:send` (P0.9b); version chính sách và cơ chế đồng ý trỏ version cụ thể (P1.13);
-`account:purge` đã có consumer với **phạm vi hồ sơ trẻ** (P1.9); bảng retry khai
-purge **1 lần, fail → alert ngay** (P1.5).
-
-### 1.2 Chưa có
-
-`/me/settings` và bốn nhóm; hai route mật khẩu tách biệt; luồng đổi email hai bước; tuỳ chọn
-thông báo; toàn bộ màn hình đồng ý và diff; luồng rút đồng ý; trang xoá tài khoản, huỷ yêu cầu,
-và phạm vi tài khoản của `account:purge`.
-
-### 1.3 Đã chốt, không mở lại
-
-`D-CY` diff chính sách là **`summary_vi` soạn tay** cho phụ huynh, toàn văn ở chế độ chi tiết ·
-`D-CZ` `REAUTH_WINDOW_MINUTES = 5` đặt ở [`auth-tokens-sessions.md`](../specs/01-platform/auth-tokens-sessions.md) §7.4 ·
-`D-GY` purge trẻ chạy trong `account:purge`, **không** thêm job thứ 11 ·
-`D-HZ` bản chính sách `pending_review` chặn deploy production ·
-`D-V` MFA là tuỳ chọn, **P2**, ngoài MVP.
+- Mỗi legal slug chỉ có một document hiện hành; route/API/version picker cũ trả 404 hoặc bị xoá.
+- `consent_logs` chỉ có `consent_type` + `action` + evidence; không có `policy_version`.
+- `consent_requirements` luôn có đúng ba singleton row và không chứa User list hay document body.
+- Deploy document không đổi trạng thái User. Chỉ force có recent reauth mới dịch marker.
+- Terms/Privacy force chặn product access nhưng luôn giữ legal, consent, export, reauth, logout
+  và account deletion.
+- Child-data force dừng profile/session/learning-data mới, cho phiên đang chạy hoàn tất và giữ
+  quyền đọc, sửa đúng, archive, export, xoá.
+- Registration và acceptance trả 409 nếu marker đổi sau khi form được tải.
+- Force ghi `legal_reconsent_forced` cùng transaction; không rollback/clear marker.
 
 ## 2. Quyết định
 
-**D-IE — thứ tự trong bước: cài đặt → đồng ý → xoá.** Nhóm **Quyền riêng tư** của
-[`account-settings.md`](../specs/03-account/account-settings.md) §7.1 là cửa vào của hai spec
-kia, nên nó phải tồn tại trước. Đồng ý trước xoá vì nhánh "rút `privacy`" của
-[`consent-management.md`](../specs/03-account/consent-management.md) §5 **dẫn sang** luồng xoá —
-làm xoá trước thì nhánh rút trỏ vào chỗ trống, làm đồng ý trước thì nhánh đó chỉ chờ một liên kết.
+**D-QV — legal document là singleton code-owned, không policy version.** `/terms`, `/privacy`
+và `/child-privacy` luôn render bản hiện hành. Git giữ lịch sử authoring; product không có URL,
+API, schema, selector hay diff version. Admin không sửa document.
 
-**D-IF — phạm vi purge là **bảng khai ba nhóm**, và bảng chưa phân nhóm là cổng đỏ.** Mỗi bảng
-trong schema thuộc đúng một nhóm: `delete` · `anonymize` · `retain`. Cổng đối chiếu danh sách
-bảng thật trong schema với bảng khai; bảng có trong schema mà không có trong khai → **đỏ**.
-Lý do: §7.2 của [`account-deletion.md`](../specs/03-account/account-deletion.md) là một danh
-sách viết tay, và nó cũ đi ngay ở migration tiếp theo. `social_identities` là bằng chứng —
-nó vào nhóm `delete` **ngay ở bước này**, dù luồng liên kết tới P1.15 mới chạy; bỏ sót thì
-người dùng mất tài khoản Google đó với KidThink vĩnh viễn (`BR-ADL-10`).
+**D-QW — force dùng marker toàn cục, không fan-out.** Mỗi `consent_type` có một
+`reconsent_required_at`. Force UPDATE đúng một singleton và INSERT audit trong cùng transaction;
+cấm UPDATE User hay consent log hàng loạt. Deploy, migration và feature flag không auto-force.
 
-**D-IG — rút `child_data` **dùng lại** đường lưu trữ của P1.9, không mở đường thứ hai.** Rút
-đồng ý đặt hồ sơ sang `archived` bằng đúng hàm mà [`child-profile-archive.md`](../specs/03-account/child-profile-archive.md)
-đã sở hữu, cộng lý do và `purge_at`. Cổng: **đúng một** code path ghi
-`child_profiles.status = 'archived'`. Lý do: hai đường lưu trữ sinh hai đường khôi phục, và
-cái ít được dùng hơn sẽ lệch — lúc đó `BR-CSM-08` ("đồng ý lại trong 30 ngày → khôi phục")
-hỏng im lặng, đúng lúc người dùng cần nó nhất.
+**D-QX — gate theo hậu quả của từng loại.** Terms/Privacy áp deny-by-default cho product route,
+trừ allow-list quyền dữ liệu đóng. Child-data chỉ chặn tạo profile, play session và learning-data
+mới; không chặn read/correction/archive/export/delete và không cắt session đã mở trước marker.
 
-**D-IH — version chính sách **không publish được** khi thiếu `summary_vi`.** `BR-CSM-05` bắt
-hiện **thay đổi**, không chỉ toàn văn; `D-CY` đã chốt tóm tắt là soạn tay. P1.13 giao cơ chế
-version nhưng không có trường này. Bước này thêm `summary_vi` bắt buộc cho **mọi version sau
-bản đầu**, và cổng publish đỏ khi trống. Ca âm: tạo version mới với `summary_vi` rỗng → đỏ.
+**D-QY — User phải echo marker đã xem.** Registration email, màn hình SNS và POST acceptance gửi
+lại `requirement_at`. Server khoá requirement trong transaction; khác giá trị thì 409
+`CONSENT_REQUIREMENT_CHANGED`, không ghi partial record.
 
-**D-II — "hỏi lại khi version đổi" chặn **đúng một** hành động: tạo hồ sơ trẻ mới.**
-`BR-CSM-04` nói thẳng: version mới **không** khoá dữ liệu đã có. Cách hỏng tự nhiên là đặt
-middleware lên `/api/users/**` — đúng về kỹ thuật, và là ép buộc về pháp lý. Xử: một guard
-`requireCurrentConsent('child_data')` gắn vào **một** route tạo hồ sơ; ca âm là route đọc báo
-cáo vẫn **200** với đồng ý cũ, và cổng đỏ nếu guard xuất hiện trên route đọc.
+**D-QZ — migration bảo toàn trạng thái đang có.** Migration đặc quyền:
 
-**D-IJ — danh sách route nhạy cảm là **dữ liệu**, và cổng canh cả hai chiều.** Bốn route ở bước
-này (đổi mật khẩu, đặt mật khẩu, đổi email, xoá tài khoản) cộng hai route của P1.15 (liên kết,
-gỡ SNS) đều đòi reauth. Sáu call site là chỗ mà "quên một cái" trở thành xác suất, và cái bị
-quên thường là cái phá huỷ nhất. Xử: khai danh sách; cổng đỏ khi route trong danh sách **thiếu**
-`requireReauth()`, **và** đỏ khi route có `requireReauth()` mà không nằm trong danh sách — vế
-thứ hai giữ cho danh sách không thành trang trí.
+1. thêm `action`;
+2. map `terms|privacy|child_data` cũ thành `accepted`;
+3. map `child_data_withdrawn` thành `{consent_type:'child_data', action:'withdrawn'}`;
+4. tạo ba requirement row với marker NULL để không force vô ý;
+5. drop `policy_version` và enum value cũ;
+6. khôi phục quyền application INSERT-only và chạy invariant test.
 
-## 3. Đồ thị
+Cutover không được tự dịch marker. Muốn hỏi lại sau deploy là một thao tác admin riêng.
 
-```
-T1 guard reauth dùng chung + danh sách route nhạy cảm (D-IJ)
-      └──→ T2 /me/settings: tên · đổi/đặt mật khẩu · email hai bước · tuỳ chọn thông báo
-                └──→ T3 xem và đồng ý bản mới: summary_vi + diff (D-IH, D-II)
-                          └──→ T4 rút đồng ý: child_data → archive của P1.9 (D-IG)
-  T5 bảng phạm vi purge ba nhóm + cổng đối chiếu schema (D-IF)
-      └──→ T6 xoá tài khoản: reauth · 30 ngày · huỷ · mở rộng account:purge
-                              ── Cổng dừng ──
-  T7 evidence, promote 3 spec
+## 3. Đồ thị increment
+
+```text
+T1 migration + consent validity query (D-QZ)
+ ├─→ T2 legal registry/routes current-only (D-QV)
+ ├─→ T3 guest marker + registration + User acceptance API (D-QY)
+ │    └─→ T4 session/child gate + closed rights allow-list (D-QX)
+ │          └─→ T5 User UI /me/settings/privacy + /consent-required
+ └─→ T6 audit action + admin force API (D-QW)
+       └─→ T7 admin force UI
+T3 + T4 ─→ T8 Task #41 SNS handoff
+T1…T8 ──→ T9 evidence, gates, promote
 ```
 
-## 4. Task
+## 4. Task breakdown
 
-### Task 1 — Guard reauth dùng chung
+### Task 1 — Migration và validity primitive
 
-**Tiêu chí nghiệm thu**
-- [ ] Danh sách route nhạy cảm khai dạng dữ liệu, gồm bốn route của bước này và chỗ dành cho hai route SNS của P1.15.
-- [ ] Dùng `reauth.ts` và `REAUTH_WINDOW_MINUTES = 5` của P0.3 (`D-CZ`); **không** định nghĩa lại cửa sổ ở bất kỳ spec nào.
-- [ ] `BR-ACS-01` `BR-ACS-03` `BR-ADL-03`: chưa reauth → **428** `REAUTH_REQUIRED` kèm `details.methods[]`.
-- [ ] `details.methods[]` phản ánh cách thật sự dùng được: mật khẩu khi `password_hash` NOT NULL · OAuth khi có `social_identities` · TOTP khi có `mfa_settings`.
-- [ ] Ca âm `D-IJ`: gỡ `requireReauth()` khỏi một route trong danh sách → cổng **đỏ**.
-- [ ] Ca âm ngược `D-IJ`: thêm `requireReauth()` vào route ngoài danh sách → cổng **đỏ**.
-- [ ] Hồi quy P0.3: reauth ở thiết bị A **không** nâng thiết bị B.
+- [ ] Viết test âm trước: schema còn `policy_version`, thiếu một singleton, hoặc app role UPDATE
+  được log đều đỏ.
+- [ ] Implement migration `D-QZ`; kiểm dữ liệu cũ gồm chuỗi accepted → withdrawn → accepted.
+- [ ] Một primitive dùng chung trả latest action, accepted_at, requirement_at và trạng thái.
+- [ ] Clock so sánh ở DB; marker NULL giữ acceptance hiện có hợp lệ.
+- [ ] Migration upgrade/rollback local và DB rỗng đều xanh; rollback không chạy ngoài local.
 
-**Kiểm chứng**
-- [ ] `pnpm test -- reauth-surface` xanh, assertion tham chiếu `BR-ACS-01` `BR-ADL-03`.
+**Cỡ:** M · **Phụ thuộc:** schema identity hiện tại.
 
-**Phụ thuộc:** P0.3 · **Cỡ:** S
+### Task 2 — Legal document current-only
 
-### Task 2 — `/me/settings`
+- [ ] Registry code-owned có `slug`, `title`, `last_updated_on`, sections và review status; không
+  có `version`, version list hay snapshot history.
+- [ ] Chỉ giữ current page/API; mọi `/v/{version}` và versions endpoint bị xoá, test 404.
+- [ ] `/terms`, `/privacy`, `/child-privacy` không tracking bên thứ ba.
+- [ ] SEO editor từ chối legal slug ở server.
+- [ ] Deploy document không đụng `consent_requirements`.
 
-**Tiêu chí nghiệm thu**
-- [ ] Bốn nhóm §7.1 đúng ranh giới. Nhóm **Bảo mật** ở bước này **chưa** có khối SNS và MFA — `BR-ACS-11`, hai thứ đó thuộc P1.15 và P2.11.
-- [ ] `PATCH /api/users/profile` đổi tên hiển thị, **không** cần reauth.
-- [ ] `BR-ACS-09`: `password_hash` NULL → hiện **"Đặt mật khẩu"**, không có ô "mật khẩu hiện tại".
-- [ ] `POST /api/users/password` trả **409** `PASSWORD_NOT_SET` khi tài khoản chưa có mật khẩu.
-- [ ] `BR-ACS-02` ca âm: đổi mật khẩu → `refresh_token_version` **+1**, thiết bị B mất phiên.
-- [ ] `BR-ACS-10` ca âm: `PUT /api/users/password` (đặt lần đầu) → `refresh_token_version` **không đổi**, thiết bị B vẫn dùng được.
-- [ ] `BR-ACS-03` `BR-ACS-04`: đổi email gửi token tới **email mới**, hạn 24h; `users.email` chỉ đổi khi xác thực xong; email cũ vẫn đăng nhập được trong lúc chờ.
-- [ ] `BR-ACS-05`: đổi email thành công → thông báo tới địa chỉ **cũ**.
-- [ ] **409** khi email mới đã có người dùng.
-- [ ] `BR-ACS-06`: `PUT /api/users/notification-preferences` chỉ nhận `weekly_progress` và `content_new`; gửi loại giao dịch → **422**.
-- [ ] Trả nợ P1.12: toggle `weekly_progress` đọc/ghi đúng `weekly_digest_enabled`, mặc định `true`; job digest tuần tôn trọng thay đổi ngay từ lần chạy kế tiếp.
-- [ ] `BR-ACS-07` ca âm: quét form — không ô tuổi, giới tính, số điện thoại, địa chỉ.
-- [ ] `BR-ACS-08` ca âm: không cài đặt nào của trẻ trên trang này.
+**Cỡ:** M · **Phụ thuộc:** T1 chỉ cho test integration; có thể làm song song phần registry.
 
-**Kiểm chứng**
-- [ ] `pnpm test -- account-settings` xanh, assertion tham chiếu `BR-ACS-02` `BR-ACS-09` `BR-ACS-10`.
+### Task 3 — Marker API, registration và acceptance
 
-**Phụ thuộc:** T1 · **Cỡ:** M
+- [ ] `GET /api/guest/consent-requirements` chỉ trả marker Terms/Privacy.
+- [ ] Registration email echo hai marker; force giữa lúc form mở trả 409 và không tạo User/log.
+- [ ] `GET/POST /api/users/consents` theo contract singleton; POST echo marker và INSERT accepted.
+- [ ] `CONSENT_VERSION_STALE` bị xoá; chỉ dùng `CONSENT_REQUIREMENT_CHANGED` cho race marker.
+- [ ] Acceptance response không chứa policy version, document history hay reason nội bộ.
 
-### Task 3 — Xem và đồng ý bản mới
+**Cỡ:** M · **Phụ thuộc:** T1, T2.
 
-**Tiêu chí nghiệm thu**
-- [ ] `GET /api/users/consents` trả §7.2 kèm version hiện hành của mỗi loại.
-- [ ] `D-IH`: `summary_vi` bắt buộc cho mọi version sau bản đầu; ca âm publish thiếu tóm tắt → cổng **đỏ**.
-- [ ] `BR-CSM-05` + `D-CY`: "Xem thay đổi" hiện `summary_vi` trước, toàn văn ở chế độ chi tiết.
-- [ ] `BR-CSM-02` ca âm: checkbox **chưa tick**; không suy đồng ý từ hành vi nào.
-- [ ] `BR-CSM-01` ca âm: đồng ý bản mới → `consent_logs` **thêm hàng**, hàng cũ không đổi.
-- [ ] `BR-CSM-07`: mỗi hàng có `policy_version`, `ip_address`, `user_agent`, thời điểm.
-- [ ] `POST /api/users/consents` trả **409** `CONSENT_VERSION_STALE` khi version không phải bản hiện hành.
-- [ ] `BR-CSM-04` + `D-II`: chỉ route **tạo hồ sơ trẻ** trả **428** `CONSENT_REQUIRED`; báo cáo và dữ liệu đã có vẫn **200**.
-- [ ] Ca âm `D-II`: gắn guard lên một route đọc → cổng **đỏ**.
-- [ ] `BR-CSM-03` + `BR-LGL-05`: version mới → banner ở `/me` cho User đã đăng nhập.
-- [ ] Ba loại đồng ý đúng §7.1; **không** có đồng ý tiếp thị (`BR-NOT-06`).
+### Task 4 — Gate Terms/Privacy và Child-data
 
-**Kiểm chứng**
-- [ ] `pnpm test -- consent-view` xanh, assertion tham chiếu `BR-CSM-01` `BR-CSM-04` `BR-CSM-05`.
+- [ ] Viết test deny-by-default: route User mới ngoài allow-list bị 428 khi Terms/Privacy required.
+- [ ] Allow-list đóng đúng [`consent-management.md`](../specs/03-account/consent-management.md)
+  mục 7.4; export, withdrawal, reauth, logout và
+  account deletion vẫn chạy.
+- [ ] Login/password, remember và SNS session đều redirect `/consent-required` trước `return_to`.
+- [ ] Child-data guard chặn create child, play session và telemetry/progress/result mới; cho phép
+  correction/archive/export/delete dữ liệu cũ.
+- [ ] Session bắt đầu trước marker vẫn ingest kết quả cuối; session tiếp theo bị chặn.
 
-**Phụ thuộc:** T2 · P1.13 · **Cỡ:** M
+**Cỡ:** M · **Phụ thuộc:** T1, T3.
 
-### Task 4 — Rút đồng ý
+### Task 5 — User UI
 
-**Tiêu chí nghiệm thu**
-- [ ] `BR-CSM-06`: màn hình rút hiện hậu quả §7.3 với **đúng số hồ sơ bé** và mốc 30 ngày, không phải câu chung chung.
-- [ ] `D-IG`: rút `child_data` → hồ sơ sang `archived` qua đúng đường của P1.9, kèm lý do và `purge_at = now + 30 ngày`.
-- [ ] Ca âm `D-IG`: quét code — **đúng một** chỗ ghi `child_profiles.status = 'archived'`.
-- [ ] `BR-CSM-08`: đồng ý lại trong 30 ngày → hồ sơ khôi phục hoàn toàn, dữ liệu còn nguyên.
-- [ ] `BR-CSM-01`: rút = **INSERT** hàng `withdrawn`, không UPDATE hàng cũ.
-- [ ] Rút `privacy` hoặc `terms` → dẫn sang luồng xoá tài khoản, **không** tự xoá.
-- [ ] Trẻ không đồng ý và không rút được — guard theo actor.
-- [ ] Sau khi rút `child_data`, thu dữ liệu mới của trẻ đó dừng ngay.
+- [ ] `/me/settings/privacy` hiện loại, document current, accepted_at, status và `notice_vi`.
+- [ ] `/consent-required` checkbox không tick sẵn, hỗ trợ nhiều loại required và safe `return_to`.
+- [ ] 409 marker đổi làm reload nội dung/trạng thái, không tự retry acceptance.
+- [ ] Không version number, version history hay diff giả.
+- [ ] Withdrawal/deletion flow baseline tiếp tục chạy khi Terms/Privacy required.
 
-**Kiểm chứng**
-- [ ] `pnpm test -- consent-withdraw` xanh, assertion tham chiếu `BR-CSM-06` `BR-CSM-08`.
+**Cỡ:** M · **Phụ thuộc:** T3, T4.
 
-**Phụ thuộc:** T3 · P1.9 · **Cỡ:** M
+### Task 6 — Audit action và admin force API
 
-### Task 5 — Bảng phạm vi purge
+- [ ] `POST /api/managers/auth/reauth` xác minh password hoặc TOTP/mã khôi phục, chỉ cập nhật
+  Redis session hiện tại; session khác và remember restore không được nâng mốc.
+- [ ] Đăng ký action `legal_reconsent_forced`; reason 20–500 ký tự, không PII trẻ.
+- [ ] GET trạng thái chỉ `super_admin`; `content_reviewer` nhận 403 và không thấy affected count.
+- [ ] POST force đòi recent reauth, CSRF, confirm deployed/all users và expected marker.
+- [ ] Marker do DB sinh, lớn hơn marker cũ; marker + audit commit/rollback cùng nhau.
+- [ ] Không route clear, rollback, giảm marker; không client timestamp; không fan-out.
 
-**Tiêu chí nghiệm thu**
-- [ ] Ba nhóm khai dạng dữ liệu: `delete` · `anonymize` · `retain`, khớp §7.2 của [`account-deletion.md`](../specs/03-account/account-deletion.md).
-- [ ] `BR-ADL-10`: `social_identities` nằm nhóm **`delete`**, dù luồng liên kết tới P1.15 mới chạy.
-- [ ] `BR-ADL-04`: `telemetry_events` nhóm **`anonymize`** — `child_uuid = NULL`, không xoá cứng.
-- [ ] `BR-ADL-05`: `audit_logs` và `consent_logs` nhóm **`retain`**; `payment_orders` retain nhưng ẩn danh liên kết tới User.
-- [ ] Cổng `D-IF`: bảng có trong schema mà không có trong ba nhóm → **đỏ**.
-- [ ] Ca âm: thêm một bảng mới vào migration → cổng đỏ cho tới khi phân nhóm.
+**Cỡ:** M · **Phụ thuộc:** T1, audit/admin auth.
 
-**Kiểm chứng**
-- [ ] `pnpm test -- purge-scope` xanh và in ra "N/N bảng đã phân nhóm".
+### Task 7 — Admin force UI
 
-**Phụ thuộc:** P0.7 · **Cỡ:** S
+- [ ] `/legal-consents` chỉ đọc metadata document và link toàn văn; không editor.
+- [ ] Chọn đúng một loại; `notice_vi` và reason tách biệt; hai xác nhận tác động rõ ràng.
+- [ ] Recent reauth và conflict 409 có recovery rõ; không tự retry force.
+- [ ] UI không có reset/clear/rollback và không cho chọn User riêng.
+- [ ] Task #43 nhận debt thêm mục nav `super_admin` khi admin shell đầy đủ được build.
 
-### Task 6 — Xoá tài khoản
+**Cỡ:** S · **Phụ thuộc:** T6.
 
-**Tiêu chí nghiệm thu**
-- [ ] `BR-ADL-07`: trang xoá liệt kê **đúng** số hồ sơ trẻ và số ngày gói còn lại (§7.1), kèm phần được giữ theo luật.
-- [ ] `BR-ADL-03`: xoá cần reauth; tài khoản `password_hash` NULL reauth bằng provider vẫn xoá được — test seed một hàng `social_identities`, không cần luồng P1.15.
-- [ ] Xác nhận → `users.status = deleted`, `purge_at = +30 ngày`, `child_profiles.status = pending_deletion`, mọi phiên thu hồi **ngay**.
-- [ ] Email xác nhận kèm **cách huỷ**.
-- [ ] `BR-ADL-02`: huỷ trong 30 ngày → khôi phục toàn bộ, `status = active`; đăng nhập trong 30 ngày → **403** kèm đường dẫn huỷ; đã purge → **410**.
-- [ ] `BR-ADL-01`: `account:purge` mở rộng sang phạm vi tài khoản, **không thêm job** (`D-GY`, registry P1.5).
-- [ ] Job idempotent; chạy lại không hỏng dữ liệu đã xoá.
-- [ ] `BR-ADL-08` + bảng retry P1.5: purge **1 lần**, fail → `alert()` ngay, không retry mù.
-- [ ] `BR-ADL-09` ca âm: sau purge, chính email đó đăng ký lại được — không danh sách cấm.
-- [ ] `BR-ADL-06` ca âm: quét route admin — không route nào đặt `users.status = deleted`.
-- [ ] Còn entitlement hiệu lực → cảnh báo mất quyền còn lại, **không** tự hoàn tiền.
+### Task 8 — Handoff SNS và task lịch sử
 
-**Kiểm chứng**
-- [ ] `pnpm test -- account-deletion` xanh, assertion tham chiếu `BR-ADL-01` `BR-ADL-02` `BR-ADL-10`.
+- [ ] Task #41 dùng marker echo trong consent SNS và redirect forced consent cho User cũ.
+- [ ] Task #17, #23, #39 chỉ thêm note superseded; không sửa lại evidence lịch sử.
+- [ ] Master P1.14 giữ unchecked cho tới khi contract mới được implement và gate xanh.
 
-**Phụ thuộc:** T4 · T5 · P1.5 · **Cỡ:** M
+**Cỡ:** S · **Phụ thuộc:** T3, T4.
 
-### Cổng dừng
+### Task 9 — Evidence và promote
 
-- [ ] Bốn route nhạy cảm đều 428 khi chưa reauth; ca âm hai chiều của `D-IJ` xanh.
-- [ ] Đặt mật khẩu lần đầu không đá người dùng ra khỏi thiết bị khác.
-- [ ] Version chính sách mới chặn **đúng** việc tạo hồ sơ trẻ; báo cáo vẫn đọc được.
-- [ ] Rút `child_data` rồi đồng ý lại trong 30 ngày → hồ sơ về nguyên trạng.
-- [ ] Purge chạy hết ba nhóm; `social_identities` không còn hàng; `telemetry_events` còn hàng với `child_uuid` NULL.
-- [ ] Email đã purge đăng ký lại được.
-- [ ] `pnpm check && pnpm test && pnpm test:e2e && pnpm lint:specs && pnpm check:progress` xanh.
+- [ ] Test tham chiếu `BR-LGL-*`, `BR-CSM-*`, `BR-LCA-*`, `BR-REG-03`, `BR-LGN-11` và
+  `BR-CDC-07` cho mọi nhánh mới.
+- [ ] Chứng minh 100000 User force vẫn UPDATE đúng một requirement row.
+- [ ] `pnpm check`, test unit/integration/E2E, `pnpm lint:specs`, `pnpm check:progress` xanh.
+- [ ] Promote lại các spec bị hạ từ `implemented` sang `approved` chỉ sau khi code mới và test tồn tại.
+- [ ] Human review diff schema, gate, admin force và migration trước merge; không auto-merge.
 
-### Task 7 — Evidence và promote
+**Cỡ:** S · **Phụ thuộc:** T1–T8.
 
-**Tiêu chí nghiệm thu**
-- [ ] Mỗi `BR-ACS-*` `BR-CSM-*` `BR-ADL-*` có ít nhất một test tham chiếu mã rule.
-- [ ] Ba spec sang `implemented`.
-- [ ] §11 Q1 của [`account-deletion.md`](../specs/03-account/account-deletion.md) (hoàn tiền phần gói chưa dùng) chuyển **P2.3**, gộp làm **một** câu với §11 Q3 của [`legal-pages.md`](../specs/02-public/legal-pages.md) — cùng một chính sách, một chủ.
-- [ ] §11 Q2 của [`consent-management.md`](../specs/03-account/consent-management.md) (ai quyết version chính sách, bao lâu một lần) nêu lại cho chủ — vận hành, **không chặn code**.
-- [ ] Nợ ghi sang **P1.15**: chèn khối SNS vào nhóm Bảo mật (`BR-ACS-11`) và thêm hai route vào danh sách reauth.
-- [ ] Nợ ghi sang **P2.11**: chèn MFA vào nhóm Bảo mật.
-- [ ] Xác nhận nợ digest tuần của [`38-p1-12-report-dashboard-library-plan.md`](38-p1-12-report-dashboard-library-plan.md) đã đóng bằng toggle `weekly_progress`; không còn debt P1.14 vô chủ.
-- [ ] Tick **P1.14** ở [`14-implementation-sequence-todo.md`](14-implementation-sequence-todo.md) khi `check:progress` tự xanh.
+## 5. Cổng dừng
 
-**Cỡ:** S
+- Không còn `policy_version`, version legal route/API/UI hay `CONSENT_VERSION_STALE` trong
+  contract/code/test active.
+- Deploy không force; force không fan-out; audit fail rollback marker.
+- Force Terms/Privacy không khoá quyền export/withdraw/delete.
+- Force Child-data không thu mới và không cắt phiên đang chạy.
+- Registration/acceptance race marker luôn fail atomically bằng 409.
+- Content reviewer không đọc/force được; super admin chưa reauth không force được.
+- Full local gate xanh; migration chỉ chạy local trong Task #14.
 
-## 5. Rủi ro
+## 6. Rủi ro
 
-| Rủi ro | Ảnh hưởng | Giảm thiểu |
-|---|---|---|
-| Quên reauth ở một route | Phiên bị chiếm đổi được email và xoá được tài khoản | `D-IJ` — danh sách dữ liệu, cổng hai chiều |
-| Purge bỏ sót một bảng | Dữ liệu trẻ còn lại sau khi đã hứa xoá; `social_identities` sót thì khoá tài khoản SNS vĩnh viễn | `D-IF` — ba nhóm, cổng đối chiếu schema |
-| Middleware đồng ý phủ quá rộng | Khoá dữ liệu của phụ huynh để ép đồng ý — vi phạm `BR-CSM-04` | `D-II` — một guard một route, ca âm route đọc |
-| Hai đường lưu trữ hồ sơ trẻ | Khôi phục sau khi rút đồng ý hỏng im lặng | `D-IG` — một code path, cổng quét |
-| Version mới không có tóm tắt | Người dùng đồng ý mà không biết đổi gì | `D-IH` — `summary_vi` bắt buộc, cổng publish |
-| Đặt mật khẩu lần đầu giết phiên | Phạt người dùng vì vừa tăng bảo mật | `BR-ACS-10` — ca âm `refresh_token_version` |
-| Purge retry mù | Thao tác phá huỷ chạy nhiều lần | Bảng retry P1.5 — purge 1×, fail → alert |
-| Đổi email một bước | Gõ nhầm địa chỉ là mất tài khoản | `BR-ACS-04` — email cũ hiệu lực tới khi xác thực |
-
-## 6. Giả định
-
-1. **P1.13 đã đóng** — có version chính sách và URL vĩnh viễn để đồng ý trỏ vào.
-2. **P1.9 đã đóng** — ba trạng thái hồ sơ trẻ và đường khôi phục đã chạy.
-3. **P1.5 đã đóng** — registry job, bảng retry, và `AlertPort` có adapter thật.
-4. **MFA chưa tồn tại ở bước này** — `details.methods[]` khai TOTP nhưng không nhánh nào bật được nó tới P2.11.
-5. **SNS chưa tồn tại ở bước này** — test tài khoản chỉ-SNS seed thẳng hàng `social_identities`.
-6. **Chính sách hoàn tiền chưa có** — trang xoá cảnh báo mất quyền còn lại, không hứa hoàn tiền.
+| Rủi ro | Giảm thiểu |
+|---|---|
+| Migration làm mất thứ tự accepted/withdrawn | Fixture nhiều action, kiểm latest-by-created_at và transaction rollback |
+| Middleware chặn cả quyền từ chối | Closed allow-list + test âm cho export/withdraw/delete |
+| Deploy vô tình khoá toàn bộ User | Không hook deploy/migration; marker NULL khi cutover; test deploy-no-force |
+| Hai admin ghi đè nhau | `expected_requirement_at` + row lock + 409 |
+| Force nhầm rồi hạ marker | Cấm clear/rollback; action mới hơn và thông báo sửa sai, không viết lại lịch sử |
+| Child bị cắt giữa game | Ghim marker lúc start; cho session đó finish, chặn start tiếp theo |
+| Code đang làm theo Task #40 cũ | Rebase theo T1–T5; không coi checklist đã tick của baseline là evidence contract mới |
 
 ## 7. Ngoài phạm vi
 
-- Khối liên kết SNS trong nhóm Bảo mật — P1.15.
-- MFA — P2.11.
-- Xuất dữ liệu cá nhân — [`data-export.md`](../specs/06-admin/data-export.md), P2.9.
-- Xoá một hồ sơ trẻ riêng lẻ có cần 30 ngày không — P2, §11 Q2 của [`account-deletion.md`](../specs/03-account/account-deletion.md).
-- Chính sách hoàn tiền — P2.3.
+- Soạn Terms/Privacy qua admin; document vẫn sửa bằng PR.
+- Quản lý hay phục vụ policy version cũ.
+- Force theo từng User/tenant/segment hoặc force tự động khi deploy.
+- Rollback/clear marker sau force.
+- Legal opinion cuối cùng; người rà soát pháp lý vẫn là cổng go-live.
+- OAuth/linking implementation; Task #41 chỉ nhận contract marker từ bước này.

@@ -6,6 +6,9 @@
 > test âm trước, gate đầy đủ, human review diff trước merge. Không auto-merge, không chạy
 > migration ngoài local.
 >
+> **Superseded một phần 2026-08-14:** các checkbox version consent là evidence lịch sử, không
+> phải contract hiện hành. Task #40 revision sở hữu migration sang action + marker singleton.
+>
 > ```
 > export PATH=/Users/macbook/.nvm/versions/node/v24.15.0/bin:$PATH
 > ```
@@ -157,4 +160,3 @@
 - [x] Không secret trong source, test snapshot hoặc log.
 - [x] Working tree không mất thay đổi ngoài phạm vi.
 - [x] Human review hoàn tất; sẵn sàng lập plan P0.5.
-

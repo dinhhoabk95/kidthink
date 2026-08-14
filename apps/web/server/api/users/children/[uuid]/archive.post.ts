@@ -13,7 +13,6 @@ import {
   requireWebUserSession,
   respondToUserAuthError,
 } from "../../../../utils/auth-runtime.js";
-import { executeArchiveChildProfile } from "../../../../utils/child-archive-runtime.js";
 
 export default defineEventHandler(async (event) => {
   try {
@@ -47,11 +46,14 @@ export default defineEventHandler(async (event) => {
     }
 
     // BR-CPR-01 & BR-CPR-02: Archive profile, release quota, keep play data intact
-    const updated = await executeArchiveChildProfile({
-      childId: child.id,
-      userId,
-      reason: "user_archive",
-    });
+    const [updated] = await db
+      .update(childProfiles)
+      .set({
+        status: "archived",
+        updatedAt: new Date(),
+      })
+      .where(eq(childProfiles.id, child.id))
+      .returning();
 
     return {
       uuid: updated.uuid,

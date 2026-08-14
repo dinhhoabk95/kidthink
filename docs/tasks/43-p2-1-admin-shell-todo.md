@@ -31,11 +31,13 @@
 - [ ] Bàn phím đi hết nav; focus nhìn thấy được.
 - [ ] Hết phiên → về đăng nhập kèm `redirect_to`, không trang trắng.
 
-### Task 2 — Re-host trang taxonomy (trả nợ P1.16)
+### Task 2 — Re-host trang P1 (trả nợ P1.14 và P1.16)
 
 - [ ] Cây taxonomy chạy dưới layout `manager`, vào được từ nav.
 - [ ] Chi tiết skill chạy dưới layout `manager`.
+- [ ] `/legal-consents` chạy dưới layout `manager`; nav chỉ `super_admin`.
 - [ ] Chrome tối thiểu của `D-IV` bị **xoá**; không còn hai đường vào.
+- [ ] Chrome tối thiểu legal consent bị xoá; recent reauth/audit test giữ nguyên.
 - [ ] Ca âm P1.16 còn xanh: không route ghi dưới `/api/managers/taxonomy`.
 - [ ] `as_of` còn cạnh số; ngưỡng "đủ" vẫn **3**.
 - [ ] Nút "soạn level" vẫn không dẫn tới 404.
@@ -88,7 +90,7 @@
 - [ ] `content_reviewer`: response API không chứa khoá tiền; nav không có mục tiền.
 - [ ] Không truy vấn nào của dashboard chạm bảng thô.
 - [ ] Không lời gọi mutation nào phát ra từ dashboard.
-- [ ] Trang taxonomy chạy trong shell; test cũ xanh, assertion không đổi.
+- [ ] Trang taxonomy và legal consent chạy trong shell; test hành vi cũ xanh, assertion không đổi.
 - [ ] `pnpm check && pnpm test && pnpm test:e2e && pnpm lint:specs && pnpm check:progress` xanh.
 
 ---

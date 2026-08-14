@@ -11,6 +11,10 @@
 > Kế hoạch migration đầu tiên (roadmap P0 bước 8) đã chuyển thành **Task #7**:
 > [`07-first-migration-plan.md`](07-first-migration-plan.md).
 >
+> **Ghi chú lịch sử 2026-08-14:** quyết định policy version của lô này đã được root D12 và
+> `D-QV`–`D-QZ` trong [Task #40](40-p1-14-account-consent-deletion-plan.md) thay thế. Phần dưới
+> giữ nguyên để truy quyết định cũ, không dùng làm contract triển khai.
+>
 > Sổ cái quyết định `D-*` là sổ liên task, dùng từ Task #1. Task #5 dừng ở `D-AG`, nên task
 > này bắt đầu từ **`D-AH`**.
 >

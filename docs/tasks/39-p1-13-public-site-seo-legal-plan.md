@@ -10,6 +10,10 @@
 > [`faq-and-help.md`](../specs/02-public/faq-and-help.md) ·
 > [`cookie-and-consent-banner.md`](../specs/02-public/cookie-and-consent-banner.md).
 >
+> **Ghi chú lịch sử 2026-08-14:** phần legal version/history của Task #39 đã được root D12 và
+> `D-QV` của [Task #40](40-p1-14-account-consent-deletion-plan.md) thay thế bằng document
+> singleton current-only. Evidence SEO, catalog, landing, FAQ và cookie vẫn giữ nguyên.
+>
 > ```
 > export PATH=/Users/macbook/.nvm/versions/node/v24.15.0/bin:$PATH
 > ```

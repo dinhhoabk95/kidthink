@@ -156,7 +156,8 @@ export function requireManagerSession(event: H3Event) {
 
 export function requireSuperAdminSession(event: H3Event) {
   validateManagerCsrf(event);
-  return requireRole(event, "super_admin");
+  requireRole(event, "super_admin");
+  return requireManagerAuth(event);
 }
 
 export function respondToManagerAuthError(

@@ -2,7 +2,7 @@
 spec: SOCIAL-ACCOUNT-LINKING
 title: Liên kết và gỡ mạng xã hội
 area: account
-status: approved
+status: implemented
 mvp: true
 phase: P1
 reviewed: 2026-08-13

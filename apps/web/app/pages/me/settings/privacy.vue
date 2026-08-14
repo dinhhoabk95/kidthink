@@ -12,7 +12,7 @@
         </NuxtLink>
       </div>
       <h1 class="text-2xl md:text-3xl font-bold font-heading text-surface-900">
-        Quản lý đồng ý pháp lý
+        Quản lý đồng ý & Quyền riêng tư
       </h1>
       <p class="text-sm md:text-base text-surface-600 mt-1">
         Theo dõi trạng thái các điều khoản và chính sách bảo vệ dữ liệu cá nhân,
@@ -35,18 +35,17 @@
               {{ consent.title_vi }}
             </h2>
             <div class="flex items-center gap-2 mt-1 text-sm text-surface-600">
-              <span
-                >Phiên bản hiện hành:
-                <strong>v{{ consent.current_version }}</strong></span
-              >
-              <span>•</span>
-              <span v-if="consent.agreed_version"
-                >Đã đồng ý:
-                <strong>v{{ consent.agreed_version }}</strong>
-                ({{ formatDate(consent.agreed_at) }})</span
+              <span v-if="consent.accepted_at"
+                >Đã đồng ý: {{ formatDate(consent.accepted_at) }}</span
               >
               <span class="text-surface-500 italic" v-else
                 >Chưa ghi nhận đồng ý</span
+              >
+              <span
+                class="text-amber-600 font-semibold"
+                v-if="consent.requirement_at && consent.status === 'required'"
+                >• Cập nhật yêu cầu tái đồng ý:
+                {{ formatDate(consent.requirement_at) }}</span
               >
             </div>
           </div>
@@ -61,9 +60,9 @@
             </span>
             <span
               class="px-3 py-1 text-xs font-bold rounded-full bg-amber-100 text-amber-800"
-              v-else-if="consent.status === 'stale'"
+              v-else-if="consent.status === 'required'"
             >
-              Có bản mới
+              Yêu cầu xem lại
             </span>
             <span
               class="px-3 py-1 text-xs font-bold rounded-full bg-rose-100 text-rose-800"
@@ -71,17 +70,11 @@
             >
               Đã rút đồng ý
             </span>
-            <span
-              class="px-3 py-1 text-xs font-bold rounded-full bg-surface-100 text-surface-700"
-              v-else
-            >
-              Chưa đồng ý
-            </span>
           </div>
         </div>
 
-        <p class="text-sm text-surface-700">
-          {{ consent.summary_vi }}
+        <p class="text-sm text-surface-700" v-if="consent.notice_vi">
+          <strong>Thông báo thay đổi:</strong> {{ consent.notice_vi }}
         </p>
 
         <!-- Actions -->
@@ -90,21 +83,21 @@
             class="text-sm font-semibold text-brand-600 hover:text-brand-700 flex items-center gap-1"
             rel="noopener noreferrer"
             target="_blank"
-            :href="consent.url"
+            :href="consent.document_url"
           >
-            <span>Đọc toàn văn chính sách</span>
+            <span>Đọc toàn văn văn bản</span>
             <UIcon class="w-3.5 h-3.5" name="i-lucide-external-link" />
           </a>
 
           <div class="flex items-center gap-3">
-            <!-- Stale / Unconsented update action -->
+            <!-- Required action -->
             <button
               class="min-h-11 px-5 py-2 bg-brand-600 hover:bg-brand-700 text-white font-semibold text-sm rounded-xl transition-colors shadow-sm"
               type="button"
-              v-if="consent.status === 'stale' || consent.status === 'unconsented' || consent.status === 'withdrawn'"
-              @click="() => handleConsentAction(consent)"
+              v-if="consent.status === 'required'"
+              @click="() => handleAcceptConsent(consent)"
             >
-              {{ consent.status === 'stale' ? 'Xem thay đổi & Đồng ý' : 'Đồng ý phiên bản mới' }}
+              Xác nhận đồng ý
             </button>
 
             <!-- Withdraw action for child_data -->
@@ -120,6 +113,27 @@
         </div>
       </div>
     </div>
+
+    <!-- Data Portability / Export Section (D-QX) -->
+    <div
+      class="bg-white rounded-2xl border-2 border-surface-200 p-5 md:p-6 space-y-3"
+    >
+      <h2 class="text-lg font-bold font-heading text-surface-900">
+        Xuất dữ liệu cá nhân
+      </h2>
+      <p class="text-sm text-surface-600">
+        Bạn có quyền tải về toàn bộ bản sao dữ liệu cá nhân và hồ sơ trẻ trực
+        thuộc tài khoản theo định dạng JSON chuẩn.
+      </p>
+      <a
+        class="inline-flex items-center gap-2 min-h-11 px-5 py-2 bg-surface-100 hover:bg-surface-200 text-surface-800 font-semibold text-sm rounded-xl transition-colors"
+        download="kidthink-data-export.json"
+        href="/api/users/data-export"
+      >
+        <UIcon class="w-4 h-4" name="i-lucide-download" />
+        <span>Tải về bản sao dữ liệu (JSON)</span>
+      </a>
+    </div>
   </div>
 </template>
 
@@ -133,55 +147,44 @@
   interface ConsentItem {
     consent_type: "terms" | "privacy" | "child_data";
     title_vi: string;
-    slug: string;
-    current_version: string;
-    agreed_version: string | null;
-    agreed_at: string | null;
-    status: "active" | "stale" | "withdrawn" | "unconsented";
-    summary_vi: string;
-    url: string;
+    document_url: string;
+    accepted_at: string | null;
+    requirement_at: string | null;
+    notice_vi: string | null;
+    status: "active" | "required" | "withdrawn";
   }
 
   const consents = ref<ConsentItem[]>([
     {
       consent_type: "terms",
       title_vi: "Điều khoản sử dụng dịch vụ",
-      slug: "terms",
-      current_version: "1.0",
-      agreed_version: "1.0",
-      agreed_at: new Date().toISOString(),
+      document_url: "/terms",
+      accepted_at: new Date().toISOString(),
+      requirement_at: null,
+      notice_vi: null,
       status: "active",
-      summary_vi:
-        "Quy định quyền và nghĩa vụ của phụ huynh khi sử dụng nền tảng KidThink.",
-      url: "/terms",
     },
     {
       consent_type: "privacy",
       title_vi: "Chính sách quyền riêng tư",
-      slug: "privacy",
-      current_version: "1.0",
-      agreed_version: "1.0",
-      agreed_at: new Date().toISOString(),
+      document_url: "/privacy",
+      accepted_at: new Date().toISOString(),
+      requirement_at: null,
+      notice_vi: null,
       status: "active",
-      summary_vi:
-        "Cam kết bảo vệ dữ liệu cá nhân của phụ huynh theo quy định pháp luật Việt Nam.",
-      url: "/privacy",
     },
     {
       consent_type: "child_data",
       title_vi: "Chính sách bảo vệ dữ liệu trẻ em",
-      slug: "child-privacy",
-      current_version: "1.0",
-      agreed_version: "1.0",
-      agreed_at: new Date().toISOString(),
+      document_url: "/child-privacy",
+      accepted_at: new Date().toISOString(),
+      requirement_at: null,
+      notice_vi: null,
       status: "active",
-      summary_vi:
-        "Quy định chuyên biệt bảo vệ quyền riêng tư và an toàn thông tin trẻ em theo Nghị định 13/2023/NĐ-CP.",
-      url: "/child-privacy",
     },
   ]);
 
-  onMounted(async () => {
+  async function loadConsents() {
     try {
       const data = await globalThis.$fetch<{ consents: ConsentItem[] }>(
         "/api/users/consents"
@@ -192,6 +195,10 @@
     } catch (err) {
       console.error("Failed to load consents", err);
     }
+  }
+
+  onMounted(() => {
+    loadConsents();
   });
 
   function formatDate(isoDate: string | null): string {
@@ -205,11 +212,34 @@
     }
   }
 
-  function handleConsentAction(_item: ConsentItem) {
-    // Modal interaction
+  async function handleAcceptConsent(item: ConsentItem) {
+    try {
+      await globalThis.$fetch("/api/users/consents", {
+        method: "POST",
+        body: {
+          consent_type: item.consent_type,
+          requirement_at: item.requirement_at,
+          accept: true,
+        },
+      });
+      await loadConsents();
+    } catch (err) {
+      console.error("Failed to submit consent", err);
+    }
   }
 
-  function handleWithdrawAction(_item: ConsentItem) {
-    // Modal interaction
+  async function handleWithdrawAction(item: ConsentItem) {
+    try {
+      await globalThis.$fetch("/api/users/consents/withdraw", {
+        method: "POST",
+        body: {
+          consent_type: item.consent_type,
+          confirm: true,
+        },
+      });
+      await loadConsents();
+    } catch (err) {
+      console.error("Failed to withdraw consent", err);
+    }
   }
 </script>

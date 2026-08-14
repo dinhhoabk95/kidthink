@@ -216,7 +216,7 @@ admin-dashboard (độc lập)
 [`child-profile-admin.md`](../specs/06-admin/child-profile-admin.md) giới hạn **đúng 4 trường**
 và cấm có trang liệt kê toàn bộ trẻ. Đọc cạnh
 [`child-data-compliance.md`](../specs/00-foundation/child-data-compliance.md) — danh sách field
-trẻ là danh sách đóng, và Nghị định 13/2023 là lý do nó đóng.
+trẻ là danh sách đóng, và Luật 91/2025/QH15 cùng Nghị định 13/2023 là lý do nó đóng.
 
 ### Lô E — nhật ký, cờ, xuất dữ liệu, MFA (8 spec)
 

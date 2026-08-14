@@ -5,7 +5,7 @@ area: account
 status: approved
 mvp: true
 phase: P0
-reviewed: 2026-08-13
+reviewed: 2026-08-14
 owns:
   - Luồng đăng nhập User bằng email và mật khẩu
   - Quản lý thiết bị đang đăng nhập
@@ -59,6 +59,7 @@ User. Cấm Trẻ không đăng nhập.
 | MFA đã bật | **428** `MFA_REQUIRED` → nhập mã → cấp session/remember theo preference. Xem [`mfa.md`](mfa.md) |
 | Chọn nút SNS | Rời luồng này sang [`social-login.md`](social-login.md) |
 | Tài khoản chỉ có SNS, thử đăng nhập bằng mật khẩu | **401** `INVALID_CREDENTIALS` — giống hệt mọi lần sai. Cấm nói "tài khoản này dùng Google" (`BR-LGN-09`) |
+| Terms hoặc Privacy bị force sau lần đồng ý gần nhất | Cấp phiên bình thường rồi điều hướng `/consent-required`; middleware chỉ cho đi qua allowlist quyền đóng tài khoản cho tới khi đồng ý lại |
 
 ## 6. Business rules
 
@@ -74,6 +75,7 @@ User. Cấm Trẻ không đăng nhập.
 | `BR-LGN-08` | Sau đăng nhập, **không tự vào khu vực chơi** — vào `/me` | Người lớn cần chọn trẻ trước |
 | `BR-LGN-09` | Tài khoản có `password_hash` NULL trả **cùng** `INVALID_CREDENTIALS` khi thử mật khẩu | `BR-ERR-02`. "Tài khoản này dùng Google" cho kẻ tấn công biết nên nhắm vào đâu, và đó là thông tin ta không nợ ai |
 | `BR-LGN-10` | Danh sách thiết bị hiện **cách đăng nhập** (`auth_method`) của từng phiên | Phiên tạo bằng SNS mà người dùng không nhớ đã bấm là dấu hiệu tài khoản SNS bị chiếm — họ cần thấy để nhận ra |
+| `BR-LGN-11` | Force Terms/Privacy không làm đăng nhập thất bại; sau khi xác thực phải vào `/consent-required` trước mọi `return_to` ngoài allowlist | User vẫn phải đăng nhập được để xem tài liệu, export dữ liệu, rút consent hoặc xoá tài khoản; session gate mới là nơi ép đúng phạm vi |
 
 ## 7. Data
 
@@ -97,6 +99,7 @@ User. Cấm Trẻ không đăng nhập.
 | Đến từ trang giá | `/me/subscription` |
 | Đến từ một game bị khoá | Trang game đó |
 | `pending_verification` | `/me` + banner nhắc xác thực |
+| Thiếu Terms hoặc Privacy sau marker bắt buộc | `/consent-required`; đích dự định chỉ được dùng sau khi hoàn tất |
 
 ## 8. API contract
 
@@ -173,6 +176,13 @@ Scenario: BR-LGN-10 — danh sách thiết bị hiện cách đăng nhập
   Given user có một phiên tạo bằng mật khẩu và một phiên tạo bằng Google
   When mở danh sách thiết bị
   Then mỗi dòng hiện cách đăng nhập tương ứng
+
+Scenario: BR-LGN-11 — force consent thắng return_to nhưng không chặn đăng nhập
+  Given privacy đã bị force sau lần user đồng ý gần nhất
+  When user đăng nhập đúng với return_to là một game
+  Then hệ thống vẫn cấp session
+  And điều hướng tới /consent-required
+  And user vẫn có thể export hoặc xoá tài khoản mà không phải đồng ý lại
 ```
 
 ## 10. Boundaries
@@ -181,6 +191,7 @@ Scenario: BR-LGN-10 — danh sách thiết bị hiện cách đăng nhập
 - Thông báo lỗi không tiết lộ tài khoản tồn tại.
 - Xoay remember credential nguyên tử.
 - Vào `/me` sau đăng nhập.
+- Kiểm tra marker Terms/Privacy trước khi dùng `return_to`.
 
 **Ask first**
 - Đổi TTL session hoặc remember.

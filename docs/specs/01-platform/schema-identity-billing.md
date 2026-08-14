@@ -5,7 +5,7 @@ area: platform
 status: approved
 mvp: true
 phase: P0
-reviewed: 2026-08-13
+reviewed: 2026-08-14
 owns:
   - Định nghĩa cột module identity, billing, ops
 depends_on:
@@ -48,12 +48,13 @@ Không có.
 | `BR-SIB-03` (snapshot giá) | `payment_orders.amount_vnd` là **snapshot** lúc tạo đơn | Giá đổi sau không ảnh hưởng đơn đã tạo |
 | `BR-SIB-04` (test orphan bắt buộc) | 4 bảng auth phụ polymorphic → **bắt buộc** test bắt orphan | [`data-model-overview.md`](data-model-overview.md) `BR-DM-04` (polymorphic phải có test toàn vẹn) |
 | `BR-SIB-05` (chỉ argon2id) | `password_hash` argon2id; cấm — **NEVER** cột mật khẩu dạng khác | [`auth-tokens-sessions.md`](auth-tokens-sessions.md) `BR-AUT-08`. Ghi ở tầng cột vì đây là chỗ vi phạm để lại dấu vĩnh viễn: một cột `password` plaintext hay `password_md5` lọt vào migration thì mọi hàng đã ghi không hash ngược lại được |
-| `BR-SIB-06` (INSERT-only cho log pháp lý) | `consent_logs` · `audit_logs` INSERT-only, ép bằng quyền DB | [`data-model-overview.md`](data-model-overview.md) `BR-DM-05` (bảng INSERT-only). Hai bảng này là bằng chứng pháp lý (Nghị định 13/2023) và vết điều tra — sửa được nghĩa là không chứng minh được điều gì. Quyền DB ép, không phải quy ước code |
+| `BR-SIB-06` (INSERT-only cho log pháp lý) | `consent_logs` · `audit_logs` INSERT-only, ép bằng quyền DB | [`data-model-overview.md`](data-model-overview.md) `BR-DM-05` (bảng INSERT-only). Hai bảng này là bằng chứng pháp lý theo Luật 91/2025/QH15 và Nghị định 13/2023 cùng vết điều tra — sửa được nghĩa là không chứng minh được điều gì. Quyền DB ép, không phải quy ước code |
 | `BR-SIB-07` | `users.email` UNIQUE **case-insensitive** (`citext` hoặc index trên `lower()`) | `A@x.com` và `a@x.com` là một người |
 | `BR-SIB-08` (password nullable) | `users.password_hash` **nullable** — tài khoản chỉ có SNS là hợp lệ | [`auth-tokens-sessions.md`](auth-tokens-sessions.md) `BR-AUT-16`, [`social-login.md`](../03-account/social-login.md) `BR-SCL-08`. Bất biến thay thế là `login_methods ≥ 1` ([`social-account-linking.md`](../03-account/social-account-linking.md) `BR-SLK-04`), ép ở tầng service không ở cột |
 | `BR-SIB-09` (hai UNIQUE) | `social_identities` có **hai** UNIQUE: `(provider, provider_user_id)` và `(user_id, provider)` | Cái thứ nhất chặn một tài khoản SNS gắn hai User; cái thứ hai chặn hai tài khoản SNS cùng provider trên một User ([`social-account-linking.md`](../03-account/social-account-linking.md) `BR-SLK-02` — một User tối đa một tài khoản mỗi provider) |
 | `BR-SIB-10` (cấm cột token provider) | `social_identities` cấm — **NEVER có cột token** của nhà cung cấp | [`oauth-provider-registry.md`](oauth-provider-registry.md) `BR-OAP-07` (không lưu token provider). Cột không tồn tại thì không rò được |
 | `BR-SIB-11` | Xoá `users` **cascade** xoá `social_identities` | Danh tính mồ côi làm `UNIQUE (provider, provider_user_id)` chặn người dùng đăng ký lại sau khi đã xoá tài khoản |
+| `BR-SIB-12` (singleton force marker) | `consent_requirements` có đúng ba khoá `terms` · `privacy` · `child_data`; marker chỉ UPDATE tiến tới, không có policy version | Một hàng cho mỗi loại cho phép kiểm consent bằng một so sánh thời gian, không fan-out theo User và không dựng kho version trá hình |
 
 ## 7. Data
 
@@ -124,8 +125,36 @@ Cấm cột `access_token`, `refresh_token`, `id_token`, hay `avatar_url` — `B
 
 ### 7.4 `consent_logs` — INSERT-only
 
-`id` · `user_id` FK · `consent_type` enum (`terms`\|`privacy`\|`child_data`\|`child_data_withdrawn`) ·
-`policy_version` · `ip_address` · `user_agent` · `created_at`.
+| Cột | Kiểu | Ràng buộc |
+|---|---|---|
+| `id` | bigserial | PK; dùng làm tie-break cùng `created_at` |
+| `user_id` | bigint | FK `users(id)`, NOT NULL |
+| `consent_type` | enum | `terms` \| `privacy` \| `child_data` |
+| `action` | enum | `accepted` \| `withdrawn` |
+| `ip_address` | inet | NOT NULL |
+| `user_agent` | text | NOT NULL |
+| `created_at` | timestamptz | NOT NULL, DB clock |
+
+Cấm cột `policy_version`, `version`, `requirement_id` hay document snapshot. Validity do
+[`consent-management.md`](../03-account/consent-management.md) mục 4 tính từ action mới nhất và
+singleton marker.
+
+Migration cutover map `child_data_withdrawn` cũ thành
+`consent_type='child_data', action='withdrawn'`; ba consent type còn lại thành
+`action='accepted'`, rồi mới drop `policy_version`. Không UPDATE/DELETE hàng log sau cutover.
+
+### 7.4a `consent_requirements` — singleton mutable
+
+| Cột | Kiểu | Ràng buộc |
+|---|---|---|
+| `consent_type` | enum | PK; đúng ba giá trị của mục 7.4 |
+| `reconsent_required_at` | timestamptz | NULL khi chưa từng force; chỉ DB sinh, marker mới phải lớn hơn marker cũ |
+| `notice_vi` | varchar(500) | NULL trước lần force đầu; 20–500 ký tự khi có marker |
+| `updated_at` | timestamptz | NOT NULL |
+
+Seed đúng ba hàng, marker NULL. Bảng này **không** INSERT-only: force hợp lệ UPDATE đúng một
+hàng trong cùng transaction với audit. Cấm FK/User list, `policy_version`, nội dung document,
+manager id hay reason nội bộ; manager và reason nằm ở `audit_logs`.
 
 ### 7.5 `entitlement_keys` — Lớp 1
 
@@ -322,6 +351,17 @@ Scenario: BR-SIB-11 — xoá user cascade xoá danh tính SNS
   When xoá hàng users của A
   Then còn 0 hàng social_identities trỏ tới A
   And tài khoản SNS đó liên kết lại được cho user mới
+
+Scenario: BR-SIB-12 — consent requirements đúng ba singleton
+  When chạy migration consent singleton
+  Then consent_requirements có đúng ba hàng terms, privacy, child_data
+  And mọi reconsent_required_at ban đầu là NULL
+  And không cột nào tên policy_version, version hay user_id
+
+Scenario: BR-SIB-12 — marker không đi lùi
+  Given privacy có reconsent_required_at A
+  When role ứng dụng cố UPDATE marker về thời điểm trước A
+  Then DB hoặc service transaction từ chối
 ```
 
 ## 10. Boundaries

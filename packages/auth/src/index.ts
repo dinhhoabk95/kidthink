@@ -52,24 +52,27 @@ export {
   MfaChallengeService,
 } from "./mfa-challenge";
 export {
+  getOAuthRegistry,
+  type OAuthProviderConfig,
+  OAuthProviderRegistry,
+  type OAuthRegistryOptions,
+} from "./oauth/registry.js";
+export {
   decodeOAuthStatePayload,
   encodeOAuthStatePayload,
   generateOAuthState,
-  getOAuthRegistry,
+  OAUTH_COOKIE_NAME,
+  OAUTH_STATE_TTL_SECONDS,
+  sanitizeReturnTo,
+} from "./oauth/state-store.js";
+export {
   isOAuthProvider,
   type NormalizedProfile,
-  OAUTH_COOKIE_NAME,
   OAUTH_PROVIDERS,
-  OAUTH_STATE_TTL_SECONDS,
   type OAuthProvider,
-  type OAuthProviderConfig,
-  type OAuthProviderEnvConfig,
   type OAuthProviderPublicInfo,
-  OAuthProviderRegistry,
-  type OAuthRegistryOptions,
   type OAuthStatePayload,
-  sanitizeReturnTo,
-} from "./oauth/index.js";
+} from "./oauth/types.js";
 export {
   createParentGateToken,
   generateParentGateChallenge,

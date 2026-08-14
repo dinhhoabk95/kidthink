@@ -1,6 +1,5 @@
 import { alert, type JobName, QUEUE_NAME } from "@kidthink/queue";
 import { type Job, Worker } from "bullmq";
-import { runAccountPurgeJob } from "./account/purge.js";
 import { runPostgresBackup } from "./backup/postgres.js";
 import { runVerifyBackup } from "./backup/verify.js";
 import { runSendEmail } from "./email/send.js";
@@ -16,9 +15,6 @@ export async function processJob(job: Job) {
     const name = job.name as JobName;
 
     switch (name) {
-      case "account:purge":
-        await runAccountPurgeJob(job.id as string);
-        break;
       case "backup:postgres":
         await runPostgresBackup(job.id as string);
         break;

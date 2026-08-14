@@ -8,6 +8,7 @@ import {
 } from "@kidthink/auth";
 import {
   consentLogs,
+  consentRequirements,
   getAppDb,
   getAppSql,
   notifications,
@@ -40,6 +41,8 @@ export interface RegisterPayload {
   display_name: string;
   accept_terms: boolean;
   accept_privacy: boolean;
+  terms_requirement_at?: string | null;
+  privacy_requirement_at?: string | null;
 }
 
 function parseAndValidateRegisterBody(body: unknown): RegisterPayload {
@@ -56,6 +59,8 @@ function parseAndValidateRegisterBody(body: unknown): RegisterPayload {
     "display_name",
     "accept_terms",
     "accept_privacy",
+    "terms_requirement_at",
+    "privacy_requirement_at",
   ]);
 
   for (const key of Object.keys(payload)) {
@@ -134,6 +139,30 @@ export async function handleRegister(event: H3Event, testBody?: unknown) {
 
     const db = getAppDb();
 
+    // Check requirement markers (D-QY)
+    const reqs = await db.select().from(consentRequirements);
+    const termsReq = reqs.find((r) => r.consentType === "terms");
+    const privReq = reqs.find((r) => r.consentType === "privacy");
+
+    if (
+      validated.terms_requirement_at !== undefined &&
+      termsReq?.reconsentRequiredAt &&
+      (!validated.terms_requirement_at ||
+        new Date(validated.terms_requirement_at).getTime() !==
+          termsReq.reconsentRequiredAt.getTime())
+    ) {
+      throw appError("CONSENT_REQUIREMENT_CHANGED");
+    }
+    if (
+      validated.privacy_requirement_at !== undefined &&
+      privReq?.reconsentRequiredAt &&
+      (!validated.privacy_requirement_at ||
+        new Date(validated.privacy_requirement_at).getTime() !==
+          privReq.reconsentRequiredAt.getTime())
+    ) {
+      throw appError("CONSENT_REQUIREMENT_CHANGED");
+    }
+
     // BR-REG-07: Check if email already exists
     const existing = await db
       .select({ id: users.id })
@@ -164,14 +193,14 @@ export async function handleRegister(event: H3Event, testBody?: unknown) {
       {
         userId: newUser.id,
         consentType: "terms",
-        policyVersion: "1.0",
+        action: "accepted",
         ipAddress: rawIp,
         userAgent,
       },
       {
         userId: newUser.id,
         consentType: "privacy",
-        policyVersion: "1.0",
+        action: "accepted",
         ipAddress: rawIp,
         userAgent,
       },
