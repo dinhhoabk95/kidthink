@@ -2,6 +2,7 @@ export * from "./auth-reauth-methods.ts";
 export * from "./auth-session-store.ts";
 export * from "./client.ts";
 export * from "./purge.ts";
+export * from "./purge-scope.ts";
 export * from "./schema/adaptive.ts";
 export * from "./schema/billing.ts";
 export * from "./schema/child.ts";

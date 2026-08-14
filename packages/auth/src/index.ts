@@ -52,6 +52,25 @@ export {
   MfaChallengeService,
 } from "./mfa-challenge";
 export {
+  decodeOAuthStatePayload,
+  encodeOAuthStatePayload,
+  generateOAuthState,
+  getOAuthRegistry,
+  isOAuthProvider,
+  type NormalizedProfile,
+  OAUTH_COOKIE_NAME,
+  OAUTH_PROVIDERS,
+  OAUTH_STATE_TTL_SECONDS,
+  type OAuthProvider,
+  type OAuthProviderConfig,
+  type OAuthProviderEnvConfig,
+  type OAuthProviderPublicInfo,
+  OAuthProviderRegistry,
+  type OAuthRegistryOptions,
+  type OAuthStatePayload,
+  sanitizeReturnTo,
+} from "./oauth/index.js";
+export {
   createParentGateToken,
   generateParentGateChallenge,
   isValidParentGateToken,
@@ -91,6 +110,11 @@ export {
   REAUTH_MAX_AGE_SECONDS,
   verifyReauthWindow,
 } from "./reauth";
+export {
+  isSensitiveReauthRoute,
+  SENSITIVE_REAUTH_ROUTES,
+  type SensitiveRouteDefinition,
+} from "./reauth-routes";
 export {
   getAuthRedisClient,
   getBrowserSessionService,

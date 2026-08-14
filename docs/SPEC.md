@@ -28,7 +28,7 @@ Quy tắc thô: nếu có người sẽ ngạc nhiên vì kết quả, việc đ
 
 ---
 
-## 0. Mười một quyết định định hình v2
+## 0. Mười hai quyết định định hình v2
 
 Đây là delta so với v1. Mỗi dòng là một quyết định đã chốt, kèm lý do.
 
@@ -39,12 +39,13 @@ Quy tắc thô: nếu có người sẽ ngạc nhiên vì kết quả, việc đ
 | **D3** | **Catalog MVP đúng 2 SKU**: `standard`, `premium`. Premium bao hàm quyền *học* của Creator. Quyền *tạo* nằm ở add-on, **spec đủ nhưng chưa bán** | Bán gói không mở được tính năng nào là vấn đề đạo đức thương mại. Add-on lên catalog cùng lúc với tính năng của nó |
 | **D4** | **Không có thư viện ảnh.** Emoji là kho cố định. Ảnh upload gắn chủ sở hữu là content item, không có pool duyệt lại | Thư viện ảnh dùng chung kéo theo governance: ai xoá được, xoá thì content nào chết, bản quyền của ai. Chi phí đó không đáng ở MVP |
 | **D5** | **Nội dung đã publish bất biến.** Sửa = tạo version mới. Play session ghim `content_version` | Báo cáo học tập của một đứa trẻ phải giải thích được bằng đúng nội dung nó đã chơi, không phải bản đã sửa sau đó |
-| **D6** | **Tuân thủ Nghị định 13/2023 + Luật Trẻ em (VN)** là ràng buộc thiết kế, không phải checklist cuối | Thu dữ liệu trẻ vượt nhu cầu là thứ không rút lại được sau khi đã ghi |
+| **D6** | **Tuân thủ Luật Bảo vệ dữ liệu cá nhân 91/2025/QH15, Nghị định 13/2023 và Luật Trẻ em (VN)** là ràng buộc thiết kế, không phải checklist cuối | Thu dữ liệu trẻ vượt nhu cầu là thứ không rút lại được sau khi đã ghi; Luật 91/2025/QH15 đã có hiệu lực từ 01/01/2026 và là căn cứ hiện hành không được bỏ sót |
 | **D7** | **AI soạn trong repo, người merge.** AI agent IDE hỗ trợ viết seeder nội dung và code; cổng người là **PR review**, và merge chính là phát hành. Cấm có LLM nào chạy trong hệ thống để sinh nội dung | Ranh giới cũ ("NEVER để AI sinh nội dung cốt lõi") đặt sai chỗ. Cái cần cấm không phải việc **soạn thảo**, mà việc **phát hành không có người kiểm**. Đặt cổng ở PR thì cổng đó có diff, có `git blame`, và revert được bằng một lệnh |
 | **D8** | **Đổi tên dự án: TiniMath → KidThink.** Package scope, domain, chuỗi hiển thị người dùng đổi theo. Thư mục repo v1 cũ (`tinimath/`) giữ nguyên tên — đó là tên lịch sử của thư mục tham khảo đọc-only, không phải thương hiệu | Product owner chốt định vị lại thương hiệu trước khi viết dòng code v2 đầu tiên, tránh phải rename giữa chừng khi đã có package đã publish, domain đã trỏ DNS |
-| **D9** | **Khởi tạo source mới từ đầu trong `kidthink/`**, nằm cạnh `tinimath/` (v1) trong cùng workspace — thay vì update dần code cũ. Port có chọn lọc theo [`docs/specs/00-foundation/repo-bootstrap.md`](specs/00-foundation/repo-bootstrap.md) | Update dần trên nền v1 mang theo nợ kỹ thuật đã ghi nhận ở [`AUDIT-v1.md`](specs/AUDIT-v1.md) — 31 spec gộp nhiều outcome, thiếu 8 loại spec. Greenfield cho phép áp toàn bộ 133 spec v2 sạch từ dòng code đầu tiên |
+| **D9** | **Khởi tạo source mới từ đầu trong `kidthink/`**, nằm cạnh `tinimath/` (v1) trong cùng workspace — thay vì update dần code cũ. Port có chọn lọc theo [`docs/specs/00-foundation/repo-bootstrap.md`](specs/00-foundation/repo-bootstrap.md) | Update dần trên nền v1 mang theo nợ kỹ thuật đã ghi nhận ở [`AUDIT-v1.md`](specs/AUDIT-v1.md) — 31 spec gộp nhiều outcome, thiếu 8 loại spec. Greenfield cho phép áp toàn bộ 134 spec v2 sạch từ dòng code đầu tiên |
 | **D10** | **Ưu tiên adopt thư viện Nuxt ecosystem đã kiểm chứng** (auth, sitemap/SEO, cache, queue) thay vì tự xây từ đầu. Khi cần dùng chung nhiều app, bọc lại thành **package driver nội bộ** — xem [`docs/specs/00-foundation/monorepo-package-architecture.md`](specs/00-foundation/monorepo-package-architecture.md) | Tự xây auth/queue/sitemap không tạo khác biệt cạnh tranh, chỉ tốn thời gian dev và mang rủi ro bảo mật tự phát hiện. Thư viện phổ biến có test, security patch, cộng đồng review. Driver nội bộ giữ interface ổn định cho nhiều app và không khoá cứng vào một thư viện |
 | **D11** | **Phạm vi hiện hành là web-only và vận hành tại Việt Nam.** PWA vẫn là web delivery; native mobile app, classroom/B2B, licensing/white-label, marketplace và mở thị trường ngoài Việt Nam không có spec triển khai, task hay placeholder schema trong roadmap hiện hành. | Lập kế hoạch cho một mô hình sản phẩm chưa được chọn tạo contract giả và kéo theo actor, pháp lý, thanh toán, store review hoặc multi-tenancy không cần thiết. Nếu sau này mở rộng, người quyết phải mở một chương trình scope mới và viết spec sở hữu trước khi lập task. |
+| **D12** | **Tài liệu pháp lý là singleton code-owned, không quản lý policy version.** Sửa nội dung bằng PR; sau deploy, `super_admin` chủ động force re-consent bằng một mốc thời gian cho từng loại `terms` · `privacy` · `child_data`. | Hệ thống chỉ cần biết User đã đồng ý trước hay sau lần force gần nhất. Lịch sử Git + audit của thao tác force giữ dấu vận hành; dựng kho version và diff policy tạo thêm schema, route và UI nhưng không tăng giá trị sản phẩm tương xứng. |
 
 ### D7 chi tiết — hai luồng, cùng một cổng
 
@@ -547,7 +548,7 @@ Soft unlock tồn tại vì duyệt tay có độ trễ người — người đ
 
 ---
 
-## 4. Tuân thủ dữ liệu trẻ em — Nghị định 13/2023 + Luật Trẻ em — quyết định D6
+## 4. Tuân thủ dữ liệu trẻ em — Luật 91/2025/QH15 + Nghị định 13/2023 + Luật Trẻ em — quyết định D6
 
 Thị trường vận hành: **Việt Nam**. Không áp COPPA/GDPR-K trong roadmap hiện hành. Nếu sau này
 mở thị trường ngoài Việt Nam, đó là một chương trình mở rộng mới: đổi scope và viết lại spec
@@ -572,9 +573,14 @@ Cấm — **NEVER thu**: địa chỉ, trường học, lớp, ảnh thật, s�
 ### 4.2 Đồng ý
 
 - Đồng ý của **người lớn** được ghi trước khi tạo child profile đầu tiên:
-  `consent_logs` INSERT-only — `{user_id, consent_type, policy_version, ip, ua, created_at}`.
-- Rút đồng ý = **thêm hàng** `consent_type='withdrawn'`, Cấm — **NEVER sửa hàng cũ**.
-- Đổi chính sách → yêu cầu đồng ý lại, ghi `policy_version` mới.
+  `consent_logs` INSERT-only — `{user_id, consent_type, action, ip, ua, created_at}`.
+- `consent_type ∈ {terms, privacy, child_data}`; `action ∈ {accepted, withdrawn}`.
+- Rút đồng ý = **thêm hàng** `action='withdrawn'`, Cấm — **NEVER sửa hàng cũ**.
+- Mỗi loại có đúng một hàng singleton trong `consent_requirements`. Admin force cập nhật
+  `reconsent_required_at`; đồng ý hợp lệ khi lần `accepted` gần nhất xảy ra không trước mốc đó
+  và không bị một lần `withdrawn` mới hơn phủ định.
+- Cấm — **NEVER `policy_version`, URL version cũ, hay lịch sử version chính sách**. Nội dung
+  pháp lý sửa trực tiếp trong code qua PR; cập nhật code tự nó không force User.
 
 ### 4.3 Ranh giới kỹ thuật
 
@@ -608,7 +614,7 @@ giữ lại (nghĩa vụ pháp lý), không chứa PII của trẻ.
 
 | Nhóm | Entity |
 |---|---|
-| **Identity** | `users` `managers` `active_sessions` `mfa_settings` `verification_tokens` `consent_logs` |
+| **Identity** | `users` `managers` `active_sessions` `mfa_settings` `verification_tokens` `consent_logs` `consent_requirements` |
 | **Child** | `child_profiles` `child_session_summaries` |
 | **Billing** | `packages` `package_entitlements` `entitlement_keys` `entitlements` `payment_orders` |
 | **Taxonomy** (L1) | `competencies` `strands` `skills` `skill_prerequisites` `learning_objectives` |
@@ -1204,7 +1210,7 @@ hình báo cáo mang câu này.
 
 Mỗi outcome có **đúng một** spec sở hữu. Spec khác **link tới**, không copy contract.
 
-**133 spec module.** Bản đồ đầy đủ: [`docs/specs/index.md`](specs/index.md).
+**134 spec module.** Bản đồ đầy đủ: [`docs/specs/index.md`](specs/index.md).
 
 ```
 docs/
@@ -1219,7 +1225,7 @@ docs/
     ├── 03-account/     21     User đã đăng nhập (gồm SNS login + linking + notification inbox)
     ├── 04-play/        13     bề mặt trẻ — core business
     ├── 05-content/      5     ràng buộc biên tập nội dung
-    ├── 06-admin/       28     Manager
+    ├── 06-admin/       29     Manager
     ├── 07-addon/        7     spec đủ, KHÔNG bán ở MVP
     └── 08-quality/      6     test · bảo mật · a11y · hiệu năng · design
 ```
@@ -1302,7 +1308,8 @@ Mã taxonomy giữ format v1 (`C1.CNT.03`) — đã biên soạn, bất biến, 
 | Authoring studio ở MVP | **Có, đầy đủ** — Manager tạo game level mới, 0 dòng code | 2026-08-04 |
 | Add-on ở MVP | **Chỉ spec, không lên catalog.** MVP bán đúng `standard` + `premium` | 2026-08-04 |
 | Premium vs Creator | **Gộp.** Premium bao hàm quyền học của Creator; quyền tạo nằm ở add-on | 2026-08-04 |
-| Pháp lý | **Việt Nam** — Nghị định 13/2023 + Luật Trẻ em. Không COPPA/GDPR-K ở MVP | 2026-08-04 |
+| Pháp lý | **Việt Nam** — Luật Bảo vệ dữ liệu cá nhân 91/2025/QH15 + Nghị định 13/2023 + Luật Trẻ em. Không COPPA/GDPR-K ở MVP | Cập nhật 2026-08-14 |
+| Legal singleton và re-consent (`D12`) | **Không quản lý policy version.** Ba tài liệu cần đồng ý là singleton code-owned; `super_admin` force bằng `reconsent_required_at`, mọi lần force ghi audit | 2026-08-14 |
 | Chủ và năng lực review nội dung (`D-CN`, thay thế `D-W`) | Nhóm Nội dung sở hữu; baseline 20 LO, 6 game level hoặc 3 lesson/người/ngày, đo lại sau pilot 30 LO + 6 level | 2026-08-09 |
 | Port 60 game type v1 | Giữ làm backlog **nội dung**, map dần thành `content_pack`; không port 60 Session class thành backlog code. Sáu template vẫn là phạm vi MVP | Đối chiếu §2.4 ngày 2026-08-12 |
 | Ngân sách rà soát pháp lý (`D-AS`) | 50M VND cho tư vấn IP/Bảo vệ dữ liệu trước go-live; owner chi tiết ở [`legal-pages.md`](specs/02-public/legal-pages.md) | 2026-08-09 |

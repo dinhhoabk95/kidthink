@@ -8,6 +8,7 @@ export * from "./entitlement-catalog.js";
 export * from "./glossary.js";
 export * from "./healthy-play-limits.js";
 export * from "./ids.js";
+export * from "./legal-summary.js";
 export * from "./lifecycle.js";
 export * from "./notifications.js";
 export * from "./offline-activities.js";

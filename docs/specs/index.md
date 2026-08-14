@@ -28,10 +28,10 @@ Bắt đầu từ [`../SPEC.md`](../SPEC.md) — contract toàn dự án. Rồi 
 | `03-account` | 21 | 19 |
 | `04-play` | 13 | 13 |
 | `05-content` | 5 | 4 |
-| `06-admin` | 28 | 28 |
+| `06-admin` | 29 | 29 |
 | `07-addon` | 7 | 0 |
 | `08-quality` | 6 | 6 |
-| **Tổng** | **133** | **121** |
+| **Tổng** | **134** | **122** |
 
 v1 có **31** spec cho cùng phạm vi. Xé nhỏ là chủ ý — xem [`AUDIT-v1.md`](AUDIT-v1.md) §1.2.
 2 spec cộng thêm 2026-08-05 ([`repo-bootstrap.md`](00-foundation/repo-bootstrap.md), [`monorepo-package-architecture.md`](00-foundation/monorepo-package-architecture.md)) lấp lỗ hổng
@@ -48,7 +48,7 @@ v1 có **31** spec cho cùng phạm vi. Xé nhỏ là chủ ý — xem [`AUDIT-v
 | [glossary](00-foundation/glossary.md) | P0 | Từ vựng chuẩn, từ bị cấm |
 | [id-conventions](00-foundation/id-conventions.md) | P0 | Định dạng mã, mã bất biến |
 | [actors](00-foundation/actors.md) | P0 | Guest · User · Child · Manager, hai guard |
-| [child-data-compliance](00-foundation/child-data-compliance.md) | P0 | **Nghị định 13/2023**, danh sách đóng field trẻ |
+| [child-data-compliance](00-foundation/child-data-compliance.md) | P0 | **Luật 91/2025 + Nghị định 13**, danh sách đóng field trẻ |
 | [access-ladder](00-foundation/access-ladder.md) | P0 | 4 bậc bao hàm, mặc-định-đóng |
 | [entitlement-model](00-foundation/entitlement-model.md) | P0 | 16 entitlement key, quota |
 | [package-catalog](00-foundation/package-catalog.md) | P0 | 2 SKU MVP + 4 add-on Cấm chưa bán |
@@ -70,7 +70,7 @@ v1 có **31** spec cho cùng phạm vi. Xé nhỏ là chủ ý — xem [`AUDIT-v
 | [schema-play-telemetry](01-platform/schema-play-telemetry.md) | P0 | Cột child · play · adaptive |
 | [taxonomy-service](01-platform/taxonomy-service.md) | P0 | Cây 5 tầng, DAG, 230 skill |
 | [auth-tokens-sessions](01-platform/auth-tokens-sessions.md) | P0 | Opaque cookie session Redis 1 giờ, remember tối đa 1 năm, revoke thiết bị, **reauth 5 phút** |
-| [audit-log](01-platform/audit-log.md) | P0 | 28 hành động bắt buộc audit |
+| [audit-log](01-platform/audit-log.md) | P0 | 29 hành động bắt buộc audit |
 | [emoji-registry](01-platform/emoji-registry.md) | P0 | Kho emoji cố định, 32 nhóm |
 | [rate-limiting](01-platform/rate-limiting.md) | P0 | Hai trục IP + account |
 | [health-check](01-platform/health-check.md) | P0 | Cấm 200 cứng |
@@ -101,7 +101,7 @@ v1 có **31** spec cho cùng phạm vi. Xé nhỏ là chủ ý — xem [`AUDIT-v
 | [game-catalog-public](02-public/game-catalog-public.md) | P1 | Hiện metadata game khoá |
 | [game-detail-public](02-public/game-detail-public.md) | P1 | 120 trang đích SEO |
 | [seo-and-structured-data](02-public/seo-and-structured-data.md) | P1 | Sitemap động, JSON-LD |
-| [legal-pages](02-public/legal-pages.md) | P1 | 8 trang, version hoá |
+| [legal-pages](02-public/legal-pages.md) | P1 | 8 document singleton code-owned, không policy version |
 | [cookie-and-consent-banner](02-public/cookie-and-consent-banner.md) | P1 | 6 cookie, không bên thứ ba |
 | [faq-and-help](02-public/faq-and-help.md) | P1 | 5 nhóm, trả lời thẳng câu khó |
 | [pricing-page](02-public/pricing-page.md) | P2 | Cấm khan hiếm giả |
@@ -120,7 +120,7 @@ v1 có **31** spec cho cùng phạm vi. Xé nhỏ là chủ ý — xem [`AUDIT-v
 | [child-profile-crud](03-account/child-profile-crud.md) | P1 | Form 4 trường, danh sách đóng |
 | [child-profile-switching](03-account/child-profile-switching.md) | P1 | Đổi trẻ qua Parent Gate |
 | [child-profile-archive](03-account/child-profile-archive.md) | P1 | Lưu trữ vs xoá |
-| [consent-management](03-account/consent-management.md) | P1 | Xem, rút, đổi version |
+| [consent-management](03-account/consent-management.md) | P1 | Xem, rút, marker force đồng ý lại |
 | [account-settings](03-account/account-settings.md) | P1 | Đổi mật khẩu, email |
 | [account-deletion](03-account/account-deletion.md) | P1 | 30 ngày hoàn tác |
 | [member-dashboard](03-account/member-dashboard.md) | P1 | 5 khối, `/me` |
@@ -165,8 +165,9 @@ v1 có **31** spec cho cùng phạm vi. Xé nhỏ là chủ ý — xem [`AUDIT-v
 
 | Spec | Phase | Nội dung |
 |---|:--:|---|
-| [admin-auth](06-admin/admin-auth.md) | P0 | MFA bắt buộc, ma trận role |
+| [admin-auth](06-admin/admin-auth.md) | P0 | MFA bắt buộc, ma trận role, reauth thao tác toàn hệ thống |
 | [taxonomy-browser](06-admin/taxonomy-browser.md) | P1 | Chỉ đọc, chỉ báo khoảng trống |
+| [legal-consent-admin](06-admin/legal-consent-admin.md) | P1 | Force đồng ý lại tài liệu pháp lý |
 | [admin-dashboard](06-admin/admin-dashboard.md) | P2 | 4 nhóm thẻ, chỉ đọc |
 | [user-management](06-admin/user-management.md) | P2 | Danh sách, khoá/mở |
 | [user-detail](06-admin/user-detail.md) | P2 | 4 nhóm, không dữ liệu học của trẻ |

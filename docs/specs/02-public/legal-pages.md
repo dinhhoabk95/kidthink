@@ -2,13 +2,13 @@
 spec: LEGAL-PAGES
 title: Trang pháp lý và chính sách
 area: public
-status: implemented
+status: approved
 mvp: true
 phase: P1
-reviewed: 2026-08-08
+reviewed: 2026-08-14
 owns:
   - Danh sách trang pháp lý bắt buộc
-  - Quy tắc version hoá chính sách
+  - Nguồn nội dung singleton của trang pháp lý
 depends_on:
   - CHILD-DATA-COMPLIANCE
 ---
@@ -17,15 +17,24 @@ depends_on:
 
 ## 1. Objective
 
-Nghĩa vụ pháp lý, không phải nội dung marketing. Chúng phải **chính xác**, **có version**,
-và **truy được** — vì đồng ý của User trỏ tới một version cụ thể.
+Tám trang pháp lý cung cấp bản công khai **duy nhất đang áp dụng** cho Guest và User. Nội dung
+được sở hữu bởi code, sửa bằng PR và deploy; hệ thống không có policy version, lịch sử version
+hay editor pháp lý trong admin.
 
-> Mọi chính sách cần được **chuyên gia pháp lý tại Việt Nam rà soát** trước khi phát hành
-> chính thức. Spec này định nghĩa cấu trúc và ràng buộc kỹ thuật, không thay tư vấn pháp lý.
+Ba tài liệu cần đồng ý (`terms`, `privacy`, `child_data`) tách việc **đổi nội dung** khỏi việc
+**yêu cầu đồng ý lại**. Sau khi bản sửa đã qua rà soát và deploy, `super_admin` mới chủ động
+force theo [`legal-consent-admin.md`](../06-admin/legal-consent-admin.md) mục 4.
+
+> Mọi chính sách cần được **chuyên gia pháp lý tại Việt Nam rà soát** trước deploy production.
+> Spec này định nghĩa cấu trúc và ràng buộc kỹ thuật, không thay tư vấn pháp lý.
 
 ## 2. Actors
 
-Guest · User · cơ quan quản lý.
+| Actor | Quyền | Làm được gì ở đây |
+|---|---|---|
+| Guest | Không cần đăng nhập | Đọc toàn bộ tám trang |
+| User | Không cần dùng session để đọc | Đọc cùng nội dung với Guest, kể cả khi đang bị yêu cầu đồng ý lại |
+| Cơ quan quản lý | Truy cập công khai | Đối chiếu chính sách đang áp dụng |
 
 ## 3. Entry points
 
@@ -34,74 +43,95 @@ Guest · User · cơ quan quản lý.
 
 ## 4. Main flow
 
-1. Truy cập trang → nội dung version **hiện hành**.
-2. Đầu trang: ngày hiệu lực + số version + link **các version trước**.
-3. Có bản mới → banner cho User đã đăng nhập, dẫn tới [`consent-management.md`](../03-account/consent-management.md).
+1. Guest hoặc User mở route pháp lý.
+2. Hệ thống đọc đúng một document hiện hành từ registry code-owned và hiện ngày cập nhật gần nhất.
+3. Mỗi mục có tóm tắt ngắn trước nội dung đầy đủ.
+4. Khi cần sửa, người soạn đổi document trong repo; legal review và PR review là cổng trước deploy.
+5. Nếu thay đổi cần User đồng ý lại, `super_admin` force **sau deploy** qua
+   [`legal-consent-admin.md`](../06-admin/legal-consent-admin.md) mục 4. Deploy tự nó không force.
 
 ## 5. Alternative flows
 
-| Nhánh | Hành vi |
-|---|---|
-| Xem version cũ | `/{slug}/v/{version}` — giữ vĩnh viễn |
-| User đồng ý version cũ | [`consent-management.md`](../03-account/consent-management.md) hiện diff |
-| Chưa có bản dịch | Chỉ tiếng Việt ở MVP |
+| Nhánh | Điều kiện | Hành vi |
+|---|---|---|
+| Slug không thuộc danh sách đóng | Mở `/{slug}` | 404 |
+| URL version lịch sử | Mở `/{slug}/v/{version}` hoặc API `/versions` | 404; route không tồn tại |
+| Chưa có bản dịch | MVP | Chỉ tiếng Việt |
+| Document `pending_review` | Kiểm production build/deploy | Cổng đỏ; document không được phát hành |
+| User đang bị force re-consent | Mở trang pháp lý | Vẫn 200 và đọc được toàn văn hiện hành |
 
 ## 6. Business rules
 
 | ID | Rule | Vì sao |
 |---|---|---|
-| `BR-LGL-01` | Mỗi chính sách có **số version và ngày hiệu lực** hiển thị | Đồng ý trỏ tới version cụ thể |
-| `BR-LGL-02` | Version cũ **giữ vĩnh viễn**, truy cập được qua URL | Phải chứng minh được User đã đồng ý với văn bản nào |
+| `BR-LGL-01` | Mỗi slug có **đúng một** document hiện hành, có `last_updated_on`, không có số version | Một bản code-owned là contract đã chọn; thêm số version sẽ dựng lại hệ thống version bị loại bỏ |
+| `BR-LGL-02` | Cấm — **NEVER route, API, schema hay UI lịch sử policy version**. Git giữ lịch sử authoring, không phải bề mặt sản phẩm | Hai nguồn lịch sử sẽ lệch nhau; sản phẩm chỉ phục vụ văn bản hiện hành |
 | `BR-LGL-03` | Cấm — **NEVER script bên thứ ba** trên trang pháp lý | Trang giải thích quyền riêng tư mà tự nó theo dõi là mâu thuẫn không giải thích được |
-| `BR-LGL-04` | Chính sách trẻ em là **trang riêng**, không nhét vào privacy | Nó là nghĩa vụ riêng theo Luật Trẻ em |
-| `BR-LGL-05` | Đổi version → thông báo User đã đăng nhập | `BR-CSM-03` |
+| `BR-LGL-04` | Chính sách trẻ em là **trang riêng**, không nhét vào privacy | Nghĩa vụ đối với dữ liệu trẻ cần được đọc và đồng ý riêng |
+| `BR-LGL-05` | Đổi code **không tự force**. Chỉ `super_admin` force sau deploy qua [`legal-consent-admin.md`](../06-admin/legal-consent-admin.md) | Tách release code khỏi quyết định pháp lý có ảnh hưởng toàn bộ User; tránh một deploy kỹ thuật vô tình khoá hệ thống |
 | `BR-LGL-06` | Ngôn ngữ **rõ ràng**, có tóm tắt đầu mỗi mục | Chính sách không đọc được là chính sách không có |
-| `BR-LGL-07` | Cấm — **NEVER phát hành chính sách chưa qua rà soát pháp lý** | Đảm bảo tính hợp pháp và tuân thủ các quy định về bảo vệ dữ liệu trẻ em |
+| `BR-LGL-07` | Cấm — **NEVER deploy production document chưa qua rà soát pháp lý** | Bảo đảm nội dung công khai đã có người chịu trách nhiệm pháp lý đọc |
 | `BR-LGL-08` | Link tới chính sách trẻ em ở **chân mọi trang** | Minh bạch thông tin và dễ tiếp cận cho phụ huynh ở mọi bề mặt sản phẩm |
+| `BR-LGL-09` | Cấm — **NEVER sửa nội dung document pháp lý qua admin UI hoặc `seo_pages`** | Nội dung pháp lý phải đi qua diff PR, legal review và rollback code; editor runtime bỏ qua cả ba cổng |
 
 ## 7. Data
 
 ### 7.1 Tám trang bắt buộc
 
-| Trang | Bắt buộc | Ghi chú |
+| Trang | Cần đồng ý riêng | Ghi chú |
 |---|:--:|---|
-| Điều khoản sử dụng (`/terms`) | | Có version, cần đồng ý |
-| Chính sách quyền riêng tư (`/privacy`) | | Có version, cần đồng ý |
-| **Chính sách bảo vệ trẻ em (`/child-privacy`)** | | Có version, cần đồng ý riêng |
-| Chính sách cookie (`/cookie`) | | Có version |
-| Chính sách thanh toán (`/payment-policy`) | | Không cần đồng ý riêng |
-| Chính sách hoàn tiền (`/refund-policy`) | | idem |
-| Giới thiệu (`/about`) | | Không version |
-| Liên hệ (`/contact`) | | Không version |
+| Điều khoản sử dụng (`/terms`) | Có | `consent_type='terms'` |
+| Chính sách quyền riêng tư (`/privacy`) | Có | `consent_type='privacy'` |
+| Chính sách bảo vệ dữ liệu trẻ em (`/child-privacy`) | Có | `consent_type='child_data'` |
+| Chính sách cookie (`/cookie`) | Không | Liệt kê cookie kỹ thuật thiết yếu |
+| Chính sách thanh toán (`/payment-policy`) | Không | Không tạo consent riêng |
+| Chính sách hoàn tiền (`/refund-policy`) | Không | Không tạo consent riêng |
+| Giới thiệu (`/about`) | Không | Trang công khai tĩnh |
+| Liên hệ (`/contact`) | Không | Trang công khai tĩnh |
 
 ### 7.2 Chính sách trẻ em phải nêu
 
-Dữ liệu **nào** được thu (danh sách đóng [`child-data-compliance.md`](../00-foundation/child-data-compliance.md) §4.1) · vì sao ·
-lưu bao lâu · ai truy cập được · không chia sẻ với bên thứ ba · quyền của phụ huynh
-(xem, sửa, xoá, rút đồng ý) · cách thực hiện từng quyền · liên hệ.
+Dữ liệu **nào** được thu theo danh sách đóng của
+[`child-data-compliance.md`](../00-foundation/child-data-compliance.md) mục 7.1 · mục đích ·
+thời hạn · ai truy cập · bên thứ ba · quyền xem, sửa, export, xoá, rút đồng ý · cách thực hiện
+từng quyền · kênh liên hệ.
 
-### 7.3 Version
+### 7.3 Registry code-owned
 
-`seo_pages` với `page_type = 'legal'`, `content_version`, `effective_from`.
-Version cũ `archived` nhưng **truy cập được** — ngoại lệ có chủ ý so với
-[`content-lifecycle.md`](../00-foundation/content-lifecycle.md) §5.
+Mỗi `LegalDocument` có đúng các field nghiệp vụ:
+
+`slug` · `title` · `last_updated_on` · `legal_review_status` (`pending_review` | `approved`) ·
+`summary` · `requires_consent` · `is_child_specific` · `sections[]`.
+
+Cấm field `version`, `content_version`, `previous_versions`, `diff` hay `effective_from` dùng
+để dựng lịch sử. `last_updated_on` chỉ mô tả bản hiện hành, không phải khoá consent.
 
 ## 8. API contract
 
-Trang tĩnh prerender. `GET /api/guest/legal/{slug}` trả nội dung + version hiện hành.
-`GET /api/guest/legal/{slug}/versions` trả lịch sử.
+### `GET /api/guest/legal/{slug}`
+
+| | |
+|---|---|
+| Auth | Không |
+| 200 | Document hiện hành theo mục 7.3; không field version |
+| 404 | Slug không thuộc danh sách đóng |
+
+Ba document cần đồng ý trả `Cache-Control: no-store` để màn hình re-consent không dùng nội dung
+cũ từ browser cache. Cấm route `GET /api/guest/legal/{slug}/versions` và
+`GET /api/guest/legal/{slug}/v/{version}`.
 
 ## 9. Acceptance criteria
 
 ```gherkin
-Scenario: BR-LGL-01 — hiện version và ngày hiệu lực
-  When mở bất kỳ trang chính sách nào
-  Then đầu trang có số version và ngày hiệu lực
+Scenario: BR-LGL-01 — mỗi slug chỉ có một document hiện hành
+  When đọc registry trang pháp lý
+  Then mỗi slug xuất hiện đúng một lần
+  And document có last_updated_on
+  And document không có field version hay content_version
 
-Scenario: BR-LGL-02 — version cũ truy cập được
-  Given chính sách đã lên version 3
-  When mở /privacy/v/1
-  Then nội dung version 1 hiển thị đầy đủ
+Scenario: BR-LGL-02 — không có bề mặt version lịch sử
+  When mở /privacy/v/1 và GET /api/guest/legal/privacy/versions
+  Then cả hai trả 404
 
 Scenario: BR-LGL-03 — không script bên thứ ba
   When mở mọi trang pháp lý
@@ -109,45 +139,52 @@ Scenario: BR-LGL-03 — không script bên thứ ba
 
 Scenario: BR-LGL-04 — chính sách trẻ em là trang riêng
   When mở /child-privacy
-  Then trang tồn tại và có version riêng
+  Then trang tồn tại và có document riêng
 
+Scenario: BR-LGL-05 — deploy không tự force re-consent
+  Given privacy được sửa, rà soát và deploy
+  When chưa có super_admin force
+  Then reconsent_required_at của privacy không đổi
 
-Scenario: BR-LGL-05 — thông báo khi đổi version
-  Given chính sách quyền riêng tư lên version mới
-  When user đã đăng nhập mở bất kỳ trang nào
-  Then hiện banner yêu cầu xem lại
+Scenario: BR-LGL-07 — document chờ review chặn production
+  Given privacy có legal_review_status pending_review
+  When chạy production gate
+  Then gate thất bại
 
 Scenario: BR-LGL-08 — link ở chân mọi trang
   When kiểm chân trang của mọi trang public
   Then có link tới chính sách trẻ em
 
-Scenario: chính sách trẻ em nêu đủ mục bắt buộc
-  When đọc trang chính sách trẻ em
-  Then có đủ 8 mục ở §7.2
+Scenario: BR-LGL-09 — legal document không thuộc SEO editor
+  When đọc schema và route của seo_pages
+  Then không có page_type legal
+  And không mutation admin nào ghi LEGAL_DOCUMENTS
 ```
 
 ## 10. Boundaries
 
 **Always**
-- Hiện version và ngày hiệu lực.
-- Giữ version cũ truy cập được.
+- Giữ đúng một document hiện hành cho mỗi slug.
+- Hiện `last_updated_on` và tóm tắt từng mục.
+- Rà soát pháp lý trước deploy production.
 - Link chính sách trẻ em ở chân mọi trang.
 
 **Ask first**
 - Sửa bất kỳ nội dung pháp lý nào.
 - Thêm hoặc bỏ một trang.
+- Đổi tài liệu nào cần consent riêng.
 
 **Never**
+- Policy version, URL version cũ, API lịch sử hay diff version.
 - Script bên thứ ba trên trang pháp lý.
-- Xoá version cũ.
-- Phát hành chính sách chưa qua rà soát pháp lý.
+- Deploy document chưa qua rà soát pháp lý.
 - Gộp chính sách trẻ em vào privacy.
+- Sửa document pháp lý qua admin UI hoặc `seo_pages`.
 
 ## 11. Open questions
 
 | # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
 |---|---|---|---|---|
 | ~~1~~ | ~~Ngân sách và đơn vị rà soát pháp lý?~~ **Đóng 2026-08-09 (T13, `D-AS`)**: ngân sách 50M VND tư vấn pháp lý IP/Bảo vệ dữ liệu trước go-live | Go-live | Đã đóng | D-AS |
-| 2 | Có cần đăng ký hồ sơ đánh giá tác động (DPIA) với cơ quan quản lý không? | Tuân thủ pháp lý — cùng câu hỏi với [`child-data-compliance.md`](../00-foundation/child-data-compliance.md) Q2 | P1 | người quyết |
-| 3 | Chính sách hoàn tiền chưa có nội dung — chính sách thương mại là gì? | Quy trình thanh toán — xem [`payment-approval.md`](../06-admin/payment-approval.md) §11 Q1 | P2 | người quyết |
-
+| 2 | Hồ sơ đánh giá tác động và nghĩa vụ nộp/lưu theo Luật 91/2025/QH15 cùng văn bản hướng dẫn hiện hành phải thực hiện thế nào? | Tuân thủ pháp lý — cùng câu hỏi với [`child-data-compliance.md`](../00-foundation/child-data-compliance.md) mục 11 câu 2 | P1 | người quyết |
+| 3 | Chính sách hoàn tiền chưa có nội dung — chính sách thương mại là gì? | Quy trình thanh toán — xem [`payment-approval.md`](../06-admin/payment-approval.md) mục 11 câu 1 | P2 | người quyết |

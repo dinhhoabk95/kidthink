@@ -87,7 +87,10 @@ export async function handleLogin(event: H3Event, testBody?: unknown) {
       throw appError("ACCOUNT_SUSPENDED");
     }
     if (user.status === "deleted") {
-      throw appError("ACCOUNT_DELETED");
+      throw appError("ACCOUNT_DELETED", {
+        cancel_url: "/me/settings/delete/cancel",
+        purge_at: user.purgeAt?.toISOString(),
+      });
     }
 
     const userAgent = getHeader(event, "user-agent") || "unknown";

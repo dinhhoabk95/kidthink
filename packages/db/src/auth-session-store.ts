@@ -87,4 +87,42 @@ export class PostgresSessionStore {
       `;
     });
   }
+
+  async getReauthState(
+    deviceIdOrSessionId: string,
+    account: AccountReference
+  ): Promise<{ readonly reauth_at: Date | null } | null> {
+    const [row] = await this.sql<{ reauth_at: string | null }[]>`
+      select reauth_at
+      from active_sessions
+      where account_type = ${account.account_type}
+        and account_id = ${account.account_id}
+        and (device_id = ${deviceIdOrSessionId} or id::text = ${deviceIdOrSessionId})
+        and revoked_at is null
+      order by last_used_at desc
+      limit 1
+    `;
+    if (!row) {
+      return null;
+    }
+    return {
+      reauth_at: row.reauth_at ? new Date(row.reauth_at) : null,
+    };
+  }
+
+  async markReauthenticated(
+    deviceIdOrSessionId: string,
+    account: AccountReference,
+    at: Date = new Date()
+  ): Promise<void> {
+    await this.sql`
+      update active_sessions
+      set reauth_at = ${at.toISOString()},
+          last_used_at = now()
+      where account_type = ${account.account_type}
+        and account_id = ${account.account_id}
+        and (device_id = ${deviceIdOrSessionId} or id::text = ${deviceIdOrSessionId})
+        and revoked_at is null
+    `;
+  }
 }

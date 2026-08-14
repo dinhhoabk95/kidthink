@@ -97,6 +97,7 @@ export const activeSessions = pgTable("active_sessions", {
   deviceLabel: text("device_label"),
   ipAddress: text("ip_address"),
   authMethod: authMethodEnum("auth_method").notNull(),
+  reauthAt: timestamp("reauth_at", { withTimezone: true }),
   revokedAt: timestamp("revoked_at", { withTimezone: true }),
   lastUsedAt: timestamp("last_used_at", { withTimezone: true })
     .defaultNow()
