@@ -3,11 +3,20 @@ import challengeHandler from "../../server/api/users/parent-gate/challenge.post"
 import verifyHandler from "../../server/api/users/parent-gate/verify.post";
 
 function mockEvent(method: string, userId = 101, body: any = {}) {
+  const csrf =
+    "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef";
   const responseHeaders: Record<string, string> = {};
   return {
     method,
     node: {
-      req: { headers: {}, url: "/", originalUrl: "/" },
+      req: {
+        headers: {
+          "x-csrf-token": csrf,
+          cookie: `tm_u_csrf=${csrf}`,
+        },
+        url: "/",
+        originalUrl: "/",
+      },
       res: {
         setHeader: (name: string, value: string) => {
           responseHeaders[name.toLowerCase()] = value;
@@ -16,6 +25,7 @@ function mockEvent(method: string, userId = 101, body: any = {}) {
         statusCode: 200,
       },
     },
+
     context: {
       user: {
         user_id: userId,

@@ -144,8 +144,18 @@ describe("Task 3 — Login & Session Management (BR-LGN-01..12)", () => {
       "../../../server/api/users/auth/sessions/[id].delete"
     );
 
+    const csrf =
+      "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef";
     const deleteEvent = {
       method: "DELETE",
+      node: {
+        req: {
+          headers: {
+            "x-csrf-token": csrf,
+            cookie: `tm_u_csrf=${csrf}`,
+          },
+        },
+      },
       context: {
         user: {
           user_id: user.id,

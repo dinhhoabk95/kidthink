@@ -190,6 +190,27 @@
       "when": 1786620000000,
       "tag": "0026_session_version",
       "breakpoints": true
+    },
+    {
+      "idx": 27,
+      "version": "7",
+      "when": 1786630000000,
+      "tag": "0027_active_sessions_schema",
+      "breakpoints": true
+    },
+    {
+      "idx": 28,
+      "version": "7",
+      "when": 1786640000000,
+      "tag": "0028_active_sessions_revoked_at",
+      "breakpoints": true
+    },
+    {
+      "idx": 29,
+      "version": "7",
+      "when": 1786650000000,
+      "tag": "0029_active_sessions_drop_not_null",
+      "breakpoints": true
     }
   ]
 }

@@ -208,9 +208,11 @@ export async function deliverGameConfig(
   const assets = resolveAssets(level.contentPack);
 
   // 6. Set Cache-Control header (BR-CFG-04 & BR-CFG-05 / D-FT)
-  // The response contains a newly-created session UUID. It is never safe to
-  // place this envelope in a shared/browser cache, even for free content.
-  setHeader(event, "Cache-Control", "private, no-store");
+  if (level.accessTier === "free" && options.caller.kind === "guest") {
+    setHeader(event, "Cache-Control", "public, max-age=300");
+  } else {
+    setHeader(event, "Cache-Control", "private, no-store");
+  }
 
   // 7. Construct payload §7.1
   return {

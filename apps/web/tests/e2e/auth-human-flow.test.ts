@@ -91,9 +91,26 @@ describe("Task 7 — Real Human End-to-End Test Scenario", () => {
       "../../server/api/users/auth/sessions.get"
     );
 
+    const csrf =
+      "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef";
     const getSessionsEvent = {
       method: "GET",
-      context: { userSession: { user_id: createdUser.id, session_id: "1" } },
+      node: {
+        req: {
+          headers: {
+            "x-csrf-token": csrf,
+            cookie: `tm_u_csrf=${csrf}`,
+          },
+        },
+      },
+      context: {
+        user: {
+          user_id: createdUser.id,
+          display_name: "Human Tester",
+          session_id: "1",
+          refresh_token_version: 0,
+        },
+      },
     } as any;
 
     const sessionsRes = await sessionsHandler(getSessionsEvent);
@@ -160,12 +177,34 @@ describe("Task 7 — Real Human End-to-End Test Scenario", () => {
       "../../server/api/users/auth/logout.post"
     );
 
+    const logoutResHeaders: Record<string, string> = {};
     const logoutEvent = {
       method: "POST",
-      context: { userSession: { user_id: createdUser.id, session_id: "1" } },
+      node: {
+        req: {
+          headers: {
+            "x-csrf-token": csrf,
+            cookie: `tm_u_csrf=${csrf}`,
+          },
+        },
+        res: {
+          setHeader: (name: string, value: string) => {
+            logoutResHeaders[name.toLowerCase()] = value;
+          },
+          getHeader: (name: string) => logoutResHeaders[name.toLowerCase()],
+        },
+      },
+      context: {
+        user: {
+          user_id: createdUser.id,
+          display_name: "Human Tester",
+          session_id: "1",
+          refresh_token_version: 0,
+        },
+      },
     } as any;
 
     const logoutRes = await logoutHandler(logoutEvent);
-    expect(logoutRes.ok).toBe(true);
+    expect(logoutRes.success).toBe(true);
   });
 });

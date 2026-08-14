@@ -3,6 +3,7 @@ import {
   notificationEndpoints,
   notificationReads,
   notifications,
+  users,
 } from "@kidthink/db";
 import { eq } from "drizzle-orm";
 import { describe, expect, it } from "vitest";
@@ -45,7 +46,7 @@ function mockEvent(
     context: {
       user: {
         user_id: userId,
-        display_name: "Test User 801",
+        display_name: `Test User ${userId}`,
         session_id: `sess_${userId}`,
         refresh_token_version: 0,
       },
@@ -55,6 +56,19 @@ function mockEvent(
     },
     _body: body,
   } as any;
+}
+
+async function createTestUser(): Promise<number> {
+  const db = getOwnerDb();
+  const [u] = await db
+    .insert(users)
+    .values({
+      email: `notif_user_${Date.now()}_${Math.random()}@kidthink.test`,
+      passwordHash: "hash123",
+      displayName: "Notification Tester",
+    })
+    .returning();
+  return u.id;
 }
 
 function isDbConnectionError(err: any): boolean {
@@ -89,7 +103,7 @@ function isDbConnectionError(err: any): boolean {
 describe("Notification Inbox & Endpoints API Integration Tests", () => {
   it("BR-NIB-01 & BR-NIB-07: GET /api/users/notifications returns items with limit max 50 and fallback action_url", async () => {
     const db = getOwnerDb();
-    const userId = 8881;
+    const userId = await createTestUser();
     const tag = `API_TEST_NOTIF_${Date.now()}`;
 
     try {
@@ -140,6 +154,7 @@ describe("Notification Inbox & Endpoints API Integration Tests", () => {
       await db
         .delete(notifications)
         .where(eq(notifications.recipientId, userId));
+      await db.delete(users).where(eq(users.id, userId));
     } catch (err: any) {
       if (isDbConnectionError(err)) {
         const event = mockEvent("GET", userId);
@@ -152,8 +167,8 @@ describe("Notification Inbox & Endpoints API Integration Tests", () => {
 
   it("BR-NIB-02: PATCH /api/users/notifications/:uuid/read returns 404 for cross-user notification", async () => {
     const db = getOwnerDb();
-    const ownerUserId = 8882;
-    const attackerUserId = 8883;
+    const ownerUserId = await createTestUser();
+    const attackerUserId = await createTestUser();
 
     try {
       const [n] = await db
@@ -176,6 +191,8 @@ describe("Notification Inbox & Endpoints API Integration Tests", () => {
       }
 
       await db.delete(notifications).where(eq(notifications.id, n.id));
+      await db.delete(users).where(eq(users.id, ownerUserId));
+      await db.delete(users).where(eq(users.id, attackerUserId));
     } catch (err: any) {
       if (isDbConnectionError(err)) {
         const event = mockEvent("PATCH", attackerUserId, {}, {});
@@ -193,8 +210,8 @@ describe("Notification Inbox & Endpoints API Integration Tests", () => {
 
   it("BR-NIB-06: POST /api/users/notifications/read-all only marks items <= snapshot_at", async () => {
     const db = getOwnerDb();
-    const userId = 8884;
-    const snapshotAt = new Date().toISOString();
+    const userId = await createTestUser();
+    const snapshotAt = new Date(Date.now() + 60_000).toISOString();
 
     try {
       const [n] = await db
@@ -220,6 +237,7 @@ describe("Notification Inbox & Endpoints API Integration Tests", () => {
       expect(readRow).toBeDefined();
 
       await db.delete(notifications).where(eq(notifications.id, n.id));
+      await db.delete(users).where(eq(users.id, userId));
     } catch (err: any) {
       if (isDbConnectionError(err)) {
         const event = mockEvent("POST", userId, {
@@ -238,7 +256,7 @@ describe("Notification Inbox & Endpoints API Integration Tests", () => {
   });
 
   it("BR-BPS-04: POST /api/users/notification-endpoints registers endpoint without echoing token", async () => {
-    const userId = 8885;
+    const userId = await createTestUser();
     const installationId = crypto.randomUUID();
     const rawToken = `fcm_token_${Date.now()}_abc123`;
 
@@ -278,6 +296,7 @@ describe("Notification Inbox & Endpoints API Integration Tests", () => {
       await db
         .delete(notificationEndpoints)
         .where(eq(notificationEndpoints.uuid, response.uuid));
+      await db.delete(users).where(eq(users.id, userId));
     } catch (err: any) {
       if (isDbConnectionError(err)) {
         const event = mockEvent("POST", userId, {

@@ -35,6 +35,10 @@ export default defineConfig({
         import.meta.dirname,
         "./packages/ui/src/index.ts"
       ),
+      "#imports": path.resolve(
+        import.meta.dirname,
+        "./apps/web/tests/mock-imports.ts"
+      ),
     },
   },
   test: {

@@ -75,7 +75,7 @@ describe("Task 7 — GET /api/managers/analytics/levels (BR-TLM-01, BR-PRF-06)",
         id: mgr.id,
         displayName: mgr.displayName,
         role: mgr.role,
-        version: mgr.refreshTokenVersion,
+        version: mgr.sessionVersion,
       },
       "/api/managers/analytics/levels?limit=200"
     );

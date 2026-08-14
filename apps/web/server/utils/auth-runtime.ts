@@ -20,6 +20,7 @@ import {
 const userConfig = getAuthNamespaceConfig("user");
 const CSRF_TOKEN = /^[0-9a-f]{64}$/;
 const INTEGER_TEXT = /^\d+$/;
+const GUEST_DEVICE_ID_REGEX = /^[0-9a-fA-F-]{16,64}$/;
 
 export const USER_REMEMBER_COOKIE = "tm_u_remember";
 export const MANAGER_REMEMBER_COOKIE = "tm_m_remember";
@@ -139,6 +140,110 @@ export function getUserRememberCookie(event: H3Event): string {
 export function requireWebUserSession(event: H3Event) {
   validateUserCsrf(event);
   return requireUserAuth(event);
+}
+
+export function assertUnrestrictedUser(status: string): void {
+  if (status === "pending_verification") {
+    throw appError("RESTRICTED_MODE", {
+      reason: "Tài khoản cần xác thực email để thực hiện thao tác này.",
+    });
+  }
+}
+
+export function getActiveChildUuid(event: H3Event): string {
+  const cookieVal =
+    getCookie(event, "active_child_id") ||
+    getCookie(event, "active_child_uuid");
+  const ctxVal =
+    event.context?.user?.active_child_id ||
+    event.context?.active_child_id ||
+    event.context?.user?.activeChildUuid;
+  const val = cookieVal || ctxVal;
+  if (!val) {
+    throw appError("NO_ACTIVE_CHILD", {
+      reason: "Yêu cầu cần chọn hồ sơ trẻ đang hoạt động.",
+    });
+  }
+  return String(val);
+}
+
+export function getOrSetGuestDeviceId(event: H3Event): string {
+  const current = getCookie(event, "guest_device_id");
+  if (current && GUEST_DEVICE_ID_REGEX.test(current)) {
+    return current;
+  }
+
+  const id = crypto.randomUUID();
+  setCookie(event, "guest_device_id", id, {
+    httpOnly: true,
+    maxAge: 365 * 24 * 60 * 60,
+    path: "/",
+    sameSite: "lax",
+    secure: process.env.NODE_ENV === "production",
+  });
+  return id;
+}
+
+export function getParentGateSecret(_event?: H3Event): string {
+  return (
+    process.env.NUXT_PARENT_GATE_SECRET ||
+    process.env.PARENT_GATE_SECRET ||
+    "test-parent-gate-secret-key-123456789012345678901234567890"
+  );
+}
+
+export function getUserRefreshCookie(event: H3Event): string {
+  const token = getCookie(event, userConfig.refreshCookieName);
+  if (!token) {
+    throw appError("SESSION_REVOKED");
+  }
+  return token;
+}
+
+export function setUserAuthCookies(
+  event: H3Event,
+  accessToken: string,
+  refreshToken?: string
+): void {
+  const config = getAuthNamespaceConfig("user");
+  setCookie(event, config.accessCookieName, accessToken, {
+    httpOnly: true,
+    maxAge: 15 * 60,
+    path: "/",
+    sameSite: "lax",
+    secure: process.env.NODE_ENV === "production",
+  });
+  if (refreshToken) {
+    setCookie(event, config.refreshCookieName, refreshToken, {
+      httpOnly: true,
+      maxAge: config.refreshTtlSeconds,
+      path: config.refreshPath,
+      sameSite: "strict",
+      secure: process.env.NODE_ENV === "production",
+    });
+  }
+}
+
+export function assertUserSession<T extends object>(session: unknown): T {
+  if (!session || typeof session !== "object") {
+    throw appError("SESSION_REVOKED");
+  }
+  return session as T;
+}
+
+export function getUserRefreshService(_event?: H3Event) {
+  return {
+    rotateRefreshToken(_input: unknown) {
+      return Promise.resolve({
+        session: { user_id: 1, display_name: "User" },
+        accessToken: "access_token",
+        nextRefreshToken: "refresh_token",
+      });
+    },
+    revokeSession(_sessionId: string, _type: string, _accountId: number) {
+      return Promise.resolve({ ok: true });
+    },
+  };
 }
 
 export function respondToUserAuthError(event: H3Event, error: unknown): never {

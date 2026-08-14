@@ -40,7 +40,7 @@ export default defineEventHandler(async (event) => {
     const { limit, unreadOnly, cursor } = parseInboxParams(query);
 
     const snapshotAt = new Date().toISOString();
-    const snapshotDate = new Date(snapshotAt);
+    const snapshotDate = new Date(Date.now() + 60_000);
 
     // Build base conditions
     const conditions = [

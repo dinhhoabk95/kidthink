@@ -127,11 +127,11 @@ describe("Task 4 — Password Recovery (BR-PWR-01..09)", () => {
       .where(eq(activeSessions.accountId, user.id));
     expect(sessionsAfter).toHaveLength(0);
 
-    // User refresh_token_version incremented
+    // User session_version incremented
     const [updatedUser] = await db
       .select()
       .from(users)
       .where(eq(users.id, user.id));
-    expect(updatedUser.refreshTokenVersion).toBe(user.refreshTokenVersion + 1);
+    expect(updatedUser.sessionVersion).toBe(user.sessionVersion + 1);
   });
 });

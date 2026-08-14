@@ -22,11 +22,20 @@ function mockEvent(
   params: Record<string, string> = {},
   body: any = {}
 ) {
+  const csrf =
+    "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef";
   const responseHeaders: Record<string, string> = {};
   return {
     method,
     node: {
-      req: { headers: {}, url: "/", originalUrl: "/" },
+      req: {
+        headers: {
+          "x-csrf-token": csrf,
+          cookie: `tm_u_csrf=${csrf}`,
+        },
+        url: "/",
+        originalUrl: "/",
+      },
       res: {
         setHeader: (name: string, value: string) => {
           responseHeaders[name.toLowerCase()] = value;
@@ -35,6 +44,7 @@ function mockEvent(
         statusCode: 200,
       },
     },
+
     context: {
       user: {
         user_id: user.id,

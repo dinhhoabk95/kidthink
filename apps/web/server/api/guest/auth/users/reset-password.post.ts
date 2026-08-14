@@ -105,7 +105,7 @@ export async function handleResetPassword(event: H3Event, testBody?: unknown) {
         .update(users)
         .set({
           passwordHash: newPassHash,
-          refreshTokenVersion: user.refreshTokenVersion + 1,
+          sessionVersion: user.sessionVersion + 1,
           updatedAt: now,
         })
         .where(eq(users.id, user.id));

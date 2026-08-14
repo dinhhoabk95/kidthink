@@ -4,8 +4,11 @@ import {
   CSRF_HEADER_NAME,
   generateCsrfToken,
   getAuthNamespaceConfig,
+  requireManagerAuth,
+  requireRole,
   validateCsrfToken,
 } from "@kidthink/auth";
+
 import {
   createError,
   deleteCookie,
@@ -144,6 +147,16 @@ export function getManagerRememberCookie(event: H3Event): string {
     throw appError("SESSION_REVOKED");
   }
   return token;
+}
+
+export function requireManagerSession(event: H3Event) {
+  validateManagerCsrf(event);
+  return requireManagerAuth(event);
+}
+
+export function requireSuperAdminSession(event: H3Event) {
+  validateManagerCsrf(event);
+  return requireRole(event, "super_admin");
 }
 
 export function respondToManagerAuthError(
