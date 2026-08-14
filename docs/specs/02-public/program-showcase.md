@@ -28,7 +28,8 @@ Guest · User.
 
 ## 3. Entry points
 
-`/chuong-trinh` · `/chuong-trinh/{code}` · `GET /api/guest/curricula`.
+`/programs` · `/programs/{code}` · `GET /api/guest/curricula`.
+
 
 ## 4. Main flow
 

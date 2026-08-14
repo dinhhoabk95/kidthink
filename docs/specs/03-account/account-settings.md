@@ -5,7 +5,7 @@ area: account
 status: approved
 mvp: true
 phase: P1
-reviewed: 2026-08-08
+reviewed: 2026-08-13
 owns:
   - Đổi thông tin tài khoản, mật khẩu, email
   - Đặt mật khẩu lần đầu cho tài khoản chỉ có SNS
@@ -62,7 +62,7 @@ tự định nghĩa cách xác minh.
 | ID | Rule | Vì sao |
 |---|---|---|
 | `BR-ACS-01` | Đổi mật khẩu cần **reauth §7.4** | Phiên bị chiếm không được đổi mật khẩu. Reauth thay cho "mật khẩu cũ" vì `password_hash` nullable từ `BR-SIB-08` — tài khoản chỉ-SNS không có mật khẩu cũ để nhập |
-| `BR-ACS-02` | Đổi mật khẩu → `refresh_token_version` +1 | `BR-LGN-06` |
+| `BR-ACS-02` | Đổi mật khẩu → `session_version` +1, revoke mọi device khác và rotate session hiện tại dưới generation mới | `BR-LGN-06` |
 | `BR-ACS-03` | Đổi email cần **reauth §7.4** + xác thực địa chỉ mới | Email là khoá khôi phục tài khoản |
 | `BR-ACS-04` | Email cũ **vẫn hiệu lực** cho tới khi email mới xác thực | Không để tài khoản treo giữa hai địa chỉ |
 | `BR-ACS-05` | Gửi thông báo tới **địa chỉ cũ** khi đổi email | Người thật biết nếu không phải họ đổi |
@@ -70,7 +70,7 @@ tự định nghĩa cách xác minh.
 | `BR-ACS-07` | Cấm — **NEVER thu thêm dữ liệu cá nhân** ở trang này | `BR-REG-08` |
 | `BR-ACS-08` | Trang này không chứa cài đặt của trẻ | Tách bề mặt rõ ràng |
 | `BR-ACS-09` | Tài khoản `password_hash` NULL hiện **"Đặt mật khẩu"**, không hiện "Đổi mật khẩu" | Ô "mật khẩu hiện tại" không điền được là ngõ cụt câm |
-| `BR-ACS-10` | Đặt mật khẩu **lần đầu** **không** tăng `refresh_token_version` | Cấm có mật khẩu cũ để mất kiểm soát. Đá người dùng ra khỏi mọi thiết bị vì họ vừa **tăng** bảo mật là phạt nhầm hướng |
+| `BR-ACS-10` | Đặt mật khẩu **lần đầu** **không** tăng `session_version` | Cấm có mật khẩu cũ để mất kiểm soát. Đá người dùng ra khỏi mọi thiết bị vì họ vừa **tăng** bảo mật là phạt nhầm hướng |
 | `BR-ACS-11` | Nhóm **Bảo mật** liệt kê SNS đã liên kết, nhưng **không** sở hữu luồng đó — [`social-account-linking.md`](social-account-linking.md) | [`CONVENTIONS.md`](../CONVENTIONS.md) §2: contract bị copy sẽ drift |
 
 ## 7. Data
@@ -144,7 +144,7 @@ Scenario: BR-ACS-10 — đặt mật khẩu lần đầu không giết phiên kh
   Given user có password_hash NULL, đăng nhập trên 2 thiết bị, đã reauth ở A
   When đặt mật khẩu lần đầu ở thiết bị A
   Then thiết bị B vẫn dùng được
-  And refresh_token_version không đổi
+  And session_version không đổi
 
 Scenario: BR-ACS-01 — tài khoản chỉ có SNS đổi được email
   Given user có password_hash NULL và đã liên kết Google

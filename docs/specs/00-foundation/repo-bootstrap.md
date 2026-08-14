@@ -2,10 +2,10 @@
 spec: REPO-BOOTSTRAP
 title: Khởi tạo repo và dependency baseline
 area: foundation
-status: implemented
+status: approved
 mvp: true
 phase: P0
-reviewed: 2026-08-07
+reviewed: 2026-08-13
 owns:
   - Cấu trúc thư mục gốc `kidthink/` và trình tự dựng repo
   - Dependency/tech baseline (version tối thiểu từng lớp)
@@ -96,7 +96,7 @@ vì tự xây từ đầu, cùng mục).
 
 ## 7. Data
 
-### 7.1 Dependency/tech baseline — chốt 2026-08-05, sửa 2026-08-06 sau nghiên cứu package
+### 7.1 Dependency/tech baseline — chốt 2026-08-05, rà lại 2026-08-13
 
 **Sửa 2026-08-06:** `iovalkey` bị gỡ khỏi baseline — nghiên cứu xác nhận **không có chỗ dùng
 thật**: BullMQ tự dựng client `ioredis` nội bộ khi nhận config dạng object thường (không
@@ -115,17 +115,22 @@ hardcode `ioredis` không nhận client khác. Cả hai điểm chạm Valkey du
 | Valkey client (Node) | **`ioredis`** `^5.11` | — | Không dùng `iovalkey` (xem ghi chú sửa ở trên) — pin khớp version BullMQ tự test (`5.11.1`). Pin `^5.11` **có chủ đích**, không nâng `^6` dù npm báo đó là bản mới nhất. `iovalkey ^0.4` chỉ dùng **nếu sau này** có code tự viết gọi Valkey trực tiếp ngoài BullMQ/unstorage (hiện chưa có) |
 | Ngôn ngữ | TypeScript | `~5.9.3` | Không pin theo `latest` npm (`7.0.2` là bản viết lại native compiler) — Nuxt 4.5.2 không pin TS, `vue-tsc@3.3.9` chỉ khai `>=5.0.0` (*cho phép*, không phải *đã kiểm chứng*). Giữ major 5, boring tech (mục 6 của [`SPEC.md`](../../SPEC.md)). Đánh giá TS 7 là task riêng khi có code thật để đo |
 | Cache abstraction | `unstorage` | `^1.17` | Driver `redis` built-in, trỏ thẳng `host`/`port` Valkey — không cần workaround, không cần driver tự viết |
+| Rate limit | `rate-limiter-flexible` | `^11.2` | Chỉ dùng trong `packages/cache`, trên singleton `ioredis`; `unstorage` chỉ làm cache. Giữ hai trục, `Retry-After`, trusted-proxy và fail-open/closed của [`rate-limiting.md`](../01-platform/rate-limiting.md), không bật limiter của `nuxt-security` |
 | Queue | BullMQ | `^6.0` | `connection: {host, port, password}` — object thường, BullMQ tự dựng `ioredis` nội bộ (tự set `maxRetriesPerRequest: null` cho Worker). Không dùng `createValkeyGlideClient` (đó là path cho HA/cluster kiểu AWS, không cần ở self-host Docker) |
 | Queue — Nuxt wrapper | Không dùng `nuxt-simple-bullmq` | — | Solo-maintainer, README tự nhận chỉ test Node 21, tác giả khuyên dùng lựa chọn khác cho production. Nối BullMQ trực tiếp qua Nitro plugin trong `apps/worker` |
-| Auth — trạng thái Nuxt (cả 2 app) | `@sidebase/nuxt-auth` Local provider | `^1.3.1` | **Dùng cho cả `apps/web` VÀ `apps/admin`**. Module trỏ tới backend endpoint canonical; cookie access `HttpOnly`, host-only và tách tên theo app. Local provider không có CSRF tích hợp nên backend vẫn cưỡng chế double-submit `x-csrf-token`. Không dùng AuthJS và không thêm `next-auth` |
-| Auth — JWT access + service-to-service | `jose` | `^6.2.4` | JWT access browser 15 phút và JWT service-to-service dùng key, issuer, audience tách biệt. `packages/auth` sở hữu ký/xác minh; Sidebase không sở hữu domain claim |
-| Auth — TOTP (Manager, bắt buộc) | `otpauth` | mới nhất | Sidebase Local không có TOTP. Zero-dependency, RFC 4226/6238. Không dùng `speakeasy` (không bảo trì ~10 năm) |
+| Auth — trạng thái Nuxt (cả 2 app) | `nuxt-auth-utils` | `^0.5.30` | **Dùng cho cả `apps/web` VÀ `apps/admin`**. Module chỉ seal opaque locator và cung cấp projection/`useUserSession`; identity/role/reauth/remember nằm trong Redis. Cookie session host-only, tuyệt đối 1 giờ; remember tuỳ chọn, tuyệt đối tối đa 365 ngày. Pin tối thiểu `0.5.30`; không dùng OAuth/password/WebAuthn helper, AuthJS hoặc `next-auth` |
+| Auth — Redis session authority | `ioredis` trong `packages/auth` | `^5.11` | Client process-long riêng, fail-closed; Lua/transaction nguyên tử cho rotate/revoke; production AOF + `noeviction`. Không đi qua cache API fail-open, không file/memory/DB fallback |
+| Auth — OAuth/OIDC backend bridge | `openid-client` | `^6.8` | `packages/auth/src/oauth/` dùng cho discovery, PKCE, authorization URL, code exchange và token validation. Không dùng `defineOAuth*EventHandler` của `nuxt-auth-utils`, không đổi sang AuthJS và không tự viết protocol primitive |
+| Auth — TOTP (Manager bắt buộc, User P2 tuỳ chọn) | `otpauth` | `^9.5` | Dùng cho sinh secret, URI và validate RFC 4226/6238; cấm dùng password helper của `nuxt-auth-utils`, tự viết HMAC/Base32/TOTP hoặc dùng `speakeasy` |
+| HTTP hardening | `nuxt-security` | `^2.6` | Khai trực tiếp ở `apps/web` và `apps/admin`: CSP/nonce, security headers, CORS và request-size. **Tắt** rate limiter + CSRF của module; hai contract đó vẫn thuộc `packages/cache` và `packages/auth` |
 | SEO | `@nuxtjs/seo` | `^5.3` (pin chính xác, không float `^`) | Bundle: `@nuxtjs/robots` `@nuxtjs/sitemap` `nuxt-og-image` (renderer **Takumi**, cài thêm `@takumi-rs/core`) `nuxt-schema-org` `nuxt-site-config`. Sitemap động qua `defineSitemapEventHandler()` + `chunks: 5000` (tính trước cho lúc scale ngàn trang). Thứ tự module: `@nuxt/ui` → `@nuxtjs/seo` → layer khác |
 | UI kit | Nuxt UI v4 (`^4.10`, pin do #6184 peer-dep vue-router) + Tailwind v4 | | Ép light-mode `pages/play/**` qua `middleware/force-play-light.global.ts` set `to.meta.colorMode = 'light'` (route-group, không phải `definePageMeta` từng file) |
 | Form (admin) | `UForm` (Nuxt UI v4) + Zod 4 (Standard Schema, không cần adapter) | | Không có lib "Zod → form" đủ chín cho schema lồng nhau — hand-author field layout mỗi content type. `@norbiros/nuxt-auto-form` chỉ pilot cho form phẳng, chưa dùng critical path |
 | Rich text (admin) | `Editor` component có sẵn trong Nuxt UI v4 (nền Tiptap 3) | | Set `starter-kit` về đúng bold/italic/link/heading. Lưu **markdown** (`html: false` khi render) thay vì HTML — biên an toàn tự nhiên hơn allowlist. Nếu chọn HTML: dùng `sanitize-html` server-side, không dùng `dompurify` server-side |
 | Payment QR | Gọi `img.vietqr.io` (Quick Link API) trực tiếp | | Không tự sinh EMVCo/CRC16, không dùng package `vietqr` npm (stale từ 2022). Fetch + lưu PNG bytes lúc tạo order, không chỉ hotlink |
-| Email | AWS SES qua `@aws-sdk/client-ses` (+ `nodemailer` transport nếu cần dùng chung API gửi mail) | | Đã ở AWS (EC2) — IAM role, không secret SMTP để xoay. Cần xin production access sớm + SNS bounce/complaint webhook trước go-live |
+| Email — transport | `nodemailer` → AWS SES SMTP | `^9.0` | SMTP pool, TLS bắt buộc (587 STARTTLS hoặc 465 TLS wrapper). SMTP credential theo region và **không phải** AWS access key; quản lý ngoài repo. Không dùng `@aws-sdk/client-ses` cho đường gửi mail này |
+| Email — template | `mjml` | `^5.4` | Template tĩnh trong repo, compile/validate strict; runtime chỉ nội suy biến typed đã escape. Không gọi MJML cloud API, không tracking pixel |
+| Browser notification — hoãn P5 | FCM Web (`firebase` + `firebase-admin`) | Chốt version ở Task #84 | Đã chốt provider nhưng **không cài trong Task #83**. FCM là best-effort; inbox nội bộ là nguồn xem lại, service worker và endpoint rotation do [`browser-push.md`](../01-platform/browser-push.md) sở hữu |
 | Ảnh — xử lý server | `sharp` | | Vẫn chuẩn 2026. pnpm: khai `onlyBuiltDependencies: [sharp]` ở `pnpm-workspace.yaml`. Docker: build native binary **trong** stage cùng base image runtime, không copy từ host |
 | Ảnh — crop client | `vue-advanced-cropper` | | Vue-3-native, có `&lt;Preview&gt;` khớp yêu cầu "xem trước cỡ thật". Mount `&lt;ClientOnly&gt;` (SSR không đụng canvas) |
 | Error tracking | `@sentry/nuxt` (SaaS Team tier) | | GlitchTip self-host là fallback nếu chi phí/lưu trú dữ liệu VN sau này bắt buộc — cùng giao thức ingest, đổi DSN là xong |
@@ -138,7 +143,7 @@ hardcode `ioredis` không nhận client khác. Cả hai điểm chạm Valkey du
 | Storage | S3 SDK | giữ nguyên | |
 | Deploy | Docker (PG 17 + Valkey 9) · PM2 · Nginx · EC2 | giữ nguyên | |
 
-Version cụ thể ở bảng trên là **version tối thiểu tại 2026-08-06**. Lúc bootstrap thực tế,
+Version cụ thể ở bảng trên là **version tối thiểu được rà lại tại 2026-08-13**. Lúc bootstrap thực tế,
 lấy bản vá/minor mới nhất cùng major đã chốt — không hạ version, không tự ý nhảy major (quy tắc
 `BR-RBS-08` — đổi bảng §7.1 là đổi spec, không sửa âm thầm trong PR cài dependency). Nguồn
 nghiên cứu chi tiết (npm registry, GitHub issue, docs) — xem lịch sử phiên làm việc 2026-08-05/06,
@@ -242,7 +247,7 @@ Scenario: BR-RBS-04 — chặn code nghiệp vụ trước foundation approved
 |---|---|---|---|---|
 | 1 | `packages/ui` (Nuxt UI v4 + Tailwind preset + brand component ở v1) có đủ khớp [`design-system-contract.md`](../08-quality/design-system-contract.md) mới để port nguyên, hay phải viết lại phần lớn? Cần audit riêng, không đoán ở đây | Bước port §7.3, và mọi UI apps/web sau đó | Hoãn, chặn phase P1 | hoãn |
 | ~~2~~ | ~~PostgreSQL có nên bump theo major mới nhất~~ **Đóng 2026-08-06 (T8)**: **giữ PG 17** — đã kiểm chứng ở v1, PG 18 chưa GA, đúng yêu cầu của quy tắc `BR-RBS-07` (chạy đúng major version production trước khi viết schema), chốt trước migration | — | Đã đóng | D-X (T8) |
-| ~~3~~ | ~~Mô hình session lõi~~ **Đóng lại 2026-08-09 (`D-CO`)**: `@sidebase/nuxt-auth` Local provider cho cả 2 app; backend phát JWT access 15 phút bằng `jose`, giữ refresh token opaque xoay vòng và CSRF double-submit tự quản. OAuth Google/Facebook ở P1 dùng backend bridge rồi phát cùng token pair; không chuyển sang AuthJS — xem mục 1, 4 và 7 của [`auth-tokens-sessions.md`](../01-platform/auth-tokens-sessions.md) | — | Đã đóng | D-CO |
+| ~~3~~ | ~~Mô hình session lõi~~ **Đóng 2026-08-09, sửa lần cuối 2026-08-13 (`D-CO`)**: thay Sidebase và toàn bộ first-party JWT/JWS bằng opaque Redis credential cho cả hai app, kể cả MFA challenge. `nuxt-auth-utils` chỉ seal locator/projection; Redis trong `packages/auth` là authority. Session tuyệt đối 1 giờ; remember tuỳ chọn, rotate-on-use, tuyệt đối tối đa 365 ngày. Gỡ direct dependency `jose`; cấm refresh route cũ và fallback file/memory/DB/JWT. OAuth P1 tiếp tục qua backend bridge — xem [`auth-tokens-sessions.md`](../01-platform/auth-tokens-sessions.md) | — | Đã đóng | D-CO |
 | ~~4~~ | ~~Thư viện TOTP~~ **Đóng 2026-08-06 (`D-CP`)**: `otpauth` — xem §7.1 | — | Đã đóng | D-CP |
 | ~~5~~ | ~~CI provider~~ **Đóng lại 2026-08-06 (lần 2, quyết định người dùng)**: **không dùng cổng tự động remote nào**. `.github/workflows/ci.yml` đã xoá cùng cả thư mục `.github/`. Thay bằng `lefthook` chạy local (§7.1). Lần đóng trước cùng ngày ghi "cổng tự động" — **sai, đã thay** | — | Đã đóng | D-S (T1) |
 | 6 | Chấp nhận phụ thuộc runtime vào `img.vietqr.io` (bên thứ ba, ngoài tầm kiểm soát) cho toàn bộ luồng thanh toán MVP? Không có lựa chọn tự-host tương đương đủ tin cậy ở §7.1 | [`payment-order-create.md`](../03-account/payment-order-create.md) | Hoãn, chặn phase P2 | hoãn |

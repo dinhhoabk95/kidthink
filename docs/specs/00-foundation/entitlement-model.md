@@ -5,7 +5,7 @@ area: foundation
 status: implemented
 mvp: true
 phase: P0
-reviewed: 2026-08-06
+reviewed: 2026-08-13
 owns:
   - Registry entitlement key
   - Quy tắc hợp nhiều gói
@@ -75,7 +75,7 @@ if (await hasEntitlement(userId, "play_premium_games")) { … }
 | `BR-ENT-03` | `entitlement_keys` là **Lớp 1** — admin không tạo/sửa/xoá qua UI | Key là hằng số mà code tham chiếu. Sửa từ UI làm code gate một key không tồn tại |
 | `BR-ENT-04` | Key được khai báo nhưng **không gói MVP nào cấp** vẫn hợp lệ (key add-on) | Khai báo trước giữ contract ổn định; nhưng không được bán |
 | `BR-ENT-05` | Hết hạn **không xoá dữ liệu**. `child_profiles`, `mastery_state`, `lesson_plans` giữ nguyên | Mua lại là mở lại, không phải bắt đầu lại |
-| `BR-ENT-06` | Đọc năng lực từ **DB/cache**, không từ JWT | JWT sống 15 phút; thu hồi phải có hiệu lực ngay |
+| `BR-ENT-06` | Đọc năng lực từ **DB/cache**, không từ session projection | Session sống một giờ; thu hồi phải có hiệu lực ngay |
 | `BR-ENT-07` | Quota cạn → **402**, không degrade âm thầm | Degrade im lặng biến vấn đề thanh toán thành báo cáo lỗi chất lượng |
 | `BR-ENT-08` | Add-on là **trục độc lập** — không mở `access_tier` nào | Chi phí add-on là biến phí; gộp vào tier cố định mất kiểm soát chi phí |
 | `BR-ENT-09` | Mọi thao tác cấp/thu hồi ghi `audit_logs` kèm lý do bắt buộc | Cấp quyền tay là đường lạm dụng dễ nhất |
@@ -188,8 +188,8 @@ Scenario: BR-ENT-02 — hợp của nhiều gói
   Then tập key chứa cả hai
   And không key nào bị gói kia ghi đè
 
-Scenario: BR-ENT-06 — thu hồi có hiệu lực ngay, không chờ JWT hết hạn
-  Given user đang giữ access token còn hạn 10 phút
+Scenario: BR-ENT-06 — thu hồi có hiệu lực ngay, không chờ session hết hạn
+  Given user đang giữ session còn hạn 10 phút
   And user có entitlement play_premium_games
   When manager thu hồi entitlement đó
   Then request tiếp theo tới nội dung premium trả 403
@@ -243,7 +243,7 @@ Scenario: BR-ENT-10 — quota reset đúng nửa đêm ICT
 
 **Never**
 - `if (package === …)` ở tầng tính năng.
-- Đọc năng lực từ JWT.
+- Đọc năng lực từ session projection.
 - Cho admin sửa `entitlement_keys` qua UI.
 - Degrade âm thầm khi quota cạn.
 - Xoá dữ liệu khi gói hết hạn.

@@ -70,7 +70,7 @@ Ghi chú:
 - `D-BR`: [`schema-content-taxonomy.md`](01-platform/schema-content-taxonomy.md) (P0) → [`game-template-contract.md`](01-platform/game-template-contract.md) (P1) — Contract-only (taxonomy schema P0 đứng trước template contract P1).
 - `D-BS`: [`ai-codegen-pipeline.md`](01-platform/ai-codegen-pipeline.md) (P0) → [`game-template-contract.md`](01-platform/game-template-contract.md) (P1) — Contract-only (xác lập quy tắc vùng cấm P0 trước khi triển khai template contract).
 - `D-BT`: [`backup-and-restore.md`](01-platform/backup-and-restore.md) (P0) → [`job-queue.md`](01-platform/job-queue.md) (P1) — Contract & script P0 (định nghĩa quy trình backup/restore), job-queue P1 thực thi job định kỳ.
-- `D-BU` (T15, 2026-08-09): [`notification-service.md`](01-platform/notification-service.md) (P0) → [`job-queue.md`](01-platform/job-queue.md) (P1) — cạnh thật, `BR-NOT-05` cần `jobId = notification_id` idempotent qua BullMQ. Không kéo spec đó nguyên khối lên P0 — dùng lại đúng khung tối thiểu mà `D-BT` đã bắt buộc phải có ở bước 8b (`apps/worker` job `backup:postgres`, `packages/queue` producer). Bước 9b build thêm job `email:send` trên khung đó; phần **đầy đủ** danh mục job, retry policy và alerting backlog vẫn ở P1.
+- `D-BU` (T15, 2026-08-09; sửa 2026-08-13): [`notification-service.md`](01-platform/notification-service.md) (P0) → [`job-queue.md`](01-platform/job-queue.md) (P1) — cạnh thật, `BR-NOT-05` cần `jobId = notification_delivery_id` và conditional claim qua BullMQ. Không kéo spec đó nguyên khối lên P0 — dùng lại đúng khung tối thiểu mà `D-BT` đã bắt buộc phải có ở bước 8b (`apps/worker` job `backup:postgres`, `packages/queue` producer). Bước 9b build thêm job `email:send` trên khung đó; phần **đầy đủ** danh mục job, retry policy và alerting backlog vẫn ở P1.
 
 Bước 1 **không phụ thuộc** bất kỳ spec nào khác — đó là lý do nó chạy trước cả [`glossary.md`](00-foundation/glossary.md).
 Nó cũng là bước duy nhất mà bản roadmap gốc (trước 2026-08-05) bỏ trống spec sở hữu (từng
@@ -85,6 +85,12 @@ Template chỉ tồn tại khi có `content_contract` và runtime thật ở P1.
 gồm ≥690 LO; [`taxonomy-service.md`](01-platform/taxonomy-service.md) sở hữu dữ liệu này.
 
 **Cổng ra P0:** `../SPEC.md` §13 + [`security-checklist.md`](08-quality/security-checklist.md).
+
+**Thay auth architecture:** [`Task #85`](../tasks/85-nuxt-auth-utils-migration-plan.md) thay
+Sidebase và toàn bộ first-party JWT/refresh bằng opaque cookie session trên Redis sau hardening package
+của Task #83 và trước khi mở P1.15. Session tuyệt đối 1 giờ, remember tuỳ chọn tuyệt đối tối
+đa 365 ngày; P0 chỉ trở lại `implemented` khi hai app có evidence expiry/restore/revoke,
+Redis fail-closed và toàn bộ legacy runtime đã được gỡ.
 
 ## P1 — Play core
 
@@ -182,7 +188,8 @@ không phải nơi giữ chỗ cho mô hình sản phẩm khác.
 | 0 | Đóng contract Web scale và tạo spec owner còn thiếu | [`pwa-install.md`](01-platform/pwa-install.md) đã có; automated payment và offline curriculum pack phải có spec riêng trước code | Task #70 |
 | 1 | Cổng thanh toán tự động, đối soát và refund theo outcome đã duyệt | Spec mới do Task #70 chốt; không gộp các outcome ship độc lập | Task #71 |
 | 2 | PWA install và offline curriculum pack | [`pwa-install.md`](01-platform/pwa-install.md) · [`offline-play.md`](01-platform/offline-play.md); pack tải trước cần owner riêng nếu được nhận | Task #72 |
-| 3 | Cổng ra Web scale dựa trên evidence | Spec/task manifest được duyệt ở Task #70 | Task #78 |
+| 3 | User xem lại notification và nhận browser push best-effort | [`notification-inbox.md`](03-account/notification-inbox.md) → [`browser-push.md`](01-platform/browser-push.md); FCM không chặn email | Task #84 |
+| 4 | Cổng ra Web scale dựa trên evidence | Spec/task manifest được duyệt ở Task #70, bổ sung evidence notification nếu Task #84 vào release | Task #78 |
 
 Task #73–#77 đã loại khỏi backlog hiện hành: classroom, native mobile app, licensing,
 localization và mở thị trường không có spec/task placeholder. ID task không tái sử dụng. Nếu
@@ -196,12 +203,12 @@ package đã được tách xuống cỡ S/M. Audit ngày 2026-08-12 cho kết q
 
 | Phase | Coverage hồ sơ hiện hành | Mức sẵn sàng sau audit |
 |---|---|---|
-| P0 | Task #1, #2, #3, #7, #14 và các increment #16–#25 | Đủ coverage; bước chưa tick vẫn phải qua gate của Task #14 |
+| P0 | Task #1, #2, #3, #7, #14, các increment #16–#25, hardening Task #83 và auth adapter Task #85 | Contract package core và auth adapter đã đổi; P0 chỉ trở lại xanh sau evidence Task #83, Task #85 và gate Task #14 |
 | P1 | Task #26–#42; contract closure mới ở [`Task #80`](../tasks/80-audio-contract-closure-plan.md) và [`Task #81`](../tasks/81-pedagogical-evidence-contract-plan.md) | **Chưa đủ để tuyên bố implementation-ready**: audio storage/authoring chưa có owner; evidence sư phạm chưa có contract; sáu mã allow-list guest chưa chốt |
 | P2 | Task #43–#53 | Đủ cho 11 bước hiện có, nhưng lời hứa “audio widget ở P2.7” không có trong Task #49; chỉ mở lại sau Task #80 |
 | P3 | Task #54–#61 và lát account bổ sung [`Task #82`](../tasks/82-p3-account-curriculum-integration-plan.md) | Coverage cũ thiếu ba debt account từ P1.12; còn chặn người ở quyết định ≥60 hay ≥126 lesson và bố cục nhiều trẻ |
 | P4 | Task #62–#69 | Đủ 8 outcome add-on hiện hành; giá, quota, provider và schema vector vẫn là contract gate, không được thay bằng số placeholder |
-| P5 | Task #70–#72 và #78 | Đủ ở mức contract-first cho Web scale; implementation bị chặn tới khi Task #70 tạo đủ spec owner |
+| P5 | Task #70–#72, #78 và #84 | Đủ ở mức contract-first cho Web scale; FCM/inbox đứng sau package core Task #83 và không chặn email |
 
 Task #14 là master dependency graph và phase gate; các task increment là lát dọc có acceptance
 criteria. Hai lớp bổ sung nhau, không phải hai implementation plan cạnh tranh. Task #1–#13 và

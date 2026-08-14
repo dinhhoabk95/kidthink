@@ -2,7 +2,7 @@
 spec: FAQ-AND-HELP
 title: Câu hỏi thường gặp và hướng dẫn
 area: public
-status: approved
+status: implemented
 mvp: true
 phase: P1
 reviewed: 2026-08-08
@@ -27,7 +27,7 @@ Guest · User.
 
 ## 3. Entry points
 
-`/faq` · `/huong-dan` · khối FAQ trên trang chủ và trang giá.
+`/faq` · `/guide` · khối FAQ trên trang chủ và trang giá.
 
 ## 4. Main flow
 
@@ -39,9 +39,10 @@ Guest · User.
 
 | Nhánh | Hành vi |
 |---|---|
-| Không tìm thấy câu trả lời | Link tới `/lien-he` |
+| Không tìm thấy câu trả lời | Link tới `/contact` |
 | Câu hỏi liên quan chính sách | Link tới trang pháp lý, không copy nội dung |
 | User đã đăng nhập | Hiện thêm nhóm câu hỏi về tài khoản |
+
 
 ## 6. Business rules
 

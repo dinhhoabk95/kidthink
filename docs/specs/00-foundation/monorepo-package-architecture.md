@@ -2,10 +2,10 @@
 spec: MONOREPO-PACKAGE-ARCHITECTURE
 title: Kiến trúc package/driver trong monorepo
 area: foundation
-status: implemented
+status: approved
 mvp: true
 phase: P0
-reviewed: 2026-08-09
+reviewed: 2026-08-13
 owns:
   - Quy tắc khi nào tách package mới vs viết inline trong app
   - Pattern "driver" bọc thư viện bên thứ ba dùng chung nhiều app
@@ -55,10 +55,11 @@ chỗ thay vì một.
    type đặt tên theo nghiệp vụ (`getCached`, `enqueueJob`, `requireUserAuth`), không export
    lại type/instance của thư viện nền nguyên trạng.
 3. Driver chỉ mình nó import thư viện runtime nền. `apps/*` **không** `import` trực tiếp
-   `iovalkey`/`ioredis`/`bullmq`/`jose`/`otpauth` — chỉ import `@kidthink/cache`,
-   `@kidthink/queue`, `@kidthink/auth`. `@sidebase/nuxt-auth` là Nuxt module cấu hình theo
-   §5: mỗi app được khai trực tiếp trong manifest/`nuxt.config`, nhưng code runtime không
-   export hoặc import type vendor thay cho domain contract.
+   `iovalkey`/`ioredis`/`rate-limiter-flexible`/`bullmq`/`otpauth`/`openid-client`/
+   `nodemailer`/`mjml` — chỉ import `@kidthink/cache`,
+   `@kidthink/queue`, `@kidthink/auth`. `nuxt-auth-utils` là Nuxt module cấu hình theo §5:
+   mỗi app được khai trực tiếp trong manifest/`nuxt.config`, và chỉ app được dùng auto-import
+   session của module; domain contract không export hoặc import type vendor.
 4. Đổi thư viện nền sau này (vd `ioredis` → `iovalkey`, hoặc BullMQ → lựa chọn khác) chỉ sửa
    trong **một** package + test của package đó xanh — không sửa call site ở `apps/*`.
 5. Capability chỉ dùng ở **một** app, hoặc là cấu hình khai báo qua `nuxt.config` (không có
@@ -69,7 +70,7 @@ chỗ thay vì một.
 | Nhánh | Điều kiện | Hành vi |
 |---|---|---|
 | Nuxt module cấu hình thuần (SEO, sitemap, robots, OG-image) | Chỉ khai trong `nuxt.config`, không có call site logic dùng lại ở app khác | **Không** bọc driver — cấu hình trực tiếp trong `apps/web/nuxt.config.ts` |
-| Nuxt auth module cần auto-import/composable của từng app | Module phải đăng ký trong Nuxt app để sinh integration runtime | Khai `@sidebase/nuxt-auth` trực tiếp ở hai app; JWT, refresh, CSRF và domain type vẫn đi qua `@kidthink/auth` |
+| Nuxt auth module cần auto-import/composable của từng app | Module phải đăng ký trong Nuxt app để sinh integration runtime | Khai `nuxt-auth-utils` trực tiếp ở hai app; sealed cookie chỉ giữ locator, còn Redis session/remember, CSRF và domain type đi qua `@kidthink/auth` |
 | Capability dùng ở đúng 1 app hiện tại nhưng roadmap ghi sẽ dùng ở app thứ 2 | Vd `packages/storage` (S3) hiện chỉ `apps/admin` dùng, `apps/web` sẽ dùng ở P2 | Tách package **ngay** — tách sau khi có app thứ hai là refactor lại toàn bộ call site |
 | Driver cần thay thư viện nền nhưng interface cũ không còn diễn tả được API mới | Vd chuyển từ client kiểu ioredis sang client kiểu khác hẳn (mảng thay vì spread arg) | Giữ nguyên interface hướng ra ngoài package (§4 bước 2); viết adapter bên trong driver — không đổi chữ ký hàm ở mọi call site |
 | Package driver phình quá 800 dòng | Kiểm tra định kỳ | Tách theo sub-module trong cùng package (`src/session.ts`, `src/oauth.ts`), **không** tách thành package mới nếu vẫn phục vụ một capability |
@@ -90,18 +91,22 @@ chỗ thay vì một.
 
 ### 7.1 Bảng ánh xạ capability ↔ package ↔ thư viện nền
 
-**Sửa 2026-08-06** sau nghiên cứu: cột "thư viện nền" của Cache và Queue đổi `iovalkey` →
+**Sửa 2026-08-06** sau nghiên cứu: cột "thư viện nền" của Cache và Queue đổi `iovalkey` sang
 `ioredis` (không có chỗ dùng thật cho `iovalkey` trong stack này — xem mục 7.1 của
-[`repo-bootstrap.md`](repo-bootstrap.md)). Auth xác nhận dùng **chung một driver cho cả 2
-app**, không tách.
+[`repo-bootstrap.md`](repo-bootstrap.md)). **Sửa 2026-08-13**: auth browser đổi sang opaque
+cookie session; `nuxt-auth-utils` chỉ giữ locator/projection, còn `packages/auth` sở hữu Redis
+adapter fail-closed và vẫn là một driver domain dùng chung. KidThink không còn dependency trực
+tiếp `jose`; mọi first-party auth credential đều opaque.
 
 | Capability | Package driver | Thư viện nền | Spec sở hữu hành vi |
 |---|---|---|---|
-| Auth session + OAuth (cả `apps/web` và `apps/admin`) | `packages/auth` cho domain/JWT; Nuxt module khai trực tiếp mỗi app | `@sidebase/nuxt-auth` Local provider (trạng thái app) + `jose` (JWT browser/service) + `otpauth` (TOTP Manager); OAuth P1 qua backend bridge | [`auth-tokens-sessions.md`](../01-platform/auth-tokens-sessions.md), [`oauth-provider-registry.md`](../01-platform/oauth-provider-registry.md) |
-| Cache + rate limit | `packages/cache` | `unstorage` (driver `redis`) trên Valkey 9, client **`ioredis`** | [`rate-limiting.md`](../01-platform/rate-limiting.md) |
+| Auth session + OAuth (cả `apps/web` và `apps/admin`) | `packages/auth` cho opaque session/remember/challenge, Redis adapter và CSRF/domain guard; Nuxt module khai trực tiếp mỗi app | `ioredis` client riêng fail-closed + `nuxt-auth-utils` (sealed locator/projection) + `otpauth` + `openid-client`; không `jose` | [`auth-tokens-sessions.md`](../01-platform/auth-tokens-sessions.md), [`oauth-provider-registry.md`](../01-platform/oauth-provider-registry.md) |
+| Cache + rate limit | `packages/cache` | Cache: `unstorage` driver `redis`; rate limit: `rate-limiter-flexible`; mỗi adapter giữ client **`ioredis`** process-long, không tạo theo request | [`rate-limiting.md`](../01-platform/rate-limiting.md) |
 | Queue | `packages/queue` (định nghĩa job + producer) · `apps/worker` (consumer, Nitro plugin) | BullMQ, connection object thường (tự dựng **`ioredis`** nội bộ) | [`job-queue.md`](../01-platform/job-queue.md) |
 | Payment QR | `packages/payment` (nếu ≥2 app cần) hoặc inline `apps/web/server` (nếu chỉ web) | Gọi API `img.vietqr.io`, không thư viện QR local | [`payment-order-create.md`](../03-account/payment-order-create.md) |
-| Email | `packages/notification` | `@aws-sdk/client-ses` | [`notification-service.md`](../01-platform/notification-service.md) |
+| Email | `packages/notification` | `nodemailer` SMTP transport tới AWS SES + `mjml` renderer | [`notification-service.md`](../01-platform/notification-service.md) |
+| Browser push (P5) | `packages/notification` cho server driver; plugin/service worker trong `apps/web` | `firebase-admin` (server) + `firebase` (web); chỉ cài khi Task #84 bắt đầu | [`browser-push.md`](../01-platform/browser-push.md) |
+| HTTP hardening | **Không cần driver** — cấu hình tại từng Nuxt app | `nuxt-security`; bật header/CSP/CORS/request-size, tắt limiter/CSRF tích hợp | [`security-checklist.md`](../08-quality/security-checklist.md) |
 | Storage ảnh | `packages/storage` | S3 SDK + `sharp` (xử lý server) | [`image-storage.md`](../01-platform/image-storage.md) |
 | Error tracking | **Không cần driver riêng** — SDK gắn ở entry mỗi app | `@sentry/nuxt` | [`monitoring-and-alerting.md`](../01-platform/monitoring-and-alerting.md) |
 | Logging | `packages/config` (factory logger dùng chung) hoặc `packages/observability` nếu tách | `pino` + `pino-http` (Nitro plugin) | [`monitoring-and-alerting.md`](../01-platform/monitoring-and-alerting.md) |
@@ -133,7 +138,7 @@ duyệt thanh toán.
 |---|---|
 | `apps/worker` import `bullmq` trực tiếp để enqueue | `apps/worker` chỉ **consume**; enqueue đi qua `packages/queue` từ `apps/web` |
 | `apps/web/server/api/*` gọi `new Redis(...)` (`ioredis`/`iovalkey`) để cache thủ công | Gọi `packages/cache` — package đó là nơi duy nhất khởi tạo client Valkey |
-| `apps/admin` import type session/JWT từ `@sidebase/nuxt-auth` hoặc `jose` | Chỉ khai Sidebase trong Nuxt config; runtime import type domain (`AuthenticatedManager`) từ `@kidthink/auth` |
+| `apps/admin` export type `#auth-utils` hoặc `ioredis` như domain contract | `#auth-utils` chỉ augmentation trong app; runtime import type domain (`AuthenticatedManager`) và Redis API từ `@kidthink/auth` |
 
 ## 8. API contract
 
@@ -173,9 +178,11 @@ export async function setCached<T>(key: string, value: T, ttlSeconds: number): P
 ```gherkin
 Scenario: BR-MPA-01 — app không import thư viện nền trực tiếp
   When quét import trong apps/web, apps/admin, apps/worker
-  Then không file runtime nào import "iovalkey", "ioredis", "bullmq", "jose", hoặc "otpauth" trực tiếp
-  And mọi truy cập đi qua "@kidthink/cache", "@kidthink/queue", hoặc "@kidthink/auth"
-  And "@sidebase/nuxt-auth" chỉ xuất hiện trong manifest hoặc Nuxt module config của app
+  Then không file runtime nào import "iovalkey", "ioredis", "rate-limiter-flexible", "bullmq", "otpauth", "openid-client", "nodemailer", hoặc "mjml" trực tiếp
+  And mọi truy cập đi qua "@kidthink/cache", "@kidthink/queue", "@kidthink/auth", hoặc "@kidthink/notification"
+  And toàn repo không có direct dependency hoặc import "jose"
+  And "nuxt-auth-utils" chỉ xuất hiện trong manifest, Nuxt module config hoặc app-local integration của hai app
+  And "#auth-utils" chỉ xuất hiện trong type augmentation của từng app
 
 Scenario: BR-MPA-06 — packages không phụ thuộc ngược apps
   When chạy dependency-graph check trong cổng tự động
@@ -213,5 +220,5 @@ Scenario: BR-MPA-04 — module cấu hình thuần không bị ép bọc driver
 | # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
 |---|---|---|---|---|
 | ~~1~~ | ~~Dependency-graph check chạy bằng công cụ nào~~ **Đóng 2026-08-06 (`D-DI`)**: `dependency-cruiser ^18.1` — duy nhất hỗ trợ cấm thư viện ngoài cụ thể theo zone (`BR-MPA-01`), không chỉ graph nội bộ. Xem mục 7.1 của [`repo-bootstrap.md`](repo-bootstrap.md) | — | Đã đóng | D-DI |
-| ~~2~~ | ~~Tách `packages/auth-oauth`/`packages/auth-jwt`?~~ **Đóng lại 2026-08-09 (`D-DJ`)**: giữ **một** `packages/auth` sở hữu JWT browser/service, refresh, CSRF và OAuth bridge. `@sidebase/nuxt-auth` Local provider phải khai ở từng Nuxt app để module integration hoạt động, nhưng không sở hữu domain contract và không làm phát sinh package auth thứ hai | — | Đã đóng | D-DJ |
+| ~~2~~ | ~~Tách `packages/auth-oauth`/`packages/auth-jwt`?~~ **Đóng 2026-08-09, sửa 2026-08-13 (`D-DJ`)**: giữ **một** `packages/auth` sở hữu opaque session/remember/challenge Redis adapter, CSRF và OAuth bridge. `nuxt-auth-utils` khai ở từng app nhưng chỉ sở hữu sealed locator/projection. Không có first-party JWT, không direct dependency `jose`, không phát sinh package auth thứ hai | — | Đã đóng | D-DJ |
 | ~~3~~ | ~~Tách `packages/payment` và `packages/notification` ngay từ đầu hay inline~~ **Đóng 2026-08-06 (T9)**: **inline** tới khi `apps/admin` cần dùng lại. Tách sớm tạo package rỗng; inline trước rồi extract khi có 2 consumer | — | Đã đóng | D-X (T9) |

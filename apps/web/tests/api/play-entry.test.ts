@@ -1,27 +1,10 @@
-import { createWebUserToken } from "@kidthink/auth";
 import { childProfiles, getOwnerDb, users } from "@kidthink/db";
 import { describe, expect, it } from "vitest";
 import getPlayHomeHandler from "../../server/api/users/play/home.get";
 
-const JWT_SECRET =
-  process.env.JWT_SECRET || "kidthink-dev-secret-kidthink-dev-secret-32bytes";
-
-async function createAuthUserHeader(userId = 501) {
-  const token = await createWebUserToken({
-    payload: {
-      user_id: userId,
-      display_name: "Parent User",
-      session_id: `sess_${userId}_${Date.now()}`,
-      refresh_token_version: 0,
-    },
-    secret: JWT_SECRET,
-  });
-  return `Bearer ${token}`;
-}
-
 function mockEvent(
   method: string,
-  headers: Record<string, string> = {},
+  userId = 501,
   cookies: Record<string, string> = {}
 ) {
   const responseHeaders: Record<string, string> = {};
@@ -30,7 +13,6 @@ function mockEvent(
     node: {
       req: {
         headers: {
-          ...headers,
           cookie: Object.entries(cookies)
             .map(([k, v]) => `${k}=${v}`)
             .join("; "),
@@ -46,14 +28,20 @@ function mockEvent(
         statusCode: 200,
       },
     },
-    context: {},
+    context: {
+      user: {
+        user_id: userId,
+        display_name: "Parent User",
+        session_id: `sess_${userId}`,
+        refresh_token_version: 0,
+      },
+    },
   } as any;
 }
 
 describe("Play Entry & Kid Lobby API (BR-PEN-01..07)", () => {
   it("GET /api/users/play/home returns 428 CHILD_SELECTION_REQUIRED when no active_child_id cookie present", async () => {
-    const authHeader = await createAuthUserHeader(501);
-    const event = mockEvent("GET", { authorization: authHeader }, {});
+    const event = mockEvent("GET", 501, {});
 
     try {
       await getPlayHomeHandler(event);
@@ -88,12 +76,7 @@ describe("Play Entry & Kid Lobby API (BR-PEN-01..07)", () => {
       })
       .returning();
 
-    const authHeader = await createAuthUserHeader(user.id);
-    const event = mockEvent(
-      "GET",
-      { authorization: authHeader },
-      { active_child_id: child.uuid }
-    );
+    const event = mockEvent("GET", user.id, { active_child_id: child.uuid });
 
     const res = await getPlayHomeHandler(event);
     expect(res.child.display_name).toBe("Bé Test");

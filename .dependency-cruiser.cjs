@@ -35,7 +35,7 @@ module.exports = {
       severity: "error",
       from: { path: "^apps/" },
       to: {
-        path: "node_modules/(ioredis|iovalkey|bullmq|jose|otpauth|unstorage)(/|$)",
+        path: "node_modules/(ioredis|iovalkey|bullmq|jose|otpauth|unstorage|nodemailer|mjml|rate-limiter-flexible)(/|$)",
       },
     },
     {

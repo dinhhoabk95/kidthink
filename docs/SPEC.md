@@ -42,7 +42,7 @@ Quy tắc thô: nếu có người sẽ ngạc nhiên vì kết quả, việc đ
 | **D6** | **Tuân thủ Nghị định 13/2023 + Luật Trẻ em (VN)** là ràng buộc thiết kế, không phải checklist cuối | Thu dữ liệu trẻ vượt nhu cầu là thứ không rút lại được sau khi đã ghi |
 | **D7** | **AI soạn trong repo, người merge.** AI agent IDE hỗ trợ viết seeder nội dung và code; cổng người là **PR review**, và merge chính là phát hành. Cấm có LLM nào chạy trong hệ thống để sinh nội dung | Ranh giới cũ ("NEVER để AI sinh nội dung cốt lõi") đặt sai chỗ. Cái cần cấm không phải việc **soạn thảo**, mà việc **phát hành không có người kiểm**. Đặt cổng ở PR thì cổng đó có diff, có `git blame`, và revert được bằng một lệnh |
 | **D8** | **Đổi tên dự án: TiniMath → KidThink.** Package scope, domain, chuỗi hiển thị người dùng đổi theo. Thư mục repo v1 cũ (`tinimath/`) giữ nguyên tên — đó là tên lịch sử của thư mục tham khảo đọc-only, không phải thương hiệu | Product owner chốt định vị lại thương hiệu trước khi viết dòng code v2 đầu tiên, tránh phải rename giữa chừng khi đã có package đã publish, domain đã trỏ DNS |
-| **D9** | **Khởi tạo source mới từ đầu trong `kidthink/`**, nằm cạnh `tinimath/` (v1) trong cùng workspace — thay vì update dần code cũ. Port có chọn lọc theo [`docs/specs/00-foundation/repo-bootstrap.md`](specs/00-foundation/repo-bootstrap.md) | Update dần trên nền v1 mang theo nợ kỹ thuật đã ghi nhận ở [`AUDIT-v1.md`](specs/AUDIT-v1.md) — 31 spec gộp nhiều outcome, thiếu 8 loại spec. Greenfield cho phép áp toàn bộ 130 spec v2 sạch từ dòng code đầu tiên |
+| **D9** | **Khởi tạo source mới từ đầu trong `kidthink/`**, nằm cạnh `tinimath/` (v1) trong cùng workspace — thay vì update dần code cũ. Port có chọn lọc theo [`docs/specs/00-foundation/repo-bootstrap.md`](specs/00-foundation/repo-bootstrap.md) | Update dần trên nền v1 mang theo nợ kỹ thuật đã ghi nhận ở [`AUDIT-v1.md`](specs/AUDIT-v1.md) — 31 spec gộp nhiều outcome, thiếu 8 loại spec. Greenfield cho phép áp toàn bộ 133 spec v2 sạch từ dòng code đầu tiên |
 | **D10** | **Ưu tiên adopt thư viện Nuxt ecosystem đã kiểm chứng** (auth, sitemap/SEO, cache, queue) thay vì tự xây từ đầu. Khi cần dùng chung nhiều app, bọc lại thành **package driver nội bộ** — xem [`docs/specs/00-foundation/monorepo-package-architecture.md`](specs/00-foundation/monorepo-package-architecture.md) | Tự xây auth/queue/sitemap không tạo khác biệt cạnh tranh, chỉ tốn thời gian dev và mang rủi ro bảo mật tự phát hiện. Thư viện phổ biến có test, security patch, cộng đồng review. Driver nội bộ giữ interface ổn định cho nhiều app và không khoá cứng vào một thư viện |
 | **D11** | **Phạm vi hiện hành là web-only và vận hành tại Việt Nam.** PWA vẫn là web delivery; native mobile app, classroom/B2B, licensing/white-label, marketplace và mở thị trường ngoài Việt Nam không có spec triển khai, task hay placeholder schema trong roadmap hiện hành. | Lập kế hoạch cho một mô hình sản phẩm chưa được chọn tạo contract giả và kéo theo actor, pháp lý, thanh toán, store review hoặc multi-tenancy không cần thiết. Nếu sau này mở rộng, người quyết phải mở một chương trình scope mới và viết spec sở hữu trước khi lập task. |
 
@@ -693,9 +693,12 @@ sách · đổi cấu hình game · đổi feature flag.
 | Admin | **Nuxt 4 SPA** | subdomain riêng |
 | DB | **PostgreSQL 17** | |
 | ORM | **Drizzle** (`^0.45`) qua driver **`postgres.js`** | Không đứng sau pooler transaction-mode nên bỏ qua caveat prepared statement của `postgres.js`. Cấm raw SQL, trừ `sql\`\`` cho tăng nguyên tử và `coalesce` |
-| Cache / rate limit | **Valkey 9** qua **unstorage** (driver `redis`) | Client nền: xem [`repo-bootstrap.md`](specs/00-foundation/repo-bootstrap.md) §7.1 |
+| Cache / rate limit | **Valkey 9**; cache qua **unstorage** (driver `redis`), rate limit qua **`rate-limiter-flexible` `^11.2`** trên singleton `ioredis` | `unstorage` không sở hữu counter/rate-limit; hai trục và fail-open/closed vẫn do [`rate-limiting.md`](specs/01-platform/rate-limiting.md) sở hữu |
 | Queue | **BullMQ** (`^6.0`) nối trực tiếp qua Nitro plugin, KHÔNG qua wrapper Nuxt | Cấm `nuxt-simple-bullmq` — solo-maintainer, README tự nhận "chỉ test với Node 21", tác giả khuyên dùng lựa chọn khác cho production |
-| Auth | **`@sidebase/nuxt-auth` Local provider** — dùng chung cho **cả `apps/web` và `apps/admin`** để quản lý trạng thái auth phía Nuxt; backend tự phát JWT access 15 phút bằng `jose`, refresh token opaque xoay vòng và CSRF double-submit theo [`auth-tokens-sessions.md`](specs/01-platform/auth-tokens-sessions.md). OAuth P1 đi qua backend bridge rồi phát cùng token pair; `admin` không có OAuth route. TOTP Manager: `otpauth` | Cấm Supabase Auth, Cấm Better-Auth, Cấm Sidebase AuthJS/`next-auth`. Mô hình session lõi **đổi 2026-08-09** — xem [`repo-bootstrap.md`](specs/00-foundation/repo-bootstrap.md) §11 |
+| Auth | **Opaque cookie session + Redis authority** cho cả `apps/web` và `apps/admin`: session tuyệt đối 1 giờ; `remember_me` tuỳ chọn, rotate-on-use và tuyệt đối tối đa 365 ngày. `nuxt-auth-utils` `^0.5.30` chỉ cung cấp sealed locator, `/api/_auth/session` và `useUserSession`; identity/role/reauth/credential nằm trong Redis fail-closed. KidThink không phát hoặc nhận first-party JWT; gỡ dependency trực tiếp `jose`. OAuth P1 dùng `openid-client` `^6.8`; TOTP dùng `otpauth` `^9.5` | Redis auth keyspace dùng client riêng, AOF + `noeviction`, transaction/Lua cho rotate/revoke. MFA challenge cũng là opaque one-time Redis credential. Token OIDC từ provider chỉ là input protocol tạm thời do `openid-client` xác minh, không lưu/forward. Pin module tối thiểu `0.5.30`; cấm fallback file/memory/DB/JWT, Supabase Auth, Better-Auth, Sidebase/AuthJS/`next-auth` và helper OAuth/password/WebAuthn của module |
+| Email | **Nodemailer `^9.0` → AWS SES SMTP**; template **MJML `^5.4`** | SMTP TLS + pool; credential SMTP theo region, tách khỏi AWS credential; SES→SNS cho delivery/bounce/complaint |
+| HTTP hardening | **`nuxt-security` `^2.6`** khai trực tiếp ở `apps/web` và `apps/admin` | Dùng CSP/header/CORS/request-size; tắt rate limiter và CSRF tích hợp để không tạo contract thứ hai |
+| Browser notification | **FCM Web** (`firebase` client + `firebase-admin` server), **P5 / Task #84** | Chỉ là kênh best-effort; notification inbox là nguồn xem lại. Không cài package hay service worker trong Task #83 |
 | SEO | **`@nuxtjs/seo`** (sitemap · robots · og-image renderer Takumi · schema.org) | thay hand-build sitemap/JSON-LD |
 | UI kit | **Nuxt UI v4** + Tailwind v4 | Cấm tái sinh shadcn-vue |
 | Icon | `i-lucide-*` qua `<UIcon>` | một library duy nhất |
@@ -707,7 +710,7 @@ sách · đổi cấu hình game · đổi feature flag.
 | Deploy | Docker (PG 17 + **Valkey 9**) · PM2 · Nginx · EC2 | |
 
 Boring tech để ổn định — nhưng "boring" nghĩa là **thư viện được cộng đồng kiểm chứng**, không
-phải "tự viết cho quen". Version cụ thể ở bảng trên chốt tại 2026-08-05; version patch mới
+phải "tự viết cho quen". Baseline package core được rà lại ngày 2026-08-13; version patch mới
 hơn tại thời điểm bootstrap thì lấy version đó, không hạ xuống bảng này
 (xem [`docs/specs/00-foundation/repo-bootstrap.md`](specs/00-foundation/repo-bootstrap.md) §7.1).
 
@@ -773,7 +776,7 @@ kidthink/
 │   ├── db/           Drizzle schema, migration, seed
 │   │   └── src/seed-master/    Lớp 1 — taxonomy, template, emoji, package
 │   │   └── src/seed-content/   Lớp 2 — game level, lesson, curriculum
-│   ├── auth/         jose (JWT browser + service-to-service), guard, refresh rotation, CSRF
+│   ├── auth/         opaque session/remember/challenge, Redis adapter, guard, CSRF
 │   ├── cache/        unstorage driver redis (Valkey 9) + cache util + rate limit
 │   ├── storage/      S3 operation, ảnh WebP pipeline
 │   ├── queue/        BullMQ job definition + producer (consumer ở apps/worker)
@@ -806,7 +809,7 @@ Thêm lại **khi** tính năng của chúng vào scope, không trước.
 | `packages/game-engine/` | Canvas 2D thuần TS | Vue, Pinia, VueUse, reactivity, ghi DB, network call lúc chơi |
 | `packages/adaptive/` | Pure TS algorithm | Ghi DB · `new Date()` (truyền `now`) |
 | `packages/db/` | Drizzle schema, migration, seed | Raw SQL, business logic |
-| `packages/auth/` | jose JWT, guard, hash | Supabase / Better-Auth |
+| `packages/auth/` | Opaque session/remember/challenge Redis adapter fail-closed, guard, hash, CSRF | Supabase / Better-Auth · JWT/JWS credential · `jose` · fallback auth sang cache fail-open |
 | `packages/queue/` | Job definition, producer | Consumer |
 | `apps/web/server/api/` | Drizzle + Zod | Frontend logic |
 | `apps/web/app/` | `useFetch()` / `$fetch` | Import `packages/db` |
@@ -817,19 +820,24 @@ Thêm lại **khi** tính năng của chúng vào scope, không trước.
 
 | Prefix | Guard |
 |---|---|
-| `/api/guest/**` | Không JWT — nội dung công khai + pre-auth (login, register, refresh, forgot, MFA challenge) |
+| `/api/guest/**` | Không session — nội dung công khai + pre-auth (login, register, remember restore, forgot, MFA challenge) |
 | `/api/users/**` | `requireUserAuth()` |
 | `/api/managers/**` | `requireManagerAuth()` |
+| `/api/_auth/session` | Route framework nội bộ của `nuxt-auth-utils`: GET trả safe session projection; DELETE bị chặn 405, không thay route logout canonical |
 
 Hai guard **tách biệt, không lồng nhau**. Một guard chung với cờ `isAdmin` là con đường
-ngắn nhất tới leo thang đặc quyền. `requireUserAuth` **NEVER** chấp nhận token manager,
-và ngược lại — audience kiểm tường minh.
+ngắn nhất tới leo thang đặc quyền. `requireUserAuth` chỉ chấp nhận cookie session User;
+`requireManagerAuth` chỉ chấp nhận cookie session Manager. Cả hai từ chối Bearer credential.
 
 Path danh từ số nhiều: `/api/users/lessons`, `/api/users/children`.
 Cấm response wrapper `{data, error}` — trả JSON trần + HTTP code.
 
+`/api/_auth/session` là ngoại lệ framework duy nhất cho quy tắc namespace và danh từ số nhiều.
+Không route nghiệp vụ mới nào được đặt dưới `/api/_auth/**`.
+
 HTTP code dùng: 200 · 201 · 400 · 401 · 402 (hết credit add-on) · 403 · 404 · 409 (xung
-đột / duyệt trùng) · 410 (snapshot hết hạn) · 422 · **428** (chưa chọn trẻ) · 500.
+đột / duyệt trùng) · 410 (snapshot hết hạn) · 422 · **428** (chưa chọn trẻ) · 500 ·
+**503** (Redis/DB/dependency bắt buộc không tới được).
 
 Record của người khác → **404**, không phải 403. 403 xác nhận record tồn tại.
 
@@ -905,7 +913,7 @@ await db.update(game_levels)
   .where(eq(game_levels.id, id));
 ```
 
-Cột đặc quyền: `managers.role` · `users.is_active` · `users.refresh_token_version` ·
+Cột đặc quyền: `managers.role` · `users.is_active` · `users.session_version` ·
 `entitlements.status` · `payment_orders.status` · `*.status` của mọi bảng nội dung.
 
 **Vue SFC — thứ tự bắt buộc:** `<template>` → `<script setup>` → `<style scoped>`.
@@ -1114,8 +1122,9 @@ Cấm cắt: gating, audit, tuân thủ §4, versioning nội dung. Bốn thứ 
 - [ ] `skill_prerequisites` là DAG — property test xanh trên toàn bộ seed.
 - [ ] Truy vấn `skill → LO → asset` < 100 ms P95.
 - [ ] Đăng ký / đăng nhập / quên mật khẩu / xác thực email chạy end-to-end.
-- [ ] `social_identities` + `active_sessions.reauth_at` có trong migration P0, dù luồng SNS
-      chỉ bật ở P1.
+- [ ] `social_identities` + `active_sessions.device_id/revoked_at` +
+      `users.session_version`/`managers.session_version` có trong migration P0; reauth state
+      authoritative nằm trong Redis session.
 
 ### Cổng ra P1
 
@@ -1195,7 +1204,7 @@ hình báo cáo mang câu này.
 
 Mỗi outcome có **đúng một** spec sở hữu. Spec khác **link tới**, không copy contract.
 
-**131 spec module.** Bản đồ đầy đủ: [`docs/specs/index.md`](specs/index.md).
+**133 spec module.** Bản đồ đầy đủ: [`docs/specs/index.md`](specs/index.md).
 
 ```
 docs/
@@ -1205,9 +1214,9 @@ docs/
     ├── CONVENTIONS.md         quy ước viết spec v2
     ├── TEMPLATE.md · index.md · roadmap.md
     ├── 00-foundation/  16     contract cắt ngang mọi bề mặt
-    ├── 01-platform/    27     năng lực nội bộ (gồm seeder nội dung + codegen + OAuth)
+    ├── 01-platform/    28     năng lực nội bộ (gồm seeder nội dung + codegen + OAuth + browser push)
     ├── 02-public/       9     khách chưa đăng nhập
-    ├── 03-account/     20     User đã đăng nhập (gồm SNS login + linking)
+    ├── 03-account/     21     User đã đăng nhập (gồm SNS login + linking + notification inbox)
     ├── 04-play/        13     bề mặt trẻ — core business
     ├── 05-content/      5     ràng buộc biên tập nội dung
     ├── 06-admin/       28     Manager

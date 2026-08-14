@@ -28,7 +28,8 @@ Guest · User.
 
 ## 3. Entry points
 
-`/bang-gia` · từ trang chủ · từ mọi CTA nâng cấp.
+`/pricing` · từ trang chủ · từ mọi CTA nâng cấp.
+
 
 ## 4. Main flow
 

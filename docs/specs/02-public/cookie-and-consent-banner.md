@@ -2,10 +2,10 @@
 spec: COOKIE-AND-CONSENT-BANNER
 title: Cookie và banner đồng ý
 area: public
-status: approved
+status: implemented
 mvp: true
 phase: P1
-reviewed: 2026-08-08
+reviewed: 2026-08-13
 owns:
   - Danh sách cookie sử dụng
   - Hành vi banner đồng ý
@@ -65,10 +65,10 @@ Banner ở lần truy cập đầu · `/cookie`.
 
 | Cookie | Mục đích | Thời hạn | Thiết yếu |
 |---|---|---|:--:|
-| `tm_u_at` | Phiên đăng nhập | 15 phút | |
-| `tm_u_rt` | Làm mới phiên | 7 ngày | |
-| `tm_u_csrf` | Chống CSRF | 7 ngày | |
-| `tm_m_*` | Tương ứng cho quản trị | | |
+| `kidthink-user-session` | Opaque session User | 1 giờ | |
+| `tm_u_remember` | Ghi nhớ User khi chủ động chọn | tối đa 1 năm | |
+| `tm_u_csrf` | Chống CSRF | 1 giờ hoặc theo remember | |
+| `kidthink-manager-session` · `tm_m_remember` · `tm_m_csrf` | Tương ứng cho quản trị | tối đa 1 năm | |
 | `active_child_id` | Ghi nhớ bé đang chơi | 30 ngày | |
 | `tm_did` | Định danh thiết bị cho khách chơi thử | 1 năm | |
 
@@ -146,4 +146,3 @@ Scenario: BR-CKB-01 — chỉ cookie thiết yếu
 | # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
 |---|---|---|---|---|
 | ~~1~~ | ~~Analytics tự host có cần thêm cookie không?~~ **Đóng 2026-08-09 (T13, `D-AW`)**: P1 không dùng analytics tự host, không phát sinh thêm cookie — khớp [`landing-page.md`](landing-page.md) Q1 | Cookie analytics | Đã đóng | D-AW |
-

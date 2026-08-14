@@ -2,7 +2,7 @@
 spec: SEO-AND-STRUCTURED-DATA
 title: SEO kỹ thuật và dữ liệu có cấu trúc
 area: public
-status: approved
+status: implemented
 mvp: true
 phase: P1
 reviewed: 2026-08-08

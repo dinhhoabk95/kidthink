@@ -1,38 +1,31 @@
-import { createAdminManagerToken } from "@kidthink/auth";
 import { describe, expect, it } from "vitest";
 import guestTemplatesHandler from "../../server/api/guest/templates.get.js";
 import managerContractHandler from "../../server/api/managers/templates/[code]/contract.get.js";
 import createTemplateHandler from "../../server/api/managers/templates.post.js";
 
-async function createAuthHeader(
-  role: "super_admin" | "content_reviewer",
-  managerId = 1
-) {
-  const token = await createAdminManagerToken({
-    payload: {
-      manager_id: managerId,
-      display_name: "Manager Name",
-      session_id: "sess_manager_123",
-      refresh_token_version: 1,
-      role,
-    },
-    secret: "kidthink-dev-secret-kidthink-dev-secret-32bytes",
-  });
-  return `Bearer ${token}`;
-}
-
 function mockEvent(
   method: string,
-  headers: Record<string, string> = {},
+  managerRole?: "super_admin" | "content_reviewer",
   params: Record<string, string> = {}
 ) {
   return {
     method,
     node: {
-      req: { headers },
+      req: { headers: {} },
       res: {},
     },
     context: {
+      ...(managerRole
+        ? {
+            manager: {
+              manager_id: 1,
+              display_name: "Manager Name",
+              session_id: "sess_manager_123",
+              refresh_token_version: 1,
+              role: managerRole,
+            },
+          }
+        : {}),
       params,
     },
   } as any;
@@ -62,17 +55,12 @@ describe("Game Template API Endpoints (BR-GTC-04, spec §8)", () => {
   });
 
   it("GET /api/managers/templates/[code]/contract rejects unauthenticated request", async () => {
-    const event = mockEvent("GET", {}, { code: "GT-001" });
+    const event = mockEvent("GET", undefined, { code: "GT-001" });
     await expect(managerContractHandler(event)).rejects.toThrow();
   });
 
   it("GET /api/managers/templates/[code]/contract returns 422 for unknown code", async () => {
-    const authHeader = await createAuthHeader("content_reviewer");
-    const event = mockEvent(
-      "GET",
-      { authorization: authHeader },
-      { code: "GT-999" }
-    );
+    const event = mockEvent("GET", "content_reviewer", { code: "GT-999" });
 
     try {
       await managerContractHandler(event);
@@ -83,12 +71,7 @@ describe("Game Template API Endpoints (BR-GTC-04, spec §8)", () => {
   });
 
   it("GET /api/managers/templates/[code]/contract returns exported contracts for manager", async () => {
-    const authHeader = await createAuthHeader("content_reviewer");
-    const event = mockEvent(
-      "GET",
-      { authorization: authHeader },
-      { code: "GT-001" }
-    );
+    const event = mockEvent("GET", "content_reviewer", { code: "GT-001" });
 
     const res = (await managerContractHandler(event)) as any;
     expect(res.code).toBe("GT-001");

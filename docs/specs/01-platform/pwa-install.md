@@ -5,7 +5,7 @@ area: platform
 status: approved
 mvp: false
 phase: P5
-reviewed: 2026-08-11
+reviewed: 2026-08-13
 owns:
   - Manifest và tiêu chí mời cài đặt
 depends_on:
@@ -120,4 +120,4 @@ Scenario: start_url mở vào bề mặt người lớn
 
 | # | Câu hỏi | Chặn phase | Đề xuất chốt | Chủ |
 |---|---|---|---|---|
-| ~~1~~ | ~~Có cần push notification qua PWA không?~~ **Đóng 2026-08-11 (khôi phục quyết định `D-BM`)**: không có PWA push trong scope hiện hành; thông báo cho phụ huynh đi qua email do [`notification-service.md`](notification-service.md) sở hữu. | Đã đóng | Không áp dụng | D-BM |
+| ~~1~~ | ~~Có cần push notification qua PWA không?~~ **Đóng lại 2026-08-13**: có browser push cho **User** qua FCM Web ở P5, nhưng đó là outcome riêng do [`browser-push.md`](browser-push.md) + Task #84 sở hữu. Task #72 chỉ phối hợp service worker và không triển khai notification; Child profile vẫn không nhận push | Đã đóng | P5 | D-BM |

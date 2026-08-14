@@ -5,7 +5,7 @@ area: foundation
 status: approved
 mvp: true
 phase: P0
-reviewed: 2026-08-06
+reviewed: 2026-08-13
 owns:
   - Bản đồ prefix BR → spec sở hữu
   - Danh sách rule không bao giờ được vi phạm
@@ -96,7 +96,7 @@ Mọi `BR-*` trong code, test, và PR. `pnpm gen:check` cảnh báo BR không đ
 | `BR-OFF` | [`offline-play.md`](../01-platform/offline-play.md) | | `BR-PWA` | [`pwa-install.md`](../01-platform/pwa-install.md) |
 | `BR-RTL` | [`rate-limiting.md`](../01-platform/rate-limiting.md) | | `BR-FLG` | [`feature-flag-service.md`](../01-platform/feature-flag-service.md) |
 | `BR-CSA` | [`content-seed-authoring.md`](../01-platform/content-seed-authoring.md) | | `BR-AIG` | [`ai-codegen-pipeline.md`](../01-platform/ai-codegen-pipeline.md) |
-| `BR-OAP` | [`oauth-provider-registry.md`](../01-platform/oauth-provider-registry.md) | | | |
+| `BR-OAP` | [`oauth-provider-registry.md`](../01-platform/oauth-provider-registry.md) | | `BR-BPS` | [`browser-push.md`](../01-platform/browser-push.md) |
 
 **Public**
 
@@ -122,6 +122,7 @@ Mọi `BR-*` trong code, test, và PR. `pnpm gen:check` cảnh báo BR không đ
 | `BR-ARP` | [`advanced-report.md`](../03-account/advanced-report.md) | | `BR-POC` | [`payment-order-create.md`](../03-account/payment-order-create.md) |
 | `BR-PPU` | [`payment-proof-upload.md`](../03-account/payment-proof-upload.md) | | `BR-SBV` | [`subscription-view.md`](../03-account/subscription-view.md) |
 | `BR-SCL` | [`social-login.md`](../03-account/social-login.md) | | `BR-SLK` | [`social-account-linking.md`](../03-account/social-account-linking.md) |
+| `BR-NIB` | [`notification-inbox.md`](../03-account/notification-inbox.md) | | | |
 
 **Play**
 
@@ -240,6 +241,10 @@ Nếu chỉ đọc một mục trong toàn corpus, đọc mục này.
 | `BR-AUT-13` `BR-SLK-01` | Thao tác nhạy cảm cần reauth ≤5 phút. Phiên hợp lệ một mình không đủ. |
 | `BR-SLK-04` | **Cấm gỡ phương thức đăng nhập cuối cùng** |
 | `BR-AUT-15` | **Manager cấm đăng nhập bằng SNS** |
+| `BR-AUT-25` `BR-AUT-31` `BR-AUT-38` | User/Manager auth chỉ dùng opaque Redis credential; cấm first-party JWT/`jose` và cấm fallback khi Redis lỗi |
+| `BR-AUT-27` `BR-AUT-28` | Session tuyệt đối 1 giờ; remember tuyệt đối tối đa 365 ngày, không sliding |
+| `BR-AUT-29` | Remember reuse thu hồi toàn bộ session/credential của account |
+| `BR-AUT-34` | Manager chỉ nhận remember credential sau khi MFA thành công |
 | `BR-ERR-08` | Thông báo lỗi không tiết lộ tài khoản đăng nhập bằng cách nào |
 
 **Nội dung**

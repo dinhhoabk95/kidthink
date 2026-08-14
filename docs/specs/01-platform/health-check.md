@@ -2,10 +2,10 @@
 spec: HEALTH-CHECK
 title: Health check dịch vụ
 area: platform
-status: implemented
+status: approved
 mvp: true
 phase: P0
-reviewed: 2026-08-08
+reviewed: 2026-08-13
 owns:
   - Endpoint health và ngữ nghĩa mã trả về
   - Danh sách dịch vụ critical
@@ -54,7 +54,7 @@ tin vào nó, nên nó không được nói dối.
 | ID | Rule | Vì sao |
 |---|---|---|
 | `BR-HLT-01` | Cấm — **NEVER trả 200 cứng** | Làm LB tin vào instance đã chết |
-| `BR-HLT-02` | Kiểm dịch vụ **thật** — `SELECT 1` qua Drizzle, `PING` Valkey, đếm queue | Kiểm biến môi trường không chứng minh gì |
+| `BR-HLT-02` | Kiểm dịch vụ **thật** — `SELECT 1` qua Drizzle, `PING` Valkey cache, write/read/delete sentinel ở auth keyspace, đếm queue | Kiểm biến môi trường hoặc chỉ `PING` không chứng minh session store ghi/đọc được |
 | `BR-HLT-03` | 503 **phải được thông báo cho người** | Health check không alerting chỉ là một endpoint |
 | `BR-HLT-04` | Response **không lộ** version, hostname, hay chuỗi kết nối | Bề mặt công khai |
 | `BR-HLT-05` | Timeout mỗi dịch vụ ≤ 2s, tổng ≤ 3s | Health check chậm bị LB coi là fail |
@@ -66,17 +66,18 @@ tin vào nó, nên nó không được nói dối.
 
 | Dịch vụ | Cách kiểm | Critical |
 |---|---|---|
-| PostgreSQL | `SELECT 1` qua Drizzle | |
-| Valkey | `PING` | |
-| BullMQ | Đếm `waiting` | |
+| PostgreSQL | `SELECT 1` qua Drizzle | Có |
+| Valkey cache/rate limit | `PING` | Có |
+| Valkey auth session | `PING` + write/read/delete sentinel ở auth keyspace; failure làm readiness 503 | Có |
+| BullMQ | Đếm `waiting` | Có |
 
 ### 7.2 Response
 
 ```jsonc
 // 200
-{ "status": "ok", "checks": { "db": "ok", "cache": "ok", "queue": "ok" } }
+{ "status": "ok", "checks": { "db": "ok", "cache": "ok", "auth": "ok", "queue": "ok" } }
 // 503
-{ "status": "degraded", "checks": { "db": "ok", "cache": "fail", "queue": "unknown" } }
+{ "status": "degraded", "checks": { "db": "ok", "cache": "ok", "auth": "fail", "queue": "unknown" } }
 ```
 
 Cấm `version`, không `hostname`, không thời gian uptime.
@@ -103,7 +104,9 @@ Scenario: BR-HLT-01 — DB chết thì trả 503
 
 Scenario: BR-HLT-02 — kiểm dịch vụ thật
   When quét implementation của health check
-  Then có truy vấn DB thật, PING Valkey thật, và đếm queue thật
+  Then có truy vấn DB thật, PING Valkey cache thật, và đếm queue thật
+  And auth keyspace thực hiện write/read/delete sentinel thành công
+  And sentinel không còn tồn tại sau phép kiểm
 
 Scenario: BR-HLT-04 — không lộ thông tin hệ thống
   When gọi health check

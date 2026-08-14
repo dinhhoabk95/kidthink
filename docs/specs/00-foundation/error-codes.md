@@ -5,7 +5,7 @@ area: foundation
 status: approved
 mvp: true
 phase: P0
-reviewed: 2026-08-11
+reviewed: 2026-08-13
 owns:
   - Danh sách mã lỗi nghiệp vụ
   - Ánh xạ mã lỗi → HTTP status
@@ -79,9 +79,9 @@ Mọi handler API. Mọi spec khai báo mã lỗi phải đăng ký ở đây.
 
 | Mã | HTTP | Khi nào | Thông báo |
 |---|:--:|---|---|
-| `UNAUTHENTICATED` | 401 | Thiếu / hỏng / sai audience token | "Bạn cần đăng nhập để tiếp tục." |
-| `TOKEN_EXPIRED` | 401 | Access token hết hạn, refresh được | — client tự refresh |
-| `SESSION_REVOKED` | 401 | `refresh_token_version` lệch | "Phiên đăng nhập đã kết thúc. Vui lòng đăng nhập lại." |
+| `UNAUTHENTICATED` | 401 | Thiếu / hỏng / hết hạn / sai namespace session | "Bạn cần đăng nhập để tiếp tục." |
+| `TOKEN_EXPIRED` | 401 | **Deprecated** — giữ mã cho compatibility trong lúc Task #85 cutover; browser session mới dùng `UNAUTHENTICATED` | — |
+| `SESSION_REVOKED` | 401 | Session/remember generation lệch, device bị revoke hoặc phát hiện remember reuse | "Phiên đăng nhập đã kết thúc. Vui lòng đăng nhập lại." |
 | `INSUFFICIENT_ROLE` | 403 | Manager role không đủ | "Bạn không có quyền truy cập mục này." |
 | `CSRF_INVALID` | 403 | Thiếu hoặc sai double-submit CSRF token trên request đổi trạng thái | "Phiên bảo mật không hợp lệ. Vui lòng tải lại trang và thử lại." |
 | `ENTITLEMENT_REQUIRED` | 403 | Thiếu entitlement key | "Tính năng này thuộc gói {tên gói}." |

@@ -2,7 +2,7 @@
 spec: GAME-DETAIL-PUBLIC
 title: Trang chi tiết trò chơi
 area: public
-status: approved
+status: implemented
 mvp: true
 phase: P1
 reviewed: 2026-08-08
@@ -29,7 +29,7 @@ Guest · User.
 
 ## 3. Entry points
 
-`/tro-choi/{code}` · `GET /api/guest/levels/{code}`.
+`/games/{code}` · `GET /api/guest/levels/{code}`.
 
 ## 4. Main flow
 
@@ -82,8 +82,9 @@ Guest · User.
 
 ### 7.3 URL
 
-`/tro-choi/{code}` với `code` là mã bất biến. Đổi tiêu đề không đổi URL —
+`/games/{code}` với `code` là mã bất biến. Đổi tiêu đề không đổi URL —
 mã bất biến là lý do URL bền.
+
 
 ## 8. API contract
 

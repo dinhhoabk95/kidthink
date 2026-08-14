@@ -27,6 +27,10 @@ export default defineConfig({
         import.meta.dirname,
         "./packages/game-engine/src/index.ts"
       ),
+      "@kidthink/notification": path.resolve(
+        import.meta.dirname,
+        "./packages/notification/src/index.ts"
+      ),
       "@kidthink/ui": path.resolve(
         import.meta.dirname,
         "./packages/ui/src/index.ts"

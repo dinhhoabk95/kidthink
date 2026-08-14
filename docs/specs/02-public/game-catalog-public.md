@@ -2,7 +2,7 @@
 spec: GAME-CATALOG-PUBLIC
 title: Danh mục trò chơi công khai
 area: public
-status: approved
+status: implemented
 mvp: true
 phase: P1
 reviewed: 2026-08-08
@@ -30,7 +30,7 @@ Guest. User đã đăng nhập thấy cùng trang nhưng có ngữ cảnh quyề
 
 ## 3. Entry points
 
-`/tro-choi` · `/tro-choi?competency=C1&age=4` · `GET /api/guest/levels`.
+`/games` · `/games?competency=C1&age=4` · `GET /api/guest/levels`.
 
 ## 4. Main flow
 
@@ -114,8 +114,9 @@ Scenario: BR-GCP-03 — bộ lọc vào URL
 
 Scenario: BR-GCP-04 — danh sách hiện khi tắt JS
   Given JavaScript bị tắt
-  When mở /tro-choi
+  When mở /games
   Then danh sách game vẫn hiển thị
+
 
 Scenario: BR-GCP-06 — chỉ game published
   Given có game ở trạng thái draft

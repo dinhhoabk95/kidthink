@@ -1,5 +1,4 @@
 import { gzipSync } from "node:zlib";
-import { createAdminManagerToken, createWebUserToken } from "@kidthink/auth";
 import {
   gameLevels,
   gameTemplates,
@@ -15,7 +14,7 @@ import userConfigHandler from "../../server/api/users/levels/[code]/config.get.j
 
 function mockEvent(
   method: string,
-  headers: Record<string, string> = {},
+  authContext?: { user?: any; manager?: any },
   params: Record<string, string> = {},
   query: Record<string, unknown> = {}
 ) {
@@ -34,7 +33,7 @@ function mockEvent(
     method,
     path,
     node: {
-      req: { headers, url, originalUrl: url },
+      req: { headers: {}, url, originalUrl: url },
       res: {
         setHeader: (name: string, value: string) => {
           responseHeaders[name.toLowerCase()] = value;
@@ -44,6 +43,8 @@ function mockEvent(
       },
     },
     context: {
+      ...(authContext?.user ? { user: authContext.user } : {}),
+      ...(authContext?.manager ? { manager: authContext.manager } : {}),
       params,
       query,
     },
@@ -52,31 +53,27 @@ function mockEvent(
   } as any;
 }
 
-async function createAuthUserHeader(userId = 1) {
-  const token = await createWebUserToken({
-    payload: {
+function mockUserAuth(userId = 1) {
+  return {
+    user: {
       user_id: userId,
       display_name: "Test Parent",
-      session_id: "user_sess_123",
+      session_id: `user_sess_${userId}`,
       refresh_token_version: 1,
     },
-    secret: "kidthink-dev-secret-kidthink-dev-secret-32bytes",
-  });
-  return `Bearer ${token}`;
+  };
 }
 
-async function createAuthManagerHeader(managerId = 1) {
-  const token = await createAdminManagerToken({
-    payload: {
+function mockManagerAuth(managerId = 1) {
+  return {
+    manager: {
       manager_id: managerId,
       display_name: "Manager One",
-      session_id: "mgr_sess_123",
+      session_id: `mgr_sess_${managerId}`,
       refresh_token_version: 1,
       role: "content_reviewer",
     },
-    secret: "kidthink-dev-secret-kidthink-dev-secret-32bytes",
-  });
-  return `Bearer ${token}`;
+  };
 }
 
 async function seedTestLevel(options: {
@@ -175,7 +172,7 @@ describe("Task P1.4 — Game Config Delivery End-to-End Suite", () => {
       const code = `GL-C1-CNT-TEST-${Math.floor(Math.random() * 8999 + 1000)}`;
       await seedTestLevel({ code, accessTier: "free" });
 
-      const event = mockEvent("GET", {}, { code });
+      const event = mockEvent("GET", undefined, { code });
       const res = (await guestConfigHandler(event)) as any;
 
       expect(res.level_code).toBe(code);
@@ -190,7 +187,7 @@ describe("Task P1.4 — Game Config Delivery End-to-End Suite", () => {
       const code = `GL-C1-CNT-PREM-${Math.floor(Math.random() * 8999 + 1000)}`;
       await seedTestLevel({ code, accessTier: "premium" });
 
-      const event = mockEvent("GET", {}, { code });
+      const event = mockEvent("GET", undefined, { code });
       try {
         await guestConfigHandler(event);
         expect.fail("Should throw 403");
@@ -203,7 +200,7 @@ describe("Task P1.4 — Game Config Delivery End-to-End Suite", () => {
       const code = `GL-C1-CNT-USER-${Math.floor(Math.random() * 8999 + 1000)}`;
       await seedTestLevel({ code, accessTier: "free" });
 
-      const event = mockEvent("GET", {}, { code });
+      const event = mockEvent("GET", undefined, { code });
       try {
         await userConfigHandler(event);
         expect.fail("Should throw 401");
@@ -216,8 +213,7 @@ describe("Task P1.4 — Game Config Delivery End-to-End Suite", () => {
       const code = `GL-C1-CNT-USRA-${Math.floor(Math.random() * 8999 + 1000)}`;
       await seedTestLevel({ code, accessTier: "login" });
 
-      const userHeader = await createAuthUserHeader(99);
-      const event = mockEvent("GET", { authorization: userHeader }, { code });
+      const event = mockEvent("GET", mockUserAuth(99), { code });
       try {
         await userConfigHandler(event);
         expect.fail("Should throw 428");
@@ -241,10 +237,9 @@ describe("Task P1.4 — Game Config Delivery End-to-End Suite", () => {
         contentVersion: 2,
       });
 
-      const mgrHeader = await createAuthManagerHeader(1);
       const event = mockEvent(
         "GET",
-        { authorization: mgrHeader },
+        mockManagerAuth(1),
         { code },
         { version: "1" }
       );
@@ -259,7 +254,7 @@ describe("Task P1.4 — Game Config Delivery End-to-End Suite", () => {
       const code = `GL-C1-CNT-ARCH-${Math.floor(Math.random() * 8999 + 1000)}`;
       await seedTestLevel({ code, status: "archived" });
 
-      const event = mockEvent("GET", {}, { code });
+      const event = mockEvent("GET", undefined, { code });
       try {
         await guestConfigHandler(event);
         expect.fail("Should throw 404");
@@ -279,7 +274,7 @@ describe("Task P1.4 — Game Config Delivery End-to-End Suite", () => {
         contentPack: corruptedPack,
       });
 
-      const event = mockEvent("GET", {}, { code });
+      const event = mockEvent("GET", undefined, { code });
       try {
         await guestConfigHandler(event);
         expect.fail("Should throw 500 CONTENT_PACK_INVALID");
@@ -300,7 +295,7 @@ describe("Task P1.4 — Game Config Delivery End-to-End Suite", () => {
       const db = getOwnerDb();
       const initialCount = (await db.select().from(playSessions)).length;
 
-      const event = mockEvent("GET", {}, { code });
+      const event = mockEvent("GET", undefined, { code });
       const res = (await guestConfigHandler(event)) as any;
 
       expect(res.session.uuid).toBeDefined();
@@ -321,8 +316,7 @@ describe("Task P1.4 — Game Config Delivery End-to-End Suite", () => {
       const code = `GL-C1-CNT-PRV-${Math.floor(Math.random() * 8999 + 1000)}`;
       await seedTestLevel({ code, accessTier: "premium" });
 
-      const mgrHeader = await createAuthManagerHeader(1);
-      const event = mockEvent("GET", { authorization: mgrHeader }, { code });
+      const event = mockEvent("GET", mockManagerAuth(1), { code });
       const res = (await managerConfigHandler(event)) as any;
 
       const db = getOwnerDb();
@@ -340,7 +334,7 @@ describe("Task P1.4 — Game Config Delivery End-to-End Suite", () => {
       const code = `GL-C1-CNT-FREE-${Math.floor(Math.random() * 8999 + 1000)}`;
       await seedTestLevel({ code, accessTier: "free" });
 
-      const event = mockEvent("GET", {}, { code });
+      const event = mockEvent("GET", undefined, { code });
       await guestConfigHandler(event);
 
       const cacheHeader = event.__responseHeaders["cache-control"];
@@ -351,8 +345,7 @@ describe("Task P1.4 — Game Config Delivery End-to-End Suite", () => {
       const code = `GL-C1-CNT-NOST-${Math.floor(Math.random() * 8999 + 1000)}`;
       await seedTestLevel({ code, accessTier: "login" });
 
-      const mgrHeader = await createAuthManagerHeader(1);
-      const event = mockEvent("GET", { authorization: mgrHeader }, { code });
+      const event = mockEvent("GET", mockManagerAuth(1), { code });
       await managerConfigHandler(event);
 
       const cacheHeader = event.__responseHeaders["cache-control"];
@@ -363,8 +356,7 @@ describe("Task P1.4 — Game Config Delivery End-to-End Suite", () => {
       const code = `GL-C1-CNT-NEGA-${Math.floor(Math.random() * 8999 + 1000)}`;
       await seedTestLevel({ code, accessTier: "premium" });
 
-      const mgrHeader = await createAuthManagerHeader(1);
-      const event = mockEvent("GET", { authorization: mgrHeader }, { code });
+      const event = mockEvent("GET", mockManagerAuth(1), { code });
       await managerConfigHandler(event);
 
       const cacheHeader = event.__responseHeaders["cache-control"];
@@ -375,7 +367,7 @@ describe("Task P1.4 — Game Config Delivery End-to-End Suite", () => {
       const code = `GL-C1-CNT-NEGB-${Math.floor(Math.random() * 8999 + 1000)}`;
       await seedTestLevel({ code, accessTier: "free" });
 
-      const event = mockEvent("GET", {}, { code });
+      const event = mockEvent("GET", undefined, { code });
       await guestConfigHandler(event);
 
       const cacheHeader = event.__responseHeaders["cache-control"];
@@ -388,7 +380,7 @@ describe("Task P1.4 — Game Config Delivery End-to-End Suite", () => {
       const code = `GL-C1-CNT-BDGT-${Math.floor(Math.random() * 8999 + 1000)}`;
       await seedTestLevel({ code, accessTier: "free" });
 
-      const event = mockEvent("GET", {}, { code });
+      const event = mockEvent("GET", undefined, { code });
       const payload = await guestConfigHandler(event);
 
       const jsonStr = JSON.stringify(payload);
@@ -402,7 +394,7 @@ describe("Task P1.4 — Game Config Delivery End-to-End Suite", () => {
       const code = `GL-C1-CNT-FULL-${Math.floor(Math.random() * 8999 + 1000)}`;
       await seedTestLevel({ code, accessTier: "free" });
 
-      const event = mockEvent("GET", {}, { code });
+      const event = mockEvent("GET", undefined, { code });
       const payload = (await guestConfigHandler(event)) as any;
 
       expect(payload.content_pack).toBeDefined();

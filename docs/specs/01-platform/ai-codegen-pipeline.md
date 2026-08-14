@@ -5,7 +5,7 @@ area: platform
 status: implemented
 mvp: true
 phase: P0
-reviewed: 2026-08-08
+reviewed: 2026-08-13
 owns:
   - Artefact máy đọc được sinh ra từ spec
   - Cái gì AI được sinh code, cái gì không
@@ -88,7 +88,7 @@ Sáu vùng dưới đây cần review tăng cường vì hậu quả khi sai l�
 
 | Vùng | Vì sao |
 |---|---|
-| **Auth** — guard, verify JWT, hash mật khẩu, xử lý phiên | Lỗi ở đây là lỗ hổng, và lỗ hổng do máy sinh khó thấy hơn lỗ hổng do người viết |
+| **Auth** — guard, Redis session/remember/challenge, hash mật khẩu | Lỗi ở đây là lỗ hổng, và lỗ hổng do máy sinh khó thấy hơn lỗ hổng do người viết |
 | **Thanh toán** — approve, cấp entitlement, transaction | Luồng tiền. Một lỗi idempotency mất tiền thật |
 | **Gating** — `allowedTiers`, kiểm ownership | Bug ở đây cho không toàn bộ nội dung |
 | **Dữ liệu trẻ** — mọi thứ chạm `child_profiles`, `consent_logs`, telemetry PII | Ràng buộc pháp lý, không sửa ngược được |

@@ -5,7 +5,7 @@ area: platform
 status: approved
 mvp: true
 phase: P1
-reviewed: 2026-08-11
+reviewed: 2026-08-13
 owns:
   - Danh sách nhà cung cấp OAuth được phép
   - Hình dạng luồng authorization code + PKCE
@@ -45,7 +45,7 @@ với hệ thống, kể cả khi biến môi trường của nó được đặ
 
 | Nơi | Ghi chú |
 |---|---|
-| `packages/auth/src/oauth/` | Registry, dựng URL, đổi code, ánh xạ hồ sơ |
+| `packages/auth/src/oauth/` | Registry + adapter `openid-client`; dựng URL, PKCE, đổi code, validate token, ánh xạ hồ sơ |
 | `GET /api/guest/auth/oauth/{provider}/start` | Bắt đầu — dùng cho cả đăng nhập và liên kết |
 | `GET /api/guest/auth/oauth/{provider}/callback` | Nhận `code` + `state` |
 | `GET /api/guest/auth/oauth/providers` | Provider nào đang bật, để UI vẽ nút |
@@ -92,6 +92,7 @@ với hệ thống, kể cả khi biến môi trường của nó được đặ
 | `BR-OAP-13` | Client secret đọc từ biến môi trường, kiểm **có mặt lúc startup**; thiếu → provider tự tắt, không crash app | Một provider hỏng không được kéo sập đăng nhập bằng email |
 | `BR-OAP-14` | Cookie `tm_oauth` bị **xoá ngay** sau callback, thành công hay thất bại | State dùng lại được là state không bảo vệ gì |
 | `BR-OAP-15` | Ảnh đại diện từ provider **không tải về, không lưu, không hiển thị** | Ảnh người lớn là PII ta không cần. Hotlink lên CDN của họ là rò referrer |
+| `BR-OAP-16` | Discovery, PKCE, authorization URL, code exchange và validation dùng `openid-client` trong `packages/auth`; Cấm — **NEVER** tự viết OAuth/OIDC protocol primitive | Protocol auth tự viết dễ bỏ sót issuer, state, PKCE hoặc token validation; package đã có conformance test và security maintenance |
 
 ## 7. Data
 
@@ -220,6 +221,11 @@ Scenario: BR-OAP-15 — không lưu ảnh đại diện
   Given provider trả picture URL
   When đọc hàng social_identities
   Then không cột nào chứa URL ảnh
+
+Scenario: BR-OAP-16 — protocol primitive không tự viết
+  When quét packages/auth/src/oauth
+  Then discovery, PKCE, authorization URL và code exchange đi qua openid-client
+  And không có implementation PKCE hay parse token response tự viết
 ```
 
 ## 10. Boundaries
@@ -231,6 +237,7 @@ Scenario: BR-OAP-15 — không lưu ảnh đại diện
 - `redirect_uri` từ cấu hình, so khớp tuyệt đối.
 - Scope tối thiểu.
 - Rate limit hai trục.
+- Mọi protocol primitive OAuth/OIDC đi qua `openid-client` trong `packages/auth`.
 
 **Ask first**
 - Thêm provider mới vào §7.1.
@@ -245,6 +252,7 @@ Scenario: BR-OAP-15 — không lưu ảnh đại diện
 - Coi email của provider là đã xác minh khi họ không khẳng định.
 - Gửi dữ liệu trẻ em tới provider.
 - Lưu hay hiển thị ảnh đại diện từ provider.
+- Tự viết PKCE, discovery, code exchange hay token validation.
 
 ## 11. Open questions
 

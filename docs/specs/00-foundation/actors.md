@@ -2,10 +2,10 @@
 spec: ACTORS
 title: Tác nhân hệ thống và ranh giới quyền
 area: foundation
-status: implemented
+status: approved
 mvp: true
 phase: P0
-reviewed: 2026-08-09
+reviewed: 2026-08-13
 owns:
   - Danh sách tác nhân và định nghĩa của từng loại
   - Ranh giới giữa hai guard
@@ -40,7 +40,7 @@ Chưa đăng nhập. Không có record trong DB.
 
 | | |
 |---|---|
-| Định danh | Cookie thiết bị `tm_did` theo [`auth-tokens-sessions.md`](../01-platform/auth-tokens-sessions.md) §7.2 (uuid, không HttpOnly, 1 năm) |
+| Định danh | Cookie thiết bị `tm_did` theo [`auth-tokens-sessions.md`](../01-platform/auth-tokens-sessions.md) §7.4 (uuid, không HttpOnly, 1 năm) |
 | Chơi được | Allow-list 6 game level `access_tier='free'`, một cho mỗi competency, difficulty 1–2 |
 | Giới hạn lượt | **Không có** |
 | Lưu tiến độ | Không — `play_sessions.child_profile_id IS NULL`, không ghi `mastery_state` |
@@ -86,7 +86,7 @@ nhập. Là một ngữ cảnh thuộc về User.
 | Kiểm quyền | `assertActiveChild(event)` throw **428**, **và** kiểm ownership ở DB |
 
 **NEVER tin `active_child_id` từ cookie.** Cookie không HttpOnly, người dùng sửa được.
-Mọi endpoint chạm dữ liệu trẻ phải `SELECT … WHERE child_profiles.user_id = <user từ JWT>`.
+Mọi endpoint chạm dữ liệu trẻ phải `SELECT … WHERE child_profiles.user_id = <user từ session context>`.
 
 ### 2.4 Manager
 
@@ -116,19 +116,19 @@ qua `super_admin` khác.
 
 ## 4. Main flow — phân giải quyền một request
 
-1. Middleware đọc cookie access token, verify chữ ký và **audience**.
+1. Middleware đọc opaque session cookie, lookup Redis theo đúng namespace một lần.
 2. Gắn vào `event.context.user` **hoặc** `event.context.manager` — không bao giờ cả hai.
 3. Handler gọi đúng một guard. Guard là **hàm sync**, đọc context, throw 401 nếu thiếu.
 4. Nếu route cần trẻ: `assertActiveChild(event)` → 428 nếu chưa chọn.
 5. Nếu route cần trẻ: query có `WHERE user_id = ctx.user.user_id` — **luôn**.
-6. Nếu route cần năng lực: `hasEntitlement(user_id, key)` — hỏi DB/cache, không hỏi JWT.
+6. Nếu route cần năng lực: `hasEntitlement(user_id, key)` — hỏi DB/cache, không hỏi session projection.
 
 ## 5. Alternative flows
 
 | Nhánh | Hành vi |
 |---|---|
-| Token manager gọi `/api/users/**` | **401** — audience không khớp |
-| Token user gọi `/api/managers/**` | **401** — audience không khớp |
+| Cookie Manager gọi `/api/users/**` | **401** — namespace không khớp |
+| Cookie User gọi `/api/managers/**` | **401** — namespace không khớp |
 | `content_reviewer` gọi route của `super_admin` | **403** kèm `INSUFFICIENT_ROLE` |
 | Truy cập record của User khác | **404**, không phải 403 |
 | Chưa chọn trẻ | **428** kèm thông báo tiếng Việt |
@@ -139,9 +139,9 @@ qua `super_admin` khác.
 | ID | Rule | Vì sao |
 |---|---|---|
 | `BR-ACT-01` | Hai guard **tách biệt, không lồng nhau**. Không có guard chung với cờ `isAdmin` | Một guard chung có cờ là con đường ngắn nhất tới leo thang đặc quyền |
-| `BR-ACT-02` | Guard kiểm **audience** JWT tường minh. Token user không bao giờ được `requireManagerAuth` chấp nhận và ngược lại | Chỉ kiểm chữ ký thì một token hợp lệ ở namespace này dùng được ở namespace kia |
+| `BR-ACT-02` | Guard kiểm namespace session Redis tường minh. Cookie User không bao giờ được `requireManagerAuth` chấp nhận và ngược lại | Tin locator mà không bind namespace mở đường dùng chéo bề mặt |
 | `BR-ACT-03` | Record của người khác → **404**, không phải 403 | 403 xác nhận record tồn tại — đó là rò rỉ thông tin |
-| `BR-ACT-04` | Năng lực đọc từ `entitlements`, **không** từ JWT | JWT sống 15 phút; thu hồi quyền phải có hiệu lực ngay |
+| `BR-ACT-04` | Năng lực đọc từ `entitlements`, **không** từ session projection | Thu hồi quyền phải có hiệu lực ngay, không chờ session một giờ hết hạn |
 | `BR-ACT-05` | **NEVER cột `role`/`persona`/`tier` trên `users`** | Năng lực = gói đã mua. Nhãn trên user sẽ lệch khỏi gói |
 | `BR-ACT-06` | **NEVER tạo credential cho trẻ** | Ràng buộc pháp lý và ràng buộc sản phẩm — xem [`child-data-compliance.md`](child-data-compliance.md) |
 | `BR-ACT-07` | Ownership child profile kiểm ở **DB query**, không ở cookie | Cookie `active_child_id` không HttpOnly |
@@ -154,7 +154,7 @@ qua `super_admin` khác.
 
 | Bảng | Field then chốt | Ràng buộc |
 |---|---|---|
-| `users` | `email` UNIQUE, `password_hash`, `status`, `refresh_token_version` | Không có `role` |
+| `users` | `email` UNIQUE, `password_hash`, `status`, `session_version` | Không có `role` |
 | `managers` | `email` UNIQUE, `password_hash`, `role`, `mfa_enabled` | `role` NOT NULL |
 | `child_profiles` | `uuid` UNIQUE, `user_id` FK, `display_name`, `birth_year`, `avatar_id` | Danh sách đóng field |
 | Bảng auth phụ | `account_type ('user'\|'manager')` + `account_id` | FK polymorphic — **bắt buộc** integration test bắt orphan |
@@ -165,8 +165,8 @@ Guard là hàm, không phải route. Contract của guard:
 
 ```ts
 // SYNC — đọc event.context. ❌ NEVER await.
-function requireUserAuth(event: H3Event): UserTokenPayload;      // throw 401
-function requireManagerAuth(event: H3Event): ManagerTokenPayload; // throw 401
+function requireUserAuth(event: H3Event): AuthenticatedUser;       // throw 401
+function requireManagerAuth(event: H3Event): AuthenticatedManager; // throw 401
 function requireRole(event: H3Event, role: ManagerRole): void;    // throw 403
 function assertActiveChild(event: H3Event): number;               // throw 428
 async function hasEntitlement(userId: number, key: string): Promise<boolean>;
@@ -174,7 +174,7 @@ async function hasEntitlement(userId: number, key: string): Promise<boolean>;
 
 | Mã lỗi | HTTP | Khi nào |
 |---|---|---|
-| `UNAUTHENTICATED` | 401 | Thiếu/hỏng/sai audience token |
+| `UNAUTHENTICATED` | 401 | Thiếu/hỏng/hết hạn/sai namespace session |
 | `INSUFFICIENT_ROLE` | 403 | Manager role không đủ |
 | `NO_ACTIVE_CHILD` | 428 | Route cần trẻ, chưa chọn |
 | `NOT_FOUND` | 404 | Record không tồn tại **hoặc** không thuộc caller |
@@ -182,9 +182,9 @@ async function hasEntitlement(userId: number, key: string): Promise<boolean>;
 ## 9. Acceptance criteria
 
 ```gherkin
-Scenario: BR-ACT-02 — token chéo namespace bị từ chối
-  Given một manager đã đăng nhập và có access token hợp lệ
-  When token đó được gửi tới GET /api/users/children
+Scenario: BR-ACT-02 — cookie chéo namespace bị từ chối
+  Given một manager đã đăng nhập và có session cookie hợp lệ
+  When cookie đó được gửi tới GET /api/users/children
   Then hệ thống trả 401
   And không rò bất kỳ dữ liệu nào
 
@@ -204,7 +204,7 @@ Scenario: BR-ACT-07 — cookie active_child_id bị giả mạo không mở đư
 
 Scenario: BR-ACT-04 — thu hồi entitlement có hiệu lực ngay
   Given user có entitlement play_premium_games đang active
-  And user đang giữ access token còn hạn 10 phút
+  And user đang giữ session còn hạn 10 phút
   When manager reject đơn thanh toán sinh ra entitlement đó
   Then request tiếp theo tới level premium trả 403
   And không cần user đăng nhập lại
@@ -219,15 +219,15 @@ Scenario: BR-ACT-08 — content_reviewer không vào được thanh toán
 
 **Always**
 - Gọi đúng một guard mỗi handler. Guard là **sync** — không `await`.
-- Kiểm audience JWT tường minh.
+- Kiểm namespace session tường minh; không có JWT/Bearer guard song song.
 - Kiểm ownership ở DB query, không ở cookie.
 - Trả 404 cho record của người khác.
-- Đọc năng lực từ `entitlements`, không từ JWT.
+- Đọc năng lực từ `entitlements`, không từ session projection.
 
 **Ask first**
 - Thêm tác nhân thứ năm.
 - Thêm role manager mới.
-- Đổi thời hạn token hoặc thuộc tính cookie.
+- Đổi thời hạn session/remember hoặc thuộc tính cookie.
 - Cho `content_reviewer` thấy thêm bề mặt nào.
 
 **Never**

@@ -2,7 +2,7 @@
 spec: BASIC-REPORT
 title: Báo cáo cơ bản
 area: account
-status: approved
+status: implemented
 mvp: true
 phase: P1
 reviewed: 2026-08-08

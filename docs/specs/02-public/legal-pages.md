@@ -2,7 +2,7 @@
 spec: LEGAL-PAGES
 title: Trang pháp lý và chính sách
 area: public
-status: approved
+status: implemented
 mvp: true
 phase: P1
 reviewed: 2026-08-08
@@ -29,8 +29,8 @@ Guest · User · cơ quan quản lý.
 
 ## 3. Entry points
 
-`/dieu-khoan` · `/quyen-rieng-tu` · `/chinh-sach-tre-em` · `/cookie` ·
-`/thanh-toan` · `/hoan-tien` · `/lien-he` · `/gioi-thieu`.
+`/terms` · `/privacy` · `/child-privacy` · `/cookie` ·
+`/payment-policy` · `/refund-policy` · `/contact` · `/about`.
 
 ## 4. Main flow
 
@@ -65,14 +65,14 @@ Guest · User · cơ quan quản lý.
 
 | Trang | Bắt buộc | Ghi chú |
 |---|:--:|---|
-| Điều khoản sử dụng | | Có version, cần đồng ý |
-| Chính sách quyền riêng tư | | Có version, cần đồng ý |
-| **Chính sách bảo vệ trẻ em** | | Có version, cần đồng ý riêng |
-| Chính sách cookie | | Có version |
-| Chính sách thanh toán | | Không cần đồng ý riêng |
-| Chính sách hoàn tiền | | idem |
-| Giới thiệu | | Không version |
-| Liên hệ | | Không version |
+| Điều khoản sử dụng (`/terms`) | | Có version, cần đồng ý |
+| Chính sách quyền riêng tư (`/privacy`) | | Có version, cần đồng ý |
+| **Chính sách bảo vệ trẻ em (`/child-privacy`)** | | Có version, cần đồng ý riêng |
+| Chính sách cookie (`/cookie`) | | Có version |
+| Chính sách thanh toán (`/payment-policy`) | | Không cần đồng ý riêng |
+| Chính sách hoàn tiền (`/refund-policy`) | | idem |
+| Giới thiệu (`/about`) | | Không version |
+| Liên hệ (`/contact`) | | Không version |
 
 ### 7.2 Chính sách trẻ em phải nêu
 
@@ -100,7 +100,7 @@ Scenario: BR-LGL-01 — hiện version và ngày hiệu lực
 
 Scenario: BR-LGL-02 — version cũ truy cập được
   Given chính sách đã lên version 3
-  When mở /quyen-rieng-tu/v/1
+  When mở /privacy/v/1
   Then nội dung version 1 hiển thị đầy đủ
 
 Scenario: BR-LGL-03 — không script bên thứ ba
@@ -108,8 +108,9 @@ Scenario: BR-LGL-03 — không script bên thứ ba
   Then không request tới domain bên thứ ba
 
 Scenario: BR-LGL-04 — chính sách trẻ em là trang riêng
-  When mở /chinh-sach-tre-em
+  When mở /child-privacy
   Then trang tồn tại và có version riêng
+
 
 Scenario: BR-LGL-05 — thông báo khi đổi version
   Given chính sách quyền riêng tư lên version mới

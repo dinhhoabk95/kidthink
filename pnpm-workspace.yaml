@@ -33,10 +33,23 @@ catalog:
   "@playwright/test": ^1.50.0
   "@axe-core/playwright": ^4.10.0
 
-  # Auth — P0.3. Sidebase Local được khai trực tiếp như Nuxt module ở mỗi app;
-  # jose chỉ được import trong packages/auth.
-  "@sidebase/nuxt-auth": ^1.3.1
-  jose: ^6.2.4
+  # Auth — Task #85: nuxt-auth-utils >=0.5.30 for opaque session locator projection
+  "nuxt-auth-utils": ^0.5.30
+  jose: ^6.1.0
+  otpauth: ^9.5.0
+  openid-client: ^6.8.0
+
+  # Notification & Security Core Packages — Task #83
+  nodemailer: ^6.10.0
+  "@types/nodemailer": ^6.4.17
+  mjml: ^5.4.0
+  "@types/mjml": ^5.0.0
+  rate-limiter-flexible: ^11.2.0
+  nuxt-security: ^2.6.0
+
+  # FCM Web Push — Task #84
+  firebase: ^11.4.0
+  firebase-admin: ^13.2.0
 
   # Driver hạ tầng — hiện chỉ scripts/check-services.ts dùng (repo-bootstrap §4
   # bước 5: "verify kết nối được từ Node"). Chuyển vào packages/db và
@@ -56,7 +69,9 @@ onlyBuiltDependencies:
 # Khai tường minh ở đây vì không khai thì `pnpm install` trên clone MỚI exit 1
 # (ERR_PNPM_IGNORED_BUILDS) — vỡ onboarding. Xem repo-bootstrap §7.1.
 allowBuilds:
+  '@firebase/util': false
   argon2: true
   esbuild: true
   lefthook: false
   msgpackr-extract: false
+  protobufjs: false

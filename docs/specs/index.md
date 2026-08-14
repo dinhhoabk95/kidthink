@@ -23,15 +23,15 @@ Bắt đầu từ [`../SPEC.md`](../SPEC.md) — contract toàn dự án. Rồi 
 | Khu vực | Spec | MVP |
 |---|---:|---:|
 | `00-foundation` | 16 | 16 |
-| `01-platform` | 27 | 26 |
+| `01-platform` | 28 | 26 |
 | `02-public` | 9 | 9 |
-| `03-account` | 20 | 19 |
+| `03-account` | 21 | 19 |
 | `04-play` | 13 | 13 |
 | `05-content` | 5 | 4 |
 | `06-admin` | 28 | 28 |
 | `07-addon` | 7 | 0 |
 | `08-quality` | 6 | 6 |
-| **Tổng** | **131** | **121** |
+| **Tổng** | **133** | **121** |
 
 v1 có **31** spec cho cùng phạm vi. Xé nhỏ là chủ ý — xem [`AUDIT-v1.md`](AUDIT-v1.md) §1.2.
 2 spec cộng thêm 2026-08-05 ([`repo-bootstrap.md`](00-foundation/repo-bootstrap.md), [`monorepo-package-architecture.md`](00-foundation/monorepo-package-architecture.md)) lấp lỗ hổng
@@ -69,7 +69,7 @@ v1 có **31** spec cho cùng phạm vi. Xé nhỏ là chủ ý — xem [`AUDIT-v
 | [schema-content-taxonomy](01-platform/schema-content-taxonomy.md) | P0 | Cột taxonomy · game · content · curriculum |
 | [schema-play-telemetry](01-platform/schema-play-telemetry.md) | P0 | Cột child · play · adaptive |
 | [taxonomy-service](01-platform/taxonomy-service.md) | P0 | Cây 5 tầng, DAG, 230 skill |
-| [auth-tokens-sessions](01-platform/auth-tokens-sessions.md) | P0 | JWT, cookie, refresh xoay, **reauth 5 phút** |
+| [auth-tokens-sessions](01-platform/auth-tokens-sessions.md) | P0 | Opaque cookie session Redis 1 giờ, remember tối đa 1 năm, revoke thiết bị, **reauth 5 phút** |
 | [audit-log](01-platform/audit-log.md) | P0 | 28 hành động bắt buộc audit |
 | [emoji-registry](01-platform/emoji-registry.md) | P0 | Kho emoji cố định, 32 nhóm |
 | [rate-limiting](01-platform/rate-limiting.md) | P0 | Hai trục IP + account |
@@ -87,7 +87,8 @@ v1 có **31** spec cho cùng phạm vi. Xé nhỏ là chủ ý — xem [`AUDIT-v
 | [monitoring-and-alerting](01-platform/monitoring-and-alerting.md) | P1 | Alert **tới người** |
 | [offline-play](01-platform/offline-play.md) | P1 | Buffer IndexedDB, không ngắt phiên |
 | [image-storage](01-platform/image-storage.md) | P2 | Cấm thư viện ảnh |
-| [notification-service](01-platform/notification-service.md) | P0 | 11 loại, một kênh email |
+| [notification-service](01-platform/notification-service.md) | P0 | Logical notification + delivery adapter; email qua SES SMTP |
+| [browser-push](01-platform/browser-push.md) | P5 | FCM Web cho User, best-effort, không push trẻ |
 | [feature-flag-service](01-platform/feature-flag-service.md) | P2 | Cờ có hạn, mặc định an toàn |
 | [adaptive-engine](01-platform/adaptive-engine.md) | P3 | BKT, ZPD, nhãn báo cáo |
 | [pwa-install](01-platform/pwa-install.md) | P5 | Web install ngoài MVP; không phải native mobile app |
@@ -111,7 +112,7 @@ v1 có **31** spec cho cùng phạm vi. Xé nhỏ là chủ ý — xem [`AUDIT-v
 | Spec | Phase | Nội dung |
 |---|:--:|---|
 | [registration](03-account/registration.md) | P0 | 3 trường, 2 checkbox đồng ý |
-| [login-and-session](03-account/login-and-session.md) | P0 | Refresh xoay, quản lý thiết bị |
+| [login-and-session](03-account/login-and-session.md) | P0 | Cookie session một giờ, remember-me và quản lý thiết bị |
 | [email-verification](03-account/email-verification.md) | P0 | Điều kiện tạo hồ sơ trẻ |
 | [password-recovery](03-account/password-recovery.md) | P0 | Luôn 200, giết mọi phiên |
 | [social-login](03-account/social-login.md) | P1 | Google + Facebook, **không auto-link theo email** |
@@ -129,6 +130,7 @@ v1 có **31** spec cho cùng phạm vi. Xé nhỏ là chủ ý — xem [`AUDIT-v
 | [payment-proof-upload](03-account/payment-proof-upload.md) | P2 | `soft_unlock` 3 ngày |
 | [subscription-view](03-account/subscription-view.md) | P2 | Gói, quyền lợi, lịch sử |
 | [mfa](03-account/mfa.md) | P2 | Tuỳ chọn cho User, ngoài MVP |
+| [notification-inbox](03-account/notification-inbox.md) | P5 | User xem lại logical notification, read state |
 | [advanced-report](03-account/advanced-report.md) | P3 | 7 mục, ngưỡng dữ liệu tối thiểu |
 
 ## 04-play — bề mặt trẻ · **core business**
