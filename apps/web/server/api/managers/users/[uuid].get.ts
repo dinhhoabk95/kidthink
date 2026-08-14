@@ -5,6 +5,7 @@ import {
   childProfiles,
   entitlements,
   getOwnerDb,
+  managers,
   paymentOrders,
   users,
 } from "@kidthink/db";
@@ -134,28 +135,21 @@ export default defineEventHandler(async (event) => {
         status: entitlements.status,
         expiresAt: entitlements.expiresAt,
         grantedAt: entitlements.grantedAt,
+        grantReason: entitlements.grantReason,
+        grantedByManagerId: entitlements.grantedByManagerId,
+        grantedByName: managers.displayName,
+        grantedByEmail: managers.email,
       })
       .from(entitlements)
+      .leftJoin(managers, eq(entitlements.grantedByManagerId, managers.id))
       .where(eq(entitlements.userId, targetUser.id))
       .orderBy(desc(entitlements.id));
 
     const activeEntitlements = userEntitlements
       .filter(
         (e) =>
-          e.status === "active" && (!e.expiresAt || new Date(e.expiresAt) > now)
-      )
-      .map((e) => ({
-        id: e.id,
-        key: e.key,
-        source: e.source,
-        expires_at: e.expiresAt ? new Date(e.expiresAt).toISOString() : null,
-        granted_at: new Date(e.grantedAt).toISOString(),
-      }));
-
-    const historyEntitlements = userEntitlements
-      .filter(
-        (e) =>
-          e.status !== "active" || (e.expiresAt && new Date(e.expiresAt) <= now)
+          (e.status === "active" || e.status === "soft_unlock") &&
+          (!e.expiresAt || new Date(e.expiresAt) > now)
       )
       .map((e) => ({
         id: e.id,
@@ -164,6 +158,35 @@ export default defineEventHandler(async (event) => {
         status: e.status,
         expires_at: e.expiresAt ? new Date(e.expiresAt).toISOString() : null,
         granted_at: new Date(e.grantedAt).toISOString(),
+        grant_reason: e.grantReason ?? null,
+        granted_by:
+          e.grantedByName ||
+          e.grantedByEmail ||
+          (e.grantedByManagerId
+            ? `Manager #${e.grantedByManagerId}`
+            : "Hệ thống"),
+      }));
+
+    const historyEntitlements = userEntitlements
+      .filter(
+        (e) =>
+          (e.status !== "active" && e.status !== "soft_unlock") ||
+          (e.expiresAt && new Date(e.expiresAt) <= now)
+      )
+      .map((e) => ({
+        id: e.id,
+        key: e.key,
+        source: e.source,
+        status: e.status,
+        expires_at: e.expiresAt ? new Date(e.expiresAt).toISOString() : null,
+        granted_at: new Date(e.grantedAt).toISOString(),
+        grant_reason: e.grantReason ?? null,
+        granted_by:
+          e.grantedByName ||
+          e.grantedByEmail ||
+          (e.grantedByManagerId
+            ? `Manager #${e.grantedByManagerId}`
+            : "Hệ thống"),
       }));
 
     // 4. Payments (BR-USD-06: return all orders including approved, rejected, submitted)

@@ -2,7 +2,7 @@
 spec: SUBSCRIPTION-VIEW
 title: Xem gói và lịch sử thanh toán
 area: account
-status: approved
+status: implemented
 mvp: true
 phase: P2
 reviewed: 2026-08-08

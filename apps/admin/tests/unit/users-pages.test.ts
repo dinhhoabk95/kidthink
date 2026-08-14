@@ -81,12 +81,15 @@ describe("Task 6 — Admin Users Screens (BR-USM-01..08, BR-USD-01..06, BR-CPA-0
     expect(userPaymentsContent).toContain("Lịch sử đơn thanh toán");
   });
 
-  it("Scenario: D-IX — action buttons to unfinished features P2.3 & P2.4 are disabled with step labels", () => {
-    expect(userEntitlementsContent).toContain("P2.4");
-    expect(userEntitlementsContent).toContain("disabled");
-
-    expect(userPaymentsContent).toContain("P2.3");
-    expect(userPaymentsContent).toContain("disabled");
+  it("Scenario: P2.4 — manual grant and revoke modals in userEntitlementsSection enforce strict validation (BR-EGR-02, BR-EGR-04)", () => {
+    expect(userEntitlementsContent).toContain("openGrantModal");
+    expect(userEntitlementsContent).toContain(
+      "grantForm.grant_reason.trim().length < 20"
+    );
+    expect(userEntitlementsContent).toContain("openRevokeModal");
+    expect(userEntitlementsContent).toContain(
+      "revokeReason.trim().length < 10"
+    );
   });
 
   it("Scenario: BR-CPA-07 — child profile archive modal requires >= 10 characters reason", () => {

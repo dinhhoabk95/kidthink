@@ -171,6 +171,7 @@ export interface PackageDefinition {
   is_public: boolean;
   is_featured: boolean;
   status: "active" | "retired";
+  requires_spec?: string;
 }
 
 export const PACKAGE_CATALOG: Record<string, PackageDefinition> = {
@@ -263,6 +264,7 @@ export const PACKAGE_CATALOG: Record<string, PackageDefinition> = {
     is_public: false,
     is_featured: false,
     status: "active",
+    requires_spec: "07-addon/lesson-plan-creator.md",
   },
   "PKG-addon_curriculum": {
     code: "PKG-addon_curriculum",
@@ -282,6 +284,7 @@ export const PACKAGE_CATALOG: Record<string, PackageDefinition> = {
     is_public: false,
     is_featured: false,
     status: "active",
+    requires_spec: "07-addon/personal-curriculum.md",
   },
   "PKG-addon_custom_game": {
     code: "PKG-addon_custom_game",
@@ -303,6 +306,7 @@ export const PACKAGE_CATALOG: Record<string, PackageDefinition> = {
     is_public: false,
     is_featured: false,
     status: "active",
+    requires_spec: "07-addon/custom-game-builder.md",
   },
   "PKG-addon_ai": {
     code: "PKG-addon_ai",
@@ -324,5 +328,6 @@ export const PACKAGE_CATALOG: Record<string, PackageDefinition> = {
     is_public: false,
     is_featured: false,
     status: "active",
+    requires_spec: "07-addon/ai-credit-ledger.md",
   },
 };

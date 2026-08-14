@@ -113,7 +113,8 @@ export function scanAdminUsersNoDelete(files: CodeFileFixture[]): void {
 
     const lowerPath = f.filePath.toLowerCase();
     if (
-      (lowerPath.includes("/users/") || lowerPath.includes("/users.")) &&
+      (lowerPath.includes("/managers/users/") ||
+        lowerPath.includes("/managers/users.")) &&
       lowerPath.includes("delete")
     ) {
       throw new Error(

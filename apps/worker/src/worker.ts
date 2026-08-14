@@ -6,6 +6,7 @@ import { runSendEmail } from "./email/send.js";
 import { runEntitlementExpireJob } from "./entitlement/expire.js";
 import { runSoftUnlockExpireJob } from "./entitlement/soft-unlock-expire.js";
 import { runOrderExpireJob } from "./orders/expire.js";
+import { runManualGrantReportJob } from "./report/manual-grants-monthly.js";
 import { runDailyRollupJob } from "./rollup/daily.js";
 import { runSessionRollup } from "./rollup/session.js";
 import { runSweepAbandoned } from "./sweep/abandoned.js";
@@ -43,6 +44,9 @@ export async function processJob(job: Job) {
         break;
       case "sweep:abandoned":
         await runSweepAbandoned(job.id as string);
+        break;
+      case "report:manual-grants-monthly":
+        await runManualGrantReportJob(job.id as string, job.data);
         break;
       default:
         // Tên job không đăng ký → fail rõ ràng

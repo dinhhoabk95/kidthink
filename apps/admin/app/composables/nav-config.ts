@@ -77,6 +77,14 @@ export const MANAGER_NAV_ITEMS: readonly ManagerNavItem[] = [
     badge: "P2.3",
   },
   {
+    id: "packages",
+    label: "Gói & Catalog",
+    href: "/packages",
+    icon: "📦",
+    roles: ["super_admin"],
+    badge: "P2.4",
+  },
+  {
     id: "legal-consents",
     label: "Đồng ý pháp lý",
     href: "/legal-consents",

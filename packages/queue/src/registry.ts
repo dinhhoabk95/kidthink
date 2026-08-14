@@ -148,6 +148,18 @@ export const JOB_REGISTRY: readonly JobDefinition[] = [
       backoffDelayMs: 300_000,
     },
   },
+  {
+    name: "report:manual-grants-monthly",
+    schedule: "00:00 ICT 1st of month",
+    idempotencyKeyFormat: "month_ict",
+    timeoutSeconds: 300,
+    ownerStep: "P2.4",
+    retryPolicy: {
+      maxAttempts: 3,
+      backoffType: "exponential",
+      backoffDelayMs: 5000,
+    },
+  },
 ] as const;
 
 export type RegisteredJobName = (typeof JOB_REGISTRY)[number]["name"];
@@ -196,6 +208,7 @@ export function validateJobRegistryConsumers(
     "P1.7",
     "P1.14",
     "P2.3",
+    "P2.4",
     "P2.7",
   ];
 

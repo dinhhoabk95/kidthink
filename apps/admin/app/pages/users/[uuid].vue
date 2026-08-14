@@ -103,7 +103,11 @@
         />
 
         <!-- GROUP 3: Gói & Quyền sử dụng (Entitlements) -->
-        <UserEntitlementsSection :entitlements="detail.entitlements" />
+        <UserEntitlementsSection
+          :entitlements="detail.entitlements"
+          :user-uuid="detail.account.uuid"
+          @refresh="loadDetail"
+        />
 
         <!-- GROUP 4: Lịch sử thanh toán -->
         <UserPaymentsSection :payments="detail.payments" />
