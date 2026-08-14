@@ -174,32 +174,6 @@ export function parseChildProfileInput(
   return parsed;
 }
 
-export type ConsentStatusResult =
-  | { allowed: true }
-  | { allowed: false; reason: "CONSENT_REQUIRED"; statusCode: 428 }
-  | { allowed: false; reason: "CONSENT_VERSION_STALE"; statusCode: 409 };
-
-/**
- * Task 8 — Evaluates child data consent status against latest consent log and active policy version.
- * - Missing consent or child_data_withdrawn -> CONSENT_REQUIRED (428)
- * - Old policy_version -> CONSENT_VERSION_STALE (409)
- * - Matching version -> allowed: true
- */
-export function evaluateChildDataConsent(
-  latestConsent: { consentType: string; policyVersion: string } | null,
-  currentPolicyVersion: string
-): ConsentStatusResult {
-  if (!latestConsent || latestConsent.consentType === "child_data_withdrawn") {
-    return { allowed: false, reason: "CONSENT_REQUIRED", statusCode: 428 };
-  }
-
-  if (latestConsent.policyVersion !== currentPolicyVersion) {
-    return { allowed: false, reason: "CONSENT_VERSION_STALE", statusCode: 409 };
-  }
-
-  return { allowed: true };
-}
-
 export interface SafeExternalPayload {
   total_users_count?: number;
   aggregate_completion_rate?: number;

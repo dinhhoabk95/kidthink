@@ -2,7 +2,7 @@
 spec: LEGAL-CONSENT-ADMIN
 title: Force đồng ý lại tài liệu pháp lý
 area: admin
-status: approved
+status: implemented
 mvp: true
 phase: P1
 reviewed: 2026-08-14

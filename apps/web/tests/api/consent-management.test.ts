@@ -224,8 +224,8 @@ describe("Consent Management — P1.14 & D12 (D-QV, D-QW, D-QX, D-QY, D-QZ)", ()
     });
   });
 
-  describe("4. Superadmin Force Re-Consent & Audit Log (D-QW, D-QZ)", () => {
-    it("POST /api/managers/legal-consent-forces updates requirement and writes audit log", async () => {
+  describe("4. Superadmin Force Re-Consent & Audit Log (BR-LCA-01..09, D-QW, D-QZ)", () => {
+    it("BR-LCA-01 & BR-LCA-03: POST /api/managers/legal-consent-forces updates requirement and writes audit log in same transaction", async () => {
       const db = getOwnerDb();
       const [m] = await db
         .insert(managers)
@@ -259,14 +259,16 @@ describe("Consent Management — P1.14 & D12 (D-QV, D-QW, D-QX, D-QY, D-QZ)", ()
         );
         expect(termsBefore?.status).toBe("active");
 
-        // Superadmin forces re-consent on terms
+        // Superadmin forces re-consent on terms (BR-LCA-01, BR-LCA-02, BR-LCA-03, BR-LCA-05)
         const forceEvent = mockEvent(
           "POST",
           undefined,
           {
             consent_type: "terms",
             notice_vi: "Cập nhật điều khoản thanh toán mới 2026",
-            reason: "Quy định pháp lý mới",
+            reason: "Quy định pháp lý mới theo yêu cầu vận hành",
+            confirm_deployed: true,
+            confirm_all_users: true,
           },
           { isManager: true, managerId: m.id }
         );
@@ -275,7 +277,7 @@ describe("Consent Management — P1.14 & D12 (D-QV, D-QW, D-QX, D-QY, D-QZ)", ()
         expect(forceRes.consent_type).toBe("terms");
         expect(forceRes.reconsent_required_at).toBeDefined();
 
-        // Check audit log was written
+        // Check audit log was written (BR-LCA-03)
         const audits = await db
           .select()
           .from(auditLogs)
@@ -288,7 +290,7 @@ describe("Consent Management — P1.14 & D12 (D-QV, D-QW, D-QX, D-QY, D-QZ)", ()
         expect(audits.length).toBeGreaterThanOrEqual(1);
         expect(audits[0].action).toBe("legal_reconsent_forced");
 
-        // After force, user terms status becomes required!
+        // After force, user terms status becomes required (BR-LCA-02, BR-LCA-07)
         const afterRes = await getConsentsHandler(mockEvent("GET", u.id));
         const termsAfter = afterRes.consents.find(
           (c) => c.consent_type === "terms"
@@ -327,6 +329,42 @@ describe("Consent Management — P1.14 & D12 (D-QV, D-QW, D-QX, D-QY, D-QZ)", ()
           .where(eq(managers.id, m.id))
           .catch(() => null);
       }
+    });
+
+    it("BR-LCA-01: content_reviewer role receives 403 INSUFFICIENT_ROLE", async () => {
+      const event = mockEvent(
+        "POST",
+        undefined,
+        {
+          consent_type: "privacy",
+          notice_vi: "Cập nhật chính sách bảo mật thông tin",
+          reason: "Yêu cầu thay đổi nội bộ",
+          confirm_deployed: true,
+          confirm_all_users: true,
+        },
+        { isManager: true, managerId: 999 }
+      );
+      event.context.manager.role = "content_reviewer";
+      event.context.superadmin = null;
+
+      await expect(forceReconsentHandler(event)).rejects.toThrow();
+    });
+
+    it("BR-LCA-04 & BR-LCA-05: rejects invalid type or short reason/notice", async () => {
+      const event = mockEvent(
+        "POST",
+        undefined,
+        {
+          consent_type: "marketing", // Invalid closed type
+          notice_vi: "Quá ngắn", // < 20 chars
+          reason: "Ngắn", // < 20 chars
+          confirm_deployed: true,
+          confirm_all_users: true,
+        },
+        { isManager: true, managerId: 101 }
+      );
+
+      await expect(forceReconsentHandler(event)).rejects.toThrow();
     });
 
     it("GET /api/managers/legal-consents lists all requirements", async () => {

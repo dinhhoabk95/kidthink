@@ -153,10 +153,6 @@ export const AUTH_ERROR_DEFINITIONS = {
     status: 409,
     message: "Yêu cầu đồng ý vừa được cập nhật. Vui lòng xem lại.",
   },
-  CONSENT_VERSION_STALE: {
-    status: 409,
-    message: "Phiên bản chính sách không khớp với phiên bản hiện hành.",
-  },
   PASSWORD_NOT_SET: {
     status: 409,
     message: "Tài khoản chưa có mật khẩu. Hãy dùng Đặt mật khẩu.",

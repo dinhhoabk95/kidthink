@@ -19,8 +19,11 @@ import { requireReauth } from "../../../utils/reauth-runtime.js";
 const ForceReconsentSchema = z
   .object({
     consent_type: z.enum(["terms", "privacy", "child_data"]),
-    notice_vi: z.string().min(1).max(500),
-    reason: z.string().min(1).max(500),
+    notice_vi: z.string().min(20).max(500),
+    reason: z.string().min(20).max(500),
+    expected_requirement_at: z.string().nullable().optional(),
+    confirm_deployed: z.boolean().optional(),
+    confirm_all_users: z.boolean().optional(),
   })
   .strict();
 
