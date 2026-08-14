@@ -17,7 +17,8 @@ thống lọt vào bề mặt trẻ. Download scope, lease/revocation và storag
 - Lời mời cài đặt chỉ ở bề mặt người lớn; `start_url` không mở thẳng `/play`.
 - Mất mạng không ngắt phiên; offline test dùng browser offline mode thật.
 - Không cache content trả phí cho actor không có entitlement tại thời điểm cấp pack.
-- Không push notification cho trẻ; không modal hệ thống che game.
+- Không push notification cho trẻ; FCM Web của User thuộc Task #84. Task này chỉ bảo đảm service
+  worker phối hợp được và không modal hệ thống che game.
 
 ## 1. Quyết định bắt buộc
 
@@ -68,7 +69,9 @@ T0 capability/storage/security preflight
   [`offline-play.md`](../specs/01-platform/offline-play.md), parent gate, gating và curriculum player
   có một owner mỗi rule.
 - [ ] Pack manifest, API/auth, lease/revoke/expiry, quota/eviction/update và errors có negative Gherkin.
-- [ ] Push-to-child bị đóng rõ; install prompt criteria và back/fullscreen behavior được Product duyệt.
+- [ ] Push-to-child bị cấm rõ; service-worker boundary với
+  [`browser-push.md`](../specs/01-platform/browser-push.md) được ghi nhưng Task #72 không cài FCM.
+- [ ] Install prompt criteria và back/fullscreen behavior được Product duyệt.
 
 **Kiểm chứng:** `pnpm lint:specs`; error/event/BR registries và dependency graph khớp.
 
@@ -158,5 +161,5 @@ T0 capability/storage/security preflight
 
 ## 4. Ngoài phạm vi
 
-Push notification cho trẻ, background tracking, cache toàn catalog, bypass entitlement, DRM hứa
+FCM Web/inbox của User (Task #84), push notification cho trẻ, background tracking, cache toàn catalog, bypass entitlement, DRM hứa
 hẹn tuyệt đối trong browser, đổi TTL/quota không decision, production publish/deploy hoặc auto-merge.

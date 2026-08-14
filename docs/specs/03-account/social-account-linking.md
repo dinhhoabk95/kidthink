@@ -5,7 +5,7 @@ area: account
 status: approved
 mvp: true
 phase: P1
-reviewed: 2026-08-08
+reviewed: 2026-08-13
 owns:
   - Liên kết thêm SNS vào tài khoản đang dùng
   - Gỡ liên kết SNS
@@ -93,7 +93,7 @@ SNS cả năm mà không bao giờ mở trang này, và ngược lại.
 | `BR-SLK-04` | Cấm — **NEVER gỡ phương thức đăng nhập cuối cùng.** Còn ít nhất một trong: `password_hash` NOT NULL, hoặc ≥1 hàng `social_identities` | Tài khoản không có cách vào là tài khoản đã mất, và cascade xoá dữ liệu trẻ không chạy được nữa |
 | `BR-SLK-05` | Liên kết và gỡ đều ghi `audit_logs` **và** gửi email thông báo | Người thật biết ngay nếu không phải họ làm. Đây là dấu hiệu chiếm tài khoản dễ nhận nhất |
 | `BR-SLK-06` | 409 khi tài khoản SNS đã gắn người khác **không tiết lộ** người đó là ai | `BR-ERR-02`. Ngược lại thì đây thành công cụ tra "email nào dùng Google nào" |
-| `BR-SLK-07` | Gỡ SNS **không** thu hồi phiên và **không** tăng `refresh_token_version` | Gỡ không phải sự kiện mất kiểm soát. Đá người dùng ra khỏi mọi thiết bị vì một thao tác dọn dẹp là phạt nhầm |
+| `BR-SLK-07` | Gỡ SNS **không** thu hồi phiên và **không** tăng `session_version` | Gỡ không phải sự kiện mất kiểm soát. Đá người dùng ra khỏi mọi thiết bị vì một thao tác dọn dẹp là phạt nhầm |
 | `BR-SLK-08` | Manager Cấm — **NEVER liên kết SNS** | `BR-AUT-11` — Manager không có đăng ký công khai. Bề mặt quản trị không nhận danh tính từ bên thứ ba |
 | `BR-SLK-09` | Danh sách hiện **provider và thời điểm liên kết**, không hiện `provider_user_id` | Định danh nội bộ không giúp người dùng, nhưng giúp người đọc trộm màn hình |
 | `BR-SLK-10` | Gỡ là **xoá cứng** hàng `social_identities` | Hàng "đã gỡ" còn trong bảng thì `UNIQUE` chặn liên kết lại. Lịch sử nằm ở `audit_logs` |
@@ -265,4 +265,3 @@ Scenario: BR-SLK-08 — Manager không có đường liên kết SNS
 |---|---|---|---|---|
 | 1 | Khi User gỡ SNS mà đó là cách vào cuối, có nên gộp 2 bước (đặt mật khẩu rồi gỡ luôn) không? | Trải nghiệm UX gỡ phương thức cuối | P2 | Studio UI |
 | ~~2~~ | ~~Cấu hình cửa sổ reauth (5 phút) nên đặt ở đâu để dùng chung toàn hệ thống?~~ **Đóng 2026-08-09 (T13, `D-CZ`)**: đặt tại `REAUTH_WINDOW_MINUTES = 5` trong [`auth-tokens-sessions.md`](../01-platform/auth-tokens-sessions.md) §7.4 | Cấu hình reauth | Đã đóng | D-CZ |
-

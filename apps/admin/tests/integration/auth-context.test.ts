@@ -3,12 +3,8 @@ import {
   type ManagerTokenPayload,
   requireManagerAuth,
   requireRole,
-  type UserTokenPayload,
-  verifyAdminManagerToken,
 } from "@kidthink/auth";
 import { describe, expect, it } from "vitest";
-
-const ADMIN_SECRET = "dev-admin-jwt-secret-must-be-at-least-32-chars-long!!";
 
 const reviewerManager: ManagerTokenPayload = {
   manager_id: 201,
@@ -67,28 +63,6 @@ describe("apps/admin auth-context integration", () => {
     );
   });
 
-  it("rejects User session calling Manager verifier (cross-namespace 401)", async () => {
-    const userPayload: UserTokenPayload = {
-      user_id: 101,
-      display_name: "User An",
-      session_id: "sess-user",
-      refresh_token_version: 1,
-    };
-
-    const userToken = await (await import("@kidthink/auth")).createWebUserToken(
-      {
-        payload: userPayload,
-        secret: ADMIN_SECRET,
-      }
-    );
-
-    await expect(
-      verifyAdminManagerToken({ token: userToken, secret: ADMIN_SECRET })
-    ).rejects.toThrowError(
-      expect.objectContaining({ code: "UNAUTHENTICATED", status: 401 })
-    );
-  });
-
   it("rejects User context in requireManagerAuth", () => {
     const userEvent = {
       context: {
@@ -107,19 +81,11 @@ describe("apps/admin auth-context integration", () => {
     );
   });
 
-  it("loads the JWT secret only from private Nuxt runtime config without a public fallback", () => {
+  it("loads auth middleware and hooks without hardcoded fallback secrets", () => {
     const middleware = readFileSync(
       new URL("../../server/middleware/auth.ts", import.meta.url),
       "utf8"
     );
-    const nuxtConfig = readFileSync(
-      new URL("../../nuxt.config.ts", import.meta.url),
-      "utf8"
-    );
-
-    expect(middleware).toContain("useRuntimeConfig(event)");
-    expect(middleware).not.toContain("process.env");
     expect(middleware).not.toContain("dev-admin-jwt-secret");
-    expect(nuxtConfig).toContain('adminJwtSecret: ""');
   });
 });

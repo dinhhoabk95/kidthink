@@ -42,6 +42,7 @@ sát nhau:
 | `CHILD-DATA-COMPLIANCE` | P0.4 | `BR-CDC-05` `BR-CDC-06` — không gửi gì của trẻ ra ngoài |
 | `ACCOUNT-SETTINGS` | **P1.14** | nhóm Bảo mật là chỗ khối liên kết được chèn vào (`BR-ACS-11`) |
 | Danh sách route reauth | **P1.14** | `D-IJ` chừa sẵn hai route của bước này |
+| [`Task #85`](85-nuxt-auth-utils-migration-plan.md) | P0 auth architecture | Opaque session Redis đã xanh; OAuth bridge chỉ cấp cùng session/remember contract, không first-party JWT |
 
 ## 1. Đo được
 
@@ -123,7 +124,12 @@ T1 registry provider: PKCE S256 · state một lần · redirect_uri từ cấu 
 ### Task 1 — Registry provider
 
 **Tiêu chí nghiệm thu**
+- [ ] Catalog pin `openid-client` `^6.8`; chỉ `packages/auth/src/oauth/` import package này.
 - [ ] `packages/auth/src/oauth/` giữ registry, dựng URL, đổi code, ánh xạ hồ sơ. Ba spec khác **không** tự cấu hình provider.
+- [ ] `BR-OAP-16`: discovery, PKCE, authorization URL, code exchange và token validation đi qua
+      `openid-client`; test/gate đỏ nếu có PKCE hoặc token-response parser tự viết.
+- [ ] Cổng âm đỏ nếu runtime domain dùng `defineOAuth*EventHandler` của `nuxt-auth-utils`;
+      module chỉ quản lý locator/projection theo [`auth-tokens-sessions.md`](../specs/01-platform/auth-tokens-sessions.md).
 - [ ] `BR-OAP-01`: chỉ authorization code + PKCE **S256**; không route nào nhận `id_token` từ client.
 - [ ] `BR-OAP-02`: đổi code lấy token **chỉ ở server**; `client_secret` không xuất hiện trong bundle client.
 - [ ] `BR-OAP-06`: danh sách provider **đóng** đúng §7.1 — `google`, `facebook`; path bịa → **404** `OAUTH_PROVIDER_DISABLED`.
@@ -135,7 +141,8 @@ T1 registry provider: PKCE S256 · state một lần · redirect_uri từ cấu 
 - [ ] `GET /api/guest/auth/oauth/providers` **không** trả `client_id`.
 
 **Kiểm chứng**
-- [ ] `pnpm --filter @kidthink/auth test -- oauth-registry` xanh, assertion tham chiếu `BR-OAP-01` `BR-OAP-09` `BR-OAP-13`.
+- [ ] `pnpm --filter @kidthink/auth test -- oauth-registry` xanh, assertion tham chiếu
+      `BR-OAP-01` `BR-OAP-09` `BR-OAP-13` `BR-OAP-16`.
 
 **Phụ thuộc:** P0.3 · P0.7 · **Cỡ:** M
 
@@ -162,7 +169,7 @@ T1 registry provider: PKCE S256 · state một lần · redirect_uri từ cấu 
 ### Task 3 — Nhánh A: đăng nhập lại
 
 **Tiêu chí nghiệm thu**
-- [ ] Tra `(provider, provider_user_id)` thấy → cấp cặp token, ghi `active_sessions`, cập nhật `last_login_at`.
+- [ ] Tra `(provider, provider_user_id)` thấy → cấp opaque session/remember theo preference đã bind, ghi metadata `active_sessions`, cập nhật `last_login_at`.
 - [ ] `BR-SCL-03` ca âm: provider đổi email nhưng cùng `sub` → vào **đúng** tài khoản cũ, `users.email` **không** bị ghi đè.
 - [ ] `BR-SCL-14`: đích đến là `/me`, không phải `/play`.
 - [ ] `status = suspended` → **403** `ACCOUNT_SUSPENDED`; `status = deleted` trong 30 ngày → 403 kèm nút huỷ yêu cầu xoá (nối P1.14).
@@ -222,7 +229,7 @@ T1 registry provider: PKCE S256 · state một lần · redirect_uri từ cấu 
 - [ ] `D-IM` + `BR-SLK-04` ca âm **song song thật**: hai DELETE đồng thời trên tài khoản `password_hash` NULL có 2 hàng → đúng một 200, một **409** `LAST_LOGIN_METHOD`, còn đúng 1 hàng.
 - [ ] `BR-SLK-04`: `password_hash` NOT NULL thì gỡ hàng cuối được; 409 kèm `details.set_password_url`.
 - [ ] `BR-SLK-05`: cả hai thao tác ghi `audit_logs` (`social_identity.linked` / `.unlinked`) **và** gửi email thông báo.
-- [ ] `BR-SLK-07` ca âm: gỡ **không** thu hồi phiên, `refresh_token_version` không đổi, thiết bị B vẫn dùng được.
+- [ ] `BR-SLK-07` ca âm: gỡ **không** thu hồi phiên, `session_version` không đổi, thiết bị B vẫn dùng được.
 - [ ] `BR-SLK-09` ca âm: `GET /api/users/social-identities` không trả `provider_user_id`; email che dạng `a***@gmail.com`.
 - [ ] `BR-SLK-10`: gỡ là **xoá cứng**; gỡ rồi liên kết lại chính tài khoản đó → **201**.
 - [ ] `BR-SLK-08` ca âm: quét mọi route dưới `/api/managers` — không route nào ghi `social_identities`.

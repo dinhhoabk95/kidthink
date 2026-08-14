@@ -1,34 +1,34 @@
-import { createHash } from "node:crypto";
 import {
   appError,
-  createAdminManagerToken,
   decryptTotpSecret,
+  getAuthRedisClient,
+  getBrowserSessionService,
   hashRecoveryCode,
-  verifyMfaChallengeToken,
+  MfaChallengeService,
   verifyTotpCode,
 } from "@kidthink/auth";
-import { checkRateLimit } from "@kidthink/cache";
 import {
+  getAppSql,
   getOwnerDb,
   managers,
   mfaRecoveryCodes,
   mfaSettings,
+  PostgresSessionStore,
   writeAudit,
 } from "@kidthink/db";
 import { enforceTwoAxisRateLimit } from "@kidthink/shared";
-
 import { and, eq, isNull } from "drizzle-orm";
 import { defineEventHandler, readBody } from "h3";
 import { z } from "zod";
+import { setUserSession } from "#imports";
 import {
   assertManagerRateLimitAllowed,
   assertManagerRequestBodySize,
   assertManagerSameOriginRequest,
   getAdminJwtSecret,
-  getManagerRefreshService,
   getManagerRemoteIp,
   respondToManagerAuthError,
-  setManagerAuthCookies,
+  setManagerRememberCookie,
 } from "../../../../utils/admin-auth-runtime.js";
 
 const MfaSchema = z
@@ -64,8 +64,7 @@ async function verifyManagerMfa(
         return { verified: true, recoveryCodeId: null };
       }
     } catch {
-      // Plaintext TOTP rows are deliberately rejected. They must be migrated
-      // with encryptTotpSecret before production login is enabled.
+      // Plaintext TOTP rows are deliberately rejected.
     }
   }
 
@@ -97,16 +96,18 @@ export default defineEventHandler(async (event) => {
     }
     const { challenge, code } = parsed.data;
 
-    const { managerId } = await verifyMfaChallengeToken({
-      token: challenge,
-      secret: getAdminJwtSecret(event),
-    });
+    // Consume opaque Redis MFA challenge atomically (BR-AUT-35)
+    const mfaChallengeService = new MfaChallengeService(getAuthRedisClient());
+    const challengePayload = await mfaChallengeService.consumeChallenge(
+      "manager",
+      challenge
+    );
 
     const db = getOwnerDb();
     const [manager] = await db
       .select()
       .from(managers)
-      .where(eq(managers.id, managerId));
+      .where(eq(managers.id, challengePayload.accountId));
 
     if (!manager?.isActive) {
       throw appError("INSUFFICIENT_ROLE");
@@ -115,13 +116,13 @@ export default defineEventHandler(async (event) => {
     const rateLimit = await enforceTwoAxisRateLimit({
       routeClass: "auth:mfa",
       remoteIp: getManagerRemoteIp(event),
-      accountIdentifier: String(managerId),
+      accountIdentifier: String(manager.id),
     });
     assertManagerRateLimitAllowed(rateLimit.statusCode);
 
     const mfaResult = await verifyManagerMfa(
       db,
-      managerId,
+      manager.id,
       code,
       getAdminJwtSecret(event)
     );
@@ -136,21 +137,6 @@ export default defineEventHandler(async (event) => {
           reason: "Invalid MFA code or recovery code",
         });
       });
-      throw appError("INVALID_CREDENTIALS");
-    }
-
-    const challengeKey = createHash("sha256").update(challenge).digest("hex");
-    let challengeReplayCheck: Awaited<ReturnType<typeof checkRateLimit>>;
-    try {
-      challengeReplayCheck = await checkRateLimit(
-        `auth:mfa:challenge:${challengeKey}`,
-        1,
-        5 * 60
-      );
-    } catch {
-      throw appError("SERVICE_UNAVAILABLE");
-    }
-    if (!challengeReplayCheck.allowed) {
       throw appError("INVALID_CREDENTIALS");
     }
 
@@ -172,12 +158,15 @@ export default defineEventHandler(async (event) => {
       });
     }
 
-    const sessionResult = await getManagerRefreshService(event).createSession({
-      account: { type: "manager", id: manager.id },
-      authMethod: "password",
-      deviceLabel: "manager-mfa",
+    // MFA success! Create opaque manager session in Redis
+    const sessionService = getBrowserSessionService();
+    const createdSession = await sessionService.create({
+      namespace: "manager",
+      accountId: manager.id,
+      displayName: manager.displayName,
+      role: manager.role,
+      rememberMe: challengePayload.rememberMe,
       ipAddress: getManagerRemoteIp(event),
-      refreshTokenVersion: manager.refreshTokenVersion,
     });
 
     await db.transaction(async (tx) => {
@@ -190,17 +179,30 @@ export default defineEventHandler(async (event) => {
       });
     });
 
-    const accessToken = await createAdminManagerToken({
-      payload: {
-        manager_id: manager.id,
-        display_name: manager.displayName,
-        session_id: sessionResult.sessionId,
-        refresh_token_version: manager.refreshTokenVersion,
-        role: manager.role,
+    await setUserSession(event, {
+      secure: {
+        session_token: createdSession.sessionToken,
       },
-      secret: getAdminJwtSecret(event),
     });
-    setManagerAuthCookies(event, accessToken, sessionResult.refreshEnvelope);
+
+    if (createdSession.rememberToken) {
+      setManagerRememberCookie(event, createdSession.rememberToken);
+    }
+
+    // Record PG metadata
+    const pgStore = new PostgresSessionStore(getAppSql());
+    await pgStore
+      .recordSession({
+        account_type: "manager",
+        account_id: manager.id,
+        device_id: createdSession.deviceId,
+        remembered: !!challengePayload.rememberMe,
+        device_label: "manager-mfa",
+        ip_address: getManagerRemoteIp(event),
+        auth_method: "password",
+        expires_at: createdSession.expiresAt,
+      })
+      .catch(() => null);
 
     return {
       status: "ok",

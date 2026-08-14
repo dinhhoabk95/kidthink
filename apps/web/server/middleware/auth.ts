@@ -1,12 +1,6 @@
-import {
-  getAuthNamespaceConfig,
-  type UserTokenPayload,
-  verifyWebUserToken,
-} from "@kidthink/auth";
-import { defineEventHandler, getCookie, getHeader } from "h3";
-import { useRuntimeConfig } from "#imports";
-
-const userAuthConfig = getAuthNamespaceConfig("user");
+import type { UserTokenPayload } from "@kidthink/auth";
+import { defineEventHandler, getHeader } from "h3";
+import { getUserSession } from "#imports";
 
 declare module "h3" {
   interface H3EventContext {
@@ -16,28 +10,22 @@ declare module "h3" {
 }
 
 export default defineEventHandler(async (event) => {
-  const tokenFromCookie = getCookie(event, userAuthConfig.accessCookieName);
-  const authHeader = getHeader(event, "authorization");
-  const tokenFromHeader = authHeader?.startsWith("Bearer ")
-    ? authHeader.slice(7).trim()
-    : undefined;
-
-  const token = tokenFromCookie || tokenFromHeader;
-
   event.context.manager = undefined;
 
-  if (!token) {
+  // BR-AUT-36: Reject Bearer token / Authorization header on browser endpoints
+  const authHeader = getHeader(event, "authorization");
+  if (authHeader?.startsWith("Bearer ")) {
     event.context.user = undefined;
     return;
   }
 
   try {
-    const { webJwtSecret } = useRuntimeConfig(event);
-    const payload = await verifyWebUserToken({
-      token,
-      secret: webJwtSecret,
-    });
-    event.context.user = payload;
+    const session = await getUserSession(event);
+    if (session?.user) {
+      event.context.user = session.user as UserTokenPayload;
+    } else {
+      event.context.user = undefined;
+    }
   } catch {
     event.context.user = undefined;
   }

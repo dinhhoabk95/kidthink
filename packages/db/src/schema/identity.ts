@@ -59,7 +59,7 @@ export const users = pgTable("users", {
   displayName: varchar("display_name", { length: 60 }).notNull(),
   status: userStatusEnum("status").notNull().default("pending_verification"),
   emailVerifiedAt: timestamp("email_verified_at", { withTimezone: true }),
-  refreshTokenVersion: integer("refresh_token_version").notNull().default(0),
+  sessionVersion: integer("session_version").notNull().default(0),
   suspendedReason: text("suspended_reason"),
   purgeAt: timestamp("purge_at", { withTimezone: true }),
   createdAt: timestamp("created_at", { withTimezone: true })
@@ -78,7 +78,7 @@ export const managers = pgTable("managers", {
   displayName: varchar("display_name", { length: 60 }).notNull(),
   role: managerRoleEnum("role").notNull(),
   mfaEnabled: boolean("mfa_enabled").notNull().default(false),
-  refreshTokenVersion: integer("refresh_token_version").notNull().default(0),
+  sessionVersion: integer("session_version").notNull().default(0),
   isActive: boolean("is_active").notNull().default(true),
   createdAt: timestamp("created_at", { withTimezone: true })
     .defaultNow()
@@ -92,11 +92,12 @@ export const activeSessions = pgTable("active_sessions", {
   id: bigint("id", { mode: "number" }).primaryKey().generatedAlwaysAsIdentity(),
   accountType: accountTypeEnum("account_type").notNull(),
   accountId: bigint("account_id", { mode: "number" }).notNull(),
-  refreshTokenHash: text("refresh_token_hash").notNull().unique(),
+  deviceId: varchar("device_id", { length: 64 }).notNull(),
+  remembered: boolean("remembered").notNull().default(false),
   deviceLabel: text("device_label"),
   ipAddress: text("ip_address"),
   authMethod: authMethodEnum("auth_method").notNull(),
-  reauthAt: timestamp("reauth_at", { withTimezone: true }),
+  revokedAt: timestamp("revoked_at", { withTimezone: true }),
   lastUsedAt: timestamp("last_used_at", { withTimezone: true })
     .defaultNow()
     .notNull(),

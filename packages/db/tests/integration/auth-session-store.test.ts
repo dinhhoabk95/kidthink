@@ -1,9 +1,4 @@
-import {
-  createRefreshToken,
-  hashRefreshToken,
-  RefreshService,
-} from "@kidthink/auth";
-import { and, eq } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import { beforeEach, describe, expect, it } from "vitest";
 import {
   getAppSql,
@@ -20,107 +15,80 @@ import {
 } from "../../src/schema/identity.ts";
 import { truncateAllTestTables } from "../global-setup.ts";
 
-const USER_SECRET = "postgres-refresh-test-secret-at-least-32-bytes";
-
-async function createUserSession(label: string) {
+async function createUserFixture(label: string) {
   const db = getOwnerDb();
   const [user] = await db
     .insert(users)
     .values({
-      email: `refresh-${label}-${Date.now()}@example.com`,
+      email: `device-sess-${label}-${Date.now()}@example.com`,
       displayName: `User ${label}`,
       status: "active",
     })
     .returning();
-  const [session] = await db
-    .insert(activeSessions)
-    .values({
-      accountType: "user",
-      accountId: user.id,
-      refreshTokenHash: `placeholder-${label}-${Date.now()}`,
-      authMethod: "password",
-      expiresAt: new Date(Date.now() + 86_400_000),
-    })
-    .returning();
-  const refreshToken = createRefreshToken({
-    namespace: "user",
-    sessionId: String(session.id),
-    refreshTokenVersion: user.refreshTokenVersion,
-    secret: USER_SECRET,
-  });
-  await db
-    .update(activeSessions)
-    .set({ refreshTokenHash: hashRefreshToken(refreshToken) })
-    .where(eq(activeSessions.id, session.id));
-
-  return { user, session, refreshToken };
+  return user;
 }
 
-describe("PostgresSessionStore", () => {
+describe("PostgresSessionStore (Metadata Only under Task #85)", () => {
   beforeEach(async () => {
     await truncateAllTestTables();
   });
 
-  it("BR-AUT-04: serializes concurrent rotation so one succeeds and reuse revokes the account", async () => {
-    const fixture = await createUserSession("concurrent");
-    const service = new RefreshService(new PostgresSessionStore(getAppSql()), {
-      namespace: "user",
-      jwtSecret: USER_SECRET,
+  it("records session device metadata without raw tokens or hashes", async () => {
+    const user = await createUserFixture("meta");
+    const store = new PostgresSessionStore(getAppSql());
+
+    const created = await store.recordSession({
+      account_type: "user",
+      account_id: user.id,
+      device_id: "dev_phone_101",
+      remembered: true,
+      device_label: "Chrome / macOS",
+      ip_address: "127.0.0.1",
+      auth_method: "password",
+      expires_at: new Date(Date.now() + 3_600_000),
     });
 
-    const attempts = await Promise.allSettled([
-      service.rotateRefreshToken({ refreshToken: fixture.refreshToken }),
-      service.rotateRefreshToken({ refreshToken: fixture.refreshToken }),
-    ]);
-
-    expect(
-      attempts.filter((result) => result.status === "fulfilled")
-    ).toHaveLength(1);
-    expect(
-      attempts.filter((result) => result.status === "rejected")
-    ).toHaveLength(1);
+    expect(created.id).toBeGreaterThan(0);
 
     const db = getOwnerDb();
-    const remaining = await db
+    const [row] = await db
       .select()
       .from(activeSessions)
-      .where(
-        and(
-          eq(activeSessions.accountType, "user"),
-          eq(activeSessions.accountId, fixture.user.id)
-        )
-      );
+      .where(eq(activeSessions.id, created.id));
+
+    expect(row.deviceId).toBe("dev_phone_101");
+    expect(row.remembered).toBe(true);
+    expect(row.revokedAt).toBeNull();
+  });
+
+  it("marks all sessions revoked and increments session_version", async () => {
+    const user = await createUserFixture("logout-all");
+    const store = new PostgresSessionStore(getAppSql());
+
+    await store.recordSession({
+      account_type: "user",
+      account_id: user.id,
+      device_id: "dev_1",
+      remembered: false,
+      auth_method: "password",
+      expires_at: new Date(Date.now() + 3_600_000),
+    });
+
+    await store.markAllRevoked({ account_type: "user", account_id: user.id });
+
+    const db = getOwnerDb();
     const [reloadedUser] = await db
       .select()
       .from(users)
-      .where(eq(users.id, fixture.user.id));
-    expect(remaining).toHaveLength(0);
-    expect(reloadedUser.refreshTokenVersion).toBe(1);
-  });
+      .where(eq(users.id, user.id));
 
-  it("BR-AUT-05: logout-all increments version and never deletes another account's session", async () => {
-    const target = await createUserSession("logout-all-target");
-    const other = await createUserSession("logout-all-other");
-    const store = new PostgresSessionStore(getAppSql());
-
-    await store.revokeAll({ account_type: "user", account_id: target.user.id });
-
-    const db = getOwnerDb();
-    const [targetUser] = await db
-      .select()
-      .from(users)
-      .where(eq(users.id, target.user.id));
-    const remainingTarget = await db
+    const [row] = await db
       .select()
       .from(activeSessions)
-      .where(eq(activeSessions.accountId, target.user.id));
-    const remainingOther = await db
-      .select()
-      .from(activeSessions)
-      .where(eq(activeSessions.accountId, other.user.id));
-    expect(targetUser.refreshTokenVersion).toBe(1);
-    expect(remainingTarget).toHaveLength(0);
-    expect(remainingOther).toHaveLength(1);
+      .where(eq(activeSessions.accountId, user.id));
+
+    expect(reloadedUser.sessionVersion).toBe(1);
+    expect(row.revokedAt).not.toBeNull();
   });
 
   it("BR-AUT-14: resolves User reauth methods from password, linked SNS and confirmed TOTP state", async () => {

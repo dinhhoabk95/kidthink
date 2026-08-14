@@ -1,81 +1,141 @@
+import { createHmac } from "node:crypto";
+import { RateLimiterMemory, RateLimiterRedis } from "rate-limiter-flexible";
+import { getClient } from "./client.js";
+
 export interface RateLimitCheckResult {
   allowed: boolean;
   remaining: number;
   resetSeconds: number;
 }
 
-/** Local-only bucket used by unit tests. Production uses Valkey below. */
-const inMemoryBucket = new Map<string, { count: number; expiresAt: number }>();
+export interface RateLimitOptions {
+  key: string;
+  limit: number;
+  windowSeconds: number;
+  failOpen?: boolean;
+}
+
+const memoryLimiters = new Map<string, RateLimiterMemory>();
+const redisLimiters = new Map<string, RateLimiterRedis>();
 
 export function clearInMemoryBuckets(): void {
-  inMemoryBucket.clear();
+  memoryLimiters.clear();
+  redisLimiters.clear();
 }
 
 /**
- * Atomic token bucket rate limiter (Task 7 / BR-RTL-01).
- * Supports in-memory atomic counting for tests and fallback.
+ * Normalizes identifier (email/username) and hashes via HMAC-SHA256
+ * so raw email/PII never enters Valkey/Redis keys or logs.
  */
-export async function checkRateLimit(
+export function hashRateLimitIdentifier(
+  identifier: string,
+  secret = "tinimath_ratelimit_salt"
+): string {
+  const normalized = identifier.trim().toLowerCase();
+  return createHmac("sha256", secret)
+    .update(normalized)
+    .digest("hex")
+    .slice(0, 32);
+}
+
+function getMemoryLimiter(points: number, duration: number): RateLimiterMemory {
+  const mapKey = `${points}:${duration}`;
+  let limiter = memoryLimiters.get(mapKey);
+  if (!limiter) {
+    limiter = new RateLimiterMemory({
+      points,
+      duration,
+    });
+    memoryLimiters.set(mapKey, limiter);
+  }
+  return limiter;
+}
+
+function getRedisLimiter(points: number, duration: number): RateLimiterRedis {
+  const mapKey = `${points}:${duration}`;
+  let limiter = redisLimiters.get(mapKey);
+  if (!limiter) {
+    const redisClient = getClient();
+    limiter = new RateLimiterRedis({
+      storeClient: redisClient,
+      points,
+      duration,
+      keyPrefix: "rl",
+    });
+    redisLimiters.set(mapKey, limiter);
+  }
+  return limiter;
+}
+
+async function consumeMemoryRateLimit(
   key: string,
   limit: number,
   windowSeconds: number
 ): Promise<RateLimitCheckResult> {
-  if (process.env.NODE_ENV !== "test") {
-    const { Redis } = await import("ioredis");
-    const client = new Redis(
-      process.env.VALKEY_URL || "redis://localhost:6380",
-      {
-        connectTimeout: 2000,
-        commandTimeout: 2000,
-        maxRetriesPerRequest: 1,
-        retryStrategy: () => null,
-      }
-    );
-    client.on("error", () => undefined);
-    try {
-      const count = await client.incr(key);
-      if (count === 1) {
-        await client.expire(key, windowSeconds);
-      }
-      const ttl = Math.max(1, await client.ttl(key));
-      return {
-        allowed: count <= limit,
-        remaining: Math.max(0, limit - count),
-        resetSeconds: ttl,
-      };
-    } finally {
-      client.disconnect();
-    }
-  }
-
-  const now = Date.now();
-  const existing = inMemoryBucket.get(key);
-
-  if (!existing || now >= existing.expiresAt) {
-    const expiresAt = now + windowSeconds * 1000;
-    inMemoryBucket.set(key, { count: 1, expiresAt });
+  const memoryLimiter = getMemoryLimiter(limit, windowSeconds);
+  try {
+    const res = await memoryLimiter.consume(key, 1);
     return {
       allowed: true,
-      remaining: Math.max(0, limit - 1),
-      resetSeconds: windowSeconds,
+      remaining: res.remainingPoints,
+      resetSeconds: Math.ceil(res.msBeforeNext / 1000),
     };
+  } catch (rej: unknown) {
+    if (rej && typeof rej === "object" && "remainingPoints" in rej) {
+      const msBeforeNext = (rej as { msBeforeNext?: number }).msBeforeNext;
+      return {
+        allowed: false,
+        remaining: 0,
+        resetSeconds: Math.ceil((msBeforeNext || windowSeconds * 1000) / 1000),
+      };
+    }
+    throw rej;
+  }
+}
+
+/**
+ * Domain Rate Limiter powered by rate-limiter-flexible (Task 83 / T5-T6).
+ */
+export async function checkRateLimit(
+  key: string,
+  limit: number,
+  windowSeconds: number,
+  failOpen = true
+): Promise<RateLimitCheckResult> {
+  if (process.env.NODE_ENV === "test" && !process.env.VALKEY_URL) {
+    return consumeMemoryRateLimit(key, limit, windowSeconds);
   }
 
-  existing.count += 1;
-  const remaining = Math.max(0, limit - existing.count);
-  const resetSeconds = Math.ceil((existing.expiresAt - now) / 1000);
+  try {
+    const redisLimiter = getRedisLimiter(limit, windowSeconds);
+    const res = await redisLimiter.consume(key, 1);
+    return {
+      allowed: true,
+      remaining: res.remainingPoints,
+      resetSeconds: Math.ceil(res.msBeforeNext / 1000),
+    };
+  } catch (err: unknown) {
+    if (err && typeof err === "object" && "remainingPoints" in err) {
+      const msBeforeNext = (err as { msBeforeNext?: number }).msBeforeNext;
+      return {
+        allowed: false,
+        remaining: 0,
+        resetSeconds: Math.ceil((msBeforeNext || windowSeconds * 1000) / 1000),
+      };
+    }
 
-  if (existing.count > limit) {
+    if (failOpen) {
+      return {
+        allowed: true,
+        remaining: 1,
+        resetSeconds: windowSeconds,
+      };
+    }
+
     return {
       allowed: false,
       remaining: 0,
-      resetSeconds,
+      resetSeconds: windowSeconds,
     };
   }
-
-  return {
-    allowed: true,
-    remaining,
-    resetSeconds,
-  };
 }

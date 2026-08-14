@@ -1,25 +1,39 @@
-import { requireManagerAuth } from "@kidthink/auth";
-import { defineEventHandler, setResponseStatus } from "h3";
+import { getBrowserSessionService } from "@kidthink/auth";
+import { defineEventHandler, type H3Event } from "h3";
+import { clearUserSession, getUserSession } from "#imports";
 import {
-  clearManagerAuthCookies,
-  getManagerRefreshService,
+  clearManagerRememberCookie,
   respondToManagerAuthError,
   validateManagerCsrf,
-} from "../../../utils/auth-runtime";
+} from "../../../../utils/admin-auth-runtime.js";
 
-export default defineEventHandler(async (event) => {
+export async function handleLogout(event: H3Event) {
   try {
     validateManagerCsrf(event);
-    const manager = requireManagerAuth(event);
-    await getManagerRefreshService(event).revokeSession(
-      manager.session_id,
-      "manager",
-      manager.manager_id
-    );
-    clearManagerAuthCookies(event);
-    setResponseStatus(event, 204);
-    return null;
+    const session = await getUserSession(event);
+    const service = getBrowserSessionService();
+
+    if (session?.manager?.manager_id && session.secure?.session_token) {
+      await service
+        .resolve("manager", session.secure.session_token)
+        .then(async (authCtx) => {
+          if (authCtx?.manager) {
+            await service.revokeAll({
+              account_type: "manager",
+              account_id: authCtx.manager.manager_id,
+            });
+          }
+        })
+        .catch(() => null);
+    }
+
+    await clearUserSession(event);
+    clearManagerRememberCookie(event);
+
+    return { success: true };
   } catch (error) {
     return respondToManagerAuthError(event, error);
   }
-});
+}
+
+export default defineEventHandler((event) => handleLogout(event));

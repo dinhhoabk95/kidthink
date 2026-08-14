@@ -31,11 +31,11 @@ describe("P2.2 Operational Lookup Invariants (BR-USM, BR-USD, BR-CPA)", () => {
       expect(entitlementsModified).toBe(false);
     });
 
-    it("Scenario: BR-USM-05 — suspending a user increments refresh_token_version to invalidate all refresh tokens", () => {
-      let refreshTokenVersion = 1;
+    it("Scenario: BR-USM-05 — suspending a user increments session_version to invalidate all sessions", () => {
+      let sessionVersion = 1;
       // Suspend user
-      refreshTokenVersion += 1;
-      expect(refreshTokenVersion).toBe(2);
+      sessionVersion += 1;
+      expect(sessionVersion).toBe(2);
     });
 
     it("Scenario: BR-USM-06 — user list response includes child profiles count only, omitting names, ages, or progress", () => {

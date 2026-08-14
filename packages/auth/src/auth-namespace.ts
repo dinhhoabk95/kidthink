@@ -1,4 +1,4 @@
-import type { AuthNamespace } from "./refresh";
+import type { AuthNamespace } from "./redis-session-store";
 
 export interface AuthNamespaceConfig {
   readonly namespace: AuthNamespace;

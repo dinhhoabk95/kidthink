@@ -10,7 +10,8 @@
 - [ ] Đo browser/device install/SW/storage/quota/eviction capabilities thật.
 - [ ] Product chốt pack scope; Security chốt lease/revoke/logout; Infra chốt update/budget.
 - [ ] Pack API/auth/version/quota/eviction/errors/events/negative Gherkin đầy đủ.
-- [ ] Push-to-child bị cấm; parent-gate/fullscreen behavior được chốt.
+- [ ] Push-to-child bị cấm; FCM Web của User được link sang Task #84, không cài trong Task #72.
+- [ ] Service worker boundary giữa install/offline và browser push không đăng ký handler trùng.
 - [ ] `pnpm lint:specs` xanh.
 
 ## Checkpoint A

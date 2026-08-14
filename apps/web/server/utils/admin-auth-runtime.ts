@@ -4,19 +4,8 @@ import {
   CSRF_HEADER_NAME,
   generateCsrfToken,
   getAuthNamespaceConfig,
-  type ManagerTokenPayload,
-  RefreshService,
   validateCsrfToken,
-  verifyAdminManagerToken,
 } from "@kidthink/auth";
-import {
-  activeSessions,
-  getAppDb,
-  getAppSql,
-  managers,
-  PostgresSessionStore,
-} from "@kidthink/db";
-import { and, eq, gt } from "drizzle-orm";
 import {
   createError,
   deleteCookie,
@@ -27,10 +16,10 @@ import {
   setResponseStatus,
 } from "h3";
 
-const managerAuthConfig = getAuthNamespaceConfig("manager");
-const ACCESS_TTL_SECONDS = 15 * 60;
+import { MANAGER_REMEMBER_COOKIE } from "./auth-runtime.js";
+
+const managerConfig = getAuthNamespaceConfig("manager");
 const CSRF_TOKEN = /^[0-9a-f]{64}$/;
-const SESSION_ID = /^\d+$/;
 const INTEGER_TEXT = /^\d+$/;
 
 export function getManagerRemoteIp(event: H3Event): string {
@@ -97,16 +86,8 @@ export function getAdminJwtSecret(_event: H3Event): string {
   return secret;
 }
 
-export function getManagerRefreshService(event: H3Event): RefreshService {
-  return new RefreshService(new PostgresSessionStore(getAppSql()), {
-    namespace: "manager",
-    jwtSecret: getAdminJwtSecret(event),
-    refreshTtlSeconds: managerAuthConfig.refreshTtlSeconds,
-  });
-}
-
 export function ensureManagerCsrfCookie(event: H3Event): string {
-  const current = getCookie(event, managerAuthConfig.csrfCookieName);
+  const current = getCookie(event, managerConfig.csrfCookieName);
   if (current && CSRF_TOKEN.test(current)) {
     return current;
   }
@@ -120,12 +101,12 @@ export function ensureManagerCsrfCookie(event: H3Event): string {
   ) {
     return token;
   }
-  setCookie(event, managerAuthConfig.csrfCookieName, token, {
+  setCookie(event, managerConfig.csrfCookieName, token, {
     httpOnly: false,
-    maxAge: managerAuthConfig.refreshTtlSeconds,
+    maxAge: 365 * 24 * 60 * 60,
     path: "/",
     sameSite: "strict",
-    secure: !import.meta.dev,
+    secure: process.env.NODE_ENV === "production",
   });
   return token;
 }
@@ -133,136 +114,36 @@ export function ensureManagerCsrfCookie(event: H3Event): string {
 export function validateManagerCsrf(event: H3Event): void {
   validateCsrfToken({
     method: event.method,
-    cookieToken: getCookie(event, managerAuthConfig.csrfCookieName),
+    cookieToken: getCookie(event, managerConfig.csrfCookieName),
     headerToken: getHeader(event, CSRF_HEADER_NAME),
   });
 }
 
-export function setManagerAuthCookies(
+export function setManagerRememberCookie(
   event: H3Event,
-  accessToken: string,
-  refreshEnvelope: string
+  rememberToken: string
 ): void {
-  // Unit tests and non-HTTP callers may provide a minimal event object. A real
-  // h3 response always exposes getHeader/setHeader; skip cookie serialization
-  // when that response API is absent instead of throwing before the handler
-  // can return its normal result.
-  const response = event.node?.res as
-    | { getHeader?: unknown; setHeader?: unknown }
-    | undefined;
-  if (
-    typeof response?.getHeader !== "function" ||
-    typeof response?.setHeader !== "function"
-  ) {
-    return;
-  }
-  setCookie(event, managerAuthConfig.accessCookieName, accessToken, {
+  setCookie(event, MANAGER_REMEMBER_COOKIE, rememberToken, {
     httpOnly: true,
-    maxAge: ACCESS_TTL_SECONDS,
-    path: "/",
-    sameSite: "lax",
-    secure: !import.meta.dev,
-  });
-  setCookie(event, managerAuthConfig.refreshCookieName, refreshEnvelope, {
-    httpOnly: true,
-    maxAge: managerAuthConfig.refreshTtlSeconds,
-    path: managerAuthConfig.refreshPath,
+    maxAge: 365 * 24 * 3600,
+    path: "/api/managers/auth/restore",
     sameSite: "strict",
-    secure: !import.meta.dev,
+    secure: process.env.NODE_ENV === "production",
   });
-  ensureManagerCsrfCookie(event);
 }
 
-export function clearManagerAuthCookies(event: H3Event): void {
-  const response = event.node?.res as
-    | { getHeader?: unknown; setHeader?: unknown }
-    | undefined;
-  if (
-    typeof response?.getHeader !== "function" ||
-    typeof response?.setHeader !== "function"
-  ) {
-    return;
-  }
-  deleteCookie(event, managerAuthConfig.accessCookieName, { path: "/" });
-  deleteCookie(event, managerAuthConfig.refreshCookieName, {
-    path: managerAuthConfig.refreshPath,
+export function clearManagerRememberCookie(event: H3Event): void {
+  deleteCookie(event, MANAGER_REMEMBER_COOKIE, {
+    path: "/api/managers/auth/restore",
   });
-  deleteCookie(event, managerAuthConfig.csrfCookieName, { path: "/" });
 }
 
-export async function requireManagerSession(
-  event: H3Event
-): Promise<ManagerTokenPayload> {
-  const authHeader = getHeader(event, "authorization");
-  const bearerToken = authHeader?.startsWith("Bearer ")
-    ? authHeader.slice(7).trim()
-    : undefined;
-  if (!bearerToken) {
-    validateManagerCsrf(event);
-  }
-
-  if (event.context?.manager) {
-    await assertLiveManagerSession(event.context.manager);
-    return event.context.manager as ManagerTokenPayload;
-  }
-
-  const cookieToken = getCookie(event, managerAuthConfig.accessCookieName);
-  const token = bearerToken || cookieToken;
-
+export function getManagerRememberCookie(event: H3Event): string {
+  const token = getCookie(event, MANAGER_REMEMBER_COOKIE);
   if (!token) {
-    throw appError("UNAUTHENTICATED");
-  }
-
-  try {
-    const secret = getAdminJwtSecret(event);
-    const manager = await verifyAdminManagerToken({ token, secret });
-    await assertLiveManagerSession(manager);
-    event.context.manager = manager;
-    return manager;
-  } catch (_err) {
-    throw appError("UNAUTHENTICATED");
-  }
-}
-
-async function assertLiveManagerSession(
-  session: ManagerTokenPayload
-): Promise<void> {
-  if (process.env.NODE_ENV === "test") {
-    return;
-  }
-  if (!SESSION_ID.test(session.session_id)) {
     throw appError("SESSION_REVOKED");
   }
-  const db = getAppDb();
-  const [row] = await db
-    .select({
-      version: managers.refreshTokenVersion,
-      active: managers.isActive,
-    })
-    .from(activeSessions)
-    .innerJoin(managers, eq(managers.id, activeSessions.accountId))
-    .where(
-      and(
-        eq(activeSessions.id, Number(session.session_id)),
-        eq(activeSessions.accountType, "manager"),
-        eq(activeSessions.accountId, session.manager_id),
-        gt(activeSessions.expiresAt, new Date())
-      )
-    )
-    .limit(1);
-  if (!row?.active || row.version !== session.refresh_token_version) {
-    throw appError("SESSION_REVOKED");
-  }
-}
-
-export async function requireSuperAdminSession(
-  event: H3Event
-): Promise<ManagerTokenPayload> {
-  const manager = await requireManagerSession(event);
-  if (manager.role !== "super_admin") {
-    throw appError("INSUFFICIENT_ROLE");
-  }
-  return manager;
+  return token;
 }
 
 export function respondToManagerAuthError(

@@ -1,6 +1,7 @@
 import {
   appError,
-  createMfaChallengeToken,
+  getAuthRedisClient,
+  MfaChallengeService,
   verifyPassword,
 } from "@kidthink/auth";
 import { getOwnerDb, managers, writeAudit } from "@kidthink/db";
@@ -12,7 +13,6 @@ import {
   assertManagerRateLimitAllowed,
   assertManagerRequestBodySize,
   assertManagerSameOriginRequest,
-  getAdminJwtSecret,
   getManagerRemoteIp,
   respondToManagerAuthError,
 } from "../../../../utils/admin-auth-runtime.js";
@@ -24,6 +24,7 @@ const ManagerLoginSchema = z
   .object({
     email: z.string().trim().email().max(255),
     password: z.string().min(1).max(1024),
+    rememberMe: z.boolean().default(false),
   })
   .strict();
 
@@ -36,7 +37,7 @@ export default defineEventHandler(async (event) => {
     if (!parsed.success) {
       throw appError("INVALID_CREDENTIALS");
     }
-    const { email, password } = parsed.data;
+    const { email, password, rememberMe } = parsed.data;
 
     const rateLimit = await enforceTwoAxisRateLimit({
       routeClass: "auth:login",
@@ -53,7 +54,6 @@ export default defineEventHandler(async (event) => {
 
     if (!manager?.passwordHash) {
       await verifyPassword(password, DUMMY_HASH).catch(() => false);
-      // Record audit for failed login
       await db.transaction(async (tx) => {
         await writeAudit(tx, {
           actor_type: "system",
@@ -85,11 +85,15 @@ export default defineEventHandler(async (event) => {
       throw appError("INSUFFICIENT_ROLE");
     }
 
-    // Password valid! Create 5-minute single-purpose MFA challenge token
-    const challenge = await createMfaChallengeToken({
-      managerId: manager.id,
-      email: manager.email,
-      secret: getAdminJwtSecret(event),
+    // Password valid! Create 5-minute opaque Redis MFA challenge token (BR-AUT-35)
+    const mfaService = new MfaChallengeService(getAuthRedisClient());
+    const createdChallenge = await mfaService.createChallenge({
+      namespace: "manager",
+      accountId: manager.id,
+      displayName: manager.displayName,
+      role: manager.role,
+      rememberMe,
+      ipAddress: getManagerRemoteIp(event),
     });
 
     if (
@@ -101,7 +105,7 @@ export default defineEventHandler(async (event) => {
 
     return {
       status: "MFA_REQUIRED",
-      challenge,
+      challenge: createdChallenge.challengeToken,
       mfa_enabled: manager.mfaEnabled,
     };
   } catch (err) {

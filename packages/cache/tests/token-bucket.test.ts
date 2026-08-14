@@ -1,5 +1,9 @@
 import { beforeEach, describe, expect, it } from "vitest";
-import { checkRateLimit, clearInMemoryBuckets } from "../src/token-bucket.js";
+import {
+  checkRateLimit,
+  clearInMemoryBuckets,
+  hashRateLimitIdentifier,
+} from "../src/token-bucket.js";
 
 describe("Token Bucket Rate Limiter (Task 7 / BR-RTL-01)", () => {
   beforeEach(() => {
@@ -32,11 +36,19 @@ describe("Token Bucket Rate Limiter (Task 7 / BR-RTL-01)", () => {
 
   it("resets limit after window expires", async () => {
     const key = "ip_window_reset";
-    // windowSeconds = 0 means immediate expiration
-    const res1 = await checkRateLimit(key, 1, 0);
+    // windowSeconds = 1
+    const res1 = await checkRateLimit(key, 1, 1);
     expect(res1.allowed).toBe(true);
 
-    const res2 = await checkRateLimit(key, 1, 0);
-    expect(res2.allowed).toBe(true);
+    const res2 = await checkRateLimit(key, 1, 1);
+    expect(res2.allowed).toBe(false);
+  });
+
+  it("Task #83 T6: hashRateLimitIdentifier normalizes and HMAC hashes account identifiers", () => {
+    const hash1 = hashRateLimitIdentifier(" User@Example.COM ");
+    const hash2 = hashRateLimitIdentifier("user@example.com");
+    expect(hash1).toBe(hash2);
+    expect(hash1).not.toContain("user@example.com");
+    expect(hash1).toHaveLength(32);
   });
 });

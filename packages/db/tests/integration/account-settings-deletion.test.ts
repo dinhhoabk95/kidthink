@@ -9,10 +9,10 @@ describe("P1.14 Account Settings, Consent Management & Deletion Invariants (BR-A
     });
 
     it("Scenario: BR-ACS-02 — changing password increments refresh_token_version and revokes existing sessions", () => {
-      let refreshTokenVersion = 1;
+      let sessionVersion = 1;
       // Change password
-      refreshTokenVersion += 1;
-      expect(refreshTokenVersion).toBe(2);
+      sessionVersion += 1;
+      expect(sessionVersion).toBe(2);
     });
 
     it("Scenario: BR-ACS-03 — changing email requires email verification", () => {
@@ -56,7 +56,7 @@ describe("P1.14 Account Settings, Consent Management & Deletion Invariants (BR-A
       expect(ctaLabel).toBe("Set Password");
     });
 
-    it("Scenario: BR-ACS-10 — setting initial password does not increment refresh_token_version", () => {
+    it("Scenario: BR-ACS-10 — setting initial password does not increment session_version", () => {
       const initialVersion = 1;
       const newVersion = initialVersion; // setting password for the first time
       expect(newVersion).toBe(1);

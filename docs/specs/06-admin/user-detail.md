@@ -5,7 +5,7 @@ area: admin
 status: approved
 mvp: true
 phase: P2
-reviewed: 2026-08-08
+reviewed: 2026-08-13
 owns:
   - Nội dung màn hình chi tiết User
   - Ranh giới dữ liệu được hiện
@@ -97,7 +97,7 @@ Scenario: BR-USD-02 — hồ sơ trẻ chỉ tên và band tuổi
 
 Scenario: BR-USD-04 — không lộ bí mật
   When đọc response
-  Then không có password_hash, refresh token, hay mfa secret
+  Then không có password_hash, session/remember token, hay mfa secret
 
 Scenario: BR-USD-03 — màn hình chỉ đọc
   When quét lời gọi API từ trang chi tiết

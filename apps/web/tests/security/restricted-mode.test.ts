@@ -1,4 +1,4 @@
-import { createWebUserToken, hashPassword } from "@kidthink/auth";
+import { hashPassword } from "@kidthink/auth";
 import { getAppDb, users } from "@kidthink/db";
 import { beforeEach, describe, expect, it } from "vitest";
 import { truncateAllTestTables } from "../../../../packages/db/tests/global-setup";
@@ -34,20 +34,17 @@ describe("Task 6 — Server-Enforced Restricted Mode (D-EQ)", () => {
       "../../server/api/users/auth/sessions.get"
     );
 
-    const token = await createWebUserToken({
-      payload: {
-        user_id: user.id,
-        display_name: user.displayName,
-        session_id: "100",
-        refresh_token_version: 0,
-      },
-      secret: "test_secret_32_bytes_minimum_length_key!!",
-    });
-
     const event = {
       method: "GET",
-      node: { req: { headers: { authorization: `Bearer ${token}` } } },
-      context: { userSession: { user_id: user.id, session_id: "100" } },
+      node: { req: { headers: {} } },
+      context: {
+        user: {
+          user_id: user.id,
+          display_name: user.displayName,
+          session_id: "100",
+          refresh_token_version: 0,
+        },
+      },
     } as any;
 
     const res = await sessionsHandler(event);

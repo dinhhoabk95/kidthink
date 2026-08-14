@@ -220,10 +220,10 @@ describe("P1.15 OAuth Provider Registry, Social Login & Linking Invariants (BR-O
       expect(targetUserPiiLeaked).toBe(false);
     });
 
-    it("Scenario: BR-SLK-07 — unlinking social identity does not revoke current session or increment refresh_token_version", () => {
-      const refreshTokenVersion = 1;
+    it("Scenario: BR-SLK-07 — unlinking social identity does not revoke current session or increment session_version", () => {
+      const sessionVersion = 1;
       // Unlink
-      const newVersion = refreshTokenVersion;
+      const newVersion = sessionVersion;
       expect(newVersion).toBe(1);
     });
 

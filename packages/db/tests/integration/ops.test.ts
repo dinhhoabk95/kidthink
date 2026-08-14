@@ -4,6 +4,7 @@ import { getAppDb, getOwnerDb } from "../../src/index.ts";
 import {
   auditLogs,
   contentReviewLog,
+  notificationDeliveries,
   notifications,
 } from "../../src/schema/ops.ts";
 
@@ -28,7 +29,7 @@ describe("Ops Schema Integration Tests", () => {
     await expect(
       appDb
         .update(auditLogs)
-        .set({ action: "MODIFIED" })
+        .set({ action: "MUTATED" })
         .where(eq(auditLogs.id, log.id))
     ).rejects.toThrow();
 
@@ -38,10 +39,9 @@ describe("Ops Schema Integration Tests", () => {
     ).rejects.toThrow();
   });
 
-  it("content_review_log.entity_id polymorphic orphan detection", async () => {
+  it("BR-CRV-01: content_review_log supports foreign key references to managers", async () => {
     const db = getOwnerDb();
 
-    // Insert content review log trỏ tới non-existent entity_id
     const [log] = await db
       .insert(contentReviewLog)
       .values({
@@ -50,7 +50,7 @@ describe("Ops Schema Integration Tests", () => {
         contentVersion: 1,
         fromStatus: "draft",
         toStatus: "in_review",
-        reason: "Test review submission",
+        reason: "Test review log entry",
       })
       .returning();
 
@@ -65,12 +65,19 @@ describe("Ops Schema Integration Tests", () => {
     // Transaction that fails and rolls back
     try {
       await db.transaction(async (tx) => {
-        await tx.insert(notifications).values({
-          recipientType: "user",
-          recipientId: 1,
+        const [notif] = await tx
+          .insert(notifications)
+          .values({
+            recipientType: "user",
+            recipientId: 1,
+            templateCode: actionTag,
+            payload: { test: true },
+          })
+          .returning();
+
+        await tx.insert(notificationDeliveries).values({
+          notificationId: notif.id,
           channel: "email",
-          templateCode: actionTag,
-          payload: { test: true },
           status: "queued",
         });
 

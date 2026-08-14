@@ -1,18 +1,22 @@
-import { appError, createWebUserToken, verifyPassword } from "@kidthink/auth";
-import { getAppDb, users } from "@kidthink/db";
+import {
+  appError,
+  getBrowserSessionService,
+  verifyPassword,
+} from "@kidthink/auth";
+import { getAppDb, getAppSql, PostgresSessionStore, users } from "@kidthink/db";
 import { enforceTwoAxisRateLimit } from "@kidthink/shared";
 import { eq } from "drizzle-orm";
 import { defineEventHandler, getHeader, type H3Event, readBody } from "h3";
 import { z } from "zod";
+import { setUserSession } from "#imports";
 import {
   assertRateLimitAllowed,
   assertRequestBodySize,
   assertSameOriginRequest,
-  getUserRefreshService,
+  ensureUserCsrfCookie,
   getVerifiedRemoteIp,
-  getWebJwtSecret,
   respondToUserAuthError,
-  setUserAuthCookies,
+  setUserRememberCookie,
 } from "../../../../utils/auth-runtime";
 
 const DUMMY_HASH =
@@ -22,12 +26,14 @@ const LoginSchema = z
   .object({
     email: z.string().trim().email().max(255),
     password: z.string().min(1).max(1024),
+    rememberMe: z.boolean().default(false),
   })
   .strict();
 
 function parseLoginCredentials(rawBody: unknown): {
   email: string;
   password: string;
+  rememberMe: boolean;
 } {
   const parsed = LoginSchema.safeParse(rawBody);
   if (!parsed.success) {
@@ -36,6 +42,7 @@ function parseLoginCredentials(rawBody: unknown): {
   return {
     email: parsed.data.email.toLowerCase(),
     password: parsed.data.password,
+    rememberMe: parsed.data.rememberMe,
   };
 }
 
@@ -53,7 +60,7 @@ export async function handleLogin(event: H3Event, testBody?: unknown) {
       testBody ??
       event.context?.body ??
       (await readBody(event).catch(() => null));
-    const { email, password } = parseLoginCredentials(rawBody);
+    const { email, password, rememberMe } = parseLoginCredentials(rawBody);
 
     const rateLimitRes = await enforceTwoAxisRateLimit({
       routeClass: "auth:login",
@@ -84,32 +91,45 @@ export async function handleLogin(event: H3Event, testBody?: unknown) {
     }
 
     const userAgent = getHeader(event, "user-agent") || "unknown";
-    const refreshService = getUserRefreshService(event);
+    const sessionService = getBrowserSessionService();
 
-    const sessionResult = await refreshService.createSession({
-      account: { type: "user", id: user.id },
-      deviceLabel: userAgent,
+    const created = await sessionService.create({
+      namespace: "user",
+      accountId: user.id,
+      displayName: user.displayName,
+      rememberMe,
       ipAddress: getVerifiedRemoteIp(event),
-      authMethod: "password",
     });
 
-    const accessJwt = await createWebUserToken({
-      payload: {
-        user_id: user.id,
-        display_name: user.displayName,
-        session_id: sessionResult.sessionId,
-        refresh_token_version: user.refreshTokenVersion,
+    await setUserSession(event, {
+      secure: {
+        session_token: created.sessionToken,
       },
-      secret: getWebJwtSecret(event),
     });
 
-    setUserAuthCookies(event, accessJwt, sessionResult.refreshEnvelope);
+    if (created.rememberToken) {
+      setUserRememberCookie(event, created.rememberToken);
+    }
+
+    ensureUserCsrfCookie(event);
+
+    // Record metadata in PG
+    const pgStore = new PostgresSessionStore(getAppSql());
+    await pgStore
+      .recordSession({
+        account_type: "user",
+        account_id: user.id,
+        device_id: created.deviceId,
+        remembered: rememberMe,
+        device_label: userAgent,
+        ip_address: getVerifiedRemoteIp(event),
+        auth_method: "password",
+        expires_at: created.expiresAt,
+      })
+      .catch(() => null);
 
     const now = new Date();
-    await db
-      .update(users)
-      .set({ lastLoginAt: now, updatedAt: now })
-      .where(eq(users.id, user.id));
+    await db.update(users).set({ updatedAt: now }).where(eq(users.id, user.id));
 
     return {
       user: {

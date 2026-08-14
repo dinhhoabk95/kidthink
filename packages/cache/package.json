@@ -10,7 +10,8 @@
     ".": "./src/index.ts"
   },
   "dependencies": {
-    "ioredis": "catalog:"
+    "ioredis": "catalog:",
+    "rate-limiter-flexible": "catalog:"
   },
   "devDependencies": {
     "@types/node": "catalog:",

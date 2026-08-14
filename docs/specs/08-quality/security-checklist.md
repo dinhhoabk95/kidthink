@@ -5,7 +5,7 @@ area: quality
 status: approved
 mvp: true
 phase: P0
-reviewed: 2026-08-08
+reviewed: 2026-08-13
 owns:
   - Checklist bảo mật bắt buộc trước merge và trước release
 depends_on:
@@ -57,6 +57,7 @@ Checklist trong PR template · `pnpm check` · rà soát trước release.
 | `BR-SEC-07` | Record của người khác → **404** | `BR-ACT-03` |
 | `BR-SEC-08` | Code chạm auth, payment, hoặc dữ liệu trẻ → **bắt buộc review** người thứ hai | Một người viết và merge là một người quyết định; hai mắt thấy lỗi mà một mắt bỏ qua |
 | `BR-SEC-09` | Cấm — **NEVER dữ liệu trẻ ra khỏi hạ tầng** | `BR-CDC-06` |
+| `BR-SEC-10` | `apps/web` và `apps/admin` dùng `nuxt-security` cho CSP/header/CORS/request-size; rate limiter và CSRF tích hợp phải **tắt** | Hai implementation rate-limit/CSRF song song tạo thứ tự middleware và error contract không kiểm soát được; domain đã có owner riêng |
 
 ## 7. Data
 
@@ -74,7 +75,11 @@ dung là checklist an ninh áp cho mọi PR, chia theo mức độ chặn merge.
 - [ ] Gating kiểm ở server handler
 - [ ] Response bị chặn không chứa `content_pack`
 - [ ] Cấm PII của trẻ trong telemetry, log, hay prompt LLM
-- [ ] Guard đúng namespace, kiểm audience
+- [ ] User/Manager guard đúng Redis session namespace; không route auth nào chấp nhận Bearer
+- [ ] Không direct dependency/import `jose`; session, remember và MFA challenge đều opaque Redis credential
+- [ ] Opaque token ≥256 bit, Redis chỉ giữ digest, session tuyệt đối 1 giờ
+- [ ] Remember mặc định tắt, absolute ≤365 ngày, rotate atomic; reuse revoke-all
+- [ ] Redis auth lỗi fail-closed 503; không fallback file/memory/PG/JWT
 - [ ] Thao tác thanh toán trong transaction, idempotent
 - [ ] Upload kiểm MIME thật, từ chối SVG
 - [ ] Cấm raw SQL nối chuỗi
@@ -83,7 +88,8 @@ dung là checklist an ninh áp cho mọi PR, chia theo mức độ chặn merge.
 
 - [ ] Rate limit trên route nhạy cảm, hai trục
 - [ ] CSRF token trên route đổi trạng thái
-- [ ] Cookie đúng thuộc tính (`HttpOnly`, `SameSite`, `Secure`, path-scope refresh)
+- [ ] Cookie đúng thuộc tính (`HttpOnly`, `SameSite`, `Secure`, path-scope remember)
+- [ ] Valkey auth AOF + `noeviction`, client/keyspace riêng khỏi cache fail-open
 - [ ] Trần phân trang ép ở server
 - [ ] Thông báo lỗi không tiết lộ tài khoản tồn tại
 - [ ] Cấm stack trace hay id nội bộ trong response
@@ -91,6 +97,8 @@ dung là checklist an ninh áp cho mọi PR, chia theo mức độ chặn merge.
 - [ ] `v-html` chỉ với hằng số trong repo
 - [ ] Audit ghi cho hành động trong [`audit-log.md`](../01-platform/audit-log.md) §7.2
 - [ ] Cấm cache response chứa nội dung trả phí
+- [ ] `nuxt-security` bật CSP/header/CORS/request-size; limiter + CSRF tích hợp tắt
+- [ ] `script-src` production không có `unsafe-inline`; script runtime dùng nonce/strict-dynamic theo config đã test
 
 ### 7.3 MEDIUM
 
@@ -122,6 +130,7 @@ dung là checklist an ninh áp cho mọi PR, chia theo mức độ chặn merge.
 - [ ] Chính sách pháp lý đã rà soát
 - [ ] Secret production khác secret dev
 - [ ] PG và Valkey không bind `0.0.0.0`
+- [ ] Auth Valkey startup check xác nhận AOF + `noeviction`; alert outage/memory/write/Lua failure tới người
 - [ ] Bề mặt admin không index
 - [ ] Quét toàn bộ: không PII trẻ trong log
 
@@ -156,6 +165,12 @@ Scenario: BR-SEC-01 — CRITICAL chặn merge
   Given một PR có secret hardcode
   When cổng tự động chạy
   Then merge bị chặn
+
+Scenario: BR-SEC-10 — một owner cho rate limit và CSRF
+  When đọc cấu hình nuxt-security của web và admin
+  Then security headers, CSP, CORS và request-size được bật
+  And rateLimiter và csrf của module bị tắt
+  And route vẫn đi qua packages/cache và packages/auth tương ứng
 ```
 
 ## 10. Boundaries
@@ -164,6 +179,7 @@ Scenario: BR-SEC-01 — CRITICAL chặn merge
 - Chạy checklist cho code chạm vùng nhạy cảm.
 - Xoay secret ngay khi nghi lộ.
 - Review người thứ hai cho auth, payment, dữ liệu trẻ.
+- Khai `nuxt-security` trực tiếp trong mỗi Nuxt app; giữ một owner cho rate limit và CSRF.
 
 **Ask first**
 - Bỏ qua một mục CRITICAL.

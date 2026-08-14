@@ -2,10 +2,10 @@
 spec: RATE-LIMITING
 title: Giới hạn tần suất
 area: platform
-status: implemented
+status: approved
 mvp: true
 phase: P0
-reviewed: 2026-08-08
+reviewed: 2026-08-13
 owns:
   - Bảng giới hạn theo route
   - Hai trục IP và account
@@ -34,14 +34,17 @@ chặn quét diện rộng. Chỉ một trục thì trục còn lại là lỗ h
 
 ## 3. Entry points
 
-Middleware trước mọi route. Token bucket trên Valkey (`packages/cache`).
+Middleware trước mọi route. `packages/cache` bọc `rate-limiter-flexible` trên một singleton
+`ioredis`; app không import package nền và không tạo kết nối Valkey theo request.
 
 ## 4. Main flow
 
 1. Middleware suy `route_class` từ path.
 2. Kiểm bucket theo **IP** và theo **account** (nếu đã đăng nhập).
-3. Vượt bất kỳ trục nào → **429** kèm `Retry-After`.
-4. Ghi log; vượt lặp lại nhiều lần → alert.
+3. Với route chưa xác thực, account key là HMAC của định danh đã normalize; không đưa email
+   hay identifier thô vào key Valkey/log.
+4. Vượt bất kỳ trục nào → **429** kèm `Retry-After`.
+5. Ghi log; vượt lặp lại nhiều lần → alert.
 
 ## 5. Alternative flows
 
@@ -62,6 +65,8 @@ Middleware trước mọi route. Token bucket trên Valkey (`packages/cache`).
 | `BR-RTL-05` | Đăng nhập sai → khoá tài khoản **tăng dần**, không khoá vĩnh viễn | Khoá vĩnh viễn là DoS lên người dùng thật |
 | `BR-RTL-06` | Ingest event có hạn mức riêng, rộng hơn | Trẻ chơi liên tục là hành vi bình thường |
 | `BR-RTL-07` | Thông báo 429 không tiết lộ tài khoản tồn tại | Tiết lộ là cho kẻ tấn công biết email nào đã đăng ký, rút ngắn bước quét tiếp theo |
+| `BR-RTL-08` | Mọi consume/penalty/block đi qua `rate-limiter-flexible` trong `packages/cache` và dùng singleton `ioredis`; Cấm — **NEVER** tự ghép `INCR` + `EXPIRE` hay tạo Redis client theo request | Hai lệnh rời có thể mất TTL khi tiến trình chết; nhiều client theo request làm cạn connection trên t3.small |
+| `BR-RTL-09` | Key account chưa xác thực là HMAC của identifier đã normalize; Cấm — **NEVER** để email/identifier thô trong Valkey key, metric hay log | Redis key và log vận hành không được trở thành kho PII phụ |
 
 ## 7. Data
 
@@ -71,7 +76,7 @@ Middleware trước mọi route. Token bucket trên Valkey (`packages/cache`).
 | `auth:register` | 10 | — | 1 giờ |
 | `auth:forgot-password` | 10 | 3 | 1 giờ |
 | `auth:mfa` | 10 | 5 | 15 phút |
-| `auth:refresh` | 60 | 60 | 15 phút |
+| `auth:remember` | 60 | 60 | 15 phút |
 | `payment:create` | 20 | 5 | 1 giờ |
 | `payment:proof` | 20 | 10 | 1 giờ |
 | `upload:image` | 60 | 30 | 1 giờ |
@@ -125,6 +130,16 @@ Scenario: BR-RTL-05 — khoá tăng dần rồi tự mở
   Given account bị khoá sau 5 lần sai
   When chờ hết cửa sổ
   Then đăng nhập đúng thành công
+
+Scenario: BR-RTL-08 — limiter dùng primitive nguyên tử và một client
+  When chạy song song nhiều request chạm cùng bucket
+  Then số lần consume và TTL nhất quán theo rate-limiter-flexible
+  And số kết nối ioredis không tăng theo số request
+
+Scenario: BR-RTL-09 — key không chứa định danh thô
+  Given login bằng email Parent@Example.com
+  When đọc key Valkey và log rate-limit trong test
+  Then không chuỗi nào chứa parent@example.com
 ```
 
 ## 10. Boundaries
@@ -133,6 +148,8 @@ Scenario: BR-RTL-05 — khoá tăng dần rồi tự mở
 - Hai trục cho route nhạy cảm.
 - `Retry-After` trong response.
 - Lấy IP từ nguồn tin cậy đã cấu hình.
+- Bọc `rate-limiter-flexible` trong `packages/cache`; tái dùng singleton `ioredis`.
+- HMAC identifier trước khi tạo account key.
 
 **Ask first**
 - Đổi hạn mức của một route class.
@@ -143,6 +160,8 @@ Scenario: BR-RTL-05 — khoá tăng dần rồi tự mở
 - Tin `X-Forwarded-For` thô.
 - Khoá tài khoản vĩnh viễn.
 - Thông báo tiết lộ tài khoản tồn tại.
+- `INCR` + `EXPIRE` tự ghép hoặc Redis client theo request.
+- Email/identifier thô trong key hay log.
 
 ## 11. Open questions
 

@@ -101,5 +101,22 @@ export async function truncateAllTestTables(
 }
 
 export default async function setup(): Promise<void> {
-  await truncateAllTestTables();
+  try {
+    await truncateAllTestTables();
+  } catch (err: unknown) {
+    const errorObj = err as {
+      code?: string;
+      errors?: Array<{ code?: string }>;
+    };
+    if (
+      errorObj?.code === "ECONNREFUSED" ||
+      errorObj?.errors?.some((e) => e.code === "ECONNREFUSED")
+    ) {
+      console.warn(
+        "⚠️ Postgres not running on port 5433 — skipping global DB cleanup."
+      );
+      return;
+    }
+    throw err;
+  }
 }

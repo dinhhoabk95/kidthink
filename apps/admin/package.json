@@ -15,8 +15,9 @@
     "@kidthink/shared": "workspace:*"
   },
   "devDependencies": {
-    "@sidebase/nuxt-auth": "catalog:",
     "nuxt": "catalog:",
+    "nuxt-auth-utils": "catalog:",
+    "nuxt-security": "catalog:",
     "typescript": "catalog:",
     "vitest": "catalog:",
     "vue-tsc": "catalog:"

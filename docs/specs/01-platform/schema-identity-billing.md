@@ -2,10 +2,10 @@
 spec: SCHEMA-IDENTITY-BILLING
 title: Schema — danh tính, thanh toán, vận hành
 area: platform
-status: implemented
+status: approved
 mvp: true
 phase: P0
-reviewed: 2026-08-08
+reviewed: 2026-08-13
 owns:
   - Định nghĩa cột module identity, billing, ops
 depends_on:
@@ -68,7 +68,7 @@ Không có.
 | `display_name` | varchar(60) | NOT NULL |
 | `status` | enum | `pending_verification`\|`active`\|`suspended`\|`deleted` |
 | `email_verified_at` | timestamptz | |
-| `refresh_token_version` | int | NOT NULL default 0 |
+| `session_version` | int | NOT NULL default 0; tăng khi revoke-all/đổi credential |
 | `suspended_reason` | text | |
 | `purge_at` | timestamptz | Đặt khi yêu cầu xoá |
 | `created_at` `updated_at` | timestamptz | |
@@ -79,21 +79,21 @@ Cấm: không `role`, không `package`, không `tier`.
 
 `id` · `uuid` · `email` citext UNIQUE · `password_hash` · `display_name` ·
 `role` enum (`super_admin`\|`content_reviewer`) NOT NULL · `mfa_enabled` bool ·
-`refresh_token_version` · `is_active` · `created_at` `updated_at`.
+`session_version` · `is_active` · `created_at` `updated_at`.
 
 ### 7.3 Bảng auth phụ — polymorphic
 
 | Bảng | Cột đặc thù |
 |---|---|
-| `active_sessions` | `refresh_token_hash` · `device_label` · `ip_address` · `auth_method` (`password`\|`social`) · `reauth_at` · `last_used_at` · `expires_at` |
+| `active_sessions` | `device_id` UUID UNIQUE · `device_label` · `ip_address` · `auth_method` (`password`\|`social`) · `remembered` · `last_used_at` · `expires_at` · `revoked_at`; **không token/hash** |
 | `mfa_settings` | `secret_encrypted` · `confirmed_at` |
 | `mfa_recovery_codes` | `code_hash` · `used_at` |
 | `verification_tokens` | `purpose` (`email_verify`\|`password_reset`) · `token_hash` · `expires_at` · `used_at` |
 
 Chung: `(account_type, account_id)` — `account_type ∈ {user, manager}`.
 
-`reauth_at` là nguồn sự thật của cửa sổ reauth 5 phút —
-[`auth-tokens-sessions.md`](auth-tokens-sessions.md) §7.4.
+`active_sessions` chỉ là metadata/audit thiết bị; Redis là session authority và giữ reauth
+state — [`auth-tokens-sessions.md`](auth-tokens-sessions.md) §7.2, §7.5.
 
 ### 7.3a `social_identities` — không phải polymorphic
 
@@ -166,9 +166,9 @@ Index `(user_id, status, expires_at)`.
 `(user_id, quota_key, period_start)` PK ghép · `used` int · `limit_snapshot` int ·
 `period_end` · `updated_at`.
 
-### 7.10 Module `ops` — P0, vào migration #1
+### 7.10 Module `ops` — P0, vào migration nền
 
-Ba bảng dưới đây **vào migration #1** (bước 8 theo [`roadmap.md`](../roadmap.md)). **Điều kiện chặn (D-AD):**
+Các bảng dưới đây thuộc schema P0 (bước 8 theo [`roadmap.md`](../roadmap.md)). **Điều kiện chặn (D-AD):**
 [`audit-log.md`](audit-log.md) và [`backup-and-restore.md`](backup-and-restore.md) phải
 `status: approved` **trước khi** migration #1 chạy — cột của `audit_logs`/`backup_log` do hai
 spec đó sở hữu.
@@ -186,7 +186,8 @@ spec đó sở hữu.
 | `audit_logs` | [`audit-log.md`](audit-log.md) §7.1 — INSERT-only | [`audit-log.md`](audit-log.md) `approved` 2026-08-07 |
 | `content_review_log` | xem §7.10a dưới | [`schema-identity-billing.md`](schema-identity-billing.md) (file này, D-AC) |
 | `backup_log` | [`backup-and-restore.md`](backup-and-restore.md) §7.2 | [`backup-and-restore.md`](backup-and-restore.md) `approved` 2026-08-07 |
-| `notifications` | [`notification-service.md`](notification-service.md) §7.2 | [`notification-service.md`](notification-service.md) `approved` 2026-08-07 (`D-AF`, P2→P0) |
+| `notifications` | [`notification-service.md`](notification-service.md) §7.2 — logical event | [`notification-service.md`](notification-service.md) (`D-AF`, P2→P0) |
+| `notification_deliveries` | [`notification-service.md`](notification-service.md) §7.3 — một hàng mỗi channel | [`notification-service.md`](notification-service.md), Task #83 |
 
 **D-AP (2026-08-08):** `notifications` chuyển từ §7.10b (hoãn) sang bảng trên. §7.10b viết
 trước `D-AF` (Task #5) chuyển [`notification-service.md`](notification-service.md) từ P2 sang
@@ -195,6 +196,12 @@ P0 — bảng đó bị bỏ quên trong danh sách hoãn khi phase của spec s
 [`password-recovery.md`](../03-account/password-recovery.md) và
 [`email-verification.md`](../03-account/email-verification.md) — cả hai P0, cả hai cần gửi
 email thật ở migration #1. Bảng phải tồn tại từ đầu, không hoãn theo tính năng UI quản lý nó.
+
+**D-ND (2026-08-13):** channel không còn nằm trên `notifications`. Logical event và trạng thái
+provider tách thành `notifications` + `notification_deliveries`; producer ghi cả hai trong cùng
+transaction. Migration Task #83 phải backfill theo `channel/status` cũ, có test rollback local và
+không được xoá dữ liệu delivery trước khi đối chiếu count. `notification_reads` và
+`notification_endpoints` là P5, tạo cùng Task #84 theo hai spec sở hữu.
 
 ### 7.10a `content_review_log` — polymorphic, INSERT-only
 
@@ -221,13 +228,45 @@ INSERT-only ([`data-model-overview.md`](data-model-overview.md) `BR-DM-05` — b
 
 Bảng **không** tạo ở P0 — tạo cùng lúc với tính năng sở hữu:
 `error_log` (Observability), `feature_flags` (feature-flag-service),
-`content_seed_batches` (content-seed-authoring). `notifications` đã chuyển sang §7.10 —
-xem `D-AP`.
+`content_seed_batches` (content-seed-authoring), `notification_reads`
+([`../03-account/notification-inbox.md`](../03-account/notification-inbox.md)) và
+`notification_endpoints` ([`browser-push.md`](browser-push.md)). `notifications` và
+`notification_deliveries` ở §7.10; xem `D-AP` và `D-ND`.
+
+### 7.10c `notification_reads` — P5, tạo cùng Task #84
+
+| Cột | Kiểu | Ràng buộc |
+|---|---|---|
+| `notification_id` | bigint | PK + FK `notifications(id)` ON DELETE CASCADE |
+| `read_at` | timestamptz | NOT NULL; lần mark đầu tiên được giữ, gọi lại idempotent |
+| `created_at` · `updated_at` | timestamptz | NOT NULL |
+
+Không lặp `user_id`: ownership luôn join qua recipient của `notifications`, tránh hai owner id có
+thể lệch nhau. Chỉ logical notification `recipient_type = user` được tạo read row; integration test
+bắt Manager/Child/cross-user write.
+
+### 7.10d `notification_endpoints` — P5, tạo cùng Task #84
+
+| Cột | Kiểu | Ràng buộc |
+|---|---|---|
+| `id` | bigserial | PK |
+| `uuid` | uuid | UNIQUE NOT NULL, public id |
+| `user_id` | bigint | FK `users(id)` ON DELETE CASCADE, NOT NULL |
+| `provider` | enum | Chỉ `fcm_web` trong P5 hiện hành |
+| `client_installation_id` | uuid | NOT NULL, UNIQUE `(user_id, client_installation_id)` |
+| `token_encrypted` | bytea | NOT NULL; không trả qua API |
+| `token_fingerprint` | text | HMAC, UNIQUE NOT NULL; không token thô |
+| `status` | enum | `active`\|`invalid`\|`revoked` |
+| `last_seen_at` · `invalidated_at` | timestamptz | Lifecycle; không dùng làm tracking hành vi |
+| `created_at` · `updated_at` | timestamptz | NOT NULL |
+
+Cấm cột IP history, browser fingerprint, location hay FCM read receipt. Token rotate của cùng
+installation cập nhật ciphertext/fingerprint trong transaction; endpoint cũ không cùng lúc active.
 
 ## 8. API contract
 
 Không có. Cột đặc quyền không nhận từ payload:
-`managers.role` · `users.status` · `users.refresh_token_version` · `entitlements.status` ·
+`managers.role` · `users.status` · `users.session_version` · `entitlements.status` ·
 `payment_orders.status` · `payment_orders.amount_vnd`.
 
 ## 9. Acceptance criteria

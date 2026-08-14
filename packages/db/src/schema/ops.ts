@@ -7,11 +7,12 @@ import {
   pgTable,
   text,
   timestamp,
+  uniqueIndex,
   uuid,
   varchar,
 } from "drizzle-orm/pg-core";
 import { contentLifecycleStatusEnum } from "./game.ts";
-import { managerRoleEnum, managers } from "./identity.ts";
+import { managerRoleEnum, managers, users } from "./identity.ts";
 
 export const actorTypeEnum = pgEnum("actor_type", [
   "user",
@@ -44,7 +45,18 @@ export const recipientTypeEnum = pgEnum("recipient_type", ["user", "manager"]);
 export const notificationChannelEnum = pgEnum("notification_channel", [
   "email",
   "in_app",
+  "fcm_web",
 ]);
+
+export const notificationEndpointProviderEnum = pgEnum(
+  "notification_endpoint_provider",
+  ["fcm_web"]
+);
+
+export const notificationEndpointStatusEnum = pgEnum(
+  "notification_endpoint_status",
+  ["active", "invalid", "revoked"]
+);
 
 export const notificationStatusEnum = pgEnum("notification_status", [
   "queued",
@@ -144,15 +156,84 @@ export const notifications = pgTable("notifications", {
   uuid: uuid("uuid").defaultRandom().notNull().unique(),
   recipientType: recipientTypeEnum("recipient_type").notNull(),
   recipientId: bigint("recipient_id", { mode: "number" }).notNull(),
-  channel: notificationChannelEnum("channel").notNull(),
   templateCode: varchar("template_code", { length: 60 }).notNull(),
   payload: jsonb("payload"),
-  status: notificationStatusEnum("status").notNull().default("queued"),
-  suppressedReason: text("suppressed_reason"),
-  providerMessageId: varchar("provider_message_id", { length: 100 }),
-  dispatchedAt: timestamp("dispatched_at", { withTimezone: true }),
-  error: text("error"),
   createdAt: timestamp("created_at", { withTimezone: true })
     .defaultNow()
     .notNull(),
 });
+
+export const notificationDeliveries = pgTable(
+  "notification_deliveries",
+  {
+    id: bigint("id", { mode: "number" })
+      .primaryKey()
+      .generatedAlwaysAsIdentity(),
+    uuid: uuid("uuid").defaultRandom().notNull().unique(),
+    notificationId: bigint("notification_id", { mode: "number" })
+      .notNull()
+      .references(() => notifications.id, { onDelete: "cascade" }),
+    channel: notificationChannelEnum("channel").notNull(),
+    status: notificationStatusEnum("status").notNull().default("queued"),
+    suppressedReason: text("suppressed_reason"),
+    providerMessageId: varchar("provider_message_id", { length: 100 }),
+    dispatchedAt: timestamp("dispatched_at", { withTimezone: true }),
+    error: text("error"),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+  },
+  (table) => [
+    uniqueIndex("idx_notification_deliveries_active_channel").on(
+      table.notificationId,
+      table.channel
+    ),
+  ]
+);
+
+export const notificationReads = pgTable("notification_reads", {
+  notificationId: bigint("notification_id", { mode: "number" })
+    .primaryKey()
+    .references(() => notifications.id, { onDelete: "cascade" }),
+  readAt: timestamp("read_at", { withTimezone: true }).notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true })
+    .defaultNow()
+    .notNull(),
+  updatedAt: timestamp("updated_at", { withTimezone: true })
+    .defaultNow()
+    .notNull(),
+});
+
+export const notificationEndpoints = pgTable(
+  "notification_endpoints",
+  {
+    id: bigint("id", { mode: "number" })
+      .primaryKey()
+      .generatedAlwaysAsIdentity(),
+    uuid: uuid("uuid").defaultRandom().notNull().unique(),
+    userId: bigint("user_id", { mode: "number" })
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    provider: notificationEndpointProviderEnum("provider").notNull(),
+    clientInstallationId: uuid("client_installation_id").notNull(),
+    tokenEncrypted: text("token_encrypted").notNull(),
+    tokenFingerprint: text("token_fingerprint").notNull().unique(),
+    status: notificationEndpointStatusEnum("status")
+      .notNull()
+      .default("active"),
+    lastSeenAt: timestamp("last_seen_at", { withTimezone: true }),
+    invalidatedAt: timestamp("invalidated_at", { withTimezone: true }),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+    updatedAt: timestamp("updated_at", { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+  },
+  (table) => [
+    uniqueIndex("idx_notification_endpoints_user_installation").on(
+      table.userId,
+      table.clientInstallationId
+    ),
+  ]
+);

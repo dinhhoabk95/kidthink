@@ -1,18 +1,34 @@
-import { createAdminManagerToken } from "@kidthink/auth";
 import { getOwnerDb, levelDailyStats, managers } from "@kidthink/db";
 import { describe, expect, it } from "vitest";
 import levelsAnalyticsHandler from "../../../server/api/managers/analytics/levels.get.ts";
 
 function mockEvent(
-  headers: Record<string, string> = {},
+  managerContext?: {
+    id: number;
+    displayName: string;
+    role: "super_admin" | "content_reviewer";
+    version: number;
+  },
   url = "/api/managers/analytics/levels"
 ) {
   const responseHeaders: Record<string, string> = {};
   return {
     method: "GET",
     path: url,
-    node: { req: { headers, url }, res: {} },
-    context: {},
+    node: { req: { headers: {}, url }, res: {} },
+    context: {
+      ...(managerContext
+        ? {
+            manager: {
+              manager_id: managerContext.id,
+              display_name: managerContext.displayName,
+              session_id: "m_session_analytics",
+              refresh_token_version: managerContext.version,
+              role: managerContext.role,
+            },
+          }
+        : {}),
+    },
     responseHeaders,
   } as any;
 }
@@ -53,20 +69,14 @@ describe("Task 7 — GET /api/managers/analytics/levels (BR-TLM-01, BR-PRF-06)",
       avgHintsUsed: 1,
     });
 
-    const token = await createAdminManagerToken({
-      payload: {
-        manager_id: mgr.id,
-        display_name: mgr.displayName,
-        session_id: "m_session_analytics",
-        refresh_token_version: mgr.refreshTokenVersion,
-        role: "super_admin",
-      },
-      secret: "kidthink-dev-secret-kidthink-dev-secret-32bytes",
-    });
-
     // Request with limit 200 (should be capped to 100 per BR-PRF-06)
     const event = mockEvent(
-      { authorization: `Bearer ${token}` },
+      {
+        id: mgr.id,
+        displayName: mgr.displayName,
+        role: mgr.role,
+        version: mgr.refreshTokenVersion,
+      },
       "/api/managers/analytics/levels?limit=200"
     );
 

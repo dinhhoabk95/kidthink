@@ -2,10 +2,10 @@
 spec: ADMIN-AUTH
 title: Đăng nhập quản trị
 area: admin
-status: implemented
+status: approved
 mvp: true
 phase: P0
-reviewed: 2026-08-09
+reviewed: 2026-08-13
 owns:
   - Luồng đăng nhập Manager
   - Phân quyền theo role ở tầng route
@@ -19,7 +19,7 @@ depends_on:
 ## 1. Objective
 
 Bề mặt admin **tách hoàn toàn** khỏi bề mặt người dùng: subdomain riêng, cookie riêng,
-token audience riêng, và MFA bắt buộc.
+session namespace riêng, và MFA bắt buộc.
 
 Manager có quyền chạm tiền và nội dung mà trẻ sẽ chơi. Đó là lý do bề mặt này chặt hơn.
 
@@ -33,15 +33,18 @@ Manager có quyền chạm tiền và nội dung mà trẻ sẽ chơi. Đó là 
 ## 3. Entry points
 
 `admin.{domain}/login` · `POST /api/guest/auth/managers/login` ·
-`POST /api/guest/auth/managers/mfa` · `POST /api/managers/auth/refresh` · `/logout`.
+`POST /api/guest/auth/managers/mfa` · `POST /api/guest/auth/managers/remember` · `/logout`.
 
 ## 4. Main flow
 
 1. Nhập email + mật khẩu → xác thực.
-2. Đúng → cấp challenge credential một mục đích, TTL ngắn, trả **428** `MFA_REQUIRED`.
-   Credential này không phải access token, không qua guard và không tạo `active_sessions`.
-3. Nhập mã TOTP kèm challenge credential → xác thực → cấp cặp token đầy đủ.
-4. Ghi `active_sessions` + audit `manager_login`.
+2. Đúng → cấp opaque Redis challenge 256-bit một mục đích, TTL tối đa 5 phút, trả **428**
+   `MFA_REQUIRED`; server chỉ lưu digest và challenge chỉ consume được một lần.
+   Credential này không phải session, không qua guard và không tạo `active_sessions`.
+   Preference `rememberMe` được bind vào challenge.
+3. Nhập mã TOTP kèm challenge credential → xác thực → cấp opaque session một giờ; chỉ cấp
+   remember credential tối đa 365 ngày nếu preference đã bind là true.
+4. Ghi Redis session authority + metadata `active_sessions` + audit `manager_login`.
 5. Mỗi route admin kiểm `requireManagerAuth()` và `requireRole()` khi cần.
 
 ## 5. Alternative flows
@@ -64,18 +67,18 @@ Manager có quyền chạm tiền và nội dung mà trẻ sẽ chơi. Đó là 
 | `BR-ADA-04` | `requireRole()` kiểm ở **server route**, không chỉ ẩn menu | Ẩn menu không phải phân quyền |
 | `BR-ADA-05` | Mọi đăng nhập và thất bại ghi `audit_logs` | Đảm bảo khả năng truy vết thao tác quản trị và phát hiện hành vi bất thường |
 | `BR-ADA-06` | Manager **không tự đổi được `role` của mình** | Leo thang đặc quyền |
-| `BR-ADA-07` | Phiên Manager TTL **ngắn hơn** User: access 15 phút, refresh **24 giờ** | Giảm cửa sổ rủi ro khi thiết bị quản trị bị bỏ quên |
+| `BR-ADA-07` | Session Manager tuyệt đối **1 giờ**; remember mặc định tắt, chỉ cấp sau MFA và tuyệt đối tối đa 365 ngày | Session làm việc ngắn; quyết định ghi nhớ phải rõ ràng và không bypass MFA ban đầu |
 | `BR-ADA-08` | Reset MFA của Manager khác **phải** do `super_admin` và ghi audit | Ngăn chặn bypass MFA trái phép giữa các tài khoản quản trị |
 
 ## 7. Data
 
-### 7.1 Token
+### 7.1 Session context
 
 ```ts
-interface ManagerTokenPayload {
-  sub: string; aud: "kidthink:manager"; iss: "kidthink:admin"; sid: string;
-  name: string; ver: number; role: "super_admin" | "content_reviewer";
-  iat: number; exp: number;
+interface AuthenticatedManager {
+  managerId: number; deviceId: string; displayName: string;
+  role: "super_admin" | "content_reviewer";
+  sessionExpiresAt: string; reauthAt: string | null;
 }
 ```
 
@@ -101,12 +104,13 @@ interface ManagerTokenPayload {
 
 ### `POST /api/guest/auth/managers/login`
 
-Body `{ email, password }`. **428** `MFA_REQUIRED` + challenge credential một mục đích.
+Body `{ email, password, rememberMe?: boolean }`. **428** `MFA_REQUIRED` + challenge credential một mục đích.
 401 `INVALID_CREDENTIALS`.
 
 ### `POST /api/guest/auth/managers/mfa`
 
-Body `{ code, challenge }` — TOTP hoặc mã khôi phục. 200 → cặp token đầy đủ.
+Body `{ code, challenge }` — TOTP hoặc mã khôi phục. 200 → session một giờ; remember chỉ theo
+preference đã bind trong challenge.
 
 ## 9. Acceptance criteria
 
@@ -142,9 +146,12 @@ Scenario: BR-ADA-05 — đăng nhập được ghi audit
   When manager đăng nhập thành công và thất bại một lần
   Then audit_logs có manager_login và manager_login_failed
 
-Scenario: BR-ADA-07 — phiên manager ngắn hơn
-  When decode refresh token của manager
-  Then hạn không quá 24 giờ
+Scenario: BR-ADA-07 — Manager remember không bypass MFA
+  Given Manager mới chỉ qua mật khẩu và chọn rememberMe
+  Then chưa có session hoặc remember credential
+  When hoàn tất MFA hợp lệ
+  Then session hết hạn sau một giờ
+  And remember hết hạn tuyệt đối không quá 365 ngày
 ```
 
 ## 10. Boundaries

@@ -2,10 +2,10 @@
 spec: PASSWORD-RECOVERY
 title: Quên và đặt lại mật khẩu
 area: account
-status: implemented
+status: approved
 mvp: true
 phase: P0
-reviewed: 2026-08-08
+reviewed: 2026-08-13
 owns:
   - Luồng quên mật khẩu và đặt lại
 depends_on:
@@ -36,7 +36,7 @@ User. Manager dùng luồng riêng có MFA.
 1. Nhập email → **luôn trả 200**, thông báo giống nhau.
 2. Nếu email tồn tại: sinh token, hash lưu, hạn **60 phút**, gửi email.
 3. Bấm link → nhập mật khẩu mới.
-4. Đặt lại → `refresh_token_version` **+1** → mọi phiên chết.
+4. Đặt lại → `session_version` **+1** và revoke Redis account index → mọi phiên chết.
 5. Chuyển tới đăng nhập, gửi email thông báo mật khẩu đã đổi.
 
 ## 5. Alternative flows
@@ -56,7 +56,7 @@ User. Manager dùng luồng riêng có MFA.
 |---|---|---|
 | `BR-PWR-01` | `forgot-password` **luôn 200**, thông báo giống hệt | Enumeration email |
 | `BR-PWR-02` | Token hash, hạn **60 phút**, dùng một lần | Ngắn hơn xác thực email vì hậu quả nặng hơn |
-| `BR-PWR-03` | Đặt lại → `refresh_token_version` **+1** | Nếu tài khoản đã bị chiếm, đổi mật khẩu phải đá kẻ tấn công ra |
+| `BR-PWR-03` | Đặt lại → `session_version` **+1** và thu hồi mọi session/remember credential | Nếu tài khoản đã bị chiếm, đổi mật khẩu phải đá kẻ tấn công ra |
 | `BR-PWR-04` | Gửi **email thông báo** sau khi đổi thành công | Người thật biết ngay nếu không phải họ đổi |
 | `BR-PWR-05` | Yêu cầu mới **vô hiệu token cũ** | Hai token cùng hợp lệ nghĩa là kẻ tấn công dùng token đánh cắp trong khi người thật đang yêu cầu lại |
 | `BR-PWR-06` | Rate limit theo **IP và email** | Chặn brute force token và enumeration email cùng lúc |
@@ -65,7 +65,7 @@ User. Manager dùng luồng riêng có MFA.
 | `BR-PWR-09` | Cấm — **NEVER tự đăng nhập** sau khi đặt lại | Buộc dùng mật khẩu mới xác nhận người dùng nhớ nó |
 | `BR-PWR-10` | Tài khoản chỉ có SNS **vẫn dùng được** luồng này — nó **đặt** mật khẩu thay vì đặt lại. Thông báo và mã trả về giống hệt | `BR-PWR-01`. Rẽ nhánh theo `password_hash IS NULL` sẽ tiết lộ tài khoản đăng ký bằng cách nào. Mô hình tin cậy không đổi: cả hai đều dựa trên kiểm soát hộp thư |
 | `BR-PWR-11` | Luồng này Cấm — **NEVER gỡ hay đụng tới** `social_identities` | Đặt mật khẩu là **thêm** một cách vào, không phải thay cách cũ. Gỡ SNS là thao tác tường minh ở [`social-account-linking.md`](social-account-linking.md) |
-| `BR-PWR-12` | Đặt mật khẩu qua luồng này **vẫn** tăng `refresh_token_version` — khác `BR-ACS-10` | Ở đây ta không biết ai yêu cầu. Ở [`account-settings.md`](account-settings.md) người dùng đã reauth trong phiên đang dùng |
+| `BR-PWR-12` | Đặt mật khẩu qua luồng này **vẫn** tăng `session_version` — khác `BR-ACS-10` | Ở đây ta không biết ai yêu cầu. Ở [`account-settings.md`](account-settings.md) người dùng đã reauth trong phiên đang dùng |
 
 ## 7. Data
 
@@ -148,7 +148,7 @@ Scenario: BR-PWR-11 — đặt mật khẩu không gỡ SNS
 **Always**
 - Luôn trả 200 ở `forgot-password`.
 - Hash token, hạn 60 phút, dùng một lần.
-- Tăng `refresh_token_version` khi đổi.
+- Tăng `session_version` và revoke Redis khi đổi.
 - Gửi email thông báo sau khi đổi.
 
 **Ask first**

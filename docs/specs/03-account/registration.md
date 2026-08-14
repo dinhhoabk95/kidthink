@@ -2,10 +2,10 @@
 spec: REGISTRATION
 title: Đăng ký tài khoản
 area: account
-status: implemented
+status: approved
 mvp: true
 phase: P0
-reviewed: 2026-08-08
+reviewed: 2026-08-13
 owns:
   - Luồng đăng ký bằng email
   - Ràng buộc đồng ý điều khoản
@@ -90,7 +90,8 @@ Guest → User. Cấm Trẻ không đăng ký.
 ### 7.2 Sau đăng ký
 
 `users.status = pending_verification` · 2 hàng `consent_logs` · 1 `verification_tokens` ·
-1 `notifications` `email_verification` · cặp token đăng nhập hạn chế.
+1 `notifications` `email_verification` · opaque session một giờ ở chế độ hạn chế; remember chỉ
+khi người đăng ký chủ động chọn.
 
 ### 7.3 Chế độ hạn chế
 

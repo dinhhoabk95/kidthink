@@ -1,34 +1,13 @@
-import { createWebUserToken } from "@kidthink/auth";
 import { describe, expect, it } from "vitest";
 import challengeHandler from "../../server/api/users/parent-gate/challenge.post";
 import verifyHandler from "../../server/api/users/parent-gate/verify.post";
 
-const JWT_SECRET =
-  process.env.JWT_SECRET || "kidthink-dev-secret-kidthink-dev-secret-32bytes";
-
-async function createAuthUserHeader(userId = 101) {
-  const token = await createWebUserToken({
-    payload: {
-      user_id: userId,
-      display_name: "Parent User",
-      session_id: `sess_${userId}_${Date.now()}`,
-      refresh_token_version: 0,
-    },
-    secret: JWT_SECRET,
-  });
-  return `Bearer ${token}`;
-}
-
-function mockEvent(
-  method: string,
-  headers: Record<string, string> = {},
-  body: any = {}
-) {
+function mockEvent(method: string, userId = 101, body: any = {}) {
   const responseHeaders: Record<string, string> = {};
   return {
     method,
     node: {
-      req: { headers, url: "/", originalUrl: "/" },
+      req: { headers: {}, url: "/", originalUrl: "/" },
       res: {
         setHeader: (name: string, value: string) => {
           responseHeaders[name.toLowerCase()] = value;
@@ -38,6 +17,12 @@ function mockEvent(
       },
     },
     context: {
+      user: {
+        user_id: userId,
+        display_name: "Parent User",
+        session_id: `sess_${userId}`,
+        refresh_token_version: 0,
+      },
       body,
     },
     _body: body,
@@ -46,8 +31,7 @@ function mockEvent(
 
 describe("Parent Gate Server Routes (BR-PGT-01..07 & D-GO)", () => {
   it("POST /api/users/parent-gate/challenge generates single-digit challenge", async () => {
-    const authHeader = await createAuthUserHeader(101);
-    const event = mockEvent("POST", { authorization: authHeader });
+    const event = mockEvent("POST", 101);
 
     const res = await challengeHandler(event);
     expect(res.challenge_id).toBeDefined();
@@ -59,19 +43,14 @@ describe("Parent Gate Server Routes (BR-PGT-01..07 & D-GO)", () => {
   });
 
   it("POST /api/users/parent-gate/verify verifies challenge answer and returns gate_token", async () => {
-    const authHeader = await createAuthUserHeader(101);
-    const challengeEvent = mockEvent("POST", { authorization: authHeader });
+    const challengeEvent = mockEvent("POST", 101);
     const challenge = await challengeHandler(challengeEvent);
     const correctAnswer = challenge.factor_a * challenge.factor_b;
 
-    const verifyEvent = mockEvent(
-      "POST",
-      { authorization: authHeader },
-      {
-        challenge_payload: challenge.challenge_payload,
-        answer: correctAnswer,
-      }
-    );
+    const verifyEvent = mockEvent("POST", 101, {
+      challenge_payload: challenge.challenge_payload,
+      answer: correctAnswer,
+    });
 
     const res = await verifyHandler(verifyEvent);
     expect(res.gate_token).toBeDefined();
@@ -79,19 +58,14 @@ describe("Parent Gate Server Routes (BR-PGT-01..07 & D-GO)", () => {
   });
 
   it("POST /api/users/parent-gate/verify throws PARENT_GATE_FAILED on wrong answer", async () => {
-    const authHeader = await createAuthUserHeader(101);
-    const challengeEvent = mockEvent("POST", { authorization: authHeader });
+    const challengeEvent = mockEvent("POST", 101);
     const challenge = await challengeHandler(challengeEvent);
     const wrongAnswer = challenge.factor_a * challenge.factor_b + 5;
 
-    const verifyEvent = mockEvent(
-      "POST",
-      { authorization: authHeader },
-      {
-        challenge_payload: challenge.challenge_payload,
-        answer: wrongAnswer,
-      }
-    );
+    const verifyEvent = mockEvent("POST", 101, {
+      challenge_payload: challenge.challenge_payload,
+      answer: wrongAnswer,
+    });
 
     try {
       await verifyHandler(verifyEvent);

@@ -1,24 +1,37 @@
+import { getBrowserSessionService } from "@kidthink/auth";
 import { defineEventHandler, type H3Event } from "h3";
+import { clearUserSession, getUserSession } from "#imports";
 import {
-  clearUserAuthCookies,
-  getUserRefreshService,
-  requireWebUserSession,
+  clearUserRememberCookie,
   respondToUserAuthError,
+  validateUserCsrf,
 } from "../../../utils/auth-runtime";
 
 export async function handleLogout(event: H3Event) {
   try {
-    const userSession = await requireWebUserSession(event);
-    const refreshService = getUserRefreshService(event);
+    validateUserCsrf(event);
+    const session = await getUserSession(event);
+    const service = getBrowserSessionService();
 
-    await refreshService.revokeSession(
-      userSession.session_id,
-      "user",
-      userSession.user_id
-    );
+    if (session?.user?.user_id && session.secure?.session_token) {
+      // Revoke session in Redis
+      await service
+        .resolve("user", session.secure.session_token)
+        .then(async (authCtx) => {
+          if (authCtx?.user) {
+            await service.revokeAll({
+              account_type: "user",
+              account_id: authCtx.user.user_id,
+            });
+          }
+        })
+        .catch(() => null);
+    }
 
-    clearUserAuthCookies(event);
-    return { ok: true };
+    await clearUserSession(event);
+    clearUserRememberCookie(event);
+
+    return { success: true };
   } catch (error) {
     return respondToUserAuthError(event, error);
   }

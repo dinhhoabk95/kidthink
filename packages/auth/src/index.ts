@@ -8,6 +8,13 @@ export {
   getAuthNamespaceConfig,
 } from "./auth-namespace";
 export {
+  type BrowserSessionService,
+  type CreateBrowserSessionInput,
+  DefaultBrowserSessionService,
+  type RestoreRememberSessionInput,
+  type RevokeDeviceInput,
+} from "./browser-session";
+export {
   type AuthContext,
   type AuthEvent,
   createAuthContext,
@@ -38,15 +45,12 @@ export {
   appError,
 } from "./errors";
 export {
-  type CreateManagerTokenOptions,
-  createAdminManagerToken,
-  createMfaChallengeToken,
-  KIDTHINK_ADMIN_ISSUER,
-  KIDTHINK_MANAGER_AUDIENCE,
-  type VerifyManagerTokenOptions,
-  verifyAdminManagerToken,
-  verifyMfaChallengeToken,
-} from "./manager-session";
+  type CreatedMfaChallengeOutput,
+  type CreateMfaChallengeInput,
+  MFA_CHALLENGE_TTL_SECONDS,
+  type MfaChallengePayload,
+  MfaChallengeService,
+} from "./mfa-challenge";
 export {
   createParentGateToken,
   generateParentGateChallenge,
@@ -88,34 +92,33 @@ export {
   verifyReauthWindow,
 } from "./reauth";
 export {
-  type AuthNamespace,
-  type CreateRefreshTokenOptions,
-  createRefreshToken,
-  hashRefreshToken,
-  RefreshService,
-  type RefreshServiceOptions,
-  type RotateTokenInput,
-  type RotateTokenResult,
-  type VerifiedRefreshToken,
-  verifyRefreshToken,
-} from "./refresh";
+  getAuthRedisClient,
+  getBrowserSessionService,
+  setAuthRedisClient,
+} from "./redis-client";
 export {
-  base32Decode,
-  base32Encode,
+  type AuthNamespace as RedisAuthNamespace,
+  type CreatedSessionOutput,
+  type CreateSessionOptions,
+  generateTokenHex,
+  InMemoryRedisClient,
+  type MinimalRedisClient,
+  REMEMBER_MAX_TTL_SECONDS,
+  RedisSessionStore,
+  type RememberData,
+  type RestoredSessionOutput,
+  type RestoreOptions,
+  SESSION_TTL_SECONDS,
+  type SessionData,
+  sha256,
+} from "./redis-session-store";
+export {
   decryptTotpSecret,
   encryptTotpSecret,
   generateRecoveryCodes,
   generateTotpCode,
   generateTotpSecret,
+  generateTotpUri,
   hashRecoveryCode,
   verifyTotpCode,
 } from "./totp";
-export {
-  type CreateUserTokenOptions,
-  createWebUserToken,
-  KIDTHINK_USER_AUDIENCE,
-  KIDTHINK_WEB_ISSUER,
-  USER_ACCESS_TOKEN_TTL_SECONDS,
-  type VerifyUserTokenOptions,
-  verifyWebUserToken,
-} from "./user-session";

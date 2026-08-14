@@ -2,10 +2,10 @@
 spec: LOGIN-AND-SESSION
 title: Đăng nhập và quản lý phiên
 area: account
-status: implemented
+status: approved
 mvp: true
 phase: P0
-reviewed: 2026-08-08
+reviewed: 2026-08-13
 owns:
   - Luồng đăng nhập User bằng email và mật khẩu
   - Quản lý thiết bị đang đăng nhập
@@ -21,10 +21,10 @@ depends_on:
 Vào lại tài khoản, và thấy được **những thiết bị nào đang đăng nhập** để thu hồi khi cần.
 
 Gộp hai thứ vào một spec vì đăng nhập **tạo ra** phiên — tách ra thì không spec được vòng
-đời token ở đâu.
+đời session ở đâu.
 
 Đăng nhập bằng Google / Facebook thuộc [`social-login.md`](social-login.md). Nó **dùng lại
-toàn bộ** phần phiên ở đây: cùng cặp token, cùng `active_sessions`, cùng màn hình quản lý
+toàn bộ** phần phiên ở đây: cùng opaque session/remember contract, cùng `active_sessions`, cùng màn hình quản lý
 thiết bị, cùng đích `/me`. Khác nhau chỉ ở cách chứng minh danh tính lúc vào.
 
 ## 2. Actors
@@ -33,15 +33,17 @@ User. Cấm Trẻ không đăng nhập.
 
 ## 3. Entry points
 
-`/dang-nhap` · `POST /api/guest/auth/users/login` · `POST /api/users/auth/refresh` ·
+`/dang-nhap` · `POST /api/guest/auth/users/login` · `POST /api/guest/auth/users/remember` ·
 `/logout` · `/logout-all` · `GET /api/users/auth/sessions`.
 
 ## 4. Main flow
 
 1. Nhập email + mật khẩu.
-2. Xác thực → cấp access (15 phút) + refresh (7 ngày).
-3. Ghi `active_sessions` với nhãn thiết bị suy từ user agent.
-4. Chuyển tới `/me` hoặc trang đang định vào trước đó.
+2. Xác thực → cấp opaque session cookie tuyệt đối 1 giờ.
+3. Nếu `rememberMe=true`, cấp remember cookie rotate-on-use, hạn tuyệt đối tối đa 365 ngày;
+   mặc định không tạo.
+4. Ghi metadata `active_sessions` với device id và nhãn suy từ user agent; Redis giữ authority.
+5. Chuyển tới `/me` hoặc trang đang định vào trước đó.
 
 ## 5. Alternative flows
 
@@ -51,9 +53,10 @@ User. Cấm Trẻ không đăng nhập.
 | `pending_verification` | Đăng nhập được, chế độ hạn chế, hiện nhắc xác thực |
 | `suspended` | 403 `ACCOUNT_SUSPENDED` kèm cách liên hệ |
 | `deleted` trong 30 ngày | 403 kèm nút **huỷ yêu cầu xoá** |
-| Access hết hạn | Client tự refresh, không bắt đăng nhập lại |
-| Refresh bị tái dùng | Thu hồi **toàn bộ** phiên |
-| MFA đã bật | **428** `MFA_REQUIRED` → nhập mã → cấp token đầy đủ. Xem [`mfa.md`](mfa.md) |
+| Session một giờ hết hạn, có remember | Client gọi restore; backend rotate remember và cấp session một giờ mới |
+| Session hết hạn, không có remember | Đăng nhập đầy đủ lại |
+| Remember bị tái dùng | Thu hồi **toàn bộ** phiên và remember credential |
+| MFA đã bật | **428** `MFA_REQUIRED` → nhập mã → cấp session/remember theo preference. Xem [`mfa.md`](mfa.md) |
 | Chọn nút SNS | Rời luồng này sang [`social-login.md`](social-login.md) |
 | Tài khoản chỉ có SNS, thử đăng nhập bằng mật khẩu | **401** `INVALID_CREDENTIALS` — giống hệt mọi lần sai. Cấm nói "tài khoản này dùng Google" (`BR-LGN-09`) |
 
@@ -63,11 +66,11 @@ User. Cấm Trẻ không đăng nhập.
 |---|---|---|
 | `BR-LGN-01` | Thông báo lỗi **không tiết lộ** email có tồn tại; thời gian phản hồi không lệch | Enumeration email |
 | `BR-LGN-02` | Rate limit theo **IP và account** | `BR-RTL-01` |
-| `BR-LGN-03` | Refresh token **xoay** mỗi lần dùng; tái dùng → thu hồi toàn bộ | `BR-AUT-04` |
-| `BR-LGN-04` | `logout` xoá **phiên hiện tại**; `logout-all` tăng `refresh_token_version` | Hai thao tác khác nhau — xoá một phiên là rời thiết bị; xoá tất cả là nghi bị chiếm — không nên buộc chọn cái to hơn |
+| `BR-LGN-03` | Remember credential **xoay** mỗi lần restore; tái dùng → thu hồi toàn bộ | `BR-AUT-29` |
+| `BR-LGN-04` | `logout` xoá thiết bị hiện tại; `logout-all` tăng `session_version` và thu hồi mọi device index | Hai thao tác khác nhau — xoá một phiên là rời thiết bị; xoá tất cả là nghi bị chiếm |
 | `BR-LGN-05` | Danh sách thiết bị hiện **nhãn thô** (loại trình duyệt, hệ điều hành, thành phố từ IP), không IP đầy đủ | Đủ để nhận ra, không đủ để lộ vị trí chính xác |
 | `BR-LGN-06` | Đổi mật khẩu → mọi phiên khác chết | Người đổi mật khẩu vì nghi lộ; phiên cũ còn sống là lỗ hổng |
-| `BR-LGN-07` | Cấm — **NEVER "ghi nhớ đăng nhập" kéo dài quá 7 ngày** | Thiết bị dùng chung với trẻ |
+| `BR-LGN-07` | `rememberMe` mặc định false; khi chủ động chọn có hạn tuyệt đối tối đa 365 ngày, không sliding | Tôn trọng yêu cầu ghi nhớ mà không tạo phiên vĩnh viễn trên thiết bị dùng chung |
 | `BR-LGN-08` | Sau đăng nhập, **không tự vào khu vực chơi** — vào `/me` | Người lớn cần chọn trẻ trước |
 | `BR-LGN-09` | Tài khoản có `password_hash` NULL trả **cùng** `INVALID_CREDENTIALS` khi thử mật khẩu | `BR-ERR-02`. "Tài khoản này dùng Google" cho kẻ tấn công biết nên nhắm vào đâu, và đó là thông tin ta không nợ ai |
 | `BR-LGN-10` | Danh sách thiết bị hiện **cách đăng nhập** (`auth_method`) của từng phiên | Phiên tạo bằng SNS mà người dùng không nhớ đã bấm là dấu hiệu tài khoản SNS bị chiếm — họ cần thấy để nhận ra |
@@ -99,8 +102,13 @@ User. Cấm Trẻ không đăng nhập.
 
 ### `POST /api/guest/auth/users/login`
 
-Body `{ email, password }`. 200 → đặt cookie. 401 `INVALID_CREDENTIALS` ·
+Body `{ email, password, rememberMe?: boolean }`. 200 → đặt cookie. 401 `INVALID_CREDENTIALS` ·
 403 `ACCOUNT_SUSPENDED` · 429 `RATE_LIMITED`.
+
+### `POST /api/guest/auth/users/remember`
+
+Body rỗng; remember cookie + `x-csrf-token`. 200 → rotate credential, đặt session một giờ;
+401 nếu thiếu/hết/reuse, 503 nếu Redis không tới được.
 
 ### `GET /api/users/auth/sessions` · `DELETE /api/users/auth/sessions/{id}`
 
@@ -115,11 +123,17 @@ Scenario: BR-LGN-01 — không tiết lộ email tồn tại
   Then cả hai trả cùng mã và thông báo
   And chênh lệch thời gian dưới 50ms
 
-Scenario: BR-LGN-03 — tái dùng refresh thu hồi toàn bộ
-  Given client đã refresh với token R
+Scenario: BR-LGN-03 — tái dùng remember thu hồi toàn bộ
+  Given client đã restore với remember token R
   When gửi lại R
   Then trả 401
-  And mọi phiên của user bị thu hồi
+  And mọi session và remember credential của user bị thu hồi
+
+Scenario: BR-LGN-07 — remember không sliding quá một năm
+  Given user chọn Ghi nhớ đăng nhập tại T0
+  And credential đã rotate nhiều lần
+  When thời gian là T0 cộng 365 ngày
+  Then user phải đăng nhập đầy đủ lại
 
 Scenario: BR-LGN-06 — đổi mật khẩu giết phiên khác
   Given user đăng nhập trên 2 thiết bị
@@ -165,11 +179,11 @@ Scenario: BR-LGN-10 — danh sách thiết bị hiện cách đăng nhập
 
 **Always**
 - Thông báo lỗi không tiết lộ tài khoản tồn tại.
-- Xoay refresh token.
+- Xoay remember credential nguyên tử.
 - Vào `/me` sau đăng nhập.
 
 **Ask first**
-- Đổi TTL token.
+- Đổi TTL session hoặc remember.
 - Thêm "ghi nhớ đăng nhập" dài hơn.
 - Thêm nhà cung cấp SNS — [`../01-platform/oauth-provider-registry.md`](../01-platform/oauth-provider-registry.md) §7.1.
 

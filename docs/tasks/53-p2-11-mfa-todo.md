@@ -61,17 +61,19 @@
 
 ## Task 3 — Bật và xác nhận MFA
 
+- [ ] Catalog pin `otpauth` `^9.5`; chỉ adapter MFA trong `packages/auth` import trực tiếp.
+- [ ] `BR-MFA-12` secret/URI/validate đi qua `otpauth`; không Base32/HMAC/TOTP tự viết.
 - [ ] Setup cần auth + reauth ≤5 phút; secret lưu mã hoá.
 - [ ] Verify đúng mới set `confirmed_at` và sinh 10 recovery code hash.
 - [ ] TOTP ±1 bước; sai 5 lần khoá 15 phút.
 - [ ] Recovery code chỉ hiện trong response sinh code một lần.
-- [ ] Bật MFA bump `refresh_token_version`, reissue phiên A ở version mới.
+- [ ] Bật MFA bump `session_version`, reissue phiên A ở version mới.
 - [ ] Test 2 thiết bị: A còn dùng được, B nhận `SESSION_REVOKED`.
 - [ ] `pnpm test -- mfa-setup` xanh với `BR-MFA-01/02/04/06/10`.
 
 ## Task 4 — Challenge sau password hoặc SNS
 
-- [ ] Password đúng + MFA bật → 428 + challenge; không access/refresh cookie/session.
+- [ ] Password đúng + MFA bật → 428 + opaque Redis challenge; không session/remember cookie.
 - [ ] SNS đúng + MFA bật → cùng 428 + challenge; không bypass.
 - [ ] `POST /api/guest/auth/users/mfa` nhận `{ code, challenge }`.
 - [ ] Consume challenge nguyên tử trước khi cấp session.

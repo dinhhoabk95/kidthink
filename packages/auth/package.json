@@ -9,7 +9,9 @@
   },
   "dependencies": {
     "argon2": "^0.45.1",
-    "jose": "catalog:"
+    "ioredis": "catalog:",
+    "jose": "catalog:",
+    "otpauth": "catalog:"
   },
   "devDependencies": {
     "@kidthink/config": "workspace:*",

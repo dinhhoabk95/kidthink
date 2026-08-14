@@ -1,4 +1,4 @@
-import { createWebUserToken, hashPassword } from "@kidthink/auth";
+import { hashPassword } from "@kidthink/auth";
 import { activeSessions, getAppDb, users } from "@kidthink/db";
 import { eq } from "drizzle-orm";
 import { beforeEach, describe, expect, it } from "vitest";
@@ -102,7 +102,7 @@ describe("Task 3 — Login & Session Management (BR-LGN-01..12)", () => {
       .values({
         accountType: "user",
         accountId: user.id,
-        refreshTokenHash: `hash1-${Date.now()}`,
+        deviceId: "dev_s1",
         authMethod: "password",
         expiresAt: new Date(Date.now() + 86_400_000),
       })
@@ -113,21 +113,11 @@ describe("Task 3 — Login & Session Management (BR-LGN-01..12)", () => {
       .values({
         accountType: "user",
         accountId: user.id,
-        refreshTokenHash: `hash2-${Date.now()}`,
+        deviceId: "dev_s2",
         authMethod: "password",
         expiresAt: new Date(Date.now() + 86_400_000),
       })
       .returning();
-
-    const token = await createWebUserToken({
-      payload: {
-        user_id: user.id,
-        display_name: user.displayName,
-        session_id: String(s1.id),
-        refresh_token_version: user.refreshTokenVersion,
-      },
-      secret: "test_secret_32_bytes_minimum_length_key!!",
-    });
 
     const { default: sessionsHandler } = await import(
       "../../../server/api/users/auth/sessions.get"
@@ -135,8 +125,15 @@ describe("Task 3 — Login & Session Management (BR-LGN-01..12)", () => {
 
     const getEvent = {
       method: "GET",
-      node: { req: { headers: { authorization: `Bearer ${token}` } } },
-      context: { userSession: { user_id: user.id, session_id: String(s1.id) } },
+      node: { req: { headers: {} } },
+      context: {
+        user: {
+          user_id: user.id,
+          display_name: user.displayName,
+          session_id: String(s1.id),
+          refresh_token_version: user.sessionVersion,
+        },
+      },
     } as any;
 
     const sessionList = await sessionsHandler(getEvent);
@@ -150,7 +147,12 @@ describe("Task 3 — Login & Session Management (BR-LGN-01..12)", () => {
     const deleteEvent = {
       method: "DELETE",
       context: {
-        userSession: { user_id: user.id, session_id: String(s1.id) },
+        user: {
+          user_id: user.id,
+          display_name: user.displayName,
+          session_id: String(s1.id),
+          refresh_token_version: user.sessionVersion,
+        },
         params: { id: String(s2.id) },
       },
     } as any;

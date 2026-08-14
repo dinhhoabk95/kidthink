@@ -1,65 +1,39 @@
-import {
-  createAdminManagerToken,
-  createWebUserToken,
-  verifyAdminManagerToken,
-  verifyWebUserToken,
-} from "@kidthink/auth";
+import { InMemoryRedisClient, RedisSessionStore } from "@kidthink/auth";
 import { describe, expect, it } from "vitest";
 
 describe("Task 4 & 5 — Admin Security Matrix & Surface Isolation (BR-ADA-02..06, D-EY, D-EZ)", () => {
-  it("D-EZ: rejects User JWT when passed to Manager verify token function", async () => {
-    const userToken = await createWebUserToken({
-      payload: {
-        user_id: 123,
-        display_name: "Regular User",
-        session_id: "sess_user_1",
-        refresh_token_version: 0,
-      },
-      secret: "kidthink-dev-secret-kidthink-dev-secret-32bytes",
+  it("D-EZ: rejects User session token when resolved under Manager namespace", async () => {
+    const store = new RedisSessionStore(new InMemoryRedisClient());
+    const userSession = await store.createSession({
+      namespace: "user",
+      accountId: 123,
+      displayName: "Regular User",
     });
 
-    await expect(
-      verifyAdminManagerToken({
-        token: userToken,
-        secret: "kidthink-dev-secret-kidthink-dev-secret-32bytes",
-      })
-    ).rejects.toThrow();
+    const managerResolved = await store.resolveSession(
+      "manager",
+      userSession.sessionToken
+    );
+    expect(managerResolved).toBeNull();
   });
 
-  it("D-EZ: rejects Manager JWT when passed to User verify token function", async () => {
-    const managerToken = await createAdminManagerToken({
-      payload: {
-        manager_id: 1,
-        display_name: "Admin User",
-        session_id: "sess_mgr_1",
-        refresh_token_version: 0,
-        role: "super_admin",
-      },
-      secret: "kidthink-dev-secret-kidthink-dev-secret-32bytes",
+  it("D-EZ: rejects Manager session token when resolved under User namespace", async () => {
+    const store = new RedisSessionStore(new InMemoryRedisClient());
+    const managerSession = await store.createSession({
+      namespace: "manager",
+      accountId: 1,
+      displayName: "Admin User",
+      role: "super_admin",
     });
 
-    await expect(
-      verifyWebUserToken({
-        token: managerToken,
-        secret: "kidthink-dev-secret-kidthink-dev-secret-32bytes",
-      })
-    ).rejects.toThrow();
+    const userResolved = await store.resolveSession(
+      "user",
+      managerSession.sessionToken
+    );
+    expect(userResolved).toBeNull();
   });
 
-  it("BR-ADA-06: self role mutation or elevation is disallowed", async () => {
-    const reviewerToken = await createAdminManagerToken({
-      payload: {
-        manager_id: 2,
-        display_name: "Content Reviewer",
-        session_id: "sess_mgr_2",
-        refresh_token_version: 0,
-        role: "content_reviewer",
-      },
-      secret: "kidthink-dev-secret-kidthink-dev-secret-32bytes",
-    });
-    expect(reviewerToken).toBeDefined();
-
-    // Mock role change attempt
+  it("BR-ADA-06: self role mutation or elevation is disallowed", () => {
     function attemptRoleChange(role: string, managerRole: string) {
       if (managerRole !== "super_admin" || role === managerRole) {
         throw new Error("BR-ADA-06: Cannot modify own role or elevate role");

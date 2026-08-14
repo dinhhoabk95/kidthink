@@ -169,6 +169,27 @@
       "when": 1786590000000,
       "tag": "0023_child_profile_purge_at",
       "breakpoints": true
+    },
+    {
+      "idx": 24,
+      "version": "7",
+      "when": 1786600000000,
+      "tag": "0024_notification_deliveries",
+      "breakpoints": true
+    },
+    {
+      "idx": 25,
+      "version": "7",
+      "when": 1786610000000,
+      "tag": "0025_notification_inbox_endpoints",
+      "breakpoints": true
+    },
+    {
+      "idx": 26,
+      "version": "7",
+      "when": 1786620000000,
+      "tag": "0026_session_version",
+      "breakpoints": true
     }
   ]
 }

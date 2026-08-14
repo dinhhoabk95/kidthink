@@ -5,7 +5,7 @@ area: admin
 status: approved
 mvp: true
 phase: P2
-reviewed: 2026-08-08
+reviewed: 2026-08-13
 owns:
   - Danh sách User và bộ lọc
   - Thao tác khoá/mở tài khoản
@@ -50,7 +50,7 @@ Tìm một User để hỗ trợ, và thực hiện đúng ba thao tác vận h�
 | Nhánh | Hành vi |
 |---|---|
 | Tìm không ra | Gợi ý tìm bằng email đầy đủ |
-| Khoá User đang có phiên | Thu hồi mọi phiên ngay (`refresh_token_version` +1) |
+| Khoá User đang có phiên | Thu hồi mọi session/remember ngay (`session_version` +1 + Redis revoke-all) |
 | Khoá User có entitlement | Entitlement **giữ nguyên** — khoá là chặn đăng nhập, không thu hồi quyền đã mua |
 | User đã `deleted` | Hiện dạng chỉ đọc, không thao tác được |
 

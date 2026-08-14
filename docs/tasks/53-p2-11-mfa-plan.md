@@ -37,7 +37,7 @@ Hai rủi ro bảo mật chi phối thứ tự triển khai:
 | Dependency                           | Bước dự kiến | Điều kiện vào Task 3 trở đi                                                     |
 | ------------------------------------ | -----------: | ------------------------------------------------------------------------------- |
 | `AUTH-TOKENS-SESSIONS`               |         P0.3 | reauth §7.4 chạy với password, SNS và TOTP                                      |
-| Schema identity                      |         P0.7 | `mfa_settings`, `mfa_recovery_codes`, token/session primitives đã migrate local |
+| Schema identity                      |         P0.7 | `mfa_settings`, `mfa_recovery_codes`, opaque session/challenge primitives đã migrate local |
 | `ADMIN-AUTH`                         |       P0.11b | challenge credential và TOTP dùng lại được, không viết bản thứ hai              |
 | `NOTIFICATION-SERVICE` · `AUDIT-LOG` |           P0 | registry và dispatcher chạy được                                                |
 | `ACCOUNT-SETTINGS`                   |        P1.14 | `/me/settings` và reauth UX đã có                                               |
@@ -83,12 +83,12 @@ fixture route nhận `password` hoặc gửi SMS OTP.
 Password và SNS dùng chung một state machine:
 
 1. Yếu tố thứ nhất đúng và User đã bật MFA.
-2. Server tạo challenge credential **một mục đích, TTL ngắn, dùng một lần**, ràng buộc ít nhất
+2. Server tạo opaque Redis challenge 256-bit **một mục đích, TTL tối đa 5 phút, dùng một lần**, ràng buộc ít nhất
    với `user_id`, auth method, audience và nonce.
-3. Trả **428** `MFA_REQUIRED` cùng challenge; không access token, refresh cookie hay
+3. Trả **428** `MFA_REQUIRED` cùng challenge; không session cookie, remember credential hay
    `active_sessions`.
 4. `POST /api/guest/auth/users/mfa` nhận `{ code, challenge }`.
-5. Chỉ sau khi consume challenge nguyên tử và verify code mới cấp session/token đầy đủ.
+5. Chỉ sau khi consume challenge nguyên tử và verify code mới cấp opaque session/remember theo preference.
 
 Challenge hết hạn, đã dùng, sai audience, sai User hoặc bị replay đều thất bại chung, không lộ
 tài khoản. Dùng lại primitive của Manager; không tạo định dạng challenge thứ hai.
@@ -146,7 +146,7 @@ và [NIST SP 800-63B](https://pages.nist.gov/800-63-4/sp800-63b.html).
 - `mfa_settings.secret_encrypted` không plaintext.
 - `mfa_recovery_codes.code_hash` không lưu code thô; consume bằng conditional update
   trong transaction.
-- Bật MFA: bump `refresh_token_version` để thu hồi phiên khác, rồi cấp lại token/session
+- Bật MFA: bump `session_version` để thu hồi phiên khác, rồi cấp lại opaque session
   hiện tại ở version mới; thiết bị đang bật MFA không bị logout ngoài ý muốn.
 - Sinh bộ recovery mới: vô hiệu bộ cũ và insert bộ mới trong cùng transaction.
 
@@ -275,16 +275,18 @@ sau implementation.
 
 - [ ] `POST /api/users/mfa/setup` cần auth + reauth ≤5 phút; secret lưu mã hoá;
       `verify` đúng mã mới set `confirmed_at` và sinh 10 code hash.
+- [ ] `BR-MFA-12`: sinh secret/URI và validate TOTP qua `otpauth` trong `packages/auth`;
+      gate âm đỏ nếu có Base32, HMAC, HOTP/TOTP implementation tự viết.
 - [ ] TOTP ±1 bước; sai lẻ trả `MFA_INVALID_CODE`, 5 lần khoá 15 phút; test âm viết
       trước code và tham chiếu `BR-MFA-01/02/04/10`.
-- [ ] Bật MFA thu hồi phiên khác nhưng cấp lại phiên hiện tại ở `refresh_token_version`
+- [ ] Bật MFA thu hồi phiên khác nhưng cấp lại phiên hiện tại ở `session_version`
       mới; test hai thiết bị chứng minh A còn dùng được, B nhận `SESSION_REVOKED`.
 
 **Kiểm chứng**
 
 - [ ] `pnpm test -- mfa-setup` xanh.
 
-**Bề mặt dự kiến:** shared MFA service · setup/verify routes · session store · integration test.
+**Bề mặt dự kiến:** `packages/auth` MFA adapter · setup/verify routes · session store · integration test.
 
 **Phụ thuộc:** Checkpoint A · **Cỡ:** M
 
@@ -294,7 +296,7 @@ sau implementation.
 
 **Tiêu chí nghiệm thu**
 
-- [ ] Password và SNS đúng trả 428 + challenge; không access/refresh cookie và không
+- [ ] Password và SNS đúng trả 428 + opaque challenge; không session/remember cookie và không
       `active_sessions` trước MFA.
 - [ ] `POST /api/guest/auth/users/mfa` nhận `{ code, challenge }`, consume
       challenge nguyên tử rồi mới cấp session.

@@ -1,7 +1,7 @@
 import {
   appError,
-  createWebUserToken,
   generateSecureToken,
+  getBrowserSessionService,
   hashPassword,
   hashSecureToken,
   validatePasswordStrength,
@@ -9,7 +9,9 @@ import {
 import {
   consentLogs,
   getAppDb,
+  getAppSql,
   notifications,
+  PostgresSessionStore,
   users,
   verificationTokens,
 } from "@kidthink/db";
@@ -22,15 +24,14 @@ import {
   readBody,
   setResponseStatus,
 } from "h3";
+import { setUserSession } from "#imports";
 import {
   assertRateLimitAllowed,
   assertRequestBodySize,
   assertSameOriginRequest,
-  getUserRefreshService,
+  ensureUserCsrfCookie,
   getVerifiedRemoteIp,
-  getWebJwtSecret,
   respondToUserAuthError,
-  setUserAuthCookies,
 } from "../../../../utils/auth-runtime";
 
 export interface RegisterPayload {
@@ -140,7 +141,6 @@ export async function handleRegister(event: H3Event, testBody?: unknown) {
       .where(eq(users.email, validated.email));
 
     if (existing.length > 0) {
-      // BR-REG-10: 409 EMAIL_ALREADY_REGISTERED without revealing social provider
       throw appError("EMAIL_ALREADY_REGISTERED");
     }
 
@@ -204,26 +204,37 @@ export async function handleRegister(event: H3Event, testBody?: unknown) {
       status: "queued",
     });
 
-    // Create active session
-    const refreshService = getUserRefreshService(event);
-    const sessionResult = await refreshService.createSession({
-      account: { type: "user", id: newUser.id },
-      deviceLabel: userAgent,
+    // Create opaque session in Redis
+    const sessionService = getBrowserSessionService();
+    const createdSession = await sessionService.create({
+      namespace: "user",
+      accountId: newUser.id,
+      displayName: newUser.displayName,
+      rememberMe: false,
       ipAddress: rawIp,
-      authMethod: "password",
     });
 
-    const accessJwt = await createWebUserToken({
-      payload: {
-        user_id: newUser.id,
-        display_name: newUser.displayName,
-        session_id: sessionResult.sessionId,
-        refresh_token_version: newUser.refreshTokenVersion,
+    await setUserSession(event, {
+      secure: {
+        session_token: createdSession.sessionToken,
       },
-      secret: getWebJwtSecret(event),
     });
 
-    setUserAuthCookies(event, accessJwt, sessionResult.refreshEnvelope);
+    ensureUserCsrfCookie(event);
+
+    const pgStore = new PostgresSessionStore(getAppSql());
+    await pgStore
+      .recordSession({
+        account_type: "user",
+        account_id: newUser.id,
+        device_id: createdSession.deviceId,
+        remembered: false,
+        device_label: userAgent,
+        ip_address: rawIp,
+        auth_method: "password",
+        expires_at: createdSession.expiresAt,
+      })
+      .catch(() => null);
 
     if (event?.node?.res) {
       setResponseStatus(event, 201);

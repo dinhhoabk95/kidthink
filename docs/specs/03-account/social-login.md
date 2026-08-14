@@ -5,7 +5,7 @@ area: account
 status: approved
 mvp: true
 phase: P1
-reviewed: 2026-08-08
+reviewed: 2026-08-13
 owns:
   - Luồng đăng ký lần đầu bằng SNS
   - Luồng đăng nhập lại bằng SNS
@@ -60,7 +60,8 @@ File này bắt đầu từ `NormalizedProfile` trở đi.
 
 1. Bấm "Tiếp tục với Google" → luồng OAuth → `NormalizedProfile`.
 2. Tra `social_identities` theo `(provider, provider_user_id)` → **thấy**.
-3. `users.status` hợp lệ → cấp cặp token, ghi `active_sessions`, cập nhật `last_login_at`.
+3. `users.status` hợp lệ → cấp opaque session một giờ, tuỳ chọn remember theo preference đã
+   bind vào OAuth `state`, ghi metadata `active_sessions`, cập nhật `last_login_at`.
 4. Về `/me` (hoặc `return_to` trong whitelist). Giống hệt sau khi đăng nhập bằng mật khẩu —
    [`login-and-session.md`](login-and-session.md) §7.2.
 
@@ -73,7 +74,7 @@ File này bắt đầu từ `NormalizedProfile` trở đi.
 4. Tạo `users` + hàng `social_identities` + 2 hàng `consent_logs` trong **một transaction**.
 5. `users.status` = `active` nếu provider khẳng định email đã xác minh; ngược lại
    `pending_verification` và gửi email xác thực — `BR-SCL-05`.
-6. Cấp token, về `/me`.
+6. Cấp opaque session, về `/me`.
 
 **C — chưa liên kết, email đã có tài khoản**
 
@@ -92,7 +93,7 @@ File này bắt đầu từ `NormalizedProfile` trở đi.
 | Cấm Chưa tick đồng ý | Nhánh B bước 3 | **422**, không tạo tài khoản, không cấp phiên |
 | `users.status = suspended` | Nhánh A | **403** `ACCOUNT_SUSPENDED` — giống luồng mật khẩu |
 | `users.status = deleted` trong 30 ngày | Nhánh A | **403** kèm nút huỷ yêu cầu xoá — `BR-LGN` nhánh tương ứng |
-| MFA đã bật | Nhánh A | **428** `MFA_REQUIRED` → nhập mã → cấp token đầy đủ. Xem `BR-SCL-07` |
+| MFA đã bật | Nhánh A | **428** `MFA_REQUIRED` → nhập mã → mới cấp session/remember. Xem `BR-SCL-07` |
 | `provider_user_id` đã gắn user khác | Nhánh B | **409** `SOCIAL_IDENTITY_ALREADY_LINKED`. Chỉ xảy ra nếu provider tái dùng `sub` — bất thường, log mức cao |
 | Bỏ dở giữa màn hình đồng ý | Đóng tab ở nhánh B bước 3 | Cấm hàng `users` nào được tạo. Transaction ở bước 4 |
 
@@ -278,4 +279,3 @@ Scenario: BR-SCL-13 — provider tắt thì không hiện nút
 |---|---|---|---|---|
 | 1 | Nhánh C trả 409: Có nên gửi email thông báo khi trùng email không? | Kênh thông báo bảo mật — xem [`notification-service.md`](../01-platform/notification-service.md) | P2 | Backend |
 | ~~2~~ | ~~Nhánh B khi provider không trả email: Có nên chặn tạo `users` cho tới lúc xác thực không?~~ **Đóng 2026-08-09 (T13, `D-DA`)**: tạo `users` với `status = pending_verification`, hạn chế quyền tạo hồ sơ trẻ cho đến khi xác minh | Luồng xác minh email SNS | Đã đóng | D-DA |
-

@@ -41,7 +41,7 @@ trong tay khi có sự cố**. Chúng ít được dùng, nhưng lúc cần thì
 
 ### 1.1 Đã có
 
-`audit_logs`; entitlement và hàm resolve quyền; AWS SES qua `@aws-sdk/client-ses` (`D-CE`);
+`audit_logs`; entitlement và hàm resolve quyền; AWS SES SMTP qua Nodemailer + MJML (`D-CE`);
 job `email:send`; vòng đời nội dung và hàng đợi duyệt của P2.8; `alerts.yml` của P1.16; shell
 admin.
 
@@ -52,7 +52,8 @@ thông báo; webhook SNS nhận bounce/delivery; bề mặt soạn template.
 
 ### 1.3 Đã chốt, không mở lại
 
-`D-CE` email đi qua **AWS SES**, bounce/delivery qua **SNS webhook**, lưu `notification_logs` ·
+`D-CE` email đi qua **AWS SES SMTP**, bounce/delivery qua **SNS webhook**, lưu
+`notification_deliveries` ·
 `BR-NOT-02` không gửi thông báo tới trẻ · `BR-NOT-06` không có cơ chế đồng ý tiếp thị nên không
 có gửi hàng loạt · `BR-CDC-14` không xuất PII của trẻ ở bất kỳ đâu.
 
@@ -93,7 +94,7 @@ qua duyệt vì email sai gửi đi không thu hồi được. Dựng một quy 
 là dựng cổng người thứ hai với checklist thứ hai — và cái thứ hai sẽ nhẹ hơn cái thứ nhất. Xử:
 template là một loại nội dung của [`content-lifecycle.md`](../specs/00-foundation/content-lifecycle.md),
 xuất hiện trong chính hàng đợi `/studio/review`, dùng chung `content_review_log`. Vế còn lại:
-trạng thái gửi đến từ **SNS webhook của SES** theo `D-CE`, ghi `notification_logs`; webhook phải
+trạng thái gửi đến từ **SNS webhook của SES** theo `D-CE`, ghi `notification_deliveries`; webhook phải
 xác thực chữ ký SNS trước khi tin, và phải idempotent theo `provider_message_id`.
 
 ## 3. Đồ thị

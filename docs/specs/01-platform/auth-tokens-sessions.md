@@ -2,14 +2,14 @@
 spec: AUTH-TOKENS-SESSIONS
 title: Token, cookie và vòng đời phiên
 area: platform
-status: implemented
+status: approved
 mvp: true
 phase: P0
-reviewed: 2026-08-09
+reviewed: 2026-08-13
 owns:
-  - Hình dạng JWT và audience
-  - Thuộc tính cookie
-  - Vòng đời refresh và thu hồi
+  - Cookie session opaque của User và Manager
+  - Vòng đời session một giờ và remember-me một năm
+  - Redis session store và thu hồi nhiều thiết bị
   - Quy tắc xác minh lại danh tính (reauth) cho thao tác nhạy cảm
 depends_on:
   - ACTORS
@@ -21,334 +21,367 @@ depends_on:
 
 ## 1. Objective
 
-**Cập nhật 2026-08-09** (quyết định package, xem
-[`repo-bootstrap.md`](../00-foundation/repo-bootstrap.md) §7.1): lớp **access** dùng JWT 15
-phút do backend ký bằng `jose`; `@sidebase/nuxt-auth` Local provider quản lý trạng thái auth
-phía Nuxt và gọi các endpoint backend canonical. Lớp **refresh** vẫn opaque đối với client:
-giá trị nội bộ là envelope `v1` chứa namespace, `sid`, phiên bản thu hồi và nonce, được xác
-thực bằng HMAC với khoá tách miền từ secret của đúng namespace. Cookie path-scoped chỉ lưu
-hash của toàn envelope trong `active_sessions` và xoay mỗi lần dùng. Local provider không
-cung cấp CSRF như AuthJS, nên double-submit CSRF vẫn là contract tự quản của backend.
+**Cập nhật 2026-08-13 theo quyết định sản phẩm mới:** xác thực trình duyệt của cả User và
+Manager dùng **opaque cookie session**, không phát JWT access token. Cookie `HttpOnly` chỉ mang
+một session locator ngẫu nhiên; payload phiên, chỉ mục account/thiết bị, trạng thái reauth và
+credential `remember_me` đều do Redis giữ làm authority duy nhất.
 
-OAuth Google/Facebook ở P1 không đổi app sang AuthJS. Backend OAuth bridge hoàn tất
-Authorization Code + PKCE rồi phát cùng access/refresh token pair của local flow. Cấm
-Supabase Auth, Better-Auth, Sidebase AuthJS và `next-auth`.
+Một session làm việc có hạn tuyệt đối **1 giờ**, không sliding. Khi người dùng chọn
+`remember_me`, backend cấp thêm credential opaque, xoay một lần mỗi lần khôi phục session và có
+hạn tuyệt đối tối đa **365 ngày** tính từ lần đăng nhập gốc; rotation không kéo dài mốc này.
+`active_sessions` trong PostgreSQL chỉ là metadata/audit thiết bị, không chứa credential và
+không được dùng để phục hồi phiên khi Redis thiếu dữ liệu.
 
-Hai namespace **tách biệt hoàn toàn** — tên cookie, issuer, audience và secret ký khác nhau
-giữa `apps/web` (User) và `apps/admin` (Manager). Token của User không bao giờ mở được bề mặt
-Manager và ngược lại.
+`nuxt-auth-utils` vẫn cung cấp `useUserSession()` và `/api/_auth/session`, nhưng không phải
+session store: H3 mặc định seal dữ liệu trong cookie và không có Redis store option. KidThink
+chỉ seal locator trong `secure`, rồi `sessionHooks.fetch` đọc safe projection từ Redis.
+KidThink không phát hoặc nhận first-party JWT cho session, remember, MFA challenge hay service
+auth hiện hành và gỡ dependency trực tiếp `jose`. Token OIDC do provider trả về chỉ là input
+protocol tạm thời do `openid-client` xác minh; không lưu, forward hoặc dùng làm KidThink session.
+
+OAuth Google/Facebook ở P1 tiếp tục dùng `openid-client`; password dùng Argon2id; TOTP dùng
+OTPAuth. Cấm OAuth/password/WebAuthn helper tích hợp của `nuxt-auth-utils`, Supabase Auth,
+Better-Auth, Sidebase AuthJS và `next-auth`.
 
 ## 2. Actors
 
-| Actor | Token | MFA | Cách xác thực yếu tố thứ nhất |
+| Actor | Credential trình duyệt | MFA | Cách xác thực yếu tố thứ nhất |
 |---|---|---|---|
-| User | `aud: "kidthink:user"` | Tuỳ chọn, P2 — [`../03-account/mfa.md`](../03-account/mfa.md) | Mật khẩu **hoặc** SNS — [`../03-account/social-login.md`](../03-account/social-login.md) |
-| Manager | `aud: "kidthink:manager"` | bắt buộc | Mật khẩu. Cấm — **NEVER SNS** (`BR-AUT-15`) |
-| Guest | không token, chỉ cookie thiết bị | — | — |
+| User | Cookie session một giờ; remember-me tuỳ chọn | Tuỳ chọn, P2 — [`../03-account/mfa.md`](../03-account/mfa.md) | Mật khẩu hoặc SNS — [`../03-account/social-login.md`](../03-account/social-login.md) |
+| Manager | Cookie session một giờ; remember-me chỉ cấp sau MFA; challenge MFA opaque một lần | Bắt buộc | Mật khẩu; cấm SNS (`BR-AUT-15`) |
+| Guest | Không session auth; có thể có cookie thiết bị | — | — |
 
 ## 3. Entry points
 
-| Nơi | |
+| Nơi | Trách nhiệm |
 |---|---|
-| `packages/auth/` | Sở hữu domain claim, ký/xác minh JWT bằng `jose`, refresh rotation, CSRF, hash mật khẩu; `otpauth` phục vụ TOTP Manager |
-| `apps/web/nuxt.config.ts`, `apps/admin/nuxt.config.ts` | Khai `@sidebase/nuxt-auth` Local provider với endpoint/cookie namespace riêng; không export type vendor |
-| `apps/web/server/middleware/auth.ts`, `apps/admin/server/middleware/auth.ts` | Xác minh JWT access **một lần** mỗi request, gắn `event.context`; guard đọc context đồng bộ |
-| `POST /api/guest/auth/{users\|managers}/login` | Pre-auth |
-| `GET /api/{users\|managers}/auth/session` | Trả safe session payload cho Sidebase; bảo đảm CSRF cookie đúng namespace tồn tại |
-| `POST /api/{users\|managers}/auth/refresh` | Post-auth, path-scoped refresh cookie và CSRF bắt buộc |
-| `POST /api/{users\|managers}/auth/logout` | Thu hồi phiên hiện tại, CSRF bắt buộc |
-| `POST /api/{users\|managers}/auth/logout-all` | Tăng version và thu hồi toàn bộ phiên của account, CSRF bắt buộc |
+| `packages/auth/` | Sở hữu credential opaque, Redis session/remember/challenge adapter fail-closed, CSRF, domain context, Argon2id và TOTP |
+| `apps/*/server/plugins/auth-session.ts` | Nối adapter, `sessionHooks.fetch`, lifecycle và health check theo namespace |
+| `apps/*/nuxt.config.ts` | Khai `nuxt-auth-utils`, cookie locator, TTL một giờ và load strategy riêng app |
+| `apps/*/shared/types/auth.d.ts` | Khai safe projection và `SecureSessionData.session_token` app-local |
+| `apps/*/server/middleware/auth.ts` | Đọc locator, lookup Redis một lần, gắn context; guard domain đọc context đồng bộ |
+| `POST /api/guest/auth/{users\|managers}/login` | Xác thực đầu vào; User tạo session, Manager tạo opaque MFA challenge; nhận `rememberMe` |
+| `POST /api/guest/auth/{users\|managers}/mfa` | Tiêu thụ nguyên tử opaque MFA challenge đúng namespace rồi mới tạo session/remember |
+| `POST /api/guest/auth/{users\|managers}/remember` | Xoay remember credential và tạo session làm việc mới |
+| `GET /api/_auth/session` | Trả safe projection được hydrate từ Redis; không trả locator/credential |
+| `POST /api/{users\|managers}/auth/logout` | Thu hồi thiết bị hiện tại và xoá cookie |
+| `POST /api/{users\|managers}/auth/logout-all` | Thu hồi mọi thiết bị của account |
 
 ## 4. Main flow
 
-1. Login thành công (User: mật khẩu **hoặc** SNS; Manager: mật khẩu **+ TOTP bắt buộc**) →
-   ghi hàng `active_sessions` (`refresh_token_hash`, thiết bị, IP) → backend phát JWT access
-   15 phút có `sid` và refresh token opaque.
-2. Sidebase Local nhận access token theo `signInResponseTokenPointer`, lưu vào cookie access
-   `HttpOnly`; backend đặt refresh cookie opaque `HttpOnly`, path-scoped và không trả refresh
-   token trong JSON.
-3. Đặt 3 cookie: access JWT (`HttpOnly`), refresh opaque (`HttpOnly`, path-scoped) và csrf
-   double-submit (không `HttpOnly`).
-4. Mỗi request: middleware xác minh chữ ký, `issuer`, **audience** và expiry đúng một lần,
-   sau đó gắn context domain.
-5. Access hết hạn → bridge của app gọi endpoint refresh. Backend xác thực MAC và namespace
-   trước khi dùng `sid`, khoá hàng phiên trong transaction, so hash, **xoay** hàng
-   `active_sessions`, rồi đặt access/refresh cookie mới. Response chỉ chứa safe session
-   payload; raw access JWT và refresh token không đi qua JSON hoặc JavaScript.
-6. Bridge gọi lại `getSession({ force: true })` để Sidebase đồng bộ trạng thái. Cơ chế refresh
-   tích hợp sẵn của Sidebase giữ tắt vì nó yêu cầu serialize refresh token ở client.
-7. Logout → xoá hàng `active_sessions` và xoá cả ba cookie đúng namespace.
+1. Login thành công (User: mật khẩu hoặc SNS; Manager: mật khẩu + TOTP) tạo `device_id` và
+   session token ngẫu nhiên 32 byte. Backend chỉ trả token qua cookie `HttpOnly`. Bước mật khẩu
+   actor trước MFA chỉ tạo challenge opaque 32 byte, TTL 5 phút, một lần dùng; Redis giữ
+   digest cùng namespace/account/origin/`rememberMe`, và MFA callback tiêu thụ nguyên tử.
+2. Redis transaction ghi session payload TTL **3600 giây**, device pointer và account index.
+   Nếu `rememberMe=true`, cùng transaction tạo credential `r1.<selector>.<verifier>` với mỗi
+   thành phần ngẫu nhiên 32 byte; chỉ lưu digest và
+   `absolute_expires_at = login_at + 365 ngày`.
+3. `replaceUserSession()` seal **chỉ** `secure.session_token` vào cookie locator một giờ.
+   `sessionHooks.fetch` dùng locator lookup Redis và hydrate safe `user` projection cho
+   `useUserSession()`; locator không xuất hiện trong response.
+4. Mỗi request User/Manager: middleware hash locator, lookup Redis đúng namespace một lần, kiểm
+   expiry/generation/device state, rồi gắn domain context. Guard route vẫn đồng bộ và không làm
+   I/O lần hai.
+5. Sau một giờ, session tuyệt đối hết hạn. Nếu có remember cookie còn hạn, client gọi route
+   `remember`: backend kiểm CSRF, xoay remember credential và CSRF token nguyên tử, tạo session
+   một giờ mới với `reauthAt=null`, rồi giữ nguyên mốc remember hết hạn tuyệt đối ban đầu.
+6. Client chỉ tự thử restore lúc bootstrap hoặc sau một request đọc/idempotent nhận 401. Không
+   tự retry request đổi trạng thái để tránh thực thi hai lần.
+7. Logout canonical kiểm CSRF, thu hồi Redis trước, xoá remember/session locator và cập nhật
+   metadata PostgreSQL idempotently. Logout-all dùng Redis transaction thu hồi toàn bộ device
+   index của account trước khi cập nhật generation/audit ở PostgreSQL.
 
-Manager qua MFA: bước 1 chỉ chạy sau khi TOTP xác minh thành công. Bước mật khẩu chỉ cấp
-challenge credential một mục đích, TTL ngắn; credential này không phải access token, không
-qua guard và không tạo `active_sessions` (§5).
+Manager: bước tạo session chỉ chạy sau MFA thành công. `rememberMe` được bind vào challenge
+credential của bước mật khẩu; client không thể thêm tuỳ chọn này vào callback MFA khác.
 
 ## 5. Alternative flows
 
 | Nhánh | Hành vi |
 |---|---|
-| Refresh token đã dùng lại (token reuse) | **Thu hồi toàn bộ phiên** của tài khoản đó, buộc đăng nhập lại. Dấu hiệu bị đánh cắp |
-| `refresh_token_version` lệch | `SESSION_REVOKED` 401 |
-| Đổi mật khẩu | `refresh_token_version` **+1** → mọi phiên khác chết |
-| Manager chưa qua MFA | `MFA_REQUIRED` 428. **Không** tạo access token/`active_sessions` — client gửi mã TOTP kèm challenge credential một mục đích để hoàn tất |
-| Token sai audience | **401**, không phải 403 |
+| `rememberMe=false` hoặc bỏ trống | Không tạo remember credential; cookie locator vẫn hết hạn sau một giờ |
+| Session hết hạn, remember còn hạn | Route remember xoay credential và tạo session một giờ mới |
+| Remember token đã dùng lại | Thu hồi mọi credential/session của account, 401 `SESSION_REVOKED`, ghi audit |
+| Remember đã tới mốc 365 ngày | 401; đăng nhập đầy đủ lại, rotation không gia hạn |
+| Session/remember sai namespace | 401, không thử namespace còn lại |
+| Redis không tới được | 503 `SERVICE_UNAVAILABLE`; không fallback file, memory, PostgreSQL hoặc JWT |
+| Redis miss/eviction | Coi session hết; chỉ restore được nếu remember record vẫn tồn tại trong Redis |
+| Manager chưa qua MFA | 428 `MFA_REQUIRED`; không tạo session, remember hay metadata thiết bị |
+| MFA challenge thiếu/sai/hết hạn/đã dùng | 401; không tạo session và không fallback sang JWT challenge |
+| Xoá một thiết bị | Session và remember của đúng `device_id` chết ở request kế tiếp; thiết bị khác giữ nguyên |
+| `DELETE /api/_auth/session` | 405; logout chỉ qua route canonical để không bỏ sót revoke server-side |
 
 ## 6. Business rules
 
 | ID | Rule | Vì sao |
 |---|---|---|
-| `BR-AUT-01` | Verify **audience** tường minh, không chỉ chữ ký | Cùng khoá ký thì token namespace này dùng được ở namespace kia |
 | `BR-AUT-02` | Guard là hàm **sync**, đọc `event.context`. Cấm — NEVER `await requireUserAuth()` | Guard trả Promise mời quên `await`, và quên `await` nghĩa là không có guard |
-| `BR-AUT-03` | Refresh cookie **path-scoped** tới đúng route refresh | Refresh token không được gửi kèm mọi request |
-| `BR-AUT-04` | Refresh token **xoay** mỗi lần dùng; tái dùng → thu hồi toàn bộ phiên | Phát hiện token bị đánh cắp |
-| `BR-AUT-05` | `refresh_token_version` **+1** khi đổi mật khẩu và khi thu hồi phiên | Đổi mật khẩu mà refresh token cũ vẫn dùng được thì việc đổi không đuổi được kẻ đã vào. Version là cách vô hiệu hoá **mọi** token đã phát bằng một phép ghi, không phải đi xoá từng hàng |
-| `BR-AUT-06` | CSRF token **không** HttpOnly, gửi qua header `x-csrf-token` trên **mọi** route đổi trạng thái | Cookie phiên tự động đi kèm request từ site khác; header thì không. Token phải đọc được bằng JS để gắn vào header — đó là lý do nó cố ý **không** HttpOnly, khác với cookie phiên |
-| `BR-AUT-07` | JWT **không** chứa entitlement hay vai trò của User | Năng lực đọc từ DB — thu hồi phải có hiệu lực ngay |
-| `BR-AUT-08` | Mật khẩu hash bằng **argon2id**; không bcrypt, không MD5/SHA | MD5/SHA là hash **nhanh** — chính thứ giúp kẻ có DB dò tỉ tổ hợp mỗi giây. argon2id tốn cả bộ nhớ nên GPU/ASIC không nhân được thông lượng; bcrypt chậm nhưng không tốn bộ nhớ và trần 72 byte |
-| `BR-AUT-09` | Rate limit đăng nhập theo **IP và theo account** — hai trục | Khoá account chặn nhắm mục tiêu; giới hạn IP chặn quét diện rộng |
-| `BR-AUT-10` | Thông báo lỗi đăng nhập không tiết lộ tài khoản tồn tại; thời gian phản hồi không lệch | Enumeration email |
-| `BR-AUT-11` | Manager không có endpoint đăng ký công khai | Manager là tài khoản vận hành, tạo bằng seed/mời từ super admin. Một route đăng ký công khai — kể cả có duyệt phía sau — là bề mặt để tự tạo tài khoản chờ leo quyền, và nó không mua lại được lợi ích gì vì số Manager đếm trên đầu ngón tay |
-| `BR-AUT-12` | Cookie Manager giới hạn domain `admin.{domain}` | Tách bề mặt |
-| `BR-AUT-13` | Thao tác nhạy cảm §7.4 cần **reauth trong 5 phút**. Phiên hợp lệ một mình **không đủ** | Phiên bị chiếm không được đổi khoá vào tài khoản. Đây là ranh giới giữa "đọc được dữ liệu" và "chiếm vĩnh viễn" |
-| `BR-AUT-14` | Reauth chấp nhận **bất kỳ** cách nào ở §7.4, không cứng mật khẩu | `password_hash` nullable từ `BR-AUT-16`. Ép mật khẩu làm tài khoản chỉ-SNS không đổi được cài đặt nào |
-| `BR-AUT-15` | Manager **cấm đăng nhập bằng SNS** | Bề mặt quản trị không nhận danh tính từ bên thứ ba. Một sự cố ở provider không được thành sự cố quản trị của ta |
-| `BR-AUT-16` | `users.password_hash` **nullable**. Tài khoản chỉ có SNS là hợp lệ | `BR-SCL-08`. Bất biến thay thế: `login_methods ≥ 1` (`BR-SLK-04`) |
-| `BR-AUT-17` | SNS là yếu tố **thứ nhất**, không phải yếu tố thứ hai. MFA đã bật thì vẫn phải qua | `BR-SCL-07`. "Đã đăng nhập Google" không chứng minh gì về thiết bị thứ hai |
-| `BR-AUT-18` | Cấm — **NEVER lưu token của nhà cung cấp OAuth** trong `active_sessions` hay bất kỳ bảng nào | `BR-OAP-07` |
+| `BR-AUT-06` | CSRF token **không** HttpOnly, gửi qua header `x-csrf-token` trên **mọi** route đổi trạng thái | Cookie auth tự động đi kèm request từ site khác; header thì không |
+| `BR-AUT-08` | Mật khẩu hash bằng **argon2id**; không bcrypt, MD5 hoặc SHA | Argon2id chống dò offline bằng chi phí memory-hard |
+| `BR-AUT-09` | Rate limit đăng nhập theo **IP và account** | Hai trục chặn cả quét diện rộng lẫn nhắm một tài khoản |
+| `BR-AUT-10` | Lỗi đăng nhập không tiết lộ tài khoản tồn tại; thời gian phản hồi không lệch | Ngăn enumeration email |
+| `BR-AUT-11` | Manager không có endpoint đăng ký công khai | Manager là tài khoản vận hành, chỉ tạo qua luồng kiểm soát |
+| `BR-AUT-12` | Cookie Manager là host-only trên `admin.{domain}` | Tách bề mặt User và Manager |
+| `BR-AUT-13` | Thao tác nhạy cảm §7.5 cần reauth trong 5 phút | Phiên bị chiếm không được đổi khoá vào tài khoản |
+| `BR-AUT-14` | Reauth chấp nhận bất kỳ cách nào ở §7.5, không cứng mật khẩu | Tài khoản chỉ-SNS vẫn cần đổi cài đặt an toàn |
+| `BR-AUT-15` | Manager cấm đăng nhập bằng SNS | Sự cố provider không được thành sự cố quản trị |
+| `BR-AUT-16` | `users.password_hash` nullable; tài khoản chỉ-SNS hợp lệ | Bất biến thật là mỗi User có ít nhất một login method |
+| `BR-AUT-17` | SNS là yếu tố thứ nhất, không thay MFA | Provider không chứng minh thiết bị thứ hai |
+| `BR-AUT-18` | Cấm lưu token OAuth provider trong session hoặc bảng | KidThink không cần gọi provider sau login |
+| `BR-AUT-25` | User/Manager browser auth chỉ dùng opaque cookie session; cấm phát hoặc nhận JWT access/Bearer cho hai guard này | Loại bỏ token client tự mang claim và cho phép revoke tập trung |
+| `BR-AUT-26` | Cookie session chỉ chứa locator ngẫu nhiên; identity, role, reauth và quyền nằm trong Redis | Cookie không được trở thành session authority thứ hai |
+| `BR-AUT-27` | Session làm việc hết hạn tuyệt đối sau 3600 giây, không sliding | Hoạt động liên tục không được kéo phiên vô hạn |
+| `BR-AUT-28` | `rememberMe` mặc định false; khi true có hạn tuyệt đối tối đa 365 ngày từ login gốc và rotation không gia hạn | “Ghi nhớ một năm” không được biến thành đăng nhập vĩnh viễn |
+| `BR-AUT-29` | Remember credential xoay nguyên tử mỗi lần dùng; reuse thu hồi toàn bộ account | Một token cũ xuất hiện lại là bằng chứng credential bị sao chép |
+| `BR-AUT-30` | Session, remember và index account/device là một keyspace Redis fail-closed; create/restore/revoke dùng transaction hoặc Lua nguyên tử | Multi-device revoke không được để lại credential mồ côi |
+| `BR-AUT-31` | Redis lỗi trả 503; cấm fallback sang file, memory, PostgreSQL metadata, sealed identity hoặc JWT | Fallback làm revocation và hành vi giữa process không nhất quán |
+| `BR-AUT-32` | Session token và từng thành phần selector/verifier của remember credential có entropy tối thiểu 256 bit; Redis chỉ giữ digest, log không ghi token/cookie | Giảm khả năng đoán và thiệt hại khi log/store bị lộ |
+| `BR-AUT-33` | Logout phải qua route canonical có CSRF; `clear()`/DELETE nội bộ không phải logout domain | Xoá riêng cookie không thu hồi credential server-side |
+| `BR-AUT-34` | Manager chỉ nhận remember credential sau MFA; remember restore của cả User/Manager không tạo hoặc làm mới cửa sổ reauth 5 phút | Remember không được bypass MFA lần cấp đầu hoặc quyền nhạy cảm |
+| `BR-AUT-35` | `nuxt-auth-utils` chỉ cung cấp projection/composable; cấm OAuth, password, WebAuthn helper và cấm tin data sealed ngoài locator | Module không có Redis store và không được tạo auth contract thứ hai |
+| `BR-AUT-36` | Redis auth store nằm trong `packages/auth`, dùng client riêng, AOF, `noeviction`, health check và alert; không đi qua `packages/cache` fail-open | Cache miss được phép, session authority thì không |
+| `BR-AUT-37` | PostgreSQL `active_sessions` chỉ là metadata/audit, không chứa session/remember token và không phục hồi auth | Tránh hai authority và cửa sổ revoke liên datastore |
+| `BR-AUT-38` | Mọi credential auth do KidThink phát đều opaque; MFA challenge nằm trong Redis, TTL tối đa 5 phút, one-time consume. Cấm direct dependency/import `jose` và cấm first-party JWT/JWS | Một cơ chế credential duy nhất giảm bề mặt crypto, tránh self-contained challenge sống ngoài revocation authority |
+
+Các ID `BR-AUT-01`, `BR-AUT-03`–`05`, `BR-AUT-07` và `BR-AUT-19`–`24` đã nghỉ cùng contract
+JWT/refresh trước đó; không tái sử dụng.
 
 ## 7. Data
 
-### 7.1 JWT access payload
+### 7.1 Opaque credential
+
+- Session token: 32 byte CSPRNG, base64url, chỉ đi qua cookie locator; Redis key dùng SHA-256.
+- Remember credential: `r1.<selector>.<verifier>`, mỗi thành phần 32 byte CSPRNG/base64url.
+  Selector là id family ngẫu nhiên ổn định qua rotation; verifier thay mới mỗi lần restore.
+  Redis key dùng SHA-256(selector), value chỉ giữ SHA-256(verifier) hiện hành.
+- Credential không chứa `account_id`, namespace, role, expiry hoặc device id; selector không có
+  nghĩa ngoài việc tìm family để phân biệt replay token cũ với token rác.
+- Namespace được chọn từ app/route server, không đọc từ token do client cung cấp.
+
+### 7.2 Redis authority
 
 ```ts
-interface UserAccessPayload {
-  sub: string;
-  aud: "kidthink:user";
-  iss: "kidthink:web";
-  sid: string;
-  name: string;
-  ver: number;
-  active_child_id?: number;
-  iat: number;
-  exp: number;
+interface OnlineSession {
+  namespace: "user" | "manager";
+  accountId: number;
+  deviceId: string;
+  sessionVersion: number;
+  authMethod: "password" | "social";
+  createdAt: string;
+  expiresAt: string;
+  reauthAt: string | null;
+  user?: { displayName: string; activeChildId?: number };
+  manager?: { displayName: string; role: ManagerRole };
 }
-interface ManagerAccessPayload {
-  sub: string;
-  aud: "kidthink:manager";
-  iss: "kidthink:admin";
-  sid: string;
-  name: string;
-  ver: number;
-  role: ManagerRole;
-  iat: number;
-  exp: number;
+
+interface RememberSession {
+  namespace: "user" | "manager";
+  accountId: number;
+  deviceId: string;
+  sessionVersion: number;
+  absoluteExpiresAt: string;
+}
+
+interface MfaChallenge {
+  namespace: "user" | "manager";
+  accountId: number;
+  rememberMe: boolean;
+  origin: string;
+  createdAt: string;
+  expiresAt: string;
 }
 ```
 
-JWT ký HS256 bằng secret tối thiểu 32 byte, secret riêng từng app. `sid` là ID opaque của
-`active_sessions`; không phải refresh token. `ver` = `refresh_token_version` và chỉ so với DB
-ở endpoint refresh, không mỗi request. JWT access không chứa entitlement, package, tier,
-provider token, refresh token hoặc dữ liệu trẻ ngoài candidate `active_child_id`.
+Key prefix đóng, có version:
 
-### 7.1a Refresh envelope
+- `auth:session:v1:{namespace}:{sha256(sessionToken)}` → payload, TTL tối đa 3600 giây;
+- `auth:remember:v1:{namespace}:{sha256(selector)}` → record + digest verifier hiện hành, TTL
+  còn lại tới mốc tuyệt đối;
+- `auth:device:v1:{namespace}:{deviceId}` → locator digest hiện hành;
+- `auth:account:v1:{namespace}:{accountId}` → set device id để revoke-all;
+- `auth:generation:v1:{namespace}:{accountId}` → generation thu hồi toàn account.
+- `auth:challenge:v1:{namespace}:{sha256(challenge)}` → pre-auth record one-time, TTL tối đa 300 giây.
 
-Refresh token có dạng `v1.<payload-base64url>.<mac-base64url>`. Payload chỉ chứa namespace,
-`sid`, `ver` nguyên không âm và nonce ngẫu nhiên 32 byte. MAC dùng HMAC-SHA256 với khoá được
-HKDF từ secret của namespace và nhãn miền cố định. Backend phải kiểm format, namespace, MAC
-constant-time, `sid` và `ver` trước khi truy vấn phiên; envelope sai không được dùng `sid` giả
-mạo để thu hồi account. DB chỉ lưu SHA-256 của **toàn bộ raw envelope**, không lưu plaintext.
+Không dùng `SCAN` trong request/revoke. Lua script lookup selector family, so verifier
+constant-time, kiểm namespace/generation/TTL và cập nhật verifier + session + device pointer
+nguyên tử. Selector tồn tại nhưng verifier lệch là reuse: revoke account index. Selector không
+tồn tại chỉ là credential không hợp lệ, không được dùng làm oracle/DoS revoke account.
 
-Envelope đã qua MAC nhưng hash không còn khớp hàng phiên là bằng chứng reuse của token từng
-hợp lệ: transaction tăng `refresh_token_version` của đúng account và xoá toàn bộ phiên account
-đó. Hai rotation đồng thời từ cùng token chỉ có tối đa một response thành công.
+### 7.3 Nuxt session projection
 
-### 7.2 Cookie
+```ts
+declare module "#auth-utils" {
+  interface User {
+    account_id: number;
+    display_name: string;
+    account_type: "user" | "manager";
+  }
+
+  interface SecureSessionData {
+    session_token: string;
+  }
+}
+```
+
+`replaceUserSession()` chỉ ghi `secure.session_token`. `sessionHooks.fetch` hydrate `user` từ
+Redis cho đúng request; public response không có `secure`, token, role không thuộc namespace
+hoặc dữ liệu trẻ ngoài allow-list.
+
+### 7.4 Cookie
 
 | Cookie | Cơ chế | HttpOnly | SameSite | Path | TTL |
 |---|---|:--:|---|---|---|
-| `kidthink-user-access` / `kidthink-manager-access` | Sidebase Local lưu JWT backend phát; secret ký riêng mỗi app | | Lax | `/` | 15 phút |
-| `tm_u_rt` | Cookie opaque backend đặt, hash so `active_sessions` | | Strict | `/api/users/auth/refresh` | 7 ngày |
-| `tm_m_rt` | Cookie opaque backend đặt, hash so `active_sessions` | | Strict | `/api/managers/auth/refresh` | 24 giờ |
-| `tm_u_csrf` / `tm_m_csrf` | Tự đặt | Cấm | Strict | `/` | 7 ngày |
-| `active_child_id` | Tự đặt | Cấm | Lax | `/` | 30 ngày |
-| `tm_did` (guest) | Tự đặt | Cấm | Lax | `/` | 1 năm |
+| `kidthink-user-session` / `kidthink-manager-session` | Sealed locator chứa opaque session token | Có | Lax | `/` | 1 giờ tuyệt đối |
+| `tm_u_remember` | Remember credential User, chỉ tạo khi chọn | Có | Strict | `/api/guest/auth/users/remember` | tối đa 365 ngày tuyệt đối |
+| `tm_m_remember` | Remember credential Manager, chỉ tạo sau MFA | Có | Strict | `/api/guest/auth/managers/remember` | tối đa 365 ngày tuyệt đối |
+| `tm_u_csrf` / `tm_m_csrf` | Double-submit; TTL theo credential dài nhất hiện có | Cấm | Strict | `/` | 1 giờ hoặc tối đa 365 ngày |
+| `active_child_id` | Context do người lớn chọn, không phải auth credential | Cấm | Lax | `/` | 30 ngày |
+| `tm_did` | Guest device | Cấm | Lax | `/` | 1 năm |
 
-Mọi cookie `Secure` ở production. Cookie session **không đặt thuộc tính `Domain`** — mặc định
-host-only, nên `admin.{domain}` và `{domain}` tự động không chia sẻ được cookie của nhau
-(RFC 6265), cộng thêm issuer, audience và secret ký khác nhau (nhiều lớp kiểm soát độc lập).
+Mọi auth cookie `Secure` ở production và không đặt `Domain`. Secret seal của Web/Admin khác
+nhau; session locator vẫn không được tin nếu Redis không có record. CSRF token xoay ở mỗi lần
+đăng nhập đầy đủ hoặc remember restore thành công và bị xoá khi logout.
 
-### 7.3 `active_sessions`
+### 7.5 PostgreSQL metadata và reauth
 
-`(account_type, account_id)` · `refresh_token_hash` · `device_label` · `ip_address` ·
-`auth_method` (`password`\|`social`) · `reauth_at` · `created_at` · `last_used_at` ·
-`expires_at`.
+`active_sessions`: `device_id` UUID unique · `account_type` · `account_id` · `device_label` ·
+`ip_address` · `auth_method` · `remembered` · `created_at` · `last_used_at` · `expires_at` ·
+`revoked_at`. Bảng không có token/hash và không nằm trên hot path guard.
 
-Polymorphic → **bắt buộc** integration test bắt orphan `account_id`.
-
-### 7.4 Reauth — xác minh lại danh tính
-
-Cửa sổ **5 phút** tính từ `active_sessions.reauth_at`. Quá hạn → **428** `REAUTH_REQUIRED`,
-`details.methods[]` liệt kê cách nào dùng được cho tài khoản đó.
-
-**Cách reauth được chấp nhận** — bất kỳ một cách:
-
-| Cách | Điều kiện | Ghi chú |
-|---|---|---|
-| Mật khẩu hiện tại | `password_hash` NOT NULL | Cách mặc định |
-| Vượt lại OAuth với provider **đã liên kết** | ≥1 hàng `social_identities` | `intent=reauth`; không tạo, không liên kết gì |
-| Mã TOTP hợp lệ | MFA đã bật | |
-
-**Thao tác cần reauth:**
-
-| Thao tác | Spec sở hữu |
-|---|---|
-| Đổi mật khẩu · đặt mật khẩu lần đầu · đổi email | [`../03-account/account-settings.md`](../03-account/account-settings.md) |
-| Bật / tắt MFA · sinh lại mã khôi phục | [`../03-account/mfa.md`](../03-account/mfa.md) |
-| Liên kết / gỡ SNS | [`../03-account/social-account-linking.md`](../03-account/social-account-linking.md) |
-| Yêu cầu xoá tài khoản | [`../03-account/account-deletion.md`](../03-account/account-deletion.md) |
-
-Reauth thành công đặt `reauth_at = now()` cho **phiên hiện tại**, không cho phiên khác —
-phiên khác có thể là của kẻ tấn công.
+Reauth state authoritative nằm trong Redis session hiện tại. Cửa sổ **5 phút**; quá hạn trả
+428 `REAUTH_REQUIRED`. Chấp nhận mật khẩu hiện tại, OAuth provider đã liên kết hoặc TOTP hợp
+lệ theo availability của account. Reauth chỉ cập nhật session hiện tại.
 
 ## 8. API contract
 
-Guard vẫn **sync** — middleware đã xác minh JWT access một lần đầu request lifecycle (§3, §4
-bước 4); guard chỉ đọc `event.context` đã gắn sẵn, không tự làm crypto/`await`
-(`BR-AUT-02` không đổi).
-
-| Route | Auth | Ghi chú |
-|---|---|---|
-| `POST /api/guest/auth/users/login` | không | Body `{email, password}`. 401 `INVALID_CREDENTIALS` |
-| `POST /api/users/auth/refresh` | refresh cookie | Xoay token |
-| `POST /api/users/auth/logout` | access | Xoá phiên hiện tại |
-| `POST /api/users/auth/logout-all` | access | `refresh_token_version` +1 |
-| `GET /api/users/auth/sessions` | access | Danh sách thiết bị |
+Middleware lookup Redis bất đồng bộ một lần; guard sau đó vẫn đồng bộ:
 
 ```ts
-function requireUserAuth(e: H3Event): UserTokenPayload;      // sync, throw 401
-function requireManagerAuth(e: H3Event): ManagerTokenPayload; // sync, throw 401
-function requireRole(e: H3Event, r: ManagerRole): void;       // throw 403
+function requireUserAuth(e: H3Event): AuthenticatedUser;
+function requireManagerAuth(e: H3Event): AuthenticatedManager;
+function requireRole(e: H3Event, role: ManagerRole): void;
 ```
+
+| Route | Auth | Request/response chính |
+|---|---|---|
+| `POST /api/guest/auth/users/login` | không | `{email,password,rememberMe?:boolean}`; 200 đặt cookie |
+| `POST /api/guest/auth/managers/login` | không | `{email,password,rememberMe?:boolean}`; 428 challenge bind preference |
+| `POST /api/guest/auth/{users\|managers}/mfa` | opaque challenge one-time đúng namespace | 200 tạo session; remember chỉ khi challenge cho phép |
+| `POST /api/guest/auth/users/remember` | remember cookie + CSRF | rotate + session mới; body rỗng |
+| `POST /api/guest/auth/managers/remember` | remember cookie + CSRF | rotate + session mới; body rỗng |
+| `POST /api/{users\|managers}/auth/logout` | session + CSRF | revoke thiết bị hiện tại |
+| `POST /api/{users\|managers}/auth/logout-all` | session + CSRF | revoke mọi thiết bị |
+| `GET /api/{users\|managers}/auth/sessions` | session | danh sách device metadata |
+| `DELETE /api/{users\|managers}/auth/sessions/{id}` | session + CSRF | revoke đúng device id |
+| `GET /api/_auth/session` | session locator | safe projection từ Redis |
+| `DELETE /api/_auth/session` | không hỗ trợ | 405 |
+
+Hai route `/auth/refresh` cũ bị xoá. Không route nào chấp nhận first-party JWT/JWS hoặc
+`Authorization: Bearer`. Redis outage trả 503, credential thiếu/sai/hết hạn trả 401.
 
 ## 9. Acceptance criteria
 
 ```gherkin
-Scenario: BR-AUT-01 — token chéo namespace bị từ chối
-  Given một manager token hợp lệ
-  When gửi tới GET /api/users/children
-  Then trả 401
+Scenario: BR-AUT-25 — session auth không phát JWT
+  Given User hoặc Manager đăng nhập thành công
+  When kiểm response, cookie, Redis payload và client bundle
+  Then không có JWT/JWS hoặc Authorization Bearer
+  And protected route chỉ nhận opaque session cookie đúng namespace
 
-Scenario: BR-AUT-04 — tái dùng refresh token thu hồi toàn bộ phiên
-  Given client đã refresh một lần với token R
-  When client gửi lại token R
-  Then trả 401
-  And mọi phiên của tài khoản đó bị thu hồi
+Scenario: BR-AUT-27 — session hết đúng một giờ
+  Given session được tạo tại T0
+  When thời gian là T0 cộng 3600 giây
+  Then Redis session không còn hợp lệ
+  And request tiếp theo trả 401 dù trước đó có hoạt động liên tục
 
-Scenario: BR-AUT-05 — đổi mật khẩu giết mọi phiên khác
-  Given user đăng nhập trên 2 thiết bị
-  When user đổi mật khẩu trên thiết bị A
-  Then thiết bị B nhận SESSION_REVOKED ở lần refresh kế tiếp
-  And thiết bị A vẫn dùng được
+Scenario: BR-AUT-28 — remember có hạn tuyệt đối một năm
+  Given remember credential tạo tại T0 và đã rotate nhiều lần
+  When thời gian là T0 cộng 365 ngày
+  Then credential không khôi phục được session
+  And phải đăng nhập đầy đủ lại
 
-Scenario: BR-AUT-03 — refresh cookie không gửi kèm request thường
-  When client gọi GET /api/users/children
-  Then header Cookie không chứa tm_u_rt
+Scenario: BR-AUT-29 — remember reuse thu hồi toàn account
+  Given remember token R đã đổi thành R2
+  When gửi lại R
+  Then trả SESSION_REVOKED
+  And mọi session và remember credential của account bị thu hồi
 
-Scenario: BR-AUT-10 — không tiết lộ email tồn tại
-  When đăng nhập sai mật khẩu với email đã đăng ký
-  And đăng nhập với email chưa đăng ký
-  Then cả hai trả cùng mã và cùng thông báo
-  And chênh lệch thời gian phản hồi dưới 50ms
+Scenario: BR-AUT-30 — thu hồi một thiết bị
+  Given account có ba device id đang hoạt động
+  When thu hồi device thứ hai
+  Then session và remember của device đó chết ở request kế tiếp
+  And hai device còn lại không bị ảnh hưởng
 
-Scenario: BR-AUT-07 — JWT không mang entitlement
-  When decode một access token của user có gói premium
-  Then payload không chứa entitlement, package, hay role
+Scenario: BR-AUT-31 — Redis outage fail closed
+  Given Redis auth store không tới được
+  When gọi protected route hoặc remember restore
+  Then trả 503 SERVICE_UNAVAILABLE
+  And không fallback sang PostgreSQL, memory, file hoặc JWT
 
-Scenario: BR-AUT-06 — thiếu CSRF token bị chặn
-  Given user đã đăng nhập
-  When gửi POST không kèm header x-csrf-token
-  Then trả 403
+Scenario: BR-AUT-32 — token không lộ
+  When quét log, response, PostgreSQL active_sessions và Redis value
+  Then không có raw session hoặc remember token
+  And Redis lookup key chỉ dùng digest session token hoặc selector
+  And remember record chỉ giữ digest verifier, không giữ verifier thô
 
-Scenario: BR-AUT-09 — rate limit hai trục
-  Given 10 lần đăng nhập sai liên tiếp cho cùng một email từ nhiều IP
-  Then account bị khoá tạm
-  Given 50 lần đăng nhập sai từ một IP cho nhiều email
-  Then IP bị giới hạn
+Scenario: BR-AUT-34 — Manager remember không bypass MFA
+  Given Manager mới chỉ qua bước mật khẩu
+  When yêu cầu remember credential
+  Then chưa có session hoặc remember record
+  When challenge MFA hợp lệ hoàn tất
+  Then mới tạo credential theo preference đã bind
 
-Scenario: BR-AUT-11 — không đăng ký manager công khai
-  When quét mọi route dưới /api/guest
-  Then không route nào tạo được hàng trong bảng managers
+Scenario: BR-AUT-33 — clear nội bộ không thay logout
+  Given thiết bị có session và remember còn hạn
+  When gọi DELETE /api/_auth/session
+  Then trả 405 và Redis record giữ nguyên
+  When gọi logout canonical với CSRF hợp lệ
+  Then Redis record bị thu hồi trước khi cookie bị xoá
 
-Scenario: BR-AUT-13 — phiên hợp lệ một mình không đủ cho thao tác nhạy cảm
-  Given user đăng nhập từ 30 phút trước và chưa reauth
-  When gọi POST /api/users/email
-  Then trả 428 REAUTH_REQUIRED
+Scenario: BR-AUT-35 — projection lấy từ Redis
+  Given cookie locator hợp lệ nhưng Redis record đã bị xoá
+  When gọi GET /api/_auth/session
+  Then không trả user projection từ sealed cookie
+  And client ở trạng thái logged out
 
-Scenario: BR-AUT-14 — tài khoản chỉ có SNS reauth được
-  Given user có password_hash NULL và đã liên kết Google
-  When gọi POST /api/users/email chưa reauth
-  Then details.methods chứa social
-  And không chứa password
-  And vượt lại OAuth Google xong thì gọi lại thành công
-
-Scenario: BR-AUT-13 — reauth chỉ áp cho phiên hiện tại
-  Given user đăng nhập trên 2 thiết bị
-  When reauth thành công ở thiết bị A
-  Then thiết bị B vẫn trả 428 REAUTH_REQUIRED cho thao tác nhạy cảm
-
-Scenario: BR-AUT-13 — cửa sổ reauth hết hạn sau 5 phút
-  Given user reauth thành công 6 phút trước
-  When gọi POST /api/users/social-identities
-  Then trả 428 REAUTH_REQUIRED
-
-Scenario: BR-AUT-15 — Manager không đăng nhập được bằng SNS
-  When quét mọi route OAuth
-  Then không route nào cấp token có aud kidthink:manager
-
-Scenario: BR-AUT-16 — password_hash NULL là hợp lệ
-  Given user đăng ký bằng Google
-  When đọc hàng users
-  Then password_hash là NULL
-  And user vẫn đăng nhập được
-
-Scenario: BR-AUT-18 — không token nào của provider được lưu
-  Given một lần đăng nhập Google thành công
-  When đọc hàng active_sessions
-  Then không cột nào chứa token của provider
+Scenario: BR-AUT-38 — MFA challenge không dùng JWT
+  Given User hoặc Manager qua yếu tố thứ nhất và cần MFA
+  When server tạo challenge
+  Then response chỉ có opaque random credential và Redis chỉ giữ digest với TTL tối đa 5 phút
+  And challenge chỉ có đúng một lần consume thành công
+  And repo không có direct dependency hoặc import jose
 ```
 
 ## 10. Boundaries
 
 **Always**
-- Verify audience tường minh.
-- Xoay refresh token mỗi lần dùng.
-- Path-scope refresh cookie.
-- `Secure` + `HttpOnly` đúng theo §7.2.
-- Rate limit theo cả IP và account.
-- Đòi reauth ≤5 phút cho mọi thao tác ở §7.4.
+- Session tuyệt đối một giờ; remember tuyệt đối tối đa 365 ngày.
+- Token CSPRNG 256 bit, digest ở store, `Secure` + `HttpOnly` ở production.
+- Redis auth store fail-closed, transaction/Lua cho rotate và revoke.
+- Revoke Redis trước; cập nhật PostgreSQL metadata idempotently sau.
+- Test âm cho reuse, cross-namespace, Redis outage, expiry và revoke nhiều thiết bị.
 
 **Ask first**
-- Đổi TTL token hoặc thuộc tính cookie.
-- Thêm claim vào JWT.
-- Đổi cửa sổ reauth 5 phút.
-- Thêm nhà cung cấp OAuth — [`oauth-provider-registry.md`](oauth-provider-registry.md) §7.1.
+- Đổi TTL một giờ hoặc 365 ngày.
+- Đổi policy AOF/`noeviction` hoặc dùng chung auth store với cache fail-open.
+- Thêm claim/payload vào cookie locator.
+- Đổi cửa sổ reauth 5 phút hoặc Manager remember policy.
 
 **Never**
-- `await` một guard.
-- Entitlement/role của User trong JWT.
-- Supabase Auth, Better-Auth, SMS OTP.
-- bcrypt/MD5/SHA cho mật khẩu.
-- Thông báo lỗi tiết lộ tài khoản tồn tại.
-- Endpoint public tạo manager.
-- SNS cho Manager.
-- Coi SNS là yếu tố thứ hai thay MFA.
-- Lưu token của nhà cung cấp OAuth.
+- First-party JWT/JWS cho session, remember, MFA challenge hoặc service auth.
+- Direct dependency/import `jose`; nếu tương lai cần service auth phải mở spec riêng trước.
+- Bearer auth credential trên bất kỳ route nào.
+- Sliding session hoặc sliding remember expiry.
+- Raw token trong log, response, PostgreSQL hoặc client state.
+- Fallback file, memory, PostgreSQL metadata hoặc JWT khi Redis lỗi.
+- `useUserSession().clear()`/DELETE nội bộ làm logout domain.
+- OAuth/password/WebAuthn helper tích hợp của `nuxt-auth-utils`.
 
 ## 11. Open questions
 
 | # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
 |---|---|---|---|---|
-| ~~1~~ | ~~MFA cho Manager bắt buộc từ P0 hay bật ở P2?~~ **Đóng 2026-08-07 (T11)**: trùng câu hỏi với [`../00-foundation/actors.md`](../00-foundation/actors.md) §11 Q1 — đã đóng ở đó: **bắt buộc từ P0**. Cột thật `mfa_settings.secret_encrypted` + `managers.mfa_enabled` ([`schema-identity-billing.md`](schema-identity-billing.md) §7.3). Bất biến "Manager không hoạt động khi `mfa_settings.confirmed_at IS NULL`" ép ở **tầng service** | — | đã đóng | D-X |
-| ~~2~~ | ~~Social login (Google) có vào MVP không?~~ **Chốt 2026-08-05: có, P1.** Google và Facebook — [`oauth-provider-registry.md`](oauth-provider-registry.md) | — | đã đóng | D-X |
-| ~~3~~ | ~~Khoá tạm account sau bao nhiêu lần sai, và bao lâu?~~ **Đóng 2026-08-07 (T13, `D-DK`)**: số cụ thể sống ở [`rate-limiting.md`](rate-limiting.md) §7 (`BR-RTL-05`) — **5 lần → 1 phút · 10 → 5 phút · 15 → 30 phút · reset sau 24 giờ không sai**, khoá tăng dần không vĩnh viễn. Lưu ý: [`rate-limiting.md`](rate-limiting.md) còn `draft`: con số có thể đổi khi nó được approve, nhưng *chủ sở hữu* câu hỏi đã rõ và không còn nằm ở file này | — | Đã đóng | D-DK |
-| 4 | Reauth bằng OAuth cần vượt lại **màn hình đồng ý** của provider hay chấp nhận phiên SSO đang mở? Chấp nhận phiên đang mở làm reauth gần như vô nghĩa trên máy dùng chung | Reauth trên tài khoản social — không chặn reauth password (P0 đã đủ) | chờ P1 | hoãn — chốt cùng lúc [`oauth-provider-registry.md`](oauth-provider-registry.md) vào P1 |
+| ~~1~~ | ~~MFA cho Manager bắt buộc từ P0 hay P2?~~ **Đóng 2026-08-07:** bắt buộc từ P0 | — | đã đóng | D-X |
+| ~~2~~ | ~~Social login có vào MVP không?~~ **Đóng 2026-08-05:** Google và Facebook ở P1 | — | đã đóng | D-X |
+| 3 | Reauth bằng OAuth có buộc provider prompt lại hay chấp nhận SSO đang mở? | Reauth SNS | P1 | người quyết |
+| 4 | Production dùng Valkey auth instance riêng hay cùng process nhưng deployment riêng? Dù chọn cách nào vẫn phải AOF + `noeviction` và không dùng logical DB như biên cô lập | Infra sizing/runbook; không chặn contract/code adapter | trước go-live | Infra |

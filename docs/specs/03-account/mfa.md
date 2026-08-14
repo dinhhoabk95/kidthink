@@ -5,7 +5,7 @@ area: account
 status: approved
 mvp: false
 phase: P2
-reviewed: 2026-08-08
+reviewed: 2026-08-13
 owns:
   - Thiết lập và dùng MFA cho tài khoản User
 depends_on:
@@ -41,7 +41,8 @@ MFA đứng **sau** mọi cách xác thực yếu tố thứ nhất — mật kh
 
 ## 3. Entry points
 
-`/me/settings/security` · `POST /api/users/mfa/setup` · `/verify` · `/disable` ·
+`packages/auth/src/mfa/` (adapter `otpauth` duy nhất) · `/me/settings/security` ·
+`POST /api/users/mfa/setup` · `/verify` · `/disable` ·
 `GET /api/users/mfa/recovery-codes` · `POST /api/guest/auth/users/mfa` (thử thách lúc đăng
 nhập, dùng chung cho cả mật khẩu và SNS).
 
@@ -53,7 +54,7 @@ nhập, dùng chung cho cả mật khẩu và SNS).
 2. User quét bằng app xác thực, nhập mã 6 số để xác nhận.
 3. Xác nhận đúng → `mfa_settings.confirmed_at`, sinh **10 mã khôi phục** dùng một lần.
 4. Lần đăng nhập sau: **yếu tố thứ nhất đúng** (mật khẩu **hoặc** SNS) → **428**
-   `MFA_REQUIRED` → nhập mã → cấp token đầy đủ.
+   `MFA_REQUIRED` → nhập mã → consume opaque Redis challenge một lần → cấp opaque session.
 
 ## 5. Alternative flows
 
@@ -82,6 +83,7 @@ nhập, dùng chung cho cả mật khẩu và SNS).
 | `BR-MFA-09` | SNS Cấm — **NEVER thay được MFA.** Thử thách chạy sau mọi yếu tố thứ nhất | `BR-AUT-17`. "Đã đăng nhập Google" chứng minh danh tính, không chứng minh thiết bị thứ hai. Coi nó là yếu tố thứ hai là hạ MFA xuống một yếu tố |
 | `BR-MFA-10` | Bật MFA cũng cần **reauth**, không chỉ phiên hợp lệ | Kẻ chiếm phiên bật MFA bằng thiết bị của họ sẽ khoá chủ tài khoản ra ngoài vĩnh viễn |
 | `BR-MFA-11` | Sinh lại mã khôi phục cần **reauth + một mã hợp lệ**, và **vô hiệu toàn bộ** bộ cũ | Hai bộ mã cùng sống là hai cửa vào |
+| `BR-MFA-12` | Sinh secret, URI và validate HOTP/TOTP phải dùng `otpauth` trong `packages/auth`; Cấm — **NEVER** tự viết Base32, HMAC hoặc thuật toán TOTP | Crypto primitive tự viết khó review, dễ lệch window/encoding và không tạo giá trị sản phẩm |
 
 ## 7. Data
 
@@ -181,6 +183,11 @@ Scenario: BR-MFA-07 — mã khôi phục hiện một lần
   When mở lại trang bảo mật
   Then không xem lại được mã cũ
   And chỉ có nút sinh bộ mới
+
+Scenario: BR-MFA-12 — không tự viết TOTP
+  When quét implementation MFA
+  Then mọi sinh secret, otpauth URI và validate mã đi qua package otpauth
+  And không có Base32, HMAC hoặc HOTP/TOTP implementation tự viết
 ```
 
 ## 10. Boundaries
@@ -191,6 +198,7 @@ Scenario: BR-MFA-07 — mã khôi phục hiện một lần
 - Yêu cầu reauth khi bật và khi sinh lại mã khôi phục.
 - Thu hồi phiên khác khi bật.
 - Chạy thử thách MFA sau **mọi** yếu tố thứ nhất, kể cả SNS.
+- Dùng `otpauth` sau interface domain trong `packages/auth`.
 
 **Ask first**
 - Đưa MFA vào MVP cho User (hiện P2, ngoài MVP).
@@ -204,6 +212,7 @@ Scenario: BR-MFA-07 — mã khôi phục hiện một lần
 - Tắt MFA chỉ bằng một yếu tố.
 - Coi SNS là yếu tố thứ hai.
 - Nhận `password` ở body route MFA — dùng reauth.
+- Tự viết Base32, HMAC, HOTP hoặc TOTP.
 
 ## 11. Open questions
 

@@ -15,6 +15,7 @@
 - [ ] `social_identities` và hai ràng buộc `UNIQUE` còn đúng như P0.7.
 - [ ] Human approve kế hoạch và sáu quyết định D-IK · D-IL · D-IM · D-IN · D-IO · D-IP.
 - [ ] Đối chiếu `BR-OAP-*` `BR-SCL-*` `BR-SLK-*` với [`business-rules.md`](../specs/00-foundation/business-rules.md).
+- [ ] Task #85 đã xanh; opaque Redis session/remember contract hoạt động và catalog có `openid-client` `^6.8`, `nuxt-auth-utils` tối thiểu `0.5.30`.
 - [ ] Client id/secret Google có trong biến môi trường staging; Facebook **để trống có chủ ý**.
 - [ ] Tạo nhánh riêng.
 
@@ -22,6 +23,9 @@
 
 ### Task 1 — Registry provider
 
+- [ ] Chỉ `packages/auth/src/oauth/` import `openid-client`; app/route không import trực tiếp.
+- [ ] `BR-OAP-16` discovery, PKCE, authorization URL, code exchange và validation đi qua `openid-client`.
+- [ ] Gate âm: PKCE/token parser tự viết, Sidebase/AuthJS hoặc `defineOAuth*EventHandler` của `nuxt-auth-utils` được dùng cho domain flow thì đỏ.
 - [ ] `packages/auth/src/oauth/` là chỗ **duy nhất** cấu hình provider.
 - [ ] `BR-OAP-01` mọi lời gọi mang `response_type=code` và `code_challenge_method=S256`.
 - [ ] `BR-OAP-01` ca âm: không route nào nhận `id_token` từ body client.

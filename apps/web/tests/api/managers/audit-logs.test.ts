@@ -1,49 +1,44 @@
-import { createAdminManagerToken } from "@kidthink/auth";
 import { auditLogs, getOwnerDb } from "@kidthink/db";
-
 import { describe, expect, it } from "vitest";
 import handler from "../../../server/api/managers/audit-logs.get";
 
-async function createAuthHeader(
-  role: "super_admin" | "content_reviewer",
-  managerId = 1
+function mockEvent(
+  managerRole?: "super_admin" | "content_reviewer",
+  url = "/api/managers/audit-logs"
 ) {
-  const token = await createAdminManagerToken({
-    payload: {
-      manager_id: managerId,
-      display_name: "Manager Name",
-      session_id: "sess_manager_123",
-      refresh_token_version: 1,
-      role,
+  return {
+    method: "GET",
+    node: {
+      req: {
+        headers: {},
+        url,
+      },
+      res: {},
     },
-    secret: "kidthink-dev-secret-kidthink-dev-secret-32bytes",
-  });
-  return `Bearer ${token}`;
+    context: {
+      ...(managerRole
+        ? {
+            manager: {
+              manager_id: 1,
+              display_name: "Manager Name",
+              session_id: "sess_manager_123",
+              refresh_token_version: 1,
+              role: managerRole,
+            },
+          }
+        : {}),
+    },
+  } as any;
 }
 
 describe("Task 6 — GET /api/managers/audit-logs (BR-AUD-09)", () => {
   it("rejects unauthenticated request with 401", async () => {
-    const event = {
-      method: "GET",
-      node: { req: { headers: {} }, res: {} },
-      context: {},
-    } as any;
-
+    const event = mockEvent();
     await expect(handler(event)).rejects.toThrow();
   });
 
   it("BR-AUD-09: rejects content_reviewer with 403 INSUFFICIENT_ROLE", async () => {
-    const authHeader = await createAuthHeader("content_reviewer");
-    const event = {
-      method: "GET",
-      node: {
-        req: {
-          headers: { authorization: authHeader },
-        },
-        res: {},
-      },
-      context: {},
-    } as any;
+    const event = mockEvent("content_reviewer");
 
     try {
       await handler(event);
@@ -67,18 +62,10 @@ describe("Task 6 — GET /api/managers/audit-logs (BR-AUD-09)", () => {
       reason: "Test suspension",
     });
 
-    const authHeader = await createAuthHeader("super_admin");
-    const event = {
-      method: "GET",
-      node: {
-        req: {
-          headers: { authorization: authHeader },
-          url: `/api/managers/audit-logs?entity_id=${testEntityId}&limit=10`,
-        },
-        res: {},
-      },
-      context: {},
-    } as any;
+    const event = mockEvent(
+      "super_admin",
+      `/api/managers/audit-logs?entity_id=${testEntityId}&limit=10`
+    );
 
     const res = await handler(event);
     expect(res).toBeDefined();

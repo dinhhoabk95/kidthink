@@ -1,50 +1,44 @@
 import { defineNuxtConfig } from "nuxt/config";
 
 export default defineNuxtConfig({
-  modules: ["@sidebase/nuxt-auth"],
-  runtimeConfig: {
-    adminJwtSecret: "",
+  modules: ["nuxt-auth-utils", "nuxt-security"],
+  security: {
+    headers: {
+      crossOriginEmbedderPolicy:
+        process.env.NODE_ENV === "development" ? "unsafe-none" : "require-corp",
+      contentSecurityPolicy: {
+        "default-src": ["'self'"],
+        "base-uri": ["'self'"],
+        "font-src": ["'self'", "https:", "data:"],
+        "form-action": ["'self'"],
+        "frame-ancestors": ["'self'"],
+        "img-src": ["'self'", "data:", "https:"],
+        "object-src": ["'none'"],
+        "script-src-attr": ["'none'"],
+        "style-src": ["'self'", "https:", "'unsafe-inline'"],
+        "script-src": ["'self'", "'wasm-unsafe-eval'"],
+        "upgrade-insecure-requests": true,
+      },
+    },
+    rateLimiter: false,
+    csrf: false,
+    requestSizeLimiter: {
+      maxRequestSizeInBytes: 10 * 1024 * 1024,
+      maxUploadFileRequestInBytes: 10 * 1024 * 1024,
+    },
+    corsHandler: {
+      origin: process.env.NUXT_ALLOWED_ORIGINS || "*",
+      methods: ["GET", "HEAD", "PUT", "PATCH", "POST", "DELETE"],
+      allowHeaders: ["Content-Type", "Authorization", "x-csrf-token"],
+    },
   },
-  auth: {
-    baseURL: "/api",
-    disableInternalRouting: false,
-    provider: {
-      type: "local",
-      endpoints: {
-        signIn: { path: "/guest/auth/managers/login", method: "post" },
-        signOut: { path: "/managers/auth/logout", method: "post" },
-        signUp: false,
-        getSession: { path: "/managers/auth/session", method: "get" },
-      },
-      pages: {
-        login: "/login",
-      },
-      token: {
-        signInResponseTokenPointer: "/access_token",
-        type: "Bearer",
-        cookieName: "kidthink-manager-access",
-        headerName: "Authorization",
-        maxAgeInSeconds: 15 * 60,
-        sameSiteAttribute: "lax",
-        secureCookieAttribute: !import.meta.dev,
-        cookieDomain: "",
-        httpOnlyCookieAttribute: true,
-      },
-      session: {
-        dataType: {
-          manager_id: "number",
-          display_name: "string",
-          session_id: "string",
-          refresh_token_version: "number",
-          role: '"super_admin" | "content_reviewer"',
-        },
-        dataResponsePointer: "/",
-      },
-      // Manager refresh is also a backend-owned opaque HttpOnly cookie and
-      // must never enter Sidebase's JavaScript-visible refresh-token state.
-      refresh: {
-        isEnabled: false,
-      },
+  userSession: {
+    maxAge: 3600,
+    cookie: {
+      name: "kidthink-manager-session",
+      sameSite: "strict",
+      secure: process.env.NODE_ENV === "production",
+      httpOnly: true,
     },
   },
 });

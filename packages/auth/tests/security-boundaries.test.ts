@@ -2,11 +2,11 @@ import { describe, expect, it } from "vitest";
 import {
   assertActiveChild,
   type ChildOwnershipPort,
-  createAdminManagerToken,
   createAuthContext,
   generateCsrfToken,
-  hashRefreshToken,
+  InMemoryRedisClient,
   type ManagerTokenPayload,
+  RedisSessionStore,
   requireManagerAuth,
   requireRole,
   requireUserAuth,
@@ -14,13 +14,10 @@ import {
   validateCsrfToken,
   verifyChildOwnership,
   verifyReauthWindow,
-  verifyWebUserToken,
 } from "../src/index";
 
-const TEST_SECRET = "security-boundary-test-secret-32-chars!";
-
 describe("P0.3 Security Evidence — Business Rule Verification", () => {
-  it("BR-ACT-01 & BR-ACT-02: Separate guards enforce explicit audience checks and reject cross-audience tokens", async () => {
+  it("BR-ACT-01 & BR-ACT-02: Separate guards enforce explicit audience checks and reject cross-namespace tokens", async () => {
     const userPayload: UserTokenPayload = {
       user_id: 1,
       display_name: "User One",
@@ -50,16 +47,19 @@ describe("P0.3 Security Evidence — Business Rule Verification", () => {
       expect.objectContaining({ code: "UNAUTHENTICATED", status: 401 })
     );
 
-    // JWT audience validation failure
-    const managerToken = await createAdminManagerToken({
-      payload: managerPayload,
-      secret: TEST_SECRET,
+    // Redis cross-namespace validation failure (User token resolving under Manager namespace)
+    const store = new RedisSessionStore(new InMemoryRedisClient());
+    const createdUserSession = await store.createSession({
+      namespace: "user",
+      accountId: 1,
+      displayName: "User One",
     });
-    await expect(
-      verifyWebUserToken({ token: managerToken, secret: TEST_SECRET })
-    ).rejects.toThrowError(
-      expect.objectContaining({ code: "UNAUTHENTICATED", status: 401 })
+
+    const managerResolved = await store.resolveSession(
+      "manager",
+      createdUserSession.sessionToken
     );
+    expect(managerResolved).toBeNull();
   });
 
   it("BR-ACT-03: Accessing another user's record returns NOT_FOUND (404), not 403", async () => {
@@ -149,14 +149,6 @@ describe("P0.3 Security Evidence — Business Rule Verification", () => {
     const result = requireUserAuth(event);
     expect(result).toBe(userPayload);
     expect(result).not.toHaveProperty("then");
-  });
-
-  it("BR-AUT-04: Refresh tokens hashed with SHA-256 and opaque", () => {
-    const token = "opaque-token-123456";
-    const hashed = hashRefreshToken(token);
-
-    expect(hashed).not.toBe(token);
-    expect(hashed.length).toBe(64);
   });
 
   it("BR-AUT-06: CSRF double-submit token enforced on unsafe HTTP methods", () => {
