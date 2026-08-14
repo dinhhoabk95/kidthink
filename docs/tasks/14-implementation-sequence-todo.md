@@ -125,7 +125,7 @@ MVP, và nó chỉ cần bước P1.2 xong.
 ## P2 — Commerce + Admin, 31 spec
 
 - [x] **P2.1** Admin shell — [`admin-dashboard.md`](../specs/06-admin/admin-dashboard.md)
-- [ ] **P2.2** Tra cứu vận hành — [`user-management.md`](../specs/06-admin/user-management.md) · [`user-detail.md`](../specs/06-admin/user-detail.md) · [`child-profile-admin.md`](../specs/06-admin/child-profile-admin.md)
+- [x] **P2.2** Tra cứu vận hành — [`user-management.md`](../specs/06-admin/user-management.md) · [`user-detail.md`](../specs/06-admin/user-detail.md) · [`child-profile-admin.md`](../specs/06-admin/child-profile-admin.md)
 - [ ] **P2.3** Luồng tiền hai đầu — [`payment-flow.md`](../specs/00-foundation/payment-flow.md) · [`pricing-page.md`](../specs/02-public/pricing-page.md) · [`payment-order-create.md`](../specs/03-account/payment-order-create.md) → [`payment-proof-upload.md`](../specs/03-account/payment-proof-upload.md) → [`payment-queue.md`](../specs/06-admin/payment-queue.md) → [`payment-approval.md`](../specs/06-admin/payment-approval.md)
 - [ ] **P2.4** Cấp quyền tay + xem catalog — [`entitlement-grant.md`](../specs/06-admin/entitlement-grant.md) · [`package-catalog-admin.md`](../specs/06-admin/package-catalog-admin.md) · [`subscription-view.md`](../specs/03-account/subscription-view.md)
 - [ ] **P2.5** Studio: form sinh từ schema — [`schema-driven-form.md`](../specs/06-admin/schema-driven-form.md)

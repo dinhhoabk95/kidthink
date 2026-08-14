@@ -173,6 +173,20 @@ export const AUTH_ERROR_DEFINITIONS = {
     status: 409,
     message: "Địa chỉ email này đã được sử dụng bởi một tài khoản khác.",
   },
+  ADMIN_NOTE_REQUIRED: {
+    status: 422,
+    message:
+      "Thao tác quản trị yêu cầu nhập lý do ghi chú hợp lệ (tối thiểu 10 ký tự).",
+  },
+  USER_ALREADY_DELETED: {
+    status: 409,
+    message: "Tài khoản người dùng đã bị xoá và không thể thực hiện thao tác.",
+  },
+  CHILD_PENDING_DELETION: {
+    status: 409,
+    message:
+      "Hồ sơ trẻ đang trong thời gian chờ xoá và không thể thực hiện thao tác.",
+  },
 } as const;
 
 export type AuthErrorCode = keyof typeof AUTH_ERROR_DEFINITIONS;

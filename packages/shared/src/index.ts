@@ -1,5 +1,6 @@
 export * from "./access-gating.js";
 export * from "./access-ladder.js";
+export * from "./admin-child-projection.js";
 export * from "./alerts-config.js";
 export * from "./asset-resolver.js";
 export * from "./audit.js";

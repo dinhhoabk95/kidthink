@@ -491,8 +491,8 @@
             >
               <span>Lessons đã xuất bản</span>
               <span
-                class="text-[10px] font-bold font-mono px-1 rounded-xl bg-surface-100 text-surface-500"
-                >P3.1</span
+                class="text-[10px] font-bold font-mono px-1.5 py-0.5 rounded-xl bg-surface-100 text-surface-600"
+                >Bước P3.1</span
               >
             </div>
             <div class="text-xs text-surface-400 italic pt-1">
