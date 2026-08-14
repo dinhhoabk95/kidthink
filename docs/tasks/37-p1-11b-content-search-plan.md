@@ -98,7 +98,7 @@ T1 index + unaccent + migration
 ### Task 1 — Index và `unaccent`
 
 **Tiêu chí nghiệm thu**
-- [ ] Migration bật `unaccent`; GIN trên `to_tsvector('simple', unaccent(title_vi || ' ' || description_vi))`.
+- [ ] Migration bật `unaccent`; GIN trên `to_tsvector('simple', unaccent(title || ' ' || description))`.
 - [ ] Index §7.3: `game_levels(status, access_tier, age_min, age_max)` · `content_tag_map(tag_id, entity_type)` · `content_skill_map(skill_id, entity_type)`.
 - [ ] Migration chạy được **từ đầu** trên DB rỗng.
 - [ ] `BR-SRC-07` ca âm: tìm `"dem qua tao"` ra level tên `"Đếm quả táo"` (`D-HP`).
@@ -141,7 +141,7 @@ T1 index + unaccent + migration
 ### Task 4 — `locked` đúng tầng
 
 **Tiêu chí nghiệm thu**
-- [ ] `BR-SRC-01`: item ngoài `allowedTiers()` → `locked: true`, có metadata (`code`, `title_vi`, `thumbnail_emoji`, `competency`, tuổi, `difficulty`, `access_tier`).
+- [ ] `BR-SRC-01`: item ngoài `allowedTiers()` → `locked: true`, có metadata (`code`, `title`, `thumbnail_emoji`, `competency`, tuổi, `difficulty`, `access_tier`).
 - [ ] `D-HM`: truy vấn **không select** `content_pack`/`difficulty_params` cho hàng `locked` — ca âm ở tầng truy vấn, không chỉ ở response.
 - [ ] Ca âm response: item `locked` không chứa hai trường đó.
 - [ ] Lọc theo bậc cao hơn quyền vẫn trả kết quả kèm `locked` (để bán được).

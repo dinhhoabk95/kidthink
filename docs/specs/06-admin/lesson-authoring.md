@@ -58,7 +58,7 @@ hoạt động ngoài màn hình.
 | `BR-LSA-01` | Lesson có **≥1 activity** mới publish được | Lesson rỗng không dạy được gì |
 | `BR-LSA-02` | `estimated_minutes ∈ [5,45]` | Trẻ 3–6 không tập trung dài hơn |
 | `BR-LSA-03` | Mọi activity tham chiếu phải ở trạng thái `published` khi lesson publish | Lesson trỏ activity draft là lesson hỏng |
-| `BR-LSA-04` | Lesson **bắt buộc** có `guide_vi` cho người lớn | Người dạy là người lớn, không phải trẻ |
+| `BR-LSA-04` | Lesson **bắt buộc** có `guide` cho người lớn | Người dạy là người lớn, không phải trẻ |
 | `BR-LSA-05` | Activity dùng lại được ở nhiều lesson; sửa activity ảnh hưởng mọi lesson dùng nó | Đó là lý do tách activity ra |
 | `BR-LSA-06` | Lesson nên có **ít nhất một hoạt động ngoài màn hình** | Sản phẩm không tối ưu cho thời gian màn hình |
 | `BR-LSA-07` | Tag ba trục bắt buộc trước khi publish | `BR-TAG-02` |
@@ -70,17 +70,17 @@ hoạt động ngoài màn hình.
 
 | Phần | Bắt buộc |
 |---|:--:|
-| `title_vi` | |
+| `title` | |
 | `learning_objective_ids` | ≥1 |
 | `target_age_min` / `max` | |
 | `estimated_minutes` | |
-| `materials_vi` — vật liệu cần chuẩn bị | Cấm |
-| `guide_vi` — hướng dẫn cho người lớn | |
-| `warm_up_vi` | Cấm |
+| `materials` — vật liệu cần chuẩn bị | Cấm |
+| `guide` — hướng dẫn cho người lớn | |
+| `warm_up` | Cấm |
 | Activity (có thứ tự, có cờ bắt buộc) | ≥1 |
-| `reflection_vi` — câu hỏi gợi mở sau bài | Cấm |
-| `assessment_vi` — cách quan sát trẻ đã đạt chưa | Cấm |
-| `extension_vi` — làm thêm ở nhà | Cấm |
+| `reflection` — câu hỏi gợi mở sau bài | Cấm |
+| `assessment` — cách quan sát trẻ đã đạt chưa | Cấm |
+| `extension` — làm thêm ở nhà | Cấm |
 | `access_tier` | |
 
 ### 7.2 Màn hình
@@ -118,7 +118,7 @@ Scenario: BR-LSA-02 — thời lượng trong khoảng
   Then trả 422
 
 Scenario: BR-LSA-04 — guide bắt buộc
-  When gửi duyệt mà guide_vi rỗng
+  When gửi duyệt mà guide rỗng
   Then trả 422
 
 Scenario: BR-LSA-05 — sửa activity ảnh hưởng mọi lesson
@@ -141,7 +141,7 @@ Scenario: kéo thả đổi thứ tự
 ## 10. Boundaries
 
 **Always**
-- ≥1 activity, có `guide_vi`.
+- ≥1 activity, có `guide`.
 - Kiểm activity `published` khi publish lesson.
 - Tag ba trục trước khi publish.
 

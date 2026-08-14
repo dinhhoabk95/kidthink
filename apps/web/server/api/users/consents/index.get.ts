@@ -65,13 +65,13 @@ export default defineEventHandler(async (event) => {
 
       return {
         consent_type: type,
-        title_vi: meta.titleVi,
+        title: meta.title,
         document_url: `/${meta.slug}`,
         accepted_at: acceptedAt,
         requirement_at: req?.reconsentRequiredAt
           ? req.reconsentRequiredAt.toISOString()
           : null,
-        notice_vi: req?.noticeVi ?? null,
+        notice: req?.noticeVi ?? null,
         status,
       };
     });

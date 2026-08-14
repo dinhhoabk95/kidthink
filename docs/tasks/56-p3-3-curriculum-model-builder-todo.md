@@ -49,7 +49,7 @@
 
 - [ ] `program_type` enum đóng: `age_based` · `journey`.
 - [ ] `target_age_min` · `target_age_max` · `duration_weeks` · `sessions_per_week`.
-- [ ] Bảng `curriculum_weeks (curriculum_id, week_no, goal_vi)` cho `BR-CRM-10`.
+- [ ] Bảng `curriculum_weeks (curriculum_id, week_no, goal)` cho `BR-CRM-10`.
 - [ ] `BR-CRM-08` ghi rõ chỉ áp cho `program_type = age_based`.
 - [ ] Ghi lại trần `CUR-###` là 999 chương trình.
 

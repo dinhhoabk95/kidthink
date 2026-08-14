@@ -106,7 +106,7 @@ Index này là nơi `BR-VER-02` thực sự được ép. Tầng service kiểm 
 
 ### 7.3 Field **không** bump version
 
-`title_vi` · `description_vi` · `tags` · `thumbnail_emoji` · trường SEO · `is_featured`.
+`title` · `description` · `tags` · `thumbnail_emoji` · trường SEO · `is_featured`.
 
 Ranh giới: **field nào tham gia vào việc chấm điểm hoặc chọn nội dung thì bump; field nào
 chỉ để hiển thị thì không.**
@@ -190,7 +190,7 @@ Scenario: BR-VER-01 — version chỉ tăng
 
 Scenario: BR-VER-07 — sửa mô tả không bump version
   Given một level đang published ở version 2
-  When manager sửa description_vi
+  When manager sửa description
   Then level vẫn ở version 2
   And status vẫn published
 

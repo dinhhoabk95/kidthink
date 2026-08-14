@@ -21,13 +21,13 @@ export function everyGroupHasAtLeastOneItem(data: {
 }
 
 export const GT004BaseContentSchema = z.object({
-  prompt_vi: z.string().min(4).max(80),
+  prompt: z.string().min(4).max(80),
   prompt_audio_ref: z.string().optional(),
   groups: z
     .array(
       z.object({
         group_id: z.string().regex(/^g[0-9]$/),
-        label_vi: z.string().max(24),
+        label: z.string().max(24),
         label_emoji: EmojiRef,
       })
     )
@@ -72,7 +72,7 @@ export const GT004Template: GameTemplate<
   typeof GT004DifficultySchema
 > = {
   code: "GT-004",
-  name_vi: "Phân loại vào nhóm",
+  name: "Phân loại vào nhóm",
   mechanic: "sort-groups",
   layouts: ["multi-bucket-bottom", "split-columns"],
   content_contract: GT004ContentSchema,

@@ -32,8 +32,8 @@ export interface SkillPrerequisiteRef {
 
 export interface LearningObjectiveInput {
   code: string;
-  behaviour_vi: string;
-  observable_criteria_vi: string;
+  behaviour: string;
+  observable_criteria: string;
   position?: number;
 }
 
@@ -41,7 +41,7 @@ export interface SkillRow {
   code: string;
   strand_code: string;
   competency_code: string;
-  name_vi: string;
+  name: string;
   age_min: number;
   age_max: number;
   difficulty: number;
@@ -96,14 +96,14 @@ export function buildSkillTree(rows: SkillRow[], version?: string): SkillTree {
     ).map((lo, idx) => ({
       code: lo.code,
       skill_code: row.code as SkillCode,
-      description_vi: lo.behaviour_vi,
+      description: lo.behaviour,
       position: lo.position ?? idx + 1,
     }));
 
     const skillTier: SkillTier = {
       code: row.code as SkillCode,
       strand_code: row.strand_code as StrandCode,
-      name_vi: row.name_vi,
+      name: row.name,
       age_min: row.age_min as 3 | 4 | 5 | 6,
       age_max: row.age_max as 3 | 4 | 5 | 6,
       difficulty: row.difficulty as 1 | 2 | 3 | 4 | 5,

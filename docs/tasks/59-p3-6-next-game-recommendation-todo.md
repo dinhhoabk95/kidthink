@@ -107,7 +107,7 @@
 - [ ] Thiếu trẻ đang chọn → 428 `NO_ACTIVE_CHILD`.
 - [ ] `limit` có trần; vượt trần bị ép, không lỗi.
 - [ ] Response đúng §7.1: `primary` + tối đa 4 `alternatives`.
-- [ ] `BR-REC-05`: mỗi item có `reason_code` và `reason_vi` không rỗng.
+- [ ] `BR-REC-05`: mỗi item có `reason_code` và `reason` không rỗng.
 - [ ] `thumbnail_emoji` phân giải qua registry; emoji thiếu không hỏng cả response.
 - [ ] Response **không** chứa `p_learn` hay con số mastery nào.
 - [ ] Thời gian phản hồi dưới ngưỡng đã đặt, đo với catalog đầy đủ.
@@ -134,7 +134,7 @@
 - [ ] Sảnh trẻ hiện 3–5 gợi ý.
 - [ ] Item khoá hiện ổ khoá trung tính; không giá, không nút mua.
 - [ ] Lời mời nâng cấp nằm sau cổng người lớn.
-- [ ] Người lớn thấy `reason_vi` trong báo cáo.
+- [ ] Người lớn thấy `reason` trong báo cáo.
 - [ ] Nội dung lý do không mang nghĩa chẩn đoán.
 - [ ] Không so sánh với trẻ khác ở bất kỳ bề mặt nào.
 - [ ] Bề mặt trẻ không giả định trẻ biết đọc.

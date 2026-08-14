@@ -122,7 +122,7 @@ phần thưởng thêm, không phải điều kiện để được công nhận
   "stars": 2,
   "rounds_correct": 4, "rounds_total": 5,
   "celebration": "great",
-  "next_suggestion": { "level_code": "GL-C1-CNT-MATCH-0008", "reason_vi": "Cùng chủ đề, khó hơn một chút" }
+  "next_suggestion": { "level_code": "GL-C1-CNT-MATCH-0008", "reason": "Cùng chủ đề, khó hơn một chút" }
 }
 ```
 

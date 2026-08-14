@@ -47,7 +47,7 @@
 - [ ] Enum có đúng 10 giá trị approved.
 - [ ] Không còn `hands_on` · `story` · `song` · `art` · `reflection` · `custom`.
 - [ ] Không có bảng ánh xạ ngầm giữa enum cũ và mới.
-- [ ] Thêm `materials_vi` và các cột provenance/review còn thiếu.
+- [ ] Thêm `materials` và các cột provenance/review còn thiếu.
 - [ ] CHECK `estimated_minutes` trong [2,20].
 - [ ] Có index cho đường phân giải activity theo `entity_id`.
 - [ ] Không thêm `target_age_min/max` vào activity.

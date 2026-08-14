@@ -449,7 +449,7 @@ export const FAQ_ITEMS: readonly FaqItem[] = [
     anchor: "cac-goi-hoc-phi",
     category: "billing",
     question: "KidThink có những gói học phí nào?",
-    answer: `Hiện tại có Gói Tiêu chuẩn (${PACKAGE_CATALOG["PKG-standard"]?.name_vi || "Tiêu chuẩn"}) và Gói Premium (${PACKAGE_CATALOG["PKG-premium"]?.name_vi || "Premium"}) với đầy đủ quyền truy cập thư viện game.`,
+    answer: `Hiện tại có Gói Tiêu chuẩn (${PACKAGE_CATALOG["PKG-standard"]?.name || "Tiêu chuẩn"}) và Gói Premium (${PACKAGE_CATALOG["PKG-premium"]?.name || "Premium"}) với đầy đủ quyền truy cập thư viện game.`,
   },
 
   // Về quyền riêng tư
@@ -470,7 +470,7 @@ export const FAQ_ITEMS: readonly FaqItem[] = [
 export const FEATURED_GUEST_LEVELS = [
   {
     code: "GL-C1-001",
-    title_vi: "Đếm số trái cây",
+    title: "Đếm số trái cây",
     competency: "C1",
     template: "GT-001",
     age_band: "3-4",
@@ -479,7 +479,7 @@ export const FEATURED_GUEST_LEVELS = [
   },
   {
     code: "GL-C2-001",
-    title_vi: "Xếp hình ngôi nhà",
+    title: "Xếp hình ngôi nhà",
     competency: "C2",
     template: "GT-002",
     age_band: "3-4",
@@ -488,7 +488,7 @@ export const FEATURED_GUEST_LEVELS = [
   },
   {
     code: "GL-C3-001",
-    title_vi: "Quy luật sắc màu",
+    title: "Quy luật sắc màu",
     competency: "C3",
     template: "GT-003",
     age_band: "4-5",
@@ -497,7 +497,7 @@ export const FEATURED_GUEST_LEVELS = [
   },
   {
     code: "GL-C4-001",
-    title_vi: "So sánh chiều cao",
+    title: "So sánh chiều cao",
     competency: "C4",
     template: "GT-004",
     age_band: "3-4",
@@ -506,7 +506,7 @@ export const FEATURED_GUEST_LEVELS = [
   },
   {
     code: "GL-C5-001",
-    title_vi: "Phân loại phương tiện",
+    title: "Phân loại phương tiện",
     competency: "C5",
     template: "GT-005",
     age_band: "4-5",
@@ -515,7 +515,7 @@ export const FEATURED_GUEST_LEVELS = [
   },
   {
     code: "GL-C6-001",
-    title_vi: "Tìm hình còn thiếu",
+    title: "Tìm hình còn thiếu",
     competency: "C6",
     template: "GT-006",
     age_band: "5-6",

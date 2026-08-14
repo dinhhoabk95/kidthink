@@ -20,7 +20,7 @@ deploy tự nó không hỏi lại. Sau khi xác nhận bản mới đã qua leg
 Revision này **giữ nguyên evidence của phần account/deletion đã hoàn thành**, nhưng mở lại
 P1.14 cho migration consent, gate User, admin force và dọn bề mặt version cũ. Các quyết định
 `D-IH` và `D-II` của bản kế hoạch 2026-08-10 bị thay thế bởi `D-QV`–`D-QZ` dưới đây; không dùng
-`summary_vi`, version URL hay `CONSENT_VERSION_STALE` cho legal consent nữa.
+`summary`, version URL hay `CONSENT_VERSION_STALE` cho legal consent nữa.
 
 ## 0. Điều kiện tiên quyết
 
@@ -138,7 +138,7 @@ T1…T8 ──→ T9 evidence, gates, promote
 
 ### Task 5 — User UI
 
-- [ ] `/me/settings/privacy` hiện loại, document current, accepted_at, status và `notice_vi`.
+- [ ] `/me/settings/privacy` hiện loại, document current, accepted_at, status và `notice`.
 - [ ] `/consent-required` checkbox không tick sẵn, hỗ trợ nhiều loại required và safe `return_to`.
 - [ ] 409 marker đổi làm reload nội dung/trạng thái, không tự retry acceptance.
 - [ ] Không version number, version history hay diff giả.
@@ -161,7 +161,7 @@ T1…T8 ──→ T9 evidence, gates, promote
 ### Task 7 — Admin force UI
 
 - [ ] `/legal-consents` chỉ đọc metadata document và link toàn văn; không editor.
-- [ ] Chọn đúng một loại; `notice_vi` và reason tách biệt; hai xác nhận tác động rõ ràng.
+- [ ] Chọn đúng một loại; `notice` và reason tách biệt; hai xác nhận tác động rõ ràng.
 - [ ] Recent reauth và conflict 409 có recovery rõ; không tự retry force.
 - [ ] UI không có reset/clear/rollback và không cho chọn User riêng.
 - [ ] Task #43 nhận debt thêm mục nav `super_admin` khi admin shell đầy đủ được build.

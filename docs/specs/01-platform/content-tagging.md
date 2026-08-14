@@ -99,7 +99,7 @@ nghĩa là `BR-TAG-02` (mỗi nội dung `published` có ≥1 tag mỗi trục) 
 
 | Bảng | Nội dung |
 |---|---|
-| `content_tags` | `code` `axis` `label_vi` `status` — Lớp 1 |
+| `content_tags` | `code` `axis` `label` `status` — Lớp 1 |
 | `content_tag_map` | `(entity_type, entity_id, tag_id)` |
 | `content_skill_map` | `(entity_type, entity_id, skill_id, weight)` |
 | `user_tags` | `(user_id, label)` — tách hoàn toàn, chỉ My Library |

@@ -308,7 +308,7 @@ Bốn game level, bốn competency, **không dòng code engine nào mới**.
 ```ts
 interface GameTemplate {
   code: string;              // "GT-003"
-  name_vi: string;
+  name: string;
   mechanic: MechanicId;      // "drag-to-container"
   layouts: LayoutId[];
   content_contract: ZodSchema;  // shape của content_pack template chấp nhận
@@ -364,8 +364,8 @@ port dần thành `content_pack` sau MVP, cái nào không map được thì gi�
 **Lesson** (Lớp 2) = đơn vị dạy học hoàn chỉnh, Manager biên soạn:
 
 ```
-code · title_vi · learning_objective_ids · target_age · estimated_minutes
-materials · guide_vi · warm_up · main_activities[] · digital_games[]
+code · title · learning_objective_ids · target_age · estimated_minutes
+materials · guide · warm_up · main_activities[] · digital_games[]
 offline_activities[] · reflection · assessment · extension
 ```
 
@@ -915,7 +915,7 @@ export default defineEventHandler(async (event) => {
 await db.update(game_levels).set(parsed).where(eq(game_levels.id, id));
 // CORRECT — map từng field
 await db.update(game_levels)
-  .set({ title_vi: parsed.title_vi, content_pack: parsed.content_pack })
+  .set({ title: parsed.title, content_pack: parsed.content_pack })
   .where(eq(game_levels.id, id));
 ```
 

@@ -4,97 +4,97 @@ export const ENTITLEMENT_KEYS = [
   {
     key: "play_free_games",
     group: "content",
-    labelVi: "Chơi trò chơi miễn phí",
+    label: "Chơi trò chơi miễn phí",
     is_mvp: true,
   },
   {
     key: "play_login_games",
     group: "content",
-    labelVi: "Chơi trò chơi yêu cầu đăng nhập",
+    label: "Chơi trò chơi yêu cầu đăng nhập",
     is_mvp: true,
   },
   {
     key: "play_standard_games",
     group: "content",
-    labelVi: "Chơi trò chơi tiêu chuẩn",
+    label: "Chơi trò chơi tiêu chuẩn",
     is_mvp: true,
   },
   {
     key: "play_premium_games",
     group: "content",
-    labelVi: "Chơi trò chơi cao cấp",
+    label: "Chơi trò chơi cao cấp",
     is_mvp: true,
   },
   {
     key: "access_premium_curriculum",
     group: "content",
-    labelVi: "Truy cập lộ trình cao cấp",
+    label: "Truy cập lộ trình cao cấp",
     is_mvp: true,
   },
   {
     key: "manage_children",
     group: "account",
-    labelVi: "Quản lý hồ sơ trẻ",
+    label: "Quản lý hồ sơ trẻ",
     is_mvp: true,
   },
   {
     key: "view_basic_report",
     group: "report",
-    labelVi: "Xem báo cáo cơ bản",
+    label: "Xem báo cáo cơ bản",
     is_mvp: true,
   },
   {
     key: "view_advanced_report",
     group: "report",
-    labelVi: "Xem báo cáo nâng cao",
+    label: "Xem báo cáo nâng cao",
     is_mvp: true,
   },
   {
     key: "create_lesson_plan",
     group: "creator",
-    labelVi: "Tạo giáo án học tập",
+    label: "Tạo giáo án học tập",
     is_mvp: false,
   },
   {
     key: "duplicate_lesson",
     group: "creator",
-    labelVi: "Sao chép bài học",
+    label: "Sao chép bài học",
     is_mvp: false,
   },
   {
     key: "customize_lesson",
     group: "creator",
-    labelVi: "Tùy chỉnh bài học",
+    label: "Tùy chỉnh bài học",
     is_mvp: false,
   },
   {
     key: "export_pdf",
     group: "creator",
-    labelVi: "Xuất PDF bài tập",
+    label: "Xuất PDF bài tập",
     is_mvp: false,
   },
   {
     key: "create_custom_curriculum",
     group: "creator",
-    labelVi: "Tạo lộ trình tùy chỉnh",
+    label: "Tạo lộ trình tùy chỉnh",
     is_mvp: false,
   },
   {
     key: "create_custom_game",
     group: "creator",
-    labelVi: "Tạo trò chơi tùy chỉnh",
+    label: "Tạo trò chơi tùy chỉnh",
     is_mvp: false,
   },
   {
     key: "use_ai_analysis",
     group: "ai",
-    labelVi: "Sử dụng phân tích AI",
+    label: "Sử dụng phân tích AI",
     is_mvp: false,
   },
   {
     key: "use_ai_search",
     group: "ai",
-    labelVi: "Sử dụng tìm kiếm AI",
+    label: "Sử dụng tìm kiếm AI",
     is_mvp: false,
   },
 ] as const;
@@ -104,38 +104,38 @@ export type EntitlementKey = (typeof ENTITLEMENT_KEYS)[number]["key"];
 export const QUOTA_KEYS = [
   {
     key: "child_profiles",
-    labelVi: "Hồ sơ trẻ",
+    label: "Hồ sơ trẻ",
     unit: "profile",
     cycle: "none",
   },
   {
     key: "daily_play_minutes",
-    labelVi: "Thời gian chơi hàng ngày",
+    label: "Thời gian chơi hàng ngày",
     unit: "minutes_per_child",
     cycle: "daily_ict",
   },
   {
     key: "data_export",
-    labelVi: "Lượt xuất dữ liệu",
+    label: "Lượt xuất dữ liệu",
     unit: "count",
     cycle: "hours_24",
   },
   {
     key: "lesson_plans_per_month",
-    labelVi: "Giáo án mỗi tháng",
+    label: "Giáo án mỗi tháng",
     unit: "plans",
     cycle: "monthly",
   },
   {
     key: "custom_games_saved",
-    labelVi: "Trò chơi tùy chỉnh đã lưu",
+    label: "Trò chơi tùy chỉnh đã lưu",
     unit: "games",
     cycle: "none",
   },
-  { key: "ai_calls", labelVi: "Lượt gọi AI", unit: "count", cycle: "monthly" },
+  { key: "ai_calls", label: "Lượt gọi AI", unit: "count", cycle: "monthly" },
   {
     key: "upload_mb",
-    labelVi: "Dung lượng tải lên",
+    label: "Dung lượng tải lên",
     unit: "mb",
     cycle: "none",
   },
@@ -155,16 +155,16 @@ export function assertEntitlementKey(key: string): EntitlementKey {
 
 export interface Offer {
   offer_code: string;
-  billing_period_vi: string;
+  billing_period: string;
   price_vnd: number;
   duration_days: number | null;
 }
 
 export interface PackageDefinition {
   code: `PKG-${string}`;
-  name_vi: string;
-  audience_vi: string;
-  description_vi: string;
+  name: string;
+  audience: string;
+  description: string;
   entitlements: EntitlementKey[];
   quotas: Partial<Record<QuotaKey, number>>;
   offers: Offer[];
@@ -176,9 +176,9 @@ export interface PackageDefinition {
 export const PACKAGE_CATALOG: Record<string, PackageDefinition> = {
   "PKG-standard": {
     code: "PKG-standard",
-    name_vi: "Tiêu chuẩn",
-    audience_vi: "Phụ huynh phổ thông",
-    description_vi: "Dành cho phụ huynh theo dõi tiến độ của 3 trẻ",
+    name: "Tiêu chuẩn",
+    audience: "Phụ huynh phổ thông",
+    description: "Dành cho phụ huynh theo dõi tiến độ của 3 trẻ",
     entitlements: [
       "play_login_games",
       "play_standard_games",
@@ -193,7 +193,7 @@ export const PACKAGE_CATALOG: Record<string, PackageDefinition> = {
     offers: [
       {
         offer_code: "annual",
-        billing_period_vi: "1 năm",
+        billing_period: "1 năm",
         price_vnd: PENDING_PRICE_VND,
         duration_days: 365,
       },
@@ -204,9 +204,9 @@ export const PACKAGE_CATALOG: Record<string, PackageDefinition> = {
   },
   "PKG-premium": {
     code: "PKG-premium",
-    name_vi: "Premium",
-    audience_vi: "Phụ huynh theo dõi sâu + giáo viên",
-    description_vi: "Mở khoá toàn bộ game, lộ trình nâng cao và tối đa 5 trẻ",
+    name: "Premium",
+    audience: "Phụ huynh theo dõi sâu + giáo viên",
+    description: "Mở khoá toàn bộ game, lộ trình nâng cao và tối đa 5 trẻ",
     entitlements: [
       "play_login_games",
       "play_standard_games",
@@ -223,13 +223,13 @@ export const PACKAGE_CATALOG: Record<string, PackageDefinition> = {
     offers: [
       {
         offer_code: "annual",
-        billing_period_vi: "1 năm",
+        billing_period: "1 năm",
         price_vnd: PENDING_PRICE_VND,
         duration_days: 365,
       },
       {
         offer_code: "lifetime",
-        billing_period_vi: "trọn đời",
+        billing_period: "trọn đời",
         price_vnd: PENDING_PRICE_VND,
         duration_days: null,
       },
@@ -240,9 +240,9 @@ export const PACKAGE_CATALOG: Record<string, PackageDefinition> = {
   },
   "PKG-addon_lesson_plan": {
     code: "PKG-addon_lesson_plan",
-    name_vi: "Add-on Giáo án",
-    audience_vi: "Giáo viên mầm non",
-    description_vi: "Tạo, tuỳ chỉnh và xuất PDF giáo án",
+    name: "Add-on Giáo án",
+    audience: "Giáo viên mầm non",
+    description: "Tạo, tuỳ chỉnh và xuất PDF giáo án",
     entitlements: [
       "create_lesson_plan",
       "duplicate_lesson",
@@ -255,7 +255,7 @@ export const PACKAGE_CATALOG: Record<string, PackageDefinition> = {
     offers: [
       {
         offer_code: "annual",
-        billing_period_vi: "1 năm",
+        billing_period: "1 năm",
         price_vnd: PENDING_PRICE_VND,
         duration_days: 365,
       },
@@ -266,15 +266,15 @@ export const PACKAGE_CATALOG: Record<string, PackageDefinition> = {
   },
   "PKG-addon_curriculum": {
     code: "PKG-addon_curriculum",
-    name_vi: "Add-on Lộ trình tùy chỉnh",
-    audience_vi: "Giáo viên và nhà thiết kế nội dung",
-    description_vi: "Tạo lộ trình học cá nhân hoá",
+    name: "Add-on Lộ trình tùy chỉnh",
+    audience: "Giáo viên và nhà thiết kế nội dung",
+    description: "Tạo lộ trình học cá nhân hoá",
     entitlements: ["create_custom_curriculum"],
     quotas: {},
     offers: [
       {
         offer_code: "annual",
-        billing_period_vi: "1 năm",
+        billing_period: "1 năm",
         price_vnd: PENDING_PRICE_VND,
         duration_days: 365,
       },
@@ -285,9 +285,9 @@ export const PACKAGE_CATALOG: Record<string, PackageDefinition> = {
   },
   "PKG-addon_custom_game": {
     code: "PKG-addon_custom_game",
-    name_vi: "Add-on Trò chơi tùy chỉnh",
-    audience_vi: "Giáo viên mầm non",
-    description_vi: "Tạo trò chơi tuỳ chỉnh từ mẫu",
+    name: "Add-on Trò chơi tùy chỉnh",
+    audience: "Giáo viên mầm non",
+    description: "Tạo trò chơi tuỳ chỉnh từ mẫu",
     entitlements: ["create_custom_game"],
     quotas: {
       custom_games_saved: 10,
@@ -295,7 +295,7 @@ export const PACKAGE_CATALOG: Record<string, PackageDefinition> = {
     offers: [
       {
         offer_code: "annual",
-        billing_period_vi: "1 năm",
+        billing_period: "1 năm",
         price_vnd: PENDING_PRICE_VND,
         duration_days: 365,
       },
@@ -306,9 +306,9 @@ export const PACKAGE_CATALOG: Record<string, PackageDefinition> = {
   },
   "PKG-addon_ai": {
     code: "PKG-addon_ai",
-    name_vi: "Add-on AI Assistant",
-    audience_vi: "Phụ huynh và giáo viên",
-    description_vi: "Phân tích tiến trình và tìm kiếm thông minh bằng AI",
+    name: "Add-on AI Assistant",
+    audience: "Phụ huynh và giáo viên",
+    description: "Phân tích tiến trình và tìm kiếm thông minh bằng AI",
     entitlements: ["use_ai_analysis", "use_ai_search"],
     quotas: {
       ai_calls: 100,
@@ -316,7 +316,7 @@ export const PACKAGE_CATALOG: Record<string, PackageDefinition> = {
     offers: [
       {
         offer_code: "annual",
-        billing_period_vi: "1 năm",
+        billing_period: "1 năm",
         price_vnd: PENDING_PRICE_VND,
         duration_days: 365,
       },

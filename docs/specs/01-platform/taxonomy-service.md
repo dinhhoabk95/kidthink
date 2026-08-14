@@ -88,11 +88,11 @@ L1 COMPETENCY          6      C1..C6
 
 | Bảng | Field then chốt |
 |---|---|
-| `competencies` | `id` PK, `code` (C1–C6, hiển thị), `name_vi`, `description_vi`, `color_token`, `icon` |
-| `strands` | `id` PK, `code` (hiển thị), `competency_id` FK, `parent_strand_id` (≤1 tầng), `name_vi`, `position` |
-| `skills` | `id` PK, `code` (hiển thị), `strand_id` FK, `name_vi`, `age_min`, `age_max`, `difficulty`, `thinking_processes[]`, `what_axis[]`, `status` |
+| `competencies` | `id` PK, `code` (C1–C6, hiển thị), `name`, `description`, `color_token`, `icon` |
+| `strands` | `id` PK, `code` (hiển thị), `competency_id` FK, `parent_strand_id` (≤1 tầng), `name`, `position` |
+| `skills` | `id` PK, `code` (hiển thị), `strand_id` FK, `name`, `age_min`, `age_max`, `difficulty`, `thinking_processes[]`, `what_axis[]`, `status` |
 | `skill_prerequisites` | `skill_id` FK, `prerequisite_id` FK, `strength` — PK ghép |
-| `learning_objectives` | `id` PK, `code` (hiển thị), `skill_id` FK, `behaviour_vi`, `observable_criteria_vi`, `position` |
+| `learning_objectives` | `id` PK, `code` (hiển thị), `skill_id` FK, `behaviour`, `observable_criteria`, `position` |
 
 Cột thật xem [`schema-content-taxonomy.md`](schema-content-taxonomy.md) §7.1 — file này chỉ
 liệt kê field, không phải nguồn `owns`. FK dùng `id` theo [`data-model-overview.md`](data-model-overview.md) `BR-DM-13`

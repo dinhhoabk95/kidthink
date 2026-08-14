@@ -19,7 +19,7 @@ import { requireReauth } from "../../../utils/reauth-runtime.js";
 const ForceReconsentSchema = z
   .object({
     consent_type: z.enum(["terms", "privacy", "child_data"]),
-    notice_vi: z.string().min(20).max(500),
+    notice: z.string().min(20).max(500),
     reason: z.string().min(20).max(500),
     expected_requirement_at: z.string().nullable().optional(),
     confirm_deployed: z.boolean().optional(),
@@ -53,11 +53,7 @@ export default defineEventHandler(async (event) => {
       });
     }
 
-    const {
-      consent_type: consentType,
-      notice_vi: noticeVi,
-      reason,
-    } = parsed.data;
+    const { consent_type: consentType, notice, reason } = parsed.data;
 
     const ipAddress = getManagerRemoteIp(event);
     const userAgent = getHeader(event, "user-agent") || "unknown";
@@ -72,14 +68,14 @@ export default defineEventHandler(async (event) => {
         .values({
           consentType,
           reconsentRequiredAt: now,
-          noticeVi,
+          noticeVi: notice,
           updatedAt: now,
         })
         .onConflictDoUpdate({
           target: consentRequirements.consentType,
           set: {
             reconsentRequiredAt: now,
-            noticeVi,
+            noticeVi: notice,
             updatedAt: now,
           },
         });
@@ -92,7 +88,7 @@ export default defineEventHandler(async (event) => {
         entityId: consentType,
         afterData: {
           consent_type: consentType,
-          notice_vi: noticeVi,
+          notice,
         },
         reason,
         ipAddress,
@@ -104,7 +100,7 @@ export default defineEventHandler(async (event) => {
     return {
       consent_type: consentType,
       reconsent_required_at: now.toISOString(),
-      notice_vi: noticeVi,
+      notice,
     };
   } catch (err: unknown) {
     if (err instanceof AppError) {

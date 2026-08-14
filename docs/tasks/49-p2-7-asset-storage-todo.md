@@ -25,7 +25,7 @@
 ### Task 1 — Kho ảnh và pipeline
 
 - [ ] Bảng `content_images` đủ cột §7.1.
-- [ ] `owner_type` là **enum đóng**; `alt_vi` **không null**.
+- [ ] `owner_type` là **enum đóng**; `alt` **không null**.
 - [ ] Pipeline: WebP chất lượng **82**, cạnh lớn nhất ≤ **960px**.
 - [ ] Thumbnail **160×160**, crop giữa.
 - [ ] Ca dương: JPEG 3000×2000 → WebP, ≤960px, có thumbnail.
@@ -45,10 +45,10 @@
 ### Task 2 — API ảnh
 
 - [ ] `POST /api/managers/images` cần auth + `x-csrf-token`.
-- [ ] Multipart `file` · `owner_type` · `owner_id` · `alt_vi`.
+- [ ] Multipart `file` · `owner_type` · `owner_id` · `alt`.
 - [ ] `BR-IMG-11` ca âm: quét mã — **không** raw `$fetch` cho route upload.
 - [ ] Request thật có header `x-csrf-token`.
-- [ ] Thiếu `alt_vi` → **422** `VALIDATION_FAILED`.
+- [ ] Thiếu `alt` → **422** `VALIDATION_FAILED`.
 - [ ] `DELETE .../images/{id}` khi đang dùng ở `published` → **409** `CONTENT_IN_USE` + `details.used_by[]`.
 - [ ] `BR-IMG-12`: mọi upload và xoá ghi `audit_logs`.
 - [ ] Content bị xoá cứng → ảnh chuyển `orphan`, không xoá file ngay.
@@ -78,7 +78,7 @@
 - [ ] `BR-IUP-02` ca âm: template hiển thị 96px → hộp preview **đúng 96px**.
 - [ ] `BR-IUP-08` ca âm: cảnh báo "không dùng ảnh chụp trẻ em" hiện **thường trực**.
 - [ ] `BR-IUP-07` ca âm: upload fail → modal **giữ nguyên crop và góc xoay**, có nút thử lại.
-- [ ] `BR-IUP-05`: chưa điền `alt_vi` → nút upload **vô hiệu**.
+- [ ] `BR-IUP-05`: chưa điền `alt` → nút upload **vô hiệu**.
 - [ ] `BR-IUP-04` ca âm: file 5 MB → client chặn trước khi gửi.
 - [ ] `BR-IUP-04` ca âm: gửi 5 MB bằng curl → server **413**.
 - [ ] Ảnh vào < 200×200 → cảnh báo, không chặn cứng.

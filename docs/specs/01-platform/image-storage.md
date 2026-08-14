@@ -99,7 +99,7 @@ Chọn/kéo ảnh
 | `path` | Tương đối, ví dụ `content/2026/08/ab12cd.webp` |
 | `thumb_path` | |
 | `width` `height` `bytes` `mime` | Sau chuẩn hoá |
-| `alt_vi` | Bắt buộc — a11y |
+| `alt` | Bắt buộc — a11y |
 | `visibility` | `public` \| `private` |
 | `status` | `active` \| `orphan` \| `archived` |
 | `uploaded_by_manager_id` `created_at` | |
@@ -133,11 +133,11 @@ Cấm — **NEVER** lưu URL tuyệt đối vào DB.
 | | |
 |---|---|
 | Auth | `requireManagerAuth()` + `x-csrf-token` |
-| Body | multipart — `file` · `owner_type` · `owner_id` · `alt_vi` |
+| Body | multipart — `file` · `owner_type` · `owner_id` · `alt` |
 | 201 | `{ id, path, thumb_path, width, height }` |
 | 413 | `PAYLOAD_TOO_LARGE` |
 | 415 | `UNSUPPORTED_MEDIA_TYPE` |
-| 422 | `VALIDATION_FAILED` — thiếu `alt_vi` |
+| 422 | `VALIDATION_FAILED` — thiếu `alt` |
 
 ### `DELETE /api/managers/images/{id}`
 
@@ -189,8 +189,8 @@ Scenario: kết quả chuẩn hoá đúng giới hạn
   And chiều lớn nhất không vượt 960px
   And có thumbnail 160x160
 
-Scenario: alt_vi bắt buộc
-  When upload không kèm alt_vi
+Scenario: alt bắt buộc
+  When upload không kèm alt
   Then trả 422
 ```
 
@@ -200,7 +200,7 @@ Scenario: alt_vi bắt buộc
 - Kiểm magic bytes ở server.
 - Lưu path tương đối, dựng URL lúc đọc.
 - Sinh thumbnail và giữ file gốc.
-- Bắt buộc `alt_vi`.
+- Bắt buộc `alt`.
 - Ghi audit mọi upload/xoá.
 
 **Ask first**

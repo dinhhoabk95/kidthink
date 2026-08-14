@@ -11,11 +11,8 @@ import {
 } from "@kidthink/db";
 import { beforeAll, describe, expect, it } from "vitest";
 
-import { truncateAllTestTables } from "../../../../../packages/db/tests/global-setup";
-
 describe("Task P1.10 — Content Tagging & Seed Authoring Pipeline (BR-TAG-* & BR-CSA-*)", () => {
   beforeAll(async () => {
-    await truncateAllTestTables();
     await seed();
   }, 60_000);
   const mockSeed: ContentSeed<any, any> = {

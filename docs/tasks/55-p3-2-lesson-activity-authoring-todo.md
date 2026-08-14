@@ -49,11 +49,11 @@
 
 ### 1b. Khung lesson
 
-- [ ] Bắt buộc: `title_vi` · ≥1 LO · `target_age_min`/`max` · `estimated_minutes` · `guide_vi`
-      năm phần · ≥1 activity · `warm_up_vi` · `reflection_vi` · `assessment_vi` · `access_tier` ·
+- [ ] Bắt buộc: `title` · ≥1 LO · `target_age_min`/`max` · `estimated_minutes` · `guide`
+      năm phần · ≥1 activity · `warm_up` · `reflection` · `assessment` · `access_tier` ·
       tag ba trục.
-- [ ] `extension_vi` tuỳ chọn theo `BR-LSM-09`.
-- [ ] `materials_vi` bắt buộc khi có activity khai vật liệu; phải bao được toàn bộ vật liệu đó.
+- [ ] `extension` tuỳ chọn theo `BR-LSM-09`.
+- [ ] `materials` bắt buộc khi có activity khai vật liệu; phải bao được toàn bộ vật liệu đó.
 - [ ] Mâu thuẫn cung bậc ở §7.1 đóng về phía `BR-LSM-01`; §7.1 và mục 10 `Always` nói cùng một điều.
 
 ### 1c. Thời lượng
@@ -150,7 +150,7 @@
 - [ ] Seeder P3.1 và route P3.2 gọi **cùng một hàm**; test quét chứng minh không có bản thứ hai.
 - [ ] `kind` hợp lệ.
 - [ ] 2–20 phút.
-- [ ] `instruction_vi` đủ bốn phần: chuẩn bị, các bước, dễ hơn, khó hơn.
+- [ ] `instruction` đủ bốn phần: chuẩn bị, các bước, dễ hơn, khó hơn.
 - [ ] ≥1 câu nói với trẻ.
 - [ ] 1–2 skill.
 - [ ] Vật liệu bắt buộc với kind ngoài màn hình.
@@ -196,7 +196,7 @@
 - [ ] Kéo activity thứ ba lên vị trí một: `position` đúng, tổng thời lượng không đổi.
 - [ ] Lesson rỗng không gửi duyệt được (`BR-LSA-01`).
 - [ ] Lesson trỏ activity `draft` → 422 nêu tên activity (`BR-LSA-03`).
-- [ ] `guide_vi` rỗng → 422 (`BR-LSA-04`).
+- [ ] `guide` rỗng → 422 (`BR-LSA-04`).
 - [ ] Phân giải activity theo bản `published` mới nhất qua `entity_id` (`D-AE`).
 - [ ] Publish version mới của activity: mọi lesson dùng nó thấy bản mới (`BR-LSA-05`).
 - [ ] Sửa lesson `published` tạo version mới ở `draft`; hàng cũ không bị `UPDATE`.

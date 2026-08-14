@@ -23,14 +23,14 @@ describe("Task 1 — OAuth Provider Registry (BR-OAP-01, BR-OAP-06, BR-OAP-09, B
 
     const google = list.find((p) => p.provider === "google");
     expect(google).toBeDefined();
-    expect(google?.label_vi).toBe("Google");
+    expect(google?.label).toBe("Google");
     expect(google?.is_enabled).toBe(true);
     expect((google as any).clientId).toBeUndefined();
     expect((google as any).clientSecret).toBeUndefined();
 
     const fb = list.find((p) => p.provider === "facebook");
     expect(fb).toBeDefined();
-    expect(fb?.label_vi).toBe("Facebook");
+    expect(fb?.label).toBe("Facebook");
     expect(fb?.is_enabled).toBe(true);
     expect((fb as any).clientId).toBeUndefined();
     expect((fb as any).clientSecret).toBeUndefined();

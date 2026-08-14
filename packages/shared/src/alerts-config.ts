@@ -4,7 +4,7 @@ export type AlertSeverityType = "critical" | "warning" | "info";
 
 export interface AlertRuleDef {
   name: string;
-  title_vi?: string;
+  title?: string;
   severity: AlertSeverityType;
   threshold: string;
   channels: string[];
@@ -87,8 +87,8 @@ function handleRuleField(line: string, state: ParserState): void {
     return;
   }
 
-  if (line.startsWith("title_vi:")) {
-    rule.title_vi = stripQuotes(line.replace("title_vi:", ""));
+  if (line.startsWith("title:")) {
+    rule.title = stripQuotes(line.replace("title:", ""));
   } else if (line.startsWith("severity:")) {
     rule.severity = stripQuotes(
       line.replace("severity:", "")

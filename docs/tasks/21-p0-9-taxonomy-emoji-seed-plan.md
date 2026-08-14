@@ -132,7 +132,7 @@ Bảng là bản chiếu, cùng quan hệ với `packages`/`PACKAGE_CATALOG` ở
 mỗi skill.
 
 **Tiêu chí nghiệm thu**
-- [ ] 30 LO viết đúng khuôn `LO-<skill_code>-NN`, có `behaviour_vi` và `observable_criteria_vi`.
+- [ ] 30 LO viết đúng khuôn `LO-<skill_code>-NN`, có `behaviour` và `observable_criteria`.
 - [ ] Mỗi LO **quan sát được** — người khác đọc xong biết cách chấm đạt/không đạt.
 - [ ] Đo thật: số LO một người review được trong một ngày. So với baseline 20 (`D-CN`).
 - [ ] Nếu lệch >30%, sửa lịch P0 **trước** khi chạy lô tiếp (D-EF).
@@ -217,7 +217,7 @@ batch trước khi tiếp tục, không tăng kích thước batch.
 ### T5 — Migration `emoji_registry`
 
 **Tiêu chí nghiệm thu**
-- [ ] Bảng theo §7.1: `code` `unicode` `name_vi` `category` `search_keywords_vi` `age_suitability` `what_axis` `status`.
+- [ ] Bảng theo §7.1: `code` `unicode` `name` `category` `search_keywords` `age_suitability` `what_axis` `status`.
 - [ ] `code` khớp khuôn `EMJ-<slug>`, ép bằng CHECK.
 - [ ] `category` thuộc đúng 32 nhóm §7.2.
 - [ ] Không route tạo/sửa/xoá (`BR-EMJ-07`).

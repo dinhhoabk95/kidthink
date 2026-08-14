@@ -106,7 +106,7 @@ không phải một thư viện.
 `game_levels(status, access_tier, age_min, age_max)` ·
 `content_tag_map(tag_id, entity_type)` ·
 `content_skill_map(skill_id, entity_type)` ·
-GIN trên `to_tsvector('simple', unaccent(title_vi || ' ' || description_vi))`.
+GIN trên `to_tsvector('simple', unaccent(title || ' ' || description))`.
 
 MVP dùng Postgres full-text với `unaccent`. Cấm thêm search engine riêng — một dịch vụ
 nữa để vận hành không đáng cho 120 level.
@@ -119,7 +119,7 @@ nữa để vận hành không đáng cho 120 level.
 |---|---|
 | Auth | `requireUserAuth()` |
 | Query | §7.1 |
-| 200 | `{ items: [{ code, title_vi, thumbnail_emoji, competency, age_min, age_max, difficulty, access_tier, locked }], next_cursor }` |
+| 200 | `{ items: [{ code, title, thumbnail_emoji, competency, age_min, age_max, difficulty, access_tier, locked }], next_cursor }` |
 | 422 | `VALIDATION_FAILED` |
 
 `items[].locked = true` → không có `content_pack`, không có `difficulty_params`.

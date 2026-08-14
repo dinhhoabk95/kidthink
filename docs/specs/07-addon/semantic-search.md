@@ -57,7 +57,7 @@ là tính năng của User.
 **Nhánh ghi (re-embed):**
 1. Nội dung chuyển trạng thái `published` (lần đầu hoặc bản mới) → publish pipeline enqueue
    `embed:content` với `{ content_type, content_id, content_version }`.
-2. Worker gọi embedding provider trên text công khai: `title_vi + description_vi + tên tag`.
+2. Worker gọi embedding provider trên text công khai: `title + description + tên tag`.
 3. Lưu vector vào `content_embeddings`, khoá theo `(content_type, content_id, content_version)`.
 
 **Nhánh đọc (tìm kiếm):**
@@ -146,7 +146,7 @@ Ngưỡng `cosine_similarity` tối thiểu để coi là "liên quan": **chưa 
 |---|---|
 | Auth | `requireUserAuth()` + entitlement `use_ai_search` |
 | Query | `q` (text, 2–200 ký tự) · `limit` (≤20) |
-| 200 | `{ items: [{ code, title_vi, thumbnail_emoji, access_tier, locked, similarity }], credits_spent }` |
+| 200 | `{ items: [{ code, title, thumbnail_emoji, access_tier, locked, similarity }], credits_spent }` |
 | 402 | `QUOTA_EXCEEDED` — hết credit |
 | 403 | `ENTITLEMENT_REQUIRED` |
 | 422 | `VALIDATION_FAILED` |
@@ -160,7 +160,7 @@ Ngưỡng `cosine_similarity` tối thiểu để coi là "liên quan": **chưa 
 Scenario: BR-SEM-01 — provider ngoài không nhận dữ liệu trẻ
   Given job embed:content chạy cho một lesson published
   When ghi lại payload gửi tới embedding provider
-  Then payload chỉ chứa title_vi, description_vi, tên tag
+  Then payload chỉ chứa title, description, tên tag
   And không chứa child_uuid, display_name, hay bất kỳ trường trẻ nào
 
 Scenario: BR-SEM-03 — không serve vector cũ hơn version hiện tại

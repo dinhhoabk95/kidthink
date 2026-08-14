@@ -4,7 +4,7 @@ import { resolveAssets } from "../src/asset-resolver";
 describe("Task 1 — Server Asset Resolution (BR-CFG-07)", () => {
   it("resolves emoji reference to glyph from registry", () => {
     const contentPack = {
-      prompt_vi: "Chọn quả táo đỏ",
+      prompt: "Chọn quả táo đỏ",
       target_item: {
         item_id: "i1",
         asset: { kind: "emoji", ref: "EMJ-red-apple" },
@@ -19,7 +19,7 @@ describe("Task 1 — Server Asset Resolution (BR-CFG-07)", () => {
 
   it("resolves image and audio references via lookup functions", () => {
     const contentPack = {
-      prompt_vi: "Nghe và xem hình",
+      prompt: "Nghe và xem hình",
       prompt_audio_ref: "AUD-instr-001",
       image: { kind: "image", ref: "IMG-farm-bg" },
     };

@@ -82,7 +82,7 @@ Thiếu toàn bộ tám key MVP: `play_free_games` `play_login_games` `play_stan
 |---|---|
 | `standard`: offer 365 ngày | `duration_months: 1` |
 | `premium`: offer 365 ngày **và** vĩnh viễn | `duration_months: 12`, không có offer vĩnh viễn |
-| Offer shape `{offer_code, billing_period_vi, price_vnd, duration_days}` (§7.3) | `{duration_months, price_vnd}` |
+| Offer shape `{offer_code, billing_period, price_vnd, duration_days}` (§7.3) | `{duration_months, price_vnd}` |
 | 4 gói add-on khai báo với `is_public = false` (`BR-PKG-05`) | không có gói nào |
 | `quotas` mỗi gói: `child_profiles` 3/5 · `daily_play_minutes` 60/90 | cột `quotas` không được seed |
 | `package_entitlements` theo bảng §7.1 | 12 hàng trỏ key bịa |
@@ -181,7 +181,7 @@ Khối B — sau khi P0.3 đóng
 ### Task 4 — `PACKAGE_CATALOG` và bảng chiếu
 
 **Tiêu chí nghiệm thu**
-- [ ] Hằng số `PACKAGE_CATALOG` đúng hình dạng §7.3 (`offer_code`, `billing_period_vi`, `duration_days`).
+- [ ] Hằng số `PACKAGE_CATALOG` đúng hình dạng §7.3 (`offer_code`, `billing_period`, `duration_days`).
 - [ ] `PKG-standard`: một offer 365 ngày. `PKG-premium`: offer 365 ngày **và** offer vĩnh viễn (`duration_days: null`).
 - [ ] Bốn gói add-on khai với `is_public: false` (`BR-PKG-05`).
 - [ ] `quotas` theo §7.1: `child_profiles` 3/5 · `daily_play_minutes` 60/90.

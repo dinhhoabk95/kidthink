@@ -23,7 +23,7 @@
 
 - [ ] Chọn 10 skill trải đều ba mức `difficulty`.
 - [ ] Soạn 3 LO mỗi skill, đúng khuôn `LO-<skill_code>-NN`.
-- [ ] Mỗi LO có `behaviour_vi` và `observable_criteria_vi`.
+- [ ] Mỗi LO có `behaviour` và `observable_criteria`.
 - [ ] Mỗi LO **quan sát được**: người khác đọc xong biết cách chấm đạt/không đạt.
 - [ ] **Đo thật** số LO một người review được trong một ngày.
 - [ ] So với baseline 20/ngày; lệch >30% thì sửa lịch P0 **trước** khi chạy lô tiếp.

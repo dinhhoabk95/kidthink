@@ -3,11 +3,11 @@ import { EmojiRef } from "../shared-fields";
 import type { GameTemplate } from "../types";
 
 export const GT003ContentSchema = z.object({
-  prompt_vi: z.string().min(4).max(80),
+  prompt: z.string().min(4).max(80),
   prompt_audio_ref: z.string().optional(),
   container: z.object({
     container_id: z.string(),
-    label_vi: z.string().max(40),
+    label: z.string().max(40),
     accepts_attribute: z.string(),
   }),
   items: z
@@ -41,7 +41,7 @@ export const GT003Template: GameTemplate<
   typeof GT003DifficultySchema
 > = {
   code: "GT-003",
-  name_vi: "Kéo vào đích",
+  name: "Kéo vào đích",
   mechanic: "drag-to-container",
   layouts: ["top-source-bottom-target", "left-source-right-target"],
   content_contract: GT003ContentSchema,

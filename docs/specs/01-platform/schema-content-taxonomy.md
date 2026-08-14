@@ -71,24 +71,24 @@ Không có.
 
 | Bảng | Cột |
 |---|---|
-| `competencies` | `id` bigserial PK · `code` UNIQUE (`C1`..`C6`, hiển thị) · `name_vi` · `description_vi` · `color_token` · `icon` · `position` |
-| `strands` | `id` bigserial PK · `code` UNIQUE (hiển thị) · `competency_id` FK · `parent_strand_id` FK self (≤1 tầng) · `name_vi` · `description_vi` · `position` |
-| `skills` | `id` bigserial PK · `code` UNIQUE (hiển thị) · `strand_id` FK · `name_vi` · `description_vi` · `age_min` `age_max` smallint CHECK 3–6 · `difficulty` smallint CHECK 1–5 · `thinking_processes` text[] · `what_axis` text[] · `status` enum (`seeded`\|`deprecated`) · `position` |
+| `competencies` | `id` bigserial PK · `code` UNIQUE (`C1`..`C6`, hiển thị) · `name` · `description` · `color_token` · `icon` · `position` |
+| `strands` | `id` bigserial PK · `code` UNIQUE (hiển thị) · `competency_id` FK · `parent_strand_id` FK self (≤1 tầng) · `name` · `description` · `position` |
+| `skills` | `id` bigserial PK · `code` UNIQUE (hiển thị) · `strand_id` FK · `name` · `description` · `age_min` `age_max` smallint CHECK 3–6 · `difficulty` smallint CHECK 1–5 · `thinking_processes` text[] · `what_axis` text[] · `status` enum (`seeded`\|`deprecated`) · `position` |
 | `skill_prerequisites` | `(skill_id, prerequisite_id)` PK · `strength` numeric CHECK 0–1 |
-| `learning_objectives` | `id` bigserial PK · `code` UNIQUE (hiển thị) · `skill_id` FK · `behaviour_vi` · `observable_criteria_vi` · `position` |
+| `learning_objectives` | `id` bigserial PK · `code` UNIQUE (hiển thị) · `skill_id` FK · `behaviour` · `observable_criteria` · `position` |
 
 ### 7.2 Tagging
 
 | Bảng | Cột |
 |---|---|
-| `content_tags` | `id` bigserial PK · `code` UNIQUE (hiển thị) · `axis` enum (`what`\|`thinking`\|`mechanic`\|`theme`) · `label_vi` · `status` — Lớp 1 |
+| `content_tags` | `id` bigserial PK · `code` UNIQUE (hiển thị) · `axis` enum (`what`\|`thinking`\|`mechanic`\|`theme`) · `label` · `status` — Lớp 1 |
 | `content_tag_map` | `(entity_type, entity_id, tag_id)` PK ghép |
 | `content_skill_map` | `(entity_type, entity_id, skill_id)` PK ghép · `weight` numeric CHECK |
 | `user_tags` | `id` · `user_id` FK · `label` · UNIQUE `(user_id, label)` |
 
 ### 7.3 `game_templates` — Lớp 1
 
-`id` bigserial PK · `code` UNIQUE (hiển thị) · `name_vi` · `mechanic` · `layouts` text[] ·
+`id` bigserial PK · `code` UNIQUE (hiển thị) · `name` · `mechanic` · `layouts` text[] ·
 `content_contract` JSONB (JSON Schema export) · `difficulty_contract` JSONB ·
 `limits` JSONB · `age_min` `age_max` · `banned_age_bands` text[] ·
 `requires_tap_fallback` bool · `asset_kinds` text[] · `scoring` JSONB · `events` text[] ·
@@ -105,7 +105,7 @@ Không có.
 | — | UNIQUE `(code, content_version)` |
 | — | UNIQUE `(code) WHERE status = 'published'` — partial |
 | `template_id` | FK `game_templates(id)` |
-| `title_vi` `description_vi` `instruction_vi` | |
+| `title` `description` `instruction` | |
 | `instruction_audio_path` | |
 | `content_pack` | JSONB NOT NULL |
 | `difficulty_params` | JSONB NOT NULL |
@@ -125,14 +125,14 @@ không nội dung ([`access-ladder.md`](../00-foundation/access-ladder.md) `BR-L
 ### 7.5 `lessons` · `activities` · `lesson_activities` — Lớp 2, có version
 
 `lessons`: `id` bigserial PK · `entity_id` bigserial (neo dòng dõi, xem đầu §7) · `code` ·
-`content_version` · `title_vi` · `guide_vi` · `target_age_min/max` ·
-`estimated_minutes` CHECK 5–45 · `materials_vi` · `warm_up_vi` · `reflection_vi` ·
-`assessment_vi` · `extension_vi` · `access_tier` · `status` · `origin` · `authored_in` ·
+`content_version` · `title` · `guide` · `target_age_min/max` ·
+`estimated_minutes` CHECK 5–45 · `materials` · `warm_up` · `reflection` ·
+`assessment` · `extension` · `access_tier` · `status` · `origin` · `authored_in` ·
 `seed_batch_id` · audit cột.
 
 `activities`: `id` bigserial PK · `entity_id` bigserial (neo dòng dõi — activity tái sử dụng
 qua nhiều lesson, [`activity-authoring.md`](../06-admin/activity-authoring.md) "sửa một lần, mọi lesson dùng nó đều cập nhật") ·
-`code` · `content_version` · `kind` enum (10 loại) · `title_vi` · `instruction_vi` ·
+`code` · `content_version` · `kind` enum (10 loại) · `title` · `instruction` ·
 `estimated_minutes` · `ref_type` `ref_id` (FK `entity_id` của `game_levels`/`worksheets` tuỳ
 `ref_type`, nếu `kind = digital_game`/`worksheet` — luôn bản `published` mới nhất) ·
 `access_tier` · `status`.
@@ -154,8 +154,8 @@ của activity — luôn bản `published` mới nhất, khớp mô tả tái s�
 > `BR-SCT-06` + [`content-versioning.md`](../00-foundation/content-versioning.md) §11 Q2, sửa lại 2026-08-07 theo D-AE.
 
 `curricula`: `id` bigserial PK · `entity_id` bigserial (neo dòng dõi, cho
-`current_curriculum_id` ở `child_profiles`) · `code` · `content_version` · `title_vi` ·
-`description_vi` · `program_type` enum · `age_min` `age_max` · `duration_weeks` ·
+`current_curriculum_id` ở `child_profiles`) · `code` · `content_version` · `title` ·
+`description` · `program_type` enum · `age_min` `age_max` · `duration_weeks` ·
 `sessions_per_week` · `access_tier` · `status`.
 
 `curriculum_items`: `id` · `curriculum_id` FK `curricula(id)` (cha-con, ghim) ·
@@ -173,7 +173,7 @@ version lúc enroll) · `started_at` · `current_week` · `status`.
 ### 7.7 `worksheets` · `content_images`
 
 `worksheets`: `id` bigserial PK · `entity_id` bigserial (neo dòng dõi — target được của
-`activities.ref_id` khi `ref_type = worksheet`) · `code` · `content_version` · `title_vi` ·
+`activities.ref_id` khi `ref_type = worksheet`) · `code` · `content_version` · `title` ·
 `learning_objective_ids` bigint[] · `pdf_path` · `access_tier` · `status`.
 
 `content_images`: [`image-storage.md`](image-storage.md) §7.1.

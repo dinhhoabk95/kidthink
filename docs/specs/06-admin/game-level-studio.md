@@ -92,7 +92,7 @@ Studio ghi `game_levels` ở trạng thái `draft`. Publish là bề mặt khác
 
 ### 7.2 Trường bắt buộc trước khi gửi duyệt
 
-`template_code` · `title_vi` · `instruction_vi` · `content_pack` hợp lệ ·
+`template_code` · `title` · `instruction` · `content_pack` hợp lệ ·
 `difficulty_params` hợp lệ · `access_tier` · ≥1 skill (đúng 1 có `weight = 1.0`) ·
 ≥1 learning objective · `age_min`/`age_max` · `difficulty` · tag đủ ba trục.
 

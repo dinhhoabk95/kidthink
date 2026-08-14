@@ -165,7 +165,7 @@
 > **D-AA** (`age_band` suy lúc đọc).
 
 - [x] **D-AB** — `billing_period` (M10). Chốt: giữ `packages.offers` JSONB, đổi khoá
-      `billing_period_vi` → `billing_period`, miền đóng `{yearly, monthly}`
+      `billing_period` → `billing_period`, miền đóng `{yearly, monthly}`
 - [x] **D-AC** — spec nào `owns` cột `content_review_log`? Chốt: [`schema-identity-billing.md`](../specs/01-platform/schema-identity-billing.md) §7.10a
 - [x] **D-AD** — module `ops` trong migration #1 gồm bảng nào? Chốt: + `audit_logs` ·
       `content_review_log` · `backup_log`; hoãn `feature_flags` · `notifications` ·
@@ -246,7 +246,7 @@
 ## T8 — [`schema-identity-billing.md`](../specs/01-platform/schema-identity-billing.md) (M9 · M10 · D-AC · D-AD · D-Y) song song được
 
 - [x] Theo **D-Y** (đã chốt): thêm `AUTH-TOKENS-SESSIONS` vào `depends_on`
-- [x] Theo **D-AB**: `packages.offers` khoá `billing_period_vi` → `billing_period`, miền đóng
+- [x] Theo **D-AB**: `packages.offers` khoá `billing_period` → `billing_period`, miền đóng
       `{yearly, monthly}`, ghi rõ MVP chỉ dùng `yearly`
 - [x] Theo **D-AC**: §7.10a định nghĩa cột `content_review_log` — INSERT-only,
       `(entity_type, entity_id)` polymorphic — **cột lấy nguyên từ [`content-lifecycle.md`](../specs/00-foundation/content-lifecycle.md) §7.2**

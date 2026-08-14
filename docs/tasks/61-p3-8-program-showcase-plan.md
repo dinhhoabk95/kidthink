@@ -74,7 +74,7 @@ gắn hành trình vào một nhóm không đúng nghĩa.
 ### 1.4 Biên public chưa có DTO đóng
 
 Spec cấm `content_pack` nhưng chưa khai response shape. Nếu route trả hàng Drizzle kèm quan hệ,
-`content_pack`, `guide_vi`, `instruction_vi`, internal `id` hoặc `entity_id` có thể lọt ra theo
+`content_pack`, `guide`, `instruction`, internal `id` hoặc `entity_id` có thể lọt ra theo
 đường lồng nhau dù route không chọn chúng trực tiếp.
 
 Hai tuần đầu chỉ cần **tên hoạt động**. Từ tuần 3 chỉ cần chủ đề/tóm tắt cấu trúc. Không có lý do
@@ -108,7 +108,7 @@ sitemap tay và không tạo JSON-LD bằng chuỗi JSON thủ công.
 **D-NF — Projection public là allow-list có schema, không serialize row DB.** Khai
 `ProgramCardPublic` và `ProgramDetailPublic` ở biên dùng chung. Mapper nhận model nội bộ và tạo
 object mới field-by-field; cấm object spread. Test đi sâu toàn response và cấm ít nhất:
-`content_pack`, `guide_vi`, `instruction_vi`, `materials_vi`, `id`, `entity_id`, `ref_id`, dữ
+`content_pack`, `guide`, `instruction`, `materials`, `id`, `entity_id`, `ref_id`, dữ
 liệu review/provenance và đường storage.
 
 **D-NG — Chỉ render nhóm có nguồn thật; hành trình có nhóm riêng.** MVP map `age_based` →
@@ -117,9 +117,9 @@ tương ứng được contract + seed sở hữu bổ sung. Không heading rỗ
 chỉnh cách hiểu §4/§7.2, phải sửa
 [`program-showcase.md`](../specs/02-public/program-showcase.md) trước code và được người sở hữu duyệt.
 
-**D-NH — Biên xem thử là đúng hai tuần, field đóng.** Tuần 1–2 trả `goal_vi`, số buổi và danh
-sách item chỉ gồm `entity_type`, `code`, `title_vi`, `estimated_minutes`, `access_tier`. Tuần 3
-trở đi chỉ trả `week_no`, `goal_vi`, `session_count`, `item_count`; không tên item. Trạng thái
+**D-NH — Biên xem thử là đúng hai tuần, field đóng.** Tuần 1–2 trả `goal`, số buổi và danh
+sách item chỉ gồm `entity_type`, `code`, `title`, `estimated_minutes`, `access_tier`. Tuần 3
+trở đi chỉ trả `week_no`, `goal`, `session_count`, `item_count`; không tên item. Trạng thái
 khoá theo người xem được suy ngoài public cache từ `access_tier`, không đóng băng vào DTO. Cùng
 projection dùng cho HTML và JSON-LD để tránh cloaking.
 
@@ -149,7 +149,7 @@ kết quả; bot và người nhận cùng nội dung, không cloaking.
 ```text
 GET /api/guest/curricula
     200 + Cache-Control: public, max-age=600
-    → { groups: [{ code, label_vi, programs: ProgramCardPublic[] }] }
+    → { groups: [{ code, label, programs: ProgramCardPublic[] }] }
     → chỉ curriculum published; nhóm rỗng không xuất hiện
 
 GET /api/guest/curricula/{curriculumCode}
@@ -164,8 +164,8 @@ type ShowcaseGroup = "age" | "journey" | "competency" | "topic";
 
 interface ProgramCardPublic {
   code: string;
-  title_vi: string;
-  description_vi: string;
+  title: string;
+  description: string;
   group: ShowcaseGroup;
   target_age: { min: number; max: number };
   duration_weeks: number;
@@ -175,20 +175,20 @@ interface ProgramCardPublic {
 
 interface ProgramWeekPublic {
   week_no: number;
-  goal_vi: string;
+  goal: string;
   session_count: number;
   item_count: number;
   items?: Array<{
     entity_type: "lesson" | "game_level";
     code: string;
-    title_vi: string;
+    title: string;
     estimated_minutes: number;
     access_tier: "free" | "login" | "standard" | "premium";
   }>;
 }
 
 interface ProgramDetailPublic extends ProgramCardPublic {
-  competency_distribution: Array<{ code: string; label_vi: string; share: number }>;
+  competency_distribution: Array<{ code: string; label: string; share: number }>;
   weeks: ProgramWeekPublic[];
 }
 ```

@@ -15,12 +15,12 @@ import {
 } from "../../../utils/auth-runtime.js";
 
 export const COMPETENCY_CARDS = [
-  { code: "C1", name_vi: "Số & Đếm", icon_id: "topic-c1" },
-  { code: "C2", name_vi: "Hình học & Không gian", icon_id: "topic-c2" },
-  { code: "C3", name_vi: "Đo lường & So sánh", icon_id: "topic-c3" },
-  { code: "C4", name_vi: "Quy luật & Phân loại", icon_id: "topic-c4" },
-  { code: "C5", name_vi: "Tư duy Logic", icon_id: "topic-c5" },
-  { code: "C6", name_vi: "Giải quyết vấn đề", icon_id: "topic-c6" },
+  { code: "C1", name: "Số & Đếm", icon_id: "topic-c1" },
+  { code: "C2", name: "Hình học & Không gian", icon_id: "topic-c2" },
+  { code: "C3", name: "Đo lường & So sánh", icon_id: "topic-c3" },
+  { code: "C4", name: "Quy luật & Phân loại", icon_id: "topic-c4" },
+  { code: "C5", name: "Tư duy Logic", icon_id: "topic-c5" },
+  { code: "C6", name: "Giải quyết vấn đề", icon_id: "topic-c6" },
 ];
 
 export default defineEventHandler(async (event) => {

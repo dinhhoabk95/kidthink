@@ -54,7 +54,7 @@
 
 - [x] Danh sách bump (§7.2) và không bump (§7.3) khai theo từng thực thể.
 - [x] `requiresVersionBump(entityType, changedFields)` hoạt động đúng.
-- [x] Ca âm `BR-VER-07`: sửa `description_vi` không bump.
+- [x] Ca âm `BR-VER-07`: sửa `description` không bump.
 - [x] Ca âm `BR-VER-08`: sửa `content_pack` bắt buộc bump; sửa trực tiếp trả 409.
 - [x] Field lạ là **lỗi**, không mặc định "không bump".
 - [x] `pnpm --filter @kidthink/shared test -- versioning` xanh.

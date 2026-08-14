@@ -52,7 +52,7 @@
 - [ ] Chỉ curriculum `published` vào projection.
 - [ ] Tuần 1–2 có item metadata allow-list.
 - [ ] Tuần 3+ bắt buộc không có `items`.
-- [ ] Deep-key test cấm `content_pack`, `guide_vi`, `instruction_vi`, `materials_vi`.
+- [ ] Deep-key test cấm `content_pack`, `guide`, `instruction`, `materials`.
 - [ ] Deep-key test cấm internal `id`, `entity_id`, `ref_id`, provenance/review/storage path.
 - [ ] Fixture cố tình nhét `content_pack` lồng nhau làm test **đỏ**.
 - [ ] `pnpm test -- program-showcase-projection` xanh.

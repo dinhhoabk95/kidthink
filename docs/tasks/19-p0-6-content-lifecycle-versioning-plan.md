@@ -196,7 +196,7 @@ Khối B — sau khi P0.3 đóng
 **Tiêu chí nghiệm thu**
 - [ ] Hai danh sách khai từ §7.2 (bump) và §7.3 (không bump), theo từng thực thể.
 - [ ] Hàm `requiresVersionBump(entityType, changedFields)` trả `true` khi giao với danh sách bump.
-- [ ] Ca âm `BR-VER-07`: sửa `description_vi` **không** bump.
+- [ ] Ca âm `BR-VER-07`: sửa `description` **không** bump.
 - [ ] Ca âm `BR-VER-08`: sửa `content_pack` bắt buộc bump; sửa trực tiếp trả 409.
 - [ ] Field không nằm trong danh sách nào → lỗi, không mặc định "không bump". Mặc định phải là **đóng**, cùng lý do với `BR-LAD-02`.
 

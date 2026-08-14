@@ -19,8 +19,8 @@ export const TAXONOMY_SUFFICIENT_THRESHOLD = 3;
 export interface TaxonomySkillSummary {
   id: number;
   code: string;
-  name_vi: string;
-  description_vi: string | null;
+  name: string;
+  description: string | null;
   strand_id: number;
   age_min: number;
   age_max: number;
@@ -40,8 +40,8 @@ export interface TaxonomySkillSummary {
 export interface TaxonomyStrandSummary {
   id: number;
   code: string;
-  name_vi: string;
-  description_vi: string | null;
+  name: string;
+  description: string | null;
   competency_id: number;
   parent_strand_id: number | null;
   total_skills: number;
@@ -53,8 +53,8 @@ export interface TaxonomyStrandSummary {
 export interface TaxonomyCompetencySummary {
   id: number;
   code: string;
-  name_vi: string;
-  description_vi: string | null;
+  name: string;
+  description: string | null;
   color_token: string;
   icon: string;
   total_strands: number;
@@ -183,8 +183,8 @@ function computeEnhancedTaxonomy(
     return {
       id: s.id,
       code: s.code,
-      name_vi: s.nameVi,
-      description_vi: s.descriptionVi,
+      name: s.name,
+      description: s.description,
       strand_id: s.strandId,
       age_min: s.ageMin,
       age_max: s.ageMax,
@@ -207,8 +207,8 @@ function computeEnhancedTaxonomy(
     return {
       id: st.id,
       code: st.code,
-      name_vi: st.nameVi,
-      description_vi: st.descriptionVi,
+      name: st.name,
+      description: st.description,
       competency_id: st.competencyId,
       parent_strand_id: st.parentStrandId,
       total_skills: strandSkills.length,
@@ -234,8 +234,8 @@ function computeEnhancedTaxonomy(
       return {
         id: comp.id,
         code: comp.code,
-        name_vi: comp.nameVi,
-        description_vi: comp.descriptionVi,
+        name: comp.name,
+        description: comp.description,
         color_token: comp.colorToken,
         icon: comp.icon,
         total_strands: compStrands.length,

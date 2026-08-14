@@ -24,20 +24,23 @@ export async function seedEmojiMasterData(
   for (const entry of ALL_EMOJIS) {
     if (hasSkinToneModifier(entry.emoji)) {
       throw new Error(
-        `BR-EMJ-09 violation: Emoji '${entry.emoji}' (${entry.name_vi}) contains a skin tone modifier`
+        `BR-EMJ-09 violation: Emoji '${entry.emoji}' (${entry.name}) contains a skin tone modifier`
       );
     }
 
     const code = getEmojiCode(entry);
+
+    const nameVi = entry.name || "";
+    const keywordsVi = entry.keywords || [];
 
     await db
       .insert(emojiRegistry)
       .values({
         code,
         unicode: entry.emoji,
-        nameVi: entry.name_vi,
+        nameVi,
         category: entry.category,
-        searchKeywordsVi: entry.keywords_vi,
+        searchKeywordsVi: keywordsVi,
         ageSuitability: entry.age_min >= 4 ? "4plus" : "all",
         status: "active",
       })

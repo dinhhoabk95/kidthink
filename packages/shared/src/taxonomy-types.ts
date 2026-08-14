@@ -12,23 +12,23 @@ import type { CompetencyCode, SkillCode, StrandCode } from "./ids.js";
 /** Tier 1: Competency (6 total, C1–C6). */
 export interface CompetencyTier {
   readonly code: CompetencyCode;
-  readonly name_en: string;
-  readonly name_vi: string;
+  readonly description: string;
+  readonly name: string;
 }
 
 /** Tier 2: Strand (41 total), belongs to exactly one Competency. */
 export interface StrandTier {
   readonly code: StrandCode;
   readonly competency_code: CompetencyCode;
-  readonly name_en: string;
-  readonly name_vi: string;
+  readonly description: string;
+  readonly name: string;
 }
 
 /** Tier 3: Skill (230 total), belongs to exactly one Strand. */
 export interface SkillTier {
   readonly code: SkillCode;
   readonly strand_code: StrandCode;
-  readonly name_vi: string;
+  readonly name: string;
   readonly age_min: 3 | 4 | 5 | 6;
   readonly age_max: 3 | 4 | 5 | 6;
   readonly difficulty: 1 | 2 | 3 | 4 | 5;
@@ -40,7 +40,7 @@ export interface SkillTier {
 export interface LearningObjectiveTier {
   readonly code: string; // LearningObjectiveCode — avoid circular import
   readonly skill_code: SkillCode;
-  readonly description_vi: string;
+  readonly description: string;
 }
 
 // ─── Thinking process ────────────────────────────────────────────────
@@ -116,7 +116,7 @@ export type GameMechanic =
 export interface GameTemplateMeta {
   readonly code: string; // GameTemplateCode
   readonly mechanic: GameMechanic;
-  readonly name_en: string;
+  readonly name: string;
 }
 
 /** Lớp 2 — admin-owned. Template + content_pack + difficulty_params + theme. */

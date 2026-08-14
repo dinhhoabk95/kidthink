@@ -70,8 +70,8 @@ Modal xác nhận xoá asset · `/studio/assets/{id}/usage` ·
 {
   "asset_ref": "content/2026/08/ab12cd.webp",
   "used_by": [
-    { "entity_type": "game_level", "code": "GL-C1-CNT-MATCH-0007", "version": 3, "status": "published", "title_vi": "Đếm quả táo" },
-    { "entity_type": "lesson", "code": "LES-0042", "version": 1, "status": "draft", "title_vi": "…" }
+    { "entity_type": "game_level", "code": "GL-C1-CNT-MATCH-0007", "version": 3, "status": "published", "title": "Đếm quả táo" },
+    { "entity_type": "lesson", "code": "LES-0042", "version": 1, "status": "draft", "title": "…" }
   ],
   "can_delete": false,
   "block_reason": "used_by_published"

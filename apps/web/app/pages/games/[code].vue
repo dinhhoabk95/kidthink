@@ -21,7 +21,7 @@
               :key="alt.code"
               :to="`/games/${alt.code}`"
             >
-              ➔ {{ alt.title_vi }} ({{ alt.code }})
+              ➔ {{ alt.title }} ({{ alt.code }})
             </NuxtLink>
           </div>
         </div>
@@ -34,7 +34,7 @@
             <span aria-hidden="true">/</span>
             <NuxtLink to="/games">Thư viện trò chơi</NuxtLink>
             <span aria-hidden="true">/</span>
-            <span class="breadcrumb-current">{{ game.title_vi }}</span>
+            <span class="breadcrumb-current">{{ game.title }}</span>
           </nav>
 
           <!-- Top Hero Card -->
@@ -53,7 +53,7 @@
                     {{ game.locked ? 'Cần nâng cấp' : 'Chơi ngay' }}
                   </span>
                 </div>
-                <h1 class="detail-title">{{ game.title_vi }}</h1>
+                <h1 class="detail-title">{{ game.title }}</h1>
                 <p class="detail-code">Mã bài học: {{ game.code }}</p>
               </div>
             </div>
@@ -87,7 +87,7 @@
               <section class="info-section">
                 <h2 class="section-subheading">Mục tiêu phát triển tư duy</h2>
                 <!-- BR-GDP-02: Pedagogical description without revealing answers -->
-                <p class="pedagogical-desc">{{ game.description_vi }}</p>
+                <p class="pedagogical-desc">{{ game.description }}</p>
               </section>
 
               <section class="info-section">
@@ -175,7 +175,7 @@
                 <span aria-hidden="true" class="related-emoji"
                   >{{ rel.emoji || '🎲' }}</span
                 >
-                <span class="related-title">{{ rel.title_vi }}</span>
+                <span class="related-title">{{ rel.title }}</span>
                 <span class="related-tag">{{ rel.age_band }} tuổi</span>
               </NuxtLink>
             </div>
@@ -206,16 +206,16 @@
   );
 
   const alternatives = ref([
-    { code: "GL-C1-001", title_vi: "Đếm số trái cây" },
-    { code: "GL-C2-001", title_vi: "Xếp hình ngôi nhà" },
-    { code: "GL-C3-001", title_vi: "Quy luật sắc màu" },
+    { code: "GL-C1-001", title: "Đếm số trái cây" },
+    { code: "GL-C2-001", title: "Xếp hình ngôi nhà" },
+    { code: "GL-C3-001", title: "Quy luật sắc màu" },
   ]);
 
   // Initial game data mock / SSR state
   const game = ref({
     code: code.value,
-    title_vi: "Đếm số trái cây trong vườn",
-    description_vi:
+    title: "Đếm số trái cây trong vườn",
+    description:
       "Bé làm quen với số lượng trong phạm vi 5, thực hành đếm các loại trái cây quen thuộc và gắn kết số tương ứng.",
     competency: "C1 (Số & Lượng)",
     age_band: "3-4",
@@ -228,19 +228,19 @@
   const relatedGames = ref([
     {
       code: "GL-C1-002",
-      title_vi: "Đếm hạt dẻ mùa thu",
+      title: "Đếm hạt dẻ mùa thu",
       emoji: "🌰",
       age_band: "3-4",
     },
     {
       code: "GL-C1-003",
-      title_vi: "Tìm bóng con số",
+      title: "Tìm bóng con số",
       emoji: "🔢",
       age_band: "3-4",
     },
     {
       code: "GL-C1-004",
-      title_vi: "Hái táo vào giỏ",
+      title: "Hái táo vào giỏ",
       emoji: "🧺",
       age_band: "3-4",
     },
@@ -248,10 +248,10 @@
 
   // BR-SEO2-04 & BR-GDP-04: Structured data & SEO meta
   useSeoMeta({
-    title: `${game.value.title_vi} — Trò chơi tư duy cho bé ${game.value.age_band} tuổi | KidThink`,
-    description: game.value.description_vi,
-    ogTitle: `${game.value.title_vi} — KidThink`,
-    ogDescription: game.value.description_vi,
+    title: `${game.value.title} — Trò chơi tư duy cho bé ${game.value.age_band} tuổi | KidThink`,
+    description: game.value.description,
+    ogTitle: `${game.value.title} — KidThink`,
+    ogDescription: game.value.description,
     ogImage: `https://kidthink.vn/images/og-${code.value}.png`,
     ogType: "article",
   });
@@ -267,8 +267,8 @@
         innerHTML: JSON.stringify({
           "@context": "https://schema.org",
           "@type": "LearningResource",
-          name: game.value.title_vi,
-          description: game.value.description_vi,
+          name: game.value.title,
+          description: game.value.description,
           learningResourceType: "Interactive Game",
           educationalLevel: `Trẻ mầm non ${game.value.age_band} tuổi`,
           inLanguage: "vi-VN",

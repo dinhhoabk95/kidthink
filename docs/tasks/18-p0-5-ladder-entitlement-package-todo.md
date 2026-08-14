@@ -45,7 +45,7 @@
 
 ### Task 4 — `PACKAGE_CATALOG`
 
-- [x] Hằng số đúng hình dạng §7.3 (`offer_code` `billing_period_vi` `duration_days`).
+- [x] Hằng số đúng hình dạng §7.3 (`offer_code` `billing_period` `duration_days`).
 - [x] `PKG-standard`: offer 365 ngày.
 - [x] `PKG-premium`: offer 365 ngày **và** offer vĩnh viễn (`duration_days: null`).
 - [x] Bốn add-on khai với `is_public: false`.

@@ -17,15 +17,15 @@ export const PENDING_PRICE_VND = PENDING_PRICE;
 export const SEED_ENTITLEMENT_KEYS = ENTITLEMENT_KEYS.map((item) => ({
   key: item.key,
   group: item.group,
-  labelVi: item.labelVi,
+  labelVi: item.label,
   isMvp: item.is_mvp,
 }));
 
 export const SEED_PACKAGES = Object.values(PACKAGE_CATALOG).map((pkg) => ({
   code: pkg.code,
-  nameVi: pkg.name_vi,
-  audienceVi: pkg.audience_vi,
-  descriptionVi: pkg.description_vi,
+  nameVi: pkg.name,
+  audienceVi: pkg.audience,
+  descriptionVi: pkg.description,
   status: pkg.status,
   offers: pkg.offers,
   quotas: pkg.quotas,

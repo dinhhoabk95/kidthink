@@ -3,9 +3,9 @@ import { EmojiRef } from "../shared-fields";
 import type { GameTemplate } from "../types";
 
 export const GT002ContentSchema = z.object({
-  prompt_vi: z.string().min(4).max(80),
+  prompt: z.string().min(4).max(80),
   prompt_audio_ref: z.string().optional(),
-  target_criterion_vi: z.string().max(80),
+  target_criterion: z.string().max(80),
   items: z
     .array(
       z.object({
@@ -36,7 +36,7 @@ export const GT002Template: GameTemplate<
   typeof GT002DifficultySchema
 > = {
   code: "GT-002",
-  name_vi: "Chọn nhiều đáp án",
+  name: "Chọn nhiều đáp án",
   mechanic: "tap-select-multi",
   layouts: ["grid-2x4", "flex-wrap"],
   content_contract: GT002ContentSchema,

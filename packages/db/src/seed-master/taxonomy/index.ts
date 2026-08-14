@@ -309,7 +309,7 @@ export function validateTaxonomyInvariants(skillsToSeed: ParsedSkill[]): void {
     code: s.code,
     strand_code: s.strand_code,
     competency_code: s.competency_code,
-    name_vi: s.name_vi,
+    name: s.name_vi,
     age_min: s.age_min,
     age_max: s.age_max,
     difficulty: s.difficulty,
@@ -318,7 +318,12 @@ export function validateTaxonomyInvariants(skillsToSeed: ParsedSkill[]): void {
     prerequisites: s.prerequisites.map((pCode) => ({
       prerequisite_code: pCode,
     })),
-    learning_objectives: s.learning_objectives,
+    learning_objectives: s.learning_objectives.map((lo) => ({
+      code: lo.code,
+      behaviour: lo.behaviour_vi,
+      observable_criteria: lo.observable_criteria_vi,
+      position: lo.position,
+    })),
   }));
 
   const tree = buildSkillTree(skillRows);
@@ -329,19 +334,21 @@ async function seedCompetenciesStep(
   db: NodePgDatabase<Record<string, unknown>>
 ): Promise<Map<string, number>> {
   for (const comp of COMPETENCIES) {
+    const nameVi = comp.name || "";
+    const descVi = comp.description || null;
     await db
       .insert(competencies)
       .values({
         code: comp.code,
-        nameVi: comp.name_vi,
-        descriptionVi: comp.name_en,
+        nameVi,
+        descriptionVi: descVi,
         colorToken: `color-${comp.code.toLowerCase()}`,
         icon: `icon-${comp.code.toLowerCase()}`,
         position: Number.parseInt(comp.code.replace("C", ""), 10),
       })
       .onConflictDoUpdate({
         target: competencies.code,
-        set: { nameVi: comp.name_vi, descriptionVi: comp.name_en },
+        set: { nameVi, descriptionVi: descVi },
       });
   }
 
@@ -361,18 +368,20 @@ async function seedStrandsStep(
     const str = STRANDS[idx];
     const compId = compIdMap.get(str.competency_code);
     if (compId) {
+      const nameVi = str.name || "";
+      const descVi = str.description || null;
       await db
         .insert(strands)
         .values({
           code: str.code,
           competencyId: compId,
-          nameVi: str.name_vi,
-          descriptionVi: str.name_en,
+          nameVi,
+          descriptionVi: descVi,
           position: idx + 1,
         })
         .onConflictDoUpdate({
           target: strands.code,
-          set: { competencyId: compId, nameVi: str.name_vi },
+          set: { competencyId: compId, nameVi, descriptionVi: descVi },
         });
     }
   }
@@ -394,12 +403,13 @@ async function seedSkillsStep(
     const sk = seededSkills[idx];
     const strandId = strandIdMap.get(sk.strand_code);
     if (strandId) {
+      const nameVi = sk.name_vi || "";
       await db
         .insert(skills)
         .values({
           code: sk.code,
           strandId,
-          nameVi: sk.name_vi,
+          nameVi,
           ageMin: sk.age_min,
           ageMax: sk.age_max,
           difficulty: sk.difficulty,
@@ -411,7 +421,7 @@ async function seedSkillsStep(
           target: skills.code,
           set: {
             strandId,
-            nameVi: sk.name_vi,
+            nameVi,
             ageMin: sk.age_min,
             ageMax: sk.age_max,
             difficulty: sk.difficulty,

@@ -75,7 +75,7 @@ export async function requireConsentActive(
       reason: "Chính sách đã cập nhật yêu cầu tái đồng ý.",
       consent_type: type,
       requirement_at: req.reconsentRequiredAt.toISOString(),
-      notice_vi: req.noticeVi,
+      notice: req.notice,
     });
   }
 }

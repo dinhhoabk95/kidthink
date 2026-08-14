@@ -33,7 +33,7 @@ function resolveOAuthDisplayName(
 
 export interface OAuthProviderConfig {
   readonly provider: OAuthProvider;
-  readonly label_vi: string;
+  readonly label: string;
   readonly clientId: string;
   readonly clientSecret: string;
   readonly redirectUri: string;
@@ -87,7 +87,7 @@ export class OAuthProviderRegistry {
 
     this.googleConfig = {
       provider: "google",
-      label_vi: "Google",
+      label: "Google",
       clientId: googleId,
       clientSecret: googleSecret,
       redirectUri: `${this.siteUrl}/api/guest/auth/oauth/google/callback`,
@@ -97,7 +97,7 @@ export class OAuthProviderRegistry {
 
     this.facebookConfig = {
       provider: "facebook",
-      label_vi: "Facebook",
+      label: "Facebook",
       clientId: facebookId,
       clientSecret: facebookSecret,
       redirectUri: `${this.siteUrl}/api/guest/auth/oauth/facebook/callback`,
@@ -110,12 +110,12 @@ export class OAuthProviderRegistry {
     return [
       {
         provider: "google",
-        label_vi: this.googleConfig.label_vi,
+        label: this.googleConfig.label,
         is_enabled: this.googleConfig.isEnabled,
       },
       {
         provider: "facebook",
-        label_vi: this.facebookConfig.label_vi,
+        label: this.facebookConfig.label,
         is_enabled: this.facebookConfig.isEnabled,
       },
     ];

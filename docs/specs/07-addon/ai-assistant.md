@@ -75,7 +75,7 @@ Sáu tính năng. Tất cả đều thao tác **trên nội dung đã có**.
 ```jsonc
 {
   "age_band": "4-5",
-  "skills": [{ "code": "C1.CNT.03", "name_vi": "Đếm trong phạm vi 5",
+  "skills": [{ "code": "C1.CNT.03", "name": "Đếm trong phạm vi 5",
                "mastery_label": "Đang phát triển", "attempts": 7 }],
   "period_days": 30,
   "totals": { "sessions": 24, "minutes": 310, "completion_rate": 0.78 }

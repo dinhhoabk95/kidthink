@@ -86,10 +86,8 @@ export interface EmojiEntry {
   curriculum_themes: CurriculumTheme[];
   /** The emoji character itself, e.g. '🍎' */
   emoji: string;
-  /** English search keywords */
-  keywords_en: string[];
-  /** Vietnamese search keywords (≥ 2) */
-  keywords_vi: string[];
-  /** Vietnamese name */
-  name_vi: string;
+  /** Search keywords, English + Vietnamese merged, deduped (≥ 2) */
+  keywords: string[];
+  /** Display name */
+  name: string;
 }

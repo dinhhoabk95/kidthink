@@ -74,7 +74,7 @@ C1 Tư duy toán học            99 skill · 412 level published
 
 | Phần | Nội dung |
 |---|---|
-| Định danh | `code` · `name_vi` · `description_vi` |
+| Định danh | `code` · `name` · `description` |
 | Thuộc tính | band tuổi · `difficulty` · thinking processes · trục `what` |
 | Learning objective | Danh sách, mỗi cái kèm số nội dung gắn |
 | Prerequisite | Skill đứng trước, và skill mà nó mở khoá |

@@ -81,7 +81,7 @@ bộ, không phải dữ liệu.
 
 ### `GET /api/managers/emoji`
 
-Query `q` `category` `age_band` `limit` ≤100. 200 → `{ items: [{ code, unicode, name_vi, category }] }`.
+Query `q` `category` `age_band` `limit` ≤100. 200 → `{ items: [{ code, unicode, name, category }] }`.
 Cache `private, max-age=3600` — registry đổi hiếm.
 
 ## 9. Acceptance criteria

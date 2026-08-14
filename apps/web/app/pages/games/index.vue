@@ -90,7 +90,7 @@
             <div class="card-body">
               <h2 class="card-title">
                 <NuxtLink class="card-title-link" :to="`/games/${game.code}`">
-                  {{ game.title_vi }}
+                  {{ game.title }}
                 </NuxtLink>
               </h2>
               <div class="card-tags">
@@ -200,7 +200,7 @@
   const allLevels = [
     ...FEATURED_GUEST_LEVELS.map((g) => ({
       code: g.code,
-      title_vi: g.title_vi,
+      title: g.title,
       competency: g.competency,
       age_band: g.age_band,
       difficulty: g.difficulty,
@@ -209,7 +209,7 @@
     })),
     {
       code: "GL-C1-002",
-      title_vi: "Đếm hạt dẻ mùa thu",
+      title: "Đếm hạt dẻ mùa thu",
       competency: "C1",
       age_band: "3-4",
       difficulty: 2,
@@ -218,7 +218,7 @@
     },
     {
       code: "GL-C2-002",
-      title_vi: "Xếp hình xe buýt",
+      title: "Xếp hình xe buýt",
       competency: "C2",
       age_band: "4-5",
       difficulty: 2,
@@ -227,7 +227,7 @@
     },
     {
       code: "GL-C3-002",
-      title_vi: "Vòng xoay màu sắc",
+      title: "Vòng xoay màu sắc",
       competency: "C3",
       age_band: "5-6",
       difficulty: 3,

@@ -68,8 +68,8 @@ và ghi đè số đo, không đọc mục 1 như bằng chứng code hiện t�
 ### 1.1 Bảng "Bắt buộc" của khung lesson không đọc được
 
 [`lesson-authoring.md`](../specs/06-admin/lesson-authoring.md) §7.1 có cột `Bắt buộc` mang giá
-trị `Cấm` cho năm trường: `materials_vi`, `warm_up_vi`, `reflection_vi`, `assessment_vi`,
-`extension_vi`. Các trường còn lại có ô **rỗng**.
+trị `Cấm` cho năm trường: `materials`, `warm_up`, `reflection`, `assessment`,
+`extension`. Các trường còn lại có ô **rỗng**.
 
 [`CONVENTIONS.md`](../specs/CONVENTIONS.md) §11.1 quy định ô bảng nhị phân chỉ nhận `Có` hoặc
 `Không`, và dịch dấu phủ định emoji thành `"Không …"` hoặc `"Cấm …"` **tuỳ ngữ cảnh**. §11.6 của
@@ -245,10 +245,10 @@ không thay bằng số 0.
 [`legal-pages.md`](../specs/02-public/legal-pages.md) §7. Cấm `sed` toàn corpus theo
 [`CONVENTIONS.md`](../specs/CONVENTIONS.md) §11.6 — đọc lại từng câu sau mỗi lần thay.
 
-Bắt buộc trước khi gửi duyệt: `title_vi` · ≥1 learning objective · `target_age_min`/`max` ·
-`estimated_minutes` · `guide_vi` đủ năm phần · ≥1 activity · `warm_up_vi` · `reflection_vi` ·
-`assessment_vi` · `access_tier` · tag ba trục. Tuỳ chọn: `extension_vi` (theo `BR-LSM-09`).
-`materials_vi` bắt buộc **khi** có activity lắp vào khai vật liệu, và phải bao được toàn bộ vật
+Bắt buộc trước khi gửi duyệt: `title` · ≥1 learning objective · `target_age_min`/`max` ·
+`estimated_minutes` · `guide` đủ năm phần · ≥1 activity · `warm_up` · `reflection` ·
+`assessment` · `access_tier` · tag ba trục. Tuỳ chọn: `extension` (theo `BR-LSM-09`).
+`materials` bắt buộc **khi** có activity lắp vào khai vật liệu, và phải bao được toàn bộ vật
 liệu đó — cổng máy kiểm bao hàm, người kiểm cách diễn đạt. Mâu thuẫn ở §7.1 của
 [`lesson-model.md`](../specs/05-content/lesson-model.md) đóng về phía `BR-LSM-01`: cung bậc là
 bắt buộc, không phải khuyến nghị.
@@ -269,7 +269,7 @@ thành cảnh báo ở 31–45 và chặn ở trên 45, để nó khớp accepta
 **D-LH — Thêm hàng `activities` vào checklist publish, và định nghĩa lại điều kiện tuổi của
 hàng "Mọi".** Hàng mới ở
 [`content-lifecycle.md`](../specs/00-foundation/content-lifecycle.md) §7.3: `kind` hợp lệ ·
-2–20 phút · `instruction_vi` đủ bốn phần · ≥1 câu nói với trẻ · 1–2 skill · vật liệu bắt buộc
+2–20 phút · `instruction` đủ bốn phần · ≥1 câu nói với trẻ · 1–2 skill · vật liệu bắt buộc
 với kind ngoài màn hình · qua cổng an toàn theo band suy ra · ràng buộc riêng theo kind ·
 `digital_game` trỏ level `published`. Hàng "Mọi" đổi từ `age_min ≤ age_max ∈ [3,6]` thành "band
 tuổi hiệu lực không rỗng và nằm trong `[3,6]`", lấy từ cột với `game_levels`/`lessons` và từ
@@ -378,15 +378,15 @@ interface TeachingView {
   activities: Array<{
     code: string;
     kind: ActivityKind;
-    title_vi: string;
+    title: string;
     estimated_minutes: number;
     is_required: boolean;
     is_offscreen: boolean;
   }>;
-  materials_union_vi: string[];
+  materials_union: string[];
   total_activity_minutes: number;        // D-LG, suy ra, không lưu
   declared_minutes: number;
-  assessment_vi: string;
+  assessment: string;
 }
 
 type ActivityKindSchemas = Record<ActivityKind, ZodObject<Record<string, ZodTypeAny>>>;
@@ -746,7 +746,7 @@ studio; mỗi package ≤5 files
    validator dùng chung; P3.2 import, không khai lại.
 2. Ba cột provenance mà hàng đợi duyệt cần đã được Task #54 thêm vào bảng `activities`. Nếu
    chưa, sửa ở Task #54 rồi quay lại, không vá trong P3.2.
-3. `instruction_vi` và `guide_vi` vẫn là text trong DB; cấu trúc có kiểu chỉ dùng ở tầng
+3. `instruction` và `guide` vẫn là text trong DB; cấu trúc có kiểu chỉ dùng ở tầng
    authoring và validator.
 4. Ba quyết định đụng spec P0/P2 (`D-LH`, `D-LI`, `D-LJ`) là **đề xuất** cho tới khi người sở
    hữu duyệt. Chưa duyệt thì dừng T3 và T7; T2, T4 và T9 vẫn chạy được.

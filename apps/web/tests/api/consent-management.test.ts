@@ -99,11 +99,11 @@ describe("Consent Management — P1.14 & D12 (D-QV, D-QW, D-QX, D-QY, D-QZ)", ()
   });
 
   describe("1. Singleton Consent Policy Map (D-QV)", () => {
-    it("ensures all 3 consent types have title_vi and valid permanent slug", () => {
+    it("ensures all 3 consent types have title and valid permanent slug", () => {
       const types: ConsentType[] = ["terms", "privacy", "child_data"];
       for (const type of types) {
         const meta = CONSENT_POLICY_MAP[type];
-        expect(meta.titleVi).toBeDefined();
+        expect(meta.title).toBeDefined();
         expect(meta.slug).toBeDefined();
         expect(`/${meta.slug}`).toMatch(KEBAB_URL_REGEX);
         expect((meta as any).currentVersion).toBeUndefined();
@@ -146,7 +146,7 @@ describe("Consent Management — P1.14 & D12 (D-QV, D-QW, D-QX, D-QY, D-QZ)", ()
         );
 
         for (const c of res.consents) {
-          expect(c.title_vi).toBeDefined();
+          expect(c.title).toBeDefined();
           expect(c.document_url).toMatch(KEBAB_URL_REGEX);
           expect(["active", "required", "withdrawn"]).toContain(c.status);
         }
@@ -265,7 +265,7 @@ describe("Consent Management — P1.14 & D12 (D-QV, D-QW, D-QX, D-QY, D-QZ)", ()
           undefined,
           {
             consent_type: "terms",
-            notice_vi: "Cập nhật điều khoản thanh toán mới 2026",
+            notice: "Cập nhật điều khoản thanh toán mới 2026",
             reason: "Quy định pháp lý mới theo yêu cầu vận hành",
             confirm_deployed: true,
             confirm_all_users: true,
@@ -296,7 +296,7 @@ describe("Consent Management — P1.14 & D12 (D-QV, D-QW, D-QX, D-QY, D-QZ)", ()
           (c) => c.consent_type === "terms"
         );
         expect(termsAfter?.status).toBe("required");
-        expect(termsAfter?.notice_vi).toBe(
+        expect(termsAfter?.notice).toBe(
           "Cập nhật điều khoản thanh toán mới 2026"
         );
 
@@ -337,7 +337,7 @@ describe("Consent Management — P1.14 & D12 (D-QV, D-QW, D-QX, D-QY, D-QZ)", ()
         undefined,
         {
           consent_type: "privacy",
-          notice_vi: "Cập nhật chính sách bảo mật thông tin",
+          notice: "Cập nhật chính sách bảo mật thông tin",
           reason: "Yêu cầu thay đổi nội bộ",
           confirm_deployed: true,
           confirm_all_users: true,
@@ -356,7 +356,7 @@ describe("Consent Management — P1.14 & D12 (D-QV, D-QW, D-QX, D-QY, D-QZ)", ()
         undefined,
         {
           consent_type: "marketing", // Invalid closed type
-          notice_vi: "Quá ngắn", // < 20 chars
+          notice: "Quá ngắn", // < 20 chars
           reason: "Ngắn", // < 20 chars
           confirm_deployed: true,
           confirm_all_users: true,

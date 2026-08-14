@@ -39,7 +39,7 @@ describe("Game Template API Endpoints (BR-GTC-04, spec §8)", () => {
     expect(res.templates).toBeDefined();
     expect(res.templates.length).toBe(6);
     expect(res.templates[0]).toHaveProperty("code");
-    expect(res.templates[0]).toHaveProperty("name_vi");
+    expect(res.templates[0]).toHaveProperty("name");
     expect(res.templates[0]).toHaveProperty("mechanic");
     expect(res.templates[0]).not.toHaveProperty("content_contract");
   });

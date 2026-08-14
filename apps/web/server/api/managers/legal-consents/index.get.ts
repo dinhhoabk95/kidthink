@@ -26,12 +26,12 @@ export default defineEventHandler(async (event) => {
 
       return {
         consent_type: type,
-        title_vi: meta.titleVi,
+        title: meta.title,
         document_url: `/${meta.slug}`,
         reconsent_required_at: req?.reconsentRequiredAt
           ? req.reconsentRequiredAt.toISOString()
           : null,
-        notice_vi: req?.noticeVi ?? null,
+        notice: req?.noticeVi ?? null,
         updated_at: req?.updatedAt ? req.updatedAt.toISOString() : null,
       };
     });

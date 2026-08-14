@@ -47,8 +47,8 @@ export function buildWebSiteJsonLd() {
  */
 export interface GameLevelSeoData {
   code: string;
-  title_vi: string;
-  description_vi?: string;
+  title: string;
+  description?: string;
   age_band?: string;
   competency_name?: string;
   learning_objectives?: string[];
@@ -59,9 +59,9 @@ export function buildLearningResourceJsonLd(game: GameLevelSeoData) {
   return {
     "@context": "https://schema.org",
     "@type": "LearningResource",
-    name: game.title_vi,
+    name: game.title,
     description:
-      game.description_vi ||
+      game.description ||
       `Trò chơi rèn luyện tư duy ${game.competency_name || ""} cho bé ${game.age_band || "3-6"} tuổi`,
     learningResourceType: "Interactive Game",
     educationalLevel: game.age_band

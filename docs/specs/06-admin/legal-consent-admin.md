@@ -46,10 +46,10 @@ dịch, User cần đồng ý lại hoặc đi theo đường withdrawal/account
 1. Bản sửa của `/terms`, `/privacy` hoặc `/child-privacy` đã qua legal review và deploy.
 2. `super_admin` mở `/legal-consents`; màn hình hiện route document, `last_updated_on`, marker
    gần nhất, thông báo gần nhất và số User đang cần đồng ý lại.
-3. Manager chọn đúng một `consent_type`, nhập `notice_vi` cho User và `reason` nội bộ, rồi xác
+3. Manager chọn đúng một `consent_type`, nhập `notice` cho User và `reason` nội bộ, rồi xác
    nhận tác động toàn hệ thống.
 4. Server yêu cầu recent reauth, khoá singleton requirement và so `expected_requirement_at`.
-5. Trong một transaction, server tạo mốc mới bằng clock DB, cập nhật `notice_vi` và INSERT
+5. Trong một transaction, server tạo mốc mới bằng clock DB, cập nhật `notice` và INSERT
    audit action `legal_reconsent_forced`.
 6. Request User kế tiếp áp gate do
    [`consent-management.md`](../03-account/consent-management.md) mục 7.4 sở hữu.
@@ -73,7 +73,7 @@ dịch, User cần đồng ý lại hoặc đi theo đường withdrawal/account
 | `BR-LCA-02` | Force chỉ UPDATE một singleton requirement; cấm policy version và cấm UPDATE hàng loạt User | Marker toàn cục cho cùng kết quả với chi phí và rủi ro thấp hơn fan-out theo User |
 | `BR-LCA-03` | UPDATE marker và INSERT audit `legal_reconsent_forced` ở **cùng transaction** | Force không có audit hoặc audit không có force đều làm mất bằng chứng vận hành |
 | `BR-LCA-04` | `consent_type` là danh sách đóng `terms` · `privacy` · `child_data`; mỗi request force đúng một loại | Tác động của ba loại khác nhau; bulk mơ hồ làm User bị chặn rộng hơn ý định |
-| `BR-LCA-05` | `notice_vi` và `reason` đều 20–500 ký tự; `notice_vi` hiện cho User, `reason` chỉ vào audit | User cần lý do dễ hiểu, người điều tra cần lý do vận hành; dùng chung một chuỗi sẽ làm một trong hai sai mục đích |
+| `BR-LCA-05` | `notice` và `reason` đều 20–500 ký tự; `notice` hiện cho User, `reason` chỉ vào audit | User cần lý do dễ hiểu, người điều tra cần lý do vận hành; dùng chung một chuỗi sẽ làm một trong hai sai mục đích |
 | `BR-LCA-06` | Cấm — **NEVER force tự động từ deploy, migration, feature flag hay thay đổi file** | Quyết định buộc toàn bộ User đồng ý lại cần con người chịu trách nhiệm sau khi xác nhận bản deploy |
 | `BR-LCA-07` | Marker do DB sinh và phải lớn hơn marker cũ; client không được chọn thời điểm | Client chọn timestamp có thể đặt marker về quá khứ và làm acceptance cũ sống lại |
 | `BR-LCA-08` | Cấm — **NEVER rollback, clear hay giảm marker sau force** | Hạ marker sẽ âm thầm coi User chưa đồng ý là đã đồng ý; force nhầm được xử lý bằng thông báo và re-consent, không sửa lịch sử |
@@ -106,7 +106,7 @@ danh sách User bị ảnh hưởng và không cho chọn User riêng lẻ.
 | | |
 |---|---|
 | Auth | `requireManagerAuth()` + `requireRole('super_admin')` |
-| 200 | `{ items: [{ consent_type, document_url, last_updated_on, requirement_at, notice_vi, affected_user_count }] }` |
+| 200 | `{ items: [{ consent_type, document_url, last_updated_on, requirement_at, notice, affected_user_count }] }` |
 | 403 | `INSUFFICIENT_ROLE` |
 
 ### `POST /api/managers/legal-consent-forces`
@@ -114,7 +114,7 @@ danh sách User bị ảnh hưởng và không cho chọn User riêng lẻ.
 | | |
 |---|---|
 | Auth | `requireManagerAuth()` + `requireRole('super_admin')` + recent reauth + CSRF |
-| Body | `{ consent_type, expected_requirement_at: string \| null, notice_vi, reason, confirm_deployed: true, confirm_all_users: true }` |
+| Body | `{ consent_type, expected_requirement_at: string \| null, notice, reason, confirm_deployed: true, confirm_all_users: true }` |
 | 201 | `{ consent_type, requirement_at, affected_user_count }` |
 | 409 | `CONSENT_REQUIREMENT_CHANGED` — marker đã đổi sau khi Manager tải màn hình |
 | 422 | `VALIDATION_FAILED` |
@@ -139,11 +139,11 @@ Scenario: BR-LCA-03 — audit fail rollback force
   Given writeAudit sẽ thất bại
   When super_admin force terms
   Then transaction rollback
-  And requirement_at và notice_vi không đổi
+  And requirement_at và notice không đổi
 
 Scenario: BR-LCA-05 — force có hai lý do đúng đối tượng
-  When super_admin force privacy với notice_vi và reason hợp lệ
-  Then User thấy notice_vi
+  When super_admin force privacy với notice và reason hợp lệ
+  Then User thấy notice
   And audit_logs.reason chứa reason
   And response User không chứa reason nội bộ
 

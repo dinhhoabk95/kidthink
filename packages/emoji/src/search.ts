@@ -1,6 +1,6 @@
 /**
  * @kidthink/emoji — Search
- * Fuzzy search qua name_vi, keywords_vi, keywords_en.
+ * Fuzzy search qua name và keywords.
  * Case-insensitive, diacritics-insensitive (không cần dấu).
  */
 
@@ -25,7 +25,7 @@ function normalize(text: string): string {
 
 /**
  * Search emoji by query string.
- * Searches across name_vi, keywords_vi, and keywords_en.
+ * Searches across name and keywords.
  * Case-insensitive and diacritics-tolerant.
  *
  * @param query - Search query (Vietnamese or English)
@@ -84,15 +84,15 @@ function scoreKeywords(
 /**
  * Relevance score for one entry. Higher wins.
  *
- * name exact 100 · vi keyword exact 90 · name partial 80 · en keyword exact 70
- * · vi keyword partial 60 · en keyword partial 40 · emoji character 100 · 0 = no match
+ * name exact 100 · keyword exact 90 · name partial 80 · keyword partial 60
+ * · emoji character 100 · 0 = no match
  */
 function scoreEntry(
   entry: EmojiEntry,
   normalizedQuery: string,
   trimmedQuery: string
 ): number {
-  const normalizedName = normalize(entry.name_vi);
+  const normalizedName = normalize(entry.name);
   if (normalizedName === normalizedQuery) {
     return 100;
   }
@@ -100,26 +100,15 @@ function scoreEntry(
     return 80;
   }
 
-  const viScore = scoreKeywords(
-    entry.keywords_vi,
+  const keywordScore = scoreKeywords(
+    entry.keywords,
     normalizedQuery,
     normalize,
     90,
     60
   );
-  if (viScore > 0) {
-    return viScore;
-  }
-
-  const enScore = scoreKeywords(
-    entry.keywords_en,
-    normalizedQuery,
-    (keyword) => keyword.toLowerCase(),
-    70,
-    40
-  );
-  if (enScore > 0) {
-    return enScore;
+  if (keywordScore > 0) {
+    return keywordScore;
   }
 
   return entry.emoji === trimmedQuery ? 100 : 0;

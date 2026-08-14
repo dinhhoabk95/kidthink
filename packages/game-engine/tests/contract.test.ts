@@ -28,7 +28,7 @@ describe("Task 2 — Game Template Contracts (BR-GTC-01..07)", () => {
 
   it("BR-GTC-02: validateContentPack rejects invalid schema with CONTENT_PACK_INVALID 422 error details", () => {
     const invalidPack = {
-      prompt_vi: "Hi", // too short (min 4)
+      prompt: "Hi", // too short (min 4)
     };
     const res = validateContentPack("GT-001", invalidPack);
     expect(res.success).toBe(false);

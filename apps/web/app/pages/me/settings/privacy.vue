@@ -32,7 +32,7 @@
         >
           <div>
             <h2 class="text-lg font-bold font-heading text-surface-900">
-              {{ consent.title_vi }}
+              {{ consent.title }}
             </h2>
             <div class="flex items-center gap-2 mt-1 text-sm text-surface-600">
               <span v-if="consent.accepted_at"
@@ -73,8 +73,8 @@
           </div>
         </div>
 
-        <p class="text-sm text-surface-700" v-if="consent.notice_vi">
-          <strong>Thông báo thay đổi:</strong> {{ consent.notice_vi }}
+        <p class="text-sm text-surface-700" v-if="consent.notice">
+          <strong>Thông báo thay đổi:</strong> {{ consent.notice }}
         </p>
 
         <!-- Actions -->
@@ -146,40 +146,40 @@
 
   interface ConsentItem {
     consent_type: "terms" | "privacy" | "child_data";
-    title_vi: string;
+    title: string;
     document_url: string;
     accepted_at: string | null;
     requirement_at: string | null;
-    notice_vi: string | null;
+    notice: string | null;
     status: "active" | "required" | "withdrawn";
   }
 
   const consents = ref<ConsentItem[]>([
     {
       consent_type: "terms",
-      title_vi: "Điều khoản sử dụng dịch vụ",
+      title: "Điều khoản sử dụng dịch vụ",
       document_url: "/terms",
       accepted_at: new Date().toISOString(),
       requirement_at: null,
-      notice_vi: null,
+      notice: null,
       status: "active",
     },
     {
       consent_type: "privacy",
-      title_vi: "Chính sách quyền riêng tư",
+      title: "Chính sách quyền riêng tư",
       document_url: "/privacy",
       accepted_at: new Date().toISOString(),
       requirement_at: null,
-      notice_vi: null,
+      notice: null,
       status: "active",
     },
     {
       consent_type: "child_data",
-      title_vi: "Chính sách bảo vệ dữ liệu trẻ em",
+      title: "Chính sách bảo vệ dữ liệu trẻ em",
       document_url: "/child-privacy",
       accepted_at: new Date().toISOString(),
       requirement_at: null,
-      notice_vi: null,
+      notice: null,
       status: "active",
     },
   ]);

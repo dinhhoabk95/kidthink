@@ -105,7 +105,7 @@ chối** hàng loạt được, nhưng **duyệt** thì không (`BR-CRQ-01`).
 
 ### `GET /api/managers/content/review-queue`
 
-200 → `{ items: [{ entity_type, code, version, title_vi, origin, authored_in, competency, age_band, waiting_since }], next_cursor }`. Trần 50.
+200 → `{ items: [{ entity_type, code, version, title, origin, authored_in, competency, age_band, waiting_since }], next_cursor }`. Trần 50.
 
 Hàng đợi **chỉ** chứa `status = in_review`; nội dung `authored_in = repo_seed` chưa từng qua
 studio không bao giờ xuất hiện ở đây (§1).

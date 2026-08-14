@@ -65,7 +65,7 @@ thành `storytelling`; `custom` càng không thể đoán. Migration phải fail
 
 ### 1.2 Activity chưa đủ hình dạng để seed và review
 
-Schema hiện chưa có `materials_vi`, provenance của seeder và các cột review giống các bảng Lớp
+Schema hiện chưa có `materials`, provenance của seeder và các cột review giống các bảng Lớp
 2 khác. `estimated_minutes` chưa có CHECK 2–20. `lesson_activities.activity_id` là lineage
 `entity_id` theo `D-AE`; tầng service phải luôn phân giải đúng một bản `published` mới nhất.
 
@@ -82,7 +82,7 @@ Thiếu skill, LO không thuộc skill đã khai, hoặc khoảng giao rỗng đ
 ### 1.3 Validator hiện mới kiểm checklist tối thiểu
 
 [`packages/shared/src/publish-checklist.ts`](../../packages/shared/src/publish-checklist.ts)
-chỉ kiểm lesson có activity, thời lượng 5–45 và `guide_vi` không rỗng. Chưa có nhánh activity,
+chỉ kiểm lesson có activity, thời lượng 5–45 và `guide` không rỗng. Chưa có nhánh activity,
 chưa ép `BR-ACM-*`, chưa kiểm năm phần guide, cung bậc lesson, an toàn, biến thể dễ/khó hoặc
 assessment quan sát được.
 
@@ -151,30 +151,30 @@ type ActivityKind =
   | "home_activity";
 
 interface ActivityInstruction {
-  preparation_vi: string;
-  steps: Array<{ instruction_vi: string; say_to_child_vi: string }>;
-  easier_vi: string;
-  harder_vi: string;
+  preparation: string;
+  steps: Array<{ instruction: string; say_to_child: string }>;
+  easier: string;
+  harder: string;
 }
 
 interface LessonGuide {
-  outcome_vi: string;
-  preparation_vi: string[];
-  opening_vi: string;
-  if_child_succeeds_vi: string;
-  if_child_needs_help_vi: string;
+  outcome: string;
+  preparation: string[];
+  opening: string;
+  if_child_succeeds: string;
+  if_child_needs_help: string;
 }
 
 interface ValidationResult {
-  errors: Array<{ rule: string; path: string; message_vi: string }>;
-  warnings: Array<{ rule: string; path: string; message_vi: string }>;
+  errors: Array<{ rule: string; path: string; message: string }>;
+  warnings: Array<{ rule: string; path: string; message: string }>;
 }
 ```
 
 `ActivitySeed` dùng `ActivityInstruction`, 1–2 `skill_codes`, ≥1
-`learning_objective_codes`, `materials_vi`, `estimated_minutes`, `access_tier` và provenance.
+`learning_objective_codes`, `materials`, `estimated_minutes`, `access_tier` và provenance.
 `LessonSeed` dùng `LessonGuide`, danh sách activity theo thứ tự, LO liên quan, các phần cung bậc
-và đánh giá. Seeder render hai cấu trúc thành `instruction_vi`/`guide_vi` để không đổi schema
+và đánh giá. Seeder render hai cấu trúc thành `instruction`/`guide` để không đổi schema
 text đã chốt.
 
 ## 4. Đồ thị phụ thuộc
@@ -223,7 +223,7 @@ Checkpoint 0 chọn ≥60/reuse hoặc ≥126/distinct
 
 - [ ] Test âm trước: fixture có một hàng `kind = 'custom'` làm migration **đỏ** và nêu code hàng.
 - [ ] Enum sau migration đúng chính xác 10 giá trị của `ActivityKind`; không còn sáu giá trị legacy.
-- [ ] Activity có `materials_vi`, provenance/review fields, CHECK 2–20 phút và index phân giải `entity_id`.
+- [ ] Activity có `materials`, provenance/review fields, CHECK 2–20 phút và index phân giải `entity_id`.
 - [ ] Không thêm `target_age_min/max` vào activity; migration không ghi dữ liệu tuổi lặp.
 - [ ] Migration từ database rỗng chạy hết; ca lỗi rollback cả transaction, không để type tạm hoặc bảng nửa đổi.
 
@@ -372,6 +372,6 @@ bắt buộc tuần tự theo batch code
 1. Activity luôn được tái sử dụng; chính sách lặp lesson phụ thuộc nhánh được duyệt ở
    Checkpoint 0.
 2. Nhóm Nội dung giữ baseline `D-CN`: 3 lesson/người review/ngày, đo lại sau pilot.
-3. `instruction_vi` và `guide_vi` tiếp tục là text trong DB; cấu trúc typed chỉ là interface
+3. `instruction` và `guide` tiếp tục là text trong DB; cấu trúc typed chỉ là interface
    authoring/seed để validator dùng chung.
 4. Task #54 không bắt đầu implementation khi bất kỳ cổng P0–P2 nào còn đỏ.

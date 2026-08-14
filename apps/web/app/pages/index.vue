@@ -89,7 +89,7 @@
                 >
                 <span class="badge-free">Miễn phí</span>
               </div>
-              <h3 class="game-title">{{ game.title_vi }}</h3>
+              <h3 class="game-title">{{ game.title }}</h3>
               <div class="game-meta">
                 <span class="badge-competency">{{ game.competency }}</span>
                 <span class="badge-age">{{ game.age_band }} tuổi</span>
@@ -239,11 +239,11 @@
     packages: [
       {
         sku: "standard",
-        name: PACKAGE_CATALOG["PKG-standard"]?.name_vi || "Gói Tiêu chuẩn",
+        name: PACKAGE_CATALOG["PKG-standard"]?.name || "Gói Tiêu chuẩn",
         price_vnd: PACKAGE_CATALOG["PKG-standard"]?.offers[0]?.price_vnd ?? 0,
         duration_months: 12,
         description:
-          PACKAGE_CATALOG["PKG-standard"]?.description_vi ||
+          PACKAGE_CATALOG["PKG-standard"]?.description ||
           "Dành cho phụ huynh theo dõi tiến độ của 3 trẻ",
         features: [
           "Toàn bộ 60+ trò chơi rèn luyện 6 năng lực tư duy",
@@ -255,11 +255,11 @@
       },
       {
         sku: "premium",
-        name: PACKAGE_CATALOG["PKG-premium"]?.name_vi || "Gói Premium",
+        name: PACKAGE_CATALOG["PKG-premium"]?.name || "Gói Premium",
         price_vnd: PACKAGE_CATALOG["PKG-premium"]?.offers[0]?.price_vnd ?? 0,
         duration_months: 12,
         description:
-          PACKAGE_CATALOG["PKG-premium"]?.description_vi ||
+          PACKAGE_CATALOG["PKG-premium"]?.description ||
           "Mở khoá toàn bộ game, lộ trình nâng cao và tối đa 5 trẻ",
         features: [
           "Toàn bộ 120+ trò chơi nâng cao và bài học mở rộng",

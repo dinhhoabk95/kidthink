@@ -97,7 +97,7 @@ Suy `week_no` từ `position` bằng phép chia cho `sessions_per_week` là các
 
 Bước 1 của §4 [`curriculum-builder.md`](../specs/06-admin/curriculum-builder.md) tạo curriculum
 với `program_type`, band tuổi, `duration_weeks`, `sessions_per_week`. Bảng `curricula` ở
-[`curriculum.ts`](../../packages/db/src/schema/curriculum.ts) có `title_vi`, `description_vi`,
+[`curriculum.ts`](../../packages/db/src/schema/curriculum.ts) có `title`, `description`,
 `access_tier`, vòng đời, provenance — **không có bốn trường trên**.
 
 `BR-CRM-08` bắt "chương trình **theo tuổi** phủ cả 6 competency" — không có `program_type` thì
@@ -207,7 +207,7 @@ việc không có hàng nào mang `week_no` đó — cổng publish đối chi�
 **D-LT — `curricula` nhận bốn cột cấu hình, và mục tiêu tuần có bảng riêng.** Thêm
 `program_type` (enum đóng, MVP: `age_based` và `journey`), `target_age_min`, `target_age_max`,
 `duration_weeks`, `sessions_per_week`. Mục tiêu mỗi tuần của `BR-CRM-10` lưu ở bảng
-`curriculum_weeks (curriculum_id, week_no, goal_vi)` — không nhét JSONB vào `curricula`, vì đó
+`curriculum_weeks (curriculum_id, week_no, goal)` — không nhét JSONB vào `curricula`, vì đó
 là dữ liệu người đọc và cần cổng chất lượng như mọi text tiếng Việt khác. `BR-CRM-08` chỉ áp cho
 `program_type = age_based`.
 
@@ -258,7 +258,7 @@ Còn lại là warning bắt buộc xác nhận, lưu vào `checklist_snapshot` 
 POST   /api/managers/curricula                                 body { program_type, target_age_min, target_age_max, duration_weeks, sessions_per_week }
 PATCH  /api/managers/curricula/{code}/{version}                body: field + expected_version
 PUT    /api/managers/curricula/{code}/{version}/items          body { items, expected_version }   (D-LS, D-LW, D-LX)
-PUT    /api/managers/curricula/{code}/{version}/weeks          body { weeks: [{ week_no, goal_vi }], expected_version }
+PUT    /api/managers/curricula/{code}/{version}/weeks          body { weeks: [{ week_no, goal }], expected_version }
 GET    /api/managers/curricula/{code}/{version}/balance        → sáu chỉ báo, cùng hàm với cổng publish
 POST   /api/managers/curricula/{code}/{version}/duplicate      → mã mới, copy item và week
 POST   /api/managers/content/{entity_type}/{id}/transition     → đường duy nhất đổi trạng thái (D-LQ)

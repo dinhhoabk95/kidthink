@@ -172,10 +172,9 @@ describe("@kidthink/emoji", () => {
     it("every entry should have required fields", () => {
       for (const entry of ALL_EMOJIS) {
         expect(entry.emoji).toBeTruthy();
-        expect(entry.name_vi).toBeTruthy();
+        expect(entry.name).toBeTruthy();
         expect(entry.category).toBeTruthy();
-        expect(entry.keywords_vi.length).toBeGreaterThanOrEqual(2);
-        expect(entry.keywords_en.length).toBeGreaterThanOrEqual(1);
+        expect(entry.keywords.length).toBeGreaterThanOrEqual(2);
         expect(entry.curriculum_themes.length).toBeGreaterThanOrEqual(1);
         expect(entry.age_min).toBeGreaterThanOrEqual(3);
         expect(entry.age_min).toBeLessThanOrEqual(6);

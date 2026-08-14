@@ -75,7 +75,7 @@ hay learning objective.
 | Trường | Ghi chú |
 |---|---|
 | `thumbnail_emoji` | Lớn |
-| `title_vi` | |
+| `title` | |
 | Competency | Chip màu theo token |
 | Band tuổi | "3–4 tuổi" |
 | Độ khó | 1–5 chấm |

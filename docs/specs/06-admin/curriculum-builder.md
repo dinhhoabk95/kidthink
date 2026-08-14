@@ -34,7 +34,7 @@ Readiness — **không biên soạn lại nội dung**. Builder là công cụ �
 
 ## 4. Main flow
 
-1. Tạo curriculum: `title_vi`, `program_type`, band tuổi, `duration_weeks`,
+1. Tạo curriculum: `title`, `program_type`, band tuổi, `duration_weeks`,
    `sessions_per_week`, `access_tier`.
 2. Lưới tuần × buổi hiện ra, rỗng.
 3. Kéo lesson hoặc game level từ thư viện bên phải vào ô.

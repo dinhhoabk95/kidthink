@@ -42,7 +42,7 @@ Mọi field `uiHint = image` · `POST /api/managers/images`.
 Chọn hoặc kéo thả ảnh
   → modal crop: khung 1:1 mặc định · nút xoay 90° · preview CỠ THẬT TRONG GAME
   → canvas cắt ở client
-  → upload multipart kèm alt_vi
+  → upload multipart kèm alt
   → server: magic bytes · WebP · ≤960×960 · thumbnail
   → field nhận path, preview studio cập nhật
 ```
@@ -66,7 +66,7 @@ Chọn hoặc kéo thả ảnh
 | `BR-IUP-02` | Preview ở **cỡ thật trong game** | Ảnh ổn ở 400px có thể vô nghĩa ở 96px |
 | `BR-IUP-03` | Nút **xoay 90°** | Ảnh từ điện thoại thường sai hướng |
 | `BR-IUP-04` | Kiểm giới hạn ở **cả client và server** | Client để trải nghiệm; server để an toàn |
-| `BR-IUP-05` | `alt_vi` **bắt buộc** | A11y, và nó cũng là mô tả để tra sau này |
+| `BR-IUP-05` | `alt` **bắt buộc** | A11y, và nó cũng là mô tả để tra sau này |
 | `BR-IUP-06` | Upload dùng client có **CSRF token**, Cấm — **NEVER raw `$fetch`** | Tránh tấn công CSRF khi tải tệp và đảm bảo qua tầng wrapper quản lý token |
 | `BR-IUP-07` | Upload fail **không mất crop đã làm** | `BR-STU-03` |
 | `BR-IUP-08` | Cấm — **NEVER upload ảnh chụp trẻ em** — nhắc rõ trên UI | `BR-CDC-04` |
@@ -82,7 +82,7 @@ Chọn hoặc kéo thả ảnh
 | Xoay | 90° mỗi lần bấm |
 | Zoom | Kéo thả trong khung |
 | Preview cỡ thật | Hộp bên cạnh, kích thước lấy từ layout của template |
-| `alt_vi` | Input bắt buộc |
+| `alt` | Input bắt buộc |
 | Cảnh báo | "Không dùng ảnh chụp trẻ em" hiện thường trực |
 
 ### 7.2 Giới hạn client
@@ -112,8 +112,8 @@ Scenario: BR-IUP-07 — upload fail không mất crop
   Then modal giữ nguyên crop
   And có nút thử lại
 
-Scenario: BR-IUP-05 — alt_vi bắt buộc
-  When upload không điền alt_vi
+Scenario: BR-IUP-05 — alt bắt buộc
+  When upload không điền alt
   Then nút upload bị vô hiệu
 
 Scenario: BR-IUP-04 — giới hạn kiểm hai phía
@@ -147,7 +147,7 @@ Scenario: thay ảnh không ghi đè file cũ
 **Always**
 - Crop 1:1 mặc định, có xoay.
 - Preview cỡ thật.
-- `alt_vi` bắt buộc.
+- `alt` bắt buộc.
 - Giữ crop khi upload fail.
 
 **Ask first**

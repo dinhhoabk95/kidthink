@@ -33,8 +33,8 @@ export default defineEventHandler(async (event) => {
       .select({
         id: skills.id,
         code: skills.code,
-        nameVi: skills.nameVi,
-        descriptionVi: skills.descriptionVi,
+        name: skills.nameVi,
+        description: skills.descriptionVi,
         strandId: skills.strandId,
         ageMin: skills.ageMin,
         ageMax: skills.ageMax,
@@ -43,9 +43,9 @@ export default defineEventHandler(async (event) => {
         whatAxis: skills.whatAxis,
         status: skills.status,
         strandCode: strands.code,
-        strandNameVi: strands.nameVi,
+        strandName: strands.nameVi,
         competencyCode: competencies.code,
-        competencyNameVi: competencies.nameVi,
+        competencyName: competencies.nameVi,
       })
       .from(skills)
       .innerJoin(strands, eq(skills.strandId, strands.id))
@@ -71,7 +71,7 @@ export default defineEventHandler(async (event) => {
       .select({
         skillId: skills.id,
         code: skills.code,
-        nameVi: skills.nameVi,
+        name: skills.nameVi,
         strength: skillPrerequisites.strength,
       })
       .from(skillPrerequisites)
@@ -82,7 +82,7 @@ export default defineEventHandler(async (event) => {
       .select({
         skillId: skills.id,
         code: skills.code,
-        nameVi: skills.nameVi,
+        name: skills.nameVi,
         strength: skillPrerequisites.strength,
       })
       .from(skillPrerequisites)
@@ -94,7 +94,7 @@ export default defineEventHandler(async (event) => {
       .select({
         id: gameLevels.id,
         code: gameLevels.code,
-        title_vi: gameLevels.titleVi,
+        title: gameLevels.titleVi,
         status: gameLevels.status,
         access_tier: gameLevels.accessTier,
         weight: contentSkillMap.weight,
@@ -113,12 +113,12 @@ export default defineEventHandler(async (event) => {
     return {
       identifiers: {
         code: skill.code,
-        name_vi: skill.nameVi,
-        description_vi: skill.descriptionVi,
+        name: skill.name,
+        description: skill.description,
         strand_code: skill.strandCode,
-        strand_name_vi: skill.strandNameVi,
+        strand_name: skill.strandName,
         competency_code: skill.competencyCode,
-        competency_name_vi: skill.competencyNameVi,
+        competency_name: skill.competencyName,
         status: skill.status,
         is_deprecated: skill.status === "deprecated",
       },
@@ -132,8 +132,8 @@ export default defineEventHandler(async (event) => {
       learning_objectives: los.map((lo) => ({
         id: lo.id,
         code: lo.code,
-        behaviour_vi: lo.behaviourVi,
-        observable_criteria_vi: lo.observableCriteriaVi,
+        behaviour: lo.behaviourVi,
+        observable_criteria: lo.observableCriteriaVi,
         position: lo.position,
       })),
       prerequisites: {

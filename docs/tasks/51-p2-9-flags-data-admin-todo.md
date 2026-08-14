@@ -88,7 +88,7 @@
 
 ### Task 5 — Soạn template thông báo
 
-- [ ] Template có `code` · `subject_vi` · `body_vi` · biến khả dụng · `content_version` · `status`.
+- [ ] Template có `code` · `subject` · `body` · biến khả dụng · `content_version` · `status`.
 - [ ] `BR-NTA-03` ca âm: sửa template → trạng thái **`draft`**.
 - [ ] Ca âm: email mới **vẫn dùng bản `published`** cho tới khi bản mới publish.
 - [ ] `D-KQ`: template xuất hiện trong hàng đợi `/studio/review` của P2.8.

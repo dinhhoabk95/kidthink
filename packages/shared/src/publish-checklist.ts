@@ -17,6 +17,7 @@ export interface PublishChecklistResult {
 
 export interface GenericEntityPayload {
   accessTier?: string;
+  access_tier?: string;
   skillIds?: (number | string)[];
   skills?: unknown[];
   learningObjectiveIds?: (number | string)[];
@@ -25,13 +26,15 @@ export interface GenericEntityPayload {
   age_min?: number | null;
   ageMax?: number | null;
   age_max?: number | null;
+  title?: string;
   titleVi?: string;
   title_vi?: string;
   [key: string]: unknown;
 }
 
 function checkCounts(entity: GenericEntityPayload, missing: string[]): void {
-  if (!entity.accessTier) {
+  const accessTier = entity.accessTier ?? entity.access_tier;
+  if (!accessTier) {
     missing.push("access_tier_missing");
   }
 
@@ -72,9 +75,9 @@ function checkCommonRules(
     missing.push("invalid_age_range");
   }
 
-  const titleVi = entity.titleVi ?? entity.title_vi;
-  if (!titleVi || typeof titleVi !== "string" || titleVi.trim() === "") {
-    missing.push("title_vi_empty");
+  const title = entity.title ?? entity.titleVi ?? entity.title_vi;
+  if (!title || typeof title !== "string" || title.trim() === "") {
+    missing.push("title_empty");
   }
 }
 
@@ -154,8 +157,8 @@ function checkLessonRules(
     missing.push("invalid_estimated_minutes");
   }
 
-  const guideVi = entity.guideVi ?? entity.guide_vi;
-  if (!guideVi || typeof guideVi !== "string" || guideVi.trim() === "") {
+  const guide = entity.guide ?? entity.guide;
+  if (!guide || typeof guide !== "string" || guide.trim() === "") {
     missing.push("guide_vi_missing");
   }
 }

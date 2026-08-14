@@ -103,7 +103,7 @@ async function seedTestLevel(options: {
   }
 
   const validGT001Pack = options.contentPack || {
-    prompt_vi: "Bé hãy chọn quả táo đỏ",
+    prompt: "Bé hãy chọn quả táo đỏ",
     target_item: {
       item_id: "i1",
       asset: { kind: "emoji", ref: "EMJ-red-apple" },

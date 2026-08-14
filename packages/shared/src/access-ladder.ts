@@ -56,7 +56,7 @@ export function getEffectiveTier(
 }
 
 export interface LockedPreviewMetadata {
-  title_vi?: string;
+  title?: string;
   competency?: string;
   age_min?: number;
   age_max?: number;

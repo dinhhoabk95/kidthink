@@ -4,6 +4,7 @@ export * from "./alerts-config.js";
 export * from "./asset-resolver.js";
 export * from "./audit.js";
 export * from "./child-data.js";
+export * from "./dashboard-cards.js";
 export * from "./date-ict.js";
 export * from "./entitlement-catalog.js";
 export * from "./glossary.js";

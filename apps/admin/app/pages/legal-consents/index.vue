@@ -60,7 +60,7 @@
             <div>
               <div class="flex items-center gap-2">
                 <h3 class="text-base font-bold text-surface-900">
-                  {{ req.title_vi }}
+                  {{ req.title }}
                 </h3>
                 <span
                   class="text-xs font-mono px-2 py-0.5 rounded bg-surface-100 text-surface-700"
@@ -116,9 +116,9 @@
 
           <div
             class="p-3 rounded-xl bg-surface-50 border border-surface-200 text-xs text-surface-700"
-            v-if="req.notice_vi"
+            v-if="req.notice"
           >
-            <strong>Thông báo cho người dùng:</strong> {{ req.notice_vi }}
+            <strong>Thông báo cho người dùng:</strong> {{ req.notice }}
           </div>
         </div>
       </div>
@@ -134,7 +134,7 @@
       >
         <div>
           <h2 class="text-xl font-bold font-heading text-surface-900">
-            Yêu cầu tái đồng ý: {{ selectedRequirement.title_vi }}
+            Yêu cầu tái đồng ý: {{ selectedRequirement.title }}
           </h2>
           <p class="text-xs text-surface-500 mt-1">
             Hành động này sẽ cập nhật mốc thời gian bắt buộc và yêu cầu tất cả
@@ -157,7 +157,7 @@
             class="block text-sm font-semibold text-surface-900"
             for="notice-vi-input"
           >
-            Thông báo hiển thị cho người dùng (notice_vi, 20-500 ký tự) *
+            Thông báo hiển thị cho người dùng (notice, 20-500 ký tự) *
           </label>
           <textarea
             class="w-full p-3 rounded-xl border border-surface-300 text-sm focus:ring-brand-500 focus:border-brand-500"
@@ -167,10 +167,10 @@
             placeholder="Ví dụ: Cập nhật điều khoản thanh toán và hoàn tiền áp dụng từ tháng 08/2026."
             required
             rows="3"
-            v-model="forceForm.notice_vi"
+            v-model="forceForm.notice"
           ></textarea>
           <p class="text-xs text-surface-500">
-            {{ forceForm.notice_vi.length }}/500 ký tự
+            {{ forceForm.notice.length }}/500 ký tự
           </p>
         </div>
 
@@ -258,13 +258,18 @@
 
 <script lang="ts" setup>
   import { computed, onMounted, reactive, ref } from "vue";
+  import { definePageMeta } from "#imports";
+
+  definePageMeta({
+    layout: "manager",
+  });
 
   interface RequirementItem {
     consent_type: "terms" | "privacy" | "child_data";
-    title_vi: string;
+    title: string;
     document_url: string;
     reconsent_required_at: string | null;
-    notice_vi: string | null;
+    notice: string | null;
     updated_at: string | null;
     affected_users_count?: number;
   }
@@ -285,7 +290,7 @@
   const successMessage = ref<string | null>(null);
 
   const forceForm = reactive({
-    notice_vi: "",
+    notice: "",
     reason: "",
     confirm_deployed: false,
     confirm_all_users: false,
@@ -293,8 +298,8 @@
 
   const canSubmitForce = computed(() => {
     return (
-      forceForm.notice_vi.trim().length >= 20 &&
-      forceForm.notice_vi.trim().length <= 500 &&
+      forceForm.notice.trim().length >= 20 &&
+      forceForm.notice.trim().length <= 500 &&
       forceForm.reason.trim().length >= 20 &&
       forceForm.reason.trim().length <= 500 &&
       forceForm.confirm_deployed &&
@@ -342,7 +347,7 @@
 
   function openForceModal(req: RequirementItem) {
     selectedRequirement.value = req;
-    forceForm.notice_vi = req.notice_vi || "";
+    forceForm.notice = req.notice || "";
     forceForm.reason = "";
     forceForm.confirm_deployed = false;
     forceForm.confirm_all_users = false;
@@ -366,14 +371,14 @@
           consent_type: selectedRequirement.value.consent_type,
           expected_requirement_at:
             selectedRequirement.value.reconsent_required_at,
-          notice_vi: forceForm.notice_vi.trim(),
+          notice: forceForm.notice.trim(),
           reason: forceForm.reason.trim(),
           confirm_deployed: true,
           confirm_all_users: true,
         },
       });
 
-      successMessage.value = `Đã kích hoạt force re-consent cho ${selectedRequirement.value.title_vi} thành công.`;
+      successMessage.value = `Đã kích hoạt force re-consent cho ${selectedRequirement.value.title} thành công.`;
       selectedRequirement.value = null;
       await loadRequirements();
     } catch (err: unknown) {

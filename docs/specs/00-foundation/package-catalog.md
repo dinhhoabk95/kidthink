@@ -129,9 +129,9 @@ không tự động hoá được ở quy mô hiện tại.
 ```ts
 interface PackageDefinition {
   code: `PKG-${string}`;
-  name_vi: string;
-  audience_vi: string;
-  description_vi: string;
+  name: string;
+  audience: string;
+  description: string;
   entitlements: EntitlementKey[];
   quotas: Partial<Record<QuotaKey, number>>;
   offers: Offer[];
@@ -142,7 +142,7 @@ interface PackageDefinition {
 
 interface Offer {
   offer_code: string;         // "annual" | "lifetime"
-  billing_period_vi: string;  // "1 năm" | "trọn đời"
+  billing_period: string;  // "1 năm" | "trọn đời"
   price_vnd: number;
   duration_days: number | null;  // null = vĩnh viễn
 }
@@ -161,7 +161,7 @@ phải để sửa từ UI.
 | | |
 |---|---|
 | Auth | không |
-| 200 | `{ packages: [{ code, name_vi, audience_vi, description_vi, is_featured, offers: [{offer_code, billing_period_vi, price_vnd, duration_days}], benefits: [{entitlement_key, label_vi}], quotas: {...} }] }` |
+| 200 | `{ packages: [{ code, name, audience, description, is_featured, offers: [{offer_code, billing_period, price_vnd, duration_days}], benefits: [{entitlement_key, label}], quotas: {...} }] }` |
 
 Chỉ gói `is_public && status === 'active'`.
 

@@ -30,20 +30,20 @@
               {{ skill.identifiers.code }}
             </span>
             <span class="text-xs text-surface-500 font-medium">
-              {{ skill.identifiers.competency_name_vi }}
-              &rsaquo; {{ skill.identifiers.strand_name_vi }}
+              {{ skill.identifiers.competency_name }}
+              &rsaquo; {{ skill.identifiers.strand_name }}
             </span>
           </div>
           <h1
             class="text-2xl md:text-3xl font-bold font-heading text-surface-900"
           >
-            {{ skill.identifiers.name_vi }}
+            {{ skill.identifiers.name }}
           </h1>
           <p
             class="text-surface-600 text-sm md:text-base mt-2"
-            v-if="skill.identifiers.description_vi"
+            v-if="skill.identifiers.description"
           >
-            {{ skill.identifiers.description_vi }}
+            {{ skill.identifiers.description }}
           </p>
         </div>
 
@@ -161,14 +161,14 @@
               {{ lo.code }}
             </span>
             <span class="text-sm font-semibold text-surface-900"
-              >{{ lo.behaviour_vi }}</span
+              >{{ lo.behaviour }}</span
             >
           </div>
           <p
             class="text-xs text-surface-600 pl-4"
-            v-if="lo.observable_criteria_vi"
+            v-if="lo.observable_criteria"
           >
-            Tiêu chí quan sát: {{ lo.observable_criteria_vi }}
+            Tiêu chí quan sát: {{ lo.observable_criteria }}
           </p>
         </div>
       </div>
@@ -203,7 +203,7 @@
                 >{{ p.code }}</span
               >
               <span class="text-surface-800 ml-2 font-medium"
-                >{{ p.name_vi }}</span
+                >{{ p.name }}</span
               >
             </div>
             <NuxtLink
@@ -240,7 +240,7 @@
                 >{{ d.code }}</span
               >
               <span class="text-surface-800 ml-2 font-medium"
-                >{{ d.name_vi }}</span
+                >{{ d.name }}</span
               >
             </div>
             <NuxtLink
@@ -281,9 +281,7 @@
             <span class="font-mono font-bold text-surface-700"
               >{{ level.code }}</span
             >
-            <span class="text-surface-900 font-medium"
-              >{{ level.title_vi }}</span
-            >
+            <span class="text-surface-900 font-medium">{{ level.title }}</span>
           </div>
           <div class="flex items-center gap-2">
             <span
@@ -330,16 +328,21 @@
 <script lang="ts" setup>
   import { onMounted, ref } from "vue";
   import { useRoute } from "vue-router";
+  import { definePageMeta } from "#imports";
+
+  definePageMeta({
+    layout: "manager",
+  });
 
   interface SkillDetailData {
     identifiers: {
       code: string;
-      name_vi: string;
-      description_vi: string | null;
+      name: string;
+      description: string | null;
       strand_code: string;
-      strand_name_vi: string;
+      strand_name: string;
       competency_code: string;
-      competency_name_vi: string;
+      competency_name: string;
       status: string;
       is_deprecated: boolean;
     };
@@ -353,21 +356,21 @@
     learning_objectives: Array<{
       id: number;
       code: string;
-      behaviour_vi: string;
-      observable_criteria_vi: string | null;
+      behaviour: string;
+      observable_criteria: string | null;
       position: number;
     }>;
     prerequisites: {
       upstream: Array<{
         skillId: number;
         code: string;
-        nameVi: string;
+        name: string;
         strength: string;
       }>;
       downstream: Array<{
         skillId: number;
         code: string;
-        nameVi: string;
+        name: string;
         strength: string;
       }>;
     };
@@ -375,7 +378,7 @@
       levels: Array<{
         id: number;
         code: string;
-        title_vi: string;
+        title: string;
         status: string;
         access_tier: string;
         weight: string;

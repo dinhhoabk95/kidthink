@@ -9,7 +9,7 @@ describe("P0.6 Task 3 — Checklist publish §7.3 & BR-CLC-09", () => {
       learningObjectiveIds: [201],
       ageMin: 3,
       ageMax: 5,
-      titleVi: "Đếm số trong phạm vi 5",
+      title: "Đếm số trong phạm vi 5",
       contentPack: {
         hasCorrectAnswer: true,
         items: [{ id: 1, isCorrect: true }],
@@ -29,7 +29,7 @@ describe("P0.6 Task 3 — Checklist publish §7.3 & BR-CLC-09", () => {
       learningObjectiveIds: [201],
       ageMin: 3,
       ageMax: 5,
-      titleVi: "Đếm số",
+      title: "Đếm số",
       contentPack: {
         hasCorrectAnswer: false,
         items: [{ id: 1, isCorrect: false }],
@@ -42,7 +42,7 @@ describe("P0.6 Task 3 — Checklist publish §7.3 & BR-CLC-09", () => {
     expect(res.missing).toContain("no_correct_answer");
   });
 
-  it("Thiếu thông tin chung (access_tier, titleVi, skillIds) -> ok = false", () => {
+  it("Thiếu thông tin chung (access_tier, title, skillIds) -> ok = false", () => {
     const incomplete = {
       ageMin: 3,
       ageMax: 5,
@@ -53,7 +53,7 @@ describe("P0.6 Task 3 — Checklist publish §7.3 & BR-CLC-09", () => {
     expect(res.missing).toContain("access_tier_missing");
     expect(res.missing).toContain("skills_missing");
     expect(res.missing).toContain("learning_objectives_missing");
-    expect(res.missing).toContain("title_vi_empty");
+    expect(res.missing).toContain("title_empty");
   });
 
   it("Lesson: thiếu hoạt động -> missing chứa activities_missing", () => {
@@ -63,10 +63,10 @@ describe("P0.6 Task 3 — Checklist publish §7.3 & BR-CLC-09", () => {
       learningObjectiveIds: [2],
       ageMin: 4,
       ageMax: 6,
-      titleVi: "Bài học hình khối",
+      title: "Bài học hình khối",
       activities: [],
       estimatedMinutes: 20,
-      guideVi: "Hướng dẫn bài học",
+      guide: "Hướng dẫn bài học",
     };
 
     const res = validatePublishChecklist("lesson", lesson);
@@ -81,7 +81,7 @@ describe("P0.6 Task 3 — Checklist publish §7.3 & BR-CLC-09", () => {
       learningObjectiveIds: [2],
       ageMin: 3,
       ageMax: 4,
-      titleVi: "Phiếu bài tập số 1",
+      title: "Phiếu bài tập số 1",
       pdfPath: "",
     };
 

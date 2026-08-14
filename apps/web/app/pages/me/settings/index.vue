@@ -128,7 +128,7 @@
                 />
                 <div>
                   <span class="font-medium text-surface-900 text-sm block">
-                    {{ prov.label_vi }}
+                    {{ prov.label }}
                   </span>
                   <span class="text-xs text-surface-500">
                     {{ prov.linked_identity ? `Đã liên kết (${prov.linked_identity.masked_email})` : 'Chưa liên kết' }}
@@ -282,7 +282,7 @@
 
   interface ProviderItem {
     provider: string;
-    label_vi: string;
+    label: string;
     is_enabled: boolean;
   }
 
@@ -293,8 +293,8 @@
   }
 
   const providers = ref<ProviderItem[]>([
-    { provider: "google", label_vi: "Google", is_enabled: true },
-    { provider: "facebook", label_vi: "Facebook", is_enabled: false },
+    { provider: "google", label: "Google", is_enabled: true },
+    { provider: "facebook", label: "Facebook", is_enabled: false },
   ]);
 
   const linkedIdentities = ref<LinkedIdentityItem[]>([]);

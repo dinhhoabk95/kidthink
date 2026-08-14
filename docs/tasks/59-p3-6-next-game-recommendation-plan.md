@@ -302,7 +302,7 @@ package ≤5 files
 - [ ] `requireUserAuth()` + `assertActiveChild()`; thiếu trẻ đang chọn → 428 `NO_ACTIVE_CHILD`.
 - [ ] `limit` có trần; vượt trần bị ép, không lỗi.
 - [ ] Response đúng §7.1: `primary` cộng tối đa 4 `alternatives`, mỗi item có `reason_code` và
-      `reason_vi` không rỗng (`BR-REC-05`).
+      `reason` không rỗng (`BR-REC-05`).
 - [ ] `thumbnail_emoji` phân giải qua registry; emoji thiếu không làm hỏng cả response.
 - [ ] Response **không** chứa `p_learn` hay bất kỳ con số mastery nào.
 - [ ] Thời gian phản hồi trên bề mặt trẻ dưới ngưỡng đã đặt, đo với catalog đầy đủ.
@@ -338,7 +338,7 @@ package ≤5 files
 - [ ] Màn hình tổng kết phiên hiện đúng một gợi ý chính; sảnh trẻ hiện 3–5.
 - [ ] Item khoá hiện ổ khoá trung tính; không giá, không nút mua trên bề mặt trẻ (`BR-CUR-06`).
 - [ ] Lời mời nâng cấp nằm sau cổng người lớn.
-- [ ] Người lớn thấy `reason_vi` trong báo cáo; nội dung lý do không mang nghĩa chẩn đoán.
+- [ ] Người lớn thấy `reason` trong báo cáo; nội dung lý do không mang nghĩa chẩn đoán.
 - [ ] Không so sánh với trẻ khác ở bất kỳ bề mặt nào (`BR-REC-06`, `BR-PRG-05`).
 - [ ] Bề mặt trẻ không giả định trẻ biết đọc; đạt
       [`accessibility.md`](../specs/08-quality/accessibility.md).

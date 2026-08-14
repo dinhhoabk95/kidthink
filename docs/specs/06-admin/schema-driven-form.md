@@ -82,8 +82,8 @@ không phải `──→ schema-driven-form`).
 | kết thúc `_image` hoặc `_path` | `image` | Image field có crop |
 | kết thúc `_color` | `color` | Swatch từ token |
 | kết thúc `_audio` | `audio` | Audio picker/upload |
-| kết thúc `_vi` | `text_vi` | Input/textarea tiếng Việt |
 | kết thúc `_ms` hoặc `_seconds` | `duration` | Slider + số |
+| Zod `string` có `.max()` > 200 hoặc không giới hạn | `textarea` | Textarea |
 | Zod `enum` | `select` | Select |
 | Zod `boolean` | `toggle` | Toggle |
 | Zod `number` có `min`/`max` | `slider` | Slider |
@@ -94,7 +94,7 @@ không phải `──→ schema-driven-form`).
 ### 7.2 `configDictionary`
 
 ```ts
-{ "prompt_vi": { label: "Câu hỏi cho bé", help: "Ngắn, dưới 12 từ, đọc thành tiếng được" },
+{ "prompt": { label: "Câu hỏi cho bé", help: "Ngắn, dưới 12 từ, đọc thành tiếng được" },
   "distractor_count": { label: "Số vật gây nhiễu", help: "0 là dễ nhất" } }
 ```
 
@@ -178,3 +178,4 @@ Scenario: BR-SDF-08 — field rơi vào text bị phát hiện
 |---|---|---|---|---|
 | 1 | Zod → JSON Schema mất `refine` — client kiểm quan hệ bằng cách nào? | P2 | Chốt `D-BK`: Dùng custom serializer để khai `uiHint` cho `refine` đơn giản ở client, các `refine` quan hệ phức tạp validate tại server; trỏ sang [`game-template-contract.md`](../01-platform/game-template-contract.md) Q4 | người quyết |
 | 2 | Field lồng sâu (array of object of array) render thế nào cho dễ dùng? | P2 | Giới hạn độ sâu tối đa 3 tầng và render dạng modal / sub-drawer theo quy định UI | người quyết |
+| 3 | §7.1 từng suy `textarea` từ hậu tố `_vi` — hậu tố bị bỏ (D11, hệ thống chỉ còn một ngôn ngữ hiển thị). Ngưỡng `.max() > 200` tạm thay có đúng ranh giới input/textarea thật của mọi field content không? | P2 | Đối chiếu ngưỡng với `varchar` vs `text` thật trong `packages/db/src/schema/*.ts` trước khi implement widget | người quyết |

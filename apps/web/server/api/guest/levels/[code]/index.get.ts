@@ -18,8 +18,8 @@ export default defineEventHandler(async (event) => {
     .select({
       id: gameLevels.id,
       code: gameLevels.code,
-      nameVi: gameLevels.nameVi,
-      descriptionVi: gameLevels.descriptionVi,
+      title: gameLevels.title,
+      description: gameLevels.description,
       status: gameLevels.status,
       accessTier: gameLevels.accessTier,
       difficulty: gameLevels.difficulty,
@@ -46,7 +46,7 @@ export default defineEventHandler(async (event) => {
     const alternatives = await db
       .select({
         code: gameLevels.code,
-        title_vi: gameLevels.nameVi,
+        title: gameLevels.title,
         access_tier: gameLevels.accessTier,
       })
       .from(gameLevels)
@@ -82,7 +82,7 @@ export default defineEventHandler(async (event) => {
   const relatedLevels = await db
     .select({
       code: gameLevels.code,
-      title_vi: gameLevels.nameVi,
+      title: gameLevels.name,
       difficulty: gameLevels.difficulty,
       access_tier: gameLevels.accessTier,
     })
@@ -106,9 +106,9 @@ export default defineEventHandler(async (event) => {
 
   return {
     code: level.code,
-    title_vi: level.nameVi,
-    description_vi:
-      level.descriptionVi ||
+    title: level.title,
+    description:
+      level.description ||
       `Trò chơi rèn luyện tư duy cho trẻ ${level.ageMin}–${level.ageMax} tuổi`,
     competency,
     age_min: level.ageMin,
@@ -132,7 +132,7 @@ export default defineEventHandler(async (event) => {
     ],
     related_games: relatedLevels.map((g) => ({
       code: g.code,
-      title_vi: g.title_vi,
+      title: g.title,
       difficulty: g.difficulty,
       access_tier: g.access_tier,
       locked: !guestAllowed.includes(g.access_tier),

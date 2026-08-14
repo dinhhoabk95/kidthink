@@ -130,7 +130,7 @@ T1 packages/storage: pipeline · magic bytes · bảng content_images (D-KC, D-K
 ### Task 1 — Kho ảnh và pipeline
 
 **Tiêu chí nghiệm thu**
-- [ ] Bảng `content_images` đủ cột §7.1; `owner_type` là **enum đóng** theo `D-KF`; `alt_vi` **không null**.
+- [ ] Bảng `content_images` đủ cột §7.1; `owner_type` là **enum đóng** theo `D-KF`; `alt` **không null**.
 - [ ] Pipeline: nhận jpeg/png/webp → WebP chất lượng **82**, cạnh lớn nhất ≤ **960px**, thumbnail **160×160** crop giữa.
 - [ ] Ca dương chuẩn hoá: upload JPEG 3000×2000 → file lưu là WebP, cạnh lớn nhất ≤ 960, có thumbnail 160×160.
 - [ ] Ảnh nhỏ hơn 160×160 → chấp nhận, **không** phóng to.
@@ -149,9 +149,9 @@ T1 packages/storage: pipeline · magic bytes · bảng content_images (D-KC, D-K
 ### Task 2 — API ảnh
 
 **Tiêu chí nghiệm thu**
-- [ ] `POST /api/managers/images` cần `requireManagerAuth()` + `x-csrf-token`; multipart `file` · `owner_type` · `owner_id` · `alt_vi`.
+- [ ] `POST /api/managers/images` cần `requireManagerAuth()` + `x-csrf-token`; multipart `file` · `owner_type` · `owner_id` · `alt`.
 - [ ] `BR-IMG-11` + `BR-IUP-06` ca âm: quét mã — **không** raw `$fetch` cho route upload; request thật có header `x-csrf-token`.
-- [ ] Thiếu `alt_vi` → **422** `VALIDATION_FAILED`.
+- [ ] Thiếu `alt` → **422** `VALIDATION_FAILED`.
 - [ ] `DELETE /api/managers/images/{id}`: đang dùng ở nội dung `published` → **409** `CONTENT_IN_USE` + `details.used_by[]`.
 - [ ] `BR-IMG-12`: mọi upload và xoá ghi `audit_logs`.
 - [ ] Ảnh của content bị xoá cứng → chuyển `orphan`, không xoá file ngay.
@@ -185,11 +185,11 @@ T1 packages/storage: pipeline · magic bytes · bảng content_images (D-KC, D-K
 
 **Tiêu chí nghiệm thu**
 - [ ] Widget lắp vào hint `image` của P2.5; placeholder "P2.7" bị **xoá** — đóng slice cuối của P2.6 theo `D-CC`.
-- [ ] Modal crop §7.1 đủ: khung **1:1** mặc định · nút **xoay 90°** · zoom kéo thả · `alt_vi` bắt buộc · cảnh báo thường trực.
+- [ ] Modal crop §7.1 đủ: khung **1:1** mặc định · nút **xoay 90°** · zoom kéo thả · `alt` bắt buộc · cảnh báo thường trực.
 - [ ] `BR-IUP-02` ca âm: template hiển thị item ở 96px → modal có hộp preview ở **đúng 96px**.
 - [ ] `BR-IUP-08` ca âm: cảnh báo "không dùng ảnh chụp trẻ em" hiện **thường trực**, không phải tooltip.
 - [ ] `BR-IUP-07` + `BR-STU-03` ca âm: upload fail vì mạng → modal **giữ nguyên crop và góc xoay**, có nút thử lại.
-- [ ] `BR-IUP-05`: chưa điền `alt_vi` → nút upload **vô hiệu**.
+- [ ] `BR-IUP-05`: chưa điền `alt` → nút upload **vô hiệu**.
 - [ ] `BR-IUP-04` ca âm hai phía: chọn file 5 MB → client chặn trước khi gửi; gửi 5 MB bằng curl → server **413**.
 - [ ] Ảnh vào < 200×200 → cảnh báo, không chặn cứng.
 - [ ] Kết quả crop gửi lên ≤ **1200×1200**, WebP hoặc PNG.

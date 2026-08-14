@@ -158,7 +158,7 @@ kiểu, `entity_id` polymorphic — xem mục 7.10a của cùng file trên.
 |---|---|
 | **Mọi** | `access_tier` có mặt · gắn ≥1 skill · gắn ≥1 learning objective · `age_min ≤ age_max ∈ [3,6]` · title tiếng Việt không rỗng |
 | `game_levels` | `content_pack` parse được bằng `content_contract` của template · có ít nhất một đáp án đúng · không câu hỏi rỗng · mọi asset id resolve được · số lượng item nằm trong giới hạn template · `difficulty ∈ [1,5]` |
-| `lessons` | ≥1 activity · `estimated_minutes ∈ [5,45]` · có `guide_vi` |
+| `lessons` | ≥1 activity · `estimated_minutes ∈ [5,45]` · có `guide` |
 | `curricula` | Mọi `curriculum_item` trỏ tới nội dung `published` · không tuần rỗng |
 | `worksheets` | Render thử ra PDF thành công |
 

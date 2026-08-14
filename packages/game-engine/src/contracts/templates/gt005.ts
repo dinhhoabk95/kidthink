@@ -3,7 +3,7 @@ import { EmojiRef } from "../shared-fields";
 import type { GameTemplate } from "../types";
 
 export const GT005ContentSchema = z.object({
-  prompt_vi: z.string().min(4).max(80),
+  prompt: z.string().min(4).max(80),
   prompt_audio_ref: z.string().optional(),
   pairs: z
     .array(
@@ -43,7 +43,7 @@ export const GT005Template: GameTemplate<
   typeof GT005DifficultySchema
 > = {
   code: "GT-005",
-  name_vi: "Ghép cặp",
+  name: "Ghép cặp",
   mechanic: "pair-match",
   layouts: ["two-column-matching", "card-flip-grid"],
   content_contract: GT005ContentSchema,

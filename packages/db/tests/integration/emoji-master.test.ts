@@ -21,12 +21,8 @@ describe("Emoji Master Seeder & Invariants (BR-EMJ-01..10)", () => {
     expect(resultsWithAccent.length).toBeGreaterThan(0);
     expect(resultsWithoutAccent.length).toBeGreaterThan(0);
 
-    const codesWith = resultsWithAccent.map(
-      (e: { name_vi: string }) => e.name_vi
-    );
-    const codesWithout = resultsWithoutAccent.map(
-      (e: { name_vi: string }) => e.name_vi
-    );
+    const codesWith = resultsWithAccent.map((e) => e.name);
+    const codesWithout = resultsWithoutAccent.map((e) => e.name);
 
     expect(codesWith).toContain("Táo đỏ");
     expect(codesWithout).toContain("Táo đỏ");

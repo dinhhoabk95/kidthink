@@ -44,11 +44,11 @@ export default defineEventHandler((event) => {
   const packages = [
     {
       sku: "standard",
-      name: standardPkg?.name_vi || "Gói Tiêu chuẩn",
+      name: standardPkg?.name || "Gói Tiêu chuẩn",
       price_vnd: standardPkg?.offers[0]?.price_vnd ?? 0,
       duration_months: 12,
       description:
-        standardPkg?.description_vi ||
+        standardPkg?.description ||
         "Dành cho phụ huynh theo dõi tiến độ của 3 trẻ",
       features: [
         "Toàn bộ 60+ trò chơi rèn luyện 6 năng lực tư duy",
@@ -60,11 +60,11 @@ export default defineEventHandler((event) => {
     },
     {
       sku: "premium",
-      name: premiumPkg?.name_vi || "Gói Premium",
+      name: premiumPkg?.name || "Gói Premium",
       price_vnd: premiumPkg?.offers[0]?.price_vnd ?? 0,
       duration_months: 12,
       description:
-        premiumPkg?.description_vi ||
+        premiumPkg?.description ||
         "Mở khoá toàn bộ game, lộ trình nâng cao và tối đa 5 trẻ",
       features: [
         "Toàn bộ 120+ trò chơi nâng cao và bài học mở rộng",

@@ -4,7 +4,7 @@ import { defineEventHandler } from "h3";
 export default defineEventHandler(() => {
   const templates = Object.values(MVP_TEMPLATES).map((tmpl) => ({
     code: tmpl.code,
-    name_vi: tmpl.name_vi,
+    name: tmpl.name,
     mechanic: tmpl.mechanic,
     age_min: tmpl.age_min,
     age_max: tmpl.age_max,

@@ -21,7 +21,7 @@ describe("P1.3 Access Gating (BR-GAT-01 .. BR-GAT-08)", () => {
     status: "published",
     age_min: 3,
     age_max: 5,
-    title_vi: "Đếm hoa quả",
+    title: "Đếm hoa quả",
   };
 
   const publishedLogin: ContentTarget = {
@@ -30,7 +30,7 @@ describe("P1.3 Access Gating (BR-GAT-01 .. BR-GAT-08)", () => {
     status: "published",
     age_min: 3,
     age_max: 6,
-    title_vi: "Ghép hình logic",
+    title: "Ghép hình logic",
   };
 
   const publishedStandard: ContentTarget = {
@@ -39,7 +39,7 @@ describe("P1.3 Access Gating (BR-GAT-01 .. BR-GAT-08)", () => {
     status: "published",
     age_min: 4,
     age_max: 6,
-    title_vi: "So sánh lớn bé",
+    title: "So sánh lớn bé",
   };
 
   const publishedPremium: ContentTarget = {
@@ -48,7 +48,7 @@ describe("P1.3 Access Gating (BR-GAT-01 .. BR-GAT-08)", () => {
     status: "published",
     age_min: 5,
     age_max: 6,
-    title_vi: "Cộng trừ mầm non",
+    title: "Cộng trừ mầm non",
   };
 
   const draftStandard: ContentTarget = {
@@ -294,7 +294,7 @@ describe("P1.3 Access Gating (BR-GAT-01 .. BR-GAT-08)", () => {
         expect(details.required_entitlement).toBe("play_premium_games");
         expect(details.upgrade_package_codes).toEqual(["PKG-premium"]);
         expect(details.preview).toEqual({
-          title_vi: "Cộng trừ mầm non",
+          title: "Cộng trừ mầm non",
           competency: undefined,
           age_min: 5,
           age_max: 6,

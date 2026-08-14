@@ -176,8 +176,8 @@ export const seed: ContentSeed<"GT-004"> = {
   items: [{
     code: "GL-C4-CLS-SORT-0021",                 // bất biến sau merge
     content_version: 1,
-    title_vi: "Xếp quả vào rổ đúng màu",
-    instruction_vi: "Bé xếp mỗi quả vào rổ cùng màu nhé!",
+    title: "Xếp quả vào rổ đúng màu",
+    instruction: "Bé xếp mỗi quả vào rổ cùng màu nhé!",
     skill_codes: ["C4.CLS.02"],
     learning_objective_codes: ["LO-C4.CLS.02-01"],
     age_min: 4, age_max: 5, difficulty: 2,

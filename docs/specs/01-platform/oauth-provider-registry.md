@@ -143,7 +143,7 @@ interface NormalizedProfile {
 | | |
 |---|---|
 | Auth | không |
-| 200 | `[{ provider, label_vi, is_enabled }]` — không có `client_id` |
+| 200 | `[{ provider, label, is_enabled }]` — không có `client_id` |
 
 ### `GET /api/guest/auth/oauth/{provider}/start`
 

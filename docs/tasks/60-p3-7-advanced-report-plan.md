@@ -132,7 +132,7 @@ danh sách từ cấm chạy trên chính thư viện đó, giống cổng an to
 ## 2. Quyết định
 
 **D-MY — Thư viện gợi ý hành động là tài sản nội dung có bảng, có provenance, có cổng duyệt.**
-Bảng `skill_action_suggestions (skill_id, order_no, text_vi, kind, ref_entity_id?)` với `kind`
+Bảng `skill_action_suggestions (skill_id, order_no, text, kind, ref_entity_id?)` với `kind`
 là danh sách đóng: `home_activity` (việc làm cùng bé ngoài màn hình) và `in_app` (trỏ một game
 level hoặc lesson `published`). Mỗi skill cần ≥1 mục `home_activity`; mục `in_app` là tuỳ chọn
 và phải trỏ nội dung `published` qua `entity_id` theo `D-AE`.
@@ -198,13 +198,13 @@ interface ReportSection {
   status: "ready" | "insufficient_data";
   sessions_have: number;
   sessions_needed: number;      // §7.2 — nêu còn thiếu bao nhiêu
-  alt_text_vi: string;          // BR-ARP-03, bắt buộc cho mọi biểu đồ
+  alt_text: string;          // BR-ARP-03, bắt buộc cho mọi biểu đồ
 }
 
 interface ReinforceItem extends ReportSection {
   skill_code: string;
   mastery_label: MasteryLabel;  // hàm duy nhất của P3.5
-  actions: Array<{ kind: "home_activity" | "in_app"; text_vi: string; ref?: string }>;  // D-MY
+  actions: Array<{ kind: "home_activity" | "in_app"; text: string; ref?: string }>;  // D-MY
 }
 ```
 

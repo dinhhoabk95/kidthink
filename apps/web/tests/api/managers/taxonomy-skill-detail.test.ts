@@ -6,6 +6,7 @@ import {
   skills,
   strands,
 } from "@kidthink/db";
+import { eq } from "drizzle-orm";
 import { describe, expect, it } from "vitest";
 import handler from "../../../server/api/managers/taxonomy/skills/[code].get.js";
 
@@ -57,7 +58,6 @@ describe("Task 6 — GET /api/managers/taxonomy/skills/[code] (BR-TXB-04, BR-TXB
   it("Scenario: BR-TXB-04 & BR-TXB-05 & D-IU — returns 6 sections with 2-way prerequisite graph and seeder authoring action", async () => {
     const db = getOwnerDb();
 
-    // 1. Seed two skills with prerequisite relationship
     const compRows = await db
       .insert(competencies)
       .values({
@@ -83,12 +83,18 @@ describe("Task 6 — GET /api/managers/taxonomy/skills/[code] (BR-TXB-04, BR-TXB
       .onConflictDoNothing()
       .returning();
 
-    const strandId = strandRows[0]?.id || 1;
+    const existingStrand = await db
+      .select({ id: strands.id })
+      .from(strands)
+      .where(eq(strands.code, "C2.GEO"))
+      .limit(1);
+
+    const strandId = existingStrand[0]?.id || strandRows[0]?.id || 1;
 
     const s1Rows = await db
       .insert(skills)
       .values({
-        code: "C2.GEO.01",
+        code: "C2.GEO.98",
         strandId,
         nameVi: "Nhận biết hình tròn",
         ageMin: 3,
@@ -97,7 +103,7 @@ describe("Task 6 — GET /api/managers/taxonomy/skills/[code] (BR-TXB-04, BR-TXB
         thinkingProcesses: ["observe", "match"],
         whatAxis: ["geometry", "shape"],
         status: "seeded",
-        position: 1,
+        position: 98,
       })
       .onConflictDoNothing()
       .returning();
@@ -105,7 +111,7 @@ describe("Task 6 — GET /api/managers/taxonomy/skills/[code] (BR-TXB-04, BR-TXB
     const s2Rows = await db
       .insert(skills)
       .values({
-        code: "C2.GEO.02",
+        code: "C2.GEO.99",
         strandId,
         nameVi: "Phân biệt hình tròn và hình vuông",
         ageMin: 3,
@@ -114,7 +120,7 @@ describe("Task 6 — GET /api/managers/taxonomy/skills/[code] (BR-TXB-04, BR-TXB
         thinkingProcesses: ["compare", "sort"],
         whatAxis: ["geometry", "shape"],
         status: "seeded",
-        position: 2,
+        position: 99,
       })
       .onConflictDoNothing()
       .returning();
@@ -137,7 +143,7 @@ describe("Task 6 — GET /api/managers/taxonomy/skills/[code] (BR-TXB-04, BR-TXB
       await db
         .insert(learningObjectives)
         .values({
-          code: "LO-C2.GEO.02-01",
+          code: "LO-C2.GEO.99-01",
           skillId: s2Id,
           behaviourVi: "Chỉ ra điểm khác nhau giữa hình tròn và hình vuông",
           observableCriteriaVi: "Chọn đúng khi đưa ra 2 hình",
@@ -146,14 +152,14 @@ describe("Task 6 — GET /api/managers/taxonomy/skills/[code] (BR-TXB-04, BR-TXB
         .onConflictDoNothing();
     }
 
-    const event = mockEvent("C2.GEO.02", "content_reviewer");
+    const event = mockEvent("C2.GEO.99", "content_reviewer");
     const res = await handler(event);
 
     expect(res).toBeDefined();
 
     // Section 1: Identifiers
-    expect(res.identifiers.code).toBe("C2.GEO.02");
-    expect(res.identifiers.name_vi).toBe("Phân biệt hình tròn và hình vuông");
+    expect(res.identifiers.code).toBe("C2.GEO.99");
+    expect(res.identifiers.name).toBe("Phân biệt hình tròn và hình vuông");
     expect(res.identifiers.strand_code).toBe("C2.GEO");
     expect(res.identifiers.competency_code).toBe("C2");
 
@@ -169,7 +175,7 @@ describe("Task 6 — GET /api/managers/taxonomy/skills/[code] (BR-TXB-04, BR-TXB
     expect(res.prerequisites.upstream).toBeDefined();
     expect(res.prerequisites.downstream).toBeDefined();
     expect(
-      res.prerequisites.upstream.some((p: any) => p.code === "C2.GEO.01")
+      res.prerequisites.upstream.some((p: any) => p.code === "C2.GEO.98")
     ).toBe(true);
 
     // Section 5: Attached Content
@@ -178,7 +184,7 @@ describe("Task 6 — GET /api/managers/taxonomy/skills/[code] (BR-TXB-04, BR-TXB
 
     // Section 6: Action button with seeder link (D-IU, BR-TXB-04) + PR notice
     expect(res.actions.author_url).toBe(
-      "/admin/seed-authoring?skill_code=C2.GEO.02"
+      "/admin/seed-authoring?skill_code=C2.GEO.99"
     );
     expect(res.actions.author_url).not.toContain("404");
     expect(res.actions.pr_notice).toContain("Pull Request");

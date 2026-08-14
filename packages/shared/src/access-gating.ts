@@ -88,7 +88,7 @@ export interface ContentTarget {
   age_max: number;
   level_tier?: AccessTier | null;
   curriculum_tier?: AccessTier | null;
-  title_vi?: string;
+  title?: string;
   competency?: string;
   thumbnail_emoji?: string;
 }
@@ -152,7 +152,7 @@ async function checkTierAccess(
   const allowed = await allowedTiers(caller, ctx.activeKeys ?? []);
   if (!allowed.includes(effectiveTier)) {
     const previewMeta: LockedPreviewMetadata = {
-      title_vi: content.title_vi,
+      title: content.title,
       competency: content.competency,
       age_min: content.age_min,
       age_max: content.age_max,

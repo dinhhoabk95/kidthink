@@ -108,7 +108,7 @@ Huy hiệu là **kỷ niệm**, không phải mục tiêu. Cấm có bảng huy 
 | | |
 |---|---|
 | Auth | `requireUserAuth()` + ownership |
-| 200 | `{ competencies: [{ code, label, skills: [{ code, name_vi, mastery_label, attempts }] }], badges }` |
+| 200 | `{ competencies: [{ code, label, skills: [{ code, name, mastery_label, attempts }] }], badges }` |
 | 403 | `ENTITLEMENT_REQUIRED` — `view_basic_report` |
 
 ### `GET /api/users/play/map`

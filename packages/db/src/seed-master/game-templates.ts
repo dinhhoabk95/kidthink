@@ -18,7 +18,7 @@ export async function seedGameTemplatesMasterData(
       .insert(gameTemplates)
       .values({
         code: template.code,
-        nameVi: template.name_vi,
+        nameVi: template.name || "",
         mechanic: template.mechanic,
         layouts: template.layouts,
         contentContract:

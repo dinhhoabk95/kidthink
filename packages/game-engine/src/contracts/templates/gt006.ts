@@ -3,7 +3,7 @@ import { EmojiRef } from "../shared-fields";
 import type { GameTemplate } from "../types";
 
 export const GT006ContentSchema = z.object({
-  prompt_vi: z.string().min(4).max(80),
+  prompt: z.string().min(4).max(80),
   prompt_audio_ref: z.string().optional(),
   sequence: z
     .array(
@@ -14,7 +14,7 @@ export const GT006ContentSchema = z.object({
           z.object({ kind: z.literal("emoji"), ref: EmojiRef }),
           z.object({ kind: z.literal("image"), path: z.string() }),
         ]),
-        label_vi: z.string().optional(),
+        label: z.string().optional(),
       })
     )
     .min(3)
@@ -35,7 +35,7 @@ export const GT006Template: GameTemplate<
   typeof GT006DifficultySchema
 > = {
   code: "GT-006",
-  name_vi: "Sắp xếp thứ tự",
+  name: "Sắp xếp thứ tự",
   mechanic: "sequence-order",
   layouts: ["horizontal-track", "step-ladder"],
   content_contract: GT006ContentSchema,

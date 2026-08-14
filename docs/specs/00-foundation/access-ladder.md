@@ -119,7 +119,7 @@ Hàm này là **nơi duy nhất** ánh xạ entitlement sang bậc. Mọi handle
   "required_entitlement": "play_premium_games",
   "upgrade_package_codes": ["PKG-premium"],
   "preview": {
-    "title_vi": "Phân loại vật lớn và vật nhỏ",
+    "title": "Phân loại vật lớn và vật nhỏ",
     "competency": "C1",
     "age_min": 4, "age_max": 6,
     "thumbnail_emoji": "🍎"

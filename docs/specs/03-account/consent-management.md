@@ -81,7 +81,7 @@ Một consent hợp lệ khi hàng mới nhất của loại đó có `action='a
 | `BR-CSM-02` | Đồng ý **tường minh**, checkbox không tick sẵn, không suy từ login, tiếp tục dùng hay hành vi khác | Đồng ý phải là hành động chủ động, cụ thể |
 | `BR-CSM-03` | Chỉ marker do `super_admin` force mới làm acceptance cũ hết hiệu lực; deploy code tự nó không force | Tách quyết định pháp lý toàn hệ thống khỏi thao tác release kỹ thuật |
 | `BR-CSM-04` | Gate theo loại và **không bao giờ** chặn đọc legal document, export dữ liệu, rút đồng ý, reauth, logout hay xoá tài khoản | User phải luôn thực hiện được quyền dữ liệu và đường từ chối hợp pháp |
-| `BR-CSM-05` | Màn hình re-consent hiện `notice_vi` của lần force và link toàn văn singleton; cấm giả diff khi không có policy version | User cần biết lý do được hỏi lại; diff bịa từ một bản duy nhất là thông tin sai |
+| `BR-CSM-05` | Màn hình re-consent hiện `notice` của lần force và link toàn văn singleton; cấm giả diff khi không có policy version | User cần biết lý do được hỏi lại; diff bịa từ một bản duy nhất là thông tin sai |
 | `BR-CSM-06` | Rút đồng ý nêu **hậu quả cụ thể** trước khi xác nhận | Người dùng phải hiểu phạm vi ảnh hưởng trước hành động nhạy cảm |
 | `BR-CSM-07` | Mỗi hàng ghi `consent_type`, `action`, IP, user agent và thời điểm; cấm `policy_version` | Đây là bằng chứng hành động trong mô hình marker, không phải bằng chứng policy version |
 | `BR-CSM-08` | Rút `child_data` **không xoá ngay** — archive rồi purge sau 30 ngày | Cho phép đổi ý và khôi phục trước khi dữ liệu bị xoá |
@@ -108,7 +108,7 @@ quy tắc `BR-NOT-06` của [`notification-service.md`](../01-platform/notificat
 | Loại | Nhãn tiếng Việt + link document singleton |
 | Đồng ý gần nhất | Thời điểm, không số version |
 | Trạng thái | `active` · `required` · `withdrawn` |
-| Thông báo thay đổi | `notice_vi` của lần force gần nhất; không giả diff |
+| Thông báo thay đổi | `notice` của lần force gần nhất; không giả diff |
 | Hành động | Đọc toàn văn · Đồng ý · Rút |
 
 ### 7.3 `consent_logs` và `consent_requirements`
@@ -139,14 +139,14 @@ Allow-list là danh sách đóng trong code. Route `/api/users/**` mới mặc �
 | Auth | Không |
 | 200 | `{ terms: { requirement_at }, privacy: { requirement_at } }` |
 
-Dùng cho form đăng ký email và SNS. Không trả `notice_vi`, manager hay số User ảnh hưởng.
+Dùng cho form đăng ký email và SNS. Không trả `notice`, manager hay số User ảnh hưởng.
 
 ### `GET /api/users/consents`
 
 | | |
 |---|---|
 | Auth | `requireUserAuth()`; route thuộc allow-list mục 7.4 |
-| 200 | `{ consents: [{ consent_type, document_url, accepted_at, requirement_at, notice_vi, status }] }` |
+| 200 | `{ consents: [{ consent_type, document_url, accepted_at, requirement_at, notice, status }] }` |
 
 ### `POST /api/users/consents`
 
@@ -188,9 +188,9 @@ Scenario: BR-CSM-04 — force terms giữ đường thực hiện quyền dữ l
   Then trả 428 CONSENT_REQUIRED
 
 Scenario: BR-CSM-05 — re-consent không giả policy diff
-  Given privacy đã được force với notice_vi hợp lệ
+  Given privacy đã được force với notice hợp lệ
   When mở /consent-required
-  Then hiện notice_vi và link /privacy
+  Then hiện notice và link /privacy
   And không có số version, version cũ hay diff version
 
 Scenario: BR-CSM-09 — marker đổi khi form đang mở
@@ -251,6 +251,6 @@ Scenario: BR-CSM-02 — không tick sẵn
 
 | # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
 |---|---|---|---|---|
-| ~~1~~ | ~~Diff chính sách sinh tự động hay soạn tay?~~ **Đóng 2026-08-14 (`D-QV`)**: không có policy version nên không sinh diff; `super_admin` nhập `notice_vi` cho lần force và User đọc toàn văn singleton | — | Đã đóng | D-QV |
+| ~~1~~ | ~~Diff chính sách sinh tự động hay soạn tay?~~ **Đóng 2026-08-14 (`D-QV`)**: không có policy version nên không sinh diff; `super_admin` nhập `notice` cho lần force và User đọc toàn văn singleton | — | Đã đóng | D-QV |
 | ~~2~~ | ~~Version chính sách đổi bao lâu một lần và ai quyết định?~~ **Đóng 2026-08-14 (`D-QV`)**: không có version; nội dung đổi bằng PR, còn `super_admin` quyết định force sau deploy | — | Đã đóng | D-QV |
 

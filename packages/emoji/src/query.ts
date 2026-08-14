@@ -90,8 +90,10 @@ export function getEmojiCode(entry: EmojiEntry): string {
   if (entry.code) {
     return entry.code;
   }
-  const primaryEn = entry.keywords_en[0] || entry.name_vi;
-  const slug = primaryEn
+  // keywords[0] is the English term — the merge in the data files keeps
+  // English first so EMJ-<slug> codes stay byte-identical.
+  const primaryKeyword = entry.keywords[0] || entry.name;
+  const slug = primaryKeyword
     .toLowerCase()
     .normalize("NFD")
     .replace(/[\u0300-\u036f]/g, "")

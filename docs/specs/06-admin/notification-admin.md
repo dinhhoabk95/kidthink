@@ -68,7 +68,7 @@ lỗi · nút gửi lại (chỉ loại giao dịch).
 
 ### 7.2 Template
 
-`code` · `subject_vi` · `body_vi` (rich text hạn chế) · biến khả dụng · `content_version` ·
+`code` · `subject` · `body` (rich text hạn chế) · biến khả dụng · `content_version` ·
 `status`.
 
 Biến theo loại, ví dụ `order_approved`: `{{display_name}}` `{{package_name}}`

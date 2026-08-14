@@ -198,7 +198,7 @@ privacy test ở T3a trước khi sinh file.
 ### Task 5 — Soạn template thông báo
 
 **Tiêu chí nghiệm thu**
-- [ ] Template có `code` · `subject_vi` · `body_vi` (rich text hạn chế) · biến khả dụng · `content_version` · `status`.
+- [ ] Template có `code` · `subject` · `body` (rich text hạn chế) · biến khả dụng · `content_version` · `status`.
 - [ ] `D-KQ` + `BR-NTA-03` ca âm: sửa template → trạng thái **`draft`**; email mới **vẫn dùng bản `published`** cho tới khi bản mới được publish.
 - [ ] `D-KQ`: template xuất hiện trong hàng đợi duyệt `/studio/review` của P2.8; **không** dựng quy trình duyệt thứ hai.
 - [ ] `BR-NTA-07` ca âm: lưu template thiếu biến bắt buộc → **422** nêu rõ biến nào thiếu.

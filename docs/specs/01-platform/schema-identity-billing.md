@@ -149,7 +149,7 @@ Migration cutover map `child_data_withdrawn` cũ thành
 |---|---|---|
 | `consent_type` | enum | PK; đúng ba giá trị của mục 7.4 |
 | `reconsent_required_at` | timestamptz | NULL khi chưa từng force; chỉ DB sinh, marker mới phải lớn hơn marker cũ |
-| `notice_vi` | varchar(500) | NULL trước lần force đầu; 20–500 ký tự khi có marker |
+| `notice` | varchar(500) | NULL trước lần force đầu; 20–500 ký tự khi có marker |
 | `updated_at` | timestamptz | NOT NULL |
 
 Seed đúng ba hàng, marker NULL. Bảng này **không** INSERT-only: force hợp lệ UPDATE đúng một
@@ -159,14 +159,14 @@ manager id hay reason nội bộ; manager và reason nằm ở `audit_logs`.
 ### 7.5 `entitlement_keys` — Lớp 1
 
 `key` PK varchar · `group` enum (`content`\|`account`\|`report`\|`creator`\|`ai`) ·
-`label_vi` · `description_vi` · `is_mvp` bool.
+`label` · `description` · `is_mvp` bool.
 
 ### 7.6 `packages` · `package_entitlements` — Lớp 1, bảng chiếu
 
 | `packages` | |
 |---|---|
 | `code` PK | `PKG-*` |
-| `name_vi` `audience_vi` `description_vi` | |
+| `name` `audience` `description` | |
 | `is_public` `is_featured` | bool |
 | `status` | `active`\|`retired` |
 | `offers` | JSONB — `[{offer_code, billing_period, price_vnd, duration_days}]` — `billing_period` ∈ `{yearly, monthly}` (miền đóng, D-AB); MVP chỉ dùng `yearly` ([`package-catalog.md`](../00-foundation/package-catalog.md) §11 Q2) |

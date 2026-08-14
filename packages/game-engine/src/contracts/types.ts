@@ -25,7 +25,7 @@ export interface GameTemplate<
   D extends z.ZodType = z.ZodType,
 > {
   code: `GT-${string}`;
-  name_vi: string;
+  name: string;
   mechanic: string;
   layouts: string[];
   content_contract: C;

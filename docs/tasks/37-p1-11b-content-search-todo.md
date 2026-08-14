@@ -21,7 +21,7 @@
 ### Task 1 — Index và `unaccent`
 
 - [x] Migration bật `unaccent`.
-- [x] GIN trên `to_tsvector('simple', unaccent(title_vi || ' ' || description_vi))`.
+- [x] GIN trên `to_tsvector('simple', unaccent(title || ' ' || description))`.
 - [x] Index `game_levels(status, access_tier, age_min, age_max)`.
 - [x] Index `content_tag_map(tag_id, entity_type)`.
 - [x] Index `content_skill_map(skill_id, entity_type)`.

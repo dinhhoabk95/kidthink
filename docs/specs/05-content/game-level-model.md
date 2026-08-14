@@ -112,12 +112,12 @@ Scenario: BR-GLM-02 — vượt trần item bị chặn
   And missing nêu vượt trần item của band
 
 Scenario: BR-GLM-04 — chỉ dẫn quá dài bị chặn
-  Given instruction_vi có 20 từ
+  Given instruction có 20 từ
   When gửi duyệt
   Then trả 422
 
 Scenario: BR-GLM-05 — phủ định bị bắt
-  Given instruction_vi chứa "đừng" hoặc "không"
+  Given instruction chứa "đừng" hoặc "không"
   When gửi duyệt
   Then hiện cảnh báo yêu cầu viết lại dạng khẳng định
 

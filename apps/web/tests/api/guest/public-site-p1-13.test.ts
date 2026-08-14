@@ -62,7 +62,7 @@ describe("P1.13 Public Site, SEO, Legal & Cookie Integration Tests", () => {
 
       const resource = buildLearningResourceJsonLd({
         code: "GL-C1-001",
-        title_vi: "Đếm số trái cây",
+        title: "Đếm số trái cây",
         age_band: "3-4",
         competency_name: "Số & Lượng",
         is_free: true,
@@ -125,7 +125,7 @@ describe("P1.13 Public Site, SEO, Legal & Cookie Integration Tests", () => {
     it("BR-GCP-02: strictly omits content_pack and difficulty_params from catalog response", () => {
       const catalogItem: Record<string, unknown> = {
         code: "GL-C1-001",
-        title_vi: "Đếm số",
+        title: "Đếm số",
         locked: true,
       };
       expect(catalogItem.content_pack).toBeUndefined();
@@ -141,8 +141,8 @@ describe("P1.13 Public Site, SEO, Legal & Cookie Integration Tests", () => {
   describe("Task 4: Trang chi tiết game (BR-GDP-01..08)", () => {
     it("BR-GDP-02: verifies game description conveys objectives without giving away answers", () => {
       for (const game of FEATURED_GUEST_LEVELS) {
-        expect(game.title_vi).toBeDefined();
-        expect(game.title_vi.toLowerCase()).not.toContain("đáp án:");
+        expect(game.title).toBeDefined();
+        expect(game.title.toLowerCase()).not.toContain("đáp án:");
       }
     });
 

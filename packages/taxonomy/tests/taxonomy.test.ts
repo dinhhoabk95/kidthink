@@ -24,8 +24,8 @@ describe("COMPETENCIES", () => {
 
   it("all have non-empty English and Vietnamese names", () => {
     for (const c of COMPETENCIES) {
-      expect(c.name_en.length).toBeGreaterThan(0);
-      expect(c.name_vi.length).toBeGreaterThan(0);
+      expect(c.description.length).toBeGreaterThan(0);
+      expect(c.name.length).toBeGreaterThan(0);
     }
   });
 });
@@ -77,8 +77,8 @@ describe("STRANDS", () => {
 
   it("all have non-empty English and Vietnamese names", () => {
     for (const s of STRANDS) {
-      expect(s.name_en.length).toBeGreaterThan(0);
-      expect(s.name_vi.length).toBeGreaterThan(0);
+      expect(s.description.length).toBeGreaterThan(0);
+      expect(s.name.length).toBeGreaterThan(0);
     }
   });
 
@@ -94,7 +94,7 @@ describe("Taxonomy API functions & DAG validation", () => {
       code: "C1.CNT.01",
       strand_code: "C1.CNT",
       competency_code: "C1",
-      name_vi: "Đếm đến 5",
+      name: "Đếm đến 5",
       age_min: 3,
       age_max: 4,
       difficulty: 1,
@@ -103,8 +103,8 @@ describe("Taxonomy API functions & DAG validation", () => {
       learning_objectives: [
         {
           code: "LO-C1.CNT.01-01",
-          behaviour_vi: "Đếm từ 1 đến 5",
-          observable_criteria_vi: "Đếm đúng không bỏ sót",
+          behaviour: "Đếm từ 1 đến 5",
+          observable_criteria: "Đếm đúng không bỏ sót",
         },
       ],
     },
@@ -112,7 +112,7 @@ describe("Taxonomy API functions & DAG validation", () => {
       code: "C1.CNT.02",
       strand_code: "C1.CNT",
       competency_code: "C1",
-      name_vi: "Đếm đến 10",
+      name: "Đếm đến 10",
       age_min: 4,
       age_max: 5,
       difficulty: 2,
@@ -124,7 +124,7 @@ describe("Taxonomy API functions & DAG validation", () => {
       code: "C1.CNT.03",
       strand_code: "C1.CNT",
       competency_code: "C1",
-      name_vi: "Đếm ngược từ 5",
+      name: "Đếm ngược từ 5",
       age_min: 5,
       age_max: 6,
       difficulty: 3,
@@ -176,7 +176,7 @@ describe("Taxonomy API functions & DAG validation", () => {
         code: "SKILL-A",
         strand_code: "C1.CNT",
         competency_code: "C1",
-        name_vi: "A",
+        name: "A",
         age_min: 3,
         age_max: 4,
         difficulty: 1,
@@ -188,7 +188,7 @@ describe("Taxonomy API functions & DAG validation", () => {
         code: "SKILL-B",
         strand_code: "C1.CNT",
         competency_code: "C1",
-        name_vi: "B",
+        name: "B",
         age_min: 3,
         age_max: 4,
         difficulty: 1,
@@ -221,7 +221,7 @@ describe("Taxonomy API functions & DAG validation", () => {
           code,
           strand_code: "C1.CNT",
           competency_code: "C1",
-          name_vi: `Node ${idx}`,
+          name: `Node ${idx}`,
           age_min: 3,
           age_max: 4,
           difficulty: 1,
@@ -247,7 +247,7 @@ describe("Taxonomy API functions & DAG validation", () => {
         code,
         strand_code: "C1.CNT",
         competency_code: "C1",
-        name_vi: `Node ${idx}`,
+        name: `Node ${idx}`,
         age_min: 3,
         age_max: 4,
         difficulty: 1,

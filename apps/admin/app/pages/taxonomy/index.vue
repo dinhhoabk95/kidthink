@@ -123,7 +123,7 @@
               {{ comp.code }}
             </span>
             <h2 class="text-lg font-bold font-heading text-surface-900">
-              {{ comp.name_vi }}
+              {{ comp.name }}
             </h2>
           </div>
           <div class="flex items-center gap-3 text-xs text-surface-600">
@@ -151,7 +151,7 @@
                   >{{ strand.code }}</span
                 >
                 <span class="text-surface-900 font-semibold text-sm"
-                  >{{ strand.name_vi }}</span
+                  >{{ strand.name }}</span
                 >
               </div>
               <div class="text-xs text-surface-500">
@@ -187,7 +187,7 @@
                   <h3
                     class="text-sm font-semibold text-surface-900 mt-1 line-clamp-2"
                   >
-                    {{ skill.name_vi }}
+                    {{ skill.name }}
                   </h3>
                   <div
                     class="text-xs text-surface-500 mt-1 flex items-center gap-2"
@@ -248,12 +248,17 @@
 
 <script lang="ts" setup>
   import { computed, onMounted, ref } from "vue";
+  import { definePageMeta } from "#imports";
+
+  definePageMeta({
+    layout: "manager",
+  });
 
   interface SkillItem {
     id: number;
     code: string;
-    name_vi: string;
-    description_vi: string | null;
+    name: string;
+    description: string | null;
     strand_id: number;
     age_min: number;
     age_max: number;
@@ -273,8 +278,8 @@
   interface StrandItem {
     id: number;
     code: string;
-    name_vi: string;
-    description_vi: string | null;
+    name: string;
+    description: string | null;
     competency_id: number;
     parent_strand_id: number | null;
     total_skills: number;
@@ -286,8 +291,8 @@
   interface CompetencyItem {
     id: number;
     code: string;
-    name_vi: string;
-    description_vi: string | null;
+    name: string;
+    description: string | null;
     color_token: string;
     icon: string;
     total_strands: number;
@@ -355,8 +360,7 @@
       if (searchQuery.value) {
         const q = searchQuery.value.toLowerCase().trim();
         return (
-          s.code.toLowerCase().includes(q) ||
-          s.name_vi.toLowerCase().includes(q)
+          s.code.toLowerCase().includes(q) || s.name.toLowerCase().includes(q)
         );
       }
       return true;

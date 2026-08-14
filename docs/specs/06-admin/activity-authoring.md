@@ -35,7 +35,7 @@ sửa một lần, mọi lesson dùng nó đều được cập nhật.
 ## 4. Main flow
 
 1. Chọn `kind` — quyết định trường nào hiện ra.
-2. Điền `title_vi`, `instruction_vi`, `estimated_minutes`.
+2. Điền `title`, `instruction`, `estimated_minutes`.
 3. Nếu `kind = digital_game` → chọn game level đã published.
 4. Gắn skill + LO, tag ba trục, `access_tier`.
 5. Lưu nháp → gửi duyệt.
@@ -83,7 +83,7 @@ cho thời gian màn hình.
 
 ### 7.2 Trường chung
 
-`code` · `title_vi` · `instruction_vi` · `estimated_minutes` · `materials_vi` ·
+`code` · `title` · `instruction` · `estimated_minutes` · `materials` ·
 `skill_ids` + `weight` · `learning_objective_ids` · tag ba trục · `access_tier` ·
 `status` · `content_version`.
 
@@ -107,7 +107,7 @@ Scenario: BR-ACA-02 — digital_game phải trỏ level published
 
 Scenario: BR-ACA-01 — trường thay đổi theo kind
   When chọn kind manipulative
-  Then trường materials_vi hiện ra
+  Then trường materials hiện ra
   When chọn kind digital_game
   Then trường ref_id hiện ra thay thế
 
@@ -121,7 +121,7 @@ Scenario: BR-ACA-04 — không xoá activity đang dùng
   Then trả 409 kèm danh sách lesson
 
 Scenario: BR-ACA-05 — hoạt động ngoài màn hình có vật liệu
-  Given kind manipulative và materials_vi rỗng
+  Given kind manipulative và materials rỗng
   When gửi duyệt
   Then trả 422
 

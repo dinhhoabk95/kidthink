@@ -44,7 +44,7 @@ Không có.
 |---|---|---|
 | `BR-ACM-01` | Activity **đứng độc lập** — không tham chiếu "như bài trước" | Tái dùng ở lesson khác thì ngữ cảnh đó sai |
 | `BR-ACM-02` | 2–20 phút. Dài hơn nên là lesson | Tối ưu khả năng tập trung của trẻ mầm non và giữ tính chất linh hoạt của hoạt động |
-| `BR-ACM-03` | `instruction_vi` viết cho **người lớn**, kèm câu **nói với trẻ** đặt trong ngoặc kép | Người dạy cần biết nói gì, không phải diễn giải |
+| `BR-ACM-03` | `instruction` viết cho **người lớn**, kèm câu **nói với trẻ** đặt trong ngoặc kép | Người dạy cần biết nói gì, không phải diễn giải |
 | `BR-ACM-04` | Vật liệu là thứ **có sẵn trong nhà** | `BR-LSM-04` |
 | `BR-ACM-05` | Activity ngoài màn hình Cấm — **NEVER cần in ấn** trừ khi `kind = worksheet` | Không phải nhà nào cũng có máy in |
 | `BR-ACM-06` | Nêu **biến thể dễ hơn và khó hơn** | Cùng một activity phục vụ được nhiều band tuổi |
@@ -53,7 +53,7 @@ Không có.
 
 ## 7. Data
 
-### 7.1 Cấu trúc `instruction_vi`
+### 7.1 Cấu trúc `instruction`
 
 ```
 Chuẩn bị: <một dòng>
@@ -94,7 +94,7 @@ Không sở hữu route.
 
 ```gherkin
 Scenario: BR-ACM-01 — activity đứng độc lập
-  When đọc instruction_vi của mọi activity published
+  When đọc instruction của mọi activity published
   Then không activity nào tham chiếu tới một lesson hay activity cụ thể khác
 
 Scenario: BR-ACM-06 — có biến thể dễ và khó
@@ -102,7 +102,7 @@ Scenario: BR-ACM-06 — có biến thể dễ và khó
   Then checklist yêu cầu có cả hai biến thể
 
 Scenario: BR-ACM-07 — không hoạt động nguy hiểm
-  When đọc materials_vi của mọi activity cho band 3-4
+  When đọc materials của mọi activity cho band 3-4
   Then không vật nào nằm trong danh sách cấm §7.3
 
 Scenario: BR-ACM-02 — thời lượng trong khoảng
@@ -110,7 +110,7 @@ Scenario: BR-ACM-02 — thời lượng trong khoảng
   Then trả 422
 
 Scenario: BR-ACM-03 — có câu nói với trẻ
-  When đọc instruction_vi
+  When đọc instruction
   Then có ít nhất một câu đặt trong ngoặc kép để nói với bé
 
 Scenario: BR-ACM-08 — tối đa 2 skill
@@ -119,7 +119,7 @@ Scenario: BR-ACM-08 — tối đa 2 skill
 
 Scenario: BR-ACM-05 — không cần in ấn
   Given một activity kind manipulative
-  When đọc materials_vi
+  When đọc materials
   Then không yêu cầu in tài liệu
 ```
 

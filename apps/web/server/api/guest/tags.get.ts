@@ -11,7 +11,7 @@ export default defineEventHandler(async (event) => {
       id: contentTags.id,
       code: contentTags.code,
       axis: contentTags.axis,
-      label_vi: contentTags.labelVi,
+      label: contentTags.label,
     })
     .from(contentTags)
     .where(eq(contentTags.status, "active"));

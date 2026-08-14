@@ -10,7 +10,7 @@ groups:
     description: "Critical severity — on-call alerted immediately via Telegram + Healthchecks + Email fallback (BR-MON-01, D-S)"
     rules:
       - name: HealthCheck503
-        title_vi: "Health check trả 503 hai lần liên tiếp"
+        title: "Health check trả 503 hai lần liên tiếp"
         severity: critical
         threshold: "2 consecutive failures"
         channels:
@@ -20,7 +20,7 @@ groups:
         enabled: true
 
       - name: RedisAuthFailure
-        title_vi: "Redis auth unavailable, write failure, hoặc lỗi Lua script"
+        title: "Redis auth unavailable, write failure, hoặc lỗi Lua script"
         severity: critical
         threshold: "1 failure"
         channels:
@@ -29,7 +29,7 @@ groups:
         enabled: true
 
       - name: RedisAuthPressure
-        title_vi: "Redis auth memory pressure hoặc chính sách eviction khác noeviction"
+        title: "Redis auth memory pressure hoặc chính sách eviction khác noeviction"
         severity: critical
         threshold: "1 occurrence"
         channels:
@@ -38,7 +38,7 @@ groups:
         enabled: true
 
       - name: RememberCredentialReuse
-        title_vi: "Phát hiện tái sử dụng remember credential — đã thu hồi toàn bộ phiên"
+        title: "Phát hiện tái sử dụng remember credential — đã thu hồi toàn bộ phiên"
         severity: critical
         threshold: "1 occurrence"
         channels:
@@ -47,7 +47,7 @@ groups:
         enabled: true
 
       - name: ErrorRate5xx
-        title_vi: "Tỉ lệ lỗi 5xx vượt 5% trong 5 phút"
+        title: "Tỉ lệ lỗi 5xx vượt 5% trong 5 phút"
         severity: critical
         threshold: "> 5% in 5m"
         channels:
@@ -56,7 +56,7 @@ groups:
         enabled: true
 
       - name: DatabaseDisconnected
-        title_vi: "Mất kết nối cơ sở dữ liệu PostgreSQL"
+        title: "Mất kết nối cơ sở dữ liệu PostgreSQL"
         severity: critical
         threshold: "immediate"
         channels:
@@ -65,7 +65,7 @@ groups:
         enabled: true
 
       - name: BackupFailed
-        title_vi: "Sao lưu cơ sở dữ liệu thất bại"
+        title: "Sao lưu cơ sở dữ liệu thất bại"
         severity: critical
         threshold: "immediate"
         channels:
@@ -74,7 +74,7 @@ groups:
         enabled: true
 
       - name: BackupVerifyFailed
-        title_vi: "Kiểm tra khôi phục bản sao lưu (verify restore) thất bại"
+        title: "Kiểm tra khôi phục bản sao lưu (verify restore) thất bại"
         severity: critical
         threshold: "immediate"
         channels:
@@ -83,7 +83,7 @@ groups:
         enabled: true
 
       - name: WorkerBacklogHigh
-        title_vi: "Hàng đợi worker tồn đọng vượt 500 job trong 5 phút"
+        title: "Hàng đợi worker tồn đọng vượt 500 job trong 5 phút"
         severity: critical
         threshold: "> 500 jobs in 5m"
         channels:
@@ -92,7 +92,7 @@ groups:
         enabled: true
 
       - name: DiskSpaceLow
-        title_vi: "Dung lượng ổ cứng máy chủ còn dưới 15%"
+        title: "Dung lượng ổ cứng máy chủ còn dưới 15%"
         severity: critical
         threshold: "< 15% free"
         channels:
@@ -104,7 +104,7 @@ groups:
     description: "Warning / Business hours severity — alert via Email + Admin Dashboard (BR-MON-01)"
     rules:
       - name: ApiLatencyP95High
-        title_vi: "Độ trễ API P95 vượt 800ms trong 15 phút"
+        title: "Độ trễ API P95 vượt 800ms trong 15 phút"
         severity: warning
         threshold: "> 800ms in 15m"
         channels:
@@ -114,7 +114,7 @@ groups:
         enabled: true
 
       - name: JobFailRateHigh
-        title_vi: "Tỉ lệ job thất bại vượt 10 job / giờ"
+        title: "Tỉ lệ job thất bại vượt 10 job / giờ"
         severity: warning
         threshold: "> 10/hour"
         channels:
@@ -124,7 +124,7 @@ groups:
         enabled: true
 
       - name: PaymentQueuePending
-        title_vi: "Đơn hàng thanh toán chờ xử lý > 20 đơn hoặc đơn cũ nhất > 24 giờ"
+        title: "Đơn hàng thanh toán chờ xử lý > 20 đơn hoặc đơn cũ nhất > 24 giờ"
         severity: warning
         threshold: "> 20 orders or oldest > 24h"
         channels:
@@ -135,7 +135,7 @@ groups:
         enabled: true
 
       - name: ReviewQueueBacklog
-        title_vi: "Nội dung in_review tồn đọng vượt 50 mục"
+        title: "Nội dung in_review tồn đọng vượt 50 mục"
         severity: warning
         threshold: "> 50 items in_review"
         channels:
@@ -146,7 +146,7 @@ groups:
         enabled: true
 
       - name: LevelDropRateHigh
-        title_vi: "Tỉ lệ bỏ dở một game level vượt 40% trong 7 ngày"
+        title: "Tỉ lệ bỏ dở một game level vượt 40% trong 7 ngày"
         severity: warning
         threshold: "> 40% drop in 7d"
         channels:
@@ -156,7 +156,7 @@ groups:
         enabled: true
 
       - name: FeatureFlagStale
-        title_vi: "Feature flag tồn tại quá 30 ngày chưa dọn dẹp"
+        title: "Feature flag tồn tại quá 30 ngày chưa dọn dẹp"
         severity: warning
         threshold: "> 30 days active"
         channels:
@@ -170,7 +170,7 @@ groups:
     description: "Weekly summary report — sent weekly (BR-MON-01)"
     rules:
       - name: LowPlayLevelsReport
-        title_vi: "Báo cáo tổng hợp các game level có lượt chơi thấp"
+        title: "Báo cáo tổng hợp các game level có lượt chơi thấp"
         severity: info
         threshold: "< 10 plays / week"
         channels:
@@ -179,7 +179,7 @@ groups:
         enabled: true
 
       - name: ContentGapReport
-        title_vi: "Báo cáo tổng hợp các skill thiếu nội dung (0 level published)"
+        title: "Báo cáo tổng hợp các skill thiếu nội dung (0 level published)"
         severity: info
         threshold: "0 published levels"
         channels:
@@ -188,7 +188,7 @@ groups:
         enabled: true
 
       - name: CurriculumCoverageReport
-        title_vi: "Báo cáo tuần curriculum chưa đủ hoạt động"
+        title: "Báo cáo tuần curriculum chưa đủ hoạt động"
         severity: info
         threshold: "< 5 activities in week"
         channels:
@@ -197,7 +197,7 @@ groups:
         enabled: true
 
       - name: LlmCostAccumulatedReport
-        title_vi: "Báo cáo chi phí LLM tích luỹ trong tuần"
+        title: "Báo cáo chi phí LLM tích luỹ trong tuần"
         severity: info
         threshold: "weekly aggregate"
         channels:

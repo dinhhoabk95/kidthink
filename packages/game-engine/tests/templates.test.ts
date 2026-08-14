@@ -31,8 +31,8 @@ describe("Task 6 & Task 7 — All 6 Template Sessions & Kid Surface Rules", () =
 
   it("GT-002 (tap-select-multi): toggles choices and completes session on submit", () => {
     const content = {
-      prompt_vi: "Chọn các quả màu đỏ",
-      target_criterion_vi: "Màu đỏ",
+      prompt: "Chọn các quả màu đỏ",
+      target_criterion: "Màu đỏ",
       items: [
         {
           item_id: "i1",
@@ -69,10 +69,10 @@ describe("Task 6 & Task 7 — All 6 Template Sessions & Kid Surface Rules", () =
 
   it("GT-003 (drag-to-container): supports drag drop and tap-tap fallback", () => {
     const content = {
-      prompt_vi: "Kéo rác vào thùng",
+      prompt: "Kéo rác vào thùng",
       container: {
         container_id: "bin_1",
-        label_vi: "Thùng rác",
+        label: "Thùng rác",
         accepts_attribute: "trash",
       },
       items: [
@@ -113,10 +113,10 @@ describe("Task 6 & Task 7 — All 6 Template Sessions & Kid Surface Rules", () =
 
   it("GT-004 (sort-groups): sorts items into matching groups", () => {
     const content = {
-      prompt_vi: "Phân loại động vật và thực vật",
+      prompt: "Phân loại động vật và thực vật",
       groups: [
-        { group_id: "g1", label_vi: "Động vật", label_emoji: "🐶" },
-        { group_id: "g2", label_vi: "Thực vật", label_emoji: "🌻" },
+        { group_id: "g1", label: "Động vật", label_emoji: "🐶" },
+        { group_id: "g2", label: "Thực vật", label_emoji: "🌻" },
       ],
       items: [
         {
@@ -160,7 +160,7 @@ describe("Task 6 & Task 7 — All 6 Template Sessions & Kid Surface Rules", () =
 
   it("GT-005 (pair-match): pairs left and right items", () => {
     const content = {
-      prompt_vi: "Nối mẹ và con",
+      prompt: "Nối mẹ và con",
       pairs: [
         {
           pair_id: "p1",
@@ -201,7 +201,7 @@ describe("Task 6 & Task 7 — All 6 Template Sessions & Kid Surface Rules", () =
 
   it("GT-006 (sequence-order): orders steps in sequence", () => {
     const content = {
-      prompt_vi: "Sắp xếp quy trình trồng cây",
+      prompt: "Sắp xếp quy trình trồng cây",
       sequence: [
         {
           step_id: "s1",

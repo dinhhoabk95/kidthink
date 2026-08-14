@@ -44,7 +44,7 @@ Không có.
 |---|---|---|
 | `BR-LSM-01` | Lesson có **cung bậc**: khởi động → hoạt động chính → đúc kết | Trẻ cần vào và ra khỏi trạng thái tập trung |
 | `BR-LSM-02` | ≥1 hoạt động **ngoài màn hình** | Sản phẩm không tối ưu cho thời gian màn hình |
-| `BR-LSM-03` | `guide_vi` viết cho **người lớn không được đào tạo** | Phụ huynh không phải giáo viên |
+| `BR-LSM-03` | `guide` viết cho **người lớn không được đào tạo** | Phụ huynh không phải giáo viên |
 | `BR-LSM-04` | Vật liệu phải là thứ **có sẵn trong nhà** | Yêu cầu mua đồ làm lesson không dùng được |
 | `BR-LSM-05` | Tổng thời lượng 15–30 phút, trần cứng 45 | Tối ưu khoảng thời gian tập trung hiệu quả của trẻ mầm non mà không gây quá tải |
 | `BR-LSM-06` | Phần đánh giá mô tả **hành vi quan sát được**, không mức độ trừu tượng | "Bé chỉ đúng vật to hơn" đo được; "bé hiểu khái niệm kích thước" thì không |
@@ -65,7 +65,7 @@ Không có.
 | Đánh giá | quan sát trong lúc làm | Cấm |
 | Mở rộng | tuỳ chọn | Cấm |
 
-### 7.2 `guide_vi` phải trả lời
+### 7.2 `guide` phải trả lời
 
 1. Bài này giúp bé làm được gì? (một câu)
 2. Cần chuẩn bị gì? (danh sách)
@@ -100,12 +100,12 @@ Scenario: BR-LSM-05 — trần thời lượng
   Then trả 422
 
 Scenario: BR-LSM-03 — guide trả lời đủ 5 câu
-  Given guide_vi thiếu phần "nếu bé chưa làm được"
+  Given guide thiếu phần "nếu bé chưa làm được"
   When người duyệt kiểm checklist
   Then mục đó không tick được
 
 Scenario: BR-LSM-06 — đánh giá mô tả hành vi
-  When đọc phần assessment_vi của mọi lesson published
+  When đọc phần assessment của mọi lesson published
   Then mỗi mô tả nêu hành vi quan sát được
   And không dùng từ trừu tượng như hiểu, nắm được
 
@@ -114,7 +114,7 @@ Scenario: BR-LSM-07 — không giả định biết đọc
   Then không hoạt động nào yêu cầu trẻ tự đọc chữ
 
 Scenario: BR-LSM-04 — vật liệu có sẵn
-  When đọc materials_vi của mọi lesson
+  When đọc materials của mọi lesson
   Then không lesson nào yêu cầu mua đồ chuyên dụng
 ```
 
@@ -123,7 +123,7 @@ Scenario: BR-LSM-04 — vật liệu có sẵn
 **Always**
 - Có cung bậc khởi động → chính → đúc kết.
 - ≥1 hoạt động ngoài màn hình.
-- `guide_vi` trả lời đủ 5 câu.
+- `guide` trả lời đủ 5 câu.
 
 **Ask first**
 - Nới trần thời lượng.

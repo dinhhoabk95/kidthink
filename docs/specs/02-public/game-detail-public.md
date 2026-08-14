@@ -131,7 +131,7 @@ Scenario: BR-GDP-02 — không lộ đáp án
   Then không có đáp án cụ thể của bất kỳ round nào
 
 Scenario: URL bền khi đổi tiêu đề
-  Given game đổi title_vi và publish version mới
+  Given game đổi title và publish version mới
   Then URL không đổi
 ```
 

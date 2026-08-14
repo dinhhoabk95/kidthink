@@ -52,7 +52,7 @@
 
 ### Task 5 — User UI (`/me/settings/privacy` & `/consent-required`)
 
-- [x] `/me/settings/privacy` hiện loại, document current, accepted_at, status và `notice_vi`.
+- [x] `/me/settings/privacy` hiện loại, document current, accepted_at, status và `notice`.
 - [x] `/consent-required` checkbox không tick sẵn (`BR-CSM-02`), hỗ trợ nhiều loại required và safe `return_to`.
 - [x] 409 marker đổi làm reload nội dung/trạng thái, không tự retry acceptance.
 - [x] Không version number, version history hay diff giả.
@@ -60,7 +60,7 @@
 
 ### Task 6 — Audit action và admin force API (`D-QW`)
 
-- [x] Đăng ký action `legal_reconsent_forced` trong `AUDIT_ACTIONS`; `notice_vi` và `reason` 20–500 ký tự.
+- [x] Đăng ký action `legal_reconsent_forced` trong `AUDIT_ACTIONS`; `notice` và `reason` 20–500 ký tự.
 - [x] `GET /api/managers/legal-consents` chỉ `super_admin` (`requireRole('super_admin')`), `content_reviewer` nhận 403.
 - [x] `POST /api/managers/legal-consent-forces` đòi recent reauth, confirm deployed/all users, lock row requirement và UPDATE marker + INSERT audit trong cùng transaction (`BR-LCA-01`..`03`).
 - [x] Marker do DB sinh, cấm timestamp từ client; không route rollback/clear marker (`BR-LCA-07`, `BR-LCA-08`).
@@ -68,7 +68,7 @@
 ### Task 7 — Admin force UI (`/legal-consents`)
 
 - [x] `apps/admin/app/pages/legal-consents/index.vue`: chỉ đọc metadata document và link toàn văn; không editor (`BR-LCA-09`).
-- [x] Chọn đúng một loại; `notice_vi` và reason tách biệt; hai xác nhận tác động rõ ràng.
+- [x] Chọn đúng một loại; `notice` và reason tách biệt; hai xác nhận tác động rõ ràng.
 - [x] Recent reauth 428 và conflict 409 có xử lý rõ ràng.
 - [x] UI không có reset/clear/rollback và không cho chọn User riêng.
 

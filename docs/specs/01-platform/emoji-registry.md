@@ -84,9 +84,9 @@ phù hợp lọt vào bài học của trẻ.
 |---|---|
 | `code` | `EMJ-<slug>` — bất biến |
 | `unicode` | Chuỗi ký tự |
-| `name_vi` | Tên tiếng Việt hiển thị — "quả táo đỏ" |
+| `name` | Tên tiếng Việt hiển thị — "quả táo đỏ" |
 | `category` | 1 trong 32 nhóm chủ đề học |
-| `search_keywords_vi` | Mảng — "táo", "trái cây", "quả", "đỏ" |
+| `search_keywords` | Mảng — "táo", "trái cây", "quả", "đỏ" |
 | `age_suitability` | `all` \| `4plus` \| `blocked` |
 | `what_axis` | Trục `what` gợi ý: `colour`, `number`, `category`… |
 | `status` | `active` \| `deprecated` |
@@ -121,7 +121,7 @@ Tìm kiếm không dấu và có dấu đều ra kết quả — "tao" và "táo
 |---|---|
 | Auth | `requireManagerAuth()` |
 | Query | `q` `category` `age_band` `limit` (≤100) |
-| 200 | `{ items: [{ code, unicode, name_vi, category }] }` |
+| 200 | `{ items: [{ code, unicode, name, category }] }` |
 
 Không có route tạo/sửa/xoá.
 

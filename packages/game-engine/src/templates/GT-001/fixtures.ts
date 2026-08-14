@@ -9,7 +9,7 @@ export const GT001_FIXTURES: {
 }[] = [
   {
     content: {
-      prompt_vi: "Tìm quả táo màu đỏ",
+      prompt: "Tìm quả táo màu đỏ",
       target_item: {
         item_id: "apple_target",
         asset: { kind: "emoji", ref: "🍎" },
@@ -41,7 +41,7 @@ export const GT001_FIXTURES: {
   },
   {
     content: {
-      prompt_vi: "Chọn thỏ con đáng yêu",
+      prompt: "Chọn thỏ con đáng yêu",
       target_item: {
         item_id: "rabbit_target",
         asset: { kind: "emoji", ref: "🐰" },
@@ -73,7 +73,7 @@ export const GT001_FIXTURES: {
   },
   {
     content: {
-      prompt_vi: "Chọn hình tròn màu đỏ",
+      prompt: "Chọn hình tròn màu đỏ",
       target_item: {
         item_id: "red_circle_target",
         asset: { kind: "emoji", ref: "🔴" },

@@ -52,10 +52,10 @@
         <div class="flex items-start justify-between gap-3">
           <div>
             <h2 class="text-lg font-bold font-heading text-surface-900">
-              {{ item.title_vi }}
+              {{ item.title }}
             </h2>
-            <p class="text-sm text-surface-700 mt-1" v-if="item.notice_vi">
-              <strong>Thông báo thay đổi:</strong> {{ item.notice_vi }}
+            <p class="text-sm text-surface-700 mt-1" v-if="item.notice">
+              <strong>Thông báo thay đổi:</strong> {{ item.notice }}
             </p>
           </div>
           <span
@@ -89,7 +89,7 @@
             v-model="checkedConsents[item.consent_type]"
           >
           <span class="text-sm font-medium text-surface-800">
-            Tôi đã đọc, hiểu và đồng ý với {{ item.title_vi }} hiện hành.
+            Tôi đã đọc, hiểu và đồng ý với {{ item.title }} hiện hành.
           </span>
         </label>
       </div>
@@ -162,11 +162,11 @@
 
   interface ConsentItem {
     consent_type: "terms" | "privacy" | "child_data";
-    title_vi: string;
+    title: string;
     document_url: string;
     accepted_at: string | null;
     requirement_at: string | null;
-    notice_vi: string | null;
+    notice: string | null;
     status: "active" | "required" | "withdrawn";
   }
 

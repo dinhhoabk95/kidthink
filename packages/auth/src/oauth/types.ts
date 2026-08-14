@@ -22,7 +22,7 @@ export interface NormalizedProfile {
 
 export interface OAuthProviderPublicInfo {
   readonly provider: OAuthProvider;
-  readonly label_vi: string;
+  readonly label: string;
   readonly is_enabled: boolean;
 }
 

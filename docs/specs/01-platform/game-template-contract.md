@@ -95,7 +95,7 @@ Template là **Lớp 1** — thêm template là việc của dev, không của M
 ```ts
 interface GameTemplate {
   code: `GT-${string}`;              // bất biến
-  name_vi: string;
+  name: string;
   mechanic: MechanicId;
   layouts: LayoutId[];
   content_contract: ZodType;         // shape của content_pack
@@ -136,11 +136,11 @@ trí nhớ làm việc; sắp xếp thứ tự cần biểu diễn quan hệ th�
 
 ```ts
 const SortGroupsContent = z.object({
-  prompt_vi: z.string().min(4).max(80),
+  prompt: z.string().min(4).max(80),
   prompt_audio_ref: z.string().optional(),
   groups: z.array(z.object({
     group_id: z.string().regex(/^g[0-9]$/),
-    label_vi: z.string().max(24),
+    label: z.string().max(24),
     label_emoji: EmojiRef,          // FK logic tới emoji_registry
   })).min(2).max(4),
   items: z.array(z.object({
@@ -197,7 +197,7 @@ Side effect khi item được đặt đúng đi vào `onItemLocked`, cấm — *
 | | |
 |---|---|
 | Auth | không |
-| 200 | `{ templates: [{ code, name_vi, mechanic, age_min, age_max }] }` — metadata, không có contract |
+| 200 | `{ templates: [{ code, name, mechanic, age_min, age_max }] }` — metadata, không có contract |
 
 ### `GET /api/managers/templates/{code}/contract`
 

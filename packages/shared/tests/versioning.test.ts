@@ -4,8 +4,8 @@ import { requiresVersionBump } from "../src/versioning.ts";
 const UNKNOWN_FIELD_REGEX = /BR-VER-08: Unknown field/;
 
 describe("P0.6 Task 4 — Phân loại field bump version §7.2 & §7.3", () => {
-  it("BR-VER-07: Sửa description_vi không bump version", () => {
-    const bump = requiresVersionBump("game_level", ["description_vi"]);
+  it("BR-VER-07: Sửa description không bump version", () => {
+    const bump = requiresVersionBump("game_level", ["description"]);
     expect(bump).toBe(false);
   });
 
@@ -14,9 +14,9 @@ describe("P0.6 Task 4 — Phân loại field bump version §7.2 & §7.3", () => 
     expect(bump).toBe(true);
   });
 
-  it("Sửa kết hợp (description_vi + content_pack) -> bắt buộc bump version", () => {
+  it("Sửa kết hợp (description + content_pack) -> bắt buộc bump version", () => {
     const bump = requiresVersionBump("game_level", [
-      "description_vi",
+      "description",
       "content_pack",
     ]);
     expect(bump).toBe(true);
@@ -29,10 +29,10 @@ describe("P0.6 Task 4 — Phân loại field bump version §7.2 & §7.3", () => 
   });
 
   it("Lesson & Curriculum: bump vs no-bump phân loại đúng", () => {
-    expect(requiresVersionBump("lesson", ["title_vi"])).toBe(false);
+    expect(requiresVersionBump("lesson", ["title"])).toBe(false);
     expect(requiresVersionBump("lesson", ["activities"])).toBe(true);
 
-    expect(requiresVersionBump("curriculum", ["description_vi"])).toBe(false);
+    expect(requiresVersionBump("curriculum", ["description"])).toBe(false);
     expect(requiresVersionBump("curriculum", ["curriculum_items"])).toBe(true);
   });
 });

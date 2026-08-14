@@ -76,7 +76,7 @@ Mỗi ứng viên phải qua **gating** trước khi vào danh sách gợi ý.
 | `BR-REC-02` | Curriculum **luôn ưu tiên hơn** adaptive | Adaptive không phủ quyết thứ tự sư phạm — `BR-ADP-05` |
 | `BR-REC-03` | Loại 3 level chơi gần nhất | Lặp lại ngay làm trẻ chán |
 | `BR-REC-04` | Gợi ý luôn hợp **band tuổi** của trẻ | Đảm bảo nội dung vừa sức phát triển nhận thức của từng nhóm tuổi mầm non |
-| `BR-REC-05` | Mỗi gợi ý có `reason_vi` giải thích được | Người lớn cần hiểu vì sao |
+| `BR-REC-05` | Mỗi gợi ý có `reason` giải thích được | Người lớn cần hiểu vì sao |
 | `BR-REC-06` | Cấm — **NEVER gợi ý dựa trên "trẻ khác cũng chơi"** | Không so sánh trẻ; và dữ liệu hành vi tập thể của trẻ là vùng nhạy cảm |
 | `BR-REC-07` | Ưu tiên nội dung **mở được**; nội dung khoá tối đa **1** trong danh sách | Danh sách toàn ổ khoá gây nản |
 | `BR-REC-08` | P1 dùng **luật**, không ML | Giải thích được và test được |
@@ -89,9 +89,9 @@ Mỗi ứng viên phải qua **gating** trước khi vào danh sách gợi ý.
 {
   "primary": {
     "level_code": "GL-C1-CNT-MATCH-0008",
-    "title_vi": "Đếm quả cam",
+    "title": "Đếm quả cam",
     "thumbnail_emoji": "EMJ-orange",
-    "reason_vi": "Cùng chủ đề, khó hơn một chút",
+    "reason": "Cùng chủ đề, khó hơn một chút",
     "reason_code": "skill_progression"
   },
   "alternatives": [ /* tối đa 4 */ ]
@@ -100,7 +100,7 @@ Mỗi ứng viên phải qua **gating** trước khi vào danh sách gợi ý.
 
 ### 7.2 `reason_code`
 
-| Code | `reason_vi` |
+| Code | `reason` |
 |---|---|
 | `curriculum_next` | "Bài tiếp theo trong chương trình" |
 | `skill_reinforce` | "Luyện thêm kỹ năng này" |
@@ -154,7 +154,7 @@ Scenario: BR-REC-04 — gợi ý hợp tuổi
 
 Scenario: BR-REC-05 — mọi gợi ý có lý do
   When lấy gợi ý
-  Then mỗi item có reason_code và reason_vi không rỗng
+  Then mỗi item có reason_code và reason không rỗng
 
 Scenario: BR-REC-06 — không gợi ý theo hành vi trẻ khác
   When đọc implementation của recommendation
@@ -171,7 +171,7 @@ Scenario: không bao giờ trả rỗng
 **Always**
 - Gating trước khi gợi ý.
 - Curriculum ưu tiên hơn adaptive.
-- Kèm `reason_code` và `reason_vi`.
+- Kèm `reason_code` và `reason`.
 
 **Ask first**
 - Đổi thứ tự ưu tiên §4.
