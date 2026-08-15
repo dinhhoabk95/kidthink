@@ -14,7 +14,7 @@ import {
   strands,
 } from "@kidthink/db";
 import { eq } from "drizzle-orm";
-import { beforeAll, describe, expect, it } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 import guestSeoHandler from "../../server/api/guest/seo-pages/[slug].get.js";
 import versionsHandler from "../../server/api/managers/content/[type]/[code]/versions.get.js";
 import transitionHandler from "../../server/api/managers/content/[type]/[id]/transition.post.js";
@@ -34,6 +34,14 @@ let reviewerManagerId = 2;
 let testSkillId = 1;
 
 beforeAll(async () => {
+  await ensureManagersAndSkill();
+});
+
+beforeEach(async () => {
+  await ensureManagersAndSkill();
+});
+
+async function ensureManagersAndSkill() {
   const db = getOwnerDb();
   let [mgr] = await db
     .select({ id: managers.id })
@@ -125,7 +133,7 @@ beforeAll(async () => {
   if (sk) {
     testSkillId = sk.id;
   }
-});
+}
 
 function mockEvent(
   params: Record<string, string> = {},

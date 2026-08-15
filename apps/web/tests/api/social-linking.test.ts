@@ -1,6 +1,6 @@
 import { auditLogs, getAppDb, socialIdentities, users } from "@kidthink/db";
 import { and, eq } from "drizzle-orm";
-import { beforeEach, describe, expect, it } from "vitest";
+import { describe, expect, it } from "vitest";
 import deleteSocialIdentityHandler from "../../server/api/users/social-identities/[provider].delete.js";
 import getSocialIdentitiesHandler from "../../server/api/users/social-identities/index.get.js";
 
@@ -59,17 +59,12 @@ function mockEvent(
 describe("Task 6 — Social Account Linking & Unlinking (BR-SLK-01..10, D-IM)", () => {
   const db = getAppDb();
 
-  beforeEach(async () => {
-    await db.delete(socialIdentities);
-    await db.delete(users);
-  });
-
   describe("GET /api/users/social-identities (BR-SLK-09)", () => {
     it("BR-SLK-09: returns masked email and linked_at, NEVER returns provider_user_id", async () => {
       const [testUser] = await db
         .insert(users)
         .values({
-          email: "parent_linked@example.com",
+          email: `parent_linked_${Date.now()}_${Math.random()}@example.com`,
           displayName: "Parent Linked",
           status: "active",
         })
@@ -78,7 +73,7 @@ describe("Task 6 — Social Account Linking & Unlinking (BR-SLK-01..10, D-IM)", 
       await db.insert(socialIdentities).values({
         userId: testUser?.id ?? 0,
         provider: "google",
-        providerUserId: "google_secret_sub_99999",
+        providerUserId: `google_sub_${Date.now()}_${Math.random()}`,
         emailAtProvider: "google_parent@gmail.com",
         emailVerifiedAtProvider: true,
       });
@@ -102,7 +97,7 @@ describe("Task 6 — Social Account Linking & Unlinking (BR-SLK-01..10, D-IM)", 
       const [testUser] = await db
         .insert(users)
         .values({
-          email: "reauth_test@example.com",
+          email: `reauth_test_${Date.now()}_${Math.random()}@example.com`,
           displayName: "Reauth Test",
           status: "active",
         })
@@ -130,7 +125,7 @@ describe("Task 6 — Social Account Linking & Unlinking (BR-SLK-01..10, D-IM)", 
       const [passwordlessUser] = await db
         .insert(users)
         .values({
-          email: "passwordless@example.com",
+          email: `passwordless_${Date.now()}_${Math.random()}@example.com`,
           displayName: "Passwordless User",
           passwordHash: null, // NO password!
           status: "active",
@@ -140,7 +135,7 @@ describe("Task 6 — Social Account Linking & Unlinking (BR-SLK-01..10, D-IM)", 
       await db.insert(socialIdentities).values({
         userId: passwordlessUser?.id ?? 0,
         provider: "google",
-        providerUserId: "google_sub_1111",
+        providerUserId: `google_sub_${Date.now()}_${Math.random()}`,
         emailAtProvider: "passwordless@gmail.com",
       });
 
@@ -174,7 +169,7 @@ describe("Task 6 — Social Account Linking & Unlinking (BR-SLK-01..10, D-IM)", 
       const [userWithPassword] = await db
         .insert(users)
         .values({
-          email: "has_password@example.com",
+          email: `has_password_${Date.now()}_${Math.random()}@example.com`,
           displayName: "Has Password",
           passwordHash: "$argon2id$v=19$m=19456,p=1,t=2$dummyhash",
           status: "active",
@@ -184,7 +179,7 @@ describe("Task 6 — Social Account Linking & Unlinking (BR-SLK-01..10, D-IM)", 
       await db.insert(socialIdentities).values({
         userId: userWithPassword?.id ?? 0,
         provider: "google",
-        providerUserId: "google_sub_2222",
+        providerUserId: `google_sub_${Date.now()}_${Math.random()}`,
         emailAtProvider: "has_pwd@gmail.com",
       });
 
@@ -226,7 +221,7 @@ describe("Task 6 — Social Account Linking & Unlinking (BR-SLK-01..10, D-IM)", 
       const [multiIdentityUser] = await db
         .insert(users)
         .values({
-          email: "multi_identity@example.com",
+          email: `multi_identity_${Date.now()}_${Math.random()}@example.com`,
           displayName: "Multi Identity User",
           passwordHash: null, // NO password!
           status: "active",
@@ -237,13 +232,13 @@ describe("Task 6 — Social Account Linking & Unlinking (BR-SLK-01..10, D-IM)", 
         {
           userId: multiIdentityUser?.id ?? 0,
           provider: "google",
-          providerUserId: "google_sub_race_1",
+          providerUserId: `google_sub_race_${Date.now()}_${Math.random()}`,
           emailAtProvider: "multi@gmail.com",
         },
         {
           userId: multiIdentityUser?.id ?? 0,
           provider: "facebook",
-          providerUserId: "fb_id_race_2",
+          providerUserId: `fb_id_race_${Date.now()}_${Math.random()}`,
           emailAtProvider: "multi@facebook.com",
         },
       ]);
