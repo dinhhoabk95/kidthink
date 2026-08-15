@@ -8,7 +8,7 @@ import {
   SEED_PACKAGES,
   users,
 } from "@kidthink/db";
-import { beforeAll, describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it } from "vitest";
 import subscriptionHandler from "../../../server/api/users/subscription.get";
 
 function mockUserEvent(userId?: number) {
@@ -36,7 +36,7 @@ function mockUserEvent(userId?: number) {
 }
 
 describe("Task 6 — User Subscription View Suite (BR-SBV-01..07, D-JQ)", () => {
-  beforeAll(async () => {
+  beforeEach(async () => {
     const db = getOwnerDb();
     for (const k of SEED_ENTITLEMENT_KEYS) {
       await db.insert(entitlementKeys).values(k).onConflictDoNothing();

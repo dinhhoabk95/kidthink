@@ -1,6 +1,6 @@
 import { getOwnerDb, managers } from "@kidthink/db";
 import { eq } from "drizzle-orm";
-import { beforeAll, describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it } from "vitest";
 import duplicateLevelHandler from "../../server/api/managers/levels/[code]/[version]/duplicate.post.js";
 import submitLevelHandler from "../../server/api/managers/levels/[code]/[version]/submit.post.js";
 import getLevelVersionHandler from "../../server/api/managers/levels/[code]/[version].get.js";
@@ -14,7 +14,7 @@ const CSRF_TOKEN =
 const LEVEL_CODE_REGEX = /^GL-C1-[A-Z]{2,5}-[A-Z]{2,5}-\d{4}$/;
 let testManagerId = 1;
 
-beforeAll(async () => {
+beforeEach(async () => {
   const db = getOwnerDb();
   let [mgr] = await db
     .select({ id: managers.id })
@@ -29,6 +29,10 @@ beforeAll(async () => {
         displayName: "Studio Tester",
         role: "super_admin",
         isActive: true,
+      })
+      .onConflictDoUpdate({
+        target: managers.email,
+        set: { displayName: "Studio Tester" },
       })
       .returning({ id: managers.id });
   }
