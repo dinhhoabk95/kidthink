@@ -171,6 +171,9 @@ importers:
       '@kidthink/db':
         specifier: workspace:*
         version: link:../../packages/db
+      '@kidthink/emoji':
+        specifier: workspace:*
+        version: link:../../packages/emoji
       '@kidthink/game-engine':
         specifier: workspace:*
         version: link:../../packages/game-engine

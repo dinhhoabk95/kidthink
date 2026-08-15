@@ -1,5 +1,6 @@
 import {
   bigint,
+  boolean,
   index,
   integer,
   jsonb,
@@ -235,5 +236,77 @@ export const notificationEndpoints = pgTable(
       table.userId,
       table.clientInstallationId
     ),
+  ]
+);
+
+export const flagScopeEnum = pgEnum("flag_scope", [
+  "global",
+  "user_ids",
+  "percentage",
+]);
+
+export const errorSourceEnum = pgEnum("error_source", ["server", "client"]);
+export const errorLevelEnum = pgEnum("error_level", ["warn", "error", "fatal"]);
+export const errorGroupStatusEnum = pgEnum("error_group_status", [
+  "open",
+  "ack",
+  "resolved",
+]);
+
+export const featureFlags = pgTable("feature_flags", {
+  id: bigint("id", { mode: "number" }).primaryKey().generatedAlwaysAsIdentity(),
+  key: varchar("key", { length: 100 }).notNull().unique(),
+  enabled: boolean("enabled").notNull().default(false),
+  scope: flagScopeEnum("scope").notNull().default("global"),
+  scopeValue: jsonb("scope_value"),
+  defaultValue: boolean("default_value").notNull().default(false),
+  expiresAt: timestamp("expires_at", { withTimezone: true }).notNull(),
+  updatedByManagerId: bigint("updated_by_manager_id", {
+    mode: "number",
+  }).references(() => managers.id),
+  updateReason: text("update_reason"),
+  createdAt: timestamp("created_at", { withTimezone: true })
+    .defaultNow()
+    .notNull(),
+  updatedAt: timestamp("updated_at", { withTimezone: true })
+    .defaultNow()
+    .notNull(),
+});
+
+export const errorLogs = pgTable(
+  "error_logs",
+  {
+    id: bigint("id", { mode: "number" })
+      .primaryKey()
+      .generatedAlwaysAsIdentity(),
+    uuid: uuid("uuid").defaultRandom().notNull().unique(),
+    source: errorSourceEnum("source").notNull().default("server"),
+    level: errorLevelEnum("level").notNull().default("error"),
+    code: varchar("code", { length: 80 }).notNull(),
+    message: text("message").notNull(),
+    fingerprint: varchar("fingerprint", { length: 120 }).notNull(),
+    context: jsonb("context"),
+    requestId: varchar("request_id", { length: 80 }),
+    userId: bigint("user_id", { mode: "number" }).references(() => users.id, {
+      onDelete: "set null",
+    }),
+    status: errorGroupStatusEnum("status").notNull().default("open"),
+    resolvedNotes: text("resolved_notes"),
+    resolvedByManagerId: bigint("resolved_by_manager_id", {
+      mode: "number",
+    }).references(() => managers.id),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+    updatedAt: timestamp("updated_at", { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+  },
+  (table) => [
+    index("idx_error_logs_fingerprint_status").on(
+      table.fingerprint,
+      table.status
+    ),
+    index("idx_error_logs_created_at").on(table.createdAt),
   ]
 );

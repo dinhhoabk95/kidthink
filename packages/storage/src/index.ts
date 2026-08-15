@@ -16,14 +16,113 @@ export interface SignedUrlResult {
   expiresAt: Date;
 }
 
+export interface PublicImageUploadOptions {
+  key: string;
+  body: Buffer | Uint8Array;
+  contentType: string;
+}
+
+export interface ImageDimensionResult {
+  width: number;
+  height: number;
+}
+
 // In-memory store for local testing/dev when S3 is not configured
 const inMemoryPrivateStore = new Map<
   string,
   { body: Buffer | Uint8Array; contentType: string; createdAt: Date }
 >();
 
+const inMemoryPublicStore = new Map<
+  string,
+  { body: Buffer | Uint8Array; contentType: string; createdAt: Date }
+>();
+
 export function getS3BucketName(): string {
   return process.env.AWS_S3_PRIVATE_BUCKET || "kidthink-private-assets";
+}
+
+export function getS3PublicBucketName(): string {
+  return process.env.AWS_S3_PUBLIC_BUCKET || "kidthink-public-assets";
+}
+
+/**
+ * Detect image MIME type strictly by inspecting magic bytes (BR-IMG-03)
+ */
+export function detectImageMimeType(
+  buffer: Buffer | Uint8Array
+): "image/jpeg" | "image/png" | "image/webp" | null {
+  if (buffer.length < 12) {
+    return null;
+  }
+  // JPEG: FF D8 FF
+  if (buffer[0] === 0xff && buffer[1] === 0xd8 && buffer[2] === 0xff) {
+    return "image/jpeg";
+  }
+  // PNG: 89 50 4E 47 0D 0A 1A 0A
+  if (
+    buffer[0] === 0x89 &&
+    buffer[1] === 0x50 &&
+    buffer[2] === 0x4e &&
+    buffer[3] === 0x47 &&
+    buffer[4] === 0x0d &&
+    buffer[5] === 0x0a &&
+    buffer[6] === 0x1a &&
+    buffer[7] === 0x0a
+  ) {
+    return "image/png";
+  }
+  // WebP: RIFF .... WEBP
+  if (
+    buffer[0] === 0x52 &&
+    buffer[1] === 0x49 &&
+    buffer[2] === 0x46 &&
+    buffer[3] === 0x46 &&
+    buffer[8] === 0x57 &&
+    buffer[9] === 0x45 &&
+    buffer[10] === 0x42 &&
+    buffer[11] === 0x50
+  ) {
+    return "image/webp";
+  }
+  return null;
+}
+
+/**
+ * Detect if payload contains SVG markup (BR-IMG-02: strictly forbidden)
+ */
+export function isSvgContent(buffer: Buffer | Uint8Array): boolean {
+  const str = Buffer.from(buffer.slice(0, 256))
+    .toString("utf-8")
+    .toLowerCase()
+    .trim();
+  return str.includes("<svg") || str.includes("<?xml");
+}
+
+export async function uploadPublicImage(
+  options: PublicImageUploadOptions
+): Promise<{ path: string }> {
+  await Promise.resolve();
+  const normalizedPath = options.key.startsWith("/")
+    ? options.key.slice(1)
+    : options.key;
+
+  inMemoryPublicStore.set(normalizedPath, {
+    body: options.body,
+    contentType: options.contentType,
+    createdAt: new Date(),
+  });
+
+  return {
+    path: normalizedPath,
+  };
+}
+
+export function getPublicImage(
+  path: string
+): { body: Buffer | Uint8Array; contentType: string } | undefined {
+  const normalizedPath = path.startsWith("/") ? path.slice(1) : path;
+  return inMemoryPublicStore.get(normalizedPath);
 }
 
 export async function uploadPrivateAsset(
@@ -34,8 +133,6 @@ export async function uploadPrivateAsset(
     ? options.key.slice(1)
     : options.key;
 
-  // If AWS S3 credentials are configured, we would upload to S3 private bucket
-  // Otherwise, use secure local/in-memory store for testing & dev
   inMemoryPrivateStore.set(normalizedPath, {
     body: options.body,
     contentType: options.contentType,

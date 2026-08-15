@@ -2,7 +2,7 @@
 spec: FEATURE-FLAG-SERVICE
 title: Cờ tính năng
 area: platform
-status: approved
+status: implemented
 mvp: true
 phase: P2
 reviewed: 2026-08-08

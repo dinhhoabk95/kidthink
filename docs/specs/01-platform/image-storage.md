@@ -2,7 +2,7 @@
 spec: IMAGE-STORAGE
 title: Lưu trữ và chuẩn hoá ảnh upload
 area: platform
-status: approved
+status: implemented
 mvp: true
 phase: P2
 reviewed: 2026-08-13

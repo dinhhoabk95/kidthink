@@ -1,0 +1,279 @@
+<template>
+  <div
+    class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm"
+    v-if="isOpen"
+  >
+    <div
+      aria-labelledby="emoji-picker-title"
+      aria-modal="true"
+      class="w-full max-w-2xl bg-white dark:bg-slate-800 rounded-3xl border-4 border-slate-200 dark:border-slate-700 p-6 shadow-2xl flex flex-col max-h-[85vh] overflow-hidden"
+      role="dialog"
+    >
+      <!-- Header -->
+      <div
+        class="flex items-center justify-between pb-4 border-b border-slate-200 dark:border-slate-700 shrink-0"
+      >
+        <div>
+          <h2
+            class="text-lg font-bold text-slate-900 dark:text-white"
+            id="emoji-picker-title"
+          >
+            Bộ chọn Emoji giáo dục
+          </h2>
+          <p class="text-xs text-slate-500">
+            Duyệt qua 32 nhóm chủ đề hoặc tìm kiếm bằng tiếng Việt
+          </p>
+        </div>
+        <button
+          aria-label="Đóng"
+          class="w-9 h-9 rounded-2xl flex items-center justify-center text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 transition-all font-bold text-lg"
+          type="button"
+          @click="close"
+        >
+          ✕
+        </button>
+      </div>
+
+      <!-- Search Input -->
+      <div class="py-3 shrink-0">
+        <input
+          class="w-full min-h-11 px-4 py-2 text-base rounded-2xl border-2 border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:border-indigo-500 focus:outline-none placeholder-slate-400"
+          placeholder="Tìm theo tên tiếng Việt (ví dụ: táo, mèo, số 1)..."
+          type="text"
+          ref="searchInputRef"
+          v-model="searchQuery"
+          @input="onSearchInput"
+        >
+      </div>
+
+      <!-- Category Filter Tabs (32 Themes) -->
+      <div class="flex gap-2 overflow-x-auto pb-2 shrink-0 scrollbar-thin">
+        <button
+          type="button"
+          :class="[
+            'px-3.5 py-1.5 rounded-xl text-sm font-semibold whitespace-nowrap transition-all border',
+            selectedCategory
+              ? 'bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 hover:bg-slate-100'
+              : 'bg-indigo-600 border-indigo-600 text-white shadow-sm',
+          ]"
+          @click="clearCategory"
+        >
+          Tất cả
+        </button>
+        <button
+          type="button"
+          v-for="cat in categories"
+          :key="cat"
+          :class="[
+            'px-3.5 py-1.5 rounded-xl text-sm font-semibold whitespace-nowrap transition-all border',
+            selectedCategory === cat
+              ? 'bg-indigo-600 border-indigo-600 text-white shadow-sm'
+              : 'bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700',
+          ]"
+          @click="selectCategory(cat)"
+        >
+          {{ cat }}
+        </button>
+      </div>
+
+      <!-- Recent Emojis Section (BR-EPK-03: 12 LRU) -->
+      <div
+        class="py-2 shrink-0"
+        v-if="!(searchQuery || selectedCategory) && recentEmojis.length > 0"
+      >
+        <div class="text-xs font-bold text-slate-400 tracking-wider mb-2">
+          Gần đây (Recent)
+        </div>
+        <div class="flex flex-wrap gap-2">
+          <button
+            class="w-10 h-10 min-w-10 min-h-10 rounded-2xl flex items-center justify-center text-[28px] leading-none hover:bg-indigo-50 dark:hover:bg-slate-700 hover:scale-110 active:scale-95 transition-all font-emoji"
+            type="button"
+            v-for="e in recentEmojis"
+            :key="e"
+            @click="selectEmoji(e)"
+          >
+            {{ e }}
+          </button>
+        </div>
+      </div>
+
+      <!-- Emoji Grid (BR-EPK-04: Cell >= 40x40px, Glyph >= 28px) -->
+      <div
+        class="flex-1 overflow-y-auto pt-2 border-t border-slate-100 dark:border-slate-700/50"
+      >
+        <div class="py-12 text-center text-slate-400" v-if="isLoading">
+          Đang tải emoji...
+        </div>
+
+        <div
+          class="py-12 text-center text-slate-400"
+          v-else-if="emojis.length === 0"
+        >
+          Không tìm thấy emoji nào phù hợp.
+        </div>
+
+        <div
+          class="grid grid-cols-6 sm:grid-cols-8 md:grid-cols-10 gap-2 p-1"
+          v-else
+        >
+          <button
+            class="w-11 h-11 min-w-11 min-h-11 rounded-2xl flex items-center justify-center text-[28px] leading-none hover:bg-indigo-50 dark:hover:bg-slate-700 hover:scale-110 active:scale-95 transition-all font-emoji"
+            type="button"
+            v-for="item in emojis"
+            :key="item.emoji"
+            :title="item.name"
+            @click="selectEmoji(item.emoji)"
+          >
+            {{ item.emoji }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script lang="ts" setup>
+  import { nextTick, onMounted, onUnmounted, ref, watch } from "vue";
+
+  interface EmojiItem {
+    name: string;
+    emoji: string;
+    category: string;
+    group: string;
+    keywords: string[];
+    code: string;
+  }
+
+  const props = defineProps<{
+    isOpen: boolean;
+  }>();
+
+  const emit = defineEmits<{
+    (e: "close"): void;
+    (e: "select", emoji: string): void;
+  }>();
+
+  const searchQuery = ref("");
+  const selectedCategory = ref("");
+  const categories = ref<string[]>([]);
+  const emojis = ref<EmojiItem[]>([]);
+  const recentEmojis = ref<string[]>([]);
+  const isLoading = ref(false);
+  const searchInputRef = ref<HTMLInputElement | null>(null);
+
+  const RECENT_KEY = "kidthink_recent_emojis";
+
+  onMounted(() => {
+    loadRecentEmojis();
+    window.addEventListener("keydown", handleGlobalKeyDown);
+  });
+
+  onUnmounted(() => {
+    window.removeEventListener("keydown", handleGlobalKeyDown);
+  });
+
+  function handleGlobalKeyDown(e: KeyboardEvent) {
+    if (props.isOpen && e.key === "Escape") {
+      close();
+    }
+  }
+
+  watch(
+    () => props.isOpen,
+    async (open) => {
+      if (open) {
+        searchQuery.value = "";
+        selectedCategory.value = "";
+        await fetchEmojis();
+        await nextTick();
+        searchInputRef.value?.focus();
+      }
+    }
+  );
+
+  function loadRecentEmojis() {
+    try {
+      const raw = localStorage.getItem(RECENT_KEY);
+      if (raw) {
+        recentEmojis.value = JSON.parse(raw);
+      }
+    } catch {
+      recentEmojis.value = [];
+    }
+  }
+
+  function saveRecentEmoji(emoji: string) {
+    try {
+      const existing = recentEmojis.value.filter((e) => e !== emoji);
+      const updated = [emoji, ...existing].slice(0, 12);
+      recentEmojis.value = updated;
+      localStorage.setItem(RECENT_KEY, JSON.stringify(updated));
+    } catch {
+      // localStorage error ignored
+    }
+  }
+
+  async function fetchEmojis() {
+    isLoading.value = true;
+    try {
+      const params = new URLSearchParams();
+      if (searchQuery.value) {
+        params.set("q", searchQuery.value);
+      }
+      if (selectedCategory.value) {
+        params.set("category", selectedCategory.value);
+      }
+      params.set("limit", "100");
+
+      const res = await $fetch<{ items: EmojiItem[]; categories: string[] }>(
+        `/api/managers/emoji?${params.toString()}`
+      );
+      emojis.value = res.items || [];
+      if (res.categories && categories.value.length === 0) {
+        categories.value = res.categories;
+      }
+    } catch (err) {
+      console.error("Failed to load emojis", err);
+      emojis.value = [];
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  let searchTimer: ReturnType<typeof setTimeout> | null = null;
+  function onSearchInput() {
+    if (searchTimer) {
+      clearTimeout(searchTimer);
+    }
+    searchTimer = setTimeout(() => {
+      fetchEmojis();
+    }, 200);
+  }
+
+  function selectCategory(cat: string) {
+    selectedCategory.value = cat;
+    fetchEmojis();
+  }
+
+  function clearCategory() {
+    selectedCategory.value = "";
+    fetchEmojis();
+  }
+
+  function selectEmoji(emoji: string) {
+    saveRecentEmoji(emoji);
+    emit("select", emoji);
+    emit("close");
+  }
+
+  function close() {
+    emit("close");
+  }
+</script>
+
+<style scoped>
+  .font-emoji {
+    font-family:
+      "Noto Color Emoji", "Apple Color Emoji", "Segoe UI Emoji", sans-serif;
+  }
+</style>

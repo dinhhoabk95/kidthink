@@ -1,6 +1,6 @@
 import { z } from "zod";
-import { EmojiRef } from "../shared-fields";
-import type { GameTemplate } from "../types";
+import { EmojiRef } from "../shared-fields.js";
+import type { GameTemplate } from "../types.js";
 
 export const GT006ContentSchema = z.object({
   prompt: z.string().min(4).max(80),

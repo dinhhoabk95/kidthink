@@ -2,7 +2,7 @@
 spec: ERROR-LOG-VIEWER
 title: Xem nhật ký lỗi
 area: admin
-status: approved
+status: implemented
 mvp: true
 phase: P2
 reviewed: 2026-08-08

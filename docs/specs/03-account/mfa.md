@@ -2,7 +2,7 @@
 spec: MFA
 title: Xác thực hai lớp
 area: account
-status: approved
+status: implemented
 mvp: false
 phase: P2
 reviewed: 2026-08-13

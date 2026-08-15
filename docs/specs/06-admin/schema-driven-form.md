@@ -2,7 +2,7 @@
 spec: SCHEMA-DRIVEN-FORM
 title: Form sinh từ schema
 area: admin
-status: approved
+status: implemented
 mvp: true
 phase: P2
 reviewed: 2026-08-08

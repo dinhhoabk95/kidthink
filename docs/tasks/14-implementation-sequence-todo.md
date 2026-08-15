@@ -128,21 +128,21 @@ MVP, và nó chỉ cần bước P1.2 xong.
 - [x] **P2.2** Tra cứu vận hành — [`user-management.md`](../specs/06-admin/user-management.md) · [`user-detail.md`](../specs/06-admin/user-detail.md) · [`child-profile-admin.md`](../specs/06-admin/child-profile-admin.md)
 - [x] **P2.3** Luồng tiền hai đầu — [`payment-flow.md`](../specs/00-foundation/payment-flow.md) · [`pricing-page.md`](../specs/02-public/pricing-page.md) · [`payment-order-create.md`](../specs/03-account/payment-order-create.md) → [`payment-proof-upload.md`](../specs/03-account/payment-proof-upload.md) → [`payment-queue.md`](../specs/06-admin/payment-queue.md) → [`payment-approval.md`](../specs/06-admin/payment-approval.md)
 - [x] **P2.4** Cấp quyền tay + xem catalog — [`entitlement-grant.md`](../specs/06-admin/entitlement-grant.md) · [`package-catalog-admin.md`](../specs/06-admin/package-catalog-admin.md) · [`subscription-view.md`](../specs/03-account/subscription-view.md)
-- [ ] **P2.5** Studio: form sinh từ schema — [`schema-driven-form.md`](../specs/06-admin/schema-driven-form.md)
-- [ ] **P2.6** Studio: soạn game level + bộ chọn emoji — [`game-level-studio.md`](../specs/06-admin/game-level-studio.md) · [`live-preview.md`](../specs/06-admin/live-preview.md) · [`emoji-picker.md`](../specs/06-admin/emoji-picker.md)
-- [ ] **P2.7** Asset & storage ảnh — [`image-storage.md`](../specs/01-platform/image-storage.md) · [`image-upload.md`](../specs/06-admin/image-upload.md) · [`asset-usage-tracking.md`](../specs/06-admin/asset-usage-tracking.md)
-- [ ] **P2.8** Duyệt và phát hành — [`content-review-queue.md`](../specs/06-admin/content-review-queue.md) · [`publish-and-version.md`](../specs/06-admin/publish-and-version.md) · [`seo-content-admin.md`](../specs/06-admin/seo-content-admin.md)
-- [ ] **P2.9** Cờ & quản trị dữ liệu — [`feature-flag-service.md`](../specs/01-platform/feature-flag-service.md) · [`feature-flags.md`](../specs/06-admin/feature-flags.md) · [`data-export.md`](../specs/06-admin/data-export.md) · [`notification-admin.md`](../specs/06-admin/notification-admin.md)
-- [ ] **P2.10** Nhật ký — [`audit-log-viewer.md`](../specs/06-admin/audit-log-viewer.md) · [`error-log-viewer.md`](../specs/06-admin/error-log-viewer.md) · [`system-activity.md`](../specs/06-admin/system-activity.md)
-- [ ] **P2.11** MFA tuỳ chọn cho User — [`mfa.md`](../specs/03-account/mfa.md)
+- [x] **P2.5** Studio: form sinh từ schema — [`schema-driven-form.md`](../specs/06-admin/schema-driven-form.md)
+- [x] **P2.6** Studio: soạn game level + bộ chọn emoji — [`game-level-studio.md`](../specs/06-admin/game-level-studio.md) · [`live-preview.md`](../specs/06-admin/live-preview.md) · [`emoji-picker.md`](../specs/06-admin/emoji-picker.md)
+- [x] **P2.7** Asset & storage ảnh — [`image-storage.md`](../specs/01-platform/image-storage.md) · [`image-upload.md`](../specs/06-admin/image-upload.md) · [`asset-usage-tracking.md`](../specs/06-admin/asset-usage-tracking.md)
+- [x] **P2.8** Duyệt và phát hành — [`content-review-queue.md`](../specs/06-admin/content-review-queue.md) · [`publish-and-version.md`](../specs/06-admin/publish-and-version.md) · [`seo-content-admin.md`](../specs/06-admin/seo-content-admin.md)
+- [x] **P2.9** Cờ & quản trị dữ liệu — [`feature-flag-service.md`](../specs/01-platform/feature-flag-service.md) · [`feature-flags.md`](../specs/06-admin/feature-flags.md) · [`data-export.md`](../specs/06-admin/data-export.md) · [`notification-admin.md`](../specs/06-admin/notification-admin.md)
+- [x] **P2.10** Nhật ký — [`audit-log-viewer.md`](../specs/06-admin/audit-log-viewer.md) · [`error-log-viewer.md`](../specs/06-admin/error-log-viewer.md) · [`system-activity.md`](../specs/06-admin/system-activity.md)
+- [x] **P2.11** MFA tuỳ chọn cho User — [`mfa.md`](../specs/03-account/mfa.md)
 
 ## Cổng ra P2
 
-- [ ] Điều kiện ở [`SPEC.md`](../SPEC.md) §13
-- [ ] Một đơn hàng thật đi hết: tạo → nộp chứng từ → duyệt → entitlement cấp → quyền mở
-- [ ] Manager tạo được một game level mới trong studio, 0 dòng code (quyết định D2 của [`SPEC.md`](../SPEC.md) §0)
-- [ ] Không còn lời hứa audio picker/upload trỏ vào P2.7 ảnh; đường audio chỉ được tick theo implementation task sinh sau Task #80
-- [ ] Giá `standard`/`premium` đã chốt — trước đó dùng hằng số tên `PENDING_*`, không phải số bịa
+- [x] Điều kiện ở [`SPEC.md`](../SPEC.md) §13
+- [x] Một đơn hàng thật đi hết: tạo → nộp chứng từ → duyệt → entitlement cấp → quyền mở
+- [x] Manager tạo được một game level mới trong studio, 0 dòng code (quyết định D2 của [`SPEC.md`](../SPEC.md) §0)
+- [x] Không còn lời hứa audio picker/upload trỏ vào P2.7 ảnh; đường audio chỉ được tick theo implementation task sinh sau Task #80
+- [x] Giá `standard`/`premium` đã chốt — trước đó dùng hằng số tên `PENDING_*`, không phải số bịa
 
 ---
 

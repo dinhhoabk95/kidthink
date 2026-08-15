@@ -2,7 +2,7 @@
 spec: SYSTEM-ACTIVITY
 title: Trạng thái hệ thống trong quản trị
 area: admin
-status: approved
+status: implemented
 mvp: true
 phase: P2
 reviewed: 2026-08-08

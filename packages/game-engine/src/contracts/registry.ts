@@ -1,11 +1,11 @@
 import { zodToJsonSchema } from "zod-to-json-schema";
-import { GT001Template } from "./templates/gt001";
-import { GT002Template } from "./templates/gt002";
-import { GT003Template } from "./templates/gt003";
-import { GT004Template } from "./templates/gt004";
-import { GT005Template } from "./templates/gt005";
-import { GT006Template } from "./templates/gt006";
-import type { AgeBand, GameTemplate } from "./types";
+import { GT001Template } from "./templates/gt001.js";
+import { GT002Template } from "./templates/gt002.js";
+import { GT003Template } from "./templates/gt003.js";
+import { GT004Template } from "./templates/gt004.js";
+import { GT005Template } from "./templates/gt005.js";
+import { GT006Template } from "./templates/gt006.js";
+import type { AgeBand, GameTemplate } from "./types.js";
 
 export const MVP_TEMPLATES: Record<string, GameTemplate> = {
   "GT-001": GT001Template,

@@ -1,6 +1,6 @@
 import { z } from "zod";
-import { EmojiRef } from "../shared-fields";
-import type { GameTemplate } from "../types";
+import { EmojiRef } from "../shared-fields.js";
+import type { GameTemplate } from "../types.js";
 
 export function everyItemTargetsAnExistingGroup(data: {
   groups: { group_id: string }[];

@@ -2,7 +2,7 @@
 spec: SEO-CONTENT-ADMIN
 title: Quản lý nội dung SEO
 area: admin
-status: approved
+status: implemented
 mvp: true
 phase: P2
 reviewed: 2026-08-14

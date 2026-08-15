@@ -10,6 +10,11 @@ const RE_ALLOWED_TIERS = /allowedTiers\s*\(/;
 const RE_CLIENT_TIER_CHECK = /access_tier\s*===?\s*['"](standard|premium)['"]/;
 
 function checkServerGating(file: FileItem): string | null {
+  // Manager routes (content authoring/studio) are guarded by requireManagerSession, not learner access tiers
+  if (file.filePath.includes("/api/managers/")) {
+    return null;
+  }
+
   const returnsContentPack = file.content.includes("content_pack");
   const returnsDiffParams = file.content.includes("difficulty_params");
   const hasGatingCall =

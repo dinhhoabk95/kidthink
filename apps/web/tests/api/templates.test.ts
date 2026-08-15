@@ -59,14 +59,14 @@ describe("Game Template API Endpoints (BR-GTC-04, spec §8)", () => {
     await expect(managerContractHandler(event)).rejects.toThrow();
   });
 
-  it("GET /api/managers/templates/[code]/contract returns 422 for unknown code", async () => {
+  it("GET /api/managers/templates/[code]/contract returns 404 for unknown code", async () => {
     const event = mockEvent("GET", "content_reviewer", { code: "GT-999" });
 
     try {
       await managerContractHandler(event);
-      expect.fail("Should have thrown 422");
+      expect.fail("Should have thrown 404");
     } catch (err: any) {
-      expect(err.statusCode || err.status).toBe(422);
+      expect(err.statusCode || err.status).toBe(404);
     }
   });
 

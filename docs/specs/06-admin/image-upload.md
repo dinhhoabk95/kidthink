@@ -2,7 +2,7 @@
 spec: IMAGE-UPLOAD
 title: Tải và cắt ảnh trong studio
 area: admin
-status: approved
+status: implemented
 mvp: true
 phase: P2
 reviewed: 2026-08-08

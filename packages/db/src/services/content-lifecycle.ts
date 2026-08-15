@@ -285,6 +285,8 @@ export async function transitionContent(
   });
 }
 
+export const transitionContentStatus = transitionContent;
+
 /**
  * BR-CLC-11: Seed batch content items published via seed must pass the same publish checklist §7.3.
  */

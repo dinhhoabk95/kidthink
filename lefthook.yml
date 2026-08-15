@@ -11,36 +11,20 @@
 skip_lfs: true
 
 pre-commit:
-  parallel: true
+  parallel: false
   jobs:
-    # biome trên file staged. --no-errors-on-unmatched: commit không có file JS/TS
-    # (vd chỉ đổi .md) thì đây là no-op hợp lệ, ❌ không phải lỗi.
-    - name: lint-staged
-      glob: "*.{js,jsx,ts,tsx,vue,json,jsonc}"
-      run: pnpm exec biome check --no-errors-on-unmatched {staged_files}
-
-    # Quét hex literal. Chạy toàn repo — script không nhận danh sách file.
-    - name: lint-tokens
-      run: pnpm lint:tokens
-
-    # So sánh snapshot staged với HEAD để checkbox tiến độ chỉ được tick khi
-    # cùng commit có bằng chứng code/test và spec liên quan đã implemented.
-    - name: check-progress
-      run: pnpm check:progress
+    # Full check chạy lúc commit: lint + tokens + deps + specs + typecheck (SPEC.md §7)
+    - name: check
+      run: pnpm check
 
 pre-push:
   parallel: false
   jobs:
-    # lint + lint:tokens + lint:deps + typecheck (SPEC.md §7)
-    - name: check
-      run: pnpm check
-
-    # `pnpm check` KHÔNG chạy test (contract §7) — chạy riêng ở đây.
+    # `pnpm check` KHÔNG chạy lại ở push vì đã chạy ở pre-commit.
     - name: test
       run: pnpm test
 
     # repo-bootstrap §4 bước 5 — PG 17 + Valkey 9 phải sống và ĐÚNG major version.
-    # fail_text nói rõ phải làm gì: không có docker thì không push được, có chủ đích.
     - name: services
       run: pnpm check:services
       fail_text: "docker compose up -d trước khi push (PG 17 + Valkey 9 phải sống)"

@@ -14,6 +14,7 @@
     "@kidthink/cache": "workspace:*",
     "@kidthink/config": "workspace:*",
     "@kidthink/db": "workspace:*",
+    "@kidthink/emoji": "workspace:*",
     "@kidthink/game-engine": "workspace:*",
     "@kidthink/notification": "workspace:*",
     "@kidthink/queue": "workspace:*",

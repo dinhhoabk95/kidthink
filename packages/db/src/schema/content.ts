@@ -4,6 +4,7 @@ import {
   boolean,
   check,
   integer,
+  jsonb,
   pgEnum,
   pgTable,
   primaryKey,
@@ -188,3 +189,57 @@ export const contentImages = pgTable("content_images", {
     .defaultNow()
     .notNull(),
 });
+
+export const seoPageTypeEnum = pgEnum("seo_page_type", [
+  "competency",
+  "skill",
+  "age_program",
+  "topic",
+  "static",
+]);
+
+export const seoPages = pgTable(
+  "seo_pages",
+  {
+    id: bigint("id", { mode: "number" })
+      .primaryKey()
+      .generatedAlwaysAsIdentity(),
+    slug: varchar("slug", { length: 200 }).notNull(),
+    contentVersion: integer("content_version").notNull().default(1),
+    pageType: seoPageTypeEnum("page_type").notNull(),
+    title: varchar("title", { length: 300 }).notNull(),
+    metaDescription: text("meta_description").notNull(),
+    h1: varchar("h1", { length: 300 }),
+    body: text("body"),
+    ogImagePath: text("og_image_path"),
+    canonicalUrl: text("canonical_url"),
+    noindex: boolean("noindex").notNull().default(false),
+    relatedContentRefs: jsonb("related_content_refs").default(sql`'[]'::jsonb`),
+    faqItems: jsonb("faq_items").default(sql`'[]'::jsonb`),
+    accessTier: accessTierEnum("access_tier").notNull().default("free"),
+    status: contentLifecycleStatusEnum("status").notNull().default("draft"),
+    redirectFrom: text("redirect_from"),
+    createdByManagerId: bigint("created_by_manager_id", {
+      mode: "number",
+    }).references(() => managers.id),
+    reviewedByManagerId: bigint("reviewed_by_manager_id", {
+      mode: "number",
+    }).references(() => managers.id),
+    publishedAt: timestamp("published_at", { withTimezone: true }),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+    updatedAt: timestamp("updated_at", { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+  },
+  (table) => [
+    unique("seo_pages_slug_version_unique").on(
+      table.slug,
+      table.contentVersion
+    ),
+    uniqueIndex("idx_seo_pages_published_slug")
+      .on(table.slug)
+      .where(sql`${table.status} = 'published'`),
+  ]
+);
