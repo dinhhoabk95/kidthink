@@ -8,6 +8,8 @@ import {
   pgTable,
   primaryKey,
   timestamp,
+  unique,
+  varchar,
 } from "drizzle-orm/pg-core";
 import { childProfiles } from "./child.ts";
 import { gameLevels } from "./game.ts";
@@ -25,20 +27,20 @@ export const masteryState = pgTable(
     pLearn: numeric("p_learn", { precision: 5, scale: 4 })
       .notNull()
       .default("0.1000"),
-    pGuess: numeric("p_guess", { precision: 5, scale: 4 })
-      .notNull()
-      .default("0.2000"),
-    pSlip: numeric("p_slip", { precision: 5, scale: 4 })
-      .notNull()
-      .default("0.1000"),
-    pTransit: numeric("p_transit", { precision: 5, scale: 4 })
-      .notNull()
-      .default("0.1000"),
     emaCorrect: numeric("ema_correct", { precision: 5, scale: 4 })
       .notNull()
       .default("0.5000"),
-    attemptsCount: integer("attempts_count").notNull().default(0),
-    lastPracticedAt: timestamp("last_practiced_at", { withTimezone: true }),
+    hintRate: numeric("hint_rate", { precision: 5, scale: 4 })
+      .notNull()
+      .default("0.0000"),
+    attemptsTotal: integer("attempts_total").notNull().default(0),
+    bestPLearn: numeric("best_p_learn", { precision: 5, scale: 4 })
+      .notNull()
+      .default("0.1000"),
+    paramsVersion: varchar("params_version", { length: 20 })
+      .notNull()
+      .default("v1"),
+    lastSeenAt: timestamp("last_seen_at", { withTimezone: true }),
     updatedAt: timestamp("updated_at", { withTimezone: true })
       .defaultNow()
       .notNull(),
@@ -52,6 +54,14 @@ export const masteryState = pgTable(
     check(
       "check_mastery_state_ema_correct",
       sql`${table.emaCorrect} >= 0 AND ${table.emaCorrect} <= 1`
+    ),
+    check(
+      "check_mastery_state_hint_rate",
+      sql`${table.hintRate} >= 0 AND ${table.hintRate} <= 1`
+    ),
+    check(
+      "check_mastery_state_best_p_learn",
+      sql`${table.bestPLearn} >= 0 AND ${table.bestPLearn} <= 1`
     ),
   ]
 );
@@ -75,5 +85,31 @@ export const levelParams = pgTable(
   },
   (table) => [
     primaryKey({ columns: [table.childProfileId, table.gameLevelId] }),
+  ]
+);
+
+export const childBadges = pgTable(
+  "child_badges",
+  {
+    id: bigint("id", { mode: "number" })
+      .primaryKey()
+      .generatedAlwaysAsIdentity(),
+    childProfileId: bigint("child_profile_id", { mode: "number" })
+      .notNull()
+      .references(() => childProfiles.id, { onDelete: "cascade" }),
+    badgeCode: varchar("badge_code", { length: 50 }).notNull(),
+    awardedAt: timestamp("awarded_at", { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+    sourceRef: varchar("source_ref", { length: 100 }),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+  },
+  (table) => [
+    unique("child_badges_child_profile_id_badge_code_unique").on(
+      table.childProfileId,
+      table.badgeCode
+    ),
   ]
 );

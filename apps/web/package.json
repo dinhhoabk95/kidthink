@@ -10,6 +10,7 @@
     "typecheck": "nuxt typecheck"
   },
   "dependencies": {
+    "@kidthink/adaptive": "workspace:*",
     "@kidthink/auth": "workspace:*",
     "@kidthink/cache": "workspace:*",
     "@kidthink/config": "workspace:*",

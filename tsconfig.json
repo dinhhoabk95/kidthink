@@ -21,6 +21,7 @@
     "allowImportingTsExtensions": true,
     "baseUrl": ".",
     "paths": {
+      "@kidthink/adaptive": ["./packages/adaptive/src/index.ts"],
       "@kidthink/config": ["./packages/config/src/index.ts"],
       "@kidthink/shared": ["./packages/shared/src/index.ts"],
       "@kidthink/taxonomy": ["./packages/taxonomy/src/index.ts"],

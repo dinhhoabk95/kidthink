@@ -47,6 +47,7 @@
     "@biomejs/biome": "catalog:",
     "@types/node": "catalog:",
     "dependency-cruiser": "catalog:",
+    "drizzle-orm": "catalog:",
     "ioredis": "catalog:",
     "lefthook": "^2.1.10",
     "postgres": "catalog:",

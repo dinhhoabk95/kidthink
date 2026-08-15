@@ -7,6 +7,7 @@
     ".": "./src/index.ts"
   },
   "dependencies": {
+    "@kidthink/adaptive": "workspace:*",
     "@kidthink/auth": "workspace:*",
     "@kidthink/emoji": "workspace:*",
     "@kidthink/game-engine": "workspace:*",

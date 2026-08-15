@@ -288,6 +288,13 @@
       "when": 1786800000000,
       "tag": "0040_curriculum_player_active_unique",
       "breakpoints": true
+    },
+    {
+      "idx": 41,
+      "version": "7",
+      "when": 1786810000000,
+      "tag": "0041_adaptive_mastery_badges",
+      "breakpoints": true
     }
   ]
 }

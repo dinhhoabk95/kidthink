@@ -22,6 +22,7 @@ const TABLES = [
   "audit_logs",
   "backup_log",
   "child_daily_stats",
+  "child_badges",
   "child_profiles",
   "child_session_summaries",
   "competencies",

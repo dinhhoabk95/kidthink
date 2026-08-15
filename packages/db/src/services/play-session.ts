@@ -1,16 +1,23 @@
+import {
+  computeUpdate,
+  evaluateBadges,
+  type MasteryState,
+  selectNext,
+} from "@kidthink/adaptive";
 import { AppError } from "@kidthink/auth";
 import { enqueue } from "@kidthink/queue";
 import { computeSessionResult, computeStars } from "@kidthink/shared";
 import { and, desc, eq, sql } from "drizzle-orm";
 import { z } from "zod";
 import { getOwnerDb } from "../client.ts";
+import { childBadges, masteryState } from "../schema/adaptive.ts";
 import { childProfiles } from "../schema/child.ts";
-
 import {
   childDailyStats,
   playSessions,
   telemetryEvents,
 } from "../schema/play.ts";
+import { contentSkillMap } from "../schema/tagging.ts";
 
 export const ALLOWED_EVENT_NAMES = new Set([
   "game_started",
@@ -493,6 +500,218 @@ export async function ingestPlayEvents(
   };
 }
 
+async function recordSkillMasteryUpdate(params: {
+  db: ReturnType<typeof getOwnerDb>;
+  childId: number;
+  skillId: number;
+  weight: number;
+  correctRatio: number;
+  hintRate: number;
+  now: Date;
+}): Promise<MasteryState> {
+  const { db, childId, skillId, weight, correctRatio, hintRate, now } = params;
+  const [existing] = await db
+    .select()
+    .from(masteryState)
+    .where(
+      and(
+        eq(masteryState.childProfileId, childId),
+        eq(masteryState.skillId, skillId)
+      )
+    )
+    .limit(1);
+
+  const prevState: MasteryState | null = existing
+    ? {
+        child_id: childId,
+        skill_id: skillId,
+        p_learn: Number(existing.pLearn),
+        ema_correct: Number(existing.emaCorrect),
+        hint_rate: Number(existing.hintRate),
+        attempts_total: existing.attemptsTotal,
+        best_p_learn: Number(existing.bestPLearn),
+        last_seen_at: existing.lastSeenAt ? new Date(existing.lastSeenAt) : now,
+        params_version: existing.paramsVersion,
+      }
+    : null;
+
+  const update = computeUpdate({
+    prev: prevState,
+    result: {
+      correct_ratio: correctRatio,
+      hint_rate: hintRate,
+    },
+    weight,
+    now,
+  });
+
+  await db
+    .insert(masteryState)
+    .values({
+      childProfileId: childId,
+      skillId,
+      pLearn: update.p_learn.toFixed(4),
+      emaCorrect: update.ema_correct.toFixed(4),
+      hintRate: update.hint_rate.toFixed(4),
+      attemptsTotal: update.attempts_total,
+      bestPLearn: update.best_p_learn.toFixed(4),
+      paramsVersion: update.params_version,
+      lastSeenAt: update.last_seen_at,
+      updatedAt: now,
+    })
+    .onConflictDoUpdate({
+      target: [masteryState.childProfileId, masteryState.skillId],
+      set: {
+        pLearn: update.p_learn.toFixed(4),
+        emaCorrect: update.ema_correct.toFixed(4),
+        hintRate: update.hint_rate.toFixed(4),
+        attemptsTotal: update.attempts_total,
+        bestPLearn: update.best_p_learn.toFixed(4),
+        paramsVersion: update.params_version,
+        lastSeenAt: update.last_seen_at,
+        updatedAt: now,
+      },
+    });
+
+  return {
+    child_id: childId,
+    skill_id: skillId,
+    ...update,
+  };
+}
+
+async function awardChildBadges(params: {
+  db: ReturnType<typeof getOwnerDb>;
+  childId: number;
+  sessionUuid: string;
+  now: Date;
+}) {
+  const { db, childId, sessionUuid, now } = params;
+  const existingBadgesRows = await db
+    .select({ badgeCode: childBadges.badgeCode })
+    .from(childBadges)
+    .where(eq(childBadges.childProfileId, childId));
+  const existingBadgeCodes = new Set(
+    existingBadgesRows.map((b) => b.badgeCode)
+  );
+
+  const dailyStatsRows = await db
+    .select({ dateIct: childDailyStats.dateIct })
+    .from(childDailyStats)
+    .where(eq(childDailyStats.childProfileId, childId));
+  const distinctDays = new Set(dailyStatsRows.map((d) => d.dateIct)).size;
+
+  const newBadges = evaluateBadges({
+    distinctPlayDays: distinctDays,
+    existingBadgeCodes,
+  });
+
+  for (const badgeCode of newBadges) {
+    await db
+      .insert(childBadges)
+      .values({
+        childProfileId: childId,
+        badgeCode,
+        awardedAt: now,
+        sourceRef: sessionUuid,
+      })
+      .onConflictDoNothing();
+  }
+}
+
+async function applySessionMasteryAndBadges(params: {
+  db: ReturnType<typeof getOwnerDb>;
+  childId: number;
+  gameLevelId: number;
+  sessionUuid: string;
+  scoringResult: ReturnType<typeof computeSessionResult>;
+  now: Date;
+}): Promise<ReturnType<typeof selectNext> | null> {
+  const { db, childId, gameLevelId, sessionUuid, scoringResult, now } = params;
+  const mappedSkills = await db
+    .select()
+    .from(contentSkillMap)
+    .where(
+      and(
+        eq(contentSkillMap.entityType, "game_level"),
+        eq(contentSkillMap.entityId, gameLevelId)
+      )
+    );
+
+  if (mappedSkills.length === 0) {
+    console.warn(
+      `[completePlaySession] Level ${gameLevelId} has no attached skills, skipping mastery update`
+    );
+    return null;
+  }
+
+  const roundsTotal = scoringResult.metrics.rounds_total;
+  const correctRatio =
+    roundsTotal > 0 ? scoringResult.metrics.rounds_correct / roundsTotal : 0;
+  const hintRate =
+    roundsTotal > 0 ? (scoringResult.metrics.hint_count ?? 0) / roundsTotal : 0;
+
+  const masteryMap = new Map<number, MasteryState>();
+
+  for (const ms of mappedSkills) {
+    const skillId = Number(ms.skillId);
+    const updatedState = await recordSkillMasteryUpdate({
+      db,
+      childId,
+      skillId,
+      weight: Number(ms.weight),
+      correctRatio,
+      hintRate,
+      now,
+    });
+    masteryMap.set(skillId, updatedState);
+  }
+
+  await awardChildBadges({ db, childId, sessionUuid, now });
+
+  return selectNext({
+    mastery: masteryMap,
+    step: {
+      week_no: 1,
+      session_no: 1,
+      position: 1,
+      skill_ids: mappedSkills.map((ms) => Number(ms.skillId)),
+    },
+    now,
+  });
+}
+
+async function applyAbandonedSessionMastery(params: {
+  db: ReturnType<typeof getOwnerDb>;
+  childId: number;
+  gameLevelId: number;
+  now: Date;
+}) {
+  const { db, childId, gameLevelId, now } = params;
+  const mappedSkills = await db
+    .select()
+    .from(contentSkillMap)
+    .where(
+      and(
+        eq(contentSkillMap.entityType, "game_level"),
+        eq(contentSkillMap.entityId, gameLevelId)
+      )
+    );
+
+  for (const ms of mappedSkills) {
+    const skillId = Number(ms.skillId);
+    await recordSkillMasteryUpdate({
+      db,
+      childId,
+      skillId,
+      weight: Number(ms.weight),
+      correctRatio: 0.0,
+      hintRate: 0.0,
+      now,
+    });
+  }
+}
+
 export async function completePlaySession(
   sessionUuid: string,
   _lastSeq?: number,
@@ -573,6 +792,18 @@ export async function completePlaySession(
     throw new AppError("SESSION_ALREADY_COMPLETED");
   }
 
+  let nextSuggestion: ReturnType<typeof selectNext> | null = null;
+  if (session.childProfileId && !session.isPreview) {
+    nextSuggestion = await applySessionMasteryAndBadges({
+      db,
+      childId: Number(session.childProfileId),
+      gameLevelId: session.gameLevelId,
+      sessionUuid,
+      scoringResult,
+      now,
+    });
+  }
+
   try {
     await enqueue("rollup:session", { sessionUuid }, { jobId: sessionUuid });
   } catch (queueErr) {
@@ -588,6 +819,7 @@ export async function completePlaySession(
     stars: null,
     rounds_correct: scoringResult.metrics.rounds_correct ?? 0,
     rounds_total: scoringResult.metrics.rounds_total ?? 0,
+    next_suggestion: nextSuggestion ?? null,
   };
 }
 
@@ -640,6 +872,13 @@ export async function sweepAbandonedSessions(now = new Date()) {
             updatedAt: now,
           },
         });
+
+      await applyAbandonedSessionMastery({
+        db,
+        childId: Number(session.childProfileId),
+        gameLevelId: session.gameLevelId,
+        now,
+      });
     }
   }
 

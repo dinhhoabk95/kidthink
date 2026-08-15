@@ -2,7 +2,7 @@
 spec: PROGRESS-AND-MASTERY
 title: Ghi nhận tiến độ và thành thạo
 area: play
-status: approved
+status: implemented
 mvp: true
 phase: P3
 reviewed: 2026-08-08
@@ -36,7 +36,7 @@ Biến kết quả phiên thành trạng thái thành thạo theo skill, và bi�
 
 | Nơi | |
 |---|---|
-| Job `rollup:session` | Ghi mastery |
+| `POST /api/users/play-sessions/{uuid}/complete` | Ghi mastery trong cùng transaction (D-MH) |
 | `/play/map` | Bản đồ cho trẻ |
 | `GET /api/users/children/{uuid}/progress` | Cho người lớn |
 
@@ -44,9 +44,9 @@ Biến kết quả phiên thành trạng thái thành thạo theo skill, và bi�
 
 1. Phiên `completed` → kiểm bốn điều kiện [`play-session-lifecycle.md`](play-session-lifecycle.md) §7.3.
 2. Với mỗi skill trong `content_skill_map` của level: gọi `computeUpdate` kèm `weight`.
-3. Tầng API ghi `mastery_state`, map từng field.
-4. Cập nhật bản đồ tiến độ của trẻ.
-5. Nếu vượt ngưỡng → mở huy hiệu, hiện ở lần vào sảnh kế tiếp.
+3. Tầng API ghi `mastery_state` và `child_badges` trong cùng transaction, map từng field.
+4. Cập nhật bản đồ tiến độ của trẻ (đọc `best_p_learn`).
+5. Nếu đạt điều kiện → mở huy hiệu lưu vào `child_badges`, hiện ở lần vào sảnh kế tiếp.
 
 ## 5. Alternative flows
 
@@ -75,7 +75,7 @@ Biến kết quả phiên thành trạng thái thành thạo theo skill, và bi�
 
 ### 7.1 Bản đồ tiến độ cho trẻ
 
-Bản đồ 6 vùng theo competency. Mỗi vùng có các "chặng" tương ứng strand.
+Bản đồ đọc `best_p_learn` từ `mastery_state`. Bề mặt trẻ mầm non hiển thị 1–2 vùng/strand đang học và các chặng gần nhất (thu gọn 6 vùng vào báo cáo người lớn). Mỗi vùng có các "chặng" tương ứng strand.
 
 | Trạng thái chặng | Hiển thị |
 |---|---|
@@ -87,6 +87,8 @@ Cấm phần trăm. Cấm thanh tiến độ có số. Cấm so sánh.
 
 ### 7.2 Huy hiệu
 
+Bảng `child_badges (child_profile_id, badge_code, awarded_at, source_ref)` là INSERT-only, unique `(child_profile_id, badge_code)`.
+
 Trao khi: hoàn thành lần đầu một competency-strand · hoàn thành một tuần curriculum ·
 chơi đủ 5 ngày khác nhau (**không** liên tiếp — `BR-PRG-07`).
 
@@ -97,7 +99,7 @@ Huy hiệu là **kỷ niệm**, không phải mục tiêu. Cấm có bảng huy 
 | Trường | Nguồn |
 |---|---|
 | Nhãn thành thạo mỗi skill | `mastery_state.p_learn` → bảng [`adaptive-engine.md`](../01-platform/adaptive-engine.md) §7.4 |
-| Skill đã tiếp xúc | `child_session_summaries.skill_ids` |
+| Skill đã tiếp xúc | `content_skill_map` nối với level của các phiên đã hoàn thành (D-MO) |
 | Skill cần củng cố | `p_learn < 0.4` và `attempts_total ≥ 3` |
 | Skill sẵn sàng học tiếp | `p_learn ≥ 0.8` và có skill kế trong DAG |
 
@@ -108,12 +110,12 @@ Huy hiệu là **kỷ niệm**, không phải mục tiêu. Cấm có bảng huy 
 | | |
 |---|---|
 | Auth | `requireUserAuth()` + ownership |
-| 200 | `{ competencies: [{ code, label, skills: [{ code, name, mastery_label, attempts }] }], badges }` |
+| 200 | `{ competencies: [{ code, label, skills: [{ code, name, mastery_label, attempts_total }] }], badges: [{ code, awarded_at }] }` |
 | 403 | `ENTITLEMENT_REQUIRED` — `view_basic_report` |
 
 ### `GET /api/users/play/map`
 
-Bề mặt trẻ. Trả **chỉ** trạng thái hình ảnh §7.1 — không `p_learn`, không số.
+Bề mặt trẻ. Trả **chỉ** trạng thái hình ảnh §7.1 — không `p_learn`, không số, không phần trăm.
 
 ## 9. Acceptance criteria
 
@@ -177,4 +179,4 @@ Scenario: BR-PRG-06 — mastery không nhận từ client
 | # | Câu hỏi | Chặn phase | Đề xuất chốt | Chủ |
 |---|---|---|---|---|
 | 1 | Skill C5 cần người lớn chấm — luồng UI thế nào và ai nhắc? | P3 | hoãn — trỏ sang quyết định `D-BA` ở [`adaptive-engine.md`](../01-platform/adaptive-engine.md); MVP chưa hỗ trợ skill chấm tay C5 | Studio UI |
-| 2 | Bản đồ 6 vùng có quá nhiều cho trẻ 3 tuổi không? Cân nhắc chỉ hiện vùng đang học | P3 | Chỉ hiển thị 1-2 vùng đang học và các chặng gần nhất trên giao diện mầm non; thu gọn 6 vùng vào trang báo cáo phụ huynh | Studio UI |
+| ~~2~~ | ~~Bản đồ 6 vùng có quá nhiều cho trẻ 3 tuổi không? Cân nhắc chỉ hiện vùng đang học~~ **Đóng 2026-08-11 (D-MJ)**: Chỉ hiển thị 1-2 vùng đang học và các chặng gần nhất trên giao diện mầm non; thu gọn 6 vùng vào trang báo cáo phụ huynh | — | đã đóng | D-MJ |

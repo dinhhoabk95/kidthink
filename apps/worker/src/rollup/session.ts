@@ -4,11 +4,7 @@ import {
   playSessions,
   telemetryEvents,
 } from "@kidthink/db";
-import {
-  computeSessionResult,
-  computeStars,
-  masteryGuard,
-} from "@kidthink/shared";
+import { computeSessionResult, computeStars } from "@kidthink/shared";
 import { eq } from "drizzle-orm";
 
 async function upsertChildSessionSummary(
@@ -145,15 +141,5 @@ export async function runSessionRollup(
     });
   }
 
-  // 6. Invoke mastery guard (D-GH)
-  const canUpdateMastery = masteryGuard({
-    childProfileId: session.childProfileId,
-    isPreview: session.isPreview,
-    completionStatus: targetStatus,
-    hasSkills: false, // At P1 mastery is not written yet
-  });
-
-  if (canUpdateMastery) {
-    // Stub for P3 mastery update
-  }
+  // D-MH: mastery_state is updated synchronously in completePlaySession transaction.
 }

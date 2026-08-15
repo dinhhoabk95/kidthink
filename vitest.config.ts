@@ -39,6 +39,10 @@ export default defineConfig({
         import.meta.dirname,
         "./packages/storage/src/index.ts"
       ),
+      "@kidthink/adaptive": path.resolve(
+        import.meta.dirname,
+        "./packages/adaptive/src/index.ts"
+      ),
       "@kidthink/ui": path.resolve(
         import.meta.dirname,
         "./packages/ui/src/index.ts"

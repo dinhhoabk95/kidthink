@@ -5,5 +5,18 @@
   "type": "module",
   "exports": {
     ".": "./src/index.ts"
+  },
+  "scripts": {
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@kidthink/shared": "workspace:*"
+  },
+  "devDependencies": {
+    "@kidthink/config": "workspace:*",
+    "fast-check": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
   }
 }

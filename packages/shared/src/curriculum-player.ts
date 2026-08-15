@@ -284,12 +284,44 @@ export function resolveNextStep(params: {
 }
 
 /**
- * D-MF: Chỗ nối adaptive.
- * P3.4 trả về chính item, đảm bảo không thể đổi (week_no, session_no, position).
- * P3.5 sẽ thay thế phần thân để chọn biến thể.
+ * D-MF & BR-ADP-05, BR-ADP-09:
+ * Adaptive variant selector.
+ * Modifies difficulty / variant overrides within the step,
+ * while STRICTLY preserving the (week_no, session_no, position) tuple.
  */
 export function selectVariant<
   T extends { week_no: number; session_no: number; position: number },
->(item: T, _context?: unknown): T {
-  return { ...item };
+>(
+  item: T,
+  context?: {
+    variants?: T[];
+    p_learn?: number;
+    difficulty_params?: Record<string, unknown>;
+  }
+): T {
+  if (!context?.variants || context.variants.length === 0) {
+    return { ...item };
+  }
+
+  const candidates = context.variants.filter(
+    (v) =>
+      v.week_no === item.week_no &&
+      v.session_no === item.session_no &&
+      v.position === item.position
+  );
+
+  if (candidates.length === 0) {
+    return { ...item };
+  }
+
+  if (
+    context.p_learn !== undefined &&
+    context.p_learn >= 0.8 &&
+    candidates.length > 1
+  ) {
+    const last = candidates.at(-1);
+    return last ? { ...last } : { ...item };
+  }
+
+  return { ...candidates[0] };
 }

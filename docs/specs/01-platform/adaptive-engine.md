@@ -2,7 +2,7 @@
 spec: ADAPTIVE-ENGINE
 title: Engine ước lượng thành thạo và chọn độ khó
 area: platform
-status: approved
+status: implemented
 mvp: true
 phase: P3
 reviewed: 2026-08-08
@@ -89,11 +89,11 @@ interface MasteryState {
   skill_id: number;          // FK — KHÔNG phải chuỗi concept
   p_learn: number;           // [0,1]
   attempts_total: number;
-  attempts_recent: number;   // 10 lần gần nhất
   ema_correct: number;
   hint_rate: number;
+  best_p_learn: number;      // Mốc cao nhất đạt được, chỉ tăng (D-MJ)
   last_seen_at: Date;
-  params_version: string;
+  params_version: string;    // Bắt buộc (BR-ADP-10)
 }
 ```
 
@@ -101,19 +101,23 @@ interface MasteryState {
 
 ```
 p_learn'     = clamp01( p_learn + α · weight · (correct_ratio − p_learn) )
-ema_correct' = β · correct_ratio + (1 − β) · ema_correct
+ema_correct' = clamp01( β · correct_ratio + (1 − β) · ema_correct )
+hint_rate'   = clamp01( β · session_hint_rate + (1 − β) · hint_rate )
+attempts'    = attempts_total + 1
+best_p_learn'= max( best_p_learn, p_learn' )
 ```
 
 Mặc định `α = 0.2`, `β = 0.3`, `params_version = "v1"`. Tinh chỉnh bằng offline replay,
 cấm tinh chỉnh bằng cảm giác.
 
-### 7.3 ZPD — bốn nhánh
+### 7.3 ZPD — năm nhánh
 
 | Điều kiện | Hành động |
 |---|---|
-| `p_learn < 0.4` | Lặp lại, hoặc biến thể **dễ hơn** |
-| `0.4 ≤ p_learn < 0.8` | Cùng độ khó, **biến thể khác** |
-| `p_learn ≥ 0.8` | Lên **một** bậc — cấm nhảy hai |
+| Dưới 3 lần chơi | Nhánh khởi tạo — cùng độ khó cơ bản, thu thập dữ liệu |
+| `p_learn < 0.4` | Lặp lại, hoặc biến thể **dễ hơn** trong cùng bước |
+| `0.4 ≤ p_learn < 0.8` | Cùng độ khó, **biến thể khác** trong cùng bước |
+| `p_learn ≥ 0.8` | Lên **một** bậc độ khó trong cùng bước — cấm nhảy hai |
 | `last_seen_at > 7 ngày` | `revision_mode = true`, bất kể `p_learn` |
 
 ### 7.4 Nhãn báo cáo — ánh xạ duy nhất
@@ -131,18 +135,31 @@ Cấm — **NEVER** hiển thị `p_learn` thô cho người dùng. Cấm — **
 ## 8. API contract
 
 ```ts
-computeUpdate(i: { prev: MasteryState | null; result: SessionResult; weight: number; now: Date }): MasteryUpdate;
-selectNext(i: { tree: SkillTree; mastery: Map<number, MasteryState>; step: CurriculumStep | null; now: Date }): NextSuggestion;
-computeAdaptiveParams(i: { base: DifficultyParams; mastery: MasteryState; ageBand: AgeBand }): DifficultyParams;
+computeUpdate(i: { prev: MasteryState | null; result: SessionResultInput; weight?: number; now: Date }): MasteryUpdate;
+selectNext(i: { tree?: SkillTree; mastery: Map<number, MasteryState>; step: CurriculumStep | null; now: Date }): NextSuggestion | null; // D-MM: step = null trả null, P3.6 sở hữu
+computeAdaptiveParams(i: { base: Record<string, unknown>; mastery?: MasteryState | null; ageBand?: string }): { param_overrides: Record<string, unknown>; adaptive_factor: number };
+masteryLabel(i: { p_learn: number; attempts_total: number }): MasteryLabel;
 ```
 
-Tất cả **thuần**. Tầng API ghi:
+Tất cả **thuần**. Tầng API ghi trong cùng transaction của `complete`:
 
 ```ts
 const u = computeUpdate({ prev, result, weight, now });
-await db.update(mastery_state).set({
-  p_learn: u.p_learn, ema_correct: u.ema_correct, attempts_total: u.attempts_total,
-}).where(and(eq(mastery_state.child_id, cid), eq(mastery_state.skill_id, sid)));
+await db.insert(mastery_state).values({
+  child_profile_id: cid, skill_id: sid,
+  p_learn: u.p_learn.toFixed(4), ema_correct: u.ema_correct.toFixed(4),
+  hint_rate: u.hint_rate.toFixed(4), attempts_total: u.attempts_total,
+  best_p_learn: u.best_p_learn.toFixed(4), params_version: u.params_version,
+  last_seen_at: u.last_seen_at,
+}).onConflictDoUpdate({
+  target: [mastery_state.child_profile_id, mastery_state.skill_id],
+  set: {
+    p_learn: u.p_learn.toFixed(4), ema_correct: u.ema_correct.toFixed(4),
+    hint_rate: u.hint_rate.toFixed(4), attempts_total: u.attempts_total,
+    best_p_learn: u.best_p_learn.toFixed(4), params_version: u.params_version,
+    last_seen_at: u.last_seen_at,
+  },
+});
 ```
 
 ## 9. Acceptance criteria
@@ -216,6 +233,6 @@ Scenario: BR-ADP-10 — đổi tham số có version
 
 | # | Câu hỏi | Chặn phase | Đề xuất chốt | Chủ |
 |---|---|---|---|---|
-| 1 | Script replay offline (`replay-adaptive.ts`) chạy hàng tuần — ai sở hữu và chạy? Thuật toán học không có "đúng" tuyệt đối, chỉ có "không trôi" | P3 | Backend team sở hữu và tích hợp vào đường ống kiểm tra tự động định kỳ | Backend |
+| ~~1~~ | ~~Script replay offline (`replay-adaptive.ts`) chạy hàng tuần — ai sở hữu và chạy?~~ **Đóng 2026-08-11 (D-MP)**: Backend team sở hữu `replay-adaptive.ts` và tích hợp cổng kiểm tra trôi tham số tự động có ca âm | — | đã đóng | D-MP |
 | ~~2~~ | ~~`strength` của prerequisite tham gia vào `selectNext` thế nào?~~ **Đóng 2026-08-08 (T10)**: `strength` (`numeric(3,2)` range `[0.00, 1.00]`) làm trọng số nhân với `p_learn` của skill tiên quyết khi tính điểm sẵn sàng cho skill tiếp theo | — | đã đóng | D-BA |
 | 3 | Skill ngôn ngữ mở (C5) cần người lớn chấm — luồng `assessed_by` thiết kế thế nào? | P3 | hoãn — MVP chưa có skill chấm tay C5; nếu phát sinh sẽ thêm trường `assessed_by` vào `mastery_state` ở P4 | Studio UI |
