@@ -1,6 +1,6 @@
 import crypto from "node:crypto";
 import { eq } from "drizzle-orm";
-import { describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it } from "vitest";
 import { getOwnerDb } from "../../src/index.ts";
 import { childProfiles } from "../../src/schema/child.ts";
 import {
@@ -26,6 +26,13 @@ import {
 } from "../../src/services/recommendation.ts";
 
 describe("P3.6 Next Game Recommendation Invariants (BR-REC-01..08, D-MQ..D-MW)", () => {
+  beforeEach(async () => {
+    const db = getOwnerDb();
+    await db.delete(contentSkillMap);
+    await db.delete(playSessions);
+    await db.delete(gameLevels);
+  });
+
   async function createTestFixtures() {
     const db = getOwnerDb();
     const uniqueHex = crypto.randomBytes(4).toString("hex");
@@ -88,7 +95,7 @@ describe("P3.6 Next Game Recommendation Invariants (BR-REC-01..08, D-MQ..D-MW)",
         .returning();
     }
 
-    const code1 = `C1.CNT.${String(crypto.randomInt(10, 99))}`;
+    const code1 = "C1.CNT.01";
     let [skill1] = await db
       .select()
       .from(skills)
@@ -110,7 +117,7 @@ describe("P3.6 Next Game Recommendation Invariants (BR-REC-01..08, D-MQ..D-MW)",
         .returning();
     }
 
-    const code2 = `C1.CNT.${String(crypto.randomInt(10, 99))}`;
+    const code2 = "C1.CNT.02";
     let [skill2] = await db
       .select()
       .from(skills)
@@ -168,7 +175,7 @@ describe("P3.6 Next Game Recommendation Invariants (BR-REC-01..08, D-MQ..D-MW)",
       .insert(gameLevels)
       .values({
         entityId: randNum + 1,
-        code: `GL-C1-CNT-FREE-${String(crypto.randomInt(1000, 9999))}`,
+        code: "GL-C1-CNT-FREE-0001",
         contentVersion: 1,
         templateId: tmpl.id,
         titleVi: "Đếm táo miễn phí",
@@ -187,7 +194,7 @@ describe("P3.6 Next Game Recommendation Invariants (BR-REC-01..08, D-MQ..D-MW)",
       .insert(gameLevels)
       .values({
         entityId: randNum + 2,
-        code: `GL-C1-CNT-FREE-${String(crypto.randomInt(1000, 9999))}`,
+        code: "GL-C1-CNT-FREE-0002",
         contentVersion: 1,
         templateId: tmpl.id,
         titleVi: "Đếm chuối miễn phí",
@@ -206,7 +213,7 @@ describe("P3.6 Next Game Recommendation Invariants (BR-REC-01..08, D-MQ..D-MW)",
       .insert(gameLevels)
       .values({
         entityId: randNum + 3,
-        code: `GL-C1-CNT-STD-${String(crypto.randomInt(1000, 9999))}`,
+        code: "GL-C1-CNT-STD-0001",
         contentVersion: 1,
         templateId: tmpl.id,
         titleVi: "Đếm cam tiêu chuẩn",
@@ -225,7 +232,7 @@ describe("P3.6 Next Game Recommendation Invariants (BR-REC-01..08, D-MQ..D-MW)",
       .insert(gameLevels)
       .values({
         entityId: randNum + 4,
-        code: `GL-C1-CNT-PREM-${String(crypto.randomInt(1000, 9999))}`,
+        code: "GL-C1-CNT-PREM-0001",
         contentVersion: 1,
         templateId: tmpl.id,
         titleVi: "Đếm dâu cao cấp",

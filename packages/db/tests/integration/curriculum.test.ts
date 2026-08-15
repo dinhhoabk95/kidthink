@@ -224,7 +224,7 @@ describe("Curriculum Schema Integration Tests", () => {
   it("D-MC: curriculum_item_progress enforces unique (enrollment_id, curriculum_item_id) for idempotency", async () => {
     const db = getOwnerDb();
     const uid = Math.floor(Math.random() * 800_000) + 100_000;
-    const curCode = `CUR-${(Math.floor(Math.random() * 800) + 100).toString()}`;
+    const curCode = `CUR-${uid}`;
 
     const [user] = await db
       .insert(users)

@@ -19,6 +19,7 @@ export * from "./healthy-play-limits.js";
 export * from "./ids.js";
 export * from "./legal-summary.js";
 export * from "./lesson-model.js";
+export * from "./lesson-plan.js";
 export * from "./lifecycle.js";
 export * from "./logger.js";
 export * from "./notifications.js";

@@ -6,9 +6,9 @@ import {
 } from "../src/notifications.js";
 
 describe("Notification Registry & Preferences Guard (Task 2 / BR-NOT-01 & BR-NOT-06)", () => {
-  it("has exactly 11 MVP notification types defined as const", () => {
+  it("has exactly 12 defined notification types as const", () => {
     const keys = Object.keys(NOTIFICATION_TYPES);
-    expect(keys).toHaveLength(11);
+    expect(keys).toHaveLength(12);
   });
 
   it("only weekly_progress and content_new are opt-outable", () => {

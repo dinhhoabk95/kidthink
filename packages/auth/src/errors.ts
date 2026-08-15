@@ -231,6 +231,18 @@ export const AUTH_ERROR_DEFINITIONS = {
     status: 409,
     message: "Chỉ có thể huỷ đơn hàng ở trạng thái chờ thanh toán.",
   },
+  ENTITLEMENT_REQUIRED: {
+    status: 403,
+    message: "Tính năng này thuộc gói dịch vụ bổ sung.",
+  },
+  QUOTA_EXCEEDED: {
+    status: 402,
+    message: "Bạn đã dùng hết hạn mức của gói dịch vụ.",
+  },
+  VERSION_CONFLICT: {
+    status: 409,
+    message: "Phiên bản dữ liệu đã thay đổi. Vui lòng tải lại trang.",
+  },
 } as const;
 
 export type AuthErrorCode = keyof typeof AUTH_ERROR_DEFINITIONS;

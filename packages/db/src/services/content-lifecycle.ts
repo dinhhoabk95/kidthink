@@ -13,6 +13,7 @@ import { contentReviewLog } from "../schema/ops.ts";
 import { contentSkillMap } from "../schema/tagging.ts";
 import { skills } from "../schema/taxonomy.ts";
 import { writeAudit } from "./audit.ts";
+import { notifyLessonPlanSourceUpdated } from "./lesson-plan.ts";
 
 export interface TransitionRequest {
   entityType:
@@ -617,7 +618,7 @@ export async function transitionContent(
     checklistSnapshot = await verifyPublishChecklist(req.entityType, itemData);
   }
 
-  return await db.transaction(async (tx) => {
+  const transitionResult = await db.transaction(async (tx) => {
     if (req.toStatus === "published") {
       await archivePreviousPublished(tx, req.entityType, code, req.entityDbId);
     }
@@ -675,6 +676,23 @@ export async function transitionContent(
       reviewLogId: reviewLog.id,
     };
   });
+
+  if (
+    req.toStatus === "published" &&
+    (req.entityType === "lesson" ||
+      req.entityType === "activity" ||
+      req.entityType === "game_level")
+  ) {
+    const entityId = (itemData.entityId as number) || req.entityDbId;
+    await notifyLessonPlanSourceUpdated(
+      req.entityType,
+      entityId,
+      currentVersion,
+      code
+    ).catch(() => undefined);
+  }
+
+  return transitionResult;
 }
 
 export const transitionContentStatus = transitionContent;

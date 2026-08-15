@@ -74,6 +74,12 @@ export const NOTIFICATION_TYPES = {
     optOutAllowed: false,
     recipientType: "manager",
   },
+  lesson_plan_source_updated: {
+    code: "lesson_plan_source_updated",
+    kind: "transactional",
+    optOutAllowed: false,
+    recipientType: "user",
+  },
 } as const satisfies Record<string, NotificationTypeMeta>;
 
 export type NotificationCode = keyof typeof NOTIFICATION_TYPES;

@@ -250,6 +250,26 @@ export const TEMPLATE_REGISTRY: Record<
     plainText: (vars) =>
       `TiniMath System Alert: ${vars.alertTitle}\n${vars.message}`,
   },
+  lesson_plan_source_updated: {
+    requiredVars: ["entity_code", "new_version", "plan_title"],
+    subject: (vars) =>
+      `[TiniMath] Nội dung ${vars.entity_code} trong giáo án "${vars.plan_title}" có bản cập nhật mới`,
+    mjml: (vars) => `
+      <mjml>
+        <mj-body background-color="#f8fafc">
+          <mj-section background-color="#ffffff" border-radius="16px">
+            <mj-column>
+              <mj-text font-size="20px" font-weight="bold" color="#4f46e5">TiniMath</mj-text>
+              <mj-text font-size="16px" font-weight="bold" color="#334155">Cập nhật nội dung giáo án</mj-text>
+              <mj-text font-size="14px" color="#475569">Nội dung <strong>${vars.entity_code}</strong> trong giáo án "<strong>${vars.plan_title}</strong>" vừa được cập nhật lên phiên bản ${vars.new_version}.</mj-text>
+            </mj-column>
+          </mj-section>
+        </mj-body>
+      </mjml>
+    `,
+    plainText: (vars) =>
+      `Nội dung ${vars.entity_code} trong giáo án "${vars.plan_title}" vừa được cập nhật lên phiên bản ${vars.new_version}.`,
+  },
 };
 
 export interface RenderEmailResult {

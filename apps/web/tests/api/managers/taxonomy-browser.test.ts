@@ -7,6 +7,7 @@ import {
   skills,
   strands,
 } from "@kidthink/db";
+import { eq } from "drizzle-orm";
 import { describe, expect, it } from "vitest";
 import handler, {
   invalidateTaxonomyManagerCache,
@@ -122,9 +123,27 @@ describe("Task 5 — GET /api/managers/taxonomy (BR-TXB-01..03, BR-TXB-06, D-IT)
       .onConflictDoNothing()
       .returning();
 
-    const skillId = skillRows[0]?.id;
+    let skillId = skillRows[0]?.id;
+    if (!skillId) {
+      const existingSkill = await db
+        .select()
+        .from(skills)
+        .where(eq(skills.code, "C1.CNT.99"));
+      skillId = existingSkill[0]?.id;
+    }
 
     if (skillId) {
+      // Clean up previous test levels if any
+      await db
+        .delete(contentSkillMap)
+        .where(eq(contentSkillMap.skillId, skillId));
+      await db
+        .delete(gameLevels)
+        .where(eq(gameLevels.code, "GL-C1-CNT-TEST-0001"));
+      await db
+        .delete(gameLevels)
+        .where(eq(gameLevels.code, "GL-C1-CNT-TEST-0002"));
+
       // Insert 1 published level and 1 draft level
       const pubLevel = await db
         .insert(gameLevels)

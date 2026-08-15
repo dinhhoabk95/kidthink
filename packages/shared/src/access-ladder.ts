@@ -99,3 +99,25 @@ export function buildTierLockedResponse(
     preview,
   };
 }
+
+export function canAccessTier(
+  tier: string,
+  activeKeys: string[] = []
+): boolean {
+  if (tier === "free") {
+    return true;
+  }
+  if (tier === "login") {
+    return true;
+  }
+  if (tier === "standard") {
+    return (
+      activeKeys.includes("play_standard_games") ||
+      activeKeys.includes("play_premium_games")
+    );
+  }
+  if (tier === "premium") {
+    return activeKeys.includes("play_premium_games");
+  }
+  return false;
+}
