@@ -1,3 +1,4 @@
+import { eq } from "drizzle-orm";
 import { describe, expect, it } from "vitest";
 import { getOwnerDb, transitionContent } from "../../src/index.ts";
 import {
@@ -74,22 +75,43 @@ async function setupTestEnvironment() {
     .returning();
 
   // 3. Game Template & Level
+  const randNum = Math.floor(Math.random() * 900) + 100;
+  const num4 = (Math.floor(Math.random() * 9000) + 1000).toString();
+  const letters = ["AA", "AB", "AC", "AD", "AE", "AF", "AG", "AH", "AI", "AJ"];
+  const l1 = letters[Math.floor(Math.random() * letters.length)];
+  const l2 = letters[Math.floor(Math.random() * letters.length)];
+  const gtCode = `GT-${randNum}`;
+  const glCode = `GL-C1-${l1}-${l2}-${num4}`;
+
   const [tmpl] = await db
     .insert(gameTemplates)
     .values({
-      code: `GT-${seq.slice(0, 3)}`,
+      code: gtCode,
       nameVi: "Template đếm số",
       mechanic: "tap_select",
     })
+    .onConflictDoUpdate({
+      target: gameTemplates.code,
+      set: { nameVi: "Template đếm số" },
+    })
     .returning();
+
+  const tmplId = tmpl
+    ? tmpl.id
+    : (
+        await db
+          .select({ id: gameTemplates.id })
+          .from(gameTemplates)
+          .where(eq(gameTemplates.code, gtCode))
+      )[0].id;
 
   const [level] = await db
     .insert(gameLevels)
     .values({
-      entityId: Number(seq) * 10,
-      code: `GL-C1-CNT-NUM-${seq}`,
+      entityId: Math.floor(Math.random() * 900_000_000) + 100_000_000,
+      code: glCode,
       contentVersion: 1,
-      templateId: tmpl.id,
+      templateId: tmplId,
       titleVi: "Đếm số lượng 1-5",
       accessTier: "standard",
       ageMin: 3,
