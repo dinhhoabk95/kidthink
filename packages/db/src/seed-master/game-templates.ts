@@ -43,7 +43,35 @@ export async function seedGameTemplatesMasterData(
         status: "active",
         version: template.version,
       })
-      .onConflictDoNothing({ target: gameTemplates.code });
+      .onConflictDoUpdate({
+        target: gameTemplates.code,
+        set: {
+          nameVi: template.name || "",
+          mechanic: template.mechanic,
+          layouts: template.layouts,
+          contentContract:
+            exported.content_contract_json_schema as unknown as Record<
+              string,
+              unknown
+            >,
+          difficultyContract:
+            exported.difficulty_contract_json_schema as unknown as Record<
+              string,
+              unknown
+            >,
+          limits: template.limits as unknown as Record<string, unknown>,
+          ageMin: template.age_min,
+          ageMax: template.age_max,
+          bannedAgeBands: template.banned_age_bands ?? null,
+          requiresTapFallback: template.requires_tap_fallback,
+          assetKinds: template.asset_kinds,
+          scoring: template.scoring as unknown as Record<string, unknown>,
+          events: template.events,
+          engineSession: template.engine_session,
+          status: "active",
+          version: template.version,
+        },
+      });
 
     count++;
   }

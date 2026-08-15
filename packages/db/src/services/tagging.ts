@@ -26,6 +26,9 @@ const MECHANIC_TAG_MAP: Record<string, string> = {
   "sort-groups": "matching",
   "pair-match": "matching",
   "sequence-order": "sequence_order",
+  match: "matching",
+  tap: "tap_select",
+  drag: "drag_drop",
 };
 
 export function normalizeMechanicTagCode(code?: string): string | undefined {
