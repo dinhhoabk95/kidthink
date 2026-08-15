@@ -9,6 +9,8 @@ export const AI_FEATURE_COSTS = {
   lesson_plan_generation: 2,
 } as const;
 
+export const CREDIT_COST_MAP = AI_FEATURE_COSTS;
+
 export type AiFeatureKey = keyof typeof AI_FEATURE_COSTS;
 
 export const AI_CREDIT_REASONS = [

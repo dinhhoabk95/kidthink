@@ -133,7 +133,7 @@ describe("Personal Curriculum API Endpoints (Task #65 / P4.4)", () => {
       },
     ]);
 
-    invalidateUserEntitlementsCache(userAId);
+    await invalidateUserEntitlementsCache(userAId);
 
     // 2. Seed child profiles
     const [cA] = await db

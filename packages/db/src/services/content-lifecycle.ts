@@ -1,7 +1,12 @@
 import type { ContentLifecycleStatus, ManagerRole } from "@kidthink/shared";
-import { canTransition, validatePublishChecklist } from "@kidthink/shared";
+import {
+  canTransition,
+  DEFAULT_EMBEDDING_MODEL,
+  validatePublishChecklist,
+} from "@kidthink/shared";
 import { and, asc, desc, eq, inArray, ne, or, sql } from "drizzle-orm";
 import { getOwnerDb } from "../client.ts";
+import { contentEmbeddings } from "../schema/ai.ts";
 import {
   activities,
   lessonActivities,
@@ -17,6 +22,7 @@ import { gameLevels } from "../schema/game.ts";
 import { contentReviewLog } from "../schema/ops.ts";
 import { contentSkillMap } from "../schema/tagging.ts";
 import { skills } from "../schema/taxonomy.ts";
+import { aiProvider } from "./ai-provider.ts";
 import { writeAudit } from "./audit.ts";
 import { notifyLessonPlanSourceUpdated } from "./lesson-plan.ts";
 
@@ -674,39 +680,74 @@ async function fetchEntityDataForTransition(
   );
 }
 
-export async function transitionContent(
-  req: TransitionRequest
-): Promise<TransitionResult> {
-  validateTransitionPreconditions(req);
-
-  const db = getOwnerDb();
-  const { currentStatus, currentVersion, code, itemData } =
-    await fetchEntityDataForTransition(db, req.entityType, req.entityDbId);
-
+async function handlePostPublishEffects(
+  req: TransitionRequest,
+  itemData: Record<string, unknown>,
+  currentVersion: number,
+  code: string
+): Promise<void> {
   if (
-    req.expectedVersion !== undefined &&
-    currentVersion !== req.expectedVersion
+    req.toStatus !== "published" ||
+    (req.entityType !== "lesson" &&
+      req.entityType !== "activity" &&
+      req.entityType !== "game_level")
   ) {
-    throw new LifecycleError(
-      `VERSION_CONFLICT: Expected version ${req.expectedVersion} but found ${currentVersion}`,
-      "VERSION_CONFLICT",
-      409
-    );
+    return;
   }
 
-  validateMatrixAndRole(currentStatus, req.toStatus, req.actorRole);
+  const entityId = (itemData.entityId as number) || req.entityDbId;
+  await notifyLessonPlanSourceUpdated(
+    req.entityType,
+    entityId,
+    currentVersion,
+    code
+  ).catch(() => undefined);
 
-  // BR-PUB-05: Check if content is referenced in active published curriculum when archiving
-  if (req.toStatus === "archived") {
-    await checkContentInUse(req.entityType, req.entityDbId);
+  if (req.entityType === "game_level" || req.entityType === "lesson") {
+    const textToEmbed = `${itemData.titleVi || ""} ${itemData.instructionVi || itemData.summaryVi || ""} ${code}`;
+    const vector = await aiProvider
+      .generateEmbedding(textToEmbed.trim() || code)
+      .catch(() => null);
+    if (vector) {
+      const db = getOwnerDb();
+      await db
+        .insert(contentEmbeddings)
+        .values({
+          contentType: req.entityType,
+          contentId: req.entityDbId,
+          contentVersion: currentVersion,
+          model: DEFAULT_EMBEDDING_MODEL,
+          embedding: vector,
+          chunkIndex: 0,
+          chunkText: textToEmbed.trim() || code,
+        })
+        .onConflictDoUpdate({
+          target: [
+            contentEmbeddings.contentType,
+            contentEmbeddings.contentId,
+            contentEmbeddings.contentVersion,
+            contentEmbeddings.model,
+            contentEmbeddings.chunkIndex,
+          ],
+          set: {
+            embedding: vector,
+            chunkText: textToEmbed.trim() || code,
+          },
+        })
+        .catch(() => undefined);
+    }
   }
+}
 
-  let checklistSnapshot: Record<string, unknown> | undefined;
-  if (req.toStatus === "published") {
-    checklistSnapshot = await verifyPublishChecklist(req.entityType, itemData);
-  }
-
-  const transitionResult = await db.transaction(async (tx) => {
+async function executeTransitionTransaction(
+  db: ReturnType<typeof getOwnerDb>,
+  req: TransitionRequest,
+  currentStatus: ContentLifecycleStatus,
+  currentVersion: number,
+  code: string,
+  checklistSnapshot?: Record<string, unknown>
+): Promise<TransitionResult> {
+  return await db.transaction(async (tx) => {
     if (req.toStatus === "published") {
       await archivePreviousPublished(tx, req.entityType, code, req.entityDbId);
     }
@@ -764,21 +805,49 @@ export async function transitionContent(
       reviewLogId: reviewLog.id,
     };
   });
+}
+
+export async function transitionContent(
+  req: TransitionRequest
+): Promise<TransitionResult> {
+  validateTransitionPreconditions(req);
+
+  const db = getOwnerDb();
+  const { currentStatus, currentVersion, code, itemData } =
+    await fetchEntityDataForTransition(db, req.entityType, req.entityDbId);
 
   if (
-    req.toStatus === "published" &&
-    (req.entityType === "lesson" ||
-      req.entityType === "activity" ||
-      req.entityType === "game_level")
+    req.expectedVersion !== undefined &&
+    currentVersion !== req.expectedVersion
   ) {
-    const entityId = (itemData.entityId as number) || req.entityDbId;
-    await notifyLessonPlanSourceUpdated(
-      req.entityType,
-      entityId,
-      currentVersion,
-      code
-    ).catch(() => undefined);
+    throw new LifecycleError(
+      `VERSION_CONFLICT: Expected version ${req.expectedVersion} but found ${currentVersion}`,
+      "VERSION_CONFLICT",
+      409
+    );
   }
+
+  validateMatrixAndRole(currentStatus, req.toStatus, req.actorRole);
+
+  if (req.toStatus === "archived") {
+    await checkContentInUse(req.entityType, req.entityDbId);
+  }
+
+  let checklistSnapshot: Record<string, unknown> | undefined;
+  if (req.toStatus === "published") {
+    checklistSnapshot = await verifyPublishChecklist(req.entityType, itemData);
+  }
+
+  const transitionResult = await executeTransitionTransaction(
+    db,
+    req,
+    currentStatus,
+    currentVersion,
+    code,
+    checklistSnapshot
+  );
+
+  await handlePostPublishEffects(req, itemData, currentVersion, code);
 
   return transitionResult;
 }

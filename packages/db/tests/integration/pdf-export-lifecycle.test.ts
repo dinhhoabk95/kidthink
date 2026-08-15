@@ -20,14 +20,10 @@ describe("Task P4.2 — PDF Export Lifecycle Integration Tests (BR-PDF-01..09)",
   let testPlanUuid: string;
 
   beforeEach(async () => {
-    await db.delete(exportJobs);
-    await db.delete(lessonPlanItems);
-    await db.delete(lessonPlans);
-
     const [user] = await db
       .insert(users)
       .values({
-        email: `teacher-lifecycle-${Date.now()}@example.com`,
+        email: `teacher-lifecycle-${Date.now()}-${Math.random().toString(36).slice(2, 8)}@example.com`,
         passwordHash: "hash123",
         displayName: "Cô Giáo Lifecycle",
       })

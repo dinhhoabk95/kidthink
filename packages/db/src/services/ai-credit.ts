@@ -532,3 +532,53 @@ export async function listCreditTransactions(
     total: countRow?.count ?? 0,
   };
 }
+
+export const grantAiCredits = (params: {
+  userId: number;
+  amount: number;
+  reason: AiCreditReason;
+  feature?: string;
+  refType?: string;
+  refId?: string;
+  grantReason?: string;
+}) =>
+  grantCredits({
+    userId: params.userId,
+    delta: params.amount,
+    reason: params.reason,
+    feature: params.feature,
+    refType: params.refType,
+    refId: params.refId,
+    grantReason: params.grantReason,
+  });
+
+export const debitAiCredits = (params: {
+  userId: number;
+  amount: number;
+  feature: string;
+  refType?: string;
+  refId?: string;
+  idempotencyKey?: string;
+}) =>
+  debitCredits({
+    userId: params.userId,
+    cost: params.amount,
+    feature: params.feature,
+    refType: params.refType,
+    refId: params.refId,
+    idempotencyKey: params.idempotencyKey,
+  });
+
+export const refundAiCredits = (params: {
+  userId: number;
+  amount: number;
+  refType?: string;
+  refId?: string;
+  grantReason?: string;
+}) =>
+  refundCredits({
+    userId: params.userId,
+    cost: params.amount,
+    debitRefId: params.refId,
+    reason: params.grantReason,
+  });

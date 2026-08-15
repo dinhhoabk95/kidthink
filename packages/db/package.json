@@ -11,6 +11,7 @@
     "@kidthink/auth": "workspace:*",
     "@kidthink/emoji": "workspace:*",
     "@kidthink/game-engine": "workspace:*",
+    "@kidthink/moderation": "workspace:*",
     "@kidthink/queue": "workspace:*",
     "@kidthink/shared": "workspace:*",
     "@kidthink/storage": "workspace:*",

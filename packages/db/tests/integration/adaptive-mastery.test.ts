@@ -73,7 +73,8 @@ describe("P3.5 Adaptive & Mastery Integration Tests (PostgreSQL)", () => {
         .returning();
     }
 
-    const skillCode = `C1.CNT.${String((ts % 90) + 10).padStart(2, "0")}`;
+    const skillRand = Math.floor(Math.random() * 89 + 10);
+    const skillCode = `C1.CNT.${String(skillRand).padStart(2, "0")}`;
     let [skill] = await db
       .select()
       .from(skills)

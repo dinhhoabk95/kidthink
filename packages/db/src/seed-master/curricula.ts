@@ -176,6 +176,16 @@ async function upsertCurriculumRecord(
       authoredIn: "repo_seed",
       publishedAt: cfg.status === "published" ? new Date() : null,
     })
+    .onConflictDoUpdate({
+      target: [curricula.code, curricula.contentVersion],
+      set: {
+        titleVi: cfg.titleVi,
+        descriptionVi: cfg.descriptionVi,
+        accessTier: cfg.accessTier,
+        status: cfg.status,
+        updatedAt: new Date(),
+      },
+    })
     .returning({ id: curricula.id });
 
   return { curriculumId: inserted.id, isNew: true };

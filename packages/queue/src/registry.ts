@@ -184,6 +184,18 @@ export const JOB_REGISTRY: readonly JobDefinition[] = [
       backoffDelayMs: 5000,
     },
   },
+  {
+    name: "embed:content",
+    schedule: "event",
+    idempotencyKeyFormat: "content_type:content_id:content_version:model",
+    timeoutSeconds: 30,
+    ownerStep: "P4.8",
+    retryPolicy: {
+      maxAttempts: 3,
+      backoffType: "exponential",
+      backoffDelayMs: 5000,
+    },
+  },
 ] as const;
 
 export type RegisteredJobName = (typeof JOB_REGISTRY)[number]["name"];
@@ -235,6 +247,7 @@ export function validateJobRegistryConsumers(
     "P2.4",
     "P2.7",
     "P4.2",
+    "P4.8",
   ];
 
   const currentIdx = stepOrder.indexOf(currentSequenceStep);

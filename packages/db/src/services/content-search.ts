@@ -502,3 +502,35 @@ export async function searchLessons(
     no_store: hasPaidOrLockedContent,
   };
 }
+
+/**
+ * Helper for fallback base search across published content.
+ */
+export async function searchContentPublished(
+  query: string,
+  options?: { limit?: number; userTier?: AccessTier }
+) {
+  const db = (await import("../client.ts")).getDb();
+  const limit = options?.limit ?? 10;
+  const userTier = options?.userTier ?? "free";
+  const gameRes = await searchGameLevels(
+    db,
+    { q: query, limit, status: "published" },
+    { role: "user", userPackage: userTier }
+  );
+
+  return {
+    items: gameRes.items.map((it) => ({
+      id: it.id,
+      contentType: "game_level",
+      code: it.code,
+      titleVi: it.title_vi,
+      instructionVi: it.instruction_vi,
+      ageMin: it.age_min ?? 3,
+      ageMax: it.age_max ?? 6,
+      difficulty: it.difficulty ?? 1,
+      accessTier: it.access_tier,
+      rank: 1,
+    })),
+  };
+}

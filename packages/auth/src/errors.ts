@@ -247,6 +247,10 @@ export const AUTH_ERROR_DEFINITIONS = {
     status: 409,
     message: "Phiên bản dữ liệu đã thay đổi. Vui lòng tải lại trang.",
   },
+  MODERATION_BLOCKED: {
+    status: 422,
+    message: "Nội dung không qua được bộ lọc kiểm duyệt an toàn.",
+  },
 } as const;
 
 export type AuthErrorCode = keyof typeof AUTH_ERROR_DEFINITIONS;

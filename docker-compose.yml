@@ -12,7 +12,7 @@
 
 services:
   db:
-    image: postgres:17-alpine
+    image: pgvector/pgvector:pg17
     restart: unless-stopped
     # Bind loopback: app Node chạy trên host nên không cần lộ ra LAN.
     # "5433:5432" bind 0.0.0.0 — với creds postgres/postgres thì bất kỳ máy nào

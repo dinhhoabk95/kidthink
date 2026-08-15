@@ -2,7 +2,7 @@
 spec: SEMANTIC-SEARCH
 title: Tìm kiếm ngữ nghĩa bằng vector embedding
 area: addon
-status: approved
+status: implemented
 mvp: false
 phase: P4
 reviewed: 2026-08-08

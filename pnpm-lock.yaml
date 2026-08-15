@@ -355,6 +355,9 @@ importers:
       '@kidthink/game-engine':
         specifier: workspace:*
         version: link:../game-engine
+      '@kidthink/moderation':
+        specifier: workspace:*
+        version: link:../moderation
       '@kidthink/queue':
         specifier: workspace:*
         version: link:../queue

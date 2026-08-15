@@ -174,11 +174,11 @@ hai contract: giữ ≥60 lesson có tái sử dụng, hoặc nhận đề xuấ
 
 Chỉ bắt đầu khi P0–P3 `implemented`. Mỗi add-on **lên catalog cùng lúc với tính năng của nó**.
 
-- [ ] [`ai-credit-ledger.md`](../specs/07-addon/ai-credit-ledger.md) → [`ai-assistant.md`](../specs/07-addon/ai-assistant.md) — chặn bởi: provider và model AI, tỉ lệ trừ credit, DPA pháp lý
-- [ ] [`worksheet-model.md`](../specs/05-content/worksheet-model.md) · [`lesson-plan-creator.md`](../specs/07-addon/lesson-plan-creator.md) → [`pdf-export.md`](../specs/07-addon/pdf-export.md) — chặn bởi: Puppeteer ~300MB RAM có chạy nổi trên t3.small không
-- [ ] [`custom-game-builder.md`](../specs/07-addon/custom-game-builder.md) · [`personal-curriculum.md`](../specs/07-addon/personal-curriculum.md) — chặn bởi: quota
-- [ ] [`semantic-search.md`](../specs/07-addon/semantic-search.md) — **chặn migration**: `N` của cột `vector` phụ thuộc embedding model, đổi `N` là đổi migration
-- [ ] Chín câu hỏi giá/quota ở [`CORPUS-CLOSURE.md`](CORPUS-CLOSURE.md) đã chốt trước khi lên catalog
+- [x] [`ai-credit-ledger.md`](../specs/07-addon/ai-credit-ledger.md) → [`ai-assistant.md`](../specs/07-addon/ai-assistant.md) — chặn bởi: provider và model AI, tỉ lệ trừ credit, DPA pháp lý
+- [x] [`worksheet-model.md`](../specs/05-content/worksheet-model.md) · [`lesson-plan-creator.md`](../specs/07-addon/lesson-plan-creator.md) → [`pdf-export.md`](../specs/07-addon/pdf-export.md) — chặn bởi: Puppeteer ~300MB RAM có chạy nổi trên t3.small không
+- [x] [`custom-game-builder.md`](../specs/07-addon/custom-game-builder.md) · [`personal-curriculum.md`](../specs/07-addon/personal-curriculum.md) — chặn bởi: quota
+- [x] [`semantic-search.md`](../specs/07-addon/semantic-search.md) — **chặn migration**: `N` của cột `vector` phụ thuộc embedding model, đổi `N` là đổi migration
+- [x] Chín câu hỏi giá/quota ở [`CORPUS-CLOSURE.md`](CORPUS-CLOSURE.md) đã chốt trước khi lên catalog
 
 ## P5 — Web scale, 1 spec hiện có
 

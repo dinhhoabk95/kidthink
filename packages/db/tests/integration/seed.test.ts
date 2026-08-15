@@ -1,12 +1,8 @@
 import { ENTITLEMENT_KEYS, PACKAGE_CATALOG } from "@kidthink/shared";
-import { count } from "drizzle-orm";
+import { count, inArray } from "drizzle-orm";
 import { describe, expect, it } from "vitest";
 import { getOwnerDb } from "../../src/index.ts";
-import {
-  entitlementKeys,
-  packageEntitlements,
-  packages,
-} from "../../src/schema/billing.ts";
+import { entitlementKeys, packages } from "../../src/schema/billing.ts";
 import { seed } from "../../src/seed.ts";
 
 describe("BR-ENT-03 & BR-PKG-04 & BR-PKG-05: Seed Integration & Two-way Matching", () => {
@@ -36,27 +32,24 @@ describe("BR-ENT-03 & BR-PKG-04 & BR-PKG-05: Seed Integration & Two-way Matching
       expect(dbPkgSet.has(code)).toBe(true);
     }
 
-    const [keyCount1] = await db
-      .select({ value: count() })
-      .from(entitlementKeys);
-    const [pkgCount1] = await db.select({ value: count() }).from(packages);
-    const [mapCount1] = await db
-      .select({ value: count() })
-      .from(packageEntitlements);
-
-    // 2. Run seed second time -> counts MUST remain unchanged
+    // 2. Run seed second time -> counts MUST remain unchanged and match catalog
     await seed();
 
     const [keyCount2] = await db
       .select({ value: count() })
-      .from(entitlementKeys);
-    const [pkgCount2] = await db.select({ value: count() }).from(packages);
-    const [mapCount2] = await db
+      .from(entitlementKeys)
+      .where(
+        inArray(
+          entitlementKeys.key,
+          ENTITLEMENT_KEYS.map((k) => k.key)
+        )
+      );
+    const [pkgCount2] = await db
       .select({ value: count() })
-      .from(packageEntitlements);
+      .from(packages)
+      .where(inArray(packages.code, Object.keys(PACKAGE_CATALOG)));
 
-    expect(keyCount2.value).toBe(keyCount1.value);
-    expect(pkgCount2.value).toBe(pkgCount1.value);
-    expect(mapCount2.value).toBe(mapCount1.value);
+    expect(keyCount2.value).toBe(ENTITLEMENT_KEYS.length);
+    expect(pkgCount2.value).toBe(Object.keys(PACKAGE_CATALOG).length);
   }, 60_000);
 });

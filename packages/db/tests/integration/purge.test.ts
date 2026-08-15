@@ -14,7 +14,7 @@ import { telemetryEvents } from "../../src/schema/play.ts";
 describe("Purge and Anonymization Integration Tests — Task 10", () => {
   it("BR-CDC-10 & BR-SPT-04: deletion request, grace period check, hard purge, and telemetry anonymization", async () => {
     const db = getOwnerDb();
-    const email = `purge-user-${Date.now()}@example.com`;
+    const email = `purge-user-${Date.now()}-${Math.random().toString(36).slice(2, 8)}@example.com`;
 
     // 1. Create parent User
     const [u] = await db
