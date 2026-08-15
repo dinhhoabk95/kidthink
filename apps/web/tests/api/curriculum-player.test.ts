@@ -84,6 +84,8 @@ describe("Curriculum Player Suite — P3.4 (BR-CUR-01..10, D-MA..D-MG)", () => {
       })
       .returning();
 
+    await invalidateUserEntitlementsCache(user.id);
+
     const [child] = await db
       .insert(childProfiles)
       .values({

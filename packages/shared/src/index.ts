@@ -25,6 +25,7 @@ export * from "./notifications.js";
 export * from "./offline-activities.js";
 export * from "./payment-state-machine.js";
 export * from "./pedagogical-evidence.js";
+export * from "./program-showcase.js";
 export * from "./public-seo.js";
 export * from "./publish-checklist.js";
 export * from "./rate-limit-middleware.js";

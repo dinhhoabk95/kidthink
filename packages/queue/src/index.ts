@@ -134,6 +134,8 @@ export function enqueue<T extends JobName>(
   });
 }
 
+export const enqueueJob = enqueue;
+
 export async function disconnectQueue(): Promise<void> {
   if (queue) {
     await queue.close();

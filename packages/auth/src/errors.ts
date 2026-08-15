@@ -83,6 +83,10 @@ export const AUTH_ERROR_DEFINITIONS = {
     status: 410,
     message: "Phiên chơi đã hết hạn.",
   },
+  CONTENT_ARCHIVED: {
+    status: 410,
+    message: "Nội dung này đã ngừng phát hành.",
+  },
   EVENT_OUT_OF_ORDER: {
     status: 409,
     message: "Thứ tự sự kiện không hợp lệ.",

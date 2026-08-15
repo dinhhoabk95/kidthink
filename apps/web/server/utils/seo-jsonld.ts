@@ -113,26 +113,40 @@ export function buildFaqPageJsonLd(items: readonly FaqItem[] = FAQ_ITEMS) {
 }
 
 /**
- * Product JSON-LD for Packages
+ * BR-PSH-04: Course JSON-LD for Program / Curriculum
  */
-export function buildProductJsonLd(pkg: {
-  sku: string;
-  name: string;
-  description: string;
-  price_vnd: number;
-}) {
+export interface ProgramCourseSeoData {
+  code: string;
+  title: string;
+  description?: string;
+  target_age: { min: number; max: number };
+  duration_weeks: number;
+  access_tier?: string;
+}
+
+export function buildCourseJsonLd(program: ProgramCourseSeoData) {
+  const isFree = program.access_tier === "free";
   return {
     "@context": "https://schema.org",
-    "@type": "Product",
-    name: pkg.name,
-    description: pkg.description,
-    sku: pkg.sku,
-    offers: {
-      "@type": "Offer",
-      url: `${SITE_URL}/#goi-hoc`,
-      priceCurrency: "VND",
-      price: pkg.price_vnd,
-      availability: "https://schema.org/InStock",
+    "@type": "Course",
+    name: program.title,
+    description:
+      program.description ||
+      `Chương trình phát triển tư duy ${program.duration_weeks} tuần cho trẻ ${program.target_age.min}–${program.target_age.max} tuổi`,
+    courseCode: program.code,
+    educationalLevel: `Trẻ mầm non ${program.target_age.min}–${program.target_age.max} tuổi`,
+    inLanguage: "vi-VN",
+    isAccessibleForFree: isFree,
+    provider: {
+      "@type": "Organization",
+      name: BRAND_NAME,
+      url: SITE_URL,
+    },
+    url: `${SITE_URL}/programs/${program.code}`,
+    hasCourseInstance: {
+      "@type": "CourseInstance",
+      courseMode: "online",
+      duration: `P${program.duration_weeks}W`,
     },
   };
 }

@@ -1,25 +1,49 @@
-import { INDEXABLE_AGE_BANDS } from "@kidthink/shared";
+import { curricula, getOwnerDb } from "@kidthink/db";
+import { eq } from "drizzle-orm";
 import { defineEventHandler, setHeader } from "h3";
 
-export default defineEventHandler((event) => {
+export default defineEventHandler(async (event) => {
   setHeader(event, "Content-Type", "application/xml; charset=utf-8");
   setHeader(event, "Cache-Control", "public, max-age=3600");
 
   const siteUrl = process.env.NUXT_PUBLIC_SITE_URL || "https://kidthink.vn";
   const now = new Date().toISOString().split("T")[0];
 
-  const urlsXml = INDEXABLE_AGE_BANDS.map(
-    (band) => `  <url>
-    <loc>${siteUrl}/games?age_band=${band}</loc>
-    <lastmod>${now}</lastmod>
+  let programs: Array<{ code: string; updatedAt: Date | null }> = [];
+  try {
+    const db = getOwnerDb();
+    programs = await db
+      .select({
+        code: curricula.code,
+        updatedAt: curricula.updatedAt,
+      })
+      .from(curricula)
+      .where(eq(curricula.status, "published"));
+  } catch (_err) {
+    programs = [];
+  }
+
+  const programUrls = programs.map(
+    (p) => `  <url>
+    <loc>${siteUrl}/programs/${p.code}</loc>
+    <lastmod>${(p.updatedAt || new Date()).toISOString().split("T")[0]}</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
   </url>`
-  ).join("\n");
+  );
+
+  const mainUrl = `  <url>
+    <loc>${siteUrl}/programs</loc>
+    <lastmod>${now}</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+  </url>`;
+
+  const allUrlsXml = [mainUrl, ...programUrls].join("\n");
 
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-${urlsXml}
+${allUrlsXml}
 </urlset>`;
 
   return xml.trim();

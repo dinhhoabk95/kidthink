@@ -8,7 +8,7 @@ import {
 import { and, eq } from "drizzle-orm";
 import { createError, defineEventHandler, getRouterParam, readBody } from "h3";
 import { z } from "zod";
-import { requireManagerSession } from "../../../../../../utils/admin-auth-runtime.js";
+import { requireManagerSession } from "../../../../../utils/admin-auth-runtime.js";
 
 const putActivitiesSchema = z.object({
   items: z.array(

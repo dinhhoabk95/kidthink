@@ -143,6 +143,7 @@ Mọi handler API. Mọi spec khai báo mã lỗi phải đăng ký ở đây.
 | `INVALID_CODE_FORMAT` | 400 | Sai regex |
 | `CODE_ALREADY_EXISTS` | 409 | Trùng mã |
 | `CODE_ALLOCATION_FAILED` | 500 | Cấp mã ID mới thất bại sau 3 lần retry do trùng ([`id-conventions.md`](id-conventions.md)) |
+| `CONTENT_ARCHIVED` | 410 | Chương trình hoặc nội dung đã ngừng phát hành ([`program-showcase.md`](../02-public/program-showcase.md)) |
 
 ### 7.5 Chơi
 

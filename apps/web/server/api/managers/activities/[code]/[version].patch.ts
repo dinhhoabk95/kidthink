@@ -3,13 +3,14 @@ import {
   contentSkillMap,
   gameLevels,
   getOwnerDb,
+  isEnabled as isFeatureEnabled,
   writeAudit,
 } from "@kidthink/db";
-import { isFeatureEnabled, updateActivityFormSchema } from "@kidthink/shared";
+import { updateActivityFormSchema } from "@kidthink/shared";
 import { and, eq } from "drizzle-orm";
 import { createError, defineEventHandler, getRouterParam, readBody } from "h3";
 import type { z } from "zod";
-import { requireManagerSession } from "../../../../../utils/admin-auth-runtime.js";
+import { requireManagerSession } from "../../../../utils/admin-auth-runtime.js";
 
 type UpdateActivityInput = z.infer<typeof updateActivityFormSchema>;
 

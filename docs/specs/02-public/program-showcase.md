@@ -2,7 +2,7 @@
 spec: PROGRAM-SHOWCASE
 title: Trưng bày chương trình học
 area: public
-status: approved
+status: implemented
 mvp: true
 phase: P3
 reviewed: 2026-08-08
@@ -75,21 +75,62 @@ Guest · User.
 
 ### 7.2 Nhóm chương trình
 
-| Nhóm | Ví dụ |
-|---|---|
-| Theo tuổi | 3 · 4 · 5 · 6 tuổi |
-| Theo năng lực | Logic · Không gian |
-| Chuyên đề | Sẵn sàng vào lớp 1 |
+| Nhóm (`ShowcaseGroup`) | Diễn giải | Nguồn dữ liệu |
+|---|---|---|
+| `age` | Theo độ tuổi (3, 4, 5, 6 tuổi) | `program_type = 'age_based'` |
+| `journey` | Hành trình phát triển toàn diện 42 tuần | `program_type = 'journey'` |
+| `competency` | Theo năng lực trọng tâm (C1–C6) | Bổ sung khi có chương trình chuyên sâu |
+| `topic` | Chuyên đề chuẩn bị vào lớp 1 | Bổ sung khi có chương trình chuyên sâu |
+
+### 7.3 Public DTO Types (D-NF, D-NH)
+
+```ts
+export type ShowcaseGroup = "age" | "journey" | "competency" | "topic";
+
+export interface ProgramCardPublic {
+  code: string;
+  title: string;
+  description: string;
+  group: ShowcaseGroup;
+  target_age: { min: number; max: number };
+  duration_weeks: number;
+  sessions_per_week: number;
+  access_tier: "free" | "login" | "standard" | "premium";
+}
+
+export interface ProgramWeekPublic {
+  week_no: number;
+  goal: string;
+  session_count: number;
+  item_count: number;
+  items?: Array<{
+    entity_type: "lesson" | "game_level";
+    code: string;
+    title: string;
+    estimated_minutes: number;
+    access_tier: "free" | "login" | "standard" | "premium";
+  }>;
+}
+
+export interface ProgramDetailPublic extends ProgramCardPublic {
+  competency_distribution: Array<{ code: string; label: string; share: number }>;
+  weeks: ProgramWeekPublic[];
+}
+```
 
 ## 8. API contract
 
 ### `GET /api/guest/curricula`
 
-200 → danh sách kèm metadata. Cache `public, max-age=600`.
+200 → danh sách nhóm chương trình công khai.
+Header: `Cache-Control: public, max-age=600`.
+Body: `{ groups: Array<{ code: ShowcaseGroup; label: string; programs: ProgramCardPublic[] }> }`.
 
 ### `GET /api/guest/curricula/{code}`
 
-200 → tổng quan + 2 tuần đầu chi tiết + phần còn lại tóm tắt. 410 nếu archived.
+- 200 → `ProgramDetailPublic` (tuần 1–2 chi tiết danh sách item, tuần 3+ chỉ summary goal/count, không có `items`). Header: `Cache-Control: public, max-age=600`.
+- 404 → `NOT_FOUND` nếu code không tồn tại hoặc chưa published.
+- 410 → `CONTENT_ARCHIVED` nếu chương trình đã lưu trữ, kèm danh sách gợi ý chương trình thay thế an toàn. Header: `Cache-Control: public, max-age=600`.
 
 ## 9. Acceptance criteria
 

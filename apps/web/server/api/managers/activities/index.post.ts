@@ -3,9 +3,10 @@ import {
   contentSkillMap,
   gameLevels,
   getOwnerDb,
+  isEnabled as isFeatureEnabled,
   writeAudit,
 } from "@kidthink/db";
-import { activityFormSchema, isFeatureEnabled } from "@kidthink/shared";
+import { activityFormSchema } from "@kidthink/shared";
 import { eq } from "drizzle-orm";
 import {
   createError,
