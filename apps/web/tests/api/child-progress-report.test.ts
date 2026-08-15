@@ -47,6 +47,8 @@ describe("Adult Progress & Mastery Report API (BR-PRG-05, BR-PRG-08, D-MO)", () 
       .values({ email: `no_ent_${ts}@test.com`, displayName: "User No Ent" })
       .returning();
 
+    await invalidateUserEntitlementsCache(user.id);
+
     const [child] = await db
       .insert(childProfiles)
       .values({
