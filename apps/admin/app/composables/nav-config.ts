@@ -53,6 +53,14 @@ export const MANAGER_NAV_ITEMS: readonly ManagerNavItem[] = [
     badge: "P3.1",
   },
   {
+    id: "activities",
+    label: "Hoạt động (Activities)",
+    href: "/activities",
+    icon: "🧩",
+    roles: ["super_admin", "content_reviewer"],
+    badge: "P3.2",
+  },
+  {
     id: "curriculum",
     label: "Khung chương trình",
     href: "/curriculum",

@@ -52,6 +52,14 @@ export const CODE_FEATURE_FLAGS: Record<string, FeatureFlagDefinition> = {
     expiresAt: "2027-06-30T23:59:59.000Z",
     safeDefaultReason: "Mặc định bật để thu hút và tiếp cận người dùng mới",
   },
+  worksheet_activity: {
+    key: "worksheet_activity",
+    nameVi: "Hoạt động phiếu bài tập (Worksheet)",
+    descriptionVi: "Cho phép tạo và liên kết hoạt động dạng phiếu bài tập PDF",
+    defaultValue: false,
+    expiresAt: "2027-12-31T23:59:59.000Z",
+    safeDefaultReason: "Tính năng worksheet thuộc Phase 4, mặc định tắt ở MVP",
+  },
 };
 
 export type FeatureFlagKey = keyof typeof CODE_FEATURE_FLAGS;

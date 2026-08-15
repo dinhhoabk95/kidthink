@@ -1,4 +1,10 @@
-import { contentSkillMap, gameLevels, getOwnerDb, lessons } from "@kidthink/db";
+import {
+  activities,
+  contentSkillMap,
+  gameLevels,
+  getOwnerDb,
+  lessons,
+} from "@kidthink/db";
 import { and, desc, eq, type SQL } from "drizzle-orm";
 import { defineEventHandler, getQuery } from "h3";
 import {
@@ -191,6 +197,62 @@ async function fetchLessonReviewQueue(
   }));
 }
 
+async function fetchActivityReviewQueue(
+  db: ReturnType<typeof getOwnerDb>,
+  options: {
+    filterManagerId?: number;
+    filterOrigin?: string;
+    filterAuthoredIn?: string;
+    limit: number;
+  }
+): Promise<ReviewQueueItem[]> {
+  const conditions: SQL<unknown>[] = [
+    eq(activities.status, "in_review"),
+    eq(activities.authoredIn, "studio"),
+  ];
+
+  if (options.filterManagerId) {
+    conditions.push(eq(activities.createdByManagerId, options.filterManagerId));
+  }
+  if (options.filterOrigin) {
+    conditions.push(
+      eq(
+        activities.origin,
+        options.filterOrigin as typeof activities.$inferSelect.origin
+      )
+    );
+  }
+  if (options.filterAuthoredIn) {
+    conditions.push(
+      eq(
+        activities.authoredIn,
+        options.filterAuthoredIn as typeof activities.$inferSelect.authoredIn
+      )
+    );
+  }
+
+  const rows = await db
+    .select()
+    .from(activities)
+    .where(and(...conditions))
+    .orderBy(desc(activities.createdAt))
+    .limit(options.limit);
+
+  return rows.map((r) => ({
+    id: r.id,
+    entity_type: "activity",
+    code: r.code,
+    version: r.contentVersion,
+    title: r.titleVi,
+    origin: r.origin,
+    authored_in: r.authoredIn,
+    created_by_manager_id: r.createdByManagerId,
+    waiting_since: r.updatedAt.toISOString(),
+    priority_score: r.contentVersion > 1 ? 30 : 10,
+    priority_tier: r.contentVersion > 1 ? 3 : 4,
+  }));
+}
+
 export default defineEventHandler(async (event) => {
   try {
     await requireManagerSession(event);
@@ -230,6 +292,16 @@ export default defineEventHandler(async (event) => {
         limit,
       });
       items.push(...lessonItems);
+    }
+
+    if (!filterType || filterType === "activity") {
+      const activityItems = await fetchActivityReviewQueue(db, {
+        filterManagerId,
+        filterOrigin,
+        filterAuthoredIn,
+        limit,
+      });
+      items.push(...activityItems);
     }
 
     // Sort by priority_score descending (Tier 2 (40) > Tier 3 (30) > Tier 4 (10))

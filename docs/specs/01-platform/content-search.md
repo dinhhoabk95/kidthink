@@ -38,6 +38,7 @@ Ba bề mặt, cùng một bộ lọc, khác nhau ở **phạm vi quyền** và 
 | `GET /api/guest/levels` | Catalog công khai |
 | `GET /api/users/levels` | Có ngữ cảnh quyền |
 | `GET /api/managers/levels` | Mọi trạng thái |
+| `GET /api/managers/activities` | Mọi trạng thái, phục vụ studio & thư viện activity (`D-LM`) |
 | `GET /api/{ns}/lessons` · `/curricula` | Cùng bộ lọc |
 
 ## 4. Main flow
@@ -76,12 +77,13 @@ Ba bề mặt, cùng một bộ lọc, khác nhau ở **phạm vi quyền** và 
 | Tham số | Kiểu | Áp cho |
 |---|---|---|
 | `q` | text | title, description, tag |
-| `age_min` `age_max` | int 3–6 | mọi |
+| `age_min` `age_max` | int 3–6 | mọi (activity suy từ giao band skill) |
 | `competency` | `C1..C6` | mọi |
 | `strand` `skill` | code | mọi |
 | `learning_objective` | code | mọi |
 | `difficulty` | 1–5 | level |
-| `duration_max` | phút | lesson |
+| `kind` | `activity_kind` | activity |
+| `duration_max` | phút | lesson, activity |
 | `what` `thinking` `mechanic` | tag | mọi |
 | `theme` | tag chủ đề | level |
 | `access_tier` | enum | mọi |

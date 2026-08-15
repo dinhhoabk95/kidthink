@@ -1,4 +1,5 @@
 import {
+  activities,
   type ContentLifecycleStatus,
   gameLevels,
   getOwnerDb,
@@ -24,7 +25,7 @@ const VALID_TYPES = [
   "seo_page",
 ];
 
-const REQUIRED_CHECKLIST_GROUPS = [
+const GAME_LEVEL_CHECKLIST_GROUPS = [
   "pedagogy",
   "content",
   "language",
@@ -33,7 +34,19 @@ const REQUIRED_CHECKLIST_GROUPS = [
   "technical",
 ];
 
-function validateChecklist(checklist?: Record<string, boolean>): void {
+const LESSON_ACTIVITY_CHECKLIST_GROUPS = [
+  "pedagogy",
+  "child_language",
+  "material_safety",
+  "home_feasibility",
+  "observational_assessment",
+  "lifecycle_references",
+];
+
+function validateChecklist(
+  entityType: string,
+  checklist?: Record<string, boolean>
+): void {
   if (!checklist || typeof checklist !== "object") {
     throw createError({
       statusCode: 422,
@@ -42,7 +55,12 @@ function validateChecklist(checklist?: Record<string, boolean>): void {
         "Duyệt nội dung bắt buộc hoàn thành 6 nhóm checklist duyệt (BR-CRQ-07)",
     });
   }
-  for (const grp of REQUIRED_CHECKLIST_GROUPS) {
+  const requiredGroups =
+    entityType === "lesson" || entityType === "activity"
+      ? LESSON_ACTIVITY_CHECKLIST_GROUPS
+      : GAME_LEVEL_CHECKLIST_GROUPS;
+
+  for (const grp of requiredGroups) {
     if (!checklist[grp]) {
       throw createError({
         statusCode: 422,
@@ -72,6 +90,13 @@ async function resolveEntityVersion(
       .where(eq(lessons.id, entityId));
     return row?.version ?? 1;
   }
+  if (entityType === "activity") {
+    const [row] = await db
+      .select({ version: activities.contentVersion })
+      .from(activities)
+      .where(eq(activities.id, entityId));
+    return row?.version ?? 1;
+  }
   if (entityType === "seo_page") {
     const [row] = await db
       .select({ version: seoPages.contentVersion })
@@ -90,7 +115,7 @@ async function ensureApprovalRequirements(options: {
   expectedVersion?: number;
   managerId: number;
 }): Promise<void> {
-  validateChecklist(options.checklist);
+  validateChecklist(options.typeParam, options.checklist);
 
   const entityVersion =
     options.expectedVersion ??

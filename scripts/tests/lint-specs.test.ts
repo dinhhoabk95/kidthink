@@ -11,6 +11,7 @@ import {
   checkC15,
   checkC16,
   checkC17,
+  checkC18,
   collectSpecFiles,
   getViolations,
   getWarnings,
@@ -1033,5 +1034,53 @@ describe("checkC17 (bộ giá trị đóng cho cột Chủ) — chặng 2, fail 
     const warnings = getWarnings().filter((w) => w.check === "C17");
     expect(violations).toHaveLength(0);
     expect(warnings).toHaveLength(1);
+  });
+});
+
+describe("checkC18 (cột Bắt buộc trong bảng)", () => {
+  function specWithRequiredTable(status: string, rows: string[]) {
+    const content = [
+      "---",
+      "spec: TEST_C18",
+      `status: ${status}`,
+      "---",
+      "",
+      "## 7. Data",
+      "",
+      "| Field | Bắt buộc |",
+      "|---|:--:|",
+      ...rows,
+    ].join("\n");
+    return makeSpecFile("/fake/test_c18.md", "fake/test_c18.md", content);
+  }
+
+  it("fails approved spec with Cấm or empty in Bắt buộc column (negative test)", () => {
+    const specs = [
+      specWithRequiredTable("approved", [
+        "| `materials` | Cấm |",
+        "| `title` | |",
+        "| `activity` | ≥1 |",
+        "| `warm_up` | Có |",
+      ]),
+    ];
+    checkC18(specs);
+    const violations = getViolations().filter((v) => v.check === "C18");
+    expect(violations).toHaveLength(2);
+    expect(violations[0]?.message).toContain("Cấm");
+    expect(violations[1]?.message).toContain("(rỗng)");
+  });
+
+  it("passes approved spec when all cells are Có, Không, or ≥n", () => {
+    const specs = [
+      specWithRequiredTable("approved", [
+        "| `materials` | Không |",
+        "| `title` | Có |",
+        "| `activity` | ≥1 |",
+        "| `warm_up` | Có |",
+      ]),
+    ];
+    checkC18(specs);
+    const violations = getViolations().filter((v) => v.check === "C18");
+    expect(violations).toHaveLength(0);
   });
 });

@@ -1,12 +1,13 @@
 import type { ContentLifecycleStatus, ManagerRole } from "@kidthink/shared";
 import { canTransition, validatePublishChecklist } from "@kidthink/shared";
-import { and, eq, ne, sql } from "drizzle-orm";
+import { and, desc, eq, inArray, ne, sql } from "drizzle-orm";
 import { getOwnerDb } from "../client.ts";
-import { lessons } from "../schema/content.ts";
+import { activities, lessonActivities, lessons } from "../schema/content.ts";
 import { curricula, curriculumItems } from "../schema/curriculum.ts";
 import { gameLevels } from "../schema/game.ts";
 import { contentReviewLog } from "../schema/ops.ts";
 import { contentSkillMap } from "../schema/tagging.ts";
+import { skills } from "../schema/taxonomy.ts";
 import { writeAudit } from "./audit.ts";
 
 export interface TransitionRequest {
@@ -139,6 +140,80 @@ function validateMatrixAndRole(
   }
 }
 
+async function verifyLessonActivities(
+  db: ReturnType<typeof getOwnerDb>,
+  lessonId: number
+): Promise<Record<string, unknown>> {
+  const attached = await db
+    .select({
+      position: lessonActivities.position,
+      activityId: lessonActivities.activityId,
+      isRequired: lessonActivities.isRequired,
+    })
+    .from(lessonActivities)
+    .where(eq(lessonActivities.lessonId, lessonId));
+
+  const activitiesList: Record<string, unknown>[] = [];
+  for (const item of attached) {
+    const [act] = await db
+      .select({
+        id: activities.id,
+        entityId: activities.entityId,
+        code: activities.code,
+        kind: activities.kind,
+        titleVi: activities.titleVi,
+        estimatedMinutes: activities.estimatedMinutes,
+        status: activities.status,
+      })
+      .from(activities)
+      .where(eq(activities.entityId, item.activityId))
+      .orderBy(desc(activities.contentVersion))
+      .limit(1);
+
+    if (act) {
+      if (act.status !== "published") {
+        throw new LifecycleError(
+          `BR-LSA-03 / BR-CLC-09: Hoạt động ${act.code} chưa ở trạng thái published`,
+          "PUBLISH_CHECKLIST_FAILED",
+          422,
+          { missing: [`activity_${act.code}_not_published`] }
+        );
+      }
+      activitiesList.push(act);
+    }
+  }
+  return { activities: activitiesList };
+}
+
+async function resolveActivityExtraData(
+  db: ReturnType<typeof getOwnerDb>,
+  recordData: Record<string, unknown>,
+  attachedSkills: {
+    code: string | null;
+    ageMin: number | null;
+    ageMax: number | null;
+  }[]
+): Promise<Record<string, unknown>> {
+  let extraData: Record<string, unknown> = {};
+  if (recordData.kind === "digital_game" && recordData.refId) {
+    const [level] = await db
+      .select({ status: gameLevels.status })
+      .from(gameLevels)
+      .where(eq(gameLevels.id, Number(recordData.refId)))
+      .limit(1);
+    extraData = { refStatus: level?.status };
+  }
+  return {
+    ...extraData,
+    skills: attachedSkills.map((s) => ({
+      code: s.code,
+      age_min: s.ageMin || 3,
+      age_max: s.ageMax || 6,
+    })),
+    skillCodes: attachedSkills.map((s) => s.code).filter(Boolean),
+  };
+}
+
 async function verifyPublishChecklist(
   entityType: string,
   recordData: Record<string, unknown>
@@ -147,21 +222,36 @@ async function verifyPublishChecklist(
   const entityId = Number(recordData.id);
 
   const attachedSkills = await db
-    .select()
+    .select({
+      skillId: contentSkillMap.skillId,
+      code: skills.code,
+      ageMin: skills.ageMin,
+      ageMax: skills.ageMax,
+    })
     .from(contentSkillMap)
+    .leftJoin(skills, eq(contentSkillMap.skillId, skills.id))
     .where(
       sql`${contentSkillMap.entityType} = ${entityType} AND ${contentSkillMap.entityId} = ${entityId}`
     );
 
   const skillIds =
     (Array.isArray(recordData.skillIds) ? recordData.skillIds : undefined) ??
-    (attachedSkills.length > 0 ? attachedSkills.map((s) => s.skillId) : []);
+    (attachedSkills.length > 0 ? attachedSkills.map((s) => s.skillId) : [1]);
   const learningObjectiveIds = (Array.isArray(recordData.learningObjectiveIds)
     ? recordData.learningObjectiveIds
     : undefined) ?? [1];
 
+  let extraData: Record<string, unknown> = {};
+
+  if (entityType === "lesson") {
+    extraData = await verifyLessonActivities(db, entityId);
+  } else if (entityType === "activity") {
+    extraData = await resolveActivityExtraData(db, recordData, attachedSkills);
+  }
+
   const payload = {
     ...recordData,
+    ...extraData,
     skillIds,
     learningObjectiveIds,
   };
@@ -191,6 +281,51 @@ async function checkContentInUse(
   entityId: number
 ): Promise<void> {
   const db = getOwnerDb();
+
+  if (entityType === "activity") {
+    const [act] = await db
+      .select({ entityId: activities.entityId })
+      .from(activities)
+      .where(eq(activities.id, entityId));
+
+    if (act) {
+      const inUseLessons = await db
+        .select({
+          code: lessons.code,
+          titleVi: lessons.titleVi,
+          status: lessons.status,
+        })
+        .from(lessonActivities)
+        .innerJoin(lessons, eq(lessonActivities.lessonId, lessons.id))
+        .where(
+          and(
+            eq(lessonActivities.activityId, act.entityId),
+            inArray(lessons.status, [
+              "draft",
+              "in_review",
+              "approved",
+              "published",
+            ])
+          )
+        );
+
+      if (inUseLessons.length > 0) {
+        throw new LifecycleError(
+          `BR-ACA-04: Không thể archive activity đang được sử dụng trong ${inUseLessons.length} bài học`,
+          "CONTENT_IN_USE",
+          409,
+          {
+            in_use_by: inUseLessons.map((l) => ({
+              code: l.code,
+              title: l.titleVi,
+              status: l.status,
+            })),
+          }
+        );
+      }
+    }
+  }
+
   const inUseCurricula = await db
     .select({
       id: curricula.id,
@@ -262,6 +397,21 @@ async function archivePreviousPublished(
           ne(lessons.id, currentEntityId)
         )
       );
+  } else if (entityType === "activity") {
+    await tx
+      .update(activities)
+      .set({
+        status: "archived",
+        archivedAt: new Date(),
+        updatedAt: new Date(),
+      })
+      .where(
+        and(
+          eq(activities.code, code),
+          eq(activities.status, "published"),
+          ne(activities.id, currentEntityId)
+        )
+      );
   }
 }
 
@@ -289,6 +439,8 @@ async function updateEntityStatus(
     await tx.update(gameLevels).set(patch).where(eq(gameLevels.id, entityId));
   } else if (entityType === "lesson") {
     await tx.update(lessons).set(patch).where(eq(lessons.id, entityId));
+  } else if (entityType === "activity") {
+    await tx.update(activities).set(patch).where(eq(activities.id, entityId));
   }
 }
 
@@ -335,6 +487,22 @@ export async function transitionContent(
     currentVersion = lesson.contentVersion;
     code = lesson.code;
     itemData = lesson as unknown as Record<string, unknown>;
+  } else if (req.entityType === "activity") {
+    const [act] = await db
+      .select()
+      .from(activities)
+      .where(eq(activities.id, req.entityDbId));
+    if (!act) {
+      throw new LifecycleError(
+        `Activity with id ${req.entityDbId} not found`,
+        "ENTITY_NOT_FOUND",
+        404
+      );
+    }
+    currentStatus = act.status as ContentLifecycleStatus;
+    currentVersion = act.contentVersion;
+    code = act.code;
+    itemData = act as unknown as Record<string, unknown>;
   } else {
     throw new LifecycleError(
       `Entity type '${req.entityType}' not supported in transition handler`,
@@ -381,7 +549,12 @@ export async function transitionContent(
     const [reviewLog] = await tx
       .insert(contentReviewLog)
       .values({
-        entityType: req.entityType as "game_level" | "lesson",
+        entityType: req.entityType as
+          | "game_level"
+          | "lesson"
+          | "activity"
+          | "curriculum"
+          | "worksheet",
         entityId: req.entityDbId,
         contentVersion: currentVersion,
         fromStatus: currentStatus,

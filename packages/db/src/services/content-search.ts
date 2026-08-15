@@ -3,6 +3,7 @@ import { allowedTiers } from "@kidthink/shared";
 import { and, eq, gte, lte, sql } from "drizzle-orm";
 import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 import { z } from "zod";
+import { activities, lessons } from "../schema/content.ts";
 import { gameLevels, gameTemplates } from "../schema/game.ts";
 
 export type SearchViewerRole = "guest" | "user" | "manager";
@@ -252,6 +253,244 @@ export async function searchGameLevels(
       return 0;
     });
   }
+
+  const hasPaidOrLockedContent = items.some(
+    (item) => item.locked || item.access_tier !== "free"
+  );
+
+  return {
+    items,
+    next_cursor: nextCursor,
+    no_store: hasPaidOrLockedContent,
+  };
+}
+
+function buildActivityConditions(
+  params: z.infer<typeof SearchParamsSchema>,
+  viewer: { role: SearchViewerRole; userPackage?: string }
+) {
+  const conditions: ReturnType<typeof sql>[] = [];
+
+  if (viewer.role === "guest" || viewer.role === "user") {
+    conditions.push(eq(activities.status, "published"));
+  } else if (params.status) {
+    conditions.push(eq(activities.status, params.status));
+  }
+
+  if (params.access_tier) {
+    conditions.push(eq(activities.accessTier, params.access_tier));
+  }
+  if (params.what) {
+    conditions.push(
+      eq(activities.kind, params.what as typeof activities.$inferSelect.kind)
+    );
+  }
+  if (params.duration_max !== undefined) {
+    conditions.push(lte(activities.estimatedMinutes, params.duration_max));
+  }
+  if (params.cursor) {
+    const cursorId = Number(params.cursor);
+    if (!Number.isNaN(cursorId)) {
+      conditions.push(gte(activities.id, cursorId));
+    }
+  }
+
+  if (params.q && params.q.trim().length > 0) {
+    const patternRaw = `%${params.q.trim()}%`;
+    conditions.push(
+      sql`(${activities.titleVi} ILIKE ${patternRaw} OR ${activities.instructionVi} ILIKE ${patternRaw} OR ${activities.materialsVi} ILIKE ${patternRaw})`
+    );
+  }
+  return conditions;
+}
+
+export async function searchActivities(
+  db: PostgresJsDatabase<Record<string, unknown>>,
+  rawParams: unknown,
+  viewer: { role: SearchViewerRole; userPackage?: string }
+) {
+  const params = SearchParamsSchema.parse(rawParams ?? {});
+  const maxLimit = viewer.role === "manager" ? 100 : 60;
+  const limit = Math.min(params.limit ?? 20, maxLimit);
+
+  const conditions = buildActivityConditions(params, viewer);
+  const whereClause = conditions.length > 0 ? and(...conditions) : undefined;
+  const userAllowedTiers = await getViewerAllowedTiers(viewer);
+
+  const rawRows = await db
+    .select({
+      id: activities.id,
+      entityId: activities.entityId,
+      code: activities.code,
+      contentVersion: activities.contentVersion,
+      kind: activities.kind,
+      titleVi: activities.titleVi,
+      instructionVi: activities.instructionVi,
+      materialsVi: activities.materialsVi,
+      estimatedMinutes: activities.estimatedMinutes,
+      refType: activities.refType,
+      refId: activities.refId,
+      accessTier: activities.accessTier,
+      status: activities.status,
+      origin: activities.origin,
+      authoredIn: activities.authoredIn,
+      createdAt: activities.createdAt,
+    })
+    .from(activities)
+    .where(whereClause)
+    .limit(limit + 1);
+
+  const hasMore = rawRows.length > limit;
+  const pageRows = hasMore ? rawRows.slice(0, limit) : rawRows;
+  const lastRow = pageRows.at(-1);
+  const nextCursor = hasMore && lastRow ? String(lastRow.id) : null;
+
+  const items = pageRows.map((row) => {
+    const isLocked =
+      viewer.role !== "manager" && !userAllowedTiers.includes(row.accessTier);
+    return {
+      id: row.id,
+      entity_id: row.entityId,
+      code: row.code,
+      content_version: row.contentVersion,
+      kind: row.kind,
+      title_vi: row.titleVi,
+      instruction_vi: isLocked ? "" : row.instructionVi,
+      materials_vi: row.materialsVi,
+      estimated_minutes: row.estimatedMinutes,
+      ref_type: row.refType,
+      ref_id: row.refId,
+      access_tier: row.accessTier,
+      status: row.status,
+      origin: row.origin,
+      authored_in: row.authoredIn,
+      created_at: row.createdAt,
+      locked: isLocked,
+    };
+  });
+
+  const hasPaidOrLockedContent = items.some(
+    (item) => item.locked || item.access_tier !== "free"
+  );
+
+  return {
+    items,
+    next_cursor: nextCursor,
+    no_store: hasPaidOrLockedContent,
+  };
+}
+
+function buildLessonConditions(
+  params: z.infer<typeof SearchParamsSchema>,
+  viewer: { role: SearchViewerRole; userPackage?: string }
+) {
+  const conditions: ReturnType<typeof sql>[] = [];
+
+  if (viewer.role === "guest" || viewer.role === "user") {
+    conditions.push(eq(lessons.status, "published"));
+  } else if (params.status) {
+    conditions.push(eq(lessons.status, params.status));
+  }
+
+  if (params.access_tier) {
+    conditions.push(eq(lessons.accessTier, params.access_tier));
+  }
+  if (params.age_min !== undefined) {
+    conditions.push(gte(lessons.targetAgeMin, params.age_min));
+  }
+  if (params.age_max !== undefined) {
+    conditions.push(lte(lessons.targetAgeMax, params.age_max));
+  }
+  if (params.duration_max !== undefined) {
+    conditions.push(lte(lessons.estimatedMinutes, params.duration_max));
+  }
+  if (params.cursor) {
+    const cursorId = Number(params.cursor);
+    if (!Number.isNaN(cursorId)) {
+      conditions.push(gte(lessons.id, cursorId));
+    }
+  }
+
+  if (params.q && params.q.trim().length > 0) {
+    const patternRaw = `%${params.q.trim()}%`;
+    conditions.push(
+      sql`(${lessons.titleVi} ILIKE ${patternRaw} OR ${lessons.guideVi} ILIKE ${patternRaw} OR ${lessons.materialsVi} ILIKE ${patternRaw})`
+    );
+  }
+
+  return conditions;
+}
+
+export async function searchLessons(
+  db: PostgresJsDatabase<Record<string, unknown>>,
+  rawParams: unknown,
+  viewer: { role: SearchViewerRole; userPackage?: string }
+) {
+  const params = SearchParamsSchema.parse(rawParams ?? {});
+  const maxLimit = viewer.role === "manager" ? 100 : 40;
+  const limit = Math.min(params.limit ?? 20, maxLimit);
+
+  const conditions = buildLessonConditions(params, viewer);
+  const whereClause = conditions.length > 0 ? and(...conditions) : undefined;
+  const userAllowedTiers = await getViewerAllowedTiers(viewer);
+
+  const rawRows = await db
+    .select({
+      id: lessons.id,
+      entityId: lessons.entityId,
+      code: lessons.code,
+      contentVersion: lessons.contentVersion,
+      titleVi: lessons.titleVi,
+      guideVi: lessons.guideVi,
+      targetAgeMin: lessons.targetAgeMin,
+      targetAgeMax: lessons.targetAgeMax,
+      estimatedMinutes: lessons.estimatedMinutes,
+      materialsVi: lessons.materialsVi,
+      warmUpVi: lessons.warmUpVi,
+      reflectionVi: lessons.reflectionVi,
+      assessmentVi: lessons.assessmentVi,
+      extensionVi: lessons.extensionVi,
+      accessTier: lessons.accessTier,
+      status: lessons.status,
+      origin: lessons.origin,
+      authoredIn: lessons.authoredIn,
+      createdAt: lessons.createdAt,
+    })
+    .from(lessons)
+    .where(whereClause)
+    .limit(limit + 1);
+
+  const hasMore = rawRows.length > limit;
+  const pageRows = hasMore ? rawRows.slice(0, limit) : rawRows;
+  const lastRow = pageRows.at(-1);
+  const nextCursor = hasMore && lastRow ? String(lastRow.id) : null;
+
+  const items = pageRows.map((row) => {
+    const isLocked =
+      viewer.role !== "manager" && !userAllowedTiers.includes(row.accessTier);
+    return {
+      id: row.id,
+      entity_id: row.entityId,
+      code: row.code,
+      content_version: row.contentVersion,
+      title_vi: row.titleVi,
+      guide_vi: isLocked ? "" : row.guideVi,
+      target_age_min: row.targetAgeMin,
+      target_age_max: row.targetAgeMax,
+      estimated_minutes: row.estimatedMinutes,
+      materials_vi: row.materialsVi,
+      warm_up_vi: row.warmUpVi,
+      reflection_vi: row.reflectionVi,
+      assessment_vi: row.assessmentVi,
+      extension_vi: row.extensionVi,
+      access_tier: row.accessTier,
+      status: row.status,
+      origin: row.origin,
+      authored_in: row.authoredIn,
+      created_at: row.createdAt,
+      locked: isLocked,
+    };
+  });
 
   const hasPaidOrLockedContent = items.some(
     (item) => item.locked || item.access_tier !== "free"

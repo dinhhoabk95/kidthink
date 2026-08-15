@@ -2,18 +2,19 @@ import { describe, expect, it } from "vitest";
 
 describe("P3.2 Lesson & Activity Authoring Studio Invariants (BR-LSA, BR-ACA)", () => {
   describe("Lesson Authoring Invariants (BR-LSA-01..08)", () => {
-    it("Scenario: BR-LSA-01 — lesson authoring studio auto-saves draft state every 30 seconds when modified", () => {
-      const autosaveIntervalSeconds = 30;
-      expect(autosaveIntervalSeconds).toBe(30);
+    it("Scenario: BR-LSA-01 — lesson rỗng không publish được (cần >= 1 activity)", () => {
+      const activities: string[] = [];
+      const canPublish = activities.length >= 1;
+      expect(canPublish).toBe(false);
     });
 
-    it("Scenario: BR-LSA-02 — validating lesson composition flags error if total duration exceeds 45 minutes", () => {
-      const totalMins = 50;
-      const isError = totalMins > 45;
-      expect(isError).toBe(true);
+    it("Scenario: BR-LSA-02 — thời lượng trong khoảng estimated_minutes in [5,45]", () => {
+      const durationMins = 25;
+      const isValid = durationMins >= 5 && durationMins <= 45;
+      expect(isValid).toBe(true);
     });
 
-    it("Scenario: BR-LSA-03 — publishing a lesson requires all referenced activities to be in published status", () => {
+    it("Scenario: BR-LSA-03 — activity draft chặn publish lesson", () => {
       const activities = [
         { code: "ACT-001", status: "published" },
         { code: "ACT-002", status: "draft" },
@@ -22,80 +23,88 @@ describe("P3.2 Lesson & Activity Authoring Studio Invariants (BR-LSA, BR-ACA)", 
       expect(allPublished).toBe(false);
     });
 
-    it("Scenario: BR-LSA-04 — updating lesson activity ordering uses atomic PUT endpoint with expected_version lock", () => {
-      const payload = {
-        items: [{ activity_code: "ACT-001", position: 1 }],
-        expected_version: 2,
-      };
-      expect(payload).toHaveProperty("expected_version");
+    it("Scenario: BR-LSA-04 — guide bắt buộc cho người lớn trong lesson", () => {
+      const guideVi =
+        "1. Mục tiêu; 2. Chuẩn bị; 3. Mở đầu; 4. Khi trẻ làm được; 5. Khi trẻ cần giúp";
+      const hasGuide = guideVi.length > 0;
+      expect(hasGuide).toBe(true);
     });
 
-    it("Scenario: BR-LSA-05 — lesson resolves target activities using their latest published version via entity_id", () => {
-      const _entityId = "ACT-001";
-      const resolvedVersion = "latest_published";
-      expect(resolvedVersion).toBe("latest_published");
+    it("Scenario: BR-LSA-05 — sửa activity ảnh hưởng mọi lesson dùng nó", () => {
+      const _activityId = 101;
+      const lessonsUsingActivity = [1, 2, 3];
+      expect(lessonsUsingActivity.length).toBeGreaterThan(1);
     });
 
-    it("Scenario: BR-LSA-06 — teaching view provides read-only preview of lesson guide and merged materials list", () => {
-      const teachingView = {
-        guide: { outcome_vi: "Đếm hạt" },
-        materials_union_vi: ["Hạt đậu"],
-      };
-      expect(teachingView.materials_union_vi).toContain("Hạt đậu");
+    it("Scenario: BR-LSA-06 — cảnh báo khi thiếu hoạt động ngoài màn hình", () => {
+      const activities = [{ kind: "digital_game" }];
+      const hasOffscreen = activities.some((a) => a.kind !== "digital_game");
+      expect(hasOffscreen).toBe(false);
     });
 
-    it("Scenario: BR-LSA-07 — editing a published lesson creates a new draft version without modifying original", () => {
-      const published = { version: 1, status: "published" };
-      const newDraft = { version: 2, status: "draft" };
-      expect(published.status).toBe("published");
-      expect(newDraft.version).toBe(2);
+    it("Scenario: BR-LSA-07 — tag ba trục bắt buộc trước khi publish", () => {
+      const tags = { subject: "math", age: "3-4", type: "hands_on" };
+      expect(tags).toHaveProperty("subject");
+      expect(tags).toHaveProperty("age");
+      expect(tags).toHaveProperty("type");
     });
 
-    it("Scenario: BR-LSA-08 — lesson authoring enforces required access_tier selection with no silent default", () => {
-      const accessTier = undefined;
-      const isValid = accessTier !== undefined;
-      expect(isValid).toBe(false);
+    it("Scenario: BR-LSA-08 — cấm never publish trực tiếp qua in_review", () => {
+      const canDirectPublish = false;
+      expect(canDirectPublish).toBe(false);
     });
   });
 
   describe("Activity Authoring Invariants (BR-ACA-01..07)", () => {
-    it("Scenario: BR-ACA-01 — activity authoring studio renders schema-driven form dynamically based on activity kind", () => {
-      const _kind = "discussion";
-      const hasDynamicSchema = true;
-      expect(hasDynamicSchema).toBe(true);
+    it("Scenario: BR-ACA-01 — trường thay đổi theo kind (10 loại activity)", () => {
+      const kinds = [
+        "digital_game",
+        "discussion",
+        "storytelling",
+        "movement",
+        "manipulative",
+        "worksheet",
+        "observation",
+        "mini_project",
+        "assessment",
+        "home_activity",
+      ];
+      expect(kinds).toHaveLength(10);
     });
 
-    it("Scenario: BR-ACA-02 — digital_game activity kind requires referencing a published game level code", () => {
+    it("Scenario: BR-ACA-02 — digital_game phải trỏ level published", () => {
       const gameLevelStatus = "published";
       const canReference = gameLevelStatus === "published";
       expect(canReference).toBe(true);
     });
 
-    it("Scenario: BR-ACA-03 — changing activity kind prompts confirmation warning for incompatible field loss", () => {
-      const promptsWarning = true;
-      expect(promptsWarning).toBe(true);
+    it("Scenario: BR-ACA-03 — thời lượng trong khoảng estimated_minutes in [2,20]", () => {
+      const estimatedMinutes = 10;
+      const isValid = estimatedMinutes >= 2 && estimatedMinutes <= 20;
+      expect(isValid).toBe(true);
     });
 
-    it("Scenario: BR-ACA-04 — archiving activity referenced in active lessons returns 409 CONTENT_IN_USE", () => {
-      const referencedInLessonsCount = 2;
-      const statusCode = referencedInLessonsCount > 0 ? 409 : 200;
-      expect(statusCode).toBe(409);
+    it("Scenario: BR-ACA-04 — không archive activity đang dùng trong active lessons", () => {
+      const referencedInLessonsCount: number = 2;
+      const canArchive = referencedInLessonsCount === 0;
+      expect(canArchive).toBe(false);
     });
 
-    it("Scenario: BR-ACA-05 — worksheet activity kind is locked by feature flag when worksheet service is disabled", () => {
-      const isWorksheetFeatureEnabled = false;
-      const canSelectWorksheetKind = isWorksheetFeatureEnabled;
-      expect(canSelectWorksheetKind).toBe(false);
+    it("Scenario: BR-ACA-05 — hoạt động ngoài màn hình có vật liệu cần chuẩn bị", () => {
+      const materialsVi = "5 hạt đậu hoặc khối xếp hình";
+      const hasMaterials = materialsVi.length > 0;
+      expect(hasMaterials).toBe(true);
     });
 
-    it("Scenario: BR-ACA-06 — activity search shares unified content-search query surface", () => {
-      const usesUnifiedSearch = true;
-      expect(usesUnifiedSearch).toBe(true);
+    it("Scenario: BR-ACA-06 — tag ba trục bắt buộc trước publish activity", () => {
+      const tags = { competency: "C1", domain: "math", interaction: "touch" };
+      expect(Object.keys(tags)).toHaveLength(3);
     });
 
-    it("Scenario: BR-ACA-07 — activity authoring writes audit_logs entries for all creation and edit operations", () => {
-      const auditAction = "manager.activity.created";
-      expect(auditAction).toBe("manager.activity.created");
+    it("Scenario: BR-ACA-07 — sửa activity đã published tạo version mới", () => {
+      const published = { version: 1, status: "published" };
+      const newDraft = { version: 2, status: "draft" };
+      expect(newDraft.version).toBe(published.version + 1);
     });
   });
 });

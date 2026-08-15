@@ -1651,10 +1651,16 @@ function splitTableCols(line: string): string[] {
   const raw: string[] = [];
   let current = "";
   let inCode = false;
-  for (const ch of line) {
+  for (let i = 0; i < line.length; i++) {
+    const ch = line[i]!;
     if (ch === "`") {
       inCode = !inCode;
       current += ch;
+      continue;
+    }
+    if (ch === "\\" && i + 1 < line.length && line[i + 1] === "|") {
+      current += "|";
+      i++;
       continue;
     }
     if (ch === "|" && !inCode) {
@@ -1933,6 +1939,70 @@ export function checkC17(specs: SpecFile[]) {
   }
 }
 
+// ─── C18 — ô bảng cột "Bắt buộc" chỉ nhận "Có", "Không", hoặc "≥n" ─────────────
+//
+// Task #55 / Task 1b — cột tên đúng "Bắt buộc" chỉ nhận "Có", "Không", hoặc
+// lượng từ dạng "≥n". Cấm rỗng hoặc chữ "Cấm".
+const VALID_REQUIRED_CELL =
+  /^(Có(\s*[,—()].*)?|Không(\s*[,—()].*)?|≥\s*\d+|—|-|N\/A)$/i;
+
+export function checkC18(specs: SpecFile[]) {
+  for (const s of specs) {
+    let currentTableColIdx = -1;
+
+    for (let i = 0; i < s.lines.length; i++) {
+      const line = s.lines[i] ?? "";
+      if (!line.trim().startsWith("|")) {
+        currentTableColIdx = -1;
+        continue;
+      }
+
+      const nextLine = s.lines[i + 1] ?? "";
+      const isHeaderRow = /^\s*\|\s*[-:|\s]+\|\s*$/.test(nextLine);
+
+      if (isHeaderRow) {
+        const headerCols = splitTableCols(line);
+        const reqIdx = headerCols.findIndex((c) => c.trim() === "Bắt buộc");
+        currentTableColIdx = reqIdx;
+        continue;
+      }
+
+      // Check if separator line
+      if (colsAreSeparator(line)) {
+        continue;
+      }
+
+      if (currentTableColIdx !== -1) {
+        const cols = splitTableCols(line);
+        if (currentTableColIdx < cols.length) {
+          const val = cols[currentTableColIdx]?.trim() ?? "";
+          if (
+            !val ||
+            val === "" ||
+            !VALID_REQUIRED_CELL.test(val) ||
+            val.startsWith("Cấm")
+          ) {
+            const msg = `Ô cột "Bắt buộc" mang giá trị không hợp lệ: "${val || "(rỗng)"}" (chỉ nhận Có, Không, hoặc ≥n)`;
+            if (
+              s.frontmatter.status === "approved" ||
+              s.frontmatter.status === "implemented"
+            ) {
+              fail(s.rel, i + 1, "C18", msg);
+            } else {
+              warn(s.rel, i + 1, "C18", msg);
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+function colsAreSeparator(line: string): boolean {
+  const inner = line.trim().replace(/^\||\|$/g, "");
+  return inner.split("|").every((part) => /^[-:\s]+$/.test(part.trim()));
+}
+
 export const ALL_CHECKS = [
   checkC1,
   checkC2,
@@ -1951,4 +2021,5 @@ export const ALL_CHECKS = [
   checkC15,
   checkC16,
   checkC17,
+  checkC18,
 ];

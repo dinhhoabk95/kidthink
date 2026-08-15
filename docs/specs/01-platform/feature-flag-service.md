@@ -88,6 +88,7 @@ sự thật cho cùng một câu hỏi.
 | `weekly_progress_email` | off | Bật khi báo cáo tuần sẵn sàng |
 | `studio_publish` | on | Tắt khẩn nếu publish gây sự cố |
 | `guest_play` | on | Tắt nếu bị lạm dụng |
+| `worksheet_activity` | off | Khoá loại activity worksheet ở MVP (`D-LN`) |
 
 ## 8. API contract
 

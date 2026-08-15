@@ -60,14 +60,34 @@ function checkCounts(entity: GenericEntityPayload, missing: string[]): void {
   }
 }
 
-function checkCommonRules(
+function checkAgeRange(
+  entityType: EntityType,
   entity: GenericEntityPayload,
   missing: string[]
 ): void {
-  checkCounts(entity, missing);
+  const ageMin =
+    entityType === "activity"
+      ? (entity.effectiveAgeMin ??
+        entity.effective_age_min ??
+        entity.ageMin ??
+        entity.age_min)
+      : (entity.ageMin ?? entity.age_min);
+  const ageMax =
+    entityType === "activity"
+      ? (entity.effectiveAgeMax ??
+        entity.effective_age_max ??
+        entity.ageMax ??
+        entity.age_max)
+      : (entity.ageMax ?? entity.age_max);
 
-  const ageMin = entity.ageMin ?? entity.age_min;
-  const ageMax = entity.ageMax ?? entity.age_max;
+  if (
+    entityType === "activity" &&
+    ageMin === undefined &&
+    ageMax === undefined
+  ) {
+    return;
+  }
+
   if (
     typeof ageMin !== "number" ||
     typeof ageMax !== "number" ||
@@ -77,6 +97,15 @@ function checkCommonRules(
   ) {
     missing.push("invalid_age_range");
   }
+}
+
+function checkCommonRules(
+  entityType: EntityType,
+  entity: GenericEntityPayload,
+  missing: string[]
+): void {
+  checkCounts(entity, missing);
+  checkAgeRange(entityType, entity, missing);
 
   const title = entity.title ?? entity.titleVi ?? entity.title_vi;
   if (!title || typeof title !== "string" || title.trim() === "") {
@@ -153,6 +182,55 @@ function checkGameLevelRules(
   }
 }
 
+function checkDigitalGameRef(
+  entity: GenericEntityPayload,
+  missing: string[]
+): void {
+  const refType = entity.refType ?? entity.ref_type;
+  const refId = entity.refId ?? entity.ref_id;
+  const refStatus = entity.refStatus ?? entity.ref_status;
+  if (refType !== "game_level" || !refId) {
+    missing.push("digital_game_missing_level_ref");
+  } else if (refStatus && refStatus !== "published") {
+    missing.push("referenced_game_level_not_published");
+  }
+}
+
+function validateActivityAgainstModel(
+  entity: GenericEntityPayload,
+  kind: string,
+  instruction: string,
+  est: number,
+  missing: string[]
+): void {
+  const res = validateActivityModel({
+    kind,
+    title_vi: (entity.title ??
+      entity.titleVi ??
+      entity.title_vi ??
+      "") as string,
+    instruction,
+    materials_vi: (entity.materialsVi ?? entity.materials_vi ?? null) as
+      | string
+      | null,
+    estimated_minutes: est ?? 10,
+    skill_codes: (entity.skillCodes ?? entity.skill_codes ?? []) as string[],
+    skills: entity.skills as
+      | { code: string; age_min: number; age_max: number }[]
+      | undefined,
+    ref_type: (entity.refType ?? entity.ref_type) as string | null,
+    ref_id: (entity.refId ?? entity.ref_id) as number | null,
+  });
+
+  if (!res.ok) {
+    for (const err of res.errors) {
+      missing.push(
+        `activity_validation_failed_${err.slice(0, 10).replace(/[^a-z0-9]/gi, "_")}`
+      );
+    }
+  }
+}
+
 function checkActivityRules(
   entity: GenericEntityPayload,
   missing: string[]
@@ -172,27 +250,17 @@ function checkActivityRules(
     missing.push("instruction_vi_missing");
   }
 
-  const res = validateActivityModel({
-    kind,
-    title_vi: (entity.title ??
-      entity.titleVi ??
-      entity.title_vi ??
-      "") as string,
-    instruction: instruction as string,
-    materials_vi: (entity.materialsVi ?? entity.materials_vi ?? null) as
-      | string
-      | null,
-    estimated_minutes: est ?? 10,
-    skill_codes: (entity.skillCodes ?? entity.skill_codes ?? []) as string[],
-  });
-
-  if (!res.ok) {
-    for (const err of res.errors) {
-      missing.push(
-        `activity_validation_failed_${err.slice(0, 10).replace(/[^a-z0-9]/gi, "_")}`
-      );
-    }
+  if (kind === "digital_game") {
+    checkDigitalGameRef(entity, missing);
   }
+
+  validateActivityAgainstModel(
+    entity,
+    kind,
+    typeof instruction === "string" ? instruction : "",
+    est,
+    missing
+  );
 }
 
 function extractLessonValidationPayload(entity: GenericEntityPayload) {
@@ -300,7 +368,7 @@ export function validatePublishChecklist(
 ): PublishChecklistResult {
   const missing: string[] = [];
 
-  checkCommonRules(entity, missing);
+  checkCommonRules(entityType, entity, missing);
 
   if (entityType === "game_level") {
     checkGameLevelRules(entity, missing);

@@ -58,12 +58,12 @@ Không có.
 
 | Phần | Thời lượng | Bắt buộc |
 |---|---|:--:|
-| Khởi động | 2–5 phút | Cấm khuyến nghị |
-| Hoạt động chính | 10–20 phút | |
-| — trong đó ≥1 ngoài màn hình | | |
-| Đúc kết / phản hồi | 2–5 phút | Cấm khuyến nghị |
-| Đánh giá | quan sát trong lúc làm | Cấm |
-| Mở rộng | tuỳ chọn | Cấm |
+| Khởi động | 2–5 phút | Có |
+| Hoạt động chính | 10–20 phút | Có |
+| — trong đó ≥1 ngoài màn hình | | Có |
+| Đúc kết / phản hồi | 2–5 phút | Có |
+| Đánh giá | quan sát trong lúc làm | Có |
+| Mở rộng | tuỳ chọn | Không |
 
 ### 7.2 `guide` phải trả lời
 
@@ -77,7 +77,7 @@ Câu 4 và 5 là phần hay bị bỏ, và là phần người dạy cần nhấ
 
 ### 7.3 Ngôn ngữ phần đánh giá
 
-| Cấm Tránh | Dùng |
+| Tránh | Dùng |
 |---|---|
 | "Bé hiểu khái niệm số lượng" | "Bé chỉ đúng nhóm có nhiều hơn trong 3 lần thử" |
 | "Bé phát triển tư duy logic" | "Bé nói được lý do vì sao xếp như vậy" |

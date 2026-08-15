@@ -2,7 +2,7 @@
 spec: ACTIVITY-AUTHORING
 title: Soạn hoạt động
 area: admin
-status: approved
+status: implemented
 mvp: true
 phase: P3
 reviewed: 2026-08-08
@@ -12,6 +12,7 @@ owns:
 depends_on:
   - ACTIVITY-MODEL
   - CONTENT-LIFECYCLE
+  - SCHEMA-DRIVEN-FORM
 ---
 
 # Soạn hoạt động
@@ -47,7 +48,7 @@ sửa một lần, mọi lesson dùng nó đều được cập nhật.
 | `kind = digital_game` nhưng chưa có level phù hợp | Link sang studio tạo level trước |
 | Đổi `kind` sau khi điền | Cảnh báo mất trường không tương thích |
 | Activity đang dùng ở lesson published | Sửa → version mới; lesson tham chiếu bản mới sau khi publish |
-| Xoá activity đang dùng | **409** kèm danh sách lesson |
+| Archive activity đang dùng | **409** `CONTENT_IN_USE` kèm danh sách lesson |
 
 ## 6. Business rules
 
@@ -95,7 +96,7 @@ cho thời gian màn hình.
 
 ### `GET /api/managers/activities`
 
-Bộ lọc `kind` `skill` `age` `duration_max` `status`. Trần 100.
+Chạy trên mặt tìm kiếm dùng chung của [`content-search.md`](../01-platform/content-search.md), cursor, trần chung, bộ lọc `kind` `skill` `age` (suy từ taxonomy) `duration_max` `status`.
 
 ## 9. Acceptance criteria
 
@@ -115,10 +116,10 @@ Scenario: BR-ACA-03 — thời lượng trong khoảng
   When đặt estimated_minutes = 40
   Then trả 422
 
-Scenario: BR-ACA-04 — không xoá activity đang dùng
+Scenario: BR-ACA-04 — không archive activity đang dùng
   Given activity dùng ở một lesson published
-  When xoá
-  Then trả 409 kèm danh sách lesson
+  When archive
+  Then trả 409 CONTENT_IN_USE kèm danh sách lesson
 
 Scenario: BR-ACA-05 — hoạt động ngoài màn hình có vật liệu
   Given kind manipulative và materials rỗng
@@ -137,6 +138,8 @@ Scenario: sửa activity ảnh hưởng mọi lesson dùng nó
 - Kiểm `ref_id` trỏ nội dung `published`.
 - Vật liệu bắt buộc cho hoạt động ngoài màn hình.
 - Tag ba trục trước publish.
+- Autosave 30 giây; lưu fail giữ nguyên toàn bộ form (`BR-STU-03`).
+- Ghi audit_logs mọi thao tác (`BR-STU-05`).
 
 **Ask first**
 - Thêm `kind` thứ 11.
@@ -146,9 +149,11 @@ Scenario: sửa activity ảnh hưởng mọi lesson dùng nó
 - Trỏ tới nội dung `draft`.
 - Xoá cứng activity đang dùng.
 - Publish trực tiếp.
+- Ghi `game_templates`, `skills`, `learning_objectives` từ studio (`BR-STU-01`).
 
 ## 11. Open questions
 
 | # | Câu hỏi | Chặn phase | Đề xuất chốt | Chủ |
 |---|---|---|---|---|
 | 1 | Activity ngoài màn hình có cần hình minh hoạ không? Tốn công soạn nhưng dễ theo hơn | P3 | hoãn — MVP chỉ yêu cầu mô tả văn bản chi tiết; hình ảnh minh họa cho activity ngoài màn hình bổ sung ở P4 | Nội dung |
+

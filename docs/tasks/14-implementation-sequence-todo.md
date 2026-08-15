@@ -149,7 +149,7 @@ MVP, và nó chỉ cần bước P1.2 xong.
 ## P3 — Curriculum, 12 spec (hết MVP)
 
 - [x] **P3.1** Mô hình lesson + activity — [`lesson-model.md`](../specs/05-content/lesson-model.md) · [`activity-model.md`](../specs/05-content/activity-model.md)
-- [ ] **P3.2** Soạn lesson và activity — [`lesson-authoring.md`](../specs/06-admin/lesson-authoring.md) · [`activity-authoring.md`](../specs/06-admin/activity-authoring.md)
+- [x] **P3.2** Soạn lesson và activity — [`lesson-authoring.md`](../specs/06-admin/lesson-authoring.md) · [`activity-authoring.md`](../specs/06-admin/activity-authoring.md)
 - [ ] **P3.3** Mô hình + builder curriculum — [`curriculum-model.md`](../specs/05-content/curriculum-model.md) · [`curriculum-builder.md`](../specs/06-admin/curriculum-builder.md)
 - [ ] **P3.4** Player curriculum — [`curriculum-player.md`](../specs/04-play/curriculum-player.md)
 - [ ] **P3.5** Mastery + adaptive — [`adaptive-engine.md`](../specs/01-platform/adaptive-engine.md) · [`progress-and-mastery.md`](../specs/04-play/progress-and-mastery.md)

@@ -156,8 +156,9 @@ kiểu, `entity_id` polymorphic — xem mục 7.10a của cùng file trên.
 
 | Thực thể | Ràng buộc bắt buộc |
 |---|---|
-| **Mọi** | `access_tier` có mặt · gắn ≥1 skill · gắn ≥1 learning objective · `age_min ≤ age_max ∈ [3,6]` · title tiếng Việt không rỗng |
+| **Mọi** | `access_tier` có mặt · gắn ≥1 skill · gắn ≥1 learning objective · band tuổi hiệu lực không rỗng, nằm trong `[3,6]` (lấy từ cột với `game_levels`/`lessons` và từ giao band skill với `activities` theo `D-LC`) · title tiếng Việt không rỗng |
 | `game_levels` | `content_pack` parse được bằng `content_contract` của template · có ít nhất một đáp án đúng · không câu hỏi rỗng · mọi asset id resolve được · số lượng item nằm trong giới hạn template · `difficulty ∈ [1,5]` |
+| `activities` | `kind` hợp lệ · 2–20 phút · `instruction` đủ bốn phần (chuẩn bị, các bước, dễ hơn, khó hơn) · ≥1 câu nói với trẻ · 1–2 skill · vật liệu bắt buộc với kind ngoài màn hình · qua cổng an toàn theo band suy ra · ràng buộc riêng theo kind của [`activity-model.md`](../05-content/activity-model.md) §7.2 · `digital_game` trỏ level `published` |
 | `lessons` | ≥1 activity · `estimated_minutes ∈ [5,45]` · có `guide` |
 | `curricula` | Mọi `curriculum_item` trỏ tới nội dung `published` · không tuần rỗng |
 | `worksheets` | Render thử ra PDF thành công |

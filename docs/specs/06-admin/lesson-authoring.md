@@ -2,7 +2,7 @@
 spec: LESSON-AUTHORING
 title: Soạn bài học
 area: admin
-status: approved
+status: implemented
 mvp: true
 phase: P3
 reviewed: 2026-08-08
@@ -47,7 +47,7 @@ hoạt động ngoài màn hình.
 | Nhánh | Hành vi |
 |---|---|
 | Activity chưa tồn tại | Tạo mới ngay trong luồng ([`activity-authoring.md`](activity-authoring.md)), quay lại lesson |
-| Tổng thời lượng vượt 45 phút | Cảnh báo, không chặn — người soạn quyết định |
+| Tổng thời lượng vượt 45 phút | Cảnh báo ở 31–45 phút, chặn (422) khi trên 45 phút — lệch quá 5 phút so với `estimated_minutes` là warning |
 | Activity bị archive sau khi lắp | Lesson vẫn giữ tham chiếu; cổng publish báo lỗi |
 | Sửa lesson đã published | Tạo version mới |
 
@@ -70,18 +70,18 @@ hoạt động ngoài màn hình.
 
 | Phần | Bắt buộc |
 |---|:--:|
-| `title` | |
+| `title` | Có |
 | `learning_objective_ids` | ≥1 |
-| `target_age_min` / `max` | |
-| `estimated_minutes` | |
-| `materials` — vật liệu cần chuẩn bị | Cấm |
-| `guide` — hướng dẫn cho người lớn | |
-| `warm_up` | Cấm |
+| `target_age_min` / `max` | Có |
+| `estimated_minutes` | Có |
+| `materials` — vật liệu cần chuẩn bị | Không |
+| `guide` — hướng dẫn cho người lớn | Có |
+| `warm_up` | Có |
 | Activity (có thứ tự, có cờ bắt buộc) | ≥1 |
-| `reflection` — câu hỏi gợi mở sau bài | Cấm |
-| `assessment` — cách quan sát trẻ đã đạt chưa | Cấm |
-| `extension` — làm thêm ở nhà | Cấm |
-| `access_tier` | |
+| `reflection` — câu hỏi gợi mở sau bài | Có |
+| `assessment` — cách quan sát trẻ đã đạt chưa | Có |
+| `extension` — làm thêm ở nhà | Không |
+| `access_tier` | Có |
 
 ### 7.2 Màn hình
 
@@ -96,7 +96,11 @@ Body theo §7.1 + `expected_version`. 422 khi thiếu trường bắt buộc.
 
 ### `PUT /api/managers/lessons/{code}/{version}/activities`
 
-Body `{ items: [{ activity_code, position, is_required }] }`.
+Body `{ items: [{ activity_code, position, is_required }], expected_version }`. 409 khi lệch version.
+
+### `GET /api/managers/lessons/{code}/{version}/teaching-view`
+
+Bản xem thử cho người dạy (`TeachingView`): guide năm phần, danh sách activity theo thứ tự kèm cờ ngoài màn hình, vật liệu gộp khử trùng lặp, thời lượng tính toán `total_activity_minutes`, đánh giá quan sát.
 
 ## 9. Acceptance criteria
 
@@ -144,6 +148,8 @@ Scenario: kéo thả đổi thứ tự
 - ≥1 activity, có `guide`.
 - Kiểm activity `published` khi publish lesson.
 - Tag ba trục trước khi publish.
+- Autosave 30 giây; lưu fail giữ nguyên toàn bộ form (`BR-STU-03`).
+- Ghi audit_logs mọi thao tác (`BR-STU-05`).
 
 **Ask first**
 - Nới khoảng `estimated_minutes`.
@@ -153,6 +159,7 @@ Scenario: kéo thả đổi thứ tự
 - Publish lesson rỗng.
 - Publish khi còn activity `draft`.
 - Publish trực tiếp không qua duyệt.
+- Ghi `game_templates`, `skills`, `learning_objectives` từ studio (`BR-STU-01`).
 
 ## 11. Open questions
 
@@ -160,3 +167,4 @@ Scenario: kéo thả đổi thứ tự
 |---|---|---|---|---|
 | 1 | **Ai biên soạn ≥60 lesson?** Seeder + AI agent IDE soạn khung được, nhưng phần sư phạm cần người | P3 | Đồng bộ nợ `D-W` ở [`mvp-scope.md`](../00-foundation/mvp-scope.md) Q1 — Seeder + AI hỗ trợ bản thô, Chuyên gia sư phạm mầm non đọc và duyệt | người quyết |
 | ~~2~~ | ~~Lesson có nên ghim version của activity không, hay luôn lấy bản mới nhất?~~ **Đóng 2026-08-09 (D-VER-02 không tồn tại, dùng D-AE, T15)**: `D-VER-02` không có trong corpus — trích dẫn sai. Quyết định thật là **`D-AE`** ở [`content-versioning.md`](../00-foundation/content-versioning.md) §7.4: lesson tham chiếu activity **luôn theo bản `published` mới nhất** qua `entity_id`, **không ghim**. Ghim chỉ áp cho dữ liệu chơi đã xảy ra, không áp cho tham chiếu nội dung sang nội dung | P3 | Đã đóng | D-AE |
+

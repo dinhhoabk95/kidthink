@@ -74,19 +74,43 @@ describe("P0.6 Task 3 — Checklist publish §7.3 & BR-CLC-09", () => {
     expect(res.missing).toContain("activities_missing");
   });
 
-  it("Worksheet: render PDF thất bại / thiếu path -> pdf_render_failed", () => {
-    const worksheet = {
-      accessTier: "free",
-      skillIds: [1],
-      learningObjectiveIds: [2],
-      ageMin: 3,
-      ageMax: 4,
-      title: "Phiếu bài tập số 1",
-      pdfPath: "",
+  it("Activity: valid activity returns ok = true", () => {
+    const validActivity = {
+      accessTier: "standard",
+      skillIds: [101],
+      learningObjectiveIds: [201],
+      skills: [{ code: "C1.NUM.01", age_min: 3, age_max: 5 }],
+      title: "Đếm hoa quả trong rổ",
+      kind: "manipulative",
+      instruction:
+        'Chuẩn bị 5 quả táo. "Bé hãy đếm xem có mấy quả táo nào!". Dễ hơn: đếm 3 quả. Khó hơn: đếm 7 quả.',
+      materialsVi: "5 quả táo hoặc đồ chơi",
+      estimatedMinutes: 10,
     };
 
-    const res = validatePublishChecklist("worksheet", worksheet);
+    const res = validatePublishChecklist("activity", validActivity);
+    expect(res.ok).toBe(true);
+    expect(res.missing).toHaveLength(0);
+  });
+
+  it("Activity: digital_game with unpublished level ref fails", () => {
+    const invalidActivity = {
+      accessTier: "standard",
+      skillIds: [101],
+      learningObjectiveIds: [201],
+      skills: [{ code: "C1.NUM.01", age_min: 3, age_max: 5 }],
+      title: "Chơi game đếm táo",
+      kind: "digital_game",
+      refType: "game_level",
+      refId: 123,
+      refStatus: "draft",
+      instruction:
+        'Mở game. "Bé hãy bấm vào các quả táo nhé!". Dễ hơn: mức 1. Khó hơn: mức 2.',
+      estimatedMinutes: 5,
+    };
+
+    const res = validatePublishChecklist("activity", invalidActivity);
     expect(res.ok).toBe(false);
-    expect(res.missing).toContain("pdf_render_failed");
+    expect(res.missing).toContain("referenced_game_level_not_published");
   });
 });

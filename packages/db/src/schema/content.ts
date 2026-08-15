@@ -175,7 +175,14 @@ export const lessonActivities = pgTable(
     activityId: bigint("activity_id", { mode: "number" }).notNull(),
     isRequired: boolean("is_required").notNull().default(true),
   },
-  (table) => [primaryKey({ columns: [table.lessonId, table.position] })]
+  (table) => [
+    primaryKey({ columns: [table.lessonId, table.position] }),
+    unique("lesson_activities_lesson_activity_unique").on(
+      table.lessonId,
+      table.activityId
+    ),
+    index("idx_lesson_activities_activity_id").on(table.activityId),
+  ]
 );
 
 export const worksheets = pgTable(

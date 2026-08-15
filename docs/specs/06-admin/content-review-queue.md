@@ -63,12 +63,12 @@ Hàng đợi phải làm việc duyệt nhanh nhất có thể mà không làm n
 | ID | Rule | Vì sao |
 |---|---|---|
 | `BR-CRQ-01` | Cấm — **NEVER duyệt theo lô.** Mỗi bản một quyết định | Duyệt hàng loạt là bỏ qua cổng người |
-| `BR-CRQ-02` | Nút duyệt **chỉ bật sau khi mở preview** | Duyệt không xem là duyệt mù |
+| `BR-CRQ-02` | Nút duyệt **chỉ bật sau khi mở preview** (với game level) hoặc **mở bản xem thử cho người dạy** (với lesson và activity, theo `D-LI`) | Duyệt không xem là duyệt mù |
 | `BR-CRQ-03` | Từ chối **bắt buộc lý do** ≥10 ký tự | Từ chối không lý do làm người soạn lặp lại đúng lỗi cũ |
 | `BR-CRQ-04` | Bản `origin = ai_assisted` gắn **nhãn rõ ràng** | Người duyệt cần biết để soi kỹ hơn |
 | `BR-CRQ-05` | Bản là version mới của hàng `authored_in = repo_seed` gắn **nhãn cảnh báo lệch seeder** | Sửa trong studio mà quên seeder = môi trường dựng mới mất bản sửa (`BR-CSA-11`) |
 | `BR-CRQ-06` | Mọi quyết định ghi `content_review_log` + `audit_logs` | Đảm bảo khả năng truy vết và giải trình trách nhiệm của người duyệt theo `BR-AUD-01` đối với mọi quyết định phát hành nội dung |
-| `BR-CRQ-07` | Checklist §7.2 hiện **đầy đủ**, không rút gọn theo loại nội dung | Rút gọn checklist là cách bỏ sót có hệ thống |
+| `BR-CRQ-07` | Checklist §7.2 hiện **đầy đủ bộ mục của họ thực thể**, không rút gọn theo từng bản (`D-LJ`) | Rút gọn checklist tuỳ tiện là cách bỏ sót có hệ thống |
 | `BR-CRQ-08` | Hàng đợi ưu tiên theo §7.1, không theo thứ tự tạo | Nội dung chặn một tuần curriculum quan trọng hơn nội dung lẻ |
 
 ## 7. Data
@@ -80,7 +80,9 @@ Hàng đợi phải làm việc duyệt nhanh nhất có thể mà không làm n
 3. Version mới của nội dung đang `published` (bản đang chạy có lỗi cần sửa).
 4. Nội dung lẻ, cũ nhất trước.
 
-### 7.2 Checklist duyệt — hiện cho mọi bản
+### 7.2 Checklist duyệt — theo họ thực thể
+
+#### Họ Game Level (`game_levels`)
 
 | Nhóm | Mục |
 |---|---|
@@ -90,6 +92,17 @@ Hàng đợi phải làm việc duyệt nhanh nhất có thể mà không làm n
 | **Hình ảnh** | Emoji/ảnh đúng nghĩa · nhìn rõ ở cỡ thật · không gây sợ |
 | **An toàn** | Không nội dung đáng sợ, bạo lực, phân biệt, thương hiệu |
 | **Kỹ thuật** | Preview chạy được · asset load đủ · sàn touch đạt |
+
+#### Họ Bài học & Hoạt động (`lessons` · `activities`)
+
+| Nhóm | Mục |
+|---|---|
+| **Sư phạm** | Khớp learning objectives · cung bậc đầy đủ · thời lượng phù hợp band tuổi |
+| **Ngôn ngữ cho trẻ** | Câu nói với trẻ ngắn gọn, tự nhiên · không giả định trẻ biết đọc chữ |
+| **An toàn vật liệu** | Đồ dùng sẵn có trong gia đình/lớp · không yêu cầu vật liệu nguy hiểm |
+| **Khả thi tại nhà** | Hướng dẫn rõ ràng cho phụ huynh/giáo viên thực hiện |
+| **Đánh giá quan sát** | Tiêu chí đánh giá cụ thể qua hành vi quan sát được, không trừu tượng |
+| **Vòng đời tham chiếu** | Hoạt động thành phần ở trạng thái published · không mồ côi liên kết |
 
 Người duyệt tick từng nhóm; kết quả lưu `checklist_snapshot`.
 
