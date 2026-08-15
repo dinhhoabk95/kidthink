@@ -12,7 +12,11 @@ import {
 } from "../../src/schema/curriculum.ts";
 import { gameLevels, gameTemplates } from "../../src/schema/game.ts";
 import { users } from "../../src/schema/identity.ts";
-import { levelDailyStats, playSessions } from "../../src/schema/play.ts";
+import {
+  childSessionSummaries,
+  levelDailyStats,
+  playSessions,
+} from "../../src/schema/play.ts";
 import { contentSkillMap } from "../../src/schema/tagging.ts";
 import {
   competencies,
@@ -29,6 +33,7 @@ describe("P3.6 Next Game Recommendation Invariants (BR-REC-01..08, D-MQ..D-MW)",
   beforeEach(async () => {
     const db = getOwnerDb();
     await db.delete(contentSkillMap);
+    await db.delete(childSessionSummaries);
     await db.delete(playSessions);
     await db.delete(gameLevels);
   });

@@ -2,10 +2,10 @@
 spec: CUSTOM-GAME-BUILDER
 title: Công cụ tạo trò chơi cá nhân
 area: addon
-status: approved
+status: implemented
 mvp: false
 phase: P4
-reviewed: 2026-08-11
+reviewed: 2026-08-16
 owns:
   - Luồng User tạo game từ template
   - Ràng buộc validation cho game do User tạo

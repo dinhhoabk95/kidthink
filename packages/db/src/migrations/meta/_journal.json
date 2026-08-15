@@ -330,6 +330,13 @@
       "when": 1786860000000,
       "tag": "0046_personal_curriculum_schema",
       "breakpoints": true
+    },
+    {
+      "idx": 47,
+      "version": "7",
+      "when": 1786870000000,
+      "tag": "0047_custom_game_schema",
+      "breakpoints": true
     }
   ]
 }

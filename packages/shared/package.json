@@ -13,6 +13,8 @@
   "dependencies": {
     "@kidthink/auth": "workspace:*",
     "@kidthink/emoji": "workspace:*",
+    "@kidthink/game-engine": "workspace:*",
+    "@kidthink/moderation": "workspace:*",
     "zod": "catalog:"
   },
   "devDependencies": {

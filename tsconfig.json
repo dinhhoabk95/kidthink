@@ -29,6 +29,7 @@
       "@kidthink/db": ["./packages/db/src/index.ts"],
       "@kidthink/game-engine": ["./packages/game-engine/src/index.ts"],
       "@kidthink/storage": ["./packages/storage/src/index.ts"],
+      "@kidthink/moderation": ["./packages/moderation/src/index.ts"],
       "@kidthink/ui": ["./packages/ui/src/index.ts"]
     }
   },

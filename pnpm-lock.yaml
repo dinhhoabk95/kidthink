@@ -415,6 +415,18 @@ importers:
         specifier: 'catalog:'
         version: 4.1.10(@opentelemetry/api@1.9.1)(@types/node@24.13.3)(vite@8.2.0(@types/node@24.13.3)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.49.2)(tsx@4.23.11)(yaml@2.9.0))
 
+  packages/moderation:
+    devDependencies:
+      '@kidthink/config':
+        specifier: workspace:*
+        version: link:../config
+      typescript:
+        specifier: 'catalog:'
+        version: 5.9.3
+      vitest:
+        specifier: 'catalog:'
+        version: 4.1.10(@opentelemetry/api@1.9.1)(@types/node@24.13.3)(vite@8.2.0(@types/node@24.13.3)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.49.2)(tsx@4.23.11)(yaml@2.9.0))
+
   packages/notification:
     dependencies:
       '@kidthink/shared':
@@ -473,6 +485,12 @@ importers:
       '@kidthink/emoji':
         specifier: workspace:*
         version: link:../emoji
+      '@kidthink/game-engine':
+        specifier: workspace:*
+        version: link:../game-engine
+      '@kidthink/moderation':
+        specifier: workspace:*
+        version: link:../moderation
       zod:
         specifier: 'catalog:'
         version: 3.25.76

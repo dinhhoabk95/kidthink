@@ -1,0 +1,35 @@
+import { appError } from "@kidthink/auth";
+import { getCustomGamePlayConfig } from "@kidthink/db";
+import { defineEventHandler, getQuery, getRouterParam } from "h3";
+import {
+  requireWebUserSession,
+  respondToUserAuthError,
+} from "../../../../utils/auth-runtime.js";
+
+export default defineEventHandler(async (event) => {
+  try {
+    const user = await requireWebUserSession(event);
+    const userId = Number(user.user_id);
+    const uuid = getRouterParam(event, "uuid") || "";
+    const query =
+      (event.context as { query?: Record<string, unknown> })?.query ??
+      getQuery(event);
+
+    const childUuid =
+      (typeof query.child_uuid === "string" ? query.child_uuid : "") ||
+      (event.context as { active_child_uuid?: string })?.active_child_uuid ||
+      "";
+
+    if (!childUuid) {
+      throw appError(
+        "NO_ACTIVE_CHILD",
+        "Hãy chọn hồ sơ bé trước khi tiếp tục."
+      );
+    }
+
+    const config = await getCustomGamePlayConfig(userId, childUuid, uuid);
+    return config;
+  } catch (error) {
+    return respondToUserAuthError(event, error);
+  }
+});

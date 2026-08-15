@@ -133,6 +133,12 @@ export const PURGE_TABLE_CLASSIFICATIONS: readonly TablePurgeMetadata[] = [
     legalBasis: "BR-ADL-01",
   },
   {
+    tableName: "custom_games",
+    classification: "delete",
+    reason: "Xoá các trò chơi tùy chỉnh do người dùng tạo khi đóng tài khoản",
+    legalBasis: "BR-ADL-01 & BR-CGB-01",
+  },
+  {
     tableName: "user_tags",
     classification: "delete",
     reason: "Xoá gắn thẻ cá nhân hoá người dùng",
