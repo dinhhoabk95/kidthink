@@ -100,6 +100,12 @@
             <span v-if="flag.update_reason"
               >Lý do đổi gần nhất: <em>"{{ flag.update_reason }}"</em></span
             >
+            <NuxtLink
+              class="text-indigo-600 dark:text-indigo-400 font-bold hover:underline"
+              :to="`/audit?entity_type=feature_flag&entity_id=${flag.key}`"
+            >
+              Xem lịch sử đổi cờ →
+            </NuxtLink>
           </div>
         </div>
       </div>

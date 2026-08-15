@@ -6,6 +6,54 @@ import {
   respondToManagerAuthError,
 } from "../../../utils/admin-auth-runtime.js";
 
+export type SystemHealthStatus = "ok" | "unknown" | "bad";
+
+export interface SystemStatusResponse {
+  as_of: string;
+  services: {
+    postgres: {
+      status: SystemHealthStatus;
+      latency_ms: number;
+      runbook_url: string;
+    };
+    valkey: {
+      status: SystemHealthStatus;
+      latency_ms: number;
+      runbook_url: string;
+    };
+    queue: { status: SystemHealthStatus; runbook_url: string };
+  };
+  jobs: {
+    status: SystemHealthStatus;
+    waiting_count: number;
+    failed_24h_count: number;
+    oldest_job_age_seconds: number;
+  };
+  backups: {
+    status: SystemHealthStatus;
+    latest_dump: {
+      status: string;
+      size_bytes: number;
+      started_at: string;
+    } | null;
+    latest_verify: {
+      status: string;
+      restored_rows: number;
+      finished_at: string | null;
+    } | null;
+    has_verified_backup: boolean;
+    warning: string | null;
+    runbook_url: string;
+  };
+  errors: {
+    status: SystemHealthStatus;
+    server_errors_24h: number;
+    client_errors_24h: number;
+    open_error_groups: number;
+    runbook_url: string;
+  };
+}
+
 export default defineEventHandler(async (event) => {
   try {
     const manager = await requireManagerSession(event);
@@ -25,44 +73,44 @@ export default defineEventHandler(async (event) => {
     const db = getOwnerDb();
     const asOf = new Date().toISOString();
 
-    // 1. Services Health Check
-    let dbStatus: "healthy" | "degraded" | "unknown" = "unknown";
+    // 1. Services Health Check (D-KT: ok | unknown | bad)
+    let pgStatus: SystemHealthStatus = "unknown";
     let dbLatencyMs = 0;
     try {
       const start = performance.now();
       await db.execute(sql`SELECT 1`);
       dbLatencyMs = Math.round(performance.now() - start);
-      dbStatus = dbLatencyMs < 200 ? "healthy" : "degraded";
+      pgStatus = dbLatencyMs < 200 ? "ok" : "bad";
     } catch {
-      dbStatus = "unknown";
+      pgStatus = "unknown";
     }
 
     const services = {
       postgres: {
-        status: dbStatus,
+        status: pgStatus,
         latency_ms: dbLatencyMs,
         runbook_url: "/docs/runbooks/db-troubleshooting.md",
       },
       valkey: {
-        status: "healthy" as const,
+        status: "ok" as SystemHealthStatus,
         latency_ms: 2,
         runbook_url: "/docs/runbooks/valkey-cache.md",
       },
       queue: {
-        status: "healthy" as const,
+        status: "ok" as SystemHealthStatus,
         runbook_url: "/docs/runbooks/bullmq-worker.md",
       },
     };
 
     // 2. Jobs Statistics
     const jobs = {
+      status: "ok" as SystemHealthStatus,
       waiting_count: 0,
       failed_24h_count: 0,
       oldest_job_age_seconds: 0,
-      status: "healthy" as const,
     };
 
-    // 3. Backup Status (BR-SYS-06: Warning if never verified)
+    // 3. Backup Status (BR-SYS-06: Warning and bad status if never verified)
     const latestBackups = await db
       .select()
       .from(backupLog)
@@ -81,6 +129,7 @@ export default defineEventHandler(async (event) => {
     );
 
     const backups = {
+      status: (hasVerifiedBackup ? "ok" : "bad") as SystemHealthStatus,
       latest_dump: latestDump
         ? {
             status: latestDump.status,
@@ -125,10 +174,18 @@ export default defineEventHandler(async (event) => {
       .from(errorLogs)
       .where(eq(errorLogs.status, "open"));
 
+    const srvErrCount = recentServerErrors?.count || 0;
+    const cliErrCount = recentClientErrors?.count || 0;
+    const openGrpCount = openErrorGroups?.count || 0;
+
+    const errorStatus: SystemHealthStatus =
+      srvErrCount > 10 || openGrpCount > 5 ? "bad" : "ok";
+
     const errors = {
-      server_errors_24h: recentServerErrors?.count || 0,
-      client_errors_24h: recentClientErrors?.count || 0,
-      open_error_groups: openErrorGroups?.count || 0,
+      status: errorStatus,
+      server_errors_24h: srvErrCount,
+      client_errors_24h: cliErrCount,
+      open_error_groups: openGrpCount,
       runbook_url: "/docs/runbooks/error-handling.md",
     };
 

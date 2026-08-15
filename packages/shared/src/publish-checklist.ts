@@ -94,7 +94,16 @@ function checkContentPackDetails(
         (item: unknown) =>
           typeof item === "object" &&
           item !== null &&
-          (item as Record<string, unknown>).isCorrect === true
+          ((item as Record<string, unknown>).isCorrect === true ||
+            (item as Record<string, unknown>).is_correct === true)
+      )) ||
+    (Array.isArray(contentPack.options) &&
+      contentPack.options.some(
+        (opt: unknown) =>
+          typeof opt === "object" &&
+          opt !== null &&
+          ((opt as Record<string, unknown>).isCorrect === true ||
+            (opt as Record<string, unknown>).is_correct === true)
       ));
 
   if (!hasCorrect) {

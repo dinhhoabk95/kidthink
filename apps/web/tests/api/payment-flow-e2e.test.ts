@@ -155,12 +155,26 @@ describe("Payment Flow Full E2E & Boundary Tests (P2.3)", () => {
   });
 
   beforeEach(async () => {
-    await db.delete(notifications);
-    await db.delete(auditLogs);
-    await db.delete(entitlements);
-    await db.delete(paymentOrders);
-    await db.delete(childProfiles);
-    await db.delete(users);
+    if (testUser?.id) {
+      await db
+        .delete(notifications)
+        .where(eq(notifications.recipientId, testUser.id));
+      await db.delete(entitlements).where(eq(entitlements.userId, testUser.id));
+      await db
+        .delete(paymentOrders)
+        .where(eq(paymentOrders.userId, testUser.id));
+      await db
+        .delete(childProfiles)
+        .where(eq(childProfiles.userId, testUser.id));
+      await db.delete(users).where(eq(users.id, testUser.id));
+    }
+
+    for (const k of SEED_ENTITLEMENT_KEYS) {
+      await db.insert(entitlementKeys).values(k).onConflictDoNothing();
+    }
+    for (const pkg of SEED_PACKAGES) {
+      await db.insert(packages).values(pkg).onConflictDoNothing();
+    }
 
     const [user] = await db
       .insert(users)
@@ -182,13 +196,22 @@ describe("Payment Flow Full E2E & Boundary Tests (P2.3)", () => {
   });
 
   afterAll(async () => {
-    await db.delete(notifications);
-    await db.delete(auditLogs);
-    await db.delete(entitlements);
-    await db.delete(paymentOrders);
-    await db.delete(childProfiles);
-    await db.delete(users);
-    await db.delete(managers);
+    if (testUser?.id) {
+      await db
+        .delete(notifications)
+        .where(eq(notifications.recipientId, testUser.id));
+      await db.delete(entitlements).where(eq(entitlements.userId, testUser.id));
+      await db
+        .delete(paymentOrders)
+        .where(eq(paymentOrders.userId, testUser.id));
+      await db
+        .delete(childProfiles)
+        .where(eq(childProfiles.userId, testUser.id));
+      await db.delete(users).where(eq(users.id, testUser.id));
+    }
+    if (testManager?.id) {
+      await db.delete(managers).where(eq(managers.id, testManager.id));
+    }
   });
 
   it("Guest: GET /api/guest/packages returns catalog without private data", async () => {

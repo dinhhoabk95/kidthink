@@ -1,14 +1,18 @@
 import {
+  contentAssetRefs,
   contentImages,
   gameLevels,
   gameTemplates,
   getOwnerDb,
   managers,
 } from "@kidthink/db";
+import { signedUrl, url } from "@kidthink/storage";
 import { eq } from "drizzle-orm";
 import { beforeAll, describe, expect, it } from "vitest";
+import assetUsageHandler from "../../server/api/managers/assets/[...ref]/usage.get.js";
 import deleteImageHandler from "../../server/api/managers/images/[id].delete.js";
 import uploadImageHandler from "../../server/api/managers/images/index.post.js";
+import createLevelHandler from "../../server/api/managers/levels/index.post.js";
 
 const CSRF_TOKEN =
   "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef";
@@ -131,8 +135,39 @@ function mockDeleteEvent(
   } as any;
 }
 
+function mockUsageEvent(
+  ref: string,
+  managerRole?: "super_admin" | "content_reviewer"
+) {
+  return {
+    method: "GET",
+    node: {
+      req: {
+        headers: {
+          "user-agent": "VitestTestRunner/1.0",
+        },
+      },
+      res: {},
+    },
+    context: {
+      ...(managerRole
+        ? {
+            manager: {
+              manager_id: testManagerId,
+              display_name: "Manager Image Tester",
+              session_id: "sess_manager_img_123",
+              refresh_token_version: 1,
+              role: managerRole,
+            },
+          }
+        : {}),
+      params: { ref },
+    },
+  } as any;
+}
+
 describe("Image Storage & Upload API (BR-IMG-01 - BR-IMG-12, BR-IUP-01 - BR-IUP-09, Spec §7.1)", () => {
-  it("rejects unauthenticated upload request", async () => {
+  it("rejects unauthenticated upload request (BR-IMG-11)", async () => {
     const event = mockMultipartEvent(undefined, [
       { name: "file", data: VALID_PNG_BUFFER, filename: "apple.png" },
       { name: "alt", data: Buffer.from("Quả táo đỏ") },
@@ -214,7 +249,21 @@ describe("Image Storage & Upload API (BR-IMG-01 - BR-IMG-12, BR-IUP-01 - BR-IUP-
     expect(res.path).not.toContain("https");
   });
 
-  it("DELETE /api/managers/images/:id prevents deletion when image is used by published content (BR-IMG-07)", async () => {
+  it("constructs URLs dynamically without absolute host in DB (BR-IMG-05, D-KD)", () => {
+    const relativePath = "content/2026/08/ab12cd.webp";
+    const fullUrl = url(relativePath);
+    const thumbUrl = url(relativePath, { variant: "thumb" });
+
+    expect(fullUrl).toContain("/content/2026/08/ab12cd.webp");
+    expect(thumbUrl).toContain("/content/2026/08/ab12cd_thumb.webp");
+    expect(relativePath).not.toContain("https://");
+
+    const signed = signedUrl("proofs/2026/08/order_proof.jpg", 900);
+    expect(signed).toContain("expires=");
+    expect(signed).toContain("signature=");
+  });
+
+  it("DELETE /api/managers/images/:id prevents deletion when image is used by published content (BR-IMG-07, BR-AUT2-01)", async () => {
     const db = getOwnerDb();
 
     // 1. Insert template if not exists
@@ -247,16 +296,27 @@ describe("Image Storage & Upload API (BR-IMG-01 - BR-IMG-12, BR-IUP-01 - BR-IUP-
 
     // 3. Create a published level referencing this image
     const levelCode = `GL-C1-IMG-PUB-${Date.now().toString().slice(-4)}`;
-    await db.insert(gameLevels).values({
-      entityId: Date.now() + 10,
-      code: levelCode,
-      contentVersion: 1,
-      templateId: tpl.id,
-      titleVi: "Level using image",
-      contentPack: { prompt: "Tìm hoa", image_path: uploaded.path },
-      difficultyParams: {},
-      accessTier: "free",
-      status: "published",
+    const [createdLvl] = await db
+      .insert(gameLevels)
+      .values({
+        entityId: Date.now() + 10,
+        code: levelCode,
+        contentVersion: 1,
+        templateId: tpl.id,
+        titleVi: "Level using image",
+        contentPack: { prompt: "Tìm hoa", image_path: uploaded.path },
+        difficultyParams: {},
+        accessTier: "free",
+        status: "published",
+      })
+      .returning();
+
+    // Insert ref into content_asset_refs (D-KB)
+    await db.insert(contentAssetRefs).values({
+      entityType: "game_level",
+      entityId: createdLvl.id,
+      assetKind: "image",
+      assetRef: uploaded.path,
     });
 
     // 4. Try to delete the image -> 409 CONTENT_IN_USE
@@ -269,7 +329,7 @@ describe("Image Storage & Upload API (BR-IMG-01 - BR-IMG-12, BR-IUP-01 - BR-IUP-
     }
   });
 
-  it("DELETE /api/managers/images/:id deletes unused image successfully", async () => {
+  it("DELETE /api/managers/images/:id deletes unused image successfully (BR-AUT2-06)", async () => {
     // 1. Upload an image
     const event = mockMultipartEvent("content_reviewer", [
       { name: "file", data: VALID_PNG_BUFFER, filename: "unused.png" },
@@ -291,5 +351,139 @@ describe("Image Storage & Upload API (BR-IMG-01 - BR-IMG-12, BR-IUP-01 - BR-IUP-
       .from(contentImages)
       .where(eq(contentImages.id, uploaded.id));
     expect(found).toBeUndefined();
+  });
+
+  it("GET /api/managers/assets/:ref/usage returns usage breakdown and can_delete flag (BR-AUT2-03, BR-AUT2-04)", async () => {
+    const db = getOwnerDb();
+    const testRef = `content/2026/08/usage_test_${Date.now()}.webp`;
+
+    // 1. Template
+    let [tpl] = await db
+      .select()
+      .from(gameTemplates)
+      .where(eq(gameTemplates.code, "GT-001"));
+    if (!tpl) {
+      [tpl] = await db
+        .insert(gameTemplates)
+        .values({
+          code: "GT-001",
+          nameVi: "GT001",
+          mechanic: "tap-select",
+          layouts: ["grid"],
+          ageMin: 3,
+          ageMax: 6,
+        })
+        .returning();
+    }
+
+    // 2. Create draft level using this asset
+    const [draftLvl] = await db
+      .insert(gameLevels)
+      .values({
+        entityId: Date.now() + 20,
+        code: `GL-C1-IMG-DFT-${Date.now().toString().slice(-4)}`,
+        contentVersion: 1,
+        templateId: tpl.id,
+        titleVi: "Level bản nháp",
+        contentPack: { prompt: "Nháp", image_path: testRef },
+        difficultyParams: {},
+        accessTier: "free",
+        status: "draft",
+      })
+      .returning();
+
+    await db.insert(contentAssetRefs).values({
+      entityType: "game_level",
+      entityId: draftLvl.id,
+      assetKind: "image",
+      assetRef: testRef,
+    });
+
+    // 3. Query usage when only in draft -> can_delete: true
+    const usageEvt = mockUsageEvent(testRef, "content_reviewer");
+    const draftUsage = (await assetUsageHandler(usageEvt)) as any;
+    expect(draftUsage.asset_ref).toBe(testRef);
+    expect(draftUsage.used_by).toHaveLength(1);
+    expect(draftUsage.used_by[0].status).toBe("draft");
+    expect(draftUsage.can_delete).toBe(true);
+    expect(draftUsage.block_reason).toBeNull();
+
+    // 4. Create published level using same asset -> can_delete: false
+    const [pubLvl] = await db
+      .insert(gameLevels)
+      .values({
+        entityId: Date.now() + 21,
+        code: `GL-C1-IMG-PUB-${Date.now().toString().slice(-4)}`,
+        contentVersion: 1,
+        templateId: tpl.id,
+        titleVi: "Level phát hành",
+        contentPack: { prompt: "Phát hành", image_path: testRef },
+        difficultyParams: {},
+        accessTier: "free",
+        status: "published",
+      })
+      .returning();
+
+    await db.insert(contentAssetRefs).values({
+      entityType: "game_level",
+      entityId: pubLvl.id,
+      assetKind: "image",
+      assetRef: testRef,
+    });
+
+    const pubUsage = (await assetUsageHandler(usageEvt)) as any;
+    expect(pubUsage.used_by).toHaveLength(2);
+    expect(pubUsage.can_delete).toBe(false);
+    expect(pubUsage.block_reason).toBe("used_by_published");
+  });
+
+  it("syncs content_asset_refs in same transaction when creating level (D-KB)", async () => {
+    const imageRef = `content/2026/08/tx_sync_${Date.now()}.webp`;
+    const createEvt = {
+      method: "POST",
+      node: {
+        req: {
+          headers: {
+            "user-agent": "VitestTestRunner/1.0",
+            "x-csrf-token": CSRF_TOKEN,
+            cookie: `tm_m_csrf=${CSRF_TOKEN}`,
+          },
+        },
+        res: { statusCode: 200 },
+      },
+      context: {
+        manager: {
+          manager_id: testManagerId,
+          display_name: "Manager Tester",
+          session_id: "sess_123",
+          refresh_token_version: 1,
+          role: "content_reviewer",
+        },
+        params: {},
+      },
+      _body: {
+        template_code: "GT-001",
+        title_vi: "Level with transactional image sync",
+        access_tier: "free",
+        content_pack: {
+          prompt: "Tìm hình quả táo",
+          image_path: imageRef,
+          options: [{ label: "1", value: 1 }],
+        },
+      },
+    } as any;
+
+    const created = (await createLevelHandler(createEvt)) as any;
+    expect(created).toBeDefined();
+
+    // Verify content_asset_refs has the new row
+    const db = getOwnerDb();
+    const [foundRef] = await db
+      .select()
+      .from(contentAssetRefs)
+      .where(eq(contentAssetRefs.entityId, created.id));
+    expect(foundRef).toBeDefined();
+    expect(foundRef.assetRef).toBe(imageRef);
+    expect(foundRef.assetKind).toBe("image");
   });
 });

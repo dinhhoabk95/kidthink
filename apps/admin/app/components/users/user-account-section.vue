@@ -53,6 +53,25 @@
 
       <div>
         <span class="text-xs text-surface-400 block"
+          >Xác thực hai lớp (MFA):</span
+        >
+        <div class="flex items-center gap-2">
+          <span class="font-medium text-emerald-700" v-if="account.mfa_enabled">
+            ✓ Đang bật
+          </span>
+          <span class="font-medium text-surface-500" v-else> Chưa bật </span>
+          <NuxtLink
+            class="text-xs font-bold text-indigo-600 hover:underline"
+            v-if="account.mfa_enabled"
+            :to="`/users/${account.uuid}/mfa-recovery`"
+          >
+            (Khôi phục)
+          </NuxtLink>
+        </div>
+      </div>
+
+      <div>
+        <span class="text-xs text-surface-400 block"
           >Số phiên đăng nhập mở:</span
         >
         <span class="font-bold text-surface-900"
@@ -105,6 +124,7 @@
       status: string;
       email_verified: boolean;
       email_verified_at: string | null;
+      mfa_enabled?: boolean;
       suspended_reason: string | null;
       purge_at: string | null;
       active_session_count: number;

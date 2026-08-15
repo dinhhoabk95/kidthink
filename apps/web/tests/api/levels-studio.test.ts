@@ -2,8 +2,10 @@ import { getOwnerDb, managers } from "@kidthink/db";
 import { eq } from "drizzle-orm";
 import { beforeAll, describe, expect, it } from "vitest";
 import duplicateLevelHandler from "../../server/api/managers/levels/[code]/[version]/duplicate.post.js";
+import submitLevelHandler from "../../server/api/managers/levels/[code]/[version]/submit.post.js";
 import getLevelVersionHandler from "../../server/api/managers/levels/[code]/[version].get.js";
 import patchLevelHandler from "../../server/api/managers/levels/[code]/[version].patch.js";
+import getLevelConfigHandler from "../../server/api/managers/levels/[code]/config.get.js";
 import createLevelHandler from "../../server/api/managers/levels/index.post.js";
 
 const CSRF_TOKEN =
@@ -39,8 +41,10 @@ function mockEvent(
   method: string,
   managerRole?: "super_admin" | "content_reviewer",
   params: Record<string, string> = {},
-  body?: unknown
+  body?: unknown,
+  query: Record<string, string> = {}
 ) {
+  const headersMap: Record<string, string> = {};
   return {
     method,
     node: {
@@ -51,12 +55,18 @@ function mockEvent(
           cookie: `tm_m_csrf=${CSRF_TOKEN}`,
         },
       },
-      res: {},
+      res: {
+        setHeader: (k: string, v: string) => {
+          headersMap[k.toLowerCase()] = v;
+        },
+        getHeader: (k: string) => headersMap[k.toLowerCase()],
+      },
     },
     context: {
       ...(managerRole
         ? {
             manager: {
+              id: testManagerId,
               manager_id: testManagerId,
               display_name: "Manager Tester",
               session_id: "sess_manager_123",
@@ -68,11 +78,12 @@ function mockEvent(
       params,
       body,
     },
+    query,
     _body: body,
   } as any;
 }
 
-describe("Game Level Studio & Management API (BR-STU-01 - BR-STU-09, Spec §7.2)", () => {
+describe("Game Level Studio & Management API (BR-STU-01 - BR-STU-10, Spec §7.2)", () => {
   it("rejects unauthenticated requests", async () => {
     const event = mockEvent("POST", undefined, {}, { template_code: "GT-001" });
     await expect(createLevelHandler(event)).rejects.toThrow();
@@ -87,13 +98,24 @@ describe("Game Level Studio & Management API (BR-STU-01 - BR-STU-09, Spec §7.2)
         template_code: "GT-001",
         title_vi: "Đếm số bông hoa",
         instruction_vi: "Hãy đếm số bông hoa xuất hiện",
+        access_tier: "free",
         content_pack: {
-          prompt: "Có bao nhiêu bông hoa?",
-          target_number: 3,
-          item_emoji: "🌸",
+          prompt: "Tìm quả táo màu đỏ",
+          target_item: {
+            item_id: "apple_target",
+            asset: { kind: "emoji", ref: "🍎" },
+          },
           options: [
-            { label: "2", value: 2 },
-            { label: "3", value: 3 },
+            {
+              item_id: "apple_opt",
+              asset: { kind: "emoji", ref: "🍎" },
+              is_correct: true,
+            },
+            {
+              item_id: "banana_opt",
+              asset: { kind: "emoji", ref: "🍌" },
+              is_correct: false,
+            },
           ],
         },
       }
@@ -117,6 +139,7 @@ describe("Game Level Studio & Management API (BR-STU-01 - BR-STU-09, Spec §7.2)
       {
         template_code: "GT-002",
         title_vi: "Tìm số còn thiếu",
+        access_tier: "free",
       }
     );
     const created = (await createLevelHandler(createEvt)) as any;
@@ -142,6 +165,7 @@ describe("Game Level Studio & Management API (BR-STU-01 - BR-STU-09, Spec §7.2)
       {
         template_code: "GT-001",
         title_vi: "Tiêu đề cũ",
+        access_tier: "free",
       }
     );
     const created = (await createLevelHandler(createEvt)) as any;
@@ -178,6 +202,40 @@ describe("Game Level Studio & Management API (BR-STU-01 - BR-STU-09, Spec §7.2)
     }
   });
 
+  it("PATCH /api/managers/levels/[code]/[version] rejects invalid content_pack with 422 (BR-STU-02)", async () => {
+    const createEvt = mockEvent(
+      "POST",
+      "content_reviewer",
+      {},
+      {
+        template_code: "GT-001",
+        title_vi: "Level test validation",
+        access_tier: "free",
+      }
+    );
+    const created = (await createLevelHandler(createEvt)) as any;
+
+    const invalidPatchEvt = mockEvent(
+      "PATCH",
+      "content_reviewer",
+      { code: created.code, version: "1" },
+      {
+        content_pack: {
+          prompt: "", // invalid empty prompt
+          target_number: -999,
+          options: "not-an-array",
+        },
+      }
+    );
+
+    try {
+      await patchLevelHandler(invalidPatchEvt);
+      expect.fail("Should have thrown 422 CONTENT_PACK_INVALID");
+    } catch (err: any) {
+      expect(err.statusCode || err.status).toBe(422);
+    }
+  });
+
   it("POST /api/managers/levels/[code]/[version]/duplicate creates cloned draft level (D-KA)", async () => {
     // 1. Create level
     const createEvt = mockEvent(
@@ -187,6 +245,7 @@ describe("Game Level Studio & Management API (BR-STU-01 - BR-STU-09, Spec §7.2)
       {
         template_code: "GT-001",
         title_vi: "Bản gốc",
+        access_tier: "free",
       }
     );
     const created = (await createLevelHandler(createEvt)) as any;
@@ -202,5 +261,80 @@ describe("Game Level Studio & Management API (BR-STU-01 - BR-STU-09, Spec §7.2)
     expect(cloned.contentVersion).toBe(1);
     expect(cloned.status).toBe("draft");
     expect(cloned.titleVi).toContain("Bản gốc");
+  });
+
+  it("POST /api/managers/levels/[code]/[version]/submit transitions draft to in_review (BR-STU-07)", async () => {
+    // 1. Create level with valid content pack & access tier
+    const createEvt = mockEvent(
+      "POST",
+      "content_reviewer",
+      {},
+      {
+        template_code: "GT-001",
+        title_vi: "Bài học hoàn chỉnh",
+        instruction_vi: "Đếm số bông hoa",
+        access_tier: "standard",
+        content_pack: {
+          prompt: "Đếm hoa",
+          hasCorrectAnswer: true,
+          correctAnswers: ["3"],
+          items: [{ isCorrect: true, emoji: "🌸" }],
+        },
+      }
+    );
+    const created = (await createLevelHandler(createEvt)) as any;
+
+    // 2. Submit for review
+    const submitEvt = mockEvent("POST", "content_reviewer", {
+      code: created.code,
+      version: "1",
+    });
+    const result = (await submitLevelHandler(submitEvt)) as any;
+    expect(result.status).toBe("in_review");
+  });
+
+  it("GET /api/managers/levels/[code]/config delivers preview config without gating (D-JW, D-JX, BR-LPV-05)", async () => {
+    const createEvt = mockEvent(
+      "POST",
+      "content_reviewer",
+      {},
+      {
+        template_code: "GT-001",
+        title_vi: "Level Preview Config",
+        access_tier: "premium",
+        content_pack: {
+          prompt: "Tìm quả táo màu đỏ",
+          target_item: {
+            item_id: "apple_target",
+            asset: { kind: "emoji", ref: "🍎" },
+          },
+          options: [
+            {
+              item_id: "apple_opt",
+              asset: { kind: "emoji", ref: "🍎" },
+              is_correct: true,
+            },
+            {
+              item_id: "banana_opt",
+              asset: { kind: "emoji", ref: "🍌" },
+              is_correct: false,
+            },
+          ],
+        },
+      }
+    );
+    const created = (await createLevelHandler(createEvt)) as any;
+
+    const configEvt = mockEvent(
+      "GET",
+      "content_reviewer",
+      { code: created.code },
+      undefined,
+      { version: "1" }
+    );
+    const config = (await getLevelConfigHandler(configEvt)) as any;
+    expect(config).toBeDefined();
+    expect(config.level_code).toBe(created.code);
+    expect(config.content_version).toBe(1);
   });
 });

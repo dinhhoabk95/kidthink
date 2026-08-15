@@ -3,6 +3,7 @@ import {
   bigint,
   boolean,
   check,
+  index,
   integer,
   jsonb,
   pgEnum,
@@ -41,8 +42,22 @@ export const imageOwnerTypeEnum = pgEnum("image_owner_type", [
   "lesson",
   "activity",
   "worksheet",
+  "payment_order",
+  "payment_proof",
+  "custom_game",
   "user_avatar",
   "manager_avatar",
+]);
+
+export const imageVisibilityEnum = pgEnum("image_visibility", [
+  "public",
+  "private",
+]);
+
+export const imageStatusEnum = pgEnum("image_status", [
+  "active",
+  "orphan",
+  "archived",
 ]);
 
 export const lessons = pgTable(
@@ -184,11 +199,47 @@ export const contentImages = pgTable("content_images", {
   ownerType: imageOwnerTypeEnum("owner_type").notNull(),
   ownerId: bigint("owner_id", { mode: "number" }).notNull(),
   storagePath: text("storage_path").notNull(),
+  thumbPath: text("thumb_path"),
+  width: integer("width"),
+  height: integer("height"),
+  bytes: integer("bytes"),
+  mime: varchar("mime", { length: 50 }),
   altTextVi: text("alt_text_vi"),
+  visibility: imageVisibilityEnum("visibility").notNull().default("public"),
+  status: imageStatusEnum("status").notNull().default("active"),
+  uploadedByManagerId: bigint("uploaded_by_manager_id", {
+    mode: "number",
+  }).references(() => managers.id),
   createdAt: timestamp("created_at", { withTimezone: true })
     .defaultNow()
     .notNull(),
 });
+
+export const contentAssetRefs = pgTable(
+  "content_asset_refs",
+  {
+    id: bigint("id", { mode: "number" })
+      .primaryKey()
+      .generatedAlwaysAsIdentity(),
+    entityType: varchar("entity_type", { length: 50 }).notNull(),
+    entityId: bigint("entity_id", { mode: "number" }).notNull(),
+    assetKind: varchar("asset_kind", { length: 50 }).notNull(),
+    assetRef: text("asset_ref").notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+  },
+  (table) => [
+    index("idx_content_asset_refs_asset_ref").on(table.assetRef),
+    index("idx_content_asset_refs_entity").on(table.entityType, table.entityId),
+    unique("content_asset_refs_unique").on(
+      table.entityType,
+      table.entityId,
+      table.assetKind,
+      table.assetRef
+    ),
+  ]
+);
 
 export const seoPageTypeEnum = pgEnum("seo_page_type", [
   "competency",

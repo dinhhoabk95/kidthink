@@ -84,7 +84,7 @@ async function fetchGameLevelVersions(
       .where(
         and(
           eq(playSessions.gameLevelId, r.id),
-          eq(playSessions.status, "completed")
+          eq(playSessions.completionStatus, "completed")
         )
       );
 

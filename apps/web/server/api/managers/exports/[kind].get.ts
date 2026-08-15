@@ -205,6 +205,17 @@ export default defineEventHandler(async (event) => {
       });
     }
 
+    // D-KP: curriculum_health pending_source: P3
+    if (kind === "curriculum_health") {
+      return {
+        status: "pending_source",
+        pending_source: "P3",
+        message:
+          "Loại xuất dữ liệu curriculum_health đang chờ module Curriculum (P3) hoàn thành (D-KP)",
+        row_count: 0,
+      };
+    }
+
     const query =
       ((event as Record<string, unknown>)._query as Record<string, unknown>) ||
       getQuery(event);
@@ -222,6 +233,15 @@ export default defineEventHandler(async (event) => {
 
     const db = getOwnerDb();
     const { csvContent, rowCount } = await generateCsvData(kind, db);
+
+    if (rowCount > MAX_EXPORT_ROWS) {
+      throw createError({
+        statusCode: 422,
+        statusMessage: "EXPORT_ROW_LIMIT_EXCEEDED",
+        message:
+          "Số lượng dòng xuất vượt quá giới hạn 100.000 dòng. Vui lòng thu hẹp khoảng thời gian (BR-EXP-05)",
+      });
+    }
 
     // Save CSV to private storage and create 15-min signed URL (BR-EXP-04)
     const exportKey = `exports/${kind}_${Date.now()}.csv`;
@@ -246,6 +266,8 @@ export default defineEventHandler(async (event) => {
       entity_id: kind,
       after_data: {
         kind,
+        from: query.from || null,
+        to: query.to || null,
         row_count: rowCount,
         expires_at: signedUrlRes.expiresAt.toISOString(),
       },

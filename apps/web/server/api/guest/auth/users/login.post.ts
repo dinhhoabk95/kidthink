@@ -1,12 +1,26 @@
 import {
   appError,
+  getAuthRedisClient,
   getBrowserSessionService,
+  MfaChallengeService,
   verifyPassword,
 } from "@kidthink/auth";
-import { getAppDb, getAppSql, PostgresSessionStore, users } from "@kidthink/db";
+import {
+  getAppDb,
+  getAppSql,
+  mfaSettings,
+  PostgresSessionStore,
+  users,
+} from "@kidthink/db";
 import { enforceTwoAxisRateLimit } from "@kidthink/shared";
-import { eq } from "drizzle-orm";
-import { defineEventHandler, getHeader, type H3Event, readBody } from "h3";
+import { and, eq } from "drizzle-orm";
+import {
+  defineEventHandler,
+  getHeader,
+  type H3Event,
+  readBody,
+  setResponseStatus,
+} from "h3";
 import { z } from "zod";
 import { setUserSession } from "#imports";
 import {
@@ -88,6 +102,35 @@ export async function handleLogin(event: H3Event, testBody?: unknown) {
     }
     if (user.status === "deleted") {
       throw appError("ACCOUNT_DELETED");
+    }
+
+    // BR-MFA-09 / D-KY: Check if user has MFA enabled
+    const [mfa] = await db
+      .select({ id: mfaSettings.id, confirmedAt: mfaSettings.confirmedAt })
+      .from(mfaSettings)
+      .where(
+        and(
+          eq(mfaSettings.accountType, "user"),
+          eq(mfaSettings.accountId, user.id)
+        )
+      );
+
+    if (mfa?.confirmedAt) {
+      const mfaService = new MfaChallengeService(getAuthRedisClient());
+      const createdChallenge = await mfaService.createChallenge({
+        namespace: "user",
+        accountId: user.id,
+        displayName: user.displayName,
+        rememberMe,
+        ipAddress: getVerifiedRemoteIp(event),
+      });
+
+      setResponseStatus(event, 428);
+      return {
+        status: "MFA_REQUIRED",
+        challenge: createdChallenge.challengeToken,
+        mfa_enabled: true,
+      };
     }
 
     const userAgent = getHeader(event, "user-agent") || "unknown";

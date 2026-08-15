@@ -1,4 +1,5 @@
 import {
+  auditLogs,
   errorLogs,
   getOwnerDb,
   managers,
@@ -8,6 +9,7 @@ import {
 import { eq } from "drizzle-orm";
 import { beforeAll, describe, expect, it } from "vitest";
 import clientErrorsPostHandler from "../../server/api/guest/client-errors.post.js";
+import auditLogsExportGetHandler from "../../server/api/managers/audit-logs/export.get.js";
 import auditLogsGetHandler from "../../server/api/managers/audit-logs/index.get.js";
 import errorLogsPatchHandler from "../../server/api/managers/error-logs/[fingerprint].patch.js";
 import errorLogsGetHandler from "../../server/api/managers/error-logs/index.get.js";
@@ -184,6 +186,13 @@ describe("Log Viewers: Audit, Error, System Status (P2.10)", () => {
       }
     });
 
+    it("caps limit at 200 rows per request (BR-ALV-03)", async () => {
+      const event = mockManagerEvent("super_admin", {}, { limit: "5000" });
+      const res = (await auditLogsGetHandler(event)) as any;
+      expect(res.limit).toBe(200);
+      expect(res.items.length).toBeLessThanOrEqual(200);
+    });
+
     it("returns formatted diff data for super_admin (BR-ALV-04)", async () => {
       const db = getOwnerDb();
       await writeAudit(db, {
@@ -207,6 +216,26 @@ describe("Log Viewers: Audit, Error, System Status (P2.10)", () => {
       expect(res.items.length).toBeGreaterThan(0);
       expect(res.items[0].before_data).toEqual({ status: "draft" });
       expect(res.items[0].after_data).toEqual({ status: "published" });
+    });
+
+    it("exports CSV and logs data_exported action (BR-ALV-06)", async () => {
+      const event = mockManagerEvent(
+        "super_admin",
+        {},
+        { reason: "Xuất dữ liệu kiểm toán định kỳ" }
+      );
+      const csvRes = (await auditLogsExportGetHandler(event)) as string;
+      expect(typeof csvRes).toBe("string");
+      expect(csvRes).toContain("ID,UUID,Thời gian");
+
+      const db = getOwnerDb();
+      const [exportedAudit] = await db
+        .select()
+        .from(auditLogs)
+        .where(eq(auditLogs.action, "data_exported"))
+        .orderBy(auditLogs.id);
+
+      expect(exportedAudit).toBeDefined();
     });
   });
 
@@ -236,6 +265,37 @@ describe("Log Viewers: Audit, Error, System Status (P2.10)", () => {
       expect(saved).toBeDefined();
       expect((saved.context as any)?.child_display_name).toBeUndefined();
       expect((saved.context as any)?.route).toBe("/play/gameboard");
+    });
+
+    it("rate limits client error reporting to 10/min/IP (BR-ELV-05)", async () => {
+      const ip = "192.168.1.99";
+      for (let i = 0; i < 10; i++) {
+        const event = mockClientEvent(
+          {
+            code: "ENGINE_WARN",
+            message: "Frame dropped",
+            fingerprint: `fp_frame_drop_${i}`,
+          },
+          ip
+        );
+        await clientErrorsPostHandler(event);
+      }
+
+      const rateLimitEvent = mockClientEvent(
+        {
+          code: "ENGINE_WARN",
+          message: "Frame dropped",
+          fingerprint: "fp_frame_drop_11",
+        },
+        ip
+      );
+
+      try {
+        await clientErrorsPostHandler(rateLimitEvent);
+        expect.fail("Should throw 429 RATE_LIMIT_EXCEEDED");
+      } catch (err: any) {
+        expect(err.statusCode || err.status).toBe(429);
+      }
     });
 
     it("groups errors by fingerprint and counts occurrences (BR-ELV-01, BR-ELV-02)", async () => {
@@ -286,16 +346,20 @@ describe("Log Viewers: Audit, Error, System Status (P2.10)", () => {
       }
     });
 
-    it("returns 4 system groups with runbook links and no secrets (BR-SYS-03, BR-SYS-04)", async () => {
+    it("returns 4 system groups with runbook links and no secrets (BR-SYS-03, BR-SYS-04, D-KT)", async () => {
       const event = mockManagerEvent("super_admin");
       const res = (await systemStatusGetHandler(event)) as any;
 
       expect(res.as_of).toBeDefined();
       expect(res.services).toBeDefined();
+      expect(["ok", "unknown", "bad"]).toContain(res.services.postgres.status);
       expect(res.services.postgres.runbook_url).toBeDefined();
       expect(res.jobs).toBeDefined();
+      expect(["ok", "unknown", "bad"]).toContain(res.jobs.status);
       expect(res.backups).toBeDefined();
+      expect(["ok", "unknown", "bad"]).toContain(res.backups.status);
       expect(res.errors).toBeDefined();
+      expect(["ok", "unknown", "bad"]).toContain(res.errors.status);
 
       // BR-SYS-04: No connection strings, secret tokens, or env dumps
       const jsonStr = JSON.stringify(res);

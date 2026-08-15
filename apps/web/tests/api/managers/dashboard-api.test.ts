@@ -133,8 +133,7 @@ describe("Task 4 — GET /api/managers/dashboard (BR-DSH-01..06, D-IY, D-IZ, D-I
       count: expect.any(Number),
     });
     expect(res.todo.pending_content).toEqual({
-      status: "pending_source",
-      owner_step: "P2.8",
+      count: expect.any(Number),
     });
     expect(res.growth.monthly_revenue).toEqual({
       current_vnd: expect.any(Number),

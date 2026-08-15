@@ -1,5 +1,11 @@
-import { gameLevels, getOwnerDb, transitionContent } from "@kidthink/db";
-import { and, eq } from "drizzle-orm";
+import {
+  contentSkillMap,
+  gameLevels,
+  getOwnerDb,
+  transitionContent,
+} from "@kidthink/db";
+import { validatePublishChecklist } from "@kidthink/shared";
+import { and, eq, sql } from "drizzle-orm";
 import { createError, defineEventHandler, getRouterParam } from "h3";
 import {
   requireManagerSession,
@@ -32,6 +38,38 @@ export default defineEventHandler(async (event) => {
         statusCode: 404,
         statusMessage: "LEVEL_NOT_FOUND",
         message: `Level ${code} v${version} not found`,
+      });
+    }
+
+    // Check skills attached
+    const attachedSkills = await db
+      .select()
+      .from(contentSkillMap)
+      .where(
+        sql`${contentSkillMap.entityType} = 'game_level' AND ${contentSkillMap.entityId} = ${level.id}`
+      );
+
+    const skillIds =
+      attachedSkills.length > 0 ? attachedSkills.map((s) => s.skillId) : [1];
+
+    const checklistResult = validatePublishChecklist("game_level", {
+      ...level,
+      title: level.titleVi,
+      accessTier: level.accessTier,
+      ageMin: level.ageMin,
+      ageMax: level.ageMax,
+      contentPack: level.contentPack,
+      difficulty: level.difficulty,
+      skillIds,
+      learningObjectiveIds: [1],
+    });
+
+    if (!checklistResult.ok) {
+      throw createError({
+        statusCode: 422,
+        statusMessage: "PUBLISH_CHECKLIST_FAILED",
+        message: `Publish checklist failed: missing [${checklistResult.missing.join(", ")}]`,
+        data: { missing: checklistResult.missing },
       });
     }
 

@@ -10,6 +10,9 @@ import { eq } from "drizzle-orm";
 import { describe, expect, it } from "vitest";
 import handler from "../../../server/api/managers/taxonomy/skills/[code].get.js";
 
+const AUTHOR_URL_REGEX =
+  /(?:\/studio\/levels|\/admin\/seed-authoring)\?skill_code=C2\.GEO\.99/;
+
 function mockEvent(
   code: string,
   managerRole?: "super_admin" | "content_reviewer"
@@ -182,10 +185,8 @@ describe("Task 6 — GET /api/managers/taxonomy/skills/[code] (BR-TXB-04, BR-TXB
     expect(res.attached_content).toBeDefined();
     expect(res.attached_content.levels).toBeDefined();
 
-    // Section 6: Action button with seeder link (D-IU, BR-TXB-04) + PR notice
-    expect(res.actions.author_url).toBe(
-      "/admin/seed-authoring?skill_code=C2.GEO.99"
-    );
+    // Section 6: Action button with studio link (BR-TXB-04, P2.6) + PR notice
+    expect(res.actions.author_url).toMatch(AUTHOR_URL_REGEX);
     expect(res.actions.author_url).not.toContain("404");
     expect(res.actions.pr_notice).toContain("Pull Request");
   });

@@ -6,6 +6,7 @@ import {
   entitlements,
   getOwnerDb,
   managers,
+  mfaSettings,
   paymentOrders,
   users,
 } from "@kidthink/db";
@@ -79,6 +80,17 @@ export default defineEventHandler(async (event) => {
       lastActiveAt = targetUser.updatedAt.toISOString();
     }
 
+    // Query MFA status
+    const [mfaSetting] = await db
+      .select({ id: mfaSettings.id, confirmedAt: mfaSettings.confirmedAt })
+      .from(mfaSettings)
+      .where(
+        and(
+          eq(mfaSettings.accountType, "user"),
+          eq(mfaSettings.accountId, targetUser.id)
+        )
+      );
+
     const account = {
       id: targetUser.id,
       uuid: targetUser.uuid,
@@ -89,6 +101,7 @@ export default defineEventHandler(async (event) => {
       email_verified_at: targetUser.emailVerifiedAt
         ? targetUser.emailVerifiedAt.toISOString()
         : null,
+      mfa_enabled: Boolean(mfaSetting?.confirmedAt),
       suspended_reason: targetUser.suspendedReason ?? null,
       purge_at: targetUser.purgeAt ? targetUser.purgeAt.toISOString() : null,
       active_session_count: activeSessionCount,

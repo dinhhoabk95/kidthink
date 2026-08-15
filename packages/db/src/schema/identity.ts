@@ -209,3 +209,43 @@ export const consentRequirements = pgTable("consent_requirements", {
     .defaultNow()
     .notNull(),
 });
+
+export const mfaRecoveryStatusEnum = pgEnum("mfa_recovery_status", [
+  "pending_verification",
+  "waiting",
+  "completed",
+  "cancelled",
+  "expired",
+]);
+
+export const mfaRecoveryRequests = pgTable("mfa_recovery_requests", {
+  id: bigint("id", { mode: "number" }).primaryKey().generatedAlwaysAsIdentity(),
+  uuid: uuid("uuid").defaultRandom().notNull().unique(),
+  userId: bigint("user_id", { mode: "number" })
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  status: mfaRecoveryStatusEnum("status")
+    .notNull()
+    .default("pending_verification"),
+  requestedByManagerId: bigint("requested_by_manager_id", { mode: "number" })
+    .notNull()
+    .references(() => managers.id, { onDelete: "cascade" }),
+  reason: text("reason").notNull(),
+  verificationTokenHash: text("verification_token_hash"),
+  verificationTokenExpiresAt: timestamp("verification_token_expires_at", {
+    withTimezone: true,
+  }),
+  emailVerifiedAt: timestamp("email_verified_at", { withTimezone: true }),
+  eligibleAt: timestamp("eligible_at", { withTimezone: true }).notNull(),
+  completedAt: timestamp("completed_at", { withTimezone: true }),
+  completedByManagerId: bigint("completed_by_manager_id", {
+    mode: "number",
+  }).references(() => managers.id, { onDelete: "set null" }),
+  cancelledAt: timestamp("cancelled_at", { withTimezone: true }),
+  createdAt: timestamp("created_at", { withTimezone: true })
+    .defaultNow()
+    .notNull(),
+  updatedAt: timestamp("updated_at", { withTimezone: true })
+    .defaultNow()
+    .notNull(),
+});

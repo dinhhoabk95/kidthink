@@ -58,12 +58,19 @@ describe("Payment Flow Integration & Concurrency (P2.3)", () => {
 
   beforeEach(async () => {
     // Clean up test data
-    await db.delete(notifications);
-    await db.delete(auditLogs);
-    await db.delete(entitlements);
-    await db.delete(paymentOrders);
-    await db.delete(childProfiles);
-    await db.delete(users);
+    if (testUserId) {
+      await db
+        .delete(notifications)
+        .where(eq(notifications.recipientId, testUserId));
+      await db.delete(entitlements).where(eq(entitlements.userId, testUserId));
+      await db
+        .delete(paymentOrders)
+        .where(eq(paymentOrders.userId, testUserId));
+      await db
+        .delete(childProfiles)
+        .where(eq(childProfiles.userId, testUserId));
+      await db.delete(users).where(eq(users.id, testUserId));
+    }
 
     // Setup fresh test user
     const [user] = await db
@@ -95,13 +102,22 @@ describe("Payment Flow Integration & Concurrency (P2.3)", () => {
   });
 
   afterAll(async () => {
-    await db.delete(notifications);
-    await db.delete(auditLogs);
-    await db.delete(entitlements);
-    await db.delete(paymentOrders);
-    await db.delete(childProfiles);
-    await db.delete(users);
-    await db.delete(managers);
+    if (testUserId) {
+      await db
+        .delete(notifications)
+        .where(eq(notifications.recipientId, testUserId));
+      await db.delete(entitlements).where(eq(entitlements.userId, testUserId));
+      await db
+        .delete(paymentOrders)
+        .where(eq(paymentOrders.userId, testUserId));
+      await db
+        .delete(childProfiles)
+        .where(eq(childProfiles.userId, testUserId));
+      await db.delete(users).where(eq(users.id, testUserId));
+    }
+    if (testManagerId) {
+      await db.delete(managers).where(eq(managers.id, testManagerId));
+    }
   });
 
   it("Task 2 / BR-POC-01, BR-POC-04: User order creation snapshot & duplicate pending prevention", async () => {

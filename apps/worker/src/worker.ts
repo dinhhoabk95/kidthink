@@ -5,6 +5,7 @@ import { runVerifyBackup } from "./backup/verify.js";
 import { runSendEmail } from "./email/send.js";
 import { runEntitlementExpireJob } from "./entitlement/expire.js";
 import { runSoftUnlockExpireJob } from "./entitlement/soft-unlock-expire.js";
+import { runOrphanImageCleanupJob } from "./image/cleanup-orphan.js";
 import { runOrderExpireJob } from "./orders/expire.js";
 import { runManualGrantReportJob } from "./report/manual-grants-monthly.js";
 import { runDailyRollupJob } from "./rollup/daily.js";
@@ -47,6 +48,9 @@ export async function processJob(job: Job) {
         break;
       case "report:manual-grants-monthly":
         await runManualGrantReportJob(job.id as string, job.data);
+        break;
+      case "image:cleanup-orphan":
+        await runOrphanImageCleanupJob(job.id as string, job.data);
         break;
       default:
         // Tên job không đăng ký → fail rõ ràng

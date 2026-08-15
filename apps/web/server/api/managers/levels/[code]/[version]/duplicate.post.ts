@@ -10,6 +10,7 @@ import {
   requireManagerSession,
   respondToManagerAuthError,
 } from "../../../../../utils/admin-auth-runtime.js";
+import { syncContentAssetRefs } from "../../../../../utils/asset-refs.js";
 
 function generateLevelCode(
   templateCode: string,
@@ -84,6 +85,8 @@ export default defineEventHandler(async (event) => {
         createdByManagerId: manager.id,
       })
       .returning();
+
+    await syncContentAssetRefs(db, "game_level", cloned.id, cloned.contentPack);
 
     const managerId = manager.manager_id || manager.id || 1;
 

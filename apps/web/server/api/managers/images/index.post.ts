@@ -144,6 +144,8 @@ export default defineEventHandler(async (event) => {
       contentType: "image/webp",
     });
 
+    const managerId = manager.manager_id || manager.id || 1;
+
     const db = getOwnerDb();
     const [imageRecord] = await db
       .insert(contentImages)
@@ -151,11 +153,18 @@ export default defineEventHandler(async (event) => {
         ownerType: ownerType as ImageOwnerType,
         ownerId,
         storagePath: relativePath,
+        thumbPath,
+        width: 960,
+        height: 960,
+        bytes: validBuffer.length,
+        mime: "image/webp",
         altTextVi: alt,
+        visibility: "public",
+        status: "active",
+        uploadedByManagerId: managerId,
       })
       .returning();
 
-    const managerId = manager.manager_id || manager.id || 1;
     await writeAudit(db, {
       actor_type: "manager",
       actor_id: managerId,

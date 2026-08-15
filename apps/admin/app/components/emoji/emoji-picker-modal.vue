@@ -76,7 +76,7 @@
         </button>
       </div>
 
-      <!-- Recent Emojis Section (BR-EPK-03: 12 LRU) -->
+      <!-- Recent Emojis Section (BR-EPK-04: 12 LRU) -->
       <div
         class="py-2 shrink-0"
         v-if="!(searchQuery || selectedCategory) && recentEmojis.length > 0"
@@ -97,7 +97,7 @@
         </div>
       </div>
 
-      <!-- Emoji Grid (BR-EPK-04: Cell >= 40x40px, Glyph >= 28px) -->
+      <!-- Emoji Grid (BR-EPK-01: Cell >= 40x40px, Glyph >= 28px; BR-EPK-06 Keyboard nav) -->
       <div
         class="flex-1 overflow-y-auto pt-2 border-t border-slate-100 dark:border-slate-700/50"
       >
@@ -106,10 +106,24 @@
         </div>
 
         <div
-          class="py-12 text-center text-slate-400"
+          class="py-12 text-center text-slate-400 space-y-3"
           v-else-if="emojis.length === 0"
         >
-          Không tìm thấy emoji nào phù hợp.
+          <p>Không tìm thấy emoji nào phù hợp.</p>
+          <div
+            class="p-3 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-300 dark:border-emerald-700 text-emerald-800 dark:text-emerald-200 text-xs rounded-xl"
+            v-if="missingReported"
+          >
+            Đã gửi yêu cầu bổ sung emoji cho nhóm phát triển.
+          </div>
+          <button
+            class="px-4 py-2 rounded-2xl bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-300 text-xs font-semibold hover:bg-indigo-100 transition-all"
+            type="button"
+            v-else
+            @click="reportMissingEmoji"
+          >
+            Báo thiếu emoji cho quản trị viên
+          </button>
         </div>
 
         <div
@@ -117,12 +131,18 @@
           v-else
         >
           <button
-            class="w-11 h-11 min-w-11 min-h-11 rounded-2xl flex items-center justify-center text-[28px] leading-none hover:bg-indigo-50 dark:hover:bg-slate-700 hover:scale-110 active:scale-95 transition-all font-emoji"
             type="button"
-            v-for="item in emojis"
+            v-for="(item, idx) in emojis"
             :key="item.emoji"
+            :class="[
+              'w-11 h-11 min-w-11 min-h-11 rounded-2xl flex items-center justify-center text-[28px] leading-none hover:bg-indigo-50 dark:hover:bg-slate-700 hover:scale-110 active:scale-95 transition-all font-emoji',
+              idx === focusedIndex
+                ? 'ring-2 ring-indigo-500 bg-indigo-50 dark:bg-slate-700'
+                : '',
+            ]"
             :title="item.name"
             @click="selectEmoji(item.emoji)"
+            @mouseenter="focusedIndex = idx"
           >
             {{ item.emoji }}
           </button>
@@ -160,6 +180,8 @@
   const recentEmojis = ref<string[]>([]);
   const isLoading = ref(false);
   const searchInputRef = ref<HTMLInputElement | null>(null);
+  const focusedIndex = ref(0);
+  const missingReported = ref(false);
 
   const RECENT_KEY = "kidthink_recent_emojis";
 
@@ -173,8 +195,43 @@
   });
 
   function handleGlobalKeyDown(e: KeyboardEvent) {
-    if (props.isOpen && e.key === "Escape") {
+    if (!props.isOpen) {
+      return;
+    }
+
+    if (e.key === "Escape") {
       close();
+      return;
+    }
+
+    if (emojis.value.length === 0) {
+      return;
+    }
+
+    const cols = 8;
+    if (e.key === "ArrowRight") {
+      e.preventDefault();
+      focusedIndex.value = (focusedIndex.value + 1) % emojis.value.length;
+    } else if (e.key === "ArrowLeft") {
+      e.preventDefault();
+      focusedIndex.value =
+        (focusedIndex.value - 1 + emojis.value.length) % emojis.value.length;
+    } else if (e.key === "ArrowDown") {
+      e.preventDefault();
+      focusedIndex.value = Math.min(
+        emojis.value.length - 1,
+        focusedIndex.value + cols
+      );
+    } else if (e.key === "ArrowUp") {
+      e.preventDefault();
+      focusedIndex.value = Math.max(0, focusedIndex.value - cols);
+    } else if (
+      e.key === "Enter" &&
+      focusedIndex.value >= 0 &&
+      focusedIndex.value < emojis.value.length
+    ) {
+      e.preventDefault();
+      selectEmoji(emojis.value[focusedIndex.value].emoji);
     }
   }
 
@@ -184,6 +241,8 @@
       if (open) {
         searchQuery.value = "";
         selectedCategory.value = "";
+        focusedIndex.value = 0;
+        missingReported.value = false;
         await fetchEmojis();
         await nextTick();
         searchInputRef.value?.focus();
@@ -229,6 +288,7 @@
         `/api/managers/emoji?${params.toString()}`
       );
       emojis.value = res.items || [];
+      focusedIndex.value = 0;
       if (res.categories && categories.value.length === 0) {
         categories.value = res.categories;
       }
@@ -264,6 +324,10 @@
     saveRecentEmoji(emoji);
     emit("select", emoji);
     emit("close");
+  }
+
+  function reportMissingEmoji() {
+    missingReported.value = true;
   }
 
   function close() {

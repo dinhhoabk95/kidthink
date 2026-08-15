@@ -1,14 +1,22 @@
 import type { ContentLifecycleStatus, ManagerRole } from "@kidthink/shared";
 import { canTransition, validatePublishChecklist } from "@kidthink/shared";
-import { eq, sql } from "drizzle-orm";
+import { and, eq, ne, sql } from "drizzle-orm";
 import { getOwnerDb } from "../client.ts";
+import { lessons } from "../schema/content.ts";
+import { curricula, curriculumItems } from "../schema/curriculum.ts";
 import { gameLevels } from "../schema/game.ts";
 import { contentReviewLog } from "../schema/ops.ts";
 import { contentSkillMap } from "../schema/tagging.ts";
 import { writeAudit } from "./audit.ts";
 
 export interface TransitionRequest {
-  entityType: "game_level" | "lesson" | "activity" | "curriculum" | "worksheet";
+  entityType:
+    | "game_level"
+    | "lesson"
+    | "activity"
+    | "curriculum"
+    | "worksheet"
+    | "seo_page";
   entityDbId: number;
   toStatus: ContentLifecycleStatus;
   actorManagerId: number;
@@ -92,13 +100,13 @@ function validateTransitionPreconditions(req: TransitionRequest): void {
     );
   }
 
-  // BR-CLC-05: reason required >= 10 chars when rejected
+  // BR-CLC-05 & BR-CRQ-03: reason required >= 10 chars when rejected
   if (
     req.toStatus === "rejected" &&
     (!req.reason || req.reason.trim().length < 10)
   ) {
     throw new LifecycleError(
-      "BR-CLC-05: Rejection reason must be at least 10 characters long",
+      "BR-CLC-05 / BR-CRQ-03: Rejection reason must be at least 10 characters long",
       "REJECTED_REASON_TOO_SHORT",
       422
     );
@@ -118,7 +126,7 @@ function validateMatrixAndRole(
       actorRole !== "super_admin"
     ) {
       throw new LifecycleError(
-        "INSUFFICIENT_ROLE: Only super_admin can publish an archived level",
+        "BR-PUB-03: Only super_admin can rollback/re-publish an archived version",
         "INSUFFICIENT_ROLE",
         403
       );
@@ -133,34 +141,43 @@ function validateMatrixAndRole(
 
 async function verifyPublishChecklist(
   entityType: string,
-  level: typeof gameLevels.$inferSelect
+  recordData: Record<string, unknown>
 ): Promise<Record<string, unknown>> {
   const db = getOwnerDb();
+  const entityId = Number(recordData.id);
+
   const attachedSkills = await db
     .select()
     .from(contentSkillMap)
     .where(
-      sql`${contentSkillMap.entityType} = ${entityType} AND ${contentSkillMap.entityId} = ${level.id}`
+      sql`${contentSkillMap.entityType} = ${entityType} AND ${contentSkillMap.entityId} = ${entityId}`
     );
 
-  const record = level as unknown as Record<string, unknown>;
   const skillIds =
-    (Array.isArray(record.skillIds) ? record.skillIds : undefined) ??
+    (Array.isArray(recordData.skillIds) ? recordData.skillIds : undefined) ??
     (attachedSkills.length > 0 ? attachedSkills.map((s) => s.skillId) : []);
-  const learningObjectiveIds = (Array.isArray(record.learningObjectiveIds)
-    ? record.learningObjectiveIds
+  const learningObjectiveIds = (Array.isArray(recordData.learningObjectiveIds)
+    ? recordData.learningObjectiveIds
     : undefined) ?? [1];
 
-  const levelPayload = {
-    ...level,
+  const payload = {
+    ...recordData,
     skillIds,
     learningObjectiveIds,
   };
 
-  const checklistResult = validatePublishChecklist("game_level", levelPayload);
+  const checklistResult = validatePublishChecklist(
+    entityType as
+      | "game_level"
+      | "lesson"
+      | "activity"
+      | "curriculum"
+      | "worksheet",
+    payload
+  );
   if (!checklistResult.ok) {
     throw new LifecycleError(
-      `BR-CLC-09: Publish checklist failed: missing [${checklistResult.missing.join(", ")}]`,
+      `BR-CLC-09 / BR-PUB-01: Publish checklist failed: missing [${checklistResult.missing.join(", ")}]`,
       "PUBLISH_CHECKLIST_FAILED",
       422,
       { missing: checklistResult.missing }
@@ -169,41 +186,169 @@ async function verifyPublishChecklist(
   return { ok: true, missing: checklistResult.missing };
 }
 
+async function checkContentInUse(
+  entityType: string,
+  entityId: number
+): Promise<void> {
+  const db = getOwnerDb();
+  const inUseCurricula = await db
+    .select({
+      id: curricula.id,
+      code: curricula.code,
+      titleVi: curricula.titleVi,
+    })
+    .from(curriculumItems)
+    .innerJoin(curricula, eq(curriculumItems.curriculumId, curricula.id))
+    .where(
+      and(
+        eq(curriculumItems.entityType, entityType),
+        eq(curriculumItems.entityId, entityId),
+        eq(curricula.status, "published")
+      )
+    );
+
+  if (inUseCurricula.length > 0) {
+    throw new LifecycleError(
+      `BR-PUB-05: Không thể archive nội dung đang được sử dụng trong ${inUseCurricula.length} curriculum đã xuất bản`,
+      "CONTENT_IN_USE",
+      409,
+      {
+        in_use_by: inUseCurricula.map((c) => ({
+          code: c.code,
+          title: c.titleVi,
+        })),
+      }
+    );
+  }
+}
+
+type DbTx = Parameters<
+  Parameters<ReturnType<typeof getOwnerDb>["transaction"]>[0]
+>[0];
+
+async function archivePreviousPublished(
+  tx: DbTx,
+  entityType: string,
+  code: string,
+  currentEntityId: number
+) {
+  if (entityType === "game_level") {
+    await tx
+      .update(gameLevels)
+      .set({
+        status: "archived",
+        archivedAt: new Date(),
+        updatedAt: new Date(),
+      })
+      .where(
+        and(
+          eq(gameLevels.code, code),
+          eq(gameLevels.status, "published"),
+          ne(gameLevels.id, currentEntityId)
+        )
+      );
+  } else if (entityType === "lesson") {
+    await tx
+      .update(lessons)
+      .set({
+        status: "archived",
+        archivedAt: new Date(),
+        updatedAt: new Date(),
+      })
+      .where(
+        and(
+          eq(lessons.code, code),
+          eq(lessons.status, "published"),
+          ne(lessons.id, currentEntityId)
+        )
+      );
+  }
+}
+
+async function updateEntityStatus(
+  tx: DbTx,
+  entityType: string,
+  entityId: number,
+  toStatus: ContentLifecycleStatus,
+  managerId?: number
+) {
+  const patch: Record<string, unknown> = {
+    status: toStatus,
+    updatedAt: new Date(),
+  };
+  if (toStatus === "published") {
+    patch.publishedAt = new Date();
+  } else if (toStatus === "archived") {
+    patch.archivedAt = new Date();
+  }
+  if (managerId && (toStatus === "approved" || toStatus === "rejected")) {
+    patch.reviewedByManagerId = managerId;
+  }
+
+  if (entityType === "game_level") {
+    await tx.update(gameLevels).set(patch).where(eq(gameLevels.id, entityId));
+  } else if (entityType === "lesson") {
+    await tx.update(lessons).set(patch).where(eq(lessons.id, entityId));
+  }
+}
+
 export async function transitionContent(
   req: TransitionRequest
 ): Promise<TransitionResult> {
   validateTransitionPreconditions(req);
 
   const db = getOwnerDb();
-  if (req.entityType !== "game_level") {
+  let currentStatus: ContentLifecycleStatus;
+  let currentVersion: number;
+  let code: string;
+  let itemData: Record<string, unknown>;
+
+  if (req.entityType === "game_level") {
+    const [level] = await db
+      .select()
+      .from(gameLevels)
+      .where(eq(gameLevels.id, req.entityDbId));
+    if (!level) {
+      throw new LifecycleError(
+        `Game level with id ${req.entityDbId} not found`,
+        "ENTITY_NOT_FOUND",
+        404
+      );
+    }
+    currentStatus = level.status as ContentLifecycleStatus;
+    currentVersion = level.contentVersion;
+    code = level.code;
+    itemData = level as unknown as Record<string, unknown>;
+  } else if (req.entityType === "lesson") {
+    const [lesson] = await db
+      .select()
+      .from(lessons)
+      .where(eq(lessons.id, req.entityDbId));
+    if (!lesson) {
+      throw new LifecycleError(
+        `Lesson with id ${req.entityDbId} not found`,
+        "ENTITY_NOT_FOUND",
+        404
+      );
+    }
+    currentStatus = lesson.status as ContentLifecycleStatus;
+    currentVersion = lesson.contentVersion;
+    code = lesson.code;
+    itemData = lesson as unknown as Record<string, unknown>;
+  } else {
     throw new LifecycleError(
-      `Entity type '${req.entityType}' not supported in P0.6 transition handler`,
+      `Entity type '${req.entityType}' not supported in transition handler`,
       "ENTITY_NOT_FOUND",
       404
     );
   }
-
-  const [level] = await db
-    .select()
-    .from(gameLevels)
-    .where(eq(gameLevels.id, req.entityDbId));
-
-  if (!level) {
-    throw new LifecycleError(
-      `Game level with id ${req.entityDbId} not found`,
-      "ENTITY_NOT_FOUND",
-      404
-    );
-  }
-
-  const currentStatus = level.status as ContentLifecycleStatus;
 
   if (
     req.expectedVersion !== undefined &&
-    level.contentVersion !== req.expectedVersion
+    currentVersion !== req.expectedVersion
   ) {
     throw new LifecycleError(
-      `VERSION_CONFLICT: Expected version ${req.expectedVersion} but found ${level.contentVersion}`,
+      `VERSION_CONFLICT: Expected version ${req.expectedVersion} but found ${currentVersion}`,
       "VERSION_CONFLICT",
       409
     );
@@ -211,43 +356,34 @@ export async function transitionContent(
 
   validateMatrixAndRole(currentStatus, req.toStatus, req.actorRole);
 
+  // BR-PUB-05: Check if content is referenced in active published curriculum when archiving
+  if (req.toStatus === "archived") {
+    await checkContentInUse(req.entityType, req.entityDbId);
+  }
+
   let checklistSnapshot: Record<string, unknown> | undefined;
   if (req.toStatus === "published") {
-    checklistSnapshot = await verifyPublishChecklist(req.entityType, level);
+    checklistSnapshot = await verifyPublishChecklist(req.entityType, itemData);
   }
 
   return await db.transaction(async (tx) => {
     if (req.toStatus === "published") {
-      await tx
-        .update(gameLevels)
-        .set({
-          status: "archived",
-          archivedAt: new Date(),
-          updatedAt: new Date(),
-        })
-        .where(
-          sql`${gameLevels.code} = ${level.code} AND ${gameLevels.status} = 'published' AND ${gameLevels.id} != ${level.id}`
-        );
+      await archivePreviousPublished(tx, req.entityType, code, req.entityDbId);
     }
-
-    await tx
-      .update(gameLevels)
-      .set({
-        status: req.toStatus,
-        reviewedByManagerId: req.actorManagerId,
-        publishedAt:
-          req.toStatus === "published" ? new Date() : level.publishedAt,
-        archivedAt: req.toStatus === "archived" ? new Date() : level.archivedAt,
-        updatedAt: new Date(),
-      })
-      .where(eq(gameLevels.id, level.id));
+    await updateEntityStatus(
+      tx,
+      req.entityType,
+      req.entityDbId,
+      req.toStatus,
+      req.actorManagerId
+    );
 
     const [reviewLog] = await tx
       .insert(contentReviewLog)
       .values({
-        entityType: req.entityType,
-        entityId: level.id,
-        contentVersion: level.contentVersion,
+        entityType: req.entityType as "game_level" | "lesson",
+        entityId: req.entityDbId,
+        contentVersion: currentVersion,
         fromStatus: currentStatus,
         toStatus: req.toStatus,
         actorManagerId: req.actorManagerId,
@@ -266,9 +402,9 @@ export async function transitionContent(
       actor_id: req.actorManagerId,
       action: auditAction,
       entity_type: req.entityType,
-      entity_id: level.id.toString(),
-      before_data: { status: currentStatus, version: level.contentVersion },
-      after_data: { status: req.toStatus, version: level.contentVersion },
+      entity_id: req.entityDbId.toString(),
+      before_data: { status: currentStatus, version: currentVersion },
+      after_data: { status: req.toStatus, version: currentVersion },
       reason:
         req.reason ??
         (auditAction === "content_rejected"
@@ -279,7 +415,7 @@ export async function transitionContent(
     return {
       success: true,
       status: req.toStatus,
-      contentVersion: level.contentVersion,
+      contentVersion: currentVersion,
       reviewLogId: reviewLog.id,
     };
   });

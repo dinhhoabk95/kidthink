@@ -15,6 +15,7 @@
     "@kidthink/db": "workspace:*",
     "@kidthink/queue": "workspace:*",
     "@kidthink/shared": "workspace:*",
+    "@kidthink/storage": "workspace:*",
     "bullmq": "catalog:",
     "drizzle-orm": "catalog:",
     "ioredis": "catalog:",

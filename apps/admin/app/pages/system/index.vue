@@ -6,11 +6,11 @@
     >
       <div>
         <h1 class="text-2xl font-bold text-slate-900 dark:text-white">
-          Trạng Thái Hệ Thống (System Health)
+          Trạng Thái Hệ Thống (System Activity & Health)
         </h1>
         <p class="text-sm text-slate-500 mt-1">
           Giám sát trạng thái dịch vụ, hàng đợi tác vụ, sao lưu và lỗi vận hành
-          (P2.10).
+          (P2.10, BR-SYS-01..06).
         </p>
       </div>
 
@@ -42,7 +42,7 @@
           </h2>
           <p class="text-xs text-rose-600 dark:text-rose-400">
             Dữ liệu học tập và tài khoản của trẻ có nguy cơ không thể khôi phục
-            nếu xảy ra sự cố phần cứng.
+            nếu xảy ra sự cố phần cứng (BR-BAK-06).
           </p>
         </div>
       </div>
@@ -55,7 +55,7 @@
       </a>
     </div>
 
-    <!-- 4 System Groups Grid (BR-SYS-01, BR-SYS-04) -->
+    <!-- 4 System Groups Grid (BR-SYS-01, BR-SYS-04, D-KT) -->
     <div class="p-12 text-center text-slate-400" v-if="isLoading">
       Đang kiểm tra trạng thái hệ thống...
     </div>
@@ -69,11 +69,11 @@
           <div class="flex items-center gap-2">
             <span class="text-xl">🗄️</span>
             <h2 class="text-base font-bold text-slate-900 dark:text-white">
-              Dịch Vụ Nền Tảng
+              1. Dịch Vụ Nền Tảng (Services)
             </h2>
           </div>
           <a
-            class="text-xs text-indigo-600 hover:underline"
+            class="text-xs text-indigo-600 dark:text-indigo-400 font-bold hover:underline"
             :href="systemData?.services?.postgres?.runbook_url"
             >Runbook →</a
           >
@@ -84,12 +84,17 @@
             class="flex items-center justify-between p-3 rounded-2xl bg-slate-50 dark:bg-slate-900/40"
           >
             <span>PostgreSQL 17 Database</span>
-            <span class="font-bold flex items-center gap-1.5">
+            <span class="font-bold flex items-center gap-2">
               <span
-                :class="['w-2 h-2 rounded-full', systemData?.services?.postgres?.status === 'healthy' ? 'bg-emerald-500' : 'bg-rose-500']"
+                :class="['w-2.5 h-2.5 rounded-full', statusDotClass(systemData?.services?.postgres?.status)]"
               />
-              {{ systemData?.services?.postgres?.latency_ms }}
-              ms
+              <span
+                :class="statusTextClass(systemData?.services?.postgres?.status)"
+              >
+                {{ statusLabel(systemData?.services?.postgres?.status) }}
+                ({{ systemData?.services?.postgres?.latency_ms }}
+                ms)
+              </span>
             </span>
           </div>
 
@@ -97,10 +102,17 @@
             class="flex items-center justify-between p-3 rounded-2xl bg-slate-50 dark:bg-slate-900/40"
           >
             <span>Valkey / Redis Cache</span>
-            <span class="font-bold flex items-center gap-1.5">
-              <span class="w-2 h-2 rounded-full bg-emerald-500" />
-              {{ systemData?.services?.valkey?.latency_ms }}
-              ms
+            <span class="font-bold flex items-center gap-2">
+              <span
+                :class="['w-2.5 h-2.5 rounded-full', statusDotClass(systemData?.services?.valkey?.status)]"
+              />
+              <span
+                :class="statusTextClass(systemData?.services?.valkey?.status)"
+              >
+                {{ statusLabel(systemData?.services?.valkey?.status) }}
+                ({{ systemData?.services?.valkey?.latency_ms }}
+                ms)
+              </span>
             </span>
           </div>
 
@@ -108,9 +120,15 @@
             class="flex items-center justify-between p-3 rounded-2xl bg-slate-50 dark:bg-slate-900/40"
           >
             <span>BullMQ Task Queue</span>
-            <span class="font-bold flex items-center gap-1.5">
-              <span class="w-2 h-2 rounded-full bg-emerald-500" />
-              Sẵn sàng
+            <span class="font-bold flex items-center gap-2">
+              <span
+                :class="['w-2.5 h-2.5 rounded-full', statusDotClass(systemData?.services?.queue?.status)]"
+              />
+              <span
+                :class="statusTextClass(systemData?.services?.queue?.status)"
+              >
+                {{ statusLabel(systemData?.services?.queue?.status) }}
+              </span>
             </span>
           </div>
         </div>
@@ -124,14 +142,19 @@
           <div class="flex items-center gap-2">
             <span class="text-xl">⚙️</span>
             <h2 class="text-base font-bold text-slate-900 dark:text-white">
-              Tiến Trình & Hàng Đợi
+              2. Tiến Trình & Hàng Đợi (Jobs)
             </h2>
           </div>
-          <a
-            class="text-xs text-indigo-600 hover:underline"
-            :href="systemData?.jobs?.status ? '/docs/runbooks/bullmq-worker.md' : '#'"
-            >Runbook →</a
-          >
+          <span class="flex items-center gap-2">
+            <span
+              :class="['w-2.5 h-2.5 rounded-full', statusDotClass(systemData?.jobs?.status)]"
+            />
+            <span
+              :class="['text-xs font-bold', statusTextClass(systemData?.jobs?.status)]"
+            >
+              {{ statusLabel(systemData?.jobs?.status) }}
+            </span>
+          </span>
         </div>
 
         <div class="space-y-3 text-xs">
@@ -174,11 +197,11 @@
           <div class="flex items-center gap-2">
             <span class="text-xl">💾</span>
             <h2 class="text-base font-bold text-slate-900 dark:text-white">
-              Sao Lưu & Phục Hồi
+              3. Sao Lưu & Phục Hồi (Backups)
             </h2>
           </div>
           <a
-            class="text-xs text-indigo-600 hover:underline"
+            class="text-xs text-indigo-600 dark:text-indigo-400 font-bold hover:underline"
             :href="systemData?.backups?.runbook_url"
             >Runbook →</a
           >
@@ -199,9 +222,9 @@
           >
             <span>Phục hồi thử nghiệm (Verify Drill)</span>
             <span
-              :class="['font-bold', systemData?.backups?.has_verified_backup ? 'text-emerald-600' : 'text-rose-600 font-bold']"
+              :class="['font-bold', systemData?.backups?.has_verified_backup ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400 font-bold']"
             >
-              {{ systemData?.backups?.has_verified_backup ? 'Đã xác nhận' : 'CHƯA KIỂM TRA' }}
+              {{ systemData?.backups?.has_verified_backup ? 'Đã xác nhận thành công' : 'CHƯA KIỂM TRA' }}
             </span>
           </div>
         </div>
@@ -215,13 +238,13 @@
           <div class="flex items-center gap-2">
             <span class="text-xl">⚠️</span>
             <h2 class="text-base font-bold text-slate-900 dark:text-white">
-              Sự Cố & Lỗi (24h)
+              4. Sự Cố & Lỗi 24h (Errors)
             </h2>
           </div>
-          <a
-            class="text-xs text-indigo-600 hover:underline"
-            :href="systemData?.errors?.runbook_url"
-            >Runbook →</a
+          <NuxtLink
+            class="text-xs text-indigo-600 dark:text-indigo-400 font-bold hover:underline"
+            to="/errors"
+            >Xem chi tiết lỗi →</NuxtLink
           >
         </div>
 
@@ -249,7 +272,7 @@
           >
             <span>Nhóm lỗi đang mở (Open)</span>
             <span
-              :class="['font-bold', (systemData?.errors?.open_error_groups || 0) > 0 ? 'text-amber-600' : 'text-slate-800 dark:text-slate-200']"
+              :class="['font-bold', (systemData?.errors?.open_error_groups || 0) > 0 ? 'text-amber-600 dark:text-amber-400' : 'text-slate-800 dark:text-slate-200']"
             >
               {{ systemData?.errors?.open_error_groups || 0 }}
             </span>
@@ -267,20 +290,31 @@
     layout: "manager",
   });
 
+  type SystemHealthStatus = "ok" | "unknown" | "bad";
+
   interface SystemStatusResponse {
     as_of: string;
     services: {
-      postgres: { status: string; latency_ms: number; runbook_url: string };
-      valkey: { status: string; latency_ms: number; runbook_url: string };
-      queue: { status: string; runbook_url: string };
+      postgres: {
+        status: SystemHealthStatus;
+        latency_ms: number;
+        runbook_url: string;
+      };
+      valkey: {
+        status: SystemHealthStatus;
+        latency_ms: number;
+        runbook_url: string;
+      };
+      queue: { status: SystemHealthStatus; runbook_url: string };
     };
     jobs: {
+      status: SystemHealthStatus;
       waiting_count: number;
       failed_24h_count: number;
       oldest_job_age_seconds: number;
-      status: string;
     };
     backups: {
+      status: SystemHealthStatus;
       latest_dump: {
         status: string;
         size_bytes: number;
@@ -296,6 +330,7 @@
       runbook_url: string;
     };
     errors: {
+      status: SystemHealthStatus;
       server_errors_24h: number;
       client_errors_24h: number;
       open_error_groups: number;
@@ -321,6 +356,39 @@
       console.error("Failed to load system status", err);
     } finally {
       isLoading.value = false;
+    }
+  }
+
+  function statusLabel(status?: SystemHealthStatus): string {
+    switch (status) {
+      case "ok":
+        return "Hoạt động tốt";
+      case "bad":
+        return "Sự cố / Cảnh báo";
+      default:
+        return "Không xác định";
+    }
+  }
+
+  function statusDotClass(status?: SystemHealthStatus): string {
+    switch (status) {
+      case "ok":
+        return "bg-emerald-500";
+      case "bad":
+        return "bg-rose-500";
+      default:
+        return "bg-amber-500";
+    }
+  }
+
+  function statusTextClass(status?: SystemHealthStatus): string {
+    switch (status) {
+      case "ok":
+        return "text-emerald-700 dark:text-emerald-400";
+      case "bad":
+        return "text-rose-700 dark:text-rose-400";
+      default:
+        return "text-amber-700 dark:text-amber-400";
     }
   }
 

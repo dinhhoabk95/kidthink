@@ -1,16 +1,36 @@
-import { gameLevels, gameTemplates, getOwnerDb, managers } from "@kidthink/db";
+import { randomUUID } from "node:crypto";
+import {
+  contentSkillMap,
+  curricula,
+  curriculumItems,
+  gameLevels,
+  gameTemplates,
+  getOwnerDb,
+  managers,
+  playSessions,
+  seoPages,
+  skills,
+  strands,
+} from "@kidthink/db";
 import { eq } from "drizzle-orm";
 import { beforeAll, describe, expect, it } from "vitest";
+import guestSeoHandler from "../../server/api/guest/seo-pages/[slug].get.js";
+import versionsHandler from "../../server/api/managers/content/[type]/[code]/versions.get.js";
 import transitionHandler from "../../server/api/managers/content/[type]/[id]/transition.post.js";
 import bulkRejectHandler from "../../server/api/managers/content/review-queue/bulk-reject.post.js";
 import reviewQueueHandler from "../../server/api/managers/content/review-queue/index.get.js";
+import levelConfigHandler from "../../server/api/managers/levels/[code]/config.get.js";
+import seoPatchHandler from "../../server/api/managers/seo-pages/[slug]/[version].patch.js";
 import seoPreviewHandler from "../../server/api/managers/seo-pages/[slug]/preview.get.js";
 import seoPagesPostHandler from "../../server/api/managers/seo-pages/index.post.js";
+import { issuePreviewToken } from "../../server/utils/preview-token.js";
 
 const CSRF_TOKEN =
   "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef";
 
 let testManagerId = 1;
+let reviewerManagerId = 2;
+let testSkillId = 1;
 
 beforeAll(async () => {
   const db = getOwnerDb();
@@ -33,6 +53,61 @@ beforeAll(async () => {
   if (mgr) {
     testManagerId = mgr.id;
   }
+
+  let [rev] = await db
+    .select({ id: managers.id })
+    .from(managers)
+    .where(eq(managers.email, "reviewer-only@kidthink.edu.vn"));
+  if (!rev) {
+    [rev] = await db
+      .insert(managers)
+      .values({
+        email: "reviewer-only@kidthink.edu.vn",
+        passwordHash: "hash",
+        displayName: "Content Reviewer Tester",
+        role: "content_reviewer",
+        isActive: true,
+      })
+      .returning({ id: managers.id });
+  }
+  if (rev) {
+    reviewerManagerId = rev.id;
+  }
+
+  // Ensure test skill
+  let [sk] = await db
+    .select({ id: skills.id })
+    .from(skills)
+    .where(eq(skills.code, "C1.CNT.01"));
+  if (!sk) {
+    let [st] = await db.select({ id: strands.id }).from(strands).limit(1);
+    if (!st) {
+      [st] = await db
+        .insert(strands)
+        .values({
+          code: "C1.CNT",
+          nameVi: "Đếm và Số Lượng",
+          competencyId: 1,
+          position: 1,
+        })
+        .returning({ id: strands.id });
+    }
+    [sk] = await db
+      .insert(skills)
+      .values({
+        code: "C1.CNT.01",
+        nameVi: "Đếm trong phạm vi 5",
+        strandId: st.id,
+        position: 1,
+        ageMin: 3,
+        ageMax: 6,
+        difficulty: 1,
+      })
+      .returning({ id: skills.id });
+  }
+  if (sk) {
+    testSkillId = sk.id;
+  }
 });
 
 function mockEvent(
@@ -44,6 +119,8 @@ function mockEvent(
 ) {
   const queryString = new URLSearchParams(query).toString();
   const url = queryString ? `/api/test?${queryString}` : "/api/test";
+  const managerId = role === "super_admin" ? testManagerId : reviewerManagerId;
+  const headersMap: Record<string, string> = {};
 
   return {
     method,
@@ -59,11 +136,19 @@ function mockEvent(
       },
       res: {
         statusCode: 200,
+        setHeader: (k: string, v: string) => {
+          headersMap[k.toLowerCase()] = v;
+        },
+        getHeader: (k: string) => headersMap[k.toLowerCase()],
+        end: () => {
+          /* no-op */
+        },
       },
     },
     context: {
       manager: {
-        manager_id: testManagerId,
+        manager_id: managerId,
+        id: managerId,
         display_name: "Review Tester Manager",
         session_id: "sess_rev_123",
         refresh_token_version: 1,
@@ -75,10 +160,56 @@ function mockEvent(
   } as any;
 }
 
-describe("Content Review, Publish & SEO Admin APIs (P2.8, BR-CRQ-*, BR-PUB-*, BR-SEO-*)", () => {
-  it("GET /api/managers/content/review-queue returns queued in_review items", async () => {
-    const db = getOwnerDb();
+function mockGuestEvent(params: Record<string, string> = {}) {
+  const headersMap: Record<string, string> = {};
+  return {
+    method: "GET",
+    node: {
+      req: {
+        method: "GET",
+        url: `/api/guest/seo-pages/${params.slug || ""}`,
+        headers: {},
+      },
+      res: {
+        statusCode: 200,
+        setHeader: (k: string, v: string) => {
+          headersMap[k.toLowerCase()] = v;
+        },
+        getHeader: (k: string) => headersMap[k.toLowerCase()],
+        end: () => {
+          /* no-op */
+        },
+      },
+    },
+    context: {
+      params,
+    },
+  } as any;
+}
 
+const VALID_CONTENT_PACK = {
+  prompt: "Tìm quả táo màu đỏ",
+  target_item: {
+    item_id: "apple_target",
+    asset: { kind: "emoji", ref: "🍎" },
+  },
+  options: [
+    {
+      item_id: "apple_opt",
+      asset: { kind: "emoji", ref: "🍎" },
+      is_correct: true,
+    },
+    {
+      item_id: "banana_opt",
+      asset: { kind: "emoji", ref: "🍌" },
+      is_correct: false,
+    },
+  ],
+};
+
+describe("Content Review, Publish, Versioning & SEO Admin APIs (P2.8, BR-CRQ-*, BR-PUB-*, BR-SEO-*)", () => {
+  async function ensureTemplate() {
+    const db = getOwnerDb();
     let [tpl] = await db
       .select()
       .from(gameTemplates)
@@ -96,78 +227,243 @@ describe("Content Review, Publish & SEO Admin APIs (P2.8, BR-CRQ-*, BR-PUB-*, BR
         })
         .returning();
     }
+    return tpl;
+  }
 
-    const uniqueCode = `GL-C1-CNT-REV-${(1000 + (Date.now() % 8999)).toString()}`;
+  // --- 1. Content Review Queue (BR-CRQ-01..08, D-KK) ---
+  it("Task 1: GET /api/managers/content/review-queue returns in_review items and filters out repo_seed published levels", async () => {
+    const db = getOwnerDb();
+    const tpl = await ensureTemplate();
+
+    const inReviewCode = `GL-C1-CNT-REV-${(1000 + (Date.now() % 8999)).toString()}`;
+    const repoSeedCode = `GL-C1-CNT-SED-${(1000 + (Date.now() % 8999)).toString()}`;
+
+    // 1. studio item in_review
     await db.insert(gameLevels).values({
       entityId: Date.now() + 100,
-      code: uniqueCode,
+      code: inReviewCode,
       contentVersion: 1,
       templateId: tpl.id,
-      titleVi: "Review Queue Test Level",
-      contentPack: { prompt: "Test prompt" },
+      titleVi: "Studio Review Queue Level",
+      contentPack: VALID_CONTENT_PACK,
       difficultyParams: {},
       accessTier: "free",
       status: "in_review",
       authoredIn: "studio",
+      ageMin: 3,
+      ageMax: 6,
+      difficulty: 1,
+      createdByManagerId: testManagerId,
+    });
+
+    // 2. repo_seed item published (must NOT appear in queue)
+    await db.insert(gameLevels).values({
+      entityId: Date.now() + 101,
+      code: repoSeedCode,
+      contentVersion: 1,
+      templateId: tpl.id,
+      titleVi: "Repo Seed Published Level",
+      contentPack: VALID_CONTENT_PACK,
+      difficultyParams: {},
+      accessTier: "free",
+      status: "published",
+      authoredIn: "repo_seed",
+      ageMin: 3,
+      ageMax: 6,
+      difficulty: 1,
+    });
+
+    const event = mockEvent({}, { entity_type: "game_level" });
+    const res = (await reviewQueueHandler(event)) as any;
+
+    expect(res.items).toBeDefined();
+    expect(res.items.some((i: any) => i.code === inReviewCode)).toBe(true);
+    expect(res.items.some((i: any) => i.code === repoSeedCode)).toBe(false);
+  });
+
+  it("Task 1: Review queue sorts by 4-tier priority (D-KK, BR-CRQ-08)", async () => {
+    const db = getOwnerDb();
+    const tpl = await ensureTemplate();
+
+    const olderCode = `GL-C1-CNT-OLD-${(1000 + (Date.now() % 8999)).toString()}`;
+    const v2Code = `GL-C1-CNT-VER-${(1000 + (Date.now() % 8999)).toString()}`;
+
+    // v1 standalone older draft
+    await db.insert(gameLevels).values({
+      entityId: Date.now() + 110,
+      code: olderCode,
+      contentVersion: 1,
+      templateId: tpl.id,
+      titleVi: "Older V1 Level",
+      contentPack: VALID_CONTENT_PACK,
+      difficultyParams: {},
+      accessTier: "free",
+      status: "in_review",
+      authoredIn: "studio",
+      ageMin: 3,
+      ageMax: 6,
+      difficulty: 1,
+      createdByManagerId: testManagerId,
+    });
+
+    // v2 level (Tier 3 priority)
+    await db.insert(gameLevels).values({
+      entityId: Date.now() + 111,
+      code: v2Code,
+      contentVersion: 2,
+      templateId: tpl.id,
+      titleVi: "Version 2 Level",
+      contentPack: VALID_CONTENT_PACK,
+      difficultyParams: {},
+      accessTier: "free",
+      status: "in_review",
+      authoredIn: "studio",
+      ageMin: 3,
+      ageMax: 6,
+      difficulty: 1,
       createdByManagerId: testManagerId,
     });
 
     const event = mockEvent({}, { entity_type: "game_level" });
     const res = (await reviewQueueHandler(event)) as any;
-    expect(res.items).toBeDefined();
-    expect(res.items.some((i: any) => i.code === uniqueCode)).toBe(true);
+
+    const v2Item = res.items.find((i: any) => i.code === v2Code);
+    const olderItem = res.items.find((i: any) => i.code === olderCode);
+
+    expect(v2Item).toBeDefined();
+    expect(olderItem).toBeDefined();
+    expect(v2Item.priority_score).toBeGreaterThan(olderItem.priority_score);
   });
 
-  it("POST /api/managers/content/review-queue/bulk-reject rejects reason < 10 chars with 422 (BR-CRQ-03)", async () => {
-    const event = mockEvent(
-      {},
-      {},
-      {
-        created_by_manager_id: testManagerId,
-        reason: "quá ngắn",
-      }
-    );
-
-    try {
-      await bulkRejectHandler(event);
-      expect.fail("Should throw 422 REJECTED_REASON_TOO_SHORT");
-    } catch (err: any) {
-      expect(err.statusCode || err.status).toBe(422);
-    }
-  });
-
-  it("POST /api/managers/content/review-queue/bulk-reject rejects author items and logs records", async () => {
+  // --- 2. Live Preview & Preview Token (D-KG, BR-CRQ-02) ---
+  it("Task 2: GET /api/managers/levels/[code]/config delivers preview config with server-signed preview_token (D-KG, BR-CRQ-02)", async () => {
     const db = getOwnerDb();
-    let [tpl] = await db
-      .select()
-      .from(gameTemplates)
-      .where(eq(gameTemplates.code, "GT-001"));
-    if (!tpl) {
-      [tpl] = await db
-        .insert(gameTemplates)
-        .values({
-          code: "GT-001",
-          nameVi: "GT001",
-          mechanic: "tap-select",
-          layouts: ["grid"],
-          ageMin: 3,
-          ageMax: 6,
-        })
-        .returning();
-    }
+    const tpl = await ensureTemplate();
+    const code = `GL-C1-CNT-TOK-${(1000 + (Date.now() % 8999)).toString()}`;
 
-    const uniqueCode = `GL-C1-CNT-BLK-${(1000 + (Date.now() % 8999)).toString()}`;
     await db.insert(gameLevels).values({
-      entityId: Date.now() + 200,
-      code: uniqueCode,
+      entityId: Date.now() + 120,
+      code,
       contentVersion: 1,
       templateId: tpl.id,
-      titleVi: "Bulk Reject Test Level",
-      contentPack: { prompt: "Test prompt" },
+      titleVi: "Preview Token Level",
+      contentPack: VALID_CONTENT_PACK,
       difficultyParams: {},
       accessTier: "free",
       status: "in_review",
       authoredIn: "studio",
+      ageMin: 3,
+      ageMax: 6,
+      difficulty: 1,
+      createdByManagerId: testManagerId,
+    });
+
+    const event = mockEvent({ code }, { version: "1" });
+    const configRes = (await levelConfigHandler(event)) as any;
+
+    expect(configRes.preview_token).toBeDefined();
+    expect(typeof configRes.preview_token).toBe("string");
+  });
+
+  it("Task 2: POST /api/managers/content/:type/:id/transition requires preview_token for approval (D-KG, BR-CRQ-02)", async () => {
+    const db = getOwnerDb();
+    const tpl = await ensureTemplate();
+    const code = `GL-C1-CNT-APV-${(1000 + (Date.now() % 8999)).toString()}`;
+
+    const [lvl] = await db
+      .insert(gameLevels)
+      .values({
+        entityId: Date.now() + 130,
+        code,
+        contentVersion: 1,
+        templateId: tpl.id,
+        titleVi: "Approve Token Test",
+        contentPack: VALID_CONTENT_PACK,
+        difficultyParams: {},
+        accessTier: "free",
+        status: "in_review",
+        authoredIn: "studio",
+        ageMin: 3,
+        ageMax: 6,
+        difficulty: 1,
+        createdByManagerId: testManagerId,
+      })
+      .returning();
+
+    // 1. Negative test: Approve via curl without preview_token -> 422
+    const badEvent = mockEvent(
+      { type: "game_level", id: String(lvl.id) },
+      {},
+      {
+        to_status: "approved",
+        checklist: {
+          pedagogy: true,
+          content: true,
+          language: true,
+          imagery: true,
+          safety: true,
+          technical: true,
+        },
+      }
+    );
+
+    try {
+      await transitionHandler(badEvent);
+      expect.fail("Should throw 422 PREVIEW_TOKEN_REQUIRED");
+    } catch (err: any) {
+      expect(err.statusCode || err.status).toBe(422);
+    }
+
+    // 2. Positive test: Approve with valid server preview_token -> 200
+    const validToken = issuePreviewToken({
+      entityType: "game_level",
+      id: lvl.id,
+      version: 1,
+      managerId: testManagerId,
+    });
+
+    const goodEvent = mockEvent(
+      { type: "game_level", id: String(lvl.id) },
+      {},
+      {
+        to_status: "approved",
+        checklist: {
+          pedagogy: true,
+          content: true,
+          language: true,
+          imagery: true,
+          safety: true,
+          technical: true,
+        },
+        preview_token: validToken,
+      }
+    );
+
+    const goodRes = (await transitionHandler(goodEvent)) as any;
+    expect(goodRes.success).toBe(true);
+    expect(goodRes.status).toBe("approved");
+  });
+
+  // --- 3. Review Decisions & Bulk Reject (BR-CRQ-03, D-KH) ---
+  it("Task 3: POST /api/managers/content/review-queue/bulk-reject rejects author items and logs records (D-KH, BR-CRQ-03)", async () => {
+    const db = getOwnerDb();
+    const tpl = await ensureTemplate();
+    const code = `GL-C1-CNT-BLK-${(1000 + (Date.now() % 8999)).toString()}`;
+
+    await db.insert(gameLevels).values({
+      entityId: Date.now() + 140,
+      code,
+      contentVersion: 1,
+      templateId: tpl.id,
+      titleVi: "Bulk Reject Target",
+      contentPack: VALID_CONTENT_PACK,
+      difficultyParams: {},
+      accessTier: "free",
+      status: "in_review",
+      authoredIn: "studio",
+      ageMin: 3,
+      ageMax: 6,
+      difficulty: 1,
       createdByManagerId: testManagerId,
     });
 
@@ -185,85 +481,234 @@ describe("Content Review, Publish & SEO Admin APIs (P2.8, BR-CRQ-*, BR-PUB-*, BR
     expect(res.rejected_count).toBeGreaterThan(0);
   });
 
-  it("POST /api/managers/content/:type/:id/transition requires 6-group checklist for approval (BR-CRQ-07)", async () => {
+  // --- 4. Publish, Archive & Rollback (BR-PUB-01..08, D-KI) ---
+  it("Task 4: Publish atomically archives existing published version (BR-PUB-02, D-KI)", async () => {
     const db = getOwnerDb();
-    let [tpl] = await db
-      .select()
-      .from(gameTemplates)
-      .where(eq(gameTemplates.code, "GT-001"));
-    if (!tpl) {
-      [tpl] = await db
-        .insert(gameTemplates)
-        .values({
-          code: "GT-001",
-          nameVi: "GT001",
-          mechanic: "tap-select",
-          layouts: ["grid"],
-          ageMin: 3,
-          ageMax: 6,
-        })
-        .returning();
-    }
+    const tpl = await ensureTemplate();
+    const code = `GL-C1-CNT-PUB-${(1000 + (Date.now() % 8999)).toString()}`;
 
-    const uniqueCode = `GL-C1-CNT-CHK-${(1000 + (Date.now() % 8999)).toString()}`;
-    const [lvl] = await db
+    // 1. v1 published
+    const [v1] = await db
       .insert(gameLevels)
       .values({
-        entityId: Date.now() + 300,
-        code: uniqueCode,
+        entityId: Date.now() + 150,
+        code,
         contentVersion: 1,
         templateId: tpl.id,
-        titleVi: "Checklist Transition Level",
-        contentPack: { prompt: "Test prompt" },
+        titleVi: "Level V1 Published",
+        contentPack: VALID_CONTENT_PACK,
         difficultyParams: {},
         accessTier: "free",
-        status: "in_review",
+        status: "published",
         authoredIn: "studio",
-        createdByManagerId: testManagerId,
+        ageMin: 3,
+        ageMax: 6,
+        difficulty: 1,
       })
       .returning();
 
-    // 1. Incomplete checklist -> 422
-    const badEvent = mockEvent(
-      { type: "game_level", id: String(lvl.id) },
+    await db.insert(contentSkillMap).values({
+      entityType: "game_level",
+      entityId: v1.id,
+      skillId: testSkillId,
+      weight: "1.0",
+    });
+
+    // 2. v2 approved
+    const [v2] = await db
+      .insert(gameLevels)
+      .values({
+        entityId: Date.now() + 150,
+        code,
+        contentVersion: 2,
+        templateId: tpl.id,
+        titleVi: "Level V2 Approved",
+        contentPack: VALID_CONTENT_PACK,
+        difficultyParams: {},
+        accessTier: "free",
+        status: "approved",
+        authoredIn: "studio",
+        ageMin: 3,
+        ageMax: 6,
+        difficulty: 1,
+      })
+      .returning();
+
+    await db.insert(contentSkillMap).values({
+      entityType: "game_level",
+      entityId: v2.id,
+      skillId: testSkillId,
+      weight: "1.0",
+    });
+
+    // 3. Publish v2
+    const pubEvent = mockEvent(
+      { type: "game_level", id: String(v2.id) },
       {},
-      {
-        to_status: "approved",
-        checklist: { pedagogy: true, content: true }, // missing 4 groups
-      }
+      { to_status: "published" }
+    );
+    const pubRes = (await transitionHandler(pubEvent)) as any;
+    expect(pubRes.status).toBe("published");
+
+    // 4. Verify v1 is archived, v2 is published
+    const [updatedV1] = await db
+      .select()
+      .from(gameLevels)
+      .where(eq(gameLevels.id, v1.id));
+    const [updatedV2] = await db
+      .select()
+      .from(gameLevels)
+      .where(eq(gameLevels.id, v2.id));
+
+    expect(updatedV1.status).toBe("archived");
+    expect(updatedV2.status).toBe("published");
+  });
+
+  it("Task 4: content_reviewer cannot perform rollback (BR-PUB-03)", async () => {
+    const db = getOwnerDb();
+    const tpl = await ensureTemplate();
+    const code = `GL-C1-CNT-ROL-${(1000 + (Date.now() % 8999)).toString()}`;
+
+    const [archivedLvl] = await db
+      .insert(gameLevels)
+      .values({
+        entityId: Date.now() + 160,
+        code,
+        contentVersion: 1,
+        templateId: tpl.id,
+        titleVi: "Archived Level",
+        contentPack: VALID_CONTENT_PACK,
+        difficultyParams: {},
+        accessTier: "free",
+        status: "archived",
+        authoredIn: "studio",
+        ageMin: 3,
+        ageMax: 6,
+        difficulty: 1,
+      })
+      .returning();
+
+    // Rollback attempt with content_reviewer role -> 403
+    const rollbackEvent = mockEvent(
+      { type: "game_level", id: String(archivedLvl.id) },
+      {},
+      { to_status: "published" },
+      "content_reviewer"
     );
 
     try {
-      await transitionHandler(badEvent);
-      expect.fail("Should throw 422 for incomplete checklist");
+      await transitionHandler(rollbackEvent);
+      expect.fail("Should throw 403 INSUFFICIENT_ROLE");
     } catch (err: any) {
-      expect(err.statusCode || err.status).toBe(422);
+      expect(err.statusCode || err.status).toBe(403);
     }
-
-    // 2. Complete 6-group checklist -> 200 approved
-    const goodEvent = mockEvent(
-      { type: "game_level", id: String(lvl.id) },
-      {},
-      {
-        to_status: "approved",
-        checklist: {
-          pedagogy: true,
-          content: true,
-          language: true,
-          imagery: true,
-          safety: true,
-          technical: true,
-        },
-      }
-    );
-
-    const goodRes = (await transitionHandler(goodEvent)) as any;
-    expect(goodRes.success).toBe(true);
-    expect(goodRes.status).toBe("approved");
   });
 
-  it("POST /api/managers/seo-pages rejects legal slugs with 422 (BR-SEO-09)", async () => {
-    const event = mockEvent(
+  it("Task 4: Archive level used in published curriculum returns 409 CONTENT_IN_USE (BR-PUB-05)", async () => {
+    const db = getOwnerDb();
+    const tpl = await ensureTemplate();
+    const code = `GL-C1-CNT-USE-${(1000 + (Date.now() % 8999)).toString()}`;
+
+    const [lvl] = await db
+      .insert(gameLevels)
+      .values({
+        entityId: Date.now() + 170,
+        code,
+        contentVersion: 1,
+        templateId: tpl.id,
+        titleVi: "Level in Curriculum",
+        contentPack: VALID_CONTENT_PACK,
+        difficultyParams: {},
+        accessTier: "free",
+        status: "published",
+        authoredIn: "studio",
+        ageMin: 3,
+        ageMax: 6,
+        difficulty: 1,
+      })
+      .returning();
+
+    const curCode = `CUR-${(100 + (Date.now() % 899)).toString()}`;
+    const [cur] = await db
+      .insert(curricula)
+      .values({
+        entityId: Date.now() + 171,
+        code: curCode,
+        contentVersion: 1,
+        titleVi: "Chương Trình Mầm Non",
+        accessTier: "free",
+        status: "published",
+      })
+      .returning();
+
+    await db.insert(curriculumItems).values({
+      curriculumId: cur.id,
+      position: 1,
+      entityType: "game_level",
+      entityId: lvl.id,
+    });
+
+    const archiveEvent = mockEvent(
+      { type: "game_level", id: String(lvl.id) },
+      {},
+      { to_status: "archived" }
+    );
+
+    try {
+      await transitionHandler(archiveEvent);
+      expect.fail("Should throw 409 CONTENT_IN_USE");
+    } catch (err: any) {
+      expect(err.statusCode || err.status).toBe(409);
+    }
+  });
+
+  // --- 5. Version History (Task 5) ---
+  it("Task 5: GET /api/managers/content/:type/:code/versions returns historical versions with play count and diffs", async () => {
+    const db = getOwnerDb();
+    const tpl = await ensureTemplate();
+    const code = `GL-C1-CNT-HST-${(1000 + (Date.now() % 8999)).toString()}`;
+
+    const [lvl] = await db
+      .insert(gameLevels)
+      .values({
+        entityId: Date.now() + 180,
+        code,
+        contentVersion: 1,
+        templateId: tpl.id,
+        titleVi: "Version History Level",
+        contentPack: VALID_CONTENT_PACK,
+        difficultyParams: {},
+        accessTier: "free",
+        status: "published",
+        ageMin: 3,
+        ageMax: 6,
+        difficulty: 1,
+      })
+      .returning();
+
+    await db.insert(playSessions).values({
+      sessionUuid: randomUUID(),
+      guestDeviceId: "device-hist-123",
+      gameLevelId: lvl.id,
+      contentVersion: 1,
+      templateId: tpl.id,
+      status: "completed",
+      completionStatus: "completed",
+      accessTierAtStart: "free",
+      startedAt: new Date(),
+    });
+
+    const event = mockEvent({ type: "game_level", code });
+    const res = (await versionsHandler(event)) as any;
+
+    expect(res.versions).toBeDefined();
+    expect(res.versions.length).toBeGreaterThan(0);
+    expect(res.versions[0].play_count).toBeGreaterThanOrEqual(1);
+  });
+
+  // --- 6. SEO Content Admin (BR-SEO-01..09, D-KL) ---
+  it("Task 6: POST /api/managers/seo-pages creates SEO page and enforces legal slug prohibition (BR-SEO-09)", async () => {
+    const badEvent = mockEvent(
       {},
       {},
       {
@@ -274,14 +719,14 @@ describe("Content Review, Publish & SEO Admin APIs (P2.8, BR-CRQ-*, BR-PUB-*, BR
     );
 
     try {
-      await seoPagesPostHandler(event);
+      await seoPagesPostHandler(badEvent);
       expect.fail("Should reject legal slug 'terms'");
     } catch (err: any) {
       expect(err.statusCode || err.status).toBe(422);
     }
   });
 
-  it("POST /api/managers/seo-pages rejects script injection with 422 (BR-SEO-02)", async () => {
+  it("Task 6: POST /api/managers/seo-pages rejects script injection with 422 (BR-SEO-02, D-KL)", async () => {
     const event = mockEvent(
       {},
       {},
@@ -301,39 +746,65 @@ describe("Content Review, Publish & SEO Admin APIs (P2.8, BR-CRQ-*, BR-PUB-*, BR
     }
   });
 
-  it("POST /api/managers/seo-pages creates SEO page and generates structured data in preview (BR-SEO-06)", async () => {
-    const slug = `tu-duy-hinh-hoc-${Date.now().toString().slice(-4)}`;
+  it("Task 6: Changing slug of published SEO page triggers 301 redirect on guest access (BR-SEO-01)", async () => {
+    const oldSlug = `toan-hoc-mam-non-${Date.now() % 9000}`;
+    const newSlug = `phat-trien-tu-duy-${Date.now() % 9000}`;
+
+    // 1. Create page
+    const createEvt = mockEvent(
+      {},
+      {},
+      {
+        slug: oldSlug,
+        page_type: "competency",
+        title: "Toán Học Mầm Non",
+        meta_description: "Phát triển tư duy cho trẻ 3-6 tuổi",
+      }
+    );
+    const created = (await seoPagesPostHandler(createEvt)) as any;
+
+    // 2. Publish page
+    const db = getOwnerDb();
+    await db
+      .update(seoPages)
+      .set({ status: "published" })
+      .where(eq(seoPages.id, created.id));
+
+    // 3. Patch with new slug
+    const patchEvt = mockEvent(
+      { slug: oldSlug, version: "1" },
+      {},
+      { new_slug: newSlug }
+    );
+    await seoPatchHandler(patchEvt);
+
+    // 4. Guest access to old slug returns 301 redirect
+    const guestEvt = mockGuestEvent({ slug: oldSlug });
+    await guestSeoHandler(guestEvt);
+
+    expect(guestEvt.node.res.statusCode).toBe(301);
+  });
+
+  it("Task 6: GET /api/managers/seo-pages/[slug]/preview generates structured data and snippet preview (BR-SEO-05, BR-SEO-06)", async () => {
+    const slug = `tu-duy-khong-gian-${Date.now() % 9000}`;
     const createEvt = mockEvent(
       {},
       {},
       {
         slug,
         page_type: "competency",
-        title: "Phát triển tư duy không gian cho trẻ mầm non",
-        meta_description:
-          "Hướng dẫn phát triển tư duy hình học và không gian cho trẻ từ 3 đến 6 tuổi.",
-        faq_items: [
-          {
-            q: "Trẻ mấy tuổi học hình học?",
-            a: "Trẻ có thể bắt đầu từ 3 tuổi.",
-          },
-        ],
+        title: "Tư Duy Không Gian Cho Bé",
+        meta_description: "Hướng dẫn hình học mầm non",
+        faq_items: [{ q: "Bé mấy tuổi?", a: "Từ 3 tuổi." }],
       }
     );
-
-    const created = (await seoPagesPostHandler(createEvt)) as any;
-    expect(created.id).toBeDefined();
-    expect(created.slug).toBe(slug);
+    await seoPagesPostHandler(createEvt);
 
     const previewEvt = mockEvent({ slug });
     const preview = (await seoPreviewHandler(previewEvt)) as any;
-    expect(preview.title).toBe(created.title);
+
     expect(preview.structured_data).toBeDefined();
-    expect(
-      preview.structured_data.some((s: any) => s["@type"] === "Course")
-    ).toBe(true);
-    expect(
-      preview.structured_data.some((s: any) => s["@type"] === "FAQPage")
-    ).toBe(true);
+    expect(preview.snippet_preview).toBeDefined();
+    expect(preview.snippet_preview.url).toContain(slug);
   });
 });

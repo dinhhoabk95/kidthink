@@ -1,16 +1,124 @@
 import {
+  contentAssetRefs,
   contentImages,
+  type DatabaseOwner,
   gameLevels,
   getOwnerDb,
   lessons,
+  seoPages,
+  worksheets,
   writeAudit,
 } from "@kidthink/db";
-import { and, eq, sql } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import { createError, defineEventHandler, getRouterParam } from "h3";
 import {
   requireManagerSession,
   respondToManagerAuthError,
 } from "../../../utils/admin-auth-runtime.js";
+
+interface PublishedUsageRef {
+  type: string;
+  code: string;
+  version?: number;
+  status?: string;
+}
+
+async function checkRefRowPublished(
+  db: DatabaseOwner,
+  refRow: { entityType: string; entityId: number }
+): Promise<PublishedUsageRef | null> {
+  if (refRow.entityType === "game_level") {
+    const [lvl] = await db
+      .select({
+        code: gameLevels.code,
+        version: gameLevels.contentVersion,
+        status: gameLevels.status,
+      })
+      .from(gameLevels)
+      .where(eq(gameLevels.id, refRow.entityId));
+    if (lvl?.status === "published") {
+      return {
+        type: "game_level",
+        code: lvl.code,
+        version: lvl.version,
+        status: lvl.status,
+      };
+    }
+  } else if (refRow.entityType === "lesson") {
+    const [les] = await db
+      .select({
+        code: lessons.code,
+        version: lessons.contentVersion,
+        status: lessons.status,
+      })
+      .from(lessons)
+      .where(eq(lessons.id, refRow.entityId));
+    if (les?.status === "published") {
+      return {
+        type: "lesson",
+        code: les.code,
+        version: les.version,
+        status: les.status,
+      };
+    }
+  } else if (refRow.entityType === "worksheet") {
+    const [ws] = await db
+      .select({
+        code: worksheets.code,
+        version: worksheets.contentVersion,
+        status: worksheets.status,
+      })
+      .from(worksheets)
+      .where(eq(worksheets.id, refRow.entityId));
+    if (ws?.status === "published") {
+      return {
+        type: "worksheet",
+        code: ws.code,
+        version: ws.version,
+        status: ws.status,
+      };
+    }
+  } else if (refRow.entityType === "seo_page") {
+    const [sp] = await db
+      .select({
+        slug: seoPages.slug,
+        version: seoPages.contentVersion,
+        status: seoPages.status,
+      })
+      .from(seoPages)
+      .where(eq(seoPages.id, refRow.entityId));
+    if (sp?.status === "published") {
+      return {
+        type: "seo_page",
+        code: sp.slug,
+        version: sp.version,
+        status: sp.status,
+      };
+    }
+  }
+  return null;
+}
+
+async function findPublishedUsage(
+  db: DatabaseOwner,
+  storagePath: string
+): Promise<PublishedUsageRef[]> {
+  const usedBy: PublishedUsageRef[] = [];
+  const refs = await db
+    .select()
+    .from(contentAssetRefs)
+    .where(eq(contentAssetRefs.assetRef, storagePath))
+    .limit(50);
+
+  for (const refRow of refs) {
+    const usage = await checkRefRowPublished(db, refRow);
+    if (usage) {
+      usedBy.push(usage);
+    }
+  }
+
+  return usedBy;
+}
 
 export default defineEventHandler(async (event) => {
   try {
@@ -32,39 +140,8 @@ export default defineEventHandler(async (event) => {
       throw createError({ statusCode: 404, statusMessage: "IMAGE_NOT_FOUND" });
     }
 
-    // Check if used by published content (BR-IMG-07, BR-AST-02)
-    const usedBy: Array<{ type: string; code: string }> = [];
-
-    const pathPattern = `%${imageRecord.storagePath}%`;
-    const publishedLevels = await db
-      .select({ code: gameLevels.code })
-      .from(gameLevels)
-      .where(
-        and(
-          eq(gameLevels.status, "published"),
-          sql`${gameLevels.contentPack}::text LIKE ${pathPattern}`
-        )
-      )
-      .limit(5);
-
-    for (const lvl of publishedLevels) {
-      usedBy.push({ type: "game_level", code: lvl.code });
-    }
-
-    const publishedLessons = await db
-      .select({ code: lessons.code })
-      .from(lessons)
-      .where(
-        and(
-          eq(lessons.status, "published"),
-          sql`${lessons.guideVi} LIKE ${pathPattern}`
-        )
-      )
-      .limit(5);
-
-    for (const les of publishedLessons) {
-      usedBy.push({ type: "lesson", code: les.code });
-    }
+    // Check if used by published content via dedicated reverse index (BR-AUT2-01, BR-AUT2-03, D-KB)
+    const usedBy = await findPublishedUsage(db, imageRecord.storagePath);
 
     if (usedBy.length > 0) {
       throw createError({
@@ -79,6 +156,9 @@ export default defineEventHandler(async (event) => {
     }
 
     await db.delete(contentImages).where(eq(contentImages.id, id));
+    await db
+      .delete(contentAssetRefs)
+      .where(eq(contentAssetRefs.assetRef, imageRecord.storagePath));
 
     const managerId = manager.manager_id || manager.id || 1;
     await writeAudit(db, {

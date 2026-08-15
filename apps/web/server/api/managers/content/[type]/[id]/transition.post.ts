@@ -1,13 +1,19 @@
 import {
   type ContentLifecycleStatus,
+  gameLevels,
+  getOwnerDb,
+  lessons,
   type ManagerRole,
+  seoPages,
   transitionContentStatus,
 } from "@kidthink/db";
+import { eq } from "drizzle-orm";
 import { createError, defineEventHandler, getRouterParam, readBody } from "h3";
 import {
   requireManagerSession,
   respondToManagerAuthError,
 } from "../../../../../utils/admin-auth-runtime.js";
+import { verifyPreviewToken } from "../../../../../utils/preview-token.js";
 
 const VALID_TYPES = [
   "game_level",
@@ -15,6 +21,7 @@ const VALID_TYPES = [
   "activity",
   "curriculum",
   "worksheet",
+  "seo_page",
 ];
 
 const REQUIRED_CHECKLIST_GROUPS = [
@@ -46,6 +53,83 @@ function validateChecklist(checklist?: Record<string, boolean>): void {
   }
 }
 
+async function resolveEntityVersion(
+  entityType: string,
+  entityId: number
+): Promise<number> {
+  const db = getOwnerDb();
+  if (entityType === "game_level") {
+    const [row] = await db
+      .select({ version: gameLevels.contentVersion })
+      .from(gameLevels)
+      .where(eq(gameLevels.id, entityId));
+    return row?.version ?? 1;
+  }
+  if (entityType === "lesson") {
+    const [row] = await db
+      .select({ version: lessons.contentVersion })
+      .from(lessons)
+      .where(eq(lessons.id, entityId));
+    return row?.version ?? 1;
+  }
+  if (entityType === "seo_page") {
+    const [row] = await db
+      .select({ version: seoPages.contentVersion })
+      .from(seoPages)
+      .where(eq(seoPages.id, entityId));
+    return row?.version ?? 1;
+  }
+  return 1;
+}
+
+async function ensureApprovalRequirements(options: {
+  checklist?: Record<string, boolean>;
+  previewToken?: string;
+  typeParam: string;
+  id: number;
+  expectedVersion?: number;
+  managerId: number;
+}): Promise<void> {
+  validateChecklist(options.checklist);
+
+  const entityVersion =
+    options.expectedVersion ??
+    (await resolveEntityVersion(options.typeParam, options.id));
+
+  const isPreviewValid = verifyPreviewToken(options.previewToken, {
+    entityType: options.typeParam,
+    id: options.id,
+    version: entityVersion,
+    managerId: options.managerId,
+  });
+
+  if (!isPreviewValid) {
+    throw createError({
+      statusCode: 422,
+      statusMessage: "PREVIEW_TOKEN_REQUIRED",
+      message:
+        "Duyệt nội dung bắt buộc mở preview trước khi duyệt (BR-CRQ-02, D-KG)",
+    });
+  }
+}
+
+async function parseTransitionBody(event: Record<string, unknown>) {
+  const body =
+    (event.context?.body as Record<string, unknown>) ||
+    ((event as Record<string, unknown>)._body as Record<string, unknown>) ||
+    (await readBody(event).catch(() => ({})));
+  return {
+    toStatus: body?.to_status as ContentLifecycleStatus,
+    reason: typeof body?.reason === "string" ? body.reason : undefined,
+    expectedVersion:
+      typeof body?.expected_version === "number"
+        ? body.expected_version
+        : undefined,
+    checklist: body?.checklist as Record<string, boolean> | undefined,
+    previewToken: body?.preview_token as string | undefined,
+  };
+}
+
 export default defineEventHandler(async (event) => {
   try {
     const manager = await requireManagerSession(event);
@@ -61,25 +145,23 @@ export default defineEventHandler(async (event) => {
       });
     }
 
-    const body =
-      (event.context?.body as Record<string, unknown>) ||
-      ((event as Record<string, unknown>)._body as Record<string, unknown>) ||
-      (await readBody(event).catch(() => ({})));
-    const toStatus = body?.to_status as ContentLifecycleStatus;
-    const reason = typeof body?.reason === "string" ? body.reason : undefined;
-    const expectedVersion =
-      typeof body?.expected_version === "number"
-        ? body.expected_version
-        : undefined;
-    const checklist = body?.checklist as Record<string, boolean> | undefined;
-
-    // BR-CRQ-07: When transitioning in_review -> approved, verify 6-group checklist
-    if (toStatus === "approved") {
-      validateChecklist(checklist);
-    }
+    const { toStatus, reason, expectedVersion, checklist, previewToken } =
+      await parseTransitionBody(event);
 
     const managerRole = (manager.role || "content_reviewer") as ManagerRole;
     const managerId = manager.manager_id || manager.id || 1;
+
+    // BR-CRQ-07 & D-KG: When transitioning in_review -> approved, verify checklist + preview_token
+    if (toStatus === "approved") {
+      await ensureApprovalRequirements({
+        checklist,
+        previewToken,
+        typeParam,
+        id,
+        expectedVersion,
+        managerId,
+      });
+    }
 
     const result = await transitionContentStatus({
       entityType: typeParam as
@@ -103,20 +185,6 @@ export default defineEventHandler(async (event) => {
       review_log_id: result.reviewLogId,
     };
   } catch (err) {
-    const errorObj = err as {
-      statusCode?: number;
-      code?: string;
-      message?: string;
-      details?: unknown;
-    };
-    if (errorObj?.statusCode && errorObj?.code) {
-      throw createError({
-        statusCode: errorObj.statusCode,
-        statusMessage: errorObj.code,
-        message: errorObj.message,
-        data: errorObj.details,
-      });
-    }
     return respondToManagerAuthError(event, err);
   }
 });

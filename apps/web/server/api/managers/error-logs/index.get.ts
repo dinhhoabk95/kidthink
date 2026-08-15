@@ -1,5 +1,5 @@
 import { errorLogs, getOwnerDb } from "@kidthink/db";
-import { and, desc, eq, type SQL, sql } from "drizzle-orm";
+import { and, desc, eq, gte, ilike, lte, or, type SQL, sql } from "drizzle-orm";
 import { createError, defineEventHandler, getQuery } from "h3";
 import {
   requireManagerSession,
@@ -20,6 +20,67 @@ export interface ErrorGroupItem {
   resolved_notes: string | null;
 }
 
+function escapeLikeWildcards(text: string): string {
+  return text.replace(/([%_\\])/g, "\\$1");
+}
+
+function buildErrorLogConditions(
+  query: Record<string, unknown>
+): SQL<unknown>[] {
+  const conditions: SQL<unknown>[] = [];
+
+  if (query.status) {
+    conditions.push(
+      eq(
+        errorLogs.status,
+        String(query.status) as typeof errorLogs.$inferSelect.status
+      )
+    );
+  }
+  if (query.source) {
+    conditions.push(
+      eq(
+        errorLogs.source,
+        String(query.source) as typeof errorLogs.$inferSelect.source
+      )
+    );
+  }
+  if (query.level) {
+    conditions.push(
+      eq(
+        errorLogs.level,
+        String(query.level) as typeof errorLogs.$inferSelect.level
+      )
+    );
+  }
+  if (query.from) {
+    const fromDate = new Date(String(query.from));
+    if (!Number.isNaN(fromDate.getTime())) {
+      conditions.push(gte(errorLogs.createdAt, fromDate));
+    }
+  }
+  if (query.to) {
+    const toDate = new Date(String(query.to));
+    if (!Number.isNaN(toDate.getTime())) {
+      conditions.push(lte(errorLogs.createdAt, toDate));
+    }
+  }
+  if (typeof query.q === "string" && query.q.trim()) {
+    const escaped = escapeLikeWildcards(query.q.trim());
+    const searchCond = or(
+      ilike(errorLogs.code, `%${escaped}%`),
+      ilike(errorLogs.message, `%${escaped}%`),
+      ilike(errorLogs.fingerprint, `%${escaped}%`),
+      ilike(errorLogs.requestId, `%${escaped}%`)
+    );
+    if (searchCond) {
+      conditions.push(searchCond);
+    }
+  }
+
+  return conditions;
+}
+
 export default defineEventHandler(async (event) => {
   try {
     const manager = await requireManagerSession(event);
@@ -38,31 +99,9 @@ export default defineEventHandler(async (event) => {
       ((event as Record<string, unknown>)._query as Record<string, unknown>) ||
       getQuery(event);
 
-    const statusFilter = query.status ? String(query.status) : undefined;
-    const sourceFilter = query.source ? String(query.source) : undefined;
     const limit = Math.min(Number(query.limit) || 50, 100);
-
+    const conditions = buildErrorLogConditions(query);
     const db = getOwnerDb();
-
-    // Query grouped error logs by fingerprint (BR-ELV-01, BR-ELV-02)
-    const conditions: SQL<unknown>[] = [];
-    if (statusFilter) {
-      conditions.push(
-        eq(
-          errorLogs.status,
-          statusFilter as typeof errorLogs.$inferSelect.status
-        )
-      );
-    }
-    if (sourceFilter) {
-      conditions.push(
-        eq(
-          errorLogs.source,
-          sourceFilter as typeof errorLogs.$inferSelect.source
-        )
-      );
-    }
-
     const whereClause = conditions.length > 0 ? and(...conditions) : undefined;
 
     const groupedRows = await db

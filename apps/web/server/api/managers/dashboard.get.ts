@@ -5,6 +5,7 @@ import {
   entitlements,
   gameLevels,
   getOwnerDb,
+  lessons,
   levelDailyStats,
   paymentOrders,
   skills,
@@ -32,7 +33,7 @@ export interface DashboardResponseSuperAdmin {
   as_of: string;
   todo: {
     pending_payments: { count: number };
-    pending_content: PendingSourceMetric;
+    pending_content: { count: number };
     open_alerts: {
       count: number;
       items: Array<{
@@ -344,13 +345,24 @@ export default defineEventHandler(
         .where(inArray(paymentOrders.status, ["submitted", "under_review"]));
       const pendingPaymentsCount = Number(pendingOrdersRows[0]?.count || 0);
 
+      const pendingContentRows = await db
+        .select({ count: count(gameLevels.id) })
+        .from(gameLevels)
+        .where(eq(gameLevels.status, "in_review"));
+      const pendingLessonsRows = await db
+        .select({ count: count(lessons.id) })
+        .from(lessons)
+        .where(eq(lessons.status, "in_review"));
+      const pendingContentCount =
+        Number(pendingContentRows[0]?.count || 0) +
+        Number(pendingLessonsRows[0]?.count || 0);
+
       const todo = {
         pending_payments: {
           count: pendingPaymentsCount,
         },
         pending_content: {
-          status: "pending_source" as const,
-          owner_step: "P2.8",
+          count: pendingContentCount,
         },
         open_alerts: {
           count: 0,

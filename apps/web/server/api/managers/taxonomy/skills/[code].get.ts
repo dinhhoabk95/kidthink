@@ -147,7 +147,7 @@ export default defineEventHandler(async (event) => {
         total_draft: attachedLevels.filter((l) => l.status === "draft").length,
       },
       actions: {
-        author_url: `/admin/seed-authoring?skill_code=${skill.code}`,
+        author_url: `/studio/levels?skill_code=${skill.code}`,
         pr_notice:
           "Taxonomy là Lớp 1 — thay đổi cấu trúc taxonomy cần thực hiện qua Pull Request trong kho lưu trữ, không thể sửa trực tiếp từ giao diện quản trị.",
       },

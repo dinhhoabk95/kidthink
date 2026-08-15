@@ -7,7 +7,7 @@
       class="h-14 px-4 bg-slate-950 border-b border-slate-800 flex items-center justify-between shrink-0"
     >
       <div class="flex items-center gap-3">
-        <!-- Age Band Scaffolding Level Selector (BR-LPV-01) -->
+        <!-- Age Band Scaffolding Level Selector (BR-LPV-01, BR-LPV-06) -->
         <div
           class="flex items-center gap-1.5 bg-slate-900 p-1 rounded-2xl border border-slate-800"
         >
@@ -58,6 +58,22 @@
         >
           <span>{{ isMuted ? "Tắt âm" : "Bật âm" }}</span>
         </button>
+
+        <!-- Scale Toggle (Fit vs 100% 960x540 - Spec §7.1) -->
+        <button
+          type="button"
+          :class="[
+            'min-h-9 px-3 py-1 rounded-xl text-xs font-semibold border transition-all flex items-center gap-1.5',
+            scaleMode === '100%'
+              ? 'bg-indigo-600 border-indigo-600 text-white shadow-sm'
+              : 'border-slate-700 text-slate-400 hover:bg-slate-800',
+          ]"
+          @click="toggleScaleMode"
+        >
+          <span
+            >{{ scaleMode === "100%" ? "100% (960×540)" : "Tự vừa (Fit)" }}</span
+          >
+        </button>
       </div>
 
       <!-- Replay & Reload Controls -->
@@ -74,16 +90,27 @@
 
     <!-- Live Preview Canvas Frame (16:9 fixed ratio logic space 960x540) -->
     <div
-      class="flex-1 p-4 flex flex-col items-center justify-center relative overflow-hidden bg-slate-950"
+      class="flex-1 p-4 flex flex-col items-center justify-center relative overflow-auto bg-slate-950"
     >
       <!-- Validation Error Banner (BR-LPV-03) -->
       <div
         class="absolute top-4 left-4 right-4 z-20 p-4 rounded-2xl bg-rose-950/90 border-2 border-rose-600 text-rose-200 text-sm shadow-xl backdrop-blur-sm"
         v-if="validationError"
       >
-        <div class="font-bold flex items-center gap-2 mb-1">
-          <span class="text-rose-400 text-base">⚠️</span>
-          <span>Dữ liệu màn chơi chưa hợp lệ với mẫu {{ templateCode }}:</span>
+        <div class="font-bold flex items-center justify-between mb-1">
+          <div class="flex items-center gap-2">
+            <span class="text-rose-400 text-base">⚠️</span>
+            <span
+              >Dữ liệu màn chơi chưa hợp lệ với mẫu {{ templateCode }}:</span
+            >
+          </div>
+          <button
+            class="text-xs px-2.5 py-1 rounded-xl bg-rose-800 hover:bg-rose-700 text-white font-mono transition-all"
+            type="button"
+            @click="copyErrorDetails"
+          >
+            Sao chép chi tiết
+          </button>
         </div>
         <div class="text-xs text-rose-300 font-mono">
           {{ validationError.message }}
@@ -101,7 +128,12 @@
 
       <!-- Iframe Target -->
       <div
-        class="w-full max-w-[960px] aspect-[16/9] relative rounded-2xl overflow-hidden border-2 border-slate-800 shadow-xl bg-slate-900 flex items-center justify-center"
+        :class="[
+          'relative rounded-2xl overflow-hidden border-2 border-slate-800 shadow-xl bg-slate-900 flex items-center justify-center transition-all',
+          scaleMode === '100%'
+            ? 'w-[960px] h-[540px] shrink-0'
+            : 'w-full max-w-[960px] aspect-[16/9]',
+        ]"
       >
         <iframe
           class="w-full h-full border-0"
@@ -143,6 +175,7 @@
   const selectedAgeBand = ref<"3-4" | "4-5" | "5-6">("3-4");
   const reducedMotion = ref(false);
   const isMuted = ref(false);
+  const scaleMode = ref<"fit" | "100%">("fit");
   const isIframeLoading = ref(true);
   const previewIframeRef = ref<HTMLIFrameElement | null>(null);
 
@@ -200,6 +233,18 @@
   function toggleMute() {
     isMuted.value = !isMuted.value;
     postUpdateToIframe();
+  }
+
+  function toggleScaleMode() {
+    scaleMode.value = scaleMode.value === "fit" ? "100%" : "fit";
+  }
+
+  function copyErrorDetails() {
+    if (!props.validationError) {
+      return;
+    }
+    const details = JSON.stringify(props.validationError, null, 2);
+    navigator.clipboard?.writeText(details);
   }
 
   function replaySession() {

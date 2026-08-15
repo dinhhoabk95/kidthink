@@ -12,6 +12,7 @@ import {
   requireManagerSession,
   respondToManagerAuthError,
 } from "../../../../utils/admin-auth-runtime.js";
+import { syncContentAssetRefs } from "../../../../utils/asset-refs.js";
 
 function buildLevelUpdates(
   body: Record<string, unknown>
@@ -136,6 +137,13 @@ export default defineEventHandler(async (event) => {
       .set(updates)
       .where(eq(gameLevels.id, existing.level.id))
       .returning();
+
+    await syncContentAssetRefs(
+      db,
+      "game_level",
+      updated.id,
+      updated.contentPack
+    );
 
     const managerId = manager.manager_id || manager.id || 1;
     await writeAudit(db, {

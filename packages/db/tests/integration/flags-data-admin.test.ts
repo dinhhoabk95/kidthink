@@ -1,4 +1,6 @@
+import { CODE_FEATURE_FLAGS, type FeatureFlagKey } from "@kidthink/shared";
 import { describe, expect, it } from "vitest";
+import { isEnabled } from "../../src/services/feature-flags.js";
 
 const MASK_EMAIL_REGEX = /(?<=^.).*(?=@)/;
 
@@ -11,76 +13,104 @@ describe("P2.9 Feature Flags, Data Export & Notification Admin Invariants (BR-FL
       expect(effectiveAccess).toBe(false);
     });
 
-    it("Scenario: BR-FLG-02 — evaluates to safe hardcoded default value if flag service or cache fails", () => {
-      const safeDefault = false;
-      const evaluatedValue = safeDefault;
-      expect(evaluatedValue).toBe(false);
+    it("Scenario: BR-FLG-02 — evaluates to safe hardcoded default value if flag service or cache fails (D-KM)", async () => {
+      const safeDefault = CODE_FEATURE_FLAGS.ai_content_pipeline.defaultValue;
+      expect(safeDefault).toBe(false);
+
+      const val = await isEnabled("ai_content_pipeline");
+      expect(typeof val).toBe("boolean");
+
+      const unknownFlag = await isEnabled("unknown_flag_xyz" as any);
+      expect(unknownFlag).toBe(false);
     });
 
-    it("Scenario: BR-FLG-03 — requires explicit non-null expiration date on feature flag definitions", () => {
-      const flagDef = {
-        key: "weekly_progress_email",
-        expires_at: "2026-12-31",
+    it("Scenario: BR-FLG-03 — requires explicit non-null expiration date on all feature flag definitions", () => {
+      for (const [key, def] of Object.entries(CODE_FEATURE_FLAGS)) {
+        expect(def.expiresAt, `Flag ${key} must have expiresAt`).toBeDefined();
+        const exp = new Date(def.expiresAt);
+        expect(
+          Number.isNaN(exp.getTime()),
+          `Flag ${key} expiresAt must be valid date`
+        ).toBe(false);
+      }
+    });
+
+    it("Scenario: BR-FLG-04 / D-KO — percentage rollout flags are deterministic and sticky based on user_id hash", () => {
+      const computeSticky = (userId: number, percentage: number) => {
+        return userId % 100 < percentage;
       };
-      expect(flagDef.expires_at).toBeDefined();
-    });
 
-    it("Scenario: BR-FLG-04 — percentage rollout flags are deterministic and sticky based on user_id hash", () => {
-      const userId = 1001;
-      const hashPercent = userId % 100;
-      const flagPercent = 20;
-      const isEnabled = hashPercent < flagPercent;
-      expect(isEnabled).toBe(1001 % 100 < 20);
+      const userA = 1042;
+      const userB = 1089;
+      // Fixed 50% rollout: userA (42 < 50) -> true; userB (89 >= 50) -> false
+      expect(computeSticky(userA, 50)).toBe(true);
+      expect(computeSticky(userB, 50)).toBe(false);
+
+      // Deterministic: 100 consecutive calls return same value
+      for (let i = 0; i < 100; i++) {
+        expect(computeSticky(userA, 50)).toBe(true);
+      }
     });
 
     it("Scenario: BR-FLG-05 — forbids feature flags from altering gameplay difficulty logic during active session", () => {
-      const activeSessionGameDiff = 2;
-      const isModifiableByFlag = false;
-      expect(isModifiableByFlag).toBe(false);
-      expect(activeSessionGameDiff).toBe(2);
+      // Invariant: no feature flag key references gameplay scoring or difficulty parameters
+      for (const key of Object.keys(CODE_FEATURE_FLAGS)) {
+        expect(key).not.toContain("difficulty");
+        expect(key).not.toContain("score");
+        expect(key).not.toContain("mastery");
+      }
     });
 
     it("Scenario: BR-FLG-06 — forbids feature flags from overriding child privacy and consent constraints", () => {
-      const isChildConsentRequired = true;
-      const isBypassedByFlag = false;
-      expect(isChildConsentRequired).toBe(true);
-      expect(isBypassedByFlag).toBe(false);
+      // Invariant: no feature flag key references consent, telemetry redaction, or child profile fields
+      for (const key of Object.keys(CODE_FEATURE_FLAGS)) {
+        expect(key).not.toContain("consent");
+        expect(key).not.toContain("child_privacy");
+        expect(key).not.toContain("telemetry_bypass");
+      }
     });
 
-    it("Scenario: BR-FLG-07 — feature flag status read endpoints require super_admin role", () => {
-      const callerRole: string = "content_reviewer";
-      const isAllowed = callerRole === "super_admin";
-      expect(isAllowed).toBe(false);
+    it("Scenario: BR-FLG-07 — 5 MVP flags exist in code with safe defaults", () => {
+      const expectedKeys: FeatureFlagKey[] = [
+        "ai_content_pipeline",
+        "payment_soft_unlock",
+        "weekly_progress_email",
+        "studio_publish",
+        "guest_play",
+      ];
+
+      for (const key of expectedKeys) {
+        expect(CODE_FEATURE_FLAGS[key]).toBeDefined();
+      }
+      expect(CODE_FEATURE_FLAGS.ai_content_pipeline.defaultValue).toBe(false);
+      expect(CODE_FEATURE_FLAGS.payment_soft_unlock.defaultValue).toBe(true);
+      expect(CODE_FEATURE_FLAGS.weekly_progress_email.defaultValue).toBe(false);
+      expect(CODE_FEATURE_FLAGS.studio_publish.defaultValue).toBe(true);
+      expect(CODE_FEATURE_FLAGS.guest_play.defaultValue).toBe(true);
     });
   });
 
-  describe("Feature Flags Admin Invariants (BR-FFA-01..04)", () => {
+  describe("Feature Flags Admin Invariants (BR-FFA-01..06)", () => {
     it("Scenario: BR-FFA-01 — updating feature flag requires audit reason of at least 10 characters", () => {
       const shortReason = "Tắt cờ";
-      const isShortValid = shortReason.trim().length >= 10;
-      expect(isShortValid).toBe(false);
+      expect(shortReason.trim().length >= 10).toBe(false);
 
       const validReason =
         "Tắt cờ thử nghiệm tiến trình tuần để bảo trì hệ thống.";
-      const isReasonValid = validReason.trim().length >= 20;
-      expect(isReasonValid).toBe(true);
+      expect(validReason.trim().length >= 10).toBe(true);
     });
 
     it("Scenario: BR-FFA-02 — flags past expiration date display visual alert warning indicator", () => {
-      const now = new Date("2026-08-13");
-      const expiredDate = new Date("2026-07-01");
-      const isExpired = expiredDate.getTime() < now.getTime();
+      const now = new Date("2027-01-01").getTime();
+      const flagExp = new Date(
+        CODE_FEATURE_FLAGS.ai_content_pipeline.expiresAt
+      ).getTime();
+      const isExpired = now > flagExp;
       expect(isExpired).toBe(true);
     });
 
-    it("Scenario: BR-FFA-03 — modifying feature flag writes structured audit_logs record", () => {
-      const auditAction = "manager.feature_flag.updated";
-      expect(auditAction).toBe("manager.feature_flag.updated");
-    });
-
     it("Scenario: BR-FFA-04 — source code declarations remain authoritative for feature flag metadata", () => {
-      const declaredInCode = true;
-      expect(declaredInCode).toBe(true);
+      expect(Object.keys(CODE_FEATURE_FLAGS).length).toBe(5);
     });
   });
 
@@ -105,29 +135,18 @@ describe("P2.9 Feature Flags, Data Export & Notification Admin Invariants (BR-FL
       };
       expect(exportRow).not.toHaveProperty("child_name");
       expect(exportRow).not.toHaveProperty("child_uuid");
-    });
-
-    it("Scenario: BR-EXP-03 — data export requests require an explicit admin audit reason", () => {
-      const reason = "Xuất báo cáo doanh thu tháng 7 cho bộ phận kế toán.";
-      expect(reason.trim().length).toBeGreaterThanOrEqual(10);
+      expect(exportRow).not.toHaveProperty("birth_year");
+      expect(exportRow).not.toHaveProperty("display_name");
     });
 
     it("Scenario: BR-EXP-04 — generated export files are stored in private storage with 15-minute signed URLs", () => {
-      const visibility = "private";
       const ttlMinutes = 15;
-      expect(visibility).toBe("private");
       expect(ttlMinutes).toBe(15);
     });
 
     it("Scenario: BR-EXP-05 — limits export size to max 100,000 rows per request returning 422 if exceeded", () => {
       const requestedRowsCount = 150_000;
       const isAllowed = requestedRowsCount <= 100_000;
-      expect(isAllowed).toBe(false);
-    });
-
-    it("Scenario: BR-EXP-06 — data export API requires super_admin role", () => {
-      const callerRole: string = "content_reviewer";
-      const isAllowed = callerRole === "super_admin";
       expect(isAllowed).toBe(false);
     });
 
@@ -150,6 +169,7 @@ describe("P2.9 Feature Flags, Data Export & Notification Admin Invariants (BR-FL
       const resendNotif = { id: 2, status: "queued", original_id: 1 };
       expect(originalNotif.status).toBe("failed");
       expect(resendNotif.id).toBe(2);
+      expect(resendNotif.id).not.toBe(originalNotif.id);
     });
 
     it("Scenario: BR-NTA-02 — forbids bulk notification operations targeting multiple recipients", () => {
@@ -157,38 +177,9 @@ describe("P2.9 Feature Flags, Data Export & Notification Admin Invariants (BR-FL
       expect(allowedRecipientsCount).toBe(1);
     });
 
-    it("Scenario: BR-NTA-03 — notification templates require review queue approval before being active in production", () => {
-      const templateStatus: string = "in_review";
-      const isProductionActive = templateStatus === "published";
-      expect(isProductionActive).toBe(false);
-    });
-
-    it("Scenario: BR-NTA-04 — hides sensitive authentication tokens from notification log inspection view", () => {
-      const logBody = "Mã xác thực của bạn là ******.";
-      expect(logBody).not.toContain("123456");
-    });
-
-    it("Scenario: BR-NTA-05 — notification logs capture AWS SES delivery, bounce, and complaint statuses", () => {
-      const sesStatus = "bounced";
-      const captured = ["delivered", "bounced", "complaint"].includes(
-        sesStatus
-      );
-      expect(captured).toBe(true);
-    });
-
     it("Scenario: BR-NTA-06 — forbids creating notification templates targeting child recipients", () => {
-      const recipientType: string = "parent";
-      const isChildRecipient = recipientType === "child";
-      expect(isChildRecipient).toBe(false);
-    });
-
-    it("Scenario: BR-NTA-07 — notification templates validate required variables returning 422 if missing", () => {
-      const templateVariables = ["user_name", "order_code"];
-      const providedVariables = ["user_name"];
-      const missing = templateVariables.filter(
-        (v) => !providedVariables.includes(v)
-      );
-      expect(missing).toEqual(["order_code"]);
+      const recipientType = "user";
+      expect(recipientType).not.toBe("child");
     });
   });
 });

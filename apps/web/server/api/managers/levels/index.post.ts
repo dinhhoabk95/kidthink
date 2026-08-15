@@ -14,6 +14,7 @@ import {
   requireManagerSession,
   respondToManagerAuthError,
 } from "../../../utils/admin-auth-runtime.js";
+import { syncContentAssetRefs } from "../../../utils/asset-refs.js";
 
 function generateLevelCode(
   templateCode: string,
@@ -158,6 +159,13 @@ export default defineEventHandler(async (event) => {
       .insert(gameLevels)
       .values(insertValues)
       .returning();
+
+    await syncContentAssetRefs(
+      db,
+      "game_level",
+      newLevel.id,
+      newLevel.contentPack
+    );
 
     await writeAudit(db, {
       actor_type: "manager",

@@ -1,5 +1,9 @@
 import crypto from "node:crypto";
-import { PROOF_SIGNED_URL_TTL_MINUTES } from "@kidthink/config";
+
+export const PROOF_SIGNED_URL_TTL_MINUTES = 15;
+
+const EXTENSION_REGEX = /\.[a-zA-Z0-9]+$/;
+const TRAILING_SLASHES_REGEX = /\/+$/;
 
 export interface UploadPrivateAssetOptions {
   key: string;
@@ -125,6 +129,11 @@ export function getPublicImage(
   return inMemoryPublicStore.get(normalizedPath);
 }
 
+export function deletePublicImage(path: string): boolean {
+  const normalizedPath = path.startsWith("/") ? path.slice(1) : path;
+  return inMemoryPublicStore.delete(normalizedPath);
+}
+
 export async function uploadPrivateAsset(
   options: UploadPrivateAssetOptions
 ): Promise<PrivateUploadResult> {
@@ -144,6 +153,63 @@ export async function uploadPrivateAsset(
   };
 }
 
+export function deletePrivateAsset(path: string): boolean {
+  const normalizedPath = path.startsWith("/") ? path.slice(1) : path;
+  return inMemoryPrivateStore.delete(normalizedPath);
+}
+
+/**
+ * Construct public asset URL dynamically from relative path (BR-IMG-05, D-KD)
+ */
+export function url(
+  path: string,
+  options?: { variant?: "full" | "thumb" }
+): string {
+  if (!path) {
+    return "";
+  }
+  if (path.startsWith("http://") || path.startsWith("https://")) {
+    return path;
+  }
+  const normalizedPath = path.startsWith("/") ? path.slice(1) : path;
+  let targetPath = normalizedPath;
+  if (options?.variant === "thumb" && !targetPath.endsWith("_thumb.webp")) {
+    targetPath = targetPath.replace(EXTENSION_REGEX, "_thumb.webp");
+  }
+  const baseUrl =
+    process.env.STORAGE_BASE_URL ||
+    process.env.NUXT_PUBLIC_SITE_URL ||
+    "https://assets.kidthink.edu.vn";
+  return `${baseUrl.replace(TRAILING_SLASHES_REGEX, "")}/${targetPath}`;
+}
+
+/**
+ * Generates a time-limited signed URL for private asset access (BR-IMG-10, BR-PQU-03, D-JK, D-KD)
+ * Default TTL: 15 minutes (900 seconds)
+ */
+export function signedUrl(path: string, ttlSeconds = 900): string {
+  const expiresAt = new Date(Date.now() + ttlSeconds * 1000);
+  const normalizedPath = path.startsWith("/") ? path.slice(1) : path;
+
+  const secret =
+    process.env.STORAGE_SIGNING_SECRET ||
+    process.env.JWT_ACCESS_SECRET ||
+    "storage-private-secret-key-signed-proof-token-123456";
+  const signature = crypto
+    .createHmac("sha256", secret)
+    .update(`${normalizedPath}:${expiresAt.getTime()}`)
+    .digest("hex");
+
+  const baseUrl =
+    process.env.STORAGE_BASE_URL ||
+    process.env.NUXT_PUBLIC_SITE_URL ||
+    "https://storage.kidthink.test";
+
+  return `${baseUrl.replace(TRAILING_SLASHES_REGEX, "")}/private/${encodeURIComponent(
+    normalizedPath
+  )}?expires=${expiresAt.getTime()}&signature=${signature}`;
+}
+
 /**
  * Generates a time-limited signed URL for private asset access (BR-PQU-03, D-JK)
  * Default TTL: 15 minutes
@@ -160,7 +226,6 @@ export async function getPrivateSignedUrl(options: {
     ? options.path.slice(1)
     : options.path;
 
-  // Generate signed token with HMAC
   const secret =
     process.env.STORAGE_SIGNING_SECRET ||
     process.env.JWT_ACCESS_SECRET ||
@@ -175,12 +240,12 @@ export async function getPrivateSignedUrl(options: {
     process.env.NUXT_PUBLIC_SITE_URL ||
     "https://storage.kidthink.test";
 
-  const url = `${baseUrl}/private/${encodeURIComponent(
+  const resultUrl = `${baseUrl.replace(TRAILING_SLASHES_REGEX, "")}/private/${encodeURIComponent(
     normalizedPath
   )}?expires=${expiresAt.getTime()}&signature=${signature}`;
 
   return {
-    url,
+    url: resultUrl,
     expiresAt,
   };
 }
@@ -217,3 +282,17 @@ export function isPrivateStorageConfigured(): boolean {
     process.env.AWS_ACCESS_KEY_ID && process.env.AWS_SECRET_ACCESS_KEY
   );
 }
+
+export const storage = {
+  url,
+  signedUrl,
+  uploadPublicImage,
+  uploadPrivateAsset,
+  getPublicImage,
+  deletePublicImage,
+  deletePrivateAsset,
+  getPrivateSignedUrl,
+  verifySignedUrlToken,
+  detectImageMimeType,
+  isSvgContent,
+};

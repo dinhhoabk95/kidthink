@@ -141,7 +141,6 @@ groups:
           - email
           - dashboard
         runbook: "https://docs.tinimath.vn/runbooks/review-backlog"
-        pending_source: "P2.8"
         enabled: true
 
       - name: LevelDropRateHigh
@@ -162,7 +161,6 @@ groups:
           - email
           - dashboard
         runbook: "https://docs.tinimath.vn/runbooks/stale-flags"
-        pending_source: "P2.9"
         enabled: true
 
   - name: P2

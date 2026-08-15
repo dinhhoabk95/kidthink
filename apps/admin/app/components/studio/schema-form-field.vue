@@ -51,7 +51,7 @@
           :src="getImageUrl(stringValue)"
         >
         <span class="text-xs text-slate-400 text-center px-1" v-else
-          >P2.7 Ảnh</span
+          >Chưa có ảnh</span
         >
       </div>
       <button

@@ -10,7 +10,7 @@
         </h1>
         <p class="text-sm text-slate-500 mt-1">
           Gom nhóm theo dấu vân tay, thống kê số lượng và số người dùng bị ảnh
-          hưởng (P2.10).
+          hưởng (P2.10, BR-ELV-01..07).
         </p>
       </div>
 
@@ -21,6 +21,64 @@
       >
         Làm mới
       </button>
+    </div>
+
+    <!-- Filters -->
+    <div
+      class="bg-white dark:bg-slate-800 rounded-3xl border-2 border-slate-200 dark:border-slate-700 p-4 grid grid-cols-1 sm:grid-cols-3 gap-4"
+    >
+      <div>
+        <label
+          class="block text-xs font-bold text-slate-500 mb-1"
+          for="filter-status"
+          >Trạng thái</label
+        >
+        <select
+          class="w-full p-2 text-xs rounded-xl border border-slate-300 dark:border-slate-600 bg-transparent text-slate-900 dark:text-white focus:outline-none"
+          id="filter-status"
+          v-model="statusFilter"
+          @change="fetchErrors"
+        >
+          <option value="">-- Tất cả trạng thái --</option>
+          <option value="open">Đang mở (Open)</option>
+          <option value="ack">Đã ghi nhận (Ack)</option>
+          <option value="resolved">Đã xử lý (Resolved)</option>
+        </select>
+      </div>
+
+      <div>
+        <label
+          class="block text-xs font-bold text-slate-500 mb-1"
+          for="filter-source"
+          >Nguồn lỗi</label
+        >
+        <select
+          class="w-full p-2 text-xs rounded-xl border border-slate-300 dark:border-slate-600 bg-transparent text-slate-900 dark:text-white focus:outline-none"
+          id="filter-source"
+          v-model="sourceFilter"
+          @change="fetchErrors"
+        >
+          <option value="">-- Tất cả nguồn --</option>
+          <option value="server">Server</option>
+          <option value="client">Client / Tablet</option>
+        </select>
+      </div>
+
+      <div>
+        <label
+          class="block text-xs font-bold text-slate-500 mb-1"
+          for="filter-search"
+          >Tìm kiếm (Mã lỗi, thông điệp, req ID)</label
+        >
+        <input
+          class="w-full p-2 text-xs rounded-xl border border-slate-300 dark:border-slate-600 bg-transparent text-slate-900 dark:text-white focus:outline-none"
+          id="filter-search"
+          placeholder="Tìm trong lỗi..."
+          type="text"
+          v-model="searchQuery"
+          @keyup.enter="fetchErrors"
+        >
+      </div>
     </div>
 
     <!-- Error Groups List (BR-ELV-01) -->
@@ -37,10 +95,11 @@
       >
         <span class="text-3xl block mb-2">🎉</span>
         <p class="font-bold text-slate-700 dark:text-slate-300">
-          Không có lỗi nào được ghi nhận
+          Không có lỗi nào phù hợp
         </p>
-        <p class="text-xs">
-          Hệ thống đang hoạt động ổn định và không có lỗi mở.
+        <p class="text-xs text-slate-500 mt-1">
+          Hệ thống đang hoạt động ổn định hoặc không có lỗi theo điều kiện lọc
+          hiện tại.
         </p>
       </div>
 
@@ -67,6 +126,10 @@
               <span class="text-xs text-slate-400">
                 Nguồn: {{ group.source }}
               </span>
+
+              <span class="font-mono text-[11px] text-slate-400">
+                FP: {{ group.fingerprint }}
+              </span>
             </div>
 
             <p class="text-sm font-bold text-slate-900 dark:text-white">
@@ -74,7 +137,9 @@
             </p>
 
             <!-- Affected Users & Count (BR-ELV-02) -->
-            <div class="flex items-center gap-4 text-xs text-slate-500">
+            <div
+              class="flex items-center gap-4 text-xs text-slate-500 flex-wrap"
+            >
               <span
                 >Số lần xảy ra:
                 <strong class="text-rose-600 font-bold"
@@ -87,6 +152,7 @@
                   >{{ group.affected_users_count }}</strong
                 ></span
               >
+              <span>Lần đầu: {{ formatDate(group.first_seen_at) }}</span>
               <span>Lần cuối: {{ formatDate(group.last_seen_at) }}</span>
             </div>
 
@@ -96,6 +162,16 @@
             >
               Ghi chú xử lý: "{{ group.resolved_notes }}"
             </p>
+
+            <!-- Cross-link to audit (D-KU) -->
+            <div class="pt-1">
+              <NuxtLink
+                class="text-[11px] text-indigo-600 dark:text-indigo-400 font-semibold hover:underline flex items-center gap-1"
+                :to="`/audit?q=${group.fingerprint}`"
+              >
+                <span>Tra cứu nhật ký kiểm toán liên quan →</span>
+              </NuxtLink>
+            </div>
           </div>
 
           <div class="flex items-center gap-2 shrink-0">
@@ -179,6 +255,7 @@
 
 <script lang="ts" setup>
   import { onMounted, ref } from "vue";
+  import { useRoute } from "vue-router";
 
   definePageMeta({
     layout: "manager",
@@ -198,6 +275,7 @@
     resolved_notes: string | null;
   }
 
+  const route = useRoute();
   const groups = ref<ErrorGroup[]>([]);
   const isLoading = ref(true);
   const isModalOpen = ref(false);
@@ -205,6 +283,10 @@
   const targetStatus = ref("resolved");
   const resolveNotes = ref("");
   const isSubmitting = ref(false);
+
+  const statusFilter = ref(String(route.query.status || ""));
+  const sourceFilter = ref(String(route.query.source || ""));
+  const searchQuery = ref(String(route.query.q || ""));
 
   onMounted(() => {
     fetchErrors();
@@ -214,7 +296,14 @@
     isLoading.value = true;
     try {
       const res = await $fetch<{ groups: ErrorGroup[] }>(
-        "/api/managers/error-logs"
+        "/api/managers/error-logs",
+        {
+          params: {
+            status: statusFilter.value || undefined,
+            source: sourceFilter.value || undefined,
+            q: searchQuery.value || undefined,
+          },
+        }
       );
       groups.value = res.groups || [];
     } catch (err) {
@@ -260,11 +349,11 @@
   function statusClass(st: string): string {
     switch (st) {
       case "resolved":
-        return "bg-emerald-100 text-emerald-800";
+        return "bg-emerald-100 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-300";
       case "ack":
-        return "bg-amber-100 text-amber-800";
+        return "bg-amber-100 dark:bg-amber-950/40 text-amber-800 dark:text-amber-300";
       default:
-        return "bg-rose-100 text-rose-800";
+        return "bg-rose-100 dark:bg-rose-950/40 text-rose-800 dark:text-rose-300";
     }
   }
 

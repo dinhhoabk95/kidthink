@@ -1,9 +1,12 @@
+import { gameLevels, getOwnerDb } from "@kidthink/db";
+import { and, desc, eq } from "drizzle-orm";
 import { createError, defineEventHandler, getQuery, getRouterParam } from "h3";
 import {
   requireManagerSession,
   respondToManagerAuthError,
 } from "../../../../utils/admin-auth-runtime.js";
 import { deliverGameConfig } from "../../../../utils/game-config-runtime.js";
+import { issuePreviewToken } from "../../../../utils/preview-token.js";
 
 export default defineEventHandler(async (event) => {
   try {
@@ -25,9 +28,8 @@ export default defineEventHandler(async (event) => {
       }
     }
 
-    // Explicitly references assertContentAccess for gating lint checks
-    // returns content_pack and difficulty_params after calling assertContentAccess
-    return await deliverGameConfig(event, code, {
+    // Deliver game config in manager preview mode
+    const config = await deliverGameConfig(event, code, {
       caller: {
         kind: "user",
         account_id: manager.id,
@@ -36,6 +38,37 @@ export default defineEventHandler(async (event) => {
       version,
       isManagerPreview: true,
     });
+
+    const db = getOwnerDb();
+    const managerId = manager.manager_id || manager.id || 1;
+
+    const [level] = await db
+      .select({ id: gameLevels.id, contentVersion: gameLevels.contentVersion })
+      .from(gameLevels)
+      .where(
+        version === undefined
+          ? eq(gameLevels.code, code)
+          : and(
+              eq(gameLevels.code, code),
+              eq(gameLevels.contentVersion, version)
+            )
+      )
+      .orderBy(desc(gameLevels.contentVersion))
+      .limit(1);
+
+    const previewToken = level
+      ? issuePreviewToken({
+          entityType: "game_level",
+          id: level.id,
+          version: level.contentVersion,
+          managerId,
+        })
+      : undefined;
+
+    return {
+      ...config,
+      preview_token: previewToken,
+    };
   } catch (err) {
     return respondToManagerAuthError(event, err);
   }

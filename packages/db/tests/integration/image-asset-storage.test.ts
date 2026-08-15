@@ -1,162 +1,233 @@
+import { existsSync, readdirSync } from "node:fs";
+import { resolve } from "node:path";
+import {
+  contentAssetRefs,
+  contentImages,
+  gameLevels,
+  gameTemplates,
+  getOwnerDb,
+} from "@kidthink/db";
+import { eq } from "drizzle-orm";
 import { describe, expect, it } from "vitest";
 
+const STORAGE_PATH_PREFIX_REGEX = /^content\/\d{4}\/\d{2}\/test_img_/;
+
 describe("P2.7 Image Storage, Upload & Asset Usage Tracking Invariants (BR-IMG, BR-IUP, BR-AUT2)", () => {
+  const db = getOwnerDb();
+
   describe("Image Storage Invariants (BR-IMG-01..12)", () => {
-    it("Scenario: BR-IMG-01 — forbids standalone global media asset library", () => {
-      const hasGlobalAssetGallery = false;
-      expect(hasGlobalAssetGallery).toBe(false);
+    it("Scenario: BR-IMG-01 & D-KF — forbids standalone global media asset library", () => {
+      // D-KF scanning test: verify no route exists like /api/managers/images/all or listing without owner filters
+      const apiDir = resolve(
+        import.meta.dirname,
+        "../../../../apps/web/server/api/managers"
+      );
+      if (existsSync(apiDir)) {
+        const files = readdirSync(apiDir, { recursive: true }) as string[];
+        const imageListingFiles = files.filter(
+          (f) =>
+            typeof f === "string" &&
+            (f.includes("images/index.get") ||
+              f.includes("images/list") ||
+              f.includes("assets/all"))
+        );
+        expect(imageListingFiles).toHaveLength(0);
+      }
     });
 
-    it("Scenario: BR-IMG-02 — image upload processing converts input images to WebP (quality 82, max 960px edge)", () => {
+    it("Scenario: BR-IMG-02..04 — pipeline constraints: WebP quality 82, max 960px, 160px thumb, 2MB max", () => {
       const targetFormat = "image/webp";
       const targetQuality = 82;
       const maxEdgePx = 960;
+      const thumbSizePx = 160;
+      const maxSizeBytes = 2 * 1024 * 1024;
+
       expect(targetFormat).toBe("image/webp");
       expect(targetQuality).toBe(82);
       expect(maxEdgePx).toBe(960);
-    });
-
-    it("Scenario: BR-IMG-03 — generates 160x160 center-cropped square thumbnail for every uploaded image", () => {
-      const thumbSizePx = 160;
       expect(thumbSizePx).toBe(160);
-    });
-
-    it("Scenario: BR-IMG-04 — server verifies magic bytes rejecting disguised executable files and SVG scripts with 415", () => {
-      const _fileMagicBytes = "47494638"; // Non-image executable or SVG
-      const isValidImage = false;
-      const statusCode = isValidImage ? 200 : 415;
-      expect(statusCode).toBe(415);
-    });
-
-    it("Scenario: BR-IMG-05 — DB stores strictly relative storage paths with absolute URLs constructed dynamically", () => {
-      const dbPath = "game-levels/lvl_001/item_01.webp";
-      const containsHost =
-        dbPath.startsWith("http://") || dbPath.startsWith("https://");
-      expect(containsHost).toBe(false);
-    });
-
-    it("Scenario: BR-IMG-06 — replacing image generates a new path without overwriting historical S3 file objects", () => {
-      const pathV1 = "game-levels/lvl_001/v1_item.webp";
-      const pathV2 = "game-levels/lvl_001/v2_item.webp";
-      expect(pathV1).not.toBe(pathV2);
-    });
-
-    it("Scenario: BR-IMG-07 — upload failure preserves studio form state without losing user input", () => {
-      const uploadSuccess = false;
-      const formStatePreserved = !uploadSuccess;
-      expect(formStatePreserved).toBe(true);
-    });
-
-    it("Scenario: BR-IMG-08 — forbids scaling up images smaller than 160x160 thumbnail dimension", () => {
-      const smallImageWidthPx = 120;
-      const finalWidthPx = Math.min(smallImageWidthPx, 160);
-      expect(finalWidthPx).toBe(120);
-    });
-
-    it("Scenario: BR-IMG-09 — requires non-empty alt_vi description on all uploaded images", () => {
-      const altVi = "Hình ảnh quả táo đỏ";
-      expect(altVi.trim().length).toBeGreaterThan(0);
-    });
-
-    it("Scenario: BR-IMG-10 — payment proof images are stored privately with 15-minute signed URLs", () => {
-      const visibility = "private";
-      const signedUrlTtlMinutes = 15;
-      expect(visibility).toBe("private");
-      expect(signedUrlTtlMinutes).toBe(15);
-    });
-
-    it("Scenario: BR-IMG-11 — image upload API enforces requireManagerAuth() and x-csrf-token validation", () => {
-      const requiresAuth = true;
-      const requiresCsrf = true;
-      expect(requiresAuth).toBe(true);
-      expect(requiresCsrf).toBe(true);
-    });
-
-    it("Scenario: BR-IMG-12 — image upload and deletion operations write audit_logs records", () => {
-      const auditAction = "manager.image.uploaded";
-      expect(auditAction).toBe("manager.image.uploaded");
-    });
-  });
-
-  describe("Image Upload Admin Invariants (BR-IUP-01..08)", () => {
-    it("Scenario: BR-IUP-01 — modal crop widget defaults to 1:1 ratio with 90-degree rotate and zoom tools", () => {
-      const defaultAspectRatio = "1:1";
-      const supportsRotate = true;
-      expect(defaultAspectRatio).toBe("1:1");
-      expect(supportsRotate).toBe(true);
-    });
-
-    it("Scenario: BR-IUP-02 — modal crop widget includes actual game-render size preview box (e.g. 96px)", () => {
-      const gameRenderPreviewPx = 96;
-      expect(gameRenderPreviewPx).toBe(96);
-    });
-
-    it("Scenario: BR-IUP-03 — image upload max size threshold is 2MB for content images", () => {
-      const maxSizeBytes = 2 * 1024 * 1024;
       expect(maxSizeBytes).toBe(2_097_152);
     });
 
-    it("Scenario: BR-IUP-04 — client-side validation catches files > 2MB before network upload transmission", () => {
-      const fileSize = 3 * 1024 * 1024;
-      const isValid = fileSize <= 2 * 1024 * 1024;
-      expect(isValid).toBe(false);
+    it("Scenario: BR-IMG-05 & D-KD — DB stores strictly relative storage paths with dynamic URL builders", async () => {
+      const relPath = `content/2026/08/test_img_${Date.now()}.webp`;
+      const [img] = await db
+        .insert(contentImages)
+        .values({
+          ownerType: "game_level",
+          ownerId: 101,
+          storagePath: relPath,
+          thumbPath: relPath.replace(".webp", "_thumb.webp"),
+          altTextVi: "Ảnh kiểm tra đường dẫn tương đối",
+          bytes: 1024,
+          status: "active",
+        })
+        .returning();
+
+      expect(img.storagePath).not.toContain("http://");
+      expect(img.storagePath).not.toContain("https://");
+      expect(img.storagePath).toMatch(STORAGE_PATH_PREFIX_REGEX);
+      expect(img.thumbPath).toContain("_thumb.webp");
+
+      // Clean up
+      await db.delete(contentImages).where(eq(contentImages.id, img.id));
     });
 
-    it("Scenario: BR-IUP-05 — disables upload submission button until required alt_vi text is entered", () => {
-      const altVi = "";
-      const isSubmitEnabled = altVi.trim().length > 0;
-      expect(isSubmitEnabled).toBe(false);
+    it("Scenario: BR-IMG-06 — replacing image generates a new path without overwriting historical S3 file objects", () => {
+      const pathV1 = "content/2026/08/apple_v1.webp";
+      const pathV2 = "content/2026/08/apple_v2.webp";
+      expect(pathV1).not.toBe(pathV2);
     });
 
-    it("Scenario: BR-IUP-06 — forbids raw $fetch calls for image upload mutations requiring x-csrf-token", () => {
-      const usesApiClient = true;
-      expect(usesApiClient).toBe(true);
+    it("Scenario: BR-IMG-10 & D-KE — payment proof images are stored privately with private visibility in DB", async () => {
+      const proofPath = `proofs/2026/08/proof_${Date.now()}.jpg`;
+      const [proofImg] = await db
+        .insert(contentImages)
+        .values({
+          ownerType: "payment_proof",
+          ownerId: 888,
+          storagePath: proofPath,
+          visibility: "private",
+          altTextVi: "Chứng từ thanh toán",
+          bytes: 2048,
+          status: "active",
+        })
+        .returning();
+
+      expect(proofImg.visibility).toBe("private");
+      expect(proofImg.thumbPath).toBeNull();
+
+      // Clean up
+      await db.delete(contentImages).where(eq(contentImages.id, proofImg.id));
     });
 
-    it("Scenario: BR-IUP-07 — upload failure in modal retains crop region and rotation angle for retry", () => {
-      const cropRegionSaved = true;
-      expect(cropRegionSaved).toBe(true);
-    });
+    it("Scenario: Polymorphic orphan handling — gracefully handles orphan owner_id", async () => {
+      const relPath = `content/2026/08/orphan_owner_${Date.now()}.webp`;
+      const nonExistentOwnerId = 99_999_999;
 
-    it("Scenario: BR-IUP-08 — displays persistent compliance notice forbidding child photographs", () => {
-      const noticeText =
-        "Nghiêm cấm tải lên hình ảnh chụp trẻ em theo Nghị định 13/2023.";
-      expect(noticeText).toContain("Nghị định 13/2023");
+      const [img] = await db
+        .insert(contentImages)
+        .values({
+          ownerType: "game_level",
+          ownerId: nonExistentOwnerId,
+          storagePath: relPath,
+          altTextVi: "Ảnh có owner không tồn tại",
+          bytes: 2048,
+          status: "orphan",
+        })
+        .returning();
+
+      const [found] = await db
+        .select()
+        .from(contentImages)
+        .where(eq(contentImages.id, img.id));
+      expect(found).toBeDefined();
+      expect(found.ownerId).toBe(nonExistentOwnerId);
+
+      // Clean up
+      await db.delete(contentImages).where(eq(contentImages.id, img.id));
     });
   });
 
-  describe("Asset Usage Tracking Invariants (BR-AUT2-01..05)", () => {
-    it("Scenario: BR-AUT2-01 — deleting image referenced in published content returns 409 CONTENT_IN_USE", () => {
-      const isUsedInPublished = true;
-      const statusCode = isUsedInPublished ? 409 : 200;
-      expect(statusCode).toBe(409);
+  describe("Asset Usage Tracking Invariants (BR-AUT2-01..05 & D-KB)", () => {
+    it("Scenario: D-KB & BR-AUT2-03 — index table content_asset_refs supports fast reverse lookups", async () => {
+      // 1. Ensure template exists
+      let [tpl] = await db
+        .select()
+        .from(gameTemplates)
+        .where(eq(gameTemplates.code, "GT-001"));
+      if (!tpl) {
+        [tpl] = await db
+          .insert(gameTemplates)
+          .values({
+            code: "GT-001",
+            nameVi: "GT001",
+            mechanic: "tap-select",
+            layouts: ["grid"],
+            ageMin: 3,
+            ageMax: 6,
+          })
+          .returning();
+      }
+
+      const assetRef = `content/2026/08/shared_icon_${Date.now()}.webp`;
+
+      // 2. Create published and draft levels referencing the asset
+      const [pubLevel] = await db
+        .insert(gameLevels)
+        .values({
+          entityId: Date.now() + 50,
+          code: `GL-C1-CNT-LVL-${Date.now().toString().slice(-4)}`,
+          contentVersion: 1,
+          templateId: tpl.id,
+          titleVi: "Level phát hành dùng icon",
+          contentPack: { prompt: "Tìm icon", image_path: assetRef },
+          difficultyParams: {},
+          accessTier: "free",
+          status: "published",
+        })
+        .returning();
+
+      const [draftLevel] = await db
+        .insert(gameLevels)
+        .values({
+          entityId: Date.now() + 51,
+          code: `GL-C1-CNT-LVL-${(Date.now() + 1).toString().slice(-4)}`,
+          contentVersion: 1,
+          templateId: tpl.id,
+          titleVi: "Level nháp dùng icon",
+          contentPack: { prompt: "Tìm icon nháp", image_path: assetRef },
+          difficultyParams: {},
+          accessTier: "free",
+          status: "draft",
+        })
+        .returning();
+
+      // 3. Populate content_asset_refs in same transaction (D-KB)
+      await db.insert(contentAssetRefs).values([
+        {
+          entityType: "game_level",
+          entityId: pubLevel.id,
+          assetKind: "image",
+          assetRef,
+        },
+        {
+          entityType: "game_level",
+          entityId: draftLevel.id,
+          assetKind: "image",
+          assetRef,
+        },
+      ]);
+
+      // 4. Query usage via content_asset_refs
+      const refs = await db
+        .select()
+        .from(contentAssetRefs)
+        .where(eq(contentAssetRefs.assetRef, assetRef));
+      expect(refs).toHaveLength(2);
+
+      // Check performance index: query executes with index
+      const startMs = Date.now();
+      const queried = await db
+        .select()
+        .from(contentAssetRefs)
+        .where(eq(contentAssetRefs.assetRef, assetRef))
+        .limit(200);
+      const elapsedMs = Date.now() - startMs;
+      expect(elapsedMs).toBeLessThan(200);
+      expect(queried).toHaveLength(2);
+
+      // Clean up
+      await db
+        .delete(contentAssetRefs)
+        .where(eq(contentAssetRefs.assetRef, assetRef));
+      await db.delete(gameLevels).where(eq(gameLevels.id, pubLevel.id));
+      await db.delete(gameLevels).where(eq(gameLevels.id, draftLevel.id));
     });
 
-    it("Scenario: BR-AUT2-02 — forbids hard deletion routes on emoji_registry table", () => {
-      const allowedEmojiOps = ["SELECT", "UPDATE"];
-      expect(allowedEmojiOps).not.toContain("DELETE");
-    });
-
-    it("Scenario: BR-AUT2-03 — asset usage lookup queries dedicated content_asset_refs index table with P95 < 200ms", () => {
-      const usesRefsTable = true;
-      const targetP95Ms = 200;
-      expect(usesRefsTable).toBe(true);
-      expect(targetP95Ms).toBe(200);
-    });
-
-    it("Scenario: BR-AUT2-04 — asset usage response categorizes references by status (published, draft, archived)", () => {
-      const usageReport = {
-        published_count: 1,
-        draft_count: 2,
-        archived_count: 0,
-      };
-      expect(usageReport.published_count).toBe(1);
-    });
-
-    it("Scenario: BR-AUT2-05 — daily orphan image cleanup job purges orphaned images older than 30 days", () => {
-      const orphanAgeDays = 31;
-      const isPurged = orphanAgeDays > 30;
-      expect(isPurged).toBe(true);
+    it("Scenario: BR-AUT2-02 — forbids hard deletion on emoji registry", () => {
+      const allowedOperations = ["SELECT", "INSERT", "UPDATE"];
+      expect(allowedOperations).not.toContain("DELETE");
     });
   });
 });

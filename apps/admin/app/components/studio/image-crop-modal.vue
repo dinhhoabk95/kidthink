@@ -346,8 +346,10 @@
       formData.append("owner_id", "1");
       formData.append("alt", altText.value.trim());
 
+      const csrf = useCookie<string | null>("tm_m_csrf");
       const res = await $fetch<{ path: string }>("/api/managers/images", {
         method: "POST",
+        headers: csrf.value ? { "x-csrf-token": csrf.value } : {},
         body: formData,
       });
 

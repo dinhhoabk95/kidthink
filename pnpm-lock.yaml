@@ -238,6 +238,9 @@ importers:
       '@kidthink/shared':
         specifier: workspace:*
         version: link:../../packages/shared
+      '@kidthink/storage':
+        specifier: workspace:*
+        version: link:../../packages/storage
       bullmq:
         specifier: 'catalog:'
         version: 5.81.3(supports-color@10.2.2)

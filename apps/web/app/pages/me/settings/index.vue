@@ -101,6 +101,30 @@
           </button>
         </div>
 
+        <!-- MFA Section (P2.11) -->
+        <div
+          class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 rounded-xl bg-surface-50 border border-surface-200"
+        >
+          <div>
+            <h3
+              class="font-semibold text-surface-900 text-base flex items-center gap-1.5"
+            >
+              <span>🛡️</span>
+              Xác thực hai lớp (MFA)
+            </h3>
+            <p class="text-sm text-surface-600 mt-0.5">
+              Bảo vệ tài khoản với ứng dụng tạo mã OTP (Google Authenticator,
+              1Password).
+            </p>
+          </div>
+          <NuxtLink
+            class="min-h-11 px-5 py-2.5 bg-white border-2 border-surface-300 hover:border-brand-600 text-surface-800 font-semibold rounded-xl transition-colors whitespace-nowrap inline-flex items-center justify-center text-sm"
+            to="/me/settings/security"
+          >
+            Quản lý MFA →
+          </NuxtLink>
+        </div>
+
         <!-- Social account linking (BR-ACS-11, BR-SLK-01..10) -->
         <div
           class="p-4 rounded-xl bg-surface-50 border border-surface-200 space-y-3"

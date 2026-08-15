@@ -62,7 +62,7 @@
       <section
         class="w-full lg:w-1/2 h-full overflow-y-auto p-6 border-r-2 border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/50 space-y-6"
       >
-        <!-- Preview Guard Hint Banner (BR-CRQ-02) -->
+        <!-- Preview Guard Hint Banner (BR-CRQ-02, D-KG) -->
         <div
           class="p-4 rounded-2xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 text-amber-800 dark:text-amber-300 text-xs flex items-center gap-2"
           v-if="!hasPreviewed"
@@ -73,6 +73,49 @@
             Bạn cần tương tác hoặc kích hoạt xem trước (Live Preview) và hoàn
             thành 6 mục checklist trước khi duyệt (BR-CRQ-02, BR-CRQ-07).
           </span>
+        </div>
+
+        <!-- Seeder Drift Warning Label (BR-CRQ-05, D-KJ) -->
+        <div
+          class="p-4 rounded-2xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800 text-rose-800 dark:text-rose-300 text-xs space-y-1"
+          v-if="seederWarning"
+        >
+          <div class="font-bold flex items-center gap-1.5">
+            <span>⚠️</span>
+            <span>Cảnh báo tách khỏi Seeder (BR-CRQ-05, D-KJ):</span>
+          </div>
+          <p>{{ seederWarning }}</p>
+        </div>
+
+        <!-- AI-Assisted Prominent Notice (BR-CRQ-04) -->
+        <div
+          class="p-4 rounded-2xl bg-purple-50 dark:bg-purple-950/40 border border-purple-200 dark:border-purple-800 text-purple-800 dark:text-purple-300 text-xs space-y-1"
+          v-if="levelData.origin === 'ai_assisted'"
+        >
+          <div class="font-bold flex items-center gap-1.5">
+            <span>🤖</span>
+            <span>Nội dung có AI hỗ trợ (BR-CRQ-04):</span>
+          </div>
+          <p>
+            Vui lòng đối chiếu cẩn thận mục tiêu học tập sư phạm và kiểm tra
+            tính an toàn của câu hỏi/hình ảnh.
+          </p>
+        </div>
+
+        <!-- Previous Rejection History (BR-CRQ-03) -->
+        <div
+          class="p-4 rounded-2xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 text-xs space-y-2"
+          v-if="previousRejections.length > 0"
+        >
+          <div class="font-bold text-slate-900 dark:text-white">
+            Lịch sử từ chối trước đây:
+          </div>
+          <ul class="space-y-1.5 list-disc list-inside">
+            <li v-for="(rej, idx) in previousRejections" :key="idx">
+              <span class="font-semibold">{{ rej.date }}:</span>
+              {{ rej.reason }}
+            </li>
+          </ul>
         </div>
 
         <!-- 6-Group Mandatory Checklist (BR-CRQ-07) -->
@@ -269,6 +312,8 @@
   import { useRoute, useRouter } from "vue-router";
   import LivePreviewFrame from "~/components/studio/live-preview-frame.vue";
 
+  const GL_CODE_PREFIX_REGEX = /^GL-(C[1-6])-/;
+
   definePageMeta({
     layout: "manager",
   });
@@ -280,10 +325,13 @@
   const entityType = String(route.query.type || "game_level");
 
   const levelData = ref<Record<string, unknown>>({});
+  const previewToken = ref<string | null>(null);
   const hasPreviewed = ref(false);
   const isProcessing = ref(false);
   const isRejectModalOpen = ref(false);
   const rejectReason = ref("");
+  const seederWarning = ref<string | null>(null);
+  const previousRejections = ref<Array<{ date: string; reason: string }>>([]);
 
   const checklist = ref({
     pedagogy: false,
@@ -297,6 +345,7 @@
   const canApprove = computed(() => {
     return (
       hasPreviewed.value &&
+      Boolean(previewToken.value) &&
       checklist.value.pedagogy &&
       checklist.value.content &&
       checklist.value.language &&
@@ -322,8 +371,70 @@
     fetchDetail();
   });
 
-  function markPreviewed() {
+  async function markPreviewed() {
     hasPreviewed.value = true;
+    // Trigger preview config fetch to obtain server-signed preview_token (D-KG)
+    if (levelData.value.code) {
+      try {
+        const configRes = await $fetch<{ preview_token?: string }>(
+          `/api/managers/levels/${levelData.value.code}/config`,
+          {
+            params: { version: levelData.value.contentVersion },
+          }
+        );
+        if (configRes?.preview_token) {
+          previewToken.value = configRes.preview_token;
+        }
+      } catch (err) {
+        console.error("Failed to obtain preview token", err);
+      }
+    }
+  }
+
+  function computeSeederWarning(
+    codeStr: string,
+    authoredIn?: unknown
+  ): string | null {
+    const match = codeStr.match(GL_CODE_PREFIX_REGEX);
+    if (match && authoredIn === "repo_seed") {
+      return `Bản này tách khỏi seeder — vui lòng cập nhật lại file 'packages/db/src/seed-content/${match[1].toLowerCase()}/levels.ts' trong repo (BR-CRQ-05)`;
+    }
+    if (authoredIn === "repo_seed") {
+      return "Không xác định được file seeder — kiểm tay trước khi publish (D-KJ)";
+    }
+    return null;
+  }
+
+  async function loadPreviousRejections(
+    entType: string,
+    code: string
+  ): Promise<Array<{ date: string; reason: string }>> {
+    try {
+      const versionsRes = await $fetch<{
+        versions: Array<{
+          review_logs?: Array<{
+            to_status: string;
+            reason: string;
+            created_at: string;
+          }>;
+        }>;
+      }>(`/api/managers/content/${entType}/${code}/versions`);
+
+      const rejs: Array<{ date: string; reason: string }> = [];
+      for (const v of versionsRes.versions || []) {
+        for (const log of v.review_logs || []) {
+          if (log.to_status === "rejected" && log.reason) {
+            rejs.push({
+              date: new Date(log.created_at).toLocaleDateString("vi-VN"),
+              reason: log.reason,
+            });
+          }
+        }
+      }
+      return rejs;
+    } catch {
+      return [];
+    }
   }
 
   async function fetchDetail() {
@@ -332,6 +443,17 @@
         `/api/managers/levels/${id}/latest`
       );
       levelData.value = res || {};
+
+      if (res?.code) {
+        seederWarning.value = computeSeederWarning(
+          String(res.code),
+          res.authoredIn
+        );
+        previousRejections.value = await loadPreviousRejections(
+          entityType,
+          String(res.code)
+        );
+      }
     } catch (err) {
       console.error("Failed to load review detail", err);
     }
@@ -348,6 +470,7 @@
         body: {
           to_status: "approved",
           checklist: checklist.value,
+          preview_token: previewToken.value,
         },
       });
       router.push("/studio/review");
