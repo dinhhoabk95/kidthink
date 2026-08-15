@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it } from "vitest";
+import { describe, expect, it } from "vitest";
 import { getOwnerDb, transitionContent } from "../../src/index.ts";
 import {
   activities,
@@ -9,7 +9,6 @@ import { gameLevels, gameTemplates } from "../../src/schema/game.ts";
 import { managers } from "../../src/schema/identity.ts";
 import { contentSkillMap } from "../../src/schema/tagging.ts";
 import { competencies, skills, strands } from "../../src/schema/taxonomy.ts";
-import { truncateAllTestTables } from "../global-setup.ts";
 
 async function setupTestEnvironment() {
   const db = getOwnerDb();
@@ -114,10 +113,6 @@ async function setupTestEnvironment() {
 }
 
 describe("Activity & Lesson Lifecycle Transitions & Gating (BR-ACA-04, BR-LSA-03)", () => {
-  beforeEach(async () => {
-    await truncateAllTestTables();
-  });
-
   it("Scenario: Activity draft -> in_review -> approved -> published with skill mapping", async () => {
     const { mgr, sk, seq } = await setupTestEnvironment();
     const db = getOwnerDb();

@@ -10,6 +10,7 @@ import {
   getOwnerDb,
   lessons,
   runEightGates,
+  skills,
 } from "../../src/index.js";
 import { ALL_SEED_ACTIVITIES } from "../../src/seed-content/activities/index.js";
 import { ALL_SEED_LESSONS } from "../../src/seed-content/lessons/index.js";
@@ -332,8 +333,11 @@ describe("P3.1 Lesson & Activity Model & Seeder Tests", () => {
 
     it("Executes seeder batch cleanly and verifies idempotency in Postgres", async () => {
       const db = getOwnerDb();
-      await seedContentTags(db);
-      await seedTaxonomyMasterData(db);
+      const existingSkill = await db.select().from(skills).limit(1);
+      if (existingSkill.length === 0) {
+        await seedContentTags(db);
+        await seedTaxonomyMasterData(db);
+      }
       const batchCode = `TEST-P31-${Date.now()}`;
 
       // Insert activities and lessons
