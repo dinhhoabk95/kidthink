@@ -7,7 +7,7 @@ import {
   writeAudit,
 } from "@kidthink/db";
 import { eq } from "drizzle-orm";
-import { beforeAll, describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it } from "vitest";
 import clientErrorsPostHandler from "../../server/api/guest/client-errors.post.js";
 import auditLogsExportGetHandler from "../../server/api/managers/audit-logs/export.get.js";
 import auditLogsGetHandler from "../../server/api/managers/audit-logs/index.get.js";
@@ -22,7 +22,7 @@ let testSuperAdminId = 1;
 let testContentReviewerId = 2;
 let _testUserId = 1;
 
-beforeAll(async () => {
+beforeEach(async () => {
   const db = getOwnerDb();
 
   // Super Admin
