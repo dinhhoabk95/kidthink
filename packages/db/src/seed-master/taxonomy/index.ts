@@ -8,6 +8,7 @@ import {
   type SkillRow,
   STRANDS,
 } from "@kidthink/taxonomy";
+import { sql } from "drizzle-orm";
 import type { NodePgDatabase } from "drizzle-orm/node-postgres";
 import {
   competencies,
@@ -333,22 +334,25 @@ export function validateTaxonomyInvariants(skillsToSeed: ParsedSkill[]): void {
 async function seedCompetenciesStep(
   db: NodePgDatabase<Record<string, unknown>>
 ): Promise<Map<string, number>> {
-  for (const comp of COMPETENCIES) {
-    const nameVi = comp.name || "";
-    const descVi = comp.description || null;
+  const values = COMPETENCIES.map((comp) => ({
+    code: comp.code,
+    nameVi: comp.name || "",
+    descriptionVi: comp.description || null,
+    colorToken: `color-${comp.code.toLowerCase()}`,
+    icon: `icon-${comp.code.toLowerCase()}`,
+    position: Number.parseInt(comp.code.replace("C", ""), 10),
+  }));
+
+  if (values.length > 0) {
     await db
       .insert(competencies)
-      .values({
-        code: comp.code,
-        nameVi,
-        descriptionVi: descVi,
-        colorToken: `color-${comp.code.toLowerCase()}`,
-        icon: `icon-${comp.code.toLowerCase()}`,
-        position: Number.parseInt(comp.code.replace("C", ""), 10),
-      })
+      .values(values)
       .onConflictDoUpdate({
         target: competencies.code,
-        set: { nameVi, descriptionVi: descVi },
+        set: {
+          nameVi: sql`excluded.name_vi`,
+          descriptionVi: sql`excluded.description_vi`,
+        },
       });
   }
 
@@ -364,26 +368,32 @@ async function seedStrandsStep(
   db: NodePgDatabase<Record<string, unknown>>,
   compIdMap: Map<string, number>
 ): Promise<Map<string, number>> {
-  for (let idx = 0; idx < STRANDS.length; idx++) {
-    const str = STRANDS[idx];
+  const values = STRANDS.map((str, idx) => {
     const compId = compIdMap.get(str.competency_code);
-    if (compId) {
-      const nameVi = str.name || "";
-      const descVi = str.description || null;
-      await db
-        .insert(strands)
-        .values({
-          code: str.code,
-          competencyId: compId,
-          nameVi,
-          descriptionVi: descVi,
-          position: idx + 1,
-        })
-        .onConflictDoUpdate({
-          target: strands.code,
-          set: { competencyId: compId, nameVi, descriptionVi: descVi },
-        });
+    if (!compId) {
+      return null;
     }
+    return {
+      code: str.code,
+      competencyId: compId,
+      nameVi: str.name || "",
+      descriptionVi: str.description || null,
+      position: idx + 1,
+    };
+  }).filter((s): s is NonNullable<typeof s> => s !== null);
+
+  if (values.length > 0) {
+    await db
+      .insert(strands)
+      .values(values)
+      .onConflictDoUpdate({
+        target: strands.code,
+        set: {
+          competencyId: sql`excluded.competency_id`,
+          nameVi: sql`excluded.name_vi`,
+          descriptionVi: sql`excluded.description_vi`,
+        },
+      });
   }
 
   const dbStrands = await db.select().from(strands);
@@ -399,38 +409,43 @@ async function seedSkillsStep(
   seededSkills: ParsedSkill[],
   strandIdMap: Map<string, number>
 ): Promise<Map<string, number>> {
-  for (let idx = 0; idx < seededSkills.length; idx++) {
-    const sk = seededSkills[idx];
-    const strandId = strandIdMap.get(sk.strand_code);
-    if (strandId) {
-      const nameVi = sk.name_vi || "";
-      await db
-        .insert(skills)
-        .values({
-          code: sk.code,
-          strandId,
-          nameVi,
-          ageMin: sk.age_min,
-          ageMax: sk.age_max,
-          difficulty: sk.difficulty,
-          thinkingProcesses: sk.thinking_processes,
-          status: "seeded",
-          position: idx + 1,
-        })
-        .onConflictDoUpdate({
-          target: skills.code,
-          set: {
-            strandId,
-            nameVi,
-            ageMin: sk.age_min,
-            ageMax: sk.age_max,
-            difficulty: sk.difficulty,
-            thinkingProcesses: sk.thinking_processes,
-            status: "seeded",
-            position: idx + 1,
-          },
-        });
-    }
+  const values = seededSkills
+    .map((sk, idx) => {
+      const strandId = strandIdMap.get(sk.strand_code);
+      if (!strandId) {
+        return null;
+      }
+      return {
+        code: sk.code,
+        strandId,
+        nameVi: sk.name_vi || "",
+        ageMin: sk.age_min,
+        ageMax: sk.age_max,
+        difficulty: sk.difficulty,
+        thinkingProcesses: sk.thinking_processes,
+        status: "seeded" as const,
+        position: idx + 1,
+      };
+    })
+    .filter((s): s is NonNullable<typeof s> => s !== null);
+
+  if (values.length > 0) {
+    await db
+      .insert(skills)
+      .values(values)
+      .onConflictDoUpdate({
+        target: skills.code,
+        set: {
+          strandId: sql`excluded.strand_id`,
+          nameVi: sql`excluded.name_vi`,
+          ageMin: sql`excluded.age_min`,
+          ageMax: sql`excluded.age_max`,
+          difficulty: sql`excluded.difficulty`,
+          thinkingProcesses: sql`excluded.thinking_processes`,
+          status: sql`excluded.status`,
+          position: sql`excluded.position`,
+        },
+      });
   }
 
   const dbSkills = await db.select().from(skills);
@@ -446,6 +461,11 @@ async function seedPrerequisitesStep(
   seededSkills: ParsedSkill[],
   skillIdMap: Map<string, number>
 ): Promise<void> {
+  const values: {
+    skillId: number;
+    prerequisiteId: number;
+    strength: string;
+  }[] = [];
   for (const sk of seededSkills) {
     const skillId = skillIdMap.get(sk.code);
     if (!skillId) {
@@ -455,16 +475,17 @@ async function seedPrerequisitesStep(
     for (const pCode of sk.prerequisites) {
       const prereqId = skillIdMap.get(pCode);
       if (prereqId) {
-        await db
-          .insert(skillPrerequisites)
-          .values({
-            skillId,
-            prerequisiteId: prereqId,
-            strength: "1.00",
-          })
-          .onConflictDoNothing();
+        values.push({
+          skillId,
+          prerequisiteId: prereqId,
+          strength: "1.00",
+        });
       }
     }
+  }
+
+  if (values.length > 0) {
+    await db.insert(skillPrerequisites).values(values).onConflictDoNothing();
   }
 }
 
@@ -473,7 +494,14 @@ async function seedLearningObjectivesStep(
   seededSkills: ParsedSkill[],
   skillIdMap: Map<string, number>
 ): Promise<number> {
-  let totalLOsInserted = 0;
+  const values: {
+    code: string;
+    skillId: number;
+    behaviourVi: string;
+    observableCriteriaVi: string;
+    position: number;
+  }[] = [];
+
   for (const sk of seededSkills) {
     const skillId = skillIdMap.get(sk.code);
     if (!skillId) {
@@ -481,28 +509,32 @@ async function seedLearningObjectivesStep(
     }
 
     for (const lo of sk.learning_objectives) {
-      await db
-        .insert(learningObjectives)
-        .values({
-          code: lo.code,
-          skillId,
-          behaviourVi: lo.behaviour_vi,
-          observableCriteriaVi: lo.observable_criteria_vi,
-          position: lo.position,
-        })
-        .onConflictDoUpdate({
-          target: learningObjectives.code,
-          set: {
-            skillId,
-            behaviourVi: lo.behaviour_vi,
-            observableCriteriaVi: lo.observable_criteria_vi,
-            position: lo.position,
-          },
-        });
-      totalLOsInserted++;
+      values.push({
+        code: lo.code,
+        skillId,
+        behaviourVi: lo.behaviour_vi,
+        observableCriteriaVi: lo.observable_criteria_vi,
+        position: lo.position,
+      });
     }
   }
-  return totalLOsInserted;
+
+  if (values.length > 0) {
+    await db
+      .insert(learningObjectives)
+      .values(values)
+      .onConflictDoUpdate({
+        target: learningObjectives.code,
+        set: {
+          skillId: sql`excluded.skill_id`,
+          behaviourVi: sql`excluded.behaviour_vi`,
+          observableCriteriaVi: sql`excluded.observable_criteria_vi`,
+          position: sql`excluded.position`,
+        },
+      });
+  }
+
+  return values.length;
 }
 
 /**
