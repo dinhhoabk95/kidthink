@@ -127,6 +127,56 @@ function checkGuideStructure(guide: unknown, guideVi?: string): number {
   return countGuideTextParts(guideText);
 }
 
+function checkOffscreenActivities(
+  activities: { kind?: string }[],
+  activityKinds: string[],
+  options: { isSeed?: boolean },
+  errors: string[],
+  warnings: string[]
+): void {
+  let offscreenCount = activities.filter(
+    (a) => a.kind && a.kind !== "digital_game"
+  ).length;
+  offscreenCount += activityKinds.filter((k) => k !== "digital_game").length;
+
+  if (offscreenCount === 0) {
+    const issue =
+      "BR-LSM-08: Bài học phải có ít nhất 1 hoạt động ngoài màn hình (không phải digital_game).";
+    if (options.isSeed || activityKinds.length > 0) {
+      errors.push(issue);
+    } else {
+      warnings.push(issue);
+    }
+  }
+}
+
+function checkWorksheetAlternative(
+  activities: { kind?: string }[],
+  activityKinds: string[],
+  errors: string[]
+): void {
+  const hasWorksheet =
+    activities.some((a) => a.kind === "worksheet") ||
+    activityKinds.includes("worksheet");
+
+  if (!hasWorksheet) {
+    return;
+  }
+
+  const nonPrintableAlternatives =
+    activities.filter(
+      (a) => a.kind && a.kind !== "worksheet" && a.kind !== "digital_game"
+    ).length +
+    activityKinds.filter((k) => k !== "worksheet" && k !== "digital_game")
+      .length;
+
+  if (nonPrintableAlternatives === 0) {
+    errors.push(
+      "BR-WSM-07: Bài học sử dụng worksheet bắt buộc phải có ít nhất 1 hoạt động thay thế không cần in."
+    );
+  }
+}
+
 function validateProgressionAndActivities(
   input: LessonValidationInput,
   options: { isSeed?: boolean },
@@ -155,20 +205,14 @@ function validateProgressionAndActivities(
     );
   }
 
-  let offscreenCount = activities.filter(
-    (a) => a.kind && a.kind !== "digital_game"
-  ).length;
-  offscreenCount += activityKinds.filter((k) => k !== "digital_game").length;
-
-  if (offscreenCount === 0) {
-    const issue =
-      "BR-LSM-08: Bài học phải có ít nhất 1 hoạt động ngoài màn hình (không phải digital_game).";
-    if (options.isSeed || activityKinds.length > 0) {
-      errors.push(issue);
-    } else {
-      warnings.push(issue);
-    }
-  }
+  checkOffscreenActivities(
+    activities,
+    activityKinds,
+    options,
+    errors,
+    warnings
+  );
+  checkWorksheetAlternative(activities, activityKinds, errors);
 }
 
 function validateGuideAndMaterials(

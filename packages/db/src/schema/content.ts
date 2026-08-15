@@ -38,6 +38,15 @@ export const activityKindEnum = pgEnum("activity_kind", [
   "home_activity",
 ]);
 
+export const worksheetLayoutTemplateEnum = pgEnum("worksheet_layout_template", [
+  "pattern_coloring",
+  "pair_matching",
+  "group_circling",
+  "shape_completion",
+  "count_and_color",
+  "spot_differences",
+]);
+
 export const imageOwnerTypeEnum = pgEnum("image_owner_type", [
   "game_level",
   "lesson",
@@ -60,6 +69,15 @@ export const imageStatusEnum = pgEnum("image_status", [
   "orphan",
   "archived",
 ]);
+
+const timestamps = {
+  createdAt: timestamp("created_at", { withTimezone: true })
+    .defaultNow()
+    .notNull(),
+  updatedAt: timestamp("updated_at", { withTimezone: true })
+    .defaultNow()
+    .notNull(),
+};
 
 export const lessons = pgTable(
   "lessons",
@@ -93,12 +111,7 @@ export const lessons = pgTable(
     }).references(() => managers.id),
     publishedAt: timestamp("published_at", { withTimezone: true }),
     archivedAt: timestamp("archived_at", { withTimezone: true }),
-    createdAt: timestamp("created_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
-    updatedAt: timestamp("updated_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
+    ...timestamps,
   },
   (table) => [
     unique("lessons_code_version_unique").on(table.code, table.contentVersion),
@@ -142,12 +155,7 @@ export const activities = pgTable(
     }).references(() => managers.id),
     publishedAt: timestamp("published_at", { withTimezone: true }),
     archivedAt: timestamp("archived_at", { withTimezone: true }),
-    createdAt: timestamp("created_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
-    updatedAt: timestamp("updated_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
+    ...timestamps,
   },
   (table) => [
     unique("activities_code_version_unique").on(
@@ -196,16 +204,36 @@ export const worksheets = pgTable(
     code: varchar("code", { length: 50 }).notNull(),
     contentVersion: integer("content_version").notNull().default(1),
     titleVi: varchar("title_vi", { length: 200 }).notNull(),
+    layoutTemplate: worksheetLayoutTemplateEnum("layout_template")
+      .notNull()
+      .default("pattern_coloring"),
+    contentBlocks: jsonb("content_blocks"),
+    instructionsVi: text("instructions_vi"),
+    learningObjectiveIds: jsonb("learning_objective_ids").default(
+      sql`'[]'::jsonb`
+    ),
     pdfPath: text("pdf_path"),
     previewPath: text("preview_path"),
+    renderJobId: varchar("render_job_id", { length: 100 }),
+    renderStatus: varchar("render_status", { length: 50 }).default("pending"),
+    renderInputHash: varchar("render_input_hash", { length: 64 }),
+    sourceContentVersion: integer("source_content_version"),
+    renderPageCount: integer("render_page_count"),
+    renderGrayscalePassed: boolean("render_grayscale_passed"),
     accessTier: accessTierEnum("access_tier").notNull(),
     status: contentLifecycleStatusEnum("status").notNull().default("draft"),
-    createdAt: timestamp("created_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
-    updatedAt: timestamp("updated_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
+    origin: contentOriginEnum("origin").notNull().default("human"),
+    authoredIn: authoredInEnum("authored_in").notNull().default("studio"),
+    seedBatchId: bigint("seed_batch_id", { mode: "number" }),
+    createdByManagerId: bigint("created_by_manager_id", {
+      mode: "number",
+    }).references(() => managers.id),
+    reviewedByManagerId: bigint("reviewed_by_manager_id", {
+      mode: "number",
+    }).references(() => managers.id),
+    publishedAt: timestamp("published_at", { withTimezone: true }),
+    archivedAt: timestamp("archived_at", { withTimezone: true }),
+    ...timestamps,
   },
   (table) => [
     unique("worksheets_code_version_unique").on(
@@ -215,6 +243,7 @@ export const worksheets = pgTable(
     uniqueIndex("idx_worksheets_published_code")
       .on(table.code)
       .where(sql`${table.status} = 'published'`),
+    index("idx_worksheets_entity_id").on(table.entityId),
     check("check_worksheets_code_format", sql`${table.code} ~ '^WS-\\d{4}$'`),
   ]
 );
@@ -302,12 +331,7 @@ export const seoPages = pgTable(
       mode: "number",
     }).references(() => managers.id),
     publishedAt: timestamp("published_at", { withTimezone: true }),
-    createdAt: timestamp("created_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
-    updatedAt: timestamp("updated_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
+    ...timestamps,
   },
   (table) => [
     unique("seo_pages_slug_version_unique").on(
@@ -349,12 +373,7 @@ export const skillActionSuggestions = pgTable(
       mode: "number",
     }).references(() => managers.id),
     publishedAt: timestamp("published_at", { withTimezone: true }),
-    createdAt: timestamp("created_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
-    updatedAt: timestamp("updated_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
+    ...timestamps,
   },
   (table) => [
     unique("skill_action_suggestions_skill_order_unique").on(

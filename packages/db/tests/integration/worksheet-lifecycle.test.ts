@@ -1,0 +1,225 @@
+import { beforeEach, describe, expect, it } from "vitest";
+import { getOwnerDb } from "../../src/client.ts";
+import { activities, managers } from "../../src/index.ts";
+import { transitionContent } from "../../src/services/content-lifecycle.ts";
+import {
+  createNewWorksheetVersion,
+  createWorksheetDraft,
+  getWorksheetById,
+  renderWorksheetArtifact,
+} from "../../src/services/worksheet.ts";
+
+const PUBLISH_CHECKLIST_FAILED_REGEX = /Publish checklist failed/;
+const CANNOT_ARCHIVE_WORKSHEET_REGEX = /Không thể archive worksheet/;
+
+describe("Worksheet Lifecycle & Render Evidence Integration Tests (Task #64 / P4.3)", () => {
+  let managerId: number;
+
+  const samplePatternColoring = {
+    template: "pattern_coloring" as const,
+    rule_sequence: ["circle", "square"],
+    rows: [
+      {
+        row_id: "row_1",
+        items: [
+          { id: "1", shape: "circle" as const, is_blank: false, size_mm: 25 },
+          { id: "2", shape: "square" as const, is_blank: false, size_mm: 25 },
+          { id: "3", shape: "circle" as const, is_blank: true, size_mm: 25 },
+        ],
+      },
+    ],
+    stroke_pt: 2.5,
+  };
+
+  beforeEach(async () => {
+    const db = getOwnerDb();
+    // Create test manager
+    const [mgr] = await db
+      .insert(managers)
+      .values({
+        email: `worksheet_mgr_${Date.now()}@tinimath.test`,
+        passwordHash: "dummy_hash_123",
+        displayName: "Worksheet Reviewer",
+        role: "super_admin",
+      })
+      .returning();
+    managerId = mgr.id;
+  });
+
+  it("triển khai quy trình trọn vẹn: Tạo draft -> Render -> Publish -> Tạo version mới -> Archive", async () => {
+    // 1. Tạo draft worksheet
+    const draft = await createWorksheetDraft(
+      {
+        code: `WS-${String(Date.now() % 9000).padStart(4, "0")}`,
+        title_vi: "Phiếu tô màu theo quy luật hình học",
+        layout_template: "pattern_coloring",
+        content_blocks: samplePatternColoring,
+        instructions_vi:
+          "Hướng dẫn người lớn: Giúp trẻ quan sát quy luật và tô màu vào hình còn trống.",
+        learning_objective_ids: [1],
+        access_tier: "standard",
+      },
+      managerId
+    );
+
+    expect(draft.status).toBe("draft");
+    expect(draft.contentVersion).toBe(1);
+    expect(draft.renderStatus).toBe("pending");
+
+    // 2. Chặn publish khi chưa render PDF (BR-WSM-06)
+    // Chuyển draft -> in_review -> approved
+    await transitionContent({
+      entityType: "worksheet",
+      entityDbId: draft.id,
+      toStatus: "in_review",
+      actorManagerId: managerId,
+      actorRole: "super_admin",
+    });
+    await transitionContent({
+      entityType: "worksheet",
+      entityDbId: draft.id,
+      toStatus: "approved",
+      actorManagerId: managerId,
+      actorRole: "super_admin",
+    });
+
+    // Thử publish khi chưa render -> chặn bởi Publish checklist failed (pdf_render_failed)
+    await expect(
+      transitionContent({
+        entityType: "worksheet",
+        entityDbId: draft.id,
+        toStatus: "published",
+        actorManagerId: managerId,
+        actorRole: "super_admin",
+      })
+    ).rejects.toThrow(PUBLISH_CHECKLIST_FAILED_REGEX);
+
+    // 3. Render vector PDF artifact và lưu evidence (D-P4J)
+    const renderResult = await renderWorksheetArtifact(draft.id, managerId);
+    expect(renderResult.worksheet.renderStatus).toBe("done");
+    expect(renderResult.worksheet.renderPageCount).toBe(1);
+    expect(renderResult.worksheet.renderGrayscalePassed).toBe(true);
+    expect(renderResult.worksheet.renderInputHash).toBeTruthy();
+    expect(renderResult.inspection.valid).toBe(true);
+
+    // 4. Publish thành công sau khi có render evidence hợp lệ
+    const publishResult = await transitionContent({
+      entityType: "worksheet",
+      entityDbId: draft.id,
+      toStatus: "published",
+      actorManagerId: managerId,
+      actorRole: "super_admin",
+    });
+    expect(publishResult.success).toBe(true);
+    expect(publishResult.status).toBe("published");
+
+    const publishedWs = await getWorksheetById(draft.id);
+    expect(publishedWs?.status).toBe("published");
+
+    // 5. Tạo version v2 cho worksheet
+    const v2Draft = await createNewWorksheetVersion(draft.code, managerId);
+    expect(v2Draft.contentVersion).toBe(2);
+    expect(v2Draft.status).toBe("draft");
+    expect(v2Draft.renderStatus).toBe("pending");
+
+    // 6. Render artifact cho version v2 & chuyển qua review/approved
+    await renderWorksheetArtifact(v2Draft.id, managerId);
+    await transitionContent({
+      entityType: "worksheet",
+      entityDbId: v2Draft.id,
+      toStatus: "in_review",
+      actorManagerId: managerId,
+      actorRole: "super_admin",
+    });
+    await transitionContent({
+      entityType: "worksheet",
+      entityDbId: v2Draft.id,
+      toStatus: "approved",
+      actorManagerId: managerId,
+      actorRole: "super_admin",
+    });
+
+    // 7. Publish version v2 -> bản v1 tự động chuyển sang 'archived'
+    await transitionContent({
+      entityType: "worksheet",
+      entityDbId: v2Draft.id,
+      toStatus: "published",
+      actorManagerId: managerId,
+      actorRole: "super_admin",
+    });
+
+    const oldVersion = await getWorksheetById(draft.id);
+    expect(oldVersion?.status).toBe("archived");
+
+    const newVersion = await getWorksheetById(v2Draft.id);
+    expect(newVersion?.status).toBe("published");
+  });
+
+  it("chặn archive khi worksheet đang được sử dụng trong activity hoạt động (BR-WSM-06 / CONTENT_IN_USE)", async () => {
+    const db = getOwnerDb();
+
+    // 1. Tạo và publish worksheet
+    const draft = await createWorksheetDraft(
+      {
+        code: `WS-${String(Date.now() % 9000).padStart(4, "0")}`,
+        title_vi: "Phiếu bài tập liên kết hoạt động",
+        layout_template: "pattern_coloring",
+        content_blocks: samplePatternColoring,
+        instructions_vi: "Hướng dẫn người lớn cho bài tập liên kết.",
+        learning_objective_ids: [1],
+        access_tier: "standard",
+      },
+      managerId
+    );
+    await renderWorksheetArtifact(draft.id, managerId);
+    await transitionContent({
+      entityType: "worksheet",
+      entityDbId: draft.id,
+      toStatus: "in_review",
+      actorManagerId: managerId,
+      actorRole: "super_admin",
+    });
+    await transitionContent({
+      entityType: "worksheet",
+      entityDbId: draft.id,
+      toStatus: "approved",
+      actorManagerId: managerId,
+      actorRole: "super_admin",
+    });
+    await transitionContent({
+      entityType: "worksheet",
+      entityDbId: draft.id,
+      toStatus: "published",
+      actorManagerId: managerId,
+      actorRole: "super_admin",
+    });
+
+    // 2. Tạo activity tham chiếu worksheet này
+    await db.insert(activities).values({
+      entityId: Date.now(),
+      code: `ACT-${String(Date.now() % 9000).padStart(4, "0")}`,
+      contentVersion: 1,
+      kind: "worksheet",
+      titleVi: "Hoạt động làm phiếu bài tập",
+      instructionVi:
+        'Cô hướng dẫn trẻ: "Con hãy quan sát hình và tô màu theo quy luật nhé!" Dễ hơn: Cô gợi ý hình tiếp theo. Khó hơn: Trẻ tự sáng tạo quy luật.',
+      estimatedMinutes: 10,
+      refType: "worksheet",
+      refId: draft.id,
+      accessTier: "standard",
+      status: "published",
+      createdByManagerId: managerId,
+    });
+
+    // 3. Cố gắng archive worksheet đang được dùng -> bị chặn bởi CONTENT_IN_USE (409)
+    await expect(
+      transitionContent({
+        entityType: "worksheet",
+        entityDbId: draft.id,
+        toStatus: "archived",
+        actorManagerId: managerId,
+        actorRole: "super_admin",
+      })
+    ).rejects.toThrow(CANNOT_ARCHIVE_WORKSHEET_REGEX);
+  });
+});

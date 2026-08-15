@@ -1,8 +1,13 @@
 import type { ContentLifecycleStatus, ManagerRole } from "@kidthink/shared";
 import { canTransition, validatePublishChecklist } from "@kidthink/shared";
-import { and, asc, desc, eq, inArray, ne, sql } from "drizzle-orm";
+import { and, asc, desc, eq, inArray, ne, or, sql } from "drizzle-orm";
 import { getOwnerDb } from "../client.ts";
-import { activities, lessonActivities, lessons } from "../schema/content.ts";
+import {
+  activities,
+  lessonActivities,
+  lessons,
+  worksheets,
+} from "../schema/content.ts";
 import {
   curricula,
   curriculumItems,
@@ -358,6 +363,53 @@ async function checkContentInUse(
     }
   }
 
+  if (entityType === "worksheet") {
+    const [ws] = await db
+      .select({ entityId: worksheets.entityId })
+      .from(worksheets)
+      .where(eq(worksheets.id, entityId));
+
+    if (ws) {
+      const inUseActivities = await db
+        .select({
+          code: activities.code,
+          titleVi: activities.titleVi,
+          status: activities.status,
+        })
+        .from(activities)
+        .where(
+          and(
+            eq(activities.kind, "worksheet"),
+            or(
+              eq(activities.refId, entityId),
+              eq(activities.refId, ws.entityId)
+            ),
+            inArray(activities.status, [
+              "draft",
+              "in_review",
+              "approved",
+              "published",
+            ])
+          )
+        );
+
+      if (inUseActivities.length > 0) {
+        throw new LifecycleError(
+          `BR-WSM-06 / BR-ACA-04: Không thể archive worksheet đang được sử dụng trong ${inUseActivities.length} hoạt động`,
+          "CONTENT_IN_USE",
+          409,
+          {
+            in_use_by: inUseActivities.map((a) => ({
+              code: a.code,
+              title: a.titleVi,
+              status: a.status,
+            })),
+          }
+        );
+      }
+    }
+  }
+
   const inUseCurricula = await db
     .select({
       id: curricula.id,
@@ -459,6 +511,21 @@ async function archivePreviousPublished(
           ne(curricula.id, currentEntityId)
         )
       );
+  } else if (entityType === "worksheet") {
+    await tx
+      .update(worksheets)
+      .set({
+        status: "archived",
+        archivedAt: new Date(),
+        updatedAt: new Date(),
+      })
+      .where(
+        and(
+          eq(worksheets.code, code),
+          eq(worksheets.status, "published"),
+          ne(worksheets.id, currentEntityId)
+        )
+      );
   }
 }
 
@@ -490,6 +557,8 @@ async function updateEntityStatus(
     await tx.update(activities).set(patch).where(eq(activities.id, entityId));
   } else if (entityType === "curriculum") {
     await tx.update(curricula).set(patch).where(eq(curricula.id, entityId));
+  } else if (entityType === "worksheet") {
+    await tx.update(worksheets).set(patch).where(eq(worksheets.id, entityId));
   }
 }
 
@@ -577,6 +646,25 @@ async function fetchEntityDataForTransition(
       currentVersion: curr.contentVersion,
       code: curr.code,
       itemData: curr as unknown as Record<string, unknown>,
+    };
+  }
+  if (entityType === "worksheet") {
+    const [ws] = await db
+      .select()
+      .from(worksheets)
+      .where(eq(worksheets.id, entityDbId));
+    if (!ws) {
+      throw new LifecycleError(
+        `Worksheet with id ${entityDbId} not found`,
+        "ENTITY_NOT_FOUND",
+        404
+      );
+    }
+    return {
+      currentStatus: ws.status as ContentLifecycleStatus,
+      currentVersion: ws.contentVersion,
+      code: ws.code,
+      itemData: ws as unknown as Record<string, unknown>,
     };
   }
   throw new LifecycleError(

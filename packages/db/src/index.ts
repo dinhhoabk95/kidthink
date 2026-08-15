@@ -37,3 +37,5 @@ export * from "./services/recommendation.ts";
 export * from "./services/rollup.ts";
 export * from "./services/tagging.ts";
 export * from "./services/telemetry-retention.ts";
+export * from "./services/worksheet.ts";
+export * from "./services/worksheet-renderer.ts";

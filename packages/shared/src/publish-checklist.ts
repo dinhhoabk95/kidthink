@@ -12,6 +12,10 @@ import {
   validateCurriculumModel,
 } from "./curriculum-model.js";
 import { validateLessonModel } from "./lesson-model.js";
+import {
+  validateWorksheetContent,
+  WORKSHEET_LAYOUT_TEMPLATES,
+} from "./worksheet-model.js";
 
 export type EntityType =
   | "game_level"
@@ -50,6 +54,9 @@ function checkCounts(entity: GenericEntityPayload, missing: string[]): void {
 
   const skillCount =
     (Array.isArray(entity.skillIds) ? entity.skillIds.length : 0) ||
+    (Array.isArray(entity.skill_ids)
+      ? (entity.skill_ids as unknown[]).length
+      : 0) ||
     (Array.isArray(entity.skills) ? entity.skills.length : 0);
   if (skillCount < 1) {
     missing.push("skills_missing");
@@ -58,6 +65,9 @@ function checkCounts(entity: GenericEntityPayload, missing: string[]): void {
   const objectiveCount =
     (Array.isArray(entity.learningObjectiveIds)
       ? entity.learningObjectiveIds.length
+      : 0) ||
+    (Array.isArray(entity.learning_objective_ids)
+      ? (entity.learning_objective_ids as unknown[]).length
       : 0) ||
     (Array.isArray(entity.learningObjectives)
       ? entity.learningObjectives.length
@@ -88,7 +98,7 @@ function checkAgeRange(
       : (entity.ageMax ?? entity.age_max);
 
   if (
-    entityType === "activity" &&
+    (entityType === "activity" || entityType === "worksheet") &&
     ageMin === undefined &&
     ageMax === undefined
   ) {
@@ -396,7 +406,7 @@ function checkCurriculumRules(
   }
 }
 
-function checkWorksheetRules(
+function checkPdfBasicEvidence(
   entity: GenericEntityPayload,
   missing: string[]
 ): void {
@@ -404,6 +414,113 @@ function checkWorksheetRules(
   if (!pdfPath || typeof pdfPath !== "string" || pdfPath.trim() === "") {
     missing.push("pdf_render_failed");
   }
+
+  const pageCount = entity.renderPageCount ?? entity.render_page_count;
+  if (typeof pageCount === "number" && pageCount !== 1) {
+    missing.push("worksheet_multi_page_forbidden");
+  }
+
+  const grayscalePassed =
+    entity.renderGrayscalePassed ?? entity.render_grayscale_passed;
+  if (grayscalePassed === false) {
+    missing.push("worksheet_grayscale_failed");
+  }
+}
+
+function checkPdfVersionAndHash(
+  entity: GenericEntityPayload,
+  missing: string[]
+): void {
+  const sourceVersion =
+    entity.sourceContentVersion ?? entity.source_content_version;
+  const contentVersion =
+    entity.contentVersion ?? entity.content_version ?? entity.version;
+  if (
+    typeof sourceVersion === "number" &&
+    typeof contentVersion === "number" &&
+    sourceVersion !== contentVersion
+  ) {
+    missing.push("worksheet_render_version_stale");
+  }
+
+  const inputHash = entity.renderInputHash ?? entity.render_input_hash;
+  const expectedHash = entity.expectedInputHash ?? entity.expected_input_hash;
+  if (expectedHash && inputHash && expectedHash !== inputHash) {
+    missing.push("worksheet_render_hash_mismatch");
+  }
+}
+
+function checkWorksheetTemplateAndGuide(
+  entity: GenericEntityPayload,
+  missing: string[]
+): void {
+  const layoutTemplate = (entity.layoutTemplate ??
+    entity.layout_template) as string;
+  if (
+    !(
+      layoutTemplate &&
+      WORKSHEET_LAYOUT_TEMPLATES.includes(
+        layoutTemplate as (typeof WORKSHEET_LAYOUT_TEMPLATES)[number]
+      )
+    )
+  ) {
+    missing.push("invalid_layout_template");
+  }
+
+  const instructionsVi =
+    entity.instructionsVi ?? entity.instructions_vi ?? entity.instructions;
+  if (
+    !instructionsVi ||
+    typeof instructionsVi !== "string" ||
+    instructionsVi.trim().length < 10
+  ) {
+    missing.push("adult_guide_footer_missing");
+  }
+}
+
+function checkWorksheetBlockValidation(
+  entity: GenericEntityPayload,
+  missing: string[]
+): void {
+  const contentBlocks = entity.contentBlocks ?? entity.content_blocks;
+  if (!contentBlocks) {
+    return;
+  }
+
+  const layoutTemplate = (entity.layoutTemplate ??
+    entity.layout_template) as string;
+  const instructionsVi =
+    entity.instructionsVi ?? entity.instructions_vi ?? entity.instructions;
+
+  const res = validateWorksheetContent({
+    title_vi: (entity.titleVi ??
+      entity.title_vi ??
+      entity.title ??
+      "") as string,
+    layout_template: layoutTemplate || "",
+    content_blocks: contentBlocks,
+    instructions_vi: typeof instructionsVi === "string" ? instructionsVi : "",
+    learning_objective_ids: (entity.learningObjectiveIds ??
+      entity.learning_objective_ids ?? [1]) as number[],
+  });
+
+  if (!res.ok) {
+    for (const err of res.errors) {
+      missing.push(
+        `worksheet_validation_failed_${err.slice(0, 15).replace(/[^a-z0-9]/gi, "_")}`
+      );
+    }
+  }
+}
+
+function checkWorksheetRules(
+  entity: GenericEntityPayload,
+  missing: string[]
+): void {
+  checkPdfBasicEvidence(entity, missing);
+  checkPdfVersionAndHash(entity, missing);
+  checkWorksheetTemplateAndGuide(entity, missing);
+  checkWorksheetBlockValidation(entity, missing);
 }
 
 export function validatePublishChecklist(

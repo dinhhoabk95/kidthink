@@ -38,4 +38,5 @@ export * from "./taxonomy-types.js";
 export * from "./versioning.js";
 export * from "./versioning-report.js";
 export * from "./vietqr.js";
+export * from "./worksheet-model.js";
 export * from "./zod-introspect.js";

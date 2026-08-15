@@ -105,8 +105,8 @@ describe("Game Schema Integration Tests", () => {
 
   it("BR-SCT-05: trigger prevents UPDATE on published game_levels row", async () => {
     const db = getOwnerDb();
-    const gtCode = `GT-${((Date.now() % 900) + 100).toString()}`;
-    const seq = (Math.floor(Math.random() * 9000) + 1000).toString();
+    const gtCode = `GT-${String((Date.now() % 800) + 100).padStart(3, "0")}`;
+    const seq = String((Date.now() % 8000) + 1000).padStart(4, "0");
     const code = `GL-C1-NUM-DRAG-${seq}`;
 
     const [gt] = await db

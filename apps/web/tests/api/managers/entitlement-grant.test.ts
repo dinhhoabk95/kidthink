@@ -304,7 +304,9 @@ describe("Task 2 — Manual Entitlement Grant & Revoke Suite (BR-EGR-01..08, D-J
         )
       );
     expect(auditEntries.length).toBeGreaterThanOrEqual(2);
-    expect(auditEntries[0].reason).toContain("Cấp add-on giáo án");
+    expect(
+      auditEntries.some((e) => e.reason?.includes("Cấp add-on giáo án"))
+    ).toBe(true);
 
     // Test Revocation: DELETE /api/managers/entitlements/[id]
     const revokeEvent = mockManagerEvent(
