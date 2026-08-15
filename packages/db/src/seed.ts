@@ -11,6 +11,7 @@ import {
   packages,
 } from "./schema/billing.ts";
 import { consentRequirements, managers } from "./schema/identity.ts";
+import { seedSkillActionSuggestions } from "./seed-master/action-suggestions.ts";
 import { seedContentTags } from "./seed-master/content-tags.ts";
 import { seedCurriculaMasterData } from "./seed-master/curricula.ts";
 import { seedEmojiMasterData } from "./seed-master/emoji.ts";
@@ -105,6 +106,12 @@ export async function seed() {
   // 7. Seed Content Tags master vocabulary
   await seedContentTags(db);
   console.log("[db:seed] Content Tags vocabulary seeded.");
+
+  // 8. Seed Skill Action Suggestions library (P3.7, D-MY)
+  const actionStats = await seedSkillActionSuggestions(db);
+  console.log(
+    `[db:seed] Skill action suggestions seeded: ${actionStats.seededCount} items.`
+  );
 
   // 7. Seed initial super_admin manager
   const initialAdminEmail =

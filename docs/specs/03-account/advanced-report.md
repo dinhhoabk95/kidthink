@@ -2,7 +2,7 @@
 spec: ADVANCED-REPORT
 title: Báo cáo nâng cao
 area: account
-status: approved
+status: implemented
 mvp: true
 phase: P3
 reviewed: 2026-08-08
@@ -164,5 +164,6 @@ Scenario: BR-ARP-08 — cảnh báo khi nội dung đã đổi
 
 | # | Câu hỏi | Chặn phase | Đề xuất chốt | Chủ |
 |---|---|---|---|---|
-| 1 | Ngưỡng 3–10 phiên đã đủ để kết luận chưa? Cần kiểm chứng thống kê trên dữ liệu thật | P3 | Giữ ngưỡng 3-10 phiên cho MVP; theo dõi độ biến động dữ liệu thực tế để tinh chỉnh ở P4 | hoãn |
-| 2 | Gợi ý hành động lấy từ đâu — soạn tay theo skill, hay sinh từ activity `home_activity`? | P3 | Soạn tay theo từng skill (không sinh tự động runtime theo quyết định `D-STRUCTURED` / D7) | người quyết |
+| ~~1~~ | ~~Ngưỡng 3–10 phiên đã đủ để kết luận chưa? Cần kiểm chứng thống kê trên dữ liệu thật~~ **Đóng 2026-08-11 (P3.7, `D-NA`)**: giữ ngưỡng 3–10 phiên cho MVP; theo dõi độ biến động dữ liệu thực tế để tinh chỉnh ở P4 | Đã đóng | Hoãn tinh chỉnh sang P4 | D-NA |
+| ~~2~~ | ~~Gợi ý hành động lấy từ đâu — soạn tay theo skill, hay sinh từ activity `home_activity`?~~ **Đóng 2026-08-11 (P3.7, `D-MY`)**: soạn tay theo từng skill, quản lý qua bảng `skill_action_suggestions` và seed theo lô (không sinh tự động runtime theo quyết định `D-STRUCTURED` / D7) | Đã đóng | Bảng `skill_action_suggestions` | D-MY |
+

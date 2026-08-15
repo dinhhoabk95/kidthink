@@ -23,6 +23,7 @@ import {
   contentOriginEnum,
 } from "./game.ts";
 import { managers } from "./identity.ts";
+import { skills } from "./taxonomy.ts";
 
 export const activityKindEnum = pgEnum("activity_kind", [
   "digital_game",
@@ -316,5 +317,50 @@ export const seoPages = pgTable(
     uniqueIndex("idx_seo_pages_published_slug")
       .on(table.slug)
       .where(sql`${table.status} = 'published'`),
+  ]
+);
+
+export const actionSuggestionKindEnum = pgEnum("action_suggestion_kind", [
+  "home_activity",
+  "in_app",
+]);
+
+export const skillActionSuggestions = pgTable(
+  "skill_action_suggestions",
+  {
+    id: bigint("id", { mode: "number" })
+      .primaryKey()
+      .generatedAlwaysAsIdentity(),
+    skillId: bigint("skill_id", { mode: "number" })
+      .notNull()
+      .references(() => skills.id, { onDelete: "cascade" }),
+    orderNo: smallint("order_no").notNull().default(1),
+    textVi: text("text_vi").notNull(),
+    kind: actionSuggestionKindEnum("kind").notNull().default("home_activity"),
+    refEntityId: bigint("ref_entity_id", { mode: "number" }),
+    status: contentLifecycleStatusEnum("status").notNull().default("published"),
+    origin: contentOriginEnum("origin").notNull().default("human"),
+    authoredIn: authoredInEnum("authored_in").notNull().default("repo_seed"),
+    seedBatchId: bigint("seed_batch_id", { mode: "number" }),
+    createdByManagerId: bigint("created_by_manager_id", {
+      mode: "number",
+    }).references(() => managers.id),
+    reviewedByManagerId: bigint("reviewed_by_manager_id", {
+      mode: "number",
+    }).references(() => managers.id),
+    publishedAt: timestamp("published_at", { withTimezone: true }),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+    updatedAt: timestamp("updated_at", { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+  },
+  (table) => [
+    unique("skill_action_suggestions_skill_order_unique").on(
+      table.skillId,
+      table.orderNo
+    ),
+    index("idx_skill_action_suggestions_skill_id").on(table.skillId),
   ]
 );

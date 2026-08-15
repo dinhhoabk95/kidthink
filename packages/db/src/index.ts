@@ -20,6 +20,7 @@ export * from "./seed-content/gates/runner.ts";
 export * from "./seed-content/service.ts";
 export * from "./seed-content/types.ts";
 export * from "./seed-master/content-tags.ts";
+export * from "./services/advanced-report.ts";
 export * from "./services/audit.ts";
 export * from "./services/content-lifecycle.ts";
 export * from "./services/content-search.ts";

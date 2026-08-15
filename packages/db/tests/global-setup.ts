@@ -57,6 +57,7 @@ const TABLES = [
   "payment_orders",
   "play_sessions",
   "quota_usage",
+  "skill_action_suggestions",
   "skill_daily_stats",
   "skill_prerequisites",
   "skills",
