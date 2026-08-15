@@ -132,6 +132,12 @@ export const QUOTA_KEYS = [
     unit: "games",
     cycle: "none",
   },
+  {
+    key: "custom_curricula_saved",
+    label: "Lộ trình tùy chỉnh đã lưu",
+    unit: "curricula",
+    cycle: "none",
+  },
   { key: "ai_calls", label: "Lượt gọi AI", unit: "count", cycle: "monthly" },
   {
     key: "upload_mb",
@@ -272,7 +278,9 @@ export const PACKAGE_CATALOG: Record<string, PackageDefinition> = {
     audience: "Giáo viên và nhà thiết kế nội dung",
     description: "Tạo lộ trình học cá nhân hoá",
     entitlements: ["create_custom_curriculum"],
-    quotas: {},
+    quotas: {
+      custom_curricula_saved: 5,
+    },
     offers: [
       {
         offer_code: "annual",

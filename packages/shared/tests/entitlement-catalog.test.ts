@@ -16,8 +16,8 @@ describe("Task 2 & 4: Entitlement and Catalog Registry (BR-ENT-01, BR-ENT-03, BR
     expect(nonMvpKeys).toHaveLength(8);
   });
 
-  it("QUOTA_KEYS has exactly 7 keys with units and cycles", () => {
-    expect(QUOTA_KEYS).toHaveLength(7);
+  it("QUOTA_KEYS has exactly 8 keys with units and cycles", () => {
+    expect(QUOTA_KEYS).toHaveLength(8);
   });
 
   it("assertEntitlementKey throws UNKNOWN_ENTITLEMENT_KEY for invalid keys", () => {

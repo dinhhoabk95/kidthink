@@ -1,4 +1,11 @@
-import { childProfiles, entitlements, getOwnerDb, users } from "@kidthink/db";
+import {
+  childProfiles,
+  entitlementKeys,
+  entitlements,
+  getOwnerDb,
+  users,
+} from "@kidthink/db";
+
 import { describe, expect, it } from "vitest";
 import getProgressHandler from "../../server/api/users/children/[uuid]/progress.get";
 import { invalidateUserEntitlementsCache } from "../../server/utils/entitlements-runtime.js";
@@ -81,12 +88,23 @@ describe("Adult Progress & Mastery Report API (BR-PRG-05, BR-PRG-08, D-MO)", () 
       .returning();
 
     // Grant view_basic_report entitlement
+    await db
+      .insert(entitlementKeys)
+      .values({
+        key: "view_basic_report",
+        labelVi: "Xem báo cáo cơ bản",
+        group: "report",
+        isMvp: true,
+      })
+      .onConflictDoNothing();
+
     await db.insert(entitlements).values({
       userId: user.id,
       entitlementKey: "view_basic_report",
       status: "active",
       source: "package_order",
     });
+
     await invalidateUserEntitlementsCache(user.id);
 
     const [child] = await db

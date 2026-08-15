@@ -109,6 +109,30 @@ export const PURGE_TABLE_CLASSIFICATIONS: readonly TablePurgeMetadata[] = [
     legalBasis: "BR-CDC-10 & BR-ADL-01",
   },
   {
+    tableName: "personal_curriculum_enrollments",
+    classification: "delete",
+    reason: "Xoá đăng ký lộ trình cá nhân của trẻ",
+    legalBasis: "BR-CDC-10 & BR-ADL-01",
+  },
+  {
+    tableName: "personal_curriculum_item_progress",
+    classification: "delete",
+    reason: "Xoá tiến độ từng bài học trong lộ trình cá nhân của trẻ",
+    legalBasis: "BR-CDC-10 & BR-ADL-01",
+  },
+  {
+    tableName: "personal_curricula",
+    classification: "delete",
+    reason: "Xoá lộ trình học cá nhân do người dùng tạo khi đóng tài khoản",
+    legalBasis: "BR-ADL-01",
+  },
+  {
+    tableName: "personal_curriculum_items",
+    classification: "delete",
+    reason: "Xoá các mục bài học trong lộ trình cá nhân của người dùng",
+    legalBasis: "BR-ADL-01",
+  },
+  {
     tableName: "user_tags",
     classification: "delete",
     reason: "Xoá gắn thẻ cá nhân hoá người dùng",
