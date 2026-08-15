@@ -14,16 +14,17 @@ import { competencies, skills, strands } from "../../src/schema/taxonomy.ts";
 
 async function setupTestData() {
   const db = getOwnerDb();
-  const seqNum = Math.floor(Math.random() * 800) + 100;
-  const seq = seqNum.toString().padStart(3, "0");
-  const num4 = (Math.floor(Math.random() * 8000) + 1000)
-    .toString()
-    .padStart(4, "0");
-  const gtCode = `GT-${seq}`;
-  const glCode = `GL-C1-NUM-DRAG-${num4}`;
+  const randNum = Math.floor(Math.random() * 900) + 100;
+  const seq = `${randNum}`;
+  const num4 = (Math.floor(Math.random() * 9000) + 1000).toString();
+  const letters = ["AA", "AB", "AC", "AD", "AE", "AF", "AG", "AH", "AI", "AJ"];
+  const l1 = letters[Math.floor(Math.random() * letters.length)];
+  const l2 = letters[Math.floor(Math.random() * letters.length)];
+  const gtCode = `GT-${randNum}`;
+  const glCode = `GL-C1-${l1}-${l2}-${num4}`;
 
   // Insert competency, strand, skill
-  const compCode = `C${(seqNum % 6) + 1}`;
+  const compCode = "C1";
   const strandCode = `${compCode}.CNT`;
   const skillCode = `${compCode}.CNT.01`;
 
@@ -134,7 +135,7 @@ async function setupTestData() {
   const [level] = await db
     .insert(gameLevels)
     .values({
-      entityId: seqNum * 10,
+      entityId: randNum * 10,
       code: glCode,
       contentVersion: 1,
       templateId,

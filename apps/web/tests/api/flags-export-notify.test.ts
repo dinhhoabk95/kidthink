@@ -8,7 +8,7 @@ import {
   users,
 } from "@kidthink/db";
 import { eq } from "drizzle-orm";
-import { beforeAll, describe, expect, it } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 import sesSnsWebhookHandler from "../../server/api/guest/webhooks/ses-sns.post.js";
 import exportsHandler from "../../server/api/managers/exports/[kind].get.js";
 import flagsPatchHandler from "../../server/api/managers/feature-flags/[key].patch.js";
@@ -28,6 +28,14 @@ let testUserId = 1;
 let testDeletedUserId = 2;
 
 beforeAll(async () => {
+  await ensureTestEntities();
+});
+
+beforeEach(async () => {
+  await ensureTestEntities();
+});
+
+async function ensureTestEntities() {
   const db = getOwnerDb();
 
   // Super Admin
@@ -111,7 +119,7 @@ beforeAll(async () => {
   if (du) {
     testDeletedUserId = du.id;
   }
-});
+}
 
 function mockManagerEvent(
   role: "super_admin" | "content_reviewer",
