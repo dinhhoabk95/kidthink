@@ -30,7 +30,7 @@ async function createTestLevel(db: ReturnType<typeof getOwnerDb>) {
     .insert(gameLevels)
     .values({
       entityId: uid,
-      code: `GL-C1-CNT-TEST-${num4}`,
+      code: `GL-C1-CNT-SWP-${num4}`,
       templateId,
       titleVi: "Level Test",
       instructionVi: "Instruction",

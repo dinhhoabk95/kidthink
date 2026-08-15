@@ -1,8 +1,15 @@
 import { eq } from "drizzle-orm";
 import { describe, expect, it } from "vitest";
 import { getOwnerDb } from "../../src/index.ts";
-import { curricula, curriculumItems } from "../../src/schema/curriculum.ts";
+import { childProfiles } from "../../src/schema/child.ts";
+import {
+  curricula,
+  curriculumEnrollments,
+  curriculumItemProgress,
+  curriculumItems,
+} from "../../src/schema/curriculum.ts";
 import { gameLevels, gameTemplates } from "../../src/schema/game.ts";
+import { users } from "../../src/schema/identity.ts";
 
 describe("Curriculum Schema Integration Tests", () => {
   it("orphan curriculum_items.(entity_type, entity_id) polymorphic check", async () => {
@@ -145,5 +152,150 @@ describe("Curriculum Schema Integration Tests", () => {
     ).find((g) => g.status === "published");
 
     expect(latestPublished?.titleVi).toBe("Version 2 (New Published)");
+  });
+
+  it("D-MB: rejects two active enrollments for the same child profile via unique partial index", async () => {
+    const db = getOwnerDb();
+    const uid = Math.floor(Math.random() * 800_000) + 100_000;
+    const curCode1 = `CUR-${(Math.floor(Math.random() * 800) + 100).toString()}`;
+    const curCode2 = `CUR-${(Math.floor(Math.random() * 800) + 100).toString()}`;
+
+    // Create user and child
+    const [user] = await db
+      .insert(users)
+      .values({
+        email: `test-cur-enroll-${uid}@example.com`,
+        displayName: "Parent Tester",
+        status: "active",
+      })
+      .returning();
+
+    const [child] = await db
+      .insert(childProfiles)
+      .values({
+        userId: user.id,
+        displayName: "Bé Test",
+        birthYear: 2021,
+        avatarId: "panda",
+      })
+      .returning();
+
+    const [cur1] = await db
+      .insert(curricula)
+      .values({
+        entityId: uid,
+        code: curCode1,
+        contentVersion: 1,
+        titleVi: "Lộ trình 1",
+        accessTier: "free",
+        status: "published",
+      })
+      .returning();
+
+    const [cur2] = await db
+      .insert(curricula)
+      .values({
+        entityId: uid + 1,
+        code: curCode2,
+        contentVersion: 1,
+        titleVi: "Lộ trình 2",
+        accessTier: "free",
+        status: "published",
+      })
+      .returning();
+
+    // First active enrollment succeeds
+    await db.insert(curriculumEnrollments).values({
+      childId: child.id,
+      curriculumId: cur1.id,
+      status: "active",
+    });
+
+    // Second active enrollment for same child fails (D-MB)
+    await expect(
+      db.insert(curriculumEnrollments).values({
+        childId: child.id,
+        curriculumId: cur2.id,
+        status: "active",
+      })
+    ).rejects.toThrow();
+  });
+
+  it("D-MC: curriculum_item_progress enforces unique (enrollment_id, curriculum_item_id) for idempotency", async () => {
+    const db = getOwnerDb();
+    const uid = Math.floor(Math.random() * 800_000) + 100_000;
+    const curCode = `CUR-${(Math.floor(Math.random() * 800) + 100).toString()}`;
+
+    const [user] = await db
+      .insert(users)
+      .values({
+        email: `test-cur-prog-${uid}@example.com`,
+        displayName: "Parent Progress Tester",
+        status: "active",
+      })
+      .returning();
+
+    const [child] = await db
+      .insert(childProfiles)
+      .values({
+        userId: user.id,
+        displayName: "Bé Progress",
+        birthYear: 2021,
+        avatarId: "panda",
+      })
+      .returning();
+
+    const [cur] = await db
+      .insert(curricula)
+      .values({
+        entityId: uid,
+        code: curCode,
+        contentVersion: 1,
+        titleVi: "Lộ trình Tiến độ",
+        accessTier: "free",
+        status: "published",
+      })
+      .returning();
+
+    const [item] = await db
+      .insert(curriculumItems)
+      .values({
+        curriculumId: cur.id,
+        weekNo: 1,
+        sessionNo: 1,
+        position: 1,
+        entityType: "game_level",
+        entityId: uid + 2,
+      })
+      .returning();
+
+    const [enrollment] = await db
+      .insert(curriculumEnrollments)
+      .values({
+        childId: child.id,
+        curriculumId: cur.id,
+        status: "active",
+      })
+      .returning();
+
+    // First progress insert
+    await db.insert(curriculumItemProgress).values({
+      enrollmentId: enrollment.id,
+      childId: child.id,
+      curriculumItemId: item.id,
+      status: "completed",
+      completedAt: new Date(),
+    });
+
+    // Duplicate progress insert violates unique constraint
+    await expect(
+      db.insert(curriculumItemProgress).values({
+        enrollmentId: enrollment.id,
+        childId: child.id,
+        curriculumItemId: item.id,
+        status: "completed",
+        completedAt: new Date(),
+      })
+    ).rejects.toThrow();
   });
 });

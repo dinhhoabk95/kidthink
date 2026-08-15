@@ -29,6 +29,7 @@ export const enrollmentStatusEnum = pgEnum("curriculum_enrollment_status", [
   "active",
   "completed",
   "paused",
+  "withdrawn",
   "dropped",
 ]);
 
@@ -164,8 +165,8 @@ export const curriculumEnrollments = pgTable(
     status: enrollmentStatusEnum("status").notNull().default("active"),
   },
   (table) => [
-    uniqueIndex("idx_curriculum_enrollments_active_unique")
-      .on(table.childId, table.curriculumId)
+    uniqueIndex("idx_curriculum_enrollments_child_active_unique")
+      .on(table.childId)
       .where(sql`${table.status} = 'active'`),
     index("idx_curriculum_enrollments_child_id").on(table.childId),
   ]
@@ -200,5 +201,9 @@ export const curriculumItemProgress = pgTable(
       table.curriculumItemId
     ),
     index("idx_curriculum_item_progress_child_id").on(table.childId),
+    index("idx_curriculum_item_progress_enrollment_status").on(
+      table.enrollmentId,
+      table.status
+    ),
   ]
 );

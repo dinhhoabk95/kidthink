@@ -9,6 +9,7 @@ export * from "./audit.js";
 export * from "./child-data.js";
 export * from "./config-dictionary.js";
 export * from "./curriculum-model.js";
+export * from "./curriculum-player.js";
 export * from "./dashboard-cards.js";
 export * from "./date-ict.js";
 export * from "./entitlement-catalog.js";
