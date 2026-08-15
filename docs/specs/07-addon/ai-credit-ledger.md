@@ -2,7 +2,7 @@
 spec: AI-CREDIT-LEDGER
 title: Sổ credit AI
 area: addon
-status: approved
+status: implemented
 mvp: false
 phase: P4
 reviewed: 2026-08-08

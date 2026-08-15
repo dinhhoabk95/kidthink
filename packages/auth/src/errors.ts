@@ -239,6 +239,10 @@ export const AUTH_ERROR_DEFINITIONS = {
     status: 402,
     message: "Bạn đã dùng hết hạn mức của gói dịch vụ.",
   },
+  INSUFFICIENT_CREDITS: {
+    status: 402,
+    message: "Số dư AI credit không đủ.",
+  },
   VERSION_CONFLICT: {
     status: 409,
     message: "Phiên bản dữ liệu đã thay đổi. Vui lòng tải lại trang.",

@@ -163,6 +163,12 @@ export const PURGE_TABLE_CLASSIFICATIONS: readonly TablePurgeMetadata[] = [
     legalBasis: "BR-ADL-01",
   },
   {
+    tableName: "ai_credit_balance",
+    classification: "delete",
+    reason: "Xoá bộ đệm số dư AI credit của người dùng khi đóng tài khoản",
+    legalBasis: "BR-ADL-01 & BR-ACL-01",
+  },
+  {
     tableName: "notification_endpoints",
     classification: "delete",
     reason: "Xoá endpoint thiết bị nhận push notification",
@@ -206,6 +212,12 @@ export const PURGE_TABLE_CLASSIFICATIONS: readonly TablePurgeMetadata[] = [
     reason:
       "Lưu trữ chứng từ giao dịch thanh toán và đối soát kế toán theo luật thuế (ẩn danh liên kết user)",
     legalBasis: "BR-ADL-05 & Luật Kế toán",
+  },
+  {
+    tableName: "ai_credit_ledger",
+    classification: "retain",
+    reason: "Nhật ký sổ cái giao dịch AI credit đối soát kế toán và kiểm toán",
+    legalBasis: "BR-ACL-01 & BR-ADL-05",
   },
   {
     tableName: "managers",

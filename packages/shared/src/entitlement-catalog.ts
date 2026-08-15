@@ -178,6 +178,7 @@ export interface PackageDefinition {
   is_featured: boolean;
   status: "active" | "retired";
   requires_spec?: string;
+  credits_grant?: number;
 }
 
 export const PACKAGE_CATALOG: Record<string, PackageDefinition> = {
@@ -322,9 +323,8 @@ export const PACKAGE_CATALOG: Record<string, PackageDefinition> = {
     audience: "Phụ huynh và giáo viên",
     description: "Phân tích tiến trình và tìm kiếm thông minh bằng AI",
     entitlements: ["use_ai_analysis", "use_ai_search"],
-    quotas: {
-      ai_calls: 100,
-    },
+    quotas: {},
+    credits_grant: 100,
     offers: [
       {
         offer_code: "annual",

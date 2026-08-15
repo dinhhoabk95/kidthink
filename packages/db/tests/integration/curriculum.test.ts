@@ -157,8 +157,8 @@ describe("Curriculum Schema Integration Tests", () => {
   it("D-MB: rejects two active enrollments for the same child profile via unique partial index", async () => {
     const db = getOwnerDb();
     const uid = Math.floor(Math.random() * 800_000) + 100_000;
-    const curCode1 = `CUR-${(Math.floor(Math.random() * 800) + 100).toString()}`;
-    const curCode2 = `CUR-${(Math.floor(Math.random() * 800) + 100).toString()}`;
+    const curCode1 = `CUR-${uid}-1`;
+    const curCode2 = `CUR-${uid}-2`;
 
     // Create user and child
     const [user] = await db

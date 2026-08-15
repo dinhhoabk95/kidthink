@@ -115,6 +115,7 @@ Mọi handler API. Mọi spec khai báo mã lỗi phải đăng ký ở đây.
 | Mã | HTTP | Khi nào |
 |---|:--:|---|
 | `QUOTA_EXCEEDED` | 402 | Hết hạn mức, `details.resets_at` |
+| `INSUFFICIENT_CREDITS` | 402 | Số dư AI credit không đủ cho thao tác yêu cầu ([`ai-credit-ledger.md`](../07-addon/ai-credit-ledger.md)) |
 | `CHILD_LIMIT_EXCEEDED` | 402 | Vượt `child_profiles` quota |
 | `DAILY_PLAY_CAP_REACHED` | 402 | Hết phút chơi trong ngày |
 | `PACKAGE_NOT_FOUND` | 404 | `package_code` không có trong catalog |

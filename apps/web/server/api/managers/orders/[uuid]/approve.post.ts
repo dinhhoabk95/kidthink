@@ -4,6 +4,7 @@ import {
   auditLogs,
   entitlements,
   getDb,
+  grantCredits,
   notifications,
   paymentOrders,
 } from "@kidthink/db";
@@ -14,6 +15,7 @@ import {
   type PaymentOrderStatus,
 } from "@kidthink/shared";
 import { and, eq } from "drizzle-orm";
+import type { PgTransaction } from "drizzle-orm/pg-core";
 import { defineEventHandler, getHeader, getRouterParam, readBody } from "h3";
 import { z } from "zod";
 import {
@@ -67,9 +69,223 @@ const approveOrderSchema = z.object({
     )
     .optional()
     .default(0),
-  // Any duration_days sent from form is intentionally ignored (BR-PAP-07)
   duration_days: z.number().optional(),
 });
+
+async function fetchAndLockOrder(
+  // biome-ignore lint/suspicious/noExplicitAny: generic drizzle transaction
+  tx: PgTransaction<any, any, any>,
+  orderUuid: string
+) {
+  const [order] = await tx
+    .select()
+    .from(paymentOrders)
+    .where(eq(paymentOrders.uuid, orderUuid))
+    .for("update");
+
+  if (!order) {
+    throw appError("NOT_FOUND");
+  }
+
+  const currentStatus = order.status as PaymentOrderStatus;
+  if (currentStatus !== "submitted" && currentStatus !== "under_review") {
+    throw appError("ORDER_ALREADY_PROCESSED", {
+      current_status: currentStatus,
+      reason: "Đơn hàng đã được xử lý hoặc không ở trạng thái có thể duyệt.",
+    });
+  }
+
+  assertPaymentOrderTransition(currentStatus, "approved");
+  return order;
+}
+
+async function grantEntitlementsForOrder(
+  // biome-ignore lint/suspicious/noExplicitAny: generic drizzle transaction
+  tx: PgTransaction<any, any, any>,
+  orderUserId: number,
+  orderUuid: string,
+  managerId: number,
+  packageCode: string,
+  offerCode: string,
+  bonusDays: number,
+  adminNote: string,
+  now: Date
+): Promise<Array<{ key: string; expires_at: Date | null }>> {
+  const pkg = PACKAGE_CATALOG[packageCode];
+  const offer = pkg?.offers.find((o) => o.offer_code === offerCode);
+  const offerDurationDays = offer ? offer.duration_days : 365;
+  const entitlementKeys = pkg?.entitlements || [];
+
+  const results: Array<{ key: string; expires_at: Date | null }> = [];
+  for (const key of entitlementKeys) {
+    const [existing] = await tx
+      .select()
+      .from(entitlements)
+      .where(
+        and(
+          eq(entitlements.userId, orderUserId),
+          eq(entitlements.entitlementKey, key)
+        )
+      )
+      .limit(1);
+
+    const newExpiresAt = computeStackedExpiryDate(
+      existing?.expiresAt,
+      offerDurationDays,
+      bonusDays,
+      now
+    );
+
+    if (existing) {
+      await tx
+        .update(entitlements)
+        .set({
+          status: "active",
+          source: "package_order",
+          sourceRef: orderUuid,
+          expiresAt: newExpiresAt,
+          grantedByManagerId: managerId,
+          grantReason: adminNote,
+          updatedAt: now,
+        })
+        .where(eq(entitlements.id, existing.id));
+    } else {
+      await tx.insert(entitlements).values({
+        userId: orderUserId,
+        entitlementKey: key,
+        source: "package_order",
+        sourceRef: orderUuid,
+        status: "active",
+        expiresAt: newExpiresAt,
+        grantedByManagerId: managerId,
+        grantReason: adminNote,
+      });
+    }
+
+    results.push({
+      key,
+      expires_at: newExpiresAt,
+    });
+  }
+  return results;
+}
+
+async function maybeGrantPackageCredits(
+  // biome-ignore lint/suspicious/noExplicitAny: generic drizzle transaction
+  tx: PgTransaction<any, any, any>,
+  userId: number,
+  orderUuid: string,
+  packageCode: string
+): Promise<void> {
+  const pkg = PACKAGE_CATALOG[packageCode];
+  if (pkg?.credits_grant && pkg.credits_grant > 0) {
+    await grantCredits({
+      userId,
+      delta: pkg.credits_grant,
+      reason: "purchase",
+      refType: "payment_order",
+      refId: orderUuid,
+      idempotencyKey: `order-approve-credits-${orderUuid}`,
+      notifyUser: false,
+      tx,
+    });
+  }
+}
+
+async function executeOrderApproval(
+  db: ReturnType<typeof getDb>,
+  session: { manager_id: number },
+  orderUuid: string,
+  adminNote: string,
+  checklist: Record<string, unknown>,
+  bonusDays: number,
+  ip: string | null,
+  userAgent: string | null
+) {
+  const now = new Date();
+  let orderUserId = 0;
+  let grantedEntitlements: Array<{ key: string; expires_at: Date | null }> = [];
+
+  await db.transaction(async (tx) => {
+    const order = await fetchAndLockOrder(tx, orderUuid);
+    const currentStatus = order.status as PaymentOrderStatus;
+    orderUserId = order.userId;
+
+    const structuredAdminNote = JSON.stringify({
+      note: adminNote,
+      checklist,
+      bonus_days: bonusDays,
+    });
+
+    await tx
+      .update(paymentOrders)
+      .set({
+        status: "approved",
+        reviewedAt: now,
+        reviewedByManagerId: session.manager_id,
+        adminNote: structuredAdminNote,
+        updatedAt: now,
+      })
+      .where(eq(paymentOrders.id, order.id));
+
+    grantedEntitlements = await grantEntitlementsForOrder(
+      tx,
+      order.userId,
+      order.uuid,
+      session.manager_id,
+      order.packageCode,
+      order.offerCode,
+      bonusDays,
+      adminNote,
+      now
+    );
+
+    await maybeGrantPackageCredits(
+      tx,
+      order.userId,
+      order.uuid,
+      order.packageCode
+    );
+
+    await tx.insert(auditLogs).values({
+      actorType: "manager",
+      actorId: session.manager_id,
+      action: "order_approved",
+      entityType: "payment_order",
+      entityId: order.uuid,
+      beforeData: { status: currentStatus },
+      afterData: {
+        status: "approved",
+        bonus_days: bonusDays,
+        checklist,
+      },
+      reason: adminNote,
+      ipAddress: ip,
+      userAgent,
+    });
+
+    await tx.insert(notifications).values({
+      recipientType: "user",
+      recipientId: order.userId,
+      templateCode: "order_approved",
+      payload: {
+        order_uuid: order.uuid,
+        package_code: order.packageCode,
+        offer_code: order.offerCode,
+        bonus_days: bonusDays,
+      },
+    });
+  });
+
+  if (orderUserId > 0) {
+    await invalidateUserEntitlementsCache(orderUserId);
+  }
+
+  return {
+    status: "approved",
+    entitlements: grantedEntitlements,
+  };
+}
 
 export default defineEventHandler(async (event) => {
   try {
@@ -100,155 +316,17 @@ export default defineEventHandler(async (event) => {
 
     const { admin_note, checklist, bonus_days } = parsed.data;
     const db = getDb();
-    const now = new Date();
 
-    let orderUserId = 0;
-    const grantedEntitlements: Array<{ key: string; expires_at: Date | null }> =
-      [];
-
-    // Atomic transaction with row lock (D-JH, BR-PAP-02, BR-PAP-03)
-    await db.transaction(async (tx) => {
-      // Step 1 in transaction: SELECT ... FOR UPDATE (D-JH)
-      const [order] = await tx
-        .select()
-        .from(paymentOrders)
-        .where(eq(paymentOrders.uuid, orderUuid))
-        .for("update");
-
-      if (!order) {
-        throw appError("NOT_FOUND");
-      }
-
-      const currentStatus = order.status as PaymentOrderStatus;
-      if (currentStatus !== "submitted" && currentStatus !== "under_review") {
-        throw appError("ORDER_ALREADY_PROCESSED", {
-          current_status: currentStatus,
-          reason:
-            "Đơn hàng đã được xử lý hoặc không ở trạng thái có thể duyệt.",
-        });
-      }
-
-      assertPaymentOrderTransition(currentStatus, "approved");
-      orderUserId = order.userId;
-
-      // Update payment order status to approved
-      const structuredAdminNote = JSON.stringify({
-        note: admin_note,
-        checklist,
-        bonus_days,
-      });
-
-      await tx
-        .update(paymentOrders)
-        .set({
-          status: "approved",
-          reviewedAt: now,
-          reviewedByManagerId: session.manager_id,
-          adminNote: structuredAdminNote,
-          updatedAt: now,
-        })
-        .where(eq(paymentOrders.id, order.id));
-
-      // Resolve package duration from catalog snapshot (BR-PAP-07)
-      const pkg = PACKAGE_CATALOG[order.packageCode];
-      const offer = pkg?.offers.find((o) => o.offer_code === order.offerCode);
-      const offerDurationDays = offer ? offer.duration_days : 365;
-
-      const entitlementKeysToGrant = pkg?.entitlements || [];
-
-      for (const key of entitlementKeysToGrant) {
-        // Query existing entitlement to calculate stacking (BR-PAP-05)
-        const [existing] = await tx
-          .select()
-          .from(entitlements)
-          .where(
-            and(
-              eq(entitlements.userId, order.userId),
-              eq(entitlements.entitlementKey, key)
-            )
-          )
-          .limit(1);
-
-        const newExpiresAt = computeStackedExpiryDate(
-          existing?.expiresAt,
-          offerDurationDays,
-          bonus_days,
-          now
-        );
-
-        if (existing) {
-          await tx
-            .update(entitlements)
-            .set({
-              status: "active",
-              source: "package_order",
-              sourceRef: order.uuid,
-              expiresAt: newExpiresAt,
-              grantedByManagerId: session.manager_id,
-              grantReason: admin_note,
-              updatedAt: now,
-            })
-            .where(eq(entitlements.id, existing.id));
-        } else {
-          await tx.insert(entitlements).values({
-            userId: order.userId,
-            entitlementKey: key,
-            source: "package_order",
-            sourceRef: order.uuid,
-            status: "active",
-            expiresAt: newExpiresAt,
-            grantedByManagerId: session.manager_id,
-            grantReason: admin_note,
-          });
-        }
-
-        grantedEntitlements.push({
-          key,
-          expires_at: newExpiresAt,
-        });
-      }
-
-      // Record audit log (BR-AUD-01)
-      await tx.insert(auditLogs).values({
-        actorType: "manager",
-        actorId: session.manager_id,
-        action: "order_approved",
-        entityType: "payment_order",
-        entityId: order.uuid,
-        beforeData: { status: currentStatus },
-        afterData: {
-          status: "approved",
-          bonus_days,
-          checklist,
-        },
-        reason: admin_note,
-        ipAddress: getManagerRemoteIp(event),
-        userAgent: getHeader(event, "user-agent") || null,
-      });
-
-      // Enqueue notification for user
-      await tx.insert(notifications).values({
-        recipientType: "user",
-        recipientId: order.userId,
-        templateCode: "order_approved",
-        payload: {
-          order_uuid: order.uuid,
-          package_code: order.packageCode,
-          offer_code: order.offerCode,
-          bonus_days,
-        },
-      });
-    });
-
-    // Invalidate user entitlements cache immediately (D-JI)
-    if (orderUserId > 0) {
-      await invalidateUserEntitlementsCache(orderUserId);
-    }
-
-    return {
-      status: "approved",
-      entitlements: grantedEntitlements,
-    };
+    return await executeOrderApproval(
+      db,
+      session,
+      orderUuid,
+      admin_note,
+      checklist,
+      bonus_days,
+      getManagerRemoteIp(event),
+      getHeader(event, "user-agent") || null
+    );
   } catch (error) {
     respondToManagerAuthError(event, error);
   }
