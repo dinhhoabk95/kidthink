@@ -333,9 +333,9 @@ describe("P3.1 Lesson & Activity Model & Seeder Tests", () => {
 
     it("Executes seeder batch cleanly and verifies idempotency in Postgres", async () => {
       const db = getOwnerDb();
+      await seedContentTags(db);
       const existingSkill = await db.select().from(skills).limit(1);
       if (existingSkill.length === 0) {
-        await seedContentTags(db);
         await seedTaxonomyMasterData(db);
       }
       const batchCode = `TEST-P31-${Date.now()}`;
