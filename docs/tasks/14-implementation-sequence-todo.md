@@ -153,7 +153,7 @@ MVP, và nó chỉ cần bước P1.2 xong.
 - [ ] **P3.3** Mô hình + builder curriculum — [`curriculum-model.md`](../specs/05-content/curriculum-model.md) · [`curriculum-builder.md`](../specs/06-admin/curriculum-builder.md)
 - [x] **P3.4** Player curriculum — [`curriculum-player.md`](../specs/04-play/curriculum-player.md)
 - [x] **P3.5** Mastery + adaptive — [`adaptive-engine.md`](../specs/01-platform/adaptive-engine.md) · [`progress-and-mastery.md`](../specs/04-play/progress-and-mastery.md)
-- [ ] **P3.6** Gợi ý game kế tiếp — [`next-game-recommendation.md`](../specs/04-play/next-game-recommendation.md)
+- [x] **P3.6** Gợi ý game kế tiếp — [`next-game-recommendation.md`](../specs/04-play/next-game-recommendation.md)
 - [ ] **P3.7** Báo cáo nâng cao — [`advanced-report.md`](../specs/03-account/advanced-report.md)
 - [ ] **P3.8** Trưng bày chương trình ra public — [`program-showcase.md`](../specs/02-public/program-showcase.md)
 - [ ] **P3.9** Tích hợp curriculum vào account, bố cục nhiều trẻ và phạm vi thư viện — [`Task #82`](82-p3-account-curriculum-integration-plan.md)

@@ -2,10 +2,10 @@
 spec: NEXT-GAME-RECOMMENDATION
 title: Gợi ý nội dung kế tiếp
 area: play
-status: approved
+status: implemented
 mvp: true
 phase: P3
-reviewed: 2026-08-08
+reviewed: 2026-08-15
 owns:
   - Luật gợi ý theo rule
   - Thứ tự ưu tiên nguồn gợi ý
@@ -35,7 +35,7 @@ và dòng tương ứng ở [`index.md`](../index.md) là chỗ lệch, đã s�
 
 | Actor | Vai trò |
 |---|---|
-| Trẻ | Nhận 1 gợi ý chính + 2 lựa chọn khác |
+| Trẻ | Nhận 1 gợi ý chính + tối đa 4 lựa chọn khác |
 | Người lớn | Thấy lý do gợi ý trong báo cáo |
 
 ## 3. Entry points
@@ -44,29 +44,33 @@ và dòng tương ứng ở [`index.md`](../index.md) là chỗ lệch, đã s�
 |---|---|
 | Màn hình tổng kết phiên | 1 gợi ý chính |
 | Sảnh trẻ | 3–5 gợi ý |
-| `GET /api/users/play/recommendations` | |
+| `GET /api/users/play/recommendations` | Gợi ý người dùng (cần active child) |
+| `GET /api/guest/play/recommendations` | Gợi ý khách (allow-list free) |
 
-## 4. Main flow — thứ tự ưu tiên
+## 4. Main flow — thứ tự ưu tiên (D-MQ, D-MR, D-MS)
 
 ```
-1. Đang theo curriculum và còn bước chưa xong  → bước kế tiếp của curriculum
-2. Có skill p_learn < 0.4 chạm gần đây          → level cùng skill, dễ hơn
-3. Có skill p_learn ≥ 0.8                        → level skill kế tiếp trong DAG
-4. Có skill last_seen_at > 7 ngày                → ôn lại
-5. Còn lại                                       → level cùng competency, chưa chơi, hợp tuổi
-6. Không có gì phù hợp                           → level phổ biến nhất hợp tuổi chưa chơi
+1. Đang theo curriculum và còn bước chưa xong  → bước kế tiếp của curriculum (bậc 1: curriculum_next)
+   (Nếu tuần bị khoá theo tier -> trả rỗng, rơi xuống bậc 2 theo D-MS)
+2. Có skill p_learn < 0.4 chạm trong 7 ngày    → level cùng skill, dễ hơn hoặc cùng độ khó (bậc 2: skill_reinforce)
+3. Có skill p_learn ≥ 0.8                      → level skill kế tiếp trong DAG prerequisite (bậc 3: skill_progression)
+4. Có skill last_seen_at > 7 ngày              → ôn lại theo thời gian (bậc 4: revision)
+5. Còn lại                                     → level cùng competency, chưa chơi, hợp tuổi (bậc 5: explore)
+6. Không có gì phù hợp                         → level phổ biến nhất hợp tuổi chưa chơi (bậc 6: popular)
+7. Hết nội dung mới / fallback                 → level đã chơi, ôn lại (bậc 7: revision)
 ```
 
-Mỗi ứng viên phải qua **gating** trước khi vào danh sách gợi ý.
+Mỗi ứng viên phải qua **gating theo lô** trước khi vào danh sách gợi ý.
+Hàm xếp hạng nhận `seed` làm tham số để đảm bảo tính tái lập trong test và ổn định trong ngày (`D-MV`).
 
 ## 5. Alternative flows
 
 | Nhánh | Hành vi |
 |---|---|
-| Không đủ dữ liệu mastery (< 3 lần) | Nhảy tới bước 5 |
-| Mọi ứng viên đều bị khoá bậc | Gợi ý **1 level mở được** + 1 level khoá kèm mời nâng cấp **trên bề mặt người lớn** |
-| Trẻ vừa chơi level đó | Cấm gợi ý lại ngay; loại 3 level gần nhất |
-| Hết nội dung phù hợp | Gợi ý ôn lại, không để trống |
+| Không đủ dữ liệu mastery (< 3 lần chơi) | Nhảy tới bước 5 (`explore`) |
+| Mọi ứng viên đều bị khoá bậc | Gợi ý **1 level khoá** (và không có level mở) kèm mời nâng cấp **trên bề mặt người lớn** (`D-MT`) |
+| Trẻ vừa chơi level đó | Cấm gợi ý lại ngay; loại 3 level gần nhất (`BR-REC-03`) |
+| Hết nội dung mới phù hợp | Gợi ý ôn lại (bậc 7: `revision`), bảo đảm không bao giờ để trống (`D-MQ`) |
 
 ## 6. Business rules
 
@@ -77,9 +81,9 @@ Mỗi ứng viên phải qua **gating** trước khi vào danh sách gợi ý.
 | `BR-REC-03` | Loại 3 level chơi gần nhất | Lặp lại ngay làm trẻ chán |
 | `BR-REC-04` | Gợi ý luôn hợp **band tuổi** của trẻ | Đảm bảo nội dung vừa sức phát triển nhận thức của từng nhóm tuổi mầm non |
 | `BR-REC-05` | Mỗi gợi ý có `reason` giải thích được | Người lớn cần hiểu vì sao |
-| `BR-REC-06` | Cấm — **NEVER gợi ý dựa trên "trẻ khác cũng chơi"** | Không so sánh trẻ; và dữ liệu hành vi tập thể của trẻ là vùng nhạy cảm |
-| `BR-REC-07` | Ưu tiên nội dung **mở được**; nội dung khoá tối đa **1** trong danh sách | Danh sách toàn ổ khoá gây nản |
-| `BR-REC-08` | P1 dùng **luật**, không ML | Giải thích được và test được |
+| `BR-REC-06` | Cấm — **NEVER gợi ý dựa trên "trẻ khác cũng chơi"** | Không so sánh trẻ; và dữ liệu hành vi tập thể của trẻ là vùng nhạy cảm. `popular` chỉ đọc `level_daily_stats.plays_count` (`D-MU`) |
+| `BR-REC-07` | Ưu tiên nội dung **mở được**; nội dung khoá tối đa **1** trong danh sách | Danh sách toàn ổ khoá gây nản. Ngoại lệ duy nhất: khi mọi ứng viên đều khoá thì danh sách chỉ có đúng 1 item khoá và 0 item mở (`D-MT`) |
+| `BR-REC-08` | Dùng **luật**, không ML | Giải thích được và test được |
 
 ## 7. Data
 
@@ -92,7 +96,8 @@ Mỗi ứng viên phải qua **gating** trước khi vào danh sách gợi ý.
     "title": "Đếm quả cam",
     "thumbnail_emoji": "EMJ-orange",
     "reason": "Cùng chủ đề, khó hơn một chút",
-    "reason_code": "skill_progression"
+    "reason_code": "skill_progression",
+    "locked": false
   },
   "alternatives": [ /* tối đa 4 */ ]
 }
@@ -109,8 +114,8 @@ Mỗi ứng viên phải qua **gating** trước khi vào danh sách gợi ý.
 | `explore` | "Thử một trò chơi mới" |
 | `popular` | "Nhiều bé thích trò này" |
 
-`popular` là code duy nhất chạm tới dữ liệu tập thể, và nó chỉ dùng **số lượt chơi tổng**,
-không dùng hành vi cá nhân của trẻ khác (`BR-REC-06`).
+`popular` là code duy nhất chạm tới dữ liệu tập thể, và nó chỉ dùng **số lượt chơi tổng** từ `level_daily_stats`,
+không dùng hành vi cá nhân của trẻ khác (`BR-REC-06`, `D-MU`).
 
 ## 8. API contract
 
@@ -119,13 +124,13 @@ không dùng hành vi cá nhân của trẻ khác (`BR-REC-06`).
 | | |
 |---|---|
 | Auth | `requireUserAuth()` + `assertActiveChild()` |
-| Query | `?limit=5` |
+| Query | `?limit=5` (trần tối đa 5) |
 | 200 | §7.1 |
 | 428 | `NO_ACTIVE_CHILD` |
 
 ### `GET /api/guest/play/recommendations`
 
-Trả từ allow-list `free`, chọn theo `explore` và `popular`.
+TrẢ từ allow-list `free`, chọn theo `explore` và `popular` (`D-MW`). Nhận tham số tuỳ chọn `?age_band=3-4|4-5|5-6&limit=5`.
 
 ## 9. Acceptance criteria
 
@@ -158,12 +163,48 @@ Scenario: BR-REC-05 — mọi gợi ý có lý do
 
 Scenario: BR-REC-06 — không gợi ý theo hành vi trẻ khác
   When đọc implementation của recommendation
-  Then không truy vấn nào đọc lịch sử chơi của child_profile khác
+  Then không truy vấn nào nối play_sessions hay telemetry_events theo child_profile khác
+
+Scenario: BR-REC-07 — giới hạn nội dung khoá
+  Given trẻ không có gói trả phí
+  When lấy gợi ý
+  Then danh sách có tối đa 1 item bị locked
+
+Scenario: BR-REC-08 — luật thay vì ML
+  When kiểm tra implementation
+  Then thuật toán là rule-based deterministic không dùng ML model
 
 Scenario: không bao giờ trả rỗng
   Given trẻ đã chơi hết nội dung hợp tuổi
   When lấy gợi ý
   Then vẫn có primary với reason_code revision
+```
+
+## 10. Boundaries
+
+**Always**
+- Gating trước khi gợi ý.
+- Curriculum ưu tiên hơn adaptive.
+- Kèm `reason_code` và `reason`.
+
+**Ask first**
+- Đổi thứ tự ưu tiên §4.
+- Thêm `reason_code` mới.
+- Dùng ML thay luật.
+
+**Never**
+- Gợi ý nội dung không chơi được (quá 1 item).
+- Gợi ý theo hành vi cá nhân của trẻ khác.
+- Trả danh sách rỗng.
+- Cho adaptive phủ quyết curriculum.
+
+## 11. Open questions
+
+| # | Câu hỏi | Chặn phase | Đề xuất chốt | Chủ |
+|---|---|---|---|---|
+| 1 | Loại 3 level gần nhất có đủ không? Với 120 level thì trẻ sẽ gặp lại khá nhanh | P3 | Giữ loại 3 level gần nhất cho MVP; mở rộng cửa sổ loại trừ nếu ghi nhận hiện tượng lặp lại quá nhanh ở P4 (đóng theo D-MV) | Backend |
+| 2 | `popular` dùng số lượt chơi tổng — có rủi ro tạo vòng lặp tự củng cố không? | P3 | Kết hợp popular với trọng số xáo trộn có hạt giống (seed) để tái lập trong test và tránh tự củng cố (đóng theo D-MV) | Backend |
+ Then vẫn có primary với reason_code revision
 ```
 
 ## 10. Boundaries
