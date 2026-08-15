@@ -1,5 +1,6 @@
 import { randomUUID } from "node:crypto";
 import {
+  competencies,
   contentSkillMap,
   curricula,
   curriculumItems,
@@ -82,12 +83,26 @@ beforeAll(async () => {
   if (!sk) {
     let [st] = await db.select({ id: strands.id }).from(strands).limit(1);
     if (!st) {
+      let [comp] = await db
+        .select({ id: competencies.id })
+        .from(competencies)
+        .limit(1);
+      if (!comp) {
+        [comp] = await db
+          .insert(competencies)
+          .values({
+            code: "C1",
+            nameVi: "Tư duy số và số lượng",
+            position: 1,
+          })
+          .returning({ id: competencies.id });
+      }
       [st] = await db
         .insert(strands)
         .values({
           code: "C1.CNT",
           nameVi: "Đếm và Số Lượng",
-          competencyId: 1,
+          competencyId: comp.id,
           position: 1,
         })
         .returning({ id: strands.id });
