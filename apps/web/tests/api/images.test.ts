@@ -8,7 +8,7 @@ import {
 } from "@kidthink/db";
 import { signedUrl, url } from "@kidthink/storage";
 import { eq } from "drizzle-orm";
-import { beforeAll, describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it } from "vitest";
 import assetUsageHandler from "../../server/api/managers/assets/[...ref]/usage.get.js";
 import deleteImageHandler from "../../server/api/managers/images/[id].delete.js";
 import uploadImageHandler from "../../server/api/managers/images/index.post.js";
@@ -42,7 +42,7 @@ const SVG_BUFFER = Buffer.from(
 
 let testManagerId = 1;
 
-beforeAll(async () => {
+beforeEach(async () => {
   const db = getOwnerDb();
   let [mgr] = await db
     .select({ id: managers.id })
@@ -57,6 +57,10 @@ beforeAll(async () => {
         displayName: "Image Tester",
         role: "super_admin",
         isActive: true,
+      })
+      .onConflictDoUpdate({
+        target: managers.email,
+        set: { displayName: "Image Tester" },
       })
       .returning({ id: managers.id });
   }
