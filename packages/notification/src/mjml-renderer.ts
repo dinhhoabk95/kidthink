@@ -270,6 +270,46 @@ export const TEMPLATE_REGISTRY: Record<
     plainText: (vars) =>
       `Nội dung ${vars.entity_code} trong giáo án "${vars.plan_title}" vừa được cập nhật lên phiên bản ${vars.new_version}.`,
   },
+  pdf_export_ready: {
+    requiredVars: ["title"],
+    subject: (vars) =>
+      `[TiniMath] File PDF giáo án "${vars.title}" đã sẵn sàng`,
+    mjml: (vars) => `
+      <mjml>
+        <mj-body background-color="#f8fafc">
+          <mj-section background-color="#ffffff" border-radius="16px">
+            <mj-column>
+              <mj-text font-size="20px" font-weight="bold" color="#4f46e5">TiniMath</mj-text>
+              <mj-text font-size="16px" font-weight="bold" color="#334155">Xuất file PDF thành công</mj-text>
+              <mj-text font-size="14px" color="#475569">File PDF cho giáo án "<strong>${vars.title}</strong>" đã được tạo thành công và sẵn sàng để tải về.</mj-text>
+            </mj-column>
+          </mj-section>
+        </mj-body>
+      </mjml>
+    `,
+    plainText: (vars) =>
+      `TiniMath - File PDF cho giáo án "${vars.title}" đã sẵn sàng để tải về.`,
+  },
+  pdf_export_failed: {
+    requiredVars: ["title", "error"],
+    subject: (vars) =>
+      `[TiniMath] Xuất PDF giáo án "${vars.title}" không thành công`,
+    mjml: (vars) => `
+      <mjml>
+        <mj-body background-color="#f8fafc">
+          <mj-section background-color="#ffffff" border-radius="16px">
+            <mj-column>
+              <mj-text font-size="20px" font-weight="bold" color="#4f46e5">TiniMath</mj-text>
+              <mj-text font-size="16px" font-weight="bold" color="#dc2626">Xuất PDF không thành công</mj-text>
+              <mj-text font-size="14px" color="#475569">Rất tiếc, quá trình xuất file PDF cho giáo án "<strong>${vars.title}</strong>" gặp lỗi: ${vars.error}. Lượt xuất (quota) của bạn đã được hoàn lại.</mj-text>
+            </mj-column>
+          </mj-section>
+        </mj-body>
+      </mjml>
+    `,
+    plainText: (vars) =>
+      `TiniMath - Xuất PDF cho giáo án "${vars.title}" không thành công: ${vars.error}. Lượt xuất đã được hoàn lại.`,
+  },
 };
 
 export interface RenderEmailResult {

@@ -39,6 +39,15 @@ export interface JobPayloads {
   "image:cleanup-orphan": {
     week: string;
   };
+  "pdf:render": {
+    exportJobUuid: string;
+    userId: number;
+    kind: "lesson_plan" | "worksheet" | "curriculum_plan";
+    refId: string;
+  };
+  "sweep:pdf-cleanup": {
+    dateIct?: string;
+  };
 }
 
 export type JobName = keyof JobPayloads;
@@ -66,6 +75,9 @@ export interface EnqueueOptions {
 
 function extractKeyFromPayload(payload: unknown): string | number | undefined {
   const p = payload as Record<string, unknown>;
+  if (p.exportJobUuid) {
+    return p.exportJobUuid as string;
+  }
   if (p.dateIct) {
     return p.dateIct as string;
   }

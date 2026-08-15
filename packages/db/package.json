@@ -13,6 +13,7 @@
     "@kidthink/game-engine": "workspace:*",
     "@kidthink/queue": "workspace:*",
     "@kidthink/shared": "workspace:*",
+    "@kidthink/storage": "workspace:*",
     "@kidthink/taxonomy": "workspace:*",
     "drizzle-orm": "catalog:",
     "postgres": "catalog:",

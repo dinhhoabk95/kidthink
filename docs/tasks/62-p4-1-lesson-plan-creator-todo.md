@@ -73,8 +73,8 @@
 - [x] Mọi route UUID có IDOR test; concurrency PUT/quota xanh.
 - [x] Mỗi `BR-LPC-01…09` có test mang mã rule.
 - [x] `pnpm check`, `pnpm test`, `pnpm lint:specs`, `pnpm check:progress` xanh.
-- [ ] Task #63 hoàn tất; `LESSON-PLAN-CREATOR` mới chuyển `implemented`.
-- [ ] Add-on chỉ public sau human review; không seed ngoài local, không auto-merge.
+- [x] Task #63 hoàn tất; `LESSON-PLAN-CREATOR` mới chuyển `implemented`.
+- [x] Add-on chỉ public sau human review; không seed ngoài local, không auto-merge.
 
 ## Ngoài phạm vi
 

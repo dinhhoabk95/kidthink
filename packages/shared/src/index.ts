@@ -13,6 +13,7 @@ export * from "./curriculum-player.js";
 export * from "./dashboard-cards.js";
 export * from "./date-ict.js";
 export * from "./entitlement-catalog.js";
+export * from "./exports.js";
 export * from "./feature-flags.js";
 export * from "./glossary.js";
 export * from "./healthy-play-limits.js";

@@ -587,17 +587,67 @@
     }
   }
 
+  function triggerBrowserDownload(url: string, filename: string): void {
+    if (typeof window === "undefined") {
+      return;
+    }
+    const link = document.createElement("a");
+    link.href = url;
+    link.target = "_blank";
+    link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
+
+  async function pollExportDownload(
+    jobUuid: string,
+    maxAttempts = 20
+  ): Promise<string> {
+    for (let attempts = 1; attempts <= maxAttempts; attempts++) {
+      await new Promise((resolve) => setTimeout(resolve, 1500));
+
+      const statusRes = await $fetch<{
+        status: string;
+        download_url?: string;
+        error?: string;
+      }>(`/api/users/exports/${jobUuid}`);
+
+      if (statusRes.status === "done" && statusRes.download_url) {
+        return statusRes.download_url;
+      }
+      if (statusRes.status === "failed") {
+        throw new Error(statusRes.error || "Quá trình xuất PDF thất bại.");
+      }
+    }
+    throw new Error("Hết thời gian chờ kết xuất file PDF.");
+  }
+
   async function handleExportPdf() {
     exporting.value = true;
     pageError.value = null;
+    pageMessage.value = "Đang khởi tạo yêu cầu xuất PDF...";
+
     try {
-      const res = await $fetch<{ export_token?: string }>(
-        `/api/users/lesson-plans/${uuid}/export`,
+      const res = await $fetch<{ job_uuid: string; status: string }>(
+        "/api/users/exports",
         {
           method: "POST",
+          body: {
+            kind: "lesson_plan",
+            ref_id: uuid,
+          },
         }
       );
-      pageMessage.value = `Đã yêu cầu xuất PDF thành công (Mã lệnh: ${res.export_token}). Tính năng renderer worker sẽ xử lý trong Task #63.`;
+
+      pageMessage.value =
+        "Hệ thống đang kết xuất file PDF giáo án (job nền)...";
+      const downloadUrl = await pollExportDownload(res.job_uuid);
+      pageMessage.value = "Xuất PDF thành công! Đang tải file về máy...";
+      triggerBrowserDownload(
+        downloadUrl,
+        `giao-an-${plan.value?.title || "lesson-plan"}.pdf`
+      );
     } catch (err: unknown) {
       const errorObject = err as {
         data?: { message?: string };
@@ -606,7 +656,7 @@
       pageError.value =
         errorObject?.data?.message ||
         errorObject?.message ||
-        "Không thể xuất PDF.";
+        "Không thể xuất PDF. Vui lòng kiểm tra lại quyền truy cập hoặc quota.";
     } finally {
       exporting.value = false;
     }

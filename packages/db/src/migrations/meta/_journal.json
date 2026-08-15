@@ -309,6 +309,13 @@
       "when": 1786830000000,
       "tag": "0043_lesson_plans_schema",
       "breakpoints": true
+    },
+    {
+      "idx": 44,
+      "version": "7",
+      "when": 1786840000000,
+      "tag": "0044_export_jobs_schema",
+      "breakpoints": true
     }
   ]
 }

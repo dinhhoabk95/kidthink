@@ -1,6 +1,6 @@
 import { appError } from "@kidthink/auth";
-import { exportLessonPlan } from "@kidthink/db";
-import { defineEventHandler, getRouterParam } from "h3";
+import { requestExportJob } from "@kidthink/db";
+import { defineEventHandler, getRouterParam, setResponseStatus } from "h3";
 import {
   requireWebUserSession,
   respondToUserAuthError,
@@ -17,11 +17,17 @@ export default defineEventHandler(async (event) => {
 
     const userId = Number(user.user_id);
     const entitlements = await resolveUserActiveEntitlements(userId);
-    const result = await exportLessonPlan(userId, uuid, {
+    const result = await requestExportJob(userId, "lesson_plan", uuid, {
       userEntitlements: entitlements,
     });
 
-    return result;
+    setResponseStatus(event, 202);
+    return {
+      plan_uuid: uuid,
+      export_token: result.job_uuid,
+      job_uuid: result.job_uuid,
+      status: result.status,
+    };
   } catch (error) {
     return respondToUserAuthError(event, error);
   }

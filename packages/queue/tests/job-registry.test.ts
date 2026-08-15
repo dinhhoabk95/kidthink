@@ -7,7 +7,7 @@ import {
 
 describe("Task 1 — Job Registry & Boundaries (BR-JOB-04, BR-JOB-07)", () => {
   it("defines all 12 MVP jobs with exact specs (BR-JOB-01..08, BR-EGR-09)", () => {
-    expect(JOB_REGISTRY).toHaveLength(12);
+    expect(JOB_REGISTRY).toHaveLength(14);
 
     const jobNames = JOB_REGISTRY.map((j) => j.name);
     expect(jobNames).toContain("rollup:session");
@@ -22,6 +22,8 @@ describe("Task 1 — Job Registry & Boundaries (BR-JOB-04, BR-JOB-07)", () => {
     expect(jobNames).toContain("backup:postgres");
     expect(jobNames).toContain("backup:verify");
     expect(jobNames).toContain("report:manual-grants-monthly");
+    expect(jobNames).toContain("pdf:render");
+    expect(jobNames).toContain("sweep:pdf-cleanup");
 
     for (const job of JOB_REGISTRY) {
       expect(job.name).toBeDefined();

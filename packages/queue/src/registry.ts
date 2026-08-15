@@ -160,6 +160,30 @@ export const JOB_REGISTRY: readonly JobDefinition[] = [
       backoffDelayMs: 5000,
     },
   },
+  {
+    name: "pdf:render",
+    schedule: "event",
+    idempotencyKeyFormat: "export_job_uuid",
+    timeoutSeconds: 120,
+    ownerStep: "P4.2",
+    retryPolicy: {
+      maxAttempts: 2,
+      backoffType: "exponential",
+      backoffDelayMs: 5000,
+    },
+  },
+  {
+    name: "sweep:pdf-cleanup",
+    schedule: "04:00 ICT daily",
+    idempotencyKeyFormat: "date_ict",
+    timeoutSeconds: 300,
+    ownerStep: "P4.2",
+    retryPolicy: {
+      maxAttempts: 3,
+      backoffType: "exponential",
+      backoffDelayMs: 5000,
+    },
+  },
 ] as const;
 
 export type RegisteredJobName = (typeof JOB_REGISTRY)[number]["name"];
@@ -210,6 +234,7 @@ export function validateJobRegistryConsumers(
     "P2.3",
     "P2.4",
     "P2.7",
+    "P4.2",
   ];
 
   const currentIdx = stepOrder.indexOf(currentSequenceStep);

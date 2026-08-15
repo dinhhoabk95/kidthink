@@ -80,6 +80,18 @@ export const NOTIFICATION_TYPES = {
     optOutAllowed: false,
     recipientType: "user",
   },
+  pdf_export_ready: {
+    code: "pdf_export_ready",
+    kind: "transactional",
+    optOutAllowed: false,
+    recipientType: "user",
+  },
+  pdf_export_failed: {
+    code: "pdf_export_failed",
+    kind: "transactional",
+    optOutAllowed: false,
+    recipientType: "user",
+  },
 } as const satisfies Record<string, NotificationTypeMeta>;
 
 export type NotificationCode = keyof typeof NOTIFICATION_TYPES;

@@ -7,6 +7,8 @@ import { runEntitlementExpireJob } from "./entitlement/expire.js";
 import { runSoftUnlockExpireJob } from "./entitlement/soft-unlock-expire.js";
 import { runOrphanImageCleanupJob } from "./image/cleanup-orphan.js";
 import { runOrderExpireJob } from "./orders/expire.js";
+import { runSweepPdfCleanupJob } from "./pdf/cleanup.js";
+import { runPdfRenderJob } from "./pdf/render.js";
 import { runManualGrantReportJob } from "./report/manual-grants-monthly.js";
 import { runDailyRollupJob } from "./rollup/daily.js";
 import { runSessionRollup } from "./rollup/session.js";
@@ -51,6 +53,12 @@ export async function processJob(job: Job) {
         break;
       case "image:cleanup-orphan":
         await runOrphanImageCleanupJob(job.id as string, job.data);
+        break;
+      case "pdf:render":
+        await runPdfRenderJob(job.id as string, job.data);
+        break;
+      case "sweep:pdf-cleanup":
+        await runSweepPdfCleanupJob(job.id as string, job.data);
         break;
       default:
         // Tên job không đăng ký → fail rõ ràng

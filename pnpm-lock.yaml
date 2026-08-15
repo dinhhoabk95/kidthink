@@ -361,6 +361,9 @@ importers:
       '@kidthink/shared':
         specifier: workspace:*
         version: link:../shared
+      '@kidthink/storage':
+        specifier: workspace:*
+        version: link:../storage
       '@kidthink/taxonomy':
         specifier: workspace:*
         version: link:../taxonomy

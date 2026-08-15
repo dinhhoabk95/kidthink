@@ -42,6 +42,35 @@
         </div>
       </div>
 
+      <!-- Feedback Banner -->
+      <div
+        class="mt-4 p-4 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-300 dark:border-emerald-700 text-emerald-800 dark:text-emerald-200 text-sm font-bold flex items-center justify-between"
+        v-if="bannerMessage"
+      >
+        <span>{{ bannerMessage }}</span>
+        <button
+          class="text-emerald-700 dark:text-emerald-300 font-bold text-sm"
+          type="button"
+          @click="bannerMessage = null"
+        >
+          ✕
+        </button>
+      </div>
+
+      <div
+        class="mt-4 p-4 rounded-2xl bg-red-50 dark:bg-red-950/40 border border-red-300 dark:border-red-700 text-red-800 dark:text-red-200 text-sm font-bold flex items-center justify-between"
+        v-if="bannerError"
+      >
+        <span>{{ bannerError }}</span>
+        <button
+          class="text-red-700 dark:text-red-300 font-bold text-sm"
+          type="button"
+          @click="bannerError = null"
+        >
+          ✕
+        </button>
+      </div>
+
       <!-- Loading state -->
       <div
         aria-live="polite"
@@ -167,6 +196,14 @@
             </span>
 
             <div class="flex items-center gap-2">
+              <button
+                class="px-3 py-1.5 rounded-xl bg-surface-200 hover:bg-surface-300 dark:bg-surface-700 dark:hover:bg-surface-600 text-surface-800 dark:text-surface-100 text-xs font-bold min-h-11 inline-flex items-center justify-center disabled:opacity-50"
+                type="button"
+                :disabled="exportingUuid === plan.uuid"
+                @click="handleQuickExport(plan)"
+              >
+                {{ exportingUuid === plan.uuid ? 'Đang xuất...' : '📄 Xuất PDF' }}
+              </button>
               <NuxtLink
                 class="px-3 py-1.5 rounded-xl bg-brand-50 dark:bg-brand-950/40 text-brand-700 dark:text-brand-300 hover:bg-brand-100 text-xs font-bold min-h-11 inline-flex items-center justify-center"
                 :to="`/lesson-plans/${plan.uuid}`"
@@ -488,12 +525,6 @@
       );
 
       showCreateModal.value = false;
-      createForm.title = "";
-      createForm.notes = "";
-      createForm.target_age = undefined;
-      createForm.estimated_minutes = undefined;
-      createForm.source_lesson_code = "";
-
       await navigateTo(`/lesson-plans/${created.uuid}`);
     } catch (err: unknown) {
       const errorObject = err as {
@@ -503,9 +534,84 @@
       createError.value =
         errorObject?.data?.message ||
         errorObject?.message ||
-        "Không thể tạo giáo án. Vui lòng thử lại.";
+        "Không thể tạo giáo án.";
     } finally {
       creating.value = false;
+    }
+  }
+
+  const exportingUuid = ref<string | null>(null);
+  const bannerMessage = ref<string | null>(null);
+  const bannerError = ref<string | null>(null);
+
+  function triggerBrowserDownload(url: string, filename: string): void {
+    if (typeof window === "undefined") {
+      return;
+    }
+    const link = document.createElement("a");
+    link.href = url;
+    link.target = "_blank";
+    link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
+
+  async function pollExportDownload(
+    jobUuid: string,
+    maxAttempts = 20
+  ): Promise<string> {
+    for (let attempts = 1; attempts <= maxAttempts; attempts++) {
+      await new Promise((resolve) => setTimeout(resolve, 1500));
+
+      const statusRes = await $fetch<{
+        status: string;
+        download_url?: string;
+        error?: string;
+      }>(`/api/users/exports/${jobUuid}`);
+
+      if (statusRes.status === "done" && statusRes.download_url) {
+        return statusRes.download_url;
+      }
+      if (statusRes.status === "failed") {
+        throw new Error(statusRes.error || "Quá trình xuất PDF thất bại.");
+      }
+    }
+    throw new Error("Hết thời gian chờ kết xuất file PDF.");
+  }
+
+  async function handleQuickExport(plan: LessonPlanSummary) {
+    exportingUuid.value = plan.uuid;
+    bannerError.value = null;
+    bannerMessage.value = `Đang chuẩn bị xuất PDF cho giáo án "${plan.title}"...`;
+
+    try {
+      const res = await $fetch<{ job_uuid: string; status: string }>(
+        "/api/users/exports",
+        {
+          method: "POST",
+          body: {
+            kind: "lesson_plan",
+            ref_id: plan.uuid,
+          },
+        }
+      );
+
+      bannerMessage.value = `Đang kết xuất file PDF "${plan.title}" (job nền)...`;
+      const downloadUrl = await pollExportDownload(res.job_uuid);
+      bannerMessage.value = `Đã xuất PDF thành công cho giáo án "${plan.title}"! Đang tải file về máy...`;
+      triggerBrowserDownload(downloadUrl, `giao-an-${plan.title}.pdf`);
+    } catch (err: unknown) {
+      const errorObject = err as {
+        data?: { message?: string };
+        message?: string;
+      };
+      bannerError.value =
+        errorObject?.data?.message ||
+        errorObject?.message ||
+        "Không thể xuất PDF. Vui lòng kiểm tra quyền truy cập hoặc quota.";
+    } finally {
+      exportingUuid.value = null;
     }
   }
 </script>
