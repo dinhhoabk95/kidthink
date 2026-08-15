@@ -1,7 +1,7 @@
 import { appError } from "@kidthink/auth";
 import { entitlements, getDb, users } from "@kidthink/db";
 import { PACKAGE_CATALOG } from "@kidthink/shared";
-import { and, desc, eq, gt, gte, inArray, isNull, or } from "drizzle-orm";
+import { and, desc, eq, gte, inArray, isNull, lt, or } from "drizzle-orm";
 import { defineEventHandler, getQuery, getRouterParam } from "h3";
 import {
   requireSuperAdminSession,
@@ -21,7 +21,10 @@ export default defineEventHandler(async (event) => {
       throw appError("PACKAGE_NOT_FOUND", "Gói không tồn tại trong catalog.");
     }
 
-    const query = getQuery(event);
+    const customEvent = event as unknown as {
+      context?: { query?: Record<string, unknown> };
+    };
+    const query = customEvent.context?.query ?? getQuery(event);
     const limit = Math.min(Math.max(Number(query.limit) || 50, 1), 100);
     const cursor = query.cursor ? Number(query.cursor) : 0;
 
@@ -44,7 +47,7 @@ export default defineEventHandler(async (event) => {
     ];
 
     if (cursor > 0) {
-      conditions.push(gt(entitlements.id, cursor));
+      conditions.push(lt(entitlements.id, cursor));
     }
 
     const rows = await db

@@ -17,6 +17,15 @@ function mockManagerEvent(
   params?: Record<string, string>,
   url = "/api/managers/packages"
 ) {
+  const parsedQuery: Record<string, string> = {};
+  if (url.includes("?")) {
+    const queryString = url.split("?")[1];
+    const searchParams = new URLSearchParams(queryString);
+    for (const [k, v] of searchParams.entries()) {
+      parsedQuery[k] = v;
+    }
+  }
+
   return {
     method: "GET",
     node: {
@@ -28,6 +37,7 @@ function mockManagerEvent(
     },
     context: {
       params: params || {},
+      query: parsedQuery,
       ...(managerRole
         ? {
             manager: {
@@ -186,5 +196,58 @@ describe("Task 4 — Package Catalog Admin & Subscribers Suite (BR-PCA-01..06, D
     expect((found as any).child_profiles).toBeUndefined();
     expect((found as any).children).toBeUndefined();
     expect(JSON.stringify(res)).not.toContain("Bé Siêu Bí Mật");
+  });
+
+  it("Scenario: cursor pagination on subscribers endpoint paginates sequentially in desc order", async () => {
+    const db = getOwnerDb();
+    const user1Email = `sub_p1_${Date.now()}@example.com`;
+    const user2Email = `sub_p2_${Date.now()}@example.com`;
+
+    const [u1] = await db
+      .insert(users)
+      .values({ email: user1Email, displayName: "User 1" })
+      .returning();
+    const [u2] = await db
+      .insert(users)
+      .values({ email: user2Email, displayName: "User 2" })
+      .returning();
+
+    await db.insert(entitlements).values([
+      {
+        userId: u1.id,
+        entitlementKey: "play_standard_games",
+        source: "package_order",
+        status: "active",
+        expiresAt: new Date(Date.now() + 30 * 86_400_000),
+      },
+      {
+        userId: u2.id,
+        entitlementKey: "play_standard_games",
+        source: "package_order",
+        status: "active",
+        expiresAt: new Date(Date.now() + 30 * 86_400_000),
+      },
+    ]);
+
+    const eventPage1 = mockManagerEvent(
+      "super_admin",
+      { code: "PKG-standard" },
+      "/api/managers/packages/PKG-standard/subscribers?limit=1"
+    );
+    const res1 = await subscribersHandler(eventPage1);
+
+    expect(res1.subscribers.length).toBe(1);
+    expect(res1.next_cursor).toBeDefined();
+
+    if (res1.next_cursor) {
+      const eventPage2 = mockManagerEvent(
+        "super_admin",
+        { code: "PKG-standard" },
+        `/api/managers/packages/PKG-standard/subscribers?limit=1&cursor=${res1.next_cursor}`
+      );
+      const res2 = await subscribersHandler(eventPage2);
+      expect(res2.subscribers.length).toBeGreaterThanOrEqual(1);
+      expect(res2.subscribers[0].user_id).not.toBe(res1.subscribers[0].user_id);
+    }
   });
 });
