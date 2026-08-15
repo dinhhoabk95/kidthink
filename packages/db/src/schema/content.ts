@@ -26,15 +26,15 @@ import { managers } from "./identity.ts";
 
 export const activityKindEnum = pgEnum("activity_kind", [
   "digital_game",
-  "worksheet",
-  "hands_on",
-  "story",
   "discussion",
+  "storytelling",
   "movement",
-  "song",
-  "art",
-  "reflection",
-  "custom",
+  "manipulative",
+  "worksheet",
+  "observation",
+  "mini_project",
+  "assessment",
+  "home_activity",
 ]);
 
 export const imageOwnerTypeEnum = pgEnum("image_owner_type", [
@@ -124,11 +124,23 @@ export const activities = pgTable(
     kind: activityKindEnum("kind").notNull(),
     titleVi: varchar("title_vi", { length: 200 }).notNull(),
     instructionVi: text("instruction_vi"),
+    materialsVi: text("materials_vi"),
     estimatedMinutes: integer("estimated_minutes"),
     refType: varchar("ref_type", { length: 50 }),
     refId: bigint("ref_id", { mode: "number" }),
     accessTier: accessTierEnum("access_tier").notNull(),
     status: contentLifecycleStatusEnum("status").notNull().default("draft"),
+    origin: contentOriginEnum("origin").notNull().default("human"),
+    authoredIn: authoredInEnum("authored_in").notNull().default("studio"),
+    seedBatchId: bigint("seed_batch_id", { mode: "number" }),
+    createdByManagerId: bigint("created_by_manager_id", {
+      mode: "number",
+    }).references(() => managers.id),
+    reviewedByManagerId: bigint("reviewed_by_manager_id", {
+      mode: "number",
+    }).references(() => managers.id),
+    publishedAt: timestamp("published_at", { withTimezone: true }),
+    archivedAt: timestamp("archived_at", { withTimezone: true }),
     createdAt: timestamp("created_at", { withTimezone: true })
       .defaultNow()
       .notNull(),
@@ -144,7 +156,12 @@ export const activities = pgTable(
     uniqueIndex("idx_activities_published_code")
       .on(table.code)
       .where(sql`${table.status} = 'published'`),
+    index("idx_activities_entity_id").on(table.entityId),
     check("check_activities_code_format", sql`${table.code} ~ '^ACT-\\d{4}$'`),
+    check(
+      "check_activities_estimated_minutes",
+      sql`${table.estimatedMinutes} >= 2 AND ${table.estimatedMinutes} <= 20`
+    ),
   ]
 );
 

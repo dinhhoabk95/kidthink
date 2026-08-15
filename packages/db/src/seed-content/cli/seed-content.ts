@@ -1,5 +1,5 @@
 import { getOwnerDb } from "../../index.js";
-import { ALL_SEED_LEVELS } from "../index.js";
+import { ALL_SEED_CONTENT } from "../index.js";
 import { executeSeedBatch } from "../service.js";
 
 export async function runSeedContent(
@@ -7,7 +7,7 @@ export async function runSeedContent(
   batchCode = `SEED-${Date.now()}`
 ) {
   console.log(
-    `🌱 [seed:content] Executing seed batch ${batchCode} with ${ALL_SEED_LEVELS.length} levels (dryRun: ${dryRun})...`
+    `🌱 [seed:content] Executing seed batch ${batchCode} with ${ALL_SEED_CONTENT.length} items (dryRun: ${dryRun})...`
   );
 
   const db = getOwnerDb();
@@ -17,7 +17,7 @@ export async function runSeedContent(
       batchCode,
       gitSha: process.env.GIT_SHA || "local-dev",
       prUrl: process.env.PR_URL || "local",
-      seeds: ALL_SEED_LEVELS,
+      seeds: ALL_SEED_CONTENT,
     },
     dryRun
   );

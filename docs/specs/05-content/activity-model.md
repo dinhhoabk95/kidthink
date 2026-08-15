@@ -2,7 +2,7 @@
 spec: ACTIVITY-MODEL
 title: Mô hình hoạt động — ràng buộc biên tập
 area: content
-status: approved
+status: implemented
 mvp: true
 phase: P3
 reviewed: 2026-08-08

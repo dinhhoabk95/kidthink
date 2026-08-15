@@ -2,7 +2,7 @@
 spec: LESSON-MODEL
 title: Mô hình bài học — ràng buộc biên tập
 area: content
-status: approved
+status: implemented
 mvp: true
 phase: P3
 reviewed: 2026-08-08

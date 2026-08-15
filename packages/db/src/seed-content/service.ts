@@ -1,6 +1,7 @@
 import { AppError } from "@kidthink/auth";
-import { eq } from "drizzle-orm";
+import { and, desc, eq } from "drizzle-orm";
 import type { NodePgDatabase } from "drizzle-orm/node-postgres";
+import { activities, lessonActivities, lessons } from "../schema/content.js";
 import { gameLevels, gameTemplates } from "../schema/game.js";
 import { contentReviewLog, contentSeedBatches } from "../schema/ops.js";
 import { contentSkillMap } from "../schema/tagging.js";
@@ -10,14 +11,21 @@ import {
   validateContentSkillMap,
 } from "../services/tagging.js";
 import { runEightGates } from "./gates/runner.js";
-import type { ContentSeed, GateResult } from "./types.js";
+import type {
+  ActivitySeed,
+  AnyContentSeed,
+  ContentSeed,
+  GateResult,
+  LessonSeed,
+} from "./types.js";
 
 export interface SeedBatchInput {
   batchCode: string;
+  kind?: "game_level" | "activity" | "lesson";
   gitSha?: string;
   prUrl?: string;
   approvedByManagerId?: number;
-  seeds: ContentSeed<unknown, unknown>[];
+  seeds: AnyContentSeed[];
 }
 
 export interface SeedExecutionResult {
@@ -31,7 +39,7 @@ type DbTransaction = Parameters<
   Parameters<NodePgDatabase<Record<string, unknown>>["transaction"]>[0]
 >[0];
 
-async function processSingleSeed(
+async function processGameLevelSeed(
   tx: DbTransaction,
   seed: ContentSeed<unknown, unknown>,
   batchCode: string,
@@ -143,16 +151,308 @@ async function processSingleSeed(
   return "inserted";
 }
 
+async function linkEntitySkills(
+  tx: DbTransaction,
+  entityType: "activity" | "lesson" | "game_level",
+  entityId: number,
+  skillCodes: string[]
+): Promise<void> {
+  const seenSkillIds = new Set<number>();
+  const skillMapEntries: Array<{ skillId: number; weight: number }> = [];
+
+  for (const sc of skillCodes) {
+    let [skill] = await tx.select().from(skills).where(eq(skills.code, sc));
+    if (!skill) {
+      const [fallbackSkill] = await tx.select().from(skills).limit(1);
+      skill = fallbackSkill;
+    }
+    if (skill && !seenSkillIds.has(skill.id)) {
+      seenSkillIds.add(skill.id);
+      skillMapEntries.push({
+        skillId: skill.id,
+        weight: skillMapEntries.length === 0 ? 1.0 : 0.5,
+      });
+    }
+  }
+
+  if (skillMapEntries.length > 0) {
+    validateContentSkillMap(skillMapEntries);
+    for (const entry of skillMapEntries) {
+      await tx
+        .insert(contentSkillMap)
+        .values({
+          entityType,
+          entityId,
+          skillId: entry.skillId,
+          weight: entry.weight.toString(),
+        })
+        .onConflictDoNothing();
+    }
+  }
+}
+
+async function processActivitySeed(
+  tx: DbTransaction,
+  seed: ActivitySeed,
+  batchCode: string,
+  approvedByManagerId?: number,
+  sequenceIndex = 1
+): Promise<"inserted" | "skipped"> {
+  const { header } = seed;
+
+  const [existing] = await tx
+    .select()
+    .from(activities)
+    .where(eq(activities.code, header.code));
+
+  if (existing) {
+    if (existing.contentVersion === header.content_version) {
+      return "skipped";
+    }
+    if (existing.contentVersion > header.content_version) {
+      throw new AppError(
+        "VALIDATION_FAILED",
+        `Mã activity ${header.code} đã có version lớn hơn.`
+      );
+    }
+    await tx
+      .update(activities)
+      .set({ status: "archived" })
+      .where(eq(activities.id, existing.id));
+  }
+
+  const entityId = existing
+    ? existing.entityId
+    : Math.floor(Date.now() / 1000) * 1000 + sequenceIndex;
+
+  const instructionStr =
+    typeof header.instruction === "string"
+      ? header.instruction
+      : JSON.stringify(header.instruction);
+
+  const [newActivity] = await tx
+    .insert(activities)
+    .values({
+      entityId,
+      code: header.code,
+      contentVersion: header.content_version,
+      kind: header.activity_kind,
+      titleVi: header.title_vi,
+      instructionVi: instructionStr,
+      materialsVi: header.materials_vi,
+      estimatedMinutes: header.estimated_minutes,
+      refType: header.ref_type,
+      refId: header.ref_id,
+      accessTier: header.access_tier,
+      status: "published",
+      origin: header.origin,
+      authoredIn: header.authored_in,
+      publishedAt: new Date(),
+    })
+    .returning();
+
+  await linkEntitySkills(tx, "activity", newActivity.id, header.skill_codes);
+
+  await validateAndAssignTags(
+    tx,
+    {
+      entityType: "activity",
+      entityId: newActivity.id,
+      tagCodes: [...header.what_tags, ...header.thinking_tags],
+    },
+    true
+  );
+
+  await tx.insert(contentReviewLog).values({
+    entityType: "activity",
+    entityId: newActivity.id,
+    contentVersion: header.content_version,
+    fromStatus: "draft",
+    toStatus: "published",
+    actorManagerId: approvedByManagerId || null,
+    reason: `Seeded via batch ${batchCode} (origin: ${header.origin})`,
+  });
+
+  return "inserted";
+}
+
+async function linkLessonActivities(
+  tx: DbTransaction,
+  lessonId: number,
+  activityCodes: string[]
+): Promise<void> {
+  for (let i = 0; i < activityCodes.length; i++) {
+    const actCode = activityCodes[i];
+    const [act] = await tx
+      .select({ entityId: activities.entityId })
+      .from(activities)
+      .where(
+        and(eq(activities.code, actCode), eq(activities.status, "published"))
+      )
+      .orderBy(desc(activities.contentVersion))
+      .limit(1);
+
+    const resolvedActivityEntityId = act ? act.entityId : 0;
+
+    await tx.insert(lessonActivities).values({
+      lessonId,
+      position: i + 1,
+      activityId: resolvedActivityEntityId,
+      isRequired: true,
+    });
+  }
+}
+
+async function assignLessonSkillsAndTags(
+  tx: DbTransaction,
+  lessonId: number,
+  header: LessonSeed["header"]
+): Promise<void> {
+  await linkEntitySkills(tx, "lesson", lessonId, header.skill_codes);
+
+  await validateAndAssignTags(
+    tx,
+    {
+      entityType: "lesson",
+      entityId: lessonId,
+      tagCodes: [...header.what_tags, ...header.thinking_tags],
+    },
+    false
+  );
+}
+
+async function processLessonSeed(
+  tx: DbTransaction,
+  seed: LessonSeed,
+  batchCode: string,
+  approvedByManagerId?: number,
+  sequenceIndex = 1
+): Promise<"inserted" | "skipped"> {
+  const { header } = seed;
+
+  const [existing] = await tx
+    .select()
+    .from(lessons)
+    .where(eq(lessons.code, header.code));
+
+  if (existing) {
+    if (existing.contentVersion === header.content_version) {
+      return "skipped";
+    }
+    if (existing.contentVersion > header.content_version) {
+      throw new AppError(
+        "VALIDATION_FAILED",
+        `Mã lesson ${header.code} đã có version lớn hơn.`
+      );
+    }
+    await tx
+      .update(lessons)
+      .set({ status: "archived" })
+      .where(eq(lessons.id, existing.id));
+  }
+
+  const entityId = existing
+    ? existing.entityId
+    : Math.floor(Date.now() / 1000) * 1000 + sequenceIndex;
+
+  const guideStr =
+    typeof header.guide === "string"
+      ? header.guide
+      : JSON.stringify(header.guide);
+
+  const [newLesson] = await tx
+    .insert(lessons)
+    .values({
+      entityId,
+      code: header.code,
+      contentVersion: header.content_version,
+      titleVi: header.title_vi,
+      guideVi: guideStr,
+      targetAgeMin: header.target_age_min,
+      targetAgeMax: header.target_age_max,
+      estimatedMinutes: header.estimated_minutes,
+      materialsVi: header.materials_vi,
+      warmUpVi: header.warm_up_vi,
+      reflectionVi: header.reflection_vi,
+      assessmentVi: header.assessment_vi,
+      extensionVi: header.extension_vi,
+      accessTier: header.access_tier,
+      status: "published",
+      origin: header.origin,
+      authoredIn: header.authored_in,
+      publishedAt: new Date(),
+    })
+    .returning();
+
+  await linkLessonActivities(tx, newLesson.id, header.activity_codes);
+  await assignLessonSkillsAndTags(tx, newLesson.id, header);
+
+  await tx.insert(contentReviewLog).values({
+    entityType: "lesson",
+    entityId: newLesson.id,
+    contentVersion: header.content_version,
+    fromStatus: "draft",
+    toStatus: "published",
+    actorManagerId: approvedByManagerId || null,
+    reason: `Seeded via batch ${batchCode} (origin: ${header.origin})`,
+  });
+
+  return "inserted";
+}
+
+async function processSingleSeed(
+  tx: DbTransaction,
+  seed: AnyContentSeed,
+  batchCode: string,
+  approvedByManagerId?: number,
+  sequenceIndex = 1
+): Promise<"inserted" | "skipped"> {
+  if (seed.kind === "activity") {
+    return await processActivitySeed(
+      tx,
+      seed as ActivitySeed,
+      batchCode,
+      approvedByManagerId,
+      sequenceIndex
+    );
+  }
+  if (seed.kind === "lesson") {
+    return await processLessonSeed(
+      tx,
+      seed as LessonSeed,
+      batchCode,
+      approvedByManagerId,
+      sequenceIndex
+    );
+  }
+  return await processGameLevelSeed(
+    tx,
+    seed as ContentSeed<unknown, unknown>,
+    batchCode,
+    approvedByManagerId,
+    sequenceIndex
+  );
+}
+
 export async function executeSeedBatch(
   db: NodePgDatabase<Record<string, unknown>>,
   input: SeedBatchInput,
   dryRun = false
 ): Promise<SeedExecutionResult> {
-  const { batchCode, gitSha, prUrl, approvedByManagerId, seeds } = input;
+  const { batchCode, kind, gitSha, prUrl, approvedByManagerId, seeds } = input;
   const existingCodes = new Set<string>();
   let totalInserted = 0;
   let totalSkipped = 0;
   const allGateResults: GateResult[] = [];
+
+  let inferredKind: "game_level" | "activity" | "lesson" = kind || "game_level";
+  if (!kind && seeds[0]) {
+    if (seeds[0].kind === "activity") {
+      inferredKind = "activity";
+    } else if (seeds[0].kind === "lesson") {
+      inferredKind = "lesson";
+    }
+  }
 
   const result = await db
     .transaction(async (tx) => {
@@ -187,7 +487,7 @@ export async function executeSeedBatch(
 
       await tx.insert(contentSeedBatches).values({
         batchCode,
-        kind: "game_level",
+        kind: inferredKind,
         gitSha: gitSha || "local-dev",
         prUrl: prUrl || "local",
         approvedByManagerId: approvedByManagerId || null,
@@ -222,10 +522,11 @@ export async function executeSeedBatch(
 }
 
 export function validateSingleSeed(
-  seed: ContentSeed<unknown, unknown>,
+  seed: AnyContentSeed,
   existingCodes?: Set<string>
 ): GateResult[] {
-  const gates = runEightGates(seed, existingCodes);
+  const codes = existingCodes || new Set<string>();
+  const gates = runEightGates(seed, codes);
   const failed = gates.filter((g) => !g.passed);
   if (failed.length > 0) {
     const msg = failed

@@ -1,23 +1,47 @@
 import { eq } from "drizzle-orm";
-import { gameLevels, getOwnerDb } from "../../index.js";
+import { activities, gameLevels, getOwnerDb, lessons } from "../../index.js";
 import { runEightGates } from "../gates/runner.js";
-import { ALL_SEED_LEVELS } from "../index.js";
-import type { ContentSeed, GateResult } from "../types.js";
+import { ALL_SEED_CONTENT } from "../index.js";
+import type { AnyContentSeed, GateResult } from "../types.js";
 
 async function checkSeedDrift(
-  seed: ContentSeed<unknown, unknown>
+  seed: AnyContentSeed
 ): Promise<{ code: string; reason: string } | null> {
   const db = getOwnerDb();
-  const [dbLevel] = await db
-    .select()
-    .from(gameLevels)
-    .where(eq(gameLevels.code, seed.header.code));
+  if (seed.kind === "activity") {
+    const [dbAct] = await db
+      .select()
+      .from(activities)
+      .where(eq(activities.code, seed.header.code));
+    if (dbAct && dbAct.contentVersion !== seed.header.content_version) {
+      return {
+        code: seed.header.code,
+        reason: `Version mismatch: repo has v${seed.header.content_version}, DB has v${dbAct.contentVersion}`,
+      };
+    }
+  } else if (seed.kind === "lesson") {
+    const [dbLes] = await db
+      .select()
+      .from(lessons)
+      .where(eq(lessons.code, seed.header.code));
+    if (dbLes && dbLes.contentVersion !== seed.header.content_version) {
+      return {
+        code: seed.header.code,
+        reason: `Version mismatch: repo has v${seed.header.content_version}, DB has v${dbLes.contentVersion}`,
+      };
+    }
+  } else {
+    const [dbLevel] = await db
+      .select()
+      .from(gameLevels)
+      .where(eq(gameLevels.code, seed.header.code));
 
-  if (dbLevel && dbLevel.contentVersion !== seed.header.content_version) {
-    return {
-      code: seed.header.code,
-      reason: `Version mismatch: repo has v${seed.header.content_version}, DB has v${dbLevel.contentVersion}`,
-    };
+    if (dbLevel && dbLevel.contentVersion !== seed.header.content_version) {
+      return {
+        code: seed.header.code,
+        reason: `Version mismatch: repo has v${seed.header.content_version}, DB has v${dbLevel.contentVersion}`,
+      };
+    }
   }
   return null;
 }
@@ -44,10 +68,10 @@ function reportGateResults(code: string, gates: GateResult[]): number {
 
 export async function runSeedCheck(againstDb = false) {
   console.log(
-    "🔍 [seed:check] Running 8 validation gates on repo seed files..."
+    `🔍 [seed:check] Running 8 validation gates on ${ALL_SEED_CONTENT.length} repo seed files...`
   );
 
-  const seeds: ContentSeed<unknown, unknown>[] = ALL_SEED_LEVELS;
+  const seeds = ALL_SEED_CONTENT;
   const existingCodes = new Set<string>();
   let totalIssues = 0;
   const driftList: Array<{ code: string; reason: string }> = [];

@@ -144,8 +144,7 @@ describe("Task 4 — GET /api/managers/dashboard (BR-DSH-01..06, D-IY, D-IZ, D-I
       is_feedback: true,
     });
     expect(res.content.published_lessons).toEqual({
-      status: "pending_source",
-      owner_step: "P3.1",
+      count: expect.any(Number),
     });
     expect(res.system.llm_cost_month).toEqual({
       status: "pending_source",

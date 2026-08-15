@@ -260,6 +260,13 @@
       "when": 1786760000000,
       "tag": "0036_mfa_recovery_requests",
       "breakpoints": true
+    },
+    {
+      "idx": 37,
+      "version": "7",
+      "when": 1786770000000,
+      "tag": "0037_activity_schema_v2",
+      "breakpoints": true
     }
   ]
 }

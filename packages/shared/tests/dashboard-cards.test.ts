@@ -24,7 +24,7 @@ describe("Task 3 — Dashboard Cards Registry & Invariants (D-IX, BR-DSH-02, BR-
     expect(groupCounts.system).toBe(2);
   });
 
-  it("Scenario: BR-DSH-02 — 16/16 thẻ có href; 5 thẻ pending_source (across 5 owner steps)", () => {
+  it("Scenario: BR-DSH-02 — 16/16 thẻ có href; 4 thẻ pending_source (across 4 remaining owner steps)", () => {
     const cardsWithoutHref = DASHBOARD_CARDS.filter(
       (card) => !card.href || card.href.trim() === ""
     );
@@ -33,10 +33,8 @@ describe("Task 3 — Dashboard Cards Registry & Invariants (D-IX, BR-DSH-02, BR-
     const pendingCards = DASHBOARD_CARDS.filter((card) => card.pending_source);
     const pendingSteps = new Set(pendingCards.map((c) => c.pending_source));
 
-    // 5 owner steps: P2.3, P2.8, P3.1, P3.3, P4
-    expect(pendingSteps).toEqual(
-      new Set(["P2.3", "P2.8", "P3.1", "P3.3", "P4"])
-    );
+    // 4 remaining owner steps: P2.3, P2.8, P3.3, P4 (P3.1 published_lessons implemented)
+    expect(pendingSteps).toEqual(new Set(["P2.3", "P2.8", "P3.3", "P4"]));
 
     console.log(
       `16/16 thẻ có href; ${pendingSteps.size} nhóm pending_source (${pendingCards.length} thẻ pending_source: ${pendingCards.map((c) => c.id).join(", ")})`

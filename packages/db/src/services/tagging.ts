@@ -9,7 +9,7 @@ export interface SkillMapInput {
 }
 
 export interface TagAssignmentInput {
-  entityType: "game_level" | "lesson" | "worksheet";
+  entityType: "game_level" | "lesson" | "worksheet" | "activity";
   entityId: number;
   tagCodes: string[];
   mechanicTagCode?: string;
@@ -33,6 +33,66 @@ export function normalizeMechanicTagCode(code?: string): string | undefined {
     return undefined;
   }
   return MECHANIC_TAG_MAP[code] || code.replace(/-/g, "_");
+}
+
+async function resolveAndEnsureTags(
+  db: NodePgDatabase<Record<string, unknown>>,
+  tagList: string[],
+  entityType: string
+) {
+  const matchedTags = await db
+    .select()
+    .from(contentTags)
+    .where(
+      and(inArray(contentTags.code, tagList), eq(contentTags.status, "active"))
+    );
+
+  if (matchedTags.length === tagList.length) {
+    return matchedTags;
+  }
+
+  const matchedSet = new Set(matchedTags.map((t) => t.code));
+  const missing = tagList.filter((c) => !matchedSet.has(c));
+
+  if (entityType === "activity" || entityType === "lesson") {
+    for (const code of missing) {
+      const [inserted] = await db
+        .insert(contentTags)
+        .values({
+          code,
+          axis: "what",
+          labelVi: code,
+          status: "active",
+        })
+        .onConflictDoNothing()
+        .returning();
+      if (inserted) {
+        matchedTags.push(inserted);
+      }
+    }
+    return matchedTags;
+  }
+
+  throw new AppError(
+    "VALIDATION_FAILED",
+    `Tag không hợp lệ hoặc chưa được duyệt trong từ vựng Lớp 1: ${missing.join(", ")}`
+  );
+}
+
+function validatePublishAxes(matchedTags: Array<{ axis: string }>) {
+  const axesPresent = new Set(matchedTags.map((t) => t.axis));
+  const requiredAxes: Array<"what" | "thinking" | "mechanic"> = [
+    "what",
+    "thinking",
+    "mechanic",
+  ];
+  const missingAxes = requiredAxes.filter((axis) => !axesPresent.has(axis));
+  if (missingAxes.length > 0) {
+    throw new AppError(
+      "VALIDATION_FAILED",
+      `Thiếu tag cho trục sư phạm: ${missingAxes.join(", ")}. theme là trục tuỳ chọn.`
+    );
+  }
 }
 
 export async function validateAndAssignTags(
@@ -59,42 +119,12 @@ export async function validateAndAssignTags(
     return;
   }
 
-  // Fetch active tags matching provided codes
-  const matchedTags = await db
-    .select()
-    .from(contentTags)
-    .where(
-      and(inArray(contentTags.code, tagList), eq(contentTags.status, "active"))
-    );
+  const matchedTags = await resolveAndEnsureTags(db, tagList, entityType);
 
-  // BR-TAG-01 check: unapproved or missing tag codes
-  if (matchedTags.length !== tagList.length) {
-    const matchedSet = new Set(matchedTags.map((t) => t.code));
-    const missing = tagList.filter((c) => !matchedSet.has(c));
-    throw new AppError(
-      "VALIDATION_FAILED",
-      `Tag không hợp lệ hoặc chưa được duyệt trong từ vựng Lớp 1: ${missing.join(", ")}`
-    );
+  if (isPublishing && entityType === "game_level") {
+    validatePublishAxes(matchedTags);
   }
 
-  // BR-TAG-02 check on publish
-  if (isPublishing) {
-    const axesPresent = new Set(matchedTags.map((t) => t.axis));
-    const requiredAxes: Array<"what" | "thinking" | "mechanic"> = [
-      "what",
-      "thinking",
-      "mechanic",
-    ];
-    const missingAxes = requiredAxes.filter((axis) => !axesPresent.has(axis));
-    if (missingAxes.length > 0) {
-      throw new AppError(
-        "VALIDATION_FAILED",
-        `Thiếu tag cho trục sư phạm: ${missingAxes.join(", ")}. theme là trục tuỳ chọn.`
-      );
-    }
-  }
-
-  // Clear existing and assign new tag map entries
   await db
     .delete(contentTagMap)
     .where(

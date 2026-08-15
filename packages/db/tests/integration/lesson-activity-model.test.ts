@@ -1,130 +1,377 @@
+import {
+  calculateActivityAgeBand,
+  validateActivityModel,
+  validateLessonModel,
+} from "@kidthink/shared";
+import { eq } from "drizzle-orm";
 import { describe, expect, it } from "vitest";
+import {
+  activities,
+  getOwnerDb,
+  lessons,
+  runEightGates,
+} from "../../src/index.js";
+import { ALL_SEED_ACTIVITIES } from "../../src/seed-content/activities/index.js";
+import { ALL_SEED_LESSONS } from "../../src/seed-content/lessons/index.js";
+import { executeSeedBatch } from "../../src/seed-content/service.js";
+import { seedContentTags } from "../../src/seed-master/content-tags.js";
+import { seedTaxonomyMasterData } from "../../src/seed-master/taxonomy/index.js";
 
-describe("P3.1 Lesson & Activity Model Invariants (BR-LSM, BR-ACM)", () => {
-  describe("Lesson Model Invariants (BR-LSM-01..08)", () => {
-    it("Scenario: BR-LSM-01 — lesson model requires 5-part lesson guide structure", () => {
-      const guideParts = [
-        "outcome_vi",
-        "preparation_vi",
-        "opening_vi",
-        "if_child_succeeds_vi",
-        "if_child_needs_help_vi",
-      ];
-      expect(guideParts.length).toBe(5);
+describe("P3.1 Lesson & Activity Model & Seeder Tests", () => {
+  describe("BR-ACM-01 to BR-ACM-08: Activity Model Rules", () => {
+    it("BR-ACM-01: Validates activity code pattern ACT-xxxx", () => {
+      const invalidCodeRes = validateActivityModel({
+        code: "INVALID-CODE",
+        activity_kind: "manipulative",
+        title_vi: "Đếm hạt đậu",
+        instruction: {
+          preparation: "Chuẩn bị cốc",
+          steps: [{ instruction: "Đặt cốc", say_to_child: '"Con hãy đếm"' }],
+          easier: "Làm ít hơn",
+          harder: "Làm nhiều hơn",
+        },
+        materials_vi: "Cốc nhựa, hạt đậu",
+        estimated_minutes: 10,
+        skills: [{ code: "C1.CNT.01", age_min: 3, age_max: 4 }],
+      });
+      expect(invalidCodeRes.valid).toBe(false);
+      expect(invalidCodeRes.errors).toContain(
+        "BR-ACM-01: Mã activity phải có định dạng ACT-xxxx (4 chữ số)."
+      );
     });
 
-    it("Scenario: BR-LSM-02 — lesson duration target is 15-30 minutes, with warnings for 5-14 and 31-45, error > 45", () => {
-      const targetMin = 15;
-      const targetMax = 30;
-      const isTarget = (mins: number) => mins >= targetMin && mins <= targetMax;
-      expect(isTarget(20)).toBe(true);
-      expect(isTarget(10)).toBe(false);
+    it("BR-ACM-02: Validates 10 approved activity kinds", () => {
+      const invalidKindRes = validateActivityModel({
+        code: "ACT-0001",
+        activity_kind: "unapproved_kind" as any,
+        title_vi: "Đếm hạt đậu",
+        instruction: {
+          preparation: "Chuẩn bị cốc",
+          steps: [{ instruction: "Đặt cốc", say_to_child: '"Con hãy đếm"' }],
+          easier: "Làm ít hơn",
+          harder: "Làm nhiều hơn",
+        },
+        materials_vi: "Cốc nhựa, hạt đậu",
+        estimated_minutes: 10,
+        skills: [{ code: "C1.CNT.01", age_min: 3, age_max: 4 }],
+      });
+      expect(invalidKindRes.valid).toBe(false);
+      expect(invalidKindRes.errors.some((e) => e.includes("BR-ACM-02"))).toBe(
+        true
+      );
     });
 
-    it("Scenario: BR-LSM-03 — requires at least 1 off-screen physical activity in every lesson", () => {
-      const activities = [{ kind: "movement", is_offscreen: true }];
-      const hasOffscreen = activities.some((a) => a.is_offscreen);
-      expect(hasOffscreen).toBe(true);
+    it("BR-ACM-03: Requires 4-part instruction and direct spoken quotes in steps", () => {
+      const missingPartsRes = validateActivityModel({
+        code: "ACT-0001",
+        activity_kind: "manipulative",
+        title_vi: "Đếm hạt đậu",
+        instruction: {
+          preparation: "",
+          steps: [
+            { instruction: "Đặt cốc mà không có lời nói", say_to_child: "" },
+          ],
+          easier: "",
+          harder: "",
+        },
+        materials_vi: "Cốc nhựa, hạt đậu",
+        estimated_minutes: 10,
+        skills: [{ code: "C1.CNT.01", age_min: 3, age_max: 4 }],
+      });
+      expect(missingPartsRes.valid).toBe(false);
+      expect(missingPartsRes.errors.some((e) => e.includes("BR-ACM-03"))).toBe(
+        true
+      );
     });
 
-    it("Scenario: BR-LSM-04 — lesson model links to target skills and specific learning objectives", () => {
-      const lesson = { skill_ids: [1, 2], learning_objective_ids: [10, 11] };
-      expect(lesson.skill_ids.length).toBeGreaterThan(0);
-      expect(lesson.learning_objective_ids.length).toBeGreaterThan(0);
+    it("BR-ACM-04: Enforces estimated_minutes in [2, 20]", () => {
+      const tooShort = validateActivityModel({
+        code: "ACT-0001",
+        activity_kind: "manipulative",
+        title_vi: "Đếm hạt đậu",
+        instruction: {
+          preparation: "Chuẩn bị cốc",
+          steps: [{ instruction: "Đặt cốc", say_to_child: '"Con đếm"' }],
+          easier: "Dễ hơn",
+          harder: "Khó hơn",
+        },
+        materials_vi: "Cốc nhựa",
+        estimated_minutes: 1,
+        skills: [{ code: "C1.CNT.01", age_min: 3, age_max: 4 }],
+      });
+      expect(tooShort.valid).toBe(false);
+      expect(tooShort.errors.some((e) => e.includes("BR-ACM-04"))).toBe(true);
+
+      const tooLong = validateActivityModel({
+        code: "ACT-0001",
+        activity_kind: "manipulative",
+        title_vi: "Đếm hạt đậu",
+        instruction: {
+          preparation: "Chuẩn bị cốc",
+          steps: [{ instruction: "Đặt cốc", say_to_child: '"Con đếm"' }],
+          easier: "Dễ hơn",
+          harder: "Khó hơn",
+        },
+        materials_vi: "Cốc nhựa",
+        estimated_minutes: 25,
+        skills: [{ code: "C1.CNT.01", age_min: 3, age_max: 4 }],
+      });
+      expect(tooLong.valid).toBe(false);
+      expect(tooLong.errors.some((e) => e.includes("BR-ACM-04"))).toBe(true);
     });
 
-    it("Scenario: BR-LSM-05 — assessment section specifies observable child behavior without abstract terms", () => {
-      const assessmentText = "Bé tự xếp đúng 5 khối gỗ theo thứ tự tăng dần.";
-      expect(assessmentText).toContain("xếp đúng");
+    it("BR-ACM-05 & D-LC: Calculates age band as skill intersection", () => {
+      const ageRes = calculateActivityAgeBand([
+        { age_min: 3, age_max: 5 },
+        { age_min: 4, age_max: 6 },
+      ]);
+      expect(ageRes).toEqual({
+        target_age_min: 4,
+        target_age_max: 5,
+        valid: true,
+      });
+
+      const disjointRes = calculateActivityAgeBand([
+        { age_min: 3, age_max: 4 },
+        { age_min: 5, age_max: 6 },
+      ]);
+      expect(disjointRes.valid).toBe(false);
     });
 
-    it("Scenario: BR-LSM-06 — lesson versioning preserves published version immutability and lineage", () => {
-      const v1 = { entity_id: "LES-001", version: 1, status: "published" };
-      const v2 = { entity_id: "LES-001", version: 2, status: "draft" };
-      expect(v1.entity_id).toBe(v2.entity_id);
-      expect(v1.status).toBe("published");
-    });
+    it("BR-ACM-07: Blacklists hazardous materials and items < 3cm for age 3-4", () => {
+      const sharpHazard = validateActivityModel({
+        code: "ACT-0001",
+        activity_kind: "manipulative",
+        title_vi: "Cắt giấy",
+        instruction: {
+          preparation: "Dùng dao nhọn và kéo sắc",
+          steps: [{ instruction: "Cắt", say_to_child: '"Con làm"' }],
+          easier: "Dễ",
+          harder: "Khó",
+        },
+        materials_vi: "dao nhọn, kéo sắc",
+        estimated_minutes: 10,
+        skills: [{ code: "C1.CNT.01", age_min: 4, age_max: 5 }],
+      });
+      expect(sharpHazard.valid).toBe(false);
+      expect(sharpHazard.errors.some((e) => e.includes("BR-ACM-07"))).toBe(
+        true
+      );
 
-    it("Scenario: BR-LSM-07 — lesson requires explicit household material preparation steps", () => {
-      const preparationSteps = ["5 cốc nhựa", "10 hạt đậu"];
-      expect(preparationSteps.length).toBeGreaterThan(0);
-    });
-
-    it("Scenario: BR-LSM-08 — lesson model validates pedagogical sequence and progression curve", () => {
-      const sequence = ["opening", "core_activity", "closing"];
-      expect(sequence[0]).toBe("opening");
-      expect(sequence[2]).toBe("closing");
+      const chokeHazardForAge3 = validateActivityModel({
+        code: "ACT-0001",
+        activity_kind: "manipulative",
+        title_vi: "Xâu hạt nhỏ",
+        instruction: {
+          preparation: "Hạt cườm nhỏ",
+          steps: [{ instruction: "Xâu", say_to_child: '"Con xâu"' }],
+          easier: "Dễ",
+          harder: "Khó",
+        },
+        materials_vi: "Hạt cườm nhỏ đường kính < 3cm",
+        estimated_minutes: 10,
+        skills: [{ code: "C1.CNT.01", age_min: 3, age_max: 4 }],
+      });
+      expect(chokeHazardForAge3.valid).toBe(false);
+      expect(
+        chokeHazardForAge3.errors.some((e) => e.includes("BR-ACM-07"))
+      ).toBe(true);
     });
   });
 
-  describe("Activity Model Invariants (BR-ACM-01..08)", () => {
-    it("Scenario: BR-ACM-01 — activity model supports exactly 10 distinct activity kinds", () => {
-      const activityKinds = [
-        "digital_game",
-        "discussion",
-        "storytelling",
-        "movement",
-        "manipulative",
-        "worksheet",
-        "observation",
-        "mini_project",
-        "assessment",
-        "home_activity",
-      ];
-      expect(activityKinds.length).toBe(10);
+  describe("BR-LSM-01 to BR-LSM-09: Lesson Model Rules", () => {
+    it("BR-LSM-01: Validates lesson code pattern LES-xxxx", () => {
+      const invalidCodeRes = validateLessonModel({
+        code: "LESSON-01",
+        title_vi: "Bài học đếm",
+        guide: {
+          outcome: "Bé đếm đúng",
+          preparation: ["Cốc"],
+          opening: "Cùng chơi",
+          if_child_succeeds: "Khen",
+          if_child_needs_help: "Giúp",
+        },
+        estimated_minutes: 20,
+        assessment_vi: "Bé đếm đúng",
+        materials_vi: "Cốc",
+        activity_kinds: ["manipulative"],
+      });
+      expect(invalidCodeRes.valid).toBe(false);
+      expect(invalidCodeRes.errors).toContain(
+        "BR-LSM-01: Mã lesson phải có định dạng LES-xxxx (4 chữ số)."
+      );
     });
 
-    it("Scenario: BR-ACM-02 — activity duration is strictly bounded between 2 and 20 minutes", () => {
-      const minDuration = 2;
-      const maxDuration = 20;
-      const duration = 10;
-      const isValid = duration >= minDuration && duration <= maxDuration;
-      expect(isValid).toBe(true);
+    it("BR-LSM-02 & BR-LSM-03: Requires 5-part guide and estimated_minutes in [5, 45]", () => {
+      const missingGuidePart = validateLessonModel({
+        code: "LES-0001",
+        title_vi: "Bài học đếm",
+        guide: {
+          outcome: "Bé đếm đúng",
+          preparation: [],
+          opening: "",
+          if_child_succeeds: "Khen",
+          if_child_needs_help: "Giúp",
+        },
+        estimated_minutes: 20,
+        assessment_vi: "Bé đếm đúng",
+        materials_vi: "Cốc",
+        activity_kinds: ["manipulative"],
+      });
+      expect(missingGuidePart.valid).toBe(false);
+      expect(missingGuidePart.errors.some((e) => e.includes("BR-LSM-02"))).toBe(
+        true
+      );
+
+      const invalidDuration = validateLessonModel({
+        code: "LES-0001",
+        title_vi: "Bài học đếm",
+        guide: {
+          outcome: "Bé đếm đúng",
+          preparation: ["Cốc"],
+          opening: "Mở đầu",
+          if_child_succeeds: "Khen",
+          if_child_needs_help: "Giúp",
+        },
+        estimated_minutes: 50,
+        assessment_vi: "Bé đếm đúng",
+        materials_vi: "Cốc",
+        activity_kinds: ["manipulative"],
+      });
+      expect(invalidDuration.valid).toBe(false);
+      expect(invalidDuration.errors.some((e) => e.includes("BR-LSM-03"))).toBe(
+        true
+      );
     });
 
-    it("Scenario: BR-ACM-03 — activity includes explicit script for what to say to the child", () => {
-      const sayToChild = "Con hãy đếm xem có bao nhiêu quả táo nhé!";
-      expect(sayToChild.length).toBeGreaterThan(0);
+    it("BR-LSM-06: Forbids abstract non-observable assessment verbs and requires action verbs", () => {
+      const abstractAssessment = validateLessonModel({
+        code: "LES-0001",
+        title_vi: "Bài học đếm",
+        guide: {
+          outcome: "Bé đếm đúng",
+          preparation: ["Cốc"],
+          opening: "Mở đầu",
+          if_child_succeeds: "Khen",
+          if_child_needs_help: "Giúp",
+        },
+        estimated_minutes: 20,
+        assessment_vi: "Bé hiểu và nắm được bản chất của số lượng",
+        materials_vi: "Cốc",
+        activity_kinds: ["manipulative"],
+      });
+      expect(abstractAssessment.valid).toBe(false);
+      expect(
+        abstractAssessment.errors.some((e) => e.includes("BR-LSM-06"))
+      ).toBe(true);
+
+      const observableAssessment = validateLessonModel({
+        code: "LES-0001",
+        title_vi: "Bài học đếm",
+        guide: {
+          outcome: "Bé đếm đúng",
+          preparation: ["Cốc"],
+          opening: "Mở đầu",
+          if_child_succeeds: "Khen",
+          if_child_needs_help: "Giúp",
+        },
+        estimated_minutes: 20,
+        assessment_vi:
+          "Bé chỉ đúng và nói được số lượng hạt trong cốc khi được hỏi 3 lần.",
+        materials_vi: "Cốc",
+        activity_kinds: ["manipulative"],
+      });
+      expect(observableAssessment.valid).toBe(true);
     });
 
-    it("Scenario: BR-ACM-04 — activity includes material checklist and preparation instructions", () => {
-      const activity = {
-        materials_vi: "Bút màu, giấy A4",
-        prep_instructions: "Cắt sẵn 5 hình tròn",
-      };
-      expect(activity.materials_vi).toBeDefined();
-      expect(activity.prep_instructions).toBeDefined();
+    it("BR-LSM-08: Requires at least one off-screen activity in lesson", () => {
+      const digitalOnly = validateLessonModel({
+        code: "LES-0001",
+        title_vi: "Bài học đếm",
+        guide: {
+          outcome: "Bé đếm đúng",
+          preparation: ["Cốc"],
+          opening: "Mở đầu",
+          if_child_succeeds: "Khen",
+          if_child_needs_help: "Giúp",
+        },
+        estimated_minutes: 20,
+        assessment_vi: "Bé chỉ đúng và xếp đúng hạt đậu.",
+        materials_vi: "Cốc",
+        activity_kinds: ["digital_game"],
+      });
+      expect(digitalOnly.valid).toBe(false);
+      expect(digitalOnly.errors.some((e) => e.includes("BR-LSM-08"))).toBe(
+        true
+      );
+    });
+  });
+
+  describe("Seed Content Library Validation: 60 Activities & 60 Lessons", () => {
+    it("All 60 seed activities pass 8 gates and validation rules cleanly", () => {
+      expect(ALL_SEED_ACTIVITIES.length).toBe(60);
+      const existingCodes = new Set<string>();
+      for (const act of ALL_SEED_ACTIVITIES) {
+        const gates = runEightGates(act, existingCodes);
+        existingCodes.add(act.header.code);
+        const failed = gates.filter((g) => !g.passed);
+        expect(failed, `Activity ${act.header.code} failed gates`).toEqual([]);
+      }
     });
 
-    it("Scenario: BR-ACM-05 — worksheet activities specify printable page constraints", () => {
-      const worksheetConfig = { format: "A4", pages: 1 };
-      expect(worksheetConfig.format).toBe("A4");
-      expect(worksheetConfig.pages).toBe(1);
+    it("All 60 seed lessons pass 8 gates and validation rules cleanly", () => {
+      expect(ALL_SEED_LESSONS.length).toBe(60);
+      const existingCodes = new Set<string>();
+      for (const les of ALL_SEED_LESSONS) {
+        const gates = runEightGates(les, existingCodes);
+        existingCodes.add(les.header.code);
+        const failed = gates.filter((g) => !g.passed);
+        expect(failed, `Lesson ${les.header.code} failed gates`).toEqual([]);
+      }
     });
 
-    it("Scenario: BR-ACM-06 — activity includes easier (scaffold) and harder (challenge) variations", () => {
-      const activity = {
-        easier_vi: "Giảm xuống 3 vật thể",
-        harder_vi: "Tăng lên 8 vật thể",
-      };
-      expect(activity.easier_vi).toBeDefined();
-      expect(activity.harder_vi).toBeDefined();
-    });
+    it("Executes seeder batch cleanly and verifies idempotency in Postgres", async () => {
+      const db = getOwnerDb();
+      await seedContentTags(db);
+      await seedTaxonomyMasterData(db);
+      const batchCode = `TEST-P31-${Date.now()}`;
 
-    it("Scenario: BR-ACM-07 — safety compliance validator checks materials against QCVN / TCVN safety standards", () => {
-      const forbiddenMaterials = ["kéo nhọn", "hạt thuỷ tinh nhỏ"];
-      const material = "giấy thủ công";
-      const isSafe = !forbiddenMaterials.includes(material);
-      expect(isSafe).toBe(true);
-    });
+      // Insert activities and lessons
+      const res = await executeSeedBatch(db, {
+        batchCode,
+        gitSha: "test-sha",
+        prUrl: "test-pr",
+        seeds: [...ALL_SEED_ACTIVITIES, ...ALL_SEED_LESSONS],
+      });
 
-    it("Scenario: BR-ACM-08 — activity connects to at most 2 target skills with age band computed from skill intersection", () => {
-      const skill1Age = { min: 3, max: 5 };
-      const skill2Age = { min: 4, max: 6 };
-      const effectiveAgeMin = Math.max(skill1Age.min, skill2Age.min);
-      const effectiveAgeMax = Math.min(skill1Age.max, skill2Age.max);
-      expect(effectiveAgeMin).toBe(4);
-      expect(effectiveAgeMax).toBe(5);
-    });
+      expect(res.rowsInserted).toBeGreaterThanOrEqual(120);
+
+      // Verify records exist in database
+      const [act] = await db
+        .select()
+        .from(activities)
+        .where(eq(activities.code, "ACT-0001"));
+      expect(act).toBeDefined();
+      expect(act.status).toBe("published");
+      expect(act.origin).toBe("human");
+
+      const [les] = await db
+        .select()
+        .from(lessons)
+        .where(eq(lessons.code, "LES-0001"));
+      expect(les).toBeDefined();
+      expect(les.status).toBe("published");
+      expect(les.origin).toBe("human");
+
+      // Idempotent re-run
+      const res2 = await executeSeedBatch(db, {
+        batchCode: `${batchCode}-RERUN`,
+        gitSha: "test-sha",
+        prUrl: "test-pr",
+        seeds: [...ALL_SEED_ACTIVITIES, ...ALL_SEED_LESSONS],
+      });
+      expect(res2.rowsSkippedIdempotent).toBe(120);
+      expect(res2.rowsInserted).toBe(0);
+    }, 30_000);
   });
 });

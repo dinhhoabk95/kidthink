@@ -88,10 +88,10 @@ describe("Content Schema Integration Tests", () => {
     const [act] = await db
       .insert(activities)
       .values({
-        entityId: 20,
+        entityId: 9901,
         code: actCode,
         contentVersion: 1,
-        kind: "hands_on",
+        kind: "manipulative",
         titleVi: "Activity Published",
         accessTier: "free",
         status: "published",

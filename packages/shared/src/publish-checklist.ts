@@ -3,6 +3,9 @@
  * Rule sở hữu: BR-CLC-09, BR-CLC-11
  */
 
+import { validateActivityModel } from "./activity-model.js";
+import { validateLessonModel } from "./lesson-model.js";
+
 export type EntityType =
   | "game_level"
   | "lesson"
@@ -150,13 +153,83 @@ function checkGameLevelRules(
   }
 }
 
-function checkLessonRules(
+function checkActivityRules(
   entity: GenericEntityPayload,
   missing: string[]
 ): void {
+  const kind = (entity.kind as string) || "";
+  const est = (entity.estimatedMinutes ?? entity.estimated_minutes) as number;
+  if (typeof est !== "number" || est < 2 || est > 20) {
+    missing.push("invalid_estimated_minutes");
+  }
+
+  const instruction =
+    entity.instruction ?? entity.instructionVi ?? entity.instruction_vi;
+  if (
+    !instruction ||
+    (typeof instruction === "string" && instruction.trim() === "")
+  ) {
+    missing.push("instruction_vi_missing");
+  }
+
+  const res = validateActivityModel({
+    kind,
+    title_vi: (entity.title ??
+      entity.titleVi ??
+      entity.title_vi ??
+      "") as string,
+    instruction: instruction as string,
+    materials_vi: (entity.materialsVi ?? entity.materials_vi ?? null) as
+      | string
+      | null,
+    estimated_minutes: est ?? 10,
+    skill_codes: (entity.skillCodes ?? entity.skill_codes ?? []) as string[],
+  });
+
+  if (!res.ok) {
+    for (const err of res.errors) {
+      missing.push(
+        `activity_validation_failed_${err.slice(0, 10).replace(/[^a-z0-9]/gi, "_")}`
+      );
+    }
+  }
+}
+
+function extractLessonValidationPayload(entity: GenericEntityPayload) {
   const activities = (entity.activities ?? entity.activityIds) as
     | unknown[]
     | undefined;
+  const est = entity.estimatedMinutes ?? entity.estimated_minutes;
+  const guide = entity.guide ?? entity.guideVi ?? entity.guide_vi;
+
+  return {
+    title_vi: (entity.title ??
+      entity.titleVi ??
+      entity.title_vi ??
+      "") as string,
+    guide: guide as string,
+    estimated_minutes: typeof est === "number" ? est : 15,
+    activities: Array.isArray(activities)
+      ? (activities as Record<string, unknown>[])
+      : [],
+    materials_vi: (entity.materialsVi ?? entity.materials_vi ?? null) as
+      | string
+      | null,
+    warm_up_vi: (entity.warmUpVi ?? entity.warm_up_vi ?? null) as string | null,
+    reflection_vi: (entity.reflectionVi ?? entity.reflection_vi ?? null) as
+      | string
+      | null,
+    assessment_vi: (entity.assessmentVi ?? entity.assessment_vi ?? null) as
+      | string
+      | null,
+  };
+}
+
+function checkLessonBasicFields(
+  entity: GenericEntityPayload,
+  missing: string[]
+): void {
+  const activities = entity.activities ?? entity.activityIds;
   if (!Array.isArray(activities) || activities.length < 1) {
     missing.push("activities_missing");
   }
@@ -166,9 +239,27 @@ function checkLessonRules(
     missing.push("invalid_estimated_minutes");
   }
 
-  const guide = entity.guide ?? entity.guide;
-  if (!guide || typeof guide !== "string" || guide.trim() === "") {
+  const guide = entity.guide ?? entity.guideVi ?? entity.guide_vi;
+  if (!guide || (typeof guide === "string" && guide.trim() === "")) {
     missing.push("guide_vi_missing");
+  }
+}
+
+function checkLessonRules(
+  entity: GenericEntityPayload,
+  missing: string[]
+): void {
+  checkLessonBasicFields(entity, missing);
+
+  const payload = extractLessonValidationPayload(entity);
+  const res = validateLessonModel(payload);
+
+  if (!res.ok) {
+    for (const err of res.errors) {
+      missing.push(
+        `lesson_validation_failed_${err.slice(0, 10).replace(/[^a-z0-9]/gi, "_")}`
+      );
+    }
   }
 }
 
@@ -213,6 +304,8 @@ export function validatePublishChecklist(
 
   if (entityType === "game_level") {
     checkGameLevelRules(entity, missing);
+  } else if (entityType === "activity") {
+    checkActivityRules(entity, missing);
   } else if (entityType === "lesson") {
     checkLessonRules(entity, missing);
   } else if (entityType === "curriculum") {

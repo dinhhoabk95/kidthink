@@ -193,7 +193,6 @@ export const DASHBOARD_CARDS: readonly DashboardCardDefinition[] = [
     source: "lessons",
     href: "/lessons",
     roles: ["super_admin", "content_reviewer"],
-    pending_source: "P3.1",
   },
 
   // 7.4 Hệ thống (System)

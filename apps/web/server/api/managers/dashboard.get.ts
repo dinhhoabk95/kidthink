@@ -57,7 +57,7 @@ export interface DashboardResponseSuperAdmin {
     curriculum_weeks_incomplete: PendingSourceMetric & { is_feedback: true };
     published_levels: { count: number };
     draft_levels: { count: number };
-    published_lessons: PendingSourceMetric;
+    published_lessons: { count: number };
   };
   system: {
     last_backup: {
@@ -77,7 +77,7 @@ export interface DashboardResponseContentReviewer {
     curriculum_weeks_incomplete: PendingSourceMetric & { is_feedback: true };
     published_levels: { count: number };
     draft_levels: { count: number };
-    published_lessons: PendingSourceMetric;
+    published_lessons: { count: number };
   };
 }
 
@@ -166,6 +166,13 @@ async function queryContentMetrics(db: OwnerDb) {
     }
   }
 
+  // 4. Published lesson counts (P3.1)
+  const [publishedLessonsRow] = await db
+    .select({ count: count(lessons.id) })
+    .from(lessons)
+    .where(eq(lessons.status, "published"));
+  const publishedLessonsCount = publishedLessonsRow?.count ?? 0;
+
   return {
     skills_without_levels: {
       count: skillsWithoutLevelsCount,
@@ -187,8 +194,7 @@ async function queryContentMetrics(db: OwnerDb) {
       count: draftLevelsCount,
     },
     published_lessons: {
-      status: "pending_source" as const,
-      owner_step: "P3.1",
+      count: publishedLessonsCount,
     },
   };
 }

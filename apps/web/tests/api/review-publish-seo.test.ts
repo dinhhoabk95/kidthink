@@ -93,6 +93,8 @@ beforeAll(async () => {
           .values({
             code: "C1",
             nameVi: "Tư duy số và số lượng",
+            colorToken: "indigo",
+            icon: "i-lucide-calculator",
             position: 1,
           })
           .returning({ id: competencies.id });

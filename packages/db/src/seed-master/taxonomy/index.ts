@@ -519,7 +519,12 @@ export async function seedTaxonomyMasterData(
   skillCount: number;
   loCount: number;
 }> {
-  const rootDocsDir = docsDir ?? path.resolve(process.cwd(), "docs/taxonomy");
+  const defaultDocsDir = fs.existsSync(
+    path.resolve(process.cwd(), "docs/taxonomy")
+  )
+    ? path.resolve(process.cwd(), "docs/taxonomy")
+    : path.resolve(process.cwd(), "../../docs/taxonomy");
+  const rootDocsDir = docsDir ?? defaultDocsDir;
   const allParsedSkills = parseTaxonomyDocs(rootDocsDir);
 
   validateTaxonomyInvariants(allParsedSkills);

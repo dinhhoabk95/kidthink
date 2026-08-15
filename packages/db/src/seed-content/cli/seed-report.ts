@@ -1,9 +1,11 @@
 import { count } from "drizzle-orm";
 import {
+  activities,
   competencies,
   gameLevels,
   gameTemplates,
   getOwnerDb,
+  lessons,
   skills,
 } from "../../index.js";
 
@@ -12,6 +14,10 @@ export async function runSeedReport() {
   const db = getOwnerDb();
 
   const [totalLevels] = await db.select({ value: count() }).from(gameLevels);
+  const [totalActivities] = await db
+    .select({ value: count() })
+    .from(activities);
+  const [totalLessons] = await db.select({ value: count() }).from(lessons);
   const [totalTemplates] = await db
     .select({ value: count() })
     .from(gameTemplates);
@@ -22,6 +28,8 @@ export async function runSeedReport() {
 
   console.log("Summary metrics:");
   console.log(`- Published Game Levels: ${totalLevels.value}`);
+  console.log(`- Published Activities: ${totalActivities.value}`);
+  console.log(`- Published Lessons: ${totalLessons.value}`);
   console.log(`- Total Templates: ${totalTemplates.value}`);
   console.log(`- Total Skills: ${totalSkills.value}`);
   console.log(`- Total Competencies: ${totalCompetencies.value}\n`);
