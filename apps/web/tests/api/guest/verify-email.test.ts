@@ -5,14 +5,9 @@ import {
 } from "@kidthink/auth";
 import { getAppDb, users, verificationTokens } from "@kidthink/db";
 import { eq } from "drizzle-orm";
-import { beforeEach, describe, expect, it } from "vitest";
-import { truncateAllTestTables } from "../../../../../packages/db/tests/global-setup";
+import { describe, expect, it } from "vitest";
 
 describe("Task 2 — Email Verification (BR-EVF-01..08)", () => {
-  beforeEach(async () => {
-    await truncateAllTestTables();
-  });
-
   it("verifies user email with valid token and sets status to active (BR-EVF-01, BR-EVF-02, BR-EVF-08)", async () => {
     const db = getAppDb();
     const passHash = await hashPassword("chuoixanh123");

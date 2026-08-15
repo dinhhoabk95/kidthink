@@ -1,20 +1,19 @@
 import { hashPassword } from "@kidthink/auth";
 import { getAppDb, socialIdentities, users } from "@kidthink/db";
-import { beforeEach, describe, expect, it } from "vitest";
-import { truncateAllTestTables } from "../../../../packages/db/tests/global-setup";
+import { describe, expect, it } from "vitest";
 
 describe("Task 5 — Identity Disclosure Prevention Test Suite (D-EP)", () => {
-  beforeEach(async () => {
-    await truncateAllTestTables();
-  });
-
   it("returns identical 401 response and balanced response timing across existing, missing, and social users on login (BR-LGN-02, BR-LGN-03)", async () => {
     const db = getAppDb();
     const passHash = await hashPassword("chuoixanh123");
+    const suffix = Math.floor(Math.random() * 900_000 + 100_000).toString();
+    const passEmail = `password_user_${suffix}@example.com`;
+    const socialEmail = `social_user_${suffix}@example.com`;
+    const nonExistEmail = `nonexistent_${suffix}@example.com`;
 
     // 1. Password user
     await db.insert(users).values({
-      email: "password_user@example.com",
+      email: passEmail,
       passwordHash: passHash,
       displayName: "Password User",
       status: "active",
@@ -24,7 +23,7 @@ describe("Task 5 — Identity Disclosure Prevention Test Suite (D-EP)", () => {
     const [socialUser] = await db
       .insert(users)
       .values({
-        email: "social_user@example.com",
+        email: socialEmail,
         passwordHash: null,
         displayName: "Social User",
         status: "active",
@@ -34,7 +33,7 @@ describe("Task 5 — Identity Disclosure Prevention Test Suite (D-EP)", () => {
     await db.insert(socialIdentities).values({
       userId: socialUser.id,
       provider: "google",
-      providerUserId: "google_12345",
+      providerUserId: `google_${suffix}`,
     });
 
     const { default: loginHandler } = await import(
@@ -48,7 +47,7 @@ describe("Task 5 — Identity Disclosure Prevention Test Suite (D-EP)", () => {
       node: { req: { headers: { "x-forwarded-for": "127.0.0.1" } } },
       context: {
         body: {
-          email: "nonexistent@example.com",
+          email: nonExistEmail,
           password: "wrongpassword123",
         },
       },
@@ -71,7 +70,7 @@ describe("Task 5 — Identity Disclosure Prevention Test Suite (D-EP)", () => {
       node: { req: { headers: { "x-forwarded-for": "127.0.0.1" } } },
       context: {
         body: {
-          email: "social_user@example.com",
+          email: socialEmail,
           password: "wrongpassword123",
         },
       },
@@ -94,7 +93,7 @@ describe("Task 5 — Identity Disclosure Prevention Test Suite (D-EP)", () => {
       node: { req: { headers: { "x-forwarded-for": "127.0.0.1" } } },
       context: {
         body: {
-          email: "password_user@example.com",
+          email: passEmail,
           password: "wrongpassword123",
         },
       },
@@ -121,9 +120,12 @@ describe("Task 5 — Identity Disclosure Prevention Test Suite (D-EP)", () => {
   it("returns identical 200 response for forgot-password regardless of email presence (BR-PWR-02)", async () => {
     const db = getAppDb();
     const passHash = await hashPassword("chuoixanh123");
+    const suffix = Math.floor(Math.random() * 900_000 + 100_000).toString();
+    const existEmail = `exist_${suffix}@example.com`;
+    const notExistEmail = `notexist_${suffix}@example.com`;
 
     await db.insert(users).values({
-      email: "exist@example.com",
+      email: existEmail,
       passwordHash: passHash,
       displayName: "Exist User",
       status: "active",
@@ -136,14 +138,14 @@ describe("Task 5 — Identity Disclosure Prevention Test Suite (D-EP)", () => {
     const event1 = {
       method: "POST",
       node: { req: { headers: { "x-forwarded-for": "127.0.0.1" } } },
-      context: { body: { email: "exist@example.com" } },
+      context: { body: { email: existEmail } },
     } as any;
     const res1 = await forgotHandler(event1);
 
     const event2 = {
       method: "POST",
       node: { req: { headers: { "x-forwarded-for": "127.0.0.1" } } },
-      context: { body: { email: "notexist@example.com" } },
+      context: { body: { email: notExistEmail } },
     } as any;
     const res2 = await forgotHandler(event2);
 
@@ -153,10 +155,13 @@ describe("Task 5 — Identity Disclosure Prevention Test Suite (D-EP)", () => {
 
   it("does not leak social provider name when registration collides with existing social user (BR-REG-10)", async () => {
     const db = getAppDb();
+    const suffix = Math.floor(Math.random() * 900_000 + 100_000).toString();
+    const googleEmail = `google_only_${suffix}@example.com`;
+
     const [socialUser] = await db
       .insert(users)
       .values({
-        email: "google_only@example.com",
+        email: googleEmail,
         passwordHash: null,
         displayName: "Google User",
         status: "active",
@@ -166,7 +171,7 @@ describe("Task 5 — Identity Disclosure Prevention Test Suite (D-EP)", () => {
     await db.insert(socialIdentities).values({
       userId: socialUser.id,
       provider: "google",
-      providerUserId: "sub_123456",
+      providerUserId: `sub_${suffix}`,
     });
 
     const { default: registerHandler } = await import(
@@ -178,7 +183,7 @@ describe("Task 5 — Identity Disclosure Prevention Test Suite (D-EP)", () => {
       node: { req: { headers: { "x-forwarded-for": "127.0.0.1" } } },
       context: {
         body: {
-          email: "google_only@example.com",
+          email: googleEmail,
           password: "password123",
           display_name: "Attacker",
           accept_terms: true,

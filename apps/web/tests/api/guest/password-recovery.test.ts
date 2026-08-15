@@ -11,14 +11,9 @@ import {
   verificationTokens,
 } from "@kidthink/db";
 import { eq } from "drizzle-orm";
-import { beforeEach, describe, expect, it } from "vitest";
-import { truncateAllTestTables } from "../../../../../packages/db/tests/global-setup";
+import { describe, expect, it } from "vitest";
 
 describe("Task 4 — Password Recovery (BR-PWR-01..09)", () => {
-  beforeEach(async () => {
-    await truncateAllTestTables();
-  });
-
   it("handles forgot password and returns 200 without leaking email presence (BR-PWR-01..03)", async () => {
     const db = getAppDb();
     const passHash = await hashPassword("chuoixanh123");

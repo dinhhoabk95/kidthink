@@ -1,0 +1,185 @@
+<template>
+  <div
+    class="p-6 rounded-3xl bg-white dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 shadow-sm space-y-5 sticky top-24"
+  >
+    <div
+      class="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-700"
+    >
+      <h2 class="text-base font-bold text-slate-900 dark:text-white">
+        Báo cáo Cân bằng Sư phạm
+      </h2>
+      <span
+        class="px-2.5 py-1 text-xs font-bold rounded-full"
+        :class="
+          report.is_balanced
+            ? 'bg-emerald-500 text-white'
+            : 'bg-amber-500 text-white'
+        "
+      >
+        {{ report.is_balanced ? "Cân bằng chuẩn" : "Chưa đạt chuẩn" }}
+      </span>
+    </div>
+
+    <!-- Violations Alert List -->
+    <div
+      class="p-3 rounded-2xl bg-amber-50 dark:bg-amber-900/30 border border-amber-200 dark:border-amber-700 text-xs space-y-1 text-amber-900 dark:text-amber-200"
+      v-if="report.violations && report.violations.length > 0"
+    >
+      <div class="font-bold">Cần khắc phục:</div>
+      <ul class="list-disc pl-4 space-y-0.5">
+        <li v-for="(v, i) in report.violations" :key="`viol-${i}`">
+          {{ v }}
+        </li>
+      </ul>
+    </div>
+
+    <!-- 6 Indicators -->
+    <div class="space-y-4 text-xs">
+      <!-- 1. Competency Distribution -->
+      <div class="space-y-1">
+        <div
+          class="flex justify-between font-semibold text-slate-700 dark:text-slate-300"
+        >
+          <span>1. Phân bổ Năng lực (C1–C6)</span>
+          <span
+            >{{ report.indicators?.competency_distribution
+                ?.distinct_competencies ?? 0 }}/6</span
+          >
+        </div>
+        <div
+          class="w-full bg-slate-100 dark:bg-slate-700 rounded-full h-2 overflow-hidden flex"
+        >
+          <div
+            class="h-full bg-indigo-500"
+            :style="{
+              width: `${((report.indicators?.competency_distribution?.distinct_competencies ?? 0) / 6) * 100}%`,
+            }"
+          />
+        </div>
+      </div>
+
+      <!-- 2. Activity Type Ratio -->
+      <div class="space-y-1">
+        <div
+          class="flex justify-between font-semibold text-slate-700 dark:text-slate-300"
+        >
+          <span>2. Tỷ lệ Bài học / Game level</span>
+          <span
+            >{{ report.indicators?.activity_type_balance?.lessons_count ?? 0 }}L
+            :
+            {{ report.indicators?.activity_type_balance?.game_levels_count ?? 0 }}G</span
+          >
+        </div>
+        <div
+          class="w-full bg-slate-100 dark:bg-slate-700 rounded-full h-2 overflow-hidden flex"
+        >
+          <div
+            class="h-full bg-amber-500"
+            :style="{
+              width: `${report.indicators?.activity_type_balance?.lesson_ratio ? report.indicators.activity_type_balance.lesson_ratio * 100 : 50}%`,
+            }"
+          />
+          <div
+            class="h-full bg-emerald-500"
+            :style="{
+              width: `${report.indicators?.activity_type_balance?.game_level_ratio ? report.indicators.activity_type_balance.game_level_ratio * 100 : 50}%`,
+            }"
+          />
+        </div>
+      </div>
+
+      <!-- 3. Cognitive Load -->
+      <div class="space-y-1">
+        <div
+          class="flex justify-between font-semibold text-slate-700 dark:text-slate-300"
+        >
+          <span>3. Tải nhận thức tối đa / tuần</span>
+          <span
+            >{{ report.indicators?.cognitive_load?.max_minutes_in_week ?? 0 }}
+            phút</span
+          >
+        </div>
+        <div
+          class="w-full bg-slate-100 dark:bg-slate-700 rounded-full h-2 overflow-hidden"
+        >
+          <div
+            class="h-full"
+            :class="
+              (report.indicators?.cognitive_load?.max_minutes_in_week ?? 0) > 45
+                ? 'bg-red-500'
+                : 'bg-emerald-500'
+            "
+            :style="{
+              width: `${Math.min(100, ((report.indicators?.cognitive_load?.max_minutes_in_week ?? 0) / 45) * 100)}%`,
+            }"
+          />
+        </div>
+      </div>
+
+      <!-- 4. Progression Smoothness -->
+      <div
+        class="flex justify-between items-center font-semibold text-slate-700 dark:text-slate-300"
+      >
+        <span>4. Độ mượt tiến trình độ khó</span>
+        <span
+          class="px-2 py-0.5 rounded-xl text-[11px]"
+          :class="
+            report.indicators?.progression_smoothness?.is_smooth
+              ? 'bg-emerald-100 text-emerald-800'
+              : 'bg-amber-100 text-amber-800'
+          "
+        >
+          {{ report.indicators?.progression_smoothness?.is_smooth
+              ? "Chuẩn"
+              : "Nhảy bậc" }}
+        </span>
+      </div>
+
+      <!-- 5. Prerequisite DAG -->
+      <div
+        class="flex justify-between items-center font-semibold text-slate-700 dark:text-slate-300"
+      >
+        <span>5. Tiền điều kiện DAG</span>
+        <span
+          class="px-2 py-0.5 rounded-xl text-[11px]"
+          :class="
+            report.indicators?.prerequisite_satisfaction?.is_satisfied
+              ? 'bg-emerald-100 text-emerald-800'
+              : 'bg-red-100 text-red-800'
+          "
+        >
+          {{ report.indicators?.prerequisite_satisfaction?.is_satisfied
+              ? "Hợp lệ"
+              : "Vi phạm" }}
+        </span>
+      </div>
+
+      <!-- 6. Retention Spacing -->
+      <div
+        class="flex justify-between items-center font-semibold text-slate-700 dark:text-slate-300"
+      >
+        <span>6. Ôn tập & Củng cố xoắn ốc</span>
+        <span
+          class="px-2 py-0.5 rounded-xl text-[11px]"
+          :class="
+            report.indicators?.retention_spacing?.has_review
+              ? 'bg-emerald-100 text-emerald-800'
+              : 'bg-slate-100 text-slate-600'
+          "
+        >
+          {{ report.indicators?.retention_spacing?.has_review
+              ? "Đầy đủ"
+              : "Chưa có" }}
+        </span>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script lang="ts" setup>
+  import type { BalanceReport } from "@kidthink/shared";
+
+  defineProps<{
+    report: BalanceReport;
+  }>();
+</script>

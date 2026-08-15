@@ -1,17 +1,12 @@
 import { hashPassword } from "@kidthink/auth";
 import { getAppDb, users } from "@kidthink/db";
-import { beforeEach, describe, expect, it } from "vitest";
-import { truncateAllTestTables } from "../../../../packages/db/tests/global-setup";
+import { describe, expect, it } from "vitest";
 import {
   assertUnrestrictedUser,
   respondToUserAuthError,
 } from "../../server/utils/auth-runtime";
 
 describe("Task 6 — Server-Enforced Restricted Mode (D-EQ)", () => {
-  beforeEach(async () => {
-    await truncateAllTestTables();
-  });
-
   it("permits pending_verification user to read session status but blocks restricted actions with 403 RESTRICTED_MODE (BR-REG-08)", async () => {
     const db = getAppDb();
     const passHash = await hashPassword("chuoixanh123");

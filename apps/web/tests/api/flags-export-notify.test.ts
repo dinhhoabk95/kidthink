@@ -302,16 +302,16 @@ describe("Feature Flags, Data Export & Notification Admin (P2.9)", () => {
       }
     });
 
-    it("curriculum_health returns pending_source P3 status without empty file (D-KP)", async () => {
+    it("curriculum_health returns valid CSV export with signed URL (D-KP)", async () => {
       const event = mockManagerEvent(
         "super_admin",
         { kind: "curriculum_health" },
         { reason: "Đối soát lộ trình học tập tuần" }
       );
       const res = (await exportsHandler(event)) as any;
-      expect(res.status).toBe("pending_source");
-      expect(res.pending_source).toBe("P3");
-      expect(res.row_count).toBe(0);
+      expect(res.url).toBeDefined();
+      expect(res.expires_at).toBeDefined();
+      expect(res.row_count).toBeGreaterThanOrEqual(0);
     });
 
     it("rejects export with reason < 10 chars with 422 (BR-EXP-03)", async () => {

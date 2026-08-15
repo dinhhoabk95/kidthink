@@ -259,7 +259,7 @@ describe("Payment Flow Full E2E & Boundary Tests (P2.3)", () => {
   });
 
   it("Manager Queue & Approval Flow: List -> Claim -> Proof URL -> Approve with checklist", async () => {
-    // 1. Create submitted order
+    const randSuffix = Math.floor(Math.random() * 900_000 + 100_000).toString();
     const [order] = await db
       .insert(paymentOrders)
       .values({
@@ -270,8 +270,8 @@ describe("Payment Flow Full E2E & Boundary Tests (P2.3)", () => {
         amountVnd: 599_000,
         currency: "VND",
         status: "submitted",
-        transferNote: "TMABC12345",
-        bankTxnRef: "FT240814E2E0001",
+        transferNote: `TMABC${randSuffix}`,
+        bankTxnRef: `FT240814E2E${randSuffix}`,
         proofPath: "proofs/test-proof.jpg",
         submittedAt: new Date(),
       })
@@ -358,7 +358,7 @@ describe("Payment Flow Full E2E & Boundary Tests (P2.3)", () => {
   });
 
   it("Manager Rejection Flow: Rejection revokes soft_unlock and stores audit", async () => {
-    // 1. Create order with soft_unlock entitlement
+    const rejSuffix = Math.floor(Math.random() * 900_000 + 100_000).toString();
     const orderUuid = crypto.randomUUID();
     await db.insert(paymentOrders).values({
       uuid: orderUuid,
@@ -368,8 +368,8 @@ describe("Payment Flow Full E2E & Boundary Tests (P2.3)", () => {
       amountVnd: 599_000,
       currency: "VND",
       status: "submitted",
-      transferNote: "TMREJECT01",
-      bankTxnRef: "FT240814REJECT01",
+      transferNote: `TMREJECT${rejSuffix}`,
+      bankTxnRef: `FT240814REJ${rejSuffix}`,
       submittedAt: new Date(),
     });
 

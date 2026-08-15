@@ -1,13 +1,8 @@
 import { consentLogs, getAppDb, users } from "@kidthink/db";
 import { eq } from "drizzle-orm";
-import { beforeEach, describe, expect, it } from "vitest";
-import { truncateAllTestTables } from "../../../../../packages/db/tests/global-setup";
+import { describe, expect, it } from "vitest";
 
 describe("Task 1 — POST /api/guest/auth/users/register (BR-REG-01..10)", () => {
-  beforeEach(async () => {
-    await truncateAllTestTables();
-  });
-
   it("registers a user with valid data and records consents, verification token, session (BR-REG-01, BR-REG-03, BR-REG-05)", async () => {
     const { default: handler } = await import(
       "../../../server/api/guest/auth/users/register.post"

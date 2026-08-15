@@ -1,5 +1,5 @@
 import { eq } from "drizzle-orm";
-import { beforeEach, describe, expect, it } from "vitest";
+import { describe, expect, it } from "vitest";
 import {
   getAppSql,
   getOwnerDb,
@@ -13,7 +13,6 @@ import {
   socialIdentities,
   users,
 } from "../../src/schema/identity.ts";
-import { truncateAllTestTables } from "../global-setup.ts";
 
 async function createUserFixture(label: string) {
   const db = getOwnerDb();
@@ -29,10 +28,6 @@ async function createUserFixture(label: string) {
 }
 
 describe("PostgresSessionStore (Metadata Only under Task #85)", () => {
-  beforeEach(async () => {
-    await truncateAllTestTables();
-  });
-
   it("records session device metadata without raw tokens or hashes", async () => {
     const user = await createUserFixture("meta");
     const store = new PostgresSessionStore(getAppSql());

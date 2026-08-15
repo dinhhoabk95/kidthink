@@ -1,5 +1,8 @@
 import {
   auditLogs,
+  curricula,
+  curriculumEnrollments,
+  curriculumItems,
   gameLevels,
   getOwnerDb,
   paymentOrders,
@@ -8,7 +11,7 @@ import {
   writeAudit,
 } from "@kidthink/db";
 import { getPrivateSignedUrl, uploadPrivateAsset } from "@kidthink/storage";
-import { desc, eq } from "drizzle-orm";
+import { and, desc, eq, sql } from "drizzle-orm";
 import { createError, defineEventHandler, getQuery, getRouterParam } from "h3";
 import {
   requireManagerSession,
@@ -160,6 +163,51 @@ async function exportAuditCsv(db: ReturnType<typeof getOwnerDb>) {
   return { csvContent, rowCount: rows.length };
 }
 
+async function exportCurriculumHealthCsv(db: ReturnType<typeof getOwnerDb>) {
+  const rows = await db
+    .select({
+      id: curricula.id,
+      code: curricula.code,
+      version: curricula.contentVersion,
+      titleVi: curricula.titleVi,
+      programType: curricula.programType,
+      status: curricula.status,
+      durationWeeks: curricula.durationWeeks,
+      sessionsPerWeek: curricula.sessionsPerWeek,
+      createdAt: curricula.createdAt,
+    })
+    .from(curricula)
+    .orderBy(desc(curricula.createdAt))
+    .limit(MAX_EXPORT_ROWS);
+
+  let csvContent =
+    "\uFEFFMã chương trình,Phiên bản,Tiêu đề,Loại hình,Trạng thái,Số tuần,Số buổi/tuần,Số hoạt động,Số học sinh đang học,Thời gian tạo\n";
+
+  for (const r of rows) {
+    const [itemCountRow] = await db
+      .select({ count: sql<number>`count(*)::int` })
+      .from(curriculumItems)
+      .where(eq(curriculumItems.curriculumId, r.id));
+
+    const [enrollmentCountRow] = await db
+      .select({ count: sql<number>`count(*)::int` })
+      .from(curriculumEnrollments)
+      .where(
+        and(
+          eq(curriculumEnrollments.curriculumId, r.id),
+          eq(curriculumEnrollments.status, "active")
+        )
+      );
+
+    const itemsCount = itemCountRow?.count ?? 0;
+    const activeEnrollments = enrollmentCountRow?.count ?? 0;
+
+    csvContent += `"${r.code}",${r.version},"${r.titleVi}","${r.programType}","${r.status}",${r.durationWeeks},${r.sessionsPerWeek},${itemsCount},${activeEnrollments},"${r.createdAt.toISOString()}"\n`;
+  }
+
+  return { csvContent, rowCount: rows.length };
+}
+
 async function generateCsvData(
   kind: string,
   db: ReturnType<typeof getOwnerDb>
@@ -173,6 +221,8 @@ async function generateCsvData(
       return await exportContentKpiCsv(db);
     case "skill_coverage":
       return await exportSkillCoverageCsv(db);
+    case "curriculum_health":
+      return await exportCurriculumHealthCsv(db);
     case "audit":
       return await exportAuditCsv(db);
     default:
@@ -203,17 +253,6 @@ export default defineEventHandler(async (event) => {
         statusMessage: "EXPORT_KIND_NOT_FOUND",
         message: `Loại xuất dữ liệu '${kind}' không thuộc danh sách đóng cho phép (BR-EXP-01)`,
       });
-    }
-
-    // D-KP: curriculum_health pending_source: P3
-    if (kind === "curriculum_health") {
-      return {
-        status: "pending_source",
-        pending_source: "P3",
-        message:
-          "Loại xuất dữ liệu curriculum_health đang chờ module Curriculum (P3) hoàn thành (D-KP)",
-        row_count: 0,
-      };
     }
 
     const query =

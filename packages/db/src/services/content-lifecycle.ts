@@ -1,9 +1,13 @@
 import type { ContentLifecycleStatus, ManagerRole } from "@kidthink/shared";
 import { canTransition, validatePublishChecklist } from "@kidthink/shared";
-import { and, desc, eq, inArray, ne, sql } from "drizzle-orm";
+import { and, asc, desc, eq, inArray, ne, sql } from "drizzle-orm";
 import { getOwnerDb } from "../client.ts";
 import { activities, lessonActivities, lessons } from "../schema/content.ts";
-import { curricula, curriculumItems } from "../schema/curriculum.ts";
+import {
+  curricula,
+  curriculumItems,
+  curriculumWeeks,
+} from "../schema/curriculum.ts";
 import { gameLevels } from "../schema/game.ts";
 import { contentReviewLog } from "../schema/ops.ts";
 import { contentSkillMap } from "../schema/tagging.ts";
@@ -247,6 +251,33 @@ async function verifyPublishChecklist(
     extraData = await verifyLessonActivities(db, entityId);
   } else if (entityType === "activity") {
     extraData = await resolveActivityExtraData(db, recordData, attachedSkills);
+  } else if (entityType === "curriculum") {
+    const weeksRows = await db
+      .select()
+      .from(curriculumWeeks)
+      .where(eq(curriculumWeeks.curriculumId, entityId))
+      .orderBy(asc(curriculumWeeks.weekNo));
+    const itemsRows = await db
+      .select()
+      .from(curriculumItems)
+      .where(eq(curriculumItems.curriculumId, entityId))
+      .orderBy(
+        asc(curriculumItems.weekNo),
+        asc(curriculumItems.sessionNo),
+        asc(curriculumItems.position)
+      );
+
+    extraData = {
+      weeks: weeksRows.map((w) => ({ week_no: w.weekNo, goal: w.goal })),
+      items: itemsRows.map((it) => ({
+        week_no: it.weekNo,
+        session_no: it.sessionNo,
+        position: it.position,
+        entity_type: it.entityType,
+        entity_id: it.entityId,
+        is_required: it.isRequired,
+      })),
+    };
   }
 
   const payload = {
@@ -412,6 +443,21 @@ async function archivePreviousPublished(
           ne(activities.id, currentEntityId)
         )
       );
+  } else if (entityType === "curriculum") {
+    await tx
+      .update(curricula)
+      .set({
+        status: "archived",
+        archivedAt: new Date(),
+        updatedAt: new Date(),
+      })
+      .where(
+        and(
+          eq(curricula.code, code),
+          eq(curricula.status, "published"),
+          ne(curricula.id, currentEntityId)
+        )
+      );
   }
 }
 
@@ -441,7 +487,102 @@ async function updateEntityStatus(
     await tx.update(lessons).set(patch).where(eq(lessons.id, entityId));
   } else if (entityType === "activity") {
     await tx.update(activities).set(patch).where(eq(activities.id, entityId));
+  } else if (entityType === "curriculum") {
+    await tx.update(curricula).set(patch).where(eq(curricula.id, entityId));
   }
+}
+
+async function fetchEntityDataForTransition(
+  db: ReturnType<typeof getOwnerDb>,
+  entityType: string,
+  entityDbId: number
+): Promise<{
+  currentStatus: ContentLifecycleStatus;
+  currentVersion: number;
+  code: string;
+  itemData: Record<string, unknown>;
+}> {
+  if (entityType === "game_level") {
+    const [level] = await db
+      .select()
+      .from(gameLevels)
+      .where(eq(gameLevels.id, entityDbId));
+    if (!level) {
+      throw new LifecycleError(
+        `Game level with id ${entityDbId} not found`,
+        "ENTITY_NOT_FOUND",
+        404
+      );
+    }
+    return {
+      currentStatus: level.status as ContentLifecycleStatus,
+      currentVersion: level.contentVersion,
+      code: level.code,
+      itemData: level as unknown as Record<string, unknown>,
+    };
+  }
+  if (entityType === "lesson") {
+    const [lesson] = await db
+      .select()
+      .from(lessons)
+      .where(eq(lessons.id, entityDbId));
+    if (!lesson) {
+      throw new LifecycleError(
+        `Lesson with id ${entityDbId} not found`,
+        "ENTITY_NOT_FOUND",
+        404
+      );
+    }
+    return {
+      currentStatus: lesson.status as ContentLifecycleStatus,
+      currentVersion: lesson.contentVersion,
+      code: lesson.code,
+      itemData: lesson as unknown as Record<string, unknown>,
+    };
+  }
+  if (entityType === "activity") {
+    const [act] = await db
+      .select()
+      .from(activities)
+      .where(eq(activities.id, entityDbId));
+    if (!act) {
+      throw new LifecycleError(
+        `Activity with id ${entityDbId} not found`,
+        "ENTITY_NOT_FOUND",
+        404
+      );
+    }
+    return {
+      currentStatus: act.status as ContentLifecycleStatus,
+      currentVersion: act.contentVersion,
+      code: act.code,
+      itemData: act as unknown as Record<string, unknown>,
+    };
+  }
+  if (entityType === "curriculum") {
+    const [curr] = await db
+      .select()
+      .from(curricula)
+      .where(eq(curricula.id, entityDbId));
+    if (!curr) {
+      throw new LifecycleError(
+        `Curriculum with id ${entityDbId} not found`,
+        "ENTITY_NOT_FOUND",
+        404
+      );
+    }
+    return {
+      currentStatus: curr.status as ContentLifecycleStatus,
+      currentVersion: curr.contentVersion,
+      code: curr.code,
+      itemData: curr as unknown as Record<string, unknown>,
+    };
+  }
+  throw new LifecycleError(
+    `Entity type '${entityType}' not supported in transition handler`,
+    "ENTITY_NOT_FOUND",
+    404
+  );
 }
 
 export async function transitionContent(
@@ -450,66 +591,8 @@ export async function transitionContent(
   validateTransitionPreconditions(req);
 
   const db = getOwnerDb();
-  let currentStatus: ContentLifecycleStatus;
-  let currentVersion: number;
-  let code: string;
-  let itemData: Record<string, unknown>;
-
-  if (req.entityType === "game_level") {
-    const [level] = await db
-      .select()
-      .from(gameLevels)
-      .where(eq(gameLevels.id, req.entityDbId));
-    if (!level) {
-      throw new LifecycleError(
-        `Game level with id ${req.entityDbId} not found`,
-        "ENTITY_NOT_FOUND",
-        404
-      );
-    }
-    currentStatus = level.status as ContentLifecycleStatus;
-    currentVersion = level.contentVersion;
-    code = level.code;
-    itemData = level as unknown as Record<string, unknown>;
-  } else if (req.entityType === "lesson") {
-    const [lesson] = await db
-      .select()
-      .from(lessons)
-      .where(eq(lessons.id, req.entityDbId));
-    if (!lesson) {
-      throw new LifecycleError(
-        `Lesson with id ${req.entityDbId} not found`,
-        "ENTITY_NOT_FOUND",
-        404
-      );
-    }
-    currentStatus = lesson.status as ContentLifecycleStatus;
-    currentVersion = lesson.contentVersion;
-    code = lesson.code;
-    itemData = lesson as unknown as Record<string, unknown>;
-  } else if (req.entityType === "activity") {
-    const [act] = await db
-      .select()
-      .from(activities)
-      .where(eq(activities.id, req.entityDbId));
-    if (!act) {
-      throw new LifecycleError(
-        `Activity with id ${req.entityDbId} not found`,
-        "ENTITY_NOT_FOUND",
-        404
-      );
-    }
-    currentStatus = act.status as ContentLifecycleStatus;
-    currentVersion = act.contentVersion;
-    code = act.code;
-    itemData = act as unknown as Record<string, unknown>;
-  } else {
-    throw new LifecycleError(
-      `Entity type '${req.entityType}' not supported in transition handler`,
-      "ENTITY_NOT_FOUND",
-      404
-    );
-  }
+  const { currentStatus, currentVersion, code, itemData } =
+    await fetchEntityDataForTransition(db, req.entityType, req.entityDbId);
 
   if (
     req.expectedVersion !== undefined &&

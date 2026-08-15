@@ -11,6 +11,11 @@ import {
   packages,
 } from "./schema/billing.ts";
 import { consentRequirements, managers } from "./schema/identity.ts";
+import { seedContentTags } from "./seed-master/content-tags.ts";
+import { seedCurriculaMasterData } from "./seed-master/curricula.ts";
+import { seedEmojiMasterData } from "./seed-master/emoji.ts";
+import { seedGameTemplatesMasterData } from "./seed-master/game-templates.ts";
+import { seedTaxonomyMasterData } from "./seed-master/taxonomy/index.ts";
 
 export const PENDING_PRICE_VND = PENDING_PRICE;
 
@@ -40,11 +45,6 @@ export const SEED_PACKAGE_ENTITLEMENTS = Object.values(PACKAGE_CATALOG).flatMap(
       entitlementKey: key,
     }))
 );
-
-import { seedContentTags } from "./seed-master/content-tags.ts";
-import { seedEmojiMasterData } from "./seed-master/emoji.ts";
-import { seedGameTemplatesMasterData } from "./seed-master/game-templates.ts";
-import { seedTaxonomyMasterData } from "./seed-master/taxonomy/index.ts";
 
 export async function seed() {
   const db = getOwnerDb();
@@ -137,6 +137,12 @@ export async function seed() {
       })
       .onConflictDoNothing({ target: consentRequirements.consentType });
   }
+
+  // 9. Seed 5 MVP Curricula master data (Task 8, D-LA, D-LU)
+  const currStats = await seedCurriculaMasterData(db);
+  console.log(
+    `[db:seed] Curricula seeded: ${currStats.curriculaCount} curricula, ${currStats.weeksCount} weeks, ${currStats.itemsCount} items.`
+  );
 
   console.log("✅ [db:seed] Seed completed successfully.");
 }

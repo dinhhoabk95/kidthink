@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it } from "vitest";
+import { describe, expect, it } from "vitest";
 import { getOwnerDb } from "../../src/index.ts";
 import {
   contentSkillMap,
@@ -6,12 +6,8 @@ import {
   contentTags,
 } from "../../src/schema/tagging.ts";
 import { skills } from "../../src/schema/taxonomy.ts";
-import { truncateAllTestTables } from "../global-setup.ts";
 
 describe("Tagging Schema Integration Tests", () => {
-  beforeEach(async () => {
-    await truncateAllTestTables();
-  });
   it("BR-SCT-07: content_skill_map.weight must be > 0 and <= 1", async () => {
     const db = getOwnerDb();
 
@@ -48,17 +44,19 @@ describe("Tagging Schema Integration Tests", () => {
       })
       .returning();
 
+    const randomTagEntityId =
+      Math.floor(Math.random() * 900_000_000) + 100_000_000;
     const [map] = await db
       .insert(contentTagMap)
       .values({
         entityType: "game_level",
-        entityId: 888_888_888,
+        entityId: randomTagEntityId,
         tagId: tag.id,
       })
       .returning();
 
     expect(map).toBeDefined();
-    expect(map.entityId).toBe(888_888_888);
+    expect(map.entityId).toBe(randomTagEntityId);
   });
 
   it("orphan content_skill_map.(entity_type, entity_id) polymorphic check", async () => {
@@ -67,18 +65,20 @@ describe("Tagging Schema Integration Tests", () => {
     const [sk] = await db.select().from(skills).limit(1);
 
     if (sk) {
+      const randomSkillEntityId =
+        Math.floor(Math.random() * 900_000_000) + 100_000_000;
       const [map] = await db
         .insert(contentSkillMap)
         .values({
           entityType: "game_level",
-          entityId: 777_777_777,
+          entityId: randomSkillEntityId,
           skillId: sk.id,
           weight: "0.80",
         })
         .returning();
 
       expect(map).toBeDefined();
-      expect(map.entityId).toBe(777_777_777);
+      expect(map.entityId).toBe(randomSkillEntityId);
     }
   });
 });

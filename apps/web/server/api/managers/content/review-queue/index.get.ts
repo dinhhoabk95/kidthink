@@ -1,11 +1,13 @@
 import {
   activities,
   contentSkillMap,
+  curricula,
+  curriculumItems,
   gameLevels,
   getOwnerDb,
   lessons,
 } from "@kidthink/db";
-import { and, desc, eq, type SQL } from "drizzle-orm";
+import { and, desc, eq, type SQL, sql } from "drizzle-orm";
 import { defineEventHandler, getQuery } from "h3";
 import {
   requireManagerSession,
@@ -14,7 +16,12 @@ import {
 
 export interface ReviewQueueItem {
   id: number;
-  entity_type: "game_level" | "lesson" | "activity" | "worksheet";
+  entity_type:
+    | "game_level"
+    | "lesson"
+    | "activity"
+    | "curriculum"
+    | "worksheet";
   code: string;
   version: number;
   title: string;
@@ -45,6 +52,50 @@ async function getSkillsWithPublishedLevels(
   return new Set(rows.map((r) => r.skillId));
 }
 
+/**
+ * BR-CRQ-08 & D-KK: Identify items belonging to incomplete curriculum weeks (< 3 items).
+ */
+async function getIncompleteCurriculumItems(
+  db: ReturnType<typeof getOwnerDb>
+): Promise<Set<string>> {
+  const itemKeys = new Set<string>();
+
+  // Find all weeks with < 3 items in draft or in_review curricula
+  const weekCounts = await db
+    .select({
+      curriculumId: curriculumItems.curriculumId,
+      weekNo: curriculumItems.weekNo,
+      count: sql<number>`count(*)::int`,
+    })
+    .from(curriculumItems)
+    .innerJoin(curricula, eq(curriculumItems.curriculumId, curricula.id))
+    .where(sql`${curricula.status} IN ('draft', 'in_review')`)
+    .groupBy(curriculumItems.curriculumId, curriculumItems.weekNo);
+
+  const incompleteWeekTuples = weekCounts.filter((w) => w.count < 3);
+
+  for (const iw of incompleteWeekTuples) {
+    const itemsInWeek = await db
+      .select({
+        entityType: curriculumItems.entityType,
+        entityId: curriculumItems.entityId,
+      })
+      .from(curriculumItems)
+      .where(
+        and(
+          eq(curriculumItems.curriculumId, iw.curriculumId),
+          eq(curriculumItems.weekNo, iw.weekNo)
+        )
+      );
+
+    for (const it of itemsInWeek) {
+      itemKeys.add(`${it.entityType}_${it.entityId}`);
+    }
+  }
+
+  return itemKeys;
+}
+
 async function fetchGameLevelReviewQueue(
   db: ReturnType<typeof getOwnerDb>,
   options: {
@@ -53,7 +104,8 @@ async function fetchGameLevelReviewQueue(
     filterAuthoredIn?: string;
     limit: number;
   },
-  publishedSkillIds: Set<number>
+  publishedSkillIds: Set<number>,
+  incompleteCurriculumItemKeys: Set<string>
 ): Promise<ReviewQueueItem[]> {
   const conditions: SQL<unknown>[] = [
     eq(gameLevels.status, "in_review"),
@@ -90,7 +142,10 @@ async function fetchGameLevelReviewQueue(
   const items: ReviewQueueItem[] = [];
 
   for (const r of rows) {
-    // Check attached skills to see if it qualifies for Tier 2
+    const isPartOfIncompleteWeek = incompleteCurriculumItemKeys.has(
+      `game_level_${r.id}`
+    );
+
     const attached = await db
       .select({ skillId: contentSkillMap.skillId })
       .from(contentSkillMap)
@@ -108,9 +163,12 @@ async function fetchGameLevelReviewQueue(
     let priorityTier: 1 | 2 | 3 | 4 = 4;
     let priorityScore = 10;
 
-    // Tier 1: Curriculum week missing activities (pending_source: P3 - inactive)
-    // Tier 2: Skill has 0 published levels
-    if (hasUncoveredSkill && attached.length > 0) {
+    if (isPartOfIncompleteWeek) {
+      // Tier 1: Curriculum week missing activities (D-KK)
+      priorityTier = 1;
+      priorityScore = 50;
+    } else if (hasUncoveredSkill && attached.length > 0) {
+      // Tier 2: Skill has 0 published levels
       priorityTier = 2;
       priorityScore = 40;
     } else if (r.contentVersion > 1) {
@@ -148,7 +206,8 @@ async function fetchLessonReviewQueue(
     filterOrigin?: string;
     filterAuthoredIn?: string;
     limit: number;
-  }
+  },
+  incompleteCurriculumItemKeys: Set<string>
 ): Promise<ReviewQueueItem[]> {
   const conditions: SQL<unknown>[] = [
     eq(lessons.status, "in_review"),
@@ -182,19 +241,35 @@ async function fetchLessonReviewQueue(
     .orderBy(desc(lessons.createdAt))
     .limit(options.limit);
 
-  return rows.map((r) => ({
-    id: r.id,
-    entity_type: "lesson",
-    code: r.code,
-    version: r.contentVersion,
-    title: r.titleVi,
-    origin: r.origin,
-    authored_in: r.authoredIn,
-    created_by_manager_id: r.createdByManagerId,
-    waiting_since: r.updatedAt.toISOString(),
-    priority_score: r.contentVersion > 1 ? 30 : 10,
-    priority_tier: r.contentVersion > 1 ? 3 : 4,
-  }));
+  return rows.map((r) => {
+    const isPartOfIncompleteWeek = incompleteCurriculumItemKeys.has(
+      `lesson_${r.id}`
+    );
+    let priorityTier: 1 | 2 | 3 | 4 = 4;
+    let priorityScore = 10;
+
+    if (isPartOfIncompleteWeek) {
+      priorityTier = 1;
+      priorityScore = 50;
+    } else if (r.contentVersion > 1) {
+      priorityTier = 3;
+      priorityScore = 30;
+    }
+
+    return {
+      id: r.id,
+      entity_type: "lesson",
+      code: r.code,
+      version: r.contentVersion,
+      title: r.titleVi,
+      origin: r.origin,
+      authored_in: r.authoredIn,
+      created_by_manager_id: r.createdByManagerId,
+      waiting_since: r.updatedAt.toISOString(),
+      priority_score: priorityScore,
+      priority_tier: priorityTier,
+    };
+  });
 }
 
 async function fetchActivityReviewQueue(
@@ -253,6 +328,62 @@ async function fetchActivityReviewQueue(
   }));
 }
 
+async function fetchCurriculumReviewQueue(
+  db: ReturnType<typeof getOwnerDb>,
+  options: {
+    filterManagerId?: number;
+    filterOrigin?: string;
+    filterAuthoredIn?: string;
+    limit: number;
+  }
+): Promise<ReviewQueueItem[]> {
+  const conditions: SQL<unknown>[] = [
+    eq(curricula.status, "in_review"),
+    eq(curricula.authoredIn, "studio"),
+  ];
+
+  if (options.filterManagerId) {
+    conditions.push(eq(curricula.createdByManagerId, options.filterManagerId));
+  }
+  if (options.filterOrigin) {
+    conditions.push(
+      eq(
+        curricula.origin,
+        options.filterOrigin as typeof curricula.$inferSelect.origin
+      )
+    );
+  }
+  if (options.filterAuthoredIn) {
+    conditions.push(
+      eq(
+        curricula.authoredIn,
+        options.filterAuthoredIn as typeof curricula.$inferSelect.authoredIn
+      )
+    );
+  }
+
+  const rows = await db
+    .select()
+    .from(curricula)
+    .where(and(...conditions))
+    .orderBy(desc(curricula.createdAt))
+    .limit(options.limit);
+
+  return rows.map((r) => ({
+    id: r.id,
+    entity_type: "curriculum",
+    code: r.code,
+    version: r.contentVersion,
+    title: r.titleVi,
+    origin: r.origin,
+    authored_in: r.authoredIn,
+    created_by_manager_id: r.createdByManagerId,
+    waiting_since: r.updatedAt.toISOString(),
+    priority_score: r.contentVersion > 1 ? 30 : 10,
+    priority_tier: r.contentVersion > 1 ? 3 : 4,
+  }));
+}
+
 export default defineEventHandler(async (event) => {
   try {
     await requireManagerSession(event);
@@ -268,6 +399,7 @@ export default defineEventHandler(async (event) => {
 
     const db = getOwnerDb();
     const publishedSkillIds = await getSkillsWithPublishedLevels(db);
+    const incompleteCurriculumItemKeys = await getIncompleteCurriculumItems(db);
     const items: ReviewQueueItem[] = [];
 
     if (!filterType || filterType === "game_level") {
@@ -279,18 +411,23 @@ export default defineEventHandler(async (event) => {
           filterAuthoredIn,
           limit,
         },
-        publishedSkillIds
+        publishedSkillIds,
+        incompleteCurriculumItemKeys
       );
       items.push(...levelItems);
     }
 
     if (!filterType || filterType === "lesson") {
-      const lessonItems = await fetchLessonReviewQueue(db, {
-        filterManagerId,
-        filterOrigin,
-        filterAuthoredIn,
-        limit,
-      });
+      const lessonItems = await fetchLessonReviewQueue(
+        db,
+        {
+          filterManagerId,
+          filterOrigin,
+          filterAuthoredIn,
+          limit,
+        },
+        incompleteCurriculumItemKeys
+      );
       items.push(...lessonItems);
     }
 
@@ -304,7 +441,17 @@ export default defineEventHandler(async (event) => {
       items.push(...activityItems);
     }
 
-    // Sort by priority_score descending (Tier 2 (40) > Tier 3 (30) > Tier 4 (10))
+    if (!filterType || filterType === "curriculum") {
+      const curriculumItemsList = await fetchCurriculumReviewQueue(db, {
+        filterManagerId,
+        filterOrigin,
+        filterAuthoredIn,
+        limit,
+      });
+      items.push(...curriculumItemsList);
+    }
+
+    // Sort by priority_score descending (Tier 1 (50) > Tier 2 (40) > Tier 3 (30) > Tier 4 (10))
     // For tie-breaks: oldest waiting_since first (BR-CRQ-08, D-KK)
     items.sort((a, b) => {
       if (b.priority_score !== a.priority_score) {

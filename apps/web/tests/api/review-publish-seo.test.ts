@@ -660,6 +660,8 @@ describe("Content Review, Publish, Versioning & SEO Admin APIs (P2.8, BR-CRQ-*, 
 
     await db.insert(curriculumItems).values({
       curriculumId: cur.id,
+      weekNo: 1,
+      sessionNo: 1,
       position: 1,
       entityType: "game_level",
       entityId: lvl.id,
@@ -823,5 +825,64 @@ describe("Content Review, Publish, Versioning & SEO Admin APIs (P2.8, BR-CRQ-*, 
     expect(preview.structured_data).toBeDefined();
     expect(preview.snippet_preview).toBeDefined();
     expect(preview.snippet_preview.url).toContain(slug);
+  });
+
+  it("Task 6: Curriculum appears in Review Queue and supports full lifecycle transition (BR-CRM-01..11, D-KK)", async () => {
+    const db = getOwnerDb();
+    const currCode = `CUR-T${Date.now() % 9000}`;
+
+    // 1. Insert draft curriculum
+    const [cRow] = await db
+      .insert(curricula)
+      .values({
+        entityId: Math.floor(Math.random() * 1_000_000) + 1,
+        code: currCode,
+        contentVersion: 1,
+        programType: "age_based",
+        durationWeeks: 8,
+        sessionsPerWeek: 3,
+        titleVi: "Chương trình thử nghiệm duyệt",
+        descriptionVi: "Mô tả",
+        accessTier: "standard",
+        status: "in_review",
+        authoredIn: "studio",
+      })
+      .returning();
+
+    // 2. Fetch Review Queue with entity_type=curriculum
+    const rqEvt = mockEvent({}, { entity_type: "curriculum" });
+    const rqRes = (await reviewQueueHandler(rqEvt)) as any;
+    const found = rqRes.items.find((i: any) => i.code === currCode);
+    expect(found).toBeDefined();
+    expect(found.entity_type).toBe("curriculum");
+
+    // 3. Issue preview token
+    const token = issuePreviewToken({
+      entityType: "curriculum",
+      id: cRow.id,
+      version: 1,
+      managerId: testManagerId,
+    });
+
+    // 4. Approve curriculum
+    const approveEvt = mockEvent(
+      { type: "curriculum", id: String(cRow.id) },
+      {},
+      {
+        to_status: "approved",
+        preview_token: token,
+        checklist: {
+          pedagogy: true,
+          content: true,
+          language: true,
+          imagery: true,
+          safety: true,
+          technical: true,
+        },
+      }
+    );
+    const approveRes = (await transitionHandler(approveEvt)) as any;
+    expect(approveRes.success).toBe(true);
+    expect(approveRes.status).toBe("approved");
   });
 });

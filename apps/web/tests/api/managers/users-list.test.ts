@@ -67,7 +67,7 @@ describe("Task 2 — GET /api/managers/users (BR-USM-01, BR-USM-02, BR-USM-06, D
 
   it("BR-USM-06: returns child_count only and NEVER exposes child names, birth years, or mastery", async () => {
     const db = getOwnerDb();
-    const testEmail = `test_parent_${Date.now()}@example.com`;
+    const testEmail = `test_parent_${Date.now()}_${Math.random().toString(36).slice(2)}@example.com`;
 
     // Seed test parent user
     const [user] = await db

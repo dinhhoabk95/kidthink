@@ -160,7 +160,7 @@ kiểu, `entity_id` polymorphic — xem mục 7.10a của cùng file trên.
 | `game_levels` | `content_pack` parse được bằng `content_contract` của template · có ít nhất một đáp án đúng · không câu hỏi rỗng · mọi asset id resolve được · số lượng item nằm trong giới hạn template · `difficulty ∈ [1,5]` |
 | `activities` | `kind` hợp lệ · 2–20 phút · `instruction` đủ bốn phần (chuẩn bị, các bước, dễ hơn, khó hơn) · ≥1 câu nói với trẻ · 1–2 skill · vật liệu bắt buộc với kind ngoài màn hình · qua cổng an toàn theo band suy ra · ràng buộc riêng theo kind của [`activity-model.md`](../05-content/activity-model.md) §7.2 · `digital_game` trỏ level `published` |
 | `lessons` | ≥1 activity · `estimated_minutes ∈ [5,45]` · có `guide` |
-| `curricula` | Mọi `curriculum_item` trỏ tới nội dung `published` · không tuần rỗng |
+| `curricula` | Mọi `curriculum_item` trỏ tới nội dung `published` (`BR-CBD-03`) · không tuần rỗng (`BR-CBD-02`) · ≥3 hoạt động mỗi tuần (`BR-CBD-04`) · thứ tự prerequisite đúng (`BR-CRM-01`) · tuần đầu dễ (`BR-CRM-06`) · không competency nào quá 40% (`BR-CRM-07`) · không lặp item trong 4 tuần (`BR-CRM-09`) · mỗi tuần có mục tiêu (`BR-CRM-10`) · không skill mới ở 3 tuần cuối (`BR-CRM-11`, `D-LY`) · cảnh báo đã xác nhận (`D-LZ`) |
 | `worksheets` | Render thử ra PDF thành công |
 
 Thiếu bất kỳ mục nào → **422** kèm mảng `missing[]`, không publish một phần.

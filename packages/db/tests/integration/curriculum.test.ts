@@ -26,6 +26,8 @@ describe("Curriculum Schema Integration Tests", () => {
       .insert(curriculumItems)
       .values({
         curriculumId: cur.id,
+        weekNo: 1,
+        sessionNo: 1,
         position: 1,
         entityType: "game_level",
         entityId: 999_111_222,
@@ -100,6 +102,8 @@ describe("Curriculum Schema Integration Tests", () => {
       .insert(curriculumItems)
       .values({
         curriculumId: cur.id,
+        weekNo: 1,
+        sessionNo: 1,
         position: 1,
         entityType: "game_level",
         entityId: lineageAnchorEntityId,

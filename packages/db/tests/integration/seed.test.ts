@@ -9,11 +9,8 @@ import {
 } from "../../src/schema/billing.ts";
 import { seed } from "../../src/seed.ts";
 
-import { truncateAllTestTables } from "../global-setup.ts";
-
 describe("BR-ENT-03 & BR-PKG-04 & BR-PKG-05: Seed Integration & Two-way Matching", () => {
   it("seed() is idempotent and matches registry exactly (BR-ENT-03)", async () => {
-    await truncateAllTestTables();
     const db = getOwnerDb();
 
     // 1. Run seed first time

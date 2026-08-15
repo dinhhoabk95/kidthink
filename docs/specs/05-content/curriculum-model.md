@@ -44,14 +44,15 @@ Không có.
 |---|---|---|
 | `BR-CRM-01` | Skill xuất hiện **sau** mọi prerequisite của nó trong lộ trình | Dạy so sánh trước khi dạy đếm là sai thứ tự |
 | `BR-CRM-02` | Mỗi tuần chạm **2–4 competency**, không 1, không cả 6 | Một competency mỗi tuần quá hẹp; cả sáu quá loãng |
-| `BR-CRM-03` | Skill mới xuất hiện phải được **ôn lại** trong 2–3 tuần sau | Học một lần rồi bỏ là quên |
+| `BR-CRM-03` | Skill mới xuất hiện phải được **ôn lại** trong 2–3 tuần sau (đo trên **skill**) | Học một lần rồi bỏ là quên |
 | `BR-CRM-04` | Độ khó trung bình **tăng dần**, cho phép chững, không giảm mạnh | Tạo độ dốc học tập tự nhiên giúp trẻ tự tin tiến bộ mà không bị hẫng hoặc nản lòng |
 | `BR-CRM-05` | Mỗi tuần có **≥1 hoạt động ngoài màn hình** | Cân bằng giữa tương tác màn hình và vận động thực tế theo định hướng giáo dục toàn diện |
 | `BR-CRM-06` | Tuần đầu **dễ có chủ ý** | Tuần đầu quyết định trẻ có quay lại không |
 | `BR-CRM-07` | Cấm — **NEVER quá 40%** item thuộc một competency trên toàn chương trình | Chương trình lệch là lỗi sư phạm khó thấy bằng mắt |
-| `BR-CRM-08` | Chương trình theo tuổi phải phủ **cả 6 competency** | Phát triển đồng đều toàn bộ 6 năng lực tư duy toán học cốt lõi cho trẻ |
-| `BR-CRM-09` | Cấm — **NEVER lặp cùng một item trong 4 tuần liên tiếp** | Duy trì sự mới mẻ và hứng thú học tập cho trẻ mầm non |
+| `BR-CRM-08` | Chương trình theo tuổi (`program_type = 'age_based'`) phải phủ **cả 6 competency** | Phát triển đồng đều toàn bộ 6 năng lực tư duy toán học cốt lõi cho trẻ |
+| `BR-CRM-09` | Cấm — **NEVER lặp cùng một item trong 4 tuần liên tiếp** (đo trên **item**) | Duy trì sự mới mẻ và hứng thú học tập cho trẻ mầm non |
 | `BR-CRM-10` | Nêu rõ **mục tiêu của mỗi tuần** bằng một câu cho người lớn | Phụ huynh cần biết tuần này học gì |
+| `BR-CRM-11` | Cấm — **NEVER giới thiệu skill mới trong 3 tuần cuối** của một chương trình | 3 tuần cuối dành cho ôn tập và củng cố toàn diện, đảm bảo `BR-CRM-03` không vi phạm vì thiếu tuần phía sau (`D-LY`) |
 
 ## 7. Data
 
@@ -120,6 +121,10 @@ Scenario: BR-CRM-09 — không lặp trong 4 tuần
 Scenario: BR-CRM-10 — mỗi tuần có mục tiêu
   When mở chương trình
   Then mỗi tuần có một câu mô tả mục tiêu cho người lớn
+
+Scenario: BR-CRM-11 — không giới thiệu skill mới trong 3 tuần cuối
+  Given một chương trình có duration_weeks = W
+  Then không skill mới nào xuất hiện ở các tuần W-2, W-1, W
 ```
 
 ## 10. Boundaries
@@ -138,10 +143,11 @@ Scenario: BR-CRM-10 — mỗi tuần có mục tiêu
 - Một competency quá 40%.
 - Lặp item trong 4 tuần liên tiếp.
 - Tuần đầu khó.
+- Skill mới ở 3 tuần cuối.
 
 ## 11. Open questions
 
 | # | Câu hỏi | Chặn phase | Đề xuất chốt | Chủ |
 |---|---|---|---|---|
-| 1 | 42 tuần cần ~126 buổi. Với ≥60 lesson thì mỗi lesson dùng lại 2 lần — có chấp nhận được không? | P3 | Chấp nhận tái sử dụng lesson với biến thể hoặc bối cảnh luyện tập khác nhau theo thiết kế `BR-ACM-06` | người quyết |
-| 2 | Chu kỳ ôn lại 2–3 tuần dựa trên nguồn nào? Đường cong quên có tài liệu nhưng chưa đối chiếu cho tuổi 3–6 | P3 | Giữ quy tắc ôn lại 2-3 tuần cho MVP; đo lường tỉ lệ hoàn thành thực tế để tinh chỉnh ở P4 | Nội dung |
+| 1 | 42 tuần cần ~126 buổi. Với ≥60 lesson thì mỗi lesson dùng lại 2 lần — có chấp nhận được không? | P3 | Đóng theo `D-LA` & `D-LU`: Thư viện lesson thiết kế đủ số lượng theo nhu cầu curriculum thực tế | người quyết |
+| 2 | Chu kỳ ôn lại 2–3 tuần dựa trên nguồn nào? Đường cong quên có tài liệu nhưng chưa đối chiếu cho tuổi 3–6 | P3 | Đóng: Giữ quy tắc ôn lại 2-3 tuần cho MVP; đo lường tỉ lệ hoàn thành thực tế để tinh chỉnh ở P4 | Nội dung |

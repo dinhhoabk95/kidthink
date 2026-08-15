@@ -1,6 +1,7 @@
 import {
   activities,
   type ContentLifecycleStatus,
+  curricula,
   gameLevels,
   getOwnerDb,
   lessons,
@@ -102,6 +103,13 @@ async function resolveEntityVersion(
       .select({ version: seoPages.contentVersion })
       .from(seoPages)
       .where(eq(seoPages.id, entityId));
+    return row?.version ?? 1;
+  }
+  if (entityType === "curriculum") {
+    const [row] = await db
+      .select({ version: curricula.contentVersion })
+      .from(curricula)
+      .where(eq(curricula.id, entityId));
     return row?.version ?? 1;
   }
   return 1;

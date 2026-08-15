@@ -1,25 +1,23 @@
 import { hashPassword } from "@kidthink/auth";
 import { activeSessions, getAppDb, users } from "@kidthink/db";
-import { eq } from "drizzle-orm";
-import { beforeEach, describe, expect, it } from "vitest";
-import { truncateAllTestTables } from "../../../../../packages/db/tests/global-setup";
+import { and, eq } from "drizzle-orm";
+import { describe, expect, it } from "vitest";
 
 describe("Task 3 — Login & Session Management (BR-LGN-01..12)", () => {
-  beforeEach(async () => {
-    await truncateAllTestTables();
-  });
-
   it("authenticates valid credentials and creates active session + auth cookies (BR-LGN-01, BR-LGN-06)", async () => {
     const db = getAppDb();
     const passHash = await hashPassword("chuoixanh123");
     const email = `login1-${Date.now()}-${Math.floor(Math.random() * 10_000)}@example.com`;
 
-    await db.insert(users).values({
-      email,
-      passwordHash: passHash,
-      displayName: "Login User 1",
-      status: "active",
-    });
+    const [createdUser] = await db
+      .insert(users)
+      .values({
+        email,
+        passwordHash: passHash,
+        displayName: "Login User 1",
+        status: "active",
+      })
+      .returning();
 
     const { default: loginHandler } = await import(
       "../../../server/api/guest/auth/users/login.post"
@@ -36,7 +34,15 @@ describe("Task 3 — Login & Session Management (BR-LGN-01..12)", () => {
     const res = await loginHandler(event);
     expect(res.user.displayName).toBe("Login User 1");
 
-    const [session] = await db.select().from(activeSessions);
+    const [session] = await db
+      .select()
+      .from(activeSessions)
+      .where(
+        and(
+          eq(activeSessions.accountType, "user"),
+          eq(activeSessions.accountId, createdUser.id)
+        )
+      );
     expect(session).toBeDefined();
     expect(session.accountType).toBe("user");
   });

@@ -1,115 +1,259 @@
-import { describe, expect, it } from "vitest";
+import { and, eq } from "drizzle-orm";
+import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import {
+  childProfiles,
+  curricula,
+  curriculumEnrollments,
+  curriculumItemProgress,
+  curriculumItems,
+  curriculumWeeks,
+  getOwnerDb,
+  users,
+} from "../../src/index.ts";
 
-describe("P3.3 Curriculum Model & Builder Invariants (BR-CRM, BR-CRB, BR-CBD)", () => {
-  describe("Curriculum Model Invariants (BR-CRM-01..09)", () => {
-    it("Scenario: BR-CRM-01 — curriculum model structures learning path into 42 weeks x 3 sessions per week", () => {
-      const weeksCount = 42;
-      const sessionsPerWeek = 3;
-      expect(weeksCount).toBe(42);
-      expect(sessionsPerWeek).toBe(3);
+describe("P3.3 Database Schema & Invariants Integration Tests (Task 2)", () => {
+  const db = getOwnerDb();
+  let testUserId: number;
+  let testChildId: number;
+  let testCurriculumId: number;
+
+  beforeEach(async () => {
+    // Truncate test tables
+    await db.delete(curriculumItemProgress);
+    await db.delete(curriculumEnrollments);
+    await db.delete(curriculumItems);
+    await db.delete(curriculumWeeks);
+    await db.delete(curricula);
+    await db.delete(childProfiles);
+    await db.delete(users);
+
+    // Create base user and child profile
+    const [user] = await db
+      .insert(users)
+      .values({
+        email: `parent-${Date.now()}@example.com`,
+        passwordHash: "hash123",
+        displayName: "Parent Test",
+      })
+      .returning();
+    testUserId = user.id;
+
+    const [child] = await db
+      .insert(childProfiles)
+      .values({
+        userId: testUserId,
+        displayName: "Bé Test",
+        birthYear: 2021,
+        avatarId: "avatar-bear",
+      })
+      .returning();
+    testChildId = child.id;
+
+    // Create a base curriculum
+    const [curr] = await db
+      .insert(curricula)
+      .values({
+        entityId: Date.now(),
+        code: "CUR-BE3",
+        contentVersion: 1,
+        programType: "age_based",
+        targetAgeMin: 3,
+        targetAgeMax: 4,
+        durationWeeks: 8,
+        sessionsPerWeek: 3,
+        titleVi: "Chương Trình Bé 3 Tuổi",
+        descriptionVi: "Dành cho bé 3-4 tuổi phát triển tư duy toán học",
+        accessTier: "standard",
+        status: "draft",
+      })
+      .returning();
+    testCurriculumId = curr.id;
+  });
+
+  afterEach(async () => {
+    await db.delete(curriculumItemProgress);
+    await db.delete(curriculumEnrollments);
+    await db.delete(curriculumItems);
+    await db.delete(curriculumWeeks);
+    await db.delete(curricula);
+    await db.delete(childProfiles);
+    await db.delete(users);
+  });
+
+  describe("Curricula Schema & Invariants (D-LT)", () => {
+    it("persists curriculum with 4 configuration columns & program_type enum", async () => {
+      const [row] = await db
+        .select()
+        .from(curricula)
+        .where(eq(curricula.id, testCurriculumId));
+
+      expect(row).toBeDefined();
+      expect(row.code).toBe("CUR-BE3");
+      expect(row.programType).toBe("age_based");
+      expect(row.targetAgeMin).toBe(3);
+      expect(row.targetAgeMax).toBe(4);
+      expect(row.durationWeeks).toBe(8);
+      expect(row.sessionsPerWeek).toBe(3);
     });
 
-    it("Scenario: BR-CRM-02 — curriculum enforces target age band between 3 and 6 years", () => {
-      const targetAgeMin = 3;
-      const targetAgeMax = 6;
-      expect(targetAgeMin).toBeGreaterThanOrEqual(3);
-      expect(targetAgeMax).toBeLessThanOrEqual(6);
-    });
-
-    it("Scenario: BR-CRM-03 — curriculum item references a published lesson or game level code", () => {
-      const item = {
-        item_type: "lesson",
-        item_code: "LES-001",
-        status: "published",
-      };
-      expect(item.status).toBe("published");
-    });
-
-    it("Scenario: BR-CRM-04 — curriculum model validates week sequence completeness and continuity", () => {
-      const weeks = Array.from({ length: 42 }, (_, i) => i + 1);
-      expect(weeks.length).toBe(42);
-      expect(weeks[0]).toBe(1);
-      expect(weeks[41]).toBe(42);
-    });
-
-    it("Scenario: BR-CRM-05 — curriculum assigns difficulty progression across 42 weeks", () => {
-      const initialDifficulty = 1;
-      const finalDifficulty = 5;
-      expect(finalDifficulty).toBeGreaterThan(initialDifficulty);
-    });
-
-    it("Scenario: BR-CRM-06 — curriculum versioning retains immutable published version snapshot", () => {
-      const v1 = { entity_id: "CUR-001", version: 1, status: "published" };
-      const v2 = { entity_id: "CUR-001", version: 2, status: "draft" };
-      expect(v1.entity_id).toBe(v2.entity_id);
-      expect(v1.status).toBe("published");
-    });
-
-    it("Scenario: BR-CRM-07 — curriculum maps to primary competency and target skill progression DAG", () => {
-      const primaryCompetency = "C1";
-      expect(primaryCompetency).toBe("C1");
-    });
-
-    it("Scenario: BR-CRM-08 — curriculum mandates required access_tier classification", () => {
-      const accessTier = "standard";
-      expect(["free", "login", "standard", "premium"]).toContain(accessTier);
-    });
-
-    it("Scenario: BR-CRM-09 — curriculum reuse policy prevents lesson repetition within a 4-week window", () => {
-      const reuseWindowWeeks = 4;
-      expect(reuseWindowWeeks).toBe(4);
+    it("enforces curriculum code format regex check constraint", async () => {
+      await expect(
+        db.insert(curricula).values({
+          entityId: Date.now() + 1,
+          code: "INVALID_CODE_123",
+          contentVersion: 1,
+          programType: "journey",
+          durationWeeks: 42,
+          sessionsPerWeek: 3,
+          titleVi: "Invalid Code",
+          accessTier: "standard",
+        })
+      ).rejects.toThrow();
     });
   });
 
-  describe("Curriculum Builder Invariants (BR-CBD-01..08, BR-CRB-01..08)", () => {
-    it("Scenario: BR-CBD-01 / BR-CRB-01 — curriculum references content items and visual matrix drag-drop auto-saves draft state every 30s", () => {
-      const autosaveIntervalSeconds = 30;
-      expect(autosaveIntervalSeconds).toBe(30);
+  describe("Curriculum Weeks Schema (BR-CRM-10, D-LT)", () => {
+    it("inserts week goals with unique (curriculum_id, week_no)", async () => {
+      await db.insert(curriculumWeeks).values({
+        curriculumId: testCurriculumId,
+        weekNo: 1,
+        goal: "Làm quen với số lượng và đếm trong phạm vi 3",
+      });
+
+      const [week] = await db
+        .select()
+        .from(curriculumWeeks)
+        .where(
+          and(
+            eq(curriculumWeeks.curriculumId, testCurriculumId),
+            eq(curriculumWeeks.weekNo, 1)
+          )
+        );
+
+      expect(week.goal).toBe("Làm quen với số lượng và đếm trong phạm vi 3");
+
+      // Duplicate week_no for same curriculum must fail
+      await expect(
+        db.insert(curriculumWeeks).values({
+          curriculumId: testCurriculumId,
+          weekNo: 1,
+          goal: "Duplicate week goal",
+        })
+      ).rejects.toThrow();
+    });
+  });
+
+  describe("Curriculum Items Schema (D-LS, D-LW, D-LX)", () => {
+    it("persists items with week_no, session_no, position, is_required", async () => {
+      await db.insert(curriculumItems).values({
+        curriculumId: testCurriculumId,
+        weekNo: 1,
+        sessionNo: 1,
+        position: 1,
+        entityType: "lesson",
+        entityId: 1001,
+        isRequired: true,
+      });
+
+      const [item] = await db
+        .select()
+        .from(curriculumItems)
+        .where(eq(curriculumItems.curriculumId, testCurriculumId));
+
+      expect(item.weekNo).toBe(1);
+      expect(item.sessionNo).toBe(1);
+      expect(item.position).toBe(1);
+      expect(item.entityType).toBe("lesson");
+      expect(item.entityId).toBe(1001);
+      expect(item.isRequired).toBe(true);
     });
 
-    it("Scenario: BR-CBD-02 / BR-CRB-02 — curriculum builder validates completeness and forbids publishing with empty weeks", () => {
-      const emptyWeeksCount = 0;
-      const canPublish = emptyWeeksCount === 0;
-      expect(canPublish).toBe(true);
+    it("rejects duplicate position within the same (curriculum_id, week_no, session_no)", async () => {
+      await db.insert(curriculumItems).values({
+        curriculumId: testCurriculumId,
+        weekNo: 1,
+        sessionNo: 1,
+        position: 1,
+        entityType: "lesson",
+        entityId: 1001,
+        isRequired: true,
+      });
+
+      await expect(
+        db.insert(curriculumItems).values({
+          curriculumId: testCurriculumId,
+          weekNo: 1,
+          sessionNo: 1,
+          position: 1,
+          entityType: "game_level",
+          entityId: 2001,
+          isRequired: false,
+        })
+      ).rejects.toThrow();
+    });
+  });
+
+  describe("Curriculum Enrollments & Item Progress (D-LV)", () => {
+    it("allows enrollment pinned to curricula.id and prevents duplicate active enrollment", async () => {
+      const [enrollment] = await db
+        .insert(curriculumEnrollments)
+        .values({
+          childId: testChildId,
+          curriculumId: testCurriculumId,
+          status: "active",
+        })
+        .returning();
+
+      expect(enrollment.status).toBe("active");
+      expect(enrollment.childId).toBe(testChildId);
+      expect(enrollment.curriculumId).toBe(testCurriculumId);
+
+      // Attempting another active enrollment for the same child and curriculum must fail
+      await expect(
+        db.insert(curriculumEnrollments).values({
+          childId: testChildId,
+          curriculumId: testCurriculumId,
+          status: "active",
+        })
+      ).rejects.toThrow();
     });
 
-    it("Scenario: BR-CBD-03 / BR-CRB-03 — publishing curriculum requires all referenced items to be in published state", () => {
-      const items = [
-        { code: "LES-001", status: "published" },
-        { code: "LES-002", status: "published" },
-      ];
-      const allPublished = items.every((i) => i.status === "published");
-      expect(allPublished).toBe(true);
-    });
+    it("tracks curriculum item progress linked to child and enrollment", async () => {
+      const [enrollment] = await db
+        .insert(curriculumEnrollments)
+        .values({
+          childId: testChildId,
+          curriculumId: testCurriculumId,
+          status: "active",
+        })
+        .returning();
 
-    it("Scenario: BR-CBD-04 / BR-CRB-04 — curriculum builder enforces at least 3 activities per week with expected_version lock", () => {
-      const activitiesPerWeek = 3;
-      expect(activitiesPerWeek).toBeGreaterThanOrEqual(3);
-    });
+      const [item] = await db
+        .insert(curriculumItems)
+        .values({
+          curriculumId: testCurriculumId,
+          weekNo: 1,
+          sessionNo: 1,
+          position: 1,
+          entityType: "lesson",
+          entityId: 1001,
+          isRequired: true,
+        })
+        .returning();
 
-    it("Scenario: BR-CBD-05 / BR-CRB-05 — curriculum builder provides persistent balance indicator for competency distribution", () => {
-      const healthStatus = { is_balanced: true, missing_activities_count: 0 };
-      expect(healthStatus.is_balanced).toBe(true);
-    });
+      const [progress] = await db
+        .insert(curriculumItemProgress)
+        .values({
+          enrollmentId: enrollment.id,
+          childId: testChildId,
+          curriculumItemId: item.id,
+          status: "completed",
+          completedAt: new Date(),
+        })
+        .returning();
 
-    it("Scenario: BR-CBD-06 / BR-CRB-06 — curriculum builder checks skill prerequisites sequence and supports cloning draft curriculum", () => {
-      const sourceId = "CUR-001";
-      const clonedDraft = {
-        source_entity_id: sourceId,
-        status: "draft",
-        version: 1,
-      };
-      expect(clonedDraft.source_entity_id).toBe(sourceId);
-    });
-
-    it("Scenario: BR-CBD-07 / BR-CRB-07 — curriculum builder forbids hardcoding real time calendar dates into week sequence", () => {
-      const isSequenceOrdinal = true;
-      expect(isSequenceOrdinal).toBe(true);
-    });
-
-    it("Scenario: BR-CBD-08 / BR-CRB-08 — editing a published curriculum creates new draft version and logs operations in audit_logs", () => {
-      const auditAction = "manager.curriculum.updated";
-      expect(auditAction).toBe("manager.curriculum.updated");
+      expect(progress.status).toBe("completed");
+      expect(progress.completedAt).toBeDefined();
     });
   });
 });

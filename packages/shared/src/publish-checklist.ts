@@ -4,6 +4,13 @@
  */
 
 import { validateActivityModel } from "./activity-model.js";
+import {
+  type CurriculumItemMetadata,
+  type CurriculumValidationInput,
+  type CurriculumWeekMetadata,
+  type ProgramType,
+  validateCurriculumModel,
+} from "./curriculum-model.js";
 import { validateLessonModel } from "./lesson-model.js";
 
 export type EntityType =
@@ -331,24 +338,61 @@ function checkLessonRules(
   }
 }
 
+function buildCurriculumPayload(
+  entity: GenericEntityPayload,
+  items: CurriculumItemMetadata[],
+  weeks: CurriculumWeekMetadata[]
+): CurriculumValidationInput {
+  return {
+    code: (entity.code as string) || "CUR-001",
+    program_type:
+      ((entity.programType ?? entity.program_type) as ProgramType) ||
+      "age_based",
+    duration_weeks: (entity.durationWeeks ??
+      entity.duration_weeks ??
+      8) as number,
+    sessions_per_week: (entity.sessionsPerWeek ??
+      entity.sessions_per_week ??
+      3) as number,
+    target_age_min: (entity.targetAgeMin ?? entity.target_age_min) as
+      | number
+      | undefined,
+    target_age_max: (entity.targetAgeMax ?? entity.target_age_max) as
+      | number
+      | undefined,
+    status: (entity.status as string) || "published",
+    items,
+    weeks,
+    skill_prerequisites_map: entity.skill_prerequisites_map as
+      | Record<string, string[]>
+      | undefined,
+  };
+}
+
 function checkCurriculumRules(
   entity: GenericEntityPayload,
   missing: string[]
 ): void {
-  const items = (entity.curriculumItems ?? entity.curriculum_items) as
-    | { status?: string }[]
-    | undefined;
+  const items = (entity.curriculumItems ??
+    entity.curriculum_items ??
+    entity.items) as CurriculumItemMetadata[] | undefined;
+  const weeks = (entity.curriculumWeeks ??
+    entity.curriculum_weeks ??
+    entity.weeks) as CurriculumWeekMetadata[] | undefined;
+
   if (!Array.isArray(items) || items.length < 1) {
     missing.push("curriculum_items_empty");
-  } else {
-    const hasUnpublished = items.some((it) => it.status !== "published");
-    if (hasUnpublished) {
-      missing.push("curriculum_item_not_published");
-    }
+    return;
   }
 
-  if (entity.hasEmptyWeek === true) {
-    missing.push("empty_week_present");
+  const payload = buildCurriculumPayload(entity, items, weeks || []);
+  const res = validateCurriculumModel(payload);
+  if (!res.ok) {
+    for (const err of res.errors) {
+      missing.push(
+        `curriculum_validation_failed_${err.slice(0, 15).replace(/[^a-z0-9]/gi, "_")}`
+      );
+    }
   }
 }
 

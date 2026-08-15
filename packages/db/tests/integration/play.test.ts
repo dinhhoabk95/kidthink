@@ -185,8 +185,8 @@ describe("Play Schema Integration Tests", () => {
 
   it("BR-SPT-04 & BR-CDC-05: SET child_uuid = NULL anonymizes telemetry events without deleting rows", async () => {
     const db = getOwnerDb();
-    const sessionUuid = "b0eebc99-9c0b-4ef8-bb6d-6bb9bd380a22";
-    const childUuid = "c0eebc99-9c0b-4ef8-bb6d-6bb9bd380a33";
+    const sessionUuid = crypto.randomUUID();
+    const childUuid = crypto.randomUUID();
 
     await db.insert(telemetryEvents).values({
       sessionUuid,

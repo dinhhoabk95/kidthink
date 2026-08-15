@@ -97,15 +97,27 @@ Trên: chỉ báo cân bằng dạng thanh. Dưới: cảnh báo còn lại.
 
 ### `POST /api/managers/curricula` · `PATCH .../{code}/{version}`
 
+- `POST` body: `{ program_type, target_age_min, target_age_max, duration_weeks, sessions_per_week, access_tier, title_vi, description_vi }` (`D-LT`).
+- `PATCH` body: metadata fields + `expected_version` lock.
+
 ### `PUT /api/managers/curricula/{code}/{version}/items`
 
-Body `{ items: [{ week_no, session_no, position, entity_type, entity_id, is_required, estimated_minutes }] }`.
-`entity_id` là `entity_id` (neo dòng dõi, D-AE) của bảng đích — luôn bản `published` mới nhất.
-Thay toàn bộ, không patch từng item — giữ tính nguyên tử của thứ tự.
+Body `{ items: [{ week_no, session_no, position, entity_type, entity_id, is_required }], expected_version }` (`D-LS`, `D-LW`, `D-LX`).
+`entity_id` là `entity_id` (neo dòng dõi, `D-AE`) của bảng đích — luôn bản `published` mới nhất.
+Thời lượng buổi là số suy ra lúc đọc, không lưu trên item (`D-LX`).
+Thay toàn bộ trong một transaction, có `expected_version` concurrency control.
+
+### `PUT /api/managers/curricula/{code}/{version}/weeks`
+
+Body `{ weeks: [{ week_no, goal }], expected_version }` lưu mục tiêu tuần cho người lớn (`BR-CRM-10`, `D-LT`).
+
+### `POST /api/managers/curricula/{code}/{version}/duplicate`
+
+Tạo bản draft mới với mã mới, copy toàn bộ items và week goals (`BR-CBD-08`).
 
 ### `GET /api/managers/curricula/{code}/{version}/balance`
 
-200 → sáu chỉ báo §7.2.
+200 → sáu chỉ báo §7.2 (dùng cùng một hàm với cổng publish, `D-LZ`).
 
 ## 9. Acceptance criteria
 
@@ -172,4 +184,4 @@ Scenario: BR-CBD-08 — sửa bản published tạo version mới
 | # | Câu hỏi | Chặn phase | Đề xuất chốt | Chủ |
 |---|---|---|---|---|
 | ~~1~~ | ~~Curriculum item ghim version của lesson hay lấy bản mới nhất?~~ **Đóng 2026-08-09 (D-VER-02 không tồn tại, dùng D-AE, T15)**: `D-VER-02` không có trong corpus — trích dẫn sai. Quyết định thật là **`D-AE`** ở [`content-versioning.md`](../00-foundation/content-versioning.md) §7.4: curriculum item **luôn theo bản `published` mới nhất** qua `entity_id`, **không ghim**. Ghim chỉ áp cho dữ liệu chơi đã xảy ra (`play_sessions`), không áp cho tham chiếu nội dung sang nội dung | P3 | Đã đóng | D-AE |
-| 2 | 42 tuần cần ~126 buổi — với ≥60 lesson MVP thì mỗi lesson dùng lại 2 lần. Chấp nhận được không? | P3 | Chấp nhận tái sử dụng lesson với biến thể hoặc bối cảnh luyện tập khác nhau theo thiết kế `BR-ACM-06` (đồng bộ với [`curriculum-model.md`](../05-content/curriculum-model.md)) | người quyết |
+| 2 | 42 tuần cần ~126 buổi — với ≥60 lesson MVP thì mỗi lesson dùng lại 2 lần. Chấp nhận được không? | P3 | Đóng theo `D-LA` & `D-LU`: Thư viện lesson thiết kế đủ số lượng theo nhu cầu curriculum thực tế | người quyết |

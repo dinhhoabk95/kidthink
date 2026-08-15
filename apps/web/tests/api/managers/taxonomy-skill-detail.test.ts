@@ -128,8 +128,22 @@ describe("Task 6 — GET /api/managers/taxonomy/skills/[code] (BR-TXB-04, BR-TXB
       .onConflictDoNothing()
       .returning();
 
-    const s1Id = s1Rows[0]?.id;
-    const s2Id = s2Rows[0]?.id;
+    const s1Id =
+      s1Rows[0]?.id ??
+      (
+        await db
+          .select({ id: skills.id })
+          .from(skills)
+          .where(eq(skills.code, "C2.GEO.98"))
+      )[0]?.id;
+    const s2Id =
+      s2Rows[0]?.id ??
+      (
+        await db
+          .select({ id: skills.id })
+          .from(skills)
+          .where(eq(skills.code, "C2.GEO.99"))
+      )[0]?.id;
 
     if (s1Id && s2Id) {
       // s2 requires s1 (s1 is upstream prereq for s2, and s1 unlocks s2)

@@ -110,7 +110,7 @@ Spec này ép ràng buộc lên schema **trước** khi bảng được tạo.
 | — | — | `age_band` **không phải cột** — suy từ `birth_year` lúc đọc (D-AA) | — |
 | `avatar_id` | varchar(24) | FK logic tới bộ preset. Không path upload | Có |
 | `relationship` | enum | `child` \| `student` \| `other` | Không |
-| `current_curriculum_id` | bigint | Chương trình đang theo — FK `curricula.entity_id` (**neo dòng dõi**, bất biến qua version), không phải `id` của một hàng version cụ thể và không phải `code`. Luôn theo bản `published` mới nhất qua `WHERE entity_id = ? AND status='published'`, cùng cơ chế với quy tắc `BR-DM-13` của [`data-model-overview.md`](../01-platform/data-model-overview.md) và quy tắc `BR-SCT-06` của [`schema-content-taxonomy.md`](../01-platform/schema-content-taxonomy.md) — cả hai đều bắt FK nội bộ trỏ `entity_id`/`id`, không dùng `code` (quyết định D-AE, sửa lại 2026-08-07) | Không |
+| `current_curriculum_id` | bigint | Chương trình đang theo — FK `curricula.entity_id` (**neo dòng dõi**, bất biến qua version), dùng cho hiển thị và ghi danh lần sau theo quyết định `D-LV` (2026-08-11). Mọi truy vấn tiến độ học tập thực tế đọc qua `curriculum_enrollments` (ghim version cụ thể `curricula.id`). Luôn theo bản `published` mới nhất qua `WHERE entity_id = ? AND status='published'`, cùng cơ chế với quy tắc `BR-DM-13` của [`data-model-overview.md`](../01-platform/data-model-overview.md) và quy tắc `BR-SCT-06` của [`schema-content-taxonomy.md`](../01-platform/schema-content-taxonomy.md) (quyết định D-AE, sửa lại 2026-08-07) | Không |
 | `daily_play_cap_minutes` | smallint | Hạn mức giờ chơi | Có, mặc định |
 | `status` | enum | `active` \| `archived` \| `pending_deletion` | Có |
 | `created_at` `updated_at` | timestamptz | | Có |

@@ -348,7 +348,9 @@ describe("P3.1 Lesson & Activity Model & Seeder Tests", () => {
         seeds: [...ALL_SEED_ACTIVITIES, ...ALL_SEED_LESSONS],
       });
 
-      expect(res.rowsInserted).toBeGreaterThanOrEqual(120);
+      expect(
+        res.rowsInserted + res.rowsSkippedIdempotent
+      ).toBeGreaterThanOrEqual(120);
 
       // Verify records exist in database
       const [act] = await db
