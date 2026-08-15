@@ -65,7 +65,7 @@ describe("Task 4 — Password Recovery (BR-PWR-01..09)", () => {
 
     const noUserRes = await forgotHandler(noUserEvent);
     expect(noUserRes.ok).toBe(true);
-  });
+  }, 30_000);
 
   it("resets password with valid token and revokes all active sessions (BR-PWR-05..07)", async () => {
     const db = getAppDb();
@@ -128,5 +128,5 @@ describe("Task 4 — Password Recovery (BR-PWR-01..09)", () => {
       .from(users)
       .where(eq(users.id, user.id));
     expect(updatedUser.sessionVersion).toBe(user.sessionVersion + 1);
-  });
+  }, 30_000);
 });

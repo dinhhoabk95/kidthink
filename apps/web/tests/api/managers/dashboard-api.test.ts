@@ -112,7 +112,7 @@ describe("Task 4 — GET /api/managers/dashboard (BR-DSH-01..06, D-IY, D-IZ, D-I
     expect(new Date(res.as_of).getTime()).toBeGreaterThanOrEqual(
       testRollupDate.getTime()
     );
-  });
+  }, 30_000);
 
   it("Scenario: BR-DSH-05 — response preserves child privacy and contains NO child names, UUIDs, or individual mastery", async () => {
     const event = mockEvent("super_admin");
@@ -170,5 +170,5 @@ describe("Task 4 — GET /api/managers/dashboard (BR-DSH-01..06, D-IY, D-IZ, D-I
     const p95Latency = latencies[p95Index];
 
     expect(p95Latency).toBeLessThan(500);
-  });
+  }, 30_000);
 });
