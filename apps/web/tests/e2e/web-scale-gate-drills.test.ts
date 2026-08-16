@@ -81,7 +81,19 @@ describe("Web Scale Gate Drills & Failure Matrix — Task #78 / P5.3", () => {
       templateId = existing?.id ?? 0;
     }
 
-    const glCode = `GL-C1-NUM-CNT-${String(Math.floor(Math.random() * 8999) + 1000).padStart(4, "0")}`;
+    let glCode = `GL-C1-SCL-DRL-${String(Math.floor(Math.random() * 8999) + 1000).padStart(4, "0")}`;
+    for (let i = 0; i < 20; i++) {
+      const candidate = `GL-C1-SCL-DRL-${String(Math.floor(Math.random() * 8999) + 1000).padStart(4, "0")}`;
+      const [existing] = await db
+        .select({ id: gameLevels.id })
+        .from(gameLevels)
+        .where(eq(gameLevels.code, candidate))
+        .limit(1);
+      if (!existing) {
+        glCode = candidate;
+        break;
+      }
+    }
     const [gl] = await db
       .insert(gameLevels)
       .values({

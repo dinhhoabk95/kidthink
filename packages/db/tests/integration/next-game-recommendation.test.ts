@@ -167,9 +167,9 @@ describe("P3.6 Next Game Recommendation Invariants (BR-REC-01..08, D-MQ..D-MW)",
     }
 
     // Helper to generate unique valid level code
-    const makeLevelCode = async () => {
+    const makeLevelCode = async (subStrand: string) => {
       for (let attempt = 0; attempt < 50; attempt++) {
-        const candidate = `GL-C1-NUM-CNT-${String(Math.floor(1000 + Math.random() * 8999))}`;
+        const candidate = `GL-C1-REC-${subStrand}-${String(Math.floor(1000 + Math.random() * 8999))}`;
         const existing = await db
           .select({ id: gameLevels.id })
           .from(gameLevels)
@@ -179,7 +179,7 @@ describe("P3.6 Next Game Recommendation Invariants (BR-REC-01..08, D-MQ..D-MW)",
           return candidate;
         }
       }
-      return `GL-C1-NUM-CNT-${String(Math.floor(1000 + Math.random() * 8999))}`;
+      return `GL-C1-REC-${subStrand}-${String(Math.floor(1000 + Math.random() * 8999))}`;
     };
 
     // 4. Game Levels
@@ -187,7 +187,7 @@ describe("P3.6 Next Game Recommendation Invariants (BR-REC-01..08, D-MQ..D-MW)",
       .insert(gameLevels)
       .values({
         entityId: Math.floor(100_000 + Math.random() * 800_000),
-        code: await makeLevelCode(),
+        code: await makeLevelCode("FREA"),
         contentVersion: 1,
         templateId: tmpl.id,
         titleVi: "Đếm táo miễn phí",
@@ -206,7 +206,7 @@ describe("P3.6 Next Game Recommendation Invariants (BR-REC-01..08, D-MQ..D-MW)",
       .insert(gameLevels)
       .values({
         entityId: Math.floor(100_000 + Math.random() * 800_000),
-        code: await makeLevelCode(),
+        code: await makeLevelCode("FREB"),
         contentVersion: 1,
         templateId: tmpl.id,
         titleVi: "Đếm chuối miễn phí",
@@ -225,7 +225,7 @@ describe("P3.6 Next Game Recommendation Invariants (BR-REC-01..08, D-MQ..D-MW)",
       .insert(gameLevels)
       .values({
         entityId: Math.floor(100_000 + Math.random() * 800_000),
-        code: await makeLevelCode(),
+        code: await makeLevelCode("STDA"),
         contentVersion: 1,
         templateId: tmpl.id,
         titleVi: "Đếm cam tiêu chuẩn",
@@ -244,7 +244,7 @@ describe("P3.6 Next Game Recommendation Invariants (BR-REC-01..08, D-MQ..D-MW)",
       .insert(gameLevels)
       .values({
         entityId: Math.floor(100_000 + Math.random() * 800_000),
-        code: await makeLevelCode(),
+        code: await makeLevelCode("PRMA"),
         contentVersion: 1,
         templateId: tmpl.id,
         titleVi: "Đếm dâu cao cấp",
