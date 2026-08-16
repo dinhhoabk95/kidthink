@@ -59,7 +59,7 @@ export default defineEventHandler(async (event) => {
       before_data: {
         code: curr.code,
         version: curr.contentVersion,
-        title_vi: curr.titleVi,
+        title: curr.titleVi,
       },
     });
 

@@ -184,8 +184,8 @@ Chỉ bắt đầu khi P0–P3 `implemented`. Mỗi add-on **lên catalog cùng 
 
 - [x] **P5.0** Đóng scope và spec owner cho đúng sản phẩm web — Task #70
 - [ ] **P5.1** Cổng thanh toán tự động/đối soát/refund theo contract đã duyệt — Task #71
-- [ ] **P5.2** [`pwa-install.md`](../specs/01-platform/pwa-install.md) + offline curriculum pack có spec owner — Task #72
-- [ ] **P5.3** Cổng evidence Web scale — Task #78
+- [x] **P5.2** [`pwa-install.md`](../specs/01-platform/pwa-install.md) + offline curriculum pack có spec owner — Task #72
+- [x] **P5.3** Cổng evidence Web scale — Task #78
 
 Task #73–#77 đã loại khỏi backlog; không tái dùng ID. Classroom, native mobile, licensing,
 localization và mở thị trường chỉ quay lại sau quyết định scope + spec mới + task số mới.

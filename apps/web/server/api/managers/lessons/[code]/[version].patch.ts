@@ -11,7 +11,7 @@ import { z } from "zod";
 import { requireManagerSession } from "../../../../utils/admin-auth-runtime.js";
 
 const updateLessonSchema = z.object({
-  title_vi: z.string().min(1).optional(),
+  title: z.string().min(1).optional(),
   guide_vi: z.string().min(1).optional(),
   target_age_min: z.number().int().min(3).max(6).optional(),
   target_age_max: z.number().int().min(3).max(6).optional(),
@@ -71,7 +71,7 @@ async function handlePublishedLessonFork(
       entityId: existing.entityId,
       code: existing.code,
       contentVersion: newVersion,
-      titleVi: data.title_vi ?? existing.titleVi,
+      titleVi: data.title ?? existing.titleVi,
       guideVi: data.guide_vi ?? existing.guideVi,
       targetAgeMin: data.target_age_min ?? existing.targetAgeMin,
       targetAgeMax: data.target_age_max ?? existing.targetAgeMax,
@@ -142,8 +142,8 @@ async function handleDraftLessonUpdate(
     updatedAt: new Date(),
   };
 
-  if (data.title_vi !== undefined) {
-    patch.titleVi = data.title_vi;
+  if (data.title !== undefined) {
+    patch.titleVi = data.title;
   }
   if (data.guide_vi !== undefined) {
     patch.guideVi = data.guide_vi;

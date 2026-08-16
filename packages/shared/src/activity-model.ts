@@ -50,7 +50,7 @@ export interface ActivityValidationInput {
   code?: string;
   kind?: string;
   activity_kind?: string;
-  title_vi: string;
+  title: string;
   instruction?: string | ActivityInstruction;
   materials_vi?: string | null;
   estimated_minutes: number;
@@ -306,7 +306,7 @@ export function validateActivityModel(
 
   const parsed = parseInstruction(input);
   const allText = [
-    input.title_vi || "",
+    input.title || "",
     parsed.instructionText,
     input.materials_vi || "",
   ].join(" ");

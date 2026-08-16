@@ -11,7 +11,7 @@ const patchCurriculumSchema = z.object({
   expected_version: z.number().int({
     message: "Bắt buộc truyền expected_version để kiểm soát đồng thời",
   }),
-  title_vi: z.string().min(1, "Tiêu đề không được để trống").optional(),
+  title: z.string().min(1, "Tiêu đề không được để trống").optional(),
   description_vi: z.string().nullable().optional(),
   program_type: z.enum(["age_based", "journey"]).optional(),
   target_age_min: z.number().int().min(3).max(6).nullable().optional(),
@@ -28,8 +28,8 @@ function buildCurriculumPatchPayload(
     updatedAt: new Date(),
   };
 
-  if (data.title_vi !== undefined) {
-    updatePayload.titleVi = data.title_vi;
+  if (data.title !== undefined) {
+    updatePayload.titleVi = data.title;
   }
   if (data.description_vi !== undefined) {
     updatePayload.descriptionVi = data.description_vi;

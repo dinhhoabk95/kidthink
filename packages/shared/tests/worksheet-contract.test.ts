@@ -168,7 +168,7 @@ describe("Worksheet Contract & Validation (BR-WSM-01..08)", () => {
 
     for (const s of samples) {
       const res = validateWorksheetContent({
-        title_vi: `Phiếu bài tập ${s.template}`,
+        title: `Phiếu bài tập ${s.template}`,
         layout_template: s.template,
         content_blocks: s.blocks,
         instructions_vi:
@@ -182,7 +182,7 @@ describe("Worksheet Contract & Validation (BR-WSM-01..08)", () => {
 
   it("từ chối loại worksheet thứ 7 ngoài danh mục đóng", () => {
     const res = validateWorksheetContent({
-      title_vi: "Phiếu bài tập tự chế",
+      title: "Phiếu bài tập tự chế",
       layout_template: "crossword_puzzle",
       content_blocks: { template: "crossword_puzzle" },
       instructions_vi: "Hướng dẫn người lớn: giải ô chữ",
@@ -198,7 +198,7 @@ describe("Worksheet Contract & Validation (BR-WSM-01..08)", () => {
       reading_prompt: "Bé hãy đọc chữ và tô màu",
     };
     const res = validateWorksheetContent({
-      title_vi: "Phiếu đố bé đọc chữ",
+      title: "Phiếu đố bé đọc chữ",
       layout_template: "pattern_coloring",
       content_blocks: readingBlock,
       instructions_vi: "Hướng dẫn người lớn cho trẻ làm bài",
@@ -222,7 +222,7 @@ describe("Worksheet Contract & Validation (BR-WSM-01..08)", () => {
       stroke_pt: 1.0, // 1pt < 2pt
     };
     const res = validateWorksheetContent({
-      title_vi: "Phiếu hình vẽ quá nhỏ",
+      title: "Phiếu hình vẽ quá nhỏ",
       layout_template: "pattern_coloring",
       content_blocks: smallAreaBlock,
       instructions_vi: "Hướng dẫn người lớn hỗ trợ trẻ",
@@ -234,7 +234,7 @@ describe("Worksheet Contract & Validation (BR-WSM-01..08)", () => {
 
   it("BR-WSM-05: từ chối nếu thiếu hướng dẫn người lớn ở chân trang", () => {
     const res = validateWorksheetContent({
-      title_vi: "Phiếu thiếu hướng dẫn",
+      title: "Phiếu thiếu hướng dẫn",
       layout_template: "pattern_coloring",
       content_blocks: samplePatternColoring,
       instructions_vi: "", // rỗng
@@ -247,7 +247,7 @@ describe("Worksheet Contract & Validation (BR-WSM-01..08)", () => {
   it("worksheetFormSchema parse hợp lệ cho Manager Studio", () => {
     const validForm = {
       code: "WS-0001",
-      title_vi: "Phiếu nối cặp hình tương ứng",
+      title: "Phiếu nối cặp hình tương ứng",
       layout_template: "pair_matching",
       content_blocks: samplePairMatching,
       instructions_vi:
@@ -262,7 +262,7 @@ describe("Worksheet Contract & Validation (BR-WSM-01..08)", () => {
 
 describe("Publish Checklist cho Worksheet (BR-WSM-03, BR-WSM-06, D-P4J)", () => {
   const baseWorksheetPayload = {
-    title_vi: "Phiếu tô màu quy luật",
+    title: "Phiếu tô màu quy luật",
     layout_template: "pattern_coloring",
     content_blocks: {
       template: "pattern_coloring",
@@ -346,7 +346,7 @@ describe("Lesson Alternative Requirement for Worksheet (BR-WSM-07)", () => {
   it("từ chối lesson có activity worksheet nhưng KHÔNG có hoạt động thay thế không cần in", () => {
     const lessonWithOnlyWorksheet = {
       code: "LES-0001",
-      title_vi: "Bài học luyện tập quy luật",
+      title: "Bài học luyện tập quy luật",
       guide: guideText,
       estimated_minutes: 20,
       assessment_vi: "Trẻ chỉ ra được hình tiếp theo trong chuỗi.",
@@ -356,7 +356,7 @@ describe("Lesson Alternative Requirement for Worksheet (BR-WSM-07)", () => {
         {
           activity_code: "ACT-0001",
           kind: "worksheet",
-          title_vi: "Phiếu tô màu quy luật",
+          title: "Phiếu tô màu quy luật",
         },
       ],
     };
@@ -369,7 +369,7 @@ describe("Lesson Alternative Requirement for Worksheet (BR-WSM-07)", () => {
   it("chấp nhận lesson có activity worksheet KÈM hoạt động thay thế không cần in (discussion/manipulative)", () => {
     const lessonWithAlternative = {
       code: "LES-0002",
-      title_vi: "Bài học luyện tập quy luật có phương án thay thế",
+      title: "Bài học luyện tập quy luật có phương án thay thế",
       guide: guideText,
       estimated_minutes: 25,
       assessment_vi: "Trẻ xếp được các khối gỗ hoặc tô được phiếu quy luật.",
@@ -379,12 +379,12 @@ describe("Lesson Alternative Requirement for Worksheet (BR-WSM-07)", () => {
         {
           activity_code: "ACT-0001",
           kind: "worksheet",
-          title_vi: "Phiếu tô màu quy luật",
+          title: "Phiếu tô màu quy luật",
         },
         {
           activity_code: "ACT-0002",
           kind: "manipulative",
-          title_vi:
+          title:
             "Xếp khối gỗ màu theo quy luật tương ứng (phương án không cần in)",
         },
       ],

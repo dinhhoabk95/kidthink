@@ -174,9 +174,9 @@
   const toastMessage = ref("");
 
   const levelData = ref<Record<string, unknown>>({
-    title_vi: "",
+    title: "",
     theme_id: "nature",
-    instruction_vi: "",
+    instruction: "",
     content_pack: {},
     difficulty_params: {},
     access_tier: "free",
@@ -195,11 +195,8 @@
   const activeImageFieldPath = ref("");
 
   const levelTitle = computed(() => {
-    if (
-      typeof levelData.value.title_vi === "string" &&
-      levelData.value.title_vi
-    ) {
-      return levelData.value.title_vi;
+    if (typeof levelData.value.title === "string" && levelData.value.title) {
+      return levelData.value.title;
     }
     return "Màn chơi";
   });
@@ -296,8 +293,8 @@
       );
       levelData.value = {
         ...res,
-        title_vi: res.titleVi,
-        instruction_vi: res.instructionVi,
+        title: res.titleVi,
+        instruction: res.instructionVi,
         theme_id: res.themeId,
         content_pack: res.contentPack,
         difficulty_params: res.difficultyParams,
@@ -343,8 +340,8 @@
 
     try {
       const payload = {
-        title_vi: levelData.value.title_vi,
-        instruction_vi: levelData.value.instruction_vi,
+        title: levelData.value.title,
+        instruction: levelData.value.instruction,
         theme_id: levelData.value.theme_id,
         content_pack: levelData.value.content_pack,
         difficulty_params: levelData.value.difficulty_params,

@@ -180,7 +180,7 @@
     entity_id: number;
     is_required?: boolean;
     code?: string;
-    title_vi?: string;
+    title?: string;
     status?: string;
     competency_code?: string;
     difficulty?: number;
@@ -201,7 +201,7 @@
     target_age_max?: number;
     duration_weeks?: number;
     sessions_per_week?: number;
-    title_vi?: string;
+    title?: string;
     description_vi?: string;
     access_tier?: "free" | "login" | "standard" | "premium";
     status?: string;
@@ -249,7 +249,7 @@
       entityId: number;
       isRequired?: boolean;
       code?: string;
-      title_vi?: string;
+      title?: string;
       status?: string;
       competency_code?: string;
       difficulty?: number;
@@ -329,7 +329,7 @@
         target_age_max: i.targetAgeMax,
         duration_weeks: i.durationWeeks,
         sessions_per_week: i.sessionsPerWeek,
-        title_vi: i.titleVi,
+        title: i.titleVi,
         description_vi: i.descriptionVi,
         access_tier: i.accessTier,
         status: i.status,
@@ -348,7 +348,7 @@
           items: Array<{
             entity_id: number;
             code: string;
-            title_vi: string;
+            title: string;
             estimated_minutes?: number;
           }>;
         }>("/api/managers/content/search?type=lessons&limit=100").catch(() => ({
@@ -358,7 +358,7 @@
           items: Array<{
             entity_id: number;
             code: string;
-            title_vi: string;
+            title: string;
             difficulty?: number;
           }>;
         }>("/api/managers/content/search?type=game_levels&limit=100").catch(
@@ -374,7 +374,7 @@
           entity_type: "lesson",
           entity_id: les.entity_id,
           code: les.code,
-          title_vi: les.title_vi,
+          title: les.title,
           estimated_minutes: les.estimated_minutes ?? 20,
         });
       }
@@ -383,7 +383,7 @@
           entity_type: "game_level",
           entity_id: lvl.entity_id,
           code: lvl.code,
-          title_vi: lvl.title_vi,
+          title: lvl.title,
           difficulty: lvl.difficulty ?? 1,
           estimated_minutes: 10,
         });
@@ -396,7 +396,7 @@
 
   function openCreateCurriculum() {
     activeCurriculum.value = {
-      title_vi: "Chương trình học mới",
+      title: "Chương trình học mới",
       program_type: "age_based",
       target_age_min: 3,
       target_age_max: 4,
@@ -429,7 +429,7 @@
         target_age_max: res.targetAgeMax,
         duration_weeks: res.durationWeeks,
         sessions_per_week: res.sessionsPerWeek,
-        title_vi: res.titleVi,
+        title: res.titleVi,
         description_vi: res.descriptionVi,
         access_tier: res.accessTier,
         status: res.status,
@@ -449,7 +449,7 @@
         entity_id: it.entityId,
         is_required: it.isRequired ?? true,
         code: it.code,
-        title_vi: it.title_vi,
+        title: it.title,
         status: it.status,
         competency_code: it.competency_code,
         difficulty: it.difficulty,
@@ -506,7 +506,7 @@
       entity_id: item.entity_id,
       is_required: true,
       code: item.code,
-      title_vi: item.title_vi,
+      title: item.title,
       competency_code: item.competency_code,
       difficulty: item.difficulty,
       estimated_minutes: item.estimated_minutes,
@@ -537,7 +537,7 @@
       program_type: activeCurriculum.value.program_type || "age_based",
       duration_weeks: activeCurriculum.value.duration_weeks || 8,
       sessions_per_week: activeCurriculum.value.sessions_per_week || 3,
-      title_vi: activeCurriculum.value.title_vi || "Draft Curriculum",
+      title: activeCurriculum.value.title || "Draft Curriculum",
       target_age_min: activeCurriculum.value.target_age_min,
       target_age_max: activeCurriculum.value.target_age_max,
       status: activeCurriculum.value.status || "draft",
@@ -552,7 +552,7 @@
         entity_type: it.entity_type,
         entity_id: it.entity_id,
         code: it.code,
-        title_vi: it.title_vi,
+        title: it.title,
         status: it.status,
         competency_code: it.competency_code,
         difficulty: it.difficulty,
@@ -576,7 +576,7 @@
             method: "PATCH",
             body: {
               expected_version: activeCurriculum.value.content_version,
-              title_vi: activeCurriculum.value.title_vi,
+              title: activeCurriculum.value.title,
               description_vi: activeCurriculum.value.description_vi,
               program_type: activeCurriculum.value.program_type,
               target_age_min: activeCurriculum.value.target_age_min,
@@ -633,7 +633,7 @@
         }>("/api/managers/curricula", {
           method: "POST",
           body: {
-            title_vi: activeCurriculum.value.title_vi,
+            title: activeCurriculum.value.title,
             description_vi: activeCurriculum.value.description_vi,
             program_type: activeCurriculum.value.program_type,
             target_age_min: activeCurriculum.value.target_age_min,

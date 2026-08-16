@@ -21,7 +21,7 @@ import { contentSkillMap } from "../schema/tagging.ts";
 
 export const ALLOWED_EVENT_NAMES = new Set([
   "game_started",
-  "instruction_viewed",
+  "instructionewed",
   "game_paused",
   "game_resumed",
   "game_completed",
@@ -62,7 +62,7 @@ const EVENT_PAYLOAD_FIELDS: Readonly<Record<string, ReadonlySet<string>>> = {
     "reduced_motion",
     "round_index",
   ]),
-  instruction_viewed: new Set(["modality", "replay_count"]),
+  instructionewed: new Set(["modality", "replay_count"]),
   game_paused: new Set(["reason"]),
   game_resumed: new Set(["paused_ms"]),
   game_completed: new Set(["duration_ms", "rounds_total", "rounds_correct"]),
@@ -115,7 +115,7 @@ const EVENT_PAYLOAD_SCHEMAS: Readonly<Record<string, z.AnyZodObject>> = {
     reduced_motion: z.boolean(),
     round_index: NON_NEGATIVE_INT,
   }),
-  instruction_viewed: z.object({
+  instructionewed: z.object({
     modality: z.enum(["audio", "visual", "both"]),
     replay_count: NON_NEGATIVE_INT,
   }),

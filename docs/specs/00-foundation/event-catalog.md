@@ -88,7 +88,7 @@ client, tương đối so với `session.started_at`) · `content_version`.
 | Event | Payload | Ghi chú |
 |---|---|---|
 | `game_started` | `{ template_code, difficulty, age_band, device: "tablet"\|"desktop"\|"mobile", reduced_motion: bool }` | Luôn là `seq = 1` |
-| `instruction_viewed` | `{ modality: "audio"\|"visual"\|"both", replay_count: int }` | |
+| `instructionewed` | `{ modality: "audio"\|"visual"\|"both", replay_count: int }` | |
 | `game_paused` | `{ reason: "user"\|"visibility"\|"parent_gate" }` | |
 | `game_resumed` | `{ paused_ms: int }` | |
 | `game_completed` | `{ duration_ms, rounds_total, rounds_correct }` | Server tính điểm từ đây |

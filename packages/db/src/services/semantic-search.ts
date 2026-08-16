@@ -17,8 +17,8 @@ export interface SemanticSearchResultItem {
   id: number;
   content_type: "game_level" | "lesson";
   code: string;
-  title_vi: string;
-  instruction_vi?: string;
+  title: string;
+  instruction?: string;
   summary_vi?: string;
   age_min: number;
   age_max: number;
@@ -69,8 +69,8 @@ async function hydrateGameLevel(
     id: gl.id,
     content_type: "game_level",
     code: gl.code,
-    title_vi: gl.titleVi,
-    instruction_vi: gl.instructionVi ?? undefined,
+    title: gl.titleVi,
+    instruction: gl.instructionVi ?? undefined,
     age_min:
       gl.ageMin !== null && gl.ageMin !== undefined ? Number(gl.ageMin) : 3,
     age_max:
@@ -109,8 +109,8 @@ async function hydrateLesson(
     id: ls.id,
     content_type: "lesson",
     code: ls.code,
-    title_vi: ls.titleVi,
-    instruction_vi: ls.guideVi ?? undefined,
+    title: ls.titleVi,
+    instruction: ls.guideVi ?? undefined,
     age_min:
       ls.targetAgeMin !== null && ls.targetAgeMin !== undefined
         ? Number(ls.targetAgeMin)
@@ -151,8 +151,8 @@ async function executeFallback(
       id: item.id,
       content_type: item.contentType as "game_level" | "lesson",
       code: item.code,
-      title_vi: item.titleVi,
-      instruction_vi: item.instructionVi ?? undefined,
+      title: item.titleVi,
+      instruction: item.instructionVi ?? undefined,
       age_min: item.ageMin,
       age_max: item.ageMax,
       difficulty: item.difficulty,

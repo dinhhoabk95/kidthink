@@ -44,7 +44,7 @@
               >
             </td>
             <td class="py-3 px-4 font-medium text-slate-900 dark:text-white">
-              {{ curr.title_vi }}
+              {{ curr.title }}
             </td>
             <td class="py-3 px-4">
               <span
@@ -127,7 +127,7 @@
     target_age_max?: number;
     duration_weeks?: number;
     sessions_per_week?: number;
-    title_vi?: string;
+    title?: string;
     access_tier?: "free" | "login" | "standard" | "premium";
     status?: string;
   }

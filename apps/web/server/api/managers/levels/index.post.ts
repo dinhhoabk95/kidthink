@@ -83,9 +83,8 @@ function buildInsertValues(
     code: levelCode,
     contentVersion: 1,
     templateId,
-    titleVi: (body.title_vi as string) || "Màn chơi mới",
-    instructionVi:
-      (body.instruction_vi as string) || "Hãy hoàn thành thử thách",
+    titleVi: (body.title as string) || "Màn chơi mới",
+    instructionVi: (body.instruction as string) || "Hãy hoàn thành thử thách",
     contentPack: body.content_pack || {
       prompt: "Chọn đáp án đúng",
       options: [],

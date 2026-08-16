@@ -18,8 +18,8 @@ export const baseActivitySchema = z.object({
       "Mã sai định dạng ACT-xxxx"
     )
     .optional(),
-  title_vi: z.string().min(1, "Tiêu đề tiếng Việt không được rỗng"),
-  instruction_vi: z.string().min(1, "Hướng dẫn không được rỗng"),
+  title: z.string().min(1, "Tiêu đề tiếng Việt không được rỗng"),
+  instruction: z.string().min(1, "Hướng dẫn không được rỗng"),
   materials_vi: z.string().nullable().optional(),
   estimated_minutes: z
     .number()

@@ -235,7 +235,7 @@
               id="create-title-input"
               placeholder="Ví dụ: Đếm quả táo trong vườn"
               type="text"
-              v-model="newLevelForm.title_vi"
+              v-model="newLevelForm.title"
             >
           </div>
         </div>
@@ -298,7 +298,7 @@
 
   const newLevelForm = ref({
     template_code: "GT-001",
-    title_vi: "",
+    title: "",
   });
 
   onMounted(() => {
@@ -343,7 +343,7 @@
   }
 
   async function submitCreateLevel() {
-    if (!newLevelForm.value.title_vi) {
+    if (!newLevelForm.value.title) {
       return;
     }
     try {

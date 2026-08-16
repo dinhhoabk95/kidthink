@@ -368,7 +368,7 @@ describe("Curriculum Player Suite — P3.4 (BR-CUR-01..10, D-MA..D-MG)", () => {
     const progEvent = makeUserEvent(user.id, { uuid: child.uuid });
     const prog = await progressHandler(progEvent);
     expect(prog.curriculum_version).toBe(1);
-    expect(prog.curriculum_title_vi).toBe("Chương trình Toán 5 tuổi");
+    expect(prog.curriculum_title).toBe("Chương trình Toán 5 tuổi");
   });
 
   it("BR-CUR-05 & BR-CUR-06: locked tier item does not block week advancement for standard user", async () => {

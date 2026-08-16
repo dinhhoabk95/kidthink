@@ -467,7 +467,7 @@ describe("Image Storage & Upload API (BR-IMG-01 - BR-IMG-12, BR-IUP-01 - BR-IUP-
       },
       _body: {
         template_code: "GT-001",
-        title_vi: "Level with transactional image sync",
+        title: "Level with transactional image sync",
         access_tier: "free",
         content_pack: {
           prompt: "Tìm hình quả táo",

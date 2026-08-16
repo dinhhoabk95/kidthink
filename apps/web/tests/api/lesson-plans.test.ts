@@ -411,7 +411,7 @@ describe("Task P4.1 — Lesson Plan Creator API (BR-LPC-01..09, D-P4A..D-P4D)", 
     );
     const refreshed = await refreshItemHandler(refreshEvent);
     expect(refreshed.items[0].snapshot.source_version).toBe(2);
-    expect(refreshed.items[0].snapshot.title_vi).toBe(
+    expect(refreshed.items[0].snapshot.title).toBe(
       "Thực hành xếp hạt nâng cao v2"
     );
     expect(refreshed.items[0].has_update).toBe(false);

@@ -24,7 +24,7 @@ export interface ResolvedCurriculumData {
   enrollment: typeof curriculumEnrollments.$inferSelect & {
     curriculum_code: string;
     curriculum_version: number;
-    curriculum_title_vi: string;
+    curriculum_title: string;
     duration_weeks: number;
     sessions_per_week: number;
   };
@@ -73,7 +73,7 @@ export async function resolveEnrolledChildCurriculum(
       status: curriculumEnrollments.status,
       curriculum_code: curricula.code,
       curriculum_version: curricula.contentVersion,
-      curriculum_title_vi: curricula.titleVi,
+      curriculum_title: curricula.titleVi,
       duration_weeks: curricula.durationWeeks,
       sessions_per_week: curricula.sessionsPerWeek,
     })
@@ -128,7 +128,7 @@ export async function resolveEnrolledChildCurriculum(
 
   const gameLevelsMap = new Map<
     number,
-    { code: string; title_vi: string; access_tier: AccessTier }
+    { code: string; title: string; access_tier: AccessTier }
   >();
   if (gameLevelEntityIds.length > 0) {
     const glRows = await db
@@ -149,7 +149,7 @@ export async function resolveEnrolledChildCurriculum(
     for (const gl of glRows) {
       gameLevelsMap.set(gl.entityId, {
         code: gl.code,
-        title_vi: gl.titleVi,
+        title: gl.titleVi,
         access_tier: gl.accessTier as AccessTier,
       });
     }
@@ -157,7 +157,7 @@ export async function resolveEnrolledChildCurriculum(
 
   const lessonsMap = new Map<
     number,
-    { code: string; title_vi: string; access_tier: AccessTier }
+    { code: string; title: string; access_tier: AccessTier }
   >();
   if (lessonEntityIds.length > 0) {
     const lesRows = await db
@@ -178,7 +178,7 @@ export async function resolveEnrolledChildCurriculum(
     for (const les of lesRows) {
       lessonsMap.set(les.entityId, {
         code: les.code,
-        title_vi: les.titleVi,
+        title: les.titleVi,
         access_tier: les.accessTier as AccessTier,
       });
     }
@@ -193,14 +193,14 @@ export async function resolveEnrolledChildCurriculum(
       const gl = gameLevelsMap.get(item.entityId);
       if (gl) {
         resolvedCode = gl.code;
-        resolvedTitle = gl.title_vi;
+        resolvedTitle = gl.title;
         resolvedTier = gl.access_tier;
       }
     } else if (item.entityType === "lesson") {
       const les = lessonsMap.get(item.entityId);
       if (les) {
         resolvedCode = les.code;
-        resolvedTitle = les.title_vi;
+        resolvedTitle = les.title;
         resolvedTier = les.access_tier;
       }
     }
@@ -214,7 +214,7 @@ export async function resolveEnrolledChildCurriculum(
       entity_type: item.entityType as "lesson" | "game_level",
       entity_id: item.entityId,
       code: resolvedCode,
-      title_vi: resolvedTitle,
+      title: resolvedTitle,
       is_required: item.isRequired,
       access_tier: resolvedTier,
     };

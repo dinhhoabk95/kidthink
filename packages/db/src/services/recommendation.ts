@@ -143,7 +143,7 @@ async function resolveTier1CurriculumCandidate(
       entity_type: item.entityType as "lesson" | "game_level",
       entity_id: item.entityId,
       code: gl?.code ?? `${item.entityType}_${item.entityId}`,
-      title_vi: gl?.titleVi ?? "Hoạt động",
+      title: gl?.titleVi ?? "Hoạt động",
       is_required: item.isRequired,
       access_tier: (gl?.accessTier as AccessTier) ?? "free",
     };

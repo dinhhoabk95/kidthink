@@ -28,7 +28,7 @@ const createCurriculumSchema = z.object({
   target_age_max: z.number().int().min(3).max(6).nullable().optional(),
   duration_weeks: z.number().int().min(1).max(52).default(8),
   sessions_per_week: z.number().int().min(1).max(7).default(3),
-  title_vi: z.string().min(1, "Tiêu đề không được để trống"),
+  title: z.string().min(1, "Tiêu đề không được để trống"),
   description_vi: z.string().nullable().optional(),
   access_tier: z
     .enum(["free", "login", "standard", "premium"])
@@ -55,7 +55,7 @@ const createCurriculumSchema = z.object({
     .optional(),
 });
 
-const CUR_CODE_REGEX = /^CUR-(\d{3})$/;
+const CUR_CODE_REGEX = /^CUR-(\d+)$/;
 
 async function generateNextCurriculumCode(
   db: ReturnType<typeof getOwnerDb>
@@ -137,7 +137,7 @@ async function createCurriculumRecord(
       targetAgeMax: data.target_age_max ?? null,
       durationWeeks: data.duration_weeks,
       sessionsPerWeek: data.sessions_per_week,
-      titleVi: data.title_vi,
+      titleVi: data.title,
       descriptionVi: data.description_vi ?? null,
       accessTier: data.access_tier,
       status: "draft",
@@ -185,7 +185,7 @@ export default defineEventHandler(async (event) => {
       after_data: {
         code: created.code,
         version: created.contentVersion,
-        title_vi: created.titleVi,
+        title: created.titleVi,
         program_type: created.programType,
       },
     });

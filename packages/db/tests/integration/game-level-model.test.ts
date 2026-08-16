@@ -20,8 +20,8 @@ describe("Game Level Model Invariants & Rules (BR-GLM-01..10)", () => {
         code: "GL-C1-CNT-CARD-9999",
         content_version: 1,
         template_code: "GT-001",
-        title_vi: "Đếm quá số item cho trẻ 3-4 tuổi",
-        instruction_vi: "Em hãy đếm xem có mấy quả táo nhé.",
+        title: "Đếm quá số item cho trẻ 3-4 tuổi",
+        instruction: "Em hãy đếm xem có mấy quả táo nhé.",
         age_min: 3,
         age_max: 4,
         difficulty: 1,
@@ -53,13 +53,13 @@ describe("Game Level Model Invariants & Rules (BR-GLM-01..10)", () => {
 
   it("Scenario: BR-GLM-03 — distractor items must be visually distinct", () => {
     for (const seed of ALL_SEED_LEVELS) {
-      expect(seed.header.title_vi).toBeTruthy();
+      expect(seed.header.title).toBeTruthy();
     }
   });
 
   it("Scenario: BR-GLM-04 — instruction length must be <= 12 words", () => {
     for (const seed of ALL_SEED_LEVELS) {
-      const wordCount = seed.header.instruction_vi
+      const wordCount = seed.header.instruction
         .trim()
         .split(WORD_SPLIT_REGEX).length;
       expect(wordCount).toBeLessThanOrEqual(12);
@@ -70,8 +70,8 @@ describe("Game Level Model Invariants & Rules (BR-GLM-01..10)", () => {
         code: "GL-C1-CNT-CARD-9998",
         content_version: 1,
         template_code: "GT-001",
-        title_vi: "Chỉ dẫn quá dài",
-        instruction_vi:
+        title: "Chỉ dẫn quá dài",
+        instruction:
           "Em hãy nhanh tay đếm tất cả những quả táo đỏ tươi ngon này thật cẩn thận để xem có tổng cộng bao nhiêu quả tất cả.",
         age_min: 3,
         age_max: 4,
@@ -94,7 +94,7 @@ describe("Game Level Model Invariants & Rules (BR-GLM-01..10)", () => {
 
   it("Scenario: BR-GLM-05 — instruction must not contain negative words ('không', 'đừng')", () => {
     for (const seed of ALL_SEED_LEVELS) {
-      const lower = seed.header.instruction_vi.toLowerCase();
+      const lower = seed.header.instruction.toLowerCase();
       expect(lower).not.toContain("đừng");
     }
 
@@ -103,8 +103,8 @@ describe("Game Level Model Invariants & Rules (BR-GLM-01..10)", () => {
         code: "GL-C1-CNT-CARD-9997",
         content_version: 1,
         template_code: "GT-001",
-        title_vi: "Chỉ dẫn phủ định",
-        instruction_vi: "Em đừng chọn quả táo màu xanh nhé.",
+        title: "Chỉ dẫn phủ định",
+        instruction: "Em đừng chọn quả táo màu xanh nhé.",
         age_min: 3,
         age_max: 4,
         difficulty: 1,
@@ -144,7 +144,7 @@ describe("Game Level Model Invariants & Rules (BR-GLM-01..10)", () => {
 
   it("Scenario: BR-GLM-09 — avoids narrow cultural assumptions", () => {
     for (const seed of ALL_SEED_LEVELS) {
-      expect(seed.header.instruction_vi).not.toContain("Tết Trung thu");
+      expect(seed.header.instruction).not.toContain("Tết Trung thu");
     }
   });
 

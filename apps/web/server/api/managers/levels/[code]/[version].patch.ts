@@ -21,14 +21,14 @@ function buildLevelUpdates(
     updatedAt: new Date(),
   };
 
-  if (body.title_vi !== undefined) {
-    updates.titleVi = body.title_vi as string;
+  if (body.title !== undefined) {
+    updates.titleVi = body.title as string;
   }
   if (body.description_vi !== undefined) {
     updates.descriptionVi = body.description_vi as string;
   }
-  if (body.instruction_vi !== undefined) {
-    updates.instructionVi = body.instruction_vi as string;
+  if (body.instruction !== undefined) {
+    updates.instructionVi = body.instruction as string;
   }
   if (body.content_pack !== undefined) {
     updates.contentPack = body.content_pack;
@@ -153,11 +153,11 @@ export default defineEventHandler(async (event) => {
       entity_type: "game_level",
       entity_id: updated.id.toString(),
       before_data: {
-        title_vi: existing.level.titleVi,
+        title: existing.level.titleVi,
         version: existing.level.contentVersion,
       },
       after_data: {
-        title_vi: updated.titleVi,
+        title: updated.titleVi,
         version: updated.contentVersion,
       },
     });

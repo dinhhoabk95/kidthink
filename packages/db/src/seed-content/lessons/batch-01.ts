@@ -6,7 +6,7 @@ export const LESSON_BATCH_01: LessonSeed[] = [
     header: {
       code: "LES-0001",
       content_version: 1,
-      title_vi: "Khám phá số lượng 1, 2, 3 cùng hạt đậu",
+      title: "Khám phá số lượng 1, 2, 3 cùng hạt đậu",
       guide: {
         outcome: "Bé đếm đúng số lượng từ 1 đến 3 và ghép tương ứng vật thể.",
         preparation: ["5 chiếc cốc nhựa nhỏ", "10 hạt đậu hoặc sỏi sạch"],
@@ -42,7 +42,7 @@ export const LESSON_BATCH_01: LessonSeed[] = [
     header: {
       code: "LES-0002",
       content_version: 1,
-      title_vi: "Nhảy bật đếm nhịp và tìm đồ vật trong phòng",
+      title: "Nhảy bật đếm nhịp và tìm đồ vật trong phòng",
       guide: {
         outcome: "Bé lắng nghe âm thanh và xác định đúng số lượng đồ vật.",
         preparation: ["Không gian phòng khách", "Đồ dùng sinh hoạt quen thuộc"],
@@ -79,7 +79,7 @@ export const LESSON_BATCH_01: LessonSeed[] = [
     header: {
       code: "LES-0003",
       content_version: 1,
-      title_vi: "Tìm hình tròn kỳ diệu và bước đi tam giác",
+      title: "Tìm hình tròn kỳ diệu và bước đi tam giác",
       guide: {
         outcome:
           "Bé nhận biết và phân biệt được hình tròn trơn láng và hình tam giác 3 góc.",
@@ -121,7 +121,7 @@ export const LESSON_BATCH_01: LessonSeed[] = [
     header: {
       code: "LES-0004",
       content_version: 1,
-      title_vi: "Khám phá không gian: Bạn gấu trốn ở đâu?",
+      title: "Khám phá không gian: Bạn gấu trốn ở đâu?",
       guide: {
         outcome:
           "Bé xác định chính xác vị trí không gian: trên, dưới, trong, ngoài.",
@@ -159,7 +159,7 @@ export const LESSON_BATCH_01: LessonSeed[] = [
     header: {
       code: "LES-0005",
       content_version: 1,
-      title_vi: "Quy luật sắc màu Đỏ - Xanh và nhịp điệu vui nhộn",
+      title: "Quy luật sắc màu Đỏ - Xanh và nhịp điệu vui nhộn",
       guide: {
         outcome:
           "Bé nhận ra quy luật lặp lại AB và tiếp tục chuỗi màu sắc chính xác.",
@@ -196,7 +196,7 @@ export const LESSON_BATCH_01: LessonSeed[] = [
     header: {
       code: "LES-0006",
       content_version: 1,
-      title_vi: "Đo chiều dài bằng gang tay và so sánh nặng nhẹ",
+      title: "Đo chiều dài bằng gang tay và so sánh nặng nhẹ",
       guide: {
         outcome:
           "Bé biết dùng gang tay để đo đồ vật và cảm nhận được vật nặng, nhẹ.",

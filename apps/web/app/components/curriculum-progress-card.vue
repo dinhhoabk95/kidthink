@@ -7,7 +7,7 @@
       <div class="flex flex-col gap-1">
         <span class="text-xs font-bold text-brand-600">Lộ trình học</span>
         <h2 class="text-xl font-bold text-surface-900">
-          {{ curriculumData.curriculum_title_vi }}
+          {{ curriculumData.curriculum_title }}
         </h2>
       </div>
       <div class="text-lg font-extrabold text-brand-600">
@@ -25,7 +25,7 @@
           Tuần {{ nextStep.week_no }} · Buổi {{ nextStep.session_no }}
         </span>
         <p class="text-base font-bold text-surface-800" v-if="nextStep.item">
-          {{ nextStep.item.title_vi }}
+          {{ nextStep.item.title }}
         </p>
       </div>
 
@@ -86,7 +86,7 @@
   interface CurriculumProgressResponse {
     enrollment_id: number;
     curriculum_code: string;
-    curriculum_title_vi: string;
+    curriculum_title: string;
     progress: number;
     numerator: number;
     denominator: number;
@@ -101,7 +101,7 @@
       id: number;
       entity_type: "lesson" | "game_level";
       entity_code: string;
-      title_vi: string;
+      title: string;
       locked: boolean;
       access_tier: string;
     } | null;

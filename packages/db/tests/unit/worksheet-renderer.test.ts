@@ -168,7 +168,7 @@ describe("Pure TypeScript Vector Worksheet PDF Renderer (BR-WSM-01..08)", () => 
       const result = renderWorksheetPdf({
         code: `WS-000${templates.indexOf(tmpl) + 1}`,
         version: 1,
-        title_vi: `Phiếu bài tập ${tmpl}`,
+        title: `Phiếu bài tập ${tmpl}`,
         layout_template: tmpl,
         content_blocks: sampleBlocks[tmpl],
         instructions_vi: adultInstructions,

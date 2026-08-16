@@ -36,7 +36,7 @@
           id="lesson-title"
           placeholder="Ví dụ: Khám phá số lượng 5 và các hình tròn"
           type="text"
-          v-model="lesson.title_vi"
+          v-model="lesson.title"
         >
       </div>
 
@@ -184,7 +184,7 @@
     id?: number;
     code?: string;
     content_version?: number;
-    title_vi?: string;
+    title?: string;
     guide_vi?: string;
     target_age_min?: number;
     target_age_max?: number;

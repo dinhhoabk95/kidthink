@@ -7,7 +7,7 @@ export const C3_SEED_ACTIVITIES: ActivitySeed[] = [
       code: "ACT-0021",
       content_version: 1,
       activity_kind: "manipulative",
-      title_vi: "Xếp chuỗi hạt màu AB (Đỏ - Xanh)",
+      title: "Xếp chuỗi hạt màu AB (Đỏ - Xanh)",
       instruction: {
         preparation: "Chuẩn bị 6 khối lego đỏ và 6 khối lego xanh.",
         steps: [
@@ -43,7 +43,7 @@ export const C3_SEED_ACTIVITIES: ActivitySeed[] = [
       code: "ACT-0022",
       content_version: 1,
       activity_kind: "movement",
-      title_vi: "Nhịp điệu cơ thể: Vỗ tay - Giậm chân",
+      title: "Nhịp điệu cơ thể: Vỗ tay - Giậm chân",
       instruction: {
         preparation: "Đứng cùng bé trong không gian phòng khách thoáng đãng.",
         steps: [
@@ -80,7 +80,7 @@ export const C3_SEED_ACTIVITIES: ActivitySeed[] = [
       code: "ACT-0023",
       content_version: 1,
       activity_kind: "manipulative",
-      title_vi: "Phân loại tất vớ theo đôi",
+      title: "Phân loại tất vớ theo đôi",
       instruction: {
         preparation: "Lấy 5 đôi tất sạch của gia đình trộn lẫn trong giỏ.",
         steps: [
@@ -116,7 +116,7 @@ export const C3_SEED_ACTIVITIES: ActivitySeed[] = [
       code: "ACT-0024",
       content_version: 1,
       activity_kind: "discussion",
-      title_vi: "Trò chuyện: Cái nào không cùng nhóm?",
+      title: "Trò chuyện: Cái nào không cùng nhóm?",
       instruction: {
         preparation: "Đặt lên bàn: 3 quả táo và 1 chiếc thìa ăn cơm.",
         steps: [
@@ -152,7 +152,7 @@ export const C3_SEED_ACTIVITIES: ActivitySeed[] = [
       code: "ACT-0025",
       content_version: 1,
       activity_kind: "storytelling",
-      title_vi: "Kể chuyện: Đoàn tàu sắc màu của bác Gấu",
+      title: "Kể chuyện: Đoàn tàu sắc màu của bác Gấu",
       instruction: {
         preparation: "Xếp 6 chiếc hộp giấy nhỏ nối đuôi nhau làm toa tàu.",
         steps: [
@@ -189,7 +189,7 @@ export const C3_SEED_ACTIVITIES: ActivitySeed[] = [
       code: "ACT-0026",
       content_version: 1,
       activity_kind: "home_activity",
-      title_vi: "Xếp dọn đồ chơi theo giỏ màu",
+      title: "Xếp dọn đồ chơi theo giỏ màu",
       instruction: {
         preparation:
           "Chuẩn bị 2 giỏ đựng đồ chơi: 1 giỏ đồ chơi nhựa, 1 giỏ thú bông.",
@@ -227,7 +227,7 @@ export const C3_SEED_ACTIVITIES: ActivitySeed[] = [
       code: "ACT-0027",
       content_version: 1,
       activity_kind: "manipulative",
-      title_vi: "Tạo vòng đeo tay chuỗi hạt quy luật",
+      title: "Tạo vòng đeo tay chuỗi hạt quy luật",
       instruction: {
         preparation:
           "Chuẩn bị sợi dây dù mềm và các vòng ống hút cắt khúc (đỏ, vàng).",
@@ -264,7 +264,7 @@ export const C3_SEED_ACTIVITIES: ActivitySeed[] = [
       code: "ACT-0028",
       content_version: 1,
       activity_kind: "observation",
-      title_vi: "Tìm quy luật trên bộ quần áo",
+      title: "Tìm quy luật trên bộ quần áo",
       instruction: {
         preparation:
           "Chọn một chiếc áo kẻ sọc hoặc váy hoa có họa tiết lặp lại.",
@@ -301,7 +301,7 @@ export const C3_SEED_ACTIVITIES: ActivitySeed[] = [
       code: "ACT-0029",
       content_version: 1,
       activity_kind: "mini_project",
-      title_vi: "Làm cuốn sổ phân loại lá và hoa khô",
+      title: "Làm cuốn sổ phân loại lá và hoa khô",
       instruction: {
         preparation: "Chuẩn bị 1 quyển sổ vẽ nháp và hồ dán an toàn.",
         steps: [
@@ -339,7 +339,7 @@ export const C3_SEED_ACTIVITIES: ActivitySeed[] = [
       code: "ACT-0030",
       content_version: 1,
       activity_kind: "assessment",
-      title_vi: "Đánh giá quan sát: Tiếp tục chuỗi quy luật",
+      title: "Đánh giá quan sát: Tiếp tục chuỗi quy luật",
       instruction: {
         preparation: "Xếp chuỗi thìa và dĩa: Thìa - Dĩa - Thìa - Dĩa - Thìa.",
         steps: [

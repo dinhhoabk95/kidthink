@@ -116,8 +116,8 @@ async function handlePublishedActivityFork(
       code: existing.code,
       contentVersion: newVersion,
       kind: targetKind as typeof activities.$inferSelect.kind,
-      titleVi: data.title_vi || existing.titleVi,
-      instructionVi: data.instruction_vi || existing.instructionVi,
+      titleVi: data.title || existing.titleVi,
+      instructionVi: data.instruction || existing.instructionVi,
       materialsVi:
         data.materials_vi === undefined
           ? existing.materialsVi
@@ -166,11 +166,11 @@ async function handleDraftActivityUpdate(
     patch.kind = data.kind;
     patch.refType = resolveRefType(data.kind);
   }
-  if (data.title_vi !== undefined) {
-    patch.titleVi = data.title_vi;
+  if (data.title !== undefined) {
+    patch.titleVi = data.title;
   }
-  if (data.instruction_vi !== undefined) {
-    patch.instructionVi = data.instruction_vi;
+  if (data.instruction !== undefined) {
+    patch.instructionVi = data.instruction;
   }
   if (data.materials_vi !== undefined) {
     patch.materialsVi = data.materials_vi;

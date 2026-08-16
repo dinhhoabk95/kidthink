@@ -124,7 +124,7 @@ function checkCommonRules(
   checkCounts(entity, missing);
   checkAgeRange(entityType, entity, missing);
 
-  const title = entity.title ?? entity.titleVi ?? entity.title_vi;
+  const title = entity.title ?? entity.titleVi ?? entity.title;
   if (!title || typeof title !== "string" || title.trim() === "") {
     missing.push("title_empty");
   }
@@ -222,10 +222,7 @@ function validateActivityAgainstModel(
 ): void {
   const res = validateActivityModel({
     kind,
-    title_vi: (entity.title ??
-      entity.titleVi ??
-      entity.title_vi ??
-      "") as string,
+    title: (entity.title ?? entity.titleVi ?? entity.title ?? "") as string,
     instruction,
     materials_vi: (entity.materialsVi ?? entity.materials_vi ?? null) as
       | string
@@ -259,12 +256,12 @@ function checkActivityRules(
   }
 
   const instruction =
-    entity.instruction ?? entity.instructionVi ?? entity.instruction_vi;
+    entity.instruction ?? entity.instructionVi ?? entity.instruction;
   if (
     !instruction ||
     (typeof instruction === "string" && instruction.trim() === "")
   ) {
-    missing.push("instruction_vi_missing");
+    missing.push("instruction_missing");
   }
 
   if (kind === "digital_game") {
@@ -288,10 +285,7 @@ function extractLessonValidationPayload(entity: GenericEntityPayload) {
   const guide = entity.guide ?? entity.guideVi ?? entity.guide_vi;
 
   return {
-    title_vi: (entity.title ??
-      entity.titleVi ??
-      entity.title_vi ??
-      "") as string,
+    title: (entity.title ?? entity.titleVi ?? entity.title ?? "") as string,
     guide: guide as string,
     estimated_minutes: typeof est === "number" ? est : 15,
     activities: Array.isArray(activities)
@@ -493,10 +487,7 @@ function checkWorksheetBlockValidation(
     entity.instructionsVi ?? entity.instructions_vi ?? entity.instructions;
 
   const res = validateWorksheetContent({
-    title_vi: (entity.titleVi ??
-      entity.title_vi ??
-      entity.title ??
-      "") as string,
+    title: (entity.titleVi ?? entity.title ?? entity.title ?? "") as string,
     layout_template: layoutTemplate || "",
     content_blocks: contentBlocks,
     instructions_vi: typeof instructionsVi === "string" ? instructionsVi : "",

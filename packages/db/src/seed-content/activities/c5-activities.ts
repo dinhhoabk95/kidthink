@@ -7,7 +7,7 @@ export const C5_SEED_ACTIVITIES: ActivitySeed[] = [
       code: "ACT-0041",
       content_version: 1,
       activity_kind: "manipulative",
-      title_vi: "Trò chơi trí nhớ: Món đồ nào biến mất?",
+      title: "Trò chơi trí nhớ: Món đồ nào biến mất?",
       instruction: {
         preparation:
           "Đặt 4 món đồ chơi nhỏ (ô tô, vịt cao su, thìa, quả bóng) lên khay.",
@@ -43,7 +43,7 @@ export const C5_SEED_ACTIVITIES: ActivitySeed[] = [
       code: "ACT-0042",
       content_version: 1,
       activity_kind: "discussion",
-      title_vi: "Thảo luận suy luận: Đoán con vật qua tiếng kêu",
+      title: "Thảo luận suy luận: Đoán con vật qua tiếng kêu",
       instruction: {
         preparation:
           "Ngồi cùng bé và mô phỏng tiếng kêu các con vật quen thuộc.",
@@ -81,7 +81,7 @@ export const C5_SEED_ACTIVITIES: ActivitySeed[] = [
       code: "ACT-0043",
       content_version: 1,
       activity_kind: "movement",
-      title_vi: "Mê cung dây trên sàn nhà",
+      title: "Mê cung dây trên sàn nhà",
       instruction: {
         preparation:
           "Dùng sợi len hoặc băng dính tạo đường mê cung đơn giản có 1 lối ra.",
@@ -118,7 +118,7 @@ export const C5_SEED_ACTIVITIES: ActivitySeed[] = [
       code: "ACT-0044",
       content_version: 1,
       activity_kind: "storytelling",
-      title_vi: "Kể chuyện: Chú kiến qua sông thế nào?",
+      title: "Kể chuyện: Chú kiến qua sông thế nào?",
       instruction: {
         preparation: "Chuẩn bị 1 chậu nước nhỏ và 1 chiếc lá khô.",
         steps: [
@@ -156,7 +156,7 @@ export const C5_SEED_ACTIVITIES: ActivitySeed[] = [
       code: "ACT-0045",
       content_version: 1,
       activity_kind: "home_activity",
-      title_vi: "Lắp ráp nắp vào đúng thân chai hộp",
+      title: "Lắp ráp nắp vào đúng thân chai hộp",
       instruction: {
         preparation:
           "Lấy 4 chiếc hộp nhựa hoặc chai nhựa rỗng và tháo nắp ra để riêng.",
@@ -195,7 +195,7 @@ export const C5_SEED_ACTIVITIES: ActivitySeed[] = [
       code: "ACT-0046",
       content_version: 1,
       activity_kind: "manipulative",
-      title_vi: "Ghép tranh 4 mảnh hình con thú",
+      title: "Ghép tranh 4 mảnh hình con thú",
       instruction: {
         preparation: "Cắt một bức tranh con mèo đơn giản thành 4 mảnh vuông.",
         steps: [
@@ -232,7 +232,7 @@ export const C5_SEED_ACTIVITIES: ActivitySeed[] = [
       code: "ACT-0047",
       content_version: 1,
       activity_kind: "observation",
-      title_vi: "Dự đoán vật nổi vật chìm",
+      title: "Dự đoán vật nổi vật chìm",
       instruction: {
         preparation:
           "Chuẩn bị chậu nước nông, 1 thìa sắt nhỏ và 1 nắp chai nhựa.",
@@ -269,7 +269,7 @@ export const C5_SEED_ACTIVITIES: ActivitySeed[] = [
       code: "ACT-0048",
       content_version: 1,
       activity_kind: "discussion",
-      title_vi: "Nếu trời mưa thì chúng mình làm gì?",
+      title: "Nếu trời mưa thì chúng mình làm gì?",
       instruction: {
         preparation: "Ngồi cùng bé bên cửa sổ hoặc thảm phòng khách.",
         steps: [
@@ -306,7 +306,7 @@ export const C5_SEED_ACTIVITIES: ActivitySeed[] = [
       code: "ACT-0049",
       content_version: 1,
       activity_kind: "mini_project",
-      title_vi: "Làm bẫy chuột bằng hộp giấy đồ chơi",
+      title: "Làm bẫy chuột bằng hộp giấy đồ chơi",
       instruction: {
         preparation: "Dùng 1 chiếc hộp các tông nhỏ và 1 que gỗ ngắn.",
         steps: [
@@ -344,7 +344,7 @@ export const C5_SEED_ACTIVITIES: ActivitySeed[] = [
       code: "ACT-0050",
       content_version: 1,
       activity_kind: "assessment",
-      title_vi: "Đánh giá quan sát: Ghi nhớ vị trí 3 thẻ bài",
+      title: "Đánh giá quan sát: Ghi nhớ vị trí 3 thẻ bài",
       instruction: {
         preparation:
           "Dùng 3 tấm thẻ có vẽ hình: Con Cá, Con Mèo, Con Chó úp mặt xuống bàn.",

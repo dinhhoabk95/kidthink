@@ -6,7 +6,7 @@ export const LESSON_BATCH_06: LessonSeed[] = [
     header: {
       code: "LES-0031",
       content_version: 1,
-      title_vi: "Đo đồ vật bằng gang tay và xếp bút chì dài ngắn",
+      title: "Đo đồ vật bằng gang tay và xếp bút chì dài ngắn",
       guide: {
         outcome:
           "Bé làm quen với đơn vị đo tự nhiên (gang tay) và sắp xếp đồ vật theo chiều dài.",
@@ -42,7 +42,7 @@ export const LESSON_BATCH_06: LessonSeed[] = [
     header: {
       code: "LES-0032",
       content_version: 1,
-      title_vi: "Rót nước vào bình và nhảy xa đo bước chân",
+      title: "Rót nước vào bình và nhảy xa đo bước chân",
       guide: {
         outcome:
           "Bé trải nghiệm đo dung tích bằng cốc đong và đo khoảng cách bằng bước chân.",
@@ -80,7 +80,7 @@ export const LESSON_BATCH_06: LessonSeed[] = [
     header: {
       code: "LES-0033",
       content_version: 1,
-      title_vi: "So sánh chiều dài: Chiếc thước đo sợi len",
+      title: "So sánh chiều dài: Chiếc thước đo sợi len",
       guide: {
         outcome:
           "Bé biết dùng đoạn sợi len để so sánh chu vi hoặc độ dài các đồ vật hình cong.",
@@ -119,7 +119,7 @@ export const LESSON_BATCH_06: LessonSeed[] = [
     header: {
       code: "LES-0034",
       content_version: 1,
-      title_vi: "Đo chiều cao cây xanh và theo dõi sự phát triển",
+      title: "Đo chiều cao cây xanh và theo dõi sự phát triển",
       guide: {
         outcome:
           "Bé theo dõi và đánh dấu sự thay đổi chiều cao của cây xanh theo thời gian.",
@@ -154,7 +154,7 @@ export const LESSON_BATCH_06: LessonSeed[] = [
     header: {
       code: "LES-0035",
       content_version: 1,
-      title_vi: "Thử thách bước chân người khổng lồ và người tí hon",
+      title: "Thử thách bước chân người khổng lồ và người tí hon",
       guide: {
         outcome:
           "Bé hiểu rằng đơn vị đo bước chân to hay nhỏ sẽ cho số lượng bước đo khác nhau.",
@@ -191,7 +191,7 @@ export const LESSON_BATCH_06: LessonSeed[] = [
     header: {
       code: "LES-0036",
       content_version: 1,
-      title_vi: "Tổng kết đo lường chiều dài: Nhà đo lường tí hon",
+      title: "Tổng kết đo lường chiều dài: Nhà đo lường tí hon",
       guide: {
         outcome:
           "Bé sử dụng thành thạo các cách đo tự nhiên để so sánh chiều dài các đồ vật quen thuộc.",

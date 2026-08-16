@@ -6,7 +6,7 @@ export const LESSON_BATCH_05: LessonSeed[] = [
     header: {
       code: "LES-0025",
       content_version: 1,
-      title_vi: "Phân loại đôi tất và trò chơi cái nào khác biệt",
+      title: "Phân loại đôi tất và trò chơi cái nào khác biệt",
       guide: {
         outcome:
           "Bé ghép đôi được các vật có cùng đặc tính màu sắc và chỉ ra vật khác biệt.",
@@ -43,7 +43,7 @@ export const LESSON_BATCH_05: LessonSeed[] = [
     header: {
       code: "LES-0026",
       content_version: 1,
-      title_vi: "Đoàn tàu sắc màu và thu dọn đồ chơi theo nhóm",
+      title: "Đoàn tàu sắc màu và thu dọn đồ chơi theo nhóm",
       guide: {
         outcome:
           "Bé mở rộng chuỗi quy luật màu sắc và phân loại đồ chơi vào đúng nhóm.",
@@ -81,7 +81,7 @@ export const LESSON_BATCH_05: LessonSeed[] = [
     header: {
       code: "LES-0027",
       content_version: 1,
-      title_vi: "Làm vòng tay chuỗi hạt và tìm hoa văn trên áo",
+      title: "Làm vòng tay chuỗi hạt và tìm hoa văn trên áo",
       guide: {
         outcome:
           "Bé xâu được chuỗi hạt theo quy luật lặp lại và phát hiện quy luật trên trang phục.",
@@ -123,7 +123,7 @@ export const LESSON_BATCH_05: LessonSeed[] = [
     header: {
       code: "LES-0028",
       content_version: 1,
-      title_vi: "Cuốn sổ phân loại thiên nhiên và chuỗi thìa dĩa",
+      title: "Cuốn sổ phân loại thiên nhiên và chuỗi thìa dĩa",
       guide: {
         outcome:
           "Bé phân loại lá hoa theo nhiều tiêu chí và hoàn thành chuỗi quy luật đồ vật.",
@@ -164,7 +164,7 @@ export const LESSON_BATCH_05: LessonSeed[] = [
     header: {
       code: "LES-0029",
       content_version: 1,
-      title_vi: "Quy luật âm thanh và nhịp điệu nâng cao",
+      title: "Quy luật âm thanh và nhịp điệu nâng cao",
       guide: {
         outcome:
           "Bé nhận diện và mô phỏng được chuỗi quy luật âm thanh phức hợp (Vỗ tay - Vỗ đùi).",
@@ -200,7 +200,7 @@ export const LESSON_BATCH_05: LessonSeed[] = [
     header: {
       code: "LES-0030",
       content_version: 1,
-      title_vi: "Tổng kết quy luật: Bậc thầy sắp xếp logic",
+      title: "Tổng kết quy luật: Bậc thầy sắp xếp logic",
       guide: {
         outcome:
           "Bé nắm vững khả năng nhận diện, mở rộng và tự tạo quy luật cũng như phân loại đa tiêu chí.",

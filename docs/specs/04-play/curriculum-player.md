@@ -115,7 +115,7 @@ progress    = denominator > 0 ? (numerator / denominator) : 0
   "item": {
     "entity_type": "game_level",
     "entity_code": "GL-C1-CNT-MATCH-0008",
-    "title_vi": "Đếm quả táo",
+    "title": "Đếm quả táo",
     "locked": false
   },
   "week_progress": { "done": 3, "total": 5 },

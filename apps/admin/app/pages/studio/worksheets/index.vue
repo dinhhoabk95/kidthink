@@ -153,7 +153,7 @@
               <td
                 class="py-3 px-4 font-semibold text-slate-800 dark:text-slate-200"
               >
-                {{ ws.title_vi }}
+                {{ ws.title }}
                 <div
                   class="text-xs text-slate-500 truncate max-w-xs font-normal"
                   v-if="ws.instructions_vi"
@@ -350,7 +350,7 @@
                 id="form-title"
                 placeholder="Ví dụ: Phiếu tô màu theo quy luật hình vuông - hình tròn"
                 type="text"
-                v-model="activeForm.title_vi"
+                v-model="activeForm.title"
               >
             </div>
           </div>
@@ -421,7 +421,7 @@
     entity_id: number;
     code: string;
     content_version: number;
-    title_vi: string;
+    title: string;
     layout_template: string;
     content_blocks: Record<string, unknown>;
     instructions_vi: string;
@@ -450,7 +450,7 @@
 
   const activeForm = ref<Partial<WorksheetItem>>({
     code: "WS-0001",
-    title_vi: "",
+    title: "",
     layout_template: "pattern_coloring",
     instructions_vi:
       "Hướng dẫn người lớn: Giúp trẻ quan sát quy luật và dùng bút sáp tô màu.",
@@ -673,7 +673,7 @@
     isEditing.value = false;
     activeForm.value = {
       code: `WS-${String(Math.floor(Math.random() * 9000) + 1000)}`,
-      title_vi: "",
+      title: "",
       layout_template: "pattern_coloring",
       instructions_vi:
         "Hướng dẫn người lớn: Giúp trẻ quan sát quy luật và tô màu vào hình còn trống.",

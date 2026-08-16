@@ -7,7 +7,7 @@ export const C2_SEED_ACTIVITIES: ActivitySeed[] = [
       code: "ACT-0011",
       content_version: 1,
       activity_kind: "manipulative",
-      title_vi: "Tìm đồ vật hình tròn trong nhà",
+      title: "Tìm đồ vật hình tròn trong nhà",
       instruction: {
         preparation: "Chuẩn bị một chiếc rổ nhựa nhỏ.",
         steps: [
@@ -44,7 +44,7 @@ export const C2_SEED_ACTIVITIES: ActivitySeed[] = [
       code: "ACT-0012",
       content_version: 1,
       activity_kind: "movement",
-      title_vi: "Bước đi theo hình vẽ trên sàn",
+      title: "Bước đi theo hình vẽ trên sàn",
       instruction: {
         preparation: "Dùng băng dính giấy dán hình tam giác lớn trên sàn nhà.",
         steps: [
@@ -80,7 +80,7 @@ export const C2_SEED_ACTIVITIES: ActivitySeed[] = [
       code: "ACT-0013",
       content_version: 1,
       activity_kind: "discussion",
-      title_vi: "Trò chuyện: Góc vuông của chiếc bàn",
+      title: "Trò chuyện: Góc vuông của chiếc bàn",
       instruction: {
         preparation: "Ngồi cạnh chiếc bàn học hoặc bàn ăn hình chữ nhật.",
         steps: [
@@ -121,7 +121,7 @@ export const C2_SEED_ACTIVITIES: ActivitySeed[] = [
       code: "ACT-0014",
       content_version: 1,
       activity_kind: "home_activity",
-      title_vi: "Giấu gấu bông: Trên, Dưới, Trong, Ngoài",
+      title: "Giấu gấu bông: Trên, Dưới, Trong, Ngoài",
       instruction: {
         preparation: "Dùng một chú gấu bông nhỏ và một chiếc hộp các-tông.",
         steps: [
@@ -157,7 +157,7 @@ export const C2_SEED_ACTIVITIES: ActivitySeed[] = [
       code: "ACT-0015",
       content_version: 1,
       activity_kind: "storytelling",
-      title_vi: "Kể chuyện: Chuyến phiêu lưu của Bạn Hình Vuông",
+      title: "Kể chuyện: Chuyến phiêu lưu của Bạn Hình Vuông",
       instruction: {
         preparation:
           "Cắt sẵn 1 hình vuông và 1 hình tam giác từ bìa giấy cứng.",
@@ -195,7 +195,7 @@ export const C2_SEED_ACTIVITIES: ActivitySeed[] = [
       code: "ACT-0016",
       content_version: 1,
       activity_kind: "manipulative",
-      title_vi: "Xếp que tính thành các hình học",
+      title: "Xếp que tính thành các hình học",
       instruction: {
         preparation: "Chuẩn bị 12 que tính hoặc que kem sạch.",
         steps: [
@@ -232,7 +232,7 @@ export const C2_SEED_ACTIVITIES: ActivitySeed[] = [
       code: "ACT-0017",
       content_version: 1,
       activity_kind: "observation",
-      title_vi: "Đi tìm hình khối 3D trong bếp",
+      title: "Đi tìm hình khối 3D trong bếp",
       instruction: {
         preparation: "Dẫn bé vào khu vực bếp quan sát đồ hộp và lon sữa.",
         steps: [
@@ -268,7 +268,7 @@ export const C2_SEED_ACTIVITIES: ActivitySeed[] = [
       code: "ACT-0018",
       content_version: 1,
       activity_kind: "movement",
-      title_vi: "Lái xe vượt chướng ngại vật: Trái, Phải",
+      title: "Lái xe vượt chướng ngại vật: Trái, Phải",
       instruction: {
         preparation: "Đặt 3 chiếc gối làm cọc tiêu trên sàn nhà.",
         steps: [
@@ -303,7 +303,7 @@ export const C2_SEED_ACTIVITIES: ActivitySeed[] = [
       code: "ACT-0019",
       content_version: 1,
       activity_kind: "mini_project",
-      title_vi: "Xây lâu đài từ các khối hộp các-tông",
+      title: "Xây lâu đài từ các khối hộp các-tông",
       instruction: {
         preparation: "Gom các vỏ hộp bánh, hộp thuốc sạch trong 2 ngày.",
         steps: [
@@ -341,7 +341,7 @@ export const C2_SEED_ACTIVITIES: ActivitySeed[] = [
       code: "ACT-0020",
       content_version: 1,
       activity_kind: "assessment",
-      title_vi: "Đánh giá quan sát: Chỉ vị trí trước - sau",
+      title: "Đánh giá quan sát: Chỉ vị trí trước - sau",
       instruction: {
         preparation: "Đặt bạn gấu bông phía trước ghế, bạn thỏ phía sau ghế.",
         steps: [

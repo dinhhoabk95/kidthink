@@ -8,8 +8,8 @@ import { z } from "zod";
 export type LessonPlanItemType = "activity" | "game_level" | "custom_note";
 
 export interface ActivitySnapshot {
-  readonly title_vi: string;
-  readonly instruction_vi?: string | null;
+  readonly title: string;
+  readonly instruction?: string | null;
   readonly materials_vi?: string | null;
   readonly estimated_minutes?: number | null;
   readonly kind: string;
@@ -19,7 +19,7 @@ export interface ActivitySnapshot {
 }
 
 export interface GameLevelSnapshot {
-  readonly title_vi: string;
+  readonly title: string;
   readonly template_id?: number | null;
   readonly access_tier: string;
   readonly difficulty_params?: Record<string, unknown> | null;
@@ -82,8 +82,8 @@ export function buildActivitySnapshot(activity: {
   contentVersion: number;
 }): ActivitySnapshot {
   return {
-    title_vi: activity.titleVi,
-    instruction_vi: activity.instructionVi ?? null,
+    title: activity.titleVi,
+    instruction: activity.instructionVi ?? null,
     materials_vi: activity.materialsVi ?? null,
     estimated_minutes: activity.estimatedMinutes ?? null,
     kind: activity.kind,
@@ -102,7 +102,7 @@ export function buildGameLevelSnapshot(level: {
   contentVersion: number;
 }): GameLevelSnapshot {
   return {
-    title_vi: level.titleVi,
+    title: level.titleVi,
     template_id: level.templateId ?? null,
     access_tier: level.accessTier,
     difficulty_params: level.difficultyParams ?? null,

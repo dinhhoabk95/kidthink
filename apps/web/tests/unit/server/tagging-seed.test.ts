@@ -20,8 +20,8 @@ describe("Task P1.10 — Content Tagging & Seed Authoring Pipeline (BR-TAG-* & B
       code: "GL-C1-CNT-CARD-0099",
       content_version: 1,
       template_code: "GT-001",
-      title_vi: "Đếm hoa quả trong vườn",
-      instruction_vi: "Em hãy đếm xem có bao nhiêu quả táo nhé.",
+      title: "Đếm hoa quả trong vườn",
+      instruction: "Em hãy đếm xem có bao nhiêu quả táo nhé.",
       age_min: 3,
       age_max: 4,
       difficulty: 1,
@@ -142,7 +142,7 @@ describe("Task P1.10 — Content Tagging & Seed Authoring Pipeline (BR-TAG-* & B
       header: {
         ...mockSeed.header,
         code: "GL-C1-CNT-CARD-0098",
-        instruction_vi: "Em hãy đánh nhau với con quái vật",
+        instruction: "Em hãy đánh nhau với con quái vật",
       },
     };
 

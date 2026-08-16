@@ -1021,14 +1021,14 @@
           "primaryKey": false,
           "notNull": true
         },
-        "title_vi": {
-          "name": "title_vi",
+        "title": {
+          "name": "title",
           "type": "varchar(200)",
           "primaryKey": false,
           "notNull": true
         },
-        "instruction_vi": {
-          "name": "instruction_vi",
+        "instruction": {
+          "name": "instruction",
           "type": "text",
           "primaryKey": false,
           "notNull": false
@@ -1272,8 +1272,8 @@
           "notNull": true,
           "default": 1
         },
-        "title_vi": {
-          "name": "title_vi",
+        "title": {
+          "name": "title",
           "type": "varchar(200)",
           "primaryKey": false,
           "notNull": true
@@ -1507,8 +1507,8 @@
           "notNull": true,
           "default": 1
         },
-        "title_vi": {
-          "name": "title_vi",
+        "title": {
+          "name": "title",
           "type": "varchar(200)",
           "primaryKey": false,
           "notNull": true
@@ -1631,8 +1631,8 @@
           "notNull": true,
           "default": 1
         },
-        "title_vi": {
-          "name": "title_vi",
+        "title": {
+          "name": "title",
           "type": "varchar(200)",
           "primaryKey": false,
           "notNull": true
@@ -2057,8 +2057,8 @@
           "primaryKey": false,
           "notNull": true
         },
-        "title_vi": {
-          "name": "title_vi",
+        "title": {
+          "name": "title",
           "type": "varchar(200)",
           "primaryKey": false,
           "notNull": true
@@ -2069,8 +2069,8 @@
           "primaryKey": false,
           "notNull": false
         },
-        "instruction_vi": {
-          "name": "instruction_vi",
+        "instruction": {
+          "name": "instruction",
           "type": "text",
           "primaryKey": false,
           "notNull": false

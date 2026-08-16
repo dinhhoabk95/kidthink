@@ -6,7 +6,7 @@ export const LESSON_BATCH_09: LessonSeed[] = [
     header: {
       code: "LES-0049",
       content_version: 1,
-      title_vi: "Dự đoán vật nổi chìm và nếu trời mưa thì sao",
+      title: "Dự đoán vật nổi chìm và nếu trời mưa thì sao",
       guide: {
         outcome:
           "Bé đưa ra dự đoán dựa trên quan sát và nêu mối liên hệ nhân quả đơn giản.",
@@ -50,7 +50,7 @@ export const LESSON_BATCH_09: LessonSeed[] = [
     header: {
       code: "LES-0050",
       content_version: 1,
-      title_vi: "Thiết kế bẫy bắt chuột bông và thử nghiệm cơ học",
+      title: "Thiết kế bẫy bắt chuột bông và thử nghiệm cơ học",
       guide: {
         outcome:
           "Bé hiểu nguyên lý cơ bản của đòn bẩy và sự chuyển động khi có tác động lực.",
@@ -88,7 +88,7 @@ export const LESSON_BATCH_09: LessonSeed[] = [
     header: {
       code: "LES-0051",
       content_version: 1,
-      title_vi: "Ghi nhớ chuỗi 4 bước: Pha nước quả ngon lành",
+      title: "Ghi nhớ chuỗi 4 bước: Pha nước quả ngon lành",
       guide: {
         outcome:
           "Bé ghi nhớ và thực hiện đúng trình tự các bước theo quy trình logic.",
@@ -125,7 +125,7 @@ export const LESSON_BATCH_09: LessonSeed[] = [
     header: {
       code: "LES-0052",
       content_version: 1,
-      title_vi: "Suy luận nhân quả: Điều gì xảy ra tiếp theo?",
+      title: "Suy luận nhân quả: Điều gì xảy ra tiếp theo?",
       guide: {
         outcome:
           "Bé dự đoán được kết quả hợp lý tiếp theo của các tình huống thực tế thường ngày.",
@@ -165,7 +165,7 @@ export const LESSON_BATCH_09: LessonSeed[] = [
     header: {
       code: "LES-0053",
       content_version: 1,
-      title_vi: "Thử thách trí nhớ phức hợp: Tìm 3 manh mối giấu kín",
+      title: "Thử thách trí nhớ phức hợp: Tìm 3 manh mối giấu kín",
       guide: {
         outcome:
           "Bé duy trì được 3 chỉ dẫn cùng lúc trong trí nhớ làm việc để hoàn thành nhiệm vụ.",
@@ -202,7 +202,7 @@ export const LESSON_BATCH_09: LessonSeed[] = [
     header: {
       code: "LES-0054",
       content_version: 1,
-      title_vi: "Tổng kết tư duy logic: Hội nghị các nhà phát minh",
+      title: "Tổng kết tư duy logic: Hội nghị các nhà phát minh",
       guide: {
         outcome:
           "Bé tự tin giải thích nguyên nhân, dự đoán kết quả và vận dụng sáng tạo các giải pháp.",

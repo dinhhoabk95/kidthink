@@ -152,7 +152,7 @@ export async function createWorksheetDraft(
   managerId: number
 ) {
   const validation = validateWorksheetContent({
-    title_vi: input.title_vi,
+    title: input.title,
     layout_template: input.layout_template,
     content_blocks: input.content_blocks,
     instructions_vi: input.instructions_vi,
@@ -182,7 +182,7 @@ export async function createWorksheetDraft(
         entityId,
         code,
         contentVersion: 1,
-        titleVi: input.title_vi,
+        titleVi: input.title,
         layoutTemplate: input.layout_template,
         contentBlocks: input.content_blocks,
         instructionsVi: input.instructions_vi,
@@ -235,7 +235,7 @@ export async function updateWorksheetDraft(
     );
   }
 
-  const mergedTitle = input.title_vi ?? existing.titleVi;
+  const mergedTitle = input.title ?? existing.titleVi;
   const mergedTemplate = input.layout_template ?? existing.layoutTemplate;
   const mergedBlocks = input.content_blocks ?? existing.contentBlocks;
   const mergedInstructions = input.instructions_vi ?? existing.instructionsVi;
@@ -245,7 +245,7 @@ export async function updateWorksheetDraft(
     [];
 
   const validation = validateWorksheetContent({
-    title_vi: mergedTitle,
+    title: mergedTitle,
     layout_template: mergedTemplate,
     content_blocks: mergedBlocks,
     instructions_vi: mergedInstructions,
@@ -388,7 +388,7 @@ export async function renderWorksheetArtifact(
   const renderResult = renderWorksheetPdf({
     code: ws.code,
     version: ws.contentVersion,
-    title_vi: ws.titleVi,
+    title: ws.titleVi,
     layout_template: ws.layoutTemplate,
     content_blocks: ws.contentBlocks,
     instructions_vi: ws.instructionsVi || "",

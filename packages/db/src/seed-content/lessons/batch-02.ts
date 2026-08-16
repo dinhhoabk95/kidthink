@@ -6,7 +6,7 @@ export const LESSON_BATCH_02: LessonSeed[] = [
     header: {
       code: "LES-0007",
       content_version: 1,
-      title_vi: "Chuyện chú thỏ hái nấm và chia thìa bữa cơm",
+      title: "Chuyện chú thỏ hái nấm và chia thìa bữa cơm",
       guide: {
         outcome:
           "Bé đếm số lượng nấm trong câu chuyện và chia tương ứng 1-1 cho các thành viên.",
@@ -43,7 +43,7 @@ export const LESSON_BATCH_02: LessonSeed[] = [
     header: {
       code: "LES-0008",
       content_version: 1,
-      title_vi: "Quan sát xe chạy và xếp nắp chai thành số",
+      title: "Quan sát xe chạy và xếp nắp chai thành số",
       guide: {
         outcome:
           "Bé ghi nhận số lượng ô tô quan sát được và xếp lượng nắp chai tương ứng.",
@@ -79,7 +79,7 @@ export const LESSON_BATCH_02: LessonSeed[] = [
     header: {
       code: "LES-0009",
       content_version: 1,
-      title_vi: "Đĩa nào nhiều hơn và bộ sưu tập 5 chiếc lá",
+      title: "Đĩa nào nhiều hơn và bộ sưu tập 5 chiếc lá",
       guide: {
         outcome: "Bé so sánh được nhóm nhiều hơn/ít hơn và đếm đến 5 chiếc lá.",
         preparation: ["Cà chua bi", "2 chiếc đĩa nhựa", "5 chiếc lá cây rụng"],
@@ -114,7 +114,7 @@ export const LESSON_BATCH_02: LessonSeed[] = [
     header: {
       code: "LES-0010",
       content_version: 1,
-      title_vi: "Nặn chữ số diệu kỳ và xếp hạt theo thẻ số",
+      title: "Nặn chữ số diệu kỳ và xếp hạt theo thẻ số",
       guide: {
         outcome: "Bé nhận diện mặt số và tạo hình chữ số 1, 2, 3 bằng đất nặn.",
         preparation: ["Đất nặn bột mì an toàn", "Hạt đậu hoặc cúc áo to"],
@@ -151,7 +151,7 @@ export const LESSON_BATCH_02: LessonSeed[] = [
     header: {
       code: "LES-0011",
       content_version: 1,
-      title_vi: "Đếm hạt đậu nâng cao và so sánh hai nhóm",
+      title: "Đếm hạt đậu nâng cao và so sánh hai nhóm",
       guide: {
         outcome:
           "Bé đếm thành thạo trong phạm vi 5 và xác định nhóm có số lượng bằng nhau.",
@@ -188,7 +188,7 @@ export const LESSON_BATCH_02: LessonSeed[] = [
     header: {
       code: "LES-0012",
       content_version: 1,
-      title_vi: "Tổng kết số học: Trò chơi đếm và ghép số",
+      title: "Tổng kết số học: Trò chơi đếm và ghép số",
       guide: {
         outcome:
           "Bé liên kết vững chắc giữa số lượng vật thể và biểu tượng số từ 1 đến 5.",

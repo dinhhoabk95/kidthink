@@ -144,7 +144,7 @@
               <td
                 class="py-3 px-4 font-semibold text-slate-800 dark:text-slate-200"
               >
-                {{ act.title_vi }}
+                {{ act.title }}
                 <div
                   class="text-xs text-slate-500 truncate max-w-xs font-normal"
                   v-if="act.materials_vi"
@@ -284,7 +284,7 @@
               id="form-title"
               placeholder="Ví dụ: Đếm hạt đậu và ghép thẻ số"
               type="text"
-              v-model="activeForm.title_vi"
+              v-model="activeForm.title"
             >
           </div>
 
@@ -349,7 +349,7 @@
               id="form-instruction"
               placeholder='Chuẩn bị đồ dùng. "Bé hãy đếm xem có mấy hạt nào!". Dễ hơn: đếm 3 hạt. Khó hơn: đếm 10 hạt.'
               rows="4"
-              v-model="activeForm.instruction_vi"
+              v-model="activeForm.instruction"
             />
           </div>
         </div>
@@ -388,8 +388,8 @@
     code: string;
     content_version: number;
     kind: string;
-    title_vi: string;
-    instruction_vi: string;
+    title: string;
+    instruction: string;
     materials_vi: string | null;
     estimated_minutes: number;
     access_tier: string;
@@ -412,8 +412,8 @@
 
   const activeForm = ref<Partial<ActivityItem>>({
     kind: "manipulative",
-    title_vi: "",
-    instruction_vi: "",
+    title: "",
+    instruction: "",
     materials_vi: "",
     estimated_minutes: 10,
     access_tier: "standard",
@@ -523,8 +523,8 @@
     isEditing.value = false;
     activeForm.value = {
       kind: "manipulative",
-      title_vi: "",
-      instruction_vi: "",
+      title: "",
+      instruction: "",
       materials_vi: "",
       estimated_minutes: 10,
       access_tier: "standard",

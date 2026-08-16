@@ -13,7 +13,7 @@
           <h2 class="text-base font-bold text-slate-900 dark:text-white">
             📖 Bản xem trước cho người dạy (Teaching View)
           </h2>
-          <div class="text-xs text-slate-500">{{ data?.lesson?.title_vi }}</div>
+          <div class="text-xs text-slate-500">{{ data?.lesson?.title }}</div>
         </div>
         <button
           class="p-1.5 rounded-xl text-slate-400 hover:bg-slate-100"
@@ -71,7 +71,7 @@
           >
             <div>
               <span class="font-bold"
-                >#{{ act.position }} {{ act.activity?.title_vi }}</span
+                >#{{ act.position }} {{ act.activity?.title }}</span
               >
               <div class="text-slate-500 font-mono">
                 ⏱️ {{ act.activity?.estimated_minutes }} phút ·
@@ -115,7 +115,7 @@
       id: number;
       code: string;
       content_version: number;
-      title_vi: string;
+      title: string;
       guide_vi: string;
     };
     activities?: {
@@ -124,7 +124,7 @@
       is_required: boolean;
       is_offscreen: boolean;
       activity?: {
-        title_vi: string;
+        title: string;
         estimated_minutes: number;
         kind: string;
       };

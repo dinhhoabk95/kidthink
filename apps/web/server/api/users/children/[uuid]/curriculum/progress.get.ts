@@ -25,7 +25,7 @@ interface WeekItemSummary {
   entity_type: "lesson" | "game_level";
   entity_id: number;
   code: string;
-  title_vi: string;
+  title: string;
   is_required: boolean;
   access_tier: AccessTier;
   locked: boolean;
@@ -99,7 +99,7 @@ function evaluateSingleWeekSummary(params: {
       entity_type: item.entity_type,
       entity_id: item.entity_id,
       code: item.code ?? "",
-      title_vi: item.title_vi ?? "",
+      title: item.title ?? "",
       is_required: item.is_required !== false,
       access_tier: item.access_tier,
       locked: !userAllowedTiers.includes(item.access_tier),
@@ -217,7 +217,7 @@ export default defineEventHandler(async (event) => {
       enrollment_id: enrollment.id,
       curriculum_code: enrollment.curriculum_code,
       curriculum_version: enrollment.curriculum_version,
-      curriculum_title_vi: enrollment.curriculum_title_vi,
+      curriculum_title: enrollment.curriculum_title,
       child_uuid: child.uuid,
       child_display_name: child.displayName,
       duration_weeks: enrollment.duration_weeks,

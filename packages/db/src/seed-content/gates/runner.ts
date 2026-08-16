@@ -73,7 +73,7 @@ function checkActivityGate1(act: ActivitySeed, issues: GateIssue[]): void {
   const validation = validateActivityModel({
     code: act.header.code,
     kind: act.header.activity_kind,
-    title_vi: act.header.title_vi,
+    title: act.header.title,
     instruction: act.header.instruction,
     materials_vi: act.header.materials_vi,
     estimated_minutes: act.header.estimated_minutes,
@@ -94,7 +94,7 @@ function checkLessonGate1(les: LessonSeed, issues: GateIssue[]): void {
   const validation = validateLessonModel(
     {
       code: les.header.code,
-      title_vi: les.header.title_vi,
+      title: les.header.title,
       guide: les.header.guide,
       target_age_min: les.header.target_age_min,
       target_age_max: les.header.target_age_max,
@@ -225,10 +225,10 @@ function checkGate2(seed: AnyContentSeed): GateResult {
   const issues: GateIssue[] = [];
   const { header } = seed;
 
-  if (!header.title_vi?.trim()) {
+  if (!header.title?.trim()) {
     issues.push({
       code: "TITLE_EMPTY",
-      message: "Tiêu đề tiếng Việt title_vi không được rỗng.",
+      message: "Tiêu đề tiếng Việt title không được rỗng.",
     });
   }
 
@@ -304,7 +304,7 @@ function checkGate4(seed: AnyContentSeed): GateResult {
 
   if (seed.kind !== "activity" && seed.kind !== "lesson") {
     const gl = seed as ContentSeed;
-    const instruction = gl.header.instruction_vi || "";
+    const instruction = gl.header.instruction || "";
     const words = instruction.split(WHITESPACE_REGEX).filter(Boolean);
     if (gl.header.age_min <= 4 && words.length > 12) {
       issues.push({
@@ -417,7 +417,7 @@ function checkGate7(seed: AnyContentSeed): GateResult {
     });
   }
 
-  let textToScan = `${header.title_vi || ""}`;
+  let textToScan = `${header.title || ""}`;
   if (seed.kind === "activity") {
     const act = seed as ActivitySeed;
     textToScan += ` ${JSON.stringify(act.header?.instruction || "")} ${act.header?.materials_vi || ""}`;
@@ -426,7 +426,7 @@ function checkGate7(seed: AnyContentSeed): GateResult {
     textToScan += ` ${JSON.stringify(les.header?.guide || "")} ${les.header?.materials_vi || ""} ${les.header?.assessment_vi || ""}`;
   } else {
     const gl = seed as ContentSeed;
-    textToScan += ` ${gl.header?.instruction_vi || ""} ${JSON.stringify(gl.content_pack || {})} ${JSON.stringify(gl.difficulty_params || {})}`;
+    textToScan += ` ${gl.header?.instruction || ""} ${JSON.stringify(gl.content_pack || {})} ${JSON.stringify(gl.difficulty_params || {})}`;
   }
 
   const safetyViolations = scanChildContentSafety(textToScan);

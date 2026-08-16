@@ -9,7 +9,7 @@ export interface CurriculumPlayerItemRef {
   entity_type: "lesson" | "game_level";
   entity_id: number;
   code?: string;
-  title_vi?: string;
+  title?: string;
   is_required?: boolean;
   access_tier: AccessTier;
 }
@@ -22,7 +22,7 @@ export interface CurriculumPlayerWeekGoal {
 export interface NextStepItemPayload {
   entity_type: "lesson" | "game_level";
   entity_code: string;
-  title_vi?: string;
+  title?: string;
   locked: boolean;
   access_tier: AccessTier;
 }
@@ -225,7 +225,7 @@ function buildItemPayload(
       entity_type: targetItem.entity_type,
       entity_code:
         targetItem.code || `${targetItem.entity_type}_${targetItem.entity_id}`,
-      title_vi: targetItem.title_vi,
+      title: targetItem.title,
       locked: isLocked,
       access_tier: targetItem.access_tier,
     },

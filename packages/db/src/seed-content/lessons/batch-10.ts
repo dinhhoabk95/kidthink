@@ -6,7 +6,7 @@ export const LESSON_BATCH_10: LessonSeed[] = [
     header: {
       code: "LES-0055",
       content_version: 1,
-      title_vi: "Đóng vai đi chợ mua hoa quả và nuôi heo đất",
+      title: "Đóng vai đi chợ mua hoa quả và nuôi heo đất",
       guide: {
         outcome:
           "Bé hiểu giá trị trao đổi của tiền xu và hình thành thói quen tích luỹ tiết kiệm.",
@@ -44,7 +44,7 @@ export const LESSON_BATCH_10: LessonSeed[] = [
     header: {
       code: "LES-0056",
       content_version: 1,
-      title_vi: "Đồ dùng cần thiết và chuyện chú Sóc tiết kiệm",
+      title: "Đồ dùng cần thiết và chuyện chú Sóc tiết kiệm",
       guide: {
         outcome:
           "Bé phân biệt được giữa thứ thiết yếu (cần) và thứ mong muốn (thích), học cách tích trữ.",
@@ -83,7 +83,7 @@ export const LESSON_BATCH_10: LessonSeed[] = [
     header: {
       code: "LES-0057",
       content_version: 1,
-      title_vi: "Vận chuyển hàng về kho và đổi đồ chơi công bằng",
+      title: "Vận chuyển hàng về kho và đổi đồ chơi công bằng",
       guide: {
         outcome:
           "Bé hiểu giá trị của sự lao động và nguyên tắc trao đổi công bằng với bạn bè.",
@@ -122,7 +122,7 @@ export const LESSON_BATCH_10: LessonSeed[] = [
     header: {
       code: "LES-0058",
       content_version: 1,
-      title_vi: "Đọc nhãn giá cửa hàng và chia sẻ hoa quả cùng bạn",
+      title: "Đọc nhãn giá cửa hàng và chia sẻ hoa quả cùng bạn",
       guide: {
         outcome:
           "Bé nhận diện nhãn giá tiền trên đồ vật và thực hành chia sẻ công bằng.",
@@ -160,7 +160,7 @@ export const LESSON_BATCH_10: LessonSeed[] = [
     header: {
       code: "LES-0059",
       content_version: 1,
-      title_vi: "Dự án quầy nước cam: Nhà kinh doanh nhí tài ba",
+      title: "Dự án quầy nước cam: Nhà kinh doanh nhí tài ba",
       guide: {
         outcome:
           "Bé trải nghiệm chu trình tạo ra sản phẩm, định giá và bán hàng nhận tiền xu.",
@@ -197,7 +197,7 @@ export const LESSON_BATCH_10: LessonSeed[] = [
     header: {
       code: "LES-0060",
       content_version: 1,
-      title_vi: "Tổng kết tài chính & xã hội: Nhà quản lý tài chính nhí",
+      title: "Tổng kết tài chính & xã hội: Nhà quản lý tài chính nhí",
       guide: {
         outcome:
           "Bé nắm vững khái niệm giá trị tiền tệ, tiết kiệm, chia sẻ công bằng và giá trị lao động.",

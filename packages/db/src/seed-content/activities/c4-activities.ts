@@ -7,7 +7,7 @@ export const C4_SEED_ACTIVITIES: ActivitySeed[] = [
       code: "ACT-0031",
       content_version: 1,
       activity_kind: "manipulative",
-      title_vi: "Đo chiều dài chiếc bàn bằng bàn tay",
+      title: "Đo chiều dài chiếc bàn bằng bàn tay",
       instruction: {
         preparation: "Ngồi cùng bé cạnh bàn học.",
         steps: [
@@ -43,7 +43,7 @@ export const C4_SEED_ACTIVITIES: ActivitySeed[] = [
       code: "ACT-0032",
       content_version: 1,
       activity_kind: "manipulative",
-      title_vi: "So sánh nặng nhẹ bằng hai bàn tay",
+      title: "So sánh nặng nhẹ bằng hai bàn tay",
       instruction: {
         preparation: "Chuẩn bị 1 quả cam và 1 chiếc lông vũ hoặc mẩu giấy vụn.",
         steps: [
@@ -79,7 +79,7 @@ export const C4_SEED_ACTIVITIES: ActivitySeed[] = [
       code: "ACT-0033",
       content_version: 1,
       activity_kind: "discussion",
-      title_vi: "Trò chuyện: Buổi sáng, Buổi trưa, Buổi tối",
+      title: "Trò chuyện: Buổi sáng, Buổi trưa, Buổi tối",
       instruction: {
         preparation: "Ngồi xem các bức ảnh sinh hoạt thường ngày của gia đình.",
         steps: [
@@ -117,7 +117,7 @@ export const C4_SEED_ACTIVITIES: ActivitySeed[] = [
       code: "ACT-0034",
       content_version: 1,
       activity_kind: "storytelling",
-      title_vi: "Kể chuyện: Chú rùa và chú thỏ chạy đua",
+      title: "Kể chuyện: Chú rùa và chú thỏ chạy đua",
       instruction: {
         preparation: "Dùng 2 ngón tay mô phỏng bước đi của rùa và thỏ.",
         steps: [
@@ -153,7 +153,7 @@ export const C4_SEED_ACTIVITIES: ActivitySeed[] = [
       code: "ACT-0035",
       content_version: 1,
       activity_kind: "home_activity",
-      title_vi: "Rót nước vào bình đo dung tích",
+      title: "Rót nước vào bình đo dung tích",
       instruction: {
         preparation: "Chuẩn bị 1 bình nhựa to và 3 chiếc cốc nhỏ bằng nhau.",
         steps: [
@@ -188,7 +188,7 @@ export const C4_SEED_ACTIVITIES: ActivitySeed[] = [
       code: "ACT-0036",
       content_version: 1,
       activity_kind: "observation",
-      title_vi: "Vẽ biểu đồ cột thời tiết 3 ngày",
+      title: "Vẽ biểu đồ cột thời tiết 3 ngày",
       instruction: {
         preparation: "Vẽ sẵn 3 cột trên tờ giấy trắng tương ứng 3 ngày.",
         steps: [
@@ -225,7 +225,7 @@ export const C4_SEED_ACTIVITIES: ActivitySeed[] = [
       code: "ACT-0037",
       content_version: 1,
       activity_kind: "manipulative",
-      title_vi: "Xếp bút chì theo thứ tự dài ngắn",
+      title: "Xếp bút chì theo thứ tự dài ngắn",
       instruction: {
         preparation: "Chuẩn bị 4 chiếc bút chì có độ dài ngắn khác nhau.",
         steps: [
@@ -262,7 +262,7 @@ export const C4_SEED_ACTIVITIES: ActivitySeed[] = [
       code: "ACT-0038",
       content_version: 1,
       activity_kind: "movement",
-      title_vi: "Nhảy xa: Ai nhảy được dài hơn?",
+      title: "Nhảy xa: Ai nhảy được dài hơn?",
       instruction: {
         preparation: "Dán vạch xuất phát bằng băng dính giấy trên sàn.",
         steps: [
@@ -298,7 +298,7 @@ export const C4_SEED_ACTIVITIES: ActivitySeed[] = [
       code: "ACT-0039",
       content_version: 1,
       activity_kind: "mini_project",
-      title_vi: "Đo chiều cao cây xanh mini sau 3 ngày",
+      title: "Đo chiều cao cây xanh mini sau 3 ngày",
       instruction: {
         preparation: "Chuẩn bị 1 chậu cây mầm nhỏ và thước dây mềm.",
         steps: [
@@ -336,7 +336,7 @@ export const C4_SEED_ACTIVITIES: ActivitySeed[] = [
       code: "ACT-0040",
       content_version: 1,
       activity_kind: "assessment",
-      title_vi: "Đánh giá quan sát: Phân biệt nặng hơn - nhẹ hơn",
+      title: "Đánh giá quan sát: Phân biệt nặng hơn - nhẹ hơn",
       instruction: {
         preparation: "Đặt trên bàn: 1 chai nước đầy và 1 quả bóng nhựa rỗng.",
         steps: [

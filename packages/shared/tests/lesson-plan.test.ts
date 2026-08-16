@@ -24,8 +24,8 @@ describe("Task P4.1 — Shared Lesson Plan Schemas & Snapshot Builders (BR-LPC-0
     const snapshot = buildActivitySnapshot(rawActivity);
 
     expect(snapshot).toEqual({
-      title_vi: "Đếm hạt dẻ",
-      instruction_vi: "Bé đếm từng hạt dẻ và xếp thành hàng",
+      title: "Đếm hạt dẻ",
+      instruction: "Bé đếm từng hạt dẻ và xếp thành hàng",
       materials_vi: "10 hạt dẻ, khay gỗ",
       estimated_minutes: 15,
       kind: "manipulative",
@@ -51,7 +51,7 @@ describe("Task P4.1 — Shared Lesson Plan Schemas & Snapshot Builders (BR-LPC-0
     const snapshot = buildGameLevelSnapshot(rawLevel);
 
     expect(snapshot).toEqual({
-      title_vi: "Đếm thỏ trong chuồng",
+      title: "Đếm thỏ trong chuồng",
       template_id: 1,
       access_tier: "standard",
       difficulty_params: { count_min: 1, count_max: 5 },

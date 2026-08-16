@@ -7,7 +7,7 @@ export const C6_SEED_ACTIVITIES: ActivitySeed[] = [
       code: "ACT-0051",
       content_version: 1,
       activity_kind: "manipulative",
-      title_vi: "Đóng vai đi chợ mua hoa quả",
+      title: "Đóng vai đi chợ mua hoa quả",
       instruction: {
         preparation:
           "Chuẩn bị rổ đựng hoa quả nhựa và 5 đồng xu đồ chơi bằng bìa cứng.",
@@ -44,7 +44,7 @@ export const C6_SEED_ACTIVITIES: ActivitySeed[] = [
       code: "ACT-0052",
       content_version: 1,
       activity_kind: "home_activity",
-      title_vi: "Nuôi heo đất tiết kiệm hàng ngày",
+      title: "Nuôi heo đất tiết kiệm hàng ngày",
       instruction: {
         preparation: "Dùng một chiếc hộp nhỏ có khe nhét tiền làm chú heo đất.",
         steps: [
@@ -81,7 +81,7 @@ export const C6_SEED_ACTIVITIES: ActivitySeed[] = [
       code: "ACT-0053",
       content_version: 1,
       activity_kind: "discussion",
-      title_vi: "Thảo luận: Đồ dùng cần thiết và Đồ muốn có",
+      title: "Thảo luận: Đồ dùng cần thiết và Đồ muốn có",
       instruction: {
         preparation:
           "Cắt 4 hình ảnh: Bát cơm, Nước uống, Đồ chơi robot, Kẹo mút.",
@@ -118,7 +118,7 @@ export const C6_SEED_ACTIVITIES: ActivitySeed[] = [
       code: "ACT-0054",
       content_version: 1,
       activity_kind: "storytelling",
-      title_vi: "Kể chuyện: Chú Sóc tích luỹ hạt dẻ mùa đông",
+      title: "Kể chuyện: Chú Sóc tích luỹ hạt dẻ mùa đông",
       instruction: {
         preparation: "Dùng mô hình bạn Sóc bông và 6 hạt dẻ hoặc hạt lạc.",
         steps: [
@@ -156,7 +156,7 @@ export const C6_SEED_ACTIVITIES: ActivitySeed[] = [
       code: "ACT-0055",
       content_version: 1,
       activity_kind: "movement",
-      title_vi: "Vận chuyển hàng hoá về kho siêu thị",
+      title: "Vận chuyển hàng hoá về kho siêu thị",
       instruction: {
         preparation: "Đặt rổ hàng ở một góc phòng và kho chứa ở góc đối diện.",
         steps: [
@@ -193,7 +193,7 @@ export const C6_SEED_ACTIVITIES: ActivitySeed[] = [
       code: "ACT-0056",
       content_version: 1,
       activity_kind: "manipulative",
-      title_vi: "Đổi đồ chơi công bằng với bạn",
+      title: "Đổi đồ chơi công bằng với bạn",
       instruction: {
         preparation:
           "Chuẩn bị 2 món đồ chơi có giá trị tương đương (ô tô nhỏ và máy bay nhỏ).",
@@ -232,7 +232,7 @@ export const C6_SEED_ACTIVITIES: ActivitySeed[] = [
       code: "ACT-0057",
       content_version: 1,
       activity_kind: "observation",
-      title_vi: "Quan sát bảng giá trong cửa hàng",
+      title: "Quan sát bảng giá trong cửa hàng",
       instruction: {
         preparation:
           "Dán nhãn giá giả định (1 xu, 2 xu, 3 xu) lên các món đồ chơi trên kệ.",
@@ -270,7 +270,7 @@ export const C6_SEED_ACTIVITIES: ActivitySeed[] = [
       code: "ACT-0058",
       content_version: 1,
       activity_kind: "discussion",
-      title_vi: "Trò chuyện: Chia sẻ đồ ăn cùng bạn bè",
+      title: "Trò chuyện: Chia sẻ đồ ăn cùng bạn bè",
       instruction: {
         preparation: "Chuẩn bị một đĩa có 4 múi cam hoặc 4 chiếc bánh quy nhỏ.",
         steps: [
@@ -306,7 +306,7 @@ export const C6_SEED_ACTIVITIES: ActivitySeed[] = [
       code: "ACT-0059",
       content_version: 1,
       activity_kind: "mini_project",
-      title_vi: "Làm quầy bán nước cam ép gia đình",
+      title: "Làm quầy bán nước cam ép gia đình",
       instruction: {
         preparation: "Dùng 1 chiếc bàn nhỏ làm quầy, cốc nhựa và quả cam.",
         steps: [
@@ -345,7 +345,7 @@ export const C6_SEED_ACTIVITIES: ActivitySeed[] = [
       code: "ACT-0060",
       content_version: 1,
       activity_kind: "assessment",
-      title_vi: "Đánh giá quan sát: Trao đổi tiền xu lấy đồ vật",
+      title: "Đánh giá quan sát: Trao đổi tiền xu lấy đồ vật",
       instruction: {
         preparation:
           "Đưa cho bé 3 đồng xu giấy. Đặt chiếc xe ô tô đồ chơi giá 2 đồng xu.",

@@ -2,7 +2,7 @@
 spec: OFFLINE-CURRICULUM-PACK
 title: Gói học tập ngoại tuyến và quản lý hạn mức
 area: platform
-status: approved
+status: implemented
 mvp: false
 phase: P5
 reviewed: 2026-08-16

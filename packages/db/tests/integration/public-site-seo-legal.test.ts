@@ -78,8 +78,8 @@ describe("P1.13 Public Site, SEO, Legal & Cookie Invariants (BR-SEO2, BR-GCP, BR
 
   describe("Public Game Catalog Invariants (BR-GCP-01..08)", () => {
     it("Scenario: BR-GCP-01 — displays metadata for all catalog games including locked items", () => {
-      const game = { code: "GL-C1-001", title_vi: "Đếm số", locked: true };
-      expect(game.title_vi).toBeDefined();
+      const game = { code: "GL-C1-001", title: "Đếm số", locked: true };
+      expect(game.title).toBeDefined();
     });
 
     it("Scenario: BR-GCP-02 — strictly omits content_pack for locked games", () => {

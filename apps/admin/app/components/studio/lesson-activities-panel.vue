@@ -43,7 +43,7 @@
           <span class="font-bold text-slate-400">#{{ idx + 1 }}</span>
           <div class="truncate">
             <div class="font-bold text-slate-900 dark:text-white truncate">
-              {{ item.activity?.title_vi || `Activity ID ${item.activity_id}` }}
+              {{ item.activity?.title || `Activity ID ${item.activity_id}` }}
             </div>
             <div class="text-slate-500 font-mono">
               ⏱️ {{ item.activity?.estimated_minutes || 5 }}p ·
@@ -114,7 +114,7 @@
       entity_id: number;
       code: string;
       kind: string;
-      title_vi: string;
+      title: string;
       estimated_minutes: number;
     };
   }

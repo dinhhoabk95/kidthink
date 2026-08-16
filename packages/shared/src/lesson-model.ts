@@ -17,14 +17,14 @@ export interface LessonActivityItem {
   activity_code?: string;
   activity_id?: number;
   kind?: ActivityKind | string;
-  title_vi?: string;
+  title?: string;
   estimated_minutes?: number;
   is_required?: boolean;
 }
 
 export interface LessonValidationInput {
   code?: string;
-  title_vi: string;
+  title: string;
   guide?: string | LessonGuide;
   guide_vi?: string;
   target_age_min?: number | null;
@@ -299,7 +299,7 @@ export function validateLessonModel(
   validateProgressionAndActivities(input, options, errors, warnings);
 
   const allText = [
-    input.title_vi || "",
+    input.title || "",
     input.materials_vi || "",
     typeof input.guide === "string"
       ? input.guide

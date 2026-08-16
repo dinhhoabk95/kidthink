@@ -5,7 +5,7 @@ describe("P3.8 Program Showcase Invariants (BR-PSH)", () => {
     it("Scenario: BR-PSH-01 — public program showcase endpoint projects allow-list fields only without internal IDs or payload leaks", () => {
       const publicProjection = {
         code: "CUR-001",
-        title_vi: "Chương trình Mầm non 3-4 tuổi",
+        title: "Chương trình Mầm non 3-4 tuổi",
         target_age: { min: 3, max: 4 },
         duration_weeks: 42,
       };
@@ -20,7 +20,7 @@ describe("P3.8 Program Showcase Invariants (BR-PSH)", () => {
     });
 
     it("Scenario: BR-PSH-03 — program detail preview exposes activity titles for weeks 1-2 only and structural summaries for weeks 3+", () => {
-      const week1 = { week_no: 1, items: [{ title_vi: "Đếm hạt" }] };
+      const week1 = { week_no: 1, items: [{ title: "Đếm hạt" }] };
       const week3 = { week_no: 3, goal_vi: "Phát triển tư duy nhóm" };
       expect(week1.items).toBeDefined();
       expect(week3).not.toHaveProperty("items");

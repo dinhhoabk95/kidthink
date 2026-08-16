@@ -2,7 +2,7 @@
 spec: PWA-INSTALL
 title: Cài đặt PWA
 area: platform
-status: approved
+status: implemented
 mvp: false
 phase: P5
 reviewed: 2026-08-13

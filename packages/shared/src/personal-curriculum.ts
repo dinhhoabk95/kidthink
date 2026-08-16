@@ -108,7 +108,7 @@ export interface PersonalCurriculumItemMetadata {
   entity_type: "lesson" | "game_level";
   entity_id: number;
   code?: string;
-  title_vi?: string;
+  title?: string;
   competency_code?: string;
   strand_code?: string;
   skill_codes?: string[];
@@ -459,7 +459,7 @@ export function resolvePersonalCurriculumNextStep(params: {
       ? {
           entity_type: targetItem.entity_type,
           entity_code: targetItem.code || String(targetItem.entity_id),
-          title_vi: targetItem.title_vi,
+          title: targetItem.title,
           locked: isLocked,
           access_tier: targetItem.access_tier,
         }

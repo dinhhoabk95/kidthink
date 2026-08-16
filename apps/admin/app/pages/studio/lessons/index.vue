@@ -120,7 +120,7 @@
                 <td
                   class="py-3 px-4 font-semibold text-slate-800 dark:text-slate-200"
                 >
-                  {{ les.title_vi }}
+                  {{ les.title }}
                 </td>
                 <td
                   class="py-3 px-4 text-slate-600 dark:text-slate-300 text-xs"
@@ -222,7 +222,7 @@
             <div>
               <div class="font-bold text-slate-900 dark:text-white text-xs">
                 {{ act.code }}
-                — {{ act.title_vi }}
+                — {{ act.title }}
               </div>
               <div class="text-xs text-slate-500 font-mono">
                 {{ act.kind }}
@@ -275,7 +275,7 @@
     entity_id: number;
     code: string;
     content_version: number;
-    title_vi: string;
+    title: string;
     guide_vi: string;
     target_age_min: number;
     target_age_max: number;
@@ -294,7 +294,7 @@
     entity_id: number;
     code: string;
     kind: string;
-    title_vi: string;
+    title: string;
     estimated_minutes: number;
   }
 
@@ -408,7 +408,7 @@
 
   function openCreateLesson() {
     currentLesson.value = {
-      title_vi: "",
+      title: "",
       guide_vi:
         "1. Mục tiêu:\n2. Chuẩn bị:\n3. Bắt đầu:\n4. Khi trẻ làm được:\n5. Khi trẻ cần giúp:",
       target_age_min: 3,

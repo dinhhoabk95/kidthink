@@ -103,7 +103,7 @@ describe("Curriculum Builder API Endpoints (BR-CBD-01..08, D-LS..D-LZ)", () => {
       "content_reviewer",
       {},
       {
-        title_vi: "Chương Trình Test API",
+        title: "Chương Trình Test API",
         program_type: "age_based",
         target_age_min: 3,
         target_age_max: 4,
@@ -140,7 +140,7 @@ describe("Curriculum Builder API Endpoints (BR-CBD-01..08, D-LS..D-LZ)", () => {
       "content_reviewer",
       {},
       {
-        title_vi: "Chương Trình Detail Test",
+        title: "Chương Trình Detail Test",
         program_type: "age_based",
         duration_weeks: 8,
         sessions_per_week: 3,
@@ -167,7 +167,7 @@ describe("Curriculum Builder API Endpoints (BR-CBD-01..08, D-LS..D-LZ)", () => {
       "content_reviewer",
       {},
       {
-        title_vi: "Chương Trình Patch Test",
+        title: "Chương Trình Patch Test",
         program_type: "age_based",
         duration_weeks: 8,
       }
@@ -184,7 +184,7 @@ describe("Curriculum Builder API Endpoints (BR-CBD-01..08, D-LS..D-LZ)", () => {
       },
       {
         expected_version: 99,
-        title_vi: "Updated Title",
+        title: "Updated Title",
       }
     );
     await expect(patchCurriculumHandler(conflictEvent)).rejects.toThrow();
@@ -199,7 +199,7 @@ describe("Curriculum Builder API Endpoints (BR-CBD-01..08, D-LS..D-LZ)", () => {
       },
       {
         expected_version: 1,
-        title_vi: "Updated Title Success",
+        title: "Updated Title Success",
         duration_weeks: 10,
       }
     );
@@ -214,7 +214,7 @@ describe("Curriculum Builder API Endpoints (BR-CBD-01..08, D-LS..D-LZ)", () => {
       "content_reviewer",
       {},
       {
-        title_vi: "Chương Trình Items Test",
+        title: "Chương Trình Items Test",
         program_type: "age_based",
         duration_weeks: 8,
       }
@@ -287,7 +287,7 @@ describe("Curriculum Builder API Endpoints (BR-CBD-01..08, D-LS..D-LZ)", () => {
       "content_reviewer",
       {},
       {
-        title_vi: "Chương Trình Weeks Test",
+        title: "Chương Trình Weeks Test",
         duration_weeks: 8,
       }
     );
@@ -320,7 +320,7 @@ describe("Curriculum Builder API Endpoints (BR-CBD-01..08, D-LS..D-LZ)", () => {
       "content_reviewer",
       {},
       {
-        title_vi: "Chương Trình Gốc",
+        title: "Chương Trình Gốc",
         duration_weeks: 8,
       }
     );
@@ -358,7 +358,7 @@ describe("Curriculum Builder API Endpoints (BR-CBD-01..08, D-LS..D-LZ)", () => {
         version: "1",
       },
       {
-        title_vi: "Chương Trình Nhân Bản",
+        title: "Chương Trình Nhân Bản",
       }
     );
 
@@ -383,7 +383,7 @@ describe("Curriculum Builder API Endpoints (BR-CBD-01..08, D-LS..D-LZ)", () => {
       "super_admin",
       {},
       {
-        title_vi: "Chương Trình Cần Xoá",
+        title: "Chương Trình Cần Xoá",
         duration_weeks: 4,
       }
     );

@@ -6,7 +6,7 @@ export const LESSON_BATCH_08: LessonSeed[] = [
     header: {
       code: "LES-0043",
       content_version: 1,
-      title_vi: "Món đồ nào biến mất và đoán con vật qua tiếng kêu",
+      title: "Món đồ nào biến mất và đoán con vật qua tiếng kêu",
       guide: {
         outcome:
           "Bé rèn luyện trí nhớ thị giác ngắn hạn và khả năng suy luận âm thanh.",
@@ -41,7 +41,7 @@ export const LESSON_BATCH_08: LessonSeed[] = [
     header: {
       code: "LES-0044",
       content_version: 1,
-      title_vi: "Chú ong vượt mê cung và kiến qua sông",
+      title: "Chú ong vượt mê cung và kiến qua sông",
       guide: {
         outcome:
           "Bé tìm đường thoát trong mê cung đơn giản và đề xuất giải pháp vượt khó khăn.",
@@ -82,7 +82,7 @@ export const LESSON_BATCH_08: LessonSeed[] = [
     header: {
       code: "LES-0045",
       content_version: 1,
-      title_vi: "Khớp nắp đúng chai và ghép tranh 4 mảnh",
+      title: "Khớp nắp đúng chai và ghép tranh 4 mảnh",
       guide: {
         outcome:
           "Bé biết thử và sai có chủ đích để lắp khớp nắp chai và ghép tranh hoàn chỉnh.",
@@ -119,7 +119,7 @@ export const LESSON_BATCH_08: LessonSeed[] = [
     header: {
       code: "LES-0046",
       content_version: 1,
-      title_vi: "Suy luận logic: Dự đoán bóng hình và vật thể",
+      title: "Suy luận logic: Dự đoán bóng hình và vật thể",
       guide: {
         outcome:
           "Bé suy luận đối chiếu giữa bóng đen của vật thể và vật thật tương ứng.",
@@ -160,7 +160,7 @@ export const LESSON_BATCH_08: LessonSeed[] = [
     header: {
       code: "LES-0047",
       content_version: 1,
-      title_vi: "Trí nhớ vị trí không gian với các thẻ bài động vật",
+      title: "Trí nhớ vị trí không gian với các thẻ bài động vật",
       guide: {
         outcome:
           "Bé ghi nhớ vị trí không gian của các thẻ bài sau khi bị lật úp.",
@@ -195,7 +195,7 @@ export const LESSON_BATCH_08: LessonSeed[] = [
     header: {
       code: "LES-0048",
       content_version: 1,
-      title_vi: "Tổng kết giải quyết vấn đề: Siêu thám tử tí hon",
+      title: "Tổng kết giải quyết vấn đề: Siêu thám tử tí hon",
       guide: {
         outcome:
           "Bé vận dụng phối hợp trí nhớ, khả năng suy luận và tư duy tìm giải pháp.",

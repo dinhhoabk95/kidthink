@@ -12,7 +12,7 @@ export interface CurriculumItemMetadata {
   entity_type: "lesson" | "game_level";
   entity_id: number;
   code?: string;
-  title_vi?: string;
+  title?: string;
   is_required?: boolean;
   status?: string;
   competency_code?: string;
@@ -35,7 +35,7 @@ export interface CurriculumValidationInput {
   target_age_max?: number | null;
   duration_weeks: number;
   sessions_per_week: number;
-  title_vi?: string;
+  title?: string;
   access_tier?: string;
   status?: string;
   items: CurriculumItemMetadata[];

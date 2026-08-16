@@ -73,7 +73,7 @@
               </span>
             </div>
             <div class="truncate text-slate-600 dark:text-slate-300">
-              {{ item.title_vi }}
+              {{ item.title }}
             </div>
           </div>
 
@@ -104,7 +104,7 @@
     entity_type: "lesson" | "game_level";
     entity_id: number;
     code: string;
-    title_vi: string;
+    title: string;
     competency_code?: string;
     difficulty?: number;
     estimated_minutes?: number;
@@ -136,7 +136,7 @@
       const q = pickerSearch.value.toLowerCase();
       return (
         it.code.toLowerCase().includes(q) ||
-        (it.title_vi?.toLowerCase().includes(q) ?? false)
+        (it.title?.toLowerCase().includes(q) ?? false)
       );
     });
   });

@@ -100,8 +100,8 @@ describe("Game Level Studio & Management API (BR-STU-01 - BR-STU-10, Spec §7.2)
       {},
       {
         template_code: "GT-001",
-        title_vi: "Đếm số bông hoa",
-        instruction_vi: "Hãy đếm số bông hoa xuất hiện",
+        title: "Đếm số bông hoa",
+        instruction: "Hãy đếm số bông hoa xuất hiện",
         access_tier: "free",
         content_pack: {
           prompt: "Tìm quả táo màu đỏ",
@@ -142,7 +142,7 @@ describe("Game Level Studio & Management API (BR-STU-01 - BR-STU-10, Spec §7.2)
       {},
       {
         template_code: "GT-002",
-        title_vi: "Tìm số còn thiếu",
+        title: "Tìm số còn thiếu",
         access_tier: "free",
       }
     );
@@ -168,7 +168,7 @@ describe("Game Level Studio & Management API (BR-STU-01 - BR-STU-10, Spec §7.2)
       {},
       {
         template_code: "GT-001",
-        title_vi: "Tiêu đề cũ",
+        title: "Tiêu đề cũ",
         access_tier: "free",
       }
     );
@@ -180,7 +180,7 @@ describe("Game Level Studio & Management API (BR-STU-01 - BR-STU-10, Spec §7.2)
       "content_reviewer",
       { code: created.code, version: "1" },
       {
-        title_vi: "Tiêu đề mới",
+        title: "Tiêu đề mới",
         expected_version: 1,
       }
     );
@@ -193,7 +193,7 @@ describe("Game Level Studio & Management API (BR-STU-01 - BR-STU-10, Spec §7.2)
       "content_reviewer",
       { code: created.code, version: "1" },
       {
-        title_vi: "Sẽ bị xung đột",
+        title: "Sẽ bị xung đột",
         expected_version: 99,
       }
     );
@@ -213,7 +213,7 @@ describe("Game Level Studio & Management API (BR-STU-01 - BR-STU-10, Spec §7.2)
       {},
       {
         template_code: "GT-001",
-        title_vi: "Level test validation",
+        title: "Level test validation",
         access_tier: "free",
       }
     );
@@ -248,7 +248,7 @@ describe("Game Level Studio & Management API (BR-STU-01 - BR-STU-10, Spec §7.2)
       {},
       {
         template_code: "GT-001",
-        title_vi: "Bản gốc",
+        title: "Bản gốc",
         access_tier: "free",
       }
     );
@@ -275,8 +275,8 @@ describe("Game Level Studio & Management API (BR-STU-01 - BR-STU-10, Spec §7.2)
       {},
       {
         template_code: "GT-001",
-        title_vi: "Bài học hoàn chỉnh",
-        instruction_vi: "Đếm số bông hoa",
+        title: "Bài học hoàn chỉnh",
+        instruction: "Đếm số bông hoa",
         access_tier: "standard",
         content_pack: {
           prompt: "Đếm hoa",
@@ -304,7 +304,7 @@ describe("Game Level Studio & Management API (BR-STU-01 - BR-STU-10, Spec §7.2)
       {},
       {
         template_code: "GT-001",
-        title_vi: "Level Preview Config",
+        title: "Level Preview Config",
         access_tier: "premium",
         content_pack: {
           prompt: "Tìm quả táo màu đỏ",

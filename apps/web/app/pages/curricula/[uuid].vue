@@ -227,7 +227,7 @@
                           <div
                             class="text-xs font-bold text-surface-800 dark:text-surface-100 truncate"
                           >
-                            {{ it.title_vi }}
+                            {{ it.title }}
                           </div>
                           <div class="text-3xs text-surface-500 truncate">
                             {{ it.code }}
@@ -329,7 +329,7 @@
             >
               <div>
                 <div class="font-bold text-xs text-surface-900 dark:text-white">
-                  {{ item.title_vi }}
+                  {{ item.title }}
                 </div>
                 <div class="text-3xs text-surface-500">
                   {{ item.code }}
@@ -381,7 +381,7 @@
     entity_type: "lesson" | "game_level";
     entity_id: number;
     code?: string;
-    title_vi?: string;
+    title?: string;
     competency_code?: string;
     access_tier?: string;
   }
@@ -404,7 +404,7 @@
     id: number;
     entity_type: "game_level" | "lesson";
     code: string;
-    title_vi: string;
+    title: string;
     access_tier: string;
   }
 
@@ -479,21 +479,21 @@
       id: 1,
       entity_type: "game_level",
       code: "GL-C1-NUM-CNT-0001",
-      title_vi: "Đếm số kẹo ngọt",
+      title: "Đếm số kẹo ngọt",
       access_tier: "free",
     },
     {
       id: 2,
       entity_type: "game_level",
       code: "GL-C1-NUM-CNT-0002",
-      title_vi: "Ghép cặp quả táo",
+      title: "Ghép cặp quả táo",
       access_tier: "standard",
     },
     {
       id: 3,
       entity_type: "lesson",
       code: "LES-0001",
-      title_vi: "Khám phá các hình khối",
+      title: "Khám phá các hình khối",
       access_tier: "standard",
     },
   ]);
@@ -523,7 +523,7 @@
       entity_type: selectedCatalogItem.value.entity_type,
       entity_id: selectedCatalogItem.value.id,
       code: selectedCatalogItem.value.code,
-      title_vi: selectedCatalogItem.value.title_vi,
+      title: selectedCatalogItem.value.title,
       access_tier: selectedCatalogItem.value.access_tier,
     });
 

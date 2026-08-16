@@ -121,7 +121,7 @@
             <h2
               class="text-2xl font-heading font-bold text-surface-900 dark:text-surface-100 mb-2"
             >
-              {{ standardPkg.title_vi }}
+              {{ standardPkg.title }}
             </h2>
             <p class="text-surface-500 dark:text-surface-400 text-sm mb-6">
               {{ standardPkg.description_vi }}
@@ -210,7 +210,7 @@
             <h2
               class="text-2xl font-heading font-bold text-surface-900 dark:text-surface-100 mb-2"
             >
-              {{ premiumPkg.title_vi }}
+              {{ premiumPkg.title }}
             </h2>
             <p class="text-surface-500 dark:text-surface-400 text-sm mb-6">
               {{ premiumPkg.description_vi }}
@@ -342,7 +342,7 @@
 
   const standardPkg = PACKAGE_CATALOG["PKG-standard"] || {
     code: "PKG-standard",
-    title_vi: "Gói Tiêu chuẩn",
+    title: "Gói Tiêu chuẩn",
     description_vi: "Đầy đủ lộ trình học chuẩn cho gia đình.",
     offers: [
       { offer_code: "std_annual", price_vnd: 599_000, duration_days: 365 },
@@ -351,7 +351,7 @@
 
   const premiumPkg = PACKAGE_CATALOG["PKG-premium"] || {
     code: "PKG-premium",
-    title_vi: "Gói Cao cấp",
+    title: "Gói Cao cấp",
     description_vi: "Trải nghiệm học tập toàn diện và tính năng cao cấp.",
     offers: [
       { offer_code: "prem_annual", price_vnd: 899_000, duration_days: 365 },
@@ -384,7 +384,7 @@
           offers: [
             {
               "@type": "Offer",
-              name: standardPkg.title_vi,
+              name: standardPkg.title,
               price: standardOffer?.price_vnd ?? 0,
               priceCurrency: "VND",
               availability: "https://schema.org/InStock",
@@ -392,7 +392,7 @@
             },
             {
               "@type": "Offer",
-              name: premiumPkg.title_vi,
+              name: premiumPkg.title,
               price: premiumOffer?.price_vnd ?? 0,
               priceCurrency: "VND",
               availability: "https://schema.org/InStock",

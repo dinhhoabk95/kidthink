@@ -3,7 +3,7 @@ CREATE TABLE "curricula" (
 	"entity_id" bigint NOT NULL,
 	"code" varchar(50) NOT NULL,
 	"content_version" integer DEFAULT 1 NOT NULL,
-	"title_vi" varchar(200) NOT NULL,
+	"title" varchar(200) NOT NULL,
 	"description_vi" text,
 	"access_tier" "access_tier" NOT NULL,
 	"status" "content_lifecycle_status" DEFAULT 'draft' NOT NULL,

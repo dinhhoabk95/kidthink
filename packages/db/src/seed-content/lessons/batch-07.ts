@@ -6,7 +6,7 @@ export const LESSON_BATCH_07: LessonSeed[] = [
     header: {
       code: "LES-0037",
       content_version: 1,
-      title_vi: "Cảm nhận sức nặng và trò chuyện buổi sáng tối",
+      title: "Cảm nhận sức nặng và trò chuyện buổi sáng tối",
       guide: {
         outcome:
           "Bé cảm nhận được trọng lượng hai vật và sắp xếp thói quen sinh hoạt sáng - tối.",
@@ -48,7 +48,7 @@ export const LESSON_BATCH_07: LessonSeed[] = [
     header: {
       code: "LES-0038",
       content_version: 1,
-      title_vi: "Chuyện rùa thỏ chạy nhanh chậm và vẽ biểu đồ thời tiết",
+      title: "Chuyện rùa thỏ chạy nhanh chậm và vẽ biểu đồ thời tiết",
       guide: {
         outcome:
           "Bé phân biệt tốc độ nhanh/chậm và theo dõi ghi nhận biểu đồ thời tiết.",
@@ -89,7 +89,7 @@ export const LESSON_BATCH_07: LessonSeed[] = [
     header: {
       code: "LES-0039",
       content_version: 1,
-      title_vi: "Cân đĩa hai bàn tay: Đồ vật nào nặng nhất?",
+      title: "Cân đĩa hai bàn tay: Đồ vật nào nặng nhất?",
       guide: {
         outcome:
           "Bé so sánh và sắp xếp 3 đồ vật theo mức độ nặng nhẹ tăng dần.",
@@ -133,7 +133,7 @@ export const LESSON_BATCH_07: LessonSeed[] = [
     header: {
       code: "LES-0040",
       content_version: 1,
-      title_vi: "Theo dõi dữ liệu thời tiết tuần và đếm ngày nắng",
+      title: "Theo dõi dữ liệu thời tiết tuần và đếm ngày nắng",
       guide: {
         outcome:
           "Bé đọc hiểu biểu đồ cột đơn giản và rút ra kết luận từ dữ liệu đã thu thập.",
@@ -171,7 +171,7 @@ export const LESSON_BATCH_07: LessonSeed[] = [
     header: {
       code: "LES-0041",
       content_version: 1,
-      title_vi: "Đo lường thời gian: Một phút làm được những gì?",
+      title: "Đo lường thời gian: Một phút làm được những gì?",
       guide: {
         outcome:
           "Bé hình thành cảm nhận về độ dài khoảng thời gian 1 phút trong thực tế.",
@@ -210,7 +210,7 @@ export const LESSON_BATCH_07: LessonSeed[] = [
     header: {
       code: "LES-0042",
       content_version: 1,
-      title_vi: "Tổng kết đo lường & dữ liệu: Nhà nghiên cứu khoa học",
+      title: "Tổng kết đo lường & dữ liệu: Nhà nghiên cứu khoa học",
       guide: {
         outcome:
           "Bé vận dụng tổng hợp kỹ năng cân nặng, đo lường thời gian và đọc dữ liệu biểu đồ.",

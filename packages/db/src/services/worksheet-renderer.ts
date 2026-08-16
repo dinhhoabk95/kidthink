@@ -17,7 +17,8 @@ import type { WorksheetContentBlock } from "@kidthink/shared";
 export interface WorksheetPdfRenderInput {
   code: string;
   version: number;
-  title_vi: string;
+  title?: string;
+  title_vi?: string;
   layout_template: string;
   content_blocks: WorksheetContentBlock | unknown;
   instructions_vi: string;
@@ -390,7 +391,8 @@ export function renderWorksheetPdf(
   streamCommands.push("BT");
   streamCommands.push("/F1 16 Tf");
   streamCommands.push("50 790 Td");
-  streamCommands.push(`${escapePdfText(input.title_vi.toUpperCase())} Tj`);
+  const titleText = (input.title_vi || input.title || "").toUpperCase();
+  streamCommands.push(`${escapePdfText(titleText)} Tj`);
   streamCommands.push("ET");
 
   streamCommands.push("0.3 0.3 0.3 rg");

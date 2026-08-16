@@ -187,7 +187,7 @@ export const worksheetFormSchema = z.object({
     .string()
     .regex(/^WS-\d{4}$/, "Mã worksheet phải có định dạng WS-xxxx")
     .optional(),
-  title_vi: z.string().min(3, "Tiêu đề worksheet phải từ 3 ký tự trở lên"),
+  title: z.string().min(3, "Tiêu đề worksheet phải từ 3 ký tự trở lên"),
   layout_template: z.enum(WORKSHEET_LAYOUT_TEMPLATES, {
     errorMap: () => ({
       message:
@@ -222,7 +222,7 @@ export interface WorksheetValidationResult {
  * Physical & Editorial Invariant Validator for Worksheets
  */
 export function validateWorksheetContent(input: {
-  title_vi: string;
+  title: string;
   layout_template: string;
   content_blocks: unknown;
   instructions_vi?: string | null;
@@ -255,7 +255,7 @@ export function validateWorksheetContent(input: {
   // 3. BR-WSM-02: NEVER require children to read text
   const blockJsonStr = JSON.stringify(input.content_blocks || "");
   for (const pattern of CHILD_READING_PATTERNS) {
-    if (pattern.test(blockJsonStr) || pattern.test(input.title_vi)) {
+    if (pattern.test(blockJsonStr) || pattern.test(input.title)) {
       errors.push(
         "BR-WSM-02: Không được yêu cầu trẻ đọc chữ. Mọi chỉ dẫn cho trẻ phải là hình ảnh/biểu tượng trực quan."
       );

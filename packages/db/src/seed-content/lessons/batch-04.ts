@@ -6,7 +6,7 @@ export const LESSON_BATCH_04: LessonSeed[] = [
     header: {
       code: "LES-0019",
       content_version: 1,
-      title_vi: "Định vị vị trí: Trên dưới và trong ngoài",
+      title: "Định vị vị trí: Trên dưới và trong ngoài",
       guide: {
         outcome:
           "Bé xác định được vị trí không gian của bản thân và đồ vật xung quanh.",
@@ -44,7 +44,7 @@ export const LESSON_BATCH_04: LessonSeed[] = [
     header: {
       code: "LES-0020",
       content_version: 1,
-      title_vi: "Lái xe rẽ trái rẽ phải vượt chướng ngại vật",
+      title: "Lái xe rẽ trái rẽ phải vượt chướng ngại vật",
       guide: {
         outcome:
           "Bé định hướng được hướng chuyển động sang bên trái và sang bên phải.",
@@ -83,7 +83,7 @@ export const LESSON_BATCH_04: LessonSeed[] = [
     header: {
       code: "LES-0021",
       content_version: 1,
-      title_vi: "Phía trước phía sau: Trò chơi xếp hàng thú cưng",
+      title: "Phía trước phía sau: Trò chơi xếp hàng thú cưng",
       guide: {
         outcome:
           "Bé phân biệt rõ ràng vị trí phía trước và phía sau so với một vật chuẩn.",
@@ -121,7 +121,7 @@ export const LESSON_BATCH_04: LessonSeed[] = [
     header: {
       code: "LES-0022",
       content_version: 1,
-      title_vi: "Định vị bản đồ phòng ngủ của bé",
+      title: "Định vị bản đồ phòng ngủ của bé",
       guide: {
         outcome:
           "Bé mô tả được vị trí các đồ đạc trong phòng ngủ bằng ngôn ngữ không gian.",
@@ -159,7 +159,7 @@ export const LESSON_BATCH_04: LessonSeed[] = [
     header: {
       code: "LES-0023",
       content_version: 1,
-      title_vi: "Trò chơi mê cung cơ thể: Trái, Phải, Tiến, Lùi",
+      title: "Trò chơi mê cung cơ thể: Trái, Phải, Tiến, Lùi",
       guide: {
         outcome:
           "Bé phản xạ chuẩn xác 4 hướng di chuyển trong không gian theo khẩu lệnh.",
@@ -197,7 +197,7 @@ export const LESSON_BATCH_04: LessonSeed[] = [
     header: {
       code: "LES-0024",
       content_version: 1,
-      title_vi: "Tổng kết không gian: Thử thách truy tìm kho báu",
+      title: "Tổng kết không gian: Thử thách truy tìm kho báu",
       guide: {
         outcome:
           "Bé vận dụng tổng hợp các khái niệm không gian: trên, dưới, trước, sau, trái, phải.",

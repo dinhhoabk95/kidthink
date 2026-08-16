@@ -11,8 +11,8 @@ export interface ContentSeedHeader {
   code: string;
   content_version: number;
   template_code: string;
-  title_vi: string;
-  instruction_vi: string;
+  title: string;
+  instruction: string;
   age_min: number;
   age_max: number;
   difficulty: number;
@@ -37,7 +37,7 @@ export interface ActivitySeedHeader {
   code: string;
   content_version: number;
   activity_kind: ActivityKind;
-  title_vi: string;
+  title: string;
   instruction: ActivityInstruction;
   materials_vi?: string;
   estimated_minutes: number;
@@ -61,7 +61,7 @@ export interface ActivitySeed {
 export interface LessonSeedHeader {
   code: string;
   content_version: number;
-  title_vi: string;
+  title: string;
   guide: LessonGuide;
   target_age_min: number;
   target_age_max: number;

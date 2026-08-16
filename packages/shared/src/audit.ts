@@ -44,6 +44,10 @@ export const AUDIT_ACTIONS = {
   // Child
   CHILD_PROFILE_ARCHIVED: "child_profile_archived",
   CHILD_DATA_PURGED: "child_data_purged",
+
+  // Offline pack / PWA
+  PWA_OFFLINE_PACK_MANIFEST_GENERATED: "pwa.offline_pack.manifest_generated",
+  PWA_OFFLINE_PACK_SYNCED: "pwa.offline_pack.synced",
 } as const;
 
 export type AuditAction = (typeof AUDIT_ACTIONS)[keyof typeof AUDIT_ACTIONS];

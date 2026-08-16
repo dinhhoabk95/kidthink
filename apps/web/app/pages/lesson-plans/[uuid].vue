@@ -466,13 +466,13 @@
   }
 
   function getSnapshotTitle(item: EditableItem): string {
-    const snap = item.snapshot as { title_vi?: string } | undefined;
-    return snap?.title_vi || item.item_code || "Hoạt động";
+    const snap = item.snapshot as { title?: string } | undefined;
+    return snap?.title || item.item_code || "Hoạt động";
   }
 
   function getSnapshotInstruction(item: EditableItem): string {
-    const snap = item.snapshot as { instruction_vi?: string } | undefined;
-    return snap?.instruction_vi || "";
+    const snap = item.snapshot as { instruction?: string } | undefined;
+    return snap?.instruction || "";
   }
 
   function moveItem(index: number, delta: number) {

@@ -24,7 +24,7 @@ const duplicateCurriculumSchema = z.object({
     .string()
     .regex(/^CUR-[A-Za-z0-9_-]+$/, "Mã sai định dạng CUR-xxx")
     .optional(),
-  title_vi: z.string().min(1).optional(),
+  title: z.string().min(1).optional(),
 });
 
 const CUR_CODE_REGEX = /^CUR-(\d{3})$/;
@@ -101,7 +101,7 @@ export default defineEventHandler(async (event) => {
 
     const newCode =
       parsed.data?.new_code || (await generateNextCurriculumCode(db));
-    const newTitle = parsed.data?.title_vi || `${source.titleVi} (Bản sao)`;
+    const newTitle = parsed.data?.title || `${source.titleVi} (Bản sao)`;
     const newEntityId = Date.now();
 
     const [created] = await db

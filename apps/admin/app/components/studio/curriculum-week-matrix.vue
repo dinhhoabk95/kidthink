@@ -79,9 +79,9 @@
                 </span>
                 <span
                   class="truncate font-medium text-slate-800 dark:text-slate-100"
-                  :title="item.title_vi || item.code"
+                  :title="item.title || item.code"
                 >
-                  {{ item.title_vi || item.code }}
+                  {{ item.title || item.code }}
                 </span>
               </div>
 
@@ -119,7 +119,7 @@
     entity_type: "lesson" | "game_level";
     entity_id: number;
     code?: string;
-    title_vi?: string;
+    title?: string;
     is_required?: boolean;
     competency_code?: string;
     difficulty?: number;

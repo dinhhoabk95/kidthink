@@ -42,7 +42,7 @@ export default defineEventHandler(async (event) => {
     const renderResult = renderWorksheetPdf({
       code: ws.code,
       version: ws.contentVersion,
-      title_vi: ws.titleVi,
+      title: ws.titleVi,
       layout_template: ws.layoutTemplate,
       content_blocks: ws.contentBlocks,
       instructions_vi: ws.instructionsVi || "",

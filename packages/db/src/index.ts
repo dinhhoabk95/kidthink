@@ -38,6 +38,7 @@ export * from "./services/content-versioning.ts";
 export * from "./services/custom-game.ts";
 export * from "./services/feature-flags.ts";
 export * from "./services/lesson-plan.ts";
+export * from "./services/offline-pack.ts";
 export * from "./services/payment-jobs.ts";
 export * from "./services/pdf-export.ts";
 export * from "./services/pdf-renderer.ts";

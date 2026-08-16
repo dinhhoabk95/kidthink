@@ -7,7 +7,7 @@ export const C1_SEED_ACTIVITIES: ActivitySeed[] = [
       code: "ACT-0001",
       content_version: 1,
       activity_kind: "manipulative",
-      title_vi: "Đếm hạt đậu vào cốc",
+      title: "Đếm hạt đậu vào cốc",
       instruction: {
         preparation:
           "Chuẩn bị 5 cốc nhựa nhỏ và 15 hạt đậu hoặc viên sỏi sạch.",
@@ -43,7 +43,7 @@ export const C1_SEED_ACTIVITIES: ActivitySeed[] = [
       code: "ACT-0002",
       content_version: 1,
       activity_kind: "movement",
-      title_vi: "Nhảy theo số lượng tiếng vỗ tay",
+      title: "Nhảy theo số lượng tiếng vỗ tay",
       instruction: {
         preparation: "Dọn khoảng trống an toàn trong phòng khách.",
         steps: [
@@ -78,7 +78,7 @@ export const C1_SEED_ACTIVITIES: ActivitySeed[] = [
       code: "ACT-0003",
       content_version: 1,
       activity_kind: "discussion",
-      title_vi: "Thảo luận: Nhà mình có mấy cái?",
+      title: "Thảo luận: Nhà mình có mấy cái?",
       instruction: {
         preparation: "Cùng bé ngồi trên thảm và quan sát xung quanh phòng.",
         steps: [
@@ -119,7 +119,7 @@ export const C1_SEED_ACTIVITIES: ActivitySeed[] = [
       code: "ACT-0004",
       content_version: 1,
       activity_kind: "storytelling",
-      title_vi: "Kể chuyện: Chú thỏ đi hái nấm",
+      title: "Kể chuyện: Chú thỏ đi hái nấm",
       instruction: {
         preparation: "Mẹ cầm mô hình thỏ hoặc gấu bông nhỏ.",
         steps: [
@@ -155,7 +155,7 @@ export const C1_SEED_ACTIVITIES: ActivitySeed[] = [
       code: "ACT-0005",
       content_version: 1,
       activity_kind: "home_activity",
-      title_vi: "Chia thìa ăn cơm cho cả nhà",
+      title: "Chia thìa ăn cơm cho cả nhà",
       instruction: {
         preparation: "Chuẩn bị thìa ăn cơm khi sắp đến bữa ăn.",
         steps: [
@@ -191,7 +191,7 @@ export const C1_SEED_ACTIVITIES: ActivitySeed[] = [
       code: "ACT-0006",
       content_version: 1,
       activity_kind: "observation",
-      title_vi: "Quan sát xe chạy qua ban công",
+      title: "Quan sát xe chạy qua ban công",
       instruction: {
         preparation: "Bé và mẹ đứng tại ban công an toàn quan sát phố.",
         steps: [
@@ -226,7 +226,7 @@ export const C1_SEED_ACTIVITIES: ActivitySeed[] = [
       code: "ACT-0007",
       content_version: 1,
       activity_kind: "manipulative",
-      title_vi: "Xếp nút chai thành số lượng",
+      title: "Xếp nút chai thành số lượng",
       instruction: {
         preparation: "Thu thập 10 nắp chai nhựa sạch nhiều màu sắc.",
         steps: [
@@ -261,7 +261,7 @@ export const C1_SEED_ACTIVITIES: ActivitySeed[] = [
       code: "ACT-0008",
       content_version: 1,
       activity_kind: "assessment",
-      title_vi: "Đánh giá quan sát: Chỉ đúng nhóm nhiều hơn",
+      title: "Đánh giá quan sát: Chỉ đúng nhóm nhiều hơn",
       instruction: {
         preparation:
           "Chia hai đĩa: đĩa A có 3 quả cà chua, đĩa B có 5 quả cà chua.",
@@ -297,7 +297,7 @@ export const C1_SEED_ACTIVITIES: ActivitySeed[] = [
       code: "ACT-0009",
       content_version: 1,
       activity_kind: "mini_project",
-      title_vi: "Bộ sưu tập 5 chiếc lá mùa thu",
+      title: "Bộ sưu tập 5 chiếc lá mùa thu",
       instruction: {
         preparation: "Chuẩn bị túi vải nhỏ đi dạo vườn hoặc công viên gần nhà.",
         steps: [
@@ -334,7 +334,7 @@ export const C1_SEED_ACTIVITIES: ActivitySeed[] = [
       code: "ACT-0010",
       content_version: 1,
       activity_kind: "manipulative",
-      title_vi: "Tạo hình số 1, 2, 3 bằng đất nặn",
+      title: "Tạo hình số 1, 2, 3 bằng đất nặn",
       instruction: {
         preparation: "Chuẩn bị 3 thỏi đất nặn bột mì an toàn.",
         steps: [

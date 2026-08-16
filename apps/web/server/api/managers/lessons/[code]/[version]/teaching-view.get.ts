@@ -129,7 +129,7 @@ export default defineEventHandler(async (event) => {
       id: lesson.id,
       code: lesson.code,
       content_version: lesson.contentVersion,
-      title_vi: lesson.titleVi,
+      title: lesson.titleVi,
       guide_vi: lesson.guideVi,
       target_age_min: lesson.targetAgeMin,
       target_age_max: lesson.targetAgeMax,

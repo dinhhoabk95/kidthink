@@ -1,8 +1,9 @@
-// Narrow Service Worker for P1.6 Session Play & Asset Caching (D-GG)
+// Service Worker for P1.6 Session Play & P5.2 Offline Curriculum Pack (BR-PWA, BR-OCP, BR-OFF)
 const CACHE_SHELL = "shell-v1";
+const CACHE_OFFLINE_PACK = "kidthink-offline-pack-v1";
 const _CACHE_SESSION_ASSETS = "session-assets-v1";
 
-const SHELL_ASSETS = ["/", "/favicon.ico"];
+const SHELL_ASSETS = ["/", "/favicon.ico", "/manifest.webmanifest"];
 
 self.addEventListener("install", (event) => {
   event.waitUntil(
@@ -16,7 +17,26 @@ self.addEventListener("install", (event) => {
 });
 
 self.addEventListener("activate", (event) => {
-  event.waitUntil(self.clients.claim());
+  event.waitUntil(
+    caches
+      .keys()
+      .then((keys) => {
+        return Promise.all(
+          keys.map((key) => {
+            // Retain current shell and offline pack caches during version activation (D-P5OFF-C)
+            if (
+              key !== CACHE_SHELL &&
+              key !== CACHE_OFFLINE_PACK &&
+              key !== _CACHE_SESSION_ASSETS
+            ) {
+              return caches.delete(key);
+            }
+            return Promise.resolve();
+          })
+        );
+      })
+      .then(() => self.clients.claim())
+  );
 });
 
 self.addEventListener("fetch", (event) => {
@@ -28,7 +48,7 @@ self.addEventListener("fetch", (event) => {
     return;
   }
 
-  // 2. Game Config & Paid content: Network-first, NO CACHE for paid levels (BR-OFF-07)
+  // 2. Game Config & Paid content: Network-first, NO CACHE for paid levels unless present in offline pack (BR-OFF-07, BR-OCP-03)
   if (url.pathname.includes("/config")) {
     event.respondWith(
       fetch(event.request)
@@ -36,13 +56,21 @@ self.addEventListener("fetch", (event) => {
           return response;
         })
         .catch(() => {
-          return new Response(
-            JSON.stringify({ error: "OFFLINE_NEED_CONNECTION" }),
-            {
-              status: 503,
-              headers: { "Content-Type": "application/json" },
-            }
-          );
+          // Check if cached in offline pack
+          return caches.open(CACHE_OFFLINE_PACK).then((cache) => {
+            return cache.match(event.request).then((cached) => {
+              if (cached) {
+                return cached;
+              }
+              return new Response(
+                JSON.stringify({ error: "OFFLINE_NEED_CONNECTION" }),
+                {
+                  status: 503,
+                  headers: { "Content-Type": "application/json" },
+                }
+              );
+            });
+          });
         })
     );
     return;
@@ -59,7 +87,8 @@ self.addEventListener("fetch", (event) => {
           response.ok &&
           (url.pathname.startsWith("/_nuxt/") ||
             url.pathname.endsWith(".png") ||
-            url.pathname.endsWith(".svg"))
+            url.pathname.endsWith(".svg") ||
+            url.pathname.endsWith(".webp"))
         ) {
           const clone = response.clone();
           caches

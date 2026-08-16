@@ -201,7 +201,7 @@ describe("Worksheet Studio & Download APIs (BR-WSM-01..08, Task #64 / P4.3)", ()
       {},
       {
         code,
-        title_vi: "Phiếu tô màu quy luật",
+        title: "Phiếu tô màu quy luật",
         layout_template: "pattern_coloring",
         content_blocks: sampleBlocks,
         instructions_vi:
@@ -225,7 +225,7 @@ describe("Worksheet Studio & Download APIs (BR-WSM-01..08, Task #64 / P4.3)", ()
       {},
       {
         code: "INVALID-CODE",
-        title_vi: "Sai mã",
+        title: "Sai mã",
         layout_template: "pattern_coloring",
         content_blocks: {},
       }
@@ -242,7 +242,7 @@ describe("Worksheet Studio & Download APIs (BR-WSM-01..08, Task #64 / P4.3)", ()
         {},
         {
           code,
-          title_vi: "Phiếu danh sách test",
+          title: "Phiếu danh sách test",
           layout_template: "pattern_coloring",
           content_blocks: sampleBlocks,
           instructions_vi: "Hướng dẫn người lớn.",
@@ -272,7 +272,7 @@ describe("Worksheet Studio & Download APIs (BR-WSM-01..08, Task #64 / P4.3)", ()
         {},
         {
           code,
-          title_vi: "Phiếu render test",
+          title: "Phiếu render test",
           layout_template: "pattern_coloring",
           content_blocks: sampleBlocks,
           instructions_vi: "Hướng dẫn người lớn quan sát.",
@@ -299,7 +299,7 @@ describe("Worksheet Studio & Download APIs (BR-WSM-01..08, Task #64 / P4.3)", ()
         {},
         {
           code,
-          title_vi: "Phiếu preview test",
+          title: "Phiếu preview test",
           layout_template: "pattern_coloring",
           content_blocks: sampleBlocks,
           instructions_vi: "Hướng dẫn người lớn.",
@@ -328,7 +328,7 @@ describe("Worksheet Studio & Download APIs (BR-WSM-01..08, Task #64 / P4.3)", ()
         {},
         {
           code,
-          title_vi: "Phiếu tải về chuẩn",
+          title: "Phiếu tải về chuẩn",
           layout_template: "pattern_coloring",
           content_blocks: sampleBlocks,
           instructions_vi: "Hướng dẫn người lớn chi tiết.",

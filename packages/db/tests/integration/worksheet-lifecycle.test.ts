@@ -51,7 +51,7 @@ describe("Worksheet Lifecycle & Render Evidence Integration Tests (Task #64 / P4
     const draft = await createWorksheetDraft(
       {
         code: `WS-${String(Date.now() % 9000).padStart(4, "0")}`,
-        title_vi: "Phiếu tô màu theo quy luật hình học",
+        title: "Phiếu tô màu theo quy luật hình học",
         layout_template: "pattern_coloring",
         content_blocks: samplePatternColoring,
         instructions_vi:
@@ -162,7 +162,7 @@ describe("Worksheet Lifecycle & Render Evidence Integration Tests (Task #64 / P4
     const draft = await createWorksheetDraft(
       {
         code: `WS-${String(Date.now() % 9000).padStart(4, "0")}`,
-        title_vi: "Phiếu bài tập liên kết hoạt động",
+        title: "Phiếu bài tập liên kết hoạt động",
         layout_template: "pattern_coloring",
         content_blocks: samplePatternColoring,
         instructions_vi: "Hướng dẫn người lớn cho bài tập liên kết.",

@@ -97,7 +97,7 @@ Trên: chỉ báo cân bằng dạng thanh. Dưới: cảnh báo còn lại.
 
 ### `POST /api/managers/curricula` · `PATCH .../{code}/{version}`
 
-- `POST` body: `{ program_type, target_age_min, target_age_max, duration_weeks, sessions_per_week, access_tier, title_vi, description_vi }` (`D-LT`).
+- `POST` body: `{ program_type, target_age_min, target_age_max, duration_weeks, sessions_per_week, access_tier, title, description_vi }` (`D-LT`).
 - `PATCH` body: metadata fields + `expected_version` lock.
 
 ### `PUT /api/managers/curricula/{code}/{version}/items`

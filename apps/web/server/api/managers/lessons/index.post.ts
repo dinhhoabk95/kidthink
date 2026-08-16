@@ -22,7 +22,7 @@ const createLessonSchema = z.object({
       "Mã sai định dạng LES-xxxx"
     )
     .optional(),
-  title_vi: z.string().min(1, "Tiêu đề bài học không được rỗng"),
+  title: z.string().min(1, "Tiêu đề bài học không được rỗng"),
   guide_vi: z.string().min(1, "Hướng dẫn cho người lớn không được rỗng"),
   target_age_min: z.number().int().min(3).max(6).default(3),
   target_age_max: z.number().int().min(3).max(6).default(6),
@@ -123,7 +123,7 @@ export default defineEventHandler(async (event) => {
       entityId,
       code,
       contentVersion: 1,
-      titleVi: data.title_vi,
+      titleVi: data.title,
       guideVi: data.guide_vi,
       targetAgeMin: data.target_age_min,
       targetAgeMax: data.target_age_max,

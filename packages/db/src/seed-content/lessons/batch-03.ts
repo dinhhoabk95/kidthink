@@ -6,7 +6,7 @@ export const LESSON_BATCH_03: LessonSeed[] = [
     header: {
       code: "LES-0013",
       content_version: 1,
-      title_vi: "Góc vuông chiếc bàn và xếp que tính hình học",
+      title: "Góc vuông chiếc bàn và xếp que tính hình học",
       guide: {
         outcome:
           "Bé nhận biết hình chữ nhật, hình vuông và dùng que tính xếp thành hình.",
@@ -44,7 +44,7 @@ export const LESSON_BATCH_03: LessonSeed[] = [
     header: {
       code: "LES-0014",
       content_version: 1,
-      title_vi: "Chuyến phiêu lưu hình vuông và xây nhà từ khối hộp",
+      title: "Chuyến phiêu lưu hình vuông và xây nhà từ khối hộp",
       guide: {
         outcome:
           "Bé kết hợp các hình phẳng 2D và nhận biết các khối 3D cơ bản.",
@@ -81,7 +81,7 @@ export const LESSON_BATCH_03: LessonSeed[] = [
     header: {
       code: "LES-0015",
       content_version: 1,
-      title_vi: "Khối lăn được và khối đứng yên trong căn bếp",
+      title: "Khối lăn được và khối đứng yên trong căn bếp",
       guide: {
         outcome:
           "Bé phân biệt được khối trụ lăn được (lon sữa) và khối hộp chữ nhật đứng yên.",
@@ -119,7 +119,7 @@ export const LESSON_BATCH_03: LessonSeed[] = [
     header: {
       code: "LES-0016",
       content_version: 1,
-      title_vi: "Tạo hình học sáng tạo với que tính và giấy màu",
+      title: "Tạo hình học sáng tạo với que tính và giấy màu",
       guide: {
         outcome:
           "Bé phân biệt được các đặc tính số cạnh và số góc của hình tam giác và hình vuông.",
@@ -157,7 +157,7 @@ export const LESSON_BATCH_03: LessonSeed[] = [
     header: {
       code: "LES-0017",
       content_version: 1,
-      title_vi: "Lâu đài khối hộp và phân loại hình khối 3D",
+      title: "Lâu đài khối hộp và phân loại hình khối 3D",
       guide: {
         outcome:
           "Bé nhận diện và gọi tên các khối hình học không gian: khối lập phương, khối trụ.",
@@ -195,7 +195,7 @@ export const LESSON_BATCH_03: LessonSeed[] = [
     header: {
       code: "LES-0018",
       content_version: 1,
-      title_vi: "Tổng kết hình học: Nhà thông thái hình dáng",
+      title: "Tổng kết hình học: Nhà thông thái hình dáng",
       guide: {
         outcome:
           "Bé gọi tên và phân biệt chính xác hình tròn, vuông, tam giác và khối 3D cơ bản.",

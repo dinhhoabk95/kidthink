@@ -358,8 +358,8 @@
 
   const previewPayload = computed(() => {
     return {
-      title_vi: levelData.value.titleVi,
-      instruction_vi: levelData.value.instructionVi,
+      title: levelData.value.titleVi,
+      instruction: levelData.value.instructionVi,
       theme_id: levelData.value.themeId,
       content_pack: levelData.value.contentPack || {},
       difficulty_params: levelData.value.difficultyParams || {},

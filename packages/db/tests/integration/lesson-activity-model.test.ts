@@ -24,7 +24,7 @@ describe("P3.1 Lesson & Activity Model & Seeder Tests", () => {
       const invalidCodeRes = validateActivityModel({
         code: "INVALID-CODE",
         activity_kind: "manipulative",
-        title_vi: "Đếm hạt đậu",
+        title: "Đếm hạt đậu",
         instruction: {
           preparation: "Chuẩn bị cốc",
           steps: [{ instruction: "Đặt cốc", say_to_child: '"Con hãy đếm"' }],
@@ -45,7 +45,7 @@ describe("P3.1 Lesson & Activity Model & Seeder Tests", () => {
       const invalidKindRes = validateActivityModel({
         code: "ACT-0001",
         activity_kind: "unapproved_kind" as any,
-        title_vi: "Đếm hạt đậu",
+        title: "Đếm hạt đậu",
         instruction: {
           preparation: "Chuẩn bị cốc",
           steps: [{ instruction: "Đặt cốc", say_to_child: '"Con hãy đếm"' }],
@@ -66,7 +66,7 @@ describe("P3.1 Lesson & Activity Model & Seeder Tests", () => {
       const missingPartsRes = validateActivityModel({
         code: "ACT-0001",
         activity_kind: "manipulative",
-        title_vi: "Đếm hạt đậu",
+        title: "Đếm hạt đậu",
         instruction: {
           preparation: "",
           steps: [
@@ -89,7 +89,7 @@ describe("P3.1 Lesson & Activity Model & Seeder Tests", () => {
       const tooShort = validateActivityModel({
         code: "ACT-0001",
         activity_kind: "manipulative",
-        title_vi: "Đếm hạt đậu",
+        title: "Đếm hạt đậu",
         instruction: {
           preparation: "Chuẩn bị cốc",
           steps: [{ instruction: "Đặt cốc", say_to_child: '"Con đếm"' }],
@@ -106,7 +106,7 @@ describe("P3.1 Lesson & Activity Model & Seeder Tests", () => {
       const tooLong = validateActivityModel({
         code: "ACT-0001",
         activity_kind: "manipulative",
-        title_vi: "Đếm hạt đậu",
+        title: "Đếm hạt đậu",
         instruction: {
           preparation: "Chuẩn bị cốc",
           steps: [{ instruction: "Đặt cốc", say_to_child: '"Con đếm"' }],
@@ -143,7 +143,7 @@ describe("P3.1 Lesson & Activity Model & Seeder Tests", () => {
       const sharpHazard = validateActivityModel({
         code: "ACT-0001",
         activity_kind: "manipulative",
-        title_vi: "Cắt giấy",
+        title: "Cắt giấy",
         instruction: {
           preparation: "Dùng dao nhọn và kéo sắc",
           steps: [{ instruction: "Cắt", say_to_child: '"Con làm"' }],
@@ -162,7 +162,7 @@ describe("P3.1 Lesson & Activity Model & Seeder Tests", () => {
       const chokeHazardForAge3 = validateActivityModel({
         code: "ACT-0001",
         activity_kind: "manipulative",
-        title_vi: "Xâu hạt nhỏ",
+        title: "Xâu hạt nhỏ",
         instruction: {
           preparation: "Hạt cườm nhỏ",
           steps: [{ instruction: "Xâu", say_to_child: '"Con xâu"' }],
@@ -184,7 +184,7 @@ describe("P3.1 Lesson & Activity Model & Seeder Tests", () => {
     it("BR-LSM-01: Validates lesson code pattern LES-xxxx", () => {
       const invalidCodeRes = validateLessonModel({
         code: "LESSON-01",
-        title_vi: "Bài học đếm",
+        title: "Bài học đếm",
         guide: {
           outcome: "Bé đếm đúng",
           preparation: ["Cốc"],
@@ -206,7 +206,7 @@ describe("P3.1 Lesson & Activity Model & Seeder Tests", () => {
     it("BR-LSM-02 & BR-LSM-03: Requires 5-part guide and estimated_minutes in [5, 45]", () => {
       const missingGuidePart = validateLessonModel({
         code: "LES-0001",
-        title_vi: "Bài học đếm",
+        title: "Bài học đếm",
         guide: {
           outcome: "Bé đếm đúng",
           preparation: [],
@@ -226,7 +226,7 @@ describe("P3.1 Lesson & Activity Model & Seeder Tests", () => {
 
       const invalidDuration = validateLessonModel({
         code: "LES-0001",
-        title_vi: "Bài học đếm",
+        title: "Bài học đếm",
         guide: {
           outcome: "Bé đếm đúng",
           preparation: ["Cốc"],
@@ -248,7 +248,7 @@ describe("P3.1 Lesson & Activity Model & Seeder Tests", () => {
     it("BR-LSM-06: Forbids abstract non-observable assessment verbs and requires action verbs", () => {
       const abstractAssessment = validateLessonModel({
         code: "LES-0001",
-        title_vi: "Bài học đếm",
+        title: "Bài học đếm",
         guide: {
           outcome: "Bé đếm đúng",
           preparation: ["Cốc"],
@@ -268,7 +268,7 @@ describe("P3.1 Lesson & Activity Model & Seeder Tests", () => {
 
       const observableAssessment = validateLessonModel({
         code: "LES-0001",
-        title_vi: "Bài học đếm",
+        title: "Bài học đếm",
         guide: {
           outcome: "Bé đếm đúng",
           preparation: ["Cốc"],
@@ -288,7 +288,7 @@ describe("P3.1 Lesson & Activity Model & Seeder Tests", () => {
     it("BR-LSM-08: Requires at least one off-screen activity in lesson", () => {
       const digitalOnly = validateLessonModel({
         code: "LES-0001",
-        title_vi: "Bài học đếm",
+        title: "Bài học đếm",
         guide: {
           outcome: "Bé đếm đúng",
           preparation: ["Cốc"],
