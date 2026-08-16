@@ -1,7 +1,12 @@
-import { eq } from "drizzle-orm";
+import { eq, or } from "drizzle-orm";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { getOwnerDb } from "../../src/client.ts";
-import { activities, managers, worksheets } from "../../src/index.ts";
+import {
+  activities,
+  contentReviewLog,
+  managers,
+  worksheets,
+} from "../../src/index.ts";
 import { transitionContent } from "../../src/services/content-lifecycle.ts";
 import {
   createNewWorksheetVersion,
@@ -36,11 +41,24 @@ describe("Worksheet Lifecycle & Render Evidence Integration Tests (Task #64 / P4
     const db = getOwnerDb();
     if (managerId) {
       await db
+        .delete(contentReviewLog)
+        .where(eq(contentReviewLog.actorManagerId, managerId));
+      await db
         .delete(activities)
-        .where(eq(activities.createdByManagerId, managerId));
+        .where(
+          or(
+            eq(activities.createdByManagerId, managerId),
+            eq(activities.reviewedByManagerId, managerId)
+          )
+        );
       await db
         .delete(worksheets)
-        .where(eq(worksheets.createdByManagerId, managerId));
+        .where(
+          or(
+            eq(worksheets.createdByManagerId, managerId),
+            eq(worksheets.reviewedByManagerId, managerId)
+          )
+        );
       await db.delete(managers).where(eq(managers.id, managerId));
     }
   });
