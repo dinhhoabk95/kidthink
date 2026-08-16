@@ -83,8 +83,8 @@ describe("Task 6 — User Subscription View Suite (BR-SBV-01..07, D-JQ)", () => 
     const eventA = mockUserEvent(userA.id);
     const resA = await subscriptionHandler(eventA);
 
-    expect(resA.current_plan).toBe("free");
-    expect(resA.order_history).toHaveLength(0);
+    expect(resA.packages).toHaveLength(0);
+    expect(resA.orders).toHaveLength(0);
   });
 
   it("Scenario: D-MN — displays all active packages when multi-package subscription exists", async () => {
