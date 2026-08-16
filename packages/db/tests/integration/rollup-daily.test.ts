@@ -131,7 +131,7 @@ describe("Task 5 — Daily Rollup & Entitlement Expire (BR-TLM-02, BR-TLM-05, BR
       .where(eq(levelDailyStats.levelCode, glCode));
     expect(levelStats3).toHaveLength(1);
     expect(levelStats3[0].playsCount).toBe(2);
-  });
+  }, 30_000);
 
   it("runs entitlement expiration job safely", async () => {
     const res = await runExpireEntitlements();

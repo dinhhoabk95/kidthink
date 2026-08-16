@@ -154,7 +154,7 @@ describe("User AI Assistant API Endpoints (BR-AIA-01..11)", () => {
 
     const event = mockEvent("POST", user.id, {
       guide_text: "Hướng dẫn bé so sánh hai nhóm đồ vật nhiều hơn và ít hơn.",
-      target_audience: "parent",
+      target_audience: "home",
     });
 
     const res: any = await rewriteGuideHandler(event);
