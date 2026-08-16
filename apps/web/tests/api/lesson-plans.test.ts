@@ -12,7 +12,7 @@ import {
 } from "@kidthink/db";
 import { ENTITLEMENT_KEYS } from "@kidthink/shared";
 import { eq } from "drizzle-orm";
-import { beforeEach, describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import exportPlanHandler from "../../server/api/users/lesson-plans/[uuid]/export.post.js";
 import putItemsHandler from "../../server/api/users/lesson-plans/[uuid]/items.put.js";
 import refreshItemHandler from "../../server/api/users/lesson-plans/[uuid]/refresh-item.post.js";
@@ -72,15 +72,52 @@ describe("Task P4.1 — Lesson Plan Creator API (BR-LPC-01..09, D-P4A..D-P4D)", 
   let publishedLessonCode: string;
   let publishedActCode: string;
   let premiumActCode: string;
+  let createdLessonId: number;
+  let createdAct1Id: number;
+  let createdAct2Id: number;
+
+  afterEach(async () => {
+    if (user1Id) {
+      const plans1 = await db
+        .select({ id: lessonPlans.id })
+        .from(lessonPlans)
+        .where(eq(lessonPlans.userId, user1Id));
+      for (const p of plans1) {
+        await db
+          .delete(lessonPlanItems)
+          .where(eq(lessonPlanItems.lessonPlanId, p.id));
+      }
+      await db.delete(lessonPlans).where(eq(lessonPlans.userId, user1Id));
+      await db.delete(users).where(eq(users.id, user1Id));
+    }
+    if (user2Id) {
+      const plans2 = await db
+        .select({ id: lessonPlans.id })
+        .from(lessonPlans)
+        .where(eq(lessonPlans.userId, user2Id));
+      for (const p of plans2) {
+        await db
+          .delete(lessonPlanItems)
+          .where(eq(lessonPlanItems.lessonPlanId, p.id));
+      }
+      await db.delete(lessonPlans).where(eq(lessonPlans.userId, user2Id));
+      await db.delete(users).where(eq(users.id, user2Id));
+    }
+    if (createdLessonId) {
+      await db
+        .delete(lessonActivities)
+        .where(eq(lessonActivities.lessonId, createdLessonId));
+      await db.delete(lessons).where(eq(lessons.id, createdLessonId));
+    }
+    if (createdAct1Id) {
+      await db.delete(activities).where(eq(activities.id, createdAct1Id));
+    }
+    if (createdAct2Id) {
+      await db.delete(activities).where(eq(activities.id, createdAct2Id));
+    }
+  });
 
   beforeEach(async () => {
-    // Reset test data
-    await db.delete(lessonPlanItems);
-    await db.delete(lessonPlans);
-    await db.delete(lessonActivities);
-    await db.delete(activities);
-    await db.delete(lessons);
-
     for (const k of ENTITLEMENT_KEYS) {
       await db
         .insert(entitlementKeys)
@@ -96,7 +133,7 @@ describe("Task P4.1 — Lesson Plan Creator API (BR-LPC-01..09, D-P4A..D-P4D)", 
     const [u1] = await db
       .insert(users)
       .values({
-        email: `teacher1-${Date.now()}@example.com`,
+        email: `teacher1-${Date.now()}-${Math.floor(Math.random() * 1_000_000)}@example.com`,
         passwordHash: "hash123",
         displayName: "Teacher One",
       })
@@ -106,7 +143,7 @@ describe("Task P4.1 — Lesson Plan Creator API (BR-LPC-01..09, D-P4A..D-P4D)", 
     const [u2] = await db
       .insert(users)
       .values({
-        email: `teacher2-${Date.now()}@example.com`,
+        email: `teacher2-${Date.now()}-${Math.floor(Math.random() * 1_000_000)}@example.com`,
         passwordHash: "hash123",
         displayName: "Teacher Two",
       })
@@ -178,12 +215,42 @@ describe("Task P4.1 — Lesson Plan Creator API (BR-LPC-01..09, D-P4A..D-P4D)", 
     }
     _templateId = tmpl.id;
 
-    // Published Lesson & Activities
-    publishedLessonCode = "LES-9991";
-    publishedActCode = "ACT-9991";
-    premiumActCode = "ACT-9992";
+    const makeLessonCode = async () => {
+      for (let attempt = 0; attempt < 50; attempt++) {
+        const cand = `LES-${String(Math.floor(1000 + Math.random() * 8999))}`;
+        const [existing] = await db
+          .select({ id: lessons.id })
+          .from(lessons)
+          .where(eq(lessons.code, cand))
+          .limit(1);
+        if (!existing) {
+          return cand;
+        }
+      }
+      return `LES-${String(Math.floor(1000 + Math.random() * 8999))}`;
+    };
 
-    const baseEntityId = 999_100;
+    const makeActCode = async () => {
+      for (let attempt = 0; attempt < 50; attempt++) {
+        const cand = `ACT-${String(Math.floor(1000 + Math.random() * 8999))}`;
+        const [existing] = await db
+          .select({ id: activities.id })
+          .from(activities)
+          .where(eq(activities.code, cand))
+          .limit(1);
+        if (!existing) {
+          return cand;
+        }
+      }
+      return `ACT-${String(Math.floor(1000 + Math.random() * 8999))}`;
+    };
+
+    // Published Lesson & Activities
+    publishedLessonCode = await makeLessonCode();
+    publishedActCode = await makeActCode();
+    premiumActCode = await makeActCode();
+
+    const baseEntityId = Math.floor(100_000 + Math.random() * 800_000);
 
     const [lesson] = await db
       .insert(lessons)
@@ -199,6 +266,7 @@ describe("Task P4.1 — Lesson Plan Creator API (BR-LPC-01..09, D-P4A..D-P4D)", 
         status: "published",
       })
       .returning();
+    createdLessonId = lesson.id;
 
     const [act1] = await db
       .insert(activities)
@@ -214,8 +282,9 @@ describe("Task P4.1 — Lesson Plan Creator API (BR-LPC-01..09, D-P4A..D-P4D)", 
         status: "published",
       })
       .returning();
+    createdAct1Id = act1.id;
 
-    const [_actPremium] = await db
+    const [actPremium] = await db
       .insert(activities)
       .values({
         entityId: baseEntityId + 2,
@@ -228,6 +297,7 @@ describe("Task P4.1 — Lesson Plan Creator API (BR-LPC-01..09, D-P4A..D-P4D)", 
         status: "published",
       })
       .returning();
+    createdAct2Id = actPremium.id;
 
     await db.insert(lessonActivities).values({
       lessonId: lesson.id,

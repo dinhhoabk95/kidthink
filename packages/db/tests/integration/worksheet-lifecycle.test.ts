@@ -1,4 +1,5 @@
-import { beforeEach, describe, expect, it } from "vitest";
+import { eq } from "drizzle-orm";
+import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { getOwnerDb } from "../../src/client.ts";
 import { activities, managers } from "../../src/index.ts";
 import { transitionContent } from "../../src/services/content-lifecycle.ts";
@@ -31,13 +32,20 @@ describe("Worksheet Lifecycle & Render Evidence Integration Tests (Task #64 / P4
     stroke_pt: 2.5,
   };
 
+  afterEach(async () => {
+    const db = getOwnerDb();
+    if (managerId) {
+      await db.delete(managers).where(eq(managers.id, managerId));
+    }
+  });
+
   beforeEach(async () => {
     const db = getOwnerDb();
     // Create test manager
     const [mgr] = await db
       .insert(managers)
       .values({
-        email: `worksheet_mgr_${Date.now()}@tinimath.test`,
+        email: `worksheet_mgr_${Date.now()}_${Math.floor(Math.random() * 1_000_000)}@tinimath.test`,
         passwordHash: "dummy_hash_123",
         displayName: "Worksheet Reviewer",
         role: "super_admin",
