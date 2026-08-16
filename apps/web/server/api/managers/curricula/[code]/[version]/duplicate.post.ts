@@ -5,7 +5,7 @@ import {
   getOwnerDb,
   writeAudit,
 } from "@kidthink/db";
-import { and, desc, eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import {
   createError,
   defineEventHandler,
@@ -27,33 +27,21 @@ const duplicateCurriculumSchema = z.object({
   title: z.string().min(1).optional(),
 });
 
-const CUR_CODE_REGEX = /^CUR-(\d{3})$/;
-
 async function generateNextCurriculumCode(
   db: ReturnType<typeof getOwnerDb>
 ): Promise<string> {
-  const rows = await db
-    .select({ code: curricula.code })
-    .from(curricula)
-    .orderBy(desc(curricula.id))
-    .limit(500);
-
-  const existingCodes = new Set(rows.map((r) => r.code));
-  let maxNum = 0;
-  for (const r of rows) {
-    const match = r.code.match(CUR_CODE_REGEX);
-    if (match) {
-      const num = Number.parseInt(match[1], 10);
-      if (!Number.isNaN(num) && num > maxNum) {
-        maxNum = num;
-      }
+  for (let i = 0; i < 50; i++) {
+    const candidate = `CUR-${Math.floor(100 + Math.random() * 899)}`;
+    const [existing] = await db
+      .select({ id: curricula.id })
+      .from(curricula)
+      .where(eq(curricula.code, candidate))
+      .limit(1);
+    if (!existing) {
+      return candidate;
     }
   }
-  let nextNum = maxNum + 1;
-  while (existingCodes.has(`CUR-${nextNum.toString().padStart(3, "0")}`)) {
-    nextNum++;
-  }
-  return `CUR-${nextNum.toString().padStart(3, "0")}`;
+  return `CUR-${Date.now().toString().slice(-4)}`;
 }
 
 async function copyWeeksAndItems(

@@ -1,3 +1,4 @@
+import crypto from "node:crypto";
 import {
   childProfiles,
   curricula,
@@ -80,7 +81,7 @@ describe("Curriculum Player Suite — P3.4 (BR-CUR-01..10, D-MA..D-MG)", {
     const [user] = await db
       .insert(users)
       .values({
-        email: `parent-cur-${uid}@example.com`,
+        email: `parent-cur-${crypto.randomUUID()}@example.com`,
         displayName: "Parent Cur",
         status: "active",
       })
