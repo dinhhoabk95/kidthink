@@ -304,10 +304,17 @@ describe("Consent Management — P1.14 & D12 (D-QV, D-QW, D-QX, D-QY, D-QZ)", ()
         await expect(assertUserTermsAndPrivacyConsent(u.id)).rejects.toThrow();
 
         // User re-consents with the new requirement marker
+        const currentConsents = await getConsentsHandler(
+          mockEvent("GET", u.id)
+        );
+        const currentTerms = currentConsents.consents.find(
+          (c) => c.consent_type === "terms"
+        );
         const reconsentRes = await submitConsentHandler(
           mockEvent("POST", u.id, {
             consent_type: "terms",
-            requirement_at: forceRes.reconsent_required_at,
+            requirement_at:
+              currentTerms?.requirement_at || forceRes.reconsent_required_at,
             accept: true,
           })
         );

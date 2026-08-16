@@ -52,16 +52,24 @@ describe("Notification Inbox & Endpoints DB Integration Tests", () => {
 
   it("BR-BPS-04 & BR-BPS-08: notification_endpoints supports encryption storage and unique fingerprint", async () => {
     const db = getOwnerDb();
-    const email = `notif_ep_user_${Date.now()}@example.com`;
-
-    // Seed user
-    const [user] = await db
-      .insert(users)
-      .values({
-        email,
-        displayName: "Notification User",
-      })
-      .returning();
+    let user: any;
+    while (!user) {
+      const email = `notif_ep_user_${Math.floor(100_000 + Math.random() * 899_999)}_${Date.now()}@example.com`;
+      const [existing] = await db
+        .select({ id: users.id })
+        .from(users)
+        .where(eq(users.email, email))
+        .limit(1);
+      if (!existing) {
+        [user] = await db
+          .insert(users)
+          .values({
+            email,
+            displayName: "Notification User",
+          })
+          .returning();
+      }
+    }
 
     const installationId = crypto.randomUUID();
     const fingerprint = `hmac_fp_${Date.now()}_${Math.random()}`;

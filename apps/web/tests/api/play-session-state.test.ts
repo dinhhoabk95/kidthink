@@ -26,13 +26,27 @@ async function createTestLevel(db: ReturnType<typeof getOwnerDb>) {
     templateId = existing[0]?.id ?? 1;
   }
 
-  const num4 = Math.floor(Math.random() * 8999) + 1000;
+  let code = "";
+  while (true) {
+    const num4 = Math.floor(Math.random() * 8999) + 1000;
+    const candidate = `GL-C1-CNT-TST-${num4}`;
+    const [existing] = await db
+      .select({ id: gameLevels.id })
+      .from(gameLevels)
+      .where(eq(gameLevels.code, candidate))
+      .limit(1);
+    if (!existing) {
+      code = candidate;
+      break;
+    }
+  }
+
   const uid = Math.floor(Math.random() * 89_999) + 10_000;
   const [gl] = await db
     .insert(gameLevels)
     .values({
       entityId: uid,
-      code: `GL-C1-CNT-TST-${num4}`,
+      code,
       templateId,
       titleVi: "Level Test",
       instructionVi: "Instruction",

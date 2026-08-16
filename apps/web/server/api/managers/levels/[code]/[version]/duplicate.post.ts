@@ -21,6 +21,83 @@ function generateLevelCode(
   return `GL-C${tNum}-STD-LVL-${numStr}`;
 }
 
+async function createClonedLevel(
+  db: ReturnType<typeof getOwnerDb>,
+  existing: {
+    level: typeof gameLevels.$inferSelect;
+    templateCode: string | null;
+  },
+  managerId: number
+) {
+  const countRes = await db
+    .select({ count: sql<number>`count(*)` })
+    .from(gameLevels);
+  const count = Number(countRes[0]?.count ?? 0);
+
+  for (let attempt = 0; attempt < 50; attempt++) {
+    const candidateCode = generateLevelCode(
+      existing.templateCode || "GT-001",
+      count + attempt + Math.floor(Math.random() * 1000)
+    );
+
+    const [existingWithCode] = await db
+      .select({ id: gameLevels.id })
+      .from(gameLevels)
+      .where(
+        and(
+          eq(gameLevels.code, candidateCode),
+          eq(gameLevels.contentVersion, 1)
+        )
+      )
+      .limit(1);
+
+    if (existingWithCode) {
+      continue;
+    }
+
+    try {
+      const [inserted] = await db
+        .insert(gameLevels)
+        .values({
+          entityId: Math.floor(10_000_000 + Math.random() * 89_000_000),
+          code: candidateCode,
+          contentVersion: 1,
+          templateId: existing.level.templateId,
+          titleVi: `Bản sao - ${existing.level.titleVi}`,
+          descriptionVi: existing.level.descriptionVi,
+          instructionVi: existing.level.instructionVi,
+          contentPack: existing.level.contentPack,
+          difficultyParams: existing.level.difficultyParams,
+          themeId: existing.level.themeId,
+          ageMin: existing.level.ageMin,
+          ageMax: existing.level.ageMax,
+          difficulty: existing.level.difficulty,
+          accessTier: existing.level.accessTier,
+          thumbnailEmoji: existing.level.thumbnailEmoji,
+          status: "draft",
+          origin: "human",
+          authoredIn: "studio",
+          createdByManagerId: managerId,
+        })
+        .returning();
+      return inserted;
+    } catch (err: unknown) {
+      const codeErr = (err as { code?: string; cause?: { code?: string } })
+        ?.code;
+      if (codeErr === "23505") {
+        continue;
+      }
+      throw err;
+    }
+  }
+
+  throw createError({
+    statusCode: 500,
+    statusMessage: "DUPLICATE_FAILED",
+    message: "Failed to generate a unique level code for duplication",
+  });
+}
+
 export default defineEventHandler(async (event) => {
   try {
     const manager = await requireManagerSession(event);
@@ -54,38 +131,7 @@ export default defineEventHandler(async (event) => {
       });
     }
 
-    const countRes = await db
-      .select({ count: sql<number>`count(*)` })
-      .from(gameLevels);
-    const count = Number(countRes[0]?.count ?? 0);
-
-    const newCode = generateLevelCode(existing.templateCode || "GT-001", count);
-
-    const [cloned] = await db
-      .insert(gameLevels)
-      .values({
-        entityId: Date.now(),
-        code: newCode,
-        contentVersion: 1,
-        templateId: existing.level.templateId,
-        titleVi: `Bản sao - ${existing.level.titleVi}`,
-        descriptionVi: existing.level.descriptionVi,
-        instructionVi: existing.level.instructionVi,
-        contentPack: existing.level.contentPack,
-        difficultyParams: existing.level.difficultyParams,
-        themeId: existing.level.themeId,
-        ageMin: existing.level.ageMin,
-        ageMax: existing.level.ageMax,
-        difficulty: existing.level.difficulty,
-        accessTier: existing.level.accessTier,
-        thumbnailEmoji: existing.level.thumbnailEmoji,
-        status: "draft",
-        origin: "human",
-        authoredIn: "studio",
-        createdByManagerId: manager.id,
-      })
-      .returning();
-
+    const cloned = await createClonedLevel(db, existing, manager.id);
     await syncContentAssetRefs(db, "game_level", cloned.id, cloned.contentPack);
 
     const managerId = manager.manager_id || manager.id || 1;
