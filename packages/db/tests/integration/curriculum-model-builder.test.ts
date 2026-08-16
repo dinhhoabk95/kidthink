@@ -16,10 +16,12 @@ describe("P3.3 Database Schema & Invariants Integration Tests (Task 2)", () => {
   let testUserId: number;
   let testChildId: number;
   let testCurriculumId: number;
+  let testCurriculumCode: string;
 
   beforeEach(async () => {
     const rand = Math.floor(Math.random() * 100_000);
     const ts = Date.now();
+    testCurriculumCode = `CUR-T${ts}${rand}`;
 
     // Create base user and child profile
     const [user] = await db
@@ -48,7 +50,7 @@ describe("P3.3 Database Schema & Invariants Integration Tests (Task 2)", () => {
       .insert(curricula)
       .values({
         entityId: Math.floor(Math.random() * 800_000) + 100_000,
-        code: "CUR-BE3",
+        code: testCurriculumCode,
         contentVersion: 1,
         programType: "age_based",
         targetAgeMin: 3,
@@ -93,7 +95,7 @@ describe("P3.3 Database Schema & Invariants Integration Tests (Task 2)", () => {
         .where(eq(curricula.id, testCurriculumId));
 
       expect(row).toBeDefined();
-      expect(row.code).toBe("CUR-BE3");
+      expect(row.code).toBe(testCurriculumCode);
       expect(row.programType).toBe("age_based");
       expect(row.targetAgeMin).toBe(3);
       expect(row.targetAgeMax).toBe(4);
