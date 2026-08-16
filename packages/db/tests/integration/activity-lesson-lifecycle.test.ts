@@ -13,7 +13,24 @@ import { competencies, skills, strands } from "../../src/schema/taxonomy.ts";
 
 async function setupTestEnvironment() {
   const db = getOwnerDb();
-  const seq = (Math.floor(Math.random() * 8000) + 1000).toString();
+  let seq = "";
+  while (true) {
+    const candidate = (Math.floor(Math.random() * 8000) + 1000).toString();
+    const [existingLes] = await db
+      .select({ id: lessons.id })
+      .from(lessons)
+      .where(eq(lessons.code, `LES-${candidate}`))
+      .limit(1);
+    const [existingAct] = await db
+      .select({ id: activities.id })
+      .from(activities)
+      .where(eq(activities.code, `ACT-${candidate}`))
+      .limit(1);
+    if (!(existingLes || existingAct)) {
+      seq = candidate;
+      break;
+    }
+  }
 
   // 1. Manager
   const [mgr] = await db

@@ -11,7 +11,7 @@ import {
   writeAudit,
 } from "@kidthink/db";
 import { getPrivateSignedUrl, uploadPrivateAsset } from "@kidthink/storage";
-import { and, desc, eq, sql } from "drizzle-orm";
+import { desc, eq, sql } from "drizzle-orm";
 import { createError, defineEventHandler, getQuery, getRouterParam } from "h3";
 import {
   requireManagerSession,
@@ -183,24 +183,38 @@ async function exportCurriculumHealthCsv(db: ReturnType<typeof getOwnerDb>) {
   let csvContent =
     "\uFEFFMã chương trình,Phiên bản,Tiêu đề,Loại hình,Trạng thái,Số tuần,Số buổi/tuần,Số hoạt động,Số học sinh đang học,Thời gian tạo\n";
 
+  if (rows.length === 0) {
+    return { csvContent, rowCount: 0 };
+  }
+
+  const itemCounts = await db
+    .select({
+      curriculumId: curriculumItems.curriculumId,
+      count: sql<number>`count(*)::int`,
+    })
+    .from(curriculumItems)
+    .groupBy(curriculumItems.curriculumId);
+
+  const itemCountMap = new Map<number, number>(
+    itemCounts.map((ic) => [ic.curriculumId, ic.count])
+  );
+
+  const enrollmentCounts = await db
+    .select({
+      curriculumId: curriculumEnrollments.curriculumId,
+      count: sql<number>`count(*)::int`,
+    })
+    .from(curriculumEnrollments)
+    .where(eq(curriculumEnrollments.status, "active"))
+    .groupBy(curriculumEnrollments.curriculumId);
+
+  const enrollmentCountMap = new Map<number, number>(
+    enrollmentCounts.map((ec) => [ec.curriculumId, ec.count])
+  );
+
   for (const r of rows) {
-    const [itemCountRow] = await db
-      .select({ count: sql<number>`count(*)::int` })
-      .from(curriculumItems)
-      .where(eq(curriculumItems.curriculumId, r.id));
-
-    const [enrollmentCountRow] = await db
-      .select({ count: sql<number>`count(*)::int` })
-      .from(curriculumEnrollments)
-      .where(
-        and(
-          eq(curriculumEnrollments.curriculumId, r.id),
-          eq(curriculumEnrollments.status, "active")
-        )
-      );
-
-    const itemsCount = itemCountRow?.count ?? 0;
-    const activeEnrollments = enrollmentCountRow?.count ?? 0;
+    const itemsCount = itemCountMap.get(r.id) ?? 0;
+    const activeEnrollments = enrollmentCountMap.get(r.id) ?? 0;
 
     csvContent += `"${r.code}",${r.version},"${r.titleVi}","${r.programType}","${r.status}",${r.durationWeeks},${r.sessionsPerWeek},${itemsCount},${activeEnrollments},"${r.createdAt.toISOString()}"\n`;
   }

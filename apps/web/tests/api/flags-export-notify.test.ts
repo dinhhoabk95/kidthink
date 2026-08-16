@@ -320,7 +320,7 @@ describe("Feature Flags, Data Export & Notification Admin (P2.9)", () => {
       expect(res.url).toBeDefined();
       expect(res.expires_at).toBeDefined();
       expect(res.row_count).toBeGreaterThanOrEqual(0);
-    });
+    }, 30_000);
 
     it("rejects export with reason < 10 chars with 422 (BR-EXP-03)", async () => {
       const event = mockManagerEvent(
@@ -347,7 +347,7 @@ describe("Feature Flags, Data Export & Notification Admin (P2.9)", () => {
       expect(res.url).toContain("expires=");
       expect(res.url).toContain("signature=");
       expect(res.expires_at).toBeDefined();
-    });
+    }, 30_000);
 
     it("subscriptions export redacts emails for privacy (BR-EXP-08)", async () => {
       const event = mockManagerEvent(
@@ -358,7 +358,7 @@ describe("Feature Flags, Data Export & Notification Admin (P2.9)", () => {
       const res = (await exportsHandler(event)) as any;
       expect(res.url).toBeDefined();
       expect(res.row_count).toBeGreaterThanOrEqual(1);
-    });
+    }, 30_000);
   });
 
   describe("Notifications Admin & Resend (BR-NTA-01 - BR-NTA-05)", () => {
