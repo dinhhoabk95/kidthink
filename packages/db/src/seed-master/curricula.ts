@@ -242,27 +242,33 @@ async function seedCurriculumItemsData(
 
       if (lessonsList.length > 0 && s % 2 === 1) {
         const lesson = lessonsList[lessonIdx];
-        await db.insert(curriculumItems).values({
-          curriculumId,
-          weekNo: w,
-          sessionNo: s,
-          position: 1,
-          entityType: "lesson",
-          entityId: lesson.id,
-          isRequired: true,
-        });
+        await db
+          .insert(curriculumItems)
+          .values({
+            curriculumId,
+            weekNo: w,
+            sessionNo: s,
+            position: 1,
+            entityType: "lesson",
+            entityId: lesson.id,
+            isRequired: true,
+          })
+          .onConflictDoNothing();
         count++;
       } else if (levelsList.length > 0) {
         const level = levelsList[levelIdx];
-        await db.insert(curriculumItems).values({
-          curriculumId,
-          weekNo: w,
-          sessionNo: s,
-          position: 1,
-          entityType: "game_level",
-          entityId: level.id,
-          isRequired: true,
-        });
+        await db
+          .insert(curriculumItems)
+          .values({
+            curriculumId,
+            weekNo: w,
+            sessionNo: s,
+            position: 1,
+            entityType: "game_level",
+            entityId: level.id,
+            isRequired: true,
+          })
+          .onConflictDoNothing();
         count++;
       }
     }

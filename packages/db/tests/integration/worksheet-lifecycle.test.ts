@@ -42,7 +42,8 @@ describe("Worksheet Lifecycle & Render Evidence Integration Tests (Task #64 / P4
     if (managerId) {
       await db
         .delete(contentReviewLog)
-        .where(eq(contentReviewLog.actorManagerId, managerId));
+        .where(eq(contentReviewLog.actorManagerId, managerId))
+        .catch(() => undefined);
       await db
         .delete(activities)
         .where(
@@ -50,7 +51,8 @@ describe("Worksheet Lifecycle & Render Evidence Integration Tests (Task #64 / P4
             eq(activities.createdByManagerId, managerId),
             eq(activities.reviewedByManagerId, managerId)
           )
-        );
+        )
+        .catch(() => undefined);
       await db
         .delete(worksheets)
         .where(
@@ -58,8 +60,12 @@ describe("Worksheet Lifecycle & Render Evidence Integration Tests (Task #64 / P4
             eq(worksheets.createdByManagerId, managerId),
             eq(worksheets.reviewedByManagerId, managerId)
           )
-        );
-      await db.delete(managers).where(eq(managers.id, managerId));
+        )
+        .catch(() => undefined);
+      await db
+        .delete(managers)
+        .where(eq(managers.id, managerId))
+        .catch(() => undefined);
     }
   });
 
@@ -82,7 +88,7 @@ describe("Worksheet Lifecycle & Render Evidence Integration Tests (Task #64 / P4
     // 1. Tạo draft worksheet
     const draft = await createWorksheetDraft(
       {
-        code: `WS-${String(Date.now() % 9000).padStart(4, "0")}`,
+        code: `WS-${String(Math.floor(1000 + Math.random() * 8999))}`,
         title: "Phiếu tô màu theo quy luật hình học",
         layout_template: "pattern_coloring",
         content_blocks: samplePatternColoring,
@@ -193,7 +199,7 @@ describe("Worksheet Lifecycle & Render Evidence Integration Tests (Task #64 / P4
     // 1. Tạo và publish worksheet
     const draft = await createWorksheetDraft(
       {
-        code: `WS-${String(Date.now() % 9000).padStart(4, "0")}`,
+        code: `WS-${String(Math.floor(1000 + Math.random() * 8999))}`,
         title: "Phiếu bài tập liên kết hoạt động",
         layout_template: "pattern_coloring",
         content_blocks: samplePatternColoring,
@@ -228,8 +234,8 @@ describe("Worksheet Lifecycle & Render Evidence Integration Tests (Task #64 / P4
 
     // 2. Tạo activity tham chiếu worksheet này
     await db.insert(activities).values({
-      entityId: Date.now(),
-      code: `ACT-${String(Date.now() % 9000).padStart(4, "0")}`,
+      entityId: Math.floor(100_000 + Math.random() * 800_000),
+      code: `ACT-${String(Math.floor(1000 + Math.random() * 8999))}`,
       contentVersion: 1,
       kind: "worksheet",
       titleVi: "Hoạt động làm phiếu bài tập",
