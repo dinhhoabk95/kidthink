@@ -122,14 +122,22 @@ async function seedTestLevel(options: {
   };
 
   const contentVersion = options.contentVersion || 1;
-  await db
-    .delete(gameLevels)
+  const existingLevels = await db
+    .select({ id: gameLevels.id })
+    .from(gameLevels)
     .where(
       and(
         eq(gameLevels.code, options.code),
         eq(gameLevels.contentVersion, contentVersion)
       )
     );
+
+  for (const existing of existingLevels) {
+    await db
+      .delete(playSessions)
+      .where(eq(playSessions.gameLevelId, existing.id));
+    await db.delete(gameLevels).where(eq(gameLevels.id, existing.id));
+  }
 
   const [level] = await db
     .insert(gameLevels)

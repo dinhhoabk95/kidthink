@@ -1,3 +1,4 @@
+import crypto from "node:crypto";
 import { and, eq } from "drizzle-orm";
 import { beforeEach, describe, expect, it } from "vitest";
 import {
@@ -41,7 +42,7 @@ describe("Automated Payment Integration Tests (P5.1 / Task #71)", () => {
     const [user] = await db
       .insert(users)
       .values({
-        email: `auto_pay_user_${Date.now()}@example.com`,
+        email: `auto_pay_user_${crypto.randomUUID()}@example.com`,
         displayName: "Auto Pay User",
       })
       .returning();
@@ -62,7 +63,7 @@ describe("Automated Payment Integration Tests (P5.1 / Task #71)", () => {
 
     const payload = {
       provider: "payos" as const,
-      provider_event_id: `evt_payos_${Date.now()}`,
+      provider_event_id: `evt_payos_${crypto.randomUUID()}`,
       order_uuid: order.uuid,
       amount_vnd: 299_000,
       status: "success" as const,
@@ -123,7 +124,7 @@ describe("Automated Payment Integration Tests (P5.1 / Task #71)", () => {
     const [user] = await db
       .insert(users)
       .values({
-        email: `auto_pay_dup_${Date.now()}@example.com`,
+        email: `auto_pay_dup_${crypto.randomUUID()}@example.com`,
         displayName: "Dup Pay User",
       })
       .returning();
@@ -144,7 +145,7 @@ describe("Automated Payment Integration Tests (P5.1 / Task #71)", () => {
 
     const payload = {
       provider: "payos" as const,
-      provider_event_id: `evt_dup_${Date.now()}`,
+      provider_event_id: `evt_dup_${crypto.randomUUID()}`,
       order_uuid: order.uuid,
       amount_vnd: 299_000,
       status: "success" as const,
@@ -177,7 +178,7 @@ describe("Automated Payment Integration Tests (P5.1 / Task #71)", () => {
 
     const payload = {
       provider: "vnpay" as const,
-      provider_event_id: `evt_old_${Date.now()}`,
+      provider_event_id: `evt_old_${crypto.randomUUID()}`,
       order_uuid: "00000000-0000-0000-0000-000000000001",
       amount_vnd: 299_000,
       status: "success" as const,
@@ -196,7 +197,7 @@ describe("Automated Payment Integration Tests (P5.1 / Task #71)", () => {
     const [user] = await db
       .insert(users)
       .values({
-        email: `auto_pay_mismatch_${Date.now()}@example.com`,
+        email: `auto_pay_mismatch_${crypto.randomUUID()}@example.com`,
         displayName: "Mismatch Pay User",
       })
       .returning();
@@ -217,7 +218,7 @@ describe("Automated Payment Integration Tests (P5.1 / Task #71)", () => {
 
     const payload = {
       provider: "payos" as const,
-      provider_event_id: `evt_mismatch_${Date.now()}`,
+      provider_event_id: `evt_mismatch_${crypto.randomUUID()}`,
       order_uuid: order.uuid,
       amount_vnd: 199_000, // mismatch
       status: "success" as const,
@@ -243,7 +244,7 @@ describe("Automated Payment Integration Tests (P5.1 / Task #71)", () => {
     const [user] = await db
       .insert(users)
       .values({
-        email: `rec_user_${Date.now()}@example.com`,
+        email: `rec_user_${crypto.randomUUID()}@example.com`,
         displayName: "Rec User",
       })
       .returning();
@@ -259,7 +260,7 @@ describe("Automated Payment Integration Tests (P5.1 / Task #71)", () => {
       })
       .returning();
 
-    const eventId = `evt_rec_${Date.now()}`;
+    const eventId = `evt_rec_${crypto.randomUUID()}`;
 
     await db.insert(paymentTransactions).values({
       provider: "payos",

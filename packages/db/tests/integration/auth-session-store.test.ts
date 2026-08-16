@@ -16,15 +16,25 @@ import {
 
 async function createUserFixture(label: string) {
   const db = getOwnerDb();
-  const [user] = await db
-    .insert(users)
-    .values({
-      email: `device-sess-${label}-${Date.now()}@example.com`,
-      displayName: `User ${label}`,
-      status: "active",
-    })
-    .returning();
-  return user;
+  while (true) {
+    const email = `device-sess-${label}-${Math.floor(100_000 + Math.random() * 899_999)}-${Date.now()}@example.com`;
+    const [existing] = await db
+      .select({ id: users.id })
+      .from(users)
+      .where(eq(users.email, email))
+      .limit(1);
+    if (!existing) {
+      const [user] = await db
+        .insert(users)
+        .values({
+          email,
+          displayName: `User ${label}`,
+          status: "active",
+        })
+        .returning();
+      return user;
+    }
+  }
 }
 
 describe("PostgresSessionStore (Metadata Only under Task #85)", () => {
@@ -88,15 +98,27 @@ describe("PostgresSessionStore (Metadata Only under Task #85)", () => {
 
   it("BR-AUT-14: resolves User reauth methods from password, linked SNS and confirmed TOTP state", async () => {
     const db = getOwnerDb();
-    const [user] = await db
-      .insert(users)
-      .values({
-        email: `reauth-user-${Date.now()}@example.com`,
-        displayName: "SNS và TOTP User",
-        passwordHash: null,
-        status: "active",
-      })
-      .returning();
+    let user: any;
+    while (!user) {
+      const email = `reauth-user-${Math.floor(100_000 + Math.random() * 899_999)}-${Date.now()}@example.com`;
+      const [existing] = await db
+        .select({ id: users.id })
+        .from(users)
+        .where(eq(users.email, email))
+        .limit(1);
+      if (!existing) {
+        [user] = await db
+          .insert(users)
+          .values({
+            email,
+            displayName: "SNS và TOTP User",
+            passwordHash: null,
+            status: "active",
+          })
+          .returning();
+      }
+    }
+
     await db.insert(socialIdentities).values({
       userId: user.id,
       provider: "google",
@@ -120,16 +142,28 @@ describe("PostgresSessionStore (Metadata Only under Task #85)", () => {
 
   it("BR-AUT-15: Manager reauth exposes password/TOTP and never social", async () => {
     const db = getOwnerDb();
-    const [manager] = await db
-      .insert(managers)
-      .values({
-        email: `reauth-manager-${Date.now()}@example.com`,
-        displayName: "Manager MFA",
-        passwordHash: "local-test-argon-placeholder",
-        role: "content_reviewer",
-        mfaEnabled: true,
-      })
-      .returning();
+    let manager: any;
+    while (!manager) {
+      const email = `reauth-manager-${Math.floor(100_000 + Math.random() * 899_999)}-${Date.now()}@example.com`;
+      const [existing] = await db
+        .select({ id: managers.id })
+        .from(managers)
+        .where(eq(managers.email, email))
+        .limit(1);
+      if (!existing) {
+        [manager] = await db
+          .insert(managers)
+          .values({
+            email,
+            displayName: "Manager MFA",
+            passwordHash: "local-test-argon-placeholder",
+            role: "content_reviewer",
+            mfaEnabled: true,
+          })
+          .returning();
+      }
+    }
+
     await db.insert(mfaSettings).values({
       accountType: "manager",
       accountId: manager.id,

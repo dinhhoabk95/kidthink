@@ -1,3 +1,4 @@
+import crypto from "node:crypto";
 import { eq } from "drizzle-orm";
 import { beforeEach, describe, expect, it } from "vitest";
 import { exportJobs, getOwnerDb, users } from "../../src/index.ts";
@@ -12,7 +13,7 @@ describe("Task P4.2 — Database Schema & Invariants Integration Tests (BR-PDF-0
     const [user] = await db
       .insert(users)
       .values({
-        email: `teacher-pdf-${Date.now()}@example.com`,
+        email: `teacher-pdf-${crypto.randomUUID()}@example.com`,
         passwordHash: "hash123",
         displayName: "Người Dùng PDF",
       })

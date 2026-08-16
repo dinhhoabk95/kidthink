@@ -45,11 +45,21 @@ describe("Play Schema Integration Tests", () => {
     const db = getOwnerDb();
 
     // 1. Create parent User & Child Profile
-    const email = `parent-${Date.now()}@example.com`;
-    const [u] = await db
-      .insert(users)
-      .values({ email, displayName: "Parent Test" })
-      .returning();
+    let u: any;
+    while (!u) {
+      const email = `parent-${Math.floor(100_000 + Math.random() * 899_999)}-${Date.now()}@example.com`;
+      const [existing] = await db
+        .select({ id: users.id })
+        .from(users)
+        .where(eq(users.email, email))
+        .limit(1);
+      if (!existing) {
+        [u] = await db
+          .insert(users)
+          .values({ email, displayName: "Parent Test" })
+          .returning();
+      }
+    }
 
     const [child] = await db
       .insert(childProfiles)
