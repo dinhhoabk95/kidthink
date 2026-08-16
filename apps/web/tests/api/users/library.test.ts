@@ -138,11 +138,40 @@ describe("Task #82 — Library & Collections API Suite (BR-MLB-01..07)", () => {
       }
     }
 
+    async function getUniqueGameLevelEntityId() {
+      while (true) {
+        const candidate = Math.floor(10_000_000 + Math.random() * 89_000_000);
+        const [existing] = await db
+          .select({ id: gameLevels.id })
+          .from(gameLevels)
+          .where(eq(gameLevels.entityId, candidate))
+          .limit(1);
+        if (!existing) {
+          return candidate;
+        }
+      }
+    }
+
+    async function getUniqueCurriculumEntityId() {
+      while (true) {
+        const candidate = Math.floor(10_000_000 + Math.random() * 89_000_000);
+        const [existing] = await db
+          .select({ id: curricula.id })
+          .from(curricula)
+          .where(eq(curricula.entityId, candidate))
+          .limit(1);
+        if (!existing) {
+          return candidate;
+        }
+      }
+    }
+
+    const gl1EntityId = await getUniqueGameLevelEntityId();
     const [gl1] = await db
       .insert(gameLevels)
       .values({
         code: gl1Code,
-        entityId: Math.floor(100_000 + Math.random() * 800_000),
+        entityId: gl1EntityId,
         templateId,
         difficulty: 1,
         titleVi: "Đếm số trái cây",
@@ -168,11 +197,12 @@ describe("Task #82 — Library & Collections API Suite (BR-MLB-01..07)", () => {
       }
     }
 
+    const gl2EntityId = await getUniqueGameLevelEntityId();
     const [gl2] = await db
       .insert(gameLevels)
       .values({
         code: gl2Code,
-        entityId: Math.floor(100_000 + Math.random() * 800_000),
+        entityId: gl2EntityId,
         templateId,
         difficulty: 2,
         titleVi: "Phân biệt hình tam giác",
@@ -185,11 +215,12 @@ describe("Task #82 — Library & Collections API Suite (BR-MLB-01..07)", () => {
     gameLevel2Id = gl2.entityId;
 
     // 3. Seed Curriculum
+    const currEntityId = await getUniqueCurriculumEntityId();
     const [curr] = await db
       .insert(curricula)
       .values({
         code: `CUR-P3-LIB-${ts}-${rand}`.slice(0, 50),
-        entityId: Math.floor(100_000 + Math.random() * 800_000),
+        entityId: currEntityId,
         titleVi: "Lộ trình tư duy toán 3-4 tuổi",
         accessTier: "standard",
         status: "published",

@@ -301,21 +301,18 @@ describe("Task P1.4 — Game Config Delivery End-to-End Suite", () => {
       const code = `GL-C1-CNT-SESS-${Math.floor(Math.random() * 8999 + 1000)}`;
       await seedTestLevel({ code, accessTier: "free", contentVersion: 3 });
 
-      const db = getOwnerDb();
-      const initialCount = (await db.select().from(playSessions)).length;
-
       const event = mockEvent("GET", undefined, { code });
       const res = (await guestConfigHandler(event)) as any;
 
       expect(res.session.uuid).toBeDefined();
       expect(res.content_version).toBe(3);
 
-      const newSessions = await db.select().from(playSessions);
-      expect(newSessions.length).toBe(initialCount + 1);
+      const db = getOwnerDb();
+      const [created] = await db
+        .select()
+        .from(playSessions)
+        .where(eq(playSessions.sessionUuid, res.session.uuid));
 
-      const created = newSessions.find(
-        (s) => s.sessionUuid === res.session.uuid
-      );
       expect(created).toBeDefined();
       expect(created?.contentVersion).toBe(3);
       expect(created?.isPreview).toBe(false);

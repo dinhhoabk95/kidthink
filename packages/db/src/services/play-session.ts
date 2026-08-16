@@ -841,13 +841,23 @@ export async function sweepAbandonedSessions(now = new Date()) {
   const dateIctStr = now.toISOString().slice(0, 10);
 
   for (const session of candidateSessions) {
-    await db
+    const [updatedRow] = await db
       .update(playSessions)
       .set({
         completionStatus: "abandoned",
         updatedAt: now,
       })
-      .where(eq(playSessions.id, session.id));
+      .where(
+        and(
+          eq(playSessions.id, session.id),
+          eq(playSessions.completionStatus, "in_progress")
+        )
+      )
+      .returning({ id: playSessions.id });
+
+    if (!updatedRow) {
+      continue;
+    }
 
     sweptCount++;
 
