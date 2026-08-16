@@ -1,7 +1,9 @@
 import { describe, expect, it } from "vitest";
 import {
+  AdminSubscriptionCancelRequestSchema,
   AutomatedPaymentWebhookPayloadSchema,
   canCancelRecurringSubscription,
+  computePaymentWebhookSignature,
   DUNNING_GRACE_PERIOD_DAYS,
   DUNNING_MAX_ATTEMPTS,
   isOfflinePackLeaseValid,
@@ -10,9 +12,8 @@ import {
   OFFLINE_PACK_MAX_LEASE_DAYS,
   OfflineCurriculumPackManifestSchema,
   PAYMENT_REPLAY_WINDOW_SECONDS,
-  PaymentRefundRequestSchema,
   RecurringConsentSnapshotSchema,
-  validateRefundAmount,
+  verifyPaymentWebhookSignature,
 } from "../src/index.js";
 
 describe("P5.0 Web Scale Contracts", () => {
@@ -63,6 +64,31 @@ describe("P5.0 Web Scale Contracts", () => {
       );
       expect(PAYMENT_REPLAY_WINDOW_SECONDS).toBe(300);
     });
+
+    it("verifies HMAC-SHA256 signature for raw webhook payloads", () => {
+      const secret = "test_webhook_secret_key_12345";
+      const rawBody = JSON.stringify({
+        provider: "payos",
+        provider_event_id: "evt_test_1",
+        order_uuid: "123e4567-e89b-12d3-a456-426614174000",
+        amount_vnd: 490_000,
+        status: "success",
+        timestamp_seconds: 1_776_300_000,
+        merchant_id: "merchant_01",
+      });
+
+      const signature = computePaymentWebhookSignature(rawBody, secret);
+      expect(signature).toBeDefined();
+      expect(verifyPaymentWebhookSignature(rawBody, signature, secret)).toBe(
+        true
+      );
+      expect(
+        verifyPaymentWebhookSignature(rawBody, "invalid_sig_hex_1234", secret)
+      ).toBe(false);
+      expect(
+        verifyPaymentWebhookSignature(rawBody, signature, "wrong_secret")
+      ).toBe(false);
+    });
   });
 
   describe("BR-RBL: Recurring Billing & Dunning Contracts", () => {
@@ -94,51 +120,27 @@ describe("P5.0 Web Scale Contracts", () => {
     });
   });
 
-  describe("BR-RFD: Payment Refund & Audit Invariants", () => {
-    it("validates refund request requiring admin note ≥ 10 characters", () => {
-      const validRefund = {
-        order_uuid: "123e4567-e89b-12d3-a456-426614174000",
-        amount_vnd: 200_000,
-        reason: "user_request",
-        admin_note: "Phụ huynh yêu cầu hoàn tiền do trẻ nhập học tiểu học.",
-        idempotency_key: "rf_idem_123456",
+  describe("BR-ASC: Admin Subscription Cancellation & Audit Invariants", () => {
+    it("validates admin subscription cancel request requiring note ≥ 20 characters", () => {
+      const validCancel = {
+        subscription_id: 101,
+        reason: "user_request_zalo",
+        admin_note:
+          "Khách hàng liên hệ qua Zalo OA #ZL-8823 xin huỷ do chuyển trường.",
+        revoke_immediate: false,
       };
-      const parsed = PaymentRefundRequestSchema.parse(validRefund);
-      expect(parsed.amount_vnd).toBe(200_000);
+      const parsed = AdminSubscriptionCancelRequestSchema.parse(validCancel);
+      expect(parsed.subscription_id).toBe(101);
+      expect(parsed.reason).toBe("user_request_zalo");
+      expect(parsed.revoke_immediate).toBe(false);
 
       const invalidNote = {
-        ...validRefund,
-        admin_note: "Quá ngắn",
+        ...validCancel,
+        admin_note: "Quá ngắn <20",
       };
-      const result = PaymentRefundRequestSchema.safeParse(invalidNote);
+      const result =
+        AdminSubscriptionCancelRequestSchema.safeParse(invalidNote);
       expect(result.success).toBe(false);
-    });
-
-    it("validates refund amount against remaining captured amount", () => {
-      const totalCaptured = 500_000;
-      const alreadyRefunded = 200_000;
-
-      const validAttempt = validateRefundAmount(
-        totalCaptured,
-        alreadyRefunded,
-        300_000
-      );
-      expect(validAttempt.valid).toBe(true);
-      expect(validAttempt.remainingRefundableVnd).toBe(300_000);
-
-      const excessiveAttempt = validateRefundAmount(
-        totalCaptured,
-        alreadyRefunded,
-        300_001
-      );
-      expect(excessiveAttempt.valid).toBe(false);
-
-      const zeroAttempt = validateRefundAmount(
-        totalCaptured,
-        alreadyRefunded,
-        0
-      );
-      expect(zeroAttempt.valid).toBe(false);
     });
   });
 

@@ -56,7 +56,7 @@ describe("Purge and Anonymization Integration Tests — Task 10", () => {
 
     // Step A: Request deletion (D=0)
     const baseDate = new Date("2026-08-01T00:00:00Z");
-    const { scheduledPurgeAt } = await requestUserDeletion(db, u.id, baseDate);
+    await requestUserDeletion(db, u.id, baseDate);
 
     // Verify user & child status
     const [uDeleted] = await db.select().from(users).where(eq(users.id, u.id));
@@ -74,11 +74,15 @@ describe("Purge and Anonymization Integration Tests — Task 10", () => {
     expect(uRestored.status).toBe("active");
 
     // Re-request deletion for hard purge test
-    await requestUserDeletion(db, u.id, baseDate);
+    const { scheduledPurgeAt: purgeAt2 } = await requestUserDeletion(
+      db,
+      u.id,
+      baseDate
+    );
 
     // Step C: Run purge at D+29 (29 days later) -> MUST NOT DELETE ANYTHING
     const d29 = new Date("2026-08-30T00:00:00Z");
-    const resultD29 = await hardPurgeUser(db, u.id, d29, scheduledPurgeAt);
+    const resultD29 = await hardPurgeUser(db, u.id, d29, purgeAt2);
 
     expect(resultD29.purged).toBe(false);
     expect(resultD29.reason).toBe("RETENTION_PERIOD_ACTIVE");
@@ -92,7 +96,7 @@ describe("Purge and Anonymization Integration Tests — Task 10", () => {
 
     // Step D: Run purge at D+30 (30 days later) -> EXECUTES HARD PURGE
     const d30 = new Date("2026-08-31T00:00:00Z");
-    const resultD30 = await hardPurgeUser(db, u.id, d30, scheduledPurgeAt);
+    const resultD30 = await hardPurgeUser(db, u.id, d30, purgeAt2);
 
     expect(resultD30.purged).toBe(true);
 

@@ -351,6 +351,13 @@
       "when": 1786890000000,
       "tag": "0049_content_embeddings_and_ai_usage",
       "breakpoints": true
+    },
+    {
+      "idx": 50,
+      "version": "7",
+      "when": 1786900000000,
+      "tag": "0050_automated_payment_and_recurring_subscriptions",
+      "breakpoints": true
     }
   ]
 }

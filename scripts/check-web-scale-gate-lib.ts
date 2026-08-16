@@ -47,21 +47,21 @@ export const ACCEPTED_WEB_SCALE_MANIFEST: WebScaleManifestEntry[] = [
     status: "accepted",
   },
   {
-    outcome: "payment_refund",
-    specId: "PAYMENT-REFUND",
-    specRelPath: "docs/specs/06-admin/payment-refund.md",
+    outcome: "admin_subscription_cancel",
+    specId: "ADMIN-SUBSCRIPTION-CANCEL",
+    specRelPath: "docs/specs/06-admin/admin-subscription-cancel.md",
     taskId: "Task #71",
     owners: ["admin", "finance"],
     dependencies: [
       "AUTOMATED-PAYMENT",
-      "PAYMENT-APPROVAL",
+      "RECURRING-BILLING",
       "ENTITLEMENT-GRANT",
     ],
     evidencePaths: [
       "packages/shared/tests/web-scale-contract.test.ts",
       "apps/web/tests/api/payment-flow-e2e.test.ts",
     ],
-    businessRuleIds: ["BR-RFD-01", "BR-RFD-02", "BR-RFD-03", "BR-RFD-04"],
+    businessRuleIds: ["BR-ASC-01", "BR-ASC-02", "BR-ASC-03", "BR-ASC-04"],
     status: "accepted",
   },
   {

@@ -23,8 +23,6 @@ import {
   NOTICE_BEFORE_RECURRING_BILLING_DAYS,
   OFFLINE_PACK_MAX_LEASE_DAYS,
   PAYMENT_REPLAY_WINDOW_SECONDS,
-  PaymentRefundRequestSchema,
-  validateRefundAmount,
 } from "@kidthink/shared";
 import { eq } from "drizzle-orm";
 import { beforeEach, describe, expect, it } from "vitest";
@@ -131,24 +129,6 @@ describe("Web Scale Gate Drills & Failure Matrix — Task #78 / P5.3", () => {
       expect(isWebhookWithinReplayWindow(expiredTimestamp, nowSeconds)).toBe(
         false
       );
-    });
-
-    it("verifies refund constraints prevent over-refund and require admin note ≥ 10 characters", () => {
-      const refundReq = {
-        order_uuid: "123e4567-e89b-12d3-a456-426614174000",
-        amount_vnd: 150_000,
-        reason: "user_request" as const,
-        admin_note: "Xác nhận hoàn tiền hợp lệ theo yêu cầu phụ huynh.",
-        idempotency_key: `idem_rf_${Date.now()}`,
-      };
-      expect(PaymentRefundRequestSchema.parse(refundReq).amount_vnd).toBe(
-        150_000
-      );
-
-      // Over-refund check
-      const validation = validateRefundAmount(500_000, 400_000, 150_000);
-      expect(validation.valid).toBe(false);
-      expect(validation.remainingRefundableVnd).toBe(100_000);
     });
 
     it("verifies recurring billing dunning constants and cancellation invariants", () => {

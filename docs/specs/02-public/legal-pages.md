@@ -187,4 +187,4 @@ Scenario: BR-LGL-09 — legal document không thuộc SEO editor
 |---|---|---|---|---|
 | ~~1~~ | ~~Ngân sách và đơn vị rà soát pháp lý?~~ **Đóng 2026-08-09 (T13, `D-AS`)**: ngân sách 50M VND tư vấn pháp lý IP/Bảo vệ dữ liệu trước go-live | Go-live | Đã đóng | D-AS |
 | 2 | Hồ sơ đánh giá tác động và nghĩa vụ nộp/lưu theo Luật 91/2025/QH15 cùng văn bản hướng dẫn hiện hành phải thực hiện thế nào? | Tuân thủ pháp lý — cùng câu hỏi với [`child-data-compliance.md`](../00-foundation/child-data-compliance.md) mục 11 câu 2 | P1 | người quyết |
-| 3 | Chính sách hoàn tiền chưa có nội dung — chính sách thương mại là gì? | Quy trình thanh toán — xem [`payment-approval.md`](../06-admin/payment-approval.md) mục 11 câu 1 | P2 | người quyết |
+| ~~3~~ | ~~Chính sách hoàn tiền chưa có nội dung — chính sách thương mại là gì?~~ **Đóng 2026-08-16 (D-RF)**: không có hoàn tiền tự động trong ứng dụng; hướng dẫn khách hàng liên hệ kênh Zalo OA / Messenger / Email để thoả thuận và chuyển khoản thủ công | Quy trình thanh toán | Đã đóng | D-RF |

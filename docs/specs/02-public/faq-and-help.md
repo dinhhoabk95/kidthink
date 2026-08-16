@@ -73,8 +73,9 @@ Guest · User.
 |---|---|
 | "Chơi có giúp bé thông minh hơn không?" | Nói rõ sản phẩm **rèn luyện tư duy qua hoạt động có cấu trúc**, không hứa tăng trí thông minh |
 | "Báo cáo có đánh giá được bé không?" | Nói rõ báo cáo phản ánh **hoạt động trong ứng dụng**, không phải đánh giá phát triển |
-| "Vì sao phải chuyển khoản tay?" | Nói thẳng: chưa tích hợp cổng thanh toán, xác nhận trong 12 giờ làm việc |
+| "Vì sao phải chuyển khoản tay?" | Nói thẳng: hỗ trợ cả cổng thanh toán tự động và chuyển khoản VietQR, xác nhận nhanh chóng |
 | "Dữ liệu bé có an toàn không?" | Nêu cụ thể thu gì, không thu gì, link chính sách |
+| "Có hoàn tiền không?" | Nêu rõ hệ thống không hoàn tiền tự động trong ứng dụng; trường hợp cần hỗ trợ, phụ huynh liên hệ Zalo OA / Facebook Messenger / Email để được tiếp nhận và xử lý chuyển khoản thủ công |
 
 ## 8. API contract
 

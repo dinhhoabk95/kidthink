@@ -171,10 +171,11 @@ describe("Personal Curriculum API Endpoints (Task #65 / P4.4)", () => {
       .returning();
     const templateId = gt?.id ?? 1;
 
+    const randId = Math.floor(Math.random() * 8999 + 1000);
     const [gl] = await db
       .insert(gameLevels)
       .values({
-        code: `GL-C1-NUM-CNT-${String((ts % 9000) + 1000)}`,
+        code: `GL-C1-NUM-CNT-${randId}`,
         entityId: 101,
         templateId,
         difficulty: 1,
@@ -191,7 +192,7 @@ describe("Personal Curriculum API Endpoints (Task #65 / P4.4)", () => {
     const [les] = await db
       .insert(lessons)
       .values({
-        code: `LES-${String((ts % 9000) + 1000)}`,
+        code: `LES-${randId}`,
         entityId: 201,
         titleVi: "Bài học hình khối",
         accessTier: "standard",
@@ -203,7 +204,7 @@ describe("Personal Curriculum API Endpoints (Task #65 / P4.4)", () => {
     publishedLessonId = les.id;
 
     // 5. Seed system curriculum
-    systemCurriculumCode = `CUR-SYS-${ts % 10_000}`;
+    systemCurriculumCode = `CUR-SYS-${Date.now()}-${randId}`;
     const [sysCurr] = await db
       .insert(curricula)
       .values({

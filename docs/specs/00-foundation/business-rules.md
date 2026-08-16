@@ -163,7 +163,7 @@ Mọi `BR-*` trong code, test, và PR. `pnpm gen:check` cảnh báo BR không đ
 | `BR-NTA` | [`notification-admin.md`](../06-admin/notification-admin.md) | | `BR-ALV` | [`audit-log-viewer.md`](../06-admin/audit-log-viewer.md) |
 | `BR-ELV` | [`error-log-viewer.md`](../06-admin/error-log-viewer.md) | | `BR-SYS` | [`system-activity.md`](../06-admin/system-activity.md) |
 | `BR-FFA` | [`feature-flags.md`](../06-admin/feature-flags.md) | | `BR-EXP` | [`data-export.md`](../06-admin/data-export.md) |
-| `BR-LCA` | [`legal-consent-admin.md`](../06-admin/legal-consent-admin.md) | | `BR-RFD` | [`payment-refund.md`](../06-admin/payment-refund.md) |
+| `BR-LCA` | [`legal-consent-admin.md`](../06-admin/legal-consent-admin.md) | | `BR-ASC` | [`admin-subscription-cancel.md`](../06-admin/admin-subscription-cancel.md) |
 
 **Add-on**
 

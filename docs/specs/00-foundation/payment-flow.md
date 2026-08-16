@@ -272,5 +272,5 @@ Scenario: E2E xuyên hai app
 |---|---|---|---|---|
 | 1 | Có tự động đối chiếu sao kê ngân hàng (webhook/API) không, hay thuần mắt người? Thuần tay giới hạn quy mô ở vài chục đơn/ngày | Quy mô vận hành | Hoãn, chặn phase P2 | hoãn |
 | 2 | `SOFT_UNLOCK_DAYS = 3` đủ chưa nếu duyệt vào cuối tuần? | SLA duyệt | Hoãn, chặn phase P2 | hoãn |
-| 3 | Có hoàn tiền không, và luồng hoàn tiền thế nào? Chưa có spec | Chính sách hoàn tiền | Hoãn, chặn phase P5 | hoãn |
-| 4 | Giữ VietQR duyệt tay vĩnh viễn hay chuyển cổng tự động ở P5? | Payment roadmap | Hoãn, chặn phase P5 | hoãn |
+| ~~3~~ | ~~Có hoàn tiền không, và luồng hoàn tiền thế nào?~~ **Đóng 2026-08-16 (D-RF)**: không xây hoàn tiền tự động trong ứng dụng; hoàn tiền ngoài hệ thống qua Zalo OA / Messenger / Email và chuyển khoản thủ công | Chính sách hoàn tiền | Đã đóng | D-RF |
+| ~~4~~ | ~~Giữ VietQR duyệt tay vĩnh viễn hay chuyển cổng tự động ở P5?~~ **Đóng 2026-08-16 (D-PA)**: mở rộng cổng tự động (Task #71) và giữ VietQR duyệt tay làm fallback | Payment roadmap | Đã đóng | D-PA |

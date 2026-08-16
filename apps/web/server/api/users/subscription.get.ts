@@ -5,6 +5,7 @@ import {
   entitlements,
   getDb,
   paymentOrders,
+  recurringSubscriptions,
   users,
 } from "@kidthink/db";
 import { PACKAGE_CATALOG, type PackageDefinition } from "@kidthink/shared";
@@ -305,6 +306,34 @@ export default defineEventHandler(async (event) => {
       .where(eq(paymentOrders.userId, session.user_id))
       .orderBy(desc(paymentOrders.id));
 
+    const [activeSub] = await db
+      .select()
+      .from(recurringSubscriptions)
+      .where(
+        and(
+          eq(recurringSubscriptions.userId, session.user_id),
+          inArray(recurringSubscriptions.status, ["active", "past_due"])
+        )
+      )
+      .orderBy(desc(recurringSubscriptions.id))
+      .limit(1);
+
+    const recurringInfo = activeSub
+      ? {
+          id: activeSub.id,
+          package_code: activeSub.packageCode,
+          billing_period: activeSub.billingPeriod,
+          price_vnd: activeSub.priceVnd,
+          auto_renew: activeSub.autoRenew,
+          status: activeSub.status,
+          current_period_end: activeSub.currentPeriodEnd.toISOString(),
+          next_billing_at: activeSub.nextBillingAt
+            ? activeSub.nextBillingAt.toISOString()
+            : null,
+          can_cancel: activeSub.autoRenew && activeSub.status === "active",
+        }
+      : null;
+
     const orders = mapOrders(orderRows);
     const hasPremium = activePackages.some((p) => p.code === "PKG-premium");
 
@@ -313,6 +342,9 @@ export default defineEventHandler(async (event) => {
       entitlements: resolvedEntitlements,
       quotas,
       orders,
+      recurring_subscription: recurringInfo,
+      cancellation_guidance:
+        "Huỷ gia hạn tự động có thể thực hiện trực tiếp tại đây bất kỳ lúc nào. Quyền lợi hiện tại được giữ nguyên cho đến hết chu kỳ đã thanh toán. Trường hợp cần hỗ trợ thoả thuận hoàn tiền, vui lòng liên hệ qua Zalo OA hoặc Facebook Messenger hỗ trợ của KidThink.",
       data_preservation_notice: DATA_PRESERVATION_NOTICE,
       has_higher_tier: !hasPremium,
     };

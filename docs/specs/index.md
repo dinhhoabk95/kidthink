@@ -194,7 +194,7 @@ v1 có **31** spec cho cùng phạm vi. Xé nhỏ là chủ ý — xem [`AUDIT-v
 | [data-export](06-admin/data-export.md) | P2 | 6 loại, danh sách đóng |
 | [seo-content-admin](06-admin/seo-content-admin.md) | P2 | Rich text hạn chế, 301 tự động |
 | [notification-admin](06-admin/notification-admin.md) | P2 | Nhật ký gửi, template |
-| [payment-refund](06-admin/payment-refund.md) | P5 | Quy trình hoàn tiền đơn hàng, super_admin audit, thu hồi quyền |
+| [admin-subscription-cancel](06-admin/admin-subscription-cancel.md) | P5 | Manager huỷ gói đăng ký của User, dừng gia hạn, super_admin audit |
 | [lesson-authoring](06-admin/lesson-authoring.md) | P3 | Lắp activity vào lesson |
 | [activity-authoring](06-admin/activity-authoring.md) | P3 | 10 loại activity |
 | [curriculum-builder](06-admin/curriculum-builder.md) | P3 | 6 chỉ báo cân bằng |

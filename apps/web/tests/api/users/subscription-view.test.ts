@@ -4,6 +4,7 @@ import {
   getOwnerDb,
   packages,
   paymentOrders,
+  recurringSubscriptions,
   SEED_ENTITLEMENT_KEYS,
   SEED_PACKAGES,
   users,
@@ -224,5 +225,43 @@ describe("Task 6 — User Subscription View Suite (BR-SBV-01..07, D-JQ)", () => 
 
     // Free user has higher tier available
     expect(res.has_higher_tier).toBe(true);
+  });
+
+  it("Scenario: P5.1 — returns recurring subscription details and cancellation guidance", async () => {
+    const db = getOwnerDb();
+
+    const [user] = await db
+      .insert(users)
+      .values({
+        email: `user_recurring_${Date.now()}@example.com`,
+        displayName: "Recurring Sub User",
+      })
+      .returning();
+
+    const now = new Date();
+    const periodEnd = new Date(now.getTime() + 30 * 86_400_000);
+
+    await db.insert(recurringSubscriptions).values({
+      userId: user.id,
+      packageCode: "PKG-standard",
+      offerCode: "monthly",
+      billingPeriod: "monthly",
+      priceVnd: 49_000,
+      autoRenew: true,
+      status: "active",
+      currentPeriodStart: now,
+      currentPeriodEnd: periodEnd,
+      nextBillingAt: periodEnd,
+      consentTermsVersion: "v1.0",
+    });
+
+    const event = mockUserEvent(user.id);
+    const res = await subscriptionHandler(event);
+
+    expect(res.recurring_subscription).toBeDefined();
+    expect(res.recurring_subscription?.auto_renew).toBe(true);
+    expect(res.recurring_subscription?.status).toBe("active");
+    expect(res.recurring_subscription?.can_cancel).toBe(true);
+    expect(res.cancellation_guidance).toContain("Huỷ gia hạn tự động");
   });
 });

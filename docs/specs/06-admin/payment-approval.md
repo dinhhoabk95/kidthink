@@ -200,5 +200,5 @@ Scenario: E2E xuyên hai app
 
 | # | Câu hỏi | Chặn phase | Đề xuất chốt | Chủ |
 |---|---|---|---|---|
-| 1 | Luồng hoàn tiền thiết kế thế nào? | P5 | Hoãn sang P5 — trỏ sang [`payment-flow.md`](../00-foundation/payment-flow.md) Q3 | người quyết |
+| ~~1~~ | ~~Luồng hoàn tiền thiết kế thế nào?~~ **Đóng 2026-08-16 (D-RF)**: không có tính năng hoàn tiền trong ứng dụng; hoàn tiền ngoài hệ thống qua Zalo OA / Messenger / Email và chuyển khoản thủ công | Đã đóng | Không có refund trong app | D-RF |
 | 2 | Duyệt nhầm rồi phát hiện sau — có thao tác "huỷ duyệt" không, hay chỉ thu hồi entitlement tay? | P2 | Không ở MVP — dùng thao tác thu hồi/điều chỉnh entitlement thủ công qua [`entitlement-grant.md`](entitlement-grant.md) | người quyết |

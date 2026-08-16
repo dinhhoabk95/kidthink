@@ -203,3 +203,93 @@ export const quotaUsage = pgTable(
     primaryKey({ columns: [table.userId, table.quotaKey, table.periodStart] }),
   ]
 );
+
+export const recurringSubscriptionStatusEnum = pgEnum(
+  "recurring_subscription_status",
+  ["active", "past_due", "cancelled", "expired"]
+);
+
+export const paymentTransactions = pgTable(
+  "payment_transactions",
+  {
+    id: bigint("id", { mode: "number" })
+      .primaryKey()
+      .generatedAlwaysAsIdentity(),
+    provider: varchar("provider", { length: 30 }).notNull(),
+    providerEventId: varchar("provider_event_id", { length: 120 })
+      .notNull()
+      .unique(),
+    orderId: bigint("order_id", { mode: "number" }).references(
+      () => paymentOrders.id,
+      { onDelete: "set null" }
+    ),
+    orderUuid: uuid("order_uuid").notNull(),
+    amountVnd: bigint("amount_vnd", { mode: "number" }).notNull(),
+    status: varchar("status", { length: 30 }).notNull(),
+    rawPayload: jsonb("raw_payload"),
+    reconciledAt: timestamp("reconciled_at", { withTimezone: true }),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+  },
+  (table) => [
+    uniqueIndex("idx_payment_transactions_provider_event").on(
+      table.provider,
+      table.providerEventId
+    ),
+    index("idx_payment_transactions_order_uuid").on(table.orderUuid),
+    index("idx_payment_transactions_created_at").on(table.createdAt),
+  ]
+);
+
+export const recurringSubscriptions = pgTable(
+  "recurring_subscriptions",
+  {
+    id: bigint("id", { mode: "number" })
+      .primaryKey()
+      .generatedAlwaysAsIdentity(),
+    userId: bigint("user_id", { mode: "number" })
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    packageCode: varchar("package_code", { length: 40 })
+      .notNull()
+      .references(() => packages.code),
+    offerCode: varchar("offer_code", { length: 40 }).notNull(),
+    billingPeriod: varchar("billing_period", { length: 20 }).notNull(),
+    priceVnd: bigint("price_vnd", { mode: "number" }).notNull(),
+    autoRenew: boolean("auto_renew").notNull().default(true),
+    status: recurringSubscriptionStatusEnum("status")
+      .notNull()
+      .default("active"),
+    currentPeriodStart: timestamp("current_period_start", {
+      withTimezone: true,
+    }).notNull(),
+    currentPeriodEnd: timestamp("current_period_end", {
+      withTimezone: true,
+    }).notNull(),
+    nextBillingAt: timestamp("next_billing_at", { withTimezone: true }),
+    dunningAttempts: integer("dunning_attempts").notNull().default(0),
+    lastDunningAt: timestamp("last_dunning_at", { withTimezone: true }),
+    consentTermsVersion: varchar("consent_terms_version", {
+      length: 40,
+    }).notNull(),
+    consentSnapshot: jsonb("consent_snapshot"),
+    cancelledAt: timestamp("cancelled_at", { withTimezone: true }),
+    cancelledBy: varchar("cancelled_by", { length: 30 }),
+    cancelReason: text("cancel_reason"),
+    cancelNote: text("cancel_note"),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+    updatedAt: timestamp("updated_at", { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+  },
+  (table) => [
+    index("idx_recurring_subscriptions_user_status").on(
+      table.userId,
+      table.status
+    ),
+    index("idx_recurring_subscriptions_next_billing").on(table.nextBillingAt),
+  ]
+);

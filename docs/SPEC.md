@@ -1231,7 +1231,7 @@ docs/
     ├── 03-account/     22     User đã đăng nhập (gồm SNS login + linking + notification inbox + recurring billing)
     ├── 04-play/        13     bề mặt trẻ — core business
     ├── 05-content/      5     ràng buộc biên tập nội dung
-    ├── 06-admin/       30     Manager (gồm studio + duyệt + refund)
+    ├── 06-admin/       30     Manager (gồm studio + duyệt + huỷ gói)
     ├── 07-addon/        7     spec đủ, KHÔNG bán ở MVP
     └── 08-quality/      6     test · bảo mật · a11y · hiệu năng · design
 ```

@@ -270,7 +270,7 @@ export const LEGAL_DOCUMENTS: readonly LegalDocument[] = [
       {
         heading: "1. Cookie kỹ thuật thiết yếu",
         summary:
-          "KidThink chỉ sử dụng 6 nhóm cookie kỹ thuật thiết yếu phục vụ đăng nhập và bảo mật.",
+          "KidThink chỉ sử dụng các nhóm cookie kỹ thuật thiết yếu phục vụ đăng nhập và bảo mật.",
         content:
           "Tất cả các cookie đều do máy chủ hệ thống trực tiếp cấp phát, không chứa mã theo dõi của bên thứ ba.",
       },
@@ -283,14 +283,14 @@ export const LEGAL_DOCUMENTS: readonly LegalDocument[] = [
     effectiveDate: "2026-08-01",
     reviewStatus: "approved",
     summary:
-      "Quy định phương thức kích hoạt gói học và xác nhận giao dịch chuyển khoản minh bạch.",
+      "Quy định phương thức kích hoạt gói học và xác nhận giao dịch thanh toán trực tuyến hoặc chuyển khoản minh bạch.",
     requiresConsent: false,
     isChildSpecific: false,
     sections: [
       {
         heading: "1. Phương thức thanh toán",
         summary:
-          "Hỗ trợ thanh toán qua chuyển khoản ngân hàng quét mã VietQR tự động.",
+          "Hỗ trợ thanh toán qua cổng thanh toán trực tuyến tự động và chuyển khoản ngân hàng VietQR.",
         content:
           "Đơn hàng được kích hoạt ngay sau khi hệ thống ghi nhận giao dịch thành công.",
       },
@@ -303,16 +303,16 @@ export const LEGAL_DOCUMENTS: readonly LegalDocument[] = [
     effectiveDate: "2026-08-01",
     reviewStatus: "approved",
     summary:
-      "Chính sách bảo đảm trải nghiệm và hỗ trợ hoàn phí trong vòng 7 ngày đầu tiên nếu không hài lòng.",
+      "Chính sách tiếp nhận và xử lý yêu cầu huỷ gói hoặc hỗ trợ hoàn tiền qua các kênh liên hệ chính thức.",
     requiresConsent: false,
     isChildSpecific: false,
     sections: [
       {
-        heading: "1. Điều kiện hoàn phí",
+        heading: "1. Quy trình tiếp nhận và xử lý",
         summary:
-          "Phụ huynh được hoàn 100% học phí trong 7 ngày đầu nếu sản phẩm không phù hợp với bé.",
+          "Khách hàng liên hệ qua Zalo OA, Facebook Messenger hoặc Email để được tư vấn và hỗ trợ.",
         content:
-          "Liên hệ bộ phận chăm sóc khách hàng qua email support@kidthink.vn để được xử lý thủ tục hoàn tiền trong 3 ngày làm việc.",
+          "Hệ thống không xử lý hoàn tiền tự động trong ứng dụng. Mọi yêu cầu hỗ trợ huỷ gói hoặc hoàn tiền được tiếp nhận qua Zalo Official Account, Facebook Messenger hoặc email support@kidthink.vn. Sau khi hai bên thống nhất, việc hoàn tiền (nếu có) sẽ được kế toán thực hiện qua chuyển khoản ngân hàng thủ công trong vòng 24–48 giờ làm việc.",
       },
     ],
   },
@@ -350,9 +350,9 @@ export const LEGAL_DOCUMENTS: readonly LegalDocument[] = [
       {
         heading: "1. Kênh hỗ trợ khách hàng",
         summary:
-          "Hỗ trợ qua Email: support@kidthink.vn và Zalo Official Account.",
+          "Hỗ trợ qua Zalo Official Account, Facebook Messenger và Email: support@kidthink.vn.",
         content:
-          "Thời gian làm việc từ 8:00 đến 20:00 tất cả các ngày trong tuần.",
+          "Thời gian làm việc từ 8:00 đến 20:00 tất cả các ngày trong tuần. Phản hồi và xử lý yêu cầu trong vòng 24–48 giờ làm việc.",
       },
     ],
   },

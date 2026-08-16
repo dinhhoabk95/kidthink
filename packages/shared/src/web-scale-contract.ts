@@ -1,3 +1,4 @@
+import { createHmac, timingSafeEqual } from "node:crypto";
 import { z } from "zod";
 
 // ============================================================================
@@ -19,6 +20,7 @@ export const AutomatedPaymentWebhookPayloadSchema = z.object({
   status: z.enum(["success", "failed", "cancelled"]),
   timestamp_seconds: z.number().int().positive(),
   merchant_id: z.string().min(1),
+  signature: z.string().optional(),
 });
 
 export type AutomatedPaymentWebhookPayload = z.infer<
@@ -31,6 +33,34 @@ export function isWebhookWithinReplayWindow(
 ): boolean {
   const diff = Math.abs(currentTimestampSeconds - webhookTimestampSeconds);
   return diff <= PAYMENT_REPLAY_WINDOW_SECONDS;
+}
+
+export function computePaymentWebhookSignature(
+  rawBody: string,
+  secretKey: string
+): string {
+  return createHmac("sha256", secretKey).update(rawBody, "utf8").digest("hex");
+}
+
+export function verifyPaymentWebhookSignature(
+  rawBody: string,
+  signature: string,
+  secretKey: string
+): boolean {
+  if (!(signature && secretKey && rawBody)) {
+    return false;
+  }
+  try {
+    const expected = computePaymentWebhookSignature(rawBody, secretKey);
+    const expectedBuf = Buffer.from(expected, "hex");
+    const givenBuf = Buffer.from(signature, "hex");
+    if (expectedBuf.length !== givenBuf.length) {
+      return false;
+    }
+    return timingSafeEqual(expectedBuf, givenBuf);
+  } catch {
+    return false;
+  }
 }
 
 // ============================================================================
@@ -71,39 +101,30 @@ export function canCancelRecurringSubscription(
 }
 
 // ============================================================================
-// 3. Payment Refund & Control Contracts (BR-RFD)
+// 3. Admin Subscription Cancellation Contracts (BR-ASC)
 // ============================================================================
 
-export const PAYMENT_REFUND_REASONS = [
-  "user_request",
-  "duplicate_payment",
-  "fraud",
+export const ADMIN_SUBSCRIPTION_CANCEL_REASONS = [
+  "user_request_zalo",
+  "user_request_messenger",
+  "user_request_email",
+  "admin_override",
   "other",
 ] as const;
 
-export type PaymentRefundReason = (typeof PAYMENT_REFUND_REASONS)[number];
+export type AdminSubscriptionCancelReason =
+  (typeof ADMIN_SUBSCRIPTION_CANCEL_REASONS)[number];
 
-export const PaymentRefundRequestSchema = z.object({
-  order_uuid: z.string().uuid(),
-  amount_vnd: z.number().int().positive(),
-  reason: z.enum(PAYMENT_REFUND_REASONS),
-  admin_note: z
-    .string()
-    .min(10, "Ghi chú hoàn tiền bắt buộc tối thiểu 10 ký tự"),
-  idempotency_key: z.string().min(8),
+export const AdminSubscriptionCancelRequestSchema = z.object({
+  subscription_id: z.number().int().positive(),
+  reason: z.enum(ADMIN_SUBSCRIPTION_CANCEL_REASONS),
+  admin_note: z.string().min(20, "Ghi chú huỷ gói bắt buộc tối thiểu 20 ký tự"),
+  revoke_immediate: z.boolean().default(false),
 });
 
-export type PaymentRefundRequest = z.infer<typeof PaymentRefundRequestSchema>;
-
-export function validateRefundAmount(
-  totalCapturedVnd: number,
-  totalAlreadyRefundedVnd: number,
-  requestedRefundVnd: number
-): { valid: boolean; remainingRefundableVnd: number } {
-  const remaining = totalCapturedVnd - totalAlreadyRefundedVnd;
-  const valid = requestedRefundVnd > 0 && requestedRefundVnd <= remaining;
-  return { valid, remainingRefundableVnd: remaining };
-}
+export type AdminSubscriptionCancelRequest = z.infer<
+  typeof AdminSubscriptionCancelRequestSchema
+>;
 
 // ============================================================================
 // 4. Offline Curriculum Pack & Lease Contracts (BR-OCP)

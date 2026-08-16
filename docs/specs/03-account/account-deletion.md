@@ -189,5 +189,5 @@ Scenario: đăng nhập trong 30 ngày dẫn tới huỷ
 
 | # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
 |---|---|---|---|---|
-| 1 | Có hoàn tiền phần gói chưa dùng khi xoá không? | Chính sách hoàn tiền | P1 | người quyết |
+| ~~1~~ | ~~Có hoàn tiền phần gói chưa dùng khi xoá không?~~ **Đóng 2026-08-16 (D-RF)**: Không hoàn tiền tự động trong ứng dụng khi xoá tài khoản; nếu có thoả thuận đặc biệt, phụ huynh liên hệ hỗ trợ trước khi xoá | Chính sách hoàn tiền | Đã đóng | D-RF |
 | 2 | Xoá **một hồ sơ trẻ** riêng lẻ có cần luồng 30 ngày không, hay xoá ngay? | [`child-profile-archive.md`](child-profile-archive.md) | P2 | hoãn — P2 |
