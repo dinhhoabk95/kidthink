@@ -3,7 +3,6 @@ import {
   getOwnerDb,
   packages,
   paymentOrders,
-  paymentTransactions,
   SEED_ENTITLEMENT_KEYS,
   SEED_PACKAGES,
   users,
@@ -51,8 +50,6 @@ describe("POST /api/guest/webhooks/payments/[provider] (BR-APM-01..07)", () => {
 
   beforeEach(async () => {
     const db = getOwnerDb();
-    await db.delete(paymentTransactions);
-    await db.delete(paymentOrders);
 
     await db
       .insert(packages)
@@ -81,7 +78,7 @@ describe("POST /api/guest/webhooks/payments/[provider] (BR-APM-01..07)", () => {
   it("Scenario: rejects invalid HMAC signature with 401", async () => {
     const payload = {
       provider: "payos",
-      provider_event_id: `evt_${Date.now()}`,
+      provider_event_id: `evt_${Date.now()}_${Math.floor(Math.random() * 1_000_000)}`,
       order_uuid: "00000000-0000-0000-0000-000000000001",
       amount_vnd: 299_000,
       status: "success",
@@ -106,7 +103,7 @@ describe("POST /api/guest/webhooks/payments/[provider] (BR-APM-01..07)", () => {
     const [user] = await db
       .insert(users)
       .values({
-        email: `webhook_user_${Date.now()}@example.com`,
+        email: `webhook_user_${Date.now()}_${Math.floor(Math.random() * 1_000_000)}@example.com`,
         displayName: "Webhook User",
       })
       .returning();

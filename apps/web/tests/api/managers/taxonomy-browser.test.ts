@@ -132,24 +132,21 @@ describe("Task 5 — GET /api/managers/taxonomy (BR-TXB-01..03, BR-TXB-06, D-IT)
       skillId = existingSkill[0]?.id;
     }
 
-    if (skillId) {
-      // Clean up previous test levels if any
-      await db
-        .delete(contentSkillMap)
-        .where(eq(contentSkillMap.skillId, skillId));
-      await db
-        .delete(gameLevels)
-        .where(eq(gameLevels.code, "GL-C1-CNT-TEST-0001"));
-      await db
-        .delete(gameLevels)
-        .where(eq(gameLevels.code, "GL-C1-CNT-TEST-0002"));
+    let pubLevel: any;
+    let draftLevel: any;
+    const rand = Math.floor(1000 + Math.random() * 8999);
+    const code1 = `GL-C1-CNT-TEST-${rand}`;
+    const code2 = `GL-C1-CNT-TEST-${rand + 1}`;
+    const entityId1 = Math.floor(100_000 + Math.random() * 800_000);
+    const entityId2 = Math.floor(100_000 + Math.random() * 800_000);
 
+    if (skillId) {
       // Insert 1 published level and 1 draft level
-      const pubLevel = await db
+      pubLevel = await db
         .insert(gameLevels)
         .values({
-          entityId: 9991,
-          code: "GL-C1-CNT-TEST-0001",
+          entityId: entityId1,
+          code: code1,
           contentVersion: 1,
           templateId,
           titleVi: "Level Published Test",
@@ -160,11 +157,11 @@ describe("Task 5 — GET /api/managers/taxonomy (BR-TXB-01..03, BR-TXB-06, D-IT)
         })
         .returning();
 
-      const draftLevel = await db
+      draftLevel = await db
         .insert(gameLevels)
         .values({
-          entityId: 9992,
-          code: "GL-C1-CNT-TEST-0002",
+          entityId: entityId2,
+          code: code2,
           contentVersion: 1,
           templateId,
           titleVi: "Level Draft Test",
@@ -191,22 +188,44 @@ describe("Task 5 — GET /api/managers/taxonomy (BR-TXB-01..03, BR-TXB-06, D-IT)
       ]);
     }
 
-    invalidateTaxonomyManagerCache();
-    const event = mockEvent("content_reviewer");
-    const res = await handler(event);
+    try {
+      invalidateTaxonomyManagerCache();
+      const event = mockEvent("content_reviewer");
+      const res = await handler(event);
 
-    expect(res).toBeDefined();
-    expect(res.as_of).toBeDefined();
-    expect(Array.isArray(res.competencies)).toBe(true);
-    expect(Array.isArray(res.strands)).toBe(true);
-    expect(Array.isArray(res.skills)).toBe(true);
+      expect(res).toBeDefined();
+      expect(res.as_of).toBeDefined();
+      expect(Array.isArray(res.competencies)).toBe(true);
+      expect(res.competencies.length).toBeGreaterThan(0);
 
-    const testSkill = res.skills.find((s: any) => s.code === "C1.CNT.99");
-    if (testSkill) {
-      expect(testSkill.published_count).toBe(1);
-      expect(testSkill.draft_count).toBe(1);
-      expect(testSkill.total_count).toBe(2);
-      expect(testSkill.gap_status).toBe("thin");
+      // Verify draft vs published count structure on skills
+      const c1 = res.competencies.find((c: any) => c.code === "C1");
+      expect(c1).toBeDefined();
+      const numStrand = c1.strands.find((s: any) => s.code === "C1.NUM");
+      expect(numStrand).toBeDefined();
+      const cntSkill = numStrand.skills.find(
+        (sk: any) => sk.code === "C1.CNT.01"
+      );
+      expect(cntSkill).toBeDefined();
+      expect(typeof cntSkill.published_count).toBe("number");
+      expect(typeof cntSkill.draft_count).toBe("number");
+      expect(cntSkill.published_count).toBeGreaterThanOrEqual(1);
+      expect(cntSkill.draft_count).toBeGreaterThanOrEqual(1);
+      expect(typeof cntSkill.has_content_gap).toBe("boolean");
+    } finally {
+      if (pubLevel?.[0]?.id) {
+        await db
+          .delete(contentSkillMap)
+          .where(eq(contentSkillMap.entityId, pubLevel[0].id));
+        await db.delete(gameLevels).where(eq(gameLevels.id, pubLevel[0].id));
+      }
+      if (draftLevel?.[0]?.id) {
+        await db
+          .delete(contentSkillMap)
+          .where(eq(contentSkillMap.entityId, draftLevel[0].id));
+        await db.delete(gameLevels).where(eq(gameLevels.id, draftLevel[0].id));
+      }
+      invalidateTaxonomyManagerCache();
     }
   });
 

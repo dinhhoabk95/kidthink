@@ -170,7 +170,7 @@ describe("Task 2 — Manual Entitlement Grant & Revoke Suite (BR-EGR-01..08, D-J
     const [user] = await db
       .insert(users)
       .values({
-        email: `user-unknown-pkg-${Date.now()}@example.com`,
+        email: `user-unknown-pkg-${Date.now()}-${Math.floor(Math.random() * 1_000_000)}@example.com`,
         displayName: "User Unknown Pkg",
       })
       .returning();
@@ -189,6 +189,8 @@ describe("Task 2 — Manual Entitlement Grant & Revoke Suite (BR-EGR-01..08, D-J
       expect.fail("Should have thrown 404");
     } catch (err: any) {
       expect(err.statusCode || err.status).toBe(404);
+    } finally {
+      await db.delete(users).where(eq(users.id, user.id));
     }
   });
 
@@ -199,10 +201,10 @@ describe("Task 2 — Manual Entitlement Grant & Revoke Suite (BR-EGR-01..08, D-J
     const [mgr] = await db
       .insert(managers)
       .values({
-        email: `mgr-grant-${Date.now()}@example.com`,
-        displayName: "Admin Grant Master",
+        email: `mgr-grant-${Date.now()}-${Math.floor(Math.random() * 1_000_000)}@example.com`,
+        displayName: "Admin Granter",
+        passwordHash: "hash123",
         role: "super_admin",
-        passwordHash: "hash-mock-123456",
       })
       .returning();
 
@@ -210,8 +212,8 @@ describe("Task 2 — Manual Entitlement Grant & Revoke Suite (BR-EGR-01..08, D-J
     const [user] = await db
       .insert(users)
       .values({
-        email: `user-grant-${Date.now()}@example.com`,
-        displayName: "Target Grant User",
+        email: `user-grant-${Date.now()}-${Math.floor(Math.random() * 1_000_000)}@example.com`,
+        displayName: "Teacher Grantee",
       })
       .returning();
 

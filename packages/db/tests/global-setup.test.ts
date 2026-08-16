@@ -19,7 +19,7 @@ describe("global-setup: truncateAllTestTables", () => {
     process.env.DATABASE_URL ??
     "postgres://postgres:postgres@localhost:5433/kidthink";
   const sql = postgres(url);
-  const probeTable = "_test_truncate_probe";
+  const probeTable = `_test_truncate_probe_${Date.now()}_${Math.floor(Math.random() * 1_000_000)}`;
 
   it("BR-TST-05: refuses to truncate a non-loopback database", () => {
     expect(() =>

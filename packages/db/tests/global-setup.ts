@@ -121,6 +121,9 @@ export async function truncateAllTestTables(
 }
 
 export default async function setup(): Promise<void> {
+  if (process.env.DB_TRUNCATE_ON_SETUP !== "1") {
+    return;
+  }
   try {
     await truncateAllTestTables();
   } catch (err: unknown) {
