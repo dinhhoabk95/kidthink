@@ -16,7 +16,7 @@ import {
   users,
 } from "@kidthink/db";
 import { and, eq } from "drizzle-orm";
-import { beforeEach, describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it } from "vitest";
 
 describe("Task #82 — P3 Account & Curriculum Integration (BR-MDB, BR-MLB, BR-CUR)", () => {
   let user1Id: number;
@@ -27,10 +27,50 @@ describe("Task #82 — P3 Account & Curriculum Integration (BR-MDB, BR-MLB, BR-C
   let gameLevel2Id: number;
   let curriculum1Id: number;
 
+  afterEach(async () => {
+    const db = getOwnerDb();
+    if (user1Id) {
+      await db.delete(users).where(eq(users.id, user1Id));
+    }
+    if (user2Id) {
+      await db.delete(users).where(eq(users.id, user2Id));
+    }
+    if (curriculum1Id) {
+      await db
+        .delete(curriculumItems)
+        .where(eq(curriculumItems.curriculumId, curriculum1Id));
+      await db
+        .delete(curriculumWeeks)
+        .where(eq(curriculumWeeks.curriculumId, curriculum1Id));
+      await db.delete(curricula).where(eq(curricula.id, curriculum1Id));
+    }
+    if (gameLevel1Id) {
+      await db.delete(gameLevels).where(eq(gameLevels.entityId, gameLevel1Id));
+    }
+    if (gameLevel2Id) {
+      await db.delete(gameLevels).where(eq(gameLevels.entityId, gameLevel2Id));
+    }
+  });
+
   beforeEach(async () => {
     const db = getOwnerDb();
     const ts = Date.now();
     const rand = Math.floor(Math.random() * 10_000);
+
+    const makeLevelCode = async (prefix: string) => {
+      for (let attempt = 0; attempt < 50; attempt++) {
+        const candidate = `${prefix}-${String(Math.floor(1000 + Math.random() * 8999))}`;
+        const existing = await db
+          .select({ id: gameLevels.id })
+          .from(gameLevels)
+          .where(eq(gameLevels.code, candidate))
+          .limit(1);
+        if (existing.length === 0) {
+          return candidate;
+        }
+      }
+      return `${prefix}-${String(Math.floor(1000 + Math.random() * 8999))}`;
+    };
 
     // 1. Seed Users
     const [u1] = await db
@@ -96,8 +136,8 @@ describe("Task #82 — P3 Account & Curriculum Integration (BR-MDB, BR-MLB, BR-C
     const [gl1] = await db
       .insert(gameLevels)
       .values({
-        code: `GL-C1-NUM-CNT-${String((ts % 9000) + 1000)}`,
-        entityId: 1000 + (ts % 100_000),
+        code: await makeLevelCode("GL-C1-NUM-CNT"),
+        entityId: Math.floor(100_000 + Math.random() * 800_000),
         templateId,
         difficulty: 1,
         titleVi: "Đếm số vui vẻ",
@@ -112,8 +152,8 @@ describe("Task #82 — P3 Account & Curriculum Integration (BR-MDB, BR-MLB, BR-C
     const [gl2] = await db
       .insert(gameLevels)
       .values({
-        code: `GL-C2-SHP-REC-${String((ts % 9000) + 1000)}`,
-        entityId: 2000 + (ts % 100_000),
+        code: await makeLevelCode("GL-C2-SHP-REC"),
+        entityId: Math.floor(100_000 + Math.random() * 800_000),
         templateId,
         difficulty: 2,
         titleVi: "Nhận biết hình khối",
