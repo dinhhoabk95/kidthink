@@ -45,7 +45,7 @@ function mockEvent(
     context: {
       params,
       ...(authContext?.user ? { user: authContext.user } : {}),
-      ...(authContext?.manager ? { superadmin: authContext.manager } : {}),
+      ...(authContext?.manager ? { manager: authContext.manager } : {}),
     },
     query,
     __responseHeaders: responseHeaders,
