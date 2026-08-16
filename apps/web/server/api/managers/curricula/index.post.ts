@@ -5,7 +5,7 @@ import {
   getOwnerDb,
   writeAudit,
 } from "@kidthink/db";
-import { desc } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import {
   createError,
   defineEventHandler,
@@ -60,11 +60,7 @@ const CUR_CODE_REGEX = /^CUR-(\d+)$/;
 async function generateNextCurriculumCode(
   db: ReturnType<typeof getOwnerDb>
 ): Promise<string> {
-  const rows = await db
-    .select({ code: curricula.code })
-    .from(curricula)
-    .orderBy(desc(curricula.id))
-    .limit(100);
+  const rows = await db.select({ code: curricula.code }).from(curricula);
 
   let maxNum = 0;
   for (const r of rows) {
@@ -76,8 +72,19 @@ async function generateNextCurriculumCode(
       }
     }
   }
-  const nextNum = maxNum + 1;
-  return `CUR-${nextNum.toString().padStart(3, "0")}`;
+  let nextNum = maxNum + 1;
+  while (true) {
+    const candidate = `CUR-${nextNum.toString().padStart(3, "0")}`;
+    const [existing] = await db
+      .select({ id: curricula.id })
+      .from(curricula)
+      .where(eq(curricula.code, candidate))
+      .limit(1);
+    if (!existing) {
+      return candidate;
+    }
+    nextNum++;
+  }
 }
 
 async function insertInitialWeeks(
@@ -123,33 +130,50 @@ async function createCurriculumRecord(
   data: z.infer<typeof createCurriculumSchema>,
   managerId: number
 ) {
-  const code = data.code || (await generateNextCurriculumCode(db));
-  const entityId = Date.now();
+  let lastErr: unknown;
+  for (let attempt = 0; attempt < 5; attempt++) {
+    const code = data.code || (await generateNextCurriculumCode(db));
+    const entityId = Date.now() + Math.floor(Math.random() * 100_000);
 
-  const [created] = await db
-    .insert(curricula)
-    .values({
-      entityId,
-      code,
-      contentVersion: 1,
-      programType: data.program_type,
-      targetAgeMin: data.target_age_min ?? null,
-      targetAgeMax: data.target_age_max ?? null,
-      durationWeeks: data.duration_weeks,
-      sessionsPerWeek: data.sessions_per_week,
-      titleVi: data.title,
-      descriptionVi: data.description_vi ?? null,
-      accessTier: data.access_tier,
-      status: "draft",
-      origin: "human",
-      authoredIn: "studio",
-      createdByManagerId: managerId,
-    })
-    .returning();
+    try {
+      const [created] = await db
+        .insert(curricula)
+        .values({
+          entityId,
+          code,
+          contentVersion: 1,
+          programType: data.program_type,
+          targetAgeMin: data.target_age_min ?? null,
+          targetAgeMax: data.target_age_max ?? null,
+          durationWeeks: data.duration_weeks,
+          sessionsPerWeek: data.sessions_per_week,
+          titleVi: data.title,
+          descriptionVi: data.description_vi ?? null,
+          accessTier: data.access_tier,
+          status: "draft",
+          origin: "human",
+          authoredIn: "studio",
+          createdByManagerId: managerId,
+        })
+        .returning();
 
-  await insertInitialWeeks(db, created.id, data.weeks);
-  await insertInitialItems(db, created.id, data.items);
-  return created;
+      await insertInitialWeeks(db, created.id, data.weeks);
+      await insertInitialItems(db, created.id, data.items);
+
+      return created;
+    } catch (err: unknown) {
+      lastErr = err;
+      if (
+        (err as { code?: string })?.code === "23505" &&
+        !data.code &&
+        attempt < 4
+      ) {
+        continue;
+      }
+      throw err;
+    }
+  }
+  throw lastErr;
 }
 
 export default defineEventHandler(async (event) => {
