@@ -299,11 +299,23 @@ describe("Image Storage & Upload API (BR-IMG-01 - BR-IMG-12, BR-IUP-01 - BR-IUP-
     const uploaded = (await uploadImageHandler(event)) as any;
 
     // 3. Create a published level referencing this image
-    const levelCode = `GL-C1-IMG-PUB-${Date.now().toString().slice(-4)}`;
+    let levelCode = "";
+    while (true) {
+      const candidate = `GL-C1-IMG-PUB-${String(Math.floor(1000 + Math.random() * 8999))}`;
+      const [existing] = await db
+        .select({ id: gameLevels.id })
+        .from(gameLevels)
+        .where(eq(gameLevels.code, candidate))
+        .limit(1);
+      if (!existing) {
+        levelCode = candidate;
+        break;
+      }
+    }
     const [createdLvl] = await db
       .insert(gameLevels)
       .values({
-        entityId: Date.now() + 10,
+        entityId: Math.floor(10_000_000 + Math.random() * 89_000_000),
         code: levelCode,
         contentVersion: 1,
         templateId: tpl.id,
