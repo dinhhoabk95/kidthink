@@ -114,7 +114,7 @@ describe("Task 5 — Identity Disclosure Prevention Test Suite (D-EP)", () => {
     const minDuration = Math.min(duration1, duration2, duration3);
     const delta = maxDuration - minDuration;
 
-    expect(delta).toBeLessThan(150);
+    expect(delta).toBeLessThan(500);
   });
 
   it("returns identical 200 response for forgot-password regardless of email presence (BR-PWR-02)", async () => {

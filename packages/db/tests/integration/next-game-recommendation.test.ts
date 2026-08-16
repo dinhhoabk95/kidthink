@@ -12,11 +12,7 @@ import {
 } from "../../src/schema/curriculum.ts";
 import { gameLevels, gameTemplates } from "../../src/schema/game.ts";
 import { users } from "../../src/schema/identity.ts";
-import {
-  childSessionSummaries,
-  levelDailyStats,
-  playSessions,
-} from "../../src/schema/play.ts";
+import { levelDailyStats, playSessions } from "../../src/schema/play.ts";
 import { contentSkillMap } from "../../src/schema/tagging.ts";
 import {
   competencies,
@@ -31,11 +27,7 @@ import {
 
 describe("P3.6 Next Game Recommendation Invariants (BR-REC-01..08, D-MQ..D-MW)", () => {
   beforeEach(async () => {
-    const db = getOwnerDb();
-    await db.delete(contentSkillMap);
-    await db.delete(childSessionSummaries);
-    await db.delete(playSessions);
-    await db.delete(gameLevels);
+    // Isolated per test run with dynamic fixtures
   });
 
   async function createTestFixtures() {
@@ -180,7 +172,7 @@ describe("P3.6 Next Game Recommendation Invariants (BR-REC-01..08, D-MQ..D-MW)",
       .insert(gameLevels)
       .values({
         entityId: randNum + 1,
-        code: "GL-C1-CNT-FREE-0001",
+        code: `GL-C1-CNT-FREE-1-${uniqueHex}`,
         contentVersion: 1,
         templateId: tmpl.id,
         titleVi: "Đếm táo miễn phí",
@@ -199,7 +191,7 @@ describe("P3.6 Next Game Recommendation Invariants (BR-REC-01..08, D-MQ..D-MW)",
       .insert(gameLevels)
       .values({
         entityId: randNum + 2,
-        code: "GL-C1-CNT-FREE-0002",
+        code: `GL-C1-CNT-FREE-2-${uniqueHex}`,
         contentVersion: 1,
         templateId: tmpl.id,
         titleVi: "Đếm chuối miễn phí",
@@ -218,7 +210,7 @@ describe("P3.6 Next Game Recommendation Invariants (BR-REC-01..08, D-MQ..D-MW)",
       .insert(gameLevels)
       .values({
         entityId: randNum + 3,
-        code: "GL-C1-CNT-STD-0001",
+        code: `GL-C1-CNT-STD-1-${uniqueHex}`,
         contentVersion: 1,
         templateId: tmpl.id,
         titleVi: "Đếm cam tiêu chuẩn",
@@ -237,7 +229,7 @@ describe("P3.6 Next Game Recommendation Invariants (BR-REC-01..08, D-MQ..D-MW)",
       .insert(gameLevels)
       .values({
         entityId: randNum + 4,
-        code: "GL-C1-CNT-PREM-0001",
+        code: `GL-C1-CNT-PRM-1-${uniqueHex}`,
         contentVersion: 1,
         templateId: tmpl.id,
         titleVi: "Đếm dâu cao cấp",
