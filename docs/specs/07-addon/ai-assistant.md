@@ -45,7 +45,7 @@ rò dữ liệu trẻ cao hơn hẳn và ranh giới phải chặt hơn.
 | `BR-AIA-03` | Mọi đầu ra AI mang **nhãn "gợi ý"** hiển thị | Người dùng phải biết đâu là máy nói |
 | `BR-AIA-04` | AI Cấm — **NEVER đưa kết luận phát triển, y khoa, hay chẩn đoán** | Ranh giới sản phẩm và pháp lý |
 | `BR-AIA-05` | AI Cấm — **NEVER sinh `skills`, `learning_objectives`, `lessons`, hay `game_levels`** | `BR-CSA-08` — nội dung cốt lõi soạn trong repo và có người merge, không sinh trong request |
-| `BR-AIA-06` | AI Cấm — **NEVER tự publish** hay tự đổi lộ trình của trẻ | Đảm bảo quyền kiểm soát lộ trình sư phạm thuộc về phụ huynh và giáo viên |
+| `BR-AIA-06` | AI Cấm — **NEVER tự publish** hay tự đổi lộ trình của trẻ | Đảm bảo quyền kiểm soát lộ trình sư phạm thuộc về User |
 | `BR-AIA-07` | Mọi lời gọi **trừ credit** và ghi `ai_usage_log` | Kiểm soát chi phí vận hành API và minh bạch hóa giao dịch tiêu dùng của người dùng |
 | `BR-AIA-08` | Hết credit → **402**, không degrade âm thầm sang model rẻ hơn | `BR-ENT-07` |
 | `BR-AIA-09` | Đầu ra qua **bộ lọc kiểm duyệt** trước khi hiển thị | Ngăn chặn việc hiển thị nội dung không an toàn hoặc sai lệch từ mô hình ngôn ngữ lớn |
@@ -62,7 +62,7 @@ rò dữ liệu trẻ cao hơn hẳn và ranh giới phải chặt hơn.
 | Giải thích báo cáo bằng lời thường | idem | 1 |
 | Gợi ý game trong thư viện | Skill + band tuổi | 1 |
 | Gợi ý lesson trong thư viện | idem | 1 |
-| Viết lại hướng dẫn cho phụ huynh | Văn bản lesson | 2 |
+| Viết lại hướng dẫn cho người dạy | Văn bản lesson | 2 |
 | Tìm kiếm ngữ nghĩa | Câu truy vấn | 1 |
 
 Tìm kiếm ngữ nghĩa có schema vector, job re-embed, và rerank riêng — spec chi tiết ở

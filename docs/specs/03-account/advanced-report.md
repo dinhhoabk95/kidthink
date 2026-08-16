@@ -54,7 +54,7 @@ User có `view_advanced_report` (gói `standard` và `premium`).
 
 | ID | Rule | Vì sao |
 |---|---|---|
-| `BR-ARP-01` | Mọi ràng buộc ngôn ngữ của [`basic-report.md`](basic-report.md) áp ở đây | Đảm bảo nhất quán nguyên tắc ngôn ngữ tích cực và tránh gây hoang mang cho phụ huynh theo `BR-REP-01` |
+| `BR-ARP-01` | Mọi ràng buộc ngôn ngữ của [`basic-report.md`](basic-report.md) áp ở đây | Đảm bảo nhất quán nguyên tắc ngôn ngữ tích cực và tránh gây hoang mang cho người lớn theo `BR-REP-01` |
 | `BR-ARP-02` | Ngưỡng dữ liệu tối thiểu §7.2 — dưới ngưỡng **không kết luận** | Chi tiết hơn không có nghĩa là chắc chắn hơn |
 | `BR-ARP-03` | Biểu đồ **luôn có nhãn văn bản thay thế** | A11y, và biểu đồ một mình dễ đọc sai |
 | `BR-ARP-04` | Xu hướng hiện **hướng đi**, không hiện độ dốc chính xác | Độ dốc chính xác từ dữ liệu thưa là chính xác giả tạo |
@@ -80,7 +80,7 @@ User có `view_advanced_report` (gói `standard` và `premium`).
 ### 7.2 Nguyên tắc ngưỡng
 
 Dưới ngưỡng → hiện `Chưa có đủ dữ liệu` kèm số phiên còn thiếu. Cấm — **NEVER** ẩn mục — ẩn đi
-làm phụ huynh tưởng tính năng hỏng.
+làm người lớn tưởng tính năng hỏng.
 
 ### 7.3 Mục "cần củng cố" — mẫu
 

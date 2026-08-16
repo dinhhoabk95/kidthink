@@ -10,6 +10,7 @@ import {
   lessons,
   users,
 } from "@kidthink/db";
+import { eq } from "drizzle-orm";
 import { beforeEach, describe, expect, it } from "vitest";
 import enrollPersonalHandler from "../../server/api/users/children/[uuid]/enroll-personal.post.js";
 import completeItemHandler from "../../server/api/users/children/[uuid]/personal-curriculum/complete-item.post.js";
@@ -171,12 +172,25 @@ describe("Personal Curriculum API Endpoints (Task #65 / P4.4)", () => {
       .returning();
     const templateId = gt?.id ?? 1;
 
-    const randId = Math.floor(Math.random() * 8999 + 1000);
+    let glCode = `GL-C1-NUM-CNT-${String(Math.floor(1000 + Math.random() * 8999))}`;
+    for (let attempt = 0; attempt < 50; attempt++) {
+      const candidate = `GL-C1-NUM-CNT-${String(Math.floor(1000 + Math.random() * 8999))}`;
+      const existing = await db
+        .select({ id: gameLevels.id })
+        .from(gameLevels)
+        .where(eq(gameLevels.code, candidate))
+        .limit(1);
+      if (existing.length === 0) {
+        glCode = candidate;
+        break;
+      }
+    }
+
     const [gl] = await db
       .insert(gameLevels)
       .values({
-        code: `GL-C1-NUM-CNT-${randId}`,
-        entityId: 101,
+        code: glCode,
+        entityId: Math.floor(100_000 + Math.random() * 800_000),
         templateId,
         difficulty: 1,
         titleVi: "Đếm số mẫu",
@@ -189,11 +203,25 @@ describe("Personal Curriculum API Endpoints (Task #65 / P4.4)", () => {
     standardGameLevelId = gl.id;
 
     // 4. Seed lesson
+    let lesCode = `LES-${String(Math.floor(1000 + Math.random() * 8999))}`;
+    for (let attempt = 0; attempt < 50; attempt++) {
+      const candidate = `LES-${String(Math.floor(1000 + Math.random() * 8999))}`;
+      const existing = await db
+        .select({ id: lessons.id })
+        .from(lessons)
+        .where(eq(lessons.code, candidate))
+        .limit(1);
+      if (existing.length === 0) {
+        lesCode = candidate;
+        break;
+      }
+    }
+
     const [les] = await db
       .insert(lessons)
       .values({
-        code: `LES-${randId}`,
-        entityId: 201,
+        code: lesCode,
+        entityId: Math.floor(100_000 + Math.random() * 800_000),
         titleVi: "Bài học hình khối",
         accessTier: "standard",
         status: "published",
@@ -204,12 +232,16 @@ describe("Personal Curriculum API Endpoints (Task #65 / P4.4)", () => {
     publishedLessonId = les.id;
 
     // 5. Seed system curriculum
-    systemCurriculumCode = `CUR-SYS-${Date.now()}-${randId}`;
+    systemCurriculumCode =
+      `CUR-SYS-${Date.now()}-${Math.floor(Math.random() * 8999 + 1000)}`.slice(
+        0,
+        50
+      );
     const [sysCurr] = await db
       .insert(curricula)
       .values({
         code: systemCurriculumCode,
-        entityId: 301,
+        entityId: Math.floor(100_000 + Math.random() * 800_000),
         titleVi: "Chương trình mẫu hệ thống",
         accessTier: "standard",
         status: "published",

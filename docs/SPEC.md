@@ -107,9 +107,11 @@ lộ trình mà không phải làm lại nội dung.
 | Tác nhân         | Nhận được gì                                                                                                  |
 | ---------------- | ------------------------------------------------------------------------------------------------------------- |
 | **Trẻ**          | Game hợp tuổi, ít chữ, thao tác lớn, phản hồi tích cực, không áp lực điểm số                                  |
-| **Phụ huynh**    | Biết con chơi gì, tiến bộ ra sao; chọn được chương trình; quản lý giờ chơi và nhiều hồ sơ trẻ                 |
-| **Giáo viên**    | Dùng kho giáo án và trò chơi đã kiểm duyệt; theo dõi nhiều trẻ. _(Công cụ tạo nội dung là add-on, ngoài MVP)_ |
+| **User**         | Biết trẻ chơi gì, tiến bộ ra sao; chọn được chương trình; quản lý giờ chơi và nhiều hồ sơ trẻ; dùng kho bài giảng và trò chơi đã kiểm duyệt. _(Công cụ tạo nội dung là add-on, ngoài MVP)_ |
 | **Doanh nghiệp** | Thư viện nội dung sở hữu riêng, tái dùng cho nhiều chương trình và bán được theo gói trên web                 |
+
+`User` là **một** tác nhân, dùng ở nhà hay trên lớp đều vậy — không có persona, không có
+role. Cách gọi theo ngữ cảnh: [`specs/00-foundation/glossary.md`](specs/00-foundation/glossary.md) §7.4.1.
 
 ### 1.3 Tác nhân hệ thống
 
@@ -119,7 +121,7 @@ ra từ entitlement đã mua.
 | Tác nhân          | Bảng             | Guard                  | Đặc điểm                                                                                                                                                                                            |
 | ----------------- | ---------------- | ---------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Guest**         | không có record  | không                  | Chưa đăng nhập. Chơi allow-list game `free`, **không lưu tiến độ**                                                                                                                                  |
-| **User**          | `users`          | `requireUserAuth()`    | Một loại duy nhất. Có thể là phụ huynh, có thể là giáo viên. Năng lực = `entitlements[]`. Vào bằng mật khẩu **hoặc** SNS (Google/Facebook) — nhiều SNS trên một tài khoản, `password_hash` nullable |
+| **User**          | `users`          | `requireUserAuth()`    | Một loại duy nhất, không phân biệt dùng ở nhà hay trên lớp. Năng lực = `entitlements[]`. Vào bằng mật khẩu **hoặc** SNS (Google/Facebook) — nhiều SNS trên một tài khoản, `password_hash` nullable |
 | **Child profile** | `child_profiles` | không (thuộc User)     | 1–5 mỗi User, tuổi 3–6, **không có tài khoản riêng, không có credential**                                                                                                                           |
 | **Manager**       | `managers`       | `requireManagerAuth()` | `role`: `super_admin` \| `content_reviewer`. Vận hành, biên soạn, duyệt nội dung, duyệt thanh toán                                                                                                  |
 
@@ -169,8 +171,8 @@ quên gán tier là cho không nội dung.
 
 | Gói            | `code`     | Đối tượng                          | Giá                 | Thời hạn             |
 | -------------- | ---------- | ---------------------------------- | ------------------- | -------------------- |
-| **Tiêu chuẩn** | `standard` | Phụ huynh phổ thông                | _chờ chốt_ — §15 Q1 | 365 ngày             |
-| **Premium**    | `premium`  | Phụ huynh theo dõi sâu + giáo viên | _chờ chốt_ — §15 Q1 | 365 ngày / vĩnh viễn |
+| **Tiêu chuẩn** | `standard` | User phổ thông                     | _chờ chốt_ — §15 Q1 | 365 ngày             |
+| **Premium**    | `premium`  | User theo dõi sâu                  | _chờ chốt_ — §15 Q1 | 365 ngày / vĩnh viễn |
 
 Premium **bao hàm toàn bộ quyền học của Creator** — xem mọi nội dung, báo cáo nâng cao,
 curriculum đặc biệt. Đây là hiệu chỉnh so với PRD: không tách gói Creator riêng.
@@ -515,7 +517,7 @@ _Lý do:_ đổi package không phải sửa code game.
 ### 3.3 Nguyên tắc
 
 - **Nhiều gói cùng lúc là bình thường.** Năng lực = **hợp** của mọi entitlement `active`.
-  Không gói nào ghi đè gói khác. Một người vừa là phụ huynh vừa là giáo viên là ca dùng
+  Không gói nào ghi đè gói khác. Một người dùng sản phẩm ở nhà và trên lớp là ca dùng
   chính, không phải ca lạ.
 - **Hết hạn không xoá dữ liệu.** `expired` chặn nội dung trả phí; `child_profiles`,
   `mastery_state`, `lesson_plans` giữ nguyên. Mua lại là mở lại, không phải bắt đầu lại.
@@ -596,7 +598,7 @@ Cấm — **NEVER thu**: địa chỉ, trường học, lớp, ảnh thật, s�
 - Cấm — **NEVER quảng cáo**, không nhắm mục tiêu, không leaderboard công khai, không cơ chế
   gây nghiện (streak ép buộc, loot box, đếm ngược tạo áp lực).
 - Cấm — **NEVER credential cho trẻ.** Không đăng nhập trẻ, không email trẻ.
-- **Parent Gate** để rời Child Game Zone: long-press 800ms → cổng phụ huynh (phép tính
+- **Parent Gate** để rời Child Game Zone: long-press 800ms → cổng người lớn (phép tính
   hoặc PIN). Không nút thoát mà một cú tap trúng được.
 - Không hiển thị dữ liệu thanh toán hay quản lý trong Child Game Zone.
 
@@ -1155,7 +1157,7 @@ Cấm cắt: gating, audit, tuân thủ §4, versioning nội dung. Bốn thứ 
 - [ ] Play session ghi đủ event, idempotent khi gửi trùng, không complete được hai lần.
 - [ ] Điểm tính ở server; gửi điểm giả từ client không đổi kết quả lưu.
 - [ ] 60 fps trên tablet Android 2GB, mỗi template có E2E journey xanh.
-- [ ] Phụ huynh xem được báo cáo cơ bản của một trẻ sau khi trẻ chơi.
+- [ ] User xem được báo cáo cơ bản của một trẻ sau khi trẻ chơi.
 - [ ] Đăng ký và đăng nhập bằng **Google** và **Facebook** chạy end-to-end, gồm màn hình
       đồng ý hai checkbox.
 - [ ] Email trùng giữa SNS và tài khoản sẵn có → **409**, **không** tự liên kết
@@ -1203,7 +1205,7 @@ hình báo cáo mang câu này.
 - User đăng ký, tạo Child Profile, và trẻ chơi được cả game free lẫn trả phí.
 - Hệ thống kiểm quyền **đúng** theo entitlement, kiểm ở server.
 - Kết quả chơi lưu theo từng trẻ, giải thích được bằng đúng version nội dung đã chơi.
-- Phụ huynh xem được báo cáo cơ bản và nâng cao.
+- User xem được báo cáo cơ bản và nâng cao.
 - Manager xác nhận thanh toán và kích hoạt gói, có audit đầy đủ.
 - Curriculum liên kết lesson và game thành lộ trình.
 - Có đủ nội dung để một trẻ quay lại **4–8 tuần**.

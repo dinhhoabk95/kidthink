@@ -23,7 +23,7 @@ MFA cho **User** là **tuỳ chọn**, phase **P2** — User tự bật ở
 spec ở [`../06-admin/admin-auth.md`](../06-admin/admin-auth.md).
 
 Lý do không bắt buộc: tài khoản User giữ dữ liệu học của trẻ, không giữ tiền hay quyền
-quản trị. Rủi ro thấp hơn, và ép thêm một bước cho phụ huynh làm giảm tỉ lệ hoàn thành
+quản trị. Rủi ro thấp hơn, và ép thêm một bước cho User làm giảm tỉ lệ hoàn thành
 onboarding.
 
 Lý do không chặn MVP: hạ tầng đã có sẵn ở [`auth-tokens-sessions.md`](../01-platform/auth-tokens-sessions.md) và `mfa_settings`, nên
@@ -79,7 +79,7 @@ nhập, dùng chung cho cả mật khẩu và SNS).
 | `BR-MFA-05` | Cấm — **NEVER SMS OTP** | SIM swap; và số điện thoại là dữ liệu ta không thu |
 | `BR-MFA-06` | Bật MFA → **thu hồi phiên khác** | Đảm bảo mọi phiên đăng nhập chưa xác thực hai lớp trước đó bị chấm dứt lập tức |
 | `BR-MFA-07` | Mã khôi phục hiện **đúng một lần** lúc sinh | Buộc người dùng lưu trữ mã khôi phục an toàn ngay lập tức và tránh rò rỉ qua màn hình |
-| `BR-MFA-08` | MFA cho User là **tuỳ chọn**; cho Manager là **bắt buộc** | Tối ưu trải nghiệm cho phụ huynh nhưng bắt buộc bảo mật tối đa cho tài khoản quản trị hệ thống |
+| `BR-MFA-08` | MFA cho User là **tuỳ chọn**; cho Manager là **bắt buộc** | Tối ưu trải nghiệm cho User nhưng bắt buộc bảo mật tối đa cho tài khoản quản trị hệ thống |
 | `BR-MFA-09` | SNS Cấm — **NEVER thay được MFA.** Thử thách chạy sau mọi yếu tố thứ nhất | `BR-AUT-17`. "Đã đăng nhập Google" chứng minh danh tính, không chứng minh thiết bị thứ hai. Coi nó là yếu tố thứ hai là hạ MFA xuống một yếu tố |
 | `BR-MFA-10` | Bật MFA cũng cần **reauth**, không chỉ phiên hợp lệ | Kẻ chiếm phiên bật MFA bằng thiết bị của họ sẽ khoá chủ tài khoản ra ngoài vĩnh viễn |
 | `BR-MFA-11` | Sinh lại mã khôi phục cần **reauth + một mã hợp lệ**, và **vô hiệu toàn bộ** bộ cũ | Hai bộ mã cùng sống là hai cửa vào |

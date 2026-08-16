@@ -25,10 +25,10 @@ depends_on:
 
 ## 1. Objective
 
-Cung cấp tính năng gia hạn gói học tập tự động định kỳ (tháng/năm) cho phụ huynh nhằm duy trì trải
+Cung cấp tính năng gia hạn gói học tập tự động định kỳ (tháng/năm) cho User nhằm duy trì trải
 nghiệm học tập liên tục không gián đoạn cho trẻ. Tính năng bảo đảm tính minh bạch tuyệt đối theo
 quy định pháp luật Việt Nam: yêu cầu sự đồng ý tường minh của người lớn (explicit opt-in consent),
-lưu vết snapshot điều khoản và mức giá, gửi thông báo trước mỗi kỳ gia hạn, và cho phép phụ huynh
+lưu vết snapshot điều khoản và mức giá, gửi thông báo trước mỗi kỳ gia hạn, và cho phép User
 huỷ gia hạn tự động bất kỳ lúc nào một cách dễ dàng ngay trên trang cài đặt tài khoản.
 
 Spec này sở hữu luồng vòng đời thuê bao định kỳ và quy trình xử lý gia hạn thất bại (dunning);
@@ -53,23 +53,23 @@ kế thừa các quy tắc quản lý quyền lợi từ [`../00-foundation/enti
 
 ## 4. Main flow
 
-1. Khi chọn mua gói dịch vụ, phụ huynh chủ động tích chọn "Tự động gia hạn theo chu kỳ".
+1. Khi chọn mua gói dịch vụ, User chủ động tích chọn "Tự động gia hạn theo chu kỳ".
 2. Hệ thống hiển thị rõ ràng điều khoản gia hạn, chu kỳ thu phí, mức phí và phương thức huỷ; ghi
    nhận `recurring_consent_snapshot` kèm phiên bản tài liệu pháp lý.
 3. Khi chu kỳ kết thúc sắp đến (trước 3 ngày), worker gửi email thông báo nhắc nhở kèm số tiền dự
-   kiến thu và hướng dẫn huỷ nếu phụ huynh không còn nhu cầu.
+   kiến thu và hướng dẫn huỷ nếu User không còn nhu cầu.
 4. Đến ngày đáo hạn chu kỳ, worker kích hoạt giao dịch thanh toán tự động qua cổng đối tác
    ([`../01-platform/automated-payment.md`](../01-platform/automated-payment.md)).
 5. Khi thanh toán thành công:
    - Cập nhật thời hạn `current_period_end` của subscription.
    - Gia hạn thời hạn `expires_at` của `entitlements` liên kết.
-   - Ghi nhận `audit_logs` và gửi biên lai điện tử qua email cho phụ huynh.
+   - Ghi nhận `audit_logs` và gửi biên lai điện tử qua email cho User.
 
 ## 5. Alternative flows
 
 | Nhánh | Điều kiện | Hành vi |
 |---|---|---|
-| Phụ huynh chủ động huỷ | Bấm huỷ tự gia hạn ở `/me/subscription` | Chuyển `auto_renew = false`, giữ nguyên quyền lợi đến hết chu kỳ đã trả tiền |
+| User chủ động huỷ | Bấm huỷ tự gia hạn ở `/me/subscription` | Chuyển `auto_renew = false`, giữ nguyên quyền lợi đến hết chu kỳ đã trả tiền |
 | Thu phí thất bại lần 1 | Thẻ hết hạn / số dư không đủ | Chuyển sang trạng thái `past_due`, gửi email thông báo và thử lại sau 24h |
 | Thu phí thất bại lần 2 & 3 | Tiếp tục không thể trừ tiền | Thử lại tối đa 3 lần trong 7 ngày ân hạn (grace period) |
 | Hết thời gian ân hạn | Quá 7 ngày không thu được tiền | Chuyển subscription sang `cancelled`, thu hồi quyền lợi gói (`entitlements.status = 'expired'`) |
@@ -82,7 +82,7 @@ kế thừa các quy tắc quản lý quyền lợi từ [`../00-foundation/enti
 | `BR-RBL-01` | Gia hạn tự động yêu cầu sự đồng ý tường minh — Cấm — **NEVER** tự động chuyển đổi thanh toán một lần sang định kỳ tự gia hạn | Tôn trọng quyền tự quyết của người tiêu dùng và tuân thủ Luật Bảo vệ người tiêu dùng |
 | `BR-RBL-02` | Snapshot điều khoản và giá tại thời điểm đăng ký subscription — User luôn được thông báo trước khi gia hạn ít nhất 3 ngày qua email | Đảm bảo tính minh bạch tài chính, tránh phát sinh khiếu nại trừ tiền bất ngờ |
 | `BR-RBL-03` | Huỷ gia hạn tự động bất cứ lúc nào qua giao diện `/me/subscription` — quyền lợi hiện tại được giữ nguyên cho đến hết chu kỳ đã thanh toán | Người dùng đã trả tiền cho trọn vẹn chu kỳ nên quyền lợi phải được bảo lưu đầy đủ |
-| `BR-RBL-04` | Cơ chế dunning và thử lại thông minh (tối đa 3 lần trong 7 ngày) khi thanh toán định kỳ thất bại — gửi thông báo nhắc nhở mà không spam | Tối ưu tỉ lệ duy trì thuê bao nhưng không làm phiền phụ huynh |
+| `BR-RBL-04` | Cơ chế dunning và thử lại thông minh (tối đa 3 lần trong 7 ngày) khi thanh toán định kỳ thất bại — gửi thông báo nhắc nhở mà không spam | Tối ưu tỉ lệ duy trì thuê bao nhưng không làm phiền User |
 | `BR-RBL-05` | Thu hồi quyền lợi khi hết thời gian ân hạn thanh toán định kỳ thất bại — chuyển trạng thái subscription sang `cancelled` | Bảo vệ mô hình kinh doanh và không duy trì dịch vụ trả phí miễn phí vô hạn |
 | `BR-RBL-06` | Thay đổi giá subscription chỉ áp dụng cho chu kỳ tiếp theo sau khi User nhận được thông báo và đồng ý theo quy định pháp luật | Nghiêm cấm tự ý tăng giá định kỳ khi chưa có sự chấp thuận của khách hàng |
 

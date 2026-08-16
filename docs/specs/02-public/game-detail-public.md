@@ -70,7 +70,7 @@ Guest · User.
 | Emoji minh hoạ | `thumbnail_emoji` |
 | Năng lực · kỹ năng · mục tiêu học | `content_skill_map` + taxonomy |
 | Band tuổi · độ khó · thời lượng ước tính | |
-| Cơ chế chơi | Từ template, mô tả bằng lời cho phụ huynh |
+| Cơ chế chơi | Từ template, mô tả bằng lời cho người lớn |
 | Trạng thái truy cập | Từ `allowedTiers()` |
 | Game liên quan | Cùng skill, tối đa 6 |
 

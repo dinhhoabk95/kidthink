@@ -21,7 +21,7 @@ depends_on:
 
 ## 1. Objective
 
-Giáo viên tạo game riêng từ template có sẵn — cùng cơ chế Manager dùng trong studio, nhưng
+User tạo game riêng từ template có sẵn — cùng cơ chế Manager dùng trong studio, nhưng
 kết quả **chỉ trẻ của chính User đó chơi được**.
 
 Ranh giới: game do User tạo Cấm — **NEVER vào catalog công khai**. Muốn công khai thì qua duyệt
@@ -94,7 +94,7 @@ Scenario: BR-CGB-02 — không vào catalog
 Scenario: BR-CGB-06 — không cập nhật mastery
   Given trẻ chơi xong một game custom
   Then mastery_state không đổi
-  And play_sessions vẫn ghi để phụ huynh xem
+  And play_sessions vẫn ghi để người lớn xem
 
 Scenario: BR-CGB-05 — validation ở server
   Given content_pack thiếu đáp án đúng

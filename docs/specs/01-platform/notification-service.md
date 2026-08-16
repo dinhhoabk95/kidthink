@@ -85,7 +85,7 @@ giảm duplicate trong phạm vi ứng dụng nhưng **không được mô tả 
 |---|---|---|
 | `BR-NOT-01` | Email **giao dịch** không opt-out được; email **định kỳ** phải opt-out được | Xác thực email và duyệt thanh toán là một phần của dịch vụ |
 | `BR-NOT-02` | Cấm — **NEVER gửi bất cứ gì tới trẻ** | Trẻ không có tài khoản, không có email |
-| `BR-NOT-03` | Cấm — **NEVER PII của trẻ trong nội dung email** ngoài `display_name` mà chính phụ huynh đặt | [`child-data-compliance.md`](../00-foundation/child-data-compliance.md) cấm mọi PII trẻ ra ngoài hệ thống; email là ngoài hệ thống |
+| `BR-NOT-03` | Cấm — **NEVER PII của trẻ trong nội dung email** ngoài `display_name` mà chính người lớn đặt | [`child-data-compliance.md`](../00-foundation/child-data-compliance.md) cấm mọi PII trẻ ra ngoài hệ thống; email là ngoài hệ thống |
 | `BR-NOT-04` | INSERT logical notification và delivery bắt buộc trong **cùng transaction** với sự kiện | Đơn được duyệt mà không có thông báo là ca hỗ trợ |
 | `BR-NOT-05` | `jobId = notification_delivery_id`, claim delivery có điều kiện và stable `Message-ID`; Cấm gọi cơ chế này là exactly-once | Queue dedup chặn hai worker cùng gửi, nhưng không thể làm SMTP và DB commit nguyên tử |
 | `BR-NOT-06` | Cấm — **NEVER email tiếp thị ở MVP** | Chưa có cơ chế đồng ý tiếp thị tách riêng |

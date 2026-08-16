@@ -21,7 +21,7 @@ depends_on:
 Đủ ngữ cảnh để hỗ trợ một User, **không hơn**.
 
 Ranh giới dữ liệu ở đây là ràng buộc tuân thủ, không phải lựa chọn UX: vận hành không cần
-dữ liệu học tập của một đứa trẻ cụ thể — phụ huynh cần.
+dữ liệu học tập của một đứa trẻ cụ thể — người lớn của trẻ đó cần.
 
 ## 2. Actors
 
@@ -51,7 +51,7 @@ dữ liệu học tập của một đứa trẻ cụ thể — phụ huynh cầ
 | ID | Rule | Vì sao |
 |---|---|---|
 | `BR-USD-01` | Cấm — **NEVER hiện telemetry, mastery, hay lịch sử chơi của một trẻ** | `BR-CDC-14` — vận hành không có nhu cầu nghiệp vụ |
-| `BR-USD-02` | Hồ sơ trẻ hiện **`display_name` + `age_band`** để hỗ trợ được; không hơn | Đủ để nói chuyện với phụ huynh, không đủ để hồ sơ hoá đứa trẻ |
+| `BR-USD-02` | Hồ sơ trẻ hiện **`display_name` + `age_band`** để hỗ trợ được; không hơn | Đủ để nói chuyện với User, không đủ để hồ sơ hoá đứa trẻ |
 | `BR-USD-03` | Màn hình **chỉ đọc**; hành động dẫn sang bề mặt có audit riêng | Ngăn ngừa nguy cơ thay đổi dữ liệu ngoài ý muốn và tách biệt trách nhiệm qua từng bề mặt có quy trình kiểm soát độc lập |
 | `BR-USD-04` | Cấm — **NEVER hiện mật khẩu hash hay token** | Bảo vệ bí mật xác thực của người dùng và tuân thủ các nguyên tắc an toàn thông tin theo `BR-SEC-01` |
 | `BR-USD-05` | Mở chi tiết User ghi `audit_logs` khi có xem hồ sơ trẻ | Truy cập dữ liệu trẻ phải truy được |

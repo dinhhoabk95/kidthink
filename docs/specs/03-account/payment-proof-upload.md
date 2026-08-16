@@ -67,7 +67,7 @@ User sở hữu đơn.
 | `BR-PPU-05` | Nộp lại **thay** ảnh cũ, không tạo đơn mới | Nhiều đơn cùng giao dịch làm đối chiếu rối |
 | `BR-PPU-06` | Upload dùng client có CSRF, Cấm — **NEVER raw `$fetch`** | Tránh tấn công CSRF khi tải tệp chứng từ và đảm bảo qua tầng wrapper quản lý token |
 | `BR-PPU-07` | Màn hình xác nhận nói rõ **quyền tạm** và thời hạn | Tránh khiếu nại hoặc hiểu nhầm gói đã được duyệt chính thức khi soft_unlock hết hạn |
-| `BR-PPU-08` | Cấm — **NEVER hiện luồng này trên bề mặt trẻ** | Quy tắc tuân thủ BR-PEN-04 — giao dịch tài chính chỉ thuộc về tài khoản phụ huynh |
+| `BR-PPU-08` | Cấm — **NEVER hiện luồng này trên bề mặt trẻ** | Quy tắc tuân thủ BR-PEN-04 — giao dịch tài chính chỉ thuộc về tài khoản User |
 
 ## 7. Data
 

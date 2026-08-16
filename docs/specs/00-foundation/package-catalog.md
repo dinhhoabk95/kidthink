@@ -81,7 +81,7 @@ một điều.
 |---|---|---|
 | `code` | `PKG-standard` | `PKG-premium` |
 | Tên hiển thị | Tiêu chuẩn | Premium |
-| Đối tượng | Phụ huynh phổ thông | Phụ huynh theo dõi sâu + giáo viên |
+| Đối tượng | User phổ thông | User theo dõi sâu |
 | Offer | 365 ngày | 365 ngày · vĩnh viễn |
 | Giá | **chờ chốt** §11 Q1 | **chờ chốt** §11 Q1 |
 | `is_public` | Có | Có |

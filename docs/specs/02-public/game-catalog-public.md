@@ -18,7 +18,7 @@ depends_on:
 
 ## 1. Objective
 
-Cho phụ huynh **thấy được toàn bộ thư viện** trước khi trả tiền, và cho công cụ tìm kiếm
+Cho người lớn **thấy được toàn bộ thư viện** trước khi trả tiền, và cho công cụ tìm kiếm
 index được từng game.
 
 Ẩn thư viện đằng sau paywall làm mất cả kênh SEO lẫn lý do nâng cấp. Hiện metadata, giấu

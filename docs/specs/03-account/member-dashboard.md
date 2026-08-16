@@ -149,5 +149,5 @@ Scenario: BR-MDB-04 — không quét event thô
 
 | # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
 |---|---|---|---|---|
-| 1 | Tài khoản nhiều trẻ (giáo viên) cần bố cục khác không? | Bố cục đa hồ sơ | P3 | Backend |
+| 1 | Tài khoản nhiều trẻ cần bố cục khác không? | Bố cục đa hồ sơ | P3 | Backend |
 

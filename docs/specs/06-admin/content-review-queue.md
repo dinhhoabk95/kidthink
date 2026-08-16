@@ -100,7 +100,7 @@ Hàng đợi phải làm việc duyệt nhanh nhất có thể mà không làm n
 | **Sư phạm** | Khớp learning objectives · cung bậc đầy đủ · thời lượng phù hợp band tuổi |
 | **Ngôn ngữ cho trẻ** | Câu nói với trẻ ngắn gọn, tự nhiên · không giả định trẻ biết đọc chữ |
 | **An toàn vật liệu** | Đồ dùng sẵn có trong gia đình/lớp · không yêu cầu vật liệu nguy hiểm |
-| **Khả thi tại nhà** | Hướng dẫn rõ ràng cho phụ huynh/giáo viên thực hiện |
+| **Khả thi tại nhà** | Hướng dẫn rõ ràng để người dạy thực hiện |
 | **Đánh giá quan sát** | Tiêu chí đánh giá cụ thể qua hành vi quan sát được, không trừu tượng |
 | **Vòng đời tham chiếu** | Hoạt động thành phần ở trạng thái published · không mồ côi liên kết |
 

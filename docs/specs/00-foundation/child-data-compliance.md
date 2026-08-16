@@ -84,7 +84,7 @@ Spec này ép ràng buộc lên schema **trước** khi bảng được tạo.
 |---|---|---|
 | `BR-CDC-01` | `child_profiles` chỉ chứa trường ở **danh sách đóng** §7.1. Thêm trường = sửa spec này trước | Danh sách mở sẽ đầy dần bằng những field "để sau này dùng" |
 | `BR-CDC-02` | **NEVER thu ngày sinh chính xác.** Chỉ `birth_year` hoặc `age_band` | Ngày sinh đầy đủ là định danh mạnh; tuổi theo năm đủ để chọn nội dung |
-| `BR-CDC-03` | **NEVER thu họ tên đầy đủ.** Chỉ tên gọi / biệt danh | Tên đầy đủ + năm sinh + email phụ huynh là bộ định danh trẻ hoàn chỉnh |
+| `BR-CDC-03` | **NEVER thu họ tên đầy đủ.** Chỉ tên gọi / biệt danh | Tên đầy đủ + năm sinh + email người giám hộ là bộ định danh trẻ hoàn chỉnh |
 | `BR-CDC-04` | Avatar chỉ chọn từ **bộ preset**. **NEVER upload ảnh chụp trẻ** | Ảnh khuôn mặt trẻ là dữ liệu sinh trắc. Không có ca dùng nào ở MVP biện minh được |
 | `BR-CDC-05` | **NEVER PII trong `telemetry_events`** — chỉ `child_uuid` | Bảng telemetry lớn nhất, giữ lâu nhất, và là bảng dễ export nhầm nhất |
 | `BR-CDC-06` | **NEVER gửi tên, `child_uuid`, hay tuổi chính xác của trẻ tới LLM provider** | Dữ liệu rời khỏi hạ tầng là rủi ro không định lượng được |
@@ -95,7 +95,7 @@ Spec này ép ràng buộc lên schema **trước** khi bảng được tạo.
 | `BR-CDC-11` | **NEVER credential cho trẻ**, không endpoint đăng nhập trẻ | Tài khoản trẻ tạo ra nghĩa vụ xác thực tuổi không đáp ứng nổi |
 | `BR-CDC-12` | Trẻ không rời được khu vực chơi mà không qua **Parent Gate** | Ngăn trẻ tự chạm vào thanh toán và cấu hình |
 | `BR-CDC-13` | `content_reviewer` không truy cập được bất kỳ dữ liệu trẻ nào | Người soạn nội dung không có nhu cầu nghiệp vụ với dữ liệu trẻ |
-| `BR-CDC-14` | Bề mặt admin không hiện telemetry / mastery / lịch sử chơi của **một trẻ cụ thể** | Vận hành không cần dữ liệu học tập của một đứa trẻ; phụ huynh cần |
+| `BR-CDC-14` | Bề mặt admin không hiện telemetry / mastery / lịch sử chơi của **một trẻ cụ thể** | Vận hành không cần dữ liệu học tập của một đứa trẻ; người giám hộ cần |
 
 ## 7. Data
 

@@ -39,14 +39,14 @@ Nhóm "Hồ sơ trẻ" trong `/users/{uuid}`. Không có trang độc lập —
 
 1. Mở [`user-detail.md`](user-detail.md), xem nhóm hồ sơ trẻ.
 2. Mỗi hồ sơ hiện: `display_name` · `age_band` · trạng thái · ngày tạo.
-3. Thao tác duy nhất: **lưu trữ** hồ sơ theo yêu cầu của phụ huynh, kèm lý do.
+3. Thao tác duy nhất: **lưu trữ** hồ sơ theo yêu cầu của User, kèm lý do.
 4. Mọi lần xem ghi audit.
 
 ## 5. Alternative flows
 
 | Nhánh | Hành vi |
 |---|---|
-| Yêu cầu xoá của phụ huynh | Đi qua luồng của chính User ([`account-deletion.md`](../03-account/account-deletion.md)), admin không xoá thay |
+| Yêu cầu xoá của User | Đi qua luồng của chính User ([`account-deletion.md`](../03-account/account-deletion.md)), admin không xoá thay |
 | Hồ sơ `pending_deletion` | Hiện `purge_at`, không thao tác được |
 | Tài khoản `deleted` | Hồ sơ hiện chỉ đọc |
 
@@ -59,7 +59,7 @@ Nhóm "Hồ sơ trẻ" trong `/users/{uuid}`. Không có trang độc lập —
 | `BR-CPA-03` | Cấm — **NEVER telemetry, mastery, lịch sử chơi, hay `birth_year` chính xác** | Tuân thủ các nguyên tắc bảo vệ quyền riêng tư dữ liệu trẻ em theo `BR-CDC-14` và ngăn ngừa nguy cơ khai thác dữ liệu nhạy cảm |
 | `BR-CPA-04` | `content_reviewer` không truy cập | `BR-CDC-13` |
 | `BR-CPA-05` | Mỗi lần xem hồ sơ trẻ ghi `audit_logs` | Truy cập dữ liệu trẻ phải truy được |
-| `BR-CPA-06` | Admin **không sửa** được `display_name`, `avatar_id`, hay bất kỳ trường nào | Đó là dữ liệu của phụ huynh |
+| `BR-CPA-06` | Admin **không sửa** được `display_name`, `avatar_id`, hay bất kỳ trường nào | Đó là dữ liệu của User |
 | `BR-CPA-07` | Admin **không xoá** hồ sơ trẻ; chỉ **lưu trữ** theo yêu cầu | Xoá là quyền của chủ thể dữ liệu, có quy trình 30 ngày |
 | `BR-CPA-08` | Cấm — **NEVER tìm kiếm trẻ theo tên** trên bề mặt admin | Tìm được theo tên nghĩa là đã có danh sách |
 
@@ -69,7 +69,7 @@ Nhóm "Hồ sơ trẻ" trong `/users/{uuid}`. Không có trang độc lập —
 
 | Trường | Hiện | Lý do |
 |---|:--:|---|
-| `display_name` | | Nói chuyện được với phụ huynh |
+| `display_name` | | Nói chuyện được với User |
 | `age_band` | | Ngữ cảnh hỗ trợ |
 | `status` | | Vận hành |
 | `created_at` | | Vận hành |
@@ -160,4 +160,4 @@ Scenario: BR-CPA-05 — xem được audit
 
 | # | Câu hỏi | Chặn phase | Đề xuất chốt | Chủ |
 |---|---|---|---|---|
-| 1 | Khi hỗ trợ cần đối chiếu một phiên chơi cụ thể thì làm sao, nếu admin không thấy lịch sử? Có thể cần luồng "phụ huynh cấp quyền xem tạm" | P2 | MVP không hỗ trợ xem phiên chơi của trẻ kể cả khi phụ huynh đồng ý; tính năng cấp quyền tạm thời hoãn sang P4 | người quyết |
+| 1 | Khi hỗ trợ cần đối chiếu một phiên chơi cụ thể thì làm sao, nếu admin không thấy lịch sử? Có thể cần luồng "User cấp quyền xem tạm" | P2 | MVP không hỗ trợ xem phiên chơi của trẻ kể cả khi User đồng ý; tính năng cấp quyền tạm thời hoãn sang P4 | người quyết |

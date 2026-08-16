@@ -71,7 +71,7 @@ tự phục vụ xem/sửa/rút, không cần để **tạo** hồ sơ lần đ�
 | `BR-CPC-07` | Quota kiểm ở **server** | Đảm bảo thực thi đúng giới hạn entitlement của từng gói dịch vụ |
 | `BR-CPC-08` | `age_band` **suy tự động**, không nhập | Đảm bảo tính chính xác của phân nhóm tuổi và tránh lỗi nhập tay từ người dùng |
 | `BR-CPC-09` | Ownership kiểm ở DB mọi thao tác sửa | `BR-ACT-07` |
-| `BR-CPC-10` | Tuổi ngoài 3–6 → từ chối kèm giải thích, không im lặng cắt | Phụ huynh cần biết vì sao |
+| `BR-CPC-10` | Tuổi ngoài 3–6 → từ chối kèm giải thích, không im lặng cắt | Người lớn cần biết vì sao |
 
 ## 7. Data
 
@@ -189,5 +189,5 @@ Scenario: BR-CPC-08 — age_band suy tự động
 | # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
 |---|---|---|---|---|
 | ~~1~~ | ~~Bao nhiêu avatar preset là đủ để trẻ thấy mình được đại diện?~~ **Đóng 2026-08-09 (T13, `D-AU`)**: 12 avatar preset SVG do UI Designer vẽ — khớp [`design-system-contract.md`](../08-quality/design-system-contract.md) Q1 | Preset thiết kế | Đã đóng | D-AU |
-| ~~2~~ | ~~Trẻ sang 7 tuổi thì hồ sơ xử lý thế nào — vẫn chơi được hay khoá?~~ **Đóng 2026-08-09 (T13, `D-CX`)**: để phụ huynh quyết định, không tự động archive — cùng quyết định với [`child-profile-archive.md`](child-profile-archive.md) Q1 | Giới hạn độ tuổi | Đã đóng | D-CX |
+| ~~2~~ | ~~Trẻ sang 7 tuổi thì hồ sơ xử lý thế nào — vẫn chơi được hay khoá?~~ **Đóng 2026-08-09 (T13, `D-CX`)**: để User quyết định, không tự động archive — cùng quyết định với [`child-profile-archive.md`](child-profile-archive.md) Q1 | Giới hạn độ tuổi | Đã đóng | D-CX |
 

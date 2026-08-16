@@ -77,7 +77,7 @@ sửa một lần, mọi lesson dùng nó đều được cập nhật.
 | `observation` | Điều cần quan sát ở trẻ |
 | `mini_project` | Nhiều buổi, vật liệu |
 | `assessment` | Tiêu chí quan sát |
-| `home_activity` | Hướng dẫn cho phụ huynh |
+| `home_activity` | Hướng dẫn cho người dạy tại nhà |
 
 Bảy trong mười loại là **hoạt động ngoài màn hình**. Đó là chủ ý — sản phẩm không tối ưu
 cho thời gian màn hình.

@@ -17,7 +17,7 @@ depends_on:
 
 ## 1. Objective
 
-Gỡ một hồ sơ trẻ khỏi danh sách **mà không mất dữ liệu ngay**, và xoá thật khi phụ huynh
+Gỡ một hồ sơ trẻ khỏi danh sách **mà không mất dữ liệu ngay**, và xoá thật khi User
 thực sự muốn.
 
 Hai thao tác khác nhau: **lưu trữ** là dọn dẹp; **xoá** là thực thi quyền của chủ thể dữ
@@ -52,13 +52,13 @@ User sở hữu hồ sơ. Admin Cấm chỉ lưu trữ theo yêu cầu, không x
 
 | ID | Rule | Vì sao |
 |---|---|---|
-| `BR-CPR-01` | Lưu trữ **giữ nguyên** mọi dữ liệu | Phụ huynh có thể chỉ muốn dọn danh sách |
+| `BR-CPR-01` | Lưu trữ **giữ nguyên** mọi dữ liệu | User có thể chỉ muốn dọn danh sách |
 | `BR-CPR-02` | Lưu trữ **giải phóng quota** | Nếu không thì lưu trữ vô nghĩa với người tới hạn |
 | `BR-CPR-03` | Xoá vĩnh viễn có **30 ngày hoàn tác** | Đối xứng với xoá tài khoản |
 | `BR-CPR-04` | Xoá xác nhận bằng **gõ tên trẻ** | Một nút "Xoá" là quá dễ bấm cho thao tác này |
 | `BR-CPR-05` | Xoá → `telemetry_events` **ẩn danh**, không xoá cứng | `BR-CDC-10` |
 | `BR-CPR-06` | Admin Cấm — **NEVER xoá** hồ sơ trẻ | `BR-CPA-07` |
-| `BR-CPR-07` | Trẻ `archived` không chơi được, nhưng **báo cáo vẫn xem được** | Phụ huynh vẫn có quyền với dữ liệu đã thu |
+| `BR-CPR-07` | Trẻ `archived` không chơi được, nhưng **báo cáo vẫn xem được** | User vẫn có quyền với dữ liệu đã thu |
 | `BR-CPR-08` | Lưu trữ **không cần** Parent Gate; **xoá thì cần mật khẩu** | Mức độ hậu quả khác nhau |
 
 ## 7. Data
@@ -156,5 +156,5 @@ Scenario: BR-CPR-06 — admin không xoá được
 
 | # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
 |---|---|---|---|---|
-| ~~1~~ | ~~Trẻ sang 7 tuổi có tự động archive không, hay để phụ huynh quyết định?~~ **Đóng 2026-08-09 (T13, `D-CX`)**: để phụ huynh quyết định, không tự động archive — cùng quyết định với [`child-profile-crud.md`](child-profile-crud.md) Q2 | Quy tắc tuổi tác | Đã đóng | D-CX |
+| ~~1~~ | ~~Trẻ sang 7 tuổi có tự động archive không, hay để User quyết định?~~ **Đóng 2026-08-09 (T13, `D-CX`)**: để User quyết định, không tự động archive — cùng quyết định với [`child-profile-crud.md`](child-profile-crud.md) Q2 | Quy tắc tuổi tác | Đã đóng | D-CX |
 

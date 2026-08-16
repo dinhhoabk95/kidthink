@@ -28,7 +28,7 @@ Spec này sở hữu khung tiêu chuẩn bằng chứng và protocol vận hành
 
 | Actor | Quyền cần | Làm được gì ở đây |
 |---|---|---|
-| Phụ huynh / Người giám hộ (`Guardian`) | Xác thực tài khoản phụ huynh | Cấp quyền đồng ý văn bản (consent), rút quyền bất cứ lúc nào, yêu cầu xoá dữ liệu playtest |
+| Người giám hộ (`Guardian`) | Xác thực tài khoản User | Cấp quyền đồng ý văn bản (consent), rút quyền bất cứ lúc nào, yêu cầu xoá dữ liệu playtest |
 | Trẻ mầm non (`Child` 3–6 tuổi) | Ngữ cảnh hồ sơ trẻ (không tài khoản) | Thể hiện assent tự nguyện, trải nghiệm game, dừng phiên khi mệt hoặc không muốn tiếp tục |
 | Quản trị viên / Nghiên cứu (`Manager`) | `super_admin` hoặc `content_reviewer` | Thiết kế kịch bản playtest trung tính, điều phối phiên, đánh giá báo cáo bằng chứng sư phạm |
 
@@ -43,18 +43,18 @@ Spec này sở hữu khung tiêu chuẩn bằng chứng và protocol vận hành
 ## 4. Main flow
 
 1. **Chuẩn bị kịch bản và phân tầng mẫu**: Manager chuẩn bị bộ level từ 6 game template (`D1`–`D6`) tương ứng 6 nhóm năng lực (`C1`–`C6`), phân tầng theo 3 nhóm tuổi (3–4, 4–5, 5–6 tuổi) với tối thiểu 8 trẻ/nhóm/template. Kịch bản quan sát sử dụng chỉ dẫn trung tính, không mớm ý.
-2. **Cấp quyền đồng ý (Guardian consent)**: Phụ huynh đọc văn bản thông tin minh bạch về mục đích phiên chơi, loại dữ liệu thu thập (chỉ telemetry định lượng), và ký/xác nhận đồng ý tham gia.
+2. **Cấp quyền đồng ý (Guardian consent)**: Người giám hộ đọc văn bản thông tin minh bạch về mục đích phiên chơi, loại dữ liệu thu thập (chỉ telemetry định lượng), và ký/xác nhận đồng ý tham gia.
 3. **Lấy sự đồng thuận của trẻ (Child assent)**: Người điều phối giải thích bằng ngôn ngữ dễ hiểu và hình ảnh trực quan, hỏi trẻ có muốn chơi trò chơi cùng không; chỉ bắt đầu khi trẻ vui vẻ đồng ý.
 4. **Khởi tạo phiên ghi nhận tối thiểu**: Hệ thống khởi tạo phiên chơi với cờ `is_playtest = true`, gắn `child_uuid` đã băm một chiều, áp đặt trần thời lượng nghiêm ngặt (15 phút cho band 3–4, 20 phút cho band 5–6) và ngắt mọi kết nối thu thập PII/media.
 5. **Thực hiện phiên chơi và quan sát**: Trẻ tương tác với trò chơi; hệ thống ghi nhận các sự kiện tương tác (lần chạm, thời gian phản hồi, lượt scaffolding kích hoạt, phương án thử lại); người điều phối ghi nhận phản ứng hành vi không xâm lấn.
-6. **Đánh giá bằng chứng và hoàn tất**: Tính toán 4 chỉ số sư phạm cốt lõi; lưu trữ báo cáo đã tổng hợp ẩn danh; tự động lên lịch xoá telemetry sau 90 ngày hoặc xoá ngay khi phụ huynh rút consent.
+6. **Đánh giá bằng chứng và hoàn tất**: Tính toán 4 chỉ số sư phạm cốt lõi; lưu trữ báo cáo đã tổng hợp ẩn danh; tự động lên lịch xoá telemetry sau 90 ngày hoặc xoá ngay khi người giám hộ rút consent.
 
 ## 5. Alternative flows
 
 | Nhánh | Điều kiện | Hành vi |
 |---|---|---|
 | Trẻ mệt mỏi, khó chịu, từ chối | Trẻ nói muốn dừng, khóc, xao nhãng kéo dài hoặc có dấu hiệu căng thẳng | Áp dụng Stop Criteria ngay lập tức: dừng phiên chơi, khen ngợi động viên trẻ, tuyệt đối không nài ép tiếp tục |
-| Phụ huynh rút quyền đồng ý | Phụ huynh yêu cầu dừng hoặc huỷ kết quả giữa chừng / sau phiên | Dừng phiên ngay lập tức; xoá vĩnh viễn toàn bộ telemetry thô gắn với phiên chơi trong vòng 24 giờ |
+| Người giám hộ rút quyền đồng ý | Người giám hộ yêu cầu dừng hoặc huỷ kết quả giữa chừng / sau phiên | Dừng phiên ngay lập tức; xoá vĩnh viễn toàn bộ telemetry thô gắn với phiên chơi trong vòng 24 giờ |
 | Nghi ngờ rò rỉ dữ liệu định danh | Phát hiện trường PII, tên thật hoặc ghi chú cá nhân lọt vào telemetry | Khoá phiên audit, kích hoạt incident escalation, lập tức purge bản ghi vi phạm và rà soát validator |
 | Dữ liệu phiên không đạt ngưỡng tối thiểu | Phiên chơi kết thúc sớm do lỗi mạng hoặc trẻ dừng trước 1 lượt hoàn chỉnh | Đánh dấu phiên là `insufficient_data`, loại khỏi tập mẫu đánh giá năng lực, không tính vào tỷ lệ hoàn thành |
 
@@ -62,12 +62,12 @@ Spec này sở hữu khung tiêu chuẩn bằng chứng và protocol vận hành
 
 | ID | Rule | Vì sao |
 |---|---|---|
-| `BR-PED-01` | **Claim ladder & boundary**: Mọi tuyên bố hiệu quả sư phạm chỉ được giới hạn ở mức "hỗ trợ luyện tập, rèn luyện và làm quen năng lực tư duy". Cấm tuyệt đối mọi tuyên bố tăng chỉ số IQ, phát triển trí thông minh vượt bậc, chẩn đoán y khoa, can thiệp trị liệu hoặc quan hệ nhân quả lâm sàng | Tránh tiếp thị gây hiểu lầm, bảo vệ kỳ vọng của phụ huynh và giữ vững tính trung thực khoa học của sản phẩm |
-| `BR-PED-02` | **100% Guardian consent & Child assent**: Phiên playtest với trẻ bắt buộc phải có sự đồng ý tường minh từ phụ huynh và sự đồng thuận tự nguyện của trẻ trước khi bắt đầu | Tôn trọng quyền tự quyết của trẻ và tuân thủ đạo đức nghiên cứu người dùng vị thành niên |
+| `BR-PED-01` | **Claim ladder & boundary**: Mọi tuyên bố hiệu quả sư phạm chỉ được giới hạn ở mức "hỗ trợ luyện tập, rèn luyện và làm quen năng lực tư duy". Cấm tuyệt đối mọi tuyên bố tăng chỉ số IQ, phát triển trí thông minh vượt bậc, chẩn đoán y khoa, can thiệp trị liệu hoặc quan hệ nhân quả lâm sàng | Tránh tiếp thị gây hiểu lầm, bảo vệ kỳ vọng của người giám hộ và giữ vững tính trung thực khoa học của sản phẩm |
+| `BR-PED-02` | **100% Guardian consent & Child assent**: Phiên playtest với trẻ bắt buộc phải có sự đồng ý tường minh từ người giám hộ và sự đồng thuận tự nguyện của trẻ trước khi bắt đầu | Tôn trọng quyền tự quyết của trẻ và tuân thủ đạo đức nghiên cứu người dùng vị thành niên |
 | `BR-PED-03` | **Zero PII & Data minimization**: Cấm thu thập hình ảnh khuôn mặt, video, bản ghi âm giọng nói, họ tên thật, địa chỉ, trường lớp hay văn bản tự do trong telemetry playtest; chỉ thu thập telemetry gameplay định lượng gắn với `child_uuid` ẩn danh | Tuân thủ Nghị định 13/2023/NĐ-CP, Luật 91/2025/QH15 và bảo đảm an toàn dữ liệu trẻ em |
 | `BR-PED-04` | **Stop criteria & quyền dừng vô điều kiện**: Phiên playtest phải dừng ngay lập tức khi trẻ thể hiện bất kỳ dấu hiệu căng thẳng, mệt mỏi, mất tập trung hoặc bày tỏ muốn dừng; cấm mọi hình thức thuyết phục hay ép buộc trẻ tiếp tục | Đặt sức khoẻ tâm lý và trải nghiệm cảm xúc của trẻ lên trên mục tiêu thu thập dữ liệu |
 | `BR-PED-05` | **Stratified sampling**: Bằng chứng sư phạm phải được đánh giá phân tầng theo 3 nhóm tuổi (3–4, 4–5, 5–6), 6 nhóm năng lực (`C1`–`C6`) và game template; cỡ mẫu tối thiểu N ≥ 8 trẻ/nhóm tuổi cho mỗi template; cấm dùng chỉ số trung bình gộp để che giấu thất bại ở nhóm tuổi nhỏ | Sự phát triển nhận thức và vận động tinh thay đổi lớn theo từng năm tuổi ở giai đoạn mầm non |
-| `BR-PED-06` | **Session limits & data retention**: Thời lượng phiên playtest không vượt quá 15 phút (band 3–4) và 20 phút (band 5–6); dữ liệu telemetry thô của phiên playtest có thời hạn lưu trữ tối đa 90 ngày và phải được xoá hoàn toàn trong vòng 24 giờ khi có yêu cầu từ phụ huynh | Phù hợp với khoảng chú ý sinh lý của trẻ mầm non và hạn chế rủi ro tích tụ dữ liệu thừa |
+| `BR-PED-06` | **Session limits & data retention**: Thời lượng phiên playtest không vượt quá 15 phút (band 3–4) và 20 phút (band 5–6); dữ liệu telemetry thô của phiên playtest có thời hạn lưu trữ tối đa 90 ngày và phải được xoá hoàn toàn trong vòng 24 giờ khi có yêu cầu từ người giám hộ | Phù hợp với khoảng chú ý sinh lý của trẻ mầm non và hạn chế rủi ro tích tụ dữ liệu thừa |
 
 ## 7. Data
 
@@ -171,7 +171,7 @@ Scenario: BR-PED-06 — kiểm soát trần thời lượng phiên theo band tu�
 ## 10. Boundaries
 
 **Always**
-- Yêu cầu chữ ký/xác nhận đồng ý từ phụ huynh và assent của trẻ trước khi bắt đầu phiên chơi.
+- Yêu cầu chữ ký/xác nhận đồng ý từ người giám hộ và assent của trẻ trước khi bắt đầu phiên chơi.
 - Băm ẩn danh `child_uuid` bằng thuật toán một chiều trước khi lưu trữ telemetry.
 - Dừng phiên ngay lập tức khi trẻ mệt mỏi, khó chịu hoặc muốn dừng.
 - Phân tầng kết quả theo nhóm tuổi và template trước khi kết luận bằng chứng sư phạm.
@@ -190,5 +190,5 @@ Scenario: BR-PED-06 — kiểm soát trần thời lượng phiên theo band tu�
 
 | # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
 |---|---|---|---|---|
-| 1 | Cần công cụ tự động nào để phụ huynh rút consent từ xa qua giao diện web? | Portal phụ huynh P2 | P2 | người quyết |
+| 1 | Cần công cụ tự động nào để người giám hộ rút consent từ xa qua giao diện web? | Portal người giám hộ P2 | P2 | người quyết |
 | 2 | Quy chuẩn ghi nhận video quan sát khi có chuyên gia tâm lý đi kèm (lab test có bảo trợ)? | Đợt nghiên cứu mở rộng | Ngoài MVP | Nội dung |

@@ -51,7 +51,7 @@ Không có.
 | `BR-CRM-07` | Cấm — **NEVER quá 40%** item thuộc một competency trên toàn chương trình | Chương trình lệch là lỗi sư phạm khó thấy bằng mắt |
 | `BR-CRM-08` | Chương trình theo tuổi (`program_type = 'age_based'`) phải phủ **cả 6 competency** | Phát triển đồng đều toàn bộ 6 năng lực tư duy toán học cốt lõi cho trẻ |
 | `BR-CRM-09` | Cấm — **NEVER lặp cùng một item trong 4 tuần liên tiếp** (đo trên **item**) | Duy trì sự mới mẻ và hứng thú học tập cho trẻ mầm non |
-| `BR-CRM-10` | Nêu rõ **mục tiêu của mỗi tuần** bằng một câu cho người lớn | Phụ huynh cần biết tuần này học gì |
+| `BR-CRM-10` | Nêu rõ **mục tiêu của mỗi tuần** bằng một câu cho người lớn | Người lớn cần biết tuần này học gì |
 | `BR-CRM-11` | Cấm — **NEVER giới thiệu skill mới trong 3 tuần cuối** của một chương trình | 3 tuần cuối dành cho ôn tập và củng cố toàn diện, đảm bảo `BR-CRM-03` không vi phạm vì thiếu tuần phía sau (`D-LY`) |
 
 ## 7. Data

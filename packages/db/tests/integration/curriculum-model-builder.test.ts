@@ -18,20 +18,14 @@ describe("P3.3 Database Schema & Invariants Integration Tests (Task 2)", () => {
   let testCurriculumId: number;
 
   beforeEach(async () => {
-    // Truncate test tables
-    await db.delete(curriculumItemProgress);
-    await db.delete(curriculumEnrollments);
-    await db.delete(curriculumItems);
-    await db.delete(curriculumWeeks);
-    await db.delete(curricula);
-    await db.delete(childProfiles);
-    await db.delete(users);
+    const rand = Math.floor(Math.random() * 100_000);
+    const ts = Date.now();
 
     // Create base user and child profile
     const [user] = await db
       .insert(users)
       .values({
-        email: `parent-${Date.now()}@example.com`,
+        email: `parent-${ts}-${rand}@example.com`,
         passwordHash: "hash123",
         displayName: "Parent Test",
       })
@@ -53,7 +47,7 @@ describe("P3.3 Database Schema & Invariants Integration Tests (Task 2)", () => {
     const [curr] = await db
       .insert(curricula)
       .values({
-        entityId: Date.now(),
+        entityId: Math.floor(Math.random() * 800_000) + 100_000,
         code: "CUR-BE3",
         contentVersion: 1,
         programType: "age_based",
@@ -71,13 +65,24 @@ describe("P3.3 Database Schema & Invariants Integration Tests (Task 2)", () => {
   });
 
   afterEach(async () => {
-    await db.delete(curriculumItemProgress);
-    await db.delete(curriculumEnrollments);
-    await db.delete(curriculumItems);
-    await db.delete(curriculumWeeks);
-    await db.delete(curricula);
-    await db.delete(childProfiles);
-    await db.delete(users);
+    if (testCurriculumId) {
+      await db
+        .delete(curriculumEnrollments)
+        .where(eq(curriculumEnrollments.curriculumId, testCurriculumId));
+      await db
+        .delete(curriculumItems)
+        .where(eq(curriculumItems.curriculumId, testCurriculumId));
+      await db
+        .delete(curriculumWeeks)
+        .where(eq(curriculumWeeks.curriculumId, testCurriculumId));
+      await db.delete(curricula).where(eq(curricula.id, testCurriculumId));
+    }
+    if (testChildId) {
+      await db.delete(childProfiles).where(eq(childProfiles.id, testChildId));
+    }
+    if (testUserId) {
+      await db.delete(users).where(eq(users.id, testUserId));
+    }
   });
 
   describe("Curricula Schema & Invariants (D-LT)", () => {

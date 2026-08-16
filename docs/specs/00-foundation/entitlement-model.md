@@ -71,7 +71,7 @@ if (await hasEntitlement(userId, "play_premium_games")) { … }
 | ID | Rule | Vì sao |
 |---|---|---|
 | `BR-ENT-01` | Gate bằng **entitlement key**, không bằng `package_code` | Đổi cấu trúc gói không được kéo theo sửa code tính năng |
-| `BR-ENT-02` | Năng lực = **hợp** của mọi entitlement hiệu lực. Không gói nào ghi đè gói khác | Một người vừa là phụ huynh vừa là giáo viên là ca dùng chính |
+| `BR-ENT-02` | Năng lực = **hợp** của mọi entitlement hiệu lực. Không gói nào ghi đè gói khác | Một người dùng sản phẩm ở nhà và trên lớp là ca dùng chính |
 | `BR-ENT-03` | `entitlement_keys` là **Lớp 1** — admin không tạo/sửa/xoá qua UI | Key là hằng số mà code tham chiếu. Sửa từ UI làm code gate một key không tồn tại |
 | `BR-ENT-04` | Key được khai báo nhưng **không gói MVP nào cấp** vẫn hợp lệ (key add-on) | Khai báo trước giữ contract ổn định; nhưng không được bán |
 | `BR-ENT-05` | Hết hạn **không xoá dữ liệu**. `child_profiles`, `mastery_state`, `lesson_plans` giữ nguyên | Mua lại là mở lại, không phải bắt đầu lại |

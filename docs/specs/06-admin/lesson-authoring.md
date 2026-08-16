@@ -19,7 +19,7 @@ depends_on:
 
 ## 1. Objective
 
-Lesson là **đơn vị dạy học hoàn chỉnh** — thứ mà một giáo viên hoặc phụ huynh mở ra và biết
+Lesson là **đơn vị dạy học hoàn chỉnh** — thứ mà một người dạy mở ra và biết
 phải làm gì trong 20–30 phút.
 
 Nó là tài sản khác hẳn game level: game level là hoạt động số; lesson là kịch bản, gồm cả

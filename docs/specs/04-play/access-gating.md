@@ -78,7 +78,7 @@ ra họ không có quyền.
 | `BR-GAT-05` | **20 ô** của ma trận §7.1 đều phải có test | Gating là ma trận; test vài ô sẽ để lọt ô còn lại |
 | `BR-GAT-06` | Property test khẳng định **tính bao hàm** trên mọi tổ hợp entitlement | Ví dụ không chứng minh được bao hàm |
 | `BR-GAT-07` | Bỏ token hoặc bỏ cookie ở phía client **không mở thêm quyền nào**. | Người gọi không có token là guest, và guest chỉ thấy nội dung tier `free`. |
-| `BR-GAT-08` | Preview của Manager không ghi `mastery_state`, và không đếm KPI (chỉ số hiệu suất theo dõi). | Manager chơi thử một level chục lần khi soạn nó. Nếu preview ghi mastery thì hồ sơ trẻ nào đang được chọn sẽ mang dữ liệu của người lớn, và báo cáo gửi phụ huynh nói sai về con họ. KPI nội dung cũng vậy: một level chưa publish sẽ trông như level được chơi nhiều nhất. Cột `play_sessions.is_preview` tồn tại để tách hai luồng này ngay ở tầng dữ liệu |
+| `BR-GAT-08` | Preview của Manager không ghi `mastery_state`, và không đếm KPI (chỉ số hiệu suất theo dõi). | Manager chơi thử một level chục lần khi soạn nó. Nếu preview ghi mastery thì hồ sơ trẻ nào đang được chọn sẽ mang dữ liệu của người lớn, và báo cáo gửi người lớn nói sai về trẻ của họ. KPI nội dung cũng vậy: một level chưa publish sẽ trông như level được chơi nhiều nhất. Cột `play_sessions.is_preview` tồn tại để tách hai luồng này ngay ở tầng dữ liệu |
 
 ## 7. Data
 

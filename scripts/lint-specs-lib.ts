@@ -889,10 +889,30 @@ export function checkC8(specs: SpecFile[]) {
 // tả UX, ...). Needs table/entity-aware parsing (which spec's §7 schema, on
 // which table) that this line-scanner doesn't have. Left as a manual
 // review item until C9 gains that context.
-export const BANNED_TOKENS_C9 = [
+// `exemptRel` — the spec that DEFINES a ban has to spell the banned word out.
+// glossary.md §8 lists it, §7.4.1 explains the replacement, §9 asserts it.
+// Those lines are the ban, not a violation of it.
+export const BANNED_TOKENS_C9: {
+  pattern: RegExp;
+  name: string;
+  exemptRel?: string[];
+}[] = [
   { pattern: /\bclassification\b/gi, name: "classification" },
   { pattern: /\btenant_id\b/gi, name: "tenant_id" },
   { pattern: /\bpersona\s+enum\b/gi, name: "persona enum" },
+  // BR-GLOS-04 — one User type, no real-world role labels. Vietnamese terms
+  // only: English `parent` is load-bearing in fixed identifiers (parent-gate,
+  // PARENT_GATE_REQUIRED, parent_gate_trusted_until) and must stay.
+  {
+    pattern: /phụ huynh/gi,
+    name: "phụ huynh",
+    exemptRel: ["00-foundation/glossary.md"],
+  },
+  {
+    pattern: /giáo viên/gi,
+    name: "giáo viên",
+    exemptRel: ["00-foundation/glossary.md"],
+  },
 ];
 
 export function checkC9(specs: SpecFile[]) {
@@ -950,7 +970,10 @@ export function checkC9(specs: SpecFile[]) {
         continue;
       }
 
-      for (const { pattern, name } of BANNED_TOKENS_C9) {
+      for (const { pattern, name, exemptRel } of BANNED_TOKENS_C9) {
+        if (exemptRel?.includes(s.rel)) {
+          continue;
+        }
         pattern.lastIndex = 0;
         if (pattern.test(line)) {
           fail(s.rel, i + 1, "C9", `Banned token: "${name}"`);

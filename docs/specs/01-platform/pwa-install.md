@@ -16,7 +16,7 @@ depends_on:
 
 ## 1. Objective
 
-Cho phụ huynh thêm ứng dụng vào màn hình chính tablet, mở toàn màn hình, không thanh
+Cho người lớn thêm ứng dụng vào màn hình chính tablet, mở toàn màn hình, không thanh
 địa chỉ — giảm khả năng trẻ chạm nhầm ra ngoài.
 
 **Ngoài MVP.** Web trong trình duyệt đủ cho P0–P3. Spec viết trước để [`offline-play.md`](offline-play.md) và

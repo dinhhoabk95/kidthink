@@ -18,10 +18,10 @@ depends_on:
 
 ## 1. Objective
 
-Trả lời câu hỏi của phụ huynh: **"con tôi đã chơi gì và có tiến bộ không"**.
+Trả lời câu hỏi của người lớn: **"bé đã chơi gì và có tiến bộ không"**.
 
-Đây là thứ tạo ra quyết định trả tiền. Một phụ huynh thấy giá trị qua báo cáo sẽ nâng gói;
-một phụ huynh không thấy gì sẽ rời đi sau hai tuần.
+Đây là thứ tạo ra quyết định trả tiền. Một người lớn thấy giá trị qua báo cáo sẽ nâng gói;
+một người không thấy gì sẽ rời đi sau hai tuần.
 
 Báo cáo cơ bản đọc dữ liệu tổng hợp từ
 [`telemetry-pipeline.md`](../01-platform/telemetry-pipeline.md), **không** đọc
@@ -62,11 +62,11 @@ ranh giới đó (`D-AK`).
 |---|---|---|
 | `BR-BRP-01` | Đọc từ **rollup**, không quét `telemetry_events` | `BR-TLM-01` |
 | `BR-BRP-02` | Cấm — **NEVER ngôn ngữ chẩn đoán** — dùng đúng bảng nhãn [`adaptive-engine.md`](../01-platform/adaptive-engine.md) §7.4 | Báo cáo phản ánh **hiệu suất trong hệ thống**, không phải năng lực của đứa trẻ |
-| `BR-BRP-03` | Mọi màn hình báo cáo mang câu **miễn trừ** §7.2 | Minh bạch bản chất dữ liệu học tập và tránh việc phụ huynh hiểu nhầm thành chẩn đoán y tế |
+| `BR-BRP-03` | Mọi màn hình báo cáo mang câu **miễn trừ** §7.2 | Minh bạch bản chất dữ liệu học tập và tránh việc người lớn hiểu nhầm thành chẩn đoán y tế |
 | `BR-BRP-04` | Cấm — **NEVER so sánh với trẻ khác** hay với "chuẩn độ tuổi" | `BR-CDC-09` và ranh giới sư phạm |
 | `BR-BRP-05` | Ownership kiểm ở DB | Bảo mật thông tin tiến độ học tập của trẻ, ngăn chặn truy cập trái phép từ tài khoản khác |
 | `BR-BRP-06` | Dữ liệu < 3 phiên → nhãn `Chưa có đủ dữ liệu` | Kết luận từ 1 phiên là kết luận sai |
-| `BR-BRP-07` | Mỗi chỉ số kèm **một câu giải thích thường** | Số không giải thích được là số vô dụng với phụ huynh |
+| `BR-BRP-07` | Mỗi chỉ số kèm **một câu giải thích thường** | Số không giải thích được là số vô dụng với người lớn |
 | `BR-BRP-08` | Cấm — **NEVER hiện `p_learn` thô hay phần trăm thành thạo** | Số chính xác giả tạo mời so sánh |
 
 ## 7. Data

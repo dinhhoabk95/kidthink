@@ -71,7 +71,7 @@ force theo [`legal-consent-admin.md`](../06-admin/legal-consent-admin.md) mục 
 | `BR-LGL-05` | Đổi code **không tự force**. Chỉ `super_admin` force sau deploy qua [`legal-consent-admin.md`](../06-admin/legal-consent-admin.md) | Tách release code khỏi quyết định pháp lý có ảnh hưởng toàn bộ User; tránh một deploy kỹ thuật vô tình khoá hệ thống |
 | `BR-LGL-06` | Ngôn ngữ **rõ ràng**, có tóm tắt đầu mỗi mục | Chính sách không đọc được là chính sách không có |
 | `BR-LGL-07` | Cấm — **NEVER deploy production document chưa qua rà soát pháp lý** | Bảo đảm nội dung công khai đã có người chịu trách nhiệm pháp lý đọc |
-| `BR-LGL-08` | Link tới chính sách trẻ em ở **chân mọi trang** | Minh bạch thông tin và dễ tiếp cận cho phụ huynh ở mọi bề mặt sản phẩm |
+| `BR-LGL-08` | Link tới chính sách trẻ em ở **chân mọi trang** | Minh bạch thông tin và dễ tiếp cận cho người lớn ở mọi bề mặt sản phẩm |
 | `BR-LGL-09` | Cấm — **NEVER sửa nội dung document pháp lý qua admin UI hoặc `seo_pages`** | Nội dung pháp lý phải đi qua diff PR, legal review và rollback code; editor runtime bỏ qua cả ba cổng |
 
 ## 7. Data

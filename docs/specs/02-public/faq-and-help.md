@@ -18,7 +18,7 @@ depends_on:
 
 Giảm ca hỗ trợ và **trả lời câu hỏi chặn quyết định mua** ngay tại chỗ.
 
-Đây cũng là nội dung SEO tốt: phụ huynh tìm "trẻ 4 tuổi nên chơi game bao lâu" không tìm
+Đây cũng là nội dung SEO tốt: người lớn tìm "trẻ 4 tuổi nên chơi game bao lâu" không tìm
 tên sản phẩm.
 
 ## 2. Actors
@@ -75,7 +75,7 @@ Guest · User.
 | "Báo cáo có đánh giá được bé không?" | Nói rõ báo cáo phản ánh **hoạt động trong ứng dụng**, không phải đánh giá phát triển |
 | "Vì sao phải chuyển khoản tay?" | Nói thẳng: hỗ trợ cả cổng thanh toán tự động và chuyển khoản VietQR, xác nhận nhanh chóng |
 | "Dữ liệu bé có an toàn không?" | Nêu cụ thể thu gì, không thu gì, link chính sách |
-| "Có hoàn tiền không?" | Nêu rõ hệ thống không hoàn tiền tự động trong ứng dụng; trường hợp cần hỗ trợ, phụ huynh liên hệ Zalo OA / Facebook Messenger / Email để được tiếp nhận và xử lý chuyển khoản thủ công |
+| "Có hoàn tiền không?" | Nêu rõ hệ thống không hoàn tiền tự động trong ứng dụng; trường hợp cần hỗ trợ, User liên hệ Zalo OA / Facebook Messenger / Email để được tiếp nhận và xử lý chuyển khoản thủ công |
 
 ## 8. API contract
 

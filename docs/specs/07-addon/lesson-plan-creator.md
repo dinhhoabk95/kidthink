@@ -21,7 +21,7 @@ depends_on:
 
 ## 1. Objective
 
-Giáo viên lắp giáo án riêng **từ thư viện đã kiểm duyệt** — chọn lesson và activity có sẵn,
+User lắp giáo án riêng **từ thư viện đã kiểm duyệt** — chọn lesson và activity có sẵn,
 sắp xếp lại, thêm ghi chú, xuất PDF.
 
 Ranh giới then chốt: User tạo **bản copy thuộc sở hữu cá nhân**. Họ **không** sửa được

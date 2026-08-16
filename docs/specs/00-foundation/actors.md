@@ -21,9 +21,12 @@ depends_on:
 Bốn tác nhân, không hơn. Không có persona enum, không có cột `role` trên `users` — năng
 lực suy ra từ entitlement đã mua.
 
-Lý do: một người vừa là phụ huynh vừa là giáo viên là **ca dùng chính**, không phải ca lạ.
+Lý do: một người dùng sản phẩm ở nhà **và** trên lớp là **ca dùng chính**, không phải ca lạ.
 Ép họ chọn một role làm hỏng cả hai trải nghiệm, và mỗi role mới thêm vào là một nhánh
 điều kiện mới ở mọi handler.
+
+Hệ quả về từ vựng: corpus không gọi tên vai trò ngoài đời của User. Cách chọn từ theo ngữ
+cảnh ở [`glossary.md`](glossary.md) §7.4.1, ép bằng `BR-GLOS-04`.
 
 ## 2. Actors
 
@@ -52,7 +55,8 @@ tạo lý do đăng ký.
 
 ### 2.2 User
 
-Một loại duy nhất. Có thể là phụ huynh, có thể là giáo viên — hệ thống **không phân biệt**.
+Một loại duy nhất. Dùng ở nhà hay trên lớp — hệ thống **không phân biệt**. Mọi User đều
+nâng cấp tài khoản, đăng ký gói cước và cấp quyền qua cùng một đường.
 
 ```ts
 interface UserTokenPayload {

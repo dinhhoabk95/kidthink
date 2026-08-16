@@ -22,8 +22,8 @@ MVP không phải "ít tính năng nhất có thể". MVP là **tập nhỏ nh�
 kinh doanh**:
 
 ```
-Phụ huynh tìm thấy sản phẩm → trẻ chơi thử → phụ huynh tạo hồ sơ
-→ trẻ tiếp tục chơi → phụ huynh thấy giá trị qua báo cáo → nâng cấp gói
+User tìm thấy sản phẩm → trẻ chơi thử → User tạo hồ sơ trẻ
+→ trẻ tiếp tục chơi → User thấy giá trị qua báo cáo → nâng cấp gói
 → hệ thống giữ được trải nghiệm học 4–8 tuần
 ```
 
@@ -53,7 +53,7 @@ Không có. Spec phạm vi.
 | **P0 Foundation** | Hệ thống có xương: taxonomy, auth, schema, audit | `../../SPEC.md` §13 |
 | **P1 Play core** | Trẻ chơi được, hệ thống đo được, quyền chặn đúng | idem |
 | **P2 Commerce + Admin** | Tiền vào được, nội dung lớn được không cần dev | idem |
-| **P3 Curriculum** | Trẻ có lộ trình 4–8 tuần, phụ huynh thấy tiến bộ | idem |
+| **P3 Curriculum** | Trẻ có lộ trình 4–8 tuần, người lớn thấy tiến bộ | idem |
 
 Không phase nào được đánh dấu xong khi cổng ra chưa xanh **toàn bộ**. Một cổng ra xanh 9/10
 không phải 90% xong — nó là chưa xong.
@@ -64,7 +64,7 @@ Khi nguồn lực căng, cắt theo đúng thứ tự này:
 
 | # | Cắt gì | Còn lại gì | Mất gì |
 |---|---|---|---|
-| 1 | P3: **1 curriculum theo tuổi** thay vì 5 | Lộ trình vẫn chạy, chứng minh được mô hình | Ít lựa chọn cho phụ huynh |
+| 1 | P3: **1 curriculum theo tuổi** thay vì 5 | Lộ trình vẫn chạy, chứng minh được mô hình | Ít lựa chọn cho User |
 | 2 | P2 Studio: **chỉ sửa level đã seed**, không tạo mới | Nội dung vẫn sửa được không cần deploy | Nội dung mới vẫn cần dev |
 | 3 | P1: **80 game level** thay vì 120 | ~13 level mỗi competency | Nội dung mỏng, trẻ hết bài sớm hơn |
 | 4 | P3: **báo cáo nâng cao rút gọn** — bỏ xu hướng theo tuần | Vẫn có điểm theo competency/skill | Giá trị của `premium` yếu đi |
@@ -138,11 +138,11 @@ Scenario: Chu trình kinh doanh đầy đủ
   And đăng ký tài khoản
   And tạo một hồ sơ trẻ
   And trẻ chơi 3 game và hoàn thành
-  And phụ huynh xem báo cáo cơ bản
-  And phụ huynh tạo đơn thanh toán và nộp chứng từ
+  And người lớn xem báo cáo cơ bản
+  And User tạo đơn thanh toán và nộp chứng từ
   And manager duyệt đơn
   Then trẻ chơi được nội dung premium
-  And phụ huynh xem được báo cáo nâng cao
+  And người lớn xem được báo cáo nâng cao
   And toàn bộ chuỗi trên không cần dev can thiệp
 
 Scenario: BR-MVP-06 — đủ nội dung cho 4 tuần

@@ -211,6 +211,51 @@ describe("checkC9 (banned token negation context)", () => {
     checkC9(specs);
     expect(getViolations()).toHaveLength(0);
   });
+
+  // BR-GLOS-04 — one User type. Real-world role labels are the banned form.
+  it("flags a real-world role label used for a User", () => {
+    const specs = [
+      specWithBody("## 1. Objective\n\nCho phụ huynh xem báo cáo của trẻ."),
+    ];
+    checkC9(specs);
+    expect(getViolations().filter((v) => v.check === "C9")).toHaveLength(1);
+  });
+
+  it("flags giáo viên the same way", () => {
+    const specs = [
+      specWithBody("## 1. Objective\n\nGiáo viên dựng lộ trình riêng."),
+    ];
+    checkC9(specs);
+    expect(getViolations().filter((v) => v.check === "C9")).toHaveLength(1);
+  });
+
+  // The English word is load-bearing in fixed identifiers and must survive.
+  it("does NOT flag parent-bearing technical identifiers", () => {
+    const specs = [
+      specWithBody(
+        "## 8. API contract\n\n403 `PARENT_GATE_REQUIRED` khi thiếu `gate_token`; cookie `parent_gate_trusted_until`."
+      ),
+    ];
+    checkC9(specs);
+    expect(getViolations()).toHaveLength(0);
+  });
+
+  // The glossary has to spell the word out to ban it.
+  it("does NOT flag the glossary that defines the ban", () => {
+    const content = [
+      "---",
+      "spec: GLOSSARY",
+      "---",
+      "## 7. Data",
+      "",
+      "| `phụ huynh` | Một loại User duy nhất | `người lớn` |",
+    ].join("\n");
+    const specs = [
+      makeSpecFile("/fake/glossary.md", "00-foundation/glossary.md", content),
+    ];
+    checkC9(specs);
+    expect(getViolations()).toHaveLength(0);
+  });
 });
 
 describe("checkC6 (BR-ID duplicate definitions + missing vì sao)", () => {

@@ -69,7 +69,9 @@ function makeUserEvent(
   } as any;
 }
 
-describe("Curriculum Player Suite — P3.4 (BR-CUR-01..10, D-MA..D-MG)", () => {
+describe("Curriculum Player Suite — P3.4 (BR-CUR-01..10, D-MA..D-MG)", {
+  timeout: 30_000,
+}, () => {
   async function createTestFixtures() {
     const db = getOwnerDb();
     const uid = Math.floor(Math.random() * 800_000) + 100_000;

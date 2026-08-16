@@ -7,6 +7,11 @@ created: 2026-08-16
 
 # Rà soát corpus spec theo mục tiêu gốc
 
+> **Ghi chú từ vựng (2026-08-16, sau bản rà soát này).** F4 đã được chốt: **một loại User
+> duy nhất**, corpus không gọi tên vai trò ngoài đời của người dùng nữa. Xem
+> [`glossary.md`](../specs/00-foundation/glossary.md) §7.4.1 và `BR-GLOS-04`. Tài liệu này
+> giữ nguyên từ ngữ tại thời điểm rà soát để đọc được bối cảnh; mọi spec đã chuẩn hoá.
+
 ## 0. Mục tiêu gốc dùng làm thước đo
 
 Mục tiêu sản phẩm được phát biểu lại:

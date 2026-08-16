@@ -19,7 +19,7 @@ depends_on:
 
 ## 1. Objective
 
-Hệ thống giữ **dữ liệu học tập của trẻ**. Mất nó là mất thứ không mua lại được — phụ huynh
+Hệ thống giữ **dữ liệu học tập của trẻ**. Mất nó là mất thứ không mua lại được — người lớn
 không thể "chơi lại 8 tuần".
 
 v1 vận hành **không có backup nào**. Spec này biến backup thành điều kiện go-live, không

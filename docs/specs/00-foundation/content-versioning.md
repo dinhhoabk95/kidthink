@@ -23,7 +23,7 @@ Báo cáo học tập của một đứa trẻ phải giải thích được b�
 không phải bản đã sửa ba tháng sau đó.
 
 Không có versioning thì: sửa một game level từ 4 item thành 6 item làm mọi phiên chơi cũ
-trở nên vô nghĩa — điểm 4/4 hôm qua đọc thành 4/6 hôm nay. Phụ huynh nhìn thấy con mình
+trở nên vô nghĩa — điểm 4/4 hôm qua đọc thành 4/6 hôm nay. Người lớn nhìn thấy trẻ của mình
 "tệ đi" vì một quyết định biên tập.
 
 ## 2. Actors

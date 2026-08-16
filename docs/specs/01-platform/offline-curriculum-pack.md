@@ -26,7 +26,7 @@ depends_on:
 
 ## 1. Objective
 
-Cho phép phụ huynh chủ động tải trước toàn bộ nội dung của một tuần hoặc một chủ đề học tập
+Cho phép người lớn chủ động tải trước toàn bộ nội dung của một tuần hoặc một chủ đề học tập
 (curriculum pack) về bộ nhớ cục bộ trên thiết bị tablet của trẻ để chơi mượt mà khi không có kết
 nối Internet (ví dụ khi đi du lịch, trên xe ô tô hoặc khu vực sóng yếu). Hệ thống bảo đảm tính
 toàn vẹn dữ liệu qua manifest có chữ ký băm, kiểm soát hạn mức lưu trữ của trình duyệt (IndexedDB /
@@ -41,7 +41,7 @@ kế thừa cơ chế đệm phiên cục bộ từ [`offline-play.md`](offline-
 
 | Actor | Quyền cần | Làm được gì ở đây |
 |---|---|---|
-| Phụ huynh (User) | Đã đăng nhập (`requireUserAuth`), có entitlement hợp lệ | Chọn tuần học, kiểm tra dung lượng và bấm tải/xoá gói offline |
+| User | Đã đăng nhập (`requireUserAuth`), có entitlement hợp lệ | Chọn tuần học, kiểm tra dung lượng và bấm tải/xoá gói offline |
 | Trẻ (Child) | Đang mở màn hình chơi offline | Chơi các bài học trong gói đã tải mà không cần kết nối mạng |
 | Service Worker | Cache Storage & IndexedDB client | Phục vụ asset offline, lưu hàng đợi sự kiện và kích hoạt đồng bộ nền |
 
@@ -55,10 +55,10 @@ kế thừa cơ chế đệm phiên cục bộ từ [`offline-play.md`](offline-
 
 ## 4. Main flow
 
-1. Phụ huynh mở giao diện chương trình học của con tại `/me/curricula/{uuid}/offline`.
+1. User mở giao diện chương trình học của trẻ tại `/me/curricula/{uuid}/offline`.
 2. Hệ thống kiểm tra entitlement của User (gói standard / premium) và dung lượng khả dụng của
    trình duyệt qua `navigator.storage.estimate()`.
-3. Phụ huynh chọn tuần học muốn tải (ví dụ: Tuần 3 — Hình học không gian, dung lượng ~25 MB).
+3. User chọn tuần học muốn tải (ví dụ: Tuần 3 — Hình học không gian, dung lượng ~25 MB).
 4. Client gọi `GET /api/users/curricula/{uuid}/offline-pack?week=3` để lấy manifest có chữ ký số
    kèm token lease có thời hạn (7 ngày).
 5. Service Worker tải toàn bộ game configs, hình ảnh và audio tương ứng vào Cache Storage chuyên
@@ -73,7 +73,7 @@ kế thừa cơ chế đệm phiên cục bộ từ [`offline-play.md`](offline-
 
 | Nhánh | Điều kiện | Hành vi |
 |---|---|---|
-| Bộ nhớ không đủ | Dung lượng trống < dung lượng gói + 50 MB buffer | Báo lỗi `STORAGE_QUOTA_INSUFFICIENT`, hướng dẫn phụ huynh dọn dẹp |
+| Bộ nhớ không đủ | Dung lượng trống < dung lượng gói + 50 MB buffer | Báo lỗi `STORAGE_QUOTA_INSUFFICIENT`, hướng dẫn người lớn dọn dẹp |
 | Hết hạn lease offline | Quá 7 ngày không kết nối mạng xác thực lại | Khóa gói offline (`OFFLINE_PACK_EXPIRED`), yêu cầu kết nối mạng để mở lại |
 | File tải bị lỗi/hỏng | Checksum hash không khớp manifest | Báo lỗi `OFFLINE_PACK_CORRUPTED`, tự động thử tải lại file hỏng |
 | Quyền gói dịch vụ bị huỷ | User bị thu hồi entitlement hoặc logout | Dọn dẹp toàn bộ dữ liệu gói offline khỏi Cache Storage & IndexedDB |
@@ -84,7 +84,7 @@ kế thừa cơ chế đệm phiên cục bộ từ [`offline-play.md`](offline-
 | ID | Rule | Vì sao |
 |---|---|---|
 | `BR-OCP-01` | Gói học offline là quyền hạn có thời hạn (lease tối đa 7 ngày), không phải bản sao chép nội dung vĩnh viễn | Ngăn chặn việc sao chép lậu nội dung độc quyền và bảo đảm tính cập nhật sư phạm |
-| `BR-OCP-02` | Tải gói offline chỉ được thực hiện từ bề mặt phụ huynh (`/me/curriculum`) sau khi xác thực quyền sở hữu và entitlement hợp lệ | Trẻ không được tự ý tải làm đầy bộ nhớ thiết bị |
+| `BR-OCP-02` | Tải gói offline chỉ được thực hiện từ bề mặt người lớn (`/me/curriculum`) sau khi xác thực quyền sở hữu và entitlement hợp lệ | Trẻ không được tự ý tải làm đầy bộ nhớ thiết bị |
 | `BR-OCP-03` | Cấm — **NEVER** lưu cache nội dung trả phí cho User không có entitlement tại thời điểm tải gói | Bảo vệ hệ thống paywall và ngăn ngừa lỗ hổng rò rỉ nội dung |
 | `BR-OCP-04` | Manifest gói học tập offline phải có chữ ký số hoặc checksum băm để đảm bảo tính toàn vẹn asset trước khi cho phép chơi ngoại tuyến | Tránh việc crash game engine do tải thiếu hoặc lỗi file |
 | `BR-OCP-05` | Khi User đăng xuất, đổi thiết bị hoặc quyền lợi bị thu hồi, toàn bộ gói học tập offline được đánh dấu vô hiệu và dọn dẹp khỏi cache/storage | Đảm bảo an toàn dữ liệu trên thiết bị dùng chung |

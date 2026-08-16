@@ -1,6 +1,6 @@
 ---
 spec: PARENT-GATE
-title: Cổng phụ huynh
+title: Cổng người lớn
 area: play
 status: implemented
 mvp: true
@@ -14,7 +14,7 @@ depends_on:
   - GAME-ENGINE-RUNTIME
 ---
 
-# Cổng phụ huynh
+# Cổng người lớn
 
 ## 1. Objective
 
@@ -61,7 +61,7 @@ tình huống thực tế nhất — trẻ chạm lung tung và thoát ra giữa
 | ID | Rule | Vì sao |
 |---|---|---|
 | `BR-PGT-01` | Nút thoát Cấm — **NEVER tap trúng được** — long-press 800ms | Trẻ chạm ngẫu nhiên rất nhiều |
-| `BR-PGT-02` | Thử thách phải **ngoài tầm** trẻ 3–6 nhưng **tức thì** với người lớn | Mật khẩu làm phụ huynh bỏ cuộc; phép tính hai chữ số thì không |
+| `BR-PGT-02` | Thử thách phải **ngoài tầm** trẻ 3–6 nhưng **tức thì** với người lớn | Mật khẩu làm người lớn bỏ cuộc; phép tính hai chữ số thì không |
 | `BR-PGT-03` | Sai Cấm — **NEVER thông báo tiêu cực cho trẻ** | Trẻ có thể là người thao tác |
 | `BR-PGT-04` | Cửa sổ tin cậy **5 phút**, gắn với tab hiện tại | Đủ để làm việc, không đủ để trẻ tận dụng sau đó |
 | `BR-PGT-05` | Cấm — **NEVER hiện dữ liệu thanh toán** trong khu vực chơi, kể cả sau cổng | Khu vực chơi là bề mặt trẻ |

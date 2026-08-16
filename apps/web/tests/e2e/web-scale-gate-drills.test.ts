@@ -25,7 +25,7 @@ import {
   PAYMENT_REPLAY_WINDOW_SECONDS,
 } from "@kidthink/shared";
 import { eq } from "drizzle-orm";
-import { beforeEach, describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it } from "vitest";
 
 describe("Web Scale Gate Drills & Failure Matrix — Task #78 / P5.3", () => {
   const db = getOwnerDb();
@@ -61,7 +61,7 @@ describe("Web Scale Gate Drills & Failure Matrix — Task #78 / P5.3", () => {
     testChildProfileId = child?.id ?? 0;
 
     // 3. Seed template & game level
-    const templateCode = `GT-${String((Date.now() % 900) + 100)}`;
+    const templateCode = `GT-${String(Math.floor(Math.random() * 899) + 100).padStart(3, "0")}`;
     const [tmpl] = await db
       .insert(gameTemplates)
       .values({
@@ -81,12 +81,12 @@ describe("Web Scale Gate Drills & Failure Matrix — Task #78 / P5.3", () => {
       templateId = existing?.id ?? 0;
     }
 
-    const glCode = `GL-C1-NUM-CNT-${String((Date.now() % 9000) + 1000)}`;
+    const glCode = `GL-C1-NUM-CNT-${String(Math.floor(Math.random() * 8999) + 1000).padStart(4, "0")}`;
     const [gl] = await db
       .insert(gameLevels)
       .values({
         code: glCode,
-        entityId: 401,
+        entityId: Math.floor(Math.random() * 800_000) + 100_000,
         nameVi: "Game Level Scale",
         titleVi: "Game Level Scale",
         difficulty: 1,
@@ -98,6 +98,26 @@ describe("Web Scale Gate Drills & Failure Matrix — Task #78 / P5.3", () => {
       })
       .returning({ id: gameLevels.id });
     gameLevelId = gl?.id ?? 0;
+  });
+
+  afterEach(async () => {
+    if (gameLevelId) {
+      await db
+        .delete(telemetryEvents)
+        .where(eq(telemetryEvents.gameLevelId, gameLevelId));
+      await db
+        .delete(playSessions)
+        .where(eq(playSessions.gameLevelId, gameLevelId));
+      await db.delete(gameLevels).where(eq(gameLevels.id, gameLevelId));
+    }
+    if (testChildProfileId) {
+      await db
+        .delete(childProfiles)
+        .where(eq(childProfiles.id, testChildProfileId));
+    }
+    if (testUserId) {
+      await db.delete(users).where(eq(users.id, testUserId));
+    }
   });
 
   describe("T2 — Automated Payment & Webhook Failure Matrix", () => {

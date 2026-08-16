@@ -17,7 +17,7 @@ depends_on:
 
 ## 1. Objective
 
-Chuyển một phụ huynh chưa biết gì thành **một người đang xem con mình chơi thử** trong dưới
+Chuyển một người lớn chưa biết gì thành **một người đang xem một đứa trẻ chơi thử** trong dưới
 60 giây.
 
 Đây là đỉnh phễu. Mọi khối trên trang phục vụ một trong ba việc: giải thích giá trị, tạo
@@ -25,7 +25,7 @@ niềm tin, hoặc đưa tới chơi thử.
 
 ## 2. Actors
 
-Guest (phụ huynh hoặc giáo viên). Cấm Trẻ không phải đối tượng của trang này.
+Guest — người lớn. Cấm Trẻ không phải đối tượng của trang này.
 
 ## 3. Entry points
 
@@ -70,7 +70,7 @@ Guest (phụ huynh hoặc giáo viên). Cấm Trẻ không phải đối tượn
 | 3 | Cách hoạt động | 3 bước: chọn bé → bé chơi → bạn xem tiến bộ |
 | 4 | Trò chơi nổi bật | 6 game `free`, chơi được ngay |
 | 5 | Chương trình theo tuổi | 3 · 4 · 5 · 6 tuổi |
-| 6 | Cho phụ huynh / cho giáo viên | Hai cột lợi ích |
+| 6 | Dùng ở nhà / dùng trên lớp | Hai cột lợi ích, chia theo ngữ cảnh dùng chứ không theo loại người |
 | 7 | Các gói | Từ `PACKAGE_CATALOG`, một CTA |
 | 8 | Câu hỏi thường gặp | 6 câu, có schema FAQPage |
 | 9 | Chân trang | Pháp lý · liên hệ · chính sách trẻ em |

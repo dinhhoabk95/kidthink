@@ -16,7 +16,7 @@ depends_on: []
 
 ## 1. Objective
 
-Tìm kiếm tự nhiên là kênh acquisition rẻ nhất cho sản phẩm này — phụ huynh tìm "trò chơi tư
+Tìm kiếm tự nhiên là kênh acquisition rẻ nhất cho sản phẩm này — người lớn tìm "trò chơi tư
 duy cho bé 4 tuổi", không tìm tên thương hiệu.
 
 Spec này sở hữu **hạ tầng SEO**; nội dung trang ở [`seo-content-admin.md`](../06-admin/seo-content-admin.md).

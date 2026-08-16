@@ -20,8 +20,7 @@ depends_on:
 
 ## 1. Objective
 
-Giáo viên sắp xếp lộ trình riêng cho lớp mình, hoặc phụ huynh dựng lộ trình theo nhu cầu cụ
-thể của con — từ **nội dung đã kiểm duyệt**.
+User dựng lộ trình riêng cho trẻ của mình — từ **nội dung đã kiểm duyệt**.
 
 Khác chương trình hệ thống ở đúng hai điểm: không qua duyệt, và chỉ trẻ của User đó theo
 được.

@@ -20,7 +20,7 @@ depends_on:
 
 ## 1. Objective
 
-Giáo viên cần **bản giấy** mang vào lớp. Màn hình không thay được tờ giấy đặt cạnh bàn khi đang
+Người dạy cần **bản giấy** mang vào lớp. Màn hình không thay được tờ giấy đặt cạnh bàn khi đang
 dạy.
 
 ## 2. Actors

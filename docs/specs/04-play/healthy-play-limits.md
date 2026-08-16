@@ -20,7 +20,7 @@ depends_on:
 ## 1. Objective
 
 Sản phẩm cho trẻ 3–6 **không được** tối ưu cho thời gian màn hình. Hạn mức là **tính
-năng**, không phải ràng buộc kỹ thuật — nó là lý do phụ huynh tin sản phẩm.
+năng**, không phải ràng buộc kỹ thuật — nó là lý do người lớn tin sản phẩm.
 
 Dừng phải **êm**: trẻ đang chơi dở không bị cắt ngang.
 
@@ -143,7 +143,7 @@ Scenario: BR-HPL-08 — không đặt cao hơn trần gói
   When đặt cap = 90
   Then trả 422
 
-Scenario: BR-HPL-06 — cấp thêm giờ qua cổng phụ huynh
+Scenario: BR-HPL-06 — cấp thêm giờ qua Parent Gate
   When gọi grant-extra-time không có gate_token hợp lệ
   Then trả 403
 

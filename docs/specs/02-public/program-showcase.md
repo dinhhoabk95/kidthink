@@ -17,7 +17,7 @@ depends_on:
 
 ## 1. Objective
 
-Cho phụ huynh thấy **lộ trình**, không chỉ một đống game rời rạc.
+Cho người lớn thấy **lộ trình**, không chỉ một đống game rời rạc.
 
 "Chương trình 42 tuần cho bé 4 tuổi" bán được; "120 trò chơi" thì không — lộ trình là thứ
 tạo cảm giác có kế hoạch.
@@ -185,4 +185,4 @@ Scenario: BR-PSH-04 — structured data Course
 
 | # | Câu hỏi | Chặn phase | Đề xuất chốt | Chủ |
 |---|---|---|---|---|
-| 1 | 2 tuần miễn phí có quá nhiều hay quá ít? | P3 | Giữ 2 tuần xem thử cho MVP để phụ huynh có đủ trải nghiệm đánh giá trước khi nâng cấp | người quyết |
+| 1 | 2 tuần miễn phí có quá nhiều hay quá ít? | P3 | Giữ 2 tuần xem thử cho MVP để người lớn có đủ trải nghiệm đánh giá trước khi nâng cấp | người quyết |

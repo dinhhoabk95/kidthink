@@ -79,7 +79,7 @@ Banner ở lần truy cập đầu · `/cookie`.
 | Khoá | Mục đích |
 |---|---|
 | `cookie_notice_ack` | Đã đóng banner |
-| `parent_gate_trusted_until` | Cửa sổ tin cậy cổng phụ huynh |
+| `parent_gate_trusted_until` | Cửa sổ tin cậy Parent Gate |
 | `emoji_recent` | 12 emoji gần đây (admin) |
 | `pending_events` | Buffer event offline |
 

@@ -179,4 +179,4 @@ Scenario: BR-PRG-06 — mastery không nhận từ client
 | # | Câu hỏi | Chặn phase | Đề xuất chốt | Chủ |
 |---|---|---|---|---|
 | 1 | Skill C5 cần người lớn chấm — luồng UI thế nào và ai nhắc? | P3 | hoãn — trỏ sang quyết định `D-BA` ở [`adaptive-engine.md`](../01-platform/adaptive-engine.md); MVP chưa hỗ trợ skill chấm tay C5 | Studio UI |
-| ~~2~~ | ~~Bản đồ 6 vùng có quá nhiều cho trẻ 3 tuổi không? Cân nhắc chỉ hiện vùng đang học~~ **Đóng 2026-08-11 (D-MJ)**: Chỉ hiển thị 1-2 vùng đang học và các chặng gần nhất trên giao diện mầm non; thu gọn 6 vùng vào trang báo cáo phụ huynh | — | đã đóng | D-MJ |
+| ~~2~~ | ~~Bản đồ 6 vùng có quá nhiều cho trẻ 3 tuổi không? Cân nhắc chỉ hiện vùng đang học~~ **Đóng 2026-08-11 (D-MJ)**: Chỉ hiển thị 1-2 vùng đang học và các chặng gần nhất trên giao diện mầm non; thu gọn 6 vùng vào trang báo cáo cho người lớn | — | đã đóng | D-MJ |

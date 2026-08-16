@@ -45,6 +45,7 @@ Không có.
 | `BR-GLOS-01` | Thuật ngữ ở §7 là duy nhất. Spec dùng từ đồng nghĩa phải sửa | Hai tên cho một thứ sinh ra hai bảng |
 | `BR-GLOS-02` | Thêm thuật ngữ mới = cập nhật file này **trước**, dùng sau | Từ vựng trôi thì tra cứu chéo chết |
 | `BR-GLOS-03` | Từ ở §8 bị **cấm** trong mọi spec, code, và UI | Chúng mang nghĩa sai hoặc thuộc phạm vi đã loại bỏ |
+| `BR-GLOS-04` | Cấm — **NEVER gọi tên vai trò ngoài đời của User**. Chọn từ theo ngữ cảnh ở §7.4.1 | Một loại User duy nhất (`BR-ACT-05`). Nhãn nghề nghiệp trong spec sẽ thành nhánh điều kiện trong code, rồi thành cột trên `users` |
 
 ## 7. Data — từ điển
 
@@ -94,7 +95,10 @@ Không có.
 | Chuẩn | Tiếng Việt | Nghĩa |
 |---|---|---|
 | **Guest** | Khách | Chưa đăng nhập. Không có record |
-| **User** | Người dùng | Một loại duy nhất. Có thể là phụ huynh, có thể là giáo viên |
+| **User** | Người dùng | **Một loại duy nhất.** Hệ thống không phân biệt vai trò ngoài đời — xem §7.4.1 |
+| **Người lớn** | Người lớn | User đang ở bề mặt đối lập với trẻ: cổng, hạn mức, báo cáo, bài giảng |
+| **Người giám hộ** | Người giám hộ | Vai trò **pháp lý** trong đồng ý dữ liệu trẻ. Chỉ dùng ở ngữ cảnh pháp lý |
+| **Người dạy** | Người dạy | Người chạy một Lesson hoặc Activity. Không phải một loại tài khoản |
 | **Child Profile** | Hồ sơ trẻ | Thuộc User. **Không có tài khoản, không có credential** |
 | **Manager** | Quản trị viên | `super_admin` \| `content_reviewer`. Không tự đăng ký |
 | **Entitlement** | Quyền sử dụng | Một khoá năng lực đã được cấp, có hạn |
@@ -103,6 +107,27 @@ Không có.
 | **Add-on** | Gói bổ sung | Package trục độc lập, không mở tier game |
 | **Access tier** | Bậc truy cập | Tier `premium` bao hàm tier `standard`, tier `standard` bao hàm tier `login`, tier `login` bao hàm tier `free` — áp dụng trên **content** |
 | **Quota** | Hạn mức | Giới hạn đếm được: số trẻ, phút chơi/ngày, lượt AI |
+
+#### 7.4.1 Một loại User — cách gọi trong corpus
+
+Hệ thống có **một** loại tài khoản người dùng. Người mua gói cho con ở nhà và người dùng
+sản phẩm trên lớp là **cùng một tác nhân `User`**: cùng bảng `users`, cùng guard, cùng
+đường nâng cấp tài khoản và đăng ký gói cước. Năng lực suy ra từ `entitlements`, không từ
+nghề nghiệp — `BR-ACT-05`.
+
+Vì vậy corpus **không** gọi tên nghề nghiệp của người dùng. Chọn từ theo **ngữ cảnh**:
+
+| Ngữ cảnh đang nói | Từ chuẩn |
+|---|---|
+| Tài khoản, quyền, hạn mức, thanh toán, gói cước | **User** |
+| Bề mặt đối lập với trẻ — cổng, hạn mức giờ chơi, báo cáo, bài giảng | **người lớn** |
+| Vai trò pháp lý khi đồng ý cho thu dữ liệu trẻ | **người giám hộ** |
+| Người đang chạy một Lesson hoặc Activity | **người dạy** |
+| Nơi sản phẩm được dùng, khi khác biệt là có thật | **ở nhà** / **trên lớp** |
+
+Dòng cuối là cách duy nhất được phép nêu khác biệt: phân biệt theo **ngữ cảnh sử dụng**,
+không theo **loại người**. Một bài giảng có biến thể cho nhóm đông là khác biệt về ngữ
+cảnh; "bản dành cho giáo viên" là khác biệt về loại người và bị cấm.
 
 ### 7.5 Chơi và đo
 
@@ -113,7 +138,7 @@ Không có.
 | **Mastery state** | Trạng thái thành thạo | Ước lượng `p_learn` của một trẻ trên một Skill |
 | **ZPD** | Vùng phát triển gần | Khoảng độ khó vừa sức — quá dễ trẻ bỏ, quá khó trẻ khóc |
 | **Scaffolding** | Trợ giúp leo thang | Gợi ý tăng dần theo đồng hồ hoặc số miss, **không theo yêu cầu** |
-| **Parent Gate** | Cổng phụ huynh | Rào chặn trẻ rời khu vực chơi |
+| **Parent Gate** | Cổng người lớn | Rào chặn trẻ rời khu vực chơi. Tên tiếng Anh và mọi định danh kỹ thuật ([`parent-gate.md`](../04-play/parent-gate.md), `PARENT_GATE_REQUIRED`, `parent_gate_trusted_until`, `gate_token`) **bất biến** |
 | **`child_uuid`** | Định danh giả của trẻ | Dùng trong telemetry. **Không** phải PII |
 
 ### 7.6 Hai lớp dữ liệu
@@ -140,6 +165,12 @@ trong corpus, không phải hợp đồng API.
 | `domain` (cho tầng 2 taxonomy) | Trùng nghĩa với domain module | `strand` |
 | `game` (trần trụi) | Mơ hồ giữa Template và Level | `game_template` / `game_level` |
 | `student`, `pupil` | Trẻ 3–6 không phải học sinh trong hệ thống | `child profile` |
+| `phụ huynh` | Một loại User duy nhất — §7.4.1. Gọi tên vai trò ngoài đời là dựng lại phân biệt mà `BR-ACT-05` đã bỏ | `User` · `người lớn` · `người giám hộ` · `người dạy` |
+| `giáo viên` | idem | idem |
+
+Hai từ cuối bị cấm khi **chỉ người dùng**. Định danh kỹ thuật chứa `parent` — [`parent-gate.md`](../04-play/parent-gate.md),
+`PARENT_GATE_REQUIRED`, `parent_gate_trusted_until`, `gate_token` — là tên riêng bất biến,
+không thuộc phạm vi cấm này.
 | `score` hiển thị cho trẻ | Không hiện điểm lúc chơi | `sao`, `hoàn thành` |
 | "chậm phát triển", "IQ", "chẩn đoán" | Vi phạm ranh giới báo cáo | Nhãn ở [`advanced-report.md`](../03-account/advanced-report.md) |
 
@@ -155,6 +186,12 @@ Scenario: BR-GLOS-01 — tầng 2 taxonomy chỉ gọi là strand
   Given toàn bộ corpus spec và schema
   When tìm từ "domain" dùng theo nghĩa tầng 2 taxonomy
   Then không có kết quả
+
+Scenario: BR-GLOS-04 — corpus không gọi tên vai trò ngoài đời của User
+  Given toàn bộ thư mục docs/specs
+  When cổng C9 quét tìm "phụ huynh" và "giáo viên"
+  Then không có kết quả nào ngoài file này
+  And định danh kỹ thuật chứa parent không bị báo lỗi
 ```
 
 ## 10. Boundaries
