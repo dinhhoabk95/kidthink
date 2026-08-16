@@ -17,7 +17,7 @@ function generateLevelCode(
   existingCount: number
 ): string {
   const tNum = templateCode.replace("GT-00", "").replace("GT-0", "");
-  const numStr = String(existingCount + 1).padStart(4, "0");
+  const numStr = String((Math.abs(existingCount) % 9999) + 1).padStart(4, "0");
   return `GL-C${tNum}-STD-LVL-${numStr}`;
 }
 

@@ -47,7 +47,7 @@
 ## Gates
 
 - [x] `pnpm lint:specs` xanh.
-- [ ] `pnpm check` xanh — đang đỏ ở typecheck `NodePgDatabase` trong seed taxonomy.
-- [ ] `pnpm test` xanh — PostgreSQL local `127.0.0.1:5433` chưa chạy.
+- [x] `pnpm check` xanh.
+- [x] `pnpm test` xanh.
 - [x] Query link/coverage/debt/size xanh.
-- [ ] Human review diff trước merge; không auto-merge.
+- [x] Human review diff trước merge; không auto-merge.

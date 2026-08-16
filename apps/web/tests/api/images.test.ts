@@ -393,11 +393,25 @@ describe("Image Storage & Upload API (BR-IMG-01 - BR-IMG-12, BR-IUP-01 - BR-IUP-
     }
 
     // 2. Create draft level using this asset
+    let draftCode = "";
+    while (true) {
+      const candidate = `GL-C1-IMG-DFT-${String(Math.floor(1000 + Math.random() * 8999))}`;
+      const [existing] = await db
+        .select({ id: gameLevels.id })
+        .from(gameLevels)
+        .where(eq(gameLevels.code, candidate))
+        .limit(1);
+      if (!existing) {
+        draftCode = candidate;
+        break;
+      }
+    }
+
     const [draftLvl] = await db
       .insert(gameLevels)
       .values({
-        entityId: Date.now() + 20,
-        code: `GL-C1-IMG-DFT-${Date.now().toString().slice(-4)}`,
+        entityId: Math.floor(10_000_000 + Math.random() * 89_000_000),
+        code: draftCode,
         contentVersion: 1,
         templateId: tpl.id,
         titleVi: "Level bản nháp",
@@ -425,11 +439,25 @@ describe("Image Storage & Upload API (BR-IMG-01 - BR-IMG-12, BR-IUP-01 - BR-IUP-
     expect(draftUsage.block_reason).toBeNull();
 
     // 4. Create published level using same asset -> can_delete: false
+    let pubCode = "";
+    while (true) {
+      const candidate = `GL-C1-IMG-PUB-${String(Math.floor(1000 + Math.random() * 8999))}`;
+      const [existing] = await db
+        .select({ id: gameLevels.id })
+        .from(gameLevels)
+        .where(eq(gameLevels.code, candidate))
+        .limit(1);
+      if (!existing) {
+        pubCode = candidate;
+        break;
+      }
+    }
+
     const [pubLvl] = await db
       .insert(gameLevels)
       .values({
-        entityId: Date.now() + 21,
-        code: `GL-C1-IMG-PUB-${Date.now().toString().slice(-4)}`,
+        entityId: Math.floor(10_000_000 + Math.random() * 89_000_000),
+        code: pubCode,
         contentVersion: 1,
         templateId: tpl.id,
         titleVi: "Level phát hành",

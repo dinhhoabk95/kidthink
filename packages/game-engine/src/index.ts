@@ -44,8 +44,19 @@ export {
   RETRY_ENCOURAGEMENTS,
 } from "./systems/feedback-system";
 export { type Particle, RenderSystem } from "./systems/render-system";
-export { ScaffoldingSystem } from "./systems/scaffolding";
+export {
+  type AgeBand as ScaffoldingAgeBand,
+  type ScaffoldAction,
+  type ScaffoldingBandThresholds,
+  type ScaffoldingLevel,
+  ScaffoldingSystem,
+  type ScaffoldState,
+} from "./systems/scaffolding";
 export { SFXEngine, type SFXType } from "./systems/sfx-engine";
+export {
+  type SpeechOptions,
+  SpeechSynthesisAdapter,
+} from "./systems/speech-synthesis-adapter";
 export { GT001_FIXTURES } from "./templates/GT-001/fixtures";
 export { GT001Session } from "./templates/GT-001/gt001-session";
 export { GT002Session } from "./templates/GT-002/gt002-session";

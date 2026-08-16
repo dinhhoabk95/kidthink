@@ -1,6 +1,6 @@
 /**
  * ScaffoldingSystem — Escalate hints automatically based on age-band timer or miss streak.
- * Implements BR-SCF-01..08 & spec SCAFFOLDING-AND-HINTS.
+ * Implements BR-SCF-01..08, BR-ENG-10, BR-A11-11 & spec SCAFFOLDING-AND-HINTS.
  */
 
 export type ScaffoldingLevel = 0 | 1 | 2 | 3;
@@ -14,6 +14,7 @@ export interface ScaffoldState {
   roundIndex: number;
   l3DurationMs: number;
   skipSuggested: boolean;
+  voiceAvailable?: boolean;
 }
 
 export interface ScaffoldingBandThresholds {
@@ -27,7 +28,7 @@ export interface ScaffoldingBandThresholds {
 
 export interface ScaffoldAction {
   level: ScaffoldingLevel;
-  trigger: "timer" | "miss_streak";
+  trigger: "timer" | "miss_streak" | "voice_fallback" | "manual";
   focusIndex: number;
   ghostHandSpeed?: number;
   reducedMotion?: boolean;
@@ -107,6 +108,29 @@ export class ScaffoldingSystem {
       roundIndex: 0,
       l3DurationMs: 0,
       skipSuggested: false,
+      voiceAvailable: true,
+    };
+  }
+
+  /**
+   * Immediate visual fallback when speech is unavailable (BR-ENG-10, BR-A11-11).
+   * Promotes scaffolding to Level 2 (ghost hand demonstration) directly.
+   */
+  triggerVisualFallback(
+    targetFocusIndex = 0,
+    state?: ScaffoldState,
+    prefersReducedMotion = false
+  ): ScaffoldAction {
+    const targetState = state || this.internalState;
+    targetState.level = 2;
+    targetState.focusIndex = targetFocusIndex;
+
+    return {
+      level: 2,
+      trigger: "voice_fallback",
+      focusIndex: targetFocusIndex,
+      ghostHandSpeed: 1.0,
+      reducedMotion: prefersReducedMotion,
     };
   }
 
