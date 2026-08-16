@@ -10,15 +10,45 @@ import {
 const UNIQUE_DUP_REGEX = /unique|duplicate/i;
 
 describe("lesson_activities Migration & Constraint Tests (Task 2)", () => {
+  async function getUniqueLessonCode() {
+    const db = getOwnerDb();
+    while (true) {
+      const candidate = `LES-${String(Math.floor(1000 + Math.random() * 8999))}`;
+      const [existing] = await db
+        .select({ id: lessons.id })
+        .from(lessons)
+        .where(eq(lessons.code, candidate))
+        .limit(1);
+      if (!existing) {
+        return candidate;
+      }
+    }
+  }
+
+  async function getUniqueActivityCode() {
+    const db = getOwnerDb();
+    while (true) {
+      const candidate = `ACT-${String(Math.floor(1000 + Math.random() * 8999))}`;
+      const [existing] = await db
+        .select({ id: activities.id })
+        .from(activities)
+        .where(eq(activities.code, candidate))
+        .limit(1);
+      if (!existing) {
+        return candidate;
+      }
+    }
+  }
+
   it("rejects duplicate activity_id in the same lesson with unique constraint violation (negative test)", async () => {
     const db = getOwnerDb();
-    const lesCode = `LES-${(Math.floor(Math.random() * 9000) + 1000).toString()}`;
-    const actCode = `ACT-${(Math.floor(Math.random() * 9000) + 1000).toString()}`;
+    const lesCode = await getUniqueLessonCode();
+    const actCode = await getUniqueActivityCode();
 
     const [les] = await db
       .insert(lessons)
       .values({
-        entityId: Math.floor(Math.random() * 100_000) + 1000,
+        entityId: Math.floor(Math.random() * 800_000) + 100_000,
         code: lesCode,
         contentVersion: 1,
         titleVi: "Lesson Test",
@@ -34,7 +64,7 @@ describe("lesson_activities Migration & Constraint Tests (Task 2)", () => {
     const [act] = await db
       .insert(activities)
       .values({
-        entityId: Math.floor(Math.random() * 100_000) + 1000,
+        entityId: Math.floor(Math.random() * 800_000) + 100_000,
         code: actCode,
         contentVersion: 1,
         kind: "discussion",
@@ -77,14 +107,14 @@ describe("lesson_activities Migration & Constraint Tests (Task 2)", () => {
 
   it("supports atomic position swap of activities in a transaction", async () => {
     const db = getOwnerDb();
-    const lesCode = `LES-${(Math.floor(Math.random() * 9000) + 1000).toString()}`;
-    const actCode1 = `ACT-${(Math.floor(Math.random() * 9000) + 1000).toString()}`;
-    const actCode2 = `ACT-${(Math.floor(Math.random() * 9000) + 1000).toString()}`;
+    const lesCode = await getUniqueLessonCode();
+    const actCode1 = await getUniqueActivityCode();
+    const actCode2 = await getUniqueActivityCode();
 
     const [les] = await db
       .insert(lessons)
       .values({
-        entityId: Math.floor(Math.random() * 100_000) + 1000,
+        entityId: Math.floor(Math.random() * 800_000) + 100_000,
         code: lesCode,
         contentVersion: 1,
         titleVi: "Lesson Test Swap",
@@ -100,7 +130,7 @@ describe("lesson_activities Migration & Constraint Tests (Task 2)", () => {
     const [act1] = await db
       .insert(activities)
       .values({
-        entityId: Math.floor(Math.random() * 100_000) + 1000,
+        entityId: Math.floor(Math.random() * 800_000) + 100_000,
         code: actCode1,
         contentVersion: 1,
         kind: "discussion",
@@ -115,7 +145,7 @@ describe("lesson_activities Migration & Constraint Tests (Task 2)", () => {
     const [act2] = await db
       .insert(activities)
       .values({
-        entityId: Math.floor(Math.random() * 100_000) + 1000,
+        entityId: Math.floor(Math.random() * 800_000) + 100_000,
         code: actCode2,
         contentVersion: 1,
         kind: "movement",
