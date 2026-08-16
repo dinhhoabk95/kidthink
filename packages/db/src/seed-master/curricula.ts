@@ -1,4 +1,4 @@
-import { asc, eq } from "drizzle-orm";
+import { and, asc, eq } from "drizzle-orm";
 import type { getOwnerDb } from "../client.ts";
 import { lessons } from "../schema/content.ts";
 import {
@@ -151,7 +151,7 @@ async function upsertCurriculumRecord(
   const [existing] = await db
     .select({ id: curricula.id, status: curricula.status })
     .from(curricula)
-    .where(eq(curricula.code, cfg.code))
+    .where(and(eq(curricula.code, cfg.code), eq(curricula.contentVersion, 1)))
     .limit(1);
 
   if (existing?.id) {
@@ -176,17 +176,17 @@ async function upsertCurriculumRecord(
       authoredIn: "repo_seed",
       publishedAt: cfg.status === "published" ? new Date() : null,
     })
-    .onConflictDoUpdate({
-      target: [curricula.code, curricula.contentVersion],
-      set: {
-        titleVi: cfg.titleVi,
-        descriptionVi: cfg.descriptionVi,
-        accessTier: cfg.accessTier,
-        status: cfg.status,
-        updatedAt: new Date(),
-      },
-    })
+    .onConflictDoNothing()
     .returning({ id: curricula.id });
+
+  if (!inserted?.id) {
+    const [found] = await db
+      .select({ id: curricula.id })
+      .from(curricula)
+      .where(and(eq(curricula.code, cfg.code), eq(curricula.contentVersion, 1)))
+      .limit(1);
+    return { curriculumId: found?.id ?? 0, isNew: false };
+  }
 
   return { curriculumId: inserted.id, isNew: true };
 }
