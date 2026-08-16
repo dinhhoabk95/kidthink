@@ -1,3 +1,4 @@
+import { eq } from "drizzle-orm";
 import fc from "fast-check";
 import { describe, expect, it } from "vitest";
 import { getOwnerDb } from "../../src/index.ts";
@@ -224,16 +225,13 @@ describe("Taxonomy Schema Integration Tests", () => {
 });
 
 function sqlEqual(code: string) {
-  const { eq } = require("drizzle-orm");
   return eq(competencies.code, code);
 }
 
 function sqlEqualStrand(code: string) {
-  const { eq } = require("drizzle-orm");
   return eq(strands.code, code);
 }
 
 function sqlIdEqual(id: number) {
-  const { eq } = require("drizzle-orm");
   return eq(strands.id, id);
 }

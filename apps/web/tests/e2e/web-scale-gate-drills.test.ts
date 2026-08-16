@@ -196,12 +196,16 @@ describe("Web Scale Gate Drills & Failure Matrix — Task #78 / P5.3", () => {
     });
 
     it("generates offline curriculum pack manifest with deterministic lease and assets", async () => {
-      const curriculumCode = `CUR-99${Math.floor(Math.random() * 9)}`;
+      const curriculumCode =
+        `CUR-WS-${Date.now()}-${Math.floor(Math.random() * 8999 + 1000)}`.slice(
+          0,
+          50
+        );
       const [curr] = await db
         .insert(curricula)
         .values({
           code: curriculumCode,
-          entityId: 501,
+          entityId: Math.floor(100_000 + Math.random() * 800_000),
           titleVi: "Chương trình Web Scale",
           accessTier: "standard",
           totalWeeks: 1,

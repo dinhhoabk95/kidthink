@@ -33,7 +33,6 @@ describe("P3.6 Next Game Recommendation Invariants (BR-REC-01..08, D-MQ..D-MW)",
   async function createTestFixtures() {
     const db = getOwnerDb();
     const uniqueHex = crypto.randomBytes(4).toString("hex");
-    const randNum = crypto.randomInt(100_000, 999_999);
 
     // 1. Create User and Child
     const [u] = await db
@@ -167,12 +166,28 @@ describe("P3.6 Next Game Recommendation Invariants (BR-REC-01..08, D-MQ..D-MW)",
         .returning();
     }
 
+    // Helper to generate unique valid level code
+    const makeLevelCode = async () => {
+      for (let attempt = 0; attempt < 50; attempt++) {
+        const candidate = `GL-C1-NUM-CNT-${String(Math.floor(1000 + Math.random() * 8999))}`;
+        const existing = await db
+          .select({ id: gameLevels.id })
+          .from(gameLevels)
+          .where(eq(gameLevels.code, candidate))
+          .limit(1);
+        if (existing.length === 0) {
+          return candidate;
+        }
+      }
+      return `GL-C1-NUM-CNT-${String(Math.floor(1000 + Math.random() * 8999))}`;
+    };
+
     // 4. Game Levels
     const [levelFree1] = await db
       .insert(gameLevels)
       .values({
-        entityId: randNum + 1,
-        code: `GL-C1-CNT-FREE-1-${uniqueHex}`,
+        entityId: Math.floor(100_000 + Math.random() * 800_000),
+        code: await makeLevelCode(),
         contentVersion: 1,
         templateId: tmpl.id,
         titleVi: "Đếm táo miễn phí",
@@ -190,8 +205,8 @@ describe("P3.6 Next Game Recommendation Invariants (BR-REC-01..08, D-MQ..D-MW)",
     const [levelFree2] = await db
       .insert(gameLevels)
       .values({
-        entityId: randNum + 2,
-        code: `GL-C1-CNT-FREE-2-${uniqueHex}`,
+        entityId: Math.floor(100_000 + Math.random() * 800_000),
+        code: await makeLevelCode(),
         contentVersion: 1,
         templateId: tmpl.id,
         titleVi: "Đếm chuối miễn phí",
@@ -209,8 +224,8 @@ describe("P3.6 Next Game Recommendation Invariants (BR-REC-01..08, D-MQ..D-MW)",
     const [levelStandard] = await db
       .insert(gameLevels)
       .values({
-        entityId: randNum + 3,
-        code: `GL-C1-CNT-STD-1-${uniqueHex}`,
+        entityId: Math.floor(100_000 + Math.random() * 800_000),
+        code: await makeLevelCode(),
         contentVersion: 1,
         templateId: tmpl.id,
         titleVi: "Đếm cam tiêu chuẩn",
@@ -228,8 +243,8 @@ describe("P3.6 Next Game Recommendation Invariants (BR-REC-01..08, D-MQ..D-MW)",
     const [levelPremium] = await db
       .insert(gameLevels)
       .values({
-        entityId: randNum + 4,
-        code: `GL-C1-CNT-PRM-1-${uniqueHex}`,
+        entityId: Math.floor(100_000 + Math.random() * 800_000),
+        code: await makeLevelCode(),
         contentVersion: 1,
         templateId: tmpl.id,
         titleVi: "Đếm dâu cao cấp",

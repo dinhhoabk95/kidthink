@@ -177,8 +177,11 @@ describe("P4.5 Custom Game Mastery Isolation (BR-CGB-06)", () => {
     expect(config.source_ref_uuid).toBe(created.uuid);
     expect(config.child_uuid).toBe(childA.uuid);
 
-    // 3. Verify mastery_state remains empty (0 rows)
-    const masteryRows = await db.select().from(masteryState);
+    // 3. Verify mastery_state for this child remains empty (0 rows)
+    const masteryRows = await db
+      .select()
+      .from(masteryState)
+      .where(eq(masteryState.childProfileId, childA.id));
     expect(masteryRows).toHaveLength(0);
   });
 });
