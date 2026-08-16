@@ -12,15 +12,44 @@ import { gameLevels, gameTemplates } from "../../src/schema/game.ts";
 import { users } from "../../src/schema/identity.ts";
 
 describe("Curriculum Schema Integration Tests", () => {
+  async function getUniqueCurriculumCode() {
+    const db = getOwnerDb();
+    while (true) {
+      const candidate = `CUR-${String(Math.floor(1000 + Math.random() * 8999))}`;
+      const [existing] = await db
+        .select({ id: curricula.id })
+        .from(curricula)
+        .where(eq(curricula.code, candidate))
+        .limit(1);
+      if (!existing) {
+        return candidate;
+      }
+    }
+  }
+
+  async function getUniqueGameLevelCode() {
+    const db = getOwnerDb();
+    while (true) {
+      const candidate = `GL-C1-NUM-DRAG-${String(Math.floor(1000 + Math.random() * 8999))}`;
+      const [existing] = await db
+        .select({ id: gameLevels.id })
+        .from(gameLevels)
+        .where(eq(gameLevels.code, candidate))
+        .limit(1);
+      if (!existing) {
+        return candidate;
+      }
+    }
+  }
+
   it("orphan curriculum_items.(entity_type, entity_id) polymorphic check", async () => {
     const db = getOwnerDb();
-    const curCode = `CUR-${(Math.floor(Math.random() * 800) + 100).toString()}`;
-    await db.delete(curricula).where(eq(curricula.code, curCode));
+    const curCode = await getUniqueCurriculumCode();
 
     const [cur] = await db
       .insert(curricula)
       .values({
-        entityId: 1,
+        entityId: Math.floor(10_000_000 + Math.random() * 89_000_000),
         code: curCode,
         contentVersion: 1,
         titleVi: "Lộ trình Test",
@@ -69,11 +98,8 @@ describe("Curriculum Schema Integration Tests", () => {
             .where(eq(gameTemplates.code, gtCode))
         )[0].id;
 
-    const seq = (Math.floor(Math.random() * 9000) + 1000).toString();
-    const glCode = `GL-C1-NUM-DRAG-${seq}`;
+    const glCode = await getUniqueGameLevelCode();
     const lineageAnchorEntityId = Math.floor(Math.random() * 900_000) + 100_000;
-
-    await db.delete(gameLevels).where(eq(gameLevels.code, glCode));
 
     const [glV1] = await db
       .insert(gameLevels)
@@ -91,12 +117,11 @@ describe("Curriculum Schema Integration Tests", () => {
       .returning();
 
     // 2. Create Curriculum and Curriculum Item pointing to lineage anchor
-    const curCode = `CUR-${(Math.floor(Math.random() * 800) + 100).toString()}`;
-    await db.delete(curricula).where(eq(curricula.code, curCode));
+    const curCode = await getUniqueCurriculumCode();
     const [cur] = await db
       .insert(curricula)
       .values({
-        entityId: 10,
+        entityId: Math.floor(10_000_000 + Math.random() * 89_000_000),
         code: curCode,
         contentVersion: 1,
         titleVi: "Curriculum Lineage Test",
