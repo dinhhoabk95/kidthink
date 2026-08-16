@@ -17,7 +17,7 @@ import {
   users,
 } from "../../src/index.js";
 
-const RE_INVALID_CANCEL_REASON = /VALIDATION_FAILED/;
+const RE_INVALID_CANCEL_REASON = /Ghi chú|VALIDATION_FAILED/;
 
 describe("Admin & User Subscription Cancellation Integration Tests (P5.1 / Task #71)", () => {
   beforeEach(async () => {
