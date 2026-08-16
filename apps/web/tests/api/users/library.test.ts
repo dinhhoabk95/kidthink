@@ -29,6 +29,9 @@ function mockUserEvent(
       ? `/?${new URLSearchParams(query).toString()}`
       : "/";
 
+  const CSRF_TOKEN =
+    "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef";
+
   return {
     method,
     path: queryStr,
@@ -37,7 +40,11 @@ function mockUserEvent(
     node: {
       req: {
         url: queryStr,
-        headers: {},
+        headers: {
+          "user-agent": "VitestTestRunner/1.0",
+          "x-csrf-token": CSRF_TOKEN,
+          cookie: `tm_u_csrf=${CSRF_TOKEN}`,
+        },
       },
       res: {},
     },

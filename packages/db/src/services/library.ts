@@ -198,6 +198,27 @@ export async function addLibraryItem(
     note?: string | null;
   }
 ) {
+  const [existing] = await db
+    .select({
+      id: libraryItems.userId,
+    })
+    .from(libraryItems)
+    .where(
+      and(
+        eq(libraryItems.userId, params.userId),
+        eq(libraryItems.entityType, params.entityType),
+        eq(libraryItems.entityId, params.entityId)
+      )
+    );
+
+  if (existing) {
+    const err = new Error("Mục này đã tồn tại trong thư viện.");
+    (err as unknown as { statusCode: number; code: string }).statusCode = 409;
+    (err as unknown as { statusCode: number; code: string }).code =
+      "DUPLICATE_LIBRARY_ITEM";
+    throw err;
+  }
+
   const [created] = await db
     .insert(libraryItems)
     .values({
@@ -206,17 +227,6 @@ export async function addLibraryItem(
       entityId: params.entityId,
       collectionId: params.collectionId ?? null,
       note: params.note?.trim() ?? null,
-    })
-    .onConflictDoUpdate({
-      target: [
-        libraryItems.userId,
-        libraryItems.entityType,
-        libraryItems.entityId,
-      ],
-      set: {
-        collectionId: params.collectionId ?? null,
-        note: params.note?.trim() ?? null,
-      },
     })
     .returning();
 

@@ -212,7 +212,8 @@ describe("Identity Schema Integration Tests", () => {
     const allLogs = await ownerDb
       .select()
       .from(consentLogs)
-      .where(eq(consentLogs.userId, u.id));
+      .where(eq(consentLogs.userId, u.id))
+      .orderBy(consentLogs.id);
 
     // Both rows must exist intact (INSERT-only)
     expect(allLogs.length).toBe(2);

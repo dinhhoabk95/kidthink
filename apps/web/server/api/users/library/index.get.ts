@@ -1,4 +1,5 @@
 import { getOwnerDb, getUserLibrary } from "@kidthink/db";
+import { allowedTiers } from "@kidthink/shared";
 import { defineEventHandler, getQuery } from "h3";
 import { z } from "zod";
 import {
@@ -18,15 +19,15 @@ const LibraryQuerySchema = z.object({
 });
 
 function resolveActiveTier(
-  allowedTiers: string[]
+  userAllowedTiers: string[]
 ): "free" | "login" | "standard" | "premium" {
-  if (allowedTiers.includes("premium")) {
+  if (userAllowedTiers.includes("premium")) {
     return "premium";
   }
-  if (allowedTiers.includes("standard")) {
+  if (userAllowedTiers.includes("standard")) {
     return "standard";
   }
-  if (allowedTiers.includes("login")) {
+  if (userAllowedTiers.includes("login")) {
     return "login";
   }
   return "free";
@@ -41,8 +42,12 @@ export default defineEventHandler(async (event) => {
     const rawQuery = getQuery(event);
     const parsed = LibraryQuerySchema.parse(rawQuery);
 
-    const entitlements = await resolveUserActiveEntitlements(userId);
-    const activeTier = resolveActiveTier(entitlements.allowedTiers);
+    const activeKeys = await resolveUserActiveEntitlements(userId);
+    const userAllowedTiers = await allowedTiers(
+      { kind: "user", user_id: String(userId) },
+      activeKeys
+    );
+    const activeTier = resolveActiveTier(userAllowedTiers);
 
     const libraryData = await getUserLibrary(db, {
       userId,
