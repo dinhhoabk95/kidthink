@@ -26,23 +26,32 @@ async function createTestLevel(db: ReturnType<typeof getOwnerDb>) {
     templateId = existing[0]?.id ?? 1;
   }
 
-  const num4 = Math.floor(Math.random() * 8999) + 1000;
-  const uid = Math.floor(Math.random() * 89_999) + 10_000;
-  const [gl] = await db
-    .insert(gameLevels)
-    .values({
-      entityId: uid,
-      code: `GL-C1-CNT-TEST-${num4}`,
-      templateId,
-      titleVi: "Level Test",
-      instructionVi: "Instruction",
-      contentPack: {},
-      difficultyParams: {},
-      accessTier: "free",
-      status: "published",
-      contentVersion: 1,
-    })
-    .returning();
+  let gl: any;
+  for (let attempt = 0; attempt < 50; attempt++) {
+    const num4 = Math.floor(Math.random() * 8999) + 1000;
+    const uid = Math.floor(Math.random() * 899_999) + 100_000;
+    const [created] = await db
+      .insert(gameLevels)
+      .values({
+        entityId: uid,
+        code: `GL-C1-CNT-TEST-${num4}`,
+        templateId,
+        titleVi: "Level Test",
+        instructionVi: "Instruction",
+        contentPack: {},
+        difficultyParams: {},
+        accessTier: "free",
+        status: "published",
+        contentVersion: 1,
+      })
+      .onConflictDoNothing()
+      .returning();
+
+    if (created) {
+      gl = created;
+      break;
+    }
+  }
 
   return { glId: gl.id, gtId: templateId };
 }
