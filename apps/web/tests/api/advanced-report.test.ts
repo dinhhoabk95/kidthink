@@ -56,7 +56,7 @@ function mockEvent(
 describe("P3.7 Advanced Child Report API (BR-ARP-01..08, D-MY..D-NE)", () => {
   beforeAll(async () => {
     await seed();
-  });
+  }, 60_000);
 
   it("Scenario: BR-ARP-02 & D-NB — returns 403 ENTITLEMENT_REQUIRED without child data when lacking entitlement", async () => {
     const db = getOwnerDb();

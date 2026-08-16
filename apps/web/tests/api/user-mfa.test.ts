@@ -14,7 +14,7 @@ import {
   users,
 } from "@kidthink/db";
 import { and, eq } from "drizzle-orm";
-import { beforeAll, describe, expect, it } from "vitest";
+import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import guestMfaHandler from "../../server/api/guest/auth/users/mfa.post.js";
 import mfaRecoveryVerifyHandler from "../../server/api/guest/auth/users/mfa-recovery/verify.get.js";
 import mfaRecoveryCancelHandler from "../../server/api/managers/users/[uuid]/mfa-recovery-requests/[reqUuid]/cancel.post.js";
@@ -40,46 +40,66 @@ let storedRecoveryCodes: string[] = [];
 
 beforeAll(async () => {
   const db = getOwnerDb();
-  let [u] = await db
-    .select({ id: users.id, uuid: users.uuid })
-    .from(users)
-    .where(eq(users.email, "user-mfa-test@kidthink.vn"));
-  if (!u) {
-    const pwd = await hashPassword("StrongPassword123!");
-    [u] = await db
-      .insert(users)
-      .values({
-        email: "user-mfa-test@kidthink.vn",
-        passwordHash: pwd,
-        displayName: "MFA Test User",
-        status: "active",
-      })
-      .returning({ id: users.id, uuid: users.uuid });
-  }
-  if (u) {
-    testUserId = u.id;
-    testUserUuid = u.uuid;
-  }
+  const unique = `${Date.now()}_${Math.floor(Math.random() * 1_000_000)}`;
 
-  let [m] = await db
-    .select({ id: managers.id })
-    .from(managers)
-    .where(eq(managers.email, "admin-mfa-test@kidthink.vn"));
-  if (!m) {
-    const pwd = await hashPassword("AdminPassword123!");
-    [m] = await db
-      .insert(managers)
-      .values({
-        email: "admin-mfa-test@kidthink.vn",
-        passwordHash: pwd,
-        displayName: "Super Admin Test",
-        role: "super_admin",
-        isActive: true,
-      })
-      .returning({ id: managers.id });
+  const pwd = await hashPassword("StrongPassword123!");
+  const [u] = await db
+    .insert(users)
+    .values({
+      email: `user-mfa-${unique}@kidthink.vn`,
+      passwordHash: pwd,
+      displayName: "MFA Test User",
+      status: "active",
+    })
+    .returning({ id: users.id, uuid: users.uuid });
+  testUserId = u.id;
+  testUserUuid = u.uuid;
+
+  const mgrPwd = await hashPassword("AdminPassword123!");
+  const [m] = await db
+    .insert(managers)
+    .values({
+      email: `admin-mfa-${unique}@kidthink.vn`,
+      passwordHash: mgrPwd,
+      displayName: "Super Admin Test",
+      role: "super_admin",
+      isActive: true,
+    })
+    .returning({ id: managers.id });
+  testManagerId = m.id;
+});
+
+afterAll(async () => {
+  const db = getOwnerDb();
+  if (testUserId) {
+    await db
+      .delete(mfaRecoveryCodes)
+      .where(
+        and(
+          eq(mfaRecoveryCodes.accountType, "user"),
+          eq(mfaRecoveryCodes.accountId, testUserId)
+        )
+      )
+      .catch(() => undefined);
+    await db
+      .delete(mfaSettings)
+      .where(
+        and(
+          eq(mfaSettings.accountType, "user"),
+          eq(mfaSettings.accountId, testUserId)
+        )
+      )
+      .catch(() => undefined);
+    await db
+      .delete(users)
+      .where(eq(users.id, testUserId))
+      .catch(() => undefined);
   }
-  if (m) {
-    testManagerId = m.id;
+  if (testManagerId) {
+    await db
+      .delete(managers)
+      .where(eq(managers.id, testManagerId))
+      .catch(() => undefined);
   }
 });
 

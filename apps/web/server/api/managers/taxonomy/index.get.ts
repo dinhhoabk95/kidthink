@@ -114,7 +114,7 @@ async function fetchLevelCountsMap() {
     .from(contentSkillMap)
     .innerJoin(
       gameLevels,
-      sql`${contentSkillMap.entityType} = 'level' AND ${contentSkillMap.entityId} = ${gameLevels.id}`
+      sql`(${contentSkillMap.entityType} IN ('level', 'game_level')) AND (${contentSkillMap.entityId} = ${gameLevels.id} OR ${contentSkillMap.entityId} = ${gameLevels.entityId})`
     )
     .groupBy(contentSkillMap.skillId, gameLevels.status);
 

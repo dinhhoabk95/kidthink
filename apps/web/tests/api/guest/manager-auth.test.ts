@@ -22,7 +22,7 @@ import mfaHandler from "../../../server/api/guest/auth/managers/mfa.post";
 describe("Task 2 & 3 — Manager Login & MFA Handler (BR-ADA-01..08)", () => {
   it("Task 2: correct password returns 428 MFA_REQUIRED + challenge without creating active_session", async () => {
     const db = getOwnerDb();
-    const testEmail = `admin_login_test_${Date.now()}@tinimath.test`;
+    const testEmail = `admin_login_test_${Date.now()}_${Math.floor(Math.random() * 1_000_000)}@tinimath.test`;
     const passwordHash = await hashPassword("AdminSecret123!");
 
     const [manager] = await db
@@ -66,7 +66,7 @@ describe("Task 2 & 3 — Manager Login & MFA Handler (BR-ADA-01..08)", () => {
 
   it("Task 2: wrong password returns 401 INVALID_CREDENTIALS + audits manager_login_failed", async () => {
     const db = getOwnerDb();
-    const testEmail = `admin_wrong_pass_${Date.now()}@tinimath.test`;
+    const testEmail = `admin_wrong_pass_${Date.now()}_${Math.floor(Math.random() * 1_000_000)}@tinimath.test`;
     const passwordHash = await hashPassword("AdminSecret123!");
 
     await db.insert(managers).values({
@@ -103,7 +103,7 @@ describe("Task 2 & 3 — Manager Login & MFA Handler (BR-ADA-01..08)", () => {
 
   it("Task 3: valid TOTP code completes login without JSON tokens + audits manager_login", async () => {
     const db = getOwnerDb();
-    const testEmail = `admin_mfa_success_${Date.now()}@tinimath.test`;
+    const testEmail = `admin_mfa_success_${Date.now()}_${Math.floor(Math.random() * 1_000_000)}@tinimath.test`;
     const passwordHash = await hashPassword("AdminSecret123!");
     const secret = generateTotpSecret();
 
@@ -171,7 +171,7 @@ describe("Task 2 & 3 — Manager Login & MFA Handler (BR-ADA-01..08)", () => {
 
   it("Task 3: valid single-use recovery code completes login and marks code used", async () => {
     const db = getOwnerDb();
-    const testEmail = `admin_recovery_${Date.now()}@tinimath.test`;
+    const testEmail = `admin_recovery_${Date.now()}_${Math.floor(Math.random() * 1_000_000)}@tinimath.test`;
     const passwordHash = await hashPassword("AdminSecret123!");
     const recoveryCode = "ABCD-1234-EFGH";
     const codeHash = hashRecoveryCode(recoveryCode);

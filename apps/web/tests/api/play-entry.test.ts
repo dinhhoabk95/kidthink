@@ -60,7 +60,7 @@ describe("Play Entry & Kid Lobby API (BR-PEN-01..07)", () => {
     const [user] = await db
       .insert(users)
       .values({
-        email: `play_home_user_${Date.now()}@tinimath.test`,
+        email: `play_home_user_${Date.now()}_${Math.floor(Math.random() * 1_000_000)}@tinimath.test`,
         passwordHash: "hash123",
         displayName: "Parent User",
       })

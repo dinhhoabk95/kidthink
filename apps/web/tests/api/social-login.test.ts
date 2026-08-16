@@ -40,24 +40,23 @@ function createMockEvent(options: { oauth_profile?: any; ip?: string } = {}) {
 
 describe("Task 3, 4 & 5 — Social Login & Registration (BR-SCL-01..14, D-IN, D-IO)", () => {
   const db = getAppDb();
-  const TEST_EMAILS = [
-    "verified_parent@gmail.com",
-    "fb_user@facebook.example.com",
-    "existing_parent@example.com",
-  ];
+  const createdUserIds: number[] = [];
+
+  const genEmail = (prefix: string) =>
+    `${prefix}_${Date.now()}_${Math.floor(Math.random() * 1_000_000)}@example.com`;
 
   async function cleanupTestData() {
-    const testUsers = await db
-      .select({ id: users.id })
-      .from(users)
-      .where(inArray(users.email, TEST_EMAILS));
-
-    const userIds = testUsers.map((u) => u.id);
-    if (userIds.length > 0) {
+    if (createdUserIds.length > 0) {
+      const ids = [...createdUserIds];
+      createdUserIds.length = 0;
       await db
         .delete(socialIdentities)
-        .where(inArray(socialIdentities.userId, userIds));
-      await db.delete(users).where(inArray(users.id, userIds));
+        .where(inArray(socialIdentities.userId, ids))
+        .catch(() => undefined);
+      await db
+        .delete(users)
+        .where(inArray(users.id, ids))
+        .catch(() => undefined);
     }
   }
 
@@ -71,11 +70,12 @@ describe("Task 3, 4 & 5 — Social Login & Registration (BR-SCL-01..14, D-IN, D-
 
   describe("Task 4 — Branch B: First-Time Registration (BR-SCL-01, BR-SCL-02, BR-SCL-05, BR-SCL-08, BR-SCL-10, BR-SCL-12)", () => {
     it("BR-SCL-01: rejects registration when terms or privacy consent is missing with 422 VALIDATION_FAILED", async () => {
+      const email = genEmail("new_parent");
       const mockEvent = createMockEvent({
         oauth_profile: {
           provider: "google" as const,
-          provider_user_id: "google_new_123",
-          email_at_provider: "new_parent@example.com",
+          provider_user_id: `google_new_${Date.now()}`,
+          email_at_provider: email,
           email_verified_at_provider: true,
           display_name_at_provider: "Parent One",
         },
@@ -92,11 +92,13 @@ describe("Task 3, 4 & 5 — Social Login & Registration (BR-SCL-01..14, D-IN, D-
     });
 
     it("BR-SCL-02 & BR-SCL-05 & BR-SCL-08 & BR-SCL-12: Google registration with email_verified creates active user, null password, 2 consent logs in single transaction", async () => {
+      const email = genEmail("verified_parent");
+      const sub = `google_sub_${Date.now()}_${Math.floor(Math.random() * 1_000_000)}`;
       const mockEvent = createMockEvent({
         oauth_profile: {
           provider: "google" as const,
-          provider_user_id: "google_sub_9999",
-          email_at_provider: "verified_parent@gmail.com",
+          provider_user_id: sub,
+          email_at_provider: email,
           email_verified_at_provider: true,
           display_name_at_provider: "Verified Parent",
         },
@@ -109,6 +111,10 @@ describe("Task 3, 4 & 5 — Social Login & Registration (BR-SCL-01..14, D-IN, D-
         accept_privacy: true,
       });
 
+      if (res?.user?.id) {
+        createdUserIds.push(res.user.id);
+      }
+
       expect(res.user.displayName).toBe("Verified Parent");
       expect(res.user.status).toBe("active"); // Google email_verified -> active (BR-SCL-05)
 
@@ -116,7 +122,7 @@ describe("Task 3, 4 & 5 — Social Login & Registration (BR-SCL-01..14, D-IN, D-
       const [dbUser] = await db
         .select()
         .from(users)
-        .where(eq(users.email, "verified_parent@gmail.com"));
+        .where(eq(users.email, email));
 
       expect(dbUser).toBeDefined();
       expect(dbUser?.passwordHash).toBeNull(); // BR-SCL-08: NULL password is valid
@@ -130,7 +136,7 @@ describe("Task 3, 4 & 5 — Social Login & Registration (BR-SCL-01..14, D-IN, D-
 
       expect(identity).toBeDefined();
       expect(identity?.provider).toBe("google");
-      expect(identity?.providerUserId).toBe("google_sub_9999");
+      expect(identity?.providerUserId).toBe(sub);
       expect(identity?.emailVerifiedAtProvider).toBe(true);
 
       // Verify BR-SCL-02: 2 rows in consent_logs
@@ -149,11 +155,13 @@ describe("Task 3, 4 & 5 — Social Login & Registration (BR-SCL-01..14, D-IN, D-
     });
 
     it("BR-SCL-05: Facebook registration creates pending_verification user", async () => {
+      const email = genEmail("fb_user");
+      const sub = `fb_user_${Date.now()}_${Math.floor(Math.random() * 1_000_000)}`;
       const mockEvent = createMockEvent({
         oauth_profile: {
           provider: "facebook" as const,
-          provider_user_id: "fb_user_8888",
-          email_at_provider: "fb_user@facebook.example.com",
+          provider_user_id: sub,
+          email_at_provider: email,
           email_verified_at_provider: false, // Facebook is ALWAYS false (BR-OAP-08)
           display_name_at_provider: "FB User",
         },
@@ -166,12 +174,16 @@ describe("Task 3, 4 & 5 — Social Login & Registration (BR-SCL-01..14, D-IN, D-
         accept_privacy: true,
       });
 
+      if (res?.user?.id) {
+        createdUserIds.push(res.user.id);
+      }
+
       expect(res.user.status).toBe("pending_verification"); // BR-SCL-05
 
       const [dbUser] = await db
         .select()
         .from(users)
-        .where(eq(users.email, "fb_user@facebook.example.com"));
+        .where(eq(users.email, email));
 
       expect(dbUser?.status).toBe("pending_verification");
       expect(dbUser?.emailVerifiedAt).toBeNull();
@@ -180,22 +192,27 @@ describe("Task 3, 4 & 5 — Social Login & Registration (BR-SCL-01..14, D-IN, D-
 
   describe("Task 5 — Branch C: Email Conflict Prevention (BR-SCL-04, D-IO)", () => {
     it("BR-SCL-04: refuses to auto-link when email matches an existing password account with 409 SOCIAL_EMAIL_CONFLICT", async () => {
+      const email = genEmail("existing_parent");
       // Seed existing user registered via password
       const [existingUser] = await db
         .insert(users)
         .values({
-          email: "existing_parent@example.com",
+          email,
           displayName: "Existing Parent",
           passwordHash: "$argon2id$v=19$m=19456,p=1,t=2$dummyhash",
           status: "active",
         })
         .returning();
 
+      if (existingUser?.id) {
+        createdUserIds.push(existingUser.id);
+      }
+
       const mockEvent = createMockEvent({
         oauth_profile: {
           provider: "google" as const,
-          provider_user_id: "google_attacker_sub",
-          email_at_provider: "existing_parent@example.com",
+          provider_user_id: `google_attacker_${Date.now()}`,
+          email_at_provider: email,
           email_verified_at_provider: true,
           display_name_at_provider: "Google Profile Name",
         },

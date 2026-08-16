@@ -79,7 +79,7 @@ describe("Personal Curriculum API Endpoints (Task #65 / P4.4)", () => {
 
   beforeEach(async () => {
     const db = getOwnerDb();
-    const ts = Date.now();
+    const ts = `${Date.now()}_${Math.floor(Math.random() * 1_000_000)}`;
 
     // 1. Seed users
     const [uA] = await db

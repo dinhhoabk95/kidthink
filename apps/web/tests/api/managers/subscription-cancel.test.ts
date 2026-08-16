@@ -119,7 +119,7 @@ describe("POST /api/managers/subscriptions/[id]/cancel (BR-ASC-01..06)", () => {
     const [user] = await db
       .insert(users)
       .values({
-        email: `admin_sub_cancel_${Date.now()}@example.com`,
+        email: `admin_sub_cancel_${Date.now()}_${Math.floor(Math.random() * 1_000_000)}@example.com`,
         displayName: "Sub Cancel User",
       })
       .returning();

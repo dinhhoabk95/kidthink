@@ -58,7 +58,7 @@ describe("Task 6 — User Subscription View Suite (BR-SBV-01..07, D-JQ)", () => 
     const [userA] = await db
       .insert(users)
       .values({
-        email: `user_a_${Date.now()}@example.com`,
+        email: `user_a_${Date.now()}_${Math.floor(Math.random() * 1_000_000)}@example.com`,
         displayName: "User A",
       })
       .returning();
@@ -66,7 +66,7 @@ describe("Task 6 — User Subscription View Suite (BR-SBV-01..07, D-JQ)", () => 
     const [userB] = await db
       .insert(users)
       .values({
-        email: `user_b_${Date.now()}@example.com`,
+        email: `user_b_${Date.now()}_${Math.floor(Math.random() * 1_000_000)}@example.com`,
         displayName: "User B",
       })
       .returning();
@@ -80,23 +80,21 @@ describe("Task 6 — User Subscription View Suite (BR-SBV-01..07, D-JQ)", () => 
       status: "approved",
     });
 
-    // Request as User A
-    const event = mockUserEvent(userA.id);
-    const res = await subscriptionHandler(event);
+    const eventA = mockUserEvent(userA.id);
+    const resA = await subscriptionHandler(eventA);
 
-    expect(res).toBeDefined();
-    // User A should have 0 orders (not seeing User B's order)
-    expect(res.orders).toHaveLength(0);
+    expect(resA.current_plan).toBe("free");
+    expect(resA.order_history).toHaveLength(0);
   });
 
-  it("Scenario: BR-SBV-01, BR-SBV-05 & D-JQ — seamlessly unions entitlements from multiple active sources (standard + manual add-on)", async () => {
+  it("Scenario: D-MN — displays all active packages when multi-package subscription exists", async () => {
     const db = getOwnerDb();
 
     const [user] = await db
       .insert(users)
       .values({
-        email: `user_multi_pkg_${Date.now()}@example.com`,
-        displayName: "Multi Package User",
+        email: `user_multi_pkg_${Date.now()}_${Math.floor(Math.random() * 1_000_000)}@example.com`,
+        displayName: "Multi Pkg User",
       })
       .returning();
 
@@ -143,7 +141,7 @@ describe("Task 6 — User Subscription View Suite (BR-SBV-01..07, D-JQ)", () => 
     const [user] = await db
       .insert(users)
       .values({
-        email: `user_preserve_${Date.now()}@example.com`,
+        email: `user_preserve_${Date.now()}_${Math.floor(Math.random() * 1_000_000)}@example.com`,
         displayName: "Preserve User",
       })
       .returning();
@@ -162,7 +160,7 @@ describe("Task 6 — User Subscription View Suite (BR-SBV-01..07, D-JQ)", () => 
     const [user] = await db
       .insert(users)
       .values({
-        email: `user_orders_${Date.now()}@example.com`,
+        email: `user_orders_${Date.now()}_${Math.floor(Math.random() * 1_000_000)}@example.com`,
         displayName: "Orders User",
       })
       .returning();
@@ -215,7 +213,7 @@ describe("Task 6 — User Subscription View Suite (BR-SBV-01..07, D-JQ)", () => 
     const [user] = await db
       .insert(users)
       .values({
-        email: `user_upgrade_cta_${Date.now()}@example.com`,
+        email: `user_upgrade_cta_${Date.now()}_${Math.floor(Math.random() * 1_000_000)}@example.com`,
         displayName: "CTA User",
       })
       .returning();
@@ -233,7 +231,7 @@ describe("Task 6 — User Subscription View Suite (BR-SBV-01..07, D-JQ)", () => 
     const [user] = await db
       .insert(users)
       .values({
-        email: `user_recurring_${Date.now()}@example.com`,
+        email: `user_recurring_${Date.now()}_${Math.floor(Math.random() * 1_000_000)}@example.com`,
         displayName: "Recurring Sub User",
       })
       .returning();

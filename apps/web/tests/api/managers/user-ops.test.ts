@@ -53,7 +53,7 @@ function mockEvent(
 describe("Task 3 — User Ops: Suspend, Reactivate, Send Password Reset (BR-USM-03, BR-USM-04, BR-USM-05, BR-USM-08, D-JE)", () => {
   it("BR-USM-03: rejects suspend with reason < 10 characters with 422 ADMIN_NOTE_REQUIRED and preserves active status", async () => {
     const db = getOwnerDb();
-    const testEmail = `test_suspend_val_${Date.now()}@example.com`;
+    const testEmail = `test_suspend_val_${Date.now()}_${Math.floor(Math.random() * 1_000_000)}@example.com`;
 
     const [user] = await db
       .insert(users)
@@ -84,7 +84,7 @@ describe("Task 3 — User Ops: Suspend, Reactivate, Send Password Reset (BR-USM-
 
   it("D-JE, BR-USM-04 & BR-USM-05: suspend revokes sessions (sessionVersion + 1), preserves entitlements, and reactivate restores access", async () => {
     const db = getOwnerDb();
-    const testEmail = `test_ops_pair_${Date.now()}@example.com`;
+    const testEmail = `test_ops_pair_${Date.now()}_${Math.floor(Math.random() * 1_000_000)}@example.com`;
 
     const [user] = await db
       .insert(users)
@@ -178,7 +178,7 @@ describe("Task 3 — User Ops: Suspend, Reactivate, Send Password Reset (BR-USM-
 
   it("BR-USM-08: send-password-reset triggers reset email without leaking token in response", async () => {
     const db = getOwnerDb();
-    const testEmail = `test_pw_reset_${Date.now()}@example.com`;
+    const testEmail = `test_pw_reset_${Date.now()}_${Math.floor(Math.random() * 1_000_000)}@example.com`;
 
     const [user] = await db
       .insert(users)
@@ -201,7 +201,7 @@ describe("Task 3 — User Ops: Suspend, Reactivate, Send Password Reset (BR-USM-
 
   it("rejects operations on deleted user with 409 USER_ALREADY_DELETED", async () => {
     const db = getOwnerDb();
-    const testEmail = `test_deleted_${Date.now()}@example.com`;
+    const testEmail = `test_deleted_${Date.now()}_${Math.floor(Math.random() * 1_000_000)}@example.com`;
 
     const [user] = await db
       .insert(users)

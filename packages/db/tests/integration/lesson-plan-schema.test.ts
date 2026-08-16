@@ -1,5 +1,5 @@
 import { eq } from "drizzle-orm";
-import { beforeEach, describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import {
   getOwnerDb,
   lessonPlanItems,
@@ -11,14 +11,24 @@ describe("Task P4.1 — Database Schema & Invariants Integration Tests (BR-LPC-0
   const db = getOwnerDb();
   let testUserId: number;
 
-  beforeEach(async () => {
-    await db.delete(lessonPlanItems);
-    await db.delete(lessonPlans);
+  afterEach(async () => {
+    if (testUserId) {
+      await db
+        .delete(lessonPlans)
+        .where(eq(lessonPlans.userId, testUserId))
+        .catch(() => undefined);
+      await db
+        .delete(users)
+        .where(eq(users.id, testUserId))
+        .catch(() => undefined);
+    }
+  });
 
+  beforeEach(async () => {
     const [user] = await db
       .insert(users)
       .values({
-        email: `teacher-${Date.now()}@example.com`,
+        email: `teacher_${Date.now()}_${Math.floor(Math.random() * 1_000_000)}@example.com`,
         passwordHash: "hash123",
         displayName: "Cô Giáo Test",
       })

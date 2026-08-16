@@ -163,11 +163,10 @@ async function createCurriculumRecord(
       return created;
     } catch (err: unknown) {
       lastErr = err;
-      if (
-        (err as { code?: string })?.code === "23505" &&
-        !data.code &&
-        attempt < 4
-      ) {
+      const errCode =
+        (err as { code?: string })?.code ||
+        (err as { cause?: { code?: string } })?.cause?.code;
+      if (errCode === "23505" && !data.code && attempt < 4) {
         continue;
       }
       throw err;

@@ -13,7 +13,7 @@ import {
   deriveAgeBand,
   resolveNextStep,
 } from "@kidthink/shared";
-import { and, desc, eq, inArray, sql } from "drizzle-orm";
+import { and, asc, desc, eq, inArray, sql } from "drizzle-orm";
 import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 import { masteryState } from "../schema/adaptive.js";
 import { childProfiles } from "../schema/child.js";
@@ -466,7 +466,8 @@ export async function getRecommendationsForChild(
   const allPublishedLevels = await db
     .select()
     .from(gameLevels)
-    .where(eq(gameLevels.status, "published"));
+    .where(eq(gameLevels.status, "published"))
+    .orderBy(asc(gameLevels.code));
 
   const publishedByEntityId = new Map<number, PublishedGameLevel>();
   const publishedByCode = new Map<string, PublishedGameLevel>();
@@ -610,7 +611,8 @@ export async function getGuestRecommendations(
     .from(gameLevels)
     .where(
       and(eq(gameLevels.status, "published"), eq(gameLevels.accessTier, "free"))
-    );
+    )
+    .orderBy(asc(gameLevels.code));
 
   const matchingFree = freeLevels.filter((gl) =>
     isLevelAgeMatch(gl.ageMin, gl.ageMax, targetAgeMin, targetAgeMax)

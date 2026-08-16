@@ -121,7 +121,7 @@ describe("Task 4 — Package Catalog Admin & Subscribers Suite (BR-PCA-01..06, D
 
   it("Scenario: BR-PCA-03 & D-JO — reports active subscribers and 30-day approved revenue", async () => {
     const db = getOwnerDb();
-    const testEmail = `subscriber_pkg_${Date.now()}@example.com`;
+    const testEmail = `subscriber_pkg_${Date.now()}_${Math.floor(Math.random() * 1_000_000)}@example.com`;
 
     const [user] = await db
       .insert(users)
@@ -149,7 +149,7 @@ describe("Task 4 — Package Catalog Admin & Subscribers Suite (BR-PCA-01..06, D
 
   it("Scenario: BR-PCA-06 — GET /api/managers/packages/[code]/subscribers excludes child profile PII", async () => {
     const db = getOwnerDb();
-    const testEmail = `sub_no_child_${Date.now()}@example.com`;
+    const testEmail = `sub_no_child_${Date.now()}_${Math.floor(Math.random() * 1_000_000)}@example.com`;
 
     const [user] = await db
       .insert(users)
@@ -200,8 +200,8 @@ describe("Task 4 — Package Catalog Admin & Subscribers Suite (BR-PCA-01..06, D
 
   it("Scenario: cursor pagination on subscribers endpoint paginates sequentially in desc order", async () => {
     const db = getOwnerDb();
-    const user1Email = `sub_p1_${Date.now()}@example.com`;
-    const user2Email = `sub_p2_${Date.now()}@example.com`;
+    const user1Email = `sub_p1_${Date.now()}_${Math.floor(Math.random() * 1_000_000)}@example.com`;
+    const user2Email = `sub_p2_${Date.now()}_${Math.floor(Math.random() * 1_000_000)}@example.com`;
 
     const [u1] = await db
       .insert(users)

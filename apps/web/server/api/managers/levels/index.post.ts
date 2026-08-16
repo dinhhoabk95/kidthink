@@ -102,6 +102,91 @@ function buildInsertValues(
   };
 }
 
+async function resolveLevelCode(
+  db: ReturnType<typeof getOwnerDb>,
+  templateCode: string,
+  providedCode?: string
+): Promise<{ levelCode: string; count: number }> {
+  const countRes = await db
+    .select({ count: sql<number>`count(*)` })
+    .from(gameLevels);
+  const count = Number(countRes[0]?.count ?? 0);
+
+  if (providedCode) {
+    return { levelCode: providedCode, count };
+  }
+
+  let offset = 0;
+  while (true) {
+    const candidate = generateLevelCode(templateCode, count + offset);
+    const [existing] = await db
+      .select({ id: gameLevels.id })
+      .from(gameLevels)
+      .where(eq(gameLevels.code, candidate))
+      .limit(1);
+    if (!existing) {
+      return { levelCode: candidate, count };
+    }
+    offset++;
+  }
+}
+
+async function resolveValidManagerId(
+  db: ReturnType<typeof getOwnerDb>,
+  manager: { manager_id?: number; id?: number }
+): Promise<number | undefined> {
+  const rawManagerId = manager.manager_id || manager.id;
+  if (!rawManagerId) {
+    return undefined;
+  }
+  const [exists] = await db
+    .select({ id: managers.id })
+    .from(managers)
+    .where(eq(managers.id, rawManagerId));
+  return exists?.id;
+}
+
+async function insertLevelWithRetry(
+  db: ReturnType<typeof getOwnerDb>,
+  body: Record<string, unknown>,
+  initialCode: string,
+  templateCode: string,
+  templateId: number,
+  templateAgeMin: number,
+  templateAgeMax: number,
+  validManagerId: number | undefined,
+  baseCount: number
+) {
+  let currentCode = initialCode;
+  for (let attempt = 0; attempt < 5; attempt++) {
+    try {
+      const insertValues = buildInsertValues(
+        body,
+        currentCode,
+        templateId,
+        templateAgeMin,
+        templateAgeMax,
+        validManagerId
+      );
+      const [created] = await db
+        .insert(gameLevels)
+        .values(insertValues)
+        .returning();
+      return created;
+    } catch (err: unknown) {
+      const errCode =
+        (err as { code?: string })?.code ||
+        (err as { cause?: { code?: string } })?.cause?.code;
+      if (errCode === "23505" && !body.code && attempt < 4) {
+        currentCode = generateLevelCode(templateCode, baseCount + attempt + 1);
+        continue;
+      }
+      throw err;
+    }
+  }
+  return undefined;
+}
+
 export default defineEventHandler(async (event) => {
   try {
     const manager = await requireManagerSession(event);
@@ -125,39 +210,31 @@ export default defineEventHandler(async (event) => {
 
     const db = getOwnerDb();
     const { template, dbTemplate } = await ensureDbTemplate(db, templateCode);
+    const { levelCode, count } = await resolveLevelCode(
+      db,
+      templateCode,
+      body.code as string | undefined
+    );
+    const validManagerId = await resolveValidManagerId(db, manager);
 
-    const countRes = await db
-      .select({ count: sql<number>`count(*)` })
-      .from(gameLevels);
-    const count = Number(countRes[0]?.count ?? 0);
-    const levelCode =
-      (body.code as string) || generateLevelCode(templateCode, count);
-
-    const rawManagerId = manager.manager_id || manager.id;
-    let validManagerId: number | undefined;
-    if (rawManagerId) {
-      const [exists] = await db
-        .select({ id: managers.id })
-        .from(managers)
-        .where(eq(managers.id, rawManagerId));
-      if (exists) {
-        validManagerId = exists.id;
-      }
-    }
-
-    const insertValues = buildInsertValues(
+    const newLevel = await insertLevelWithRetry(
+      db,
       body,
       levelCode,
+      templateCode,
       dbTemplate.id,
       template.age_min,
       template.age_max,
-      validManagerId
+      validManagerId,
+      count
     );
 
-    const [newLevel] = await db
-      .insert(gameLevels)
-      .values(insertValues)
-      .returning();
+    if (!newLevel) {
+      throw createError({
+        statusCode: 500,
+        statusMessage: "LEVEL_CREATE_FAILED",
+      });
+    }
 
     await syncContentAssetRefs(
       db,

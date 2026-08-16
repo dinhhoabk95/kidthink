@@ -65,7 +65,7 @@ describe("Task 5 — POST /api/managers/children/[uuid]/archive (BR-CPA-07, D-IG
     const [user] = await db
       .insert(users)
       .values({
-        email: `archive_test_${Date.now()}@example.com`,
+        email: `archive_test_${Date.now()}_${Math.floor(Math.random() * 1_000_000)}@example.com`,
         displayName: "Archive Parent",
         status: "active",
       })
@@ -105,7 +105,7 @@ describe("Task 5 — POST /api/managers/children/[uuid]/archive (BR-CPA-07, D-IG
     const [user] = await db
       .insert(users)
       .values({
-        email: `archive_valid_${Date.now()}@example.com`,
+        email: `archive_valid_${Date.now()}_${Math.floor(Math.random() * 1_000_000)}@example.com`,
         displayName: "Archive Valid Parent",
         status: "active",
       })
@@ -158,7 +158,7 @@ describe("Task 5 — POST /api/managers/children/[uuid]/archive (BR-CPA-07, D-IG
     const [user] = await db
       .insert(users)
       .values({
-        email: `archive_del_${Date.now()}@example.com`,
+        email: `archive_del_${Date.now()}_${Math.floor(Math.random() * 1_000_000)}@example.com`,
         displayName: "Deletion Parent",
         status: "active",
       })

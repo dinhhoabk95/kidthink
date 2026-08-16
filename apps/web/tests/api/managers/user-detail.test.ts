@@ -76,7 +76,7 @@ describe("Task 4 — GET /api/managers/users/[uuid] Detail (BR-USD-01, BR-USD-04
 
   it("D-JF, BR-USD-01, BR-USD-04 & BR-CPA-03: returns 4 groups with projected child profiles and NO child learning telemetry or auth secrets", async () => {
     const db = getOwnerDb();
-    const testEmail = `test_detail_${Date.now()}@example.com`;
+    const testEmail = `test_detail_${Date.now()}_${Math.floor(Math.random() * 1_000_000)}@example.com`;
 
     const [user] = await db
       .insert(users)
@@ -135,7 +135,7 @@ describe("Task 4 — GET /api/managers/users/[uuid] Detail (BR-USD-01, BR-USD-04
 
   it("BR-USD-06: returns complete payment order history including approved and rejected orders", async () => {
     const db = getOwnerDb();
-    const testEmail = `test_detail_pay_${Date.now()}@example.com`;
+    const testEmail = `test_detail_pay_${Date.now()}_${Math.floor(Math.random() * 1_000_000)}@example.com`;
 
     const [user] = await db
       .insert(users)
@@ -204,7 +204,7 @@ describe("Task 4 — GET /api/managers/users/[uuid] Detail (BR-USD-01, BR-USD-04
     const [userWithChildren] = await db
       .insert(users)
       .values({
-        email: `audit_user_with_kids_${Date.now()}@example.com`,
+        email: `audit_user_with_kids_${Date.now()}_${Math.floor(Math.random() * 1_000_000)}@example.com`,
         displayName: "Audit Parent With Kids",
         status: "active",
       })
@@ -240,7 +240,7 @@ describe("Task 4 — GET /api/managers/users/[uuid] Detail (BR-USD-01, BR-USD-04
     const [userNoChildren] = await db
       .insert(users)
       .values({
-        email: `audit_user_no_kids_${Date.now()}@example.com`,
+        email: `audit_user_no_kids_${Date.now()}_${Math.floor(Math.random() * 1_000_000)}@example.com`,
         displayName: "Audit Parent No Kids",
         status: "active",
       })

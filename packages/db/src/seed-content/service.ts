@@ -200,10 +200,27 @@ async function processActivitySeed(
 ): Promise<"inserted" | "skipped"> {
   const { header } = seed;
 
+  const [existingVersion] = await tx
+    .select()
+    .from(activities)
+    .where(
+      and(
+        eq(activities.code, header.code),
+        eq(activities.contentVersion, header.content_version)
+      )
+    )
+    .limit(1);
+
+  if (existingVersion) {
+    return "skipped";
+  }
+
   const [existing] = await tx
     .select()
     .from(activities)
-    .where(eq(activities.code, header.code));
+    .where(eq(activities.code, header.code))
+    .orderBy(desc(activities.contentVersion))
+    .limit(1);
 
   if (existing) {
     if (existing.contentVersion === header.content_version) {
@@ -330,10 +347,27 @@ async function processLessonSeed(
 ): Promise<"inserted" | "skipped"> {
   const { header } = seed;
 
+  const [existingVersion] = await tx
+    .select()
+    .from(lessons)
+    .where(
+      and(
+        eq(lessons.code, header.code),
+        eq(lessons.contentVersion, header.content_version)
+      )
+    )
+    .limit(1);
+
+  if (existingVersion) {
+    return "skipped";
+  }
+
   const [existing] = await tx
     .select()
     .from(lessons)
-    .where(eq(lessons.code, header.code));
+    .where(eq(lessons.code, header.code))
+    .orderBy(desc(lessons.contentVersion))
+    .limit(1);
 
   if (existing) {
     if (existing.contentVersion === header.content_version) {
