@@ -185,9 +185,9 @@ không phải nơi giữ chỗ cho mô hình sản phẩm khác.
 
 | # | Việc | Spec sở hữu | Hồ sơ task |
 |---|---|---|---|
-| 0 | Đóng contract Web scale và tạo spec owner còn thiếu | [`pwa-install.md`](01-platform/pwa-install.md) đã có; automated payment và offline curriculum pack phải có spec riêng trước code | Task #70 |
-| 1 | Cổng thanh toán tự động, đối soát và refund theo outcome đã duyệt | Spec mới do Task #70 chốt; không gộp các outcome ship độc lập | Task #71 |
-| 2 | PWA install và offline curriculum pack | [`pwa-install.md`](01-platform/pwa-install.md) · [`offline-play.md`](01-platform/offline-play.md); pack tải trước cần owner riêng nếu được nhận | Task #72 |
+| 0 | Đóng contract Web scale và tạo spec owner còn thiếu | [`pwa-install.md`](01-platform/pwa-install.md) đã có; automated payment và offline curriculum pack đã có spec riêng | Task #70 |
+| 1 | Cổng thanh toán tự động, đối soát và refund theo outcome đã duyệt | [`automated-payment.md`](01-platform/automated-payment.md) · [`recurring-billing.md`](03-account/recurring-billing.md) · [`payment-refund.md`](06-admin/payment-refund.md) | Task #71 |
+| 2 | PWA install và offline curriculum pack | [`pwa-install.md`](01-platform/pwa-install.md) · [`offline-play.md`](01-platform/offline-play.md) · [`offline-curriculum-pack.md`](01-platform/offline-curriculum-pack.md) | Task #72 |
 | 3 | User xem lại notification và nhận browser push best-effort | [`notification-inbox.md`](03-account/notification-inbox.md) → [`browser-push.md`](01-platform/browser-push.md); FCM không chặn email | Task #84 |
 | 4 | Cổng ra Web scale dựa trên evidence | Spec/task manifest được duyệt ở Task #70, bổ sung evidence notification nếu Task #84 vào release | Task #78 |
 

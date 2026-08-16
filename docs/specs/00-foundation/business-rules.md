@@ -97,6 +97,7 @@ Mọi `BR-*` trong code, test, và PR. `pnpm gen:check` cảnh báo BR không đ
 | `BR-RTL` | [`rate-limiting.md`](../01-platform/rate-limiting.md) | | `BR-FLG` | [`feature-flag-service.md`](../01-platform/feature-flag-service.md) |
 | `BR-CSA` | [`content-seed-authoring.md`](../01-platform/content-seed-authoring.md) | | `BR-AIG` | [`ai-codegen-pipeline.md`](../01-platform/ai-codegen-pipeline.md) |
 | `BR-OAP` | [`oauth-provider-registry.md`](../01-platform/oauth-provider-registry.md) | | `BR-BPS` | [`browser-push.md`](../01-platform/browser-push.md) |
+| `BR-APM` | [`automated-payment.md`](../01-platform/automated-payment.md) | | `BR-OCP` | [`offline-curriculum-pack.md`](../01-platform/offline-curriculum-pack.md) |
 
 **Public**
 
@@ -122,7 +123,7 @@ Mọi `BR-*` trong code, test, và PR. `pnpm gen:check` cảnh báo BR không đ
 | `BR-ARP` | [`advanced-report.md`](../03-account/advanced-report.md) | | `BR-POC` | [`payment-order-create.md`](../03-account/payment-order-create.md) |
 | `BR-PPU` | [`payment-proof-upload.md`](../03-account/payment-proof-upload.md) | | `BR-SBV` | [`subscription-view.md`](../03-account/subscription-view.md) |
 | `BR-SCL` | [`social-login.md`](../03-account/social-login.md) | | `BR-SLK` | [`social-account-linking.md`](../03-account/social-account-linking.md) |
-| `BR-NIB` | [`notification-inbox.md`](../03-account/notification-inbox.md) | | | |
+| `BR-NIB` | [`notification-inbox.md`](../03-account/notification-inbox.md) | | `BR-RBL` | [`recurring-billing.md`](../03-account/recurring-billing.md) |
 
 **Play**
 
@@ -162,7 +163,7 @@ Mọi `BR-*` trong code, test, và PR. `pnpm gen:check` cảnh báo BR không đ
 | `BR-NTA` | [`notification-admin.md`](../06-admin/notification-admin.md) | | `BR-ALV` | [`audit-log-viewer.md`](../06-admin/audit-log-viewer.md) |
 | `BR-ELV` | [`error-log-viewer.md`](../06-admin/error-log-viewer.md) | | `BR-SYS` | [`system-activity.md`](../06-admin/system-activity.md) |
 | `BR-FFA` | [`feature-flags.md`](../06-admin/feature-flags.md) | | `BR-EXP` | [`data-export.md`](../06-admin/data-export.md) |
-| `BR-LCA` | [`legal-consent-admin.md`](../06-admin/legal-consent-admin.md) | | | |
+| `BR-LCA` | [`legal-consent-admin.md`](../06-admin/legal-consent-admin.md) | | `BR-RFD` | [`payment-refund.md`](../06-admin/payment-refund.md) |
 
 **Add-on**
 
@@ -185,9 +186,9 @@ Mọi `BR-*` trong code, test, và PR. `pnpm gen:check` cảnh báo BR không đ
 
 | | Số |
 |---|---:|
-| Spec module | 134 |
-| Prefix BR | 133 |
-| Business rule | ~1230 |
+| Spec module | 138 |
+| Prefix BR | 137 |
+| Business rule | ~1255 |
 
 **Cảnh báo:** con số "spec module" trước 2026-08-05 ghi **123**, trong khi
 [`../index.md`](../index.md) đếm **124**. Lệch có từ trước, chưa truy nguyên. Đã đặt lại theo

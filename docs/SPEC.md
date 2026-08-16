@@ -1210,7 +1210,7 @@ hình báo cáo mang câu này.
 
 Mỗi outcome có **đúng một** spec sở hữu. Spec khác **link tới**, không copy contract.
 
-**134 spec module.** Bản đồ đầy đủ: [`docs/specs/index.md`](specs/index.md).
+**138 spec module.** Bản đồ đầy đủ: [`docs/specs/index.md`](specs/index.md).
 
 ```
 docs/
@@ -1220,12 +1220,12 @@ docs/
     ├── CONVENTIONS.md         quy ước viết spec v2
     ├── TEMPLATE.md · index.md · roadmap.md
     ├── 00-foundation/  16     contract cắt ngang mọi bề mặt
-    ├── 01-platform/    28     năng lực nội bộ (gồm seeder nội dung + codegen + OAuth + browser push)
+    ├── 01-platform/    30     năng lực nội bộ (gồm seeder nội dung + codegen + OAuth + browser push + thanh toán tự động + offline pack)
     ├── 02-public/       9     khách chưa đăng nhập
-    ├── 03-account/     21     User đã đăng nhập (gồm SNS login + linking + notification inbox)
+    ├── 03-account/     22     User đã đăng nhập (gồm SNS login + linking + notification inbox + recurring billing)
     ├── 04-play/        13     bề mặt trẻ — core business
     ├── 05-content/      5     ràng buộc biên tập nội dung
-    ├── 06-admin/       29     Manager
+    ├── 06-admin/       30     Manager (gồm studio + duyệt + refund)
     ├── 07-addon/        7     spec đủ, KHÔNG bán ở MVP
     └── 08-quality/      6     test · bảo mật · a11y · hiệu năng · design
 ```

@@ -251,6 +251,42 @@ export const AUTH_ERROR_DEFINITIONS = {
     status: 422,
     message: "Nội dung không qua được bộ lọc kiểm duyệt an toàn.",
   },
+  WEBHOOK_SIGNATURE_INVALID: {
+    status: 401,
+    message: "Chữ ký số webhook không hợp lệ.",
+  },
+  WEBHOOK_REPLAY_DETECTED: {
+    status: 409,
+    message: "Yêu cầu webhook quá hạn hoặc phát lại.",
+  },
+  RECONCILIATION_MISMATCH: {
+    status: 409,
+    message: "Phát hiện sai lệch đối soát thanh toán.",
+  },
+  SUBSCRIPTION_ALREADY_CANCELLED: {
+    status: 409,
+    message: "Gói thuê bao định kỳ đã được huỷ tự gia hạn.",
+  },
+  REFUND_EXCEEDS_CAPTURED_AMOUNT: {
+    status: 422,
+    message: "Số tiền hoàn vượt quá số tiền thực thu của đơn hàng.",
+  },
+  REFUND_ALREADY_PROCESSED: {
+    status: 409,
+    message: "Lệnh hoàn tiền đã được xử lý trước đó.",
+  },
+  OFFLINE_PACK_EXPIRED: {
+    status: 410,
+    message: "Gói học tập offline đã hết hạn lease.",
+  },
+  OFFLINE_PACK_CORRUPTED: {
+    status: 422,
+    message: "Gói học tập offline bị lỗi toàn vẹn hoặc sai checksum.",
+  },
+  STORAGE_QUOTA_INSUFFICIENT: {
+    status: 422,
+    message: "Bộ nhớ thiết bị không đủ để tải gói offline.",
+  },
 } as const;
 
 export type AuthErrorCode = keyof typeof AUTH_ERROR_DEFINITIONS;

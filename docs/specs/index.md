@@ -23,15 +23,15 @@ Bắt đầu từ [`../SPEC.md`](../SPEC.md) — contract toàn dự án. Rồi 
 | Khu vực | Spec | MVP |
 |---|---:|---:|
 | `00-foundation` | 16 | 16 |
-| `01-platform` | 28 | 26 |
+| `01-platform` | 30 | 26 |
 | `02-public` | 9 | 9 |
-| `03-account` | 21 | 19 |
+| `03-account` | 22 | 19 |
 | `04-play` | 13 | 13 |
 | `05-content` | 5 | 4 |
-| `06-admin` | 29 | 29 |
+| `06-admin` | 30 | 29 |
 | `07-addon` | 7 | 0 |
 | `08-quality` | 6 | 6 |
-| **Tổng** | **134** | **122** |
+| **Tổng** | **138** | **122** |
 
 v1 có **31** spec cho cùng phạm vi. Xé nhỏ là chủ ý — xem [`AUDIT-v1.md`](AUDIT-v1.md) §1.2.
 2 spec cộng thêm 2026-08-05 ([`repo-bootstrap.md`](00-foundation/repo-bootstrap.md), [`monorepo-package-architecture.md`](00-foundation/monorepo-package-architecture.md)) lấp lỗ hổng
@@ -89,6 +89,8 @@ v1 có **31** spec cho cùng phạm vi. Xé nhỏ là chủ ý — xem [`AUDIT-v
 | [image-storage](01-platform/image-storage.md) | P2 | Cấm thư viện ảnh |
 | [notification-service](01-platform/notification-service.md) | P0 | Logical notification + delivery adapter; email qua SES SMTP |
 | [browser-push](01-platform/browser-push.md) | P5 | FCM Web cho User, best-effort, không push trẻ |
+| [automated-payment](01-platform/automated-payment.md) | P5 | Cổng thanh toán tự động, webhook signature, đối soát |
+| [offline-curriculum-pack](01-platform/offline-curriculum-pack.md) | P5 | Gói học tập offline, 7-day lease, quota & sync |
 | [feature-flag-service](01-platform/feature-flag-service.md) | P2 | Cờ có hạn, mặc định an toàn |
 | [adaptive-engine](01-platform/adaptive-engine.md) | P3 | BKT, ZPD, nhãn báo cáo |
 | [pwa-install](01-platform/pwa-install.md) | P5 | Web install ngoài MVP; không phải native mobile app |
@@ -131,6 +133,7 @@ v1 có **31** spec cho cùng phạm vi. Xé nhỏ là chủ ý — xem [`AUDIT-v
 | [subscription-view](03-account/subscription-view.md) | P2 | Gói, quyền lợi, lịch sử |
 | [mfa](03-account/mfa.md) | P2 | Tuỳ chọn cho User, ngoài MVP |
 | [notification-inbox](03-account/notification-inbox.md) | P5 | User xem lại logical notification, read state |
+| [recurring-billing](03-account/recurring-billing.md) | P5 | Gia hạn thuê bao tự động, opt-in consent snapshot, dunning |
 | [advanced-report](03-account/advanced-report.md) | P3 | 7 mục, ngưỡng dữ liệu tối thiểu |
 
 ## 04-play — bề mặt trẻ · **core business**
@@ -191,6 +194,7 @@ v1 có **31** spec cho cùng phạm vi. Xé nhỏ là chủ ý — xem [`AUDIT-v
 | [data-export](06-admin/data-export.md) | P2 | 6 loại, danh sách đóng |
 | [seo-content-admin](06-admin/seo-content-admin.md) | P2 | Rich text hạn chế, 301 tự động |
 | [notification-admin](06-admin/notification-admin.md) | P2 | Nhật ký gửi, template |
+| [payment-refund](06-admin/payment-refund.md) | P5 | Quy trình hoàn tiền đơn hàng, super_admin audit, thu hồi quyền |
 | [lesson-authoring](06-admin/lesson-authoring.md) | P3 | Lắp activity vào lesson |
 | [activity-authoring](06-admin/activity-authoring.md) | P3 | 10 loại activity |
 | [curriculum-builder](06-admin/curriculum-builder.md) | P3 | 6 chỉ báo cân bằng |

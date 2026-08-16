@@ -126,6 +126,15 @@ Mọi handler API. Mọi spec khai báo mã lỗi phải đăng ký ở đây.
 | `ORDER_ALREADY_PROCESSED` | 409 | Approve/reject đơn đã terminal |
 | `ADMIN_NOTE_REQUIRED` | 422 | Duyệt/từ chối không ghi chú |
 | `PAYMENT_PROOF_REQUIRED` | 422 | Thiếu chứng từ |
+| `WEBHOOK_SIGNATURE_INVALID` | 401 | Chữ ký số webhook không hợp lệ ([`automated-payment.md`](../01-platform/automated-payment.md)) |
+| `WEBHOOK_REPLAY_DETECTED` | 409 | Webhook gửi quá thời gian cho phép hoặc phát lại ([`automated-payment.md`](../01-platform/automated-payment.md)) |
+| `RECONCILIATION_MISMATCH` | 409 | Sai lệch số tiền hoặc trạng thái đối soát ([`automated-payment.md`](../01-platform/automated-payment.md)) |
+| `SUBSCRIPTION_ALREADY_CANCELLED` | 409 | Gói thuê bao định kỳ đã được huỷ tự gia hạn ([`recurring-billing.md`](../03-account/recurring-billing.md)) |
+| `REFUND_EXCEEDS_CAPTURED_AMOUNT` | 422 | Số tiền hoàn vượt quá số tiền thực thu của đơn hàng ([`payment-refund.md`](../06-admin/payment-refund.md)) |
+| `REFUND_ALREADY_PROCESSED` | 409 | Lệnh hoàn tiền đã được xử lý trước đó ([`payment-refund.md`](../06-admin/payment-refund.md)) |
+| `OFFLINE_PACK_EXPIRED` | 410 | Gói học tập offline đã hết hạn lease ([`offline-curriculum-pack.md`](../01-platform/offline-curriculum-pack.md)) |
+| `OFFLINE_PACK_CORRUPTED` | 422 | Gói học tập offline bị lỗi toàn vẹn hoặc sai checksum ([`offline-curriculum-pack.md`](../01-platform/offline-curriculum-pack.md)) |
+| `STORAGE_QUOTA_INSUFFICIENT` | 422 | Bộ nhớ thiết bị không đủ để tải gói offline ([`offline-curriculum-pack.md`](../01-platform/offline-curriculum-pack.md)) |
 
 ### 7.4 Nội dung
 

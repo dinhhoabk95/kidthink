@@ -124,6 +124,12 @@ client, tương đối so với `session.started_at`) · `content_version`.
 | `parent_gate_shown` | `{ trigger: "exit"\|"settings" }` |
 | `parent_gate_passed` | `{ attempts }` |
 | `parent_gate_failed` | `{ attempts }` |
+| `payment_webhook_received` | `{ provider: string, provider_event_id: string, amount: number, status: string }` |
+| `subscription_renewed` | `{ subscription_id: string, package_code: string, current_period_end: string }` |
+| `subscription_cancelled` | `{ subscription_id: string, reason?: string }` |
+| `payment_refunded` | `{ order_id: string, refund_amount: number, reason: string }` |
+| `offline_pack_downloaded` | `{ pack_id: string, total_size_bytes: number, asset_count: number }` |
+| `offline_pack_synced` | `{ pack_id: string, event_count: number, duplicate_count: number }` |
 
 ### 7.5 Field bị cấm trong mọi payload
 
