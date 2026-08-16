@@ -4,10 +4,40 @@ import { getOwnerDb } from "../../src/index.ts";
 import { gameLevels, gameTemplates } from "../../src/schema/game.ts";
 
 describe("Game Schema Integration Tests", () => {
+  async function getUniqueGameLevelCode(prefix = "GL-C1-NUM-DRAG") {
+    const db = getOwnerDb();
+    while (true) {
+      const code = `${prefix}-${Math.floor(1000 + Math.random() * 8999)}`;
+      const [existing] = await db
+        .select({ id: gameLevels.id })
+        .from(gameLevels)
+        .where(eq(gameLevels.code, code))
+        .limit(1);
+      if (!existing) {
+        return code;
+      }
+    }
+  }
+
+  async function getUniqueGameTemplateCode() {
+    const db = getOwnerDb();
+    while (true) {
+      const code = `GT-${Math.floor(100 + Math.random() * 899)}`;
+      const [existing] = await db
+        .select({ id: gameTemplates.id })
+        .from(gameTemplates)
+        .where(eq(gameTemplates.code, code))
+        .limit(1);
+      if (!existing) {
+        return code;
+      }
+    }
+  }
+
   it("access_tier has no default and rejects omitted value", async () => {
     const db = getOwnerDb();
-    const gtCode = `GT-${((Date.now() % 900) + 100).toString()}`;
-    const seq = (Math.floor(Math.random() * 9000) + 1000).toString();
+    const gtCode = await getUniqueGameTemplateCode();
+    const code = await getUniqueGameLevelCode();
 
     const [gt] = await db
       .insert(gameTemplates)
@@ -33,7 +63,7 @@ describe("Game Schema Integration Tests", () => {
       // @ts-expect-error testing missing access_tier
       db.insert(gameLevels).values({
         entityId: 1,
-        code: `GL-C1-NUM-DRAG-${seq}`,
+        code,
         contentVersion: 1,
         templateId: gtId,
         titleVi: "Level Test",
@@ -46,9 +76,8 @@ describe("Game Schema Integration Tests", () => {
 
   it("BR-SCT-03: partial unique index enforces only one published version per code", async () => {
     const db = getOwnerDb();
-    const gtCode = `GT-${((Date.now() % 900) + 100).toString()}`;
-    const seq = (Math.floor(Math.random() * 9000) + 1000).toString();
-    const code = `GL-C1-NUM-DRAG-${seq}`;
+    const gtCode = await getUniqueGameTemplateCode();
+    const code = await getUniqueGameLevelCode();
 
     const [gt] = await db
       .insert(gameTemplates)
@@ -105,9 +134,8 @@ describe("Game Schema Integration Tests", () => {
 
   it("BR-SCT-05: trigger prevents UPDATE on published game_levels row", async () => {
     const db = getOwnerDb();
-    const gtCode = `GT-${String((Date.now() % 800) + 100).padStart(3, "0")}`;
-    const seq = String((Date.now() % 8000) + 1000).padStart(4, "0");
-    const code = `GL-C1-NUM-DRAG-${seq}`;
+    const gtCode = await getUniqueGameTemplateCode();
+    const code = await getUniqueGameLevelCode();
 
     const [gt] = await db
       .insert(gameTemplates)

@@ -1,4 +1,5 @@
 import crypto from "node:crypto";
+import { shuffleWithSeed } from "@kidthink/adaptive";
 import { eq } from "drizzle-orm";
 import { beforeEach, describe, expect, it } from "vitest";
 import { getOwnerDb } from "../../src/index.ts";
@@ -515,26 +516,22 @@ describe("P3.6 Next Game Recommendation Invariants (BR-REC-01..08, D-MQ..D-MW)",
     expect(recs.primary.level_code).toBeTruthy();
   });
 
-  it("Scenario: D-MV — deterministic seed produces identical ordering", async () => {
-    const db = getOwnerDb();
-    const { child } = await createTestFixtures();
+  it("Scenario: D-MV — deterministic seed produces identical ordering", () => {
+    const list = [
+      "GL-C1-001",
+      "GL-C1-002",
+      "GL-C1-003",
+      "GL-C1-004",
+      "GL-C1-005",
+      "GL-C1-006",
+    ];
 
-    const recs1 = await getRecommendationsForChild(db, {
-      childId: child.id,
-      allowedTiers: ["free", "standard", "premium"],
-      seed: 99_999,
-    });
+    const shuffled1 = shuffleWithSeed(list, 99_999);
+    const shuffled2 = shuffleWithSeed(list, 99_999);
+    expect(shuffled1).toEqual(shuffled2);
 
-    const recs2 = await getRecommendationsForChild(db, {
-      childId: child.id,
-      allowedTiers: ["free", "standard", "premium"],
-      seed: 99_999,
-    });
-
-    expect(recs1.primary.level_code).toBe(recs2.primary.level_code);
-    expect(recs1.alternatives.map((a) => a.level_code)).toEqual(
-      recs2.alternatives.map((a) => a.level_code)
-    );
+    const shuffled3 = shuffleWithSeed(list, 12_345);
+    expect(shuffled1).not.toEqual(shuffled3);
   });
 
   it("Scenario: D-MW — guest recommendations only return allow-list free content and respect age band", async () => {

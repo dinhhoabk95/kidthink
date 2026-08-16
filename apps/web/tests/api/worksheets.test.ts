@@ -4,6 +4,7 @@ import {
   getOwnerDb,
   managers,
   users,
+  worksheets,
 } from "@kidthink/db";
 import { ENTITLEMENT_KEYS } from "@kidthink/shared";
 import { eq } from "drizzle-orm";
@@ -24,6 +25,21 @@ const CSRF_TOKEN =
 
 let testManagerId = 1;
 let testUserId = 1;
+
+async function getUniqueWorksheetCode() {
+  const db = getOwnerDb();
+  while (true) {
+    const candidate = `WS-${String(Math.floor(1000 + Math.random() * 8999))}`;
+    const [existing] = await db
+      .select({ id: worksheets.id })
+      .from(worksheets)
+      .where(eq(worksheets.code, candidate))
+      .limit(1);
+    if (!existing) {
+      return candidate;
+    }
+  }
+}
 
 beforeEach(async () => {
   const db = getOwnerDb();
@@ -195,7 +211,7 @@ describe("Worksheet Studio & Download APIs (BR-WSM-01..08, Task #64 / P4.3)", ()
   };
 
   it("POST /api/managers/worksheets tạo phiếu bài tập draft mới hợp lệ", async () => {
-    const code = `WS-${String(Date.now() % 9000).padStart(4, "0")}`;
+    const code = await getUniqueWorksheetCode();
     const event = mockManagerEvent(
       "POST",
       {},
@@ -235,7 +251,7 @@ describe("Worksheet Studio & Download APIs (BR-WSM-01..08, Task #64 / P4.3)", ()
   });
 
   it("GET /api/managers/worksheets và GET /api/managers/worksheets/[code] lấy danh sách và chi tiết", async () => {
-    const code = `WS-${String(Date.now() % 9000).padStart(4, "0")}`;
+    const code = await getUniqueWorksheetCode();
     await createWorksheetHandler(
       mockManagerEvent(
         "POST",
@@ -265,7 +281,7 @@ describe("Worksheet Studio & Download APIs (BR-WSM-01..08, Task #64 / P4.3)", ()
   });
 
   it("POST /api/managers/worksheets/[code]/render thực thi render PDF và lưu bằng chứng", async () => {
-    const code = `WS-${String(Date.now() % 9000).padStart(4, "0")}`;
+    const code = await getUniqueWorksheetCode();
     await createWorksheetHandler(
       mockManagerEvent(
         "POST",
@@ -292,7 +308,7 @@ describe("Worksheet Studio & Download APIs (BR-WSM-01..08, Task #64 / P4.3)", ()
   });
 
   it("GET /api/managers/worksheets/[code]/preview trả về buffer vector PDF", async () => {
-    const code = `WS-${String(Date.now() % 9000).padStart(4, "0")}`;
+    const code = await getUniqueWorksheetCode();
     await createWorksheetHandler(
       mockManagerEvent(
         "POST",
@@ -319,7 +335,7 @@ describe("Worksheet Studio & Download APIs (BR-WSM-01..08, Task #64 / P4.3)", ()
 
   it("GET /api/users/worksheets/[code]/pdf kiểm soát quyền tải và trả PDF cho user được cấp quyền", async () => {
     const db = getOwnerDb();
-    const code = `WS-${String(Date.now() % 9000).padStart(4, "0")}`;
+    const code = await getUniqueWorksheetCode();
 
     // 1. Tạo worksheet và render & transition sang published
     const created = (await createWorksheetHandler(

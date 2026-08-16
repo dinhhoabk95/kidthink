@@ -1,4 +1,3 @@
-import { getDateIct } from "@kidthink/shared";
 import { eq } from "drizzle-orm";
 import { describe, expect, it } from "vitest";
 import { getOwnerDb } from "../../src/index.ts";
@@ -18,7 +17,8 @@ import {
 describe("Task 5 — Daily Rollup & Entitlement Expire (BR-TLM-02, BR-TLM-05, BR-TLM-08)", () => {
   it("runs daily rollup idempotently and excludes guest sessions from child stats (BR-TLM-02, BR-TLM-05)", async () => {
     const db = getOwnerDb();
-    const dateIct = getDateIct();
+    const dateIct = "2099-07-07";
+    const testStartedAt = new Date("2099-07-07T10:00:00.000+07:00");
 
     // 1. Create Parent User & Child Profile
     const email = `rollup-parent-${Date.now()}@example.com`;
@@ -77,6 +77,7 @@ describe("Task 5 — Daily Rollup & Entitlement Expire (BR-TLM-02, BR-TLM-05, BR
       durationSeconds: 120,
       score: 100,
       starsEarned: 3,
+      startedAt: testStartedAt,
     });
 
     // 4. Create Guest Session (childProfileId is NULL) per BR-TLM-05
@@ -90,6 +91,7 @@ describe("Task 5 — Daily Rollup & Entitlement Expire (BR-TLM-02, BR-TLM-05, BR
       durationSeconds: 90,
       score: 80,
       starsEarned: 2,
+      startedAt: testStartedAt,
     });
 
     // 5. Run daily rollup 1st time
