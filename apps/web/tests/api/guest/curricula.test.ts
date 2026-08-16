@@ -128,7 +128,7 @@ describe("Public Program Showcase Suite — P3.8 (Task #61, BR-PSH-01..07, D-NF.
         code: lesCode1,
         contentVersion: 1,
         titleVi: "Bài học đo lường bước chân",
-        guideVi: "Hướng dẫn giáo viên",
+        guideVi: "Hướng dẫn người dạy",
         estimatedMinutes: 25,
         accessTier: "free",
         status: "published",

@@ -12,7 +12,7 @@
         </h3>
         <p class="text-xs text-surface-500">
           Thao tác này sẽ chuyển hồ sơ sang trạng thái lưu trữ theo yêu cầu của
-          phụ huynh.
+          người dùng.
         </p>
       </div>
 
@@ -29,7 +29,7 @@
             id="child-archive-reason"
             maxlength="500"
             minlength="10"
-            placeholder="Ví dụ: Phụ huynh yêu cầu tạm lưu trữ hồ sơ..."
+            placeholder="Ví dụ: Người dùng yêu cầu tạm lưu trữ hồ sơ..."
             required
             rows="3"
             v-model="reason"

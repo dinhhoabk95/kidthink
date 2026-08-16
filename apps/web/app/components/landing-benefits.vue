@@ -1,5 +1,6 @@
 <template>
-  <!-- Khối 6: Cho phụ huynh / Cho giáo viên -->
+  <!-- Khối 6: Dùng ở nhà / dùng trên lớp — chia theo ngữ cảnh dùng, không theo
+       loại người. Một loại User duy nhất: BR-GLOS-04. -->
   <section aria-labelledby="benefits-title" class="benefits-section">
     <div class="section-container">
       <div class="section-header">
@@ -7,12 +8,12 @@
           Đồng hành cùng bé lớn khôn
         </h2>
         <p class="section-subtitle">
-          Giải pháp hỗ trợ toàn diện cho gia đình và nhà trường
+          Một tài khoản, dùng được cả ở nhà lẫn trên lớp
         </p>
       </div>
       <div class="benefits-grid">
         <div class="benefit-col">
-          <h3 class="benefit-heading">Dành cho Phụ huynh</h3>
+          <h3 class="benefit-heading">Khi dùng ở nhà</h3>
           <ul class="benefit-list">
             <li>
               ✓ Theo dõi tiến độ tư duy trực quan mà không tạo áp lực điểm số
@@ -25,7 +26,7 @@
           </ul>
         </div>
         <div class="benefit-col">
-          <h3 class="benefit-heading">Dành cho Giáo viên & Trường mầm non</h3>
+          <h3 class="benefit-heading">Khi dùng trên lớp</h3>
           <ul class="benefit-list">
             <li>
               ✓ Thư viện học liệu trò chơi đa dạng chuẩn hoá khung mầm non

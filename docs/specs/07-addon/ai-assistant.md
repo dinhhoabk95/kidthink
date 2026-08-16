@@ -62,8 +62,21 @@ rò dữ liệu trẻ cao hơn hẳn và ranh giới phải chặt hơn.
 | Giải thích báo cáo bằng lời thường | idem | 1 |
 | Gợi ý game trong thư viện | Skill + band tuổi | 1 |
 | Gợi ý lesson trong thư viện | idem | 1 |
-| Viết lại hướng dẫn cho người dạy | Văn bản lesson | 2 |
+| Viết lại hướng dẫn cho người dạy | Văn bản lesson + `target_audience` §7.1.1 | 2 |
 | Tìm kiếm ngữ nghĩa | Câu truy vấn | 1 |
+
+#### 7.1.1 `target_audience` — ngữ cảnh dùng, không phải loại người
+
+`POST /api/users/ai/rewrite-guide` nhận `target_audience`, enum đóng:
+
+| Giá trị | Nghĩa | Giọng bản viết lại |
+|---|---|---|
+| `home` (mặc định) | Bài giảng chạy ở nhà, một người lớn một trẻ | "người dạy tại nhà" |
+| `class` | Bài giảng chạy trên lớp, một người dạy nhóm trẻ | "người dạy trên lớp" |
+
+Đây là trục **ngữ cảnh sử dụng** theo [`glossary.md`](../00-foundation/glossary.md) §7.4.1.
+Cấm — **NEVER đổi enum này thành nhãn vai trò** (`parent` / `teacher`): một enum persona
+trên public API là bước đầu của cột `role` trên `users` mà `BR-ACT-05` cấm.
 
 Tìm kiếm ngữ nghĩa có schema vector, job re-embed, và rerank riêng — spec chi tiết ở
 [`semantic-search.md`](semantic-search.md), file này chỉ giữ nó trong danh sách 6 tính năng.

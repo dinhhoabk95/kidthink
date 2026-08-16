@@ -422,8 +422,11 @@
     { key: "user_reactivated", label: "Kích hoạt lại tài khoản" },
     { key: "child_profile_created", label: "Tạo hồ sơ trẻ" },
     { key: "child_profile_deleted", label: "Xoá hồ sơ trẻ" },
-    { key: "parental_consent_recorded", label: "Ghi nhận đồng ý phụ huynh" },
-    { key: "parental_consent_revoked", label: "Rút đồng ý phụ huynh" },
+    {
+      key: "parental_consent_recorded",
+      label: "Ghi nhận đồng ý của người giám hộ",
+    },
+    { key: "parental_consent_revoked", label: "Rút đồng ý của người giám hộ" },
     { key: "entitlement_granted", label: "Cấp gói quyền lợi" },
     { key: "entitlement_revoked", label: "Thu hồi gói quyền lợi" },
     { key: "order_created", label: "Tạo đơn mua hàng" },

@@ -31,7 +31,7 @@ describe("PDF Renderer Unit Tests (BR-PDF-04, 05, 06, 07)", () => {
           description:
             "Hoạt động khởi động giúp trẻ nhận biết số lượng từ 1 đến 5.",
           instructions:
-            "Bước 1: Giáo viên đặt 5 quả táo.\nBước 2: Hướng dẫn trẻ chạm tay và đếm 1, 2, 3, 4, 5.\nBước 3: Cho trẻ nhắc lại số lượng tổng.",
+            "Bước 1: Người dạy đặt 5 quả táo.\nBước 2: Hướng dẫn trẻ chạm tay và đếm 1, 2, 3, 4, 5.\nBước 3: Cho trẻ nhắc lại số lượng tổng.",
           child_prompts: [
             "Con thấy có bao nhiêu quả táo trên bàn?",
             "Nếu cô lấy bớt 1 quả thì còn lại mấy quả nhỉ?",

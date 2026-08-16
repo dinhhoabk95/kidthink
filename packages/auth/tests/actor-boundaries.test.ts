@@ -10,7 +10,7 @@ import type { ChildOwnershipPort, EntitlementPort } from "../src/ports";
 
 const userWithChild: UserTokenPayload = {
   user_id: 101,
-  display_name: "Phụ huynh An",
+  display_name: "Người dùng An",
   session_id: "sess-user-1",
   refresh_token_version: 1,
   active_child_id: 301,
@@ -18,7 +18,7 @@ const userWithChild: UserTokenPayload = {
 
 const userWithoutChild: UserTokenPayload = {
   user_id: 102,
-  display_name: "Phụ huynh Bình",
+  display_name: "Người dùng Bình",
   session_id: "sess-user-2",
   refresh_token_version: 1,
 };

@@ -439,9 +439,7 @@ export function renderWorksheetPdf(
   streamCommands.push("BT");
   streamCommands.push("/F1 9 Tf");
   streamCommands.push("60 120 Td");
-  streamCommands.push(
-    `${escapePdfText("HƯỚNG DẪN DÀNH CHO PHỤ HUYNH / GIÁO VIÊN:")} Tj`
-  );
+  streamCommands.push(`${escapePdfText("HƯỚNG DẪN DÀNH CHO NGƯỜI DẠY:")} Tj`);
   streamCommands.push("ET");
 
   const guideLines = wrapText(input.instructions_vi, 80).slice(0, 4);

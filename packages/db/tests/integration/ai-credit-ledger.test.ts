@@ -316,7 +316,8 @@ describe("AI Credit Ledger Integration Tests (BR-ACL-01..09)", () => {
       userUuid: user.uuid,
       input: {
         credits: 50,
-        grant_reason: "Cấp bù credit theo yêu cầu hỗ trợ phụ huynh qua hotline",
+        grant_reason:
+          "Cấp bù credit theo yêu cầu hỗ trợ người dùng qua hotline",
         notify_user: true,
       },
       ip: "127.0.0.1",

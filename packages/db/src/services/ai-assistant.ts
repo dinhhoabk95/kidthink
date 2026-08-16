@@ -463,7 +463,7 @@ export class AiAssistantService {
   async rewriteGuide(
     userId: number,
     guideText: string,
-    targetAudience: "parent" | "teacher" = "parent"
+    targetAudience: "home" | "class" = "home"
   ) {
     const db = getDb();
     const idempotencyKey = `rew-gd:${userId}:${Date.now()}`;
@@ -565,5 +565,5 @@ export const suggestContent = (
 export const rewriteGuide = (
   userId: number,
   guideText: string,
-  targetAudience?: "parent" | "teacher"
+  targetAudience?: "home" | "class"
 ) => aiAssistantService.rewriteGuide(userId, guideText, targetAudience);

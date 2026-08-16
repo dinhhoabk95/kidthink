@@ -14,7 +14,7 @@ const WRONG_SECRET = "wrong-secret-key-at-least-32-chars-long!!";
 
 const validUser: UserTokenPayload = {
   user_id: 101,
-  display_name: "Phụ huynh An",
+  display_name: "Người dùng An",
   session_id: "session-user-123",
   refresh_token_version: 1,
   active_child_id: 301,

@@ -16,7 +16,7 @@
           <div
             class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-100 text-brand-700 dark:bg-brand-900/40 dark:text-brand-300 text-sm font-bold mb-2"
           >
-            <span>Công cụ giáo viên</span>
+            <span>Công cụ soạn giáo án</span>
           </div>
           <h1
             class="text-2xl sm:text-3xl font-heading font-extrabold text-surface-900 dark:text-white"

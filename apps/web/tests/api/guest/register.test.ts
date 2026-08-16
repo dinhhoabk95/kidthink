@@ -26,7 +26,7 @@ describe("Task 1 — POST /api/guest/auth/users/register (BR-REG-01..10)", () =>
     const payload = {
       email,
       password: "chuoixanh123",
-      display_name: "Phụ Huynh",
+      display_name: "Người Dùng",
       accept_terms: true,
       accept_privacy: true,
     };
@@ -71,7 +71,7 @@ describe("Task 1 — POST /api/guest/auth/users/register (BR-REG-01..10)", () =>
         body: {
           email: "noterms@example.com",
           password: "chuoixanh123",
-          display_name: "Phụ Huynh",
+          display_name: "Người Dùng",
           accept_terms: false,
           accept_privacy: true,
         },
@@ -93,7 +93,7 @@ describe("Task 1 — POST /api/guest/auth/users/register (BR-REG-01..10)", () =>
         body: {
           email: "weakpass@example.com",
           password: "123",
-          display_name: "Phụ Huynh",
+          display_name: "Người Dùng",
           accept_terms: true,
           accept_privacy: true,
         },
@@ -114,7 +114,7 @@ describe("Task 1 — POST /api/guest/auth/users/register (BR-REG-01..10)", () =>
     await db.insert(users).values({
       email,
       passwordHash: "dummy_hash",
-      displayName: "Phụ Huynh Dupe",
+      displayName: "Người Dùng Dupe",
       status: "pending_verification",
     });
 
@@ -125,7 +125,7 @@ describe("Task 1 — POST /api/guest/auth/users/register (BR-REG-01..10)", () =>
         body: {
           email: email.toUpperCase(),
           password: "chuoixanh123",
-          display_name: "Phụ Huynh Mới",
+          display_name: "Người Dùng Mới",
           accept_terms: true,
           accept_privacy: true,
         },

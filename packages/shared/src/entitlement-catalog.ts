@@ -185,8 +185,8 @@ export const PACKAGE_CATALOG: Record<string, PackageDefinition> = {
   "PKG-standard": {
     code: "PKG-standard",
     name: "Tiêu chuẩn",
-    audience: "Phụ huynh phổ thông",
-    description: "Dành cho phụ huynh theo dõi tiến độ của 3 trẻ",
+    audience: "Người dùng phổ thông",
+    description: "Dành cho người dùng theo dõi tiến độ của 3 trẻ",
     entitlements: [
       "play_login_games",
       "play_standard_games",
@@ -213,7 +213,7 @@ export const PACKAGE_CATALOG: Record<string, PackageDefinition> = {
   "PKG-premium": {
     code: "PKG-premium",
     name: "Premium",
-    audience: "Phụ huynh theo dõi sâu + giáo viên",
+    audience: "Người dùng theo dõi sâu",
     description: "Mở khoá toàn bộ game, lộ trình nâng cao và tối đa 5 trẻ",
     entitlements: [
       "play_login_games",
@@ -249,7 +249,7 @@ export const PACKAGE_CATALOG: Record<string, PackageDefinition> = {
   "PKG-addon_lesson_plan": {
     code: "PKG-addon_lesson_plan",
     name: "Add-on Giáo án",
-    audience: "Giáo viên mầm non",
+    audience: "Người dùng tự soạn giáo án",
     description: "Tạo, tuỳ chỉnh và xuất PDF giáo án",
     entitlements: [
       "create_lesson_plan",
@@ -276,7 +276,7 @@ export const PACKAGE_CATALOG: Record<string, PackageDefinition> = {
   "PKG-addon_curriculum": {
     code: "PKG-addon_curriculum",
     name: "Add-on Lộ trình tùy chỉnh",
-    audience: "Giáo viên và nhà thiết kế nội dung",
+    audience: "Người dùng tự dựng lộ trình",
     description: "Tạo lộ trình học cá nhân hoá",
     entitlements: ["create_custom_curriculum"],
     quotas: {
@@ -298,7 +298,7 @@ export const PACKAGE_CATALOG: Record<string, PackageDefinition> = {
   "PKG-addon_custom_game": {
     code: "PKG-addon_custom_game",
     name: "Add-on Trò chơi tùy chỉnh",
-    audience: "Giáo viên mầm non",
+    audience: "Người dùng tự tạo trò chơi",
     description: "Tạo trò chơi tuỳ chỉnh từ mẫu",
     entitlements: ["create_custom_game"],
     quotas: {
@@ -320,7 +320,7 @@ export const PACKAGE_CATALOG: Record<string, PackageDefinition> = {
   "PKG-addon_ai": {
     code: "PKG-addon_ai",
     name: "Add-on AI Assistant",
-    audience: "Phụ huynh và giáo viên",
+    audience: "Mọi người dùng",
     description: "Phân tích tiến trình và tìm kiếm thông minh bằng AI",
     entitlements: ["use_ai_analysis", "use_ai_search"],
     quotas: {},

@@ -76,7 +76,7 @@ export default defineEventHandler(async (event) => {
           statusMessage: "PARENT_GATE_REQUIRED",
           data: {
             code: "PARENT_GATE_REQUIRED",
-            message: "Cần xác nhận cổng phụ huynh khi đổi hồ sơ trẻ.",
+            message: "Cần xác nhận cổng người lớn khi đổi hồ sơ trẻ.",
           },
         });
       }

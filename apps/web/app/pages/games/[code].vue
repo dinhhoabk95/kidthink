@@ -12,7 +12,7 @@
           </h1>
           <p class="archived-desc">
             Nội dung bài học này đã được thay thế hoặc hoàn thành chu kỳ sử
-            dụng. Phụ huynh có thể tham khảo các trò chơi tương đương dưới đây:
+            dụng. Bạn có thể tham khảo các trò chơi tương đương dưới đây:
           </p>
           <div class="alternatives-grid">
             <NuxtLink

@@ -63,13 +63,13 @@ export interface CookieDefinition {
 export const ESSENTIAL_COOKIES: readonly CookieDefinition[] = [
   {
     name: "kidthink-user-session",
-    purpose: "Opaque session đăng nhập của phụ huynh/người dùng",
+    purpose: "Opaque session đăng nhập của người dùng",
     maxAge: "1 giờ",
     isEssential: true,
   },
   {
     name: "tm_u_remember",
-    purpose: "Ghi nhớ phiên đăng nhập khi phụ huynh chủ động chọn",
+    purpose: "Ghi nhớ phiên đăng nhập khi người dùng chủ động chọn",
     maxAge: "Tối đa 1 năm",
     isEssential: true,
   },
@@ -109,11 +109,11 @@ export const LOCAL_STORAGE_ITEMS: readonly StorageDefinition[] = [
   {
     key: "cookie_notice_ack",
     purpose:
-      "Ghi nhận phụ huynh đã đọc và đóng thông báo cookie (hiệu lực 12 tháng)",
+      "Ghi nhận người dùng đã đọc và đóng thông báo cookie (hiệu lực 12 tháng)",
   },
   {
     key: "parent_gate_trusted_until",
-    purpose: "Cửa sổ tin cậy sau khi phụ huynh mở cổng phụ huynh",
+    purpose: "Cửa sổ tin cậy sau khi người lớn mở cổng người lớn",
   },
   {
     key: "emoji_recent",
@@ -154,7 +154,7 @@ export const LEGAL_DOCUMENTS: readonly LegalDocument[] = [
     effectiveDate: "2026-08-01",
     reviewStatus: "approved",
     summary:
-      "Quy định quyền và nghĩa vụ của phụ huynh và nhà trường khi sử dụng nền tảng KidThink.",
+      "Quy định quyền và nghĩa vụ của người dùng khi sử dụng nền tảng KidThink.",
     requiresConsent: true,
     isChildSpecific: false,
     sections: [
@@ -168,9 +168,9 @@ export const LEGAL_DOCUMENTS: readonly LegalDocument[] = [
       {
         heading: "2. Tài khoản và hồ sơ trẻ",
         summary:
-          "Mỗi tài khoản phụ huynh được tạo tối đa 5 hồ sơ trẻ em với thông tin tối thiểu.",
+          "Mỗi tài khoản được tạo tối đa 5 hồ sơ trẻ em với thông tin tối thiểu.",
         content:
-          "Phụ huynh chịu trách nhiệm bảo mật thông tin đăng nhập và quản lý các hồ sơ trẻ trực thuộc tài khoản của mình.",
+          "Người dùng chịu trách nhiệm bảo mật thông tin đăng nhập và quản lý các hồ sơ trẻ trực thuộc tài khoản của mình.",
       },
     ],
   },
@@ -181,7 +181,7 @@ export const LEGAL_DOCUMENTS: readonly LegalDocument[] = [
     effectiveDate: "2026-08-01",
     reviewStatus: "approved",
     summary:
-      "Cam kết bảo vệ dữ liệu cá nhân của phụ huynh và gia đình theo quy định pháp luật Việt Nam.",
+      "Cam kết bảo vệ dữ liệu cá nhân của người dùng và gia đình theo quy định pháp luật Việt Nam.",
     requiresConsent: true,
     isChildSpecific: false,
     sections: [
@@ -195,7 +195,7 @@ export const LEGAL_DOCUMENTS: readonly LegalDocument[] = [
       {
         heading: "2. Quyền của chủ thể dữ liệu",
         summary:
-          "Phụ huynh có toàn quyền xem, chỉnh sửa, trích xuất hoặc yêu cầu xoá vĩnh viễn dữ liệu.",
+          "Người giám hộ có toàn quyền xem, chỉnh sửa, trích xuất hoặc yêu cầu xoá vĩnh viễn dữ liệu.",
         content:
           "Mọi yêu cầu rút lại sự đồng ý hoặc xoá tài khoản sẽ được hệ thống xử lý triệt để trong vòng 72 giờ làm việc.",
       },
@@ -224,7 +224,7 @@ export const LEGAL_DOCUMENTS: readonly LegalDocument[] = [
         summary:
           "Dữ liệu chỉ dùng để gợi ý bài học phù hợp vùng phát triển gần nhất (ZPD).",
         content:
-          "Dữ liệu chơi và tiến độ tư duy của trẻ được lưu trữ an toàn và tự động xoá khi phụ huynh xoá hồ sơ hoặc huỷ tài khoản.",
+          "Dữ liệu chơi và tiến độ tư duy của trẻ được lưu trữ an toàn và tự động xoá khi người dùng xoá hồ sơ hoặc huỷ tài khoản.",
       },
       {
         heading: "3. Cam kết không quảng cáo và không theo dõi",
@@ -245,7 +245,7 @@ export const LEGAL_DOCUMENTS: readonly LegalDocument[] = [
         summary:
           "Tự động kích hoạt màn hình nghỉ ngơi khi bé chơi đủ thời gian khuyến nghị.",
         content:
-          "Ứng dụng hỗ trợ phụ huynh đặt giới hạn thời gian chơi hàng ngày (15–30 phút) nhằm bảo vệ thị lực và sức khoẻ của trẻ.",
+          "Ứng dụng hỗ trợ người lớn đặt giới hạn thời gian chơi hàng ngày (15–30 phút) nhằm bảo vệ thị lực và sức khoẻ của trẻ.",
       },
       {
         heading: "6. Kênh tiếp nhận và giải quyết khiếu nại",
@@ -421,7 +421,7 @@ export const FAQ_ITEMS: readonly FaqItem[] = [
     question:
       "Báo cáo học tập có đánh giá được sự phát triển toàn diện của bé không?",
     answer:
-      "Báo cáo học tập phản ánh mức độ làm quen và thao tác với các dạng bài tư duy trong ứng dụng, hỗ trợ phụ huynh theo dõi tiến độ chứ không thay thế các bài kiểm tra đánh giá phát triển chuyên khoa.",
+      "Báo cáo học tập phản ánh mức độ làm quen và thao tác với các dạng bài tư duy trong ứng dụng, hỗ trợ người lớn theo dõi tiến độ chứ không thay thế các bài kiểm tra đánh giá phát triển chuyên khoa.",
   },
 
   // Về tài khoản
@@ -429,9 +429,9 @@ export const FAQ_ITEMS: readonly FaqItem[] = [
     id: "faq-a1",
     anchor: "so-luong-ho-so-tre",
     category: "account",
-    question: "Một tài khoản phụ huynh quản lý được bao nhiêu bé?",
+    question: "Một tài khoản quản lý được bao nhiêu bé?",
     answer:
-      "Mỗi tài khoản phụ huynh được tạo tối đa 5 hồ sơ trẻ em. Mỗi bé có tiến trình học tập, lịch sử bài học và báo cáo tư duy độc lập hoàn toàn.",
+      "Mỗi tài khoản được tạo tối đa 5 hồ sơ trẻ em. Mỗi bé có tiến trình học tập, lịch sử bài học và báo cáo tư duy độc lập hoàn toàn.",
   },
 
   // Về thanh toán
@@ -441,7 +441,7 @@ export const FAQ_ITEMS: readonly FaqItem[] = [
     category: "billing",
     question: "KidThink có chính sách hoàn tiền không?",
     answer:
-      "Có, chúng tôi áp dụng chính sách bảo đảm hài lòng: hoàn tiền 100% trong vòng 7 ngày đầu tiên nếu phụ huynh cảm thấy chương trình chưa phù hợp với bé.",
+      "Có, chúng tôi áp dụng chính sách bảo đảm hài lòng: hoàn tiền 100% trong vòng 7 ngày đầu tiên nếu người dùng cảm thấy chương trình chưa phù hợp với bé.",
     legalLink: "/refund-policy",
   },
   {

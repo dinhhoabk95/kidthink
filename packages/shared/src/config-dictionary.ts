@@ -20,7 +20,7 @@ export const CONFIG_DICTIONARY: Record<string, FieldDictionaryEntry> = {
   },
   instruction: {
     label: "Hướng dẫn thực hiện",
-    help: "Chỉ dẫn thao tác cho bé hoặc phụ huynh.",
+    help: "Chỉ dẫn thao tác cho bé hoặc người lớn.",
   },
   access_tier: {
     label: "Gói quyền truy cập",

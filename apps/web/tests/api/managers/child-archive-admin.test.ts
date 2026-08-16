@@ -122,7 +122,7 @@ describe("Task 5 — POST /api/managers/children/[uuid]/archive (BR-CPA-07, D-IG
       })
       .returning();
 
-    const archiveReason = "Phụ huynh yêu cầu tạm lưu trữ hồ sơ của bé";
+    const archiveReason = "Người dùng yêu cầu tạm lưu trữ hồ sơ của bé";
     const event = mockEvent("super_admin", child.uuid, {
       reason: archiveReason,
     });

@@ -76,7 +76,8 @@ export const rewriteGuideInputSchema = z.object({
     .string({ required_error: "Văn bản hướng dẫn là bắt buộc." })
     .min(10, "Văn bản hướng dẫn phải có tối thiểu 10 ký tự.")
     .max(3000, "Văn bản hướng dẫn không được vượt quá 3000 ký tự."),
-  target_audience: z.enum(["parent", "teacher"]).optional().default("parent"),
+  // Ngữ cảnh dùng, không phải loại người — BR-GLOS-04.
+  target_audience: z.enum(["home", "class"]).optional().default("home"),
 });
 
 export type RewriteGuideInput = z.infer<typeof rewriteGuideInputSchema>;

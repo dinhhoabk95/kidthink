@@ -8,7 +8,7 @@ import { describe, expect, it } from "vitest";
 
 const sampleUserPayload: UserTokenPayload = {
   user_id: 42,
-  display_name: "Phụ huynh Minh",
+  display_name: "Người dùng Minh",
   session_id: "web-session-abc",
   refresh_token_version: 1,
   active_child_id: 10,

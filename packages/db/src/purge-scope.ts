@@ -20,7 +20,7 @@ export const PURGE_TABLE_CLASSIFICATIONS: readonly TablePurgeMetadata[] = [
     tableName: "child_profiles",
     classification: "delete",
     reason:
-      "Hồ sơ trẻ em và thông tin độ tuổi cần xoá triệt để khi phụ huynh xoá tài khoản",
+      "Hồ sơ trẻ em và thông tin độ tuổi cần xoá triệt để khi người dùng xoá tài khoản",
     legalBasis: "Nghị định 13/2023/NĐ-CP Điều 16 (Quyền xoá dữ liệu cá nhân)",
   },
   {

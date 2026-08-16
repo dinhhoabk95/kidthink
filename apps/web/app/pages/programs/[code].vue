@@ -20,8 +20,8 @@
           </h1>
           <p class="text-surface-600 leading-relaxed mb-8">
             Chương trình <strong>{{ programCode }}</strong> đã được cập nhật
-            thành các lộ trình mới hơn. Phụ huynh có thể tham khảo các chương
-            trình tương đương dưới đây:
+            thành các lộ trình mới hơn. Bạn có thể tham khảo các chương trình
+            tương đương dưới đây:
           </p>
 
           <div

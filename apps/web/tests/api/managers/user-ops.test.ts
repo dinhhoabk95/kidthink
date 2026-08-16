@@ -160,7 +160,7 @@ describe("Task 3 — User Ops: Suspend, Reactivate, Send Password Reset (BR-USM-
     expect(auditLog.reason).toBe(suspendReason);
 
     // Step 2: Reactivate user
-    const reactivateReason = "Phụ huynh đã giải trình và xác minh hợp lệ";
+    const reactivateReason = "Người dùng đã giải trình và xác minh hợp lệ";
     const reactivateEvent = mockEvent("super_admin", user.uuid, {
       reason: reactivateReason,
     });

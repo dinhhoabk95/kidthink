@@ -56,7 +56,7 @@ describe("User AI Assistant API Endpoints (BR-AIA-01..11)", () => {
       .insert(users)
       .values({
         email: `test-api-ai-parent-${uid}@example.com`,
-        displayName: "Phụ huynh API Test",
+        displayName: "Người dùng API Test",
         status: "active",
       })
       .returning();

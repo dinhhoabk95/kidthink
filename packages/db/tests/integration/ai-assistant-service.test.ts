@@ -27,7 +27,7 @@ describe("AI Assistant Service Integration Tests (BR-AIA-01..11)", () => {
       .insert(users)
       .values({
         email: `test-ai-parent-${uid}@example.com`,
-        displayName: "Phụ huynh Test AI",
+        displayName: "Người dùng Test AI",
         status: "active",
       })
       .returning();
@@ -169,13 +169,15 @@ describe("AI Assistant Service Integration Tests (BR-AIA-01..11)", () => {
     const res = await aiAssistantService.rewriteGuide(
       user.id,
       "Cho trẻ đếm 3 khối gỗ hình vuông và xếp thành hàng ngang.",
-      "parent"
+      "home"
     );
 
     expect(res.label).toBe(AI_SUGGESTION_LABEL);
     expect(res.credits_spent).toBe(2);
     expect(res.remaining_balance).toBe(3);
-    expect(res.rewritten_guide).toContain("Gợi ý hướng dẫn dành cho phụ huynh");
+    expect(res.rewritten_guide).toContain(
+      "Gợi ý hướng dẫn dành cho người dạy tại nhà"
+    );
   });
 
   it("BR-AIA-05 & BR-AIA-06 & BR-AIA-10: suggestContent queries published games/lessons without altering curriculum", async () => {

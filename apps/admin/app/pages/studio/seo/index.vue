@@ -206,7 +206,7 @@
             {{ formData.title || 'Tiêu đề trang sẽ hiển thị ở đây' }}
           </div>
           <div class="text-xs text-slate-600 dark:text-slate-300 line-clamp-2">
-            {{ formData.meta_description || 'Mô tả tóm tắt nội dung của trang giúp phụ huynh và giáo viên tìm thấy trang...' }}
+            {{ formData.meta_description || 'Mô tả tóm tắt nội dung của trang giúp người dùng tìm thấy trang...' }}
           </div>
         </div>
 

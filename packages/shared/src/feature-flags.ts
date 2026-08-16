@@ -24,11 +24,11 @@ export const CODE_FEATURE_FLAGS: Record<string, FeatureFlagDefinition> = {
     defaultValue: true,
     expiresAt: "2026-12-31T23:59:59.000Z",
     safeDefaultReason:
-      "Mặc định bật để phụ huynh có thể cho trẻ trải nghiệm ngay sau thanh toán",
+      "Mặc định bật để người dùng có thể cho trẻ trải nghiệm ngay sau thanh toán",
   },
   weekly_progress_email: {
     key: "weekly_progress_email",
-    nameVi: "Email báo cáo tuần cho phụ huynh",
+    nameVi: "Email báo cáo tuần cho người lớn",
     descriptionVi: "Tự động gửi email tổng kết tiến độ học tập hàng tuần",
     defaultValue: false,
     expiresAt: "2026-12-31T23:59:59.000Z",

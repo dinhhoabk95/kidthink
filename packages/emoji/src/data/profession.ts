@@ -25,6 +25,9 @@ export const PROFESSION_EMOJIS: EmojiEntry[] = [
     ],
     name: "Bác sĩ nữ",
   },
+  // BR-GLOS-04 exemption, allowlisted in scripts/lint-user-vocabulary.ts:
+  // "giáo viên" here is an emoji search keyword for the picture 👨‍🏫 / 👩‍🏫, not a
+  // label for a kind of account. Removing it breaks Vietnamese emoji search.
   {
     age_min: 3,
     category: "profession",

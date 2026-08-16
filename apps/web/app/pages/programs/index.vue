@@ -113,8 +113,7 @@
         <div class="empty-state" v-else>
           <p class="empty-title">Chưa có chương trình nào</p>
           <p class="empty-subtitle">
-            Các chương trình học đang được cập nhật. Phụ huynh vui lòng quay lại
-            sau.
+            Các chương trình học đang được cập nhật. Vui lòng quay lại sau.
           </p>
         </div>
       </div>

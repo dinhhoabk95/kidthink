@@ -87,7 +87,7 @@ describe("Manager Session JWT token lifecycle", () => {
   it("fails verification for a canonical User token even when the secret is shared accidentally", async () => {
     const user: UserTokenPayload = {
       user_id: 101,
-      display_name: "Phụ huynh An",
+      display_name: "Người dùng An",
       session_id: "user-session-101",
       refresh_token_version: 0,
     };

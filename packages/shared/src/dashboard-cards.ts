@@ -76,7 +76,7 @@ export const DASHBOARD_CARDS: readonly DashboardCardDefinition[] = [
   {
     id: "new_users_7d",
     title: "User mới 7 ngày",
-    description_vi: "Số tài khoản phụ huynh đăng ký mới trong 7 ngày gần nhất",
+    description_vi: "Số tài khoản người dùng đăng ký mới trong 7 ngày gần nhất",
     group: "growth",
     source: "telemetry_rollup_daily",
     href: "/users",

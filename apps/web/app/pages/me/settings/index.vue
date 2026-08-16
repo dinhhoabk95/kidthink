@@ -343,7 +343,7 @@
   });
 
   const profileForm = reactive({
-    displayName: "Phụ huynh",
+    displayName: "Người dùng",
   });
 
   const notifPreferences = reactive({

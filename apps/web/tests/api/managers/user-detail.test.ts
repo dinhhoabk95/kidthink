@@ -152,7 +152,7 @@ describe("Task 4 — GET /api/managers/users/[uuid] Detail (BR-USD-01, BR-USD-04
       .values({
         code: "PKG_TEST_STD",
         nameVi: "Gói chuẩn",
-        audienceVi: "Phụ huynh",
+        audienceVi: "Người dùng",
         offers: [],
       })
       .onConflictDoNothing();

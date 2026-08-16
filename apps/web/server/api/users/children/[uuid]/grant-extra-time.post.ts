@@ -52,7 +52,7 @@ export default defineEventHandler(async (event) => {
       )
     ) {
       throw new AppError("INSUFFICIENT_ROLE", {
-        message: "Cần xác minh cổng phụ huynh.",
+        message: "Cần xác minh cổng người lớn.",
       });
     }
 

@@ -58,7 +58,7 @@ const userEvent = {
   context: createAuthContext({
     user: {
       user_id: 101,
-      display_name: "Phụ huynh An",
+      display_name: "Người dùng An",
       session_id: "session-a",
       refresh_token_version: 0,
     },

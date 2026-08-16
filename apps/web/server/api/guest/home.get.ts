@@ -49,7 +49,7 @@ export default defineEventHandler((event) => {
       duration_months: 12,
       description:
         standardPkg?.description ||
-        "Dành cho phụ huynh theo dõi tiến độ của 3 trẻ",
+        "Dành cho người dùng theo dõi tiến độ của 3 trẻ",
       features: [
         "Toàn bộ 60+ trò chơi rèn luyện 6 năng lực tư duy",
         "Lộ trình học thích ứng theo độ tuổi",
@@ -69,7 +69,7 @@ export default defineEventHandler((event) => {
       features: [
         "Toàn bộ 120+ trò chơi nâng cao và bài học mở rộng",
         "Thuật toán thích ứng ZPD cá nhân hoá từng kỹ năng",
-        "Phân tích chuyên sâu 6 năng lực tư duy cho phụ huynh",
+        "Phân tích chuyên sâu 6 năng lực tư duy cho người lớn",
         "Hỗ trợ ưu tiên và cập nhật liên tục trò chơi mới",
       ],
       cta_text: "Đăng ký Gói Premium",
@@ -106,7 +106,7 @@ export default defineEventHandler((event) => {
       },
       {
         step: 3,
-        title: "Phụ huynh theo dõi tiến bộ",
+        title: "Người lớn theo dõi tiến bộ",
         description:
           "Xem báo cáo trực quan về mức độ thuần thục của bé ở từng năng lực mà không có điểm số áp lực.",
       },

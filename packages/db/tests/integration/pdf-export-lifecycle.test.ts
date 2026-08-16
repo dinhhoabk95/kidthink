@@ -52,7 +52,7 @@ describe("Task P4.2 — PDF Export Lifecycle Integration Tests (BR-PDF-01..09)",
         snapshot: {
           title: "Hoạt động khởi động",
           duration_minutes: 15,
-          description: "Giáo viên hướng dẫn trẻ đếm 1-5",
+          description: "Người dạy hướng dẫn trẻ đếm 1-5",
           child_prompts: ["Có mấy quả táo?"],
         },
       },

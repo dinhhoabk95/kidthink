@@ -157,7 +157,7 @@ export const aiProvider = {
         "Gợi ý tiếp theo: Nên cho bé thử các thử thách tương tác mới về ghép nối quy luật để củng cố vùng phát triển gần nhất.";
     } else if (prompt.includes("viết lại") || prompt.includes("hướng dẫn")) {
       responseText =
-        "Hướng dẫn cho phụ huynh: Hãy cùng con quan sát các vật dụng xung quanh nhà, khuyến khích con tự tìm câu trả lời qua các câu hỏi gợi mở nhẹ nhàng.";
+        "Hướng dẫn cho người dạy: Hãy cùng bé quan sát các vật dụng xung quanh nhà, khuyến khích bé tự tìm câu trả lời qua các câu hỏi gợi mở nhẹ nhàng.";
     }
 
     const completionTokens = Math.max(1, Math.ceil(responseText.length / 4));
@@ -276,7 +276,7 @@ export const aiProvider = {
 
   async rewriteGuide(
     guideText: string,
-    targetAudience: "parent" | "teacher" = "parent",
+    targetAudience: "home" | "class" = "home",
     model = DEFAULT_COMPLETION_MODEL
   ): Promise<AiCompletionResult> {
     await Promise.resolve();
@@ -307,7 +307,7 @@ export const aiProvider = {
     }
 
     const audienceTitle =
-      targetAudience === "parent" ? "phụ huynh" : "giáo viên";
+      targetAudience === "home" ? "người dạy tại nhà" : "người dạy trên lớp";
     const text =
       `Gợi ý hướng dẫn dành cho ${audienceTitle}:\n` +
       "1. Khởi động (1-2 phút): Tạo tâm lý thoải mái và gợi mở sự tò mò cho bé.\n" +

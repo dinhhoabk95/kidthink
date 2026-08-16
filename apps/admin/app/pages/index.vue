@@ -583,7 +583,7 @@
               Chưa có nguồn — bước P4
             </div>
             <p class="text-xs text-surface-500">
-              Theo dõi hạn mức tiêu thụ token API của giáo viên và phụ huynh.
+              Theo dõi hạn mức tiêu thụ token API của người dùng.
             </p>
           </div>
         </div>

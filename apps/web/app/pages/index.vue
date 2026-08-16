@@ -137,7 +137,7 @@
         </div>
       </section>
 
-      <!-- Khối 6: Cho phụ huynh / Cho giáo viên -->
+      <!-- Khối 6: Dùng ở nhà / dùng trên lớp -->
       <LandingBenefits />
 
       <!-- Khối 7: Gói học & Bảng giá (BR-LND-05) -->
@@ -149,7 +149,7 @@
           <div class="section-header">
             <h2 class="section-title" id="faq-title">Câu hỏi thường gặp</h2>
             <p class="section-subtitle">
-              Giải đáp thắc mắc của phụ huynh trước khi bắt đầu
+              Giải đáp thắc mắc của người lớn trước khi bắt đầu
             </p>
           </div>
           <div class="faq-accordion">
@@ -207,7 +207,7 @@
       },
       {
         step: 3,
-        title: "Phụ huynh theo dõi tiến bộ",
+        title: "Người lớn theo dõi tiến bộ",
         description:
           "Xem báo cáo trực quan về mức độ thuần thục của bé ở từng năng lực mà không có điểm số áp lực.",
       },
@@ -244,7 +244,7 @@
         duration_months: 12,
         description:
           PACKAGE_CATALOG["PKG-standard"]?.description ||
-          "Dành cho phụ huynh theo dõi tiến độ của 3 trẻ",
+          "Dành cho người dùng theo dõi tiến độ của 3 trẻ",
         features: [
           "Toàn bộ 60+ trò chơi rèn luyện 6 năng lực tư duy",
           "Lộ trình học thích ứng theo độ tuổi",
@@ -264,7 +264,7 @@
         features: [
           "Toàn bộ 120+ trò chơi nâng cao và bài học mở rộng",
           "Thuật toán thích ứng ZPD cá nhân hoá từng kỹ năng",
-          "Phân tích chuyên sâu 6 năng lực tư duy cho phụ huynh",
+          "Phân tích chuyên sâu 6 năng lực tư duy cho người lớn",
           "Hỗ trợ ưu tiên và cập nhật liên tục trò chơi mới",
         ],
         cta_text: "Đăng ký Gói Premium",

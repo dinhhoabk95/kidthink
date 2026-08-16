@@ -26,7 +26,7 @@ export const CONSENT_POLICY_MAP: Record<
     title: "Điều khoản sử dụng dịch vụ",
     lastUpdatedOn: "2026-08-01",
     summary:
-      "Quy định quyền và nghĩa vụ của phụ huynh và nhà trường khi sử dụng nền tảng KidThink.",
+      "Quy định quyền và nghĩa vụ của người dùng khi sử dụng nền tảng KidThink.",
     isChildSpecific: false,
     requiresConsent: true,
   },
@@ -35,7 +35,7 @@ export const CONSENT_POLICY_MAP: Record<
     title: "Chính sách quyền riêng tư",
     lastUpdatedOn: "2026-08-01",
     summary:
-      "Cam kết bảo vệ dữ liệu cá nhân của phụ huynh và gia đình theo quy định pháp luật Việt Nam.",
+      "Cam kết bảo vệ dữ liệu cá nhân của người dùng và gia đình theo quy định pháp luật Việt Nam.",
     isChildSpecific: false,
     requiresConsent: true,
   },

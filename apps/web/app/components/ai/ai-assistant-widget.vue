@@ -115,7 +115,7 @@
       </div>
       <p class="text-xs text-surface-500 italic pt-2 border-t border-brand-100">
         Lưu ý: Phản hồi AI chỉ mang tính chất gợi ý tham khảo, không thay thế
-        nhận định trực tiếp của phụ huynh và giáo viên.
+        nhận định trực tiếp của người lớn.
       </p>
     </div>
   </section>

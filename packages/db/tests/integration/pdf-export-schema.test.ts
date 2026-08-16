@@ -14,7 +14,7 @@ describe("Task P4.2 — Database Schema & Invariants Integration Tests (BR-PDF-0
       .values({
         email: `teacher-pdf-${Date.now()}@example.com`,
         passwordHash: "hash123",
-        displayName: "Giáo Viên PDF",
+        displayName: "Người Dùng PDF",
       })
       .returning();
     testUserId = user.id;

@@ -13,7 +13,7 @@
             Tra cứu và quản lý người dùng
           </h1>
           <p class="text-sm text-surface-500 mt-1">
-            Tra cứu thông tin tài khoản phụ huynh, số hồ sơ trẻ và thực hiện
+            Tra cứu thông tin tài khoản người dùng, số hồ sơ trẻ và thực hiện
             thao tác vận hành.
           </p>
         </div>
@@ -69,7 +69,7 @@
             <input
               class="w-full px-3.5 py-2.5 rounded-2xl border-[3px] border-surface-200 focus:border-indigo-500 focus:outline-none text-sm"
               id="filter-q"
-              placeholder="Nhập email hoặc tên phụ huynh..."
+              placeholder="Nhập email hoặc tên người dùng..."
               type="text"
               v-model="filterForm.q"
             >

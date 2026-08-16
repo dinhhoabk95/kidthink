@@ -83,7 +83,7 @@
                 Xác thực hai lớp (TOTP)
               </h2>
               <p class="text-xs text-surface-500 mt-0.5">
-                MFA là tính năng tuỳ chọn cho tài khoản phụ huynh.
+                MFA là tính năng tuỳ chọn cho tài khoản người dùng.
               </p>
             </div>
           </div>

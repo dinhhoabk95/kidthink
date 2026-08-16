@@ -7,8 +7,8 @@
         <div class="guide-header">
           <h1 class="guide-title">Hướng dẫn đồng hành cùng con</h1>
           <p class="guide-subtitle">
-            Cẩm nang cho cha mẹ và giáo viên giúp trẻ phát huy tối đa tư duy qua
-            từng bài học tương tác.
+            Cẩm nang cho người lớn giúp trẻ phát huy tối đa tư duy qua từng bài
+            học tương tác.
           </p>
         </div>
 
@@ -66,7 +66,7 @@
   useSeoMeta({
     title: "Hướng dẫn đồng hành cùng con — KidThink",
     description:
-      "Cẩm nang hướng dẫn phụ huynh và giáo viên đồng hành giúp trẻ mầm non học toán tư duy hiệu quả và an toàn.",
+      "Cẩm nang hướng dẫn người lớn đồng hành giúp trẻ mầm non học toán tư duy hiệu quả và an toàn.",
   });
 
   useHead({

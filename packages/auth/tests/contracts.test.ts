@@ -22,7 +22,7 @@ const AUTH_VENDOR_PATTERN = /@sidebase\/nuxt-auth|next-auth|AuthJS/;
 
 const user: UserTokenPayload = {
   user_id: 101,
-  display_name: "Phụ huynh An",
+  display_name: "Người dùng An",
   session_id: "session-user-1",
   refresh_token_version: 2,
   active_child_id: 301,

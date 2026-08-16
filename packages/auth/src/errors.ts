@@ -113,15 +113,15 @@ export const AUTH_ERROR_DEFINITIONS = {
   },
   PARENT_GATE_INVALID: {
     status: 400,
-    message: "Thử thách phụ huynh không hợp lệ.",
+    message: "Thử thách cổng người lớn không hợp lệ.",
   },
   PARENT_GATE_EXPIRED: {
     status: 410,
-    message: "Thử thách phụ huynh đã hết hạn.",
+    message: "Thử thách cổng người lớn đã hết hạn.",
   },
   PARENT_GATE_FAILED: {
     status: 403,
-    message: "Câu trả lời thử thách phụ huynh không chính xác.",
+    message: "Câu trả lời thử thách cổng người lớn không chính xác.",
   },
   SOCIAL_EMAIL_CONFLICT: {
     status: 409,

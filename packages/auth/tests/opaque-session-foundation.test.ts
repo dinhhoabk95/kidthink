@@ -15,7 +15,7 @@ describe("T1 Opaque Redis Session Foundation (BR-AUT-25 .. BR-AUT-38)", () => {
     const created = await store.createSession({
       namespace: "user",
       accountId: 101,
-      displayName: "Phụ huynh A",
+      displayName: "Người dùng A",
       rememberMe: false,
       now,
     });
@@ -32,7 +32,7 @@ describe("T1 Opaque Redis Session Foundation (BR-AUT-25 .. BR-AUT-38)", () => {
     expect(resolved).toEqual({
       user: {
         user_id: 101,
-        display_name: "Phụ huynh A",
+        display_name: "Người dùng A",
         session_id: sha256(created.sessionToken),
         refresh_token_version: 0,
         active_child_id: undefined,
@@ -48,7 +48,7 @@ describe("T1 Opaque Redis Session Foundation (BR-AUT-25 .. BR-AUT-38)", () => {
     const created = await store.createSession({
       namespace: "user",
       accountId: 102,
-      displayName: "Phụ huynh B",
+      displayName: "Người dùng B",
       rememberMe: true,
       now: now1,
     });
@@ -110,7 +110,7 @@ describe("T1 Opaque Redis Session Foundation (BR-AUT-25 .. BR-AUT-38)", () => {
     const created = await store.createSession({
       namespace: "user",
       accountId: 103,
-      displayName: "Phụ huynh C",
+      displayName: "Người dùng C",
       rememberMe: true,
       deviceId: "dev_phone_1",
     });

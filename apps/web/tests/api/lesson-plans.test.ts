@@ -333,7 +333,7 @@ describe("Task P4.1 — Lesson Plan Creator API (BR-LPC-01..09, D-P4A..D-P4D)", 
         items: [
           {
             item_type: "custom_note",
-            custom_note: "Ghi chú sửa đổi của giáo viên",
+            custom_note: "Ghi chú sửa đổi của người dạy",
           },
         ],
       },
