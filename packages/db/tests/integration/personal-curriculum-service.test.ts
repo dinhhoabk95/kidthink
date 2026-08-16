@@ -1,4 +1,5 @@
-import { beforeEach, describe, expect, it } from "vitest";
+import { eq, inArray } from "drizzle-orm";
+import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { getOwnerDb } from "../../src/client.ts";
 import {
   childProfiles,
@@ -40,16 +41,18 @@ describe("Personal Curriculum Service & Lifecycle Integration Tests (Task #65 / 
   let standardGameLevelId: number;
   let archivedLessonId: number;
   let systemCurriculumCode: string;
+  let systemCurriculumId: number;
 
   beforeEach(async () => {
     const db = getOwnerDb();
     const ts = Date.now();
+    const rand = Math.floor(Math.random() * 1_000_000);
 
     // 1. Create test users
     const [uA] = await db
       .insert(users)
       .values({
-        email: `pcu_user_a_${ts}@tinimath.test`,
+        email: `pcu_user_a_${ts}_${rand}@tinimath.test`,
         passwordHash: "hash123",
         displayName: "User A (Teacher/Parent)",
       })
@@ -59,7 +62,7 @@ describe("Personal Curriculum Service & Lifecycle Integration Tests (Task #65 / 
     const [uB] = await db
       .insert(users)
       .values({
-        email: `pcu_user_b_${ts}@tinimath.test`,
+        email: `pcu_user_b_${ts}_${rand}@tinimath.test`,
         passwordHash: "hash123",
         displayName: "User B (Other Parent)",
       })
@@ -89,7 +92,7 @@ describe("Personal Curriculum Service & Lifecycle Integration Tests (Task #65 / 
       .returning();
     childBUuid = cB.uuid;
 
-    // 3. Create game template
+    // 3. Create or get game template
     const [gt] = await db
       .insert(gameTemplates)
       .values({
@@ -100,72 +103,109 @@ describe("Personal Curriculum Service & Lifecycle Integration Tests (Task #65 / 
       })
       .onConflictDoNothing()
       .returning();
-    const templateId = gt?.id ?? 1;
+    let templateId = gt?.id;
+    if (!templateId) {
+      const [existing] = await db
+        .select({ id: gameTemplates.id })
+        .from(gameTemplates)
+        .where(eq(gameTemplates.code, "GT-999"))
+        .limit(1);
+      templateId = existing.id;
+    }
 
     // 4. Create standard & premium game levels
-    const [glStd] = await db
-      .insert(gameLevels)
-      .values({
-        code: `GL-C1-NUM-CNT-${String((ts % 9000) + 1000)}`,
-        entityId: 101,
-        templateId,
-        difficulty: 1,
-        titleVi: "Đếm số tiêu chuẩn",
-        accessTier: "standard",
-        status: "published",
-        contentPack: {},
-        difficultyParams: {},
-      })
-      .returning();
-    standardGameLevelId = glStd.id;
+    async function insertUniqueGameLevel(
+      entityId: number,
+      difficulty: number,
+      titleVi: string,
+      accessTier: "standard" | "premium"
+    ): Promise<number> {
+      for (let i = 0; i < 20; i++) {
+        const code = `GL-C1-TST-PCU-${Math.floor(Math.random() * 8000) + 1000}`;
+        const [existing] = await db
+          .select({ id: gameLevels.id })
+          .from(gameLevels)
+          .where(eq(gameLevels.code, code))
+          .limit(1);
+        if (!existing) {
+          const [res] = await db
+            .insert(gameLevels)
+            .values({
+              code,
+              entityId,
+              templateId,
+              difficulty,
+              titleVi,
+              accessTier,
+              status: "published",
+              contentPack: {},
+              difficultyParams: {},
+            })
+            .returning();
+          return res.id;
+        }
+      }
+      throw new Error("Failed to insert unique game level");
+    }
 
-    const [glPrem] = await db
-      .insert(gameLevels)
-      .values({
-        code: `GL-C1-NUM-CNT-${String(((ts + 1) % 9000) + 1000)}`,
-        entityId: 102,
-        templateId,
-        difficulty: 2,
-        titleVi: "Đếm số cao cấp",
-        accessTier: "premium",
-        status: "published",
-        contentPack: {},
-        difficultyParams: {},
-      })
-      .returning();
-    premiumGameLevelId = glPrem.id;
+    standardGameLevelId = await insertUniqueGameLevel(
+      101,
+      1,
+      "Đếm số tiêu chuẩn",
+      "standard"
+    );
+    premiumGameLevelId = await insertUniqueGameLevel(
+      102,
+      2,
+      "Đếm số cao cấp",
+      "premium"
+    );
 
     // 5. Create lessons (published & archived)
-    const [lesPub] = await db
-      .insert(lessons)
-      .values({
-        code: `LES-${String((ts % 9000) + 1000)}`,
-        entityId: 201,
-        titleVi: "Bài học hình khối cơ bản",
-        accessTier: "standard",
-        status: "published",
-        estimatedMinutes: 20,
-        contentVersion: 1,
-      })
-      .returning();
-    publishedLessonId = lesPub.id;
+    async function insertUniqueLesson(
+      entityId: number,
+      titleVi: string,
+      status: "published" | "archived"
+    ): Promise<number> {
+      for (let i = 0; i < 20; i++) {
+        const code = `LES-${Math.floor(Math.random() * 8000) + 1000}`;
+        const [existing] = await db
+          .select({ id: lessons.id })
+          .from(lessons)
+          .where(eq(lessons.code, code))
+          .limit(1);
+        if (!existing) {
+          const [res] = await db
+            .insert(lessons)
+            .values({
+              code,
+              entityId,
+              titleVi,
+              accessTier: "standard",
+              status,
+              estimatedMinutes: 20,
+              contentVersion: 1,
+            })
+            .returning();
+          return res.id;
+        }
+      }
+      throw new Error("Failed to insert unique lesson");
+    }
 
-    const [lesArch] = await db
-      .insert(lessons)
-      .values({
-        code: `LES-${String(((ts + 1) % 9000) + 1000)}`,
-        entityId: 202,
-        titleVi: "Bài học cũ đã lưu trữ",
-        accessTier: "standard",
-        status: "archived",
-        estimatedMinutes: 20,
-        contentVersion: 1,
-      })
-      .returning();
-    archivedLessonId = lesArch.id;
+    publishedLessonId = await insertUniqueLesson(
+      201,
+      "Bài học hình khối cơ bản",
+      "published"
+    );
+    archivedLessonId = await insertUniqueLesson(
+      202,
+      "Bài học cũ đã lưu trữ",
+      "archived"
+    );
 
     // 6. Create system published curriculum
-    systemCurriculumCode = `CUR-SYS-${ts % 10_000}`;
+    systemCurriculumCode = `CUR-SYS-${ts}-${rand}`;
     const [sysCurr] = await db
       .insert(curricula)
       .values({
@@ -178,6 +218,7 @@ describe("Personal Curriculum Service & Lifecycle Integration Tests (Task #65 / 
         sessionsPerWeek: 3,
       })
       .returning();
+    systemCurriculumId = sysCurr.id;
 
     await db.insert(curriculumItems).values([
       {
@@ -199,6 +240,46 @@ describe("Personal Curriculum Service & Lifecycle Integration Tests (Task #65 / 
         isRequired: true,
       },
     ]);
+  });
+
+  afterEach(async () => {
+    const db = getOwnerDb();
+    if (systemCurriculumId) {
+      await db
+        .delete(curriculumItems)
+        .where(eq(curriculumItems.curriculumId, systemCurriculumId));
+      await db.delete(curricula).where(eq(curricula.id, systemCurriculumId));
+    }
+    if (standardGameLevelId || premiumGameLevelId) {
+      await db
+        .delete(gameLevels)
+        .where(
+          inArray(
+            gameLevels.id,
+            [standardGameLevelId, premiumGameLevelId].filter(Boolean)
+          )
+        );
+    }
+    if (publishedLessonId || archivedLessonId) {
+      await db
+        .delete(lessons)
+        .where(
+          inArray(
+            lessons.id,
+            [publishedLessonId, archivedLessonId].filter(Boolean)
+          )
+        );
+    }
+    if (userAId || userBId) {
+      await db
+        .delete(childProfiles)
+        .where(
+          inArray(childProfiles.userId, [userAId, userBId].filter(Boolean))
+        );
+      await db
+        .delete(users)
+        .where(inArray(users.id, [userAId, userBId].filter(Boolean)));
+    }
   });
 
   describe("Entitlement, Quota & Paywall Gates (BR-PCU-01, BR-PCU-08)", () => {
@@ -428,7 +509,7 @@ describe("Personal Curriculum Service & Lifecycle Integration Tests (Task #65 / 
       expect(copied.title).toBe("Bản sao lớp Mầm của cô");
       expect(copied.status).toBe("draft");
       expect(copied.items.length).toBe(2);
-      expect(copied.items[0].code).toContain("GL-C1-NUM-CNT");
+      expect(copied.items[0].code).toContain("GL-C1-");
     });
   });
 

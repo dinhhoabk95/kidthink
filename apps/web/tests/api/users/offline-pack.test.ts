@@ -163,8 +163,18 @@ describe("Offline Curriculum Pack & Sync APIs (BR-PWA, BR-OCP, BR-OFF)", () => {
       .where(eq(gameTemplates.code, templateCode));
     templateId = foundGt?.id ?? 1;
 
-    const randNum = String(Math.floor(Math.random() * 9000) + 1000);
-    gameLevelCode = `GL-C1-NUM-CNT-${randNum}`;
+    while (true) {
+      const candidate = `GL-C1-OFF-PCK-${String(Math.floor(1000 + Math.random() * 8999))}`;
+      const [existing] = await db
+        .select({ id: gameLevels.id })
+        .from(gameLevels)
+        .where(eq(gameLevels.code, candidate))
+        .limit(1);
+      if (!existing) {
+        gameLevelCode = candidate;
+        break;
+      }
+    }
     const randEntityId = Math.floor(Math.random() * 100_000) + 1000;
     const [gl] = await db
       .insert(gameLevels)
@@ -183,10 +193,23 @@ describe("Offline Curriculum Pack & Sync APIs (BR-PWA, BR-OCP, BR-OFF)", () => {
     gameLevelId = gl.id;
 
     // 4. Seed lesson
+    let lesCode = "";
+    while (true) {
+      const candidate = `LES-${String(Math.floor(1000 + Math.random() * 8999))}`;
+      const [existing] = await db
+        .select({ id: lessons.id })
+        .from(lessons)
+        .where(eq(lessons.code, candidate))
+        .limit(1);
+      if (!existing) {
+        lesCode = candidate;
+        break;
+      }
+    }
     const [les] = await db
       .insert(lessons)
       .values({
-        code: `LES-${randNum}`,
+        code: lesCode,
         entityId: randEntityId + 1,
         titleVi: "Bài học toán tuần 1",
         accessTier: "standard",

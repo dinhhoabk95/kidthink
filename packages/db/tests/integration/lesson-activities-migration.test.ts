@@ -177,7 +177,19 @@ describe("lesson_activities Migration & Constraint Tests (Task 2)", () => {
 
   it("preserves entity_id lineage reference without strict FK to activities.id (D-AE)", async () => {
     const db = getOwnerDb();
-    const lesCode = `LES-${(Math.floor(Math.random() * 9000) + 1000).toString()}`;
+    let lesCode = "";
+    while (true) {
+      const candidate = `LES-${String(Math.floor(1000 + Math.random() * 8999))}`;
+      const [existing] = await db
+        .select({ id: lessons.id })
+        .from(lessons)
+        .where(eq(lessons.code, candidate))
+        .limit(1);
+      if (!existing) {
+        lesCode = candidate;
+        break;
+      }
+    }
     const nonExistentEntityId = 888_777_666;
 
     const [les] = await db
