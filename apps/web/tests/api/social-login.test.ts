@@ -1,12 +1,6 @@
-import {
-  consentLogs,
-  getAppDb,
-  mfaSettings,
-  socialIdentities,
-  users,
-} from "@kidthink/db";
-import { eq } from "drizzle-orm";
-import { beforeEach, describe, expect, it } from "vitest";
+import { consentLogs, getAppDb, socialIdentities, users } from "@kidthink/db";
+import { eq, inArray } from "drizzle-orm";
+import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { handleSocialLogin } from "../../server/api/guest/auth/users/social-login.post.js";
 
 function createMockEvent(options: { oauth_profile?: any; ip?: string } = {}) {
@@ -46,12 +40,33 @@ function createMockEvent(options: { oauth_profile?: any; ip?: string } = {}) {
 
 describe("Task 3, 4 & 5 — Social Login & Registration (BR-SCL-01..14, D-IN, D-IO)", () => {
   const db = getAppDb();
+  const TEST_EMAILS = [
+    "verified_parent@gmail.com",
+    "fb_user@facebook.example.com",
+    "existing_parent@example.com",
+  ];
+
+  async function cleanupTestData() {
+    const testUsers = await db
+      .select({ id: users.id })
+      .from(users)
+      .where(inArray(users.email, TEST_EMAILS));
+
+    const userIds = testUsers.map((u) => u.id);
+    if (userIds.length > 0) {
+      await db
+        .delete(socialIdentities)
+        .where(inArray(socialIdentities.userId, userIds));
+      await db.delete(users).where(inArray(users.id, userIds));
+    }
+  }
 
   beforeEach(async () => {
-    // Clear test data
-    await db.delete(socialIdentities);
-    await db.delete(mfaSettings);
-    await db.delete(users);
+    await cleanupTestData();
+  });
+
+  afterEach(async () => {
+    await cleanupTestData();
   });
 
   describe("Task 4 — Branch B: First-Time Registration (BR-SCL-01, BR-SCL-02, BR-SCL-05, BR-SCL-08, BR-SCL-10, BR-SCL-12)", () => {

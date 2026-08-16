@@ -1,12 +1,12 @@
 import {
   childProfiles,
-  customGames,
   entitlementKeys,
   entitlements,
   getOwnerDb,
   users,
 } from "@kidthink/db";
-import { beforeEach, describe, expect, it } from "vitest";
+import { eq } from "drizzle-orm";
+import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import configHandler from "../../server/api/users/custom-games/[uuid]/config.get.js";
 import deleteCustomGameHandler from "../../server/api/users/custom-games/[uuid]/index.delete.js";
 import getCustomGameHandler from "../../server/api/users/custom-games/[uuid]/index.get.js";
@@ -104,12 +104,18 @@ describe("P4.5 Custom Game API Endpoints (BR-CGB-01..10)", () => {
     },
   };
 
+  afterEach(async () => {
+    const db = getOwnerDb();
+    if (userA?.id) {
+      await db.delete(users).where(eq(users.id, userA.id));
+    }
+    if (userB?.id) {
+      await db.delete(users).where(eq(users.id, userB.id));
+    }
+  });
+
   beforeEach(async () => {
     const db = getOwnerDb();
-    await db.delete(customGames);
-    await db.delete(childProfiles);
-    await db.delete(entitlements);
-    await db.delete(users);
 
     // Seed entitlement key if not exists
     await db

@@ -187,8 +187,8 @@ async function assertGatingAllowance(
   const hasAccessibleMandatoryItem = mandatoryItems.some((item) => {
     const tier =
       item.entityType === "game_level"
-        ? glTiers.get(item.entityId) || "free"
-        : lesTiers.get(item.entityId) || "free";
+        ? glTiers.get(item.entityId) || "premium"
+        : lesTiers.get(item.entityId) || "premium";
     return userAllowedTiers.includes(tier);
   });
 

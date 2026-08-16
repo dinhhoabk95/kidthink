@@ -1,7 +1,7 @@
-import { beforeEach, describe, expect, it } from "vitest";
+import { eq } from "drizzle-orm";
+import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { getOwnerDb } from "../../src/client.ts";
 import { childProfiles } from "../../src/schema/child.ts";
-import { customGames } from "../../src/schema/custom-game.ts";
 import { users } from "../../src/schema/identity.ts";
 import {
   createCustomGame,
@@ -53,11 +53,21 @@ describe("P4.5 Custom Game DB Service (BR-CGB-01..10)", () => {
     },
   };
 
+  afterEach(async () => {
+    const db = getOwnerDb();
+    if (childA?.id) {
+      await db.delete(childProfiles).where(eq(childProfiles.id, childA.id));
+    }
+    if (userA?.id) {
+      await db.delete(users).where(eq(users.id, userA.id));
+    }
+    if (userB?.id) {
+      await db.delete(users).where(eq(users.id, userB.id));
+    }
+  });
+
   beforeEach(async () => {
     const db = getOwnerDb();
-    await db.delete(customGames);
-    await db.delete(childProfiles);
-    await db.delete(users);
 
     // Create User A & User B
     const [uA] = await db

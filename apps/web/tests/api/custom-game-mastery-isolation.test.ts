@@ -1,13 +1,13 @@
 import {
   childProfiles,
-  customGames,
   entitlementKeys,
   entitlements,
   getOwnerDb,
   masteryState,
   users,
 } from "@kidthink/db";
-import { beforeEach, describe, expect, it } from "vitest";
+import { eq } from "drizzle-orm";
+import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import configHandler from "../../server/api/users/custom-games/[uuid]/config.get.js";
 import createCustomGameHandler from "../../server/api/users/custom-games/index.post.js";
 import { invalidateUserEntitlementsCache } from "../../server/utils/entitlements-runtime.js";
@@ -65,13 +65,15 @@ describe("P4.5 Custom Game Mastery Isolation (BR-CGB-06)", () => {
   let userA: { id: number; email: string };
   let childA: { id: number; uuid: string };
 
+  afterEach(async () => {
+    const db = getOwnerDb();
+    if (userA?.id) {
+      await db.delete(users).where(eq(users.id, userA.id));
+    }
+  });
+
   beforeEach(async () => {
     const db = getOwnerDb();
-    await db.delete(masteryState);
-    await db.delete(customGames);
-    await db.delete(childProfiles);
-    await db.delete(entitlements);
-    await db.delete(users);
 
     await db
       .insert(entitlementKeys)
