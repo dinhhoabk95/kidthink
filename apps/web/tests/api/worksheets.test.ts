@@ -4,7 +4,6 @@ import {
   getOwnerDb,
   managers,
   users,
-  worksheets,
 } from "@kidthink/db";
 import { ENTITLEMENT_KEYS } from "@kidthink/shared";
 import { eq } from "drizzle-orm";
@@ -28,8 +27,9 @@ let testUserId = 1;
 
 beforeEach(async () => {
   const db = getOwnerDb();
-  await db.delete(entitlements);
-  await db.delete(worksheets);
+  if (testUserId) {
+    await db.delete(entitlements).where(eq(entitlements.userId, testUserId));
+  }
 
   // Ensure entitlement keys
   for (const k of ENTITLEMENT_KEYS) {

@@ -65,11 +65,6 @@ describe("Task P4.2 — PDF Export API (BR-PDF-01..09)", () => {
   let plan1Uuid: string;
 
   beforeEach(async () => {
-    await db.delete(exportJobs);
-    await db.delete(lessonPlanItems);
-    await db.delete(lessonPlans);
-    await db.delete(entitlements);
-
     const [u1] = await db
       .insert(users)
       .values({

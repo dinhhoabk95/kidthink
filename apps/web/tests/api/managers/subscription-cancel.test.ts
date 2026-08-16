@@ -1,7 +1,6 @@
 import {
   createRecurringSubscription,
   entitlementKeys,
-  entitlements,
   getOwnerDb,
   packages,
   recurringSubscriptions,
@@ -65,8 +64,6 @@ function mockManagerEvent(
 describe("POST /api/managers/subscriptions/[id]/cancel (BR-ASC-01..06)", () => {
   beforeEach(async () => {
     const db = getOwnerDb();
-    await db.delete(entitlements);
-    await db.delete(recurringSubscriptions);
 
     await db
       .insert(packages)

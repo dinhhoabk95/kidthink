@@ -10,7 +10,6 @@ import {
   paymentTransactions,
   processAutomatedPaymentWebhook,
   reconcileAutomatedPayments,
-  recurringSubscriptions,
   SEED_ENTITLEMENT_KEYS,
   SEED_PACKAGES,
   users,
@@ -21,12 +20,7 @@ const RE_RECONCILIATION_MISMATCH = /không khớp|RECONCILIATION_MISMATCH/;
 
 describe("Automated Payment Integration Tests (P5.1 / Task #71)", () => {
   beforeEach(async () => {
-    // Clear test tables
     const db = getOwnerDb();
-    await db.delete(paymentTransactions);
-    await db.delete(entitlements);
-    await db.delete(paymentOrders);
-    await db.delete(recurringSubscriptions);
 
     await db
       .insert(packages)

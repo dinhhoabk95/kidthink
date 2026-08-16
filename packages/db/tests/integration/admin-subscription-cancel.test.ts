@@ -8,7 +8,6 @@ import {
   entitlements,
   getOwnerDb,
   packages,
-  paymentOrders,
   recurringSubscriptions,
   runDunningSweep,
   SEED_ENTITLEMENT_KEYS,
@@ -22,10 +21,6 @@ const RE_INVALID_CANCEL_REASON = /Ghi chú|VALIDATION_FAILED/;
 describe("Admin & User Subscription Cancellation Integration Tests (P5.1 / Task #71)", () => {
   beforeEach(async () => {
     const db = getOwnerDb();
-    await db.delete(entitlements);
-    await db.delete(recurringSubscriptions);
-    await db.delete(paymentOrders);
-    await db.delete(auditLogs);
 
     await db
       .insert(packages)
