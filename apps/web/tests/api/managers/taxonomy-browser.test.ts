@@ -134,43 +134,60 @@ describe("Task 5 — GET /api/managers/taxonomy (BR-TXB-01..03, BR-TXB-06, D-IT)
 
     let pubLevel: any;
     let draftLevel: any;
-    const rand = Math.floor(1000 + Math.random() * 8999);
-    const code1 = `GL-C1-CNT-TEST-${rand}`;
-    const code2 = `GL-C1-CNT-TEST-${rand + 1}`;
-    const entityId1 = Math.floor(100_000 + Math.random() * 800_000);
-    const entityId2 = Math.floor(100_000 + Math.random() * 800_000);
 
     if (skillId) {
       // Insert 1 published level and 1 draft level
-      pubLevel = await db
-        .insert(gameLevels)
-        .values({
-          entityId: entityId1,
-          code: code1,
-          contentVersion: 1,
-          templateId,
-          titleVi: "Level Published Test",
-          contentPack: {},
-          difficultyParams: {},
-          accessTier: "free",
-          status: "published",
-        })
-        .returning();
+      while (!pubLevel) {
+        const rand = Math.floor(1000 + Math.random() * 8999);
+        const code1 = `GL-C1-CNT-TEST-${rand}`;
+        const [existing] = await db
+          .select({ id: gameLevels.id })
+          .from(gameLevels)
+          .where(eq(gameLevels.code, code1))
+          .limit(1);
+        if (!existing) {
+          pubLevel = await db
+            .insert(gameLevels)
+            .values({
+              entityId: Math.floor(100_000 + Math.random() * 800_000),
+              code: code1,
+              contentVersion: 1,
+              templateId,
+              titleVi: "Level Published Test",
+              contentPack: {},
+              difficultyParams: {},
+              accessTier: "free",
+              status: "published",
+            })
+            .returning();
+        }
+      }
 
-      draftLevel = await db
-        .insert(gameLevels)
-        .values({
-          entityId: entityId2,
-          code: code2,
-          contentVersion: 1,
-          templateId,
-          titleVi: "Level Draft Test",
-          contentPack: {},
-          difficultyParams: {},
-          accessTier: "free",
-          status: "draft",
-        })
-        .returning();
+      while (!draftLevel) {
+        const rand = Math.floor(1000 + Math.random() * 8999);
+        const code2 = `GL-C1-CNT-TEST-${rand}`;
+        const [existing] = await db
+          .select({ id: gameLevels.id })
+          .from(gameLevels)
+          .where(eq(gameLevels.code, code2))
+          .limit(1);
+        if (!existing) {
+          draftLevel = await db
+            .insert(gameLevels)
+            .values({
+              entityId: Math.floor(100_000 + Math.random() * 800_000),
+              code: code2,
+              contentVersion: 1,
+              templateId,
+              titleVi: "Level Draft Test",
+              contentPack: {},
+              difficultyParams: {},
+              accessTier: "free",
+              status: "draft",
+            })
+            .returning();
+        }
+      }
 
       await db.insert(contentSkillMap).values([
         {

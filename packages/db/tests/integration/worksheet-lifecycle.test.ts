@@ -84,11 +84,42 @@ describe("Worksheet Lifecycle & Render Evidence Integration Tests (Task #64 / P4
     managerId = mgr.id;
   });
 
+  async function getUniqueWorksheetCode() {
+    const db = getOwnerDb();
+    while (true) {
+      const code = `WS-${Math.floor(1000 + Math.random() * 8999)}`;
+      const [existing] = await db
+        .select({ id: worksheets.id })
+        .from(worksheets)
+        .where(eq(worksheets.code, code))
+        .limit(1);
+      if (!existing) {
+        return code;
+      }
+    }
+  }
+
+  async function getUniqueActivityCode() {
+    const db = getOwnerDb();
+    while (true) {
+      const code = `ACT-${Math.floor(1000 + Math.random() * 8999)}`;
+      const [existing] = await db
+        .select({ id: activities.id })
+        .from(activities)
+        .where(eq(activities.code, code))
+        .limit(1);
+      if (!existing) {
+        return code;
+      }
+    }
+  }
+
   it("triển khai quy trình trọn vẹn: Tạo draft -> Render -> Publish -> Tạo version mới -> Archive", async () => {
     // 1. Tạo draft worksheet
+    const draftCode = await getUniqueWorksheetCode();
     const draft = await createWorksheetDraft(
       {
-        code: `WS-${String(Math.floor(1000 + Math.random() * 8999))}`,
+        code: draftCode,
         title: "Phiếu tô màu theo quy luật hình học",
         layout_template: "pattern_coloring",
         content_blocks: samplePatternColoring,
@@ -197,9 +228,10 @@ describe("Worksheet Lifecycle & Render Evidence Integration Tests (Task #64 / P4
     const db = getOwnerDb();
 
     // 1. Tạo và publish worksheet
+    const draftCode = await getUniqueWorksheetCode();
     const draft = await createWorksheetDraft(
       {
-        code: `WS-${String(Math.floor(1000 + Math.random() * 8999))}`,
+        code: draftCode,
         title: "Phiếu bài tập liên kết hoạt động",
         layout_template: "pattern_coloring",
         content_blocks: samplePatternColoring,
@@ -233,9 +265,10 @@ describe("Worksheet Lifecycle & Render Evidence Integration Tests (Task #64 / P4
     });
 
     // 2. Tạo activity tham chiếu worksheet này
+    const actCode = await getUniqueActivityCode();
     await db.insert(activities).values({
       entityId: Math.floor(100_000 + Math.random() * 800_000),
-      code: `ACT-${String(Math.floor(1000 + Math.random() * 8999))}`,
+      code: actCode,
       contentVersion: 1,
       kind: "worksheet",
       titleVi: "Hoạt động làm phiếu bài tập",

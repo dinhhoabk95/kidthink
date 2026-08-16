@@ -6,7 +6,7 @@ import {
   playSessions,
 } from "@kidthink/db";
 import { resolveAssets } from "@kidthink/shared";
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import { describe, expect, it } from "vitest";
 import guestConfigHandler from "../../server/api/guest/levels/[code]/config.get.js";
 import managerConfigHandler from "../../server/api/managers/levels/[code]/config.get.js";
@@ -43,10 +43,9 @@ function mockEvent(
       },
     },
     context: {
-      ...(authContext?.user ? { user: authContext.user } : {}),
-      ...(authContext?.manager ? { manager: authContext.manager } : {}),
       params,
-      query,
+      ...(authContext?.user ? { user: authContext.user } : {}),
+      ...(authContext?.manager ? { superadmin: authContext.manager } : {}),
     },
     query,
     __responseHeaders: responseHeaders,
@@ -122,12 +121,22 @@ async function seedTestLevel(options: {
     ],
   };
 
+  const contentVersion = options.contentVersion || 1;
+  await db
+    .delete(gameLevels)
+    .where(
+      and(
+        eq(gameLevels.code, options.code),
+        eq(gameLevels.contentVersion, contentVersion)
+      )
+    );
+
   const [level] = await db
     .insert(gameLevels)
     .values({
       entityId: Math.floor(Math.random() * 900_000) + 100_000,
       code: options.code,
-      contentVersion: options.contentVersion || 1,
+      contentVersion,
       templateId: gt.id,
       titleVi: "Level Test Config",
       instructionVi: "Hướng dẫn làm bài",
