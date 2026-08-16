@@ -32,7 +32,7 @@
     "check:services": "node scripts/check-services.ts",
     "perf:budget": "node scripts/lint-perf-budget.ts",
     "format": "biome format --write .",
-    "test": "vitest run --no-file-parallelism --maxWorkers=1",
+    "test": "NODE_OPTIONS=--max-old-space-size=4096 vitest run",
     "test:a11y": "vitest run packages/ui/tests/a11y.test.ts",
     "lint:specs": "node scripts/lint-specs.ts",
     "lint:user-vocabulary": "tsx scripts/lint-user-vocabulary.ts",
