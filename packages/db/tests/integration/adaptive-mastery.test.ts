@@ -14,13 +14,12 @@ import { completePlaySession } from "../../src/services/play-session.ts";
 describe("P3.5 Adaptive & Mastery Integration Tests (PostgreSQL)", () => {
   async function createTestFixtures() {
     const db = getOwnerDb();
-    const ts = Date.now();
 
     // 1. Create user and child
     const [u] = await db
       .insert(users)
       .values({
-        email: `user-adp-${ts}@example.com`,
+        email: `user-adp-${crypto.randomUUID()}@example.com`,
         displayName: "Parent ADP",
       })
       .returning();
@@ -35,7 +34,7 @@ describe("P3.5 Adaptive & Mastery Integration Tests (PostgreSQL)", () => {
       })
       .returning();
 
-    // 2. Create taxonomy: competency, strand, skill
+    // 2. Create taxonomy: competency, unique strand, unique skill
     let [comp] = await db
       .select()
       .from(competencies)
@@ -55,108 +54,107 @@ describe("P3.5 Adaptive & Mastery Integration Tests (PostgreSQL)", () => {
         .returning();
     }
 
-    let [strand] = await db
+    const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    const randLetters = Array.from(
+      { length: 3 },
+      () => letters[Math.floor(Math.random() * letters.length)]
+    ).join("");
+    const validStrandCode = `C1.AD${randLetters}`; // e.g. C1.ADXYZ
+
+    const [strand] = await db
+      .insert(strands)
+      .values({
+        competencyId: comp.id,
+        code: validStrandCode,
+        nameVi: `Đếm số lượng ${validStrandCode}`,
+        position: 1,
+      })
+      .returning();
+
+    const skillCode = `${validStrandCode}.01`;
+    const [skill] = await db
+      .insert(skills)
+      .values({
+        strandId: strand.id,
+        code: skillCode,
+        nameVi: `Đếm trong phạm vi 5 ${skillCode}`,
+        difficulty: 1,
+        ageMin: 3,
+        ageMax: 4,
+        position: 1,
+      })
+      .returning();
+
+    // 3. Create game template and level
+    let template: any;
+    const templateCode = `GT-${String(Math.floor(Math.random() * 899 + 100)).padStart(3, "0")}`;
+    const [existingTemplate] = await db
       .select()
-      .from(strands)
-      .where(eq(strands.code, "C1.CNT"))
+      .from(gameTemplates)
+      .where(eq(gameTemplates.code, templateCode))
       .limit(1);
 
-    if (!strand) {
-      [strand] = await db
-        .insert(strands)
+    if (existingTemplate) {
+      template = existingTemplate;
+    } else {
+      [template] = await db
+        .insert(gameTemplates)
         .values({
-          competencyId: comp.id,
-          code: "C1.CNT",
-          nameVi: "Đếm số lượng",
-          position: 1,
+          code: templateCode,
+          nameVi: "Tap To Count",
+          mechanic: "tap_select",
+          status: "active",
         })
         .returning();
     }
 
-    let skill: any;
-    while (!skill) {
-      const skillRand = Math.floor(Math.random() * 89 + 10);
-      const skillCode = `C1.CNT.${String(skillRand).padStart(2, "0")}`;
-      const [existing] = await db
-        .select()
-        .from(skills)
-        .where(eq(skills.code, skillCode))
-        .limit(1);
-
-      if (!existing) {
-        [skill] = await db
-          .insert(skills)
-          .values({
-            strandId: strand.id,
-            code: skillCode,
-            nameVi: `Đếm trong phạm vi ${skillRand}`,
-            difficulty: 1,
-            ageMin: 3,
-            ageMax: 4,
-            position: 1,
-          })
-          .returning();
-      }
-    }
-
-    // 3. Create game template and level
-    let template: any;
-    while (!template) {
-      const templateCode = `GT-${String(Math.floor(Math.random() * 899 + 100)).padStart(3, "0")}`;
-      const [existing] = await db
-        .select()
-        .from(gameTemplates)
-        .where(eq(gameTemplates.code, templateCode))
-        .limit(1);
-
-      if (existing) {
-        template = existing;
-      } else {
-        [template] = await db
-          .insert(gameTemplates)
-          .values({
-            code: templateCode,
-            nameVi: "Tap To Count",
-            mechanic: "tap_select",
-            status: "active",
-          })
-          .returning();
-      }
-    }
-
     let level: any;
-    while (!level) {
-      const levelCode = `GL-C1-CNT-TAP-${String(Math.floor(Math.random() * 8999 + 1000)).padStart(4, "0")}`;
-      const [existing] = await db
-        .select()
-        .from(gameLevels)
-        .where(eq(gameLevels.code, levelCode))
-        .limit(1);
+    const levelCode = `GL-C1-CNT-TAP-${String(Math.floor(Math.random() * 8999 + 1000)).padStart(4, "0")}`;
+    const [existingLevel] = await db
+      .select()
+      .from(gameLevels)
+      .where(eq(gameLevels.code, levelCode))
+      .limit(1);
 
-      if (!existing) {
-        [level] = await db
-          .insert(gameLevels)
-          .values({
-            entityId: Math.floor(Math.random() * 800_000 + 100_000),
-            code: levelCode,
-            templateId: template.id,
-            titleVi: "Level Test 1",
-            contentPack: {},
-            difficultyParams: {},
-            accessTier: "free",
-            status: "published",
-          })
-          .returning();
-      }
+    if (existingLevel) {
+      level = existingLevel;
+    } else {
+      [level] = await db
+        .insert(gameLevels)
+        .values({
+          entityId: Math.floor(Math.random() * 800_000 + 100_000),
+          code: levelCode,
+          templateId: template.id,
+          titleVi: "Level Test 1",
+          contentPack: {},
+          difficultyParams: {},
+          accessTier: "free",
+          status: "published",
+        })
+        .returning();
     }
 
     // 4. Map level to skill
-    await db.insert(contentSkillMap).values({
-      entityType: "game_level",
-      entityId: level.id,
-      skillId: skill.id,
-      weight: "1.0000",
-    });
+    const [existingMap] = await db
+      .select()
+      .from(contentSkillMap)
+      .where(
+        and(
+          eq(contentSkillMap.entityType, "game_level"),
+          eq(contentSkillMap.entityId, level.id),
+          eq(contentSkillMap.skillId, skill.id)
+        )
+      )
+      .limit(1);
+
+    if (!existingMap) {
+      await db.insert(contentSkillMap).values({
+        entityType: "game_level",
+        entityId: level.id,
+        skillId: skill.id,
+        weight: "1.0000",
+      });
+    }
 
     return { u, child, comp, strand, skill, level, template };
   }

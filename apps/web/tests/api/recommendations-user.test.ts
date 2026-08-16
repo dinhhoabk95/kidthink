@@ -6,6 +6,7 @@ import {
   getOwnerDb,
   users,
 } from "@kidthink/db";
+import { eq } from "drizzle-orm";
 import { describe, expect, it } from "vitest";
 import getRecommendationsHandler from "../../server/api/users/play/recommendations.get";
 
@@ -108,10 +109,26 @@ describe("User Play Recommendations API (BR-REC-01..08, D-MQ..D-MV)", () => {
         .returning();
     }
 
-    const randNum = crypto.randomInt(100_000, 999_999);
+    let randEntityId = crypto.randomInt(100_000, 999_999);
+    let randCode = `GL-C1-REC-API-${String(crypto.randomInt(1000, 9999))}`;
+    let codeExists = true;
+    while (codeExists) {
+      const [existing] = await db
+        .select()
+        .from(gameLevels)
+        .where(eq(gameLevels.code, randCode))
+        .limit(1);
+      if (existing) {
+        randCode = `GL-C1-REC-API-${String(crypto.randomInt(1000, 9999))}`;
+        randEntityId = crypto.randomInt(100_000, 999_999);
+      } else {
+        codeExists = false;
+      }
+    }
+
     await db.insert(gameLevels).values({
-      entityId: randNum,
-      code: `GL-C1-API-REC-${String(crypto.randomInt(1000, 9999))}`,
+      entityId: randEntityId,
+      code: randCode,
       contentVersion: 1,
       templateId: tmpl.id,
       titleVi: "Đếm hoa quả API",

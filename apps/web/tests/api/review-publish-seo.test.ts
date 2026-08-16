@@ -255,17 +255,49 @@ describe("Content Review, Publish, Versioning & SEO Admin APIs (P2.8, BR-CRQ-*, 
     return tpl;
   }
 
+  async function getUniqueLevelCode(prefix: string) {
+    const db = getOwnerDb();
+    while (true) {
+      const num4 = Math.floor(Math.random() * 8999) + 1000;
+      const candidate = `GL-C1-CNT-${prefix}-${num4}`;
+      const [existing] = await db
+        .select({ id: gameLevels.id })
+        .from(gameLevels)
+        .where(eq(gameLevels.code, candidate))
+        .limit(1);
+      if (!existing) {
+        return candidate;
+      }
+    }
+  }
+
+  async function getUniqueCurriculumCode() {
+    const db = getOwnerDb();
+    while (true) {
+      const num3 = Math.floor(Math.random() * 899) + 100;
+      const candidate = `CUR-${num3}`;
+      const [existing] = await db
+        .select({ id: curricula.id })
+        .from(curricula)
+        .where(eq(curricula.code, candidate))
+        .limit(1);
+      if (!existing) {
+        return candidate;
+      }
+    }
+  }
+
   // --- 1. Content Review Queue (BR-CRQ-01..08, D-KK) ---
   it("Task 1: GET /api/managers/content/review-queue returns in_review items and filters out repo_seed published levels", async () => {
     const db = getOwnerDb();
     const tpl = await ensureTemplate();
 
-    const inReviewCode = `GL-C1-CNT-REV-${(1000 + (Date.now() % 8999)).toString()}`;
-    const repoSeedCode = `GL-C1-CNT-SED-${(1000 + (Date.now() % 8999)).toString()}`;
+    const inReviewCode = await getUniqueLevelCode("REV");
+    const repoSeedCode = await getUniqueLevelCode("SED");
 
     // 1. studio item in_review
     await db.insert(gameLevels).values({
-      entityId: Date.now() + 100,
+      entityId: Math.floor(Math.random() * 800_000 + 100_000),
       code: inReviewCode,
       contentVersion: 1,
       templateId: tpl.id,
@@ -283,7 +315,7 @@ describe("Content Review, Publish, Versioning & SEO Admin APIs (P2.8, BR-CRQ-*, 
 
     // 2. repo_seed item published (must NOT appear in queue)
     await db.insert(gameLevels).values({
-      entityId: Date.now() + 101,
+      entityId: Math.floor(Math.random() * 800_000 + 100_000),
       code: repoSeedCode,
       contentVersion: 1,
       templateId: tpl.id,
@@ -310,12 +342,12 @@ describe("Content Review, Publish, Versioning & SEO Admin APIs (P2.8, BR-CRQ-*, 
     const db = getOwnerDb();
     const tpl = await ensureTemplate();
 
-    const olderCode = `GL-C1-CNT-OLD-${(1000 + (Date.now() % 8999)).toString()}`;
-    const v2Code = `GL-C1-CNT-VER-${(1000 + (Date.now() % 8999)).toString()}`;
+    const olderCode = await getUniqueLevelCode("OLD");
+    const v2Code = await getUniqueLevelCode("VER");
 
     // v1 standalone older draft
     await db.insert(gameLevels).values({
-      entityId: Date.now() + 110,
+      entityId: Math.floor(Math.random() * 800_000 + 100_000),
       code: olderCode,
       contentVersion: 1,
       templateId: tpl.id,
@@ -333,7 +365,7 @@ describe("Content Review, Publish, Versioning & SEO Admin APIs (P2.8, BR-CRQ-*, 
 
     // v2 level (Tier 3 priority)
     await db.insert(gameLevels).values({
-      entityId: Date.now() + 111,
+      entityId: Math.floor(Math.random() * 800_000 + 100_000),
       code: v2Code,
       contentVersion: 2,
       templateId: tpl.id,
@@ -364,10 +396,10 @@ describe("Content Review, Publish, Versioning & SEO Admin APIs (P2.8, BR-CRQ-*, 
   it("Task 2: GET /api/managers/levels/[code]/config delivers preview config with server-signed preview_token (D-KG, BR-CRQ-02)", async () => {
     const db = getOwnerDb();
     const tpl = await ensureTemplate();
-    const code = `GL-C1-CNT-TOK-${(1000 + (Date.now() % 8999)).toString()}`;
+    const code = await getUniqueLevelCode("TOK");
 
     await db.insert(gameLevels).values({
-      entityId: Date.now() + 120,
+      entityId: Math.floor(Math.random() * 800_000 + 100_000),
       code,
       contentVersion: 1,
       templateId: tpl.id,
@@ -393,12 +425,12 @@ describe("Content Review, Publish, Versioning & SEO Admin APIs (P2.8, BR-CRQ-*, 
   it("Task 2: POST /api/managers/content/:type/:id/transition requires preview_token for approval (D-KG, BR-CRQ-02)", async () => {
     const db = getOwnerDb();
     const tpl = await ensureTemplate();
-    const code = `GL-C1-CNT-APV-${(1000 + (Date.now() % 8999)).toString()}`;
+    const code = await getUniqueLevelCode("APV");
 
     const [lvl] = await db
       .insert(gameLevels)
       .values({
-        entityId: Date.now() + 130,
+        entityId: Math.floor(Math.random() * 800_000 + 100_000),
         code,
         contentVersion: 1,
         templateId: tpl.id,
@@ -473,10 +505,10 @@ describe("Content Review, Publish, Versioning & SEO Admin APIs (P2.8, BR-CRQ-*, 
   it("Task 3: POST /api/managers/content/review-queue/bulk-reject rejects author items and logs records (D-KH, BR-CRQ-03)", async () => {
     const db = getOwnerDb();
     const tpl = await ensureTemplate();
-    const code = `GL-C1-CNT-BLK-${(1000 + (Date.now() % 8999)).toString()}`;
+    const code = await getUniqueLevelCode("BLK");
 
     await db.insert(gameLevels).values({
-      entityId: Date.now() + 140,
+      entityId: Math.floor(Math.random() * 800_000 + 100_000),
       code,
       contentVersion: 1,
       templateId: tpl.id,
@@ -510,13 +542,13 @@ describe("Content Review, Publish, Versioning & SEO Admin APIs (P2.8, BR-CRQ-*, 
   it("Task 4: Publish atomically archives existing published version (BR-PUB-02, D-KI)", async () => {
     const db = getOwnerDb();
     const tpl = await ensureTemplate();
-    const code = `GL-C1-CNT-PUB-${(1000 + (Date.now() % 8999)).toString()}`;
+    const code = await getUniqueLevelCode("PUB");
 
     // 1. v1 published
     const [v1] = await db
       .insert(gameLevels)
       .values({
-        entityId: Date.now() + 150,
+        entityId: Math.floor(Math.random() * 800_000 + 100_000),
         code,
         contentVersion: 1,
         templateId: tpl.id,
@@ -543,7 +575,7 @@ describe("Content Review, Publish, Versioning & SEO Admin APIs (P2.8, BR-CRQ-*, 
     const [v2] = await db
       .insert(gameLevels)
       .values({
-        entityId: Date.now() + 150,
+        entityId: Math.floor(Math.random() * 800_000 + 100_000),
         code,
         contentVersion: 2,
         templateId: tpl.id,
@@ -592,12 +624,12 @@ describe("Content Review, Publish, Versioning & SEO Admin APIs (P2.8, BR-CRQ-*, 
   it("Task 4: content_reviewer cannot perform rollback (BR-PUB-03)", async () => {
     const db = getOwnerDb();
     const tpl = await ensureTemplate();
-    const code = `GL-C1-CNT-ROL-${(1000 + (Date.now() % 8999)).toString()}`;
+    const code = await getUniqueLevelCode("ROL");
 
     const [archivedLvl] = await db
       .insert(gameLevels)
       .values({
-        entityId: Date.now() + 160,
+        entityId: Math.floor(Math.random() * 800_000 + 100_000),
         code,
         contentVersion: 1,
         templateId: tpl.id,
@@ -632,12 +664,12 @@ describe("Content Review, Publish, Versioning & SEO Admin APIs (P2.8, BR-CRQ-*, 
   it("Task 4: Archive level used in published curriculum returns 409 CONTENT_IN_USE (BR-PUB-05)", async () => {
     const db = getOwnerDb();
     const tpl = await ensureTemplate();
-    const code = `GL-C1-CNT-USE-${(1000 + (Date.now() % 8999)).toString()}`;
+    const code = await getUniqueLevelCode("USE");
 
     const [lvl] = await db
       .insert(gameLevels)
       .values({
-        entityId: Date.now() + 170,
+        entityId: Math.floor(Math.random() * 800_000 + 100_000),
         code,
         contentVersion: 1,
         templateId: tpl.id,
@@ -653,11 +685,11 @@ describe("Content Review, Publish, Versioning & SEO Admin APIs (P2.8, BR-CRQ-*, 
       })
       .returning();
 
-    const curCode = `CUR-${(100 + (Date.now() % 899)).toString()}`;
+    const curCode = await getUniqueCurriculumCode();
     const [cur] = await db
       .insert(curricula)
       .values({
-        entityId: Date.now() + 171,
+        entityId: Math.floor(Math.random() * 800_000 + 100_000),
         code: curCode,
         contentVersion: 1,
         titleVi: "Chương Trình Mầm Non",
@@ -693,12 +725,12 @@ describe("Content Review, Publish, Versioning & SEO Admin APIs (P2.8, BR-CRQ-*, 
   it("Task 5: GET /api/managers/content/:type/:code/versions returns historical versions with play count and diffs", async () => {
     const db = getOwnerDb();
     const tpl = await ensureTemplate();
-    const code = `GL-C1-CNT-HST-${(1000 + (Date.now() % 8999)).toString()}`;
+    const code = await getUniqueLevelCode("HST");
 
     const [lvl] = await db
       .insert(gameLevels)
       .values({
-        entityId: Date.now() + 180,
+        entityId: Math.floor(Math.random() * 800_000 + 100_000),
         code,
         contentVersion: 1,
         templateId: tpl.id,
@@ -837,7 +869,7 @@ describe("Content Review, Publish, Versioning & SEO Admin APIs (P2.8, BR-CRQ-*, 
 
   it("Task 6: Curriculum appears in Review Queue and supports full lifecycle transition (BR-CRM-01..11, D-KK)", async () => {
     const db = getOwnerDb();
-    const currCode = `CUR-T${Date.now() % 9000}`;
+    const currCode = await getUniqueCurriculumCode();
 
     // 1. Insert draft curriculum
     const [cRow] = await db

@@ -47,7 +47,7 @@ describe("Payment Flow Integration & Concurrency (P2.3)", () => {
     const [manager] = await db
       .insert(managers)
       .values({
-        email: `manager-payment-test-${Date.now()}@example.com`,
+        email: `manager-payment-test-${crypto.randomUUID()}@example.com`,
         displayName: "Payment SuperAdmin",
         role: "super_admin",
         passwordHash: "hash-mock-123456",
@@ -76,7 +76,7 @@ describe("Payment Flow Integration & Concurrency (P2.3)", () => {
     const [user] = await db
       .insert(users)
       .values({
-        email: `user-pay-${Date.now()}@example.com`,
+        email: `user-pay-${crypto.randomUUID()}@example.com`,
         displayName: "Payment Parent",
         passwordHash: "hash-mock-user-123456",
         status: "active",
@@ -466,12 +466,24 @@ describe("Payment Flow Integration & Concurrency (P2.3)", () => {
     });
 
     // Run sweep jobs
-    const orderExpireRes = await runExpirePaymentOrders();
-    expect(orderExpireRes.expiredCount).toBeGreaterThanOrEqual(1);
-    expect(orderExpireRes.orderUuids).toContain(expiredPending.uuid);
+    await runExpirePaymentOrders();
+    const [refreshedExpiredPending] = await db
+      .select()
+      .from(paymentOrders)
+      .where(eq(paymentOrders.uuid, expiredPending.uuid));
+    expect(refreshedExpiredPending?.status).toBe("expired");
 
-    const softUnlockExpireRes = await runExpireSoftUnlockEntitlements();
-    expect(softUnlockExpireRes.expiredCount).toBeGreaterThanOrEqual(1);
+    await runExpireSoftUnlockEntitlements();
+    const [refreshedEntitlement] = await db
+      .select()
+      .from(entitlements)
+      .where(
+        and(
+          eq(entitlements.userId, testUserId),
+          eq(entitlements.sourceRef, submittedOrderUuid)
+        )
+      );
+    expect(refreshedEntitlement?.status).toBe("expired");
 
     // D-JL Check: Order MUST STILL be 'submitted' even when soft_unlock expired!
     const [refreshedSubmittedOrder] = await db
