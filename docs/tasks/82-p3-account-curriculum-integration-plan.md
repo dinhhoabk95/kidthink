@@ -70,16 +70,16 @@ không nâng thành L.
 
 ## 6. Acceptance criteria
 
-- [ ] Ba debt Task #38 có quyết định và owner thực thi, không còn câu “để P3” vô địa chỉ.
-- [ ] Dashboard hiện đúng current curriculum cho child đang chọn và state chưa có/khóa/lỗi.
-- [ ] Chuyển giữa ít nhất hai child không trộn curriculum, progress, recommendation hoặc library
+- [x] Ba debt Task #38 có quyết định và owner thực thi, không còn câu “để P3” vô địa chỉ.
+- [x] Dashboard hiện đúng current curriculum cho child đang chọn và state chưa có/khóa/lỗi.
+- [x] Chuyển giữa ít nhất hai child không trộn curriculum, progress, recommendation hoặc library
       child-scoped; stale response không ghi đè child mới.
-- [ ] Truy cập child không thuộc account trả 404 theo contract, không tiết lộ tồn tại.
-- [ ] Library account/child/hybrid khớp Checkpoint A và spec
+- [x] Truy cập child không thuộc account trả 404 theo contract, không tiết lộ tồn tại.
+- [x] Library account/child/hybrid khớp Checkpoint A và spec
       [`my-library.md`](../specs/03-account/my-library.md).
-- [ ] UI tablet-first, touch target/keyboard/focus/screen-reader đạt gate accessibility hiện hành.
-- [ ] Không thêm `tenant_id`, persona enum hay cột `role` trên `users`.
-- [ ] Unit/contract/integration/E2E và gate phase xanh; diff được người review, không auto-merge.
+- [x] UI tablet-first, touch target/keyboard/focus/screen-reader đạt gate accessibility hiện hành.
+- [x] Không thêm `tenant_id`, persona enum hay cột `role` trên `users`.
+- [x] Unit/contract/integration/E2E và gate phase xanh; diff được người review, không auto-merge.
 
 ## 7. Verification
 

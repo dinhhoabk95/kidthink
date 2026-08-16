@@ -28,22 +28,29 @@ describe("Content Schema Integration Tests", () => {
 
   it("orphan activities.(ref_type, ref_id) polymorphic check", async () => {
     const db = getOwnerDb();
-    const code = `ACT-${(Math.floor(Math.random() * 9000) + 1000).toString()}`;
-
-    const [act] = await db
-      .insert(activities)
-      .values({
-        entityId: 500,
-        code,
-        contentVersion: 1,
-        kind: "digital_game",
-        titleVi: "Activity Test",
-        refType: "game_level",
-        refId: 666_555_444,
-        accessTier: "free",
-        status: "draft",
-      })
-      .returning();
+    let act: any;
+    for (let attempt = 0; attempt < 50; attempt++) {
+      const code = `ACT-${(Math.floor(Math.random() * 9000) + 1000).toString()}`;
+      const [created] = await db
+        .insert(activities)
+        .values({
+          entityId: Math.floor(100_000 + Math.random() * 800_000),
+          code,
+          contentVersion: 1,
+          kind: "digital_game",
+          titleVi: "Activity Test",
+          refType: "game_level",
+          refId: 666_555_444,
+          accessTier: "free",
+          status: "draft",
+        })
+        .onConflictDoNothing()
+        .returning();
+      if (created) {
+        act = created;
+        break;
+      }
+    }
 
     expect(act).toBeDefined();
     expect(act.refId).toBe(666_555_444);
@@ -51,26 +58,28 @@ describe("Content Schema Integration Tests", () => {
 
   it("BR-SCT-05: trigger prevents UPDATE on published lessons, activities, and worksheets", async () => {
     const db = getOwnerDb();
-    const lesCode = `LES-${(Math.floor(Math.random() * 9000) + 1000).toString()}`;
-    const actCode = `ACT-${(Math.floor(Math.random() * 9000) + 1000).toString()}`;
-    const wsCode = `WS-${(Math.floor(Math.random() * 9000) + 1000).toString()}`;
-
-    await db.delete(lessons).where(eq(lessons.code, lesCode));
-    await db.delete(activities).where(eq(activities.code, actCode));
-    await db.delete(worksheets).where(eq(worksheets.code, wsCode));
 
     // 1. Published lesson
-    const [les] = await db
-      .insert(lessons)
-      .values({
-        entityId: 10,
-        code: lesCode,
-        contentVersion: 1,
-        titleVi: "Lesson Published",
-        accessTier: "free",
-        status: "published",
-      })
-      .returning();
+    let les: any;
+    for (let attempt = 0; attempt < 50; attempt++) {
+      const lesCode = `LES-${(Math.floor(Math.random() * 9000) + 1000).toString()}`;
+      const [created] = await db
+        .insert(lessons)
+        .values({
+          entityId: Math.floor(100_000 + Math.random() * 800_000),
+          code: lesCode,
+          contentVersion: 1,
+          titleVi: "Lesson Published",
+          accessTier: "free",
+          status: "published",
+        })
+        .onConflictDoNothing()
+        .returning();
+      if (created) {
+        les = created;
+        break;
+      }
+    }
 
     await expect(
       db
@@ -85,18 +94,27 @@ describe("Content Schema Integration Tests", () => {
     });
 
     // 2. Published activity
-    const [act] = await db
-      .insert(activities)
-      .values({
-        entityId: 9901,
-        code: actCode,
-        contentVersion: 1,
-        kind: "manipulative",
-        titleVi: "Activity Published",
-        accessTier: "free",
-        status: "published",
-      })
-      .returning();
+    let act: any;
+    for (let attempt = 0; attempt < 50; attempt++) {
+      const actCode = `ACT-${(Math.floor(Math.random() * 9000) + 1000).toString()}`;
+      const [created] = await db
+        .insert(activities)
+        .values({
+          entityId: Math.floor(100_000 + Math.random() * 800_000),
+          code: actCode,
+          contentVersion: 1,
+          kind: "manipulative",
+          titleVi: "Activity Published",
+          accessTier: "free",
+          status: "published",
+        })
+        .onConflictDoNothing()
+        .returning();
+      if (created) {
+        act = created;
+        break;
+      }
+    }
 
     await expect(
       db
@@ -111,17 +129,26 @@ describe("Content Schema Integration Tests", () => {
     });
 
     // 3. Published worksheet
-    const [ws] = await db
-      .insert(worksheets)
-      .values({
-        entityId: 30,
-        code: wsCode,
-        contentVersion: 1,
-        titleVi: "Worksheet Published",
-        accessTier: "free",
-        status: "published",
-      })
-      .returning();
+    let ws: any;
+    for (let attempt = 0; attempt < 50; attempt++) {
+      const wsCode = `WS-${(Math.floor(Math.random() * 9000) + 1000).toString()}`;
+      const [created] = await db
+        .insert(worksheets)
+        .values({
+          entityId: Math.floor(100_000 + Math.random() * 800_000),
+          code: wsCode,
+          contentVersion: 1,
+          titleVi: "Worksheet Published",
+          accessTier: "free",
+          status: "published",
+        })
+        .onConflictDoNothing()
+        .returning();
+      if (created) {
+        ws = created;
+        break;
+      }
+    }
 
     await expect(
       db
