@@ -209,6 +209,10 @@ trong studio rồi gán.
 |             | API P95                              | < 800 ms                       |
 |             | Game engine                          | 60 fps trên tablet Android 2GB |
 | Nội dung    | Skill có ≥ 1 game level published    | 100% skill `seeded`            |
+| Sư phạm     | Task Comprehension (lượt đầu)        | ≥ 85% phân tầng nhóm tuổi      |
+|             | Independent Transition (sau trợ giúp)| ≥ 75% phân tầng competency     |
+|             | Strategy Exploration (sau retry)     | ≥ 70%                          |
+|             | Playtest an toàn & zero PII          | 100% phiên có consent & assent |
 
 ### 1.8 Quy mô nội dung MVP
 
@@ -1216,7 +1220,7 @@ hình báo cáo mang câu này.
 
 Mỗi outcome có **đúng một** spec sở hữu. Spec khác **link tới**, không copy contract.
 
-**138 spec module.** Bản đồ đầy đủ: [`docs/specs/index.md`](specs/index.md).
+**139 spec module.** Bản đồ đầy đủ: [`docs/specs/index.md`](specs/index.md).
 
 ```
 docs/
@@ -1226,7 +1230,7 @@ docs/
     ├── CONVENTIONS.md         quy ước viết spec v2
     ├── TEMPLATE.md · index.md · roadmap.md
     ├── 00-foundation/  16     contract cắt ngang mọi bề mặt
-    ├── 01-platform/    30     năng lực nội bộ (gồm seeder nội dung + codegen + OAuth + browser push + thanh toán tự động + offline pack)
+    ├── 01-platform/    31     năng lực nội bộ (gồm seeder nội dung + codegen + OAuth + browser push + thanh toán tự động + offline pack + audio storage)
     ├── 02-public/       9     khách chưa đăng nhập
     ├── 03-account/     22     User đã đăng nhập (gồm SNS login + linking + notification inbox + recurring billing)
     ├── 04-play/        13     bề mặt trẻ — core business
@@ -1300,7 +1304,6 @@ Mã taxonomy giữ format v1 (`C1.CNT.03`) — đã biên soạn, bất biến, 
 | --- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------- |
 | 1   | **Giá cuối** của `standard` và `premium` (365 ngày / vĩnh viễn)                                                                                                                                                                 | Mở thanh toán           |
 | 2   | 6 game level nào vào allow-list guest? 1 mỗi competency, difficulty 1–2                                                                                                                                                         | P1 gating               |
-| 5   | C5 Language cần audio tiếng Việt cho ~21 skill — thu âm người thật hay TTS?                                                                                                                                                     | P1 nội dung             |
 | 10  | Giữ VietQR duyệt tay vĩnh viễn hay thêm cổng thanh toán ở P5?                                                                                                                                                                   | Payment roadmap         |
 | 11  | Backup + monitoring: v1 **không có gì**. Ai sở hữu và ngân sách bao nhiêu?                                                                                                                                                      | Go-live                 |
 | 12  | Bằng chứng nào đủ để nói sản phẩm **rèn luyện, khai phá tư duy**, thay vì chỉ chứng minh trẻ chơi được và quay lại? Cần chốt claim, KPI sư phạm và protocol kiểm thử với trẻ trước khi dùng kết quả đó làm thông điệp sản phẩm. | P1 nghiệm thu · Go-live |
@@ -1326,3 +1329,4 @@ Mã taxonomy giữ format v1 (`C1.CNT.03`) — đã biên soạn, bất biến, 
 | Dùng AI để soạn game và code?                            | **Có — AI agent IDE soạn file trong repo, người merge.** Nội dung nền là **seeder** (8 cổng tự động → PR review → seed ghi thẳng `published`). Code Task #14 được phép đi vào sáu vùng nhạy cảm nhưng phải có test âm, gate tự động và người review diff; không auto-merge, không chạy migration ngoài local, không tự publish. Cấm có pipeline LLM sinh nội dung trong runtime. Hard rule cũ "NEVER để AI sinh nội dung cốt lõi" viết sai chỗ — cái cần cấm là **phát hành không có người kiểm** | 2026-08-09                     |
 | Nội dung nền vào DB ở trạng thái nào?                    | **`published` thẳng từ seed.** Cổng người là PR review, không phải hàng đợi duyệt. Seed chỉ INSERT và vẫn chạy đủ checklist publish. Sau đó admin quản lý trong studio bằng version mới                                                                                                                                                                                                                                                                                                           | 2026-08-05                     |
 | Tách nhỏ spec tới mức nào?                               | **Một outcome một file.** 31 spec v1 → **124** spec v2. Tên file có `and` bị cấm khi nối hai outcome                                                                                                                                                                                                                                                                                                                                                                                              | 2026-08-05                     |
+| Audio tiếng Việt & Fallback (`D-AV`)                     | **P1 kết hợp clip tĩnh + Web Speech API (TTS vi-VN)** với visual fallback (ghost hand / highlight / icon) không crash khi thiếu voice; P2 quản lý audio asset qua [`audio-storage.md`](specs/01-platform/audio-storage.md) riêng biệt khỏi image pipeline | 2026-08-16 (Task #80) |

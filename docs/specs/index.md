@@ -23,7 +23,7 @@ Bắt đầu từ [`../SPEC.md`](../SPEC.md) — contract toàn dự án. Rồi 
 | Khu vực | Spec | MVP |
 |---|---:|---:|
 | `00-foundation` | 16 | 16 |
-| `01-platform` | 30 | 26 |
+| `01-platform` | 31 | 26 |
 | `02-public` | 9 | 9 |
 | `03-account` | 22 | 19 |
 | `04-play` | 13 | 13 |
@@ -31,7 +31,7 @@ Bắt đầu từ [`../SPEC.md`](../SPEC.md) — contract toàn dự án. Rồi 
 | `06-admin` | 30 | 29 |
 | `07-addon` | 7 | 0 |
 | `08-quality` | 6 | 6 |
-| **Tổng** | **138** | **122** |
+| **Tổng** | **139** | **122** |
 
 v1 có **31** spec cho cùng phạm vi. Xé nhỏ là chủ ý — xem [`AUDIT-v1.md`](AUDIT-v1.md) §1.2.
 2 spec cộng thêm 2026-08-05 ([`repo-bootstrap.md`](00-foundation/repo-bootstrap.md), [`monorepo-package-architecture.md`](00-foundation/monorepo-package-architecture.md)) lấp lỗ hổng
@@ -87,6 +87,7 @@ v1 có **31** spec cho cùng phạm vi. Xé nhỏ là chủ ý — xem [`AUDIT-v
 | [monitoring-and-alerting](01-platform/monitoring-and-alerting.md) | P1 | Alert **tới người** |
 | [offline-play](01-platform/offline-play.md) | P1 | Buffer IndexedDB, không ngắt phiên |
 | [image-storage](01-platform/image-storage.md) | P2 | Cấm thư viện ảnh |
+| [audio-storage](01-platform/audio-storage.md) | P2 | Lưu trữ và chuẩn hoá audio asset |
 | [notification-service](01-platform/notification-service.md) | P0 | Logical notification + delivery adapter; email qua SES SMTP |
 | [browser-push](01-platform/browser-push.md) | P5 | FCM Web cho User, best-effort, không push trẻ |
 | [automated-payment](01-platform/automated-payment.md) | P5 | Cổng thanh toán tự động, webhook signature, đối soát |

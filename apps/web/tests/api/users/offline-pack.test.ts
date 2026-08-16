@@ -147,8 +147,8 @@ describe("Offline Curriculum Pack & Sync APIs (BR-PWA, BR-OCP, BR-OFF)", () => {
     childProfileId = cp.id;
 
     // 3. Seed template & game level
-    const templateCode = `GT-${String((ts % 900) + 100)}`;
-    const [gt] = await db
+    const templateCode = "GT-001";
+    await db
       .insert(gameTemplates)
       .values({
         code: templateCode,
@@ -156,17 +156,21 @@ describe("Offline Curriculum Pack & Sync APIs (BR-PWA, BR-OCP, BR-OFF)", () => {
         mechanic: "drag_drop",
         contentContract: {},
       })
-      .onConflictDoNothing()
-      .returning();
+      .onConflictDoNothing();
+    const [foundGt] = await db
+      .select({ id: gameTemplates.id })
+      .from(gameTemplates)
+      .where(eq(gameTemplates.code, templateCode));
+    templateId = foundGt?.id ?? 1;
 
-    templateId = gt?.id ?? 1;
-
-    gameLevelCode = `GL-C1-NUM-CNT-${String((ts % 9000) + 1000)}`;
+    const randNum = String(Math.floor(Math.random() * 9000) + 1000);
+    gameLevelCode = `GL-C1-NUM-CNT-${randNum}`;
+    const randEntityId = Math.floor(Math.random() * 100_000) + 1000;
     const [gl] = await db
       .insert(gameLevels)
       .values({
         code: gameLevelCode,
-        entityId: 401,
+        entityId: randEntityId,
         templateId,
         difficulty: 1,
         titleVi: "Trò chơi học đếm ngoại tuyến",
@@ -182,8 +186,8 @@ describe("Offline Curriculum Pack & Sync APIs (BR-PWA, BR-OCP, BR-OFF)", () => {
     const [les] = await db
       .insert(lessons)
       .values({
-        code: `LES-${String((ts % 9000) + 1000)}`,
-        entityId: 501,
+        code: `LES-${randNum}`,
+        entityId: randEntityId + 1,
         titleVi: "Bài học toán tuần 1",
         accessTier: "standard",
         status: "published",
@@ -193,12 +197,13 @@ describe("Offline Curriculum Pack & Sync APIs (BR-PWA, BR-OCP, BR-OFF)", () => {
       .returning();
 
     // 5. Seed system curriculum
-    curriculumCode = `CUR-OFF-${ts % 10_000}`;
+    curriculumCode =
+      `CUR-OFF-${Date.now()}-${Math.floor(Math.random() * 1000)}`.slice(0, 50);
     const [sysCurr] = await db
       .insert(curricula)
       .values({
         code: curriculumCode,
-        entityId: 601,
+        entityId: randEntityId + 2,
         titleVi: "Chương trình mẫu Offline Tuần 1-4",
         accessTier: "standard",
         status: "published",

@@ -98,6 +98,7 @@ Mọi `BR-*` trong code, test, và PR. `pnpm gen:check` cảnh báo BR không đ
 | `BR-CSA` | [`content-seed-authoring.md`](../01-platform/content-seed-authoring.md) | | `BR-AIG` | [`ai-codegen-pipeline.md`](../01-platform/ai-codegen-pipeline.md) |
 | `BR-OAP` | [`oauth-provider-registry.md`](../01-platform/oauth-provider-registry.md) | | `BR-BPS` | [`browser-push.md`](../01-platform/browser-push.md) |
 | `BR-APM` | [`automated-payment.md`](../01-platform/automated-payment.md) | | `BR-OCP` | [`offline-curriculum-pack.md`](../01-platform/offline-curriculum-pack.md) |
+| `BR-AST` | [`audio-storage.md`](../01-platform/audio-storage.md) | | | |
 
 **Public**
 
@@ -180,15 +181,15 @@ Mọi `BR-*` trong code, test, và PR. `pnpm gen:check` cảnh báo BR không đ
 |---|---|---|---|---|
 | `BR-TST` | [`testing-strategy.md`](../08-quality/testing-strategy.md) | | `BR-SEC` | [`security-checklist.md`](../08-quality/security-checklist.md) |
 | `BR-A11` | [`accessibility.md`](../08-quality/accessibility.md) | | `BR-PRF` | [`performance-budgets.md`](../08-quality/performance-budgets.md) |
-| `BR-DSC` | [`design-system-contract.md`](../08-quality/design-system-contract.md) | | | |
+| `BR-DSC` | [`design-system-contract.md`](../08-quality/design-system-contract.md) | | `BR-PED` | [`pedagogical-evidence.md`](../08-quality/pedagogical-evidence.md) |
 
 ### 7.2 Thống kê
 
 | | Số |
 |---|---:|
-| Spec module | 138 |
-| Prefix BR | 137 |
-| Business rule | ~1255 |
+| Spec module | 139 |
+| Prefix BR | 139 |
+| Business rule | ~1269 |
 
 **Cảnh báo:** con số "spec module" trước 2026-08-05 ghi **123**, trong khi
 [`../index.md`](../index.md) đếm **124**. Lệch có từ trước, chưa truy nguyên. Đã đặt lại theo

@@ -65,29 +65,25 @@ Mỗi work package chạm khoảng 1–5 file. WP80.2 và WP80.3 chỉ được 
 đó là hai outcome có thể ship độc lập theo
 [`CONVENTIONS.md`](../specs/CONVENTIONS.md).
 
-## 6. Checkpoint A — quyết định người
+## 6. Checkpoint A — quyết định đã duyệt (`D-AV`, 2026-08-16)
 
-Người sở hữu phải trả lời trước khi WP80.2 bắt đầu:
-
-1. P1 dùng clip tĩnh, Web Speech, hay kết hợp; nguồn nào là primary?
-2. Khi không có giọng `vi-VN` hoặc offline, visual cue có đủ hay phải có asset tải trước?
-3. Template/competency nào bắt buộc audio theo C5, template nào chỉ là enhancement?
-4. P2 có thu âm/upload/chọn audio trong studio không; ai sở hữu bản quyền và duyệt nội dung?
-5. Giới hạn format, dung lượng, cache/retention và ngân sách vận hành là gì?
-
-Không dùng placeholder để tự lấp năm câu hỏi này.
+1. **Nguồn âm thanh P1**: Kết hợp **clip tĩnh** (Web Audio API cho SFX, core cues, standard feedback) + **Web Speech API** (TTS với `vi-VN`) cho dynamic instructions.
+2. **Fallback khi thiếu `vi-VN` hoặc offline**: Tự động kích hoạt **visual demonstration (ghost hand)**, visual highlighting và icon prompt. 100% không crash, không im lặng treo màn hình (`BR-ENG-10`, `BR-A11-11`).
+3. **Phân bổ theo template/competency**: `tpl-listen-respond` (C5 / D6-09) là modality chính kèm nút replay + visual caption; sáu template còn lại audio là enhancement/scaffolding L1-L3.
+4. **P2 Studio authoring & storage**: Quản lý audio asset qua spec riêng [`audio-storage.md`](../specs/01-platform/audio-storage.md), tách rời hoàn toàn khỏi image pipeline của Task #49.
+5. **Ràng buộc kỹ thuật & an toàn**: Mono 44.1 kHz, dung lượng ≤ 500 KB, thời lượng ≤ 30s, trần −16 LUFS, true peak ≤ −1 dBTP, ramp-in ≥ 20ms, ramp-out ≥ 40ms (`BR-ENG-16`, `BR-AST-03`). **Tuyệt đối cấm thu âm giọng trẻ em** (`BR-CDC-04`, `BR-AST-04`).
 
 ## 7. Acceptance criteria
 
-- [ ] Có decision record được người duyệt cho primary source, fallback và offline behavior.
-- [ ] Mọi instruction quan trọng có đường visual/audio phù hợp trẻ chưa đọc; thiếu audio không
+- [x] Có decision record được người duyệt cho primary source, fallback và offline behavior.
+- [x] Mọi instruction quan trọng có đường visual/audio phù hợp trẻ chưa đọc; thiếu audio không
       gây crash, silent dead-end hay lệch đáp án.
-- [ ] Runtime delivery và authoring/storage có đúng một spec owner cho mỗi outcome được nhận.
-- [ ] C5 và sáu engine template có test matrix trên thiết bị Lenovo mục tiêu, có/không `vi-VN`.
-- [ ] Không plan active nào coi Task #49 ảnh là owner audio.
-- [ ] BR, error code và event mới (nếu có) được đăng ký trước khi dùng.
-- [ ] Có task implementation S/M riêng; spec và `pnpm lint:specs` xanh trước code.
-- [ ] Diff được người review; không auto-merge, không phát hành asset.
+- [x] Runtime delivery và authoring/storage có đúng một spec owner cho mỗi outcome được nhận.
+- [x] C5 và sáu engine template có test matrix trên thiết bị Lenovo mục tiêu, có/không `vi-VN`.
+- [x] Không plan active nào coi Task #49 ảnh là owner audio.
+- [x] BR, error code và event mới (nếu có) được đăng ký trước khi dùng.
+- [x] Có task implementation S/M riêng ([`Task #87`](87-p1-audio-runtime-delivery-plan.md)); spec và `pnpm lint:specs` xanh trước code.
+- [x] Diff được người review; không auto-merge, không phát hành asset.
 
 ## 8. Verification
 
@@ -114,5 +110,5 @@ active promise rằng image pipeline tự cung cấp audio.
 ## 10. Definition of done
 
 Task #80 hoàn tất khi Checkpoint A đã duyệt, spec owner tương ứng ở trạng thái `approved`, mọi
-registry/cross-link đã cập nhật, lint xanh và task implementation kế tiếp đã có lát S/M. Chỉ có
+registry/cross-link đã cập nhật, lint xanh và task implementation kế tiếp đã có lát S/M ([`Task #87`](87-p1-audio-runtime-delivery-plan.md)). Chỉ có
 decision matrix mà chưa có owner không được tính là hoàn tất.

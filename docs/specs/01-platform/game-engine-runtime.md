@@ -194,11 +194,12 @@ Scenario: reduced-motion giảm chứ không bỏ
   Then vẫn có ăn mừng, dạng một nhịp scale 400ms
   And độ khó, nhịp, và cách tính điểm không đổi
 
-Scenario: asset lỗi không làm đứng game
-  Given một emoji trong content_pack không load được
-  Then phát asset_load_failed
-  And hiện placeholder trung tính
-  And trẻ vẫn hoàn thành được level
+Scenario: BR-ENG-10 — audio fallback sang visual khi thiếu voice tiếng Việt hoặc offline
+  Given thiết bị không có voice vi-VN hoặc autoplay bị chặn
+  When engine phát chỉ dẫn
+  Then engine kích hoạt visual demonstration (ghost hand) và highlighting
+  And trẻ vẫn hiểu được nhiệm vụ và hoàn thành level bình thường
+  And không xảy ra lỗi crash hoặc im lặng treo màn hình
 ```
 
 ## 10. Boundaries
@@ -229,4 +230,4 @@ Scenario: asset lỗi không làm đứng game
 |---|---|---|---|---|
 | ~~1~~ | ~~Model tablet Android 2GB nào làm chuẩn đo 60 fps?~~ **Đóng 2026-08-09 (`D-CH`)**: Lenovo Tab M8 bản 2 GB RAM; Chrome ổn định mới nhất, pin >30%, tắt tiết kiệm pin; ba lần chạy lấy median | — | Đã đóng | D-CH |
 | 2 | WebGL cho template về sau? Canvas 2D đủ cho 6 template MVP | P4 | P4 | Studio UI |
-| 3 | Audio narration tiếng Việt — thu âm người thật hay TTS? Ảnh hưởng kích thước bundle và chất lượng | Nội dung P1 | P1 | người quyết |
+| ~~3~~ | ~~Audio narration tiếng Việt — thu âm người thật hay TTS?~~ **Đóng 2026-08-16 (`D-AV`, Task #80)**: P1 kết hợp clip tĩnh (SFX, core cues) + Web Speech API (TTS `vi-VN`) với fallback trực quan (ghost hand / highlight / icon); P2 spec riêng cho audio asset storage/authoring | — | Đã đóng | D-AV |

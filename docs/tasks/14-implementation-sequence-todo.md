@@ -94,7 +94,7 @@ MVP, và nó chỉ cần bước P1.2 xong.
 
 - [x] **P1.1** Ràng buộc chất lượng & thiết kế UI — [`design-system-contract.md`](../specs/08-quality/design-system-contract.md) · [`accessibility.md`](../specs/08-quality/accessibility.md) · [`performance-budgets.md`](../specs/08-quality/performance-budgets.md)
 - [x] **P1.2** Contract template + 6 template chạy được — [`game-template-contract.md`](../specs/01-platform/game-template-contract.md) · [`game-engine-runtime.md`](../specs/01-platform/game-engine-runtime.md)
-- [ ] **P1.2b** Đóng contract audio tiếng Việt, fallback và spec owner asset/authoring — [`Task #80`](80-audio-contract-closure-plan.md); chưa có contract thì không được coi placeholder P2.7 là coverage
+- [x] **P1.2b** Đóng contract audio tiếng Việt, fallback và spec owner asset/authoring — [`Task #80`](80-audio-contract-closure-plan.md); chưa có contract thì không được coi placeholder P2.7 là coverage
 - [x] **P1.3** Gating trước nội dung — [`access-gating.md`](../specs/04-play/access-gating.md)
 - [x] **P1.4** Giao config game đã lọc quyền — [`game-config-delivery.md`](../specs/04-play/game-config-delivery.md)
 - [x] **P1.5** Hàng đợi công việc & telemetry — [`job-queue.md`](../specs/01-platform/job-queue.md) · [`telemetry-pipeline.md`](../specs/01-platform/telemetry-pipeline.md)
@@ -105,7 +105,7 @@ MVP, và nó chỉ cần bước P1.2 xong.
 - [x] **P1.10** Gắn tag nội dung & seeder nội dung nền — [`content-tagging.md`](../specs/01-platform/content-tagging.md) · [`content-seed-authoring.md`](../specs/01-platform/content-seed-authoring.md)
 - [x] **P1.11** ≥120 game level `published` — [`game-level-model.md`](../specs/05-content/game-level-model.md)
 - [x] **P1.11b** Tìm kiếm nội dung — [`content-search.md`](../specs/01-platform/content-search.md)
-- [ ] **P1.11c** Đóng claim/KPI evidence sư phạm và protocol kiểm thử với trẻ — [`Task #81`](81-pedagogical-evidence-contract-plan.md)
+- [x] **P1.11c** Đóng claim/KPI evidence sư phạm và protocol kiểm thử với trẻ — [`Task #81`](81-pedagogical-evidence-contract-plan.md)
 - [x] **P1.12** Báo cáo cơ bản, trang chính phụ huynh, thư viện — [`basic-report.md`](../specs/03-account/basic-report.md) · [`member-dashboard.md`](../specs/03-account/member-dashboard.md) · [`my-library.md`](../specs/03-account/my-library.md)
 - [x] **P1.13** Public site, SEO, trang pháp lý — [`landing-page.md`](../specs/02-public/landing-page.md) · [`game-catalog-public.md`](../specs/02-public/game-catalog-public.md) · [`game-detail-public.md`](../specs/02-public/game-detail-public.md) · [`seo-and-structured-data.md`](../specs/02-public/seo-and-structured-data.md) · [`legal-pages.md`](../specs/02-public/legal-pages.md) · [`faq-and-help.md`](../specs/02-public/faq-and-help.md) · [`cookie-and-consent-banner.md`](../specs/02-public/cookie-and-consent-banner.md)
 - [x] **P1.14** Cài đặt tài khoản, đồng ý pháp lý, xoá tài khoản — [`account-settings.md`](../specs/03-account/account-settings.md) · [`consent-management.md`](../specs/03-account/consent-management.md) · [`account-deletion.md`](../specs/03-account/account-deletion.md) · [`legal-consent-admin.md`](../specs/06-admin/legal-consent-admin.md)

@@ -106,7 +106,7 @@ access-gating ──→ game-config-delivery ──→ play-session-lifecycle
 |---|---|---|
 | 1 | Ràng buộc chất lượng & thiết kế UI | [`design-system-contract.md`](08-quality/design-system-contract.md) · [`accessibility.md`](08-quality/accessibility.md) · [`performance-budgets.md`](08-quality/performance-budgets.md) |
 | 2 | Contract template + 6 template chạy được | [`game-template-contract.md`](01-platform/game-template-contract.md) · [`game-engine-runtime.md`](01-platform/game-engine-runtime.md) |
-| 2b | Đóng contract audio tiếng Việt, fallback trên thiết bị chuẩn và owner của đường asset/authoring trước khi sản xuất nội dung hàng loạt | Runtime hiện thuộc [`game-engine-runtime.md`](01-platform/game-engine-runtime.md) và [`game-config-delivery.md`](04-play/game-config-delivery.md); storage/authoring chưa có spec owner — [`Task #80`](../tasks/80-audio-contract-closure-plan.md) phải đóng trước code tương ứng |
+| 2b | Đóng contract audio tiếng Việt, fallback trên thiết bị chuẩn và owner của đường asset/authoring trước khi sản xuất nội dung hàng loạt | Runtime thuộc [`game-engine-runtime.md`](01-platform/game-engine-runtime.md) và [`game-config-delivery.md`](04-play/game-config-delivery.md); storage/authoring có spec owner [`audio-storage.md`](01-platform/audio-storage.md) — [`Task #80`](../tasks/80-audio-contract-closure-plan.md) đã đóng contract; implementation runtime tại [`Task #87`](../tasks/87-p1-audio-runtime-delivery-plan.md) |
 | 3 | **Gating trước nội dung** | [`access-gating.md`](04-play/access-gating.md) |
 | 4 | Giao config game đã lọc quyền | [`game-config-delivery.md`](04-play/game-config-delivery.md) |
 | 5 | Hạ tầng hàng đợi công việc & đường ống telemetry | [`job-queue.md`](01-platform/job-queue.md) · [`telemetry-pipeline.md`](01-platform/telemetry-pipeline.md) |
@@ -152,7 +152,7 @@ image-upload · emoji-picker ──→ game-level-studio
 | 4 | Cấp quyền tay + xem catalog | [`entitlement-grant.md`](06-admin/entitlement-grant.md) · [`package-catalog-admin.md`](06-admin/package-catalog-admin.md) · [`subscription-view.md`](03-account/subscription-view.md) |
 | 5 | Studio: form sinh từ schema | [`schema-driven-form.md`](06-admin/schema-driven-form.md) |
 | 6 | Studio: soạn game level + bộ chọn emoji là vật liệu chính | [`game-level-studio.md`](06-admin/game-level-studio.md) · [`live-preview.md`](06-admin/live-preview.md) · [`emoji-picker.md`](06-admin/emoji-picker.md) |
-| 7 | Asset & Storage ảnh | [`image-storage.md`](01-platform/image-storage.md) · [`image-upload.md`](06-admin/image-upload.md) · [`asset-usage-tracking.md`](06-admin/asset-usage-tracking.md) |
+| 7 | Asset & Storage ảnh và audio | [`image-storage.md`](01-platform/image-storage.md) · [`image-upload.md`](06-admin/image-upload.md) · [`asset-usage-tracking.md`](06-admin/asset-usage-tracking.md) · [`audio-storage.md`](01-platform/audio-storage.md) |
 | 8 | Duyệt và phát hành | [`content-review-queue.md`](06-admin/content-review-queue.md) · [`publish-and-version.md`](06-admin/publish-and-version.md) · [`seo-content-admin.md`](06-admin/seo-content-admin.md) |
 | 9 | Cờ & Quản trị dữ liệu | [`feature-flag-service.md`](01-platform/feature-flag-service.md) · [`feature-flags.md`](06-admin/feature-flags.md) · [`data-export.md`](06-admin/data-export.md) · [`notification-admin.md`](06-admin/notification-admin.md) |
 | 10 | Nhật ký | [`audit-log-viewer.md`](06-admin/audit-log-viewer.md) · [`error-log-viewer.md`](06-admin/error-log-viewer.md) · [`system-activity.md`](06-admin/system-activity.md) |
@@ -204,8 +204,8 @@ package đã được tách xuống cỡ S/M. Audit ngày 2026-08-12 cho kết q
 | Phase | Coverage hồ sơ hiện hành | Mức sẵn sàng sau audit |
 |---|---|---|
 | P0 | Task #1, #2, #3, #7, #14, các increment #16–#25, hardening Task #83 và auth adapter Task #85 | Contract package core và auth adapter đã đổi; P0 chỉ trở lại xanh sau evidence Task #83, Task #85 và gate Task #14 |
-| P1 | Task #26–#42; contract closure mới ở [`Task #80`](../tasks/80-audio-contract-closure-plan.md) và [`Task #81`](../tasks/81-pedagogical-evidence-contract-plan.md) | **Chưa đủ để tuyên bố implementation-ready**: audio storage/authoring chưa có owner; evidence sư phạm chưa có contract; sáu mã allow-list guest chưa chốt |
-| P2 | Task #43–#53 | Đủ cho 11 bước hiện có, nhưng lời hứa “audio widget ở P2.7” không có trong Task #49; chỉ mở lại sau Task #80 |
+| P1 | Task #26–#42; contract closure ở [`Task #80`](../tasks/80-audio-contract-closure-plan.md) (implementation [`Task #87`](../tasks/87-p1-audio-runtime-delivery-plan.md)) và [`Task #81`](../tasks/81-pedagogical-evidence-contract-plan.md) | Contract audio và evidence sư phạm đã đóng; implementation audio runtime được giao tại Task #87 |
+| P2 | Task #43–#53 | Đủ cho 11 bước; audio storage P2 đã có spec [`audio-storage.md`](01-platform/audio-storage.md) tách biệt khỏi pipeline ảnh của Task #49 |
 | P3 | Task #54–#61 và lát account bổ sung [`Task #82`](../tasks/82-p3-account-curriculum-integration-plan.md) | Coverage cũ thiếu ba debt account từ P1.12; còn chặn người ở quyết định ≥60 hay ≥126 lesson và bố cục nhiều trẻ |
 | P4 | Task #62–#69 | Đủ 8 outcome add-on hiện hành; giá, quota, provider và schema vector vẫn là contract gate, không được thay bằng số placeholder |
 | P5 | Task #70–#72, #78 và #84 | Đủ ở mức contract-first cho Web scale; FCM/inbox đứng sau package core Task #83 và không chặn email |
