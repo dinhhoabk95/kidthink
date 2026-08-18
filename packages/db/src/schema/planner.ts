@@ -80,6 +80,9 @@ export const lessonPlanItems = pgTable(
     createdAt: timestamp("created_at", { withTimezone: true })
       .defaultNow()
       .notNull(),
+    updatedAt: timestamp("updated_at", { withTimezone: true })
+      .defaultNow()
+      .notNull(),
   },
   (table) => [
     unique("lesson_plan_items_plan_pos_unique").on(

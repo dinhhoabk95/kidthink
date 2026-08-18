@@ -5,8 +5,8 @@ import {
   getOwnerDb,
   isEnabled as isFeatureEnabled,
   writeAudit,
-} from "@kidthink/db";
-import { activityFormSchema } from "@kidthink/shared";
+} from "@mindkid/db";
+import { activityFormSchema } from "@mindkid/shared";
 import { eq } from "drizzle-orm";
 import {
   createError,
@@ -15,6 +15,7 @@ import {
   setResponseStatus,
 } from "h3";
 import { requireManagerSession } from "../../../utils/admin-auth-runtime.js";
+import { throwValidationError } from "../../../utils/api-error.js";
 
 function generateActivityCode(existingCount: number): string {
   const numStr = String(existingCount + 1).padStart(4, "0");
@@ -70,12 +71,7 @@ export default defineEventHandler(async (event) => {
 
   const parsed = activityFormSchema.safeParse(rawBody);
   if (!parsed.success) {
-    throw createError({
-      statusCode: 422,
-      statusMessage: "VALIDATION_FAILED",
-      message: parsed.error.issues.map((i) => i.message).join("; "),
-      data: parsed.error.issues,
-    });
+    throwValidationError(parsed.error);
   }
 
   const data = parsed.data;
@@ -94,9 +90,9 @@ export default defineEventHandler(async (event) => {
       code,
       contentVersion: 1,
       kind: data.kind,
-      titleVi: data.title,
-      instructionVi: data.instruction,
-      materialsVi: data.materials_vi || null,
+      title: data.title,
+      instruction: data.instruction,
+      materials: data.materials || null,
       estimatedMinutes: data.estimated_minutes,
       refType,
       refId,
@@ -110,17 +106,17 @@ export default defineEventHandler(async (event) => {
 
   if (data.skill_ids && data.skill_ids.length > 0) {
     const weightPerSkill = (1.0 / data.skill_ids.length).toFixed(2);
-    for (const skillId of data.skill_ids) {
-      await db
-        .insert(contentSkillMap)
-        .values({
-          entityType: "activity",
+    await db
+      .insert(contentSkillMap)
+      .values(
+        data.skill_ids.map((skillId) => ({
+          entityType: "activity" as const,
           entityId,
           skillId,
           weight: weightPerSkill,
-        })
-        .onConflictDoNothing();
-    }
+        }))
+      )
+      .onConflictDoNothing();
   }
 
   await writeAudit(db, {

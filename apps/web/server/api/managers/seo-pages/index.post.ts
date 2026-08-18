@@ -1,10 +1,7 @@
-import { getOwnerDb, seoPages, writeAudit } from "@kidthink/db";
+import { getOwnerDb, seoPages, writeAudit } from "@mindkid/db";
 import { and, eq } from "drizzle-orm";
 import { createError, defineEventHandler, readBody } from "h3";
-import {
-  requireManagerSession,
-  respondToManagerAuthError,
-} from "../../../utils/admin-auth-runtime.js";
+import { requireManagerSession } from "../../../utils/admin-auth-runtime.js";
 
 const FORBIDDEN_LEGAL_SLUGS = [
   "terms",
@@ -109,50 +106,46 @@ function validateAndBuildSeoInsert(
 }
 
 export default defineEventHandler(async (event) => {
-  try {
-    const manager = await requireManagerSession(event);
-    const body =
-      (event.context?.body as Record<string, unknown>) ||
-      ((event as Record<string, unknown>)._body as Record<string, unknown>) ||
-      (await readBody(event).catch(() => ({})));
+  const manager = await requireManagerSession(event);
+  const body =
+    (event.context?.body as Record<string, unknown>) ||
+    ((event as Record<string, unknown>)._body as Record<string, unknown>) ||
+    (await readBody(event).catch(() => ({})));
 
-    const managerId = manager.manager_id || manager.id || 1;
-    const insertData = validateAndBuildSeoInsert(body, managerId);
-    const rawSlug = insertData.slug;
-    const db = getOwnerDb();
+  const managerId = manager.manager_id || manager.id || 1;
+  const insertData = validateAndBuildSeoInsert(body, managerId);
+  const rawSlug = insertData.slug;
+  const db = getOwnerDb();
 
-    // Check slug collision
-    const [existing] = await db
-      .select({ id: seoPages.id })
-      .from(seoPages)
-      .where(and(eq(seoPages.slug, rawSlug), eq(seoPages.contentVersion, 1)));
+  // Check slug collision
+  const [existing] = await db
+    .select({ id: seoPages.id })
+    .from(seoPages)
+    .where(and(eq(seoPages.slug, rawSlug), eq(seoPages.contentVersion, 1)));
 
-    if (existing) {
-      throw createError({
-        statusCode: 409,
-        statusMessage: "CODE_ALREADY_EXISTS",
-        message: `SEO page với slug '${rawSlug}' đã tồn tại`,
-      });
-    }
-
-    const [created] = await db.insert(seoPages).values(insertData).returning();
-
-    await writeAudit(db, {
-      actor_type: "manager",
-      actor_id: managerId,
-      action: "content_created",
-      entity_type: "seo_page",
-      entity_id: created.id.toString(),
-      after_data: {
-        slug: rawSlug,
-        title: insertData.title,
-        page_type: insertData.pageType,
-      },
+  if (existing) {
+    throw createError({
+      statusCode: 409,
+      statusMessage: "CODE_ALREADY_EXISTS",
+      message: `SEO page với slug '${rawSlug}' đã tồn tại`,
     });
-
-    event.node.res.statusCode = 201;
-    return created;
-  } catch (err) {
-    return respondToManagerAuthError(event, err);
   }
+
+  const [created] = await db.insert(seoPages).values(insertData).returning();
+
+  await writeAudit(db, {
+    actor_type: "manager",
+    actor_id: managerId,
+    action: "content_created",
+    entity_type: "seo_page",
+    entity_id: created.id.toString(),
+    after_data: {
+      slug: rawSlug,
+      title: insertData.title,
+      page_type: insertData.pageType,
+    },
+  });
+
+  event.node.res.statusCode = 201;
+  return created;
 });

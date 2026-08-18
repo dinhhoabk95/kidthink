@@ -1,4 +1,3 @@
-import { AppError } from "@kidthink/auth";
 import {
   auditLogs,
   childProfiles,
@@ -8,8 +7,8 @@ import {
   gameLevels,
   getOwnerDb,
   lessons,
-} from "@kidthink/db";
-import { type AccessTier, allowedTiers } from "@kidthink/shared";
+} from "@mindkid/db";
+import { type AccessTier, allowedTiers } from "@mindkid/shared";
 import { and, eq, inArray } from "drizzle-orm";
 import {
   createError,
@@ -19,11 +18,11 @@ import {
   readBody,
   setResponseStatus,
 } from "h3";
+
 import {
   assertRequestBodySize,
   getVerifiedRemoteIp,
   requireWebUserSession,
-  respondToUserAuthError,
 } from "../../../../../utils/auth-runtime.js";
 import { resolveUserActiveEntitlements } from "../../../../../utils/entitlements-runtime.js";
 
@@ -207,123 +206,100 @@ async function assertGatingAllowance(
 }
 
 export default defineEventHandler(async (event) => {
-  try {
-    assertRequestBodySize(event, 16 * 1024);
-    const user = await requireWebUserSession(event);
-    const uuid = getRouterParam(event, "uuid");
-    if (!uuid) {
-      setResponseStatus(event, 404);
-      throw createError({ statusCode: 404, statusMessage: "NOT_FOUND" });
-    }
+  assertRequestBodySize(event, 16 * 1024);
+  const user = await requireWebUserSession(event);
+  const uuid = getRouterParam(event, "uuid");
+  if (!uuid) {
+    setResponseStatus(event, 404);
+    throw createError({ statusCode: 404, statusMessage: "NOT_FOUND" });
+  }
 
-    const userId = Number(user.user_id);
-    const db = getOwnerDb();
+  const userId = Number(user.user_id);
+  const db = getOwnerDb();
 
-    // 1. Verify child belongs to user (BR-CPC-09 / BR-ERR-05 -> 404)
-    const child = await assertChildOwnership(db, uuid, userId, event);
+  // 1. Verify child belongs to user (BR-CPC-09 / BR-ERR-05 -> 404)
+  const child = await assertChildOwnership(db, uuid, userId, event);
 
-    const eventBody = (event.context as { body?: Record<string, unknown> })
-      ?.body;
-    const body =
-      eventBody || ((await readBody(event)) as Record<string, unknown>) || {};
+  const eventBody = (event.context as { body?: Record<string, unknown> })?.body;
+  const body =
+    eventBody || ((await readBody(event)) as Record<string, unknown>) || {};
 
-    const curriculumCode =
-      typeof body.curriculum_code === "string"
-        ? body.curriculum_code.trim()
-        : "";
+  const curriculumCode =
+    typeof body.curriculum_code === "string" ? body.curriculum_code.trim() : "";
 
-    if (!curriculumCode) {
-      throw createError({
-        statusCode: 422,
-        statusMessage: "VALIDATION_FAILED",
-        data: {
-          code: "VALIDATION_FAILED",
-          message: "Mã chương trình là bắt buộc.",
-        },
-      });
-    }
-
-    // 2. Check if child already has an active enrollment (D-MB -> 409 ALREADY_ENROLLED)
-    await assertNoActiveEnrollment(db, child.id, event);
-
-    // 3. Resolve published curriculum by code (D-MA)
-    const [curriculum] = await db
-      .select()
-      .from(curricula)
-      .where(
-        and(
-          eq(curricula.code, curriculumCode),
-          eq(curricula.status, "published")
-        )
-      );
-
-    if (!curriculum) {
-      setResponseStatus(event, 404);
-      throw createError({
-        statusCode: 404,
-        statusMessage: "NOT_FOUND",
-        data: {
-          code: "NOT_FOUND",
-          message: "Không tìm thấy chương trình học.",
-        },
-      });
-    }
-
-    // 4. Validate child's age against target_age_min / target_age_max
-    assertChildAgeMatchesCurriculum(child, curriculum, event);
-
-    // 5. Gating pre-check: User must be able to open at least 1 mandatory item (D-ME / BR-CUR-10)
-    await assertGatingAllowance(db, userId, child.id, curriculum.id, event);
-
-    // 6. Create enrollment pinning curriculum version (D-MA, BR-CUR-04)
-    const [enrollment] = await db
-      .insert(curriculumEnrollments)
-      .values({
-        childId: child.id,
-        curriculumId: curriculum.id,
-        status: "active",
-        enrolledAt: new Date(),
-      })
-      .returning();
-
-    // 7. Audit log (INSERT-only)
-    await db.insert(auditLogs).values({
-      actorType: "user",
-      actorId: userId,
-      action: "curriculum.enrolled",
-      entityType: "curriculum_enrollment",
-      entityId: enrollment.id,
-      ipAddress: getVerifiedRemoteIp(event),
-      metadata: {
-        child_id: child.id,
-        child_uuid: child.uuid,
-        curriculum_code: curriculum.code,
-        curriculum_version: curriculum.contentVersion,
+  if (!curriculumCode) {
+    throw createError({
+      statusCode: 422,
+      statusMessage: "VALIDATION_FAILED",
+      data: {
+        code: "VALIDATION_FAILED",
+        message: "Mã chương trình là bắt buộc.",
       },
     });
+  }
 
-    setResponseStatus(event, 201);
-    return {
-      enrollment_id: enrollment.id,
+  // 2. Check if child already has an active enrollment (D-MB -> 409 ALREADY_ENROLLED)
+  await assertNoActiveEnrollment(db, child.id, event);
+
+  // 3. Resolve published curriculum by code (D-MA)
+  const [curriculum] = await db
+    .select()
+    .from(curricula)
+    .where(
+      and(eq(curricula.code, curriculumCode), eq(curricula.status, "published"))
+    );
+
+  if (!curriculum) {
+    setResponseStatus(event, 404);
+    throw createError({
+      statusCode: 404,
+      statusMessage: "NOT_FOUND",
+      data: {
+        code: "NOT_FOUND",
+        message: "Không tìm thấy chương trình học.",
+      },
+    });
+  }
+
+  // 4. Validate child's age against target_age_min / target_age_max
+  assertChildAgeMatchesCurriculum(child, curriculum, event);
+
+  // 5. Gating pre-check: User must be able to open at least 1 mandatory item (D-ME / BR-CUR-10)
+  await assertGatingAllowance(db, userId, child.id, curriculum.id, event);
+
+  // 6. Create enrollment pinning curriculum version (D-MA, BR-CUR-04)
+  const [enrollment] = await db
+    .insert(curriculumEnrollments)
+    .values({
+      childId: child.id,
+      curriculumId: curriculum.id,
+      status: "active",
+      enrolledAt: new Date(),
+    })
+    .returning();
+
+  // 7. Audit log (INSERT-only)
+  await db.insert(auditLogs).values({
+    actorType: "user",
+    actorId: userId,
+    action: "curriculum.enrolled",
+    entityType: "curriculum_enrollment",
+    entityId: enrollment.id,
+    ipAddress: getVerifiedRemoteIp(event),
+    metadata: {
+      child_id: child.id,
+      child_uuid: child.uuid,
       curriculum_code: curriculum.code,
       curriculum_version: curriculum.contentVersion,
-      status: enrollment.status,
-      enrolled_at: enrollment.enrolledAt,
-    };
-  } catch (err: unknown) {
-    const errorObj = err as { statusCode?: number };
-    if (errorObj?.statusCode) {
-      setResponseStatus(event, errorObj.statusCode);
-      throw err;
-    }
-    if (err instanceof AppError) {
-      setResponseStatus(event, err.status);
-      throw createError({
-        statusCode: err.status,
-        statusMessage: err.code,
-        data: { code: err.code, message: err.message },
-      });
-    }
-    return respondToUserAuthError(event, err);
-  }
+    },
+  });
+
+  setResponseStatus(event, 201);
+  return {
+    enrollment_id: enrollment.id,
+    curriculum_code: curriculum.code,
+    curriculum_version: curriculum.contentVersion,
+    status: enrollment.status,
+    enrolled_at: enrollment.enrolledAt,
+  };
 });

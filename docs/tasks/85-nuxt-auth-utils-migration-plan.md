@@ -30,7 +30,7 @@ claim client-side; Web SSR, Admin SPA, MFA, remember restore và multi-device re
 maxAge, seal và generateId nhưng **không có storage adapter**; `updateSession()` seal toàn bộ
 data vào cookie. Vì vậy không thể đạt “session lưu Redis” chỉ bằng đổi `nuxt.config`.
 
-KidThink giữ module vì `useUserSession()`, type augmentation, SSR/SPA load strategy và
+MindKid giữ module vì `useUserSession()`, type augmentation, SSR/SPA load strategy và
 `/api/_auth/session`, nhưng sealed cookie chỉ chứa một opaque locator. `sessionHooks.fetch`
 lookup Redis rồi hydrate safe projection. Không dùng Nitro `useStorage()` làm session store
 ngầm vì module không nối vào mount đó và auth cần atomic rotate/revoke fail-closed.
@@ -119,10 +119,10 @@ challenge và chỉ cấp sau MFA success. Remember restore không cập nhật 
 | Web/Admin | `server-first` / `client-only` |
 
 ```bash
-pnpm --filter @kidthink/auth test
-pnpm --filter @kidthink/db test
-pnpm --filter @kidthink/web test
-pnpm --filter @kidthink/admin test
+pnpm --filter @mindkid/auth test
+pnpm --filter @mindkid/db test
+pnpm --filter @mindkid/web test
+pnpm --filter @mindkid/admin test
 pnpm test:e2e
 pnpm lint:specs
 pnpm check
@@ -232,7 +232,7 @@ chạy tuần tự; không song song với app cutover.
       revoke-all; selector miss chỉ 401, verifier mismatch của family tồn tại mới là reuse.
 - [ ] Unit + Valkey integration test concurrent restore/reuse/cross-namespace/outage xanh.
 
-**Verify:** `pnpm --filter @kidthink/auth test`. **Files:** package manifest, port/service,
+**Verify:** `pnpm --filter @mindkid/auth test`. **Files:** package manifest, port/service,
 Redis adapter, Lua module, tests; chia T1a/T1b nếu vượt 5 file. **Dependency:** T0. **Cỡ:** M.
 
 ### T2 — Metadata schema và migration

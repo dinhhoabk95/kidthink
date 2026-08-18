@@ -37,7 +37,6 @@ function mockEvent(
         user_id: userId,
         display_name: "Parent User",
         session_id: `sess_${userId}`,
-        refresh_token_version: 0,
       },
       body,
       params: routerParams,

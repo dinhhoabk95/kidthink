@@ -1,4 +1,4 @@
-import { getWorksheetByCode } from "@kidthink/db";
+import { getWorksheetByCode } from "@mindkid/db";
 import { createError, defineEventHandler, getQuery, getRouterParam } from "h3";
 import { requireManagerSession } from "../../../../utils/admin-auth-runtime.js";
 

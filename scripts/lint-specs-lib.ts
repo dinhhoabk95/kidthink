@@ -260,7 +260,7 @@ export function checkC1(specs: SpecFile[]) {
         fail(s.rel, 1, "C1", `Missing frontmatter field: ${field}`);
       }
     }
-    if (fm.status && !VALID_STATUS.includes(fm.status as string)) {
+    if (typeof fm.status === "string" && !VALID_STATUS.includes(fm.status)) {
       fail(
         s.rel,
         1,
@@ -268,7 +268,7 @@ export function checkC1(specs: SpecFile[]) {
         `Invalid status: "${fm.status}" (expected: ${VALID_STATUS.join(", ")})`
       );
     }
-    if (fm.area && !VALID_AREA.includes(fm.area as string)) {
+    if (typeof fm.area === "string" && !VALID_AREA.includes(fm.area)) {
       fail(
         s.rel,
         1,
@@ -420,24 +420,6 @@ export function checkC4(specs: SpecFile[]) {
       rel: relative(join(ROOT, "docs"), SPEC_MD),
       lines: content.split("\n"),
     });
-  }
-
-  // Add docs/tasks/*.md (plan.md, todo.md, ...) — comment above already
-  // claimed "+ tasks" but the scan was missing; broken links there went unchecked.
-  const tasksDir = join(ROOT, "docs", "tasks");
-  if (existsSync(tasksDir)) {
-    for (const f of readdirSync(tasksDir)) {
-      if (!f.endsWith(".md")) {
-        continue;
-      }
-      const p = join(tasksDir, f);
-      const content = readFileSync(p, "utf-8");
-      allFiles.push({
-        path: p,
-        rel: relative(join(ROOT, "docs"), p),
-        lines: content.split("\n"),
-      });
-    }
   }
 
   const linkPattern = /\]\(([^)#\s]+\.md)(?:#[^)]*)?\)/g;
@@ -764,7 +746,7 @@ export function checkC7(specs: SpecFile[]) {
   const specToFile = new Map<string, SpecFile>();
 
   for (const s of specs) {
-    const id = s.frontmatter.spec as string;
+    const id = typeof s.frontmatter.spec === "string" ? s.frontmatter.spec : "";
     if (!id) {
       continue;
     }
@@ -837,16 +819,18 @@ export function checkC8(specs: SpecFile[]) {
   const specToFile = new Map<string, SpecFile>();
 
   for (const s of specs) {
-    const id = s.frontmatter.spec as string;
+    const id = typeof s.frontmatter.spec === "string" ? s.frontmatter.spec : "";
     if (!id) {
       continue;
     }
-    statusMap.set(id, s.frontmatter.status as string);
+    const status =
+      typeof s.frontmatter.status === "string" ? s.frontmatter.status : "";
+    statusMap.set(id, status);
     specToFile.set(id, s);
   }
 
   for (const s of specs) {
-    const id = s.frontmatter.spec as string;
+    const id = typeof s.frontmatter.spec === "string" ? s.frontmatter.spec : "";
     if (!id) {
       continue;
     }

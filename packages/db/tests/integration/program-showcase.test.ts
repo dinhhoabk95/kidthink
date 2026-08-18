@@ -10,7 +10,7 @@ describe("P3.8 Program Showcase Invariants (BR-PSH)", () => {
         duration_weeks: 42,
       };
       expect(publicProjection).not.toHaveProperty("content_pack");
-      expect(publicProjection).not.toHaveProperty("guide_vi");
+      expect(publicProjection).not.toHaveProperty("guide");
     });
 
     it("Scenario: BR-PSH-02 — public program showcase serves only published curricula and excludes draft or archived entries", () => {
@@ -21,7 +21,7 @@ describe("P3.8 Program Showcase Invariants (BR-PSH)", () => {
 
     it("Scenario: BR-PSH-03 — program detail preview exposes activity titles for weeks 1-2 only and structural summaries for weeks 3+", () => {
       const week1 = { week_no: 1, items: [{ title: "Đếm hạt" }] };
-      const week3 = { week_no: 3, goal_vi: "Phát triển tư duy nhóm" };
+      const week3 = { week_no: 3, goal: "Phát triển tư duy nhóm" };
       expect(week1.items).toBeDefined();
       expect(week3).not.toHaveProperty("items");
     });

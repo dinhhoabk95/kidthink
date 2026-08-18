@@ -123,7 +123,7 @@ describe("Worksheet Lifecycle & Render Evidence Integration Tests (Task #64 / P4
         title: "Phiếu tô màu theo quy luật hình học",
         layout_template: "pattern_coloring",
         content_blocks: samplePatternColoring,
-        instructions_vi:
+        instructions:
           "Hướng dẫn người lớn: Giúp trẻ quan sát quy luật và tô màu vào hình còn trống.",
         learning_objective_ids: [1],
         access_tier: "standard",
@@ -235,7 +235,7 @@ describe("Worksheet Lifecycle & Render Evidence Integration Tests (Task #64 / P4
         title: "Phiếu bài tập liên kết hoạt động",
         layout_template: "pattern_coloring",
         content_blocks: samplePatternColoring,
-        instructions_vi: "Hướng dẫn người lớn cho bài tập liên kết.",
+        instructions: "Hướng dẫn người lớn cho bài tập liên kết.",
         learning_objective_ids: [1],
         access_tier: "standard",
       },
@@ -271,8 +271,8 @@ describe("Worksheet Lifecycle & Render Evidence Integration Tests (Task #64 / P4
       code: actCode,
       contentVersion: 1,
       kind: "worksheet",
-      titleVi: "Hoạt động làm phiếu bài tập",
-      instructionVi:
+      title: "Hoạt động làm phiếu bài tập",
+      instruction:
         'Cô hướng dẫn trẻ: "Con hãy quan sát hình và tô màu theo quy luật nhé!" Dễ hơn: Cô gợi ý hình tiếp theo. Khó hơn: Trẻ tự sáng tạo quy luật.',
       estimatedMinutes: 10,
       refType: "worksheet",

@@ -1,9 +1,9 @@
-import type { ContentLifecycleStatus, ManagerRole } from "@kidthink/shared";
+import type { ContentLifecycleStatus, ManagerRole } from "@mindkid/shared";
 import {
   canTransition,
   DEFAULT_EMBEDDING_MODEL,
   validatePublishChecklist,
-} from "@kidthink/shared";
+} from "@mindkid/shared";
 import { and, asc, desc, eq, inArray, ne, or, sql } from "drizzle-orm";
 import { getOwnerDb } from "../client.ts";
 import { contentEmbeddings } from "../schema/ai.ts";
@@ -177,7 +177,7 @@ async function verifyLessonActivities(
         entityId: activities.entityId,
         code: activities.code,
         kind: activities.kind,
-        titleVi: activities.titleVi,
+        title: activities.title,
         estimatedMinutes: activities.estimatedMinutes,
         status: activities.status,
       })
@@ -335,7 +335,7 @@ async function checkContentInUse(
       const inUseLessons = await db
         .select({
           code: lessons.code,
-          titleVi: lessons.titleVi,
+          title: lessons.title,
           status: lessons.status,
         })
         .from(lessonActivities)
@@ -360,7 +360,7 @@ async function checkContentInUse(
           {
             in_use_by: inUseLessons.map((l) => ({
               code: l.code,
-              title: l.titleVi,
+              title: l.title,
               status: l.status,
             })),
           }
@@ -379,7 +379,7 @@ async function checkContentInUse(
       const inUseActivities = await db
         .select({
           code: activities.code,
-          titleVi: activities.titleVi,
+          title: activities.title,
           status: activities.status,
         })
         .from(activities)
@@ -407,7 +407,7 @@ async function checkContentInUse(
           {
             in_use_by: inUseActivities.map((a) => ({
               code: a.code,
-              title: a.titleVi,
+              title: a.title,
               status: a.status,
             })),
           }
@@ -420,7 +420,7 @@ async function checkContentInUse(
     .select({
       id: curricula.id,
       code: curricula.code,
-      titleVi: curricula.titleVi,
+      title: curricula.title,
     })
     .from(curriculumItems)
     .innerJoin(curricula, eq(curriculumItems.curriculumId, curricula.id))
@@ -440,7 +440,7 @@ async function checkContentInUse(
       {
         in_use_by: inUseCurricula.map((c) => ({
           code: c.code,
-          title: c.titleVi,
+          title: c.title,
         })),
       }
     );
@@ -704,7 +704,7 @@ async function handlePostPublishEffects(
   ).catch(() => undefined);
 
   if (req.entityType === "game_level" || req.entityType === "lesson") {
-    const textToEmbed = `${itemData.titleVi || ""} ${itemData.instructionVi || itemData.summaryVi || ""} ${code}`;
+    const textToEmbed = `${itemData.title || ""} ${itemData.instruction || itemData.summary || ""} ${code}`;
     const vector = await aiProvider
       .generateEmbedding(textToEmbed.trim() || code)
       .catch(() => null);

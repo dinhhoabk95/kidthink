@@ -1,4 +1,4 @@
-// @kidthink/ui — Accessibility (axe) harness & page object rules (BR-A11-*)
+// @mindkid/ui — Accessibility (axe) harness & page object rules (BR-A11-*)
 
 export interface PageObjectDefinition {
   htmlContent: string;

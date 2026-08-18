@@ -3,10 +3,10 @@ import {
   evaluateBadges,
   type MasteryState,
   selectNext,
-} from "@kidthink/adaptive";
-import { AppError } from "@kidthink/auth";
-import { enqueue } from "@kidthink/queue";
-import { computeSessionResult, computeStars } from "@kidthink/shared";
+} from "@mindkid/adaptive";
+import { AppError } from "@mindkid/auth";
+import { enqueue } from "@mindkid/queue";
+import { computeSessionResult, computeStars } from "@mindkid/shared";
 import { and, desc, eq, sql } from "drizzle-orm";
 import { z } from "zod";
 import { getOwnerDb } from "../client.ts";

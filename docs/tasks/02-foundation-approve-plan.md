@@ -1,7 +1,7 @@
 # Plan — Task #2: 16 spec `00-foundation` `draft` → `approved`
 
 > Viết 2026-08-06. Checklist thực thi: [`02-foundation-approve-todo.md`](02-foundation-approve-todo.md).
-> Task #1 (bootstrap `kidthink/`) đã lưu trữ tại
+> Task #1 (bootstrap `mindkid/`) đã lưu trữ tại
 > [`01-bootstrap-plan.md`](01-bootstrap-plan.md) · [`01-bootstrap-todo.md`](01-bootstrap-todo.md)
 > — quyết định D-A…D-R nằm ở đó, plan này tiếp số từ **D-S**.
 >
@@ -14,7 +14,7 @@
 ## Context
 
 `BR-RBS-04` chặn **mọi** code nghiệp vụ cho tới khi toàn bộ 16 spec `00-foundation` đạt
-`status: approved`. Hiện **130/130 spec còn `draft`**. Task #1 (bootstrap `kidthink/`) đã
+`status: approved`. Hiện **130/130 spec còn `draft`**. Task #1 (bootstrap `mindkid/`) đã
 xong — gate local xanh, PG 17.9 + Valkey 9.1.1 sống — nên đây là việc duy nhất đứng giữa
 repo hiện tại và dòng schema đầu tiên ([`roadmap.md`](../specs/roadmap.md) P0 bước 7).
 
@@ -41,8 +41,8 @@ Kết quả mong muốn: 16/16 `approved`, `BR-RBS-04` mở khoá, và một scr
 
 | Đo | Kết quả |
 |---|---|
-| `kidthink/` git | 3 commit (`1b87a08` · `1def069` · `75febf6`), branch `main` tracking `origin/main` |
-| Working tree `kidthink/` | **bẩn**: `?? lefthook.yml`, `D .github/workflows/ci.yml`, `M package.json`, `M pnpm-workspace.yaml`, `M pnpm-lock.yaml` — migration CI→lefthook chưa commit |
+| `mindkid/` git | 3 commit (`1b87a08` · `1def069` · `75febf6`), branch `main` tracking `origin/main` |
+| Working tree `mindkid/` | **bẩn**: `?? lefthook.yml`, `D .github/workflows/ci.yml`, `M package.json`, `M pnpm-workspace.yaml`, `M pnpm-lock.yaml` — migration CI→lefthook chưa commit |
 | `.git/hooks/pre-commit`·`pre-push` | tồn tại, 2.3K — `lefthook install` đã chạy |
 | `docs/tasks/todo.md` | vẫn ghi "bật lại CI" ở 3 chỗ — **stale** so với §11 Q5/Q11 đã đóng |
 | Corpus spec | 135 file ở workspace root, **không trong git** |
@@ -62,7 +62,7 @@ Kết quả mong muốn: 16/16 `approved`, `BR-RBS-04` mở khoá, và một scr
 |---|---|---|
 | **D-S** | Phạm vi = **Task #2 đầy đủ**, 16/16 spec foundation → `approved` | người người dùng |
 | **D-T** | Bar approve = **đóng OQ chặn P0**, phần còn lại hoãn *có chủ* (ghi rõ chặn phase nào + ai sở hữu) — không đòi đóng cả 48 | người người dùng |
-| **D-U** | Đóng §11 **Q10**: corpus spec **chuyển vào `kidthink/docs/`** | người người dùng |
+| **D-U** | Đóng §11 **Q10**: corpus spec **chuyển vào `mindkid/docs/`** | người người dùng |
 | **D-V** | Đóng §11 **Q13**: sửa **cả 17 file**, dùng từ **"cổng tự động"** (provider-agnostic) | người người dùng |
 | **D-W** | [`mvp-scope.md`](../specs/00-foundation/mvp-scope.md) Q1 (ai biên soạn ≥690 LO · ≥120 game level · ≥60 lesson) **hạ từ chặn-P0 xuống chặn-P1**. Nó chặn đường găng *nội dung*, không chạm schema/migration/auth thì **không** chặn Task #2 | người người dùng, 2026-08-06 |
 
@@ -73,10 +73,10 @@ chờ hoãn **có chủ + có hạn**, và hạn là **trước khi P1 bắt đ�
 §11 phải ghi đúng câu đó, không ghi chung chung "P1".
 
 **D-U không phải thay đổi kiến trúc — nó khôi phục cấu trúc đã ghi trong spec.**
-[`SPEC.md`](../SPEC.md) §8 và §14 *đã* mô tả đích là `kidthink/docs/SPEC.md` + `kidthink/docs/specs/` +
-`kidthink/docs/tasks/`. Vị trí hiện tại ở workspace root mới là cái lệch.
+[`SPEC.md`](../SPEC.md) §8 và §14 *đã* mô tả đích là `mindkid/docs/SPEC.md` + `mindkid/docs/specs/` +
+`mindkid/docs/tasks/`. Vị trí hiện tại ở workspace root mới là cái lệch.
 
-Hệ quả kỹ thuật: giữ `kidthink/docs/SPEC.md` làm **file thật** và `kidthink/SPEC.md` làm
+Hệ quả kỹ thuật: giữ `mindkid/docs/SPEC.md` làm **file thật** và `mindkid/SPEC.md` làm
 symlink về nó (đúng chữ trong §8: *"root SPEC.md symlink về đây"*). Khi đó mọi link tương
 đối trong corpus (`../SPEC.md` từ `docs/specs/`, `../../SPEC.md` từ `docs/specs/00-*/`)
 **giữ nguyên giá trị** — không phải sửa 217 link nào.
@@ -87,7 +87,7 @@ symlink về nó (đúng chữ trong §8: *"root SPEC.md symlink về đây"*). 
 
 ```
 T1 Commit nợ lefthook  ─┐
-                        ├─▶ T2 Chuyển corpus vào kidthink/docs/  ─▶ T3 scripts/lint-specs.ts
+                        ├─▶ T2 Chuyển corpus vào mindkid/docs/  ─▶ T3 scripts/lint-specs.ts
                         │        (đóng Q10 · git truy vết)              (+ SPEC.md §7)
                         │                                                     │
                         │                                          CHECKPOINT A
@@ -125,7 +125,7 @@ trên contract chưa ký.
 
 ### T1 — Đóng nợ migration CI → lefthook
 
-**Mô tả:** Working tree `kidthink/` đang bẩn với migration chưa commit. Không chuyển corpus
+**Mô tả:** Working tree `mindkid/` đang bẩn với migration chưa commit. Không chuyển corpus
 vào một repo đang dở dang.
 
 **Làm:**
@@ -136,41 +136,41 @@ vào một repo đang dở dang.
 - Commit: `chore: thay CI remote bằng lefthook gate local`.
 
 **Acceptance:**
-- [ ] `git status --short` trong `kidthink/` rỗng
+- [ ] `git status --short` trong `mindkid/` rỗng
 - [ ] Ca âm `pre-commit` chặn đúng, in `file:line`
 - [ ] Ca âm `pre-push` chặn đúng
-- [ ] `.github/` không còn tồn tại trong `kidthink/`
+- [ ] `.github/` không còn tồn tại trong `mindkid/`
 
-**Verify:** `cd kidthink && git status --short && ls .github 2>&1`
-**Dependencies:** None · **Files:** `kidthink/lefthook.yml`, `package.json`, `pnpm-workspace.yaml` · **Scope:** S
+**Verify:** `cd mindkid && git status --short && ls .github 2>&1`
+**Dependencies:** None · **Files:** `mindkid/lefthook.yml`, `package.json`, `pnpm-workspace.yaml` · **Scope:** S
 
 ---
 
-### T2 — Chuyển corpus spec vào `kidthink/docs/` (đóng §11 Q10)
+### T2 — Chuyển corpus spec vào `mindkid/docs/` (đóng §11 Q10)
 
-**Mô tả:** Đưa [`SPEC.md`](../SPEC.md) + `docs/specs/` + `docs/tasks/` vào repo `kidthink/`, khôi phục
+**Mô tả:** Đưa [`SPEC.md`](../SPEC.md) + `docs/specs/` + `docs/tasks/` vào repo `mindkid/`, khôi phục
 cấu trúc [`SPEC.md`](../SPEC.md) §8. Từ đây mọi thay đổi contract có history và đi cùng PR code.
 
 **Làm:**
-- `docs/specs/` → `kidthink/docs/specs/` (135 file, `git add` trong `kidthink/`)
-- [`SPEC.md`](../SPEC.md) (file thật, 71K) → `kidthink/docs/SPEC.md`; tạo symlink `kidthink/SPEC.md -> docs/SPEC.md`
-- `docs/tasks/{plan.md,todo.md}` → `kidthink/docs/tasks/`
+- `docs/specs/` → `mindkid/docs/specs/` (135 file, `git add` trong `mindkid/`)
+- [`SPEC.md`](../SPEC.md) (file thật, 71K) → `mindkid/docs/SPEC.md`; tạo symlink `mindkid/SPEC.md -> docs/SPEC.md`
+- `docs/tasks/{plan.md,todo.md}` → `mindkid/docs/tasks/`
 - Sửa đường dẫn trong `.agents/AGENTS.md` (13 tham chiếu `../SPEC.md` / `../docs/specs/**`
-  → `../kidthink/docs/**`). `.agents/` **giữ nguyên ở root** — nó phục vụ cả workspace, di
+  → `../mindkid/docs/**`). `.agents/` **giữ nguyên ở root** — nó phục vụ cả workspace, di
   chuyển nó làm Claude Code mất `CLAUDE.md`. Ghi thành việc theo dõi riêng.
 - Xoá bản cũ ở root sau khi verify (không để hai bản — cùng lỗi "hai scope" của `BR-RBS-02`)
 - Cập nhật [`repo-bootstrap.md`](../specs/00-foundation/repo-bootstrap.md) §11 Q10 → **Đóng 2026-08-06**, ghi quyết định D-U
 
 **Acceptance:**
 - [ ] 217 link `.md` trong corpus resolve được, **0 link vỡ** — không sửa link nào
-- [ ] `kidthink/SPEC.md` là symlink, trỏ tới `docs/SPEC.md`; `cat kidthink/SPEC.md` ra nội dung
-- [ ] `git log --follow kidthink/docs/specs/00-foundation/glossary.md` có ít nhất 1 commit
+- [ ] `mindkid/SPEC.md` là symlink, trỏ tới `docs/SPEC.md`; `cat mindkid/SPEC.md` ra nội dung
+- [ ] `git log --follow mindkid/docs/specs/00-foundation/glossary.md` có ít nhất 1 commit
 - [ ] Workspace root **không còn** [`SPEC.md`](../SPEC.md), `docs/specs/`, `docs/tasks/`
 - [ ] `docs/montessori/` giữ nguyên ở root (không thuộc corpus, [`SPEC.md`](../SPEC.md) §8 không liệt kê)
 
 **Verify:**
 ```bash
-cd kidthink && git ls-files docs/specs | wc -l          # mong đợi 135
+cd mindkid && git ls-files docs/specs | wc -l          # mong đợi 135
 # quét link vỡ: mỗi target tương đối phải tồn tại
 grep -rhoE '\]\(([^)#]+\.md)' docs/specs docs/SPEC.md | ...   # 0 miss
 ls -l SPEC.md                                            # -> docs/SPEC.md
@@ -212,7 +212,7 @@ approved" là lời khai, không phải phép đo — và corpus trôi lại nga
 Lưu ý: Ca âm ở dòng 3 là quan trọng nhất: script mới viết mà xanh ngay là dấu hiệu nó không đo gì.
 Ta **đã biết** corpus đang có 3 vi phạm — script phải thấy đủ cả ba.
 
-**Dependencies:** T2 · **Files:** `kidthink/scripts/lint-specs.ts`, `package.json`, `docs/SPEC.md` §7 · **Scope:** M
+**Dependencies:** T2 · **Files:** `mindkid/scripts/lint-specs.ts`, `package.json`, `docs/SPEC.md` §7 · **Scope:** M
 
 ---
 
@@ -270,7 +270,7 @@ bằng `--no-verify`, nên nó *không* thay được câu "không có cờ bỏ
 - [`SPEC.md`](../SPEC.md) §14: 124 → **130** spec module; `00-foundation/` 14 → **16**; `07-addon/` 6 → **7**
 - [`SPEC.md`](../SPEC.md) §14.3 "120 prefix" — đối chiếu [`business-rules.md`](../specs/00-foundation/business-rules.md) thật, sửa nếu lệch
 - [`SPEC.md`](../SPEC.md) §15 **Q6** ("repo riêng hay branch v2?") → chuyển sang bảng *Đã chốt*: repo riêng
-  `kidthink/`, quyết định D-A 2026-08-06
+  `mindkid/`, quyết định D-A 2026-08-06
 - `docs/tasks/todo.md`: xoá 3 mục "bật lại CI" (đã bị D-V/Q5 thay thế), đánh dấu T8/T9đk2
   là **huỷ, không phải hoãn**; thêm mục Task #2 trỏ về plan này
 - `docs/tasks/plan.md` §5: thêm D-Q hệ quả (CI xoá hẳn, không phải tạm tắt) + D-S…D-V
@@ -441,7 +441,7 @@ OQ P0: [`package-catalog.md`](../specs/00-foundation/package-catalog.md) Q2 (gó
 |---|---|
 | Approve 114 spec `01-*`…`08-*` | `BR-RBS-04` chỉ đòi `00-foundation`. Các spec khác approve khi phase của chúng tới |
 | Viết `packages/db` schema | Đó là P0 bước 7, **sau** khi task này mở khoá |
-| Chuyển `.agents/` vào `kidthink/` | [`SPEC.md`](../SPEC.md) §8 ghi vậy, nhưng `.agents/` đang phục vụ cả workspace — di chuyển làm mất `CLAUDE.md` ở cwd. Theo dõi riêng |
+| Chuyển `.agents/` vào `mindkid/` | [`SPEC.md`](../SPEC.md) §8 ghi vậy, nhưng `.agents/` đang phục vụ cả workspace — di chuyển làm mất `CLAUDE.md` ở cwd. Theo dõi riêng |
 | Chuyển `infra/`, `docs/montessori/` | Không thuộc corpus spec. `infra/` theo dõi riêng khi tới deploy |
 | Task #3 — khảo sát 60 game type v1 → 6 template | P1, [`game-template-contract.md`](../specs/01-platform/game-template-contract.md) §11 Q1 |
 | Cổng server-side thay `--no-verify` | Phụ thuộc quyết định Q12 ở Checkpoint C; nếu chọn thì là task P1 riêng |
@@ -451,7 +451,7 @@ OQ P0: [`package-catalog.md`](../specs/00-foundation/package-catalog.md) Q2 (gó
 ## Verification tổng
 
 ```bash
-cd kidthink
+cd mindkid
 
 # Cổng cơ học — phải xanh ở Checkpoint B trở đi
 pnpm lint:specs          # 11 check trên 130 spec
@@ -473,4 +473,4 @@ git log --oneline docs/specs/                                              # his
 chủ và phase · [`data-model-overview.md`](../specs/01-platform/data-model-overview.md) §Ràng buộc chờ ghi đủ quyết định schema đã chốt.
 
 **Vị trí file này:** hiện ở `docs/tasks/plan.md` tại workspace root. **T2 di chuyển nó** sang
-`kidthink/docs/tasks/plan.md` cùng toàn bộ corpus — đó là đích ghi trong [`SPEC.md`](../SPEC.md) §8.
+`mindkid/docs/tasks/plan.md` cùng toàn bộ corpus — đó là đích ghi trong [`SPEC.md`](../SPEC.md) §8.

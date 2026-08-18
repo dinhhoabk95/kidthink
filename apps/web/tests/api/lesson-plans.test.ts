@@ -9,8 +9,8 @@ import {
   lessonPlans,
   lessons,
   users,
-} from "@kidthink/db";
-import { ENTITLEMENT_KEYS } from "@kidthink/shared";
+} from "@mindkid/db";
+import { ENTITLEMENT_KEYS } from "@mindkid/shared";
 import { eq } from "drizzle-orm";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import exportPlanHandler from "../../server/api/users/lesson-plans/[uuid]/export.post.js";
@@ -124,7 +124,7 @@ describe("Task P4.1 — Lesson Plan Creator API (BR-LPC-01..09, D-P4A..D-P4D)", 
         .values({
           key: k.key,
           group: k.group as any,
-          labelVi: k.label,
+          label: k.label,
           isMvp: k.is_mvp,
         })
         .onConflictDoNothing();
@@ -206,7 +206,7 @@ describe("Task P4.1 — Lesson Plan Creator API (BR-LPC-01..09, D-P4A..D-P4D)", 
         .insert(gameTemplates)
         .values({
           code: "GT-001",
-          nameVi: "Đếm số",
+          name: "Đếm số",
           mechanic: "tap_target",
           domain: "c1",
           contentContract: {},
@@ -258,7 +258,7 @@ describe("Task P4.1 — Lesson Plan Creator API (BR-LPC-01..09, D-P4A..D-P4D)", 
         entityId: baseEntityId,
         code: publishedLessonCode,
         contentVersion: 1,
-        titleVi: "Bài học mẫu số lượng 1-5",
+        title: "Bài học mẫu số lượng 1-5",
         targetAgeMin: 4,
         targetAgeMax: 5,
         estimatedMinutes: 25,
@@ -275,8 +275,8 @@ describe("Task P4.1 — Lesson Plan Creator API (BR-LPC-01..09, D-P4A..D-P4D)", 
         code: publishedActCode,
         contentVersion: 1,
         kind: "manipulative",
-        titleVi: "Thực hành xếp hạt",
-        instructionVi: "Xếp 5 hạt thành hàng ngang",
+        title: "Thực hành xếp hạt",
+        instruction: "Xếp 5 hạt thành hàng ngang",
         estimatedMinutes: 10,
         accessTier: "standard",
         status: "published",
@@ -291,7 +291,7 @@ describe("Task P4.1 — Lesson Plan Creator API (BR-LPC-01..09, D-P4A..D-P4D)", 
         code: premiumActCode,
         contentVersion: 1,
         kind: "digital_game",
-        titleVi: "Trò chơi cao cấp 3D",
+        title: "Trò chơi cao cấp 3D",
         estimatedMinutes: 15,
         accessTier: "premium",
         status: "published",
@@ -348,7 +348,7 @@ describe("Task P4.1 — Lesson Plan Creator API (BR-LPC-01..09, D-P4A..D-P4D)", 
       .select()
       .from(lessons)
       .where(eq(lessons.code, publishedLessonCode));
-    expect(originalLesson.titleVi).toBe("Bài học mẫu số lượng 1-5");
+    expect(originalLesson.title).toBe("Bài học mẫu số lượng 1-5");
 
     const originalActs = await db
       .select()
@@ -458,8 +458,8 @@ describe("Task P4.1 — Lesson Plan Creator API (BR-LPC-01..09, D-P4A..D-P4D)", 
       code: publishedActCode,
       contentVersion: 2,
       kind: "manipulative",
-      titleVi: "Thực hành xếp hạt nâng cao v2",
-      instructionVi: "Xếp 5 hạt thành vòng tròn",
+      title: "Thực hành xếp hạt nâng cao v2",
+      instruction: "Xếp 5 hạt thành vòng tròn",
       estimatedMinutes: 12,
       accessTier: "standard",
       status: "published",

@@ -3,7 +3,7 @@ import {
   getBrowserSessionService,
   isOAuthProvider,
   type NormalizedProfile,
-} from "@kidthink/auth";
+} from "@mindkid/auth";
 import {
   auditLogs,
   consentLogs,
@@ -12,8 +12,8 @@ import {
   PostgresSessionStore,
   socialIdentities,
   users,
-} from "@kidthink/db";
-import { enforceTwoAxisRateLimit } from "@kidthink/shared";
+} from "@mindkid/db";
+import { enforceTwoAxisRateLimit } from "@mindkid/shared";
 import { and, eq } from "drizzle-orm";
 import {
   createError,
@@ -33,7 +33,6 @@ import {
   assertSameOriginRequest,
   ensureUserCsrfCookie,
   getVerifiedRemoteIp,
-  respondToUserAuthError,
 } from "../../../../utils/auth-runtime.js";
 import { OAUTH_TICKET_COOKIE_NAME } from "../oauth/[provider]/callback.get.js";
 
@@ -281,71 +280,67 @@ async function establishRegistrationSession(
 }
 
 export async function handleSocialLogin(event: H3Event, testBody?: unknown) {
-  try {
-    assertSameOriginRequest(event);
-    assertRequestBodySize(event, 16 * 1024);
+  assertSameOriginRequest(event);
+  assertRequestBodySize(event, 16 * 1024);
 
-    const ipRateLimit = await enforceTwoAxisRateLimit({
-      routeClass: "auth:social-login",
-      remoteIp: getVerifiedRemoteIp(event),
-    });
-    assertRateLimitAllowed(ipRateLimit.statusCode);
+  const ipRateLimit = await enforceTwoAxisRateLimit({
+    routeClass: "auth:social-login",
+    remoteIp: getVerifiedRemoteIp(event),
+  });
+  assertRateLimitAllowed(ipRateLimit.statusCode);
 
-    const rawBody =
-      testBody ??
-      (event.context as { body?: unknown })?.body ??
-      (await readBody(event).catch(() => ({})));
+  const rawBody =
+    testBody ??
+    (event.context as { body?: unknown })?.body ??
+    (await readBody(event).catch(() => ({})));
 
-    const input = parseRegistrationPayload(rawBody);
-    const profile = resolveProfileFromTicket(event, input.provider);
+  const input = parseRegistrationPayload(rawBody);
+  const profile = resolveProfileFromTicket(event, input.provider);
 
-    const finalEmail = (
-      profile.email_at_provider ||
-      input.email ||
-      ""
-    ).toLowerCase();
+  const finalEmail = (
+    profile.email_at_provider ||
+    input.email ||
+    ""
+  ).toLowerCase();
 
-    if (!finalEmail) {
-      setResponseStatus(event, 422);
-      throw createError({
-        statusCode: 422,
-        statusMessage: "VALIDATION_FAILED",
-        data: {
-          code: "VALIDATION_FAILED",
-          message: "Vui lòng nhập địa chỉ email để tiếp tục.",
-        },
-      });
-    }
-
-    const finalDisplayName = (
-      input.display_name ||
-      profile.display_name_at_provider ||
-      finalEmail.split("@")[0] ||
-      "User"
-    ).slice(0, 60);
-
-    await assertNoRegistrationConflicts(finalEmail, profile);
-
-    const newUser = await executeRegistrationTransaction(
-      event,
-      finalEmail,
-      finalDisplayName,
-      profile
-    );
-
-    await establishRegistrationSession(event, newUser);
-
-    setResponseStatus(event, 201);
-    return {
-      user: {
-        uuid: newUser.uuid,
-        displayName: newUser.displayName,
-        status: newUser.status,
+  if (!finalEmail) {
+    setResponseStatus(event, 422);
+    throw createError({
+      statusCode: 422,
+      statusMessage: "VALIDATION_FAILED",
+      data: {
+        code: "VALIDATION_FAILED",
+        message: "Vui lòng nhập địa chỉ email để tiếp tục.",
       },
-    };
-  } catch (error) {
-    return respondToUserAuthError(event, error);
+    });
   }
+
+  const finalDisplayName = (
+    input.display_name ||
+    profile.display_name_at_provider ||
+    finalEmail.split("@")[0] ||
+    "User"
+  ).slice(0, 60);
+
+  await assertNoRegistrationConflicts(finalEmail, profile);
+
+  const newUser = await executeRegistrationTransaction(
+    event,
+    finalEmail,
+    finalDisplayName,
+    profile
+  );
+
+  await establishRegistrationSession(event, newUser);
+
+  setResponseStatus(event, 201);
+  return {
+    user: {
+      uuid: newUser.uuid,
+      displayName: newUser.displayName,
+      status: newUser.status,
+    },
+  };
 }
 
 export default defineEventHandler((event) => handleSocialLogin(event));

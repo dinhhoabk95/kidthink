@@ -192,7 +192,7 @@ T1 hàm dùng chung: đổi entitlement + audit + vô hiệu cache (D-JM)
 - [ ] Không có lần cấp tay nào trong tháng → **vẫn gửi**, nội dung "không có" — báo cáo im lặng là báo cáo không ai biết đã hỏng.
 
 **Kiểm chứng**
-- [ ] `pnpm --filter @kidthink/worker test -- manual-grant-report` xanh.
+- [ ] `pnpm --filter @mindkid/worker test -- manual-grant-report` xanh.
 
 **Phụ thuộc:** T2 · P1.5 · **Cỡ:** S
 

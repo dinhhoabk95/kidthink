@@ -4,7 +4,7 @@ import {
   entitlements,
   getOwnerDb,
   users,
-} from "@kidthink/db";
+} from "@mindkid/db";
 import { and, eq } from "drizzle-orm";
 import { describe, expect, it } from "vitest";
 import reactivateHandler from "../../../server/api/managers/users/[uuid]/reactivate.post";
@@ -41,7 +41,6 @@ function mockEvent(
               manager_id: 1,
               display_name: "Super Admin",
               session_id: "sess_mgr_1",
-              refresh_token_version: 1,
               role: managerRole,
             },
           }
@@ -102,7 +101,7 @@ describe("Task 3 — User Ops: Suspend, Reactivate, Send Password Reset (BR-USM-
       .values({
         key: "content.standard",
         group: "content",
-        labelVi: "Nội dung chuẩn",
+        label: "Nội dung chuẩn",
       })
       .onConflictDoNothing();
 

@@ -1,10 +1,10 @@
-import { appError } from "@kidthink/auth";
+import { appError } from "@mindkid/auth";
 import {
   type AdminSubscriptionCancelReason,
   canCancelRecurringSubscription,
   DUNNING_GRACE_PERIOD_DAYS,
   DUNNING_MAX_ATTEMPTS,
-} from "@kidthink/shared";
+} from "@mindkid/shared";
 import { and, eq, inArray, isNotNull, lt } from "drizzle-orm";
 import { getOwnerDb } from "../client.js";
 import { entitlements, recurringSubscriptions } from "../schema/billing.js";

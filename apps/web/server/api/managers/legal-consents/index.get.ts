@@ -1,11 +1,7 @@
-import { AppError } from "@kidthink/auth";
-import { consentRequirements, getOwnerDb } from "@kidthink/db";
-import { CONSENT_POLICY_MAP, type ConsentType } from "@kidthink/shared";
-import { createError, defineEventHandler, setResponseStatus } from "h3";
-import {
-  requireSuperAdminSession,
-  respondToManagerAuthError,
-} from "../../../utils/admin-auth-runtime.js";
+import { consentRequirements, getOwnerDb } from "@mindkid/db";
+import { CONSENT_POLICY_MAP, type ConsentType } from "@mindkid/shared";
+import { defineEventHandler } from "h3";
+import { requireSuperAdminSession } from "../../../utils/admin-auth-runtime.js";
 
 const CONSENT_TYPES: readonly ConsentType[] = [
   "terms",
@@ -14,40 +10,28 @@ const CONSENT_TYPES: readonly ConsentType[] = [
 ];
 
 export default defineEventHandler(async (event) => {
-  try {
-    requireSuperAdminSession(event);
+  requireSuperAdminSession(event);
 
-    const db = getOwnerDb();
-    const reqs = await db.select().from(consentRequirements);
+  const db = getOwnerDb();
+  const reqs = await db.select().from(consentRequirements);
 
-    const requirements = CONSENT_TYPES.map((type) => {
-      const meta = CONSENT_POLICY_MAP[type];
-      const req = reqs.find((r) => r.consentType === type);
-
-      return {
-        consent_type: type,
-        title: meta.title,
-        document_url: `/${meta.slug}`,
-        reconsent_required_at: req?.reconsentRequiredAt
-          ? req.reconsentRequiredAt.toISOString()
-          : null,
-        notice: req?.noticeVi ?? null,
-        updated_at: req?.updatedAt ? req.updatedAt.toISOString() : null,
-      };
-    });
+  const requirements = CONSENT_TYPES.map((type) => {
+    const meta = CONSENT_POLICY_MAP[type];
+    const req = reqs.find((r) => r.consentType === type);
 
     return {
-      requirements,
+      consent_type: type,
+      title: meta.title,
+      document_url: `/${meta.slug}`,
+      reconsent_required_at: req?.reconsentRequiredAt
+        ? req.reconsentRequiredAt.toISOString()
+        : null,
+      notice: req?.notice ?? null,
+      updated_at: req?.updatedAt ? req.updatedAt.toISOString() : null,
     };
-  } catch (err: unknown) {
-    if (err instanceof AppError) {
-      setResponseStatus(event, err.status);
-      throw createError({
-        statusCode: err.status,
-        statusMessage: err.code,
-        data: err.toResponse(),
-      });
-    }
-    return respondToManagerAuthError(event, err);
-  }
+  });
+
+  return {
+    requirements,
+  };
 });

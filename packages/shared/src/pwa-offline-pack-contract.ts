@@ -66,7 +66,7 @@ export function canPromptPwaInstall(params: {
 // 2. Offline Curriculum Pack & Integrity Contracts (BR-OCP)
 // ============================================================================
 
-export const OFFLINE_PACK_CACHE_NAME = "kidthink-offline-pack-v1";
+export const OFFLINE_PACK_CACHE_NAME = "mindkid-offline-pack-v1";
 export const OFFLINE_PACK_MAX_SIZE_BYTES = 100 * 1024 * 1024; // 100 MB max per pack
 
 export const OfflineSyncEventItemSchema = z.object({

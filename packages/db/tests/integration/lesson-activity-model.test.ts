@@ -2,7 +2,7 @@ import {
   calculateActivityAgeBand,
   validateActivityModel,
   validateLessonModel,
-} from "@kidthink/shared";
+} from "@mindkid/shared";
 import { eq } from "drizzle-orm";
 import { describe, expect, it } from "vitest";
 import {
@@ -31,7 +31,7 @@ describe("P3.1 Lesson & Activity Model & Seeder Tests", () => {
           easier: "Làm ít hơn",
           harder: "Làm nhiều hơn",
         },
-        materials_vi: "Cốc nhựa, hạt đậu",
+        materials: "Cốc nhựa, hạt đậu",
         estimated_minutes: 10,
         skills: [{ code: "C1.CNT.01", age_min: 3, age_max: 4 }],
       });
@@ -52,7 +52,7 @@ describe("P3.1 Lesson & Activity Model & Seeder Tests", () => {
           easier: "Làm ít hơn",
           harder: "Làm nhiều hơn",
         },
-        materials_vi: "Cốc nhựa, hạt đậu",
+        materials: "Cốc nhựa, hạt đậu",
         estimated_minutes: 10,
         skills: [{ code: "C1.CNT.01", age_min: 3, age_max: 4 }],
       });
@@ -75,7 +75,7 @@ describe("P3.1 Lesson & Activity Model & Seeder Tests", () => {
           easier: "",
           harder: "",
         },
-        materials_vi: "Cốc nhựa, hạt đậu",
+        materials: "Cốc nhựa, hạt đậu",
         estimated_minutes: 10,
         skills: [{ code: "C1.CNT.01", age_min: 3, age_max: 4 }],
       });
@@ -96,7 +96,7 @@ describe("P3.1 Lesson & Activity Model & Seeder Tests", () => {
           easier: "Dễ hơn",
           harder: "Khó hơn",
         },
-        materials_vi: "Cốc nhựa",
+        materials: "Cốc nhựa",
         estimated_minutes: 1,
         skills: [{ code: "C1.CNT.01", age_min: 3, age_max: 4 }],
       });
@@ -113,7 +113,7 @@ describe("P3.1 Lesson & Activity Model & Seeder Tests", () => {
           easier: "Dễ hơn",
           harder: "Khó hơn",
         },
-        materials_vi: "Cốc nhựa",
+        materials: "Cốc nhựa",
         estimated_minutes: 25,
         skills: [{ code: "C1.CNT.01", age_min: 3, age_max: 4 }],
       });
@@ -150,7 +150,7 @@ describe("P3.1 Lesson & Activity Model & Seeder Tests", () => {
           easier: "Dễ",
           harder: "Khó",
         },
-        materials_vi: "dao nhọn, kéo sắc",
+        materials: "dao nhọn, kéo sắc",
         estimated_minutes: 10,
         skills: [{ code: "C1.CNT.01", age_min: 4, age_max: 5 }],
       });
@@ -169,7 +169,7 @@ describe("P3.1 Lesson & Activity Model & Seeder Tests", () => {
           easier: "Dễ",
           harder: "Khó",
         },
-        materials_vi: "Hạt cườm nhỏ đường kính < 3cm",
+        materials: "Hạt cườm nhỏ đường kính < 3cm",
         estimated_minutes: 10,
         skills: [{ code: "C1.CNT.01", age_min: 3, age_max: 4 }],
       });
@@ -193,8 +193,8 @@ describe("P3.1 Lesson & Activity Model & Seeder Tests", () => {
           if_child_needs_help: "Giúp",
         },
         estimated_minutes: 20,
-        assessment_vi: "Bé đếm đúng",
-        materials_vi: "Cốc",
+        assessment: "Bé đếm đúng",
+        materials: "Cốc",
         activity_kinds: ["manipulative"],
       });
       expect(invalidCodeRes.valid).toBe(false);
@@ -215,8 +215,8 @@ describe("P3.1 Lesson & Activity Model & Seeder Tests", () => {
           if_child_needs_help: "Giúp",
         },
         estimated_minutes: 20,
-        assessment_vi: "Bé đếm đúng",
-        materials_vi: "Cốc",
+        assessment: "Bé đếm đúng",
+        materials: "Cốc",
         activity_kinds: ["manipulative"],
       });
       expect(missingGuidePart.valid).toBe(false);
@@ -235,8 +235,8 @@ describe("P3.1 Lesson & Activity Model & Seeder Tests", () => {
           if_child_needs_help: "Giúp",
         },
         estimated_minutes: 50,
-        assessment_vi: "Bé đếm đúng",
-        materials_vi: "Cốc",
+        assessment: "Bé đếm đúng",
+        materials: "Cốc",
         activity_kinds: ["manipulative"],
       });
       expect(invalidDuration.valid).toBe(false);
@@ -257,8 +257,8 @@ describe("P3.1 Lesson & Activity Model & Seeder Tests", () => {
           if_child_needs_help: "Giúp",
         },
         estimated_minutes: 20,
-        assessment_vi: "Bé hiểu và nắm được bản chất của số lượng",
-        materials_vi: "Cốc",
+        assessment: "Bé hiểu và nắm được bản chất của số lượng",
+        materials: "Cốc",
         activity_kinds: ["manipulative"],
       });
       expect(abstractAssessment.valid).toBe(false);
@@ -277,9 +277,9 @@ describe("P3.1 Lesson & Activity Model & Seeder Tests", () => {
           if_child_needs_help: "Giúp",
         },
         estimated_minutes: 20,
-        assessment_vi:
+        assessment:
           "Bé chỉ đúng và nói được số lượng hạt trong cốc khi được hỏi 3 lần.",
-        materials_vi: "Cốc",
+        materials: "Cốc",
         activity_kinds: ["manipulative"],
       });
       expect(observableAssessment.valid).toBe(true);
@@ -297,8 +297,8 @@ describe("P3.1 Lesson & Activity Model & Seeder Tests", () => {
           if_child_needs_help: "Giúp",
         },
         estimated_minutes: 20,
-        assessment_vi: "Bé chỉ đúng và xếp đúng hạt đậu.",
-        materials_vi: "Cốc",
+        assessment: "Bé chỉ đúng và xếp đúng hạt đậu.",
+        materials: "Cốc",
         activity_kinds: ["digital_game"],
       });
       expect(digitalOnly.valid).toBe(false);

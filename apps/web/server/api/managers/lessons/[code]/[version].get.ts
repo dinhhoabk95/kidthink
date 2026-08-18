@@ -5,7 +5,7 @@ import {
   lessonActivities,
   lessons,
   skills,
-} from "@kidthink/db";
+} from "@mindkid/db";
 import { and, desc, eq } from "drizzle-orm";
 import { createError, defineEventHandler, getRouterParam } from "h3";
 import { requireManagerSession } from "../../../../utils/admin-auth-runtime.js";
@@ -70,9 +70,9 @@ export default defineEventHandler(async (event) => {
           code: activities.code,
           contentVersion: activities.contentVersion,
           kind: activities.kind,
-          titleVi: activities.titleVi,
-          instructionVi: activities.instructionVi,
-          materialsVi: activities.materialsVi,
+          title: activities.title,
+          instruction: activities.instruction,
+          materials: activities.materials,
           estimatedMinutes: activities.estimatedMinutes,
           accessTier: activities.accessTier,
           status: activities.status,
@@ -96,7 +96,7 @@ export default defineEventHandler(async (event) => {
     .select({
       skillId: contentSkillMap.skillId,
       skillCode: skills.code,
-      skillNameVi: skills.nameVi,
+      skillName: skills.name,
       ageMin: skills.ageMin,
       ageMax: skills.ageMax,
       weight: contentSkillMap.weight,

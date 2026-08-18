@@ -1,4 +1,4 @@
-import { sweepAbandonedSessions } from "@kidthink/db";
+import { sweepAbandonedSessions } from "@mindkid/db";
 
 export async function runSweepAbandoned(jobId: string) {
   const count = await sweepAbandonedSessions();

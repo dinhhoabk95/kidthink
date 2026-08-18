@@ -11,8 +11,6 @@ export interface AccountReference {
 
 interface BaseSessionRecord extends AccountReference {
   readonly session_id: string;
-  readonly refresh_token_hash: string;
-  readonly refresh_token_version: number;
   readonly auth_method: AuthMethod;
   readonly reauth_at: Date | null;
   readonly expires_at: Date;
@@ -31,38 +29,18 @@ export interface ManagerSessionRecord extends BaseSessionRecord {
 
 export type SessionRecord = UserSessionRecord | ManagerSessionRecord;
 
-export interface RotateSessionInput {
-  readonly session_id: string;
-  readonly account_type: AccountType;
-  readonly refresh_token_version: number;
-  readonly current_refresh_token_hash: string;
-  readonly next_refresh_token_hash: string;
-  readonly next_expires_at: Date;
-  readonly used_at: Date;
-}
-
-export type RotateSessionResult =
-  | { readonly outcome: "rotated"; readonly session: SessionRecord }
-  | { readonly outcome: "reused" | "revoked" }
-  | { readonly outcome: "not_found" };
-
 export interface SessionStorePort {
   createSession?(input: {
     account_type: AccountType;
     account_id: number;
-    refresh_token_hash: string;
     device_label?: string;
     ip_address?: string;
     auth_method: AuthMethod;
+    remembered?: boolean;
     expires_at: Date;
   }): Promise<{ session_id: string }>;
-  updateSessionTokenHash?(
-    sessionId: string,
-    refreshTokenHash: string
-  ): Promise<void>;
-  rotate(input: RotateSessionInput): Promise<RotateSessionResult>;
   revokeSession(sessionId: string, account: AccountReference): Promise<void>;
-  /** Atomically increments refresh_token_version and deletes all sessions. */
+  /** Atomically increments `session_version` and deletes all sessions. */
   revokeAll(account: AccountReference): Promise<void>;
   getReauthState(
     sessionId: string,

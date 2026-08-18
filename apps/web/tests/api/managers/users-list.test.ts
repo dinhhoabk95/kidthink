@@ -1,4 +1,4 @@
-import { childProfiles, getOwnerDb, users } from "@kidthink/db";
+import { childProfiles, getOwnerDb, users } from "@mindkid/db";
 import { describe, expect, it } from "vitest";
 import handler from "../../../server/api/managers/users/index.get";
 
@@ -22,7 +22,6 @@ function mockEvent(
               manager_id: 1,
               display_name: "Super Admin",
               session_id: "sess_mgr_1",
-              refresh_token_version: 1,
               role: managerRole,
             },
           }

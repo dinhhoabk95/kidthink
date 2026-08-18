@@ -7,7 +7,7 @@ import {
   playSessions,
   telemetryEvents,
   users,
-} from "@kidthink/db";
+} from "@mindkid/db";
 import { eq } from "drizzle-orm";
 import { describe, expect, it } from "vitest";
 import { runSessionRollup } from "./session.js";
@@ -41,7 +41,7 @@ describe("Task 5 — rollup:session Integration Suite (BR-TLM-04 & BR-JOB-01)", 
       .insert(gameTemplates)
       .values({
         code: gtCode,
-        nameVi: "Template Rollup",
+        name: "Template Rollup",
         mechanic: "tap",
       })
       .onConflictDoNothing()
@@ -55,7 +55,7 @@ describe("Task 5 — rollup:session Integration Suite (BR-TLM-04 & BR-JOB-01)", 
         code: glCode,
         contentVersion: 1,
         templateId: gt ? gt.id : 1,
-        titleVi: "Level Rollup Test",
+        title: "Level Rollup Test",
         contentPack: { test: true },
         difficultyParams: { speed: 1 },
         accessTier: "free",

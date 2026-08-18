@@ -4,7 +4,7 @@ import {
   generateTotpSecret,
   hashPassword,
   hashRecoveryCode,
-} from "@kidthink/auth";
+} from "@mindkid/auth";
 import {
   activeSessions,
   auditLogs,
@@ -12,7 +12,7 @@ import {
   managers,
   mfaRecoveryCodes,
   mfaSettings,
-} from "@kidthink/db";
+} from "@mindkid/db";
 
 import { and, eq } from "drizzle-orm";
 import { describe, expect, it } from "vitest";
@@ -124,7 +124,7 @@ describe("Task 2 & 3 — Manager Login & MFA Handler (BR-ADA-01..08)", () => {
       secretEncrypted: encryptTotpSecret(
         secret,
         process.env.NUXT_ADMIN_JWT_SECRET ??
-          "kidthink-dev-secret-kidthink-dev-secret-32bytes"
+          "mindkid-dev-secret-mindkid-dev-secret-32bytes"
       ),
       confirmedAt: new Date(),
     });

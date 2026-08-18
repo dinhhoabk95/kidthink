@@ -77,7 +77,7 @@ describe("Play Schema Integration Tests", () => {
       .insert(gameTemplates)
       .values({
         code: gtCode,
-        nameVi: "Template Play Test",
+        name: "Template Play Test",
         mechanic: "drag_drop",
       })
       .onConflictDoNothing()
@@ -101,7 +101,7 @@ describe("Play Schema Integration Tests", () => {
         code: glCode,
         contentVersion: 1,
         templateId: gt.id,
-        titleVi: "Level Play Test",
+        title: "Level Play Test",
         contentPack: { test: true },
         difficultyParams: { speed: 1 },
         accessTier: "free",
@@ -185,6 +185,11 @@ describe("Play Schema Integration Tests", () => {
       "client_timestamp",
       "ingested_at",
       "created_at",
+      // BR-DM-08 siết thành "mọi bảng có cả created_at và updated_at" (2026-08-16).
+      // Trên bảng này `updated_at` là cột chết: telemetry_events INSERT-only, role
+      // ứng dụng đã bị REVOKE UPDATE — nó không mang được dữ liệu trẻ nào, nên
+      // không nới lỏng BR-CDC-05.
+      "updated_at",
     ];
 
     const allowedSet = new Set(allowedColumns);

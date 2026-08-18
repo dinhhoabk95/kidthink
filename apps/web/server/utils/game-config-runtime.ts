@@ -1,19 +1,19 @@
 import { randomUUID } from "node:crypto";
-import { AppError } from "@kidthink/auth";
+import { AppError } from "@mindkid/auth";
 import {
   childProfiles,
   gameLevels,
   gameTemplates,
   getOwnerDb,
   playSessions,
-} from "@kidthink/db";
-import { validateContentPack } from "@kidthink/game-engine";
+} from "@mindkid/db";
+import { validateContentPack } from "@mindkid/game-engine";
 import {
   type AssetAccessResult,
   assertContentAccess,
   type CallerIdentity,
   resolveAssets,
-} from "@kidthink/shared";
+} from "@mindkid/shared";
 import { and, desc, eq } from "drizzle-orm";
 import { createError, type H3Event, setHeader, setResponseStatus } from "h3";
 

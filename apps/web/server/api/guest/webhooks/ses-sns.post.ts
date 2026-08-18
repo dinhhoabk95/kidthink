@@ -1,4 +1,4 @@
-import { getOwnerDb, notificationDeliveries } from "@kidthink/db";
+import { getOwnerDb, notificationDeliveries } from "@mindkid/db";
 import { eq } from "drizzle-orm";
 import { defineEventHandler, readBody } from "h3";
 

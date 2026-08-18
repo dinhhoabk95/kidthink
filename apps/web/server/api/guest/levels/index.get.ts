@@ -1,4 +1,4 @@
-import { getOwnerDb, searchGameLevels } from "@kidthink/db";
+import { getOwnerDb, searchGameLevels } from "@mindkid/db";
 import { defineEventHandler, getQuery, setHeader } from "h3";
 
 export default defineEventHandler(async (event) => {

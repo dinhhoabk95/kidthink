@@ -13,12 +13,12 @@
         <h3
           class="text-base font-bold font-heading text-surface-900 dark:text-white"
         >
-          Cài đặt ứng dụng KidThink
+          Cài đặt ứng dụng MindKid
         </h3>
         <p
           class="text-xs sm:text-sm text-surface-600 dark:text-surface-300 mt-0.5"
         >
-          {{ isIos ? 'Chạm biểu tượng Chia sẻ rồi chọn "Thêm vào MH chính" để mở toàn màn hình cho bé chơi mượt mà.' : 'Thêm KidThink vào màn hình chính tablet để mở toàn màn hình, không thanh địa chỉ, giúp bé tập trung hơn.' }}
+          {{ isIos ? 'Chạm biểu tượng Chia sẻ rồi chọn "Thêm vào MH chính" để mở toàn màn hình cho bé chơi mượt mà.' : 'Thêm MindKid vào màn hình chính tablet để mở toàn màn hình, không thanh địa chỉ, giúp bé tập trung hơn.' }}
         </p>
       </div>
     </div>

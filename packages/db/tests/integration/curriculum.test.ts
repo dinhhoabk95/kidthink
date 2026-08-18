@@ -52,7 +52,7 @@ describe("Curriculum Schema Integration Tests", () => {
         entityId: Math.floor(10_000_000 + Math.random() * 89_000_000),
         code: curCode,
         contentVersion: 1,
-        titleVi: "Lộ trình Test",
+        title: "Lộ trình Test",
         accessTier: "free",
         status: "draft",
       })
@@ -83,7 +83,7 @@ describe("Curriculum Schema Integration Tests", () => {
       .insert(gameTemplates)
       .values({
         code: gtCode,
-        nameVi: "Template Lineage Test",
+        name: "Template Lineage Test",
         mechanic: "drag_drop",
       })
       .onConflictDoNothing()
@@ -108,7 +108,7 @@ describe("Curriculum Schema Integration Tests", () => {
         code: glCode,
         contentVersion: 1,
         templateId: gtId,
-        titleVi: "Version 1",
+        title: "Version 1",
         contentPack: { v: 1 },
         difficultyParams: { speed: 1 },
         accessTier: "free",
@@ -124,7 +124,7 @@ describe("Curriculum Schema Integration Tests", () => {
         entityId: Math.floor(10_000_000 + Math.random() * 89_000_000),
         code: curCode,
         contentVersion: 1,
-        titleVi: "Curriculum Lineage Test",
+        title: "Curriculum Lineage Test",
         accessTier: "free",
         status: "published",
       })
@@ -148,7 +148,7 @@ describe("Curriculum Schema Integration Tests", () => {
       .from(gameLevels)
       .where(eq(gameLevels.entityId, item.entityId));
 
-    expect(publishedBefore.titleVi).toBe("Version 1");
+    expect(publishedBefore.title).toBe("Version 1");
 
     // 3. Archive V1 and create Published Game Level Version 2 with same lineageAnchorEntityId
     await db
@@ -161,7 +161,7 @@ describe("Curriculum Schema Integration Tests", () => {
       code: glCode,
       contentVersion: 2,
       templateId: gtId,
-      titleVi: "Version 2 (New Published)",
+      title: "Version 2 (New Published)",
       contentPack: { v: 2 },
       difficultyParams: { speed: 2 },
       accessTier: "free",
@@ -176,7 +176,7 @@ describe("Curriculum Schema Integration Tests", () => {
         .where(eq(gameLevels.entityId, item.entityId))
     ).find((g) => g.status === "published");
 
-    expect(latestPublished?.titleVi).toBe("Version 2 (New Published)");
+    expect(latestPublished?.title).toBe("Version 2 (New Published)");
   });
 
   it("D-MB: rejects two active enrollments for the same child profile via unique partial index", async () => {
@@ -211,7 +211,7 @@ describe("Curriculum Schema Integration Tests", () => {
         entityId: uid,
         code: curCode1,
         contentVersion: 1,
-        titleVi: "Lộ trình 1",
+        title: "Lộ trình 1",
         accessTier: "free",
         status: "published",
       })
@@ -223,7 +223,7 @@ describe("Curriculum Schema Integration Tests", () => {
         entityId: uid + 1,
         code: curCode2,
         contentVersion: 1,
-        titleVi: "Lộ trình 2",
+        title: "Lộ trình 2",
         accessTier: "free",
         status: "published",
       })
@@ -276,7 +276,7 @@ describe("Curriculum Schema Integration Tests", () => {
         entityId: uid,
         code: curCode,
         contentVersion: 1,
-        titleVi: "Lộ trình Tiến độ",
+        title: "Lộ trình Tiến độ",
         accessTier: "free",
         status: "published",
       })

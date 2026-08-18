@@ -174,7 +174,7 @@ T1 zodIntrospect ở server: bảng §7.1 đủ 12 dòng (D-JR)
 - [ ] Bàn phím đi hết form; nhãn gắn với input đúng chuẩn — [`accessibility.md`](../specs/08-quality/accessibility.md).
 
 **Kiểm chứng**
-- [ ] `pnpm --filter @kidthink/admin test -- form-renderer` xanh · render cả 6 template không lỗi.
+- [ ] `pnpm --filter @mindkid/admin test -- form-renderer` xanh · render cả 6 template không lỗi.
 
 **Phụ thuộc:** T3 · **Cỡ:** 3 work package M — widget primitive + nhóm; array/object; a11y + sáu contract fixture
 

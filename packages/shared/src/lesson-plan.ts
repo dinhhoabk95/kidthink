@@ -10,7 +10,7 @@ export type LessonPlanItemType = "activity" | "game_level" | "custom_note";
 export interface ActivitySnapshot {
   readonly title: string;
   readonly instruction?: string | null;
-  readonly materials_vi?: string | null;
+  readonly materials?: string | null;
   readonly estimated_minutes?: number | null;
   readonly kind: string;
   readonly access_tier: string;
@@ -72,9 +72,9 @@ export interface LessonPlanDetail extends LessonPlanSummary {
 }
 
 export function buildActivitySnapshot(activity: {
-  titleVi: string;
-  instructionVi?: string | null;
-  materialsVi?: string | null;
+  title: string;
+  instruction?: string | null;
+  materials?: string | null;
   estimatedMinutes?: number | null;
   kind: string;
   accessTier: string;
@@ -82,9 +82,9 @@ export function buildActivitySnapshot(activity: {
   contentVersion: number;
 }): ActivitySnapshot {
   return {
-    title: activity.titleVi,
-    instruction: activity.instructionVi ?? null,
-    materials_vi: activity.materialsVi ?? null,
+    title: activity.title,
+    instruction: activity.instruction ?? null,
+    materials: activity.materials ?? null,
     estimated_minutes: activity.estimatedMinutes ?? null,
     kind: activity.kind,
     access_tier: activity.accessTier,
@@ -94,7 +94,7 @@ export function buildActivitySnapshot(activity: {
 }
 
 export function buildGameLevelSnapshot(level: {
-  titleVi: string;
+  title: string;
   templateId?: number | null;
   accessTier: string;
   difficultyParams?: Record<string, unknown> | null;
@@ -102,7 +102,7 @@ export function buildGameLevelSnapshot(level: {
   contentVersion: number;
 }): GameLevelSnapshot {
   return {
-    title: level.titleVi,
+    title: level.title,
     template_id: level.templateId ?? null,
     access_tier: level.accessTier,
     difficulty_params: level.difficultyParams ?? null,

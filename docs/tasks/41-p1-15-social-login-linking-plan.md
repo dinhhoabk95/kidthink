@@ -23,7 +23,7 @@ trường hợp thường, không phải hiếm.
 sát nhau:
 
 1. **Tự liên kết vì trùng email** — ai tạo được tài khoản SNS mang email của nạn nhân thì vào
-   được tài khoản KidThink của họ. `BR-SCL-04` cấm; `BR-OAP-08` giải thích vì sao Facebook
+   được tài khoản MindKid của họ. `BR-SCL-04` cấm; `BR-OAP-08` giải thích vì sao Facebook
    không bao giờ đủ tin.
 2. **Gắn SNS vào phiên bị chiếm** — cửa hậu vĩnh viễn, sống sót qua cả lần đổi mật khẩu.
    `BR-SLK-01` chống bằng reauth.
@@ -142,7 +142,7 @@ T1 registry provider: PKCE S256 · state một lần · redirect_uri từ cấu 
 - [ ] `GET /api/guest/auth/oauth/providers` **không** trả `client_id`.
 
 **Kiểm chứng**
-- [ ] `pnpm --filter @kidthink/auth test -- oauth-registry` xanh, assertion tham chiếu
+- [ ] `pnpm --filter @mindkid/auth test -- oauth-registry` xanh, assertion tham chiếu
       `BR-OAP-01` `BR-OAP-09` `BR-OAP-13` `BR-OAP-16`.
 
 **Phụ thuộc:** P0.3 · P0.7 · **Cỡ:** M

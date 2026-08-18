@@ -10,8 +10,8 @@ import { gameLevels } from "../schema/game.ts";
 
 export interface MvpCurriculumConfig {
   code: string;
-  titleVi: string;
-  descriptionVi: string;
+  title: string;
+  description: string;
   programType: "age_based" | "journey";
   targetAgeMin: number;
   targetAgeMax: number;
@@ -25,8 +25,8 @@ export interface MvpCurriculumConfig {
 export const MVP_CURRICULA_CONFIGS: MvpCurriculumConfig[] = [
   {
     code: "CUR-BE3",
-    titleVi: "Bé 3 Tuổi — Khám Phá Thế Giới & Làm Quen Số Lượng",
-    descriptionVi:
+    title: "Bé 3 Tuổi — Khám Phá Thế Giới & Làm Quen Số Lượng",
+    description:
       "Chương trình chuẩn bị nền tảng tư duy toán học cho trẻ 3–4 tuổi: nhận biết số lượng 1–3, so sánh to/nhỏ, phân loại màu sắc và hình dạng cơ bản.",
     programType: "age_based",
     targetAgeMin: 3,
@@ -48,8 +48,8 @@ export const MVP_CURRICULA_CONFIGS: MvpCurriculumConfig[] = [
   },
   {
     code: "CUR-BE4",
-    titleVi: "Bé 4 Tuổi — Nhận Biết, Phân Loại & Đếm Đến 5",
-    descriptionVi:
+    title: "Bé 4 Tuổi — Nhận Biết, Phân Loại & Đếm Đến 5",
+    description:
       "Chương trình phát triển tư duy logic cho trẻ 4–5 tuổi: đếm số lượng 1–5, nhận biết quy luật chuỗi đơn giản ABAB, so sánh dài/ngắn, cao/thấp.",
     programType: "age_based",
     targetAgeMin: 4,
@@ -71,8 +71,8 @@ export const MVP_CURRICULA_CONFIGS: MvpCurriculumConfig[] = [
   },
   {
     code: "CUR-BE5",
-    titleVi: "Bé 5 Tuổi — Tư Duy Không Gian & Số Học Đến 10",
-    descriptionVi:
+    title: "Bé 5 Tuổi — Tư Duy Không Gian & Số Học Đến 10",
+    description:
       "Chương trình nâng cao cho trẻ 5–6 tuổi: đếm thành thạo 1–10, tách gộp nhóm, quy luật phức tạp ABC/AABB, tư duy không gian trái/phải, trước/sau.",
     programType: "age_based",
     targetAgeMin: 5,
@@ -94,8 +94,8 @@ export const MVP_CURRICULA_CONFIGS: MvpCurriculumConfig[] = [
   },
   {
     code: "CUR-BE6",
-    titleVi: "Bé 6 Tuổi — Sẵn Sàng Vào Lớp 1 & Tư Duy Độc Lập",
-    descriptionVi:
+    title: "Bé 6 Tuổi — Sẵn Sàng Vào Lớp 1 & Tư Duy Độc Lập",
+    description:
       "Chương trình hoàn thiện kỹ năng tư duy cho trẻ 6 tuổi: cấu tạo số trong phạm vi 10, cộng trừ trực quan, đọc biểu đồ đơn giản, tư duy suy luận có điều kiện.",
     programType: "age_based",
     targetAgeMin: 5,
@@ -117,8 +117,8 @@ export const MVP_CURRICULA_CONFIGS: MvpCurriculumConfig[] = [
   },
   {
     code: "CUR-J42",
-    titleVi: "Hành Trình 42 Tuần — Phát Triển Tư Duy Toàn Diện 3–6 Tuổi",
-    descriptionVi:
+    title: "Hành Trình 42 Tuần — Phát Triển Tư Duy Toàn Diện 3–6 Tuổi",
+    description:
       "Lộ trình 42 tuần xuyên suốt cả năm học mầm non, tích hợp 6 năng lực tư duy cốt lõi C1–C6 từ mức độ trực quan đến suy luận logic trừu tượng.",
     programType: "journey",
     targetAgeMin: 3,
@@ -169,8 +169,8 @@ async function upsertCurriculumRecord(
       targetAgeMax: cfg.targetAgeMax,
       durationWeeks: cfg.durationWeeks,
       sessionsPerWeek: cfg.sessionsPerWeek,
-      titleVi: cfg.titleVi,
-      descriptionVi: cfg.descriptionVi,
+      title: cfg.title,
+      description: cfg.description,
       accessTier: cfg.accessTier,
       status: cfg.status,
       authoredIn: "repo_seed",

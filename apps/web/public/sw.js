@@ -1,6 +1,6 @@
 // Service Worker for P1.6 Session Play & P5.2 Offline Curriculum Pack (BR-PWA, BR-OCP, BR-OFF)
 const CACHE_SHELL = "shell-v1";
-const CACHE_OFFLINE_PACK = "kidthink-offline-pack-v1";
+const CACHE_OFFLINE_PACK = "mindkid-offline-pack-v1";
 const _CACHE_SESSION_ASSETS = "session-assets-v1";
 
 const SHELL_ASSETS = ["/", "/favicon.ico", "/manifest.webmanifest"];

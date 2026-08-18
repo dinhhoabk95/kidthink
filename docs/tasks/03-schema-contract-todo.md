@@ -22,9 +22,9 @@
 > Lưu ý: Mọi lệnh prefix `export PATH=/Users/macbook/.nvm/versions/node/v24.15.0/bin:$PATH`
 > — shell state không persist, shell mặc định vẫn node v20.17.0.
 >
-> Lưu ý: **2026-08-07 (người)**: quyết định dời `docs/` ra khỏi `kidthink/` (sáng) đã **đảo lại cùng
-> ngày** (chiều) — `docs/` ở nguyên trong `kidthink/docs/`, track chung git repo code. Xem
-> [`repo-bootstrap.md`](../specs/00-foundation/repo-bootstrap.md) §11 Q10 (Lượt 3). Mọi lệnh đo/grep chạy từ `cd kidthink` như cũ, không
+> Lưu ý: **2026-08-07 (người)**: quyết định dời `docs/` ra khỏi `mindkid/` (sáng) đã **đảo lại cùng
+> ngày** (chiều) — `docs/` ở nguyên trong `mindkid/docs/`, track chung git repo code. Xem
+> [`repo-bootstrap.md`](../specs/00-foundation/repo-bootstrap.md) §11 Q10 (Lượt 3). Mọi lệnh đo/grep chạy từ `cd mindkid` như cũ, không
 > cần `CORPUS_ROOT`.
 >
 > Lưu ý: Tick checkbox **ngay khi làm**. Task #2 để lại một file 217 dòng toàn ô trống trong khi
@@ -427,8 +427,8 @@ Mỗi spec 4 bước: (1) checklist [`CONVENTIONS.md`](../specs/CONVENTIONS.md) 
       tiền lệ [`game-template-contract.md`](../specs/01-platform/game-template-contract.md)). D-AD ghi 2 spec là **thiếu**; đã ghi chú ở SIB §7.10
       rằng điều kiện chặn nên phát biểu bằng bao đóng `depends_on`, không liệt kê tay
 - [ ] Approve [`taxonomy-service.md`](../specs/01-platform/taxonomy-service.md) seed + [`emoji-registry.md`](../specs/01-platform/emoji-registry.md) — P0 bước 9, sau migration
-- [ ] Chuyển `.agents/` vào `kidthink/` theo [`SPEC.md`](../SPEC.md) §8
-- [ ] Chuyển `infra/` vào `kidthink/infra/` khi tới deploy
+- [ ] Chuyển `.agents/` vào `mindkid/` theo [`SPEC.md`](../SPEC.md) §8
+- [ ] Chuyển `infra/` vào `mindkid/infra/` khi tới deploy
 - [ ] `docs/montessori/` — chưa spec nào sở hữu
 - [ ] Nhánh lỗi PG trong `check-services.ts` in message rỗng (mất `.message` ECONNREFUSED)
 - [ ] Khảo sát 60 game type v1 → 6 template (P1, [`game-template-contract.md`](../specs/01-platform/game-template-contract.md) Q1)

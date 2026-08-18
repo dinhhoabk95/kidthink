@@ -9,7 +9,7 @@ import {
 
 const FAKE_MSG_ID_REGEX = /^msg_fake_/;
 
-describe("@kidthink/notification tests", () => {
+describe("@mindkid/notification tests", () => {
   describe("Typed MJML renderer", () => {
     it("renders all 11 notification template codes successfully", async () => {
       const templates = [

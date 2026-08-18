@@ -24,9 +24,9 @@ describe("P3.2 Lesson & Activity Authoring Studio Invariants (BR-LSA, BR-ACA)", 
     });
 
     it("Scenario: BR-LSA-04 — guide bắt buộc cho người lớn trong lesson", () => {
-      const guideVi =
+      const guide =
         "1. Mục tiêu; 2. Chuẩn bị; 3. Mở đầu; 4. Khi trẻ làm được; 5. Khi trẻ cần giúp";
-      const hasGuide = guideVi.length > 0;
+      const hasGuide = guide.length > 0;
       expect(hasGuide).toBe(true);
     });
 
@@ -91,8 +91,8 @@ describe("P3.2 Lesson & Activity Authoring Studio Invariants (BR-LSA, BR-ACA)", 
     });
 
     it("Scenario: BR-ACA-05 — hoạt động ngoài màn hình có vật liệu cần chuẩn bị", () => {
-      const materialsVi = "5 hạt đậu hoặc khối xếp hình";
-      const hasMaterials = materialsVi.length > 0;
+      const materials = "5 hạt đậu hoặc khối xếp hình";
+      const hasMaterials = materials.length > 0;
       expect(hasMaterials).toBe(true);
     });
 

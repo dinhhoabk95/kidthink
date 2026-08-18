@@ -6,7 +6,6 @@ import {
   jsonb,
   numeric,
   pgTable,
-  primaryKey,
   timestamp,
   unique,
   varchar,
@@ -18,6 +17,9 @@ import { skills } from "./taxonomy.ts";
 export const masteryState = pgTable(
   "mastery_state",
   {
+    id: bigint("id", { mode: "number" })
+      .primaryKey()
+      .generatedAlwaysAsIdentity(),
     childProfileId: bigint("child_profile_id", { mode: "number" })
       .notNull()
       .references(() => childProfiles.id, { onDelete: "cascade" }),
@@ -44,9 +46,15 @@ export const masteryState = pgTable(
     updatedAt: timestamp("updated_at", { withTimezone: true })
       .defaultNow()
       .notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .defaultNow()
+      .notNull(),
   },
   (table) => [
-    primaryKey({ columns: [table.childProfileId, table.skillId] }),
+    unique("mastery_state_child_skill_unique").on(
+      table.childProfileId,
+      table.skillId
+    ),
     check(
       "check_mastery_state_p_learn",
       sql`${table.pLearn} >= 0 AND ${table.pLearn} <= 1`
@@ -69,6 +77,9 @@ export const masteryState = pgTable(
 export const levelParams = pgTable(
   "level_params",
   {
+    id: bigint("id", { mode: "number" })
+      .primaryKey()
+      .generatedAlwaysAsIdentity(),
     childProfileId: bigint("child_profile_id", { mode: "number" })
       .notNull()
       .references(() => childProfiles.id, { onDelete: "cascade" }),
@@ -82,9 +93,15 @@ export const levelParams = pgTable(
     updatedAt: timestamp("updated_at", { withTimezone: true })
       .defaultNow()
       .notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .defaultNow()
+      .notNull(),
   },
   (table) => [
-    primaryKey({ columns: [table.childProfileId, table.gameLevelId] }),
+    unique("level_params_child_game_level_unique").on(
+      table.childProfileId,
+      table.gameLevelId
+    ),
   ]
 );
 
@@ -103,6 +120,9 @@ export const childBadges = pgTable(
       .notNull(),
     sourceRef: varchar("source_ref", { length: 100 }),
     createdAt: timestamp("created_at", { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+    updatedAt: timestamp("updated_at", { withTimezone: true })
       .defaultNow()
       .notNull(),
   },

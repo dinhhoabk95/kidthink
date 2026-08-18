@@ -12,7 +12,7 @@ export interface DashboardCardThreshold {
 export interface DashboardCardDefinition {
   id: string;
   title: string;
-  description_vi: string;
+  description: string;
   group: DashboardCardGroup;
   source: string;
   threshold?: DashboardCardThreshold;
@@ -32,7 +32,7 @@ export const DASHBOARD_CARDS: readonly DashboardCardDefinition[] = [
   {
     id: "pending_payments",
     title: "Đơn thanh toán chờ duyệt",
-    description_vi: "Đơn chuyển khoản ngân hàng cần đối soát và phê duyệt",
+    description: "Đơn chuyển khoản ngân hàng cần đối soát và phê duyệt",
     group: "todo",
     source: "payment_orders",
     threshold: {
@@ -47,7 +47,7 @@ export const DASHBOARD_CARDS: readonly DashboardCardDefinition[] = [
   {
     id: "pending_content",
     title: "Nội dung chờ duyệt",
-    description_vi: "Game levels và nội dung đang ở trạng thái in_review",
+    description: "Game levels và nội dung đang ở trạng thái in_review",
     group: "todo",
     source: "content_review_queue",
     threshold: {
@@ -61,7 +61,7 @@ export const DASHBOARD_CARDS: readonly DashboardCardDefinition[] = [
   {
     id: "open_alerts",
     title: "Cảnh báo hệ thống đang mở",
-    description_vi: "Các cảnh báo vận hành P0/P1/P2 chưa được giải quyết",
+    description: "Các cảnh báo vận hành P0/P1/P2 chưa được giải quyết",
     group: "todo",
     source: "system_alerts",
     threshold: {
@@ -76,7 +76,7 @@ export const DASHBOARD_CARDS: readonly DashboardCardDefinition[] = [
   {
     id: "new_users_7d",
     title: "User mới 7 ngày",
-    description_vi: "Số tài khoản người dùng đăng ký mới trong 7 ngày gần nhất",
+    description: "Số tài khoản người dùng đăng ký mới trong 7 ngày gần nhất",
     group: "growth",
     source: "telemetry_rollup_daily",
     href: "/users",
@@ -85,7 +85,7 @@ export const DASHBOARD_CARDS: readonly DashboardCardDefinition[] = [
   {
     id: "active_users_7d",
     title: "User hoạt động 7 ngày",
-    description_vi: "Số tài khoản có ít nhất 1 phiên học trong 7 ngày",
+    description: "Số tài khoản có ít nhất 1 phiên học trong 7 ngày",
     group: "growth",
     source: "telemetry_rollup_daily",
     href: "/users",
@@ -94,7 +94,7 @@ export const DASHBOARD_CARDS: readonly DashboardCardDefinition[] = [
   {
     id: "active_child_profiles",
     title: "Child profile hoạt động",
-    description_vi: "Số hồ sơ trẻ em có hoạt động học tập trong 7 ngày",
+    description: "Số hồ sơ trẻ em có hoạt động học tập trong 7 ngày",
     group: "growth",
     source: "telemetry_rollup_daily",
     href: "/users",
@@ -103,7 +103,7 @@ export const DASHBOARD_CARDS: readonly DashboardCardDefinition[] = [
   {
     id: "active_subscriptions",
     title: "Subscription đang hiệu lực",
-    description_vi: "Gói quyền Standard / Premium đang trong thời hạn",
+    description: "Gói quyền Standard / Premium đang trong thời hạn",
     group: "growth",
     source: "telemetry_rollup_daily",
     href: "/payments",
@@ -112,7 +112,7 @@ export const DASHBOARD_CARDS: readonly DashboardCardDefinition[] = [
   {
     id: "monthly_revenue",
     title: "Doanh thu tháng này",
-    description_vi: "Tổng doanh thu thực thu từ đơn approved trong tháng",
+    description: "Tổng doanh thu thực thu từ đơn approved trong tháng",
     group: "growth",
     source: "payment_orders",
     href: "/payments",
@@ -124,7 +124,7 @@ export const DASHBOARD_CARDS: readonly DashboardCardDefinition[] = [
   {
     id: "skills_without_levels",
     title: "Skill chưa có level nào",
-    description_vi:
+    description:
       "Kỹ năng trong cây taxonomy chưa có bất kỳ game level nào (gap)",
     group: "content",
     source: "taxonomy_service",
@@ -139,8 +139,7 @@ export const DASHBOARD_CARDS: readonly DashboardCardDefinition[] = [
   {
     id: "levels_high_drop_rate",
     title: "Level tỉ lệ bỏ > 40%",
-    description_vi:
-      "Số level có tỷ lệ bỏ dở giữa chừng vượt ngưỡng sư phạm 40%",
+    description: "Số level có tỷ lệ bỏ dở giữa chừng vượt ngưỡng sư phạm 40%",
     group: "content",
     source: "telemetry_rollup_daily",
     threshold: {
@@ -154,8 +153,7 @@ export const DASHBOARD_CARDS: readonly DashboardCardDefinition[] = [
   {
     id: "curriculum_weeks_incomplete",
     title: "Tuần curriculum chưa đủ hoạt động",
-    description_vi:
-      "Tuần phân phối chương trình chưa đạt đủ định mức hoạt động",
+    description: "Tuần phân phối chương trình chưa đạt đủ định mức hoạt động",
     group: "content",
     source: "curriculum_service",
     threshold: {
@@ -170,7 +168,7 @@ export const DASHBOARD_CARDS: readonly DashboardCardDefinition[] = [
   {
     id: "published_levels",
     title: "Levels đã xuất bản",
-    description_vi: "Tổng số game level đã duyệt và công khai cho trẻ chơi",
+    description: "Tổng số game level đã duyệt và công khai cho trẻ chơi",
     group: "content",
     source: "game_levels",
     href: "/levels",
@@ -179,7 +177,7 @@ export const DASHBOARD_CARDS: readonly DashboardCardDefinition[] = [
   {
     id: "draft_levels",
     title: "Levels bản nháp",
-    description_vi: "Số game level đang trong quá trình biên soạn",
+    description: "Số game level đang trong quá trình biên soạn",
     group: "content",
     source: "game_levels",
     href: "/levels",
@@ -188,7 +186,7 @@ export const DASHBOARD_CARDS: readonly DashboardCardDefinition[] = [
   {
     id: "published_lessons",
     title: "Lessons đã xuất bản",
-    description_vi: "Tổng số giáo án bài giảng đã xuất bản",
+    description: "Tổng số giáo án bài giảng đã xuất bản",
     group: "content",
     source: "lessons",
     href: "/lessons",
@@ -199,7 +197,7 @@ export const DASHBOARD_CARDS: readonly DashboardCardDefinition[] = [
   {
     id: "last_backup",
     title: "Backup gần nhất",
-    description_vi:
+    description:
       "Thời điểm sao lưu cơ sở dữ liệu gần nhất và trạng thái verify",
     group: "system",
     source: "backup_log",
@@ -209,8 +207,7 @@ export const DASHBOARD_CARDS: readonly DashboardCardDefinition[] = [
   {
     id: "llm_cost_month",
     title: "Chi phí LLM tháng",
-    description_vi:
-      "Tổng ngân sách tiêu thụ API trợ lý AI trong tháng hiện tại",
+    description: "Tổng ngân sách tiêu thụ API trợ lý AI trong tháng hiện tại",
     group: "system",
     source: "llm_usage",
     href: "/system",

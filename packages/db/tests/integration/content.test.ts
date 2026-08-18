@@ -1,12 +1,8 @@
 import { eq } from "drizzle-orm";
 import { describe, expect, it } from "vitest";
 import { getOwnerDb } from "../../src/index.ts";
-import {
-  activities,
-  contentImages,
-  lessons,
-  worksheets,
-} from "../../src/schema/content.ts";
+import { contentImages } from "../../src/schema/assets.ts";
+import { activities, lessons, worksheets } from "../../src/schema/content.ts";
 
 describe("Content Schema Integration Tests", () => {
   it("orphan content_images.(owner_type, owner_id) polymorphic check", async () => {
@@ -18,7 +14,7 @@ describe("Content Schema Integration Tests", () => {
         ownerType: "lesson",
         ownerId: 999_888_777,
         storagePath: "/images/test.png",
-        altTextVi: "Ảnh test",
+        altText: "Ảnh test",
       })
       .returning();
 
@@ -38,7 +34,7 @@ describe("Content Schema Integration Tests", () => {
           code,
           contentVersion: 1,
           kind: "digital_game",
-          titleVi: "Activity Test",
+          title: "Activity Test",
           refType: "game_level",
           refId: 666_555_444,
           accessTier: "free",
@@ -69,7 +65,7 @@ describe("Content Schema Integration Tests", () => {
           entityId: Math.floor(100_000 + Math.random() * 800_000),
           code: lesCode,
           contentVersion: 1,
-          titleVi: "Lesson Published",
+          title: "Lesson Published",
           accessTier: "free",
           status: "published",
         })
@@ -82,10 +78,7 @@ describe("Content Schema Integration Tests", () => {
     }
 
     await expect(
-      db
-        .update(lessons)
-        .set({ titleVi: "Changed" })
-        .where(eq(lessons.id, les.id))
+      db.update(lessons).set({ title: "Changed" }).where(eq(lessons.id, les.id))
     ).rejects.toSatisfy((err: unknown) => {
       const e = err as { message?: string; cause?: { message?: string } };
       return ((e.message ?? "") + (e.cause?.message ?? "")).includes(
@@ -104,7 +97,7 @@ describe("Content Schema Integration Tests", () => {
           code: actCode,
           contentVersion: 1,
           kind: "manipulative",
-          titleVi: "Activity Published",
+          title: "Activity Published",
           accessTier: "free",
           status: "published",
         })
@@ -119,7 +112,7 @@ describe("Content Schema Integration Tests", () => {
     await expect(
       db
         .update(activities)
-        .set({ titleVi: "Changed" })
+        .set({ title: "Changed" })
         .where(eq(activities.id, act.id))
     ).rejects.toSatisfy((err: unknown) => {
       const e = err as { message?: string; cause?: { message?: string } };
@@ -138,7 +131,7 @@ describe("Content Schema Integration Tests", () => {
           entityId: Math.floor(100_000 + Math.random() * 800_000),
           code: wsCode,
           contentVersion: 1,
-          titleVi: "Worksheet Published",
+          title: "Worksheet Published",
           accessTier: "free",
           status: "published",
         })
@@ -153,7 +146,7 @@ describe("Content Schema Integration Tests", () => {
     await expect(
       db
         .update(worksheets)
-        .set({ titleVi: "Changed" })
+        .set({ title: "Changed" })
         .where(eq(worksheets.id, ws.id))
     ).rejects.toSatisfy((err: unknown) => {
       const e = err as { message?: string; cause?: { message?: string } };

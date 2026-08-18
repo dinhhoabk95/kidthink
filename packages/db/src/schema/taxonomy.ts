@@ -10,6 +10,7 @@ import {
   primaryKey,
   smallint,
   text,
+  timestamp,
   varchar,
 } from "drizzle-orm/pg-core";
 
@@ -22,11 +23,17 @@ export const competencies = pgTable(
       .primaryKey()
       .generatedAlwaysAsIdentity(),
     code: varchar("code", { length: 20 }).notNull().unique(),
-    nameVi: varchar("name_vi", { length: 100 }).notNull(),
-    descriptionVi: text("description_vi"),
+    name: varchar("name", { length: 100 }).notNull(),
+    description: text("description"),
     colorToken: varchar("color_token", { length: 50 }).notNull(),
     icon: varchar("icon", { length: 50 }).notNull(),
     position: integer("position").notNull().default(0),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+    updatedAt: timestamp("updated_at", { withTimezone: true })
+      .defaultNow()
+      .notNull(),
   },
   (table) => [
     check("check_competencies_code_format", sql`${table.code} ~ '^C[1-6]$'`),
@@ -46,9 +53,15 @@ export const strands = pgTable(
     parentStrandId: bigint("parent_strand_id", { mode: "number" }).references(
       (): AnyPgColumn => strands.id
     ),
-    nameVi: varchar("name_vi", { length: 100 }).notNull(),
-    descriptionVi: text("description_vi"),
+    name: varchar("name", { length: 100 }).notNull(),
+    description: text("description"),
     position: integer("position").notNull().default(0),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+    updatedAt: timestamp("updated_at", { withTimezone: true })
+      .defaultNow()
+      .notNull(),
   },
   (table) => [
     check(
@@ -68,8 +81,8 @@ export const skills = pgTable(
     strandId: bigint("strand_id", { mode: "number" })
       .notNull()
       .references(() => strands.id, { onDelete: "cascade" }),
-    nameVi: varchar("name_vi", { length: 100 }).notNull(),
-    descriptionVi: text("description_vi"),
+    name: varchar("name", { length: 100 }).notNull(),
+    description: text("description"),
     ageMin: smallint("age_min").notNull(),
     ageMax: smallint("age_max").notNull(),
     difficulty: smallint("difficulty").notNull(),
@@ -77,6 +90,12 @@ export const skills = pgTable(
     whatAxis: text("what_axis").array(),
     status: skillStatusEnum("status").notNull().default("seeded"),
     position: integer("position").notNull().default(0),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+    updatedAt: timestamp("updated_at", { withTimezone: true })
+      .defaultNow()
+      .notNull(),
   },
   (table) => [
     check(
@@ -111,6 +130,12 @@ export const skillPrerequisites = pgTable(
     strength: numeric("strength", { precision: 3, scale: 2 })
       .notNull()
       .default("1.00"),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+    updatedAt: timestamp("updated_at", { withTimezone: true })
+      .defaultNow()
+      .notNull(),
   },
   (table) => [
     primaryKey({ columns: [table.skillId, table.prerequisiteId] }),
@@ -131,9 +156,15 @@ export const learningObjectives = pgTable(
     skillId: bigint("skill_id", { mode: "number" })
       .notNull()
       .references(() => skills.id, { onDelete: "cascade" }),
-    behaviourVi: text("behaviour_vi").notNull(),
-    observableCriteriaVi: text("observable_criteria_vi"),
+    behaviour: text("behaviour").notNull(),
+    observableCriteria: text("observable_criteria"),
     position: integer("position").notNull().default(0),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+    updatedAt: timestamp("updated_at", { withTimezone: true })
+      .defaultNow()
+      .notNull(),
   },
   (table) => [
     check(
@@ -159,14 +190,20 @@ export const emojiRegistry = pgTable(
       .generatedAlwaysAsIdentity(),
     code: varchar("code", { length: 50 }).notNull().unique(),
     unicode: varchar("unicode", { length: 20 }).notNull(),
-    nameVi: varchar("name_vi", { length: 100 }).notNull(),
+    name: varchar("name", { length: 100 }).notNull(),
     category: varchar("category", { length: 50 }).notNull(),
-    searchKeywordsVi: text("search_keywords_vi").array(),
+    searchKeywords: text("search_keywords").array(),
     ageSuitability: emojiAgeSuitabilityEnum("age_suitability")
       .notNull()
       .default("all"),
     whatAxis: varchar("what_axis", { length: 50 }),
     status: emojiStatusEnum("status").notNull().default("active"),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+    updatedAt: timestamp("updated_at", { withTimezone: true })
+      .defaultNow()
+      .notNull(),
   },
   (table) => [
     check(

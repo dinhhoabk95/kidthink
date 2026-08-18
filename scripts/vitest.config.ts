@@ -4,19 +4,19 @@ import { defineConfig } from "vitest/config";
 export default defineConfig({
   resolve: {
     alias: {
-      "@kidthink/adaptive": path.resolve(
+      "@mindkid/adaptive": path.resolve(
         import.meta.dirname,
         "../packages/adaptive/src/index.ts"
       ),
-      "@kidthink/db": path.resolve(
+      "@mindkid/db": path.resolve(
         import.meta.dirname,
         "../packages/db/src/index.ts"
       ),
-      "@kidthink/shared": path.resolve(
+      "@mindkid/shared": path.resolve(
         import.meta.dirname,
         "../packages/shared/src/index.ts"
       ),
-      "@kidthink/config": path.resolve(
+      "@mindkid/config": path.resolve(
         import.meta.dirname,
         "../packages/config/src/index.ts"
       ),

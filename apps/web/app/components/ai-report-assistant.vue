@@ -11,7 +11,7 @@
           {{ suggestionLabel }}
         </span>
         <span class="text-xs text-surface-500 font-medium">
-          Trợ lý AI KidThink
+          Trợ lý AI MindKid
         </span>
       </div>
       <div class="flex items-center gap-1">
@@ -81,7 +81,7 @@
 </template>
 
 <script lang="ts" setup>
-  import { AI_SUGGESTION_LABEL } from "@kidthink/shared";
+  import { AI_SUGGESTION_LABEL } from "@mindkid/shared";
   import { ref } from "vue";
 
   const props = withDefaults(
@@ -139,10 +139,10 @@
       }
 
       interface AiResponsePayload {
-        summary_vi?: string;
-        explanation_vi?: string;
-        tip_vi?: string;
-        rewritten_guide_vi?: string;
+        summary?: string;
+        explanation?: string;
+        tip?: string;
+        rewritten_guide?: string;
         [key: string]: unknown;
       }
 
@@ -152,10 +152,10 @@
       });
 
       content.value =
-        res.summary_vi ||
-        res.explanation_vi ||
-        res.tip_vi ||
-        res.rewritten_guide_vi ||
+        res.summary ||
+        res.explanation ||
+        res.tip ||
+        res.rewritten_guide ||
         null;
       emit("completed", res);
     } catch (err: unknown) {

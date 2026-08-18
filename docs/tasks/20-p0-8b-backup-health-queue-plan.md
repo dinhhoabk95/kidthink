@@ -134,7 +134,7 @@ Khối B — cần Nitro runtime của P0.3
 - [ ] Ca âm: Valkey tắt → `ping()` trả fail trong ≤ 2s, **không** treo.
 
 **Kiểm chứng**
-- [ ] `pnpm --filter @kidthink/cache test` xanh · `pnpm lint:deps` xanh.
+- [ ] `pnpm --filter @mindkid/cache test` xanh · `pnpm lint:deps` xanh.
 
 **Phụ thuộc:** không · **Cỡ:** S
 
@@ -148,7 +148,7 @@ Khối B — cần Nitro runtime của P0.3
 - [ ] Chỉ khai hai job của bước này; job lạ là lỗi biên dịch (D-DZ).
 
 **Kiểm chứng**
-- [ ] `pnpm --filter @kidthink/queue test` xanh · `pnpm lint:deps` xanh.
+- [ ] `pnpm --filter @mindkid/queue test` xanh · `pnpm lint:deps` xanh.
 
 **Phụ thuộc:** T1 · **Cỡ:** M
 
@@ -161,7 +161,7 @@ Khối B — cần Nitro runtime của P0.3
 - [ ] `pnpm check:services` vẫn xanh (PG 17 + Valkey 9).
 
 **Kiểm chứng**
-- [ ] `pnpm --filter @kidthink/worker test` xanh.
+- [ ] `pnpm --filter @mindkid/worker test` xanh.
 
 **Phụ thuộc:** T2 · **Cỡ:** M
 
@@ -177,7 +177,7 @@ Khối B — cần Nitro runtime của P0.3
 - [ ] Không đường nào ghi dump ra thư mục người dùng hoặc bucket công khai (`BR-BAK-07`).
 
 **Kiểm chứng**
-- [ ] `pnpm --filter @kidthink/worker test -- backup` xanh, assertion tham chiếu `BR-BAK-02` `BR-BAK-03` `BR-BAK-04`.
+- [ ] `pnpm --filter @mindkid/worker test -- backup` xanh, assertion tham chiếu `BR-BAK-02` `BR-BAK-03` `BR-BAK-04`.
 
 **Phụ thuộc:** T3 · T6 · **Cỡ:** M
 
@@ -193,7 +193,7 @@ Khối B — cần Nitro runtime của P0.3
 - [ ] **Không** restore lên database đang nhận ghi — ca âm: trỏ vào DB chính thì job từ chối chạy.
 
 **Kiểm chứng**
-- [ ] `pnpm --filter @kidthink/worker test -- backup-verify` xanh, assertion tham chiếu `BR-BAK-01`.
+- [ ] `pnpm --filter @mindkid/worker test -- backup-verify` xanh, assertion tham chiếu `BR-BAK-01`.
 
 **Phụ thuộc:** T4 · **Cỡ:** M
 
@@ -206,7 +206,7 @@ Khối B — cần Nitro runtime của P0.3
 - [ ] Ghi rõ trong spec rằng adapter thật thuộc P1.16, đổi adapter không đụng call site.
 
 **Kiểm chứng**
-- [ ] `pnpm --filter @kidthink/worker test -- alert` xanh, assertion tham chiếu `BR-BAK-04`.
+- [ ] `pnpm --filter @mindkid/worker test -- alert` xanh, assertion tham chiếu `BR-BAK-04`.
 
 **Phụ thuộc:** T3 · **Cỡ:** S
 
@@ -241,7 +241,7 @@ Khối B — cần Nitro runtime của P0.3
 - [ ] 503 gọi `alert()` (`BR-HLT-03`).
 
 **Kiểm chứng**
-- [ ] `pnpm --filter @kidthink/web test -- health` xanh, assertion tham chiếu `BR-HLT-01` `BR-HLT-02` `BR-HLT-04`.
+- [ ] `pnpm --filter @mindkid/web test -- health` xanh, assertion tham chiếu `BR-HLT-01` `BR-HLT-02` `BR-HLT-04`.
 
 **Phụ thuộc:** P0.3 dựng xong Nitro runtime · T1 · T2 · **Cỡ:** M
 

@@ -125,7 +125,7 @@ T1 adapter Telegram + Healthchecks sau AlertPort (D-IQ)
 - [ ] Adapter fail (Telegram 5xx) → rơi xuống email, và bản thân việc rơi được ghi lại.
 
 **Kiểm chứng**
-- [ ] `pnpm --filter @kidthink/worker test -- alert-adapters` xanh, assertion tham chiếu `BR-MON-01` `BR-MON-04`.
+- [ ] `pnpm --filter @mindkid/worker test -- alert-adapters` xanh, assertion tham chiếu `BR-MON-01` `BR-MON-04`.
 
 **Phụ thuộc:** P0.8b · P1.5 · **Cỡ:** M
 

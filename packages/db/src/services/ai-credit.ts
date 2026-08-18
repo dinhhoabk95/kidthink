@@ -3,13 +3,13 @@
  * Business rules: BR-ACL-01..09
  */
 
-import { appError } from "@kidthink/auth";
+import { appError } from "@mindkid/auth";
 import {
   type AiCreditReason,
   LOW_CREDIT_WARNING_THRESHOLD_PERCENT,
   type ManualGrantCreditsInput,
   MIN_MANUAL_GRANT_REASON_LENGTH,
-} from "@kidthink/shared";
+} from "@mindkid/shared";
 import { desc, eq, sql } from "drizzle-orm";
 import type { PgTransaction } from "drizzle-orm/pg-core";
 import { getDb } from "../client.ts";
@@ -83,12 +83,16 @@ export async function getCreditBalance(
     .limit(1);
 
   if (!row) {
+    // Chưa có hàng ví: trả số dư rỗng, chưa ghi DB. `id: 0` là chỗ giữ chỗ cho
+    // hàng chưa tồn tại — chỉ dùng để đọc, không bao giờ ghi ngược lại.
     return {
+      id: 0,
       userId,
       balance: 0,
       totalGranted: 0,
       totalUsed: 0,
       version: 1,
+      createdAt: new Date(),
       updatedAt: new Date(),
     };
   }

@@ -1,10 +1,7 @@
-import { getOwnerDb, seoPages } from "@kidthink/db";
+import { getOwnerDb, seoPages } from "@mindkid/db";
 import { desc, eq } from "drizzle-orm";
 import { createError, defineEventHandler, getRouterParam } from "h3";
-import {
-  requireManagerSession,
-  respondToManagerAuthError,
-} from "../../../../utils/admin-auth-runtime.js";
+import { requireManagerSession } from "../../../../utils/admin-auth-runtime.js";
 import { issuePreviewToken } from "../../../../utils/preview-token.js";
 
 function buildStructuredData(page: typeof seoPages.$inferSelect) {
@@ -23,8 +20,8 @@ function buildStructuredData(page: typeof seoPages.$inferSelect) {
       description: page.metaDescription,
       provider: {
         "@type": "Organization",
-        name: "KidThink",
-        url: "https://kidthink.edu.vn",
+        name: "MindKid",
+        url: "https://mindkid.edu.vn",
       },
     });
   } else {
@@ -35,7 +32,7 @@ function buildStructuredData(page: typeof seoPages.$inferSelect) {
       description: page.metaDescription,
       author: {
         "@type": "Organization",
-        name: "KidThink Sư Phạm",
+        name: "MindKid Sư Phạm",
       },
     });
   }
@@ -61,65 +58,61 @@ function buildStructuredData(page: typeof seoPages.$inferSelect) {
 }
 
 export default defineEventHandler(async (event) => {
-  try {
-    const manager = await requireManagerSession(event);
-    const slug = getRouterParam(event, "slug");
+  const manager = await requireManagerSession(event);
+  const slug = getRouterParam(event, "slug");
 
-    if (!slug) {
-      throw createError({ statusCode: 404, statusMessage: "NOT_FOUND" });
-    }
-
-    const db = getOwnerDb();
-    const [page] = await db
-      .select()
-      .from(seoPages)
-      .where(eq(seoPages.slug, slug))
-      .orderBy(desc(seoPages.contentVersion))
-      .limit(1);
-
-    if (!page) {
-      throw createError({
-        statusCode: 404,
-        statusMessage: "SEO_PAGE_NOT_FOUND",
-      });
-    }
-
-    const structuredData = buildStructuredData(page);
-    const managerId = manager.manager_id || manager.id || 1;
-
-    const previewToken = issuePreviewToken({
-      entityType: "seo_page",
-      id: page.id,
-      version: page.contentVersion,
-      managerId,
-    });
-
-    // Snippet preview truncation (BR-SEO-05, §7.3)
-    const snippetTitle =
-      page.title.length > 60 ? `${page.title.slice(0, 57)}...` : page.title;
-    const snippetDescription =
-      page.metaDescription.length > 160
-        ? `${page.metaDescription.slice(0, 157)}...`
-        : page.metaDescription;
-
-    return {
-      slug: page.slug,
-      title: page.title,
-      meta_description: page.metaDescription,
-      h1: page.h1 || page.title,
-      body: page.body,
-      og_image_path: page.ogImagePath,
-      canonical_url: page.canonicalUrl,
-      noindex: page.noindex,
-      structured_data: structuredData,
-      preview_token: previewToken,
-      snippet_preview: {
-        title: snippetTitle,
-        description: snippetDescription,
-        url: `https://kidthink.edu.vn/seo/${page.slug}`,
-      },
-    };
-  } catch (err) {
-    return respondToManagerAuthError(event, err);
+  if (!slug) {
+    throw createError({ statusCode: 404, statusMessage: "NOT_FOUND" });
   }
+
+  const db = getOwnerDb();
+  const [page] = await db
+    .select()
+    .from(seoPages)
+    .where(eq(seoPages.slug, slug))
+    .orderBy(desc(seoPages.contentVersion))
+    .limit(1);
+
+  if (!page) {
+    throw createError({
+      statusCode: 404,
+      statusMessage: "SEO_PAGE_NOT_FOUND",
+    });
+  }
+
+  const structuredData = buildStructuredData(page);
+  const managerId = manager.manager_id || manager.id || 1;
+
+  const previewToken = issuePreviewToken({
+    entityType: "seo_page",
+    id: page.id,
+    version: page.contentVersion,
+    managerId,
+  });
+
+  // Snippet preview truncation (BR-SEO-05, §7.3)
+  const snippetTitle =
+    page.title.length > 60 ? `${page.title.slice(0, 57)}...` : page.title;
+  const snippetDescription =
+    page.metaDescription.length > 160
+      ? `${page.metaDescription.slice(0, 157)}...`
+      : page.metaDescription;
+
+  return {
+    slug: page.slug,
+    title: page.title,
+    meta_description: page.metaDescription,
+    h1: page.h1 || page.title,
+    body: page.body,
+    og_image_path: page.ogImagePath,
+    canonical_url: page.canonicalUrl,
+    noindex: page.noindex,
+    structured_data: structuredData,
+    preview_token: previewToken,
+    snippet_preview: {
+      title: snippetTitle,
+      description: snippetDescription,
+      url: `https://mindkid.edu.vn/seo/${page.slug}`,
+    },
+  };
 });

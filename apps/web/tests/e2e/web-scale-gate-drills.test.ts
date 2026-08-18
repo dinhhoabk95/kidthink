@@ -11,7 +11,7 @@ import {
   syncOfflinePlayEvents,
   telemetryEvents,
   users,
-} from "@kidthink/db";
+} from "@mindkid/db";
 import {
   AutomatedPaymentWebhookPayloadSchema,
   canCancelRecurringSubscription,
@@ -23,7 +23,7 @@ import {
   NOTICE_BEFORE_RECURRING_BILLING_DAYS,
   OFFLINE_PACK_MAX_LEASE_DAYS,
   PAYMENT_REPLAY_WINDOW_SECONDS,
-} from "@kidthink/shared";
+} from "@mindkid/shared";
 import { eq } from "drizzle-orm";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 
@@ -39,7 +39,7 @@ describe("Web Scale Gate Drills & Failure Matrix — Task #78 / P5.3", () => {
     const [user] = await db
       .insert(users)
       .values({
-        email: `scale_user_${Date.now()}_${Math.random().toString(36).slice(2, 6)}@kidthink.test`,
+        email: `scale_user_${Date.now()}_${Math.random().toString(36).slice(2, 6)}@mindkid.test`,
         passwordHash: "hash_scale_test",
         displayName: "Web Scale User",
       })
@@ -66,7 +66,7 @@ describe("Web Scale Gate Drills & Failure Matrix — Task #78 / P5.3", () => {
       .insert(gameTemplates)
       .values({
         code: templateCode,
-        nameVi: "Template Scale",
+        name: "Template Scale",
         mechanic: "tap_select",
         contentContract: { schema: "v1" },
         status: "active",
@@ -99,8 +99,8 @@ describe("Web Scale Gate Drills & Failure Matrix — Task #78 / P5.3", () => {
       .values({
         code: glCode,
         entityId: Math.floor(Math.random() * 800_000) + 100_000,
-        nameVi: "Game Level Scale",
-        titleVi: "Game Level Scale",
+        name: "Game Level Scale",
+        title: "Game Level Scale",
         difficulty: 1,
         accessTier: "standard",
         status: "published",
@@ -218,7 +218,7 @@ describe("Web Scale Gate Drills & Failure Matrix — Task #78 / P5.3", () => {
         .values({
           code: curriculumCode,
           entityId: Math.floor(100_000 + Math.random() * 800_000),
-          titleVi: "Chương trình Web Scale",
+          title: "Chương trình Web Scale",
           accessTier: "standard",
           totalWeeks: 1,
           status: "published",

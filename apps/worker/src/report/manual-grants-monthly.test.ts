@@ -5,7 +5,7 @@ import {
   managers,
   SEED_ENTITLEMENT_KEYS,
   users,
-} from "@kidthink/db";
+} from "@mindkid/db";
 import { beforeAll, describe, expect, it } from "vitest";
 import { runManualGrantReportJob } from "./manual-grants-monthly.js";
 

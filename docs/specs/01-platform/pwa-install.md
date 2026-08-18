@@ -62,7 +62,7 @@ service worker không phải làm lại khi tới lúc.
 
 ```jsonc
 {
-  "name": "KidThink", "short_name": "KidThink",
+  "name": "MindKid", "short_name": "MindKid",
   "start_url": "/me", "scope": "/",
   "display": "standalone", "orientation": "any",
   "background_color": "…", "theme_color": "…",

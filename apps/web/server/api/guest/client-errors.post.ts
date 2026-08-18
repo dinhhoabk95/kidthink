@@ -1,4 +1,4 @@
-import { errorLogs, getOwnerDb } from "@kidthink/db";
+import { errorLogs, getOwnerDb } from "@mindkid/db";
 import { createError, defineEventHandler, readBody } from "h3";
 
 // Rate limiting: 10 req / min / IP (BR-ELV-05)

@@ -3,8 +3,6 @@ import { createAuthContext } from "../src/contracts";
 import type {
   AccountReference,
   ReauthMethodAvailabilityPort,
-  RotateSessionInput,
-  RotateSessionResult,
   SessionStorePort,
 } from "../src/ports";
 import {
@@ -20,10 +18,6 @@ class ReauthSessionStore implements SessionStorePort {
     account: AccountReference;
     at: Date;
   }> = [];
-
-  rotate(_input: RotateSessionInput): Promise<RotateSessionResult> {
-    return Promise.resolve({ outcome: "not_found" });
-  }
 
   revokeSession(): Promise<void> {
     return Promise.resolve();
@@ -60,7 +54,6 @@ const userEvent = {
       user_id: 101,
       display_name: "Người dùng An",
       session_id: "session-a",
-      refresh_token_version: 0,
     },
   }),
 };

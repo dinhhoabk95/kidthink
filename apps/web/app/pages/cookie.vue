@@ -12,7 +12,7 @@
           </div>
           <h1 class="policy-title">Chính sách Cookie & Lưu trữ kỹ thuật</h1>
           <p class="policy-subtitle">
-            KidThink chỉ sử dụng các cookie kỹ thuật cần thiết để duy trì phiên
+            MindKid chỉ sử dụng các cookie kỹ thuật cần thiết để duy trì phiên
             đăng nhập và bảo vệ an toàn cho tài khoản. Chúng tôi tuyệt đối không
             sử dụng cookie theo dõi hay quảng cáo của bên thứ ba.
           </p>
@@ -85,7 +85,7 @@
         <section class="policy-section">
           <h2 class="section-heading">3. Cam kết không cookie bên thứ ba</h2>
           <p class="section-text">
-            KidThink cam kết không tích hợp bất kỳ thẻ theo dõi (pixel), cookie
+            MindKid cam kết không tích hợp bất kỳ thẻ theo dõi (pixel), cookie
             từ mạng xã hội hoặc dịch vụ phân tích hành vi của bên thứ ba. Mọi dữ
             liệu thu thập được giới hạn nghiêm ngặt ở mức tối thiểu phục vụ học
             tập.
@@ -100,7 +100,7 @@
 </template>
 
 <script lang="ts" setup>
-  import { ESSENTIAL_COOKIES, LOCAL_STORAGE_ITEMS } from "@kidthink/shared";
+  import { ESSENTIAL_COOKIES, LOCAL_STORAGE_ITEMS } from "@mindkid/shared";
   import { useHead, useSeoMeta } from "unhead";
   import CookieNoticeBanner from "~/components/cookie-notice-banner.vue";
   import PublicFooter from "~/components/public-footer.vue";
@@ -110,14 +110,14 @@
   const localStorageItems = LOCAL_STORAGE_ITEMS;
 
   useSeoMeta({
-    title: "Chính sách Cookie — KidThink",
+    title: "Chính sách Cookie — MindKid",
     description:
-      "Bảng kê chi tiết các cookie kỹ thuật thiết yếu được sử dụng trên nền tảng KidThink.",
+      "Bảng kê chi tiết các cookie kỹ thuật thiết yếu được sử dụng trên nền tảng MindKid.",
   });
 
   useHead({
     htmlAttrs: { lang: "vi-VN" },
-    link: [{ rel: "canonical", href: "https://kidthink.vn/cookie" }],
+    link: [{ rel: "canonical", href: "https://mindkid.vn/cookie" }],
   });
 </script>
 

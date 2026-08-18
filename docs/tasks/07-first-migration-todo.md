@@ -44,7 +44,7 @@ Bước 1 -> Bước 2 -> Bước 3 -> Bước 4 -> Cổng dừng A
       `out: "./src/migrations"`, `dialect: "postgresql"`
 - [x] `packages/db/src/index.ts` — hai factory kết nối (D1 trong plan):
       - `getOwnerDb()` — dùng `DATABASE_URL` (role `postgres`, cho script migration)
-      - `getAppDb()` — dùng `DATABASE_URL_APP` (role `kidthink_app`, cho `apps/*` runtime)
+      - `getAppDb()` — dùng `DATABASE_URL_APP` (role `mindkid_app`, cho `apps/*` runtime)
       - Cả hai lazy-init, không kết nối lúc import module (khớp
         [`monorepo-package-architecture.md`](../specs/00-foundation/monorepo-package-architecture.md) §8 "side effect lúc import")
 - [x] `.env` mẫu (`.env.example` ở gốc) — thêm `DATABASE_URL_APP`
@@ -52,13 +52,13 @@ Bước 1 -> Bước 2 -> Bước 3 -> Bước 4 -> Cổng dừng A
       `db:migrate` (script tự viết chạy migration bằng owner connection),
       `db:seed` (chạy `packages/db/src/seed.ts`)
 - [x] Migration custom đầu tiên (`pnpm db:generate --custom` hoặc tương đương của
-      `drizzle-kit`) — tạo role `kidthink_app` `NOLOGIN` → sau đó `ALTER ROLE ... LOGIN
+      `drizzle-kit`) — tạo role `mindkid_app` `NOLOGIN` → sau đó `ALTER ROLE ... LOGIN
       PASSWORD ...` (đọc từ biến môi trường lúc chạy migration, không hardcode), `GRANT
-      CONNECT` lên DB `kidthink`
+      CONNECT` lên DB `mindkid`
 - [x] `docker compose up -d` (đã chạy sẵn nếu chưa dừng từ Task #5) → `pnpm db:migrate` exit 0
       trên DB rỗng
 - [x] `pnpm check` xanh (chưa có bảng nghiệp vụ nào, chỉ hạ tầng)
-- [x] Commit `feat(db): P0 bước 8.1 — driver, role kidthink_app, script db:*`
+- [x] Commit `feat(db): P0 bước 8.1 — driver, role mindkid_app, script db:*`
 
 ## Bước 2 — `schema/identity.ts`
 
@@ -74,7 +74,7 @@ File: `packages/db/src/schema/identity.ts` — 8 bảng theo
 - [x] `social_identities` — FK thẳng `users(id)` **ON DELETE CASCADE** (`BR-SIB-11`), hai
       UNIQUE `(provider, provider_user_id)` và `(user_id, provider)` (`BR-SIB-09`), **không**
       cột `access_token`/`refresh_token`/`id_token`/`avatar_url` (`BR-SIB-10`)
-- [x] `consent_logs` — INSERT-only: `REVOKE UPDATE, DELETE ... FROM kidthink_app` trong cùng
+- [x] `consent_logs` — INSERT-only: `REVOKE UPDATE, DELETE ... FROM mindkid_app` trong cùng
       migration (`BR-SIB-06`)
 - [x] `pnpm db:generate` — đọc file SQL sinh ra trước khi tiếp tục
 - [x] `pnpm db:migrate` trên DB rỗng — exit 0
@@ -86,7 +86,7 @@ File: `packages/db/src/schema/identity.ts` — 8 bảng theo
       - [x] `BR-SIB-09` — cả hai UNIQUE của `social_identities` đều bị bắt (2 test)
       - [x] `BR-SIB-10` — đọc định nghĩa bảng, không có 4 cột token
       - [x] `BR-SIB-11` — xoá `users` → 0 hàng `social_identities` còn lại
-      - [x] `BR-SIB-06` — `UPDATE`/`DELETE` trên `consent_logs` bằng role `kidthink_app` bị từ
+      - [x] `BR-SIB-06` — `UPDATE`/`DELETE` trên `consent_logs` bằng role `mindkid_app` bị từ
             chối (kết nối **bằng đúng role app**, không phải owner)
 - [x] `pnpm test` xanh
 - [x] Commit `feat(db): P0 bước 8.2 — schema identity`
@@ -130,7 +130,7 @@ P2→P0). Bỏ sót bảng này thì
 - [x] `notifications` — cột theo [`notification-service.md`](../specs/01-platform/notification-service.md) §7.2
       (`recipient_type`/`recipient_id` polymorphic **nhưng không** nằm trong danh sách đóng 9
       chỗ của DMO §7.2 — xác nhận lại trước khi bỏ qua test orphan cho nó, đừng tự loại trừ)
-- [x] `REVOKE UPDATE, DELETE ... FROM kidthink_app` trên `audit_logs` và `content_review_log`
+- [x] `REVOKE UPDATE, DELETE ... FROM mindkid_app` trên `audit_logs` và `content_review_log`
       (`BR-AUD-01`, INSERT-only) — `backup_log` **không** insert-only (job ghi `finished_at`
       sau khi đã ghi `started_at`, cần UPDATE); `notifications` **không** insert-only (worker
       cập nhật `status`/`dispatched_at`/`error` sau khi gửi)
@@ -320,7 +320,7 @@ File: `packages/db/src/schema/play.ts` — theo
 - [x] Trigger `BEFORE UPDATE` chặn sửa khi `OLD.completion_status = 'completed'` (`BR-SPT-07`,
       D2 trong plan)
 - [x] `telemetry_events` — PK ghép `(session_uuid, seq)`, INSERT-only (REVOKE UPDATE/DELETE
-      cho `kidthink_app`), **không** FK nào trỏ **vào** bảng này (D-Z)
+      cho `mindkid_app`), **không** FK nào trỏ **vào** bảng này (D-Z)
 - [x] `child_daily_stats` · `level_daily_stats` · `skill_daily_stats` — cột chi tiết theo
       [`telemetry-pipeline.md`](../specs/01-platform/telemetry-pipeline.md) §7.1 (spec `draft`
       — chỉ tạo cột khoá chính đã rõ trong [`schema-play-telemetry.md`](../specs/01-platform/schema-play-telemetry.md) §7.5, **ask first** nếu
@@ -398,7 +398,7 @@ File: `packages/db/src/seed.ts`
 
 - [x] 11/11 file schema tồn tại và migrate được từ DB rỗng
 - [x] 9/9 test orphan polymorphic pass
-- [x] INSERT-only verify bằng role `kidthink_app` thật (không phải owner) trên 4 bảng:
+- [x] INSERT-only verify bằng role `mindkid_app` thật (không phải owner) trên 4 bảng:
       `audit_logs` · `consent_logs` · `content_review_log` · `telemetry_events`
 - [x] 2 trigger (`published` bất biến, `play_sessions` hậu-completed bất biến) có test cả
       nhánh chặn và nhánh cho phép

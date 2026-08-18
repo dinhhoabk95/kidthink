@@ -88,7 +88,7 @@ describe("Task 1 — OAuth Provider Registry (BR-OAP-01, BR-OAP-06, BR-OAP-09, B
     const registry = new OAuthProviderRegistry({
       facebookClientId: "fb-app-123",
       facebookClientSecret: "fb-sec-456",
-      siteUrl: "https://kidthink.edu.vn",
+      siteUrl: "https://mindkid.edu.vn",
     });
 
     const { code_challenge } = await registry.generatePKCE();
@@ -104,7 +104,7 @@ describe("Task 1 — OAuth Provider Registry (BR-OAP-01, BR-OAP-06, BR-OAP-09, B
     expect(url.pathname).toBe("/v21.0/dialog/oauth");
     expect(url.searchParams.get("client_id")).toBe("fb-app-123");
     expect(url.searchParams.get("redirect_uri")).toBe(
-      "https://kidthink.edu.vn/api/guest/auth/oauth/facebook/callback"
+      "https://mindkid.edu.vn/api/guest/auth/oauth/facebook/callback"
     );
     expect(url.searchParams.get("state")).toBe(state);
     expect(url.searchParams.get("code_challenge")).toBe(code_challenge);

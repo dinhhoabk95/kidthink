@@ -41,8 +41,6 @@ export interface GenericEntityPayload {
   ageMax?: number | null;
   age_max?: number | null;
   title?: string;
-  titleVi?: string;
-  title_vi?: string;
   [key: string]: unknown;
 }
 
@@ -124,7 +122,7 @@ function checkCommonRules(
   checkCounts(entity, missing);
   checkAgeRange(entityType, entity, missing);
 
-  const title = entity.title ?? entity.titleVi ?? entity.title;
+  const title = entity.title;
   if (!title || typeof title !== "string" || title.trim() === "") {
     missing.push("title_empty");
   }
@@ -222,11 +220,9 @@ function validateActivityAgainstModel(
 ): void {
   const res = validateActivityModel({
     kind,
-    title: (entity.title ?? entity.titleVi ?? entity.title ?? "") as string,
+    title: (entity.title ?? "") as string,
     instruction,
-    materials_vi: (entity.materialsVi ?? entity.materials_vi ?? null) as
-      | string
-      | null,
+    materials: (entity.materials ?? null) as string | null,
     estimated_minutes: est ?? 10,
     skill_codes: (entity.skillCodes ?? entity.skill_codes ?? []) as string[],
     skills: entity.skills as
@@ -255,8 +251,7 @@ function checkActivityRules(
     missing.push("invalid_estimated_minutes");
   }
 
-  const instruction =
-    entity.instruction ?? entity.instructionVi ?? entity.instruction;
+  const instruction = entity.instruction;
   if (
     !instruction ||
     (typeof instruction === "string" && instruction.trim() === "")
@@ -282,25 +277,19 @@ function extractLessonValidationPayload(entity: GenericEntityPayload) {
     | unknown[]
     | undefined;
   const est = entity.estimatedMinutes ?? entity.estimated_minutes;
-  const guide = entity.guide ?? entity.guideVi ?? entity.guide_vi;
+  const guide = entity.guide;
 
   return {
-    title: (entity.title ?? entity.titleVi ?? entity.title ?? "") as string,
+    title: (entity.title ?? "") as string,
     guide: guide as string,
     estimated_minutes: typeof est === "number" ? est : 15,
     activities: Array.isArray(activities)
       ? (activities as Record<string, unknown>[])
       : [],
-    materials_vi: (entity.materialsVi ?? entity.materials_vi ?? null) as
-      | string
-      | null,
-    warm_up_vi: (entity.warmUpVi ?? entity.warm_up_vi ?? null) as string | null,
-    reflection_vi: (entity.reflectionVi ?? entity.reflection_vi ?? null) as
-      | string
-      | null,
-    assessment_vi: (entity.assessmentVi ?? entity.assessment_vi ?? null) as
-      | string
-      | null,
+    materials: (entity.materials ?? null) as string | null,
+    warm_up: (entity.warmUp ?? entity.warm_up ?? null) as string | null,
+    reflection: (entity.reflection ?? null) as string | null,
+    assessment: (entity.assessment ?? null) as string | null,
   };
 }
 
@@ -318,7 +307,7 @@ function checkLessonBasicFields(
     missing.push("invalid_estimated_minutes");
   }
 
-  const guide = entity.guide ?? entity.guideVi ?? entity.guide_vi;
+  const guide = entity.guide;
   if (!guide || (typeof guide === "string" && guide.trim() === "")) {
     missing.push("guide_vi_missing");
   }
@@ -461,12 +450,11 @@ function checkWorksheetTemplateAndGuide(
     missing.push("invalid_layout_template");
   }
 
-  const instructionsVi =
-    entity.instructionsVi ?? entity.instructions_vi ?? entity.instructions;
+  const instructions = entity.instructions;
   if (
-    !instructionsVi ||
-    typeof instructionsVi !== "string" ||
-    instructionsVi.trim().length < 10
+    !instructions ||
+    typeof instructions !== "string" ||
+    instructions.trim().length < 10
   ) {
     missing.push("adult_guide_footer_missing");
   }
@@ -483,14 +471,13 @@ function checkWorksheetBlockValidation(
 
   const layoutTemplate = (entity.layoutTemplate ??
     entity.layout_template) as string;
-  const instructionsVi =
-    entity.instructionsVi ?? entity.instructions_vi ?? entity.instructions;
+  const instructions = entity.instructions;
 
   const res = validateWorksheetContent({
-    title: (entity.titleVi ?? entity.title ?? entity.title ?? "") as string,
+    title: (entity.title ?? "") as string,
     layout_template: layoutTemplate || "",
     content_blocks: contentBlocks,
-    instructions_vi: typeof instructionsVi === "string" ? instructionsVi : "",
+    instructions: typeof instructions === "string" ? instructions : "",
     learning_objective_ids: (entity.learningObjectiveIds ??
       entity.learning_objective_ids ?? [1]) as number[],
   });

@@ -65,10 +65,10 @@ Banner ở lần truy cập đầu · `/cookie`.
 
 | Cookie | Mục đích | Thời hạn | Thiết yếu |
 |---|---|---|:--:|
-| `kidthink-user-session` | Opaque session User | 1 giờ | |
+| `mindkid-user-session` | Opaque session User | 1 giờ | |
 | `tm_u_remember` | Ghi nhớ User khi chủ động chọn | tối đa 1 năm | |
 | `tm_u_csrf` | Chống CSRF | 1 giờ hoặc theo remember | |
-| `kidthink-manager-session` · `tm_m_remember` · `tm_m_csrf` | Tương ứng cho quản trị | tối đa 1 năm | |
+| `mindkid-manager-session` · `tm_m_remember` · `tm_m_csrf` | Tương ứng cho quản trị | tối đa 1 năm | |
 | `active_child_id` | Ghi nhớ bé đang chơi | 30 ngày | |
 | `tm_did` | Định danh thiết bị cho khách chơi thử | 1 năm | |
 

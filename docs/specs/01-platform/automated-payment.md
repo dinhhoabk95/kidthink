@@ -2,7 +2,7 @@
 spec: AUTOMATED-PAYMENT
 title: Cổng thanh toán tự động và đối soát
 area: platform
-status: approved
+status: implemented
 mvp: false
 phase: P5
 reviewed: 2026-08-16
@@ -24,7 +24,7 @@ depends_on:
 
 ## 1. Objective
 
-Mở rộng hạ tầng thanh toán của KidThink từ quy trình chuyển khoản VietQR duyệt tay ở P2 sang cổng
+Mở rộng hạ tầng thanh toán của MindKid từ quy trình chuyển khoản VietQR duyệt tay ở P2 sang cổng
 thanh toán trực tuyến tự động (gateway webhook), tự động xác nhận giao dịch và kích hoạt gói dịch
 vụ ngay lập tức cho User. Hệ thống hỗ trợ xử lý sự kiện webhook với cơ chế khử trùng lặp
 (idempotency), bảo vệ giao dịch bằng chữ ký số bảo mật, và duy trì kênh VietQR duyệt tay làm
@@ -57,7 +57,7 @@ không thay thế máy trạng thái đơn hàng cơ sở trong [`../00-foundati
    ví điện tử hoặc QR động qua cổng).
 2. Server tạo `payment_intent` phía provider với số tiền và mã gói đọc từ `PACKAGE_CATALOG` nội bộ;
    ghi nhận `provider_transaction_id` và trả redirect URL / QR payload về client.
-3. User hoàn tất thanh toán trên cổng của provider. Provider gửi webhook về server KidThink.
+3. User hoàn tất thanh toán trên cổng của provider. Provider gửi webhook về server MindKid.
 4. Handler webhook đọc raw-body, xác minh chữ ký số HMAC, timestamp trong cửa sổ replay (≤ 5 phút),
    và kiểm tra idempotency theo `provider_event_id`.
 5. Trong cùng một DB transaction:
@@ -160,7 +160,7 @@ Scenario: BR-APM-03 — giá đơn hàng luôn lấy từ catalog máy chủ
 - Thay đổi thời gian replay window hoặc phương thức tính chữ ký webhook.
 
 **Never**
-- Lưu trữ thông tin thẻ tín dụng/CVV trên máy chủ KidThink.
+- Lưu trữ thông tin thẻ tín dụng/CVV trên máy chủ MindKid.
 - Bỏ qua bước kiểm tra chữ ký webhook kể cả trong môi trường staging khi chưa có cờ kiểm thử.
 
 ## 11. Open questions

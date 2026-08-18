@@ -16,7 +16,7 @@
         <div>
           <div class="flex items-center gap-2">
             <h1 class="text-base font-bold text-slate-900 dark:text-white">
-              {{ levelData.titleVi || 'Duyệt Nội Dung' }}
+              {{ levelData.title || 'Duyệt Nội Dung' }}
             </h1>
             <span
               class="font-mono text-xs px-2.5 py-0.5 rounded-full bg-slate-100 dark:bg-slate-700 font-semibold text-slate-700 dark:text-slate-300"
@@ -358,8 +358,8 @@
 
   const previewPayload = computed(() => {
     return {
-      title: levelData.value.titleVi,
-      instruction: levelData.value.instructionVi,
+      title: levelData.value.title,
+      instruction: levelData.value.instruction,
       theme_id: levelData.value.themeId,
       content_pack: levelData.value.contentPack || {},
       difficulty_params: levelData.value.difficultyParams || {},

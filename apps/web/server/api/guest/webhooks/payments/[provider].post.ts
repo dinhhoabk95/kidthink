@@ -1,11 +1,11 @@
-import { appError } from "@kidthink/auth";
-import { processAutomatedPaymentWebhook } from "@kidthink/db";
+import { appError } from "@mindkid/auth";
+import { processAutomatedPaymentWebhook } from "@mindkid/db";
 import {
   AUTOMATED_PAYMENT_PROVIDERS,
   type AutomatedPaymentProvider,
   AutomatedPaymentWebhookPayloadSchema,
   verifyPaymentWebhookSignature,
-} from "@kidthink/shared";
+} from "@mindkid/shared";
 import { defineEventHandler, getHeader, getRouterParam, readBody } from "h3";
 
 export default defineEventHandler(async (event) => {

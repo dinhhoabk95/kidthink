@@ -1,4 +1,4 @@
-import { getOAuthRegistry } from "@kidthink/auth";
+import { getOAuthRegistry } from "@mindkid/auth";
 import { defineEventHandler } from "h3";
 
 export default defineEventHandler(() => {

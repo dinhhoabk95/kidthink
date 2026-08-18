@@ -52,13 +52,13 @@ async function setupTestEnvironment() {
     .insert(competencies)
     .values({
       code: compCode,
-      nameVi: "Năng lực tư duy",
+      name: "Năng lực tư duy",
       colorToken: "indigo",
       icon: "brain",
     })
     .onConflictDoUpdate({
       target: competencies.code,
-      set: { nameVi: "Năng lực tư duy" },
+      set: { name: "Năng lực tư duy" },
     })
     .returning();
 
@@ -67,11 +67,11 @@ async function setupTestEnvironment() {
     .values({
       code: strandCode,
       competencyId: comp.id,
-      nameVi: "Mạch số lượng",
+      name: "Mạch số lượng",
     })
     .onConflictDoUpdate({
       target: strands.code,
-      set: { competencyId: comp.id, nameVi: "Mạch số lượng" },
+      set: { competencyId: comp.id, name: "Mạch số lượng" },
     })
     .returning();
 
@@ -80,14 +80,14 @@ async function setupTestEnvironment() {
     .values({
       code: skillCode,
       strandId: strd.id,
-      nameVi: "Kỹ năng đếm tương ứng 1-1",
+      name: "Kỹ năng đếm tương ứng 1-1",
       ageMin: 3,
       ageMax: 5,
       difficulty: 1,
     })
     .onConflictDoUpdate({
       target: skills.code,
-      set: { strandId: strd.id, nameVi: "Kỹ năng đếm tương ứng 1-1" },
+      set: { strandId: strd.id, name: "Kỹ năng đếm tương ứng 1-1" },
     })
     .returning();
 
@@ -104,12 +104,12 @@ async function setupTestEnvironment() {
     .insert(gameTemplates)
     .values({
       code: gtCode,
-      nameVi: "Template đếm số",
+      name: "Template đếm số",
       mechanic: "tap_select",
     })
     .onConflictDoUpdate({
       target: gameTemplates.code,
-      set: { nameVi: "Template đếm số" },
+      set: { name: "Template đếm số" },
     })
     .returning();
 
@@ -129,7 +129,7 @@ async function setupTestEnvironment() {
       code: glCode,
       contentVersion: 1,
       templateId: tmplId,
-      titleVi: "Đếm số lượng 1-5",
+      title: "Đếm số lượng 1-5",
       accessTier: "standard",
       ageMin: 3,
       ageMax: 5,
@@ -163,10 +163,10 @@ describe("Activity & Lesson Lifecycle Transitions & Gating (BR-ACA-04, BR-LSA-03
         code: `ACT-${seq}`,
         contentVersion: 1,
         kind: "manipulative",
-        titleVi: "Thao tác ghép hạt đếm",
-        instructionVi:
+        title: "Thao tác ghép hạt đếm",
+        instruction:
           '1. Chuẩn bị: 5 hạt đậu. 2. Nói với trẻ: "Bé hãy đếm xem có mấy hạt nhé!". 3. Dễ hơn: 3 hạt. 4. Khó hơn: 10 hạt.',
-        materialsVi: "5 hạt đậu hoặc khối xếp hình",
+        materials: "5 hạt đậu hoặc khối xếp hình",
         estimatedMinutes: 10,
         accessTier: "standard",
         status: "draft",
@@ -224,8 +224,8 @@ describe("Activity & Lesson Lifecycle Transitions & Gating (BR-ACA-04, BR-LSA-03
         code: `ACT-${seq}`,
         contentVersion: 1,
         kind: "discussion",
-        titleVi: "Trò chuyện về đồ vật",
-        instructionVi:
+        title: "Trò chuyện về đồ vật",
+        instruction:
           '1. Chuẩn bị: Tranh ảnh. 2. "Con thấy gì trong tranh?". 3. Dễ hơn: chỉ đồ vật. 4. Khó hơn: kể câu chuyện.',
         estimatedMinutes: 5,
         accessTier: "standard",
@@ -241,8 +241,8 @@ describe("Activity & Lesson Lifecycle Transitions & Gating (BR-ACA-04, BR-LSA-03
         entityId: Number(seq) * 40,
         code: `LES-${seq}`,
         contentVersion: 1,
-        titleVi: "Bài học đếm số đầu tiên",
-        guideVi:
+        title: "Bài học đếm số đầu tiên",
+        guide:
           "1. Mục tiêu: Nhận biết số lượng 3.\n2. Chuẩn bị: Đồ chơi.\n3. Mở đầu: Hát bài tập đếm.\n4. Khi trẻ làm được: Khen ngợi và thử thách thêm.\n5. Khi trẻ cần giúp: Cầm tay hướng dẫn.",
         targetAgeMin: 3,
         targetAgeMax: 5,
@@ -287,8 +287,8 @@ describe("Activity & Lesson Lifecycle Transitions & Gating (BR-ACA-04, BR-LSA-03
         code: `ACT-${seq}`,
         contentVersion: 1,
         kind: "movement",
-        titleVi: "Nhảy theo nhịp đếm",
-        instructionVi:
+        title: "Nhảy theo nhịp đếm",
+        instruction:
           '1. Chuẩn bị: Không gian. 2. "Cùng nhảy 3 cái nhé!". 3. Dễ hơn: nhảy 1 cái. 4. Khó hơn: nhảy 5 cái.',
         estimatedMinutes: 5,
         accessTier: "standard",
@@ -304,8 +304,8 @@ describe("Activity & Lesson Lifecycle Transitions & Gating (BR-ACA-04, BR-LSA-03
         entityId: Number(seq) * 60,
         code: `LES-${seq}`,
         contentVersion: 1,
-        titleVi: "Bài học vận động đếm",
-        guideVi:
+        title: "Bài học vận động đếm",
+        guide:
           "1. Mục tiêu: Đếm qua vận động.\n2. Chuẩn bị: Thảm.\n3. Mở đầu: Khởi động nhẹ.\n4. Khi trẻ làm được: Tăng tốc độ.\n5. Khi trẻ cần giúp: Làm mẫu chậm.",
         targetAgeMin: 3,
         targetAgeMax: 5,

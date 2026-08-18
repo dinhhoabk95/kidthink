@@ -85,7 +85,7 @@ Chọn/kéo ảnh
 | `BR-IMG-08` | Preview ở **cỡ thật trong game** | Ảnh ổn ở 400px có thể vô nghĩa ở 96px |
 | `BR-IMG-09` | Cấm — **NEVER ảnh chụp trẻ em** ở bất kỳ đâu, kể cả avatar | [`child-data-compliance.md`](../00-foundation/child-data-compliance.md) `BR-CDC-04` |
 | `BR-IMG-10` | Ảnh chứng từ thanh toán lưu **private**, signed URL 15 phút | Chứa thông tin ngân hàng |
-| `BR-IMG-11` | Cấm — **NEVER raw `$fetch` cho route upload** — mất `x-csrf-token` | Opaque cookie session không thay contract CSRF; raw `$fetch` không đi qua wrapper double-submit của KidThink, dễ bị tấn công CSRF upload file độc hại |
+| `BR-IMG-11` | Cấm — **NEVER raw `$fetch` cho route upload** — mất `x-csrf-token` | Opaque cookie session không thay contract CSRF; raw `$fetch` không đi qua wrapper double-submit của MindKid, dễ bị tấn công CSRF upload file độc hại |
 | `BR-IMG-12` | Mọi upload/xoá ghi `audit_logs` | Bắt buộc để vết trách nhiệm quản trị viên khi có sự cố phát tán ảnh hoặc xoá nhầm asset của content published (`BR-AUD-01`) |
 
 ## 7. Data

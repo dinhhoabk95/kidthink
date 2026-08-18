@@ -145,12 +145,12 @@
 
       if (permission === "granted") {
         let installationId = localStorage.getItem(
-          "kidthink_client_installation_id"
+          "mindkid_client_installation_id"
         );
         if (!installationId) {
           installationId = crypto.randomUUID();
           localStorage.setItem(
-            "kidthink_client_installation_id",
+            "mindkid_client_installation_id",
             installationId
           );
         }

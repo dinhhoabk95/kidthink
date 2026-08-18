@@ -39,6 +39,8 @@ suy ra từ `depends_on` của các spec.
    notification-service · rate-limiting ────────→ registration · email-verification · login-and-session · password-recovery
                                                  │
                                                  └──→ audit-log ──→ admin-auth
+
+   env-contract ──→ server-provisioning · process-supervision ──→ release-deploy ──→ release-rollback
 ```
 
 Thứ tự làm:
@@ -46,7 +48,7 @@ Thứ tự làm:
 | # | Việc | Spec sở hữu |
 |---|---|---|
 | 0 | Cổng chất lượng, vùng cấm & cắt MVP | [`testing-strategy.md`](08-quality/testing-strategy.md) · [`ai-codegen-pipeline.md`](01-platform/ai-codegen-pipeline.md) · [`mvp-scope.md`](00-foundation/mvp-scope.md) |
-| 1 | Dựng khung repo trong `kidthink/` + chốt dependency baseline + port có chọn lọc từ v1 | [`repo-bootstrap.md`](00-foundation/repo-bootstrap.md) · [`monorepo-package-architecture.md`](00-foundation/monorepo-package-architecture.md) |
+| 1 | Dựng khung repo trong `mindkid/` + chốt dependency baseline + port có chọn lọc từ v1 | [`repo-bootstrap.md`](00-foundation/repo-bootstrap.md) · [`monorepo-package-architecture.md`](00-foundation/monorepo-package-architecture.md) |
 | 2 | Chốt từ vựng và ID | [`glossary.md`](00-foundation/glossary.md) · [`id-conventions.md`](00-foundation/id-conventions.md) |
 | 3 | Chốt tác nhân và guard | [`actors.md`](00-foundation/actors.md) · [`auth-tokens-sessions.md`](01-platform/auth-tokens-sessions.md) |
 | 4 | Chốt ràng buộc pháp lý **trước** khi thiết kế bảng trẻ | [`child-data-compliance.md`](00-foundation/child-data-compliance.md) |
@@ -60,6 +62,7 @@ Thứ tự làm:
 | 10 | Auth end-to-end **bằng email/mật khẩu** | [`registration.md`](03-account/registration.md) · [`email-verification.md`](03-account/email-verification.md) · [`login-and-session.md`](03-account/login-and-session.md) · [`password-recovery.md`](03-account/password-recovery.md) |
 | 11 | Audit log (trước mọi hành động cần audit) | [`audit-log.md`](01-platform/audit-log.md) |
 | 11b | Đăng nhập admin | [`admin-auth.md`](06-admin/admin-auth.md) |
+| 12 | Phát hành lên máy chủ bằng một lệnh, và ranh giới máy trạm với máy chủ | [`env-contract.md`](01-platform/env-contract.md) → [`server-provisioning.md`](01-platform/server-provisioning.md) · [`process-supervision.md`](01-platform/process-supervision.md) → [`release-deploy.md`](01-platform/release-deploy.md) → [`release-rollback.md`](01-platform/release-rollback.md) |
 
 Ghi chú:
 - Registry: [`business-rules.md`](00-foundation/business-rules.md), [`error-codes.md`](00-foundation/error-codes.md), [`event-catalog.md`](00-foundation/event-catalog.md) không thành bước riêng mà được tra cứu và tuân thủ ở **mọi** bước.
@@ -92,6 +95,11 @@ của Task #83 và trước khi mở P1.15. Session tuyệt đối 1 giờ, reme
 đa 365 ngày; P0 chỉ trở lại `implemented` khi hai app có evidence expiry/restore/revoke,
 Redis fail-closed và toàn bộ legacy runtime đã được gỡ.
 
+Bước 12 vào P0 vì nó là điều kiện go-live, không phải việc dọn sau: đo ngày 2026-08-18,
+`infra/scripts/deploy.sh` có 50 dòng với mọi bước thật bị chú thích, và `.env.example` khai 2
+trong 56 biến môi trường mà code đang đọc. Hồ sơ task:
+[`Task #90`](../tasks/90-vps-deploy-plan.md).
+
 ## P1 — Play core
 
 ```
@@ -107,6 +115,7 @@ access-gating ──→ game-config-delivery ──→ play-session-lifecycle
 | 1 | Ràng buộc chất lượng & thiết kế UI | [`design-system-contract.md`](08-quality/design-system-contract.md) · [`accessibility.md`](08-quality/accessibility.md) · [`performance-budgets.md`](08-quality/performance-budgets.md) |
 | 2 | Contract template + 6 template chạy được | [`game-template-contract.md`](01-platform/game-template-contract.md) · [`game-engine-runtime.md`](01-platform/game-engine-runtime.md) |
 | 2b | Đóng contract audio tiếng Việt, fallback trên thiết bị chuẩn và owner của đường asset/authoring trước khi sản xuất nội dung hàng loạt | Runtime thuộc [`game-engine-runtime.md`](01-platform/game-engine-runtime.md) và [`game-config-delivery.md`](04-play/game-config-delivery.md); storage/authoring có spec owner [`audio-storage.md`](01-platform/audio-storage.md) — [`Task #80`](../tasks/80-audio-contract-closure-plan.md) đã đóng contract; implementation runtime tại [`Task #87`](../tasks/87-p1-audio-runtime-delivery-plan.md) |
+| 2c | Nợ engine phát hiện sau khi 6 template đã ship: bộ dựng layout, rồi ngẫu nhiên có seed. Thứ tự **không đảo được** — [`deterministic-randomness.md`](01-platform/deterministic-randomness.md) khai `depends_on: GAME-LAYOUT-ENGINE`, và `BR-LAY-08` giao việc xáo trộn cho spec ngẫu nhiên chứ không cho hàm layout | [`game-layout-engine.md`](01-platform/game-layout-engine.md) → [`deterministic-randomness.md`](01-platform/deterministic-randomness.md) |
 | 3 | **Gating trước nội dung** | [`access-gating.md`](04-play/access-gating.md) |
 | 4 | Giao config game đã lọc quyền | [`game-config-delivery.md`](04-play/game-config-delivery.md) |
 | 5 | Hạ tầng hàng đợi công việc & đường ống telemetry | [`job-queue.md`](01-platform/job-queue.md) · [`telemetry-pipeline.md`](01-platform/telemetry-pipeline.md) |
@@ -171,10 +180,18 @@ image-upload · emoji-picker ──→ game-level-studio
 | 7 | Báo cáo nâng cao | [`advanced-report.md`](03-account/advanced-report.md) |
 | 8 | Trưng bày chương trình ra public | [`program-showcase.md`](02-public/program-showcase.md) |
 | 9 | Tích hợp curriculum vào account: bật khối chương trình đang học, chốt bố cục nhiều trẻ và phạm vi thư viện theo trẻ | [`member-dashboard.md`](03-account/member-dashboard.md) · [`my-library.md`](03-account/my-library.md) · [`curriculum-player.md`](04-play/curriculum-player.md) — [`Task #82`](../tasks/82-p3-account-curriculum-integration-plan.md) |
+| 10 | Ma trận phủ tư duy và cổng phủ nội dung | [`thinking-coverage-matrix.md`](08-quality/thinking-coverage-matrix.md) |
 
 ## P4 — Add-on (ngoài MVP)
 
 Chỉ bắt đầu khi P0–P3 đã `implemented`. Mỗi add-on **lên catalog cùng lúc với tính năng của nó**, không trước.
+
+Ba spec add-on nữa nằm ngoài dòng catalog và có thứ tự riêng:
+[`lesson-session-runner.md`](04-play/lesson-session-runner.md) →
+[`lesson-exemplar-set.md`](05-content/lesson-exemplar-set.md) (spec sau khai
+`depends_on: LESSON-SESSION-RUNNER`; điều kiện mẫu được kiểm dựa trên bản ghi phiên chạy), còn
+[`template-authoring-kit.md`](01-platform/template-authoring-kit.md) chờ cả hai spec P1
+ở bước 2c vì nó khai `depends_on` cả hai.
 
 [`worksheet-model.md`](05-content/worksheet-model.md) · [`lesson-plan-creator.md`](07-addon/lesson-plan-creator.md) → [`pdf-export.md`](07-addon/pdf-export.md) · [`personal-curriculum.md`](07-addon/personal-curriculum.md) · [`custom-game-builder.md`](07-addon/custom-game-builder.md) · [`ai-credit-ledger.md`](07-addon/ai-credit-ledger.md) → [`ai-assistant.md`](07-addon/ai-assistant.md) · [`semantic-search.md`](07-addon/semantic-search.md)
 
@@ -203,7 +220,7 @@ package đã được tách xuống cỡ S/M. Audit ngày 2026-08-12 cho kết q
 
 | Phase | Coverage hồ sơ hiện hành | Mức sẵn sàng sau audit |
 |---|---|---|
-| P0 | Task #1, #2, #3, #7, #14, các increment #16–#25, hardening Task #83 và auth adapter Task #85 | Contract package core và auth adapter đã đổi; P0 chỉ trở lại xanh sau evidence Task #83, Task #85 và gate Task #14 |
+| P0 | Task #1, #2, #3, #7, #14, các increment #16–#25, hardening Task #83, auth adapter Task #85, phát hành [`Task #90`](../tasks/90-vps-deploy-plan.md) và bằng chứng test P0 Task #91 | Contract package core và auth adapter đã đổi; P0 chỉ trở lại xanh sau evidence Task #83, Task #85 và gate Task #14 |
 | P1 | Task #26–#42; contract closure ở [`Task #80`](../tasks/80-audio-contract-closure-plan.md) (implementation [`Task #87`](../tasks/87-p1-audio-runtime-delivery-plan.md)) và [`Task #81`](../tasks/81-pedagogical-evidence-contract-plan.md) | Contract audio và evidence sư phạm đã đóng; implementation audio runtime được giao tại Task #87 |
 | P2 | Task #43–#53 | Đủ cho 11 bước; audio storage P2 đã có spec [`audio-storage.md`](01-platform/audio-storage.md) tách biệt khỏi pipeline ảnh của Task #49 |
 | P3 | Task #54–#61 và lát account bổ sung [`Task #82`](../tasks/82-p3-account-curriculum-integration-plan.md) | Coverage cũ thiếu ba debt account từ P1.12; còn chặn người ở quyết định ≥60 hay ≥126 lesson và bố cục nhiều trẻ |
@@ -211,14 +228,35 @@ package đã được tách xuống cỡ S/M. Audit ngày 2026-08-12 cho kết q
 | P5 | Task #70–#72, #78 và #84 | Đủ ở mức contract-first cho Web scale; FCM/inbox đứng sau package core Task #83 và không chặn email |
 
 Task #14 là master dependency graph và phase gate; các task increment là lát dọc có acceptance
-criteria. Hai lớp bổ sung nhau, không phải hai implementation plan cạnh tranh. Task #1–#13 và
-[`plan.md`](../tasks/plan.md)/[`todo.md`](../tasks/todo.md) là hồ sơ đã hoàn tất, không phải
+criteria. Hai lớp bổ sung nhau, không phải hai implementation plan cạnh tranh. Task #1–#13 và `plan.md`/`todo.md` là hồ sơ đã hoàn tất, không phải
 backlog đang hoạt động.
 
 Audit task sizing ban đầu tìm thấy **19** work package tự gắn cỡ `L`/`XL` trong 10 plan active.
 [`Task #79`](../tasks/79-roadmap-scope-audit-plan.md) đã tách cả 19 thành work package S/M có
 dependency, gate và ranh giới PR; query `**Cỡ:** L|XL` hiện trả rỗng. Plan mới không được thêm
 lại nhãn L/XL không có lát con; mỗi package tiếp tục giữ khoảng 1–5 file và test RED riêng.
+
+### Thứ tự task cho spec chưa triển khai, chốt 2026-08-18
+
+Mười ba spec chưa mang `status: implemented`. Một trong số đó
+([`business-rules.md`](00-foundation/business-rules.md)) là registry quản trị corpus, do
+`lint:specs` thi hành chứ không do test runtime, nên nó nằm trong task bằng chứng test chứ không
+có task riêng.
+
+| Task | Spec đóng | Chặn bởi |
+|---|---|---|
+| [#90](../tasks/90-vps-deploy-plan.md) | năm spec phát hành ở bước 12 của P0 | tên thương hiệu đang đổi, nhà cung cấp máy, tên miền |
+| #91 | [`security-checklist.md`](08-quality/security-checklist.md) · [`business-rules.md`](00-foundation/business-rules.md) | 24 route còn nợ validate body |
+| #92 | [`game-layout-engine.md`](01-platform/game-layout-engine.md) | câu hỏi §11 Q2: 12 giá trị layout có gộp được không |
+| #93 | [`deterministic-randomness.md`](01-platform/deterministic-randomness.md) | Task #92, và migration thêm cột seed vào bảng phiên chơi |
+| #94 | [`thinking-coverage-matrix.md`](08-quality/thinking-coverage-matrix.md) | chưa nội dung nào gắn tag trục tư duy — cổng sẽ đo ma trận rỗng |
+| #95 | [`lesson-session-runner.md`](04-play/lesson-session-runner.md) | ba bảng mới, và câu hỏi §11 Q3 định hình lược đồ |
+| #96 | [`lesson-exemplar-set.md`](05-content/lesson-exemplar-set.md) | Task #95, và chưa spec nào sở hữu nơi lưu bản ghi chơi thử |
+| #97 | [`template-authoring-kit.md`](01-platform/template-authoring-kit.md) | Task #92 và #93 |
+
+Task #92 và #93 sửa một contract đã `implemented`: cột seed mới trên bảng phiên chơi kéo theo
+thay đổi payload của [`game-config-delivery.md`](04-play/game-config-delivery.md). Đó là lý do
+hai task này không phải "thêm tính năng" mà là sửa nợ, và phải đi qua cổng người.
 
 ## Việc chạy song song được
 

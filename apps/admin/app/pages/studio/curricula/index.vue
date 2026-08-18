@@ -156,7 +156,7 @@
 </template>
 
 <script lang="ts" setup>
-  import { calculateCurriculumBalance } from "@kidthink/shared";
+  import { calculateCurriculumBalance } from "@mindkid/shared";
   import { computed, onMounted, ref } from "vue";
   import CurriculumActivityDrawer, {
     type LibraryItem,
@@ -202,7 +202,7 @@
     duration_weeks?: number;
     sessions_per_week?: number;
     title?: string;
-    description_vi?: string;
+    description?: string;
     access_tier?: "free" | "login" | "standard" | "premium";
     status?: string;
     weeks?: CurriculumWeekRow[];
@@ -219,8 +219,8 @@
       targetAgeMax?: number;
       durationWeeks: number;
       sessionsPerWeek: number;
-      titleVi: string;
-      descriptionVi?: string;
+      title: string;
+      description?: string;
       accessTier: "free" | "login" | "standard" | "premium";
       status: string;
     }>;
@@ -235,8 +235,8 @@
     targetAgeMax?: number;
     durationWeeks: number;
     sessionsPerWeek: number;
-    titleVi: string;
-    descriptionVi?: string;
+    title: string;
+    description?: string;
     accessTier: "free" | "login" | "standard" | "premium";
     status: string;
     weeks: Array<{ weekNo: number; goal: string }>;
@@ -329,8 +329,8 @@
         target_age_max: i.targetAgeMax,
         duration_weeks: i.durationWeeks,
         sessions_per_week: i.sessionsPerWeek,
-        title: i.titleVi,
-        description_vi: i.descriptionVi,
+        title: i.title,
+        description: i.description,
         access_tier: i.accessTier,
         status: i.status,
       }));
@@ -429,8 +429,8 @@
         target_age_max: res.targetAgeMax,
         duration_weeks: res.durationWeeks,
         sessions_per_week: res.sessionsPerWeek,
-        title: res.titleVi,
-        description_vi: res.descriptionVi,
+        title: res.title,
+        description: res.description,
         access_tier: res.accessTier,
         status: res.status,
       };
@@ -577,7 +577,7 @@
             body: {
               expected_version: activeCurriculum.value.content_version,
               title: activeCurriculum.value.title,
-              description_vi: activeCurriculum.value.description_vi,
+              description: activeCurriculum.value.description,
               program_type: activeCurriculum.value.program_type,
               target_age_min: activeCurriculum.value.target_age_min,
               target_age_max: activeCurriculum.value.target_age_max,
@@ -634,7 +634,7 @@
           method: "POST",
           body: {
             title: activeCurriculum.value.title,
-            description_vi: activeCurriculum.value.description_vi,
+            description: activeCurriculum.value.description,
             program_type: activeCurriculum.value.program_type,
             target_age_min: activeCurriculum.value.target_age_min,
             target_age_max: activeCurriculum.value.target_age_max,

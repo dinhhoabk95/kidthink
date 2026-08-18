@@ -21,13 +21,12 @@ export const LESSON_BATCH_03: LessonSeed[] = [
       target_age_min: 3,
       target_age_max: 4,
       estimated_minutes: 20,
-      materials_vi: "Bàn học, que tính nhựa",
-      warm_up_vi:
+      materials: "Bàn học, que tính nhựa",
+      warm_up:
         "Khởi động: Dùng ngón tay vẽ hình vuông và hình tam giác trong không khí 3 phút.",
-      reflection_vi: "Đúc kết: Bé đếm số cạnh của hình vuông bé vừa xếp.",
-      assessment_vi:
-        "Bé dùng 4 que tính ghép đúng thành một hình vuông khép kín.",
-      extension_vi: "Bé xếp thêm hình ngôi nhà kết hợp hình vuông và tam giác.",
+      reflection: "Đúc kết: Bé đếm số cạnh của hình vuông bé vừa xếp.",
+      assessment: "Bé dùng 4 que tính ghép đúng thành một hình vuông khép kín.",
+      extension: "Bé xếp thêm hình ngôi nhà kết hợp hình vuông và tam giác.",
       access_tier: "free",
       skill_codes: ["C2.2D.02"],
       learning_objective_codes: ["LO-C2.2D.02-01"],
@@ -58,13 +57,13 @@ export const LESSON_BATCH_03: LessonSeed[] = [
       target_age_min: 4,
       target_age_max: 5,
       estimated_minutes: 22,
-      materials_vi: "Bìa giấy màu, vỏ hộp bánh",
-      warm_up_vi: "Khởi động: Bài tập vươn vai cao như toà nhà 3 phút.",
-      reflection_vi:
+      materials: "Bìa giấy màu, vỏ hộp bánh",
+      warm_up: "Khởi động: Bài tập vươn vai cao như toà nhà 3 phút.",
+      reflection:
         "Đúc kết: Bé giới thiệu ngôi nhà khối hộp của mình cho bố mẹ.",
-      assessment_vi:
+      assessment:
         "Bé ghép đúng hình tam giác lên hình vuông làm mái nhà và xếp được tháp 3 tầng.",
-      extension_vi: "Trang trí thêm cửa sổ tròn cho toà lâu đài.",
+      extension: "Trang trí thêm cửa sổ tròn cho toà lâu đài.",
       access_tier: "standard",
       skill_codes: ["C2.2D.01", "C2.3D.01"],
       learning_objective_codes: ["LO-C2.2D.01-01", "LO-C2.3D.01-01"],
@@ -96,12 +95,12 @@ export const LESSON_BATCH_03: LessonSeed[] = [
       target_age_min: 4,
       target_age_max: 5,
       estimated_minutes: 20,
-      materials_vi: "Lon sữa sạch, hộp bánh",
-      warm_up_vi: "Khởi động: Lăn quả bóng qua lại giữa mẹ và bé 3 phút.",
-      reflection_vi: "Đúc kết: Bé chỉ vào món đồ lăn được trong căn phòng.",
-      assessment_vi:
+      materials: "Lon sữa sạch, hộp bánh",
+      warm_up: "Khởi động: Lăn quả bóng qua lại giữa mẹ và bé 3 phút.",
+      reflection: "Đúc kết: Bé chỉ vào món đồ lăn được trong căn phòng.",
+      assessment:
         "Bé chỉ đúng lon sữa là vật lăn được và đẩy lon sữa lăn trên mặt thảm.",
-      extension_vi:
+      extension:
         "Tìm thêm các chai lọ nhựa tròn trong nhà xem có lăn được không.",
       access_tier: "standard",
       skill_codes: ["C2.3D.01"],
@@ -134,13 +133,13 @@ export const LESSON_BATCH_03: LessonSeed[] = [
       target_age_min: 5,
       target_age_max: 6,
       estimated_minutes: 22,
-      materials_vi: "Que tính, giấy màu",
-      warm_up_vi: "Khởi động: Hát bài hát Các Hình Học Vui Nhộn 3 phút.",
-      reflection_vi:
+      materials: "Que tính, giấy màu",
+      warm_up: "Khởi động: Hát bài hát Các Hình Học Vui Nhộn 3 phút.",
+      reflection:
         "Đúc kết: Bé nêu điểm khác nhau giữa hình tam giác và hình vuông.",
-      assessment_vi:
+      assessment:
         "Bé nói được hình tam giác có 3 cạnh và dùng que tính xếp đúng hình.",
-      extension_vi: "Bé dán các hình giấy màu thành bức tranh phong cảnh.",
+      extension: "Bé dán các hình giấy màu thành bức tranh phong cảnh.",
       access_tier: "standard",
       skill_codes: ["C2.2D.01", "C2.2D.02"],
       learning_objective_codes: ["LO-C2.2D.01-01", "LO-C2.2D.02-01"],
@@ -172,13 +171,13 @@ export const LESSON_BATCH_03: LessonSeed[] = [
       target_age_min: 5,
       target_age_max: 6,
       estimated_minutes: 25,
-      materials_vi: "Vỏ hộp các-tông, lon sữa rỗng",
-      warm_up_vi:
+      materials: "Vỏ hộp các-tông, lon sữa rỗng",
+      warm_up:
         "Khởi động: Nhấc các khối hộp lên cao hạ xuống theo nhịp 3 phút.",
-      reflection_vi: "Đúc kết: Bé đếm xem lâu đài có tất cả bao nhiêu tầng.",
-      assessment_vi:
+      reflection: "Đúc kết: Bé đếm xem lâu đài có tất cả bao nhiêu tầng.",
+      assessment:
         "Bé phân loại đúng các khối hộp vuông vào một nhóm và lon tròn vào một nhóm.",
-      extension_vi: "Vẽ thêm cửa sổ và ban công lên các khối hộp.",
+      extension: "Vẽ thêm cửa sổ và ban công lên các khối hộp.",
       access_tier: "premium",
       skill_codes: ["C2.3D.01"],
       learning_objective_codes: ["LO-C2.3D.01-01"],
@@ -210,12 +209,12 @@ export const LESSON_BATCH_03: LessonSeed[] = [
       target_age_min: 5,
       target_age_max: 6,
       estimated_minutes: 22,
-      materials_vi: "Thẻ hình học giấy, đồ vật gia đình",
-      warm_up_vi: "Khởi động: Nhảy vào ô hình học dán trên sàn 3 phút.",
-      reflection_vi: "Đúc kết: Bé nhận danh hiệu Nhà Thông Thái Hình Học.",
-      assessment_vi:
+      materials: "Thẻ hình học giấy, đồ vật gia đình",
+      warm_up: "Khởi động: Nhảy vào ô hình học dán trên sàn 3 phút.",
+      reflection: "Đúc kết: Bé nhận danh hiệu Nhà Thông Thái Hình Học.",
+      assessment:
         "Bé chỉ đúng và đọc tên 3 hình: hình tròn, hình vuông, hình tam giác khi được hỏi.",
-      extension_vi: "Bé tự vẽ lại 3 hình học vào sổ tay của mình.",
+      extension: "Bé tự vẽ lại 3 hình học vào sổ tay của mình.",
       access_tier: "free",
       skill_codes: ["C2.2D.01", "C2.2D.02"],
       learning_objective_codes: ["LO-C2.2D.01-01", "LO-C2.2D.02-01"],

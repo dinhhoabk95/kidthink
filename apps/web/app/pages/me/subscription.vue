@@ -196,7 +196,7 @@
             <div>
               <span
                 class="text-xs font-bold text-surface-500 tracking-wider block"
-                >{{ quota.label_vi }}</span
+                >{{ quota.label }}</span
               >
               <span
                 class="text-lg font-bold font-heading text-surface-900 mt-0.5 block"
@@ -224,7 +224,7 @@
             >
               <div class="flex items-center justify-between gap-1">
                 <span class="font-bold text-xs text-surface-900 truncate"
-                  >{{ ent.label_vi }}</span
+                  >{{ ent.label }}</span
                 >
                 <span
                   class="text-[10px] px-1.5 py-0.5 rounded bg-surface-200 text-surface-700"
@@ -234,9 +234,9 @@
               </div>
               <p
                 class="text-[11px] text-surface-500 line-clamp-2"
-                v-if="ent.description_vi"
+                v-if="ent.description"
               >
-                {{ ent.description_vi }}
+                {{ ent.description }}
               </p>
             </div>
           </div>
@@ -348,8 +348,8 @@
     }>;
     entitlements: Array<{
       key: string;
-      label_vi: string;
-      description_vi: string | null;
+      label: string;
+      description: string | null;
       group: string;
       status: string;
       source_label: string;
@@ -358,7 +358,7 @@
     }>;
     quotas: Array<{
       quota_key: string;
-      label_vi: string;
+      label: string;
       used: number;
       total: number;
     }>;

@@ -9,14 +9,14 @@ vi.mock("h3", () => ({
   createError: (opts: any) => opts,
 }));
 
-vi.mock("@kidthink/db", () => ({
+vi.mock("@mindkid/db", () => ({
   getOwnerDb: vi.fn(),
   skills: { status: "status", code: "code", id: "id" },
   strands: {},
   learningObjectives: { skillId: "skillId" },
 }));
 
-import { getOwnerDb } from "@kidthink/db";
+import { getOwnerDb } from "@mindkid/db";
 import { getQuery, getRouterParam, setHeader } from "h3";
 import taxonomyIndexHandler from "../../server/api/guest/taxonomy/index.get.ts";
 import skillDetailHandler from "../../server/api/guest/taxonomy/skills/[code].get.ts";

@@ -3,7 +3,7 @@
  * Rule sở hữu: BR-CSA-02, BR-TAG-01, BR-TAG-02
  */
 
-import { validateActivityModel, validateLessonModel } from "@kidthink/shared";
+import { validateActivityModel, validateLessonModel } from "@mindkid/shared";
 import type {
   ActivitySeed,
   AnyContentSeed,
@@ -75,7 +75,7 @@ function checkActivityGate1(act: ActivitySeed, issues: GateIssue[]): void {
     kind: act.header.activity_kind,
     title: act.header.title,
     instruction: act.header.instruction,
-    materials_vi: act.header.materials_vi,
+    materials: act.header.materials,
     estimated_minutes: act.header.estimated_minutes,
     skill_codes: act.header.skill_codes,
     learning_objective_codes: act.header.learning_objective_codes,
@@ -99,11 +99,11 @@ function checkLessonGate1(les: LessonSeed, issues: GateIssue[]): void {
       target_age_min: les.header.target_age_min,
       target_age_max: les.header.target_age_max,
       estimated_minutes: les.header.estimated_minutes,
-      materials_vi: les.header.materials_vi,
-      warm_up_vi: les.header.warm_up_vi,
-      reflection_vi: les.header.reflection_vi,
-      assessment_vi: les.header.assessment_vi,
-      extension_vi: les.header.extension_vi,
+      materials: les.header.materials,
+      warm_up: les.header.warm_up,
+      reflection: les.header.reflection,
+      assessment: les.header.assessment,
+      extension: les.header.extension,
       skill_codes: les.header.skill_codes,
       learning_objective_codes: les.header.learning_objective_codes,
       activities: (les.header.activity_codes || []).map((c) => ({
@@ -420,10 +420,10 @@ function checkGate7(seed: AnyContentSeed): GateResult {
   let textToScan = `${header.title || ""}`;
   if (seed.kind === "activity") {
     const act = seed as ActivitySeed;
-    textToScan += ` ${JSON.stringify(act.header?.instruction || "")} ${act.header?.materials_vi || ""}`;
+    textToScan += ` ${JSON.stringify(act.header?.instruction || "")} ${act.header?.materials || ""}`;
   } else if (seed.kind === "lesson") {
     const les = seed as LessonSeed;
-    textToScan += ` ${JSON.stringify(les.header?.guide || "")} ${les.header?.materials_vi || ""} ${les.header?.assessment_vi || ""}`;
+    textToScan += ` ${JSON.stringify(les.header?.guide || "")} ${les.header?.materials || ""} ${les.header?.assessment || ""}`;
   } else {
     const gl = seed as ContentSeed;
     textToScan += ` ${gl.header?.instruction || ""} ${JSON.stringify(gl.content_pack || {})} ${JSON.stringify(gl.difficulty_params || {})}`;

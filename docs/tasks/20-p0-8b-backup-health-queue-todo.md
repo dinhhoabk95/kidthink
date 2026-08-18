@@ -26,7 +26,7 @@
 - [x] Là nơi duy nhất khởi tạo kết nối Valkey.
 - [x] `ping()` thật, có timeout ≤ 2s.
 - [x] Ca âm: Valkey tắt → trả fail trong ≤ 2s, không treo.
-- [x] `pnpm --filter @kidthink/cache test` và `pnpm lint:deps` xanh.
+- [x] `pnpm --filter @mindkid/cache test` và `pnpm lint:deps` xanh.
 
 ### Task 2 — `packages/queue`
 
@@ -35,7 +35,7 @@
 - [x] Không import gì từ `apps/*` (`BR-MPA-06`).
 - [x] Ca âm: enqueue hai lần cùng `jobId` chỉ tạo một job.
 - [x] Chỉ hai job `backup:postgres` `backup:verify`; job lạ là lỗi biên dịch.
-- [x] `pnpm --filter @kidthink/queue test` xanh.
+- [x] `pnpm --filter @mindkid/queue test` xanh.
 
 ### Task 3 — `apps/worker`
 
@@ -61,7 +61,7 @@ Em
 - [x] Ca âm `BR-BAK-04`: fail → `status = failed` **và** `alert()` gọi đúng một lần.
 - [x] Retention 30/12/24 khai thành hằng số có tên.
 - [x] Không đường nào ghi dump ra thư mục người dùng hay bucket công khai.
-- [x] `pnpm --filter @kidthink/worker test -- backup` xanh.
+- [x] `pnpm --filter @mindkid/worker test -- backup` xanh.
 
 ### Task 5 — Job `backup:verify`
 
@@ -72,7 +72,7 @@ Em
 - [x] `restored_rows = 0` là **fail**, không phải success.
 - [x] Verify fail → `alert()` mức cao.
 - [x] Ca âm: trỏ vào DB đang nhận ghi thì job **từ chối chạy**.
-- [x] `pnpm --filter @kidthink/worker test -- backup-verify` xanh.
+- [x] `pnpm --filter @mindkid/worker test -- backup-verify` xanh.
 
 ### Task 7 — `restore.sh` và runbook
 
@@ -101,7 +101,7 @@ Em
 - [x] Ca âm `BR-HLT-04`: body không có `version`, `hostname`, chuỗi kết nối.
 - [x] `Cache-Control: no-store`.
 - [x] 503 gọi `alert()`.
-- [x] `pnpm --filter @kidthink/web test -- health` xanh.
+- [x] `pnpm --filter @mindkid/web test -- health` xanh.
 
 ### Task 9 — Smoke deploy
 

@@ -5,7 +5,7 @@ import {
   managers,
   users,
   writeAudit,
-} from "@kidthink/db";
+} from "@mindkid/db";
 import { eq } from "drizzle-orm";
 import { beforeEach, describe, expect, it } from "vitest";
 import clientErrorsPostHandler from "../../server/api/guest/client-errors.post.js";
@@ -29,12 +29,12 @@ beforeEach(async () => {
   let [sa] = await db
     .select({ id: managers.id })
     .from(managers)
-    .where(eq(managers.email, "p210-sa@kidthink.edu.vn"));
+    .where(eq(managers.email, "p210-sa@mindkid.edu.vn"));
   if (!sa) {
     [sa] = await db
       .insert(managers)
       .values({
-        email: "p210-sa@kidthink.edu.vn",
+        email: "p210-sa@mindkid.edu.vn",
         passwordHash: "hash",
         displayName: "P210 Super Admin",
         role: "super_admin",
@@ -50,12 +50,12 @@ beforeEach(async () => {
   let [cr] = await db
     .select({ id: managers.id })
     .from(managers)
-    .where(eq(managers.email, "p210-cr@kidthink.edu.vn"));
+    .where(eq(managers.email, "p210-cr@mindkid.edu.vn"));
   if (!cr) {
     [cr] = await db
       .insert(managers)
       .values({
-        email: "p210-cr@kidthink.edu.vn",
+        email: "p210-cr@mindkid.edu.vn",
         passwordHash: "hash",
         displayName: "P210 Reviewer",
         role: "content_reviewer",
@@ -71,12 +71,12 @@ beforeEach(async () => {
   let [u] = await db
     .select({ id: users.id })
     .from(users)
-    .where(eq(users.email, "p210-user@test.kidthink.vn"));
+    .where(eq(users.email, "p210-user@test.mindkid.vn"));
   if (!u) {
     [u] = await db
       .insert(users)
       .values({
-        email: "p210-user@test.kidthink.vn",
+        email: "p210-user@test.mindkid.vn",
         passwordHash: "hash",
         displayName: "P210 User",
         status: "active",
@@ -124,7 +124,6 @@ function mockManagerEvent(
         manager_id: managerId,
         display_name: `Manager ${role}`,
         session_id: "sess_p210_mgr",
-        refresh_token_version: 1,
         role,
       },
       params,

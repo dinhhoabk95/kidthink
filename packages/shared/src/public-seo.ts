@@ -62,7 +62,7 @@ export interface CookieDefinition {
 
 export const ESSENTIAL_COOKIES: readonly CookieDefinition[] = [
   {
-    name: "kidthink-user-session",
+    name: "mindkid-user-session",
     purpose: "Opaque session đăng nhập của người dùng",
     maxAge: "1 giờ",
     isEssential: true,
@@ -80,7 +80,7 @@ export const ESSENTIAL_COOKIES: readonly CookieDefinition[] = [
     isEssential: true,
   },
   {
-    name: "kidthink-manager-session",
+    name: "mindkid-manager-session",
     purpose:
       "Opaque session đăng nhập của quản trị viên và người duyệt nội dung",
     maxAge: "Tối đa 1 năm",
@@ -154,14 +154,14 @@ export const LEGAL_DOCUMENTS: readonly LegalDocument[] = [
     effectiveDate: "2026-08-01",
     reviewStatus: "approved",
     summary:
-      "Quy định quyền và nghĩa vụ của người dùng khi sử dụng nền tảng KidThink.",
+      "Quy định quyền và nghĩa vụ của người dùng khi sử dụng nền tảng MindKid.",
     requiresConsent: true,
     isChildSpecific: false,
     sections: [
       {
         heading: "1. Định nghĩa và phạm vi áp dụng",
         summary:
-          "KidThink là thư viện trò chơi phát triển tư duy cho trẻ 3–6 tuổi dưới sự giám hộ của người lớn.",
+          "MindKid là thư viện trò chơi phát triển tư duy cho trẻ 3–6 tuổi dưới sự giám hộ của người lớn.",
         content:
           "Nền tảng cung cấp các trò chơi tương tác giáo dục nhằm rèn luyện 6 năng lực tư duy mầm non. Người dùng đăng ký phải từ đủ 18 tuổi hoặc có sự đồng ý của người giám hộ hợp pháp.",
       },
@@ -250,7 +250,7 @@ export const LEGAL_DOCUMENTS: readonly LegalDocument[] = [
       {
         heading: "6. Kênh tiếp nhận và giải quyết khiếu nại",
         summary:
-          "Liên hệ trực tiếp qua email bảo vệ trẻ em chuyên trách: privacy@kidthink.vn",
+          "Liên hệ trực tiếp qua email bảo vệ trẻ em chuyên trách: privacy@mindkid.vn",
         content:
           "Mọi thắc mắc và yêu cầu bảo vệ quyền riêng tư của trẻ sẽ được phản hồi trong vòng 24 giờ.",
       },
@@ -270,7 +270,7 @@ export const LEGAL_DOCUMENTS: readonly LegalDocument[] = [
       {
         heading: "1. Cookie kỹ thuật thiết yếu",
         summary:
-          "KidThink chỉ sử dụng các nhóm cookie kỹ thuật thiết yếu phục vụ đăng nhập và bảo mật.",
+          "MindKid chỉ sử dụng các nhóm cookie kỹ thuật thiết yếu phục vụ đăng nhập và bảo mật.",
         content:
           "Tất cả các cookie đều do máy chủ hệ thống trực tiếp cấp phát, không chứa mã theo dõi của bên thứ ba.",
       },
@@ -312,13 +312,13 @@ export const LEGAL_DOCUMENTS: readonly LegalDocument[] = [
         summary:
           "Khách hàng liên hệ qua Zalo OA, Facebook Messenger hoặc Email để được tư vấn và hỗ trợ.",
         content:
-          "Hệ thống không xử lý hoàn tiền tự động trong ứng dụng. Mọi yêu cầu hỗ trợ huỷ gói hoặc hoàn tiền được tiếp nhận qua Zalo Official Account, Facebook Messenger hoặc email support@kidthink.vn. Sau khi hai bên thống nhất, việc hoàn tiền (nếu có) sẽ được kế toán thực hiện qua chuyển khoản ngân hàng thủ công trong vòng 24–48 giờ làm việc.",
+          "Hệ thống không xử lý hoàn tiền tự động trong ứng dụng. Mọi yêu cầu hỗ trợ huỷ gói hoặc hoàn tiền được tiếp nhận qua Zalo Official Account, Facebook Messenger hoặc email support@mindkid.vn. Sau khi hai bên thống nhất, việc hoàn tiền (nếu có) sẽ được kế toán thực hiện qua chuyển khoản ngân hàng thủ công trong vòng 24–48 giờ làm việc.",
       },
     ],
   },
   {
     slug: "about",
-    title: "Về KidThink - Thinking Play Platform",
+    title: "Về MindKid - Thinking Play Platform",
     version: "1.0",
     effectiveDate: "2026-08-01",
     reviewStatus: "approved",
@@ -332,7 +332,7 @@ export const LEGAL_DOCUMENTS: readonly LegalDocument[] = [
         summary:
           "Phát triển tư duy mầm non theo phương pháp sư phạm kiến tạo chuẩn quốc tế.",
         content:
-          "KidThink kết hợp các nghiên cứu giáo dục mầm non hiện đại với công nghệ tương tác trực quan giúp trẻ học toán không áp lực.",
+          "MindKid kết hợp các nghiên cứu giáo dục mầm non hiện đại với công nghệ tương tác trực quan giúp trẻ học toán không áp lực.",
       },
     ],
   },
@@ -350,7 +350,7 @@ export const LEGAL_DOCUMENTS: readonly LegalDocument[] = [
       {
         heading: "1. Kênh hỗ trợ khách hàng",
         summary:
-          "Hỗ trợ qua Zalo Official Account, Facebook Messenger và Email: support@kidthink.vn.",
+          "Hỗ trợ qua Zalo Official Account, Facebook Messenger và Email: support@mindkid.vn.",
         content:
           "Thời gian làm việc từ 8:00 đến 20:00 tất cả các ngày trong tuần. Phản hồi và xử lý yêu cầu trong vòng 24–48 giờ làm việc.",
       },
@@ -376,9 +376,9 @@ export const FAQ_ITEMS: readonly FaqItem[] = [
     id: "faq-p1",
     anchor: "do-tuoi-phu-hop",
     category: "product",
-    question: "KidThink dành cho bé trong độ tuổi nào?",
+    question: "MindKid dành cho bé trong độ tuổi nào?",
     answer:
-      "KidThink được thiết kế chuyên biệt cho trẻ mầm non từ 3 đến 6 tuổi, chia thành 3 phân tầng phát triển (Mầm 3–4, Chồi 4–5, Lá 5–6) phù hợp tâm lý tiếp nhận của từng lứa tuổi.",
+      "MindKid được thiết kế chuyên biệt cho trẻ mầm non từ 3 đến 6 tuổi, chia thành 3 phân tầng phát triển (Mầm 3–4, Chồi 4–5, Lá 5–6) phù hợp tâm lý tiếp nhận của từng lứa tuổi.",
   },
   {
     id: "faq-p2",
@@ -400,9 +400,9 @@ export const FAQ_ITEMS: readonly FaqItem[] = [
     id: "faq-p4",
     anchor: "giup-be-thong-minh-hon",
     category: "product",
-    question: "Chơi KidThink có giúp bé thông minh hơn không?",
+    question: "Chơi MindKid có giúp bé thông minh hơn không?",
     answer:
-      "KidThink giúp rèn luyện 6 năng lực tư duy nền tảng (Số lượng, Hình không gian, Quy luật, Đo lường, Phân loại, Suy luận) qua các trò chơi có cấu trúc sư phạm, không cam kết biến trẻ thành thần đồng hay tăng chỉ số IQ.",
+      "MindKid giúp rèn luyện 6 năng lực tư duy nền tảng (Số lượng, Hình không gian, Quy luật, Đo lường, Phân loại, Suy luận) qua các trò chơi có cấu trúc sư phạm, không cam kết biến trẻ thành thần đồng hay tăng chỉ số IQ.",
   },
 
   // Về nội dung
@@ -410,7 +410,7 @@ export const FAQ_ITEMS: readonly FaqItem[] = [
     id: "faq-c1",
     anchor: "co-so-su-pham",
     category: "content",
-    question: "Chương trình học của KidThink dựa trên cơ sở nào?",
+    question: "Chương trình học của MindKid dựa trên cơ sở nào?",
     answer:
       "Chương trình dựa trên khung chuẩn giáo dục mầm non Việt Nam kết hợp các phương pháp sư phạm trực quan Montessori và tư duy Singapore, được biên soạn bởi các chuyên gia giáo dục đầu ngành.",
   },
@@ -439,7 +439,7 @@ export const FAQ_ITEMS: readonly FaqItem[] = [
     id: "faq-b1",
     anchor: "chinh-sach-hoan-tien",
     category: "billing",
-    question: "KidThink có chính sách hoàn tiền không?",
+    question: "MindKid có chính sách hoàn tiền không?",
     answer:
       "Có, chúng tôi áp dụng chính sách bảo đảm hài lòng: hoàn tiền 100% trong vòng 7 ngày đầu tiên nếu người dùng cảm thấy chương trình chưa phù hợp với bé.",
     legalLink: "/refund-policy",
@@ -448,7 +448,7 @@ export const FAQ_ITEMS: readonly FaqItem[] = [
     id: "faq-b2",
     anchor: "cac-goi-hoc-phi",
     category: "billing",
-    question: "KidThink có những gói học phí nào?",
+    question: "MindKid có những gói học phí nào?",
     answer: `Hiện tại có Gói Tiêu chuẩn (${PACKAGE_CATALOG["PKG-standard"]?.name || "Tiêu chuẩn"}) và Gói Premium (${PACKAGE_CATALOG["PKG-premium"]?.name || "Premium"}) với đầy đủ quyền truy cập thư viện game.`,
   },
 

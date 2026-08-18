@@ -33,8 +33,9 @@ export const collections = pgTable(
       .notNull(),
   },
   (table) => [
+    // UNIQUE (user_id, name) đã phục vụ mọi tra cứu theo user_id — index
+    // (user_id) riêng chỉ thêm chi phí ghi.
     unique("collections_user_id_name_unique").on(table.userId, table.name),
-    index("idx_collections_user_id").on(table.userId),
   ]
 );
 
@@ -54,10 +55,13 @@ export const libraryItems = pgTable(
     createdAt: timestamp("created_at", { withTimezone: true })
       .defaultNow()
       .notNull(),
+    updatedAt: timestamp("updated_at", { withTimezone: true })
+      .defaultNow()
+      .notNull(),
   },
   (table) => [
+    // PK (user_id, entity_type, entity_id) đã phủ tra cứu theo user_id.
     primaryKey({ columns: [table.userId, table.entityType, table.entityId] }),
-    index("idx_library_items_user_id").on(table.userId),
     index("idx_library_items_collection_id").on(table.collectionId),
     index("idx_library_items_entity").on(table.entityType, table.entityId),
     check(
@@ -81,13 +85,19 @@ export const userTagMap = pgTable(
     createdAt: timestamp("created_at", { withTimezone: true })
       .defaultNow()
       .notNull(),
+    updatedAt: timestamp("updated_at", { withTimezone: true })
+      .defaultNow()
+      .notNull(),
   },
   (table) => [
     primaryKey({
       columns: [table.userId, table.tagId, table.entityType, table.entityId],
     }),
-    index("idx_user_tag_map_user_tag").on(table.userId, table.tagId),
     index("idx_user_tag_map_entity").on(table.entityType, table.entityId),
+    check(
+      "check_user_tag_entity_type",
+      sql`${table.entityType} IN ('game_level', 'lesson', 'curriculum', 'activity')`
+    ),
   ]
 );
 

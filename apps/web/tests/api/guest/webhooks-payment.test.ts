@@ -6,8 +6,8 @@ import {
   SEED_ENTITLEMENT_KEYS,
   SEED_PACKAGES,
   users,
-} from "@kidthink/db";
-import { computePaymentWebhookSignature } from "@kidthink/shared";
+} from "@mindkid/db";
+import { computePaymentWebhookSignature } from "@mindkid/shared";
 import { eq } from "drizzle-orm";
 import { beforeEach, describe, expect, it } from "vitest";
 import paymentWebhookHandler from "../../../server/api/guest/webhooks/payments/[provider].post.js";

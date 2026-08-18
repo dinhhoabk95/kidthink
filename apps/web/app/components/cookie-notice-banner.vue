@@ -3,7 +3,7 @@
     <div class="cookie-content">
       <p class="cookie-text">
         Chúng tôi chỉ dùng cookie kỹ thuật cần thiết để đăng nhập và ghi nhớ bé
-        đang chơi. KidThink tuyệt đối không dùng cookie quảng cáo hay theo dõi
+        đang chơi. MindKid tuyệt đối không dùng cookie quảng cáo hay theo dõi
         bên thứ ba.
         <NuxtLink class="cookie-link" to="/cookie">Tìm hiểu thêm</NuxtLink>
       </p>

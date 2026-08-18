@@ -4,7 +4,7 @@ import {
   canPromptPwaInstall,
   isOfflinePackLeaseValid,
   validateStorageQuotaForPack,
-} from "@kidthink/shared";
+} from "@mindkid/shared";
 import { describe, expect, it } from "vitest";
 
 describe("PWA Install & Offline Curriculum Pack E2E Verification (BR-PWA, BR-OCP, BR-OFF)", () => {
@@ -18,8 +18,8 @@ describe("PWA Install & Offline Curriculum Pack E2E Verification (BR-PWA, BR-OCP
       expect(fs.existsSync(manifestPath)).toBe(true);
 
       const content = JSON.parse(fs.readFileSync(manifestPath, "utf-8"));
-      expect(content.name).toBe("KidThink");
-      expect(content.short_name).toBe("KidThink");
+      expect(content.name).toBe("MindKid");
+      expect(content.short_name).toBe("MindKid");
       expect(content.start_url).toBe("/me"); // BR-PWA-04: start_url is adult surface
       expect(content.display).toBe("standalone");
       expect(content.scope).toBe("/");
@@ -33,7 +33,7 @@ describe("PWA Install & Offline Curriculum Pack E2E Verification (BR-PWA, BR-OCP
       expect(fs.existsSync(swPath)).toBe(true);
 
       const swContent = fs.readFileSync(swPath, "utf-8");
-      expect(swContent).toContain("kidthink-offline-pack-v1");
+      expect(swContent).toContain("mindkid-offline-pack-v1");
       expect(swContent).toContain('url.pathname.startsWith("/api/")');
       expect(swContent).toContain("fetch(event.request)");
       expect(swContent).toContain("CACHE_SHELL");

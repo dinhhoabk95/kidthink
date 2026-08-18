@@ -1,11 +1,11 @@
-import { appError, generateSecureToken, hashSecureToken } from "@kidthink/auth";
+import { appError, generateSecureToken, hashSecureToken } from "@mindkid/auth";
 import {
   getAppDb,
   notifications,
   users,
   verificationTokens,
-} from "@kidthink/db";
-import { enforceTwoAxisRateLimit } from "@kidthink/shared";
+} from "@mindkid/db";
+import { enforceTwoAxisRateLimit } from "@mindkid/shared";
 import { and, eq, isNull } from "drizzle-orm";
 import { defineEventHandler, type H3Event, readBody } from "h3";
 import { z } from "zod";
@@ -14,7 +14,6 @@ import {
   assertRequestBodySize,
   assertSameOriginRequest,
   getVerifiedRemoteIp,
-  respondToUserAuthError,
 } from "../../../utils/auth-runtime";
 
 const EmailSchema = z
@@ -25,89 +24,85 @@ export async function handleResendVerification(
   event: H3Event,
   testBody?: unknown
 ) {
-  try {
-    assertSameOriginRequest(event);
-    assertRequestBodySize(event, 16 * 1024);
-    const ipRateLimit = await enforceTwoAxisRateLimit({
-      routeClass: "auth:forgot-password",
-      remoteIp: getVerifiedRemoteIp(event),
-    });
-    assertRateLimitAllowed(ipRateLimit.statusCode);
+  assertSameOriginRequest(event);
+  assertRequestBodySize(event, 16 * 1024);
+  const ipRateLimit = await enforceTwoAxisRateLimit({
+    routeClass: "auth:forgot-password",
+    remoteIp: getVerifiedRemoteIp(event),
+  });
+  assertRateLimitAllowed(ipRateLimit.statusCode);
 
-    const rawBody =
-      testBody ??
-      event.context?.body ??
-      (await readBody(event).catch(() => null));
+  const rawBody =
+    testBody ??
+    event.context?.body ??
+    (await readBody(event).catch(() => null));
 
-    const parsed = EmailSchema.safeParse(rawBody);
-    if (!parsed.success) {
-      throw appError("VALIDATION_FAILED");
-    }
-    const email = parsed.data.email.toLowerCase();
-
-    // BR-EVF-07: Rate limit resend
-    const rateLimitRes = await enforceTwoAxisRateLimit({
-      routeClass: "auth:forgot-password",
-      remoteIp: getVerifiedRemoteIp(event),
-      accountIdentifier: email,
-    });
-
-    assertRateLimitAllowed(rateLimitRes.statusCode);
-
-    const db = getAppDb();
-    const [user] = await db.select().from(users).where(eq(users.email, email));
-
-    // BR-EVF-05: Always return 200 { ok: true }, never leak whether user exists or is active
-    if (user?.status !== "pending_verification") {
-      return { ok: true };
-    }
-
-    const now = new Date();
-
-    // BR-EVF-03: Invalidate old active verification tokens for this user
-    await db
-      .update(verificationTokens)
-      .set({ usedAt: now })
-      .where(
-        and(
-          eq(verificationTokens.accountId, user.id),
-          eq(verificationTokens.accountType, "user"),
-          eq(verificationTokens.purpose, "email_verify"),
-          isNull(verificationTokens.usedAt)
-        )
-      );
-
-    // Generate new token valid for 24h
-    const rawToken = generateSecureToken();
-    const tokenHash = hashSecureToken(rawToken);
-    const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000);
-
-    await db.insert(verificationTokens).values({
-      accountType: "user",
-      accountId: user.id,
-      purpose: "email_verify",
-      tokenHash,
-      expiresAt,
-    });
-
-    // Create notification
-    await db.insert(notifications).values({
-      recipientType: "user",
-      recipientId: user.id,
-      channel: "email",
-      templateCode: "email_verification",
-      payload: {
-        token: rawToken,
-        email: user.email,
-        displayName: user.displayName,
-      },
-      status: "queued",
-    });
-
-    return { ok: true };
-  } catch (error) {
-    return respondToUserAuthError(event, error);
+  const parsed = EmailSchema.safeParse(rawBody);
+  if (!parsed.success) {
+    throw appError("VALIDATION_FAILED");
   }
+  const email = parsed.data.email.toLowerCase();
+
+  // BR-EVF-07: Rate limit resend
+  const rateLimitRes = await enforceTwoAxisRateLimit({
+    routeClass: "auth:forgot-password",
+    remoteIp: getVerifiedRemoteIp(event),
+    accountIdentifier: email,
+  });
+
+  assertRateLimitAllowed(rateLimitRes.statusCode);
+
+  const db = getAppDb();
+  const [user] = await db.select().from(users).where(eq(users.email, email));
+
+  // BR-EVF-05: Always return 200 { ok: true }, never leak whether user exists or is active
+  if (user?.status !== "pending_verification") {
+    return { ok: true };
+  }
+
+  const now = new Date();
+
+  // BR-EVF-03: Invalidate old active verification tokens for this user
+  await db
+    .update(verificationTokens)
+    .set({ usedAt: now })
+    .where(
+      and(
+        eq(verificationTokens.accountId, user.id),
+        eq(verificationTokens.accountType, "user"),
+        eq(verificationTokens.purpose, "email_verify"),
+        isNull(verificationTokens.usedAt)
+      )
+    );
+
+  // Generate new token valid for 24h
+  const rawToken = generateSecureToken();
+  const tokenHash = hashSecureToken(rawToken);
+  const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000);
+
+  await db.insert(verificationTokens).values({
+    accountType: "user",
+    accountId: user.id,
+    purpose: "email_verify",
+    tokenHash,
+    expiresAt,
+  });
+
+  // Create notification
+  await db.insert(notifications).values({
+    recipientType: "user",
+    recipientId: user.id,
+    channel: "email",
+    templateCode: "email_verification",
+    payload: {
+      token: rawToken,
+      email: user.email,
+      displayName: user.displayName,
+    },
+    status: "queued",
+  });
+
+  return { ok: true };
 }
 
 export default defineEventHandler((event) => handleResendVerification(event));

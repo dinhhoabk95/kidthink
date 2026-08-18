@@ -1,5 +1,5 @@
 /**
- * @kidthink/emoji — Constants
+ * @mindkid/emoji — Constants
  * Mapping groups → categories và curriculum themes → categories.
  */
 

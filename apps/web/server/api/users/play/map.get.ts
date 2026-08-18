@@ -1,4 +1,3 @@
-import { AppError } from "@kidthink/auth";
 import {
   childBadges,
   childProfiles,
@@ -7,7 +6,7 @@ import {
   masteryState,
   skills,
   strands,
-} from "@kidthink/db";
+} from "@mindkid/db";
 import { and, eq } from "drizzle-orm";
 import {
   createError,
@@ -16,10 +15,8 @@ import {
   getCookie,
   setResponseStatus,
 } from "h3";
-import {
-  requireWebUserSession,
-  respondToUserAuthError,
-} from "../../../utils/auth-runtime.js";
+
+import { requireWebUserSession } from "../../../utils/auth-runtime.js";
 
 export type StageVisualStatus = "not_started" | "learning" | "stable";
 
@@ -103,7 +100,7 @@ function evaluateStrandStage(params: {
 
   const stage: MapMilestoneStage = {
     strand_code: strand.code,
-    strand_name: strand.nameVi,
+    strand_name: strand.name,
     competency_code:
       competenciesList.find((c) => Number(c.id) === compId)?.code ?? "C1",
     status,
@@ -156,7 +153,7 @@ function buildActiveRegions(params: {
 
   return allCompetencies.slice(0, 2).map((c) => ({
     competency_code: c.code,
-    competency_name: c.nameVi,
+    competency_name: c.name,
     stages: strandsByCompetencyId.get(Number(c.id)) ?? [],
   }));
 }
@@ -169,125 +166,106 @@ function buildActiveRegions(params: {
  * - Displays 1-2 active learning regions for preschool age group.
  */
 export default defineEventHandler(async (event) => {
-  try {
-    const user = await requireWebUserSession(event);
-    const candidateUuid = getCookie(event, "active_child_id");
+  const user = await requireWebUserSession(event);
+  const candidateUuid = getCookie(event, "active_child_id");
 
-    if (!candidateUuid) {
-      setResponseStatus(event, 428);
-      throw createError({
-        statusCode: 428,
-        statusMessage: "CHILD_SELECTION_REQUIRED",
-        data: {
-          code: "CHILD_SELECTION_REQUIRED",
-          message: "Vui lòng chọn hồ sơ trẻ trước khi xem bản đồ tiến độ.",
-        },
-      });
-    }
+  if (!candidateUuid) {
+    setResponseStatus(event, 428);
+    throw createError({
+      statusCode: 428,
+      statusMessage: "CHILD_SELECTION_REQUIRED",
+      data: {
+        code: "CHILD_SELECTION_REQUIRED",
+        message: "Vui lòng chọn hồ sơ trẻ trước khi xem bản đồ tiến độ.",
+      },
+    });
+  }
 
-    const userId = Number(user.user_id);
-    const db = getOwnerDb();
+  const userId = Number(user.user_id);
+  const db = getOwnerDb();
 
-    // 1. Verify DB ownership and active child status
-    const [activeChild] = await db
-      .select()
-      .from(childProfiles)
-      .where(
-        and(
-          eq(childProfiles.uuid, candidateUuid),
-          eq(childProfiles.userId, userId),
-          eq(childProfiles.status, "active")
-        )
-      );
-
-    if (!activeChild) {
-      deleteCookie(event, "active_child_id", { path: "/" });
-      setResponseStatus(event, 428);
-      throw createError({
-        statusCode: 428,
-        statusMessage: "CHILD_SELECTION_REQUIRED",
-        data: {
-          code: "CHILD_SELECTION_REQUIRED",
-          message:
-            "Hồ sơ trẻ không tồn tại hoặc đã bị lưu trữ. Vui lòng chọn lại.",
-        },
-      });
-    }
-
-    const childId = Number(activeChild.id);
-
-    // 2. Fetch taxonomy structure
-    const allCompetencies = await db
-      .select()
-      .from(competencies)
-      .orderBy(competencies.position);
-
-    const allStrands = await db
-      .select()
-      .from(strands)
-      .orderBy(strands.position);
-
-    const allSkills = await db.select().from(skills).orderBy(skills.position);
-
-    // 3. Fetch child's mastery states
-    const childMasteryRows = await db
-      .select()
-      .from(masteryState)
-      .where(eq(masteryState.childProfileId, childId));
-
-    const masteryBySkillId = new Map(
-      childMasteryRows.map((row) => [
-        Number(row.skillId),
-        {
-          bestPLearn: Number(row.bestPLearn),
-          attemptsTotal: row.attemptsTotal,
-        },
-      ])
+  // 1. Verify DB ownership and active child status
+  const [activeChild] = await db
+    .select()
+    .from(childProfiles)
+    .where(
+      and(
+        eq(childProfiles.uuid, candidateUuid),
+        eq(childProfiles.userId, userId),
+        eq(childProfiles.status, "active")
+      )
     );
 
-    const activeRegions = buildActiveRegions({
-      allCompetencies,
-      allStrands,
-      allSkills,
-      masteryBySkillId,
-    });
-
-    // 4. Fetch unlocked badges
-    const badgeRows = await db
-      .select()
-      .from(childBadges)
-      .where(eq(childBadges.childProfileId, childId))
-      .orderBy(childBadges.awardedAt);
-
-    const badges: MapBadgePayload[] = badgeRows.map((b) => ({
-      badge_code: b.badgeCode,
-      awarded_at: new Date(b.awardedAt).toISOString(),
-    }));
-
-    const response: ChildPlayMapResponse = {
-      child: {
-        uuid: activeChild.uuid,
-        display_name: activeChild.displayName,
-        avatar_id: activeChild.avatarId,
+  if (!activeChild) {
+    deleteCookie(event, "active_child_id", { path: "/" });
+    setResponseStatus(event, 428);
+    throw createError({
+      statusCode: 428,
+      statusMessage: "CHILD_SELECTION_REQUIRED",
+      data: {
+        code: "CHILD_SELECTION_REQUIRED",
+        message:
+          "Hồ sơ trẻ không tồn tại hoặc đã bị lưu trữ. Vui lòng chọn lại.",
       },
-      active_regions: activeRegions,
-      badges,
-    };
-
-    return response;
-  } catch (err: unknown) {
-    const errorObj = err as { statusCode?: number };
-    if (errorObj?.statusCode) {
-      throw err;
-    }
-    if (err instanceof AppError) {
-      setResponseStatus(event, err.status);
-      throw createError({
-        statusCode: err.status,
-        statusMessage: err.code,
-        data: { code: err.code, message: err.message },
-      });
-    }
-    return respondToUserAuthError(event, err);
+    });
   }
+
+  const childId = Number(activeChild.id);
+
+  // 2. Fetch taxonomy structure
+  const allCompetencies = await db
+    .select()
+    .from(competencies)
+    .orderBy(competencies.position);
+
+  const allStrands = await db.select().from(strands).orderBy(strands.position);
+
+  const allSkills = await db.select().from(skills).orderBy(skills.position);
+
+  // 3. Fetch child's mastery states
+  const childMasteryRows = await db
+    .select()
+    .from(masteryState)
+    .where(eq(masteryState.childProfileId, childId));
+
+  const masteryBySkillId = new Map(
+    childMasteryRows.map((row) => [
+      Number(row.skillId),
+      {
+        bestPLearn: Number(row.bestPLearn),
+        attemptsTotal: row.attemptsTotal,
+      },
+    ])
+  );
+
+  const activeRegions = buildActiveRegions({
+    allCompetencies,
+    allStrands,
+    allSkills,
+    masteryBySkillId,
+  });
+
+  // 4. Fetch unlocked badges
+  const badgeRows = await db
+    .select()
+    .from(childBadges)
+    .where(eq(childBadges.childProfileId, childId))
+    .orderBy(childBadges.awardedAt);
+
+  const badges: MapBadgePayload[] = badgeRows.map((b) => ({
+    badge_code: b.badgeCode,
+    awarded_at: new Date(b.awardedAt).toISOString(),
+  }));
+
+  const response: ChildPlayMapResponse = {
+    child: {
+      uuid: activeChild.uuid,
+      display_name: activeChild.displayName,
+      avatar_id: activeChild.avatarId,
+    },
+    active_regions: activeRegions,
+    badges,
+  };
+
+  return response;
 });

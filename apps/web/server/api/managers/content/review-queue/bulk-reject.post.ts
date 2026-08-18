@@ -4,138 +4,131 @@ import {
   getOwnerDb,
   lessons,
   writeAudit,
-} from "@kidthink/db";
+} from "@mindkid/db";
 import { and, eq } from "drizzle-orm";
 import { createError, defineEventHandler, readBody } from "h3";
-import {
-  requireManagerSession,
-  respondToManagerAuthError,
-} from "../../../../utils/admin-auth-runtime.js";
+import { requireManagerSession } from "../../../../utils/admin-auth-runtime.js";
 
 export default defineEventHandler(async (event) => {
-  try {
-    const manager = await requireManagerSession(event);
-    const body =
-      (event.context?.body as Record<string, unknown>) ||
-      ((event as Record<string, unknown>)._body as Record<string, unknown>) ||
-      (await readBody(event).catch(() => ({})));
+  const manager = await requireManagerSession(event);
+  const body =
+    (event.context?.body as Record<string, unknown>) ||
+    ((event as Record<string, unknown>)._body as Record<string, unknown>) ||
+    (await readBody(event).catch(() => ({})));
 
-    const createdByManagerId = Number(body?.created_by_manager_id);
-    const reason = typeof body?.reason === "string" ? body.reason.trim() : "";
+  const createdByManagerId = Number(body?.created_by_manager_id);
+  const reason = typeof body?.reason === "string" ? body.reason.trim() : "";
 
-    if (!createdByManagerId || createdByManagerId <= 0) {
-      throw createError({
-        statusCode: 422,
-        statusMessage: "VALIDATION_FAILED",
-        message: "created_by_manager_id is required",
-      });
-    }
+  if (!createdByManagerId || createdByManagerId <= 0) {
+    throw createError({
+      statusCode: 422,
+      statusMessage: "VALIDATION_FAILED",
+      message: "created_by_manager_id is required",
+    });
+  }
 
-    if (!reason || reason.length < 10) {
-      throw createError({
-        statusCode: 422,
-        statusMessage: "REJECTED_REASON_TOO_SHORT",
-        message: "Từ chối bắt buộc lý do tối thiểu 10 ký tự (BR-CRQ-03)",
-      });
-    }
+  if (!reason || reason.length < 10) {
+    throw createError({
+      statusCode: 422,
+      statusMessage: "REJECTED_REASON_TOO_SHORT",
+      message: "Từ chối bắt buộc lý do tối thiểu 10 ký tự (BR-CRQ-03)",
+    });
+  }
 
-    const db = getOwnerDb();
-    const rejectedIds: Array<{ type: string; id: number; code: string }> = [];
+  const db = getOwnerDb();
+  const rejectedIds: Array<{ type: string; id: number; code: string }> = [];
 
-    // 1. Bulk reject game levels
-    const levelsToReject = await db
-      .select({
-        id: gameLevels.id,
-        code: gameLevels.code,
-        version: gameLevels.contentVersion,
-      })
-      .from(gameLevels)
-      .where(
-        and(
-          eq(gameLevels.status, "in_review"),
-          eq(gameLevels.createdByManagerId, createdByManagerId)
-        )
-      );
+  // 1. Bulk reject game levels
+  const levelsToReject = await db
+    .select({
+      id: gameLevels.id,
+      code: gameLevels.code,
+      version: gameLevels.contentVersion,
+    })
+    .from(gameLevels)
+    .where(
+      and(
+        eq(gameLevels.status, "in_review"),
+        eq(gameLevels.createdByManagerId, createdByManagerId)
+      )
+    );
 
-    for (const lvl of levelsToReject) {
-      await db
-        .update(gameLevels)
-        .set({ status: "rejected", updatedAt: new Date() })
-        .where(eq(gameLevels.id, lvl.id));
+  for (const lvl of levelsToReject) {
+    await db
+      .update(gameLevels)
+      .set({ status: "rejected", updatedAt: new Date() })
+      .where(eq(gameLevels.id, lvl.id));
 
-      await db.insert(contentReviewLog).values({
-        entityType: "game_level",
-        entityId: lvl.id,
-        contentVersion: lvl.version,
-        fromStatus: "in_review",
-        toStatus: "rejected",
-        actorManagerId: manager.manager_id || manager.id || 1,
-        actorRole: (manager.role || "content_reviewer") as
-          | "super_admin"
-          | "content_reviewer",
-        reason,
-      });
-
-      rejectedIds.push({ type: "game_level", id: lvl.id, code: lvl.code });
-    }
-
-    // 2. Bulk reject lessons
-    const lessonsToReject = await db
-      .select({
-        id: lessons.id,
-        code: lessons.code,
-        version: lessons.contentVersion,
-      })
-      .from(lessons)
-      .where(
-        and(
-          eq(lessons.status, "in_review"),
-          eq(lessons.createdByManagerId, createdByManagerId)
-        )
-      );
-
-    for (const les of lessonsToReject) {
-      await db
-        .update(lessons)
-        .set({ status: "rejected", updatedAt: new Date() })
-        .where(eq(lessons.id, les.id));
-
-      await db.insert(contentReviewLog).values({
-        entityType: "lesson",
-        entityId: les.id,
-        contentVersion: les.version,
-        fromStatus: "in_review",
-        toStatus: "rejected",
-        actorManagerId: manager.manager_id || manager.id || 1,
-        actorRole: (manager.role || "content_reviewer") as
-          | "super_admin"
-          | "content_reviewer",
-        reason,
-      });
-
-      rejectedIds.push({ type: "lesson", id: les.id, code: les.code });
-    }
-
-    const managerId = manager.manager_id || manager.id || 1;
-    await writeAudit(db, {
-      actor_type: "manager",
-      actor_id: managerId,
-      action: "content_rejected",
+    await db.insert(contentReviewLog).values({
+      entityType: "game_level",
+      entityId: lvl.id,
+      contentVersion: lvl.version,
+      fromStatus: "in_review",
+      toStatus: "rejected",
+      actorManagerId: manager.manager_id || manager.id || 1,
+      actorRole: (manager.role || "content_reviewer") as
+        | "super_admin"
+        | "content_reviewer",
       reason,
-      entity_type: "bulk_review",
-      entity_id: createdByManagerId.toString(),
-      after_data: {
-        rejected_count: rejectedIds.length,
-        items: rejectedIds,
-      },
     });
 
-    return {
-      success: true,
+    rejectedIds.push({ type: "game_level", id: lvl.id, code: lvl.code });
+  }
+
+  // 2. Bulk reject lessons
+  const lessonsToReject = await db
+    .select({
+      id: lessons.id,
+      code: lessons.code,
+      version: lessons.contentVersion,
+    })
+    .from(lessons)
+    .where(
+      and(
+        eq(lessons.status, "in_review"),
+        eq(lessons.createdByManagerId, createdByManagerId)
+      )
+    );
+
+  for (const les of lessonsToReject) {
+    await db
+      .update(lessons)
+      .set({ status: "rejected", updatedAt: new Date() })
+      .where(eq(lessons.id, les.id));
+
+    await db.insert(contentReviewLog).values({
+      entityType: "lesson",
+      entityId: les.id,
+      contentVersion: les.version,
+      fromStatus: "in_review",
+      toStatus: "rejected",
+      actorManagerId: manager.manager_id || manager.id || 1,
+      actorRole: (manager.role || "content_reviewer") as
+        | "super_admin"
+        | "content_reviewer",
+      reason,
+    });
+
+    rejectedIds.push({ type: "lesson", id: les.id, code: les.code });
+  }
+
+  const managerId = manager.manager_id || manager.id || 1;
+  await writeAudit(db, {
+    actor_type: "manager",
+    actor_id: managerId,
+    action: "content_rejected",
+    reason,
+    entity_type: "bulk_review",
+    entity_id: createdByManagerId.toString(),
+    after_data: {
       rejected_count: rejectedIds.length,
       items: rejectedIds,
-    };
-  } catch (err) {
-    return respondToManagerAuthError(event, err);
-  }
+    },
+  });
+
+  return {
+    success: true,
+    rejected_count: rejectedIds.length,
+    items: rejectedIds,
+  };
 });

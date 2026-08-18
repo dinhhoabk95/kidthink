@@ -337,7 +337,6 @@ export class RedisSessionStore {
             user_id: data.accountId,
             display_name: data.displayName,
             session_id: digest,
-            refresh_token_version: 0,
             active_child_id: data.activeChildId,
           },
         };
@@ -349,7 +348,6 @@ export class RedisSessionStore {
             manager_id: data.accountId,
             display_name: data.displayName,
             session_id: digest,
-            refresh_token_version: 0,
             role: data.role ?? "content_reviewer",
           },
         };
@@ -440,7 +438,6 @@ export class RedisSessionStore {
             user_id: rememberData.accountId,
             display_name: rememberData.displayName,
             session_id: created.sessionId,
-            refresh_token_version: 0,
           },
         };
       }
@@ -453,7 +450,6 @@ export class RedisSessionStore {
           manager_id: rememberData.accountId,
           display_name: rememberData.displayName,
           session_id: created.sessionId,
-          refresh_token_version: 0,
           role: rememberData.role ?? "content_reviewer",
         },
       };

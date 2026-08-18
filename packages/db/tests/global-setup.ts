@@ -14,22 +14,35 @@ import postgres from "postgres";
  * Dọn bằng TRUNCATE liệt kê rõ tên bảng (không dùng toàn schema). Database Docker local
  * được xem là disposable khi chạy test; guard BR-TST-05 từ chối mọi host không phải
  * loopback để không thể chạm DB từ xa. Ca âm nằm ở `tests/global-setup.test.ts`.
+ *
+ * Danh sách chép tay thì sẽ lệch: nó đứng yên ở 56 tên trong khi schema lên 78, nên 22
+ * bảng thêm sau (`library_items`, `payment_transactions`, `error_logs`, …) chưa từng được
+ * dọn — đúng lỗi D-BX tái diễn trên nhóm bảng mới, chỉ chưa ai đo. Danh sách vẫn viết tay
+ * (giữ nguyên chủ ý "không TRUNCATE cả schema") nhưng nay có cổng:
+ * `global-setup.test.ts` đối chiếu nó với `pg_tables` và đỏ ngay khi thiếu một tên.
  */
 
-const TABLES = [
+export const TABLES = [
   "active_sessions",
   "activities",
+  "ai_credit_balance",
+  "ai_credit_ledger",
+  "ai_usage_log",
   "audit_logs",
   "backup_log",
-  "child_daily_stats",
   "child_badges",
+  "child_daily_stats",
   "child_profiles",
   "child_session_summaries",
+  "collections",
   "competencies",
   "consent_logs",
   "consent_requirements",
+  "content_asset_refs",
+  "content_embeddings",
   "content_images",
   "content_review_log",
+  "content_seed_batches",
   "content_skill_map",
   "content_tag_map",
   "content_tags",
@@ -37,31 +50,45 @@ const TABLES = [
   "curriculum_enrollments",
   "curriculum_item_progress",
   "curriculum_items",
+  "curriculum_weeks",
   "custom_games",
   "emoji_registry",
   "entitlement_keys",
   "entitlements",
+  "error_logs",
+  "export_jobs",
+  "feature_flags",
   "game_levels",
   "game_templates",
   "learning_objectives",
   "lesson_activities",
+  "lesson_plan_items",
+  "lesson_plans",
   "lessons",
   "level_daily_stats",
   "level_params",
+  "library_items",
   "managers",
   "mastery_state",
   "mfa_recovery_codes",
+  "mfa_recovery_requests",
   "mfa_settings",
+  "notification_deliveries",
+  "notification_endpoints",
+  "notification_reads",
   "notifications",
   "package_entitlements",
   "packages",
   "payment_orders",
+  "payment_transactions",
   "personal_curricula",
   "personal_curriculum_enrollments",
   "personal_curriculum_item_progress",
   "personal_curriculum_items",
   "play_sessions",
   "quota_usage",
+  "recurring_subscriptions",
+  "seo_pages",
   "skill_action_suggestions",
   "skill_daily_stats",
   "skill_prerequisites",
@@ -69,11 +96,13 @@ const TABLES = [
   "social_identities",
   "strands",
   "telemetry_events",
+  "user_tag_map",
   "user_tags",
   "users",
   "verification_tokens",
   "worksheets",
 ] as const;
+
 const LOOPBACK_HOSTS = new Set(["localhost", "127.0.0.1", "[::1]", "::1"]);
 
 /** BR-TST-05: destructive test cleanup may only target this machine. */
@@ -98,7 +127,7 @@ export async function truncateAllTestTables(
   const url =
     databaseUrl ??
     process.env.DATABASE_URL ??
-    "postgres://postgres:postgres@localhost:5433/kidthink";
+    "postgres://postgres:postgres@localhost:5433/mindkid";
   assertDisposableDatabaseUrl(url);
   const sql = postgres(url, { max: 1 });
   try {

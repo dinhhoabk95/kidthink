@@ -2,71 +2,65 @@ import type {
   GT004Content,
   GT004Difficulty,
 } from "../../contracts/templates/gt004";
-import { BaseGameSession, type FeedbackKind } from "../../game-session";
+import {
+  ACTION_CORRECT,
+  ACTION_IGNORED,
+  ACTION_RETRY,
+  type ActionResult,
+  type GameAction,
+  TemplateGameSession,
+} from "../../game-session";
 
-export class GT004Session extends BaseGameSession {
-  readonly content: GT004Content;
-  readonly difficulty: GT004Difficulty;
-  private readonly sortedItems: Map<string, string> = new Map(); // item_id -> group_id
-  private isWon = false;
-
-  constructor(content: GT004Content, difficulty: GT004Difficulty) {
-    super();
-    this.content = content;
-    this.difficulty = difficulty;
-  }
+export class GT004Session extends TemplateGameSession<
+  GT004Content,
+  GT004Difficulty
+> {
+  /** item_id -> group_id, correctly sorted items only */
+  private readonly sortedItems: Map<string, string> = new Map();
 
   setupEntities(): void {
     this.sortedItems.clear();
     this.isWon = false;
   }
 
-  validateAction(action: { type: string; data: unknown }): {
-    valid: boolean;
-    feedback: FeedbackKind;
-  } {
-    if (action.type !== "sort_item") {
-      return { valid: false, feedback: "none" };
-    }
-    const data = action.data as { item_id: string; group_id: string };
-    const item = this.content.items.find((i) => i.item_id === data.item_id);
-    if (!item) {
-      return { valid: false, feedback: "none" };
-    }
+  private findItem(itemId: string) {
+    return this.content.items.find((i) => i.item_id === itemId);
+  }
 
-    if (item.correct_group_id === data.group_id) {
-      return { valid: true, feedback: "pop_celebrate" };
+  validateAction(action: GameAction): ActionResult {
+    if (action.type !== "sort_item") {
+      return ACTION_IGNORED;
     }
-    return { valid: false, feedback: "amber_soft" };
+    const { item_id, group_id } = action.data as {
+      item_id: string;
+      group_id: string;
+    };
+    const item = this.findItem(item_id);
+    if (!item) {
+      return ACTION_IGNORED;
+    }
+    return item.correct_group_id === group_id ? ACTION_CORRECT : ACTION_RETRY;
   }
 
   onItemSorted(itemId: string, groupId: string): void {
-    const item = this.content.items.find((i) => i.item_id === itemId);
+    const item = this.findItem(itemId);
     if (!item) {
       return;
     }
 
-    if (item.correct_group_id === groupId) {
-      this.sortedItems.set(itemId, groupId);
-      this.recordEvent("item_sorted", {
-        item_id: itemId,
-        group_id: groupId,
-        is_correct: true,
-      });
-      if (this.sortedItems.size === this.content.items.length) {
-        this.isWon = true;
-        this.completeSession();
-      }
-    } else {
-      this.recordEvent("item_sorted", {
-        item_id: itemId,
-        group_id: groupId,
-        is_correct: false,
-      });
+    const isCorrect = item.correct_group_id === groupId;
+    this.recordEvent("item_sorted", {
+      item_id: itemId,
+      group_id: groupId,
+      is_correct: isCorrect,
+    });
+    if (!isCorrect) {
+      return;
     }
-  }
 
-  checkWinCondition(): boolean {
-    return this.isWon;
+    this.sortedItems.set(itemId, groupId);
+    if (this.sortedItems.size === this.content.items.length) {
+      this.winSession();
+    }
   }
 }

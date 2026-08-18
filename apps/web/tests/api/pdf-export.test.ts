@@ -8,8 +8,8 @@ import {
   MONTHLY_PDF_EXPORT_QUOTA,
   processPdfRenderJob,
   users,
-} from "@kidthink/db";
-import { ENTITLEMENT_KEYS } from "@kidthink/shared";
+} from "@mindkid/db";
+import { ENTITLEMENT_KEYS } from "@mindkid/shared";
 import { beforeEach, describe, expect, it } from "vitest";
 import getExportStatusHandler from "../../server/api/users/exports/[uuid].get.js";
 import postExportHandler from "../../server/api/users/exports/index.post.js";
@@ -93,7 +93,7 @@ describe("Task P4.2 — PDF Export API (BR-PDF-01..09)", () => {
         .values({
           key: k.key,
           group: k.group as any,
-          labelVi: k.label,
+          label: k.label,
           isMvp: k.is_mvp,
         })
         .onConflictDoNothing();

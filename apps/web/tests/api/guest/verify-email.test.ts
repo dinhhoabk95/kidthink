@@ -2,8 +2,8 @@ import {
   generateSecureToken,
   hashPassword,
   hashSecureToken,
-} from "@kidthink/auth";
-import { getAppDb, users, verificationTokens } from "@kidthink/db";
+} from "@mindkid/auth";
+import { getAppDb, users, verificationTokens } from "@mindkid/db";
 import { eq } from "drizzle-orm";
 import { describe, expect, it } from "vitest";
 

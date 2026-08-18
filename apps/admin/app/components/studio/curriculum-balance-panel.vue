@@ -177,7 +177,7 @@
 </template>
 
 <script lang="ts" setup>
-  import type { BalanceReport } from "@kidthink/shared";
+  import type { BalanceReport } from "@mindkid/shared";
 
   defineProps<{
     report: BalanceReport;

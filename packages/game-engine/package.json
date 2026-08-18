@@ -1,5 +1,5 @@
 {
-  "name": "@kidthink/game-engine",
+  "name": "@mindkid/game-engine",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -8,7 +8,7 @@
     "typecheck": "tsc --noEmit"
   },
   "devDependencies": {
-    "@kidthink/config": "workspace:*",
+    "@mindkid/config": "workspace:*",
     "typescript": "catalog:",
     "vitest": "catalog:"
   },

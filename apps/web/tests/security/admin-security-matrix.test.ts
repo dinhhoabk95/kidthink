@@ -1,4 +1,4 @@
-import { InMemoryRedisClient, RedisSessionStore } from "@kidthink/auth";
+import { InMemoryRedisClient, RedisSessionStore } from "@mindkid/auth";
 import { describe, expect, it } from "vitest";
 
 describe("Task 4 & 5 — Admin Security Matrix & Surface Isolation (BR-ADA-02..06, D-EY, D-EZ)", () => {

@@ -203,7 +203,7 @@
 </template>
 
 <script lang="ts" setup>
-  import type { UiHintType } from "@kidthink/shared";
+  import type { UiHintType } from "@mindkid/shared";
   import { computed } from "vue";
 
   const props = defineProps<{

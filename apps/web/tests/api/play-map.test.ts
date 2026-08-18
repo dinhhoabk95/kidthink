@@ -4,7 +4,7 @@ import {
   competencies,
   getOwnerDb,
   users,
-} from "@kidthink/db";
+} from "@mindkid/db";
 import { describe, expect, it } from "vitest";
 import getPlayMapHandler from "../../server/api/users/play/map.get";
 
@@ -43,7 +43,6 @@ function mockEvent(
         user_id: userId,
         display_name: "Parent User",
         session_id: `sess_${userId}`,
-        refresh_token_version: 0,
       },
     },
   } as any;
@@ -89,7 +88,7 @@ describe("Child Play Map API (BR-PRG-02..05, D-MJ, D-MK)", () => {
       .insert(competencies)
       .values({
         code: "C1",
-        nameVi: "Số & Đếm",
+        name: "Số & Đếm",
         colorToken: "blue",
         icon: "icon-c1",
         position: 1,

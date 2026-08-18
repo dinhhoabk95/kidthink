@@ -256,7 +256,7 @@ T5a → T5b → T5c; không dồn integration test đồng thời sang PR cuối
 - [ ] Ngưỡng backlog và alert của hai job này khai trong `alerts.yml` — gỡ `pending_source: P2.3` mà P1.16 đã đặt.
 
 **Kiểm chứng**
-- [ ] `pnpm --filter @kidthink/worker test -- payment-jobs` xanh.
+- [ ] `pnpm --filter @mindkid/worker test -- payment-jobs` xanh.
 
 **Phụ thuộc:** T3 · P1.5 · **Cỡ:** M
 

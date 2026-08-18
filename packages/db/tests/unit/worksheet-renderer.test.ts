@@ -116,21 +116,21 @@ describe("Pure TypeScript Vector Worksheet PDF Renderer (BR-WSM-01..08)", () => 
           x_pct: 25,
           y_pct: 30,
           radius_mm: 12,
-          description_adult_vi: "Thiếu mào gà",
+          description_adult: "Thiếu mào gà",
         },
         {
           spot_id: "s2",
           x_pct: 70,
           y_pct: 50,
           radius_mm: 12,
-          description_adult_vi: "Ngôi sao trên mái",
+          description_adult: "Ngôi sao trên mái",
         },
         {
           spot_id: "s3",
           x_pct: 45,
           y_pct: 80,
           radius_mm: 12,
-          description_adult_vi: "Bụi cỏ",
+          description_adult: "Bụi cỏ",
         },
       ],
       stroke_pt: 2.0,
@@ -171,7 +171,7 @@ describe("Pure TypeScript Vector Worksheet PDF Renderer (BR-WSM-01..08)", () => 
         title: `Phiếu bài tập ${tmpl}`,
         layout_template: tmpl,
         content_blocks: sampleBlocks[tmpl],
-        instructions_vi: adultInstructions,
+        instructions: adultInstructions,
       });
 
       expect(result.pdfBuffer).toBeInstanceOf(Buffer);

@@ -1,5 +1,5 @@
-import type { AccessTier } from "@kidthink/shared";
-import { allowedTiers } from "@kidthink/shared";
+import type { AccessTier } from "@mindkid/shared";
+import { allowedTiers } from "@mindkid/shared";
 import { and, eq, gte, lte, sql } from "drizzle-orm";
 import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 import { z } from "zod";
@@ -102,10 +102,10 @@ function buildSearchWhereConditions(
     const patternNorm = `%${normalizedQuery}%`;
     conditions.push(
       sql`(
-        ${gameLevels.titleVi} ILIKE ${patternRaw} OR
-        ${gameLevels.descriptionVi} ILIKE ${patternRaw} OR
+        ${gameLevels.title} ILIKE ${patternRaw} OR
+        ${gameLevels.description} ILIKE ${patternRaw} OR
         ${gameLevels.code} ILIKE ${patternRaw} OR
-        ${gameLevels.titleVi} ILIKE ${patternNorm}
+        ${gameLevels.title} ILIKE ${patternNorm}
       )`
     );
   }
@@ -146,9 +146,9 @@ async function getViewerAllowedTiers(viewer: {
 interface RawRow {
   id: number;
   code: string;
-  titleVi: string;
-  descriptionVi?: string | null;
-  instructionVi?: string | null;
+  title: string;
+  description?: string | null;
+  instruction?: string | null;
   thumbnailEmoji?: string | null;
   themeId?: string | null;
   ageMin?: number | null;
@@ -169,9 +169,9 @@ function formatSearchItem(row: RawRow, userAllowedTiers: AccessTier[]) {
     return {
       id: row.id,
       code: row.code,
-      title: row.titleVi,
-      description_vi: row.descriptionVi,
-      instruction: row.instructionVi,
+      title: row.title,
+      description: row.description,
+      instruction: row.instruction,
       thumbnail_emoji: row.thumbnailEmoji,
       theme_id: row.themeId,
       age_min: row.ageMin,
@@ -186,9 +186,9 @@ function formatSearchItem(row: RawRow, userAllowedTiers: AccessTier[]) {
   return {
     id: row.id,
     code: row.code,
-    title: row.titleVi,
-    description_vi: row.descriptionVi,
-    instruction: row.instructionVi,
+    title: row.title,
+    description: row.description,
+    instruction: row.instruction,
     thumbnail_emoji: row.thumbnailEmoji,
     theme_id: row.themeId,
     age_min: row.ageMin,
@@ -219,9 +219,9 @@ export async function searchGameLevels(
     .select({
       id: gameLevels.id,
       code: gameLevels.code,
-      titleVi: gameLevels.titleVi,
-      descriptionVi: gameLevels.descriptionVi,
-      instructionVi: gameLevels.instructionVi,
+      title: gameLevels.title,
+      description: gameLevels.description,
+      instruction: gameLevels.instruction,
       thumbnailEmoji: gameLevels.thumbnailEmoji,
       themeId: gameLevels.themeId,
       ageMin: gameLevels.ageMin,
@@ -298,7 +298,7 @@ function buildActivityConditions(
   if (params.q && params.q.trim().length > 0) {
     const patternRaw = `%${params.q.trim()}%`;
     conditions.push(
-      sql`(${activities.titleVi} ILIKE ${patternRaw} OR ${activities.instructionVi} ILIKE ${patternRaw} OR ${activities.materialsVi} ILIKE ${patternRaw})`
+      sql`(${activities.title} ILIKE ${patternRaw} OR ${activities.instruction} ILIKE ${patternRaw} OR ${activities.materials} ILIKE ${patternRaw})`
     );
   }
   return conditions;
@@ -324,9 +324,9 @@ export async function searchActivities(
       code: activities.code,
       contentVersion: activities.contentVersion,
       kind: activities.kind,
-      titleVi: activities.titleVi,
-      instructionVi: activities.instructionVi,
-      materialsVi: activities.materialsVi,
+      title: activities.title,
+      instruction: activities.instruction,
+      materials: activities.materials,
       estimatedMinutes: activities.estimatedMinutes,
       refType: activities.refType,
       refId: activities.refId,
@@ -354,9 +354,9 @@ export async function searchActivities(
       code: row.code,
       content_version: row.contentVersion,
       kind: row.kind,
-      title: row.titleVi,
-      instruction: isLocked ? "" : row.instructionVi,
-      materials_vi: row.materialsVi,
+      title: row.title,
+      instruction: isLocked ? "" : row.instruction,
+      materials: row.materials,
       estimated_minutes: row.estimatedMinutes,
       ref_type: row.refType,
       ref_id: row.refId,
@@ -414,7 +414,7 @@ function buildLessonConditions(
   if (params.q && params.q.trim().length > 0) {
     const patternRaw = `%${params.q.trim()}%`;
     conditions.push(
-      sql`(${lessons.titleVi} ILIKE ${patternRaw} OR ${lessons.guideVi} ILIKE ${patternRaw} OR ${lessons.materialsVi} ILIKE ${patternRaw})`
+      sql`(${lessons.title} ILIKE ${patternRaw} OR ${lessons.guide} ILIKE ${patternRaw} OR ${lessons.materials} ILIKE ${patternRaw})`
     );
   }
 
@@ -440,16 +440,16 @@ export async function searchLessons(
       entityId: lessons.entityId,
       code: lessons.code,
       contentVersion: lessons.contentVersion,
-      titleVi: lessons.titleVi,
-      guideVi: lessons.guideVi,
+      title: lessons.title,
+      guide: lessons.guide,
       targetAgeMin: lessons.targetAgeMin,
       targetAgeMax: lessons.targetAgeMax,
       estimatedMinutes: lessons.estimatedMinutes,
-      materialsVi: lessons.materialsVi,
-      warmUpVi: lessons.warmUpVi,
-      reflectionVi: lessons.reflectionVi,
-      assessmentVi: lessons.assessmentVi,
-      extensionVi: lessons.extensionVi,
+      materials: lessons.materials,
+      warmUp: lessons.warmUp,
+      reflection: lessons.reflection,
+      assessment: lessons.assessment,
+      extension: lessons.extension,
       accessTier: lessons.accessTier,
       status: lessons.status,
       origin: lessons.origin,
@@ -473,16 +473,16 @@ export async function searchLessons(
       entity_id: row.entityId,
       code: row.code,
       content_version: row.contentVersion,
-      title: row.titleVi,
-      guide_vi: isLocked ? "" : row.guideVi,
+      title: row.title,
+      guide: isLocked ? "" : row.guide,
       target_age_min: row.targetAgeMin,
       target_age_max: row.targetAgeMax,
       estimated_minutes: row.estimatedMinutes,
-      materials_vi: row.materialsVi,
-      warm_up_vi: row.warmUpVi,
-      reflection_vi: row.reflectionVi,
-      assessment_vi: row.assessmentVi,
-      extension_vi: row.extensionVi,
+      materials: row.materials,
+      warm_up: row.warmUp,
+      reflection: row.reflection,
+      assessment: row.assessment,
+      extension: row.extension,
       access_tier: row.accessTier,
       status: row.status,
       origin: row.origin,
@@ -524,8 +524,8 @@ export async function searchContentPublished(
       id: it.id,
       contentType: "game_level",
       code: it.code,
-      titleVi: it.title,
-      instructionVi: it.instruction,
+      title: it.title,
+      instruction: it.instruction,
       ageMin: it.age_min ?? 3,
       ageMax: it.age_max ?? 6,
       difficulty: it.difficulty ?? 1,

@@ -1,13 +1,13 @@
 import fs from "node:fs";
 import path from "node:path";
-import type { ContentLifecycleStatus, ThinkingProcess } from "@kidthink/shared";
+import type { ContentLifecycleStatus, ThinkingProcess } from "@mindkid/shared";
 import {
   assertDag,
   buildSkillTree,
   COMPETENCIES,
   type SkillRow,
   STRANDS,
-} from "@kidthink/taxonomy";
+} from "@mindkid/taxonomy";
 import { sql } from "drizzle-orm";
 import type { NodePgDatabase } from "drizzle-orm/node-postgres";
 import {
@@ -22,7 +22,7 @@ export interface ParsedSkill {
   code: string;
   strand_code: string;
   competency_code: string;
-  name_vi: string;
+  name: string;
   age_min: number;
   age_max: number;
   difficulty: number;
@@ -31,8 +31,8 @@ export interface ParsedSkill {
   prerequisites: string[];
   learning_objectives: {
     code: string;
-    behaviour_vi: string;
-    observable_criteria_vi: string;
+    behaviour: string;
+    observable_criteria: string;
     position: number;
   }[];
 }
@@ -90,26 +90,26 @@ function parseThinkingProcesses(thinkingStr: string): string[] {
   return matches.length > 0 ? matches : ["observe"];
 }
 
-function generateDefaultLOs(code: string, nameVi: string) {
+function generateDefaultLOs(code: string, name: string) {
   return [
     {
       code: `LO-${code}-01`,
-      behaviour_vi: `Nhận biết và thực hành ${nameVi} ở mức cơ bản`,
-      observable_criteria_vi:
+      behaviour: `Nhận biết và thực hành ${name} ở mức cơ bản`,
+      observable_criteria:
         "Trẻ thực hiện đúng không qua gợi ý trong 3 lần thử liên tiếp.",
       position: 1,
     },
     {
       code: `LO-${code}-02`,
-      behaviour_vi: `Vận dụng ${nameVi} trong môi trường tương tác`,
-      observable_criteria_vi:
+      behaviour: `Vận dụng ${name} trong môi trường tương tác`,
+      observable_criteria:
         "Trẻ hoàn thành thử thách độc lập trong vòng 2 phút.",
       position: 2,
     },
     {
       code: `LO-${code}-03`,
-      behaviour_vi: `Giải quyết vấn đề nâng cao liên quan tới ${nameVi}`,
-      observable_criteria_vi:
+      behaviour: `Giải quyết vấn đề nâng cao liên quan tới ${name}`,
+      observable_criteria:
         "Trẻ trả lời chính xác câu hỏi phân loại/suy luận liên quan.",
       position: 3,
     },
@@ -139,7 +139,7 @@ function parseSkillTableRow(
     return null;
   }
 
-  const name_vi = cells[1];
+  const name = cells[1];
   const { age_min, age_max } = parseAgeRange(cells[2]);
   const difficulty = Number.parseInt(cells[3], 10) || 1;
   const prerequisites = parsePrereqs(cells[4]);
@@ -155,14 +155,14 @@ function parseSkillTableRow(
     code,
     strand_code: currentStrandCode || code.slice(0, code.lastIndexOf(".")),
     competency_code: currentCompCode || code.split(".")[0],
-    name_vi,
+    name,
     age_min,
     age_max,
     difficulty,
     thinking_processes,
     status,
     prerequisites,
-    learning_objectives: generateDefaultLOs(code, name_vi),
+    learning_objectives: generateDefaultLOs(code, name),
   };
 }
 
@@ -310,7 +310,7 @@ export function validateTaxonomyInvariants(skillsToSeed: ParsedSkill[]): void {
     code: s.code,
     strand_code: s.strand_code,
     competency_code: s.competency_code,
-    name: s.name_vi,
+    name: s.name,
     age_min: s.age_min,
     age_max: s.age_max,
     difficulty: s.difficulty,
@@ -321,8 +321,8 @@ export function validateTaxonomyInvariants(skillsToSeed: ParsedSkill[]): void {
     })),
     learning_objectives: s.learning_objectives.map((lo) => ({
       code: lo.code,
-      behaviour: lo.behaviour_vi,
-      observable_criteria: lo.observable_criteria_vi,
+      behaviour: lo.behaviour,
+      observable_criteria: lo.observable_criteria,
       position: lo.position,
     })),
   }));
@@ -336,8 +336,8 @@ async function seedCompetenciesStep(
 ): Promise<Map<string, number>> {
   const values = COMPETENCIES.map((comp) => ({
     code: comp.code,
-    nameVi: comp.name || "",
-    descriptionVi: comp.description || null,
+    name: comp.name || "",
+    description: comp.description || null,
     colorToken: `color-${comp.code.toLowerCase()}`,
     icon: `icon-${comp.code.toLowerCase()}`,
     position: Number.parseInt(comp.code.replace("C", ""), 10),
@@ -350,8 +350,8 @@ async function seedCompetenciesStep(
       .onConflictDoUpdate({
         target: competencies.code,
         set: {
-          nameVi: sql`excluded.name_vi`,
-          descriptionVi: sql`excluded.description_vi`,
+          name: sql`excluded.name`,
+          description: sql`excluded.description`,
         },
       });
   }
@@ -376,8 +376,8 @@ async function seedStrandsStep(
     return {
       code: str.code,
       competencyId: compId,
-      nameVi: str.name || "",
-      descriptionVi: str.description || null,
+      name: str.name || "",
+      description: str.description || null,
       position: idx + 1,
     };
   }).filter((s): s is NonNullable<typeof s> => s !== null);
@@ -390,8 +390,8 @@ async function seedStrandsStep(
         target: strands.code,
         set: {
           competencyId: sql`excluded.competency_id`,
-          nameVi: sql`excluded.name_vi`,
-          descriptionVi: sql`excluded.description_vi`,
+          name: sql`excluded.name`,
+          description: sql`excluded.description`,
         },
       });
   }
@@ -418,7 +418,7 @@ async function seedSkillsStep(
       return {
         code: sk.code,
         strandId,
-        nameVi: sk.name_vi || "",
+        name: sk.name || "",
         ageMin: sk.age_min,
         ageMax: sk.age_max,
         difficulty: sk.difficulty,
@@ -437,7 +437,7 @@ async function seedSkillsStep(
         target: skills.code,
         set: {
           strandId: sql`excluded.strand_id`,
-          nameVi: sql`excluded.name_vi`,
+          name: sql`excluded.name`,
           ageMin: sql`excluded.age_min`,
           ageMax: sql`excluded.age_max`,
           difficulty: sql`excluded.difficulty`,
@@ -497,8 +497,8 @@ async function seedLearningObjectivesStep(
   const values: {
     code: string;
     skillId: number;
-    behaviourVi: string;
-    observableCriteriaVi: string;
+    behaviour: string;
+    observableCriteria: string;
     position: number;
   }[] = [];
 
@@ -512,8 +512,8 @@ async function seedLearningObjectivesStep(
       values.push({
         code: lo.code,
         skillId,
-        behaviourVi: lo.behaviour_vi,
-        observableCriteriaVi: lo.observable_criteria_vi,
+        behaviour: lo.behaviour,
+        observableCriteria: lo.observable_criteria,
         position: lo.position,
       });
     }
@@ -527,8 +527,8 @@ async function seedLearningObjectivesStep(
         target: learningObjectives.code,
         set: {
           skillId: sql`excluded.skill_id`,
-          behaviourVi: sql`excluded.behaviour_vi`,
-          observableCriteriaVi: sql`excluded.observable_criteria_vi`,
+          behaviour: sql`excluded.behaviour`,
+          observableCriteria: sql`excluded.observable_criteria`,
           position: sql`excluded.position`,
         },
       });

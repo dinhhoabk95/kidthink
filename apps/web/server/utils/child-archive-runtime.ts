@@ -1,4 +1,4 @@
-import { childProfiles, getOwnerDb } from "@kidthink/db";
+import { childProfiles, getOwnerDb } from "@mindkid/db";
 import { eq } from "drizzle-orm";
 
 export interface ArchiveChildProfileInput {

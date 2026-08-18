@@ -1,4 +1,4 @@
-import { getWorksheetByCode, renderWorksheetPdf } from "@kidthink/db";
+import { getWorksheetByCode, renderWorksheetPdf } from "@mindkid/db";
 import {
   createError,
   defineEventHandler,
@@ -35,10 +35,10 @@ export default defineEventHandler(async (event) => {
   const renderResult = renderWorksheetPdf({
     code: ws.code,
     version: ws.contentVersion,
-    title: ws.titleVi,
+    title: ws.title,
     layout_template: ws.layoutTemplate,
     content_blocks: ws.contentBlocks,
-    instructions_vi: ws.instructionsVi || "",
+    instructions: ws.instructions || "",
   });
 
   setHeader(event, "Content-Type", "application/pdf");

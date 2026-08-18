@@ -141,7 +141,7 @@ T1 phân giải asset ở server (emoji · image · audio) + đường lỗi
 - [ ] Ghi nợ tường minh: heartbeat, timeout, abandon, resume, đóng phiên → **P1.6**.
 
 **Kiểm chứng**
-- [ ] `pnpm test -- session-row` xanh; `pnpm --filter @kidthink/db test` xanh.
+- [ ] `pnpm test -- session-row` xanh; `pnpm --filter @mindkid/db test` xanh.
 
 **Phụ thuộc:** T2 · **Cỡ:** S
 

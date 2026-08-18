@@ -9,6 +9,7 @@ import {
   primaryKey,
   smallint,
   timestamp,
+  unique,
   uuid,
   varchar,
 } from "drizzle-orm/pg-core";
@@ -50,6 +51,9 @@ export const playSessions = pgTable(
     updatedAt: timestamp("updated_at", { withTimezone: true })
       .defaultNow()
       .notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .defaultNow()
+      .notNull(),
   },
   (table) => [
     check(
@@ -78,6 +82,9 @@ export const telemetryEvents = pgTable(
     createdAt: timestamp("created_at", { withTimezone: true })
       .defaultNow()
       .notNull(),
+    updatedAt: timestamp("updated_at", { withTimezone: true })
+      .defaultNow()
+      .notNull(),
   },
   (table) => [primaryKey({ columns: [table.sessionUuid, table.seq] })]
 );
@@ -85,6 +92,9 @@ export const telemetryEvents = pgTable(
 export const childSessionSummaries = pgTable(
   "child_session_summaries",
   {
+    id: bigint("id", { mode: "number" })
+      .primaryKey()
+      .generatedAlwaysAsIdentity(),
     childProfileId: bigint("child_profile_id", { mode: "number" })
       .notNull()
       .references(() => childProfiles.id, { onDelete: "cascade" }),
@@ -106,15 +116,24 @@ export const childSessionSummaries = pgTable(
     createdAt: timestamp("created_at", { withTimezone: true })
       .defaultNow()
       .notNull(),
+    updatedAt: timestamp("updated_at", { withTimezone: true })
+      .defaultNow()
+      .notNull(),
   },
   (table) => [
-    primaryKey({ columns: [table.childProfileId, table.sessionUuid] }),
+    unique("child_session_summaries_child_session_unique").on(
+      table.childProfileId,
+      table.sessionUuid
+    ),
   ]
 );
 
 export const childDailyStats = pgTable(
   "child_daily_stats",
   {
+    id: bigint("id", { mode: "number" })
+      .primaryKey()
+      .generatedAlwaysAsIdentity(),
     childProfileId: bigint("child_profile_id", { mode: "number" })
       .notNull()
       .references(() => childProfiles.id, { onDelete: "cascade" }),
@@ -133,13 +152,24 @@ export const childDailyStats = pgTable(
     updatedAt: timestamp("updated_at", { withTimezone: true })
       .defaultNow()
       .notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .defaultNow()
+      .notNull(),
   },
-  (table) => [primaryKey({ columns: [table.childProfileId, table.dateIct] })]
+  (table) => [
+    unique("child_daily_stats_child_date_unique").on(
+      table.childProfileId,
+      table.dateIct
+    ),
+  ]
 );
 
 export const levelDailyStats = pgTable(
   "level_daily_stats",
   {
+    id: bigint("id", { mode: "number" })
+      .primaryKey()
+      .generatedAlwaysAsIdentity(),
     levelCode: varchar("level_code", { length: 40 }).notNull(),
     contentVersion: integer("content_version").notNull(),
     dateIct: varchar("date_ict", { length: 10 }).notNull(),
@@ -151,17 +181,25 @@ export const levelDailyStats = pgTable(
     updatedAt: timestamp("updated_at", { withTimezone: true })
       .defaultNow()
       .notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .defaultNow()
+      .notNull(),
   },
   (table) => [
-    primaryKey({
-      columns: [table.levelCode, table.contentVersion, table.dateIct],
-    }),
+    unique("level_daily_stats_level_version_date_unique").on(
+      table.levelCode,
+      table.contentVersion,
+      table.dateIct
+    ),
   ]
 );
 
 export const skillDailyStats = pgTable(
   "skill_daily_stats",
   {
+    id: bigint("id", { mode: "number" })
+      .primaryKey()
+      .generatedAlwaysAsIdentity(),
     skillId: bigint("skill_id", { mode: "number" })
       .notNull()
       .references(() => skills.id, { onDelete: "cascade" }),
@@ -171,6 +209,14 @@ export const skillDailyStats = pgTable(
     updatedAt: timestamp("updated_at", { withTimezone: true })
       .defaultNow()
       .notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .defaultNow()
+      .notNull(),
   },
-  (table) => [primaryKey({ columns: [table.skillId, table.dateIct] })]
+  (table) => [
+    unique("skill_daily_stats_skill_date_unique").on(
+      table.skillId,
+      table.dateIct
+    ),
+  ]
 );

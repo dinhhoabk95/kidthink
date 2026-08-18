@@ -2,7 +2,7 @@
 spec: RECURRING-BILLING
 title: Gia hạn thuê bao tự động và quản lý chu kỳ
 area: account
-status: approved
+status: implemented
 mvp: false
 phase: P5
 reviewed: 2026-08-16

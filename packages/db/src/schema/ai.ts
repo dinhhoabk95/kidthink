@@ -56,6 +56,9 @@ export const contentEmbeddings = pgTable(
     createdAt: timestamp("created_at", { withTimezone: true })
       .defaultNow()
       .notNull(),
+    updatedAt: timestamp("updated_at", { withTimezone: true })
+      .defaultNow()
+      .notNull(),
   },
   (table) => [
     uniqueIndex("idx_content_embeddings_unique").on(
@@ -64,11 +67,6 @@ export const contentEmbeddings = pgTable(
       table.contentVersion,
       table.model,
       table.chunkIndex
-    ),
-    index("idx_content_embeddings_lookup").on(
-      table.contentType,
-      table.contentId,
-      table.contentVersion
     ),
     index("idx_content_embeddings_model").on(table.model),
   ]
@@ -93,6 +91,9 @@ export const aiUsageLog = pgTable(
     costUsdMicros: integer("cost_usd_micros").notNull().default(0),
     moderationPassed: boolean("moderation_passed").notNull().default(true),
     createdAt: timestamp("created_at", { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+    updatedAt: timestamp("updated_at", { withTimezone: true })
       .defaultNow()
       .notNull(),
   },

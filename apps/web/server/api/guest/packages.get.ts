@@ -1,4 +1,4 @@
-import { PACKAGE_CATALOG } from "@kidthink/shared";
+import { PACKAGE_CATALOG } from "@mindkid/shared";
 import { defineEventHandler } from "h3";
 
 export default defineEventHandler(() => {
@@ -7,7 +7,7 @@ export default defineEventHandler(() => {
     .map((pkg) => ({
       code: pkg.code,
       title: pkg.title,
-      description_vi: pkg.description_vi,
+      description: pkg.description,
       tier: pkg.tier,
       entitlements: pkg.entitlements,
       offers: pkg.offers,

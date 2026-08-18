@@ -67,10 +67,10 @@
 ## T10 — Evidence
 
 - [x] Mỗi `BR-AUT-25` đến `BR-AUT-38` có evidence.
-- [x] `pnpm --filter @kidthink/auth test` xanh.
-- [x] `pnpm --filter @kidthink/db test` xanh.
-- [x] `pnpm --filter @kidthink/web test` xanh.
-- [x] `pnpm --filter @kidthink/admin test` xanh.
+- [x] `pnpm --filter @mindkid/auth test` xanh.
+- [x] `pnpm --filter @mindkid/db test` xanh.
+- [x] `pnpm --filter @mindkid/web test` xanh.
+- [x] `pnpm --filter @mindkid/admin test` xanh.
 - [x] `pnpm test:e2e` xanh.
 - [x] `pnpm lint:specs` xanh.
 - [x] `pnpm check && pnpm test && pnpm check:progress` xanh.

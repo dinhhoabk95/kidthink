@@ -1,7 +1,8 @@
-import { getWorksheetByCode, updateWorksheetDraft } from "@kidthink/db";
-import { worksheetFormSchema } from "@kidthink/shared";
+import { getWorksheetByCode, updateWorksheetDraft } from "@mindkid/db";
+import { worksheetFormSchema } from "@mindkid/shared";
 import { createError, defineEventHandler, getRouterParam, readBody } from "h3";
 import { requireManagerSession } from "../../../../utils/admin-auth-runtime.js";
+import { throwValidationError } from "../../../../utils/api-error.js";
 
 export default defineEventHandler(async (event) => {
   const session = await requireManagerSession(event);
@@ -37,12 +38,7 @@ export default defineEventHandler(async (event) => {
       : fallbackBody;
   const parsed = worksheetFormSchema.partial().safeParse(rawBody);
   if (!parsed.success) {
-    throw createError({
-      statusCode: 422,
-      statusMessage: "VALIDATION_FAILED",
-      message: parsed.error.issues.map((i) => i.message).join("; "),
-      data: parsed.error.issues,
-    });
+    throwValidationError(parsed.error);
   }
 
   try {

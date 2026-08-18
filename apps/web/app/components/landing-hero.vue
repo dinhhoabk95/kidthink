@@ -8,7 +8,7 @@
           Thư viện tư duy qua trò chơi tương tác cho bé
         </h1>
         <p class="hero-desc">
-          KidThink giúp bé rèn luyện 6 năng lực toán học nền tảng qua 120+ trò
+          MindKid giúp bé rèn luyện 6 năng lực toán học nền tảng qua 120+ trò
           chơi kiến tạo sư phạm trực quan, nói không với học vẹt và áp lực điểm
           số.
         </p>

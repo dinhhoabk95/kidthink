@@ -1,17 +1,11 @@
-import { AppError } from "@kidthink/auth";
-import { ingestPlayEvents } from "@kidthink/db";
-import {
-  createError,
-  defineEventHandler,
-  getRouterParam,
-  readBody,
-  setResponseStatus,
-} from "h3";
+import { AppError } from "@mindkid/auth";
+import { ingestPlayEvents } from "@mindkid/db";
+import { createError, defineEventHandler, getRouterParam, readBody } from "h3";
 import { z } from "zod";
+
 import {
   assertRequestBodySize,
   requireWebUserSession,
-  respondToUserAuthError,
 } from "../../../../utils/auth-runtime.js";
 
 const EventsSchema = z
@@ -34,35 +28,23 @@ const EventsSchema = z
   .strict();
 
 export default defineEventHandler(async (event) => {
-  try {
-    const user = await requireWebUserSession(event);
-    assertRequestBodySize(event, 64 * 1024);
-    const uuid = getRouterParam(event, "uuid");
-    if (!uuid) {
-      throw createError({ statusCode: 404, statusMessage: "NOT_FOUND" });
-    }
-
-    const parsed = EventsSchema.safeParse((await readBody(event)) || {});
-    if (!parsed.success) {
-      throw new AppError("VALIDATION_FAILED");
-    }
-    const events = parsed.data.events;
-
-    const result = await ingestPlayEvents(uuid, events, {
-      isUserCall: true,
-      callerAccountId: user.user_id,
-    });
-
-    return result;
-  } catch (err) {
-    if (err instanceof AppError) {
-      setResponseStatus(event, err.status);
-      throw createError({
-        statusCode: err.status,
-        statusMessage: err.code,
-        data: { code: err.code, message: err.message },
-      });
-    }
-    return respondToUserAuthError(event, err);
+  const user = await requireWebUserSession(event);
+  assertRequestBodySize(event, 64 * 1024);
+  const uuid = getRouterParam(event, "uuid");
+  if (!uuid) {
+    throw createError({ statusCode: 404, statusMessage: "NOT_FOUND" });
   }
+
+  const parsed = EventsSchema.safeParse((await readBody(event)) || {});
+  if (!parsed.success) {
+    throw new AppError("VALIDATION_FAILED");
+  }
+  const events = parsed.data.events;
+
+  const result = await ingestPlayEvents(uuid, events, {
+    isUserCall: true,
+    callerAccountId: user.user_id,
+  });
+
+  return result;
 });

@@ -1,4 +1,4 @@
-import { consentLogs, getAppDb, socialIdentities, users } from "@kidthink/db";
+import { consentLogs, getAppDb, socialIdentities, users } from "@mindkid/db";
 import { eq, inArray } from "drizzle-orm";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { handleSocialLogin } from "../../server/api/guest/auth/users/social-login.post.js";

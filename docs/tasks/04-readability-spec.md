@@ -7,7 +7,7 @@
 ## Chỗ để file này, và vì sao không phải [`SPEC.md`](../SPEC.md) ở gốc repo
 
 Lệnh `/spec` mặc định ghi ra [`SPEC.md`](../SPEC.md) ở gốc dự án. Ở repo này **không làm vậy được**:
-`kidthink/SPEC.md` là symlink trỏ tới [`../SPEC.md`](../SPEC.md) — bản đặc tả sản phẩm dài
+`mindkid/SPEC.md` là symlink trỏ tới [`../SPEC.md`](../SPEC.md) — bản đặc tả sản phẩm dài
 1.286 dòng, được kiểm tra C11 đối chiếu số lượng spec, và là thứ 130 file trong `docs/specs/`
 tham chiếu tới. Ghi đè nó bằng spec của một task biên tập là phá hợp đồng sản phẩm.
 
@@ -137,7 +137,7 @@ tả chính quy ước này.
 
 ## 2. Lệnh chạy
 
-Mọi lệnh chạy từ thư mục `kidthink/`. Shell mặc định của máy đang là Node v20.17.0, còn dự án
+Mọi lệnh chạy từ thư mục `mindkid/`. Shell mặc định của máy đang là Node v20.17.0, còn dự án
 cần v24 — nên mọi lệnh phải đặt lại `PATH` trước:
 
 ```bash
@@ -164,7 +164,7 @@ Task này chỉ chạm vào tài liệu và mã kiểm tra tài liệu. Không c
 `packages/`.
 
 ```
-kidthink/
+mindkid/
 ├── docs/
 │   ├── SPEC.md                     Đặc tả sản phẩm, 1.286 dòng — viết lại phần văn xuôi
 │   ├── specs/

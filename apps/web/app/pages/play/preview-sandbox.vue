@@ -1,17 +1,8 @@
 <script lang="ts" setup>
-  import {
-    type EngineConfig,
-    GameEngine,
-    type GameSession,
-    GT001Session,
-    GT002Session,
-    GT003Session,
-    GT004Session,
-    GT005Session,
-    GT006Session,
-  } from "@kidthink/game-engine";
+  import { type EngineConfig, GameEngine } from "@mindkid/game-engine";
   import { onMounted, onUnmounted, ref } from "vue";
   import { useRoute } from "vue-router";
+  import { createSessionFactory } from "../../utils/game-session-factory";
 
   interface StudioUpdatePayload {
     templateCode?: string;
@@ -29,27 +20,6 @@
   let currentConfig: EngineConfig | null = null;
   let currentTemplateCode = (route.query.template as string) || "GT-001";
 
-  function createSessionFactory(
-    templateCode: string
-  ): (cfg: EngineConfig) => GameSession {
-    switch (templateCode) {
-      case "GT-001":
-        return (cfg) => new GT001Session(cfg as never);
-      case "GT-002":
-        return (cfg) => new GT002Session(cfg as never);
-      case "GT-003":
-        return (cfg) => new GT003Session(cfg as never);
-      case "GT-004":
-        return (cfg) => new GT004Session(cfg as never);
-      case "GT-005":
-        return (cfg) => new GT005Session(cfg as never);
-      case "GT-006":
-        return (cfg) => new GT006Session(cfg as never);
-      default:
-        throw new Error(`TEMPLATE_NOT_SUPPORTED: ${templateCode}`);
-    }
-  }
-
   function startSession(config: EngineConfig, templateCode: string) {
     if (!canvasRef.value) {
       return;
@@ -58,7 +28,7 @@
     try {
       errorMessage.value = null;
       if (engine) {
-        engine.stop();
+        engine.destroy();
         engine = null;
       }
 
@@ -71,7 +41,7 @@
       if (window.parent) {
         window.parent.postMessage(
           {
-            type: "KIDTHINK_STUDIO_ENGINE_ERROR",
+            type: "MindKid_STUDIO_ENGINE_ERROR",
             error: errorMessage.value,
           },
           "*"
@@ -114,7 +84,7 @@
       return;
     }
 
-    if (data.type === "KIDTHINK_STUDIO_UPDATE") {
+    if (data.type === "MindKid_STUDIO_UPDATE") {
       const payload: StudioUpdatePayload = data.payload || {};
       const tCode = payload.templateCode || currentTemplateCode || "GT-001";
       currentTemplateCode = tCode;
@@ -122,7 +92,7 @@
       const config = buildEngineConfig(payload, tCode);
       currentConfig = config;
       startSession(config, tCode);
-    } else if (data.type === "KIDTHINK_STUDIO_REPLAY" && currentConfig) {
+    } else if (data.type === "MindKid_STUDIO_REPLAY" && currentConfig) {
       startSession(currentConfig, currentTemplateCode);
     }
   }
@@ -149,7 +119,7 @@
   onUnmounted(() => {
     window.removeEventListener("message", handleMessage);
     if (engine) {
-      engine.stop();
+      engine.destroy();
       engine = null;
     }
   });

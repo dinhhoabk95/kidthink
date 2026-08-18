@@ -1,4 +1,4 @@
-import { appError, REAUTH_MAX_AGE_SECONDS } from "@kidthink/auth";
+import { appError, REAUTH_MAX_AGE_SECONDS } from "@mindkid/auth";
 import type { H3Event } from "h3";
 
 export function requireReauth(

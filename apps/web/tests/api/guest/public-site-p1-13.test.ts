@@ -8,7 +8,7 @@ import {
   LEGAL_DOCUMENTS,
   LOCAL_STORAGE_ITEMS,
   PACKAGE_CATALOG,
-} from "@kidthink/shared";
+} from "@mindkid/shared";
 import { describe, expect, it } from "vitest";
 import { checkLegalReviewStatus } from "../../../../../scripts/lint-legal-review.ts";
 import { scanDirectoryForThirdPartyScripts } from "../../../../../scripts/lint-public-scripts.ts";

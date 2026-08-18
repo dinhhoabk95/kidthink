@@ -1,4 +1,4 @@
-import { LEGAL_DOCUMENTS } from "@kidthink/shared";
+import { LEGAL_DOCUMENTS } from "@mindkid/shared";
 import { createError, defineEventHandler, getRouterParam, setHeader } from "h3";
 
 export default defineEventHandler((event) => {

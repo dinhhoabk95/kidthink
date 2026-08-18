@@ -2,7 +2,7 @@
 spec: PASSWORD-RECOVERY
 title: Quên và đặt lại mật khẩu
 area: account
-status: approved
+status: implemented
 mvp: true
 phase: P0
 reviewed: 2026-08-13

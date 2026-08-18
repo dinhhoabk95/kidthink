@@ -2,7 +2,7 @@
 spec: ADMIN-SUBSCRIPTION-CANCEL
 title: Manager huỷ gói đăng ký của User và dừng gia hạn
 area: admin
-status: approved
+status: implemented
 mvp: false
 phase: P5
 reviewed: 2026-08-16

@@ -1,5 +1,5 @@
 /**
- * KidThink AI Provider
+ * MindKid AI Provider
  * Unified adapter for deterministic embedding generation and LLM completions.
  * Enforces privacy egress scanning on all outgoing prompts and texts.
  */
@@ -11,7 +11,7 @@ import {
   DEFAULT_EMBEDDING_DIMENSION,
   DEFAULT_EMBEDDING_MODEL,
   PROMPT_VERSIONS,
-} from "@kidthink/shared";
+} from "@mindkid/shared";
 import { assertNoEgressViolation } from "./ai-egress-guard.ts";
 
 export interface CompletionOptions {

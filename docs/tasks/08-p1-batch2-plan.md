@@ -19,7 +19,7 @@
 > Sổ cái quyết định `D-*` là sổ liên task, dùng từ Task #1. Mã cuối đã dùng là `D-AQ`
 > (Task #7 bước 12b), nên task này bắt đầu từ **`D-AR`**.
 >
-> Mọi lệnh chạy từ thư mục `kidthink/`. Đặt lại đường dẫn Node trước mỗi phiên shell mới, vì
+> Mọi lệnh chạy từ thư mục `mindkid/`. Đặt lại đường dẫn Node trước mỗi phiên shell mới, vì
 > shell mặc định của máy là v20.17.0 còn dự án cần v24:
 >
 > ```

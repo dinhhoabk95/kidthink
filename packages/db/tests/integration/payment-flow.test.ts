@@ -13,7 +13,7 @@ import {
   SEED_ENTITLEMENT_KEYS,
   SEED_PACKAGES,
   users,
-} from "@kidthink/db";
+} from "@mindkid/db";
 import {
   assertPaymentOrderTransition,
   computeOrderPendingExpiresAt,
@@ -21,7 +21,7 @@ import {
   computeStackedExpiryDate,
   formatTransferNote,
   PACKAGE_CATALOG,
-} from "@kidthink/shared";
+} from "@mindkid/shared";
 import { and, eq, inArray } from "drizzle-orm";
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
 

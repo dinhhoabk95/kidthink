@@ -1,6 +1,6 @@
 {
-  "name": "KidThink",
-  "short_name": "KidThink",
+  "name": "MindKid",
+  "short_name": "MindKid",
   "description": "Nền tảng tư duy toán học qua trò chơi cho trẻ mầm non",
   "start_url": "/me",
   "scope": "/",

@@ -160,7 +160,7 @@ T1 đối chiếu từ vựng ba trục × 230 skill (D-HC) — trước mọi v
 - [ ] `BR-CSA-10`: `code` bất biến sau merge; ca âm đổi `code` đã seed → cổng 0 đỏ.
 
 **Kiểm chứng**
-- [ ] `pnpm --filter @kidthink/db test -- seed-shape` xanh; `pnpm typecheck` bắt được seeder sai schema.
+- [ ] `pnpm --filter @mindkid/db test -- seed-shape` xanh; `pnpm typecheck` bắt được seeder sai schema.
 
 **Phụ thuộc:** T2 · P1.2 · **Cỡ:** M
 

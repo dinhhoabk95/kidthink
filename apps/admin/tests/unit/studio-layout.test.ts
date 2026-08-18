@@ -39,15 +39,15 @@ describe("Studio Layout & Components (BR-STU, BR-LPV, BR-EPK)", () => {
   it("Scenario: BR-STU-03 & D-JY — Autosave and Local Storage Backup", () => {
     expect(studioCodeSource).toContain("setInterval");
     expect(studioCodeSource).toContain("30_000");
-    expect(studioCodeSource).toContain("kidthink_level_backup_");
+    expect(studioCodeSource).toContain("mindkid_level_backup_");
     expect(studioCodeSource).toContain("expected_version");
   });
 
   it("Scenario: BR-LPV-01..07 — Live Preview Frame Controls & Iframe Integration", () => {
     expect(livePreviewSource).toContain("previewUrl");
     expect(livePreviewSource).toContain("/play/preview-sandbox");
-    expect(livePreviewSource).toContain("KIDTHINK_STUDIO_UPDATE");
-    expect(livePreviewSource).toContain("KIDTHINK_STUDIO_REPLAY");
+    expect(livePreviewSource).toContain("MindKid_STUDIO_UPDATE");
+    expect(livePreviewSource).toContain("MindKid_STUDIO_REPLAY");
     expect(livePreviewSource).toContain("300"); // 300ms debounce
     expect(livePreviewSource).toContain("ageBands");
     expect(livePreviewSource).toContain("reducedMotion");
@@ -57,7 +57,7 @@ describe("Studio Layout & Components (BR-STU, BR-LPV, BR-EPK)", () => {
   it("Scenario: BR-EPK-01..08 — Emoji Picker Specs", () => {
     expect(emojiPickerSource).toContain("w-10 h-10 min-w-10 min-h-10");
     expect(emojiPickerSource).toContain("text-[28px]");
-    expect(emojiPickerSource).toContain("kidthink_recent_emojis");
+    expect(emojiPickerSource).toContain("mindkid_recent_emojis");
     expect(emojiPickerSource).toContain("Noto Color Emoji");
     expect(emojiPickerSource).toContain("ArrowRight");
     expect(emojiPickerSource).toContain("Escape");

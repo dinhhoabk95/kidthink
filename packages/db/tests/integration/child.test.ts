@@ -1,4 +1,4 @@
-import { CHILD_PROFILE_CLOSED_COLUMNS } from "@kidthink/shared";
+import { CHILD_PROFILE_CLOSED_COLUMNS } from "@mindkid/shared";
 import { sql } from "drizzle-orm";
 import { describe, expect, it } from "vitest";
 import { getOwnerDb } from "../../src/index.ts";

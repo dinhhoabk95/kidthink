@@ -1,4 +1,4 @@
-import { ENTITLEMENT_KEYS, PACKAGE_CATALOG } from "@kidthink/shared";
+import { ENTITLEMENT_KEYS, PACKAGE_CATALOG } from "@mindkid/shared";
 import { count, inArray } from "drizzle-orm";
 import { describe, expect, it } from "vitest";
 import { getOwnerDb } from "../../src/index.ts";

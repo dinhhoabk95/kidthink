@@ -276,15 +276,15 @@
     code: string;
     content_version: number;
     title: string;
-    guide_vi: string;
+    guide: string;
     target_age_min: number;
     target_age_max: number;
     estimated_minutes: number;
-    materials_vi?: string | null;
-    warm_up_vi?: string | null;
-    reflection_vi?: string | null;
-    assessment_vi?: string | null;
-    extension_vi?: string | null;
+    materials?: string | null;
+    warm_up?: string | null;
+    reflection?: string | null;
+    assessment?: string | null;
+    extension?: string | null;
     access_tier: string;
     status: string;
   }
@@ -409,16 +409,16 @@
   function openCreateLesson() {
     currentLesson.value = {
       title: "",
-      guide_vi:
+      guide:
         "1. Mục tiêu:\n2. Chuẩn bị:\n3. Bắt đầu:\n4. Khi trẻ làm được:\n5. Khi trẻ cần giúp:",
       target_age_min: 3,
       target_age_max: 6,
       estimated_minutes: 20,
-      materials_vi: "",
-      warm_up_vi: "",
-      reflection_vi: "",
-      assessment_vi: "",
-      extension_vi: "",
+      materials: "",
+      warm_up: "",
+      reflection: "",
+      assessment: "",
+      extension: "",
       access_tier: "standard",
       status: "draft",
     };

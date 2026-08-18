@@ -6,13 +6,10 @@ import {
   learningObjectives,
   skills,
   strands,
-} from "@kidthink/db";
+} from "@mindkid/db";
 import { sql } from "drizzle-orm";
 import { defineEventHandler, getQuery } from "h3";
-import {
-  requireManagerSession,
-  respondToManagerAuthError,
-} from "../../../utils/admin-auth-runtime.js";
+import { requireManagerSession } from "../../../utils/admin-auth-runtime.js";
 
 export const TAXONOMY_SUFFICIENT_THRESHOLD = 3;
 
@@ -264,64 +261,60 @@ function computeEnhancedTaxonomy(
 }
 
 export default defineEventHandler(async (event) => {
-  try {
-    await requireManagerSession(event);
+  await requireManagerSession(event);
 
-    const query = getQuery(event);
-    const gapsOnly = query.gaps_only === "true" || query.gaps_only === true;
-    const depth = (query.depth as string) || "skill";
+  const query = getQuery(event);
+  const gapsOnly = query.gaps_only === "true" || query.gaps_only === true;
+  const depth = (query.depth as string) || "skill";
 
-    const now = Date.now();
-    let baseData: CachedTaxonomyData["data"];
+  const now = Date.now();
+  let baseData: CachedTaxonomyData["data"];
 
-    if (taxonomyCache && now - taxonomyCache.timestamp < CACHE_TTL_MS) {
-      baseData = taxonomyCache.data;
-    } else {
-      const rawHierarchy = await fetchRawTaxonomyHierarchy();
-      const skillCountsMap = await fetchLevelCountsMap();
-      const enhanced = computeEnhancedTaxonomy(rawHierarchy, skillCountsMap);
+  if (taxonomyCache && now - taxonomyCache.timestamp < CACHE_TTL_MS) {
+    baseData = taxonomyCache.data;
+  } else {
+    const rawHierarchy = await fetchRawTaxonomyHierarchy();
+    const skillCountsMap = await fetchLevelCountsMap();
+    const enhanced = computeEnhancedTaxonomy(rawHierarchy, skillCountsMap);
 
-      baseData = {
-        as_of: new Date(now).toISOString(),
-        threshold_sufficient: TAXONOMY_SUFFICIENT_THRESHOLD,
-        ...enhanced,
-      };
+    baseData = {
+      as_of: new Date(now).toISOString(),
+      threshold_sufficient: TAXONOMY_SUFFICIENT_THRESHOLD,
+      ...enhanced,
+    };
 
-      taxonomyCache = { timestamp: now, data: baseData };
-    }
+    taxonomyCache = { timestamp: now, data: baseData };
+  }
 
-    const returnSkills = gapsOnly
-      ? baseData.skills.filter((s) => s.is_gap)
-      : baseData.skills;
+  const returnSkills = gapsOnly
+    ? baseData.skills.filter((s) => s.is_gap)
+    : baseData.skills;
 
-    if (depth === "competency") {
-      return {
-        as_of: baseData.as_of,
-        threshold_sufficient: baseData.threshold_sufficient,
-        competencies: baseData.competencies,
-        summary: baseData.summary,
-      };
-    }
+  if (depth === "competency") {
+    return {
+      as_of: baseData.as_of,
+      threshold_sufficient: baseData.threshold_sufficient,
+      competencies: baseData.competencies,
+      summary: baseData.summary,
+    };
+  }
 
-    if (depth === "strand") {
-      return {
-        as_of: baseData.as_of,
-        threshold_sufficient: baseData.threshold_sufficient,
-        competencies: baseData.competencies,
-        strands: baseData.strands,
-        summary: baseData.summary,
-      };
-    }
-
+  if (depth === "strand") {
     return {
       as_of: baseData.as_of,
       threshold_sufficient: baseData.threshold_sufficient,
       competencies: baseData.competencies,
       strands: baseData.strands,
-      skills: returnSkills,
       summary: baseData.summary,
     };
-  } catch (err) {
-    return respondToManagerAuthError(event, err);
   }
+
+  return {
+    as_of: baseData.as_of,
+    threshold_sufficient: baseData.threshold_sufficient,
+    competencies: baseData.competencies,
+    strands: baseData.strands,
+    skills: returnSkills,
+    summary: baseData.summary,
+  };
 });

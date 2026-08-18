@@ -1,12 +1,12 @@
-import { alert } from "@kidthink/queue";
+import { alert } from "@mindkid/queue";
 import type { Job } from "bullmq";
 import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
 import { closeWorker, processJob, startWorker } from "./worker.js";
 
 const unknownJobRegex = /Unknown job name/;
 
-vi.mock("@kidthink/queue", async (importOriginal) => {
-  const actual = await importOriginal<typeof import("@kidthink/queue")>();
+vi.mock("@mindkid/queue", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("@mindkid/queue")>();
   return {
     ...actual,
     alert: vi.fn(),

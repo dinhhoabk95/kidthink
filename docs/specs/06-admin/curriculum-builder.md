@@ -2,7 +2,7 @@
 spec: CURRICULUM-BUILDER
 title: Dựng chương trình học
 area: admin
-status: approved
+status: implemented
 mvp: true
 phase: P3
 reviewed: 2026-08-08

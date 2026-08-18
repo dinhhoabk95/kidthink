@@ -1,4 +1,4 @@
-import { requireManagerAuth } from "@kidthink/auth";
+import { requireManagerAuth } from "@mindkid/auth";
 import {
   backupLog,
   childDailyStats,
@@ -11,13 +11,10 @@ import {
   paymentOrders,
   skills,
   users,
-} from "@kidthink/db";
+} from "@mindkid/db";
 import { and, count, desc, eq, gt, gte, inArray, lt, sql } from "drizzle-orm";
 import { defineEventHandler } from "h3";
-import {
-  ensureManagerCsrfCookie,
-  respondToManagerAuthError,
-} from "../../../utils/auth-runtime";
+import { ensureManagerCsrfCookie } from "../../../utils/auth-runtime";
 
 type OwnerDb = ReturnType<typeof getOwnerDb>;
 
@@ -254,52 +251,48 @@ async function querySystemMetrics(db: OwnerDb) {
 
 export default defineEventHandler(async (event) => {
   ensureManagerCsrfCookie(event);
-  try {
-    const manager = requireManagerAuth(event);
-    const db = getOwnerDb();
+  const manager = requireManagerAuth(event);
+  const db = getOwnerDb();
 
-    const asOf = await resolveDashboardAsOf(db);
-    const content = await queryContentMetrics(db);
+  const asOf = await resolveDashboardAsOf(db);
+  const content = await queryContentMetrics(db);
 
-    // If actor is content_reviewer, strictly return ONLY as_of and content (D-IY, BR-DSH-06)
-    if (manager.role === "content_reviewer") {
-      return {
-        as_of: asOf,
-        content,
-      };
-    }
-
-    const growth = await queryGrowthMetrics(db);
-    const system = await querySystemMetrics(db);
-
-    const pendingOrdersRows = await db
-      .select({ count: count() })
-      .from(paymentOrders)
-      .where(inArray(paymentOrders.status, ["submitted", "under_review"]));
-    const pendingPaymentsCount = Number(pendingOrdersRows[0]?.count || 0);
-
-    const todo = {
-      pending_payments: {
-        count: pendingPaymentsCount,
-      },
-      pending_content: {
-        status: "pending_source" as const,
-        owner_step: "P2.8",
-      },
-      open_alerts: {
-        count: 0,
-        items: [],
-      },
-    };
-
+  // If actor is content_reviewer, strictly return ONLY as_of and content (D-IY, BR-DSH-06)
+  if (manager.role === "content_reviewer") {
     return {
       as_of: asOf,
-      todo,
-      growth,
       content,
-      system,
     };
-  } catch (error) {
-    return respondToManagerAuthError(event, error);
   }
+
+  const growth = await queryGrowthMetrics(db);
+  const system = await querySystemMetrics(db);
+
+  const pendingOrdersRows = await db
+    .select({ count: count() })
+    .from(paymentOrders)
+    .where(inArray(paymentOrders.status, ["submitted", "under_review"]));
+  const pendingPaymentsCount = Number(pendingOrdersRows[0]?.count || 0);
+
+  const todo = {
+    pending_payments: {
+      count: pendingPaymentsCount,
+    },
+    pending_content: {
+      status: "pending_source" as const,
+      owner_step: "P2.8",
+    },
+    open_alerts: {
+      count: 0,
+      items: [],
+    },
+  };
+
+  return {
+    as_of: asOf,
+    todo,
+    growth,
+    content,
+    system,
+  };
 });

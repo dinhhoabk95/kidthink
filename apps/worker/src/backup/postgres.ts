@@ -4,7 +4,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { pipeline } from "node:stream/promises";
 import { createGzip } from "node:zlib";
-import { backupLog, getOwnerDb } from "@kidthink/db";
+import { backupLog, getOwnerDb } from "@mindkid/db";
 import { eq } from "drizzle-orm";
 
 export const RETENTION_DAYS_POSTGRES = 30; // 30/12/24 khai thành hằng số có tên
@@ -38,7 +38,7 @@ export async function runPostgresBackup(_jobId: string) {
   try {
     const dbUrl =
       process.env.DATABASE_URL ||
-      "postgres://postgres:postgres@localhost:5432/kidthink";
+      "postgres://postgres:postgres@localhost:5432/mindkid";
 
     const dumpProcess = spawn("pg_dump", [dbUrl], {
       stdio: ["ignore", "pipe", "pipe"],

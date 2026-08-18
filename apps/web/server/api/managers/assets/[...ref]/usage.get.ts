@@ -5,13 +5,10 @@ import {
   lessons,
   seoPages,
   worksheets,
-} from "@kidthink/db";
+} from "@mindkid/db";
 import { eq } from "drizzle-orm";
 import { createError, defineEventHandler, getQuery, getRouterParam } from "h3";
-import {
-  requireManagerSession,
-  respondToManagerAuthError,
-} from "../../../../utils/admin-auth-runtime.js";
+import { requireManagerSession } from "../../../../utils/admin-auth-runtime.js";
 
 export interface AssetUsageItem {
   entity_type: string;
@@ -40,7 +37,7 @@ async function resolveUsageItem(
         code: gameLevels.code,
         version: gameLevels.contentVersion,
         status: gameLevels.status,
-        titleVi: gameLevels.titleVi,
+        title: gameLevels.title,
       })
       .from(gameLevels)
       .where(eq(gameLevels.id, refRow.entityId));
@@ -50,7 +47,7 @@ async function resolveUsageItem(
           code: lvl.code,
           version: lvl.version,
           status: lvl.status,
-          title: lvl.titleVi,
+          title: lvl.title,
         }
       : null;
   }
@@ -60,7 +57,7 @@ async function resolveUsageItem(
         code: lessons.code,
         version: lessons.contentVersion,
         status: lessons.status,
-        titleVi: lessons.titleVi,
+        title: lessons.title,
       })
       .from(lessons)
       .where(eq(lessons.id, refRow.entityId));
@@ -70,7 +67,7 @@ async function resolveUsageItem(
           code: les.code,
           version: les.version,
           status: les.status,
-          title: les.titleVi,
+          title: les.title,
         }
       : null;
   }
@@ -80,7 +77,7 @@ async function resolveUsageItem(
         code: worksheets.code,
         version: worksheets.contentVersion,
         status: worksheets.status,
-        titleVi: worksheets.titleVi,
+        title: worksheets.title,
       })
       .from(worksheets)
       .where(eq(worksheets.id, refRow.entityId));
@@ -90,7 +87,7 @@ async function resolveUsageItem(
           code: ws.code,
           version: ws.version,
           status: ws.status,
-          title: ws.titleVi,
+          title: ws.title,
         }
       : null;
   }
@@ -119,63 +116,59 @@ async function resolveUsageItem(
 
 export default defineEventHandler(
   async (event): Promise<AssetUsageResponse> => {
-    try {
-      await requireManagerSession(event);
+    await requireManagerSession(event);
 
-      const query = getQuery(event);
-      const paramRef = getRouterParam(event, "ref");
-      const rawRef = (query.ref as string) || paramRef;
+    const query = getQuery(event);
+    const paramRef = getRouterParam(event, "ref");
+    const rawRef = (query.ref as string) || paramRef;
 
-      if (!rawRef) {
-        throw createError({
-          statusCode: 422,
-          statusMessage: "VALIDATION_FAILED",
-          message: "Asset reference (ref) is required",
-        });
-      }
-
-      const assetRef = decodeURIComponent(rawRef).replace(
-        LEADING_SLASHES_REGEX,
-        ""
-      );
-      const db = getOwnerDb();
-
-      // Query reverse asset index table (BR-AUT2-03: P95 < 200ms)
-      const refs = await db
-        .select({
-          id: contentAssetRefs.id,
-          entityType: contentAssetRefs.entityType,
-          entityId: contentAssetRefs.entityId,
-          assetKind: contentAssetRefs.assetKind,
-          assetRef: contentAssetRefs.assetRef,
-        })
-        .from(contentAssetRefs)
-        .where(eq(contentAssetRefs.assetRef, assetRef))
-        .limit(200);
-
-      const usedBy: AssetUsageItem[] = [];
-
-      for (const refRow of refs) {
-        const item = await resolveUsageItem(db, refRow);
-        if (item) {
-          usedBy.push(item);
-        }
-      }
-
-      const isUsedInPublished = usedBy.some(
-        (item) => item.status === "published"
-      );
-      const canDelete = !isUsedInPublished;
-      const blockReason = isUsedInPublished ? "used_by_published" : null;
-
-      return {
-        asset_ref: assetRef,
-        used_by: usedBy,
-        can_delete: canDelete,
-        block_reason: blockReason,
-      };
-    } catch (err) {
-      return respondToManagerAuthError(event, err);
+    if (!rawRef) {
+      throw createError({
+        statusCode: 422,
+        statusMessage: "VALIDATION_FAILED",
+        message: "Asset reference (ref) is required",
+      });
     }
+
+    const assetRef = decodeURIComponent(rawRef).replace(
+      LEADING_SLASHES_REGEX,
+      ""
+    );
+    const db = getOwnerDb();
+
+    // Query reverse asset index table (BR-AUT2-03: P95 < 200ms)
+    const refs = await db
+      .select({
+        id: contentAssetRefs.id,
+        entityType: contentAssetRefs.entityType,
+        entityId: contentAssetRefs.entityId,
+        assetKind: contentAssetRefs.assetKind,
+        assetRef: contentAssetRefs.assetRef,
+      })
+      .from(contentAssetRefs)
+      .where(eq(contentAssetRefs.assetRef, assetRef))
+      .limit(200);
+
+    const usedBy: AssetUsageItem[] = [];
+
+    for (const refRow of refs) {
+      const item = await resolveUsageItem(db, refRow);
+      if (item) {
+        usedBy.push(item);
+      }
+    }
+
+    const isUsedInPublished = usedBy.some(
+      (item) => item.status === "published"
+    );
+    const canDelete = !isUsedInPublished;
+    const blockReason = isUsedInPublished ? "used_by_published" : null;
+
+    return {
+      asset_ref: assetRef,
+      used_by: usedBy,
+      can_delete: canDelete,
+      block_reason: blockReason,
+    };
   }
 );

@@ -104,7 +104,7 @@
 - [x] `BR-FAQ-04` nội dung là **dữ liệu**, không hardcode trong component.
 - [x] `BR-FAQ-05` trả lời thẳng ở câu đầu.
 - [x] `BR-FAQ-06` có câu nói thẳng giới hạn sản phẩm.
-- [x] `D-AX` hiển thị email `support@kidthink.vn` + Zalo OA.
+- [x] `D-AX` hiển thị email `support@mindkid.vn` + Zalo OA.
 - [x] `BR-CKB-01` chỉ cookie kỹ thuật thiết yếu.
 - [x] `BR-CKB-04` không cookie bên thứ ba.
 - [x] `BR-CKB-05` `/cookie` liệt kê từng cookie: tên · mục đích · thời hạn, sinh từ dữ liệu.

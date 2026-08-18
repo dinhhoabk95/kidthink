@@ -30,7 +30,7 @@ module.exports = {
       name: "no-app-direct-base-lib",
       comment:
         "BR-MPA-01: apps/* NEVER import thư viện nền cho capability dùng chung " +
-        "≥2 app — luôn qua driver @kidthink/{cache,queue,auth}. Import rải rác " +
+        "≥2 app — luôn qua driver @mindkid/{cache,queue,auth}. Import rải rác " +
         "làm đổi thư viện nền thành việc sửa N chỗ.",
       severity: "error",
       from: { path: "^apps/" },

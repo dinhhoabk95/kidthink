@@ -51,7 +51,7 @@ seed 230 skill + 690 LO là hai phase deprecation (`BR-DM-09`).
 
 | Đo | Kết quả |
 |---|---|
-| `kidthink/` git | 15 commit, `main` tracking `origin/main` (remote đã có: `dinhhoabk95/kidthink`) |
+| `mindkid/` git | 15 commit, `main` tracking `origin/main` (remote đã có: `dinhhoabk95/mindkid`) |
 | Working tree | **bẩn và đang thay đổi**: `M lefthook.yml` · `M scripts/lint-specs.ts` · `M tsconfig.json` · `M vitest.config.ts` · `?? scripts/lint-specs-lib.ts` · `?? scripts/tests/lint-specs.test.ts` · `?? scripts/vitest.config.ts` |
 | Lưu ý: Phiên khác đang chạy | Có. File `scripts/lint-specs-lib.ts` (30K) + `scripts/tests/` xuất hiện **trong lúc** viết plan này (mtime 23:11→23:15). Ai đó đang tách `lint-specs.ts` thành lib có test. **T0 phải hoà việc đó trước, không ghi đè** |
 | `pnpm check` | Cấm **ĐỎ** — 2 lỗi biome format trong `scripts/lint-specs-lib.ts` (số lỗi đang đổi theo từng phút) |
@@ -596,9 +596,9 @@ kèm **vì sao + ngày** → (3) `status: approved` + `reviewed:` → (4) `lint:
 ## Verification tổng
 
 ```bash
-# docs/ ở trong kidthink/docs/, cùng git repo code (repo-bootstrap.md §11 Q10, Lượt 3, 2026-08-07)
+# docs/ ở trong mindkid/docs/, cùng git repo code (repo-bootstrap.md §11 Q10, Lượt 3, 2026-08-07)
 
-cd kidthink
+cd mindkid
 export PATH=/Users/macbook/.nvm/versions/node/v24.15.0/bin:$PATH   # shell mặc định vẫn node v20
 
 # Cổng cơ học
@@ -614,7 +614,7 @@ pnpm check:services # PG 17.9 + Valkey 9.1.1 (host port 5433/6380)
 #  C12 : xoá social_identities khỏi DMO §7           thì exit 1 + tên bảng
 #  C13 : ví dụ mã đổi về G-C1-CNT-007                thì exit 1 tại đúng dòng
 
-# Đo kết quả cuối — grep thẳng file .md, cwd = workspace root (một cấp trên kidthink/)
+# Đo kết quả cuối — grep thẳng file .md, cwd = workspace root (một cấp trên mindkid/)
 cd ..
 grep -l 'status: approved' docs/specs/**/*.md | wc -l          # 23
 grep -rn 'G-C[1-6]-' docs/ | wc -l                             # 0

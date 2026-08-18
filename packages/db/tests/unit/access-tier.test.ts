@@ -1,4 +1,4 @@
-import { TIER_ORDER } from "@kidthink/shared";
+import { TIER_ORDER } from "@mindkid/shared";
 import { describe, expect, it } from "vitest";
 import { accessTierEnum } from "../../src/schema/game";
 

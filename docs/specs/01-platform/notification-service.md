@@ -2,7 +2,7 @@
 spec: NOTIFICATION-SERVICE
 title: Dịch vụ thông báo
 area: platform
-status: approved
+status: implemented
 mvp: true
 phase: P0
 reviewed: 2026-08-13

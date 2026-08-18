@@ -1,5 +1,5 @@
-import { gameLevels, gameTemplates, getOwnerDb } from "@kidthink/db";
-import { allowedTiers } from "@kidthink/shared";
+import { gameLevels, gameTemplates, getOwnerDb } from "@mindkid/db";
+import { allowedTiers } from "@mindkid/shared";
 import { and, eq, ne } from "drizzle-orm";
 import { createError, defineEventHandler, getRouterParam } from "h3";
 

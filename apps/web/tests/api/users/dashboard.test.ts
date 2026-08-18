@@ -10,7 +10,7 @@ import {
   gameTemplates,
   getOwnerDb,
   users,
-} from "@kidthink/db";
+} from "@mindkid/db";
 import { eq } from "drizzle-orm";
 import { beforeEach, describe, expect, it } from "vitest";
 import dashboardHandler from "../../../server/api/users/dashboard.get.ts";
@@ -40,7 +40,6 @@ function mockUserEvent(userId?: number, query: Record<string, string> = {}) {
               user_id: userId,
               display_name: "Test User",
               session_id: "sess_user_test",
-              refresh_token_version: 1,
             },
           }
         : {}),
@@ -115,7 +114,7 @@ describe("Task #82 — GET /api/users/dashboard (BR-MDB-01..07, BR-CUR-01..10)",
       .insert(gameTemplates)
       .values({
         code: templateCode,
-        nameVi: "Game template test P3",
+        name: "Game template test P3",
         mechanic: "drag_drop",
         contentContract: {},
       })
@@ -147,7 +146,7 @@ describe("Task #82 — GET /api/users/dashboard (BR-MDB-01..07, BR-CUR-01..10)",
         entityId: Math.floor(100_000 + Math.random() * 800_000),
         templateId,
         difficulty: 1,
-        titleVi: "Đếm số vui vẻ",
+        title: "Đếm số vui vẻ",
         accessTier: "standard",
         status: "published",
         contentPack: { items: ["apple"] },
@@ -161,7 +160,7 @@ describe("Task #82 — GET /api/users/dashboard (BR-MDB-01..07, BR-CUR-01..10)",
       .values({
         code: `CUR-P3-DASH-${ts}-${rand}`.slice(0, 50),
         entityId: 3000 + (ts % 100_000),
-        titleVi: "Lộ trình tư duy toán mầm non",
+        title: "Lộ trình tư duy toán mầm non",
         accessTier: "standard",
         status: "published",
         durationWeeks: 4,
@@ -239,7 +238,7 @@ describe("Task #82 — GET /api/users/dashboard (BR-MDB-01..07, BR-CUR-01..10)",
     expect(resultA.children.length).toBe(2);
     expect(resultA.active_child_id).toBe(childAId);
     expect(resultA.curriculum?.enrolled).toBe(true);
-    expect(resultA.curriculum?.title_vi).toBe("Lộ trình tư duy toán mầm non");
+    expect(resultA.curriculum?.title).toBe("Lộ trình tư duy toán mầm non");
 
     // Explicit switch to Child B
     const eventB = mockUserEvent(user1Id, { child_id: String(childBId) });

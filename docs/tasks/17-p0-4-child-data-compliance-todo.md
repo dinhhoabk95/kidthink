@@ -32,7 +32,7 @@
 - [x] Test so khớp tập hợp tên cột hai chiều: thiếu là lỗi, thừa là lỗi.
 - [x] Thông báo lỗi nêu đúng tên cột thừa và cột thiếu.
 - [x] Ca âm `BR-SPT-02`: cột `%_url` / `%_path` / `photo%` trên bảng dữ liệu trẻ làm test đỏ.
-- [x] `pnpm --filter @kidthink/db test -- child` **ĐỎ** đúng lý do trên.
+- [x] `pnpm --filter @mindkid/db test -- child` **ĐỎ** đúng lý do trên.
 
 ### Task 2 — `child_profiles` đúng 12 cột hợp đồng
 
@@ -56,7 +56,7 @@
 - [x] Cổng allow-list cột theo §7.3; cột lạ làm test đỏ.
 - [x] Ca âm: không FK nào trỏ vào `telemetry_events` (D-Z).
 - [x] Ca âm `BR-SPT-04`: `SET child_uuid = NULL` chạy được, số hàng không giảm.
-- [x] `pnpm --filter @kidthink/db test -- play` xanh, có assertion tham chiếu `BR-CDC-05`.
+- [x] `pnpm --filter @mindkid/db test -- play` xanh, có assertion tham chiếu `BR-CDC-05`.
 
 ### Task 4 — Kiểm kê và ghi nợ vào spec
 
@@ -72,14 +72,14 @@
 - [x] Field ngoài danh sách đóng → `CHILD_FIELD_NOT_ALLOWED` (400) theo [`error-codes.md`](../specs/00-foundation/error-codes.md).
 - [x] Ca âm: body có `full_name` + `school` bị từ chối; thông báo lỗi **không** vọng lại giá trị đã gửi.
 - [x] Cổng DB và cổng Zod đọc **cùng một** nguồn tên cột.
-- [x] `pnpm --filter @kidthink/shared test` xanh, assertion tham chiếu `BR-CDC-01`.
+- [x] `pnpm --filter @mindkid/shared test` xanh, assertion tham chiếu `BR-CDC-01`.
 
 ### Task 6 — `avatar_id` chỉ nhận preset
 
 - [x] Validator từ chối giá trị chứa `/`, `\`, `http`, `data:`.
 - [x] Test khẳng định không bảng dữ liệu trẻ nào còn cột `avatar_url`.
 - [x] Ghi rõ danh mục preset do P0.9 ([`emoji-registry.md`](../specs/01-platform/emoji-registry.md)) cấp; không tự chế danh mục.
-- [x] `pnpm --filter @kidthink/shared test` xanh, assertion tham chiếu `BR-CDC-04`.
+- [x] `pnpm --filter @mindkid/shared test` xanh, assertion tham chiếu `BR-CDC-04`.
 
 ### Task 7 — Khoảng `birth_year` theo năm hiện tại
 
@@ -87,7 +87,7 @@
 - [x] `CHECK` ở DB siết lại, không còn nhận năm tương lai.
 - [x] Ghi trong spec: `CHECK` là ràng buộc **sàn**, khoảng chính xác ép ở tầng ứng dụng.
 - [x] Ca âm: năm sinh tương lai bị từ chối; trẻ 10 tuổi bị từ chối.
-- [x] `pnpm --filter @kidthink/shared test` và `pnpm --filter @kidthink/db test -- child` xanh.
+- [x] `pnpm --filter @mindkid/shared test` và `pnpm --filter @mindkid/db test -- child` xanh.
 
 ## Cổng dừng A
 
@@ -107,14 +107,14 @@
 - [x] `policy_version` cũ → `CONSENT_VERSION_STALE` (409).
 - [x] Ca âm `BR-CDC-07`: rút đồng ý thêm hàng, hàng cũ không đổi.
 - [x] Chính sách đổi version chặn tạo trẻ mới, **không** chặn đọc dữ liệu đã có.
-- [x] `pnpm --filter @kidthink/db test -- identity` xanh, assertion tham chiếu `BR-CDC-07`.
+- [x] `pnpm --filter @mindkid/db test -- identity` xanh, assertion tham chiếu `BR-CDC-07`.
 
 ### Task 9 — `content_reviewer` không chạm dữ liệu trẻ
 
 - [x] Contract test: `content_reviewer` gọi đường đọc dữ liệu trẻ → 403.
 - [x] Cổng quét: bề mặt admin không có đường đọc telemetry/mastery/lịch sử chơi của một trẻ cụ thể (`BR-CDC-14`).
 - [x] Dùng guard của P0.3, không tự chế guard mới.
-- [x] `pnpm --filter @kidthink/auth test -- actor-boundaries` xanh, assertion tham chiếu `BR-CDC-13`.
+- [x] `pnpm --filter @mindkid/auth test -- actor-boundaries` xanh, assertion tham chiếu `BR-CDC-13`.
 
 ### Task 10 — Xoá và ẩn danh hoá theo §7.4
 
@@ -125,7 +125,7 @@
 - [x] `audit_logs` và `consent_logs` còn nguyên.
 - [x] Ca âm: purge chạy ở D+29 không xoá gì.
 - [x] Lập lịch job **không** làm ở đây — thuộc P0.8b.
-- [x] `pnpm --filter @kidthink/db test -- purge` xanh, assertion tham chiếu `BR-CDC-10` và `BR-SPT-04`.
+- [x] `pnpm --filter @mindkid/db test -- purge` xanh, assertion tham chiếu `BR-CDC-10` và `BR-SPT-04`.
 
 ### Task 11 — Ba cổng tĩnh
 

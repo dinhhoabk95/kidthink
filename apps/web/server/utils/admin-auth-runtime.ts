@@ -7,7 +7,7 @@ import {
   requireManagerAuth,
   requireRole,
   validateCsrfToken,
-} from "@kidthink/auth";
+} from "@mindkid/auth";
 
 import {
   createError,

@@ -1,4 +1,4 @@
-import { consentRequirements, getAppDb } from "@kidthink/db";
+import { consentRequirements, getAppDb } from "@mindkid/db";
 import { defineEventHandler, setHeader } from "h3";
 
 export default defineEventHandler(async (event) => {

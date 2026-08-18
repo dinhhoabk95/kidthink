@@ -1,26 +1,19 @@
-import { getOwnerDb, seoPages } from "@kidthink/db";
+import { getOwnerDb, seoPages } from "@mindkid/db";
 import { desc } from "drizzle-orm";
 import { defineEventHandler } from "h3";
-import {
-  requireManagerSession,
-  respondToManagerAuthError,
-} from "../../../utils/admin-auth-runtime.js";
+import { requireManagerSession } from "../../../utils/admin-auth-runtime.js";
 
 export default defineEventHandler(async (event) => {
-  try {
-    await requireManagerSession(event);
-    const db = getOwnerDb();
+  await requireManagerSession(event);
+  const db = getOwnerDb();
 
-    const rows = await db
-      .select()
-      .from(seoPages)
-      .orderBy(desc(seoPages.updatedAt));
+  const rows = await db
+    .select()
+    .from(seoPages)
+    .orderBy(desc(seoPages.updatedAt));
 
-    return {
-      items: rows,
-      total: rows.length,
-    };
-  } catch (err) {
-    return respondToManagerAuthError(event, err);
-  }
+  return {
+    items: rows,
+    total: rows.length,
+  };
 });

@@ -1,11 +1,8 @@
-import { getOwnerDb, getUserLibrary } from "@kidthink/db";
-import { allowedTiers } from "@kidthink/shared";
+import { getOwnerDb, getUserLibrary } from "@mindkid/db";
+import { allowedTiers } from "@mindkid/shared";
 import { defineEventHandler, getQuery } from "h3";
 import { z } from "zod";
-import {
-  requireWebUserSession,
-  respondToUserAuthError,
-} from "../../../utils/auth-runtime.ts";
+import { requireWebUserSession } from "../../../utils/auth-runtime.ts";
 import { resolveUserActiveEntitlements } from "../../../utils/entitlements-runtime.ts";
 
 const LibraryQuerySchema = z.object({
@@ -34,33 +31,29 @@ function resolveActiveTier(
 }
 
 export default defineEventHandler(async (event) => {
-  try {
-    const user = await requireWebUserSession(event);
-    const userId = Number(user.user_id);
-    const db = getOwnerDb();
+  const user = await requireWebUserSession(event);
+  const userId = Number(user.user_id);
+  const db = getOwnerDb();
 
-    const rawQuery = getQuery(event);
-    const parsed = LibraryQuerySchema.parse(rawQuery);
+  const rawQuery = getQuery(event);
+  const parsed = LibraryQuerySchema.parse(rawQuery);
 
-    const activeKeys = await resolveUserActiveEntitlements(userId);
-    const userAllowedTiers = await allowedTiers(
-      { kind: "user", user_id: String(userId) },
-      activeKeys
-    );
-    const activeTier = resolveActiveTier(userAllowedTiers);
+  const activeKeys = await resolveUserActiveEntitlements(userId);
+  const userAllowedTiers = await allowedTiers(
+    { kind: "user", user_id: String(userId) },
+    activeKeys
+  );
+  const activeTier = resolveActiveTier(userAllowedTiers);
 
-    const libraryData = await getUserLibrary(db, {
-      userId,
-      entityType: parsed.entity_type,
-      collectionId: parsed.collection_id,
-      tag: parsed.tag,
-      q: parsed.q,
-      limit: parsed.limit,
-      activeTier,
-    });
+  const libraryData = await getUserLibrary(db, {
+    userId,
+    entityType: parsed.entity_type,
+    collectionId: parsed.collection_id,
+    tag: parsed.tag,
+    q: parsed.q,
+    limit: parsed.limit,
+    activeTier,
+  });
 
-    return libraryData;
-  } catch (error) {
-    return respondToUserAuthError(event, error);
-  }
+  return libraryData;
 });

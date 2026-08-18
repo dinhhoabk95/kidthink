@@ -48,11 +48,11 @@ nhưng cũng chưa có Nuxt runtime để chứng minh middleware và cookie con
 
 ### In scope
 
-- Contract domain và public API của `@kidthink/auth`, không lộ type của thư viện nền.
+- Contract domain và public API của `@mindkid/auth`, không lộ type của thư viện nền.
 - Context User/Manager loại trừ nhau; `requireUserAuth`, `requireManagerAuth`, `requireRole`
   là hàm đồng bộ.
 - Hai cấu hình Sidebase Local cho `apps/web` và `apps/admin`; cookie/issuer/secret/audience tách biệt.
-- JWT access 15 phút ký bằng `jose`; payload allow-list theo domain KidThink.
+- JWT access 15 phút ký bằng `jose`; payload allow-list theo domain MindKid.
 - Refresh token opaque: hash trong `active_sessions`, xoay, phát hiện reuse, logout một phiên
   và thu hồi toàn bộ.
 - CSRF cho request đổi trạng thái và reauth theo đúng phiên hiện tại trong cửa sổ 5 phút.
@@ -83,7 +83,7 @@ nhận diff trước khi viết code:
 Việc thêm dependency auth là `Ask first` và đã được người dùng yêu cầu trong task này. Human
 reviewer vẫn phải duyệt lockfile sau khi đối chiếu
 [Sidebase Local 1.3.1](https://auth.sidebase.io/guide/local/quick-start) và Nuxt 4; không suy
-API từ trí nhớ hoặc export type vendor qua `@kidthink/auth`.
+API từ trí nhớ hoặc export type vendor qua `@mindkid/auth`.
 
 ## Threat model
 
@@ -100,7 +100,7 @@ API từ trí nhớ hoặc export type vendor qua `@kidthink/auth`.
 
 - `@sidebase/nuxt-auth` Local provider được khai trực tiếp trong mỗi Nuxt app vì module cần
   sinh integration runtime; code app không import/export vendor type.
-- `@kidthink/auth` export type/hàm domain và là nơi duy nhất dùng `jose` cho JWT browser.
+- `@mindkid/auth` export type/hàm domain và là nơi duy nhất dùng `jose` cho JWT browser.
 - Middleware server của mỗi app xác minh JWT access đúng một lần; guard chỉ đọc context và
   không trả `Promise`.
 - User/Manager dùng discriminated session context; một request không thể có cả hai.
@@ -114,7 +114,7 @@ API từ trí nhớ hoặc export type vendor qua `@kidthink/auth`.
 - Entitlement không nằm trong JWT access. `hasEntitlement` là port async để P0.5 gắn
   DB/cache implementation mà không đổi public guard API.
 - Sidebase Local không có CSRF tích hợp; mọi unsafe request vẫn phải qua wrapper double-submit
-  `x-csrf-token` của KidThink.
+  `x-csrf-token` của MindKid.
 - Không tạo production route test, route Manager OAuth, endpoint public tạo Manager, hoặc
   challenge trước MFA đi qua guard. OAuth P1 dùng backend bridge rồi phát token pair canonical.
 
@@ -125,7 +125,7 @@ Task 0: human chốt contract + ranh giới bảo mật
     |
 Task 1: human duyệt dependency và Nuxt adapter seam
     |
-Task 2: public contract @kidthink/auth + abuse tests
+Task 2: public contract @mindkid/auth + abuse tests
     |-------------------------|
 Task 3: User session slice    Task 4: Manager session slice
     |-------------------------|
@@ -184,7 +184,7 @@ chưa được allow-list hoặc khai hai version.
 **Acceptance criteria:**
 
 - [ ] Có ghi nhận config thật của Nuxt 4 và Sidebase Local 1.3.1; không dùng AuthJS hoặc pattern Nuxt 3 cũ.
-- [ ] Hai app khai Sidebase như Nuxt module; `@kidthink/auth` sở hữu domain/JWT và không export type vendor.
+- [ ] Hai app khai Sidebase như Nuxt module; `@mindkid/auth` sở hữu domain/JWT và không export type vendor.
 - [ ] `packages/auth` dùng `jose`; app runtime không import `jose`/`otpauth` trực tiếp.
 - [ ] Lockfile chỉ thêm dependency đã duyệt, không có install script mới được blanket-approve.
 
@@ -213,7 +213,7 @@ chưa được allow-list hoặc khai hai version.
 - [ ] Ngoại lệ Task #14 và các cổng test/review đã được ghi trong canonical contract.
 - [ ] `pnpm check && pnpm lint:specs` xanh.
 
-## Task 2: Define the stable `@kidthink/auth` contract and write abuse tests
+## Task 2: Define the stable `@mindkid/auth` contract and write abuse tests
 
 **Owner:** AI theo ngoại lệ Task #14; human review diff trước merge.
 
@@ -229,8 +229,8 @@ Manager hoặc lộ type/claim của vendor.
 
 **Verification:**
 
-- [ ] `pnpm --filter @kidthink/auth test -- contracts`
-- [ ] `pnpm --filter @kidthink/auth typecheck`
+- [ ] `pnpm --filter @mindkid/auth test -- contracts`
+- [ ] `pnpm --filter @mindkid/auth typecheck`
 - [ ] Public export snapshot không chứa type/import từ vendor auth.
 
 **Dependencies:** Task 1.
@@ -250,7 +250,7 @@ Manager hoặc lộ type/claim của vendor.
 **Owner:** AI theo ngoại lệ Task #14; human review diff trước merge.
 
 **Description:** Dựng runtime Nuxt tối thiểu của `apps/web`, cấu hình Sidebase Local và để
-server middleware gọi verifier trong `@kidthink/auth` đúng một lần, map JWT access sang domain
+server middleware gọi verifier trong `@mindkid/auth` đúng một lần, map JWT access sang domain
 context, rồi chứng minh `requireUserAuth` là sync và từ chối missing/wrong audience bằng 401.
 
 **Acceptance criteria:**
@@ -262,7 +262,7 @@ context, rồi chứng minh `requireUserAuth` là sync và từ chối missing/w
 
 **Verification:**
 
-- [ ] `pnpm --filter @kidthink/web test -- auth-context`
+- [ ] `pnpm --filter @mindkid/web test -- auth-context`
 - [ ] Contract test kiểm `Set-Cookie` và payload allow-list.
 - [ ] Static test cấm `await requireUserAuth(...)`.
 
@@ -283,7 +283,7 @@ context, rồi chứng minh `requireUserAuth` là sync và từ chối missing/w
 **Owner:** AI theo ngoại lệ Task #14; human review diff trước merge.
 
 **Description:** Dựng Sidebase Local cho `apps/admin` với cookie, issuer, secret và audience
-riêng; middleware gọi JWT verifier do `@kidthink/auth` sở hữu, rồi chứng minh User session
+riêng; middleware gọi JWT verifier do `@mindkid/auth` sở hữu, rồi chứng minh User session
 không qua được namespace Manager và `content_reviewer` không được nâng quyền.
 
 **Acceptance criteria:**
@@ -294,7 +294,7 @@ không qua được namespace Manager và `content_reviewer` không được nâ
 
 **Verification:**
 
-- [ ] `pnpm --filter @kidthink/admin test -- auth-context`
+- [ ] `pnpm --filter @mindkid/admin test -- auth-context`
 - [ ] Cross-namespace integration test chạy hai chiều User ↔ Manager.
 - [ ] `rg -n "isAdmin|mfa_pending|oauth" apps/admin packages/auth` được review từng kết quả, không dùng như allow-list mù.
 
@@ -333,7 +333,7 @@ rotation, reuse detection, logout một phiên và revoke-all phải atomic và 
 
 **Verification:**
 
-- [ ] `pnpm --filter @kidthink/auth test -- refresh`
+- [ ] `pnpm --filter @mindkid/auth test -- refresh`
 - [ ] Integration test PostgreSQL thật cho rotation đồng thời và orphan guard.
 - [ ] Property test: mọi token chỉ thành công tối đa một lần.
 
@@ -353,7 +353,7 @@ rotation, reuse detection, logout một phiên và revoke-all phải atomic và 
 
 **Owner:** AI theo ngoại lệ Task #14; human review diff trước merge.
 
-**Description:** Vì Sidebase Local không cung cấp CSRF, thêm wrapper double-submit KidThink
+**Description:** Vì Sidebase Local không cung cấp CSRF, thêm wrapper double-submit MindKid
 cho mọi request đổi trạng thái và service reauth dùng `active_sessions.reauth_at`. Reauth chỉ
 nâng phiên hiện tại, hết hạn sau 5 phút, và trả danh sách method khả dụng mà không tiết lộ
 provider cho caller chưa xác thực.
@@ -366,7 +366,7 @@ provider cho caller chưa xác thực.
 
 **Verification:**
 
-- [ ] `pnpm --filter @kidthink/auth test -- csrf reauth`
+- [ ] `pnpm --filter @mindkid/auth test -- csrf reauth`
 - [ ] Test dùng clock giả đúng biên 5 phút và hai session đồng thời.
 - [ ] Test response/log không chứa token, secret hoặc tên provider ngoài `details.methods` đã đăng ký.
 
@@ -399,7 +399,7 @@ khai child CRUD, DB adapter thật, package catalog hay access gating trước r
 
 **Verification:**
 
-- [ ] `pnpm --filter @kidthink/auth test -- actor-boundaries`
+- [ ] `pnpm --filter @mindkid/auth test -- actor-boundaries`
 - [ ] Contract test với fake ownership store: giả mạo `active_child_id` của User khác trả 404.
 - [ ] Static payload test cấm `entitlement`, `package`, `tier` trong User session.
 

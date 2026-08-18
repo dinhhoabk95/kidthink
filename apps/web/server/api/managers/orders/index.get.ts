@@ -1,6 +1,5 @@
-import { appError } from "@kidthink/auth";
-import { ORDER_LIST_PAGE_LIMIT_MAX } from "@kidthink/config";
-import { childProfiles, getDb, paymentOrders, users } from "@kidthink/db";
+import { ORDER_LIST_PAGE_LIMIT_MAX } from "@mindkid/config";
+import { childProfiles, getDb, paymentOrders, users } from "@mindkid/db";
 import {
   and,
   asc,
@@ -17,10 +16,8 @@ import {
 } from "drizzle-orm";
 import { defineEventHandler, getQuery } from "h3";
 import { z } from "zod";
-import {
-  requireSuperAdminSession,
-  respondToManagerAuthError,
-} from "../../../utils/admin-auth-runtime.ts";
+import { requireSuperAdminSession } from "../../../utils/admin-auth-runtime.ts";
+import { throwValidationError } from "../../../utils/api-error.js";
 
 const querySchema = z.object({
   status: z.string().optional().default("submitted,under_review"),
@@ -186,105 +183,99 @@ async function fetchEnrichmentData(
 }
 
 export default defineEventHandler(async (event) => {
-  try {
-    requireSuperAdminSession(event);
-    const db = getDb();
+  requireSuperAdminSession(event);
+  const db = getDb();
 
-    const rawQuery = getQuery(event);
-    const parsed = querySchema.safeParse(rawQuery);
-    if (!parsed.success) {
-      throw appError("VALIDATION_FAILED", {
-        errors: parsed.error.flatten().fieldErrors,
-      });
-    }
+  const rawQuery = getQuery(event);
+  const parsed = querySchema.safeParse(rawQuery);
+  if (!parsed.success) {
+    throwValidationError(parsed.error);
+  }
 
-    const filter = parsed.data;
-    const conditions = buildFilterConditions(filter);
-    const whereClause = conditions.length > 0 ? and(...conditions) : undefined;
+  const filter = parsed.data;
+  const conditions = buildFilterConditions(filter);
+  const whereClause = conditions.length > 0 ? and(...conditions) : undefined;
 
-    const orderBy =
-      filter.sort === "oldest"
-        ? [asc(paymentOrders.submittedAt), asc(paymentOrders.id)]
-        : [desc(paymentOrders.submittedAt), desc(paymentOrders.id)];
+  const orderBy =
+    filter.sort === "oldest"
+      ? [asc(paymentOrders.submittedAt), asc(paymentOrders.id)]
+      : [desc(paymentOrders.submittedAt), desc(paymentOrders.id)];
 
-    const [rows, stats] = await Promise.all([
-      db
-        .select({
-          order: paymentOrders,
-          userEmail: users.email,
-          userDisplayName: users.displayName,
-          userCreatedAt: users.createdAt,
-        })
-        .from(paymentOrders)
-        .innerJoin(users, eq(paymentOrders.userId, users.id))
-        .where(whereClause)
-        .orderBy(...orderBy)
-        .limit(filter.limit + 1),
-      fetchPendingStats(db),
-    ]);
+  const [rows, stats] = await Promise.all([
+    db
+      .select({
+        order: paymentOrders,
+        userEmail: users.email,
+        userDisplayName: users.displayName,
+        userCreatedAt: users.createdAt,
+      })
+      .from(paymentOrders)
+      .innerJoin(users, eq(paymentOrders.userId, users.id))
+      .where(whereClause)
+      .orderBy(...orderBy)
+      .limit(filter.limit + 1),
+    fetchPendingStats(db),
+  ]);
 
-    const hasNextPage = rows.length > filter.limit;
-    const itemsToReturn = hasNextPage ? rows.slice(0, filter.limit) : rows;
-    const nextCursor = hasNextPage
-      ? (itemsToReturn.at(-1)?.order.uuid ?? null)
-      : null;
+  const hasNextPage = rows.length > filter.limit;
+  const itemsToReturn = hasNextPage ? rows.slice(0, filter.limit) : rows;
+  const nextCursor = hasNextPage
+    ? (itemsToReturn.at(-1)?.order.uuid ?? null)
+    : null;
 
-    const userIds = [...new Set(itemsToReturn.map((r) => r.order.userId))];
-    const bankTxnRefs = [
-      ...new Set(
-        itemsToReturn
-          .map((r) => r.order.bankTxnRef)
-          .filter((ref): ref is string => Boolean(ref && ref.length > 0))
-      ),
-    ];
+  const userIds = [...new Set(itemsToReturn.map((r) => r.order.userId))];
+  const bankTxnRefs = [
+    ...new Set(
+      itemsToReturn
+        .map((r) => r.order.bankTxnRef)
+        .filter((ref): ref is string => Boolean(ref && ref.length > 0))
+    ),
+  ];
 
-    const { childCountsMap, priorRejectedUsersSet, duplicateRefsSet } =
-      await fetchEnrichmentData(db, userIds, bankTxnRefs);
+  const { childCountsMap, priorRejectedUsersSet, duplicateRefsSet } =
+    await fetchEnrichmentData(db, userIds, bankTxnRefs);
 
-    const items = itemsToReturn.map((r) => {
-      const order = r.order;
-      const childCount = childCountsMap.get(order.userId) || 0;
-      const isDuplicateBankRef = Boolean(
-        order.bankTxnRef && duplicateRefsSet.has(order.bankTxnRef)
-      );
-      const userHasPriorRejection = priorRejectedUsersSet.has(order.userId);
-
-      return {
-        uuid: order.uuid,
-        user: {
-          id: order.userId,
-          email: r.userEmail,
-          display_name: r.userDisplayName,
-          child_profiles_count: childCount,
-        },
-        package_code: order.packageCode,
-        offer_code: order.offerCode,
-        amount_vnd: order.amountVnd,
-        currency: order.currency,
-        status: order.status,
-        transfer_note: order.transferNote,
-        bank_txn_ref: order.bankTxnRef,
-        has_proof: Boolean(order.proofPath),
-        submitted_at: order.submittedAt,
-        reviewed_at: order.reviewedAt,
-        created_at: order.createdAt,
-        expires_at: order.expiresAt,
-        flags: {
-          duplicate_bank_txn_ref: isDuplicateBankRef,
-          user_has_prior_rejected_order: userHasPriorRejection,
-        },
-      };
-    });
+  const items = itemsToReturn.map((r) => {
+    const order = r.order;
+    const childCount = childCountsMap.get(order.userId) || 0;
+    const isDuplicateBankRef = Boolean(
+      order.bankTxnRef && duplicateRefsSet.has(order.bankTxnRef)
+    );
+    const userHasPriorRejection = priorRejectedUsersSet.has(order.userId);
 
     return {
-      items,
-      next_cursor: nextCursor,
-      stats: {
-        pending_count: stats.pendingCount,
-        oldest_waiting_hours: stats.oldestWaitingHours,
+      uuid: order.uuid,
+      user: {
+        id: order.userId,
+        email: r.userEmail,
+        display_name: r.userDisplayName,
+        child_profiles_count: childCount,
+      },
+      package_code: order.packageCode,
+      offer_code: order.offerCode,
+      amount_vnd: order.amountVnd,
+      currency: order.currency,
+      status: order.status,
+      transfer_note: order.transferNote,
+      bank_txn_ref: order.bankTxnRef,
+      has_proof: Boolean(order.proofPath),
+      submitted_at: order.submittedAt,
+      reviewed_at: order.reviewedAt,
+      created_at: order.createdAt,
+      expires_at: order.expiresAt,
+      flags: {
+        duplicate_bank_txn_ref: isDuplicateBankRef,
+        user_has_prior_rejected_order: userHasPriorRejection,
       },
     };
-  } catch (error) {
-    respondToManagerAuthError(event, error);
-  }
+  });
+
+  return {
+    items,
+    next_cursor: nextCursor,
+    stats: {
+      pending_count: stats.pendingCount,
+      oldest_waiting_hours: stats.oldestWaitingHours,
+    },
+  };
 });

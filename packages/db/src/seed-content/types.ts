@@ -2,7 +2,7 @@ import type {
   ActivityInstruction,
   ActivityKind,
   LessonGuide,
-} from "@kidthink/shared";
+} from "@mindkid/shared";
 
 export type SeedOrigin = "human" | "ai_assisted";
 export type SeedAuthoredIn = "repo_seed" | "studio";
@@ -39,7 +39,7 @@ export interface ActivitySeedHeader {
   activity_kind: ActivityKind;
   title: string;
   instruction: ActivityInstruction;
-  materials_vi?: string;
+  materials?: string;
   estimated_minutes: number;
   access_tier: "free" | "login" | "standard" | "premium";
   skill_codes: string[];
@@ -66,11 +66,11 @@ export interface LessonSeedHeader {
   target_age_min: number;
   target_age_max: number;
   estimated_minutes: number;
-  materials_vi?: string;
-  warm_up_vi?: string;
-  reflection_vi?: string;
-  assessment_vi?: string;
-  extension_vi?: string;
+  materials?: string;
+  warm_up?: string;
+  reflection?: string;
+  assessment?: string;
+  extension?: string;
   access_tier: "free" | "login" | "standard" | "premium";
   skill_codes: string[];
   learning_objective_codes: string[];

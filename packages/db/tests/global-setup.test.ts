@@ -2,6 +2,7 @@ import postgres from "postgres";
 import { afterAll, describe, expect, it } from "vitest";
 import {
   assertDisposableDatabaseUrl,
+  TABLES,
   truncateAllTestTables,
 } from "./global-setup.ts";
 
@@ -17,14 +18,14 @@ const DUPLICATE_KEY_ERROR = /duplicate key/i;
 describe("global-setup: truncateAllTestTables", () => {
   const url =
     process.env.DATABASE_URL ??
-    "postgres://postgres:postgres@localhost:5433/kidthink";
+    "postgres://postgres:postgres@localhost:5433/mindkid";
   const sql = postgres(url);
   const probeTable = `_test_truncate_probe_${Date.now()}_${Math.floor(Math.random() * 1_000_000)}`;
 
   it("BR-TST-05: refuses to truncate a non-loopback database", () => {
     expect(() =>
       assertDisposableDatabaseUrl(
-        "postgres://postgres:postgres@db.example.invalid:5432/kidthink"
+        "postgres://postgres:postgres@db.example.invalid:5432/mindkid"
       )
     ).toThrow("loopback");
   });
@@ -45,6 +46,23 @@ describe("global-setup: truncateAllTestTables", () => {
     await expect(
       sql`insert into ${sql(probeTable)} (code) values ('DUP-CODE')`
     ).rejects.toThrow(DUPLICATE_KEY_ERROR);
+  });
+
+  /**
+   * Cổng chống lệch cho D-BX. Danh sách TABLES viết tay từng đứng yên ở 56 tên
+   * trong khi schema đã lên 78 — 22 bảng thêm sau không bao giờ được dọn và rác
+   * cứ cộng dồn im lặng. Đối chiếu với `pg_tables` biến "quên thêm tên" thành
+   * test đỏ ngay lần chạy đầu tiên sau khi thêm bảng.
+   */
+  it("TABLES phủ đúng mọi bảng trong schema public", async () => {
+    const rows = await sql<{ tablename: string }[]>`
+      select tablename from pg_tables
+      where schemaname = 'public' and tablename not like '\\_test\\_%'
+    `;
+    const inDatabase = rows.map((row) => row.tablename).sort();
+    const listed = [...TABLES].sort();
+
+    expect(listed).toEqual(inDatabase);
   });
 
   it("sau truncateAllTestTables, bảng rỗng và identity reset về 1", async () => {

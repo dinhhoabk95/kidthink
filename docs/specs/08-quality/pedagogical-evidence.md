@@ -2,7 +2,7 @@
 spec: PEDAGOGICAL-EVIDENCE
 title: Tiêu chuẩn bằng chứng sư phạm và quy trình playtest với trẻ
 area: quality
-status: approved
+status: implemented
 mvp: true
 phase: P1
 reviewed: 2026-08-16
@@ -91,7 +91,7 @@ Spec này sở hữu khung tiêu chuẩn bằng chứng và protocol vận hành
 
 ## 8. API contract
 
-Hệ thống không cung cấp HTTP endpoint công khai để ghi nhận playtest tự do. Logic kiểm thực quy trình playtest và đánh giá bằng chứng sư phạm được đóng gói qua TypeScript contract trong `@kidthink/shared`:
+Hệ thống không cung cấp HTTP endpoint công khai để ghi nhận playtest tự do. Logic kiểm thực quy trình playtest và đánh giá bằng chứng sư phạm được đóng gói qua TypeScript contract trong `@mindkid/shared`:
 
 ```ts
 export interface PlaytestSessionConfig {

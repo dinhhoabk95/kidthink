@@ -130,7 +130,7 @@ sau kiểm chứng task trước bằng một luồng người thật.
 - [ ] Chỗ cho nút SNS có trong thứ tự DOM, sau một cờ đang tắt (D-ES).
 
 **Kiểm chứng**
-- [ ] `pnpm --filter @kidthink/web test -- register` xanh, assertion tham chiếu `BR-REG-02` `BR-REG-03` `BR-REG-06` `BR-REG-07`.
+- [ ] `pnpm --filter @mindkid/web test -- register` xanh, assertion tham chiếu `BR-REG-02` `BR-REG-03` `BR-REG-06` `BR-REG-07`.
 
 **Phụ thuộc:** P0.3 · P0.4 · P0.9b · **Cỡ:** M
 
@@ -147,7 +147,7 @@ sau kiểm chứng task trước bằng một luồng người thật.
 - [ ] `BR-EVF-08`: xác thực xong đích là `/me/children/new`.
 
 **Kiểm chứng**
-- [ ] `pnpm --filter @kidthink/web test -- verify-email` xanh, assertion tham chiếu `BR-EVF-01` `BR-EVF-02` `BR-EVF-03` `BR-EVF-07`.
+- [ ] `pnpm --filter @mindkid/web test -- verify-email` xanh, assertion tham chiếu `BR-EVF-01` `BR-EVF-02` `BR-EVF-03` `BR-EVF-07`.
 
 **Phụ thuộc:** T1 · **Cỡ:** M
 
@@ -166,7 +166,7 @@ sau kiểm chứng task trước bằng một luồng người thật.
 - [ ] `BR-LGN-03` gọi lại `refresh.ts` của P0.3, **không** cài lại; test tầng luồng: tái dùng refresh → 401 và thu hồi toàn bộ.
 
 **Kiểm chứng**
-- [ ] `pnpm --filter @kidthink/web test -- login sessions` xanh, assertion tham chiếu `BR-LGN-04` `BR-LGN-05` `BR-LGN-06` `BR-LGN-08` `BR-LGN-10`.
+- [ ] `pnpm --filter @mindkid/web test -- login sessions` xanh, assertion tham chiếu `BR-LGN-04` `BR-LGN-05` `BR-LGN-06` `BR-LGN-08` `BR-LGN-10`.
 
 **Phụ thuộc:** T2 · **Cỡ:** M
 
@@ -186,7 +186,7 @@ sau kiểm chứng task trước bằng một luồng người thật.
 - [ ] `suspended` → không gửi email đặt lại.
 
 **Kiểm chứng**
-- [ ] `pnpm --filter @kidthink/web test -- password-recovery` xanh, assertion tham chiếu `BR-PWR-01` `BR-PWR-03` `BR-PWR-09` `BR-PWR-10` `BR-PWR-11`.
+- [ ] `pnpm --filter @mindkid/web test -- password-recovery` xanh, assertion tham chiếu `BR-PWR-01` `BR-PWR-03` `BR-PWR-09` `BR-PWR-10` `BR-PWR-11`.
 
 **Phụ thuộc:** T3 · **Cỡ:** M
 
@@ -202,7 +202,7 @@ sau kiểm chứng task trước bằng một luồng người thật.
 - [ ] Đo thời gian trên **nhiều lần chạy**, so trung vị, không so một lần.
 
 **Kiểm chứng**
-- [ ] `pnpm --filter @kidthink/web test -- identity-disclosure` xanh, assertion tham chiếu cả năm mã rule.
+- [ ] `pnpm --filter @mindkid/web test -- identity-disclosure` xanh, assertion tham chiếu cả năm mã rule.
 
 **Phụ thuộc:** T4 · **Cỡ:** M
 
@@ -215,7 +215,7 @@ sau kiểm chứng task trước bằng một luồng người thật.
 - [ ] Cổng: không route nào trong nhóm bị chặn thiếu kiểm trạng thái.
 
 **Kiểm chứng**
-- [ ] `pnpm --filter @kidthink/web test -- restricted-mode` xanh, assertion tham chiếu `BR-REG-04` `BR-EVF-06`.
+- [ ] `pnpm --filter @mindkid/web test -- restricted-mode` xanh, assertion tham chiếu `BR-REG-04` `BR-EVF-06`.
 
 **Phụ thuộc:** T5 · **Cỡ:** S
 

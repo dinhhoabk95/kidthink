@@ -84,6 +84,15 @@ export const FORBIDDEN_WORDS = [
   "Bé chưa giỏi",
 ] as const;
 
+/** Pick a random index, avoiding an immediate repeat where possible (BR-FBK-08). */
+function pickNonRepeatingIndex(length: number, lastIndex: number): number {
+  let nextIndex: number;
+  do {
+    nextIndex = Math.floor(Math.random() * length);
+  } while (nextIndex === lastIndex && length > 1);
+  return nextIndex;
+}
+
 export class FeedbackSystem {
   private lastComplimentIndex = -1;
   private lastRetryIndex = -1;
@@ -92,29 +101,22 @@ export class FeedbackSystem {
    * Returns rotation of praise text without repeating consecutive strings (BR-FBK-08).
    */
   getCompliment(): string {
-    let nextIndex: number;
-    do {
-      nextIndex = Math.floor(Math.random() * COMPLIMENTS.length);
-    } while (nextIndex === this.lastComplimentIndex && COMPLIMENTS.length > 1);
-
-    this.lastComplimentIndex = nextIndex;
-    return COMPLIMENTS[nextIndex] as string;
+    this.lastComplimentIndex = pickNonRepeatingIndex(
+      COMPLIMENTS.length,
+      this.lastComplimentIndex
+    );
+    return COMPLIMENTS[this.lastComplimentIndex] as string;
   }
 
   /**
    * Returns rotation of non-punitive retry encouragement text.
    */
   getRetryEncouragement(): string {
-    let nextIndex: number;
-    do {
-      nextIndex = Math.floor(Math.random() * RETRY_ENCOURAGEMENTS.length);
-    } while (
-      nextIndex === this.lastRetryIndex &&
-      RETRY_ENCOURAGEMENTS.length > 1
+    this.lastRetryIndex = pickNonRepeatingIndex(
+      RETRY_ENCOURAGEMENTS.length,
+      this.lastRetryIndex
     );
-
-    this.lastRetryIndex = nextIndex;
-    return RETRY_ENCOURAGEMENTS[nextIndex] as string;
+    return RETRY_ENCOURAGEMENTS[this.lastRetryIndex] as string;
   }
 
   /**

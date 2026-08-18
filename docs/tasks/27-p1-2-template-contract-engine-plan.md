@@ -153,7 +153,7 @@ T2 hình dạng GameTemplate + Zod contract + xuất JSON Schema + z.infer
 - [ ] Mã lỗi `TEMPLATE_NOT_SUPPORTED` (422) và `CONTENT_PACK_INVALID` (422 + `details.issues[]`) khớp registry.
 
 **Kiểm chứng**
-- [ ] `pnpm --filter @kidthink/game-engine test -- contract` xanh, assertion tham chiếu `BR-GTC-01` `BR-GTC-03` `BR-GTC-07`.
+- [ ] `pnpm --filter @mindkid/game-engine test -- contract` xanh, assertion tham chiếu `BR-GTC-01` `BR-GTC-03` `BR-GTC-07`.
 
 **Phụ thuộc:** không · **Cỡ:** M
 
@@ -174,7 +174,7 @@ T2 hình dạng GameTemplate + Zod contract + xuất JSON Schema + z.infer
 - [ ] Asset load fail → `asset_load_failed` + placeholder trung tính, **chơi tiếp được**.
 
 **Kiểm chứng**
-- [ ] `pnpm --filter @kidthink/game-engine test -- core` xanh, assertion tham chiếu `BR-ENG-01` `BR-ENG-13` `BR-ENG-14` `BR-ENG-15`.
+- [ ] `pnpm --filter @mindkid/game-engine test -- core` xanh, assertion tham chiếu `BR-ENG-01` `BR-ENG-13` `BR-ENG-14` `BR-ENG-15`.
 
 **Ranh giới work package**
 

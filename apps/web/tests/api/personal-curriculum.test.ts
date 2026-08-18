@@ -9,7 +9,7 @@ import {
   getOwnerDb,
   lessons,
   users,
-} from "@kidthink/db";
+} from "@mindkid/db";
 import { eq } from "drizzle-orm";
 import { beforeEach, describe, expect, it } from "vitest";
 import enrollPersonalHandler from "../../server/api/users/children/[uuid]/enroll-personal.post.js";
@@ -109,12 +109,12 @@ describe("Personal Curriculum API Endpoints (Task #65 / P4.4)", () => {
         {
           key: "create_custom_curriculum",
           group: "creator",
-          labelVi: "Tạo lộ trình cá nhân",
+          label: "Tạo lộ trình cá nhân",
         },
         {
           key: "play_standard_games",
           group: "content",
-          labelVi: "Chơi game chuẩn",
+          label: "Chơi game chuẩn",
         },
       ])
       .onConflictDoNothing();
@@ -164,7 +164,7 @@ describe("Personal Curriculum API Endpoints (Task #65 / P4.4)", () => {
       .insert(gameTemplates)
       .values({
         code: "GT-998",
-        nameVi: "Game template test API",
+        name: "Game template test API",
         mechanic: "drag_drop",
         contentContract: {},
       })
@@ -193,7 +193,7 @@ describe("Personal Curriculum API Endpoints (Task #65 / P4.4)", () => {
         entityId: Math.floor(100_000 + Math.random() * 800_000),
         templateId,
         difficulty: 1,
-        titleVi: "Đếm số mẫu",
+        title: "Đếm số mẫu",
         accessTier: "standard",
         status: "published",
         contentPack: {},
@@ -222,7 +222,7 @@ describe("Personal Curriculum API Endpoints (Task #65 / P4.4)", () => {
       .values({
         code: lesCode,
         entityId: Math.floor(100_000 + Math.random() * 800_000),
-        titleVi: "Bài học hình khối",
+        title: "Bài học hình khối",
         accessTier: "standard",
         status: "published",
         estimatedMinutes: 20,
@@ -242,7 +242,7 @@ describe("Personal Curriculum API Endpoints (Task #65 / P4.4)", () => {
       .values({
         code: systemCurriculumCode,
         entityId: Math.floor(100_000 + Math.random() * 800_000),
-        titleVi: "Chương trình mẫu hệ thống",
+        title: "Chương trình mẫu hệ thống",
         accessTier: "standard",
         status: "published",
         durationWeeks: 4,

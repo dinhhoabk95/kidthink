@@ -12,7 +12,6 @@ const userWithChild: UserTokenPayload = {
   user_id: 101,
   display_name: "Người dùng An",
   session_id: "sess-user-1",
-  refresh_token_version: 1,
   active_child_id: 301,
 };
 
@@ -20,7 +19,6 @@ const userWithoutChild: UserTokenPayload = {
   user_id: 102,
   display_name: "Người dùng Bình",
   session_id: "sess-user-2",
-  refresh_token_version: 1,
 };
 
 const fakeOwnershipPort: ChildOwnershipPort = {
@@ -113,7 +111,6 @@ describe("Actor-boundary ports and active-child helpers", () => {
         display_name: "Reviewer A",
         role: "content_reviewer",
         session_id: "m-sess-1",
-        refresh_token_version: 1,
       },
     });
 

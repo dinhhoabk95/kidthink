@@ -2,7 +2,7 @@
 spec: BROWSER-PUSH
 title: Thông báo trình duyệt qua FCM Web
 area: platform
-status: approved
+status: implemented
 mvp: false
 phase: P5
 reviewed: 2026-08-13
@@ -20,7 +20,7 @@ depends_on:
 
 ## 1. Objective
 
-User có thể chủ động bật thông báo trình duyệt để nhận tín hiệu kịp thời khi không mở KidThink.
+User có thể chủ động bật thông báo trình duyệt để nhận tín hiệu kịp thời khi không mở MindKid.
 Kênh dùng **Firebase Cloud Messaging cho Web (FCM Web)** và được xử lý sau các package core ở
 Task #83. Đây là delivery best-effort; User luôn xem lại logical notification trong inbox do
 [`../03-account/notification-inbox.md`](../03-account/notification-inbox.md) sở hữu.

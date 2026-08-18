@@ -1,11 +1,6 @@
-import { createParentGateToken } from "@kidthink/auth";
-import {
-  childDailyStats,
-  childProfiles,
-  getOwnerDb,
-  users,
-} from "@kidthink/db";
-import { getDateIct } from "@kidthink/shared";
+import { createParentGateToken } from "@mindkid/auth";
+import { childDailyStats, childProfiles, getOwnerDb, users } from "@mindkid/db";
+import { getDateIct } from "@mindkid/shared";
 import { describe, expect, it } from "vitest";
 import grantExtraTimeHandler from "../../server/api/users/children/[uuid]/grant-extra-time.post";
 import playBudgetHandler from "../../server/api/users/children/[uuid]/play-budget.get";
@@ -14,7 +9,7 @@ import updateSettingsHandler from "../../server/api/users/children/[uuid]/settin
 const PARENT_GATE_SECRET =
   process.env.NUXT_PARENT_GATE_SECRET ||
   process.env.PARENT_GATE_SECRET ||
-  "kidthink-parent-gate-secret-key-default-2026";
+  "mindkid-parent-gate-secret-key-default-2026";
 
 function mockEvent(
   method: string,
@@ -50,7 +45,6 @@ function mockEvent(
         user_id: user.id,
         display_name: user.displayName,
         session_id: `sess_${user.id}`,
-        refresh_token_version: 0,
       },
       params,
       body,

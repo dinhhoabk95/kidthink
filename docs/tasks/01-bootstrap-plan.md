@@ -1,4 +1,4 @@
-# Plan — Bootstrap `kidthink/` (P0 bước 1)
+# Plan — Bootstrap `mindkid/` (P0 bước 1)
 
 > **Bản 2, viết lại 2026-08-06.** Bản 1 dựa trên assumption chưa đo; ba assumption sai, xem §6.
 >
@@ -13,7 +13,7 @@
 
 | Đo | Kết quả | Hệ quả |
 |---|---|---|
-| `kidthink/` | **chưa tồn tại** | T1 tạo từ đầu |
+| `mindkid/` | **chưa tồn tại** | T1 tạo từ đầu |
 | 16 spec `00-foundation` | **16/16 `status: draft`**, 0 `approved` | `BR-RBS-04` chặn code nghiệp vụ → task #2, ngoài plan này |
 | git ở workspace root | **không phải repo** | quyết định D-A §5 |
 | git ở `tinimath/` (v1) | repo, remote `dinhhoabk95/tinimath`, branch `main` | v1 tự quản, không đụng |
@@ -39,11 +39,11 @@
 T0 Toolchain + remote  (người làm phần bật OrbStack + tạo repo GitHub)
    │
    ▼
-T1 Skeleton workspace + git init trong kidthink/
+T1 Skeleton workspace + git init trong mindkid/
    │
    ├──▶ T2 Port tooling config → packages/config   (tsconfig + biome, KHÔNG constants)
    │      │
-   │      └──▶ T4 Port packages/emoji   (tsconfig extends @kidthink/config)
+   │      └──▶ T4 Port packages/emoji   (tsconfig extends @mindkid/config)
    │
    ├──▶ T3 Port docs/taxonomy/                      ⟂ độc lập
    ├──▶ T5 Script lint:tokens (viết mới)            ⟂ độc lập
@@ -72,7 +72,7 @@ T1 Skeleton workspace + git init trong kidthink/
 | a | `nvm use 24` (đã có `v24.15.0`) | agent | `node -v` → `v24.x` |
 | b | Cài **pnpm 11** (`corepack enable && corepack prepare pnpm@11 --activate`) | agent | `pnpm -v` → `11.x` |
 | c | **Bật OrbStack** (daemon đang chết) | người **người** | `docker info` không lỗi socket |
-| d | Tạo repo GitHub cho `kidthink` + lấy remote URL | người **người** (hoặc `gh repo create`, cần xác nhận) | `git ls-remote <url>` trả về |
+| d | Tạo repo GitHub cho `mindkid` + lấy remote URL | người **người** (hoặc `gh repo create`, cần xác nhận) | `git ls-remote <url>` trả về |
 
 Lưu ý: (c) và (d) là việc người làm — (d) là hành động **ra ngoài** (tạo repo trên GitHub), cần
 bạn xác nhận hoặc tự làm. Không tự chạy `gh repo create` mà chưa hỏi.
@@ -84,15 +84,15 @@ bạn xác nhận hoặc tự làm. Không tự chạy `gh repo create` mà chư
 ### T1 — Skeleton workspace + git init
 
 **Làm:**
-- `mkdir kidthink/` cạnh `tinimath/`. Cấm xoá/sửa `tinimath/`.
-- `git init` **trong `kidthink/`** + `git remote add origin <url từ T0d>` (quyết định D-A).
+- `mkdir mindkid/` cạnh `tinimath/`. Cấm xoá/sửa `tinimath/`.
+- `git init` **trong `mindkid/`** + `git remote add origin <url từ T0d>` (quyết định D-A).
 - `.gitignore`: `node_modules`, `.nuxt`, `.output`, `dist`, `.env*`, `pgdata_*`.
-- `package.json` gốc: `name: "@kidthink/monorepo"`, `private: true`, `type: "module"`,
+- `package.json` gốc: `name: "@mindkid/monorepo"`, `private: true`, `type: "module"`,
   `engines: { node: ">=24", pnpm: ">=11" }`, scripts theo **[`SPEC.md`](../SPEC.md) §7** (T7 lấp nội dung).
 - `pnpm-workspace.yaml`: `packages: [apps/*, packages/*]` + `catalog:` theo
   [`repo-bootstrap.md`](../specs/00-foundation/repo-bootstrap.md) §7.1 (lấy patch/minor mới nhất **cùng major đã chốt** — `BR-RBS-08`,
   không hạ, không nhảy major) + `onlyBuiltDependencies: [sharp]`.
-- **3 app**: `apps/{web,admin,worker}/package.json` → `@kidthink/{web,admin,worker}`.
+- **3 app**: `apps/{web,admin,worker}/package.json` → `@mindkid/{web,admin,worker}`.
 - **12 package** theo [`SPEC.md`](../SPEC.md) §8: `config` `shared` `db` `auth` `cache` `storage` `queue`
   `taxonomy` `emoji` `game-engine` `adaptive` `ui` — mỗi cái `package.json` +
   `src/index.ts` chứa `export {};`.
@@ -100,17 +100,17 @@ bạn xác nhận hoặc tự làm. Không tự chạy `gh repo create` mà chư
 **Acceptance:**
 ```gherkin
 Scenario: workspace cài sạch
-  When chạy `pnpm install` tại kidthink/
+  When chạy `pnpm install` tại mindkid/
   Then exit 0, không lỗi resolve workspace
   And `pnpm ls -r --depth -1` liệt kê 15 workspace project (3 app + 12 package)
 
 Scenario: BR-RBS-02 — không sót scope cũ
-  When grep "@tinimath/" trong kidthink/ (trừ node_modules)
+  When grep "@tinimath/" trong mindkid/ (trừ node_modules)
   Then 0 kết quả
 ```
 **Verify:**
 ```bash
-cd kidthink && pnpm install && pnpm ls -r --depth -1
+cd mindkid && pnpm install && pnpm ls -r --depth -1
 grep -rn "@tinimath/" . --exclude-dir=node_modules ; echo "exit=$?"   # mong đợi exit=1
 ```
 
@@ -127,7 +127,7 @@ lẫn lỗi skeleton với lỗi port.
 | Port | Đích | Ghi chú |
 |---|---|---|
 | `packages/config/tsconfig.base.json` | `packages/config/tsconfig.base.json` | đổi scope trong `paths` nếu có; rà `target`/`lib` theo TS 5.9 |
-| `.dockerignore` | `kidthink/.dockerignore` | |
+| `.dockerignore` | `mindkid/.dockerignore` | |
 
 | Cấm port | Lý do |
 |---|---|
@@ -138,7 +138,7 @@ lẫn lỗi skeleton với lỗi port.
 
 **Lint stack (D-H, đã smoke test):**
 ```jsonc
-// kidthink/biome.jsonc — toàn bộ config lint
+// mindkid/biome.jsonc — toàn bộ config lint
 {
   "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
   "root": true,
@@ -149,7 +149,7 @@ lẫn lỗi skeleton với lỗi port.
 - Lưu ý: Preset `core` bật `vcs: { enabled, clientKind: git, useIgnoreFile: true, defaultBranch: "main" }`
   → **bắt buộc** có `.gitignore` + git repo branch `main`, nếu không Biome báo
   `internalError/fs: couldn't find an ignore file`. Đã có ở T1.
-- `package.json` → `@kidthink/config`, `exports` giữ `./tsconfig.base.json`, **bỏ**
+- `package.json` → `@mindkid/config`, `exports` giữ `./tsconfig.base.json`, **bỏ**
   `"."`, `"./constants"`, `"./biome.base.jsonc"`.
 
 **Acceptance:**
@@ -170,14 +170,14 @@ Scenario: ca âm — lint thật sự chặn
 
 Scenario: không mang constants v1
   Then packages/config/src/ không tồn tại
-  And grep "tinimath_sa\|superadmin" trong kidthink/ → 0 kết quả
+  And grep "tinimath_sa\|superadmin" trong mindkid/ → 0 kết quả
 ```
 
 ---
 
 ### T3 — Port `docs/taxonomy/` (độc lập)
 
-`tinimath/tinimath/docs/taxonomy/` (72K) → `kidthink/docs/taxonomy/`. Port **nguyên** — data
+`tinimath/tinimath/docs/taxonomy/` (72K) → `mindkid/docs/taxonomy/`. Port **nguyên** — data
 registry C1–C6 + 230 skill, không phải code, không có scope để đổi.
 
 **Acceptance:**
@@ -185,9 +185,9 @@ registry C1–C6 + 230 skill, không phải code, không có scope để đổi.
 Scenario: taxonomy port đủ
   When so số file và tổng dòng giữa nguồn và đích
   Then khớp 100%
-  And grep "@tinimath" trong kidthink/docs/taxonomy/ → 0 kết quả
+  And grep "@tinimath" trong mindkid/docs/taxonomy/ → 0 kết quả
 ```
-**Verify:** `diff -r tinimath/tinimath/docs/taxonomy kidthink/docs/taxonomy` → rỗng.
+**Verify:** `diff -r tinimath/tinimath/docs/taxonomy mindkid/docs/taxonomy` → rỗng.
 
 ---
 
@@ -197,7 +197,7 @@ Scenario: taxonomy port đủ
 — Search`) + `tsconfig.json` `extends "@tinimath/config/tsconfig.base.json"`. Port sạch.
 
 **Làm:** copy `src/` `tests/` `tsconfig.json` `package.json` → đổi mọi `@tinimath/` →
-`@kidthink/` (gồm comment header — `BR-RBS-02` nói "không còn tham chiếu `@tinimath/` nào
+`@mindkid/` (gồm comment header — `BR-RBS-02` nói "không còn tham chiếu `@tinimath/` nào
 trong package đó"). Version `vitest`: v1 pin `^3.2.1` ở emoji nhưng `4.1.5` ở root →
 **dùng 4** ([`SPEC.md`](../SPEC.md) §6 chốt Vitest 4), lấy từ `catalog:`.
 
@@ -205,11 +205,11 @@ trong package đó"). Version `vitest`: v1 pin `^3.2.1` ở emoji nhưng `4.1.5`
 ```gherkin
 Scenario: BR-RBS-02 — scope đổi hết
   When đọc packages/emoji/package.json
-  Then name là "@kidthink/emoji"
+  Then name là "@mindkid/emoji"
   And grep "@tinimath" trong packages/emoji/ → 0 kết quả
 
 Scenario: test emoji xanh sau port
-  When chạy `pnpm --filter @kidthink/emoji test`
+  When chạy `pnpm --filter @mindkid/emoji test`
   Then toàn bộ test pass
 ```
 
@@ -220,7 +220,7 @@ Scenario: test emoji xanh sau port
 [`SPEC.md`](../SPEC.md) §7 định nghĩa `pnpm check` = `lint` + **`lint:tokens`** + `typecheck`. `lint:tokens`
 = "cấm hex literal ngoài `designTokens.ts`". Ở v1 script này nằm trong
 `packages/game-engine/scripts/lint-tokens.ts` — nhưng game-engine **không port ở đợt này**
-(D-B). → viết mới tại `kidthink/scripts/lint-tokens.ts` (quyết định D-D).
+(D-B). → viết mới tại `mindkid/scripts/lint-tokens.ts` (quyết định D-D).
 
 **Làm:** script quét hex literal (`#rrggbb`/`#rgb`) trong `apps/**` + `packages/**`, allow-list
 đúng file `designTokens.ts`, exit 1 nếu vi phạm. Không port bản v1 (nó gắn đường dẫn engine v1).
@@ -245,7 +245,7 @@ Ca thứ hai là bắt buộc — script luôn exit 0 vì repo rỗng là gate h
 
 Port **khung** từ `tinimath/tinimath/docker-compose.yml`, ba thay đổi có chủ đích:
 - `valkey/valkey:8-alpine` → **`valkey/valkey:9-alpine`** (v1 ở 8; baseline §7.1 chốt 9).
-- `POSTGRES_DB: tinimath` → `kidthink`.
+- `POSTGRES_DB: tinimath` → `mindkid`.
 - Bỏ service `rustfs` (S3 local) — chưa có spec nào ở bootstrap cần nó; thêm khi
   [`image-storage.md`](../specs/01-platform/image-storage.md) tới.
 - Giữ `postgres:17-alpine` + healthcheck.
@@ -253,7 +253,7 @@ Port **khung** từ `tinimath/tinimath/docker-compose.yml`, ba thay đổi có c
 **Acceptance (`BR-RBS-07`):**
 ```gherkin
 Scenario: đúng major version production
-  When chạy `docker compose up -d` ở kidthink/
+  When chạy `docker compose up -d` ở mindkid/
   Then service db healthy và báo server_version 17.x
   And service valkey báo valkey_version 9.x
 ```
@@ -292,7 +292,7 @@ Scenario: pnpm check đúng contract SPEC.md §7
 
 Scenario: pnpm test chạy thật
   When chạy `pnpm test`
-  Then test của @kidthink/emoji chạy và pass
+  Then test của @mindkid/emoji chạy và pass
   And không phải "no test files found"
 ```
 Ca thứ hai chặn cái bẫy "CI xanh vì không có test nào".
@@ -301,7 +301,7 @@ Ca thứ hai chặn cái bẫy "CI xanh vì không có test nào".
 
 ### T8 — CI workflow (chờ T7)
 
-`kidthink/.github/workflows/ci.yml`. Port **khung cú pháp** từ v1 (`concurrency`,
+`mindkid/.github/workflows/ci.yml`. Port **khung cú pháp** từ v1 (`concurrency`,
 `actions/checkout@v4`, `pnpm/action-setup@v4`, `actions/setup-node@v4` + `cache: pnpm`), ba
 thay đổi:
 - `pnpm/action-setup` version `10` → **`11`**.
@@ -312,7 +312,7 @@ thay đổi:
 **Acceptance (`BR-RBS-03`):**
 ```gherkin
 Scenario: CI xanh trên commit bootstrap
-  Given kidthink/ chỉ chứa skeleton + asset port (không route/schema/service)
+  Given mindkid/ chỉ chứa skeleton + asset port (không route/schema/service)
   When push lên remote và CI chạy
   Then job pass: install, check, test
   And log check hiện đủ 3 bước lint / lint:tokens / typecheck
@@ -326,7 +326,7 @@ Scenario: CI xanh trên commit bootstrap
 
 | # | Điều kiện | Verify |
 |---|---|---|
-| 1 | `pnpm check` exit 0 tại chỗ | `cd kidthink && pnpm check; echo $?` |
+| 1 | `pnpm check` exit 0 tại chỗ | `cd mindkid && pnpm check; echo $?` |
 | 2 | CI xanh trên remote | GitHub Actions run status |
 | 3 | `docker compose up -d` đúng version | T6 verify block |
 
@@ -357,10 +357,10 @@ chưa nằm trong PR này** — nên `BR-RBS-04` vẫn đang chặn code nghiệ
 
 | ID | Quyết định | Ai chốt | Đánh đổi |
 |---|---|---|---|
-| **D-A** | `git init` **chỉ trong `kidthink/`**, remote riêng | người người dùng, 2026-08-06 | Lưu ý: 135 spec ở workspace root **vẫn không được version control** — đổi spec không truy được vết, và [`plan.md`](../tasks/plan.md)/[`todo.md`](../tasks/todo.md) này cũng untracked. Đã nêu; giữ nguyên lựa chọn |
+| **D-A** | `git init` **chỉ trong `mindkid/`**, remote riêng | người người dùng, 2026-08-06 | Lưu ý: 135 spec ở workspace root **vẫn không được version control** — đổi spec không truy được vết, và [`plan.md`](../tasks/plan.md)/[`todo.md`](../tasks/todo.md) này cũng untracked. Đã nêu; giữ nguyên lựa chọn |
 | **D-B** | `packages/game-engine` = **skeleton rỗng** ở bootstrap, port toàn bộ thành task P1 | người người dùng, 2026-08-06 | [`repo-bootstrap.md`](../specs/00-foundation/repo-bootstrap.md) §7.3 ghi "port nguyên" — **đo được là bất khả thi**: 48 import `D1xx–D4xxConfig` từ `@tinimath/shared` (ngoài danh sách port), v1 `handlers/d1..d6/` 86 file / 60 game type vs v2 `templates/GT-001..006/`. Lưu ý: §7.3 **cần sửa spec** (§7 dưới) |
 | **D-C** | Port `packages/config` **chỉ tooling** (tsconfig + biome), không `src/constants.ts` | agent, đo được | `COOKIE_PREFIXES` là bề mặt auth v1 (`superadmin`, prefix `tinimath_`); auth = vùng cấm [`SPEC.md`](../SPEC.md) §0 D7. §7.3 không liệt kê `constants.ts` |
-| **D-D** | `lint-tokens.ts` **viết mới** ở `kidthink/scripts/`, không port bản v1 | agent | Bản v1 ở `packages/game-engine/scripts/`, gắn path engine v1 — mà engine không port (D-B). [`SPEC.md`](../SPEC.md) §7 vẫn buộc `lint:tokens` trong `pnpm check` |
+| **D-D** | `lint-tokens.ts` **viết mới** ở `mindkid/scripts/`, không port bản v1 | agent | Bản v1 ở `packages/game-engine/scripts/`, gắn path engine v1 — mà engine không port (D-B). [`SPEC.md`](../SPEC.md) §7 vẫn buộc `lint:tokens` trong `pnpm check` |
 | **D-E** | CI = `check` + `test`, **không** step `build` | agent | v1 CI có `pnpm build`; trên skeleton rỗng nó xanh giả. Thêm lại khi có app |
 | **D-F** | CI provider = **GitHub Actions** | agent | Đóng [`repo-bootstrap.md`](../specs/00-foundation/repo-bootstrap.md) §11 **Q5**. Root đã có `.github/`, v1 dùng Actions — không có lý do đổi |
 | **D-G** | Valkey **8 → 9** khi port docker-compose | baseline §7.1 | v1 chạy Valkey 8. Bump có chủ đích, không phải port nguyên trạng (`BR-RBS-07`) |
@@ -412,6 +412,6 @@ chưa nằm trong PR này** — nên `BR-RBS-04` vẫn đang chặn code nghiệ
 **Ask first** — mở rộng danh sách port ngoài §7.3 · đổi major bất kỳ dòng nào ở §7.1 · thêm
 dependency ngoài §7.1 trước khi có spec cần · tạo repo/remote trên GitHub (T0d).
 
-**Never** — copy route/schema/service từ v1 · để hai scope `@tinimath/*` + `@kidthink/*` cùng
+**Never** — copy route/schema/service từ v1 · để hai scope `@tinimath/*` + `@mindkid/*` cùng
 tồn tại · merge PR bootstrap khi T9 chưa đủ 3 điều kiện · hạ version dưới §7.1 · khai script
 `package.json` trỏ vào chỗ trống để `check` xanh · sửa bảng §7.1/§7.3 âm thầm trong PR code.

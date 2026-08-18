@@ -4,11 +4,11 @@ import fs from "node:fs";
 import path from "node:path";
 import { pipeline } from "node:stream/promises";
 import { createGunzip } from "node:zlib";
-import { backupLog, getOwnerDb } from "@kidthink/db";
+import { backupLog, getOwnerDb } from "@mindkid/db";
 
 const dbNameRegex = /\/[^/]+(\?.*)?$/;
 
-import { alert } from "@kidthink/queue";
+import { alert } from "@mindkid/queue";
 import { desc, eq } from "drizzle-orm";
 import postgres from "postgres";
 
@@ -80,7 +80,7 @@ export async function runVerifyBackup(jobId: string) {
     // 3. Create temp database
     const dbUrl =
       process.env.DATABASE_URL ||
-      "postgres://postgres:postgres@localhost:5432/kidthink";
+      "postgres://postgres:postgres@localhost:5432/mindkid";
     tempDbName = `verify_${crypto.randomBytes(4).toString("hex")}`;
 
     // Connect to default DB to create temp DB
@@ -155,7 +155,7 @@ export async function runVerifyBackup(jobId: string) {
       try {
         const dbUrl =
           process.env.DATABASE_URL ||
-          "postgres://postgres:postgres@localhost:5432/kidthink";
+          "postgres://postgres:postgres@localhost:5432/mindkid";
         const sqlAdminCleanup = postgres(dbUrl);
         await sqlAdminCleanup.unsafe(`DROP DATABASE IF EXISTS ${tempDbName}`);
         await sqlAdminCleanup.end();

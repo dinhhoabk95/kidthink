@@ -183,7 +183,7 @@
   const focusedIndex = ref(0);
   const missingReported = ref(false);
 
-  const RECENT_KEY = "kidthink_recent_emojis";
+  const RECENT_KEY = "mindkid_recent_emojis";
 
   onMounted(() => {
     loadRecentEmojis();

@@ -1,4 +1,4 @@
-// @kidthink/ui — App configuration extension point for Nuxt UI (BR-DSC-03, Task 3)
+// @mindkid/ui — App configuration extension point for Nuxt UI (BR-DSC-03, Task 3)
 
 // biome-ignore lint/correctness/noUndeclaredVariables: Nuxt auto-imported global defineAppConfig
 export default defineAppConfig({

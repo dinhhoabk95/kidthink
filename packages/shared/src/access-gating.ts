@@ -1,4 +1,4 @@
-import { appError } from "@kidthink/auth";
+import { appError } from "@mindkid/auth";
 import {
   allowedTiers,
   buildTierLockedResponse,

@@ -1,23 +1,16 @@
-import { appError } from "@kidthink/auth";
-import { deleteLessonPlan } from "@kidthink/db";
+import { appError } from "@mindkid/auth";
+import { deleteLessonPlan } from "@mindkid/db";
 import { defineEventHandler, getRouterParam } from "h3";
-import {
-  requireWebUserSession,
-  respondToUserAuthError,
-} from "../../../utils/auth-runtime.js";
+import { requireWebUserSession } from "../../../utils/auth-runtime.js";
 
 export default defineEventHandler(async (event) => {
-  try {
-    const user = await requireWebUserSession(event);
-    const uuid = getRouterParam(event, "uuid");
-    if (!uuid) {
-      throw appError("NOT_FOUND", "Thiếu mã định danh giáo án.");
-    }
-
-    const userId = Number(user.user_id);
-    const result = await deleteLessonPlan(userId, uuid);
-    return result;
-  } catch (error) {
-    return respondToUserAuthError(event, error);
+  const user = await requireWebUserSession(event);
+  const uuid = getRouterParam(event, "uuid");
+  if (!uuid) {
+    throw appError("NOT_FOUND", "Thiếu mã định danh giáo án.");
   }
+
+  const userId = Number(user.user_id);
+  const result = await deleteLessonPlan(userId, uuid);
+  return result;
 });

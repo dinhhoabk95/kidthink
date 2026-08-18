@@ -1,5 +1,5 @@
 {
-  "name": "@kidthink/db",
+  "name": "@mindkid/db",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -7,21 +7,21 @@
     ".": "./src/index.ts"
   },
   "dependencies": {
-    "@kidthink/adaptive": "workspace:*",
-    "@kidthink/auth": "workspace:*",
-    "@kidthink/emoji": "workspace:*",
-    "@kidthink/game-engine": "workspace:*",
-    "@kidthink/moderation": "workspace:*",
-    "@kidthink/queue": "workspace:*",
-    "@kidthink/shared": "workspace:*",
-    "@kidthink/storage": "workspace:*",
-    "@kidthink/taxonomy": "workspace:*",
+    "@mindkid/adaptive": "workspace:*",
+    "@mindkid/auth": "workspace:*",
+    "@mindkid/emoji": "workspace:*",
+    "@mindkid/game-engine": "workspace:*",
+    "@mindkid/moderation": "workspace:*",
+    "@mindkid/queue": "workspace:*",
+    "@mindkid/shared": "workspace:*",
+    "@mindkid/storage": "workspace:*",
+    "@mindkid/taxonomy": "workspace:*",
     "drizzle-orm": "catalog:",
     "postgres": "catalog:",
     "zod": "catalog:"
   },
   "devDependencies": {
-    "@kidthink/shared": "workspace:*",
+    "@mindkid/shared": "workspace:*",
     "drizzle-kit": "catalog:",
     "fast-check": "catalog:"
   }

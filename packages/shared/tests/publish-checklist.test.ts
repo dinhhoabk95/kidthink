@@ -84,7 +84,7 @@ describe("P0.6 Task 3 — Checklist publish §7.3 & BR-CLC-09", () => {
       kind: "manipulative",
       instruction:
         'Chuẩn bị 5 quả táo. "Bé hãy đếm xem có mấy quả táo nào!". Dễ hơn: đếm 3 quả. Khó hơn: đếm 7 quả.',
-      materialsVi: "5 quả táo hoặc đồ chơi",
+      materials: "5 quả táo hoặc đồ chơi",
       estimatedMinutes: 10,
     };
 

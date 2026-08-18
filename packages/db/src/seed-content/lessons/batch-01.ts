@@ -20,12 +20,12 @@ export const LESSON_BATCH_01: LessonSeed[] = [
       target_age_min: 3,
       target_age_max: 4,
       estimated_minutes: 20,
-      materials_vi: "Cốc nhựa, hạt đậu sạch",
-      warm_up_vi: "Khởi động: Cùng hát bài hát Đếm Ngón Tay và lắc lư 3 phút.",
-      reflection_vi:
+      materials: "Cốc nhựa, hạt đậu sạch",
+      warm_up: "Khởi động: Cùng hát bài hát Đếm Ngón Tay và lắc lư 3 phút.",
+      reflection:
         "Đúc kết: Bé nhắc lại hôm nay đã gieo được mấy hạt đậu vào cốc.",
-      assessment_vi: "Bé đếm đúng và chỉ tay vào nhóm có 3 hạt đậu khi mẹ hỏi.",
-      extension_vi: "Bé thử xếp các hạt đậu thành hình tam giác 3 góc.",
+      assessment: "Bé đếm đúng và chỉ tay vào nhóm có 3 hạt đậu khi mẹ hỏi.",
+      extension: "Bé thử xếp các hạt đậu thành hình tam giác 3 góc.",
       access_tier: "free",
       skill_codes: ["C1.CNT.01"],
       learning_objective_codes: ["LO-C1.CNT.01-01"],
@@ -56,13 +56,13 @@ export const LESSON_BATCH_01: LessonSeed[] = [
       target_age_min: 3,
       target_age_max: 4,
       estimated_minutes: 20,
-      materials_vi: "Không gian phòng khách thoáng đãng",
-      warm_up_vi: "Khởi động: Nhảy chân sáo nhẹ nhàng quanh thảm 3 phút.",
-      reflection_vi:
+      materials: "Không gian phòng khách thoáng đãng",
+      warm_up: "Khởi động: Nhảy chân sáo nhẹ nhàng quanh thảm 3 phút.",
+      reflection:
         "Đúc kết: Bé chia sẻ cảm xúc sau khi hoàn thành các bước nhảy.",
-      assessment_vi:
+      assessment:
         "Bé nhảy đúng số lần theo số tiếng vỗ tay của mẹ trong 3 lượt thử.",
-      extension_vi: "Bé tự làm người vỗ tay để mẹ nhảy theo.",
+      extension: "Bé tự làm người vỗ tay để mẹ nhảy theo.",
       access_tier: "free",
       skill_codes: ["C1.CNT.01", "C1.CNT.02"],
       learning_objective_codes: ["LO-C1.CNT.01-01", "LO-C1.CNT.02-01"],
@@ -97,14 +97,14 @@ export const LESSON_BATCH_01: LessonSeed[] = [
       target_age_min: 4,
       target_age_max: 5,
       estimated_minutes: 22,
-      materials_vi: "Nắp hộp tròn, đĩa nhựa, băng dính giấy",
-      warm_up_vi:
+      materials: "Nắp hộp tròn, đĩa nhựa, băng dính giấy",
+      warm_up:
         "Khởi động: Hát bài hát Chiếc Đồng Hồ Tròn và xoay cánh tay 3 phút.",
-      reflection_vi:
+      reflection:
         "Đúc kết: Bé giơ chiếc đĩa tròn lên và nói tên hình dạng cho mẹ nghe.",
-      assessment_vi:
+      assessment:
         "Bé nhặt đúng đồ vật hình tròn trong rổ và bước chuẩn trên 3 cạnh tam giác.",
-      extension_vi: "Bé dùng bút sáp vẽ hình tròn ông mặt trời lên giấy.",
+      extension: "Bé dùng bút sáp vẽ hình tròn ông mặt trời lên giấy.",
       access_tier: "free",
       skill_codes: ["C2.2D.01"],
       learning_objective_codes: ["LO-C2.2D.01-01"],
@@ -135,14 +135,13 @@ export const LESSON_BATCH_01: LessonSeed[] = [
       target_age_min: 4,
       target_age_max: 5,
       estimated_minutes: 20,
-      materials_vi: "Gấu bông, hộp các-tông",
-      warm_up_vi:
+      materials: "Gấu bông, hộp các-tông",
+      warm_up:
         "Khởi động: Giơ tay lên cao (trên) rồi cúi chạm mũi chân (dưới) 3 phút.",
-      reflection_vi:
-        "Đúc kết: Bé đặt gấu bông vào giường và chúc bạn ngủ ngon.",
-      assessment_vi:
+      reflection: "Đúc kết: Bé đặt gấu bông vào giường và chúc bạn ngủ ngon.",
+      assessment:
         "Bé đặt đúng chú gấu bông vào bên trong chiếc hộp theo yêu cầu.",
-      extension_vi: "Bé giấu gấu bông để bố mẹ đi tìm.",
+      extension: "Bé giấu gấu bông để bố mẹ đi tìm.",
       access_tier: "login",
       skill_codes: ["C2.POS.01"],
       learning_objective_codes: ["LO-C2.POS.01-01"],
@@ -173,13 +172,12 @@ export const LESSON_BATCH_01: LessonSeed[] = [
       target_age_min: 5,
       target_age_max: 6,
       estimated_minutes: 20,
-      materials_vi: "Khối lego hoặc cúc áo màu đỏ, xanh",
-      warm_up_vi: "Khởi động: Vỗ tay và giậm chân theo nhịp 1-2 trong 3 phút.",
-      reflection_vi:
+      materials: "Khối lego hoặc cúc áo màu đỏ, xanh",
+      warm_up: "Khởi động: Vỗ tay và giậm chân theo nhịp 1-2 trong 3 phút.",
+      reflection:
         "Đúc kết: Bé chỉ vào chuỗi màu và đọc to lại toàn bộ quy luật.",
-      assessment_vi:
-        "Bé đặt đúng khối màu tiếp theo vào cuối chuỗi quy luật AB.",
-      extension_vi: "Bé tự sáng tạo một chuỗi màu sắc mới theo ý thích.",
+      assessment: "Bé đặt đúng khối màu tiếp theo vào cuối chuỗi quy luật AB.",
+      extension: "Bé tự sáng tạo một chuỗi màu sắc mới theo ý thích.",
       access_tier: "free",
       skill_codes: ["C3.PAT.01"],
       learning_objective_codes: ["LO-C3.PAT.01-01"],
@@ -211,13 +209,13 @@ export const LESSON_BATCH_01: LessonSeed[] = [
       target_age_min: 5,
       target_age_max: 6,
       estimated_minutes: 25,
-      materials_vi: "Bàn học, quả cam, mẩu giấy",
-      warm_up_vi: "Khởi động: Xòe và nắm 10 ngón tay theo nhịp đếm 3 phút.",
-      reflection_vi:
+      materials: "Bàn học, quả cam, mẩu giấy",
+      warm_up: "Khởi động: Xòe và nắm 10 ngón tay theo nhịp đếm 3 phút.",
+      reflection:
         "Đúc kết: Bé nói cho mẹ biết chiếc bàn dài mấy gang tay của con.",
-      assessment_vi:
+      assessment:
         "Bé chỉ đúng quả cam là vật nặng hơn và nâng cánh tay đo gang bàn tay liên tục.",
-      extension_vi: "Bé đo chiều dài chiếc gối ngủ của mình.",
+      extension: "Bé đo chiều dài chiếc gối ngủ của mình.",
       access_tier: "free",
       skill_codes: ["C4.LEN.01", "C4.WGT.01"],
       learning_objective_codes: ["LO-C4.LEN.01-01", "LO-C4.WGT.01-01"],

@@ -1,9 +1,9 @@
-import { exportTemplateContracts, MVP_TEMPLATES } from "@kidthink/game-engine";
+import { exportTemplateContracts, MVP_TEMPLATES } from "@mindkid/game-engine";
 import type { NodePgDatabase } from "drizzle-orm/node-postgres";
 import { gameTemplates } from "../schema/game.ts";
 
 /**
- * Seeds Master Game Templates from `@kidthink/game-engine`.
+ * Seeds Master Game Templates from `@mindkid/game-engine`.
  * Idempotent according to `code`.
  */
 export async function seedGameTemplatesMasterData(
@@ -18,7 +18,7 @@ export async function seedGameTemplatesMasterData(
       .insert(gameTemplates)
       .values({
         code: template.code,
-        nameVi: template.name || "",
+        name: template.name || "",
         mechanic: template.mechanic,
         layouts: template.layouts,
         contentContract:
@@ -46,7 +46,7 @@ export async function seedGameTemplatesMasterData(
       .onConflictDoUpdate({
         target: gameTemplates.code,
         set: {
-          nameVi: template.name || "",
+          name: template.name || "",
           mechanic: template.mechanic,
           layouts: template.layouts,
           contentContract:

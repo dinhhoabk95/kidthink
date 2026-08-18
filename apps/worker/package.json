@@ -1,5 +1,5 @@
 {
-  "name": "@kidthink/worker",
+  "name": "@mindkid/worker",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -11,11 +11,11 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@kidthink/cache": "workspace:*",
-    "@kidthink/db": "workspace:*",
-    "@kidthink/queue": "workspace:*",
-    "@kidthink/shared": "workspace:*",
-    "@kidthink/storage": "workspace:*",
+    "@mindkid/cache": "workspace:*",
+    "@mindkid/db": "workspace:*",
+    "@mindkid/queue": "workspace:*",
+    "@mindkid/shared": "workspace:*",
+    "@mindkid/storage": "workspace:*",
     "bullmq": "catalog:",
     "drizzle-orm": "catalog:",
     "ioredis": "catalog:",

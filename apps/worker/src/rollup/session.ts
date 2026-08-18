@@ -3,8 +3,8 @@ import {
   getOwnerDb,
   playSessions,
   telemetryEvents,
-} from "@kidthink/db";
-import { computeSessionResult, computeStars } from "@kidthink/shared";
+} from "@mindkid/db";
+import { computeSessionResult, computeStars } from "@mindkid/shared";
 import { eq } from "drizzle-orm";
 
 async function upsertChildSessionSummary(

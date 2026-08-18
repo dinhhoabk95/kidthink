@@ -1,5 +1,5 @@
 {
-  "name": "@kidthink/notification",
+  "name": "@mindkid/notification",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -8,13 +8,13 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@kidthink/shared": "workspace:*",
+    "@mindkid/shared": "workspace:*",
     "firebase-admin": "catalog:",
     "mjml": "catalog:",
     "nodemailer": "catalog:"
   },
   "devDependencies": {
-    "@kidthink/config": "workspace:*",
+    "@mindkid/config": "workspace:*",
     "@types/mjml": "catalog:",
     "@types/nodemailer": "catalog:",
     "fast-check": "catalog:",

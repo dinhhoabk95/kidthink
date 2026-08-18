@@ -69,22 +69,19 @@ export class RenderSystem {
     ctx.save();
     ctx.translate(0, 5);
     ctx.fillStyle = border;
-    ctx.beginPath();
-    this.drawRoundShape(ctx, r, shape);
+    this.traceRoundShape(ctx, r, shape);
     ctx.fill();
     ctx.restore();
 
     // 2. Main fill body
     ctx.fillStyle = fill;
-    ctx.beginPath();
-    this.drawRoundShape(ctx, r, shape);
+    this.traceRoundShape(ctx, r, shape);
     ctx.fill();
 
     // 3. Thick outline
     ctx.strokeStyle = border;
     ctx.lineWidth = 4;
-    ctx.beginPath();
-    this.drawRoundShape(ctx, r, shape);
+    this.traceRoundShape(ctx, r, shape);
     ctx.stroke();
 
     // 4. White top specular highlight
@@ -170,11 +167,13 @@ export class RenderSystem {
     ctx.restore();
   }
 
-  private drawRoundShape(
+  /** Trace (never paints) — caller picks fill or stroke. Matches traceContainerBody. */
+  private traceRoundShape(
     ctx: CanvasRenderingContext2D,
     r: number,
     shape: "circle" | "square"
   ): void {
+    ctx.beginPath();
     if (shape === "square") {
       ctx.roundRect(-r, -r, r * 2, r * 2, Math.max(10, r * 0.22));
     } else {

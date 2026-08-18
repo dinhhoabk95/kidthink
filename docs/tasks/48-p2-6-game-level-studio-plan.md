@@ -204,7 +204,7 @@ gates. T3a → T3b; contract/error tests không chờ UI.
 - [ ] Danh sách `/studio/levels` có lọc theo template · trạng thái · skill; trần 100.
 
 **Kiểm chứng**
-- [ ] `pnpm --filter @kidthink/admin test -- studio-layout` xanh.
+- [ ] `pnpm --filter @mindkid/admin test -- studio-layout` xanh.
 
 **Phụ thuộc:** T1 · T2 · T3 · **Cỡ:** M
 

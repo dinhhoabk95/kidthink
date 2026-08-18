@@ -32,7 +32,7 @@ describe("Admin Route Compliance Gates — Task 1 / D-JB (BR-USM-07, BR-USM-08, 
       filePath: "apps/web/server/api/managers/users/[uuid].get.ts",
       content: `
         import { defineEventHandler } from "h3";
-        import { childProfiles } from "@kidthink/db";
+        import { childProfiles } from "@mindkid/db";
         export default defineEventHandler(async (event) => {
           const children = await db.select().from(childProfiles).where(eq(childProfiles.userId, user.id));
           return { account: {}, child_profiles: children };

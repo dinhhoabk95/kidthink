@@ -8,7 +8,7 @@ import {
   OAUTH_COOKIE_NAME,
   type OAuthProvider,
   type OAuthStatePayload,
-} from "@kidthink/auth";
+} from "@mindkid/auth";
 import {
   auditLogs,
   getAppDb,
@@ -17,8 +17,8 @@ import {
   PostgresSessionStore,
   socialIdentities,
   users,
-} from "@kidthink/db";
-import { enforceTwoAxisRateLimit } from "@kidthink/shared";
+} from "@mindkid/db";
+import { enforceTwoAxisRateLimit } from "@mindkid/shared";
 import { and, eq } from "drizzle-orm";
 import {
   createError,
@@ -39,7 +39,6 @@ import {
   assertRateLimitAllowed,
   ensureUserCsrfCookie,
   getVerifiedRemoteIp,
-  respondToUserAuthError,
 } from "../../../../../utils/auth-runtime.js";
 
 function getOAuthStateSecret(): string {
@@ -359,49 +358,45 @@ async function handleOAuthLoginFlow(
 }
 
 export default defineEventHandler(async (event) => {
-  try {
-    const rawParam = getRouterParam(event, "provider") || "";
-    const provider = validateOAuthProvider(event, rawParam);
-    const query = getQuery(event);
+  const rawParam = getRouterParam(event, "provider") || "";
+  const provider = validateOAuthProvider(event, rawParam);
+  const query = getQuery(event);
 
-    if (query.error === "access_denied") {
-      deleteCookie(event, OAUTH_COOKIE_NAME, { path: "/" });
-      return sendRedirect(event, "/dang-nhap?cancelled=true", 302);
-    }
+  if (query.error === "access_denied") {
+    deleteCookie(event, OAUTH_COOKIE_NAME, { path: "/" });
+    return sendRedirect(event, "/dang-nhap?cancelled=true", 302);
+  }
 
-    const statePayload = parseAndValidateState(event, provider, query.state);
+  const statePayload = parseAndValidateState(event, provider, query.state);
 
-    const ipRateLimit = await enforceTwoAxisRateLimit({
-      routeClass: "auth:oauth:callback",
-      remoteIp: getVerifiedRemoteIp(event),
-    });
-    assertRateLimitAllowed(ipRateLimit.statusCode);
+  const ipRateLimit = await enforceTwoAxisRateLimit({
+    routeClass: "auth:oauth:callback",
+    remoteIp: getVerifiedRemoteIp(event),
+  });
+  assertRateLimitAllowed(ipRateLimit.statusCode);
 
-    const registry = getOAuthRegistry();
-    const requestUrl = getRequestURL(event);
-    const profile = await registry.handleCallback(
-      provider,
-      requestUrl,
-      statePayload.code_verifier
-    );
+  const registry = getOAuthRegistry();
+  const requestUrl = getRequestURL(event);
+  const profile = await registry.handleCallback(
+    provider,
+    requestUrl,
+    statePayload.code_verifier
+  );
 
-    if (statePayload.intent === "link") {
-      return await handleOAuthLinkFlow(
-        event,
-        statePayload.user_id,
-        provider,
-        profile,
-        statePayload.return_to
-      );
-    }
-
-    return await handleOAuthLoginFlow(
+  if (statePayload.intent === "link") {
+    return await handleOAuthLinkFlow(
       event,
+      statePayload.user_id,
       provider,
       profile,
       statePayload.return_to
     );
-  } catch (error) {
-    return respondToUserAuthError(event, error);
   }
+
+  return await handleOAuthLoginFlow(
+    event,
+    provider,
+    profile,
+    statePayload.return_to
+  );
 });

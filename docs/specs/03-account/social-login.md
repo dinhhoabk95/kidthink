@@ -22,7 +22,7 @@ depends_on:
 
 ## 1. Objective
 
-Vào được KidThink bằng **một lần bấm** thay vì điền form và chờ email xác thực.
+Vào được MindKid bằng **một lần bấm** thay vì điền form và chờ email xác thực.
 
 Đây là đòn bẩy chuyển đổi lớn nhất còn lại của phễu:
 [[`registration.md`](registration.md)](registration.md) §1 đã cắt form xuống 3 trường, và bước tốn thời gian
@@ -82,7 +82,7 @@ File này bắt đầu từ `NormalizedProfile` trở đi.
 1. Bước 1–2 như trên, nhưng tra `users.email` → **thấy**.
 2. **Dừng.** Cấm tạo tài khoản, không liên kết, không cấp phiên.
 3. **409** `SOCIAL_EMAIL_CONFLICT`, đưa về `/dang-nhap` kèm thông báo chỉ đường:
-   *"Email này đã có tài khoản KidThink. Hãy đăng nhập rồi liên kết {provider} trong
+   *"Email này đã có tài khoản MindKid. Hãy đăng nhập rồi liên kết {provider} trong
    Cài đặt → Bảo mật."* Xem `BR-SCL-04`.
 
 ## 5. Alternative flows
@@ -107,7 +107,7 @@ File này bắt đầu từ `NormalizedProfile` trở đi.
 | `BR-SCL-01` | Đăng ký bằng SNS **vẫn phải** thu hai đồng ý riêng, không tick sẵn | `BR-REG-02`. Đồng ý của provider không phải đồng ý với **ta**; Luật 91/2025/QH15 và Nghị định 13 yêu cầu việc đồng ý được thể hiện rõ ràng, tự nguyện |
 | `BR-SCL-02` | Ghi `consent_logs` action `accepted` kèm IP, user agent và đối chiếu hai marker đã xem — y hệt đăng ký thường | `BR-REG-03`. Bằng chứng không được yếu đi vì đổi cách đăng ký |
 | `BR-SCL-03` | Tra danh tính theo `(provider, provider_user_id)`, Cấm — **NEVER theo email** | `BR-OAP-10`. Email đổi được ở phía provider; `sub` thì không |
-| `BR-SCL-04` | Cấm — **NEVER tự liên kết SNS vào tài khoản sẵn có chỉ vì trùng email.** Trả 409 và bắt đăng nhập rồi liên kết ở [`social-account-linking.md`](social-account-linking.md) | Đây là đường chiếm tài khoản trực tiếp: ai tạo được tài khoản SNS mang email của nạn nhân sẽ vào được tài khoản KidThink của họ. Facebook không khẳng định email đã xác minh (`BR-OAP-08`) |
+| `BR-SCL-04` | Cấm — **NEVER tự liên kết SNS vào tài khoản sẵn có chỉ vì trùng email.** Trả 409 và bắt đăng nhập rồi liên kết ở [`social-account-linking.md`](social-account-linking.md) | Đây là đường chiếm tài khoản trực tiếp: ai tạo được tài khoản SNS mang email của nạn nhân sẽ vào được tài khoản MindKid của họ. Facebook không khẳng định email đã xác minh (`BR-OAP-08`) |
 | `BR-SCL-05` | `status = active` ngay **chỉ khi** provider khẳng định email đã xác minh; ngược lại `pending_verification` + gửi email xác thực | Bỏ vòng xác thực chỉ hợp lệ khi có bên khác đã làm việc đó thật |
 | `BR-SCL-06` | Tài khoản SNS không có email → bắt nhập email ở màn hình đồng ý, `status = pending_verification` | Email là khoá khôi phục tài khoản (`BR-ACS-03`). Tài khoản không có email là tài khoản không khôi phục được |
 | `BR-SCL-07` | MFA đã bật thì SNS **không bỏ qua được** — vẫn 428 `MFA_REQUIRED` | SNS là yếu tố thứ nhất, không phải yếu tố thứ hai |
@@ -197,7 +197,7 @@ Scenario: BR-SCL-04 — email trùng không bao giờ tự liên kết
   And không cookie phiên nào được đặt
 
 Scenario: BR-SCL-01 — đăng ký SNS vẫn phải tick hai đồng ý
-  Given một tài khoản Google chưa từng dùng KidThink
+  Given một tài khoản Google chưa từng dùng MindKid
   When hoàn tất OAuth
   Then màn hình đồng ý hiện hai checkbox chưa tick
   And nút hoàn tất bị vô hiệu cho tới khi tick cả hai

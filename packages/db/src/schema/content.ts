@@ -47,29 +47,6 @@ export const worksheetLayoutTemplateEnum = pgEnum("worksheet_layout_template", [
   "spot_differences",
 ]);
 
-export const imageOwnerTypeEnum = pgEnum("image_owner_type", [
-  "game_level",
-  "lesson",
-  "activity",
-  "worksheet",
-  "payment_order",
-  "payment_proof",
-  "custom_game",
-  "user_avatar",
-  "manager_avatar",
-]);
-
-export const imageVisibilityEnum = pgEnum("image_visibility", [
-  "public",
-  "private",
-]);
-
-export const imageStatusEnum = pgEnum("image_status", [
-  "active",
-  "orphan",
-  "archived",
-]);
-
 const timestamps = {
   createdAt: timestamp("created_at", { withTimezone: true })
     .defaultNow()
@@ -88,16 +65,16 @@ export const lessons = pgTable(
     entityId: bigint("entity_id", { mode: "number" }).notNull(),
     code: varchar("code", { length: 50 }).notNull(),
     contentVersion: integer("content_version").notNull().default(1),
-    titleVi: varchar("title_vi", { length: 200 }).notNull(),
-    guideVi: text("guide_vi"),
+    title: varchar("title", { length: 200 }).notNull(),
+    guide: text("guide"),
     targetAgeMin: smallint("target_age_min"),
     targetAgeMax: smallint("target_age_max"),
     estimatedMinutes: integer("estimated_minutes"),
-    materialsVi: text("materials_vi"),
-    warmUpVi: text("warm_up_vi"),
-    reflectionVi: text("reflection_vi"),
-    assessmentVi: text("assessment_vi"),
-    extensionVi: text("extension_vi"),
+    materials: text("materials"),
+    warmUp: text("warm_up"),
+    reflection: text("reflection"),
+    assessment: text("assessment"),
+    extension: text("extension"),
     accessTier: accessTierEnum("access_tier").notNull(),
     status: contentLifecycleStatusEnum("status").notNull().default("draft"),
     origin: contentOriginEnum("origin").notNull().default("human"),
@@ -136,9 +113,9 @@ export const activities = pgTable(
     code: varchar("code", { length: 50 }).notNull(),
     contentVersion: integer("content_version").notNull().default(1),
     kind: activityKindEnum("kind").notNull(),
-    titleVi: varchar("title_vi", { length: 200 }).notNull(),
-    instructionVi: text("instruction_vi"),
-    materialsVi: text("materials_vi"),
+    title: varchar("title", { length: 200 }).notNull(),
+    instruction: text("instruction"),
+    materials: text("materials"),
     estimatedMinutes: integer("estimated_minutes"),
     refType: varchar("ref_type", { length: 50 }),
     refId: bigint("ref_id", { mode: "number" }),
@@ -158,6 +135,9 @@ export const activities = pgTable(
     ...timestamps,
   },
   (table) => [
+    // Cặp đa hình: index, không khoá ngoại (BR-DM-04).
+    index("idx_activities_ref").on(table.refType, table.refId),
+
     unique("activities_code_version_unique").on(
       table.code,
       table.contentVersion
@@ -183,12 +163,20 @@ export const lessonActivities = pgTable(
     position: integer("position").notNull(),
     activityId: bigint("activity_id", { mode: "number" }).notNull(),
     isRequired: boolean("is_required").notNull().default(true),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+    updatedAt: timestamp("updated_at", { withTimezone: true })
+      .defaultNow()
+      .notNull(),
   },
   (table) => [
-    primaryKey({ columns: [table.lessonId, table.position] }),
-    unique("lesson_activities_lesson_activity_unique").on(
+    // Pivot: PK ghép theo hai cột khoá ngoại, không có id riêng.
+    primaryKey({ columns: [table.lessonId, table.activityId] }),
+    // Thứ tự trong lesson vẫn phải duy nhất — trước đây nó là PK.
+    unique("lesson_activities_lesson_position_unique").on(
       table.lessonId,
-      table.activityId
+      table.position
     ),
     index("idx_lesson_activities_activity_id").on(table.activityId),
   ]
@@ -203,12 +191,12 @@ export const worksheets = pgTable(
     entityId: bigint("entity_id", { mode: "number" }).notNull(),
     code: varchar("code", { length: 50 }).notNull(),
     contentVersion: integer("content_version").notNull().default(1),
-    titleVi: varchar("title_vi", { length: 200 }).notNull(),
+    title: varchar("title", { length: 200 }).notNull(),
     layoutTemplate: worksheetLayoutTemplateEnum("layout_template")
       .notNull()
       .default("pattern_coloring"),
     contentBlocks: jsonb("content_blocks"),
-    instructionsVi: text("instructions_vi"),
+    instructions: text("instructions"),
     learningObjectiveIds: jsonb("learning_objective_ids").default(
       sql`'[]'::jsonb`
     ),
@@ -245,53 +233,6 @@ export const worksheets = pgTable(
       .where(sql`${table.status} = 'published'`),
     index("idx_worksheets_entity_id").on(table.entityId),
     check("check_worksheets_code_format", sql`${table.code} ~ '^WS-\\d{4}$'`),
-  ]
-);
-
-export const contentImages = pgTable("content_images", {
-  id: bigint("id", { mode: "number" }).primaryKey().generatedAlwaysAsIdentity(),
-  ownerType: imageOwnerTypeEnum("owner_type").notNull(),
-  ownerId: bigint("owner_id", { mode: "number" }).notNull(),
-  storagePath: text("storage_path").notNull(),
-  thumbPath: text("thumb_path"),
-  width: integer("width"),
-  height: integer("height"),
-  bytes: integer("bytes"),
-  mime: varchar("mime", { length: 50 }),
-  altTextVi: text("alt_text_vi"),
-  visibility: imageVisibilityEnum("visibility").notNull().default("public"),
-  status: imageStatusEnum("status").notNull().default("active"),
-  uploadedByManagerId: bigint("uploaded_by_manager_id", {
-    mode: "number",
-  }).references(() => managers.id),
-  createdAt: timestamp("created_at", { withTimezone: true })
-    .defaultNow()
-    .notNull(),
-});
-
-export const contentAssetRefs = pgTable(
-  "content_asset_refs",
-  {
-    id: bigint("id", { mode: "number" })
-      .primaryKey()
-      .generatedAlwaysAsIdentity(),
-    entityType: varchar("entity_type", { length: 50 }).notNull(),
-    entityId: bigint("entity_id", { mode: "number" }).notNull(),
-    assetKind: varchar("asset_kind", { length: 50 }).notNull(),
-    assetRef: text("asset_ref").notNull(),
-    createdAt: timestamp("created_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
-  },
-  (table) => [
-    index("idx_content_asset_refs_asset_ref").on(table.assetRef),
-    index("idx_content_asset_refs_entity").on(table.entityType, table.entityId),
-    unique("content_asset_refs_unique").on(
-      table.entityType,
-      table.entityId,
-      table.assetKind,
-      table.assetRef
-    ),
   ]
 );
 
@@ -359,7 +300,7 @@ export const skillActionSuggestions = pgTable(
       .notNull()
       .references(() => skills.id, { onDelete: "cascade" }),
     orderNo: smallint("order_no").notNull().default(1),
-    textVi: text("text_vi").notNull(),
+    text: text("text").notNull(),
     kind: actionSuggestionKindEnum("kind").notNull().default("home_activity"),
     refEntityId: bigint("ref_entity_id", { mode: "number" }),
     status: contentLifecycleStatusEnum("status").notNull().default("published"),
@@ -380,6 +321,5 @@ export const skillActionSuggestions = pgTable(
       table.skillId,
       table.orderNo
     ),
-    index("idx_skill_action_suggestions_skill_id").on(table.skillId),
   ]
 );

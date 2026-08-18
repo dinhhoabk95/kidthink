@@ -55,7 +55,7 @@
 </template>
 
 <script lang="ts" setup>
-  import { LEGAL_DOCUMENTS, type LegalDocument } from "@kidthink/shared";
+  import { LEGAL_DOCUMENTS, type LegalDocument } from "@mindkid/shared";
   import { useHead, useSeoMeta } from "unhead";
   import { computed } from "vue";
   import { useRoute } from "vue-router";
@@ -77,17 +77,17 @@
 
   useSeoMeta({
     title: doc.value
-      ? `${doc.value.title} — KidThink`
-      : "Trang pháp lý — KidThink",
+      ? `${doc.value.title} — MindKid`
+      : "Trang pháp lý — MindKid",
     description:
-      doc.value?.summary || "Văn bản pháp lý và chính sách nền tảng KidThink.",
-    ogTitle: doc.value ? `${doc.value.title} — KidThink` : "KidThink",
+      doc.value?.summary || "Văn bản pháp lý và chính sách nền tảng MindKid.",
+    ogTitle: doc.value ? `${doc.value.title} — MindKid` : "MindKid",
     ogType: "article",
   });
 
   useHead({
     htmlAttrs: { lang: "vi-VN" },
-    link: [{ rel: "canonical", href: `https://kidthink.vn/${slug.value}` }],
+    link: [{ rel: "canonical", href: `https://mindkid.vn/${slug.value}` }],
   });
 </script>
 

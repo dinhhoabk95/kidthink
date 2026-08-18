@@ -28,7 +28,7 @@ describe("Task 1 — Server Asset Resolution (BR-CFG-07)", () => {
       imageStorageLookup: (ref) =>
         ref === "IMG-farm-bg"
           ? {
-              url: "https://storage.kidthink.vn/images/farm.png",
+              url: "https://storage.mindkid.vn/images/farm.png",
               width: 800,
               height: 600,
             }
@@ -36,7 +36,7 @@ describe("Task 1 — Server Asset Resolution (BR-CFG-07)", () => {
       audioStorageLookup: (ref) =>
         ref === "AUD-instr-001"
           ? {
-              url: "https://storage.kidthink.vn/audio/instr1.mp3",
+              url: "https://storage.mindkid.vn/audio/instr1.mp3",
               duration_ms: 2500,
             }
           : null,
@@ -46,13 +46,13 @@ describe("Task 1 — Server Asset Resolution (BR-CFG-07)", () => {
       {
         ref: "AUD-instr-001",
         kind: "audio",
-        url: "https://storage.kidthink.vn/audio/instr1.mp3",
+        url: "https://storage.mindkid.vn/audio/instr1.mp3",
         duration_ms: 2500,
       },
       {
         ref: "IMG-farm-bg",
         kind: "image",
-        url: "https://storage.kidthink.vn/images/farm.png",
+        url: "https://storage.mindkid.vn/images/farm.png",
         width: 800,
         height: 600,
       },

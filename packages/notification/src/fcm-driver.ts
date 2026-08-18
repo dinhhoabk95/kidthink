@@ -38,7 +38,7 @@ export async function sendFcmWebPush(
   payload: FcmPayload
 ): Promise<FcmDispatchResult> {
   // BR-BPS-05: Payload validation against child PII leakage
-  const safeTitle = payload.title || "KidThink";
+  const safeTitle = payload.title || "MindKid";
   const safeBody = payload.body || "";
   const safeActionUrl = payload.actionUrl || "/me";
 

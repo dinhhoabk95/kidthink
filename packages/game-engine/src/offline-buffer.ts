@@ -1,3 +1,21 @@
+/** Flush once this many events have queued up. */
+const FLUSH_THRESHOLD = 20;
+/** Background flush cadence while a session is open. */
+const FLUSH_INTERVAL_MS = 10_000;
+/** Events older than this are dropped unsent (BR-OFF-05). */
+const MAX_EVENT_AGE_MS = 24 * 60 * 60 * 1000;
+/** Serialized buffer size above which the oldest non-critical half is dropped. */
+const MAX_BUFFER_BYTES = 5 * 1024 * 1024;
+
+const GUEST_ENDPOINT = "/api/guest/play-sessions";
+const USER_ENDPOINT = "/api/users/play-sessions";
+
+/** Never leave the device — score is server-computed, the rest is PII (BR-ING-08). */
+const STRIPPED_PAYLOAD_KEYS = new Set(["score", "display_name", "user_id"]);
+
+/** Events worth keeping when the buffer has to be trimmed. */
+const CRITICAL_EVENT_NAMES = new Set(["game_started", "game_completed"]);
+
 export interface BufferedEvent {
   session_uuid: string;
   seq: number;
@@ -16,13 +34,32 @@ export interface SessionMeta {
   started_at: number;
 }
 
+function isCritical(event: BufferedEvent): boolean {
+  return event.seq === 1 || CRITICAL_EVENT_NAMES.has(event.event_name);
+}
+
+function stripSensitiveKeys(
+  payload?: Record<string, unknown>
+): Record<string, unknown> {
+  const clean: Record<string, unknown> = {};
+  if (!payload || typeof payload !== "object") {
+    return clean;
+  }
+  for (const [key, value] of Object.entries(payload)) {
+    if (!STRIPPED_PAYLOAD_KEYS.has(key.toLowerCase())) {
+      clean[key] = value;
+    }
+  }
+  return clean;
+}
+
 export class OfflineEventBuffer {
   private memoryEvents: BufferedEvent[] = [];
   private currentSeq = 0;
   private sessionMeta: SessionMeta | null = null;
   private flushTimer: ReturnType<typeof setInterval> | null = null;
   private isFlushing = false;
-  private apiEndpoint = "/api/users/play-sessions";
+  private apiEndpoint = USER_ENDPOINT;
   private readonly getCsrfToken: (() => string | null) | null;
 
   constructor(options?: {
@@ -30,7 +67,7 @@ export class OfflineEventBuffer {
     getCsrfToken?: () => string | null;
   }) {
     if (options?.isGuest) {
-      this.apiEndpoint = "/api/guest/play-sessions";
+      this.apiEndpoint = GUEST_ENDPOINT;
     }
     this.getCsrfToken = options?.getCsrfToken ?? null;
   }
@@ -40,7 +77,7 @@ export class OfflineEventBuffer {
     this.currentSeq = 0;
     this.memoryEvents = [];
     if (meta.is_guest) {
-      this.apiEndpoint = "/api/guest/play-sessions";
+      this.apiEndpoint = GUEST_ENDPOINT;
     }
 
     if (typeof window !== "undefined") {
@@ -63,30 +100,13 @@ export class OfflineEventBuffer {
       throw new Error("Session not initialized in OfflineEventBuffer");
     }
 
-    const seq = this.getNextSeq();
     const now = Date.now();
-
-    // Strip score & PII fields if present (BR-ING-08)
-    const cleanPayload: Record<string, unknown> = {};
-    if (payload && typeof payload === "object") {
-      for (const [key, value] of Object.entries(payload)) {
-        const lowerKey = key.toLowerCase();
-        if (
-          lowerKey !== "score" &&
-          lowerKey !== "display_name" &&
-          lowerKey !== "user_id"
-        ) {
-          cleanPayload[key] = value;
-        }
-      }
-    }
-
     const ev: BufferedEvent = {
       session_uuid: this.sessionMeta.session_uuid,
-      seq,
+      seq: this.getNextSeq(),
       event_name: eventName,
       occurred_at_ms: occurredAtMs ?? now - this.sessionMeta.started_at,
-      payload: cleanPayload,
+      payload: stripSensitiveKeys(payload),
       client_timestamp: new Date(now).toISOString(),
       queued_at: now,
     };
@@ -94,8 +114,7 @@ export class OfflineEventBuffer {
     this.memoryEvents.push(ev);
     this.pruneBuffer();
 
-    // Flush if reached threshold (20 events)
-    if (this.memoryEvents.length >= 20) {
+    if (this.memoryEvents.length >= FLUSH_THRESHOLD) {
       this.flush();
     }
 
@@ -104,12 +123,9 @@ export class OfflineEventBuffer {
 
   pruneBuffer() {
     const now = Date.now();
-    const maxAgeMs = 24 * 60 * 60 * 1000;
 
-    // 1. Drop events older than 24h (BR-OFF-05)
     this.memoryEvents = this.memoryEvents.filter((e) => {
-      const age = now - e.queued_at;
-      if (age > maxAgeMs) {
+      if (now - e.queued_at > MAX_EVENT_AGE_MS) {
         console.warn(
           `[OFFLINE_BUFFER] Dropped event seq ${e.seq} (${e.event_name}) older than 24 hours`
         );
@@ -118,27 +134,18 @@ export class OfflineEventBuffer {
       return true;
     });
 
-    // 2. Limit buffer size (5 MB threshold)
-    const jsonLen = JSON.stringify(this.memoryEvents).length;
-    if (jsonLen > 5 * 1024 * 1024) {
-      // Drop oldest non-critical events, keeping game_started and game_completed
-      const criticalEvents = this.memoryEvents.filter(
-        (e) =>
-          e.seq === 1 ||
-          e.event_name === "game_started" ||
-          e.event_name === "game_completed"
-      );
-      const otherEvents = this.memoryEvents.filter(
-        (e) =>
-          e.seq !== 1 &&
-          e.event_name !== "game_started" &&
-          e.event_name !== "game_completed"
-      );
-      otherEvents.splice(0, Math.floor(otherEvents.length / 2));
-      this.memoryEvents = [...criticalEvents, ...otherEvents].sort(
-        (a, b) => a.seq - b.seq
-      );
+    if (JSON.stringify(this.memoryEvents).length <= MAX_BUFFER_BYTES) {
+      return;
     }
+
+    // Over budget: keep every critical event, drop the oldest half of the rest.
+    const critical: BufferedEvent[] = [];
+    const other: BufferedEvent[] = [];
+    for (const e of this.memoryEvents) {
+      (isCritical(e) ? critical : other).push(e);
+    }
+    other.splice(0, Math.floor(other.length / 2));
+    this.memoryEvents = [...critical, ...other].sort((a, b) => a.seq - b.seq);
   }
 
   async flush(): Promise<{ accepted: number; skipped: number }> {
@@ -151,8 +158,7 @@ export class OfflineEventBuffer {
     }
 
     this.isFlushing = true;
-    const batch = [...this.memoryEvents].sort((a, b) => a.seq - b.seq);
-    const url = `${this.apiEndpoint}/${this.sessionMeta.session_uuid}/events`;
+    const batch = this.sortedBatch();
 
     try {
       const headers: Record<string, string> = {
@@ -162,7 +168,7 @@ export class OfflineEventBuffer {
       if (csrfToken) {
         headers["x-csrf-token"] = csrfToken;
       }
-      const res = await fetch(url, {
+      const res = await fetch(this.eventsUrl(this.sessionMeta), {
         method: "POST",
         headers,
         body: JSON.stringify({ events: batch }),
@@ -200,17 +206,40 @@ export class OfflineEventBuffer {
       return false;
     }
 
-    const batch = [...this.memoryEvents].sort((a, b) => a.seq - b.seq);
-    const url = `${this.apiEndpoint}/${this.sessionMeta.session_uuid}/events`;
-    const blob = new Blob([JSON.stringify({ events: batch })], {
+    const blob = new Blob([JSON.stringify({ events: this.sortedBatch() })], {
       type: "application/json",
     });
 
-    const sent = navigator.sendBeacon(url, blob);
+    const sent = navigator.sendBeacon(this.eventsUrl(this.sessionMeta), blob);
     if (sent) {
       this.memoryEvents = [];
     }
     return sent;
+  }
+
+  getPendingEvents(): readonly BufferedEvent[] {
+    return this.memoryEvents;
+  }
+
+  destroy() {
+    if (this.flushTimer) {
+      clearInterval(this.flushTimer);
+      this.flushTimer = null;
+    }
+    if (typeof window !== "undefined") {
+      window.removeEventListener(
+        "visibilitychange",
+        this.handleVisibilityChange
+      );
+    }
+  }
+
+  private eventsUrl(meta: SessionMeta): string {
+    return `${this.apiEndpoint}/${meta.session_uuid}/events`;
+  }
+
+  private sortedBatch(): BufferedEvent[] {
+    return [...this.memoryEvents].sort((a, b) => a.seq - b.seq);
   }
 
   private readonly handleVisibilityChange = () => {
@@ -228,23 +257,6 @@ export class OfflineEventBuffer {
     }
     this.flushTimer = setInterval(() => {
       this.flush();
-    }, 10_000);
-  }
-
-  destroy() {
-    if (this.flushTimer) {
-      clearInterval(this.flushTimer);
-      this.flushTimer = null;
-    }
-    if (typeof window !== "undefined") {
-      window.removeEventListener(
-        "visibilitychange",
-        this.handleVisibilityChange
-      );
-    }
-  }
-
-  getPendingEvents(): readonly BufferedEvent[] {
-    return this.memoryEvents;
+    }, FLUSH_INTERVAL_MS);
   }
 }

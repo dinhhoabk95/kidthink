@@ -21,16 +21,16 @@
     "allowImportingTsExtensions": true,
     "baseUrl": ".",
     "paths": {
-      "@kidthink/adaptive": ["./packages/adaptive/src/index.ts"],
-      "@kidthink/config": ["./packages/config/src/index.ts"],
-      "@kidthink/shared": ["./packages/shared/src/index.ts"],
-      "@kidthink/taxonomy": ["./packages/taxonomy/src/index.ts"],
-      "@kidthink/emoji": ["./packages/emoji/src/index.ts"],
-      "@kidthink/db": ["./packages/db/src/index.ts"],
-      "@kidthink/game-engine": ["./packages/game-engine/src/index.ts"],
-      "@kidthink/storage": ["./packages/storage/src/index.ts"],
-      "@kidthink/moderation": ["./packages/moderation/src/index.ts"],
-      "@kidthink/ui": ["./packages/ui/src/index.ts"]
+      "@mindkid/adaptive": ["./packages/adaptive/src/index.ts"],
+      "@mindkid/config": ["./packages/config/src/index.ts"],
+      "@mindkid/shared": ["./packages/shared/src/index.ts"],
+      "@mindkid/taxonomy": ["./packages/taxonomy/src/index.ts"],
+      "@mindkid/emoji": ["./packages/emoji/src/index.ts"],
+      "@mindkid/db": ["./packages/db/src/index.ts"],
+      "@mindkid/game-engine": ["./packages/game-engine/src/index.ts"],
+      "@mindkid/storage": ["./packages/storage/src/index.ts"],
+      "@mindkid/moderation": ["./packages/moderation/src/index.ts"],
+      "@mindkid/ui": ["./packages/ui/src/index.ts"]
     }
   },
   "include": [
@@ -38,5 +38,9 @@
     "*.config.ts",
     "packages/*/src/**/*.ts",
     "packages/*/tests/**/*.ts"
-  ]
+  ],
+  // Fixture của cổng lint là **mẫu văn bản** cho script quét, không phải code
+  // chạy được: chúng cố ý import h3/zod mà scripts/ không có, và ca âm cố ý
+  // thiếu kiểu. Typecheck chúng là đo sai thứ.
+  "exclude": ["scripts/tests/fixtures/**"]
 }

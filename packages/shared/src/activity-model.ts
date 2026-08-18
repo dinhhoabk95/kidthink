@@ -52,7 +52,7 @@ export interface ActivityValidationInput {
   activity_kind?: string;
   title: string;
   instruction?: string | ActivityInstruction;
-  materials_vi?: string | null;
+  materials?: string | null;
   estimated_minutes: number;
   skill_codes?: string[];
   skills?: SkillAgeConstraint[];
@@ -202,7 +202,7 @@ function parseInstruction(input: ActivityValidationInput) {
 function checkContentPatterns(
   allText: string,
   kind: string,
-  materialsVi: string | null | undefined,
+  materials: string | null | undefined,
   parsed: ReturnType<typeof parseInstruction>,
   errors: string[]
 ): void {
@@ -222,8 +222,8 @@ function checkContentPatterns(
   }
 
   if (
-    typeof materialsVi === "string" &&
-    EXPENSIVE_MATERIALS_REGEX.test(materialsVi)
+    typeof materials === "string" &&
+    EXPENSIVE_MATERIALS_REGEX.test(materials)
   ) {
     errors.push(
       "BR-ACM-04: Vật liệu phải là thứ có sẵn trong gia đình hoặc tái chế, cấm yêu cầu mua đồ chuyên dụng."
@@ -308,10 +308,10 @@ export function validateActivityModel(
   const allText = [
     input.title || "",
     parsed.instructionText,
-    input.materials_vi || "",
+    input.materials || "",
   ].join(" ");
 
-  checkContentPatterns(allText, kind, input.materials_vi, parsed, errors);
+  checkContentPatterns(allText, kind, input.materials, parsed, errors);
 
   let skillCount = 0;
   if (input.skills) {

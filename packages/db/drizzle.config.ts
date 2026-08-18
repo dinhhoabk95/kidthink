@@ -7,6 +7,6 @@ export default defineConfig({
   dbCredentials: {
     url:
       process.env.DATABASE_URL ??
-      "postgres://postgres:postgres@localhost:5433/kidthink",
+      "postgres://postgres:postgres@localhost:5433/mindkid",
   },
 });

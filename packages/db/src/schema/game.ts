@@ -3,6 +3,7 @@ import {
   bigint,
   boolean,
   check,
+  index,
   integer,
   jsonb,
   pgEnum,
@@ -51,7 +52,7 @@ export const gameTemplates = pgTable(
       .primaryKey()
       .generatedAlwaysAsIdentity(),
     code: varchar("code", { length: 20 }).notNull().unique(),
-    nameVi: varchar("name_vi", { length: 100 }).notNull(),
+    name: varchar("name", { length: 100 }).notNull(),
     mechanic: varchar("mechanic", { length: 50 }).notNull(),
     layouts: text("layouts").array(),
     contentContract: jsonb("content_contract"),
@@ -68,6 +69,9 @@ export const gameTemplates = pgTable(
     status: gameTemplateStatusEnum("status").notNull().default("active"),
     version: integer("version").notNull().default(1),
     createdAt: timestamp("created_at", { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+    updatedAt: timestamp("updated_at", { withTimezone: true })
       .defaultNow()
       .notNull(),
   },
@@ -91,9 +95,9 @@ export const gameLevels = pgTable(
     templateId: bigint("template_id", { mode: "number" })
       .notNull()
       .references(() => gameTemplates.id),
-    titleVi: varchar("title_vi", { length: 200 }).notNull(),
-    descriptionVi: text("description_vi"),
-    instructionVi: text("instruction_vi"),
+    title: varchar("title", { length: 200 }).notNull(),
+    description: text("description"),
+    instruction: text("instruction"),
     instructionAudioPath: text("instruction_audio_path"),
     contentPack: jsonb("content_pack").notNull(),
     difficultyParams: jsonb("difficulty_params").notNull(),
@@ -130,6 +134,9 @@ export const gameLevels = pgTable(
     uniqueIndex("idx_game_levels_published_code")
       .on(table.code)
       .where(sql`${table.status} = 'published'`),
+    // Tra cứu nội dung theo khoá JSONB (content-search) — không có GIN thì mỗi
+    // truy vấn quét toàn bảng game_levels.
+    index("idx_game_levels_content_pack_gin").using("gin", table.contentPack),
     check(
       "check_game_levels_code_format",
       sql`${table.code} ~ '^GL-C[1-6]-[A-Z]{2,5}-[A-Z]{2,5}-\\d{4}$'`

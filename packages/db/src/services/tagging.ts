@@ -1,4 +1,4 @@
-import { AppError } from "@kidthink/auth";
+import { AppError } from "@mindkid/auth";
 import { and, eq, inArray, sql } from "drizzle-orm";
 import type { NodePgDatabase } from "drizzle-orm/node-postgres";
 import { contentTagMap, contentTags } from "../schema/tagging.js";
@@ -64,7 +64,7 @@ async function resolveAndEnsureTags(
         .values({
           code,
           axis: "what",
-          labelVi: code,
+          label: code,
           status: "active",
         })
         .onConflictDoNothing()

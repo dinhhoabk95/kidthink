@@ -54,7 +54,7 @@ export class EmailAlertAdapter implements AlertPort {
 
   constructor(opsEmail?: string) {
     this.opsEmail =
-      opsEmail || process.env.OPERATIONS_ALERT_EMAIL || "ops@kidthink.vn";
+      opsEmail || process.env.OPERATIONS_ALERT_EMAIL || "ops@mindkid.vn";
   }
 
   async sendAlert(payload: AlertPayload): Promise<void> {

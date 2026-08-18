@@ -1,4 +1,4 @@
-import { getDateIct } from "@kidthink/shared";
+import { getDateIct } from "@mindkid/shared";
 import { and, count, eq, gte, isNotNull, lt, sql } from "drizzle-orm";
 import { getOwnerDb } from "../client.ts";
 import { entitlements } from "../schema/billing.ts";

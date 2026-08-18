@@ -34,7 +34,6 @@ describe("T1 Opaque Redis Session Foundation (BR-AUT-25 .. BR-AUT-38)", () => {
         user_id: 101,
         display_name: "Người dùng A",
         session_id: sha256(created.sessionToken),
-        refresh_token_version: 0,
         active_child_id: undefined,
       },
     });

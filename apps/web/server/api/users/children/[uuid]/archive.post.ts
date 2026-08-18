@@ -1,5 +1,4 @@
-import { AppError } from "@kidthink/auth";
-import { childProfiles, getOwnerDb } from "@kidthink/db";
+import { childProfiles, getOwnerDb } from "@mindkid/db";
 import { and, eq } from "drizzle-orm";
 import {
   createError,
@@ -9,65 +8,49 @@ import {
   getRouterParam,
   setResponseStatus,
 } from "h3";
-import {
-  requireWebUserSession,
-  respondToUserAuthError,
-} from "../../../../utils/auth-runtime.js";
+
+import { requireWebUserSession } from "../../../../utils/auth-runtime.js";
 
 export default defineEventHandler(async (event) => {
-  try {
-    const user = await requireWebUserSession(event);
-    const uuid = getRouterParam(event, "uuid");
-    if (!uuid) {
-      setResponseStatus(event, 404);
-      throw createError({ statusCode: 404, statusMessage: "NOT_FOUND" });
-    }
-
-    const userId = Number(user.user_id);
-    const db = getOwnerDb();
-
-    // Ownership check (BR-CPC-09)
-    const [child] = await db
-      .select()
-      .from(childProfiles)
-      .where(
-        and(eq(childProfiles.uuid, uuid), eq(childProfiles.userId, userId))
-      );
-
-    if (!child) {
-      setResponseStatus(event, 404);
-      throw createError({ statusCode: 404, statusMessage: "NOT_FOUND" });
-    }
-
-    // Clear active_child_id cookie if target child is active
-    const activeUuid = getCookie(event, "active_child_id");
-    if (activeUuid === uuid) {
-      deleteCookie(event, "active_child_id", { path: "/" });
-    }
-
-    // BR-CPR-01 & BR-CPR-02: Archive profile, release quota, keep play data intact
-    const [updated] = await db
-      .update(childProfiles)
-      .set({
-        status: "archived",
-        updatedAt: new Date(),
-      })
-      .where(eq(childProfiles.id, child.id))
-      .returning();
-
-    return {
-      uuid: updated.uuid,
-      status: updated.status,
-    };
-  } catch (err) {
-    if (err instanceof AppError) {
-      setResponseStatus(event, err.status);
-      throw createError({
-        statusCode: err.status,
-        statusMessage: err.code,
-        data: { code: err.code, message: err.message },
-      });
-    }
-    return respondToUserAuthError(event, err);
+  const user = await requireWebUserSession(event);
+  const uuid = getRouterParam(event, "uuid");
+  if (!uuid) {
+    setResponseStatus(event, 404);
+    throw createError({ statusCode: 404, statusMessage: "NOT_FOUND" });
   }
+
+  const userId = Number(user.user_id);
+  const db = getOwnerDb();
+
+  // Ownership check (BR-CPC-09)
+  const [child] = await db
+    .select()
+    .from(childProfiles)
+    .where(and(eq(childProfiles.uuid, uuid), eq(childProfiles.userId, userId)));
+
+  if (!child) {
+    setResponseStatus(event, 404);
+    throw createError({ statusCode: 404, statusMessage: "NOT_FOUND" });
+  }
+
+  // Clear active_child_id cookie if target child is active
+  const activeUuid = getCookie(event, "active_child_id");
+  if (activeUuid === uuid) {
+    deleteCookie(event, "active_child_id", { path: "/" });
+  }
+
+  // BR-CPR-01 & BR-CPR-02: Archive profile, release quota, keep play data intact
+  const [updated] = await db
+    .update(childProfiles)
+    .set({
+      status: "archived",
+      updatedAt: new Date(),
+    })
+    .where(eq(childProfiles.id, child.id))
+    .returning();
+
+  return {
+    uuid: updated.uuid,
+    status: updated.status,
+  };
 });

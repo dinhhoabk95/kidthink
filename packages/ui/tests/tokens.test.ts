@@ -1,6 +1,6 @@
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
-import { designTokens } from "@kidthink/game-engine";
+import { designTokens } from "@mindkid/game-engine";
 import { describe, expect, it } from "vitest";
 import { DESIGN_TOKENS, SURFACE_RULES, TOUCH_FLOORS } from "../src/index.js";
 

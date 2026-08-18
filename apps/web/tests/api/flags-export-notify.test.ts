@@ -6,7 +6,7 @@ import {
   notificationDeliveries,
   notifications,
   users,
-} from "@kidthink/db";
+} from "@mindkid/db";
 import { eq } from "drizzle-orm";
 import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 import sesSnsWebhookHandler from "../../server/api/guest/webhooks/ses-sns.post.js";
@@ -42,12 +42,12 @@ async function ensureTestEntities() {
   let [sa] = await db
     .select({ id: managers.id })
     .from(managers)
-    .where(eq(managers.email, "p29-sa@kidthink.edu.vn"));
+    .where(eq(managers.email, "p29-sa@mindkid.edu.vn"));
   if (!sa) {
     [sa] = await db
       .insert(managers)
       .values({
-        email: "p29-sa@kidthink.edu.vn",
+        email: "p29-sa@mindkid.edu.vn",
         passwordHash: "hash",
         displayName: "P29 Super Admin",
         role: "super_admin",
@@ -63,12 +63,12 @@ async function ensureTestEntities() {
   let [cr] = await db
     .select({ id: managers.id })
     .from(managers)
-    .where(eq(managers.email, "p29-cr@kidthink.edu.vn"));
+    .where(eq(managers.email, "p29-cr@mindkid.edu.vn"));
   if (!cr) {
     [cr] = await db
       .insert(managers)
       .values({
-        email: "p29-cr@kidthink.edu.vn",
+        email: "p29-cr@mindkid.edu.vn",
         passwordHash: "hash",
         displayName: "P29 Reviewer",
         role: "content_reviewer",
@@ -84,12 +84,12 @@ async function ensureTestEntities() {
   let [u] = await db
     .select({ id: users.id })
     .from(users)
-    .where(eq(users.email, "p29-user@test.kidthink.vn"));
+    .where(eq(users.email, "p29-user@test.mindkid.vn"));
   if (!u) {
     [u] = await db
       .insert(users)
       .values({
-        email: "p29-user@test.kidthink.vn",
+        email: "p29-user@test.mindkid.vn",
         passwordHash: "hash",
         displayName: "P29 User",
         status: "active",
@@ -104,12 +104,12 @@ async function ensureTestEntities() {
   let [du] = await db
     .select({ id: users.id })
     .from(users)
-    .where(eq(users.email, "p29-deleted@test.kidthink.vn"));
+    .where(eq(users.email, "p29-deleted@test.mindkid.vn"));
   if (!du) {
     [du] = await db
       .insert(users)
       .values({
-        email: "p29-deleted@test.kidthink.vn",
+        email: "p29-deleted@test.mindkid.vn",
         passwordHash: "hash",
         displayName: "P29 Deleted User",
         status: "deleted",
@@ -154,7 +154,6 @@ function mockManagerEvent(
         manager_id: managerId,
         display_name: `Manager ${role}`,
         session_id: "sess_p29_mgr",
-        refresh_token_version: 1,
         role,
       },
       params,
@@ -476,7 +475,7 @@ describe("Feature Flags, Data Export & Notification Admin (P2.9)", () => {
         notificationType: "Delivery",
         mail: {
           messageId,
-          destination: ["p29-user@test.kidthink.vn"],
+          destination: ["p29-user@test.mindkid.vn"],
         },
       });
 

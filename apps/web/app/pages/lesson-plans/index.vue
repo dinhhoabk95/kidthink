@@ -422,11 +422,11 @@
     CreateLessonPlanInput,
     LessonPlanDetail,
     LessonPlanSummary,
-  } from "@kidthink/shared";
+  } from "@mindkid/shared";
   import { computed, reactive, ref } from "vue";
 
   useHead({
-    title: "Thư viện giáo án cá nhân | KidThink",
+    title: "Thư viện giáo án cá nhân | MindKid",
     meta: [
       {
         name: "description",

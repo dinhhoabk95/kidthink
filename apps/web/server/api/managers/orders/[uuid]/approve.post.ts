@@ -1,5 +1,5 @@
-import { appError } from "@kidthink/auth";
-import { MAX_BONUS_DAYS, MIN_ADMIN_NOTE_LENGTH } from "@kidthink/config";
+import { appError } from "@mindkid/auth";
+import { MAX_BONUS_DAYS, MIN_ADMIN_NOTE_LENGTH } from "@mindkid/config";
 import {
   auditLogs,
   entitlements,
@@ -7,13 +7,13 @@ import {
   grantCredits,
   notifications,
   paymentOrders,
-} from "@kidthink/db";
+} from "@mindkid/db";
 import {
   assertPaymentOrderTransition,
   computeStackedExpiryDate,
   PACKAGE_CATALOG,
   type PaymentOrderStatus,
-} from "@kidthink/shared";
+} from "@mindkid/shared";
 import { and, eq } from "drizzle-orm";
 import type { PgTransaction } from "drizzle-orm/pg-core";
 import { defineEventHandler, getHeader, getRouterParam, readBody } from "h3";
@@ -21,7 +21,6 @@ import { z } from "zod";
 import {
   getManagerRemoteIp,
   requireSuperAdminSession,
-  respondToManagerAuthError,
 } from "../../../../utils/admin-auth-runtime.ts";
 import { invalidateUserEntitlementsCache } from "../../../../utils/entitlements-runtime.ts";
 
@@ -288,46 +287,42 @@ async function executeOrderApproval(
 }
 
 export default defineEventHandler(async (event) => {
-  try {
-    const session = requireSuperAdminSession(event);
-    const orderUuid = getRouterParam(event, "uuid");
-    if (!orderUuid) {
-      throw appError("VALIDATION_FAILED", "Order UUID is required");
-    }
-
-    const customEvent = event as unknown as {
-      _body?: unknown;
-      context?: { body?: unknown };
-    };
-    const rawBody =
-      (await readBody(event).catch(() => undefined)) ??
-      customEvent._body ??
-      customEvent.context?.body;
-    const parsed = approveOrderSchema.safeParse(rawBody);
-    if (!parsed.success) {
-      const fieldErrors = parsed.error.flatten().fieldErrors;
-      if (fieldErrors.admin_note) {
-        throw appError("ADMIN_NOTE_REQUIRED", fieldErrors.admin_note[0]);
-      }
-      throw appError("VALIDATION_FAILED", {
-        errors: fieldErrors,
-      });
-    }
-
-    const { admin_note, checklist, bonus_days } = parsed.data;
-    const db = getDb();
-
-    return await executeOrderApproval(
-      db,
-      session,
-      orderUuid,
-      admin_note,
-      checklist,
-      bonus_days,
-      getManagerRemoteIp(event),
-      getHeader(event, "user-agent") || null
-    );
-  } catch (error) {
-    respondToManagerAuthError(event, error);
+  const session = requireSuperAdminSession(event);
+  const orderUuid = getRouterParam(event, "uuid");
+  if (!orderUuid) {
+    throw appError("VALIDATION_FAILED", "Order UUID is required");
   }
+
+  const customEvent = event as unknown as {
+    _body?: unknown;
+    context?: { body?: unknown };
+  };
+  const rawBody =
+    (await readBody(event).catch(() => undefined)) ??
+    customEvent._body ??
+    customEvent.context?.body;
+  const parsed = approveOrderSchema.safeParse(rawBody);
+  if (!parsed.success) {
+    const fieldErrors = parsed.error.flatten().fieldErrors;
+    if (fieldErrors.admin_note) {
+      throw appError("ADMIN_NOTE_REQUIRED", fieldErrors.admin_note[0]);
+    }
+    throw appError("VALIDATION_FAILED", {
+      errors: fieldErrors,
+    });
+  }
+
+  const { admin_note, checklist, bonus_days } = parsed.data;
+  const db = getDb();
+
+  return await executeOrderApproval(
+    db,
+    session,
+    orderUuid,
+    admin_note,
+    checklist,
+    bonus_days,
+    getManagerRemoteIp(event),
+    getHeader(event, "user-agent") || null
+  );
 });

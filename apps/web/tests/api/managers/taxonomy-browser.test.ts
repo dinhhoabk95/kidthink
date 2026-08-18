@@ -6,7 +6,7 @@ import {
   getOwnerDb,
   skills,
   strands,
-} from "@kidthink/db";
+} from "@mindkid/db";
 import { eq } from "drizzle-orm";
 import { describe, expect, it } from "vitest";
 import handler, {
@@ -35,7 +35,6 @@ function mockEvent(
               manager_id: 1,
               display_name: "Manager Name",
               session_id: "sess_manager_123",
-              refresh_token_version: 1,
               role: managerRole,
             },
           }
@@ -71,7 +70,7 @@ describe("Task 5 — GET /api/managers/taxonomy (BR-TXB-01..03, BR-TXB-06, D-IT)
       .insert(gameTemplates)
       .values({
         code: "GT-099",
-        nameVi: "Template Test",
+        name: "Template Test",
         mechanic: "tap-select",
       })
       .onConflictDoNothing()
@@ -84,7 +83,7 @@ describe("Task 5 — GET /api/managers/taxonomy (BR-TXB-01..03, BR-TXB-06, D-IT)
       .insert(competencies)
       .values({
         code: "C1",
-        nameVi: "Tư duy toán học",
+        name: "Tư duy toán học",
         colorToken: "brand-indigo",
         icon: "math",
         position: 1,
@@ -99,7 +98,7 @@ describe("Task 5 — GET /api/managers/taxonomy (BR-TXB-01..03, BR-TXB-06, D-IT)
       .values({
         code: "C1.CNT",
         competencyId: compId,
-        nameVi: "Đếm và lượng",
+        name: "Đếm và lượng",
         position: 1,
       })
       .onConflictDoNothing()
@@ -112,7 +111,7 @@ describe("Task 5 — GET /api/managers/taxonomy (BR-TXB-01..03, BR-TXB-06, D-IT)
       .values({
         code: "C1.CNT.99",
         strandId,
-        nameVi: "Kỹ năng test gap",
+        name: "Kỹ năng test gap",
         ageMin: 3,
         ageMax: 5,
         difficulty: 1,
@@ -153,7 +152,7 @@ describe("Task 5 — GET /api/managers/taxonomy (BR-TXB-01..03, BR-TXB-06, D-IT)
               code: code1,
               contentVersion: 1,
               templateId,
-              titleVi: "Level Published Test",
+              title: "Level Published Test",
               contentPack: {},
               difficultyParams: {},
               accessTier: "free",
@@ -179,7 +178,7 @@ describe("Task 5 — GET /api/managers/taxonomy (BR-TXB-01..03, BR-TXB-06, D-IT)
               code: code2,
               contentVersion: 1,
               templateId,
-              titleVi: "Level Draft Test",
+              title: "Level Draft Test",
               contentPack: {},
               difficultyParams: {},
               accessTier: "free",

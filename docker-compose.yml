@@ -1,7 +1,7 @@
-# KidThink — hạ tầng dev (chỉ DB + cache; app Node chạy trên host)
+# MindKid — hạ tầng dev (chỉ DB + cache; app Node chạy trên host)
 #
 #   docker compose up -d
-#   psql -h localhost -p 5433 -U postgres -d kidthink
+#   psql -h localhost -p 5433 -U postgres -d mindkid
 #
 # BR-RBS-07: major version phải KHỚP production — PostgreSQL 17, Valkey 9.
 # Test trên version khác production là kiểm tra sai thứ.
@@ -22,7 +22,7 @@ services:
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: kidthink
+      POSTGRES_DB: mindkid
     volumes:
       - pgdata_dev:/var/lib/postgresql/data
     healthcheck:

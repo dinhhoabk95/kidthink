@@ -2,14 +2,14 @@ import {
   generateSecureToken,
   hashPassword,
   hashSecureToken,
-} from "@kidthink/auth";
+} from "@mindkid/auth";
 import {
   activeSessions,
   getAppDb,
   notifications,
   users,
   verificationTokens,
-} from "@kidthink/db";
+} from "@mindkid/db";
 import { eq } from "drizzle-orm";
 import { describe, expect, it } from "vitest";
 
@@ -86,7 +86,7 @@ describe("Task 4 — Password Recovery (BR-PWR-01..09)", () => {
     await db.insert(activeSessions).values({
       accountType: "user",
       accountId: user.id,
-      refreshTokenHash: "old_session_hash",
+      deviceId: `dev_${user.id}`,
       authMethod: "password",
       expiresAt: new Date(Date.now() + 86_400_000),
     });

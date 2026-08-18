@@ -1,3 +1,18 @@
+/**
+ * DegradationManager — sheds visual effects as FPS drops (BR-PRF-03).
+ *
+ * Touch target size, audio channel, and font size are NEVER degraded: they are
+ * accessibility floors, not decoration.
+ */
+
+/** FPS below which each effect switches off, most expendable first. */
+const FPS_FLOOR = {
+  particles: 45,
+  softShadows: 40,
+  bgAnimation: 35,
+  scaffoldingPulse: 30,
+} as const;
+
 export interface DegradationState {
   particles_enabled: boolean;
   soft_shadows_enabled: boolean;
@@ -13,30 +28,14 @@ export class DegradationManager {
 
   updateFps(fps: number): DegradationState {
     this.currentFps = fps;
-    const state: DegradationState = {
-      particles_enabled: true,
-      soft_shadows_enabled: true,
-      bg_animation_enabled: true,
-      scaffolding_pulse_enabled: true,
+    return {
+      particles_enabled: fps >= FPS_FLOOR.particles,
+      soft_shadows_enabled: fps >= FPS_FLOOR.softShadows,
+      bg_animation_enabled: fps >= FPS_FLOOR.bgAnimation,
+      scaffolding_pulse_enabled: fps >= FPS_FLOOR.scaffoldingPulse,
       touch_target_size_degraded: false,
       audio_channel_degraded: false,
       font_size_degraded: false,
     };
-
-    if (fps < 45) {
-      state.particles_enabled = false;
-    }
-    if (fps < 40) {
-      state.soft_shadows_enabled = false;
-    }
-    if (fps < 35) {
-      state.bg_animation_enabled = false;
-    }
-    if (fps < 30) {
-      state.scaffolding_pulse_enabled = false;
-    }
-
-    // Touch targets, audio channel, font size MUST NEVER be degraded (BR-PRF-03)
-    return state;
   }
 }

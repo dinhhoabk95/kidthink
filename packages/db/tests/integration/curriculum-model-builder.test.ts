@@ -57,8 +57,8 @@ describe("P3.3 Database Schema & Invariants Integration Tests (Task 2)", () => {
         targetAgeMax: 4,
         durationWeeks: 8,
         sessionsPerWeek: 3,
-        titleVi: "Chương Trình Bé 3 Tuổi",
-        descriptionVi: "Dành cho bé 3-4 tuổi phát triển tư duy toán học",
+        title: "Chương Trình Bé 3 Tuổi",
+        description: "Dành cho bé 3-4 tuổi phát triển tư duy toán học",
         accessTier: "standard",
         status: "draft",
       })
@@ -112,7 +112,7 @@ describe("P3.3 Database Schema & Invariants Integration Tests (Task 2)", () => {
           programType: "journey",
           durationWeeks: 42,
           sessionsPerWeek: 3,
-          titleVi: "Invalid Code",
+          title: "Invalid Code",
           accessTier: "standard",
         })
       ).rejects.toThrow();

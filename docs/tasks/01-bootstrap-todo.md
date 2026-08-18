@@ -1,4 +1,4 @@
-# Todo — Bootstrap `kidthink/` (P0 bước 1)
+# Todo — Bootstrap `mindkid/` (P0 bước 1)
 
 > Bản 2, 2026-08-06. Chi tiết + acceptance + lý do: [`01-bootstrap-plan.md`](01-bootstrap-plan.md).
 > Thứ tự: `T0 → T1 → {T2→T4, T3, T5, T6, T7→T8} → T9`.
@@ -8,17 +8,17 @@
 - [x] ~~pnpm 11~~ **xong** — `11.16.0` có sẵn dưới node 24, không cần corepack
 - [x] ~~Chốt stack lint~~ **xong** — `ultracite ~6.5.1` + `@biomejs/biome ^2.5.7`, smoke test pass (D-H)
 - [x] người **Người**: bật OrbStack — xong 2026-08-06, `docker info` sống
-- [x] người **Người**: tạo repo GitHub `kidthink` + đưa remote URL (hành động ra ngoài — không tự chạy `gh repo create`) — **chặn T8/T9đk2**
+- [x] người **Người**: tạo repo GitHub `mindkid` + đưa remote URL (hành động ra ngoài — không tự chạy `gh repo create`) — **chặn T8/T9đk2**
 
 > Lưu ý: Mọi lệnh phải prefix `export PATH=/Users/macbook/.nvm/versions/node/v24.15.0/bin:$PATH`
 > — shell state không persist giữa các lệnh; shell mặc định vẫn là node v20.17.0.
 
 ## T1 — Skeleton + git init
-- [x] `mkdir kidthink/` cạnh `tinimath/` (không đụng `tinimath/`)
-- [x] `git init -b main` trong `kidthink/` + `.gitignore` + `.npmrc` + `.nvmrc`
+- [x] `mkdir mindkid/` cạnh `tinimath/` (không đụng `tinimath/`)
+- [x] `git init -b main` trong `mindkid/` + `.gitignore` + `.npmrc` + `.nvmrc`
 - [x] `git remote add origin <url>` — **chờ T0d** (chưa có repo GitHub)
 - [x] Commit đầu tiên — xong 2026-08-06, người duyệt nội dung → `1b87a08` local trên `main` (chưa có remote để push)
-- [x] `package.json` gốc `@kidthink/monorepo`, `engines: node>=24, pnpm>=11`
+- [x] `package.json` gốc `@mindkid/monorepo`, `engines: node>=24, pnpm>=11`
 - [x] `pnpm-workspace.yaml`: `apps/*` `packages/*` + `catalog:` theo §7.1 + `onlyBuiltDependencies: [sharp]`
 - [x] 3 app: `web` `admin` `worker`
 - [x] 12 package: `config` `shared` `db` `auth` `cache` `storage` `queue` `taxonomy` `emoji` `game-engine` `adaptive` `ui`
@@ -33,7 +33,7 @@
 - [x] `biome.jsonc` gốc = 4 dòng `extends: ["ultracite/core", "ultracite/vue"]`
 - [x] devDep gốc: `ultracite@~6.5.1` + `@biomejs/biome@^2.5.7` (không `^7` — đã sang oxlint)
 - [x] `typescript@~5.9.3` + `@types/node@^24` vào `catalog:` (D-I; Cấm chưa TS 7)
-- [x] `package.json` → `@kidthink/config`, exports chỉ giữ `./tsconfig.base.json`
+- [x] `package.json` → `@mindkid/config`, exports chỉ giữ `./tsconfig.base.json`
 - [x] `pnpm exec ultracite --help` → `check` mô tả "Run **Biome** linter"
 - [x] `pnpm ls -r` **không** có `oxlint`, **không** có `oxfmt`
 - [x] `pnpm lint` exit 0, "No issues found"
@@ -41,18 +41,18 @@
 - [x] `grep -rn "tinimath_sa\|superadmin" .` → rỗng
 
 ## T3 — Port `docs/taxonomy/` (sau T1, song song được song song)
-- [x] Copy nguyên `tinimath/tinimath/docs/taxonomy/` → `kidthink/docs/taxonomy/`
+- [x] Copy nguyên `tinimath/tinimath/docs/taxonomy/` → `mindkid/docs/taxonomy/`
 - [x] `diff -r` nguồn/đích → rỗng
 
 ## T4 — Port `packages/emoji` (sau T2)
 - [x] Copy `src/` `tests/` `tsconfig.json` `package.json`
-- [x] Đổi mọi `@tinimath/` → `@kidthink/` **gồm comment header** (7 chỗ)
+- [x] Đổi mọi `@tinimath/` → `@mindkid/` **gồm comment header** (7 chỗ)
 - [x] `vitest` dùng **v4** từ `catalog:` (v1 pin `^3.2.1` ở package này — lệch [`SPEC.md`](../SPEC.md) §6)
-- [x] `name` = `@kidthink/emoji` · grep `@tinimath` → rỗng
-- [x] `pnpm --filter @kidthink/emoji test` pass
+- [x] `name` = `@mindkid/emoji` · grep `@tinimath` → rỗng
+- [x] `pnpm --filter @mindkid/emoji test` pass
 
 ## T5 — Script `lint:tokens` viết mới (sau T1, song song được song song)
-- [x] Viết `kidthink/scripts/lint-tokens.ts` (không port bản v1 — gắn path engine v1, mà engine không port)
+- [x] Viết `mindkid/scripts/lint-tokens.ts` (không port bản v1 — gắn path engine v1, mà engine không port)
 - [x] Quét hex literal `#rgb`/`#rrggbb` trong `apps/**` + `packages/**`, allow `designTokens.ts`
 - [x] ca dương: `pnpm lint:tokens` exit 0 trên repo rỗng
 - [x] **ca âm**: thêm file tạm có `#ff0000` → exit 1 + in `file:line`; xoá → exit 0 lại
@@ -60,7 +60,7 @@
 ## T6 — docker-compose PG17 + Valkey9 (sau T1, song song được song song)
 - [x] Port khung từ v1
 - [x] **Bump `valkey:8-alpine` → `valkey:9-alpine`** (D-G, có chủ đích)
-- [x] `POSTGRES_DB: tinimath` → `kidthink`
+- [x] `POSTGRES_DB: tinimath` → `mindkid`
 - [x] Bỏ service `rustfs` (chưa spec nào cần)
 - [x] `docker compose up -d` → cả hai **healthy**
 - [x] PostgreSQL **17.9**
@@ -91,7 +91,7 @@
 - [x] **ca âm**: `pnpm test` chạy test emoji thật, không phải "no test files found"
 
 ## T8 — CI workflow (sau T7) — **SUPERSEDED 2026-08-06, xem T8b**
-- [x] `kidthink/.github/workflows/ci.yml` — port khung cú pháp từ v1
+- [x] `mindkid/.github/workflows/ci.yml` — port khung cú pháp từ v1
 - [x] `pnpm/action-setup` version `10` → **`11`**
 - [x] Job: `install --frozen-lockfile` → `check` → `check:services` → `test`
 - [x] `services:` PG 17-alpine + Valkey 9-alpine (SPEC.md §10 cấm mock DB)

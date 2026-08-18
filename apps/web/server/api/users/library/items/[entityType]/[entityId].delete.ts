@@ -1,65 +1,58 @@
-import { getOwnerDb, removeLibraryItem } from "@kidthink/db";
+import { getOwnerDb, removeLibraryItem } from "@mindkid/db";
 import {
   createError,
   defineEventHandler,
   getRouterParam,
   setResponseStatus,
 } from "h3";
-import {
-  requireWebUserSession,
-  respondToUserAuthError,
-} from "../../../../../utils/auth-runtime.ts";
+import { requireWebUserSession } from "../../../../../utils/auth-runtime.ts";
 
 export default defineEventHandler(async (event) => {
-  try {
-    const user = await requireWebUserSession(event);
-    const userId = Number(user.user_id);
-    const db = getOwnerDb();
+  const user = await requireWebUserSession(event);
+  const userId = Number(user.user_id);
+  const db = getOwnerDb();
 
-    const entityType = getRouterParam(event, "entityType");
-    const entityIdStr = getRouterParam(event, "entityId");
+  const entityType = getRouterParam(event, "entityType");
+  const entityIdStr = getRouterParam(event, "entityId");
 
-    if (!(entityType && entityIdStr)) {
-      setResponseStatus(event, 400);
-      throw createError({
-        statusCode: 400,
-        statusMessage: "VALIDATION_FAILED",
-      });
-    }
-
-    const validTypes = ["game_level", "lesson", "curriculum", "activity"];
-    if (!validTypes.includes(entityType)) {
-      setResponseStatus(event, 400);
-      throw createError({
-        statusCode: 400,
-        statusMessage: "INVALID_ENTITY_TYPE",
-      });
-    }
-
-    const entityId = Number(entityIdStr);
-    if (Number.isNaN(entityId) || entityId <= 0) {
-      setResponseStatus(event, 400);
-      throw createError({
-        statusCode: 400,
-        statusMessage: "INVALID_ENTITY_ID",
-      });
-    }
-
-    await removeLibraryItem(db, {
-      userId,
-      entityType: entityType as
-        | "game_level"
-        | "lesson"
-        | "curriculum"
-        | "activity",
-      entityId,
+  if (!(entityType && entityIdStr)) {
+    setResponseStatus(event, 400);
+    throw createError({
+      statusCode: 400,
+      statusMessage: "VALIDATION_FAILED",
     });
-
-    return {
-      success: true,
-      message: "Đã xoá mục khỏi thư viện cá nhân.",
-    };
-  } catch (error) {
-    return respondToUserAuthError(event, error);
   }
+
+  const validTypes = ["game_level", "lesson", "curriculum", "activity"];
+  if (!validTypes.includes(entityType)) {
+    setResponseStatus(event, 400);
+    throw createError({
+      statusCode: 400,
+      statusMessage: "INVALID_ENTITY_TYPE",
+    });
+  }
+
+  const entityId = Number(entityIdStr);
+  if (Number.isNaN(entityId) || entityId <= 0) {
+    setResponseStatus(event, 400);
+    throw createError({
+      statusCode: 400,
+      statusMessage: "INVALID_ENTITY_ID",
+    });
+  }
+
+  await removeLibraryItem(db, {
+    userId,
+    entityType: entityType as
+      | "game_level"
+      | "lesson"
+      | "curriculum"
+      | "activity",
+    entityId,
+  });
+
+  return {
+    success: true,
+    message: "Đã xoá mục khỏi thư viện cá nhân.",
+  };
 });

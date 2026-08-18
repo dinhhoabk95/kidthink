@@ -1,82 +1,75 @@
 import crypto from "node:crypto";
-import { auditLogs, getOwnerDb, mfaRecoveryRequests } from "@kidthink/db";
+import { auditLogs, getOwnerDb, mfaRecoveryRequests } from "@mindkid/db";
 import { and, eq, gt } from "drizzle-orm";
 import { createError, defineEventHandler, getHeader, getQuery } from "h3";
-import {
-  getVerifiedRemoteIp,
-  respondToUserAuthError,
-} from "../../../../../utils/auth-runtime.js";
+import { getVerifiedRemoteIp } from "../../../../../utils/auth-runtime.js";
 
 export default defineEventHandler(async (event) => {
-  try {
-    const rawQuery =
-      (event as unknown as { _query?: Record<string, unknown> })._query ||
-      (event.context as { query?: Record<string, unknown> })?.query ||
-      getQuery(event) ||
-      {};
-    const token =
-      typeof (rawQuery as Record<string, unknown>)?.token === "string"
-        ? ((rawQuery as Record<string, unknown>).token as string).trim()
-        : "";
+  const rawQuery =
+    (event as unknown as { _query?: Record<string, unknown> })._query ||
+    (event.context as { query?: Record<string, unknown> })?.query ||
+    getQuery(event) ||
+    {};
+  const token =
+    typeof (rawQuery as Record<string, unknown>)?.token === "string"
+      ? ((rawQuery as Record<string, unknown>).token as string).trim()
+      : "";
 
-    if (!token) {
-      throw createError({
-        statusCode: 400,
-        statusMessage: "TOKEN_REQUIRED",
-        message: "Mã xác thực token không được để trống",
-      });
-    }
-
-    const tokenHash = crypto.createHash("sha256").update(token).digest("hex");
-    const db = getOwnerDb();
-    const now = new Date();
-
-    const [matchingReq] = await db
-      .select()
-      .from(mfaRecoveryRequests)
-      .where(
-        and(
-          eq(mfaRecoveryRequests.verificationTokenHash, tokenHash),
-          eq(mfaRecoveryRequests.status, "pending_verification"),
-          gt(mfaRecoveryRequests.verificationTokenExpiresAt, now)
-        )
-      );
-
-    if (!matchingReq) {
-      throw createError({
-        statusCode: 400,
-        statusMessage: "TOKEN_INVALID_OR_EXPIRED",
-        message: "Mã xác thực không hợp lệ hoặc đã hết hạn",
-      });
-    }
-
-    // Update status to waiting and clear token hash
-    await db
-      .update(mfaRecoveryRequests)
-      .set({
-        status: "waiting",
-        emailVerifiedAt: now,
-        verificationTokenHash: null,
-        updatedAt: now,
-      })
-      .where(eq(mfaRecoveryRequests.id, matchingReq.id));
-
-    await db.insert(auditLogs).values({
-      actorType: "user",
-      actorId: matchingReq.userId,
-      action: "mfa.recovery_email_verified",
-      entityType: "user",
-      entityId: String(matchingReq.userId),
-      ipAddress: getVerifiedRemoteIp(event),
-      userAgent: getHeader(event, "user-agent") ?? "unknown",
+  if (!token) {
+    throw createError({
+      statusCode: 400,
+      statusMessage: "TOKEN_REQUIRED",
+      message: "Mã xác thực token không được để trống",
     });
-
-    return {
-      success: true,
-      message:
-        "Email đã được xác thực thành công. Yêu cầu khôi phục MFA sẽ sẵn sàng xử lý sau 48 giờ kể từ lúc tạo.",
-    };
-  } catch (err) {
-    return respondToUserAuthError(event, err);
   }
+
+  const tokenHash = crypto.createHash("sha256").update(token).digest("hex");
+  const db = getOwnerDb();
+  const now = new Date();
+
+  const [matchingReq] = await db
+    .select()
+    .from(mfaRecoveryRequests)
+    .where(
+      and(
+        eq(mfaRecoveryRequests.verificationTokenHash, tokenHash),
+        eq(mfaRecoveryRequests.status, "pending_verification"),
+        gt(mfaRecoveryRequests.verificationTokenExpiresAt, now)
+      )
+    );
+
+  if (!matchingReq) {
+    throw createError({
+      statusCode: 400,
+      statusMessage: "TOKEN_INVALID_OR_EXPIRED",
+      message: "Mã xác thực không hợp lệ hoặc đã hết hạn",
+    });
+  }
+
+  // Update status to waiting and clear token hash
+  await db
+    .update(mfaRecoveryRequests)
+    .set({
+      status: "waiting",
+      emailVerifiedAt: now,
+      verificationTokenHash: null,
+      updatedAt: now,
+    })
+    .where(eq(mfaRecoveryRequests.id, matchingReq.id));
+
+  await db.insert(auditLogs).values({
+    actorType: "user",
+    actorId: matchingReq.userId,
+    action: "mfa.recovery_email_verified",
+    entityType: "user",
+    entityId: String(matchingReq.userId),
+    ipAddress: getVerifiedRemoteIp(event),
+    userAgent: getHeader(event, "user-agent") ?? "unknown",
+  });
+
+  return {
+    success: true,
+    message:
+      "Email đã được xác thực thành công. Yêu cầu khôi phục MFA sẽ sẵn sàng xử lý sau 48 giờ kể từ lúc tạo.",
+  };
 });

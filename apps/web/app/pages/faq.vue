@@ -9,7 +9,7 @@
           <h1 class="faq-page-title">Câu hỏi thường gặp & Hướng dẫn</h1>
           <p class="faq-page-subtitle">
             Giải đáp mọi thắc mắc về phương pháp rèn luyện tư duy, an toàn dữ
-            liệu và gói học KidThink.
+            liệu và gói học MindKid.
           </p>
         </div>
 
@@ -71,18 +71,18 @@
         <div class="support-box">
           <h2 class="support-title">Vẫn chưa tìm thấy câu trả lời?</h2>
           <p class="support-desc">
-            Đội ngũ chuyên viên sư phạm và kỹ thuật của KidThink luôn sẵn sàng
-            hỗ trợ bạn:
+            Đội ngũ chuyên viên sư phạm và kỹ thuật của MindKid luôn sẵn sàng hỗ
+            trợ bạn:
           </p>
           <div class="support-channels">
-            <a class="channel-card" href="mailto:support@kidthink.vn">
+            <a class="channel-card" href="mailto:support@mindkid.vn">
               <span aria-hidden="true" class="channel-icon">✉️</span>
-              <span class="channel-name">support@kidthink.vn</span>
+              <span class="channel-name">support@mindkid.vn</span>
               <span class="channel-note">Phản hồi trong 24h</span>
             </a>
             <a
               class="channel-card"
-              href="https://zalo.me/kidthink"
+              href="https://zalo.me/mindkid"
               rel="noopener noreferrer"
               target="_blank"
             >
@@ -101,7 +101,7 @@
 </template>
 
 <script lang="ts" setup>
-  import { FAQ_ITEMS, type FaqItem } from "@kidthink/shared";
+  import { FAQ_ITEMS, type FaqItem } from "@mindkid/shared";
   import { useHead, useSeoMeta } from "unhead";
   import { computed, onMounted, ref } from "vue";
   import { useRoute, useRouter } from "vue-router";
@@ -203,18 +203,18 @@
 
   // BR-FAQ-03: FAQPage JSON-LD
   useSeoMeta({
-    title: "Câu hỏi thường gặp & Hướng dẫn sử dụng — KidThink",
+    title: "Câu hỏi thường gặp & Hướng dẫn sử dụng — MindKid",
     description:
-      "Giải đáp thắc mắc về phương pháp rèn luyện tư duy cho trẻ mầm non, chính sách hoàn phí và cam kết bảo vệ dữ liệu trẻ em tại KidThink.",
-    ogTitle: "Câu hỏi thường gặp — KidThink",
+      "Giải đáp thắc mắc về phương pháp rèn luyện tư duy cho trẻ mầm non, chính sách hoàn phí và cam kết bảo vệ dữ liệu trẻ em tại MindKid.",
+    ogTitle: "Câu hỏi thường gặp — MindKid",
     ogDescription:
-      "Giải đáp thắc mắc về phương pháp học toán tư duy và chính sách KidThink.",
+      "Giải đáp thắc mắc về phương pháp học toán tư duy và chính sách MindKid.",
     ogType: "article",
   });
 
   useHead({
     htmlAttrs: { lang: "vi-VN" },
-    link: [{ rel: "canonical", href: "https://kidthink.vn/faq" }],
+    link: [{ rel: "canonical", href: "https://mindkid.vn/faq" }],
     script: [
       {
         type: "application/ld+json",

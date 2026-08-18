@@ -152,7 +152,7 @@ mỗi skill.
 - [ ] Cache cây 5 phút, invalidate theo `taxonomy_version`.
 
 **Kiểm chứng**
-- [ ] `pnpm --filter @kidthink/taxonomy test` xanh, assertion tham chiếu `BR-TAX-01`.
+- [ ] `pnpm --filter @mindkid/taxonomy test` xanh, assertion tham chiếu `BR-TAX-01`.
 
 **Phụ thuộc:** không · **Cỡ:** M
 
@@ -166,7 +166,7 @@ mỗi skill.
 - [ ] Ca âm: một file seed khai A prereq B và B prereq A → fail **trước** khi ghi hàng nào.
 
 **Kiểm chứng**
-- [ ] `pnpm db:seed` rồi `pnpm --filter @kidthink/db test -- taxonomy` xanh.
+- [ ] `pnpm db:seed` rồi `pnpm --filter @mindkid/db test -- taxonomy` xanh.
 
 **Phụ thuộc:** T1 · **Cỡ:** M
 
@@ -181,7 +181,7 @@ mỗi skill.
 - [ ] Mỗi bất biến có **ca âm** riêng: một fixture vi phạm làm cổng đỏ.
 
 **Kiểm chứng**
-- [ ] `pnpm --filter @kidthink/db test -- taxonomy` xanh, assertion tham chiếu `BR-TAX-03` `BR-TAX-04` `BR-TAX-05` `BR-TAX-08` `BR-TAX-09`.
+- [ ] `pnpm --filter @mindkid/db test -- taxonomy` xanh, assertion tham chiếu `BR-TAX-03` `BR-TAX-04` `BR-TAX-05` `BR-TAX-08` `BR-TAX-09`.
 
 **Phụ thuộc:** T2 · **Cỡ:** M
 
@@ -194,7 +194,7 @@ mỗi skill.
 - [ ] Cổng đếm: tổng LO ≥ 690 là điều kiện của **cổng ra P0**, không phải của mỗi lần seed.
 
 **Kiểm chứng**
-- [ ] `pnpm --filter @kidthink/db test -- taxonomy` xanh, assertion tham chiếu `BR-TAX-02`.
+- [ ] `pnpm --filter @mindkid/db test -- taxonomy` xanh, assertion tham chiếu `BR-TAX-02`.
 
 **Phụ thuộc:** T3 · H1 · **Cỡ:** M
 
@@ -238,7 +238,7 @@ batch trước khi tiếp tục, không tăng kích thước batch.
 - [ ] `BR-EMJ-10`: `deprecated` vẫn tra được bằng `getByCode`, không xoá cứng.
 
 **Kiểm chứng**
-- [ ] `pnpm --filter @kidthink/emoji test` và `pnpm --filter @kidthink/db test -- emoji` xanh, assertion tham chiếu `BR-EMJ-04` `BR-EMJ-08` `BR-EMJ-09`.
+- [ ] `pnpm --filter @mindkid/emoji test` và `pnpm --filter @mindkid/db test -- emoji` xanh, assertion tham chiếu `BR-EMJ-04` `BR-EMJ-08` `BR-EMJ-09`.
 
 **Phụ thuộc:** T5 · **Cỡ:** M
 
@@ -273,7 +273,7 @@ batch trước khi tiếp tục, không tăng kích thước batch.
 - [ ] `BR-TAX-10`: 100 truy vấn `skill → LO → asset` với dữ liệu đầy đủ, **P95 < 100 ms**.
 
 **Kiểm chứng**
-- [ ] `pnpm --filter @kidthink/web test -- taxonomy` xanh, assertion tham chiếu `BR-TAX-06` `BR-TAX-10`.
+- [ ] `pnpm --filter @mindkid/web test -- taxonomy` xanh, assertion tham chiếu `BR-TAX-06` `BR-TAX-10`.
 
 **Phụ thuộc:** P0.3 dựng xong Nitro runtime · T4 · **Cỡ:** M
 

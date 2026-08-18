@@ -1,15 +1,12 @@
 import crypto from "node:crypto";
-import { contentImages, getOwnerDb, writeAudit } from "@kidthink/db";
+import { contentImages, getOwnerDb, writeAudit } from "@mindkid/db";
 import {
   detectImageMimeType,
   isSvgContent,
   uploadPublicImage,
-} from "@kidthink/storage";
+} from "@mindkid/storage";
 import { createError, defineEventHandler, readMultipartFormData } from "h3";
-import {
-  requireManagerSession,
-  respondToManagerAuthError,
-} from "../../../utils/admin-auth-runtime.js";
+import { requireManagerSession } from "../../../utils/admin-auth-runtime.js";
 
 const MAX_FILE_SIZE = 2 * 1024 * 1024; // 2MB (BR-IMG-04, BR-IUP-04)
 
@@ -111,83 +108,79 @@ function validateUpload(
 }
 
 export default defineEventHandler(async (event) => {
-  try {
-    const manager = await requireManagerSession(event);
+  const manager = await requireManagerSession(event);
 
-    const rawFormData =
-      ((event as Record<string, unknown>)._multipartFormData as
-        | Array<{ name?: string; data?: Buffer; filename?: string }>
-        | undefined) || (await readMultipartFormData(event).catch(() => null));
+  const rawFormData =
+    ((event as Record<string, unknown>)._multipartFormData as
+      | Array<{ name?: string; data?: Buffer; filename?: string }>
+      | undefined) || (await readMultipartFormData(event).catch(() => null));
 
-    const { fileBuffer, fileName, ownerType, ownerId, alt } =
-      parseMultipartItems(rawFormData);
+  const { fileBuffer, fileName, ownerType, ownerId, alt } =
+    parseMultipartItems(rawFormData);
 
-    validateUpload(fileBuffer, fileName, alt);
-    const validBuffer = fileBuffer as Buffer;
+  validateUpload(fileBuffer, fileName, alt);
+  const validBuffer = fileBuffer as Buffer;
 
-    const now = new Date();
-    const year = now.getFullYear();
-    const month = String(now.getMonth() + 1).padStart(2, "0");
-    const fileHash = crypto.randomBytes(8).toString("hex");
-    const relativePath = `content/${year}/${month}/${fileHash}.webp`;
-    const thumbPath = `content/${year}/${month}/${fileHash}_thumb.webp`;
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, "0");
+  const fileHash = crypto.randomBytes(8).toString("hex");
+  const relativePath = `content/${year}/${month}/${fileHash}.webp`;
+  const thumbPath = `content/${year}/${month}/${fileHash}_thumb.webp`;
 
-    await uploadPublicImage({
-      key: relativePath,
-      body: validBuffer,
-      contentType: "image/webp",
-    });
+  await uploadPublicImage({
+    key: relativePath,
+    body: validBuffer,
+    contentType: "image/webp",
+  });
 
-    await uploadPublicImage({
-      key: thumbPath,
-      body: validBuffer,
-      contentType: "image/webp",
-    });
+  await uploadPublicImage({
+    key: thumbPath,
+    body: validBuffer,
+    contentType: "image/webp",
+  });
 
-    const managerId = manager.manager_id || manager.id || 1;
+  const managerId = manager.manager_id || manager.id || 1;
 
-    const db = getOwnerDb();
-    const [imageRecord] = await db
-      .insert(contentImages)
-      .values({
-        ownerType: ownerType as ImageOwnerType,
-        ownerId,
-        storagePath: relativePath,
-        thumbPath,
-        width: 960,
-        height: 960,
-        bytes: validBuffer.length,
-        mime: "image/webp",
-        altTextVi: alt,
-        visibility: "public",
-        status: "active",
-        uploadedByManagerId: managerId,
-      })
-      .returning();
-
-    await writeAudit(db, {
-      actor_type: "manager",
-      actor_id: managerId,
-      action: "image_uploaded",
-      entity_type: "content_image",
-      entity_id: imageRecord.id.toString(),
-      after_data: {
-        path: relativePath,
-        owner_type: ownerType,
-        owner_id: ownerId,
-        alt,
-      },
-    });
-
-    event.node.res.statusCode = 201;
-    return {
-      id: imageRecord.id,
-      path: relativePath,
-      thumb_path: thumbPath,
+  const db = getOwnerDb();
+  const [imageRecord] = await db
+    .insert(contentImages)
+    .values({
+      ownerType: ownerType as ImageOwnerType,
+      ownerId,
+      storagePath: relativePath,
+      thumbPath,
       width: 960,
       height: 960,
-    };
-  } catch (err) {
-    return respondToManagerAuthError(event, err);
-  }
+      bytes: validBuffer.length,
+      mime: "image/webp",
+      altText: alt,
+      visibility: "public",
+      status: "active",
+      uploadedByManagerId: managerId,
+    })
+    .returning();
+
+  await writeAudit(db, {
+    actor_type: "manager",
+    actor_id: managerId,
+    action: "image_uploaded",
+    entity_type: "content_image",
+    entity_id: imageRecord.id.toString(),
+    after_data: {
+      path: relativePath,
+      owner_type: ownerType,
+      owner_id: ownerId,
+      alt,
+    },
+  });
+
+  event.node.res.statusCode = 201;
+  return {
+    id: imageRecord.id,
+    path: relativePath,
+    thumb_path: thumbPath,
+    width: 960,
+    height: 960,
+  };
 });

@@ -13,7 +13,7 @@ describe("Taxonomy Schema Integration Tests", () => {
       .insert(competencies)
       .values({
         code: "C1",
-        nameVi: "Tư duy số",
+        name: "Tư duy số",
         colorToken: "blue",
         icon: "icon-c1",
       })
@@ -29,7 +29,7 @@ describe("Taxonomy Schema Integration Tests", () => {
       .values({
         code: "C1.NUM",
         competencyId: compId,
-        nameVi: "Số đếm",
+        name: "Số đếm",
       })
       .onConflictDoNothing()
       .returning();
@@ -43,7 +43,7 @@ describe("Taxonomy Schema Integration Tests", () => {
       db.insert(skills).values({
         code: "c1.cnt.3",
         strandId,
-        nameVi: "Đếm đến 3",
+        name: "Đếm đến 3",
         ageMin: 3,
         ageMax: 5,
         difficulty: 1,
@@ -58,7 +58,7 @@ describe("Taxonomy Schema Integration Tests", () => {
       .insert(competencies)
       .values({
         code: "C2",
-        nameVi: "Tư duy hình học",
+        name: "Tư duy hình học",
         colorToken: "red",
         icon: "icon-c2",
       })
@@ -75,7 +75,7 @@ describe("Taxonomy Schema Integration Tests", () => {
       .values({
         code: "C2.GEO",
         competencyId: compId,
-        nameVi: "Hình học",
+        name: "Hình học",
       })
       .onConflictDoNothing()
       .returning();
@@ -91,7 +91,7 @@ describe("Taxonomy Schema Integration Tests", () => {
         code: "C2.SHP",
         competencyId: compId,
         parentStrandId: s0Id,
-        nameVi: "Hình phẳng",
+        name: "Hình phẳng",
       })
       .onConflictDoNothing()
       .returning();
@@ -105,7 +105,7 @@ describe("Taxonomy Schema Integration Tests", () => {
       code: string;
       competencyId: number;
       parentStrandId?: number | null;
-      nameVi: string;
+      name: string;
     }) {
       if (input.parentStrandId) {
         const [parent] = await db
@@ -128,7 +128,7 @@ describe("Taxonomy Schema Integration Tests", () => {
         code: "C2.CIR",
         competencyId: compId,
         parentStrandId: s1Id,
-        nameVi: "Hình tròn",
+        name: "Hình tròn",
       })
     ).rejects.toThrow("BR-SCT: Strand nesting depth cannot exceed 1 level");
   });

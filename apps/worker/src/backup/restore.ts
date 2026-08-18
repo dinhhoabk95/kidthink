@@ -5,7 +5,7 @@ import path from "node:path";
 import { createInterface } from "node:readline";
 import { pipeline } from "node:stream/promises";
 import { createGunzip } from "node:zlib";
-import { backupLog, getOwnerDb } from "@kidthink/db";
+import { backupLog, getOwnerDb } from "@mindkid/db";
 import { desc, eq } from "drizzle-orm";
 import postgres from "postgres";
 

@@ -1,4 +1,4 @@
-import { getByCode } from "@kidthink/emoji";
+import { getByCode } from "@mindkid/emoji";
 
 export interface ResolvedEmojiAsset {
   ref: string;

@@ -1,4 +1,4 @@
-import type { UserTokenPayload } from "@kidthink/auth";
+import type { UserTokenPayload } from "@mindkid/auth";
 import { defineEventHandler, getHeader } from "h3";
 import { getUserSession } from "#imports";
 

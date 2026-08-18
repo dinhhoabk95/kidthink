@@ -1,5 +1,5 @@
 // biome-ignore lint/style/useFilenamingConvention: Spec canonical filename designTokens.ts
-// @kidthink/game-engine — Design Tokens (Canvas rendering counterpart to CSS @theme)
+// @mindkid/game-engine — Design Tokens (Canvas rendering counterpart to CSS @theme)
 
 export const designTokens = {
   colors: {

@@ -1,10 +1,7 @@
-import { getOwnerDb, seoPages, writeAudit } from "@kidthink/db";
+import { getOwnerDb, seoPages, writeAudit } from "@mindkid/db";
 import { and, eq } from "drizzle-orm";
 import { createError, defineEventHandler, getRouterParam, readBody } from "h3";
-import {
-  requireManagerSession,
-  respondToManagerAuthError,
-} from "../../../../utils/admin-auth-runtime.js";
+import { requireManagerSession } from "../../../../utils/admin-auth-runtime.js";
 
 const FORBIDDEN_LEGAL_SLUGS = [
   "terms",
@@ -115,55 +112,49 @@ function buildSeoPageUpdates(
 }
 
 export default defineEventHandler(async (event) => {
-  try {
-    const manager = await requireManagerSession(event);
-    const slug = getRouterParam(event, "slug");
-    const version = Number(getRouterParam(event, "version"));
+  const manager = await requireManagerSession(event);
+  const slug = getRouterParam(event, "slug");
+  const version = Number(getRouterParam(event, "version"));
 
-    if (!(slug && version)) {
-      throw createError({ statusCode: 404, statusMessage: "NOT_FOUND" });
-    }
-
-    const db = getOwnerDb();
-    const [existing] = await db
-      .select()
-      .from(seoPages)
-      .where(
-        and(eq(seoPages.slug, slug), eq(seoPages.contentVersion, version))
-      );
-
-    if (!existing) {
-      throw createError({
-        statusCode: 404,
-        statusMessage: "SEO_PAGE_NOT_FOUND",
-      });
-    }
-
-    const body =
-      (event.context?.body as Record<string, unknown>) ||
-      ((event as Record<string, unknown>)._body as Record<string, unknown>) ||
-      (await readBody(event).catch(() => ({})));
-
-    const updates = buildSeoPageUpdates(body, existing, slug);
-
-    const [updated] = await db
-      .update(seoPages)
-      .set(updates)
-      .where(eq(seoPages.id, existing.id))
-      .returning();
-
-    const managerId = manager.manager_id || manager.id || 1;
-    await writeAudit(db, {
-      actor_type: "manager",
-      actor_id: managerId,
-      action: "content_updated",
-      entity_type: "seo_page",
-      entity_id: existing.id.toString(),
-      after_data: updates,
-    });
-
-    return updated;
-  } catch (err) {
-    return respondToManagerAuthError(event, err);
+  if (!(slug && version)) {
+    throw createError({ statusCode: 404, statusMessage: "NOT_FOUND" });
   }
+
+  const db = getOwnerDb();
+  const [existing] = await db
+    .select()
+    .from(seoPages)
+    .where(and(eq(seoPages.slug, slug), eq(seoPages.contentVersion, version)));
+
+  if (!existing) {
+    throw createError({
+      statusCode: 404,
+      statusMessage: "SEO_PAGE_NOT_FOUND",
+    });
+  }
+
+  const body =
+    (event.context?.body as Record<string, unknown>) ||
+    ((event as Record<string, unknown>)._body as Record<string, unknown>) ||
+    (await readBody(event).catch(() => ({})));
+
+  const updates = buildSeoPageUpdates(body, existing, slug);
+
+  const [updated] = await db
+    .update(seoPages)
+    .set(updates)
+    .where(eq(seoPages.id, existing.id))
+    .returning();
+
+  const managerId = manager.manager_id || manager.id || 1;
+  await writeAudit(db, {
+    actor_type: "manager",
+    actor_id: managerId,
+    action: "content_updated",
+    entity_type: "seo_page",
+    entity_id: existing.id.toString(),
+    after_data: updates,
+  });
+
+  return updated;
 });

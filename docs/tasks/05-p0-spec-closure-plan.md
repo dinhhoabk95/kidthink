@@ -14,7 +14,7 @@
 > là liên kết bấm được. Riêng mã quyết định `D-*` được giữ vì nó là sổ cái liên task, đã dùng
 > từ Task #1. Task #3 dừng ở `D-AE`, nên task này bắt đầu từ **`D-AF`**.
 >
-> Mọi lệnh chạy từ thư mục `kidthink/` và phải đặt lại đường dẫn Node trước, vì shell mặc định
+> Mọi lệnh chạy từ thư mục `mindkid/` và phải đặt lại đường dẫn Node trước, vì shell mặc định
 > của máy là v20.17.0 còn dự án cần v24:
 >
 > ```
@@ -38,7 +38,7 @@ Khối lượng đo được: 12 file (11 spec đích cộng một spec kéo th�
 
 | Đo | Kết quả |
 |---|---|
-| Nhánh | `main`, tracking `origin/main` tại `git@dinhhoabk95.github.com:dinhhoabk95/kidthink.git` |
+| Nhánh | `main`, tracking `origin/main` tại `git@dinhhoabk95.github.com:dinhhoabk95/mindkid.git` |
 | Commit gần nhất | `2a615bb` — thêm [`READING-GUIDE.md`](../specs/READING-GUIDE.md) |
 | Working tree | Bẩn: `docs/tasks/plan.md`, `docs/tasks/todo.md`, `docs/tasks/04-readability-spec.md` chưa commit; hai file `03-schema-contract-*` là bản đổi tên chưa commit |
 | `pnpm lint:specs` | Xanh — 130 spec, 13 kiểm tra, **0 lỗi, 213 cảnh báo** |

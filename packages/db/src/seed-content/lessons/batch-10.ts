@@ -20,14 +20,12 @@ export const LESSON_BATCH_10: LessonSeed[] = [
       target_age_min: 3,
       target_age_max: 4,
       estimated_minutes: 20,
-      materials_vi: "Hoa quả đồ chơi, đồng xu giấy, hộp heo đất",
-      warm_up_vi:
-        "Khởi động: Bắt chước tiếng kêu lách cách của heo đất 3 phút.",
-      reflection_vi:
-        "Đúc kết: Bé đếm xem chú heo đất hôm nay đã có mấy đồng xu.",
-      assessment_vi:
+      materials: "Hoa quả đồ chơi, đồng xu giấy, hộp heo đất",
+      warm_up: "Khởi động: Bắt chước tiếng kêu lách cách của heo đất 3 phút.",
+      reflection: "Đúc kết: Bé đếm xem chú heo đất hôm nay đã có mấy đồng xu.",
+      assessment:
         "Bé đưa đúng 2 đồng xu giấy cho mẹ để mua món đồ có giá 2 xu.",
-      extension_vi: "Bé trang trí tai và mắt cho chú heo đất thêm xinh xắn.",
+      extension: "Bé trang trí tai và mắt cho chú heo đất thêm xinh xắn.",
       access_tier: "free",
       skill_codes: ["C6.VAL.01", "C6.SAV.01"],
       learning_objective_codes: ["LO-C6.VAL.01-01", "LO-C6.SAV.01-01"],
@@ -59,14 +57,12 @@ export const LESSON_BATCH_10: LessonSeed[] = [
       target_age_min: 4,
       target_age_max: 5,
       estimated_minutes: 22,
-      materials_vi: "Thẻ tranh gia đình, sóc bông, hạt lạc",
-      warm_up_vi:
-        "Khởi động: Động tác nhảy nhót hái hạt dẻ của bạn sóc 3 phút.",
-      reflection_vi:
-        "Đúc kết: Bé chia sẻ món đồ bé muốn tiết kiệm tiền để mua.",
-      assessment_vi:
+      materials: "Thẻ tranh gia đình, sóc bông, hạt lạc",
+      warm_up: "Khởi động: Động tác nhảy nhót hái hạt dẻ của bạn sóc 3 phút.",
+      reflection: "Đúc kết: Bé chia sẻ món đồ bé muốn tiết kiệm tiền để mua.",
+      assessment:
         "Bé chỉ đúng thẻ tranh Nước Uống là món đồ cần thiết hàng ngày.",
-      extension_vi: "Bé xếp hạt lạc vào hũ nhựa nhỏ cất dành.",
+      extension: "Bé xếp hạt lạc vào hũ nhựa nhỏ cất dành.",
       access_tier: "login",
       skill_codes: ["C6.VAL.01", "C6.SAV.01"],
       learning_objective_codes: ["LO-C6.VAL.01-01", "LO-C6.SAV.01-01"],
@@ -98,14 +94,14 @@ export const LESSON_BATCH_10: LessonSeed[] = [
       target_age_min: 4,
       target_age_max: 5,
       estimated_minutes: 20,
-      materials_vi: "Hộp giấy, rổ nhựa, đồ chơi nhỏ",
-      warm_up_vi:
+      materials: "Hộp giấy, rổ nhựa, đồ chơi nhỏ",
+      warm_up:
         "Khởi động: Bài tập nâng tạ tay giả định rèn luyện sức khoẻ 3 phút.",
-      reflection_vi:
+      reflection:
         "Đúc kết: Bé lau mồ hôi và uống một ngụm nước mát sau khi làm việc.",
-      assessment_vi:
+      assessment:
         "Bé trao đổi đồ chơi bằng cả hai tay và nói lời đề nghị lịch sự.",
-      extension_vi: "Bé giúp mẹ cất giỏ quần áo đã gấp vào tủ.",
+      extension: "Bé giúp mẹ cất giỏ quần áo đã gấp vào tủ.",
       access_tier: "free",
       skill_codes: ["C6.EXC.01"],
       learning_objective_codes: ["LO-C6.EXC.01-01"],
@@ -137,12 +133,11 @@ export const LESSON_BATCH_10: LessonSeed[] = [
       target_age_min: 5,
       target_age_max: 6,
       estimated_minutes: 22,
-      materials_vi: "Đồ chơi dán nhãn giá, đĩa cam tươi",
-      warm_up_vi:
-        "Khởi động: Nhún nhảy theo bài hát Đi Siêu Thị Vui Lắm 3 phút.",
-      reflection_vi: "Đúc kết: Bé thưởng thức múi cam ngọt ngào cùng mẹ.",
-      assessment_vi: "Bé chia đều 4 múi cam cho mẹ và bé mỗi người đúng 2 múi.",
-      extension_vi:
+      materials: "Đồ chơi dán nhãn giá, đĩa cam tươi",
+      warm_up: "Khởi động: Nhún nhảy theo bài hát Đi Siêu Thị Vui Lắm 3 phút.",
+      reflection: "Đúc kết: Bé thưởng thức múi cam ngọt ngào cùng mẹ.",
+      assessment: "Bé chia đều 4 múi cam cho mẹ và bé mỗi người đúng 2 múi.",
+      extension:
         "Bé tự tay viết các nhãn giá 1 xu, 2 xu dán lên đồ chơi của mình.",
       access_tier: "standard",
       skill_codes: ["C6.VAL.01", "C6.EXC.01"],
@@ -174,13 +169,13 @@ export const LESSON_BATCH_10: LessonSeed[] = [
       target_age_min: 5,
       target_age_max: 6,
       estimated_minutes: 25,
-      materials_vi: "Cam tươi, cốc nhựa, tiền xu giấy",
-      warm_up_vi: "Khởi động: Bài tập chào khách hàng lịch sự cúi chào 3 phút.",
-      reflection_vi:
+      materials: "Cam tươi, cốc nhựa, tiền xu giấy",
+      warm_up: "Khởi động: Bài tập chào khách hàng lịch sự cúi chào 3 phút.",
+      reflection:
         "Đúc kết: Bé cất tiền xu kiếm được vào chú heo đất tiết kiệm.",
-      assessment_vi:
+      assessment:
         "Bé thu đúng 1 đồng xu cho mỗi cốc nước cam và trao cốc nước cho khách hàng.",
-      extension_vi: "Bé vẽ tranh quảng cáo quán nước cam dán lên cửa phòng.",
+      extension: "Bé vẽ tranh quảng cáo quán nước cam dán lên cửa phòng.",
       access_tier: "premium",
       skill_codes: ["C6.VAL.01", "C6.SAV.01"],
       learning_objective_codes: ["LO-C6.VAL.01-01", "LO-C6.SAV.01-01"],
@@ -216,13 +211,13 @@ export const LESSON_BATCH_10: LessonSeed[] = [
       target_age_min: 5,
       target_age_max: 6,
       estimated_minutes: 25,
-      materials_vi: "Ví tiền giấy, heo đất, đồ chơi",
-      warm_up_vi: "Khởi động: Hát bài hát Tiết Kiệm Vì Tương Lai 3 phút.",
-      reflection_vi:
+      materials: "Ví tiền giấy, heo đất, đồ chơi",
+      warm_up: "Khởi động: Hát bài hát Tiết Kiệm Vì Tương Lai 3 phút.",
+      reflection:
         "Đúc kết: Bé nhận giấy khen Nhà Quản Lý Tài Chính Nhí Xuất Sắc.",
-      assessment_vi:
+      assessment:
         "Bé sử dụng đúng số đồng xu để mua đồ và phân bổ tiền vào heo tiết kiệm hợp lý.",
-      extension_vi: "Bé cùng bố mẹ lên kế hoạch tiết kiệm tuần mới.",
+      extension: "Bé cùng bố mẹ lên kế hoạch tiết kiệm tuần mới.",
       access_tier: "free",
       skill_codes: ["C6.VAL.01", "C6.SAV.01", "C6.EXC.01"],
       learning_objective_codes: [

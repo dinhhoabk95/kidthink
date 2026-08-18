@@ -48,7 +48,7 @@ describe("Task P4.8 — Semantic Search Service (BR-SEM-01..08)", () => {
       .insert(gameTemplates)
       .values({
         code: "GT-001",
-        nameVi: "Game Template Đếm",
+        name: "Game Template Đếm",
         mechanic: "count",
       })
       .onConflictDoNothing()
@@ -74,8 +74,8 @@ describe("Task P4.8 — Semantic Search Service (BR-SEM-01..08)", () => {
         code: `GL-C1-CNT-CARD-${numSuffix}`,
         contentVersion: 1,
         templateId,
-        titleVi: "Đếm hoa quả nông trại",
-        instructionVi: "Em hãy đếm các quả táo màu đỏ.",
+        title: "Đếm hoa quả nông trại",
+        instruction: "Em hãy đếm các quả táo màu đỏ.",
         ageMin: 3,
         ageMax: 4,
         difficulty: 1,
@@ -96,8 +96,8 @@ describe("Task P4.8 — Semantic Search Service (BR-SEM-01..08)", () => {
         code: `GL-C1-CNT-CARD-${numSuffix2}`,
         contentVersion: 1,
         templateId,
-        titleVi: "Thử thách đếm hoa quả nâng cao",
-        instructionVi: "Em hãy đếm số lượng hoa quả và tìm quy luật.",
+        title: "Thử thách đếm hoa quả nâng cao",
+        instruction: "Em hãy đếm số lượng hoa quả và tìm quy luật.",
         ageMin: 5,
         ageMax: 6,
         difficulty: 4,

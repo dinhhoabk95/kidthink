@@ -1,6 +1,5 @@
-import { AppError } from "@kidthink/auth";
-import { childProfiles, getOwnerDb } from "@kidthink/db";
-import { deriveAgeBand, isValidAvatarPreset } from "@kidthink/shared";
+import { childProfiles, getOwnerDb } from "@mindkid/db";
+import { deriveAgeBand, isValidAvatarPreset } from "@mindkid/shared";
 import { and, eq } from "drizzle-orm";
 import {
   createError,
@@ -9,10 +8,10 @@ import {
   readBody,
   setResponseStatus,
 } from "h3";
+
 import {
   assertRequestBodySize,
   requireWebUserSession,
-  respondToUserAuthError,
 } from "../../../../utils/auth-runtime.js";
 
 const ALLOWED_UPDATE_KEYS = new Set([
@@ -119,67 +118,47 @@ function buildChildUpdates(body: Record<string, unknown>, currentYear: number) {
 }
 
 export default defineEventHandler(async (event) => {
-  try {
-    assertRequestBodySize(event, 16 * 1024);
-    const user = await requireWebUserSession(event);
-    const uuid = getRouterParam(event, "uuid");
-    if (!uuid) {
-      setResponseStatus(event, 404);
-      throw createError({ statusCode: 404, statusMessage: "NOT_FOUND" });
-    }
-
-    const userId = Number(user.user_id);
-    const db = getOwnerDb();
-
-    // Verify ownership at DB level (BR-CPC-09)
-    const [child] = await db
-      .select()
-      .from(childProfiles)
-      .where(
-        and(eq(childProfiles.uuid, uuid), eq(childProfiles.userId, userId))
-      );
-
-    if (!child) {
-      setResponseStatus(event, 404);
-      throw createError({ statusCode: 404, statusMessage: "NOT_FOUND" });
-    }
-
-    const eventBody = (event.context as { body?: Record<string, unknown> })
-      ?.body;
-    const body =
-      eventBody || ((await readBody(event)) as Record<string, unknown>) || {};
-    const currentYear = new Date().getFullYear();
-
-    const updates = buildChildUpdates(body, currentYear);
-
-    const [updated] = await db
-      .update(childProfiles)
-      .set(updates)
-      .where(eq(childProfiles.id, child.id))
-      .returning();
-
-    return {
-      uuid: updated.uuid,
-      display_name: updated.displayName,
-      birth_year: updated.birthYear,
-      age_band: deriveAgeBand(updated.birthYear, currentYear),
-      avatar_id: updated.avatarId,
-      relationship: updated.relationship,
-    };
-  } catch (err: unknown) {
-    const errorObj = err as { statusCode?: number };
-    if (errorObj?.statusCode) {
-      setResponseStatus(event, errorObj.statusCode);
-      throw err;
-    }
-    if (err instanceof AppError) {
-      setResponseStatus(event, err.status);
-      throw createError({
-        statusCode: err.status,
-        statusMessage: err.code,
-        data: { code: err.code, message: err.message },
-      });
-    }
-    return respondToUserAuthError(event, err);
+  assertRequestBodySize(event, 16 * 1024);
+  const user = await requireWebUserSession(event);
+  const uuid = getRouterParam(event, "uuid");
+  if (!uuid) {
+    setResponseStatus(event, 404);
+    throw createError({ statusCode: 404, statusMessage: "NOT_FOUND" });
   }
+
+  const userId = Number(user.user_id);
+  const db = getOwnerDb();
+
+  // Verify ownership at DB level (BR-CPC-09)
+  const [child] = await db
+    .select()
+    .from(childProfiles)
+    .where(and(eq(childProfiles.uuid, uuid), eq(childProfiles.userId, userId)));
+
+  if (!child) {
+    setResponseStatus(event, 404);
+    throw createError({ statusCode: 404, statusMessage: "NOT_FOUND" });
+  }
+
+  const eventBody = (event.context as { body?: Record<string, unknown> })?.body;
+  const body =
+    eventBody || ((await readBody(event)) as Record<string, unknown>) || {};
+  const currentYear = new Date().getFullYear();
+
+  const updates = buildChildUpdates(body, currentYear);
+
+  const [updated] = await db
+    .update(childProfiles)
+    .set(updates)
+    .where(eq(childProfiles.id, child.id))
+    .returning();
+
+  return {
+    uuid: updated.uuid,
+    display_name: updated.displayName,
+    birth_year: updated.birthYear,
+    age_band: deriveAgeBand(updated.birthYear, currentYear),
+    avatar_id: updated.avatarId,
+    relationship: updated.relationship,
+  };
 });

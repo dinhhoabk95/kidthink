@@ -122,7 +122,7 @@ T1 token + designTokens.ts (một nguồn mỗi tầng)
 - [ ] `surface-400` đánh dấu rõ **chỉ** dùng cho viền/placeholder.
 
 **Kiểm chứng**
-- [ ] `pnpm --filter @kidthink/ui test -- tokens` xanh, assertion tham chiếu `BR-DSC-08`.
+- [ ] `pnpm --filter @mindkid/ui test -- tokens` xanh, assertion tham chiếu `BR-DSC-08`.
 - [ ] Test đối chiếu giá trị màu giữa `@theme` và `designTokens.ts` — lệch là đỏ.
 
 **Phụ thuộc:** không · **Cỡ:** M
@@ -158,7 +158,7 @@ T1 token + designTokens.ts (một nguồn mỗi tầng)
 - [ ] `BR-DSC-11`: quy ước `active:` cho phản hồi nhấn; ca âm — `hover:` làm phản hồi nhấn duy nhất bị bắt trong review checklist.
 
 **Kiểm chứng**
-- [ ] `pnpm --filter @kidthink/ui test -- surfaces` xanh, assertion tham chiếu `BR-A11-04` `BR-DSC-04`.
+- [ ] `pnpm --filter @mindkid/ui test -- surfaces` xanh, assertion tham chiếu `BR-A11-04` `BR-DSC-04`.
 - [ ] `pnpm check` xanh (gồm `lint:deps` — kit không rò ngược vào `packages/game-engine`).
 
 **Phụ thuộc:** T1 · **Cỡ:** M

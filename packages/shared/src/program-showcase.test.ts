@@ -21,8 +21,8 @@ describe("program-showcase projections (Task #61 / P3.8)", () => {
       id: 999, // should be dropped
       entityId: 888, // should be dropped
       code: "CUR-KID-4Y",
-      titleVi: "Chương trình 4 tuổi",
-      descriptionVi: "Lộ trình phát triển tư duy toán mầm non",
+      title: "Chương trình 4 tuổi",
+      description: "Lộ trình phát triển tư duy toán mầm non",
       programType: "age_based",
       targetAgeMin: 4,
       targetAgeMax: 5,
@@ -53,8 +53,8 @@ describe("program-showcase projections (Task #61 / P3.8)", () => {
   it("projects ProgramDetailPublic with weeks 1-2 items and weeks 3+ summary (BR-PSH-02, D-NH)", () => {
     const rawCurriculum = {
       code: "CUR-JOURNEY-42W",
-      titleVi: "Hành trình 42 tuần",
-      descriptionVi: "Hành trình toàn diện",
+      title: "Hành trình 42 tuần",
+      description: "Hành trình toàn diện",
       programType: "journey",
       targetAgeMin: 3,
       targetAgeMax: 6,
@@ -78,7 +78,7 @@ describe("program-showcase projections (Task #61 / P3.8)", () => {
         entityType: "lesson",
         entityId: 1001, // should not leak
         code: "LES-C1-001",
-        titleVi: "Đếm hạt dẻ",
+        title: "Đếm hạt dẻ",
         estimatedMinutes: 20,
         accessTier: "free",
         content_pack: { answer: 3 }, // forbidden field in raw input
@@ -90,7 +90,7 @@ describe("program-showcase projections (Task #61 / P3.8)", () => {
         entityType: "game_level",
         entityId: 2001,
         code: "GL-C2-001",
-        titleVi: "Tìm hình tròn",
+        title: "Tìm hình tròn",
         estimatedMinutes: 10,
         accessTier: "free",
       },
@@ -101,7 +101,7 @@ describe("program-showcase projections (Task #61 / P3.8)", () => {
         entityType: "game_level",
         entityId: 2002,
         code: "GL-C4-001",
-        titleVi: "To hơn - Nhỏ hơn",
+        title: "To hơn - Nhỏ hơn",
         estimatedMinutes: 10,
         accessTier: "login",
       },
@@ -112,7 +112,7 @@ describe("program-showcase projections (Task #61 / P3.8)", () => {
         entityType: "lesson",
         entityId: 1003,
         code: "LES-C3-001",
-        titleVi: "Chuỗi màu sắc",
+        title: "Chuỗi màu sắc",
         estimatedMinutes: 20,
         accessTier: "standard",
       },
@@ -123,7 +123,7 @@ describe("program-showcase projections (Task #61 / P3.8)", () => {
         entityType: "lesson",
         entityId: 1004,
         code: "LES-C6-001",
-        titleVi: "Thử thách chặng 1",
+        title: "Thử thách chặng 1",
         estimatedMinutes: 20,
         accessTier: "premium",
       },

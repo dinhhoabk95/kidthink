@@ -6,7 +6,6 @@ export interface UserTokenPayload {
   readonly user_id: number;
   readonly display_name: string;
   readonly session_id: string;
-  readonly refresh_token_version: number;
   readonly active_child_id?: number;
 }
 
@@ -14,7 +13,6 @@ export interface ManagerTokenPayload {
   readonly manager_id: number;
   readonly display_name: string;
   readonly session_id: string;
-  readonly refresh_token_version: number;
   readonly role: ManagerRole;
 }
 

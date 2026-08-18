@@ -1,5 +1,5 @@
 import crypto from "node:crypto";
-import { gameLevels, gameTemplates, getOwnerDb } from "@kidthink/db";
+import { gameLevels, gameTemplates, getOwnerDb } from "@mindkid/db";
 import { describe, expect, it } from "vitest";
 import getGuestRecommendationsHandler from "../../server/api/guest/play/recommendations.get";
 
@@ -39,7 +39,7 @@ describe("Guest Play Recommendations API (BR-REC-04, BR-REC-06, D-MW)", () => {
         .insert(gameTemplates)
         .values({
           code: "GT-001",
-          nameVi: "Nối cặp",
+          name: "Nối cặp",
           mechanic: "match",
           status: "active",
         })
@@ -54,7 +54,7 @@ describe("Guest Play Recommendations API (BR-REC-04, BR-REC-06, D-MW)", () => {
       code: `GL-C1-GUEST-FREE-${String(crypto.randomInt(1000, 9999))}`,
       contentVersion: 1,
       templateId: tmpl.id,
-      titleVi: "Trò chơi khách",
+      title: "Trò chơi khách",
       contentPack: {},
       difficultyParams: {},
       accessTier: "free",
@@ -71,7 +71,7 @@ describe("Guest Play Recommendations API (BR-REC-04, BR-REC-06, D-MW)", () => {
       code: `GL-C1-GUEST-STD-${String(crypto.randomInt(1000, 9999))}`,
       contentVersion: 1,
       templateId: tmpl.id,
-      titleVi: "Trò chơi khoá",
+      title: "Trò chơi khoá",
       contentPack: {},
       difficultyParams: {},
       accessTier: "standard",

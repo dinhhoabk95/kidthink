@@ -1,18 +1,15 @@
-import { curricula, getOwnerDb, writeAudit } from "@kidthink/db";
+import { curricula, getOwnerDb, writeAudit } from "@mindkid/db";
 import { and, eq } from "drizzle-orm";
 import { createError, defineEventHandler, getRouterParam, readBody } from "h3";
 import { z } from "zod";
-import {
-  requireManagerSession,
-  respondToManagerAuthError,
-} from "../../../../utils/admin-auth-runtime.js";
+import { requireManagerSession } from "../../../../utils/admin-auth-runtime.js";
 
 const patchCurriculumSchema = z.object({
   expected_version: z.number().int({
     message: "Bắt buộc truyền expected_version để kiểm soát đồng thời",
   }),
   title: z.string().min(1, "Tiêu đề không được để trống").optional(),
-  description_vi: z.string().nullable().optional(),
+  description: z.string().nullable().optional(),
   program_type: z.enum(["age_based", "journey"]).optional(),
   target_age_min: z.number().int().min(3).max(6).nullable().optional(),
   target_age_max: z.number().int().min(3).max(6).nullable().optional(),
@@ -29,10 +26,10 @@ function buildCurriculumPatchPayload(
   };
 
   if (data.title !== undefined) {
-    updatePayload.titleVi = data.title;
+    updatePayload.title = data.title;
   }
-  if (data.description_vi !== undefined) {
-    updatePayload.descriptionVi = data.description_vi;
+  if (data.description !== undefined) {
+    updatePayload.description = data.description;
   }
   if (data.program_type !== undefined) {
     updatePayload.programType = data.program_type;
@@ -89,68 +86,64 @@ async function getExistingCurriculumForPatch(
 }
 
 export default defineEventHandler(async (event) => {
-  try {
-    const session = await requireManagerSession(event);
-    const code = getRouterParam(event, "code");
-    const versionParam = getRouterParam(event, "version");
-    const version = Number(versionParam) || 1;
+  const session = await requireManagerSession(event);
+  const code = getRouterParam(event, "code");
+  const versionParam = getRouterParam(event, "version");
+  const version = Number(versionParam) || 1;
 
-    if (!code) {
-      throw createError({
-        statusCode: 400,
-        statusMessage: "BAD_REQUEST",
-        message: "Thiếu tham số mã chương trình",
-      });
-    }
-
-    const rawBody =
-      (event.context?.body as unknown) ??
-      (event as { _body?: unknown })._body ??
-      (await readBody(event).catch(() => ({}))) ??
-      {};
-    const parsed = patchCurriculumSchema.safeParse(rawBody);
-    if (!parsed.success) {
-      throw createError({
-        statusCode: 422,
-        statusMessage: "VALIDATION_FAILED",
-        message: parsed.error.issues[0]?.message || "Dữ liệu không hợp lệ",
-      });
-    }
-
-    const data = parsed.data;
-    const db = getOwnerDb();
-    const managerId = session.manager_id || session.id || 1;
-
-    const existing = await getExistingCurriculumForPatch(
-      db,
-      code,
-      version,
-      data.expected_version
-    );
-
-    const updatePayload = buildCurriculumPatchPayload(data);
-
-    const [updated] = await db
-      .update(curricula)
-      .set(updatePayload)
-      .where(eq(curricula.id, existing.id))
-      .returning();
-
-    await writeAudit(db, {
-      action: "content_created",
-      actor_type: "manager",
-      actor_id: managerId,
-      entity_type: "curriculum",
-      entity_id: String(updated.id),
-      after_data: {
-        code: updated.code,
-        version: updated.contentVersion,
-        changes: Object.keys(updatePayload),
-      },
+  if (!code) {
+    throw createError({
+      statusCode: 400,
+      statusMessage: "BAD_REQUEST",
+      message: "Thiếu tham số mã chương trình",
     });
-
-    return updated;
-  } catch (err) {
-    return respondToManagerAuthError(event, err);
   }
+
+  const rawBody =
+    (event.context?.body as unknown) ??
+    (event as { _body?: unknown })._body ??
+    (await readBody(event).catch(() => ({}))) ??
+    {};
+  const parsed = patchCurriculumSchema.safeParse(rawBody);
+  if (!parsed.success) {
+    throw createError({
+      statusCode: 422,
+      statusMessage: "VALIDATION_FAILED",
+      message: parsed.error.issues[0]?.message || "Dữ liệu không hợp lệ",
+    });
+  }
+
+  const data = parsed.data;
+  const db = getOwnerDb();
+  const managerId = session.manager_id || session.id || 1;
+
+  const existing = await getExistingCurriculumForPatch(
+    db,
+    code,
+    version,
+    data.expected_version
+  );
+
+  const updatePayload = buildCurriculumPatchPayload(data);
+
+  const [updated] = await db
+    .update(curricula)
+    .set(updatePayload)
+    .where(eq(curricula.id, existing.id))
+    .returning();
+
+  await writeAudit(db, {
+    action: "content_created",
+    actor_type: "manager",
+    actor_id: managerId,
+    entity_type: "curriculum",
+    entity_id: String(updated.id),
+    after_data: {
+      code: updated.code,
+      version: updated.contentVersion,
+      changes: Object.keys(updatePayload),
+    },
+  });
+
+  return updated;
 });

@@ -1,5 +1,5 @@
 /**
- * KidThink AI Egress Guard
+ * MindKid AI Egress Guard
  * Enforces BR-AIA-01, BR-AIA-02, BR-CDC-06, BR-SEM-01, BR-SEM-02.
  * Strictly blocks child PII, UUIDs, birth dates, and canary tokens from leaving server boundaries.
  */
@@ -7,7 +7,7 @@
 import {
   type AiEgressReportPayload,
   aiEgressReportPayloadSchema,
-} from "@kidthink/shared";
+} from "@mindkid/shared";
 
 const PII_PATTERNS = [
   /\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b/i, // Email

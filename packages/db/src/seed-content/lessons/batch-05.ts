@@ -20,13 +20,13 @@ export const LESSON_BATCH_05: LessonSeed[] = [
       target_age_min: 3,
       target_age_max: 4,
       estimated_minutes: 20,
-      materials_vi: "Tất sạch, quả táo, chiếc thìa",
-      warm_up_vi: "Khởi động: Giơ chân lắc cổ chân khởi động nhẹ nhàng 3 phút.",
-      reflection_vi:
+      materials: "Tất sạch, quả táo, chiếc thìa",
+      warm_up: "Khởi động: Giơ chân lắc cổ chân khởi động nhẹ nhàng 3 phút.",
+      reflection:
         "Đúc kết: Bé đếm xem đã cuộn được bao nhiêu đôi tất gọn gàng.",
-      assessment_vi:
+      assessment:
         "Bé chỉ đúng chiếc thìa là món đồ khác biệt không cùng nhóm quả táo.",
-      extension_vi: "Bé giúp mẹ xếp tất vào ngăn tủ đồ.",
+      extension: "Bé giúp mẹ xếp tất vào ngăn tủ đồ.",
       access_tier: "free",
       skill_codes: ["C3.SRT.01"],
       learning_objective_codes: ["LO-C3.SRT.01-01"],
@@ -58,13 +58,13 @@ export const LESSON_BATCH_05: LessonSeed[] = [
       target_age_min: 4,
       target_age_max: 5,
       estimated_minutes: 22,
-      materials_vi: "Hộp giấy nhiều màu, giỏ đồ chơi",
-      warm_up_vi: "Khởi động: Làm đoàn tàu chạy xình xịch quanh phòng 3 phút.",
-      reflection_vi:
+      materials: "Hộp giấy nhiều màu, giỏ đồ chơi",
+      warm_up: "Khởi động: Làm đoàn tàu chạy xình xịch quanh phòng 3 phút.",
+      reflection:
         "Đúc kết: Bé chào các bạn đồ chơi đã được xếp ngay ngắn vào giỏ.",
-      assessment_vi:
+      assessment:
         "Bé đặt đúng thú bông vào giỏ vải và đồ chơi nhựa vào giỏ nhựa.",
-      extension_vi: "Bé xếp các bạn búp bê ngồi thành hàng theo màu áo.",
+      extension: "Bé xếp các bạn búp bê ngồi thành hàng theo màu áo.",
       access_tier: "login",
       skill_codes: ["C3.PAT.02", "C3.SRT.02"],
       learning_objective_codes: ["LO-C3.PAT.02-01", "LO-C3.SRT.02-01"],
@@ -100,13 +100,13 @@ export const LESSON_BATCH_05: LessonSeed[] = [
       target_age_min: 4,
       target_age_max: 5,
       estimated_minutes: 22,
-      materials_vi: "Ống hút giấy cắt đoạn, dây dù mềm, áo kẻ sọc",
-      warm_up_vi: "Khởi động: Xoay tròn cổ tay nhẹ nhàng 3 phút.",
-      reflection_vi:
+      materials: "Ống hút giấy cắt đoạn, dây dù mềm, áo kẻ sọc",
+      warm_up: "Khởi động: Xoay tròn cổ tay nhẹ nhàng 3 phút.",
+      reflection:
         "Đúc kết: Bé đeo chiếc vòng tay tự làm và khoe họa tiết kẻ sọc trên áo.",
-      assessment_vi:
+      assessment:
         "Bé xâu được chuỗi vòng tay có ít nhất 3 chu kỳ màu sắc lặp lại đúng.",
-      extension_vi: "Bé làm thêm nhẫn đeo ngón tay cùng quy luật màu.",
+      extension: "Bé làm thêm nhẫn đeo ngón tay cùng quy luật màu.",
       access_tier: "standard",
       skill_codes: ["C3.PAT.02", "C3.PAT.01"],
       learning_objective_codes: ["LO-C3.PAT.02-01", "LO-C3.PAT.01-01"],
@@ -142,12 +142,12 @@ export const LESSON_BATCH_05: LessonSeed[] = [
       target_age_min: 5,
       target_age_max: 6,
       estimated_minutes: 25,
-      materials_vi: "Sổ vẽ, hồ dán, lá cây, thìa dĩa",
-      warm_up_vi: "Khởi động: Lắc nhẹ cổ tay và các ngón tay 3 phút.",
-      reflection_vi: "Đúc kết: Bé lật giở từng trang sổ hoa lá đã hoàn thành.",
-      assessment_vi:
+      materials: "Sổ vẽ, hồ dán, lá cây, thìa dĩa",
+      warm_up: "Khởi động: Lắc nhẹ cổ tay và các ngón tay 3 phút.",
+      reflection: "Đúc kết: Bé lật giở từng trang sổ hoa lá đã hoàn thành.",
+      assessment:
         "Bé đặt đúng chiếc dĩa vào vị trí tiếp theo trong chuỗi thìa - dĩa trên bàn.",
-      extension_vi: "Bé ép thêm cánh hoa khô vào trang bìa cuốn sổ.",
+      extension: "Bé ép thêm cánh hoa khô vào trang bìa cuốn sổ.",
       access_tier: "standard",
       skill_codes: ["C3.SRT.02", "C3.PAT.02"],
       learning_objective_codes: ["LO-C3.SRT.02-01", "LO-C3.PAT.02-01"],
@@ -177,13 +177,12 @@ export const LESSON_BATCH_05: LessonSeed[] = [
       target_age_min: 5,
       target_age_max: 6,
       estimated_minutes: 20,
-      materials_vi: "Không gian phòng khách",
-      warm_up_vi: "Khởi động: Hát bài hát Vỗ Tay Theo Nhịp 3 phút.",
-      reflection_vi:
-        "Đúc kết: Bé tự tin biểu diễn bản nhạc nhịp điệu cho cả nhà.",
-      assessment_vi:
+      materials: "Không gian phòng khách",
+      warm_up: "Khởi động: Hát bài hát Vỗ Tay Theo Nhịp 3 phút.",
+      reflection: "Đúc kết: Bé tự tin biểu diễn bản nhạc nhịp điệu cho cả nhà.",
+      assessment:
         "Bé thực hiện đúng chuỗi nhịp Vỗ tay - Vỗ đùi lặp lại 4 lần liên tiếp.",
-      extension_vi: "Bé dùng 2 chiếc thìa gỗ gõ nhịp thay cho vỗ tay.",
+      extension: "Bé dùng 2 chiếc thìa gỗ gõ nhịp thay cho vỗ tay.",
       access_tier: "login",
       skill_codes: ["C3.PAT.01", "C3.PAT.02"],
       learning_objective_codes: ["LO-C3.PAT.01-01", "LO-C3.PAT.02-01"],
@@ -215,12 +214,12 @@ export const LESSON_BATCH_05: LessonSeed[] = [
       target_age_min: 5,
       target_age_max: 6,
       estimated_minutes: 22,
-      materials_vi: "Cúc áo to nhiều màu, khay nhựa",
-      warm_up_vi: "Khởi động: Nhảy theo ô màu sắc trên sàn 3 phút.",
-      reflection_vi: "Đúc kết: Bé tự hào nhận danh hiệu Bậc Thầy Quy Luật.",
-      assessment_vi:
+      materials: "Cúc áo to nhiều màu, khay nhựa",
+      warm_up: "Khởi động: Nhảy theo ô màu sắc trên sàn 3 phút.",
+      reflection: "Đúc kết: Bé tự hào nhận danh hiệu Bậc Thầy Quy Luật.",
+      assessment:
         "Bé phân loại đúng cúc áo theo màu và tiếp tục chính xác chuỗi quy luật trên bàn.",
-      extension_vi: "Bé tìm quy luật trong bảng số từ 1 đến 10.",
+      extension: "Bé tìm quy luật trong bảng số từ 1 đến 10.",
       access_tier: "free",
       skill_codes: ["C3.PAT.01", "C3.SRT.01"],
       learning_objective_codes: ["LO-C3.PAT.01-01", "LO-C3.SRT.01-01"],

@@ -5,8 +5,8 @@ import {
   gameTemplates,
   getOwnerDb,
   managers,
-} from "@kidthink/db";
-import { signedUrl, url } from "@kidthink/storage";
+} from "@mindkid/db";
+import { signedUrl, url } from "@mindkid/storage";
 import { eq } from "drizzle-orm";
 import { beforeEach, describe, expect, it } from "vitest";
 import assetUsageHandler from "../../server/api/managers/assets/[...ref]/usage.get.js";
@@ -47,12 +47,12 @@ beforeEach(async () => {
   let [mgr] = await db
     .select({ id: managers.id })
     .from(managers)
-    .where(eq(managers.email, "image-tester@kidthink.edu.vn"));
+    .where(eq(managers.email, "image-tester@mindkid.edu.vn"));
   if (!mgr) {
     [mgr] = await db
       .insert(managers)
       .values({
-        email: "image-tester@kidthink.edu.vn",
+        email: "image-tester@mindkid.edu.vn",
         passwordHash: "hash",
         displayName: "Image Tester",
         role: "super_admin",
@@ -95,7 +95,6 @@ function mockMultipartEvent(
               manager_id: testManagerId,
               display_name: "Manager Image Tester",
               session_id: "sess_manager_img_123",
-              refresh_token_version: 1,
               role: managerRole,
             },
           }
@@ -129,7 +128,6 @@ function mockDeleteEvent(
               manager_id: testManagerId,
               display_name: "Manager Image Tester",
               session_id: "sess_manager_img_123",
-              refresh_token_version: 1,
               role: managerRole,
             },
           }
@@ -160,7 +158,6 @@ function mockUsageEvent(
               manager_id: testManagerId,
               display_name: "Manager Image Tester",
               session_id: "sess_manager_img_123",
-              refresh_token_version: 1,
               role: managerRole,
             },
           }
@@ -280,7 +277,7 @@ describe("Image Storage & Upload API (BR-IMG-01 - BR-IMG-12, BR-IUP-01 - BR-IUP-
         .insert(gameTemplates)
         .values({
           code: "GT-001",
-          nameVi: "GT001",
+          name: "GT001",
           mechanic: "tap-select",
           layouts: ["grid"],
           ageMin: 3,
@@ -319,7 +316,7 @@ describe("Image Storage & Upload API (BR-IMG-01 - BR-IMG-12, BR-IUP-01 - BR-IUP-
         code: levelCode,
         contentVersion: 1,
         templateId: tpl.id,
-        titleVi: "Level using image",
+        title: "Level using image",
         contentPack: { prompt: "Tìm hoa", image_path: uploaded.path },
         difficultyParams: {},
         accessTier: "free",
@@ -383,7 +380,7 @@ describe("Image Storage & Upload API (BR-IMG-01 - BR-IMG-12, BR-IUP-01 - BR-IUP-
         .insert(gameTemplates)
         .values({
           code: "GT-001",
-          nameVi: "GT001",
+          name: "GT001",
           mechanic: "tap-select",
           layouts: ["grid"],
           ageMin: 3,
@@ -414,7 +411,7 @@ describe("Image Storage & Upload API (BR-IMG-01 - BR-IMG-12, BR-IUP-01 - BR-IUP-
         code: draftCode,
         contentVersion: 1,
         templateId: tpl.id,
-        titleVi: "Level bản nháp",
+        title: "Level bản nháp",
         contentPack: { prompt: "Nháp", image_path: testRef },
         difficultyParams: {},
         accessTier: "free",
@@ -460,7 +457,7 @@ describe("Image Storage & Upload API (BR-IMG-01 - BR-IMG-12, BR-IUP-01 - BR-IUP-
         code: pubCode,
         contentVersion: 1,
         templateId: tpl.id,
-        titleVi: "Level phát hành",
+        title: "Level phát hành",
         contentPack: { prompt: "Phát hành", image_path: testRef },
         difficultyParams: {},
         accessTier: "free",
@@ -500,7 +497,6 @@ describe("Image Storage & Upload API (BR-IMG-01 - BR-IMG-12, BR-IUP-01 - BR-IUP-
           manager_id: testManagerId,
           display_name: "Manager Tester",
           session_id: "sess_123",
-          refresh_token_version: 1,
           role: "content_reviewer",
         },
         params: {},

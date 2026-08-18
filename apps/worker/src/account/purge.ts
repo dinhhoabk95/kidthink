@@ -1,5 +1,5 @@
-import { getOwnerDb, hardPurgeUser, users } from "@kidthink/db";
-import { alert } from "@kidthink/queue";
+import { getOwnerDb, hardPurgeUser, users } from "@mindkid/db";
+import { alert } from "@mindkid/queue";
 import { and, eq, lte } from "drizzle-orm";
 
 /**

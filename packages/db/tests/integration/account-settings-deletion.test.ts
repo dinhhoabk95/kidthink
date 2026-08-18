@@ -8,7 +8,7 @@ describe("P1.14 Account Settings, Consent Management & Deletion Invariants (BR-A
       expect(responseStatus).toBe(428);
     });
 
-    it("Scenario: BR-ACS-02 — changing password increments refresh_token_version and revokes existing sessions", () => {
+    it("Scenario: BR-ACS-02 — changing password increments session_version and revokes existing sessions", () => {
       let sessionVersion = 1;
       // Change password
       sessionVersion += 1;
@@ -93,10 +93,10 @@ describe("P1.14 Account Settings, Consent Management & Deletion Invariants (BR-A
       expect(canReadReports).toBe(true);
     });
 
-    it("Scenario: BR-CSM-05 — presents concise summary_vi before full legal text", () => {
-      const summaryVi =
+    it("Scenario: BR-CSM-05 — presents concise summary before full legal text", () => {
+      const summary =
         "Tóm tắt: Chúng tôi không chia sẻ dữ liệu của bé cho bên thứ ba.";
-      expect(summaryVi).toContain("Tóm tắt:");
+      expect(summary).toContain("Tóm tắt:");
     });
 
     it("Scenario: BR-CSM-06 — consent withdrawal screen explicitly displays impact and 30-day grace period", () => {

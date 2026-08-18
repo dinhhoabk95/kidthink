@@ -5,16 +5,45 @@ import {
   getOwnerDb,
   managers,
   writeAudit,
-} from "@kidthink/db";
-import { getGameTemplate } from "@kidthink/game-engine";
-import type { AccessTier, ContentOrigin } from "@kidthink/shared";
+} from "@mindkid/db";
+import { getGameTemplate } from "@mindkid/game-engine";
 import { eq, sql } from "drizzle-orm";
-import { createError, defineEventHandler, readBody } from "h3";
-import {
-  requireManagerSession,
-  respondToManagerAuthError,
-} from "../../../utils/admin-auth-runtime.js";
+import { createError, defineEventHandler } from "h3";
+import { z } from "zod";
+import { requireManagerSession } from "../../../utils/admin-auth-runtime.js";
+import { throwValidationError } from "../../../utils/api-error.js";
 import { syncContentAssetRefs } from "../../../utils/asset-refs.js";
+import { readPostgresErrorCode } from "../../../utils/pg-error.js";
+import { readRequestBody } from "../../../utils/request-body.js";
+
+/**
+ * BR-SEC-04: mọi route `/api/*` phải Zod validate body.
+ * BR-SEC-05: map từng field, ❌ NEVER mass assignment — object mặc định của Zod
+ * loại field lạ, nên client gửi thêm `status` hay `created_by_manager_id`
+ * không ghi đè được cột nào.
+ *
+ * `content_pack` và `difficulty_params` cố ý để `unknown` bên trong: hình dạng
+ * thật của chúng do `content_contract` / `difficulty_contract` của từng game
+ * template quyết định (xem `game-template-contract.md`), không phải route này.
+ * Đây là ca dùng `unknown` hợp lệ theo TYPE-SAFETY `BR-TYP-03` — dữ liệu đi
+ * tiếp tới một schema khác, không bị đọc trực tiếp ở đây.
+ */
+const createLevelSchema = z.object({
+  template_code: z.string().min(1, "template_code là bắt buộc"),
+  code: z.string().min(1, "Mã màn chơi không được rỗng").optional(),
+  title: z.string().min(1, "Tiêu đề không được rỗng").optional(),
+  instruction: z.string().min(1, "Hướng dẫn không được rỗng").optional(),
+  content_pack: z.record(z.string(), z.unknown()).optional(),
+  difficulty_params: z.record(z.string(), z.unknown()).optional(),
+  theme_id: z.string().min(1, "theme_id không được rỗng").optional(),
+  age_min: z.number().int().min(3).max(6).optional(),
+  age_max: z.number().int().min(3).max(6).optional(),
+  difficulty: z.number().int().min(1).max(5).optional(),
+  access_tier: z.enum(["free", "login", "standard", "premium"]).optional(),
+  origin: z.enum(["human", "ai_assisted"]).optional(),
+});
+
+type CreateLevelInput = z.infer<typeof createLevelSchema>;
 
 function generateLevelCode(
   templateCode: string,
@@ -45,7 +74,7 @@ async function ensureDbTemplate(db: DatabaseOwner, templateCode: string) {
       .insert(gameTemplates)
       .values({
         code: template.code,
-        nameVi: template.name,
+        name: template.name,
         mechanic: template.mechanic,
         layouts: template.layouts,
         ageMin: template.age_min,
@@ -63,40 +92,42 @@ async function ensureDbTemplate(db: DatabaseOwner, templateCode: string) {
   return { template, dbTemplate };
 }
 
+const DEFAULT_DIFFICULTY_PARAMS = {
+  distractor_count: 1,
+  hint_after_ms: 10_000,
+  allow_retry: true,
+  shuffle_items: true,
+};
+
+const DEFAULT_CONTENT_PACK = {
+  prompt: "Chọn đáp án đúng",
+  options: [],
+};
+
 function buildInsertValues(
-  body: Record<string, unknown>,
+  input: CreateLevelInput,
   levelCode: string,
   templateId: number,
   templateAgeMin: number,
   templateAgeMax: number,
   managerId?: number
 ) {
-  const defaultDifficulty = {
-    distractor_count: 1,
-    hint_after_ms: 10_000,
-    allow_retry: true,
-    shuffle_items: true,
-  };
-
   return {
     entityId: Date.now(),
     code: levelCode,
     contentVersion: 1,
     templateId,
-    titleVi: (body.title as string) || "Màn chơi mới",
-    instructionVi: (body.instruction as string) || "Hãy hoàn thành thử thách",
-    contentPack: body.content_pack || {
-      prompt: "Chọn đáp án đúng",
-      options: [],
-    },
-    difficultyParams: body.difficulty_params || defaultDifficulty,
-    themeId: (body.theme_id as string) || "nature",
-    ageMin: (body.age_min as number) || templateAgeMin,
-    ageMax: (body.age_max as number) || templateAgeMax,
-    difficulty: (body.difficulty as number) || 1,
-    accessTier: ((body.access_tier as string) || "free") as AccessTier,
+    title: input.title ?? "Màn chơi mới",
+    instruction: input.instruction ?? "Hãy hoàn thành thử thách",
+    contentPack: input.content_pack ?? DEFAULT_CONTENT_PACK,
+    difficultyParams: input.difficulty_params ?? DEFAULT_DIFFICULTY_PARAMS,
+    themeId: input.theme_id ?? "nature",
+    ageMin: input.age_min ?? templateAgeMin,
+    ageMax: input.age_max ?? templateAgeMax,
+    difficulty: input.difficulty ?? 1,
+    accessTier: input.access_tier ?? "free",
     status: "draft" as const,
-    origin: ((body.origin as string) || "human") as ContentOrigin,
+    origin: input.origin ?? "human",
     authoredIn: "studio" as const,
     createdByManagerId: managerId,
   };
@@ -148,7 +179,7 @@ async function resolveValidManagerId(
 
 async function insertLevelWithRetry(
   db: ReturnType<typeof getOwnerDb>,
-  body: Record<string, unknown>,
+  input: CreateLevelInput,
   initialCode: string,
   templateCode: string,
   templateId: number,
@@ -161,7 +192,7 @@ async function insertLevelWithRetry(
   for (let attempt = 0; attempt < 5; attempt++) {
     try {
       const insertValues = buildInsertValues(
-        body,
+        input,
         currentCode,
         templateId,
         templateAgeMin,
@@ -174,10 +205,8 @@ async function insertLevelWithRetry(
         .returning();
       return created;
     } catch (err: unknown) {
-      const errCode =
-        (err as { code?: string })?.code ||
-        (err as { cause?: { code?: string } })?.cause?.code;
-      if (errCode === "23505" && !body.code && attempt < 4) {
+      const errCode = readPostgresErrorCode(err);
+      if (errCode === "23505" && !input.code && attempt < 4) {
         currentCode = generateLevelCode(templateCode, baseCount + attempt + 1);
         continue;
       }
@@ -188,77 +217,64 @@ async function insertLevelWithRetry(
 }
 
 export default defineEventHandler(async (event) => {
-  try {
-    const manager = await requireManagerSession(event);
-    const parsedBody = await readBody(event).catch(() => ({}));
-    const fallbackBody = (event as Record<string, unknown>)._body as
-      | Record<string, unknown>
-      | undefined;
-    const body =
-      (parsedBody && Object.keys(parsedBody).length > 0
-        ? parsedBody
-        : fallbackBody) || {};
+  const manager = await requireManagerSession(event);
+  const rawBody = await readRequestBody(event);
 
-    const templateCode = body.template_code as string | undefined;
-    if (!templateCode) {
-      throw createError({
-        statusCode: 422,
-        statusMessage: "VALIDATION_FAILED",
-        message: "template_code is required",
-      });
-    }
-
-    const db = getOwnerDb();
-    const { template, dbTemplate } = await ensureDbTemplate(db, templateCode);
-    const { levelCode, count } = await resolveLevelCode(
-      db,
-      templateCode,
-      body.code as string | undefined
-    );
-    const validManagerId = await resolveValidManagerId(db, manager);
-
-    const newLevel = await insertLevelWithRetry(
-      db,
-      body,
-      levelCode,
-      templateCode,
-      dbTemplate.id,
-      template.age_min,
-      template.age_max,
-      validManagerId,
-      count
-    );
-
-    if (!newLevel) {
-      throw createError({
-        statusCode: 500,
-        statusMessage: "LEVEL_CREATE_FAILED",
-      });
-    }
-
-    await syncContentAssetRefs(
-      db,
-      "game_level",
-      newLevel.id,
-      newLevel.contentPack
-    );
-
-    await writeAudit(db, {
-      actor_type: "manager",
-      actor_id: validManagerId || 1,
-      action: "game_level_created",
-      entity_type: "game_level",
-      entity_id: newLevel.id.toString(),
-      after_data: {
-        code: newLevel.code,
-        version: newLevel.contentVersion,
-        template: templateCode,
-      },
-    });
-
-    event.node.res.statusCode = 201;
-    return newLevel;
-  } catch (err) {
-    return respondToManagerAuthError(event, err);
+  const parsed = createLevelSchema.safeParse(rawBody);
+  if (!parsed.success) {
+    throwValidationError(parsed.error);
   }
+  const input = parsed.data;
+  const templateCode = input.template_code;
+
+  const db = getOwnerDb();
+  const { template, dbTemplate } = await ensureDbTemplate(db, templateCode);
+  const { levelCode, count } = await resolveLevelCode(
+    db,
+    templateCode,
+    input.code
+  );
+  const validManagerId = await resolveValidManagerId(db, manager);
+
+  const newLevel = await insertLevelWithRetry(
+    db,
+    input,
+    levelCode,
+    templateCode,
+    dbTemplate.id,
+    template.age_min,
+    template.age_max,
+    validManagerId,
+    count
+  );
+
+  if (!newLevel) {
+    throw createError({
+      statusCode: 500,
+      statusMessage: "LEVEL_CREATE_FAILED",
+    });
+  }
+
+  await syncContentAssetRefs(
+    db,
+    "game_level",
+    newLevel.id,
+    newLevel.contentPack
+  );
+
+  await writeAudit(db, {
+    actor_type: "manager",
+    actor_id: validManagerId || 1,
+    action: "game_level_created",
+    entity_type: "game_level",
+    entity_id: newLevel.id.toString(),
+    after_data: {
+      code: newLevel.code,
+      version: newLevel.contentVersion,
+      template: templateCode,
+    },
+  });
+
+  event.node.res.statusCode = 201;
+  return newLevel;
 });

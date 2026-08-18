@@ -169,7 +169,7 @@ T1 registry 10 job (dữ liệu) + cổng đếm + ranh giới producer/consumer
 - [ ] Migration chạy được **từ đầu** trên database rỗng, không chỉ chạy tiếp.
 
 **Kiểm chứng**
-- [ ] `pnpm db:migrate` trên DB rỗng xanh; `pnpm --filter @kidthink/db test -- rollup-schema` xanh.
+- [ ] `pnpm db:migrate` trên DB rỗng xanh; `pnpm --filter @mindkid/db test -- rollup-schema` xanh.
 
 **Phụ thuộc:** T1 · **Cỡ:** M
 

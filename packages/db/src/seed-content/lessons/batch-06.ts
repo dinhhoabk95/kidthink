@@ -20,12 +20,12 @@ export const LESSON_BATCH_06: LessonSeed[] = [
       target_age_min: 3,
       target_age_max: 4,
       estimated_minutes: 20,
-      materials_vi: "Bút chì, bàn học",
-      warm_up_vi: "Khởi động: Xòe và nắm bàn tay 10 lần trong 3 phút.",
-      reflection_vi: "Đúc kết: Bé chỉ ra chiếc bút chì dài nhất trên bàn.",
-      assessment_vi:
+      materials: "Bút chì, bàn học",
+      warm_up: "Khởi động: Xòe và nắm bàn tay 10 lần trong 3 phút.",
+      reflection: "Đúc kết: Bé chỉ ra chiếc bút chì dài nhất trên bàn.",
+      assessment:
         "Bé xếp đúng 4 chiếc bút chì theo thứ tự từ ngắn nhất đến dài nhất.",
-      extension_vi: "Bé so sánh chiều dài bàn tay của mình với bàn tay của mẹ.",
+      extension: "Bé so sánh chiều dài bàn tay của mình với bàn tay của mẹ.",
       access_tier: "free",
       skill_codes: ["C4.LEN.01"],
       learning_objective_codes: ["LO-C4.LEN.01-01"],
@@ -56,14 +56,13 @@ export const LESSON_BATCH_06: LessonSeed[] = [
       target_age_min: 4,
       target_age_max: 5,
       estimated_minutes: 22,
-      materials_vi: "Bình nhựa, cốc nhựa, băng dính giấy",
-      warm_up_vi: "Khởi động: Nhún gối bật nhảy tại chỗ 3 phút.",
-      reflection_vi:
+      materials: "Bình nhựa, cốc nhựa, băng dính giấy",
+      warm_up: "Khởi động: Nhún gối bật nhảy tại chỗ 3 phút.",
+      reflection:
         "Đúc kết: Bé nói cho mẹ biết chiếc bình chứa được mấy cốc nước.",
-      assessment_vi:
+      assessment:
         "Bé đong đúng 3 cốc nước đầy bình và đo được khoảng cách cú nhảy bằng 3 bàn chân.",
-      extension_vi:
-        "Bé thử đong nước bằng chiếc thìa to xem cần bao nhiêu thìa.",
+      extension: "Bé thử đong nước bằng chiếc thìa to xem cần bao nhiêu thìa.",
       access_tier: "free",
       skill_codes: ["C4.LEN.01"],
       learning_objective_codes: ["LO-C4.LEN.01-01"],
@@ -97,12 +96,11 @@ export const LESSON_BATCH_06: LessonSeed[] = [
       target_age_min: 4,
       target_age_max: 5,
       estimated_minutes: 20,
-      materials_vi: "Sợi len mềm, quả bóng, hộp sữa",
-      warm_up_vi: "Khởi động: Uốn lượn cánh tay như sợi len mềm mại 3 phút.",
-      reflection_vi: "Đúc kết: Bé cắt đoạn len bằng chiều dài món đồ vừa đo.",
-      assessment_vi:
-        "Bé chỉ đúng món đồ có chu vi lớn hơn sau khi ướm sợi len.",
-      extension_vi: "Bé dùng sợi len đo chu vi vòng cổ tay của mình.",
+      materials: "Sợi len mềm, quả bóng, hộp sữa",
+      warm_up: "Khởi động: Uốn lượn cánh tay như sợi len mềm mại 3 phút.",
+      reflection: "Đúc kết: Bé cắt đoạn len bằng chiều dài món đồ vừa đo.",
+      assessment: "Bé chỉ đúng món đồ có chu vi lớn hơn sau khi ướm sợi len.",
+      extension: "Bé dùng sợi len đo chu vi vòng cổ tay của mình.",
       access_tier: "login",
       skill_codes: ["C4.LEN.01"],
       learning_objective_codes: ["LO-C4.LEN.01-01"],
@@ -132,12 +130,12 @@ export const LESSON_BATCH_06: LessonSeed[] = [
       target_age_min: 5,
       target_age_max: 6,
       estimated_minutes: 25,
-      materials_vi: "Chậu cây mầm, que gỗ, bút dạ",
-      warm_up_vi: "Khởi động: Động tác mầm cây vươn lên đón ánh nắng 3 phút.",
-      reflection_vi: "Đúc kết: Bé tưới nước cho cây sau khi đo xong.",
-      assessment_vi:
+      materials: "Chậu cây mầm, que gỗ, bút dạ",
+      warm_up: "Khởi động: Động tác mầm cây vươn lên đón ánh nắng 3 phút.",
+      reflection: "Đúc kết: Bé tưới nước cho cây sau khi đo xong.",
+      assessment:
         "Bé chỉ đúng vạch mới cao hơn vạch cũ trên que đo chiều cao cây.",
-      extension_vi: "Bé vẽ lại hình ảnh cây mầm lớn lên vào sổ nhật ký.",
+      extension: "Bé vẽ lại hình ảnh cây mầm lớn lên vào sổ nhật ký.",
       access_tier: "standard",
       skill_codes: ["C4.DAT.01", "C4.LEN.01"],
       learning_objective_codes: ["LO-C4.DAT.01-01", "LO-C4.LEN.01-01"],
@@ -168,13 +166,13 @@ export const LESSON_BATCH_06: LessonSeed[] = [
       target_age_min: 5,
       target_age_max: 6,
       estimated_minutes: 20,
-      materials_vi: "Băng dính dán sàn",
-      warm_up_vi: "Khởi động: Bước chân dài ngắn theo nhịp hô 3 phút.",
-      reflection_vi:
+      materials: "Băng dính dán sàn",
+      warm_up: "Khởi động: Bước chân dài ngắn theo nhịp hô 3 phút.",
+      reflection:
         "Đúc kết: Bé chia sẻ điều thú vị về số bước chân của người khổng lồ.",
-      assessment_vi:
+      assessment:
         "Bé đếm đúng số bước chân dài và bước chân ngắn từ vạch xuất phát đến đích.",
-      extension_vi: "Bé đo khoảng cách từ bàn ăn đến cửa sổ bằng bước chân.",
+      extension: "Bé đo khoảng cách từ bàn ăn đến cửa sổ bằng bước chân.",
       access_tier: "standard",
       skill_codes: ["C4.LEN.01"],
       learning_objective_codes: ["LO-C4.LEN.01-01"],
@@ -206,13 +204,12 @@ export const LESSON_BATCH_06: LessonSeed[] = [
       target_age_min: 5,
       target_age_max: 6,
       estimated_minutes: 22,
-      materials_vi: "Đồ dùng học tập, thước que tính",
-      warm_up_vi: "Khởi động: Bài tập đo khoảng cách hai cánh tay 3 phút.",
-      reflection_vi: "Đúc kết: Bé tự hào nhận danh hiệu Kỹ Sư Đo Lường Tí Hon.",
-      assessment_vi:
+      materials: "Đồ dùng học tập, thước que tính",
+      warm_up: "Khởi động: Bài tập đo khoảng cách hai cánh tay 3 phút.",
+      reflection: "Đúc kết: Bé tự hào nhận danh hiệu Kỹ Sư Đo Lường Tí Hon.",
+      assessment:
         "Bé đo đúng chiều dài quyển sách bằng que tính và nêu kết quả chính xác.",
-      extension_vi:
-        "Bé đo chiều dài chiếc giường ngủ bằng thước dây cùng bố mẹ.",
+      extension: "Bé đo chiều dài chiếc giường ngủ bằng thước dây cùng bố mẹ.",
       access_tier: "free",
       skill_codes: ["C4.LEN.01"],
       learning_objective_codes: ["LO-C4.LEN.01-01"],

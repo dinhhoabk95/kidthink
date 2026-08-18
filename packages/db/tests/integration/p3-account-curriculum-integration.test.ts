@@ -14,7 +14,7 @@ import {
   removeLibraryItem,
   saveLibraryItem,
   users,
-} from "@kidthink/db";
+} from "@mindkid/db";
 import { and, eq } from "drizzle-orm";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 
@@ -122,7 +122,7 @@ describe("Task #82 — P3 Account & Curriculum Integration (BR-MDB, BR-MLB, BR-C
       .insert(gameTemplates)
       .values({
         code: templateCode,
-        nameVi: "Game template test P3",
+        name: "Game template test P3",
         mechanic: "drag_drop",
         contentContract: {},
       })
@@ -140,7 +140,7 @@ describe("Task #82 — P3 Account & Curriculum Integration (BR-MDB, BR-MLB, BR-C
         entityId: Math.floor(100_000 + Math.random() * 800_000),
         templateId,
         difficulty: 1,
-        titleVi: "Đếm số vui vẻ",
+        title: "Đếm số vui vẻ",
         accessTier: "standard",
         status: "published",
         contentPack: { items: ["apple"] },
@@ -156,7 +156,7 @@ describe("Task #82 — P3 Account & Curriculum Integration (BR-MDB, BR-MLB, BR-C
         entityId: Math.floor(100_000 + Math.random() * 800_000),
         templateId,
         difficulty: 2,
-        titleVi: "Nhận biết hình khối",
+        title: "Nhận biết hình khối",
         accessTier: "premium",
         status: "archived",
         contentPack: { items: ["circle"] },
@@ -171,7 +171,7 @@ describe("Task #82 — P3 Account & Curriculum Integration (BR-MDB, BR-MLB, BR-C
       .values({
         code: `CUR-P3-${ts}-${rand}`.slice(0, 50),
         entityId: 3000 + (ts % 100_000),
-        titleVi: "Lộ trình tư duy toán 4-5 tuổi",
+        title: "Lộ trình tư duy toán 4-5 tuổi",
         accessTier: "standard",
         status: "published",
         durationWeeks: 4,

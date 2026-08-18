@@ -55,7 +55,7 @@ export type JobName = keyof JobPayloads;
 let queue: Queue | undefined;
 let connection: Redis | undefined;
 
-export const QUEUE_NAME = "kidthink-jobs";
+export const QUEUE_NAME = "mindkid-jobs";
 
 function getQueue() {
   if (!queue) {

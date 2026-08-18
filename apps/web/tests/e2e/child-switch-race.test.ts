@@ -9,7 +9,7 @@ import {
   gameTemplates,
   getOwnerDb,
   users,
-} from "@kidthink/db";
+} from "@mindkid/db";
 import { eq } from "drizzle-orm";
 import { beforeEach, describe, expect, it } from "vitest";
 import dashboardHandler from "../../server/api/users/dashboard.get.ts";
@@ -37,7 +37,6 @@ function mockUserEvent(userId: number, query: Record<string, string> = {}) {
         user_id: userId,
         display_name: "Multi-child Parent",
         session_id: "sess_user_multichild",
-        refresh_token_version: 1,
       },
     },
   } as any;
@@ -94,7 +93,7 @@ describe("Task #82 E2E Simulation — Multi-Child Switch Race & Isolation (BR-MD
       .insert(gameTemplates)
       .values({
         code: templateCode,
-        nameVi: "Game template test Race",
+        name: "Game template test Race",
         mechanic: "drag_drop",
         contentContract: {},
       })
@@ -126,7 +125,7 @@ describe("Task #82 E2E Simulation — Multi-Child Switch Race & Isolation (BR-MD
         entityId: Math.floor(100_000 + Math.random() * 800_000),
         templateId,
         difficulty: 1,
-        titleVi: "Đếm số trái cây",
+        title: "Đếm số trái cây",
         accessTier: "standard",
         status: "published",
         contentPack: { items: ["apple"] },
@@ -140,7 +139,7 @@ describe("Task #82 E2E Simulation — Multi-Child Switch Race & Isolation (BR-MD
       .values({
         code: `CUR-RACE-A-${ts}-${rand}`.slice(0, 50),
         entityId: Math.floor(100_000 + Math.random() * 800_000),
-        titleVi: "Lộ trình tư duy mầm non 4-5 tuổi",
+        title: "Lộ trình tư duy mầm non 4-5 tuổi",
         accessTier: "standard",
         status: "published",
         durationWeeks: 4,
@@ -200,7 +199,7 @@ describe("Task #82 E2E Simulation — Multi-Child Switch Race & Isolation (BR-MD
     // Verify Child A results
     expect(results[0].active_child_id).toBe(childAId);
     expect(results[0].curriculum?.enrolled).toBe(true);
-    expect(results[0].curriculum?.title_vi).toBe(
+    expect(results[0].curriculum?.title).toBe(
       "Lộ trình tư duy mầm non 4-5 tuổi"
     );
 

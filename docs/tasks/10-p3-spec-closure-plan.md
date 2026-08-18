@@ -14,7 +14,7 @@ title: Kế hoạch — Task #10: Đóng corpus spec P3 (12 spec)
 > song song hai session thì chỉ tranh nhau hai thứ — số cảnh báo lint và mã `D-*`; cả hai đều xử
 > lý bằng cách đo lúc làm, xem mục 0.
 >
-> Mọi lệnh chạy từ `kidthink/`. Đặt lại Node mỗi phiên shell mới:
+> Mọi lệnh chạy từ `mindkid/`. Đặt lại Node mỗi phiên shell mới:
 >
 > ```
 > export PATH=/Users/macbook/.nvm/versions/node/v24.15.0/bin:$PATH

@@ -13,7 +13,7 @@ import {
   searchEmoji,
 } from "../src/index";
 
-describe("@kidthink/emoji", () => {
+describe("@mindkid/emoji", () => {
   // ── Subtask 8.1: Test mỗi category có ít nhất 10 emoji entries ──
   describe("Category size validation", () => {
     const categories = getAllCategories();

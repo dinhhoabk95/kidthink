@@ -10,13 +10,10 @@ import {
   paymentOrders,
   skills,
   users,
-} from "@kidthink/db";
+} from "@mindkid/db";
 import { and, count, desc, eq, gt, gte, inArray, lt, sql } from "drizzle-orm";
 import { defineEventHandler } from "h3";
-import {
-  requireManagerSession,
-  respondToManagerAuthError,
-} from "../../utils/admin-auth-runtime.js";
+import { requireManagerSession } from "../../utils/admin-auth-runtime.js";
 
 export interface PendingSourceMetric {
   status: "pending_source";
@@ -326,65 +323,61 @@ async function querySystemMetrics(db: OwnerDb) {
 
 export default defineEventHandler(
   async (event): Promise<DashboardApiResponse> => {
-    try {
-      const manager = await requireManagerSession(event);
-      const db = getOwnerDb();
+    const manager = await requireManagerSession(event);
+    const db = getOwnerDb();
 
-      const asOf = await resolveDashboardAsOf(db);
-      const content = await queryContentMetrics(db);
+    const asOf = await resolveDashboardAsOf(db);
+    const content = await queryContentMetrics(db);
 
-      // If actor is content_reviewer, strictly return ONLY as_of and content (D-IY, BR-DSH-06)
-      if (manager.role === "content_reviewer") {
-        return {
-          as_of: asOf,
-          content,
-        };
-      }
-
-      // For super_admin: query Growth, Todo, System from rollups & status tables
-      const growth = await queryGrowthMetrics(db);
-      const system = await querySystemMetrics(db);
-
-      const pendingOrdersRows = await db
-        .select({ count: count() })
-        .from(paymentOrders)
-        .where(inArray(paymentOrders.status, ["submitted", "under_review"]));
-      const pendingPaymentsCount = Number(pendingOrdersRows[0]?.count || 0);
-
-      const pendingContentRows = await db
-        .select({ count: count(gameLevels.id) })
-        .from(gameLevels)
-        .where(eq(gameLevels.status, "in_review"));
-      const pendingLessonsRows = await db
-        .select({ count: count(lessons.id) })
-        .from(lessons)
-        .where(eq(lessons.status, "in_review"));
-      const pendingContentCount =
-        Number(pendingContentRows[0]?.count || 0) +
-        Number(pendingLessonsRows[0]?.count || 0);
-
-      const todo = {
-        pending_payments: {
-          count: pendingPaymentsCount,
-        },
-        pending_content: {
-          count: pendingContentCount,
-        },
-        open_alerts: {
-          count: 0,
-          items: [],
-        },
-      };
-
+    // If actor is content_reviewer, strictly return ONLY as_of and content (D-IY, BR-DSH-06)
+    if (manager.role === "content_reviewer") {
       return {
         as_of: asOf,
-        todo,
-        growth,
         content,
-        system,
       };
-    } catch (err: unknown) {
-      return respondToManagerAuthError(event, err);
     }
+
+    // For super_admin: query Growth, Todo, System from rollups & status tables
+    const growth = await queryGrowthMetrics(db);
+    const system = await querySystemMetrics(db);
+
+    const pendingOrdersRows = await db
+      .select({ count: count() })
+      .from(paymentOrders)
+      .where(inArray(paymentOrders.status, ["submitted", "under_review"]));
+    const pendingPaymentsCount = Number(pendingOrdersRows[0]?.count || 0);
+
+    const pendingContentRows = await db
+      .select({ count: count(gameLevels.id) })
+      .from(gameLevels)
+      .where(eq(gameLevels.status, "in_review"));
+    const pendingLessonsRows = await db
+      .select({ count: count(lessons.id) })
+      .from(lessons)
+      .where(eq(lessons.status, "in_review"));
+    const pendingContentCount =
+      Number(pendingContentRows[0]?.count || 0) +
+      Number(pendingLessonsRows[0]?.count || 0);
+
+    const todo = {
+      pending_payments: {
+        count: pendingPaymentsCount,
+      },
+      pending_content: {
+        count: pendingContentCount,
+      },
+      open_alerts: {
+        count: 0,
+        items: [],
+      },
+    };
+
+    return {
+      as_of: asOf,
+      todo,
+      growth,
+      content,
+      system,
+    };
   }
 );

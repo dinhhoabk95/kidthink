@@ -10,12 +10,12 @@ import {
   gameTemplates,
   getOwnerDb,
   users,
-} from "@kidthink/db";
+} from "@mindkid/db";
 import {
   computeCurriculumProgress,
   resolveNextStep,
   selectVariant,
-} from "@kidthink/shared";
+} from "@mindkid/shared";
 import { eq } from "drizzle-orm";
 import { describe, expect, it } from "vitest";
 import completeItemHandler from "../../server/api/users/children/[uuid]/curriculum/complete-item.post.js";
@@ -61,7 +61,6 @@ function makeUserEvent(
         user_id: String(userId),
         display_name: "Test Parent",
         session_id: `sess_${userId}`,
-        refresh_token_version: 0,
       },
       params: routerParams,
       body: body || {},
@@ -105,7 +104,7 @@ describe("Curriculum Player Suite — P3.4 (BR-CUR-01..10, D-MA..D-MG)", {
       .insert(gameTemplates)
       .values({
         code: "GT-001",
-        nameVi: "Template Cur",
+        name: "Template Cur",
         mechanic: "tap_target",
       })
       .onConflictDoNothing()
@@ -134,8 +133,8 @@ describe("Curriculum Player Suite — P3.4 (BR-CUR-01..10, D-MA..D-MG)", {
           code: glCode,
           contentVersion: 1,
           templateId,
-          titleVi: `Trò chơi ${i}`,
-          instructionVi: "Hướng dẫn",
+          title: `Trò chơi ${i}`,
+          instruction: "Hướng dẫn",
           contentPack: { level: i },
           difficultyParams: { difficulty: 1 },
           accessTier: i === 4 ? "premium" : "free", // Level 4 is premium
@@ -158,7 +157,7 @@ describe("Curriculum Player Suite — P3.4 (BR-CUR-01..10, D-MA..D-MG)", {
         targetAgeMax: 6,
         durationWeeks: 8,
         sessionsPerWeek: 3,
-        titleVi: "Chương trình Toán 5 tuổi",
+        title: "Chương trình Toán 5 tuổi",
         accessTier: "free",
         status: "published",
       })
@@ -361,7 +360,7 @@ describe("Curriculum Player Suite — P3.4 (BR-CUR-01..10, D-MA..D-MG)", {
         entityId: curriculum.entityId,
         code: curriculum.code,
         contentVersion: 2,
-        titleVi: "Chương trình V2 mới",
+        title: "Chương trình V2 mới",
         accessTier: "free",
         status: "published",
       })
@@ -538,7 +537,7 @@ describe("Curriculum Player Suite — P3.4 (BR-CUR-01..10, D-MA..D-MG)", {
       .values({
         key: "play_premium_games",
         group: "content",
-        labelVi: "Chơi trò chơi cao cấp",
+        label: "Chơi trò chơi cao cấp",
         isMvp: true,
       })
       .onConflictDoNothing();
@@ -737,7 +736,7 @@ describe("Curriculum Player Suite — P3.4 (BR-CUR-01..10, D-MA..D-MG)", {
         targetAgeMax: 6,
         durationWeeks: 4,
         sessionsPerWeek: 2,
-        titleVi: "Chương trình VIP",
+        title: "Chương trình VIP",
         accessTier: "premium",
         status: "published",
       })

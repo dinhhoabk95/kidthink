@@ -1,4 +1,4 @@
-import { contentTags, getOwnerDb } from "@kidthink/db";
+import { contentTags, getOwnerDb } from "@mindkid/db";
 import { eq } from "drizzle-orm";
 import { defineEventHandler, setHeader } from "h3";
 

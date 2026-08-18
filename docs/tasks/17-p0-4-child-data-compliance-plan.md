@@ -184,7 +184,7 @@ ngay thì nó chưa đo gì.
 - [ ] Bổ sung ca âm cho `BR-SPT-02`: cột nào tên khớp `%_url` / `%_path` / `photo%` trên bảng dữ liệu trẻ là lỗi.
 
 **Kiểm chứng**
-- [ ] `pnpm --filter @kidthink/db test -- child` — **đỏ**, đúng lý do trên.
+- [ ] `pnpm --filter @mindkid/db test -- child` — **đỏ**, đúng lý do trên.
 
 **Phụ thuộc:** không · **Chạm:** [`child.test.ts`](../../packages/db/tests/integration/child.test.ts) · **Cỡ:** S
 
@@ -219,7 +219,7 @@ theo §7.3 và viết ca âm cho PII.
 - [ ] Ca âm `BR-SPT-04`: `UPDATE … SET child_uuid = NULL` chạy được và **số hàng không giảm**.
 
 **Kiểm chứng**
-- [ ] `pnpm --filter @kidthink/db test -- play` xanh, có assertion tham chiếu `BR-SPT-04` và `BR-CDC-05`.
+- [ ] `pnpm --filter @mindkid/db test -- play` xanh, có assertion tham chiếu `BR-SPT-04` và `BR-CDC-05`.
 
 **Phụ thuộc:** T1 · **Chạm:** `play.ts` · migration · [`play.test.ts`](../../packages/db/tests/integration/play.test.ts) · **Cỡ:** M
 
@@ -251,7 +251,7 @@ giao route.
 - [ ] Bộ tên cột dùng chung một nguồn với cổng DB ở Task 1 — hai chỗ không được khai hai bản.
 
 **Kiểm chứng**
-- [ ] `pnpm --filter @kidthink/shared test` xanh, assertion tham chiếu `BR-CDC-01`.
+- [ ] `pnpm --filter @mindkid/shared test` xanh, assertion tham chiếu `BR-CDC-01`.
 
 **Phụ thuộc:** T1 · **Chạm:** `packages/shared/src/*` · test · **Cỡ:** M
 
@@ -267,7 +267,7 @@ dạng** và validator, không giao danh mục.
 - [ ] Ghi rõ trong test rằng danh mục preset do P0.9 cung cấp; validator không tự chế danh mục.
 
 **Kiểm chứng**
-- [ ] `pnpm --filter @kidthink/shared test` xanh, assertion tham chiếu `BR-CDC-04`.
+- [ ] `pnpm --filter @mindkid/shared test` xanh, assertion tham chiếu `BR-CDC-04`.
 
 **Phụ thuộc:** T5 · **Chạm:** `packages/shared/src/*` · test · **Cỡ:** S
 
@@ -282,7 +282,7 @@ dạng** và validator, không giao danh mục.
 - [ ] Ca âm: năm sinh tương lai và năm sinh của trẻ 10 tuổi đều bị từ chối ở tầng ứng dụng.
 
 **Kiểm chứng**
-- [ ] `pnpm --filter @kidthink/shared test` và `pnpm --filter @kidthink/db test -- child` xanh.
+- [ ] `pnpm --filter @mindkid/shared test` và `pnpm --filter @mindkid/db test -- child` xanh.
 
 **Phụ thuộc:** T2 · T5 · **Cỡ:** S
 
@@ -306,7 +306,7 @@ dạng** và validator, không giao danh mục.
 - [ ] Chính sách đổi version chặn **tạo trẻ mới** nhưng **không** chặn đọc dữ liệu đã có (§5).
 
 **Kiểm chứng**
-- [ ] `pnpm --filter @kidthink/db test -- identity` xanh, assertion tham chiếu `BR-CDC-07`.
+- [ ] `pnpm --filter @mindkid/db test -- identity` xanh, assertion tham chiếu `BR-CDC-07`.
 
 **Phụ thuộc:** P0.3 đóng · T5 · **Cỡ:** M
 
@@ -319,7 +319,7 @@ dạng** và validator, không giao danh mục.
 - [ ] Bề mặt admin không có đường đọc telemetry/mastery/lịch sử chơi của **một trẻ cụ thể** (`BR-CDC-14`) — khẳng định bằng cổng quét, không bằng lời.
 
 **Kiểm chứng**
-- [ ] `pnpm --filter @kidthink/auth test -- actor-boundaries` xanh, assertion tham chiếu `BR-CDC-13`.
+- [ ] `pnpm --filter @mindkid/auth test -- actor-boundaries` xanh, assertion tham chiếu `BR-CDC-13`.
 
 **Phụ thuộc:** P0.3 đóng (T7 của [`16-...-todo.md`](16-p0-3-auth-foundation-todo.md)) · **Cỡ:** M
 
@@ -335,7 +335,7 @@ Lập lịch định kỳ thuộc P0.8b — không kéo lên đây.
 - [ ] Ca âm: chạy purge ở ngày D+29 **không** xoá gì.
 
 **Kiểm chứng**
-- [ ] `pnpm --filter @kidthink/db test -- purge` xanh, assertion tham chiếu `BR-CDC-10` và `BR-SPT-04`.
+- [ ] `pnpm --filter @mindkid/db test -- purge` xanh, assertion tham chiếu `BR-CDC-10` và `BR-SPT-04`.
 
 **Phụ thuộc:** T2 · T3 · P0.3 đóng · **Cỡ:** M
 

@@ -164,6 +164,79 @@ describe("Task 3 & Task 4 — Core Engine & GT-001 End-to-End (BR-ENG-01..17)", 
     engine.destroy();
   });
 
+  it("BR-ENG-14: loop() draws through session.render when a canvas is attached", () => {
+    const fixture = GT001_FIXTURES[0];
+    const rendered: number[] = [];
+    const ctxStub = { clearRect: () => undefined, scale: () => undefined };
+    const canvasStub = {
+      getBoundingClientRect: () => ({ width: 960, height: 540 }),
+      getContext: () => ctxStub,
+      width: 0,
+      height: 0,
+    } as unknown as HTMLCanvasElement;
+
+    const engine = new GameEngine();
+    engine.load(
+      {
+        level_code: "LVL-001",
+        content_version: 1,
+        template_code: "GT-001",
+        content_pack: fixture.content,
+        difficulty_params: fixture.difficulty,
+        theme_id: "default",
+        age_band: "3-4",
+        reduced_motion: false,
+        audio_enabled: true,
+      },
+      () => {
+        const s = new GT001Session(fixture.content, fixture.difficulty);
+        (s as GT001Session & { render: unknown }).render = (
+          _ctx: unknown,
+          _rs: unknown,
+          timeMs: number
+        ) => {
+          rendered.push(timeMs);
+        };
+        return s;
+      }
+    );
+
+    engine.start(canvasStub);
+    expect(rendered.length).toBeGreaterThan(0);
+    engine.destroy();
+  });
+
+  it("BR-ENG-14: loop() skips drawing when no canvas is attached", () => {
+    const fixture = GT001_FIXTURES[0];
+    let renderCalls = 0;
+
+    const engine = new GameEngine();
+    engine.load(
+      {
+        level_code: "LVL-001",
+        content_version: 1,
+        template_code: "GT-001",
+        content_pack: fixture.content,
+        difficulty_params: fixture.difficulty,
+        theme_id: "default",
+        age_band: "3-4",
+        reduced_motion: false,
+        audio_enabled: true,
+      },
+      () => {
+        const s = new GT001Session(fixture.content, fixture.difficulty);
+        (s as GT001Session & { render: unknown }).render = () => {
+          renderCalls++;
+        };
+        return s;
+      }
+    );
+
+    engine.start();
+    expect(renderCalls).toBe(0);
+    engine.destroy();
+  });
+
   it("Engine asset load failure emits asset_load_failed and allows fallback continue", () => {
     const engine = new GameEngine();
     const events: string[] = [];

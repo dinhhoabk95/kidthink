@@ -26,14 +26,14 @@ export const LESSON_BATCH_09: LessonSeed[] = [
       target_age_min: 3,
       target_age_max: 4,
       estimated_minutes: 20,
-      materials_vi: "Chậu nước, thìa sắt, nắp chai, chiếc ô",
-      warm_up_vi:
+      materials: "Chậu nước, thìa sắt, nắp chai, chiếc ô",
+      warm_up:
         "Khởi động: Bắt chước tiếng mưa rơi tí tách bằng ngón tay 3 phút.",
-      reflection_vi:
+      reflection:
         "Đúc kết: Bé giải thích vì sao nắp chai lại nổi trên mặt nước.",
-      assessment_vi:
+      assessment:
         "Bé chỉ đúng nắp chai nhựa là vật nổi và chiếc thìa là vật chìm.",
-      extension_vi: "Bé gấp chiếc thuyền giấy và thả vào chậu nước.",
+      extension: "Bé gấp chiếc thuyền giấy và thả vào chậu nước.",
       access_tier: "free",
       skill_codes: ["C5.RSN.01"],
       learning_objective_codes: ["LO-C5.RSN.01-01"],
@@ -65,13 +65,13 @@ export const LESSON_BATCH_09: LessonSeed[] = [
       target_age_min: 4,
       target_age_max: 5,
       estimated_minutes: 22,
-      materials_vi: "Hộp các-tông, que gỗ, đồ chơi bông",
-      warm_up_vi: "Khởi động: Động tác nhảy bắt đồ chơi nhanh nhẹn 3 phút.",
-      reflection_vi:
+      materials: "Hộp các-tông, que gỗ, đồ chơi bông",
+      warm_up: "Khởi động: Động tác nhảy bắt đồ chơi nhanh nhẹn 3 phút.",
+      reflection:
         "Đúc kết: Bé mô tả điều gì xảy ra khi bạn chuột chạm vào que chống.",
-      assessment_vi:
+      assessment:
         "Bé chạm nhẹ vào que gỗ để chiếc hộp sập xuống chụp lấy bạn chuột bông.",
-      extension_vi: "Bé thử dùng hộp nhựa trong suốt thay cho hộp giấy.",
+      extension: "Bé thử dùng hộp nhựa trong suốt thay cho hộp giấy.",
       access_tier: "standard",
       skill_codes: ["C5.SPL.01"],
       learning_objective_codes: ["LO-C5.SPL.01-01"],
@@ -102,13 +102,13 @@ export const LESSON_BATCH_09: LessonSeed[] = [
       target_age_min: 4,
       target_age_max: 5,
       estimated_minutes: 20,
-      materials_vi: "Cốc nhựa, thìa, nước sạch",
-      warm_up_vi:
+      materials: "Cốc nhựa, thìa, nước sạch",
+      warm_up:
         "Khởi động: Xoay tròn cánh tay như chiếc máy xay sinh tố 3 phút.",
-      reflection_vi: "Đúc kết: Bé mời mẹ thưởng thức ly nước thơm ngon.",
-      assessment_vi:
+      reflection: "Đúc kết: Bé mời mẹ thưởng thức ly nước thơm ngon.",
+      assessment:
         "Bé thực hiện đúng trình tự 4 bước pha chế mà không đảo lộn bước.",
-      extension_vi: "Bé vẽ lại 4 bước pha chế lên một tờ giấy nhớ.",
+      extension: "Bé vẽ lại 4 bước pha chế lên một tờ giấy nhớ.",
       access_tier: "login",
       skill_codes: ["C5.MEM.01", "C5.SPL.01"],
       learning_objective_codes: ["LO-C5.MEM.01-01", "LO-C5.SPL.01-01"],
@@ -142,13 +142,13 @@ export const LESSON_BATCH_09: LessonSeed[] = [
       target_age_min: 5,
       target_age_max: 6,
       estimated_minutes: 22,
-      materials_vi: "Tranh minh hoạ nhân quả",
-      warm_up_vi: "Khởi động: Động tác thổi bóng to rồi nổ bụp 3 phút.",
-      reflection_vi:
+      materials: "Tranh minh hoạ nhân quả",
+      warm_up: "Khởi động: Động tác thổi bóng to rồi nổ bụp 3 phút.",
+      reflection:
         "Đúc kết: Bé chia sẻ bài học về việc cẩn thận với vật sắc nhọn.",
-      assessment_vi:
+      assessment:
         "Bé ghép đúng bức tranh quả bóng bị vỡ vào sau bức tranh bóng chạm gai.",
-      extension_vi: "Bé tự vẽ thêm một bức tranh tình huống nhân quả mới.",
+      extension: "Bé tự vẽ thêm một bức tranh tình huống nhân quả mới.",
       access_tier: "standard",
       skill_codes: ["C5.RSN.01"],
       learning_objective_codes: ["LO-C5.RSN.01-01"],
@@ -179,13 +179,12 @@ export const LESSON_BATCH_09: LessonSeed[] = [
       target_age_min: 5,
       target_age_max: 6,
       estimated_minutes: 22,
-      materials_vi: "3 món đồ chơi gia đình",
-      warm_up_vi: "Khởi động: Vừa vỗ tay vừa dậm chân theo khẩu lệnh 3 phút.",
-      reflection_vi:
-        "Đúc kết: Bé đặt 3 món đồ lên bàn và đối chiếu với nhiệm vụ.",
-      assessment_vi:
+      materials: "3 món đồ chơi gia đình",
+      warm_up: "Khởi động: Vừa vỗ tay vừa dậm chân theo khẩu lệnh 3 phút.",
+      reflection: "Đúc kết: Bé đặt 3 món đồ lên bàn và đối chiếu với nhiệm vụ.",
+      assessment:
         "Bé mang về đủ 3 món đồ chơi theo lời yêu cầu của mẹ trong 1 lần nghe.",
-      extension_vi: "Bé giao nhiệm vụ tìm 3 đồ vật cho bố mẹ.",
+      extension: "Bé giao nhiệm vụ tìm 3 đồ vật cho bố mẹ.",
       access_tier: "login",
       skill_codes: ["C5.MEM.01"],
       learning_objective_codes: ["LO-C5.MEM.01-01"],
@@ -217,12 +216,12 @@ export const LESSON_BATCH_09: LessonSeed[] = [
       target_age_min: 5,
       target_age_max: 6,
       estimated_minutes: 25,
-      materials_vi: "Đồ dùng thí nghiệm, giấy vẽ",
-      warm_up_vi: "Khởi động: Hát bài hát Nhà Phát Minh Tương Lai 3 phút.",
-      reflection_vi: "Đúc kết: Bé nhận huân chương Nhà Phát Minh Nhí Sáng Tạo.",
-      assessment_vi:
+      materials: "Đồ dùng thí nghiệm, giấy vẽ",
+      warm_up: "Khởi động: Hát bài hát Nhà Phát Minh Tương Lai 3 phút.",
+      reflection: "Đúc kết: Bé nhận huân chương Nhà Phát Minh Nhí Sáng Tạo.",
+      assessment:
         "Bé giải thích đúng mối quan hệ nguyên nhân - kết quả trong tình huống thực tế.",
-      extension_vi: "Bé cùng cả nhà chơi trò chơi giải đố vui sau bữa ăn.",
+      extension: "Bé cùng cả nhà chơi trò chơi giải đố vui sau bữa ăn.",
       access_tier: "free",
       skill_codes: ["C5.RSN.01", "C5.SPL.01"],
       learning_objective_codes: ["LO-C5.RSN.01-01", "LO-C5.SPL.01-01"],

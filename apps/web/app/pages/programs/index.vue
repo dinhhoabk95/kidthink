@@ -127,10 +127,10 @@
   import type {
     ProgramGroupPublic,
     ProgramListPublicResponse,
-  } from "@kidthink/shared";
+  } from "@mindkid/shared";
   import { computed } from "vue";
 
-  const siteUrl = "https://kidthink.vn";
+  const siteUrl = "https://mindkid.vn";
 
   const {
     data,
@@ -159,7 +159,7 @@
   }
 
   useHead({
-    title: "Chương trình học tư duy toán mầm non | KidThink",
+    title: "Chương trình học tư duy toán mầm non | MindKid",
     meta: [
       {
         name: "description",
@@ -168,7 +168,7 @@
       },
       {
         property: "og:title",
-        content: "Chương trình học tư duy toán mầm non | KidThink",
+        content: "Chương trình học tư duy toán mầm non | MindKid",
       },
       {
         property: "og:description",

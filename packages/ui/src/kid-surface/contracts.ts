@@ -1,4 +1,4 @@
-// @kidthink/ui — Kid Surface 8 Technical Constraints (accessibility.md §7.2, design-system-contract.md §7.1)
+// @mindkid/ui — Kid Surface 8 Technical Constraints (accessibility.md §7.2, design-system-contract.md §7.1)
 
 export interface KidInstruction {
   audioUrl?: string;

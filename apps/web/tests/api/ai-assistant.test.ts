@@ -1,4 +1,4 @@
-import { childProfiles, getOwnerDb, grantCredits, users } from "@kidthink/db";
+import { childProfiles, getOwnerDb, grantCredits, users } from "@mindkid/db";
 import { describe, expect, it } from "vitest";
 import explainReportHandler from "../../server/api/users/ai/explain-report.post.js";
 import rewriteGuideHandler from "../../server/api/users/ai/rewrite-guide.post.js";
@@ -39,7 +39,6 @@ function mockEvent(
             user_id: userId,
             display_name: "Parent Test",
             session_id: `sess_${userId}`,
-            refresh_token_version: 0,
           }
         : undefined,
     },

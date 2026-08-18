@@ -53,7 +53,7 @@
               <h2
                 class="text-base font-bold text-slate-900 dark:text-white mt-1"
               >
-                {{ item.titleVi }}
+                {{ item.title }}
               </h2>
             </div>
 
@@ -86,7 +86,7 @@
                   class="font-semibold block text-slate-800 dark:text-slate-200"
                   >Bản sắp phát hành (v{{ item.contentVersion }}):</span
                 >
-                <p>Tiêu đề: {{ item.titleVi }}</p>
+                <p>Tiêu đề: {{ item.title }}</p>
                 <p>Gói truy cập: {{ item.accessTier }}</p>
               </div>
               <div>
@@ -119,7 +119,7 @@
     id: number;
     code: string;
     contentVersion: number;
-    titleVi: string;
+    title: string;
     accessTier: string;
     status: string;
   }

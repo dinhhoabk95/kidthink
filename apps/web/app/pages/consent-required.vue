@@ -11,7 +11,7 @@
         Yêu cầu xem lại & xác nhận điều khoản
       </h1>
       <p class="text-sm md:text-base text-surface-600">
-        Để tiếp tục sử dụng KidThink, vui lòng đọc và đồng ý với các nội dung
+        Để tiếp tục sử dụng MindKid, vui lòng đọc và đồng ý với các nội dung
         pháp lý đã được cập nhật dưới đây.
       </p>
     </div>

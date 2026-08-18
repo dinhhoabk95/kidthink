@@ -4,61 +4,61 @@ import { contentTags } from "../schema/tagging.js";
 export interface TagSeedItem {
   code: string;
   axis: "what" | "thinking" | "mechanic" | "theme";
-  labelVi: string;
+  label: string;
 }
 
 export const SEED_CONTENT_TAGS: TagSeedItem[] = [
   // What Axis (14 tags)
-  { code: "cnt", axis: "what", labelVi: "Đếm & Nhận biết số" },
-  { code: "cmp", axis: "what", labelVi: "So sánh & Thứ tự" },
-  { code: "ops", axis: "what", labelVi: "Phép tính cơ bản" },
-  { code: "shp", axis: "what", labelVi: "Hình học phẳng & Khối" },
-  { code: "spt", axis: "what", labelVi: "Không gian & Vị trí" },
-  { code: "msr", axis: "what", labelVi: "Đo lường & Kích thước" },
-  { code: "pat", axis: "what", labelVi: "Quy luật & Dãy số" },
-  { code: "cls", axis: "what", labelVi: "Phân loại & Nhóm" },
-  { code: "log", axis: "what", labelVi: "Suy luận & Logic" },
-  { code: "mem", axis: "what", labelVi: "Ghi nhớ & Nhận dạng" },
-  { code: "voc", axis: "what", labelVi: "Từ vựng & Khái niệm" },
-  { code: "lst", axis: "what", labelVi: "Nghe & Làm theo" },
-  { code: "flw", axis: "what", labelVi: "Luồng & Thứ tự các bước" },
-  { code: "fnc", axis: "what", labelVi: "Kiểm soát vi tế & Điều hành" },
+  { code: "cnt", axis: "what", label: "Đếm & Nhận biết số" },
+  { code: "cmp", axis: "what", label: "So sánh & Thứ tự" },
+  { code: "ops", axis: "what", label: "Phép tính cơ bản" },
+  { code: "shp", axis: "what", label: "Hình học phẳng & Khối" },
+  { code: "spt", axis: "what", label: "Không gian & Vị trí" },
+  { code: "msr", axis: "what", label: "Đo lường & Kích thước" },
+  { code: "pat", axis: "what", label: "Quy luật & Dãy số" },
+  { code: "cls", axis: "what", label: "Phân loại & Nhóm" },
+  { code: "log", axis: "what", label: "Suy luận & Logic" },
+  { code: "mem", axis: "what", label: "Ghi nhớ & Nhận dạng" },
+  { code: "voc", axis: "what", label: "Từ vựng & Khái niệm" },
+  { code: "lst", axis: "what", label: "Nghe & Làm theo" },
+  { code: "flw", axis: "what", label: "Luồng & Thứ tự các bước" },
+  { code: "fnc", axis: "what", label: "Kiểm soát vi tế & Điều hành" },
 
   // Thinking Axis (12 tags)
-  { code: "visual", axis: "thinking", labelVi: "Thị giác" },
-  { code: "auditory", axis: "thinking", labelVi: "Thính giác" },
-  { code: "spatial", axis: "thinking", labelVi: "Không gian" },
-  { code: "analytical", axis: "thinking", labelVi: "Phân tích" },
-  { code: "abstract", axis: "thinking", labelVi: "Trừu tượng" },
-  { code: "deductive", axis: "thinking", labelVi: "Diễn dịch" },
-  { code: "inductive", axis: "thinking", labelVi: "Quy nạp" },
-  { code: "sequential", axis: "thinking", labelVi: "Tuần tự" },
-  { code: "associative", axis: "thinking", labelVi: "Liên tưởng" },
-  { code: "critical", axis: "thinking", labelVi: "Phản biện" },
-  { code: "flexible", axis: "thinking", labelVi: "Linh hoạt" },
-  { code: "inhibitory", axis: "thinking", labelVi: "Ức chế & Tập trung" },
+  { code: "visual", axis: "thinking", label: "Thị giác" },
+  { code: "auditory", axis: "thinking", label: "Thính giác" },
+  { code: "spatial", axis: "thinking", label: "Không gian" },
+  { code: "analytical", axis: "thinking", label: "Phân tích" },
+  { code: "abstract", axis: "thinking", label: "Trừu tượng" },
+  { code: "deductive", axis: "thinking", label: "Diễn dịch" },
+  { code: "inductive", axis: "thinking", label: "Quy nạp" },
+  { code: "sequential", axis: "thinking", label: "Tuần tự" },
+  { code: "associative", axis: "thinking", label: "Liên tưởng" },
+  { code: "critical", axis: "thinking", label: "Phản biện" },
+  { code: "flexible", axis: "thinking", label: "Linh hoạt" },
+  { code: "inhibitory", axis: "thinking", label: "Ức chế & Tập trung" },
 
   // Mechanic Axis (6 tags)
-  { code: "drag_drop", axis: "mechanic", labelVi: "Kéo thả" },
-  { code: "tap_select", axis: "mechanic", labelVi: "Tap chọn" },
-  { code: "sequence_order", axis: "mechanic", labelVi: "Sắp xếp thứ tự" },
-  { code: "matching", axis: "mechanic", labelVi: "Nối cặp & Ghép" },
-  { code: "tracing", axis: "mechanic", labelVi: "Tô & Vẽ nét" },
-  { code: "memory_flip", axis: "mechanic", labelVi: "Lật hình ghi nhớ" },
+  { code: "drag_drop", axis: "mechanic", label: "Kéo thả" },
+  { code: "tap_select", axis: "mechanic", label: "Tap chọn" },
+  { code: "sequence_order", axis: "mechanic", label: "Sắp xếp thứ tự" },
+  { code: "matching", axis: "mechanic", label: "Nối cặp & Ghép" },
+  { code: "tracing", axis: "mechanic", label: "Tô & Vẽ nét" },
+  { code: "memory_flip", axis: "mechanic", label: "Lật hình ghi nhớ" },
 
   // Theme Axis (12 tags)
-  { code: "farm", axis: "theme", labelVi: "Nông trại" },
-  { code: "jungle", axis: "theme", labelVi: "Rừng xanh" },
-  { code: "ocean", axis: "theme", labelVi: "Đại dương" },
-  { code: "space", axis: "theme", labelVi: "Vũ trụ" },
-  { code: "school", axis: "theme", labelVi: "Trường học" },
-  { code: "home", axis: "theme", labelVi: "Gia đình & Nhà bếp" },
-  { code: "park", axis: "theme", labelVi: "Công viên & Sân chơi" },
-  { code: "vehicles", axis: "theme", labelVi: "Phương tiện giao thông" },
-  { code: "food", axis: "theme", labelVi: "Món ăn & Hoa quả" },
-  { code: "dino", axis: "theme", labelVi: "Khủng long" },
-  { code: "fairytale", axis: "theme", labelVi: "Cổ tích & Phép thuật" },
-  { code: "seasons", axis: "theme", labelVi: "Thời tiết & Bốn mùa" },
+  { code: "farm", axis: "theme", label: "Nông trại" },
+  { code: "jungle", axis: "theme", label: "Rừng xanh" },
+  { code: "ocean", axis: "theme", label: "Đại dương" },
+  { code: "space", axis: "theme", label: "Vũ trụ" },
+  { code: "school", axis: "theme", label: "Trường học" },
+  { code: "home", axis: "theme", label: "Gia đình & Nhà bếp" },
+  { code: "park", axis: "theme", label: "Công viên & Sân chơi" },
+  { code: "vehicles", axis: "theme", label: "Phương tiện giao thông" },
+  { code: "food", axis: "theme", label: "Món ăn & Hoa quả" },
+  { code: "dino", axis: "theme", label: "Khủng long" },
+  { code: "fairytale", axis: "theme", label: "Cổ tích & Phép thuật" },
+  { code: "seasons", axis: "theme", label: "Thời tiết & Bốn mùa" },
 ];
 
 export async function seedContentTags(
@@ -70,14 +70,14 @@ export async function seedContentTags(
       .values({
         code: tag.code,
         axis: tag.axis,
-        labelVi: tag.labelVi,
+        label: tag.label,
         status: "active",
       })
       .onConflictDoUpdate({
         target: contentTags.code,
         set: {
           axis: tag.axis,
-          labelVi: tag.labelVi,
+          label: tag.label,
           status: "active",
         },
       });

@@ -1,9 +1,9 @@
 <template>
   <header class="site-header">
     <div class="header-container">
-      <NuxtLink aria-label="Trang chủ KidThink" class="brand-logo" to="/">
+      <NuxtLink aria-label="Trang chủ MindKid" class="brand-logo" to="/">
         <span aria-hidden="true" class="brand-emoji">🧠</span>
-        <span class="brand-title">KidThink</span>
+        <span class="brand-title">MindKid</span>
       </NuxtLink>
 
       <nav aria-label="Điều hướng chính" class="nav-links">

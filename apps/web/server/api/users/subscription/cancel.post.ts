@@ -1,11 +1,8 @@
-import { appError } from "@kidthink/auth";
-import { userCancelRecurringSubscription } from "@kidthink/db";
+import { appError } from "@mindkid/auth";
+import { userCancelRecurringSubscription } from "@mindkid/db";
 import { defineEventHandler, readBody } from "h3";
 import { z } from "zod";
-import {
-  requireWebUserSession,
-  respondToUserAuthError,
-} from "../../../utils/auth-runtime.ts";
+import { requireWebUserSession } from "../../../utils/auth-runtime.ts";
 
 const cancelSubscriptionSchema = z.object({
   subscription_id: z.number().int().positive({
@@ -14,12 +11,7 @@ const cancelSubscriptionSchema = z.object({
 });
 
 export default defineEventHandler(async (event) => {
-  let session: ReturnType<typeof requireWebUserSession>;
-  try {
-    session = requireWebUserSession(event);
-  } catch (error) {
-    return respondToUserAuthError(event, error);
-  }
+  const session = requireWebUserSession(event);
 
   const rawBody =
     ((event.context as { body?: unknown })?.body as Record<string, unknown>) ??

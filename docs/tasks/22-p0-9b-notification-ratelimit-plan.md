@@ -127,7 +127,7 @@ T6 bảng hạn mức 12 route class (một nguồn)
 - [ ] Cổng: `channel = 'in_app'` bị từ chối ở MVP, ca âm chứng minh cổng đỏ khi dùng.
 
 **Kiểm chứng**
-- [ ] `pnpm db:migrate` từ database rỗng · `pnpm --filter @kidthink/db test -- ops` xanh.
+- [ ] `pnpm db:migrate` từ database rỗng · `pnpm --filter @mindkid/db test -- ops` xanh.
 
 **Phụ thuộc:** không · **Cỡ:** S
 
@@ -140,7 +140,7 @@ T6 bảng hạn mức 12 route class (một nguồn)
 - [ ] `BR-NOT-06`: không loại nào mang nghĩa tiếp thị; cổng chặn thêm loại tiếp thị.
 
 **Kiểm chứng**
-- [ ] `pnpm --filter @kidthink/shared test -- notifications` xanh, assertion tham chiếu `BR-NOT-01`.
+- [ ] `pnpm --filter @mindkid/shared test -- notifications` xanh, assertion tham chiếu `BR-NOT-01`.
 
 **Phụ thuộc:** T1 · **Cỡ:** M
 
@@ -153,7 +153,7 @@ T6 bảng hạn mức 12 route class (một nguồn)
 - [ ] Tài khoản `deleted` → không gửi gì.
 
 **Kiểm chứng**
-- [ ] `pnpm --filter @kidthink/notification test` xanh, assertion tham chiếu `BR-NOT-02`.
+- [ ] `pnpm --filter @mindkid/notification test` xanh, assertion tham chiếu `BR-NOT-02`.
 
 **Phụ thuộc:** T2 · **Cỡ:** M
 
@@ -168,7 +168,7 @@ T6 bảng hạn mức 12 route class (một nguồn)
 - [ ] Bounce cứng → đánh dấu địa chỉ, dừng loại định kỳ, **giữ** loại giao dịch.
 
 **Kiểm chứng**
-- [ ] `pnpm --filter @kidthink/worker test -- email` xanh, assertion tham chiếu `BR-NOT-04` `BR-NOT-05`.
+- [ ] `pnpm --filter @mindkid/worker test -- email` xanh, assertion tham chiếu `BR-NOT-04` `BR-NOT-05`.
 
 **Phụ thuộc:** T3 · P0.8b · **Cỡ:** M
 
@@ -195,7 +195,7 @@ T6 bảng hạn mức 12 route class (một nguồn)
 - [ ] Route không suy ra được `route_class` là **lỗi**, không phải mặc định không giới hạn.
 
 **Kiểm chứng**
-- [ ] `pnpm --filter @kidthink/shared test -- rate-limit` xanh, assertion tham chiếu `BR-RTL-01`.
+- [ ] `pnpm --filter @mindkid/shared test -- rate-limit` xanh, assertion tham chiếu `BR-RTL-01`.
 
 **Phụ thuộc:** không · **Cỡ:** M
 
@@ -207,7 +207,7 @@ T6 bảng hạn mức 12 route class (một nguồn)
 - [ ] Cửa sổ trượt đúng theo cấu hình từng class.
 
 **Kiểm chứng**
-- [ ] `pnpm --filter @kidthink/cache test -- bucket` xanh.
+- [ ] `pnpm --filter @mindkid/cache test -- bucket` xanh.
 
 **Phụ thuộc:** T6 · P0.8b T1 · **Cỡ:** M
 
@@ -222,7 +222,7 @@ T6 bảng hạn mức 12 route class (một nguồn)
 - [ ] Guest dùng trục `tm_did`; Manager có hạn mức riêng.
 
 **Kiểm chứng**
-- [ ] `pnpm --filter @kidthink/web test -- rate-limit` xanh, assertion tham chiếu `BR-RTL-01` `BR-RTL-03` `BR-RTL-04` `BR-RTL-07`.
+- [ ] `pnpm --filter @mindkid/web test -- rate-limit` xanh, assertion tham chiếu `BR-RTL-01` `BR-RTL-03` `BR-RTL-04` `BR-RTL-07`.
 
 **Phụ thuộc:** T7 · P0.3 đóng · **Cỡ:** M
 
@@ -234,7 +234,7 @@ T6 bảng hạn mức 12 route class (một nguồn)
 - [ ] Ngưỡng khai trong bảng Task 6, không rải trong code.
 
 **Kiểm chứng**
-- [ ] `pnpm --filter @kidthink/web test -- lockout` xanh, assertion tham chiếu `BR-RTL-05`.
+- [ ] `pnpm --filter @mindkid/web test -- lockout` xanh, assertion tham chiếu `BR-RTL-05`.
 
 **Phụ thuộc:** T8 · **Cỡ:** S
 
@@ -247,7 +247,7 @@ T6 bảng hạn mức 12 route class (một nguồn)
 - [ ] `BR-RTL-06`: `play:events` có hạn mức riêng rộng hơn; ca âm — phiên chơi 30 phút gửi event đều không bị 429.
 
 **Kiểm chứng**
-- [ ] `pnpm --filter @kidthink/web test -- rate-limit-failmode` xanh, assertion tham chiếu `BR-RTL-02` `BR-RTL-06`.
+- [ ] `pnpm --filter @mindkid/web test -- rate-limit-failmode` xanh, assertion tham chiếu `BR-RTL-02` `BR-RTL-06`.
 
 **Phụ thuộc:** T8 · **Cỡ:** M
 

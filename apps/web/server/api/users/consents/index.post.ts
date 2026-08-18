@@ -1,10 +1,10 @@
-import { AppError, appError } from "@kidthink/auth";
+import { appError } from "@mindkid/auth";
 import {
   childProfiles,
   consentLogs,
   consentRequirements,
   getOwnerDb,
-} from "@kidthink/db";
+} from "@mindkid/db";
 import { and, eq } from "drizzle-orm";
 import {
   createError,
@@ -14,11 +14,11 @@ import {
   setResponseStatus,
 } from "h3";
 import { z } from "zod";
+
 import {
   assertRequestBodySize,
   getVerifiedRemoteIp,
   requireWebUserSession,
-  respondToUserAuthError,
 } from "../../../utils/auth-runtime.js";
 
 const SubmitConsentSchema = z
@@ -30,103 +30,90 @@ const SubmitConsentSchema = z
   .strict();
 
 export default defineEventHandler(async (event) => {
-  try {
-    assertRequestBodySize(event, 8 * 1024);
-    const userSession = await requireWebUserSession(event);
-    const userId = Number(userSession.user_id);
+  assertRequestBodySize(event, 8 * 1024);
+  const userSession = await requireWebUserSession(event);
+  const userId = Number(userSession.user_id);
 
-    const eventBody = (event.context as { body?: Record<string, unknown> })
-      ?.body;
-    const rawBody =
-      eventBody || ((await readBody(event)) as Record<string, unknown>) || {};
+  const eventBody = (event.context as { body?: Record<string, unknown> })?.body;
+  const rawBody =
+    eventBody || ((await readBody(event)) as Record<string, unknown>) || {};
 
-    const parsed = SubmitConsentSchema.safeParse(rawBody);
-    if (!parsed.success) {
-      throw createError({
-        statusCode: 422,
-        statusMessage: "VALIDATION_FAILED",
-        data: {
-          code: "VALIDATION_FAILED",
-          message: "Dữ liệu đồng ý không hợp lệ.",
-        },
-      });
+  const parsed = SubmitConsentSchema.safeParse(rawBody);
+  if (!parsed.success) {
+    throw createError({
+      statusCode: 422,
+      statusMessage: "VALIDATION_FAILED",
+      data: {
+        code: "VALIDATION_FAILED",
+        message: "Dữ liệu đồng ý không hợp lệ.",
+      },
+    });
+  }
+
+  const { consent_type: consentType, requirement_at: clientReqAt } =
+    parsed.data;
+
+  const ipAddress = getVerifiedRemoteIp(event);
+  const userAgent = getHeader(event, "user-agent") || "unknown";
+  const now = new Date();
+
+  const db = getOwnerDb();
+
+  const result = await db.transaction(async (tx) => {
+    // Lock requirement row for update to ensure atomic marker check (BR-CSM-09, D-QY)
+    const [req] = await tx
+      .select()
+      .from(consentRequirements)
+      .where(eq(consentRequirements.consentType, consentType))
+      .for("update");
+
+    const dbMarker = req?.reconsentRequiredAt
+      ? req.reconsentRequiredAt.toISOString()
+      : null;
+
+    // Verify requirement_at matches current DB marker
+    const clientMarkerNorm = clientReqAt
+      ? new Date(clientReqAt).toISOString()
+      : null;
+
+    if (dbMarker !== clientMarkerNorm) {
+      throw appError("CONSENT_REQUIREMENT_CHANGED");
     }
 
-    const { consent_type: consentType, requirement_at: clientReqAt } =
-      parsed.data;
-
-    const ipAddress = getVerifiedRemoteIp(event);
-    const userAgent = getHeader(event, "user-agent") || "unknown";
-    const now = new Date();
-
-    const db = getOwnerDb();
-
-    const result = await db.transaction(async (tx) => {
-      // Lock requirement row for update to ensure atomic marker check (BR-CSM-09, D-QY)
-      const [req] = await tx
-        .select()
-        .from(consentRequirements)
-        .where(eq(consentRequirements.consentType, consentType))
-        .for("update");
-
-      const dbMarker = req?.reconsentRequiredAt
-        ? req.reconsentRequiredAt.toISOString()
-        : null;
-
-      // Verify requirement_at matches current DB marker
-      const clientMarkerNorm = clientReqAt
-        ? new Date(clientReqAt).toISOString()
-        : null;
-
-      if (dbMarker !== clientMarkerNorm) {
-        throw appError("CONSENT_REQUIREMENT_CHANGED");
-      }
-
-      // BR-CSM-01 & BR-CSM-07: INSERT-only into consent_logs
-      await tx.insert(consentLogs).values({
-        userId,
-        consentType,
-        action: "accepted",
-        ipAddress,
-        userAgent,
-        createdAt: now,
-      });
-
-      // BR-CSM-08: If re-consenting to child_data within 30 days, restore archived child profiles
-      if (consentType === "child_data") {
-        await tx
-          .update(childProfiles)
-          .set({
-            status: "active",
-            purgeAt: null,
-            updatedAt: now,
-          })
-          .where(
-            and(
-              eq(childProfiles.userId, userId),
-              eq(childProfiles.status, "archived")
-            )
-          );
-      }
-
-      return {
-        consent_type: consentType,
-        accepted_at: now.toISOString(),
-        status: "active" as const,
-      };
+    // BR-CSM-01 & BR-CSM-07: INSERT-only into consent_logs
+    await tx.insert(consentLogs).values({
+      userId,
+      consentType,
+      action: "accepted",
+      ipAddress,
+      userAgent,
+      createdAt: now,
     });
 
-    setResponseStatus(event, 201);
-    return result;
-  } catch (err: unknown) {
-    if (err instanceof AppError) {
-      setResponseStatus(event, err.status);
-      throw createError({
-        statusCode: err.status,
-        statusMessage: err.code,
-        data: err.toResponse(),
-      });
+    // BR-CSM-08: If re-consenting to child_data within 30 days, restore archived child profiles
+    if (consentType === "child_data") {
+      await tx
+        .update(childProfiles)
+        .set({
+          status: "active",
+          purgeAt: null,
+          updatedAt: now,
+        })
+        .where(
+          and(
+            eq(childProfiles.userId, userId),
+            eq(childProfiles.status, "archived")
+          )
+        );
     }
-    return respondToUserAuthError(event, err);
-  }
+
+    return {
+      consent_type: consentType,
+      accepted_at: now.toISOString(),
+      status: "active" as const,
+    };
+  });
+
+  setResponseStatus(event, 201);
+  return result;
 });

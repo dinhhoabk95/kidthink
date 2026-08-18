@@ -1,4 +1,4 @@
-import { getOwnerDb, managers } from "@kidthink/db";
+import { getOwnerDb, managers } from "@mindkid/db";
 import { eq } from "drizzle-orm";
 import { beforeEach, describe, expect, it } from "vitest";
 import duplicateLevelHandler from "../../server/api/managers/levels/[code]/[version]/duplicate.post.js";
@@ -19,12 +19,12 @@ beforeEach(async () => {
   let [mgr] = await db
     .select({ id: managers.id })
     .from(managers)
-    .where(eq(managers.email, "studio-tester@kidthink.edu.vn"));
+    .where(eq(managers.email, "studio-tester@mindkid.edu.vn"));
   if (!mgr) {
     [mgr] = await db
       .insert(managers)
       .values({
-        email: "studio-tester@kidthink.edu.vn",
+        email: "studio-tester@mindkid.edu.vn",
         passwordHash: "hash",
         displayName: "Studio Tester",
         role: "super_admin",
@@ -74,7 +74,6 @@ function mockEvent(
               manager_id: testManagerId,
               display_name: "Manager Tester",
               session_id: "sess_manager_123",
-              refresh_token_version: 1,
               role: managerRole,
             },
           }
@@ -131,7 +130,7 @@ describe("Game Level Studio & Management API (BR-STU-01 - BR-STU-10, Spec §7.2)
     expect(res.code).toMatch(LEVEL_CODE_REGEX);
     expect(res.contentVersion).toBe(1);
     expect(res.status).toBe("draft");
-    expect(res.titleVi).toBe("Đếm số bông hoa");
+    expect(res.title).toBe("Đếm số bông hoa");
   });
 
   it("GET /api/managers/levels/[code]/[version] retrieves level details", async () => {
@@ -157,7 +156,7 @@ describe("Game Level Studio & Management API (BR-STU-01 - BR-STU-10, Spec §7.2)
 
     expect(fetched.code).toBe(created.code);
     expect(fetched.contentVersion).toBe(1);
-    expect(fetched.titleVi).toBe("Tìm số còn thiếu");
+    expect(fetched.title).toBe("Tìm số còn thiếu");
   });
 
   it("PATCH /api/managers/levels/[code]/[version] updates draft and enforces optimistic concurrency (BR-STU-03)", async () => {
@@ -185,7 +184,7 @@ describe("Game Level Studio & Management API (BR-STU-01 - BR-STU-10, Spec §7.2)
       }
     );
     const updated = (await patchLevelHandler(patchEvt)) as any;
-    expect(updated.titleVi).toBe("Tiêu đề mới");
+    expect(updated.title).toBe("Tiêu đề mới");
 
     // 3. Update with mismatched expected_version -> 409 VERSION_CONFLICT
     const conflictEvt = mockEvent(
@@ -264,7 +263,7 @@ describe("Game Level Studio & Management API (BR-STU-01 - BR-STU-10, Spec §7.2)
     expect(cloned.code).not.toBe(created.code);
     expect(cloned.contentVersion).toBe(1);
     expect(cloned.status).toBe("draft");
-    expect(cloned.titleVi).toContain("Bản gốc");
+    expect(cloned.title).toContain("Bản gốc");
   });
 
   it("POST /api/managers/levels/[code]/[version]/submit transitions draft to in_review (BR-STU-07)", async () => {

@@ -1,6 +1,6 @@
-import { appError } from "@kidthink/auth";
-import { consentLogs, consentRequirements, getOwnerDb } from "@kidthink/db";
-import type { ConsentType } from "@kidthink/shared";
+import { appError } from "@mindkid/auth";
+import { consentLogs, consentRequirements, getOwnerDb } from "@mindkid/db";
+import type { ConsentType } from "@mindkid/shared";
 import { desc, eq } from "drizzle-orm";
 
 /**

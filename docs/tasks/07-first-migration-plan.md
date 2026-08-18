@@ -7,7 +7,7 @@
 >
 > Checklist chạy từng bước: [`07-first-migration-todo.md`](07-first-migration-todo.md).
 >
-> Mọi lệnh chạy từ thư mục `kidthink/`. Đặt lại đường dẫn Node trước mỗi phiên shell mới:
+> Mọi lệnh chạy từ thư mục `mindkid/`. Đặt lại đường dẫn Node trước mỗi phiên shell mới:
 >
 > ```
 > export PATH=/Users/macbook/.nvm/versions/node/v24.15.0/bin:$PATH
@@ -101,14 +101,14 @@ trên các bảng đó.
 
 - **Role `postgres`** (superuser, đã có sẵn trong `docker-compose.yml`) — chỉ dùng cho
   `drizzle-kit migrate` (DDL, cần quyền tạo bảng/role/trigger).
-- **Role mới `kidthink_app`** (`LOGIN`, không superuser) — app runtime (`apps/*`) kết nối bằng
+- **Role mới `mindkid_app`** (`LOGIN`, không superuser) — app runtime (`apps/*`) kết nối bằng
   role này. `REVOKE UPDATE, DELETE` trên `audit_logs` · `consent_logs` · `content_review_log` ·
   `telemetry_events` cho role này ngay sau khi tạo bảng (migration SQL, không phải bước
   riêng — xem D2).
 - Tạo role này bằng **custom SQL migration** (`drizzle-kit generate --custom`), chạy một lần
   trong migration đầu tiên. Thêm `DATABASE_URL_APP` bên cạnh `DATABASE_URL` (owner) trong
   `.env` mẫu — `packages/db/src/index.ts` export hai factory riêng, app chỉ import cái dùng
-  role `kidthink_app`.
+  role `mindkid_app`.
 - `play_sessions` **không** nằm trong danh sách REVOKE — nó mở cho `UPDATE` tới lúc
   `completed` (`BR-SPT-07`), ép bằng **trigger** (D2), không phải quyền DB.
 
@@ -176,7 +176,7 @@ Kiểm tra thực tế trạng thái repo trước khi lập kế hoạch này:
 | `packages/db/package.json` | Không có dependency nào | Thêm `drizzle-orm` `drizzle-kit` `postgres` |
 | `pnpm-workspace.yaml` catalog | Chỉ có `postgres` driver (cho `check-services.ts`) | Thêm `drizzle-orm@^0.45`, `drizzle-kit@^0.31` (version đã chốt ở [`repo-bootstrap.md`](../specs/00-foundation/repo-bootstrap.md) §7.1 — **lockstep**, không lệch minor) |
 | `package.json` gốc — scripts | Không có `db:generate`/`db:migrate`/`db:seed` | Thêm cả ba — [`data-model-overview.md`](../specs/01-platform/data-model-overview.md) §4 và acceptance criteria đòi hỏi đúng ba lệnh này |
-| `docker-compose.yml` | Chỉ user `postgres` (superuser) | Thêm bước tạo role `kidthink_app` (xem D1) — làm trong migration SQL, **không** sửa `docker-compose.yml` (role là dữ liệu trong DB, không phải hạ tầng container) |
+| `docker-compose.yml` | Chỉ user `postgres` (superuser) | Thêm bước tạo role `mindkid_app` (xem D1) — làm trong migration SQL, **không** sửa `docker-compose.yml` (role là dữ liệu trong DB, không phải hạ tầng container) |
 | `drizzle.config.ts` | Chưa tồn tại | Tạo ở gốc `packages/db/`, trỏ `schema: "./src/schema/*.ts"`, `out: "./src/migrations"` |
 
 ## 4. Giá gói MVP — chưa chốt, đừng tự bịa số
@@ -245,7 +245,7 @@ thể chạy bất kỳ lúc nào sau đó.
 - `pnpm check && pnpm test && pnpm check:services` xanh tại chỗ.
 - 11/11 file schema tồn tại, ≤400 dòng mỗi file (`BR-DM-11`).
 - 9 test orphan polymorphic pass (7 gốc + 2 mới từ §2a).
-- INSERT-only: `UPDATE`/`DELETE` bằng role `kidthink_app` bị DB từ chối trên
+- INSERT-only: `UPDATE`/`DELETE` bằng role `mindkid_app` bị DB từ chối trên
   `audit_logs`·`consent_logs`·`content_review_log`·`telemetry_events` — verify bằng test
   thật kết nối role đó, không chỉ đọc migration SQL bằng mắt.
 - Trigger chặn sửa hàng `published` (5 bảng Lớp 2) và phiên `completed` — mỗi cái có test.
@@ -259,7 +259,7 @@ thể chạy bất kỳ lúc nào sau đó.
 | Rủi ro | Ảnh hưởng | Giảm thiểu |
 |---|---|---|
 | Bỏ sót Bước 8, viết `content.ts`/`curriculum.ts` với polymorphic không có test orphan | Orphan row lặng lẽ tồn tại, chỉ lộ ra khi có dữ liệu thật (mất curriculum item trỏ vào lesson đã xoá) | Cổng dừng B chặn cứng — không tiến tới Bước 9 khi §2a chưa đóng |
-| Role `kidthink_app` bị quên revoke đúng bảng, hoặc app lỡ dùng owner connection cho runtime | INSERT-only chỉ là quy ước, âm thầm mất tác dụng | Test integration kết nối **bằng đúng role app**, không test bằng owner — nếu owner cũng bị chặn thì test dương tính giả |
+| Role `mindkid_app` bị quên revoke đúng bảng, hoặc app lỡ dùng owner connection cho runtime | INSERT-only chỉ là quy ước, âm thầm mất tác dụng | Test integration kết nối **bằng đúng role app**, không test bằng owner — nếu owner cũng bị chặn thì test dương tính giả |
 | `drizzle-kit generate` không sinh được trigger/role (chỉ hiểu DDL từ schema DSL) | Thiếu D2/D1 nếu chỉ dựa vào generate tự động | Dùng `drizzle-kit generate --custom` để tạo khung migration rỗng, viết tay phần SQL không biểu diễn được bằng schema |
 | File schema vượt 400 dòng khi viết đủ cột + CHECK + comment | Vi phạm `BR-DM-11`, phải tách giữa chừng | Đếm dòng sau mỗi module (Bước 15 sweep), tách sớm nếu áp sát 350 dòng thay vì đợi vượt |
 | Giá gói giả `PENDING_PRICE_VND = 0` bị quên, lọt vào chỗ khác dùng làm giá thật | Hiển thị "0đ" cho user | Đặt tên hằng số rõ ràng + comment, và đây chỉ là seed **dev**, không chạm production tới khi §11 Q1 đóng |

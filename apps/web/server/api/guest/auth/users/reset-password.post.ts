@@ -3,21 +3,20 @@ import {
   hashPassword,
   hashSecureToken,
   validatePasswordStrength,
-} from "@kidthink/auth";
+} from "@mindkid/auth";
 import {
   activeSessions,
   getAppDb,
   notifications,
   users,
   verificationTokens,
-} from "@kidthink/db";
+} from "@mindkid/db";
 import { and, eq, isNull } from "drizzle-orm";
 import { defineEventHandler, type H3Event, readBody } from "h3";
 import { z } from "zod";
 import {
   assertRequestBodySize,
   assertSameOriginRequest,
-  respondToUserAuthError,
 } from "../../../../utils/auth-runtime";
 
 const ResetPasswordSchema = z
@@ -28,114 +27,110 @@ const ResetPasswordSchema = z
   .strict();
 
 export async function handleResetPassword(event: H3Event, testBody?: unknown) {
-  try {
-    assertSameOriginRequest(event);
-    assertRequestBodySize(event, 16 * 1024);
-    const rawBody =
-      testBody ??
-      event.context?.body ??
-      (await readBody(event).catch(() => null));
-    const parsed = ResetPasswordSchema.safeParse(rawBody);
-    if (!parsed.success) {
-      throw appError("VALIDATION_FAILED");
-    }
-    const { token, new_password: newPassword } = parsed.data;
+  assertSameOriginRequest(event);
+  assertRequestBodySize(event, 16 * 1024);
+  const rawBody =
+    testBody ??
+    event.context?.body ??
+    (await readBody(event).catch(() => null));
+  const parsed = ResetPasswordSchema.safeParse(rawBody);
+  if (!parsed.success) {
+    throw appError("VALIDATION_FAILED");
+  }
+  const { token, new_password: newPassword } = parsed.data;
 
-    const passVal = validatePasswordStrength(newPassword);
-    if (!passVal.valid) {
-      throw appError("VALIDATION_FAILED", {
-        reason: passVal.reason || "Mật khẩu mới không đạt yêu cầu an toàn.",
-      });
-    }
+  const passVal = validatePasswordStrength(newPassword);
+  if (!passVal.valid) {
+    throw appError("VALIDATION_FAILED", {
+      reason: passVal.reason || "Mật khẩu mới không đạt yêu cầu an toàn.",
+    });
+  }
 
-    const db = getAppDb();
-    const tokenHash = hashSecureToken(token);
+  const db = getAppDb();
+  const tokenHash = hashSecureToken(token);
 
-    const tokenRows = await db
-      .select()
-      .from(verificationTokens)
+  const tokenRows = await db
+    .select()
+    .from(verificationTokens)
+    .where(
+      and(
+        eq(verificationTokens.tokenHash, tokenHash),
+        eq(verificationTokens.accountType, "user"),
+        eq(verificationTokens.purpose, "password_reset")
+      )
+    );
+
+  if (tokenRows.length === 0) {
+    throw appError("NOT_FOUND");
+  }
+
+  const vToken = tokenRows[0];
+  if (vToken.usedAt !== null || vToken.expiresAt <= new Date()) {
+    throw appError("TOKEN_EXPIRED");
+  }
+
+  const [user] = await db
+    .select()
+    .from(users)
+    .where(eq(users.id, vToken.accountId));
+
+  if (!user) {
+    throw appError("NOT_FOUND");
+  }
+
+  const newPassHash = await hashPassword(newPassword);
+  const now = new Date();
+
+  await db.transaction(async (tx) => {
+    // Claim the token atomically before changing any account state.
+    const [claimed] = await tx
+      .update(verificationTokens)
+      .set({ usedAt: now })
       .where(
         and(
-          eq(verificationTokens.tokenHash, tokenHash),
+          eq(verificationTokens.id, vToken.id),
           eq(verificationTokens.accountType, "user"),
-          eq(verificationTokens.purpose, "password_reset")
+          eq(verificationTokens.purpose, "password_reset"),
+          isNull(verificationTokens.usedAt)
         )
-      );
-
-    if (tokenRows.length === 0) {
-      throw appError("NOT_FOUND");
-    }
-
-    const vToken = tokenRows[0];
-    if (vToken.usedAt !== null || vToken.expiresAt <= new Date()) {
+      )
+      .returning({ id: verificationTokens.id });
+    if (!claimed) {
       throw appError("TOKEN_EXPIRED");
     }
 
-    const [user] = await db
-      .select()
-      .from(users)
-      .where(eq(users.id, vToken.accountId));
+    await tx
+      .update(users)
+      .set({
+        passwordHash: newPassHash,
+        sessionVersion: user.sessionVersion + 1,
+        updatedAt: now,
+      })
+      .where(eq(users.id, user.id));
 
-    if (!user) {
-      throw appError("NOT_FOUND");
-    }
-
-    const newPassHash = await hashPassword(newPassword);
-    const now = new Date();
-
-    await db.transaction(async (tx) => {
-      // Claim the token atomically before changing any account state.
-      const [claimed] = await tx
-        .update(verificationTokens)
-        .set({ usedAt: now })
-        .where(
-          and(
-            eq(verificationTokens.id, vToken.id),
-            eq(verificationTokens.accountType, "user"),
-            eq(verificationTokens.purpose, "password_reset"),
-            isNull(verificationTokens.usedAt)
-          )
+    await tx
+      .delete(activeSessions)
+      .where(
+        and(
+          eq(activeSessions.accountType, "user"),
+          eq(activeSessions.accountId, user.id)
         )
-        .returning({ id: verificationTokens.id });
-      if (!claimed) {
-        throw appError("TOKEN_EXPIRED");
-      }
+      );
 
-      await tx
-        .update(users)
-        .set({
-          passwordHash: newPassHash,
-          sessionVersion: user.sessionVersion + 1,
-          updatedAt: now,
-        })
-        .where(eq(users.id, user.id));
-
-      await tx
-        .delete(activeSessions)
-        .where(
-          and(
-            eq(activeSessions.accountType, "user"),
-            eq(activeSessions.accountId, user.id)
-          )
-        );
-
-      await tx.insert(notifications).values({
-        recipientType: "user",
-        recipientId: user.id,
-        channel: "email",
-        templateCode: "password_changed",
-        payload: {
-          email: user.email,
-          displayName: user.displayName,
-        },
-        status: "queued",
-      });
+    await tx.insert(notifications).values({
+      recipientType: "user",
+      recipientId: user.id,
+      channel: "email",
+      templateCode: "password_changed",
+      payload: {
+        email: user.email,
+        displayName: user.displayName,
+      },
+      status: "queued",
     });
+  });
 
-    return { ok: true };
-  } catch (error) {
-    return respondToUserAuthError(event, error);
-  }
+  return { ok: true };
 }
 
 export default defineEventHandler((event) => handleResetPassword(event));

@@ -2,59 +2,51 @@ import type {
   GT001Content,
   GT001Difficulty,
 } from "../../contracts/templates/gt001";
-import { BaseGameSession, type FeedbackKind } from "../../game-session";
+import {
+  ACTION_CORRECT,
+  ACTION_IGNORED,
+  ACTION_RETRY,
+  type ActionResult,
+  type GameAction,
+  TemplateGameSession,
+} from "../../game-session";
 
-export class GT001Session extends BaseGameSession {
-  readonly content: GT001Content;
-  readonly difficulty: GT001Difficulty;
+export class GT001Session extends TemplateGameSession<
+  GT001Content,
+  GT001Difficulty
+> {
   selectedItemId: string | null = null;
-  private isWon = false;
-
-  constructor(content: GT001Content, difficulty: GT001Difficulty) {
-    super();
-    this.content = content;
-    this.difficulty = difficulty;
-  }
 
   setupEntities(): void {
     this.selectedItemId = null;
     this.isWon = false;
   }
 
-  validateAction(action: { type: string; data: unknown }): {
-    valid: boolean;
-    feedback: FeedbackKind;
-  } {
-    if (action.type !== "tap_option") {
-      return { valid: false, feedback: "none" };
-    }
-    const data = action.data as { item_id: string };
-    const option = this.content.options.find(
-      (opt) => opt.item_id === data.item_id
-    );
-    if (!option) {
-      return { valid: false, feedback: "none" };
-    }
+  private findOption(itemId: string) {
+    return this.content.options.find((opt) => opt.item_id === itemId);
+  }
 
-    if (option.is_correct) {
-      return { valid: true, feedback: "pop_celebrate" };
+  validateAction(action: GameAction): ActionResult {
+    if (action.type !== "tap_option") {
+      return ACTION_IGNORED;
     }
-    return { valid: false, feedback: "amber_soft" };
+    const { item_id } = action.data as { item_id: string };
+    const option = this.findOption(item_id);
+    if (!option) {
+      return ACTION_IGNORED;
+    }
+    return option.is_correct ? ACTION_CORRECT : ACTION_RETRY;
   }
 
   onItemLocked(itemId: string): void {
     this.selectedItemId = itemId;
-    const option = this.content.options.find((opt) => opt.item_id === itemId);
-    if (option?.is_correct) {
-      this.isWon = true;
-      this.recordEvent("item_selected", { item_id: itemId, is_correct: true });
-      this.completeSession();
-    } else {
-      this.recordEvent("item_selected", { item_id: itemId, is_correct: false });
+    const isCorrect = this.findOption(itemId)?.is_correct === true;
+    this.recordEvent("item_selected", {
+      item_id: itemId,
+      is_correct: isCorrect,
+    });
+    if (isCorrect) {
+      this.winSession();
     }
-  }
-
-  checkWinCondition(): boolean {
-    return this.isWon;
   }
 }

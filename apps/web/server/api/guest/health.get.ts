@@ -1,6 +1,6 @@
-import { ping } from "@kidthink/cache";
-import { getOwnerDb } from "@kidthink/db";
-import { alert, getWaitingCount } from "@kidthink/queue";
+import { ping } from "@mindkid/cache";
+import { getOwnerDb } from "@mindkid/db";
+import { alert, getWaitingCount } from "@mindkid/queue";
 import { sql } from "drizzle-orm";
 import { defineEventHandler, setHeader, setResponseStatus } from "h3";
 

@@ -3,14 +3,13 @@ import {
   type ManagerTokenPayload,
   requireUserAuth,
   type UserTokenPayload,
-} from "@kidthink/auth";
+} from "@mindkid/auth";
 import { describe, expect, it } from "vitest";
 
 const sampleUserPayload: UserTokenPayload = {
   user_id: 42,
   display_name: "Người dùng Minh",
   session_id: "web-session-abc",
-  refresh_token_version: 1,
   active_child_id: 10,
 };
 
@@ -47,7 +46,6 @@ describe("apps/web auth-context integration", () => {
       manager_id: 1,
       display_name: "Admin",
       session_id: "sess-admin",
-      refresh_token_version: 1,
       role: "super_admin",
     };
 

@@ -1,4 +1,4 @@
-import { activities, contentSkillMap, getOwnerDb, skills } from "@kidthink/db";
+import { activities, contentSkillMap, getOwnerDb, skills } from "@mindkid/db";
 import { and, desc, eq } from "drizzle-orm";
 import { createError, defineEventHandler, getRouterParam } from "h3";
 import { requireManagerSession } from "../../../../utils/admin-auth-runtime.js";
@@ -50,7 +50,7 @@ export default defineEventHandler(async (event) => {
     .select({
       skillId: contentSkillMap.skillId,
       skillCode: skills.code,
-      skillNameVi: skills.nameVi,
+      skillName: skills.name,
       ageMin: skills.ageMin,
       ageMax: skills.ageMax,
       weight: contentSkillMap.weight,

@@ -127,7 +127,7 @@
 </template>
 
 <script lang="ts" setup>
-  import type { UiHintResult } from "@kidthink/shared";
+  import type { UiHintResult } from "@mindkid/shared";
   import { computed, onMounted, onUnmounted, ref, watch } from "vue";
   import { useRoute, useRouter } from "vue-router";
   import EmojiPickerModal from "~/components/emoji/emoji-picker-modal.vue";
@@ -146,9 +146,9 @@
     code: string;
     contentVersion: number;
     templateCode?: string;
-    titleVi: string;
-    descriptionVi?: string;
-    instructionVi?: string;
+    title: string;
+    description?: string;
+    instruction?: string;
     themeId?: string;
     contentPack: Record<string, unknown>;
     difficultyParams: Record<string, unknown>;
@@ -272,7 +272,7 @@
     (val) => {
       try {
         localStorage.setItem(
-          `kidthink_level_backup_${code}`,
+          `mindkid_level_backup_${code}`,
           JSON.stringify(val)
         );
       } catch {
@@ -293,8 +293,8 @@
       );
       levelData.value = {
         ...res,
-        title: res.titleVi,
-        instruction: res.instructionVi,
+        title: res.title,
+        instruction: res.instruction,
         theme_id: res.themeId,
         content_pack: res.contentPack,
         difficulty_params: res.difficultyParams,

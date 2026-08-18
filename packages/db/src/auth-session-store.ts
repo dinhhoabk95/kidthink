@@ -1,4 +1,4 @@
-import type { AccountReference, AuthMethod } from "@kidthink/auth";
+import type { AccountReference, AuthMethod } from "@mindkid/auth";
 import type postgres from "postgres";
 
 export interface RecordDeviceSessionInput {

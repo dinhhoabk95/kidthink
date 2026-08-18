@@ -1,4 +1,4 @@
-import { gameLevels, getOwnerDb } from "@kidthink/db";
+import { gameLevels, getOwnerDb } from "@mindkid/db";
 import { eq } from "drizzle-orm";
 import { defineEventHandler, setHeader } from "h3";
 
@@ -6,7 +6,7 @@ export default defineEventHandler(async (event) => {
   setHeader(event, "Content-Type", "application/xml; charset=utf-8");
   setHeader(event, "Cache-Control", "public, max-age=3600");
 
-  const siteUrl = process.env.NUXT_PUBLIC_SITE_URL || "https://kidthink.vn";
+  const siteUrl = process.env.NUXT_PUBLIC_SITE_URL || "https://mindkid.vn";
   const now = new Date().toISOString().split("T")[0];
 
   let levels: Array<{ code: string; updatedAt: Date | null }> = [];

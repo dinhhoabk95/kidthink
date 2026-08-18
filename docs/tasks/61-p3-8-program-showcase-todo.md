@@ -172,7 +172,7 @@
 - [ ] `pnpm test:e2e` xanh.
 - [ ] `pnpm lint:specs` xanh.
 - [ ] `pnpm check:progress` xanh.
-- [ ] `pnpm --filter @kidthink/web build` xanh.
+- [ ] `pnpm --filter @mindkid/web build` xanh.
 - [ ] Human review API projection, cache/invalidation, SEO schema, hai page và phase-gate evidence.
 - [ ] Không seed/publish/migration ngoài local; không sửa hàng `published`.
 - [ ] Không add-on P4, analytics, A/B test hoặc ML lọt vào.

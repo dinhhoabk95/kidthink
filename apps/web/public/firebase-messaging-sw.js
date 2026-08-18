@@ -1,5 +1,5 @@
 /* eslint-disable no-undef */
-// Service worker for KidThink FCM Web push handling (BR-BPS-01, BR-BPS-07)
+// Service worker for MindKid FCM Web push handling (BR-BPS-01, BR-BPS-07)
 
 self.addEventListener("push", (event) => {
   if (!event.data) {
@@ -8,7 +8,7 @@ self.addEventListener("push", (event) => {
 
   try {
     const payload = event.data.json();
-    const notificationTitle = payload.notification?.title || "KidThink";
+    const notificationTitle = payload.notification?.title || "MindKid";
     const notificationOptions = {
       body: payload.notification?.body || "",
       icon: "/icon-192.png",

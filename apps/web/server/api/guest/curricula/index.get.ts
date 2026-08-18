@@ -1,11 +1,11 @@
-import { curricula, getOwnerDb } from "@kidthink/db";
+import { curricula, getOwnerDb } from "@mindkid/db";
 import {
   type ProgramCardPublic,
   type ProgramGroupPublic,
   SHOWCASE_GROUP_LABELS,
   type ShowcaseGroup,
   toProgramCardPublic,
-} from "@kidthink/shared";
+} from "@mindkid/shared";
 import { asc, eq } from "drizzle-orm";
 import { defineEventHandler, setHeader } from "h3";
 
@@ -26,8 +26,8 @@ export default defineEventHandler(async (event) => {
     .select({
       id: curricula.id,
       code: curricula.code,
-      titleVi: curricula.titleVi,
-      descriptionVi: curricula.descriptionVi,
+      title: curricula.title,
+      description: curricula.description,
       programType: curricula.programType,
       targetAgeMin: curricula.targetAgeMin,
       targetAgeMax: curricula.targetAgeMax,

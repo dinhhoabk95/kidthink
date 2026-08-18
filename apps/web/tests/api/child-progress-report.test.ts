@@ -4,7 +4,7 @@ import {
   entitlements,
   getOwnerDb,
   users,
-} from "@kidthink/db";
+} from "@mindkid/db";
 
 import { describe, expect, it } from "vitest";
 import getProgressHandler from "../../server/api/users/children/[uuid]/progress.get";
@@ -38,7 +38,6 @@ function mockEvent(
         user_id: userId,
         display_name: "Parent User",
         session_id: `sess_${userId}`,
-        refresh_token_version: 0,
       },
     },
   } as any;
@@ -92,7 +91,7 @@ describe("Adult Progress & Mastery Report API (BR-PRG-05, BR-PRG-08, D-MO)", () 
       .insert(entitlementKeys)
       .values({
         key: "view_basic_report",
-        labelVi: "Xem báo cáo cơ bản",
+        label: "Xem báo cáo cơ bản",
         group: "report",
         isMvp: true,
       })

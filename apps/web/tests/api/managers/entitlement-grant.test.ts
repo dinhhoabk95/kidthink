@@ -10,7 +10,7 @@ import {
   SEED_ENTITLEMENT_KEYS,
   SEED_PACKAGES,
   users,
-} from "@kidthink/db";
+} from "@mindkid/db";
 import { and, eq } from "drizzle-orm";
 import { beforeAll, describe, expect, it } from "vitest";
 import revokeHandler from "../../../server/api/managers/entitlements/[id].delete";
@@ -46,7 +46,6 @@ function mockManagerEvent(
               manager_id: 999,
               display_name: "Test Super Admin",
               session_id: "sess_test_sa",
-              refresh_token_version: 1,
               role: managerRole,
             },
           }

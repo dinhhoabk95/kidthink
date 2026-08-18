@@ -2,26 +2,32 @@ import { describe, expect, it } from "vitest";
 import { getAuthNamespaceConfig } from "../src/auth-namespace";
 
 describe("auth namespace runtime contract", () => {
-  it("keeps User and Manager cookie, issuer, audience and TTL boundaries separate", () => {
+  it("keeps User and Manager CSRF cookies separate", () => {
     expect(getAuthNamespaceConfig("user")).toEqual({
       namespace: "user",
-      audience: "kidthink:user",
-      issuer: "kidthink:web",
-      accessCookieName: "kidthink-user-access",
-      refreshCookieName: "tm_u_rt",
       csrfCookieName: "tm_u_csrf",
-      refreshPath: "/api/users/auth/refresh",
-      refreshTtlSeconds: 7 * 24 * 60 * 60,
     });
     expect(getAuthNamespaceConfig("manager")).toEqual({
       namespace: "manager",
-      audience: "kidthink:manager",
-      issuer: "kidthink:admin",
-      accessCookieName: "kidthink-manager-access",
-      refreshCookieName: "tm_m_rt",
       csrfCookieName: "tm_m_csrf",
-      refreshPath: "/api/managers/auth/refresh",
-      refreshTtlSeconds: 24 * 60 * 60,
     });
+  });
+
+  /**
+   * Ca âm cho quyết định bỏ refresh token: phiên là session opaque trong Redis
+   * cộng cookie remember-me, không còn cặp access/refresh cookie. Test này đỏ
+   * ngay nếu ai đó dựng lại vòng đời token thứ hai qua đường config.
+   */
+  it("does not reintroduce access or refresh token config", () => {
+    for (const namespace of ["user", "manager"] as const) {
+      const config = getAuthNamespaceConfig(namespace) as unknown as Record<
+        string,
+        unknown
+      >;
+      expect(Object.keys(config).sort()).toEqual([
+        "csrfCookieName",
+        "namespace",
+      ]);
+    }
   });
 });

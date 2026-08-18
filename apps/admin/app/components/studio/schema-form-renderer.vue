@@ -246,7 +246,7 @@
 </template>
 
 <script lang="ts" setup>
-  import type { UiHintResult } from "@kidthink/shared";
+  import type { UiHintResult } from "@mindkid/shared";
   import SchemaFormField from "./schema-form-field.vue";
 
   const props = withDefaults(

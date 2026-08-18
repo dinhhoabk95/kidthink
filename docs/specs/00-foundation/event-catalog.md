@@ -2,7 +2,7 @@
 spec: EVENT-CATALOG
 title: Catalog sự kiện và schema payload
 area: foundation
-status: approved
+status: implemented
 mvp: true
 phase: P0
 reviewed: 2026-08-07

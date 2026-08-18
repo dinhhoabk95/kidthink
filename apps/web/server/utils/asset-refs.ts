@@ -1,4 +1,4 @@
-import { contentAssetRefs, type DatabaseOwner } from "@kidthink/db";
+import { contentAssetRefs, type DatabaseOwner } from "@mindkid/db";
 import { and, eq } from "drizzle-orm";
 
 export interface ExtractedAssetRef {

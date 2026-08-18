@@ -1,4 +1,4 @@
-import { enqueue } from "@kidthink/queue";
+import { enqueue } from "@mindkid/queue";
 
 export async function setupCronJobs() {
   await enqueue("backup:postgres", {}, {

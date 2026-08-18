@@ -1,4 +1,4 @@
-import { ORDER_PENDING_TTL_HOURS, SOFT_UNLOCK_DAYS } from "@kidthink/config";
+import { ORDER_PENDING_TTL_HOURS, SOFT_UNLOCK_DAYS } from "@mindkid/config";
 import { describe, expect, it } from "vitest";
 import {
   assertPaymentOrderTransition,

@@ -427,7 +427,7 @@ trên evidence của cả tám increment.
 - [ ] Chỉ tick cổng P3 khi 120 spec `mvp: true` đều `implemented` và một trẻ đi hết curriculum thật; thiếu evidence nào thì giữ ô đó mở.
 
 **Kiểm chứng:** `pnpm check && pnpm test && pnpm test:e2e && pnpm lint:specs && pnpm check:progress`
-và `pnpm --filter @kidthink/web build` xanh.
+và `pnpm --filter @mindkid/web build` xanh.
 
 **Phụ thuộc:** T8 · P3.1–P3.7 đã `implemented`
 

@@ -4,10 +4,10 @@ import { describe, expect, it } from "vitest";
 import { BANNED_TERMS } from "../src/index.js";
 
 const ROOT = resolve(import.meta.dirname, "../../..");
-const KIDTHINK_SCOPE_PATTERN = /^@kidthink\//;
+const MindKid_SCOPE_PATTERN = /^@mindkid\//;
 
 describe("P0 foundation contracts", () => {
-  it("BR-RBS-02: every workspace package uses the @kidthink scope", () => {
+  it("BR-RBS-02: every workspace package uses the @mindkid scope", () => {
     const workspace = readFileSync(
       resolve(ROOT, "pnpm-workspace.yaml"),
       "utf8"
@@ -26,7 +26,7 @@ describe("P0 foundation contracts", () => {
       const packageJson = JSON.parse(
         readFileSync(resolve(ROOT, manifest), "utf8")
       ) as { name?: string };
-      expect(packageJson.name, manifest).toMatch(KIDTHINK_SCOPE_PATTERN);
+      expect(packageJson.name, manifest).toMatch(MindKid_SCOPE_PATTERN);
     }
   });
 

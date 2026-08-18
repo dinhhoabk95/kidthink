@@ -1,4 +1,4 @@
-import { isValidRef, searchEmoji } from "@kidthink/emoji";
+import { isValidRef, searchEmoji } from "@mindkid/emoji";
 import { describe, expect, it } from "vitest";
 import { getOwnerDb } from "../../src/client.ts";
 import {

@@ -1,6 +1,6 @@
 import { useAuth, useCookie, useNuxtApp } from "#imports";
 
-export function useKidThinkAuth() {
+export function useMindKidAuth() {
   const { getSession } = useAuth();
   const { $fetch } = useNuxtApp();
   const csrf = useCookie<string | null>("tm_m_csrf");

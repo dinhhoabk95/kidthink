@@ -1,4 +1,4 @@
-import { CompetencyCodeSchema, StrandCodeSchema } from "@kidthink/shared";
+import { CompetencyCodeSchema, StrandCodeSchema } from "@mindkid/shared";
 import { describe, expect, it } from "vitest";
 import { COMPETENCIES, STRANDS } from "../src/index.js";
 

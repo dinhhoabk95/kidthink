@@ -1,3 +1,17 @@
+import type { AgeBand } from "./contracts/types";
+
+/**
+ * Touch floors owned by accessibility.md BR-A11-04, surfaced through the one
+ * function BR-ENG-05 requires. Never re-declare these numbers elsewhere.
+ */
+const MIN_TOUCH_PX = {
+  band_3_4: 96,
+  primary: 76,
+  floor: 64,
+} as const;
+
+const DEFAULT_LONG_PRESS_EXIT_MS = 800;
+
 export interface TouchTarget {
   id: string;
   x: number;
@@ -8,16 +22,13 @@ export interface TouchTarget {
 }
 
 export function getMinTouchTargetSize(
-  ageBand: "3-4" | "4-5" | "5-6",
+  ageBand: AgeBand,
   isPrimary = false
 ): number {
   if (ageBand === "3-4") {
-    return 96;
+    return MIN_TOUCH_PX.band_3_4;
   }
-  if (isPrimary) {
-    return 76;
-  }
-  return 64;
+  return isPrimary ? MIN_TOUCH_PX.primary : MIN_TOUCH_PX.floor;
 }
 
 export class InteractionManager {
@@ -36,6 +47,10 @@ export class InteractionManager {
     this.selectedSourceId = null;
   }
 
+  /**
+   * Tap-tap drag fallback (BR-ENG-06): first tap arms the source, second tap
+   * commits it to the target. Returns null while still awaiting the second tap.
+   */
   handleTapTapFallback(
     sourceId: string,
     targetId: string
@@ -53,11 +68,12 @@ export class InteractionManager {
     return result;
   }
 
-  startLongPressExit(onExitTriggered: () => void, durationMs = 800): void {
+  startLongPressExit(
+    onExitTriggered: () => void,
+    durationMs = DEFAULT_LONG_PRESS_EXIT_MS
+  ): void {
     this.cancelLongPressExit();
-    this.longPressTimer = setTimeout(() => {
-      onExitTriggered();
-    }, durationMs);
+    this.longPressTimer = setTimeout(onExitTriggered, durationMs);
   }
 
   cancelLongPressExit(): void {
@@ -69,7 +85,7 @@ export class InteractionManager {
 
   validateTouchTargetSize(
     target: TouchTarget,
-    ageBand: "3-4" | "4-5" | "5-6",
+    ageBand: AgeBand,
     isPrimary = false
   ): boolean {
     const minSize = getMinTouchTargetSize(ageBand, isPrimary);

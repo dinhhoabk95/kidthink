@@ -1,22 +1,14 @@
-import { appError } from "@kidthink/auth";
-import { adminCancelSubscription } from "@kidthink/db";
+import { appError } from "@mindkid/auth";
+import { adminCancelSubscription } from "@mindkid/db";
 import {
   type AdminSubscriptionCancelReason,
   AdminSubscriptionCancelRequestSchema,
-} from "@kidthink/shared";
+} from "@mindkid/shared";
 import { defineEventHandler, getRouterParam, readBody } from "h3";
-import {
-  requireSuperAdminSession,
-  respondToManagerAuthError,
-} from "../../../../utils/admin-auth-runtime.ts";
+import { requireSuperAdminSession } from "../../../../utils/admin-auth-runtime.ts";
 
 export default defineEventHandler(async (event) => {
-  let managerSession: ReturnType<typeof requireSuperAdminSession>;
-  try {
-    managerSession = requireSuperAdminSession(event);
-  } catch (error) {
-    return respondToManagerAuthError(event, error);
-  }
+  const managerSession = requireSuperAdminSession(event);
 
   const idParam = getRouterParam(event, "id");
   const subscriptionId = Number(idParam);

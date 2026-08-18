@@ -1,7 +1,7 @@
 export interface FeatureFlagDefinition {
   key: string;
-  nameVi: string;
-  descriptionVi: string;
+  name: string;
+  description: string;
   defaultValue: boolean;
   expiresAt: string; // ISO string
   safeDefaultReason: string;
@@ -10,8 +10,8 @@ export interface FeatureFlagDefinition {
 export const CODE_FEATURE_FLAGS: Record<string, FeatureFlagDefinition> = {
   ai_content_pipeline: {
     key: "ai_content_pipeline",
-    nameVi: "Pipeline AI sinh nội dung",
-    descriptionVi: "Bật/tắt tính năng hỗ trợ sinh nháp nội dung qua LLM",
+    name: "Pipeline AI sinh nội dung",
+    description: "Bật/tắt tính năng hỗ trợ sinh nháp nội dung qua LLM",
     defaultValue: false,
     expiresAt: "2026-12-31T23:59:59.000Z",
     safeDefaultReason:
@@ -19,8 +19,8 @@ export const CODE_FEATURE_FLAGS: Record<string, FeatureFlagDefinition> = {
   },
   payment_soft_unlock: {
     key: "payment_soft_unlock",
-    nameVi: "Mở khoá mềm thanh toán",
-    descriptionVi: "Tự động kích hoạt gói tạm thời khi có uỷ nhiệm chi hợp lệ",
+    name: "Mở khoá mềm thanh toán",
+    description: "Tự động kích hoạt gói tạm thời khi có uỷ nhiệm chi hợp lệ",
     defaultValue: true,
     expiresAt: "2026-12-31T23:59:59.000Z",
     safeDefaultReason:
@@ -28,8 +28,8 @@ export const CODE_FEATURE_FLAGS: Record<string, FeatureFlagDefinition> = {
   },
   weekly_progress_email: {
     key: "weekly_progress_email",
-    nameVi: "Email báo cáo tuần cho người lớn",
-    descriptionVi: "Tự động gửi email tổng kết tiến độ học tập hàng tuần",
+    name: "Email báo cáo tuần cho người lớn",
+    description: "Tự động gửi email tổng kết tiến độ học tập hàng tuần",
     defaultValue: false,
     expiresAt: "2026-12-31T23:59:59.000Z",
     safeDefaultReason:
@@ -37,8 +37,8 @@ export const CODE_FEATURE_FLAGS: Record<string, FeatureFlagDefinition> = {
   },
   studio_publish: {
     key: "studio_publish",
-    nameVi: "Xuất bản nội dung từ Studio",
-    descriptionVi: "Cho phép quản trị viên xuất bản nội dung ra production",
+    name: "Xuất bản nội dung từ Studio",
+    description: "Cho phép quản trị viên xuất bản nội dung ra production",
     defaultValue: true,
     expiresAt: "2027-06-30T23:59:59.000Z",
     safeDefaultReason:
@@ -46,16 +46,16 @@ export const CODE_FEATURE_FLAGS: Record<string, FeatureFlagDefinition> = {
   },
   guest_play: {
     key: "guest_play",
-    nameVi: "Chơi thử không cần đăng nhập",
-    descriptionVi: "Cho phép khách vãng lai trải nghiệm các level miễn phí",
+    name: "Chơi thử không cần đăng nhập",
+    description: "Cho phép khách vãng lai trải nghiệm các level miễn phí",
     defaultValue: true,
     expiresAt: "2027-06-30T23:59:59.000Z",
     safeDefaultReason: "Mặc định bật để thu hút và tiếp cận người dùng mới",
   },
   worksheet_activity: {
     key: "worksheet_activity",
-    nameVi: "Hoạt động phiếu bài tập (Worksheet)",
-    descriptionVi: "Cho phép tạo và liên kết hoạt động dạng phiếu bài tập PDF",
+    name: "Hoạt động phiếu bài tập (Worksheet)",
+    description: "Cho phép tạo và liên kết hoạt động dạng phiếu bài tập PDF",
     defaultValue: false,
     expiresAt: "2027-12-31T23:59:59.000Z",
     safeDefaultReason: "Tính năng worksheet thuộc Phase 4, mặc định tắt ở MVP",

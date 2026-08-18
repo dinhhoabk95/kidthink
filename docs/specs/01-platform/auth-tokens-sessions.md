@@ -2,7 +2,7 @@
 spec: AUTH-TOKENS-SESSIONS
 title: Token, cookie và vòng đời phiên
 area: platform
-status: approved
+status: implemented
 mvp: true
 phase: P0
 reviewed: 2026-08-14
@@ -33,11 +33,11 @@ hạn tuyệt đối tối đa **365 ngày** tính từ lần đăng nhập gố
 không được dùng để phục hồi phiên khi Redis thiếu dữ liệu.
 
 `nuxt-auth-utils` vẫn cung cấp `useUserSession()` và `/api/_auth/session`, nhưng không phải
-session store: H3 mặc định seal dữ liệu trong cookie và không có Redis store option. KidThink
+session store: H3 mặc định seal dữ liệu trong cookie và không có Redis store option. MindKid
 chỉ seal locator trong `secure`, rồi `sessionHooks.fetch` đọc safe projection từ Redis.
-KidThink không phát hoặc nhận first-party JWT cho session, remember, MFA challenge hay service
+MindKid không phát hoặc nhận first-party JWT cho session, remember, MFA challenge hay service
 auth hiện hành và gỡ dependency trực tiếp `jose`. Token OIDC do provider trả về chỉ là input
-protocol tạm thời do `openid-client` xác minh; không lưu, forward hoặc dùng làm KidThink session.
+protocol tạm thời do `openid-client` xác minh; không lưu, forward hoặc dùng làm MindKid session.
 
 OAuth Google/Facebook ở P1 tiếp tục dùng `openid-client`; password dùng Argon2id; TOTP dùng
 OTPAuth. Cấm OAuth/password/WebAuthn helper tích hợp của `nuxt-auth-utils`, Supabase Auth,
@@ -127,7 +127,7 @@ credential của bước mật khẩu; client không thể thêm tuỳ chọn n�
 | `BR-AUT-15` | Manager cấm đăng nhập bằng SNS | Sự cố provider không được thành sự cố quản trị |
 | `BR-AUT-16` | `users.password_hash` nullable; tài khoản chỉ-SNS hợp lệ | Bất biến thật là mỗi User có ít nhất một login method |
 | `BR-AUT-17` | SNS là yếu tố thứ nhất, không thay MFA | Provider không chứng minh thiết bị thứ hai |
-| `BR-AUT-18` | Cấm lưu token OAuth provider trong session hoặc bảng | KidThink không cần gọi provider sau login |
+| `BR-AUT-18` | Cấm lưu token OAuth provider trong session hoặc bảng | MindKid không cần gọi provider sau login |
 | `BR-AUT-25` | User/Manager browser auth chỉ dùng opaque cookie session; cấm phát hoặc nhận JWT access/Bearer cho hai guard này | Loại bỏ token client tự mang claim và cho phép revoke tập trung |
 | `BR-AUT-26` | Cookie session chỉ chứa locator ngẫu nhiên; identity, role, reauth và quyền nằm trong Redis | Cookie không được trở thành session authority thứ hai |
 | `BR-AUT-27` | Session làm việc hết hạn tuyệt đối sau 3600 giây, không sliding | Hoạt động liên tục không được kéo phiên vô hạn |
@@ -141,7 +141,7 @@ credential của bước mật khẩu; client không thể thêm tuỳ chọn n�
 | `BR-AUT-35` | `nuxt-auth-utils` chỉ cung cấp projection/composable; cấm OAuth, password, WebAuthn helper và cấm tin data sealed ngoài locator | Module không có Redis store và không được tạo auth contract thứ hai |
 | `BR-AUT-36` | Redis auth store nằm trong `packages/auth`, dùng client riêng, AOF, `noeviction`, health check và alert; không đi qua `packages/cache` fail-open | Cache miss được phép, session authority thì không |
 | `BR-AUT-37` | PostgreSQL `active_sessions` chỉ là metadata/audit, không chứa session/remember token và không phục hồi auth | Tránh hai authority và cửa sổ revoke liên datastore |
-| `BR-AUT-38` | Mọi credential auth do KidThink phát đều opaque; MFA challenge nằm trong Redis, TTL tối đa 5 phút, one-time consume. Cấm direct dependency/import `jose` và cấm first-party JWT/JWS | Một cơ chế credential duy nhất giảm bề mặt crypto, tránh self-contained challenge sống ngoài revocation authority |
+| `BR-AUT-38` | Mọi credential auth do MindKid phát đều opaque; MFA challenge nằm trong Redis, TTL tối đa 5 phút, one-time consume. Cấm direct dependency/import `jose` và cấm first-party JWT/JWS | Một cơ chế credential duy nhất giảm bề mặt crypto, tránh self-contained challenge sống ngoài revocation authority |
 
 Các ID `BR-AUT-01`, `BR-AUT-03`–`05`, `BR-AUT-07` và `BR-AUT-19`–`24` đã nghỉ cùng contract
 JWT/refresh trước đó; không tái sử dụng.
@@ -231,7 +231,7 @@ hoặc dữ liệu trẻ ngoài allow-list.
 
 | Cookie | Cơ chế | HttpOnly | SameSite | Path | TTL |
 |---|---|:--:|---|---|---|
-| `kidthink-user-session` / `kidthink-manager-session` | Sealed locator chứa opaque session token | Có | Lax | `/` | 1 giờ tuyệt đối |
+| `mindkid-user-session` / `mindkid-manager-session` | Sealed locator chứa opaque session token | Có | Lax | `/` | 1 giờ tuyệt đối |
 | `tm_u_remember` | Remember credential User, chỉ tạo khi chọn | Có | Strict | `/api/guest/auth/users/remember` | tối đa 365 ngày tuyệt đối |
 | `tm_m_remember` | Remember credential Manager, chỉ tạo sau MFA | Có | Strict | `/api/guest/auth/managers/remember` | tối đa 365 ngày tuyệt đối |
 | `tm_u_csrf` / `tm_m_csrf` | Double-submit; TTL theo credential dài nhất hiện có | Cấm | Strict | `/` | 1 giờ hoặc tối đa 365 ngày |

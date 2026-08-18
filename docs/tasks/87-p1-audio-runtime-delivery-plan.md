@@ -84,7 +84,7 @@ Scenario: An toàn tuyệt đối không thu âm
 ## 8. Verification
 
 ```bash
-pnpm --filter @kidthink/game-engine test
+pnpm --filter @mindkid/game-engine test
 pnpm check
 pnpm test
 ```

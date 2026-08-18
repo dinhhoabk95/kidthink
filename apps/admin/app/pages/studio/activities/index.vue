@@ -147,9 +147,9 @@
                 {{ act.title }}
                 <div
                   class="text-xs text-slate-500 truncate max-w-xs font-normal"
-                  v-if="act.materials_vi"
+                  v-if="act.materials"
                 >
-                  Vật liệu: {{ act.materials_vi }}
+                  Vật liệu: {{ act.materials }}
                 </div>
               </td>
               <td class="py-3 px-4 text-slate-600 dark:text-slate-300">
@@ -330,7 +330,7 @@
                 class="w-full min-h-11 px-3 py-2 rounded-2xl border-2 border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:border-indigo-500 focus:outline-none"
                 id="form-materials"
                 type="text"
-                v-model="activeForm.materials_vi"
+                v-model="activeForm.materials"
                 :placeholder="isOffscreenKind ? 'Bắt buộc có vật liệu (ví dụ: 10 hạt đậu, thẻ số)' : 'Tuỳ chọn'"
               >
             </div>
@@ -390,7 +390,7 @@
     kind: string;
     title: string;
     instruction: string;
-    materials_vi: string | null;
+    materials: string | null;
     estimated_minutes: number;
     access_tier: string;
     status: string;
@@ -414,7 +414,7 @@
     kind: "manipulative",
     title: "",
     instruction: "",
-    materials_vi: "",
+    materials: "",
     estimated_minutes: 10,
     access_tier: "standard",
     ref_id: null,
@@ -525,7 +525,7 @@
       kind: "manipulative",
       title: "",
       instruction: "",
-      materials_vi: "",
+      materials: "",
       estimated_minutes: 10,
       access_tier: "standard",
       ref_id: null,

@@ -97,7 +97,7 @@ describe("Personal Curriculum Service & Lifecycle Integration Tests (Task #65 / 
       .insert(gameTemplates)
       .values({
         code: "GT-999",
-        nameVi: "Game template test",
+        name: "Game template test",
         mechanic: "drag_drop",
         contentContract: {},
       })
@@ -117,7 +117,7 @@ describe("Personal Curriculum Service & Lifecycle Integration Tests (Task #65 / 
     async function insertUniqueGameLevel(
       entityId: number,
       difficulty: number,
-      titleVi: string,
+      title: string,
       accessTier: "standard" | "premium"
     ): Promise<number> {
       for (let i = 0; i < 20; i++) {
@@ -135,7 +135,7 @@ describe("Personal Curriculum Service & Lifecycle Integration Tests (Task #65 / 
               entityId,
               templateId,
               difficulty,
-              titleVi,
+              title,
               accessTier,
               status: "published",
               contentPack: {},
@@ -164,7 +164,7 @@ describe("Personal Curriculum Service & Lifecycle Integration Tests (Task #65 / 
     // 5. Create lessons (published & archived)
     async function insertUniqueLesson(
       entityId: number,
-      titleVi: string,
+      title: string,
       status: "published" | "archived"
     ): Promise<number> {
       for (let i = 0; i < 20; i++) {
@@ -180,7 +180,7 @@ describe("Personal Curriculum Service & Lifecycle Integration Tests (Task #65 / 
             .values({
               code,
               entityId,
-              titleVi,
+              title,
               accessTier: "standard",
               status,
               estimatedMinutes: 20,
@@ -211,7 +211,7 @@ describe("Personal Curriculum Service & Lifecycle Integration Tests (Task #65 / 
       .values({
         code: systemCurriculumCode,
         entityId: 301,
-        titleVi: "Chương trình mẫu hệ thống",
+        title: "Chương trình mẫu hệ thống",
         accessTier: "standard",
         status: "published",
         durationWeeks: 4,

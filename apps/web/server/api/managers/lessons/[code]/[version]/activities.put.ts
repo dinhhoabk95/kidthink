@@ -4,11 +4,12 @@ import {
   lessonActivities,
   lessons,
   writeAudit,
-} from "@kidthink/db";
+} from "@mindkid/db";
 import { and, eq } from "drizzle-orm";
 import { createError, defineEventHandler, getRouterParam, readBody } from "h3";
 import { z } from "zod";
 import { requireManagerSession } from "../../../../../utils/admin-auth-runtime.js";
+import { throwValidationError } from "../../../../../utils/api-error.js";
 
 const putActivitiesSchema = z.object({
   items: z.array(
@@ -97,12 +98,7 @@ export default defineEventHandler(async (event) => {
   const rawBody = await readBody(event);
   const parsed = putActivitiesSchema.safeParse(rawBody);
   if (!parsed.success) {
-    throw createError({
-      statusCode: 422,
-      statusMessage: "VALIDATION_FAILED",
-      message: parsed.error.issues.map((i) => i.message).join("; "),
-      data: parsed.error.issues,
-    });
+    throwValidationError(parsed.error);
   }
 
   const { items, expected_version } = parsed.data;

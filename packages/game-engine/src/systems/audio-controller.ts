@@ -112,50 +112,34 @@ export class AudioController {
     this.sfxEngine.play(type);
   }
 
-  playPromptAudio(_ref?: string): void {
-    if (!(this.enabled && _ref)) {
-      return;
+  playPromptAudio(ref?: string): void {
+    if (ref) {
+      this.play("tap");
     }
-    this.sfxEngine.play("tap");
   }
 
   /** Soft amber chime on retry (BR-ENG-07 non-punitive) */
   playSoftFeedbackSound(): void {
-    if (!this.enabled) {
-      return;
-    }
-    this.sfxEngine.play("amber_soft");
+    this.play("amber_soft");
   }
 
   /** Pop celebration at touch point (BR-ENG-08) */
   playPopCelebrateSound(): void {
-    if (!this.enabled) {
-      return;
-    }
-    this.sfxEngine.play("pop_celebrate");
+    this.play("pop_celebrate");
   }
 
   /** Grand fanfare on level completion */
   playLevelCelebrateSound(): void {
-    if (!this.enabled) {
-      return;
-    }
-    this.sfxEngine.play("level_celebrate");
+    this.play("level_celebrate");
   }
 
   /** Tap sound on interaction */
   playTapSound(): void {
-    if (!this.enabled) {
-      return;
-    }
-    this.sfxEngine.play("tap");
+    this.play("tap");
   }
 
   /** Sound on holding exit button */
   playExitSound(): void {
-    if (!this.enabled) {
-      return;
-    }
-    this.sfxEngine.play("longpress_exit");
+    this.play("longpress_exit");
   }
 }

@@ -10,8 +10,8 @@ import type {
   ContentLifecycleStatus,
   WorksheetFormInput,
   WorksheetLayoutTemplate,
-} from "@kidthink/shared";
-import { validateWorksheetContent } from "@kidthink/shared";
+} from "@mindkid/shared";
+import { validateWorksheetContent } from "@mindkid/shared";
 import { and, desc, eq, ilike, or, type SQL, sql } from "drizzle-orm";
 import { getOwnerDb } from "../client.ts";
 import { worksheets } from "../schema/content.ts";
@@ -78,7 +78,7 @@ export async function listWorksheets(options: ListWorksheetsOptions = {}) {
     conditions.push(
       or(
         ilike(worksheets.code, `%${options.search}%`),
-        ilike(worksheets.titleVi, `%${options.search}%`)
+        ilike(worksheets.title, `%${options.search}%`)
       ) as SQL
     );
   }
@@ -155,7 +155,7 @@ export async function createWorksheetDraft(
     title: input.title,
     layout_template: input.layout_template,
     content_blocks: input.content_blocks,
-    instructions_vi: input.instructions_vi,
+    instructions: input.instructions,
     learning_objective_ids: input.learning_objective_ids,
   });
 
@@ -182,10 +182,10 @@ export async function createWorksheetDraft(
         entityId,
         code,
         contentVersion: 1,
-        titleVi: input.title,
+        title: input.title,
         layoutTemplate: input.layout_template,
         contentBlocks: input.content_blocks,
-        instructionsVi: input.instructions_vi,
+        instructions: input.instructions,
         learningObjectiveIds: input.learning_objective_ids,
         accessTier: input.access_tier,
         status: "draft",
@@ -235,10 +235,10 @@ export async function updateWorksheetDraft(
     );
   }
 
-  const mergedTitle = input.title ?? existing.titleVi;
+  const mergedTitle = input.title ?? existing.title;
   const mergedTemplate = input.layout_template ?? existing.layoutTemplate;
   const mergedBlocks = input.content_blocks ?? existing.contentBlocks;
-  const mergedInstructions = input.instructions_vi ?? existing.instructionsVi;
+  const mergedInstructions = input.instructions ?? existing.instructions;
   const mergedObjectives =
     input.learning_objective_ids ??
     (existing.learningObjectiveIds as number[]) ??
@@ -248,7 +248,7 @@ export async function updateWorksheetDraft(
     title: mergedTitle,
     layout_template: mergedTemplate,
     content_blocks: mergedBlocks,
-    instructions_vi: mergedInstructions,
+    instructions: mergedInstructions,
     learning_objective_ids: mergedObjectives,
   });
 
@@ -261,10 +261,10 @@ export async function updateWorksheetDraft(
   }
 
   const patch: Record<string, unknown> = {
-    titleVi: mergedTitle,
+    title: mergedTitle,
     layoutTemplate: mergedTemplate,
     contentBlocks: mergedBlocks,
-    instructionsVi: mergedInstructions,
+    instructions: mergedInstructions,
     learningObjectiveIds: mergedObjectives,
     accessTier: input.access_tier ?? existing.accessTier,
     updatedAt: new Date(),
@@ -336,10 +336,10 @@ export async function createNewWorksheetVersion(
         entityId: latest.entityId,
         code: latest.code,
         contentVersion: newVersion,
-        titleVi: latest.titleVi,
+        title: latest.title,
         layoutTemplate: latest.layoutTemplate,
         contentBlocks: latest.contentBlocks,
-        instructionsVi: latest.instructionsVi,
+        instructions: latest.instructions,
         learningObjectiveIds: latest.learningObjectiveIds,
         accessTier: latest.accessTier,
         status: "draft",
@@ -388,10 +388,10 @@ export async function renderWorksheetArtifact(
   const renderResult = renderWorksheetPdf({
     code: ws.code,
     version: ws.contentVersion,
-    title: ws.titleVi,
+    title: ws.title,
     layout_template: ws.layoutTemplate,
     content_blocks: ws.contentBlocks,
-    instructions_vi: ws.instructionsVi || "",
+    instructions: ws.instructions || "",
   });
 
   const inspection = inspectWorksheetPdf(renderResult.pdfBuffer);

@@ -12,6 +12,90 @@ export type SFXType =
   | "level_celebrate"
   | "longpress_exit";
 
+/** Soft attack — BR-ENG-16 requires >= 20ms so onsets never startle a child. */
+const RAMP_IN_SEC = 0.02;
+/** exponentialRampToValueAtTime cannot target 0. */
+const SILENCE = 0.0001;
+/** Tail padding so the oscillator outlives its own release. */
+const STOP_PADDING_SEC = 0.01;
+
+interface NoteRecipe {
+  /** Offset from the moment `play()` is called. */
+  delaySec: number;
+  type: OscillatorType;
+  freq: number;
+  /** Optional pitch glide, e.g. the downward sigh of `amber_soft`. */
+  glideTo?: { freq: number; overSec: number };
+  volume: number;
+  durationSec: number;
+  /** Release length — BR-ENG-16 requires >= 40ms. */
+  rampOutSec: number;
+}
+
+const POP_NOTES = [523, 659, 784]; // C5, E5, G5
+const FANFARE_NOTES = [523, 659, 784, 1047, 784, 1047]; // C5 E5 G5 C6 G5 C6
+const FANFARE_FINAL_INDEX = FANFARE_NOTES.length - 1;
+
+const SFX_RECIPES: Record<SFXType, NoteRecipe[]> = {
+  tap: [
+    {
+      delaySec: 0,
+      type: "sine",
+      freq: 600,
+      volume: 0.1,
+      durationSec: 0.08,
+      rampOutSec: 0.04,
+    },
+  ],
+
+  longpress_exit: [
+    {
+      delaySec: 0,
+      type: "triangle",
+      freq: 350,
+      volume: 0.15,
+      durationSec: 0.25,
+      rampOutSec: 0.1,
+    },
+  ],
+
+  /** Ascending chime at the touch point on a correct answer (BR-ENG-08). */
+  pop_celebrate: POP_NOTES.map((freq, i) => ({
+    delaySec: i * 0.07,
+    type: "triangle" as OscillatorType,
+    freq,
+    volume: 0.18,
+    durationSec: 0.25,
+    rampOutSec: 0.05,
+  })),
+
+  /** Non-punitive downward sigh on a wrong answer (BR-ENG-07). */
+  amber_soft: [
+    {
+      delaySec: 0,
+      type: "sine",
+      freq: 320,
+      glideTo: { freq: 220, overSec: 0.2 },
+      volume: 0.12,
+      durationSec: 0.22,
+      rampOutSec: 0.06,
+    },
+  ],
+
+  /** Grand fanfare, level completion only (BR-ENG-08). */
+  level_celebrate: FANFARE_NOTES.map((freq, i) => {
+    const durationSec = i === FANFARE_FINAL_INDEX ? 0.5 : 0.16;
+    return {
+      delaySec: i * 0.09,
+      type: (i < 4 ? "triangle" : "sine") as OscillatorType,
+      freq,
+      volume: 0.16,
+      durationSec,
+      rampOutSec: Math.max(0.04, durationSec * 0.35),
+    };
+  }),
+};
+
 export class SFXEngine {
   private ctx: AudioContext | null = null;
   private isMuted = false;
@@ -49,132 +133,46 @@ export class SFXEngine {
     if (!ctx) {
       return;
     }
-
-    switch (type) {
-      case "tap":
-        this.playTone(ctx, 600, 0.08, "sine", 0.1);
-        break;
-      case "pop_celebrate":
-        this.playPopCelebrate(ctx);
-        break;
-      case "amber_soft":
-        this.playAmberSoft(ctx);
-        break;
-      case "level_celebrate":
-        this.playLevelCelebrate(ctx);
-        break;
-      case "longpress_exit":
-        this.playTone(ctx, 350, 0.25, "triangle", 0.15);
-        break;
-      default:
-        break;
+    for (const note of SFX_RECIPES[type]) {
+      playNote(ctx, note, ctx.currentTime + note.delaySec);
     }
   }
+}
 
-  /** Play tone with ramp-in >= 20ms and ramp-out >= 40ms (BR-ENG-16) */
-  private playTone(
-    ctx: AudioContext,
-    freq: number,
-    duration: number,
-    type: OscillatorType = "sine",
-    volume = 0.15
-  ): void {
-    const osc = ctx.createOscillator();
-    const gain = ctx.createGain();
-    osc.type = type;
-    osc.frequency.value = freq;
+/** Schedule one oscillator with the BR-ENG-16 attack/release envelope. */
+function playNote(
+  ctx: AudioContext,
+  note: NoteRecipe,
+  startTime: number
+): void {
+  const osc = ctx.createOscillator();
+  const gain = ctx.createGain();
+  osc.type = note.type;
 
-    const startTime = ctx.currentTime;
-    const rampIn = 0.02; // 20ms ramp-in (BR-ENG-16)
-    const rampOut = Math.max(0.04, duration * 0.4); // >= 40ms ramp-out (BR-ENG-16)
-    const sustainEnd = Math.max(
-      startTime + rampIn,
-      startTime + duration - rampOut
+  if (note.glideTo) {
+    osc.frequency.setValueAtTime(note.freq, startTime);
+    osc.frequency.exponentialRampToValueAtTime(
+      note.glideTo.freq,
+      startTime + note.glideTo.overSec
     );
-    const stopTime = sustainEnd + rampOut;
-
-    gain.gain.setValueAtTime(0.0001, startTime);
-    gain.gain.linearRampToValueAtTime(volume, startTime + rampIn);
-    gain.gain.setValueAtTime(volume, sustainEnd);
-    gain.gain.exponentialRampToValueAtTime(0.0001, stopTime);
-
-    osc.connect(gain);
-    gain.connect(ctx.destination);
-    osc.start(startTime);
-    osc.stop(stopTime + 0.01);
+  } else {
+    osc.frequency.value = note.freq;
   }
 
-  /** Pop celebrate sound at touch point: C5 -> E5 -> G5 ascending chime with ramp-in >= 20ms and ramp-out >= 40ms */
-  private playPopCelebrate(ctx: AudioContext): void {
-    const notes = [523, 659, 784]; // C5, E5, G5
-    for (let i = 0; i < notes.length; i++) {
-      const osc = ctx.createOscillator();
-      const gain = ctx.createGain();
-      osc.type = "triangle";
-      osc.frequency.value = notes[i] as number;
-      const startTime = ctx.currentTime + i * 0.07;
-      const duration = 0.25;
-      const rampIn = 0.02; // 20ms
-      const rampOut = 0.05; // 50ms >= 40ms
+  // Hold the peak until the release begins, but never cut the attack short.
+  const sustainEnd = Math.max(
+    startTime + RAMP_IN_SEC,
+    startTime + note.durationSec - note.rampOutSec
+  );
+  const stopTime = sustainEnd + note.rampOutSec;
 
-      gain.gain.setValueAtTime(0.0001, startTime);
-      gain.gain.linearRampToValueAtTime(0.18, startTime + rampIn);
-      gain.gain.setValueAtTime(0.18, startTime + duration - rampOut);
-      gain.gain.exponentialRampToValueAtTime(0.0001, startTime + duration);
+  gain.gain.setValueAtTime(SILENCE, startTime);
+  gain.gain.linearRampToValueAtTime(note.volume, startTime + RAMP_IN_SEC);
+  gain.gain.setValueAtTime(note.volume, sustainEnd);
+  gain.gain.exponentialRampToValueAtTime(SILENCE, stopTime);
 
-      osc.connect(gain);
-      gain.connect(ctx.destination);
-      osc.start(startTime);
-      osc.stop(startTime + duration + 0.01);
-    }
-  }
-
-  /** Non-punitive amber soft feedback sound with ramp-in >= 20ms and ramp-out >= 40ms (BR-ENG-07, BR-ENG-16) */
-  private playAmberSoft(ctx: AudioContext): void {
-    const osc = ctx.createOscillator();
-    const gain = ctx.createGain();
-    osc.type = "sine";
-    const startTime = ctx.currentTime;
-    osc.frequency.setValueAtTime(320, startTime);
-    osc.frequency.exponentialRampToValueAtTime(220, startTime + 0.2);
-
-    const rampIn = 0.02; // 20ms
-    const rampOut = 0.06; // 60ms >= 40ms
-    const duration = 0.22;
-
-    gain.gain.setValueAtTime(0.0001, startTime);
-    gain.gain.linearRampToValueAtTime(0.12, startTime + rampIn);
-    gain.gain.setValueAtTime(0.12, startTime + duration - rampOut);
-    gain.gain.exponentialRampToValueAtTime(0.0001, startTime + duration);
-
-    osc.connect(gain);
-    gain.connect(ctx.destination);
-    osc.start(startTime);
-    osc.stop(startTime + duration + 0.01);
-  }
-
-  /** Level completion grand fanfare */
-  private playLevelCelebrate(ctx: AudioContext): void {
-    const notes = [523, 659, 784, 1047, 784, 1047]; // C5 E5 G5 C6 G5 C6
-    for (let i = 0; i < notes.length; i++) {
-      const osc = ctx.createOscillator();
-      const gain = ctx.createGain();
-      osc.type = i < 4 ? "triangle" : "sine";
-      osc.frequency.value = notes[i] as number;
-      const startTime = ctx.currentTime + i * 0.09;
-      const duration = i === notes.length - 1 ? 0.5 : 0.16;
-      const rampIn = 0.02;
-      const rampOut = Math.max(0.04, duration * 0.35);
-
-      gain.gain.setValueAtTime(0.0001, startTime);
-      gain.gain.linearRampToValueAtTime(0.16, startTime + rampIn);
-      gain.gain.setValueAtTime(0.16, startTime + duration - rampOut);
-      gain.gain.exponentialRampToValueAtTime(0.0001, startTime + duration);
-
-      osc.connect(gain);
-      gain.connect(ctx.destination);
-      osc.start(startTime);
-      osc.stop(startTime + duration + 0.01);
-    }
-  }
+  osc.connect(gain);
+  gain.connect(ctx.destination);
+  osc.start(startTime);
+  osc.stop(stopTime + STOP_PADDING_SEC);
 }

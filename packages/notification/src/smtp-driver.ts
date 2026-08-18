@@ -1,4 +1,4 @@
-import type { NotificationCode } from "@kidthink/shared";
+import type { NotificationCode } from "@mindkid/shared";
 import nodemailer, { type Transporter } from "nodemailer";
 import { renderEmailTemplate } from "./mjml-renderer.js";
 

@@ -299,7 +299,7 @@
                 {{ dashboardData.curriculum.duration_weeks }}
               </span>
               <h3 class="text-xl font-bold font-heading text-surface-900">
-                {{ dashboardData.curriculum.title_vi }}
+                {{ dashboardData.curriculum.title }}
               </h3>
             </div>
 

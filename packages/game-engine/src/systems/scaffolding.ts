@@ -1,10 +1,26 @@
 /**
  * ScaffoldingSystem — Escalate hints automatically based on age-band timer or miss streak.
  * Implements BR-SCF-01..08, BR-ENG-10, BR-A11-11 & spec SCAFFOLDING-AND-HINTS.
+ *
+ * Never on request — a 3 year old will not ask for help (spec §7.3).
  */
 
+import type { AgeBand } from "../contracts/types";
+
+export type { AgeBand } from "../contracts/types";
+
 export type ScaffoldingLevel = 0 | 1 | 2 | 3;
-export type AgeBand = "3-4" | "4-5" | "5-6";
+
+/** Assumed frame budget when a caller ticks without supplying a delta (~60fps). */
+const DEFAULT_FRAME_MS = 16.6;
+/** Time stuck at L3 before offering to skip the round. */
+const SKIP_SUGGEST_AFTER_MS = 60_000;
+
+/** Ghost hand playback rate per level — slower at L3 so it reads as a demo. */
+const GHOST_HAND_SPEED: Partial<Record<ScaffoldingLevel, number>> = {
+  2: 1.0,
+  3: 0.5,
+};
 
 export interface ScaffoldState {
   level: ScaffoldingLevel;
@@ -90,6 +106,31 @@ function computeTargetLevel(
   return { targetLevel: 0, triggerType: "timer" };
 }
 
+/** Advance timers and settle `state` on the level it has escalated to. */
+function advanceState(
+  state: ScaffoldState,
+  config: ScaffoldingBandThresholds,
+  deltaMs: number
+) {
+  state.sinceMs += deltaMs;
+  const { targetLevel, triggerType } = computeTargetLevel(state, config);
+
+  if (targetLevel === 3) {
+    state.l3DurationMs += deltaMs;
+  }
+
+  let skipJustSuggested = false;
+  if (state.l3DurationMs >= SKIP_SUGGEST_AFTER_MS && !state.skipSuggested) {
+    state.skipSuggested = true;
+    skipJustSuggested = true;
+  }
+
+  const levelChanged = targetLevel !== state.level;
+  state.level = targetLevel;
+
+  return { triggerType, levelChanged, skipJustSuggested };
+}
+
 export class ScaffoldingSystem {
   private readonly internalAgeBand: AgeBand;
   private readonly internalState: ScaffoldState;
@@ -129,7 +170,7 @@ export class ScaffoldingSystem {
       level: 2,
       trigger: "voice_fallback",
       focusIndex: targetFocusIndex,
-      ghostHandSpeed: 1.0,
+      ghostHandSpeed: GHOST_HAND_SPEED[2],
       reducedMotion: prefersReducedMotion,
     };
   }
@@ -153,32 +194,22 @@ export class ScaffoldingSystem {
   ): ScaffoldAction | ScaffoldingLevel | null {
     if (state !== undefined) {
       return this.tickStateless(
-        deltaMs ?? 16.6,
+        deltaMs ?? DEFAULT_FRAME_MS,
         state,
         ageBand ?? this.internalAgeBand,
         targetFocusIndex ?? 0,
         prefersReducedMotion ?? false
       );
     }
-    return this.tickInternal(deltaMs ?? 16.6);
+    return this.tickInternal(deltaMs ?? DEFAULT_FRAME_MS);
   }
 
   private tickInternal(deltaMs: number): ScaffoldingLevel {
-    this.internalState.sinceMs += deltaMs;
-    const config = SCAFFOLDING_BY_BAND[this.internalAgeBand];
-    const { targetLevel } = computeTargetLevel(this.internalState, config);
-
-    if (targetLevel === 3) {
-      this.internalState.l3DurationMs += deltaMs;
-    }
-    if (
-      this.internalState.l3DurationMs >= 60_000 &&
-      !this.internalState.skipSuggested
-    ) {
-      this.internalState.skipSuggested = true;
-    }
-
-    this.internalState.level = targetLevel;
+    advanceState(
+      this.internalState,
+      SCAFFOLDING_BY_BAND[this.internalAgeBand],
+      deltaMs
+    );
     return this.internalState.level;
   }
 
@@ -189,48 +220,30 @@ export class ScaffoldingSystem {
     targetFocusIndex: number,
     prefersReducedMotion: boolean
   ): ScaffoldAction | null {
-    state.sinceMs += deltaMs;
-    const config = SCAFFOLDING_BY_BAND[ageBand];
-    const { targetLevel, triggerType } = computeTargetLevel(state, config);
-
-    if (targetLevel === 3) {
-      state.l3DurationMs += deltaMs;
-    }
-
-    let roundSkippedSuggested = false;
-    if (state.l3DurationMs >= 60_000 && !state.skipSuggested) {
-      state.skipSuggested = true;
-      roundSkippedSuggested = true;
-    }
-
+    const { triggerType, levelChanged, skipJustSuggested } = advanceState(
+      state,
+      SCAFFOLDING_BY_BAND[ageBand],
+      deltaMs
+    );
     state.focusIndex = targetFocusIndex;
-    const levelChanged = targetLevel !== state.level;
-    state.level = targetLevel;
 
-    if (levelChanged || roundSkippedSuggested) {
-      let ghostHandSpeed: number | undefined;
-      if (state.level === 3) {
-        ghostHandSpeed = 0.5;
-      } else if (state.level === 2) {
-        ghostHandSpeed = 1.0;
-      }
-
-      return {
-        level: state.level,
-        trigger: triggerType,
-        focusIndex: targetFocusIndex,
-        ghostHandSpeed,
-        reducedMotion: prefersReducedMotion,
-        roundSkippedSuggested,
-      };
+    if (!(levelChanged || skipJustSuggested)) {
+      return null;
     }
 
-    return null;
+    return {
+      level: state.level,
+      trigger: triggerType,
+      focusIndex: targetFocusIndex,
+      ghostHandSpeed: GHOST_HAND_SPEED[state.level],
+      reducedMotion: prefersReducedMotion,
+      roundSkippedSuggested: skipJustSuggested,
+    };
   }
 
   recordMiss(): ScaffoldingLevel {
     this.internalState.missStreak += 1;
-    this.tick(16.6);
+    this.tick(DEFAULT_FRAME_MS);
     return this.internalState.level;
   }
 

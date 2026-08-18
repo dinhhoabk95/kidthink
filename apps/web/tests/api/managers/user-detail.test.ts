@@ -5,7 +5,7 @@ import {
   packages,
   paymentOrders,
   users,
-} from "@kidthink/db";
+} from "@mindkid/db";
 import { and, eq } from "drizzle-orm";
 import { describe, expect, it } from "vitest";
 import handler from "../../../server/api/managers/users/[uuid].get";
@@ -38,7 +38,6 @@ function mockEvent(
               manager_id: 1,
               display_name: "Super Admin",
               session_id: "sess_mgr_1",
-              refresh_token_version: 1,
               role: managerRole,
             },
           }
@@ -151,8 +150,8 @@ describe("Task 4 — GET /api/managers/users/[uuid] Detail (BR-USD-01, BR-USD-04
       .insert(packages)
       .values({
         code: "PKG_TEST_STD",
-        nameVi: "Gói chuẩn",
-        audienceVi: "Người dùng",
+        name: "Gói chuẩn",
+        audience: "Người dùng",
         offers: [],
       })
       .onConflictDoNothing();

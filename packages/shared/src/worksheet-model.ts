@@ -154,7 +154,7 @@ export const differenceSpotSchema = z.object({
   x_pct: z.number().min(0).max(100),
   y_pct: z.number().min(0).max(100),
   radius_mm: z.number().min(10).default(12), // 10mm radius = 20mm diameter (BR-WSM-04)
-  description_adult_vi: z.string(),
+  description_adult: z.string(),
 });
 
 export const spotDifferencesBlockSchema = z.object({
@@ -195,7 +195,7 @@ export const worksheetFormSchema = z.object({
     }),
   }),
   content_blocks: worksheetContentBlockSchema,
-  instructions_vi: z
+  instructions: z
     .string()
     .min(10, "Hướng dẫn cho người lớn ở chân trang phải có ít nhất 10 ký tự"),
   learning_objective_ids: z
@@ -225,7 +225,7 @@ export function validateWorksheetContent(input: {
   title: string;
   layout_template: string;
   content_blocks: unknown;
-  instructions_vi?: string | null;
+  instructions?: string | null;
   learning_objective_ids?: (number | string)[];
 }): WorksheetValidationResult {
   const errors: string[] = [];
@@ -264,7 +264,7 @@ export function validateWorksheetContent(input: {
   }
 
   // 4. BR-WSM-05: Instructions for adults in footer
-  if (!input.instructions_vi || input.instructions_vi.trim().length < 10) {
+  if (!input.instructions || input.instructions.trim().length < 10) {
     errors.push(
       "BR-WSM-05: Worksheet bắt buộc phải có hướng dẫn sư phạm cho người lớn ở chân trang (tối thiểu 10 ký tự)."
     );

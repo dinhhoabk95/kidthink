@@ -21,13 +21,12 @@ export const LESSON_BATCH_04: LessonSeed[] = [
       target_age_min: 3,
       target_age_max: 4,
       estimated_minutes: 20,
-      materials_vi: "Hộp các-tông, gấu bông",
-      warm_up_vi:
-        "Khởi động: Giơ hai tay lên trời rồi hạ xuống chạm đất 3 phút.",
-      reflection_vi: "Đúc kết: Bé nhắc lại vị trí bạn Gấu vừa nằm ngủ.",
-      assessment_vi:
+      materials: "Hộp các-tông, gấu bông",
+      warm_up: "Khởi động: Giơ hai tay lên trời rồi hạ xuống chạm đất 3 phút.",
+      reflection: "Đúc kết: Bé nhắc lại vị trí bạn Gấu vừa nằm ngủ.",
+      assessment:
         "Bé đặt đồ vật đúng vào bên trong hoặc bên ngoài chiếc hộp theo lời mẹ.",
-      extension_vi: "Bé xếp các bạn thú bông nằm thành một hàng thẳng.",
+      extension: "Bé xếp các bạn thú bông nằm thành một hàng thẳng.",
       access_tier: "free",
       skill_codes: ["C2.POS.01"],
       learning_objective_codes: ["LO-C2.POS.01-01"],
@@ -59,14 +58,14 @@ export const LESSON_BATCH_04: LessonSeed[] = [
       target_age_min: 4,
       target_age_max: 5,
       estimated_minutes: 20,
-      materials_vi: "Gối êm, đĩa nhựa",
-      warm_up_vi:
+      materials: "Gối êm, đĩa nhựa",
+      warm_up:
         "Khởi động: Xoay vô lăng sang trái và sang phải theo bài hát 3 phút.",
-      reflection_vi:
+      reflection:
         "Đúc kết: Bé giơ bàn tay phải lên chào mẹ sau chuyến đi an toàn.",
-      assessment_vi:
+      assessment:
         "Bé điều khiển bước chạy rẽ đúng sang bên tay phải khi mẹ hô hiệu lệnh.",
-      extension_vi: "Bé vẽ đường đua ngoằn ngoèo bằng phấn hoặc băng dính.",
+      extension: "Bé vẽ đường đua ngoằn ngoèo bằng phấn hoặc băng dính.",
       access_tier: "standard",
       skill_codes: ["C2.POS.02"],
       learning_objective_codes: ["LO-C2.POS.02-01"],
@@ -97,14 +96,14 @@ export const LESSON_BATCH_04: LessonSeed[] = [
       target_age_min: 4,
       target_age_max: 5,
       estimated_minutes: 20,
-      materials_vi: "Thú bông, ghế nhỏ",
-      warm_up_vi:
+      materials: "Thú bông, ghế nhỏ",
+      warm_up:
         "Khởi động: Bước 3 bước về phía trước rồi lùi 3 bước về phía sau 3 phút.",
-      reflection_vi:
+      reflection:
         "Đúc kết: Bé chỉ vào bạn thú đứng đầu hàng và bạn đứng cuối hàng.",
-      assessment_vi:
+      assessment:
         "Bé chỉ đúng bạn thỏ đang ngồi ở phía sau chiếc ghế khi được hỏi.",
-      extension_vi: "Bé cùng mẹ và bố chơi trò rồng rắn lên mây xếp hàng.",
+      extension: "Bé cùng mẹ và bố chơi trò rồng rắn lên mây xếp hàng.",
       access_tier: "login",
       skill_codes: ["C2.POS.01"],
       learning_objective_codes: ["LO-C2.POS.01-01"],
@@ -136,13 +135,12 @@ export const LESSON_BATCH_04: LessonSeed[] = [
       target_age_min: 5,
       target_age_max: 6,
       estimated_minutes: 22,
-      materials_vi: "Sổ vẽ, bút màu, phòng ngủ",
-      warm_up_vi:
-        "Khởi động: Bài tập xoay người 4 hướng đông tây nam bắc 3 phút.",
-      reflection_vi: "Đúc kết: Bé khoe tấm bản đồ phòng ngủ bé vừa hoàn thành.",
-      assessment_vi:
+      materials: "Sổ vẽ, bút màu, phòng ngủ",
+      warm_up: "Khởi động: Bài tập xoay người 4 hướng đông tây nam bắc 3 phút.",
+      reflection: "Đúc kết: Bé khoe tấm bản đồ phòng ngủ bé vừa hoàn thành.",
+      assessment:
         "Bé chỉ đúng vị trí chiếc đèn ngủ ở phía bên trái chiếc giường trên sơ đồ.",
-      extension_vi: "Bé dán các nhãn tên đồ vật vào đúng vị trí trong phòng.",
+      extension: "Bé dán các nhãn tên đồ vật vào đúng vị trí trong phòng.",
       access_tier: "standard",
       skill_codes: ["C2.POS.01", "C2.POS.02"],
       learning_objective_codes: ["LO-C2.POS.01-01", "LO-C2.POS.02-01"],
@@ -174,13 +172,13 @@ export const LESSON_BATCH_04: LessonSeed[] = [
       target_age_min: 5,
       target_age_max: 6,
       estimated_minutes: 20,
-      materials_vi: "Không gian phòng khách",
-      warm_up_vi:
+      materials: "Không gian phòng khách",
+      warm_up:
         "Khởi động: Giơ tay trái vẫy chào, giơ tay phải vẫy chào 3 phút.",
-      reflection_vi: "Đúc kết: Bé đếm số bước đi đúng trong suốt trò chơi.",
-      assessment_vi:
+      reflection: "Đúc kết: Bé đếm số bước đi đúng trong suốt trò chơi.",
+      assessment:
         "Bé bước đúng sang hướng bên trái hoặc bên phải theo hiệu lệnh 3 lần liên tiếp.",
-      extension_vi: "Bé đổi vai làm người ra hiệu lệnh cho bố mẹ di chuyển.",
+      extension: "Bé đổi vai làm người ra hiệu lệnh cho bố mẹ di chuyển.",
       access_tier: "standard",
       skill_codes: ["C2.POS.02"],
       learning_objective_codes: ["LO-C2.POS.02-01"],
@@ -214,13 +212,12 @@ export const LESSON_BATCH_04: LessonSeed[] = [
       target_age_min: 5,
       target_age_max: 6,
       estimated_minutes: 25,
-      materials_vi: "Món quà nhỏ, mẩu giấy chỉ dẫn",
-      warm_up_vi: "Khởi động: Hát bài hát Bước Chân Thần Kỳ 3 phút.",
-      reflection_vi:
-        "Đúc kết: Bé mở món quà nhỏ và chia sẻ niềm vui với cả nhà.",
-      assessment_vi:
+      materials: "Món quà nhỏ, mẩu giấy chỉ dẫn",
+      warm_up: "Khởi động: Hát bài hát Bước Chân Thần Kỳ 3 phút.",
+      reflection: "Đúc kết: Bé mở món quà nhỏ và chia sẻ niềm vui với cả nhà.",
+      assessment:
         "Bé tìm ra món quà nhờ làm đúng theo 3 chỉ dẫn vị trí không gian liên tiếp.",
-      extension_vi: "Bé tự giấu kho báu và vẽ sơ đồ vị trí cho bố mẹ tìm.",
+      extension: "Bé tự giấu kho báu và vẽ sơ đồ vị trí cho bố mẹ tìm.",
       access_tier: "premium",
       skill_codes: ["C2.POS.01", "C2.POS.02"],
       learning_objective_codes: ["LO-C2.POS.01-01", "LO-C2.POS.02-01"],

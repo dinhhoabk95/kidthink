@@ -7,22 +7,22 @@ vi.mock("h3", () => ({
   setResponseStatus: vi.fn(),
 }));
 
-vi.mock("@kidthink/db", () => ({
+vi.mock("@mindkid/db", () => ({
   getOwnerDb: vi.fn(),
 }));
 
-vi.mock("@kidthink/cache", () => ({
+vi.mock("@mindkid/cache", () => ({
   ping: vi.fn(),
 }));
 
-vi.mock("@kidthink/queue", () => ({
+vi.mock("@mindkid/queue", () => ({
   getWaitingCount: vi.fn(),
   alert: vi.fn(),
 }));
 
-import { ping } from "@kidthink/cache";
-import { getOwnerDb } from "@kidthink/db";
-import { alert, getWaitingCount } from "@kidthink/queue";
+import { ping } from "@mindkid/cache";
+import { getOwnerDb } from "@mindkid/db";
+import { alert, getWaitingCount } from "@mindkid/queue";
 import { setHeader, setResponseStatus } from "h3";
 import handler from "../../../server/api/guest/health.get.ts";
 

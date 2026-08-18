@@ -3,13 +3,10 @@ import {
   notificationDeliveries,
   notifications,
   users,
-} from "@kidthink/db";
+} from "@mindkid/db";
 import { and, desc, eq, gte, ilike, lte, or, type SQL } from "drizzle-orm";
 import { createError, defineEventHandler, getQuery } from "h3";
-import {
-  requireManagerSession,
-  respondToManagerAuthError,
-} from "../../../utils/admin-auth-runtime.js";
+import { requireManagerSession } from "../../../utils/admin-auth-runtime.js";
 
 /**
  * Mask email for privacy (BR-NTA-06, BR-LOG-04): j***@example.com
@@ -129,75 +126,70 @@ function buildQueryConditions(query: Record<string, unknown>): SQL[] {
 }
 
 export default defineEventHandler(async (event) => {
-  try {
-    const manager = await requireManagerSession(event);
+  const manager = await requireManagerSession(event);
 
-    // BR-NTA-05: super_admin only
-    if (manager.role !== "super_admin") {
-      throw createError({
-        statusCode: 403,
-        statusMessage: "INSUFFICIENT_ROLE",
-        message:
-          "Chỉ super_admin mới có quyền xem lịch sử thông báo (BR-NTA-05)",
-      });
-    }
-
-    const query = getQuery(event);
-    const limit = Math.min(Number(query.limit) || 50, 100);
-    const conditions = buildQueryConditions(query);
-
-    const db = getOwnerDb();
-    let queryBuilder = db
-      .select({
-        id: notificationDeliveries.id,
-        uuid: notificationDeliveries.uuid,
-        notificationId: notificationDeliveries.notificationId,
-        channel: notificationDeliveries.channel,
-        status: notificationDeliveries.status,
-        providerMessageId: notificationDeliveries.providerMessageId,
-        error: notificationDeliveries.error,
-        suppressedReason: notificationDeliveries.suppressedReason,
-        dispatchedAt: notificationDeliveries.dispatchedAt,
-        createdAt: notificationDeliveries.createdAt,
-        templateCode: notifications.templateCode,
-        recipientType: notifications.recipientType,
-        recipientId: notifications.recipientId,
-        payload: notifications.payload,
-        recipientEmail: users.email,
-      })
-      .from(notificationDeliveries)
-      .innerJoin(
-        notifications,
-        eq(notificationDeliveries.notificationId, notifications.id)
-      )
-      .leftJoin(users, eq(notifications.recipientId, users.id))
-      .orderBy(desc(notificationDeliveries.createdAt))
-      .limit(limit);
-
-    if (conditions.length > 0) {
-      queryBuilder = queryBuilder.where(
-        and(...conditions)
-      ) as typeof queryBuilder;
-    }
-
-    const rows = await queryBuilder;
-
-    const sanitizedRows = rows.map((r) => ({
-      ...r,
-      recipientEmailMasked: r.recipientEmail
-        ? redactEmail(r.recipientEmail)
-        : null,
-      payload: sanitizeNotificationPayload(
-        r.payload as Record<string, unknown> | null,
-        r.templateCode
-      ),
-    }));
-
-    return {
-      items: sanitizedRows,
-      total: sanitizedRows.length,
-    };
-  } catch (err) {
-    return respondToManagerAuthError(event, err);
+  // BR-NTA-05: super_admin only
+  if (manager.role !== "super_admin") {
+    throw createError({
+      statusCode: 403,
+      statusMessage: "INSUFFICIENT_ROLE",
+      message: "Chỉ super_admin mới có quyền xem lịch sử thông báo (BR-NTA-05)",
+    });
   }
+
+  const query = getQuery(event);
+  const limit = Math.min(Number(query.limit) || 50, 100);
+  const conditions = buildQueryConditions(query);
+
+  const db = getOwnerDb();
+  let queryBuilder = db
+    .select({
+      id: notificationDeliveries.id,
+      uuid: notificationDeliveries.uuid,
+      notificationId: notificationDeliveries.notificationId,
+      channel: notificationDeliveries.channel,
+      status: notificationDeliveries.status,
+      providerMessageId: notificationDeliveries.providerMessageId,
+      error: notificationDeliveries.error,
+      suppressedReason: notificationDeliveries.suppressedReason,
+      dispatchedAt: notificationDeliveries.dispatchedAt,
+      createdAt: notificationDeliveries.createdAt,
+      templateCode: notifications.templateCode,
+      recipientType: notifications.recipientType,
+      recipientId: notifications.recipientId,
+      payload: notifications.payload,
+      recipientEmail: users.email,
+    })
+    .from(notificationDeliveries)
+    .innerJoin(
+      notifications,
+      eq(notificationDeliveries.notificationId, notifications.id)
+    )
+    .leftJoin(users, eq(notifications.recipientId, users.id))
+    .orderBy(desc(notificationDeliveries.createdAt))
+    .limit(limit);
+
+  if (conditions.length > 0) {
+    queryBuilder = queryBuilder.where(
+      and(...conditions)
+    ) as typeof queryBuilder;
+  }
+
+  const rows = await queryBuilder;
+
+  const sanitizedRows = rows.map((r) => ({
+    ...r,
+    recipientEmailMasked: r.recipientEmail
+      ? redactEmail(r.recipientEmail)
+      : null,
+    payload: sanitizeNotificationPayload(
+      r.payload as Record<string, unknown> | null,
+      r.templateCode
+    ),
+  }));
+
+  return {
+    items: sanitizedRows,
+    total: sanitizedRows.length,
+  };
 });

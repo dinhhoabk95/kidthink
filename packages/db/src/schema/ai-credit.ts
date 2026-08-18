@@ -44,6 +44,9 @@ export const aiCreditLedger = pgTable(
     createdAt: timestamp("created_at", { withTimezone: true })
       .defaultNow()
       .notNull(),
+    updatedAt: timestamp("updated_at", { withTimezone: true })
+      .defaultNow()
+      .notNull(),
   },
   (table) => [
     index("idx_ai_credit_ledger_user_created").on(
@@ -58,14 +61,21 @@ export const aiCreditLedger = pgTable(
 export const aiCreditBalance = pgTable(
   "ai_credit_balance",
   {
-    userId: bigint("user_id", { mode: "number" })
+    id: bigint("id", { mode: "number" })
       .primaryKey()
+      .generatedAlwaysAsIdentity(),
+    userId: bigint("user_id", { mode: "number" })
+      .notNull()
+      .unique()
       .references(() => users.id, { onDelete: "cascade" }),
     balance: integer("balance").notNull().default(0),
     totalGranted: integer("total_granted").notNull().default(0),
     totalUsed: integer("total_used").notNull().default(0),
     version: integer("version").notNull().default(1),
     updatedAt: timestamp("updated_at", { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true })
       .defaultNow()
       .notNull(),
   },

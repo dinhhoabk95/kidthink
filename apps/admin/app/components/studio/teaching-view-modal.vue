@@ -33,7 +33,7 @@
             Hướng dẫn sư phạm:
           </div>
           <div class="whitespace-pre-line text-slate-700 dark:text-slate-300">
-            {{ data?.lesson?.guide_vi }}
+            {{ data?.lesson?.guide }}
           </div>
         </div>
 
@@ -47,12 +47,12 @@
           <ul
             class="list-disc list-inside space-y-0.5 text-indigo-900 dark:text-indigo-300"
           >
-            <li v-for="mat in data?.materials_union_vi || []" :key="mat">
+            <li v-for="mat in data?.materials_union || []" :key="mat">
               {{ mat }}
             </li>
             <li
               class="italic text-slate-400"
-              v-if="!data?.materials_union_vi?.length"
+              v-if="!data?.materials_union?.length"
             >
               Không yêu cầu vật liệu đặc biệt
             </li>
@@ -116,7 +116,7 @@
       code: string;
       content_version: number;
       title: string;
-      guide_vi: string;
+      guide: string;
     };
     activities?: {
       position: number;
@@ -129,7 +129,7 @@
         kind: string;
       };
     }[];
-    materials_union_vi?: string[];
+    materials_union?: string[];
     duration_warning?: string | null;
   }
 

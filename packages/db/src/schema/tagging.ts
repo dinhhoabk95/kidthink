@@ -6,6 +6,7 @@ import {
   pgEnum,
   pgTable,
   primaryKey,
+  timestamp,
   unique,
   varchar,
 } from "drizzle-orm/pg-core";
@@ -25,8 +26,14 @@ export const contentTags = pgTable("content_tags", {
   id: bigint("id", { mode: "number" }).primaryKey().generatedAlwaysAsIdentity(),
   code: varchar("code", { length: 50 }).notNull().unique(),
   axis: tagAxisEnum("axis").notNull(),
-  labelVi: varchar("label_vi", { length: 100 }).notNull(),
+  label: varchar("label", { length: 100 }).notNull(),
   status: tagStatusEnum("status").notNull().default("active"),
+  createdAt: timestamp("created_at", { withTimezone: true })
+    .defaultNow()
+    .notNull(),
+  updatedAt: timestamp("updated_at", { withTimezone: true })
+    .defaultNow()
+    .notNull(),
 });
 
 export const contentTagMap = pgTable(
@@ -37,6 +44,12 @@ export const contentTagMap = pgTable(
     tagId: bigint("tag_id", { mode: "number" })
       .notNull()
       .references(() => contentTags.id, { onDelete: "cascade" }),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+    updatedAt: timestamp("updated_at", { withTimezone: true })
+      .defaultNow()
+      .notNull(),
   },
   (table) => [
     primaryKey({ columns: [table.entityType, table.entityId, table.tagId] }),
@@ -52,6 +65,12 @@ export const contentSkillMap = pgTable(
       .notNull()
       .references(() => skills.id, { onDelete: "cascade" }),
     weight: numeric("weight", { precision: 3, scale: 2 }).notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+    updatedAt: timestamp("updated_at", { withTimezone: true })
+      .defaultNow()
+      .notNull(),
   },
   (table) => [
     primaryKey({ columns: [table.entityType, table.entityId, table.skillId] }),
@@ -72,6 +91,12 @@ export const userTags = pgTable(
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
     label: varchar("label", { length: 100 }).notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+    updatedAt: timestamp("updated_at", { withTimezone: true })
+      .defaultNow()
+      .notNull(),
   },
   (table) => [
     unique("user_tags_user_id_label_unique").on(table.userId, table.label),

@@ -2,7 +2,7 @@
 spec: CHILD-DATA-COMPLIANCE
 title: Tuân thủ dữ liệu trẻ em — Luật 91/2025, Nghị định 13/2023 và Luật Trẻ em
 area: foundation
-status: approved
+status: implemented
 mvp: true
 phase: P0
 reviewed: 2026-08-14

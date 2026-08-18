@@ -1,5 +1,5 @@
 {
-  "name": "@kidthink/auth",
+  "name": "@mindkid/auth",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -15,7 +15,7 @@
     "otpauth": "catalog:"
   },
   "devDependencies": {
-    "@kidthink/config": "workspace:*",
+    "@mindkid/config": "workspace:*",
     "fast-check": "catalog:",
     "typescript": "catalog:",
     "vitest": "catalog:"

@@ -1,4 +1,4 @@
-import { getAppDb, notifications, users } from "@kidthink/db";
+import { getAppDb, notifications, users } from "@mindkid/db";
 import { and, eq } from "drizzle-orm";
 import { describe, expect, it } from "vitest";
 
@@ -136,7 +136,6 @@ describe("Task 7 — Real Human End-toEnd Test Scenario", () => {
           user_id: createdUser?.id ?? 0,
           display_name: "Human Tester",
           session_id: "1",
-          refresh_token_version: 0,
         },
       },
     } as any;
@@ -232,7 +231,6 @@ describe("Task 7 — Real Human End-toEnd Test Scenario", () => {
           user_id: createdUser.id,
           display_name: "Human Tester",
           session_id: "1",
-          refresh_token_version: 0,
         },
       },
     } as any;

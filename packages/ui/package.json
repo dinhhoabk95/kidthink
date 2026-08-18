@@ -1,5 +1,5 @@
 {
-  "name": "@kidthink/ui",
+  "name": "@mindkid/ui",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -8,10 +8,10 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@kidthink/game-engine": "workspace:*"
+    "@mindkid/game-engine": "workspace:*"
   },
   "devDependencies": {
-    "@kidthink/config": "workspace:*",
+    "@mindkid/config": "workspace:*",
     "typescript": "catalog:",
     "vitest": "catalog:"
   },

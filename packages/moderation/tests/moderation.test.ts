@@ -5,7 +5,7 @@ import {
   moderateText,
 } from "../src/index.js";
 
-describe("@kidthink/moderation", () => {
+describe("@mindkid/moderation", () => {
   it("passes clean and friendly content for children", () => {
     const text = "Bé hãy tìm và chọn quả táo màu đỏ nhé!";
     const result = moderateText(text);

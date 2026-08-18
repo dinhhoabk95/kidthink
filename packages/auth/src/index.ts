@@ -2,18 +2,18 @@ export {
   assertActiveChild,
   checkUserEntitlement,
   verifyChildOwnership,
-} from "./actor-boundaries";
+} from "./actor-boundaries.js";
 export {
   type AuthNamespaceConfig,
   getAuthNamespaceConfig,
-} from "./auth-namespace";
+} from "./auth-namespace.js";
 export {
   type BrowserSessionService,
   type CreateBrowserSessionInput,
   DefaultBrowserSessionService,
   type RestoreRememberSessionInput,
   type RevokeDeviceInput,
-} from "./browser-session";
+} from "./browser-session.js";
 export {
   type AuthContext,
   type AuthEvent,
@@ -27,7 +27,7 @@ export {
   requireUserAuth,
   type UserAuthContext,
   type UserTokenPayload,
-} from "./contracts";
+} from "./contracts.js";
 export {
   CSRF_HEADER_NAME,
   generateCsrfToken,
@@ -35,7 +35,7 @@ export {
   USER_CSRF_COOKIE_NAME,
   type ValidateCsrfOptions,
   validateCsrfToken,
-} from "./csrf";
+} from "./csrf.js";
 export {
   AppError,
   AUTH_ERROR_DEFINITIONS,
@@ -43,14 +43,37 @@ export {
   type AuthErrorDetails,
   type AuthErrorResponse,
   appError,
-} from "./errors";
+} from "./errors.js";
 export {
   type CreatedMfaChallengeOutput,
   type CreateMfaChallengeInput,
   MFA_CHALLENGE_TTL_SECONDS,
   type MfaChallengePayload,
   MfaChallengeService,
-} from "./mfa-challenge";
+} from "./mfa-challenge.js";
+export {
+  ActivityNotFoundError,
+  ChildNotFoundError,
+  CurriculumNotFoundError,
+  CustomGameNotFoundError,
+  EntitlementNotFoundError,
+  ExportNotFoundError,
+  GameLevelNotFoundError,
+  isModelBoundError,
+  LessonNotFoundError,
+  LessonPlanNotFoundError,
+  type ModelBoundError,
+  ModelNotFoundError,
+  modelErrorContext,
+  OrderNotFoundError,
+  PersonalCurriculumNotFoundError,
+  PlaySessionNotFoundError,
+  SubscriptionNotFoundError,
+  UserNotFoundError,
+  ValidationError,
+  type ValidationFieldError,
+  WorksheetNotFoundError,
+} from "./model-errors.js";
 export {
   getOAuthRegistry,
   type OAuthProviderConfig,
@@ -80,14 +103,14 @@ export {
   type ParentGateChallenge,
   type ParentGateTokenPayload,
   verifyParentGateChallenge,
-} from "./parent-gate";
+} from "./parent-gate.js";
 export {
   generateSecureToken,
   hashPassword,
   hashSecureToken,
   validatePasswordStrength,
   verifyPassword,
-} from "./password";
+} from "./password.js";
 export type {
   AccountReference,
   AccountType,
@@ -102,27 +125,25 @@ export type {
   RateLimitPort,
   ReauthMethod,
   ReauthMethodAvailabilityPort,
-  RotateSessionInput,
-  RotateSessionResult,
   SessionRecord,
   SessionStorePort,
   UserSessionRecord,
-} from "./ports";
+} from "./ports.js";
 export {
   CurrentSessionReauthService,
   REAUTH_MAX_AGE_SECONDS,
   verifyReauthWindow,
-} from "./reauth";
+} from "./reauth.js";
 export {
   isSensitiveReauthRoute,
   SENSITIVE_REAUTH_ROUTES,
   type SensitiveRouteDefinition,
-} from "./reauth-routes";
+} from "./reauth-routes.js";
 export {
   getAuthRedisClient,
   getBrowserSessionService,
   setAuthRedisClient,
-} from "./redis-client";
+} from "./redis-client.js";
 export {
   type AuthNamespace as RedisAuthNamespace,
   type CreatedSessionOutput,
@@ -138,7 +159,7 @@ export {
   SESSION_TTL_SECONDS,
   type SessionData,
   sha256,
-} from "./redis-session-store";
+} from "./redis-session-store.js";
 export {
   decryptTotpSecret,
   encryptTotpSecret,
@@ -148,4 +169,4 @@ export {
   generateTotpUri,
   hashRecoveryCode,
   verifyTotpCode,
-} from "./totp";
+} from "./totp.js";

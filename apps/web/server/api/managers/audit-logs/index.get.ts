@@ -1,10 +1,7 @@
-import { auditLogs, getOwnerDb } from "@kidthink/db";
+import { auditLogs, getOwnerDb } from "@mindkid/db";
 import { and, desc, eq, gte, ilike, inArray, lte, type SQL } from "drizzle-orm";
 import { createError, defineEventHandler, getQuery } from "h3";
-import {
-  requireManagerSession,
-  respondToManagerAuthError,
-} from "../../../utils/admin-auth-runtime.js";
+import { requireManagerSession } from "../../../utils/admin-auth-runtime.js";
 
 export interface FormattedAuditItem {
   id: number;
@@ -123,90 +120,84 @@ function buildAuditConditions(
 }
 
 export default defineEventHandler(async (event) => {
-  try {
-    const manager = await requireManagerSession(event);
+  const manager = await requireManagerSession(event);
 
-    // BR-ALV-02: super_admin only
-    if (manager.role !== "super_admin") {
-      throw createError({
-        statusCode: 403,
-        statusMessage: "INSUFFICIENT_ROLE",
-        message:
-          "Chỉ super_admin mới có quyền xem nhật ký kiểm toán (BR-ALV-02)",
-      });
-    }
-
-    const query =
-      ((event as Record<string, unknown>)._query as Record<string, unknown>) ||
-      getQuery(event);
-
-    const limit = Math.min(Math.max(Number(query.limit) || 50, 1), 200);
-    const dates = validateAuditDateRange(
-      query.from ? String(query.from) : undefined,
-      query.to ? String(query.to) : undefined
-    );
-
-    const conditions = buildAuditConditions(query, dates);
-    const db = getOwnerDb();
-    const whereClause = conditions.length > 0 ? and(...conditions) : undefined;
-
-    const rows = await db
-      .select({
-        id: auditLogs.id,
-        uuid: auditLogs.uuid,
-        actorType: auditLogs.actorType,
-        actorId: auditLogs.actorId,
-        action: auditLogs.action,
-        entityType: auditLogs.entityType,
-        entityId: auditLogs.entityId,
-        reason: auditLogs.reason,
-        beforeData: auditLogs.beforeData,
-        afterData: auditLogs.afterData,
-        ipAddress: auditLogs.ipAddress,
-        userAgent: auditLogs.userAgent,
-        createdAt: auditLogs.createdAt,
-      })
-      .from(auditLogs)
-      .where(whereClause)
-      .orderBy(desc(auditLogs.createdAt))
-      .limit(limit);
-
-    const formatted: FormattedAuditItem[] = rows.map((r) => {
-      const beforeObj =
-        (r.beforeData as Record<string, unknown> | null) || null;
-      const afterObj = (r.afterData as Record<string, unknown> | null) || null;
-      const requestId =
-        (beforeObj?.request_id ? String(beforeObj.request_id) : null) ||
-        (afterObj?.request_id ? String(afterObj.request_id) : null) ||
-        r.uuid;
-
-      return {
-        id: r.id,
-        uuid: r.uuid,
-        actor_type: r.actorType,
-        actor_id: r.actorId,
-        actor_name: `${r.actorType} #${r.actorId || "0"}`,
-        action: r.action,
-        entity_type: r.entityType,
-        entity_id: r.entityId,
-        entityType: r.entityType,
-        entityId: r.entityId,
-        reason: r.reason,
-        before_data: beforeObj,
-        after_data: afterObj,
-        ip: r.ipAddress ? `${r.ipAddress.slice(0, 7)}***` : null,
-        user_agent: r.userAgent,
-        request_id: requestId,
-        created_at: r.createdAt.toISOString(),
-      };
+  // BR-ALV-02: super_admin only
+  if (manager.role !== "super_admin") {
+    throw createError({
+      statusCode: 403,
+      statusMessage: "INSUFFICIENT_ROLE",
+      message: "Chỉ super_admin mới có quyền xem nhật ký kiểm toán (BR-ALV-02)",
     });
+  }
+
+  const query =
+    ((event as Record<string, unknown>)._query as Record<string, unknown>) ||
+    getQuery(event);
+
+  const limit = Math.min(Math.max(Number(query.limit) || 50, 1), 200);
+  const dates = validateAuditDateRange(
+    query.from ? String(query.from) : undefined,
+    query.to ? String(query.to) : undefined
+  );
+
+  const conditions = buildAuditConditions(query, dates);
+  const db = getOwnerDb();
+  const whereClause = conditions.length > 0 ? and(...conditions) : undefined;
+
+  const rows = await db
+    .select({
+      id: auditLogs.id,
+      uuid: auditLogs.uuid,
+      actorType: auditLogs.actorType,
+      actorId: auditLogs.actorId,
+      action: auditLogs.action,
+      entityType: auditLogs.entityType,
+      entityId: auditLogs.entityId,
+      reason: auditLogs.reason,
+      beforeData: auditLogs.beforeData,
+      afterData: auditLogs.afterData,
+      ipAddress: auditLogs.ipAddress,
+      userAgent: auditLogs.userAgent,
+      createdAt: auditLogs.createdAt,
+    })
+    .from(auditLogs)
+    .where(whereClause)
+    .orderBy(desc(auditLogs.createdAt))
+    .limit(limit);
+
+  const formatted: FormattedAuditItem[] = rows.map((r) => {
+    const beforeObj = (r.beforeData as Record<string, unknown> | null) || null;
+    const afterObj = (r.afterData as Record<string, unknown> | null) || null;
+    const requestId =
+      (beforeObj?.request_id ? String(beforeObj.request_id) : null) ||
+      (afterObj?.request_id ? String(afterObj.request_id) : null) ||
+      r.uuid;
 
     return {
-      items: formatted,
-      total: formatted.length,
-      limit,
+      id: r.id,
+      uuid: r.uuid,
+      actor_type: r.actorType,
+      actor_id: r.actorId,
+      actor_name: `${r.actorType} #${r.actorId || "0"}`,
+      action: r.action,
+      entity_type: r.entityType,
+      entity_id: r.entityId,
+      entityType: r.entityType,
+      entityId: r.entityId,
+      reason: r.reason,
+      before_data: beforeObj,
+      after_data: afterObj,
+      ip: r.ipAddress ? `${r.ipAddress.slice(0, 7)}***` : null,
+      user_agent: r.userAgent,
+      request_id: requestId,
+      created_at: r.createdAt.toISOString(),
     };
-  } catch (err) {
-    return respondToManagerAuthError(event, err);
-  }
+  });
+
+  return {
+    items: formatted,
+    total: formatted.length,
+    limit,
+  };
 });

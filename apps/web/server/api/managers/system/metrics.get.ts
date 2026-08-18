@@ -1,8 +1,5 @@
 import { defineEventHandler } from "h3";
-import {
-  requireSuperAdminSession,
-  respondToManagerAuthError,
-} from "../../../utils/admin-auth-runtime.js";
+import { requireSuperAdminSession } from "../../../utils/admin-auth-runtime.js";
 
 export interface SloStatus {
   name: string;
@@ -33,51 +30,47 @@ export interface SystemMetricsResponse {
 }
 
 export default defineEventHandler(async (event) => {
-  try {
-    await requireSuperAdminSession(event);
+  await requireSuperAdminSession(event);
 
-    const now = new Date().toISOString();
+  const now = new Date().toISOString();
 
-    const slos = {
-      uptime: {
-        name: "Uptime",
-        target: 0.997,
-        current: 0.999,
-        unit: "ratio",
-        status: "healthy" as const,
-      },
-      api_p95: {
-        name: "API Latency P95",
-        target: 800,
-        current: 145,
-        unit: "ms",
-        status: "healthy" as const,
-      },
-      game_fps: {
-        name: "Game Engine FPS",
-        target: 60,
-        current: 60,
-        unit: "fps",
-        status: "healthy" as const,
-      },
-      payment_p90: {
-        name: "Thời gian xử lý payment request P90",
-        target: 12,
-        current: null,
-        unit: "hours",
-        status: "pending_source" as const,
-        pending_step: "P2.3",
-      },
-    };
+  const slos = {
+    uptime: {
+      name: "Uptime",
+      target: 0.997,
+      current: 0.999,
+      unit: "ratio",
+      status: "healthy" as const,
+    },
+    api_p95: {
+      name: "API Latency P95",
+      target: 800,
+      current: 145,
+      unit: "ms",
+      status: "healthy" as const,
+    },
+    game_fps: {
+      name: "Game Engine FPS",
+      target: 60,
+      current: 60,
+      unit: "fps",
+      status: "healthy" as const,
+    },
+    payment_p90: {
+      name: "Thời gian xử lý payment request P90",
+      target: 12,
+      current: null,
+      unit: "hours",
+      status: "pending_source" as const,
+      pending_step: "P2.3",
+    },
+  };
 
-    const response: SystemMetricsResponse = {
-      as_of: now,
-      slos,
-      open_alerts: [],
-    };
+  const response: SystemMetricsResponse = {
+    as_of: now,
+    slos,
+    open_alerts: [],
+  };
 
-    return response;
-  } catch (err) {
-    return respondToManagerAuthError(event, err);
-  }
+  return response;
 });

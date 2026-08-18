@@ -24,7 +24,7 @@
 
 - [x] Đối chiếu official docs Sidebase Local 1.3.1 và npm package metadata cho version pin.
 - [x] Người dùng approve đổi dependency sang `@sidebase/nuxt-auth`.
-- [x] Hai app khai Sidebase như Nuxt module; `@kidthink/auth` giữ domain/JWT API.
+- [x] Hai app khai Sidebase như Nuxt module; `@mindkid/auth` giữ domain/JWT API.
 - [x] Lockfile không cài `next-auth`; optional peer chỉ xuất hiện trong metadata Sidebase. App runtime không import `jose`/`otpauth` trực tiếp.
 - [x] Review lockfile, provenance và install scripts; không blanket-approve.
 - [x] `pnpm install --frozen-lockfile`
@@ -38,14 +38,14 @@
 - [ ] Ngoại lệ Task #14 và các cổng test/review đã được ghi trong canonical contract.
 - [ ] `pnpm check && pnpm lint:specs` xanh.
 
-## Task 2 — Định nghĩa public contract `@kidthink/auth`
+## Task 2 — Định nghĩa public contract `@mindkid/auth`
 
 - [x] Viết domain types User/Manager loại trừ nhau.
 - [x] Viết structured error mapping theo registry.
 - [x] Viết port cho session store, rate limit, audit, ownership và entitlement.
 - [x] Viết test âm trước cho cross-audience, Promise guard và dual context.
-- [x] `pnpm --filter @kidthink/auth test -- contracts`
-- [x] `pnpm --filter @kidthink/auth typecheck`
+- [x] `pnpm --filter @mindkid/auth test -- contracts`
+- [x] `pnpm --filter @mindkid/auth typecheck`
 
 ## Task 3 — Làm User session slice
 
@@ -79,7 +79,7 @@
 - [x] Logout hiện tại và logout-all có semantics khác nhau, không ảnh hưởng account khác.
 - [x] Concurrency test và property “một token thành công tối đa một lần” xanh.
 - [x] Test khẳng định token không vào log/error/client session.
-- [x] `pnpm --filter @kidthink/auth test -- refresh`
+- [x] `pnpm --filter @mindkid/auth test -- refresh`
 
 ## Task 6 — Làm CSRF và reauth
 
@@ -87,7 +87,7 @@
 - [x] Safe methods không bị CSRF middleware chặn.
 - [x] Reauth hết hạn đúng 5 phút và chỉ nâng current session.
 - [x] `details.methods` phản ánh method khả dụng, không chạy OAuth/TOTP flow trước roadmap.
-- [x] `pnpm --filter @kidthink/auth test -- csrf reauth`
+- [x] `pnpm --filter @mindkid/auth test -- csrf reauth`
 
 ## Task 7 — Hoàn thiện actor-boundary ports
 
@@ -95,7 +95,7 @@
 - [x] Cookie giả mạo child của User khác trả 404 qua fake ownership adapter contract test.
 - [x] Ownership query luôn nhận User ID từ authenticated context.
 - [x] Entitlement đọc request-time qua async port, không nằm trong session.
-- [x] `pnpm --filter @kidthink/auth test -- actor-boundaries`
+- [x] `pnpm --filter @mindkid/auth test -- actor-boundaries`
 
 ## Checkpoint C
 

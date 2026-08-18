@@ -16,7 +16,7 @@
           <div
             class="font-bold font-heading text-base text-surface-900 leading-tight"
           >
-            KidThink Admin
+            MindKid Admin
           </div>
           <div class="text-xs text-surface-500 font-medium">
             Vận hành sư phạm

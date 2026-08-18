@@ -1,5 +1,5 @@
 import { readFileSync } from "node:fs";
-import { getOwnerDb, levelDailyStats } from "@kidthink/db";
+import { getOwnerDb, levelDailyStats } from "@mindkid/db";
 import { describe, expect, it } from "vitest";
 import handler from "../../../server/api/managers/dashboard.get.js";
 
@@ -21,7 +21,6 @@ function mockEvent(managerRole?: "super_admin" | "content_reviewer") {
               manager_id: 1,
               display_name: "Manager Test",
               session_id: "sess_mgr_123",
-              refresh_token_version: 1,
               role: managerRole,
             },
           }

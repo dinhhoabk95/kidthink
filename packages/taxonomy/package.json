@@ -1,5 +1,5 @@
 {
-  "name": "@kidthink/taxonomy",
+  "name": "@mindkid/taxonomy",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -7,6 +7,6 @@
     ".": "./src/index.ts"
   },
   "dependencies": {
-    "@kidthink/shared": "workspace:*"
+    "@mindkid/shared": "workspace:*"
   }
 }

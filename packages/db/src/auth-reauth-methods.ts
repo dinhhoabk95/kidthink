@@ -2,7 +2,7 @@ import type {
   AccountReference,
   ReauthMethod,
   ReauthMethodAvailabilityPort,
-} from "@kidthink/auth";
+} from "@mindkid/auth";
 import type postgres from "postgres";
 
 interface UserMethodsRow {

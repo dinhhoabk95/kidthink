@@ -5,7 +5,7 @@ import {
   gameTemplates,
   getOwnerDb,
   users,
-} from "@kidthink/db";
+} from "@mindkid/db";
 import { eq } from "drizzle-orm";
 import { describe, expect, it } from "vitest";
 import getRecommendationsHandler from "../../server/api/users/play/recommendations.get";
@@ -48,7 +48,6 @@ function mockEvent(
         user_id: userId,
         display_name: "Parent User",
         session_id: `sess_${userId}`,
-        refresh_token_version: 0,
       },
     },
   } as never;
@@ -102,7 +101,7 @@ describe("User Play Recommendations API (BR-REC-01..08, D-MQ..D-MV)", () => {
         .insert(gameTemplates)
         .values({
           code: "GT-001",
-          nameVi: "Nối cặp",
+          name: "Nối cặp",
           mechanic: "match",
           status: "active",
         })
@@ -131,7 +130,7 @@ describe("User Play Recommendations API (BR-REC-01..08, D-MQ..D-MV)", () => {
       code: randCode,
       contentVersion: 1,
       templateId: tmpl.id,
-      titleVi: "Đếm hoa quả API",
+      title: "Đếm hoa quả API",
       contentPack: {},
       difficultyParams: {},
       accessTier: "free",

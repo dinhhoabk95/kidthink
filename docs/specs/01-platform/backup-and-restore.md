@@ -48,7 +48,7 @@ phải việc để sau.
 
 ```
 1. 01:00 ICT — pg_dump toàn bộ, nén, mã hoá
-2. Upload S3 s3://kidthink-backups/postgres/YYYY/MM/DD.dump.gz.enc
+2. Upload S3 s3://mindkid-backups/postgres/YYYY/MM/DD.dump.gz.enc
 3. Ghi backup_log { started, finished, bytes, sha256, status }
 4. Thứ hai 05:00 ICT — backup:verify:
       restore bản mới nhất vào container tạm

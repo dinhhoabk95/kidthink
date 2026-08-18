@@ -1,4 +1,4 @@
-import { auditLogs, childProfiles, getOwnerDb, users } from "@kidthink/db";
+import { auditLogs, childProfiles, getOwnerDb, users } from "@mindkid/db";
 import { and, eq } from "drizzle-orm";
 import { describe, expect, it } from "vitest";
 import handler from "../../../server/api/managers/children/[uuid]/archive.post";
@@ -33,7 +33,6 @@ function mockEvent(
               manager_id: 1,
               display_name: "Super Admin",
               session_id: "sess_mgr_1",
-              refresh_token_version: 1,
               role: managerRole,
             },
           }

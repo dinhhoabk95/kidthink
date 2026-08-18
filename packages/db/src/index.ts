@@ -7,6 +7,7 @@ export * from "./purge-scope.ts";
 export * from "./schema/adaptive.ts";
 export * from "./schema/ai.ts";
 export * from "./schema/ai-credit.ts";
+export * from "./schema/assets.ts";
 export * from "./schema/billing.ts";
 export * from "./schema/child.ts";
 export * from "./schema/content.ts";

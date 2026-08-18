@@ -1,4 +1,4 @@
-import { checkMasteryEligibility } from "@kidthink/db";
+import { checkMasteryEligibility } from "@mindkid/db";
 import { describe, expect, it } from "vitest";
 
 describe("Task P1.6 — Mastery Guard Central Function (D-GH, BR-PSL-04, BR-PSL-05, §7.3)", () => {

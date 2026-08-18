@@ -70,6 +70,8 @@ Mỗi bước: chín việc ở kế hoạch mục 5; mỗi work package S/M m�
 - [x] **P0.10** Auth end-to-end bằng email/mật khẩu — [`registration.md`](../specs/03-account/registration.md) · [`email-verification.md`](../specs/03-account/email-verification.md) · [`login-and-session.md`](../specs/03-account/login-and-session.md) · [`password-recovery.md`](../specs/03-account/password-recovery.md)
 - [x] **P0.11** Audit log, trước mọi hành động cần audit — [`audit-log.md`](../specs/01-platform/audit-log.md)
 - [x] **P0.11b** Đăng nhập admin — [`admin-auth.md`](../specs/06-admin/admin-auth.md)
+- [ ] **P0.12** Phát hành lên máy chủ bằng một lệnh, và ranh giới máy trạm với máy chủ — [`Task #90`](90-vps-deploy-plan.md)
+- [ ] **P0.13** Bằng chứng test cho hai spec P0 còn nợ — [`security-checklist.md`](../specs/08-quality/security-checklist.md) · [`business-rules.md`](../specs/00-foundation/business-rules.md) — Task #91
 
 Kiểm giữa phase:
 
@@ -81,7 +83,7 @@ Kiểm giữa phase:
 
 - [ ] Điều kiện ở [`SPEC.md`](../SPEC.md) §13
 - [ ] [`security-checklist.md`](../specs/08-quality/security-checklist.md) chạy hết, không mục nào đỏ
-- [ ] 35 spec P0 mang `status: implemented`
+- [ ] 41 spec P0 mang `status: implemented`
 - [ ] Mọi `BR-*` mà P0 sở hữu có ít nhất một test tham chiếu mã rule
 - [ ] Không spec P0 nào còn câu hỏi mở mang `Chặn phase: P0`
 
@@ -111,6 +113,7 @@ MVP, và nó chỉ cần bước P1.2 xong.
 - [x] **P1.14** Cài đặt tài khoản, đồng ý pháp lý, xoá tài khoản — [`account-settings.md`](../specs/03-account/account-settings.md) · [`consent-management.md`](../specs/03-account/consent-management.md) · [`account-deletion.md`](../specs/03-account/account-deletion.md) · [`legal-consent-admin.md`](../specs/06-admin/legal-consent-admin.md)
 - [x] **P1.15** Đăng nhập SNS, **thứ tự không đảo được** — [`oauth-provider-registry.md`](../specs/01-platform/oauth-provider-registry.md) → [`social-login.md`](../specs/03-account/social-login.md) → [`social-account-linking.md`](../specs/03-account/social-account-linking.md)
 - [x] **P1.16** Taxonomy admin & giám sát — [`taxonomy-browser.md`](../specs/06-admin/taxonomy-browser.md) · [`monitoring-and-alerting.md`](../specs/01-platform/monitoring-and-alerting.md)
+- [ ] **P1.17** Nợ engine: bộ dựng layout rồi ngẫu nhiên có seed, **thứ tự không đảo được** — [`game-layout-engine.md`](../specs/01-platform/game-layout-engine.md) (Task #92) → [`deterministic-randomness.md`](../specs/01-platform/deterministic-randomness.md) (Task #93)
 
 ## Cổng ra P1
 
@@ -118,7 +121,7 @@ MVP, và nó chỉ cần bước P1.2 xong.
 - [ ] Một trẻ chơi hết một game level thật, điểm về server, phụ huynh thấy trong báo cáo
 - [ ] Audio tiếng Việt có fallback đo trên thiết bị chuẩn; không dùng Web Speech/TTS như một giả định không test
 - [ ] Ca “trẻ thật” tuân theo contract evidence/an toàn của Task #81; chưa có protocol thì không dùng để claim hiệu quả sư phạm
-- [ ] 43 spec P1 `implemented`; không câu hỏi mở nào còn `Chặn phase: P1`
+- [ ] 47 spec P1 `implemented`; không câu hỏi mở nào còn `Chặn phase: P1`
 
 ---
 
@@ -157,6 +160,7 @@ MVP, và nó chỉ cần bước P1.2 xong.
 - [x] **P3.7** Báo cáo nâng cao — [`advanced-report.md`](../specs/03-account/advanced-report.md)
 - [x] **P3.8** Trưng bày chương trình ra public — [`program-showcase.md`](../specs/02-public/program-showcase.md)
 - [ ] **P3.9** Tích hợp curriculum vào account, bố cục nhiều trẻ và phạm vi thư viện — [`Task #82`](82-p3-account-curriculum-integration-plan.md)
+- [ ] **P3.10** Ma trận phủ tư duy và cổng phủ nội dung — [`thinking-coverage-matrix.md`](../specs/08-quality/thinking-coverage-matrix.md) — Task #94. Chưa nội dung nào gắn tag trục tư duy, nên cổng sẽ đo ma trận rỗng nếu bật ngưỡng ngay
 
 Chặn bởi người, hỏi **trước** P3.1: ai biên soạn lesson (nền sư phạm mầm non), và chốt một trong
 hai contract: giữ ≥60 lesson có tái sử dụng, hoặc nhận đề xuất ≥126 lesson distinct của Task #54.
@@ -164,7 +168,7 @@ hai contract: giữ ≥60 lesson có tái sử dụng, hoặc nhận đề xuấ
 ## Cổng ra P3 — hết MVP
 
 - [ ] Điều kiện ở [`SPEC.md`](../SPEC.md) §13
-- [ ] 120 spec `mvp: true` đều `implemented`
+- [ ] 130 spec `mvp: true` đều `implemented`
 - [ ] Một trẻ đi hết một curriculum thật từ đầu tới cuối
 - [ ] Dashboard hiện đúng curriculum của trẻ đang active; không trộn tiến độ/thư viện giữa hai hồ sơ trẻ
 
@@ -179,6 +183,8 @@ Chỉ bắt đầu khi P0–P3 `implemented`. Mỗi add-on **lên catalog cùng 
 - [x] [`custom-game-builder.md`](../specs/07-addon/custom-game-builder.md) · [`personal-curriculum.md`](../specs/07-addon/personal-curriculum.md) — chặn bởi: quota
 - [x] [`semantic-search.md`](../specs/07-addon/semantic-search.md) — **chặn migration**: `N` của cột `vector` phụ thuộc embedding model, đổi `N` là đổi migration
 - [x] Chín câu hỏi giá/quota ở [`CORPUS-CLOSURE.md`](CORPUS-CLOSURE.md) đã chốt trước khi lên catalog
+- [ ] [`lesson-session-runner.md`](../specs/04-play/lesson-session-runner.md) (Task #95) → [`lesson-exemplar-set.md`](../specs/05-content/lesson-exemplar-set.md) (Task #96) — spec sau khai `depends_on` spec trước
+- [ ] [`template-authoring-kit.md`](../specs/01-platform/template-authoring-kit.md) (Task #97) — chặn bởi P1.17, vì nó khai `depends_on` cả hai spec ở bước đó
 
 ## P5 — Web scale, 1 spec hiện có
 
@@ -194,6 +200,6 @@ localization và mở thị trường chỉ quay lại sau quyết định scope
 
 ## Cổng dừng cuối
 
-- [ ] `grep -rh "^status: " --include="*.md" docs/specs | sort | uniq -c` — 130 `implemented`
+- [ ] Đếm `status:` trong `docs/specs` bằng script (không dùng `grep -rh`, hook viết lại cờ ngắn) — 151 `implemented`
 - [ ] `pnpm check && pnpm test && pnpm lint:specs && pnpm check:services` xanh
 - [ ] Không spec nào còn câu hỏi mở mang `Chặn phase` là một phase đã qua

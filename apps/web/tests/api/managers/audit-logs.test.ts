@@ -1,4 +1,4 @@
-import { auditLogs, getOwnerDb } from "@kidthink/db";
+import { auditLogs, getOwnerDb } from "@mindkid/db";
 import { describe, expect, it } from "vitest";
 import handler from "../../../server/api/managers/audit-logs.get";
 
@@ -22,7 +22,6 @@ function mockEvent(
               manager_id: 1,
               display_name: "Manager Name",
               session_id: "sess_manager_123",
-              refresh_token_version: 1,
               role: managerRole,
             },
           }

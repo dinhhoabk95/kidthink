@@ -1,4 +1,4 @@
-import { AppError } from "@kidthink/auth";
+import { AppError } from "@mindkid/auth";
 import {
   createError,
   defineEventHandler,

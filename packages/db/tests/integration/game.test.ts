@@ -43,7 +43,7 @@ describe("Game Schema Integration Tests", () => {
       .insert(gameTemplates)
       .values({
         code: gtCode,
-        nameVi: "Template Test 1",
+        name: "Template Test 1",
         mechanic: "drag_drop",
       })
       .onConflictDoNothing()
@@ -66,7 +66,7 @@ describe("Game Schema Integration Tests", () => {
         code,
         contentVersion: 1,
         templateId: gtId,
-        titleVi: "Level Test",
+        title: "Level Test",
         contentPack: { test: true },
         difficultyParams: { speed: 1 },
         status: "draft",
@@ -83,7 +83,7 @@ describe("Game Schema Integration Tests", () => {
       .insert(gameTemplates)
       .values({
         code: gtCode,
-        nameVi: "Template Test 2",
+        name: "Template Test 2",
         mechanic: "drag_drop",
       })
       .onConflictDoNothing()
@@ -106,7 +106,7 @@ describe("Game Schema Integration Tests", () => {
         code,
         contentVersion: 1,
         templateId: gtId,
-        titleVi: "Level V1",
+        title: "Level V1",
         contentPack: { test: true },
         difficultyParams: { speed: 1 },
         accessTier: "free",
@@ -123,7 +123,7 @@ describe("Game Schema Integration Tests", () => {
         code,
         contentVersion: 2,
         templateId: gtId,
-        titleVi: "Level V2",
+        title: "Level V2",
         contentPack: { test: true },
         difficultyParams: { speed: 2 },
         accessTier: "free",
@@ -141,7 +141,7 @@ describe("Game Schema Integration Tests", () => {
       .insert(gameTemplates)
       .values({
         code: gtCode,
-        nameVi: "Template Test 3",
+        name: "Template Test 3",
         mechanic: "drag_drop",
       })
       .onConflictDoNothing()
@@ -163,7 +163,7 @@ describe("Game Schema Integration Tests", () => {
         code,
         contentVersion: 1,
         templateId: gtId,
-        titleVi: "Original Published Title",
+        title: "Original Published Title",
         contentPack: { test: true },
         difficultyParams: { speed: 1 },
         accessTier: "free",
@@ -177,7 +177,7 @@ describe("Game Schema Integration Tests", () => {
     await expect(
       db
         .update(gameLevels)
-        .set({ titleVi: "Modified Title" })
+        .set({ title: "Modified Title" })
         .where(eq(gameLevels.id, gl.id))
     ).rejects.toSatisfy((err: unknown) => {
       const e = err as { message?: string; cause?: { message?: string } };

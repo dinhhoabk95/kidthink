@@ -7,7 +7,7 @@ import {
   SEED_ENTITLEMENT_KEYS,
   SEED_PACKAGES,
   users,
-} from "@kidthink/db";
+} from "@mindkid/db";
 import { eq } from "drizzle-orm";
 import { beforeEach, describe, expect, it } from "vitest";
 import adminCancelHandler from "../../../server/api/managers/subscriptions/[id]/cancel.post.js";
@@ -44,14 +44,12 @@ function mockManagerEvent(
               manager_id: 1,
               display_name: "Test Admin",
               session_id: "sess_admin_test",
-              refresh_token_version: 1,
               role: managerRole,
             },
             manager: {
               manager_id: 1,
               display_name: "Test Admin",
               session_id: "sess_admin_test",
-              refresh_token_version: 1,
               role: managerRole,
             },
           }

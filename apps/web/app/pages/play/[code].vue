@@ -1,17 +1,8 @@
 <script lang="ts" setup>
-  import {
-    EngineConfig,
-    GameEngine,
-    GameSession,
-    GT001Session,
-    GT002Session,
-    GT003Session,
-    GT004Session,
-    GT005Session,
-    GT006Session,
-  } from "@kidthink/game-engine";
+  import { type EngineConfig, GameEngine } from "@mindkid/game-engine";
   import { onMounted, onUnmounted, ref } from "vue";
   import { useRoute } from "vue-router";
+  import { createSessionFactory } from "../../utils/game-session-factory";
 
   interface ConfigPayload {
     level_code: string;
@@ -37,27 +28,6 @@
   const canvasRef = ref<HTMLCanvasElement | null>(null);
 
   let engine: GameEngine | null = null;
-
-  function createSessionFactory(
-    templateCode: string
-  ): (cfg: EngineConfig) => GameSession {
-    switch (templateCode) {
-      case "GT-001":
-        return (cfg) => new GT001Session(cfg as never);
-      case "GT-002":
-        return (cfg) => new GT002Session(cfg as never);
-      case "GT-003":
-        return (cfg) => new GT003Session(cfg as never);
-      case "GT-004":
-        return (cfg) => new GT004Session(cfg as never);
-      case "GT-005":
-        return (cfg) => new GT005Session(cfg as never);
-      case "GT-006":
-        return (cfg) => new GT006Session(cfg as never);
-      default:
-        throw new Error(`TEMPLATE_NOT_SUPPORTED: ${templateCode}`);
-    }
-  }
 
   /** Preload all resolved assets before engine start() (BR-CFG-01 & BR-CFG-08) */
   async function preloadAssets(
@@ -135,7 +105,7 @@
 
   onUnmounted(() => {
     if (engine) {
-      engine.stop();
+      engine.destroy();
       engine = null;
     }
   });

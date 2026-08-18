@@ -1,6 +1,6 @@
 import crypto from "node:crypto";
 
-const DEFAULT_SECRET = "kidthink_fcm_token_secret_key_32bytes!!";
+const DEFAULT_SECRET = "mindkid_fcm_token_secret_key_32bytes!!";
 
 function getSecretKey(secret?: string): Buffer {
   const rawSecret =

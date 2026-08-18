@@ -5,17 +5,14 @@ import {
   gameLevels,
   getOwnerDb,
   lessons,
-} from "@kidthink/db";
+} from "@mindkid/db";
 import {
   type CurriculumItemMetadata,
   calculateCurriculumBalance,
-} from "@kidthink/shared";
+} from "@mindkid/shared";
 import { and, asc, eq } from "drizzle-orm";
 import { createError, defineEventHandler, getRouterParam } from "h3";
-import {
-  requireManagerSession,
-  respondToManagerAuthError,
-} from "../../../../utils/admin-auth-runtime.js";
+import { requireManagerSession } from "../../../../utils/admin-auth-runtime.js";
 
 const LES_COMPETENCY_REGEX = /LES-(C[1-6])/i;
 const GL_COMPETENCY_REGEX = /GL-(C[1-6])/i;
@@ -35,7 +32,7 @@ async function enrichCurriculumItem(
     const [les] = await db
       .select({
         code: lessons.code,
-        titleVi: lessons.titleVi,
+        title: lessons.title,
         status: lessons.status,
         estimatedMinutes: lessons.estimatedMinutes,
       })
@@ -46,7 +43,7 @@ async function enrichCurriculumItem(
 
     if (les) {
       codeStr = les.code;
-      titleViStr = les.titleVi;
+      titleViStr = les.title;
       statusStr = les.status;
       minsNum = les.estimatedMinutes ?? 20;
       const match = les.code.match(LES_COMPETENCY_REGEX);
@@ -58,7 +55,7 @@ async function enrichCurriculumItem(
     const [lvl] = await db
       .select({
         code: gameLevels.code,
-        titleVi: gameLevels.titleVi,
+        title: gameLevels.title,
         status: gameLevels.status,
         difficulty: gameLevels.difficulty,
       })
@@ -69,7 +66,7 @@ async function enrichCurriculumItem(
 
     if (lvl) {
       codeStr = lvl.code;
-      titleViStr = lvl.titleVi;
+      titleViStr = lvl.title;
       statusStr = lvl.status;
       diffNum = lvl.difficulty ?? 1;
       minsNum = 10;
@@ -109,83 +106,79 @@ async function enrichCurriculumItem(
 }
 
 export default defineEventHandler(async (event) => {
-  try {
-    await requireManagerSession(event);
-    const code = getRouterParam(event, "code");
-    const versionParam = getRouterParam(event, "version");
-    const version = Number(versionParam) || 1;
+  await requireManagerSession(event);
+  const code = getRouterParam(event, "code");
+  const versionParam = getRouterParam(event, "version");
+  const version = Number(versionParam) || 1;
 
-    if (!code) {
-      throw createError({
-        statusCode: 400,
-        statusMessage: "BAD_REQUEST",
-        message: "Thiếu tham số mã chương trình",
-      });
-    }
-
-    const db = getOwnerDb();
-    const [curr] = await db
-      .select()
-      .from(curricula)
-      .where(
-        and(eq(curricula.code, code), eq(curricula.contentVersion, version))
-      );
-
-    if (!curr) {
-      throw createError({
-        statusCode: 404,
-        statusMessage: "CURRICULUM_NOT_FOUND",
-        message: `Không tìm thấy chương trình ${code} version ${version}`,
-      });
-    }
-
-    const weeks = await db
-      .select()
-      .from(curriculumWeeks)
-      .where(eq(curriculumWeeks.curriculumId, curr.id))
-      .orderBy(asc(curriculumWeeks.weekNo));
-
-    const rawItems = await db
-      .select()
-      .from(curriculumItems)
-      .where(eq(curriculumItems.curriculumId, curr.id))
-      .orderBy(
-        asc(curriculumItems.weekNo),
-        asc(curriculumItems.sessionNo),
-        asc(curriculumItems.position)
-      );
-
-    const enrichedItems: Awaited<
-      ReturnType<typeof enrichCurriculumItem>
-    >["enriched"][] = [];
-    const balanceItemsPayload: CurriculumItemMetadata[] = [];
-
-    for (const it of rawItems) {
-      const { enriched, balanceItem } = await enrichCurriculumItem(db, it);
-      enrichedItems.push(enriched);
-      balanceItemsPayload.push(balanceItem);
-    }
-
-    const balanceReport = calculateCurriculumBalance({
-      code: curr.code,
-      program_type: curr.programType,
-      duration_weeks: curr.durationWeeks,
-      sessions_per_week: curr.sessionsPerWeek,
-      title: curr.titleVi,
-      target_age_min: curr.targetAgeMin,
-      target_age_max: curr.targetAgeMax,
-      status: curr.status,
-      items: balanceItemsPayload,
-      weeks: weeks.map((w) => ({ week_no: w.weekNo, goal: w.goal })),
+  if (!code) {
+    throw createError({
+      statusCode: 400,
+      statusMessage: "BAD_REQUEST",
+      message: "Thiếu tham số mã chương trình",
     });
-
-    return {
-      ...curr,
-      weeks,
-      items: enrichedItems,
-      balance: balanceReport,
-    };
-  } catch (err) {
-    return respondToManagerAuthError(event, err);
   }
+
+  const db = getOwnerDb();
+  const [curr] = await db
+    .select()
+    .from(curricula)
+    .where(
+      and(eq(curricula.code, code), eq(curricula.contentVersion, version))
+    );
+
+  if (!curr) {
+    throw createError({
+      statusCode: 404,
+      statusMessage: "CURRICULUM_NOT_FOUND",
+      message: `Không tìm thấy chương trình ${code} version ${version}`,
+    });
+  }
+
+  const weeks = await db
+    .select()
+    .from(curriculumWeeks)
+    .where(eq(curriculumWeeks.curriculumId, curr.id))
+    .orderBy(asc(curriculumWeeks.weekNo));
+
+  const rawItems = await db
+    .select()
+    .from(curriculumItems)
+    .where(eq(curriculumItems.curriculumId, curr.id))
+    .orderBy(
+      asc(curriculumItems.weekNo),
+      asc(curriculumItems.sessionNo),
+      asc(curriculumItems.position)
+    );
+
+  const enrichedItems: Awaited<
+    ReturnType<typeof enrichCurriculumItem>
+  >["enriched"][] = [];
+  const balanceItemsPayload: CurriculumItemMetadata[] = [];
+
+  for (const it of rawItems) {
+    const { enriched, balanceItem } = await enrichCurriculumItem(db, it);
+    enrichedItems.push(enriched);
+    balanceItemsPayload.push(balanceItem);
+  }
+
+  const balanceReport = calculateCurriculumBalance({
+    code: curr.code,
+    program_type: curr.programType,
+    duration_weeks: curr.durationWeeks,
+    sessions_per_week: curr.sessionsPerWeek,
+    title: curr.title,
+    target_age_min: curr.targetAgeMin,
+    target_age_max: curr.targetAgeMax,
+    status: curr.status,
+    items: balanceItemsPayload,
+    weeks: weeks.map((w) => ({ week_no: w.weekNo, goal: w.goal })),
+  });
+
+  return {
+    ...curr,
+    weeks,
+    items: enrichedItems,
+    balance: balanceReport,
+  };
 });

@@ -8,13 +8,13 @@ import {
   gameLevels,
   getOwnerDb,
   lessons,
-} from "@kidthink/db";
+} from "@mindkid/db";
 import {
   type AccessTier,
   allowedTiers,
   type CurriculumPlayerItemRef,
   type CurriculumPlayerWeekGoal,
-} from "@kidthink/shared";
+} from "@mindkid/shared";
 import { and, desc, eq, inArray } from "drizzle-orm";
 import { createError, type H3Event, setResponseStatus } from "h3";
 import { resolveUserActiveEntitlements } from "./entitlements-runtime.js";
@@ -73,7 +73,7 @@ export async function resolveEnrolledChildCurriculum(
       status: curriculumEnrollments.status,
       curriculum_code: curricula.code,
       curriculum_version: curricula.contentVersion,
-      curriculum_title: curricula.titleVi,
+      curriculum_title: curricula.title,
       duration_weeks: curricula.durationWeeks,
       sessions_per_week: curricula.sessionsPerWeek,
     })
@@ -135,7 +135,7 @@ export async function resolveEnrolledChildCurriculum(
       .select({
         entityId: gameLevels.entityId,
         code: gameLevels.code,
-        titleVi: gameLevels.titleVi,
+        title: gameLevels.title,
         accessTier: gameLevels.accessTier,
       })
       .from(gameLevels)
@@ -149,7 +149,7 @@ export async function resolveEnrolledChildCurriculum(
     for (const gl of glRows) {
       gameLevelsMap.set(gl.entityId, {
         code: gl.code,
-        title: gl.titleVi,
+        title: gl.title,
         access_tier: gl.accessTier as AccessTier,
       });
     }
@@ -164,7 +164,7 @@ export async function resolveEnrolledChildCurriculum(
       .select({
         entityId: lessons.entityId,
         code: lessons.code,
-        titleVi: lessons.titleVi,
+        title: lessons.title,
         accessTier: lessons.accessTier,
       })
       .from(lessons)
@@ -178,7 +178,7 @@ export async function resolveEnrolledChildCurriculum(
     for (const les of lesRows) {
       lessonsMap.set(les.entityId, {
         code: les.code,
-        title: les.titleVi,
+        title: les.title,
         access_tier: les.accessTier as AccessTier,
       });
     }

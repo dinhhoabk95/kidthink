@@ -1,4 +1,4 @@
-import { appError } from "@kidthink/auth";
+import { appError } from "@mindkid/auth";
 import {
   childProfiles,
   entitlementKeys,
@@ -7,14 +7,11 @@ import {
   paymentOrders,
   recurringSubscriptions,
   users,
-} from "@kidthink/db";
-import { PACKAGE_CATALOG, type PackageDefinition } from "@kidthink/shared";
+} from "@mindkid/db";
+import { PACKAGE_CATALOG, type PackageDefinition } from "@mindkid/shared";
 import { and, count, desc, eq, inArray } from "drizzle-orm";
 import { defineEventHandler } from "h3";
-import {
-  requireWebUserSession,
-  respondToUserAuthError,
-} from "../../utils/auth-runtime.ts";
+import { requireWebUserSession } from "../../utils/auth-runtime.ts";
 
 const DATA_PRESERVATION_NOTICE =
   "Khi gói hết hạn, hồ sơ của các bé và toàn bộ tiến độ học vẫn được giữ nguyên. Bạn chỉ tạm thời không truy cập được nội dung trả phí.";
@@ -26,15 +23,15 @@ interface EntitlementDbRow {
   status: string;
   grantedAt: Date;
   expiresAt: Date | null;
-  labelVi: string | null;
-  descriptionVi: string | null;
+  label: string | null;
+  description: string | null;
   group: string | null;
 }
 
 interface ResolvedEntitlement {
   key: string;
-  label_vi: string;
-  description_vi: string | null;
+  label: string;
+  description: string | null;
   group: string;
   status: string;
   source_label: string;
@@ -90,8 +87,8 @@ function resolveEntitlements(
 
   const resolved = Array.from(activeKeyMap.values()).map((e) => ({
     key: e.key,
-    label_vi: e.labelVi || e.key,
-    description_vi: e.descriptionVi || null,
+    label: e.label || e.key,
+    description: e.description || null,
     group: e.group || "content",
     status: e.status,
     source_label: resolveSourceLabel(e.source),
@@ -171,13 +168,13 @@ function calculateQuotas(
   return [
     {
       quota_key: "child_profiles",
-      label_vi: "Hồ sơ trẻ",
+      label: "Hồ sơ trẻ",
       used: childrenUsed,
       total: maxChildProfiles,
     },
     {
       quota_key: "daily_play_minutes",
-      label_vi: "Thời lượng chơi mỗi ngày (phút/trẻ)",
+      label: "Thời lượng chơi mỗi ngày (phút/trẻ)",
       used: 0,
       total: dailyPlayMinutes,
     },
@@ -223,132 +220,128 @@ function mapOrders(orderRows: OrderDbRow[]) {
 }
 
 export default defineEventHandler(async (event) => {
-  try {
-    const session = requireWebUserSession(event);
-    const db = getDb();
-    const now = new Date();
+  const session = requireWebUserSession(event);
+  const db = getDb();
+  const now = new Date();
 
-    const [userRecord] = await db
-      .select()
-      .from(users)
-      .where(eq(users.id, session.user_id))
-      .limit(1);
+  const [userRecord] = await db
+    .select()
+    .from(users)
+    .where(eq(users.id, session.user_id))
+    .limit(1);
 
-    if (!userRecord) {
-      throw appError("UNAUTHENTICATED");
-    }
+  if (!userRecord) {
+    throw appError("UNAUTHENTICATED");
+  }
 
-    const userEntitlementRows = await db
-      .select({
-        id: entitlements.id,
-        key: entitlements.entitlementKey,
-        source: entitlements.source,
-        status: entitlements.status,
-        grantedAt: entitlements.grantedAt,
-        expiresAt: entitlements.expiresAt,
-        labelVi: entitlementKeys.labelVi,
-        descriptionVi: entitlementKeys.descriptionVi,
-        group: entitlementKeys.group,
-      })
-      .from(entitlements)
-      .leftJoin(
-        entitlementKeys,
-        eq(entitlements.entitlementKey, entitlementKeys.key)
+  const userEntitlementRows = await db
+    .select({
+      id: entitlements.id,
+      key: entitlements.entitlementKey,
+      source: entitlements.source,
+      status: entitlements.status,
+      grantedAt: entitlements.grantedAt,
+      expiresAt: entitlements.expiresAt,
+      label: entitlementKeys.label,
+      description: entitlementKeys.description,
+      group: entitlementKeys.group,
+    })
+    .from(entitlements)
+    .leftJoin(
+      entitlementKeys,
+      eq(entitlements.entitlementKey, entitlementKeys.key)
+    )
+    .where(
+      and(
+        eq(entitlements.userId, session.user_id),
+        inArray(entitlements.status, [
+          "active",
+          "soft_unlock",
+          "grace_period",
+          "expired",
+          "cancelled",
+        ])
       )
-      .where(
-        and(
-          eq(entitlements.userId, session.user_id),
-          inArray(entitlements.status, [
-            "active",
-            "soft_unlock",
-            "grace_period",
-            "expired",
-            "cancelled",
-          ])
-        )
+    )
+    .orderBy(desc(entitlements.id));
+
+  const { activeOrSoftRows, resolved: resolvedEntitlements } =
+    resolveEntitlements(userEntitlementRows, now);
+
+  const activePackages = resolvePackages(activeOrSoftRows, now);
+
+  const [childrenCountResult] = await db
+    .select({ val: count(childProfiles.id) })
+    .from(childProfiles)
+    .where(
+      and(
+        eq(childProfiles.userId, session.user_id),
+        eq(childProfiles.status, "active")
       )
-      .orderBy(desc(entitlements.id));
-
-    const { activeOrSoftRows, resolved: resolvedEntitlements } =
-      resolveEntitlements(userEntitlementRows, now);
-
-    const activePackages = resolvePackages(activeOrSoftRows, now);
-
-    const [childrenCountResult] = await db
-      .select({ val: count(childProfiles.id) })
-      .from(childProfiles)
-      .where(
-        and(
-          eq(childProfiles.userId, session.user_id),
-          eq(childProfiles.status, "active")
-        )
-      );
-
-    const quotas = calculateQuotas(
-      activePackages,
-      Number(childrenCountResult?.val ?? 0)
     );
 
-    const orderRows = await db
-      .select({
-        id: paymentOrders.id,
-        uuid: paymentOrders.uuid,
-        packageCode: paymentOrders.packageCode,
-        offerCode: paymentOrders.offerCode,
-        amountVnd: paymentOrders.amountVnd,
-        currency: paymentOrders.currency,
-        status: paymentOrders.status,
-        createdAt: paymentOrders.createdAt,
-        submittedAt: paymentOrders.submittedAt,
-        reviewedAt: paymentOrders.reviewedAt,
-      })
-      .from(paymentOrders)
-      .where(eq(paymentOrders.userId, session.user_id))
-      .orderBy(desc(paymentOrders.id));
+  const quotas = calculateQuotas(
+    activePackages,
+    Number(childrenCountResult?.val ?? 0)
+  );
 
-    const [activeSub] = await db
-      .select()
-      .from(recurringSubscriptions)
-      .where(
-        and(
-          eq(recurringSubscriptions.userId, session.user_id),
-          inArray(recurringSubscriptions.status, ["active", "past_due"])
-        )
+  const orderRows = await db
+    .select({
+      id: paymentOrders.id,
+      uuid: paymentOrders.uuid,
+      packageCode: paymentOrders.packageCode,
+      offerCode: paymentOrders.offerCode,
+      amountVnd: paymentOrders.amountVnd,
+      currency: paymentOrders.currency,
+      status: paymentOrders.status,
+      createdAt: paymentOrders.createdAt,
+      submittedAt: paymentOrders.submittedAt,
+      reviewedAt: paymentOrders.reviewedAt,
+    })
+    .from(paymentOrders)
+    .where(eq(paymentOrders.userId, session.user_id))
+    .orderBy(desc(paymentOrders.id));
+
+  const [activeSub] = await db
+    .select()
+    .from(recurringSubscriptions)
+    .where(
+      and(
+        eq(recurringSubscriptions.userId, session.user_id),
+        inArray(recurringSubscriptions.status, ["active", "past_due"])
       )
-      .orderBy(desc(recurringSubscriptions.id))
-      .limit(1);
+    )
+    .orderBy(desc(recurringSubscriptions.id))
+    .limit(1);
 
-    const recurringInfo = activeSub
-      ? {
-          id: activeSub.id,
-          package_code: activeSub.packageCode,
-          billing_period: activeSub.billingPeriod,
-          price_vnd: activeSub.priceVnd,
-          auto_renew: activeSub.autoRenew,
-          status: activeSub.status,
-          current_period_end: activeSub.currentPeriodEnd.toISOString(),
-          next_billing_at: activeSub.nextBillingAt
-            ? activeSub.nextBillingAt.toISOString()
-            : null,
-          can_cancel: activeSub.autoRenew && activeSub.status === "active",
-        }
-      : null;
+  const recurringInfo = activeSub
+    ? {
+        id: activeSub.id,
+        package_code: activeSub.packageCode,
+        billing_period: activeSub.billingPeriod,
+        price_vnd: activeSub.priceVnd,
+        auto_renew: activeSub.autoRenew,
+        status: activeSub.status,
+        current_period_end: activeSub.currentPeriodEnd.toISOString(),
+        next_billing_at: activeSub.nextBillingAt
+          ? activeSub.nextBillingAt.toISOString()
+          : null,
+        can_cancel: activeSub.autoRenew && activeSub.status === "active",
+      }
+    : null;
 
-    const orders = mapOrders(orderRows);
-    const hasPremium = activePackages.some((p) => p.code === "PKG-premium");
+  const orders = mapOrders(orderRows);
+  const hasPremium = activePackages.some((p) => p.code === "PKG-premium");
 
-    return {
-      packages: activePackages,
-      entitlements: resolvedEntitlements,
-      quotas,
-      orders,
-      recurring_subscription: recurringInfo,
-      cancellation_guidance:
-        "Huỷ gia hạn tự động có thể thực hiện trực tiếp tại đây bất kỳ lúc nào. Quyền lợi hiện tại được giữ nguyên cho đến hết chu kỳ đã thanh toán. Trường hợp cần hỗ trợ thoả thuận hoàn tiền, vui lòng liên hệ qua Zalo OA hoặc Facebook Messenger hỗ trợ của KidThink.",
-      data_preservation_notice: DATA_PRESERVATION_NOTICE,
-      has_higher_tier: !hasPremium,
-    };
-  } catch (error) {
-    respondToUserAuthError(event, error);
-  }
+  return {
+    packages: activePackages,
+    entitlements: resolvedEntitlements,
+    quotas,
+    orders,
+    recurring_subscription: recurringInfo,
+    cancellation_guidance:
+      "Huỷ gia hạn tự động có thể thực hiện trực tiếp tại đây bất kỳ lúc nào. Quyền lợi hiện tại được giữ nguyên cho đến hết chu kỳ đã thanh toán. Trường hợp cần hỗ trợ thoả thuận hoàn tiền, vui lòng liên hệ qua Zalo OA hoặc Facebook Messenger hỗ trợ của MindKid.",
+    data_preservation_notice: DATA_PRESERVATION_NOTICE,
+    has_higher_tier: !hasPremium,
+  };
 });

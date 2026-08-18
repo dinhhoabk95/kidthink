@@ -6,13 +6,13 @@ import {
   type RecommendationItem,
   type RecommendationsPayload,
   shuffleWithSeed,
-} from "@kidthink/adaptive";
-import { getByCode } from "@kidthink/emoji";
+} from "@mindkid/adaptive";
+import { getByCode } from "@mindkid/emoji";
 import {
   type AccessTier,
   deriveAgeBand,
   resolveNextStep,
-} from "@kidthink/shared";
+} from "@mindkid/shared";
 import { and, asc, desc, eq, inArray, sql } from "drizzle-orm";
 import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 import { masteryState } from "../schema/adaptive.js";
@@ -143,7 +143,7 @@ async function resolveTier1CurriculumCandidate(
       entity_type: item.entityType as "lesson" | "game_level",
       entity_id: item.entityId,
       code: gl?.code ?? `${item.entityType}_${item.entityId}`,
-      title: gl?.titleVi ?? "Hoạt động",
+      title: gl?.title ?? "Hoạt động",
       is_required: item.isRequired,
       access_tier: (gl?.accessTier as AccessTier) ?? "free",
     };
@@ -177,7 +177,7 @@ async function resolveTier1CurriculumCandidate(
 
   return {
     level_code: matchedLevel.code,
-    title: matchedLevel.titleVi,
+    title: matchedLevel.title,
     thumbnail_emoji: resolveThumbnailEmoji(matchedLevel.thumbnailEmoji),
     reason_code: "curriculum_next",
     access_tier: matchedLevel.accessTier as AccessTier,
@@ -213,7 +213,7 @@ async function resolveReinforceCandidates(
     if (gl && isLevelAgeMatch(gl.ageMin, gl.ageMax, targetMin, targetMax)) {
       results.push({
         level_code: gl.code,
-        title: gl.titleVi,
+        title: gl.title,
         thumbnail_emoji: resolveThumbnailEmoji(gl.thumbnailEmoji),
         reason_code: "skill_reinforce",
         access_tier: gl.accessTier as AccessTier,
@@ -263,7 +263,7 @@ async function resolveProgressionCandidates(
     if (gl && isLevelAgeMatch(gl.ageMin, gl.ageMax, targetMin, targetMax)) {
       results.push({
         level_code: gl.code,
-        title: gl.titleVi,
+        title: gl.title,
         thumbnail_emoji: resolveThumbnailEmoji(gl.thumbnailEmoji),
         reason_code: "skill_progression",
         access_tier: gl.accessTier as AccessTier,
@@ -302,7 +302,7 @@ async function resolveRevisionCandidates(
     if (gl && isLevelAgeMatch(gl.ageMin, gl.ageMax, targetMin, targetMax)) {
       results.push({
         level_code: gl.code,
-        title: gl.titleVi,
+        title: gl.title,
         thumbnail_emoji: resolveThumbnailEmoji(gl.thumbnailEmoji),
         reason_code: "revision",
         access_tier: gl.accessTier as AccessTier,
@@ -405,7 +405,7 @@ async function resolvePopularCandidates(
 
   return unplayedForPopular.map((gl) => ({
     level_code: gl.code,
-    title: gl.titleVi,
+    title: gl.title,
     thumbnail_emoji: resolveThumbnailEmoji(gl.thumbnailEmoji),
     reason_code: "popular" as const,
     access_tier: gl.accessTier as AccessTier,
@@ -514,7 +514,7 @@ export async function getRecommendationsForChild(
   for (const gl of shuffledExplore) {
     candidatePool.push({
       level_code: gl.code,
-      title: gl.titleVi,
+      title: gl.title,
       thumbnail_emoji: resolveThumbnailEmoji(gl.thumbnailEmoji),
       reason_code: "explore",
       access_tier: gl.accessTier as AccessTier,
@@ -542,7 +542,7 @@ export async function getRecommendationsForChild(
   for (const gl of shuffledRevision) {
     candidatePool.push({
       level_code: gl.code,
-      title: gl.titleVi,
+      title: gl.title,
       thumbnail_emoji: resolveThumbnailEmoji(gl.thumbnailEmoji),
       reason_code: "revision",
       access_tier: gl.accessTier as AccessTier,
@@ -557,7 +557,7 @@ export async function getRecommendationsForChild(
     for (const gl of allPublishedLevels) {
       candidatePool.push({
         level_code: gl.code,
-        title: gl.titleVi,
+        title: gl.title,
         thumbnail_emoji: resolveThumbnailEmoji(gl.thumbnailEmoji),
         reason_code: "revision",
         access_tier: gl.accessTier as AccessTier,
@@ -585,7 +585,7 @@ export async function getRecommendationsForChild(
     primary: formatRecommendationItem(
       {
         level_code: fallbackLevel.code,
-        title: fallbackLevel.titleVi,
+        title: fallbackLevel.title,
         thumbnail_emoji: resolveThumbnailEmoji(fallbackLevel.thumbnailEmoji),
         reason_code: "revision",
         access_tier: fallbackLevel.accessTier as AccessTier,
@@ -639,7 +639,7 @@ export async function getGuestRecommendations(
   for (const gl of shuffledExplore) {
     candidatePool.push({
       level_code: gl.code,
-      title: gl.titleVi,
+      title: gl.title,
       thumbnail_emoji: resolveThumbnailEmoji(gl.thumbnailEmoji),
       reason_code: "explore",
       access_tier: "free",
@@ -657,7 +657,7 @@ export async function getGuestRecommendations(
   for (const gl of popularSorted) {
     candidatePool.push({
       level_code: gl.code,
-      title: gl.titleVi,
+      title: gl.title,
       thumbnail_emoji: resolveThumbnailEmoji(gl.thumbnailEmoji),
       reason_code: "popular",
       access_tier: "free",

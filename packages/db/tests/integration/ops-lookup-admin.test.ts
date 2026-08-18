@@ -99,7 +99,7 @@ describe("P2.2 Operational Lookup Invariants (BR-USM, BR-USD, BR-CPA)", () => {
     it("Scenario: BR-USD-04 — user detail response omits password_hash, refresh tokens, and MFA secrets", () => {
       const userObj = { id: 1, email: "user@example.com" };
       expect(userObj).not.toHaveProperty("password_hash");
-      expect(userObj).not.toHaveProperty("refresh_token_version_secret");
+      expect(userObj).not.toHaveProperty("session_version_secret");
     });
 
     it("Scenario: BR-USD-05 — accessing user detail containing child profiles writes an audit_logs entry with no-store header", () => {

@@ -1,7 +1,7 @@
-import { canPromptPwaInstall, type PwaInstallState } from "@kidthink/shared";
+import { canPromptPwaInstall, type PwaInstallState } from "@mindkid/shared";
 import { computed, onMounted, ref } from "vue";
 
-const STORAGE_KEY = "kidthink_pwa_install_state";
+const STORAGE_KEY = "mindkid_pwa_install_state";
 const IOS_UA_REGEX = /iphone|ipad|ipod/;
 
 interface BeforeInstallPromptEvent extends Event {

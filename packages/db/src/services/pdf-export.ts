@@ -1,6 +1,6 @@
-import { appError } from "@kidthink/auth";
-import { enqueue } from "@kidthink/queue";
-import { storage } from "@kidthink/storage";
+import { appError } from "@mindkid/auth";
+import { enqueue } from "@mindkid/queue";
+import { storage } from "@mindkid/storage";
 import { and, count, eq, gte, isNotNull, lte, ne } from "drizzle-orm";
 import { getDb } from "../client.ts";
 import { exportJobs } from "../schema/exports.ts";

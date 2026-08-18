@@ -12,7 +12,7 @@ import {
   playSessions,
   telemetryEvents,
   users,
-} from "@kidthink/db";
+} from "@mindkid/db";
 import { eq } from "drizzle-orm";
 import { beforeEach, describe, expect, it } from "vitest";
 import getOfflinePackHandler from "../../../server/api/users/curricula/[uuid]/offline-pack.get.js";
@@ -117,7 +117,7 @@ describe("Offline Curriculum Pack & Sync APIs (BR-PWA, BR-OCP, BR-OFF)", () => {
         {
           key: "play_standard_games",
           group: "content",
-          labelVi: "Chơi game chuẩn",
+          label: "Chơi game chuẩn",
         },
       ])
       .onConflictDoNothing();
@@ -152,7 +152,7 @@ describe("Offline Curriculum Pack & Sync APIs (BR-PWA, BR-OCP, BR-OFF)", () => {
       .insert(gameTemplates)
       .values({
         code: templateCode,
-        nameVi: "Game template test offline",
+        name: "Game template test offline",
         mechanic: "drag_drop",
         contentContract: {},
       })
@@ -183,7 +183,7 @@ describe("Offline Curriculum Pack & Sync APIs (BR-PWA, BR-OCP, BR-OFF)", () => {
         entityId: randEntityId,
         templateId,
         difficulty: 1,
-        titleVi: "Trò chơi học đếm ngoại tuyến",
+        title: "Trò chơi học đếm ngoại tuyến",
         accessTier: "standard",
         status: "published",
         contentPack: { items: ["apple", "banana"] },
@@ -211,7 +211,7 @@ describe("Offline Curriculum Pack & Sync APIs (BR-PWA, BR-OCP, BR-OFF)", () => {
       .values({
         code: lesCode,
         entityId: randEntityId + 1,
-        titleVi: "Bài học toán tuần 1",
+        title: "Bài học toán tuần 1",
         accessTier: "standard",
         status: "published",
         estimatedMinutes: 15,
@@ -227,7 +227,7 @@ describe("Offline Curriculum Pack & Sync APIs (BR-PWA, BR-OCP, BR-OFF)", () => {
       .values({
         code: curriculumCode,
         entityId: randEntityId + 2,
-        titleVi: "Chương trình mẫu Offline Tuần 1-4",
+        title: "Chương trình mẫu Offline Tuần 1-4",
         accessTier: "standard",
         status: "published",
         durationWeeks: 4,

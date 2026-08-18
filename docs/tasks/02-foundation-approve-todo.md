@@ -24,7 +24,7 @@
 |---|---|
 | 0/16 spec foundation `approved` | **16/16** |
 | 48 OQ không phân loại | 48/48 có `Chặn phase` + `Chủ`; 14 nhóm chặn P0 đã đóng |
-| Corpus không trong git | Trong `kidthink/`, `git log --follow` chạy được |
+| Corpus không trong git | Trong `mindkid/`, `git log --follow` chạy được |
 | Không có cổng kiểm spec | `pnpm lint:specs` — 11 check, 11 ca âm |
 | `BR-RBS-04` chặn | **Mở khoá** |
 
@@ -37,23 +37,23 @@
       `HEAD` không đổi, output in `file:line`
 - [ ] **Ca âm** `pre-push`: `pnpm check` đỏ thì push bị chặn
 - [ ] Commit `chore: thay CI remote bằng lefthook gate local`
-- [ ] `git status --short` trong `kidthink/` **rỗng**
-- [ ] `kidthink/.github/` không còn tồn tại
+- [ ] `git status --short` trong `mindkid/` **rỗng**
+- [ ] `mindkid/.github/` không còn tồn tại
 
-## T2 — Chuyển corpus vào `kidthink/docs/` (đóng §11 Q10 · D-U)
+## T2 — Chuyển corpus vào `mindkid/docs/` (đóng §11 Q10 · D-U)
 
 - [ ] Đếm link resolve **TRƯỚC** khi di chuyển (số nền để so sánh)
-- [ ] `docs/specs/` → `kidthink/docs/specs/` (135 file)
-- [ ] [`SPEC.md`](../SPEC.md) (file thật 71K) → `kidthink/docs/SPEC.md`
-- [ ] Symlink `kidthink/SPEC.md -> docs/SPEC.md` ([`SPEC.md`](../SPEC.md) §8: *"root SPEC.md symlink về đây"*)
-- [ ] `docs/tasks/*` → `kidthink/docs/tasks/` (4 file: plan · todo · 01-bootstrap-plan · 01-bootstrap-todo)
+- [ ] `docs/specs/` → `mindkid/docs/specs/` (135 file)
+- [ ] [`SPEC.md`](../SPEC.md) (file thật 71K) → `mindkid/docs/SPEC.md`
+- [ ] Symlink `mindkid/SPEC.md -> docs/SPEC.md` ([`SPEC.md`](../SPEC.md) §8: *"root SPEC.md symlink về đây"*)
+- [ ] `docs/tasks/*` → `mindkid/docs/tasks/` (4 file: plan · todo · 01-bootstrap-plan · 01-bootstrap-todo)
 - [ ] Sửa 13 tham chiếu đường dẫn trong `.agents/AGENTS.md`
 - [ ] Xoá bản cũ ở workspace root — không để hai bản cùng tồn tại
 - [ ] [`repo-bootstrap.md`](../specs/00-foundation/repo-bootstrap.md) §11 Q10 → gạch `~~10~~` **Đóng 2026-08-06**, ghi D-U
 - [ ] `git ls-files docs/specs | wc -l` = **135**
 - [ ] 217 link `.md` resolve, **0 vỡ** — và **0 link phải sửa** (nếu phải sửa link thì đặt sai chỗ [`SPEC.md`](../SPEC.md))
-- [ ] `cat kidthink/SPEC.md` ra nội dung (symlink sống)
-- [ ] `git log --follow kidthink/docs/specs/00-foundation/glossary.md` ≥ 1 commit
+- [ ] `cat mindkid/SPEC.md` ra nội dung (symlink sống)
+- [ ] `git log --follow mindkid/docs/specs/00-foundation/glossary.md` ≥ 1 commit
 - [ ] Root không còn [`SPEC.md`](../SPEC.md) · `docs/specs/` · `docs/tasks/`
 - [ ] `docs/montessori/` **giữ nguyên** ở root
 
@@ -113,7 +113,7 @@
 - [ ] [`SPEC.md`](../SPEC.md) §14: `00-foundation/` **14 → 16** · `07-addon/` **6 → 7**
 - [ ] [`SPEC.md`](../SPEC.md) §14.3: đối chiếu "120 prefix" với [`business-rules.md`](../specs/00-foundation/business-rules.md) thật, sửa nếu lệch
 - [ ] [`SPEC.md`](../SPEC.md) §15 **Q6** ("repo riêng hay branch v2?") → chuyển sang bảng *Đã chốt*: repo
-      riêng `kidthink/`, D-A 2026-08-06
+      riêng `mindkid/`, D-A 2026-08-06
 - [ ] [`SPEC.md`](../SPEC.md) §15: rà 10 câu còn lại, cái nào trùng OQ foundation thì trỏ link thay vì lặp
 - [ ] [`01-bootstrap-todo.md`](../tasks/01-bootstrap-todo.md): 3 mục "bật lại CI" → đánh dấu **huỷ**, không phải hoãn (D-V thay)
 - [ ] [`01-bootstrap-todo.md`](../tasks/01-bootstrap-todo.md) T8/T9đk2: ghi rõ CI đã bị bỏ hẳn
@@ -215,9 +215,9 @@ Mỗi quyết định đụng schema thì ghi thêm một dòng vào [`data-mode
 ## Ngoài task này (theo dõi riêng)
 
 - [ ] Approve 114 spec `01-*`…`08-*` — theo phase của từng cái, không phải bây giờ
-- [ ] Chuyển `.agents/` vào `kidthink/` theo [`SPEC.md`](../SPEC.md) §8 — hiện phục vụ cả workspace, di
+- [ ] Chuyển `.agents/` vào `mindkid/` theo [`SPEC.md`](../SPEC.md) §8 — hiện phục vụ cả workspace, di
       chuyển làm mất `CLAUDE.md` ở cwd
-- [ ] Chuyển `infra/` vào `kidthink/infra/` khi tới deploy
+- [ ] Chuyển `infra/` vào `mindkid/infra/` khi tới deploy
 - [ ] `docs/montessori/` — không thuộc corpus spec, chưa có spec nào sở hữu
 - [ ] Nhánh lỗi PG trong `check-services.ts` in message rỗng (mất `.message` ECONNREFUSED)
 - [ ] **Task #3 (P1)** — khảo sát 60 game type v1 → 6 template, rồi port `game-engine`

@@ -1,4 +1,4 @@
-import { alert, type JobName, QUEUE_NAME } from "@kidthink/queue";
+import { alert, type JobName, QUEUE_NAME } from "@mindkid/queue";
 import { type Job, Worker } from "bullmq";
 import { runPostgresBackup } from "./backup/postgres.js";
 import { runVerifyBackup } from "./backup/verify.js";

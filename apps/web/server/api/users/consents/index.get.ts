@@ -1,12 +1,8 @@
-import { AppError } from "@kidthink/auth";
-import { consentLogs, consentRequirements, getOwnerDb } from "@kidthink/db";
-import { CONSENT_POLICY_MAP, type ConsentType } from "@kidthink/shared";
+import { consentLogs, consentRequirements, getOwnerDb } from "@mindkid/db";
+import { CONSENT_POLICY_MAP, type ConsentType } from "@mindkid/shared";
 import { desc, eq } from "drizzle-orm";
-import { defineEventHandler, setResponseStatus } from "h3";
-import {
-  requireWebUserSession,
-  respondToUserAuthError,
-} from "../../../utils/auth-runtime.js";
+import { defineEventHandler } from "h3";
+import { requireWebUserSession } from "../../../utils/auth-runtime.js";
 
 const CONSENT_TYPES: readonly ConsentType[] = [
   "terms",
@@ -43,47 +39,39 @@ function computeConsentState(
 }
 
 export default defineEventHandler(async (event) => {
-  try {
-    const userSession = await requireWebUserSession(event);
-    const userId = Number(userSession.user_id);
+  const userSession = await requireWebUserSession(event);
+  const userId = Number(userSession.user_id);
 
-    const db = getOwnerDb();
-    const [logs, reqs] = await Promise.all([
-      db
-        .select()
-        .from(consentLogs)
-        .where(eq(consentLogs.userId, userId))
-        .orderBy(desc(consentLogs.createdAt), desc(consentLogs.id)),
-      db.select().from(consentRequirements),
-    ]);
+  const db = getOwnerDb();
+  const [logs, reqs] = await Promise.all([
+    db
+      .select()
+      .from(consentLogs)
+      .where(eq(consentLogs.userId, userId))
+      .orderBy(desc(consentLogs.createdAt), desc(consentLogs.id)),
+    db.select().from(consentRequirements),
+  ]);
 
-    const consents = CONSENT_TYPES.map((type) => {
-      const meta = CONSENT_POLICY_MAP[type];
-      const req = reqs.find((r) => r.consentType === type);
-      const latestLog = logs.find((l) => l.consentType === type);
-      const { status, acceptedAt } = computeConsentState(latestLog, req);
-
-      return {
-        consent_type: type,
-        title: meta.title,
-        document_url: `/${meta.slug}`,
-        accepted_at: acceptedAt,
-        requirement_at: req?.reconsentRequiredAt
-          ? req.reconsentRequiredAt.toISOString()
-          : null,
-        notice: req?.noticeVi ?? null,
-        status,
-      };
-    });
+  const consents = CONSENT_TYPES.map((type) => {
+    const meta = CONSENT_POLICY_MAP[type];
+    const req = reqs.find((r) => r.consentType === type);
+    const latestLog = logs.find((l) => l.consentType === type);
+    const { status, acceptedAt } = computeConsentState(latestLog, req);
 
     return {
-      consents,
+      consent_type: type,
+      title: meta.title,
+      document_url: `/${meta.slug}`,
+      accepted_at: acceptedAt,
+      requirement_at: req?.reconsentRequiredAt
+        ? req.reconsentRequiredAt.toISOString()
+        : null,
+      notice: req?.notice ?? null,
+      status,
     };
-  } catch (err: unknown) {
-    if (err instanceof AppError) {
-      setResponseStatus(event, err.status);
-      throw err;
-    }
-    return respondToUserAuthError(event, err);
-  }
+  });
+
+  return {
+    consents,
+  };
 });

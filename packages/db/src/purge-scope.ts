@@ -180,7 +180,7 @@ export const PURGE_TABLE_CLASSIFICATIONS: readonly TablePurgeMetadata[] = [
     tableName: "users",
     classification: "anonymize",
     reason:
-      "Ẩn danh email (deleted+uuid@kidthink.invalid), tên hiển thị, xoá password_hash và đặt status = 'purged' (BR-ADL-09)",
+      "Ẩn danh email (deleted+uuid@mindkid.invalid), tên hiển thị, xoá password_hash và đặt status = 'purged' (BR-ADL-09)",
     legalBasis: "BR-ADL-09 & Nghị định 13/2023",
   },
   {

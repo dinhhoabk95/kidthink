@@ -6,8 +6,8 @@ import {
   paymentOrders,
   recurringSubscriptions,
   users,
-} from "@kidthink/db";
-import { allowedTiers, resolveNextStep } from "@kidthink/shared";
+} from "@mindkid/db";
+import { allowedTiers, resolveNextStep } from "@mindkid/shared";
 import { and, desc, eq, gte } from "drizzle-orm";
 import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 import {
@@ -17,10 +17,7 @@ import {
   type H3Event,
   setResponseStatus,
 } from "h3";
-import {
-  requireWebUserSession,
-  respondToUserAuthError,
-} from "../../utils/auth-runtime.ts";
+import { requireWebUserSession } from "../../utils/auth-runtime.ts";
 import { resolveEnrolledChildCurriculum } from "../../utils/curriculum-runtime.ts";
 import { resolveUserActiveEntitlements } from "../../utils/entitlements-runtime.ts";
 
@@ -134,7 +131,7 @@ async function resolveCurriculumBlock(
       enrollment_id: enrollment.id,
       curriculum_id: enrollment.curriculum_id,
       curriculum_code: enrollment.curriculum_code,
-      title_vi: enrollment.curriculum_title,
+      title: enrollment.curriculum_title,
       duration_weeks: enrollment.duration_weeks,
       current_week: nextStep.week_no,
       current_session: nextStep.session_no,
@@ -314,107 +311,100 @@ function computeSubscriptionState(
 }
 
 export default defineEventHandler(async (event) => {
-  try {
-    const user = await requireWebUserSession(event);
-    const userId = Number(user.user_id);
-    const db = getOwnerDb();
-    const query = getQuery(event);
+  const user = await requireWebUserSession(event);
+  const userId = Number(user.user_id);
+  const db = getOwnerDb();
+  const query = getQuery(event);
 
-    const [dbUser] = await db
-      .select({
-        id: users.id,
-        status: users.status,
-        emailVerifiedAt: users.emailVerifiedAt,
-      })
-      .from(users)
-      .where(eq(users.id, userId));
+  const [dbUser] = await db
+    .select({
+      id: users.id,
+      status: users.status,
+      emailVerifiedAt: users.emailVerifiedAt,
+    })
+    .from(users)
+    .where(eq(users.id, userId));
 
-    const userChildren: ChildRecord[] = await db
-      .select({
-        id: childProfiles.id,
-        uuid: childProfiles.uuid,
-        displayName: childProfiles.displayName,
-        birthYear: childProfiles.birthYear,
-        avatarId: childProfiles.avatarId,
-        relationship: childProfiles.relationship,
-        status: childProfiles.status,
-      })
-      .from(childProfiles)
-      .where(
-        and(
-          eq(childProfiles.userId, userId),
-          eq(childProfiles.status, "active")
-        )
+  const userChildren: ChildRecord[] = await db
+    .select({
+      id: childProfiles.id,
+      uuid: childProfiles.uuid,
+      displayName: childProfiles.displayName,
+      birthYear: childProfiles.birthYear,
+      avatarId: childProfiles.avatarId,
+      relationship: childProfiles.relationship,
+      status: childProfiles.status,
+    })
+    .from(childProfiles)
+    .where(
+      and(eq(childProfiles.userId, userId), eq(childProfiles.status, "active"))
+    )
+    .orderBy(childProfiles.id);
+
+  const activeChild = resolveActiveChild(event, userChildren, query);
+  const activeEntitlements = await resolveUserActiveEntitlements(userId);
+  const activeTiers = await allowedTiers(
+    {
+      kind: "user",
+      user_id: String(userId),
+      active_child_id: activeChild ? String(activeChild.id) : null,
+    },
+    activeEntitlements
+  );
+
+  const [sub] = await db
+    .select({
+      packageCode: recurringSubscriptions.packageCode,
+      status: recurringSubscriptions.status,
+      currentPeriodEnd: recurringSubscriptions.currentPeriodEnd,
+    })
+    .from(recurringSubscriptions)
+    .where(
+      and(
+        eq(recurringSubscriptions.userId, userId),
+        eq(recurringSubscriptions.status, "active")
       )
-      .orderBy(childProfiles.id);
+    )
+    .orderBy(desc(recurringSubscriptions.id))
+    .limit(1);
 
-    const activeChild = resolveActiveChild(event, userChildren, query);
-    const activeEntitlements = await resolveUserActiveEntitlements(userId);
-    const activeTiers = await allowedTiers(
-      {
-        kind: "user",
-        user_id: String(userId),
-        active_child_id: activeChild ? String(activeChild.id) : null,
-      },
-      activeEntitlements
-    );
+  const { daysLeft, isExpiringSoon, subscriptionBlock } =
+    computeSubscriptionState(sub, activeTiers, userChildren.length);
 
-    const [sub] = await db
-      .select({
-        packageCode: recurringSubscriptions.packageCode,
-        status: recurringSubscriptions.status,
-        currentPeriodEnd: recurringSubscriptions.currentPeriodEnd,
-      })
-      .from(recurringSubscriptions)
-      .where(
-        and(
-          eq(recurringSubscriptions.userId, userId),
-          eq(recurringSubscriptions.status, "active")
-        )
-      )
-      .orderBy(desc(recurringSubscriptions.id))
-      .limit(1);
+  const todoList = await buildTodoList(
+    db,
+    userId,
+    dbUser?.status,
+    isExpiringSoon,
+    daysLeft
+  );
 
-    const { daysLeft, isExpiringSoon, subscriptionBlock } =
-      computeSubscriptionState(sub, activeTiers, userChildren.length);
+  const sevenDaysAgoDate = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)
+    .toISOString()
+    .slice(0, 10);
 
-    const todoList = await buildTodoList(
-      db,
-      userId,
-      dbUser?.status,
-      isExpiringSoon,
-      daysLeft
-    );
+  const childrenData: Record<string, unknown>[] = [];
+  const recentProgressData: Record<string, unknown>[] = [];
 
-    const sevenDaysAgoDate = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)
-      .toISOString()
-      .slice(0, 10);
-
-    const childrenData: Record<string, unknown>[] = [];
-    const recentProgressData: Record<string, unknown>[] = [];
-
-    for (const child of userChildren) {
-      const stats = await fetchChildStats(db, child, sevenDaysAgoDate);
-      childrenData.push(stats.childSummary);
-      recentProgressData.push(stats.progressSummary);
-    }
-
-    const curriculumBlock = await resolveCurriculumBlock(
-      event,
-      userId,
-      activeChild
-    );
-
-    return {
-      todo: todoList,
-      children: childrenData,
-      recent_progress: recentProgressData,
-      curriculum: curriculumBlock,
-      subscription: subscriptionBlock,
-      active_child_id: activeChild?.id ?? null,
-      active_child_uuid: activeChild?.uuid ?? null,
-    };
-  } catch (error) {
-    return respondToUserAuthError(event, error);
+  for (const child of userChildren) {
+    const stats = await fetchChildStats(db, child, sevenDaysAgoDate);
+    childrenData.push(stats.childSummary);
+    recentProgressData.push(stats.progressSummary);
   }
+
+  const curriculumBlock = await resolveCurriculumBlock(
+    event,
+    userId,
+    activeChild
+  );
+
+  return {
+    todo: todoList,
+    children: childrenData,
+    recent_progress: recentProgressData,
+    curriculum: curriculumBlock,
+    subscription: subscriptionBlock,
+    active_child_id: activeChild?.id ?? null,
+    active_child_uuid: activeChild?.uuid ?? null,
+  };
 });

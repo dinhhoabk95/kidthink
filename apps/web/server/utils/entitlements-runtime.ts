@@ -1,11 +1,11 @@
-import { appError } from "@kidthink/auth";
-import { getClient } from "@kidthink/cache";
-import { auditLogs, entitlements, getDb } from "@kidthink/db";
+import { appError } from "@mindkid/auth";
+import { getClient } from "@mindkid/cache";
+import { auditLogs, entitlements, getDb } from "@mindkid/db";
 import {
   computeStackedExpiryDate,
   type EntitlementKey,
   PACKAGE_CATALOG,
-} from "@kidthink/shared";
+} from "@mindkid/shared";
 import { and, eq, gte, inArray, isNull, or } from "drizzle-orm";
 
 const ENTITLEMENTS_CACHE_PREFIX = "user:entitlements:";

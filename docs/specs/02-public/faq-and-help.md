@@ -127,5 +127,5 @@ Scenario: BR-FAQ-04 — sửa được không cần deploy
 
 | # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
 |---|---|---|---|---|
-| ~~1~~ | ~~Có kênh hỗ trợ trực tiếp không (email, Zalo)?~~ **Đóng 2026-08-09 (T13, `D-AX`)**: dùng email support@kidthink.vn + Zalo OA | Kênh hỗ trợ khách hàng | Đã đóng | D-AX |
+| ~~1~~ | ~~Có kênh hỗ trợ trực tiếp không (email, Zalo)?~~ **Đóng 2026-08-09 (T13, `D-AX`)**: dùng email support@mindkid.vn + Zalo OA | Kênh hỗ trợ khách hàng | Đã đóng | D-AX |
 

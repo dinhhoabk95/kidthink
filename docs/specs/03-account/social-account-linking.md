@@ -88,7 +88,7 @@ SNS cả năm mà không bao giờ mở trang này, và ngược lại.
 | ID | Rule | Vì sao |
 |---|---|---|
 | `BR-SLK-01` | Liên kết và gỡ đều cần **reauth trong 5 phút** | Phiên bị chiếm không được gắn SNS của kẻ tấn công vào — đó là cửa hậu vĩnh viễn sống sót qua cả lần đổi mật khẩu |
-| `BR-SLK-02` | **Một provider một lần** mỗi User — `UNIQUE (user_id, provider)` | Hai tài khoản Google trên một tài khoản KidThink không giải quyết vấn đề nào, nhưng làm màn hình gỡ mơ hồ |
+| `BR-SLK-02` | **Một provider một lần** mỗi User — `UNIQUE (user_id, provider)` | Hai tài khoản Google trên một tài khoản MindKid không giải quyết vấn đề nào, nhưng làm màn hình gỡ mơ hồ |
 | `BR-SLK-03` | Liên kết Cấm — **NEVER ghi đè `users.email`**, không đồng bộ tên hiển thị | `users.email` là khoá khôi phục (`BR-ACS-03`). Để provider đổi nó là để provider đổi chủ tài khoản |
 | `BR-SLK-04` | Cấm — **NEVER gỡ phương thức đăng nhập cuối cùng.** Còn ít nhất một trong: `password_hash` NOT NULL, hoặc ≥1 hàng `social_identities` | Tài khoản không có cách vào là tài khoản đã mất, và cascade xoá dữ liệu trẻ không chạy được nữa |
 | `BR-SLK-05` | Liên kết và gỡ đều ghi `audit_logs` **và** gửi email thông báo | Người thật biết ngay nếu không phải họ làm. Đây là dấu hiệu chiếm tài khoản dễ nhận nhất |

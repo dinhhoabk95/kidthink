@@ -18,7 +18,7 @@
 > Sổ cái quyết định `D-*` là sổ liên task, dùng từ Task #1. Task #5 dừng ở `D-AG`, nên task
 > này bắt đầu từ **`D-AH`**.
 >
-> Mọi lệnh chạy từ thư mục `kidthink/` và phải đặt lại đường dẫn Node trước, vì shell mặc định
+> Mọi lệnh chạy từ thư mục `mindkid/` và phải đặt lại đường dẫn Node trước, vì shell mặc định
 > của máy là v20.17.0 còn dự án cần v24:
 >
 > ```

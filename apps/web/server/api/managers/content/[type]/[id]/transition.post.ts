@@ -8,13 +8,10 @@ import {
   type ManagerRole,
   seoPages,
   transitionContentStatus,
-} from "@kidthink/db";
+} from "@mindkid/db";
 import { eq } from "drizzle-orm";
 import { createError, defineEventHandler, getRouterParam, readBody } from "h3";
-import {
-  requireManagerSession,
-  respondToManagerAuthError,
-} from "../../../../../utils/admin-auth-runtime.js";
+import { requireManagerSession } from "../../../../../utils/admin-auth-runtime.js";
 import { verifyPreviewToken } from "../../../../../utils/preview-token.js";
 
 const VALID_TYPES = [
@@ -164,60 +161,56 @@ async function parseTransitionBody(event: Record<string, unknown>) {
 }
 
 export default defineEventHandler(async (event) => {
-  try {
-    const manager = await requireManagerSession(event);
-    const typeParam = getRouterParam(event, "type");
-    const idParam = getRouterParam(event, "id");
-    const id = Number(idParam);
+  const manager = await requireManagerSession(event);
+  const typeParam = getRouterParam(event, "type");
+  const idParam = getRouterParam(event, "id");
+  const id = Number(idParam);
 
-    if (!(typeParam && VALID_TYPES.includes(typeParam) && id) || id <= 0) {
-      throw createError({
-        statusCode: 404,
-        statusMessage: "ENTITY_NOT_FOUND",
-        message: `Unknown content entity '${typeParam}' with id '${idParam}'`,
-      });
-    }
-
-    const { toStatus, reason, expectedVersion, checklist, previewToken } =
-      await parseTransitionBody(event);
-
-    const managerRole = (manager.role || "content_reviewer") as ManagerRole;
-    const managerId = manager.manager_id || manager.id || 1;
-
-    // BR-CRQ-07 & D-KG: When transitioning in_review -> approved, verify checklist + preview_token
-    if (toStatus === "approved") {
-      await ensureApprovalRequirements({
-        checklist,
-        previewToken,
-        typeParam,
-        id,
-        expectedVersion,
-        managerId,
-      });
-    }
-
-    const result = await transitionContentStatus({
-      entityType: typeParam as
-        | "game_level"
-        | "lesson"
-        | "activity"
-        | "curriculum"
-        | "worksheet",
-      entityDbId: id,
-      toStatus,
-      actorManagerId: managerId,
-      actorRole: managerRole,
-      reason,
-      expectedVersion,
+  if (!(typeParam && VALID_TYPES.includes(typeParam) && id) || id <= 0) {
+    throw createError({
+      statusCode: 404,
+      statusMessage: "ENTITY_NOT_FOUND",
+      message: `Unknown content entity '${typeParam}' with id '${idParam}'`,
     });
-
-    return {
-      success: true,
-      status: result.status,
-      content_version: result.contentVersion,
-      review_log_id: result.reviewLogId,
-    };
-  } catch (err) {
-    return respondToManagerAuthError(event, err);
   }
+
+  const { toStatus, reason, expectedVersion, checklist, previewToken } =
+    await parseTransitionBody(event);
+
+  const managerRole = (manager.role || "content_reviewer") as ManagerRole;
+  const managerId = manager.manager_id || manager.id || 1;
+
+  // BR-CRQ-07 & D-KG: When transitioning in_review -> approved, verify checklist + preview_token
+  if (toStatus === "approved") {
+    await ensureApprovalRequirements({
+      checklist,
+      previewToken,
+      typeParam,
+      id,
+      expectedVersion,
+      managerId,
+    });
+  }
+
+  const result = await transitionContentStatus({
+    entityType: typeParam as
+      | "game_level"
+      | "lesson"
+      | "activity"
+      | "curriculum"
+      | "worksheet",
+    entityDbId: id,
+    toStatus,
+    actorManagerId: managerId,
+    actorRole: managerRole,
+    reason,
+    expectedVersion,
+  });
+
+  return {
+    success: true,
+    status: result.status,
+    content_version: result.contentVersion,
+    review_log_id: result.reviewLogId,
+  };
 });

@@ -5,7 +5,7 @@ import {
   ingestPlayEvents,
   playSessions,
   telemetryEvents,
-} from "@kidthink/db";
+} from "@mindkid/db";
 import { eq } from "drizzle-orm";
 import { describe, expect, it } from "vitest";
 
@@ -15,7 +15,7 @@ async function createTestLevel(db: ReturnType<typeof getOwnerDb>) {
     .insert(gameTemplates)
     .values({
       code: `GT-${num3}`,
-      nameVi: "Template test",
+      name: "Template test",
       mechanic: "tap_target",
       scoring: {},
     })
@@ -50,8 +50,8 @@ async function createTestLevel(db: ReturnType<typeof getOwnerDb>) {
       entityId: uid,
       code,
       templateId,
-      titleVi: "Level Test",
-      instructionVi: "Instruction",
+      title: "Level Test",
+      instruction: "Instruction",
       contentPack: {},
       difficultyParams: {},
       accessTier: "free",

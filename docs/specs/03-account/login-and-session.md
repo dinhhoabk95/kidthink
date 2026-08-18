@@ -2,7 +2,7 @@
 spec: LOGIN-AND-SESSION
 title: Đăng nhập và quản lý phiên
 area: account
-status: approved
+status: implemented
 mvp: true
 phase: P0
 reviewed: 2026-08-14

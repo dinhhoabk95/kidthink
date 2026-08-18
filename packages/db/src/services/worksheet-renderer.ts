@@ -12,16 +12,15 @@
  */
 
 import { createHash } from "node:crypto";
-import type { WorksheetContentBlock } from "@kidthink/shared";
+import type { WorksheetContentBlock } from "@mindkid/shared";
 
 export interface WorksheetPdfRenderInput {
   code: string;
   version: number;
   title?: string;
-  title_vi?: string;
   layout_template: string;
   content_blocks: WorksheetContentBlock | unknown;
-  instructions_vi: string;
+  instructions: string;
 }
 
 export interface WorksheetPdfRenderResult {
@@ -50,11 +49,11 @@ export interface WorksheetPhysicalInspectionResult {
  */
 export function computeWorksheetRenderHash(
   contentBlocks: unknown,
-  instructionsVi?: string | null
+  instructions?: string | null
 ): string {
   const normalized = {
     blocks: contentBlocks || {},
-    instructions: (instructionsVi || "").trim(),
+    instructions: (instructions || "").trim(),
   };
   const jsonStr = JSON.stringify(normalized);
   return createHash("sha256").update(jsonStr, "utf8").digest("hex");
@@ -382,7 +381,7 @@ export function renderWorksheetPdf(
 ): WorksheetPdfRenderResult {
   const inputHash = computeWorksheetRenderHash(
     input.content_blocks,
-    input.instructions_vi
+    input.instructions
   );
   const blocks = input.content_blocks as Record<string, unknown>;
   const streamCommands: string[] = [];
@@ -391,7 +390,7 @@ export function renderWorksheetPdf(
   streamCommands.push("BT");
   streamCommands.push("/F1 16 Tf");
   streamCommands.push("50 790 Td");
-  const titleText = (input.title_vi || input.title || "").toUpperCase();
+  const titleText = (input.title || "").toUpperCase();
   streamCommands.push(`${escapePdfText(titleText)} Tj`);
   streamCommands.push("ET");
 
@@ -442,7 +441,7 @@ export function renderWorksheetPdf(
   streamCommands.push(`${escapePdfText("HƯỚNG DẪN DÀNH CHO NGƯỜI DẠY:")} Tj`);
   streamCommands.push("ET");
 
-  const guideLines = wrapText(input.instructions_vi, 80).slice(0, 4);
+  const guideLines = wrapText(input.instructions, 80).slice(0, 4);
   let guideY = 105;
   for (const gLine of guideLines) {
     streamCommands.push("0.2 0.2 0.2 rg");

@@ -212,7 +212,7 @@ T1 packages/storage: pipeline · magic bytes · bảng content_images (D-KC, D-K
 - [ ] Đăng ký vào registry job của P1.5 kèm retry policy và ngưỡng alert.
 
 **Kiểm chứng**
-- [ ] `pnpm --filter @kidthink/worker test -- orphan-image-cleanup` xanh.
+- [ ] `pnpm --filter @mindkid/worker test -- orphan-image-cleanup` xanh.
 
 **Phụ thuộc:** T1 · P1.5 · **Cỡ:** S
 

@@ -1,4 +1,4 @@
-import { getPublicImage } from "@kidthink/storage";
+import { getPublicImage } from "@mindkid/storage";
 import { createError, defineEventHandler, getRouterParam, setHeader } from "h3";
 
 export default defineEventHandler((event) => {

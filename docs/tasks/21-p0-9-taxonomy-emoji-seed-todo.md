@@ -50,7 +50,7 @@
 - [x] Property test `BR-TAX-01` trên đồ thị sinh ngẫu nhiên.
 - [x] `prerequisitesOf(..., { transitive: true })` không lặp vô hạn với dữ liệu bẩn.
 - [x] Cache cây 5 phút, invalidate theo `taxonomy_version`.
-- [x] `pnpm --filter @kidthink/taxonomy test` xanh.
+- [x] `pnpm --filter @mindkid/taxonomy test` xanh.
 
 ### T2 — Seeder ba tầng đầu
 

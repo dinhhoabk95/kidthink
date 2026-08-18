@@ -1,5 +1,5 @@
 {
-  "extends": "@kidthink/config/tsconfig.base.json",
+  "extends": "@mindkid/config/tsconfig.base.json",
   "compilerOptions": {
     "rootDir": "./",
     "outDir": "./dist"

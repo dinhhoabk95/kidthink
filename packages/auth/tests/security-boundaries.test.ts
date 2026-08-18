@@ -22,13 +22,11 @@ describe("P0.3 Security Evidence — Business Rule Verification", () => {
       user_id: 1,
       display_name: "User One",
       session_id: "s-user",
-      refresh_token_version: 1,
     };
     const managerPayload: ManagerTokenPayload = {
       manager_id: 2,
       display_name: "Manager Two",
       session_id: "s-mgr",
-      refresh_token_version: 1,
       role: "content_reviewer",
     };
 
@@ -77,7 +75,6 @@ describe("P0.3 Security Evidence — Business Rule Verification", () => {
           user_id: 20,
           display_name: "User Twenty",
           session_id: "s-user-20",
-          refresh_token_version: 0,
         },
       }),
     };
@@ -93,7 +90,6 @@ describe("P0.3 Security Evidence — Business Rule Verification", () => {
       user_id: 1,
       display_name: "User",
       session_id: "s-1",
-      refresh_token_version: 1,
     };
 
     expect(userPayload).not.toHaveProperty("role");
@@ -109,7 +105,6 @@ describe("P0.3 Security Evidence — Business Rule Verification", () => {
           user_id: 1,
           display_name: "User",
           session_id: "s-1",
-          refresh_token_version: 1,
         },
       }),
     };
@@ -126,7 +121,6 @@ describe("P0.3 Security Evidence — Business Rule Verification", () => {
           manager_id: 2,
           display_name: "Reviewer",
           session_id: "s-2",
-          refresh_token_version: 1,
           role: "content_reviewer",
         },
       }),
@@ -142,7 +136,6 @@ describe("P0.3 Security Evidence — Business Rule Verification", () => {
       user_id: 1,
       display_name: "User",
       session_id: "s-1",
-      refresh_token_version: 1,
     };
     const event = { context: createAuthContext({ user: userPayload }) };
 

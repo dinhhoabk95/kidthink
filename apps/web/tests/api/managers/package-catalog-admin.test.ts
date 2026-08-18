@@ -7,7 +7,7 @@ import {
   SEED_ENTITLEMENT_KEYS,
   SEED_PACKAGES,
   users,
-} from "@kidthink/db";
+} from "@mindkid/db";
 import { beforeAll, describe, expect, it } from "vitest";
 import subscribersHandler from "../../../server/api/managers/packages/[code]/subscribers.get";
 import packagesListHandler from "../../../server/api/managers/packages/index.get";
@@ -44,7 +44,6 @@ function mockManagerEvent(
               manager_id: 1,
               display_name: "Super Admin",
               session_id: "sess_sa",
-              refresh_token_version: 1,
               role: managerRole,
             },
           }

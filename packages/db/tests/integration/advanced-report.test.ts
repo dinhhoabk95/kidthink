@@ -31,9 +31,9 @@ describe("P3.7 Advanced Report Invariants (BR-ARP)", () => {
 
     it("Scenario: BR-ARP-03 — every visual chart section provides non-empty equivalent text descriptions for accessibility", () => {
       const chart = {
-        alt_text_vi: "Biểu đồ xu hướng thành thạo kỹ năng đếm qua 30 ngày.",
+        alt_text: "Biểu đồ xu hướng thành thạo kỹ năng đếm qua 30 ngày.",
       };
-      expect(chart.alt_text_vi.length).toBeGreaterThan(0);
+      expect(chart.alt_text.length).toBeGreaterThan(0);
     });
 
     it("Scenario: BR-ARP-04 — trend section represents progress direction using discrete 3-state enum without raw slope numbers", () => {
@@ -53,7 +53,7 @@ describe("P3.7 Advanced Report Invariants (BR-ARP)", () => {
         actions: [
           {
             kind: "home_activity",
-            text_vi: "Cùng bé đếm 5 chiếc cốc khi dọn bàn ăn.",
+            text: "Cùng bé đếm 5 chiếc cốc khi dọn bàn ăn.",
           },
         ],
       };
@@ -94,7 +94,7 @@ describe("P3.7 Advanced Report Invariants (BR-ARP)", () => {
         .where(eq(skillActionSuggestions.skillId, Number(sampleSkill.id)));
 
       expect(suggestions.length).toBeGreaterThanOrEqual(1);
-      expect(suggestions[0].textVi).toBeDefined();
+      expect(suggestions[0].text).toBeDefined();
       expect(["home_activity", "in_app"]).toContain(suggestions[0].kind);
     });
   });

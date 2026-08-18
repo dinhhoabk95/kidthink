@@ -4,7 +4,7 @@ import {
   curriculumWeeks,
   getOwnerDb,
   writeAudit,
-} from "@kidthink/db";
+} from "@mindkid/db";
 import { and, eq } from "drizzle-orm";
 import {
   createError,
@@ -14,10 +14,7 @@ import {
   setResponseStatus,
 } from "h3";
 import { z } from "zod";
-import {
-  requireManagerSession,
-  respondToManagerAuthError,
-} from "../../../../../utils/admin-auth-runtime.js";
+import { requireManagerSession } from "../../../../../utils/admin-auth-runtime.js";
 
 const duplicateCurriculumSchema = z.object({
   new_code: z
@@ -54,12 +51,14 @@ async function copyWeeksAndItems(
     .from(curriculumWeeks)
     .where(eq(curriculumWeeks.curriculumId, sourceId));
 
-  for (const wk of sourceWeeks) {
-    await db.insert(curriculumWeeks).values({
-      curriculumId: newCurriculumId,
-      weekNo: wk.weekNo,
-      goal: wk.goal,
-    });
+  if (sourceWeeks.length > 0) {
+    await db.insert(curriculumWeeks).values(
+      sourceWeeks.map((wk) => ({
+        curriculumId: newCurriculumId,
+        weekNo: wk.weekNo,
+        goal: wk.goal,
+      }))
+    );
   }
 
   const sourceItems = await db
@@ -67,16 +66,18 @@ async function copyWeeksAndItems(
     .from(curriculumItems)
     .where(eq(curriculumItems.curriculumId, sourceId));
 
-  for (const it of sourceItems) {
-    await db.insert(curriculumItems).values({
-      curriculumId: newCurriculumId,
-      weekNo: it.weekNo,
-      sessionNo: it.sessionNo,
-      position: it.position,
-      entityType: it.entityType,
-      entityId: it.entityId,
-      isRequired: it.isRequired,
-    });
+  if (sourceItems.length > 0) {
+    await db.insert(curriculumItems).values(
+      sourceItems.map((it) => ({
+        curriculumId: newCurriculumId,
+        weekNo: it.weekNo,
+        sessionNo: it.sessionNo,
+        position: it.position,
+        entityType: it.entityType,
+        entityId: it.entityId,
+        isRequired: it.isRequired,
+      }))
+    );
   }
 }
 
@@ -104,8 +105,8 @@ async function createDuplicateRecord(
           targetAgeMax: source.targetAgeMax,
           durationWeeks: source.durationWeeks,
           sessionsPerWeek: source.sessionsPerWeek,
-          titleVi: newTitle,
-          descriptionVi: source.descriptionVi,
+          title: newTitle,
+          description: source.description,
           accessTier: source.accessTier,
           status: "draft",
           origin: "human",
@@ -131,80 +132,76 @@ async function createDuplicateRecord(
 }
 
 export default defineEventHandler(async (event) => {
-  try {
-    const session = await requireManagerSession(event);
-    const code = getRouterParam(event, "code");
-    const versionParam = getRouterParam(event, "version");
-    const version = Number(versionParam) || 1;
+  const session = await requireManagerSession(event);
+  const code = getRouterParam(event, "code");
+  const versionParam = getRouterParam(event, "version");
+  const version = Number(versionParam) || 1;
 
-    if (!code) {
-      throw createError({
-        statusCode: 400,
-        statusMessage: "BAD_REQUEST",
-        message: "Thiếu tham số mã chương trình",
-      });
-    }
+  if (!code) {
+    throw createError({
+      statusCode: 400,
+      statusMessage: "BAD_REQUEST",
+      message: "Thiếu tham số mã chương trình",
+    });
+  }
 
-    const rawBody =
-      (event.context?.body as unknown) ??
-      (event as Record<string, unknown>)._body ??
-      (await readBody(event).catch(() => ({}))) ??
-      {};
-    const parsed = duplicateCurriculumSchema.safeParse(rawBody);
-    if (!parsed.success) {
-      throw createError({
-        statusCode: 422,
-        statusMessage: "VALIDATION_FAILED",
-        message: parsed.error.issues[0]?.message || "Dữ liệu không hợp lệ",
-      });
-    }
+  const rawBody =
+    (event.context?.body as unknown) ??
+    (event as Record<string, unknown>)._body ??
+    (await readBody(event).catch(() => ({}))) ??
+    {};
+  const parsed = duplicateCurriculumSchema.safeParse(rawBody);
+  if (!parsed.success) {
+    throw createError({
+      statusCode: 422,
+      statusMessage: "VALIDATION_FAILED",
+      message: parsed.error.issues[0]?.message || "Dữ liệu không hợp lệ",
+    });
+  }
 
-    const db = getOwnerDb();
-    const managerId = session.manager_id || session.id || 1;
+  const db = getOwnerDb();
+  const managerId = session.manager_id || session.id || 1;
 
-    const [source] = await db
-      .select()
-      .from(curricula)
-      .where(
-        and(eq(curricula.code, code), eq(curricula.contentVersion, version))
-      );
-
-    if (!source) {
-      throw createError({
-        statusCode: 404,
-        statusMessage: "CURRICULUM_NOT_FOUND",
-        message: `Không tìm thấy chương trình ${code} version ${version}`,
-      });
-    }
-
-    const newTitle = parsed.data.title || `${source.titleVi} (Bản sao)`;
-    const created = await createDuplicateRecord(
-      db,
-      source,
-      newTitle,
-      parsed.data.new_code,
-      managerId
+  const [source] = await db
+    .select()
+    .from(curricula)
+    .where(
+      and(eq(curricula.code, code), eq(curricula.contentVersion, version))
     );
 
-    await copyWeeksAndItems(db, source.id, created.id);
-
-    await writeAudit(db, {
-      action: "content_created",
-      actor_type: "manager",
-      actor_id: managerId,
-      entity_type: "curriculum",
-      entity_id: String(created.id),
-      after_data: {
-        source_code: source.code,
-        source_version: source.contentVersion,
-        new_code: created.code,
-        new_version: created.contentVersion,
-      },
+  if (!source) {
+    throw createError({
+      statusCode: 404,
+      statusMessage: "CURRICULUM_NOT_FOUND",
+      message: `Không tìm thấy chương trình ${code} version ${version}`,
     });
-
-    setResponseStatus(event, 201);
-    return created;
-  } catch (err) {
-    return respondToManagerAuthError(event, err);
   }
+
+  const newTitle = parsed.data.title || `${source.title} (Bản sao)`;
+  const created = await createDuplicateRecord(
+    db,
+    source,
+    newTitle,
+    parsed.data.new_code,
+    managerId
+  );
+
+  await copyWeeksAndItems(db, source.id, created.id);
+
+  await writeAudit(db, {
+    action: "content_created",
+    actor_type: "manager",
+    actor_id: managerId,
+    entity_type: "curriculum",
+    entity_id: String(created.id),
+    after_data: {
+      source_code: source.code,
+      source_version: source.contentVersion,
+      new_code: created.code,
+      new_version: created.contentVersion,
+    },
+  });
+
+  setResponseStatus(event, 201);
+  return created;
 });

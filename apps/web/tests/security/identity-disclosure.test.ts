@@ -1,5 +1,5 @@
-import { hashPassword } from "@kidthink/auth";
-import { getAppDb, socialIdentities, users } from "@kidthink/db";
+import { hashPassword } from "@mindkid/auth";
+import { getAppDb, socialIdentities, users } from "@mindkid/db";
 import { describe, expect, it } from "vitest";
 
 describe("Task 5 — Identity Disclosure Prevention Test Suite (D-EP)", () => {

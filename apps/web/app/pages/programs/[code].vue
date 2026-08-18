@@ -366,12 +366,12 @@
   import type {
     ProgramAlternativeSuggestion,
     ProgramDetailPublic,
-  } from "@kidthink/shared";
+  } from "@mindkid/shared";
   import { computed } from "vue";
 
   const route = useRoute();
   const programCode = computed(() => String(route.params.code || ""));
-  const siteUrl = "https://kidthink.vn";
+  const siteUrl = "https://mindkid.vn";
 
   const {
     data: program,
@@ -411,19 +411,19 @@
   useHead(() => {
     if (isArchived.value) {
       return {
-        title: "Chương trình học đã lưu trữ | KidThink",
+        title: "Chương trình học đã lưu trữ | MindKid",
         meta: [{ name: "robots", content: "noindex, nofollow" }],
       };
     }
 
     if (!program.value) {
       return {
-        title: "Chương trình học | KidThink",
+        title: "Chương trình học | MindKid",
       };
     }
 
     const p = program.value;
-    const pageTitle = `${p.title} (${p.duration_weeks} tuần) | KidThink`;
+    const pageTitle = `${p.title} (${p.duration_weeks} tuần) | MindKid`;
     const pageDesc =
       p.description ||
       `Chương trình học tư duy toán mầm non ${p.duration_weeks} tuần cho trẻ ${p.target_age.min}–${p.target_age.max} tuổi. Khám phá ngay!`;
@@ -440,7 +440,7 @@
       isAccessibleForFree: p.access_tier === "free",
       provider: {
         "@type": "Organization",
-        name: "KidThink",
+        name: "MindKid",
         url: siteUrl,
       },
       url: canonicalUrl,

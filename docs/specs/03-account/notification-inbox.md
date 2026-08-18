@@ -2,7 +2,7 @@
 spec: NOTIFICATION-INBOX
 title: Hộp thư thông báo của User
 area: account
-status: approved
+status: implemented
 mvp: false
 phase: P5
 reviewed: 2026-08-13
@@ -18,7 +18,7 @@ depends_on:
 
 ## 1. Objective
 
-User xem lại các thay đổi quan trọng trong KidThink dù email hoặc FCM bị bỏ lỡ. Inbox hiển thị
+User xem lại các thay đổi quan trọng trong MindKid dù email hoặc FCM bị bỏ lỡ. Inbox hiển thị
 **logical notification**, không hiển thị một hàng lặp cho mỗi channel. Nó là nguồn sự thật về
 nội dung và trạng thái đọc; delivery log kỹ thuật vẫn thuộc
 [`../01-platform/notification-service.md`](../01-platform/notification-service.md).

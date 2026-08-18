@@ -106,9 +106,7 @@ export function mapProgramTypeToShowcaseGroup(
 
 export interface RawCurriculumRecord {
   code: string;
-  titleVi?: string | null;
   title?: string | null;
-  descriptionVi?: string | null;
   description?: string | null;
   programType?: string | null;
   group?: ShowcaseGroup | null;
@@ -134,7 +132,6 @@ export interface RawCurriculumItemRecord {
   position?: number | null;
   entityType: "lesson" | "game_level" | string;
   code?: string | null;
-  titleVi?: string | null;
   title?: string | null;
   estimatedMinutes?: number | null;
   accessTier?: AccessTier | string | null;
@@ -151,7 +148,7 @@ export interface ProgramCourseSeoData {
 
 export function buildCourseJsonLd(
   program: ProgramCourseSeoData,
-  siteUrl = "https://kidthink.vn"
+  siteUrl = "https://mindkid.vn"
 ) {
   const isFree = program.access_tier === "free";
   return {
@@ -167,7 +164,7 @@ export function buildCourseJsonLd(
     isAccessibleForFree: isFree,
     provider: {
       "@type": "Organization",
-      name: "KidThink",
+      name: "MindKid",
       url: siteUrl,
     },
     url: `${siteUrl}/programs/${program.code}`,
@@ -245,8 +242,8 @@ export function toProgramCardPublic(
 ): ProgramCardPublic {
   return {
     code: String(record.code || ""),
-    title: String(record.titleVi || record.title || ""),
-    description: String(record.descriptionVi || record.description || ""),
+    title: String(record.title || ""),
+    description: String(record.description || ""),
     group: record.group || mapProgramTypeToShowcaseGroup(record.programType),
     target_age: extractTargetAge(record),
     duration_weeks: extractDurationWeeks(record),
@@ -307,7 +304,7 @@ export function toProgramDetailPublic(params: {
         return {
           entity_type: entityType,
           code: String(item.code || ""),
-          title: String(item.titleVi || item.title || "Hoạt động học"),
+          title: String(item.title || "Hoạt động học"),
           estimated_minutes: Number(item.estimatedMinutes || defaultMinutes),
           access_tier:
             (item.accessTier as AccessTier) || card.access_tier || "free",

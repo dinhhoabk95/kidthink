@@ -1,4 +1,4 @@
-import { getOwnerDb, levelDailyStats, managers } from "@kidthink/db";
+import { getOwnerDb, levelDailyStats, managers } from "@mindkid/db";
 import { eq } from "drizzle-orm";
 import { describe, expect, it } from "vitest";
 import levelsAnalyticsHandler from "../../../server/api/managers/analytics/levels.get.ts";
@@ -24,7 +24,6 @@ function mockEvent(
               manager_id: managerContext.id,
               display_name: managerContext.displayName,
               session_id: "m_session_analytics",
-              refresh_token_version: managerContext.version,
               role: managerContext.role,
             },
           }

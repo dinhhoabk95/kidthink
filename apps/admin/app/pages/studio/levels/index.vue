@@ -137,7 +137,7 @@
               </td>
               <td class="px-5 py-4">
                 <div class="font-semibold text-slate-900 dark:text-white">
-                  {{ lvl.titleVi }}
+                  {{ lvl.title }}
                 </div>
                 <div class="text-xs text-slate-500">
                   {{ lvl.templateCode || 'GT-001' }}
@@ -273,7 +273,7 @@
     id: number;
     code: string;
     contentVersion: number;
-    titleVi: string;
+    title: string;
     templateCode?: string;
     ageMin?: number;
     ageMax?: number;

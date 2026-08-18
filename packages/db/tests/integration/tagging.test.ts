@@ -40,7 +40,7 @@ describe("Tagging Schema Integration Tests", () => {
       .values({
         code: `tag-test-${Date.now()}`,
         axis: "what",
-        labelVi: "Nhận biết số",
+        label: "Nhận biết số",
       })
       .returning();
 

@@ -1,19 +1,15 @@
 import { z } from "zod";
-import { EmojiRef } from "../shared-fields.js";
+import { assetSchema, promptFields } from "../shared-fields.js";
 import type { GameTemplate } from "../types.js";
 
 export const GT006ContentSchema = z.object({
-  prompt: z.string().min(4).max(80),
-  prompt_audio_ref: z.string().optional(),
+  ...promptFields(),
   sequence: z
     .array(
       z.object({
         step_id: z.string(),
         order_index: z.number().int().min(0),
-        asset: z.discriminatedUnion("kind", [
-          z.object({ kind: z.literal("emoji"), ref: EmojiRef }),
-          z.object({ kind: z.literal("image"), path: z.string() }),
-        ]),
+        asset: assetSchema(),
         label: z.string().optional(),
       })
     )

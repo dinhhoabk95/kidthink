@@ -2,7 +2,7 @@
 spec: WORKSHEET-MODEL
 title: Mô hình phiếu bài tập
 area: content
-status: approved
+status: implemented
 mvp: false
 phase: P4
 reviewed: 2026-08-08

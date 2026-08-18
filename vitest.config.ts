@@ -7,43 +7,43 @@ import { defineConfig } from "vitest/config";
 export default defineConfig({
   resolve: {
     alias: {
-      "@kidthink/config": path.resolve(
+      "@mindkid/config": path.resolve(
         import.meta.dirname,
         "./packages/config/src/index.ts"
       ),
-      "@kidthink/shared": path.resolve(
+      "@mindkid/shared": path.resolve(
         import.meta.dirname,
         "./packages/shared/src/index.ts"
       ),
-      "@kidthink/taxonomy": path.resolve(
+      "@mindkid/taxonomy": path.resolve(
         import.meta.dirname,
         "./packages/taxonomy/src/index.ts"
       ),
-      "@kidthink/emoji": path.resolve(
+      "@mindkid/emoji": path.resolve(
         import.meta.dirname,
         "./packages/emoji/src/index.ts"
       ),
-      "@kidthink/db": path.resolve(
+      "@mindkid/db": path.resolve(
         import.meta.dirname,
         "./packages/db/src/index.ts"
       ),
-      "@kidthink/game-engine": path.resolve(
+      "@mindkid/game-engine": path.resolve(
         import.meta.dirname,
         "./packages/game-engine/src/index.ts"
       ),
-      "@kidthink/notification": path.resolve(
+      "@mindkid/notification": path.resolve(
         import.meta.dirname,
         "./packages/notification/src/index.ts"
       ),
-      "@kidthink/storage": path.resolve(
+      "@mindkid/storage": path.resolve(
         import.meta.dirname,
         "./packages/storage/src/index.ts"
       ),
-      "@kidthink/adaptive": path.resolve(
+      "@mindkid/adaptive": path.resolve(
         import.meta.dirname,
         "./packages/adaptive/src/index.ts"
       ),
-      "@kidthink/ui": path.resolve(
+      "@mindkid/ui": path.resolve(
         import.meta.dirname,
         "./packages/ui/src/index.ts"
       ),

@@ -2,35 +2,40 @@ import type {
   GT006Content,
   GT006Difficulty,
 } from "../../contracts/templates/gt006";
-import { BaseGameSession, type FeedbackKind } from "../../game-session";
+import {
+  ACTION_CORRECT,
+  ACTION_IGNORED,
+  ACTION_RETRY,
+  type ActionResult,
+  type GameAction,
+  TemplateGameSession,
+} from "../../game-session";
 
-export class GT006Session extends BaseGameSession {
-  readonly content: GT006Content;
-  readonly difficulty: GT006Difficulty;
-  private currentSequence: string[] = []; // Array of step_ids in current user order
-  private isWon = false;
-
-  constructor(content: GT006Content, difficulty: GT006Difficulty) {
-    super();
-    this.content = content;
-    this.difficulty = difficulty;
-  }
+export class GT006Session extends TemplateGameSession<
+  GT006Content,
+  GT006Difficulty
+> {
+  /** step_ids in the order the child currently has them */
+  private currentSequence: string[] = [];
 
   setupEntities(): void {
-    // Initial order
     this.currentSequence = this.content.sequence.map((s) => s.step_id);
     this.isWon = false;
   }
 
+  private isInBounds(index: number): boolean {
+    return index >= 0 && index < this.currentSequence.length;
+  }
+
   reorderSteps(fromIndex: number, toIndex: number): void {
-    if (fromIndex < 0 || fromIndex >= this.currentSequence.length) {
-      return;
-    }
-    if (toIndex < 0 || toIndex >= this.currentSequence.length) {
+    if (!(this.isInBounds(fromIndex) && this.isInBounds(toIndex))) {
       return;
     }
 
     const moved = this.currentSequence[fromIndex];
+    if (moved === undefined) {
+      return; // unreachable after isInBounds — keeps the checker honest
+    }
     const without = [
       ...this.currentSequence.slice(0, fromIndex),
       ...this.currentSequence.slice(fromIndex + 1),
@@ -46,12 +51,9 @@ export class GT006Session extends BaseGameSession {
     });
   }
 
-  validateAction(action: { type: string; data: unknown }): {
-    valid: boolean;
-    feedback: FeedbackKind;
-  } {
+  validateAction(action: GameAction): ActionResult {
     if (action.type !== "submit_sequence") {
-      return { valid: false, feedback: "none" };
+      return ACTION_IGNORED;
     }
     const targetSequence = [...this.content.sequence]
       .sort((a, b) => a.order_index - b.order_index)
@@ -63,24 +65,17 @@ export class GT006Session extends BaseGameSession {
         (stepId, idx) => stepId === targetSequence[idx]
       );
 
-    if (isCorrectSequence) {
-      return { valid: true, feedback: "pop_celebrate" };
-    }
-    return { valid: false, feedback: "amber_soft" };
+    return isCorrectSequence ? ACTION_CORRECT : ACTION_RETRY;
   }
 
   onSubmitSequence(): void {
-    const res = this.validateAction({ type: "submit_sequence", data: {} });
-    if (res.valid) {
-      this.isWon = true;
-      this.recordEvent("sequence_submitted", { is_correct: true });
-      this.completeSession();
-    } else {
-      this.recordEvent("sequence_submitted", { is_correct: false });
+    const { valid } = this.validateAction({
+      type: "submit_sequence",
+      data: {},
+    });
+    this.recordEvent("sequence_submitted", { is_correct: valid });
+    if (valid) {
+      this.winSession();
     }
-  }
-
-  checkWinCondition(): boolean {
-    return this.isWon;
   }
 }

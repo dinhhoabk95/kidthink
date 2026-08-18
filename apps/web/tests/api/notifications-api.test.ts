@@ -4,7 +4,7 @@ import {
   notificationReads,
   notifications,
   users,
-} from "@kidthink/db";
+} from "@mindkid/db";
 import { eq } from "drizzle-orm";
 import { describe, expect, it } from "vitest";
 import revokeEndpointHandler from "../../server/api/users/notification-endpoints/[uuid].delete";
@@ -48,7 +48,6 @@ function mockEvent(
         user_id: userId,
         display_name: `Test User ${userId}`,
         session_id: `sess_${userId}`,
-        refresh_token_version: 0,
       },
       body,
       params: routerParams,
@@ -63,7 +62,7 @@ async function createTestUser(): Promise<number> {
   const [u] = await db
     .insert(users)
     .values({
-      email: `notif_user_${Date.now()}_${Math.random()}@kidthink.test`,
+      email: `notif_user_${Date.now()}_${Math.random()}@mindkid.test`,
       passwordHash: "hash123",
       displayName: "Notification Tester",
     })

@@ -1,5 +1,5 @@
 /**
- * @kidthink/emoji — Search
+ * @mindkid/emoji — Search
  * Fuzzy search qua name và keywords.
  * Case-insensitive, diacritics-insensitive (không cần dấu).
  */

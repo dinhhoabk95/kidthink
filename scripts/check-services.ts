@@ -21,11 +21,11 @@ const EXPECTED_VALKEY_MAJOR = 9;
  * Đo được 2026-08-06: default 5432/6379 nối vào container của stack KHÁC trên
  * máy dev này (`hlo-api-postgres-1`, `hlo-api-valkey-1`) và in `✅ Valkey 9.1.0`
  * — xanh giả, vì nó khẳng định version của service không thuộc repo này.
- * Version thật của kidthink là 9.1.1.
+ * Version thật của mindkid là 9.1.1.
  */
 const PG_URL =
   process.env.DATABASE_URL ??
-  "postgres://postgres:postgres@localhost:5433/kidthink";
+  "postgres://postgres:postgres@localhost:5433/mindkid";
 const VALKEY_HOST = process.env.VALKEY_HOST ?? "localhost";
 const DEFAULT_VALKEY_PORT = 6380;
 const MAX_PORT = 65_535;

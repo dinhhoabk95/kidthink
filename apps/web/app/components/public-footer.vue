@@ -6,14 +6,14 @@
         <div class="footer-col brand-col">
           <div class="footer-brand">
             <span aria-hidden="true" class="brand-emoji">🧠</span>
-            <span class="brand-name">KidThink</span>
+            <span class="brand-name">MindKid</span>
           </div>
           <p class="brand-tagline">
             Thinking Play Platform — Thư viện tư duy qua trò chơi tương tác cho
             trẻ mầm non 3–6 tuổi.
           </p>
           <p class="copyright-text">
-            © 2026 KidThink. Phát triển theo chuẩn sư phạm mầm non Việt Nam.
+            © 2026 MindKid. Phát triển theo chuẩn sư phạm mầm non Việt Nam.
           </p>
         </div>
 
@@ -127,7 +127,7 @@
 
       <div class="footer-bottom">
         <p class="disclaimer-text">
-          KidThink là sản phẩm giáo dục rèn luyện tư duy, cam kết bảo mật tuyệt
+          MindKid là sản phẩm giáo dục rèn luyện tư duy, cam kết bảo mật tuyệt
           đối dữ liệu trẻ em theo Nghị định 13/2023/NĐ-CP.
         </p>
       </div>

@@ -1,5 +1,5 @@
-import { hashPassword } from "@kidthink/auth";
-import { activeSessions, getAppDb, users } from "@kidthink/db";
+import { hashPassword } from "@mindkid/auth";
+import { activeSessions, getAppDb, users } from "@mindkid/db";
 import { and, eq } from "drizzle-orm";
 import { describe, expect, it } from "vitest";
 
@@ -137,7 +137,6 @@ describe("Task 3 — Login & Session Management (BR-LGN-01..12)", () => {
           user_id: user.id,
           display_name: user.displayName,
           session_id: String(s1.id),
-          refresh_token_version: user.sessionVersion,
         },
       },
     } as any;
@@ -167,7 +166,6 @@ describe("Task 3 — Login & Session Management (BR-LGN-01..12)", () => {
           user_id: user.id,
           display_name: user.displayName,
           session_id: String(s1.id),
-          refresh_token_version: user.sessionVersion,
         },
         params: { id: String(s2.id) },
       },

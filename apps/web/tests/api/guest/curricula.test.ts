@@ -6,13 +6,13 @@ import {
   gameTemplates,
   getOwnerDb,
   lessons,
-} from "@kidthink/db";
+} from "@mindkid/db";
 import {
   buildCourseJsonLd,
   hasForbiddenPublicKeys,
   toProgramCardPublic,
   toProgramDetailPublic,
-} from "@kidthink/shared";
+} from "@mindkid/shared";
 import { eq, inArray } from "drizzle-orm";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import getCurriculumDetailHandler from "../../../server/api/guest/curricula/[code].get.js";
@@ -68,7 +68,7 @@ describe("Public Program Showcase Suite — P3.8 (Task #61, BR-PSH-01..07, D-NF.
       .insert(gameTemplates)
       .values({
         code: "GT-001",
-        nameVi: "Template Showcase",
+        name: "Template Showcase",
         mechanic: "tap_target",
       })
       .onConflictDoNothing()
@@ -96,8 +96,8 @@ describe("Public Program Showcase Suite — P3.8 (Task #61, BR-PSH-01..07, D-NF.
         code: glCode1,
         contentVersion: 1,
         templateId,
-        titleVi: "Đếm sao quả",
-        instructionVi: "Hướng dẫn đếm",
+        title: "Đếm sao quả",
+        instruction: "Hướng dẫn đếm",
         contentPack: { secret: 123 },
         difficultyParams: { difficulty: 1 },
         accessTier: "free",
@@ -112,8 +112,8 @@ describe("Public Program Showcase Suite — P3.8 (Task #61, BR-PSH-01..07, D-NF.
         code: glCode2,
         contentVersion: 1,
         templateId,
-        titleVi: "Phân loại hình khối",
-        instructionVi: "Hướng dẫn hình",
+        title: "Phân loại hình khối",
+        instruction: "Hướng dẫn hình",
         contentPack: { shapes: ["circle", "square"] },
         difficultyParams: { difficulty: 2 },
         accessTier: "standard",
@@ -127,8 +127,8 @@ describe("Public Program Showcase Suite — P3.8 (Task #61, BR-PSH-01..07, D-NF.
         entityId: testRunId + 201,
         code: lesCode1,
         contentVersion: 1,
-        titleVi: "Bài học đo lường bước chân",
-        guideVi: "Hướng dẫn người dạy",
+        title: "Bài học đo lường bước chân",
+        guide: "Hướng dẫn người dạy",
         estimatedMinutes: 25,
         accessTier: "free",
         status: "published",
@@ -147,8 +147,8 @@ describe("Public Program Showcase Suite — P3.8 (Task #61, BR-PSH-01..07, D-NF.
         targetAgeMax: 5,
         durationWeeks: 4,
         sessionsPerWeek: 2,
-        titleVi: "Chương trình Tư duy Toán 4 tuổi",
-        descriptionVi: "Phát triển năng lực số học và hình học cho trẻ 4 tuổi.",
+        title: "Chương trình Tư duy Toán 4 tuổi",
+        description: "Phát triển năng lực số học và hình học cho trẻ 4 tuổi.",
         accessTier: "standard",
         status: "published",
       })
@@ -222,8 +222,8 @@ describe("Public Program Showcase Suite — P3.8 (Task #61, BR-PSH-01..07, D-NF.
       targetAgeMax: 6,
       durationWeeks: 42,
       sessionsPerWeek: 3,
-      titleVi: "Hành trình Toán Mầm non 42 Tuần",
-      descriptionVi: "Hành trình phát triển toàn diện 6 năng lực toán học.",
+      title: "Hành trình Toán Mầm non 42 Tuần",
+      description: "Hành trình phát triển toàn diện 6 năng lực toán học.",
       accessTier: "premium",
       status: "published",
     });
@@ -240,8 +240,8 @@ describe("Public Program Showcase Suite — P3.8 (Task #61, BR-PSH-01..07, D-NF.
         targetAgeMax: 4,
         durationWeeks: 8,
         sessionsPerWeek: 3,
-        titleVi: "Chương trình cũ đã lưu trữ",
-        descriptionVi: "Chương trình không còn hỗ trợ.",
+        title: "Chương trình cũ đã lưu trữ",
+        description: "Chương trình không còn hỗ trợ.",
         accessTier: "free",
         status: "archived",
       })
@@ -257,8 +257,8 @@ describe("Public Program Showcase Suite — P3.8 (Task #61, BR-PSH-01..07, D-NF.
       targetAgeMax: 6,
       durationWeeks: 12,
       sessionsPerWeek: 3,
-      titleVi: "Chương trình nháp đang soạn",
-      descriptionVi: "Chưa công bố.",
+      title: "Chương trình nháp đang soạn",
+      description: "Chưa công bố.",
       accessTier: "standard",
       status: "draft",
     });
@@ -452,7 +452,7 @@ describe("Public Program Showcase Suite — P3.8 (Task #61, BR-PSH-01..07, D-NF.
         duration: "P4W",
       });
       expect(courseJson.url).toBe(
-        `https://kidthink.vn/programs/${publishedCode}`
+        `https://mindkid.vn/programs/${publishedCode}`
       );
     });
   });
@@ -483,8 +483,8 @@ describe("Public Program Showcase Suite — P3.8 (Task #61, BR-PSH-01..07, D-NF.
     it("BR-PSH-07: ensures curriculum showcase structure is prerenderable and does not depend on client-side JS", () => {
       const publicCard = toProgramCardPublic({
         code: "CUR-NOJS-TEST",
-        titleVi: "Chương trình xem không cần JS",
-        descriptionVi: "Mô tả đầy đủ",
+        title: "Chương trình xem không cần JS",
+        description: "Mô tả đầy đủ",
         programType: "age_based",
         targetAgeMin: 4,
         targetAgeMax: 5,
@@ -506,7 +506,7 @@ describe("Public Program Showcase Suite — P3.8 (Task #61, BR-PSH-01..07, D-NF.
             position: 1,
             entityType: "game_level",
             code: "GL-C1-001",
-            titleVi: "Trò chơi tuần 1",
+            title: "Trò chơi tuần 1",
             accessTier: "free",
           },
         ],

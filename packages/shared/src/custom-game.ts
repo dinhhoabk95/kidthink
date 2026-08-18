@@ -1,6 +1,6 @@
-import { isValidRef } from "@kidthink/emoji";
-import { MVP_TEMPLATES } from "@kidthink/game-engine";
-import { moderateCustomGameMetadata } from "@kidthink/moderation";
+import { isValidRef } from "@mindkid/emoji";
+import { MVP_TEMPLATES } from "@mindkid/game-engine";
+import { moderateCustomGameMetadata } from "@mindkid/moderation";
 import { z } from "zod";
 
 /**

@@ -5,7 +5,7 @@ import {
   getOwnerDb,
   masteryState,
   users,
-} from "@kidthink/db";
+} from "@mindkid/db";
 import { eq } from "drizzle-orm";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import configHandler from "../../server/api/users/custom-games/[uuid]/config.get.js";
@@ -80,8 +80,8 @@ describe("P4.5 Custom Game Mastery Isolation (BR-CGB-06)", () => {
       .values({
         key: "create_custom_game",
         group: "creator",
-        labelVi: "Tạo trò chơi tùy chỉnh",
-        descriptionVi: "Quyền tạo trò chơi tùy chỉnh",
+        label: "Tạo trò chơi tùy chỉnh",
+        description: "Quyền tạo trò chơi tùy chỉnh",
         isMvp: false,
       })
       .onConflictDoNothing();

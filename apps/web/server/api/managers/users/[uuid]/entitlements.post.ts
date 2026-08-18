@@ -1,6 +1,6 @@
-import { appError } from "@kidthink/auth";
-import { getDb, notifications, users } from "@kidthink/db";
-import { PACKAGE_CATALOG } from "@kidthink/shared";
+import { appError } from "@mindkid/auth";
+import { getDb, notifications, users } from "@mindkid/db";
+import { PACKAGE_CATALOG } from "@mindkid/shared";
 import { eq } from "drizzle-orm";
 import {
   defineEventHandler,
@@ -13,8 +13,8 @@ import { z } from "zod";
 import {
   getManagerRemoteIp,
   requireSuperAdminSession,
-  respondToManagerAuthError,
 } from "../../../../utils/admin-auth-runtime.ts";
+import { throwValidationError } from "../../../../utils/api-error.js";
 import { mutateUserEntitlements } from "../../../../utils/entitlements-runtime.ts";
 
 /**
@@ -37,86 +37,80 @@ const grantEntitlementSchema = z
   .strict();
 
 export default defineEventHandler(async (event) => {
-  try {
-    const session = requireSuperAdminSession(event);
-    const userUuid = getRouterParam(event, "uuid");
-    if (!userUuid) {
-      throw appError("NOT_FOUND", "User UUID is required");
-    }
+  const session = requireSuperAdminSession(event);
+  const userUuid = getRouterParam(event, "uuid");
+  if (!userUuid) {
+    throw appError("NOT_FOUND", "User UUID is required");
+  }
 
-    const customEvent = event as unknown as {
-      _body?: unknown;
-      context?: { body?: unknown };
-    };
-    const rawBody =
-      (await readBody(event).catch(() => undefined)) ??
-      customEvent._body ??
-      customEvent.context?.body;
+  const customEvent = event as unknown as {
+    _body?: unknown;
+    context?: { body?: unknown };
+  };
+  const rawBody =
+    (await readBody(event).catch(() => undefined)) ??
+    customEvent._body ??
+    customEvent.context?.body;
 
-    const parsed = grantEntitlementSchema.safeParse(rawBody);
-    if (!parsed.success) {
-      throw appError("VALIDATION_FAILED", {
-        errors: parsed.error.flatten().fieldErrors,
-      });
-    }
+  const parsed = grantEntitlementSchema.safeParse(rawBody);
+  if (!parsed.success) {
+    throwValidationError(parsed.error);
+  }
 
-    const { package_code, duration_days, grant_reason, notify_user } =
-      parsed.data;
+  const { package_code, duration_days, grant_reason, notify_user } =
+    parsed.data;
 
-    // Check package in catalog (gồm cả add-on chưa bán is_public: false)
-    const pkg = PACKAGE_CATALOG[package_code];
-    if (!pkg) {
-      throw appError("PACKAGE_NOT_FOUND", "Gói không tồn tại trong catalog.");
-    }
+  // Check package in catalog (gồm cả add-on chưa bán is_public: false)
+  const pkg = PACKAGE_CATALOG[package_code];
+  if (!pkg) {
+    throw appError("PACKAGE_NOT_FOUND", "Gói không tồn tại trong catalog.");
+  }
 
-    const db = getDb();
-    const [user] = await db
-      .select({ id: users.id, uuid: users.uuid })
-      .from(users)
-      .where(eq(users.uuid, userUuid))
-      .limit(1);
+  const db = getDb();
+  const [user] = await db
+    .select({ id: users.id, uuid: users.uuid })
+    .from(users)
+    .where(eq(users.uuid, userUuid))
+    .limit(1);
 
-    if (!user) {
-      throw appError("NOT_FOUND", "Không tìm thấy người dùng.");
-    }
+  if (!user) {
+    throw appError("NOT_FOUND", "Không tìm thấy người dùng.");
+  }
 
-    // Mutate entitlements using shared helper (D-JM, BR-EGR-08: no payment_orders created)
-    const granted = await mutateUserEntitlements({
-      userId: user.id,
-      packageCode: package_code,
-      durationDays: duration_days,
-      source: "manual_grant",
-      reason: grant_reason,
-      actor: {
-        type: "manager",
-        id: session.manager_id,
-        ip: getManagerRemoteIp(event),
-        userAgent: getHeader(event, "user-agent") || null,
+  // Mutate entitlements using shared helper (D-JM, BR-EGR-08: no payment_orders created)
+  const granted = await mutateUserEntitlements({
+    userId: user.id,
+    packageCode: package_code,
+    durationDays: duration_days,
+    source: "manual_grant",
+    reason: grant_reason,
+    actor: {
+      type: "manager",
+      id: session.manager_id,
+      ip: getManagerRemoteIp(event),
+      userAgent: getHeader(event, "user-agent") || null,
+    },
+  });
+
+  // Notify user if requested (BR-EGR-03: do NOT leak internal grant_reason to user)
+  if (notify_user) {
+    await db.insert(notifications).values({
+      recipientType: "user",
+      recipientId: user.id,
+      templateCode: "entitlement_granted",
+      payload: {
+        package_code,
+        package_name: pkg.name,
+        duration_days,
       },
     });
-
-    // Notify user if requested (BR-EGR-03: do NOT leak internal grant_reason to user)
-    if (notify_user) {
-      await db.insert(notifications).values({
-        recipientType: "user",
-        recipientId: user.id,
-        templateCode: "entitlement_granted",
-        payload: {
-          package_code,
-          package_name: pkg.name,
-          duration_days,
-        },
-      });
-    }
-
-    setResponseStatus(event, 201);
-    return {
-      entitlements: granted.map((g) => ({
-        key: g.key,
-        expires_at: g.expires_at ? g.expires_at.toISOString() : null,
-      })),
-    };
-  } catch (error) {
-    respondToManagerAuthError(event, error);
   }
+
+  setResponseStatus(event, 201);
+  return {
+    entitlements: granted.map((g) => ({
+      key: g.key,
+      expires_at: g.expires_at ? g.expires_at.toISOString() : null,
+    })),
+  };
 });

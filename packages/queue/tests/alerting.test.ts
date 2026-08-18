@@ -9,7 +9,7 @@ import {
 
 describe("Task 3 — Alert Port & Delivery (BR-JOB-03, BR-JOB-05, BR-TLM-06, D-FX)", () => {
   it("delivers alert to operational email recipient channel (D-FX)", async () => {
-    const adapter = new EmailAlertAdapter("ops@kidthink.vn");
+    const adapter = new EmailAlertAdapter("ops@mindkid.vn");
     expect(adapter.isLogOnly()).toBe(false);
 
     let dispatchedEmail: string | undefined;
@@ -31,7 +31,7 @@ describe("Task 3 — Alert Port & Delivery (BR-JOB-03, BR-JOB-05, BR-TLM-06, D-F
       }
     );
 
-    expect(dispatchedEmail).toBe("ops@kidthink.vn");
+    expect(dispatchedEmail).toBe("ops@mindkid.vn");
     expect(dispatchedPayload).toBeDefined();
     expect(dispatchedPayload.severity).toBe("error");
     expect(dispatchedPayload.message).toContain("backlog exceeded");

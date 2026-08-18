@@ -1,4 +1,4 @@
-import { getGuestRecommendations, getOwnerDb } from "@kidthink/db";
+import { getGuestRecommendations, getOwnerDb } from "@mindkid/db";
 import { defineEventHandler, getQuery } from "h3";
 
 export default defineEventHandler(async (event) => {

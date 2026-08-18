@@ -1,4 +1,4 @@
-import { curricula, curriculumItems, getOwnerDb, managers } from "@kidthink/db";
+import { curricula, curriculumItems, getOwnerDb, managers } from "@mindkid/db";
 import { eq } from "drizzle-orm";
 import { beforeEach, describe, expect, it } from "vitest";
 import duplicateCurriculumHandler from "../../server/api/managers/curricula/[code]/[version]/duplicate.post.js";
@@ -22,13 +22,13 @@ beforeEach(async () => {
   let [mgr] = await db
     .select({ id: managers.id })
     .from(managers)
-    .where(eq(managers.email, "curriculum-tester@kidthink.edu.vn"));
+    .where(eq(managers.email, "curriculum-tester@mindkid.edu.vn"));
 
   if (!mgr) {
     [mgr] = await db
       .insert(managers)
       .values({
-        email: "curriculum-tester@kidthink.edu.vn",
+        email: "curriculum-tester@mindkid.edu.vn",
         passwordHash: "hash",
         displayName: "Curriculum Tester",
         role: "super_admin",
@@ -78,7 +78,6 @@ function mockEvent(
               manager_id: testManagerId,
               display_name: "Manager Tester",
               session_id: "sess_manager_123",
-              refresh_token_version: 1,
               role: managerRole,
             },
           }
@@ -116,7 +115,7 @@ describe("Curriculum Builder API Endpoints (BR-CBD-01..08, D-LS..D-LZ)", () => {
     const res = await createCurriculumHandler(event);
     expect(res).toBeDefined();
     expect(res.code).toMatch(CUR_CODE_REGEX);
-    expect(res.titleVi).toBe("Chương Trình Test API");
+    expect(res.title).toBe("Chương Trình Test API");
     expect(res.programType).toBe("age_based");
     expect(res.status).toBe("draft");
   });
@@ -204,7 +203,7 @@ describe("Curriculum Builder API Endpoints (BR-CBD-01..08, D-LS..D-LZ)", () => {
       }
     );
     const updated = await patchCurriculumHandler(validPatchEvent);
-    expect(updated.titleVi).toBe("Updated Title Success");
+    expect(updated.title).toBe("Updated Title Success");
     expect(updated.durationWeeks).toBe(10);
   });
 
@@ -364,7 +363,7 @@ describe("Curriculum Builder API Endpoints (BR-CBD-01..08, D-LS..D-LZ)", () => {
 
     const duplicated = await duplicateCurriculumHandler(duplicateEvent);
     expect(duplicated.code).not.toBe(source.code);
-    expect(duplicated.titleVi).toBe("Chương Trình Nhân Bản");
+    expect(duplicated.title).toBe("Chương Trình Nhân Bản");
     expect(duplicated.status).toBe("draft");
 
     // Verify duplicated items copied

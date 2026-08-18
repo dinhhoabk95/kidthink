@@ -8,13 +8,10 @@ import {
   seoPages,
   worksheets,
   writeAudit,
-} from "@kidthink/db";
+} from "@mindkid/db";
 import { eq } from "drizzle-orm";
 import { createError, defineEventHandler, getRouterParam } from "h3";
-import {
-  requireManagerSession,
-  respondToManagerAuthError,
-} from "../../../utils/admin-auth-runtime.js";
+import { requireManagerSession } from "../../../utils/admin-auth-runtime.js";
 
 interface PublishedUsageRef {
   type: string;
@@ -121,62 +118,58 @@ async function findPublishedUsage(
 }
 
 export default defineEventHandler(async (event) => {
-  try {
-    const manager = await requireManagerSession(event);
-    const idParam = getRouterParam(event, "id");
-    const id = Number(idParam);
+  const manager = await requireManagerSession(event);
+  const idParam = getRouterParam(event, "id");
+  const id = Number(idParam);
 
-    if (!Number.isInteger(id) || id <= 0) {
-      throw createError({ statusCode: 404, statusMessage: "IMAGE_NOT_FOUND" });
-    }
+  if (!Number.isInteger(id) || id <= 0) {
+    throw createError({ statusCode: 404, statusMessage: "IMAGE_NOT_FOUND" });
+  }
 
-    const db = getOwnerDb();
-    const [imageRecord] = await db
-      .select()
-      .from(contentImages)
-      .where(eq(contentImages.id, id));
+  const db = getOwnerDb();
+  const [imageRecord] = await db
+    .select()
+    .from(contentImages)
+    .where(eq(contentImages.id, id));
 
-    if (!imageRecord) {
-      throw createError({ statusCode: 404, statusMessage: "IMAGE_NOT_FOUND" });
-    }
+  if (!imageRecord) {
+    throw createError({ statusCode: 404, statusMessage: "IMAGE_NOT_FOUND" });
+  }
 
-    // Check if used by published content via dedicated reverse index (BR-AUT2-01, BR-AUT2-03, D-KB)
-    const usedBy = await findPublishedUsage(db, imageRecord.storagePath);
+  // Check if used by published content via dedicated reverse index (BR-AUT2-01, BR-AUT2-03, D-KB)
+  const usedBy = await findPublishedUsage(db, imageRecord.storagePath);
 
-    if (usedBy.length > 0) {
-      throw createError({
-        statusCode: 409,
-        statusMessage: "CONTENT_IN_USE",
-        message:
-          "Cannot delete image that is currently in use by published content",
-        data: {
-          used_by: usedBy,
-        },
-      });
-    }
-
-    await db.delete(contentImages).where(eq(contentImages.id, id));
-    await db
-      .delete(contentAssetRefs)
-      .where(eq(contentAssetRefs.assetRef, imageRecord.storagePath));
-
-    const managerId = manager.manager_id || manager.id || 1;
-    await writeAudit(db, {
-      actor_type: "manager",
-      actor_id: managerId,
-      action: "image_deleted",
-      reason: "Xoá ảnh không còn sử dụng",
-      entity_type: "content_image",
-      entity_id: id.toString(),
-      before_data: {
-        path: imageRecord.storagePath,
-        owner_type: imageRecord.ownerType,
-        owner_id: imageRecord.ownerId,
+  if (usedBy.length > 0) {
+    throw createError({
+      statusCode: 409,
+      statusMessage: "CONTENT_IN_USE",
+      message:
+        "Cannot delete image that is currently in use by published content",
+      data: {
+        used_by: usedBy,
       },
     });
-
-    return { success: true };
-  } catch (err) {
-    return respondToManagerAuthError(event, err);
   }
+
+  await db.delete(contentImages).where(eq(contentImages.id, id));
+  await db
+    .delete(contentAssetRefs)
+    .where(eq(contentAssetRefs.assetRef, imageRecord.storagePath));
+
+  const managerId = manager.manager_id || manager.id || 1;
+  await writeAudit(db, {
+    actor_type: "manager",
+    actor_id: managerId,
+    action: "image_deleted",
+    reason: "Xoá ảnh không còn sử dụng",
+    entity_type: "content_image",
+    entity_id: id.toString(),
+    before_data: {
+      path: imageRecord.storagePath,
+      owner_type: imageRecord.ownerType,
+      owner_id: imageRecord.ownerId,
+    },
+  });
+
+  return { success: true };
 });

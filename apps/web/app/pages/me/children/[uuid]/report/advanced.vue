@@ -150,7 +150,7 @@
               <span class="text-xs font-bold text-surface-600">5/5 phiên</span>
             </div>
             <h3 class="text-lg font-bold font-heading text-surface-900">
-              {{ comp.name_vi }}
+              {{ comp.name }}
             </h3>
             <p class="text-sm font-bold text-brand-600">
               {{ comp.mastery_label }}
@@ -226,7 +226,7 @@
 
             <div>
               <h3 class="text-lg font-bold font-heading text-surface-900">
-                {{ comp.name_vi }}
+                {{ comp.name }}
               </h3>
               <p
                 :class="[
@@ -293,7 +293,7 @@
             >
               <div>
                 <p class="text-sm font-bold text-surface-900">
-                  {{ str.name_vi }}
+                  {{ str.name }}
                 </p>
                 <p class="text-xs text-surface-500">
                   {{ str.code }}
@@ -357,7 +357,7 @@
             >
               <div>
                 <p class="text-sm font-bold text-surface-900">
-                  {{ sk.name_vi }}
+                  {{ sk.name }}
                 </p>
                 <div class="flex items-center gap-2 mt-0.5">
                   <span class="text-xs text-surface-500">{{ sk.code }}</span>
@@ -580,7 +580,7 @@
           >
             <div class="flex flex-wrap items-center justify-between gap-2">
               <h3 class="text-base font-bold font-heading text-surface-900">
-                {{ item.name_vi }}
+                {{ item.name }}
                 <span class="text-xs text-surface-500"
                   >({{ item.skill_code }})</span
                 >
@@ -607,7 +607,7 @@
                     class="w-5 h-5 text-brand-600 shrink-0 mt-0.5"
                     :name="act.kind === 'home_activity' ? 'i-lucide-home' : 'i-lucide-gamepad-2'"
                   />
-                  <span>{{ act.text_vi }}</span>
+                  <span>{{ act.text }}</span>
                 </li>
               </ul>
             </div>
@@ -656,7 +656,7 @@
               <span
                 class="text-xs font-bold text-success-700 bg-success-50 px-2 py-0.5 rounded"
               >
-                Đã đạt: {{ r.name_vi }}
+                Đã đạt: {{ r.name }}
               </span>
             </div>
             <div class="flex items-center gap-2 pt-1">
@@ -666,7 +666,7 @@
               />
               <p class="text-sm font-bold text-surface-900">
                 Sẵn sàng bước sang:
-                <span class="text-brand-700">{{ r.next_skill_name_vi }}</span>
+                <span class="text-brand-700">{{ r.next_skill_name }}</span>
               </p>
             </div>
           </div>
@@ -691,8 +691,8 @@
             v-for="marker in reportData.version_markers"
             :key="marker.level_code"
           >
-            Bài tập {{ marker.level_code }}: {{ marker.note_vi }} (Các phiên bản
-            đã chơi: v{{ marker.played_versions.join(', v') }}).
+            Bài tập {{ marker.level_code }}: {{ marker.note }} (Các phiên bản đã
+            chơi: v{{ marker.played_versions.join(', v') }}).
           </li>
         </ul>
       </div>
@@ -701,7 +701,7 @@
 </template>
 
 <script lang="ts" setup>
-  import type { AdvancedReportResult } from "@kidthink/db";
+  import type { AdvancedReportResult } from "@mindkid/db";
   import { computed, ref } from "vue";
   import { useRoute } from "vue-router";
 
@@ -748,24 +748,24 @@
     competencies: [
       {
         code: "C1",
-        name_vi: "Tư duy Số học",
+        name: "Tư duy Số học",
         mastery_label: "Đang phát triển",
       },
       {
         code: "C2",
-        name_vi: "Tư duy Không gian",
+        name: "Tư duy Không gian",
         mastery_label: "Mới làm quen",
       },
-      { code: "C3", name_vi: "Tư duy Logic", mastery_label: "Khá ổn định" },
-      { code: "C4", name_vi: "Tư duy Quan sát", mastery_label: "Mới làm quen" },
+      { code: "C3", name: "Tư duy Logic", mastery_label: "Khá ổn định" },
+      { code: "C4", name: "Tư duy Quan sát", mastery_label: "Mới làm quen" },
       {
         code: "C5",
-        name_vi: "Tư duy Ngôn ngữ",
+        name: "Tư duy Ngôn ngữ",
         mastery_label: "Đang phát triển",
       },
       {
         code: "C6",
-        name_vi: "Chức năng Điều hành",
+        name: "Chức năng Điều hành",
         mastery_label: "Khá ổn định",
       },
     ],

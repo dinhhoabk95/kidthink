@@ -26,7 +26,7 @@ export const CONSENT_POLICY_MAP: Record<
     title: "Điều khoản sử dụng dịch vụ",
     lastUpdatedOn: "2026-08-01",
     summary:
-      "Quy định quyền và nghĩa vụ của người dùng khi sử dụng nền tảng KidThink.",
+      "Quy định quyền và nghĩa vụ của người dùng khi sử dụng nền tảng MindKid.",
     isChildSpecific: false,
     requiresConsent: true,
   },

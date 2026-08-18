@@ -40,7 +40,7 @@
 - [x] Ca âm `BR-CLC-02`: `draft → published` trả 409 `INVALID_STATUS_TRANSITION`.
 - [x] Trạng thái khởi sinh chỉ nhận `draft` hoặc `published` (seed §4.1); giá trị khác là lỗi.
 - [x] `archived → published` đánh dấu chỉ `super_admin`.
-- [x] `pnpm --filter @kidthink/shared test -- lifecycle` xanh.
+- [x] `pnpm --filter @mindkid/shared test -- lifecycle` xanh.
 
 ### Task 3 — Checklist publish §7.3
 
@@ -48,7 +48,7 @@
 - [x] Phủ ràng buộc chung + riêng `game_levels` `lessons` `curricula` `worksheets`.
 - [x] Ca âm `BR-CLC-09`: thiếu đáp án đúng → `missing` chứa `no_correct_answer`, status không đổi.
 - [x] Thiếu bất kỳ mục nào → 422, không publish một phần.
-- [x] `pnpm --filter @kidthink/shared test -- publish-checklist` xanh.
+- [x] `pnpm --filter @mindkid/shared test -- publish-checklist` xanh.
 
 ### Task 4 — Phân loại field bump version
 
@@ -57,7 +57,7 @@
 - [x] Ca âm `BR-VER-07`: sửa `description` không bump.
 - [x] Ca âm `BR-VER-08`: sửa `content_pack` bắt buộc bump; sửa trực tiếp trả 409.
 - [x] Field lạ là **lỗi**, không mặc định "không bump".
-- [x] `pnpm --filter @kidthink/shared test -- versioning` xanh.
+- [x] `pnpm --filter @mindkid/shared test -- versioning` xanh.
 
 ## Cổng dừng A
 

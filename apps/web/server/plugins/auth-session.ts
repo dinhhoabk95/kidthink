@@ -1,4 +1,4 @@
-import { getBrowserSessionService } from "@kidthink/auth";
+import { getBrowserSessionService } from "@mindkid/auth";
 import { defineNitroPlugin } from "#imports";
 
 interface SessionHooksObject {

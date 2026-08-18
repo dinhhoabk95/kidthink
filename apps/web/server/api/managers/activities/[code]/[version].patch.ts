@@ -5,12 +5,13 @@ import {
   getOwnerDb,
   isEnabled as isFeatureEnabled,
   writeAudit,
-} from "@kidthink/db";
-import { updateActivityFormSchema } from "@kidthink/shared";
+} from "@mindkid/db";
+import { updateActivityFormSchema } from "@mindkid/shared";
 import { and, eq } from "drizzle-orm";
 import { createError, defineEventHandler, getRouterParam, readBody } from "h3";
 import type { z } from "zod";
 import { requireManagerSession } from "../../../../utils/admin-auth-runtime.js";
+import { throwValidationError } from "../../../../utils/api-error.js";
 
 type UpdateActivityInput = z.infer<typeof updateActivityFormSchema>;
 
@@ -84,17 +85,17 @@ async function syncActivitySkills(
       )
     );
   const weightPerSkill = (1.0 / skillIds.length).toFixed(2);
-  for (const skillId of skillIds) {
-    await db
-      .insert(contentSkillMap)
-      .values({
-        entityType: "activity",
+  await db
+    .insert(contentSkillMap)
+    .values(
+      skillIds.map((skillId) => ({
+        entityType: "activity" as const,
         entityId,
         skillId,
         weight: weightPerSkill,
-      })
-      .onConflictDoNothing();
-  }
+      }))
+    )
+    .onConflictDoNothing();
 }
 
 async function handlePublishedActivityFork(
@@ -116,12 +117,10 @@ async function handlePublishedActivityFork(
       code: existing.code,
       contentVersion: newVersion,
       kind: targetKind as typeof activities.$inferSelect.kind,
-      titleVi: data.title || existing.titleVi,
-      instructionVi: data.instruction || existing.instructionVi,
-      materialsVi:
-        data.materials_vi === undefined
-          ? existing.materialsVi
-          : data.materials_vi,
+      title: data.title || existing.title,
+      instruction: data.instruction || existing.instruction,
+      materials:
+        data.materials === undefined ? existing.materials : data.materials,
       estimatedMinutes:
         data.estimated_minutes === undefined
           ? existing.estimatedMinutes
@@ -167,13 +166,13 @@ async function handleDraftActivityUpdate(
     patch.refType = resolveRefType(data.kind);
   }
   if (data.title !== undefined) {
-    patch.titleVi = data.title;
+    patch.title = data.title;
   }
   if (data.instruction !== undefined) {
-    patch.instructionVi = data.instruction;
+    patch.instruction = data.instruction;
   }
-  if (data.materials_vi !== undefined) {
-    patch.materialsVi = data.materials_vi;
+  if (data.materials !== undefined) {
+    patch.materials = data.materials;
   }
   if (data.estimated_minutes !== undefined) {
     patch.estimatedMinutes = data.estimated_minutes;
@@ -224,12 +223,7 @@ export default defineEventHandler(async (event) => {
   const rawBody = await readBody(event);
   const parsed = updateActivityFormSchema.safeParse(rawBody);
   if (!parsed.success) {
-    throw createError({
-      statusCode: 422,
-      statusMessage: "VALIDATION_FAILED",
-      message: parsed.error.issues.map((i) => i.message).join("; "),
-      data: parsed.error.issues,
-    });
+    throwValidationError(parsed.error);
   }
 
   const data = parsed.data;

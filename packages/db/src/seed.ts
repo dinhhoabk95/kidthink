@@ -1,9 +1,9 @@
-import { hashPassword } from "@kidthink/auth";
+import { hashPassword } from "@mindkid/auth";
 import {
   ENTITLEMENT_KEYS,
   PACKAGE_CATALOG,
   PENDING_PRICE_VND as PENDING_PRICE,
-} from "@kidthink/shared";
+} from "@mindkid/shared";
 import { getOwnerDb } from "./client.ts";
 import {
   entitlementKeys,
@@ -23,15 +23,15 @@ export const PENDING_PRICE_VND = PENDING_PRICE;
 export const SEED_ENTITLEMENT_KEYS = ENTITLEMENT_KEYS.map((item) => ({
   key: item.key,
   group: item.group,
-  labelVi: item.label,
+  label: item.label,
   isMvp: item.is_mvp,
 }));
 
 export const SEED_PACKAGES = Object.values(PACKAGE_CATALOG).map((pkg) => ({
   code: pkg.code,
-  nameVi: pkg.name,
-  audienceVi: pkg.audience,
-  descriptionVi: pkg.description,
+  name: pkg.name,
+  audience: pkg.audience,
+  description: pkg.description,
   status: pkg.status,
   offers: pkg.offers,
   quotas: pkg.quotas,
@@ -58,7 +58,7 @@ export async function seed() {
       .values(item)
       .onConflictDoUpdate({
         target: entitlementKeys.key,
-        set: { labelVi: item.labelVi, group: item.group, isMvp: item.isMvp },
+        set: { label: item.label, group: item.group, isMvp: item.isMvp },
       });
   }
 
@@ -70,9 +70,9 @@ export async function seed() {
       .onConflictDoUpdate({
         target: packages.code,
         set: {
-          nameVi: item.nameVi,
-          audienceVi: item.audienceVi,
-          descriptionVi: item.descriptionVi,
+          name: item.name,
+          audience: item.audience,
+          description: item.description,
           status: item.status,
           offers: item.offers,
           quotas: item.quotas,
@@ -140,7 +140,7 @@ export async function seed() {
       .values({
         consentType,
         reconsentRequiredAt: null,
-        noticeVi: null,
+        notice: null,
       })
       .onConflictDoNothing({ target: consentRequirements.consentType });
   }

@@ -24,7 +24,6 @@ const user: UserTokenPayload = {
   user_id: 101,
   display_name: "Người dùng An",
   session_id: "session-user-1",
-  refresh_token_version: 2,
   active_child_id: 301,
 };
 
@@ -32,7 +31,6 @@ const reviewer: ManagerTokenPayload = {
   manager_id: 201,
   display_name: "Biên tập viên Bình",
   session_id: "session-manager-1",
-  refresh_token_version: 4,
   role: "content_reviewer",
 };
 

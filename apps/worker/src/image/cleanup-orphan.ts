@@ -3,8 +3,8 @@ import {
   contentImages,
   getOwnerDb,
   writeAudit,
-} from "@kidthink/db";
-import { deletePrivateAsset, deletePublicImage } from "@kidthink/storage";
+} from "@mindkid/db";
+import { deletePrivateAsset, deletePublicImage } from "@mindkid/storage";
 import { and, eq, lte, ne } from "drizzle-orm";
 
 export interface OrphanImageCleanupResult {

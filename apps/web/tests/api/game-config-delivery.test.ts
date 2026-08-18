@@ -4,8 +4,8 @@ import {
   gameTemplates,
   getOwnerDb,
   playSessions,
-} from "@kidthink/db";
-import { resolveAssets } from "@kidthink/shared";
+} from "@mindkid/db";
+import { resolveAssets } from "@mindkid/shared";
 import { and, eq } from "drizzle-orm";
 import { describe, expect, it } from "vitest";
 import guestConfigHandler from "../../server/api/guest/levels/[code]/config.get.js";
@@ -58,7 +58,6 @@ function mockUserAuth(userId = 1) {
       user_id: userId,
       display_name: "Test Parent",
       session_id: `user_sess_${userId}`,
-      refresh_token_version: 1,
     },
   };
 }
@@ -69,7 +68,6 @@ function mockManagerAuth(managerId = 1) {
       manager_id: managerId,
       display_name: "Manager One",
       session_id: `mgr_sess_${managerId}`,
-      refresh_token_version: 1,
       role: "content_reviewer",
     },
   };
@@ -95,7 +93,7 @@ async function seedTestLevel(options: {
       .insert(gameTemplates)
       .values({
         code: gtCode,
-        nameVi: "Chọn một đáp án",
+        name: "Chọn một đáp án",
         mechanic: "tap-select",
       })
       .returning();
@@ -146,8 +144,8 @@ async function seedTestLevel(options: {
       code: options.code,
       contentVersion,
       templateId: gt.id,
-      titleVi: "Level Test Config",
-      instructionVi: "Hướng dẫn làm bài",
+      title: "Level Test Config",
+      instruction: "Hướng dẫn làm bài",
       contentPack: validGT001Pack,
       difficultyParams: {
         distractor_count: 1,

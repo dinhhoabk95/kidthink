@@ -3,7 +3,7 @@
 > Lý do, đồ thị phụ thuộc, tiêu chí chấp nhận và quy trình chuẩn bảy việc:
 > [`05-p0-spec-closure-plan.md`](05-p0-spec-closure-plan.md).
 >
-> Mọi lệnh chạy từ thư mục `kidthink/`. Đặt lại đường dẫn Node trước mỗi phiên shell mới:
+> Mọi lệnh chạy từ thư mục `mindkid/`. Đặt lại đường dẫn Node trước mỗi phiên shell mới:
 >
 > ```
 > export PATH=/Users/macbook/.nvm/versions/node/v24.15.0/bin:$PATH

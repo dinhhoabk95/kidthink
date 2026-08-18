@@ -1,4 +1,4 @@
-import { listWorksheets } from "@kidthink/db";
+import { listWorksheets } from "@mindkid/db";
 import { defineEventHandler, getQuery } from "h3";
 import { requireManagerSession } from "../../../utils/admin-auth-runtime.js";
 

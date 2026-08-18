@@ -43,11 +43,11 @@ const inMemoryPublicStore = new Map<
 >();
 
 export function getS3BucketName(): string {
-  return process.env.AWS_S3_PRIVATE_BUCKET || "kidthink-private-assets";
+  return process.env.AWS_S3_PRIVATE_BUCKET || "mindkid-private-assets";
 }
 
 export function getS3PublicBucketName(): string {
-  return process.env.AWS_S3_PUBLIC_BUCKET || "kidthink-public-assets";
+  return process.env.AWS_S3_PUBLIC_BUCKET || "mindkid-public-assets";
 }
 
 /**
@@ -179,7 +179,7 @@ export function url(
   const baseUrl =
     process.env.STORAGE_BASE_URL ||
     process.env.NUXT_PUBLIC_SITE_URL ||
-    "https://assets.kidthink.edu.vn";
+    "https://assets.mindkid.edu.vn";
   return `${baseUrl.replace(TRAILING_SLASHES_REGEX, "")}/${targetPath}`;
 }
 
@@ -203,7 +203,7 @@ export function signedUrl(path: string, ttlSeconds = 900): string {
   const baseUrl =
     process.env.STORAGE_BASE_URL ||
     process.env.NUXT_PUBLIC_SITE_URL ||
-    "https://storage.kidthink.test";
+    "https://storage.mindkid.test";
 
   return `${baseUrl.replace(TRAILING_SLASHES_REGEX, "")}/private/${encodeURIComponent(
     normalizedPath
@@ -238,7 +238,7 @@ export async function getPrivateSignedUrl(options: {
   const baseUrl =
     process.env.STORAGE_BASE_URL ||
     process.env.NUXT_PUBLIC_SITE_URL ||
-    "https://storage.kidthink.test";
+    "https://storage.mindkid.test";
 
   const resultUrl = `${baseUrl.replace(TRAILING_SLASHES_REGEX, "")}/private/${encodeURIComponent(
     normalizedPath

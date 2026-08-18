@@ -42,7 +42,6 @@ function mockEvent(
         user_id: userId,
         display_name: "Test User",
         session_id: options.sessionId || `sess_${userId}`,
-        refresh_token_version: 0,
         reauth_at:
           options.reauthAt === undefined ? new Date() : options.reauthAt,
       },

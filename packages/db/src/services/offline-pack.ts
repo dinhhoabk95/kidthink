@@ -1,12 +1,12 @@
 import { createHash } from "node:crypto";
-import { appError } from "@kidthink/auth";
+import { appError } from "@mindkid/auth";
 import {
   OFFLINE_PACK_MAX_LEASE_DAYS,
   type OfflineAssetItem,
   type OfflineCurriculumPackManifest,
   type OfflineSyncEventItem,
   type OfflineSyncResponse,
-} from "@kidthink/shared";
+} from "@mindkid/shared";
 import { and, eq, inArray } from "drizzle-orm";
 import { getDb, getOwnerDb } from "../client.ts";
 import { childProfiles } from "../schema/child.ts";
@@ -39,7 +39,7 @@ function generateDeterministicLeaseToken(
   weekNo: number,
   expiresAtIso: string
 ): string {
-  const secret = "kidthink_offline_lease_secret_v1";
+  const secret = "mindkid_offline_lease_secret_v1";
   return calculateSha256(
     `${userId}:${curriculumCode}:${weekNo}:${expiresAtIso}:${secret}`
   );
@@ -173,8 +173,8 @@ async function buildOfflineAssets(
     for (const les of lessonRows) {
       const lessonContent = JSON.stringify({
         code: les.code,
-        title: les.titleVi,
-        guide_vi: les.guideVi,
+        title: les.title,
+        guide: les.guide,
       });
       assets.push({
         path: `/api/guest/lessons/${les.code}`,

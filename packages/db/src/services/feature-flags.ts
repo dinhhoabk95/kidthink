@@ -1,4 +1,4 @@
-import { CODE_FEATURE_FLAGS, type FeatureFlagKey } from "@kidthink/shared";
+import { CODE_FEATURE_FLAGS, type FeatureFlagKey } from "@mindkid/shared";
 import { eq } from "drizzle-orm";
 import { getOwnerDb } from "../client.ts";
 import { featureFlags } from "../schema/ops.ts";

@@ -1,4 +1,4 @@
-import { processPdfRenderJob } from "@kidthink/db";
+import { processPdfRenderJob } from "@mindkid/db";
 
 const PDF_RENDER_PREFIX = /^pdf:render:/;
 

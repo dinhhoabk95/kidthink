@@ -67,7 +67,7 @@ job `account:purge`.
 | `BR-ADL-07` | Trang xoá liệt kê **cụ thể** cái gì sẽ mất | Xoá mù là xoá nhầm |
 | `BR-ADL-08` | Purge fail → **alert**, không retry mù | Thao tác phá huỷ không retry tự động nhiều lần |
 | `BR-ADL-09` | Sau purge, email đó **đăng ký lại được** | Cấm giữ danh sách cấm |
-| `BR-ADL-10` | Purge **xoá cứng** `social_identities` | `users` chỉ được ẩn danh chứ không xoá hàng, nên `ON DELETE CASCADE` không chạy. Bỏ sót thì `UNIQUE (provider, provider_user_id)` khoá vĩnh viễn tài khoản Google đó khỏi KidThink — người dùng không đăng ký lại được, và không có cách nào tự sửa |
+| `BR-ADL-10` | Purge **xoá cứng** `social_identities` | `users` chỉ được ẩn danh chứ không xoá hàng, nên `ON DELETE CASCADE` không chạy. Bỏ sót thì `UNIQUE (provider, provider_user_id)` khoá vĩnh viễn tài khoản Google đó khỏi MindKid — người dùng không đăng ký lại được, và không có cách nào tự sửa |
 
 ## 7. Data
 

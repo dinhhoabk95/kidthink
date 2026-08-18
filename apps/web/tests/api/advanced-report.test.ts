@@ -10,7 +10,7 @@ import {
   seed,
   skills,
   users,
-} from "@kidthink/db";
+} from "@mindkid/db";
 import { beforeAll, describe, expect, it } from "vitest";
 import getAdvancedReportHandler from "../../server/api/users/children/[uuid]/reports/advanced.get";
 import { invalidateUserEntitlementsCache } from "../../server/utils/entitlements-runtime.js";
@@ -47,7 +47,6 @@ function mockEvent(
         user_id: userId,
         display_name: "Parent User",
         session_id: `sess_${userId}`,
-        refresh_token_version: 0,
       },
     },
   } as any;
@@ -285,7 +284,7 @@ describe("P3.7 Advanced Child Report API (BR-ARP-01..08, D-MY..D-NE)", () => {
         .insert(gameTemplates)
         .values({
           code: "GT-001",
-          nameVi: "Template Test",
+          name: "Template Test",
           mechanic: "tap",
         })
         .returning();
@@ -298,7 +297,7 @@ describe("P3.7 Advanced Child Report API (BR-ARP-01..08, D-MY..D-NE)", () => {
         entityId: 90_001,
         contentVersion: 1,
         templateId: template.id,
-        titleVi: "Bài tập đếm",
+        title: "Bài tập đếm",
         contentPack: {},
         difficultyParams: {},
         accessTier: "free",
@@ -363,7 +362,7 @@ describe("P3.7 Advanced Child Report API (BR-ARP-01..08, D-MY..D-NE)", () => {
     );
     expect(item).toBeDefined();
     expect(item?.actions.length).toBeGreaterThanOrEqual(1);
-    expect(item?.actions[0].text_vi).toBeDefined();
+    expect(item?.actions[0].text).toBeDefined();
 
     // Verify version change marker (BR-ARP-08)
     expect(res.version_markers.length).toBeGreaterThanOrEqual(1);

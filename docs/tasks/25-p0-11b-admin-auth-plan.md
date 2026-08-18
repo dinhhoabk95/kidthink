@@ -107,7 +107,7 @@ T1 TOTP: sinh secret · xác thực mã · mã khôi phục dùng một lần
 - [ ] Sai MFA 5 lần → khoá 15 phút, dùng bảng hạn mức của P0.9b.
 
 **Kiểm chứng**
-- [ ] `pnpm --filter @kidthink/auth test -- totp` xanh, assertion tham chiếu `BR-ADA-08`.
+- [ ] `pnpm --filter @mindkid/auth test -- totp` xanh, assertion tham chiếu `BR-ADA-08`.
 
 **Phụ thuộc:** P0.9b · **Cỡ:** M
 
@@ -122,7 +122,7 @@ T1 TOTP: sinh secret · xác thực mã · mã khôi phục dùng một lần
 - [ ] Rate limit `auth:login` hai trục theo bảng P0.9b.
 
 **Kiểm chứng**
-- [ ] `pnpm --filter @kidthink/admin test -- login` xanh, assertion tham chiếu `BR-ADA-01`.
+- [ ] `pnpm --filter @mindkid/admin test -- login` xanh, assertion tham chiếu `BR-ADA-01`.
 
 **Phụ thuộc:** T1 · P0.11 · **Cỡ:** M
 
@@ -130,13 +130,13 @@ T1 TOTP: sinh secret · xác thực mã · mã khôi phục dùng một lần
 
 **Tiêu chí nghiệm thu**
 - [ ] Nhận `{ code, challenge }` — TOTP **hoặc** mã khôi phục.
-- [ ] Thành công → cặp token đầy đủ, payload đúng §7.1 (`aud: "kidthink:manager"`, `iss: "kidthink:admin"`, `role`).
+- [ ] Thành công → cặp token đầy đủ, payload đúng §7.1 (`aud: "mindkid:manager"`, `iss: "mindkid:admin"`, `role`).
 - [ ] `BR-ADA-07`: refresh **không quá 24 giờ**; ca âm decode token và kiểm hạn.
 - [ ] Ghi `active_sessions` + audit `manager_login` (`BR-ADA-05`).
 - [ ] Sai mã → 401 + audit `manager_mfa_failed`.
 
 **Kiểm chứng**
-- [ ] `pnpm --filter @kidthink/admin test -- mfa` xanh, assertion tham chiếu `BR-ADA-05` `BR-ADA-07`.
+- [ ] `pnpm --filter @mindkid/admin test -- mfa` xanh, assertion tham chiếu `BR-ADA-05` `BR-ADA-07`.
 
 **Phụ thuộc:** T2 · **Cỡ:** M
 
@@ -150,7 +150,7 @@ T1 TOTP: sinh secret · xác thực mã · mã khôi phục dùng một lần
 - [ ] Route admin mới không khai được trong ma trận là **lỗi**, không phải mặc định cho phép.
 
 **Kiểm chứng**
-- [ ] `pnpm --filter @kidthink/admin test -- role-matrix` xanh, assertion tham chiếu `BR-ADA-04` `BR-ADA-06`.
+- [ ] `pnpm --filter @mindkid/admin test -- role-matrix` xanh, assertion tham chiếu `BR-ADA-04` `BR-ADA-06`.
 
 **Phụ thuộc:** T3 · **Cỡ:** M
 
@@ -163,7 +163,7 @@ T1 TOTP: sinh secret · xác thực mã · mã khôi phục dùng một lần
 - [ ] Cấu hình nginx cho subdomain admin có mặt; `infra/nginx/conf.d/` đã có `manager.conf` và `superadmin.conf` — đối chiếu, không viết lại.
 
 **Kiểm chứng**
-- [ ] `pnpm --filter @kidthink/admin test -- surface-isolation` xanh, assertion tham chiếu `BR-ADA-02` `BR-ADA-03`.
+- [ ] `pnpm --filter @mindkid/admin test -- surface-isolation` xanh, assertion tham chiếu `BR-ADA-02` `BR-ADA-03`.
 
 **Phụ thuộc:** T3 · **Cỡ:** M
 
@@ -177,7 +177,7 @@ T1 TOTP: sinh secret · xác thực mã · mã khôi phục dùng một lần
 - [ ] §11 Q2 (quy trình xoay mật khẩu ban đầu) nêu lại ở cổng ra P0 — chủ là người quyết.
 
 **Kiểm chứng**
-- [ ] `pnpm --filter @kidthink/db test -- seed-manager` xanh.
+- [ ] `pnpm --filter @mindkid/db test -- seed-manager` xanh.
 
 **Phụ thuộc:** T4 · T5 · **Cỡ:** S
 

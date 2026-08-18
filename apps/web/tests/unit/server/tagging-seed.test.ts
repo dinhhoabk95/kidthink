@@ -8,7 +8,7 @@ import {
   seed,
   validateAndAssignTags,
   validateContentSkillMap,
-} from "@kidthink/db";
+} from "@mindkid/db";
 import { beforeAll, describe, expect, it } from "vitest";
 
 describe("Task P1.10 — Content Tagging & Seed Authoring Pipeline (BR-TAG-* & BR-CSA-*)", () => {

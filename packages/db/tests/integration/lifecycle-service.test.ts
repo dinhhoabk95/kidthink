@@ -32,13 +32,13 @@ async function setupTestData() {
     .insert(competencies)
     .values({
       code: compCode,
-      nameVi: "Năng lực toán",
+      name: "Năng lực toán",
       colorToken: "blue",
       icon: "math",
     })
     .onConflictDoUpdate({
       target: competencies.code,
-      set: { nameVi: "Năng lực toán" },
+      set: { name: "Năng lực toán" },
     })
     .returning();
 
@@ -56,11 +56,11 @@ async function setupTestData() {
     .values({
       code: strandCode,
       competencyId: compId,
-      nameVi: "Mạch kiến thức",
+      name: "Mạch kiến thức",
     })
     .onConflictDoUpdate({
       target: strands.code,
-      set: { competencyId: compId, nameVi: "Mạch kiến thức" },
+      set: { competencyId: compId, name: "Mạch kiến thức" },
     })
     .returning();
 
@@ -74,14 +74,14 @@ async function setupTestData() {
     .values({
       code: skillCode,
       strandId: strdId,
-      nameVi: "Kỹ năng đếm",
+      name: "Kỹ năng đếm",
       ageMin: 3,
       ageMax: 5,
       difficulty: 1,
     })
     .onConflictDoUpdate({
       target: skills.code,
-      set: { strandId: strdId, nameVi: "Kỹ năng đếm" },
+      set: { strandId: strdId, name: "Kỹ năng đếm" },
     })
     .returning();
 
@@ -94,7 +94,7 @@ async function setupTestData() {
     .insert(gameTemplates)
     .values({
       code: gtCode,
-      nameVi: "Template Lifecycle Test",
+      name: "Template Lifecycle Test",
       mechanic: "drag_drop",
     })
     .onConflictDoNothing()
@@ -139,8 +139,8 @@ async function setupTestData() {
       code: glCode,
       contentVersion: 1,
       templateId,
-      titleVi: "Mức chơi thử nghiệm 1",
-      descriptionVi: "Mô tả",
+      title: "Mức chơi thử nghiệm 1",
+      description: "Mô tả",
       accessTier: "standard",
       ageMin: 3,
       ageMax: 5,

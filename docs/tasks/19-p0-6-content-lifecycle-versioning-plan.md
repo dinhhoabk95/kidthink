@@ -159,7 +159,7 @@ Khối B — sau khi P0.3 đóng
 - [ ] Thông báo `RAISE EXCEPTION` của bốn trigger nêu **cả** `BR-CLC-01` lẫn `BR-SCT-05`.
 
 **Kiểm chứng**
-- [ ] `pnpm db:migrate` từ database rỗng · `pnpm --filter @kidthink/db test -- game content` xanh.
+- [ ] `pnpm db:migrate` từ database rỗng · `pnpm --filter @mindkid/db test -- game content` xanh.
 
 **Phụ thuộc:** không · **Cỡ:** S
 
@@ -173,7 +173,7 @@ Khối B — sau khi P0.3 đóng
 - [ ] `archived → published` chỉ mở cho `super_admin` — đánh dấu trong dữ liệu, kiểm quyền ở T5.
 
 **Kiểm chứng**
-- [ ] `pnpm --filter @kidthink/shared test -- lifecycle` xanh, assertion tham chiếu `BR-CLC-02`.
+- [ ] `pnpm --filter @mindkid/shared test -- lifecycle` xanh, assertion tham chiếu `BR-CLC-02`.
 
 **Phụ thuộc:** T1 · **Cỡ:** M
 
@@ -187,7 +187,7 @@ Khối B — sau khi P0.3 đóng
 - [ ] Hàm **không** nhận tham số nào cho biết nguồn gọi (studio hay seed).
 
 **Kiểm chứng**
-- [ ] `pnpm --filter @kidthink/shared test -- publish-checklist` xanh, assertion tham chiếu `BR-CLC-09`.
+- [ ] `pnpm --filter @mindkid/shared test -- publish-checklist` xanh, assertion tham chiếu `BR-CLC-09`.
 
 **Phụ thuộc:** T2 · **Cỡ:** M
 
@@ -201,7 +201,7 @@ Khối B — sau khi P0.3 đóng
 - [ ] Field không nằm trong danh sách nào → lỗi, không mặc định "không bump". Mặc định phải là **đóng**, cùng lý do với `BR-LAD-02`.
 
 **Kiểm chứng**
-- [ ] `pnpm --filter @kidthink/shared test -- versioning` xanh, assertion tham chiếu `BR-VER-07` `BR-VER-08`.
+- [ ] `pnpm --filter @mindkid/shared test -- versioning` xanh, assertion tham chiếu `BR-VER-07` `BR-VER-08`.
 
 **Phụ thuộc:** T2 · **Cỡ:** M
 
@@ -223,7 +223,7 @@ Khối B — sau khi P0.3 đóng
 - [ ] `expected_version` sai → 409 `VERSION_CONFLICT`.
 
 **Kiểm chứng**
-- [ ] `pnpm --filter @kidthink/db test -- lifecycle` xanh, assertion tham chiếu `BR-CLC-03` `BR-CLC-05`.
+- [ ] `pnpm --filter @mindkid/db test -- lifecycle` xanh, assertion tham chiếu `BR-CLC-03` `BR-CLC-05`.
 
 **Phụ thuộc:** P0.3 đóng · T2 · **Cỡ:** M
 
@@ -237,7 +237,7 @@ Khối B — sau khi P0.3 đóng
 - [ ] Mỗi lần chuyển ghi `content_review_log` + `audit_logs` (`BR-CLC-10`).
 
 **Kiểm chứng**
-- [ ] `pnpm --filter @kidthink/db test -- versioning` xanh, assertion tham chiếu `BR-VER-01` `BR-VER-02` `BR-VER-06` `BR-CLC-07`.
+- [ ] `pnpm --filter @mindkid/db test -- versioning` xanh, assertion tham chiếu `BR-VER-01` `BR-VER-02` `BR-VER-06` `BR-CLC-07`.
 
 **Phụ thuộc:** T5 · **Cỡ:** M
 
@@ -250,7 +250,7 @@ Khối B — sau khi P0.3 đóng
 - [ ] `BR-CLC-11`: đường seed dùng **đúng** hàm checklist Task 3; ca âm — một batch thiếu learning objective làm rollback toàn batch, không ghi hàng nào.
 
 **Kiểm chứng**
-- [ ] `pnpm check` gọi cổng mới; `pnpm --filter @kidthink/db test -- lifecycle` xanh, assertion tham chiếu `BR-CLC-04` `BR-CLC-08` `BR-CLC-11`.
+- [ ] `pnpm check` gọi cổng mới; `pnpm --filter @mindkid/db test -- lifecycle` xanh, assertion tham chiếu `BR-CLC-04` `BR-CLC-08` `BR-CLC-11`.
 
 **Phụ thuộc:** T3 · T6 · **Cỡ:** M
 
@@ -262,7 +262,7 @@ Khối B — sau khi P0.3 đóng
 - [ ] Ca âm `BR-VER-04`: phiên mở ở version 3, publish version 4 giữa chừng → kết quả phiên ghi `content_version = 3`.
 
 **Kiểm chứng**
-- [ ] `pnpm --filter @kidthink/shared test -- versioning` xanh, assertion tham chiếu `BR-VER-04` `BR-VER-05`.
+- [ ] `pnpm --filter @mindkid/shared test -- versioning` xanh, assertion tham chiếu `BR-VER-04` `BR-VER-05`.
 
 **Phụ thuộc:** T6 · **Cỡ:** S
 

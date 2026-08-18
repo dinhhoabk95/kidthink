@@ -1,4 +1,4 @@
-import { runExpirePaymentOrders } from "@kidthink/db";
+import { runExpirePaymentOrders } from "@mindkid/db";
 
 export async function runOrderExpireJob(jobId: string): Promise<void> {
   const result = await runExpirePaymentOrders();

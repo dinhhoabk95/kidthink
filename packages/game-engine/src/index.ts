@@ -1,4 +1,4 @@
-// Public barrel entry point for @kidthink/game-engine (BR-MPA-01)
+// Public barrel entry point for @mindkid/game-engine (BR-MPA-01)
 
 export {
   exportTemplateContracts,
@@ -8,6 +8,30 @@ export {
   validateContentPack,
 } from "./contracts/registry";
 export type {
+  GT001Content,
+  GT001Difficulty,
+} from "./contracts/templates/gt001";
+export type {
+  GT002Content,
+  GT002Difficulty,
+} from "./contracts/templates/gt002";
+export type {
+  GT003Content,
+  GT003Difficulty,
+} from "./contracts/templates/gt003";
+export type {
+  GT004Content,
+  GT004Difficulty,
+} from "./contracts/templates/gt004";
+export type {
+  GT005Content,
+  GT005Difficulty,
+} from "./contracts/templates/gt005";
+export type {
+  GT006Content,
+  GT006Difficulty,
+} from "./contracts/templates/gt006";
+export type {
   AgeBand,
   ContentStatus,
   GameTemplate,
@@ -16,11 +40,14 @@ export type {
 } from "./contracts/types";
 export { type EngineConfig, type EventCallback, GameEngine } from "./core";
 export {
+  type ActionResult,
   BaseGameSession,
   type FeedbackKind,
+  type GameAction,
   type GameSession,
   type SessionTelemetry,
   type TelemetryEvent,
+  TemplateGameSession,
 } from "./game-session";
 export { getMinTouchTargetSize, InteractionManager } from "./interaction";
 export {

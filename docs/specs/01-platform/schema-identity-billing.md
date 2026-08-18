@@ -2,7 +2,7 @@
 spec: SCHEMA-IDENTITY-BILLING
 title: Schema — danh tính, thanh toán, vận hành
 area: platform
-status: approved
+status: implemented
 mvp: true
 phase: P0
 reviewed: 2026-08-14

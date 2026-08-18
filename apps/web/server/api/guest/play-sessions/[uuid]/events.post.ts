@@ -1,13 +1,8 @@
-import { AppError } from "@kidthink/auth";
-import { ingestPlayEvents } from "@kidthink/db";
-import {
-  createError,
-  defineEventHandler,
-  getRouterParam,
-  readBody,
-  setResponseStatus,
-} from "h3";
+import { AppError } from "@mindkid/auth";
+import { ingestPlayEvents } from "@mindkid/db";
+import { createError, defineEventHandler, getRouterParam, readBody } from "h3";
 import { z } from "zod";
+
 import {
   assertRequestBodySize,
   assertSameOriginRequest,
@@ -34,36 +29,24 @@ const EventsSchema = z
   .strict();
 
 export default defineEventHandler(async (event) => {
-  try {
-    const uuid = getRouterParam(event, "uuid");
-    if (!uuid) {
-      throw createError({ statusCode: 404, statusMessage: "NOT_FOUND" });
-    }
-    assertSameOriginRequest(event);
-    assertRequestBodySize(event, 64 * 1024);
-
-    const guestDeviceId = getOrSetGuestDeviceId(event);
-    const parsed = EventsSchema.safeParse((await readBody(event)) || {});
-    if (!parsed.success) {
-      throw new AppError("VALIDATION_FAILED");
-    }
-    const events = parsed.data.events;
-
-    const result = await ingestPlayEvents(uuid, events, {
-      isUserCall: false,
-      guestDeviceId,
-    });
-
-    return result;
-  } catch (err) {
-    if (err instanceof AppError) {
-      setResponseStatus(event, err.status);
-      throw createError({
-        statusCode: err.status,
-        statusMessage: err.code,
-        data: { code: err.code, message: err.message },
-      });
-    }
-    throw err;
+  const uuid = getRouterParam(event, "uuid");
+  if (!uuid) {
+    throw createError({ statusCode: 404, statusMessage: "NOT_FOUND" });
   }
+  assertSameOriginRequest(event);
+  assertRequestBodySize(event, 64 * 1024);
+
+  const guestDeviceId = getOrSetGuestDeviceId(event);
+  const parsed = EventsSchema.safeParse((await readBody(event)) || {});
+  if (!parsed.success) {
+    throw new AppError("VALIDATION_FAILED");
+  }
+  const events = parsed.data.events;
+
+  const result = await ingestPlayEvents(uuid, events, {
+    isUserCall: false,
+    guestDeviceId,
+  });
+
+  return result;
 });

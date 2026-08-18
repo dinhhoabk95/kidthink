@@ -37,7 +37,7 @@
 
 ## WP87.5 — Verification & Completion Gate
 
-- [x] `pnpm --filter @kidthink/game-engine test` pass xanh 100%.
+- [x] `pnpm --filter @mindkid/game-engine test` pass xanh 100%.
 - [x] `pnpm check` (lint + typecheck) pass xanh.
 - [x] `pnpm test` toàn bộ workspace pass xanh.
 - [x] Mở PR review, không auto-merge.

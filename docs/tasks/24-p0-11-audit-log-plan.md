@@ -106,7 +106,7 @@ T1 migration: before_data · after_data · reason · actor_id nullable · 2 inde
 - [ ] `REVOKE UPDATE, DELETE ON audit_logs` giữ nguyên sau migration; test `BR-AUD-01` vẫn xanh.
 
 **Kiểm chứng**
-- [ ] `pnpm db:migrate` từ database rỗng · `pnpm --filter @kidthink/db test -- ops` xanh.
+- [ ] `pnpm db:migrate` từ database rỗng · `pnpm --filter @mindkid/db test -- ops` xanh.
 
 **Phụ thuộc:** không · **Cỡ:** S
 
@@ -119,7 +119,7 @@ T1 migration: before_data · after_data · reason · actor_id nullable · 2 inde
 - [ ] Test đối chiếu registry với bảng §7.2 — thiếu hoặc thừa một dòng là đỏ.
 
 **Kiểm chứng**
-- [ ] `pnpm --filter @kidthink/shared test -- audit` xanh, assertion tham chiếu `BR-AUD-03`.
+- [ ] `pnpm --filter @mindkid/shared test -- audit` xanh, assertion tham chiếu `BR-AUD-03`.
 
 **Phụ thuộc:** T1 · **Cỡ:** M
 
@@ -134,7 +134,7 @@ T1 migration: before_data · after_data · reason · actor_id nullable · 2 inde
 - [ ] `writeAudit` là **nơi duy nhất** ghi `audit_logs`; cổng chặn INSERT trực tiếp từ chỗ khác.
 
 **Kiểm chứng**
-- [ ] `pnpm --filter @kidthink/db test -- audit` xanh, assertion tham chiếu `BR-AUD-02` `BR-AUD-04` `BR-AUD-07`.
+- [ ] `pnpm --filter @mindkid/db test -- audit` xanh, assertion tham chiếu `BR-AUD-02` `BR-AUD-04` `BR-AUD-07`.
 
 **Phụ thuộc:** T2 · **Cỡ:** M
 
@@ -147,7 +147,7 @@ T1 migration: before_data · after_data · reason · actor_id nullable · 2 inde
 - [ ] `BR-AUD-08`: job purge của P0.4 **giữ** `audit_logs`; ca âm khẳng định hàng còn sau purge.
 
 **Kiểm chứng**
-- [ ] `pnpm --filter @kidthink/db test -- audit-payload` xanh, assertion tham chiếu `BR-AUD-05` `BR-AUD-06` `BR-AUD-08`.
+- [ ] `pnpm --filter @mindkid/db test -- audit-payload` xanh, assertion tham chiếu `BR-AUD-05` `BR-AUD-06` `BR-AUD-08`.
 
 **Phụ thuộc:** T3 · **Cỡ:** M
 
@@ -163,7 +163,7 @@ User). Phần còn lại thuộc P0.11b và P2.
 - [ ] `BR-AUD-03` kiểm được: test duyệt danh sách action đã gắn, mỗi cái sinh đúng một hàng.
 
 **Kiểm chứng**
-- [ ] `pnpm --filter @kidthink/db test -- audit-coverage` xanh.
+- [ ] `pnpm --filter @mindkid/db test -- audit-coverage` xanh.
 
 **Phụ thuộc:** T3 · **Cỡ:** M
 
@@ -176,7 +176,7 @@ User). Phần còn lại thuộc P0.11b và P2.
 - [ ] Không route nào cho `UPDATE`/`DELETE`.
 
 **Kiểm chứng**
-- [ ] `pnpm --filter @kidthink/admin test -- audit-logs` xanh, assertion tham chiếu `BR-AUD-09`.
+- [ ] `pnpm --filter @mindkid/admin test -- audit-logs` xanh, assertion tham chiếu `BR-AUD-09`.
 
 **Phụ thuộc:** T3 · P0.3 đóng · **Cỡ:** M
 

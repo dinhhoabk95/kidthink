@@ -11,9 +11,9 @@ import {
 describe("Task P4.1 — Shared Lesson Plan Schemas & Snapshot Builders (BR-LPC-01..09, D-P4A..D-P4D)", () => {
   it("D-P4A: builds allow-list activity snapshot and strips internal admin data", () => {
     const rawActivity = {
-      titleVi: "Đếm hạt dẻ",
-      instructionVi: "Bé đếm từng hạt dẻ và xếp thành hàng",
-      materialsVi: "10 hạt dẻ, khay gỗ",
+      title: "Đếm hạt dẻ",
+      instruction: "Bé đếm từng hạt dẻ và xếp thành hàng",
+      materials: "10 hạt dẻ, khay gỗ",
       estimatedMinutes: 15,
       kind: "manipulative",
       accessTier: "free",
@@ -26,7 +26,7 @@ describe("Task P4.1 — Shared Lesson Plan Schemas & Snapshot Builders (BR-LPC-0
     expect(snapshot).toEqual({
       title: "Đếm hạt dẻ",
       instruction: "Bé đếm từng hạt dẻ và xếp thành hàng",
-      materials_vi: "10 hạt dẻ, khay gỗ",
+      materials: "10 hạt dẻ, khay gỗ",
       estimated_minutes: 15,
       kind: "manipulative",
       access_tier: "free",
@@ -40,7 +40,7 @@ describe("Task P4.1 — Shared Lesson Plan Schemas & Snapshot Builders (BR-LPC-0
 
   it("D-P4A: builds allow-list game level snapshot and strips content_pack internal fields", () => {
     const rawLevel = {
-      titleVi: "Đếm thỏ trong chuồng",
+      title: "Đếm thỏ trong chuồng",
       templateId: 1,
       accessTier: "standard",
       difficultyParams: { count_min: 1, count_max: 5 },

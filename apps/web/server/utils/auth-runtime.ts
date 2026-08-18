@@ -6,7 +6,7 @@ import {
   getAuthNamespaceConfig,
   requireUserAuth,
   validateCsrfToken,
-} from "@kidthink/auth";
+} from "@mindkid/auth";
 import {
   createError,
   deleteCookie,
@@ -190,60 +190,6 @@ export function getParentGateSecret(_event?: H3Event): string {
     process.env.PARENT_GATE_SECRET ||
     "test-parent-gate-secret-key-123456789012345678901234567890"
   );
-}
-
-export function getUserRefreshCookie(event: H3Event): string {
-  const token = getCookie(event, userConfig.refreshCookieName);
-  if (!token) {
-    throw appError("SESSION_REVOKED");
-  }
-  return token;
-}
-
-export function setUserAuthCookies(
-  event: H3Event,
-  accessToken: string,
-  refreshToken?: string
-): void {
-  const config = getAuthNamespaceConfig("user");
-  setCookie(event, config.accessCookieName, accessToken, {
-    httpOnly: true,
-    maxAge: 15 * 60,
-    path: "/",
-    sameSite: "lax",
-    secure: process.env.NODE_ENV === "production",
-  });
-  if (refreshToken) {
-    setCookie(event, config.refreshCookieName, refreshToken, {
-      httpOnly: true,
-      maxAge: config.refreshTtlSeconds,
-      path: config.refreshPath,
-      sameSite: "strict",
-      secure: process.env.NODE_ENV === "production",
-    });
-  }
-}
-
-export function assertUserSession<T extends object>(session: unknown): T {
-  if (!session || typeof session !== "object") {
-    throw appError("SESSION_REVOKED");
-  }
-  return session as T;
-}
-
-export function getUserRefreshService(_event?: H3Event) {
-  return {
-    rotateRefreshToken(_input: unknown) {
-      return Promise.resolve({
-        session: { user_id: 1, display_name: "User" },
-        accessToken: "access_token",
-        nextRefreshToken: "refresh_token",
-      });
-    },
-    revokeSession(_sessionId: string, _type: string, _accountId: number) {
-      return Promise.resolve({ ok: true });
-    },
-  };
 }
 
 export function respondToUserAuthError(event: H3Event, error: unknown): never {

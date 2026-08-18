@@ -1,5 +1,5 @@
-import { hashPassword } from "@kidthink/auth";
-import { getAppDb, users } from "@kidthink/db";
+import { hashPassword } from "@mindkid/auth";
+import { getAppDb, users } from "@mindkid/db";
 import { describe, expect, it } from "vitest";
 import {
   assertUnrestrictedUser,
@@ -37,7 +37,6 @@ describe("Task 6 — Server-Enforced Restricted Mode (D-EQ)", () => {
           user_id: user.id,
           display_name: user.displayName,
           session_id: "100",
-          refresh_token_version: 0,
         },
       },
     } as any;

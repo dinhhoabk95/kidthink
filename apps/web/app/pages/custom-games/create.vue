@@ -301,12 +301,12 @@
           groups: [
             {
               group_id: "fruits",
-              label_vi: "Nhóm quả",
+              label: "Nhóm quả",
               icon_emoji: "EMJ-red-apple",
             },
             {
               group_id: "animals",
-              label_vi: "Nhóm con vật",
+              label: "Nhóm con vật",
               icon_emoji: "EMJ-cat",
             },
           ],
@@ -337,7 +337,7 @@
         return {
           target_count: 3,
           target_item_kind: "EMJ-red-apple",
-          tray: { capacity: 3, label_vi: "Giỏ táo" },
+          tray: { capacity: 3, label: "Giỏ táo" },
           items: [
             {
               item_id: "a1",

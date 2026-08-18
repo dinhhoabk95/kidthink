@@ -5,7 +5,7 @@ import {
   type SectionStatus,
   type TrendDirection,
   trendDirectionDescription,
-} from "@kidthink/adaptive";
+} from "@mindkid/adaptive";
 import { and, asc, eq, gte } from "drizzle-orm";
 import { getOwnerDb } from "../client.ts";
 import { masteryState } from "../schema/adaptive.ts";
@@ -23,7 +23,7 @@ import {
 
 export interface CompetencyReportItem {
   code: string;
-  name_vi: string;
+  name: string;
   status: SectionStatus;
   mastery_label: string;
   sessions_have: number;
@@ -33,7 +33,7 @@ export interface CompetencyReportItem {
 
 export interface StrandReportItem {
   code: string;
-  name_vi: string;
+  name: string;
   competency_code: string;
   status: SectionStatus;
   mastery_label: string;
@@ -44,7 +44,7 @@ export interface StrandReportItem {
 
 export interface SkillReportItem {
   code: string;
-  name_vi: string;
+  name: string;
   strand_code: string;
   competency_code: string;
   status: SectionStatus;
@@ -85,13 +85,13 @@ export interface IndependenceSection {
 
 export interface ReinforcementAction {
   kind: "home_activity" | "in_app";
-  text_vi: string;
+  text: string;
   ref_entity_id?: number;
 }
 
 export interface ReinforcementSkillItem {
   skill_code: string;
-  name_vi: string;
+  name: string;
   mastery_label: string;
   actions: ReinforcementAction[];
   alt_text: string;
@@ -99,17 +99,17 @@ export interface ReinforcementSkillItem {
 
 export interface ReadyForNextSkillItem {
   skill_code: string;
-  name_vi: string;
+  name: string;
   mastery_label: string;
   next_skill_code: string;
-  next_skill_name_vi: string;
+  next_skill_name: string;
   alt_text: string;
 }
 
 export interface VersionChangeMarker {
   level_code: string;
   played_versions: number[];
-  note_vi: string;
+  note: string;
 }
 
 export interface AdvancedReportResult {
@@ -187,12 +187,12 @@ function buildCompetencyItems(
     if (!isReady) {
       return {
         code: comp.code,
-        name_vi: comp.nameVi,
+        name: comp.name,
         status: "insufficient_data",
         mastery_label: "Chưa có đủ dữ liệu",
         sessions_have: touchedSessions,
         sessions_needed: needed,
-        alt_text: `Năng lực ${comp.nameVi} (${comp.code}): Chưa có đủ dữ liệu (cần thêm ${needed} phiên hoạt động).`,
+        alt_text: `Năng lực ${comp.name} (${comp.code}): Chưa có đủ dữ liệu (cần thêm ${needed} phiên hoạt động).`,
       };
     }
 
@@ -205,12 +205,12 @@ function buildCompetencyItems(
 
     return {
       code: comp.code,
-      name_vi: comp.nameVi,
+      name: comp.name,
       status: "ready",
       mastery_label: label,
       sessions_have: touchedSessions,
       sessions_needed: 0,
-      alt_text: `Năng lực ${comp.nameVi} (${comp.code}): Đánh giá mức ${label} dựa trên ${touchedSessions} phiên hoạt động.`,
+      alt_text: `Năng lực ${comp.name} (${comp.code}): Đánh giá mức ${label} dựa trên ${touchedSessions} phiên hoạt động.`,
     };
   });
 }
@@ -244,13 +244,13 @@ function buildStrandItems(data: AggregatedTaxonomyData): StrandReportItem[] {
     if (!isReady) {
       strandItems.push({
         code: st.code,
-        name_vi: st.nameVi,
+        name: st.name,
         competency_code: compCode,
         status: "insufficient_data",
         mastery_label: "Chưa có đủ dữ liệu",
         sessions_have: touchedSessions,
         sessions_needed: needed,
-        alt_text: `Nhánh ${st.nameVi} (${st.code}): Chưa có đủ dữ liệu (cần thêm ${needed} phiên).`,
+        alt_text: `Nhánh ${st.name} (${st.code}): Chưa có đủ dữ liệu (cần thêm ${needed} phiên).`,
       });
       continue;
     }
@@ -264,13 +264,13 @@ function buildStrandItems(data: AggregatedTaxonomyData): StrandReportItem[] {
 
     strandItems.push({
       code: st.code,
-      name_vi: st.nameVi,
+      name: st.name,
       competency_code: compCode,
       status: "ready",
       mastery_label: label,
       sessions_have: touchedSessions,
       sessions_needed: 0,
-      alt_text: `Nhánh ${st.nameVi} (${st.code}): Mức ${label} qua ${touchedSessions} phiên.`,
+      alt_text: `Nhánh ${st.name} (${st.code}): Mức ${label} qua ${touchedSessions} phiên.`,
     });
   }
 
@@ -297,16 +297,16 @@ function createSingleSkillReportItem(
     ? masteryLabel({ p_learn: pLearn, attempts_total: attemptsTotal })
     : "Chưa có đủ dữ liệu";
 
-  let altText = `Kỹ năng ${sk.nameVi}: Chưa có đủ dữ liệu (cần thêm ${needed} phiên).`;
+  let altText = `Kỹ năng ${sk.name}: Chưa có đủ dữ liệu (cần thêm ${needed} phiên).`;
   if (isExposureOnly) {
-    altText = `Kỹ năng ${sk.nameVi}: Đã tiếp xúc (1 lần chơi).`;
+    altText = `Kỹ năng ${sk.name}: Đã tiếp xúc (1 lần chơi).`;
   } else if (isReady) {
-    altText = `Kỹ năng ${sk.nameVi}: ${label} qua ${touchedSessions} phiên.`;
+    altText = `Kỹ năng ${sk.name}: ${label} qua ${touchedSessions} phiên.`;
   }
 
   return {
     code: sk.code,
-    name_vi: sk.nameVi,
+    name: sk.name,
     strand_code: strandCode,
     competency_code: compCode,
     status: isReady ? "ready" : "insufficient_data",
@@ -502,13 +502,13 @@ function buildReinforcementSection(
       skillActions.length > 0
         ? skillActions.map((a) => ({
             kind: a.kind,
-            text_vi: a.textVi,
+            text: a.text,
             ref_entity_id: a.refEntityId ?? undefined,
           }))
         : [
             {
               kind: "home_activity",
-              text_vi: `Cùng bé thực hành hoạt động nhận biết và trải nghiệm kỹ năng ${sk.nameVi} trong sinh hoạt hằng ngày.`,
+              text: `Cùng bé thực hành hoạt động nhận biết và trải nghiệm kỹ năng ${sk.name} trong sinh hoạt hằng ngày.`,
             },
           ];
 
@@ -518,10 +518,10 @@ function buildReinforcementSection(
     });
     items.push({
       skill_code: sk.code,
-      name_vi: sk.nameVi,
+      name: sk.name,
       mastery_label: label,
       actions: formattedActions,
-      alt_text: `Kỹ năng ${sk.nameVi} (${sk.code}): Đang ở mức ${label}. Gợi ý hỗ trợ: ${formattedActions[0].text_vi}`,
+      alt_text: `Kỹ năng ${sk.name} (${sk.code}): Đang ở mức ${label}. Gợi ý hỗ trợ: ${formattedActions[0].text}`,
     });
   }
 
@@ -564,11 +564,11 @@ function buildReadyForNextSection(
 
     items.push({
       skill_code: sk.code,
-      name_vi: sk.nameVi,
+      name: sk.name,
       mastery_label: label,
       next_skill_code: nextSkill.code,
-      next_skill_name_vi: nextSkill.nameVi,
-      alt_text: `Kỹ năng ${sk.nameVi} (${sk.code}) đã đạt mức ${label}. Sẵn sàng bước tiếp sang kỹ năng ${nextSkill.nameVi} (${nextSkill.code}).`,
+      next_skill_name: nextSkill.name,
+      alt_text: `Kỹ năng ${sk.name} (${sk.code}) đã đạt mức ${label}. Sẵn sàng bước tiếp sang kỹ năng ${nextSkill.name} (${nextSkill.code}).`,
     });
   }
 
@@ -599,7 +599,7 @@ function buildVersionMarkers(
       markers.push({
         level_code: code,
         played_versions: sortedVersions,
-        note_vi: `Bài tập ${code} đã có cập nhật nội dung trong khoảng thời gian này (phiên bản đã trải nghiệm: v${sortedVersions.join(", v")}).`,
+        note: `Bài tập ${code} đã có cập nhật nội dung trong khoảng thời gian này (phiên bản đã trải nghiệm: v${sortedVersions.join(", v")}).`,
       });
     }
   }

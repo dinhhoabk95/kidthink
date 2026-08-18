@@ -98,7 +98,11 @@ Mọi `BR-*` trong code, test, và PR. `pnpm gen:check` cảnh báo BR không đ
 | `BR-CSA` | [`content-seed-authoring.md`](../01-platform/content-seed-authoring.md) | | `BR-AIG` | [`ai-codegen-pipeline.md`](../01-platform/ai-codegen-pipeline.md) |
 | `BR-OAP` | [`oauth-provider-registry.md`](../01-platform/oauth-provider-registry.md) | | `BR-BPS` | [`browser-push.md`](../01-platform/browser-push.md) |
 | `BR-APM` | [`automated-payment.md`](../01-platform/automated-payment.md) | | `BR-OCP` | [`offline-curriculum-pack.md`](../01-platform/offline-curriculum-pack.md) |
-| `BR-AST` | [`audio-storage.md`](../01-platform/audio-storage.md) | | | |
+| `BR-AST` | [`audio-storage.md`](../01-platform/audio-storage.md) | | `BR-LAY` | [`game-layout-engine.md`](../01-platform/game-layout-engine.md) |
+| `BR-RNG` | [`deterministic-randomness.md`](../01-platform/deterministic-randomness.md) | | `BR-TAK` | [`template-authoring-kit.md`](../01-platform/template-authoring-kit.md) |
+| `BR-ENV` | [`env-contract.md`](../01-platform/env-contract.md) | | `BR-SRV` | [`server-provisioning.md`](../01-platform/server-provisioning.md) |
+| `BR-SUP` | [`process-supervision.md`](../01-platform/process-supervision.md) | | `BR-DEP` | [`release-deploy.md`](../01-platform/release-deploy.md) |
+| `BR-RBK` | [`release-rollback.md`](../01-platform/release-rollback.md) | | | |
 
 **Public**
 
@@ -136,7 +140,7 @@ Mọi `BR-*` trong code, test, và PR. `pnpm gen:check` cảnh báo BR không đ
 | `BR-SCF` | [`scaffolding-and-hints.md`](../04-play/scaffolding-and-hints.md) | | `BR-FBK` | [`feedback-and-celebration.md`](../04-play/feedback-and-celebration.md) |
 | `BR-PGT` | [`parent-gate.md`](../04-play/parent-gate.md) | | `BR-HPL` | [`healthy-play-limits.md`](../04-play/healthy-play-limits.md) |
 | `BR-CUR` | [`curriculum-player.md`](../04-play/curriculum-player.md) | | `BR-PRG` | [`progress-and-mastery.md`](../04-play/progress-and-mastery.md) |
-| `BR-REC` | [`next-game-recommendation.md`](../04-play/next-game-recommendation.md) | | | |
+| `BR-REC` | [`next-game-recommendation.md`](../04-play/next-game-recommendation.md) | | `BR-LSR` | [`lesson-session-runner.md`](../04-play/lesson-session-runner.md) |
 
 **Content**
 
@@ -144,7 +148,7 @@ Mọi `BR-*` trong code, test, và PR. `pnpm gen:check` cảnh báo BR không đ
 |---|---|---|---|---|
 | `BR-GLM` | [`game-level-model.md`](../05-content/game-level-model.md) | | `BR-LSM` | [`lesson-model.md`](../05-content/lesson-model.md) |
 | `BR-ACM` | [`activity-model.md`](../05-content/activity-model.md) | | `BR-CRM` | [`curriculum-model.md`](../05-content/curriculum-model.md) |
-| `BR-WSM` | [`worksheet-model.md`](../05-content/worksheet-model.md) | | | |
+| `BR-WSM` | [`worksheet-model.md`](../05-content/worksheet-model.md) | | `BR-LEX` | [`lesson-exemplar-set.md`](../05-content/lesson-exemplar-set.md) |
 
 **Admin**
 
@@ -182,14 +186,15 @@ Mọi `BR-*` trong code, test, và PR. `pnpm gen:check` cảnh báo BR không đ
 | `BR-TST` | [`testing-strategy.md`](../08-quality/testing-strategy.md) | | `BR-SEC` | [`security-checklist.md`](../08-quality/security-checklist.md) |
 | `BR-A11` | [`accessibility.md`](../08-quality/accessibility.md) | | `BR-PRF` | [`performance-budgets.md`](../08-quality/performance-budgets.md) |
 | `BR-DSC` | [`design-system-contract.md`](../08-quality/design-system-contract.md) | | `BR-PED` | [`pedagogical-evidence.md`](../08-quality/pedagogical-evidence.md) |
+| `BR-TCM` | [`thinking-coverage-matrix.md`](../08-quality/thinking-coverage-matrix.md) | | `BR-TYP` | [`type-safety.md`](../08-quality/type-safety.md) |
 
 ### 7.2 Thống kê
 
 | | Số |
 |---|---:|
-| Spec module | 139 |
-| Prefix BR | 139 |
-| Business rule | ~1269 |
+| Spec module | 151 |
+| Prefix BR | 151 |
+| Business rule | ~1332 |
 
 **Cảnh báo:** con số "spec module" trước 2026-08-05 ghi **123**, trong khi
 [`../index.md`](../index.md) đếm **124**. Lệch có từ trước, chưa truy nguyên. Đã đặt lại theo

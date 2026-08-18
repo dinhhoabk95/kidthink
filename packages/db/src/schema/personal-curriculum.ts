@@ -83,8 +83,17 @@ export const personalCurriculumItems = pgTable(
     createdAt: timestamp("created_at", { withTimezone: true })
       .defaultNow()
       .notNull(),
+    updatedAt: timestamp("updated_at", { withTimezone: true })
+      .defaultNow()
+      .notNull(),
   },
   (table) => [
+    // Cặp đa hình: index, không khoá ngoại (BR-DM-04).
+    index("idx_personal_curriculum_items_entity").on(
+      table.entityType,
+      table.entityId
+    ),
+
     unique("personal_curriculum_items_week_session_pos_unique").on(
       table.personalCurriculumId,
       table.weekNo,
@@ -115,6 +124,12 @@ export const personalCurriculumEnrollments = pgTable(
       .defaultNow()
       .notNull(),
     status: enrollmentStatusEnum("status").notNull().default("active"),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+    updatedAt: timestamp("updated_at", { withTimezone: true })
+      .defaultNow()
+      .notNull(),
   },
   (table) => [
     uniqueIndex("idx_personal_curriculum_enrollments_child_active_unique")
@@ -151,6 +166,9 @@ export const personalCurriculumItemProgress = pgTable(
       .default("not_started"),
     completedAt: timestamp("completed_at", { withTimezone: true }),
     updatedAt: timestamp("updated_at", { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true })
       .defaultNow()
       .notNull(),
   },

@@ -82,7 +82,7 @@ export function moderateText(
         category: entry.category,
         term: entry.term,
         severity: entry.severity,
-        message: entry.messageVi,
+        message: entry.message,
       });
     }
   }

@@ -33,7 +33,7 @@
 - [x] 7 quota key §7.3 khai kèm đơn vị và chu kỳ.
 - [x] Type suy từ hằng số; chuỗi lạ là lỗi biên dịch.
 - [x] Ca âm: key ngoài registry → `UNKNOWN_ENTITLEMENT_KEY` (500).
-- [x] `pnpm --filter @kidthink/shared test` xanh, assertion tham chiếu `BR-ENT-01` `BR-ENT-03`.
+- [x] `pnpm --filter @mindkid/shared test` xanh, assertion tham chiếu `BR-ENT-01` `BR-ENT-03`.
 
 ### Task 3 — Seed sinh từ registry
 
@@ -41,7 +41,7 @@
 - [x] `SEED_ENTITLEMENT_KEYS` sinh từ hằng số Task 2, không chép tay.
 - [x] Seed giữ idempotent theo `key`.
 - [x] Bỏ assertion đếm `16`/`12`, thay bằng so khớp tập hợp.
-- [x] `pnpm --filter @kidthink/db test -- seed` xanh, assertion tham chiếu `BR-ENT-03`.
+- [x] `pnpm --filter @mindkid/db test -- seed` xanh, assertion tham chiếu `BR-ENT-03`.
 
 ### Task 4 — `PACKAGE_CATALOG`
 
@@ -53,7 +53,7 @@
 - [x] `package_entitlements` khớp ma trận 7 dòng §7.1.
 - [x] Ca âm `BR-PKG-08`: mọi key `standard` cấp đều có trong `premium`.
 - [x] Giá giữ `PENDING_PRICE_VND`; test chặn giá khác 0 khi §11 Q1 chưa chốt.
-- [x] `pnpm --filter @kidthink/db test -- seed` xanh, assertion tham chiếu `BR-PKG-04` `BR-PKG-05`.
+- [x] `pnpm --filter @mindkid/db test -- seed` xanh, assertion tham chiếu `BR-PKG-04` `BR-PKG-05`.
 
 ### Task 5 — Cổng "không hardcode giá"
 
@@ -80,7 +80,7 @@
 - [x] `BR-LAD-02`: thiếu `access_tier` → `premium`, không phải `free`.
 - [x] `BR-LAD-05`: bậc hiệu lực = max(level, curriculum).
 - [x] Cổng: không module nào khác ánh xạ entitlement sang tier.
-- [x] `pnpm --filter @kidthink/shared test -- ladder` xanh.
+- [x] `pnpm --filter @mindkid/shared test -- ladder` xanh.
 
 ### Task 7 — Response khi chặn
 

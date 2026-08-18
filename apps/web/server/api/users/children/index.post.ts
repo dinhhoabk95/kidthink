@@ -1,16 +1,15 @@
-import { AppError } from "@kidthink/auth";
 import {
   childProfiles,
   consentLogs,
   entitlements,
   getOwnerDb,
   users,
-} from "@kidthink/db";
+} from "@mindkid/db";
 import {
   deriveAgeBand,
   isValidAvatarPreset,
   parseChildProfileInput,
-} from "@kidthink/shared";
+} from "@mindkid/shared";
 import { and, count, eq, gt, isNull, ne, or } from "drizzle-orm";
 import {
   createError,
@@ -22,7 +21,6 @@ import {
 import {
   assertRequestBodySize,
   requireWebUserSession,
-  respondToUserAuthError,
 } from "../../../utils/auth-runtime.js";
 
 function parseAndValidateInput(rawBody: unknown, currentYear: number) {
@@ -133,106 +131,83 @@ async function verifyChildConsentAndQuota(event: H3Event, userId: number) {
 }
 
 export default defineEventHandler(async (event) => {
-  try {
-    assertRequestBodySize(event, 16 * 1024);
-    const user = await requireWebUserSession(event);
-    const db = getOwnerDb();
-    const [account] = await db
-      .select({ status: users.status })
-      .from(users)
-      .where(eq(users.id, user.user_id))
-      .limit(1);
+  assertRequestBodySize(event, 16 * 1024);
+  const user = await requireWebUserSession(event);
+  const db = getOwnerDb();
+  const [account] = await db
+    .select({ status: users.status })
+    .from(users)
+    .where(eq(users.id, user.user_id))
+    .limit(1);
 
-    if (account?.status !== "active") {
-      setResponseStatus(event, 403);
-      throw createError({
-        statusCode: 403,
-        statusMessage: "EMAIL_NOT_VERIFIED",
-        data: {
-          code: "EMAIL_NOT_VERIFIED",
-          message: "Tài khoản cần xác thực email trước khi tạo hồ sơ trẻ.",
-        },
-      });
-    }
-
-    const eventBody = (event.context as { body?: Record<string, unknown> })
-      ?.body;
-    const rawBody =
-      eventBody || ((await readBody(event)) as Record<string, unknown>) || {};
-    const currentYear = new Date().getFullYear();
-
-    const parsedInput = parseAndValidateInput(rawBody, currentYear);
-
-    if (!isValidAvatarPreset(parsedInput.avatar_id)) {
-      setResponseStatus(event, 400);
-      throw createError({
-        statusCode: 400,
-        statusMessage: "AVATAR_NOT_IN_PRESET",
-        data: {
-          code: "AVATAR_NOT_IN_PRESET",
-          message: "Hình đại diện phải thuộc bộ 12 preset minh hoạ có sẵn.",
-        },
-      });
-    }
-
-    const age = currentYear - parsedInput.birth_year;
-    if (age < 3 || age > 6) {
-      setResponseStatus(event, 422);
-      throw createError({
-        statusCode: 422,
-        statusMessage: "CHILD_AGE_OUT_OF_RANGE",
-        data: {
-          code: "CHILD_AGE_OUT_OF_RANGE",
-          message:
-            "TiniMath là sản phẩm dành riêng cho trẻ từ 3–6 tuổi. Vui lòng chọn năm sinh phù hợp.",
-        },
-      });
-    }
-
-    const userId = Number(user.user_id);
-    await verifyChildConsentAndQuota(event, userId);
-
-    const ageBand = deriveAgeBand(parsedInput.birth_year, currentYear);
-
-    const [newChild] = await db
-      .insert(childProfiles)
-      .values({
-        userId,
-        displayName: parsedInput.display_name,
-        birthYear: parsedInput.birth_year,
-        avatarId: parsedInput.avatar_id,
-        relationship: parsedInput.relationship || "child",
-        dailyPlayCapMinutes: 60,
-        status: "active",
-      })
-      .returning();
-
-    setResponseStatus(event, 201);
-    return {
-      uuid: newChild.uuid,
-      display_name: newChild.displayName,
-      age_band: ageBand,
-      avatar_id: newChild.avatarId,
-    };
-  } catch (err: unknown) {
-    const errorObj = err as {
-      statusCode?: number;
-      status?: number;
-      code?: string;
-      message?: string;
-    };
-    if (errorObj?.statusCode) {
-      setResponseStatus(event, errorObj.statusCode);
-      throw err;
-    }
-    if (err instanceof AppError) {
-      setResponseStatus(event, err.status);
-      throw createError({
-        statusCode: err.status,
-        statusMessage: err.code,
-        data: { code: err.code, message: err.message },
-      });
-    }
-    return respondToUserAuthError(event, err);
+  if (account?.status !== "active") {
+    setResponseStatus(event, 403);
+    throw createError({
+      statusCode: 403,
+      statusMessage: "EMAIL_NOT_VERIFIED",
+      data: {
+        code: "EMAIL_NOT_VERIFIED",
+        message: "Tài khoản cần xác thực email trước khi tạo hồ sơ trẻ.",
+      },
+    });
   }
+
+  const eventBody = (event.context as { body?: Record<string, unknown> })?.body;
+  const rawBody =
+    eventBody || ((await readBody(event)) as Record<string, unknown>) || {};
+  const currentYear = new Date().getFullYear();
+
+  const parsedInput = parseAndValidateInput(rawBody, currentYear);
+
+  if (!isValidAvatarPreset(parsedInput.avatar_id)) {
+    setResponseStatus(event, 400);
+    throw createError({
+      statusCode: 400,
+      statusMessage: "AVATAR_NOT_IN_PRESET",
+      data: {
+        code: "AVATAR_NOT_IN_PRESET",
+        message: "Hình đại diện phải thuộc bộ 12 preset minh hoạ có sẵn.",
+      },
+    });
+  }
+
+  const age = currentYear - parsedInput.birth_year;
+  if (age < 3 || age > 6) {
+    setResponseStatus(event, 422);
+    throw createError({
+      statusCode: 422,
+      statusMessage: "CHILD_AGE_OUT_OF_RANGE",
+      data: {
+        code: "CHILD_AGE_OUT_OF_RANGE",
+        message:
+          "TiniMath là sản phẩm dành riêng cho trẻ từ 3–6 tuổi. Vui lòng chọn năm sinh phù hợp.",
+      },
+    });
+  }
+
+  const userId = Number(user.user_id);
+  await verifyChildConsentAndQuota(event, userId);
+
+  const ageBand = deriveAgeBand(parsedInput.birth_year, currentYear);
+
+  const [newChild] = await db
+    .insert(childProfiles)
+    .values({
+      userId,
+      displayName: parsedInput.display_name,
+      birthYear: parsedInput.birth_year,
+      avatarId: parsedInput.avatar_id,
+      relationship: parsedInput.relationship || "child",
+      dailyPlayCapMinutes: 60,
+      status: "active",
+    })
+    .returning();
+
+  setResponseStatus(event, 201);
+  return {
+    uuid: newChild.uuid,
+    display_name: newChild.displayName,
+    age_band: ageBand,
+    avatar_id: newChild.avatarId,
+  };
 });

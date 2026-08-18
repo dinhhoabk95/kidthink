@@ -7,12 +7,18 @@
 import { execFileSync } from "node:child_process";
 import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
 import { join, relative, resolve } from "node:path";
-import { type ProgressSpec, validateProgress } from "./check-progress-lib.ts";
+import {
+  ownedRuleIds,
+  type ProgressSpec,
+  parseRulePrefixRegistry,
+  validateProgress,
+} from "./check-progress-lib.ts";
 import { collectSpecFiles, parseFrontmatter } from "./lint-specs-lib.ts";
 
 const ROOT = resolve(import.meta.dirname, "..");
 const CHECKLIST_REL = "docs/tasks/14-implementation-sequence-todo.md";
 const CHECKLIST = join(ROOT, CHECKLIST_REL);
+const BUSINESS_RULES = join(ROOT, "docs/specs/00-foundation/business-rules.md");
 const BUSINESS_RULE_PATTERN = /\bBR-[A-Z0-9]+-\d+\b/g;
 const SECTION_6_PATTERN = /\n## 6\. /;
 const SECTION_7_PATTERN = /\n## 7\. /;
@@ -64,24 +70,29 @@ function collectChangedPaths(): string[] {
     .map((path) => path.split(" -> ").at(-1) ?? path);
 }
 
-function businessRulesOwnedBySpec(content: string): string[] {
+function businessRulesCitedBySpec(content: string): string[] {
   const section =
     content.split(SECTION_7_PATTERN, 1)[0]?.split(SECTION_6_PATTERN)[1] ?? "";
   return [...new Set(section.match(BUSINESS_RULE_PATTERN) ?? [])];
 }
 
 function collectProgressSpecs(fromIndex: boolean): ProgressSpec[] {
+  const registry = parseRulePrefixRegistry(
+    readSnapshotFile(BUSINESS_RULES, fromIndex) ?? ""
+  );
   return collectSpecFiles().map((spec) => {
     const content = fromIndex
       ? (readIndexFile(relative(ROOT, spec.path)) ?? spec.content)
       : spec.content;
     const frontmatter = parseFrontmatter(content).data;
+    const citedRuleIds = businessRulesCitedBySpec(content);
     return {
       id: String(frontmatter.spec ?? ""),
       phase: String(frontmatter.phase ?? ""),
       rel: spec.rel,
       status: String(frontmatter.status ?? ""),
-      businessRuleIds: businessRulesOwnedBySpec(content),
+      citedRuleIds,
+      ownedRuleIds: ownedRuleIds(citedRuleIds, spec.rel, registry),
     };
   });
 }

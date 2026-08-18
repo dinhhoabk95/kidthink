@@ -4,8 +4,8 @@
  * Source of truth: `docs/taxonomy/index.md` + per-competency files.
  * Layer 1 — code-owned master data. Admin reads only. Change = PR + deploy.
  *
- * Re-exports taxonomy types from @kidthink/shared so downstream
- * packages only need `@kidthink/taxonomy`.
+ * Re-exports taxonomy types from @mindkid/shared so downstream
+ * packages only need `@mindkid/taxonomy`.
  */
 
 import type {
@@ -13,7 +13,7 @@ import type {
   CompetencyTier,
   StrandCode,
   StrandTier,
-} from "@kidthink/shared";
+} from "@mindkid/shared";
 
 // Re-export all taxonomy types for convenience
 export type {
@@ -29,7 +29,7 @@ export type {
   SkillTier,
   StrandTier,
   ThinkingProcess,
-} from "@kidthink/shared";
+} from "@mindkid/shared";
 
 // ─── Competency constants ────────────────────────────────────────────
 

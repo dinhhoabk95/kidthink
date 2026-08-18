@@ -1,5 +1,5 @@
-import { contentImages, getOwnerDb } from "@kidthink/db";
-import { uploadPublicImage } from "@kidthink/storage";
+import { contentImages, getOwnerDb } from "@mindkid/db";
+import { uploadPublicImage } from "@mindkid/storage";
 import { eq } from "drizzle-orm";
 import { describe, expect, it } from "vitest";
 import { runOrphanImageCleanupJob } from "./cleanup-orphan.js";
@@ -36,7 +36,7 @@ describe("Orphan Image Cleanup Worker Job (BR-AUT2-05, D-BD, Task #49 T5)", () =
         ownerId: 9999,
         storagePath: oldPath,
         status: "orphan",
-        altTextVi: "Ảnh cũ mồ côi",
+        altText: "Ảnh cũ mồ côi",
         bytes: 1024,
         createdAt: thirtyOneDaysAgo,
       })
@@ -50,7 +50,7 @@ describe("Orphan Image Cleanup Worker Job (BR-AUT2-05, D-BD, Task #49 T5)", () =
         ownerId: 9999,
         storagePath: newPath,
         status: "orphan",
-        altTextVi: "Ảnh mới mồ côi",
+        altText: "Ảnh mới mồ côi",
         bytes: 2048,
         createdAt: twentyNineDaysAgo,
       })
@@ -65,7 +65,7 @@ describe("Orphan Image Cleanup Worker Job (BR-AUT2-05, D-BD, Task #49 T5)", () =
         storagePath: proofPath,
         visibility: "private",
         status: "orphan",
-        altTextVi: "Chứng từ cũ",
+        altText: "Chứng từ cũ",
         bytes: 4096,
         createdAt: thirtyOneDaysAgo,
       })

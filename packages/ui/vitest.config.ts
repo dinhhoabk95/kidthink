@@ -4,7 +4,7 @@ import { defineConfig } from "vitest/config";
 export default defineConfig({
   resolve: {
     alias: {
-      "@kidthink/game-engine": path.resolve(
+      "@mindkid/game-engine": path.resolve(
         import.meta.dirname,
         "../game-engine/src/index.ts"
       ),

@@ -58,10 +58,10 @@
               </div>
 
               <h2 class="text-base font-bold text-slate-900 dark:text-white">
-                {{ flag.name_vi }}
+                {{ flag.name }}
               </h2>
               <p class="text-xs text-slate-500">
-                {{ flag.description_vi }}
+                {{ flag.description }}
               </p>
             </div>
 
@@ -180,8 +180,8 @@
 
   interface FlagItem {
     key: string;
-    name_vi: string;
-    description_vi: string;
+    name: string;
+    description: string;
     enabled: boolean;
     scope: string;
     scope_value: Record<string, unknown> | null;

@@ -1,13 +1,8 @@
-import { AppError } from "@kidthink/auth";
-import { completePlaySession } from "@kidthink/db";
-import {
-  createError,
-  defineEventHandler,
-  getRouterParam,
-  readBody,
-  setResponseStatus,
-} from "h3";
+import { AppError } from "@mindkid/auth";
+import { completePlaySession } from "@mindkid/db";
+import { createError, defineEventHandler, getRouterParam, readBody } from "h3";
 import { z } from "zod";
+
 import {
   assertRequestBodySize,
   assertSameOriginRequest,
@@ -19,36 +14,24 @@ const CompleteSchema = z
   .strict();
 
 export default defineEventHandler(async (event) => {
-  try {
-    assertSameOriginRequest(event);
-    assertRequestBodySize(event, 16 * 1024);
-    const uuid = getRouterParam(event, "uuid");
-    if (!uuid) {
-      throw createError({ statusCode: 404, statusMessage: "NOT_FOUND" });
-    }
-
-    const guestDeviceId = getOrSetGuestDeviceId(event);
-    const parsed = CompleteSchema.safeParse((await readBody(event)) || {});
-    if (!parsed.success) {
-      throw new AppError("VALIDATION_FAILED");
-    }
-    const lastSeq = parsed.data.last_seq;
-
-    const result = await completePlaySession(uuid, lastSeq, {
-      isUserCall: false,
-      guestDeviceId,
-    });
-
-    return result;
-  } catch (err) {
-    if (err instanceof AppError) {
-      setResponseStatus(event, err.status);
-      throw createError({
-        statusCode: err.status,
-        statusMessage: err.code,
-        data: { code: err.code, message: err.message },
-      });
-    }
-    throw err;
+  assertSameOriginRequest(event);
+  assertRequestBodySize(event, 16 * 1024);
+  const uuid = getRouterParam(event, "uuid");
+  if (!uuid) {
+    throw createError({ statusCode: 404, statusMessage: "NOT_FOUND" });
   }
+
+  const guestDeviceId = getOrSetGuestDeviceId(event);
+  const parsed = CompleteSchema.safeParse((await readBody(event)) || {});
+  if (!parsed.success) {
+    throw new AppError("VALIDATION_FAILED");
+  }
+  const lastSeq = parsed.data.last_seq;
+
+  const result = await completePlaySession(uuid, lastSeq, {
+    isUserCall: false,
+    guestDeviceId,
+  });
+
+  return result;
 });

@@ -2,7 +2,7 @@
 spec: ERROR-CODES
 title: Registry mã lỗi
 area: foundation
-status: approved
+status: implemented
 mvp: true
 phase: P0
 reviewed: 2026-08-14
@@ -101,7 +101,7 @@ Mọi handler API. Mọi spec khai báo mã lỗi phải đăng ký ở đây.
 
 | Mã | HTTP | Khi nào | Thông báo |
 |---|:--:|---|---|
-| `SOCIAL_EMAIL_CONFLICT` | 409 | Provider trả email đã có tài khoản, chưa liên kết. **NEVER tự liên kết** (quy tắc `BR-SCL-04` — cấm tự liên kết SNS vào tài khoản sẵn có vì trùng email) | "Email này đã có tài khoản KidThink. Hãy đăng nhập rồi liên kết {provider} trong Cài đặt → Bảo mật." |
+| `SOCIAL_EMAIL_CONFLICT` | 409 | Provider trả email đã có tài khoản, chưa liên kết. **NEVER tự liên kết** (quy tắc `BR-SCL-04` — cấm tự liên kết SNS vào tài khoản sẵn có vì trùng email) | "Email này đã có tài khoản MindKid. Hãy đăng nhập rồi liên kết {provider} trong Cài đặt → Bảo mật." |
 | `SOCIAL_IDENTITY_ALREADY_LINKED` | 409 | Tài khoản SNS đó đã gắn User khác. Body **không** nói User nào (quy tắc `BR-SLK-06` — không tiết lộ người đã gắn tài khoản SNS đó là ai) | "Tài khoản {provider} này đã được liên kết với một tài khoản khác." |
 | `SOCIAL_PROVIDER_ALREADY_LINKED` | 409 | User đã có provider đó (`BR-SLK-02`) | "Bạn đã liên kết {provider} rồi." |
 | `LAST_LOGIN_METHOD` | 409 | Gỡ SNS cuối trên tài khoản không mật khẩu. `details.set_password_url` | "Đây là cách đăng nhập duy nhất của bạn. Hãy đặt mật khẩu trước khi gỡ." |
@@ -168,6 +168,7 @@ Mọi handler API. Mọi spec khai báo mã lỗi phải đăng ký ở đây.
 | `EVENT_OUT_OF_ORDER` | 409 | `seq` lùi — client lỗi |
 | `EVENT_DUPLICATE` | 200 | Trùng `(session, seq)` — **idempotent, trả 200** |
 | `TEMPLATE_NOT_SUPPORTED` | 422 | Client yêu cầu template không có |
+| `LAYOUT_NOT_SUPPORTED` | 422 | `layout_id` không thuộc `layouts` của template ([`game-layout-engine.md`](../01-platform/game-layout-engine.md)) |
 
 ### 7.6 Dữ liệu trẻ và tài khoản
 

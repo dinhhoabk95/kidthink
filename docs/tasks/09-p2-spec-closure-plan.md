@@ -18,7 +18,7 @@
 > (Task #8), bước 1 dùng `D-BD` (`D-BC` **bỏ trống, không dùng**), nên các quyết định tiếp theo
 > bắt đầu từ **`D-BE`**.
 >
-> Mọi lệnh chạy từ thư mục `kidthink/`. Đặt lại đường dẫn Node trước mỗi phiên shell mới, vì
+> Mọi lệnh chạy từ thư mục `mindkid/`. Đặt lại đường dẫn Node trước mỗi phiên shell mới, vì
 > shell mặc định của máy là v20.17.0 còn dự án cần v24:
 >
 > ```

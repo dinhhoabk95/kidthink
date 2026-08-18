@@ -239,7 +239,7 @@ T1 SEO contract: meta · canonical · sitemap động · JSON-LD · og:image · 
 - [ ] `BR-FAQ-04`: nội dung sửa qua [`seo-content-admin.md`](../specs/06-admin/seo-content-admin.md) (P2.8) — ở P1 lưu dạng dữ liệu, **không** hardcode trong component.
 - [ ] `BR-FAQ-05`: trả lời thẳng ở câu đầu.
 - [ ] `BR-FAQ-06`: có ít nhất một câu nói thẳng giới hạn sản phẩm.
-- [ ] `D-AX`: kênh hỗ trợ email `support@kidthink.vn` + Zalo OA hiển thị.
+- [ ] `D-AX`: kênh hỗ trợ email `support@mindkid.vn` + Zalo OA hiển thị.
 - [ ] `BR-CKB-01` `BR-CKB-04`: chỉ cookie **kỹ thuật thiết yếu**, không cookie bên thứ ba.
 - [ ] `BR-CKB-05`: `/cookie` liệt kê **từng** cookie: tên, mục đích, thời hạn — sinh từ danh sách dữ liệu, không viết tay.
 - [ ] `BR-CKB-02`: banner **không** chặn nội dung, không modal toàn màn hình.

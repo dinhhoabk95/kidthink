@@ -1,5 +1,5 @@
 {
-  "name": "@kidthink/shared",
+  "name": "@mindkid/shared",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -11,14 +11,14 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@kidthink/auth": "workspace:*",
-    "@kidthink/emoji": "workspace:*",
-    "@kidthink/game-engine": "workspace:*",
-    "@kidthink/moderation": "workspace:*",
+    "@mindkid/auth": "workspace:*",
+    "@mindkid/emoji": "workspace:*",
+    "@mindkid/game-engine": "workspace:*",
+    "@mindkid/moderation": "workspace:*",
     "zod": "catalog:"
   },
   "devDependencies": {
-    "@kidthink/config": "workspace:*",
+    "@mindkid/config": "workspace:*",
     "fast-check": "catalog:",
     "typescript": "catalog:",
     "vitest": "catalog:"

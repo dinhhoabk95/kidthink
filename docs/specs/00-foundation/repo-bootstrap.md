@@ -2,12 +2,12 @@
 spec: REPO-BOOTSTRAP
 title: Khởi tạo repo và dependency baseline
 area: foundation
-status: approved
+status: implemented
 mvp: true
 phase: P0
 reviewed: 2026-08-13
 owns:
-  - Cấu trúc thư mục gốc `kidthink/` và trình tự dựng repo
+  - Cấu trúc thư mục gốc `mindkid/` và trình tự dựng repo
   - Dependency/tech baseline (version tối thiểu từng lớp)
   - Danh sách port có chọn lọc từ `tinimath/` (v1)
   - Gate chất lượng local (git hook) xanh trước khi viết business logic
@@ -23,9 +23,9 @@ không có spec sở hữu — đây là lỗ hổng duy nhất trong 128 spec g
 đầu tiên thực thi**, trước cả [`glossary.md`](glossary.md) và
 [`id-conventions.md`](id-conventions.md), vì mọi spec khác giả định đã có repo để đặt code vào.
 
-Quyết định nền: **khởi tạo từ đầu trong `kidthink/`**, nằm cạnh `tinimath/` (v1, tham khảo
+Quyết định nền: **khởi tạo từ đầu trong `mindkid/`**, nằm cạnh `tinimath/` (v1, tham khảo
 đọc-only) trong cùng workspace — không update dần trên code cũ (quyết định D9 — khởi tạo source
-mới từ đầu trong `kidthink/` thay vì update dần code cũ, mục 0 của [`SPEC.md`](../../SPEC.md)).
+mới từ đầu trong `mindkid/` thay vì update dần code cũ, mục 0 của [`SPEC.md`](../../SPEC.md)).
 Port có chọn lọc, không copy nguyên khối; phần lớn thư viện nền adopt từ hệ sinh thái đã kiểm
 chứng thay vì tự viết (quyết định D10 — ưu tiên adopt thư viện Nuxt ecosystem đã kiểm chứng thay
 vì tự xây từ đầu, cùng mục).
@@ -42,18 +42,18 @@ vì tự xây từ đầu, cùng mục).
 
 | Nơi | |
 |---|---|
-| `kidthink/package.json`, `pnpm-workspace.yaml` | Gốc workspace |
-| `kidthink/apps/*`, `kidthink/packages/*` | Khung app/package rỗng |
-| `kidthink/lefthook.yml` + `.git/hooks/pre-commit`·`pre-push` | Gate lint+typecheck+test, chạy local. Không có cổng remote |
-| `kidthink/docker-compose.yml` | PostgreSQL 17 + Valkey 9 cho dev local |
+| `mindkid/package.json`, `pnpm-workspace.yaml` | Gốc workspace |
+| `mindkid/apps/*`, `mindkid/packages/*` | Khung app/package rỗng |
+| `mindkid/lefthook.yml` + `.git/hooks/pre-commit`·`pre-push` | Gate lint+typecheck+test, chạy local. Không có cổng remote |
+| `mindkid/docker-compose.yml` | PostgreSQL 17 + Valkey 9 cho dev local |
 | `tinimath/tinimath/**` (v1, đọc-only) | Nguồn port — xem §7.3 |
 
 ## 4. Main flow — trình tự bootstrap
 
-1. Tạo `kidthink/` cạnh `tinimath/` (v1) trong workspace hiện tại. Không xoá, không sửa
+1. Tạo `mindkid/` cạnh `tinimath/` (v1) trong workspace hiện tại. Không xoá, không sửa
    `tinimath/` — nó vẫn là tham khảo đọc-only.
 2. Port có chọn lọc theo §7.3 — chỉ những gì trong bảng, đổi scope `@tinimath/*` →
-   `@kidthink/*` ngay khi port, không để sót bản cũ.
+   `@mindkid/*` ngay khi port, không để sót bản cũ.
 3. Khởi tạo `pnpm-workspace.yaml` (`apps/*`, `packages/*`) + `catalog:` cho dependency dùng
    chung (xem §7.1) + `package.json` gốc với `engines.node` và `engines.pnpm` khoá theo §7.1.
 4. Cài dependency baseline theo §7.1 vào từng package/app tương ứng — **không** cài phiên
@@ -85,7 +85,7 @@ vì tự xây từ đầu, cùng mục).
 | ID | Rule | Vì sao |
 |---|---|---|
 | `BR-RBS-01` | Repo mới **NEVER copy trực tiếp** route/schema/service từ v1 — chỉ 3 tài sản + tooling config ở §7.3, trừ khi có audit riêng bổ sung | Mục 1 của [`AUDIT-v1.md`](../AUDIT-v1.md) đã đo: ~26% nội dung v1 là "nợ" gắn với code sẽ bỏ. Copy nguyên khối mang nợ đó sang |
-| `BR-RBS-02` | Mọi package port từ v1 **phải đổi scope** `@tinimath/*` → `@kidthink/*` trong cùng PR port, không để hai scope cùng tồn tại | Hai scope trộn lẫn làm import path không nhất quán và dễ import nhầm bản cũ |
+| `BR-RBS-02` | Mọi package port từ v1 **phải đổi scope** `@tinimath/*` → `@mindkid/*` trong cùng PR port, không để hai scope cùng tồn tại | Hai scope trộn lẫn làm import path không nhất quán và dễ import nhầm bản cũ |
 | `BR-RBS-03` | Gate local `lefthook` (lint + lint:tokens + lint:deps + typecheck + test) phải xanh trên commit rỗng **và** chặn đúng ở ca âm, **trước khi** PR đầu tiên chứa business logic mở | Bootstrap xong mà gate chưa chạy là nợ kỹ thuật ghi nhận ngay từ dòng code đầu tiên. Ca âm bắt buộc vì gate exit 0 khi có lỗi là chuyện **đã xảy ra** ở project này (`ultracite check`, `check:services`) |
 | `BR-RBS-03a` | `lefthook install` phải chạy tự động qua `prepare` script của `package.json` — không dựa vào người mới clone tự nhớ | Hook chỉ tồn tại trong `.git/hooks/` (không được commit). Người clone mà không cài hook thì gate im lặng biến mất, và git không báo gì |
 | `BR-RBS-04` | **NEVER viết code nghiệp vụ** trước khi toàn bộ spec `00-foundation` đạt `status: approved` | Nguyên tắc 1 của [`roadmap.md`](../roadmap.md) — contract trước implementation |
@@ -152,16 +152,16 @@ không lặp lại ở đây theo [`CONVENTIONS.md`](../CONVENTIONS.md) (spec kh
 ### 7.2 Cấu trúc thư mục
 
 Không lặp lại — xem [`../../SPEC.md`](../../SPEC.md) §8 Project structure. File đó là nguồn
-sở hữu cây thư mục `kidthink/`; file này chỉ sở hữu **trình tự dựng** nó.
+sở hữu cây thư mục `mindkid/`; file này chỉ sở hữu **trình tự dựng** nó.
 
 ### 7.3 Danh sách port từ v1 (`tinimath/tinimath/`)
 
-| Tài sản v1 | Đích ở `kidthink/` | Điều kiện port |
+| Tài sản v1 | Đích ở `mindkid/` | Điều kiện port |
 |---|---|---|
 | `docs/taxonomy/` | `docs/taxonomy/` | Port nguyên — registry C1–C6 + 230 skill là dữ liệu, không phải code |
 | `packages/emoji/` | `packages/emoji/` | Port nguyên, đổi scope. 32 nhóm emoji cố định không đổi theo spec v2 |
 | `packages/game-engine/` | `packages/game-engine/` | Port **có điều kiện**, đổi scope — không "port nguyên": đo được là bất khả thi. **48 import** `D1xx–D4xxConfig` từ `@tinimath/shared` — package ngoài danh sách port ở bảng này; v1 `handlers/d1..d6/` 86 file / 60 game type vs v2 `templates/` `GT-001`…`GT-006`. Phụ thuộc mục 11 câu hỏi 1 của [`game-template-contract.md`](../01-platform/game-template-contract.md) — khảo sát % port được **trước khi cam kết**. Task riêng, ngoài P0 bước 1 |
-| `biome.json`, TSConfig base, `.dockerignore`, `docker-compose*.yml` skeleton | `packages/config/`, gốc `kidthink/` | Port làm điểm khởi đầu, chỉnh version dependency theo §7.1 |
+| `biome.json`, TSConfig base, `.dockerignore`, `docker-compose*.yml` skeleton | `packages/config/`, gốc `mindkid/` | Port làm điểm khởi đầu, chỉnh version dependency theo §7.1 |
 | `packages/config/src/constants.ts` | Không port | `COOKIE_PREFIXES` (`superadmin: "tinimath_sa"`) + `API_PATHS` là bề mặt auth v1 — actor `superadmin` (v2 dùng `manager`), prefix `tinimath_`. Auth tuân theo cổng review vùng nhạy cảm và ngoại lệ Task #14 tại mục 5 của [`ai-codegen-pipeline.md`](../01-platform/ai-codegen-pipeline.md); không port contract v1 |
 | Workflow v1 (`.github/workflows/`) | Không port | Không có cổng remote ở v2 (§7.1 dòng "Gate chất lượng", §11 Q5). Bản port ngày 2026-08-06 đã **xoá lại** cùng cả thư mục `.github/` |
 | `packages/ui/` (Nuxt UI v4 + Tailwind preset, brand component) | `packages/ui/` | Port **có điều kiện** — chỉ phần đã khớp [`design-system-contract.md`](../08-quality/design-system-contract.md); phần lệch thì viết lại, không ép port. Cần audit riêng trước khi merge — xem §11 Q1 |
@@ -175,7 +175,7 @@ Không sở hữu route nào.
 
 ```gherkin
 Scenario: BR-RBS-03 — gate local xanh trước business logic
-  Given repo kidthink/ mới tạo với commit rỗng
+  Given repo mindkid/ mới tạo với commit rỗng
   When chạy `git push` thật (không phải `lefthook run pre-push` thủ công — lệnh
     thủ công thiếu ref data trên stdin mà git thật cung cấp, lefthook đọc thành
     "0 file cần push" và **skip cả 3 job, exit 0 giả** — đo được 2026-08-06.
@@ -201,11 +201,11 @@ Scenario: BR-RBS-03a — hook tự cài khi cài dependency
 Scenario: BR-RBS-02 — scope package đổi khi port
   Given packages/emoji được port từ tinimath/tinimath/packages/emoji
   When đọc package.json của package vừa port
-  Then name là "@kidthink/emoji"
+  Then name là "@mindkid/emoji"
   And không còn tham chiếu "@tinimath/" nào trong package đó
 
 Scenario: BR-RBS-07 — docker compose đúng version production
-  When chạy `docker compose up -d` ở kidthink/
+  When chạy `docker compose up -d` ở mindkid/
   Then Postgres báo version 17
   And Valkey báo version 9
 
@@ -235,7 +235,7 @@ Scenario: BR-RBS-04 — chặn code nghiệp vụ trước foundation approved
 
 **Never**
 - Copy route/schema/service từ v1.
-- Để hai scope package (`@tinimath/*` và `@kidthink/*`) cùng tồn tại sau khi port xong.
+- Để hai scope package (`@tinimath/*` và `@mindkid/*`) cùng tồn tại sau khi port xong.
 - Merge PR business logic khi gate local chưa xanh.
 - `git commit --no-verify` / `git push --no-verify` — không có cổng tự động remote đỡ phía sau, bỏ qua
   hook là bỏ qua **toàn bộ** kiểm tra tự động của project này.
@@ -254,10 +254,10 @@ Scenario: BR-RBS-04 — chặn code nghiệp vụ trước foundation approved
 | 7 | Xin production access AWS SES trước khi nào — cần review thời gian duyệt của AWS trước go-live P2 (không tự chốt được, phụ thuộc AWS) | Go-live P2, [`notification-service.md`](../01-platform/notification-service.md) | Hoãn, chặn go-live | người quyết |
 | 8 | Sentry SaaS Team tier ($26/mo) hay tự host GlitchTip ngay từ đầu — quyết định chi phí, không phải kỹ thuật (đổi qua lại chỉ là đổi DSN) | Ngân sách vận hành | Hoãn, chặn phase P1 | hoãn |
 | 9 | Kích thước pool `postgres.js` (`max`) và `PG max_connections` phải tính theo **loại EC2 instance thật** (số vCPU × số PM2 instance) — chưa chốt vì chưa biết instance type production | [`data-model-overview.md`](../01-platform/data-model-overview.md), deploy | Hoãn, chặn phase P1 | hoãn |
-| ~~10~~ | ~~Chiến lược version control cho corpus spec ở workspace root.~~ **Đóng 2026-08-09 (T13)**: Lượt 3 khôi phục Lượt 1 (`D-U`) — corpus ở nguyên trong `kidthink/docs/`. **Ba lượt quyết định:** | — | Đã đóng | D-U |
-| | **Lượt 1 — 2026-08-06 (D-U, T2)**: chốt corpus spec ([`SPEC.md`](../../SPEC.md) + `docs/specs/` + `docs/tasks/`) chuyển vào `kidthink/docs/`, thuộc git repo code. `kidthink/SPEC.md` = symlink → `docs/SPEC.md`. `git log --follow` truy được vết. 223 link `.md` resolve, 0 vỡ. | | | |
-| | **Lượt 2 — 2026-08-07 sáng (quyết định người dùng)**: **đảo lại** — corpus spec ra khỏi `kidthink/`, về `docs/` ở workspace root (sibling của `kidthink/`), **không** track chung git repo code. Lý do lúc đó: docs đổi nhịp khác code và người duyệt khác nhau — tách để diff/review code không lẫn thay đổi markdown. Chưa kịp code hoá (`CORPUS_ROOT` chưa thêm vào `scripts/lint-specs-lib.ts`) thì đã đảo lại ở Lượt 3 — bản ghi lượt này giữ lại làm lịch sử, không phải trạng thái hiện hành | | | |
-| | **Lượt 3 — 2026-08-07 chiều (quyết định người dùng, đảo lại Lượt 2)**: **khôi phục Lượt 1** — corpus spec ([`SPEC.md`](../../SPEC.md) + `docs/specs/` + `docs/tasks/` + `docs/taxonomy/` + `docs/montessori/`) ở nguyên trong `kidthink/docs/`, thuộc git repo code, commit chung dòng lịch sử với task code (ví dụ Task #3). Lý do: tách riêng repo docs mới chỉ là quyết định trên giấy — chưa mang lại lợi ích gì (chưa review-tách-luồng nào từng chạy) mà đã phát sinh rủi ro thật: một bản `docs/` cũ bị bỏ quên ở workspace root làm `kidthink/SPEC.md` (symlink) trỏ nhầm sang nội dung lỗi thời. `kidthink/SPEC.md` = symlink → `docs/SPEC.md` (khôi phục, bỏ `../`). Xoá bản `docs/` trùng ở workspace root | | | |
+| ~~10~~ | ~~Chiến lược version control cho corpus spec ở workspace root.~~ **Đóng 2026-08-09 (T13)**: Lượt 3 khôi phục Lượt 1 (`D-U`) — corpus ở nguyên trong `mindkid/docs/`. **Ba lượt quyết định:** | — | Đã đóng | D-U |
+| | **Lượt 1 — 2026-08-06 (D-U, T2)**: chốt corpus spec ([`SPEC.md`](../../SPEC.md) + `docs/specs/` + `docs/tasks/`) chuyển vào `mindkid/docs/`, thuộc git repo code. `mindkid/SPEC.md` = symlink → `docs/SPEC.md`. `git log --follow` truy được vết. 223 link `.md` resolve, 0 vỡ. | | | |
+| | **Lượt 2 — 2026-08-07 sáng (quyết định người dùng)**: **đảo lại** — corpus spec ra khỏi `mindkid/`, về `docs/` ở workspace root (sibling của `mindkid/`), **không** track chung git repo code. Lý do lúc đó: docs đổi nhịp khác code và người duyệt khác nhau — tách để diff/review code không lẫn thay đổi markdown. Chưa kịp code hoá (`CORPUS_ROOT` chưa thêm vào `scripts/lint-specs-lib.ts`) thì đã đảo lại ở Lượt 3 — bản ghi lượt này giữ lại làm lịch sử, không phải trạng thái hiện hành | | | |
+| | **Lượt 3 — 2026-08-07 chiều (quyết định người dùng, đảo lại Lượt 2)**: **khôi phục Lượt 1** — corpus spec ([`SPEC.md`](../../SPEC.md) + `docs/specs/` + `docs/tasks/` + `docs/taxonomy/` + `docs/montessori/`) ở nguyên trong `mindkid/docs/`, thuộc git repo code, commit chung dòng lịch sử với task code (ví dụ Task #3). Lý do: tách riêng repo docs mới chỉ là quyết định trên giấy — chưa mang lại lợi ích gì (chưa review-tách-luồng nào từng chạy) mà đã phát sinh rủi ro thật: một bản `docs/` cũ bị bỏ quên ở workspace root làm `mindkid/SPEC.md` (symlink) trỏ nhầm sang nội dung lỗi thời. `mindkid/SPEC.md` = symlink → `docs/SPEC.md` (khôi phục, bỏ `../`). Xoá bản `docs/` trùng ở workspace root | | | |
 | ~~11~~ | ~~Bật lại CI cổng tự động khi nào~~ **Đóng 2026-08-06**: câu hỏi biến mất cùng provider — không còn CI để bật. Quy tắc `BR-RBS-03` (gate local phải xanh và chặn đúng ca âm trước khi mở PR chứa business logic) giờ đo bằng `lefthook run pre-push` + ca âm tại máy | — | Đã đóng | D-S (T1) |
 | ~~12~~ | ~~Gate local bỏ qua được bằng `--no-verify`~~ **Đóng dứt điểm 2026-08-09 (`D-CL`)**: giữ lefthook làm phản hồi nhanh local; `main` cấm direct/force push, bắt buộc PR + ít nhất một approving human review và dismiss approval khi có commit mới. Người bật rule trước PR seeder đầu tiên | — | Đã đóng | D-CL |
 | ~~13~~ | ~~"Cổng CI" còn sót ở spec khác~~ **Đóng 2026-08-06**: đo lại chính xác là **7 file** (không phải 15 — số cũ ước lượng sai), đã sửa hết thành "cổng tự động": [`mvp-scope.md`](mvp-scope.md) · [`content-lifecycle.md`](content-lifecycle.md) · [`content-seed-authoring.md`](../01-platform/content-seed-authoring.md) (2 chỗ, gồm câu "không có cờ bỏ qua" ở Q12) · [`roadmap.md`](../roadmap.md) · [`index.md`](../index.md) · [`SPEC.md`](../../SPEC.md) (4 chỗ). `grep -rn "cổng tự động\|CI xanh\|cổng tự động" docs/specs/ SPEC.md` chỉ còn khớp trong chính file này (lịch sử quyết định, không phải khẳng định hiện tại) | — | Đã đóng | D-V (T4) |

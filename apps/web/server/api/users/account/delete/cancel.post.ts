@@ -1,5 +1,5 @@
-import { AppError, appError, verifyPassword } from "@kidthink/auth";
-import { cancelUserDeletion, getOwnerDb, users } from "@kidthink/db";
+import { appError, verifyPassword } from "@mindkid/auth";
+import { cancelUserDeletion, getOwnerDb, users } from "@mindkid/db";
 import { eq } from "drizzle-orm";
 import type { H3Event } from "h3";
 import {
@@ -9,10 +9,8 @@ import {
   setResponseStatus,
 } from "h3";
 import { z } from "zod";
-import {
-  assertRequestBodySize,
-  respondToUserAuthError,
-} from "../../../../utils/auth-runtime.js";
+
+import { assertRequestBodySize } from "../../../../utils/auth-runtime.js";
 
 const CancelDeletionSchema = z
   .object({
@@ -75,52 +73,40 @@ async function resolveTargetUserId(
 }
 
 export default defineEventHandler(async (event) => {
-  try {
-    assertRequestBodySize(event, 8 * 1024);
-    const db = getOwnerDb();
-    const targetUserId = await resolveTargetUserId(event, db);
+  assertRequestBodySize(event, 8 * 1024);
+  const db = getOwnerDb();
+  const targetUserId = await resolveTargetUserId(event, db);
 
-    const [account] = await db
-      .select({
-        id: users.id,
-        status: users.status,
-        purgeAt: users.purgeAt,
-      })
-      .from(users)
-      .where(eq(users.id, targetUserId))
-      .limit(1);
+  const [account] = await db
+    .select({
+      id: users.id,
+      status: users.status,
+      purgeAt: users.purgeAt,
+    })
+    .from(users)
+    .where(eq(users.id, targetUserId))
+    .limit(1);
 
-    if (!account) {
-      setResponseStatus(event, 404);
-      throw createError({ statusCode: 404, statusMessage: "NOT_FOUND" });
-    }
-
-    if (account.status === "purged") {
-      throw appError("ACCOUNT_PURGED");
-    }
-
-    const now = new Date();
-    if (account.purgeAt && account.purgeAt.getTime() <= now.getTime()) {
-      throw appError("ACCOUNT_PURGED");
-    }
-
-    // BR-ADL-02: Cancel deletion within 30-day grace period restores active state
-    await cancelUserDeletion(db, targetUserId);
-
-    return {
-      status: "active",
-      message:
-        "Đã huỷ yêu cầu xoá tài khoản thành công. Tài khoản của bạn đã được kích hoạt lại.",
-    };
-  } catch (err: unknown) {
-    if (err instanceof AppError) {
-      setResponseStatus(event, err.status);
-      throw createError({
-        statusCode: err.status,
-        statusMessage: err.code,
-        data: err.toResponse(),
-      });
-    }
-    return respondToUserAuthError(event, err);
+  if (!account) {
+    setResponseStatus(event, 404);
+    throw createError({ statusCode: 404, statusMessage: "NOT_FOUND" });
   }
+
+  if (account.status === "purged") {
+    throw appError("ACCOUNT_PURGED");
+  }
+
+  const now = new Date();
+  if (account.purgeAt && account.purgeAt.getTime() <= now.getTime()) {
+    throw appError("ACCOUNT_PURGED");
+  }
+
+  // BR-ADL-02: Cancel deletion within 30-day grace period restores active state
+  await cancelUserDeletion(db, targetUserId);
+
+  return {
+    status: "active",
+    message:
+      "Đã huỷ yêu cầu xoá tài khoản thành công. Tài khoản của bạn đã được kích hoạt lại.",
+  };
 });

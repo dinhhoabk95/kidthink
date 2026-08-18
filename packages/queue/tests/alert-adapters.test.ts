@@ -40,7 +40,7 @@ describe("Task 1 — Alert Adapters & Reliability (BR-MON-01, BR-MON-03, BR-MON-
       timestamp: "2026-08-14T10:00:00.000Z",
       severity: "critical",
       message: "Database connection failed",
-      context: { host: "db.kidthink.vn", error_code: "ECONNREFUSED" },
+      context: { host: "db.mindkid.vn", error_code: "ECONNREFUSED" },
       runbook: "https://docs.tinimath.vn/runbooks/db-disconnected",
     };
 

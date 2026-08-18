@@ -64,14 +64,14 @@
   import PublicNavbar from "~/components/public-navbar.vue";
 
   useSeoMeta({
-    title: "Hướng dẫn đồng hành cùng con — KidThink",
+    title: "Hướng dẫn đồng hành cùng con — MindKid",
     description:
       "Cẩm nang hướng dẫn người lớn đồng hành giúp trẻ mầm non học toán tư duy hiệu quả và an toàn.",
   });
 
   useHead({
     htmlAttrs: { lang: "vi-VN" },
-    link: [{ rel: "canonical", href: "https://kidthink.vn/guide" }],
+    link: [{ rel: "canonical", href: "https://mindkid.vn/guide" }],
   });
 </script>
 

@@ -1,4 +1,4 @@
-import { runDailyRollup } from "@kidthink/db";
+import { runDailyRollup } from "@mindkid/db";
 
 export async function runDailyRollupJob(
   jobId: string,

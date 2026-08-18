@@ -4,7 +4,7 @@ import { scanReportingQueries } from "../lint-analytics-queries.ts";
 describe("BR-TLM-01: Analytics Query Gate", () => {
   it("passes when reporting route reads from level_daily_stats rollup table", () => {
     const code = `
-      import { levelDailyStats } from "@kidthink/db";
+      import { levelDailyStats } from "@mindkid/db";
       export default defineEventHandler(async () => {
         return await db.select().from(levelDailyStats);
       });
@@ -19,7 +19,7 @@ describe("BR-TLM-01: Analytics Query Gate", () => {
 
   it("negative test: flags reporting route that queries telemetry_events directly (BR-TLM-01)", () => {
     const badCode = `
-      import { telemetryEvents } from "@kidthink/db";
+      import { telemetryEvents } from "@mindkid/db";
       export default defineEventHandler(async () => {
         return await db.select().from(telemetryEvents);
       });

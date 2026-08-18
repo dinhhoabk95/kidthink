@@ -1,5 +1,5 @@
-import { getOwnerDb, skills, strands } from "@kidthink/db";
-import { COMPETENCIES } from "@kidthink/taxonomy";
+import { getOwnerDb, skills, strands } from "@mindkid/db";
+import { COMPETENCIES } from "@mindkid/taxonomy";
 import { eq } from "drizzle-orm";
 import { defineEventHandler, getQuery, setHeader } from "h3";
 

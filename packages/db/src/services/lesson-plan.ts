@@ -3,7 +3,7 @@
  * Business rules: BR-LPC-01..09, D-P4A..D-P4D
  */
 
-import { appError } from "@kidthink/auth";
+import { appError } from "@mindkid/auth";
 import {
   type ActivitySnapshot,
   buildActivitySnapshot,
@@ -20,7 +20,7 @@ import {
   type LessonPlanSummary,
   type ReplaceLessonPlanItemsInput,
   type UpdateLessonPlanMetaInput,
-} from "@kidthink/shared";
+} from "@mindkid/shared";
 import { and, asc, desc, eq, gte, inArray, or, sql } from "drizzle-orm";
 import { getDb } from "../client.ts";
 import { activities, lessonActivities, lessons } from "../schema/content.ts";
@@ -274,7 +274,7 @@ async function copyFromSourceLesson(
       .insert(lessonPlans)
       .values({
         userId,
-        title: input.title || sourceLesson.titleVi,
+        title: input.title || sourceLesson.title,
         targetAge: input.target_age ?? sourceLesson.targetAgeMin ?? null,
         estimatedMinutes:
           input.estimated_minutes ?? sourceLesson.estimatedMinutes ?? null,

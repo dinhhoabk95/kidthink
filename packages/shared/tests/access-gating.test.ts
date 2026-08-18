@@ -1,4 +1,4 @@
-import { AppError } from "@kidthink/auth";
+import { AppError } from "@mindkid/auth";
 import fc from "fast-check";
 import { describe, expect, it } from "vitest";
 import {

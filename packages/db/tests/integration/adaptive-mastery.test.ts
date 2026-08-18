@@ -46,7 +46,7 @@ describe("P3.5 Adaptive & Mastery Integration Tests (PostgreSQL)", () => {
         .insert(competencies)
         .values({
           code: "C1",
-          nameVi: "Số & Đếm",
+          name: "Số & Đếm",
           colorToken: "brand-blue",
           icon: "icon-c1",
           position: 1,
@@ -66,7 +66,7 @@ describe("P3.5 Adaptive & Mastery Integration Tests (PostgreSQL)", () => {
       .values({
         competencyId: comp.id,
         code: validStrandCode,
-        nameVi: `Đếm số lượng ${validStrandCode}`,
+        name: `Đếm số lượng ${validStrandCode}`,
         position: 1,
       })
       .returning();
@@ -77,7 +77,7 @@ describe("P3.5 Adaptive & Mastery Integration Tests (PostgreSQL)", () => {
       .values({
         strandId: strand.id,
         code: skillCode,
-        nameVi: `Đếm trong phạm vi 5 ${skillCode}`,
+        name: `Đếm trong phạm vi 5 ${skillCode}`,
         difficulty: 1,
         ageMin: 3,
         ageMax: 4,
@@ -101,7 +101,7 @@ describe("P3.5 Adaptive & Mastery Integration Tests (PostgreSQL)", () => {
         .insert(gameTemplates)
         .values({
           code: templateCode,
-          nameVi: "Tap To Count",
+          name: "Tap To Count",
           mechanic: "tap_select",
           status: "active",
         })
@@ -125,7 +125,7 @@ describe("P3.5 Adaptive & Mastery Integration Tests (PostgreSQL)", () => {
           entityId: Math.floor(Math.random() * 800_000 + 100_000),
           code: levelCode,
           templateId: template.id,
-          titleVi: "Level Test 1",
+          title: "Level Test 1",
           contentPack: {},
           difficultyParams: {},
           accessTier: "free",

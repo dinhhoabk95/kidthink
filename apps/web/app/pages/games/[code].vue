@@ -248,18 +248,18 @@
 
   // BR-SEO2-04 & BR-GDP-04: Structured data & SEO meta
   useSeoMeta({
-    title: `${game.value.title} — Trò chơi tư duy cho bé ${game.value.age_band} tuổi | KidThink`,
+    title: `${game.value.title} — Trò chơi tư duy cho bé ${game.value.age_band} tuổi | MindKid`,
     description: game.value.description,
-    ogTitle: `${game.value.title} — KidThink`,
+    ogTitle: `${game.value.title} — MindKid`,
     ogDescription: game.value.description,
-    ogImage: `https://kidthink.vn/images/og-${code.value}.png`,
+    ogImage: `https://mindkid.vn/images/og-${code.value}.png`,
     ogType: "article",
   });
 
   useHead({
     htmlAttrs: { lang: "vi-VN" },
     link: [
-      { rel: "canonical", href: `https://kidthink.vn/games/${code.value}` },
+      { rel: "canonical", href: `https://mindkid.vn/games/${code.value}` },
     ],
     script: [
       {
@@ -273,7 +273,7 @@
           educationalLevel: `Trẻ mầm non ${game.value.age_band} tuổi`,
           inLanguage: "vi-VN",
           isAccessibleForFree: game.value.access_tier === "free",
-          url: `https://kidthink.vn/games/${code.value}`,
+          url: `https://mindkid.vn/games/${code.value}`,
         }),
       },
     ],

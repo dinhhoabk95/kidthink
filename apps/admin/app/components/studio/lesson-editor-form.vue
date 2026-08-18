@@ -100,7 +100,7 @@
           id="lesson-guide"
           placeholder="1. Mục tiêu; 2. Chuẩn bị; 3. Mở đầu; 4. Khi trẻ làm được; 5. Khi trẻ cần giúp"
           rows="4"
-          v-model="lesson.guide_vi"
+          v-model="lesson.guide"
         />
       </div>
 
@@ -116,7 +116,7 @@
             id="lesson-warmup"
             placeholder="Hát bài hát đếm ngón tay"
             type="text"
-            v-model="lesson.warm_up_vi"
+            v-model="lesson.warm_up"
           >
         </div>
         <div>
@@ -130,7 +130,7 @@
             id="lesson-reflection"
             placeholder="Hỏi trẻ cảm nhận và đếm lại đồ vật quanh phòng"
             type="text"
-            v-model="lesson.reflection_vi"
+            v-model="lesson.reflection"
           >
         </div>
       </div>
@@ -147,7 +147,7 @@
           id="lesson-assessment"
           placeholder="Bé chỉ và đếm chính xác nhóm 5 đồ vật trong 3 lần thử"
           type="text"
-          v-model="lesson.assessment_vi"
+          v-model="lesson.assessment"
         >
       </div>
 
@@ -162,7 +162,7 @@
           id="lesson-extension"
           placeholder="Cùng mẹ xếp bát đũa cho bữa tối"
           type="text"
-          v-model="lesson.extension_vi"
+          v-model="lesson.extension"
         >
       </div>
     </div>
@@ -185,15 +185,15 @@
     code?: string;
     content_version?: number;
     title?: string;
-    guide_vi?: string;
+    guide?: string;
     target_age_min?: number;
     target_age_max?: number;
     estimated_minutes?: number;
-    materials_vi?: string | null;
-    warm_up_vi?: string | null;
-    reflection_vi?: string | null;
-    assessment_vi?: string | null;
-    extension_vi?: string | null;
+    materials?: string | null;
+    warm_up?: string | null;
+    reflection?: string | null;
+    assessment?: string | null;
+    extension?: string | null;
     access_tier?: string;
     status?: string;
   }

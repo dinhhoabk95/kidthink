@@ -6,23 +6,19 @@ import {
   generateCsrfToken,
   getAuthNamespaceConfig,
   type ManagerTokenPayload,
-  RefreshService,
   validateCsrfToken,
-} from "@kidthink/auth";
-import { getAppSql, PostgresSessionStore } from "@kidthink/db";
-import { enforceTwoAxisRateLimit } from "@kidthink/shared";
+} from "@mindkid/auth";
 import {
-  deleteCookie,
   getCookie,
   getHeader,
   type H3Event,
   setCookie,
   setResponseStatus,
 } from "h3";
-import { useRuntimeConfig } from "#imports";
 
 const config = getAuthNamespaceConfig("manager");
-const ACCESS_TTL_SECONDS = 15 * 60;
+/** CSRF cookie sống cùng vòng đời remember-me dài nhất của manager. */
+const CSRF_COOKIE_MAX_AGE_SECONDS = 24 * 60 * 60;
 const CSRF_TOKEN = /^[0-9a-f]{64}$/;
 
 export function getManagerRemoteIp(event: H3Event): string {
@@ -30,29 +26,6 @@ export function getManagerRemoteIp(event: H3Event): string {
     | { socket?: { remoteAddress?: string } }
     | undefined;
   return request?.socket?.remoteAddress?.trim() || "unknown";
-}
-
-export async function assertManagerRefreshRateLimit(
-  event: H3Event
-): Promise<void> {
-  const result = await enforceTwoAxisRateLimit({
-    routeClass: "auth:refresh",
-    remoteIp: getManagerRemoteIp(event),
-  });
-  if (result.statusCode !== 200) {
-    throw appError(
-      result.statusCode === 429 ? "RATE_LIMITED" : "SERVICE_UNAVAILABLE"
-    );
-  }
-}
-
-export function getManagerRefreshService(event: H3Event): RefreshService {
-  const { adminJwtSecret } = useRuntimeConfig(event);
-  return new RefreshService(new PostgresSessionStore(getAppSql()), {
-    namespace: "manager",
-    jwtSecret: adminJwtSecret,
-    refreshTtlSeconds: config.refreshTtlSeconds,
-  });
 }
 
 export function ensureManagerCsrfCookie(event: H3Event): string {
@@ -73,7 +46,7 @@ export function ensureManagerCsrfCookie(event: H3Event): string {
   }
   setCookie(event, config.csrfCookieName, token, {
     httpOnly: false,
-    maxAge: config.refreshTtlSeconds,
+    maxAge: CSRF_COOKIE_MAX_AGE_SECONDS,
     path: "/",
     sameSite: "strict",
     secure: !import.meta.dev,
@@ -87,62 +60,6 @@ export function validateManagerCsrf(event: H3Event): void {
     cookieToken: getCookie(event, config.csrfCookieName),
     headerToken: getHeader(event, CSRF_HEADER_NAME),
   });
-}
-
-export function setManagerAuthCookies(
-  event: H3Event,
-  accessJwt: string,
-  refreshEnvelope: string
-): void {
-  const response = event.node?.res as
-    | { getHeader?: unknown; setHeader?: unknown }
-    | undefined;
-  if (
-    typeof response?.getHeader !== "function" ||
-    typeof response?.setHeader !== "function"
-  ) {
-    return;
-  }
-  setCookie(event, config.accessCookieName, accessJwt, {
-    httpOnly: true,
-    maxAge: ACCESS_TTL_SECONDS,
-    path: "/",
-    sameSite: "lax",
-    secure: !import.meta.dev,
-  });
-  setCookie(event, config.refreshCookieName, refreshEnvelope, {
-    httpOnly: true,
-    maxAge: config.refreshTtlSeconds,
-    path: config.refreshPath,
-    sameSite: "strict",
-    secure: !import.meta.dev,
-  });
-  ensureManagerCsrfCookie(event);
-}
-
-export function clearManagerAuthCookies(event: H3Event): void {
-  const response = event.node?.res as
-    | { getHeader?: unknown; setHeader?: unknown }
-    | undefined;
-  if (
-    typeof response?.getHeader !== "function" ||
-    typeof response?.setHeader !== "function"
-  ) {
-    return;
-  }
-  deleteCookie(event, config.accessCookieName, { path: "/" });
-  deleteCookie(event, config.refreshCookieName, {
-    path: config.refreshPath,
-  });
-  deleteCookie(event, config.csrfCookieName, { path: "/" });
-}
-
-export function getManagerRefreshCookie(event: H3Event): string {
-  const token = getCookie(event, config.refreshCookieName);
-  if (!token) {
-    throw appError("SESSION_REVOKED");
-  }
-  return token;
 }
 
 export function assertManagerSession(

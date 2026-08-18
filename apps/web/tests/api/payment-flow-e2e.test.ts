@@ -11,7 +11,7 @@ import {
   SEED_ENTITLEMENT_KEYS,
   SEED_PACKAGES,
   users,
-} from "@kidthink/db";
+} from "@mindkid/db";
 import { and, eq } from "drizzle-orm";
 import type { H3Event } from "h3";
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
@@ -101,7 +101,6 @@ describe("Payment Flow Full E2E & Boundary Tests (P2.3)", () => {
           display_name: "Test Manager",
           role,
           session_id: "test-session",
-          refresh_token_version: 1,
         },
         params,
         body,

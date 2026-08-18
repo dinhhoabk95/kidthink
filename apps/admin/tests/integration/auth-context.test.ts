@@ -3,14 +3,13 @@ import {
   type ManagerTokenPayload,
   requireManagerAuth,
   requireRole,
-} from "@kidthink/auth";
+} from "@mindkid/auth";
 import { describe, expect, it } from "vitest";
 
 const reviewerManager: ManagerTokenPayload = {
   manager_id: 201,
   display_name: "Biên tập viên Bình",
   session_id: "admin-session-xyz",
-  refresh_token_version: 1,
   role: "content_reviewer",
 };
 
@@ -18,7 +17,6 @@ const superAdminManager: ManagerTokenPayload = {
   manager_id: 202,
   display_name: "Quản trị viên Cường",
   session_id: "admin-session-super",
-  refresh_token_version: 1,
   role: "super_admin",
 };
 
@@ -70,7 +68,6 @@ describe("apps/admin auth-context integration", () => {
           user_id: 101,
           display_name: "User An",
           session_id: "sess-user",
-          refresh_token_version: 1,
         },
         manager: undefined,
       },

@@ -2,7 +2,7 @@
 spec: MONOREPO-PACKAGE-ARCHITECTURE
 title: Kiến trúc package/driver trong monorepo
 area: foundation
-status: approved
+status: implemented
 mvp: true
 phase: P0
 reviewed: 2026-08-13
@@ -45,7 +45,7 @@ chỗ thay vì một.
 | Nơi | |
 |---|---|
 | `packages/*/src/index.ts` | Bề mặt export duy nhất của một driver — nơi duy nhất thư viện nền được import |
-| `apps/*/package.json` | Khai `@kidthink/*`, không khai thư viện nền mà driver đã bọc |
+| `apps/*/package.json` | Khai `@mindkid/*`, không khai thư viện nền mà driver đã bọc |
 | cổng tự động dependency-graph check | Chặn `apps/*` phụ thuộc ngược vào nhau, và chặn `apps/*` import thư viện nền đã có driver |
 
 ## 4. Main flow — quyết định tách package mới
@@ -56,8 +56,8 @@ chỗ thay vì một.
    lại type/instance của thư viện nền nguyên trạng.
 3. Driver chỉ mình nó import thư viện runtime nền. `apps/*` **không** `import` trực tiếp
    `iovalkey`/`ioredis`/`rate-limiter-flexible`/`bullmq`/`otpauth`/`openid-client`/
-   `nodemailer`/`mjml` — chỉ import `@kidthink/cache`,
-   `@kidthink/queue`, `@kidthink/auth`. `nuxt-auth-utils` là Nuxt module cấu hình theo §5:
+   `nodemailer`/`mjml` — chỉ import `@mindkid/cache`,
+   `@mindkid/queue`, `@mindkid/auth`. `nuxt-auth-utils` là Nuxt module cấu hình theo §5:
    mỗi app được khai trực tiếp trong manifest/`nuxt.config`, và chỉ app được dùng auto-import
    session của module; domain contract không export hoặc import type vendor.
 4. Đổi thư viện nền sau này (vd `ioredis` → `iovalkey`, hoặc BullMQ → lựa chọn khác) chỉ sửa
@@ -70,7 +70,7 @@ chỗ thay vì một.
 | Nhánh | Điều kiện | Hành vi |
 |---|---|---|
 | Nuxt module cấu hình thuần (SEO, sitemap, robots, OG-image) | Chỉ khai trong `nuxt.config`, không có call site logic dùng lại ở app khác | **Không** bọc driver — cấu hình trực tiếp trong `apps/web/nuxt.config.ts` |
-| Nuxt auth module cần auto-import/composable của từng app | Module phải đăng ký trong Nuxt app để sinh integration runtime | Khai `nuxt-auth-utils` trực tiếp ở hai app; sealed cookie chỉ giữ locator, còn Redis session/remember, CSRF và domain type đi qua `@kidthink/auth` |
+| Nuxt auth module cần auto-import/composable của từng app | Module phải đăng ký trong Nuxt app để sinh integration runtime | Khai `nuxt-auth-utils` trực tiếp ở hai app; sealed cookie chỉ giữ locator, còn Redis session/remember, CSRF và domain type đi qua `@mindkid/auth` |
 | Capability dùng ở đúng 1 app hiện tại nhưng roadmap ghi sẽ dùng ở app thứ 2 | Vd `packages/storage` (S3) hiện chỉ `apps/admin` dùng, `apps/web` sẽ dùng ở P2 | Tách package **ngay** — tách sau khi có app thứ hai là refactor lại toàn bộ call site |
 | Driver cần thay thư viện nền nhưng interface cũ không còn diễn tả được API mới | Vd chuyển từ client kiểu ioredis sang client kiểu khác hẳn (mảng thay vì spread arg) | Giữ nguyên interface hướng ra ngoài package (§4 bước 2); viết adapter bên trong driver — không đổi chữ ký hàm ở mọi call site |
 | Package driver phình quá 800 dòng | Kiểm tra định kỳ | Tách theo sub-module trong cùng package (`src/session.ts`, `src/oauth.ts`), **không** tách thành package mới nếu vẫn phục vụ một capability |
@@ -79,7 +79,7 @@ chỗ thay vì một.
 
 | ID | Rule | Vì sao |
 |---|---|---|
-| `BR-MPA-01` | `apps/*` **NEVER** import trực tiếp thư viện nền cho capability dùng chung ≥ 2 app — luôn qua package driver ở `@kidthink/*` | Import rải rác làm đổi thư viện nền thành việc sửa N chỗ |
+| `BR-MPA-01` | `apps/*` **NEVER** import trực tiếp thư viện nền cho capability dùng chung ≥ 2 app — luôn qua package driver ở `@mindkid/*` | Import rải rác làm đổi thư viện nền thành việc sửa N chỗ |
 | `BR-MPA-02` | Driver **export interface theo domain dự án**, không export lại type/instance thư viện nền nguyên trạng ra ngoài package | Rò rỉ type thư viện nền ra app làm app khoá cứng vào thư viện đó dù có driver |
 | `BR-MPA-03` | Đổi thư viện nền chỉ sửa **trong** driver + test của package đó, **NEVER** sửa call site ở `apps/*` | Đây là lý do tồn tại của driver — nếu vẫn phải sửa app thì driver không có tác dụng |
 | `BR-MPA-04` | Nuxt module cấu hình thuần qua `nuxt.config` (không có call site logic runtime) **NEVER** bị ép bọc driver | Bọc driver cho thứ chỉ là cấu hình khai báo là phức tạp hoá không cần thiết |
@@ -95,7 +95,7 @@ chỗ thay vì một.
 `ioredis` (không có chỗ dùng thật cho `iovalkey` trong stack này — xem mục 7.1 của
 [`repo-bootstrap.md`](repo-bootstrap.md)). **Sửa 2026-08-13**: auth browser đổi sang opaque
 cookie session; `nuxt-auth-utils` chỉ giữ locator/projection, còn `packages/auth` sở hữu Redis
-adapter fail-closed và vẫn là một driver domain dùng chung. KidThink không còn dependency trực
+adapter fail-closed và vẫn là một driver domain dùng chung. MindKid không còn dependency trực
 tiếp `jose`; mọi first-party auth credential đều opaque.
 
 | Capability | Package driver | Thư viện nền | Spec sở hữu hành vi |
@@ -138,7 +138,7 @@ duyệt thanh toán.
 |---|---|
 | `apps/worker` import `bullmq` trực tiếp để enqueue | `apps/worker` chỉ **consume**; enqueue đi qua `packages/queue` từ `apps/web` |
 | `apps/web/server/api/*` gọi `new Redis(...)` (`ioredis`/`iovalkey`) để cache thủ công | Gọi `packages/cache` — package đó là nơi duy nhất khởi tạo client Valkey |
-| `apps/admin` export type `#auth-utils` hoặc `ioredis` như domain contract | `#auth-utils` chỉ augmentation trong app; runtime import type domain (`AuthenticatedManager`) và Redis API từ `@kidthink/auth` |
+| `apps/admin` export type `#auth-utils` hoặc `ioredis` như domain contract | `#auth-utils` chỉ augmentation trong app; runtime import type domain (`AuthenticatedManager`) và Redis API từ `@mindkid/auth` |
 
 ## 8. API contract
 
@@ -146,7 +146,7 @@ Không sở hữu route. Ràng buộc áp lên **bề mặt export của mọi p
 
 | Ràng buộc | |
 |---|---|
-| Export | Chỉ qua `src/index.ts`, không import path sâu (`@kidthink/cache/internal/*`) từ ngoài package |
+| Export | Chỉ qua `src/index.ts`, không import path sâu (`@mindkid/cache/internal/*`) từ ngoài package |
 | Naming | Hàm/type theo domain dự án (tiếng Anh, `camelCase`/`PascalCase`) — không theo tên API thư viện nền |
 | Side effect lúc import | Không kết nối mạng khi module được import — khởi tạo lazy trong hàm gọi đầu tiên |
 
@@ -179,7 +179,7 @@ export async function setCached<T>(key: string, value: T, ttlSeconds: number): P
 Scenario: BR-MPA-01 — app không import thư viện nền trực tiếp
   When quét import trong apps/web, apps/admin, apps/worker
   Then không file runtime nào import "iovalkey", "ioredis", "rate-limiter-flexible", "bullmq", "otpauth", "openid-client", "nodemailer", hoặc "mjml" trực tiếp
-  And mọi truy cập đi qua "@kidthink/cache", "@kidthink/queue", "@kidthink/auth", hoặc "@kidthink/notification"
+  And mọi truy cập đi qua "@mindkid/cache", "@mindkid/queue", "@mindkid/auth", hoặc "@mindkid/notification"
   And toàn repo không có direct dependency hoặc import "jose"
   And "nuxt-auth-utils" chỉ xuất hiện trong manifest, Nuxt module config hoặc app-local integration của hai app
   And "#auth-utils" chỉ xuất hiện trong type augmentation của từng app

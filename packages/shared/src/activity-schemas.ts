@@ -20,7 +20,7 @@ export const baseActivitySchema = z.object({
     .optional(),
   title: z.string().min(1, "Tiêu đề tiếng Việt không được rỗng"),
   instruction: z.string().min(1, "Hướng dẫn không được rỗng"),
-  materials_vi: z.string().nullable().optional(),
+  materials: z.string().nullable().optional(),
   estimated_minutes: z
     .number()
     .int("Thời lượng phải là số nguyên")
@@ -67,9 +67,7 @@ export const movementActivitySchema = baseActivitySchema.extend({
 
 export const manipulativeActivitySchema = baseActivitySchema.extend({
   kind: z.literal("manipulative"),
-  materials_vi: z
-    .string()
-    .min(1, "Hoạt động ngoài màn hình bắt buộc có vật liệu"),
+  materials: z.string().min(1, "Hoạt động ngoài màn hình bắt buộc có vật liệu"),
   ref_type: z.null().optional(),
   ref_id: z.null().optional(),
 });
@@ -88,7 +86,7 @@ export const observationActivitySchema = baseActivitySchema.extend({
 
 export const miniProjectActivitySchema = baseActivitySchema.extend({
   kind: z.literal("mini_project"),
-  materials_vi: z.string().min(1, "Dự án nhỏ bắt buộc có vật liệu chuẩn bị"),
+  materials: z.string().min(1, "Dự án nhỏ bắt buộc có vật liệu chuẩn bị"),
   ref_type: z.null().optional(),
   ref_id: z.null().optional(),
 });

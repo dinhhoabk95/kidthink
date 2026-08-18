@@ -1,9 +1,4 @@
-import {
-  activities,
-  getOwnerDb,
-  lessonActivities,
-  lessons,
-} from "@kidthink/db";
+import { activities, getOwnerDb, lessonActivities, lessons } from "@mindkid/db";
 import { and, desc, eq } from "drizzle-orm";
 import { createError, defineEventHandler, getRouterParam } from "h3";
 import { requireManagerSession } from "../../../../../utils/admin-auth-runtime.js";
@@ -74,7 +69,7 @@ export default defineEventHandler(async (event) => {
   const materialsSet = new Set<string>();
 
   // Add lesson materials
-  for (const m of extractMaterialList(lesson.materialsVi)) {
+  for (const m of extractMaterialList(lesson.materials)) {
     materialsSet.add(m);
   }
 
@@ -87,9 +82,9 @@ export default defineEventHandler(async (event) => {
           code: activities.code,
           contentVersion: activities.contentVersion,
           kind: activities.kind,
-          titleVi: activities.titleVi,
-          instructionVi: activities.instructionVi,
-          materialsVi: activities.materialsVi,
+          title: activities.title,
+          instruction: activities.instruction,
+          materials: activities.materials,
           estimatedMinutes: activities.estimatedMinutes,
           accessTier: activities.accessTier,
           status: activities.status,
@@ -101,7 +96,7 @@ export default defineEventHandler(async (event) => {
 
       if (act) {
         totalActivityMinutes += act.estimatedMinutes || 0;
-        for (const m of extractMaterialList(act.materialsVi)) {
+        for (const m of extractMaterialList(act.materials)) {
           materialsSet.add(m);
         }
       }
@@ -129,20 +124,20 @@ export default defineEventHandler(async (event) => {
       id: lesson.id,
       code: lesson.code,
       content_version: lesson.contentVersion,
-      title: lesson.titleVi,
-      guide_vi: lesson.guideVi,
+      title: lesson.title,
+      guide: lesson.guide,
       target_age_min: lesson.targetAgeMin,
       target_age_max: lesson.targetAgeMax,
       estimated_minutes: lesson.estimatedMinutes,
-      warm_up_vi: lesson.warmUpVi,
-      reflection_vi: lesson.reflectionVi,
-      assessment_vi: lesson.assessmentVi,
-      extension_vi: lesson.extensionVi,
+      warm_up: lesson.warmUp,
+      reflection: lesson.reflection,
+      assessment: lesson.assessment,
+      extension: lesson.extension,
       access_tier: lesson.accessTier,
       status: lesson.status,
     },
     activities: activitiesView,
-    materials_union_vi: Array.from(materialsSet),
+    materials_union: Array.from(materialsSet),
     total_activity_minutes: totalActivityMinutes,
     duration_warning: durationWarning,
     has_offscreen_activity: activitiesView.some((a) => a.is_offscreen),

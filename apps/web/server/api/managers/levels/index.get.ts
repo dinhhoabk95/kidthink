@@ -1,4 +1,4 @@
-import { getOwnerDb, searchGameLevels } from "@kidthink/db";
+import { getOwnerDb, searchGameLevels } from "@mindkid/db";
 import { defineEventHandler, getQuery } from "h3";
 import { requireManagerSession } from "../../../utils/admin-auth-runtime.ts";
 

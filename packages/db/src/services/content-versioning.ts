@@ -1,4 +1,4 @@
-import type { ContentLifecycleStatus, ManagerRole } from "@kidthink/shared";
+import type { ContentLifecycleStatus, ManagerRole } from "@mindkid/shared";
 import { eq, sql } from "drizzle-orm";
 import { getOwnerDb } from "../client.ts";
 import { gameLevels } from "../schema/game.ts";
@@ -81,9 +81,9 @@ export async function createNewVersion(
       code: sourceLevel.code,
       contentVersion: nextVersion,
       templateId: sourceLevel.templateId,
-      titleVi: sourceLevel.titleVi,
-      descriptionVi: sourceLevel.descriptionVi,
-      instructionVi: sourceLevel.instructionVi,
+      title: sourceLevel.title,
+      description: sourceLevel.description,
+      instruction: sourceLevel.instruction,
       instructionAudioPath: sourceLevel.instructionAudioPath,
       contentPack: sourceLevel.contentPack,
       difficultyParams: sourceLevel.difficultyParams,

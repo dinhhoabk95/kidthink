@@ -1,4 +1,4 @@
-import { gameLevels, getOwnerDb, seoPages } from "@kidthink/db";
+import { gameLevels, getOwnerDb, seoPages } from "@mindkid/db";
 import { and, desc, eq } from "drizzle-orm";
 import {
   createError,
@@ -35,8 +35,8 @@ function buildStructuredData(page: typeof seoPages.$inferSelect) {
       description: page.metaDescription,
       provider: {
         "@type": "Organization",
-        name: "KidThink",
-        url: "https://kidthink.edu.vn",
+        name: "MindKid",
+        url: "https://mindkid.edu.vn",
       },
     });
   } else {
@@ -47,7 +47,7 @@ function buildStructuredData(page: typeof seoPages.$inferSelect) {
       description: page.metaDescription,
       author: {
         "@type": "Organization",
-        name: "KidThink Sư Phạm",
+        name: "MindKid Sư Phạm",
       },
     });
   }
@@ -106,7 +106,7 @@ export default defineEventHandler(async (event) => {
       if (ref.type === "game_level" && ref.code) {
         const [pubLevel] = await db
           .select({
-            titleVi: gameLevels.titleVi,
+            title: gameLevels.title,
             thumbnailEmoji: gameLevels.thumbnailEmoji,
             status: gameLevels.status,
           })
@@ -125,7 +125,7 @@ export default defineEventHandler(async (event) => {
           resolvedRefs.push({
             type: "game_level",
             code: ref.code,
-            title: pubLevel.titleVi,
+            title: pubLevel.title,
             thumbnail: pubLevel.thumbnailEmoji,
           });
         }

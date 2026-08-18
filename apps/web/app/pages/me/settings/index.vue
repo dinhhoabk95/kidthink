@@ -224,7 +224,7 @@
               >Bài học & trò chơi mới</span
             >
             <span class="text-sm text-surface-600"
-              >Nhận thông báo khi thư viện KidThink phát hành trò chơi mới phù
+              >Nhận thông báo khi thư viện MindKid phát hành trò chơi mới phù
               hợp lứa tuổi</span
             >
           </div>

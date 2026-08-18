@@ -299,6 +299,23 @@ export interface AuthErrorResponse {
 }
 
 export class AppError extends Error {
+  /**
+   * h3 v1 nhận diện lỗi HTTP bằng duck-type `constructor.__h3_error__`
+   * (`isError()` trong h3/dist/index.mjs). Khai cờ này cùng ba getter
+   * `statusCode` / `statusMessage` / `data` làm AppError trở thành H3Error
+   * hạng nhất: `throw appError(...)` ở bất kỳ tầng nào — service, guard,
+   * route — đều được Nitro trả về đúng status và đúng body mà route KHÔNG
+   * phải tự bọc try/catch để chuyển đổi.
+   *
+   * Cùng tư tưởng với `HttpException` của Laravel implement
+   * `HttpExceptionInterface`: lỗi domain tự khai được HTTP surface của nó,
+   * handler chung chỉ việc render.
+   *
+   * Đây là toàn bộ chỗ `packages/auth` biết tới giao thức h3 — một tên thuộc
+   * tính, không import h3. ❌ NEVER thêm phụ thuộc h3 vào package này.
+   */
+  static readonly __h3_error__ = true;
+
   readonly code: AuthErrorCode;
   readonly status: number;
   readonly details?: AuthErrorDetails;
@@ -314,6 +331,26 @@ export class AppError extends Error {
     this.code = code;
     this.status = definition?.status ?? 500;
     this.details = details;
+  }
+
+  /** Surface H3Error: HTTP status của mã lỗi (ERROR-CODES §7). */
+  get statusCode(): number {
+    return this.status;
+  }
+
+  /**
+   * Surface H3Error: `statusMessage` là **mã lỗi**, không phải thông báo.
+   * ERROR-CODES `BR-ERR-06` — client bắt theo mã, không theo chuỗi; chuỗi
+   * tiếng Việt đổi được cho UX, mã thì bất biến. h3 cũng sanitize
+   * `statusMessage`, nên đặt chuỗi tiếng Việt vào đó là sai chỗ.
+   */
+  get statusMessage(): AuthErrorCode {
+    return this.code;
+  }
+
+  /** Surface H3Error: body lỗi theo ERROR-CODES §7.1. */
+  get data(): AuthErrorResponse {
+    return this.toResponse();
   }
 
   toResponse(): AuthErrorResponse {

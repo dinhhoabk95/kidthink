@@ -3,13 +3,13 @@
  * Business rules: BR-AIA-01..11
  */
 
-import { appError } from "@kidthink/auth";
-import { moderateText } from "@kidthink/moderation";
+import { appError } from "@mindkid/auth";
+import { moderateText } from "@mindkid/moderation";
 import {
   type AccessTier,
   AI_SUGGESTION_LABEL,
   allowedTiers,
-} from "@kidthink/shared";
+} from "@mindkid/shared";
 import { and, desc, eq, gte, sql } from "drizzle-orm";
 import { getDb } from "../client.ts";
 import { masteryState } from "../schema/adaptive.ts";
@@ -115,7 +115,7 @@ export class AiAssistantService {
     const masteryRows = await db
       .select({
         skillCode: skills.code,
-        skillName: skills.nameVi,
+        skillName: skills.name,
         pLearn: masteryState.pLearn,
         attempts: masteryState.attemptsTotal,
       })
@@ -379,7 +379,7 @@ export class AiAssistantService {
       const lessonRows = await db
         .select({
           code: lessons.code,
-          title: lessons.titleVi,
+          title: lessons.title,
           accessTier: lessons.accessTier,
         })
         .from(lessons)
@@ -419,7 +419,7 @@ export class AiAssistantService {
     const levels = await db
       .select({
         code: gameLevels.code,
-        title: gameLevels.titleVi,
+        title: gameLevels.title,
         thumbnailEmoji: gameLevels.thumbnailEmoji,
         accessTier: gameLevels.accessTier,
       })

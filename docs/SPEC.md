@@ -1,13 +1,13 @@
 ---
 spec: ROOT
-title: KidThink — Project Specification (v2, greenfield)
+title: MindKid — Project Specification (v2, greenfield)
 version: 2.0.0-draft
 status: draft — chờ duyệt
 created: 2026-08-04
 supersedes: tinimath/docs/SPEC.md (v1.0.0)
 ---
 
-# KidThink — Project Specification v2
+# MindKid — Project Specification v2
 
 > **Bản viết lại từ đầu.** Không dựa trên code hiện tại.
 > Repo `tinimath/` (v1) trở thành **tham khảo đọc-only**: taxonomy `docs/taxonomy/`,
@@ -41,8 +41,8 @@ Quy tắc thô: nếu có người sẽ ngạc nhiên vì kết quả, việc đ
 | **D5**  | **Nội dung đã publish bất biến.** Sửa = tạo version mới. Play session ghim `content_version`                                                                                                                                                                                                                     | Báo cáo học tập của một đứa trẻ phải giải thích được bằng đúng nội dung nó đã chơi, không phải bản đã sửa sau đó                                                                                                                                                           |
 | **D6**  | **Tuân thủ Luật Bảo vệ dữ liệu cá nhân 91/2025/QH15, Nghị định 13/2023 và Luật Trẻ em (VN)** là ràng buộc thiết kế, không phải checklist cuối                                                                                                                                                                    | Thu dữ liệu trẻ vượt nhu cầu là thứ không rút lại được sau khi đã ghi; Luật 91/2025/QH15 đã có hiệu lực từ 01/01/2026 và là căn cứ hiện hành không được bỏ sót                                                                                                             |
 | **D7**  | **AI soạn trong repo, người merge.** AI agent IDE hỗ trợ viết seeder nội dung và code; cổng người là **PR review**, và merge chính là phát hành. Cấm có LLM nào chạy trong hệ thống để sinh nội dung                                                                                                             | Ranh giới cũ ("NEVER để AI sinh nội dung cốt lõi") đặt sai chỗ. Cái cần cấm không phải việc **soạn thảo**, mà việc **phát hành không có người kiểm**. Đặt cổng ở PR thì cổng đó có diff, có `git blame`, và revert được bằng một lệnh                                      |
-| **D8**  | **Đổi tên dự án: TiniMath → KidThink.** Package scope, domain, chuỗi hiển thị người dùng đổi theo. Thư mục repo v1 cũ (`tinimath/`) giữ nguyên tên — đó là tên lịch sử của thư mục tham khảo đọc-only, không phải thương hiệu                                                                                    | Product owner chốt định vị lại thương hiệu trước khi viết dòng code v2 đầu tiên, tránh phải rename giữa chừng khi đã có package đã publish, domain đã trỏ DNS                                                                                                              |
-| **D9**  | **Khởi tạo source mới từ đầu trong `kidthink/`**, nằm cạnh `tinimath/` (v1) trong cùng workspace — thay vì update dần code cũ. Port có chọn lọc theo [`docs/specs/00-foundation/repo-bootstrap.md`](specs/00-foundation/repo-bootstrap.md)                                                                       | Update dần trên nền v1 mang theo nợ kỹ thuật đã ghi nhận ở [`AUDIT-v1.md`](specs/AUDIT-v1.md) — 31 spec gộp nhiều outcome, thiếu 8 loại spec. Greenfield cho phép áp toàn bộ 134 spec v2 sạch từ dòng code đầu tiên                                                        |
+| **D8**  | **Đổi tên dự án: TiniMath → MindKid.** Package scope, domain, chuỗi hiển thị người dùng đổi theo. Thư mục repo v1 cũ (`tinimath/`) giữ nguyên tên — đó là tên lịch sử của thư mục tham khảo đọc-only, không phải thương hiệu                                                                                    | Product owner chốt định vị lại thương hiệu trước khi viết dòng code v2 đầu tiên, tránh phải rename giữa chừng khi đã có package đã publish, domain đã trỏ DNS                                                                                                              |
+| **D9**  | **Khởi tạo source mới từ đầu trong `mindkid/`**, nằm cạnh `tinimath/` (v1) trong cùng workspace — thay vì update dần code cũ. Port có chọn lọc theo [`docs/specs/00-foundation/repo-bootstrap.md`](specs/00-foundation/repo-bootstrap.md)                                                                        | Update dần trên nền v1 mang theo nợ kỹ thuật đã ghi nhận ở [`AUDIT-v1.md`](specs/AUDIT-v1.md) — 31 spec gộp nhiều outcome, thiếu 8 loại spec. Greenfield cho phép áp toàn bộ 134 spec v2 sạch từ dòng code đầu tiên                                                        |
 | **D10** | **Ưu tiên adopt thư viện Nuxt ecosystem đã kiểm chứng** (auth, sitemap/SEO, cache, queue) thay vì tự xây từ đầu. Khi cần dùng chung nhiều app, bọc lại thành **package driver nội bộ** — xem [`docs/specs/00-foundation/monorepo-package-architecture.md`](specs/00-foundation/monorepo-package-architecture.md) | Tự xây auth/queue/sitemap không tạo khác biệt cạnh tranh, chỉ tốn thời gian dev và mang rủi ro bảo mật tự phát hiện. Thư viện phổ biến có test, security patch, cộng đồng review. Driver nội bộ giữ interface ổn định cho nhiều app và không khoá cứng vào một thư viện    |
 | **D11** | **Phạm vi hiện hành là web-only và vận hành tại Việt Nam.** PWA vẫn là web delivery; native mobile app, classroom/B2B, licensing/white-label, marketplace và mở thị trường ngoài Việt Nam không có spec triển khai, task hay placeholder schema trong roadmap hiện hành.                                         | Lập kế hoạch cho một mô hình sản phẩm chưa được chọn tạo contract giả và kéo theo actor, pháp lý, thanh toán, store review hoặc multi-tenancy không cần thiết. Nếu sau này mở rộng, người quyết phải mở một chương trình scope mới và viết spec sở hữu trước khi lập task. |
 | **D12** | **Tài liệu pháp lý là singleton code-owned, không quản lý policy version.** Sửa nội dung bằng PR; sau deploy, `super_admin` chủ động force re-consent bằng một mốc thời gian cho từng loại `terms` · `privacy` · `child_data`.                                                                                   | Hệ thống chỉ cần biết User đã đồng ý trước hay sau lần force gần nhất. Lịch sử Git + audit của thao tác force giữ dấu vận hành; dựng kho version và diff policy tạo thêm schema, route và UI nhưng không tăng giá trị sản phẩm tương xứng.                                 |
@@ -104,11 +104,11 @@ lộ trình mà không phải làm lại nội dung.
 
 ### 1.2 Giá trị cốt lõi theo tác nhân
 
-| Tác nhân         | Nhận được gì                                                                                                  |
-| ---------------- | ------------------------------------------------------------------------------------------------------------- |
-| **Trẻ**          | Game hợp tuổi, ít chữ, thao tác lớn, phản hồi tích cực, không áp lực điểm số                                  |
+| Tác nhân         | Nhận được gì                                                                                                                                                                               |
+| ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **Trẻ**          | Game hợp tuổi, ít chữ, thao tác lớn, phản hồi tích cực, không áp lực điểm số                                                                                                               |
 | **User**         | Biết trẻ chơi gì, tiến bộ ra sao; chọn được chương trình; quản lý giờ chơi và nhiều hồ sơ trẻ; dùng kho bài giảng và trò chơi đã kiểm duyệt. _(Công cụ tạo nội dung là add-on, ngoài MVP)_ |
-| **Doanh nghiệp** | Thư viện nội dung sở hữu riêng, tái dùng cho nhiều chương trình và bán được theo gói trên web                 |
+| **Doanh nghiệp** | Thư viện nội dung sở hữu riêng, tái dùng cho nhiều chương trình và bán được theo gói trên web                                                                                              |
 
 `User` là **một** tác nhân, dùng ở nhà hay trên lớp đều vậy — không có persona, không có
 role. Cách gọi theo ngữ cảnh: [`specs/00-foundation/glossary.md`](specs/00-foundation/glossary.md) §7.4.1.
@@ -118,12 +118,12 @@ role. Cách gọi theo ngữ cảnh: [`specs/00-foundation/glossary.md`](specs/0
 Bốn tác nhân. **Không có persona enum, không có cột `role` trên `users`** — năng lực suy
 ra từ entitlement đã mua.
 
-| Tác nhân          | Bảng             | Guard                  | Đặc điểm                                                                                                                                                                                            |
-| ----------------- | ---------------- | ---------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Guest**         | không có record  | không                  | Chưa đăng nhập. Chơi allow-list game `free`, **không lưu tiến độ**                                                                                                                                  |
+| Tác nhân          | Bảng             | Guard                  | Đặc điểm                                                                                                                                                                                           |
+| ----------------- | ---------------- | ---------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Guest**         | không có record  | không                  | Chưa đăng nhập. Chơi allow-list game `free`, **không lưu tiến độ**                                                                                                                                 |
 | **User**          | `users`          | `requireUserAuth()`    | Một loại duy nhất, không phân biệt dùng ở nhà hay trên lớp. Năng lực = `entitlements[]`. Vào bằng mật khẩu **hoặc** SNS (Google/Facebook) — nhiều SNS trên một tài khoản, `password_hash` nullable |
-| **Child profile** | `child_profiles` | không (thuộc User)     | 1–5 mỗi User, tuổi 3–6, **không có tài khoản riêng, không có credential**                                                                                                                           |
-| **Manager**       | `managers`       | `requireManagerAuth()` | `role`: `super_admin` \| `content_reviewer`. Vận hành, biên soạn, duyệt nội dung, duyệt thanh toán                                                                                                  |
+| **Child profile** | `child_profiles` | không (thuộc User)     | 1–5 mỗi User, tuổi 3–6, **không có tài khoản riêng, không có credential**                                                                                                                          |
+| **Manager**       | `managers`       | `requireManagerAuth()` | `role`: `super_admin` \| `content_reviewer`. Vận hành, biên soạn, duyệt nội dung, duyệt thanh toán                                                                                                 |
 
 Manager **không tự đăng ký** — không endpoint public nào tạo manager, và Manager
 **không bao giờ đăng nhập bằng SNS** (`BR-AUT-15`).
@@ -169,10 +169,10 @@ quên gán tier là cho không nội dung.
 
 **Catalog MVP đúng hai gói.**
 
-| Gói            | `code`     | Đối tượng                          | Giá                 | Thời hạn             |
-| -------------- | ---------- | ---------------------------------- | ------------------- | -------------------- |
-| **Tiêu chuẩn** | `standard` | User phổ thông                     | _chờ chốt_ — §15 Q1 | 365 ngày             |
-| **Premium**    | `premium`  | User theo dõi sâu                  | _chờ chốt_ — §15 Q1 | 365 ngày / vĩnh viễn |
+| Gói            | `code`     | Đối tượng         | Giá                 | Thời hạn             |
+| -------------- | ---------- | ----------------- | ------------------- | -------------------- |
+| **Tiêu chuẩn** | `standard` | User phổ thông    | _chờ chốt_ — §15 Q1 | 365 ngày             |
+| **Premium**    | `premium`  | User theo dõi sâu | _chờ chốt_ — §15 Q1 | 365 ngày / vĩnh viễn |
 
 Premium **bao hàm toàn bộ quyền học của Creator** — xem mọi nội dung, báo cáo nâng cao,
 curriculum đặc biệt. Đây là hiệu chỉnh so với PRD: không tách gói Creator riêng.
@@ -197,24 +197,24 @@ trong studio rồi gán.
 
 ### 1.7 KPI
 
-| Nhóm        | KPI                                  | Mục tiêu                       |
-| ----------- | ------------------------------------ | ------------------------------ |
-| Acquisition | Visitor → đăng ký                    | ≥ 8%                           |
-|             | Guest chơi game free → tạo tài khoản | ≥ 15%                          |
-| Activation  | Tạo Child Profile trong 24h đầu      | ≥ 70%                          |
-|             | Hoàn thành 3 game trong tuần đầu     | ≥ 50%                          |
-| Engagement  | D1 / D7 retention                    | ≥ 50% / ≥ 30%                  |
-|             | Ngày active mỗi tuần / trẻ           | ≥ 3                            |
-| Revenue     | Free → paid                          | ≥ 5%                           |
-|             | Thời gian xử lý payment request      | P90 < 12 giờ                   |
-| Kỹ thuật    | Uptime SLO                           | 99,7%                          |
-|             | API P95                              | < 800 ms                       |
-|             | Game engine                          | 60 fps trên tablet Android 2GB |
-| Nội dung    | Skill có ≥ 1 game level published    | 100% skill `seeded`            |
-| Sư phạm     | Task Comprehension (lượt đầu)        | ≥ 85% phân tầng nhóm tuổi      |
-|             | Independent Transition (sau trợ giúp)| ≥ 75% phân tầng competency     |
-|             | Strategy Exploration (sau retry)     | ≥ 70%                          |
-|             | Playtest an toàn & zero PII          | 100% phiên có consent & assent |
+| Nhóm        | KPI                                   | Mục tiêu                       |
+| ----------- | ------------------------------------- | ------------------------------ |
+| Acquisition | Visitor → đăng ký                     | ≥ 8%                           |
+|             | Guest chơi game free → tạo tài khoản  | ≥ 15%                          |
+| Activation  | Tạo Child Profile trong 24h đầu       | ≥ 70%                          |
+|             | Hoàn thành 3 game trong tuần đầu      | ≥ 50%                          |
+| Engagement  | D1 / D7 retention                     | ≥ 50% / ≥ 30%                  |
+|             | Ngày active mỗi tuần / trẻ            | ≥ 3                            |
+| Revenue     | Free → paid                           | ≥ 5%                           |
+|             | Thời gian xử lý payment request       | P90 < 12 giờ                   |
+| Kỹ thuật    | Uptime SLO                            | 99,7%                          |
+|             | API P95                               | < 800 ms                       |
+|             | Game engine                           | 60 fps trên tablet Android 2GB |
+| Nội dung    | Skill có ≥ 1 game level published     | 100% skill `seeded`            |
+| Sư phạm     | Task Comprehension (lượt đầu)         | ≥ 85% phân tầng nhóm tuổi      |
+|             | Independent Transition (sau trợ giúp) | ≥ 75% phân tầng competency     |
+|             | Strategy Exploration (sau retry)      | ≥ 70%                          |
+|             | Playtest an toàn & zero PII           | 100% phiên có consent & assent |
 
 ### 1.8 Quy mô nội dung MVP
 
@@ -709,7 +709,7 @@ sách · đổi cấu hình game · đổi feature flag.
 | ORM                  | **Drizzle** (`^0.45`) qua driver **`postgres.js`**                                                                                                                                                                                                                                                                                                                                                                                                                                          | Không đứng sau pooler transaction-mode nên bỏ qua caveat prepared statement của `postgres.js`. Cấm raw SQL, trừ `sql\`\``cho tăng nguyên tử và`coalesce`                                                                                                                                                                                                                                                                         |
 | Cache / rate limit   | **Valkey 9**; cache qua **unstorage** (driver `redis`), rate limit qua **`rate-limiter-flexible` `^11.2`** trên singleton `ioredis`                                                                                                                                                                                                                                                                                                                                                         | `unstorage` không sở hữu counter/rate-limit; hai trục và fail-open/closed vẫn do [`rate-limiting.md`](specs/01-platform/rate-limiting.md) sở hữu                                                                                                                                                                                                                                                                                 |
 | Queue                | **BullMQ** (`^6.0`) nối trực tiếp qua Nitro plugin, KHÔNG qua wrapper Nuxt                                                                                                                                                                                                                                                                                                                                                                                                                  | Cấm `nuxt-simple-bullmq` — solo-maintainer, README tự nhận "chỉ test với Node 21", tác giả khuyên dùng lựa chọn khác cho production                                                                                                                                                                                                                                                                                              |
-| Auth                 | **Opaque cookie session + Redis authority** cho cả `apps/web` và `apps/admin`: session tuyệt đối 1 giờ; `remember_me` tuỳ chọn, rotate-on-use và tuyệt đối tối đa 365 ngày. `nuxt-auth-utils` `^0.5.30` chỉ cung cấp sealed locator, `/api/_auth/session` và `useUserSession`; identity/role/reauth/credential nằm trong Redis fail-closed. KidThink không phát hoặc nhận first-party JWT; gỡ dependency trực tiếp `jose`. OAuth P1 dùng `openid-client` `^6.8`; TOTP dùng `otpauth` `^9.5` | Redis auth keyspace dùng client riêng, AOF + `noeviction`, transaction/Lua cho rotate/revoke. MFA challenge cũng là opaque one-time Redis credential. Token OIDC từ provider chỉ là input protocol tạm thời do `openid-client` xác minh, không lưu/forward. Pin module tối thiểu `0.5.30`; cấm fallback file/memory/DB/JWT, Supabase Auth, Better-Auth, Sidebase/AuthJS/`next-auth` và helper OAuth/password/WebAuthn của module |
+| Auth                 | **Opaque cookie session + Redis authority** cho cả `apps/web` và `apps/admin`: session tuyệt đối 1 giờ; `remember_me` tuỳ chọn, rotate-on-use và tuyệt đối tối đa 365 ngày. `nuxt-auth-utils` `^0.5.30` chỉ cung cấp sealed locator, `/api/_auth/session` và `useUserSession`; identity/role/reauth/credential nằm trong Redis fail-closed. MindKid không phát hoặc nhận first-party JWT; gỡ dependency trực tiếp `jose`. OAuth P1 dùng `openid-client` `^6.8`; TOTP dùng `otpauth` `^9.5` | Redis auth keyspace dùng client riêng, AOF + `noeviction`, transaction/Lua cho rotate/revoke. MFA challenge cũng là opaque one-time Redis credential. Token OIDC từ provider chỉ là input protocol tạm thời do `openid-client` xác minh, không lưu/forward. Pin module tối thiểu `0.5.30`; cấm fallback file/memory/DB/JWT, Supabase Auth, Better-Auth, Sidebase/AuthJS/`next-auth` và helper OAuth/password/WebAuthn của module |
 | Email                | **Nodemailer `^9.0` → AWS SES SMTP**; template **MJML `^5.4`**                                                                                                                                                                                                                                                                                                                                                                                                                              | SMTP TLS + pool; credential SMTP theo region, tách khỏi AWS credential; SES→SNS cho delivery/bounce/complaint                                                                                                                                                                                                                                                                                                                    |
 | HTTP hardening       | **`nuxt-security` `^2.6`** khai trực tiếp ở `apps/web` và `apps/admin`                                                                                                                                                                                                                                                                                                                                                                                                                      | Dùng CSP/header/CORS/request-size; tắt rate limiter và CSRF tích hợp để không tạo contract thứ hai                                                                                                                                                                                                                                                                                                                               |
 | Browser notification | **FCM Web** (`firebase` client + `firebase-admin` server), **P5 / Task #84**                                                                                                                                                                                                                                                                                                                                                                                                                | Chỉ là kênh best-effort; notification inbox là nguồn xem lại. Không cài package hay service worker trong Task #83                                                                                                                                                                                                                                                                                                                |
@@ -779,7 +779,7 @@ bash infra/scripts/deploy.sh                  # check → build → rsync → pm
 ## 8. Project structure
 
 ```
-kidthink/
+mindkid/
 ├── apps/                              3 app
 │   ├── web/          Nuxt 4 — public + play + account + API        :3000
 │   ├── admin/        Nuxt 4 SPA — authoring studio + vận hành      :3002
@@ -868,7 +868,7 @@ Biome 2 qua `ultracite`: semicolons luôn có, double quotes, indent 2 space, li
 | Vue component     | `PascalCase.vue`                  | `LessonCard.vue`        |
 | TS file           | `kebab-case.ts`                   | `skill-graph.ts`        |
 | Constant          | `UPPER_SNAKE_CASE`                | `PACKAGE_CATALOG`       |
-| Package           | `@kidthink/xxx`                   | `@kidthink/db`          |
+| Package           | `@mindkid/xxx`                    | `@mindkid/db`           |
 | Function / local  | `camelCase`                       | `resolveSkillPath()`    |
 | Boolean           | prefix `is`/`has`/`should`/`can`  | `isPublished`           |
 | Type / interface  | `PascalCase`                      | `LearningObjective`     |
@@ -886,9 +886,9 @@ const published = { ...lesson, status: "published" as const };
 **Ví dụ chuẩn — một API route:**
 
 ```ts
-import { requireUserAuth } from "@kidthink/auth";
-import { game_levels } from "@kidthink/db";
-import { GameLevelQuerySchema } from "@kidthink/shared";
+import { requireUserAuth } from "@mindkid/auth";
+import { game_levels } from "@mindkid/db";
+import { GameLevelQuerySchema } from "@mindkid/shared";
 import { and, eq, inArray } from "drizzle-orm";
 import { useDb } from "~~/server/utils/db";
 import { resolveAccessibleTiers } from "~~/server/utils/entitlements";
@@ -1222,7 +1222,7 @@ hình báo cáo mang câu này.
 
 Mỗi outcome có **đúng một** spec sở hữu. Spec khác **link tới**, không copy contract.
 
-**139 spec module.** Bản đồ đầy đủ: [`docs/specs/index.md`](specs/index.md).
+**151 spec module.** Bản đồ đầy đủ: [`docs/specs/index.md`](specs/index.md).
 
 ```
 docs/
@@ -1232,14 +1232,14 @@ docs/
     ├── CONVENTIONS.md         quy ước viết spec v2
     ├── TEMPLATE.md · index.md · roadmap.md
     ├── 00-foundation/  16     contract cắt ngang mọi bề mặt
-    ├── 01-platform/    31     năng lực nội bộ (gồm seeder nội dung + codegen + OAuth + browser push + thanh toán tự động + offline pack + audio storage)
+    ├── 01-platform/    39     năng lực nội bộ (gồm seeder nội dung + codegen + OAuth + browser push + thanh toán tự động + offline pack + audio storage + layout + ngẫu nhiên có seed + bộ dựng template + hợp đồng biến môi trường + dựng máy + giám sát tiến trình + phát hành + quay lui)
     ├── 02-public/       9     khách chưa đăng nhập
     ├── 03-account/     22     User đã đăng nhập (gồm SNS login + linking + notification inbox + recurring billing)
-    ├── 04-play/        13     bề mặt trẻ — core business
-    ├── 05-content/      5     ràng buộc biên tập nội dung
+    ├── 04-play/        14     bề mặt trẻ — core business (gồm bề mặt chạy tiết học của người dạy)
+    ├── 05-content/      6     ràng buộc biên tập nội dung (gồm bộ tiết học mẫu)
     ├── 06-admin/       30     Manager (gồm studio + duyệt + huỷ gói)
     ├── 07-addon/        7     spec đủ, KHÔNG bán ở MVP
-    └── 08-quality/      6     test · bảo mật · a11y · hiệu năng · design
+    └── 08-quality/      8     test · bảo mật · a11y · hiệu năng · design · phủ tư duy · an toàn kiểu
 ```
 
 ### 14.1 Luật cứng: một outcome, một file
@@ -1325,10 +1325,10 @@ Mã taxonomy giữ format v1 (`C1.CNT.03`) — đã biên soạn, bất biến, 
 | Port 60 game type v1                                     | Giữ làm backlog **nội dung**, map dần thành `content_pack`; không port 60 Session class thành backlog code. Sáu template vẫn là phạm vi MVP                                                                                                                                                                                                                                                                                                                                                       | Đối chiếu §2.4 ngày 2026-08-12 |
 | Ngân sách rà soát pháp lý (`D-AS`)                       | 50M VND cho tư vấn IP/Bảo vệ dữ liệu trước go-live; owner chi tiết ở [`legal-pages.md`](specs/02-public/legal-pages.md)                                                                                                                                                                                                                                                                                                                                                                           | 2026-08-09                     |
 | Thiết bị chuẩn 60 fps (`D-CH`)                           | Lenovo Tab M8 2 GB RAM; Chrome ổn định mới nhất, pin >30%, tắt tiết kiệm pin; chạy ba lần lấy median                                                                                                                                                                                                                                                                                                                                                                                              | 2026-08-09                     |
-| Repo mới hay branch v2?                                  | **Repo riêng `kidthink/`**, nằm cạnh `tinimath/` (v1). Port có chọn lọc: `game-engine`, `emoji`, taxonomy data                                                                                                                                                                                                                                                                                                                                                                                    | 2026-08-06 (D-A)               |
+| Repo mới hay branch v2?                                  | **Repo riêng `mindkid/`**, nằm cạnh `tinimath/` (v1). Port có chọn lọc: `game-engine`, `emoji`, taxonomy data                                                                                                                                                                                                                                                                                                                                                                                     | 2026-08-06 (D-A)               |
 | Thư viện ảnh                                             | **Không có.** Emoji cố định; ảnh upload gắn content item                                                                                                                                                                                                                                                                                                                                                                                                                                          | 2026-08-04                     |
 | Master data                                              | **Lớp 1 code-owned, admin read-only**; Lớp 2 studio CRUD                                                                                                                                                                                                                                                                                                                                                                                                                                          | 2026-08-04                     |
 | Dùng AI để soạn game và code?                            | **Có — AI agent IDE soạn file trong repo, người merge.** Nội dung nền là **seeder** (8 cổng tự động → PR review → seed ghi thẳng `published`). Code Task #14 được phép đi vào sáu vùng nhạy cảm nhưng phải có test âm, gate tự động và người review diff; không auto-merge, không chạy migration ngoài local, không tự publish. Cấm có pipeline LLM sinh nội dung trong runtime. Hard rule cũ "NEVER để AI sinh nội dung cốt lõi" viết sai chỗ — cái cần cấm là **phát hành không có người kiểm** | 2026-08-09                     |
 | Nội dung nền vào DB ở trạng thái nào?                    | **`published` thẳng từ seed.** Cổng người là PR review, không phải hàng đợi duyệt. Seed chỉ INSERT và vẫn chạy đủ checklist publish. Sau đó admin quản lý trong studio bằng version mới                                                                                                                                                                                                                                                                                                           | 2026-08-05                     |
 | Tách nhỏ spec tới mức nào?                               | **Một outcome một file.** 31 spec v1 → **124** spec v2. Tên file có `and` bị cấm khi nối hai outcome                                                                                                                                                                                                                                                                                                                                                                                              | 2026-08-05                     |
-| Audio tiếng Việt & Fallback (`D-AV`)                     | **P1 kết hợp clip tĩnh + Web Speech API (TTS vi-VN)** với visual fallback (ghost hand / highlight / icon) không crash khi thiếu voice; P2 quản lý audio asset qua [`audio-storage.md`](specs/01-platform/audio-storage.md) riêng biệt khỏi image pipeline | 2026-08-16 (Task #80) |
+| Audio tiếng Việt & Fallback (`D-AV`)                     | **P1 kết hợp clip tĩnh + Web Speech API (TTS vi-VN)** với visual fallback (ghost hand / highlight / icon) không crash khi thiếu voice; P2 quản lý audio asset qua [`audio-storage.md`](specs/01-platform/audio-storage.md) riêng biệt khỏi image pipeline                                                                                                                                                                                                                                         | 2026-08-16 (Task #80)          |

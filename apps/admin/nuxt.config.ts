@@ -35,7 +35,7 @@ export default defineNuxtConfig({
   userSession: {
     maxAge: 3600,
     cookie: {
-      name: "kidthink-manager-session",
+      name: "mindkid-manager-session",
       sameSite: "strict",
       secure: process.env.NODE_ENV === "production",
       httpOnly: true,

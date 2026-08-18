@@ -1,4 +1,4 @@
-import { runExpireSoftUnlockEntitlements } from "@kidthink/db";
+import { runExpireSoftUnlockEntitlements } from "@mindkid/db";
 
 export async function runSoftUnlockExpireJob(jobId: string): Promise<void> {
   const result = await runExpireSoftUnlockEntitlements();

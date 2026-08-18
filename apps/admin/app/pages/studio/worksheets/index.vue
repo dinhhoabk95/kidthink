@@ -156,9 +156,9 @@
                 {{ ws.title }}
                 <div
                   class="text-xs text-slate-500 truncate max-w-xs font-normal"
-                  v-if="ws.instructions_vi"
+                  v-if="ws.instructions"
                 >
-                  HD người lớn: {{ ws.instructions_vi }}
+                  HD người lớn: {{ ws.instructions }}
                 </div>
               </td>
               <td class="py-3 px-4">
@@ -368,7 +368,7 @@
               id="form-instructions"
               placeholder="Hướng dẫn người lớn: Giúp trẻ quan sát quy luật và tô màu vào hình còn trống."
               rows="3"
-              v-model="activeForm.instructions_vi"
+              v-model="activeForm.instructions"
             />
           </div>
 
@@ -424,7 +424,7 @@
     title: string;
     layout_template: string;
     content_blocks: Record<string, unknown>;
-    instructions_vi: string;
+    instructions: string;
     access_tier: string;
     status: string;
     render_status?: string;
@@ -452,7 +452,7 @@
     code: "WS-0001",
     title: "",
     layout_template: "pattern_coloring",
-    instructions_vi:
+    instructions:
       "Hướng dẫn người lớn: Giúp trẻ quan sát quy luật và dùng bút sáp tô màu.",
     access_tier: "standard",
   });
@@ -565,21 +565,21 @@
           x_pct: 25,
           y_pct: 30,
           radius_mm: 12,
-          description_adult_vi: "Thiếu mào gà",
+          description_adult: "Thiếu mào gà",
         },
         {
           spot_id: "s2",
           x_pct: 70,
           y_pct: 50,
           radius_mm: 12,
-          description_adult_vi: "Ngôi sao trên mái",
+          description_adult: "Ngôi sao trên mái",
         },
         {
           spot_id: "s3",
           x_pct: 45,
           y_pct: 80,
           radius_mm: 12,
-          description_adult_vi: "Bụi cỏ",
+          description_adult: "Bụi cỏ",
         },
       ],
       stroke_pt: 2.0,
@@ -675,7 +675,7 @@
       code: `WS-${String(Math.floor(Math.random() * 9000) + 1000)}`,
       title: "",
       layout_template: "pattern_coloring",
-      instructions_vi:
+      instructions:
         "Hướng dẫn người lớn: Giúp trẻ quan sát quy luật và tô màu vào hình còn trống.",
       access_tier: "standard",
     };

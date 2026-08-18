@@ -2,7 +2,7 @@
 spec: CURRICULUM-MODEL
 title: Mô hình chương trình — ràng buộc sư phạm
 area: content
-status: approved
+status: implemented
 mvp: true
 phase: P3
 reviewed: 2026-08-08

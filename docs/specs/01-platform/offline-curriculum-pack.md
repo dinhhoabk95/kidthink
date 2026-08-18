@@ -62,7 +62,7 @@ kế thừa cơ chế đệm phiên cục bộ từ [`offline-play.md`](offline-
 4. Client gọi `GET /api/users/curricula/{uuid}/offline-pack?week=3` để lấy manifest có chữ ký số
    kèm token lease có thời hạn (7 ngày).
 5. Service Worker tải toàn bộ game configs, hình ảnh và audio tương ứng vào Cache Storage chuyên
-   biệt `kidthink-offline-pack-v1`, xác minh checksum từng file.
+   biệt `mindkid-offline-pack-v1`, xác minh checksum từng file.
 6. Khi trẻ chơi offline:
    - Hệ thống nạp bài học từ local cache mà không cần gửi request mạng.
    - Các sự kiện chơi (`telemetry_events`) được lưu vào IndexedDB cục bộ với số thứ tự `seq`.

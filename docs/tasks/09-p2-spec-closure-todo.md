@@ -1,7 +1,7 @@
 # Checklist — Task #9: Đóng corpus spec P2 (30 spec)
 
 > Kế hoạch: [`09-p2-spec-closure-plan.md`](09-p2-spec-closure-plan.md).
-> Mọi lệnh chạy từ `kidthink/`. Đặt lại đường dẫn Node trước mỗi phiên shell mới:
+> Mọi lệnh chạy từ `mindkid/`. Đặt lại đường dẫn Node trước mỗi phiên shell mới:
 >
 > ```
 > export PATH=/Users/macbook/.nvm/versions/node/v24.15.0/bin:$PATH

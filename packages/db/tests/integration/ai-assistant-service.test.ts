@@ -1,4 +1,4 @@
-import { AI_SUGGESTION_LABEL } from "@kidthink/shared";
+import { AI_SUGGESTION_LABEL } from "@mindkid/shared";
 import { eq } from "drizzle-orm";
 import { afterEach, describe, expect, it } from "vitest";
 import {
@@ -190,7 +190,7 @@ describe("AI Assistant Service Integration Tests (BR-AIA-01..11)", () => {
       .insert(gameTemplates)
       .values({
         code: `GT-${String(uid).padStart(3, "0").slice(0, 3)}`,
-        nameVi: "Game AI Test",
+        name: "Game AI Test",
         mechanic: "drag_drop",
       })
       .onConflictDoNothing()
@@ -202,7 +202,7 @@ describe("AI Assistant Service Integration Tests (BR-AIA-01..11)", () => {
         code: `GL-C1-CNT-NUM-${String(uid).slice(0, 4)}`,
         templateId: gt.id,
         contentVersion: 1,
-        titleVi: "Mức chơi AI Test",
+        title: "Mức chơi AI Test",
         contentPack: {},
         difficultyParams: {},
         status: "published",

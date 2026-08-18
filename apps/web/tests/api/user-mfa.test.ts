@@ -4,7 +4,7 @@ import {
   getAuthRedisClient,
   hashPassword,
   MfaChallengeService,
-} from "@kidthink/auth";
+} from "@mindkid/auth";
 import {
   getOwnerDb,
   managers,
@@ -12,7 +12,7 @@ import {
   mfaRecoveryRequests,
   mfaSettings,
   users,
-} from "@kidthink/db";
+} from "@mindkid/db";
 import { and, eq } from "drizzle-orm";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import guestMfaHandler from "../../server/api/guest/auth/users/mfa.post.js";
@@ -46,7 +46,7 @@ beforeAll(async () => {
   const [u] = await db
     .insert(users)
     .values({
-      email: `user-mfa-${unique}@kidthink.vn`,
+      email: `user-mfa-${unique}@mindkid.vn`,
       passwordHash: pwd,
       displayName: "MFA Test User",
       status: "active",
@@ -59,7 +59,7 @@ beforeAll(async () => {
   const [m] = await db
     .insert(managers)
     .values({
-      email: `admin-mfa-${unique}@kidthink.vn`,
+      email: `admin-mfa-${unique}@mindkid.vn`,
       passwordHash: mgrPwd,
       displayName: "Super Admin Test",
       role: "super_admin",

@@ -121,7 +121,7 @@ T1 shell: layout · nav theo role · breadcrumb · rỗng/lỗi (D-IW)
 - [ ] Hết phiên → về màn đăng nhập kèm `redirect_to`, không rơi vào trang trắng.
 
 **Kiểm chứng**
-- [ ] `pnpm --filter @kidthink/admin test -- manager-layout` xanh.
+- [ ] `pnpm --filter @mindkid/admin test -- manager-layout` xanh.
 
 **Phụ thuộc:** P0.11b · P1.1 · **Cỡ:** M
 
@@ -187,7 +187,7 @@ T1 shell: layout · nav theo role · breadcrumb · rỗng/lỗi (D-IW)
 - [ ] Manager đăng nhập → landing là dashboard (§4.1).
 
 **Kiểm chứng**
-- [ ] `pnpm --filter @kidthink/admin test -- dashboard-view` xanh · `pnpm test:e2e -- admin-dashboard` xanh.
+- [ ] `pnpm --filter @mindkid/admin test -- dashboard-view` xanh · `pnpm test:e2e -- admin-dashboard` xanh.
 
 **Phụ thuộc:** T4 · **Cỡ:** M
 

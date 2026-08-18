@@ -118,7 +118,7 @@ Gom tất cả câu hỏi cần người vào **một phiên**. Hỏi rải rác
   - [x] 3 — số avatar preset và ai vẽ (D-AS: 12 avatar SVG do UI Designer vẽ)
   - [x] 4 — lời khen thu âm người thật hay tổng hợp giọng nói (D-AV: Audio clip tĩnh + Web Speech API ở P1, studio ở P2)
   - [x] 5 — có dùng analytics tự host không (D-AW: Không dùng self-host ở P1)
-  - [x] 6 — kênh hỗ trợ trực tiếp là gì (D-AX: Email support@kidthink.vn + Zalo OA)
+  - [x] 6 — kênh hỗ trợ trực tiếp là gì (D-AX: Email support@mindkid.vn + Zalo OA)
   - [x] 7 — 6 game allow-list guest và ngưỡng lượt mời đăng ký (D-AY: 6 game D1-D6, 5 lượt chơi guest)
   - [x] 8 — nguồn y tế cho ngưỡng 30/60/90 phút (D-AZ: Khuyến nghị AAP / WHO ≤ 1 giờ/ngày)
 - [x] Ghi cả 8 câu trả lời thành `D-*` liên tiếp, một mã một quyết định (D-AR đến D-AZ)

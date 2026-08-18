@@ -1,5 +1,5 @@
 /**
- * @kidthink/emoji — Query Functions
+ * @mindkid/emoji — Query Functions
  * Category/group/theme query and random selection.
  */
 

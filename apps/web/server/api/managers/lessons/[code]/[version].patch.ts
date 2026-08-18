@@ -4,23 +4,24 @@ import {
   lessonActivities,
   lessons,
   writeAudit,
-} from "@kidthink/db";
+} from "@mindkid/db";
 import { and, eq } from "drizzle-orm";
 import { createError, defineEventHandler, getRouterParam, readBody } from "h3";
 import { z } from "zod";
 import { requireManagerSession } from "../../../../utils/admin-auth-runtime.js";
+import { throwValidationError } from "../../../../utils/api-error.js";
 
 const updateLessonSchema = z.object({
   title: z.string().min(1).optional(),
-  guide_vi: z.string().min(1).optional(),
+  guide: z.string().min(1).optional(),
   target_age_min: z.number().int().min(3).max(6).optional(),
   target_age_max: z.number().int().min(3).max(6).optional(),
   estimated_minutes: z.number().int().min(5).max(45).optional(),
-  materials_vi: z.string().nullable().optional(),
-  warm_up_vi: z.string().nullable().optional(),
-  reflection_vi: z.string().nullable().optional(),
-  assessment_vi: z.string().nullable().optional(),
-  extension_vi: z.string().nullable().optional(),
+  materials: z.string().nullable().optional(),
+  warm_up: z.string().nullable().optional(),
+  reflection: z.string().nullable().optional(),
+  assessment: z.string().nullable().optional(),
+  extension: z.string().nullable().optional(),
   access_tier: z.enum(["free", "login", "standard", "premium"]).optional(),
   expected_version: z.number().int().positive().optional(),
   skill_ids: z.array(z.number().int()).max(3).optional(),
@@ -45,17 +46,17 @@ async function syncLessonSkills(
       )
     );
   const weightPerSkill = (1.0 / skillIds.length).toFixed(2);
-  for (const skillId of skillIds) {
-    await db
-      .insert(contentSkillMap)
-      .values({
-        entityType: "lesson",
+  await db
+    .insert(contentSkillMap)
+    .values(
+      skillIds.map((skillId) => ({
+        entityType: "lesson" as const,
         entityId,
         skillId,
         weight: weightPerSkill,
-      })
-      .onConflictDoNothing();
-  }
+      }))
+    )
+    .onConflictDoNothing();
 }
 
 async function handlePublishedLessonFork(
@@ -71,29 +72,20 @@ async function handlePublishedLessonFork(
       entityId: existing.entityId,
       code: existing.code,
       contentVersion: newVersion,
-      titleVi: data.title ?? existing.titleVi,
-      guideVi: data.guide_vi ?? existing.guideVi,
+      title: data.title ?? existing.title,
+      guide: data.guide ?? existing.guide,
       targetAgeMin: data.target_age_min ?? existing.targetAgeMin,
       targetAgeMax: data.target_age_max ?? existing.targetAgeMax,
       estimatedMinutes: data.estimated_minutes ?? existing.estimatedMinutes,
-      materialsVi:
-        data.materials_vi === undefined
-          ? existing.materialsVi
-          : data.materials_vi,
-      warmUpVi:
-        data.warm_up_vi === undefined ? existing.warmUpVi : data.warm_up_vi,
-      reflectionVi:
-        data.reflection_vi === undefined
-          ? existing.reflectionVi
-          : data.reflection_vi,
-      assessmentVi:
-        data.assessment_vi === undefined
-          ? existing.assessmentVi
-          : data.assessment_vi,
-      extensionVi:
-        data.extension_vi === undefined
-          ? existing.extensionVi
-          : data.extension_vi,
+      materials:
+        data.materials === undefined ? existing.materials : data.materials,
+      warmUp: data.warm_up === undefined ? existing.warmUp : data.warm_up,
+      reflection:
+        data.reflection === undefined ? existing.reflection : data.reflection,
+      assessment:
+        data.assessment === undefined ? existing.assessment : data.assessment,
+      extension:
+        data.extension === undefined ? existing.extension : data.extension,
       accessTier: data.access_tier ?? existing.accessTier,
       status: "draft",
       origin: existing.origin,
@@ -107,13 +99,15 @@ async function handlePublishedLessonFork(
     .from(lessonActivities)
     .where(eq(lessonActivities.lessonId, existing.id));
 
-  for (const act of existingActivities) {
-    await db.insert(lessonActivities).values({
-      lessonId: created.id,
-      position: act.position,
-      activityId: act.activityId,
-      isRequired: act.isRequired,
-    });
+  if (existingActivities.length > 0) {
+    await db.insert(lessonActivities).values(
+      existingActivities.map((act) => ({
+        lessonId: created.id,
+        position: act.position,
+        activityId: act.activityId,
+        isRequired: act.isRequired,
+      }))
+    );
   }
 
   await syncLessonSkills(db, existing.entityId, data.skill_ids);
@@ -143,10 +137,10 @@ async function handleDraftLessonUpdate(
   };
 
   if (data.title !== undefined) {
-    patch.titleVi = data.title;
+    patch.title = data.title;
   }
-  if (data.guide_vi !== undefined) {
-    patch.guideVi = data.guide_vi;
+  if (data.guide !== undefined) {
+    patch.guide = data.guide;
   }
   if (data.target_age_min !== undefined) {
     patch.targetAgeMin = data.target_age_min;
@@ -157,20 +151,20 @@ async function handleDraftLessonUpdate(
   if (data.estimated_minutes !== undefined) {
     patch.estimatedMinutes = data.estimated_minutes;
   }
-  if (data.materials_vi !== undefined) {
-    patch.materialsVi = data.materials_vi;
+  if (data.materials !== undefined) {
+    patch.materials = data.materials;
   }
-  if (data.warm_up_vi !== undefined) {
-    patch.warmUpVi = data.warm_up_vi;
+  if (data.warm_up !== undefined) {
+    patch.warmUp = data.warm_up;
   }
-  if (data.reflection_vi !== undefined) {
-    patch.reflectionVi = data.reflection_vi;
+  if (data.reflection !== undefined) {
+    patch.reflection = data.reflection;
   }
-  if (data.assessment_vi !== undefined) {
-    patch.assessmentVi = data.assessment_vi;
+  if (data.assessment !== undefined) {
+    patch.assessment = data.assessment;
   }
-  if (data.extension_vi !== undefined) {
-    patch.extensionVi = data.extension_vi;
+  if (data.extension !== undefined) {
+    patch.extension = data.extension;
   }
   if (data.access_tier !== undefined) {
     patch.accessTier = data.access_tier;
@@ -215,12 +209,7 @@ export default defineEventHandler(async (event) => {
   const rawBody = await readBody(event);
   const parsed = updateLessonSchema.safeParse(rawBody);
   if (!parsed.success) {
-    throw createError({
-      statusCode: 422,
-      statusMessage: "VALIDATION_FAILED",
-      message: parsed.error.issues.map((i) => i.message).join("; "),
-      data: parsed.error.issues,
-    });
+    throwValidationError(parsed.error);
   }
 
   const data = parsed.data;

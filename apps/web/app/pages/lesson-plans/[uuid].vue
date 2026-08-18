@@ -371,7 +371,7 @@
     LessonPlanItemInput,
     LessonPlanItemType,
     LessonPlanSnapshot,
-  } from "@kidthink/shared";
+  } from "@mindkid/shared";
   import { reactive, ref, watch } from "vue";
 
   interface EditableItem {
@@ -391,7 +391,7 @@
   const uuid = String(route.params.uuid);
 
   useHead({
-    title: "Soạn giáo án | KidThink",
+    title: "Soạn giáo án | MindKid",
   });
 
   const {

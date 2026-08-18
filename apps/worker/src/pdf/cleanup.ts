@@ -1,4 +1,4 @@
-import { runPdfCleanupJob } from "@kidthink/db";
+import { runPdfCleanupJob } from "@mindkid/db";
 
 export async function runSweepPdfCleanupJob(
   _jobId: string,

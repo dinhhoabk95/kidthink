@@ -187,6 +187,6 @@ ngoài diff tài liệu.
 
 1. Audio P1 dùng chiến lược nào khi thiết bị không có giọng `vi-VN`; P2 có thu âm/upload hay
    tiếp tục TTS?
-2. Claim sư phạm nào KidThink được phép nói, và evidence tối thiểu nào đủ cho claim đó?
+2. Claim sư phạm nào MindKid được phép nói, và evidence tối thiểu nào đủ cho claim đó?
 3. Giữ ≥60 lesson có tái sử dụng hay nhận ≥126 lesson distinct?
 4. Thư viện ở P3 thuộc account hay từng child; layout nhiều trẻ dùng active-child hay overview?

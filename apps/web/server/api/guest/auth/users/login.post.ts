@@ -4,15 +4,15 @@ import {
   getBrowserSessionService,
   MfaChallengeService,
   verifyPassword,
-} from "@kidthink/auth";
+} from "@mindkid/auth";
 import {
   getAppDb,
   getAppSql,
   mfaSettings,
   PostgresSessionStore,
   users,
-} from "@kidthink/db";
-import { enforceTwoAxisRateLimit } from "@kidthink/shared";
+} from "@mindkid/db";
+import { enforceTwoAxisRateLimit } from "@mindkid/shared";
 import { and, eq } from "drizzle-orm";
 import {
   defineEventHandler,
@@ -29,7 +29,6 @@ import {
   assertSameOriginRequest,
   ensureUserCsrfCookie,
   getVerifiedRemoteIp,
-  respondToUserAuthError,
   setUserRememberCookie,
 } from "../../../../utils/auth-runtime";
 
@@ -61,82 +60,62 @@ function parseLoginCredentials(rawBody: unknown): {
 }
 
 export async function handleLogin(event: H3Event, testBody?: unknown) {
-  try {
-    assertSameOriginRequest(event);
-    assertRequestBodySize(event, 16 * 1024);
-    const ipRateLimit = await enforceTwoAxisRateLimit({
-      routeClass: "auth:login",
-      remoteIp: getVerifiedRemoteIp(event),
-    });
-    assertRateLimitAllowed(ipRateLimit.statusCode);
+  assertSameOriginRequest(event);
+  assertRequestBodySize(event, 16 * 1024);
+  const ipRateLimit = await enforceTwoAxisRateLimit({
+    routeClass: "auth:login",
+    remoteIp: getVerifiedRemoteIp(event),
+  });
+  assertRateLimitAllowed(ipRateLimit.statusCode);
 
-    const rawBody =
-      testBody ??
-      event.context?.body ??
-      (await readBody(event).catch(() => null));
-    const { email, password, rememberMe } = parseLoginCredentials(rawBody);
+  const rawBody =
+    testBody ??
+    event.context?.body ??
+    (await readBody(event).catch(() => null));
+  const { email, password, rememberMe } = parseLoginCredentials(rawBody);
 
-    const rateLimitRes = await enforceTwoAxisRateLimit({
-      routeClass: "auth:login",
-      remoteIp: getVerifiedRemoteIp(event),
-      accountIdentifier: email,
-    });
-    assertRateLimitAllowed(rateLimitRes.statusCode);
+  const rateLimitRes = await enforceTwoAxisRateLimit({
+    routeClass: "auth:login",
+    remoteIp: getVerifiedRemoteIp(event),
+    accountIdentifier: email,
+  });
+  assertRateLimitAllowed(rateLimitRes.statusCode);
 
-    const db = getAppDb();
-    const [user] = await db.select().from(users).where(eq(users.email, email));
+  const db = getAppDb();
+  const [user] = await db.select().from(users).where(eq(users.email, email));
 
-    // BR-LGN-03 / D-EP: Timing mitigation for missing user or missing passwordHash
-    if (!user?.passwordHash) {
-      await verifyPassword(password, DUMMY_HASH).catch(() => false);
-      throw appError("INVALID_CREDENTIALS");
-    }
+  // BR-LGN-03 / D-EP: Timing mitigation for missing user or missing passwordHash
+  if (!user?.passwordHash) {
+    await verifyPassword(password, DUMMY_HASH).catch(() => false);
+    throw appError("INVALID_CREDENTIALS");
+  }
 
-    const validPassword = await verifyPassword(password, user.passwordHash);
-    if (!validPassword) {
-      throw appError("INVALID_CREDENTIALS");
-    }
+  const validPassword = await verifyPassword(password, user.passwordHash);
+  if (!validPassword) {
+    throw appError("INVALID_CREDENTIALS");
+  }
 
-    if (user.status === "suspended") {
-      throw appError("ACCOUNT_SUSPENDED");
-    }
-    if (user.status === "deleted") {
-      throw appError("ACCOUNT_DELETED");
-    }
+  if (user.status === "suspended") {
+    throw appError("ACCOUNT_SUSPENDED");
+  }
+  if (user.status === "deleted") {
+    throw appError("ACCOUNT_DELETED");
+  }
 
-    // BR-MFA-09 / D-KY: Check if user has MFA enabled
-    const [mfa] = await db
-      .select({ id: mfaSettings.id, confirmedAt: mfaSettings.confirmedAt })
-      .from(mfaSettings)
-      .where(
-        and(
-          eq(mfaSettings.accountType, "user"),
-          eq(mfaSettings.accountId, user.id)
-        )
-      );
+  // BR-MFA-09 / D-KY: Check if user has MFA enabled
+  const [mfa] = await db
+    .select({ id: mfaSettings.id, confirmedAt: mfaSettings.confirmedAt })
+    .from(mfaSettings)
+    .where(
+      and(
+        eq(mfaSettings.accountType, "user"),
+        eq(mfaSettings.accountId, user.id)
+      )
+    );
 
-    if (mfa?.confirmedAt) {
-      const mfaService = new MfaChallengeService(getAuthRedisClient());
-      const createdChallenge = await mfaService.createChallenge({
-        namespace: "user",
-        accountId: user.id,
-        displayName: user.displayName,
-        rememberMe,
-        ipAddress: getVerifiedRemoteIp(event),
-      });
-
-      setResponseStatus(event, 428);
-      return {
-        status: "MFA_REQUIRED",
-        challenge: createdChallenge.challengeToken,
-        mfa_enabled: true,
-      };
-    }
-
-    const userAgent = getHeader(event, "user-agent") || "unknown";
-    const sessionService = getBrowserSessionService();
-
-    const created = await sessionService.create({
+  if (mfa?.confirmedAt) {
+    const mfaService = new MfaChallengeService(getAuthRedisClient());
+    const createdChallenge = await mfaService.createChallenge({
       namespace: "user",
       accountId: user.id,
       displayName: user.displayName,
@@ -144,46 +123,62 @@ export async function handleLogin(event: H3Event, testBody?: unknown) {
       ipAddress: getVerifiedRemoteIp(event),
     });
 
-    await setUserSession(event, {
-      secure: {
-        session_token: created.sessionToken,
-      },
-    });
-
-    if (created.rememberToken) {
-      setUserRememberCookie(event, created.rememberToken);
-    }
-
-    ensureUserCsrfCookie(event);
-
-    // Record metadata in PG
-    const pgStore = new PostgresSessionStore(getAppSql());
-    await pgStore
-      .recordSession({
-        account_type: "user",
-        account_id: user.id,
-        device_id: created.deviceId,
-        remembered: rememberMe,
-        device_label: userAgent,
-        ip_address: getVerifiedRemoteIp(event),
-        auth_method: "password",
-        expires_at: created.expiresAt,
-      })
-      .catch(() => null);
-
-    const now = new Date();
-    await db.update(users).set({ updatedAt: now }).where(eq(users.id, user.id));
-
+    setResponseStatus(event, 428);
     return {
-      user: {
-        uuid: user.uuid,
-        displayName: user.displayName,
-        status: user.status,
-      },
+      status: "MFA_REQUIRED",
+      challenge: createdChallenge.challengeToken,
+      mfa_enabled: true,
     };
-  } catch (error) {
-    return respondToUserAuthError(event, error);
   }
+
+  const userAgent = getHeader(event, "user-agent") || "unknown";
+  const sessionService = getBrowserSessionService();
+
+  const created = await sessionService.create({
+    namespace: "user",
+    accountId: user.id,
+    displayName: user.displayName,
+    rememberMe,
+    ipAddress: getVerifiedRemoteIp(event),
+  });
+
+  await setUserSession(event, {
+    secure: {
+      session_token: created.sessionToken,
+    },
+  });
+
+  if (created.rememberToken) {
+    setUserRememberCookie(event, created.rememberToken);
+  }
+
+  ensureUserCsrfCookie(event);
+
+  // Record metadata in PG
+  const pgStore = new PostgresSessionStore(getAppSql());
+  await pgStore
+    .recordSession({
+      account_type: "user",
+      account_id: user.id,
+      device_id: created.deviceId,
+      remembered: rememberMe,
+      device_label: userAgent,
+      ip_address: getVerifiedRemoteIp(event),
+      auth_method: "password",
+      expires_at: created.expiresAt,
+    })
+    .catch(() => null);
+
+  const now = new Date();
+  await db.update(users).set({ updatedAt: now }).where(eq(users.id, user.id));
+
+  return {
+    user: {
+      uuid: user.uuid,
+      displayName: user.displayName,
+      status: user.status,
+    },
+  };
 }
 
 export default defineEventHandler((event) => handleLogin(event));

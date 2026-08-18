@@ -1,18 +1,18 @@
-import { appError } from "@kidthink/auth";
-import { getDb, paymentOrders, users } from "@kidthink/db";
+import { appError } from "@mindkid/auth";
+import { getDb, paymentOrders, users } from "@mindkid/db";
 import {
   computeOrderPendingExpiresAt,
   formatTransferNote,
   generateVietQrPayload,
   PACKAGE_CATALOG,
-} from "@kidthink/shared";
+} from "@mindkid/shared";
 import { and, eq, inArray } from "drizzle-orm";
 import { defineEventHandler, readBody, setResponseStatus } from "h3";
 import { z } from "zod";
+import { throwValidationError } from "../../../utils/api-error.js";
 import {
   assertUnrestrictedUser,
   requireWebUserSession,
-  respondToUserAuthError,
 } from "../../../utils/auth-runtime.ts";
 
 const createOrderSchema = z.object({
@@ -23,123 +23,117 @@ const createOrderSchema = z.object({
 });
 
 export default defineEventHandler(async (event) => {
-  try {
-    const session = requireWebUserSession(event);
-    const db = getDb();
+  const session = requireWebUserSession(event);
+  const db = getDb();
 
-    // Verify user is not pending verification
-    const [userRecord] = await db
-      .select()
-      .from(users)
-      .where(eq(users.id, session.user_id))
-      .limit(1);
+  // Verify user is not pending verification
+  const [userRecord] = await db
+    .select()
+    .from(users)
+    .where(eq(users.id, session.user_id))
+    .limit(1);
 
-    if (!userRecord) {
-      throw appError("UNAUTHENTICATED");
-    }
-
-    assertUnrestrictedUser(userRecord.status);
-
-    const customEvent = event as unknown as {
-      _body?: unknown;
-      context?: { body?: unknown };
-    };
-    const rawBody =
-      (await readBody(event).catch(() => undefined)) ??
-      customEvent._body ??
-      customEvent.context?.body;
-    const parsed = createOrderSchema.safeParse(rawBody);
-    if (!parsed.success) {
-      throw appError("VALIDATION_FAILED", {
-        errors: parsed.error.flatten().fieldErrors,
-      });
-    }
-
-    const { package_code, offer_code } = parsed.data;
-
-    // Validate package in catalog
-    const pkg = PACKAGE_CATALOG[package_code];
-    if (!pkg) {
-      throw appError("PACKAGE_NOT_FOUND");
-    }
-
-    if (!pkg.is_public || pkg.status !== "active") {
-      throw appError("PACKAGE_NOT_SELLABLE");
-    }
-
-    const offer = pkg.offers.find((o) => o.offer_code === offer_code);
-    if (!offer) {
-      throw appError("OFFER_NOT_FOUND");
-    }
-
-    // Check for existing pending/submitted order for the same package (BR-POC-04)
-    const [existingOrder] = await db
-      .select()
-      .from(paymentOrders)
-      .where(
-        and(
-          eq(paymentOrders.userId, userRecord.id),
-          eq(paymentOrders.packageCode, package_code),
-          inArray(paymentOrders.status, [
-            "draft",
-            "pending",
-            "pending_proof",
-            "submitted",
-            "under_review",
-          ])
-        )
-      )
-      .limit(1);
-
-    if (existingOrder) {
-      throw appError("ORDER_ALREADY_PENDING", {
-        existing_order_uuid: existingOrder.uuid,
-        package_code,
-      });
-    }
-
-    // Generate unique order UUID and formatted transfer note
-    const orderUuid = crypto.randomUUID();
-    const transferNote = formatTransferNote(orderUuid);
-    const expiresAt = computeOrderPendingExpiresAt();
-    const amountVnd = offer.price_vnd;
-
-    const [insertedOrder] = await db
-      .insert(paymentOrders)
-      .values({
-        uuid: orderUuid,
-        userId: userRecord.id,
-        packageCode: pkg.code,
-        offerCode: offer.offer_code,
-        amountVnd,
-        currency: "VND",
-        status: "pending",
-        transferNote,
-        expiresAt,
-      })
-      .returning();
-
-    const vietQr = generateVietQrPayload({
-      amountVnd,
-      transferNote,
-    });
-
-    setResponseStatus(event, 201);
-    return {
-      uuid: insertedOrder.uuid,
-      package_code: insertedOrder.packageCode,
-      offer_code: insertedOrder.offerCode,
-      amount_vnd: insertedOrder.amountVnd,
-      currency: insertedOrder.currency,
-      status: insertedOrder.status,
-      transfer_note: insertedOrder.transferNote,
-      qr_payload: vietQr.qrPayload,
-      qr_image_url: vietQr.qrImageUrl,
-      bank_info: vietQr.bankInfo,
-      expires_at: insertedOrder.expiresAt,
-      created_at: insertedOrder.createdAt,
-    };
-  } catch (error) {
-    respondToUserAuthError(event, error);
+  if (!userRecord) {
+    throw appError("UNAUTHENTICATED");
   }
+
+  assertUnrestrictedUser(userRecord.status);
+
+  const customEvent = event as unknown as {
+    _body?: unknown;
+    context?: { body?: unknown };
+  };
+  const rawBody =
+    (await readBody(event).catch(() => undefined)) ??
+    customEvent._body ??
+    customEvent.context?.body;
+  const parsed = createOrderSchema.safeParse(rawBody);
+  if (!parsed.success) {
+    throwValidationError(parsed.error);
+  }
+
+  const { package_code, offer_code } = parsed.data;
+
+  // Validate package in catalog
+  const pkg = PACKAGE_CATALOG[package_code];
+  if (!pkg) {
+    throw appError("PACKAGE_NOT_FOUND");
+  }
+
+  if (!pkg.is_public || pkg.status !== "active") {
+    throw appError("PACKAGE_NOT_SELLABLE");
+  }
+
+  const offer = pkg.offers.find((o) => o.offer_code === offer_code);
+  if (!offer) {
+    throw appError("OFFER_NOT_FOUND");
+  }
+
+  // Check for existing pending/submitted order for the same package (BR-POC-04)
+  const [existingOrder] = await db
+    .select()
+    .from(paymentOrders)
+    .where(
+      and(
+        eq(paymentOrders.userId, userRecord.id),
+        eq(paymentOrders.packageCode, package_code),
+        inArray(paymentOrders.status, [
+          "draft",
+          "pending",
+          "pending_proof",
+          "submitted",
+          "under_review",
+        ])
+      )
+    )
+    .limit(1);
+
+  if (existingOrder) {
+    throw appError("ORDER_ALREADY_PENDING", {
+      existing_order_uuid: existingOrder.uuid,
+      package_code,
+    });
+  }
+
+  // Generate unique order UUID and formatted transfer note
+  const orderUuid = crypto.randomUUID();
+  const transferNote = formatTransferNote(orderUuid);
+  const expiresAt = computeOrderPendingExpiresAt();
+  const amountVnd = offer.price_vnd;
+
+  const [insertedOrder] = await db
+    .insert(paymentOrders)
+    .values({
+      uuid: orderUuid,
+      userId: userRecord.id,
+      packageCode: pkg.code,
+      offerCode: offer.offer_code,
+      amountVnd,
+      currency: "VND",
+      status: "pending",
+      transferNote,
+      expiresAt,
+    })
+    .returning();
+
+  const vietQr = generateVietQrPayload({
+    amountVnd,
+    transferNote,
+  });
+
+  setResponseStatus(event, 201);
+  return {
+    uuid: insertedOrder.uuid,
+    package_code: insertedOrder.packageCode,
+    offer_code: insertedOrder.offerCode,
+    amount_vnd: insertedOrder.amountVnd,
+    currency: insertedOrder.currency,
+    status: insertedOrder.status,
+    transfer_note: insertedOrder.transferNote,
+    qr_payload: vietQr.qrPayload,
+    qr_image_url: vietQr.qrImageUrl,
+    bank_info: vietQr.bankInfo,
+    expires_at: insertedOrder.expiresAt,
+    created_at: insertedOrder.createdAt,
+  };
 });

@@ -178,7 +178,7 @@
 </template>
 
 <script lang="ts" setup>
-  import { FEATURED_GUEST_LEVELS } from "@kidthink/shared";
+  import { FEATURED_GUEST_LEVELS } from "@mindkid/shared";
   import { useHead, useSeoMeta } from "unhead";
   import { computed, ref, watch } from "vue";
   import { useRoute, useRouter } from "vue-router";
@@ -345,10 +345,10 @@
   );
 
   useSeoMeta({
-    title: "Thư viện 120+ trò chơi tư duy cho bé 3–6 tuổi — KidThink",
+    title: "Thư viện 120+ trò chơi tư duy cho bé 3–6 tuổi — MindKid",
     description:
       "Duyệt danh mục trò chơi phát triển tư duy toán học cho trẻ mầm non. Lọc theo năng lực C1–C6, độ tuổi 3–6 và độ khó.",
-    ogTitle: "Thư viện 120+ trò chơi tư duy cho bé 3–6 tuổi — KidThink",
+    ogTitle: "Thư viện 120+ trò chơi tư duy cho bé 3–6 tuổi — MindKid",
     ogDescription:
       "Danh mục trò chơi toán học tương tác mầm non phân theo 6 nhóm năng lực chuẩn sư phạm.",
     ogType: "website",
@@ -356,7 +356,7 @@
 
   useHead({
     htmlAttrs: { lang: "vi-VN" },
-    link: [{ rel: "canonical", href: "https://kidthink.vn/games" }],
+    link: [{ rel: "canonical", href: "https://mindkid.vn/games" }],
   });
 </script>
 

@@ -5,7 +5,7 @@ import {
   gameLevels,
   getOwnerDb,
   lessons,
-} from "@kidthink/db";
+} from "@mindkid/db";
 import {
   type AccessTier,
   COMPETENCY_LABELS,
@@ -13,7 +13,7 @@ import {
   type ProgramCompetencyShare,
   type RawCurriculumItemRecord,
   toProgramDetailPublic,
-} from "@kidthink/shared";
+} from "@mindkid/shared";
 import { and, asc, eq, inArray, ne } from "drizzle-orm";
 import { createError, defineEventHandler, getRouterParam, setHeader } from "h3";
 
@@ -25,11 +25,11 @@ async function loadGameLevelsMap(
   db: ReturnType<typeof getOwnerDb>,
   entityIds: number[]
 ): Promise<
-  Map<number, { code: string; titleVi: string; accessTier: AccessTier }>
+  Map<number, { code: string; title: string; accessTier: AccessTier }>
 > {
   const map = new Map<
     number,
-    { code: string; titleVi: string; accessTier: AccessTier }
+    { code: string; title: string; accessTier: AccessTier }
   >();
   if (entityIds.length === 0) {
     return map;
@@ -39,7 +39,7 @@ async function loadGameLevelsMap(
     .select({
       entityId: gameLevels.entityId,
       code: gameLevels.code,
-      titleVi: gameLevels.titleVi,
+      title: gameLevels.title,
       accessTier: gameLevels.accessTier,
     })
     .from(gameLevels)
@@ -53,7 +53,7 @@ async function loadGameLevelsMap(
   for (const row of rows) {
     map.set(row.entityId, {
       code: row.code,
-      titleVi: row.titleVi,
+      title: row.title,
       accessTier: row.accessTier as AccessTier,
     });
   }
@@ -68,7 +68,7 @@ async function loadLessonsMap(
     number,
     {
       code: string;
-      titleVi: string;
+      title: string;
       accessTier: AccessTier;
       estimatedMinutes?: number | null;
     }
@@ -78,7 +78,7 @@ async function loadLessonsMap(
     number,
     {
       code: string;
-      titleVi: string;
+      title: string;
       accessTier: AccessTier;
       estimatedMinutes?: number | null;
     }
@@ -91,7 +91,7 @@ async function loadLessonsMap(
     .select({
       entityId: lessons.entityId,
       code: lessons.code,
-      titleVi: lessons.titleVi,
+      title: lessons.title,
       accessTier: lessons.accessTier,
       estimatedMinutes: lessons.estimatedMinutes,
     })
@@ -103,7 +103,7 @@ async function loadLessonsMap(
   for (const row of rows) {
     map.set(row.entityId, {
       code: row.code,
-      titleVi: row.titleVi,
+      title: row.title,
       accessTier: row.accessTier as AccessTier,
       estimatedMinutes: row.estimatedMinutes,
     });
@@ -118,7 +118,7 @@ async function handleArchivedCurriculum(
   const alternativeRows = await db
     .select({
       code: curricula.code,
-      titleVi: curricula.titleVi,
+      title: curricula.title,
       accessTier: curricula.accessTier,
       targetAgeMin: curricula.targetAgeMin,
       targetAgeMax: curricula.targetAgeMax,
@@ -133,7 +133,7 @@ async function handleArchivedCurriculum(
   const suggestions: ProgramAlternativeSuggestion[] = alternativeRows.map(
     (alt) => ({
       code: alt.code,
-      title: alt.titleVi,
+      title: alt.title,
       access_tier: alt.accessTier as AccessTier,
       target_age: {
         min: alt.targetAgeMin ?? 3,
@@ -165,13 +165,13 @@ function resolveSingleItem(
   defaultTier: AccessTier,
   gameLevelsMap: Map<
     number,
-    { code: string; titleVi: string; accessTier: AccessTier }
+    { code: string; title: string; accessTier: AccessTier }
   >,
   lessonsMap: Map<
     number,
     {
       code: string;
-      titleVi: string;
+      title: string;
       accessTier: AccessTier;
       estimatedMinutes?: number | null;
     }
@@ -185,7 +185,7 @@ function resolveSingleItem(
       position: item.position,
       entityType: item.entityType,
       code: gl?.code || "",
-      titleVi: gl?.titleVi || "",
+      title: gl?.title || "",
       estimatedMinutes: 10,
       accessTier: gl?.accessTier || defaultTier,
     };
@@ -198,7 +198,7 @@ function resolveSingleItem(
     position: item.position,
     entityType: item.entityType,
     code: les?.code || "",
-    titleVi: les?.titleVi || "",
+    title: les?.title || "",
     estimatedMinutes: les?.estimatedMinutes || 20,
     accessTier: les?.accessTier || defaultTier,
   };
@@ -223,8 +223,8 @@ export default defineEventHandler(async (event) => {
     .select({
       id: curricula.id,
       code: curricula.code,
-      titleVi: curricula.titleVi,
-      descriptionVi: curricula.descriptionVi,
+      title: curricula.title,
+      description: curricula.description,
       programType: curricula.programType,
       targetAgeMin: curricula.targetAgeMin,
       targetAgeMax: curricula.targetAgeMax,

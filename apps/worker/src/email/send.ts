@@ -2,7 +2,7 @@ import {
   type ProcessEmailJobInput,
   type ProcessEmailJobResult,
   runSendEmail as runSendEmailShared,
-} from "@kidthink/shared";
+} from "@mindkid/shared";
 
 export function runSendEmail(
   jobId: string,

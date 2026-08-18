@@ -4,7 +4,7 @@ import {
   curriculumWeeks,
   getOwnerDb,
   writeAudit,
-} from "@kidthink/db";
+} from "@mindkid/db";
 import { eq } from "drizzle-orm";
 import {
   createError,
@@ -13,10 +13,7 @@ import {
   setResponseStatus,
 } from "h3";
 import { z } from "zod";
-import {
-  requireManagerSession,
-  respondToManagerAuthError,
-} from "../../../utils/admin-auth-runtime.js";
+import { requireManagerSession } from "../../../utils/admin-auth-runtime.js";
 
 const createCurriculumSchema = z.object({
   code: z
@@ -29,7 +26,7 @@ const createCurriculumSchema = z.object({
   duration_weeks: z.number().int().min(1).max(52).default(8),
   sessions_per_week: z.number().int().min(1).max(7).default(3),
   title: z.string().min(1, "Tiêu đề không được để trống"),
-  description_vi: z.string().nullable().optional(),
+  description: z.string().nullable().optional(),
   access_tier: z
     .enum(["free", "login", "standard", "premium"])
     .default("standard"),
@@ -95,13 +92,13 @@ async function insertInitialWeeks(
   if (!weeks || weeks.length === 0) {
     return;
   }
-  for (const wk of weeks) {
-    await db.insert(curriculumWeeks).values({
+  await db.insert(curriculumWeeks).values(
+    weeks.map((wk) => ({
       curriculumId,
       weekNo: wk.week_no,
       goal: wk.goal,
-    });
-  }
+    }))
+  );
 }
 
 async function insertInitialItems(
@@ -112,8 +109,8 @@ async function insertInitialItems(
   if (!items || items.length === 0) {
     return;
   }
-  for (const item of items) {
-    await db.insert(curriculumItems).values({
+  await db.insert(curriculumItems).values(
+    items.map((item) => ({
       curriculumId,
       weekNo: item.week_no,
       sessionNo: item.session_no,
@@ -121,8 +118,8 @@ async function insertInitialItems(
       entityType: item.entity_type,
       entityId: item.entity_id,
       isRequired: item.is_required,
-    });
-  }
+    }))
+  );
 }
 
 async function createCurriculumRecord(
@@ -147,8 +144,8 @@ async function createCurriculumRecord(
           targetAgeMax: data.target_age_max ?? null,
           durationWeeks: data.duration_weeks,
           sessionsPerWeek: data.sessions_per_week,
-          titleVi: data.title,
-          descriptionVi: data.description_vi ?? null,
+          title: data.title,
+          description: data.description ?? null,
           accessTier: data.access_tier,
           status: "draft",
           origin: "human",
@@ -176,46 +173,42 @@ async function createCurriculumRecord(
 }
 
 export default defineEventHandler(async (event) => {
-  try {
-    const session = await requireManagerSession(event);
-    const rawBody =
-      (event.context?.body as unknown) ??
-      (event as Record<string, unknown>)._body ??
-      (await readBody(event).catch(() => ({}))) ??
-      {};
+  const session = await requireManagerSession(event);
+  const rawBody =
+    (event.context?.body as unknown) ??
+    (event as Record<string, unknown>)._body ??
+    (await readBody(event).catch(() => ({}))) ??
+    {};
 
-    const parsed = createCurriculumSchema.safeParse(rawBody);
-    if (!parsed.success) {
-      throw createError({
-        statusCode: 422,
-        statusMessage: "VALIDATION_FAILED",
-        message: parsed.error.issues[0]?.message || "Dữ liệu không hợp lệ",
-      });
-    }
-
-    const db = getOwnerDb();
-    const data = parsed.data;
-    const managerId = session.manager_id || session.id || 1;
-
-    const created = await createCurriculumRecord(db, data, managerId);
-
-    await writeAudit(db, {
-      action: "content_created",
-      actor_type: "manager",
-      actor_id: managerId,
-      entity_type: "curriculum",
-      entity_id: String(created.id),
-      after_data: {
-        code: created.code,
-        version: created.contentVersion,
-        title: created.titleVi,
-        program_type: created.programType,
-      },
+  const parsed = createCurriculumSchema.safeParse(rawBody);
+  if (!parsed.success) {
+    throw createError({
+      statusCode: 422,
+      statusMessage: "VALIDATION_FAILED",
+      message: parsed.error.issues[0]?.message || "Dữ liệu không hợp lệ",
     });
-
-    setResponseStatus(event, 201);
-    return created;
-  } catch (err) {
-    return respondToManagerAuthError(event, err);
   }
+
+  const db = getOwnerDb();
+  const data = parsed.data;
+  const managerId = session.manager_id || session.id || 1;
+
+  const created = await createCurriculumRecord(db, data, managerId);
+
+  await writeAudit(db, {
+    action: "content_created",
+    actor_type: "manager",
+    actor_id: managerId,
+    entity_type: "curriculum",
+    entity_id: String(created.id),
+    after_data: {
+      code: created.code,
+      version: created.contentVersion,
+      title: created.title,
+      program_type: created.programType,
+    },
+  });
+
+  setResponseStatus(event, 201);
+  return created;
 });

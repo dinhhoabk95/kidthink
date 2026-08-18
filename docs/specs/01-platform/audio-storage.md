@@ -2,7 +2,7 @@
 spec: AUDIO-STORAGE
 title: Lưu trữ và chuẩn hoá audio asset
 area: platform
-status: approved
+status: implemented
 mvp: false
 phase: P2
 reviewed: 2026-08-16

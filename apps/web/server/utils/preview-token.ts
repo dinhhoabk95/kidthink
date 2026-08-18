@@ -3,7 +3,7 @@ import { createHmac, timingSafeEqual } from "node:crypto";
 const PREVIEW_SECRET =
   process.env.SESSION_SECRET ||
   process.env.NUXT_SESSION_PASSWORD ||
-  "kidthink-preview-token-secret-key-32-chars-minimum";
+  "mindkid-preview-token-secret-key-32-chars-minimum";
 
 const PREVIEW_TOKEN_TTL_MS = 30 * 60 * 1000; // 30 minutes
 

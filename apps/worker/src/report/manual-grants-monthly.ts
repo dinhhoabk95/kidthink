@@ -1,4 +1,4 @@
-import { entitlements, getDb, managers, users } from "@kidthink/db";
+import { entitlements, getDb, managers, users } from "@mindkid/db";
 import { and, eq, gte, lt } from "drizzle-orm";
 
 export interface ManualGrantReportJobInput {

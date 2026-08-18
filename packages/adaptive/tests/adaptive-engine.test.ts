@@ -17,7 +17,7 @@ import {
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const DRIZZLE_REGEX = /drizzle-orm/i;
-const KIDTHINK_DB_REGEX = /@kidthink\/db/i;
+const MindKid_DB_REGEX = /@mindkid\/db/i;
 const PACKAGES_DB_REGEX = /from\s+["'][^"']*packages\/db/i;
 const NEW_DATE_REGEX = /new\s+Date\s*\(\s*\)/;
 const DATE_NOW_REGEX = /Date\.now\s*\(\s*\)/;
@@ -31,7 +31,7 @@ describe("packages/adaptive — Pure Adaptive Engine (BR-ADP-01..10, BR-PRG-08)"
       for (const file of files) {
         const content = fs.readFileSync(path.join(srcDir, file), "utf-8");
         expect(content).not.toMatch(DRIZZLE_REGEX);
-        expect(content).not.toMatch(KIDTHINK_DB_REGEX);
+        expect(content).not.toMatch(MindKid_DB_REGEX);
         expect(content).not.toMatch(PACKAGES_DB_REGEX);
       }
     });

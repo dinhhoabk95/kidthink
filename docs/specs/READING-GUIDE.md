@@ -261,7 +261,7 @@ tiêu đề, cấm đọc tuần tự từng ô.
 | Còn câu hỏi nào mở chặn P0 | `grep -rn 'chặn P0' docs/specs/` |
 | Corpus có sạch không | `pnpm lint:specs` |
 
-Lưu ý: Lệnh `grep` phải chạy từ `kidthink/` (nơi có `docs/`). Đo trên `docs/tasks/*.md` sẽ ra
+Lưu ý: Lệnh `grep` phải chạy từ `mindkid/` (nơi có `docs/`). Đo trên `docs/tasks/*.md` sẽ ra
 kết quả nhiễu — file task **nói về** ký hiệu nên chính nó chứa chuỗi đang tìm.
 
 ---

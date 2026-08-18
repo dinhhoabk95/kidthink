@@ -181,7 +181,7 @@
     FAQ_ITEMS,
     FEATURED_GUEST_LEVELS,
     PACKAGE_CATALOG,
-  } from "@kidthink/shared";
+  } from "@mindkid/shared";
   import { useHead, useSeoMeta } from "unhead";
   import CookieNoticeBanner from "~/components/cookie-notice-banner.vue";
   import LandingBenefits from "~/components/landing-benefits.vue";
@@ -276,29 +276,29 @@
   // BR-SEO2-04 & BR-SEO2-09: Meta and hreflang
   useSeoMeta({
     title:
-      "KidThink — Thư viện tư duy qua trò chơi tương tác cho trẻ mầm non 3–6 tuổi",
+      "MindKid — Thư viện tư duy qua trò chơi tương tác cho trẻ mầm non 3–6 tuổi",
     description:
       "Phát triển 6 năng lực toán học nền tảng cho bé 3–6 tuổi qua 120+ trò chơi tương tác chuẩn sư phạm mầm non. Chơi thử miễn phí ngay không cần đăng ký.",
     ogTitle:
-      "KidThink — Thư viện tư duy qua trò chơi tương tác cho trẻ mầm non 3–6 tuổi",
+      "MindKid — Thư viện tư duy qua trò chơi tương tác cho trẻ mầm non 3–6 tuổi",
     ogDescription:
       "Phát triển 6 năng lực toán học nền tảng cho bé qua 120+ trò chơi tương tác chuẩn sư phạm mầm non.",
-    ogImage: "https://kidthink.vn/images/og-home.png",
+    ogImage: "https://mindkid.vn/images/og-home.png",
     ogType: "website",
     twitterCard: "summary_large_image",
   });
 
   useHead({
     htmlAttrs: { lang: "vi-VN" },
-    link: [{ rel: "canonical", href: "https://kidthink.vn/" }],
+    link: [{ rel: "canonical", href: "https://mindkid.vn/" }],
     script: [
       {
         type: "application/ld+json",
         innerHTML: JSON.stringify({
           "@context": "https://schema.org",
           "@type": "WebSite",
-          name: "KidThink",
-          url: "https://kidthink.vn",
+          name: "MindKid",
+          url: "https://mindkid.vn",
         }),
       },
       {
@@ -306,9 +306,9 @@
         innerHTML: JSON.stringify({
           "@context": "https://schema.org",
           "@type": "Organization",
-          name: "KidThink",
-          url: "https://kidthink.vn",
-          logo: "https://kidthink.vn/images/brand-logo.png",
+          name: "MindKid",
+          url: "https://mindkid.vn",
+          logo: "https://mindkid.vn/images/brand-logo.png",
         }),
       },
     ],

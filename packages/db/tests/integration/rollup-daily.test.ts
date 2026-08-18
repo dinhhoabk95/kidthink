@@ -44,7 +44,7 @@ describe("Task 5 — Daily Rollup & Entitlement Expire (BR-TLM-02, BR-TLM-05, BR
         .insert(gameTemplates)
         .values({
           code: "GT-001",
-          nameVi: "Template Rollup Test",
+          name: "Template Rollup Test",
           mechanic: "tap_target",
         })
         .returning();
@@ -59,7 +59,7 @@ describe("Task 5 — Daily Rollup & Entitlement Expire (BR-TLM-02, BR-TLM-05, BR
         code: glCode,
         contentVersion: 1,
         templateId: gt.id,
-        titleVi: "Level Rollup Test",
+        title: "Level Rollup Test",
         contentPack: { test: true },
         difficultyParams: { speed: 1 },
         accessTier: "free",

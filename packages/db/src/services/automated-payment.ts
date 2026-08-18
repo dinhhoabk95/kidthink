@@ -1,10 +1,10 @@
-import { appError } from "@kidthink/auth";
+import { appError } from "@mindkid/auth";
 import {
   type AutomatedPaymentProvider,
   type AutomatedPaymentWebhookPayload,
   isWebhookWithinReplayWindow,
   PACKAGE_CATALOG,
-} from "@kidthink/shared";
+} from "@mindkid/shared";
 import { and, eq, inArray } from "drizzle-orm";
 import { getOwnerDb } from "../client.js";
 import {

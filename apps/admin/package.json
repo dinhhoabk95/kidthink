@@ -1,5 +1,5 @@
 {
-  "name": "@kidthink/admin",
+  "name": "@mindkid/admin",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -10,9 +10,9 @@
     "typecheck": "nuxt typecheck"
   },
   "dependencies": {
-    "@kidthink/auth": "workspace:*",
-    "@kidthink/db": "workspace:*",
-    "@kidthink/shared": "workspace:*"
+    "@mindkid/auth": "workspace:*",
+    "@mindkid/db": "workspace:*",
+    "@mindkid/shared": "workspace:*"
   },
   "devDependencies": {
     "nuxt": "catalog:",

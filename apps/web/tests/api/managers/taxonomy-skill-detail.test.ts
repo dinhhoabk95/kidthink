@@ -5,7 +5,7 @@ import {
   skillPrerequisites,
   skills,
   strands,
-} from "@kidthink/db";
+} from "@mindkid/db";
 import { eq } from "drizzle-orm";
 import { describe, expect, it } from "vitest";
 import handler from "../../../server/api/managers/taxonomy/skills/[code].get.js";
@@ -35,7 +35,6 @@ function mockEvent(
               manager_id: 1,
               display_name: "Manager Name",
               session_id: "sess_manager_123",
-              refresh_token_version: 1,
               role: managerRole,
             },
           }
@@ -65,7 +64,7 @@ describe("Task 6 — GET /api/managers/taxonomy/skills/[code] (BR-TXB-04, BR-TXB
       .insert(competencies)
       .values({
         code: "C2",
-        nameVi: "Hình học và không gian",
+        name: "Hình học và không gian",
         colorToken: "brand-indigo",
         icon: "geometry",
         position: 2,
@@ -80,7 +79,7 @@ describe("Task 6 — GET /api/managers/taxonomy/skills/[code] (BR-TXB-04, BR-TXB
       .values({
         code: "C2.GEO",
         competencyId: compId,
-        nameVi: "Hình dạng phẳng",
+        name: "Hình dạng phẳng",
         position: 1,
       })
       .onConflictDoNothing()
@@ -99,7 +98,7 @@ describe("Task 6 — GET /api/managers/taxonomy/skills/[code] (BR-TXB-04, BR-TXB
       .values({
         code: "C2.GEO.98",
         strandId,
-        nameVi: "Nhận biết hình tròn",
+        name: "Nhận biết hình tròn",
         ageMin: 3,
         ageMax: 4,
         difficulty: 1,
@@ -116,7 +115,7 @@ describe("Task 6 — GET /api/managers/taxonomy/skills/[code] (BR-TXB-04, BR-TXB
       .values({
         code: "C2.GEO.99",
         strandId,
-        nameVi: "Phân biệt hình tròn và hình vuông",
+        name: "Phân biệt hình tròn và hình vuông",
         ageMin: 3,
         ageMax: 5,
         difficulty: 2,
@@ -162,8 +161,8 @@ describe("Task 6 — GET /api/managers/taxonomy/skills/[code] (BR-TXB-04, BR-TXB
         .values({
           code: "LO-C2.GEO.99-01",
           skillId: s2Id,
-          behaviourVi: "Chỉ ra điểm khác nhau giữa hình tròn và hình vuông",
-          observableCriteriaVi: "Chọn đúng khi đưa ra 2 hình",
+          behaviour: "Chỉ ra điểm khác nhau giữa hình tròn và hình vuông",
+          observableCriteria: "Chọn đúng khi đưa ra 2 hình",
           position: 1,
         })
         .onConflictDoNothing();

@@ -1,19 +1,12 @@
-import { AppError } from "@kidthink/auth";
-import { auditLogs, consentRequirements, getOwnerDb } from "@kidthink/db";
-import {
-  createError,
-  defineEventHandler,
-  getHeader,
-  readBody,
-  setResponseStatus,
-} from "h3";
+import { auditLogs, consentRequirements, getOwnerDb } from "@mindkid/db";
+import { createError, defineEventHandler, getHeader, readBody } from "h3";
 import { z } from "zod";
 import {
   assertManagerRequestBodySize,
   getManagerRemoteIp,
   requireSuperAdminSession,
-  respondToManagerAuthError,
 } from "../../../utils/admin-auth-runtime.js";
+
 import { requireReauth } from "../../../utils/reauth-runtime.js";
 
 const ForceReconsentSchema = z
@@ -28,89 +21,76 @@ const ForceReconsentSchema = z
   .strict();
 
 export default defineEventHandler(async (event) => {
-  try {
-    assertManagerRequestBodySize(event, 8 * 1024);
-    const superAdminSession = requireSuperAdminSession(event);
-    const managerId = Number(superAdminSession.manager_id);
+  assertManagerRequestBodySize(event, 8 * 1024);
+  const superAdminSession = requireSuperAdminSession(event);
+  const managerId = Number(superAdminSession.manager_id);
 
-    // Require superadmin reauth ≤ 5 min
-    requireReauth(event);
+  // Require superadmin reauth ≤ 5 min
+  requireReauth(event);
 
-    const eventBody = (event.context as { body?: Record<string, unknown> })
-      ?.body;
-    const rawBody =
-      eventBody || ((await readBody(event)) as Record<string, unknown>) || {};
+  const eventBody = (event.context as { body?: Record<string, unknown> })?.body;
+  const rawBody =
+    eventBody || ((await readBody(event)) as Record<string, unknown>) || {};
 
-    const parsed = ForceReconsentSchema.safeParse(rawBody);
-    if (!parsed.success) {
-      throw createError({
-        statusCode: 422,
-        statusMessage: "VALIDATION_FAILED",
-        data: {
-          code: "VALIDATION_FAILED",
-          message: "Dữ liệu yêu cầu tái đồng ý không hợp lệ.",
-        },
-      });
-    }
-
-    const { consent_type: consentType, notice, reason } = parsed.data;
-
-    const ipAddress = getManagerRemoteIp(event);
-    const userAgent = getHeader(event, "user-agent") || "unknown";
-    const now = new Date();
-
-    const db = getOwnerDb();
-
-    // In single transaction: update consent_requirements & insert audit_logs
-    await db.transaction(async (tx) => {
-      await tx
-        .insert(consentRequirements)
-        .values({
-          consentType,
-          reconsentRequiredAt: now,
-          noticeVi: notice,
-          updatedAt: now,
-        })
-        .onConflictDoUpdate({
-          target: consentRequirements.consentType,
-          set: {
-            reconsentRequiredAt: now,
-            noticeVi: notice,
-            updatedAt: now,
-          },
-        });
-
-      await tx.insert(auditLogs).values({
-        actorType: "manager",
-        actorId: managerId,
-        action: "legal_reconsent_forced",
-        entityType: "consent_requirement",
-        entityId: consentType,
-        afterData: {
-          consent_type: consentType,
-          notice,
-        },
-        reason,
-        ipAddress,
-        userAgent,
-        createdAt: now,
-      });
+  const parsed = ForceReconsentSchema.safeParse(rawBody);
+  if (!parsed.success) {
+    throw createError({
+      statusCode: 422,
+      statusMessage: "VALIDATION_FAILED",
+      data: {
+        code: "VALIDATION_FAILED",
+        message: "Dữ liệu yêu cầu tái đồng ý không hợp lệ.",
+      },
     });
-
-    return {
-      consent_type: consentType,
-      reconsent_required_at: now.toISOString(),
-      notice,
-    };
-  } catch (err: unknown) {
-    if (err instanceof AppError) {
-      setResponseStatus(event, err.status);
-      throw createError({
-        statusCode: err.status,
-        statusMessage: err.code,
-        data: err.toResponse(),
-      });
-    }
-    return respondToManagerAuthError(event, err);
   }
+
+  const { consent_type: consentType, notice, reason } = parsed.data;
+
+  const ipAddress = getManagerRemoteIp(event);
+  const userAgent = getHeader(event, "user-agent") || "unknown";
+  const now = new Date();
+
+  const db = getOwnerDb();
+
+  // In single transaction: update consent_requirements & insert audit_logs
+  await db.transaction(async (tx) => {
+    await tx
+      .insert(consentRequirements)
+      .values({
+        consentType,
+        reconsentRequiredAt: now,
+        notice,
+        updatedAt: now,
+      })
+      .onConflictDoUpdate({
+        target: consentRequirements.consentType,
+        set: {
+          reconsentRequiredAt: now,
+          notice,
+          updatedAt: now,
+        },
+      });
+
+    await tx.insert(auditLogs).values({
+      actorType: "manager",
+      actorId: managerId,
+      action: "legal_reconsent_forced",
+      entityType: "consent_requirement",
+      entityId: consentType,
+      afterData: {
+        consent_type: consentType,
+        notice,
+      },
+      reason,
+      ipAddress,
+      userAgent,
+      createdAt: now,
+    });
+  });
+
+  return {
+    consent_type: consentType,
+    reconsent_required_at: now.toISOString(),
+    notice,
+  };
 });

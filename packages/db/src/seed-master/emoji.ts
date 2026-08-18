@@ -1,4 +1,4 @@
-import { ALL_EMOJIS, getEmojiCode } from "@kidthink/emoji";
+import { ALL_EMOJIS, getEmojiCode } from "@mindkid/emoji";
 import type { NodePgDatabase } from "drizzle-orm/node-postgres";
 import { emojiRegistry } from "../schema/taxonomy.ts";
 
@@ -12,7 +12,7 @@ export function hasSkinToneModifier(emojiStr: string): boolean {
 }
 
 /**
- * Seeds Master Emoji Registry from `@kidthink/emoji`.
+ * Seeds Master Emoji Registry from `@mindkid/emoji`.
  * Enforces BR-EMJ-09 (no skin tone modifiers allowed).
  * Idempotent according to `code`.
  */
@@ -30,17 +30,17 @@ export async function seedEmojiMasterData(
 
     const code = getEmojiCode(entry);
 
-    const nameVi = entry.name || "";
-    const keywordsVi = entry.keywords || [];
+    const name = entry.name || "";
+    const keywords = entry.keywords || [];
 
     await db
       .insert(emojiRegistry)
       .values({
         code,
         unicode: entry.emoji,
-        nameVi,
+        name,
         category: entry.category,
-        searchKeywordsVi: keywordsVi,
+        searchKeywords: keywords,
         ageSuitability: entry.age_min >= 4 ? "4plus" : "all",
         status: "active",
       })

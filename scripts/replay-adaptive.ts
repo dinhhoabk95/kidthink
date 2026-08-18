@@ -1,12 +1,12 @@
-import { computeUpdate, type MasteryState } from "@kidthink/adaptive";
+import { computeUpdate, type MasteryState } from "@mindkid/adaptive";
 import {
   contentSkillMap,
   getOwnerDb,
   masteryState,
   playSessions,
   telemetryEvents,
-} from "@kidthink/db";
-import { computeSessionResult } from "@kidthink/shared";
+} from "@mindkid/db";
+import { computeSessionResult } from "@mindkid/shared";
 import { and, asc, eq } from "drizzle-orm";
 
 export interface ReplayOptions {

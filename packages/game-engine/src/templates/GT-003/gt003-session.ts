@@ -2,64 +2,69 @@ import type {
   GT003Content,
   GT003Difficulty,
 } from "../../contracts/templates/gt003";
-import { BaseGameSession, type FeedbackKind } from "../../game-session";
+import {
+  ACTION_CORRECT,
+  ACTION_IGNORED,
+  ACTION_RETRY,
+  type ActionResult,
+  type GameAction,
+  TemplateGameSession,
+} from "../../game-session";
 
-export class GT003Session extends BaseGameSession {
-  readonly content: GT003Content;
-  readonly difficulty: GT003Difficulty;
+const DROP_ACTIONS = new Set(["drop_item", "tap_tap_item"]);
+
+export class GT003Session extends TemplateGameSession<
+  GT003Content,
+  GT003Difficulty
+> {
   private readonly itemsInContainer: Set<string> = new Set();
-  private isWon = false;
-
-  constructor(content: GT003Content, difficulty: GT003Difficulty) {
-    super();
-    this.content = content;
-    this.difficulty = difficulty;
-  }
 
   setupEntities(): void {
     this.itemsInContainer.clear();
     this.isWon = false;
   }
 
-  validateAction(action: { type: string; data: unknown }): {
-    valid: boolean;
-    feedback: FeedbackKind;
-  } {
-    if (action.type !== "drop_item" && action.type !== "tap_tap_item") {
-      return { valid: false, feedback: "none" };
+  /** The item, only when it was dropped on this level's one container. */
+  private resolveDrop(itemId: string, containerId: string) {
+    if (containerId !== this.content.container.container_id) {
+      return;
     }
-    const data = action.data as { item_id: string; container_id: string };
-    const item = this.content.items.find((i) => i.item_id === data.item_id);
-    if (!item || data.container_id !== this.content.container.container_id) {
-      return { valid: false, feedback: "none" };
-    }
+    return this.content.items.find((i) => i.item_id === itemId);
+  }
 
-    if (item.is_correct) {
-      return { valid: true, feedback: "pop_celebrate" };
+  validateAction(action: GameAction): ActionResult {
+    if (!DROP_ACTIONS.has(action.type)) {
+      return ACTION_IGNORED;
     }
-    return { valid: false, feedback: "amber_soft" };
+    const { item_id, container_id } = action.data as {
+      item_id: string;
+      container_id: string;
+    };
+    const item = this.resolveDrop(item_id, container_id);
+    if (!item) {
+      return ACTION_IGNORED;
+    }
+    return item.is_correct ? ACTION_CORRECT : ACTION_RETRY;
   }
 
   onItemDropped(itemId: string, containerId: string): void {
-    const item = this.content.items.find((i) => i.item_id === itemId);
-    if (!item || containerId !== this.content.container.container_id) {
+    const item = this.resolveDrop(itemId, containerId);
+    if (!item) {
       return;
     }
 
-    if (item.is_correct) {
-      this.itemsInContainer.add(itemId);
-      this.recordEvent("item_dropped", { item_id: itemId, is_correct: true });
-      const targetItems = this.content.items.filter((i) => i.is_correct);
-      if (this.itemsInContainer.size === targetItems.length) {
-        this.isWon = true;
-        this.completeSession();
-      }
-    } else {
-      this.recordEvent("item_dropped", { item_id: itemId, is_correct: false });
+    this.recordEvent("item_dropped", {
+      item_id: itemId,
+      is_correct: item.is_correct,
+    });
+    if (!item.is_correct) {
+      return;
     }
-  }
 
-  checkWinCondition(): boolean {
-    return this.isWon;
+    this.itemsInContainer.add(itemId);
+    const targetCount = this.content.items.filter((i) => i.is_correct).length;
+    if (this.itemsInContainer.size === targetCount) {
+      this.winSession();
+    }
   }
 }

@@ -3,13 +3,13 @@
  * Business rules: BR-CGB-01..10, BR-GLM-01..10
  */
 
-import { appError } from "@kidthink/auth";
+import { appError } from "@mindkid/auth";
 import {
   type CreateCustomGameInput,
   type CustomGameValidationResult,
   type UpdateCustomGameInput,
   validateCustomGameContent,
-} from "@kidthink/shared";
+} from "@mindkid/shared";
 import { and, desc, eq, sql } from "drizzle-orm";
 import { getDb } from "../client.ts";
 import { childProfiles } from "../schema/child.ts";

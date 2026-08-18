@@ -1,4 +1,4 @@
-import { MVP_TEMPLATES } from "@kidthink/game-engine";
+import { MVP_TEMPLATES } from "@mindkid/game-engine";
 import { defineEventHandler } from "h3";
 
 export default defineEventHandler(() => {

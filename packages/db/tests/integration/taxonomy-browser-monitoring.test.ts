@@ -1,5 +1,5 @@
 import { resolve } from "node:path";
-import { loadAndValidateAlertsFile, redactPii } from "@kidthink/shared";
+import { loadAndValidateAlertsFile, redactPii } from "@mindkid/shared";
 import { describe, expect, it } from "vitest";
 
 describe("P1.16 Taxonomy Browser & Monitoring Invariants (BR-TXB, BR-MON)", () => {

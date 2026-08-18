@@ -1,5 +1,5 @@
 /**
- * @kidthink/emoji
+ * @mindkid/emoji
  * Hệ sinh thái emoji curated cho giáo dục mầm non Việt Nam.
  *
  * 800+ emoji phân loại theo 32 categories, mapping 12 chủ đề giáo trình,

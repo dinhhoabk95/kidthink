@@ -1,4 +1,4 @@
-import { getOwnerDb, learningObjectives, skills } from "@kidthink/db";
+import { getOwnerDb, learningObjectives, skills } from "@mindkid/db";
 import { eq } from "drizzle-orm";
 import { createError, defineEventHandler, getRouterParam, setHeader } from "h3";
 

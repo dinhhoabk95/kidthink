@@ -42,9 +42,9 @@ describe("Billing Schema Integration Tests", () => {
     try {
       await db.insert(packages).values({
         code: pkgCode,
-        nameVi: "Gói Test",
-        audienceVi: "Người dùng",
-        descriptionVi: "Mô tả",
+        name: "Gói Test",
+        audience: "Người dùng",
+        description: "Mô tả",
         isPublic: true,
         isFeatured: false,
         status: "active",

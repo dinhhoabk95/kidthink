@@ -124,7 +124,7 @@
               {{ standardPkg.title }}
             </h2>
             <p class="text-surface-500 dark:text-surface-400 text-sm mb-6">
-              {{ standardPkg.description_vi }}
+              {{ standardPkg.description }}
             </p>
             <div class="mb-8">
               <span
@@ -213,7 +213,7 @@
               {{ premiumPkg.title }}
             </h2>
             <p class="text-surface-500 dark:text-surface-400 text-sm mb-6">
-              {{ premiumPkg.description_vi }}
+              {{ premiumPkg.description }}
             </p>
             <div class="mb-8">
               <span
@@ -337,13 +337,13 @@
 </template>
 
 <script lang="ts" setup>
-  import { PACKAGE_CATALOG } from "@kidthink/shared";
+  import { PACKAGE_CATALOG } from "@mindkid/shared";
   import { useHead, useSeoMeta } from "#imports";
 
   const standardPkg = PACKAGE_CATALOG["PKG-standard"] || {
     code: "PKG-standard",
     title: "Gói Tiêu chuẩn",
-    description_vi: "Đầy đủ lộ trình học chuẩn cho gia đình.",
+    description: "Đầy đủ lộ trình học chuẩn cho gia đình.",
     offers: [
       { offer_code: "std_annual", price_vnd: 599_000, duration_days: 365 },
     ],
@@ -352,7 +352,7 @@
   const premiumPkg = PACKAGE_CATALOG["PKG-premium"] || {
     code: "PKG-premium",
     title: "Gói Cao cấp",
-    description_vi: "Trải nghiệm học tập toàn diện và tính năng cao cấp.",
+    description: "Trải nghiệm học tập toàn diện và tính năng cao cấp.",
     offers: [
       { offer_code: "prem_annual", price_vnd: 899_000, duration_days: 365 },
     ],

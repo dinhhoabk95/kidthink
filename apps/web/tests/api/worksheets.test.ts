@@ -5,8 +5,8 @@ import {
   managers,
   users,
   worksheets,
-} from "@kidthink/db";
-import { ENTITLEMENT_KEYS } from "@kidthink/shared";
+} from "@mindkid/db";
+import { ENTITLEMENT_KEYS } from "@mindkid/shared";
 import { eq } from "drizzle-orm";
 import { beforeEach, describe, expect, it } from "vitest";
 import getWorksheetByCodeHandler from "../../server/api/managers/worksheets/[code]/index.get.js";
@@ -54,7 +54,7 @@ beforeEach(async () => {
       .values({
         key: k.key,
         group: k.group as any,
-        labelVi: k.label,
+        label: k.label,
         isMvp: k.is_mvp,
       })
       .onConflictDoNothing();
@@ -64,12 +64,12 @@ beforeEach(async () => {
   let [mgr] = await db
     .select({ id: managers.id })
     .from(managers)
-    .where(eq(managers.email, "worksheet-tester@kidthink.edu.vn"));
+    .where(eq(managers.email, "worksheet-tester@mindkid.edu.vn"));
   if (!mgr) {
     [mgr] = await db
       .insert(managers)
       .values({
-        email: "worksheet-tester@kidthink.edu.vn",
+        email: "worksheet-tester@mindkid.edu.vn",
         passwordHash: "hash",
         displayName: "Worksheet Studio Tester",
         role: "super_admin",
@@ -89,12 +89,12 @@ beforeEach(async () => {
   let [u] = await db
     .select({ id: users.id })
     .from(users)
-    .where(eq(users.email, "parent-worksheet-tester@kidthink.edu.vn"));
+    .where(eq(users.email, "parent-worksheet-tester@mindkid.edu.vn"));
   if (!u) {
     [u] = await db
       .insert(users)
       .values({
-        email: "parent-worksheet-tester@kidthink.edu.vn",
+        email: "parent-worksheet-tester@mindkid.edu.vn",
         passwordHash: "hash",
         displayName: "Parent Tester",
         isActive: true,
@@ -141,7 +141,6 @@ function mockManagerEvent(
         manager_id: testManagerId,
         display_name: "Worksheet Studio Tester",
         session_id: "sess_mgr_ws",
-        refresh_token_version: 1,
         role: "super_admin",
       },
       params,
@@ -220,7 +219,7 @@ describe("Worksheet Studio & Download APIs (BR-WSM-01..08, Task #64 / P4.3)", ()
         title: "Phiếu tô màu quy luật",
         layout_template: "pattern_coloring",
         content_blocks: sampleBlocks,
-        instructions_vi:
+        instructions:
           "Hướng dẫn người lớn: Giúp trẻ quan sát quy luật và dùng bút sáp tô màu vào hình còn trống.",
         learning_objective_ids: [1],
         access_tier: "standard",
@@ -261,7 +260,7 @@ describe("Worksheet Studio & Download APIs (BR-WSM-01..08, Task #64 / P4.3)", ()
           title: "Phiếu danh sách test",
           layout_template: "pattern_coloring",
           content_blocks: sampleBlocks,
-          instructions_vi: "Hướng dẫn người lớn.",
+          instructions: "Hướng dẫn người lớn.",
           learning_objective_ids: [1],
           access_tier: "free",
         }
@@ -277,7 +276,7 @@ describe("Worksheet Studio & Download APIs (BR-WSM-01..08, Task #64 / P4.3)", ()
     const detailEvent = mockManagerEvent("GET", { code });
     const detailRes = (await getWorksheetByCodeHandler(detailEvent)) as any;
     expect(detailRes.code).toBe(code);
-    expect(detailRes.titleVi).toBe("Phiếu danh sách test");
+    expect(detailRes.title).toBe("Phiếu danh sách test");
   });
 
   it("POST /api/managers/worksheets/[code]/render thực thi render PDF và lưu bằng chứng", async () => {
@@ -291,7 +290,7 @@ describe("Worksheet Studio & Download APIs (BR-WSM-01..08, Task #64 / P4.3)", ()
           title: "Phiếu render test",
           layout_template: "pattern_coloring",
           content_blocks: sampleBlocks,
-          instructions_vi: "Hướng dẫn người lớn quan sát.",
+          instructions: "Hướng dẫn người lớn quan sát.",
           learning_objective_ids: [1],
           access_tier: "standard",
         }
@@ -318,7 +317,7 @@ describe("Worksheet Studio & Download APIs (BR-WSM-01..08, Task #64 / P4.3)", ()
           title: "Phiếu preview test",
           layout_template: "pattern_coloring",
           content_blocks: sampleBlocks,
-          instructions_vi: "Hướng dẫn người lớn.",
+          instructions: "Hướng dẫn người lớn.",
           learning_objective_ids: [1],
           access_tier: "standard",
         }
@@ -347,7 +346,7 @@ describe("Worksheet Studio & Download APIs (BR-WSM-01..08, Task #64 / P4.3)", ()
           title: "Phiếu tải về chuẩn",
           layout_template: "pattern_coloring",
           content_blocks: sampleBlocks,
-          instructions_vi: "Hướng dẫn người lớn chi tiết.",
+          instructions: "Hướng dẫn người lớn chi tiết.",
           learning_objective_ids: [1],
           access_tier: "standard",
         }
@@ -357,7 +356,7 @@ describe("Worksheet Studio & Download APIs (BR-WSM-01..08, Task #64 / P4.3)", ()
     await renderWorksheetHandler(mockManagerEvent("POST", { code }));
 
     // Cập nhật trạng thái published để user có thể truy cập
-    const { worksheets } = await import("@kidthink/db");
+    const { worksheets } = await import("@mindkid/db");
     await db
       .update(worksheets)
       .set({ status: "published", publishedAt: new Date() })

@@ -1,4 +1,4 @@
-import type { NotificationCode } from "@kidthink/shared";
+import type { NotificationCode } from "@mindkid/shared";
 import mjml2html from "mjml";
 
 const SCRIPT_TAG_REGEX = /<script/i;

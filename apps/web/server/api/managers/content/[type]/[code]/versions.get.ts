@@ -4,13 +4,10 @@ import {
   getOwnerDb,
   lessons,
   playSessions,
-} from "@kidthink/db";
+} from "@mindkid/db";
 import { and, asc, desc, eq, sql } from "drizzle-orm";
 import { createError, defineEventHandler, getRouterParam } from "h3";
-import {
-  requireManagerSession,
-  respondToManagerAuthError,
-} from "../../../../../utils/admin-auth-runtime.js";
+import { requireManagerSession } from "../../../../../utils/admin-auth-runtime.js";
 
 export interface ContentVersionItem {
   id: number;
@@ -37,8 +34,8 @@ function computeLevelDiff(
   r: typeof gameLevels.$inferSelect
 ): Record<string, { before: unknown; after: unknown }> {
   const diffSummary: Record<string, { before: unknown; after: unknown }> = {};
-  if (prevRow.titleVi !== r.titleVi) {
-    diffSummary.title = { before: prevRow.titleVi, after: r.titleVi };
+  if (prevRow.title !== r.title) {
+    diffSummary.title = { before: prevRow.title, after: r.title };
   }
   if (prevRow.accessTier !== r.accessTier) {
     diffSummary.access_tier = {
@@ -106,7 +103,7 @@ async function fetchGameLevelVersions(
       code: r.code,
       version: r.contentVersion,
       status: r.status,
-      title: r.titleVi,
+      title: r.title,
       created_by_manager_id: r.createdByManagerId,
       reviewed_by_manager_id: r.reviewedByManagerId,
       published_at: r.publishedAt?.toISOString() || null,
@@ -155,7 +152,7 @@ async function fetchLessonVersions(
       code: r.code,
       version: r.contentVersion,
       status: r.status,
-      title: r.titleVi,
+      title: r.title,
       created_by_manager_id: r.createdByManagerId,
       reviewed_by_manager_id: r.reviewedByManagerId,
       published_at: r.publishedAt?.toISOString() || null,
@@ -173,32 +170,28 @@ async function fetchLessonVersions(
 }
 
 export default defineEventHandler(async (event) => {
-  try {
-    await requireManagerSession(event);
-    const typeParam = getRouterParam(event, "type");
-    const code = getRouterParam(event, "code");
+  await requireManagerSession(event);
+  const typeParam = getRouterParam(event, "type");
+  const code = getRouterParam(event, "code");
 
-    if (!(typeParam && code)) {
-      throw createError({
-        statusCode: 404,
-        statusMessage: "NOT_FOUND",
-      });
-    }
-
-    const db = getOwnerDb();
-    let versionItems: ContentVersionItem[] = [];
-
-    if (typeParam === "game_level") {
-      versionItems = await fetchGameLevelVersions(code, db);
-    } else if (typeParam === "lesson") {
-      versionItems = await fetchLessonVersions(code, db);
-    }
-
-    return {
-      code,
-      versions: versionItems.reverse(), // latest first
-    };
-  } catch (err) {
-    return respondToManagerAuthError(event, err);
+  if (!(typeParam && code)) {
+    throw createError({
+      statusCode: 404,
+      statusMessage: "NOT_FOUND",
+    });
   }
+
+  const db = getOwnerDb();
+  let versionItems: ContentVersionItem[] = [];
+
+  if (typeParam === "game_level") {
+    versionItems = await fetchGameLevelVersions(code, db);
+  } else if (typeParam === "lesson") {
+    versionItems = await fetchLessonVersions(code, db);
+  }
+
+  return {
+    code,
+    versions: versionItems.reverse(), // latest first
+  };
 });

@@ -1,18 +1,11 @@
-import { appError } from "@kidthink/auth";
-import { getOwnerDb, recurringSubscriptions } from "@kidthink/db";
+import { appError } from "@mindkid/auth";
+import { getOwnerDb, recurringSubscriptions } from "@mindkid/db";
 import { desc, eq } from "drizzle-orm";
 import { defineEventHandler, getRouterParam } from "h3";
-import {
-  requireSuperAdminSession,
-  respondToManagerAuthError,
-} from "../../../../utils/admin-auth-runtime.ts";
+import { requireSuperAdminSession } from "../../../../utils/admin-auth-runtime.ts";
 
 export default defineEventHandler(async (event) => {
-  try {
-    requireSuperAdminSession(event);
-  } catch (error) {
-    return respondToManagerAuthError(event, error);
-  }
+  requireSuperAdminSession(event);
 
   const idParam = getRouterParam(event, "id");
   const userId = Number(idParam);

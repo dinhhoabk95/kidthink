@@ -1,4 +1,4 @@
-import { getOwnerDb, searchLessons } from "@kidthink/db";
+import { getOwnerDb, searchLessons } from "@mindkid/db";
 import { defineEventHandler, getQuery } from "h3";
 import { requireManagerSession } from "../../../utils/admin-auth-runtime.js";
 

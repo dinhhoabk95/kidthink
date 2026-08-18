@@ -1,5 +1,5 @@
 /**
- * @kidthink/emoji — Registry
+ * @mindkid/emoji — Registry
  * Aggregate tất cả data files, build lookup maps.
  */
 

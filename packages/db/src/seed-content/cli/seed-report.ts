@@ -37,7 +37,7 @@ export async function runSeedReport() {
   console.log("Competency Breakdown:");
   const compList = await db.select().from(competencies);
   for (const comp of compList) {
-    console.log(`  [${comp.code}] ${comp.nameVi}`);
+    console.log(`  [${comp.code}] ${comp.name}`);
   }
 
   console.log("\n✅ [seed:report] Report complete.");

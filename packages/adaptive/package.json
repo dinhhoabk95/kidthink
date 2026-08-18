@@ -1,5 +1,5 @@
 {
-  "name": "@kidthink/adaptive",
+  "name": "@mindkid/adaptive",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -11,10 +11,10 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@kidthink/shared": "workspace:*"
+    "@mindkid/shared": "workspace:*"
   },
   "devDependencies": {
-    "@kidthink/config": "workspace:*",
+    "@mindkid/config": "workspace:*",
     "fast-check": "catalog:",
     "typescript": "catalog:",
     "vitest": "catalog:"

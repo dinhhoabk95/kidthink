@@ -33,7 +33,6 @@ function mockEvent(
               manager_id: 1,
               display_name: "Manager Name",
               session_id: "sess_manager_123",
-              refresh_token_version: 1,
               role: managerRole,
             },
           }

@@ -2,7 +2,7 @@ import {
   AiSearchQuerySchema,
   CREDIT_COST_MAP,
   DEFAULT_EMBEDDING_MODEL,
-} from "@kidthink/shared";
+} from "@mindkid/shared";
 import { and, eq, sql } from "drizzle-orm";
 import { getOwnerDb } from "../client.ts";
 import { aiUsageLog } from "../schema/ai.ts";
@@ -19,7 +19,7 @@ export interface SemanticSearchResultItem {
   code: string;
   title: string;
   instruction?: string;
-  summary_vi?: string;
+  summary?: string;
   age_min: number;
   age_max: number;
   difficulty: number;
@@ -69,8 +69,8 @@ async function hydrateGameLevel(
     id: gl.id,
     content_type: "game_level",
     code: gl.code,
-    title: gl.titleVi,
-    instruction: gl.instructionVi ?? undefined,
+    title: gl.title,
+    instruction: gl.instruction ?? undefined,
     age_min:
       gl.ageMin !== null && gl.ageMin !== undefined ? Number(gl.ageMin) : 3,
     age_max:
@@ -109,8 +109,8 @@ async function hydrateLesson(
     id: ls.id,
     content_type: "lesson",
     code: ls.code,
-    title: ls.titleVi,
-    instruction: ls.guideVi ?? undefined,
+    title: ls.title,
+    instruction: ls.guide ?? undefined,
     age_min:
       ls.targetAgeMin !== null && ls.targetAgeMin !== undefined
         ? Number(ls.targetAgeMin)
@@ -151,8 +151,8 @@ async function executeFallback(
       id: item.id,
       content_type: item.contentType as "game_level" | "lesson",
       code: item.code,
-      title: item.titleVi,
-      instruction: item.instructionVi ?? undefined,
+      title: item.title,
+      instruction: item.instruction ?? undefined,
       age_min: item.ageMin,
       age_max: item.ageMax,
       difficulty: item.difficulty,

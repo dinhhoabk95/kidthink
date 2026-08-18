@@ -1,4 +1,4 @@
-import { type AccessTier, TIER_ORDER, TIER_RANK } from "@kidthink/shared";
+import { type AccessTier, TIER_ORDER, TIER_RANK } from "@mindkid/shared";
 import { and, desc, eq, sql } from "drizzle-orm";
 import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 import { activities, lessons } from "../schema/content.ts";
@@ -279,7 +279,7 @@ async function resolveGameLevelMeta(
   const levels = await db
     .select({
       code: gameLevels.code,
-      titleVi: gameLevels.titleVi,
+      title: gameLevels.title,
       thumbnailEmoji: gameLevels.thumbnailEmoji,
       accessTier: gameLevels.accessTier,
       status: gameLevels.status,
@@ -292,7 +292,7 @@ async function resolveGameLevelMeta(
   const active = published ?? levels[0];
   return {
     code: active?.code ?? `game_level-${entityId}`,
-    title: active?.titleVi ?? `Trò chơi #${entityId}`,
+    title: active?.title ?? `Trò chơi #${entityId}`,
     thumbnailEmoji: active?.thumbnailEmoji ?? undefined,
     accessTier: active?.accessTier ?? "free",
     isArchived: !published && levels.some((l) => l.status === "archived"),
@@ -306,7 +306,7 @@ async function resolveLessonMeta(
   const les = await db
     .select({
       code: lessons.code,
-      titleVi: lessons.titleVi,
+      title: lessons.title,
       accessTier: lessons.accessTier,
       status: lessons.status,
     })
@@ -318,7 +318,7 @@ async function resolveLessonMeta(
   const active = published ?? les[0];
   return {
     code: active?.code ?? `lesson-${entityId}`,
-    title: active?.titleVi ?? `Bài học #${entityId}`,
+    title: active?.title ?? `Bài học #${entityId}`,
     accessTier: active?.accessTier ?? "free",
     isArchived: !published && les.some((l) => l.status === "archived"),
   };
@@ -331,7 +331,7 @@ async function resolveCurriculumMeta(
   const currs = await db
     .select({
       code: curricula.code,
-      titleVi: curricula.titleVi,
+      title: curricula.title,
       accessTier: curricula.accessTier,
       status: curricula.status,
     })
@@ -343,7 +343,7 @@ async function resolveCurriculumMeta(
   const active = published ?? currs[0];
   return {
     code: active?.code ?? `curriculum-${entityId}`,
-    title: active?.titleVi ?? `Chương trình #${entityId}`,
+    title: active?.title ?? `Chương trình #${entityId}`,
     accessTier: active?.accessTier ?? "free",
     isArchived: !published && currs.some((c) => c.status === "archived"),
   };
@@ -356,7 +356,7 @@ async function resolveActivityMeta(
   const acts = await db
     .select({
       code: activities.code,
-      titleVi: activities.titleVi,
+      title: activities.title,
       accessTier: activities.accessTier,
       status: activities.status,
     })
@@ -368,7 +368,7 @@ async function resolveActivityMeta(
   const active = published ?? acts[0];
   return {
     code: active?.code ?? `activity-${entityId}`,
-    title: active?.titleVi ?? `Hoạt động #${entityId}`,
+    title: active?.title ?? `Hoạt động #${entityId}`,
     accessTier: active?.accessTier ?? "free",
     isArchived: !published && acts.some((a) => a.status === "archived"),
   };

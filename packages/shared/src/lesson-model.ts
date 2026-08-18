@@ -26,15 +26,14 @@ export interface LessonValidationInput {
   code?: string;
   title: string;
   guide?: string | LessonGuide;
-  guide_vi?: string;
   target_age_min?: number | null;
   target_age_max?: number | null;
   estimated_minutes?: number;
-  materials_vi?: string | null;
-  warm_up_vi?: string | null;
-  reflection_vi?: string | null;
-  assessment_vi?: string | null;
-  extension_vi?: string | null;
+  materials?: string | null;
+  warm_up?: string | null;
+  reflection?: string | null;
+  assessment?: string | null;
+  extension?: string | null;
   activities?: LessonActivityItem[];
   activity_kinds?: string[];
   skill_codes?: string[];
@@ -119,12 +118,11 @@ function countGuideTextParts(text: string): number {
   return count;
 }
 
-function checkGuideStructure(guide: unknown, guideVi?: string): number {
+function checkGuideStructure(guide: unknown): number {
   if (typeof guide === "object" && guide !== null) {
     return countGuideObjParts(guide as LessonGuide);
   }
-  const guideText = (guide as string) || guideVi || "";
-  return countGuideTextParts(guideText);
+  return countGuideTextParts((guide as string) || "");
 }
 
 function checkOffscreenActivities(
@@ -193,13 +191,13 @@ function validateProgressionAndActivities(
     );
   }
 
-  if (!input.warm_up_vi || input.warm_up_vi.trim() === "") {
+  if (!input.warm_up || input.warm_up.trim() === "") {
     warnings.push(
       "BR-LSM-01: Lesson nên có phần Khởi động (2–5 phút) để trẻ vào trạng thái tập trung."
     );
   }
 
-  if (!input.reflection_vi || input.reflection_vi.trim() === "") {
+  if (!input.reflection || input.reflection.trim() === "") {
     warnings.push(
       "BR-LSM-01: Lesson nên có phần Đúc kết / phản hồi (2–5 phút) để tổng kết bài học."
     );
@@ -221,7 +219,7 @@ function validateGuideAndMaterials(
   errors: string[],
   warnings: string[]
 ): void {
-  const guideParts = checkGuideStructure(input.guide, input.guide_vi);
+  const guideParts = checkGuideStructure(input.guide);
   if (guideParts < 5) {
     errors.push(
       `BR-LSM-02: Hướng dẫn (Guide) phải trả lời đủ 5 câu hỏi cốt lõi cho người lớn (hiện tại: ${guideParts}/5 phần).`
@@ -253,13 +251,13 @@ function validateAssessmentAndReading(
   allText: string,
   errors: string[]
 ): void {
-  if (!input.assessment_vi || input.assessment_vi.trim() === "") {
+  if (!input.assessment || input.assessment.trim() === "") {
     errors.push(
-      "BR-LSM-06: Lesson phải có tiêu chí đánh giá / quan sát cụ thể (assessment_vi) cho người lớn."
+      "BR-LSM-06: Lesson phải có tiêu chí đánh giá / quan sát cụ thể (assessment) cho người lớn."
     );
   } else {
     for (const term of FORBIDDEN_ASSESSMENT_ABSTRACT_TERMS) {
-      if (term.test(input.assessment_vi)) {
+      if (term.test(input.assessment)) {
         errors.push(
           "BR-LSM-06: Tiêu chí đánh giá không được dùng thuật ngữ trừu tượng chung chung, phải là hành vi quan sát được."
         );
@@ -300,11 +298,11 @@ export function validateLessonModel(
 
   const allText = [
     input.title || "",
-    input.materials_vi || "",
+    input.materials || "",
     typeof input.guide === "string"
       ? input.guide
       : JSON.stringify(input.guide || ""),
-    input.assessment_vi || "",
+    input.assessment || "",
   ].join(" ");
 
   validateGuideAndMaterials(input, allText, errors, warnings);

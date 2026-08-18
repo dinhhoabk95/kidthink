@@ -8,7 +8,7 @@ import {
   SEED_ENTITLEMENT_KEYS,
   SEED_PACKAGES,
   users,
-} from "@kidthink/db";
+} from "@mindkid/db";
 import { beforeEach, describe, expect, it } from "vitest";
 import subscriptionHandler from "../../../server/api/users/subscription.get";
 
@@ -28,7 +28,6 @@ function mockUserEvent(userId?: number) {
               user_id: userId,
               display_name: "Test User",
               session_id: "sess_user_test",
-              refresh_token_version: 1,
             },
           }
         : {}),

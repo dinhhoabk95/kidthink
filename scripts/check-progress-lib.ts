@@ -1,9 +1,14 @@
+import { posix } from "node:path";
+
 export interface ProgressSpec {
   id: string;
   phase: string;
   rel: string;
   status: string;
-  businessRuleIds: string[];
+  /** Mọi BR ID xuất hiện trong §6, kể cả rule do spec khác sở hữu */
+  citedRuleIds: string[];
+  /** BR ID mà business-rules.md §7.1 gán prefix cho chính spec này */
+  ownedRuleIds: string[];
 }
 
 export interface PromotedCheckbox {
@@ -18,6 +23,7 @@ export interface PromotedCheckbox {
 export interface ProgressViolation {
   code:
     | "IMPLEMENTED_SPEC_WITHOUT_BR_TEST"
+    | "IMPLEMENTED_SPEC_WITHOUT_OWNED_RULE"
     | "PHASE_NOT_IMPLEMENTED"
     | "PROGRESS_TICK_WITHOUT_EVIDENCE"
     | "STEP_SPEC_NOT_IMPLEMENTED";
@@ -35,6 +41,46 @@ interface ValidateProgressInput {
   changedPaths: string[];
   specs: ProgressSpec[];
   testContents: string[];
+}
+
+const RULE_PREFIX_ROW_PATTERN =
+  /\|\s*`(BR-[A-Z0-9]+)`\s*\|\s*\[`[^`]+`\]\(([^)]+)\)/g;
+const SECTION_7_1_PATTERN = /\n### 7\.1 /;
+const SECTION_7_2_PATTERN = /\n### 7\.2 /;
+const RULE_ID_PREFIX_PATTERN = /^(BR-[A-Z0-9]+)-\d+$/;
+
+/**
+ * business-rules.md §7.1 — bản đồ prefix BR sang spec sở hữu. Khoá là prefix,
+ * giá trị là đường dẫn spec tính từ `docs/specs/`.
+ *
+ * Đây là nguồn duy nhất trả lời "rule này của spec nào". §6 của một spec dẫn cả
+ * rule của spec khác, nên không đọc được quyền sở hữu từ đó.
+ */
+export function parseRulePrefixRegistry(
+  businessRulesContent: string
+): Map<string, string> {
+  const section =
+    businessRulesContent
+      .split(SECTION_7_2_PATTERN, 1)[0]
+      ?.split(SECTION_7_1_PATTERN)[1] ?? "";
+  return new Map(
+    [...section.matchAll(RULE_PREFIX_ROW_PATTERN)].map(([, prefix, link]) => [
+      prefix ?? "",
+      posix.normalize(posix.join("00-foundation", link ?? "")),
+    ])
+  );
+}
+
+/** Lọc ra những BR ID mà registry gán cho đúng spec `rel`. */
+export function ownedRuleIds(
+  citedRuleIds: readonly string[],
+  rel: string,
+  registry: ReadonlyMap<string, string>
+): string[] {
+  return citedRuleIds.filter((ruleId) => {
+    const prefix = RULE_ID_PREFIX_PATTERN.exec(ruleId)?.[1];
+    return prefix !== undefined && registry.get(prefix) === rel;
+  });
 }
 
 const CHECKBOX_PATTERN = /^- \[([ xX])\]\s+(.+)$/;
@@ -118,16 +164,37 @@ function validateImplementedSpecTests(
 ): ProgressViolation[] {
   return specs
     .filter((spec) => spec.status === "implemented")
-    .filter(
-      (spec) =>
-        !spec.businessRuleIds.some((ruleId) =>
+    .flatMap((spec): ProgressViolation[] => {
+      if (spec.ownedRuleIds.length === 0) {
+        return [
+          {
+            code: "IMPLEMENTED_SPEC_WITHOUT_OWNED_RULE" as const,
+            message: `${spec.rel}: status implemented nhưng §6 không có rule nào thuộc prefix của spec — kiểm prefix trong business-rules.md §7.1`,
+          },
+        ];
+      }
+      const proven = spec.ownedRuleIds.some((ruleId) =>
+        testContents.some((content) => content.includes(ruleId))
+      );
+      if (proven) {
+        return [];
+      }
+      const borrowed = spec.citedRuleIds.filter(
+        (ruleId) =>
+          !spec.ownedRuleIds.includes(ruleId) &&
           testContents.some((content) => content.includes(ruleId))
-        )
-    )
-    .map((spec) => ({
-      code: "IMPLEMENTED_SPEC_WITHOUT_BR_TEST" as const,
-      message: `${spec.rel}: status implemented nhưng chưa có test tham chiếu BR do spec sở hữu`,
-    }));
+      );
+      const borrowedNote =
+        borrowed.length > 0
+          ? ` (${borrowed.length} rule của spec khác có test — bằng chứng đi vay không tính)`
+          : "";
+      return [
+        {
+          code: "IMPLEMENTED_SPEC_WITHOUT_BR_TEST" as const,
+          message: `${spec.rel}: status implemented nhưng chưa có test tham chiếu BR do spec sở hữu${borrowedNote}`,
+        },
+      ];
+    });
 }
 
 function validateStepSpecs(

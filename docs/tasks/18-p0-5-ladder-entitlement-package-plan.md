@@ -148,7 +148,7 @@ Khối B — sau khi P0.3 đóng
 - [ ] Bốn bảng mang `access_tier` (`game_levels` `lessons` `activities` `curricula`) đều nhận giá trị mới.
 
 **Kiểm chứng**
-- [ ] `pnpm db:migrate` từ database rỗng, không lỗi · `pnpm --filter @kidthink/db test -- game` xanh.
+- [ ] `pnpm db:migrate` từ database rỗng, không lỗi · `pnpm --filter @mindkid/db test -- game` xanh.
 
 **Phụ thuộc:** không · **Cỡ:** S
 
@@ -161,7 +161,7 @@ Khối B — sau khi P0.3 đóng
 - [ ] Ca âm: gate một key ngoài registry → `UNKNOWN_ENTITLEMENT_KEY` (500, lỗi lập trình).
 
 **Kiểm chứng**
-- [ ] `pnpm --filter @kidthink/shared test` xanh, assertion tham chiếu `BR-ENT-01` và `BR-ENT-03`.
+- [ ] `pnpm --filter @mindkid/shared test` xanh, assertion tham chiếu `BR-ENT-01` và `BR-ENT-03`.
 
 **Phụ thuộc:** không · **Cỡ:** M
 
@@ -174,7 +174,7 @@ Khối B — sau khi P0.3 đóng
 - [ ] Test cũ đếm `16`/`12` thay bằng so khớp tập hợp; **không** giữ song song hai kiểu assert.
 
 **Kiểm chứng**
-- [ ] `pnpm --filter @kidthink/db test -- seed` xanh, assertion tham chiếu `BR-ENT-03`.
+- [ ] `pnpm --filter @mindkid/db test -- seed` xanh, assertion tham chiếu `BR-ENT-03`.
 
 **Phụ thuộc:** T2 · **Cỡ:** M
 
@@ -189,7 +189,7 @@ Khối B — sau khi P0.3 đóng
 - [ ] Giá giữ `PENDING_PRICE_VND` (D-DT); test khẳng định không gói nào có giá khác 0 khi §11 Q1 chưa chốt.
 
 **Kiểm chứng**
-- [ ] `pnpm --filter @kidthink/db test -- seed` xanh, assertion tham chiếu `BR-PKG-04` `BR-PKG-05` `BR-PKG-08`.
+- [ ] `pnpm --filter @mindkid/db test -- seed` xanh, assertion tham chiếu `BR-PKG-04` `BR-PKG-05` `BR-PKG-08`.
 
 **Phụ thuộc:** T3 · **Cỡ:** M
 
@@ -226,7 +226,7 @@ file định nghĩa catalog. Repo đã có tiền lệ đúng dạng này — `p
 - [ ] Cổng: không file nào ngoài module này ánh xạ entitlement sang tier.
 
 **Kiểm chứng**
-- [ ] `pnpm --filter @kidthink/shared test -- ladder` xanh, assertion tham chiếu `BR-LAD-01` `BR-LAD-02` `BR-LAD-05`.
+- [ ] `pnpm --filter @mindkid/shared test -- ladder` xanh, assertion tham chiếu `BR-LAD-01` `BR-LAD-02` `BR-LAD-05`.
 
 **Phụ thuộc:** P0.3 đóng · T1 · T2 · **Cỡ:** M
 
@@ -239,7 +239,7 @@ file định nghĩa catalog. Repo đã có tiền lệ đúng dạng này — `p
 - [ ] `upgrade_package_codes` sinh từ catalog, không viết tay.
 
 **Kiểm chứng**
-- [ ] `pnpm --filter @kidthink/shared test -- ladder` xanh, assertion tham chiếu `BR-LAD-04` `BR-LAD-09`.
+- [ ] `pnpm --filter @mindkid/shared test -- ladder` xanh, assertion tham chiếu `BR-LAD-04` `BR-LAD-09`.
 
 **Phụ thuộc:** T6 · T4 · **Cỡ:** M
 
@@ -252,7 +252,7 @@ file định nghĩa catalog. Repo đã có tiền lệ đúng dạng này — `p
 - [ ] Hết hạn không xoá dữ liệu (`BR-ENT-05`).
 
 **Kiểm chứng**
-- [ ] `pnpm --filter @kidthink/db test -- entitlement` xanh, assertion tham chiếu `BR-ENT-02` `BR-ENT-05` `BR-ENT-06`.
+- [ ] `pnpm --filter @mindkid/db test -- entitlement` xanh, assertion tham chiếu `BR-ENT-02` `BR-ENT-05` `BR-ENT-06`.
 
 **Phụ thuộc:** P0.3 đóng · T2 · **Cỡ:** M
 
@@ -265,7 +265,7 @@ file định nghĩa catalog. Repo đã có tiền lệ đúng dạng này — `p
 - [ ] `limit_snapshot` ghi lúc mở chu kỳ; đổi gói giữa chu kỳ không hồi tố.
 
 **Kiểm chứng**
-- [ ] `pnpm --filter @kidthink/db test -- quota` xanh, assertion tham chiếu `BR-ENT-07` `BR-ENT-10`.
+- [ ] `pnpm --filter @mindkid/db test -- quota` xanh, assertion tham chiếu `BR-ENT-07` `BR-ENT-10`.
 
 **Phụ thuộc:** T8 · **Cỡ:** M
 

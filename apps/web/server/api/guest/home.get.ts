@@ -3,7 +3,7 @@ import {
   FAQ_ITEMS,
   FEATURED_GUEST_LEVELS,
   PACKAGE_CATALOG,
-} from "@kidthink/shared";
+} from "@mindkid/shared";
 import { defineEventHandler, setHeader } from "h3";
 
 export default defineEventHandler((event) => {
@@ -80,7 +80,7 @@ export default defineEventHandler((event) => {
     hero: {
       title: "Phát triển tư duy cho trẻ 3–6 tuổi qua trò chơi tương tác",
       subtitle:
-        "KidThink giúp bé rèn luyện 6 năng lực toán học nền tảng qua 120+ trò chơi kiến tạo sư phạm trực quan.",
+        "MindKid giúp bé rèn luyện 6 năng lực toán học nền tảng qua 120+ trò chơi kiến tạo sư phạm trực quan.",
       cta_primary: {
         text: "Cho bé chơi thử ngay",
         url: "/games/GL-C1-001",

@@ -1,5 +1,5 @@
 /**
- * @kidthink/emoji — Type definitions
+ * @mindkid/emoji — Type definitions
  * Hệ sinh thái emoji curated cho giáo dục mầm non Việt Nam.
  */
 

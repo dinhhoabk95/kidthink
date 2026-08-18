@@ -9,6 +9,7 @@ import {
   primaryKey,
   text,
   timestamp,
+  unique,
   uniqueIndex,
   uuid,
   varchar,
@@ -59,19 +60,22 @@ export const paymentOrderStatusEnum = pgEnum("payment_order_status", [
 export const entitlementKeys = pgTable("entitlement_keys", {
   key: varchar("key", { length: 60 }).primaryKey(),
   group: entitlementGroupEnum("group").notNull(),
-  labelVi: varchar("label_vi", { length: 100 }).notNull(),
-  descriptionVi: text("description_vi"),
+  label: varchar("label", { length: 100 }).notNull(),
+  description: text("description"),
   isMvp: boolean("is_mvp").notNull().default(true),
   createdAt: timestamp("created_at", { withTimezone: true })
+    .defaultNow()
+    .notNull(),
+  updatedAt: timestamp("updated_at", { withTimezone: true })
     .defaultNow()
     .notNull(),
 });
 
 export const packages = pgTable("packages", {
   code: varchar("code", { length: 40 }).primaryKey(),
-  nameVi: varchar("name_vi", { length: 100 }).notNull(),
-  audienceVi: varchar("audience_vi", { length: 100 }).notNull(),
-  descriptionVi: text("description_vi"),
+  name: varchar("name", { length: 100 }).notNull(),
+  audience: varchar("audience", { length: 100 }).notNull(),
+  description: text("description"),
   isPublic: boolean("is_public").notNull().default(true),
   isFeatured: boolean("is_featured").notNull().default(false),
   status: packageStatusEnum("status").notNull().default("active"),
@@ -94,6 +98,12 @@ export const packageEntitlements = pgTable(
     entitlementKey: varchar("entitlement_key", { length: 60 })
       .notNull()
       .references(() => entitlementKeys.key, { onDelete: "cascade" }),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+    updatedAt: timestamp("updated_at", { withTimezone: true })
+      .defaultNow()
+      .notNull(),
   },
   (table) => [
     primaryKey({ columns: [table.packageCode, table.entitlementKey] }),
@@ -187,6 +197,9 @@ export const paymentOrders = pgTable(
 export const quotaUsage = pgTable(
   "quota_usage",
   {
+    id: bigint("id", { mode: "number" })
+      .primaryKey()
+      .generatedAlwaysAsIdentity(),
     userId: bigint("user_id", { mode: "number" })
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
@@ -198,9 +211,16 @@ export const quotaUsage = pgTable(
     updatedAt: timestamp("updated_at", { withTimezone: true })
       .defaultNow()
       .notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .defaultNow()
+      .notNull(),
   },
   (table) => [
-    primaryKey({ columns: [table.userId, table.quotaKey, table.periodStart] }),
+    unique("quota_usage_user_key_period_unique").on(
+      table.userId,
+      table.quotaKey,
+      table.periodStart
+    ),
   ]
 );
 
@@ -229,6 +249,9 @@ export const paymentTransactions = pgTable(
     rawPayload: jsonb("raw_payload"),
     reconciledAt: timestamp("reconciled_at", { withTimezone: true }),
     createdAt: timestamp("created_at", { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+    updatedAt: timestamp("updated_at", { withTimezone: true })
       .defaultNow()
       .notNull(),
   },

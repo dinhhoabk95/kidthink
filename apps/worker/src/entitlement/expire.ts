@@ -1,4 +1,4 @@
-import { runExpireEntitlements } from "@kidthink/db";
+import { runExpireEntitlements } from "@mindkid/db";
 
 export async function runEntitlementExpireJob(
   jobId: string,

@@ -1,7 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
-import { getOwnerDb } from "@kidthink/db";
-import { alert } from "@kidthink/queue";
+import { getOwnerDb } from "@mindkid/db";
+import { alert } from "@mindkid/queue";
 import postgres from "postgres";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { runVerifyBackup } from "./verify.js";
@@ -44,7 +44,7 @@ vi.mock("postgres", () => {
 
 // Remove crypto and zlib mocks, we will use real ones
 
-vi.mock("@kidthink/queue", () => {
+vi.mock("@mindkid/queue", () => {
   return {
     alert: vi.fn(),
     QUEUE_NAME: "test",
@@ -52,7 +52,7 @@ vi.mock("@kidthink/queue", () => {
 });
 
 // We need to mock drizzle db inserts/updates
-vi.mock("@kidthink/db", () => ({
+vi.mock("@mindkid/db", () => ({
   getOwnerDb: vi.fn().mockReturnValue({
     insert: vi.fn().mockReturnValue({
       values: vi.fn().mockReturnValue({
@@ -93,7 +93,7 @@ describe("apps/worker/backup/verify", () => {
     vi.clearAllMocks();
     process.env.BACKUP_ENCRYPTION_KEY = "12345678901234567890123456789012"; // 32 chars
     process.env.DATABASE_URL =
-      "postgres://postgres:postgres@localhost:5432/kidthink";
+      "postgres://postgres:postgres@localhost:5432/mindkid";
 
     // Create dummy backup file to satisfy fs checks
     const storageDir = path.join(process.cwd(), ".backups");

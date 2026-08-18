@@ -252,7 +252,7 @@
     if (iframe?.contentWindow) {
       iframe.contentWindow.postMessage(
         {
-          type: "KIDTHINK_STUDIO_REPLAY",
+          type: "MindKid_STUDIO_REPLAY",
         },
         "*"
       );
@@ -267,7 +267,7 @@
 
     iframe.contentWindow.postMessage(
       {
-        type: "KIDTHINK_STUDIO_UPDATE",
+        type: "MindKid_STUDIO_UPDATE",
         payload: {
           templateCode: props.templateCode,
           levelData: props.levelData,

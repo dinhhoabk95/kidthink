@@ -1,4 +1,4 @@
-import { AI_FEATURE_COSTS } from "@kidthink/shared";
+import { AI_FEATURE_COSTS } from "@mindkid/shared";
 import { eq } from "drizzle-orm";
 import { describe, expect, it } from "vitest";
 import {
@@ -282,7 +282,7 @@ describe("AI Credit Ledger Integration Tests (BR-ACL-01..09)", () => {
     const [manager] = await db
       .insert(managers)
       .values({
-        email: `sa-credit-${uid}@kidthink.edu.vn`,
+        email: `sa-credit-${uid}@mindkid.edu.vn`,
         displayName: "Super Admin Tester",
         role: "super_admin",
         passwordHash: "hash-mock",

@@ -16,7 +16,7 @@ import type {
   StrandCode,
   StrandTier,
   ThinkingProcess,
-} from "@kidthink/shared";
+} from "@mindkid/shared";
 import {
   COMPETENCIES as INTERNAL_COMPETENCIES,
   STRANDS as INTERNAL_STRANDS,

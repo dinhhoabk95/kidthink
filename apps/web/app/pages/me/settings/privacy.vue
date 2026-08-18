@@ -127,7 +127,7 @@
       </p>
       <a
         class="inline-flex items-center gap-2 min-h-11 px-5 py-2 bg-surface-100 hover:bg-surface-200 text-surface-800 font-semibold text-sm rounded-xl transition-colors"
-        download="kidthink-data-export.json"
+        download="mindkid-data-export.json"
         href="/api/users/data-export"
       >
         <UIcon class="w-4 h-4" name="i-lucide-download" />

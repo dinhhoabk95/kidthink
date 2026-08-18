@@ -6,7 +6,7 @@ import {
   getOwnerDb,
   libraryItems,
   users,
-} from "@kidthink/db";
+} from "@mindkid/db";
 import { eq } from "drizzle-orm";
 import { beforeEach, describe, expect, it } from "vitest";
 import collectionsGetHandler from "../../../server/api/users/collections/index.get.ts";
@@ -55,7 +55,6 @@ function mockUserEvent(
               user_id: userId,
               display_name: "Test User",
               session_id: "sess_user_lib_test",
-              refresh_token_version: 1,
             },
           }
         : {}),
@@ -113,7 +112,7 @@ describe("Task #82 — Library & Collections API Suite (BR-MLB-01..07)", () => {
       .insert(gameTemplates)
       .values({
         code: templateCode,
-        nameVi: "Game template test P3 Lib",
+        name: "Game template test P3 Lib",
         mechanic: "drag_drop",
         contentContract: {},
       })
@@ -174,7 +173,7 @@ describe("Task #82 — Library & Collections API Suite (BR-MLB-01..07)", () => {
         entityId: gl1EntityId,
         templateId,
         difficulty: 1,
-        titleVi: "Đếm số trái cây",
+        title: "Đếm số trái cây",
         accessTier: "standard",
         status: "published",
         contentPack: { items: ["apple"] },
@@ -205,7 +204,7 @@ describe("Task #82 — Library & Collections API Suite (BR-MLB-01..07)", () => {
         entityId: gl2EntityId,
         templateId,
         difficulty: 2,
-        titleVi: "Phân biệt hình tam giác",
+        title: "Phân biệt hình tam giác",
         accessTier: "premium",
         status: "archived",
         contentPack: { items: ["triangle"] },
@@ -221,7 +220,7 @@ describe("Task #82 — Library & Collections API Suite (BR-MLB-01..07)", () => {
       .values({
         code: `CUR-P3-LIB-${ts}-${rand}`.slice(0, 50),
         entityId: currEntityId,
-        titleVi: "Lộ trình tư duy toán 3-4 tuổi",
+        title: "Lộ trình tư duy toán 3-4 tuổi",
         accessTier: "standard",
         status: "published",
         durationWeeks: 4,

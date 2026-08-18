@@ -1,4 +1,4 @@
-import type { AccessTier } from "@kidthink/shared";
+import type { AccessTier } from "@mindkid/shared";
 
 export type ReasonCode =
   | "curriculum_next"

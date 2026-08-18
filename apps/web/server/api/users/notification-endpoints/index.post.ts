@@ -1,18 +1,10 @@
-import { AppError } from "@kidthink/auth";
-import { getOwnerDb, notificationEndpoints } from "@kidthink/db";
-import { encryptFcmToken } from "@kidthink/notification";
+import { getOwnerDb, notificationEndpoints } from "@mindkid/db";
+import { encryptFcmToken } from "@mindkid/notification";
 import { and, eq } from "drizzle-orm";
-import {
-  createError,
-  defineEventHandler,
-  readBody,
-  setResponseStatus,
-} from "h3";
+import { createError, defineEventHandler, readBody } from "h3";
 import { z } from "zod";
-import {
-  requireWebUserSession,
-  respondToUserAuthError,
-} from "../../../utils/auth-runtime.js";
+
+import { requireWebUserSession } from "../../../utils/auth-runtime.js";
 
 const endpointRegistrationSchema = z.object({
   provider: z.literal("fcm_web", {
@@ -25,100 +17,88 @@ const endpointRegistrationSchema = z.object({
 });
 
 export default defineEventHandler(async (event) => {
-  try {
-    const user = await requireWebUserSession(event);
-    const userId = Number(user.user_id);
-    const body =
-      (await readBody(event).catch(() => null)) ||
-      event._body ||
-      event.context?.body ||
-      {};
-    const parsed = endpointRegistrationSchema.safeParse(body);
+  const user = await requireWebUserSession(event);
+  const userId = Number(user.user_id);
+  const body =
+    (await readBody(event).catch(() => null)) ||
+    event._body ||
+    event.context?.body ||
+    {};
+  const parsed = endpointRegistrationSchema.safeParse(body);
 
-    if (!parsed.success) {
-      throw createError({
-        statusCode: 400,
-        statusMessage: "INVALID_ENDPOINT_PAYLOAD",
-        data: {
-          code: "INVALID_ENDPOINT_PAYLOAD",
-          message: parsed.error.issues[0]?.message,
-        },
-      });
-    }
-
-    const {
-      provider,
-      client_installation_id: installationId,
-      token,
-    } = parsed.data;
-
-    // Encrypt token and get HMAC fingerprint
-    const { tokenEncrypted, tokenFingerprint } = encryptFcmToken(token);
-
-    const db = getOwnerDb();
-
-    // Check if endpoint exists for (userId, installationId)
-    const [existing] = await db
-      .select()
-      .from(notificationEndpoints)
-      .where(
-        and(
-          eq(notificationEndpoints.userId, userId),
-          eq(notificationEndpoints.clientInstallationId, installationId)
-        )
-      );
-
-    let resultEndpoint = existing;
-
-    if (existing) {
-      // Rotate / update token
-      const [updated] = await db
-        .update(notificationEndpoints)
-        .set({
-          tokenEncrypted,
-          tokenFingerprint,
-          status: "active",
-          lastSeenAt: new Date(),
-          invalidatedAt: null,
-          updatedAt: new Date(),
-        })
-        .where(eq(notificationEndpoints.id, existing.id))
-        .returning();
-
-      resultEndpoint = updated;
-    } else {
-      // Create new endpoint
-      const [created] = await db
-        .insert(notificationEndpoints)
-        .values({
-          userId,
-          provider,
-          clientInstallationId: installationId,
-          tokenEncrypted,
-          tokenFingerprint,
-          status: "active",
-          lastSeenAt: new Date(),
-        })
-        .returning();
-
-      resultEndpoint = created;
-    }
-
-    // BR-BPS-04: Token is NEVER echoed back in response
-    return {
-      uuid: resultEndpoint.uuid,
-      provider: resultEndpoint.provider,
-      status: resultEndpoint.status,
-    };
-  } catch (err) {
-    if (err instanceof AppError) {
-      setResponseStatus(event, err.status);
-      throw createError({
-        statusCode: err.status,
-        statusMessage: err.code,
-        data: { code: err.code, message: err.message },
-      });
-    }
-    return respondToUserAuthError(event, err);
+  if (!parsed.success) {
+    throw createError({
+      statusCode: 400,
+      statusMessage: "INVALID_ENDPOINT_PAYLOAD",
+      data: {
+        code: "INVALID_ENDPOINT_PAYLOAD",
+        message: parsed.error.issues[0]?.message,
+      },
+    });
   }
+
+  const {
+    provider,
+    client_installation_id: installationId,
+    token,
+  } = parsed.data;
+
+  // Encrypt token and get HMAC fingerprint
+  const { tokenEncrypted, tokenFingerprint } = encryptFcmToken(token);
+
+  const db = getOwnerDb();
+
+  // Check if endpoint exists for (userId, installationId)
+  const [existing] = await db
+    .select()
+    .from(notificationEndpoints)
+    .where(
+      and(
+        eq(notificationEndpoints.userId, userId),
+        eq(notificationEndpoints.clientInstallationId, installationId)
+      )
+    );
+
+  let resultEndpoint = existing;
+
+  if (existing) {
+    // Rotate / update token
+    const [updated] = await db
+      .update(notificationEndpoints)
+      .set({
+        tokenEncrypted,
+        tokenFingerprint,
+        status: "active",
+        lastSeenAt: new Date(),
+        invalidatedAt: null,
+        updatedAt: new Date(),
+      })
+      .where(eq(notificationEndpoints.id, existing.id))
+      .returning();
+
+    resultEndpoint = updated;
+  } else {
+    // Create new endpoint
+    const [created] = await db
+      .insert(notificationEndpoints)
+      .values({
+        userId,
+        provider,
+        clientInstallationId: installationId,
+        tokenEncrypted,
+        tokenFingerprint,
+        status: "active",
+        lastSeenAt: new Date(),
+      })
+      .returning();
+
+    resultEndpoint = created;
+  }
+
+  // BR-BPS-04: Token is NEVER echoed back in response
+  return {
+    uuid: resultEndpoint.uuid,
+    provider: resultEndpoint.provider,
+    status: resultEndpoint.status,
+  };
 });

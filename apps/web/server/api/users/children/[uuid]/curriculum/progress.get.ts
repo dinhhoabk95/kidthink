@@ -1,20 +1,17 @@
-import { AppError } from "@kidthink/auth";
 import {
   type AccessTier,
   type CurriculumPlayerItemRef,
   type CurriculumPlayerWeekGoal,
   computeCurriculumProgress,
-} from "@kidthink/shared";
+} from "@mindkid/shared";
 import {
   createError,
   defineEventHandler,
   getRouterParam,
   setResponseStatus,
 } from "h3";
-import {
-  requireWebUserSession,
-  respondToUserAuthError,
-} from "../../../../../utils/auth-runtime.js";
+
+import { requireWebUserSession } from "../../../../../utils/auth-runtime.js";
 import { resolveEnrolledChildCurriculum } from "../../../../../utils/curriculum-runtime.js";
 
 interface WeekItemSummary {
@@ -175,77 +172,60 @@ function buildWeekBreakdown(params: {
 }
 
 export default defineEventHandler(async (event) => {
-  try {
-    const user = await requireWebUserSession(event);
-    const uuid = getRouterParam(event, "uuid");
-    if (!uuid) {
-      setResponseStatus(event, 404);
-      throw createError({ statusCode: 404, statusMessage: "NOT_FOUND" });
-    }
-
-    const userId = Number(user.user_id);
-
-    // 1. Resolve child, enrollment, items, weeks, completed items, and user tiers
-    const {
-      child,
-      enrollment,
-      items,
-      weeks,
-      completedItemIds,
-      userAllowedTiers,
-    } = await resolveEnrolledChildCurriculum(event, userId, uuid, {
-      requireActive: false,
-    });
-
-    // 2. Compute overall progress (BR-CUR-07 & D-MD)
-    const { denominator, numerator, progress } = computeCurriculumProgress({
-      items,
-      completedItemIds,
-      allowedTiers: userAllowedTiers,
-    });
-
-    // 3. Build week breakdown
-    const { weekBreakdown, currentActiveWeek } = buildWeekBreakdown({
-      durationWeeks: enrollment.duration_weeks,
-      items,
-      weeks,
-      completedItemIds,
-      userAllowedTiers,
-    });
-
-    return {
-      enrollment_id: enrollment.id,
-      curriculum_code: enrollment.curriculum_code,
-      curriculum_version: enrollment.curriculum_version,
-      curriculum_title: enrollment.curriculum_title,
-      child_uuid: child.uuid,
-      child_display_name: child.displayName,
-      duration_weeks: enrollment.duration_weeks,
-      sessions_per_week: enrollment.sessions_per_week,
-      status: enrollment.status,
-      current_week: currentActiveWeek,
-      progress,
-      numerator,
-      denominator,
-      total_items: items.length,
-      completed_items: completedItemIds.size,
-      is_completed: enrollment.status === "completed" || progress >= 1.0,
-      weeks: weekBreakdown,
-    };
-  } catch (err: unknown) {
-    const errorObj = err as { statusCode?: number };
-    if (errorObj?.statusCode) {
-      setResponseStatus(event, errorObj.statusCode);
-      throw err;
-    }
-    if (err instanceof AppError) {
-      setResponseStatus(event, err.status);
-      throw createError({
-        statusCode: err.status,
-        statusMessage: err.code,
-        data: { code: err.code, message: err.message },
-      });
-    }
-    return respondToUserAuthError(event, err);
+  const user = await requireWebUserSession(event);
+  const uuid = getRouterParam(event, "uuid");
+  if (!uuid) {
+    setResponseStatus(event, 404);
+    throw createError({ statusCode: 404, statusMessage: "NOT_FOUND" });
   }
+
+  const userId = Number(user.user_id);
+
+  // 1. Resolve child, enrollment, items, weeks, completed items, and user tiers
+  const {
+    child,
+    enrollment,
+    items,
+    weeks,
+    completedItemIds,
+    userAllowedTiers,
+  } = await resolveEnrolledChildCurriculum(event, userId, uuid, {
+    requireActive: false,
+  });
+
+  // 2. Compute overall progress (BR-CUR-07 & D-MD)
+  const { denominator, numerator, progress } = computeCurriculumProgress({
+    items,
+    completedItemIds,
+    allowedTiers: userAllowedTiers,
+  });
+
+  // 3. Build week breakdown
+  const { weekBreakdown, currentActiveWeek } = buildWeekBreakdown({
+    durationWeeks: enrollment.duration_weeks,
+    items,
+    weeks,
+    completedItemIds,
+    userAllowedTiers,
+  });
+
+  return {
+    enrollment_id: enrollment.id,
+    curriculum_code: enrollment.curriculum_code,
+    curriculum_version: enrollment.curriculum_version,
+    curriculum_title: enrollment.curriculum_title,
+    child_uuid: child.uuid,
+    child_display_name: child.displayName,
+    duration_weeks: enrollment.duration_weeks,
+    sessions_per_week: enrollment.sessions_per_week,
+    status: enrollment.status,
+    current_week: currentActiveWeek,
+    progress,
+    numerator,
+    denominator,
+    total_items: items.length,
+    completed_items: completedItemIds.size,
+    is_completed: enrollment.status === "completed" || progress >= 1.0,
+    weeks: weekBreakdown,
+  };
 });

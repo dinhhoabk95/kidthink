@@ -1,4 +1,4 @@
-import { getOwnerDb } from "@kidthink/db";
+import { getOwnerDb } from "@mindkid/db";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { RETENTION_DAYS_POSTGRES, runPostgresBackup } from "./postgres.js";
 
@@ -34,7 +34,7 @@ vi.mock("child_process", () => {
 // But let's mock the DB to be safe and fast unless we want an integration test.
 // Actually, it's easier to mock child_process and let DB insert run? Or mock db?
 // The instructions don't forbid mocking DB, but since we are using drizzle, let's mock it.
-vi.mock("@kidthink/db", () => ({
+vi.mock("@mindkid/db", () => ({
   getOwnerDb: vi.fn().mockReturnValue({
     insert: vi.fn().mockReturnValue({
       values: vi.fn().mockReturnValue({
@@ -84,7 +84,7 @@ describe("apps/worker/backup/postgres", () => {
   it("Ca âm BR-BAK-02: mở file không có khoá thì không đọc được", async () => {
     // Restore valid DATABASE_URL for a successful run (our mocked spawn will succeed)
     process.env.DATABASE_URL =
-      "postgres://postgres:postgres@localhost:5432/kidthink";
+      "postgres://postgres:postgres@localhost:5432/mindkid";
 
     await runPostgresBackup("test-job-success");
 

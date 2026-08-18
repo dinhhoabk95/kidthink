@@ -5,8 +5,8 @@ import {
   getOwnerDb,
   managers,
   users,
-} from "@kidthink/db";
-import { CONSENT_POLICY_MAP, type ConsentType } from "@kidthink/shared";
+} from "@mindkid/db";
+import { CONSENT_POLICY_MAP, type ConsentType } from "@mindkid/shared";
 import { and, eq } from "drizzle-orm";
 import { beforeEach, describe, expect, it } from "vitest";
 import getGuestConsentRequirementsHandler from "../../server/api/guest/consent-requirements/index.get";
@@ -71,7 +71,6 @@ function mockEvent(
       manager_id: managerId,
       display_name: "Super Admin Tester",
       session_id: `sess_manager_${managerId}`,
-      refresh_token_version: 1,
       role: "super_admin",
       reauth_at: reauth,
     };
@@ -81,7 +80,6 @@ function mockEvent(
       user_id: userId,
       display_name: "Test Parent",
       session_id: `sess_${userId}`,
-      refresh_token_version: 0,
       reauth_at: reauth,
     };
   }
@@ -129,7 +127,7 @@ describe("Consent Management — P1.14 & D12 (D-QV, D-QW, D-QX, D-QY, D-QZ)", ()
       const [u] = await db
         .insert(users)
         .values({
-          email: `get_consents_${Date.now()}_${Math.random()}@kidthink.test`,
+          email: `get_consents_${Date.now()}_${Math.random()}@mindkid.test`,
           passwordHash: "hash123",
           displayName: "Get Consents Tester",
         })
@@ -163,7 +161,7 @@ describe("Consent Management — P1.14 & D12 (D-QV, D-QW, D-QX, D-QY, D-QZ)", ()
       const [u] = await db
         .insert(users)
         .values({
-          email: `consent_user_${Date.now()}_${Math.random()}@kidthink.test`,
+          email: `consent_user_${Date.now()}_${Math.random()}@mindkid.test`,
           passwordHash: "hash123",
           displayName: "Consent Tester",
         })
@@ -201,7 +199,7 @@ describe("Consent Management — P1.14 & D12 (D-QV, D-QW, D-QX, D-QY, D-QZ)", ()
       const [u] = await db
         .insert(users)
         .values({
-          email: `consent_stale_${Date.now()}_${Math.random()}@kidthink.test`,
+          email: `consent_stale_${Date.now()}_${Math.random()}@mindkid.test`,
           passwordHash: "hash123",
           displayName: "Stale Marker Tester",
         })
@@ -230,7 +228,7 @@ describe("Consent Management — P1.14 & D12 (D-QV, D-QW, D-QX, D-QY, D-QZ)", ()
       const [m] = await db
         .insert(managers)
         .values({
-          email: `super_admin_${Date.now()}_${Math.random()}@kidthink.test`,
+          email: `super_admin_${Date.now()}_${Math.random()}@mindkid.test`,
           passwordHash: "adminhash",
           displayName: "Super Admin Tester",
           role: "super_admin",
@@ -240,7 +238,7 @@ describe("Consent Management — P1.14 & D12 (D-QV, D-QW, D-QX, D-QY, D-QZ)", ()
       const [u] = await db
         .insert(users)
         .values({
-          email: `forced_user_${Date.now()}_${Math.random()}@kidthink.test`,
+          email: `forced_user_${Date.now()}_${Math.random()}@mindkid.test`,
           passwordHash: "hash123",
           displayName: "Forced User Tester",
         })
@@ -411,7 +409,7 @@ describe("Consent Management — P1.14 & D12 (D-QV, D-QW, D-QX, D-QY, D-QZ)", ()
       const [u] = await db
         .insert(users)
         .values({
-          email: `export_user_${Date.now()}_${Math.random()}@kidthink.test`,
+          email: `export_user_${Date.now()}_${Math.random()}@mindkid.test`,
           passwordHash: "hash123",
           displayName: "Export Tester",
         })
@@ -451,7 +449,7 @@ describe("Consent Management — P1.14 & D12 (D-QV, D-QW, D-QX, D-QY, D-QZ)", ()
       const [u] = await db
         .insert(users)
         .values({
-          email: `consent_terms_wd_${Date.now()}_${Math.random()}@kidthink.test`,
+          email: `consent_terms_wd_${Date.now()}_${Math.random()}@mindkid.test`,
           passwordHash: "hash123",
           displayName: "Terms Withdraw Tester",
         })

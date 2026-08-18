@@ -3,7 +3,7 @@
  * Business rules: BR-PCU-01..08, D-P4M..D-P4P
  */
 
-import { appError } from "@kidthink/auth";
+import { appError } from "@mindkid/auth";
 import {
   type AccessTier,
   type CopySystemCurriculumInput,
@@ -18,7 +18,7 @@ import {
   type ReplacePersonalCurriculumItemsInput,
   resolvePersonalCurriculumNextStep,
   type UpdatePersonalCurriculumMetaInput,
-} from "@kidthink/shared";
+} from "@mindkid/shared";
 import { and, asc, desc, eq, inArray, sql } from "drizzle-orm";
 import { getDb } from "../client.ts";
 import { childProfiles } from "../schema/child.ts";
@@ -116,7 +116,7 @@ function buildLessonDetail(
     entity_type: "lesson",
     entity_id: item.entityId,
     code: lesson?.code,
-    title: lesson?.titleVi ?? `Bài học #${item.entityId}`,
+    title: lesson?.title ?? `Bài học #${item.entityId}`,
     is_required: item.isRequired !== false,
     access_tier: lesson?.accessTier as AccessTier | undefined,
     status: lesson?.status,
@@ -142,7 +142,7 @@ function buildGameLevelDetail(
     entity_type: "game_level",
     entity_id: item.entityId,
     code: gl?.code,
-    title: gl?.titleVi ?? `Trò chơi #${item.entityId}`,
+    title: gl?.title ?? `Trò chơi #${item.entityId}`,
     is_required: item.isRequired !== false,
     access_tier: gl?.accessTier as AccessTier | undefined,
     status: gl?.status,
@@ -226,13 +226,13 @@ async function validateLessons(
     if (l.status !== "published") {
       throw appError(
         "VALIDATION_FAILED",
-        `BR-PCU-01: Bài học '${l.titleVi}' (${l.code}) chưa được xuất bản (status: ${l.status}).`
+        `BR-PCU-01: Bài học '${l.title}' (${l.code}) chưa được xuất bản (status: ${l.status}).`
       );
     }
     if (!allowedTiers.includes(l.accessTier as AccessTier)) {
       throw appError(
         "TIER_LOCKED",
-        `BR-PCU-01: Bài học '${l.titleVi}' yêu cầu gói ${l.accessTier}, vượt quyền tài khoản của bạn.`
+        `BR-PCU-01: Bài học '${l.title}' yêu cầu gói ${l.accessTier}, vượt quyền tài khoản của bạn.`
       );
     }
   }
@@ -254,13 +254,13 @@ async function validateGameLevels(
     if (g.status !== "published") {
       throw appError(
         "VALIDATION_FAILED",
-        `BR-PCU-01: Trò chơi '${g.titleVi}' (${g.code}) chưa được xuất bản (status: ${g.status}).`
+        `BR-PCU-01: Trò chơi '${g.title}' (${g.code}) chưa được xuất bản (status: ${g.status}).`
       );
     }
     if (!allowedTiers.includes(g.accessTier as AccessTier)) {
       throw appError(
         "TIER_LOCKED",
-        `BR-PCU-01: Trò chơi '${g.titleVi}' yêu cầu gói ${g.accessTier}, vượt quyền tài khoản của bạn.`
+        `BR-PCU-01: Trò chơi '${g.title}' yêu cầu gói ${g.accessTier}, vượt quyền tài khoản của bạn.`
       );
     }
   }
@@ -673,7 +673,7 @@ export async function copySystemCurriculum(
       .insert(personalCurricula)
       .values({
         userId: context.userId,
-        title: input.title || `Bản sao - ${systemCurriculum.titleVi}`,
+        title: input.title || `Bản sao - ${systemCurriculum.title}`,
         ageMin: systemCurriculum.targetAgeMin,
         ageMax: systemCurriculum.targetAgeMax,
         durationWeeks: systemCurriculum.durationWeeks,

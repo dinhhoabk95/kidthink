@@ -4,7 +4,7 @@ import {
   lessonActivities,
   lessons,
   writeAudit,
-} from "@kidthink/db";
+} from "@mindkid/db";
 import {
   createError,
   defineEventHandler,
@@ -13,6 +13,7 @@ import {
 } from "h3";
 import { z } from "zod";
 import { requireManagerSession } from "../../../utils/admin-auth-runtime.js";
+import { throwValidationError } from "../../../utils/api-error.js";
 
 const createLessonSchema = z.object({
   code: z
@@ -23,7 +24,7 @@ const createLessonSchema = z.object({
     )
     .optional(),
   title: z.string().min(1, "Tiêu đề bài học không được rỗng"),
-  guide_vi: z.string().min(1, "Hướng dẫn cho người lớn không được rỗng"),
+  guide: z.string().min(1, "Hướng dẫn cho người lớn không được rỗng"),
   target_age_min: z.number().int().min(3).max(6).default(3),
   target_age_max: z.number().int().min(3).max(6).default(6),
   estimated_minutes: z
@@ -32,11 +33,11 @@ const createLessonSchema = z.object({
     .min(5, "Thời lượng tối thiểu 5 phút")
     .max(45, "Thời lượng tối đa 45 phút")
     .default(20),
-  materials_vi: z.string().nullable().optional(),
-  warm_up_vi: z.string().nullable().optional(),
-  reflection_vi: z.string().nullable().optional(),
-  assessment_vi: z.string().nullable().optional(),
-  extension_vi: z.string().nullable().optional(),
+  materials: z.string().nullable().optional(),
+  warm_up: z.string().nullable().optional(),
+  reflection: z.string().nullable().optional(),
+  assessment: z.string().nullable().optional(),
+  extension: z.string().nullable().optional(),
   access_tier: z
     .enum(["free", "login", "standard", "premium"])
     .default("standard"),
@@ -64,29 +65,29 @@ async function attachLessonActivitiesAndSkills(
   skillIds?: number[]
 ) {
   if (activitiesList && activitiesList.length > 0) {
-    for (const actItem of activitiesList) {
-      await db.insert(lessonActivities).values({
+    await db.insert(lessonActivities).values(
+      activitiesList.map((actItem) => ({
         lessonId: createdLessonId,
         position: actItem.position,
         activityId: actItem.activity_id,
         isRequired: actItem.is_required,
-      });
-    }
+      }))
+    );
   }
 
   if (skillIds && skillIds.length > 0) {
     const weightPerSkill = (1.0 / skillIds.length).toFixed(2);
-    for (const skillId of skillIds) {
-      await db
-        .insert(contentSkillMap)
-        .values({
-          entityType: "lesson",
+    await db
+      .insert(contentSkillMap)
+      .values(
+        skillIds.map((skillId) => ({
+          entityType: "lesson" as const,
           entityId,
           skillId,
           weight: weightPerSkill,
-        })
-        .onConflictDoNothing();
-    }
+        }))
+      )
+      .onConflictDoNothing();
   }
 }
 
@@ -96,12 +97,7 @@ export default defineEventHandler(async (event) => {
 
   const parsed = createLessonSchema.safeParse(rawBody);
   if (!parsed.success) {
-    throw createError({
-      statusCode: 422,
-      statusMessage: "VALIDATION_FAILED",
-      message: parsed.error.issues.map((i) => i.message).join("; "),
-      data: parsed.error.issues,
-    });
+    throwValidationError(parsed.error);
   }
 
   const data = parsed.data;
@@ -123,16 +119,16 @@ export default defineEventHandler(async (event) => {
       entityId,
       code,
       contentVersion: 1,
-      titleVi: data.title,
-      guideVi: data.guide_vi,
+      title: data.title,
+      guide: data.guide,
       targetAgeMin: data.target_age_min,
       targetAgeMax: data.target_age_max,
       estimatedMinutes: data.estimated_minutes,
-      materialsVi: data.materials_vi || null,
-      warmUpVi: data.warm_up_vi || null,
-      reflectionVi: data.reflection_vi || null,
-      assessmentVi: data.assessment_vi || null,
-      extensionVi: data.extension_vi || null,
+      materials: data.materials || null,
+      warmUp: data.warm_up || null,
+      reflection: data.reflection || null,
+      assessment: data.assessment || null,
+      extension: data.extension || null,
       accessTier: data.access_tier,
       status: "draft",
       origin: "human",

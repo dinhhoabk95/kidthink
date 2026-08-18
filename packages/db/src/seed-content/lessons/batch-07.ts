@@ -25,13 +25,13 @@ export const LESSON_BATCH_07: LessonSeed[] = [
       target_age_min: 3,
       target_age_max: 4,
       estimated_minutes: 20,
-      materials_vi: "Quả cam, mẩu giấy, tranh ảnh gia đình",
-      warm_up_vi:
+      materials: "Quả cam, mẩu giấy, tranh ảnh gia đình",
+      warm_up:
         "Khởi động: Vươn vai đón mặt trời buổi sáng và nhắm mắt ngủ 3 phút.",
-      reflection_vi: "Đúc kết: Bé ôm mẹ và chúc mẹ buổi tối vui vẻ.",
-      assessment_vi:
+      reflection: "Đúc kết: Bé ôm mẹ và chúc mẹ buổi tối vui vẻ.",
+      assessment:
         "Bé chỉ đúng quả cam là vật nặng hơn và bức tranh đánh răng diễn ra vào buổi sáng.",
-      extension_vi: "Bé sắp xếp đồ chơi trước khi đi ngủ vào buổi tối.",
+      extension: "Bé sắp xếp đồ chơi trước khi đi ngủ vào buổi tối.",
       access_tier: "free",
       skill_codes: ["C4.WGT.01", "C4.TIM.01"],
       learning_objective_codes: ["LO-C4.WGT.01-01", "LO-C4.TIM.01-01"],
@@ -65,14 +65,13 @@ export const LESSON_BATCH_07: LessonSeed[] = [
       target_age_min: 4,
       target_age_max: 5,
       estimated_minutes: 22,
-      materials_vi: "Giấy vẽ biểu đồ, bút màu",
-      warm_up_vi: "Khởi động: Chạy nhanh tại chỗ rồi đi bộ chậm rãi 3 phút.",
-      reflection_vi:
+      materials: "Giấy vẽ biểu đồ, bút màu",
+      warm_up: "Khởi động: Chạy nhanh tại chỗ rồi đi bộ chậm rãi 3 phút.",
+      reflection:
         "Đúc kết: Bé nhìn biểu đồ và cho biết hôm nay thời tiết thế nào.",
-      assessment_vi:
+      assessment:
         "Bé di chuyển nhanh/chậm theo đúng hiệu lệnh và vẽ đúng biểu tượng thời tiết.",
-      extension_vi:
-        "Bé quan sát bầu trời vào buổi chiều xem có thay đổi không.",
+      extension: "Bé quan sát bầu trời vào buổi chiều xem có thay đổi không.",
       access_tier: "login",
       skill_codes: ["C4.TIM.01", "C4.DAT.01"],
       learning_objective_codes: ["LO-C4.TIM.01-01", "LO-C4.DAT.01-01"],
@@ -108,14 +107,13 @@ export const LESSON_BATCH_07: LessonSeed[] = [
       target_age_min: 4,
       target_age_max: 5,
       estimated_minutes: 20,
-      materials_vi: "Chai nước, quả táo, mẩu giấy",
-      warm_up_vi:
+      materials: "Chai nước, quả táo, mẩu giấy",
+      warm_up:
         "Khởi động: Hai tay nâng lên hạ xuống mô phỏng chiếc cân đĩa 3 phút.",
-      reflection_vi:
+      reflection:
         "Đúc kết: Bé chỉ ra món đồ nhẹ nhất trong số các món vừa cân.",
-      assessment_vi:
-        "Bé chọn đúng chai nước đầy là vật nặng nhất trong 3 món đồ.",
-      extension_vi:
+      assessment: "Bé chọn đúng chai nước đầy là vật nặng nhất trong 3 món đồ.",
+      extension:
         "Bé thử cầm quyển sách dày và đoán xem nặng hơn quả táo không.",
       access_tier: "standard",
       skill_codes: ["C4.WGT.01"],
@@ -147,14 +145,13 @@ export const LESSON_BATCH_07: LessonSeed[] = [
       target_age_min: 5,
       target_age_max: 6,
       estimated_minutes: 22,
-      materials_vi: "Biểu đồ thời tiết giấy, bút dạ",
-      warm_up_vi:
+      materials: "Biểu đồ thời tiết giấy, bút dạ",
+      warm_up:
         "Khởi động: Bài tập vận động mô phỏng gió thổi và mưa rơi 3 phút.",
-      reflection_vi: "Đúc kết: Bé nêu số ngày nắng trong tuần vừa qua.",
-      assessment_vi:
+      reflection: "Đúc kết: Bé nêu số ngày nắng trong tuần vừa qua.",
+      assessment:
         "Bé đếm đúng số biểu tượng ngày nắng trên biểu đồ và nói to kết quả.",
-      extension_vi:
-        "Bé dự đoán thời tiết ngày mai dựa trên bầu trời chiều nay.",
+      extension: "Bé dự đoán thời tiết ngày mai dựa trên bầu trời chiều nay.",
       access_tier: "standard",
       skill_codes: ["C4.DAT.01"],
       learning_objective_codes: ["LO-C4.DAT.01-01"],
@@ -186,14 +183,13 @@ export const LESSON_BATCH_07: LessonSeed[] = [
       target_age_min: 5,
       target_age_max: 6,
       estimated_minutes: 20,
-      materials_vi: "Đồng hồ bấm giờ, giấy vẽ",
-      warm_up_vi:
+      materials: "Đồng hồ bấm giờ, giấy vẽ",
+      warm_up:
         "Khởi động: Nhịp thở đều đặn và đếm theo tiếng tích tắc đồng hồ 3 phút.",
-      reflection_vi: "Đúc kết: Bé đếm số vòng tròn vẽ được trong 1 phút.",
-      assessment_vi:
+      reflection: "Đúc kết: Bé đếm số vòng tròn vẽ được trong 1 phút.",
+      assessment:
         "Bé dừng hoạt động đúng lúc khi đồng hồ bấm giờ báo hết 1 phút.",
-      extension_vi:
-        "Thử xem trong 1 phút bé nhặt được bao nhiêu đồ chơi vào giỏ.",
+      extension: "Thử xem trong 1 phút bé nhặt được bao nhiêu đồ chơi vào giỏ.",
       access_tier: "login",
       skill_codes: ["C4.TIM.01"],
       learning_objective_codes: ["LO-C4.TIM.01-01"],
@@ -228,13 +224,12 @@ export const LESSON_BATCH_07: LessonSeed[] = [
       target_age_min: 5,
       target_age_max: 6,
       estimated_minutes: 25,
-      materials_vi: "Đồ vật thí nghiệm, biểu đồ",
-      warm_up_vi: "Khởi động: Bài tập nhà khoa học vươn vai vận động 3 phút.",
-      reflection_vi: "Đúc kết: Bé nhận chứng nhận Nhà Nghiên Cứu Đo Lường.",
-      assessment_vi:
+      materials: "Đồ vật thí nghiệm, biểu đồ",
+      warm_up: "Khởi động: Bài tập nhà khoa học vươn vai vận động 3 phút.",
+      reflection: "Đúc kết: Bé nhận chứng nhận Nhà Nghiên Cứu Đo Lường.",
+      assessment:
         "Bé chọn đúng vật nặng hơn và đọc đúng số liệu từ biểu đồ minh hoạ.",
-      extension_vi:
-        "Bé cùng mẹ lập kế hoạch biểu đồ thói quen đọc sách mỗi ngày.",
+      extension: "Bé cùng mẹ lập kế hoạch biểu đồ thói quen đọc sách mỗi ngày.",
       access_tier: "premium",
       skill_codes: ["C4.WGT.01", "C4.DAT.01"],
       learning_objective_codes: ["LO-C4.WGT.01-01", "LO-C4.DAT.01-01"],

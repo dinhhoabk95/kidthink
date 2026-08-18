@@ -1,7 +1,7 @@
-import { FAQ_ITEMS, type FaqItem } from "@kidthink/shared";
+import { FAQ_ITEMS, type FaqItem } from "@mindkid/shared";
 
-const SITE_URL = process.env.NUXT_PUBLIC_SITE_URL || "https://kidthink.vn";
-const BRAND_NAME = "KidThink";
+const SITE_URL = process.env.NUXT_PUBLIC_SITE_URL || "https://mindkid.vn";
+const BRAND_NAME = "MindKid";
 
 /**
  * BR-SEO2-03: Organization & WebSite JSON-LD
@@ -15,10 +15,10 @@ export function buildOrganizationJsonLd() {
     logo: `${SITE_URL}/images/brand-logo.png`,
     description:
       "Thinking Play Platform - Thư viện tư duy qua trò chơi cho trẻ mầm non 3-6 tuổi",
-    sameAs: ["https://zalo.me/kidthink"],
+    sameAs: ["https://zalo.me/mindkid"],
     contactPoint: {
       "@type": "ContactPoint",
-      email: "support@kidthink.vn",
+      email: "support@mindkid.vn",
       contactType: "customer service",
       availableLanguage: "vi",
     },

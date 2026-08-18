@@ -1,6 +1,8 @@
+import { sql } from "drizzle-orm";
 import {
   bigint,
   boolean,
+  check,
   index,
   integer,
   jsonb,
@@ -86,6 +88,9 @@ export const auditLogs = pgTable(
     createdAt: timestamp("created_at", { withTimezone: true })
       .defaultNow()
       .notNull(),
+    updatedAt: timestamp("updated_at", { withTimezone: true })
+      .defaultNow()
+      .notNull(),
   },
   (table) => [
     index("idx_audit_logs_actor_created").on(
@@ -99,26 +104,45 @@ export const auditLogs = pgTable(
       table.createdAt
     ),
     index("idx_audit_logs_action_created").on(table.action, table.createdAt),
+    // actor_id chỉ NULL đúng khi actor là hệ thống. Không có CHECK thì một hàng
+    // `actor_type='user', actor_id=NULL` lọt vào và vết điều tra mất chủ thể.
+    check(
+      "chk_audit_logs_actor",
+      sql`(${table.actorType} = 'system' AND ${table.actorId} IS NULL)
+        OR (${table.actorType} <> 'system' AND ${table.actorId} IS NOT NULL)`
+    ),
   ]
 );
 
-export const contentReviewLog = pgTable("content_review_log", {
-  id: bigint("id", { mode: "number" }).primaryKey().generatedAlwaysAsIdentity(),
-  entityType: reviewEntityTypeEnum("entity_type").notNull(),
-  entityId: bigint("entity_id", { mode: "number" }).notNull(),
-  contentVersion: integer("content_version").notNull(),
-  fromStatus: contentLifecycleStatusEnum("from_status").notNull(),
-  toStatus: contentLifecycleStatusEnum("to_status").notNull(),
-  actorManagerId: bigint("actor_manager_id", {
-    mode: "number",
-  }).references(() => managers.id),
-  actorRole: managerRoleEnum("actor_role"),
-  reason: text("reason"),
-  checklistSnapshot: jsonb("checklist_snapshot"),
-  createdAt: timestamp("created_at", { withTimezone: true })
-    .defaultNow()
-    .notNull(),
-});
+export const contentReviewLog = pgTable(
+  "content_review_log",
+  {
+    id: bigint("id", { mode: "number" })
+      .primaryKey()
+      .generatedAlwaysAsIdentity(),
+    entityType: reviewEntityTypeEnum("entity_type").notNull(),
+    entityId: bigint("entity_id", { mode: "number" }).notNull(),
+    contentVersion: integer("content_version").notNull(),
+    fromStatus: contentLifecycleStatusEnum("from_status").notNull(),
+    toStatus: contentLifecycleStatusEnum("to_status").notNull(),
+    actorManagerId: bigint("actor_manager_id", {
+      mode: "number",
+    }).references(() => managers.id),
+    actorRole: managerRoleEnum("actor_role"),
+    reason: text("reason"),
+    checklistSnapshot: jsonb("checklist_snapshot"),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+    updatedAt: timestamp("updated_at", { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+  },
+  (table) => [
+    // Cặp đa hình: index, không khoá ngoại (BR-DM-04).
+    index("idx_content_review_log_entity").on(table.entityType, table.entityId),
+  ]
+);
 
 export const contentSeedBatches = pgTable("content_seed_batches", {
   id: bigint("id", { mode: "number" }).primaryKey().generatedAlwaysAsIdentity(),
@@ -132,6 +156,12 @@ export const contentSeedBatches = pgTable("content_seed_batches", {
   rowsInserted: integer("rows_inserted").notNull().default(0),
   gateResults: jsonb("gate_results"),
   seededAt: timestamp("seeded_at", { withTimezone: true })
+    .defaultNow()
+    .notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true })
+    .defaultNow()
+    .notNull(),
+  updatedAt: timestamp("updated_at", { withTimezone: true })
     .defaultNow()
     .notNull(),
 });
@@ -150,19 +180,37 @@ export const backupLog = pgTable("backup_log", {
   createdAt: timestamp("created_at", { withTimezone: true })
     .defaultNow()
     .notNull(),
-});
-
-export const notifications = pgTable("notifications", {
-  id: bigint("id", { mode: "number" }).primaryKey().generatedAlwaysAsIdentity(),
-  uuid: uuid("uuid").defaultRandom().notNull().unique(),
-  recipientType: recipientTypeEnum("recipient_type").notNull(),
-  recipientId: bigint("recipient_id", { mode: "number" }).notNull(),
-  templateCode: varchar("template_code", { length: 60 }).notNull(),
-  payload: jsonb("payload"),
-  createdAt: timestamp("created_at", { withTimezone: true })
+  updatedAt: timestamp("updated_at", { withTimezone: true })
     .defaultNow()
     .notNull(),
 });
+
+export const notifications = pgTable(
+  "notifications",
+  {
+    id: bigint("id", { mode: "number" })
+      .primaryKey()
+      .generatedAlwaysAsIdentity(),
+    uuid: uuid("uuid").defaultRandom().notNull().unique(),
+    recipientType: recipientTypeEnum("recipient_type").notNull(),
+    recipientId: bigint("recipient_id", { mode: "number" }).notNull(),
+    templateCode: varchar("template_code", { length: 60 }).notNull(),
+    payload: jsonb("payload"),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+    updatedAt: timestamp("updated_at", { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+  },
+  (table) => [
+    // Cặp đa hình: index, không khoá ngoại (BR-DM-04).
+    index("idx_notifications_recipient").on(
+      table.recipientType,
+      table.recipientId
+    ),
+  ]
+);
 
 export const notificationDeliveries = pgTable(
   "notification_deliveries",
@@ -183,6 +231,9 @@ export const notificationDeliveries = pgTable(
     createdAt: timestamp("created_at", { withTimezone: true })
       .defaultNow()
       .notNull(),
+    updatedAt: timestamp("updated_at", { withTimezone: true })
+      .defaultNow()
+      .notNull(),
   },
   (table) => [
     uniqueIndex("idx_notification_deliveries_active_channel").on(
@@ -193,8 +244,10 @@ export const notificationDeliveries = pgTable(
 );
 
 export const notificationReads = pgTable("notification_reads", {
+  id: bigint("id", { mode: "number" }).primaryKey().generatedAlwaysAsIdentity(),
   notificationId: bigint("notification_id", { mode: "number" })
-    .primaryKey()
+    .notNull()
+    .unique()
     .references(() => notifications.id, { onDelete: "cascade" }),
   readAt: timestamp("read_at", { withTimezone: true }).notNull(),
   createdAt: timestamp("created_at", { withTimezone: true })

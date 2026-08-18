@@ -1,6 +1,6 @@
 import { createHash } from "node:crypto";
-import type { AuditAction, AuditInput } from "@kidthink/shared";
-import { ACTIONS_REQUIRING_REASON } from "@kidthink/shared";
+import type { AuditAction, AuditInput } from "@mindkid/shared";
+import { ACTIONS_REQUIRING_REASON } from "@mindkid/shared";
 import type { PgTransaction } from "drizzle-orm/pg-core";
 import { auditLogs } from "../schema/ops.ts";
 

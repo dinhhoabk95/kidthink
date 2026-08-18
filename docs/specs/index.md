@@ -23,15 +23,15 @@ Bắt đầu từ [`../SPEC.md`](../SPEC.md) — contract toàn dự án. Rồi 
 | Khu vực | Spec | MVP |
 |---|---:|---:|
 | `00-foundation` | 16 | 16 |
-| `01-platform` | 31 | 26 |
+| `01-platform` | 39 | 33 |
 | `02-public` | 9 | 9 |
 | `03-account` | 22 | 19 |
-| `04-play` | 13 | 13 |
-| `05-content` | 5 | 4 |
+| `04-play` | 14 | 13 |
+| `05-content` | 6 | 4 |
 | `06-admin` | 30 | 29 |
 | `07-addon` | 7 | 0 |
-| `08-quality` | 6 | 6 |
-| **Tổng** | **139** | **122** |
+| `08-quality` | 8 | 7 |
+| **Tổng** | **151** | **130** |
 
 v1 có **31** spec cho cùng phạm vi. Xé nhỏ là chủ ý — xem [`AUDIT-v1.md`](AUDIT-v1.md) §1.2.
 2 spec cộng thêm 2026-08-05 ([`repo-bootstrap.md`](00-foundation/repo-bootstrap.md), [`monorepo-package-architecture.md`](00-foundation/monorepo-package-architecture.md)) lấp lỗ hổng
@@ -75,11 +75,19 @@ v1 có **31** spec cho cùng phạm vi. Xé nhỏ là chủ ý — xem [`AUDIT-v
 | [rate-limiting](01-platform/rate-limiting.md) | P0 | Hai trục IP + account |
 | [health-check](01-platform/health-check.md) | P0 | Cấm 200 cứng |
 | [backup-and-restore](01-platform/backup-and-restore.md) | P0 | Verify hàng tuần, chặn go-live |
+| [env-contract](01-platform/env-contract.md) | P0 | 56 biến, một tên một khái niệm, kiểm trước khi build |
+| [server-provisioning](01-platform/server-provisioning.md) | P0 | Máy trắng thành máy chạy được, chạy lại nhiều lần |
+| [process-supervision](01-platform/process-supervision.md) | P0 | Ba tiến trình, nạp lại không cắt, log có giới hạn |
+| [release-deploy](01-platform/release-deploy.md) | P0 | Một lệnh, nguồn là commit trên kho, cổng khói |
+| [release-rollback](01-platform/release-rollback.md) | P0 | Quay lui dưới 60 giây, chỉ migration cộng thêm |
 | **[ai-codegen-pipeline](01-platform/ai-codegen-pipeline.md)** | P0 | **Sinh code từ spec**, vùng cấm |
 | **[content-seed-authoring](01-platform/content-seed-authoring.md)** | P1 | **Seeder nội dung nền**, 8 cổng tự động, PR review là cổng người |
 | [oauth-provider-registry](01-platform/oauth-provider-registry.md) | P1 | Google + Facebook, PKCE, danh sách đóng |
 | [game-template-contract](01-platform/game-template-contract.md) | P1 | 6 template, `content_contract` |
 | [game-engine-runtime](01-platform/game-engine-runtime.md) | P1 | Canvas 60fps, bất biến bề mặt trẻ |
+| [game-layout-engine](01-platform/game-layout-engine.md) | P1 | Từ vựng layout, hình học slot, sàn chạm |
+| [deterministic-randomness](01-platform/deterministic-randomness.md) | P1 | Seed một phiên, xáo tái dựng được |
+| [template-authoring-kit](01-platform/template-authoring-kit.md) | P4 | Một template mới bằng một file mô tả |
 | [telemetry-pipeline](01-platform/telemetry-pipeline.md) | P1 | Rollup, KPI nội dung |
 | [content-tagging](01-platform/content-tagging.md) | P1 | Ba trục what/thinking/mechanic |
 | [content-search](01-platform/content-search.md) | P1 | Bộ lọc, lọc theo quyền |
@@ -154,6 +162,7 @@ v1 có **31** spec cho cùng phạm vi. Xé nhỏ là chủ ý — xem [`AUDIT-v
 | [next-game-recommendation](04-play/next-game-recommendation.md) | P3 | Luật, không ML |
 | [curriculum-player](04-play/curriculum-player.md) | P3 | Ghim version, mở khoá tuần |
 | [progress-and-mastery](04-play/progress-and-mastery.md) | P3 | Bản đồ, huy hiệu không mất |
+| [lesson-session-runner](04-play/lesson-session-runner.md) | P4 | Người dạy chạy tiết học, một bước một lúc |
 
 ## 05-content — ràng buộc biên tập
 
@@ -164,6 +173,7 @@ v1 có **31** spec cho cùng phạm vi. Xé nhỏ là chủ ý — xem [`AUDIT-v
 | [activity-model](05-content/activity-model.md) | P3 | Đứng độc lập, danh sách an toàn |
 | [curriculum-model](05-content/curriculum-model.md) | P3 | Thứ tự prerequisite, cân bằng |
 | [worksheet-model](05-content/worksheet-model.md) | P4 | Ngoài MVP |
+| [lesson-exemplar-set](05-content/lesson-exemplar-set.md) | P4 | Tiết học mẫu, ma trận 18 ô |
 
 ## 06-admin — Manager
 
@@ -222,6 +232,8 @@ v1 có **31** spec cho cùng phạm vi. Xé nhỏ là chủ ý — xem [`AUDIT-v
 | [performance-budgets](08-quality/performance-budgets.md) | P1 | Ngân sách chặn merge |
 | [design-system-contract](08-quality/design-system-contract.md) | P1 | Token, một kit, 4 bề mặt |
 | [pedagogical-evidence](08-quality/pedagogical-evidence.md) | P1 | Tiêu chuẩn bằng chứng sư phạm |
+| [thinking-coverage-matrix](08-quality/thinking-coverage-matrix.md) | P3 | Cổng đo phủ 6 năng lực, từ vựng đóng thật |
+| [type-safety](08-quality/type-safety.md) | P0 | Cấm any, nợ ép kiểu chỉ giảm, dữ liệu vào qua schema |
 
 ---
 

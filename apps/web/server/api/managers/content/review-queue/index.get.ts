@@ -6,13 +6,10 @@ import {
   gameLevels,
   getOwnerDb,
   lessons,
-} from "@kidthink/db";
+} from "@mindkid/db";
 import { and, desc, eq, type SQL, sql } from "drizzle-orm";
 import { defineEventHandler, getQuery } from "h3";
-import {
-  requireManagerSession,
-  respondToManagerAuthError,
-} from "../../../../utils/admin-auth-runtime.js";
+import { requireManagerSession } from "../../../../utils/admin-auth-runtime.js";
 
 export interface ReviewQueueItem {
   id: number;
@@ -186,7 +183,7 @@ async function fetchGameLevelReviewQueue(
       entity_type: "game_level",
       code: r.code,
       version: r.contentVersion,
-      title: r.titleVi,
+      title: r.title,
       origin: r.origin,
       authored_in: r.authoredIn,
       created_by_manager_id: r.createdByManagerId,
@@ -261,7 +258,7 @@ async function fetchLessonReviewQueue(
       entity_type: "lesson",
       code: r.code,
       version: r.contentVersion,
-      title: r.titleVi,
+      title: r.title,
       origin: r.origin,
       authored_in: r.authoredIn,
       created_by_manager_id: r.createdByManagerId,
@@ -318,7 +315,7 @@ async function fetchActivityReviewQueue(
     entity_type: "activity",
     code: r.code,
     version: r.contentVersion,
-    title: r.titleVi,
+    title: r.title,
     origin: r.origin,
     authored_in: r.authoredIn,
     created_by_manager_id: r.createdByManagerId,
@@ -374,7 +371,7 @@ async function fetchCurriculumReviewQueue(
     entity_type: "curriculum",
     code: r.code,
     version: r.contentVersion,
-    title: r.titleVi,
+    title: r.title,
     origin: r.origin,
     authored_in: r.authoredIn,
     created_by_manager_id: r.createdByManagerId,
@@ -385,94 +382,88 @@ async function fetchCurriculumReviewQueue(
 }
 
 export default defineEventHandler(async (event) => {
-  try {
-    await requireManagerSession(event);
-    const query = getQuery(event);
+  await requireManagerSession(event);
+  const query = getQuery(event);
 
-    const filterType = query.entity_type as string | undefined;
-    const filterManagerId = query.created_by_manager_id
-      ? Number(query.created_by_manager_id)
-      : undefined;
-    const filterOrigin = query.origin as string | undefined;
-    const filterAuthoredIn = query.authored_in as string | undefined;
-    const limit = Math.min(Number(query.limit) || 50, 50);
+  const filterType = query.entity_type as string | undefined;
+  const filterManagerId = query.created_by_manager_id
+    ? Number(query.created_by_manager_id)
+    : undefined;
+  const filterOrigin = query.origin as string | undefined;
+  const filterAuthoredIn = query.authored_in as string | undefined;
+  const limit = Math.min(Number(query.limit) || 50, 50);
 
-    const db = getOwnerDb();
-    const publishedSkillIds = await getSkillsWithPublishedLevels(db);
-    const incompleteCurriculumItemKeys = await getIncompleteCurriculumItems(db);
-    const items: ReviewQueueItem[] = [];
+  const db = getOwnerDb();
+  const publishedSkillIds = await getSkillsWithPublishedLevels(db);
+  const incompleteCurriculumItemKeys = await getIncompleteCurriculumItems(db);
+  const items: ReviewQueueItem[] = [];
 
-    if (!filterType || filterType === "game_level") {
-      const levelItems = await fetchGameLevelReviewQueue(
-        db,
-        {
-          filterManagerId,
-          filterOrigin,
-          filterAuthoredIn,
-          limit,
-        },
-        publishedSkillIds,
-        incompleteCurriculumItemKeys
-      );
-      items.push(...levelItems);
-    }
-
-    if (!filterType || filterType === "lesson") {
-      const lessonItems = await fetchLessonReviewQueue(
-        db,
-        {
-          filterManagerId,
-          filterOrigin,
-          filterAuthoredIn,
-          limit,
-        },
-        incompleteCurriculumItemKeys
-      );
-      items.push(...lessonItems);
-    }
-
-    if (!filterType || filterType === "activity") {
-      const activityItems = await fetchActivityReviewQueue(db, {
+  if (!filterType || filterType === "game_level") {
+    const levelItems = await fetchGameLevelReviewQueue(
+      db,
+      {
         filterManagerId,
         filterOrigin,
         filterAuthoredIn,
         limit,
-      });
-      items.push(...activityItems);
-    }
-
-    if (!filterType || filterType === "curriculum") {
-      const curriculumItemsList = await fetchCurriculumReviewQueue(db, {
-        filterManagerId,
-        filterOrigin,
-        filterAuthoredIn,
-        limit,
-      });
-      items.push(...curriculumItemsList);
-    }
-
-    // Sort by priority_score descending (Tier 1 (50) > Tier 2 (40) > Tier 3 (30) > Tier 4 (10))
-    // For tie-breaks: oldest waiting_since first (BR-CRQ-08, D-KK)
-    items.sort((a, b) => {
-      if (b.priority_score !== a.priority_score) {
-        return b.priority_score - a.priority_score;
-      }
-      return (
-        new Date(a.waiting_since).getTime() -
-        new Date(b.waiting_since).getTime()
-      );
-    });
-
-    const sliced = items.slice(0, limit);
-    const nextCursor =
-      items.length > limit ? sliced.at(-1)?.id.toString() : null;
-
-    return {
-      items: sliced,
-      next_cursor: nextCursor,
-      total: items.length,
-    };
-  } catch (err) {
-    return respondToManagerAuthError(event, err);
+      },
+      publishedSkillIds,
+      incompleteCurriculumItemKeys
+    );
+    items.push(...levelItems);
   }
+
+  if (!filterType || filterType === "lesson") {
+    const lessonItems = await fetchLessonReviewQueue(
+      db,
+      {
+        filterManagerId,
+        filterOrigin,
+        filterAuthoredIn,
+        limit,
+      },
+      incompleteCurriculumItemKeys
+    );
+    items.push(...lessonItems);
+  }
+
+  if (!filterType || filterType === "activity") {
+    const activityItems = await fetchActivityReviewQueue(db, {
+      filterManagerId,
+      filterOrigin,
+      filterAuthoredIn,
+      limit,
+    });
+    items.push(...activityItems);
+  }
+
+  if (!filterType || filterType === "curriculum") {
+    const curriculumItemsList = await fetchCurriculumReviewQueue(db, {
+      filterManagerId,
+      filterOrigin,
+      filterAuthoredIn,
+      limit,
+    });
+    items.push(...curriculumItemsList);
+  }
+
+  // Sort by priority_score descending (Tier 1 (50) > Tier 2 (40) > Tier 3 (30) > Tier 4 (10))
+  // For tie-breaks: oldest waiting_since first (BR-CRQ-08, D-KK)
+  items.sort((a, b) => {
+    if (b.priority_score !== a.priority_score) {
+      return b.priority_score - a.priority_score;
+    }
+    return (
+      new Date(a.waiting_since).getTime() - new Date(b.waiting_since).getTime()
+    );
+  });
+
+  const sliced = items.slice(0, limit);
+  const nextCursor = items.length > limit ? sliced.at(-1)?.id.toString() : null;
+
+  return {
+    items: sliced,
+    next_cursor: nextCursor,
+    total: items.length,
+  };
 });

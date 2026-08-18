@@ -127,21 +127,21 @@ describe("Worksheet Contract & Validation (BR-WSM-01..08)", () => {
         x_pct: 25,
         y_pct: 30,
         radius_mm: 12,
-        description_adult_vi: "Con gà thiếu mào",
+        description_adult: "Con gà thiếu mào",
       },
       {
         spot_id: "s2",
         x_pct: 70,
         y_pct: 50,
         radius_mm: 12,
-        description_adult_vi: "Ngôi sao trên mái chuồng",
+        description_adult: "Ngôi sao trên mái chuồng",
       },
       {
         spot_id: "s3",
         x_pct: 45,
         y_pct: 80,
         radius_mm: 12,
-        description_adult_vi: "Đám cỏ bên phải",
+        description_adult: "Đám cỏ bên phải",
       },
     ],
     stroke_pt: 2.0,
@@ -171,7 +171,7 @@ describe("Worksheet Contract & Validation (BR-WSM-01..08)", () => {
         title: `Phiếu bài tập ${s.template}`,
         layout_template: s.template,
         content_blocks: s.blocks,
-        instructions_vi:
+        instructions:
           "Hướng dẫn người lớn: Cho trẻ quan sát hình mẫu và thực hiện theo thứ tự.",
         learning_objective_ids: [101],
       });
@@ -185,7 +185,7 @@ describe("Worksheet Contract & Validation (BR-WSM-01..08)", () => {
       title: "Phiếu bài tập tự chế",
       layout_template: "crossword_puzzle",
       content_blocks: { template: "crossword_puzzle" },
-      instructions_vi: "Hướng dẫn người lớn: giải ô chữ",
+      instructions: "Hướng dẫn người lớn: giải ô chữ",
       learning_objective_ids: [101],
     });
     expect(res.ok).toBe(false);
@@ -201,7 +201,7 @@ describe("Worksheet Contract & Validation (BR-WSM-01..08)", () => {
       title: "Phiếu đố bé đọc chữ",
       layout_template: "pattern_coloring",
       content_blocks: readingBlock,
-      instructions_vi: "Hướng dẫn người lớn cho trẻ làm bài",
+      instructions: "Hướng dẫn người lớn cho trẻ làm bài",
       learning_objective_ids: [101],
     });
     expect(res.ok).toBe(false);
@@ -225,7 +225,7 @@ describe("Worksheet Contract & Validation (BR-WSM-01..08)", () => {
       title: "Phiếu hình vẽ quá nhỏ",
       layout_template: "pattern_coloring",
       content_blocks: smallAreaBlock,
-      instructions_vi: "Hướng dẫn người lớn hỗ trợ trẻ",
+      instructions: "Hướng dẫn người lớn hỗ trợ trẻ",
       learning_objective_ids: [101],
     });
     expect(res.ok).toBe(false);
@@ -237,7 +237,7 @@ describe("Worksheet Contract & Validation (BR-WSM-01..08)", () => {
       title: "Phiếu thiếu hướng dẫn",
       layout_template: "pattern_coloring",
       content_blocks: samplePatternColoring,
-      instructions_vi: "", // rỗng
+      instructions: "", // rỗng
       learning_objective_ids: [101],
     });
     expect(res.ok).toBe(false);
@@ -250,7 +250,7 @@ describe("Worksheet Contract & Validation (BR-WSM-01..08)", () => {
       title: "Phiếu nối cặp hình tương ứng",
       layout_template: "pair_matching",
       content_blocks: samplePairMatching,
-      instructions_vi:
+      instructions:
         "Hướng dẫn người lớn: Cho trẻ dùng bút chì nối 2 cột với nhau.",
       learning_objective_ids: [201],
       access_tier: "standard",
@@ -279,7 +279,7 @@ describe("Publish Checklist cho Worksheet (BR-WSM-03, BR-WSM-06, D-P4J)", () => 
       ],
       stroke_pt: 2.0,
     },
-    instructions_vi:
+    instructions:
       "Hướng dẫn người lớn: Cho trẻ tô màu hình tròn rồi đến hình vuông.",
     learning_objective_ids: [101],
     skill_ids: [1],
@@ -349,9 +349,9 @@ describe("Lesson Alternative Requirement for Worksheet (BR-WSM-07)", () => {
       title: "Bài học luyện tập quy luật",
       guide: guideText,
       estimated_minutes: 20,
-      assessment_vi: "Trẻ chỉ ra được hình tiếp theo trong chuỗi.",
-      warm_up_vi: "Khởi động cùng cô",
-      reflection_vi: "Đúc kết bài học",
+      assessment: "Trẻ chỉ ra được hình tiếp theo trong chuỗi.",
+      warm_up: "Khởi động cùng cô",
+      reflection: "Đúc kết bài học",
       activities: [
         {
           activity_code: "ACT-0001",
@@ -372,9 +372,9 @@ describe("Lesson Alternative Requirement for Worksheet (BR-WSM-07)", () => {
       title: "Bài học luyện tập quy luật có phương án thay thế",
       guide: guideText,
       estimated_minutes: 25,
-      assessment_vi: "Trẻ xếp được các khối gỗ hoặc tô được phiếu quy luật.",
-      warm_up_vi: "Khởi động cùng cô",
-      reflection_vi: "Đúc kết bài học",
+      assessment: "Trẻ xếp được các khối gỗ hoặc tô được phiếu quy luật.",
+      warm_up: "Khởi động cùng cô",
+      reflection: "Đúc kết bài học",
       activities: [
         {
           activity_code: "ACT-0001",

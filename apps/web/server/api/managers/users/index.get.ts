@@ -4,7 +4,7 @@ import {
   entitlements,
   getOwnerDb,
   users,
-} from "@kidthink/db";
+} from "@mindkid/db";
 import {
   and,
   count,
@@ -21,10 +21,7 @@ import {
 } from "drizzle-orm";
 import { defineEventHandler, getQuery } from "h3";
 import { z } from "zod";
-import {
-  requireSuperAdminSession,
-  respondToManagerAuthError,
-} from "../../../utils/admin-auth-runtime.js";
+import { requireSuperAdminSession } from "../../../utils/admin-auth-runtime.js";
 
 /**
  * Escapes PostgreSQL LIKE wildcard characters (% and _)
@@ -207,81 +204,77 @@ async function fetchLastActiveMap(
 }
 
 export default defineEventHandler(async (event) => {
-  try {
-    await requireSuperAdminSession(event);
+  await requireSuperAdminSession(event);
 
-    const rawQuery = getQuery(event);
-    const parsedQuery = listUsersQuerySchema.safeParse(rawQuery);
-    if (!parsedQuery.success) {
-      throw parsedQuery.error;
-    }
+  const rawQuery = getQuery(event);
+  const parsedQuery = listUsersQuerySchema.safeParse(rawQuery);
+  if (!parsedQuery.success) {
+    throw parsedQuery.error;
+  }
 
-    const { limit, has_children } = parsedQuery.data;
-    const db = getOwnerDb();
-    const conditions = buildUserConditions(db, parsedQuery.data);
-    const whereClause = conditions.length > 0 ? and(...conditions) : undefined;
+  const { limit, has_children } = parsedQuery.data;
+  const db = getOwnerDb();
+  const conditions = buildUserConditions(db, parsedQuery.data);
+  const whereClause = conditions.length > 0 ? and(...conditions) : undefined;
 
-    const userRows = await db
-      .select({
-        id: users.id,
-        uuid: users.uuid,
-        email: users.email,
-        displayName: users.displayName,
-        status: users.status,
-        createdAt: users.createdAt,
-        updatedAt: users.updatedAt,
-      })
-      .from(users)
-      .where(whereClause)
-      .orderBy(desc(users.id))
-      .limit(limit + 1);
+  const userRows = await db
+    .select({
+      id: users.id,
+      uuid: users.uuid,
+      email: users.email,
+      displayName: users.displayName,
+      status: users.status,
+      createdAt: users.createdAt,
+      updatedAt: users.updatedAt,
+    })
+    .from(users)
+    .where(whereClause)
+    .orderBy(desc(users.id))
+    .limit(limit + 1);
 
-    let nextCursor: string | null = null;
-    if (userRows.length > limit) {
-      const nextItem = userRows.pop();
-      nextCursor = nextItem?.id.toString() ?? null;
-    }
+  let nextCursor: string | null = null;
+  if (userRows.length > limit) {
+    const nextItem = userRows.pop();
+    nextCursor = nextItem?.id.toString() ?? null;
+  }
 
-    if (userRows.length === 0) {
-      return { items: [], next_cursor: null };
-    }
+  if (userRows.length === 0) {
+    return { items: [], next_cursor: null };
+  }
 
-    const userIds = userRows.map((u) => u.id);
-    const [childCountMap, activePackageMap, lastActiveMap] = await Promise.all([
-      fetchChildCountMap(db, userIds),
-      fetchActivePackageMap(db, userIds),
-      fetchLastActiveMap(db, userIds),
-    ]);
+  const userIds = userRows.map((u) => u.id);
+  const [childCountMap, activePackageMap, lastActiveMap] = await Promise.all([
+    fetchChildCountMap(db, userIds),
+    fetchActivePackageMap(db, userIds),
+    fetchLastActiveMap(db, userIds),
+  ]);
 
-    let items = userRows.map((u) => {
-      const childCount = childCountMap.get(u.id) ?? 0;
-      const activePackage = activePackageMap.get(u.id) ?? null;
-      const lastActive = lastActiveMap.get(u.id) ?? u.updatedAt;
-
-      return {
-        id: u.id,
-        uuid: u.uuid,
-        email: u.email,
-        display_name: u.displayName,
-        status: u.status,
-        child_count: childCount,
-        active_package: activePackage,
-        created_at: u.createdAt.toISOString(),
-        last_active_at: lastActive ? lastActive.toISOString() : null,
-      };
-    });
-
-    if (has_children !== undefined) {
-      items = items.filter((item) =>
-        has_children ? item.child_count > 0 : item.child_count === 0
-      );
-    }
+  let items = userRows.map((u) => {
+    const childCount = childCountMap.get(u.id) ?? 0;
+    const activePackage = activePackageMap.get(u.id) ?? null;
+    const lastActive = lastActiveMap.get(u.id) ?? u.updatedAt;
 
     return {
-      items,
-      next_cursor: nextCursor,
+      id: u.id,
+      uuid: u.uuid,
+      email: u.email,
+      display_name: u.displayName,
+      status: u.status,
+      child_count: childCount,
+      active_package: activePackage,
+      created_at: u.createdAt.toISOString(),
+      last_active_at: lastActive ? lastActive.toISOString() : null,
     };
-  } catch (err) {
-    return respondToManagerAuthError(event, err);
+  });
+
+  if (has_children !== undefined) {
+    items = items.filter((item) =>
+      has_children ? item.child_count > 0 : item.child_count === 0
+    );
   }
+
+  return {
+    items,
+    next_cursor: nextCursor,
+  };
 });

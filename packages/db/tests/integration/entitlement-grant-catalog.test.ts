@@ -9,12 +9,12 @@ import {
   SEED_ENTITLEMENT_KEYS,
   SEED_PACKAGES,
   users,
-} from "@kidthink/db";
+} from "@mindkid/db";
 import {
   computeStackedExpiryDate,
   PACKAGE_CATALOG,
   type PackageDefinition,
-} from "@kidthink/shared";
+} from "@mindkid/shared";
 import { and, eq } from "drizzle-orm";
 import { beforeAll, describe, expect, it } from "vitest";
 

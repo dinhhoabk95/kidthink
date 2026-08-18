@@ -198,7 +198,7 @@
             Mô phỏng kết quả tìm kiếm Google (Search Snippet):
           </span>
           <div class="text-xs text-slate-600 dark:text-slate-400">
-            https://kidthink.edu.vn/{{ formData.slug || 'duong-dan-trang' }}
+            https://mindkid.edu.vn/{{ formData.slug || 'duong-dan-trang' }}
           </div>
           <div
             class="text-base text-blue-600 dark:text-blue-400 font-medium hover:underline cursor-pointer"
