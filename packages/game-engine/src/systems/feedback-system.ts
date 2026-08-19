@@ -3,6 +3,8 @@
  * Implements BR-FBK-01..10 & spec FEEDBACK-AND-CELEBRATION.
  */
 
+import type { Rng } from "../rng/types.js";
+
 export type FeedbackState = "lift" | "success" | "retry" | "celebrate_level";
 
 export interface FeedbackConfig {
@@ -84,39 +86,54 @@ export const FORBIDDEN_WORDS = [
   "Bé chưa giỏi",
 ] as const;
 
-/** Pick a random index, avoiding an immediate repeat where possible (BR-FBK-08). */
-function pickNonRepeatingIndex(length: number, lastIndex: number): number {
-  let nextIndex: number;
-  do {
-    nextIndex = Math.floor(Math.random() * length);
-  } while (nextIndex === lastIndex && length > 1);
-  return nextIndex;
+/** Pick a non-repeating index using RNG or deterministic round-robin (BR-RNG-02, BR-FBK-08). */
+function pickNextIndex(length: number, lastIndex: number, rng?: Rng): number {
+  if (length <= 1) {
+    return 0;
+  }
+  if (rng) {
+    let nextIndex: number;
+    do {
+      nextIndex = rng.nextInt(length);
+    } while (nextIndex === lastIndex);
+    return nextIndex;
+  }
+  return (lastIndex + 1) % length;
 }
 
 export class FeedbackSystem {
   private lastComplimentIndex = -1;
   private lastRetryIndex = -1;
+  private readonly rng?: Rng;
+
+  constructor(rng?: Rng) {
+    this.rng = rng;
+  }
 
   /**
    * Returns rotation of praise text without repeating consecutive strings (BR-FBK-08).
    */
   getCompliment(): string {
-    this.lastComplimentIndex = pickNonRepeatingIndex(
+    this.lastComplimentIndex = pickNextIndex(
       COMPLIMENTS.length,
-      this.lastComplimentIndex
+      this.lastComplimentIndex,
+      this.rng
     );
-    return COMPLIMENTS[this.lastComplimentIndex] as string;
+    const item = COMPLIMENTS[this.lastComplimentIndex];
+    return item ?? COMPLIMENTS[0];
   }
 
   /**
    * Returns rotation of non-punitive retry encouragement text.
    */
   getRetryEncouragement(): string {
-    this.lastRetryIndex = pickNonRepeatingIndex(
+    this.lastRetryIndex = pickNextIndex(
       RETRY_ENCOURAGEMENTS.length,
-      this.lastRetryIndex
+      this.lastRetryIndex,
+      this.rng
     );
-    return RETRY_ENCOURAGEMENTS[this.lastRetryIndex] as string;
+    const item = RETRY_ENCOURAGEMENTS[this.lastRetryIndex];
+    return item ?? RETRY_ENCOURAGEMENTS[0];
   }
 
   /**

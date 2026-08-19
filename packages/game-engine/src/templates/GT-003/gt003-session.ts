@@ -1,7 +1,7 @@
 import type {
   GT003Content,
   GT003Difficulty,
-} from "../../contracts/templates/gt003";
+} from "../../contracts/templates/gt003.js";
 import {
   ACTION_CORRECT,
   ACTION_IGNORED,
@@ -9,19 +9,22 @@ import {
   type ActionResult,
   type GameAction,
   TemplateGameSession,
-} from "../../game-session";
+} from "../../game-session.js";
 
 const DROP_ACTIONS = new Set(["drop_item", "tap_tap_item"]);
+type DraggableItem = GT003Content["items"][number];
 
 export class GT003Session extends TemplateGameSession<
   GT003Content,
   GT003Difficulty
 > {
   private readonly itemsInContainer: Set<string> = new Set();
+  displayItems: readonly DraggableItem[] = [];
 
   setupEntities(): void {
     this.itemsInContainer.clear();
     this.isWon = false;
+    this.displayItems = [...this.content.items];
   }
 
   /** The item, only when it was dropped on this level's one container. */

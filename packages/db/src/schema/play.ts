@@ -41,6 +41,7 @@ export const playSessions = pgTable(
       .notNull()
       .default("in_progress"),
     accessTierAtStart: varchar("access_tier_at_start", { length: 20 }),
+    layoutSeed: bigint("layout_seed", { mode: "number" }),
     starsEarned: smallint("stars_earned").default(0),
     score: integer("score").default(0),
     durationSeconds: integer("duration_seconds").default(0),
@@ -59,6 +60,10 @@ export const playSessions = pgTable(
     check(
       "check_play_sessions_identity",
       sql`${table.childProfileId} IS NOT NULL OR ${table.guestDeviceId} IS NOT NULL`
+    ),
+    check(
+      "check_play_sessions_layout_seed",
+      sql`${table.layoutSeed} IS NULL OR (${table.layoutSeed} >= 0 AND ${table.layoutSeed} <= 4294967295)`
     ),
   ]
 );

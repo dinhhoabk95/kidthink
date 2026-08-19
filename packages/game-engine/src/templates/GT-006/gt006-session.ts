@@ -1,7 +1,7 @@
 import type {
   GT006Content,
   GT006Difficulty,
-} from "../../contracts/templates/gt006";
+} from "../../contracts/templates/gt006.js";
 import {
   ACTION_CORRECT,
   ACTION_IGNORED,
@@ -9,7 +9,9 @@ import {
   type ActionResult,
   type GameAction,
   TemplateGameSession,
-} from "../../game-session";
+} from "../../game-session.js";
+import { deriveStream } from "../../rng/mulberry32.js";
+import { shuffle } from "../../rng/shuffle.js";
 
 export class GT006Session extends TemplateGameSession<
   GT006Content,
@@ -19,8 +21,18 @@ export class GT006Session extends TemplateGameSession<
   private currentSequence: string[] = [];
 
   setupEntities(): void {
-    this.currentSequence = this.content.sequence.map((s) => s.step_id);
+    const steps = this.content.sequence.map((s) => s.step_id);
+    if (this.difficulty.shuffle_initial === false) {
+      this.currentSequence = [...steps];
+    } else {
+      const rng = deriveStream(this.layoutSeed, "initial");
+      this.currentSequence = shuffle(steps, rng);
+    }
     this.isWon = false;
+  }
+
+  getCurrentSequence(): readonly string[] {
+    return this.currentSequence;
   }
 
   private isInBounds(index: number): boolean {
@@ -34,7 +46,7 @@ export class GT006Session extends TemplateGameSession<
 
     const moved = this.currentSequence[fromIndex];
     if (moved === undefined) {
-      return; // unreachable after isInBounds — keeps the checker honest
+      return;
     }
     const without = [
       ...this.currentSequence.slice(0, fromIndex),
@@ -59,13 +71,13 @@ export class GT006Session extends TemplateGameSession<
       .sort((a, b) => a.order_index - b.order_index)
       .map((s) => s.step_id);
 
-    const isCorrectSequence =
+    const isMatch =
       this.currentSequence.length === targetSequence.length &&
       this.currentSequence.every(
         (stepId, idx) => stepId === targetSequence[idx]
       );
 
-    return isCorrectSequence ? ACTION_CORRECT : ACTION_RETRY;
+    return isMatch ? ACTION_CORRECT : ACTION_RETRY;
   }
 
   onSubmitSequence(): void {

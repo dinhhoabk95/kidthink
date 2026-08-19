@@ -1,7 +1,7 @@
 import type {
   GT004Content,
   GT004Difficulty,
-} from "../../contracts/templates/gt004";
+} from "../../contracts/templates/gt004.js";
 import {
   ACTION_CORRECT,
   ACTION_IGNORED,
@@ -9,7 +9,11 @@ import {
   type ActionResult,
   type GameAction,
   TemplateGameSession,
-} from "../../game-session";
+} from "../../game-session.js";
+import { deriveStream } from "../../rng/mulberry32.js";
+import { shuffle } from "../../rng/shuffle.js";
+
+type SortItem = GT004Content["items"][number];
 
 export class GT004Session extends TemplateGameSession<
   GT004Content,
@@ -17,10 +21,17 @@ export class GT004Session extends TemplateGameSession<
 > {
   /** item_id -> group_id, correctly sorted items only */
   private readonly sortedItems: Map<string, string> = new Map();
+  displayItems: readonly SortItem[] = [];
 
   setupEntities(): void {
     this.sortedItems.clear();
     this.isWon = false;
+    if (this.difficulty.shuffle_items === false) {
+      this.displayItems = [...this.content.items];
+    } else {
+      const rng = deriveStream(this.layoutSeed, "items");
+      this.displayItems = shuffle(this.content.items, rng);
+    }
   }
 
   private findItem(itemId: string) {

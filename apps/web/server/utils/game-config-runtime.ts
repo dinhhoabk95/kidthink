@@ -147,6 +147,44 @@ async function performAccessControl(
   }
 }
 
+async function createPlaySessionRecord(
+  db: ReturnType<typeof getOwnerDb>,
+  params: {
+    level: { id: number; contentVersion: number; accessTier: string };
+    templateId: number;
+    ownedChild: { id: number } | null;
+    options: GameConfigDeliveryOptions;
+    isPreview: boolean;
+  }
+) {
+  const sessionUuid = randomUUID();
+  const startedAt = new Date();
+  const childProfileId = params.ownedChild?.id ?? null;
+  const guestDeviceId = childProfileId
+    ? null
+    : params.options.guestDeviceId ||
+      (params.options.isManagerPreview ? "preview-manager" : "guest-device");
+  const layoutSeed = params.options.isManagerPreview
+    ? 42
+    : Math.floor(Math.random() * 0xff_ff_ff_ff);
+
+  await db.insert(playSessions).values({
+    sessionUuid,
+    childProfileId,
+    guestDeviceId,
+    gameLevelId: params.level.id,
+    contentVersion: params.level.contentVersion,
+    templateId: params.templateId,
+    layoutSeed,
+    isPreview: params.isPreview,
+    completionStatus: "in_progress",
+    accessTierAtStart: params.level.accessTier,
+    startedAt,
+  });
+
+  return { sessionUuid, startedAt, layoutSeed };
+}
+
 export async function deliverGameConfig(
   event: H3Event,
   code: string,
@@ -182,27 +220,17 @@ export async function deliverGameConfig(
     });
   }
 
-  // 4. Create minimum play_sessions row (D-FR)
-  const sessionUuid = randomUUID();
-  const startedAt = new Date();
-  const childProfileId = ownedChild?.id ?? null;
-  const guestDeviceId = childProfileId
-    ? null
-    : options.guestDeviceId ||
-      (options.isManagerPreview ? "preview-manager" : "guest-device");
-
-  await db.insert(playSessions).values({
-    sessionUuid,
-    childProfileId,
-    guestDeviceId,
-    gameLevelId: level.id,
-    contentVersion: level.contentVersion,
-    templateId: template.id,
-    isPreview: accessResult.is_preview,
-    completionStatus: "in_progress",
-    accessTierAtStart: level.accessTier,
-    startedAt,
-  });
+  // 4. Create minimum play_sessions row (D-FR, BR-RNG-06, BR-RNG-07)
+  const { sessionUuid, startedAt, layoutSeed } = await createPlaySessionRecord(
+    db,
+    {
+      level,
+      templateId: template.id,
+      ownedChild,
+      options,
+      isPreview: accessResult.is_preview,
+    }
+  );
 
   // 5. Resolve assets (BR-CFG-07)
   const assets = resolveAssets(level.contentPack);
@@ -224,6 +252,7 @@ export async function deliverGameConfig(
     instruction_audio_url: level.instructionAudioPath || undefined,
     content_pack: level.contentPack,
     difficulty_params: level.difficultyParams,
+    layout_seed: layoutSeed,
     theme_id: level.themeId || "general",
     age_band: `${level.ageMin ?? 3}-${level.ageMax ?? 6}`,
     scoring: template.scoring,

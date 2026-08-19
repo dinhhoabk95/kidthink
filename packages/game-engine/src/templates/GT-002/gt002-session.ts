@@ -1,7 +1,7 @@
 import type {
   GT002Content,
   GT002Difficulty,
-} from "../../contracts/templates/gt002";
+} from "../../contracts/templates/gt002.js";
 import {
   ACTION_CORRECT,
   ACTION_IGNORED,
@@ -9,17 +9,21 @@ import {
   type ActionResult,
   type GameAction,
   TemplateGameSession,
-} from "../../game-session";
+} from "../../game-session.js";
+
+type TargetItem = GT002Content["items"][number];
 
 export class GT002Session extends TemplateGameSession<
   GT002Content,
   GT002Difficulty
 > {
   private readonly selectedItemIds: Set<string> = new Set();
+  displayItems: readonly TargetItem[] = [];
 
   setupEntities(): void {
     this.selectedItemIds.clear();
     this.isWon = false;
+    this.displayItems = [...this.content.items];
   }
 
   toggleItemSelection(itemId: string): void {

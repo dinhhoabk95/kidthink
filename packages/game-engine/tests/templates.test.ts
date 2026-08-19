@@ -223,12 +223,11 @@ describe("Task 6 & Task 7 — All 6 Template Sessions & Kid Surface Rules", () =
     const difficulty = {
       hint_after_ms: 10_000,
       allow_retry: true,
-      shuffle_initial: true,
+      shuffle_initial: false,
     };
     const session = new GT006Session(content, difficulty);
     session.setupEntities();
 
-    // Default setupEntities puts them in s1, s2, s3 order
     session.onSubmitSequence();
     expect(session.checkWinCondition()).toBe(true);
   });

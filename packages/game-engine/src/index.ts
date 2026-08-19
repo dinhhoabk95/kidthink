@@ -82,6 +82,9 @@ export {
   OfflineEventBuffer,
   type SessionMeta,
 } from "./offline-buffer";
+export { createRng, deriveStream } from "./rng/mulberry32.js";
+export { shuffle } from "./rng/shuffle.js";
+export type { Rng, RngStreamName } from "./rng/types.js";
 export { AudioController } from "./systems/audio-controller";
 export {
   DegradationManager,

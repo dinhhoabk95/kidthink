@@ -195,6 +195,8 @@ describe("Task P1.4 — Game Config Delivery End-to-End Suite", () => {
       expect(res.template_code).toBe("GT-001");
       expect(res.session).toBeDefined();
       expect(res.session.uuid).toBeDefined();
+      expect(res.layout_seed).toBeDefined();
+      expect(typeof res.layout_seed).toBe("number");
       expect(res.assets).toBeDefined();
     });
 

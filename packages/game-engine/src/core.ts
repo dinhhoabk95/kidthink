@@ -92,6 +92,7 @@ export interface EngineConfig {
   age_band: AgeBand;
   reduced_motion: boolean;
   audio_enabled: boolean;
+  layout_seed?: number;
 }
 
 export type EventCallback = (event: TelemetryEvent) => void;

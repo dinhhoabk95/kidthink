@@ -2,7 +2,7 @@
 spec: DETERMINISTIC-RANDOMNESS
 title: Ngẫu nhiên tái dựng được trong phiên chơi
 area: platform
-status: draft
+status: implemented
 mvp: true
 phase: P1
 reviewed: 2026-08-17
@@ -199,6 +199,6 @@ Scenario: BR-RNG-06 — thiếu seed không rơi về ngẫu nhiên hệ thống
 
 | # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
 |---|---|---|---|---|
-| 1 | Chọn thuật toán nào cho `createRng`? Cần loại 32 bit, không phụ thuộc, chất lượng đủ cho xáo hiển thị chứ không cho mã hoá | Cài đặt P1 | P1 | Backend |
+| ~~1~~ | ~~Chọn thuật toán nào cho `createRng`? Cần loại 32 bit, không phụ thuộc, chất lượng đủ cho xáo hiển thị chứ không cho mã hoá~~ **Đóng 2026-08-19 (`D-RA`)**: Chọn thuật toán Mulberry32 32-bit với hàm băm FNV-1a chia luồng theo tên. Thuần TS, không phụ thuộc, tái lập 100% | Cài đặt P1 | Đã đóng | D-RA |
 | 2 | Chơi offline sinh seed ở client rồi gửi lên — có cần chống trùng seed giữa nhiều thiết bị của cùng một trẻ không? | Ghi phiên offline | P2 | hoãn — đo sau khi có số phiên offline thật |
 | 3 | Adaptive chọn bước tiếp theo có nên dùng chung nguồn seed này để tái dựng đường đi của trẻ không? Hiện [`adaptive-engine.md`](adaptive-engine.md) không nói về ngẫu nhiên | Tái dựng đường đi, không chặn bàn chơi | chờ P2 | hoãn |

@@ -114,12 +114,14 @@ export abstract class TemplateGameSession<
 > extends BaseGameSession {
   readonly content: TContent;
   readonly difficulty: TDifficulty;
+  readonly layoutSeed: number;
   protected isWon = false;
 
-  constructor(content: TContent, difficulty: TDifficulty) {
+  constructor(content: TContent, difficulty: TDifficulty, layoutSeed = 0) {
     super();
     this.content = content;
     this.difficulty = difficulty;
+    this.layoutSeed = Math.abs(Math.floor(layoutSeed)) || 0;
   }
 
   /** Pure — safe to call every frame (BR-ENG-13). */
