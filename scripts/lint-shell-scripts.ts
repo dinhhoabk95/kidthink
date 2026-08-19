@@ -20,7 +20,9 @@ export interface ShellLintError {
 }
 
 const SCAN_DIRS = ["infra/scripts", "scripts"];
-const SKIP_DIRS = new Set(["node_modules", "dist", ".output"]);
+// Fixtures are wrong on purpose; the negative-case test points the gate at them
+// explicitly instead.
+const SKIP_DIRS = new Set(["node_modules", "dist", ".output", "fixtures"]);
 const INSTALL_HINT =
   "Install it: `brew install shellcheck` (macOS) or `apt-get install shellcheck` (Debian/Ubuntu).";
 
@@ -80,7 +82,19 @@ export function runShellcheck(files: string[], root: string): ShellLintError[] {
   // -x follows `source` into lib/, which is where most of the logic lives.
   const result = spawnSync(
     "shellcheck",
-    ["--shell=bash", "--severity=warning", "--format=json", "-x", ...files],
+    // severity=info, not warning: SC2086 (unquoted expansion) is an info-level
+    // finding, and it is the single most common way a deploy script mangles a
+    // path with a space in it.
+    [
+      "--shell=bash",
+      "--severity=info",
+      "--format=json",
+      "-x",
+      // `source=lib/x.sh` directives are relative to the script that writes
+      // them, not to the working directory the gate happens to run from.
+      "--source-path=SCRIPTDIR",
+      ...files,
+    ],
     { encoding: "utf8", cwd: root, maxBuffer: 20 * 1024 * 1024 }
   );
 

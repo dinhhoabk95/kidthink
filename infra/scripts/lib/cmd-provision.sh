@@ -54,7 +54,7 @@ mk_prov_base_system() {
   if command -v apt-get >/dev/null 2>&1; then
     export DEBIAN_FRONTEND=noninteractive
     apt-get update -qq
-    apt-get install -y -qq curl ca-certificates gnupg lsb-release logrotate nginx certbot python3-certbot-nginx
+    apt-get install -y -qq curl ca-certificates gnupg lsb-release logrotate gettext-base nginx certbot python3-certbot-nginx
   fi
 }
 
@@ -139,7 +139,9 @@ mk_prov_runtime() {
   fi
 
   # BR-SUP-01: without this the applications do not come back after a reboot.
-  pm2 startup systemd -u "${MK_SYSTEM_USER}" --hp "${MK_ROOT}" >/dev/null 2>&1 \
+  # The supervisor runs as root and drops each application to the mindkid uid;
+  # see infra/pm2/ecosystem.config.cjs.
+  pm2 startup systemd -u root --hp /root >/dev/null 2>&1 \
     || log_warn "Could not register the supervisor with systemd."
 }
 
@@ -181,6 +183,14 @@ mk_prov_web_server() {
     return 1
   fi
 
+  mkdir -p /etc/nginx/snippets /etc/nginx/conf.d
+  cp -f "${MK_COMPOSE_DIR}/nginx/mindkid-proxy.conf" /etc/nginx/snippets/mindkid-proxy.conf
+  cp -f "${MK_COMPOSE_DIR}/nginx/mindkid-upgrade-map.conf" /etc/nginx/conf.d/mindkid-upgrade-map.conf
+
+  # shellcheck disable=SC2016
+  # The single quotes are required: envsubst takes the placeholder names as a
+  # literal argument and substitutes only those, leaving nginx's own $variables
+  # untouched.
   SITE_DOMAIN="${site_domain}" ADMIN_DOMAIN="${admin_domain}" \
     envsubst '${SITE_DOMAIN} ${ADMIN_DOMAIN}' \
     <"${template}" >/etc/nginx/sites-available/mindkid.conf

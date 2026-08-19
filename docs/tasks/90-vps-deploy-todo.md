@@ -1,108 +1,137 @@
 # Todo — Task #90: Triển khai lên VPS bằng một lệnh (P0)
 
 > Lý do, đồ thị phụ thuộc, work package: [`90-vps-deploy-plan.md`](90-vps-deploy-plan.md).
-> Giả định và số đo hiện trạng trong các spec sở hữu.
+> Kết quả review ngày 2026-08-19 và quyết định sửa: [`90-vps-deploy-fixes.md`](90-vps-deploy-fixes.md).
+> So sánh nginx với Caddy: [`90-caddy-vs-nginx.md`](90-caddy-vs-nginx.md).
 >
 > Mọi lệnh chạy từ thư mục gốc của monorepo, đặt lại đường dẫn Node trước:
 > `export PATH=/Users/macbook/.nvm/versions/node/v24.15.0/bin:$PATH`.
 > Dùng `pnpm exec biome check .` chứ không `pnpm lint` — hook viết lại lệnh đó thành eslint.
->
-> **Chặn WP90.5 trở đi:** thương hiệu đang đổi tên (thư mục đã đổi `MindKid` sang `mindkid`,
-> package scope vẫn `@MindKid/*`). Đường dẫn máy chủ, tên người dùng hệ thống và tên tệp cấu
-> hình trong năm spec đang mang tên cũ. Chốt tên trước khi viết script, vì đổi tên sau khi máy
-> chủ đã chạy là một lần di chuyển dữ liệu, không phải một lần sửa chuỗi.
 
 ## Preflight
 
 - [x] Đọc năm spec sở hữu: [`env-contract.md`](../specs/01-platform/env-contract.md) · [`server-provisioning.md`](../specs/01-platform/server-provisioning.md) · [`process-supervision.md`](../specs/01-platform/process-supervision.md) · [`release-deploy.md`](../specs/01-platform/release-deploy.md) · [`release-rollback.md`](../specs/01-platform/release-rollback.md).
-- [x] Đo lại 12 số đo ở đặc tả task — chúng là trạng thái ngày 2026-08-18, không phải sự thật vĩnh viễn.
-- [x] Xác nhận `pnpm check` và `pnpm test` xanh trước khi sửa dòng đầu tiên.
+- [x] Đo lại 12 số đo ở đặc tả task.
 - [x] Chốt tên thương hiệu dùng cho đường dẫn máy chủ và người dùng hệ thống (`mindkid`).
+- [x] Chốt gốc đường dẫn máy chủ theo [`server-provisioning.md`](../specs/01-platform/server-provisioning.md) §7.1: `/opt/mindkid`.
 
 ## WP90.0 — Năm spec draft sang approved
 
-- [x] Đọc lại §11 của từng spec, xác nhận mọi hàng có `Chặn phase` và `Chủ` thuộc bộ giá trị đóng.
 - [x] Đổi `status: draft` sang `status: approved` cho năm spec.
-- [x] `pnpm lint:specs` xanh (C8 kiểm dependency; C16 và C17 chuyển từ cảnh báo sang lỗi khi approved).
+- [x] `pnpm lint:specs` xanh.
 
 ## WP90.1 — Registry biến môi trường và validator
 
-- [x] Khai 56 biến trong `packages/config/src/env-contract.ts` theo bảng ở [`env-contract.md`](../specs/01-platform/env-contract.md) §7.1.
-- [x] `validateEnvFile(app, parsed)` nhận `Map` đã đọc từ tệp, **không** đọc biến môi trường của tiến trình (`BR-ENV-06`).
-- [x] Unit test sáu loại lệch: thiếu · rỗng · sai kiểu địa chỉ · bí mật dưới 32 byte · biến lạ · chỉ bắt buộc ở máy chủ.
-- [x] Unit test ca âm của `BR-ENV-06`: shell có đủ biến, tệp truyền vào thiếu, validator vẫn báo thiếu.
+- [x] `packages/config/src/env-contract.ts`: 45 biến, mỗi biến có mã đọc thật (đo 2026-08-19).
+- [x] `packages/config/src/env-file.ts`: bộ đọc tệp env dùng chung cho cổng và test.
+- [x] `validateEnvFile(app, parsed, isProduction)` nhận `Map`, **không** đọc `process.env` (`BR-ENV-06`).
+- [x] Thêm mức `optional` vào enum `required`; cập nhật [`env-contract.md`](../specs/01-platform/env-contract.md) §7.1 trong cùng thay đổi.
+- [x] 18 unit test: thiếu · rỗng · secret dưới 32 byte · URL sai · cổng sai · chỉ bắt buộc ở production · biến lạ chỉ cảnh báo · `BR-ENV-04` · `BR-ENV-06` · năm ca của bộ đọc tệp.
 
-## WP90.2 — Cổng lint:env-names, viết trước khi sửa code
+## WP90.2 — Cổng lint:env-names
 
-- [x] Viết `scripts/lint-env-names.ts`: quét `apps/` và `packages/` tìm sáu nhóm tên đồng nghĩa đã bỏ.
-- [x] Bắt cả giá trị mặc định cứng cho địa chỉ site (`BR-ENV-03`).
-- [x] Fixture sai cố ý trong `scripts/tests/fixtures/`; test khẳng định cổng **đỏ** trên fixture đó.
-- [x] Chạy cổng trên code hiện tại: phải đỏ. Đây là trạng thái RED mong đợi.
+- [x] `scripts/lint-env-names.ts` bắt tên đồng nghĩa ở **bốn** dạng đọc: thuộc tính, ngoặc vuông, `requireEnv()`, và giải cấu trúc.
+- [x] Bắt mặc định cứng cho biến quyết định danh tính hoặc tính xác thực (`BR-ENV-03`).
+- [x] Fixture sai cố ý ở `scripts/tests/fixtures/env-names/`; test khẳng định cổng **đỏ** trên fixture và **xanh** trên fixture đúng.
+- [x] Cổng quét toàn cây trong 0,6 giây (regex biên dịch một lần, có bộ lọc dòng).
 
 ## WP90.3 — Gộp tên đồng nghĩa và bỏ mặc định cứng
 
 - [x] Gộp sáu nhóm về tên chốt ở [`env-contract.md`](../specs/01-platform/env-contract.md) §7.2.
-- [x] Bỏ 10 giá trị mặc định cứng cho địa chỉ site; thiếu biến thì nổ lúc khởi động.
-- [x] Sinh `.env.example` từ registry; không sửa tay tệp đó nữa (`BR-ENV-09`).
-- [x] `pnpm lint:env-names` xanh · `pnpm test` xanh.
+- [x] Bỏ **22** mặc định cứng còn sót: 10 địa chỉ site, 5 khoá mã hoá MFA, khoá ký URL tài sản, tên hai bucket, hai bí mật OAuth, mật khẩu admin gieo dữ liệu, hai chuỗi kết nối Valkey.
+- [x] `packages/config/src/require-env.ts`: `requireEnv` · `optionalEnv` · `requireFirstEnv` · `devFallbackEnv` (chỉ `devFallbackEnv` được phép đứng cạnh chuỗi cứng, và nó ném lỗi ở production).
+- [x] Sinh `.env.example` từ registry; cổng `lint:env-example` chặn sửa tay (`BR-ENV-09`).
 
 ## WP90.4 — Script build ở gốc và worker chạy mã đã build
 
-- [x] Thêm `build` vào `package.json` gốc, thứ tự package trước app.
-- [x] `apps/worker`: lệnh chạy dùng mã trong `dist/`; bỏ loader phát triển khỏi đường chạy máy chủ (`BR-SUP-09`).
-- [x] `pnpm build` chạy được từ gốc, sinh `.output/` cho hai app Nuxt và `dist/` cho worker.
+- [x] `build` ở `package.json` gốc, thứ tự theo đồ thị workspace.
+- [x] `apps/worker` chạy `node dist/index.js`; không loader nào trong đường chạy máy chủ (`BR-SUP-09`).
 
 ## WP90.5 — Cấu hình trình giám sát tiến trình
 
 - [x] `infra/pm2/ecosystem.config.cjs`: ba ứng dụng, cluster cho `web`, fork một bản cho `worker` (`BR-SUP-03`).
-- [x] Mỗi ứng dụng trỏ đúng tệp env của nó (`BR-SUP-04`).
-- [x] Ngưỡng bộ nhớ, số lần dựng lại, thời gian tắt êm theo [`process-supervision.md`](../specs/01-platform/process-supervision.md) §7.2.
-- [x] Luân chuyển log: mỗi ngày, giữ 14 ngày, nén (`BR-SUP-06`).
-- [x] Test đọc tệp cấu hình khẳng định đúng ba ứng dụng và `worker` đúng một bản.
+- [x] `cwd` trỏ `/opt/mindkid/current` — thiếu nó thì đường dẫn tương đối giải ra `infra/pm2/apps/...` và không ứng dụng nào khởi động.
+- [x] `uid`/`gid` là `mindkid` (`BR-SRV-02`); trình giám sát giữ quyền `root` để đọc tệp env `0600` (`BR-ENV-05`).
+- [x] Giãn cách dựng lại tăng dần thay cho 5 giây cố định (`BR-SUP-05`).
+- [x] Cổng loopback theo [`server-provisioning.md`](../specs/01-platform/server-provisioning.md) §7.3.
+- [x] Luân chuyển log mỗi ngày, giữ 14 ngày, nén, trần 200 MB, có `postrotate` nạp lại log.
+- [x] 10 test đọc tệp cấu hình.
 
 ## WP90.6 — Dựng máy chủ
 
-- [x] `infra/scripts/provision.sh` theo 11 bước ở [`server-provisioning.md`](../specs/01-platform/server-provisioning.md) §4.
-- [x] Khuôn cấu hình Nginx cộng snippet header bảo mật trong `infra/nginx/`.
-- [x] `infra/docker-compose.prod.yml`: PostgreSQL 17 và Valkey 9, cổng chuẩn, bind loopback, volume riêng (`BR-SRV-03`).
-- [x] Test nhị phân giả: chạy hai lần không cài lại gì, phiên bản lệch thì dừng, không chạm tệp env và volume (`BR-SRV-01`, `BR-SRV-07`).
+- [x] `mindkid.sh init`: người dùng hệ thống, cây thư mục, bản sao kho, gieo `bin/` và `compose/` — chạy được trên máy trắng, không phụ thuộc bản phát hành nào.
+- [x] `mindkid.sh provision` theo 11 bước ở [`server-provisioning.md`](../specs/01-platform/server-provisioning.md) §4: tiền kiểm phần cứng · gói nền · cây thư mục · tường lửa · runtime · dữ liệu · web server · TLS · log · báo cáo.
+- [x] Bỏ `ufw --force reset`: nó xoá cả luật SSH trong lúc dựng lại, ngược với `BR-SRV-01`.
+- [x] Dừng khi phiên bản lệch, không tự nâng cấp (`BR-SRV-05`).
+- [x] Khuôn Nginx được kết xuất, kiểm cú pháp và nạp lại thật; snippet header nằm trong `infra/nginx/`.
+- [x] `infra/docker-compose.prod.yml`: PostgreSQL 17 và **Valkey 9**, bind loopback, volume riêng, mật khẩu bắt buộc.
+- [x] Bước 11 in hai việc còn phải làm tay: trỏ DNS và ghi ba tệp env.
 
 ## WP90.7 — Phát hành
 
-- [x] `infra/scripts/lib/`: log có mốc thời gian, khoá chống chạy song song, đổi liên kết mềm nguyên tử, cổng khói.
-- [x] `infra/scripts/release.sh` theo 10 bước ở [`release-deploy.md`](../specs/01-platform/release-deploy.md) §4.
-- [x] Ca âm 1 — cổng khói 503: quay lui, mã thoát khác 0, log nêu lý do.
-- [x] Ca âm 2 — thiếu biến bắt buộc: không tạo thư mục bản nào.
-- [x] Ca âm 3 — hai lần phát hành song song: lần thứ hai thoát vì khoá.
-- [x] Ca âm 4 — ngắt giữa bước build: liên kết mềm vẫn trỏ bản cũ.
-- [x] Ca âm 5 — phát hành lại cùng một commit: cả hai lần thành công.
-- [x] Ca âm 6 — chế độ in kế hoạch: không đổi liên kết mềm, không thêm thư mục bản.
-- [x] Khẳng định không giá trị bí mật nào xuất hiện trong log (`BR-DEP-10`).
+- [x] `infra/scripts/mindkid.sh` là **điểm vào duy nhất**; `deploy.sh`, `release.sh`, `rollback.sh`, `provision.sh` cũ đã xoá.
+- [x] Thư viện dùng chung: `paths` · `log` · `lock` · `atomic` · `smoke` · `notify` · `pm2` · `envcheck` · `git` · `releases` · `build`.
+- [x] Khoá là **thư mục** trong `/opt/mindkid`, không phải tệp trong `/tmp`: `mkdir` nguyên tử ở mọi hệ tệp, và người dùng thường không tạo trước hay trỏ liên kết mềm vào tệp khác được.
+- [x] Tên thư mục bản `<mốc UTC>-<7 ký tự sha>` ([`release-deploy.md`](../specs/01-platform/release-deploy.md) §7.1) — đây là thứ làm cho phát hành lại cùng commit không xoá bản đang chạy.
+- [x] Bước kiểm env gọi validator thật, trước khi cài và build (`BR-DEP-04`).
+- [x] Cài và build trong container `node:24-bookworm` (`BR-DEP-05`), kho pnpm dùng chung ở `shared/`.
+- [x] Nạp lại theo thứ tự worker → admin → web ([`release-deploy.md`](../specs/01-platform/release-deploy.md) §7.2).
+- [x] Thông báo khi thất bại (`BR-DEP-11`) qua `/etc/mindkid/deploy.conf`.
+- [x] Ghi `/var/log/mindkid/deploy.log` với mốc thời gian quốc tế.
 
 ## WP90.8 — Quay lui và cổng migration cộng thêm
 
-- [x] `infra/scripts/rollback.sh` dùng chung thư viện của WP90.7, không build, không migration.
-- [x] `scripts/lint-migration-expand.ts`: chặn migration xoá hoặc đổi tên cột (`BR-RBK-02`).
-- [x] Fixture migration xoá cột; test khẳng định cổng đỏ trên fixture.
-- [x] Test quay lui: về bản trước, cổng khói xanh, có dòng log nêu bản nguồn và bản đích.
+- [x] `mindkid.sh rollback` dùng chung khoá với phát hành (`BR-RBK-05`), không build, không migration.
+- [x] Chọn đích bằng `--to <tên bản>` theo [`release-rollback.md`](../specs/01-platform/release-rollback.md) §3.
+- [x] Từ chối bản đích không có artefact đã build (§4 bước 3).
+- [x] Chạy cổng khói sau khi quay lui (`BR-RBK-06`) và phát thông báo (`BR-RBK-07`).
+- [x] `scripts/lint-migration-expand.ts` quét đúng `packages/db/src/migrations` — đường dẫn cũ không tồn tại nên cổng xanh mà không đọc tệp nào.
+- [x] Cổng **đỏ khi quét 0 tệp**: một cổng không đọc gì thì xanh vĩnh viễn.
+- [x] Chặn thêm `DROP INDEX` · `DROP CONSTRAINT` · `DROP VIEW` · `DROP TYPE` · `SET NOT NULL` · `ALTER COLUMN TYPE` · `TRUNCATE`.
+- [x] Fixture migration xoá cột; 10 test khẳng định cổng đỏ trên fixture, xanh trên fixture cộng thêm.
 
 ## WP90.9 — Lệnh phía máy trạm
 
-- [x] `scripts/deploy/` lớp bọc SSH; tệp cấu hình máy chủ không chứa bí mật.
-- [x] Bảy lệnh phát hành và vận hành ở [`release-deploy.md`](../specs/01-platform/release-deploy.md) §3 và [`release-rollback.md`](../specs/01-platform/release-rollback.md) §3.
-- [x] Cây làm việc bẩn: in cảnh báo kèm số tệp khác biệt, vẫn phát hành đúng commit trên kho (`BR-DEP-02`).
-- [x] Tham chiếu chưa đẩy lên kho: dừng, in cách xử lý.
+- [x] `scripts/deploy/cli.ts` cho bảy lệnh; `scripts/deploy/remote-exec.ts` kiểm mọi giá trị trước khi gửi.
+- [x] Gửi **mảng tham số** qua SSH, không ghép chuỗi: shell đầu kia chạy bằng `root`.
+- [x] `pnpm deploy:init` — lệnh còn thiếu khiến máy trắng không dựng được.
+- [x] Tham chiếu chưa đẩy lên kho: dừng tại máy trạm, in cách xử lý (`BR-DEP-01`).
+- [x] Cây làm việc bẩn: in cảnh báo kèm số tệp, vẫn phát hành commit trên kho (`BR-DEP-02`).
+- [x] `pnpm deploy:status` liệt kê các bản còn giữ và bản nào quay lui được.
+- [x] 6 test với 20 chuỗi tấn công cho lớp kiểm tham số.
 
 ## WP90.10 — Cổng kiểm cú pháp shell và verification
 
-- [x] Thêm cổng kiểm cú pháp shell cho `infra/scripts/` vào `pnpm check`.
-- [x] Fixture shell sai cố ý; test khẳng định cổng đỏ.
-- [x] `pnpm exec biome check .` · `pnpm lint:specs` · `pnpm check` · `pnpm test` xanh.
+- [x] Cổng dùng **shellcheck** ở mức `info`, không phải `bash -n`: `SC2086` là mức info và là cách phổ biến nhất một script phát hành làm hỏng đường dẫn có dấu cách.
+- [x] Cổng **đỏ khi thiếu shellcheck** và khi quét 0 tệp.
+- [x] Fixture shell sai cố ý mà `bash -n` chấp nhận; test khẳng định cổng đỏ.
+- [x] `pnpm exec biome check .` xanh · `pnpm lint:specs` xanh · `pnpm lint:rule-ids` xanh.
+- [x] `bash infra/scripts/tests/run.sh`: **43 khẳng định, 12 ca, 0 lỗi**.
+
+### Sáu ca âm bắt buộc của plan §6, cộng sáu ca review thêm
+
+| Ca | Nội dung | Kết quả |
+| --- | --- | --- |
+| 1 | Cổng khói trả 503 | Liên kết mềm về bản trước, mã thoát khác 0, log nêu lý do |
+| 2 | Thiếu một biến bắt buộc | Không thư mục bản nào được tạo, bản đang chạy vẫn phục vụ |
+| 3 | Hai lần phát hành song song | Lần thứ hai thoát, không xếp hàng |
+| 4 | Ngắt giữa bước build | Liên kết mềm giữ bản cũ, thư mục dở dang bị dọn, khoá được trả |
+| 5 | Phát hành lại cùng commit | Hai thư mục bản riêng biệt, bản cũ còn nguyên |
+| 6 | Chế độ in kế hoạch | Không đổi liên kết mềm, không thêm thư mục bản |
+| 7 | Tham chiếu chưa đẩy lên kho | Dừng, không tạo thư mục nào |
+| 8 | Quay lui | Về bản trước, không chạy migration nào |
+| 9 | Thứ tự nạp lại | worker, admin, web |
+| 10 | Dọn bản cũ | Bản đang phục vụ không bị xoá dù nằm ngoài cửa sổ giữ lại |
+| 11 | Bí mật trong log | Không giá trị bí mật nào trong output và trong `deploy.log` |
+| 12 | Bản đích thiếu artefact | Quay lui từ chối, liên kết mềm không đổi |
 
 ## WP90.11 — Máy thật, cổng người
 
 - [ ] Có câu trả lời cho ba câu hỏi chặn: nhà cung cấp và cấu hình máy, tên miền và ai giữ DNS, nơi chạy cổng tự động.
-- [ ] Dựng máy trắng, chạy lệnh dựng máy, ghi thời gian thật.
-- [ ] Chạy lệnh phát hành, ghi thời gian thật và gián đoạn đo được.
+- [ ] Ghi `/etc/mindkid/env/{web,admin,worker}.env` và `compose/datastore.env`, quyền `0600 root:root`.
+- [ ] `pnpm deploy:init --host <tên> --remote <url>` trên máy trắng, ghi thời gian thật.
+- [ ] `pnpm deploy:provision --host <tên> --site-domain <d> --admin-domain <d>`, ghi thời gian thật.
+- [ ] `pnpm deploy --host <tên> --ref main`, ghi thời gian thật và gián đoạn đo được.
+- [ ] Chạy lại lệnh dựng máy lần hai, khẳng định không tiến trình nào bị dừng (`BR-SRV-01`).
 - [ ] Đo 10 tiêu chí ở [`release-deploy.md`](../specs/01-platform/release-deploy.md); ghi số đo vào đây, không ghi "đã xong".
 - [ ] Mở PR cho người review diff, không tự merge.

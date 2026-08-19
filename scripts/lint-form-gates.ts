@@ -1,7 +1,10 @@
 import { readdirSync, statSync } from "node:fs";
 import { join } from "node:path";
-import { MVP_TEMPLATES } from "../packages/game-engine/src/contracts/registry.ts";
-import type { GameTemplate } from "../packages/game-engine/src/contracts/types.ts";
+import {
+  type GameTemplate,
+  MVP_TEMPLATES,
+} from "../packages/game-engine/src/index.ts";
+
 import {
   CONFIG_DICTIONARY,
   TEXT_FALLBACK_ALLOWLIST,

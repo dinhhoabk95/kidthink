@@ -1,7 +1,4 @@
-import type {
-  GT001Content,
-  GT001Difficulty,
-} from "../../contracts/templates/gt001";
+import type { GT001Content, GT001Difficulty } from "./template.js";
 
 export const GT001_FIXTURES: {
   content: GT001Content;

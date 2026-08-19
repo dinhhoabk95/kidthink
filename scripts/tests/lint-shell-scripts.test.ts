@@ -1,31 +1,46 @@
-import { unlinkSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { describe, expect, it } from "vitest";
 import {
   checkBashSyntax,
+  collectShellScripts,
+  isShellcheckAvailable,
+  runShellcheck,
   scanAndLintShellScripts,
-} from "../lint-shell-scripts.js";
+} from "../lint-shell-scripts.ts";
 
-describe("Task #90 — WP90.10 Shell Scripts Syntax Verification", () => {
-  it("all real infra/scripts/*.sh pass bash -n syntax verification", () => {
-    const errors = scanAndLintShellScripts();
-    expect(errors).toEqual([]);
+const REPO_ROOT = resolve(import.meta.dirname, "../..");
+const BAD_FIXTURE = "scripts/tests/fixtures/shell/bad/unquoted.sh";
+
+describe("Gate lint:shell", () => {
+  it("shellcheck is installed; without it the gate cannot do its job", () => {
+    expect(isShellcheckAvailable()).toBe(true);
   });
 
-  it("detects syntax error on malformed bash script fixture", () => {
-    const badScriptPath = resolve(import.meta.dirname, "temp_bad_script.sh");
-    writeFileSync(
-      badScriptPath,
-      "if [ true; then echo missing bracket fi",
-      "utf8"
+  it("collects the server scripts and skips the fixtures", () => {
+    const files = collectShellScripts(REPO_ROOT);
+    expect(files.length).toBeGreaterThan(0);
+    expect(files.some((f) => f.includes("infra/scripts/mindkid.sh"))).toBe(
+      true
     );
+    expect(files.some((f) => f.includes("fixtures"))).toBe(false);
+  });
 
-    try {
-      const err = checkBashSyntax(badScriptPath);
-      expect(err).not.toBeNull();
-      expect(err?.message).toBeTruthy();
-    } finally {
-      unlinkSync(badScriptPath);
-    }
+  it("goes red on a fixture that bash -n accepts", () => {
+    // The point of the gate: this file parses, so syntax checking alone passes.
+    expect(checkBashSyntax(resolve(REPO_ROOT, BAD_FIXTURE))).toBeNull();
+
+    const findings = runShellcheck([BAD_FIXTURE], REPO_ROOT);
+    expect(findings.length).toBeGreaterThan(0);
+    expect(findings.map((f) => f.code)).toContain("SC2086");
+  });
+
+  it("anchors every finding to a line so it can be acted on", () => {
+    const findings = runShellcheck([BAD_FIXTURE], REPO_ROOT);
+    expect(findings.every((f) => f.line > 0)).toBe(true);
+    expect(findings.every((f) => f.file === BAD_FIXTURE)).toBe(true);
+  });
+
+  it("is green on the real server scripts", { timeout: 60_000 }, () => {
+    expect(scanAndLintShellScripts(REPO_ROOT)).toEqual([]);
   });
 });

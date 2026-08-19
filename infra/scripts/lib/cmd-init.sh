@@ -57,7 +57,7 @@ mk_init_layout() {
   # as root and hands the values to a process running as mindkid (BR-ENV-05).
   mkdir -p "${MK_ENV_DIR}"
   chown root:root "${MK_ENV_DIR}"
-  chmod 0750 "${MK_ENV_DIR}"
+  chmod 0700 "${MK_ENV_DIR}"
 }
 
 # Copies the operational assets out of a commit so provisioning never depends on

@@ -68,17 +68,34 @@ function isTestPath(relPath: string): boolean {
 }
 
 /**
- * Matches every shape a name can be read in, not just `process.env.NAME`:
- * bracket access and destructuring were how the last rename leaked through.
+ * Every shape a name can be read in, not just `process.env.NAME`: bracket
+ * access and destructuring were how the last rename leaked through.
+ *
+ * Compiled once at module load. Building these per line made the gate scan the
+ * repository in tens of seconds instead of under one.
  */
-function buildAliasPatterns(bannedName: string): RegExp[] {
-  return [
-    new RegExp(`\\bprocess\\.env\\.${bannedName}\\b`),
-    new RegExp(`\\bprocess\\.env\\[\\s*["'\`]${bannedName}["'\`]\\s*\\]`),
-    new RegExp(`\\b(?:requireEnv|optionalEnv)\\(\\s*["'\`]${bannedName}["'\`]`),
-    new RegExp(`\\{[^}]*\\b${bannedName}\\b[^}]*\\}\\s*=\\s*process\\.env\\b`),
-  ];
-}
+const ALIAS_MATCHERS: readonly {
+  rule: DeprecatedEnvRule;
+  patterns: readonly RegExp[];
+}[] = DEPRECATED_ENV_NAMES.map((rule) => ({
+  rule,
+  patterns: [
+    new RegExp(`\\bprocess\\.env\\.${rule.bannedName}\\b`),
+    new RegExp(`\\bprocess\\.env\\[\\s*["'\`]${rule.bannedName}["'\`]\\s*\\]`),
+    new RegExp(
+      `\\b(?:requireEnv|optionalEnv)\\(\\s*["'\`]${rule.bannedName}["'\`]`
+    ),
+    new RegExp(
+      `\\{[^}]*\\b${rule.bannedName}\\b[^}]*\\}\\s*=\\s*process\\.env\\b`
+    ),
+  ],
+}));
+
+/**
+ * Cheap pre-filter: a line with no `process.env`, `requireEnv` or `optionalEnv`
+ * cannot violate either rule, and that is almost every line in the repository.
+ */
+const CANDIDATE_LINE = /process\.env|requireEnv|optionalEnv/;
 
 /**
  * A string literal used as the fallback of a contract variable. Chained
@@ -94,7 +111,7 @@ const REQUIRE_ENV_DEFAULT_PATTERN =
 const SANCTIONED_FALLBACK = /\bdevFallbackEnv\s*\(/;
 
 /** Names whose value decides identity or authenticity — a literal is never right. */
-function noDefaultNames(): Set<string> {
+function computeNoDefaultNames(): Set<string> {
   const names = new Set<string>();
   for (const def of ENV_REGISTRY) {
     if (
@@ -110,20 +127,22 @@ function noDefaultNames(): Set<string> {
   return names;
 }
 
+const NO_DEFAULT_NAMES = computeNoDefaultNames();
+
 function scanLineForAliases(
   relPath: string,
   line: string,
   lineNumber: number,
   found: EnvNameViolation[]
 ): void {
-  for (const rule of DEPRECATED_ENV_NAMES) {
-    if (buildAliasPatterns(rule.bannedName).some((p) => p.test(line))) {
+  for (const matcher of ALIAS_MATCHERS) {
+    if (matcher.patterns.some((p) => p.test(line))) {
       found.push({
         file: relPath,
         line: lineNumber,
         kind: "deprecated-alias",
-        name: rule.bannedName,
-        advice: `Use "${rule.replacement}" — env-contract.md §7.2`,
+        name: matcher.rule.bannedName,
+        advice: `Use "${matcher.rule.replacement}" — env-contract.md §7.2`,
         codeSnippet: line.trim(),
       });
     }
@@ -172,15 +191,21 @@ export function scanContentForEnvNames(
   content: string
 ): EnvNameViolation[] {
   const found: EnvNameViolation[] = [];
-  const banned = noDefaultNames();
+  if (!CANDIDATE_LINE.test(content)) {
+    return found;
+  }
+
   const lines = content.split("\n");
   const skipDefaults = isTestPath(relPath);
 
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i] ?? "";
+    if (!CANDIDATE_LINE.test(line)) {
+      continue;
+    }
     scanLineForAliases(relPath, line, i + 1, found);
     if (!skipDefaults) {
-      scanLineForDefaults(relPath, line, i + 1, banned, found);
+      scanLineForDefaults(relPath, line, i + 1, NO_DEFAULT_NAMES, found);
     }
   }
 

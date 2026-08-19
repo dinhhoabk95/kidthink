@@ -90,6 +90,14 @@ chỉ lộ ra vào lúc tệ nhất — lúc máy vừa khởi động lại, ho
 
 ## 7. Data
 
+### 7.0 Người dùng của tiến trình
+
+Trình giám sát chạy bằng `root` và hạ từng ứng dụng xuống người dùng `mindkid`. Đây là cách duy
+nhất để `BR-SRV-02` và `BR-ENV-05` cùng đúng: chỉ `root` đọc được tệp env `0600 root:root`, còn
+tiến trình phục vụ người dùng thì không được là `root`. Trình giám sát đọc tệp và truyền giá trị
+xuống tiến trình con; tiến trình con không bao giờ mở tệp env.
+
+
 **Đọc:** tệp định nghĩa ứng dụng trong kho, ba file env trên máy chủ.
 **Ghi:** log ứng dụng, trạng thái tiến trình của trình giám sát. Không ghi cơ sở dữ liệu.
 

@@ -98,14 +98,21 @@ nó thành một cổng chặn phát hành.
 | ----------- | ------- | ----------------------------------------------------------- |
 | `name`      | text    | Chữ in, gạch dưới; là tên duy nhất của khái niệm            |
 | `apps`      | tập hợp | Tập con của `web` · `admin` · `worker`                      |
-| `required`  | enum    | `always` \| `production` \| `when-enabled`                  |
+| `required`  | enum    | `always` \| `production` \| `when-enabled` \| `optional`     |
 | `kind`      | enum    | `url` \| `secret` \| `email` \| `port` \| `enum` \| `text`  |
 | `secret`    | boolean | `true` thì giá trị không bao giờ được in ra                 |
 | `enabledBy` | text    | Tên cờ tính năng, chỉ dùng khi `required` là `when-enabled` |
 | `note`      | text    | Một câu: ai đọc và để làm gì                                |
 
+`optional` nghĩa là mã đọc biến này và xử lý được trường hợp vắng mặt. Nó khác `when-enabled`
+ở chỗ không có cờ nào bật nó, và khác việc **không khai** ở chỗ tên vẫn nằm trong danh mục —
+nếu không, validator sẽ báo mọi dòng của nó là biến lạ.
+
 Số biến đo được ngày 2026-08-18, dùng làm điểm bắt đầu của danh mục: `apps/web` đọc 13,
-`apps/admin` đọc 2, `apps/worker` đọc 3, `packages/` đọc 43, tổng 56 tên khác nhau.
+`apps/admin` đọc 2, `apps/worker` đọc 3, `packages/` đọc 43, tổng 56 tên khác nhau. Sau khi gộp
+sáu nhóm đồng nghĩa ở §7.2, registry chốt lại 45 tên (đo ngày 2026-08-19). Điều kiện để một tên
+có mặt trong registry là **có mã đọc nó**: một tên không ai đọc làm validator đòi giá trị mà
+không tiến trình nào tiêu thụ.
 
 ### 7.2 Sáu nhóm phải gộp
 

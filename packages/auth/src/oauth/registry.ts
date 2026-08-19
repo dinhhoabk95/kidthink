@@ -37,7 +37,7 @@ export interface OAuthProviderConfig {
   readonly label: string;
   readonly clientId: string;
   readonly clientSecret: string;
-  readonly redirectUri: string;
+  readonly callbackPath: string;
   readonly scopes: readonly string[];
   readonly isEnabled: boolean;
 }
@@ -51,14 +51,14 @@ export interface OAuthRegistryOptions {
 }
 
 export class OAuthProviderRegistry {
-  private readonly siteUrl: string;
+  private readonly siteUrlOption?: string;
+  private siteUrlCache?: string;
   private readonly googleConfig: OAuthProviderConfig;
   private readonly facebookConfig: OAuthProviderConfig;
   private googleOidcConfigPromise: Promise<Configuration> | null = null;
 
   constructor(options: OAuthRegistryOptions = {}) {
-    const rawSiteUrl = options.siteUrl || requireEnv("SITE_URL");
-    this.siteUrl = rawSiteUrl.replace(TRAILING_SLASH_REGEX, "");
+    this.siteUrlOption = options.siteUrl;
 
     const googleId =
       options.googleClientId ?? optionalEnv("GOOGLE_CLIENT_ID") ?? "";
@@ -77,7 +77,7 @@ export class OAuthProviderRegistry {
       label: "Google",
       clientId: googleId,
       clientSecret: googleSecret,
-      redirectUri: `${this.siteUrl}/api/guest/auth/oauth/google/callback`,
+      callbackPath: "/api/guest/auth/oauth/google/callback",
       scopes: ["openid", "email", "profile"],
       isEnabled: Boolean(googleId && googleSecret),
     };
@@ -87,10 +87,28 @@ export class OAuthProviderRegistry {
       label: "Facebook",
       clientId: facebookId,
       clientSecret: facebookSecret,
-      redirectUri: `${this.siteUrl}/api/guest/auth/oauth/facebook/callback`,
+      callbackPath: "/api/guest/auth/oauth/facebook/callback",
       scopes: ["public_profile", "email"],
       isEnabled: Boolean(facebookId && facebookSecret),
     };
+  }
+
+  /**
+   * The public address is only needed when a redirect URI is actually built.
+   * Reading it in the constructor would make listing the providers — which
+   * exposes no address at all — depend on a variable it does not use.
+   */
+  private siteUrl(): string {
+    if (this.siteUrlCache === undefined) {
+      this.siteUrlCache = (
+        this.siteUrlOption ?? requireEnv("SITE_URL")
+      ).replace(TRAILING_SLASH_REGEX, "");
+    }
+    return this.siteUrlCache;
+  }
+
+  private redirectUri(config: OAuthProviderConfig): string {
+    return `${this.siteUrl()}${config.callbackPath}`;
   }
 
   getPublicProviders(): OAuthProviderPublicInfo[] {
@@ -151,7 +169,7 @@ export class OAuthProviderRegistry {
     if (provider === "google") {
       const oidcConfig = await this.getGoogleOidcConfig();
       const authUrl = buildAuthorizationUrl(oidcConfig, {
-        redirect_uri: config.redirectUri,
+        redirect_uri: this.redirectUri(config),
         scope: config.scopes.join(" "),
         state,
         code_challenge,
@@ -164,7 +182,7 @@ export class OAuthProviderRegistry {
     // Facebook OAuth2 dialog URL
     const url = new URL("https://www.facebook.com/v21.0/dialog/oauth");
     url.searchParams.set("client_id", config.clientId);
-    url.searchParams.set("redirect_uri", config.redirectUri);
+    url.searchParams.set("redirect_uri", this.redirectUri(config));
     url.searchParams.set("state", state);
     url.searchParams.set("response_type", "code");
     url.searchParams.set("scope", config.scopes.join(","));
@@ -248,7 +266,10 @@ export class OAuthProviderRegistry {
       "client_secret",
       this.facebookConfig.clientSecret
     );
-    tokenUrl.searchParams.set("redirect_uri", this.facebookConfig.redirectUri);
+    tokenUrl.searchParams.set(
+      "redirect_uri",
+      this.redirectUri(this.facebookConfig)
+    );
     tokenUrl.searchParams.set("code", code);
     tokenUrl.searchParams.set("code_verifier", codeVerifier);
 

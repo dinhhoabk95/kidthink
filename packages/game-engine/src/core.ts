@@ -1,6 +1,9 @@
-import { getGameTemplate, validateContentPack } from "./contracts/registry.js";
 import type { AgeBand } from "./contracts/types.js";
 import type { GameSession, TelemetryEvent } from "./game-session.js";
+import {
+  getGameTemplate,
+  validateContentPack,
+} from "./generated/template-registry.js";
 import { InteractionManager } from "./interaction.js";
 import { isLayoutId, resolveLayout } from "./layout/registry.js";
 import type { LayoutId, Slot } from "./layout/types.js";

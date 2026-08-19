@@ -23,6 +23,7 @@ export default defineConfig({
   },
   test: {
     globalSetup: [path.resolve(import.meta.dirname, "./tests/global-setup.ts")],
+    setupFiles: [path.resolve(import.meta.dirname, "./tests/setup.ts")],
     testTimeout: 30_000,
     fileParallelism: false,
     maxWorkers: 1,

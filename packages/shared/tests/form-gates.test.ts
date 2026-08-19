@@ -7,7 +7,7 @@ import {
   checkTextFallbackGate,
   runAllFormGates,
 } from "../../../scripts/lint-form-gates.ts";
-import { MVP_TEMPLATES } from "../../game-engine/src/contracts/registry.ts";
+import { MVP_TEMPLATES } from "../../game-engine/src/index.ts";
 
 describe("Schema-Driven Form Anti-Drift Gates (BR-SDF-01, BR-SDF-06, BR-SDF-08, D-JT, D-JU)", () => {
   describe("Gate 1: Label Gate (BR-SDF-06, D-JU)", () => {

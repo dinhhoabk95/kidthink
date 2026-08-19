@@ -2,9 +2,9 @@
 /* biome-ignore-all lint/performance/useTopLevelRegex: test regexes */
 
 import { describe, expect, it } from "vitest";
-import { MVP_TEMPLATES } from "../src/contracts/registry.js";
 import type { AgeBand } from "../src/contracts/types.js";
 import { GameEngine } from "../src/core.js";
+import { MVP_TEMPLATES } from "../src/index.js";
 import {
   getTouchFloor,
   LOGIC_HEIGHT,

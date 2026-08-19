@@ -34,6 +34,12 @@ export interface ScoringSchema {
   star_thresholds: [star1: number, star2: number, star3: number];
 }
 
+export const STANDARD_SCORING: ScoringSchema = {
+  max_score: 100,
+  pass_threshold: 60,
+  star_thresholds: [60, 80, 100],
+};
+
 export interface GameTemplate<
   C extends z.ZodType = z.ZodType,
   D extends z.ZodType = z.ZodType,
@@ -55,4 +61,18 @@ export interface GameTemplate<
   engine_session: string;
   status: ContentStatus;
   version: number;
+}
+
+export interface TemplateDefinition<
+  C extends z.ZodType = z.ZodType,
+  D extends z.ZodType = z.ZodType,
+> extends GameTemplate<C, D> {
+  session?: () => Promise<unknown>;
+}
+
+export function defineTemplate<
+  C extends z.ZodType = z.ZodType,
+  D extends z.ZodType = z.ZodType,
+>(def: TemplateDefinition<C, D>): TemplateDefinition<C, D> {
+  return def;
 }

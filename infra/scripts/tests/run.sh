@@ -113,6 +113,26 @@ add_commit() {
   )
 }
 
+list_releases_in_root() {
+  find "${MK_ROOT}/releases" -mindepth 1 -maxdepth 1 -type d | sort -r
+}
+
+# Retention normally runs at the end of a release, when the active release is by
+# definition the newest one. Calling it on its own is the only way to observe
+# the guard that protects an older active release.
+run_prune_directly() {
+  local keep="$1"
+  local lib="${REPO_ROOT}/infra/scripts/lib"
+  MK_KEEP_RELEASES="${keep}" bash -c "
+    set -uo pipefail
+    . '${lib}/paths.sh'
+    . '${lib}/log.sh'
+    . '${lib}/atomic.sh'
+    . '${lib}/releases.sh'
+    prune_old_releases
+  "
+}
+
 # --- cases ------------------------------------------------------------------
 
 case_1_smoke_failure_rolls_back() {
@@ -278,6 +298,9 @@ case_8_rollback_returns_to_previous() {
   bash "${MINDKID_SH}" release --ref main >/dev/null 2>&1
   local second_link; second_link="$(current_target)"
 
+  local migrations_before
+  migrations_before="$(wc -l <"${MK_FAKE_STATE}/migrations.applied" | tr -d ' ')"
+
   local output status
   output="$(bash "${MINDKID_SH}" rollback 2>&1)"
   status=$?
@@ -286,8 +309,8 @@ case_8_rollback_returns_to_previous() {
   assert_eq "${first_link}" "$(current_target)" "the previous release is active again"
   assert_contains "${output}" "${first_link##*/}" "log names the target release"
   assert_contains "${output}" "${second_link##*/}" "log names the source release"
-  assert_eq "0" "$(grep -c 'migrate' "${MK_FAKE_STATE}/docker.calls" 2>/dev/null || echo 0)" \
-    "rollback ran no migration"
+  assert_eq "${migrations_before}" "$(wc -l <"${MK_FAKE_STATE}/migrations.applied" | tr -d ' ')" \
+    "rollback ran no migration (BR-RBK-09)"
   rm -rf "${root}"
 }
 
@@ -308,7 +331,6 @@ case_10_prune_keeps_the_active_release() {
   printf 'Case 10 — retention never removes what is serving\n'
   new_workspace
   local root="${WORKSPACE_ROOT}"
-  export MK_KEEP_RELEASES=2
 
   local i
   for i in 1 2 3; do
@@ -316,15 +338,23 @@ case_10_prune_keeps_the_active_release() {
     bash "${MINDKID_SH}" release --ref main >/dev/null 2>&1
   done
 
-  # Roll back so the active release is deliberately not the newest one.
+  # A rollback leaves an older release active. Retention must then keep a
+  # directory that is outside the newest-N window purely because it is serving.
   bash "${MINDKID_SH}" rollback >/dev/null 2>&1
-  local active; active="$(current_target)"
+  local active oldest
+  active="$(current_target)"
+  oldest="$(list_releases_in_root | tail -1)"
 
-  add_commit "${root}/source" "commit 4"
-  bash "${MINDKID_SH}" release --ref main >/dev/null 2>&1
+  local output
+  # Retention of one: r3 is inside the window, r2 is outside it but active,
+  # r1 is outside it and idle.
+  output="$(run_prune_directly 1 2>&1)"
 
   assert_eq "true" "$([ -d "${active}" ] && echo true || echo false)" \
-    "the release that was serving was not pruned"
+    "the active release survived retention"
+  assert_eq "false" "$([ -d "${oldest}" ] && echo true || echo false)" \
+    "the oldest non-active release was removed"
+  assert_contains "${output}" "it is the active release" "log explains the exception"
   unset MK_KEEP_RELEASES
   rm -rf "${root}"
 }

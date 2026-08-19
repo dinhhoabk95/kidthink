@@ -105,14 +105,22 @@ env theo [`env-contract.md`](env-contract.md) §7.3.
 ├── releases/<mốc>-<sha>/    một thư mục mỗi lần phát hành
 ├── current -> releases/...  liên kết mềm trỏ bản đang chạy
 ├── shared/                  thứ sống lâu hơn một release
-├── bin/                     provision.sh · release.sh · rollback.sh
-└── compose/                 docker-compose.prod.yml
+├── bin/                     mindkid.sh · lib/ · tests/
+└── compose/                 docker-compose.prod.yml · datastore.env · nginx/ · pm2/
 /etc/mindkid/env/           web.env · admin.env · worker.env  (0600 root)
+/etc/mindkid/deploy.conf    đích thông báo của quy trình phát hành (0600 root)
 /var/log/mindkid/           deploy.log · log từng ứng dụng
 ```
 
 Chủ sở hữu: `/opt/mindkid` thuộc `mindkid`, `/etc/mindkid` thuộc `root`, `/var/log/mindkid`
 thuộc `mindkid` với quyền ghi cho trình giám sát tiến trình.
+
+`compose/datastore.env` chứa mật khẩu PostgreSQL của container, `0600 root:root`. Nó không nằm
+trong `/etc/mindkid/env/` vì ba tệp ở đó thuộc ba ứng dụng (`BR-ENV-04`); cơ sở dữ liệu không
+phải một trong ba.
+
+Ba lệnh của spec này và của hai spec phát hành đi qua **một** điểm vào: `bin/mindkid.sh <verb>`.
+Một script nghĩa là một khoá, một tệp log, và một đích cho cổng kiểm cú pháp shell.
 
 ### 7.2 Thành phần và phiên bản
 

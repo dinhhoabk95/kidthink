@@ -4,9 +4,11 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "gen:templates": "tsx ../../scripts/gen-templates.ts",
     "test": "vitest run",
     "typecheck": "tsc --noEmit"
   },
+
   "devDependencies": {
     "@mindkid/config": "workspace:*",
     "typescript": "catalog:",

@@ -1,36 +1,5 @@
 // Public barrel entry point for @mindkid/game-engine (BR-MPA-01)
 
-export {
-  exportTemplateContracts,
-  getGameTemplate,
-  MVP_TEMPLATES,
-  validateAgeBandForTemplate,
-  validateContentPack,
-} from "./contracts/registry";
-export type {
-  GT001Content,
-  GT001Difficulty,
-} from "./contracts/templates/gt001";
-export type {
-  GT002Content,
-  GT002Difficulty,
-} from "./contracts/templates/gt002";
-export type {
-  GT003Content,
-  GT003Difficulty,
-} from "./contracts/templates/gt003";
-export type {
-  GT004Content,
-  GT004Difficulty,
-} from "./contracts/templates/gt004";
-export type {
-  GT005Content,
-  GT005Difficulty,
-} from "./contracts/templates/gt005";
-export type {
-  GT006Content,
-  GT006Difficulty,
-} from "./contracts/templates/gt006";
 export type {
   AgeBand,
   ContentStatus,
@@ -49,6 +18,25 @@ export {
   type TelemetryEvent,
   TemplateGameSession,
 } from "./game-session";
+export {
+  createGameSessionSync,
+  loadGameSession,
+} from "./generated/session-loader.js";
+export { STUDIO_TEMPLATE_OPTIONS } from "./generated/studio-options.js";
+export {
+  ALL_TEMPLATE_CODES,
+  CUSTOM_GAME_TEMPLATE_CODES,
+  type TemplateCode,
+} from "./generated/template-codes.js";
+export {
+  ALL_TEMPLATES,
+  exportTemplateContracts,
+  getGameTemplate,
+  MVP_TEMPLATES,
+  validateAgeBandForTemplate,
+  validateContentPack,
+} from "./generated/template-registry.js";
+export { TEMPLATE_SEED_ENTRIES } from "./generated/template-seed.js";
 export { getMinTouchTargetSize, InteractionManager } from "./interaction";
 export {
   getTouchFloor,
@@ -77,6 +65,25 @@ export type {
   Slot,
   SlotRole,
 } from "./layout/types.js";
+export {
+  OrderingMechanic,
+  type OrderingMechanicOptions,
+} from "./mechanics/ordering-mechanic.js";
+export {
+  type PairDefinition,
+  PairingMechanic,
+  type PairingMechanicOptions,
+} from "./mechanics/pairing-mechanic.js";
+export {
+  type PlacementItem,
+  PlacementMechanic,
+  type PlacementMechanicOptions,
+} from "./mechanics/placement-mechanic.js";
+export {
+  type SelectionItem,
+  SelectionMechanic,
+  type SelectionMechanicOptions,
+} from "./mechanics/selection-mechanic.js";
 export {
   type BufferedEvent,
   OfflineEventBuffer,
@@ -114,11 +121,40 @@ export {
   type SpeechOptions,
   SpeechSynthesisAdapter,
 } from "./systems/speech-synthesis-adapter";
-export { GT001_FIXTURES } from "./templates/GT-001/fixtures";
-export { GT001Session } from "./templates/GT-001/gt001-session";
-export { GT002Session } from "./templates/GT-002/gt002-session";
-export { GT003Session } from "./templates/GT-003/gt003-session";
-export { GT004Session } from "./templates/GT-004/gt004-session";
-export { GT005Session } from "./templates/GT-005/gt005-session";
-export { GT006Session } from "./templates/GT-006/gt006-session";
-export { ObjectPool } from "./utils/object-pool";
+export { GT001_FIXTURES } from "./templates/GT-001/fixtures.js";
+export { GT001Session } from "./templates/GT-001/session.js";
+export type {
+  GT001Content,
+  GT001Difficulty,
+} from "./templates/GT-001/template.js";
+export { GT002_FIXTURES } from "./templates/GT-002/fixtures.js";
+export { GT002Session } from "./templates/GT-002/session.js";
+export type {
+  GT002Content,
+  GT002Difficulty,
+} from "./templates/GT-002/template.js";
+export { GT003_FIXTURES } from "./templates/GT-003/fixtures.js";
+export { GT003Session } from "./templates/GT-003/session.js";
+export type {
+  GT003Content,
+  GT003Difficulty,
+} from "./templates/GT-003/template.js";
+export { GT004_FIXTURES } from "./templates/GT-004/fixtures.js";
+export { GT004Session } from "./templates/GT-004/session.js";
+export type {
+  GT004Content,
+  GT004Difficulty,
+} from "./templates/GT-004/template.js";
+export { GT005_FIXTURES } from "./templates/GT-005/fixtures.js";
+export { GT005Session } from "./templates/GT-005/session.js";
+export type {
+  GT005Content,
+  GT005Difficulty,
+} from "./templates/GT-005/template.js";
+export { GT006_FIXTURES } from "./templates/GT-006/fixtures.js";
+export { GT006Session } from "./templates/GT-006/session.js";
+export type {
+  GT006Content,
+  GT006Difficulty,
+} from "./templates/GT-006/template.js";
+export { ObjectPool } from "./utils/object-pool.js";

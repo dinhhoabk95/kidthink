@@ -2,10 +2,11 @@
 spec: TEMPLATE-AUTHORING-KIT
 title: Bộ dựng template — chi phí thêm một khuôn trò chơi
 area: platform
-status: draft
+status: implemented
 mvp: false
 phase: P4
-reviewed: 2026-08-17
+reviewed: 2026-08-19
+
 owns:
   - Chi phí thêm một game template
   - Nguồn sinh registry và điểm nối template

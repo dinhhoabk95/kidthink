@@ -1,129 +1,104 @@
-# Nginx configuration template for MindKid Production
-# Spec: docs/specs/01-platform/server-provisioning.md
-# Replace ${SITE_DOMAIN} and ${ADMIN_DOMAIN} during provisioning.
+# Reverse proxy for the MindKid host.
+# Spec: docs/specs/01-platform/server-provisioning.md §4 step 8, §7.3
+#
+# Rendered by `mindkid.sh provision` with envsubst; ${SITE_DOMAIN} and
+# ${ADMIN_DOMAIN} are the only placeholders.
 
-# Rate limiting zones
 limit_req_zone $binary_remote_addr zone=mindkid_api:10m rate=20r/s;
 limit_req_zone $binary_remote_addr zone=mindkid_auth:10m rate=5r/s;
 
-# Web Application (${SITE_DOMAIN})
+# Shared TLS settings. Certificates come from certbot (BR-SRV-08).
+ssl_protocols TLSv1.2 TLSv1.3;
+ssl_prefer_server_ciphers off;
+ssl_ciphers ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305;
+ssl_session_cache shared:MindKidTLS:10m;
+ssl_session_timeout 1d;
+ssl_session_tickets off;
+ssl_stapling on;
+ssl_stapling_verify on;
+
 server {
     listen 80;
     listen [::]:80;
-    server_name ${SITE_DOMAIN};
-    return 301 https://$host$request_uri;
+    server_name ${SITE_DOMAIN} ${ADMIN_DOMAIN};
+
+    # Certbot needs this to stay on port 80.
+    location /.well-known/acme-challenge/ {
+        root /var/www/html;
+    }
+
+    location / {
+        return 301 https://$host$request_uri;
+    }
 }
 
 server {
-    listen 443 ssl http2;
-    listen [::]:443 ssl http2;
+    listen 443 ssl;
+    listen [::]:443 ssl;
+    http2 on;
     server_name ${SITE_DOMAIN};
 
     ssl_certificate /etc/letsencrypt/live/${SITE_DOMAIN}/fullchain.pem;
     ssl_certificate_key /etc/letsencrypt/live/${SITE_DOMAIN}/privkey.pem;
-    ssl_protocols TLSv1.2 TLSv1.3;
-    ssl_ciphers HIGH:!aNULL:!MD5;
-    ssl_prefer_server_ciphers on;
 
-    # Security headers
+    # A site handling children's data should never be reachable over cleartext
+    # after the first visit.
+    add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
     add_header X-Content-Type-Options nosniff always;
     add_header X-Frame-Options SAMEORIGIN always;
     add_header Referrer-Policy strict-origin-when-cross-origin always;
+    add_header Cross-Origin-Opener-Policy same-origin always;
 
-    # Static assets caching
+    client_max_body_size 8m;
+
     location /_nuxt/ {
-        alias /srv/mindkid/current/apps/web/.output/public/_nuxt/;
+        alias /opt/mindkid/current/apps/web/.output/public/_nuxt/;
         expires 1y;
         add_header Cache-Control "public, max-age=31536000, immutable";
     }
 
-    # Public static files
-    location /public/ {
-        alias /srv/mindkid/current/apps/web/.output/public/;
-        expires 7d;
-        add_header Cache-Control "public, max-age=604800";
-    }
-
-    # Health check bypass rate limiting
+    # The health endpoint is what the release smoke gate calls; rate limiting it
+    # would make a release fail for the wrong reason.
     location = /api/guest/health {
         proxy_pass http://127.0.0.1:3000;
-        proxy_http_version 1.1;
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto $scheme;
+        include /etc/nginx/snippets/mindkid-proxy.conf;
     }
 
-    # Auth endpoints stricter rate limit
     location ~* ^/api/guest/auth/ {
         limit_req zone=mindkid_auth burst=10 nodelay;
         proxy_pass http://127.0.0.1:3000;
-        proxy_http_version 1.1;
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto $scheme;
+        include /etc/nginx/snippets/mindkid-proxy.conf;
     }
 
-    # General API with standard rate limiting
     location /api/ {
         limit_req zone=mindkid_api burst=30 nodelay;
         proxy_pass http://127.0.0.1:3000;
-        proxy_http_version 1.1;
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto $scheme;
+        include /etc/nginx/snippets/mindkid-proxy.conf;
     }
 
-    # SSR and Pages
     location / {
         proxy_pass http://127.0.0.1:3000;
-        proxy_http_version 1.1;
-        proxy_set_header Upgrade $http_upgrade;
-        proxy_set_header Connection 'upgrade';
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto $scheme;
-        proxy_cache_bypass $http_upgrade;
+        include /etc/nginx/snippets/mindkid-proxy.conf;
     }
 }
 
-# Admin Dashboard (${ADMIN_DOMAIN})
 server {
-    listen 80;
-    listen [::]:80;
-    server_name ${ADMIN_DOMAIN};
-    return 301 https://$host$request_uri;
-}
-
-server {
-    listen 443 ssl http2;
-    listen [::]:443 ssl http2;
+    listen 443 ssl;
+    listen [::]:443 ssl;
+    http2 on;
     server_name ${ADMIN_DOMAIN};
 
     ssl_certificate /etc/letsencrypt/live/${ADMIN_DOMAIN}/fullchain.pem;
     ssl_certificate_key /etc/letsencrypt/live/${ADMIN_DOMAIN}/privkey.pem;
-    ssl_protocols TLSv1.2 TLSv1.3;
-    ssl_ciphers HIGH:!aNULL:!MD5;
-    ssl_prefer_server_ciphers on;
 
-    # Security headers
+    add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
     add_header X-Content-Type-Options nosniff always;
     add_header X-Frame-Options DENY always;
     add_header Referrer-Policy strict-origin-when-cross-origin always;
+    add_header Cross-Origin-Opener-Policy same-origin always;
 
-    # Admin App Proxy
     location / {
         proxy_pass http://127.0.0.1:3002;
-        proxy_http_version 1.1;
-        proxy_set_header Upgrade $http_upgrade;
-        proxy_set_header Connection 'upgrade';
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto $scheme;
-        proxy_cache_bypass $http_upgrade;
+        include /etc/nginx/snippets/mindkid-proxy.conf;
     }
 }

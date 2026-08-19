@@ -1,9 +1,17 @@
-import { writeFileSync } from "node:fs";
+#!/usr/bin/env node
+/**
+ * Generates .env.example from the registry, and checks it has not been edited
+ * by hand (BR-ENV-09).
+ *
+ * Run with --check in the gate: a generated file nobody verifies drifts, and a
+ * drifted example is worse than none because people copy it.
+ */
+import { readFileSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
 import {
   ENV_REGISTRY,
   type EnvVarDef,
-} from "../packages/config/src/env-contract.js";
+} from "../packages/config/src/env-contract.ts";
 
 function getUrlExample(name: string): string {
   if (name === "DATABASE_URL") {
@@ -15,8 +23,8 @@ function getUrlExample(name: string): string {
   if (name === "SITE_URL") {
     return "http://localhost:3000";
   }
-  if (name === "ADMIN_SITE_URL") {
-    return "http://localhost:3002";
+  if (name === "STORAGE_BASE_URL") {
+    return "http://localhost:3000/assets";
   }
   return "https://example.com/endpoint";
 }
@@ -83,6 +91,29 @@ export function generateEnvExample(): string {
 if (import.meta.url === `file://${process.argv[1]}`) {
   const content = generateEnvExample();
   const targetPath = resolve(process.cwd(), ".env.example");
+
+  if (process.argv.includes("--check")) {
+    let onDisk = "";
+    try {
+      onDisk = readFileSync(targetPath, "utf8");
+    } catch {
+      console.error(
+        "❌ [lint:env-example] .env.example is missing. Run `pnpm gen:env`."
+      );
+      process.exit(1);
+    }
+    if (onDisk !== content) {
+      console.error(
+        "❌ [lint:env-example] .env.example does not match the registry (BR-ENV-09). Run `pnpm gen:env`; do not edit it by hand."
+      );
+      process.exit(1);
+    }
+    console.log(
+      `✅ [lint:env-example] .env.example matches the registry (${ENV_REGISTRY.length} variables).`
+    );
+    process.exit(0);
+  }
+
   writeFileSync(targetPath, content, "utf8");
   console.log(`✅ Generated .env.example (${ENV_REGISTRY.length} variables)`);
 }

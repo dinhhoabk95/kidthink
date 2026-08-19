@@ -5,11 +5,12 @@ import {
   MVP_TEMPLATES,
   validateAgeBandForTemplate,
   validateContentPack,
-} from "../src/contracts/registry";
+} from "../src/index.js";
+
 import {
   everyGroupHasAtLeastOneItem,
   everyItemTargetsAnExistingGroup,
-} from "../src/contracts/templates/gt004";
+} from "../src/templates/GT-004/template.js";
 
 describe("Task 2 — Game Template Contracts (BR-GTC-01..07)", () => {
   it("BR-GTC-01: no template contains skill_id or competency_id", () => {
