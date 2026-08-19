@@ -2,10 +2,10 @@
 spec: GAME-LAYOUT-ENGINE
 title: Bố cục màn chơi — từ vựng layout và hình học slot
 area: platform
-status: draft
+status: implemented
 mvp: true
 phase: P1
-reviewed: 2026-08-17
+reviewed: 2026-08-19
 owns:
   - Từ vựng LayoutId
   - Hình học slot và vùng chạm của một slot
@@ -223,6 +223,6 @@ Scenario: LAYOUT_NOT_SUPPORTED khi layout_id ngoài danh sách template
 
 | # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
 |---|---|---|---|---|
-| 1 | Phân trang ở band 3–4 có cần điều hướng nhìn thấy được không, hay engine tự chuyển trang sau khi trang hiện tại xong? Trẻ 3 tuổi chưa chắc hiểu nút sang trang | Hành vi `BR-LAY-04` khi `slotCount` lớn | P1 | người quyết |
-| 2 | Mười hai `LayoutId` hiện tại có gộp được không? `grid` và `grid-2x4` có thể là một hàm với tham số cột | Số hàm phải viết ở P1 | P1 | Backend |
+| ~~1~~ | ~~Phân trang ở band 3–4 có cần điều hướng nhìn thấy được không, hay engine tự chuyển trang sau khi trang hiện tại xong?~~ **Đóng 2026-08-19 (`D-LA`)**: Engine tự động chuyển trang khi hoàn tất tương tác của trang hiện tại, kết hợp hiển thị chỉ báo trực quan | Hành vi `BR-LAY-04` | Đã đóng | D-LA |
+| ~~2~~ | ~~Mười hai `LayoutId` hiện tại có gộp được không?~~ **Đóng 2026-08-19 (`D-LB`)**: 12 `LayoutId` gộp thành 4 nhóm hàm hình học lõi (`gridLayout`, `bipartiteLayout`, `multiBucketLayout`, `trackLayout`), mỗi `LayoutId` ánh xạ 1-1 trong registry | Số hàm phải viết | Đã đóng | D-LB |
 | 3 | Layout có cần biến thể cho màn hình dọc không? Bản MVP giả định chơi ngang | Phạm vi P1 | chờ P4 | hoãn |

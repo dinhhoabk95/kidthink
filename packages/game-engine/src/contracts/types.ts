@@ -1,5 +1,19 @@
 import type { z } from "zod";
 
+export type LayoutId =
+  | "grid"
+  | "horizontal-row"
+  | "grid-2x4"
+  | "flex-wrap"
+  | "top-source-bottom-target"
+  | "left-source-right-target"
+  | "multi-bucket-bottom"
+  | "split-columns"
+  | "two-column-matching"
+  | "card-flip-grid"
+  | "horizontal-track"
+  | "step-ladder";
+
 export type AgeBand = "3-4" | "4-5" | "5-6";
 export type ContentStatus =
   | "draft"
@@ -27,7 +41,7 @@ export interface GameTemplate<
   code: `GT-${string}`;
   name: string;
   mechanic: string;
-  layouts: string[];
+  layouts: LayoutId[];
   content_contract: C;
   difficulty_contract: D;
   limits: GameTemplateLimits;

@@ -20,7 +20,7 @@ export async function seedGameTemplatesMasterData(
         code: template.code,
         name: template.name || "",
         mechanic: template.mechanic,
-        layouts: template.layouts,
+        layouts: [...template.layouts],
         contentContract:
           exported.content_contract_json_schema as unknown as Record<
             string,
@@ -48,7 +48,7 @@ export async function seedGameTemplatesMasterData(
         set: {
           name: template.name || "",
           mechanic: template.mechanic,
-          layouts: template.layouts,
+          layouts: [...template.layouts],
           contentContract:
             exported.content_contract_json_schema as unknown as Record<
               string,

@@ -340,4 +340,41 @@ describe("Game Level Studio & Management API (BR-STU-01 - BR-STU-10, Spec §7.2)
     expect(config.level_code).toBe(created.code);
     expect(config.content_version).toBe(1);
   });
+
+  it("Task #92 — POST /api/managers/levels rejects invalid layout_id with 422 LAYOUT_NOT_SUPPORTED (BR-LAY-02, BR-LAY-10)", async () => {
+    const createEvt = mockEvent(
+      "POST",
+      "content_reviewer",
+      {},
+      {
+        template_code: "GT-001",
+        title: "Level with Invalid Layout",
+        access_tier: "free",
+        difficulty_params: {
+          layout_id: "step-ladder", // GT-001 does not support step-ladder
+        },
+        content_pack: {
+          prompt: "Tìm quả táo",
+          target_item: { item_id: "t1", asset: { kind: "emoji", ref: "🍎" } },
+          options: [
+            {
+              item_id: "o1",
+              asset: { kind: "emoji", ref: "🍎" },
+              is_correct: true,
+            },
+            {
+              item_id: "o2",
+              asset: { kind: "emoji", ref: "🍌" },
+              is_correct: false,
+            },
+          ],
+        },
+      }
+    );
+
+    await expect(createLevelHandler(createEvt)).rejects.toMatchObject({
+      statusCode: 422,
+      statusMessage: "LAYOUT_NOT_SUPPORTED",
+    });
+  });
 });

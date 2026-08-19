@@ -51,6 +51,33 @@ export {
 } from "./game-session";
 export { getMinTouchTargetSize, InteractionManager } from "./interaction";
 export {
+  getTouchFloor,
+  LOGIC_HEIGHT,
+  LOGIC_WIDTH,
+  SAFE_MARGIN_PX,
+  SLOT_GAP_PX,
+} from "./layout/constants.js";
+export {
+  computeBipartiteLayout,
+  computeGridLayout,
+  computeHorizontalRowLayout,
+  computeMultiBucketLayout,
+  computeTrackLayout,
+} from "./layout/geometry.js";
+export {
+  isLayoutId,
+  LAYOUT_IDS,
+  LAYOUT_REGISTRY,
+  resolveLayout,
+} from "./layout/registry.js";
+export type {
+  LayoutFn,
+  LayoutId,
+  LayoutInput,
+  Slot,
+  SlotRole,
+} from "./layout/types.js";
+export {
   type BufferedEvent,
   OfflineEventBuffer,
   type SessionMeta,

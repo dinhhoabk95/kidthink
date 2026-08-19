@@ -226,9 +226,23 @@ export default defineEventHandler(async (event) => {
   }
   const input = parsed.data;
   const templateCode = input.template_code;
-
   const db = getOwnerDb();
   const { template, dbTemplate } = await ensureDbTemplate(db, templateCode);
+
+  const rawLayoutId = input.difficulty_params?.layout_id;
+  const requestedLayoutId =
+    typeof rawLayoutId === "string" ? rawLayoutId : undefined;
+  if (
+    requestedLayoutId &&
+    !template.layouts.some((layoutId) => layoutId === requestedLayoutId)
+  ) {
+    throw createError({
+      statusCode: 422,
+      statusMessage: "LAYOUT_NOT_SUPPORTED",
+      message: `Layout '${requestedLayoutId}' is not supported by template '${templateCode}' (BR-LAY-02)`,
+    });
+  }
+
   const { levelCode, count } = await resolveLevelCode(
     db,
     templateCode,

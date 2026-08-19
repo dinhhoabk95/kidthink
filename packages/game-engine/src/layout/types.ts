@@ -1,0 +1,24 @@
+import type { AgeBand } from "../contracts/types.js";
+
+export type { LayoutId } from "../contracts/types.js";
+export type SlotRole = "source" | "target" | "neutral";
+
+export interface Slot {
+  readonly index: number;
+  readonly x: number; // Tâm slot, không gian logic (960x540)
+  readonly y: number; // Tâm slot, không gian logic (960x540)
+  readonly w: number; // Kích thước vẽ chiều rộng
+  readonly h: number; // Kích thước vẽ chiều cao
+  readonly hitW: number; // Vùng chạm chiều rộng (>= sàn chạm của band tuổi)
+  readonly hitH: number; // Vùng chạm chiều cao (>= sàn chạm của band tuổi)
+  readonly page: number; // 0 khi không phân trang
+  readonly role: SlotRole;
+}
+
+export interface LayoutInput {
+  readonly slotCount: number;
+  readonly ageBand: AgeBand;
+  readonly targetCount?: number;
+}
+
+export type LayoutFn = (input: LayoutInput) => Slot[];

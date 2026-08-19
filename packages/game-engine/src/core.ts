@@ -1,14 +1,85 @@
-import { validateContentPack } from "./contracts/registry";
-import type { AgeBand } from "./contracts/types";
-import type { GameSession, TelemetryEvent } from "./game-session";
-import { InteractionManager } from "./interaction";
-import { AudioController } from "./systems/audio-controller";
-import { RenderSystem } from "./systems/render-system";
-import { ScaffoldingSystem } from "./systems/scaffolding";
+import { getGameTemplate, validateContentPack } from "./contracts/registry.js";
+import type { AgeBand } from "./contracts/types.js";
+import type { GameSession, TelemetryEvent } from "./game-session.js";
+import { InteractionManager } from "./interaction.js";
+import { isLayoutId, resolveLayout } from "./layout/registry.js";
+import type { LayoutId, Slot } from "./layout/types.js";
+import { AudioController } from "./systems/audio-controller.js";
+import { RenderSystem } from "./systems/render-system.js";
+import { ScaffoldingSystem } from "./systems/scaffolding.js";
 
 /** Monotonic clock, falling back to Date.now in non-browser test envs. */
 function nowMs(): number {
   return typeof performance === "undefined" ? Date.now() : performance.now();
+}
+
+function resolveLevelLayoutId(
+  templateCode: string,
+  difficultyParams: unknown
+): LayoutId {
+  const template = getGameTemplate(templateCode);
+  const rawLayoutId =
+    typeof difficultyParams === "object" &&
+    difficultyParams !== null &&
+    "layout_id" in difficultyParams
+      ? difficultyParams.layout_id
+      : undefined;
+
+  let layoutId: LayoutId = "grid";
+  if (isLayoutId(rawLayoutId)) {
+    layoutId = rawLayoutId;
+  } else if (template?.layouts[0]) {
+    layoutId = template.layouts[0];
+  }
+
+  if (template && !template.layouts.some((l) => l === layoutId)) {
+    throw new Error(
+      `LAYOUT_NOT_SUPPORTED: Layout '${layoutId}' không được hỗ trợ bởi template '${templateCode}' (BR-LAY-02).`
+    );
+  }
+
+  return layoutId;
+}
+
+function extractContentDimensions(contentPack: unknown): {
+  slotCount: number;
+  targetCount: number | undefined;
+} {
+  let optionsArray: unknown[] = [];
+  let targetCount: number | undefined;
+
+  if (typeof contentPack === "object" && contentPack !== null) {
+    if ("options" in contentPack && Array.isArray(contentPack.options)) {
+      optionsArray = contentPack.options;
+    } else if ("items" in contentPack && Array.isArray(contentPack.items)) {
+      optionsArray = contentPack.items;
+    }
+    if ("buckets" in contentPack && Array.isArray(contentPack.buckets)) {
+      targetCount = contentPack.buckets.length;
+    }
+  }
+
+  return {
+    slotCount: optionsArray.length || 4,
+    targetCount,
+  };
+}
+
+function computeEngineSlots(config: EngineConfig): Slot[] {
+  const layoutId = resolveLevelLayoutId(
+    config.template_code,
+    config.difficulty_params
+  );
+  const { slotCount, targetCount } = extractContentDimensions(
+    config.content_pack
+  );
+  const layoutFn = resolveLayout(layoutId);
+
+  return layoutFn({
+    slotCount,
+    ageBand: config.age_band,
+    targetCount,
+  });
 }
 
 export interface EngineConfig {
@@ -28,6 +99,7 @@ export type EventCallback = (event: TelemetryEvent) => void;
 export class GameEngine {
   config?: EngineConfig;
   activeSession?: GameSession;
+  slots: Slot[] = [];
   readonly renderSystem = new RenderSystem();
   readonly interaction = new InteractionManager();
   readonly audio = new AudioController();
@@ -56,6 +128,8 @@ export class GameEngine {
         `CONTENT_PACK_INVALID: ${validation.error?.message || "Invalid content pack"}`
       );
     }
+
+    this.slots = computeEngineSlots(config);
 
     this.config = config;
     this.audio.setEnabled(config.audio_enabled);
