@@ -57,33 +57,18 @@ export class OAuthProviderRegistry {
 
   constructor(options: OAuthRegistryOptions = {}) {
     const rawSiteUrl =
-      options.siteUrl ||
-      process.env.NUXT_SITE_URL ||
-      process.env.SITE_URL ||
-      "http://localhost:3000";
+      options.siteUrl || process.env.SITE_URL || "http://localhost:3000";
     this.siteUrl = rawSiteUrl.replace(TRAILING_SLASH_REGEX, "");
 
     const googleId =
-      options.googleClientId ||
-      process.env.GOOGLE_CLIENT_ID ||
-      process.env.NUXT_OAUTH_GOOGLE_CLIENT_ID ||
-      "";
+      options.googleClientId || process.env.GOOGLE_CLIENT_ID || "";
     const googleSecret =
-      options.googleClientSecret ||
-      process.env.GOOGLE_CLIENT_SECRET ||
-      process.env.NUXT_OAUTH_GOOGLE_CLIENT_SECRET ||
-      "";
+      options.googleClientSecret || process.env.GOOGLE_CLIENT_SECRET || "";
 
     const facebookId =
-      options.facebookClientId ||
-      process.env.FACEBOOK_CLIENT_ID ||
-      process.env.NUXT_OAUTH_FACEBOOK_CLIENT_ID ||
-      "";
+      options.facebookClientId || process.env.FACEBOOK_CLIENT_ID || "";
     const facebookSecret =
-      options.facebookClientSecret ||
-      process.env.FACEBOOK_CLIENT_SECRET ||
-      process.env.NUXT_OAUTH_FACEBOOK_CLIENT_SECRET ||
-      "";
+      options.facebookClientSecret || process.env.FACEBOOK_CLIENT_SECRET || "";
 
     this.googleConfig = {
       provider: "google",

@@ -78,9 +78,8 @@ export function assertManagerSameOriginRequest(event: H3Event): void {
 
 export function getAdminJwtSecret(_event: H3Event): string {
   const secret =
-    process.env.NUXT_ADMIN_JWT_SECRET ||
     process.env.ADMIN_JWT_SECRET ||
-    (process.env.NODE_ENV === "test" ? process.env.JWT_SECRET : undefined);
+    (process.env.NODE_ENV === "test" ? process.env.WEB_JWT_SECRET : undefined);
   if (!secret || new TextEncoder().encode(secret).byteLength < 32) {
     throw new Error(
       "ADMIN_JWT_SECRET is not configured with at least 32 bytes"

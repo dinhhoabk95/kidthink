@@ -123,7 +123,7 @@ describe("Task 2 & 3 — Manager Login & MFA Handler (BR-ADA-01..08)", () => {
       accountId: manager.id,
       secretEncrypted: encryptTotpSecret(
         secret,
-        process.env.NUXT_ADMIN_JWT_SECRET ??
+        process.env.ADMIN_JWT_SECRET ??
           "mindkid-dev-secret-mindkid-dev-secret-32bytes"
       ),
       confirmedAt: new Date(),

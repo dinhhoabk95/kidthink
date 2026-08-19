@@ -1,8 +1,8 @@
 ---
 spec: RELEASE-DEPLOY
-title: Phát hành lên máy chủ bằng một lệnh
+title: Quy trình phát hành không gián đoạn
 area: platform
-status: draft
+status: approved
 mvp: true
 phase: P0
 reviewed: 2026-08-18

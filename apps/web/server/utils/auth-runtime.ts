@@ -186,7 +186,6 @@ export function getOrSetGuestDeviceId(event: H3Event): string {
 
 export function getParentGateSecret(_event?: H3Event): string {
   return (
-    process.env.NUXT_PARENT_GATE_SECRET ||
     process.env.PARENT_GATE_SECRET ||
     "test-parent-gate-secret-key-123456789012345678901234567890"
   );

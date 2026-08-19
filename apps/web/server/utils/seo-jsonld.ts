@@ -1,6 +1,6 @@
 import { FAQ_ITEMS, type FaqItem } from "@mindkid/shared";
 
-const SITE_URL = process.env.NUXT_PUBLIC_SITE_URL || "https://mindkid.vn";
+const SITE_URL = process.env.SITE_URL || "https://mindkid.vn";
 const BRAND_NAME = "MindKid";
 
 /**

@@ -7,7 +7,6 @@ import playBudgetHandler from "../../server/api/users/children/[uuid]/play-budge
 import updateSettingsHandler from "../../server/api/users/children/[uuid]/settings.patch";
 
 const PARENT_GATE_SECRET =
-  process.env.NUXT_PARENT_GATE_SECRET ||
   process.env.PARENT_GATE_SECRET ||
   "mindkid-parent-gate-secret-key-default-2026";
 

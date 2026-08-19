@@ -10,10 +10,14 @@
   "packageManager": "pnpm@11.16.0",
   "scripts": {
     "prepare": "lefthook install",
+    "build": "pnpm --recursive --if-present run build",
     "lint": "biome check .",
     "lint:fix": "biome check --write .",
     "lint:tokens": "node scripts/lint-tokens.ts",
     "lint:deps": "depcruise apps packages --config .dependency-cruiser.cjs",
+    "lint:env-names": "node scripts/lint-env-names.ts",
+    "lint:migration-expand": "node scripts/lint-migration-expand.ts",
+    "lint:shell": "node scripts/lint-shell-scripts.ts",
     "lint:emoji": "node scripts/lint-emoji-affordance.ts",
     "lint:email": "node scripts/lint-email-content.ts",
     "lint:gating": "node scripts/lint-gating.ts",
@@ -27,7 +31,7 @@
     "lint:web-scale": "node scripts/check-web-scale-gate.ts",
     "typecheck:root": "tsc --noEmit -p tsconfig.json",
     "typecheck": "pnpm typecheck:root && pnpm --recursive run typecheck",
-    "check": "pnpm lint && pnpm lint:tokens && pnpm lint:deps && pnpm lint:specs && pnpm lint:user-vocabulary && pnpm lint:emoji && pnpm lint:email && pnpm lint:gating && pnpm lint:telemetry-pii && pnpm lint:analytics && pnpm lint:kid-surface && pnpm lint:public-scripts && pnpm lint:legal-review && pnpm lint:admin-routes && pnpm lint:form-gates && pnpm lint:web-scale && pnpm lint:type-safety && pnpm lint:route-validation && pnpm check:progress && pnpm typecheck",
+    "check": "pnpm lint && pnpm lint:tokens && pnpm lint:deps && pnpm lint:specs && pnpm lint:env-names && pnpm lint:migration-expand && pnpm lint:shell && pnpm lint:user-vocabulary && pnpm lint:emoji && pnpm lint:email && pnpm lint:gating && pnpm lint:telemetry-pii && pnpm lint:analytics && pnpm lint:kid-surface && pnpm lint:public-scripts && pnpm lint:legal-review && pnpm lint:admin-routes && pnpm lint:form-gates && pnpm lint:web-scale && pnpm lint:type-safety && pnpm lint:route-validation && pnpm check:progress && pnpm typecheck",
     "check:progress": "node scripts/check-progress.ts",
     "check:services": "node scripts/check-services.ts",
     "perf:budget": "node scripts/lint-perf-budget.ts",
@@ -47,7 +51,13 @@
     "seed:content": "tsx packages/db/src/seed-content/cli/seed-content.ts",
     "seed:report": "tsx packages/db/src/seed-content/cli/seed-report.ts",
     "lint:type-safety": "node scripts/lint-type-safety.ts",
-    "lint:route-validation": "node scripts/lint-route-validation.ts"
+    "lint:route-validation": "node scripts/lint-route-validation.ts",
+    "deploy": "tsx scripts/deploy/cli-deploy.ts",
+    "deploy:provision": "tsx scripts/deploy/cli-provision.ts",
+    "deploy:rollback": "tsx scripts/deploy/cli-rollback.ts",
+    "deploy:status": "tsx scripts/deploy/cli-status.ts",
+    "deploy:env": "tsx scripts/deploy/cli-env.ts",
+    "deploy:logs": "tsx scripts/deploy/cli-logs.ts"
   },
   "devDependencies": {
     "@biomejs/biome": "catalog:",

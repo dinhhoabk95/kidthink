@@ -2,7 +2,7 @@
 spec: ENV-CONTRACT
 title: Hợp đồng biến môi trường
 area: platform
-status: draft
+status: approved
 mvp: true
 phase: P0
 reviewed: 2026-08-18

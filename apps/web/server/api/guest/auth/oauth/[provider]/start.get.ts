@@ -27,7 +27,6 @@ import { requireReauth } from "../../../../../utils/reauth-runtime.js";
 function getOAuthStateSecret(): string {
   return (
     process.env.NUXT_SESSION_PASSWORD ||
-    process.env.SESSION_SECRET ||
     "dev-secret-key-oauth-state-at-least-32-chars-long"
   );
 }

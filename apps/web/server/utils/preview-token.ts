@@ -1,7 +1,6 @@
 import { createHmac, timingSafeEqual } from "node:crypto";
 
 const PREVIEW_SECRET =
-  process.env.SESSION_SECRET ||
   process.env.NUXT_SESSION_PASSWORD ||
   "mindkid-preview-token-secret-key-32-chars-minimum";
 

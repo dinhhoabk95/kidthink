@@ -1,0 +1,43 @@
+# Production Database & Cache Docker Compose for MindKid VPS
+# Spec: docs/specs/01-platform/server-provisioning.md
+# Rule: BR-SRV-04 (bind to loopback 127.0.0.1 only)
+
+services:
+  postgres:
+    image: postgres:17-bookworm
+    container_name: mindkid-postgres-prod
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-mindkid}
+      POSTGRES_USER: ${POSTGRES_USER:-mindkid}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - "127.0.0.1:5432:5432"
+    volumes:
+      - mindkid_pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-mindkid} -d ${POSTGRES_DB:-mindkid}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  valkey:
+    image: valkey/valkey:8-bookworm
+    container_name: mindkid-valkey-prod
+    restart: unless-stopped
+    command: valkey-server --appendonly yes --save 60 1
+    ports:
+      - "127.0.0.1:6379:6379"
+    volumes:
+      - mindkid_valkey_data:/data
+    healthcheck:
+      test: ["CMD", "valkey-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  mindkid_pg_data:
+    name: mindkid_prod_pg_data
+  mindkid_valkey_data:
+    name: mindkid_prod_valkey_data

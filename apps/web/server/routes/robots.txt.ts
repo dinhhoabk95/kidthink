@@ -4,7 +4,7 @@ export default defineEventHandler((event) => {
   setHeader(event, "Content-Type", "text/plain; charset=utf-8");
   setHeader(event, "Cache-Control", "public, max-age=86400");
 
-  const siteUrl = process.env.NUXT_PUBLIC_SITE_URL || "https://mindkid.vn";
+  const siteUrl = process.env.SITE_URL || "https://mindkid.vn";
 
   return `User-agent: *
 Disallow: /play/

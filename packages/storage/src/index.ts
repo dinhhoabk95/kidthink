@@ -178,7 +178,7 @@ export function url(
   }
   const baseUrl =
     process.env.STORAGE_BASE_URL ||
-    process.env.NUXT_PUBLIC_SITE_URL ||
+    process.env.SITE_URL ||
     "https://assets.mindkid.edu.vn";
   return `${baseUrl.replace(TRAILING_SLASHES_REGEX, "")}/${targetPath}`;
 }
@@ -193,7 +193,7 @@ export function signedUrl(path: string, ttlSeconds = 900): string {
 
   const secret =
     process.env.STORAGE_SIGNING_SECRET ||
-    process.env.JWT_ACCESS_SECRET ||
+    process.env.WEB_JWT_SECRET ||
     "storage-private-secret-key-signed-proof-token-123456";
   const signature = crypto
     .createHmac("sha256", secret)
@@ -202,7 +202,7 @@ export function signedUrl(path: string, ttlSeconds = 900): string {
 
   const baseUrl =
     process.env.STORAGE_BASE_URL ||
-    process.env.NUXT_PUBLIC_SITE_URL ||
+    process.env.SITE_URL ||
     "https://storage.mindkid.test";
 
   return `${baseUrl.replace(TRAILING_SLASHES_REGEX, "")}/private/${encodeURIComponent(
@@ -228,7 +228,7 @@ export async function getPrivateSignedUrl(options: {
 
   const secret =
     process.env.STORAGE_SIGNING_SECRET ||
-    process.env.JWT_ACCESS_SECRET ||
+    process.env.WEB_JWT_SECRET ||
     "storage-private-secret-key-signed-proof-token-123456";
   const signature = crypto
     .createHmac("sha256", secret)
@@ -237,7 +237,7 @@ export async function getPrivateSignedUrl(options: {
 
   const baseUrl =
     process.env.STORAGE_BASE_URL ||
-    process.env.NUXT_PUBLIC_SITE_URL ||
+    process.env.SITE_URL ||
     "https://storage.mindkid.test";
 
   const resultUrl = `${baseUrl.replace(TRAILING_SLASHES_REGEX, "")}/private/${encodeURIComponent(
@@ -264,7 +264,7 @@ export function verifySignedUrlToken(
 
   const secret =
     process.env.STORAGE_SIGNING_SECRET ||
-    process.env.JWT_ACCESS_SECRET ||
+    process.env.WEB_JWT_SECRET ||
     "storage-private-secret-key-signed-proof-token-123456";
   const expectedSig = crypto
     .createHmac("sha256", secret)

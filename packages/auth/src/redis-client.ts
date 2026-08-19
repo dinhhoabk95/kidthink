@@ -13,10 +13,7 @@ let browserSessionService: BrowserSessionService | undefined;
 
 export function getAuthRedisClient(): MinimalRedisClient {
   if (!authRedisClient) {
-    const url =
-      process.env.AUTH_REDIS_URL ||
-      process.env.VALKEY_URL ||
-      process.env.REDIS_URL;
+    const url = process.env.VALKEY_URL;
     if (url) {
       const client = new Redis(url, {
         connectTimeout: 2000,

@@ -1,8 +1,8 @@
 ---
 spec: PROCESS-SUPERVISION
-title: Giám sát tiến trình ứng dụng trên máy chủ
+title: Giám sát tiến trình và luân chuyển log
 area: platform
-status: draft
+status: approved
 mvp: true
 phase: P0
 reviewed: 2026-08-18
