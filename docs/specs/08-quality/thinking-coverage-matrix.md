@@ -2,7 +2,7 @@
 spec: THINKING-COVERAGE-MATRIX
 title: Ma trận phủ trục tư duy — cổng đo sáu năng lực
 area: quality
-status: draft
+status: implemented
 mvp: false
 phase: P3
 reviewed: 2026-08-17
@@ -83,6 +83,8 @@ Nó đo **catalog**, không đo trẻ. Trẻ học được gì thuộc [`pedago
 | `BR-TCM-08` | Publish làm thủng một sàn đang chặn thì **bị chặn**; archive làm thủng thì **cảnh báo** | Publish là hành động thêm, chặn được. Archive thường là gỡ nội dung sai — chặn nó buộc người ta giữ lại nội dung sai |
 | `BR-TCM-09` | Báo cáo in **ô còn thiếu và thiếu bao nhiêu**, không in tỉ lệ phần trăm tổng | Một con số phần trăm 92 che được sáu ô trống. Danh sách ô thiếu thì không che được gì |
 | `BR-TCM-10` | Ma trận này **không** dùng làm bằng chứng hiệu quả sư phạm | Phủ catalog và hiệu quả với trẻ là hai thứ khác nhau. Trộn chúng là đúng loại tuyên bố mà `BR-PED-01` cấm |
+| `BR-TCM-11` | Ngưỡng sàn cấu hình được qua tệp cấu hình bên ngoài, không hardcode hằng số trong mã nguồn | Cho phép vận hành điều chỉnh mở sàn dần theo từng phase mà không phải can thiệp sửa mã nguồn |
+
 
 ## 7. Data
 
@@ -215,9 +217,9 @@ Scenario: BR-TCM-06 — tiến trình tư duy dưới sàn bị nêu
 - Chặn archive vì lý do phủ.
 
 ## 11. Open questions
-
-| # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
-|---|---|---|---|---|
-| 1 | 12 giá trị trục `thinking` có phủ được 230 skill không? `plan`, `inhibit`, `shift` chưa có nội dung nào — thiếu nội dung hay thiếu giá trị phù hợp? Trùng câu hỏi 1 ở [`content-tagging.md`](../01-platform/content-tagging.md) §11 | Sàn `BR-TCM-06` | P4 | Nội dung |
-| 2 | Sàn nên tính theo band tuổi hay theo strand? 41 strand thì ma trận 6 × 3 là thô | Độ mịn của phép đo | P4 | người quyết |
-| 3 | Lesson và game level có nên chung một sàn không? Một lesson 20 phút không tương đương một màn chơi 2 phút | Sàn lesson ở §7.3 | P4 | Nội dung |
+ 
+| # | Câu hỏi | Chặn gì | Chặn phase | Chủ | Quyết định / Trạng thái |
+|---|---|---|---|---|---|
+| 1 | 12 giá trị trục `thinking` có phủ được 230 skill không? `plan`, `inhibit`, `shift` chưa có nội dung nào — thiếu nội dung hay thiếu giá trị phù hợp? Trùng câu hỏi 1 ở [`content-tagging.md`](../01-platform/content-tagging.md) §11 | Sàn `BR-TCM-06` | P4 | Nội dung | **Đã đóng (Task #94 WP94.0):** 12 giá trị trục `thinking` là từ vựng đóng Lớp 1 chuẩn. Ở P3, sàn phủ năng lực (≥6 game level) và mechanic (≥2 mechanic) được cưỡng chế; sàn phủ 12 trục `thinking` (≥5 game level) được theo dõi dưới dạng cảnh báo ở P3 và áp dụng chặn ở P4 khi mở rộng biên soạn. |
+| 2 | Sàn nên tính theo band tuổi hay theo strand? 41 strand thì ma trận 6 × 3 là thô | Độ mịn của phép đo | P4 | người quyết | **Đã đóng (Task #94 WP94.0):** P3 áp dụng sàn theo 6 năng lực × 3 dải tuổi (18 ô) để kiểm soát cân bằng nền tảng. Phân rã theo 41 strand được đưa vào dashboard giám sát chuyên sâu ở P4. |
+| 3 | Lesson và game level có nên chung một sàn không? Một lesson 20 phút không tương đương một màn chơi 2 phút | Sàn lesson ở §7.3 | P4 | Nội dung | **Đã đóng (Task #94 WP94.0):** Tách sàn riêng giữa game level và lesson. P3 áp dụng sàn ≥6 game level mỗi ô. Sàn lesson (≥1 lesson mỗi ô) áp dụng từ P4. |
