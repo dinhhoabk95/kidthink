@@ -1,3 +1,4 @@
+import { optionalEnv, requireEnv } from "@mindkid/config";
 import {
   authorizationCodeGrant,
   buildAuthorizationUrl,
@@ -56,19 +57,20 @@ export class OAuthProviderRegistry {
   private googleOidcConfigPromise: Promise<Configuration> | null = null;
 
   constructor(options: OAuthRegistryOptions = {}) {
-    const rawSiteUrl =
-      options.siteUrl || process.env.SITE_URL || "http://localhost:3000";
+    const rawSiteUrl = options.siteUrl || requireEnv("SITE_URL");
     this.siteUrl = rawSiteUrl.replace(TRAILING_SLASH_REGEX, "");
 
     const googleId =
-      options.googleClientId || process.env.GOOGLE_CLIENT_ID || "";
+      options.googleClientId ?? optionalEnv("GOOGLE_CLIENT_ID") ?? "";
     const googleSecret =
-      options.googleClientSecret || process.env.GOOGLE_CLIENT_SECRET || "";
+      options.googleClientSecret ?? optionalEnv("GOOGLE_CLIENT_SECRET") ?? "";
 
     const facebookId =
-      options.facebookClientId || process.env.FACEBOOK_CLIENT_ID || "";
+      options.facebookClientId ?? optionalEnv("FACEBOOK_CLIENT_ID") ?? "";
     const facebookSecret =
-      options.facebookClientSecret || process.env.FACEBOOK_CLIENT_SECRET || "";
+      options.facebookClientSecret ??
+      optionalEnv("FACEBOOK_CLIENT_SECRET") ??
+      "";
 
     this.googleConfig = {
       provider: "google",

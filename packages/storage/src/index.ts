@@ -1,4 +1,5 @@
 import crypto from "node:crypto";
+import { requireEnv, requireFirstEnv } from "@mindkid/config";
 
 export const PROOF_SIGNED_URL_TTL_MINUTES = 15;
 
@@ -43,11 +44,29 @@ const inMemoryPublicStore = new Map<
 >();
 
 export function getS3BucketName(): string {
-  return process.env.AWS_S3_PRIVATE_BUCKET || "mindkid-private-assets";
+  return requireEnv("AWS_S3_PRIVATE_BUCKET");
 }
 
 export function getS3PublicBucketName(): string {
-  return process.env.AWS_S3_PUBLIC_BUCKET || "mindkid-public-assets";
+  return requireEnv("AWS_S3_PUBLIC_BUCKET");
+}
+
+/**
+ * Key used to sign private asset URLs (BR-ENV-03).
+ *
+ * There is deliberately no literal fallback here: a constant checked into the
+ * repository would let anyone forge a signed URL for a child's private asset.
+ */
+function assetSigningSecret(): string {
+  return requireFirstEnv(
+    ["STORAGE_SIGNING_SECRET", "WEB_JWT_SECRET"],
+    "Set STORAGE_SIGNING_SECRET in the env file of every process that serves assets."
+  );
+}
+
+/** Public base address for asset URLs; falls back only to another contract variable. */
+function assetBaseUrl(): string {
+  return requireFirstEnv(["STORAGE_BASE_URL", "SITE_URL"]);
 }
 
 /**
@@ -176,10 +195,7 @@ export function url(
   if (options?.variant === "thumb" && !targetPath.endsWith("_thumb.webp")) {
     targetPath = targetPath.replace(EXTENSION_REGEX, "_thumb.webp");
   }
-  const baseUrl =
-    process.env.STORAGE_BASE_URL ||
-    process.env.SITE_URL ||
-    "https://assets.mindkid.edu.vn";
+  const baseUrl = assetBaseUrl();
   return `${baseUrl.replace(TRAILING_SLASHES_REGEX, "")}/${targetPath}`;
 }
 
@@ -191,19 +207,13 @@ export function signedUrl(path: string, ttlSeconds = 900): string {
   const expiresAt = new Date(Date.now() + ttlSeconds * 1000);
   const normalizedPath = path.startsWith("/") ? path.slice(1) : path;
 
-  const secret =
-    process.env.STORAGE_SIGNING_SECRET ||
-    process.env.WEB_JWT_SECRET ||
-    "storage-private-secret-key-signed-proof-token-123456";
+  const secret = assetSigningSecret();
   const signature = crypto
     .createHmac("sha256", secret)
     .update(`${normalizedPath}:${expiresAt.getTime()}`)
     .digest("hex");
 
-  const baseUrl =
-    process.env.STORAGE_BASE_URL ||
-    process.env.SITE_URL ||
-    "https://storage.mindkid.test";
+  const baseUrl = assetBaseUrl();
 
   return `${baseUrl.replace(TRAILING_SLASHES_REGEX, "")}/private/${encodeURIComponent(
     normalizedPath
@@ -226,19 +236,13 @@ export async function getPrivateSignedUrl(options: {
     ? options.path.slice(1)
     : options.path;
 
-  const secret =
-    process.env.STORAGE_SIGNING_SECRET ||
-    process.env.WEB_JWT_SECRET ||
-    "storage-private-secret-key-signed-proof-token-123456";
+  const secret = assetSigningSecret();
   const signature = crypto
     .createHmac("sha256", secret)
     .update(`${normalizedPath}:${expiresAt.getTime()}`)
     .digest("hex");
 
-  const baseUrl =
-    process.env.STORAGE_BASE_URL ||
-    process.env.SITE_URL ||
-    "https://storage.mindkid.test";
+  const baseUrl = assetBaseUrl();
 
   const resultUrl = `${baseUrl.replace(TRAILING_SLASHES_REGEX, "")}/private/${encodeURIComponent(
     normalizedPath
@@ -262,10 +266,7 @@ export function verifySignedUrlToken(
     return false; // Expired
   }
 
-  const secret =
-    process.env.STORAGE_SIGNING_SECRET ||
-    process.env.WEB_JWT_SECRET ||
-    "storage-private-secret-key-signed-proof-token-123456";
+  const secret = assetSigningSecret();
   const expectedSig = crypto
     .createHmac("sha256", secret)
     .update(`${path}:${expiresTimestamp}`)

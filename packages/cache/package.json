@@ -10,6 +10,7 @@
     ".": "./src/index.ts"
   },
   "dependencies": {
+    "@mindkid/config": "workspace:*",
     "ioredis": "catalog:",
     "rate-limiter-flexible": "catalog:"
   },

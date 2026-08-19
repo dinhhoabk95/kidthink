@@ -7,6 +7,7 @@ import {
   MfaChallengeService,
   verifyTotpCode,
 } from "@mindkid/auth";
+import { requireEnv } from "@mindkid/config";
 import {
   getAppSql,
   getOwnerDb,
@@ -20,8 +21,9 @@ import { defineEventHandler, readBody } from "h3";
 import { z } from "zod";
 import { setUserSession } from "#imports";
 
-const MFA_SECRET_KEY =
-  process.env.MFA_ENCRYPTION_KEY || "default_mfa_encryption_key_32bytes_!";
+function mfaSecretKey(): string {
+  return requireEnv("MFA_ENCRYPTION_KEY");
+}
 
 const MfaSchema = z
   .object({
@@ -106,7 +108,7 @@ export default defineEventHandler(async (event) => {
     throw appError("INVALID_CREDENTIALS");
   }
 
-  const mfaResult = await verifyUserMfa(db, user.id, code, MFA_SECRET_KEY);
+  const mfaResult = await verifyUserMfa(db, user.id, code, mfaSecretKey());
 
   if (!mfaResult.verified) {
     throw appError("INVALID_CREDENTIALS");

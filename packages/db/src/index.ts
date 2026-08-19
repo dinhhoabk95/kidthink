@@ -41,6 +41,7 @@ export * from "./services/content-search.ts";
 export * from "./services/content-versioning.ts";
 export * from "./services/custom-game.ts";
 export * from "./services/feature-flags.ts";
+export * from "./services/lesson-exemplar.ts";
 export * from "./services/lesson-plan.ts";
 export * from "./services/lesson-session-runner.ts";
 export * from "./services/library.ts";

@@ -39,6 +39,7 @@ export const SearchParamsSchema = z.object({
     .default("relevance"),
   limit: z.coerce.number().min(1).optional(),
   cursor: z.string().optional(),
+  is_exemplar: z.coerce.boolean().optional(),
 });
 
 export type SearchParams = z.infer<typeof SearchParamsSchema>;
@@ -411,6 +412,10 @@ function buildLessonConditions(
     }
   }
 
+  if (params.is_exemplar !== undefined) {
+    conditions.push(eq(lessons.isExemplar, params.is_exemplar));
+  }
+
   if (params.q && params.q.trim().length > 0) {
     const patternRaw = `%${params.q.trim()}%`;
     conditions.push(
@@ -454,6 +459,9 @@ export async function searchLessons(
       status: lessons.status,
       origin: lessons.origin,
       authoredIn: lessons.authoredIn,
+      isExemplar: lessons.isExemplar,
+      exemplarCompetency: lessons.exemplarCompetency,
+      exemplarAgeBand: lessons.exemplarAgeBand,
       createdAt: lessons.createdAt,
     })
     .from(lessons)
@@ -487,6 +495,9 @@ export async function searchLessons(
       status: row.status,
       origin: row.origin,
       authored_in: row.authoredIn,
+      is_exemplar: row.isExemplar,
+      exemplar_competency: row.exemplarCompetency,
+      exemplar_age_band: row.exemplarAgeBand,
       created_at: row.createdAt,
       locked: isLocked,
     };

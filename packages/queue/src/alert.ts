@@ -1,3 +1,4 @@
+import { optionalEnv } from "@mindkid/config";
 export type AlertSeverity =
   | "P0"
   | "P1"
@@ -88,9 +89,8 @@ export class TelegramAlertAdapter implements AlertPort {
 
   constructor(options?: TelegramAdapterOptions) {
     this.botToken =
-      options?.botToken || process.env.TELEGRAM_BOT_TOKEN || "mock_token";
-    this.chatId =
-      options?.chatId || process.env.TELEGRAM_CHAT_ID || "mock_chat_id";
+      options?.botToken ?? optionalEnv("TELEGRAM_BOT_TOKEN") ?? "";
+    this.chatId = options?.chatId ?? optionalEnv("TELEGRAM_CHAT_ID") ?? "";
     this.fallbackAdapter = options?.fallbackAdapter || new EmailAlertAdapter();
     this.fetchFn = options?.fetchFn || globalThis.fetch;
   }

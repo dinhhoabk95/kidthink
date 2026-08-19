@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+# Fake curl: returns the status code the test asked for.
+set -uo pipefail
+state="${MK_FAKE_STATE:?}"
+printf 'curl %s\n' "$*" >>"${state}/curl.calls"
+
+# notify() posts JSON; record it and succeed.
+for arg in "$@"; do
+  if [ "${arg}" = "-X" ]; then
+    printf 'notify-post\n' >>"${state}/notify.calls"
+    exit 0
+  fi
+done
+
+status_file="${state}/http_status"
+[ -f "${status_file}" ] && printf '%s' "$(cat "${status_file}")" && exit 0
+printf '200'

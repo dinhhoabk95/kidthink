@@ -1,0 +1,54 @@
+#!/usr/bin/env bash
+# Fake docker for the release harness.
+#
+# Emulates only what build.sh asks of it: run a command in an image with the
+# release directory mounted at /workspace. Behaviour is steered by files in
+# $MK_FAKE_STATE so a test can make the build fail without touching the script.
+set -uo pipefail
+
+state="${MK_FAKE_STATE:?MK_FAKE_STATE must be set}"
+printf 'docker %s\n' "$*" >>"${state}/docker.calls"
+
+case "${1:-}" in
+  compose|ps|exec) exit 0 ;;
+esac
+
+# Find the host path mounted at /workspace.
+workspace=""
+prev=""
+for arg in "$@"; do
+  if [ "${prev}" = "-v" ]; then
+    case "${arg}" in
+      *:/workspace) workspace="${arg%%:/workspace}" ;;
+    esac
+  fi
+  prev="${arg}"
+done
+
+command_text="${*: -1}"
+
+if [ -f "${state}/build_fails" ] && [[ "${command_text}" == *"pnpm build"* ]]; then
+  echo "fake docker: build killed" >&2
+  exit 137
+fi
+
+if [ -f "${state}/migrate_fails" ] && [[ "${command_text}" == *"db:migrate"* ]]; then
+  echo "fake docker: migration failed" >&2
+  exit 1
+fi
+
+# A successful build leaves exactly the artefacts release_has_artifacts checks.
+if [[ "${command_text}" == *"pnpm build"* ]] && [ -n "${workspace}" ]; then
+  mkdir -p "${workspace}/apps/web/.output/server" \
+           "${workspace}/apps/admin/.output/server" \
+           "${workspace}/apps/worker/dist"
+  echo "// built" >"${workspace}/apps/web/.output/server/index.mjs"
+  echo "// built" >"${workspace}/apps/admin/.output/server/index.mjs"
+  echo "// built" >"${workspace}/apps/worker/dist/index.js"
+fi
+
+if [[ "${command_text}" == *"db:migrate"* ]]; then
+  echo "migration applied" >>"${state}/migrations.applied"
+fi
+
+exit 0

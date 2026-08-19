@@ -9,9 +9,11 @@ import { and, eq } from "drizzle-orm";
 import { createError, defineEventHandler, readBody } from "h3";
 import { requireWebUserSession } from "../../../utils/auth-runtime.js";
 
-const MFA_SECRET_KEY =
-  process.env.MFA_ENCRYPTION_KEY || "default_mfa_encryption_key_32bytes_!";
+function mfaSecretKey(): string {
+  return requireEnv("MFA_ENCRYPTION_KEY");
+}
 
+import { requireEnv } from "@mindkid/config";
 import { z } from "zod";
 
 const verifyMfaSchema = z.object({
@@ -59,7 +61,7 @@ export default defineEventHandler(async (event) => {
 
   const decryptedSecret = decryptTotpSecret(
     setting.secretEncrypted,
-    MFA_SECRET_KEY
+    mfaSecretKey()
   );
   const isValid = verifyTotpCode(code, decryptedSecret); // BR-MFA-04, BR-MFA-12
 

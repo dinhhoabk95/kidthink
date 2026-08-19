@@ -199,7 +199,6 @@
     "packages/emoji/src/query.ts": 1,
     "packages/emoji/src/registry.ts": 4,
     "packages/game-engine/src/index.ts": 1,
-    "packages/game-engine/src/systems/feedback-system.ts": 2,
     "packages/game-engine/src/systems/sfx-engine.ts": 2,
     "packages/game-engine/src/templates/GT-001/gt001-session.ts": 1,
     "packages/game-engine/src/templates/GT-003/gt003-session.ts": 1,

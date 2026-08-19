@@ -9,6 +9,7 @@
   "dependencies": {
     "@mindkid/adaptive": "workspace:*",
     "@mindkid/auth": "workspace:*",
+    "@mindkid/config": "workspace:*",
     "@mindkid/emoji": "workspace:*",
     "@mindkid/game-engine": "workspace:*",
     "@mindkid/moderation": "workspace:*",

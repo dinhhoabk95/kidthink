@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+# Fake process supervisor: records the reload order so a test can assert it.
+set -uo pipefail
+state="${MK_FAKE_STATE:?}"
+printf 'pm2 %s\n' "$*" >>"${state}/pm2.calls"
+
+case "${1:-}" in
+  reload)
+    [ -f "${state}/pm2_reload_fails" ] && exit 1
+    printf '%s\n' "${2:-}" >>"${state}/pm2.reload-order"
+    exit 0
+    ;;
+  list|save|start|startup) exit 0 ;;
+esac
+exit 0

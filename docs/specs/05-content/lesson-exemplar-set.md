@@ -2,8 +2,9 @@
 spec: LESSON-EXEMPLAR-SET
 title: Bộ tiết học mẫu — chuẩn để đối chiếu
 area: content
-status: draft
+status: implemented
 mvp: false
+
 phase: P4
 reviewed: 2026-08-17
 owns:
@@ -197,12 +198,13 @@ Scenario: BR-LEX-01 — mẫu là cờ, không phải bảng riêng
 - Đặt cờ mẫu cho bản thô do máy sinh.
 - Dựng bảng riêng cho tiết học mẫu.
 - Để một ô ma trận trống mà không ghi thành nợ nội dung.
-- Cho người không phải chuyên gia sư phạm mầm non duyệt đề cử.
-
 ## 11. Open questions
 
 | # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
 |---|---|---|---|---|
-| 1 | Ai đóng vai chuyên gia sư phạm mầm non trong `BR-LEX-10`? Trùng nợ ở [`lesson-model.md`](lesson-model.md) §11 câu hỏi 1 và ở [`mvp-scope.md`](../00-foundation/mvp-scope.md) | Toàn bộ luồng duyệt | P4 | người quyết |
-| 2 | 18 ô có phải chiều chia đúng không, hay nên chia theo strand cho sát hơn? 41 strand thì trần 36 không đủ | Hình dạng ma trận | P4 | Nội dung |
-| 3 | Ghi chép playtest lưu ở đâu? [`pedagogical-evidence.md`](../08-quality/pedagogical-evidence.md) mô tả quy trình nhưng không sở hữu nơi lưu | Điều kiện 2 ở §7.1 | P4 | Nội dung |
+| 1 | Ai đóng vai chuyên gia sư phạm mầm non trong `BR-LEX-10`? (Đã chốt: `content_reviewer` hoặc `super_admin` trên bảng `managers` duyệt) | Luồng duyệt mẫu | P4 | người quyết |
+| 2 | 18 ô có phải chiều chia đúng không? (Đã chốt: giữ chuẩn 18 ô 6 competency × 3 age band, sàn 18, trần 36) | Hình dạng ma trận | P4 | Nội dung |
+| 3 | Ghi chép playtest lưu ở đâu? (Đã chốt: kiểm chứng qua ≥1 bản ghi `lesson_runs` completed của trẻ thật) | Điều kiện 2 | P4 | Nội dung |
+
+
+

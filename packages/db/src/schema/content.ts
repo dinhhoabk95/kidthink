@@ -88,6 +88,15 @@ export const lessons = pgTable(
     }).references(() => managers.id),
     publishedAt: timestamp("published_at", { withTimezone: true }),
     archivedAt: timestamp("archived_at", { withTimezone: true }),
+    isExemplar: boolean("is_exemplar").notNull().default(false),
+    exemplarCompetency: varchar("exemplar_competency", { length: 10 }),
+    exemplarAgeBand: varchar("exemplar_age_band", { length: 10 }),
+    exemplarApprovedById: bigint("exemplar_approved_by_id", {
+      mode: "number",
+    }).references(() => managers.id),
+    exemplarApprovedAt: timestamp("exemplar_approved_at", {
+      withTimezone: true,
+    }),
     ...timestamps,
   },
   (table) => [
@@ -95,10 +104,25 @@ export const lessons = pgTable(
     uniqueIndex("idx_lessons_published_code")
       .on(table.code)
       .where(sql`${table.status} = 'published'`),
+    index("idx_lessons_exemplar")
+      .on(table.isExemplar, table.exemplarCompetency, table.exemplarAgeBand)
+      .where(sql`${table.isExemplar} = true`),
     check("check_lessons_code_format", sql`${table.code} ~ '^LES-\\d{4}$'`),
     check(
       "check_lessons_estimated_minutes",
       sql`${table.estimatedMinutes} >= 5 AND ${table.estimatedMinutes} <= 45`
+    ),
+    check(
+      "check_lessons_exemplar_competency",
+      sql`${table.exemplarCompetency} IS NULL OR ${table.exemplarCompetency} ~ '^C[1-6]$'`
+    ),
+    check(
+      "check_lessons_exemplar_age_band",
+      sql`${table.exemplarAgeBand} IS NULL OR ${table.exemplarAgeBand} IN ('3-4', '4-5', '5-6')`
+    ),
+    check(
+      "check_lessons_exemplar_invariants",
+      sql`(${table.isExemplar} = false) OR (${table.isExemplar} = true AND ${table.exemplarCompetency} IS NOT NULL AND ${table.exemplarAgeBand} IS NOT NULL AND ${table.exemplarApprovedById} IS NOT NULL AND ${table.accessTier} = 'free' AND ${table.origin} = 'human')`
     ),
   ]
 );

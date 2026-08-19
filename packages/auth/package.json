@@ -8,6 +8,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@mindkid/config": "workspace:*",
     "argon2": "^0.45.1",
     "ioredis": "catalog:",
     "jose": "catalog:",

@@ -1,4 +1,5 @@
 import { hashPassword } from "@mindkid/auth";
+import { requireEnv } from "@mindkid/config";
 import {
   ENTITLEMENT_KEYS,
   PACKAGE_CATALOG,
@@ -114,10 +115,14 @@ export async function seed() {
   );
 
   // 7. Seed initial super_admin manager
-  const initialAdminEmail =
-    process.env.INITIAL_ADMIN_EMAIL || "admin@tinimath.test";
-  const initialAdminPassword =
-    process.env.INITIAL_ADMIN_PASSWORD || "Admin123456!";
+  const initialAdminEmail = requireEnv(
+    "INITIAL_ADMIN_EMAIL",
+    "Seeding creates the first super admin; name the account explicitly."
+  );
+  const initialAdminPassword = requireEnv(
+    "INITIAL_ADMIN_PASSWORD",
+    "Seeding creates the first super admin; supply its password explicitly."
+  );
   const initialAdminHash = await hashPassword(initialAdminPassword);
 
   await db

@@ -1,91 +1,208 @@
-import { spawnSync } from "node:child_process";
-import { readdirSync } from "node:fs";
-import { join, relative, resolve } from "node:path";
-
+#!/usr/bin/env node
 /**
- * Gate: lint:shell-scripts (WP90.10)
- * Validates bash syntax on all shell scripts using bash -n syntax verification.
+ * Gate: lint:shell
+ * Owns: static analysis of every shell script that runs on the server.
+ *
+ * `bash -n` alone is not this gate. It accepts unquoted expansions, masked
+ * return values and unset-variable reads — the exact defects that turn a
+ * deploy script into a half-applied release. shellcheck is therefore required,
+ * and its absence is a failure rather than a silent pass.
  */
+import { spawnSync } from "node:child_process";
+import { readdirSync, statSync } from "node:fs";
+import { join, relative, resolve } from "node:path";
 
 export interface ShellLintError {
   file: string;
-  error: string;
+  line: number;
+  code: string;
+  message: string;
+}
+
+const SCAN_DIRS = ["infra/scripts", "scripts"];
+const SKIP_DIRS = new Set(["node_modules", "dist", ".output"]);
+const INSTALL_HINT =
+  "Install it: `brew install shellcheck` (macOS) or `apt-get install shellcheck` (Debian/Ubuntu).";
+
+export function isShellcheckAvailable(): boolean {
+  return (
+    spawnSync("shellcheck", ["--version"], { encoding: "utf8" }).status === 0
+  );
 }
 
 export function checkBashSyntax(filePath: string): ShellLintError | null {
   const result = spawnSync("bash", ["-n", filePath], { encoding: "utf8" });
-  if (result.status !== 0) {
-    return {
-      file: filePath,
-      error: (result.stderr || result.stdout || "Syntax error").trim(),
-    };
+  if (result.status === 0) {
+    return null;
   }
-  return null;
+  return {
+    file: filePath,
+    line: 0,
+    code: "bash-n",
+    message: (result.stderr || result.stdout || "Syntax error").trim(),
+  };
 }
 
-function processShellEntry(
-  entry: import("node:fs").Dirent,
-  dir: string,
-  root: string,
-  errors: ShellLintError[],
-  walk: (d: string) => void
-) {
-  const fullPath = join(dir, entry.name);
-  if (entry.isDirectory()) {
-    if (entry.name !== "node_modules" && entry.name !== "dist") {
-      walk(fullPath);
-    }
-    return;
+interface ShellcheckComment {
+  file: string;
+  line: number;
+  level: string;
+  code: number;
+  message: string;
+}
+
+function isShellcheckCommentArray(val: unknown): val is ShellcheckComment[] {
+  if (!Array.isArray(val)) {
+    return false;
   }
-  if (entry.isFile() && entry.name.endsWith(".sh")) {
-    const err = checkBashSyntax(fullPath);
-    if (err) {
-      errors.push({
-        file: relative(root, fullPath),
-        error: err.error,
-      });
+  return val.every(
+    (c) =>
+      typeof c === "object" &&
+      c !== null &&
+      "file" in c &&
+      typeof c.file === "string" &&
+      "line" in c &&
+      typeof c.line === "number" &&
+      "level" in c &&
+      typeof c.level === "string" &&
+      "code" in c &&
+      typeof c.code === "number" &&
+      "message" in c &&
+      typeof c.message === "string"
+  );
+}
+
+export function runShellcheck(files: string[], root: string): ShellLintError[] {
+  if (files.length === 0) {
+    return [];
+  }
+
+  // -x follows `source` into lib/, which is where most of the logic lives.
+  const result = spawnSync(
+    "shellcheck",
+    ["--shell=bash", "--severity=warning", "--format=json", "-x", ...files],
+    { encoding: "utf8", cwd: root, maxBuffer: 20 * 1024 * 1024 }
+  );
+
+  const raw = (result.stdout || "").trim();
+  if (raw.length === 0) {
+    return [];
+  }
+
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(raw);
+  } catch {
+    return [
+      {
+        file: "(shellcheck)",
+        line: 0,
+        code: "parse",
+        message: `Unreadable shellcheck output: ${raw.slice(0, 200)}`,
+      },
+    ];
+  }
+
+  if (!isShellcheckCommentArray(parsed)) {
+    return [
+      {
+        file: "(shellcheck)",
+        line: 0,
+        code: "parse",
+        message: `Unreadable shellcheck output: ${raw.slice(0, 200)}`,
+      },
+    ];
+  }
+
+  return parsed.map((c) => ({
+    file: relative(root, resolve(root, c.file)),
+    line: c.line,
+    code: `SC${c.code}`,
+    message: `${c.level}: ${c.message}`,
+  }));
+}
+
+export function collectShellScripts(root = process.cwd()): string[] {
+  const found: string[] = [];
+
+  function walk(dir: string): void {
+    let entries: string[];
+    try {
+      entries = readdirSync(dir);
+    } catch {
+      return;
+    }
+    for (const entry of entries) {
+      const full = join(dir, entry);
+      if (statSync(full).isDirectory()) {
+        if (!SKIP_DIRS.has(entry)) {
+          walk(full);
+        }
+        continue;
+      }
+      if (entry.endsWith(".sh")) {
+        found.push(full);
+      }
     }
   }
+
+  for (const dir of SCAN_DIRS) {
+    walk(resolve(root, dir));
+  }
+  return found.sort();
 }
 
 export function scanAndLintShellScripts(
   root = process.cwd()
 ): ShellLintError[] {
+  const files = collectShellScripts(root);
   const errors: ShellLintError[] = [];
-  const searchDirs = [resolve(root, "infra/scripts"), resolve(root, "scripts")];
 
-  function walk(dir: string) {
-    try {
-      const entries = readdirSync(dir, { withFileTypes: true });
-      for (const entry of entries) {
-        processShellEntry(entry, dir, root, errors, walk);
-      }
-    } catch {
-      // Directory may not exist
+  for (const file of files) {
+    const syntaxError = checkBashSyntax(file);
+    if (syntaxError) {
+      errors.push({ ...syntaxError, file: relative(root, file) });
     }
   }
 
-  for (const sDir of searchDirs) {
-    walk(sDir);
+  // A file that does not parse would only produce noise in shellcheck too.
+  if (errors.length > 0) {
+    return errors;
   }
 
-  return errors;
+  return runShellcheck(
+    files.map((f) => relative(root, f)),
+    root
+  );
 }
 
 if (import.meta.url === `file://${process.argv[1]}`) {
+  if (!isShellcheckAvailable()) {
+    console.error(
+      `❌ [lint:shell] shellcheck is not installed. ${INSTALL_HINT}`
+    );
+    process.exit(1);
+  }
+
+  const files = collectShellScripts();
+  if (files.length === 0) {
+    console.error(
+      `❌ [lint:shell] Found 0 shell scripts under ${SCAN_DIRS.join(", ")}; the gate would pass without checking anything.`
+    );
+    process.exit(1);
+  }
+
   const errors = scanAndLintShellScripts();
   if (errors.length === 0) {
     console.log(
-      "✅ [lint:shell-scripts] All bash scripts passed syntax verification."
+      `✅ [lint:shell] ${files.length} shell scripts pass shellcheck.`
     );
     process.exit(0);
-  } else {
-    console.error(
-      `❌ [lint:shell-scripts] Found ${errors.length} shell syntax errors:`
-    );
-    for (const e of errors) {
-      console.error(`  ${e.file}: ${e.error}`);
-    }
-    process.exit(1);
   }
+
+  console.error(`❌ [lint:shell] ${errors.length} findings:`);
+  for (const e of errors) {
+    console.error(`  ${e.file}:${e.line} ${e.code} ${e.message}`);
+  }
+  process.exit(1);
 }

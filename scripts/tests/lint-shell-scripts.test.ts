@@ -23,7 +23,7 @@ describe("Task #90 — WP90.10 Shell Scripts Syntax Verification", () => {
     try {
       const err = checkBashSyntax(badScriptPath);
       expect(err).not.toBeNull();
-      expect(err?.error).toBeTruthy();
+      expect(err?.message).toBeTruthy();
     } finally {
       unlinkSync(badScriptPath);
     }

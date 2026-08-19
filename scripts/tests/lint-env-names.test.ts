@@ -3,11 +3,11 @@ import { scanContentForEnvNames } from "../lint-env-names.js";
 
 describe("Gate lint:env-names (BR-ENV-02)", () => {
   it("detects deprecated SESSION_SECRET alias", () => {
-    const code = 'const secret = process.env.SESSION_SECRET || "default";';
+    const code = "const secret = process.env.SESSION_SECRET;";
     const violations = scanContentForEnvNames("apps/web/server/test.ts", code);
     expect(violations.length).toBe(1);
-    expect(violations[0]?.bannedName).toBe("SESSION_SECRET");
-    expect(violations[0]?.replacement).toBe("NUXT_SESSION_PASSWORD");
+    expect(violations[0]?.name).toBe("SESSION_SECRET");
+    expect(violations[0]?.advice).toContain("NUXT_SESSION_PASSWORD");
   });
 
   it("detects deprecated REDIS_URL and VALKEY_HOST aliases", () => {
@@ -20,8 +20,8 @@ describe("Gate lint:env-names (BR-ENV-02)", () => {
       code
     );
     expect(violations.length).toBe(2);
-    expect(violations.map((v) => v.bannedName)).toContain("REDIS_URL");
-    expect(violations.map((v) => v.bannedName)).toContain("VALKEY_HOST");
+    expect(violations.map((v) => v.name)).toContain("REDIS_URL");
+    expect(violations.map((v) => v.name)).toContain("VALKEY_HOST");
   });
 
   it("passes clean for canonical names", () => {

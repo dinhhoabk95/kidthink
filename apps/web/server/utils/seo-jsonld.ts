@@ -1,7 +1,13 @@
+import { requireEnv } from "@mindkid/config";
 import { FAQ_ITEMS, type FaqItem } from "@mindkid/shared";
 
-const SITE_URL = process.env.SITE_URL || "https://mindkid.vn";
 const BRAND_NAME = "MindKid";
+
+// Read at call time, not import time: the value belongs to the request that
+// renders the document, and importing this module must not require it.
+function siteUrl(): string {
+  return requireEnv("SITE_URL");
+}
 
 /**
  * BR-SEO2-03: Organization & WebSite JSON-LD
@@ -11,8 +17,8 @@ export function buildOrganizationJsonLd() {
     "@context": "https://schema.org",
     "@type": "Organization",
     name: BRAND_NAME,
-    url: SITE_URL,
-    logo: `${SITE_URL}/images/brand-logo.png`,
+    url: siteUrl(),
+    logo: `${siteUrl()}/images/brand-logo.png`,
     description:
       "Thinking Play Platform - Thư viện tư duy qua trò chơi cho trẻ mầm non 3-6 tuổi",
     sameAs: ["https://zalo.me/mindkid"],
@@ -30,12 +36,12 @@ export function buildWebSiteJsonLd() {
     "@context": "https://schema.org",
     "@type": "WebSite",
     name: BRAND_NAME,
-    url: SITE_URL,
+    url: siteUrl(),
     potentialAction: {
       "@type": "SearchAction",
       target: {
         "@type": "EntryPoint",
-        urlTemplate: `${SITE_URL}/games?q={search_term_string}`,
+        urlTemplate: `${siteUrl()}/games?q={search_term_string}`,
       },
       "query-input": "required name=search_term_string",
     },
@@ -72,7 +78,7 @@ export function buildLearningResourceJsonLd(game: GameLevelSeoData) {
     teaches: game.learning_objectives?.length
       ? game.learning_objectives.join(", ")
       : game.competency_name || "Tư duy toán học mầm non",
-    url: `${SITE_URL}/games/${game.code}`,
+    url: `${siteUrl()}/games/${game.code}`,
   };
 }
 
@@ -89,7 +95,7 @@ export function buildBreadcrumbListJsonLd(
       "@type": "ListItem",
       position: index + 1,
       name: item.name,
-      item: item.url.startsWith("http") ? item.url : `${SITE_URL}${item.url}`,
+      item: item.url.startsWith("http") ? item.url : `${siteUrl()}${item.url}`,
     })),
   };
 }
@@ -140,9 +146,9 @@ export function buildCourseJsonLd(program: ProgramCourseSeoData) {
     provider: {
       "@type": "Organization",
       name: BRAND_NAME,
-      url: SITE_URL,
+      url: siteUrl(),
     },
-    url: `${SITE_URL}/programs/${program.code}`,
+    url: `${siteUrl()}/programs/${program.code}`,
     hasCourseInstance: {
       "@type": "CourseInstance",
       courseMode: "online",
