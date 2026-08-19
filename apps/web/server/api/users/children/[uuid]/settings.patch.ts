@@ -3,11 +3,15 @@ import { childProfiles, entitlements, getOwnerDb } from "@mindkid/db";
 import { validateCustomPlayCap } from "@mindkid/shared";
 import { and, eq, gt, isNull, or } from "drizzle-orm";
 import { defineEventHandler, getRouterParam, readBody } from "h3";
-
+import { z } from "zod";
 import {
   assertRequestBodySize,
   requireWebUserSession,
 } from "../../../../utils/auth-runtime.js";
+
+const patchSettingsSchema = z.object({
+  daily_play_cap_minutes: z.number().int(),
+});
 
 export default defineEventHandler(async (event) => {
   assertRequestBodySize(event, 16 * 1024);
@@ -17,16 +21,17 @@ export default defineEventHandler(async (event) => {
     throw new AppError("NOT_FOUND");
   }
 
-  const eventBody = (event.context as { body?: Record<string, unknown> })?.body;
-  const body =
-    eventBody || ((await readBody(event)) as Record<string, unknown>) || {};
-  const requestedCap = body.daily_play_cap_minutes;
+  const eventBody = (event.context as { body?: unknown })?.body;
+  const raw = eventBody || (await readBody(event).catch(() => ({})));
+  const parsed = patchSettingsSchema.safeParse(raw);
 
-  if (requestedCap === undefined || typeof requestedCap !== "number") {
+  if (!parsed.success) {
     throw new AppError("VALIDATION_FAILED", {
       message: "daily_play_cap_minutes là bắt buộc.",
     });
   }
+
+  const requestedCap = parsed.data.daily_play_cap_minutes;
 
   const db = getOwnerDb();
   const userId = Number(user.user_id);

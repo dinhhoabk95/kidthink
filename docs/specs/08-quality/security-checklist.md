@@ -2,10 +2,10 @@
 spec: SECURITY-CHECKLIST
 title: Danh sách kiểm bảo mật
 area: quality
-status: approved
+status: implemented
 mvp: true
 phase: P0
-reviewed: 2026-08-13
+reviewed: 2026-08-19
 owns:
   - Checklist bảo mật bắt buộc trước merge và trước release
 depends_on:

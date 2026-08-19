@@ -33,13 +33,42 @@ function sanitizeRichText(html: string | undefined): string | undefined {
   return html;
 }
 
+import { z } from "zod";
+
+const createSeoPageSchema = z.object({
+  slug: z.string().min(1),
+  title: z.string().min(1),
+  meta_description: z.string().min(1),
+  page_type: z
+    .enum(["competency", "skill", "age_program", "topic", "static"])
+    .optional()
+    .default("topic"),
+  h1: z.string().optional(),
+  body: z.string().optional(),
+  og_image_path: z.string().nullable().optional(),
+  canonical_url: z.string().nullable().optional(),
+  noindex: z.boolean().optional(),
+  related_content_refs: z
+    .array(z.object({ type: z.string(), code: z.string() }))
+    .optional(),
+  faq_items: z.array(z.object({ q: z.string(), a: z.string() })).optional(),
+});
+
 function validateAndBuildSeoInsert(
-  body: Record<string, unknown> | undefined,
+  rawBody: unknown,
   managerId: number
 ): typeof seoPages.$inferInsert {
-  let rawSlug = String(body?.slug || "")
-    .trim()
-    .toLowerCase();
+  const parsedResult = createSeoPageSchema.safeParse(rawBody);
+  if (!parsedResult.success) {
+    throw createError({
+      statusCode: 422,
+      statusMessage: "VALIDATION_FAILED",
+      message: "Slug, title và meta_description là bắt buộc",
+    });
+  }
+
+  const body = parsedResult.data;
+  let rawSlug = body.slug.trim().toLowerCase();
   if (rawSlug.startsWith("/")) {
     rawSlug = rawSlug.slice(1);
   }
@@ -65,26 +94,16 @@ function validateAndBuildSeoInsert(
     });
   }
 
-  const title = String(body?.title || "").trim();
-  const metaDescription = String(body?.meta_description || "").trim();
-  const pageType = (body?.page_type ||
-    "topic") as (typeof seoPages.$inferInsert)["pageType"];
-  const h1 = body?.h1 ? String(body.h1).trim() : title;
-  const bodyHtml = sanitizeRichText(body?.body as string | undefined);
-  const ogImagePath = body?.og_image_path ? String(body.og_image_path) : null;
-  const canonicalUrl = body?.canonical_url ? String(body.canonical_url) : null;
-  const noindex = Boolean(body?.noindex);
-  const relatedContentRefs =
-    (body?.related_content_refs as Array<{ type: string; code: string }>) || [];
-  const faqItems = (body?.faq_items as Array<{ q: string; a: string }>) || [];
-
-  if (!(title && metaDescription)) {
-    throw createError({
-      statusCode: 422,
-      statusMessage: "VALIDATION_FAILED",
-      message: "Title và meta_description là bắt buộc",
-    });
-  }
+  const title = body.title.trim();
+  const metaDescription = body.meta_description.trim();
+  const pageType = body.page_type as (typeof seoPages.$inferInsert)["pageType"];
+  const h1 = body.h1 ? body.h1.trim() : title;
+  const bodyHtml = sanitizeRichText(body.body);
+  const ogImagePath = body.og_image_path ? String(body.og_image_path) : null;
+  const canonicalUrl = body.canonical_url ? String(body.canonical_url) : null;
+  const noindex = Boolean(body.noindex);
+  const relatedContentRefs = body.related_content_refs || [];
+  const faqItems = body.faq_items || [];
 
   return {
     slug: rawSlug,

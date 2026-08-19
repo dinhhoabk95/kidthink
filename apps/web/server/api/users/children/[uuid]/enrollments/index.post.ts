@@ -205,6 +205,12 @@ async function assertGatingAllowance(
   }
 }
 
+import { z } from "zod";
+
+const createEnrollmentSchema = z.object({
+  curriculum_code: z.string().min(1),
+});
+
 export default defineEventHandler(async (event) => {
   assertRequestBodySize(event, 16 * 1024);
   const user = await requireWebUserSession(event);
@@ -220,14 +226,11 @@ export default defineEventHandler(async (event) => {
   // 1. Verify child belongs to user (BR-CPC-09 / BR-ERR-05 -> 404)
   const child = await assertChildOwnership(db, uuid, userId, event);
 
-  const eventBody = (event.context as { body?: Record<string, unknown> })?.body;
-  const body =
-    eventBody || ((await readBody(event)) as Record<string, unknown>) || {};
+  const eventBody = (event.context as { body?: unknown })?.body;
+  const raw = eventBody || (await readBody(event).catch(() => ({})));
+  const parsed = createEnrollmentSchema.safeParse(raw);
 
-  const curriculumCode =
-    typeof body.curriculum_code === "string" ? body.curriculum_code.trim() : "";
-
-  if (!curriculumCode) {
+  if (!parsed.success) {
     throw createError({
       statusCode: 422,
       statusMessage: "VALIDATION_FAILED",
@@ -237,6 +240,8 @@ export default defineEventHandler(async (event) => {
       },
     });
   }
+
+  const curriculumCode = parsed.data.curriculum_code.trim();
 
   // 2. Check if child already has an active enrollment (D-MB -> 409 ALREADY_ENROLLED)
   await assertNoActiveEnrollment(db, child.id, event);

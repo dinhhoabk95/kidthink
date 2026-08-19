@@ -7,7 +7,18 @@ import {
 import { CODE_FEATURE_FLAGS } from "@mindkid/shared";
 import { eq } from "drizzle-orm";
 import { createError, defineEventHandler, getRouterParam, readBody } from "h3";
+import { z } from "zod";
 import { requireManagerSession } from "../../../utils/admin-auth-runtime.js";
+
+const patchFlagSchema = z.object({
+  reason: z.string().min(10),
+  enabled: z.boolean().optional().default(false),
+  scope: z
+    .enum(["global", "beta_users", "percentage"])
+    .optional()
+    .default("global"),
+  scope_value: z.record(z.unknown()).nullable().optional(),
+});
 
 export default defineEventHandler(async (event) => {
   const manager = await requireManagerSession(event);
@@ -26,13 +37,13 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 404, statusMessage: "FLAG_NOT_FOUND" });
   }
 
-  const body =
-    (event.context?.body as Record<string, unknown>) ||
-    ((event as Record<string, unknown>)._body as Record<string, unknown>) ||
+  const raw =
+    (event.context?.body as unknown) ||
+    ((event as Record<string, unknown>)._body as unknown) ||
     (await readBody(event).catch(() => ({})));
 
-  const reason = typeof body?.reason === "string" ? body.reason.trim() : "";
-  if (!reason || reason.length < 10) {
+  const parsedResult = patchFlagSchema.safeParse(raw);
+  if (!parsedResult.success) {
     throw createError({
       statusCode: 422,
       statusMessage: "REASON_REQUIRED",
@@ -41,10 +52,7 @@ export default defineEventHandler(async (event) => {
     });
   }
 
-  const enabled = Boolean(body?.enabled);
-  const scope = (body?.scope ||
-    "global") as (typeof featureFlags.$inferInsert)["scope"];
-  const scopeValue = (body?.scope_value as Record<string, unknown>) || null;
+  const { reason, enabled, scope, scope_value: scopeValue } = parsedResult.data;
 
   const codeDef = CODE_FEATURE_FLAGS[key];
   const defaultValue = codeDef ? codeDef.defaultValue : false;

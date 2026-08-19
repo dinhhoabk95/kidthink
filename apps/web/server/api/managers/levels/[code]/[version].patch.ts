@@ -50,6 +50,23 @@ function buildLevelUpdates(
   return updates;
 }
 
+import { z } from "zod";
+
+const patchLevelSchema = z.object({
+  title: z.string().optional(),
+  description: z.string().optional(),
+  instruction: z.string().optional(),
+  content_pack: z.record(z.unknown()).optional(),
+  difficulty_params: z.record(z.unknown()).optional(),
+  theme_id: z.string().optional(),
+  age_min: z.number().int().min(3).max(6).optional(),
+  age_max: z.number().int().min(3).max(6).optional(),
+  difficulty: z.number().int().min(1).max(5).optional(),
+  access_tier: z.enum(["free", "standard", "premium", "login"]).optional(),
+  thumbnail_emoji: z.string().optional(),
+  expected_version: z.number().int().positive().optional(),
+});
+
 export default defineEventHandler(async (event) => {
   const manager = await requireManagerSession(event);
   const code = getRouterParam(event, "code");
@@ -64,10 +81,12 @@ export default defineEventHandler(async (event) => {
   const fallbackBody = (event as Record<string, unknown>)._body as
     | Record<string, unknown>
     | undefined;
-  const body =
+  const rawBody =
     (parsedBody && Object.keys(parsedBody).length > 0
       ? parsedBody
       : fallbackBody) || {};
+
+  const body = patchLevelSchema.parse(rawBody);
 
   const db = getOwnerDb();
 

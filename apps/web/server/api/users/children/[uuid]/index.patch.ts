@@ -14,13 +14,6 @@ import {
   requireWebUserSession,
 } from "../../../../utils/auth-runtime.js";
 
-const ALLOWED_UPDATE_KEYS = new Set([
-  "display_name",
-  "birth_year",
-  "avatar_id",
-  "relationship",
-]);
-
 function validatePatchDisplayName(name: string): string {
   const trimmed = name.trim();
   if (trimmed.length < 1 || trimmed.length > 40) {
@@ -57,11 +50,20 @@ function validatePatchBirthYear(
   return birthYear;
 }
 
-function buildChildUpdates(body: Record<string, unknown>, currentYear: number) {
-  const extraFields = Object.keys(body).filter(
-    (key) => !ALLOWED_UPDATE_KEYS.has(key)
-  );
-  if (extraFields.length > 0) {
+import { z } from "zod";
+
+const patchChildSchema = z
+  .object({
+    display_name: z.string().optional(),
+    birth_year: z.number().int().optional(),
+    avatar_id: z.string().optional(),
+    relationship: z.enum(["child", "student", "other"]).optional(),
+  })
+  .strict();
+
+function buildChildUpdates(rawBody: unknown, currentYear: number) {
+  const parsedResult = patchChildSchema.safeParse(rawBody);
+  if (!parsedResult.success) {
     throw createError({
       statusCode: 400,
       statusMessage: "CHILD_FIELD_NOT_ALLOWED",
@@ -73,6 +75,7 @@ function buildChildUpdates(body: Record<string, unknown>, currentYear: number) {
     });
   }
 
+  const body = parsedResult.data;
   const updates: Record<string, unknown> = { updatedAt: new Date() };
 
   if (typeof body.display_name === "string") {

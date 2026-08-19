@@ -143,20 +143,35 @@ async function ensureApprovalRequirements(options: {
   }
 }
 
-async function parseTransitionBody(event: Record<string, unknown>) {
-  const body =
-    (event.context?.body as Record<string, unknown>) ||
-    ((event as Record<string, unknown>)._body as Record<string, unknown>) ||
+import { z } from "zod";
+
+const transitionBodySchema = z.object({
+  to_status: z.enum([
+    "draft",
+    "in_review",
+    "approved",
+    "published",
+    "archived",
+    "rejected",
+  ]),
+  reason: z.string().optional(),
+  expected_version: z.number().int().positive().optional(),
+  checklist: z.record(z.boolean()).optional(),
+  preview_token: z.string().optional(),
+});
+
+async function parseTransitionBody(event: H3Event) {
+  const raw =
+    ((event.context as Record<string, unknown>)?.body as unknown) ||
+    ((event as Record<string, unknown>)._body as unknown) ||
     (await readBody(event).catch(() => ({})));
+  const parsed = transitionBodySchema.parse(raw);
   return {
-    toStatus: body?.to_status as ContentLifecycleStatus,
-    reason: typeof body?.reason === "string" ? body.reason : undefined,
-    expectedVersion:
-      typeof body?.expected_version === "number"
-        ? body.expected_version
-        : undefined,
-    checklist: body?.checklist as Record<string, boolean> | undefined,
-    previewToken: body?.preview_token as string | undefined,
+    toStatus: parsed.to_status as ContentLifecycleStatus,
+    reason: parsed.reason,
+    expectedVersion: parsed.expected_version,
+    checklist: parsed.checklist,
+    previewToken: parsed.preview_token,
   };
 }
 

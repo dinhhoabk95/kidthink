@@ -47,6 +47,15 @@ function validateRequiredVariables(
   }
 }
 
+import { z } from "zod";
+
+const patchNotificationTemplateSchema = z.object({
+  subject: z.string().min(1),
+  body: z.string().optional().default(""),
+  reason: z.string().optional(),
+  provided_vars: z.array(z.string()).optional().default([]),
+});
+
 export default defineEventHandler(async (event) => {
   const manager = await requireManagerSession(event);
 
@@ -79,16 +88,13 @@ export default defineEventHandler(async (event) => {
     });
   }
 
-  const body =
-    (event.context?.body as Record<string, unknown>) ||
-    ((event as Record<string, unknown>)._body as Record<string, unknown>) ||
+  const raw =
+    (event.context?.body as unknown) ||
+    ((event as Record<string, unknown>)._body as unknown) ||
     (await readBody(event).catch(() => ({})));
 
-  const subject = typeof body?.subject === "string" ? body.subject.trim() : "";
-  const content = typeof body?.body === "string" ? body.body : "";
-  const reason = typeof body?.reason === "string" ? body.reason.trim() : "";
-
-  if (!subject) {
+  const parsedResult = patchNotificationTemplateSchema.safeParse(raw);
+  if (!parsedResult.success) {
     throw createError({
       statusCode: 422,
       statusMessage: "SUBJECT_REQUIRED",
@@ -96,11 +102,15 @@ export default defineEventHandler(async (event) => {
     });
   }
 
-  validateTemplateSecurity(content);
+  const {
+    subject,
+    body: content,
+    reason: rawReason,
+    provided_vars: providedVars,
+  } = parsedResult.data;
+  const reason = rawReason ? rawReason.trim() : "";
 
-  const providedVars = Array.isArray(body?.provided_vars)
-    ? (body.provided_vars as string[])
-    : [];
+  validateTemplateSecurity(content);
   validateRequiredVariables(code, content, providedVars);
 
   const db = getOwnerDb();

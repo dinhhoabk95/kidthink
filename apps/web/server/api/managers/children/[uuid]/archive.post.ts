@@ -2,11 +2,16 @@ import { appError } from "@mindkid/auth";
 import { auditLogs, childProfiles, getOwnerDb } from "@mindkid/db";
 import { eq } from "drizzle-orm";
 import { defineEventHandler, getHeader, getRouterParam, readBody } from "h3";
+import { z } from "zod";
 import {
   getManagerRemoteIp,
   requireSuperAdminSession,
 } from "../../../../utils/admin-auth-runtime.js";
 import { executeArchiveChildProfile } from "../../../../utils/child-archive-runtime.js";
+
+const archiveBodySchema = z.object({
+  reason: z.string().min(10),
+});
 
 export default defineEventHandler(async (event) => {
   const session = await requireSuperAdminSession(event);
@@ -17,13 +22,13 @@ export default defineEventHandler(async (event) => {
 
   const rawBody =
     event.context?.body ?? (await readBody(event).catch(() => ({}))) ?? {};
-  const reason =
-    typeof rawBody?.reason === "string" ? rawBody.reason.trim() : "";
+  const parsed = archiveBodySchema.safeParse(rawBody);
 
   // BR-CPA-07 & Task 5: reason is required (>= 10 chars per ADMIN_NOTE_REQUIRED)
-  if (reason.length < 10) {
+  if (!parsed.success) {
     throw appError("ADMIN_NOTE_REQUIRED");
   }
+  const reason = parsed.data.reason.trim();
 
   const db = getOwnerDb();
   const [targetChild] = await db

@@ -10,11 +10,16 @@ import {
   readBody,
   setResponseStatus,
 } from "h3";
-
+import { z } from "zod";
 import {
   assertRequestBodySize,
   requireWebUserSession,
 } from "../../../../utils/auth-runtime.js";
+
+const deleteChildSchema = z.object({
+  password: z.string().optional().default(""),
+  confirm_name: z.string().optional().default(""),
+});
 
 export default defineEventHandler(async (event) => {
   assertRequestBodySize(event, 16 * 1024);
@@ -39,12 +44,12 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 404, statusMessage: "NOT_FOUND" });
   }
 
-  const eventBody = (event.context as { body?: Record<string, unknown> })?.body;
-  const body =
-    eventBody || ((await readBody(event)) as Record<string, unknown>) || {};
+  const eventBody = (event.context as { body?: unknown })?.body;
+  const raw = eventBody || (await readBody(event).catch(() => ({})));
+  const parsed = deleteChildSchema.parse(raw);
 
-  const password = String(body.password || "");
-  const confirmName = String(body.confirm_name || "").trim();
+  const password = parsed.password;
+  const confirmName = parsed.confirm_name.trim();
 
   // BR-CPR-08: Deletion requires password verification
   const [userRecord] = await db

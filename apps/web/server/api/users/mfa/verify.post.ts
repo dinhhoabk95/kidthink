@@ -12,23 +12,31 @@ import { requireWebUserSession } from "../../../utils/auth-runtime.js";
 const MFA_SECRET_KEY =
   process.env.MFA_ENCRYPTION_KEY || "default_mfa_encryption_key_32bytes_!";
 
+import { z } from "zod";
+
+const verifyMfaSchema = z.object({
+  code: z.string().length(6),
+});
+
 export default defineEventHandler(async (event) => {
   const session = requireWebUserSession(event);
   const userId = session.user_id;
 
-  const body =
-    (event.context?.body as Record<string, unknown>) ||
-    ((event as Record<string, unknown>)._body as Record<string, unknown>) ||
+  const raw =
+    (event.context?.body as unknown) ||
+    ((event as Record<string, unknown>)._body as unknown) ||
     (await readBody(event).catch(() => ({})));
 
-  const code = typeof body?.code === "string" ? body.code.trim() : "";
-  if (code?.length !== 6) {
+  const parsedResult = verifyMfaSchema.safeParse(raw);
+  if (!parsedResult.success) {
     throw createError({
       statusCode: 401,
       statusMessage: "MFA_INVALID_CODE",
       message: "Mã xác thực không đúng hoặc đã hết hạn",
     });
   }
+
+  const code = parsedResult.data.code.trim();
 
   const db = getOwnerDb();
   const [setting] = await db

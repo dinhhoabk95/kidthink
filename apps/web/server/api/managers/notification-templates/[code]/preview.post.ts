@@ -4,7 +4,15 @@ import {
   TEMPLATE_REGISTRY,
 } from "@mindkid/notification";
 import { createError, defineEventHandler, getRouterParam, readBody } from "h3";
+import { z } from "zod";
 import { requireManagerSession } from "../../../../utils/admin-auth-runtime.js";
+
+const previewTemplateSchema = z
+  .object({
+    sample_data: z.record(z.unknown()).optional(),
+  })
+  .passthrough()
+  .optional();
 
 export default defineEventHandler(async (event) => {
   const manager = await requireManagerSession(event);
@@ -28,15 +36,16 @@ export default defineEventHandler(async (event) => {
     });
   }
 
-  const body =
-    (event.context?.body as Record<string, unknown>) ||
-    ((event as Record<string, unknown>)._body as Record<string, unknown>) ||
+  const raw =
+    (event.context?.body as unknown) ||
+    ((event as Record<string, unknown>)._body as unknown) ||
     (await readBody(event).catch(() => ({})));
 
+  const parsed = previewTemplateSchema.parse(raw);
+  const body = (parsed || {}) as Record<string, unknown>;
+
   const sampleData =
-    (body?.sample_data as Record<string, unknown>) ||
-    (body as Record<string, unknown>) ||
-    {};
+    (body?.sample_data as Record<string, unknown>) || body || {};
 
   // Provide sensible defaults for preview if missing
   const templateDef = TEMPLATE_REGISTRY[code];

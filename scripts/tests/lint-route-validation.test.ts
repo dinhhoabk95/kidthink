@@ -11,8 +11,6 @@ import {
  */
 const FIXTURES = path.join(import.meta.dirname, "fixtures", "route-validation");
 
-const DEBT_ENTRY = /^apps\/(web|admin)\/server\/api\/.+\.ts$/;
-
 function scan(folder: string) {
   return findUnvalidatedRoutes([path.join(FIXTURES, folder)]);
 }
@@ -33,12 +31,9 @@ describe("lint:route-validation", () => {
     expect(scan("exempt")).toEqual([]);
   });
 
-  it("sổ nợ chỉ chứa đường dẫn route thật, không có mục lạ", () => {
+  it("sổ nợ là 0 (toàn bộ route đã được validate)", () => {
     const debt = readDebtList();
 
-    expect(debt.length).toBeGreaterThan(0);
-    for (const entry of debt) {
-      expect(entry).toMatch(DEBT_ENTRY);
-    }
+    expect(debt).toHaveLength(0);
   });
 });

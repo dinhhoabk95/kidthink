@@ -13,11 +13,15 @@ import {
   readBody,
   setResponseStatus,
 } from "h3";
-
+import { z } from "zod";
 import {
   assertRequestBodySize,
   requireWebUserSession,
 } from "../../../../../utils/auth-runtime.js";
+
+const completeItemSchema = z.object({
+  curriculum_item_id: z.coerce.number().int().positive(),
+});
 
 export default defineEventHandler(async (event) => {
   assertRequestBodySize(event, 16 * 1024);
@@ -52,12 +56,11 @@ export default defineEventHandler(async (event) => {
     });
   }
 
-  const eventBody = (event.context as { body?: Record<string, unknown> })?.body;
-  const body =
-    eventBody || ((await readBody(event)) as Record<string, unknown>) || {};
+  const eventBody = (event.context as { body?: unknown })?.body;
+  const raw = eventBody || (await readBody(event).catch(() => ({})));
+  const parsed = completeItemSchema.safeParse(raw);
 
-  const curriculumItemId = Number(body.curriculum_item_id);
-  if (!curriculumItemId || Number.isNaN(curriculumItemId)) {
+  if (!parsed.success) {
     throw createError({
       statusCode: 422,
       statusMessage: "VALIDATION_FAILED",
@@ -67,6 +70,8 @@ export default defineEventHandler(async (event) => {
       },
     });
   }
+
+  const curriculumItemId = parsed.data.curriculum_item_id;
 
   // 2. Find active enrollment
   const [enrollment] = await db

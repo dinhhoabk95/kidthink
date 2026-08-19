@@ -15,10 +15,15 @@ import {
   getRouterParam,
   readBody,
 } from "h3";
+import { z } from "zod";
 import {
   getManagerRemoteIp,
   requireSuperAdminSession,
 } from "../../../../../utils/admin-auth-runtime.js";
+
+const createMfaRecoverySchema = z.object({
+  reason: z.string().min(10),
+});
 
 export default defineEventHandler(async (event) => {
   const session = await requireSuperAdminSession(event);
@@ -29,16 +34,16 @@ export default defineEventHandler(async (event) => {
 
   const rawBody =
     event.context?.body ?? (await readBody(event).catch(() => ({}))) ?? {};
-  const reason =
-    typeof rawBody?.reason === "string" ? rawBody.reason.trim() : "";
+  const parsed = createMfaRecoverySchema.safeParse(rawBody);
 
-  if (reason.length < 10) {
+  if (!parsed.success) {
     throw createError({
       statusCode: 400,
       statusMessage: "REASON_REQUIRED",
       message: "Lý do khôi phục MFA bắt buộc tối thiểu 10 ký tự",
     });
   }
+  const reason = parsed.data.reason.trim();
 
   const db = getOwnerDb();
   const [targetUser] = await db

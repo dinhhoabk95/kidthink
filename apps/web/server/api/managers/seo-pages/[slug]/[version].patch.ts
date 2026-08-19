@@ -111,6 +111,23 @@ function buildSeoPageUpdates(
   return updates;
 }
 
+import { z } from "zod";
+
+const patchSeoPageSchema = z.object({
+  title: z.string().optional(),
+  meta_description: z.string().optional(),
+  h1: z.string().nullable().optional(),
+  body: z.string().optional(),
+  og_image_path: z.string().nullable().optional(),
+  canonical_url: z.string().nullable().optional(),
+  noindex: z.boolean().optional(),
+  related_content_refs: z
+    .array(z.object({ type: z.string(), code: z.string() }))
+    .optional(),
+  faq_items: z.array(z.object({ q: z.string(), a: z.string() })).optional(),
+  new_slug: z.string().optional(),
+});
+
 export default defineEventHandler(async (event) => {
   const manager = await requireManagerSession(event);
   const slug = getRouterParam(event, "slug");
@@ -133,10 +150,12 @@ export default defineEventHandler(async (event) => {
     });
   }
 
-  const body =
-    (event.context?.body as Record<string, unknown>) ||
-    ((event as Record<string, unknown>)._body as Record<string, unknown>) ||
+  const raw =
+    (event.context?.body as unknown) ||
+    ((event as Record<string, unknown>)._body as unknown) ||
     (await readBody(event).catch(() => ({})));
+
+  const body = patchSeoPageSchema.parse(raw);
 
   const updates = buildSeoPageUpdates(body, existing, slug);
 

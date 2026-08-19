@@ -2,10 +2,15 @@ import { appError } from "@mindkid/auth";
 import { auditLogs, getOwnerDb, users } from "@mindkid/db";
 import { eq } from "drizzle-orm";
 import { defineEventHandler, getHeader, getRouterParam, readBody } from "h3";
+import { z } from "zod";
 import {
   getManagerRemoteIp,
   requireSuperAdminSession,
 } from "../../../../utils/admin-auth-runtime.js";
+
+const reactivateBodySchema = z.object({
+  reason: z.string().min(10),
+});
 
 export default defineEventHandler(async (event) => {
   const session = await requireSuperAdminSession(event);
@@ -16,13 +21,13 @@ export default defineEventHandler(async (event) => {
 
   const rawBody =
     event.context?.body ?? (await readBody(event).catch(() => ({}))) ?? {};
-  const reason =
-    typeof rawBody?.reason === "string" ? rawBody.reason.trim() : "";
+  const parsed = reactivateBodySchema.safeParse(rawBody);
 
   // BR-USM-03: reason must be >= 10 characters
-  if (reason.length < 10) {
+  if (!parsed.success) {
     throw appError("ADMIN_NOTE_REQUIRED");
   }
+  const reason = parsed.data.reason.trim();
 
   const db = getOwnerDb();
   const [targetUser] = await db

@@ -7,19 +7,31 @@ import {
 } from "@mindkid/db";
 import { and, eq } from "drizzle-orm";
 import { createError, defineEventHandler, readBody } from "h3";
+import { z } from "zod";
 import { requireManagerSession } from "../../../../utils/admin-auth-runtime.js";
+
+const bulkRejectSchema = z.object({
+  created_by_manager_id: z.number().int().positive(),
+  reason: z.string().min(10),
+});
 
 export default defineEventHandler(async (event) => {
   const manager = await requireManagerSession(event);
-  const body =
-    (event.context?.body as Record<string, unknown>) ||
-    ((event as Record<string, unknown>)._body as Record<string, unknown>) ||
+  const raw =
+    (event.context?.body as unknown) ||
+    ((event as Record<string, unknown>)._body as unknown) ||
     (await readBody(event).catch(() => ({})));
 
-  const createdByManagerId = Number(body?.created_by_manager_id);
-  const reason = typeof body?.reason === "string" ? body.reason.trim() : "";
-
-  if (!createdByManagerId || createdByManagerId <= 0) {
+  const parsedResult = bulkRejectSchema.safeParse(raw);
+  if (!parsedResult.success) {
+    const issues = parsedResult.error.issues;
+    if (issues.some((i) => i.path.includes("reason"))) {
+      throw createError({
+        statusCode: 422,
+        statusMessage: "REJECTED_REASON_TOO_SHORT",
+        message: "Từ chối bắt buộc lý do tối thiểu 10 ký tự (BR-CRQ-03)",
+      });
+    }
     throw createError({
       statusCode: 422,
       statusMessage: "VALIDATION_FAILED",
@@ -27,13 +39,8 @@ export default defineEventHandler(async (event) => {
     });
   }
 
-  if (!reason || reason.length < 10) {
-    throw createError({
-      statusCode: 422,
-      statusMessage: "REJECTED_REASON_TOO_SHORT",
-      message: "Từ chối bắt buộc lý do tối thiểu 10 ký tự (BR-CRQ-03)",
-    });
-  }
+  const { created_by_manager_id: createdByManagerId, reason } =
+    parsedResult.data;
 
   const db = getOwnerDb();
   const rejectedIds: Array<{ type: string; id: number; code: string }> = [];

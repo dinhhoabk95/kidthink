@@ -80,19 +80,12 @@ export function readDebtList(): string[] {
 
 function main(): void {
   const findings = findUnvalidatedRoutes();
-  const debt = new Set(readDebtList());
-  const wantsUpdate = process.argv.includes("--update");
-  const fresh = findings.filter(({ file }) => !debt.has(file));
-  const fixed = [...debt].filter(
-    (file) => !findings.some((finding) => finding.file === file)
-  );
-  const isFirstRun = debt.size === 0 && !fs.existsSync(ALLOWLIST_PATH);
 
-  if (fresh.length > 0 && !(wantsUpdate && isFirstRun)) {
+  if (findings.length > 0) {
     process.stdout.write(
-      `❌ lint:route-validation — ${fresh.length} route đọc body mà không validate (BR-SEC-04, BR-TYP-04):\n\n`
+      `❌ lint:route-validation — ${findings.length} route đọc body mà không validate (BR-SEC-04, BR-TYP-04):\n\n`
     );
-    for (const { file, reason } of fresh) {
+    for (const { file, reason } of findings) {
       process.stdout.write(`  ${file}\n    ${reason}\n`);
     }
     process.stdout.write(
@@ -103,22 +96,9 @@ function main(): void {
     return;
   }
 
-  if (wantsUpdate) {
-    const next = findings.map(({ file }) => file).sort();
-    fs.writeFileSync(ALLOWLIST_PATH, `${JSON.stringify(next, null, 2)}\n`);
-    process.stdout.write(
-      `✅ lint:route-validation — hạ sổ nợ: ${debt.size} → ${next.length} route\n`
-    );
-    return;
-  }
-
   const scanned = API_ROOTS.flatMap((root) => walkSource(root)).length;
-  const note =
-    fixed.length > 0
-      ? ` — ${fixed.length} route đã sửa, chạy \`pnpm lint:route-validation --update\` để hạ sổ nợ`
-      : "";
   process.stdout.write(
-    `✅ lint:route-validation — ${scanned} route quét, ${findings.length} còn nợ validate body (không tăng)${note}\n`
+    `✅ lint:route-validation — ${scanned} route quét, 0 route nợ validate body (BR-SEC-04, BR-TYP-04)\n`
   );
 }
 

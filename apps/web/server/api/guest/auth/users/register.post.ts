@@ -25,6 +25,7 @@ import {
   readBody,
   setResponseStatus,
 } from "h3";
+import { z } from "zod";
 import { setUserSession } from "#imports";
 import {
   assertRateLimitAllowed,
@@ -34,75 +35,30 @@ import {
   getVerifiedRemoteIp,
 } from "../../../../utils/auth-runtime";
 
-export interface RegisterPayload {
-  email: string;
-  password: string;
-  display_name: string;
-  accept_terms: boolean;
-  accept_privacy: boolean;
-  terms_requirement_at?: string | null;
-  privacy_requirement_at?: string | null;
-}
+const registerSchema = z
+  .object({
+    email: z.string().email().max(255),
+    password: z.string(),
+    display_name: z.string().min(2).max(60),
+    accept_terms: z.literal(true),
+    accept_privacy: z.literal(true),
+    terms_requirement_at: z.string().nullable().optional(),
+    privacy_requirement_at: z.string().nullable().optional(),
+  })
+  .strict();
+
+export type RegisterPayload = z.infer<typeof registerSchema>;
 
 function parseAndValidateRegisterBody(body: unknown): RegisterPayload {
-  if (!body || typeof body !== "object") {
+  const result = registerSchema.safeParse(body);
+  if (!result.success) {
     throw appError("VALIDATION_FAILED", {
-      reason: "Dữ liệu yêu cầu không hợp lệ.",
+      reason: "Dữ liệu yêu cầu không hợp lệ hoặc thiếu thông tin bắt buộc.",
     });
   }
 
-  const payload = body as Record<string, unknown>;
-  const allowedKeys = new Set([
-    "email",
-    "password",
-    "display_name",
-    "accept_terms",
-    "accept_privacy",
-    "terms_requirement_at",
-    "privacy_requirement_at",
-  ]);
-
-  for (const key of Object.keys(payload)) {
-    if (!allowedKeys.has(key)) {
-      throw appError("VALIDATION_FAILED", {
-        reason: `Trường không hợp lệ hoặc bị cấm: '${key}'`,
-      });
-    }
-  }
-
-  if (payload.accept_terms !== true || payload.accept_privacy !== true) {
-    throw appError("VALIDATION_FAILED", {
-      reason:
-        "Bạn phải đồng ý với Điều khoản dịch vụ và Chính sách quyền riêng tư.",
-    });
-  }
-
-  const email = payload.email;
-  if (typeof email !== "string" || !email.includes("@") || email.length > 255) {
-    throw appError("VALIDATION_FAILED", {
-      reason: "Địa chỉ email không hợp lệ.",
-    });
-  }
-
-  const displayName = payload.display_name;
-  if (
-    typeof displayName !== "string" ||
-    displayName.trim().length < 2 ||
-    displayName.trim().length > 60
-  ) {
-    throw appError("VALIDATION_FAILED", {
-      reason: "Tên hiển thị phải từ 2 đến 60 ký tự.",
-    });
-  }
-
-  const password = payload.password;
-  if (typeof password !== "string") {
-    throw appError("VALIDATION_FAILED", {
-      reason: "Mật khẩu không hợp lệ.",
-    });
-  }
-
-  const passVal = validatePasswordStrength(password);
+  const payload = result.data;
+  const passVal = validatePasswordStrength(payload.password);
   if (!passVal.valid) {
     throw appError("VALIDATION_FAILED", {
       reason: passVal.reason || "Mật khẩu không đạt yêu cầu an toàn.",
@@ -110,11 +66,13 @@ function parseAndValidateRegisterBody(body: unknown): RegisterPayload {
   }
 
   return {
-    email: email.trim().toLowerCase(),
-    password,
-    display_name: displayName.trim(),
+    email: payload.email.trim().toLowerCase(),
+    password: payload.password,
+    display_name: payload.display_name.trim(),
     accept_terms: true,
     accept_privacy: true,
+    terms_requirement_at: payload.terms_requirement_at,
+    privacy_requirement_at: payload.privacy_requirement_at,
   };
 }
 

@@ -1,7 +1,16 @@
 import { errorLogs, getOwnerDb, writeAudit } from "@mindkid/db";
 import { eq } from "drizzle-orm";
 import { createError, defineEventHandler, getRouterParam, readBody } from "h3";
+import { z } from "zod";
 import { requireManagerSession } from "../../../utils/admin-auth-runtime.js";
+
+const patchErrorLogSchema = z.object({
+  status: z
+    .enum(["new", "in_progress", "resolved", "ignored"])
+    .optional()
+    .default("resolved"),
+  notes: z.string().nullable().optional(),
+});
 
 export default defineEventHandler(async (event) => {
   const manager = await requireManagerSession(event);
@@ -23,14 +32,14 @@ export default defineEventHandler(async (event) => {
     });
   }
 
-  const body =
-    (event.context?.body as Record<string, unknown>) ||
-    ((event as Record<string, unknown>)._body as Record<string, unknown>) ||
+  const raw =
+    (event.context?.body as unknown) ||
+    ((event as Record<string, unknown>)._body as unknown) ||
     (await readBody(event).catch(() => ({})));
 
-  const status = (body?.status ||
-    "resolved") as (typeof errorLogs.$inferInsert)["status"];
-  const notes = typeof body?.notes === "string" ? body.notes.trim() : null;
+  const parsed = patchErrorLogSchema.parse(raw);
+  const status = parsed.status as (typeof errorLogs.$inferInsert)["status"];
+  const notes = parsed.notes ? parsed.notes.trim() : null;
 
   const db = getOwnerDb();
   const managerId = manager.manager_id || manager.id || 1;

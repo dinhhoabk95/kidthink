@@ -2,10 +2,10 @@
 spec: BUSINESS-RULES
 title: Registry business rule
 area: foundation
-status: approved
+status: implemented
 mvp: true
 phase: P0
-reviewed: 2026-08-14
+reviewed: 2026-08-19
 owns:
   - Bản đồ prefix BR → spec sở hữu
   - Danh sách rule không bao giờ được vi phạm
@@ -17,11 +17,16 @@ depends_on:
 
 ## 1. Objective
 
-Corpus có **~1230 business rule** trên 134 spec. Registry này **không** liệt kê lại từng rule —
+Corpus có **~1350 business rule** trên 151 spec. Registry này **không** liệt kê lại từng rule —
 nó ánh xạ **prefix → spec sở hữu**, để tra ngược từ một ID trong code hoặc test về nơi định
 nghĩa.
 
 Cộng thêm §7.3: **danh sách rule không bao giờ được vi phạm**, bất kể áp lực lịch trình.
+
+Spec này đạt trạng thái `implemented` khi toàn bộ 4 rule `BR-REG2-01` đến `BR-REG2-04` được thi
+hành bằng cổng tự động (`lint:specs`, `lint:rule-ids`) và test đơn vị (`scripts/tests/lint-rule-ids.test.ts`).
+Trạng thái `implemented` của registry chứng minh rằng hệ thống quản trị quy tắc kinh doanh đang
+hoạt động và bảo vệ tính toàn vẹn của toàn bộ corpus.
 
 ## 2. Actors
 
@@ -29,7 +34,8 @@ Dev · reviewer · test.
 
 ## 3. Entry points
 
-Mọi `BR-*` trong code, test, và PR. `pnpm gen:check` cảnh báo BR không được tham chiếu.
+Mọi `BR-*` trong code, test, và PR. `pnpm lint:rule-ids` và `pnpm lint:specs` kiểm tra tính duy
+nhất, bất biến và cảnh báo BR không được tham chiếu (`pnpm gen:check`).
 
 ## 4. Main flow
 

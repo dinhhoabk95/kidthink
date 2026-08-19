@@ -11,12 +11,18 @@ import {
   setCookie,
   setResponseStatus,
 } from "h3";
-
+import { z } from "zod";
 import {
   assertRequestBodySize,
   getParentGateSecret,
   requireWebUserSession,
 } from "../../../../utils/auth-runtime.js";
+
+const activateChildSchema = z
+  .object({
+    gate_token: z.string().optional(),
+  })
+  .optional();
 
 export default defineEventHandler(async (event) => {
   assertRequestBodySize(event, 16 * 1024);
@@ -55,9 +61,10 @@ export default defineEventHandler(async (event) => {
   }
 
   const currentActiveUuid = getCookie(event, "active_child_id");
-  const eventBody = (event.context as { body?: Record<string, unknown> })?.body;
-  const body =
-    eventBody || ((await readBody(event)) as Record<string, unknown>) || {};
+  const eventBody = (event.context as { body?: unknown })?.body;
+  const raw = eventBody || (await readBody(event).catch(() => ({})));
+  const parsed = activateChildSchema.parse(raw);
+  const body = parsed || {};
 
   // BR-CPS-01 & BR-PEN-01: Switching between children requires Parent Gate
   if (currentActiveUuid && currentActiveUuid !== uuid) {

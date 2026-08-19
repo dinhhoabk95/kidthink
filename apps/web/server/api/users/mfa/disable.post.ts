@@ -13,6 +13,12 @@ const MFA_SECRET_KEY =
   process.env.MFA_ENCRYPTION_KEY || "default_mfa_encryption_key_32bytes_!";
 const TOTP_REGEX = /^\d{6}$/;
 
+import { z } from "zod";
+
+const disableMfaSchema = z.object({
+  code: z.string().min(1),
+});
+
 export default defineEventHandler(async (event) => {
   const session = requireWebUserSession(event);
   const userId = session.user_id;
@@ -20,13 +26,13 @@ export default defineEventHandler(async (event) => {
   // BR-MFA-03: Disable requires recent reauth (<= 5 min)
   requireReauth(event);
 
-  const body =
-    (event.context?.body as Record<string, unknown>) ||
-    ((event as Record<string, unknown>)._body as Record<string, unknown>) ||
+  const raw =
+    (event.context?.body as unknown) ||
+    ((event as Record<string, unknown>)._body as unknown) ||
     (await readBody(event).catch(() => ({})));
 
-  const code = typeof body?.code === "string" ? body.code.trim() : "";
-  if (!code) {
+  const parsedResult = disableMfaSchema.safeParse(raw);
+  if (!parsedResult.success) {
     throw createError({
       statusCode: 422,
       statusMessage: "CODE_REQUIRED",
@@ -34,6 +40,8 @@ export default defineEventHandler(async (event) => {
         "Tắt xác thực hai lớp bắt buộc cung cấp mã TOTP hoặc mã khôi phục (BR-MFA-03)",
     });
   }
+
+  const code = parsedResult.data.code.trim();
 
   const db = getOwnerDb();
   const [setting] = await db

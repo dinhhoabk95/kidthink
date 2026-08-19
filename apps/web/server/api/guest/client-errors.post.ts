@@ -64,6 +64,17 @@ function sanitizeContext(ctx: unknown): Record<string, unknown> {
   return cleaned;
 }
 
+import { z } from "zod";
+
+const clientErrorSchema = z
+  .object({
+    code: z.string().max(80).optional(),
+    message: z.string().max(500).optional(),
+    fingerprint: z.string().max(120).optional(),
+    context: z.record(z.unknown()).optional(),
+  })
+  .optional();
+
 export default defineEventHandler(async (event) => {
   const ip =
     (event.node?.req?.headers?.["x-forwarded-for"] as string) ||
@@ -71,21 +82,21 @@ export default defineEventHandler(async (event) => {
     "127.0.0.1";
   checkClientErrorRateLimit(ip);
 
-  const body =
-    (event.context?.body as Record<string, unknown>) ||
-    ((event as Record<string, unknown>)._body as Record<string, unknown>) ||
+  const raw =
+    (event.context?.body as unknown) ||
+    ((event as Record<string, unknown>)._body as unknown) ||
     (await readBody(event).catch(() => ({})));
 
-  const code =
-    typeof body?.code === "string" ? body.code.slice(0, 80) : "CLIENT_ERROR";
-  const message =
-    typeof body?.message === "string"
-      ? body.message.slice(0, 500)
-      : "Unknown client error";
-  const fingerprint =
-    typeof body?.fingerprint === "string"
-      ? body.fingerprint.slice(0, 120)
-      : `${code}_${message.slice(0, 40)}`;
+  const parsed = clientErrorSchema.parse(raw);
+  const body = parsed || {};
+
+  const code = body.code ? body.code.slice(0, 80) : "CLIENT_ERROR";
+  const message = body.message
+    ? body.message.slice(0, 500)
+    : "Unknown client error";
+  const fingerprint = body.fingerprint
+    ? body.fingerprint.slice(0, 120)
+    : `${code}_${message.slice(0, 40)}`;
 
   // Sampling check (BR-ELV-04)
   if (!shouldSampleError(code)) {
