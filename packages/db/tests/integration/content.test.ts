@@ -109,6 +109,7 @@ describe("Content Schema Integration Tests", () => {
       }
     }
 
+    expect(act).toBeDefined();
     await expect(
       db
         .update(activities)

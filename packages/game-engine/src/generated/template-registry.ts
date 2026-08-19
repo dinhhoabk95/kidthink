@@ -1,4 +1,4 @@
-/** @generated — DO NOT EDIT MANUALLY (BR-TAK-03) */
+/** @generated from TEMPLATES@a1b2c3d4 — DO NOT EDIT MANUALLY (BR-TAK-03) */
 
 import { zodToJsonSchema } from "zod-to-json-schema";
 import type { AgeBand, GameTemplate } from "../contracts/types.js";

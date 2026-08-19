@@ -1,4 +1,4 @@
-/** @generated — DO NOT EDIT MANUALLY (BR-TAK-03) */
+/** @generated from TEMPLATES@a1b2c3d4 — DO NOT EDIT MANUALLY (BR-TAK-03) */
 
 import GT001Template from "../templates/GT-001/template.js";
 import GT002Template from "../templates/GT-002/template.js";

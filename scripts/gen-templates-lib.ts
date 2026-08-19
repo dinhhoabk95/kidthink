@@ -15,7 +15,7 @@ export interface GenerationResult {
 }
 
 export const GENERATED_BANNER =
-  "/** @generated — DO NOT EDIT MANUALLY (BR-TAK-03) */\n\n";
+  "/** @generated from TEMPLATES@a1b2c3d4 — DO NOT EDIT MANUALLY (BR-TAK-03) */\n\n";
 
 const GT_CODE_REGEX = /^GT-\d{3}$/;
 

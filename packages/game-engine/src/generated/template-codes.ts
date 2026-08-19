@@ -1,4 +1,4 @@
-/** @generated — DO NOT EDIT MANUALLY (BR-TAK-03) */
+/** @generated from TEMPLATES@a1b2c3d4 — DO NOT EDIT MANUALLY (BR-TAK-03) */
 
 export const ALL_TEMPLATE_CODES = [
   "GT-001",

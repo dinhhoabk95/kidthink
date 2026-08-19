@@ -145,18 +145,23 @@ mục "Tiêu chí thành công của task"; không nhắc lại ở đây.
 ```bash
 pnpm exec biome check .                       # pnpm lint bị hook viết lại, dùng lệnh này
 pnpm lint:specs
-pnpm check                                    # 18 cổng + typecheck, gồm cổng mới ở WP90.2/90.8/90.10
+pnpm check                                    # gồm lint:env-names, lint:env-example,
+                                              # lint:migration-expand, lint:shell
 pnpm test
-pnpm vitest run scripts/tests packages/config/tests
-bash infra/scripts/tests/run.sh               # test nhị phân giả của WP90.6–WP90.8
+pnpm vitest run scripts packages/config
+bash infra/scripts/tests/run.sh               # 12 ca nhị phân giả, 43 khẳng định
+pnpm test:deploy                              # cùng bộ đó qua package.json
 ```
+
+Cổng `lint:shell` cần `shellcheck` trên máy: `brew install shellcheck` hoặc
+`apt-get install shellcheck`. Thiếu nó thì cổng **đỏ**, không im lặng bỏ qua.
 
 ## 9. Definition of done
 
 - Năm spec `approved`; `pnpm lint:specs` xanh.
 - Registry biến môi trường là nguồn duy nhất; `.env.example` sinh ra từ nó; sáu nhóm alias còn đúng một tên mỗi khái niệm.
 - `pnpm build` chạy từ gốc; `apps/worker` chạy mã đã build.
-- Ba script `provision.sh`, `release.sh`, `rollback.sh` có test nhị phân giả phủ đủ sáu ca âm ở mục 6.
-- Ba cổng mới (`lint:env-names`, `lint:migration-expand`, `shellcheck`) đều có fixture sai chứng minh cổng đỏ được.
+- Một script `infra/scripts/mindkid.sh` với bảy verb, có test nhị phân giả phủ đủ sáu ca âm ở mục 6 cộng sáu ca do review thêm.
+- Bốn cổng mới (`lint:env-names`, `lint:env-example`, `lint:migration-expand`, `lint:shell`) đều có fixture sai chứng minh cổng đỏ được, và hai cổng quét tệp đều đỏ khi quét 0 tệp.
 - `pnpm check` và `pnpm test` xanh.
 - WP90.11 chỉ đóng khi có số đo thật từ một máy chủ thật, không đóng bằng suy luận.

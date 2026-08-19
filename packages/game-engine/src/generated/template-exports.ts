@@ -1,4 +1,4 @@
-/** @generated — DO NOT EDIT MANUALLY (BR-TAK-03) */
+/** @generated from TEMPLATES@a1b2c3d4 — DO NOT EDIT MANUALLY (BR-TAK-03) */
 
 import GT001Template, { type GT001Content, type GT001Difficulty } from "../templates/GT-001/template.js";
 import { GT001Session } from "../templates/GT-001/session.js";
