@@ -74,7 +74,7 @@ describe("Curriculum Player Suite — P3.4 (BR-CUR-01..10, D-MA..D-MG)", {
 }, () => {
   async function createTestFixtures() {
     const db = getOwnerDb();
-    const uid = Math.floor(Math.random() * 800_000) + 100_000;
+    const uid = Math.floor(Math.random() * 800_000_000) + 100_000_000;
 
     // 1. User & Child
     const [user] = await db

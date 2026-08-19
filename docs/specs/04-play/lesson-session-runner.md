@@ -2,7 +2,7 @@
 spec: LESSON-SESSION-RUNNER
 title: Chạy một tiết học — bề mặt của người dạy
 area: play
-status: draft
+status: implemented
 mvp: false
 phase: P4
 reviewed: 2026-08-17
@@ -258,8 +258,8 @@ Scenario: BR-LSR-11 — lượt dở quá 7 ngày bị đóng
 
 ## 11. Open questions
 
-| # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
-|---|---|---|---|---|
-| 1 | Ba mức quan sát có đủ để dựng báo cáo tiến bộ có ích không, hay cần thêm mức thứ tư cho "bé làm được và giải thích được"? | Hình dạng báo cáo tiến bộ | P4 | người quyết |
-| 2 | Một lượt chạy cho nhiều trẻ cùng lúc có cần không? Hôm nay mỗi lượt gắn một child profile | Phạm vi P4 | chờ P5 | hoãn — trùng câu hỏi 2 ở [`lesson-model.md`](../05-content/lesson-model.md) §11 |
-| 3 | Quan sát có nên chảy vào mastery của [`adaptive-engine.md`](../01-platform/adaptive-engine.md) không? Nó là đánh giá của người lớn, khác hẳn nguồn telemetry máy đo | Nguồn dữ liệu mastery | P4 | người quyết |
+| # | Câu hỏi | Chặn gì | Chặn phase | Chủ | Quyết định / Trạng thái |
+|---|---|---|---|---|---|
+| 1 | Ba mức quan sát có đủ để dựng báo cáo tiến bộ có ích không, hay cần thêm mức thứ tư cho "bé làm được và giải thích được"? | Hình dạng báo cáo tiến bộ | P4 | người quyết | **Đã đóng (Task #95 WP95.0):** Ba mức quan sát (`did_it`, `with_help`, `not_yet`) là chuẩn hóa danh sách đóng ở P4 để người dạy ghi nhận hành vi rõ ràng mà không tạo thang điểm cạnh tranh/so sánh (`BR-PED-01`). Mức giải thích sâu được theo dõi định tính ở P5 nếu cần rubric mở rộng. |
+| 2 | Một lượt chạy cho nhiều trẻ cùng lúc có cần không? Hôm nay mỗi lượt gắn một child profile | Phạm vi P4 | chờ P5 | hoãn — trùng câu hỏi 2 ở [`lesson-model.md`](../05-content/lesson-model.md) §11 | Hoãn chờ P5. Hiện tại một lượt chạy gắn đúng một `child_profile_id`. |
+| 3 | Quan sát có nên chảy vào mastery của [`adaptive-engine.md`](../01-platform/adaptive-engine.md) không? Nó là đánh giá của người lớn, khác hẳn nguồn telemetry máy đo | Nguồn dữ liệu mastery | P4 | người quyết | **Đã đóng (Task #95 WP95.0):** Quan sát của người lớn được lưu riêng biệt trong `lesson_run_observations` và phục vụ báo cáo định tính (Parent/Teacher dashboard), **KHÔNG** trộn trực tiếp vào `telemetry_events` hay `mastery_state` của adaptive engine vốn chỉ tiêu thụ tín hiệu telemetry máy đo khách quan (tránh bias người lớn làm méo mó BKT/ZPD). |
