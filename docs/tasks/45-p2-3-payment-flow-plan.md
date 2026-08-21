@@ -301,7 +301,7 @@ T5a → T5b → T5c; không dồn integration test đồng thời sang PR cuối
 - [ ] Chứng từ không mở được bằng URL trực tiếp; signed URL chết sau 15 phút.
 - [ ] `content_reviewer` bị **403** ở cả hàng đợi lẫn màn duyệt.
 - [ ] Không route nào xoá được `payment_orders`.
-- [ ] `pnpm check && pnpm test && pnpm test:e2e && pnpm lint:specs && pnpm lint:prices && pnpm check:progress` xanh.
+- [ ] `pnpm check && pnpm test && pnpm test:e2e && pnpm --filter @mindkid/gates test && pnpm --filter @mindkid/gates test && node packages/gates/scripts/check-progress.ts` xanh.
 
 ### Task 9 — Evidence, promote và nợ chuyển tiếp
 

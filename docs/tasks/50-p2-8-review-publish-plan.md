@@ -265,7 +265,7 @@ archived-embed warning và E2E. T6a → T6b; write/render sanitizer tests nằm 
 - [ ] Rollback không sinh version mới; `content_reviewer` bị 403.
 - [ ] Nội dung `repo_seed` không xuất hiện trong hàng đợi.
 - [ ] Đổi slug SEO tạo 301; thẻ `script` bị chặn ở cả ghi lẫn render.
-- [ ] `pnpm check && pnpm test && pnpm test:e2e && pnpm lint:specs && pnpm check:progress` xanh.
+- [ ] `pnpm check && pnpm test && pnpm test:e2e && pnpm --filter @mindkid/gates test && node packages/gates/scripts/check-progress.ts` xanh.
 
 ### Task 8 — Evidence, promote và nợ chuyển tiếp
 

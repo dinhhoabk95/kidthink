@@ -36,7 +36,7 @@ nó là thứ duy nhất chặn xuất bản nhầm.
 |---|---|
 | Manager `content_reviewer` | `draft → in_review` · `in_review → approved` · `in_review → rejected` · `approved → published` · `published → archived` |
 | Manager `super_admin` | Tất cả, cộng `archived → published` (rollback) |
-| `pnpm seed:content` | **Chỉ INSERT** hàng mới ở `published` sau khi PR đã được người merge (§4.1). Không `UPDATE`, không chuyển trạng thái hàng đã có |
+| `pnpm --filter @mindkid/db seed:content` | **Chỉ INSERT** hàng mới ở `published` sau khi PR đã được người merge (§4.1). Không `UPDATE`, không chuyển trạng thái hàng đã có |
 | User | Không chạm. `lesson_plans` của User có vòng đời riêng, không duyệt |
 
 ## 3. Entry points
@@ -219,7 +219,7 @@ Scenario: BR-CLC-04 — không tiến trình máy nào chuyển được trạng
 
 Scenario: BR-CLC-11 — seed ghi published nhưng vẫn qua checklist
   Given một batch seed có một game level thiếu learning objective
-  When chạy pnpm seed:content
+  When chạy pnpm --filter @mindkid/db seed:content
   Then transaction bị rollback
   And không hàng nào trong batch được ghi
 

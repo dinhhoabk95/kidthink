@@ -1,16 +1,5 @@
-import path from "node:path";
-import { defineConfig } from "vitest/config";
+import { defineWorkspaceTest } from "@mindkid/config/vitest";
 
-export default defineConfig({
-  resolve: {
-    alias: {
-      "@mindkid/game-engine": path.resolve(
-        import.meta.dirname,
-        "../game-engine/src/index.ts"
-      ),
-    },
-  },
-  test: {
-    include: ["tests/**/*.test.ts"],
-  },
+export default defineWorkspaceTest({
+  test: { include: ["tests/**/*.test.ts"] },
 });

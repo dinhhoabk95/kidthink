@@ -2,11 +2,13 @@ import {
   computeBipartiteLayout,
   computeClueBoardLayout,
   computeEquationRowsLayout,
+  computeFreeSceneLayout,
   computeGridLayout,
   computeHorizontalRowLayout,
   computeHorizontalSlotTrackLayout,
   computeMatrix3x3Layout,
   computeMatrixSlotGridLayout,
+  computeMirrorAxisSplitLayout,
   computeMultiBucketLayout,
   computeNumberBondTreeLayout,
   computeTenFrameSplitLayout,
@@ -34,6 +36,8 @@ export const LAYOUT_IDS: readonly LayoutId[] = [
   "clue-board",
   "matrix-3x3",
   "equation-rows",
+  "mirror-axis-split",
+  "free-scene",
 ] as const;
 
 export const LAYOUT_REGISTRY: Record<LayoutId, LayoutFn> = {
@@ -67,6 +71,8 @@ export const LAYOUT_REGISTRY: Record<LayoutId, LayoutFn> = {
   "clue-board": (input) => computeClueBoardLayout(input),
   "matrix-3x3": (input) => computeMatrix3x3Layout(input),
   "equation-rows": (input) => computeEquationRowsLayout(input),
+  "mirror-axis-split": (input) => computeMirrorAxisSplitLayout(input),
+  "free-scene": (input) => computeFreeSceneLayout(input),
 };
 
 export function isLayoutId(val: unknown): val is LayoutId {

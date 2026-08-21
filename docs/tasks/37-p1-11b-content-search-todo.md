@@ -86,7 +86,7 @@
 - [x] Nội dung mở được xếp trên `locked`.
 - [x] Guest không thấy `draft`.
 - [x] Trần `limit` ép ở server; phân trang cursor.
-- [x] `pnpm check && pnpm test && pnpm lint:specs && pnpm check:progress` xanh.
+- [x] `pnpm check && pnpm test && pnpm --filter @mindkid/gates test && node packages/gates/scripts/check-progress.ts` xanh.
 
 ---
 

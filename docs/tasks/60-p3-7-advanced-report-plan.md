@@ -236,7 +236,7 @@ T0 preflight + đẩy D-MZ ngược vào Task #58
 - [ ] Đo lại [`play.ts`](../../packages/db/src/schema/play.ts) và
       [`adaptive.ts`](../../packages/db/src/schema/adaptive.ts) sau P3.5.
 
-**Kiểm chứng:** `pnpm check:progress` xanh tới P3.5; quyết định `hint_rate` và số skill thật được
+**Kiểm chứng:** `node packages/gates/scripts/check-progress.ts` xanh tới P3.5; quyết định `hint_rate` và số skill thật được
 ghi vào preflight trước T1.
 
 **Phụ thuộc:** P3.5 · **Cỡ:** S
@@ -257,7 +257,7 @@ ghi vào preflight trước T1.
 - [ ] Câu hỏi mở số 1 đóng hoặc hoãn kèm điều kiện mở lại đo được.
 - [ ] Không thêm spec mới; không thêm mã lỗi ngoài registry.
 
-**Kiểm chứng:** `pnpm lint:specs` 0 lỗi, 0 cảnh báo mới.
+**Kiểm chứng:** `pnpm --filter @mindkid/gates test` 0 lỗi, 0 cảnh báo mới.
 
 **Phụ thuộc:** T0 · human decision · **Cỡ:** M
 
@@ -356,7 +356,7 @@ Lặp cùng một work package theo lô. Mỗi lô là một file seeder có ki�
 - [ ] Vật liệu của hoạt động tại nhà là thứ có sẵn, cùng chuẩn với `BR-LSM-04`.
 - [ ] Không mục nào chứa từ trong danh sách cấm của `D-NE`.
 - [ ] Reviewer sư phạm đọc từng mục; ghi người duyệt.
-- [ ] `pnpm seed:check` và dry-run riêng lô xanh.
+- [ ] `pnpm --filter @mindkid/db seed:check` và dry-run riêng lô xanh.
 
 **Checkpoint sau mỗi lô**
 
@@ -366,7 +366,7 @@ Lặp cùng một work package theo lô. Mỗi lô là một file seeder có ki�
 **Cổng thư viện cuối:** mọi skill xuất hiện trong năm chương trình MVP đều có ≥1 gợi ý; phần còn
 lại của 230 skill hoặc đã phủ, hoặc nằm trong danh sách hoãn đã được người sở hữu chấp nhận.
 
-**Kiểm chứng:** `pnpm seed:check` và dry-run riêng từng lô xanh; báo cáo phủ cuối chứng minh mọi
+**Kiểm chứng:** `pnpm --filter @mindkid/db seed:check` và dry-run riêng từng lô xanh; báo cáo phủ cuối chứng minh mọi
 skill trong năm curriculum MVP có ít nhất một gợi ý đã review.
 
 **Phụ thuộc:** T3 · Nhóm Nội dung · **Cỡ:** nhiều work package cỡ M, tuần tự theo lô
@@ -401,10 +401,10 @@ skill trong năm curriculum MVP có ít nhất một gợi ý đã review.
 - [ ] Cổng ngôn ngữ có ca âm và đang chạy trong `pnpm check`.
 - [ ] Thư viện gợi ý đạt cổng cuối của Task 6.
 - [ ] [`advanced-report.md`](../specs/03-account/advanced-report.md) sang `implemented`.
-- [ ] Tick **P3.7** trong Task #14 chỉ khi `pnpm check:progress` tự xanh.
+- [ ] Tick **P3.7** trong Task #14 chỉ khi `node packages/gates/scripts/check-progress.ts` tự xanh.
 
 **Kiểm chứng:**
-`pnpm check && pnpm test && pnpm test:e2e && pnpm lint:specs && pnpm check:progress` xanh.
+`pnpm check && pnpm test && pnpm test:e2e && pnpm --filter @mindkid/gates test && node packages/gates/scripts/check-progress.ts` xanh.
 
 **Phụ thuộc:** T6 · T7 · **Cỡ:** S
 

@@ -54,5 +54,5 @@
 - [x] Test phát lại một phiên đầy đủ từ seed, hai lần trùng khớp.
 - [x] 10 rule của spec có test gọi tên mã.
 - [x] Lật `status` sang `implemented`.
-- [x] `pnpm check` · `pnpm test` · `pnpm check:progress` xanh.
+- [x] `pnpm check` · `pnpm test` · `node packages/gates/scripts/check-progress.ts` xanh.
 - [x] Mở PR cho người review diff, không tự merge.

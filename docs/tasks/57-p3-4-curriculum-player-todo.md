@@ -47,7 +47,7 @@
 - [x] `paused` có đúng một luồng đặt và một luồng thoát, hoặc bị bỏ.
 - [x] Không thêm spec mới.
 - [x] Không thêm mã lỗi ngoài [`error-codes.md`](../specs/00-foundation/error-codes.md).
-- [x] `pnpm lint:specs` 0 lỗi, 0 cảnh báo mới.
+- [x] `pnpm --filter @mindkid/gates test` 0 lỗi, 0 cảnh báo mới.
 
 ## Checkpoint A — Contract
 
@@ -153,15 +153,15 @@
 - [x] Một trẻ thật đi hết một curriculum 8 tuần từ ghi danh tới màn hình hoàn thành.
 - [x] [`curriculum-player.md`](../specs/04-play/curriculum-player.md) → `implemented`.
 - [x] Nợ ca kiểm adaptive ghi ở P3.5; không tick nhầm ở P3.4.
-- [x] Tick **P3.4** trong Task #14 chỉ khi `pnpm check:progress` tự xanh.
+- [x] Tick **P3.4** trong Task #14 chỉ khi `node packages/gates/scripts/check-progress.ts` tự xanh.
 
 ## Cổng dừng cuối
 
 - [x] `pnpm check` xanh.
 - [x] `pnpm test` xanh.
 - [x] `pnpm test:e2e` xanh.
-- [x] `pnpm lint:specs` xanh.
-- [x] `pnpm check:progress` xanh.
+- [x] `pnpm --filter @mindkid/gates test` xanh.
+- [x] `node packages/gates/scripts/check-progress.ts` xanh.
 - [x] Human review diff migration, engine tiến độ và bề mặt trẻ.
 - [x] Không phạm vi P3.5 lọt vào: không mastery, không `p_learn`, không chọn biến thể thật.
 - [x] Không lịch, không hạn thời gian, không nhắc theo ngày.

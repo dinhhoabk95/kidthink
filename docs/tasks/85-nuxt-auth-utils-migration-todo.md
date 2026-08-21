@@ -72,8 +72,8 @@
 - [x] `pnpm --filter @mindkid/web test` xanh.
 - [x] `pnpm --filter @mindkid/admin test` xanh.
 - [x] `pnpm test:e2e` xanh.
-- [x] `pnpm lint:specs` xanh.
-- [x] `pnpm check && pnpm test && pnpm check:progress` xanh.
+- [x] `pnpm --filter @mindkid/gates test` xanh.
+- [x] `pnpm check && pnpm test && node packages/gates/scripts/check-progress.ts` xanh.
 - [x] Chỉ sau evidence, auth/login/admin specs trở lại `implemented`.
 - [x] Human security review; không auto-merge/deploy/migration ngoài local.
 

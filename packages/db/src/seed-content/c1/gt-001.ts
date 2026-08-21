@@ -17,7 +17,7 @@ export const SEED_GL_C1_CNT_0001: ContentSeed<
     skill_codes: ["C1.CNT.01"],
     learning_objective_codes: ["LO-C1.CNT.01-01"],
     what_tags: ["cnt"],
-    thinking_tags: ["visual"],
+    thinking_tags: ["count"],
     theme_tag: "farm",
     origin: "human",
     authored_in: "repo_seed",

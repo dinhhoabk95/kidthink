@@ -250,7 +250,7 @@ T0 preflight + đẩy D-MB ngược vào Task #56
 - [ ] Xác nhận `paused` có luồng hay bị bỏ (`D-MG`), trước khi Task #56 T2 tạo enum.
 - [ ] Đo lại [`curriculum.ts`](../../packages/db/src/schema/curriculum.ts) sau P3.3.
 
-**Kiểm chứng:** `pnpm check:progress` xanh tới P3.3; báo cáo preflight ghi constraint enrollment
+**Kiểm chứng:** `node packages/gates/scripts/check-progress.ts` xanh tới P3.3; báo cáo preflight ghi constraint enrollment
 và enum status thật trước T1.
 
 **Phụ thuộc:** P3.3 · **Cỡ:** S
@@ -270,7 +270,7 @@ và enum status thật trước T1.
 - [ ] Không thêm spec mới; không thêm mã lỗi ngoài
       [`error-codes.md`](../specs/00-foundation/error-codes.md).
 
-**Kiểm chứng:** `pnpm lint:specs` 0 lỗi, 0 cảnh báo mới.
+**Kiểm chứng:** `pnpm --filter @mindkid/gates test` 0 lỗi, 0 cảnh báo mới.
 
 **Phụ thuộc:** T0 · human decision · **Cỡ:** M
 
@@ -413,10 +413,10 @@ package ≤5 files
 - [ ] Một trẻ thật đi hết một curriculum 8 tuần từ ghi danh tới màn hình hoàn thành.
 - [ ] [`curriculum-player.md`](../specs/04-play/curriculum-player.md) sang `implemented`.
 - [ ] Nợ ca kiểm adaptive ghi rõ ở P3.5, không tick nhầm ở P3.4.
-- [ ] Tick **P3.4** trong Task #14 chỉ khi `pnpm check:progress` tự xanh.
+- [ ] Tick **P3.4** trong Task #14 chỉ khi `node packages/gates/scripts/check-progress.ts` tự xanh.
 
 **Kiểm chứng:**
-`pnpm check && pnpm test && pnpm test:e2e && pnpm lint:specs && pnpm check:progress` xanh.
+`pnpm check && pnpm test && pnpm test:e2e && pnpm --filter @mindkid/gates test && node packages/gates/scripts/check-progress.ts` xanh.
 
 **Phụ thuộc:** T6 · T7 · **Cỡ:** S
 

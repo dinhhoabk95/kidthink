@@ -48,7 +48,7 @@ chú thích. Không có quy trình phát hành nào tồn tại.
 | Nơi                                           | Actor          | Ghi chú                                              |
 | --------------------------------------------- | -------------- | ---------------------------------------------------- |
 | `pnpm deploy --host <tên>`                    | Người vận hành | Lớp bọc SSH; mặc định phát hành nhánh chính trên kho |
-| `pnpm deploy:init --host <tên> --remote <url>` | Người vận hành | Dựng máy trắng: người dùng hệ thống, cây thư mục, bản sao kho |
+| `pnpm deploy init --host <tên> --remote <url>` | Người vận hành | Dựng máy trắng: người dùng hệ thống, cây thư mục, bản sao kho |
 | `pnpm deploy --host <tên> --ref <tham chiếu>` | Người vận hành | Thẻ hoặc mã commit                                   |
 | `pnpm deploy --host <tên> --dry-run`          | Người vận hành | In kế hoạch, không đổi gì trên máy chủ               |
 | `mindkid.sh release --ref <tham chiếu>`       |                | Nội dung thật, chạy trên máy chủ tại `/opt/mindkid/bin/` |

@@ -179,7 +179,7 @@ T1 bảng 20 ô + allowedTiers wiring (dữ liệu)
 - [ ] `BR-GAT-01`: ca âm — không có nhánh kiểm bậc nào ở component hay middleware client.
 
 **Kiểm chứng**
-- [ ] `pnpm lint:gating` (hoặc rule trong `lint:deps`) xanh trên repo sạch, đỏ trên fixture.
+- [ ] `pnpm --filter @mindkid/gates test` (hoặc rule trong `lint:deps`) xanh trên repo sạch, đỏ trên fixture.
 
 **Phụ thuộc:** T2 · **Cỡ:** M
 
@@ -202,7 +202,7 @@ T1 bảng 20 ô + allowedTiers wiring (dữ liệu)
 - [ ] Không handler nào trả nội dung mà bỏ qua gating — cổng đã đỏ được trên fixture.
 - [ ] 403 không mang nội dung; 404 không rò tồn tại.
 - [ ] Preview không chạm `mastery_state` và KPI.
-- [ ] `pnpm check && pnpm test && pnpm lint:specs && pnpm check:progress` xanh.
+- [ ] `pnpm check && pnpm test && pnpm --filter @mindkid/gates test && node packages/gates/scripts/check-progress.ts` xanh.
 - [ ] Human security reviewer duyệt diff — **cổng doanh thu**, không auto-merge.
 
 ### Task 8 — Evidence và promote

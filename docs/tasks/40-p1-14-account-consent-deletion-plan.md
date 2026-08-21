@@ -181,7 +181,7 @@ T1…T8 ──→ T9 evidence, gates, promote
 - [ ] Test tham chiếu `BR-LGL-*`, `BR-CSM-*`, `BR-LCA-*`, `BR-REG-03`, `BR-LGN-11` và
   `BR-CDC-07` cho mọi nhánh mới.
 - [ ] Chứng minh 100000 User force vẫn UPDATE đúng một requirement row.
-- [ ] `pnpm check`, test unit/integration/E2E, `pnpm lint:specs`, `pnpm check:progress` xanh.
+- [ ] `pnpm check`, test unit/integration/E2E, `pnpm --filter @mindkid/gates test`, `node packages/gates/scripts/check-progress.ts` xanh.
 - [ ] Promote lại các spec bị hạ từ `implemented` sang `approved` chỉ sau khi code mới và test tồn tại.
 - [ ] Human review diff schema, gate, admin force và migration trước merge; không auto-merge.
 

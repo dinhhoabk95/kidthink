@@ -209,10 +209,10 @@ T0 ──→ cổng P2 độc lập; T1…T10 không chặn cổng P2
 
 **Kiểm chứng**
 
-- [ ] `pnpm test -- check-progress` · `pnpm check:progress` xanh.
+- [ ] `pnpm test -- check-progress` · `node packages/gates/scripts/check-progress.ts` xanh.
 
-**Bề mặt dự kiến:** `scripts/check-progress-lib.ts` ·
-`scripts/check-progress.ts` · `scripts/tests/check-progress.test.ts` ·
+**Bề mặt dự kiến:** `packages/gates/scripts/check-progress-lib.ts` ·
+`packages/gates/scripts/check-progress.ts` · `packages/gates/tests/check-progress.test.ts` ·
 `docs/tasks/14-implementation-sequence-plan.md`.
 
 **Phụ thuộc:** không · **Cỡ:** M
@@ -233,7 +233,7 @@ sau implementation.
 
 **Kiểm chứng**
 
-- [ ] `pnpm lint:specs` xanh; §11 không còn câu hỏi chặn P2 chưa được quyết.
+- [ ] `pnpm --filter @mindkid/gates test` xanh; §11 không còn câu hỏi chặn P2 chưa được quyết.
 
 **Bề mặt dự kiến:** [`mfa.md`](../specs/03-account/mfa.md) · [`auth-tokens-sessions.md`](../specs/01-platform/auth-tokens-sessions.md) ·
 [`user-detail.md`](../specs/06-admin/user-detail.md) · [`schema-identity-billing.md`](../specs/01-platform/schema-identity-billing.md).
@@ -254,7 +254,7 @@ sau implementation.
 
 **Kiểm chứng**
 
-- [ ] `pnpm lint:specs` xanh; quét route fixture dùng code chưa đăng ký → đỏ.
+- [ ] `pnpm --filter @mindkid/gates test` xanh; quét route fixture dùng code chưa đăng ký → đỏ.
 
 **Bề mặt dự kiến:** [`error-codes.md`](../specs/00-foundation/error-codes.md) · [`audit-log.md`](../specs/01-platform/audit-log.md) ·
 [`notification-service.md`](../specs/01-platform/notification-service.md) · test registry.
@@ -442,7 +442,7 @@ sau implementation.
 
 **Kiểm chứng**
 
-- [ ] `pnpm check && pnpm test && pnpm test:e2e && pnpm lint:specs && pnpm check:progress`
+- [ ] `pnpm check && pnpm test && pnpm test:e2e && pnpm --filter @mindkid/gates test && node packages/gates/scripts/check-progress.ts`
       xanh.
 
 **Bề mặt dự kiến:** tests/evidence · [`mfa.md`](../specs/03-account/mfa.md) ·

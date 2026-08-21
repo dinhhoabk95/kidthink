@@ -227,7 +227,7 @@ P1.13/P3.3; không triển khai dựa trên plan tương lai.
 - [ ] Ghi lại interface SEO/cache/transition/enrollment thật và shape schema curriculum cuối.
 - [ ] Đối chiếu đủ `BR-PSH-*`, `BR-SEO2-*` liên quan và business-rules §7.3.
 
-**Kiểm chứng:** `pnpm check:progress` xanh tới P3.4; báo cáo preflight không còn dependency giả.
+**Kiểm chứng:** `node packages/gates/scripts/check-progress.ts` xanh tới P3.4; báo cáo preflight không còn dependency giả.
 
 **Phụ thuộc:** P3.3 · P3.4 · P1.13 · P2.8
 
@@ -247,7 +247,7 @@ hai tuần xem thử trước khi tạo route.
 - [ ] `CONTENT_ARCHIVED` (hoặc tên người sở hữu duyệt) được đăng ký 410; list/detail/sitemap/transition cùng viện dẫn một mã.
 - [ ] Mọi thay đổi schema/enum nếu có được đẩy về spec P3.3 và duyệt riêng; Task #61 không tự tạo migration.
 
-**Kiểm chứng:** `pnpm lint:specs` 0 lỗi, 0 cảnh báo mới; tìm toàn corpus không còn hai cách hiểu
+**Kiểm chứng:** `pnpm --filter @mindkid/gates test` 0 lỗi, 0 cảnh báo mới; tìm toàn corpus không còn hai cách hiểu
 khác nhau về nhóm hoặc preview tuần.
 
 **Phụ thuộc:** T0 · human decision D-NG/D-NI
@@ -426,7 +426,7 @@ trên evidence của cả tám increment.
       thật; không suy từ checkbox plan.
 - [ ] Chỉ tick cổng P3 khi 120 spec `mvp: true` đều `implemented` và một trẻ đi hết curriculum thật; thiếu evidence nào thì giữ ô đó mở.
 
-**Kiểm chứng:** `pnpm check && pnpm test && pnpm test:e2e && pnpm lint:specs && pnpm check:progress`
+**Kiểm chứng:** `pnpm check && pnpm test && pnpm test:e2e && pnpm --filter @mindkid/gates test && node packages/gates/scripts/check-progress.ts`
 và `pnpm --filter @mindkid/web build` xanh.
 
 **Phụ thuộc:** T8 · P3.1–P3.7 đã `implemented`

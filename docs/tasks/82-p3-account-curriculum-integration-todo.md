@@ -13,7 +13,7 @@
 - [x] Product/Design chốt active-child hay overview trên tablet.
 - [x] Chốt states/CTA của “Chương trình đang học”.
 - [x] Chốt library account-scoped, child-scoped hay hybrid và lifecycle khi child bị xoá.
-- [x] Nếu contract đổi, sửa owner spec/BR/error/event trước code; chạy `pnpm lint:specs`.
+- [x] Nếu contract đổi, sửa owner spec/BR/error/event trước code; chạy `pnpm --filter @mindkid/gates test`.
 
 ## WP82.2 — API projection
 
@@ -43,7 +43,7 @@
 
 ## WP82.6 — Gate và evidence
 
-- [x] Chạy unit/contract/integration/E2E, `pnpm check`, `pnpm lint:specs`.
+- [x] Chạy unit/contract/integration/E2E, `pnpm check`, `pnpm --filter @mindkid/gates test`.
 - [x] Cập nhật traceability Task #38/roadmap; không copy contract vào plan khác.
 - [x] Lưu evidence test theo chuẩn repo và để người review diff.
 - [x] Không auto-merge; không sửa published content hay migration ngoài local.

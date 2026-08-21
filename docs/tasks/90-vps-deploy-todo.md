@@ -18,7 +18,7 @@
 ## WP90.0 — Năm spec draft sang approved
 
 - [x] Đổi `status: draft` sang `status: approved` cho năm spec.
-- [x] `pnpm lint:specs` xanh.
+- [x] `pnpm --filter @mindkid/gates test` xanh.
 
 ## WP90.1 — Registry biến môi trường và validator
 
@@ -30,9 +30,9 @@
 
 ## WP90.2 — Cổng lint:env-names
 
-- [x] `scripts/lint-env-names.ts` bắt tên đồng nghĩa ở **bốn** dạng đọc: thuộc tính, ngoặc vuông, `requireEnv()`, và giải cấu trúc.
+- [x] `packages/gates/src/lint-env-names.ts` bắt tên đồng nghĩa ở **bốn** dạng đọc: thuộc tính, ngoặc vuông, `requireEnv()`, và giải cấu trúc.
 - [x] Bắt mặc định cứng cho biến quyết định danh tính hoặc tính xác thực (`BR-ENV-03`).
-- [x] Fixture sai cố ý ở `scripts/tests/fixtures/env-names/`; test khẳng định cổng **đỏ** trên fixture và **xanh** trên fixture đúng.
+- [x] Fixture sai cố ý ở `packages/gates/tests/fixtures/env-names/`; test khẳng định cổng **đỏ** trên fixture và **xanh** trên fixture đúng.
 - [x] Cổng quét toàn cây trong 0,6 giây (regex biên dịch một lần, có bộ lọc dòng).
 
 ## WP90.3 — Gộp tên đồng nghĩa và bỏ mặc định cứng
@@ -85,7 +85,7 @@
 - [x] Chọn đích bằng `--to <tên bản>` theo [`release-rollback.md`](../specs/01-platform/release-rollback.md) §3.
 - [x] Từ chối bản đích không có artefact đã build (§4 bước 3).
 - [x] Chạy cổng khói sau khi quay lui (`BR-RBK-06`) và phát thông báo (`BR-RBK-07`).
-- [x] `scripts/lint-migration-expand.ts` quét đúng `packages/db/src/migrations` — đường dẫn cũ không tồn tại nên cổng xanh mà không đọc tệp nào.
+- [x] `packages/db/tests/gates/migration-expand.ts` quét đúng `packages/db/src/migrations` — đường dẫn cũ không tồn tại nên cổng xanh mà không đọc tệp nào.
 - [x] Cổng **đỏ khi quét 0 tệp**: một cổng không đọc gì thì xanh vĩnh viễn.
 - [x] Chặn thêm `DROP INDEX` · `DROP CONSTRAINT` · `DROP VIEW` · `DROP TYPE` · `SET NOT NULL` · `ALTER COLUMN TYPE` · `TRUNCATE`.
 - [x] Fixture migration xoá cột; 10 test khẳng định cổng đỏ trên fixture, xanh trên fixture cộng thêm.
@@ -94,10 +94,10 @@
 
 - [x] `scripts/deploy/cli.ts` cho bảy lệnh; `scripts/deploy/remote-exec.ts` kiểm mọi giá trị trước khi gửi.
 - [x] Gửi **mảng tham số** qua SSH, không ghép chuỗi: shell đầu kia chạy bằng `root`.
-- [x] `pnpm deploy:init` — lệnh còn thiếu khiến máy trắng không dựng được.
+- [x] `pnpm deploy init` — lệnh còn thiếu khiến máy trắng không dựng được.
 - [x] Tham chiếu chưa đẩy lên kho: dừng tại máy trạm, in cách xử lý (`BR-DEP-01`).
 - [x] Cây làm việc bẩn: in cảnh báo kèm số tệp, vẫn phát hành commit trên kho (`BR-DEP-02`).
-- [x] `pnpm deploy:status` liệt kê các bản còn giữ và bản nào quay lui được.
+- [x] `pnpm deploy status` liệt kê các bản còn giữ và bản nào quay lui được.
 - [x] 6 test với 20 chuỗi tấn công cho lớp kiểm tham số.
 
 ## WP90.10 — Cổng kiểm cú pháp shell và verification
@@ -105,7 +105,7 @@
 - [x] Cổng dùng **shellcheck** ở mức `info`, không phải `bash -n`: `SC2086` là mức info và là cách phổ biến nhất một script phát hành làm hỏng đường dẫn có dấu cách.
 - [x] Cổng **đỏ khi thiếu shellcheck** và khi quét 0 tệp.
 - [x] Fixture shell sai cố ý mà `bash -n` chấp nhận; test khẳng định cổng đỏ.
-- [x] `pnpm exec biome check .` xanh · `pnpm lint:specs` xanh · `pnpm lint:rule-ids` xanh.
+- [x] `pnpm exec biome check .` xanh · `pnpm --filter @mindkid/gates test` xanh · `pnpm --filter @mindkid/gates test` xanh.
 - [x] `bash infra/scripts/tests/run.sh`: **43 khẳng định, 12 ca, 0 lỗi**.
 
 ### Sáu ca âm bắt buộc của plan §6, cộng sáu ca review thêm
@@ -129,8 +129,8 @@
 
 - [ ] Có câu trả lời cho ba câu hỏi chặn: nhà cung cấp và cấu hình máy, tên miền và ai giữ DNS, nơi chạy cổng tự động.
 - [ ] Ghi `/etc/mindkid/env/{web,admin,worker}.env` và `compose/datastore.env`, quyền `0600 root:root`.
-- [ ] `pnpm deploy:init --host <tên> --remote <url>` trên máy trắng, ghi thời gian thật.
-- [ ] `pnpm deploy:provision --host <tên> --site-domain <d> --admin-domain <d>`, ghi thời gian thật.
+- [ ] `pnpm deploy init --host <tên> --remote <url>` trên máy trắng, ghi thời gian thật.
+- [ ] `pnpm deploy provision --host <tên> --site-domain <d> --admin-domain <d>`, ghi thời gian thật.
 - [ ] `pnpm deploy --host <tên> --ref main`, ghi thời gian thật và gián đoạn đo được.
 - [ ] Chạy lại lệnh dựng máy lần hai, khẳng định không tiến trình nào bị dừng (`BR-SRV-01`).
 - [ ] Đo 10 tiêu chí ở [`release-deploy.md`](../specs/01-platform/release-deploy.md); ghi số đo vào đây, không ghi "đã xong".

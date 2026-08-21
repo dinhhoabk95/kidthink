@@ -188,7 +188,7 @@ T1 index + unaccent + migration
 - [ ] Nội dung mở được xếp trên `locked`.
 - [ ] Guest không thấy `draft`; `status` không có tác dụng ngoài route admin.
 - [ ] Trần `limit` ép ở server; phân trang cursor.
-- [ ] `pnpm check && pnpm test && pnpm lint:specs && pnpm check:progress` xanh.
+- [ ] `pnpm check && pnpm test && pnpm --filter @mindkid/gates test && node packages/gates/scripts/check-progress.ts` xanh.
 
 ### Task 7 — Hiệu năng, evidence, promote
 

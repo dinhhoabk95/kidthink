@@ -36,7 +36,7 @@ vì tự xây từ đầu, cùng mục).
 |---|---|
 | Dev (người hoặc AI agent IDE) | Chạy trình tự bootstrap, port asset, cấu hình gate local |
 | Reviewer | Duyệt PR bootstrap đầu tiên — PR này **không chứa business logic** |
-| lefthook (git hook local) | `pre-commit`: lint file staged. `pre-push`: `pnpm check` + `pnpm test` + `pnpm check:services`. Kể từ commit đầu tiên |
+| lefthook (git hook local) | `pre-commit`: `pnpm lint` + `pnpm lint:deps`. `pre-push`: `pnpm services` + `pnpm check` (lint · deps · typecheck · test). Kể từ commit đầu tiên |
 
 ## 3. Entry points
 
@@ -60,9 +60,11 @@ vì tự xây từ đầu, cùng mục).
    bản thấp hơn bảng đó.
 5. Dựng `docker-compose.yml` chạy PostgreSQL 17 + Valkey 9, verify kết nối được từ Node
    trước khi viết schema.
-6. Cấu hình gate local bằng `lefthook`: `pre-commit` chạy lint trên file staged;
-   `pre-push` chạy `pnpm check` (lint · lint:tokens · lint:deps · typecheck) + `pnpm test`
-   + `pnpm check:services`. Chạy `lefthook install` để ghi `.git/hooks/*`, rồi bắt xanh
+6. Cấu hình gate local bằng `lefthook`: `pre-commit` chạy `pnpm lint` + `pnpm lint:deps`
+   (nhanh); `pre-push` chạy `pnpm services` rồi `pnpm check` = lint · lint:deps ·
+   typecheck · test. Cổng nội dung/spec/an toàn kiểu **là test vitest** trong package
+   sở hữu đường dẫn chúng quét, nên `pnpm test` phủ hết — Cấm — NEVER thêm script `lint:*`
+   mới cho một rule. Chạy `lefthook install` để ghi `.git/hooks/*`, rồi bắt xanh
    trên **commit rỗng** — và kiểm **ca âm** (file vi phạm thì hook chặn commit) trước khi
    PR đầu tiên chứa business logic được mở. Hook không có ca âm đã đo là hook chưa tồn tại.
 7. Gate ra: `pnpm check` xanh tại chỗ, `lefthook run pre-commit`/`pre-push` xanh **và** ca âm
@@ -256,7 +258,7 @@ Scenario: BR-RBS-04 — chặn code nghiệp vụ trước foundation approved
 | 9 | Kích thước pool `postgres.js` (`max`) và `PG max_connections` phải tính theo **loại EC2 instance thật** (số vCPU × số PM2 instance) — chưa chốt vì chưa biết instance type production | [`data-model-overview.md`](../01-platform/data-model-overview.md), deploy | Hoãn, chặn phase P1 | hoãn |
 | ~~10~~ | ~~Chiến lược version control cho corpus spec ở workspace root.~~ **Đóng 2026-08-09 (T13)**: Lượt 3 khôi phục Lượt 1 (`D-U`) — corpus ở nguyên trong `mindkid/docs/`. **Ba lượt quyết định:** | — | Đã đóng | D-U |
 | | **Lượt 1 — 2026-08-06 (D-U, T2)**: chốt corpus spec ([`SPEC.md`](../../SPEC.md) + `docs/specs/` + `docs/tasks/`) chuyển vào `mindkid/docs/`, thuộc git repo code. `mindkid/SPEC.md` = symlink → `docs/SPEC.md`. `git log --follow` truy được vết. 223 link `.md` resolve, 0 vỡ. | | | |
-| | **Lượt 2 — 2026-08-07 sáng (quyết định người dùng)**: **đảo lại** — corpus spec ra khỏi `mindkid/`, về `docs/` ở workspace root (sibling của `mindkid/`), **không** track chung git repo code. Lý do lúc đó: docs đổi nhịp khác code và người duyệt khác nhau — tách để diff/review code không lẫn thay đổi markdown. Chưa kịp code hoá (`CORPUS_ROOT` chưa thêm vào `scripts/lint-specs-lib.ts`) thì đã đảo lại ở Lượt 3 — bản ghi lượt này giữ lại làm lịch sử, không phải trạng thái hiện hành | | | |
+| | **Lượt 2 — 2026-08-07 sáng (quyết định người dùng)**: **đảo lại** — corpus spec ra khỏi `mindkid/`, về `docs/` ở workspace root (sibling của `mindkid/`), **không** track chung git repo code. Lý do lúc đó: docs đổi nhịp khác code và người duyệt khác nhau — tách để diff/review code không lẫn thay đổi markdown. Chưa kịp code hoá (`CORPUS_ROOT` chưa thêm vào `packages/gates/src/lint-specs-lib.ts`) thì đã đảo lại ở Lượt 3 — bản ghi lượt này giữ lại làm lịch sử, không phải trạng thái hiện hành | | | |
 | | **Lượt 3 — 2026-08-07 chiều (quyết định người dùng, đảo lại Lượt 2)**: **khôi phục Lượt 1** — corpus spec ([`SPEC.md`](../../SPEC.md) + `docs/specs/` + `docs/tasks/` + `docs/taxonomy/` + `docs/montessori/`) ở nguyên trong `mindkid/docs/`, thuộc git repo code, commit chung dòng lịch sử với task code (ví dụ Task #3). Lý do: tách riêng repo docs mới chỉ là quyết định trên giấy — chưa mang lại lợi ích gì (chưa review-tách-luồng nào từng chạy) mà đã phát sinh rủi ro thật: một bản `docs/` cũ bị bỏ quên ở workspace root làm `mindkid/SPEC.md` (symlink) trỏ nhầm sang nội dung lỗi thời. `mindkid/SPEC.md` = symlink → `docs/SPEC.md` (khôi phục, bỏ `../`). Xoá bản `docs/` trùng ở workspace root | | | |
 | ~~11~~ | ~~Bật lại CI cổng tự động khi nào~~ **Đóng 2026-08-06**: câu hỏi biến mất cùng provider — không còn CI để bật. Quy tắc `BR-RBS-03` (gate local phải xanh và chặn đúng ca âm trước khi mở PR chứa business logic) giờ đo bằng `lefthook run pre-push` + ca âm tại máy | — | Đã đóng | D-S (T1) |
 | ~~12~~ | ~~Gate local bỏ qua được bằng `--no-verify`~~ **Đóng dứt điểm 2026-08-09 (`D-CL`)**: giữ lefthook làm phản hồi nhanh local; `main` cấm direct/force push, bắt buộc PR + ít nhất một approving human review và dismiss approval khi có commit mới. Người bật rule trước PR seeder đầu tiên | — | Đã đóng | D-CL |

@@ -222,7 +222,7 @@ privacy test ở T3a trước khi sinh file.
 - [ ] Webhook SNS ghi đúng trạng thái gửi; nhận trùng không sinh hàng trùng.
 - [ ] Sửa template → bản mới ở `draft`, email vẫn dùng bản published cũ.
 - [ ] `content_reviewer` bị **403** ở cả bốn bề mặt.
-- [ ] `pnpm check && pnpm test && pnpm test:e2e && pnpm lint:specs && pnpm check:progress` xanh.
+- [ ] `pnpm check && pnpm test && pnpm test:e2e && pnpm --filter @mindkid/gates test && node packages/gates/scripts/check-progress.ts` xanh.
 
 ### Task 6 — Evidence, promote và nợ chuyển tiếp
 

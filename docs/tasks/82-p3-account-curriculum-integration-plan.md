@@ -84,7 +84,7 @@ không nâng thành L.
 ## 7. Verification
 
 ```bash
-pnpm lint:specs
+pnpm --filter @mindkid/gates test
 pnpm check
 pnpm test
 pnpm test:e2e

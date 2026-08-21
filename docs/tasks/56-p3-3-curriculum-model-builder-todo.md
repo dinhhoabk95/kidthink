@@ -85,7 +85,7 @@
 - [ ] Không thêm spec mới.
 - [ ] Không thêm mã lỗi ngoài [`error-codes.md`](../specs/00-foundation/error-codes.md).
 - [ ] Câu hỏi mở còn lại của hai spec P3.3 đóng hoặc hoãn kèm điều kiện mở lại đo được.
-- [ ] `pnpm lint:specs` 0 lỗi, 0 cảnh báo mới.
+- [ ] `pnpm --filter @mindkid/gates test` 0 lỗi, 0 cảnh báo mới.
 
 ## Checkpoint A — Contract
 
@@ -236,7 +236,7 @@ Quy trình cho **mỗi** chương trình:
 - [ ] Không chương trình nào lặp item trong cửa sổ 4 tuần.
 - [ ] Điểm cắt [`mvp-scope.md`](../specs/00-foundation/mvp-scope.md) §5 ghi rõ: thiếu nguồn lực
       thì giữ **một** chương trình theo tuổi, không hạ checklist.
-- [ ] `pnpm seed:check` xanh.
+- [ ] `pnpm --filter @mindkid/db seed:check` xanh.
 
 ## Checkpoint E — Corpus curriculum
 
@@ -251,15 +251,15 @@ Quy trình cho **mỗi** chương trình:
 - [ ] [`curriculum-builder.md`](../specs/06-admin/curriculum-builder.md) → `implemented`.
 - [ ] Spec bị P3.3 sửa giữ nguyên trạng thái cũ, có ghi task nguồn của lần sửa.
 - [ ] `D-KK` và `D-KP` không còn `pending_source`.
-- [ ] Tick **P3.3** trong Task #14 chỉ khi `pnpm check:progress` tự xanh.
+- [ ] Tick **P3.3** trong Task #14 chỉ khi `node packages/gates/scripts/check-progress.ts` tự xanh.
 
 ## Cổng dừng cuối
 
 - [ ] `pnpm check` xanh.
 - [ ] `pnpm test` xanh.
 - [ ] `pnpm test:e2e` xanh.
-- [ ] `pnpm lint:specs` xanh.
-- [ ] `pnpm check:progress` xanh.
+- [ ] `pnpm --filter @mindkid/gates test` xanh.
+- [ ] `node packages/gates/scripts/check-progress.ts` xanh.
 - [ ] Human review diff contract, migration, engine cân bằng, builder và từng chương trình.
 - [ ] Không phạm vi P3.4 lọt vào: không mở khoá buổi, không tiến độ trẻ, không xử lý bỏ dở.
 - [ ] Không tầng `Level` hay `Module` được build ở MVP.

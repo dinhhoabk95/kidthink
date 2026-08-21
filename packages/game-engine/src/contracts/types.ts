@@ -19,7 +19,9 @@ export type LayoutId =
   | "matrix-slot-grid"
   | "clue-board"
   | "matrix-3x3"
-  | "equation-rows";
+  | "equation-rows"
+  | "mirror-axis-split"
+  | "free-scene";
 
 export type AgeBand = "3-4" | "4-5" | "5-6";
 export type ContentStatus =

@@ -156,7 +156,7 @@
 - [x] Chứng từ không mở bằng URL trực tiếp; signed URL chết sau 15 phút.
 - [x] `content_reviewer` bị **403** ở hàng đợi và màn duyệt.
 - [x] Không route nào xoá được `payment_orders`.
-- [x] `pnpm check && pnpm test && pnpm test:e2e && pnpm lint:specs && pnpm lint:prices && pnpm check:progress` xanh.
+- [x] `pnpm check && pnpm test && pnpm test:e2e && pnpm --filter @mindkid/gates test && pnpm --filter @mindkid/gates test && node packages/gates/scripts/check-progress.ts` xanh.
 
 ---
 

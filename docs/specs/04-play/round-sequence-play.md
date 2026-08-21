@@ -2,7 +2,7 @@
 spec: ROUND-SEQUENCE-PLAY
 title: Chạy nhiều vòng liên tiếp trong một phiên chơi
 area: play
-status: draft
+status: implemented
 mvp: false
 phase: P2
 reviewed: 2026-08-21

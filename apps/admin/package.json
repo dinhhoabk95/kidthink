@@ -20,6 +20,7 @@
     "nuxt-security": "catalog:",
     "typescript": "catalog:",
     "vitest": "catalog:",
-    "vue-tsc": "catalog:"
+    "vue-tsc": "catalog:",
+    "@mindkid/config": "workspace:*"
   }
 }

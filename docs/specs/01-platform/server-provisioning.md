@@ -42,7 +42,7 @@ Việt Nam, vì thứ nó cần chỉ là một bản Ubuntu 24.04 và một kho
 
 | Nơi                                  | Actor          | Ghi chú                                      |
 | ------------------------------------ | -------------- | -------------------------------------------- |
-| `pnpm deploy:provision --host <tên>` | Người vận hành | Lớp bọc SSH, chạy từ máy trạm                |
+| `pnpm deploy provision --host <tên>` | Người vận hành | Lớp bọc SSH, chạy từ máy trạm                |
 | `infra/scripts/provision.sh`         |                | Nội dung thật, chạy trên máy chủ bằng `root` |
 | `infra/nginx/`                       |                | Khuôn cấu hình, biến thay là tên miền        |
 | `infra/docker-compose.prod.yml`      |                | PostgreSQL 17 và Valkey 9                    |

@@ -125,7 +125,7 @@
 - [x] Không chỗ nào tra danh tính theo email.
 - [x] Seed MFA → SNS trả 428, không cấp phiên.
 - [x] Chạy lại ca âm `BR-ADL-10` của P1.14 với hàng `social_identities` thật.
-- [x] `pnpm check && pnpm test && pnpm test:e2e && pnpm lint:specs && pnpm check:progress` xanh.
+- [x] `pnpm check && pnpm test && pnpm test:e2e && pnpm --filter @mindkid/gates test && node packages/gates/scripts/check-progress.ts` xanh.
 
 ---
 

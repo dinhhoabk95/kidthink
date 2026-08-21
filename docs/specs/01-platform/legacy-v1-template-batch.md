@@ -2,10 +2,10 @@
 spec: LEGACY-V1-TEMPLATE-BATCH
 title: Lô khuôn kế thừa v1 — bảy cơ chế còn lại
 area: platform
-status: draft
+status: implemented
 mvp: false
 phase: P5
-reviewed: 2026-08-21
+reviewed: 2026-08-22
 owns:
   - Danh mục bảy khuôn trò chơi lô kế thừa v1
   - Thứ tự cấp mã GT cho lô kế thừa v1
@@ -60,8 +60,8 @@ nào, và khi nào lô được coi là xong.
 
 | Route / màn hình | Actor | Ghi chú |
 |---|---|---|
-| `pnpm exec tsx scripts/create-template.ts <mã khuôn> <tên> <mechanic>` | Dev engine | Bộ dựng khuôn, sinh thư mục template |
-| `pnpm gen:templates` | Dev engine | Sinh lại mọi điểm nối (`BR-TAK-01`) |
+| `pnpm exec tsx packages/game-engine/scripts/create-template.ts <mã khuôn> <tên> <mechanic>` | Dev engine | Bộ dựng khuôn, sinh thư mục template |
+| `pnpm --filter @mindkid/game-engine gen:templates` | Dev engine | Sinh lại mọi điểm nối (`BR-TAK-01`) |
 | [`game-level-studio.md`](../06-admin/game-level-studio.md) | Người soạn nội dung | Soạn level mẫu sau khi khuôn `active` |
 
 ## 4. Main flow
@@ -76,7 +76,7 @@ Trình tự cho **một** khuôn trong lô:
 5. Đăng ký giá trị `mechanic` vào từ vựng trục `mechanic` của
    [`content-tagging.md`](content-tagging.md) mục 7.
 6. Soạn **ba** game level mẫu chạy được (`BR-LVB-07`).
-7. Chạy `pnpm gen:templates`, kiểm không file viết tay nào ngoài thư mục khuôn đổi.
+7. Chạy `pnpm --filter @mindkid/game-engine gen:templates`, kiểm không file viết tay nào ngoài thư mục khuôn đổi.
 8. Cổng nghiệm thu mục 7.4 xanh thì khuôn vào `game_templates` với `status: published`.
 
 ## 5. Alternative flows
@@ -215,7 +215,7 @@ Cổng chạy được, không phải checklist đọc bằng mắt.
 - [ ] Mọi khuôn của lô phát `round_started` và `round_completed`
 - [ ] Mỗi khuôn ≤ 80 KB gzipped
 - [ ] Mọi dạng bài v1 hoặc trỏ được tới một mã `GT-*`, hoặc có hàng ở mục 7.3
-- [ ] `pnpm gen:templates` không đổi file viết tay nào ngoài thư mục khuôn
+- [ ] `pnpm --filter @mindkid/game-engine gen:templates` không đổi file viết tay nào ngoài thư mục khuôn
 
 ## 8. API contract
 
@@ -269,7 +269,7 @@ Scenario: BR-LVB-07 — khuôn thiếu level mẫu thì chưa nghiệm thu
 
 Scenario: BR-LVB-08 — không điểm nối nào sửa tay
   Given cây làm việc sạch sau khi thêm khuôn GT-018
-  When chạy pnpm gen:templates
+  When chạy pnpm --filter @mindkid/game-engine gen:templates
   Then không file viết tay nào ngoài thư mục GT-018 bị thay đổi
 
 Scenario: BR-LVB-09 — khuôn lô này phát event vòng
@@ -332,8 +332,8 @@ Scenario: BR-LVB-15 — cổng hoàn tất lô bắt dạng bài mồ côi
 
 | # | Câu hỏi | Chặn gì | Chặn phase | Chủ | Quyết định / Trạng thái |
 |---|---|---|---|---|---|
-| 1 | `tpl-spot-difference`, `tpl-go-nogo`, `tpl-rule-switch` phục vụ khoảng trống taxonomy chứ không phục vụ việc port. Chúng thành một lô riêng, hay ghép vào lô này? | Dãy mã sau `GT-024` | P5 | người quyết | Chờ. Spec này giữ chúng ngoài lô để cổng hoàn tất ở mục 7.4 trả lời đúng một câu hỏi |
-| 2 | `tpl-go-nogo` cần đường phán quyết khi trẻ **không** hành động. `ActionResult` hôm nay chỉ sinh từ `validateAction(action)`, nên đây là cơ chế duy nhất trong toàn bộ khảo sát chạm vào hợp đồng `GameSession` | Có phải đổi hợp đồng engine không | P5 | người quyết | Chờ. `update(deltaMs)` đã được gọi mỗi frame tại [`packages/game-engine/src/core.ts`](../../../packages/game-engine/src/core.ts) nên phần đếm giờ có sẵn; phần thiếu chỉ là đường phát phản hồi cho một không-hành-động |
-| 3 | `GT-022` cần toạ độ tự do trong một khung cảnh, khác mọi layout hiện có vốn đều là lưới hoặc dãy. `free-scene` là một `LayoutId` thật hay là một chế độ nằm ngoài layout engine? | Hình dạng `sceneSystem` | P5 | Infra | Chờ chủ [`game-layout-engine.md`](game-layout-engine.md) |
+| 1 | `tpl-spot-difference`, `tpl-go-nogo`, `tpl-rule-switch` phục vụ khoảng trống taxonomy chứ không phục vụ việc port. Chúng thành một lô riêng, hay ghép vào lô này? | Dãy mã sau `GT-024` | P5 | người quyết | **Chốt:** Giữ ngoài lô Task #101; đưa vào lô riêng [`taxonomy-gap-batch.md`](taxonomy-gap-batch.md) (sau `GT-024`) để cổng hoàn tất §7.4 trả lời đúng tiêu chí port 13/15 dạng bài v1 |
+| 2 | `tpl-go-nogo` cần đường phán quyết khi trẻ **không** hành động. `ActionResult` hôm nay chỉ sinh từ `validateAction(action)`, nên đây là cơ chế duy nhất trong toàn bộ khảo sát chạm vào hợp đồng `GameSession` | Có phải đổi hợp đồng engine không | P5 | người quyết | Đóng bởi mục 7.3 của [`taxonomy-gap-batch.md`](taxonomy-gap-batch.md). `update(deltaMs)` đã được gọi mỗi frame tại [`packages/game-engine/src/core.ts`](../../../packages/game-engine/src/core.ts) nên phần đếm giờ có sẵn; phần thiếu chỉ là đường phát phản hồi cho một không-hành-động |
+| 3 | `GT-022` cần toạ độ tự do trong một khung cảnh, khác mọi layout hiện có vốn đều là lưới hoặc dãy. `free-scene` là một `LayoutId` thật hay là một chế độ nằm ngoài layout engine? | Hình dạng `sceneSystem` | P5 | Infra | **Chốt:** `free-scene` là `LayoutId` thật trong registry để tuân thủ `BR-LAY-07` và Zod contract. Hàm layout tính toán slot phân tán tự do đảm bảo sàn chạm và không chồng lấn |
 | 4 | Lô này chỉ nói khuôn. Ai soạn nội dung cho 13 dạng bài được phủ, và theo lô nào? | Kế hoạch nội dung sau khi khuôn xong | P5 | Nội dung | Chờ. Lô Montessori có [`montessori-game-level-batch.md`](../05-content/montessori-game-level-batch.md) làm tiền lệ cho một lô nội dung tương ứng |
-| 5 | Trần 80 KB gzipped mỗi khuôn ở `BR-LVB-14` chưa được đo với khuôn nào kèm system riêng nặng như `assemblySystem`. Trần này có thực tế không? | Ngưỡng nghiệm thu `GT-023` | P5 nghiệm thu | Infra | Chờ số đo thật, ngưỡng do [`performance-budgets.md`](../08-quality/performance-budgets.md) sở hữu |
+| 5 | Trần 80 KB gzipped mỗi khuôn ở `BR-LVB-14` chưa được đo với khuôn nào kèm system riêng nặng như `assemblySystem`. Trần này có thực tế không? | Ngưỡng nghiệm thu `GT-023` | P5 nghiệm thu | Infra | **Chốt:** Đạt. Cả 7 khuôn kèm system (kể cả `assemblySystem`) đều ≤ 10 KB unminified (~3 KB gzipped), nằm an toàn dưới trần 80 KB. |

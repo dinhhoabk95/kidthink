@@ -17,6 +17,16 @@ import GT014Template from "../templates/GT-014/template.js";
 import GT015Template from "../templates/GT-015/template.js";
 import GT016Template from "../templates/GT-016/template.js";
 import GT017Template from "../templates/GT-017/template.js";
+import GT018Template from "../templates/GT-018/template.js";
+import GT019Template from "../templates/GT-019/template.js";
+import GT020Template from "../templates/GT-020/template.js";
+import GT021Template from "../templates/GT-021/template.js";
+import GT022Template from "../templates/GT-022/template.js";
+import GT023Template from "../templates/GT-023/template.js";
+import GT024Template from "../templates/GT-024/template.js";
+import GT025Template from "../templates/GT-025/template.js";
+import GT026Template from "../templates/GT-026/template.js";
+import GT027Template from "../templates/GT-027/template.js";
 
 export const STUDIO_TEMPLATE_OPTIONS = [
   {
@@ -120,5 +130,65 @@ export const STUDIO_TEMPLATE_OPTIONS = [
     label: `${GT017Template.code}: ${GT017Template.name}`,
     mechanic: GT017Template.mechanic,
     ageRange: `${GT017Template.age_min}-${GT017Template.age_max}`,
+  },
+  {
+    value: GT018Template.code,
+    label: `${GT018Template.code}: ${GT018Template.name}`,
+    mechanic: GT018Template.mechanic,
+    ageRange: `${GT018Template.age_min}-${GT018Template.age_max}`,
+  },
+  {
+    value: GT019Template.code,
+    label: `${GT019Template.code}: ${GT019Template.name}`,
+    mechanic: GT019Template.mechanic,
+    ageRange: `${GT019Template.age_min}-${GT019Template.age_max}`,
+  },
+  {
+    value: GT020Template.code,
+    label: `${GT020Template.code}: ${GT020Template.name}`,
+    mechanic: GT020Template.mechanic,
+    ageRange: `${GT020Template.age_min}-${GT020Template.age_max}`,
+  },
+  {
+    value: GT021Template.code,
+    label: `${GT021Template.code}: ${GT021Template.name}`,
+    mechanic: GT021Template.mechanic,
+    ageRange: `${GT021Template.age_min}-${GT021Template.age_max}`,
+  },
+  {
+    value: GT022Template.code,
+    label: `${GT022Template.code}: ${GT022Template.name}`,
+    mechanic: GT022Template.mechanic,
+    ageRange: `${GT022Template.age_min}-${GT022Template.age_max}`,
+  },
+  {
+    value: GT023Template.code,
+    label: `${GT023Template.code}: ${GT023Template.name}`,
+    mechanic: GT023Template.mechanic,
+    ageRange: `${GT023Template.age_min}-${GT023Template.age_max}`,
+  },
+  {
+    value: GT024Template.code,
+    label: `${GT024Template.code}: ${GT024Template.name}`,
+    mechanic: GT024Template.mechanic,
+    ageRange: `${GT024Template.age_min}-${GT024Template.age_max}`,
+  },
+  {
+    value: GT025Template.code,
+    label: `${GT025Template.code}: ${GT025Template.name}`,
+    mechanic: GT025Template.mechanic,
+    ageRange: `${GT025Template.age_min}-${GT025Template.age_max}`,
+  },
+  {
+    value: GT026Template.code,
+    label: `${GT026Template.code}: ${GT026Template.name}`,
+    mechanic: GT026Template.mechanic,
+    ageRange: `${GT026Template.age_min}-${GT026Template.age_max}`,
+  },
+  {
+    value: GT027Template.code,
+    label: `${GT027Template.code}: ${GT027Template.name}`,
+    mechanic: GT027Template.mechanic,
+    ageRange: `${GT027Template.age_min}-${GT027Template.age_max}`,
   },
 ];

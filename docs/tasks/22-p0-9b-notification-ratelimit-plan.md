@@ -257,7 +257,7 @@ T6 bảng hạn mức 12 route class (một nguồn)
 - [ ] Chạy lại job không gửi hai lần.
 - [ ] Opt-out ghi `suppressed`, có bằng chứng trong DB.
 - [ ] Hai trục rate limit cùng hoạt động; fail closed đúng chỗ.
-- [ ] `pnpm check && pnpm test && pnpm lint:specs && pnpm check:progress` xanh.
+- [ ] `pnpm check && pnpm test && pnpm --filter @mindkid/gates test && node packages/gates/scripts/check-progress.ts` xanh.
 - [ ] Human review diff — chạm auth và dữ liệu trẻ, không auto-merge.
 
 ### Task 11 — Evidence và promote

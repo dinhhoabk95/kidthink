@@ -1,7 +1,10 @@
 {
   "extends": "@mindkid/config/tsconfig.base.json",
   "compilerOptions": {
-    "noEmit": true
+    "noEmit": true,
+    // Cổng trong tests/gates/ import theo đường dẫn .ts tường minh — chúng cũng
+    // chạy được bằng node trực tiếp, và Node ESM cần extension đầy đủ.
+    "allowImportingTsExtensions": true
   },
   "include": ["src/**/*", "tests/**/*"]
 }

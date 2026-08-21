@@ -27,7 +27,7 @@ và **cả 12 đều là P0** — tức là chúng chặn sớm nhất mà lại
 ## 0. Điều kiện tiên quyết
 
 ```
-pnpm lint:specs 2>&1 | tail -2                  # 0 lỗi, 0 cảnh báo
+pnpm --filter @mindkid/gates test 2>&1 | tail -2                  # 0 lỗi, 0 cảnh báo
 grep -rl "^status: approved" --include="*.md" docs/specs | xargs grep -l "^spec: " | wc -l
 pnpm check && pnpm test
 ```
@@ -152,7 +152,7 @@ trực tiếp hàng `published`, không gọi transition publish và không phá
 6. Code tới khi test xanh. Với sáu vùng nhạy cảm, áp ngoại lệ D5: test âm trước, ghi rõ phần
    AI soạn và giữ cổng người review diff; không dùng ngoại lệ để auto-merge, chạy migration
    ngoài local hoặc phát hành nội dung.
-7. `pnpm check && pnpm test && pnpm lint:specs` xanh.
+7. `pnpm check && pnpm test && pnpm --filter @mindkid/gates test` xanh.
 8. Nếu bước làm lộ ra spec sai: sửa spec **trong cùng PR**, kèm lý do. Spec là hợp đồng — code
    lệch spec mà spec không đổi là nợ im lặng.
 9. Một commit cho mỗi lát chạy được; mỗi PR chỉ mang một work package. PR cuối của bước chạy
@@ -197,7 +197,7 @@ Ba registry ([`business-rules.md`](../specs/00-foundation/business-rules.md),
   commit kế hoạch là 130/130.
 - Năm cạnh đảo phase đã xử lý: mỗi cái hoặc được xác minh là contract-only, hoặc bị bỏ, hoặc
   spec đổi phase — kèm mã `D-*` cho từng cái.
-- `pnpm lint:specs` 0 lỗi 0 cảnh báo (roadmap cũng bị lint chấm).
+- `pnpm --filter @mindkid/gates test` 0 lỗi 0 cảnh báo (roadmap cũng bị lint chấm).
 
 ### Cổng ra mỗi phase
 
@@ -249,10 +249,10 @@ grep -rh "^status: " --include="*.md" docs/specs | sort | uniq -c
 Cổng chung mỗi bước:
 
 ```
-pnpm check && pnpm test && pnpm lint:specs
+pnpm check && pnpm test && pnpm --filter @mindkid/gates test
 ```
 
-## 10. Cổng chống tick khống — `pnpm check:progress`
+## 10. Cổng chống tick khống — `node packages/gates/scripts/check-progress.ts`
 
 Đo được 2026-08-09, sau khi checklist của chính task này chạy một vòng: **khoảng 50 ô đã tick,
 đúng một ô có việc thật đằng sau**. Commit `1b063d8` (P0.0) thêm

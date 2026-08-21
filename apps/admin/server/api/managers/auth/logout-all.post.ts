@@ -5,7 +5,7 @@ import { clearUserSession } from "#imports";
 import {
   clearManagerRememberCookie,
   validateManagerCsrf,
-} from "../../../../utils/admin-auth-runtime.js";
+} from "../../../utils/auth-runtime.js";
 
 export async function handleLogoutAll(event: H3Event) {
   validateManagerCsrf(event);

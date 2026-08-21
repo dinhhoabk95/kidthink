@@ -216,7 +216,7 @@ T5 nối chéo: "xem lịch sử" từ mọi entity + link từ thẻ cờ (tr�
 - [ ] Mất số liệu queue → `/system` hiện "không xác định", **không** xanh.
 - [ ] Không thao tác nào phát ra từ `/system`.
 - [ ] `content_reviewer` bị **403** ở cả ba màn hình.
-- [ ] `pnpm check && pnpm test && pnpm test:e2e && pnpm lint:specs && pnpm check:progress` xanh.
+- [ ] `pnpm check && pnpm test && pnpm test:e2e && pnpm --filter @mindkid/gates test && node packages/gates/scripts/check-progress.ts` xanh.
 
 ### Task 6 — Evidence, promote và nợ chuyển tiếp
 

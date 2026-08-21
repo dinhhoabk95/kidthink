@@ -73,7 +73,7 @@
 - [x] Gọi `writeAudit` ngoài transaction là lỗi biên dịch.
 - [x] Cổng payload chặn PII trẻ và bí mật ở runtime, có ca âm.
 - [x] `content_reviewer` không đọc được audit.
-- [x] `pnpm check && pnpm test && pnpm lint:specs && pnpm check:progress` xanh.
+- [x] `pnpm check && pnpm test && pnpm --filter @mindkid/gates test && node packages/gates/scripts/check-progress.ts` xanh.
 - [x] Human review diff.
 
 ## Task 7 — Evidence và promote

@@ -74,7 +74,7 @@ T0 đo output thật #63 + P3 activity/lesson
 - [ ] Đối chiếu `BR-WSM-*`, `BR-ACM-05`, lifecycle/versioning và §7.3 không-nới.
 - [ ] Ghi delta bảng worksheet/checklist hiện tại; không tạo bảng/renderer song song.
 
-**Kiểm chứng:** `pnpm check:progress`; preflight link tới code merge thật.
+**Kiểm chứng:** `node packages/gates/scripts/check-progress.ts`; preflight link tới code merge thật.
 
 **Phụ thuộc:** Task #63 + P3.2 · **Files:** task/spec nếu seam đổi · **Cỡ:** S.
 
@@ -87,7 +87,7 @@ T0 đo output thật #63 + P3 activity/lesson
   publish checklist cùng ghi version/hash/artifact gate.
 - [ ] Mọi lỗi layout/render/publish/download dùng mã registry; không tự chế 422.
 
-**Kiểm chứng:** `pnpm lint:specs`; tìm corpus không còn chiều dependency hoặc gate path-only.
+**Kiểm chứng:** `pnpm --filter @mindkid/gates test`; tìm corpus không còn chiều dependency hoặc gate path-only.
 
 **Phụ thuộc:** T0 + human schema review · **Files:** tối đa 4 spec/registry · **Cỡ:** M.
 
@@ -181,7 +181,7 @@ T0 đo output thật #63 + P3 activity/lesson
 - [ ] `WORKSHEET-MODEL` chuyển `implemented`; Task #14 tick đúng spec bằng progress check.
 - [ ] Human review artifact thật; không agent publish content hoặc chạy seed ngoài local.
 
-**Kiểm chứng:** full gate + `pnpm check:progress`.
+**Kiểm chứng:** full gate + `node packages/gates/scripts/check-progress.ts`.
 
 **Phụ thuộc:** T7 · **Files:** spec status, Task #14/evidence · **Cỡ:** S.
 

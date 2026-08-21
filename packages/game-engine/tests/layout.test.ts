@@ -37,8 +37,8 @@ describe("Game Layout Engine (BR-LAY-01..10)", () => {
     }
   });
 
-  it("BR-LAY-02 — LayoutId là từ vựng đóng gồm đúng 19 giá trị; id lạ bị từ chối", () => {
-    expect(LAYOUT_IDS).toHaveLength(19);
+  it("BR-LAY-02 — LayoutId là từ vựng đóng gồm đúng 21 giá trị; id lạ bị từ chối", () => {
+    expect(LAYOUT_IDS).toHaveLength(21);
     expect(isLayoutId("grid")).toBe(true);
     expect(isLayoutId("step-ladder")).toBe(true);
     expect(isLayoutId("number-bond-tree")).toBe(true);
@@ -48,6 +48,8 @@ describe("Game Layout Engine (BR-LAY-01..10)", () => {
     expect(isLayoutId("clue-board")).toBe(true);
     expect(isLayoutId("matrix-3x3")).toBe(true);
     expect(isLayoutId("equation-rows")).toBe(true);
+    expect(isLayoutId("mirror-axis-split")).toBe(true);
+    expect(isLayoutId("free-scene")).toBe(true);
     expect(isLayoutId("random-unknown-layout")).toBe(false);
 
     expect(() => resolveLayout("invalid-layout" as LayoutId)).toThrowError(

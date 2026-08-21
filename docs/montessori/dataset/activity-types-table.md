@@ -3,7 +3,7 @@
 > **Căn cứ spec:** [`montessori-corpus-mapping.md`](../specs/05-content/montessori-corpus-mapping.md) & [`montessori-game-level-batch.md`](../specs/05-content/montessori-game-level-batch.md).
 > **Quy tắc:** Mã dạng bài `WB<nn>-D<n>` là bất biến sau khi merge. Tổng **59** dạng bài — 34 dạng nhận đợt này (20 Lô A + 14 Lô B), 25 dạng hoãn đợt sau per `D-RQ`.
 >
-> Số ở mục 2 **đo bằng lệnh trên chính bảng này**, không đếm tay. Cổng `pnpm lint:montessori-corpus`
+> Số ở mục 2 **đo bằng lệnh trên chính bảng này**, không đếm tay. Cổng `pnpm --filter @mindkid/db test`
 > đối chiếu chúng với mục 7.5 của [`montessori-game-level-batch.md`](../../specs/05-content/montessori-game-level-batch.md).
 > Con số 57 · 33 · 24 · 19 ở các bản trước là lỗi cộng, đã sửa ở T99 WP99.0 (2026-08-20); mã dạng bài không đổi hàng nào.
 

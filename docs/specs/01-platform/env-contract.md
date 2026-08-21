@@ -47,7 +47,7 @@ nó thành một cổng chặn phát hành.
 | `packages/config/src/env-contract.ts`                   | Người phát triển | Registry — nguồn sự thật duy nhất          |
 | `/etc/mindkid/env/web.env` · `admin.env` · `worker.env` | Người vận hành   | Chỉ trên máy chủ, quyền `0600`, chủ `root` |
 | `.env` ở gốc repo                                       | Người phát triển | Chỉ máy trạm, đã bị `.gitignore` chặn      |
-| `pnpm deploy:env --host <tên> --check`                  | Người vận hành   | Đối chiếu máy chủ với registry             |
+| `pnpm deploy env --host <tên> --check`                  | Người vận hành   | Đối chiếu máy chủ với registry             |
 
 ## 4. Main flow
 

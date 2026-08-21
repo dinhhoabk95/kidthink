@@ -27,7 +27,7 @@ thiếu code**, chúng thiếu thứ chứng minh code tuân rule.
 5. [`business-rules.md`](../specs/00-foundation/business-rules.md) sở hữu 4 rule `BR-REG2-*`.
    `BR-REG2-01` và `BR-REG2-03` được `lint:specs` C6 thi hành một phần; **`BR-REG2-02` và
    `BR-REG2-04` không có cổng nào**.
-6. §3 của nó dẫn `pnpm gen:check` — **lệnh không tồn tại** trong `package.json`.
+6. §3 của nó dẫn `node packages/gates/scripts/check-progress.ts` — **lệnh không tồn tại** trong `package.json`.
 7. Hai đảo chiều phụ thuộc: [`type-safety.md`](../specs/08-quality/type-safety.md) đã
    `implemented` mà khai `depends_on` spec chưa implemented này; bốn spec P5 đã `implemented` khai
    `depends_on` [`business-rules.md`](../specs/00-foundation/business-rules.md).
@@ -65,7 +65,7 @@ WP91.1 và WP91.3 độc lập nhau, chạy song song được.
 | WP91.2 | M | Thêm validate body cho 24 route còn nợ; đổi `lint:route-validation` từ ngưỡng "không tăng" sang 0 | Cổng báo 0 route nợ; fixture route thiếu validate làm cổng đỏ |
 | WP91.3 | M | Cổng `lint:rule-ids`: so với `HEAD`, mã rule biến mất hoặc bị tái dùng thì đỏ (`BR-REG2-02`); mã rule không được spec nào dẫn thì đỏ (`BR-REG2-04`) | Ca âm: xoá một mã rule trong fixture, đổi nghĩa một mã — cả hai đỏ |
 | WP91.4 | S | Sửa §3 của [`business-rules.md`](../specs/00-foundation/business-rules.md): bỏ lệnh không tồn tại, hoặc thêm lệnh thật vào `package.json` | Mọi lệnh được spec dẫn đều chạy được |
-| WP91.5 | S | Lật `status` hai spec sang `implemented` sau khi có test gọi mã rule của chúng | `pnpm check:progress` xanh; `pnpm lint:specs` xanh |
+| WP91.5 | S | Lật `status` hai spec sang `implemented` sau khi có test gọi mã rule của chúng | `node packages/gates/scripts/check-progress.ts` xanh; `pnpm --filter @mindkid/gates test` xanh |
 
 ## 6. Acceptance criteria
 
@@ -96,8 +96,8 @@ Scenario: Bằng chứng đi vay không đóng được spec
 
 ```bash
 pnpm exec biome check .
-pnpm lint:specs
-pnpm lint:route-validation
+pnpm --filter @mindkid/gates test
+pnpm --filter @mindkid/gates test
 pnpm check
 pnpm vitest run apps/web/tests scripts/tests
 ```

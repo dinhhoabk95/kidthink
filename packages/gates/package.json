@@ -1,0 +1,20 @@
+{
+  "name": "@mindkid/gates",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@mindkid/config": "workspace:*"
+  },
+  "devDependencies": {
+    "vitest": "catalog:"
+  },
+  "exports": {
+    "./source-scan": "./src/lint-lib/source-scan.ts",
+    "./route-validation": "./src/lint-route-validation.ts"
+  }
+}

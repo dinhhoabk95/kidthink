@@ -46,15 +46,15 @@ Mười một spec ở Bước 4–14 **không phụ thuộc lẫn nhau** — ba
       thành Task #7)
 - [x] Sửa 21 tham chiếu trần thành liên kết markdown (`C15`)
 - [x] Sửa 3 link vỡ do đổi tên (`C4`) và 16 liên kết lồng đôi do thay thế hàng loạt
-- [x] `pnpm lint:specs` — 0 lỗi, 179 cảnh báo
+- [x] `pnpm --filter @mindkid/gates test` — 0 lỗi, 179 cảnh báo
 - [x] Commit `docs(tasks): T6 bước 0 — plan migration đổi số 06 sang 07, sửa 21 lỗi C15`
 
 ## Bước 1 — Ca âm `C7` (chứng minh cổng bắt được chu trình)
 
 `C7` chưa từng được chứng minh là bắt đúng. Nó cũng chưa từng đỏ, vì nó chỉ gọi `warn()`.
 
-- [x] Đọc `checkC7` ở [`scripts/lint-specs-lib.ts`](../../scripts/lint-specs-lib.ts) dòng 734
-- [x] Đọc ca âm `C8` đã có ở [`scripts/tests/lint-specs.test.ts`](../../scripts/tests/lint-specs.test.ts)
+- [x] Đọc `checkC7` ở [`packages/gates/src/lint-specs-lib.ts`](../../scripts/lint-specs-lib.ts) dòng 734
+- [x] Đọc ca âm `C8` đã có ở [`packages/gates/tests/lint-specs.test.ts`](../../scripts/tests/lint-specs.test.ts)
       làm khuôn
 - [x] **Đo được: bốn ca này ĐÃ tồn tại sẵn** (`A → B → A`, `A → B → C → A`, DAG không chu
       trình, dep ngoài đồ thị). Bước 1 vì vậy thu lại thành: siết assertion và thêm ca thiếu
@@ -128,8 +128,8 @@ Cấm xoá thông tin — chỉ đổi cạnh phụ thuộc thành liên kết t
 
 ### Kiểm chung Bước 2
 
-- [x] `pnpm lint:specs` — **0 cảnh báo `C7`** (nền là 8)
-- [x] `pnpm lint:specs` — 0 lỗi
+- [x] `pnpm --filter @mindkid/gates test` — **0 cảnh báo `C7`** (nền là 8)
+- [x] `pnpm --filter @mindkid/gates test` — 0 lỗi
 - [x] Commit `fix(specs): T6 bước 2 — cắt 8 chu trình depends_on (D-AH..D-AN)`
 
 ## Bước 3 — `D-AM`: [`next-game-recommendation.md`](../specs/04-play/next-game-recommendation.md) P1 sang P3
@@ -142,12 +142,12 @@ Cấm xoá thông tin — chỉ đổi cạnh phụ thuộc thành liên kết t
 - [x] Xác nhận [`roadmap.md`](../specs/roadmap.md) **không cần sửa** (nó đã đúng)
 - [x] Đếm lại: `P1` phải ra **43**, `P3` phải ra **12**
 - [x] Cập nhật [`SPEC.md`](../SPEC.md) §14 nếu nó có số đếm theo phase
-- [x] `pnpm lint:specs` 0 lỗi
+- [x] `pnpm --filter @mindkid/gates test` 0 lỗi
 - [x] Commit `fix(specs): T6 bước 3 — next-game-recommendation P1 sang P3 (D-AM)`
 
 ## Cổng dừng A
 
-- [x] `pnpm lint:specs` — 0 lỗi **và 0 cảnh báo `C7`**
+- [x] `pnpm --filter @mindkid/gates test` — 0 lỗi **và 0 cảnh báo `C7`**
 - [x] `pnpm test` xanh, có ca âm `C7`
 - [x] `pnpm check` xanh
 - [x] Đếm: `P1` = 43, `P3` = 12, `approved` = 38 (chưa approve gì ở bước này)
@@ -171,7 +171,7 @@ Cấm xoá thông tin — chỉ đổi cạnh phụ thuộc thành liên kết t
       [`testing-strategy.md`](../specs/08-quality/testing-strategy.md) §11 Q2 trỏ về đây
 - [x] Checklist [`CONVENTIONS.md`](../specs/CONVENTIONS.md) §10
 - [x] `status: approved`, cập nhật `reviewed`
-- [x] `pnpm lint:specs` 0 lỗi
+- [x] `pnpm --filter @mindkid/gates test` 0 lỗi
 - [x] Commit `feat(specs): T6 bước 4 — approve game-engine-runtime`
 
 ### Bước 5 — [`access-gating.md`](../specs/04-play/access-gating.md) (205 dòng, 8 rule, 2 hỏi mở, 1 `C6`)
@@ -190,7 +190,7 @@ Spec mà `D-AG` của Task #5 đã cắt cạnh để không phải kéo vào l�
       gating" khớp đúng 20 ô ở đây — nếu lệch thì một trong hai sai, ghi sổ cái trước khi sửa
 - [x] Checklist [`CONVENTIONS.md`](../specs/CONVENTIONS.md) §10
 - [x] `status: approved`, cập nhật `reviewed`
-- [x] `pnpm lint:specs` 0 lỗi
+- [x] `pnpm --filter @mindkid/gates test` 0 lỗi
 - [x] Commit `feat(specs): T6 bước 5 — approve access-gating`
 
 ### Bước 6 — [`content-seed-authoring.md`](../specs/01-platform/content-seed-authoring.md) (405 dòng, 14 rule, 6 hỏi mở, 0 `C6`)
@@ -215,7 +215,7 @@ Spec mà `D-AG` của Task #5 đã cắt cạnh để không phải kéo vào l�
       chặn P1 và cần **người**, không tự chốt
 - [x] Checklist [`CONVENTIONS.md`](../specs/CONVENTIONS.md) §10
 - [x] `status: approved`, cập nhật `reviewed`
-- [x] `pnpm lint:specs` 0 lỗi
+- [x] `pnpm --filter @mindkid/gates test` 0 lỗi
 - [x] Commit `feat(specs): T6 bước 6 — approve content-seed-authoring`
 
 ### Bước 7 — [`game-level-model.md`](../specs/05-content/game-level-model.md) (162 dòng, 10 rule, 2 hỏi mở, 0 `C6`)
@@ -232,7 +232,7 @@ Spec mà `D-AG` của Task #5 đã cắt cạnh để không phải kéo vào l�
 - [x] Xác nhận "chỉ dẫn ≤12 từ" không mâu thuẫn `BR-A11-11` (chỉ dẫn không bao giờ chỉ bằng chữ)
 - [x] Checklist [`CONVENTIONS.md`](../specs/CONVENTIONS.md) §10
 - [x] `status: approved`, cập nhật `reviewed`
-- [x] `pnpm lint:specs` 0 lỗi
+- [x] `pnpm --filter @mindkid/gates test` 0 lỗi
 - [x] Commit `feat(specs): T6 bước 7 — approve game-level-model`
 
 ---
@@ -252,7 +252,7 @@ Spec mà `D-AG` của Task #5 đã cắt cạnh để không phải kéo vào l�
 - [x] Điền "vì sao" cho 2 rule còn trống
 - [x] Checklist [`CONVENTIONS.md`](../specs/CONVENTIONS.md) §10
 - [x] `status: approved`, cập nhật `reviewed`
-- [x] `pnpm lint:specs` 0 lỗi
+- [x] `pnpm --filter @mindkid/gates test` 0 lỗi
 - [x] Commit `feat(specs): T6 bước 8 — approve content-tagging`
 
 ### Bước 9 — [`telemetry-pipeline.md`](../specs/01-platform/telemetry-pipeline.md) (186 dòng, 9 rule, 3 hỏi mở, 2 `C6`)
@@ -268,7 +268,7 @@ Spec mà `D-AG` của Task #5 đã cắt cạnh để không phải kéo vào l�
 - [x] Điền "vì sao" cho 2 rule còn trống
 - [x] Checklist [`CONVENTIONS.md`](../specs/CONVENTIONS.md) §10
 - [x] `status: approved`, cập nhật `reviewed`
-- [x] `pnpm lint:specs` 0 lỗi
+- [x] `pnpm --filter @mindkid/gates test` 0 lỗi
 - [x] Commit `feat(specs): T6 bước 9 — approve telemetry-pipeline`
 
 ### Bước 10 — [`oauth-provider-registry.md`](../specs/01-platform/oauth-provider-registry.md) (254 dòng, 15 rule, 2 hỏi mở, 0 `C6`)
@@ -287,7 +287,7 @@ Spec mà `D-AG` của Task #5 đã cắt cạnh để không phải kéo vào l�
 - [x] Xác nhận `apps/admin` **không đăng ký route OAuth nào** — cấm bằng việc không có file
 - [x] Checklist [`CONVENTIONS.md`](../specs/CONVENTIONS.md) §10
 - [x] `status: approved`, cập nhật `reviewed`
-- [x] `pnpm lint:specs` 0 lỗi
+- [x] `pnpm --filter @mindkid/gates test` 0 lỗi
 - [x] Commit `feat(specs): T6 bước 10 — approve oauth-provider-registry`
 
 ### Bước 11 — [`monitoring-and-alerting.md`](../specs/01-platform/monitoring-and-alerting.md) (192 dòng, 7 rule, 3 hỏi mở, 2 `C6`)
@@ -303,7 +303,7 @@ Spec mà `D-AG` của Task #5 đã cắt cạnh để không phải kéo vào l�
 - [x] Điền "vì sao" cho 2 rule còn trống
 - [x] Checklist [`CONVENTIONS.md`](../specs/CONVENTIONS.md) §10
 - [x] `status: approved`, cập nhật `reviewed`
-- [x] `pnpm lint:specs` 0 lỗi
+- [x] `pnpm --filter @mindkid/gates test` 0 lỗi
 - [x] Commit `feat(specs): T6 bước 11 — approve monitoring-and-alerting`
 
 ---
@@ -328,7 +328,7 @@ Spec mà `D-AG` của Task #5 đã cắt cạnh để không phải kéo vào l�
       file này) đã được trả lời ở đây, hoặc ghi rõ vẫn hoãn
 - [x] Checklist [`CONVENTIONS.md`](../specs/CONVENTIONS.md) §10
 - [x] `status: approved`, cập nhật `reviewed`
-- [x] `pnpm lint:specs` 0 lỗi
+- [x] `pnpm --filter @mindkid/gates test` 0 lỗi
 - [x] Commit `feat(specs): T6 bước 12 — approve account-settings`
 
 ### Bước 13 — [`account-deletion.md`](../specs/03-account/account-deletion.md) (193 dòng, 10 rule, 2 hỏi mở, 0 `C6`)
@@ -345,7 +345,7 @@ Spec mà `D-AG` của Task #5 đã cắt cạnh để không phải kéo vào l�
       người dùng đăng ký lại
 - [x] Checklist [`CONVENTIONS.md`](../specs/CONVENTIONS.md) §10
 - [x] `status: approved`, cập nhật `reviewed`
-- [x] `pnpm lint:specs` 0 lỗi
+- [x] `pnpm --filter @mindkid/gates test` 0 lỗi
 - [x] Commit `feat(specs): T6 bước 13 — approve account-deletion`
 
 ### Bước 14 — [`taxonomy-browser.md`](../specs/06-admin/taxonomy-browser.md) (155 dòng, 6 rule, 1 hỏi mở, 1 `C6`)
@@ -358,13 +358,13 @@ Spec mà `D-AG` của Task #5 đã cắt cạnh để không phải kéo vào l�
 - [x] Điền "vì sao" cho rule còn trống
 - [x] Checklist [`CONVENTIONS.md`](../specs/CONVENTIONS.md) §10
 - [x] `status: approved`, cập nhật `reviewed`
-- [x] `pnpm lint:specs` 0 lỗi
+- [x] `pnpm --filter @mindkid/gates test` 0 lỗi
 - [x] Commit `feat(specs): T6 bước 14 — approve taxonomy-browser`
 
 ## Cổng dừng B
 
 - [x] 11/11 spec đích `approved`
-- [x] `pnpm lint:specs` 0 lỗi, 0 cảnh báo `C7`
+- [x] `pnpm --filter @mindkid/gates test` 0 lỗi, 0 cảnh báo `C7`
 - [x] Cảnh báo `C6` giảm ít nhất 8 so với nền 171
 - [x] `pnpm test` xanh
 - [x] Mọi quyết định mới ghi vào sổ cái của
@@ -386,7 +386,7 @@ Lý do đầy đủ: [`07-first-migration-plan.md`](07-first-migration-plan.md) 
 - [x] Sửa dòng "Ask first: Thêm một FK polymorphic thứ tám" ở §10 thành "thứ mười"
 - [x] Ghi quyết định vào sổ cái, đánh số tiếp từ `D-AN`
 - [x] Cập nhật `reviewed`, giữ `status: approved`
-- [x] `pnpm lint:specs` 0 lỗi
+- [x] `pnpm --filter @mindkid/gates test` 0 lỗi
 - [x] Commit `fix(specs): T6 bước 15 — DMO §7.2 danh sách đa hình 7 sang 9`
 
 ## Bước 16 — Nâng `C7` từ cảnh báo lên lỗi
@@ -394,12 +394,12 @@ Lý do đầy đủ: [`07-first-migration-plan.md`](07-first-migration-plan.md) 
 Chỉ làm **sau** khi Cổng dừng A đã xác nhận `C7` về 0. Nâng sớm hơn là làm đỏ gate.
 
 - [x] Đổi `warn(` thành `fail(` trong `checkC7`
-      ([`scripts/lint-specs-lib.ts`](../../scripts/lint-specs-lib.ts) dòng 785)
+      ([`packages/gates/src/lint-specs-lib.ts`](../../scripts/lint-specs-lib.ts) dòng 785)
 - [x] Cập nhật ca âm Bước 1 để khẳng định nó nằm trong danh sách **lỗi**, không phải cảnh báo
 - [x] Cập nhật phần chú thích đầu file liệt kê 15 kiểm tra (dòng 15: "C7 — depends_on không
       chu trình") nếu nó ghi mức nghiêm trọng
-- [x] `pnpm lint:specs` — vẫn 0 lỗi (vì đã cắt hết chu trình ở Bước 2)
-- [x] **Ca âm cuối**: thêm tạm một chu trình vào hai file spec thật, chạy `pnpm lint:specs`,
+- [x] `pnpm --filter @mindkid/gates test` — vẫn 0 lỗi (vì đã cắt hết chu trình ở Bước 2)
+- [x] **Ca âm cuối**: thêm tạm một chu trình vào hai file spec thật, chạy `pnpm --filter @mindkid/gates test`,
       phải **đỏ**; rồi hoàn tác
 - [x] `pnpm test` xanh
 - [x] Commit `feat(lint): T6 bước 16 — C7 chu trình depends_on chuyển từ cảnh báo sang lỗi`
@@ -427,7 +427,7 @@ mà kiểm tra tự động bỏ qua.
 ## Cổng dừng cuối — kết thúc task
 
 - [x] 11/11 spec đích `approved`, tổng corpus 49/130
-- [x] `pnpm lint:specs` 0 lỗi, **0 chu trình** toàn corpus, `C7` là mức lỗi
+- [x] `pnpm --filter @mindkid/gates test` 0 lỗi, **0 chu trình** toàn corpus, `C7` là mức lỗi
 - [x] `pnpm check` xanh
 - [x] `pnpm test` xanh
 - [ ] **`git push` — CHƯA làm được trong phiên này.** Docker daemon không chạy trong sandbox
@@ -455,5 +455,5 @@ for f in $(grep -rl "^phase: P1" docs/specs/*/ --include="*.md"); do
 done | sort | uniq -c                                                     # approved 13
 
 # Cổng
-pnpm lint:specs && pnpm test && pnpm check
+pnpm --filter @mindkid/gates test && pnpm test && pnpm check
 ```

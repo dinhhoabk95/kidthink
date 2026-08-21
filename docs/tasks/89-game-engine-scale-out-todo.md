@@ -16,7 +16,7 @@
 - [x] Viết [`thinking-coverage-matrix.md`](../specs/08-quality/thinking-coverage-matrix.md) — 10 rule `BR-TCM`
 - [x] Đăng ký 6 prefix mới ở [`business-rules.md`](../specs/00-foundation/business-rules.md), thêm mã `LAYOUT_NOT_SUPPORTED` ở [`error-codes.md`](../specs/00-foundation/error-codes.md)
 - [x] Cập nhật đếm ở [`index.md`](../specs/index.md) và [`SPEC.md`](../SPEC.md) §14: 139 lên 145 spec, 122 lên 124 MVP
-- [x] `pnpm lint:specs` xanh — 145 spec, 18 check, 0 lỗi, 0 cảnh báo
+- [x] `pnpm --filter @mindkid/gates test` xanh — 145 spec, 18 check, 0 lỗi, 0 cảnh báo
 
 ## P1 — Sửa 3 defect chặn mọi thứ (xong)
 
@@ -31,7 +31,7 @@
 - [x] Hai ca âm: vòng lặp có canvas thì `render` được gọi; không canvas thì không gọi
 - [x] `packages/game-engine` 55/55 · `tsc --noEmit` sạch · `biome check` sạch
 - [x] Bộ test không cần cơ sở dữ liệu: **662/663**. Ca hỏng duy nhất là
-      `scripts/tests/adaptive-replay.test.ts` với `ECONNREFUSED 127.0.0.1:5433`
+      `packages/db/tests/gates/adaptive-replay.test.ts` với `ECONNREFUSED 127.0.0.1:5433`
 
 **Cảnh báo về bộ test đầy đủ.** Chạy toàn repo cho 2058 test, 1500 xanh, **435 đỏ**,
 272 suite đỏ. Postgres cổng 5433 và Valkey cổng 6379 đều không chạy trên máy đo, và
@@ -54,7 +54,7 @@ trên sống sót. Phân bố: `server/api` 353 · `packages/db` 160 · `app/pag
 
 Đo trước khi sửa, và số đo đổi hẳn phạm vi — xem kế hoạch §2.4.
 
-- [x] Viết `pnpm report:tags` đo độ lệch giữa từ vựng Lớp 1 và tag thật trong seed
+- [x] Viết `pnpm --filter @mindkid/db report:tags` đo độ lệch giữa từ vựng Lớp 1 và tag thật trong seed
 - [x] Đo được: trục `what` 120/130 giá trị ngoài từ vựng; trục `thinking` 116/122.
       Một nửa số lượt gắn tag nằm ngoài từ vựng
 - [x] Phát hiện hai từ vựng đóng khác nhau, giao **rỗng**: [`content-tagging.md`](../specs/01-platform/content-tagging.md) §7.1 so với
@@ -78,14 +78,14 @@ một cổng luôn đỏ, và cổng luôn đỏ cũng không ai đọc.
 
 ## P4 — Cổng phủ tư duy (chờ approve)
 
-- [ ] `pnpm check:coverage` dựng 3 ma trận, in ô thiếu và số còn thiếu
+- [ ] `pnpm --filter @mindkid/db test` dựng 3 ma trận, in ô thiếu và số còn thiếu
 - [ ] Nối vào cổng publish của [`content-lifecycle.md`](../specs/00-foundation/content-lifecycle.md)
 - [ ] Hiển thị ma trận trên [`admin-dashboard.md`](../specs/06-admin/admin-dashboard.md)
 
 ## P5 — Bộ dựng template (chờ approve)
 
 - [ ] 4 nguyên thuỷ cơ chế, port đường tap fallback vào `PlacementMechanic`
-- [ ] `pnpm gen:templates` sinh 6 đầu ra ở [`template-authoring-kit.md`](../specs/01-platform/template-authoring-kit.md) §7.2
+- [ ] `pnpm --filter @mindkid/game-engine gen:templates` sinh 6 đầu ra ở [`template-authoring-kit.md`](../specs/01-platform/template-authoring-kit.md) §7.2
 - [ ] Kiểm lệch file sinh ra — `BR-TAK-03`
 - [ ] Bộ test tuân thủ tự nhận template, 9 kiểm ở §7.4
 - [ ] Chuyển 6 template hiện có sang hình dạng file mô tả, không đổi `content_contract`

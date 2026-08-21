@@ -48,7 +48,7 @@
 - [x] Danh sách từ cấm đăng ký ở nơi dùng chung với báo cáo cơ bản; không chép hai bản.
 - [x] Câu hỏi mở số 1 đóng hoặc hoãn kèm điều kiện mở lại đo được.
 - [x] Không thêm spec mới; không thêm mã lỗi ngoài registry.
-- [x] `pnpm lint:specs` 0 lỗi, 0 cảnh báo mới.
+- [x] `pnpm --filter @mindkid/gates test` 0 lỗi, 0 cảnh báo mới.
 
 ## Checkpoint A — Contract
 
@@ -135,7 +135,7 @@ Quy trình cho **mỗi** lô:
 - [x] Vật liệu là thứ có sẵn trong nhà, cùng chuẩn `BR-LSM-04`.
 - [x] Không mục nào chứa từ trong danh sách cấm của `D-NE`.
 - [x] Reviewer sư phạm đọc từng mục; ghi người duyệt.
-- [x] `pnpm seed:check` xanh.
+- [x] `pnpm --filter @mindkid/db seed:check` xanh.
 - [x] Dry-run riêng lô xanh.
 
 ### Checkpoint sau mỗi lô
@@ -181,15 +181,15 @@ Quy trình cho **mỗi** lô:
 - [x] Cổng ngôn ngữ có ca âm và đang chạy trong `pnpm check`.
 - [x] Thư viện gợi ý đạt cổng cuối của Task 6.
 - [x] [`advanced-report.md`](../specs/03-account/advanced-report.md) → `implemented`.
-- [x] Tick **P3.7** trong Task #14 chỉ khi `pnpm check:progress` tự xanh.
+- [x] Tick **P3.7** trong Task #14 chỉ khi `node packages/gates/scripts/check-progress.ts` tự xanh.
 
 ## Cổng dừng cuối
 
 - [x] `pnpm check` xanh.
 - [x] `pnpm test` xanh.
 - [x] `pnpm test:e2e` xanh.
-- [x] `pnpm lint:specs` xanh.
-- [x] `pnpm check:progress` xanh.
+- [x] `pnpm --filter @mindkid/gates test` xanh.
+- [x] `node packages/gates/scripts/check-progress.ts` xanh.
 - [x] Human review diff migration, engine đếm, route, UI và từng lô nội dung.
 - [x] Không xuất PDF, không báo cáo lớp học.
 - [x] Không phạm vi P3.8 lọt vào: không trang công khai.

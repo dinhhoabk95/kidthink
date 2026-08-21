@@ -87,7 +87,7 @@ Product/Pedagogy/Privacy phải duyệt:
 ## 8. Verification
 
 ```bash
-pnpm lint:specs
+pnpm --filter @mindkid/gates test
 pnpm check
 rg -n "trẻ thật|playtest|evidence|sư phạm|pedagog" SPEC.md docs/specs docs/tasks
 rg -n "consent|assent|stop criteria|retention|clinical|IQ" docs/specs docs/tasks

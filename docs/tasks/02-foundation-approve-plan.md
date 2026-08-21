@@ -33,7 +33,7 @@ phải dọn trước khi động vào nội dung spec:
    version của container thuộc repo khác). Gate mới **phải có ca âm**.
 
 Kết quả mong muốn: 16/16 `approved`, `BR-RBS-04` mở khoá, và một script chạy được
-(`pnpm lint:specs`) giữ corpus không trôi lại.
+(`pnpm --filter @mindkid/gates test`) giữ corpus không trôi lại.
 
 ---
 
@@ -87,7 +87,7 @@ symlink về nó (đúng chữ trong §8: *"root SPEC.md symlink về đây"*). 
 
 ```
 T1 Commit nợ lefthook  ─┐
-                        ├─▶ T2 Chuyển corpus vào mindkid/docs/  ─▶ T3 scripts/lint-specs.ts
+                        ├─▶ T2 Chuyển corpus vào mindkid/docs/  ─▶ T3 packages/gates/tests/lint-specs.test.ts
                         │        (đóng Q10 · git truy vết)              (+ SPEC.md §7)
                         │                                                     │
                         │                                          CHECKPOINT A
@@ -179,13 +179,13 @@ ls -l SPEC.md                                            # -> docs/SPEC.md
 
 ---
 
-### T3 — `scripts/lint-specs.ts` + `pnpm lint:specs`
+### T3 — `packages/gates/tests/lint-specs.test.ts` + `pnpm --filter @mindkid/gates test`
 
 **Mô tả:** Biến [`CONVENTIONS.md`](../specs/CONVENTIONS.md) §10 từ checklist người thành cổng máy. Không có nó, "16/16
 approved" là lời khai, không phải phép đo — và corpus trôi lại ngay sau khi đóng task.
 
 **Sửa spec TRƯỚC (`BR-RBS-08`):** [`SPEC.md`](../SPEC.md) §7 — `pnpm check` = `lint` + `lint:tokens` +
-`lint:deps` + **`lint:specs`** + `typecheck` (5 bước), thêm dòng `pnpm lint:specs`.
+`lint:deps` + **`lint:specs`** + `typecheck` (5 bước), thêm dòng `pnpm --filter @mindkid/gates test`.
 
 **Check phải có** (mỗi check một ca âm riêng):
 
@@ -204,9 +204,9 @@ approved" là lời khai, không phải phép đo — và corpus trôi lại nga
 | C11 | Số spec mỗi thư mục khớp bảng [`SPEC.md`](../SPEC.md) §14 + [`index.md`](../specs/index.md) §Tổng | Đếm lệch (đang lệch 124 vs 130) |
 
 **Acceptance:**
-- [ ] `pnpm lint:specs` exit 0 trên corpus **sau khi** T4·T5·T6 xong
+- [ ] `pnpm --filter @mindkid/gates test` exit 0 trên corpus **sau khi** T4·T5·T6 xong
 - [ ] **11 ca âm**: mỗi check có một fixture vi phạm thì exit 1 + in `file:line` + tên check
-- [ ] Chạy `pnpm lint:specs` **ngay bây giờ** (trước T4–T6) thì exit 1, báo đúng C5 · C10 · C11
+- [ ] Chạy `pnpm --filter @mindkid/gates test` **ngay bây giờ** (trước T4–T6) thì exit 1, báo đúng C5 · C10 · C11
 - [ ] `pnpm check` gọi `lint:specs`; bỏ script thì `pnpm check` không còn kiểm spec (ca âm của wiring)
 
 Lưu ý: Ca âm ở dòng 3 là quan trọng nhất: script mới viết mà xanh ngay là dấu hiệu nó không đo gì.
@@ -218,7 +218,7 @@ Ta **đã biết** corpus đang có 3 vi phạm — script phải thấy đủ c
 
 ### CHECKPOINT A
 - [ ] Corpus trong git, history truy được, 0 link vỡ
-- [ ] `pnpm lint:specs` **đỏ đúng chỗ** (C5 · C10 · C11) — chứng minh cổng thật
+- [ ] `pnpm --filter @mindkid/gates test` **đỏ đúng chỗ** (C5 · C10 · C11) — chứng minh cổng thật
 - [ ] 11/11 ca âm chặn đúng
 - [ ] Người duyệt trước khi động vào nội dung spec
 
@@ -285,7 +285,7 @@ bằng `--no-verify`, nên nó *không* thay được câu "không có cờ bỏ
 ---
 
 ### CHECKPOINT B
-- [ ] `pnpm lint:specs` **exit 0** trên 130/130 — lần đầu corpus sạch cơ học có đo
+- [ ] `pnpm --filter @mindkid/gates test` **exit 0** trên 130/130 — lần đầu corpus sạch cơ học có đo
 - [ ] `pnpm check` (5 bước) exit 0 · `pnpm test` exit 0
 - [ ] 1 commit cho mỗi task, message nói rõ đóng OQ nào
 
@@ -372,13 +372,13 @@ Mỗi task T8–T12 chạy đúng một quy trình trên từng spec trong layer
 2. Đóng OQ chặn P0 của spec đó — mỗi câu ghi **quyết định + vì sao + ngày**, gạch số câu
    (`~~3~~`) đúng khuôn đang dùng ở [`repo-bootstrap.md`](../specs/00-foundation/repo-bootstrap.md) §11
 3. `status: draft` → `approved`, `reviewed:` → ngày hôm nay
-4. `pnpm lint:specs` xanh — **check C8** đảm bảo không approve ngược thứ tự
+4. `pnpm --filter @mindkid/gates test` xanh — **check C8** đảm bảo không approve ngược thứ tự
 
 **Acceptance chung cho T8–T12:**
 - [ ] Mọi OQ chặn P0 của layer đã gạch, có quyết định + lý do
 - [ ] Mọi OQ chờ còn nguyên, có `Chặn phase` + `Chủ`
 - [ ] `status: approved` + `reviewed` đúng ngày
-- [ ] `pnpm lint:specs` exit 0 (C8 chứng minh dependency đã approved trước)
+- [ ] `pnpm --filter @mindkid/gates test` exit 0 (C8 chứng minh dependency đã approved trước)
 - [ ] Mỗi quyết định đóng OQ đụng schema thì ghi thêm dòng vào [`data-model-overview.md`](../specs/01-platform/data-model-overview.md)
       §Ràng buộc chờ (để P0 bước 7 không phải đọc lại 16 file)
 
@@ -415,7 +415,7 @@ OQ P0: [`package-catalog.md`](../specs/00-foundation/package-catalog.md) Q2 (gó
 
 ### CHECKPOINT D — `BR-RBS-04` mở khoá
 - [ ] 16/16 `00-foundation` = `status: approved`
-- [ ] `pnpm lint:specs` exit 0 · `pnpm check` exit 0 · `pnpm test` exit 0
+- [ ] `pnpm --filter @mindkid/gates test` exit 0 · `pnpm check` exit 0 · `pnpm test` exit 0
 - [ ] Ca âm cuối: đặt một spec về `draft` thì C8 làm đỏ mọi spec phụ thuộc nó
 - [ ] `docs/tasks/todo.md` ghi rõ **P0 bước 7 ([`data-model-overview.md`](../specs/01-platform/data-model-overview.md) → `schema-*`) là việc kế tiếp**
 - [ ] Người duyệt — đây là hành động khó đảo: mở đường cho PR schema đầu tiên
@@ -454,10 +454,10 @@ OQ P0: [`package-catalog.md`](../specs/00-foundation/package-catalog.md) Q2 (gó
 cd mindkid
 
 # Cổng cơ học — phải xanh ở Checkpoint B trở đi
-pnpm lint:specs          # 11 check trên 130 spec
+pnpm --filter @mindkid/gates test          # 11 check trên 130 spec
 pnpm check               # lint · lint:tokens · lint:deps · lint:specs · typecheck
 pnpm test                # 56/56
-pnpm check:services      # PG 17.9 + Valkey 9.1.1
+pnpm services      # PG 17.9 + Valkey 9.1.1
 
 # Ca âm bắt buộc (gate không có ca âm là gate chưa tồn tại)
 #  · mỗi check C1–C11: một fixture vi phạm thì exit 1 + file:line + tên check
@@ -469,7 +469,7 @@ grep -c 'status: approved' docs/specs/00-foundation/*.md | grep -c ':1$'   # mon
 git log --oneline docs/specs/                                              # history tồn tại
 ```
 
-**Cổng ra của Task #2:** 16/16 `approved` · `pnpm lint:specs` xanh có ca âm · mọi OQ chờ có
+**Cổng ra của Task #2:** 16/16 `approved` · `pnpm --filter @mindkid/gates test` xanh có ca âm · mọi OQ chờ có
 chủ và phase · [`data-model-overview.md`](../specs/01-platform/data-model-overview.md) §Ràng buộc chờ ghi đủ quyết định schema đã chốt.
 
 **Vị trí file này:** hiện ở `docs/tasks/plan.md` tại workspace root. **T2 di chuyển nó** sang

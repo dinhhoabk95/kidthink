@@ -20,7 +20,7 @@
 
 ## WP94.1 — Script đo
 
-- [x] `scripts/lint-thinking-coverage.ts` đọc sáu bảng ở §7.
+- [x] `packages/db/tests/gates/thinking-coverage.test.ts` đọc sáu bảng ở §7.
 - [x] In ma trận năng lực nhân trục tư duy kèm số nội dung mỗi ô.
 - [x] Khẳng định script chỉ đọc, không ghi.
 
@@ -40,5 +40,5 @@
 - [x] Thêm cổng vào `pnpm check`.
 - [x] 11 rule có test gọi tên mã.
 - [x] Lật `status` sang `implemented`.
-- [x] `pnpm check` · `pnpm check:progress` xanh.
+- [x] `pnpm check` · `node packages/gates/scripts/check-progress.ts` xanh.
 - [x] Mở PR cho người review diff, không tự merge.

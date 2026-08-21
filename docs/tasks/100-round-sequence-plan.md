@@ -77,11 +77,11 @@ WP100.0  Vá điểm — ship độc lập, không chờ gì
 |---|---:|---|---|
 | WP100.0 | S | Vá `first_try_ratio` khi `rounds_total = 0`. Mặc định đề xuất: điểm rơi về `accuracy` nguyên phần, không nhân 0,4. Ghi quyết định vào câu hỏi còn mở số 2 của [`round-sequence-play.md`](../specs/04-play/round-sequence-play.md) | Test: phiên không có `round_started` và trả lời đúng hết đạt 3 sao. Ca âm: test cũ khẳng định trần 0,4 phải đỏ trước khi sửa |
 | WP100.1 | S | Chốt ba việc: bảng con hay jsonb; cách vá điểm ở WP100.0; câu chữ mục 7.2 của [`event-catalog.md`](../specs/00-foundation/event-catalog.md) | Ba quyết định ghi vào spec kèm lý do; không để lửng |
-| WP100.2 | M | `game_level_rounds` theo mục 7.2 của [`round-set-model.md`](../specs/05-content/round-set-model.md); migration expand-contract copy `content_pack` hiện có thành `round_index = 0` | `pnpm lint:migration-expand` xanh; mọi level đã seed có đúng một hàng vòng; đọc level cũ cho kết quả y hệt trước migration |
+| WP100.2 | M | `game_level_rounds` theo mục 7.2 của [`round-set-model.md`](../specs/05-content/round-set-model.md); migration expand-contract copy `content_pack` hiện có thành `round_index = 0` | `pnpm --filter @mindkid/db test` xanh; mọi level đã seed có đúng một hàng vòng; đọc level cũ cho kết quả y hệt trước migration |
 | WP100.3 | M | Cổng publish ép `BR-RSM-01` tới `BR-RSM-13`, trả `422` kèm `round_index` vi phạm | Cổng đỏ trên fixture vi phạm từng rule; xanh trên corpus hiện có. Ca âm bắt buộc theo `BR-TYP-07` |
 | WP100.4 | M | Payload config trả `rounds[]` và `scoring.mode`; đo trần 200 KB gzipped **cả set** (`BR-RSM-10`) | Set 6 vòng có ảnh vượt trần bị chặn kèm số byte đo được; set hợp lệ trả đủ vòng trong một response |
 | WP100.5 | L | `RoundRunner`: con trỏ vòng, dựng session mỗi vòng, `destroy()` session cũ **trước**, phát `round_started` và `round_completed` | Chạy headless hết set 4 vòng; `getNetworkRequestCount()` trả 0; snapshot hành vi 17 khuôn trùng khít trước và sau |
-| WP100.6 | M | Bề mặt chơi: chuyển vòng, chỉ báo tiến độ phi ngôn ngữ, ăn mừng chỉ ở cuối set, scaffolding reset mỗi vòng | `pnpm lint:kid-surface` xanh; không phần tử nào hiện chữ số tiến độ; không đường nào đếm ngược chuyển vòng |
+| WP100.6 | M | Bề mặt chơi: chuyển vòng, chỉ báo tiến độ phi ngôn ngữ, ăn mừng chỉ ở cuối set, scaffolding reset mỗi vòng | `pnpm --filter @mindkid/gates test` xanh; không phần tử nào hiện chữ số tiến độ; không đường nào đếm ngược chuyển vòng |
 | WP100.7 | S | `complete` trả `422 VALIDATION_FAILED` khi `scoring.mode` là `rounds` mà chuỗi event không có `round_started` nào | Cổng đỏ trên chuỗi event thiếu; xanh trên chuỗi đủ. Đây là cổng ngăn lỗ ở mục 2 quay lại |
 | WP100.8 | S | Verification đầy đủ; lật `status` hai spec sang `implemented` | 27 rule có test mang ID; `pnpm check` và `pnpm test` giữ nguyên baseline |
 
@@ -137,9 +137,9 @@ Scenario: WP100.7 — thiếu round_started bị bắt ở cổng
 ```bash
 export PATH=/Users/macbook/.nvm/versions/node/v24.15.0/bin:$PATH
 pnpm lint
-pnpm lint:specs
-pnpm lint:migration-expand
-pnpm lint:kid-surface
+pnpm --filter @mindkid/gates test
+pnpm --filter @mindkid/db test
+pnpm --filter @mindkid/gates test
 pnpm check
 pnpm vitest run packages/shared packages/game-engine
 pnpm typecheck:web

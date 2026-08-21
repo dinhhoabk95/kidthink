@@ -48,5 +48,5 @@
 
 - [x] 16 rule `BR-LSR` có test gọi tên mã.
 - [x] Lật `status` sang `implemented`.
-- [x] `pnpm check` · `pnpm check:progress` xanh.
+- [x] `pnpm check` · `node packages/gates/scripts/check-progress.ts` xanh.
 - [x] Mở PR cho người review diff, không tự merge.

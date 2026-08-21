@@ -1,0 +1,188 @@
+#!/usr/bin/env node
+/**
+ * Gate: lint:shell
+ * Owns: static analysis of every shell script that runs on the server.
+ *
+ * `bash -n` alone is not this gate. It accepts unquoted expansions, masked
+ * return values and unset-variable reads — the exact defects that turn a
+ * deploy script into a half-applied release. shellcheck is therefore required,
+ * and its absence is a failure rather than a silent pass.
+ */
+import { spawnSync } from "node:child_process";
+import { readdirSync, statSync } from "node:fs";
+import { join, relative, resolve } from "node:path";
+import { REPO_ROOT } from "@mindkid/config/paths";
+
+export interface ShellLintError {
+  file: string;
+  line: number;
+  code: string;
+  message: string;
+}
+
+const SCAN_DIRS = ["infra/scripts", "scripts"];
+// Fixtures are wrong on purpose; the negative-case test points the gate at them
+// explicitly instead.
+const SKIP_DIRS = new Set(["node_modules", "dist", ".output", "fixtures"]);
+
+export function isShellcheckAvailable(): boolean {
+  return (
+    spawnSync("shellcheck", ["--version"], { encoding: "utf8" }).status === 0
+  );
+}
+
+export function checkBashSyntax(filePath: string): ShellLintError | null {
+  const result = spawnSync("bash", ["-n", filePath], { encoding: "utf8" });
+  if (result.status === 0) {
+    return null;
+  }
+  return {
+    file: filePath,
+    line: 0,
+    code: "bash-n",
+    message: (result.stderr || result.stdout || "Syntax error").trim(),
+  };
+}
+
+interface ShellcheckComment {
+  file: string;
+  line: number;
+  level: string;
+  code: number;
+  message: string;
+}
+
+function isShellcheckCommentArray(val: unknown): val is ShellcheckComment[] {
+  if (!Array.isArray(val)) {
+    return false;
+  }
+  return val.every(
+    (c) =>
+      typeof c === "object" &&
+      c !== null &&
+      "file" in c &&
+      typeof c.file === "string" &&
+      "line" in c &&
+      typeof c.line === "number" &&
+      "level" in c &&
+      typeof c.level === "string" &&
+      "code" in c &&
+      typeof c.code === "number" &&
+      "message" in c &&
+      typeof c.message === "string"
+  );
+}
+
+export function runShellcheck(files: string[], root: string): ShellLintError[] {
+  if (files.length === 0) {
+    return [];
+  }
+
+  // -x follows `source` into lib/, which is where most of the logic lives.
+  const result = spawnSync(
+    "shellcheck",
+    // severity=info, not warning: SC2086 (unquoted expansion) is an info-level
+    // finding, and it is the single most common way a deploy script mangles a
+    // path with a space in it.
+    [
+      "--shell=bash",
+      "--severity=info",
+      "--format=json",
+      "-x",
+      // `source=lib/x.sh` directives are relative to the script that writes
+      // them, not to the working directory the gate happens to run from.
+      "--source-path=SCRIPTDIR",
+      ...files,
+    ],
+    { encoding: "utf8", cwd: root, maxBuffer: 20 * 1024 * 1024 }
+  );
+
+  const raw = (result.stdout || "").trim();
+  if (raw.length === 0) {
+    return [];
+  }
+
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(raw);
+  } catch {
+    return [
+      {
+        file: "(shellcheck)",
+        line: 0,
+        code: "parse",
+        message: `Unreadable shellcheck output: ${raw.slice(0, 200)}`,
+      },
+    ];
+  }
+
+  if (!isShellcheckCommentArray(parsed)) {
+    return [
+      {
+        file: "(shellcheck)",
+        line: 0,
+        code: "parse",
+        message: `Unreadable shellcheck output: ${raw.slice(0, 200)}`,
+      },
+    ];
+  }
+
+  return parsed.map((c) => ({
+    file: relative(root, resolve(root, c.file)),
+    line: c.line,
+    code: `SC${c.code}`,
+    message: `${c.level}: ${c.message}`,
+  }));
+}
+
+export function collectShellScripts(root = REPO_ROOT): string[] {
+  const found: string[] = [];
+
+  function walk(dir: string): void {
+    let entries: string[];
+    try {
+      entries = readdirSync(dir);
+    } catch {
+      return;
+    }
+    for (const entry of entries) {
+      const full = join(dir, entry);
+      if (statSync(full).isDirectory()) {
+        if (!SKIP_DIRS.has(entry)) {
+          walk(full);
+        }
+        continue;
+      }
+      if (entry.endsWith(".sh")) {
+        found.push(full);
+      }
+    }
+  }
+
+  for (const dir of SCAN_DIRS) {
+    walk(resolve(root, dir));
+  }
+  return found.sort();
+}
+
+export function scanAndLintShellScripts(root = REPO_ROOT): ShellLintError[] {
+  const files = collectShellScripts(root);
+  const errors: ShellLintError[] = [];
+
+  for (const file of files) {
+    const syntaxError = checkBashSyntax(file);
+    if (syntaxError) {
+      errors.push({ ...syntaxError, file: relative(root, file) });
+    }
+  }
+
+  // A file that does not parse would only produce noise in shellcheck too.
+  if (errors.length > 0) {
+    return errors;
+  }
+
+  return runShellcheck(
+    files.map((f) => relative(root, f)),
+    root
+  );
+}

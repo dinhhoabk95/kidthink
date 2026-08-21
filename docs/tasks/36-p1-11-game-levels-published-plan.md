@@ -70,7 +70,7 @@ ghi rõ *"phán đoán chuyên môn, hiệu lực tới khi có dữ liệu ki�
 
 **D-HH — phủ **theo competency**, không theo skill; công bố % phủ skill thay vì im lặng.** Phân
 bổ: **≥20 level mỗi competency C1–C6** (120 = 6 × 20), trong mỗi competency ưu tiên skill nền —
-skill mà skill khác treo lên. `pnpm seed:report` in ra: level mỗi competency, skill có ≥1 level,
+skill mà skill khác treo lên. `pnpm --filter @mindkid/db seed:report` in ra: level mỗi competency, skill có ≥1 level,
 skill **chưa** có level. Con số phủ skill là **đầu ra công bố** của bước này, đi vào cổng ra P1,
 không phải thứ phát hiện ở P3 khi curriculum cần skill chưa có nội dung.
 
@@ -119,7 +119,7 @@ T1 đối chiếu nguồn trần item + kế hoạch phủ theo competency (D-HG
 - [ ] Ghi rõ: MVP **không** phủ hết 230 skill; mục tiêu phủ skill là con số cụ thể, không phải "càng nhiều càng tốt".
 
 **Kiểm chứng**
-- [ ] Kế hoạch nằm trong repo; `pnpm seed:report` in được cùng cấu trúc phủ.
+- [ ] Kế hoạch nằm trong repo; `pnpm --filter @mindkid/db seed:report` in được cùng cấu trúc phủ.
 
 **Phụ thuộc:** P1.10 · **Cỡ:** M
 
@@ -142,9 +142,9 @@ T1 đối chiếu nguồn trần item + kế hoạch phủ theo competency (D-HG
 ### Task 3 — Sản xuất theo lô
 
 **Tiêu chí nghiệm thu**
-- [ ] Mỗi lô ≤ **30 bản**, một PR, chạy `pnpm seed:check` xanh **trước khi** mở PR.
+- [ ] Mỗi lô ≤ **30 bản**, một PR, chạy `pnpm --filter @mindkid/db seed:check` xanh **trước khi** mở PR.
 - [ ] Mỗi lô có người review đọc **từng bản** (`BR-CSA-02`).
-- [ ] Mỗi lô merge → `pnpm seed:content --batch=…` → hàng `published`, `content_review_log`, hàng `content_seed_batches`.
+- [ ] Mỗi lô merge → `pnpm --filter @mindkid/db seed:content --batch=…` → hàng `published`, `content_review_log`, hàng `content_seed_batches`.
 - [ ] Sau mỗi lô: ghi lại thời gian review thật, cập nhật ước lượng còn lại.
 - [ ] Sáu template đều có level thật; không template nào chỉ có level mẫu của P1.2.
 - [ ] Mỗi level có ≥1 tag mỗi **trục sư phạm** (`BR-TAG-02`) và đúng một skill chính.
@@ -152,14 +152,14 @@ T1 đối chiếu nguồn trần item + kế hoạch phủ theo competency (D-HG
 - [ ] `D-HL`: nếu tới hạn chưa đủ 120, **báo cáo thiếu** — không hạ chuẩn, không nhân bản level đổi số.
 
 **Kiểm chứng**
-- [ ] `pnpm seed:report` in ≥120 level `published`, chia theo competency.
+- [ ] `pnpm --filter @mindkid/db seed:report` in ≥120 level `published`, chia theo competency.
 
 **Phụ thuộc:** T2 · **Cỡ:** ≥4 work package M — mỗi lô ≤30 level, một PR, acceptance và evidence riêng
 
 ### Task 4 — Đo phủ sau mỗi lô
 
 **Tiêu chí nghiệm thu**
-- [ ] `pnpm seed:report` in: level mỗi competency · skill có ≥1 level · skill chưa có level · level mỗi template.
+- [ ] `pnpm --filter @mindkid/db seed:report` in: level mỗi competency · skill có ≥1 level · skill chưa có level · level mỗi template.
 - [ ] Lô kế tiếp chọn từ **khoảng trống** báo cáo chỉ ra, không chọn theo cảm hứng.
 - [ ] Cân bằng band tuổi: mỗi band 3–4 / 4–5 / 5–6 đều có nội dung ở mọi competency.
 - [ ] Cân bằng bậc: **đúng 6** level `free`, một mã `published` cho mỗi competency C1–C6, difficulty 1–2; các level còn lại dùng `login`/`standard`/`premium` theo plan nội dung.
@@ -180,7 +180,7 @@ T1 đối chiếu nguồn trần item + kế hoạch phủ theo competency (D-HG
 - [ ] Thời gian chạy của ba cổng ở quy mô 120 level không làm cổng tự động quá chậm để dùng — đo và ghi lại.
 
 **Kiểm chứng**
-- [ ] `pnpm seed:check --against-db && pnpm test -- content-roundtrip && pnpm perf:budget -- config` xanh.
+- [ ] `pnpm --filter @mindkid/db seed:check --against-db && pnpm test -- content-roundtrip && pnpm --filter @mindkid/gates test -- config` xanh.
 
 **Phụ thuộc:** T3 · **Cỡ:** M
 
@@ -191,7 +191,7 @@ T1 đối chiếu nguồn trần item + kế hoạch phủ theo competency (D-HG
 - [ ] Mỗi lô có `content_review_log` và hàng `content_seed_batches` với `pr_url` thật.
 - [ ] Không level nào là bản sao của level khác chỉ đổi số lượng.
 - [ ] Một trẻ thật chơi được ít nhất một level của **mỗi** template, điểm về server, theo protocol an toàn/evidence đã duyệt ở [`Task #81`](81-pedagogical-evidence-contract-plan.md).
-- [ ] `pnpm check && pnpm test && pnpm test:e2e && pnpm lint:specs && pnpm check:progress` xanh.
+- [ ] `pnpm check && pnpm test && pnpm test:e2e && pnpm --filter @mindkid/gates test && node packages/gates/scripts/check-progress.ts` xanh.
 
 ### Task 6 — Evidence và promote
 

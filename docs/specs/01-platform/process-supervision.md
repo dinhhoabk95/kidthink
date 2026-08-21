@@ -44,8 +44,8 @@ chỉ lộ ra vào lúc tệ nhất — lúc máy vừa khởi động lại, ho
 | Nơi                                         | Actor            | Ghi chú                                 |
 | ------------------------------------------- | ---------------- | --------------------------------------- |
 | `infra/pm2/ecosystem.config.cjs`            | Người phát triển | Định nghĩa ba ứng dụng, nằm trong kho   |
-| `pnpm deploy:status --host <tên>`           | Người vận hành   | Trạng thái ba tiến trình, bản đang chạy |
-| `pnpm deploy:logs --host <tên> --app <tên>` | Người vận hành   | Log một ứng dụng                        |
+| `pnpm deploy status --host <tên>`           | Người vận hành   | Trạng thái ba tiến trình, bản đang chạy |
+| `pnpm deploy logs --host <tên> --app <tên>` | Người vận hành   | Log một ứng dụng                        |
 | `/var/log/mindkid/<app>/`                   |                  | Log ra tệp, có luân chuyển              |
 
 ## 4. Main flow

@@ -228,12 +228,12 @@ Scenario: test emoji xanh sau port
 **Acceptance:**
 ```gherkin
 Scenario: lint:tokens chạy được trên repo rỗng
-  When chạy `pnpm lint:tokens`
+  When chạy `pnpm --filter @mindkid/gates test`
   Then exit 0 (chưa có hex literal nào)
 
 Scenario: lint:tokens thật sự chặn
   Given tạm thêm một file có literal "#ff0000" ngoài designTokens.ts
-  When chạy `pnpm lint:tokens`
+  When chạy `pnpm --filter @mindkid/gates test`
   Then exit 1, in đúng file:line
   And xoá file tạm, chạy lại → exit 0
 ```
@@ -275,9 +275,9 @@ bootstrap**:
 |---|---|---|
 | `lint` | `ultracite check .` | |
 | `lint:fix` | `ultracite fix .` | |
-| `lint:tokens` | `node --experimental-strip-types scripts/lint-tokens.ts` | (T5) |
+| `lint:tokens` | `node --experimental-strip-types packages/gates/src/lint-tokens.ts` | (T5) |
 | `typecheck` | `pnpm -r run typecheck` | (package rỗng → no-op) |
-| `check` | `pnpm lint && pnpm lint:tokens && pnpm typecheck` | |
+| `check` | `pnpm lint && pnpm --filter @mindkid/gates test && pnpm typecheck` | |
 | `test` | `vitest run` | (T4 có test emoji) |
 | `format` | `biome format --write .` | |
 | `db:*`, `dev*`, `build` | — | Cấm **chưa** — khai sau khi có `packages/db` / app thật. Khai script trỏ vào chỗ trống làm `pnpm check` xanh giả |
@@ -371,9 +371,9 @@ chưa nằm trong PR này** — nên `BR-RBS-04` vẫn đang chặn code nghiệ
 | **D-M** | Root `vitest.config.ts` khai `projects: ["apps/*", "packages/*"]` | agent | Không có nó, `pnpm test` ở root báo "no test files found" và **xanh giả** — đúng bẫy T7 ca âm |
 | **D-N** | **Thêm T10** — `dependency-cruiser ^18.1.1` + `.dependency-cruiser.cjs` + script `lint:deps`, đưa vào `check` **và** CI | agent | **Lỗ hổng của plan bản 2**: [`monorepo-package-architecture.md`](../specs/00-foundation/monorepo-package-architecture.md) là spec-đầu-tiên thứ hai, §10 yêu cầu "chạy dependency-graph check trong CI mỗi PR", §7.1 pin `dependency-cruiser ^18.1` — plan không có task nào sở hữu. Không có nó, `BR-MPA-01/06/07` chỉ là chữ. Lưu ý: `pnpm check` giờ có **4** bước, [`SPEC.md`](../SPEC.md) §7 ghi 3 → sửa spec (§7 dưới) |
 | **D-O** | `.dependency-cruiser.cjs`: `node_modules` đi vào `doNotFollow`, **không** `exclude` | agent, đo được | `exclude` **xoá cạnh khỏi graph** → rule `no-app-direct-base-lib` không bao giờ thấy import `ioredis` và xanh giả. Ca âm phát hiện: 2/3 rule ban đầu vô dụng. Sau sửa cả 3 rule đều bắt đúng |
-| **D-P** | `scripts/check-services.ts` + `pnpm check:services`, driver `postgres@^3.4.9` + `ioredis@^5.11.1` ở devDep gốc | agent | [`repo-bootstrap.md`](../specs/00-foundation/repo-bootstrap.md) §4 **bước 5** yêu cầu "verify kết nối được **từ Node**" — `docker compose ps` chỉ nói container sống. Script khẳng định luôn major version (`BR-RBS-07`). Cấm `ioredis@6` dù là latest — §7.1 pin `^5.11` để khớp version BullMQ tự test. Driver để ở gốc vì `packages/db`/`packages/cache` chưa được dựng (`BR-RBS-04`); chuyển vào đó khi dựng thật |
+| **D-P** | `scripts/check-services.ts` + `pnpm services`, driver `postgres@^3.4.9` + `ioredis@^5.11.1` ở devDep gốc | agent | [`repo-bootstrap.md`](../specs/00-foundation/repo-bootstrap.md) §4 **bước 5** yêu cầu "verify kết nối được **từ Node**" — `docker compose ps` chỉ nói container sống. Script khẳng định luôn major version (`BR-RBS-07`). Cấm `ioredis@6` dù là latest — §7.1 pin `^5.11` để khớp version BullMQ tự test. Driver để ở gốc vì `packages/db`/`packages/cache` chưa được dựng (`BR-RBS-04`); chuyển vào đó khi dựng thật |
 | **D-Q** | CI Actions **tạm tắt** — trigger `push`/`pull_request` comment, chỉ giữ `workflow_dispatch` | người người dùng, 2026-08-06 | Lưu ý: `BR-RBS-03` **mất cưỡng chế tự động**; mọi lần đo về lại thủ công tại chỗ. Rule **vẫn chặn** PR business logic đầu tiên → bật lại là điều kiện tiên quyết, không phải việc tuỳ chọn. Giữ `workflow_dispatch` thay vì comment sạch block `on:` vì workflow không có event nào bị GitHub báo *invalid workflow file* + annotation đỏ — đỏ giả dạy người ta bỏ qua màu. Nội dung job giữ nguyên, bật lại = uncomment 4 dòng. Spec [`repo-bootstrap.md`](../specs/00-foundation/repo-bootstrap.md) §11 Q11 |
-| **D-R** | `check-services.ts` default port `5432`/`6379` → **`5433`/`6380`** cho khớp `docker-compose.yml` | agent, đo được | Lưu ý: **Xanh giả đã ship**: fix host port trước đó chỉ đổi compose, quên script. `pnpm check:services` không env var thì nối vào `hlo-api-postgres-1`/`hlo-api-valkey-1` (stack khác trên cùng máy dev) và in `Valkey 9.1.0` — khẳng định version của service **không thuộc repo này**; version thật là 9.1.1. Lần verify T6 trước xanh vì truyền `DATABASE_URL`/`VALKEY_PORT` bằng tay, che mất default hỏng. Bài học lặp lại D-O/D-M: **gate nào cũng phải chạy đúng đường mặc định, và phải có ca âm** |
+| **D-R** | `check-services.ts` default port `5432`/`6379` → **`5433`/`6380`** cho khớp `docker-compose.yml` | agent, đo được | Lưu ý: **Xanh giả đã ship**: fix host port trước đó chỉ đổi compose, quên script. `pnpm services` không env var thì nối vào `hlo-api-postgres-1`/`hlo-api-valkey-1` (stack khác trên cùng máy dev) và in `Valkey 9.1.0` — khẳng định version của service **không thuộc repo này**; version thật là 9.1.1. Lần verify T6 trước xanh vì truyền `DATABASE_URL`/`VALKEY_PORT` bằng tay, che mất default hỏng. Bài học lặp lại D-O/D-M: **gate nào cũng phải chạy đúng đường mặc định, và phải có ca âm** |
 | **D-I** | TypeScript pin **`~5.9.3`**, Cấm chưa lên 7.x | agent | §7.1 **không có** dòng TypeScript (khoảng trống, không phải override contract). TS 7.0.2 là bản viết lại native compiler; Nuxt 4.5.2 không pin TS, `vue-tsc@3.3.9` chỉ khai `>=5.0.0` — *cho phép*, không phải *đã kiểm chứng*. Khớp nguyên tắc "boring tech để ổn định" ([`SPEC.md`](../SPEC.md) §6). Đánh giá TS 7 = task riêng khi có code thật để đo. **Nói rõ để bạn bác nếu muốn** |
 | **D-S** | **D-F và D-Q superseded 2026-08-06**: không CI remote nào (không GitHub Actions, không GitLab CI). Gate chuyển hẳn sang **`lefthook ^2.1`** local (`pre-commit` + `pre-push`) | người người dùng, 2026-08-06 | Xoá `.github/workflows/ci.yml` + cả `.github/`. `BR-RBS-03` đo bằng `lefthook run pre-push --force` (thủ công) hoặc `git push` thật (không phải `lefthook run pre-push` trần — thiếu ref stdin, lefthook đọc "0 file cần push" và **skip cả 3 job, exit 0 giả**, đo được). Verify thật: commit `d4860b7`, push `75febf6..d4860b7` — 3 job (check/test/services) chạy qua hook thật, exit 0, PG 17.9 + Valkey 9.1.1 sống. Ca âm cùng lượt: file vi phạm biome → `git commit` exit 1, HEAD không đổi; file hex literal → `lint-tokens` chặn. `pnpm-workspace.yaml` cần `allowBuilds: {lefthook: false}` — không khai thì `pnpm install` trên clone mới exit 1 (`ERR_PNPM_IGNORED_BUILDS`); `onlyBuiltDependencies`/`ignoredBuiltDependencies` đều không tắt được lỗi này (đo trên pnpm 11.16). Rủi ro nhận biết: `git commit --no-verify` bỏ qua được, không gì server-side chặn — chấp nhận đến P1, cần branch protection GitHub trước [`content-seed-authoring.md`](../specs/01-platform/content-seed-authoring.md) chạy thật ([`repo-bootstrap.md`](../specs/00-foundation/repo-bootstrap.md) §11 Q12) |
 
@@ -397,7 +397,7 @@ chưa nằm trong PR này** — nên `BR-RBS-04` vẫn đang chặn code nghiệ
 | [`repo-bootstrap.md`](../specs/00-foundation/repo-bootstrap.md) §11 | Thêm Q mới: chiến lược git — corpus spec ở workspace root không được version control (D-A) | Rủi ro chưa spec nào sở hữu |
 | [`repo-bootstrap.md`](../specs/00-foundation/repo-bootstrap.md) §7.1 + [`SPEC.md`](../SPEC.md) §6 | Dòng Lint/format: "Biome qua `ultracite` · giữ nguyên (v1 đã dùng)" → **`ultracite ~6.5.1` làm preset + `@biomejs/biome ^2.5.7` chạy CLI**; ghi chú không nâng ultracite lên `^7` (bỏ Biome) và không dùng CLI `ultracite check` (exit 0 khi có lỗi) | Câu hiện tại **sai sự thật hai lần**: bản v1 pin (`7.9.4`) không chạy Biome, và CLI wrapper nuốt lỗi (D-H) |
 | [`SPEC.md`](../SPEC.md) §7 | Dòng `pnpm lint` = `ultracite check .` → **`biome check .`**; `lint:fix` → `biome check --write .` | D-H (b) — lệnh hiện tại không chặn được gì |
-| [`SPEC.md`](../SPEC.md) §7 | `check` = "lint + lint:tokens + typecheck" → **thêm `lint:deps`** (4 bước). Thêm dòng `pnpm check:services` | D-N, D-P |
+| [`SPEC.md`](../SPEC.md) §7 | `check` = "lint + lint:tokens + typecheck" → **thêm `lint:deps`** (4 bước). Thêm dòng `pnpm services` | D-N, D-P |
 | [`repo-bootstrap.md`](../specs/00-foundation/repo-bootstrap.md) §7.1 | Ghi rõ `ioredis` pin `^5.11` là **có chủ đích**, không nâng `^6` dù npm báo latest | D-P |
 | [`repo-bootstrap.md`](../specs/00-foundation/repo-bootstrap.md) §7.1 | **Thêm dòng mới** `TypeScript ~5.9.3` — bảng đang thiếu hẳn | D-I; không pin thì mỗi package tự trôi (`BR-RBS-06`) |
 | [`repo-bootstrap.md`](../specs/00-foundation/repo-bootstrap.md) toàn file | CI → lefthook: owns bullet, actors, entry points, main flow bước 6-7, alternative flows, `BR-RBS-03`+`BR-RBS-03a` mới, port table (không port CI workflow v1), Gherkin, boundaries, §11 (Q5 đóng lần 2, Q11/Q12/Q13 đóng) | D-S |

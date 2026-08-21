@@ -58,7 +58,8 @@ export interface GameSession {
     rs: RenderSystem,
     timeMs: number
   ): void;
-  update?(deltaMs: number): void;
+  // biome-ignore lint/suspicious/noConfusingVoidType: void needed for compatibility with void-returning sessions
+  update?(deltaMs: number): ActionResult | void | null;
   getTelemetry(): SessionTelemetry;
   completeSession(): void;
   destroy(): void;

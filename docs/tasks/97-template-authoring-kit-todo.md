@@ -51,5 +51,5 @@
 
 - [x] 14 rule `BR-TAK` có test gọi tên mã.
 - [x] Lật `status` sang `implemented`.
-- [x] `pnpm check` · `pnpm test` · `pnpm check:progress` xanh.
+- [x] `pnpm check` · `pnpm test` · `node packages/gates/scripts/check-progress.ts` xanh.
 - [x] Mở PR cho người review diff, không tự merge.

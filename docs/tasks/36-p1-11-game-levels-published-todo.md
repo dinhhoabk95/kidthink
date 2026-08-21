@@ -45,9 +45,9 @@
 ### Task 3 — Sản xuất theo lô (≥4 lô, mỗi lô một PR)
 
 - [x] Lô ≤ **30 bản**.
-- [x] `pnpm seed:check` xanh **trước khi** mở PR.
+- [x] `pnpm --filter @mindkid/db seed:check` xanh **trước khi** mở PR.
 - [x] Người review đọc **từng bản**.
-- [x] Merge → `pnpm seed:content --batch=…`.
+- [x] Merge → `pnpm --filter @mindkid/db seed:content --batch=…`.
 - [x] Mỗi lô có hàng `content_seed_batches` với `pr_url` và `approved_by_manager_id` thật.
 - [x] Ghi lại thời gian review thật sau mỗi lô, cập nhật ước lượng.
 - [x] Sáu template đều có level thật (không chỉ level mẫu P1.2).
@@ -57,7 +57,7 @@
 
 ### Task 4 — Đo phủ sau mỗi lô
 
-- [x] `pnpm seed:report` in level mỗi competency.
+- [x] `pnpm --filter @mindkid/db seed:report` in level mỗi competency.
 - [x] Báo cáo in skill có ≥1 level và skill **chưa** có level.
 - [x] Báo cáo in level mỗi template.
 - [x] Lô kế tiếp chọn từ khoảng trống báo cáo chỉ ra.
@@ -80,7 +80,7 @@
 - [x] Mỗi lô có `content_review_log` và batch row thật.
 - [x] Không level nào là bản sao đổi số của level khác.
 - [x] Trẻ thật chơi được ít nhất một level của **mỗi** template, điểm về server, theo protocol đã duyệt ở [`Task #81`](81-pedagogical-evidence-contract-plan.md).
-- [x] `pnpm check && pnpm test && pnpm test:e2e && pnpm lint:specs && pnpm check:progress` xanh.
+- [x] `pnpm check && pnpm test && pnpm test:e2e && pnpm --filter @mindkid/gates test && node packages/gates/scripts/check-progress.ts` xanh.
 
 ---
 

@@ -254,18 +254,18 @@ Scenario: BR-MCM-01 — dataset không nạp thẳng vào database
 
 Scenario: BR-MCM-03 — seeder mang skill code thật, không mang strand
   Given một seeder Montessori khai skill_codes là "C1.NREC"
-  When chạy pnpm seed:check
+  When chạy pnpm --filter @mindkid/db seed:check
   Then cổng 5 fail
   And thông báo nêu giá trị không khớp regex skill code
 
 Scenario: BR-MCM-04 — seeder không tạo được skill mới
   Given một seeder Montessori khai một skill code chưa có trong taxonomy
-  When chạy pnpm seed:check
+  When chạy pnpm --filter @mindkid/db seed:check
   Then cổng 5 fail với thông báo taxonomy là Lớp 1
 
 Scenario: BR-MCM-06 — tên bộ test thương mại bị chặn
   Given một level Montessori có title chứa tên một bộ test tâm lý thương mại
-  When chạy pnpm seed:check
+  When chạy pnpm --filter @mindkid/db seed:check
   Then cổng 7 fail
   And thông báo nêu đúng chuỗi vi phạm
 

@@ -196,7 +196,7 @@ T1 dựng lại chuỗi round từ event + 5 nhánh bất thường §5
 - [ ] Response bề mặt trẻ không có trường điểm nào.
 - [ ] Hint, retry, tốc độ không đổi điểm; điểm không âm; hoàn thành luôn có ≥1 sao.
 - [ ] Phiên `abandoned`: có `normalized_score`, không sao.
-- [ ] `pnpm check && pnpm test && pnpm test:e2e && pnpm lint:specs && pnpm check:progress` xanh.
+- [ ] `pnpm check && pnpm test && pnpm test:e2e && pnpm --filter @mindkid/gates test && node packages/gates/scripts/check-progress.ts` xanh.
 
 ### Task 7 — Evidence và promote
 

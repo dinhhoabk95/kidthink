@@ -36,7 +36,7 @@
 - [x] Cập nhật [`business-rules.md`](../specs/00-foundation/business-rules.md) §7.1/registry
       lỗi/event nếu có prefix mới (`BR-AST`).
 - [x] Cross-link Task #33/#47/#49; không copy contract sang plan.
-- [x] Chạy link check và `pnpm lint:specs`.
+- [x] Chạy link check và `pnpm --filter @mindkid/gates test`.
 
 ## WP80.5 — Handoff implementation
 
@@ -48,5 +48,5 @@
 
 - [x] Checkpoint A có người duyệt.
 - [x] Spec owner được `approved`; không còn audio debt vô chủ.
-- [x] `pnpm lint:specs` và gate repo liên quan xanh.
+- [x] `pnpm --filter @mindkid/gates test` và gate repo liên quan xanh.
 - [x] Todo implementation kế tiếp có owner và thứ tự ([`Task #87`](87-p1-audio-runtime-delivery-todo.md)); Task #80 không tự nhận là đã ship audio.

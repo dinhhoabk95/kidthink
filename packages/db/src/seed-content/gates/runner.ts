@@ -79,6 +79,9 @@ function checkActivityGate1(act: ActivitySeed, issues: GateIssue[]): void {
     estimated_minutes: act.header.estimated_minutes,
     skill_codes: act.header.skill_codes,
     learning_objective_codes: act.header.learning_objective_codes,
+    ref_type: act.header.ref_type,
+    ref_id: act.header.ref_id,
+    ref_code: act.header.ref_code,
   });
   if (!validation.ok) {
     for (const err of validation.errors) {

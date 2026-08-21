@@ -61,7 +61,7 @@ WP92.0  Trả lời §11 Q1 và Q2 (cổng người)
 | WP92.4 | M | Phân trang khi số ô vượt sức chứa của layout (`BR-LAY-04`), theo quyết định Q1 | Test: `slotCount` vượt trần thì `page` tăng, thứ tự index không đảo |
 | WP92.5 | M | `GameEngine.load()` chọn hàm theo `layout_id` trong tham số độ khó; studio có ô chọn layout | Test engine: đổi `layout_id` đổi `Slot[]`; test template hiện có không đổi kết quả |
 | WP92.6 | S | Hợp đồng template: `layouts` từ `string[]` thành union 12 giá trị; cổng chặn giá trị lạ, kèm fixture sai | Cổng đỏ trên fixture chứa layout không có trong union |
-| WP92.7 | S | Verification đầy đủ, lật `status` sang `implemented` | 12 rule `BR-LAY` có test; `pnpm check:progress` xanh |
+| WP92.7 | S | Verification đầy đủ, lật `status` sang `implemented` | 12 rule `BR-LAY` có test; `node packages/gates/scripts/check-progress.ts` xanh |
 
 ## 6. Acceptance criteria
 
@@ -93,7 +93,7 @@ Scenario: Giá trị layout lạ bị chặn ở hợp đồng
 
 ```bash
 pnpm exec biome check .
-pnpm lint:specs
+pnpm --filter @mindkid/gates test
 pnpm check
 pnpm vitest run packages/game-engine
 pnpm test

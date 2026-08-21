@@ -155,7 +155,7 @@ ra 11 kết quả không phân biệt được. Đã ghi trong [`todo.md`](../ta
 
 ## 5. `C1`–`C13` — 13 cổng máy
 
-`pnpm lint:specs` chạy 13 check trên 130 spec. Đọc log dạng
+`pnpm --filter @mindkid/gates test` chạy 13 check trên 130 spec. Đọc log dạng
 `file.md:52  [C6]  <mô tả>`:
 
 | Mã | Kiểm gì | Mức |
@@ -259,7 +259,7 @@ tiêu đề, cấm đọc tuần tự từng ô.
 | Format một loại mã | [`00-foundation/id-conventions.md`](00-foundation/id-conventions.md) §7 |
 | Spec nào đã approved | `grep -rl '^status: approved' docs/specs --include='*.md'` |
 | Còn câu hỏi nào mở chặn P0 | `grep -rn 'chặn P0' docs/specs/` |
-| Corpus có sạch không | `pnpm lint:specs` |
+| Corpus có sạch không | `pnpm --filter @mindkid/gates test` |
 
 Lưu ý: Lệnh `grep` phải chạy từ `mindkid/` (nơi có `docs/`). Đo trên `docs/tasks/*.md` sẽ ra
 kết quả nhiễu — file task **nói về** ký hiệu nên chính nó chứa chuỗi đang tìm.

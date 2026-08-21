@@ -144,6 +144,9 @@ set một vòng — xem `BR-RSP-02` ở [`round-sequence-play.md`](../04-play/ro
 | `hand_rotated` | `{ hand: "hour"\|"minute", time, round_index? }` | `GT-016` |
 | `time_submitted` | `{ time?, card_id?, is_correct, round_index? }` | `GT-016` |
 | `model_rotated` | `{ angle: 0\|90\|180\|270, hidden_cubes_remaining, round_index? }` | `GT-017` |
+| `item_revealed` | `{ item_id, round_index? }` | `GT-022` |
+| `checkpoint_reached` | `{ waypoint_id, checkpoint_index, total_waypoints, round_index? }` | `GT-024` |
+| `trace_completed` | `{ shape_name, round_index? }` | `GT-024` |
 
 ### 7.3 Trợ giúp
 

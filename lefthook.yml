@@ -1,8 +1,12 @@
 # Gate chất lượng — chạy LOCAL, không có CI remote (repo-bootstrap.md §7.1, §11 Q5).
 #
 # Phân tầng có chủ đích:
-#   pre-commit  = nhanh, chỉ file staged  → không làm commit chậm tới mức người ta bỏ qua
-#   pre-push    = đủ, toàn repo + test    → cổng thật trước khi code ra khỏi máy
+#   pre-commit  = nhanh (lint + ranh giới package)  → không làm commit chậm tới mức người ta bỏ qua
+#   pre-push    = đủ (`pnpm check` = lint + deps + typecheck + test) → cổng thật trước khi code ra khỏi máy
+#
+# Cổng nội dung/spec/an toàn kiểu KHÔNG còn là script riêng: chúng là test vitest
+# trong package sở hữu đường dẫn chúng quét, nên `pnpm test` phủ hết
+# (docs/tasks/103-script-surface-refactor-plan.md).
 #
 # ⛔ `git commit --no-verify` / `git push --no-verify` BỎ QUA hook này.
 # lefthook là gate local, ❌ KHÔNG phải cưỡng chế server-side. Xem repo-bootstrap §11 Q12.
@@ -13,18 +17,20 @@ skip_lfs: true
 pre-commit:
   parallel: false
   jobs:
-    # Full check chạy lúc commit: lint + tokens + deps + specs + typecheck (SPEC.md §7)
-    - name: check
-      run: pnpm check
+    - name: lint
+      run: pnpm lint
+
+    - name: deps
+      run: pnpm lint:deps
 
 pre-push:
   parallel: false
   jobs:
-    # `pnpm check` KHÔNG chạy lại ở push vì đã chạy ở pre-commit.
-    - name: test
-      run: pnpm test
-
     # repo-bootstrap §4 bước 5 — PG 17 + Valkey 9 phải sống và ĐÚNG major version.
+    # Chạy TRƯỚC test vì test tích hợp dùng DB thật (BR-TST-02).
     - name: services
-      run: pnpm check:services
+      run: pnpm services
       fail_text: "docker compose up -d trước khi push (PG 17 + Valkey 9 phải sống)"
+
+    - name: check
+      run: pnpm check

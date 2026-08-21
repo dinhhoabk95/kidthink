@@ -102,7 +102,7 @@
 - [x] Bốn add-on đều hiện `requires_spec` đúng.
 - [x] Không route nào sửa được gói từ UI.
 - [x] User thấy đúng quyền hợp từ hai nguồn, không thấy `admin_note` nội bộ.
-- [x] `pnpm check && pnpm test && pnpm test:e2e && pnpm lint:specs && pnpm lint:prices && pnpm check:progress` xanh.
+- [x] `pnpm check && pnpm test && pnpm test:e2e && pnpm --filter @mindkid/gates test && pnpm --filter @mindkid/gates test && node packages/gates/scripts/check-progress.ts` xanh.
 
 ---
 

@@ -105,7 +105,7 @@
 - [x] Seed ba tầng đầu khớp từng competency với `docs/taxonomy/`.
 - [x] `emoji_registry` khớp `packages/emoji` hai chiều.
 - [x] Lô pilot 30 LO xong, baseline đã đo lại.
-- [x] `pnpm check && pnpm test && pnpm lint:specs && pnpm check:progress` xanh.
+- [x] `pnpm check && pnpm test && pnpm --filter @mindkid/gates test && node packages/gates/scripts/check-progress.ts` xanh.
 
 ---
 
@@ -132,7 +132,7 @@
 - [x] `BR-EMJ-05` ghi bước sở hữu P2.7, **không** tick ở đây.
 - [x] [`taxonomy-service.md`](../specs/01-platform/taxonomy-service.md) · [`emoji-registry.md`](../specs/01-platform/emoji-registry.md) sang `implemented` chỉ khi đủ evidence, gồm ≥690 LO đã seed.
 - [x] Tick **P0.9** ở [`14-implementation-sequence-todo.md`](14-implementation-sequence-todo.md) chỉ khi `check:progress` tự xanh.
-- [x] `pnpm check && pnpm test && pnpm lint:specs && pnpm check:progress` xanh.
+- [x] `pnpm check && pnpm test && pnpm --filter @mindkid/gates test && node packages/gates/scripts/check-progress.ts` xanh.
 
 ## Cổng dừng cuối
 

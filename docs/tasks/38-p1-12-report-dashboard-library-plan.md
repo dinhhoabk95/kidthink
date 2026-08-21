@@ -196,7 +196,7 @@ T1 bảng nhãn + cổng quét ngôn ngữ (D-HS)
 - [ ] Không truy vấn báo cáo nào chạm `telemetry_events` hay `mastery_state`.
 - [ ] Mỗi trang người lớn có tối đa **một** CTA nâng cấp.
 - [ ] Thư viện không rò sang user khác; nội dung khoá không mang `content_pack`.
-- [ ] `pnpm check && pnpm test && pnpm test:e2e && pnpm lint:specs && pnpm check:progress` xanh.
+- [ ] `pnpm check && pnpm test && pnpm test:e2e && pnpm --filter @mindkid/gates test && node packages/gates/scripts/check-progress.ts` xanh.
 
 ### Task 6 — Evidence và promote
 

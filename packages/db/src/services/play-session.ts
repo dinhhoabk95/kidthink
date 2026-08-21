@@ -73,6 +73,9 @@ export const ALLOWED_EVENT_NAMES = new Set([
   "hand_rotated",
   "time_submitted",
   "model_rotated",
+  "item_revealed",
+  "checkpoint_reached",
+  "trace_completed",
 ]);
 
 const PII_FIELDS = new Set([
@@ -189,6 +192,14 @@ const EVENT_PAYLOAD_FIELDS: Readonly<Record<string, ReadonlySet<string>>> = {
   hand_rotated: new Set(["hand", "time", "round_index"]),
   time_submitted: new Set(["time", "card_id", "is_correct", "round_index"]),
   model_rotated: new Set(["angle", "hidden_cubes_remaining", "round_index"]),
+  item_revealed: new Set(["item_id", "round_index"]),
+  checkpoint_reached: new Set([
+    "waypoint_id",
+    "checkpoint_index",
+    "total_waypoints",
+    "round_index",
+  ]),
+  trace_completed: new Set(["shape_name", "round_index"]),
 };
 
 const NON_NEGATIVE_INT = z.number().int().nonnegative();
@@ -458,6 +469,20 @@ const EVENT_PAYLOAD_SCHEMAS: Readonly<Record<string, z.AnyZodObject>> = {
       z.literal(270),
     ]),
     hidden_cubes_remaining: NON_NEGATIVE_INT,
+    round_index: OPTIONAL_ROUND_INDEX,
+  }),
+  item_revealed: z.object({
+    item_id: CONTENT_ID,
+    round_index: OPTIONAL_ROUND_INDEX,
+  }),
+  checkpoint_reached: z.object({
+    waypoint_id: CONTENT_ID,
+    checkpoint_index: NON_NEGATIVE_INT,
+    total_waypoints: NON_NEGATIVE_INT,
+    round_index: OPTIONAL_ROUND_INDEX,
+  }),
+  trace_completed: z.object({
+    shape_name: z.string().max(64),
     round_index: OPTIONAL_ROUND_INDEX,
   }),
 };

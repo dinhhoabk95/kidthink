@@ -10,7 +10,7 @@
 - [x] Chốt embedding provider/model/version/N và DPA.
 - [x] Chốt query privacy guard/retention, provider-fail refund và weights/cutoff eval method.
 - [x] Architecture/error/SEM/AIA/ACL contract thống nhất; không còn pending N trước migration.
-- [x] SKU AI vẫn ẩn; `pnpm lint:specs` xanh.
+- [x] SKU AI vẫn ẩn; `pnpm --filter @mindkid/gates test` xanh.
 
 ## Checkpoint A
 
@@ -58,7 +58,7 @@
 - [x] Mỗi `BR-SEM-01…08` và `BR-AIA-01…11` có test mang mã.
 - [x] SEM + AIA promote; AI SKU public cùng feature sau human review.
 - [x] Progress chứng minh đủ 8 spec P4 `implemented` và catalog predicates xanh.
-- [x] `pnpm check`, `pnpm test`, `pnpm lint:specs`, `pnpm check:services` xanh.
+- [x] `pnpm check`, `pnpm test`, `pnpm --filter @mindkid/gates test`, `pnpm services` xanh.
 - [x] Không câu hỏi chặn P4 còn mở; không auto-merge/migration ngoài local/provider production trong test.
 
 ## Ngoài phạm vi

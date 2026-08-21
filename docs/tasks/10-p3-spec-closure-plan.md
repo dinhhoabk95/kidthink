@@ -40,8 +40,8 @@ dùng thang nhị phân hay 0–1) ghi rõ "hoãn — chốt lúc [`adaptive-eng
 
 ```
 git status                                  # phải sạch
-pnpm lint:specs 2>&1 | tail -2              # ghi lại số lỗi và cảnh báo
-pnpm lint:specs 2>&1 | grep -oE "\[C[0-9]+\]" | sort | uniq -c
+pnpm --filter @mindkid/gates test 2>&1 | tail -2              # ghi lại số lỗi và cảnh báo
+pnpm --filter @mindkid/gates test 2>&1 | grep -oE "\[C[0-9]+\]" | sort | uniq -c
 grep -rhoE "D-B[A-Z]" docs/specs docs/tasks | sort -u | tail -1   # mã D-* lớn nhất đang dùng
 ```
 
@@ -153,7 +153,7 @@ dung rule.
 ### Cổng dừng A — sau đợt 2
 
 - 6/6 spec đợt 1 và 2 `approved`; `C6` của sáu file đó về 0; sáu bảng mục 11 đủ 5 cột.
-- [`taxonomy-service.md`](../specs/01-platform/taxonomy-service.md) Q3 đã đóng, có mã `D-*`, và `pnpm lint:specs` vẫn 0 lỗi (sửa spec
+- [`taxonomy-service.md`](../specs/01-platform/taxonomy-service.md) Q3 đã đóng, có mã `D-*`, và `pnpm --filter @mindkid/gates test` vẫn 0 lỗi (sửa spec
   `approved` là chỗ dễ sinh lỗi `C16` mới vì hàng thiếu `Chủ` trên spec `approved` là `fail`).
 - Nói rõ: quyết định 4.1 có phát sinh migration mới hay không.
 - `pnpm check` và `pnpm test` xanh.
@@ -169,7 +169,7 @@ dung rule.
 
 - 12/12 `approved`; `phase: P3` không còn `draft`.
 - Tổng `C6` giảm đúng 25 so với lúc bắt đầu; tổng `C16` giảm đúng 12.
-- `pnpm lint:specs` 0 lỗi; `pnpm check` và `pnpm test` xanh.
+- `pnpm --filter @mindkid/gates test` 0 lỗi; `pnpm check` và `pnpm test` xanh.
 - Bảng P3 của [`roadmap.md`](../specs/roadmap.md) khớp số spec mang `phase: P3`.
 - Mọi câu hỏi còn mở có `Chặn phase` và `Chủ` không rỗng.
 
@@ -178,7 +178,7 @@ dung rule.
 | Rủi ro | Ảnh hưởng | Giảm thiểu |
 |---|---|---|
 | Tự chốt lại "ghim version" theo trí nhớ | Đổi FK và migration đã chạy ở Task #7 | Mục 4.3 — chỉ trỏ `D-AE`, cấm mở lại |
-| Sửa [`taxonomy-service.md`](../specs/01-platform/taxonomy-service.md) (spec `approved`) làm hàng câu hỏi thiếu `Chủ` | `C16` sinh **lỗi**, không phải cảnh báo, pipeline đỏ | Chạy `pnpm lint:specs` ngay sau lần sửa đó, trước khi commit |
+| Sửa [`taxonomy-service.md`](../specs/01-platform/taxonomy-service.md) (spec `approved`) làm hàng câu hỏi thiếu `Chủ` | `C16` sinh **lỗi**, không phải cảnh báo, pipeline đỏ | Chạy `pnpm --filter @mindkid/gates test` ngay sau lần sửa đó, trước khi commit |
 | Chốt thang `strength` bằng trí nhớ thay vì đọc `packages/db/src/schema/taxonomy.ts` | Spec nói khác schema đã chạy | Mục 4.1 buộc đọc cột thật trước |
 | Hai session cùng tiêu mã `D-*` | Hai quyết định khác nhau cùng một mã, sổ cái mất giá trị tra cứu | Lấy mã bằng lệnh ở mục 0 ngay trước khi ghi, không lấy từ kế hoạch |
 | Viết "vì sao" bằng cách diễn giải lại rule | Cột "vì sao" đầy mà vẫn không giải thích gì | Mục 5 — hoặc con trỏ, hoặc hậu quả |
@@ -188,14 +188,14 @@ dung rule.
 Sau mỗi bước:
 
 ```
-pnpm lint:specs 2>&1 | grep -E "<tên-file-vừa-sửa>"     # phải không còn dòng nào
-pnpm lint:specs 2>&1 | tail -2                          # 0 lỗi
+pnpm --filter @mindkid/gates test 2>&1 | grep -E "<tên-file-vừa-sửa>"     # phải không còn dòng nào
+pnpm --filter @mindkid/gates test 2>&1 | tail -2                          # 0 lỗi
 ```
 
 Sau lô:
 
 ```
-pnpm lint:specs 2>&1 | grep -oE "\[C[0-9]+\]" | sort | uniq -c
+pnpm --filter @mindkid/gates test 2>&1 | grep -oE "\[C[0-9]+\]" | sort | uniq -c
 for f in $(grep -rl "^phase: P3" --include="*.md" docs/specs); do grep -q "^status: draft$" $f && echo $f; done
 pnpm check && pnpm test
 ```

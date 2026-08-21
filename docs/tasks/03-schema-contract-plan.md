@@ -52,11 +52,11 @@ seed 230 skill + 690 LO là hai phase deprecation (`BR-DM-09`).
 | Đo | Kết quả |
 |---|---|
 | `mindkid/` git | 15 commit, `main` tracking `origin/main` (remote đã có: `dinhhoabk95/mindkid`) |
-| Working tree | **bẩn và đang thay đổi**: `M lefthook.yml` · `M scripts/lint-specs.ts` · `M tsconfig.json` · `M vitest.config.ts` · `?? scripts/lint-specs-lib.ts` · `?? scripts/tests/lint-specs.test.ts` · `?? scripts/vitest.config.ts` |
-| Lưu ý: Phiên khác đang chạy | Có. File `scripts/lint-specs-lib.ts` (30K) + `scripts/tests/` xuất hiện **trong lúc** viết plan này (mtime 23:11→23:15). Ai đó đang tách `lint-specs.ts` thành lib có test. **T0 phải hoà việc đó trước, không ghi đè** |
-| `pnpm check` | Cấm **ĐỎ** — 2 lỗi biome format trong `scripts/lint-specs-lib.ts` (số lỗi đang đổi theo từng phút) |
+| Working tree | **bẩn và đang thay đổi**: `M lefthook.yml` · `M packages/gates/tests/lint-specs.test.ts` · `M tsconfig.json` · `M vitest.config.ts` · `?? packages/gates/src/lint-specs-lib.ts` · `?? packages/gates/tests/lint-specs.test.ts` · `?? scripts/vitest.config.ts` |
+| Lưu ý: Phiên khác đang chạy | Có. File `packages/gates/src/lint-specs-lib.ts` (30K) + `scripts/tests/` xuất hiện **trong lúc** viết plan này (mtime 23:11→23:15). Ai đó đang tách `lint-specs.ts` thành lib có test. **T0 phải hoà việc đó trước, không ghi đè** |
+| `pnpm check` | Cấm **ĐỎ** — 2 lỗi biome format trong `packages/gates/src/lint-specs-lib.ts` (số lỗi đang đổi theo từng phút) |
 | `pnpm test` | **73/73** (2 file) — tăng từ 56/56, +17 unit test cho `parseFrontmatter` · C7 · C9 |
-| `pnpm lint:specs` | exit 0 — 130 spec · 11 check · **0 error · 228–232 warning** |
+| `pnpm --filter @mindkid/gates test` | exit 0 — 130 spec · 11 check · **0 error · 228–232 warning** |
 | Spec `approved` | **16/130** (đúng 16 file `00-foundation`) |
 | Spec cần approve ở task này | **6** (hoặc 7, xem D-Y): [`taxonomy-service.md`](../specs/01-platform/taxonomy-service.md) · [`game-template-contract.md`](../specs/01-platform/game-template-contract.md) · [`data-model-overview.md`](../specs/01-platform/data-model-overview.md) · 3 × `schema-*` |
 | Quyết định T8–T12 đụng schema | **11** — không cái nào được ghi vào [`data-model-overview.md`](../specs/01-platform/data-model-overview.md) |
@@ -254,7 +254,7 @@ nếu đảo.
 **Mô tả:** `pnpm check` đang **đỏ**. Không mở task mới trên gate đỏ.
 
 Nhưng working tree không chỉ có nợ của tôi. Trong lúc viết plan này (23:11→23:15) một phiên
-khác đã tạo `scripts/lint-specs-lib.ts` (30K) · `scripts/tests/lint-specs.test.ts` ·
+khác đã tạo `packages/gates/src/lint-specs-lib.ts` (30K) · `packages/gates/tests/lint-specs.test.ts` ·
 `scripts/vitest.config.ts` và sửa `tsconfig.json` · `vitest.config.ts` — tức đang **tách
 `lint-specs.ts` thành lib có unit test**. `pnpm test` đã lên **73/73** (+17 test cho
 `parseFrontmatter` · C7 · C9).
@@ -264,7 +264,7 @@ và không commit hộ.** Bước một của T0 là xác nhận phiên đó đ�
 
 **Việc**
 1. Xác nhận phiên khác đã xong (`git status` không đổi qua 2 lần đo cách nhau vài phút).
-2. Đọc `scripts/tests/lint-specs.test.ts` — biết check nào **đã** có test (`parseFrontmatter`,
+2. Đọc `packages/gates/tests/lint-specs.test.ts` — biết check nào **đã** có test (`parseFrontmatter`,
    C7, C9) để T2 không viết lại.
 3. Sửa lỗi biome format còn lại; không refactor thêm.
 4. Ca âm cho hai thay đổi hành vi chưa có test.
@@ -523,7 +523,7 @@ D-Y · D-Z · D-AA · M1 **đã chốt 2026-08-06** (xem §Quyết định). Cò
 
 ### CHECKPOINT C
 
-- [ ] `pnpm lint:specs` exit 0 — **13 check** trên 130 spec.
+- [ ] `pnpm --filter @mindkid/gates test` exit 0 — **13 check** trên 130 spec.
 - [ ] `pnpm check` exit 0 · `pnpm test` exit 0 (56/56).
 - [ ] Đối chiếu tay: **11 closure T8–T12 <-> 11 dòng** DMO §7.3 (cổng người, không có cổng máy).
 - [ ] Nợ #4 đã đóng: [`mvp-scope.md`](../specs/00-foundation/mvp-scope.md) Q1 có tên chủ thật.
@@ -554,7 +554,7 @@ kèm **vì sao + ngày** → (3) `status: approved` + `reviewed:` → (4) `lint:
 ### CHECKPOINT D — mở khoá P0 bước 8
 
 - [ ] **7** spec đích `status: approved`; tổng `approved` = **23/130**.
-- [ ] `pnpm lint:specs` exit 0 · `pnpm check` exit 0 · `pnpm test` exit 0.
+- [ ] `pnpm --filter @mindkid/gates test` exit 0 · `pnpm check` exit 0 · `pnpm test` exit 0.
 - [ ] **Ca âm C8**: đặt [`data-model-overview.md`](../specs/01-platform/data-model-overview.md) về `draft` thì 3 `schema-*` chuyển đỏ.
 - [ ] **Ca âm C12**: xoá `social_identities` khỏi DMO §7 thì đỏ.
 - [ ] **Ca âm C13**: đổi một ví dụ mã thành `G-C1-CNT-007` thì đỏ.
@@ -602,10 +602,10 @@ cd mindkid
 export PATH=/Users/macbook/.nvm/versions/node/v24.15.0/bin:$PATH   # shell mặc định vẫn node v20
 
 # Cổng cơ học
-pnpm lint:specs     # 13 check × 130 spec — exit 0, và số warning ≤ 228
+pnpm --filter @mindkid/gates test     # 13 check × 130 spec — exit 0, và số warning ≤ 228
 pnpm check          # lint · lint:tokens · lint:deps · lint:specs · typecheck
 pnpm test           # 56/56
-pnpm check:services # PG 17.9 + Valkey 9.1.1 (host port 5433/6380)
+pnpm services # PG 17.9 + Valkey 9.1.1 (host port 5433/6380)
 
 # Ca âm bắt buộc — gate không có ca âm là gate chưa tồn tại
 #  C6  : định nghĩa lại BR-DM-01 ở spec khác        thì exit 1

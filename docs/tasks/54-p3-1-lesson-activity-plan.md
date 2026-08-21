@@ -210,7 +210,7 @@ Checkpoint 0 chọn ≥60/reuse hoặc ≥126/distinct
       lesson; cả hai nhánh đều cho phép tái sử dụng activity.
 - [ ] `activity` được thêm vào batch kind và đường dẫn seeder; band tuổi suy từ taxonomy được ghi ở spec sở hữu.
 - [ ] Câu hỏi nguồn an toàn đóng theo `D-LE`; link nguồn chính thức mở được.
-- [ ] `pnpm lint:specs` 0 lỗi, 0 cảnh báo mới.
+- [ ] `pnpm --filter @mindkid/gates test` 0 lỗi, 0 cảnh báo mới.
 
 **Kiểm chứng:** tìm toàn corpus chỉ còn một ngưỡng canonical; mọi chỗ nhắc ngưỡng còn lại phải
 được ghi rõ là proposal/lịch sử hoặc nhánh không được chọn.
@@ -284,7 +284,7 @@ Checkpoint 0 chọn ≥60/reuse hoặc ≥126/distinct
 - [ ] Đo số phút review, số lỗi cổng bắt và số lỗi người bắt; so baseline 3 lesson/người/ngày.
 - [ ] Lệch năng lực >30% thì sửa lịch/batch size, không hạ checklist.
 
-**Kiểm chứng:** `pnpm seed:check` · `pnpm seed:content --dry-run` · test idempotency và rollback
+**Kiểm chứng:** `pnpm --filter @mindkid/db seed:check` · `pnpm --filter @mindkid/db seed:content --dry-run` · test idempotency và rollback
 đều xanh.
 
 **Phụ thuộc:** T4 · P1.10 · **Cỡ:** M
@@ -326,7 +326,7 @@ bảy, nên tổng cuối vẫn là 18 × 7 = **126**, không phải 132.
 **Cổng corpus cuối:** nhánh A có ít nhất 60 lesson published và reuse đúng `BR-CRM-09`; nhánh B
 có đúng 126 lesson distinct. Activity được dùng ở nhiều lesson khi phù hợp.
 
-**Kiểm chứng:** sau mỗi batch, `pnpm seed:check` và dry-run riêng batch xanh; checkpoint theo
+**Kiểm chứng:** sau mỗi batch, `pnpm --filter @mindkid/db seed:check` và dry-run riêng batch xanh; checkpoint theo
 nhánh có full gate + báo cáo phủ + human review; cổng cuối đếm đúng target đã duyệt.
 
 **Phụ thuộc:** T5 · Checkpoint 0 · **Cỡ:** nhánh A có 10, nhánh B có 18 work package S/M,
@@ -341,9 +341,9 @@ bắt buộc tuần tự theo batch code
 - [ ] Mỗi `BR-ACM-*` và `BR-LSM-*` có test tham chiếu; toàn bộ target lesson đã duyệt có
       provenance và review log.
 - [ ] Hai spec model sang `implemented`; spec authoring P3.2 vẫn `approved`.
-- [ ] Tick P3.1 trong Task #14 chỉ khi `pnpm check:progress` tự xanh.
+- [ ] Tick P3.1 trong Task #14 chỉ khi `node packages/gates/scripts/check-progress.ts` tự xanh.
 
-**Kiểm chứng:** `pnpm check && pnpm test && pnpm lint:specs && pnpm check:progress` xanh.
+**Kiểm chứng:** `pnpm check && pnpm test && pnpm --filter @mindkid/gates test && node packages/gates/scripts/check-progress.ts` xanh.
 
 **Phụ thuộc:** T6 · **Cỡ:** S
 

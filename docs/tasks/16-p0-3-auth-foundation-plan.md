@@ -158,7 +158,7 @@ cùng sửa `packages/auth` nên làm tuần tự hoặc chia file ownership tư
 
 **Verification:**
 
-- [ ] `pnpm lint:specs`
+- [ ] `pnpm --filter @mindkid/gates test`
 - [ ] Đọc diff tay theo [`CONVENTIONS.md`](../specs/CONVENTIONS.md); không có ID rule đổi hoặc tái dùng.
 - [ ] Review security checklist mục CRITICAL/HIGH có kết quả ghi trong PR.
 
@@ -211,7 +211,7 @@ chưa được allow-list hoặc khai hai version.
 - [ ] Human thứ hai đã approve Task 0.
 - [ ] Dependency diff và provenance đã được review.
 - [ ] Ngoại lệ Task #14 và các cổng test/review đã được ghi trong canonical contract.
-- [ ] `pnpm check && pnpm lint:specs` xanh.
+- [ ] `pnpm check && pnpm --filter @mindkid/gates test` xanh.
 
 ## Task 2: Define the stable `@mindkid/auth` contract and write abuse tests
 
@@ -418,7 +418,7 @@ khai child CRUD, DB adapter thật, package catalog hay access gating trước r
 - [ ] Mọi acceptance criterion của Tasks 2–7 có test âm và test dương.
 - [ ] Các port audit/rate-limit/OAuth chỉ là contract; không giả vờ external behavior đã chạy.
 - [ ] Không route đăng nhập/đăng ký/UI ngoài phạm vi xuất hiện trong diff.
-- [ ] `pnpm check && pnpm test && pnpm lint:specs` xanh.
+- [ ] `pnpm check && pnpm test && pnpm --filter @mindkid/gates test` xanh.
 
 ## Task 8: Produce security evidence and close progress honestly
 
@@ -437,7 +437,7 @@ tick khống để vượt `check:progress`.
 
 **Verification:**
 
-- [ ] `pnpm check && pnpm test && pnpm lint:specs && pnpm check:progress`
+- [ ] `pnpm check && pnpm test && pnpm --filter @mindkid/gates test && node packages/gates/scripts/check-progress.ts`
 - [ ] `pnpm audit --prod` được triage theo reachability; không tự chạy forced remediation.
 - [ ] Review tay `git diff` và cookie/error snapshots; human thứ hai ký security checklist.
 
@@ -456,7 +456,7 @@ tick khống để vượt `check:progress`.
 
 - [ ] Dependency order được giữ: P0.3 foundation xong trước khi P0.4/P0.5 gắn implementation thật.
 - [ ] `ACTORS` và `AUTH-TOKENS-SESSIONS` chỉ mang `implemented` khi evidence đạt Definition of Done.
-- [ ] P0.3 chỉ được tick khi `pnpm check:progress` tự chấp nhận, không sửa hoặc né cổng.
+- [ ] P0.3 chỉ được tick khi `node packages/gates/scripts/check-progress.ts` tự chấp nhận, không sửa hoặc né cổng.
 - [ ] Human review hoàn tất; sẵn sàng sang P0.4 theo roadmap.
 
 ## Risks and mitigations
@@ -478,7 +478,7 @@ Definition of Done dùng các nguồn canonical của repo:
 - [`SPEC.md`](../SPEC.md) mục 11 và 13.
 - [`testing-strategy.md`](../specs/08-quality/testing-strategy.md).
 - [`security-checklist.md`](../specs/08-quality/security-checklist.md).
-- `pnpm check:progress` và checklist Task #14.
+- `node packages/gates/scripts/check-progress.ts` và checklist Task #14.
 
 Dependency baseline và ngoại lệ Task #14 đã được người dùng approve. AI được triển khai code
 auth sau Task 0, nhưng human vẫn review diff trước merge và không có quyền auto-merge hoặc

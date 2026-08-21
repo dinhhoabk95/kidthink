@@ -124,10 +124,10 @@ pnpm --filter @mindkid/db test
 pnpm --filter @mindkid/web test
 pnpm --filter @mindkid/admin test
 pnpm test:e2e
-pnpm lint:specs
+pnpm --filter @mindkid/gates test
 pnpm check
 pnpm test
-pnpm check:progress
+node packages/gates/scripts/check-progress.ts
 ```
 
 ## 6. Project structure và interface
@@ -337,7 +337,7 @@ health plugin, monitoring, runbook, tests. **Dependency:** T8. **Cỡ:** M.
 
 - [ ] Mỗi `BR-AUT-25` đến `BR-AUT-38` có evidence dương/âm phù hợp.
 - [ ] Web SSR và Admin SPA E2E xanh qua one-hour expiry, remember, revoke và MFA.
-- [ ] `pnpm check`, `pnpm test`, `pnpm test:e2e`, `pnpm lint:specs`, `pnpm check:progress` xanh.
+- [ ] `pnpm check`, `pnpm test`, `pnpm test:e2e`, `pnpm --filter @mindkid/gates test`, `node packages/gates/scripts/check-progress.ts` xanh.
 - [ ] Chỉ sau evidence, auth/login/admin specs trở lại `implemented`.
 
 **Files:** evidence/status tối đa 5 file. **Dependency:** T9. **Cỡ:** M.

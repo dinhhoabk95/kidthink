@@ -45,7 +45,7 @@
 - [x] `BR-REC-08` bỏ tiền tố `P1`.
 - [x] Không thêm spec mới.
 - [x] Không thêm `reason_code` ngoài sáu code đã khai.
-- [x] `pnpm lint:specs` 0 lỗi, 0 cảnh báo mới.
+- [x] `pnpm --filter @mindkid/gates test` 0 lỗi, 0 cảnh báo mới.
 
 ## Checkpoint A — Contract
 
@@ -153,15 +153,15 @@
 - [x] Hai ca biên của Task 4 xanh.
 - [x] [`next-game-recommendation.md`](../specs/04-play/next-game-recommendation.md) →
       `implemented`.
-- [x] Tick **P3.6** trong Task #14 chỉ khi `pnpm check:progress` tự xanh.
+- [x] Tick **P3.6** trong Task #14 chỉ khi `node packages/gates/scripts/check-progress.ts` tự xanh.
 
 ## Cổng dừng cuối
 
 - [x] `pnpm check` xanh.
 - [x] `pnpm test` xanh.
 - [x] `pnpm test:e2e` xanh.
-- [x] `pnpm lint:specs` xanh.
-- [x] `pnpm check:progress` xanh.
+- [x] `pnpm --filter @mindkid/gates test` xanh.
+- [x] `node packages/gates/scripts/check-progress.ts` xanh.
 - [x] Human review diff thang bậc, hàm xếp hạng và bề mặt trẻ.
 - [x] Không ML, không embedding, không học xếp hạng.
 - [x] Không phạm vi P3.7 lọt vào: không báo cáo phân tích lý do theo thời gian.

@@ -12,7 +12,7 @@
 - [x] Đăng ký quota export riêng, chu kỳ và giá trị; không trùng entitlement `export_pdf`.
 - [x] Capability/package renderer ghi vào architecture trước khi thêm dependency.
 - [x] Catalog vẫn ẩn tới khi Task #62 + #63 cùng xanh.
-- [x] `pnpm lint:specs` và dependency/catalog tests xanh.
+- [x] `pnpm --filter @mindkid/gates test` và dependency/catalog tests xanh.
 
 ## Checkpoint A
 
@@ -55,7 +55,7 @@
 - [x] Drill S3/provider/retry/restart/cleanup không mất hoặc double refund.
 - [x] `pnpm test:e2e -- pdf-export` xanh, không `setTimeout` chờ.
 - [x] Mỗi `BR-PDF-01…09` và `BR-LPC-06` có test mang mã rule.
-- [x] `pnpm check`, `pnpm test`, `pnpm lint:specs`, `pnpm check:progress` xanh.
+- [x] `pnpm check`, `pnpm test`, `pnpm --filter @mindkid/gates test`, `node packages/gates/scripts/check-progress.ts` xanh.
 - [x] PDF + LPC promote theo evidence; SKU public cùng feature sau human review.
 - [x] Không auto-merge, không migration ngoài local, không seed ngoài local.
 

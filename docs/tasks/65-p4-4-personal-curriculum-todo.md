@@ -10,7 +10,7 @@
 - [x] Chốt copy curriculum hệ thống, quota lưu và semantics count/delete.
 - [x] Đăng ký `custom_curricula_saved`; catalog không còn quota rỗng khi public.
 - [x] Chốt enrollment/source kind và hai player policy; không class roster.
-- [x] `pnpm lint:specs` + registry/catalog tests xanh.
+- [x] `pnpm --filter @mindkid/gates test` + registry/catalog tests xanh.
 
 ## Checkpoint A
 
@@ -49,7 +49,7 @@
 
 - [x] Mọi UUID có IDOR test; race quota/replace xanh.
 - [x] Mỗi `BR-PCU-01…08` có test mang mã rule.
-- [x] `pnpm check`, `pnpm test`, E2E, `pnpm lint:specs`, `pnpm check:progress` xanh.
+- [x] `pnpm check`, `pnpm test`, E2E, `pnpm --filter @mindkid/gates test`, `node packages/gates/scripts/check-progress.ts` xanh.
 - [x] Spec promote và SKU public cùng release sau human review.
 - [x] Không seed/publish ngoài local, không auto-merge.
 

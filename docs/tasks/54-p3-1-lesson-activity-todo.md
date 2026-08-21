@@ -39,7 +39,7 @@
 - [x] Thêm `activity` vào `content_seed_batches.kind` và đường `seed-content/activities/*.ts`.
 - [x] Ghi thuật toán band: `max(skill.age_min)` tới `min(skill.age_max)`.
 - [x] Đóng nguồn an toàn theo `D-LE`, có link QCVN/TCVN và Thông tư 45/2021.
-- [x] `pnpm lint:specs` 0 lỗi, 0 cảnh báo mới.
+- [x] `pnpm --filter @mindkid/gates test` 0 lỗi, 0 cảnh báo mới.
 
 ## Task 2 — Migration schema activity
 
@@ -111,8 +111,8 @@
 - [x] So baseline 3 lesson/người/ngày.
 - [x] Lệch >30% thì sửa lịch hoặc batch size; không hạ checklist.
 - [x] Sửa sáu lesson pilot sau review để đưa vào Batch 01.
-- [x] `pnpm seed:check` xanh.
-- [x] `pnpm seed:content --dry-run` xanh.
+- [x] `pnpm --filter @mindkid/db seed:check` xanh.
+- [x] `pnpm --filter @mindkid/db seed:content --dry-run` xanh.
 - [x] Test idempotency và rollback xanh.
 
 ## Checkpoint C — Pilot nội dung
@@ -164,8 +164,8 @@
 
 - [x] `pnpm check` xanh.
 - [x] `pnpm test` xanh.
-- [x] `pnpm lint:specs` xanh.
-- [x] `pnpm check:progress` xanh.
+- [x] `pnpm --filter @mindkid/gates test` xanh.
+- [x] `node packages/gates/scripts/check-progress.ts` xanh.
 - [x] Human review diff migration, validator và từng batch nội dung.
 - [x] Không route/UI P3.2 lọt vào Task #54.
 - [x] Không nợ P3.3 bị bật sớm.

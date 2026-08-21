@@ -73,7 +73,7 @@ T0 capability/storage/security preflight
   [`browser-push.md`](../specs/01-platform/browser-push.md) được ghi nhưng Task #72 không cài FCM.
 - [ ] Install prompt criteria và back/fullscreen behavior được Product duyệt.
 
-**Kiểm chứng:** `pnpm lint:specs`; error/event/BR registries và dependency graph khớp.
+**Kiểm chứng:** `pnpm --filter @mindkid/gates test`; error/event/BR registries và dependency graph khớp.
 
 **Phụ thuộc:** T0 · **Files:** PWA/offline/gating/parent specs + registries · **Cỡ:** M.
 

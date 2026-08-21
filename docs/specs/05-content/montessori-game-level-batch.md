@@ -47,9 +47,9 @@ ngược từ cổng phủ chứ không từ độ dày của nguồn.
 | Route / màn hình | Actor | Ghi chú |
 |---|---|---|
 | `packages/db/src/seed-content/c1/` tới `c6/` | Người biên soạn | File seeder, chia theo competency như quy ước hiện có |
-| `pnpm seed:report` | Người biên soạn | Xem khoảng trống và mức tiêu thụ hạn ngạch |
-| `pnpm seed:check` | Người biên soạn | Tám cổng, không chạm database |
-| `pnpm check:coverage` | Cổng phủ | Ba ma trận và sàn |
+| `pnpm --filter @mindkid/db seed:report` | Người biên soạn | Xem khoảng trống và mức tiêu thụ hạn ngạch |
+| `pnpm --filter @mindkid/db seed:check` | Người biên soạn | Tám cổng, không chạm database |
+| `pnpm --filter @mindkid/db test` | Cổng phủ | Ba ma trận và sàn |
 
 ## 4. Main flow
 
@@ -58,11 +58,11 @@ ngược từ cổng phủ chứ không từ độ dày của nguồn.
    không soạn tiếp.
 3. Cấp mã trong khối dành riêng ở mục 7.2.
 4. Soạn seeder theo hình dạng ở mục 7.2 của [`content-seed-authoring.md`](../01-platform/content-seed-authoring.md).
-5. Chạy `pnpm seed:check` cho tới khi tám cổng xanh.
-6. Chạy `pnpm check:coverage` trên tập published cộng lô đang soạn; ô nào tụt sàn thì sửa
+5. Chạy `pnpm --filter @mindkid/db seed:check` cho tới khi tám cổng xanh.
+6. Chạy `pnpm --filter @mindkid/db test` trên tập published cộng lô đang soạn; ô nào tụt sàn thì sửa
    phân bổ band trước khi mở PR.
 7. Mở PR một batch một lần; người review đọc từng bản.
-8. Merge, rồi `pnpm seed:content --batch=SEED-MONT-…`.
+8. Merge, rồi `pnpm --filter @mindkid/db seed:content --batch=SEED-MONT-…`.
 
 ## 5. Alternative flows
 
@@ -95,7 +95,7 @@ ngược từ cổng phủ chứ không từ độ dày của nguồn.
 ## 7. Data
 
 **Đọc:** `game_levels` · `skills` · `content_tag_map` · bảng ánh xạ Montessori.
-**Ghi:** `game_levels` `published` qua `pnpm seed:content`, kèm `content_seed_batches` và
+**Ghi:** `game_levels` `published` qua `pnpm --filter @mindkid/db seed:content`, kèm `content_seed_batches` và
 `content_review_log` theo `BR-CSA-03` (bằng chứng phát hành).
 
 ### 7.1 Hạn ngạch theo competency
@@ -183,7 +183,7 @@ Nguồn có **59 dạng bài** sau chuẩn hoá (`D-RI`). Ở hai level mỗi d�
 và tỉ lệ cân bằng lên 4,8 lần. Trần ở mục 7.1 chỉ chứa được một phần.
 
 Số ở bảng dưới **đo bằng lệnh** trên [`activity-types-table.md`](../../montessori/dataset/activity-types-table.md)
-và trên chính seeder, không ước lượng. Cổng `pnpm lint:montessori-corpus` giữ hai chỗ khớp nhau.
+và trên chính seeder, không ước lượng. Cổng `pnpm --filter @mindkid/db test` giữ hai chỗ khớp nhau.
 
 | Competency | Dạng bài trong nguồn | Trần level | Dạng bài nhận đợt này | Dạng bài đã soạn | Level đã soạn |
 |---|---:|---:|---:|---:|---:|
@@ -249,7 +249,7 @@ Scenario: BR-MGL-03 — dạng bài chỉ có một level bị chặn
 
 Scenario: BR-MGL-05 — lô làm thủng ô phủ bị chặn trước PR
   Given lô đang soạn làm ô C2 band 5-6 chỉ còn một mechanic
-  When chạy pnpm check:coverage trên tập published cộng lô
+  When chạy pnpm --filter @mindkid/db test trên tập published cộng lô
   Then cổng thoát với mã khác 0
   And nêu ô thiếu đa dạng cơ chế
 
@@ -265,7 +265,7 @@ Scenario: BR-MGL-07 — một batch một workbook
 
 Scenario: BR-MGL-08 — level chỉ khác số liệu bị loại
   Given hai level cùng skill chỉ khác số lượng vật
-  When chạy pnpm seed:check
+  When chạy pnpm --filter @mindkid/db seed:check
   Then cổng 6 fail
   And nêu mã của cả hai bản
 

@@ -51,7 +51,7 @@ WP95.0  Trả lời §11 Q1 và Q3 (cổng người, Q3 định hình lược đ
 | WP95.2 | L | Route mở phiên chạy, ghi bước, đóng phiên; quyền theo actor người dạy | Test tích hợp: một lượt chạy thật ghi đủ ba bảng |
 | WP95.3 | M | Ba mức quan sát; ghim phiên bản nội dung mỗi lần chạy (`BR-LSR-07`) | Test: sửa tiết học sau khi chạy không đổi bản ghi đã ghim |
 | WP95.4 | M | Màn xem lại một lượt chạy; lối vào từ player curriculum | Test giao diện: mở được từ curriculum, hiện đủ bước và quan sát |
-| WP95.5 | M | Test cho 16 rule; verification đầy đủ; lật `status` | 16 rule có test gọi tên mã; `pnpm check:progress` xanh |
+| WP95.5 | M | Test cho 16 rule; verification đầy đủ; lật `status` | 16 rule có test gọi tên mã; `node packages/gates/scripts/check-progress.ts` xanh |
 
 ## 6. Acceptance criteria
 
@@ -81,7 +81,7 @@ Scenario: Người không có quyền dạy không mở được phiên chạy
 
 ```bash
 pnpm exec biome check .
-pnpm lint:specs
+pnpm --filter @mindkid/gates test
 pnpm db:generate && pnpm db:migrate
 pnpm check
 pnpm vitest run packages/db apps/web/tests

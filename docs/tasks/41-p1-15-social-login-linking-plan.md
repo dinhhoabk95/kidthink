@@ -255,7 +255,7 @@ T1 registry provider: PKCE S256 · state một lần · redirect_uri từ cấu 
 - [ ] Không tra danh tính theo email ở bất kỳ đâu.
 - [ ] MFA seed một hàng → SNS trả 428, không cấp phiên.
 - [ ] Xoá tài khoản của P1.14 vẫn xoá cứng `social_identities` — chạy lại ca âm `BR-ADL-10` với hàng thật.
-- [ ] `pnpm check && pnpm test && pnpm test:e2e && pnpm lint:specs && pnpm check:progress` xanh.
+- [ ] `pnpm check && pnpm test && pnpm test:e2e && pnpm --filter @mindkid/gates test && node packages/gates/scripts/check-progress.ts` xanh.
 
 ### Task 7 — Evidence và promote
 

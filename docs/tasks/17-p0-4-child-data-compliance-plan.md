@@ -35,7 +35,7 @@ ship** cho khớp hợp đồng, và dựng cổng máy đọc được để l�
 | Spec `implemented` | 11/130 |
 | Bước P0 đã tick | P0.0 · P0.0b · P0.1 · P0.2 · P0.7 · P0.8 |
 | Bước P0 đang chạy | **P0.3** — [`16-p0-3-auth-foundation-todo.md`](16-p0-3-auth-foundation-todo.md) Task 0–2 xong, Task 3–8 chưa |
-| `pnpm check:progress` | xanh |
+| `node packages/gates/scripts/check-progress.ts` | xanh |
 | Migration mới nhất | `0011_soft_scarecrow` |
 
 `depends_on` của [`child-data-compliance.md`](../specs/00-foundation/child-data-compliance.md)
@@ -234,7 +234,7 @@ theo §7.3 và viết ca âm cho PII.
 - [ ] Không đổi bất kỳ cột nào thuộc bảng nợ trong PR này.
 
 **Kiểm chứng**
-- [ ] `pnpm lint:specs` 0 lỗi, 0 cảnh báo.
+- [ ] `pnpm --filter @mindkid/gates test` 0 lỗi, 0 cảnh báo.
 
 **Phụ thuộc:** T2 · T3 · **Chạm:** 2 file spec · **Cỡ:** S
 
@@ -290,7 +290,7 @@ dạng** và validator, không giao danh mục.
 
 - [ ] `child_profiles` đúng 12 cột hợp đồng; test so khớp **hai chiều** xanh.
 - [ ] `telemetry_events` có `child_uuid` nullable; ca âm ẩn danh hoá xanh.
-- [ ] `pnpm check && pnpm test && pnpm lint:specs && pnpm check:progress` xanh.
+- [ ] `pnpm check && pnpm test && pnpm --filter @mindkid/gates test && node packages/gates/scripts/check-progress.ts` xanh.
 - [ ] Human review diff — đây là **vùng nhạy cảm "dữ liệu trẻ"** theo [`ai-codegen-pipeline.md`](../specs/01-platform/ai-codegen-pipeline.md); không auto-merge.
 - [ ] Khối B **chưa** bắt đầu nếu P0.3 chưa đóng.
 
@@ -372,7 +372,7 @@ credential cho trẻ) đều nói về code **chưa viết**. Cổng phải tồ
 - [ ] Tick P0.4 ở [`14-implementation-sequence-todo.md`](14-implementation-sequence-todo.md) chỉ khi `check:progress` tự xanh.
 
 **Kiểm chứng**
-- [ ] `pnpm check && pnpm test && pnpm lint:specs && pnpm check:progress` xanh.
+- [ ] `pnpm check && pnpm test && pnpm --filter @mindkid/gates test && node packages/gates/scripts/check-progress.ts` xanh.
 
 **Phụ thuộc:** mọi task trên · **Cỡ:** S
 

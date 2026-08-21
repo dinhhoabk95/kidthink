@@ -75,7 +75,7 @@ T0 đo ledger/report/search/recommendation/moderation seams
 - [ ] Đối chiếu `BR-AIA-*`, `BR-ACL-*`, `BR-CDC-06`, content-authoring và §7.3.
 - [ ] Inventory mọi field có thể đi ra provider và mọi nơi log; không dùng plan-only DTO.
 
-**Kiểm chứng:** `pnpm check:progress`; data-flow inventory có source→mapper→adapter→log.
+**Kiểm chứng:** `node packages/gates/scripts/check-progress.ts`; data-flow inventory có source→mapper→adapter→log.
 
 **Phụ thuộc:** Task #67 + P3 · **Files:** task/spec nếu seam đổi · **Cỡ:** S.
 
@@ -87,7 +87,7 @@ T0 đo ledger/report/search/recommendation/moderation seams
 - [ ] Architecture ghi package/SDK, timeout/retry/model version; moderation dùng port duy nhất.
 - [ ] Spec ghi refund khi provider/moderation fail, egress allow-list và join #69; dependency/error trước code.
 
-**Kiểm chứng:** `pnpm lint:specs`; architecture/dependency/catalog pending tests xanh.
+**Kiểm chứng:** `pnpm --filter @mindkid/gates test`; architecture/dependency/catalog pending tests xanh.
 
 **Phụ thuộc:** T0 + Product/Legal/Security decisions · **Files:** AIA/architecture/catalog/privacy/error specs · **Cỡ:** M.
 
@@ -181,7 +181,7 @@ T0 đo ledger/report/search/recommendation/moderation seams
 - [ ] `BR-AIA-01…11` có test mang mã, nhưng spec giữ `approved` tới Task #69 hoàn tất feature thứ sáu.
 - [ ] Sau #69, full gate + human review mới promote và public SKU; không call provider production trong gate.
 
-**Kiểm chứng:** full gate, eval report, `pnpm check:progress` sau join.
+**Kiểm chứng:** full gate, eval report, `node packages/gates/scripts/check-progress.ts` sau join.
 
 **Phụ thuộc:** T5–T7 + Task #69 · **Files:** eval/evidence/spec/catalog/progress tests · **Cỡ:** M.
 

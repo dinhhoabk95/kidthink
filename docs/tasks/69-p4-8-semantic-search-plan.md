@@ -75,7 +75,7 @@ T0 verify pgvector/provider/publish/search/progress seams
 - [ ] Verify pgvector version/capability ở local+CI và production plan/validate, không apply.
 - [ ] Đối chiếu `BR-SEM-*`, AIA/ACL/CDC/search/gating/job/version và inventory progress P4 thiếu.
 
-**Kiểm chứng:** capability report + `pnpm check:services`; không production mutation.
+**Kiểm chứng:** capability report + `pnpm services`; không production mutation.
 
 **Phụ thuộc:** #67/#68 + P1/P2 · **Files:** evidence/task/spec nếu seam đổi · **Cỡ:** S.
 
@@ -87,7 +87,7 @@ T0 verify pgvector/provider/publish/search/progress seams
 - [ ] Eval owner chốt corpus/metrics để quyết weights/cutoff; Infra xác nhận extension/migration path.
 - [ ] Semantic/AI/ledger/architecture/error specs ghi một contract; SKU vẫn ẩn.
 
-**Kiểm chứng:** `pnpm lint:specs`; không còn `PENDING_EMBEDDING_DIM` ở contract được phép migrate.
+**Kiểm chứng:** `pnpm --filter @mindkid/gates test`; không còn `PENDING_EMBEDDING_DIM` ở contract được phép migrate.
 
 **Phụ thuộc:** T0 + human decisions · **Files:** SEM/AIA/ACL/architecture/privacy/error specs · **Cỡ:** M.
 
@@ -197,7 +197,7 @@ T0 verify pgvector/provider/publish/search/progress seams
 - [ ] Mỗi `BR-SEM-01…08` có test mang mã; AIA đủ 11 rule sau feature thứ sáu.
 - [ ] `SEMANTIC-SEARCH` và `AI-ASSISTANT` promote; `PKG-addon_ai` public cùng feature sau human review.
 - [ ] Progress chứng minh cả 8 spec P4 `implemented`, dependencies/catalog predicates/gates xanh.
-- [ ] `pnpm check && pnpm test && pnpm lint:specs && pnpm check:services` xanh; không open question
+- [ ] `pnpm check && pnpm test && pnpm --filter @mindkid/gates test && pnpm services` xanh; không open question
   chặn P4 còn mở.
 
 **Kiểm chứng:** full gate trên và audit không còn open question chặn P4.

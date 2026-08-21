@@ -99,7 +99,7 @@ T0 đo seam P2/P3 thật
 - [ ] Đối chiếu đủ `BR-LPC-*`, `BR-ENT-*`, `BR-PKG-*`, `BR-CLC-*` và §7.3 business rules.
 - [ ] Xác nhận không plan P3 nào được dùng như API runtime nếu code thật khác.
 
-**Kiểm chứng:** `pnpm check:progress`; báo cáo preflight không còn dependency giả.
+**Kiểm chứng:** `node packages/gates/scripts/check-progress.ts`; báo cáo preflight không còn dependency giả.
 
 **Phụ thuộc:** cổng ra P3 · **Files likely touched:** chỉ task/spec nếu seam đổi · **Cỡ:** S.
 
@@ -113,7 +113,7 @@ T0 đo seam P2/P3 thật
 - [ ] Giá trị 20 hiện tại được xác nhận thành contract hoặc thay bằng trạng thái pending an toàn;
   không có số chưa chốt ở đường public.
 
-**Kiểm chứng:** `pnpm lint:specs` và test catalog pending/public.
+**Kiểm chứng:** `pnpm --filter @mindkid/gates test` và test catalog pending/public.
 
 **Phụ thuộc:** T0 + human decision · **Files:** spec LPC, package-catalog, entitlement catalog,
 error registry/test · **Cỡ:** M (3–5 file).
@@ -202,7 +202,7 @@ error registry/test · **Cỡ:** M (3–5 file).
 
 - [ ] IDOR test cho mọi route UUID, concurrency PUT/quota và deep-key leak đều xanh.
 - [ ] E2E tablet + a11y + refresh/retry không tạo item/quota trùng.
-- [ ] `pnpm check`, `pnpm test`, `pnpm lint:specs` xanh; không nới test hiện có.
+- [ ] `pnpm check`, `pnpm test`, `pnpm --filter @mindkid/gates test` xanh; không nới test hiện có.
 
 **Kiểm chứng:** full gate và human security review.
 
@@ -216,7 +216,7 @@ error registry/test · **Cỡ:** M (3–5 file).
 - [ ] Task #63 hoàn tất `BR-PDF-*`, quota export và renderer; LPC chuyển `implemented` sau join.
 - [ ] Chỉ sau human review mới bật catalog/seed local; agent không merge hoặc chạy seed ngoài local.
 
-**Kiểm chứng:** `pnpm check:progress` + full gate; diff catalog chứng minh feature và SKU đổi cùng PR/release.
+**Kiểm chứng:** `node packages/gates/scripts/check-progress.ts` + full gate; diff catalog chứng minh feature và SKU đổi cùng PR/release.
 
 **Phụ thuộc:** T7 + Task #63 · **Files:** spec status, todo Task #14, evidence/catalog test · **Cỡ:** S.
 

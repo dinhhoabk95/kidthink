@@ -161,7 +161,7 @@ là đổi hợp đồng, không phải chi tiết triển khai tự quyết đ�
    `curriculum_items.entity_id`) vào danh sách đóng, cùng cột "Test bắt buộc".
 2. Cập nhật số đếm "Bảy chỗ" → "Chín chỗ" trong văn xuôi.
 3. `reviewed` cập nhật ngày làm, giữ `status: approved` (đây là sửa lỗi sót, không phải mở
-   lại toàn bộ approval flow của Task #5 — nhưng vẫn cần `pnpm lint:specs` xanh sau khi sửa).
+   lại toàn bộ approval flow của Task #5 — nhưng vẫn cần `pnpm --filter @mindkid/gates test` xanh sau khi sửa).
 4. Ghi quyết định vào sổ cái theo đúng định dạng các mục D- trước đó trong spec.
 5. **Không tự quyết định âm thầm trong PR code** — đây là lý do Bước 8 đứng thành bước riêng,
    có gate dừng, không gộp vào Bước 9.
@@ -236,13 +236,13 @@ thể chạy bất kỳ lúc nào sau đó.
   định cần xác nhận, không phải chỗ lướt qua.
 
 ### Cổng dừng C — sau Bước 10 (content + curriculum, hậu Bước 8)
-- [`data-model-overview.md`](../specs/01-platform/data-model-overview.md) §7.2 đã có 9 (không phải 7) dòng, `pnpm lint:specs` 0 lỗi.
+- [`data-model-overview.md`](../specs/01-platform/data-model-overview.md) §7.2 đã có 9 (không phải 7) dòng, `pnpm --filter @mindkid/gates test` 0 lỗi.
 - Test orphan cho `activities.ref_id` và `curriculum_items.entity_id` xanh — hai ca mới sinh
   ra từ Bước 8, không phải hai ca "cho đủ số".
 - `BR-SCT-06` — test entity_id bất biến qua version (given/when/then đã có sẵn trong spec).
 
 ### Cổng dừng cuối (sau Bước 15)
-- `pnpm check && pnpm test && pnpm check:services` xanh tại chỗ.
+- `pnpm check && pnpm test && pnpm services` xanh tại chỗ.
 - 11/11 file schema tồn tại, ≤400 dòng mỗi file (`BR-DM-11`).
 - 9 test orphan polymorphic pass (7 gốc + 2 mới từ §2a).
 - INSERT-only: `UPDATE`/`DELETE` bằng role `mindkid_app` bị DB từ chối trên

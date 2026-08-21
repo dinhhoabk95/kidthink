@@ -158,7 +158,7 @@ Khối B — cần Nitro runtime của P0.3
 - [ ] Worker **chỉ** consume; không có đường enqueue trong `apps/worker`.
 - [ ] Đăng ký handler theo tên job; tên không đăng ký → fail rõ ràng, không im lặng.
 - [ ] Tắt sạch khi nhận tín hiệu dừng, không bỏ dở job đang chạy.
-- [ ] `pnpm check:services` vẫn xanh (PG 17 + Valkey 9).
+- [ ] `pnpm services` vẫn xanh (PG 17 + Valkey 9).
 
 **Kiểm chứng**
 - [ ] `pnpm --filter @mindkid/worker test` xanh.
@@ -228,7 +228,7 @@ Khối B — cần Nitro runtime của P0.3
 - [ ] `packages/queue` · `apps/worker` · `packages/cache` không còn là stub.
 - [ ] Đúng hai job được khai; không kéo danh mục P1.5 lên (D-DZ).
 - [ ] Ít nhất **một** lần `backup:verify` thành công có thật trong `backup_log` (`BR-BAK-06`).
-- [ ] `pnpm check && pnpm test && pnpm lint:specs && pnpm lint:deps && pnpm check:progress` xanh.
+- [ ] `pnpm check && pnpm test && pnpm --filter @mindkid/gates test && pnpm lint:deps && node packages/gates/scripts/check-progress.ts` xanh.
 
 ### Task 8 — `GET /api/guest/health`
 

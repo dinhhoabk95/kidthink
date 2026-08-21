@@ -12,7 +12,7 @@
 
 ## Tóm tắt
 
-Task #12 đưa mọi bảng mục 11 về 5 cột và lật `checkC16` sang chặng 2. Sau đó `pnpm lint:specs`
+Task #12 đưa mọi bảng mục 11 về 5 cột và lật `checkC16` sang chặng 2. Sau đó `pnpm --filter @mindkid/gates test`
 sẽ xanh sạch — nhưng **xanh không có nghĩa là hai cột mới nói được điều gì**. `checkC16` chỉ hỏi
 một câu: ô `Chặn phase` và ô `Chủ` có rỗng không. Nó không hỏi ô đó **chứa gì**.
 
@@ -27,11 +27,11 @@ dọn 76 hàng, rồi lật `C17` sang `fail`.
 
 ```
 git log --oneline -1                            # Task #12 đã đóng
-pnpm lint:specs 2>&1 | tail -2                  # 0 lỗi, 0 cảnh báo
+pnpm --filter @mindkid/gates test 2>&1 | tail -2                  # 0 lỗi, 0 cảnh báo
 grep -rl "^status: approved" --include="*.md" docs/specs | xargs grep -l "^spec: " | wc -l
 ```
 
-Lệnh cuối ra **130**. Nếu `pnpm lint:specs` còn cảnh báo thì Task #12 chưa xong và task này chưa
+Lệnh cuối ra **130**. Nếu `pnpm --filter @mindkid/gates test` còn cảnh báo thì Task #12 chưa xong và task này chưa
 tới lượt — hai task cùng sửa mục 11 của những file giao nhau, chạy song song là xung đột merge.
 
 Đo ở `be75db4`: cả ba điều kiện đã đạt. Task #12 đóng lúc `be75db4`, gồm cả `C16` và `C6` chặng 2
@@ -39,7 +39,7 @@ tới lượt — hai task cùng sửa mục 11 của những file giao nhau, ch
 
 ## 1. Vì sao cổng hiện tại không bắt được
 
-`checkC16` trong [`scripts/lint-specs-lib.ts`](../../scripts/lint-specs-lib.ts) coi một ô là
+`checkC16` trong [`packages/gates/src/lint-specs-lib.ts`](../../scripts/lint-specs-lib.ts) coi một ô là
 thiếu khi nó rỗng, `-`, hoặc `—`. Mọi chuỗi khác đều qua. Nên các giá trị sau đang **hợp lệ với
 cổng** mà vô nghĩa với người đọc:
 
@@ -67,7 +67,7 @@ Tổng **76 hàng trên 42 file**. Lấy lại danh sách lúc làm, đừng tin
 đang thêm hàng mới:
 
 ```
-pnpm lint:specs 2>&1 | grep -F "[C17]"
+pnpm --filter @mindkid/gates test 2>&1 | grep -F "[C17]"
 ```
 
 Phân bố theo vùng: `00-foundation` 6 file / 14 hàng · `01-platform` 6 file / 9 hàng ·
@@ -137,13 +137,13 @@ Chặng 1 (bước 1 của task, **trước** khi dọn):
 2. Chạy test — **phải đỏ**.
 3. Viết `checkC17`: `Chủ` phải khớp một trong bốn dạng ở mục 3. Hàng gạch `~~n~~` chỉ chấp nhận
    `D-*`. Mức `warn` cho mọi `status`.
-4. Chạy test — **phải xanh**. `pnpm lint:specs` in ra khoảng 76 cảnh báo `C17`, 0 lỗi.
+4. Chạy test — **phải xanh**. `pnpm --filter @mindkid/gates test` in ra khoảng 76 cảnh báo `C17`, 0 lỗi.
 
 Chặng 2 (bước cuối, sau khi dọn hết):
 
 5. Đổi `warn` sang `fail` khi `status: approved`, giữ `warn` cho `draft`.
 6. Xoá thân nhánh vừa đổi, chạy lại ca âm — **phải đỏ trở lại**. Không bỏ được bước này.
-7. Khôi phục. `pnpm lint:specs` — 0 lỗi, 0 cảnh báo.
+7. Khôi phục. `pnpm --filter @mindkid/gates test` — 0 lỗi, 0 cảnh báo.
 
 Đặt `C17` ở mức `warn` trước có hai cái lợi đo được: danh sách nợ do chính cổng sinh ra (không
 phải chép tay từ kế hoạch này), và pipeline không đỏ trong lúc 42 file còn đang dọn.
@@ -152,11 +152,11 @@ phải chép tay từ kế hoạch này), và pipeline không đỏ trong lúc 4
 
 Áp cho cả 42 file, không ngoại lệ:
 
-1. `pnpm lint:specs 2>&1 | grep <tên-file>` — lấy đúng số hàng nợ.
+1. `pnpm --filter @mindkid/gates test 2>&1 | grep <tên-file>` — lấy đúng số hàng nợ.
 2. Đọc **cả mục 11**, không chỉ hàng bị báo. Hàng bên cạnh thường cùng một lỗi mà cổng chưa bắt.
 3. Phân loại từng hàng nợ vào A / B / C / D theo mục 2.
 4. Sửa theo luật mục 3. Sửa tay từng hàng — **không** `sed` hàng loạt lên bảng markdown.
-5. `pnpm lint:specs 2>&1 | grep <tên-file>` trống, và `tail -2` vẫn 0 lỗi.
+5. `pnpm --filter @mindkid/gates test 2>&1 | grep <tên-file>` trống, và `tail -2` vẫn 0 lỗi.
 6. Một commit: `docs(specs): T13 — chuẩn hoá Chủ cho <tên-file>`.
 
 Việc 2 là việc dễ bỏ nhất và tốn nhất khi bỏ: cổng `C17` chỉ đọc ô `Chủ`, còn ô `Chặn phase` bên
@@ -191,7 +191,7 @@ bước 1 và bước cuối.
 ### Cổng dừng A — sau bước 1
 
 - Ca âm `C17` đã chứng minh đỏ rồi xanh.
-- `pnpm lint:specs` — 0 lỗi, số cảnh báo `C17` bằng số hàng đo ở mục 2 (± số hàng Task #12 mới thêm).
+- `pnpm --filter @mindkid/gates test` — 0 lỗi, số cảnh báo `C17` bằng số hàng đo ở mục 2 (± số hàng Task #12 mới thêm).
 - Số đó được ghi vào [`13-question-owner-normalization-todo.md`](13-question-owner-normalization-todo.md) làm mốc đếm ngược.
 
 ### Cổng dừng B — sau lô 4
@@ -202,7 +202,7 @@ bước 1 và bước cuối.
 
 ### Cổng dừng cuối
 
-- `pnpm lint:specs` — 0 lỗi, 0 cảnh báo **với `C17` ở chặng 2**.
+- `pnpm --filter @mindkid/gates test` — 0 lỗi, 0 cảnh báo **với `C17` ở chặng 2**.
 - Ca âm chặng 2 đã chứng minh đỏ → xanh → đỏ.
 - [`CONVENTIONS.md`](../specs/CONVENTIONS.md) có mục bộ giá trị `Chủ` (bảng mục 3) và khuôn đóng
   một hàng (mục 3, nhóm A).
@@ -216,7 +216,7 @@ bước 1 và bước cuối.
 - Chuẩn hoá cột `Chặn phase` thành bộ đóng. Cột đó hiện có hơn 100 giá trị khác nhau; gom lại là
   một task riêng, và phải chốt bộ phase trước. Task này chỉ dời phase khỏi ô `Chủ` khi gặp.
 - Sửa nội dung rule hoặc nội dung câu hỏi.
-- Code sản phẩm, ngoài [`scripts/lint-specs-lib.ts`](../../scripts/lint-specs-lib.ts) và test của nó.
+- Code sản phẩm, ngoài [`packages/gates/src/lint-specs-lib.ts`](../../scripts/lint-specs-lib.ts) và test của nó.
 
 ## 9. Rủi ro
 
@@ -232,8 +232,8 @@ bước 1 và bước cuối.
 ## 10. Kiểm chứng toàn task
 
 ```
-pnpm lint:specs 2>&1 | tail -2                  # 0 lỗi, 0 cảnh báo
-pnpm test scripts/tests/lint-specs.test.ts      # ca âm C17 hai chặng xanh
+pnpm --filter @mindkid/gates test 2>&1 | tail -2                  # 0 lỗi, 0 cảnh báo
+pnpm test packages/gates/tests/lint-specs.test.ts      # ca âm C17 hai chặng xanh
 pnpm check && pnpm test
 ```
 

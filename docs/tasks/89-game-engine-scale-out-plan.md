@@ -91,7 +91,7 @@ giá trị hợp lệ). Cổng in "hợp lệ".
 Đây là hỏng nặng hơn nó trông: trục `thinking` là thứ duy nhất trả lời được câu
 "đã phủ đủ 6 loại hình tư duy chưa". Từ vựng trôi thì câu hỏi đó không đo được nữa.
 
-**Đo lại bằng `pnpm report:tags` (2026-08-17) — độ lệch lớn hơn hai ví dụ ở trên nhiều:**
+**Đo lại bằng `pnpm --filter @mindkid/db report:tags` (2026-08-17) — độ lệch lớn hơn hai ví dụ ở trên nhiều:**
 
 | Trục | Từ vựng Lớp 1 | Giá trị khác nhau trong seed | Ngoài từ vựng | Lượt gắn ngoài / tổng |
 |---|---:|---:|---:|---|

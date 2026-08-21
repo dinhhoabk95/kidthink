@@ -261,7 +261,7 @@ batch trước khi tiếp tục, không tăng kích thước batch.
 - [ ] Seed ba tầng đầu khớp **từng competency** với `docs/taxonomy/`.
 - [ ] `emoji_registry` tồn tại và khớp `packages/emoji` hai chiều.
 - [ ] Lô pilot 30 LO xong, baseline đã đo lại (D-EF).
-- [ ] `pnpm check && pnpm test && pnpm lint:specs && pnpm check:progress` xanh.
+- [ ] `pnpm check && pnpm test && pnpm --filter @mindkid/gates test && node packages/gates/scripts/check-progress.ts` xanh.
 
 ### T8 — `GET /api/guest/taxonomy`
 

@@ -153,7 +153,7 @@ T1 SEO contract: meta · canonical · sitemap động · JSON-LD · og:image · 
 - [ ] Trang public đầu tiên ≤ **500 KB** tổng (ngân sách P1.1).
 
 **Kiểm chứng**
-- [ ] `pnpm test:e2e -- no-js && pnpm lint:public-scripts` xanh; fixture vi phạm → đỏ.
+- [ ] `pnpm test:e2e -- no-js && pnpm --filter @mindkid/web test` xanh; fixture vi phạm → đỏ.
 
 **Phụ thuộc:** T1 · **Cỡ:** M
 
@@ -261,7 +261,7 @@ T1 SEO contract: meta · canonical · sitemap động · JSON-LD · og:image · 
 - [ ] Mọi chính sách có version, URL vĩnh viễn; bản `pending_review` chặn deploy production.
 - [ ] Không ảnh trẻ em thật, không hứa hẹn kết quả học tập.
 - [ ] LCP < 2,5 s trên 4G; trang đầu ≤500 KB.
-- [ ] `pnpm check && pnpm test && pnpm test:e2e && pnpm lint:specs && pnpm check:progress` xanh.
+- [ ] `pnpm check && pnpm test && pnpm test:e2e && pnpm --filter @mindkid/gates test && node packages/gates/scripts/check-progress.ts` xanh.
 
 ### Task 8 — Evidence và promote
 

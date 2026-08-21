@@ -123,7 +123,7 @@
 - [x] Mọi chính sách có version và URL vĩnh viễn; `pending_review` chặn deploy.
 - [x] Không ảnh trẻ em thật; không hứa hẹn kết quả học tập.
 - [x] LCP < 2,5 s trên 4G; trang đầu ≤500 KB.
-- [x] `pnpm check && pnpm test && pnpm test:e2e && pnpm lint:specs && pnpm check:progress` xanh.
+- [x] `pnpm check && pnpm test && pnpm test:e2e && pnpm --filter @mindkid/gates test && node packages/gates/scripts/check-progress.ts` xanh.
 
 ---
 

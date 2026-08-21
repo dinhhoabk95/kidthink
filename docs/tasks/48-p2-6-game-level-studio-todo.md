@@ -125,7 +125,7 @@
 - [x] Hai Manager không ghi đè nhau (**409**).
 - [x] Không route studio nào ghi `game_templates` hay đặt `published`.
 - [x] `access_tier` không có mặc định.
-- [x] `pnpm check && pnpm test && pnpm test:e2e && pnpm lint:tokens && pnpm lint:specs && pnpm check:progress` xanh.
+- [x] `pnpm check && pnpm test && pnpm test:e2e && pnpm --filter @mindkid/gates test && pnpm --filter @mindkid/gates test && node packages/gates/scripts/check-progress.ts` xanh.
 
 ---
 

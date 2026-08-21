@@ -987,3 +987,120 @@ export function computeEquationRowsLayout(input: LayoutInput): Slot[] {
 
   return slots;
 }
+
+/**
+ * Bố cục chia đôi trục đối xứng (mirror-axis-split) — `GT-021`.
+ * Nửa trái là mẫu tham chiếu, nửa phải là các ô cần hoàn thiện đối xứng, khay dưới là các mảnh lựa chọn.
+ */
+export function computeMirrorAxisSplitLayout(input: LayoutInput): Slot[] {
+  const { slotCount, ageBand, targetCount: rawTargetCount } = input;
+  const targetCount = Math.max(1, rawTargetCount ?? 2);
+  const touchFloor = getTouchFloor(ageBand);
+  const availW = LOGIC_WIDTH - 2 * SAFE_MARGIN_PX;
+  const availH = LOGIC_HEIGHT - 2 * SAFE_MARGIN_PX;
+
+  const slots: Slot[] = [];
+
+  // Vùng làm việc chính bên trên chia đôi trục dọc (x = 480 là trục đối xứng)
+  const mainH = Math.floor(availH * 0.65);
+  const halfW = Math.floor((availW - SLOT_GAP_PX * 2) / 2);
+  const cell = Math.max(touchFloor, 72);
+
+  // 1. Mẫu đối xứng bên trái (Neutral / Reference)
+  slots.push({
+    index: 0,
+    x: Math.round(SAFE_MARGIN_PX + halfW / 2),
+    y: Math.round(SAFE_MARGIN_PX + mainH / 2),
+    w: Math.round(halfW),
+    h: Math.round(mainH),
+    hitW: Math.round(halfW),
+    hitH: Math.round(mainH),
+    page: 0,
+    role: "neutral",
+  });
+
+  // 2. Các ô đích cần hoàn thiện bên phải (Target)
+  const targetCols = Math.min(targetCount, 3);
+  const targetStartX = SAFE_MARGIN_PX + halfW + SLOT_GAP_PX * 2;
+
+  for (let t = 0; t < targetCount; t++) {
+    const row = Math.floor(t / targetCols);
+    const col = t % targetCols;
+    slots.push({
+      index: 1 + t,
+      x: Math.round(targetStartX + col * (cell + SLOT_GAP_PX) + cell / 2),
+      y: Math.round(
+        SAFE_MARGIN_PX + 20 + row * (cell + SLOT_GAP_PX) + cell / 2
+      ),
+      w: Math.round(cell),
+      h: Math.round(cell),
+      hitW: Math.max(touchFloor, Math.round(cell)),
+      hitH: Math.max(touchFloor, Math.round(cell)),
+      page: 0,
+      role: "target",
+    });
+  }
+
+  // 3. Khay mảnh lựa chọn bên dưới (Source)
+  const trayStartY = SAFE_MARGIN_PX + mainH + 16;
+  const sourceCols = Math.max(1, slotCount);
+  const totalSourceW = sourceCols * cell + (sourceCols - 1) * SLOT_GAP_PX;
+  const sourceStartX =
+    SAFE_MARGIN_PX + Math.max(0, (availW - totalSourceW) / 2);
+
+  for (let s = 0; s < slotCount; s++) {
+    slots.push({
+      index: 1 + targetCount + s,
+      x: Math.round(sourceStartX + s * (cell + SLOT_GAP_PX) + cell / 2),
+      y: Math.round(trayStartY + cell / 2),
+      w: Math.round(cell),
+      h: Math.round(cell),
+      hitW: Math.max(touchFloor, Math.round(cell)),
+      hitH: Math.max(touchFloor, Math.round(cell)),
+      page: 0,
+      role: "source",
+    });
+  }
+
+  return slots;
+}
+
+/**
+ * Bố cục khung cảnh tự do (free-scene) — `GT-022`.
+ * Phân bố các vị trí vật thể trong không gian tranh logic đảm bảo sàn chạm và không chồng lấn.
+ */
+export function computeFreeSceneLayout(input: LayoutInput): Slot[] {
+  const { slotCount, ageBand } = input;
+  if (slotCount <= 0) {
+    return [];
+  }
+  const touchFloor = getTouchFloor(ageBand);
+  const availW = LOGIC_WIDTH - 2 * SAFE_MARGIN_PX;
+  const availH = LOGIC_HEIGHT - 2 * SAFE_MARGIN_PX;
+  const cell = Math.max(touchFloor, 64);
+
+  // Phân bố đều lưới mở rộng làm các điểm neo trong khung cảnh
+  const cols = Math.max(2, Math.min(4, Math.ceil(Math.sqrt(slotCount))));
+  const rows = Math.ceil(slotCount / cols);
+  const colStep = availW / cols;
+  const rowStep = availH / rows;
+
+  const slots: Slot[] = [];
+  for (let i = 0; i < slotCount; i++) {
+    const r = Math.floor(i / cols);
+    const c = i % cols;
+    slots.push({
+      index: i,
+      x: Math.round(SAFE_MARGIN_PX + c * colStep + colStep / 2),
+      y: Math.round(SAFE_MARGIN_PX + r * rowStep + rowStep / 2),
+      w: Math.round(cell),
+      h: Math.round(cell),
+      hitW: Math.max(touchFloor, Math.round(cell)),
+      hitH: Math.max(touchFloor, Math.round(cell)),
+      page: 0,
+      role: "neutral",
+    });
+  }
+
+  return slots;
+}

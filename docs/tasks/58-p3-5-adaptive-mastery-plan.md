@@ -262,7 +262,7 @@ T1 sửa contract D-MH…D-MP + human approve
       1–2 vùng cho trẻ, 6 vùng cho báo cáo người lớn.
 - [ ] Không thêm spec mới; không thêm mã lỗi ngoài registry.
 
-**Kiểm chứng:** `pnpm lint:specs` 0 lỗi, 0 cảnh báo mới.
+**Kiểm chứng:** `pnpm --filter @mindkid/gates test` 0 lỗi, 0 cảnh báo mới.
 
 **Phụ thuộc:** P3.4 · human decision · **Cỡ:** M
 
@@ -427,10 +427,10 @@ idempotency/performance tests; mỗi package ≤5 files
 - [ ] Nợ ca kiểm của Task #57 đã trả và được tick ở đúng chỗ.
 - [ ] [`adaptive-engine.md`](../specs/01-platform/adaptive-engine.md) và
       [`progress-and-mastery.md`](../specs/04-play/progress-and-mastery.md) sang `implemented`.
-- [ ] Tick **P3.5** trong Task #14 chỉ khi `pnpm check:progress` tự xanh.
+- [ ] Tick **P3.5** trong Task #14 chỉ khi `node packages/gates/scripts/check-progress.ts` tự xanh.
 
 **Kiểm chứng:**
-`pnpm check && pnpm test && pnpm test:e2e && pnpm lint:specs && pnpm check:progress` xanh.
+`pnpm check && pnpm test && pnpm test:e2e && pnpm --filter @mindkid/gates test && node packages/gates/scripts/check-progress.ts` xanh.
 
 **Phụ thuộc:** T5 · T6 · T7 · T8 · **Cỡ:** S
 

@@ -38,7 +38,7 @@ Studio ghi `game_levels` ở trạng thái `draft`. Publish là bề mặt khác
 | Actor | Làm gì |
 |---|---|
 | `content_reviewer` · `super_admin` | Tạo, sửa, gửi duyệt |
-| `pnpm seed:content` | Ghi nội dung nền `published` qua đường khác ([`content-seed-authoring.md`](../01-platform/content-seed-authoring.md)); từ đó Manager quản lý trong studio bằng **version mới** |
+| `pnpm --filter @mindkid/db seed:content` | Ghi nội dung nền `published` qua đường khác ([`content-seed-authoring.md`](../01-platform/content-seed-authoring.md)); từ đó Manager quản lý trong studio bằng **version mới** |
 
 ## 3. Entry points
 

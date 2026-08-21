@@ -23,15 +23,15 @@ Bắt đầu từ [`../SPEC.md`](../SPEC.md) — contract toàn dự án. Rồi 
 | Khu vực | Spec | MVP |
 |---|---:|---:|
 | `00-foundation` | 16 | 16 |
-| `01-platform` | 41 | 33 |
+| `01-platform` | 42 | 33 |
 | `02-public` | 9 | 9 |
 | `03-account` | 22 | 19 |
 | `04-play` | 15 | 13 |
-| `05-content` | 10 | 4 |
+| `05-content` | 12 | 4 |
 | `06-admin` | 30 | 29 |
 | `07-addon` | 7 | 0 |
 | `08-quality` | 8 | 7 |
-| **Tổng** | **158** | **130** |
+| **Tổng** | **161** | **130** |
 
 v1 có **31** spec cho cùng phạm vi. Xé nhỏ là chủ ý — xem [`AUDIT-v1.md`](AUDIT-v1.md) §1.2.
 2 spec cộng thêm 2026-08-05 ([`repo-bootstrap.md`](00-foundation/repo-bootstrap.md), [`monorepo-package-architecture.md`](00-foundation/monorepo-package-architecture.md)) lấp lỗ hổng

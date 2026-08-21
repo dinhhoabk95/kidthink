@@ -47,10 +47,12 @@ export {
 } from "./layout/constants.js";
 export {
   computeBipartiteLayout,
+  computeFreeSceneLayout,
   computeGridLayout,
   computeHorizontalRowLayout,
   computeHorizontalSlotTrackLayout,
   computeMatrixSlotGridLayout,
+  computeMirrorAxisSplitLayout,
   computeMultiBucketLayout,
   computeNumberBondTreeLayout,
   computeTenFrameSplitLayout,
@@ -104,7 +106,20 @@ export {
   type RoundRunnerState,
   type SessionFactory,
 } from "./round-runner";
+export {
+  type AssemblyAnchor,
+  type AssemblyPart,
+  type AssemblyPlacementResult,
+  AssemblySystem,
+} from "./systems/assembly-system.js";
 export { AudioController } from "./systems/audio-controller";
+export {
+  type CardItem,
+  type CardState,
+  type CardStateItem,
+  CardSystem,
+  type FlipResult,
+} from "./systems/card-system.js";
 export {
   DegradationManager,
   type DegradationState,
@@ -143,7 +158,25 @@ export {
   reachableCells,
   sameCell,
 } from "./systems/maze-system.js";
+export {
+  computeMirroredPoint,
+  type GridCoord,
+  getSymmetricGridPosition,
+  isMirroredPointMatch,
+  type MirrorAxis,
+  type MirrorPoint,
+  MirrorSystem,
+  type SymmetricSlotPair,
+} from "./systems/mirror-system.js";
 export { type Particle, RenderSystem } from "./systems/render-system";
+export {
+  type FlipAxis,
+  isPieceTransformMatch,
+  type PieceTransform,
+  type RotationAngle90,
+  rotatePiece90,
+  togglePieceFlip,
+} from "./systems/rotation-system.js";
 export {
   type AgeBand as ScaffoldingAgeBand,
   type ScaffoldAction,
@@ -152,11 +185,23 @@ export {
   ScaffoldingSystem,
   type ScaffoldState,
 } from "./systems/scaffolding";
+export {
+  type FindResult,
+  type SceneObject,
+  type SceneObjectState,
+  SceneSystem,
+} from "./systems/scene-system.js";
 export { SFXEngine, type SFXType } from "./systems/sfx-engine";
 export {
   type SpeechOptions,
   SpeechSynthesisAdapter,
 } from "./systems/speech-synthesis-adapter";
+export {
+  type TracePathResult,
+  type TracePoint,
+  TraceSystem,
+  type TraceWaypoint,
+} from "./systems/trace-system.js";
 export { GT001_FIXTURES } from "./templates/GT-001/fixtures.js";
 export { GT001Session } from "./templates/GT-001/session.js";
 export type {
@@ -271,4 +316,64 @@ export type {
   GT017Content,
   GT017Difficulty,
 } from "./templates/GT-017/template.js";
+export { GT018_FIXTURES } from "./templates/GT-018/fixtures.js";
+export { GT018Session } from "./templates/GT-018/session.js";
+export type {
+  GT018Content,
+  GT018Difficulty,
+} from "./templates/GT-018/template.js";
+export { GT019_FIXTURES } from "./templates/GT-019/fixtures.js";
+export { GT019Session } from "./templates/GT-019/session.js";
+export type {
+  GT019Content,
+  GT019Difficulty,
+} from "./templates/GT-019/template.js";
+export { GT020_FIXTURES } from "./templates/GT-020/fixtures.js";
+export { GT020Session } from "./templates/GT-020/session.js";
+export type {
+  GT020Content,
+  GT020Difficulty,
+} from "./templates/GT-020/template.js";
+export { GT021_FIXTURES } from "./templates/GT-021/fixtures.js";
+export { GT021Session } from "./templates/GT-021/session.js";
+export type {
+  GT021Content,
+  GT021Difficulty,
+} from "./templates/GT-021/template.js";
+export { GT022_FIXTURES } from "./templates/GT-022/fixtures.js";
+export { GT022Session } from "./templates/GT-022/session.js";
+export type {
+  GT022Content,
+  GT022Difficulty,
+} from "./templates/GT-022/template.js";
+export { GT023_FIXTURES } from "./templates/GT-023/fixtures.js";
+export { GT023Session } from "./templates/GT-023/session.js";
+export type {
+  GT023Content,
+  GT023Difficulty,
+} from "./templates/GT-023/template.js";
+export { GT024_FIXTURES } from "./templates/GT-024/fixtures.js";
+export { GT024Session } from "./templates/GT-024/session.js";
+export type {
+  GT024Content,
+  GT024Difficulty,
+} from "./templates/GT-024/template.js";
+export { GT025_FIXTURES } from "./templates/GT-025/fixtures.js";
+export { GT025Session } from "./templates/GT-025/session.js";
+export type {
+  GT025Content,
+  GT025Difficulty,
+} from "./templates/GT-025/template.js";
+export { GT026_FIXTURES } from "./templates/GT-026/fixtures.js";
+export { GT026Session } from "./templates/GT-026/session.js";
+export type {
+  GT026Content,
+  GT026Difficulty,
+} from "./templates/GT-026/template.js";
+export { GT027_FIXTURES } from "./templates/GT-027/fixtures.js";
+export { GT027Session } from "./templates/GT-027/session.js";
+export type {
+  GT027Content,
+  GT027Difficulty,
+} from "./templates/GT-027/template.js";
 export { ObjectPool } from "./utils/object-pool.js";

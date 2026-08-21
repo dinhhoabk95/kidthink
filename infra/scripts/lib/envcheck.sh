@@ -8,7 +8,7 @@
 
 validate_env_files() {
   local release_dir="$1"
-  local validator="${release_dir}/scripts/validate-env-file.ts"
+  local validator="${release_dir}/packages/config/scripts/validate-env-file.ts"
 
   if [ ! -d "${MK_ENV_DIR}" ]; then
     log_error "Environment directory '${MK_ENV_DIR}' does not exist. Write the three files described in env-contract.md §7.3 first."

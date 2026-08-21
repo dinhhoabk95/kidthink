@@ -13,7 +13,7 @@
 
 ## Bước 0 — điều kiện tiên quyết
 
-- [x] `pnpm lint:specs 2>&1 | tail -2` — 0 lỗi, 0 cảnh báo
+- [x] `pnpm --filter @mindkid/gates test 2>&1 | tail -2` — 0 lỗi, 0 cảnh báo
 - [x] `grep -rl "^status: approved" --include="*.md" docs/specs | xargs grep -l "^spec: " | wc -l` — ra **130**
 - [x] `pnpm check && pnpm test` xanh
 - [x] Đọc kế hoạch mục 3 (vì sao không dùng `depends_on` làm nguồn thứ tự) và mục 5 (chín việc)
@@ -45,7 +45,7 @@ Năm cạnh `depends_on` đảo phase — quyết định từng cái, cấp mã
 
 - [x] Lệnh phủ ở kế hoạch mục 9 in ra **rỗng** (roadmap phủ 130/130)
 - [x] Năm cạnh đảo phase đều đã có quyết định kèm mã `D-*`
-- [x] `pnpm lint:specs` 0 lỗi, 0 cảnh báo
+- [x] `pnpm --filter @mindkid/gates test` 0 lỗi, 0 cảnh báo
 - [x] Commit `docs(specs): T14 bước 1 — roadmap phủ đủ 130 spec`
 
 ---
@@ -55,7 +55,7 @@ Năm cạnh `depends_on` đảo phase — quyết định từng cái, cấp mã
 Mỗi bước: chín việc ở kế hoạch mục 5; mỗi work package S/M một PR.
 
 - [x] **P0.0** Cổng chất lượng và review vùng nhạy cảm — [`testing-strategy.md`](../specs/08-quality/testing-strategy.md) · [`ai-codegen-pipeline.md`](../specs/01-platform/ai-codegen-pipeline.md) · [`mvp-scope.md`](../specs/00-foundation/mvp-scope.md)
-- [x] **P0.0b** Cổng chống tick khống `pnpm check:progress` — kế hoạch mục 10; ca âm trước: commit chỉ đổi `[ ]` thành `[x]` phải làm cổng đỏ
+- [x] **P0.0b** Cổng chống tick khống `node packages/gates/scripts/check-progress.ts` — kế hoạch mục 10; ca âm trước: commit chỉ đổi `[ ]` thành `[x]` phải làm cổng đỏ
 - [x] **P0.1** Khung repo + dependency baseline — [`repo-bootstrap.md`](../specs/00-foundation/repo-bootstrap.md) · [`monorepo-package-architecture.md`](../specs/00-foundation/monorepo-package-architecture.md)
 - [x] **P0.2** Từ vựng và ID — [`glossary.md`](../specs/00-foundation/glossary.md) · [`id-conventions.md`](../specs/00-foundation/id-conventions.md)
 - [x] **P0.3** Tác nhân và guard — [`actors.md`](../specs/00-foundation/actors.md) · [`auth-tokens-sessions.md`](../specs/01-platform/auth-tokens-sessions.md)
@@ -77,7 +77,7 @@ Kiểm giữa phase:
 
 - [x] Sau P0.8: migration chạy được từ đầu trên database rỗng, không phải chỉ chạy tiếp được
 - [ ] Sau P0.10: một người dùng thật đăng ký → nhận email → đăng nhập → đổi mật khẩu, không dùng seed tay
-- [ ] Sau mỗi bước: `pnpm check && pnpm test && pnpm lint:specs` xanh
+- [ ] Sau mỗi bước: `pnpm check && pnpm test && pnpm --filter @mindkid/gates test` xanh
 
 ## Cổng ra P0
 
@@ -201,5 +201,5 @@ localization và mở thị trường chỉ quay lại sau quyết định scope
 ## Cổng dừng cuối
 
 - [ ] Đếm `status:` trong `docs/specs` bằng script (không dùng `grep -rh`, hook viết lại cờ ngắn) — 151 `implemented`
-- [ ] `pnpm check && pnpm test && pnpm lint:specs && pnpm check:services` xanh
+- [ ] `pnpm check && pnpm test && pnpm --filter @mindkid/gates test && pnpm services` xanh
 - [ ] Không spec nào còn câu hỏi mở mang `Chặn phase` là một phase đã qua

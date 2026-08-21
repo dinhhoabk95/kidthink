@@ -10,7 +10,7 @@
 - [x] Chốt cost từng feature, pack size/price, 20% baseline, không-expiry/accounting.
 - [x] Catalog/payment định nghĩa credit grant; loại counter conflict contract-first.
 - [x] Predicate catalog buộc #67 + #68 + #69; SKU vẫn ẩn.
-- [x] `pnpm lint:specs` + price/catalog tests xanh.
+- [x] `pnpm --filter @mindkid/gates test` + price/catalog tests xanh.
 
 ## Checkpoint A
 

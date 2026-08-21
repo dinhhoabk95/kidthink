@@ -34,7 +34,7 @@
 - [x] Cập nhật KPI/success criteria ở [`SPEC.md`](../SPEC.md) sau phê duyệt.
 - [x] Cập nhật [`index.md`](../specs/index.md), roadmap và registry nếu có spec/prefix mới.
 - [x] Task #26/#36/#57 chỉ link owner; xóa protocol cục bộ trùng lặp.
-- [x] Chạy link check, `pnpm lint:specs` và query claim/evidence.
+- [x] Chạy link check, `pnpm --filter @mindkid/gates test` và query claim/evidence.
 
 ## WP81.5 — Handoff implementation
 
@@ -47,4 +47,4 @@
 - [x] Checkpoint A có đủ Product/Pedagogy/Privacy review.
 - [x] Spec/protocol được `approved`; root KPI không còn chỉ đo growth/engagement.
 - [x] Không phiên playtest hoặc collection nào chạy trước contract.
-- [x] `pnpm lint:specs` và gate repo liên quan xanh; không auto-merge.
+- [x] `pnpm --filter @mindkid/gates test` và gate repo liên quan xanh; không auto-merge.

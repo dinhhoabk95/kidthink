@@ -48,10 +48,10 @@ make_source_repo() {
     git config user.email harness@example.test
     git config user.name Harness
 
-    mkdir -p scripts packages/config/src packages/db/scripts infra
+    mkdir -p scripts packages/config/src packages/config/scripts packages/db/scripts infra
     cp -R "${REPO_ROOT}/infra/scripts" infra/
     cp -R "${REPO_ROOT}/infra/pm2" infra/
-    cp "${REPO_ROOT}/scripts/validate-env-file.ts" scripts/
+    cp "${REPO_ROOT}/packages/config/scripts/validate-env-file.ts" packages/config/scripts/
     cp "${REPO_ROOT}/packages/config/src/env-contract.ts" packages/config/src/
     cp "${REPO_ROOT}/packages/config/src/env-file.ts" packages/config/src/
     echo "// migration entrypoint" >packages/db/scripts/migrate.ts

@@ -188,7 +188,7 @@ T1 TOTP: sinh secret · xác thực mã · mã khôi phục dùng một lần
 - [ ] 26 ô ma trận đều có test; curl không đi vòng được.
 - [ ] Cookie và audience tách hoàn toàn hai chiều.
 - [ ] Mọi đăng nhập và thất bại có hàng `audit_logs`.
-- [ ] `pnpm check && pnpm test && pnpm lint:specs && pnpm check:progress` xanh.
+- [ ] `pnpm check && pnpm test && pnpm --filter @mindkid/gates test && node packages/gates/scripts/check-progress.ts` xanh.
 - [ ] Human security reviewer approve diff — vùng nhạy cảm **auth**, không auto-merge.
 
 ### Task 7 — Evidence, cổng ra P0, promote

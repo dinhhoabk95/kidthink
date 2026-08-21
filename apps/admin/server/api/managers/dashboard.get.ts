@@ -14,7 +14,7 @@ import {
 } from "@mindkid/db";
 import { and, count, desc, eq, gt, gte, inArray, lt, sql } from "drizzle-orm";
 import { defineEventHandler } from "h3";
-import { ensureManagerCsrfCookie } from "../../../utils/auth-runtime";
+import { ensureManagerCsrfCookie } from "../../utils/auth-runtime.js";
 
 type OwnerDb = ReturnType<typeof getOwnerDb>;
 

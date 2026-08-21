@@ -234,7 +234,7 @@ T1 máy trạng thái + cột access_tier_at_start · completion_status (mở r�
 - [ ] Idempotency ép ở **PK**, chứng minh bằng chèn thẳng vào DB.
 - [ ] Test offline dùng chế độ offline **thật**; không chuỗi `navigator.onLine` nào trong test (`D-GF`).
 - [ ] Cache service worker không chứa nội dung trả phí.
-- [ ] `pnpm check && pnpm test && pnpm test:e2e && pnpm lint:specs && pnpm check:progress` xanh.
+- [ ] `pnpm check && pnpm test && pnpm test:e2e && pnpm --filter @mindkid/gates test && node packages/gates/scripts/check-progress.ts` xanh.
 
 ### Task 8 — Evidence và promote
 

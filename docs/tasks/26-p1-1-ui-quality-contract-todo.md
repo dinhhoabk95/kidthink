@@ -29,7 +29,7 @@
 - [x] Test đối chiếu `@theme` ↔ `designTokens.ts`, lệch là đỏ.
 - [x] Ca âm `BR-DSC-08`: định nghĩa lại token thương hiệu ở `apps/web` → cổng đỏ.
 
-### Task 2 — `pnpm lint:tokens` mở rộng
+### Task 2 — `pnpm --filter @mindkid/gates test` mở rộng
 
 - [x] `BR-DSC-01` hex trong `.vue` → đỏ (template, `<style>`, inline `:style`).
 - [x] `BR-DSC-02` hex trong `packages/game-engine` ngoài `designTokens.ts` → đỏ.
@@ -96,7 +96,7 @@
 - [x] Từng cổng mới đã được **chứng minh đỏ** bằng ca âm.
 - [x] Không nguồn thứ hai cho sàn chạm hay màu.
 - [x] Không `.vue` nào chứa hex; không kit thứ hai trong lockfile.
-- [x] `pnpm check && pnpm test && pnpm lint:specs && pnpm check:progress` xanh.
+- [x] `pnpm check && pnpm test && pnpm --filter @mindkid/gates test && node packages/gates/scripts/check-progress.ts` xanh.
 - [x] Human review diff.
 
 ---

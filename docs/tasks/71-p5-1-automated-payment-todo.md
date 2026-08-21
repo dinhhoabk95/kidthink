@@ -22,7 +22,7 @@
       [`SPEC.md`](../SPEC.md) §14 hết chữ refund.
 - [x] Automated payment và recurring billing có spec owner riêng, đủ state/API/event/error/audit
       và negative Gherkin.
-- [x] `pnpm lint:specs` xanh (`C2`, `C4`, `C11`, `C16`, `C17`).
+- [x] `pnpm --filter @mindkid/gates test` xanh (`C2`, `C4`, `C11`, `C16`, `C17`).
 
 ## Checkpoint A
 

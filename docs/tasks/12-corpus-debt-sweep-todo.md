@@ -13,9 +13,9 @@
 
 - [x] `grep -rl "^status: draft$" --include="*.md" docs/specs | xargs grep -l "^spec: " | grep -v TEMPLATE` — không in gì
 - [x] `grep -rl "^status: approved" --include="*.md" docs/specs | xargs grep -l "^spec: " | wc -l` — ra **130**
-- [x] `pnpm lint:specs 2>&1 | tail -2` — 0 lỗi; cảnh báo: 31
+- [x] `pnpm --filter @mindkid/gates test 2>&1 | tail -2` — 0 lỗi; cảnh báo: 31
 - [x] Lấy danh sách nợ thật:
-      `pnpm lint:specs 2>&1 | grep "\[C" | awk '{print $1}' | sed 's/:[0-9]*$//' | sort | uniq -c | sort -rn`
+      `pnpm --filter @mindkid/gates test 2>&1 | grep "\[C" | awk '{print $1}' | sed 's/:[0-9]*$//' | sort | uniq -c | sort -rn`
 - [x] Số file còn cảnh báo: 23 (8 C6 + 23 C16 trên 23 file)
 - [x] Đọc [`12-corpus-debt-sweep-plan.md`](12-corpus-debt-sweep-plan.md) mục 3 (bộ giá trị `Chủ`)
 
@@ -28,13 +28,13 @@
 - [x] Điền "vì sao" cho `BR-ERR-03`, `BR-ERR-06`
 - [x] Đối chiếu [`business-rules.md`](../specs/00-foundation/business-rules.md) mục 7.3 trước khi
       viết — đây là registry, sai lan ra mọi spec
-- [x] `pnpm lint:specs | grep error-codes` trống
+- [x] `pnpm --filter @mindkid/gates test | grep error-codes` trống
 - [x] Commit `docs(specs): T12 bước 1 — vì sao cho error-codes`
 
 ### Bước 2 — [`payment-flow.md`](../specs/00-foundation/payment-flow.md)
 
 - [x] Điền "vì sao" cho 2 hàng `C6` (đã dọn từ trước)
-- [x] `pnpm lint:specs | grep payment-flow` trống
+- [x] `pnpm --filter @mindkid/gates test | grep payment-flow` trống
 - [x] Commit `docs(specs): T12 bước 2 — vì sao cho payment-flow`
 
 ### Bước 3 — [`mvp-scope.md`](../specs/00-foundation/mvp-scope.md)
@@ -52,7 +52,7 @@
 
 - [x] 4 file `00-foundation` không còn `C6`
 - [x] Đọc lại 6 câu "vì sao" vừa viết — là lý do, không phải diễn giải lại rule
-- [x] `pnpm lint:specs` 0 lỗi
+- [x] `pnpm --filter @mindkid/gates test` 0 lỗi
 
 ---
 
@@ -86,7 +86,7 @@ Mỗi file: đọc mục 11, thêm hai cột, gán `Chặn phase` và `Chủ` th
 
 Kiểm giữa lô:
 
-- [x] Sau mỗi 5 file: `pnpm lint:specs 2>&1 | tail -2` — 0 lỗi, `C16` giảm đúng 5
+- [x] Sau mỗi 5 file: `pnpm --filter @mindkid/gates test 2>&1 | tail -2` — 0 lỗi, `C16` giảm đúng 5
 - [x] Không dùng `sed` hàng loạt cho bảng — thêm cột bằng tay từng file
 
 ---
@@ -103,7 +103,7 @@ Kiểm giữa lô:
 
 ## Cổng dừng B
 
-- [x] `pnpm lint:specs 2>&1 | tail -2` — **0 lỗi, 0 cảnh báo** (lần đầu corpus đạt)
+- [x] `pnpm --filter @mindkid/gates test 2>&1 | tail -2` — **0 lỗi, 0 cảnh báo** (lần đầu corpus đạt)
 - [x] `grep -rh "^| [0-9]" docs/specs --include="*.md" | awk -F'|' 'NF>=6 {print $6}' | sed 's/^ *//;s/ *$//' | sort -u`
       — mọi giá trị thuộc bộ đóng ở kế hoạch mục 3, không ô nào rỗng
 - [x] `pnpm check && pnpm test` xanh
@@ -114,14 +114,14 @@ Kiểm giữa lô:
 
 Thứ tự bắt buộc, không đảo:
 
-- [x] Viết ca âm trong [`scripts/tests/lint-specs.test.ts`](../../scripts/tests/lint-specs.test.ts):
+- [x] Viết ca âm trong [`packages/gates/tests/lint-specs.test.ts`](../../scripts/tests/lint-specs.test.ts):
       spec giả `status: approved`, bảng mục 11 **ba cột** → đúng một `fail`
-- [x] `pnpm test scripts/tests/lint-specs.test.ts` — **phải đỏ**
-- [x] Sửa `checkC16` trong [`scripts/lint-specs-lib.ts`](../../scripts/lint-specs-lib.ts): nhánh
+- [x] `pnpm test packages/gates/tests/lint-specs.test.ts` — **phải đỏ**
+- [x] Sửa `checkC16` trong [`packages/gates/src/lint-specs-lib.ts`](../../scripts/lint-specs-lib.ts): nhánh
       `!tableHas5Cols` gọi `fail` khi `status: approved`, giữ `warn` khi `draft`
 - [x] Chạy test — **phải xanh**
 - [x] Xoá thân nhánh vừa thêm, chạy lại test — **phải đỏ trở lại** (không bỏ được bước này)
-- [x] Khôi phục; `pnpm lint:specs` — 0 lỗi, 0 cảnh báo với cổng mới
+- [x] Khôi phục; `pnpm --filter @mindkid/gates test` — 0 lỗi, 0 cảnh báo với cổng mới
 - [x] Commit `feat(scripts): T12 — C16 chặng 2, bảng dưới 5 cột là lỗi`
 
 ### Đề xuất chờ chủ dự án — `checkC6` chặng 2
@@ -144,7 +144,7 @@ Thứ tự bắt buộc, không đảo:
 
 ## Cổng dừng cuối
 
-- [x] `pnpm lint:specs` 0 lỗi, 0 cảnh báo
+- [x] `pnpm --filter @mindkid/gates test` 0 lỗi, 0 cảnh báo
 - [x] `pnpm check && pnpm test` xanh
 - [x] Ca âm chặng 2 tồn tại và đã chứng minh đỏ → xanh → đỏ
 - [x] Bốn điều kiện "xong" ở [`CORPUS-CLOSURE.md`](CORPUS-CLOSURE.md) đều đạt

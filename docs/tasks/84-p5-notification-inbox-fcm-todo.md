@@ -9,7 +9,7 @@
 - [x] Product/Privacy chốt retention/archive và code allow-list FCM.
 - [x] QA/Product chốt browser matrix + denied/unsupported copy.
 - [x] Một service-worker owner/lifecycle được chốt với Task #72 nếu đã implement.
-- [x] Error/audit/metric registry đầy đủ; `pnpm lint:specs` xanh.
+- [x] Error/audit/metric registry đầy đủ; `pnpm --filter @mindkid/gates test` xanh.
 - [x] Human Product/Privacy/Security/QA review.
 
 ## Checkpoint A

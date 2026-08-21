@@ -19,6 +19,16 @@ import { GT014Session } from "../templates/GT-014/session.js";
 import { GT015Session } from "../templates/GT-015/session.js";
 import { GT016Session } from "../templates/GT-016/session.js";
 import { GT017Session } from "../templates/GT-017/session.js";
+import { GT018Session } from "../templates/GT-018/session.js";
+import { GT019Session } from "../templates/GT-019/session.js";
+import { GT020Session } from "../templates/GT-020/session.js";
+import { GT021Session } from "../templates/GT-021/session.js";
+import { GT022Session } from "../templates/GT-022/session.js";
+import { GT023Session } from "../templates/GT-023/session.js";
+import { GT024Session } from "../templates/GT-024/session.js";
+import { GT025Session } from "../templates/GT-025/session.js";
+import { GT026Session } from "../templates/GT-026/session.js";
+import { GT027Session } from "../templates/GT-027/session.js";
 
 /**
  * Dynamic lazy loader for GameSession classes by template code (BR-TAK-08).
@@ -94,6 +104,46 @@ export async function loadGameSession(templateCode: string): Promise<new (...arg
       const mod = await import("../templates/GT-017/session.js");
       return mod.GT017Session;
     }
+    case "GT-018": {
+      const mod = await import("../templates/GT-018/session.js");
+      return mod.GT018Session;
+    }
+    case "GT-019": {
+      const mod = await import("../templates/GT-019/session.js");
+      return mod.GT019Session;
+    }
+    case "GT-020": {
+      const mod = await import("../templates/GT-020/session.js");
+      return mod.GT020Session;
+    }
+    case "GT-021": {
+      const mod = await import("../templates/GT-021/session.js");
+      return mod.GT021Session;
+    }
+    case "GT-022": {
+      const mod = await import("../templates/GT-022/session.js");
+      return mod.GT022Session;
+    }
+    case "GT-023": {
+      const mod = await import("../templates/GT-023/session.js");
+      return mod.GT023Session;
+    }
+    case "GT-024": {
+      const mod = await import("../templates/GT-024/session.js");
+      return mod.GT024Session;
+    }
+    case "GT-025": {
+      const mod = await import("../templates/GT-025/session.js");
+      return mod.GT025Session;
+    }
+    case "GT-026": {
+      const mod = await import("../templates/GT-026/session.js");
+      return mod.GT026Session;
+    }
+    case "GT-027": {
+      const mod = await import("../templates/GT-027/session.js");
+      return mod.GT027Session;
+    }
     default:
       throw new Error(`TEMPLATE_NOT_SUPPORTED: ${templateCode}`);
   }
@@ -138,6 +188,26 @@ export function createGameSessionSync(templateCode: string, cfg: EngineConfig): 
       return Reflect.construct(GT016Session, [cfg.content_pack, cfg.difficulty_params]);
     case "GT-017":
       return Reflect.construct(GT017Session, [cfg.content_pack, cfg.difficulty_params]);
+    case "GT-018":
+      return Reflect.construct(GT018Session, [cfg.content_pack, cfg.difficulty_params]);
+    case "GT-019":
+      return Reflect.construct(GT019Session, [cfg.content_pack, cfg.difficulty_params]);
+    case "GT-020":
+      return Reflect.construct(GT020Session, [cfg.content_pack, cfg.difficulty_params]);
+    case "GT-021":
+      return Reflect.construct(GT021Session, [cfg.content_pack, cfg.difficulty_params]);
+    case "GT-022":
+      return Reflect.construct(GT022Session, [cfg.content_pack, cfg.difficulty_params]);
+    case "GT-023":
+      return Reflect.construct(GT023Session, [cfg.content_pack, cfg.difficulty_params]);
+    case "GT-024":
+      return Reflect.construct(GT024Session, [cfg.content_pack, cfg.difficulty_params]);
+    case "GT-025":
+      return Reflect.construct(GT025Session, [cfg.content_pack, cfg.difficulty_params]);
+    case "GT-026":
+      return Reflect.construct(GT026Session, [cfg.content_pack, cfg.difficulty_params]);
+    case "GT-027":
+      return Reflect.construct(GT027Session, [cfg.content_pack, cfg.difficulty_params]);
     default:
       throw new Error(`TEMPLATE_NOT_SUPPORTED: ${templateCode}`);
   }

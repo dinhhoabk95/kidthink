@@ -1,9 +1,9 @@
 import { LessonExemplarService } from "@mindkid/db";
 import { defineEventHandler } from "h3";
-import { requireSuperAdminAuth } from "../../../../utils/auth.ts";
+import { requireSuperAdminSession } from "../../../utils/admin-auth-runtime.js";
 
 export default defineEventHandler(async (event) => {
-  requireSuperAdminAuth(event);
+  requireSuperAdminSession(event);
   const matrix = await LessonExemplarService.getExemplarMatrix();
   return {
     success: true,

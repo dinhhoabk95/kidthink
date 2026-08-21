@@ -74,7 +74,7 @@ T0 đo payment/catalog/audit/notification seams
 - [ ] Đối chiếu `BR-ACL-*`, tiền/quyền §7.3, `BR-PAY-*`, `BR-ENT-*`, `BR-PKG-*`.
 - [ ] Inventory mọi `ai_calls` placeholder và chứng minh chưa có đường public phụ thuộc nó.
 
-**Kiểm chứng:** `pnpm check:progress`; inventory có file:line và owner.
+**Kiểm chứng:** `node packages/gates/scripts/check-progress.ts`; inventory có file:line và owner.
 
 **Phụ thuộc:** P2 complete · **Files:** task/spec nếu seam đổi · **Cỡ:** S.
 
@@ -86,7 +86,7 @@ T0 đo payment/catalog/audit/notification seams
 - [ ] Catalog/entitlement/payment/ledger specs định nghĩa credit offer, approval grant và loại bỏ counter conflict.
 - [ ] Predicate catalog yêu cầu #67–#69; mọi mã/ref/idempotency/audit contract đăng ký trước code.
 
-**Kiểm chứng:** `pnpm lint:specs`; price/catalog tests không hardcode ngoài catalog.
+**Kiểm chứng:** `pnpm --filter @mindkid/gates test`; price/catalog tests không hardcode ngoài catalog.
 
 **Phụ thuộc:** T0 + Product/Kế toán decisions · **Files:** ACL + package/entitlement/payment/error specs · **Cỡ:** M.
 

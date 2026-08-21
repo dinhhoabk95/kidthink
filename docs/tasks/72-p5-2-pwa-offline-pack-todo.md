@@ -12,7 +12,7 @@
 - [x] Pack API/auth/version/quota/eviction/errors/events/negative Gherkin đầy đủ.
 - [x] Push-to-child bị cấm; FCM Web của User được link sang Task #84, không cài trong Task #72.
 - [x] Service worker boundary giữa install/offline và browser push không đăng ký handler trùng.
-- [x] `pnpm lint:specs` xanh.
+- [x] `pnpm --filter @mindkid/gates test` xanh.
 
 ## Checkpoint A
 

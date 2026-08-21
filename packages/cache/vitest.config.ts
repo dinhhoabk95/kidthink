@@ -1,7 +1,3 @@
-import { defineConfig } from "vitest/config";
+import { defineWorkspaceTest } from "@mindkid/config/vitest";
 
-export default defineConfig({
-  test: {
-    environment: "node",
-  },
-});
+export default defineWorkspaceTest();

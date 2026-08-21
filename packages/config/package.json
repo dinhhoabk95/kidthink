@@ -8,6 +8,16 @@
   "exports": {
     ".": "./src/index.ts",
     "./constants": "./src/constants.ts",
-    "./tsconfig.base.json": "./tsconfig.base.json"
+    "./tsconfig.base.json": "./tsconfig.base.json",
+    "./vitest": "./vitest/base.ts",
+    "./paths": "./src/repo-paths.ts"
+  },
+  "devDependencies": {
+    "vitest": "catalog:"
+  },
+  "scripts": {
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit",
+    "gen:env-example": "node scripts/generate-env-example.ts"
   }
 }

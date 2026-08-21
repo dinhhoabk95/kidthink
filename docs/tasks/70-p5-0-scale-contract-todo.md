@@ -36,7 +36,7 @@
 ## T4 — Handoff
 
 - [x] Roadmap/index/Task #14/#71/#72/#78 map cùng spec/dependency.
-- [x] Accepted specs `approved`; blocker có owner; `pnpm lint:specs` xanh.
+- [x] Accepted specs `approved`; blocker có owner; `pnpm --filter @mindkid/gates test` xanh.
 - [x] `pnpm check && pnpm test` xanh và human review diff contract.
 
 ## Checkpoint B

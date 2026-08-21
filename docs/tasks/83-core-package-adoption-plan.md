@@ -248,7 +248,7 @@ nếu vượt 5 file).
 - [ ] Task #41 nhận `openid-client`; Task #53 nhận OTPAuth User-MFA; Task #84 vẫn deferred.
 - [ ] Human review diff auth/schema/email; không auto-merge, không migration ngoài local.
 
-**Kiểm chứng:** `pnpm check && pnpm test && pnpm lint:specs && pnpm check:progress`; browser/E2E
+**Kiểm chứng:** `pnpm check && pnpm test && pnpm --filter @mindkid/gates test && node packages/gates/scripts/check-progress.ts`; browser/E2E
 targeted gates của T7/T8 xanh.
 
 **Bề mặt dự kiến:** obsolete files · evidence/tests · spec status · progress manifest.

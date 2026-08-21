@@ -60,7 +60,7 @@ Task #83. T6 không bắt đầu nếu service-worker owner chưa rõ.
       handler ownership; không đăng ký worker thứ hai.
 - [ ] Error/audit/metric identifiers mới vào registry trước route.
 
-**Kiểm chứng:** `pnpm lint:specs`; decision table có owner/date, không open question chặn P5.
+**Kiểm chứng:** `pnpm --filter @mindkid/gates test`; decision table có owner/date, không open question chặn P5.
 
 **Bề mặt dự kiến:** hai owner specs · error/event/metric registry · Task #72 boundary nếu cần.
 

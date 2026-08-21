@@ -9,19 +9,19 @@
 > **Đính chính (T99 WP99.0, 2026-08-20):** số dạng bài trong file này là **57 · 19 Lô A · 33 nhận
 > · 24 hoãn**. Đếm lại bằng lệnh trên chính bảng tra cho **59 · 20 · 34 · 25**. Mã dạng bài không
 > đổi hàng nào — chỉ tổng sai. Số đúng ở [`activity-types-table.md`](../montessori/dataset/activity-types-table.md)
-> mục 2, và cổng `pnpm lint:montessori-corpus` giữ chúng khớp nhau từ đây.
+> mục 2, và cổng `pnpm --filter @mindkid/db test` giữ chúng khớp nhau từ đây.
 
 ## Preflight
 
-- [x] Bốn spec Montessori `approved`, `pnpm lint:specs` và `pnpm lint:rule-ids` xanh.
+- [x] Bốn spec Montessori `approved`, `pnpm --filter @mindkid/gates test` và `pnpm --filter @mindkid/gates test` xanh.
 - [x] Dataset chuẩn hoá: 21 workbook, 57 dạng bài, workbook 09 và 17 đã tách dạng (`D-RI`).
 - [x] Đọc mục 7 của bốn spec Montessori trước khi soạn bản đầu tiên.
 - [x] Xác nhận `emoji_registry` có đủ vật liệu cho workbook 01 tới 06, hoặc ghi danh sách thiếu.
 
 ## WP98.0 — Baseline
 
-- [x] Chạy `pnpm seed:report`, lưu kết quả.
-- [x] Chạy `pnpm check:coverage`, lưu ba ma trận trước khi nạp.
+- [x] Chạy `pnpm --filter @mindkid/db seed:report`, lưu kết quả.
+- [x] Chạy `pnpm --filter @mindkid/db test`, lưu ba ma trận trước khi nạp.
 - [x] Đếm hàng `game_levels` và `lessons` theo competency và band; lưu số ([`baseline-metrics.md`](../montessori/dataset/baseline-metrics.md)).
 
 ## WP98.1 — Bảng tra 57 dạng bài
@@ -30,7 +30,7 @@
 - [x] Mỗi hàng đủ sáu cột: mã, band, competency, strand, lô A hay B, khuôn.
 - [x] Tổng khớp 57; đối chiếu lại bằng lệnh đếm, không đếm tay.
 - [x] Đánh dấu 19 dạng bài lô A và 14 dạng bài lô B được nhận đợt này (`D-RQ`).
-- [x] `pnpm lint:specs` xanh sau khi thêm file.
+- [x] `pnpm --filter @mindkid/gates test` xanh sau khi thêm file.
 
 ## WP98.2 — Cổng lô Montessori
 
@@ -48,8 +48,8 @@
 - [x] Chỉ dẫn ≤12 từ, không phủ định.
 - [x] Ba mức gợi ý sư phạm viết đủ — dùng làm mẫu cho các workbook sau (`BR-MCM-09`).
 - [x] Đúng một skill code mỗi level (`D-RH`); strand phụ vào tag.
-- [x] `pnpm seed:check` và `pnpm seed:content --dry-run` xanh.
-- [x] `pnpm check:coverage` không tụt ô nào.
+- [x] `pnpm --filter @mindkid/db seed:check` và `pnpm --filter @mindkid/db seed:content --dry-run` xanh.
+- [x] `pnpm --filter @mindkid/db test` không tụt ô nào.
 
 ## WP98.4 — Lô A band 3-4 còn lại
 
@@ -65,8 +65,8 @@
 
 ## CHECKPOINT 1 — lô A xong
 
-- [x] `pnpm check:coverage` xanh; tỉ lệ cân bằng dưới ba lần.
-- [x] `pnpm seed:report` in hạn ngạch còn lại của từng competency.
+- [x] `pnpm --filter @mindkid/db test` xanh; tỉ lệ cân bằng dưới ba lần.
+- [x] `pnpm --filter @mindkid/db seed:report` in hạn ngạch còn lại của từng competency.
 - [x] Người review đã đọc **từng bản** trong năm batch, không approve theo lô.
 
 ## WP98.6 — Lesson band 3-4
@@ -112,7 +112,7 @@
 - [x] Ba mức gợi ý L1, L2, L3 nối được vào khuôn.
 - [x] Ba game level mẫu chạy hết; một journey E2E xanh.
 - [x] Thêm đúng một giá trị `mechanic` vào mục 7.1 của [`content-tagging.md`](../specs/01-platform/content-tagging.md) trong **cùng PR** (`D-RK`).
-- [x] `pnpm gen:templates` chạy lại không sinh diff.
+- [x] `pnpm --filter @mindkid/game-engine gen:templates` chạy lại không sinh diff.
 - [x] Đủ 15 điều kiện nghiệm thu ở mục 7.5 của spec khuôn.
 
 ## WP98.11 — Khuôn `GT-008` kéo vào ô khuyết
@@ -143,6 +143,6 @@
 
 - [x] Bốn spec Montessori lật `implemented` — chỉ khi cả bốn nhóm khuôn xong.
 - [x] Mọi rule `BR-MCM` · `BR-MTB` · `BR-MGL` · `BR-MLS` có test gọi tên mã.
-- [x] `pnpm lint` · `pnpm lint:specs` · `pnpm lint:rule-ids` · `pnpm typecheck` · `pnpm test` xanh.
-- [x] `pnpm check:coverage` xanh.
+- [x] `pnpm lint` · `pnpm --filter @mindkid/gates test` · `pnpm --filter @mindkid/gates test` · `pnpm typecheck` · `pnpm test` xanh.
+- [x] `pnpm --filter @mindkid/db test` xanh.
 - [ ] Mở PR cho người review diff, không tự merge.

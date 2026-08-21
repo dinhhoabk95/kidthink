@@ -9,7 +9,7 @@
  * validator would demand a value no process consumes.
  *
  * This module must stay dependency-free. The release workflow runs it through
- * `scripts/validate-env-file.ts` BEFORE `pnpm install` (BR-DEP-04).
+ * `packages/config/scripts/validate-env-file.ts` BEFORE `pnpm install` (BR-DEP-04).
  */
 
 export type AppType = "web" | "admin" | "worker";

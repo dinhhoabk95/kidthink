@@ -34,7 +34,7 @@
 - [x] Nếu enum/schema đổi, sửa spec P3.3 trước; Task #61 không tạo migration.
 - [x] Đóng câu hỏi hai tuần xem thử theo đúng contract approved.
 - [x] Human approve D-NG, D-NI và tên mã lỗi.
-- [x] `pnpm lint:specs` 0 lỗi, 0 cảnh báo mới.
+- [x] `pnpm --filter @mindkid/gates test` 0 lỗi, 0 cảnh báo mới.
 
 ## Checkpoint A — Contract
 
@@ -170,8 +170,8 @@
 - [ ] `pnpm check` xanh.
 - [ ] `pnpm test` xanh.
 - [ ] `pnpm test:e2e` xanh.
-- [ ] `pnpm lint:specs` xanh.
-- [ ] `pnpm check:progress` xanh.
+- [ ] `pnpm --filter @mindkid/gates test` xanh.
+- [ ] `node packages/gates/scripts/check-progress.ts` xanh.
 - [ ] `pnpm --filter @mindkid/web build` xanh.
 - [ ] Human review API projection, cache/invalidation, SEO schema, hai page và phase-gate evidence.
 - [ ] Không seed/publish/migration ngoài local; không sửa hàng `published`.

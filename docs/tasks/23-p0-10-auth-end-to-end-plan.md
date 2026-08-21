@@ -241,7 +241,7 @@ sau kiểm chứng task trước bằng một luồng người thật.
 - [ ] Năm rule chống rò danh tính có bộ test chung, gồm đo thời gian.
 - [ ] Chế độ hạn chế ép ở server, curl không đi vòng được.
 - [ ] Không cài lại vòng đời token; `packages/auth` là nơi duy nhất (D-EO).
-- [ ] `pnpm check && pnpm test && pnpm lint:specs && pnpm check:progress` xanh.
+- [ ] `pnpm check && pnpm test && pnpm --filter @mindkid/gates test && node packages/gates/scripts/check-progress.ts` xanh.
 - [ ] Human security reviewer approve diff — vùng nhạy cảm **auth**, không auto-merge.
 
 ### Task 8 — Evidence và promote

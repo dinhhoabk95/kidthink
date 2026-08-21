@@ -186,7 +186,7 @@ User). Phần còn lại thuộc P0.11b và P2.
 - [ ] Gọi `writeAudit` ngoài transaction là lỗi biên dịch.
 - [ ] Cổng payload chặn PII trẻ và bí mật ở runtime, có ca âm.
 - [ ] `content_reviewer` không đọc được audit.
-- [ ] `pnpm check && pnpm test && pnpm lint:specs && pnpm check:progress` xanh.
+- [ ] `pnpm check && pnpm test && pnpm --filter @mindkid/gates test && node packages/gates/scripts/check-progress.ts` xanh.
 - [ ] Human review diff.
 
 ### Task 7 — Evidence và promote

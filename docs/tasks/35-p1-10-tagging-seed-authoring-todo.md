@@ -82,9 +82,9 @@
 - [x] `T5b` (M): transaction + INSERT/version/archive + review log + idempotency.
 - [x] `T5c` (M): against-db/report + studio conflict + agent/request guards.
 - [x] T5a → T5b → T5c; mỗi package có negative test RED và PR riêng.
-- [x] `pnpm seed:check` — 8 cổng, **không chạm DB**.
-- [x] `pnpm seed:content --dry-run` — DB tạm → seed → checklist → rollback.
-- [x] `pnpm seed:content --batch=SEED-*` — ghi thật.
+- [x] `pnpm --filter @mindkid/db seed:check` — 8 cổng, **không chạm DB**.
+- [x] `pnpm --filter @mindkid/db seed:content --dry-run` — DB tạm → seed → checklist → rollback.
+- [x] `pnpm --filter @mindkid/db seed:content --batch=SEED-*` — ghi thật.
 - [x] `BR-CSA-05` một batch = một transaction; cấm seed một phần.
 - [x] `BR-CSA-01` ca âm: sửa `content_pack` giữ nguyên version → thoát ≠ 0, DB không đổi.
 - [x] Khai version mới → INSERT bản mới + archive bản cũ trong **một** transaction.
@@ -94,7 +94,7 @@
 - [x] `BR-CSA-04` ca âm: một bản thiếu LO → **rollback cả batch**, nêu `code`.
 - [x] `BR-CSA-06` chạy lại → `rows_inserted = 0`, không UPDATE hàng nào.
 - [x] `BR-CSA-11` `seed:check --against-db` chạy trong cổng tự động; drift → **đỏ**.
-- [x] `pnpm seed:report` in phủ theo competency · skill · template + khoảng trống.
+- [x] `pnpm --filter @mindkid/db seed:report` in phủ theo competency · skill · template + khoảng trống.
 - [x] Xung đột với bản studio cùng `code` → seed **từ chối**, studio thắng.
 - [x] `BR-CSA-07` ca âm: AI agent không chạy được `seed:content` ngoài local.
 - [x] `BR-CSA-07` ca âm: AI agent không merge được PR.
@@ -119,7 +119,7 @@
 - [x] `--against-db` bắt được drift cố ý trong cổng tự động.
 - [x] Không đường nào cho AI merge hay seed ngoài local.
 - [x] Ba số đo review đã ghi lại.
-- [x] `pnpm check && pnpm test && pnpm lint:specs && pnpm check:progress` xanh.
+- [x] `pnpm check && pnpm test && pnpm --filter @mindkid/gates test && node packages/gates/scripts/check-progress.ts` xanh.
 
 ---
 

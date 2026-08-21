@@ -5,7 +5,7 @@ area: quality
 status: implemented
 mvp: false
 phase: P3
-reviewed: 2026-08-17
+reviewed: 2026-08-22
 owns:
   - Ngưỡng phủ nội dung theo trục tư duy
   - Cổng chặn khi một ô phủ tụt dưới sàn
@@ -45,13 +45,15 @@ Nó đo **catalog**, không đo trẻ. Trẻ học được gì thuộc [`pedago
 
 | Route / màn hình | Actor | Ghi chú |
 |---|---|---|
-| `pnpm check:coverage` | Cổng nội dung | Chạy ma trận, mã thoát khác 0 khi thủng sàn |
+| `pnpm --filter @mindkid/db test` | Cổng nội dung | Chạy ma trận, mã thoát khác 0 khi thủng sàn |
 | [`admin-dashboard.md`](../06-admin/admin-dashboard.md) | Manager | Hiển thị ma trận, ô trống nổi lên trước |
 | Cổng publish của [`content-lifecycle.md`](../00-foundation/content-lifecycle.md) | Cổng nội dung | Chặn publish làm thủng sàn |
 
 ## 4. Main flow
 
-1. Cổng đọc toàn bộ nội dung `published`: game level, lesson.
+1. Cổng đọc toàn bộ nội dung `published` từ corpus seed trong repo — xem mục 7.0. Nguồn
+   không đọc được, hoặc có hàng không quy được về competency hay mechanic, thì cổng **dừng
+   với mã thoát khác 0**; cấm nhánh trả danh sách rỗng rồi báo xanh.
 2. Với mỗi mục, lấy `competency`, band tuổi, và tag trục `thinking`.
 3. Tag không thuộc 12 giá trị đóng thì **dừng ngay** với lỗi, không tính tiếp.
 4. Cổng dựng ba ma trận ở §7.2.
@@ -75,7 +77,7 @@ Nó đo **catalog**, không đo trẻ. Trẻ học được gì thuộc [`pedago
 |---|---|---|
 | `BR-TCM-01` | Từ vựng ba trục **đóng thật**: giá trị ngoài danh sách làm cổng đỏ, không có nhánh slug dự phòng | Nhánh dự phòng hiện tại là lý do `gross_motor_counting` sống được trong seed. Một cổng nhận mọi thứ không phải cổng |
 | `BR-TCM-02` | Cổng phải có **ca âm** trong test: một tag bịa đặt phải làm cổng đỏ | Bài học đã trả giá một lần với công cụ lint khác — cổng không có ca âm là cổng không biết mình hỏng |
-| `BR-TCM-03` | Ma trận đếm **chỉ nội dung `published`** | Phủ là thứ trẻ mở được hôm nay, không phải thứ đang nằm trong hàng đợi duyệt |
+| `BR-TCM-03` | Ma trận đếm **chỉ nội dung `published`**, đọc từ corpus seed trong repo. Nguồn không đọc được hoặc hàng không quy được competency hay mechanic thì cổng đỏ, **cấm giá trị mặc định** | Phủ là thứ trẻ mở được hôm nay, không phải thứ đang nằm trong hàng đợi duyệt. Bản cũ trả `[]` khi mất kết nối và mặc định `"C1"` khi không quy được, nên nó in "18/18 ô thiếu" kèm mã thoát 0 và dồn mọi hàng lạ vào C1 |
 | `BR-TCM-04` | Mỗi ô `competency × band tuổi` đạt sàn số game level ở §7.3 | Đây là dạng kiểm được của câu "phủ đủ sáu năng lực cho mọi lứa" |
 | `BR-TCM-05` | Mỗi ô `competency × band tuổi` phủ bởi **≥2 mechanic khác nhau** | Một năng lực chỉ luyện qua một cơ chế thì trẻ đang học cơ chế, không học năng lực |
 | `BR-TCM-06` | Mỗi giá trị trục `thinking` đạt sàn tối thiểu toàn catalog | Thiếu ràng buộc này thì 12 tiến trình tư duy dồn hết vào `count` và `match` — hai cái dễ soạn nhất |
@@ -88,8 +90,18 @@ Nó đo **catalog**, không đo trẻ. Trẻ học được gì thuộc [`pedago
 
 ## 7. Data
 
-**Đọc:** `game_levels` · `lessons` · `content_tag_map` · `content_skill_map` · `skills` · `competencies`.
+**Đọc:** corpus seed trong repo (`packages/db/src/seed-content/`) kèm registry template của
+engine. Chế độ `--from-db` đọc `game_levels` · `lessons` · `content_tag_map` ·
+`content_skill_map` · `skills` · `competencies`.
 **Ghi:** không ghi vào cơ sở dữ liệu. Đầu ra là báo cáo và mã thoát.
+
+### 7.0 Vì sao nguồn mặc định là corpus seed
+
+Cơ sở dữ liệu dev dùng chung `DATABASE_URL` với test tích hợp. Đo được ngày 2026-08-22:
+nó chứa **281** hàng `game_templates` (gồm `GT-999`, `GT-212`, … do test sinh) và **1854**
+hàng `game_levels`. Ma trận đọc từ đó báo `C1 3-4: 1444` và năm competency còn lại bằng 0 —
+một con số không nói gì về catalog. Corpus seed thì tất định, luôn đọc được, và là thứ được
+review qua PR (`D7`).
 
 ### 7.1 Từ vựng đóng
 
@@ -117,9 +129,12 @@ nhập tay.
 | Phủ tiến trình tư duy | ≥5 game level mỗi giá trị | P4 |
 | Luật cân bằng | tỉ lệ cao nhất trên thấp nhất ≤3 | P4 |
 
-Số đo lúc viết file này: 120 game level, 20 mỗi competency. Chia đều ba band thì mỗi ô
-khoảng 6–7 — nghĩa là sàn P3 nằm sát mức hiện có, không phải mục tiêu xa. Sàn không phải để
-gây khó; nó để mức hiện có không tụt xuống mà không ai thấy.
+Số đo ngày 2026-08-22, đọc từ corpus seed: 172 game level. Mọi ô trong 18 ô đạt sàn 6, và
+mọi ô đạt sàn 2 mechanic. Trục `thinking` còn ba giá trị dưới sàn P4 — `predict` 4,
+`plan` 1, `shift` 0. `shift` bằng 0 vì chưa `mechanic` nào sinh ra nó; đó là việc của
+lô khuôn khoảng trống taxonomy, không phải việc của người soạn nội dung.
+
+Sàn không phải để gây khó; nó để mức hiện có không tụt xuống mà không ai thấy.
 
 ### 7.4 Hình dạng báo cáo
 
@@ -161,6 +176,18 @@ Scenario: BR-TCM-03 — chỉ đếm nội dung published
   Given 10 game level draft cho ô C1 band 3-4
   When chạy cổng phủ
   Then 10 level đó không được tính vào ô C1 band 3-4
+
+Scenario: BR-TCM-03 — nguồn không đọc được thì cổng đỏ
+  Given nguồn nội dung không mở được
+  When chạy cổng phủ
+  Then cổng thoát với mã khác 0 và nêu nguồn nào hỏng
+  And cổng không in ra một ma trận toàn số 0 kèm mã thoát 0
+
+Scenario: BR-TCM-03 — hàng không quy được thì nêu ra, không mặc định
+  Given một hàng nội dung không quy được về competency
+  When chạy cổng phủ
+  Then cổng nêu mã của hàng đó
+  And hàng đó không bị gán về C1
 
 Scenario: BR-TCM-04 — ô dưới sàn thì chặn
   Given ô C3 band 3-4 có 4 game level published và sàn là 6
@@ -223,3 +250,5 @@ Scenario: BR-TCM-06 — tiến trình tư duy dưới sàn bị nêu
 | 1 | 12 giá trị trục `thinking` có phủ được 230 skill không? `plan`, `inhibit`, `shift` chưa có nội dung nào — thiếu nội dung hay thiếu giá trị phù hợp? Trùng câu hỏi 1 ở [`content-tagging.md`](../01-platform/content-tagging.md) §11 | Sàn `BR-TCM-06` | P4 | Nội dung | **Đã đóng (Task #94 WP94.0):** 12 giá trị trục `thinking` là từ vựng đóng Lớp 1 chuẩn. Ở P3, sàn phủ năng lực (≥6 game level) và mechanic (≥2 mechanic) được cưỡng chế; sàn phủ 12 trục `thinking` (≥5 game level) được theo dõi dưới dạng cảnh báo ở P3 và áp dụng chặn ở P4 khi mở rộng biên soạn. |
 | 2 | Sàn nên tính theo band tuổi hay theo strand? 41 strand thì ma trận 6 × 3 là thô | Độ mịn của phép đo | P4 | người quyết | **Đã đóng (Task #94 WP94.0):** P3 áp dụng sàn theo 6 năng lực × 3 dải tuổi (18 ô) để kiểm soát cân bằng nền tảng. Phân rã theo 41 strand được đưa vào dashboard giám sát chuyên sâu ở P4. |
 | 3 | Lesson và game level có nên chung một sàn không? Một lesson 20 phút không tương đương một màn chơi 2 phút | Sàn lesson ở §7.3 | P4 | Nội dung | **Đã đóng (Task #94 WP94.0):** Tách sàn riêng giữa game level và lesson. P3 áp dụng sàn ≥6 game level mỗi ô. Sàn lesson (≥1 lesson mỗi ô) áp dụng từ P4. |
+| 4 | Trục `what` và trục `theme` vẫn đang nới: danh sách hợp lệ của cổng chứa 14 viết tắt seed-master (`cnt`, `cmp`, `mem`, …) và 10 theme ngoài 12 giá trị của [`content-tagging.md`](../01-platform/content-tagging.md) §7.1–§7.2. Gắn lại hai trục này về từ vựng đóng, hay đóng từ vựng lại quanh giá trị đang dùng? | `BR-TCM-01` cho hai trục còn lại | P4 | Nội dung | Mở. Trục `thinking` và `mechanic` đã đóng thật ngày 2026-08-22; hai trục còn lại chưa |
+| 5 | `content_pack` của **169 trên 172** game level trong corpus seed không parse được bằng `content_contract` của template chúng khai. `BR-GTC-10` yêu cầu điều ngược lại, nhưng tám cổng seed ở [`content-seed-authoring.md`](../01-platform/content-seed-authoring.md) không cổng nào parse `content_pack`, và bộ test tuân thủ chỉ parse `fixtures.ts` chứ không parse corpus seed. Sửa nội dung, hay sửa contract? | `BR-GTC-10`, và mọi kế hoạch nội dung dựa trên corpus seed | P4 | người quyết | Mở. Đo ngày 2026-08-22 |

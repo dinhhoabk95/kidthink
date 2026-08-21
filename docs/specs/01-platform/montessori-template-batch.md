@@ -61,7 +61,7 @@ khuôn được coi là xong.
 | `packages/game-engine/src/layout/registry.ts` | Dev | Nơi bảy `LayoutId` mới của nhóm A được đăng ký |
 | `packages/game-engine/src/layout/geometry.ts` | Dev | Chỉ chạm nếu một `LayoutId` không ánh xạ được sang bốn hàm lõi |
 | `packages/game-engine/src/systems/` | Dev | Nơi sáu system mới của nhóm B nằm |
-| `pnpm gen:templates` | Dev | Sinh registry và điểm nối, theo [`template-authoring-kit.md`](template-authoring-kit.md) |
+| `pnpm --filter @mindkid/game-engine gen:templates` | Dev | Sinh registry và điểm nối, theo [`template-authoring-kit.md`](template-authoring-kit.md) |
 | `packages/db/src/seed-master/game-templates.ts` | Dev | Seed Lớp 1 sau khi khuôn xanh |
 
 ## 4. Main flow — ship một khuôn lô Montessori
@@ -73,7 +73,7 @@ khuôn được coi là xong.
    `layouts`, `mechanic`, `scoring`, `events`.
 4. Viết `session.ts` dựng trên nguyên thuỷ cơ chế đã có; nhóm B gọi thêm system của chính nó.
 5. Lấy bố cục từ [`game-layout-engine.md`](game-layout-engine.md); lấy mọi thứ xáo trộn từ [`deterministic-randomness.md`](deterministic-randomness.md).
-6. Chạy `pnpm gen:templates`.
+6. Chạy `pnpm --filter @mindkid/game-engine gen:templates`.
 7. Viết ít nhất ba game level mẫu từ workbook nguồn ghi ở cột cuối mục 7.1.
 8. Viết journey E2E cho khuôn.
 9. Chạy đủ điều kiện nghiệm thu mục 7.5; đỏ một mục thì khuôn chưa xong.
@@ -263,12 +263,12 @@ Mỗi system có bộ test độc lập với khuôn dùng nó (`BR-MTB-15`).
 | 3 | Không key độ khó nằm trong `content_contract` | Test `BR-GTC-03` |
 | 4 | `checkWinCondition()` thuần | Test gọi lặp, `BR-GTC-09` |
 | 5 | Có đường xử lý chạm-chạm nếu khai fallback tap | Test và journey E2E |
-| 6 | Ít nhất ba game level mẫu parse được và chơi hết | `pnpm seed:check` và E2E |
+| 6 | Ít nhất ba game level mẫu parse được và chơi hết | `pnpm --filter @mindkid/db seed:check` và E2E |
 | 7 | Một journey E2E xanh | Bộ E2E |
 | 8 | Mọi xáo trộn đi qua nguồn ngẫu nhiên có seed | Test tái lập phiên |
 | 9 | Layout lấy từ registry, không toạ độ cứng | Đọc diff, `BR-MTB-13` |
 | 10 | `mechanic` có trong từ vựng trục `mechanic` | Cổng phủ |
-| 11 | Không điểm nối nào sửa tay | `pnpm gen:templates` chạy lại không sinh diff |
+| 11 | Không điểm nối nào sửa tay | `pnpm --filter @mindkid/game-engine gen:templates` chạy lại không sinh diff |
 | 12 | Ngân sách hiệu năng của band tuổi thấp nhất khuôn nhận | [`performance-budgets.md`](../08-quality/performance-budgets.md) |
 | 13 | **Kiểm soát lỗi tự thân** biểu hiện được, mô tả trong file mô tả khuôn | Journey E2E có một bước trẻ tự sửa trước khi hệ thống báo |
 | 14 | Nhóm B: system có test độc lập với khuôn | Bộ test của `systems/` |
@@ -364,7 +364,7 @@ Scenario: BR-MTB-07 — phiên chơi tái lập được
 
 Scenario: BR-MTB-08 — không điểm nối nào sửa tay
   Given cây làm việc sạch sau khi thêm một khuôn
-  When chạy pnpm gen:templates
+  When chạy pnpm --filter @mindkid/game-engine gen:templates
   Then không file nào trong thư mục sinh mã bị thay đổi
 
 Scenario: BR-MTB-09 — khuôn không mang skill
@@ -379,7 +379,7 @@ Scenario: BR-MTB-10 — band khuôn thắng band nguồn
 
 Scenario: BR-MTB-11 — nội dung cho khuôn chưa ship bị chặn
   Given GT-014 chưa active
-  When chạy pnpm seed:check trên một batch khai template_code GT-014
+  When chạy pnpm --filter @mindkid/db seed:check trên một batch khai template_code GT-014
   Then cổng 1 fail
   And thông báo nêu khuôn chưa tồn tại
 

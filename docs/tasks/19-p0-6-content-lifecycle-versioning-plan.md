@@ -210,7 +210,7 @@ Khối B — sau khi P0.3 đóng
 - [ ] Enum trạng thái khớp §7.1; không còn tên `submitted`.
 - [ ] 36 ô bảng chuyển đều có test.
 - [ ] Checklist publish trả `missing[]` đúng cho mọi thực thể.
-- [ ] `pnpm check && pnpm test && pnpm lint:specs && pnpm check:progress` xanh.
+- [ ] `pnpm check && pnpm test && pnpm --filter @mindkid/gates test && node packages/gates/scripts/check-progress.ts` xanh.
 - [ ] Khối B chưa bắt đầu nếu P0.3 chưa đóng.
 
 ### Task 5 — Quyền chuyển trạng thái theo role

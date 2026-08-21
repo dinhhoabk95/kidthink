@@ -94,7 +94,7 @@
 - [x] Cây taxonomy chỉ đọc; không route ghi nào tồn tại.
 - [x] Số đếm có `as_of`; ngưỡng "đủ" vẫn là 3.
 - [x] Nút soạn không dẫn tới 404.
-- [x] `pnpm check && pnpm test && pnpm test:e2e && pnpm lint:specs && pnpm check:progress` xanh.
+- [x] `pnpm check && pnpm test && pnpm test:e2e && pnpm --filter @mindkid/gates test && node packages/gates/scripts/check-progress.ts` xanh.
 
 ---
 

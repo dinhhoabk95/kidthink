@@ -119,6 +119,8 @@ export type GameMechanic =
   | "trace-path"
   | "sequence-arrange"
   | "listen-respond"
+  | "mirror-complete"
+  | "hidden-object"
   | "free-create";
 
 // ─── Game template & level ───────────────────────────────────────────

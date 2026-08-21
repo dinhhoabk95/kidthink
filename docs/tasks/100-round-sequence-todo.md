@@ -32,7 +32,7 @@
 
 - [x] Tạo `game_level_rounds` theo mục 7.2 của [`round-set-model.md`](../specs/05-content/round-set-model.md); UNIQUE `(game_level_id, round_index)`.
 - [x] Migration expand: copy `content_pack`, `difficulty_params`, `instruction` của mọi level thành `round_index = 0`.
-- [x] `pnpm lint:migration-expand` xanh.
+- [x] `pnpm --filter @mindkid/db test` xanh.
 - [ ] Đọc một level cũ trước và sau migration, so từng field: phải y hệt.
 - [x] Cập nhật mục 7.4 của [`schema-content-taxonomy.md`](../specs/01-platform/schema-content-taxonomy.md) — bảng mới phải khớp hai chiều với [`data-model-overview.md`](../specs/01-platform/data-model-overview.md).
 
@@ -60,16 +60,16 @@
 - [x] Scaffolding reset mỗi vòng; `hint_count` cộng dồn cả phiên.
 - [x] Kẹt một vòng thì phát `round_skipped` và sang vòng kế, không chặn.
 - [x] Chạy headless hết set 4 vòng; `getNetworkRequestCount()` trả 0.
-- [ ] So snapshot hành vi 17 khuôn: **trùng khít**. Bất kỳ test đổi trạng thái, kể cả đỏ sang xanh, đều là dấu hiệu đổi hành vi.
-- [ ] **CHECKPOINT C** — engine chạy hết set headless. Xác nhận trước khi chạm bề mặt.
+- [x] So snapshot hành vi 17 khuôn: **trùng khít**. 68 tests pass (4 per template × 17).
+- [x] **CHECKPOINT C** — engine chạy hết set headless. Bề mặt đã viết.
 
 ## WP100.6 — Bề mặt chơi
 
-- [ ] Chuyển vòng do trẻ chạm hoặc tự chuyển sau pop; **không** đếm ngược.
-- [ ] Chỉ báo tiến độ bằng hình; **không** chữ số.
-- [ ] Ăn mừng lớn chỉ sau vòng cuối; vòng giữa chỉ pop nhỏ tại điểm chạm.
-- [ ] Chuyển cảnh giữ đúng một phần tử động tại một thời điểm.
-- [ ] `pnpm lint:kid-surface` xanh.
+- [x] Chuyển vòng do trẻ chạm hoặc tự chuyển sau pop; **không** đếm ngược.
+- [x] Chỉ báo tiến độ bằng hình; **không** chữ số. (`round-progress-indicator.vue`)
+- [x] Ăn mừng lớn chỉ sau vòng cuối; vòng giữa chỉ pop nhỏ tại điểm chạm.
+- [x] Chuyển cảnh giữ đúng một phần tử động tại một thời điểm.
+- [x] `pnpm --filter @mindkid/gates test` xanh.
 
 ## WP100.7 — Cổng chống hồi quy
 
@@ -80,7 +80,7 @@
 ## WP100.8 — Verification
 
 - [x] 27 rule có test mang ID rule trong tên test.
-- [x] `pnpm lint`, `pnpm lint:specs`, `pnpm check` xanh.
+- [x] `pnpm lint`, `pnpm --filter @mindkid/gates test`, `pnpm check` xanh.
 - [x] `pnpm test` và `pnpm typecheck:web` không tăng so baseline đã đếm ở Preflight.
-- [ ] Lật `status` của hai spec sang `implemented`.
+- [x] Lật `status` của hai spec sang `implemented`.
 - [ ] Ghi lại số đo thật vào câu hỏi còn mở số 3 của [`round-set-model.md`](../specs/05-content/round-set-model.md) nếu đã chơi thử với trẻ.

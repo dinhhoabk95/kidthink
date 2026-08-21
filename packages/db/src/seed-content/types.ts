@@ -50,6 +50,7 @@ export interface ActivitySeedHeader {
   origin: SeedOrigin;
   authored_in: SeedAuthoredIn;
   ref_type?: string;
+  ref_code?: string;
   ref_id?: number;
 }
 

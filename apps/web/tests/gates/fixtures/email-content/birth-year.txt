@@ -1,0 +1,3 @@
+<h1>Xin chào phụ huynh</h1>
+<p>Năm sinh của bé: {{birth_year}}</p>
+<a href="/unsubscribe">unsubscribe</a>

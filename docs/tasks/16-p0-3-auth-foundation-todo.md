@@ -18,7 +18,7 @@
 - [x] Guest device cookie canonical là `tm_did`; actors chỉ link tới spec cookie.
 - [x] Contract package dùng Sidebase Local + JWT access bằng `jose`; OAuth P1 qua backend bridge.
 - [ ] Human thứ hai review threat model, sáu vùng nhạy cảm và ngoại lệ Task #14.
-- [x] `pnpm lint:specs` xanh.
+- [x] `pnpm --filter @mindkid/gates test` xanh.
 
 ## Task 1 — Human duyệt Nuxt adapter và dependency
 
@@ -36,7 +36,7 @@
 - [ ] Task 0 được human thứ hai approve.
 - [ ] Supply-chain review hoàn tất.
 - [ ] Ngoại lệ Task #14 và các cổng test/review đã được ghi trong canonical contract.
-- [ ] `pnpm check && pnpm lint:specs` xanh.
+- [ ] `pnpm check && pnpm --filter @mindkid/gates test` xanh.
 
 ## Task 2 — Định nghĩa public contract `@mindkid/auth`
 
@@ -102,14 +102,14 @@
 - [x] Test âm và dương phủ Tasks 2–7.
 - [x] Audit/rate-limit/OAuth mới là port; không khai concrete behavior đã xong.
 - [x] Không route login/register/UI ngoài phạm vi trong diff.
-- [x] `pnpm check && pnpm test && pnpm lint:specs` xanh.
+- [x] `pnpm check && pnpm test && pnpm --filter @mindkid/gates test` xanh.
 
 ## Task 8 — Đóng evidence và tiến độ
 
 - [x] Mỗi `BR-ACT-*` và `BR-AUT-*` có test tham chiếu và assertion đúng hành vi.
 - [ ] Human thứ hai hoàn tất security checklist CRITICAL/HIGH.
 - [x] `pnpm audit --prod` không có critical/high reachable chưa xử lý.
-- [x] `pnpm check && pnpm test && pnpm lint:specs && pnpm check:progress`
+- [x] `pnpm check && pnpm test && pnpm --filter @mindkid/gates test && node packages/gates/scripts/check-progress.ts`
 - [ ] Chỉ promote spec sang `implemented` khi đủ evidence.
 - [ ] Chỉ tick P0.3 khi cả hai spec `implemented` và `check:progress` tự xanh; thiếu evidence thì giữ ô trống và ghi blocker.
 

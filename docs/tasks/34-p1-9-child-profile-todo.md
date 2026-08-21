@@ -90,7 +90,7 @@
 - [x] Thêm rule `lint:kid-surface`: không bộ lọc chữ trong catalog trẻ.
 - [x] Thêm rule: không giá tiền trên bề mặt trẻ.
 - [x] Mỗi rule mới có ca âm.
-- [x] `pnpm lint:specs` xanh sau khi sửa spec.
+- [x] `pnpm --filter @mindkid/gates test` xanh sau khi sửa spec.
 
 ## Cổng dừng
 
@@ -100,7 +100,7 @@
 - [x] Lưu trữ giữ dữ liệu + giải phóng quota; xoá có 30 ngày hoàn tác.
 - [x] Telemetry sau purge còn hàng với `child_uuid` NULL.
 - [x] `/play` không chữ để đọc, không bộ lọc, không giá tiền.
-- [x] `pnpm check && pnpm test && pnpm test:e2e && pnpm lint:specs && pnpm check:progress` xanh.
+- [x] `pnpm check && pnpm test && pnpm test:e2e && pnpm --filter @mindkid/gates test && node packages/gates/scripts/check-progress.ts` xanh.
 - [x] Human review diff — dữ liệu trẻ em.
 
 ---

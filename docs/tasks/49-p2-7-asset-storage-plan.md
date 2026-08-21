@@ -241,7 +241,7 @@ T1 packages/storage: pipeline · magic bytes · bảng content_images (D-KC, D-K
 - [ ] Đổi base URL → ảnh trỏ host mới, DB không đổi.
 - [ ] Không route nào liệt kê ảnh không kèm owner.
 - [ ] Ảnh chứng từ vẫn private và vẫn không qua pipeline.
-- [ ] `pnpm check && pnpm test && pnpm test:e2e && pnpm lint:specs && pnpm check:progress` xanh.
+- [ ] `pnpm check && pnpm test && pnpm test:e2e && pnpm --filter @mindkid/gates test && node packages/gates/scripts/check-progress.ts` xanh.
 
 ### Task 7 — Evidence, promote và nợ chuyển tiếp
 

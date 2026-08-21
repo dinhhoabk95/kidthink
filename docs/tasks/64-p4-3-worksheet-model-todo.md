@@ -10,7 +10,7 @@
 - [x] Chốt quan hệ objective, sáu layout/schema block và representation alternative.
 - [x] Publish evidence có artifact status + source version + input hash, không path-only.
 - [x] Sửa canonical dependency worksheet sau PDF và đăng ký mọi mã lỗi.
-- [x] `pnpm lint:specs` xanh; schema change được human review.
+- [x] `pnpm --filter @mindkid/gates test` xanh; schema change được human review.
 
 ## Checkpoint A
 
@@ -50,7 +50,7 @@
 - [x] Sáu fixture qua page/measurement/font/grayscale/footer/watermark.
 - [x] IDOR/stale/path leak/render fail tests xanh.
 - [x] Mỗi `BR-WSM-01…08` có test/evidence mang mã rule.
-- [x] `pnpm check`, `pnpm test`, `pnpm lint:specs`, `pnpm check:progress` xanh.
+- [x] `pnpm check`, `pnpm test`, `pnpm --filter @mindkid/gates test`, `node packages/gates/scripts/check-progress.ts` xanh.
 - [x] Spec promote sau human artifact review; không publish/seed ngoài local.
 
 ## Ngoài phạm vi

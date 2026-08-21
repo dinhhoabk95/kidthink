@@ -11,7 +11,7 @@
 
 ## Bước 0 — điều kiện tiên quyết
 
-- [x] Task #12 đã đóng: `pnpm lint:specs 2>&1 | tail -2` — **0 lỗi, 0 cảnh báo** ✓
+- [x] Task #12 đã đóng: `pnpm --filter @mindkid/gates test 2>&1 | tail -2` — **0 lỗi, 0 cảnh báo** ✓
 - [x] `grep -rl "^status: approved" --include="*.md" docs/specs | xargs grep -l "^spec: " | wc -l` — ra **120**,
       không phải 130. Không phải nợ T12: giữa lúc viết kế hoạch (`be75db4`) và giờ, Task #14 đã hợp lệ đưa
       10 spec từ `approved` sang `implemented` (glossary, mvp-scope, monorepo-package-architecture,
@@ -28,18 +28,18 @@
 
 ## Bước 1 — `checkC17` chặng 1, mức `warn`
 
-- [x] Viết ca âm trong [`scripts/tests/lint-specs.test.ts`](../../scripts/tests/lint-specs.test.ts):
+- [x] Viết ca âm trong [`packages/gates/tests/lint-specs.test.ts`](../../scripts/tests/lint-specs.test.ts):
       spec giả `approved`, hàng mục 11 có `Chủ` = `Product / QA` → đúng một `warn` `C17`
 - [x] Ca dương cùng chỗ: `Chủ` = `người quyết` → im lặng
 - [x] Ca biên bắt buộc: `Chủ` = `người quyết — chặn P2` → **phải** `warn` (khớp lỏng là cổng giả)
 - [x] Ca biên: hàng gạch `~~2~~` với `Chủ` = `D-AE (T11)` → im lặng; cùng hàng đó với `Chủ` = `Infra` → `warn`
-- [x] `pnpm test scripts/tests/lint-specs.test.ts` — **đỏ** (6 test fail, `checkC17 is not a function`)
-- [x] Viết `checkC17` trong [`scripts/lint-specs-lib.ts`](../../scripts/lint-specs-lib.ts), đăng ký vào danh sách check
+- [x] `pnpm test packages/gates/tests/lint-specs.test.ts` — **đỏ** (6 test fail, `checkC17 is not a function`)
+- [x] Viết `checkC17` trong [`packages/gates/src/lint-specs-lib.ts`](../../scripts/lint-specs-lib.ts), đăng ký vào danh sách check
 - [x] Chạy test — **xanh** (57/57)
-- [x] `pnpm lint:specs 2>&1 | tail -2` — 0 lỗi; số cảnh báo `C17`: **93** (kế hoạch ước 76 lúc viết ở
+- [x] `pnpm --filter @mindkid/gates test 2>&1 | tail -2` — 0 lỗi; số cảnh báo `C17`: **93** (kế hoạch ước 76 lúc viết ở
       `9f1ef3f`; corpus đã trôi qua T12 đóng + 10 spec T14 chuyển `implemented` — kế hoạch mục 2 tự
       dặn "đừng tin số in ở đây". Đã soát mẫu ~15 dòng đầu: không khớp lỏng, đúng nhóm A/B/D thật)
-- [x] `pnpm lint:specs 2>&1 | grep -F "[C17]" > .../scratchpad/c17-baseline.txt` — giữ làm mốc đếm ngược
+- [x] `pnpm --filter @mindkid/gates test 2>&1 | grep -F "[C17]" > .../scratchpad/c17-baseline.txt` — giữ làm mốc đếm ngược
       (dùng scratchpad thay `/tmp` theo quy ước phiên; nội dung tương đương)
 - [ ] Commit `feat(scripts): T13 bước 1 — C17 chặng 1, bộ giá trị cột Chủ`
 
@@ -118,7 +118,7 @@
       (`D-CX` — cặp vòng lặp crud/archive; `D-BK` — game-template-contract ↔ schema-driven-form)
 - [ ] `pnpm check && pnpm test` — **đỏ, không phải do T13**: `packages/auth` có người khác đang code
       sống (T16, human-owned theo quy định chính task đó) — 1 file test, 10 ca fail, không đụng.
-      `pnpm lint:specs` (cổng thật của T13) vẫn 0 lỗi. Ghi nhận, không chặn tiếp tục.
+      `pnpm --filter @mindkid/gates test` (cổng thật của T13) vẫn 0 lỗi. Ghi nhận, không chặn tiếp tục.
 
 ---
 
@@ -148,7 +148,7 @@ Lô nặng nhất, gần như toàn nhóm A.
 - [x] [`performance-budgets.md`](../specs/08-quality/performance-budgets.md) — A1+B1, tái dùng D-CH
 
 **Mở rộng ngoài kế hoạch** — corpus trôi qua T14/T15 để lộ nợ `C17` ở 13 file khác không nằm
-trong 42 file gốc (`pnpm lint:specs` là nguồn sự thật, không phải danh sách kế hoạch mục 6):
+trong 42 file gốc (`pnpm --filter @mindkid/gates test` là nguồn sự thật, không phải danh sách kế hoạch mục 6):
 
 - [x] [`security-checklist.md`](../specs/08-quality/security-checklist.md),
       [`testing-strategy.md`](../specs/08-quality/testing-strategy.md) — câu trả lời đã có mã sẵn,
@@ -168,7 +168,7 @@ trong 42 file gốc (`pnpm lint:specs` là nguồn sự thật, không phải da
 
 ## Cổng dừng C — hết nợ
 
-- [x] `pnpm lint:specs 2>&1 | tail -2` — **0 lỗi, 0 cảnh báo** ✓ (toàn corpus, không chỉ 42 file gốc)
+- [x] `pnpm --filter @mindkid/gates test 2>&1 | tail -2` — **0 lỗi, 0 cảnh báo** ✓ (toàn corpus, không chỉ 42 file gốc)
 - [x] Không ô `Chủ` nào ngoài bộ đóng — xác nhận qua `checkC17` (mọi hàng qua cổng)
 - [x] `pnpm test` — 300/300 xanh (bao gồm `packages/auth` — WIP T16 đã ổn định giữa lúc làm task này)
 - [~] `pnpm check` — đỏ ở bước `lint`/`format`, chỉ 5 lỗi biome trong `packages/auth/src/*` và
@@ -182,12 +182,12 @@ trong 42 file gốc (`pnpm lint:specs` là nguồn sự thật, không phải da
 Thứ tự bắt buộc, không đảo:
 
 - [x] Thêm ca âm chặng 2: spec giả `approved` với `Chủ` sai → đúng một `fail`; spec `draft` cùng lỗi → `warn`
-- [x] `pnpm test scripts/tests/lint-specs.test.ts` — **đỏ** (1 ca fail đúng như dự kiến)
+- [x] `pnpm test packages/gates/tests/lint-specs.test.ts` — **đỏ** (1 ca fail đúng như dự kiến)
 - [x] Sửa `checkC17`: `fail` khi `status: approved`, giữ `warn` khi `draft`
 - [x] Chạy test — **xanh** — nhưng lộ 3 ca âm chặng 1 cũ dùng `status: approved` giờ sai kỳ vọng
       (đổi sang `draft`, ý định gốc đã có ca chặng 2 riêng phủ `approved`)
 - [x] Xoá thân nhánh vừa thêm, chạy lại test — **đỏ trở lại** (1 ca chặng 2 fail đúng)
-- [x] Khôi phục; `pnpm lint:specs` — 0 lỗi, 0 cảnh báo với cổng mới
+- [x] Khôi phục; `pnpm --filter @mindkid/gates test` — 0 lỗi, 0 cảnh báo với cổng mới
 - [x] Commit `feat(scripts): T13 — C17 chặng 2, Chủ ngoài bộ đóng là lỗi` (`cc0de17`)
 - [x] [`CONVENTIONS.md`](../specs/CONVENTIONS.md): thêm bộ giá trị `Chủ` (kế hoạch mục 3) + khuôn đóng một hàng
 - [x] [`CORPUS-CLOSURE.md`](CORPUS-CLOSURE.md): cập nhật số câu hỏi mở thật sau khi trừ nhóm A
@@ -195,8 +195,8 @@ Thứ tự bắt buộc, không đảo:
 
 ## Cổng dừng cuối
 
-- [x] `pnpm lint:specs` 0 lỗi, 0 cảnh báo
-- [x] `pnpm test && pnpm check:services` xanh; `pnpm check` đỏ chỉ ở `packages/auth` (WIP T16, ngoài
+- [x] `pnpm --filter @mindkid/gates test` 0 lỗi, 0 cảnh báo
+- [x] `pnpm test && pnpm services` xanh; `pnpm check` đỏ chỉ ở `packages/auth` (WIP T16, ngoài
       phạm vi agent — xem Cổng dừng C)
 - [x] Ca âm `C17` cả hai chặng tồn tại và đã chứng minh đỏ → xanh → đỏ
 - [x] Số câu hỏi mở in ở [`CORPUS-CLOSURE.md`](CORPUS-CLOSURE.md) khớp lệnh đếm ở kế hoạch mục 10

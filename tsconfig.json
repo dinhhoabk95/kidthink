@@ -37,10 +37,14 @@
     "scripts/**/*.ts",
     "*.config.ts",
     "packages/*/src/**/*.ts",
-    "packages/*/tests/**/*.ts"
+    "packages/*/tests/**/*.ts",
+    // Tooling của workspace (cổng chất lượng, generator, script vận hành) nằm
+    // trong package sở hữu nó, không còn ở scripts/ gốc — vẫn phải được typecheck.
+    "packages/*/scripts/**/*.ts",
+    "packages/*/vitest/**/*.ts"
   ],
-  // Fixture của cổng lint là **mẫu văn bản** cho script quét, không phải code
-  // chạy được: chúng cố ý import h3/zod mà scripts/ không có, và ca âm cố ý
+  // Fixture của cổng lint là **mẫu văn bản** cho cổng quét, không phải code
+  // chạy được: chúng cố ý import h3/zod mà package cổng không có, và ca âm cố ý
   // thiếu kiểu. Typecheck chúng là đo sai thứ.
-  "exclude": ["scripts/tests/fixtures/**"]
+  "exclude": ["packages/*/tests/**/fixtures/**"]
 }

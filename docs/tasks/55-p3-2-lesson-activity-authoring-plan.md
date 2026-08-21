@@ -428,7 +428,7 @@ T7 · T8 · T10 ──────→ T11 E2E, evidence, promote
       thiếu cột nào thì sửa ở Task #54, không vá trong P3.2.
 - [ ] Nhánh riêng, không trộn working tree đang chạy.
 
-**Kiểm chứng:** `pnpm check:progress` xanh tới P3.1; báo cáo preflight ghi shape schema/checklist
+**Kiểm chứng:** `node packages/gates/scripts/check-progress.ts` xanh tới P3.1; báo cáo preflight ghi shape schema/checklist
 thật sau P3.1 và không còn dependency giả.
 
 **Phụ thuộc:** cổng ra P2 · P3.1 · **Cỡ:** S
@@ -459,7 +459,7 @@ thật sau P3.1 và không còn dependency giả.
 - [ ] Câu hỏi mở còn lại của bốn spec P3 được đóng hoặc ghi rõ hoãn kèm điều kiện mở lại đo được.
 - [ ] Không thêm spec thứ 131; không thêm mã lỗi ngoài registry.
 
-**Kiểm chứng:** `pnpm lint:specs` 0 lỗi, 0 cảnh báo mới.
+**Kiểm chứng:** `pnpm --filter @mindkid/gates test` 0 lỗi, 0 cảnh báo mới.
 
 **Phụ thuộc:** T0 · human decision · **Cỡ:** 3 work package M — model/authoring,
 lifecycle/review, registry/search; mỗi package ≤5 files
@@ -478,7 +478,7 @@ trong corpus, nên kiểm tra hẹp là rẻ và ít báo nhầm.
 - [ ] Chạy trên corpus thật: đúng bốn file ở mục 1.1 đỏ trước T1, xanh hết sau T1.
 - [ ] Không nới ca kiểm hiện có để đổi lấy cổng mới xanh.
 
-**Kiểm chứng:** `pnpm test -- lint-specs` · `pnpm lint:specs` xanh sau T1.
+**Kiểm chứng:** `pnpm test -- lint-specs` · `pnpm --filter @mindkid/gates test` xanh sau T1.
 
 **Phụ thuộc:** T1 · **Cỡ:** S
 
@@ -702,10 +702,10 @@ studio; mỗi package ≤5 files
       [`schema-driven-form.md`](../specs/06-admin/schema-driven-form.md) — giữ nguyên trạng thái
       cũ, có ghi task nguồn của lần sửa.
 - [ ] `D-KK` và `D-KP` vẫn `pending_source: P3.3`; không thẻ dashboard nào bị bật sớm.
-- [ ] Tick **P3.2** trong Task #14 chỉ khi `pnpm check:progress` tự xanh.
+- [ ] Tick **P3.2** trong Task #14 chỉ khi `node packages/gates/scripts/check-progress.ts` tự xanh.
 
 **Kiểm chứng:**
-`pnpm check && pnpm test && pnpm test:e2e && pnpm lint:specs && pnpm check:progress` xanh.
+`pnpm check && pnpm test && pnpm test:e2e && pnpm --filter @mindkid/gates test && node packages/gates/scripts/check-progress.ts` xanh.
 
 **Phụ thuộc:** T7 · T8 · T10 · **Cỡ:** S
 
@@ -724,7 +724,7 @@ studio; mỗi package ≤5 files
 | Sửa spec P0/P2 từ task P3 mà không ai duyệt | Contract drift ngược phase | T1 tách ba quyết định đó ra duyệt riêng |
 | Đếm P3.2 bằng số lesson soạn được | Task nuốt phạm vi nội dung của P3.1 | `D-LR` — nghiệm thu bằng một lesson và ba activity |
 | Bắt đầu code khi P3.1 chưa xong | Dùng model và validator tưởng tượng | Stop condition §0.1 + T0 đo lại |
-| Ghi file docs bị hook cắt thân | Plan hoặc todo mất nội dung, gate đỏ | Sau mỗi lần ghi: `wc -l` rồi `pnpm lint:specs` |
+| Ghi file docs bị hook cắt thân | Plan hoặc todo mất nội dung, gate đỏ | Sau mỗi lần ghi: `wc -l` rồi `pnpm --filter @mindkid/gates test` |
 
 ## 7. Ngoài phạm vi
 

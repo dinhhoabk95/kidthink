@@ -42,7 +42,7 @@
 - [x] Worker chỉ consume; không có đường enqueue trong `apps/worker`.
 - [x] Tên job không đăng ký → fail rõ ràng, không im lặng.
 - [x] Tắt sạch khi nhận tín hiệu dừng.
-- [x] `pnpm check:services` xanh.
+- [x] `pnpm services` xanh.
 
 ### Task 6 — Port `alert()`
 Em 
@@ -87,7 +87,7 @@ Em
 - [x] `packages/queue` · `apps/worker` · `packages/cache` không còn stub.
 - [x] Đúng hai job; không kéo danh mục P1.5 lên.
 - [x] Có ít nhất **một** hàng `backup_log` kind verify status success **thật**.
-- [x] `pnpm check && pnpm test && pnpm lint:specs && pnpm lint:deps && pnpm check:progress` xanh.
+- [x] `pnpm check && pnpm test && pnpm --filter @mindkid/gates test && pnpm lint:deps && node packages/gates/scripts/check-progress.ts` xanh.
 
 ---
 
@@ -126,7 +126,7 @@ Em
 - [x] Ghi lệch **tên** cột `backup_log` (`storage_path`/`checksum`) vào [`backup-and-restore.md`](../specs/01-platform/backup-and-restore.md), **không** đổi cột.
 - [x] [`backup-and-restore.md`](../specs/01-platform/backup-and-restore.md) · [`health-check.md`](../specs/01-platform/health-check.md) sang `implemented` chỉ khi đủ evidence.
 - [x] Tick **P0.8b** ở [`14-implementation-sequence-todo.md`](14-implementation-sequence-todo.md) chỉ khi `check:progress` tự xanh.
-- [x] `pnpm check && pnpm test && pnpm lint:specs && pnpm check:progress` xanh.
+- [x] `pnpm check && pnpm test && pnpm --filter @mindkid/gates test && node packages/gates/scripts/check-progress.ts` xanh.
 
 ## Cổng dừng cuối
 

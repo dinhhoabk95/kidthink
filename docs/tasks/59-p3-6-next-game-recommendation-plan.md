@@ -232,7 +232,7 @@ T1 sửa contract D-MQ…D-MX + human approve
 - [ ] `BR-REC-08` bỏ tiền tố `P1`.
 - [ ] Không thêm spec mới; không thêm `reason_code` ngoài sáu code đã khai.
 
-**Kiểm chứng:** `pnpm lint:specs` 0 lỗi, 0 cảnh báo mới.
+**Kiểm chứng:** `pnpm --filter @mindkid/gates test` 0 lỗi, 0 cảnh báo mới.
 
 **Phụ thuộc:** P3.5 · human decision · **Cỡ:** M
 
@@ -361,10 +361,10 @@ package ≤5 files
 - [ ] Bảy bậc đều có ca dương và ca rỗng; hai ca biên của T4 xanh.
 - [ ] [`next-game-recommendation.md`](../specs/04-play/next-game-recommendation.md) sang
       `implemented`.
-- [ ] Tick **P3.6** trong Task #14 chỉ khi `pnpm check:progress` tự xanh.
+- [ ] Tick **P3.6** trong Task #14 chỉ khi `node packages/gates/scripts/check-progress.ts` tự xanh.
 
 **Kiểm chứng:**
-`pnpm check && pnpm test && pnpm test:e2e && pnpm lint:specs && pnpm check:progress` xanh.
+`pnpm check && pnpm test && pnpm test:e2e && pnpm --filter @mindkid/gates test && node packages/gates/scripts/check-progress.ts` xanh.
 
 **Phụ thuộc:** T6 · T7 · **Cỡ:** S
 

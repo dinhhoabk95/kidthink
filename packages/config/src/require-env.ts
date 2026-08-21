@@ -7,6 +7,18 @@
  * wrong domain, or signs private URLs with a constant that lives in the repo.
  */
 
+// Auto-load .env if present in local development runtime
+try {
+  if (
+    typeof process !== "undefined" &&
+    typeof process.loadEnvFile === "function"
+  ) {
+    process.loadEnvFile();
+  }
+} catch {
+  // Ignored if .env does not exist (e.g. CI / production where env is injected)
+}
+
 export class MissingEnvError extends Error {
   readonly varName: string;
 

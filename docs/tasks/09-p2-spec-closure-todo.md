@@ -29,7 +29,7 @@ Mẫu commit: `feat(specs): T9 bước <n> — approve <tên-spec>`
 - [ ] `git status` sạch, `origin/main..HEAD` ra **0**
 - [ ] `docker info` chạy được (hook `pre-push` job `services` của [`lefthook.yml`](../../lefthook.yml)
       sẽ chặn nếu Docker chết)
-- [ ] `pnpm lint:specs` — ghi lại con số: phải là **0 lỗi, 101 cảnh báo, 0 chu trình**
+- [ ] `pnpm --filter @mindkid/gates test` — ghi lại con số: phải là **0 lỗi, 101 cảnh báo, 0 chu trình**
 - [ ] Đếm `status: approved` toàn corpus — phải ra **81**
 - [ ] Đếm spec `phase: P2` — phải ra **31**; trong đó `draft` ra **29**
 - [ ] Đọc [`CONVENTIONS.md`](../specs/CONVENTIONS.md) mục 10 (checklist review 15 mục) và mục 11
@@ -51,7 +51,7 @@ Mẫu commit: `feat(specs): T9 bước <n> — approve <tên-spec>`
 - [x] Q2 (CDN trước S3) — `Chặn phase: P2`, `Chủ: người quyết`, không tự chốt
 - [x] Q3 (tần suất job dọn ảnh `orphan`) — chốt được từ corpus, ghi `D-*` (`D-BD`)
 - [x] `status: approved`, `reviewed` sang ngày làm
-- [x] `pnpm lint:specs` — 0 lỗi, cảnh báo **104 → 101**
+- [x] `pnpm --filter @mindkid/gates test` — 0 lỗi, cảnh báo **104 → 101**
 - [x] Commit `feat(specs): T9 bước 1 — approve image-storage`
 
 ### Bước 2 — [`image-upload.md`](../specs/06-admin/image-upload.md)
@@ -60,7 +60,7 @@ Mẫu commit: `feat(specs): T9 bước <n> — approve <tên-spec>`
 - [x] Điền "vì sao" cho **2** cảnh báo `C6`
 - [x] Bảng mục 11 sang 5 cột; Q1 trỏ ngược sang
       [`image-storage.md`](../specs/01-platform/image-storage.md) Q1, cùng `Chặn phase: P4`
-- [x] `status: approved`; `pnpm lint:specs` cảnh báo **101 → 99**
+- [x] `status: approved`; `pnpm --filter @mindkid/gates test` cảnh báo **101 → 99**
 - [x] Commit `feat(specs): T9 bước 2 — approve image-upload`
 
 ### Bước 3 — [`emoji-picker.md`](../specs/06-admin/emoji-picker.md)
@@ -69,7 +69,7 @@ Mẫu commit: `feat(specs): T9 bước <n> — approve <tên-spec>`
 - [x] Đối chiếu 32 nhóm emoji với [`emoji-registry.md`](../specs/01-platform/emoji-registry.md) —
       kho emoji là danh sách đóng, picker không được mở rộng nó
 - [x] Bảng mục 11 sang 5 cột
-- [x] `status: approved`; `pnpm lint:specs` cảnh báo giữ **99**
+- [x] `status: approved`; `pnpm --filter @mindkid/gates test` cảnh báo giữ **99**
 - [x] Commit `feat(specs): T9 bước 3 — approve emoji-picker`
 
 ### Bước 4 — [`asset-usage-tracking.md`](../specs/06-admin/asset-usage-tracking.md)
@@ -84,7 +84,7 @@ Mẫu commit: `feat(specs): T9 bước <n> — approve <tên-spec>`
 
 ## Cổng dừng A
 
-- [x] 4/4 spec lô A `approved`; `pnpm lint:specs` 0 lỗi, **99** cảnh báo
+- [x] 4/4 spec lô A `approved`; `pnpm --filter @mindkid/gates test` 0 lỗi, **99** cảnh báo
 - [x] `pnpm check` xanh
 - [x] `pnpm test` xanh
 - [x] **Một phiên duy nhất với chủ dự án** — 6 câu ở mục 7 của
@@ -101,15 +101,15 @@ Mẫu commit: `feat(specs): T9 bước <n> — approve <tên-spec>`
 
 ### Bước 4b — bịt lỗ hổng `C16` (chỉ chạy nếu Cổng dừng A duyệt)
 
-- [x] Viết **ca âm trước**: trong [`scripts/tests/lint-specs.test.ts`](../../scripts/tests/lint-specs.test.ts),
+- [x] Viết **ca âm trước**: trong [`packages/gates/tests/lint-specs.test.ts`](../../scripts/tests/lint-specs.test.ts),
       một spec giả `approved` có bảng mục 11 dạng 3 cột phải sinh **đúng một** violation
 - [x] Chạy test — **phải đỏ** (chưa sửa `checkC16` thì không thể xanh)
-- [x] Sửa `checkC16` ([`scripts/lint-specs-lib.ts`](../../scripts/lint-specs-lib.ts) quanh dòng
+- [x] Sửa `checkC16` ([`packages/gates/src/lint-specs-lib.ts`](../../scripts/lint-specs-lib.ts) quanh dòng
       1693): bảng <5 cột thì `fail` nếu `status: approved`, `warn` nếu `draft`
 - [x] Chạy test — **phải xanh**
 - [x] Xoá thân nhánh mới, chạy lại test — **phải đỏ trở lại**. Đây là bước chứng minh cổng, không
       bỏ được
-- [x] Khôi phục, `pnpm lint:specs` — 4 spec lô A đã 5 cột nên **không** phát sinh lỗi mới
+- [x] Khôi phục, `pnpm --filter @mindkid/gates test` — 4 spec lô A đã 5 cột nên **không** phát sinh lỗi mới
 - [x] Commit `feat(scripts): T9 bước 4b — C16 bắt bảng câu hỏi mở thiếu cột`
 
 ---
@@ -202,7 +202,7 @@ entitlement-grant · subscription-view · package-catalog-admin (độc lập)
 ## Cổng dừng B
 
 - [x] 8/8 spec lô B `approved`; toàn corpus **16/30** spec đích xong
-- [x] `pnpm lint:specs` 0 lỗi, cảnh báo **≤ 86**
+- [x] `pnpm --filter @mindkid/gates test` 0 lỗi, cảnh báo **≤ 86**
 - [x] `pnpm check` xanh
 - [x] `pnpm test` xanh
 - [x] **Nêu rõ: lô B có đổi `schema-*` hay không.** Không đổi schema (không phát sinh cột mới)
@@ -276,7 +276,7 @@ live-preview · publish-and-version · seo-content-admin (độc lập)
 ## Cổng dừng C
 
 - [x] 6/6 spec lô C `approved`; **22/30** spec đích xong
-- [x] `pnpm lint:specs` 0 lỗi, cảnh báo **≤ 80** (hiện tại: 136 warnings tổng corpus, trong đó nợ Lô C = 0)
+- [x] `pnpm --filter @mindkid/gates test` 0 lỗi, cảnh báo **≤ 80** (hiện tại: 136 warnings tổng corpus, trong đó nợ Lô C = 0)
 - [x] `pnpm check` xanh, `pnpm test` xanh
 - [x] Xác nhận `D-*` cho cặp 9 (sửa [`game-template-contract.md`](../specs/01-platform/game-template-contract.md),
       spec `P1` đã `approved`, mã `D-BK`) và cặp 10 (đóng Q1 của
@@ -328,7 +328,7 @@ admin-dashboard (độc lập)
 ## Cổng dừng D
 
 - [x] 4/4 spec lô D `approved`; **26/30** spec đích xong
-- [x] `pnpm lint:specs` 0 lỗi, cảnh báo **≤ 76** (hiện tại: 129 warnings tổng corpus, nợ Lô D = 0)
+- [x] `pnpm --filter @mindkid/gates test` 0 lỗi, cảnh báo **≤ 76** (hiện tại: 129 warnings tổng corpus, nợ Lô D = 0)
 - [x] `pnpm check` xanh, `pnpm test` xanh
 
 ---
@@ -449,7 +449,7 @@ chỗ lệch mà kiểm tra tự động bỏ qua.
 
 - [x] 29/29 spec đích `approved` (cộng rà soát [`payment-flow.md`](../specs/00-foundation/payment-flow.md)), tổng corpus **109/130**
 - [x] `phase: P2` đạt **31/31**
-- [x] `pnpm lint:specs` 0 lỗi, **0 chu trình**, cảnh báo **98** (0 trên 31 spec P2)
+- [x] `pnpm --filter @mindkid/gates test` 0 lỗi, **0 chu trình**, cảnh báo **98** (0 trên 31 spec P2)
 - [x] `pnpm check` xanh
 - [x] `pnpm test` xanh (260/260 tests passed)
 - [x] `git push` sạch
@@ -470,7 +470,7 @@ for f in $(grep -rl "^phase: P2" docs/specs/*/ --include="*.md"); do
 done | sort | uniq -c
 
 # Cảnh báo C6 còn trên spec P2 — phải ra 0
-pnpm lint:specs 2>&1 | grep "\[C6\]" | while read -r line; do
+pnpm --filter @mindkid/gates test 2>&1 | grep "\[C6\]" | while read -r line; do
   f="docs/specs/${line%%:*}"
   grep -q "^phase: P2" "$f" && echo "$line"
 done
@@ -486,5 +486,5 @@ awk '/^## P2/{f=1} /^## P3/{f=0} f' docs/specs/roadmap.md \
 grep -rl "^phase: P2" docs/specs/*/ --include="*.md" | wc -l
 
 # Cổng
-pnpm lint:specs && pnpm test && pnpm check
+pnpm --filter @mindkid/gates test && pnpm test && pnpm check
 ```

@@ -66,7 +66,7 @@
 - [x] Enum bốn bậc, `TIER_ORDER` khớp DB.
 - [x] Tập `entitlement_keys` bằng đúng registry.
 - [x] Catalog 2 gói bán được + 4 add-on ẩn.
-- [x] `pnpm check && pnpm test && pnpm lint:specs && pnpm check:progress` xanh.
+- [x] `pnpm check && pnpm test && pnpm --filter @mindkid/gates test && node packages/gates/scripts/check-progress.ts` xanh.
 - [x] P0.3 đã đóng **trước** khi mở khối B.
 
 ---
@@ -118,7 +118,7 @@
 - [x] Rule chặn P1/P2 ghi bước sở hữu, **không** tick.
 - [x] [`access-ladder.md`](../specs/00-foundation/access-ladder.md) · [`entitlement-model.md`](../specs/00-foundation/entitlement-model.md) · [`package-catalog.md`](../specs/00-foundation/package-catalog.md) sang `implemented` chỉ khi đủ evidence.
 - [x] Tick **P0.5** ở [`14-implementation-sequence-todo.md`](14-implementation-sequence-todo.md) chỉ khi `check:progress` tự xanh.
-- [x] `pnpm check && pnpm test && pnpm lint:specs && pnpm check:progress` xanh.
+- [x] `pnpm check && pnpm test && pnpm --filter @mindkid/gates test && node packages/gates/scripts/check-progress.ts` xanh.
 
 ## Cổng dừng cuối
 

@@ -51,14 +51,14 @@ một spec".
 4. Chạy đủ mười một mục checklist [`CONVENTIONS.md`](../specs/CONVENTIONS.md) §10.
 5. Xử lý câu hỏi mở section 11 — chốt cái chặn P0, để nguyên cái chặn P1 trở đi.
 6. Đổi `status` sang `approved`, cập nhật `reviewed`.
-7. `pnpm lint:specs` và `pnpm test` xanh, rồi commit. Một spec một commit.
+7. `pnpm --filter @mindkid/gates test` và `pnpm test` xanh, rồi commit. Một spec một commit.
 
 ---
 
 ## Bước 0 — Ca âm cho cổng `C8`
 
-- [x] Đọc `checkC8` ở [`scripts/lint-specs-lib.ts`](../../scripts/lint-specs-lib.ts) dòng 791
-- [x] Thêm ca âm vào [`scripts/tests/lint-specs.test.ts`](../../scripts/tests/lint-specs.test.ts):
+- [x] Đọc `checkC8` ở [`packages/gates/src/lint-specs-lib.ts`](../../scripts/lint-specs-lib.ts) dòng 791
+- [x] Thêm ca âm vào [`packages/gates/tests/lint-specs.test.ts`](../../scripts/tests/lint-specs.test.ts):
       spec `approved` phụ thuộc spec `draft` phải sinh đúng một violation
 - [x] Thêm ca dương: phụ thuộc `approved` không sinh gì
 - [x] `pnpm test` báo ít nhất 83 test (nền là 81)
@@ -80,7 +80,7 @@ File: [`01-platform/notification-service.md`](../specs/01-platform/notification-
 - [x] Cập nhật [`index.md`](../specs/index.md) dòng 90 từ `P2` sang `P0`
 - [x] Chạy checklist [`CONVENTIONS.md`](../specs/CONVENTIONS.md) §10
 - [x] Đổi `status` sang `approved`, `reviewed` sang ngày làm
-- [x] `pnpm lint:specs` 0 lỗi
+- [x] `pnpm --filter @mindkid/gates test` 0 lỗi
 - [x] Commit `feat(specs): T1 — notification-service P2 sang P0 và approve (D-AF)`
 
 ## Bước 2 — `D-AG`: cắt cạnh của [`security-checklist.md`](../specs/08-quality/security-checklist.md)
@@ -90,14 +90,14 @@ File: [`08-quality/security-checklist.md`](../specs/08-quality/security-checklis
 - [x] Xoá `ACCESS-GATING` khỏi `depends_on`, còn đúng hai mục
 - [x] Tìm mọi chỗ nhắc gating trong văn xuôi, đổi thành liên kết tới
       [`access-gating`](../specs/04-play/access-gating.md)
-- [x] `pnpm lint:specs` — `C4` xanh, `C8` chưa áp dụng vì file còn `draft`
+- [x] `pnpm --filter @mindkid/gates test` — `C4` xanh, `C8` chưa áp dụng vì file còn `draft`
 - [x] Commit `fix(specs): D-AG — security-checklist bỏ depends_on ACCESS-GATING`
 
 ## Cổng dừng A
 
 - [x] Chủ dự án xác nhận `D-AF`
 - [x] Chủ dự án xác nhận `D-AG`
-- [x] `pnpm lint:specs` 0 lỗi
+- [x] `pnpm --filter @mindkid/gates test` 0 lỗi
 - [x] `pnpm test` xanh, có ca âm `C8`
 - [x] `git status` sạch
 
@@ -118,7 +118,7 @@ File: [`08-quality/security-checklist.md`](../specs/08-quality/security-checklis
 - [x] Bốn câu hỏi mở đều chặn P1 trở đi — xác nhận rồi để nguyên
 - [x] Checklist [`CONVENTIONS.md`](../specs/CONVENTIONS.md) §10
 - [x] `status: approved`, cập nhật `reviewed`
-- [x] `pnpm lint:specs` 0 lỗi
+- [x] `pnpm --filter @mindkid/gates test` 0 lỗi
 - [x] Commit `feat(specs): T3 — approve ai-codegen-pipeline`
 
 ### Bước 4 — [`emoji-registry.md`](../specs/01-platform/emoji-registry.md) (200 dòng, 10 rule, 3 câu hỏi mở)
@@ -132,7 +132,7 @@ File: [`08-quality/security-checklist.md`](../specs/08-quality/security-checklis
 - [x] Ba câu hỏi mở chặn P1 và P4 — để nguyên
 - [x] Checklist [`CONVENTIONS.md`](../specs/CONVENTIONS.md) §10
 - [x] `status: approved`, cập nhật `reviewed`
-- [x] `pnpm lint:specs` 0 lỗi
+- [x] `pnpm --filter @mindkid/gates test` 0 lỗi
 - [x] Commit `feat(specs): T4 — approve emoji-registry`
 
 ### Bước 5 — [`rate-limiting.md`](../specs/01-platform/rate-limiting.md) (151 dòng, 7 rule, 2 câu hỏi mở)
@@ -148,7 +148,7 @@ File: [`08-quality/security-checklist.md`](../specs/08-quality/security-checklis
 - [x] Hai câu hỏi mở chặn P1 — để nguyên
 - [x] Checklist [`CONVENTIONS.md`](../specs/CONVENTIONS.md) §10
 - [x] `status: approved`, cập nhật `reviewed`
-- [x] `pnpm lint:specs` 0 lỗi
+- [x] `pnpm --filter @mindkid/gates test` 0 lỗi
 - [x] Commit `feat(specs): T5 — approve rate-limiting`
 
 ### Bước 6 — [`health-check.md`](../specs/01-platform/health-check.md) (143 dòng, 6 rule, 1 câu hỏi mở)
@@ -161,7 +161,7 @@ File: [`08-quality/security-checklist.md`](../specs/08-quality/security-checklis
       quyết định vào sổ cái
 - [x] Checklist [`CONVENTIONS.md`](../specs/CONVENTIONS.md) §10
 - [x] `status: approved`, cập nhật `reviewed`
-- [x] `pnpm lint:specs` 0 lỗi
+- [x] `pnpm --filter @mindkid/gates test` 0 lỗi
 - [x] Commit `feat(specs): T6 — approve health-check`
 
 ---
@@ -182,7 +182,7 @@ Phải xong trước bước 10.
 - [x] Câu hỏi 2 chặn P1 — để nguyên
 - [x] Checklist [`CONVENTIONS.md`](../specs/CONVENTIONS.md) §10
 - [x] `status: approved`, cập nhật `reviewed`
-- [x] `pnpm lint:specs` 0 lỗi
+- [x] `pnpm --filter @mindkid/gates test` 0 lỗi
 - [x] Commit `feat(specs): T7 — approve registration`
 
 ### Bước 8 — [`login-and-session.md`](../specs/03-account/login-and-session.md) (188 dòng, 10 rule, 2 câu hỏi mở)
@@ -204,7 +204,7 @@ Phải xong trước bước 10.
 - [x] Hai câu hỏi mở chặn P2 — để nguyên
 - [x] Checklist [`CONVENTIONS.md`](../specs/CONVENTIONS.md) §10
 - [x] `status: approved`, cập nhật `reviewed`
-- [x] `pnpm lint:specs` 0 lỗi
+- [x] `pnpm --filter @mindkid/gates test` 0 lỗi
 - [x] Commit `feat(specs): T8 — approve login-and-session`
 
 ### Bước 9 — [`password-recovery.md`](../specs/03-account/password-recovery.md) (169 dòng, 12 rule, 1 câu hỏi mở)
@@ -221,7 +221,7 @@ Mở khoá bởi bước 1.
 - [x] Câu hỏi 1 chặn [`account-settings.md`](../specs/03-account/account-settings.md) — để nguyên
 - [x] Checklist [`CONVENTIONS.md`](../specs/CONVENTIONS.md) §10
 - [x] `status: approved`, cập nhật `reviewed`
-- [x] `pnpm lint:specs` 0 lỗi
+- [x] `pnpm --filter @mindkid/gates test` 0 lỗi
 - [x] Commit `feat(specs): T9 — approve password-recovery`
 
 ### Bước 10 — [`email-verification.md`](../specs/03-account/email-verification.md) (141 dòng, 8 rule, 1 câu hỏi mở)
@@ -238,7 +238,7 @@ Mở khoá bởi bước 1 và bước 7. `C8` sẽ đỏ nếu làm sớm hơn.
 - [x] Câu hỏi 1 chặn P1 — để nguyên
 - [x] Checklist [`CONVENTIONS.md`](../specs/CONVENTIONS.md) §10
 - [x] `status: approved`, cập nhật `reviewed`
-- [x] `pnpm lint:specs` 0 lỗi
+- [x] `pnpm --filter @mindkid/gates test` 0 lỗi
 - [x] Commit `feat(specs): T10 — approve email-verification`
 
 ---
@@ -260,7 +260,7 @@ Mở khoá bởi bước 1 và bước 7. `C8` sẽ đỏ nếu làm sớm hơn.
 - [x] Câu hỏi 1 chặn P2 — để nguyên
 - [x] Checklist [`CONVENTIONS.md`](../specs/CONVENTIONS.md) §10
 - [x] `status: approved`, cập nhật `reviewed`
-- [x] `pnpm lint:specs` 0 lỗi
+- [x] `pnpm --filter @mindkid/gates test` 0 lỗi
 - [x] Commit `feat(specs): T11 — approve admin-auth`
 
 ### Bước 12 — [`testing-strategy.md`](../specs/08-quality/testing-strategy.md) (187 dòng, 10 rule, 2 câu hỏi mở)
@@ -276,7 +276,7 @@ Mở khoá bởi bước 1 và bước 7. `C8` sẽ đỏ nếu làm sớm hơn.
 - [x] Câu hỏi 2 chặn [`game-engine-runtime.md`](../specs/01-platform/game-engine-runtime.md) — để nguyên
 - [x] Checklist [`CONVENTIONS.md`](../specs/CONVENTIONS.md) §10
 - [x] `status: approved`, cập nhật `reviewed`
-- [x] `pnpm lint:specs` 0 lỗi
+- [x] `pnpm --filter @mindkid/gates test` 0 lỗi
 - [x] Commit `feat(specs): T12 — approve testing-strategy`
 
 ---
@@ -299,13 +299,13 @@ Sau `D-AG` ở bước 2 và sau mọi spec khác, vì nó tham chiếu nhiều 
 - [x] Câu hỏi 1 chặn go-live — để nguyên
 - [x] Checklist [`CONVENTIONS.md`](../specs/CONVENTIONS.md) §10
 - [x] `status: approved`, cập nhật `reviewed`
-- [x] `pnpm lint:specs` 0 lỗi
+- [x] `pnpm --filter @mindkid/gates test` 0 lỗi
 - [x] Commit `feat(specs): T13 — approve security-checklist`
 
 ## Cổng dừng B
 
 - [x] 12/12 spec `approved`
-- [x] `pnpm lint:specs` 0 lỗi
+- [x] `pnpm --filter @mindkid/gates test` 0 lỗi
 - [x] Cảnh báo giảm ít nhất 30 so với nền 213
 - [x] `pnpm test` xanh
 - [x] Mọi quyết định mới đã ghi vào sổ cái, đánh số tiếp từ `D-AF`
@@ -333,7 +333,7 @@ tự động bỏ qua.
 - [x] 35/35 spec P0 `approved`
 - [x] `pnpm check` xanh
 - [x] `pnpm test` xanh
-- [x] `pnpm lint:specs` 0 lỗi
+- [x] `pnpm --filter @mindkid/gates test` 0 lỗi
 - [x] Đã push lên `origin/main`
 - [x] Việc tiếp theo của dự án là roadmap P0 **bước 8 — migration đầu tiên**, task viết code đầu tiên
 
@@ -352,5 +352,5 @@ done | sort | uniq -c
 grep -rh "^status: approved" docs/specs/*/ --include="*.md" | wc -l
 
 # Cổng
-pnpm lint:specs && pnpm test && pnpm check
+pnpm --filter @mindkid/gates test && pnpm test && pnpm check
 ```

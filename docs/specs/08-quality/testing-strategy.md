@@ -120,16 +120,37 @@ Viewport mặc định **768×1024** tablet portrait · throttle 4G cho assertio
 Chrome + WebKit + Firefox, 2 major gần nhất · offline test dùng **Playwright offline mode**,
 không mock `navigator.onLine` · screenshot khi fail.
 
+### 7.6 Cổng contract là test, không phải script
+
+Một rule contract (spec corpus, an toàn kiểu, từ vựng, corpus nội dung, mặt công khai)
+được cưỡng chế bằng **test vitest**, Cấm — NEVER bằng một script CLI đăng ký thêm vào
+`package.json`. Lý do: 30 script `lint:*` trước đây chỉ chạy khi ai đó nhớ gọi
+`pnpm check`, còn test của chúng phần lớn chỉ kiểm hàm bằng chuỗi fixture — nghĩa là
+`pnpm test` xanh mà rule không được đo.
+
+| Cổng quét | Sống ở |
+|---|---|
+| Đường dẫn của **một** workspace | `<workspace>/tests/gates/` |
+| Chéo repo hoặc `docs/` | `packages/gates` |
+
+Mỗi cổng BẮT BUỘC có **hai** phần: quét nguồn thật (repo, corpus seed, hoặc DB thật) và
+**ca âm** (`BR-TYP-07`) — một mẫu vi phạm phải làm test đỏ. Mẫu vi phạm sống trong
+`tests/**/fixtures/`, Cấm — NEVER viết thẳng vào file test: nguồn dưới `apps/` và
+`packages/` là thứ các cổng khác đang quét.
+
+Ngoại lệ duy nhất là cổng dựa trên **diff git đang chờ** (`check-progress`): không có
+trạng thái repo cố định nào để assert, nên nó vẫn là script chạy tay.
+
 ## 8. API contract
 
 Không có. Ràng buộc lên cổng tự động:
 
 ```
-pnpm check            → lint + tokens + typecheck
-pnpm test             → unit + integration + property
+pnpm check            → lint + lint:deps + typecheck + test
+pnpm test             → unit + integration + property + CỔNG contract
 pnpm test:coverage    → chặn khi tụt ngưỡng
 pnpm test:e2e         → Playwright
-pnpm gen:check        → spec ↔ code
+node packages/gates/scripts/check-progress.ts        → spec ↔ code
 ```
 
 Cả năm phải xanh để merge.

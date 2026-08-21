@@ -170,7 +170,7 @@ T1 phân giải asset ở server (emoji · image · audio) + đường lỗi
 - [ ] Ghi nợ (`D-FV`): chạy lại cổng này trên ≥120 level ở **P1.11**.
 
 **Kiểm chứng**
-- [ ] `pnpm perf:budget -- config` xanh; `pnpm test:e2e -- no-network-during-play` xanh.
+- [ ] `pnpm --filter @mindkid/gates test -- config` xanh; `pnpm test:e2e -- no-network-during-play` xanh.
 
 **Phụ thuộc:** T3 · T4 · **Cỡ:** M
 
@@ -181,7 +181,7 @@ T1 phân giải asset ở server (emoji · image · audio) + đường lỗi
 - [ ] Payload mọi level mẫu ≤200 KB gz.
 - [ ] Cache đúng hai chiều; `no-store` không lọt lên proxy.
 - [ ] `content_pack` hỏng → 500 + alert, không bao giờ tới engine.
-- [ ] `pnpm check && pnpm test && pnpm test:e2e && pnpm lint:specs && pnpm check:progress` xanh.
+- [ ] `pnpm check && pnpm test && pnpm test:e2e && pnpm --filter @mindkid/gates test && node packages/gates/scripts/check-progress.ts` xanh.
 
 ### Task 7 — Nối engine, evidence, promote
 

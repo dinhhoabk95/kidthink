@@ -232,7 +232,7 @@ Xem lý do đầy đủ ở [`07-first-migration-plan.md`](07-first-migration-pl
       [`data-model-overview.md`](../specs/01-platform/data-model-overview.md) §7.2 đã là
       **9 chỗ** (thêm `activities.ref_id`, `curriculum_items.entity_id`), `status: approved`,
       `reviewed: 2026-08-08`
-- [x] Xác nhận không cần làm lại: `pnpm lint:specs` 0 lỗi, danh sách đã có 9 dòng
+- [x] Xác nhận không cần làm lại: `pnpm --filter @mindkid/gates test` 0 lỗi, danh sách đã có 9 dòng
 - [x] Bỏ qua các ô còn lại của Bước 8 gốc (đọc §7.5/§7.6, thêm dòng, sửa văn xuôi, ghi sổ cái) —
       đã làm ở Task #6, không lặp lại
 
@@ -283,7 +283,7 @@ File: `packages/db/src/schema/curriculum.ts` — theo
 
 ## Cổng dừng C
 
-- [x] [`data-model-overview.md`](../specs/01-platform/data-model-overview.md) §7.2 có đúng 9 dòng, `pnpm lint:specs` 0 lỗi
+- [x] [`data-model-overview.md`](../specs/01-platform/data-model-overview.md) §7.2 có đúng 9 dòng, `pnpm --filter @mindkid/gates test` 0 lỗi
 - [x] 9/9 file schema tồn tại (identity, billing, ops, taxonomy, tagging, game, content,
       curriculum — 8 vừa xong; child/play/adaptive còn ở Bước 11–13)
 - [x] 6 test orphan polymorphic xanh (content_tag_map, content_skill_map, content_images,
@@ -388,7 +388,7 @@ File: `packages/db/src/seed.ts`
 - [x] `pnpm db:seed` — exit 0, chạy lại lần hai số hàng không đổi
 - [x] `pnpm check` xanh
 - [x] `pnpm test` xanh (toàn bộ integration test của 11 module)
-- [x] `pnpm check:services` xanh
+- [x] `pnpm services` xanh
 - [x] `lefthook run pre-push` xanh (chạy thật bằng `git push`, không chỉ lệnh thủ công — xem
       cảnh báo ở [`repo-bootstrap.md`](../specs/00-foundation/repo-bootstrap.md) §9 về lệnh thủ công thiếu ref data)
 - [x] Push `origin/main`
@@ -403,7 +403,7 @@ File: `packages/db/src/seed.ts`
 - [x] 2 trigger (`published` bất biến, `play_sessions` hậu-completed bất biến) có test cả
       nhánh chặn và nhánh cho phép
 - [x] Seed idempotent verify bằng test tự động
-- [x] `pnpm check && pnpm test && pnpm check:services` xanh
+- [x] `pnpm check && pnpm test && pnpm services` xanh
 - [x] Đã push `origin/main`
 - [x] Việc tiếp theo của dự án: roadmap P0 bước 9 — taxonomy service + seed Lớp 1
       ([`taxonomy-service.md`](../specs/01-platform/taxonomy-service.md),

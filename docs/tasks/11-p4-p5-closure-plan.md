@@ -36,8 +36,8 @@ Một câu hỏi trong lô **thật sự** chặn kỹ thuật: [`semantic-searc
 
 ```
 git status
-pnpm lint:specs 2>&1 | tail -2
-pnpm lint:specs 2>&1 | grep -oE "\[C[0-9]+\]" | sort | uniq -c
+pnpm --filter @mindkid/gates test 2>&1 | tail -2
+pnpm --filter @mindkid/gates test 2>&1 | grep -oE "\[C[0-9]+\]" | sort | uniq -c
 grep -rhoE "D-B[A-Z]" docs/specs docs/tasks | sort -u | tail -1
 for f in $(grep -rl "^phase: P3" --include="*.md" docs/specs); do grep -q "^status: draft$" $f && echo $f; done
 ```
@@ -140,7 +140,7 @@ người khác đọc để tin.
 - [`pwa-install.md`](../specs/01-platform/pwa-install.md) Q1 (push notification qua PWA) đối chiếu ràng buộc "không gửi gì tới trẻ" ở
   [`child-data-compliance.md`](../specs/00-foundation/child-data-compliance.md) — nếu ràng buộc
   đã cấm thì hàng này **đóng được**, không phải hoãn.
-- `pnpm lint:specs` 0 lỗi.
+- `pnpm --filter @mindkid/gates test` 0 lỗi.
 
 ### Cổng dừng B — sau đợt 3
 
@@ -172,7 +172,7 @@ người khác đọc để tin.
 ## 9. Kiểm chứng
 
 ```
-pnpm lint:specs 2>&1 | tail -2
+pnpm --filter @mindkid/gates test 2>&1 | tail -2
 grep -rl "^status: draft$" --include="*.md" docs/specs | xargs grep -l "^spec: " | grep -v TEMPLATE
 grep -rl "^status: approved" --include="*.md" docs/specs | xargs grep -l "^spec: " | wc -l
 pnpm check && pnpm test

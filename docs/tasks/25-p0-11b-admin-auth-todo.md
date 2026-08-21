@@ -77,7 +77,7 @@
 - [x] 26 ô ma trận đều có test; curl không đi vòng.
 - [x] Cookie và audience tách hoàn toàn hai chiều.
 - [x] Mọi đăng nhập và thất bại có hàng `audit_logs`.
-- [x] `pnpm check && pnpm test && pnpm lint:specs && pnpm check:progress` xanh.
+- [x] `pnpm check && pnpm test && pnpm --filter @mindkid/gates test && node packages/gates/scripts/check-progress.ts` xanh.
 - [x] Human security reviewer approve diff.
 
 ---

@@ -198,7 +198,7 @@ T1 shell: layout · nav theo role · breadcrumb · rỗng/lỗi (D-IW)
 - [ ] Không truy vấn nào của dashboard chạm bảng thô.
 - [ ] Không lời gọi mutation nào phát ra từ dashboard.
 - [ ] Trang taxonomy P1.16 và legal consent P1.14 chạy trong shell; test hành vi cũ xanh không sửa assertion.
-- [ ] `pnpm check && pnpm test && pnpm test:e2e && pnpm lint:specs && pnpm check:progress` xanh.
+- [ ] `pnpm check && pnpm test && pnpm test:e2e && pnpm --filter @mindkid/gates test && node packages/gates/scripts/check-progress.ts` xanh.
 
 ### Task 6 — Evidence, promote và nợ chuyển tiếp
 

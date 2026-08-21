@@ -91,7 +91,7 @@
 - [x] Không truy vấn nào của dashboard chạm bảng thô.
 - [x] Không lời gọi mutation nào phát ra từ dashboard.
 - [x] Trang taxonomy và legal consent chạy trong shell; test hành vi cũ xanh, assertion không đổi.
-- [x] `pnpm check && pnpm test && pnpm test:e2e && pnpm lint:specs && pnpm check:progress` xanh.
+- [x] `pnpm check && pnpm test && pnpm test:e2e && pnpm --filter @mindkid/gates test && node packages/gates/scripts/check-progress.ts` xanh.
 
 ---
 

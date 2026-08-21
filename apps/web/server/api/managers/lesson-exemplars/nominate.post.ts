@@ -2,7 +2,7 @@ import { LessonExemplarService } from "@mindkid/db";
 import { createError, defineEventHandler, readBody } from "h3";
 
 import { z } from "zod";
-import { requireSuperAdminAuth } from "../../../../utils/auth.ts";
+import { requireSuperAdminSession } from "../../../utils/admin-auth-runtime.js";
 
 const nominateBodySchema = z.object({
   lesson_id: z.number().int().positive(),
@@ -12,7 +12,7 @@ const nominateBodySchema = z.object({
 });
 
 export default defineEventHandler(async (event) => {
-  const manager = requireSuperAdminAuth(event);
+  const manager = requireSuperAdminSession(event);
   const rawBody = await readBody(event);
   const parsed = nominateBodySchema.safeParse(rawBody);
 

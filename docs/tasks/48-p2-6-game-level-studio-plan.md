@@ -90,7 +90,7 @@ nguyên. Bản cục bộ xoá khi lưu server thành công, để không có ha
 **D-JZ — Ba quy tắc "không được tồn tại" của studio vào **cùng cổng quét** đã có từ P2.2.**
 `BR-STU-01` cấm ghi `game_templates`; `BR-STU-07` cấm publish trực tiếp; `BR-STU-06` cấm
 `access_tier` có giá trị mặc định. Ba thứ này không kiểm được bằng test tính năng. Xử: mở rộng
-`scripts/check-child-data-compliance-gates.ts` lần thứ ba — không route studio nào ghi
+`apps/web/tests/gates/child-data-compliance.ts` lần thứ ba — không route studio nào ghi
 `game_templates`; không route studio nào đặt `status = published`; và ở tầng schema,
 `access_tier` **không có** giá trị mặc định, thiếu là `undefined` chứ không phải một tier nào
 đó. Ca âm cho từng quy tắc.
@@ -260,7 +260,7 @@ gates. T3a → T3b; contract/error tests không chờ UI.
 - [ ] Hai Manager không ghi đè nhau (**409** `VERSION_CONFLICT`).
 - [ ] Không route studio nào ghi `game_templates` hay đặt `published`.
 - [ ] `access_tier` không có mặc định.
-- [ ] `pnpm check && pnpm test && pnpm test:e2e && pnpm lint:tokens && pnpm lint:specs && pnpm check:progress` xanh.
+- [ ] `pnpm check && pnpm test && pnpm test:e2e && pnpm --filter @mindkid/gates test && pnpm --filter @mindkid/gates test && node packages/gates/scripts/check-progress.ts` xanh.
 
 ### Task 8 — Evidence, promote và nợ chuyển tiếp
 

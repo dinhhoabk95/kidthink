@@ -50,7 +50,7 @@
       [`progress-and-mastery.md`](../specs/04-play/progress-and-mastery.md) đóng: 1–2 vùng cho
       trẻ, 6 vùng cho báo cáo người lớn.
 - [x] Không thêm spec mới; không thêm mã lỗi ngoài registry.
-- [x] `pnpm lint:specs` 0 lỗi, 0 cảnh báo mới.
+- [x] `pnpm --filter @mindkid/gates test` 0 lỗi, 0 cảnh báo mới.
 
 ## Checkpoint A — Contract
 
@@ -182,15 +182,15 @@
 - [x] Nợ ca kiểm của Task #57 đã trả và tick ở đúng chỗ.
 - [x] [`adaptive-engine.md`](../specs/01-platform/adaptive-engine.md) → `implemented`.
 - [x] [`progress-and-mastery.md`](../specs/04-play/progress-and-mastery.md) → `implemented`.
-- [x] Tick **P3.5** trong Task #14 chỉ khi `pnpm check:progress` tự xanh.
+- [x] Tick **P3.5** trong Task #14 chỉ khi `node packages/gates/scripts/check-progress.ts` tự xanh.
 
 ## Cổng dừng cuối
 
 - [x] `pnpm check` xanh.
 - [x] `pnpm test` xanh.
 - [x] `pnpm test:e2e` xanh.
-- [x] `pnpm lint:specs` xanh.
-- [x] `pnpm check:progress` xanh.
+- [x] `pnpm --filter @mindkid/gates test` xanh.
+- [x] `node packages/gates/scripts/check-progress.ts` xanh.
 - [x] Human review diff migration, package thuần, đường ghi và bề mặt trẻ.
 - [x] Không phạm vi P3.6 lọt vào: không gợi ý nội dung ngoài curriculum.
 - [x] Không xếp hạng, không so sánh giữa trẻ, không streak.

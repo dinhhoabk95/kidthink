@@ -10,7 +10,7 @@
 
 - [x] Đọc [`security-checklist.md`](../specs/08-quality/security-checklist.md) §6 và [`business-rules.md`](../specs/00-foundation/business-rules.md) §6.
 - [x] Đo lại: bao nhiêu rule `BR-SEC-*` có neo trong mã, bao nhiêu có test. Số đo ngày 2026-08-18 là 2 neo, 0 test.
-- [x] Đo lại số route còn nợ validate body (`pnpm lint:route-validation`). Số đo cũ: 24 trong 245.
+- [x] Đo lại số route còn nợ validate body (`pnpm --filter @mindkid/gates test`). Số đo cũ: 24 trong 245.
 - [x] `pnpm check` và `pnpm test` xanh trước khi sửa dòng đầu tiên.
 
 ## WP91.0 — Câu hỏi người: trạng thái của một registry
@@ -50,5 +50,5 @@
 
 - [x] [`security-checklist.md`](../specs/08-quality/security-checklist.md) sang `implemented` sau khi có test gọi mã của nó.
 - [x] [`business-rules.md`](../specs/00-foundation/business-rules.md) sang `implemented`, hoặc ghi lý do giữ `approved` vĩnh viễn.
-- [x] `pnpm check:progress` xanh · `pnpm lint:specs` xanh · `pnpm check` xanh · `pnpm test` xanh.
+- [x] `node packages/gates/scripts/check-progress.ts` xanh · `pnpm --filter @mindkid/gates test` xanh · `pnpm check` xanh · `pnpm test` xanh.
 - [x] Mở PR cho người review diff, không tự merge.

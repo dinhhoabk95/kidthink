@@ -18,7 +18,7 @@ không route đặt mật khẩu User, không mutation trên trang chi tiết, k
 
 Đó đổi cách làm bước này. Một tính năng có test khi nó chạy đúng; **một tính năng không được
 phép tồn tại thì không có gì để test** — trừ khi có cổng quét mã nguồn. Repo đã có đúng loại
-cổng đó tại `scripts/check-child-data-compliance-gates.ts`, viết từ P0.4 cho `BR-CDC-08` và
+cổng đó tại `apps/web/tests/gates/child-data-compliance.ts`, viết từ P0.4 cho `BR-CDC-08` và
 `BR-CDC-11`. Bước này mở rộng nó, không phát minh cơ chế thứ hai.
 
 Phần "có tồn tại" thì nhỏ và rõ: một danh sách có lọc, một trang chi tiết chỉ đọc, ba thao tác
@@ -61,7 +61,7 @@ xoá tài khoản là quyền của chủ thể dữ liệu, đi qua [`account-d
 **D-JB — Sáu quy tắc "không được tồn tại" thi hành bằng **cổng quét route**, mở rộng script
 sẵn có.** `BR-USM-07` · `BR-USM-08` · `BR-CPA-01` · `BR-CPA-06` · `BR-CPA-07` · `BR-CPA-08` đều
 có dạng "quét mọi route admin, không route nào…". Viết chúng thành review checklist là giao
-việc canh cho trí nhớ người. Xử: thêm vào `scripts/check-child-data-compliance-gates.ts` một
+việc canh cho trí nhớ người. Xử: thêm vào `apps/web/tests/gates/child-data-compliance.ts` một
 hàm quét thư mục route admin, khẳng định: không `DELETE` trên `child_profiles` hay `users`;
 không handler nào ghi `password_hash` của User; không route trả `child_profiles` mà thiếu ràng
 buộc `user_id`; không schema query nào nhận tên trẻ làm tham số. Chạy trong `pnpm check`. Ca âm
@@ -120,7 +120,7 @@ viết sau code luôn xanh ở lần chạy đầu và không ai biết nó có 
 ### Task 1 — Mở rộng cổng quét route
 
 **Tiêu chí nghiệm thu**
-- [ ] Thêm hàm quét vào `scripts/check-child-data-compliance-gates.ts`, chạy trong `pnpm check`.
+- [ ] Thêm hàm quét vào `apps/web/tests/gates/child-data-compliance.ts`, chạy trong `pnpm check`.
 - [ ] `BR-USM-07`: không route admin nào `DELETE` một hàng `users`.
 - [ ] `BR-USM-08`: không handler admin nào ghi `password_hash`; chỉ có route gửi link đặt lại.
 - [ ] `BR-CPA-01`: không route nào trả `child_profiles` mà không ràng buộc theo một `user_id` cụ thể.
@@ -225,7 +225,7 @@ viết sau code luôn xanh ở lần chạy đầu và không ai biết nó có 
 - [ ] Mở chi tiết User có trẻ hai lần → hai hàng audit; không có trẻ → không hàng nào.
 - [ ] Không response admin nào chứa trường trẻ ngoài bốn trường của projection.
 - [ ] `content_reviewer` bị **403** ở cả ba bề mặt.
-- [ ] `pnpm check && pnpm test && pnpm test:e2e && pnpm lint:specs && pnpm check:progress` xanh.
+- [ ] `pnpm check && pnpm test && pnpm test:e2e && pnpm --filter @mindkid/gates test && node packages/gates/scripts/check-progress.ts` xanh.
 
 ### Task 7 — Evidence, promote và nợ chuyển tiếp
 

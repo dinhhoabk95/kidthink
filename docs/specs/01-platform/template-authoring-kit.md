@@ -49,7 +49,7 @@ Con số template khi đó là quyết định sản phẩm, không phải trầ
 | `packages/game-engine/src/templates/<code>/template.ts` | Dev | **File mô tả** — thứ duy nhất viết tay cho phần khai báo |
 | `packages/game-engine/src/templates/<code>/session.ts` | Dev | Session class, viết tay, dựng trên nguyên thuỷ cơ chế |
 | `packages/game-engine/src/generated/` | Bộ sinh mã | Đầu ra. Cấm sửa tay |
-| `pnpm gen:templates` | Dev | Chạy lại bộ sinh mã |
+| `pnpm --filter @mindkid/game-engine gen:templates` | Dev | Chạy lại bộ sinh mã |
 
 ## 4. Main flow
 
@@ -58,7 +58,7 @@ Con số template khi đó là quyết định sản phẩm, không phải trầ
    `limits`, band tuổi, `layouts`, `mechanic`, `scoring`, `events`.
 3. Dev tạo `templates/GT-007/session.ts` — Session class, ghép từ nguyên thuỷ cơ chế ở §7.3.
 4. Dev viết ≥3 game level mẫu chứng minh contract dùng được, theo `BR-GTC` bước 4.
-5. Dev chạy `pnpm gen:templates`.
+5. Dev chạy `pnpm --filter @mindkid/game-engine gen:templates`.
 6. Bộ sinh mã quét thư mục, sinh lại toàn bộ điểm nối ở §7.2.
 7. Bộ test tuân thủ tự nhận template mới và chạy toàn bộ kiểm ở §7.4 cho nó.
 8. Seed vào `game_templates` qua PR, như `BR-GTC` bước 6.
@@ -169,7 +169,7 @@ từ bảng viết tay sang registry sinh ra.
 ```gherkin
 Scenario: BR-TAK-01 — thêm template chỉ chạm thư mục của nó
   Given một template giả lập GT-999 chỉ gồm template.ts và session.ts
-  When chạy pnpm gen:templates
+  When chạy pnpm --filter @mindkid/game-engine gen:templates
   Then mọi file viết tay ngoài thư mục GT-999 không đổi
   And template GT-999 xuất hiện trong registry sinh ra
 
@@ -200,7 +200,7 @@ Scenario: BR-TAK-08 — bundle chơi không tăng tuyến tính
 
 Scenario: BR-TAK-09 — template chưa có level mẫu không vào registry
   Given template GT-999 không có game level mẫu nào
-  When chạy pnpm gen:templates
+  When chạy pnpm --filter @mindkid/game-engine gen:templates
   Then bộ sinh mã dừng và nêu thiếu level mẫu
 
 Scenario: BR-TAK-11 — hàng seed sinh từ file mô tả
@@ -210,7 +210,7 @@ Scenario: BR-TAK-11 — hàng seed sinh từ file mô tả
 
 Scenario: BR-TAK-12 — cờ khai rồi bỏ đó bị chặn
   Given template GT-999 khai layout "chưa-có-thật"
-  When chạy pnpm gen:templates
+  When chạy pnpm --filter @mindkid/game-engine gen:templates
   Then bộ sinh mã dừng và nêu layout không cài đặt được
 ```
 

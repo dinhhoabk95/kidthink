@@ -43,7 +43,7 @@ Bước 31 (roadmap) -> Bước 32 (đối chiếu tay) -> Cổng dừng cuối
 Cổng dừng cuối của Task #6 để lại ô này chưa tick vì Docker không sống. Đo lại: Docker đã sống.
 
 - [ ] `docker compose up -d`
-- [ ] `pnpm check:services` xanh (PG 17 + Valkey 9, đúng major version)
+- [ ] `pnpm services` xanh (PG 17 + Valkey 9, đúng major version)
 - [ ] `git push` — không dùng `--no-verify`
 - [ ] `git log --oneline origin/main..HEAD | wc -l` ra **0**
 - [ ] Quay lại [`06-p1-spec-closure-todo.md`](06-p1-spec-closure-todo.md) Cổng dừng cuối, tick ô
@@ -68,7 +68,7 @@ Mọi spec giao diện ở lô B, C, D tiêu thụ ngưỡng của lô này. Ch�
       được hoặc ghi `D-AR` nói rõ số này là ước lượng nội bộ và điều kiện để sửa
 - [x] Chạy checklist review [`CONVENTIONS.md`](../specs/CONVENTIONS.md) mục 10, đủ 15 mục
 - [x] `status: approved`, `reviewed: 2026-08-08`
-- [x] `pnpm lint:specs` 0 lỗi, cảnh báo **không đổi** (file này vốn 0 cảnh báo)
+- [x] `pnpm --filter @mindkid/gates test` 0 lỗi, cảnh báo **không đổi** (file này vốn 0 cảnh báo)
 - [x] Commit `feat(specs): T8 bước 1 — approve accessibility`
 
 ### Bước 2 — [`design-system-contract.md`](../specs/08-quality/design-system-contract.md)
@@ -88,7 +88,7 @@ Mọi spec giao diện ở lô B, C, D tiêu thụ ngưỡng của lô này. Ch�
 - [x] Q2 (giấy phép font chữ số trên canvas) — chặn P1, chốt hoặc ghi chủ sở hữu rõ
 - [x] Checklist review 15 mục
 - [x] `status: approved`, `reviewed: 2026-08-08`
-- [x] `pnpm lint:specs` 0 lỗi, cảnh báo giảm **3**
+- [x] `pnpm --filter @mindkid/gates test` 0 lỗi, cảnh báo giảm **3**
 - [x] Commit `feat(specs): T8 bước 2 — approve design-system-contract`
 
 ### Bước 3 — [`performance-budgets.md`](../specs/08-quality/performance-budgets.md)
@@ -104,7 +104,7 @@ Mọi spec giao diện ở lô B, C, D tiêu thụ ngưỡng của lô này. Ch�
 - [x] Q3 (CDN trước S3 từ đầu hay sau) — để mở, `Chặn phase: P2`
 - [x] Checklist review 15 mục
 - [x] `status: approved`, `reviewed: 2026-08-08`
-- [x] `pnpm lint:specs` 0 lỗi, cảnh báo giảm **1**
+- [x] `pnpm --filter @mindkid/gates test` 0 lỗi, cảnh báo giảm **1**
 - [x] Commit `feat(specs): T8 bước 3 — approve performance-budgets`
 
 ### Cổng dừng A — phiên quyết định của chủ dự án
@@ -146,7 +146,7 @@ Lô đụng `play_sessions` và `play_events`. **Mọi cột phát sinh phải s
 - [x] Q1 (đáp án đúng nằm trong payload) — để mở, `Chặn phase: P4`
 - [x] Q2 (adaptive params áp ở P3, P1 dùng tham số gốc) — **chặn P1, chốt**
 - [x] Checklist review 15 mục
-- [x] `status: approved`, `reviewed: 2026-08-08`, `pnpm lint:specs` 0 lỗi
+- [x] `status: approved`, `reviewed: 2026-08-08`, `pnpm --filter @mindkid/gates test` 0 lỗi
 - [x] Commit `feat(specs): T8 bước 4 — approve game-config-delivery`
 
 ### Bước 5 — [`play-session-lifecycle.md`](../specs/04-play/play-session-lifecycle.md)
@@ -162,7 +162,7 @@ Lô đụng `play_sessions` và `play_events`. **Mọi cột phát sinh phải s
 - [x] Q1 (30 phút đóng phiên bỏ dở có đúng không) — **chặn P1, chốt**
 - [x] Q2 (trẻ quay lại phiên `abandoned` — tiếp tục hay bắt đầu mới) — **chặn P1, chốt**
 - [x] Checklist review 15 mục
-- [x] `status: approved`, `reviewed: 2026-08-08`, `pnpm lint:specs` cảnh báo giảm **3**
+- [x] `status: approved`, `reviewed: 2026-08-08`, `pnpm --filter @mindkid/gates test` cảnh báo giảm **3**
 - [x] Commit `feat(specs): T8 bước 5 — approve play-session-lifecycle`
 
 ### Bước 6 — [`play-event-ingestion.md`](../specs/04-play/play-event-ingestion.md)
@@ -273,7 +273,7 @@ Lô đụng `play_sessions` và `play_events`. **Mọi cột phát sinh phải s
 ### Cổng dừng B — sau lô B (9 spec)
 
 - [x] 12/12 spec của lô A và B `approved`
-- [x] `pnpm lint:specs` 0 lỗi, cảnh báo giảm (142 → 129)
+- [x] `pnpm --filter @mindkid/gates test` 0 lỗi, cảnh báo giảm (142 → 129)
 - [x] `pnpm check` xanh
 - [x] `pnpm test` xanh (217 tests passed)
 - [x] **Trả lời rõ: lô B có đổi `schema-*` không?**: Không có thay đổi schema table nào trong lô B.
@@ -399,7 +399,7 @@ Lô đụng `play_sessions` và `play_events`. **Mọi cột phát sinh phải s
 ### Cổng dừng C — sau lô C (7 spec)
 
 - [x] 19/19 spec của lô A, B, C `approved`
-- [x] `pnpm lint:specs` 0 lỗi, cảnh báo 142 → **117**
+- [x] `pnpm --filter @mindkid/gates test` 0 lỗi, cảnh báo 142 → **117**
 - [x] `pnpm check` xanh, `pnpm test` xanh (217 tests passed)
 - [x] Mọi lần sửa spec `P0` đã `approved` trong lô C đều có `D-*`
 - [x] `git push`
@@ -523,7 +523,7 @@ Lô đụng `play_sessions` và `play_events`. **Mọi cột phát sinh phải s
 ### Cổng dừng D — sau lô D (8 spec)
 
 - [x] 27/27 spec của lô A, B, C, D `approved`
-- [x] `pnpm lint:specs` 0 lỗi, cảnh báo 142 → **106**
+- [x] `pnpm --filter @mindkid/gates test` 0 lỗi, cảnh báo 142 → **106**
 - [x] `pnpm check` xanh, `pnpm test` xanh (217 tests passed)
 - [x] `git push`
 
@@ -651,7 +651,7 @@ tìm ra chỗ lệch mà kiểm tra tự động bỏ qua.
 
 - [x] 30/30 spec đích `approved`, tổng corpus **79/130**
 - [x] `phase: P1` đạt **43/43**
-- [x] `pnpm lint:specs` 0 lỗi, **0 chu trình**, cảnh báo **≤ 104** (đạt **100**)
+- [x] `pnpm --filter @mindkid/gates test` 0 lỗi, **0 chu trình**, cảnh báo **≤ 104** (đạt **100**)
 - [x] `pnpm check` xanh
 - [x] `pnpm test` xanh
 - [x] `git push` sạch, `origin/main..HEAD` ra **0**
@@ -675,7 +675,7 @@ for f in $(grep -rl "^phase: P1" docs/specs/*/ --include="*.md"); do
 done | sort | uniq -c
 
 # Cảnh báo C6 còn trên spec P1 — phải ra 0
-pnpm lint:specs 2>&1 | grep "\[C6\]" | while read -r line; do
+pnpm --filter @mindkid/gates test 2>&1 | grep "\[C6\]" | while read -r line; do
   f="docs/specs/${line%%:*}"
   grep -q "^phase: P1" "$f" && echo "$line"
 done
@@ -685,5 +685,5 @@ grep -c "^| [0-9]" docs/specs/roadmap.md
 grep -rl "^phase: P1" docs/specs/*/ --include="*.md" | wc -l
 
 # Cổng
-pnpm lint:specs && pnpm test && pnpm check
+pnpm --filter @mindkid/gates test && pnpm test && pnpm check
 ```

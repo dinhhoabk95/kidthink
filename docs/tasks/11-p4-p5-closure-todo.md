@@ -23,8 +23,8 @@ Bước 0 → Đợt 1 (3) → Cổng dừng A → [chờ Task #10 xong] → Đ�
 ## Bước 0 — đo lại trước khi bắt đầu
 
 - [x] `git status` sạch
-- [x] `pnpm lint:specs 2>&1 | tail -2` — lỗi: 0 cảnh báo: 61
-- [x] `pnpm lint:specs 2>&1 | grep -oE "\[C[0-9]+\]" | sort | uniq -c` — `C6`: 37 `C16`: 24
+- [x] `pnpm --filter @mindkid/gates test 2>&1 | tail -2` — lỗi: 0 cảnh báo: 61
+- [x] `pnpm --filter @mindkid/gates test 2>&1 | grep -oE "\[C[0-9]+\]" | sort | uniq -c` — `C6`: 37 `C16`: 24
 - [x] `grep -rhoE "D-B[A-Z]" docs/specs docs/tasks | sort -u | tail -1` — mã lớn nhất: `D-BK`
 - [x] Đọc [`package-catalog.md`](../specs/00-foundation/package-catalog.md) mục 7.2 (add-on khai báo, `is_public = false`) — nền của cả lô
 
@@ -41,7 +41,7 @@ Bước 0 → Đợt 1 (3) → Cổng dừng A → [chờ Task #10 xong] → Đ�
 - [x] Q3 (credit không hết hạn có tạo nợ dài hạn) — `Chủ: Kế toán`, `Chặn phase: P4`
 - [x] Thêm nguyên tắc bút toán ngược cho lời gọi lỗi (kế hoạch mục 4, hệ quả của [`semantic-search.md`](../specs/07-addon/semantic-search.md) Q4) — sửa số dư trực tiếp là Cấm
 - [x] Bảng mục 11 sang 5 cột; `status: approved`; `reviewed` sang ngày làm
-- [x] `pnpm lint:specs | grep ai-credit-ledger` trống
+- [x] `pnpm --filter @mindkid/gates test | grep ai-credit-ledger` trống
 - [x] Commit `feat(specs): T11 bước 1 — approve ai-credit-ledger`
 
 - [x] Đọc hết 126 dòng
@@ -65,7 +65,7 @@ Bước 0 → Đợt 1 (3) → Cổng dừng A → [chờ Task #10 xong] → Đ�
 ## Cổng dừng A
 
 - [x] 3/3 spec đợt 1 `approved`; `C6` giảm đúng **6** (từ 37 xuống 31); `C16` giảm đúng **3** (từ 24 xuống 21)
-- [x] `pnpm lint:specs` 0 lỗi
+- [x] `pnpm --filter @mindkid/gates test` 0 lỗi
 - [x] `pnpm check && pnpm test` xanh
 - [x] Kiểm điều kiện vào đợt 2: `for f in $(grep -rl "^phase: P3" --include="*.md" docs/specs); do grep -q "^status: draft$" $f && echo $f; done` — **không in gì** (Task #10 đã xong)
 
@@ -110,7 +110,7 @@ Bước 0 → Đợt 1 (3) → Cổng dừng A → [chờ Task #10 xong] → Đ�
 ### Bước 7 — [`semantic-search.md`](../specs/07-addon/semantic-search.md)
 
 - [x] Đọc hết 231 dòng (file dài nhất lô)
-- [x] 0 cảnh báo `C6` — xác nhận bằng `pnpm lint:specs | grep semantic-search`
+- [x] 0 cảnh báo `C6` — xác nhận bằng `pnpm --filter @mindkid/gates test | grep semantic-search`
 - [x] Đặt tham số chờ cho `N` của `vector(N)`, tên grep được (`PENDING_EMBEDDING_DIM`)
 - [x] Q1 — trỏ [`ai-assistant.md`](../specs/07-addon/ai-assistant.md) Q1; `Chặn phase: P4`, `Chủ: người quyết`
 - [x] Q2 (ngưỡng `cosine_similarity`) — cần đo trên corpus thật, `Chặn phase: P4`, `Chủ: hoãn`
@@ -126,7 +126,7 @@ Bước 0 → Đợt 1 (3) → Cổng dừng A → [chờ Task #10 xong] → Đ�
 - [x] 7/9 spec `approved`
 - [x] `grep -rn "PENDING_EMBEDDING_DIM" docs/specs` — có kết quả, tên khớp giữa spec và ghi chú nợ
 - [x] `grep -rnE "[0-9]{3,} ?(đ|VND)" docs/specs/07-addon/` — đọc từng dòng, không dòng nào là giá chốt tự điền
-- [x] `pnpm lint:specs` 0 lỗi
+- [x] `pnpm --filter @mindkid/gates test` 0 lỗi
 
 ---
 
@@ -170,7 +170,7 @@ Bước 0 → Đợt 1 (3) → Cổng dừng A → [chờ Task #10 xong] → Đ�
 
 - [x] `grep -rl "^status: draft$" --include="*.md" docs/specs | xargs grep -l "^spec: " | grep -v TEMPLATE` — **không in gì**
 - [x] `grep -rl "^status: approved" --include="*.md" docs/specs | xargs grep -l "^spec: " | wc -l` — ra **130**
-- [x] `pnpm lint:specs` 0 lỗi; 31 cảnh báo còn lại (nợ của Task #12)
+- [x] `pnpm --filter @mindkid/gates test` 0 lỗi; 31 cảnh báo còn lại (nợ của Task #12)
 - [x] `pnpm check && pnpm test` xanh (260/260 tests passed)
 - [x] Cập nhật [`CORPUS-CLOSURE.md`](CORPUS-CLOSURE.md): số đo mới + nợ còn lại (`N` của `vector`, giá, quota, DPA, Puppeteer)
 - [x] Task kế tiếp mở khoá: [`12-corpus-debt-sweep-plan.md`](12-corpus-debt-sweep-plan.md)

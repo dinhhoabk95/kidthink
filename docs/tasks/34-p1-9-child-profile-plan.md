@@ -192,10 +192,10 @@ T1 CRUD: 4 trường · danh sách đóng ba tầng · quota · age_band suy · 
 - [ ] Sửa §5 và §9 của [`play-entry-and-profile-select.md`](../specs/04-play/play-entry-and-profile-select.md): 3 lượt → **5 lượt**, ghi `D-GX` (`D-GX`).
 - [ ] Thêm rule vào cổng `lint:kid-surface` của P1.8: không bộ lọc chữ trong catalog trẻ; không giá tiền; ổ khoá trung tính.
 - [ ] Mỗi rule mới có ca âm.
-- [ ] `pnpm lint:specs` xanh sau khi sửa spec.
+- [ ] `pnpm --filter @mindkid/gates test` xanh sau khi sửa spec.
 
 **Kiểm chứng**
-- [ ] `pnpm lint:kid-surface` đỏ trên fixture có input tìm kiếm dưới `pages/play`.
+- [ ] `pnpm --filter @mindkid/gates test` đỏ trên fixture có input tìm kiếm dưới `pages/play`.
 
 **Phụ thuộc:** T4 · **Cỡ:** S
 
@@ -206,7 +206,7 @@ T1 CRUD: 4 trường · danh sách đóng ba tầng · quota · age_band suy · 
 - [ ] Đổi trẻ không có `gate_token` → 403; đổi giữa phiên → phiên cũ `abandoned`.
 - [ ] Lưu trữ giữ nguyên dữ liệu và giải phóng quota; xoá có 30 ngày hoàn tác; telemetry còn hàng với `child_uuid` NULL.
 - [ ] `/play` không có chữ để đọc, không bộ lọc, không giá tiền.
-- [ ] `pnpm check && pnpm test && pnpm test:e2e && pnpm lint:specs && pnpm check:progress` xanh.
+- [ ] `pnpm check && pnpm test && pnpm test:e2e && pnpm --filter @mindkid/gates test && node packages/gates/scripts/check-progress.ts` xanh.
 - [ ] Human review — vùng **dữ liệu trẻ em**, không auto-merge.
 
 ### Task 6 — Evidence và promote

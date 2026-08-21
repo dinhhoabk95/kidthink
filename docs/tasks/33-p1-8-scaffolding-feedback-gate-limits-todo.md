@@ -109,8 +109,8 @@
 - [x] Sai luôn có phản hồi; không đỏ; cường độ không tăng.
 - [x] Nút thoát không tap trúng được; sửa storage không đi vòng được server.
 - [x] Hết hạn mức không cắt phiên đang chạy; đổi giờ thiết bị không lách được.
-- [x] `pnpm lint:kid-surface` đỏ trên **từng** fixture của tám rule.
-- [x] `pnpm check && pnpm test && pnpm test:e2e && pnpm lint:specs && pnpm check:progress` xanh.
+- [x] `pnpm --filter @mindkid/gates test` đỏ trên **từng** fixture của tám rule.
+- [x] `pnpm check && pnpm test && pnpm test:e2e && pnpm --filter @mindkid/gates test && node packages/gates/scripts/check-progress.ts` xanh.
 
 ---
 

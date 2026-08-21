@@ -146,7 +146,7 @@ biểu diễn bằng số work package M và batch limit, không giữ nhãn XL.
 ## 8. Verification
 
 ```bash
-pnpm lint:specs
+pnpm --filter @mindkid/gates test
 pnpm check
 pnpm test
 rg -n "Task #7[3-7]|73-p5|74-p5|75-p5|76-p5|77-p5" SPEC.md docs/specs docs/tasks
@@ -160,7 +160,7 @@ promise. Query debt P3 phải trả Task #82. Query size phải giảm theo từ
 
 ### Kết quả chạy 2026-08-12
 
-- `pnpm lint:specs`: xanh — 130 specs, 15 checks, 0 lỗi.
+- `pnpm --filter @mindkid/gates test`: xanh — 130 specs, 15 checks, 0 lỗi.
 - Coverage query: 130/130 spec trong roadmap; 75/75 plan có todo; không thiếu cặp.
 - Size query: không còn nhãn `L`/`XL` trong plan active.
 - `pnpm check`: lint, token, dependency, spec, emoji và progress xanh; dừng ở typecheck vì

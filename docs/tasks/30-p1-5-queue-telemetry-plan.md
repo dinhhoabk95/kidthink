@@ -223,7 +223,7 @@ T1 registry 10 job (dữ liệu) + cổng đếm + ranh giới producer/consumer
 - [ ] `rollup:daily` chạy ba lần cho cùng ngày → kết quả không đổi.
 - [ ] Không truy vấn báo cáo nào chạm `telemetry_events`.
 - [ ] Cổng PII đã đỏ được trên fixture.
-- [ ] `pnpm check && pnpm test && pnpm lint:specs && pnpm check:progress` xanh.
+- [ ] `pnpm check && pnpm test && pnpm --filter @mindkid/gates test && node packages/gates/scripts/check-progress.ts` xanh.
 
 ### Task 8 — Evidence, promote, ghi nợ
 

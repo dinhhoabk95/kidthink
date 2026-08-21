@@ -125,7 +125,7 @@ T1 đối chiếu từ vựng ba trục × 230 skill (D-HC) — trước mọi v
 - [ ] Ghi kết quả vào todo bước này — đóng §11 Q1 của tagging (`D-HC`).
 
 **Kiểm chứng**
-- [ ] Bảng nằm trong repo; `pnpm seed:report` sau này in được cùng con số.
+- [ ] Bảng nằm trong repo; `pnpm --filter @mindkid/db seed:report` sau này in được cùng con số.
 
 **Phụ thuộc:** P0.9 · **Cỡ:** M
 
@@ -179,7 +179,7 @@ T1 đối chiếu từ vựng ba trục × 230 skill (D-HC) — trước mọi v
 - [ ] Trượt cổng nào thì **dừng ở đó**; PR không merge được.
 
 **Kiểm chứng**
-- [ ] `pnpm seed:check` xanh trên lô sạch, đỏ trên **tám** fixture, mỗi fixture một cổng.
+- [ ] `pnpm --filter @mindkid/db seed:check` xanh trên lô sạch, đỏ trên **tám** fixture, mỗi fixture một cổng.
 
 **Ranh giới work package:** `T4a` (M) cổng 0–3 + fail-before-DB; `T4b` (M) cổng 4–5 + band
 âm; `T4c` (M) cổng 6–7 + blocklist + báo cáo nhãn heuristic/stop-first. T4a → T4b → T4c;
@@ -190,9 +190,9 @@ mỗi package có fixture âm của chính cổng đó và một PR riêng.
 ### Task 5 — Ba lệnh CLI và đường ghi
 
 **Tiêu chí nghiệm thu**
-- [ ] `pnpm seed:check` chạy 8 cổng, **không chạm DB**.
-- [ ] `pnpm seed:content --dry-run` dựng DB tạm → seed → checklist publish → rollback.
-- [ ] `pnpm seed:content --batch=SEED-*` ghi thật; `BR-CSA-05` một batch = **một transaction**, cấm seed một phần.
+- [ ] `pnpm --filter @mindkid/db seed:check` chạy 8 cổng, **không chạm DB**.
+- [ ] `pnpm --filter @mindkid/db seed:content --dry-run` dựng DB tạm → seed → checklist publish → rollback.
+- [ ] `pnpm --filter @mindkid/db seed:content --batch=SEED-*` ghi thật; `BR-CSA-05` một batch = **một transaction**, cấm seed một phần.
 - [ ] `BR-CSA-01`: chỉ **INSERT**; sửa `content_pack` mà giữ `content_version` → thoát khác 0, DB không đổi, thông báo yêu cầu khai version mới.
 - [ ] Khai `content_version` mới → INSERT bản mới + **archive** bản cũ trong **một** transaction.
 - [ ] `BR-CSA-02`: ghi thẳng `published`, không qua `draft`/`in_review`.
@@ -200,7 +200,7 @@ mỗi package có fixture âm của chính cổng đó và một PR riêng.
 - [ ] `BR-CSA-04`: trượt checklist publish → **rollback cả batch**, nêu `code` bản lỗi.
 - [ ] `BR-CSA-06`: chạy lại → `rows_inserted = 0`, `rows_skipped_idempotent` = số bản, **không** hàng nào bị UPDATE.
 - [ ] `BR-CSA-11` + `D-HD`: `seed:check --against-db` chạy trong cổng tự động; `drift.length > 0` → **đỏ**.
-- [ ] `pnpm seed:report` in phủ theo competency · skill · template và **chỉ ra khoảng trống**.
+- [ ] `pnpm --filter @mindkid/db seed:report` in phủ theo competency · skill · template và **chỉ ra khoảng trống**.
 - [ ] Môi trường đã có bản studio cùng `code` → seed **từ chối**, studio thắng.
 - [ ] `BR-CSA-07` `BR-CSA-08`: ca âm — cấu hình AI agent **không** chạy được `seed:content` ngoài local, **không** merge PR, **không** chạm `skills`/`strands`.
 - [ ] Cấm chạy trong đường request; ca âm quét route.
@@ -241,7 +241,7 @@ T5a → T5b → T5c; mỗi package viết ca âm trước và chạm khoảng 1�
 - [ ] `--against-db` chạy trong cổng tự động và bắt được drift cố ý.
 - [ ] Không đường nào cho AI merge hay chạy seed ngoài local.
 - [ ] Ba số đo review đã ghi lại.
-- [ ] `pnpm check && pnpm test && pnpm lint:specs && pnpm check:progress` xanh.
+- [ ] `pnpm check && pnpm test && pnpm --filter @mindkid/gates test && node packages/gates/scripts/check-progress.ts` xanh.
 
 ### Task 7 — Evidence và promote
 

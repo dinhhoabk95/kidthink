@@ -58,6 +58,7 @@ export const TABLES = [
   "error_logs",
   "export_jobs",
   "feature_flags",
+  "game_level_rounds",
   "game_levels",
   "game_templates",
   "learning_objectives",

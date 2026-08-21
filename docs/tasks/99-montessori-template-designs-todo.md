@@ -12,7 +12,7 @@
 - [x] Bốn `LayoutId` mới có hàm hình học riêng trong `geometry.ts`.
 - [x] 50 game level, 21 lesson, 21 activity Montessori đã soạn.
 - [ ] Đọc mục 4 của plan cho khuôn sắp làm **trước** khi mở editor.
-- [ ] Chạy `pnpm seed:report` và `pnpm check:coverage`, lưu số đo trước.
+- [ ] Chạy `pnpm --filter @mindkid/db seed:report` và `pnpm --filter @mindkid/db test`, lưu số đo trước.
       **Chặn:** cả hai đọc Postgres ở `127.0.0.1:5433`, máy này chưa chạy daemon Docker.
       `seed:report` thoát 1 trung thực; `check:coverage` thoát **0** kèm ma trận rỗng — cổng
       xanh giả, phải sửa trước khi dùng nó làm bằng chứng ở WP99.6.
@@ -22,10 +22,10 @@
 - [x] C4 đang **10 level, trần 9**. Gỡ một level: `GL-C4-VIS-MATCH-0106` (WB03-D2 còn 2 level, đúng sàn). C4 về 9.
 - [x] Hạn ngạch chưa từng chạy trong pipeline — `checkMontessoriQuotas` chỉ có test gọi, `seed:check` không gọi. Đã thêm `checkGateMontessoriCorpus` và nối vào `seed:check`; ca âm cho thấy nó thoát 1.
 - [x] Đăng ký event thiếu vào [`event-catalog.md`](../specs/00-foundation/event-catalog.md) §7.2. Đo lại: thiếu **12**, không phải 8 — thêm `item_sorted` · `pair_selected` · `pair_matched` · `selection_submitted` vào danh sách của plan.
-- [x] Kiểm mọi `events` của tám khuôn hiện có tra được trong catalog **và** trong `ALLOWED_EVENT_NAMES` — cổng `pnpm lint:events`, 4 ca âm.
+- [x] Kiểm mọi `events` của tám khuôn hiện có tra được trong catalog **và** trong `ALLOWED_EVENT_NAMES` — cổng `pnpm --filter @mindkid/db test`, 4 ca âm.
 - [x] Đối chiếu tổng dạng bài: chốt **59**. Số 57 là lỗi cộng; mục 2 của bảng tra tự liệt kê 20 hàng Lô A trong khi ghi 19. Không hàng nào bị xoá.
-- [x] Kiểm lại phép chia `D-RQ`: **34 nhận trên 25 hoãn** (20 Lô A + 14 Lô B), không phải 33 trên 24. Cổng `pnpm lint:montessori-corpus` giữ bảng tra, mục 7.5 spec và seeder khớp nhau; 5 ca âm.
-- [x] Cổng lô Montessori xanh trở lại trước khi mở WP99.1 — `pnpm seed:check` thoát 0 kèm cổng corpus.
+- [x] Kiểm lại phép chia `D-RQ`: **34 nhận trên 25 hoãn** (20 Lô A + 14 Lô B), không phải 33 trên 24. Cổng `pnpm --filter @mindkid/db test` giữ bảng tra, mục 7.5 spec và seeder khớp nhau; 5 ca âm.
+- [x] Cổng lô Montessori xanh trở lại trước khi mở WP99.1 — `pnpm --filter @mindkid/db seed:check` thoát 0 kèm cổng corpus.
 
 ## WP99.1 — `GT-009` loại trừ theo manh mối
 
@@ -38,7 +38,7 @@
 - [x] Band 4-5 dùng bảng tối đa **6** ứng viên — test giữ trần này.
 - [x] Thêm `clue-deduction` vào từ vựng trục `mechanic` (mục 7.1 [`content-tagging.md`](../specs/01-platform/content-tagging.md)) và vào `GameMechanic` trong cùng PR.
 - [x] Journey trẻ tự loại trừ **trước** phản hồi hệ thống — `gt-009-clue-deduction.test.ts`: sau ba manh mối chỉ có `clue_revealed` và `candidate_eliminated`, chưa event đúng-sai nào. **Lưu ý:** repo chưa có bộ E2E trình duyệt cho khuôn; `GT-007` và `GT-008` cũng dừng ở mức test phiên engine.
-- [x] `pnpm gen:templates` không sinh diff; 19 test cho `GT-009`.
+- [x] `pnpm --filter @mindkid/game-engine gen:templates` không sinh diff; 19 test cho `GT-009`.
 - [ ] Điều kiện nghiệm thu 12 (ngân sách hiệu năng band thấp nhất) chưa đo — cần harness đo fps.
 
 ## WP99.2 — `GT-011` ma trận chọn hình
@@ -67,10 +67,10 @@
 - [x] `requires_tap_fallback` true; `tap_cell` và `draw_step` đi **chung một** đường xử lý, `move_arrow` chỉ đổi hướng thành ô rồi gọi cùng hàm đó.
 - [x] Ba level mẫu ở [`fixtures.ts`](../../packages/game-engine/src/templates/GT-013/fixtures.ts) — WB09-D1 hành lang đơn (0 ngõ cụt) · WB09-D2 ngã ba có bẫy (1 ngõ cụt) · WB09-D3 thu thập hai vật phẩm (mê cung phủ kín 4×4, 5 ngõ cụt). Một test đối chiếu `dead_end_count` khai trong `difficulty` với số ngõ cụt **đo được** trên chính lưới đó, nên số không trôi.
 - [x] Đóng câu hỏi mở số 7 bằng `D-RY`: giữ cả hai dạng đầu vào — mục 7.7 của [`montessori-template-batch.md`](../specs/01-platform/montessori-template-batch.md).
-- [x] Ba event mới đăng ký đủ **bốn** chỗ, không phải một: catalog §7.2 · `ALLOWED_EVENT_NAMES` · `EVENT_PAYLOAD_FIELDS` · `EVENT_PAYLOAD_SCHEMAS`. `pnpm lint:events` xanh. `path_blocked` nhận `row` và `col` **âm** — chặn ở biên lưới là ô ngoài lưới.
+- [x] Ba event mới đăng ký đủ **bốn** chỗ, không phải một: catalog §7.2 · `ALLOWED_EVENT_NAMES` · `EVENT_PAYLOAD_FIELDS` · `EVENT_PAYLOAD_SCHEMAS`. `pnpm --filter @mindkid/db test` xanh. `path_blocked` nhận `row` và `col` **âm** — chặn ở biên lưới là ô ngoài lưới.
 - [x] `maze-route` vào từ vựng trục `mechanic` (mục 7.1 [`content-tagging.md`](../specs/01-platform/content-tagging.md)); `GameMechanic` đã có sẵn giá trị này từ trước.
 - [x] `asset_kinds` chỉ khai `audio`, khác chín khuôn trước. Đo được: `content_pack` của khuôn này không mang emoji hay ảnh nào — lưới vẽ bằng canvas (`D-RL`), asset duy nhất là `prompt_audio_ref`.
-- [x] `pnpm gen:templates` không sinh diff; `lint:templates` · `lint:events` · `lint:specs` · `lint:rule-ids` · `lint` · `typecheck` xanh; 27 test cho `GT-013`, engine từ 188 lên 247 test.
+- [x] `pnpm --filter @mindkid/game-engine gen:templates` không sinh diff; `lint:templates` · `lint:events` · `lint:specs` · `lint:rule-ids` · `lint` · `typecheck` xanh; 27 test cho `GT-013`, engine từ 188 lên 247 test.
 - [ ] Điều kiện nghiệm thu 7 (journey E2E) và 12 (ngân sách hiệu năng) chưa đo — cùng nợ với `GT-009` và `GT-011`: repo chưa có bộ E2E trình duyệt cho khuôn, và chưa có harness đo fps.
 
 ## WP99.4 — `constraintSystem` + `GT-015` sudoku
@@ -99,7 +99,7 @@
 - [x] WB14 → C3 · WB21 → C3 · WB09 → C2 · WB17 → C3 · WB19 → C2.
 - [x] Một batch một workbook; mã từ `0101` trở lên.
 - [x] `access_tier` theo `difficulty` (`D-RR`).
-- [x] C2 và C3 không vượt trần; `pnpm check:coverage` không tụt ô nào.
+- [x] C2 và C3 không vượt trần; `pnpm --filter @mindkid/db test` không tụt ô nào.
 
 ## CHECKPOINT 3 — cổng người về trần C1
 
@@ -119,6 +119,6 @@
 - [x] Mục 7.1 của spec khuôn khớp **hình dạng thật đã build**: band, `limits`, layout, system.
 - [x] Câu hỏi mở số 6 và số 7 của spec khuôn đã đóng kèm mã quyết định.
 - [x] Mọi rule `BR-MTB` có test gọi tên mã.
-- [x] `pnpm lint` · `pnpm lint:specs` · `pnpm lint:rule-ids` · `pnpm typecheck` · `pnpm test` xanh.
-- [x] `pnpm gen:templates` chạy lại không sinh diff.
+- [x] `pnpm lint` · `pnpm --filter @mindkid/gates test` · `pnpm --filter @mindkid/gates test` · `pnpm typecheck` · `pnpm test` xanh.
+- [x] `pnpm --filter @mindkid/game-engine gen:templates` chạy lại không sinh diff.
 - [ ] Mở PR cho người review diff, không tự merge.

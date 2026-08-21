@@ -59,7 +59,7 @@
 - [x] Mỗi hint có đúng **một** widget; bảng hint → widget khai một chỗ.
 - [x] `BR-SDF-03` ca âm: field `_color` chỉ chọn từ **token**.
 - [x] Ca âm: không input hex tự do, không color wheel.
-- [x] `pnpm lint:tokens` phủ cả widget màu.
+- [x] `pnpm --filter @mindkid/gates test` phủ cả widget màu.
 - [x] `D-JV`: hint `emoji` render bộ chọn thật (spec kéo lên P2.6).
 - [x] `D-JV`: hint `image` render placeholder **"P2.7"**; hint `audio` render placeholder **"chờ contract Task #80"**.
 - [x] `BR-SDF-04` ca âm: không đường nào nhập emoji bằng input text.
@@ -87,7 +87,7 @@
 - [x] Sáu template render đủ, không field nào hiện tên kỹ thuật thô.
 - [x] Không input nào dưới 16px; không color wheel; không input text cho emoji.
 - [x] Thông báo lỗi client và server khớp nhau.
-- [x] `pnpm check && pnpm test && pnpm lint:tokens && pnpm lint:specs && pnpm check:progress` xanh.
+- [x] `pnpm check && pnpm test && pnpm --filter @mindkid/gates test && pnpm --filter @mindkid/gates test && node packages/gates/scripts/check-progress.ts` xanh.
 
 ---
 

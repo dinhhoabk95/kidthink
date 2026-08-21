@@ -320,7 +320,7 @@ T0 preflight + đẩy D-LU ngược vào Task #54
       để tính phần thừa.
 - [ ] Đo lại [`curriculum.ts`](../../packages/db/src/schema/curriculum.ts) sau P3.1 và P3.2.
 
-**Kiểm chứng:** `pnpm check:progress` xanh tới P3.2; báo cáo cung/cầu và shape schema thật được
+**Kiểm chứng:** `node packages/gates/scripts/check-progress.ts` xanh tới P3.2; báo cáo cung/cầu và shape schema thật được
 lưu trước khi T1 bắt đầu.
 
 **Phụ thuộc:** P3.2 · **Cỡ:** S
@@ -344,7 +344,7 @@ lưu trước khi T1 bắt đầu.
 - [ ] Không thêm spec mới; không thêm mã lỗi ngoài
       [`error-codes.md`](../specs/00-foundation/error-codes.md).
 
-**Kiểm chứng:** `pnpm lint:specs` 0 lỗi, 0 cảnh báo mới.
+**Kiểm chứng:** `pnpm --filter @mindkid/gates test` 0 lỗi, 0 cảnh báo mới.
 
 **Phụ thuộc:** T0 · human decision · **Cỡ:** 3 work package M — model/schema, builder,
 enrollment/lifecycle; mỗi package ≤5 files
@@ -500,7 +500,7 @@ tests; mỗi package ≤5 files
 - [ ] Điểm cắt theo [`mvp-scope.md`](../specs/00-foundation/mvp-scope.md) §5 được ghi rõ: thiếu
       nguồn lực thì giữ **một** chương trình theo tuổi, không hạ checklist.
 
-**Kiểm chứng:** `pnpm seed:check` và dry-run riêng từng chương trình xanh; báo cáo cân bằng lưu
+**Kiểm chứng:** `pnpm --filter @mindkid/db seed:check` và dry-run riêng từng chương trình xanh; báo cáo cân bằng lưu
 làm evidence.
 
 **Phụ thuộc:** T5 · T3 · thư viện lesson của P3.1 · **Cỡ:** 5 work package cỡ M
@@ -520,10 +520,10 @@ làm evidence.
       [`curriculum-builder.md`](../specs/06-admin/curriculum-builder.md) sang `implemented`.
 - [ ] Spec bị P3.3 sửa giữ nguyên trạng thái cũ, có ghi task nguồn của lần sửa.
 - [ ] `D-KK` và `D-KP` không còn `pending_source`.
-- [ ] Tick **P3.3** trong Task #14 chỉ khi `pnpm check:progress` tự xanh.
+- [ ] Tick **P3.3** trong Task #14 chỉ khi `node packages/gates/scripts/check-progress.ts` tự xanh.
 
 **Kiểm chứng:**
-`pnpm check && pnpm test && pnpm test:e2e && pnpm lint:specs && pnpm check:progress` xanh.
+`pnpm check && pnpm test && pnpm test:e2e && pnpm --filter @mindkid/gates test && node packages/gates/scripts/check-progress.ts` xanh.
 
 **Phụ thuộc:** T6 · T7 · T8 · **Cỡ:** S
 

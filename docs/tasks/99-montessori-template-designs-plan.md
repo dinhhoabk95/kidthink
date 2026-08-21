@@ -397,7 +397,7 @@ chứng minh khuôn viết một system trước khi ba system nặng hơn bắt
 | WP99.9 | M | `balanceSystem` + `GT-014` — **chỉ khi** WP99.7 mở trần | Như WP99.3; phản hồi liên tục không rò vào `checkWinCondition()` |
 | WP99.10 | M | `rotationSystem` + `GT-016` — **chỉ khi** WP99.7 mở trần | Như WP99.3; kim không dừng được giữa hai nấc |
 | WP99.11 | M | `GT-010` — **chỉ khi** WP99.7 mở trần | 15 điều kiện nghiệm thu |
-| WP99.12 | S | Cập nhật spec khuôn theo hình dạng thật đã build; lật `implemented` | Mọi số ở mục 7.1 spec khuôn khớp code; `pnpm lint:specs` xanh |
+| WP99.12 | S | Cập nhật spec khuôn theo hình dạng thật đã build; lật `implemented` | Mọi số ở mục 7.1 spec khuôn khớp code; `pnpm --filter @mindkid/gates test` xanh |
 
 ## 8. Acceptance criteria
 
@@ -414,7 +414,7 @@ Scenario: WP99.0 — mọi event của khuôn đều đăng ký
 
 Scenario: Level mẫu không tiêu hạn ngạch
   Given ba level mẫu của một khuôn nằm trong fixtures.ts
-  When chạy pnpm seed:report
+  When chạy pnpm --filter @mindkid/db seed:report
   Then chúng không xuất hiện trong số đếm hạn ngạch competency
 
 Scenario: BR-MTB-14 — kiểm soát lỗi tự thân chạy trước phản hồi hệ thống
@@ -459,14 +459,14 @@ Scenario: WB14 tôn trọng trần item theo band
 ```bash
 export PATH=/Users/macbook/.nvm/versions/node/v24.15.0/bin:$PATH
 pnpm lint                 # biome check ., KHÔNG dùng ultracite check
-pnpm lint:specs
-pnpm lint:rule-ids
+pnpm --filter @mindkid/gates test
+pnpm --filter @mindkid/gates test
 pnpm typecheck
-pnpm gen:templates        # chạy lại không được sinh diff
+pnpm --filter @mindkid/game-engine gen:templates        # chạy lại không được sinh diff
 pnpm vitest run packages/game-engine
-pnpm seed:check
-pnpm check:coverage
-pnpm seed:report
+pnpm --filter @mindkid/db seed:check
+pnpm --filter @mindkid/db test
+pnpm --filter @mindkid/db seed:report
 ```
 
 ## 10. Definition of done
@@ -477,7 +477,7 @@ pnpm seed:report
 - Mỗi khuôn có ba level mẫu trong `fixtures.ts` và một journey E2E.
 - Nội dung thật của năm khuôn đó seed xong; C2 và C3 không vượt trần.
 - Quyết định về trần C1 ghi vào spec, không để lửng.
-- Spec khuôn cập nhật theo hình dạng thật; `pnpm gen:templates` không sinh diff.
+- Spec khuôn cập nhật theo hình dạng thật; `pnpm --filter @mindkid/game-engine gen:templates` không sinh diff.
 
 ## 11. Rủi ro
 

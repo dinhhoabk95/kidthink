@@ -248,7 +248,7 @@ CLC           →  content-lifecycle.md (liên kết)
 Tn (hồ sơ task)  →  "Bước n"
 Mn (hồ sơ task)  →  "Mâu thuẫn n"
 D-*           →  Giữ mã (spec khác trích nó), luôn kèm tên đọc được lần nhắc đầu
-Cn            →  Giữ mã (log `pnpm lint:specs` in `[C6]`), luôn kèm tên đọc được lần nhắc đầu
+Cn            →  Giữ mã (log `pnpm --filter @mindkid/gates test` in `[C6]`), luôn kèm tên đọc được lần nhắc đầu
 ```
 
 ### 11.3 Thuật ngữ chuyên môn giữ nguyên tiếng Anh
@@ -289,7 +289,7 @@ Sai:   Xem `access-ladder` §7.3.
 ```
 
 Với mã nguồn, trỏ dòng cụ thể dạng `đường-dẫn:số-dòng`, ví dụ
-[`scripts/lint-specs-lib.ts:297`](../../scripts/lint-specs-lib.ts).
+[`packages/gates/src/lint-specs-lib.ts:297`](../../scripts/lint-specs-lib.ts).
 
 ### 11.5 Mã hợp đồng luôn kèm tên đọc được
 
@@ -308,7 +308,7 @@ spec khác trích nó.
 6. Thay chữ viết tắt tự phát theo mục 11.2.
 7. Đổi tham chiếu trần thành liên kết có số mục.
 8. Mã hợp đồng kèm tên đọc được ở lần nhắc đầu tiên trong file.
-9. Chạy `pnpm lint:specs`, đọc diff từng dòng, tự hỏi: có chỗ nào đổi nghĩa không.
+9. Chạy `pnpm --filter @mindkid/gates test`, đọc diff từng dòng, tự hỏi: có chỗ nào đổi nghĩa không.
 
 Cấm thay thế hàng loạt (`sed` trên toàn corpus) — dấu phủ định emoji không có một bản dịch duy
 nhất, mỗi câu cần đọc lại sau khi thay.

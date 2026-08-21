@@ -19,7 +19,7 @@ chặn được việc phát hành một chương trình học nghiêng hẳn v�
 2. Mười hai mã trục tư duy đã có trong seed Lớp 1.
 3. **Không nội dung nào được gắn tag trục tư duy.** Nên cổng bật ngày đầu sẽ báo mọi ô bằng 0 và
    chặn publish ngay lập tức — không phải vì nội dung sai, mà vì tag chưa có.
-4. `scripts/lint-thinking-coverage.ts` không tồn tại; không có lệnh `pnpm` nào cho nó.
+4. `packages/db/tests/gates/thinking-coverage.test.ts` không tồn tại; không có lệnh `pnpm` nào cho nó.
 5. Không cần migration.
 6. §11 Q1 của spec **trùng câu hỏi** Q1 của [`content-tagging.md`](../specs/01-platform/content-tagging.md):
    ba trục `plan`, `inhibit`, `shift` chưa có nội dung nào — thiếu nội dung hay thiếu giá trị phù
@@ -51,10 +51,10 @@ WP94.0  Chọn đường đi + chốt ngưỡng (cổng người, §11 Q1–Q3)
 | ID | Cỡ | Công việc | Kết quả kiểm được |
 |---|---:|---|---|
 | WP94.0 | S | Chốt đường đi và ngưỡng; ghi vào §11 kèm lý do | Ba hàng §11 có quyết định, hoặc có điều kiện mở lại đo được |
-| WP94.1 | M | `scripts/lint-thinking-coverage.ts`: đọc sáu bảng, in ma trận năng lực nhân trục tư duy, kèm số nội dung mỗi ô | Chạy trên dữ liệu seed thật, in đúng số; không ghi gì vào cơ sở dữ liệu |
+| WP94.1 | M | `packages/db/tests/gates/thinking-coverage.test.ts`: đọc sáu bảng, in ma trận năng lực nhân trục tư duy, kèm số nội dung mỗi ô | Chạy trên dữ liệu seed thật, in đúng số; không ghi gì vào cơ sở dữ liệu |
 | WP94.2 | S | Ngưỡng đọc từ tệp cấu hình, không hằng số trong mã; fixture một ô dưới ngưỡng | Cổng **đỏ** trên fixture; xanh khi mọi ô đạt ngưỡng |
 | WP94.3 | M | Theo đường đã chọn: gắn tag bù cho nội dung đã publish, hoặc mở ngưỡng theo từng bước có ghi lại | Số ô bằng 0 giảm theo từng bước, đo được bằng chính cổng |
-| WP94.4 | S | Thêm cổng vào `pnpm check`; lật `status` | 11 rule có test; `pnpm check` xanh; `pnpm check:progress` xanh |
+| WP94.4 | S | Thêm cổng vào `pnpm check`; lật `status` | 11 rule có test; `pnpm check` xanh; `node packages/gates/scripts/check-progress.ts` xanh |
 
 ## 6. Acceptance criteria
 
@@ -85,7 +85,7 @@ Scenario: Ô trống vì thiếu tag được nói rõ
 
 ```bash
 pnpm exec biome check .
-pnpm lint:specs
+pnpm --filter @mindkid/gates test
 pnpm check
 pnpm vitest run scripts/tests
 ```

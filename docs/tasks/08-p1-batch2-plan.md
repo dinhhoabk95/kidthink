@@ -43,7 +43,7 @@ Lô 2 là **30 spec P1 còn lại**. Điểm khác biệt lớn nhất so với 
 | **Đích của task này** | **30** |
 | Chu trình `depends_on` toàn corpus | 0 |
 | Tham chiếu tiến P1 sang P2/P3 | 0 |
-| `pnpm lint:specs` | 0 lỗi, 142 cảnh báo |
+| `pnpm --filter @mindkid/gates test` | 0 lỗi, 142 cảnh báo |
 
 Không còn nhát cắt đồ thị nào phải làm. Nhưng **đây không phải việc đọc rồi lật cờ**: 30 file
 mang **55 câu hỏi mở**, trong đó **26 câu chặn P1** và **8 câu cần chủ dự án trả lời** vì
@@ -55,7 +55,7 @@ Sau task này: **79/130 `approved`**, và **P1 đạt 43/43** — toàn bộ t�
 ## 0. Điều kiện tiên quyết — 50 commit chưa push
 
 Cổng dừng cuối của Task #6 để lại một ô chưa tick: `git push` không chạy được vì Docker daemon
-không sống, `pnpm check:services` đỏ, và hook `pre-push` chặn đúng chức năng của nó
+không sống, `pnpm services` đỏ, và hook `pre-push` chặn đúng chức năng của nó
 ([`lefthook.yml`](../../lefthook.yml), `pre-push` job `services`).
 
 Đo lại hôm nay: Docker **đã sống**, `origin/main..HEAD` còn **50 commit**.
@@ -249,7 +249,7 @@ Bảy việc đầu là vòng lặp của Task #5 và Task #6, giữ nguyên. Vi
 6. **Xử lý từng câu hỏi mở.** Câu chặn P1 phải chốt và ghi vào sổ cái `D-*`. Câu chặn P2 trở đi
    để nguyên, điền `Chặn phase` và `Chủ`.
 7. **Đổi `status: draft` thành `approved`, cập nhật `reviewed` sang ngày làm.**
-8. **Chạy `pnpm lint:specs`, phải 0 lỗi và số cảnh báo phải giảm đúng bằng số `C6` vừa sửa; rồi
+8. **Chạy `pnpm --filter @mindkid/gates test`, phải 0 lỗi và số cảnh báo phải giảm đúng bằng số `C6` vừa sửa; rồi
    commit — một spec một commit.**
 
 `pnpm test` và `pnpm check` chạy ở **cuối mỗi lô**, không sau mỗi spec: hai lệnh đó không đọc
@@ -331,7 +331,7 @@ tách ra chạy trước Task #7 — chín spec đó là phần duy nhất của
 | Lô B phát sinh cột schema mới | Cao — đổi 2 spec `P0` đã `approved` | Sửa [`schema-play-telemetry.md`](../specs/01-platform/schema-play-telemetry.md) và [`data-model-overview.md`](../specs/01-platform/data-model-overview.md) **cùng commit**; `C12` là cổng |
 | Sửa [`access-ladder.md`](../specs/00-foundation/access-ladder.md) và [`game-template-contract.md`](../specs/01-platform/game-template-contract.md) — spec đã `approved` | Trung bình | Ghi `D-*`, nêu ở cổng dừng của lô tương ứng, không sửa lặng lẽ |
 | [`social-login.md`](../specs/03-account/social-login.md) 281 dòng, 27 rule | Trung bình — dễ đọc lướt | Để riêng ở lô E, không ghép chung ngày với spec khác |
-| 30 commit, mỗi commit một lần `pnpm lint:specs` | Thấp — chỉ tốn thời gian | `pnpm test` và `pnpm check` chạy cuối lô, không sau mỗi spec |
+| 30 commit, mỗi commit một lần `pnpm --filter @mindkid/gates test` | Thấp — chỉ tốn thời gian | `pnpm test` và `pnpm check` chạy cuối lô, không sau mỗi spec |
 | Đóng câu hỏi bằng cách xoá nó | Cao — mất thông tin lặng lẽ | Đối chiếu tay ở bước cuối: mọi câu hỏi biến mất phải có `D-*` tương ứng |
 | [`roadmap.md`](../specs/roadmap.md) thiếu 18 spec `P1` | Trung bình — người đọc roadmap tưởng P1 có 25 việc | Bước riêng ở cuối, sau khi cả 30 đã `approved` |
 
@@ -349,7 +349,7 @@ tách ra chạy trước Task #7 — chín spec đó là phần duy nhất của
 
 - [ ] 30/30 spec đích `status: approved`, `reviewed` là ngày làm.
 - [ ] Toàn corpus **79/130 `approved`**; `phase: P1` đạt **43/43**.
-- [ ] `pnpm lint:specs` 0 lỗi, cảnh báo giảm từ 142 xuống **≤ 104**, 0 chu trình.
+- [ ] `pnpm --filter @mindkid/gates test` 0 lỗi, cảnh báo giảm từ 142 xuống **≤ 104**, 0 chu trình.
 - [ ] 0 cảnh báo `C6` nào còn nằm trên spec `phase: P1`.
 - [ ] `pnpm check` xanh, `pnpm test` xanh (số test tăng nếu `C16` được duyệt).
 - [ ] Mọi hàng câu hỏi mở của 43 spec `P1` có `Chặn phase` và `Chủ` không rỗng.

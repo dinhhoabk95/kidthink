@@ -57,8 +57,8 @@ người + AI agent IDE ──soạn──► file trong repo ──cổng tự 
 
 | Luồng            | Soạn gì                                                                                                   | Cổng                                                                           | Spec                                               |
 | ---------------- | --------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------ | -------------------------------------------------- |
-| **Nội dung nền** | Seeder cho game level · learning objective · lesson · curriculum, chia theo **năng lực C1–C6 × template** | 8 cổng tự động → PR review → `pnpm seed:content` ghi thẳng `published`         | `docs/specs/01-platform/content-seed-authoring.md` |
-| **Code**         | Zod · Drizzle · route skeleton · test từ Gherkin · Session class                                          | `pnpm gen:check` + PR có người review; sáu vùng nhạy cảm cần review tăng cường | `docs/specs/01-platform/ai-codegen-pipeline.md`    |
+| **Nội dung nền** | Seeder cho game level · learning objective · lesson · curriculum, chia theo **năng lực C1–C6 × template** | 8 cổng tự động → PR review → `pnpm --filter @mindkid/db seed:content` ghi thẳng `published`         | `docs/specs/01-platform/content-seed-authoring.md` |
+| **Code**         | Zod · Drizzle · route skeleton · test từ Gherkin · Session class                                          | `node packages/gates/scripts/check-progress.ts` + PR có người review; sáu vùng nhạy cảm cần review tăng cường | `docs/specs/01-platform/ai-codegen-pipeline.md`    |
 
 **Ngoại lệ Task #14, chốt ngày 2026-08-09:** trong phạm vi triển khai
 [`14-implementation-sequence-plan.md`](tasks/14-implementation-sequence-plan.md), AI được phép
@@ -746,9 +746,9 @@ pnpm dev:worker                               # worker     :3099
 pnpm check                                    # lint + lint:tokens + lint:deps + lint:specs + typecheck
 pnpm lint                                     # biome check .
 pnpm lint:fix                                 # biome check --write .
-pnpm lint:tokens                              # cấm hex literal ngoài designTokens.ts
+pnpm --filter @mindkid/gates test                              # cấm hex literal ngoài designTokens.ts
 pnpm lint:deps                                # dependency-cruiser — chặn import xuyên ranh giới package/app
-pnpm lint:specs                               # kiểm corpus spec: frontmatter, section, link, rule, mã lỗi
+pnpm --filter @mindkid/gates test                               # kiểm corpus spec: frontmatter, section, link, rule, mã lỗi
 pnpm typecheck                                # recursive
 pnpm format                                   # biome format --write .
 
@@ -757,7 +757,7 @@ pnpm test                                     # vitest run
 pnpm test:watch
 pnpm test:coverage                            # vitest run --coverage
 pnpm test:e2e                                 # playwright
-pnpm check:services                           # verify PG + Valkey kết nối được từ Node (repo-bootstrap.md §4 bước 5)
+pnpm services                           # verify PG + Valkey kết nối được từ Node (repo-bootstrap.md §4 bước 5)
 
 # Database
 pnpm db:generate                              # sinh migration Drizzle
@@ -1222,7 +1222,7 @@ hình báo cáo mang câu này.
 
 Mỗi outcome có **đúng một** spec sở hữu. Spec khác **link tới**, không copy contract.
 
-**158 spec module.** Bản đồ đầy đủ: [`docs/specs/index.md`](specs/index.md).
+**161 spec module.** Bản đồ đầy đủ: [`docs/specs/index.md`](specs/index.md).
 
 ```
 docs/
@@ -1232,11 +1232,11 @@ docs/
     ├── CONVENTIONS.md         quy ước viết spec v2
     ├── TEMPLATE.md · index.md · roadmap.md
     ├── 00-foundation/  16     contract cắt ngang mọi bề mặt
-    ├── 01-platform/    41     năng lực nội bộ (gồm seeder nội dung + codegen + OAuth + browser push + thanh toán tự động + offline pack + audio storage + layout + ngẫu nhiên có seed + bộ dựng template + lô khuôn Montessori + hợp đồng biến môi trường + dựng máy + giám sát tiến trình + phát hành + quay lui)
+    ├── 01-platform/    42     năng lực nội bộ (gồm seeder nội dung + codegen + OAuth + browser push + thanh toán tự động + offline pack + audio storage + layout + ngẫu nhiên có seed + bộ dựng template + lô khuôn Montessori + hợp đồng biến môi trường + dựng máy + giám sát tiến trình + phát hành + quay lui)
     ├── 02-public/       9     khách chưa đăng nhập
     ├── 03-account/     22     User đã đăng nhập (gồm SNS login + linking + notification inbox + recurring billing)
     ├── 04-play/        15     bề mặt trẻ — core business (gồm bề mặt chạy tiết học của người dạy + chuỗi vòng trong một phiên)
-    ├── 05-content/     10     ràng buộc biên tập nội dung (gồm bộ tiết học mẫu + ba spec lô Montessori + chuỗi vòng)
+    ├── 05-content/     12     ràng buộc biên tập nội dung (gồm bộ tiết học mẫu + ba spec lô Montessori + chuỗi vòng)
     ├── 06-admin/       30     Manager (gồm studio + duyệt + huỷ gói)
     ├── 07-addon/        7     spec đủ, KHÔNG bán ở MVP
     └── 08-quality/      8     test · bảo mật · a11y · hiệu năng · design · phủ tư duy · an toàn kiểu

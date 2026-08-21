@@ -86,7 +86,7 @@
 - [x] Cổng gating đã **đỏ** được trên fixture handler thiếu kiểm.
 - [x] 403 không mang nội dung; 404 không rò tồn tại.
 - [x] Preview không chạm `mastery_state` và KPI.
-- [x] `pnpm check && pnpm test && pnpm lint:specs && pnpm check:progress` xanh.
+- [x] `pnpm check && pnpm test && pnpm --filter @mindkid/gates test && node packages/gates/scripts/check-progress.ts` xanh.
 - [x] Human security reviewer duyệt diff.
 
 ---

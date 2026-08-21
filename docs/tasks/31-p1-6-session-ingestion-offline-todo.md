@@ -107,7 +107,7 @@
 - [x] Idempotency ép ở **PK**, chứng minh bằng chèn thẳng DB.
 - [x] Test offline dùng chế độ offline **thật**; không chuỗi `navigator.onLine` trong test.
 - [x] Cache service worker không chứa nội dung trả phí.
-- [x] `pnpm check && pnpm test && pnpm test:e2e && pnpm lint:specs && pnpm check:progress` xanh.
+- [x] `pnpm check && pnpm test && pnpm test:e2e && pnpm --filter @mindkid/gates test && node packages/gates/scripts/check-progress.ts` xanh.
 
 ---
 

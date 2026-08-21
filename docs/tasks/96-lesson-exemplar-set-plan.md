@@ -55,7 +55,7 @@ WP96.0  Trả lời §11 Q1 và Q3 (cổng người: người ký, và chủ c�
 | WP96.2 | M | Đề cử một tiết học làm mẫu trong màn soạn; hiện đủ sáu điều kiện và trạng thái từng điều kiện | Test: tiết học thiếu điều kiện kiểm được bằng máy không đề cử được |
 | WP96.3 | M | Duyệt mẫu trong hàng đợi review; bản ký của người là điều kiện bật cờ | Test: cờ mẫu không bật được bằng đường nào khác ngoài duyệt |
 | WP96.4 | M | Cổng ma trận 18 ô cộng sàn 18 tiết học mẫu, kèm fixture thiếu ô | Cổng **đỏ** trên fixture thiếu một ô; xanh khi đủ |
-| WP96.5 | S | Test 11 rule; verification; lật `status` | 11 rule có test gọi tên mã; `pnpm check:progress` xanh |
+| WP96.5 | S | Test 11 rule; verification; lật `status` | 11 rule có test gọi tên mã; `node packages/gates/scripts/check-progress.ts` xanh |
 
 ## 6. Acceptance criteria
 
@@ -85,7 +85,7 @@ Scenario: Bỏ cờ mẫu cũng phải qua duyệt
 
 ```bash
 pnpm exec biome check .
-pnpm lint:specs
+pnpm --filter @mindkid/gates test
 pnpm db:generate && pnpm db:migrate
 pnpm check
 pnpm vitest run packages/db apps/web/tests

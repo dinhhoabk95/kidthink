@@ -105,7 +105,7 @@
 - [x] Bộ test chống rò danh tính xanh, gồm đo thời gian.
 - [x] Chế độ hạn chế ép ở server, curl không đi vòng.
 - [x] Không cài lại vòng đời token; `packages/auth` là nơi duy nhất.
-- [x] `pnpm check && pnpm test && pnpm lint:specs && pnpm check:progress` xanh.
+- [x] `pnpm check && pnpm test && pnpm --filter @mindkid/gates test && node packages/gates/scripts/check-progress.ts` xanh.
 - [x] Human security reviewer approve diff.
 
 ## Task 8 — Evidence và promote

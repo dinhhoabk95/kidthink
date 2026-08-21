@@ -43,8 +43,8 @@ Sau task này: **110/130 `approved`**, và `phase: P2` đạt **31/31** (29 spec
 |---|---|
 | `origin/main..HEAD` | **0** commit chờ |
 | `git status` | sạch |
-| Docker daemon | sống — `pnpm check:services` chạy được, hook `pre-push` (`services` job của [`lefthook.yml`](../../lefthook.yml)) không chặn |
-| `pnpm lint:specs` | 0 lỗi, **101** cảnh báo, 0 chu trình |
+| Docker daemon | sống — `pnpm services` chạy được, hook `pre-push` (`services` job của [`lefthook.yml`](../../lefthook.yml)) không chặn |
+| `pnpm --filter @mindkid/gates test` | 0 lỗi, **101** cảnh báo, 0 chu trình |
 
 Không có nợ tồn từ Task #8. Bắt đầu được ngay.
 
@@ -66,7 +66,7 @@ Không có nợ tồn từ Task #8. Bắt đầu được ngay.
 **Ngoài phạm vi — cố ý:**
 
 - Viết code sản phẩm. Task này không đụng `packages/` hay `apps/`. Ngoại lệ duy nhất:
-  [`scripts/lint-specs-lib.ts`](../../scripts/lint-specs-lib.ts) cùng test của nó, nếu chủ dự án
+  [`packages/gates/src/lint-specs-lib.ts`](../../scripts/lint-specs-lib.ts) cùng test của nó, nếu chủ dự án
   duyệt đề xuất ở mục 8.
 - Spec `phase: P3/P4/P5` (21 spec `draft`). Lô sau.
 - Chốt **giá cuối** `standard`/`premium`. Lý do đo được: mục 7.
@@ -254,7 +254,7 @@ Giữ nguyên vòng lặp của Task #5, Task #6 và Task #8.
 6. **Xử lý từng câu hỏi mở.** Câu chặn P2 phải chốt và ghi vào sổ cái `D-*`. Câu chặn P3 trở đi
    để nguyên, điền `Chặn phase` và `Chủ`.
 7. **Đổi `status: draft` thành `approved`, cập nhật `reviewed` sang ngày làm.**
-8. **Chạy `pnpm lint:specs`** — phải 0 lỗi và số cảnh báo giảm đúng bằng số `C6` vừa sửa; rồi
+8. **Chạy `pnpm --filter @mindkid/gates test`** — phải 0 lỗi và số cảnh báo giảm đúng bằng số `C6` vừa sửa; rồi
    commit — **một spec một commit**.
 
 `pnpm test` và `pnpm check` chạy ở **cuối mỗi lô**, không sau mỗi spec: hai lệnh đó không đọc
@@ -318,17 +318,17 @@ dừng việc.
 
 `C16` được thêm ở Task #8 để giữ việc thứ 4 của quy trình (bảng câu hỏi mở 5 cột).
 
-`checkC16` ([`scripts/lint-specs-lib.ts`](../../scripts/lint-specs-lib.ts)) trước đây chỉ kiểm tra khi bảng đã có ≥5 cột, khiến các bảng 3 cột rơi qua cổng mà không bị cảnh báo. Đồng thời 23 spec đã `approved` từ trước đang mang bảng <5 cột. Việc lật `fail` trực tiếp sẽ làm đỏ 23 spec `approved` và phong toả pipeline.
+`checkC16` ([`packages/gates/src/lint-specs-lib.ts`](../../scripts/lint-specs-lib.ts)) trước đây chỉ kiểm tra khi bảng đã có ≥5 cột, khiến các bảng 3 cột rơi qua cổng mà không bị cảnh báo. Đồng thời 23 spec đã `approved` từ trước đang mang bảng <5 cột. Việc lật `fail` trực tiếp sẽ làm đỏ 23 spec `approved` và phong toả pipeline.
 
 Để giải quyết, thực hiện thiết kế **hai chặng**:
 
 **Chặng 1 (trong Task #9):**
-1. Mở rộng `checkC16` ở `scripts/lint-specs-lib.ts`: bảng mục 11 có <5 cột → **`warn`** cho mọi `status` (kể cả `approved`).
+1. Mở rộng `checkC16` ở `packages/gates/src/lint-specs-lib.ts`: bảng mục 11 có <5 cột → **`warn`** cho mọi `status` (kể cả `approved`).
 2. Bịt điểm mù:
    - `docs/specs/00-foundation/glossary.md` — §11 có, bảng không, thân là `Không có.` → hợp lệ, cho qua tường minh.
    - `docs/specs/READING-GUIDE.md` — miễn trừ theo khoá frontmatter (`doc:` thay vì `spec:`).
    - Spec `approved` có `spec:` mà không có §11, hoặc §11 rỗng không phải `Không có.` → **`warn`**.
-3. Thêm ca âm bắt buộc trong `scripts/tests/lint-specs.test.ts` (spec giả `approved` bảng 3 cột, không bảng/không `Không có.`, không §11).
+3. Thêm ca âm bắt buộc trong `packages/gates/tests/lint-specs.test.ts` (spec giả `approved` bảng 3 cột, không bảng/không `Không có.`, không §11).
 
 **Chặng 2 (task sau):**
 Sau khi 23 spec `approved` được chuyển sang 5 cột, lật `warn` → `fail`.
@@ -351,7 +351,7 @@ Mọi sai lệch phát hiện ở đây sẽ tốn một migration mới + một
 | Đóng câu hỏi bằng cách xoá nó | Cao — mất thông tin lặng lẽ | Đối chiếu tay ở bước cuối: mọi câu hỏi biến mất phải có `D-*` tương ứng |
 | Bảng 3 cột lọt qua `C16` | Trung bình — 30 file `approved` mà cổng vẫn xanh | Mục 8 |
 | [`mfa.md`](../specs/03-account/mfa.md) 5 cảnh báo `C6` và phụ thuộc [`social-login.md`](../specs/03-account/social-login.md) vừa `approved` hôm qua | Trung bình | Để riêng ở lô E, đọc cạnh mục 7.4 của [`auth-tokens-sessions.md`](../specs/01-platform/auth-tokens-sessions.md) |
-| 30 commit, mỗi commit một lần `pnpm lint:specs` | Thấp — chỉ tốn thời gian | `pnpm test` và `pnpm check` chạy cuối lô |
+| 30 commit, mỗi commit một lần `pnpm --filter @mindkid/gates test` | Thấp — chỉ tốn thời gian | `pnpm test` và `pnpm check` chạy cuối lô |
 | [`roadmap.md`](../specs/roadmap.md) thiếu 9 spec `P2` | Trung bình — người đọc roadmap tưởng P2 có 22 việc | Bước riêng ở cuối, sau khi cả 30 đã `approved` |
 
 ## 11. Cổng dừng
@@ -368,7 +368,7 @@ Mọi sai lệch phát hiện ở đây sẽ tốn một migration mới + một
 
 - [ ] 29/29 spec đích `status: approved`, `reviewed` là ngày làm (cộng rà soát [`payment-flow.md`](../specs/00-foundation/payment-flow.md) như file thứ 30).
 - [ ] Toàn corpus **110/130 `approved`**; `phase: P2` đạt **31/31**.
-- [ ] `pnpm lint:specs` 0 lỗi, cảnh báo giảm từ **101 xuống ≤ 54** (trên 29 spec đích và payment-flow), 0 chu trình.
+- [ ] `pnpm --filter @mindkid/gates test` 0 lỗi, cảnh báo giảm từ **101 xuống ≤ 54** (trên 29 spec đích và payment-flow), 0 chu trình.
 - [ ] 0 cảnh báo `C6` nào còn nằm trên spec `phase: P2`.
 - [ ] 0 bảng mục 11 < 5 cột trong 30 file phạm vi (23 spec `approved` khác còn < 5 cột được ghi nhận nợ cho Chặng 2 mục 8).
 - [ ] `pnpm check` xanh, `pnpm test` xanh (số test tăng do thêm unit test cho C16 ở mục 8).

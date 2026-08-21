@@ -57,7 +57,7 @@ WP90.3 và WP90.5 chạy song song được sau khi WP90.1 xong. WP90.6 không c
 
 | ID      |  Cỡ | Công việc                                                                                                                                                                                         | Kết quả kiểm được                                                                                      |
 | ------- | --: | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
-| WP90.0  |   S | Năm spec chuyển `draft` → `approved` sau khi đọc lại §11; không đổi nội dung rule                                                                                                                 | `pnpm lint:specs` xanh, C8/C16/C17 không đỏ                                                            |
+| WP90.0  |   S | Năm spec chuyển `draft` → `approved` sau khi đọc lại §11; không đổi nội dung rule                                                                                                                 | `pnpm --filter @mindkid/gates test` xanh, C8/C16/C17 không đỏ                                                            |
 | WP90.1  |   S | `packages/config/src/env-contract.ts`: khai 56 biến (tên, tiến trình, bắt buộc, kiểu, bí mật) + `validateEnvFile()` nhận `Map` chứ không đọc `process.env`                                        | Unit test: thiếu · rỗng · sai kiểu · secret <32 byte · biến lạ · chỉ bắt buộc ở production             |
 | WP90.2  |   S | Cổng `lint:env-names`: quét `apps/` và `packages/` tìm tên alias đã bỏ và mặc định cứng cho địa chỉ site; kèm fixture sai cố ý                                                                    | Cổng **đỏ** trên fixture, đỏ trên code hiện tại (RED), xanh sau WP90.3                                 |
 | WP90.3  |   M | Gộp 6 nhóm alias về tên chốt ở [`env-contract.md`](../specs/01-platform/env-contract.md) §7.2; bỏ 10 mặc định cứng; sinh `.env.example` từ registry                                               | `lint:env-names` xanh; `pnpm test` xanh; `.env.example` khai đủ biến bắt buộc                          |
@@ -144,7 +144,7 @@ mục "Tiêu chí thành công của task"; không nhắc lại ở đây.
 
 ```bash
 pnpm exec biome check .                       # pnpm lint bị hook viết lại, dùng lệnh này
-pnpm lint:specs
+pnpm --filter @mindkid/gates test
 pnpm check                                    # gồm lint:env-names, lint:env-example,
                                               # lint:migration-expand, lint:shell
 pnpm test
@@ -158,7 +158,7 @@ Cổng `lint:shell` cần `shellcheck` trên máy: `brew install shellcheck` ho�
 
 ## 9. Definition of done
 
-- Năm spec `approved`; `pnpm lint:specs` xanh.
+- Năm spec `approved`; `pnpm --filter @mindkid/gates test` xanh.
 - Registry biến môi trường là nguồn duy nhất; `.env.example` sinh ra từ nó; sáu nhóm alias còn đúng một tên mỗi khái niệm.
 - `pnpm build` chạy từ gốc; `apps/worker` chạy mã đã build.
 - Một script `infra/scripts/mindkid.sh` với bảy verb, có test nhị phân giả phủ đủ sáu ca âm ở mục 6 cộng sáu ca do review thêm.

@@ -14,7 +14,7 @@
 
 ## Tóm tắt
 
-Corpus 130/130 `approved` vẫn chưa phải xong. `pnpm lint:specs` còn cảnh báo trên các spec đã
+Corpus 130/130 `approved` vẫn chưa phải xong. `pnpm --filter @mindkid/gates test` còn cảnh báo trên các spec đã
 `approved` từ những task trước, và `checkC16` vẫn đang ở **chặng 1** (bảng dưới 5 cột chỉ `warn`).
 Nghĩa là cổng chưa tự giữ corpus: người viết spec mới hoàn toàn có thể lặp lại đúng khuyết tật cũ
 mà pipeline vẫn xanh.
@@ -31,8 +31,8 @@ dọn file của lô mình. Nợ thật của task này là phần còn lại sa
 ```
 grep -rl "^status: draft$" --include="*.md" docs/specs | xargs grep -l "^spec: " | grep -v TEMPLATE
 grep -rl "^status: approved" --include="*.md" docs/specs | xargs grep -l "^spec: " | wc -l
-pnpm lint:specs 2>&1 | tail -2
-pnpm lint:specs 2>&1 | grep -oE "\[C[0-9]+\]" | sort | uniq -c
+pnpm --filter @mindkid/gates test 2>&1 | tail -2
+pnpm --filter @mindkid/gates test 2>&1 | grep -oE "\[C[0-9]+\]" | sort | uniq -c
 ```
 
 Lệnh 1 không in gì. Lệnh 2 ra **130**. Nếu chưa đạt thì task này chưa tới lượt.
@@ -40,7 +40,7 @@ Lệnh 1 không in gì. Lệnh 2 ra **130**. Nếu chưa đạt thì task này c
 Lấy danh sách nợ thật bằng đúng lệnh này, đừng dùng bảng in trong kế hoạch:
 
 ```
-pnpm lint:specs 2>&1 | grep "\[C" | awk '{print $1}' | sed 's/:[0-9]*$//' | sort | uniq -c | sort -rn
+pnpm --filter @mindkid/gates test 2>&1 | grep "\[C" | awk '{print $1}' | sed 's/:[0-9]*$//' | sort | uniq -c | sort -rn
 ```
 
 ## 1. Nợ đo được tại `e322414`
@@ -68,7 +68,7 @@ tra cứu. Nợ ở đó lan xa nhất.
 
 - Trả lời các câu hỏi mở. Task này gán **chủ** và **phase** cho câu hỏi, không trả lời chúng.
 - Sửa nội dung rule. Điền "vì sao" là viết lý do của rule đã có, không đổi rule.
-- Code sản phẩm, ngoài `scripts/lint-specs-lib.ts` và test của nó.
+- Code sản phẩm, ngoài `packages/gates/src/lint-specs-lib.ts` và test của nó.
 
 ## 3. Gán `Chủ` — bộ giá trị đóng
 
@@ -112,11 +112,11 @@ Trình tự cho `checkC16` chặng 2:
 1. Viết ca âm **trước**: spec giả `status: approved`, bảng mục 11 ba cột → phải sinh đúng một
    `fail`.
 2. Chạy test — **phải đỏ**.
-3. Sửa `checkC16` trong [`scripts/lint-specs-lib.ts`](../../scripts/lint-specs-lib.ts): nhánh
+3. Sửa `checkC16` trong [`packages/gates/src/lint-specs-lib.ts`](../../scripts/lint-specs-lib.ts): nhánh
    `!tableHas5Cols` gọi `fail` khi `status: approved`, giữ `warn` cho `draft`.
 4. Chạy test — **phải xanh**.
 5. Xoá thân nhánh mới, chạy lại — **phải đỏ trở lại**. Bước này không bỏ được.
-6. Khôi phục. `pnpm lint:specs` — 0 lỗi, 0 cảnh báo.
+6. Khôi phục. `pnpm --filter @mindkid/gates test` — 0 lỗi, 0 cảnh báo.
 
 Đề xuất kèm theo, cần chủ dự án duyệt: làm y hệt cho `checkC6` (hiện tại luôn `warn`) — spec
 `approved` thiếu cột "vì sao" thành `fail`. Lý do: sau task này số `C6` về 0, nên lật không làm đỏ
@@ -129,18 +129,18 @@ gì; không lật thì nợ mọc lại lần sau. Nếu chủ dự án bác, gh
 
 - 4 file `00-foundation` không còn `C6`.
 - Đọc lại từng "vì sao" mới: là lý do, không phải diễn giải lại rule.
-- `pnpm lint:specs` 0 lỗi.
+- `pnpm --filter @mindkid/gates test` 0 lỗi.
 
 ### Cổng dừng B — sau lô 3
 
-- `pnpm lint:specs` — **0 cảnh báo**. Đây là lần đầu corpus đạt số này.
+- `pnpm --filter @mindkid/gates test` — **0 cảnh báo**. Đây là lần đầu corpus đạt số này.
 - Mọi hàng câu hỏi mở toàn corpus có `Chặn phase` và `Chủ` thuộc bộ đóng ở mục 3.
 - `pnpm check && pnpm test` xanh.
 
 ### Cổng dừng cuối — sau lô 4
 
 - Ca âm `checkC16` chặng 2 đã chứng minh đỏ, xanh, rồi đỏ trở lại.
-- `pnpm lint:specs` 0 lỗi, 0 cảnh báo **với cổng mới**.
+- `pnpm --filter @mindkid/gates test` 0 lỗi, 0 cảnh báo **với cổng mới**.
 - [`CONVENTIONS.md`](../specs/CONVENTIONS.md) có mục bảng 5 cột + bộ giá trị `Chủ`.
 - [`CORPUS-CLOSURE.md`](CORPUS-CLOSURE.md) cập nhật: bốn điều kiện "xong" đều đạt.
 - Quyết định về `checkC6` đã ghi vào sổ `D-*`, dù duyệt hay bác.
@@ -158,8 +158,8 @@ gì; không lật thì nợ mọc lại lần sau. Nếu chủ dự án bác, gh
 ## 8. Kiểm chứng
 
 ```
-pnpm lint:specs 2>&1 | tail -2                  # 0 lỗi, 0 cảnh báo
-pnpm test scripts/tests/lint-specs.test.ts      # ca âm chặng 2 xanh
+pnpm --filter @mindkid/gates test 2>&1 | tail -2                  # 0 lỗi, 0 cảnh báo
+pnpm test packages/gates/tests/lint-specs.test.ts      # ca âm chặng 2 xanh
 pnpm check && pnpm test
 ```
 

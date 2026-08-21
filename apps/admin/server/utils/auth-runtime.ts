@@ -9,12 +9,15 @@ import {
   validateCsrfToken,
 } from "@mindkid/auth";
 import {
+  deleteCookie,
   getCookie,
   getHeader,
   type H3Event,
   setCookie,
   setResponseStatus,
 } from "h3";
+
+const MANAGER_REMEMBER_COOKIE = "tm_m_remember";
 
 const config = getAuthNamespaceConfig("manager");
 /** CSRF cookie sống cùng vòng đời remember-me dài nhất của manager. */
@@ -80,4 +83,10 @@ export function respondToManagerAuthError(
   }
   setResponseStatus(event, error.status);
   return error.toResponse();
+}
+
+export function clearManagerRememberCookie(event: H3Event): void {
+  deleteCookie(event, MANAGER_REMEMBER_COOKIE, {
+    path: "/api/managers/auth/restore",
+  });
 }

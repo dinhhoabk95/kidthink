@@ -164,7 +164,7 @@ T1 feedbackSystem: bảng phản hồi §7.1 · lời khen xoay vòng · ngân s
 - [ ] Thêm rule thứ chín phải sửa **một** chỗ.
 
 **Kiểm chứng**
-- [ ] `pnpm lint:kid-surface` xanh trên repo sạch, đỏ trên **từng** fixture vi phạm.
+- [ ] `pnpm --filter @mindkid/gates test` xanh trên repo sạch, đỏ trên **từng** fixture vi phạm.
 
 **Phụ thuộc:** T2 · **Cỡ:** M
 
@@ -211,8 +211,8 @@ T1 feedbackSystem: bảng phản hồi §7.1 · lời khen xoay vòng · ngân s
 - [ ] Sai luôn có phản hồi, không đỏ, không tăng cường độ.
 - [ ] Nút thoát không tap trúng được; qua cổng bằng phép nhân; sửa storage không đi vòng được server.
 - [ ] Hết hạn mức không cắt phiên đang chạy; đổi giờ thiết bị không lách được.
-- [ ] `pnpm lint:kid-surface` đã đỏ trên **từng** fixture của tám rule.
-- [ ] `pnpm check && pnpm test && pnpm test:e2e && pnpm lint:specs && pnpm check:progress` xanh.
+- [ ] `pnpm --filter @mindkid/gates test` đã đỏ trên **từng** fixture của tám rule.
+- [ ] `pnpm check && pnpm test && pnpm test:e2e && pnpm --filter @mindkid/gates test && node packages/gates/scripts/check-progress.ts` xanh.
 
 ### Task 6 — Evidence và promote
 

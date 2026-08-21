@@ -80,7 +80,7 @@
 ### Task 9 — Evidence và promote
 
 - [x] Test tham chiếu `BR-ACS-*`, `BR-CSM-*`, `BR-LCA-*`, `BR-ADL-*`, `BR-REG-03`, `BR-LGN-11` cho mọi nhánh.
-- [x] `pnpm check`, `pnpm test`, `pnpm lint:specs`, `pnpm check:progress` toàn bộ xanh.
+- [x] `pnpm check`, `pnpm test`, `pnpm --filter @mindkid/gates test`, `node packages/gates/scripts/check-progress.ts` toàn bộ xanh.
 - [x] Promote spec [`legal-consent-admin.md`](../specs/06-admin/legal-consent-admin.md) sang `status: implemented`.
 - [x] Tick **P1.14** ở [`14-implementation-sequence-todo.md`](14-implementation-sequence-todo.md).
 

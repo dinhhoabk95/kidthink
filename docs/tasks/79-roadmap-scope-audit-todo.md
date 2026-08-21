@@ -46,7 +46,7 @@
 
 ## Gates
 
-- [x] `pnpm lint:specs` xanh.
+- [x] `pnpm --filter @mindkid/gates test` xanh.
 - [x] `pnpm check` xanh.
 - [x] `pnpm test` xanh.
 - [x] Query link/coverage/debt/size xanh.

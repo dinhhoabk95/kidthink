@@ -54,7 +54,7 @@
 ## T5 — Script `lint:tokens` viết mới (sau T1, song song được song song)
 - [x] Viết `mindkid/scripts/lint-tokens.ts` (không port bản v1 — gắn path engine v1, mà engine không port)
 - [x] Quét hex literal `#rgb`/`#rrggbb` trong `apps/**` + `packages/**`, allow `designTokens.ts`
-- [x] ca dương: `pnpm lint:tokens` exit 0 trên repo rỗng
+- [x] ca dương: `pnpm --filter @mindkid/gates test` exit 0 trên repo rỗng
 - [x] **ca âm**: thêm file tạm có `#ff0000` → exit 1 + in `file:line`; xoá → exit 0 lại
 
 ## T6 — docker-compose PG17 + Valkey9 (sau T1, song song được song song)
@@ -65,10 +65,10 @@
 - [x] `docker compose up -d` → cả hai **healthy**
 - [x] PostgreSQL **17.9**
 - [x] Valkey **9.1.1**
-- [x] **§4 bước 5** — `pnpm check:services` nối được **từ Node**, khẳng định major version (D-P)
+- [x] **§4 bước 5** — `pnpm services` nối được **từ Node**, khẳng định major version (D-P)
 - [x] 🐛 **Fix 2026-08-06**: host port `5432`/`6379` xung đột với stack khác (`hlo-api`) đã chiếm trên máy dev → đổi host port sang `5433`/`6380` (container bên trong giữ nguyên `5432`/`6379`, không đụng contract). Verify lại: `check:services` PG 17.9 + Valkey 9.1.1 qua port mới
-- [x] 🐛 **Fix 2026-08-06 (thứ hai) — XANH GIẢ**: fix trên chỉ đổi `docker-compose.yml`, **quên `scripts/check-services.ts`** — default vẫn `5432`/`6379`, tức `pnpm check:services` không env var thì nối vào `hlo-api-postgres-1`/`hlo-api-valkey-1` và in `Valkey 9.1.0` — **khẳng định version của service không thuộc repo này**. Lần verify trước xanh vì truyền `DATABASE_URL`/`VALKEY_PORT` bằng tay. Sửa default → `5433`/`6380` (commit `1def069`)
-  - [x] ca dương: `pnpm check:services` **không** env var → PG **17.9** + Valkey **9.1.1**, exit 0
+- [x] 🐛 **Fix 2026-08-06 (thứ hai) — XANH GIẢ**: fix trên chỉ đổi `docker-compose.yml`, **quên `scripts/check-services.ts`** — default vẫn `5432`/`6379`, tức `pnpm services` không env var thì nối vào `hlo-api-postgres-1`/`hlo-api-valkey-1` và in `Valkey 9.1.0` — **khẳng định version của service không thuộc repo này**. Lần verify trước xanh vì truyền `DATABASE_URL`/`VALKEY_PORT` bằng tay. Sửa default → `5433`/`6380` (commit `1def069`)
+  - [x] ca dương: `pnpm services` **không** env var → PG **17.9** + Valkey **9.1.1**, exit 0
   - [x] ca âm: port chết `5499`/`6499` → exit 1
   - [x] Lưu ý: Còn nợ nhỏ: nhánh lỗi PG in `Cấm PostgreSQL: ` **rỗng** (mất `.message` của lỗi ECONNREFUSED). Không gây xanh giả (vẫn exit 1) — theo dõi riêng
 
@@ -150,7 +150,7 @@
 - [x] [`repo-bootstrap.md`](../specs/00-foundation/repo-bootstrap.md) §7.1: ghi rõ `ioredis` pin `^5.11` có chủ đích, không nâng `^6`
 - [x] [`repo-bootstrap.md`](../specs/00-foundation/repo-bootstrap.md) §7.1: thêm dòng `TypeScript ~5.9.3` (bảng thiếu hẳn)
 - [x] [`SPEC.md`](../SPEC.md) §6: dòng Lint/format khớp [`repo-bootstrap.md`](../specs/00-foundation/repo-bootstrap.md) §7.1
-- [x] [`SPEC.md`](../SPEC.md) §7: `pnpm lint`/`lint:fix` → `biome check .` / `biome check --write .`; `check` thêm `lint:deps`; thêm dòng `pnpm check:services`
+- [x] [`SPEC.md`](../SPEC.md) §7: `pnpm lint`/`lint:fix` → `biome check .` / `biome check --write .`; `check` thêm `lint:deps`; thêm dòng `pnpm services`
 
 ## Ngoài plan này (theo dõi riêng)
 - [x] ~~Bật lại CI + xanh remote~~ — **không còn áp dụng 2026-08-06**: không có CI để bật lại (D-S, T8b). `BR-RBS-03` đã thoả bằng lefthook + `git push` thật, xem T9

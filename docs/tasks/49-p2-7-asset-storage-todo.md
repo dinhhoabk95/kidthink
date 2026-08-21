@@ -117,7 +117,7 @@
 - [x] Đổi base URL → ảnh trỏ host mới, DB không đổi.
 - [x] Không route nào liệt kê ảnh không kèm owner.
 - [x] Ảnh chứng từ vẫn private và vẫn không qua pipeline.
-- [x] `pnpm check && pnpm test && pnpm test:e2e && pnpm lint:specs && pnpm check:progress` xanh.
+- [x] `pnpm check && pnpm test && pnpm test:e2e && pnpm --filter @mindkid/gates test && node packages/gates/scripts/check-progress.ts` xanh.
 
 ---
 

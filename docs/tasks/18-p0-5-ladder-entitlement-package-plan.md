@@ -196,7 +196,7 @@ Khối B — sau khi P0.3 đóng
 ### Task 5 — Cổng "không hardcode giá"
 
 **Mô tả.** `BR-PKG-02` và acceptance §9 đòi một phép grep: số tiền chỉ được xuất hiện trong
-file định nghĩa catalog. Repo đã có tiền lệ đúng dạng này — `pnpm lint:tokens` quét hex literal.
+file định nghĩa catalog. Repo đã có tiền lệ đúng dạng này — `pnpm --filter @mindkid/gates test` quét hex literal.
 
 **Tiêu chí nghiệm thu**
 - [ ] Cổng quét số tiền dạng chữ số trong `apps/**` và `packages/**`, miễn trừ file catalog.
@@ -213,7 +213,7 @@ file định nghĩa catalog. Repo đã có tiền lệ đúng dạng này — `p
 - [ ] Enum `access_tier` bốn bậc; `TIER_ORDER` khớp DB.
 - [ ] Tập `entitlement_keys` trong DB **bằng đúng** registry §7.1.
 - [ ] Catalog đúng 2 gói bán được + 4 add-on `is_public = false`.
-- [ ] `pnpm check && pnpm test && pnpm lint:specs && pnpm check:progress` xanh.
+- [ ] `pnpm check && pnpm test && pnpm --filter @mindkid/gates test && node packages/gates/scripts/check-progress.ts` xanh.
 - [ ] Khối B chưa bắt đầu nếu P0.3 chưa đóng.
 
 ### Task 6 — `allowedTiers()` là nơi duy nhất ánh xạ

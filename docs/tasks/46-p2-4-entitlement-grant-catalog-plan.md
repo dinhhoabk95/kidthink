@@ -225,7 +225,7 @@ T1 hàm dùng chung: đổi entitlement + audit + vô hiệu cache (D-JM)
 - [ ] Bốn add-on đều hiện `requires_spec` đúng.
 - [ ] Không route nào sửa được gói từ UI.
 - [ ] User thấy đúng quyền hợp từ hai nguồn, và không thấy `admin_note` nội bộ.
-- [ ] `pnpm check && pnpm test && pnpm test:e2e && pnpm lint:specs && pnpm lint:prices && pnpm check:progress` xanh.
+- [ ] `pnpm check && pnpm test && pnpm test:e2e && pnpm --filter @mindkid/gates test && pnpm --filter @mindkid/gates test && node packages/gates/scripts/check-progress.ts` xanh.
 
 ### Task 7 — Evidence, promote và nợ chuyển tiếp
 

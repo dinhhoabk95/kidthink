@@ -38,7 +38,7 @@
 
 | Đo bây giờ | Đo lúc đóng task | Đạt |
 |---|---|---|
-| `pnpm check` Cấm **đỏ** (biome format trong `scripts/lint-specs-lib.ts`) | exit 0 | exit 0 |
+| `pnpm check` Cấm **đỏ** (biome format trong `packages/gates/src/lint-specs-lib.ts`) | exit 0 | exit 0 |
 | `pnpm test` 73/73 (phiên khác vừa thêm 17 test) | ≥ **73/73**, không giảm | **81/81** |
 | 16/130 spec `approved` | **23/130** (D-Y = 7 spec) | **23/130** |
 | `lint:specs` 11 check | **13 check** (thêm C12 · C13), mỗi cái có ca âm | 13, 3 ca âm chạy lại ở CP-D |
@@ -62,11 +62,11 @@
 ## T0 — Đóng nợ working tree (gate đang đỏ) Lưu ý: phiên khác đang sửa cùng file
 
 - [ ] Lưu ý: **Trước hết**: xác nhận phiên khác đã dừng — `git status` không đổi qua 2 lần đo cách
-      nhau vài phút. Phiên đó đang tách `scripts/lint-specs-lib.ts` + `scripts/tests/`
+      nhau vài phút. Phiên đó đang tách `packages/gates/src/lint-specs-lib.ts` + `scripts/tests/`
       (mtime 23:11→23:15). Cấm ghi đè, không commit hộ
-- [ ] Đọc `scripts/tests/lint-specs.test.ts` — ghi lại check nào **đã** có test
+- [ ] Đọc `packages/gates/tests/lint-specs.test.ts` — ghi lại check nào **đã** có test
       (`parseFrontmatter` · C7 · C9) để T2 không viết lại
-- [ ] Sửa lỗi biome format còn lại trong `scripts/lint-specs-lib.ts` — không refactor thêm
+- [ ] Sửa lỗi biome format còn lại trong `packages/gates/src/lint-specs-lib.ts` — không refactor thêm
 - [ ] **Ca âm C6-trùng**: fixture định nghĩa lại `BR-DM-01` ở §6 spec khác thì `lint:specs`
       exit **1**, in `file:line` + `C6`; xoá fixture thì exit 0
 - [ ] **Ca âm C10-codeblock** hai chiều: `GitHub Actions` **trong** code fence thì im lặng;
@@ -331,12 +331,12 @@ không phải code, không có ngoại lệ."** Sửa lại đúng:
       submit theo code), URL param (`taxonomy-browser.md /taxonomy/{skill_code}`), event
       payload JSONB tự do ([`event-catalog.md`](../specs/00-foundation/event-catalog.md) §7.1), runtime config gửi xuống client
       ([`game-engine-runtime.md`](../specs/01-platform/game-engine-runtime.md))
-- [x] `pnpm lint:specs` 0 error/231 warning (không tăng) · `pnpm check` exit 0 ·
+- [x] `pnpm --filter @mindkid/gates test` 0 error/231 warning (không tăng) · `pnpm check` exit 0 ·
       `pnpm test` 81/81 — chạy lại sau sửa lần 2
 
 ## CHECKPOINT C
 
-- [x] `pnpm lint:specs` exit 0 — **13 check** × 130 spec
+- [x] `pnpm --filter @mindkid/gates test` exit 0 — **13 check** × 130 spec
 - [x] Số warning **≤ 228** → đo được **219** (giảm 12: mỗi spec approve đều phải điền cột
       "vì sao" còn thiếu theo [`CONVENTIONS.md`](../specs/CONVENTIONS.md) §10, nên warning C6 giảm theo)
 - [x] `pnpm check` exit 0 · `pnpm test` exit 0 (**81/81**, mốc cũ 56/56 đã lỗi thời)
@@ -398,7 +398,7 @@ Mỗi spec 4 bước: (1) checklist [`CONVENTIONS.md`](../specs/CONVENTIONS.md) 
 ## CHECKPOINT D — mở khoá P0 bước 8
 
 - [x] Tổng `approved` = **23/130** (7 spec đích) — đo bằng `grep -rl '^status: approved'`
-- [x] `pnpm lint:specs` exit 0 · `pnpm check` exit 0 · `pnpm test` exit 0 (81/81)
+- [x] `pnpm --filter @mindkid/gates test` exit 0 · `pnpm check` exit 0 · `pnpm test` exit 0 (81/81)
 - [x] **Ca âm C8**: [`data-model-overview.md`](../specs/01-platform/data-model-overview.md) → `draft` thì exit 1, đỏ **đúng 3** `schema-*`
 - [x] **Ca âm C12**: xoá `social_identities` khỏi DMO §7 thì exit 1, báo đúng tên bảng
 - [x] **Ca âm C13**: đổi ví dụ mã về `G-C1-CNT-007` thì exit 1, báo đúng `file:line` + regex

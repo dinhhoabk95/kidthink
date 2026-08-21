@@ -111,7 +111,7 @@
 - [x] Chạy lại job không gửi hai lần.
 - [x] Opt-out ghi `suppressed`, có bằng chứng trong DB.
 - [x] Hai trục rate limit cùng hoạt động; fail closed đúng chỗ.
-- [x] `pnpm check && pnpm test && pnpm lint:specs && pnpm check:progress` xanh.
+- [x] `pnpm check && pnpm test && pnpm --filter @mindkid/gates test && node packages/gates/scripts/check-progress.ts` xanh.
 - [x] Human review diff vùng auth và dữ liệu trẻ.
 
 ## Task 11 — Evidence và promote

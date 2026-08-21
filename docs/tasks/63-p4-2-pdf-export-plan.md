@@ -71,7 +71,7 @@ T0 benchmark + sửa thứ tự roadmap/depends_on
 - [ ] Owner chốt worker chung hay workload tách, kèm ngưỡng rollback/alert.
 - [ ] Roadmap/`depends_on` worksheet–PDF có một chiều canonical và mã quyết định; không còn mâu thuẫn.
 
-**Kiểm chứng:** báo cáo có command, giới hạn container và artifact; `pnpm lint:specs` xanh.
+**Kiểm chứng:** báo cáo có command, giới hạn container và artifact; `pnpm --filter @mindkid/gates test` xanh.
 
 **Phụ thuộc:** Infra + Task #62 contract · **Files:** task evidence + tối đa 2 spec · **Cỡ:** S/M.
 
@@ -83,7 +83,7 @@ T0 benchmark + sửa thứ tự roadmap/depends_on
 - [ ] Capability renderer có package/adapter và thư viện nền được ghi ở architecture trước dependency.
 - [ ] Catalog giữ ẩn tới join #62/#63; refund/idempotency/retention có contract duy nhất.
 
-**Kiểm chứng:** `pnpm lint:specs`; dependency boundary và catalog pending tests xanh.
+**Kiểm chứng:** `pnpm --filter @mindkid/gates test`; dependency boundary và catalog pending tests xanh.
 
 **Phụ thuộc:** T0 + human decisions · **Files:** PDF/entitlement/package/architecture/error specs · **Cỡ:** M.
 
@@ -194,7 +194,7 @@ T0 benchmark + sửa thứ tự roadmap/depends_on
 - [ ] Full gate xanh; PDF spec và LPC spec promote theo đúng evidence.
 - [ ] `PKG-addon_lesson_plan` chỉ public trong join có human review; không seed ngoài local.
 
-**Kiểm chứng:** `pnpm check`, `pnpm test`, `pnpm lint:specs`, `pnpm check:progress` và diff catalog.
+**Kiểm chứng:** `pnpm check`, `pnpm test`, `pnpm --filter @mindkid/gates test`, `node packages/gates/scripts/check-progress.ts` và diff catalog.
 
 **Phụ thuộc:** Checkpoint C + Task #62 · **Files:** spec status, evidence, catalog/progress test · **Cỡ:** S.
 

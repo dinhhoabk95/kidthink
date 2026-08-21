@@ -44,7 +44,7 @@ nhất là hai file `scripts/` phục vụ chính cổng của corpus (ca âm `C
 | Nhánh | `main`, tracking `origin/main` |
 | Commit gần nhất | `c4c910e` — Task #6 bước 0, sửa 21 lỗi `C15` |
 | Working tree | Sạch |
-| `pnpm lint:specs` | Xanh — 130 spec, 15 kiểm tra, **0 lỗi, 179 cảnh báo** (nền Task #5 là 213) |
+| `pnpm --filter @mindkid/gates test` | Xanh — 130 spec, 15 kiểm tra, **0 lỗi, 179 cảnh báo** (nền Task #5 là 213) |
 | Spec `approved` | **38/130** |
 | Theo phase | `P0` 35 approved / 0 draft · `P1` 2 / 42 · `P2` 1 / 30 · `P3`–`P5` 0 / 20 |
 
@@ -52,7 +52,7 @@ nhất là hai file `scripts/` phục vụ chính cổng của corpus (ca âm `C
 
 ### Khuyết tật 1 — tám chu trình `depends_on`, `C7` chỉ là cảnh báo
 
-[`scripts/lint-specs-lib.ts`](../../scripts/lint-specs-lib.ts) dòng 785 gọi `warn()` cho
+[`packages/gates/src/lint-specs-lib.ts`](../../scripts/lint-specs-lib.ts) dòng 785 gọi `warn()` cho
 `C7` (chu trình phụ thuộc), trong khi dòng 841 gọi `fail()` cho `C8` (spec `approved` không
 được `depends_on` spec `draft`).
 
@@ -268,7 +268,7 @@ thứ tự ưu tiên nếu phải dừng giữa chừng.
 5. **Xử lý từng câu hỏi mở §11.** Câu nào chặn P1 thì chốt và ghi vào sổ cái. Câu nào chặn
    P2 trở đi thì để nguyên, ghi rõ nó chặn gì.
 6. **Đổi `status` sang `approved`, cập nhật `reviewed`.**
-7. **`pnpm lint:specs` và `pnpm test` xanh, rồi commit.** Một spec một commit.
+7. **`pnpm --filter @mindkid/gates test` và `pnpm test` xanh, rồi commit.** Một spec một commit.
 
 ## Thứ tự và cổng dừng
 

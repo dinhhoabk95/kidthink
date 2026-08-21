@@ -41,7 +41,7 @@ Khối lượng đo được: 12 file (11 spec đích cộng một spec kéo th�
 | Nhánh | `main`, tracking `origin/main` tại `git@dinhhoabk95.github.com:dinhhoabk95/mindkid.git` |
 | Commit gần nhất | `2a615bb` — thêm [`READING-GUIDE.md`](../specs/READING-GUIDE.md) |
 | Working tree | Bẩn: `docs/tasks/plan.md`, `docs/tasks/todo.md`, `docs/tasks/04-readability-spec.md` chưa commit; hai file `03-schema-contract-*` là bản đổi tên chưa commit |
-| `pnpm lint:specs` | Xanh — 130 spec, 13 kiểm tra, **0 lỗi, 213 cảnh báo** |
+| `pnpm --filter @mindkid/gates test` | Xanh — 130 spec, 13 kiểm tra, **0 lỗi, 213 cảnh báo** |
 | `pnpm test` | Xanh — **81/81** (2 file test) |
 | `pnpm typecheck` | Xanh |
 | Spec `approved` | **26/130**. Trong đó 23 spec `P0`, 2 spec `P1`, 1 spec `P2` |
@@ -71,9 +71,9 @@ Spec kéo thêm vào phạm vi (lý do ở `D-AF`):
 
 ## Ràng buộc cứng: cổng `C8`
 
-[`scripts/lint-specs-lib.ts`](../../scripts/lint-specs-lib.ts) dòng 791 định nghĩa kiểm tra
+[`packages/gates/src/lint-specs-lib.ts`](../../scripts/lint-specs-lib.ts) dòng 791 định nghĩa kiểm tra
 `C8` — *"spec `approved` thì `depends_on` của nó cũng phải `approved`"*. Nó gọi `fail()`, không
-phải `warn()`, nên vi phạm là **lỗi**, không phải cảnh báo, và làm `pnpm lint:specs` trả mã
+phải `warn()`, nên vi phạm là **lỗi**, không phải cảnh báo, và làm `pnpm --filter @mindkid/gates test` trả mã
 thoát khác 0. Lefthook chặn commit ở đó.
 
 Hệ quả trực tiếp: **không thể đảo thứ tự tuỳ ý**. Đồ thị dưới đây là bắt buộc, không phải gợi ý.
@@ -173,7 +173,7 @@ gọn.
 5. **Xử lý từng câu hỏi mở ở section 11.** Câu nào chặn P0 thì phải chốt và ghi quyết định vào
    sổ cái. Câu nào chặn P1 trở đi thì để nguyên, ghi rõ nó chặn gì.
 6. **Đổi `status: draft` thành `status: approved` và cập nhật `reviewed` sang ngày làm.**
-7. **Chạy `pnpm lint:specs` và `pnpm test`, cả hai phải xanh, rồi commit một spec một commit.**
+7. **Chạy `pnpm --filter @mindkid/gates test` và `pnpm test`, cả hai phải xanh, rồi commit một spec một commit.**
 
 Một spec một commit. Task #3 làm vậy và khi `T11a` sai thì `git revert` gọn đúng một file.
 
@@ -186,7 +186,7 @@ hiện chưa có spec `approved` nào có phụ thuộc `draft`. Một cổng ch
 được chứng minh. Bài học `ultracite` còn nguyên giá trị: `ultracite check` trả mã thoát 0 dù có
 lỗi lint, và không ai biết cho tới khi có người viết ca âm.
 
-Thêm ca âm vào [`scripts/tests/lint-specs.test.ts`](../../scripts/tests/lint-specs.test.ts):
+Thêm ca âm vào [`packages/gates/tests/lint-specs.test.ts`](../../scripts/tests/lint-specs.test.ts):
 gọi `checkC8` với một spec giả `approved` phụ thuộc một spec giả `draft`, khẳng định nó sinh ra
 đúng một violation. Thêm ca dương: phụ thuộc `approved` thì không sinh gì.
 
@@ -202,7 +202,7 @@ tồn tại, và ba spec ở cuối lô có thể approve thẳng mà không c�
 [`index.md`](../specs/index.md) dòng 90, approve.
 
 **Tiêu chí chấp nhận.** [`notification-service.md`](../specs/01-platform/notification-service.md) có `status: approved` và `phase: P0`.
-[`index.md`](../specs/index.md) ghi `P0`. `pnpm lint:specs` còn 0 lỗi.
+[`index.md`](../specs/index.md) ghi `P0`. `pnpm --filter @mindkid/gates test` còn 0 lỗi.
 
 ### Bước 2 — `D-AG`: cắt cạnh của [`security-checklist.md`](../specs/08-quality/security-checklist.md)
 
@@ -220,7 +220,7 @@ thế — nhưng chúng cũng là hai chỗ duy nhất trong task này mà **ng�
 lại chỉ là đọc, điền "vì sao", và lật cờ.
 
 - [ ] Chủ dự án xác nhận `D-AF` và `D-AG`
-- [ ] `pnpm lint:specs` 0 lỗi, `pnpm test` xanh với ca âm `C8` mới
+- [ ] `pnpm --filter @mindkid/gates test` 0 lỗi, `pnpm test` xanh với ca âm `C8` mới
 
 ### Bước 3 đến 6 — Nhóm A: bốn spec `01-platform`
 
@@ -263,7 +263,7 @@ một rule sẽ bị tắt trong lần đầu nó cản việc.
 ### Cổng dừng B — sau bước 13
 
 - [ ] 12/12 spec `approved`
-- [ ] `pnpm lint:specs` 0 lỗi, và số cảnh báo giảm ít nhất 30 so với 213 của mức nền
+- [ ] `pnpm --filter @mindkid/gates test` 0 lỗi, và số cảnh báo giảm ít nhất 30 so với 213 của mức nền
 - [ ] `pnpm test` xanh
 - [ ] Mọi quyết định mới ghi vào sổ cái, đánh số tiếp từ `D-AF`
 
@@ -285,7 +285,7 @@ lệch mà mười một kiểm tra tự động bỏ qua.
 ### Cổng dừng C — kết thúc task
 
 - [ ] 35/35 spec P0 `approved`
-- [ ] `pnpm check`, `pnpm test`, `pnpm lint:specs` xanh cả ba
+- [ ] `pnpm check`, `pnpm test`, `pnpm --filter @mindkid/gates test` xanh cả ba
 - [ ] Đã push lên `origin/main`
 - [ ] Corpus P0 đóng. Việc tiếp theo của dự án là roadmap P0 **bước 8 — migration đầu tiên**,
       và đó là task viết code đầu tiên

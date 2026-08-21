@@ -247,6 +247,18 @@ async function processActivitySeed(
       ? header.instruction
       : JSON.stringify(header.instruction);
 
+  let resolvedRefId = header.ref_id;
+  if (!resolvedRefId && header.ref_type === "game_level" && header.ref_code) {
+    const [gl] = await tx
+      .select({ entityId: gameLevels.entityId })
+      .from(gameLevels)
+      .where(eq(gameLevels.code, header.ref_code))
+      .limit(1);
+    if (gl) {
+      resolvedRefId = gl.entityId;
+    }
+  }
+
   const [newActivity] = await tx
     .insert(activities)
     .values({
@@ -259,7 +271,7 @@ async function processActivitySeed(
       materials: header.materials,
       estimatedMinutes: header.estimated_minutes,
       refType: header.ref_type,
-      refId: header.ref_id,
+      refId: resolvedRefId,
       accessTier: header.access_tier,
       status: "published",
       origin: header.origin,

@@ -80,7 +80,7 @@
 - [x] Mọi level mẫu ≤200 KB gz.
 - [x] Cache đúng cả hai chiều.
 - [x] `content_pack` hỏng → 500 + alert, không tới engine.
-- [x] `pnpm check && pnpm test && pnpm test:e2e && pnpm lint:specs && pnpm check:progress` xanh.
+- [x] `pnpm check && pnpm test && pnpm test:e2e && pnpm --filter @mindkid/gates test && node packages/gates/scripts/check-progress.ts` xanh.
 
 ---
 

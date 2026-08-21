@@ -217,7 +217,7 @@ T1 adapter Telegram + Healthchecks sau AlertPort (D-IQ)
 - [ ] Cây taxonomy chỉ đọc; không route ghi nào tồn tại.
 - [ ] Số đếm có `as_of`; ngưỡng "đủ" vẫn là 3.
 - [ ] Nút soạn không dẫn tới 404.
-- [ ] `pnpm check && pnpm test && pnpm test:e2e && pnpm lint:specs && pnpm check:progress` xanh.
+- [ ] `pnpm check && pnpm test && pnpm test:e2e && pnpm --filter @mindkid/gates test && node packages/gates/scripts/check-progress.ts` xanh.
 
 ### Task 7 — Evidence, promote và cổng ra P1
 

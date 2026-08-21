@@ -98,7 +98,7 @@ Scenario: BR-RBK-02 — migration cộng thêm
 
 ```bash
 pnpm exec biome check .
-pnpm lint:specs
+pnpm --filter @mindkid/gates test
 pnpm db:generate && pnpm db:migrate
 pnpm check
 pnpm vitest run packages/game-engine packages/db apps/web/tests/api

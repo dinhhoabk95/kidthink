@@ -109,6 +109,9 @@ describe("P0.0 Quality & Governance Rules (BR-TST, BR-AIG, BR-MVP)", () => {
         !file.includes("docs") &&
         !file.includes(".git") &&
         !file.includes("scripts") &&
+        // packages/gates **định nghĩa** danh sách từ khoá bị cấm (BR-MVP-04),
+        // nên quét chính nó là tự bắt định nghĩa của mình.
+        !file.includes(`packages${path.sep}gates`) &&
         !file.includes("tests") &&
         !file.endsWith("glossary.ts")
     );

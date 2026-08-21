@@ -82,13 +82,13 @@ Mỗi work package chạm khoảng 1–5 file. WP80.2 và WP80.3 chỉ được 
 - [x] C5 và sáu engine template có test matrix trên thiết bị Lenovo mục tiêu, có/không `vi-VN`.
 - [x] Không plan active nào coi Task #49 ảnh là owner audio.
 - [x] BR, error code và event mới (nếu có) được đăng ký trước khi dùng.
-- [x] Có task implementation S/M riêng ([`Task #87`](87-p1-audio-runtime-delivery-plan.md)); spec và `pnpm lint:specs` xanh trước code.
+- [x] Có task implementation S/M riêng ([`Task #87`](87-p1-audio-runtime-delivery-plan.md)); spec và `pnpm --filter @mindkid/gates test` xanh trước code.
 - [x] Diff được người review; không auto-merge, không phát hành asset.
 
 ## 8. Verification
 
 ```bash
-pnpm lint:specs
+pnpm --filter @mindkid/gates test
 pnpm check
 rg -n "audio.*P2\.7|P2\.7.*audio|speechSynthesis|vi-VN" SPEC.md docs/specs docs/tasks
 rg -n "BR-[A-Z]+-|[A-Z_]+_FAILED" docs/specs/00-foundation/business-rules.md docs/specs/00-foundation/error-codes.md

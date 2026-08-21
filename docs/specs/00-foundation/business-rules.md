@@ -24,7 +24,7 @@ nghĩa.
 Cộng thêm §7.3: **danh sách rule không bao giờ được vi phạm**, bất kể áp lực lịch trình.
 
 Spec này đạt trạng thái `implemented` khi toàn bộ 4 rule `BR-REG2-01` đến `BR-REG2-04` được thi
-hành bằng cổng tự động (`lint:specs`, `lint:rule-ids`) và test đơn vị (`scripts/tests/lint-rule-ids.test.ts`).
+hành bằng cổng tự động (`lint:specs`, `lint:rule-ids`) và test đơn vị (`packages/gates/tests/lint-rule-ids.test.ts`).
 Trạng thái `implemented` của registry chứng minh rằng hệ thống quản trị quy tắc kinh doanh đang
 hoạt động và bảo vệ tính toàn vẹn của toàn bộ corpus.
 
@@ -34,8 +34,8 @@ Dev · reviewer · test.
 
 ## 3. Entry points
 
-Mọi `BR-*` trong code, test, và PR. `pnpm lint:rule-ids` và `pnpm lint:specs` kiểm tra tính duy
-nhất, bất biến và cảnh báo BR không được tham chiếu (`pnpm gen:check`).
+Mọi `BR-*` trong code, test, và PR. `pnpm --filter @mindkid/gates test` và `pnpm --filter @mindkid/gates test` kiểm tra tính duy
+nhất, bất biến và cảnh báo BR không được tham chiếu (`node packages/gates/scripts/check-progress.ts`).
 
 ## 4. Main flow
 
@@ -109,7 +109,7 @@ nhất, bất biến và cảnh báo BR không được tham chiếu (`pnpm gen:
 | `BR-ENV` | [`env-contract.md`](../01-platform/env-contract.md) | | `BR-SRV` | [`server-provisioning.md`](../01-platform/server-provisioning.md) |
 | `BR-SUP` | [`process-supervision.md`](../01-platform/process-supervision.md) | | `BR-DEP` | [`release-deploy.md`](../01-platform/release-deploy.md) |
 | `BR-RBK` | [`release-rollback.md`](../01-platform/release-rollback.md) | | `BR-MTB` | [`montessori-template-batch.md`](../01-platform/montessori-template-batch.md) |
-| `BR-LVB` | [`legacy-v1-template-batch.md`](../01-platform/legacy-v1-template-batch.md) | | | |
+| `BR-LVB` | [`legacy-v1-template-batch.md`](../01-platform/legacy-v1-template-batch.md) | | `BR-TGB` | [`taxonomy-gap-batch.md`](../01-platform/taxonomy-gap-batch.md) |
 
 **Public**
 
@@ -159,6 +159,7 @@ nhất, bất biến và cảnh báo BR không được tham chiếu (`pnpm gen:
 | `BR-WSM` | [`worksheet-model.md`](../05-content/worksheet-model.md) | | `BR-LEX` | [`lesson-exemplar-set.md`](../05-content/lesson-exemplar-set.md) |
 | `BR-MCM` | [`montessori-corpus-mapping.md`](../05-content/montessori-corpus-mapping.md) | | `BR-MGL` | [`montessori-game-level-batch.md`](../05-content/montessori-game-level-batch.md) |
 | `BR-MLS` | [`montessori-lesson-batch.md`](../05-content/montessori-lesson-batch.md) | | `BR-RSM` | [`round-set-model.md`](../05-content/round-set-model.md) |
+| `BR-TCL` | [`template-coverage-level-batch.md`](../05-content/template-coverage-level-batch.md) | | `BR-LTV` | [`lesson-template-variety.md`](../05-content/lesson-template-variety.md) |
 
 **Admin**
 
@@ -202,9 +203,9 @@ nhất, bất biến và cảnh báo BR không được tham chiếu (`pnpm gen:
 
 | | Số |
 |---|---:|
-| Spec module | 158 |
-| Prefix BR | 158 |
-| Business rule | ~1447 |
+| Spec module | 161 |
+| Prefix BR | 161 |
+| Business rule | ~1473 |
 
 **Cảnh báo:** con số "spec module" trước 2026-08-05 ghi **123**, trong khi
 [`../index.md`](../index.md) đếm **124**. Lệch có từ trước, chưa truy nguyên. Đã đặt lại theo
@@ -351,4 +352,4 @@ Scenario: BR-REG2-02 — ID không tái dùng
 
 | # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
 |---|---|---|---|---|
-| 1 | Có tự sinh registry này từ corpus không, thay vì duy trì tay? `gen:spec-index` làm được | [`ai-codegen-pipeline.md`](../01-platform/ai-codegen-pipeline.md) | Hoãn, chặn phase P1 tooling | hoãn — bước dựng `scripts/lint-specs.ts` ở Task #2 là bước đầu |
+| 1 | Có tự sinh registry này từ corpus không, thay vì duy trì tay? `gen:spec-index` làm được | [`ai-codegen-pipeline.md`](../01-platform/ai-codegen-pipeline.md) | Hoãn, chặn phase P1 tooling | hoãn — bước dựng `packages/gates/tests/lint-specs.test.ts` ở Task #2 là bước đầu |

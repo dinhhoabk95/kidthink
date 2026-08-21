@@ -17,7 +17,7 @@
 - [x] Chốt snapshot allow-list + source version + optimistic version + refresh chủ động.
 - [x] Sửa predicate catalog: Task #62 **và** #63 phải xanh.
 - [x] Đăng ký mọi mã lỗi mới trước khi dùng.
-- [x] `pnpm lint:specs` và catalog test xanh.
+- [x] `pnpm --filter @mindkid/gates test` và catalog test xanh.
 
 ## Checkpoint A
 
@@ -72,7 +72,7 @@
 
 - [x] Mọi route UUID có IDOR test; concurrency PUT/quota xanh.
 - [x] Mỗi `BR-LPC-01…09` có test mang mã rule.
-- [x] `pnpm check`, `pnpm test`, `pnpm lint:specs`, `pnpm check:progress` xanh.
+- [x] `pnpm check`, `pnpm test`, `pnpm --filter @mindkid/gates test`, `node packages/gates/scripts/check-progress.ts` xanh.
 - [x] Task #63 hoàn tất; `LESSON-PLAN-CREATOR` mới chuyển `implemented`.
 - [x] Add-on chỉ public sau human review; không seed ngoài local, không auto-merge.
 

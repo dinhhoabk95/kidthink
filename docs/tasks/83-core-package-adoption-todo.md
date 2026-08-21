@@ -8,7 +8,7 @@
 
 - [x] Contract ghi SMTP SES, package boundaries và FCM deferred; auth adapter được tách sang Task #85.
 - [x] Task #41 nhận `openid-client`; Task #53 nhận `otpauth` cho User-MFA.
-- [x] `pnpm lint:specs` xanh sau contract update (133 specs, 15 checks, 0 lỗi).
+- [x] `pnpm --filter @mindkid/gates test` xanh sau contract update (133 specs, 15 checks, 0 lỗi).
 - [ ] Human review spec diff và chấp nhận demote các spec chưa khớp code về `approved`.
 - [ ] Tạo nhánh riêng; không đụng thay đổi ngoài Task #83.
 
@@ -65,7 +65,7 @@
 - [x] Xoá local fallback chết sau parity; import guards xanh.
 - [x] Không Firebase/service-worker/FCM endpoint trong diff.
 - [x] Specs chỉ promote khi evidence thật tồn tại.
-- [x] `pnpm check && pnpm test && pnpm lint:specs && pnpm check:progress` xanh.
+- [x] `pnpm check && pnpm test && pnpm --filter @mindkid/gates test && node packages/gates/scripts/check-progress.ts` xanh.
 - [x] Targeted browser/E2E email/rate/security/auth xanh.
 - [x] Human review; không auto-merge, deploy, production credential hay migration ngoài local.
 

@@ -29,7 +29,7 @@ hỏng thứ đang chạy mà là **cấp mã sai** — mã `GT-*` bất biến,
    đã dựng sẵn tại [`packages/game-engine/src/core.ts`](../../packages/game-engine/src/core.ts),
    nhưng **không khuôn nào trong mười bảy khuôn dùng nó làm cơ chế chơi**. `GT-018` là khuôn đầu
    tiên tiêu nó — đó là lý do nó phục vụ ba dạng bài mà nằm ở nhóm chi phí thấp nhất.
-5. `scripts/create-template.ts` đã có và nhận đúng ba tham số. `pnpm gen:templates` sinh lại mọi
+5. `packages/game-engine/scripts/create-template.ts` đã có và nhận đúng ba tham số. `pnpm --filter @mindkid/game-engine gen:templates` sinh lại mọi
    điểm nối, nên chi phí "sửa tay mười một nơi" đã được
    [`Task #97`](97-template-authoring-kit-plan.md) đóng.
 6. Mười một khuôn `GT-007` tới `GT-017` của [`Task #99`](99-montessori-template-designs-plan.md)
@@ -82,7 +82,7 @@ system của khuôn khác.
 |---|---:|---|---|
 | WP101.0 | S | Chốt câu hỏi còn mở số 1 (ba khuôn ngoài lô) và số 3 (`free-scene` là `LayoutId` thật hay chế độ ngoài layout engine) | Hai quyết định ghi vào spec kèm lý do |
 | WP101.1 | S | Thêm 7 giá trị `mechanic` vào từ vựng trục `mechanic` của [`content-tagging.md`](../specs/01-platform/content-tagging.md) | Cổng phủ đỏ khi khuôn khai `mechanic` chưa đăng ký; ca âm bắt buộc |
-| WP101.2 | M | `GT-018` `listen-respond` trên `AudioController` đã có; phủ C3-04, C3-08, C5-01 | Ba level mẫu chạy được; phát `round_started`; không xin quyền microphone; `pnpm gen:templates` không đổi file viết tay ngoài thư mục khuôn |
+| WP101.2 | M | `GT-018` `listen-respond` trên `AudioController` đã có; phủ C3-04, C3-08, C5-01 | Ba level mẫu chạy được; phát `round_started`; không xin quyền microphone; `pnpm --filter @mindkid/game-engine gen:templates` không đổi file viết tay ngoài thư mục khuôn |
 | WP101.3 | S | `GT-019` `rotate-transform` mở rộng `rotationSystem`; xoay bằng nút góc 90 độ | Không file mới dưới `systems/`; không đường nào xoay bằng cử chỉ hai ngón; ba level mẫu |
 | WP101.4 | M | `GT-020` `memory-flip` + `cardSystem`; dùng lại layout `card-flip-grid` và `timerSystem` | `cardSystem` có test chạy được **không nạp** `GT-020`; ba level mẫu; band 3–6 |
 | WP101.5 | M | `GT-021` `mirror-complete` + `mirrorSystem` + layout `mirror-axis-split` | Layout vào registry **trước** khi viết Session; `mirrorSystem` có test độc lập; ba level mẫu |
@@ -147,15 +147,15 @@ Scenario: WP101.10 — khuôn mới không đụng contract cũ
 
 ```bash
 export PATH=/Users/macbook/.nvm/versions/node/v24.15.0/bin:$PATH
-pnpm gen:templates
+pnpm --filter @mindkid/game-engine gen:templates
 pnpm lint
-pnpm lint:specs
+pnpm --filter @mindkid/gates test
 pnpm check
 pnpm vitest run packages/game-engine
 pnpm test
 ```
 
-Sau `pnpm gen:templates`, kiểm cây làm việc: không file viết tay nào ngoài thư mục khuôn vừa
+Sau `pnpm --filter @mindkid/game-engine gen:templates`, kiểm cây làm việc: không file viết tay nào ngoài thư mục khuôn vừa
 thêm được phép đổi (`BR-LVB-08`).
 
 ## 8. Definition of done

@@ -92,7 +92,7 @@ Scenario: Nguyên thuỷ dùng nguồn ngẫu nhiên có seed
 
 ```bash
 pnpm exec biome check .
-pnpm lint:specs
+pnpm --filter @mindkid/gates test
 pnpm check
 pnpm vitest run packages/game-engine
 pnpm test

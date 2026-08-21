@@ -43,9 +43,9 @@ Spec này cũng là nơi phát ngôn một ràng buộc ngược lên cách vi�
 
 | Nơi | Actor | Ghi chú |
 |---|---|---|
-| `pnpm deploy:rollback --host <tên>` | Người vận hành | Về bản liền trước |
-| `pnpm deploy:rollback --host <tên> --to <tên bản>` | Người vận hành | Về một bản cụ thể trong 5 bản giữ lại |
-| `pnpm deploy:status --host <tên>` | Người vận hành | Xem danh sách bản còn giữ và bản đang chạy |
+| `pnpm deploy rollback --host <tên>` | Người vận hành | Về bản liền trước |
+| `pnpm deploy rollback --host <tên> --to <tên bản>` | Người vận hành | Về một bản cụ thể trong 5 bản giữ lại |
+| `pnpm deploy status --host <tên>` | Người vận hành | Xem danh sách bản còn giữ và bản đang chạy |
 | `mindkid.sh rollback [--to <tên bản>]` | | Nội dung thật, chạy trên máy chủ tại `/opt/mindkid/bin/` |
 
 ## 4. Main flow

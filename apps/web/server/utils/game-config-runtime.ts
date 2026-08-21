@@ -2,6 +2,7 @@ import { randomUUID } from "node:crypto";
 import { AppError } from "@mindkid/auth";
 import {
   childProfiles,
+  gameLevelRounds,
   gameLevels,
   gameTemplates,
   getOwnerDb,
@@ -14,7 +15,7 @@ import {
   type CallerIdentity,
   resolveAssets,
 } from "@mindkid/shared";
-import { and, desc, eq } from "drizzle-orm";
+import { and, asc, desc, eq } from "drizzle-orm";
 import { createError, type H3Event, setHeader, setResponseStatus } from "h3";
 
 export interface GameConfigDeliveryOptions {
@@ -220,6 +221,41 @@ export async function deliverGameConfig(
     });
   }
 
+  // 3b. WP100.4: Load and validate rounds
+  const rounds = await db
+    .select({
+      round_index: gameLevelRounds.roundIndex,
+      instruction: gameLevelRounds.instruction,
+      instruction_audio_path: gameLevelRounds.instructionAudioPath,
+      content_pack: gameLevelRounds.contentPack,
+      difficulty_params: gameLevelRounds.difficultyParams,
+      difficulty: gameLevelRounds.difficulty,
+    })
+    .from(gameLevelRounds)
+    .where(eq(gameLevelRounds.gameLevelId, level.id))
+    .orderBy(asc(gameLevelRounds.roundIndex));
+
+  for (const round of rounds) {
+    const roundValidation = validateContentPack(
+      template.code,
+      round.content_pack
+    );
+    if (!roundValidation.success) {
+      throw createError({
+        statusCode: 422,
+        statusMessage: "CONTENT_PACK_INVALID",
+        data: {
+          code: "CONTENT_PACK_INVALID",
+          message: `Round ${round.round_index} content pack invalid`,
+          round_index: round.round_index,
+          details: roundValidation.error?.details,
+        },
+      });
+    }
+  }
+
+  const scoringMode = rounds.length > 1 ? "rounds" : "attempts";
+
   // 4. Create minimum play_sessions row (D-FR, BR-RNG-06, BR-RNG-07)
   const { sessionUuid, startedAt, layoutSeed } = await createPlaySessionRecord(
     db,
@@ -233,7 +269,11 @@ export async function deliverGameConfig(
   );
 
   // 5. Resolve assets (BR-CFG-07)
-  const assets = resolveAssets(level.contentPack);
+  const allContentPacks = [
+    level.contentPack,
+    ...rounds.map((r) => r.content_pack),
+  ];
+  const assets = allContentPacks.flatMap((pack) => resolveAssets(pack));
 
   // 6. Set Cache-Control header (BR-CFG-04 & BR-CFG-05 / D-FT)
   if (level.accessTier === "free" && options.caller.kind === "guest") {
@@ -255,7 +295,18 @@ export async function deliverGameConfig(
     layout_seed: layoutSeed,
     theme_id: level.themeId || "general",
     age_band: `${level.ageMin ?? 3}-${level.ageMax ?? 6}`,
-    scoring: template.scoring,
+    scoring: {
+      ...template.scoring,
+      mode: scoringMode,
+    },
+    rounds: rounds.map((r) => ({
+      round_index: r.round_index,
+      instruction: r.instruction,
+      instruction_audio_path: r.instruction_audio_path,
+      content_pack: r.content_pack,
+      difficulty_params: r.difficulty_params,
+      difficulty: r.difficulty,
+    })),
     session: {
       uuid: sessionUuid,
       started_at: startedAt.toISOString(),

@@ -87,7 +87,7 @@
 - [x] Hint · retry · tốc độ không đổi điểm.
 - [x] Điểm không âm; hoàn thành luôn ≥ 1 sao.
 - [x] Phiên `abandoned`: có điểm, không sao.
-- [x] `pnpm check && pnpm test && pnpm test:e2e && pnpm lint:specs && pnpm check:progress` xanh.
+- [x] `pnpm check && pnpm test && pnpm test:e2e && pnpm --filter @mindkid/gates test && node packages/gates/scripts/check-progress.ts` xanh.
 
 ---
 

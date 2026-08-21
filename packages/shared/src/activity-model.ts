@@ -59,6 +59,7 @@ export interface ActivityValidationInput {
   learning_objective_codes?: string[];
   ref_type?: string | null;
   ref_id?: number | null;
+  ref_code?: string | null;
   [key: string]: unknown;
 }
 
@@ -146,10 +147,10 @@ function validateKindAndRef(
 
   if (
     kind === "digital_game" &&
-    (input.ref_type !== "game_level" || !input.ref_id)
+    (input.ref_type !== "game_level" || !(input.ref_id || input.ref_code))
   ) {
     errors.push(
-      "D-LC: Hoạt động loại 'digital_game' bắt buộc phải liên kết tới một game level (ref_type = 'game_level' và có ref_id)."
+      "D-LC: Hoạt động loại 'digital_game' bắt buộc phải liên kết tới một game level (ref_type = 'game_level' và có ref_id hoặc ref_code)."
     );
   }
 
@@ -215,7 +216,11 @@ function checkContentPatterns(
     }
   }
 
-  if (!(parsed.hasSayToChild && parsed.has4Parts)) {
+  if (
+    kind !== "digital_game" &&
+    kind !== "worksheet" &&
+    !(parsed.hasSayToChild && parsed.has4Parts)
+  ) {
     errors.push(
       "BR-ACM-03: Hoạt động phải có đủ 4 phần hướng dẫn và ít nhất một câu thoại hướng dẫn trực tiếp với trẻ (trong ngoặc kép hoặc trường say_to_child)."
     );
@@ -240,7 +245,11 @@ function checkContentPatterns(
     );
   }
 
-  if (!(parsed.easierText && parsed.harderText)) {
+  if (
+    kind !== "digital_game" &&
+    kind !== "worksheet" &&
+    !(parsed.easierText && parsed.harderText)
+  ) {
     errors.push(
       "BR-ACM-06: Hoạt động phải nêu rõ cả hai biến thể: Dễ hơn (scaffold) và Khó hơn (challenge)."
     );

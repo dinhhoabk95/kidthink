@@ -48,7 +48,7 @@ cùng contract và runtime thật.
 ### 1.1 Đã có
 
 `packages/game-engine/src/index.ts` là `export {};`. Bảng `game_templates` có cột từ P0.7,
-**không** có hàng. Sau P1.1: `designTokens.ts`, hằng số sàn chạm, `pnpm lint:tokens` mở rộng,
+**không** có hàng. Sau P1.1: `designTokens.ts`, hằng số sàn chạm, `pnpm --filter @mindkid/gates test` mở rộng,
 harness axe, ngân sách bundle.
 
 ### 1.2 Chưa có
@@ -200,7 +200,7 @@ T3a → T3b → T3c; mỗi package khoảng 1–5 file và một PR. Không ch�
 - [ ] Side effect đi qua `onItemLocked`, **không** ở `validateAction`/`checkWinCondition`.
 
 **Kiểm chứng**
-- [ ] `pnpm test:e2e -- GT-001` xanh; `pnpm perf:budget` xanh.
+- [ ] `pnpm test:e2e -- GT-001` xanh; `pnpm --filter @mindkid/gates test` xanh.
 
 **Phụ thuộc:** T3 · **Cỡ:** M
 
@@ -254,7 +254,7 @@ của đúng một template; gate package trước phải xanh trước package 
 - [ ] Bộ test bề mặt trẻ §7.2 của P1.1 (T5) chạy **thật** trên 6 template và xanh.
 
 **Kiểm chứng**
-- [ ] `pnpm test -- kid-surface` xanh trên cả 6 template; `pnpm test:a11y` 0 violation.
+- [ ] `pnpm test -- kid-surface` xanh trên cả 6 template; `pnpm --filter @mindkid/ui test` 0 violation.
 
 **Phụ thuộc:** T3 · **Cỡ:** M
 
@@ -264,7 +264,7 @@ của đúng một template; gate package trước phải xanh trước package 
 - [ ] `BR-GTC-10`: round-trip `content_pack` × `content_contract` chạy trên **toàn bộ** level mẫu — 100% parse được.
 - [ ] Không import Vue/Pinia/VueUse trong engine; không network lúc chơi; không cấp phát mỗi frame.
 - [ ] Cổng FPS và thứ tự suy giảm đã đỏ được ít nhất một lần trên fixture.
-- [ ] `pnpm check && pnpm test && pnpm test:e2e && pnpm lint:specs && pnpm check:progress` xanh.
+- [ ] `pnpm check && pnpm test && pnpm test:e2e && pnpm --filter @mindkid/gates test && node packages/gates/scripts/check-progress.ts` xanh.
 - [ ] Human review — engine là **core business**, không auto-merge.
 
 ### Task 8 — Seed, evidence, promote

@@ -64,7 +64,7 @@
 - [x] Enum khớp §7.1, không còn `submitted`.
 - [x] 36 ô bảng chuyển đều có test.
 - [x] Checklist trả `missing[]` đúng cho mọi thực thể.
-- [x] `pnpm check && pnpm test && pnpm lint:specs && pnpm check:progress` xanh.
+- [x] `pnpm check && pnpm test && pnpm --filter @mindkid/gates test && node packages/gates/scripts/check-progress.ts` xanh.
 - [x] P0.3 đã đóng **trước** khi mở khối B.
 
 ---
@@ -116,7 +116,7 @@
 - [x] Mỗi `BR-CLC-*` `BR-VER-*` có test tham chiếu mã rule.
 - [x] [`content-lifecycle.md`](../specs/00-foundation/content-lifecycle.md) · [`content-versioning.md`](../specs/00-foundation/content-versioning.md) sang `implemented` chỉ khi đủ evidence.
 - [x] Tick **P0.6** ở [`14-implementation-sequence-todo.md`](14-implementation-sequence-todo.md) chỉ khi `check:progress` tự xanh.
-- [x] `pnpm check && pnpm test && pnpm lint:specs && pnpm check:progress` xanh.
+- [x] `pnpm check && pnpm test && pnpm --filter @mindkid/gates test && node packages/gates/scripts/check-progress.ts` xanh.
 
 ## Cổng dừng cuối
 

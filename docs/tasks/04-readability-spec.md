@@ -46,7 +46,7 @@ thay vì dịch ra."* Tên mục là từ vựng của định dạng spec, nên
 mục 4.4.
 
 Bản nháp đầu đề xuất dịch cả 1.420 tên mục sang tiếng Việt, kéo theo sửa
-[`scripts/lint-specs-lib.ts:297-319`](../../scripts/lint-specs-lib.ts) và một commit chạm 134
+[`packages/gates/src/lint-specs-lib.ts:297-319`](../../scripts/lint-specs-lib.ts) và một commit chạm 134
 file. Quyết định mới **bỏ hẳn** bước đó khỏi kế hoạch.
 *Nếu bác:* dịch tên mục sang tiếng Việt, bước 4 quay lại kế hoạch.
 
@@ -58,7 +58,7 @@ kiểm tra tự động mới cấm chúng quay lại, kèm ca âm chứng minh 
 nghiệp vụ (`BR-GAT-01`), mã lỗi (`TIER_LOCKED`), mã định danh spec (`ACCESS-GATING`), và mã kiểm
 tra tự động (`C6`) là hợp đồng thật: tên test mang mã, sổ đăng ký
 [`../specs/00-foundation/business-rules.md`](../specs/00-foundation/business-rules.md) tra theo
-mã, kiểm tra C5, C6, C13 đọc mã, và log của `pnpm lint:specs` in ra `[C6]`. Xoá mã là phá cổng.
+mã, kiểm tra C5, C6, C13 đọc mã, và log của `pnpm --filter @mindkid/gates test` in ra `[C6]`. Xoá mã là phá cổng.
 Cách xử lý: giữ mã, nhưng mỗi lần nhắc phải kèm tên đọc được — viết *"quy tắc `BR-GAT-01` (kiểm
 quyền ở tầng server, không kiểm ở trình duyệt)"* thay vì `BR-GAT-01` trần.
 Riêng nhóm viết tắt tự phát — `OQ`, `DMO`, `SIB`, `SCT`, `SPT`, `TAX`, `GTC`, `CLC` — bị bỏ hẳn,
@@ -93,7 +93,7 @@ diff đó sai.
 
 ### Hiện trạng đo được
 
-Đo 2026-08-07, tại commit `2a615bb`. `pnpm lint:specs` exit 0 với 130 spec, 13 kiểm tra, 0 lỗi,
+Đo 2026-08-07, tại commit `2a615bb`. `pnpm --filter @mindkid/gates test` exit 0 với 130 spec, 13 kiểm tra, 0 lỗi,
 213 cảnh báo. `pnpm test` 81 trên 81. Working tree sạch.
 
 Số dưới đây đếm bằng script, **đã bỏ mọi nội dung nằm trong khối mã**, và tách được `SIB` đứng
@@ -146,12 +146,12 @@ export PATH=/Users/macbook/.nvm/versions/node/v24.15.0/bin:$PATH
 
 | Việc | Lệnh |
 |---|---|
-| Kiểm tra corpus spec | `pnpm lint:specs` |
+| Kiểm tra corpus spec | `pnpm --filter @mindkid/gates test` |
 | Toàn bộ cổng tự động | `pnpm check` |
 | Chạy test | `pnpm test` |
 | Test có che phủ | `pnpm test:coverage` |
 | Sửa định dạng tự động | `pnpm lint:fix` |
-| Đếm tồn kho ký hiệu (script mới, dựng ở bước 1) | `pnpm inventory:symbols` |
+| Đếm tồn kho ký hiệu (script mới, dựng ở bước 1) | ~~`pnpm inventory:symbols`~~ — script đã xoá ở Task #103, chưa từng được đăng ký trong `package.json` |
 
 `pnpm check` chạy lần lượt `lint`, `lint:tokens`, `lint:deps`, `lint:specs`, `typecheck` — định
 nghĩa ở [`package.json`](../../package.json).
@@ -193,7 +193,7 @@ mindkid/
 └── scripts/
     ├── lint-specs.ts               Điểm vào, 59 dòng
     ├── lint-specs-lib.ts           13 kiểm tra, 1.516 dòng — thêm C14, C15
-    ├── inventory-symbols.ts        Script đếm mới, dựng ở bước 1
+    ├── inventory-symbols.ts        Script đếm mới, dựng ở bước 1 (đã xoá — Task #103)
     └── tests/lint-specs.test.ts    81 test — thêm ca âm cho C14, C15
 ```
 
@@ -244,7 +244,7 @@ Lưu ý khi thay: chỉ đổi **ký hiệu**, không đổi thuật ngữ đứ
 | `Tn` trong hồ sơ task | "Bước n" |
 | `Mn` trong hồ sơ task | "Mâu thuẫn n" |
 | `D-*` | Giữ mã (spec khác trích nó), luôn kèm tên: "quyết định D-Z — không partition bảng `telemetry_events` ở phase P0" |
-| `Cn` | Giữ mã (log của `pnpm lint:specs` in `[C6]`), luôn kèm tên: "kiểm tra C6 — business rule phải có cột vì sao" |
+| `Cn` | Giữ mã (log của `pnpm --filter @mindkid/gates test` in `[C6]`), luôn kèm tên: "kiểm tra C6 — business rule phải có cột vì sao" |
 
 Ba chữ viết tắt **không** nằm trong bảng này vì chúng là thuật ngữ chuyên môn, không phải viết
 tắt tự phát: `LO`, `ZPD`, `KPI`. Cách xử lý ở mục 4.3.
@@ -296,7 +296,7 @@ Danh sách cần chú giải một lần: `ZPD`, `LO`, `KPI`, `idempotency`, `ro
 
 Quy tắc ở mục 4.3 áp cho cả tên mục. Tên mười một mục là **từ vựng của định dạng spec**, không
 phải câu văn: chúng bị hard-code ở
-[`scripts/lint-specs-lib.ts:297-319`](../../scripts/lint-specs-lib.ts), được
+[`packages/gates/src/lint-specs-lib.ts:297-319`](../../scripts/lint-specs-lib.ts), được
 [`../specs/CONVENTIONS.md`](../specs/CONVENTIONS.md) mục 4 định nghĩa, và
 [`../specs/READING-GUIDE.md`](../specs/READING-GUIDE.md) mục 1 dùng để chỉ đường đọc.
 
@@ -316,7 +316,7 @@ Việt. Quyết định mới có ba hệ quả tốt:
 
 1. Bỏ hẳn bước 4 của kế hoạch — bước tốn nhất và rủi ro nhất, vì nó chạm 134 file trong một
    commit và phải sửa cả mã kiểm tra C3.
-2. Không đụng [`scripts/lint-specs-lib.ts`](../../scripts/lint-specs-lib.ts), nên kiểm tra C3
+2. Không đụng [`packages/gates/src/lint-specs-lib.ts`](../../scripts/lint-specs-lib.ts), nên kiểm tra C3
    giữ nguyên hành vi đã được 81 test bao phủ.
 3. Bốn file đang đặt tên mục riêng vẫn phải sửa về tên chuẩn — nhưng là tên chuẩn **tiếng Anh**,
    và việc đó gộp vào đợt của khu vực chứa chúng thay vì thành một bước riêng.
@@ -332,7 +332,7 @@ Trong một spec thật nằm ở `docs/specs/04-play/`, cùng liên kết đó 
 
 Lý do phải viết đường dẫn thật thay vì đường dẫn minh hoạ: kiểm tra C4 quét **cả nội dung trong
 khối mã**, không bỏ qua như kiểm tra C10 làm. Một đường dẫn ví dụ không resolve sẽ làm
-`pnpm lint:specs` đỏ. Đo được: bản nháp đầu của file này làm C4 báo 4 lỗi đúng vì lý do đó.
+`pnpm --filter @mindkid/gates test` đỏ. Đo được: bản nháp đầu của file này làm C4 báo 4 lỗi đúng vì lý do đó.
 
 ```markdown
 Sai:   Xem `access-ladder` §7.3.
@@ -343,7 +343,7 @@ Sai:   Theo `data-model-overview` §7 thì bảng này thuộc module ops.
 ```
 
 Với mã nguồn thì trỏ tới dòng cụ thể, ví dụ
-[`scripts/lint-specs-lib.ts:297`](../../scripts/lint-specs-lib.ts) — dạng `đường-dẫn:số-dòng`
+[`packages/gates/src/lint-specs-lib.ts:297`](../../scripts/lint-specs-lib.ts) — dạng `đường-dẫn:số-dòng`
 bấm được trong hầu hết trình soạn thảo.
 
 ### 4.6 Ví dụ đầy đủ, trước và sau
@@ -407,7 +407,7 @@ chạy đầu tiên** trên corpus hiện tại, và phải có ca âm chứng m
 **Kiểm tra C14 — cấm ký hiệu emoji trong corpus.** Quét `docs/specs/`, `docs/SPEC.md`,
 `docs/taxonomy/`, `docs/tasks/`. Bắt 15 ký tự trong bảng ở mục 4.1. Bỏ qua nội dung nằm trong
 khối mã, giống cách kiểm tra C10 đang xử lý — xem
-[`scripts/lint-specs-lib.ts`](../../scripts/lint-specs-lib.ts) hàm `checkC10`.
+[`packages/gates/src/lint-specs-lib.ts`](../../scripts/lint-specs-lib.ts) hàm `checkC10`.
 
 Kỳ vọng lần chạy đầu: **đỏ, đúng 2.925 vị trí**, khớp số ở mục 1. Nếu xanh thì script không đo gì.
 
@@ -434,7 +434,7 @@ lệnh `grep` viết thẳng vào dòng văn xuôi. Chúng phải chuyển vào 
 ### 5.2 Ca âm bắt buộc
 
 Mỗi ca âm là một unit test trong
-[`scripts/tests/lint-specs.test.ts`](../../scripts/tests/lint-specs.test.ts), theo đúng kiểu 81
+[`packages/gates/tests/lint-specs.test.ts`](../../scripts/tests/lint-specs.test.ts), theo đúng kiểu 81
 test đang có.
 
 | Ca âm | Đầu vào | Kỳ vọng |
@@ -462,10 +462,10 @@ nhầm là đã tự động.
 
 | Bất biến | Đo bằng |
 |---|---|
-| Số spec vẫn là 130 | `pnpm lint:specs` in ra "130 specs" |
+| Số spec vẫn là 130 | `pnpm --filter @mindkid/gates test` in ra "130 specs" |
 | Số spec đã duyệt vẫn là 23 | `grep -rl '^status: approved' docs/specs --include='*.md' \| wc -l` |
-| Không lỗi nào mới | `pnpm lint:specs` exit 0 |
-| Số cảnh báo không tăng quá mốc 213 | Dòng tổng kết của `pnpm lint:specs` |
+| Không lỗi nào mới | `pnpm --filter @mindkid/gates test` exit 0 |
+| Số cảnh báo không tăng quá mốc 213 | Dòng tổng kết của `pnpm --filter @mindkid/gates test` |
 | Test không giảm dưới 81 | `pnpm test` |
 | Không mã `G-C…` nào quay lại | `grep -rn 'G-C[1-6]-' docs/specs/ docs/SPEC.md` rỗng |
 | Không quyết định nào bị đổi | Đọc diff — mọi thay đổi phải là thay đổi cách viết |
@@ -507,12 +507,12 @@ nhầm là đã tự động.
 
 Task xong khi tất cả những điều dưới đây đúng cùng lúc:
 
-- [x] `pnpm lint:specs` exit 0 với **15 kiểm tra** trên 130 spec, 0 lỗi, cảnh báo không quá 213 (hiện 179).
+- [x] `pnpm --filter @mindkid/gates test` exit 0 với **15 kiểm tra** trên 130 spec, 0 lỗi, cảnh báo không quá 213 (hiện 179).
 - [x] `pnpm check` exit 0 và `pnpm test` ít nhất 89 test (hiện 89 test xanh).
 - [x] Kiểm tra C14 đỏ đúng **2.925** vị trí ở lần chạy đầu, xanh ở lần chạy cuối, và ba ca âm của nó chặn đúng.
 - [x] Kiểm tra C15 đỏ đúng **1.212** vị trí ở lần chạy đầu, xanh ở lần chạy cuối, và ba ca âm của nó chặn đúng.
-- [x] `pnpm inventory:symbols` báo 0 cho mọi vùng: `docs/specs/`, `docs/SPEC.md`, `docs/taxonomy/`, `docs/tasks/`.
-- [x] Tên mười một mục **vẫn tiếng Anh**, kiểm tra C3 in 0 cảnh báo (giảm từ 4 xuống 0), và [`scripts/lint-specs-lib.ts`](../../scripts/lint-specs-lib.ts) không bị đổi hằng số `FULL_SECTIONS` hay `ADDON_SECTIONS`.
+- [x] `pnpm inventory:symbols` báo 0 cho mọi vùng: `docs/specs/`, `docs/SPEC.md`, `docs/taxonomy/`, `docs/tasks/`. (Script xoá ở Task #103; kiểm tương đương nay là C14/C15 của cổng spec.)
+- [x] Tên mười một mục **vẫn tiếng Anh**, kiểm tra C3 in 0 cảnh báo (giảm từ 4 xuống 0), và [`packages/gates/src/lint-specs-lib.ts`](../../scripts/lint-specs-lib.ts) không bị đổi hằng số `FULL_SECTIONS` hay `ADDON_SECTIONS`.
 - [x] Không thuật ngữ chuyên môn nào bị dịch ra tiếng Việt.
 - [x] Sáu hồ sơ task cũ đã viết lại.
 - [x] Số spec `approved` vẫn đúng 23, không file nào đổi `status`.

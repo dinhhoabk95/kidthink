@@ -66,7 +66,7 @@ T0 đo template/studio/config/play/mastery/storage seams
 - [ ] Đối chiếu `BR-CGB-*`, `BR-GLM-*`, `BR-EMJ-*`, child-data và §7.3.
 - [ ] Xác nhận mọi code dùng chung nằm package/server phù hợp, không DB import từ `app/`.
 
-**Kiểm chứng:** `pnpm check:progress`; preflight không còn seam plan-only.
+**Kiểm chứng:** `node packages/gates/scripts/check-progress.ts`; preflight không còn seam plan-only.
 
 **Phụ thuộc:** cổng ra P3 · **Files:** task/spec nếu seam đổi · **Cỡ:** S.
 
@@ -78,7 +78,7 @@ T0 đo template/studio/config/play/mastery/storage seams
 - [ ] Spec/architecture/report/play owners ghi source kind, mastery exclusion, payload/logging/fail policy.
 - [ ] Mọi quota/error/key đăng ký trước code; SKU vẫn ẩn.
 
-**Kiểm chứng:** `pnpm lint:specs`; catalog/architecture/dependency tests xanh.
+**Kiểm chứng:** `pnpm --filter @mindkid/gates test`; catalog/architecture/dependency tests xanh.
 
 **Phụ thuộc:** T0 + human decisions · **Files:** CGB + architecture + catalog/entitlement + play/report/error specs · **Cỡ:** M theo PR contract.
 

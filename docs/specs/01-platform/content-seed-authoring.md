@@ -46,7 +46,7 @@ người + AI agent IDE ──viết──► seeder file trong repo (TS có ki�
                                         ▼
                           PR có người review  ◄── ĐÂY là cổng người
                                         │
-                              pnpm seed:content
+                              pnpm --filter @mindkid/db seed:content
                                         ▼
                      hàng published, content_version = 1
                                         │
@@ -79,7 +79,7 @@ cũng là tài sản và cũng cần review: code.
 | **AI agent IDE** | Soạn thảo file seeder theo `content_contract`, tra taxonomy · emoji registry · spec | Chạy `seed:content` lên môi trường ≠ local · merge PR · chạm `skills`/`strands` |
 | **Người review PR** | Đọc **từng bản** trong diff, approve = phát hành | Approve theo lô mà không mở nội dung |
 | **cổng tự động** | Chạy 8 cổng §7.3 + `seed:content --dry-run` trên DB tạm | Merge tự động |
-| **`pnpm seed:content`** | INSERT hàng `published` + `content_review_log` + batch | `UPDATE` hàng đã có |
+| **`pnpm --filter @mindkid/db seed:content`** | INSERT hàng `published` + `content_review_log` + batch | `UPDATE` hàng đã có |
 | **Manager trong studio** | Từ đây quản lý nội dung: tạo version mới, archive, rollback | Sửa tại chỗ hàng đã `published` |
 
 ## 3. Entry points
@@ -89,10 +89,10 @@ cũng là tài sản và cũng cần review: code.
 | `packages/db/src/seed-content/c1..c6/gt-001..gt-006.ts` | Game level, chia theo **năng lực đã chốt C1–C6** × template |
 | `packages/db/src/seed-master/taxonomy/learning-objectives/c1..c6.ts` | LO Lớp 1 do [`taxonomy-service.md`](taxonomy-service.md) sở hữu; P0 dùng cùng quy tắc PR review, không tính là lô Lớp 2 của spec này |
 | `packages/db/src/seed-content/lessons/*.ts` · `curricula/*.ts` | P3 |
-| `pnpm seed:check` | Chạy 8 cổng, không chạm DB |
-| `pnpm seed:content --dry-run` | DB tạm → seed → checklist publish → rollback |
-| `pnpm seed:content --batch=SEED-*` | Ghi thật |
-| `pnpm seed:report` | Phủ theo competency · skill · template; chỉ ra khoảng trống |
+| `pnpm --filter @mindkid/db seed:check` | Chạy 8 cổng, không chạm DB |
+| `pnpm --filter @mindkid/db seed:content --dry-run` | DB tạm → seed → checklist publish → rollback |
+| `pnpm --filter @mindkid/db seed:content --batch=SEED-*` | Ghi thật |
+| `pnpm --filter @mindkid/db seed:report` | Phủ theo competency · skill · template; chỉ ra khoảng trống |
 | [`game-level-studio.md`](../06-admin/game-level-studio.md) | Nơi admin quản lý **sau khi** seed |
 
 Cấm — **NEVER trong đường request.** Seed là lệnh vận hành, chạy lúc dựng môi trường hoặc lúc
@@ -101,17 +101,17 @@ deploy một lô nội dung đã merge.
 ## 4. Main flow
 
 ```
-1. Chọn khoảng trống cần lấp:  pnpm seed:report  → skill nào chưa có level published
+1. Chọn khoảng trống cần lấp:  pnpm --filter @mindkid/db seed:report  → skill nào chưa có level published
 2. Người biên soạn + AI agent IDE soạn seeder file
        ├── kiểu content_pack suy ra từ content_contract của template (§7.2)
        ├── emoji chỉ lấy từ emoji_registry
        └── skill_codes / learning_objective_codes là FK có thật
-3. pnpm seed:check                 → 8 cổng, chạy local, sửa cho tới khi xanh
+3. pnpm --filter @mindkid/db seed:check                 → 8 cổng, chạy local, sửa cho tới khi xanh
 4. Mở PR
 5. Cổng tự động chạy 8 cổng + seed:content --dry-run trên DB tạm
 6. ► NGƯỜI REVIEW ĐỌC TỪNG BẢN  ← cổng người
 7. Merge  = quyết định phát hành
-8. pnpm seed:content --batch=…     → INSERT published + content_review_log + batch row
+8. pnpm --filter @mindkid/db seed:content --batch=…     → INSERT published + content_review_log + batch row
 9. Từ đây: admin quản lý trong studio; sửa = version mới, cấm UPDATE tại chỗ
 ```
 
@@ -141,7 +141,7 @@ deploy một lô nội dung đã merge.
 | `BR-CSA-08` (AI không sinh taxonomy) | AI cấm — **NEVER sinh `skills` hay `strands`** | Taxonomy là Lớp 1, do người thiết kế. Sai một skill là sai mọi thứ treo lên nó |
 | `BR-CSA-09` (LO soạn bằng seeder) | `learning_objectives` soạn bằng seeder như game level, chịu đúng 8 cổng và đúng PR review | LO là Tầng 4 taxonomy nhưng là **mô tả hành vi** — soạn được, miễn có người đọc |
 | `BR-CSA-10` (code bất biến) | `code` trong seeder **bất biến** sau khi merge | [`id-conventions.md`](../00-foundation/id-conventions.md) — mã published là neo của mọi telemetry và báo cáo |
-| `BR-CSA-11` (nguồn sự thật) | Seeder file là **nguồn sự thật** của lô nền. `pnpm seed:check --against-db` báo lệch giữa repo và DB | Sửa DB tay rồi quên seeder = môi trường tiếp theo mất bản sửa |
+| `BR-CSA-11` (nguồn sự thật) | Seeder file là **nguồn sự thật** của lô nền. `pnpm --filter @mindkid/db seed:check --against-db` báo lệch giữa repo và DB | Sửa DB tay rồi quên seeder = môi trường tiếp theo mất bản sửa |
 | `BR-CSA-12` (TS có kiểu) | `content_pack` viết bằng **TS có kiểu**, kiểu lấy từ `content_contract` của template. Cấm JSON trần | Sai schema bắt lúc `tsc` rẻ hơn bắt lúc cổng tự động, rẻ hơn nhiều bắt lúc trẻ đang chơi |
 | `BR-CSA-13` (chỉ emoji registry) | Emoji **chỉ** lấy từ `emoji_registry`. Cấm — NEVER emoji ngoài registry | [`emoji-registry.md`](emoji-registry.md) `BR-EMJ-*` — ref không resolve được là ô trống trên màn hình trẻ |
 | `BR-CSA-14` (provenance) | Mọi hàng seed mang `seed_batch_id` + `origin` + `authored_in = 'repo_seed'` | Khi phát hiện một lô sai, phải truy được lô nào cùng PR |
@@ -272,7 +272,7 @@ Cổng tự động fail khi `gate_failures.length > 0` hoặc `drift.length > 0
 Scenario: BR-CSA-01 — seed không UPDATE bản đã published
   Given một game level code GL-C4-CLS-SORT-0021 version 1 đang published
   And seeder sửa content_pack của GL-C4-CLS-SORT-0021 mà giữ nguyên content_version
-  When chạy pnpm seed:content
+  When chạy pnpm --filter @mindkid/db seed:content
   Then lệnh thoát khác 0
   And nội dung trong DB không đổi
   And thông báo chỉ ra phải khai content_version mới
@@ -280,14 +280,14 @@ Scenario: BR-CSA-01 — seed không UPDATE bản đã published
 Scenario: BR-CSA-01 — version mới thì INSERT và archive bản cũ
   Given GL-C4-CLS-SORT-0021 version 1 đang published
   And seeder khai GL-C4-CLS-SORT-0021 content_version 2
-  When chạy pnpm seed:content
+  When chạy pnpm --filter @mindkid/db seed:content
   Then version 2 có status published
   And version 1 có status archived
   And cả hai đổi trong một transaction
 
 Scenario: BR-CSA-02 — seed ghi thẳng published
   Given một batch 30 game level qua đủ 8 cổng và đã merge
-  When chạy pnpm seed:content
+  When chạy pnpm --filter @mindkid/db seed:content
   Then cả 30 hàng có status = published
   And không hàng nào đi qua trạng thái draft hay in_review
 
@@ -300,21 +300,21 @@ Scenario: BR-CSA-03 — mỗi hàng seed có bằng chứng phát hành
 
 Scenario: BR-CSA-04 — trượt checklist publish thì rollback cả batch
   Given một batch 30 bản, trong đó một bản thiếu learning objective
-  When chạy pnpm seed:content
+  When chạy pnpm --filter @mindkid/db seed:content
   Then transaction bị rollback
   And số hàng trong bảng game_levels không đổi
   And thông báo nêu code của bản thiếu
 
 Scenario: BR-CSA-06 — chạy lại là no-op
   Given một batch đã seed xong
-  When chạy lại pnpm seed:content với cùng batch
+  When chạy lại pnpm --filter @mindkid/db seed:content với cùng batch
   Then rows_inserted bằng 0
   And rows_skipped_idempotent bằng số bản trong batch
   And không hàng nào bị UPDATE
 
 Scenario: cổng 0 — code trùng giữa hai seeder file
   Given hai file seeder cùng khai code GL-C4-CLS-SORT-0021
-  When chạy pnpm seed:check
+  When chạy pnpm --filter @mindkid/db seed:check
   Then cổng 0 fail
   And thông báo nêu cả hai đường dẫn file
   And không kết nối DB nào được mở
@@ -327,13 +327,13 @@ Scenario: BR-CSA-12 — sai content_pack bắt được lúc tsc
 
 Scenario: BR-CSA-13 — emoji ngoài registry bị chặn
   Given một seeder dùng emoji không có trong emoji_registry
-  When chạy pnpm seed:check
+  When chạy pnpm --filter @mindkid/db seed:check
   Then cổng 3 fail
   And thông báo nêu rõ ref nào không hợp lệ
 
 Scenario: cổng 5 — mechanic không phù hợp tuổi bị chặn
   Given một seeder dùng GT-006 với age_min = 3
-  When chạy pnpm seed:check
+  When chạy pnpm --filter @mindkid/db seed:check
   Then cổng 5 fail
   And lý do nêu ràng buộc band tuổi của template
 
@@ -344,24 +344,24 @@ Scenario: BR-CSA-07 — AI agent không phát hành được
 
 Scenario: BR-CSA-08 — seeder không tạo được skill
   Given một seeder cố khai một skill mới
-  When chạy pnpm seed:check
+  When chạy pnpm --filter @mindkid/db seed:check
   Then cổng 5 fail với thông báo taxonomy là Lớp 1
 
 Scenario: BR-CSA-11 — lệch giữa repo và DB bị bắt
   Given một hàng trong DB bị sửa tay khác với seeder
-  When chạy pnpm seed:check --against-db
+  When chạy pnpm --filter @mindkid/db seed:check --against-db
   Then drift liệt kê code và field lệch
   And cổng tự động fail
 
 Scenario: studio thắng seed khi trùng code
   Given một game level cùng code do manager tạo trong studio
-  When chạy pnpm seed:content
+  When chạy pnpm --filter @mindkid/db seed:content
   Then seed từ chối bản đó
   And nội dung do manager tạo không đổi
   And batch báo xung đột kèm code
 
 Scenario: dry-run không chạm DB thật
-  Given chạy pnpm seed:content --dry-run
+  Given chạy pnpm --filter @mindkid/db seed:content --dry-run
   When lệnh kết thúc
   Then báo cáo đầy đủ gate_failures và rows_inserted dự kiến
   And số hàng trong DB thật không đổi

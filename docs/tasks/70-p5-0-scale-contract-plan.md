@@ -85,7 +85,7 @@ Sau Task #70 + cổng P4:
 - [ ] Negative Gherkin phủ duplicate webhook, replay, partial failure, double refund và reconciliation lệch.
 - [ ] Index và BR/error/event registries khớp, không copy contract của [`payment-flow.md`](../specs/00-foundation/payment-flow.md).
 
-**Verification:** `pnpm lint:specs`; dependency graph không chu trình; human Finance/Security review.
+**Verification:** `pnpm --filter @mindkid/gates test`; dependency graph không chu trình; human Finance/Security review.
 
 **Dependencies:** Checkpoint A · **Files likely touched:** từng payment spec + registries/index theo lát ≤5 file · **Estimated scope:** M mỗi spec.
 
@@ -97,7 +97,7 @@ Sau Task #70 + cổng P4:
 - [ ] [`pwa-install.md`](../specs/01-platform/pwa-install.md) chỉ sở hữu install UX; [`offline-play.md`](../specs/01-platform/offline-play.md) chỉ sở hữu buffer phiên.
 - [ ] Negative Gherkin chặn cache premium sai quyền, Child tự tải pack và stale pack mở quá hạn.
 
-**Verification:** `pnpm lint:specs`; link/BR/error/event/dependency checks; Security/Product review.
+**Verification:** `pnpm --filter @mindkid/gates test`; link/BR/error/event/dependency checks; Security/Product review.
 
 **Dependencies:** Checkpoint A · **Files likely touched:** offline-pack spec, PWA/offline links, registries/index theo lát ≤5 file · **Estimated scope:** M.
 
@@ -109,7 +109,7 @@ Sau Task #70 + cổng P4:
 - [ ] Mọi spec accepted `approved`; mọi blocker có owner; không hardcode corpus count mới ở nhiều nơi.
 - [ ] Human review diff contract trước khi Task #71 hoặc #72 viết code.
 
-**Verification:** `pnpm check && pnpm test && pnpm lint:specs`; query coverage roadmap ↔ spec ↔ task.
+**Verification:** `pnpm check && pnpm test && pnpm --filter @mindkid/gates test`; query coverage roadmap ↔ spec ↔ task.
 
 **Dependencies:** T2–T3 · **Files likely touched:** roadmap, index, task manifest/evidence · **Estimated scope:** S.
 

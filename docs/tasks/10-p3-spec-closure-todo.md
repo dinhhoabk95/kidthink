@@ -25,8 +25,8 @@ Bước 0 → Đợt 1 (2) → Đợt 2 (4) → Cổng dừng A → Đợt 3 (2)
 ## Bước 0 — đo lại trước khi bắt đầu
 
 - [ ] `git status` sạch
-- [ ] `pnpm lint:specs 2>&1 | tail -2` — ghi lại số lỗi và cảnh báo vào đây: ______
-- [ ] `pnpm lint:specs 2>&1 | grep -oE "\[C[0-9]+\]" | sort | uniq -c` — ghi `C6`: ____ `C16`: ____
+- [ ] `pnpm --filter @mindkid/gates test 2>&1 | tail -2` — ghi lại số lỗi và cảnh báo vào đây: ______
+- [ ] `pnpm --filter @mindkid/gates test 2>&1 | grep -oE "\[C[0-9]+\]" | sort | uniq -c` — ghi `C6`: ____ `C16`: ____
 - [ ] `grep -rhoE "D-B[A-Z]" docs/specs docs/tasks | sort -u | tail -1` — mã lớn nhất: ____
 - [ ] Đọc [`CONVENTIONS.md`](../specs/CONVENTIONS.md) mục 10 (checklist review spec)
 - [ ] Xác nhận 12 spec đích còn `draft`: `for f in $(grep -rl "^phase: P3" --include="*.md" docs/specs); do grep -q "^status: draft$" $f && echo $f; done | wc -l` ra **12**
@@ -42,12 +42,12 @@ Bước 0 → Đợt 1 (2) → Đợt 2 (4) → Cổng dừng A → Đợt 3 (2)
 - [x] Chốt thang `strength` theo cột thật; ghi `D-BA`
 - [x] Sửa [`taxonomy-service.md`](../specs/01-platform/taxonomy-service.md) mục 11 Q3 sang trạng
       thái đã đóng, trỏ [`adaptive-engine.md`](../specs/01-platform/adaptive-engine.md) và mã `D-BA` vừa ghi
-- [x] `pnpm lint:specs` ngay sau khi sửa [`taxonomy-service.md`](../specs/01-platform/taxonomy-service.md) — **0 lỗi**
+- [x] `pnpm --filter @mindkid/gates test` ngay sau khi sửa [`taxonomy-service.md`](../specs/01-platform/taxonomy-service.md) — **0 lỗi**
 - [x] Điền "vì sao" cho `BR-ADP-07` và `BR-ADP-09`
 - [x] Q3 (chấm tay skill C5) — chốt hoãn sang P4 với `Chủ: Studio UI`
 - [x] Bảng mục 11 sang 5 cột
 - [x] `status: approved`, `reviewed` sang ngày làm
-- [x] `pnpm lint:specs | grep adaptive-engine` — không còn dòng nào
+- [x] `pnpm --filter @mindkid/gates test | grep adaptive-engine` — không còn dòng nào
 - [x] Commit `feat(specs): T10 bước 1 — approve adaptive-engine`
 
 ### Bước 2 — [`activity-model.md`](../specs/05-content/activity-model.md)
@@ -57,7 +57,7 @@ Bước 0 → Đợt 1 (2) → Đợt 2 (4) → Cổng dừng A → Đợt 3 (2)
 - [x] Q1 (danh sách an toàn cần nguồn tham chiếu nào) — hoạt động ngoài màn hình đụng an toàn
       trẻ; `Chủ: người quyết`, `Chặn phase: P3`
 - [x] Bảng mục 11 sang 5 cột
-- [x] `status: approved`; `pnpm lint:specs | grep activity-model` trống
+- [x] `status: approved`; `pnpm --filter @mindkid/gates test | grep activity-model` trống
 - [x] Commit `feat(specs): T10 bước 2 — approve activity-model`
 
 ---
@@ -105,7 +105,7 @@ Bước 0 → Đợt 1 (2) → Đợt 2 (4) → Cổng dừng A → Đợt 3 (2)
 ## Cổng dừng A
 
 - [x] 6/6 spec đợt 1 và 2 `approved`
-- [x] `pnpm lint:specs` — 0 lỗi; `C6` giảm đúng **10** so với bước 0
+- [x] `pnpm --filter @mindkid/gates test` — 0 lỗi; `C6` giảm đúng **10** so với bước 0
 - [x] `C16` giảm đúng **6**
 - [x] [`taxonomy-service.md`](../specs/01-platform/taxonomy-service.md) Q3 đã đóng, có mã `D-BA`, spec vẫn `approved`, 0 lỗi
 - [x] Thang `strength` (numeric 0.00-1.00) đã khớp schema hiện tại, **không** phát sinh migration mới
@@ -171,7 +171,7 @@ Bước 0 → Đợt 1 (2) → Đợt 2 (4) → Cổng dừng A → Đợt 3 (2)
 - [x] 11/12 spec `approved`
 - [x] Ba hàng "ghim version" (Bước 8, 9, 11) đều trỏ `D-VER-02`, không hàng nào tự chốt lại
 - [x] Hai hàng "42 tuần / 126 buổi" (Bước 7, 11) trùng nội dung và trùng `Chủ: người quyết`
-- [x] `pnpm lint:specs` 0 lỗi
+- [x] `pnpm --filter @mindkid/gates test` 0 lỗi
 
 ---
 
@@ -206,6 +206,6 @@ Bước 0 → Đợt 1 (2) → Đợt 2 (4) → Cổng dừng A → Đợt 3 (2)
 ## Cổng dừng cuối
 
 - [x] `for f in $(grep -rl "^phase: P3" --include="*.md" docs/specs); do grep -q "^status: draft$" $f && echo $f; done` — **không in gì** (tất cả 12 P3 spec `approved`)
-- [x] `pnpm lint:specs` — 0 lỗi; `C6` giảm 25 (từ 62 xuống 37), `C16` giảm 12 (từ 36 xuống 24)
+- [x] `pnpm --filter @mindkid/gates test` — 0 lỗi; `C6` giảm 25 (từ 62 xuống 37), `C16` giảm 12 (từ 36 xuống 24)
 - [x] `pnpm check && pnpm test` xanh (260/260 tests passed)
 - [x] Task kế tiếp mở khoá: [`11-p4-p5-closure-plan.md`](11-p4-p5-closure-plan.md)

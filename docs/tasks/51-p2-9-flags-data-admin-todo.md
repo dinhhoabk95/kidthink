@@ -109,7 +109,7 @@
 - [x] Webhook SNS ghi đúng trạng thái; nhận trùng không sinh hàng trùng.
 - [x] Sửa template → bản mới `draft`, email vẫn dùng bản published cũ.
 - [x] `content_reviewer` bị **403** ở cả bốn bề mặt.
-- [x] `pnpm check && pnpm test && pnpm test:e2e && pnpm lint:specs && pnpm check:progress` xanh.
+- [x] `pnpm check && pnpm test && pnpm test:e2e && pnpm --filter @mindkid/gates test && node packages/gates/scripts/check-progress.ts` xanh.
 
 ---
 

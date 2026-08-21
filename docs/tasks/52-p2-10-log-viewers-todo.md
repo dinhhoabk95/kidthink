@@ -100,7 +100,7 @@
 - [x] Mất số liệu queue → `/system` hiện "không xác định", **không** xanh.
 - [x] Không thao tác nào phát ra từ `/system`.
 - [x] `content_reviewer` bị **403** ở cả ba màn hình.
-- [x] `pnpm check && pnpm test && pnpm test:e2e && pnpm lint:specs && pnpm check:progress` xanh.
+- [x] `pnpm check && pnpm test && pnpm test:e2e && pnpm --filter @mindkid/gates test && node packages/gates/scripts/check-progress.ts` xanh.
 
 ---
 

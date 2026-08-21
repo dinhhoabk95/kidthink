@@ -30,7 +30,7 @@
 - [x] Test dương: optional approved không chặn gate.
 - [x] Test âm: đổi optional thành `mvp: true` thì gate đỏ.
 - [x] Task #14 ghi “mọi spec `mvp: true` của phase”.
-- [x] `pnpm test -- check-progress && pnpm check:progress` xanh.
+- [x] `pnpm test -- check-progress && node packages/gates/scripts/check-progress.ts` xanh.
 
 ## Task 1 — Freeze contract MFA và recovery
 
@@ -41,7 +41,7 @@
 - [x] [`auth-tokens-sessions.md`](../specs/01-platform/auth-tokens-sessions.md) sở hữu challenge/session invariants.
 - [x] [`user-detail.md`](../specs/06-admin/user-detail.md) chỉ thêm link sang recovery surface riêng.
 - [x] Schema spec sở hữu recovery request và token purpose.
-- [x] `pnpm lint:specs` xanh; §11 không còn câu hỏi chặn P2 chưa được quyết.
+- [x] `pnpm --filter @mindkid/gates test` xanh; §11 không còn câu hỏi chặn P2 chưa được quyết.
 
 ## Task 2 — Registry-first
 
@@ -49,7 +49,7 @@
 - [x] Đăng ký audit action create/verify/complete/cancel; admin action có reason.
 - [x] Đăng ký notification request/verification và completed/cancelled cần thiết.
 - [x] Fixture dùng code chưa đăng ký làm gate đỏ.
-- [x] `pnpm lint:specs` xanh.
+- [x] `pnpm --filter @mindkid/gates test` xanh.
 
 ## Checkpoint A — Contract
 
@@ -161,7 +161,7 @@
 - [x] [`mfa.md`](../specs/03-account/mfa.md) → `implemented`; không open question chặn phase.
 - [x] Tick P2.11 chỉ khi `check:progress` chấp nhận evidence thật.
 - [x] Full gate:
-      `pnpm check && pnpm test && pnpm test:e2e && pnpm lint:specs && pnpm check:progress`.
+      `pnpm check && pnpm test && pnpm test:e2e && pnpm --filter @mindkid/gates test && node packages/gates/scripts/check-progress.ts`.
 - [x] Human review trước merge; không auto-merge, không migration ngoài local.
 
 ---

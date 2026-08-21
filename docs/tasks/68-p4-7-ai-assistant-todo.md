@@ -10,7 +10,7 @@
 - [x] Benchmark/chốt provider+model tiếng Việt, cost/latency; Legal chốt DPA/retention/training.
 - [x] Architecture ghi package/SDK/timeout/model version; moderation port duy nhất.
 - [x] Chốt refund provider/moderation fail, egress allow-list và join catalog #69.
-- [x] `pnpm lint:specs` + dependency/catalog pending tests xanh.
+- [x] `pnpm --filter @mindkid/gates test` + dependency/catalog pending tests xanh.
 
 ## Checkpoint A
 

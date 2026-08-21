@@ -116,7 +116,7 @@
 - [x] Không Vue/Pinia/VueUse trong engine.
 - [x] Không network lúc chơi; không cấp phát mỗi frame.
 - [x] Cổng FPS và suy giảm đã **đỏ** ít nhất một lần trên fixture.
-- [x] `pnpm check && pnpm test && pnpm test:e2e && pnpm lint:specs && pnpm check:progress` xanh.
+- [x] `pnpm check && pnpm test && pnpm test:e2e && pnpm --filter @mindkid/gates test && node packages/gates/scripts/check-progress.ts` xanh.
 - [x] Human review diff — core business.
 
 ---

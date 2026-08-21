@@ -69,7 +69,7 @@ T0 đo curriculum/player/enrollment/balance seams P3
 - [ ] Đối chiếu đủ `BR-PCU-*`, ownership/child-data/access-ladder và §7.3.
 - [ ] Xác nhận cách tái dùng không làm `apps/web/app` import DB/admin code.
 
-**Kiểm chứng:** `pnpm check:progress`; dependency report không còn plan-only seam.
+**Kiểm chứng:** `node packages/gates/scripts/check-progress.ts`; dependency report không còn plan-only seam.
 
 **Phụ thuộc:** cổng ra P3 · **Files:** task/spec nếu seam đổi · **Cỡ:** S.
 
@@ -81,7 +81,7 @@ T0 đo curriculum/player/enrollment/balance seams P3
 - [ ] Spec/model owner ghi personal source/enrollment policy, tuần rỗng/archive và cảnh báo không chặn.
 - [ ] Đăng ký quota key + lỗi trước code; bỏ cách hiểu “lớp” cần roster khỏi P4.
 
-**Kiểm chứng:** `pnpm lint:specs`; entitlement/catalog registry tests xanh.
+**Kiểm chứng:** `pnpm --filter @mindkid/gates test`; entitlement/catalog registry tests xanh.
 
 **Phụ thuộc:** T0 + human decisions · **Files:** PCU/entitlement/package/curriculum-player/error specs · **Cỡ:** M.
 
@@ -163,7 +163,7 @@ T0 đo curriculum/player/enrollment/balance seams P3
 - [ ] Mỗi `BR-PCU-01…08` có test mang mã; full gate + progress xanh.
 - [ ] Spec `implemented` và SKU public cùng release sau human review; không seed/publish ngoài local.
 
-**Kiểm chứng:** `pnpm check`, `pnpm test`, E2E, `pnpm lint:specs`, `pnpm check:progress`.
+**Kiểm chứng:** `pnpm check`, `pnpm test`, E2E, `pnpm --filter @mindkid/gates test`, `node packages/gates/scripts/check-progress.ts`.
 
 **Phụ thuộc:** T5–T6 · **Files:** security/evidence/spec/catalog/progress tests · **Cỡ:** M.
 

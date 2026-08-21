@@ -27,7 +27,7 @@ Ba spec, ba loại ngưỡng:
 3. [`performance-budgets.md`](../specs/08-quality/performance-budgets.md) sở hữu **ngân sách** —
    bundle, thời gian, thứ tự suy giảm.
 
-Kết quả bước này là **cổng**, không phải giao diện: `pnpm lint:tokens` mở rộng, axe chạy được,
+Kết quả bước này là **cổng**, không phải giao diện: `pnpm --filter @mindkid/gates test` mở rộng, axe chạy được,
 ngân sách bundle đo được. Mỗi cổng phải có **ca âm** — một commit cố tình vi phạm phải làm cổng
 đỏ. Bài học `ultracite check` exit 0 dù có lỗi áp thẳng vào đây.
 
@@ -47,7 +47,7 @@ ngân sách bundle đo được. Mỗi cổng phải có **ca âm** — một co
 
 | Thứ | Nơi |
 |---|---|
-| `pnpm lint:tokens` | [`scripts/lint-tokens.ts`](../../scripts/lint-tokens.ts), đã nằm trong `pnpm check` |
+| `pnpm --filter @mindkid/gates test` | [`packages/gates/src/lint-tokens.ts`](../../scripts/lint-tokens.ts), đã nằm trong `pnpm check` |
 | `apps/web` khung Nuxt 4.5 | `apps/web/nuxt.config.ts` |
 | catalog version | `pnpm-workspace.yaml` — `nuxt ^4.5.1`, `vue-tsc ^3.3.9` |
 
@@ -83,7 +83,7 @@ Cổng xanh trên repo không có vi phạm chứng minh **không** điều gì.
 
 **D-FD — quy tắc grep của §7.5 và §7.3 thành lệnh, không thành thói quen của reviewer.** Hai
 spec liệt kê 5 lệnh `grep` để chạy trước merge. Lệnh nằm trong tài liệu là lệnh không ai chạy.
-Gộp hết vào `pnpm lint:tokens` (mở rộng phạm vi: hex trong `.vue`, kit thứ hai, `dark:` trên bề
+Gộp hết vào `pnpm --filter @mindkid/gates test` (mở rộng phạm vi: hex trong `.vue`, kit thứ hai, `dark:` trên bề
 mặt trẻ, emoji làm affordance, `rounded-md`/`rounded-lg`, `.vue` > 800 dòng).
 
 **D-FE — Nuxt UI v4 + Tailwind v4 vào catalog ở P1.1, không ở P1.2.** `BR-DSC-03` khai Nuxt UI
@@ -127,7 +127,7 @@ T1 token + designTokens.ts (một nguồn mỗi tầng)
 
 **Phụ thuộc:** không · **Cỡ:** M
 
-### Task 2 — `pnpm lint:tokens` mở rộng, mỗi rule một ca âm
+### Task 2 — `pnpm --filter @mindkid/gates test` mở rộng, mỗi rule một ca âm
 
 **Tiêu chí nghiệm thu**
 - [ ] `BR-DSC-01`: hex literal trong `.vue` (template, `<style>`, inline `:style`) → đỏ.
@@ -142,8 +142,8 @@ T1 token + designTokens.ts (một nguồn mỗi tầng)
 - [ ] Cổng exit code **thật** — không phải in cảnh báo rồi exit 0.
 
 **Kiểm chứng**
-- [ ] `pnpm lint:tokens` xanh trên repo sạch, đỏ trên mỗi fixture.
-- [ ] `node scripts/tests/lint-tokens.test.ts` (hoặc vitest tương đương) phủ đủ 8 rule.
+- [ ] `pnpm --filter @mindkid/gates test` xanh trên repo sạch, đỏ trên mỗi fixture.
+- [ ] `node packages/gates/tests/lint-tokens.test.ts` (hoặc vitest tương đương) phủ đủ 8 rule.
 
 **Phụ thuộc:** T1 · **Cỡ:** M
 
@@ -174,7 +174,7 @@ T1 token + designTokens.ts (một nguồn mỗi tầng)
 - [ ] Bỏ qua rule axe phải ghi lý do **tại chỗ**, cấm tắt toàn cục (§5).
 
 **Kiểm chứng**
-- [ ] `pnpm test:a11y` xanh trên 4 page object, đỏ trên fixture vi phạm.
+- [ ] `pnpm --filter @mindkid/ui test` xanh trên 4 page object, đỏ trên fixture vi phạm.
 
 **Phụ thuộc:** T3 · **Cỡ:** M
 
@@ -205,7 +205,7 @@ T1 token + designTokens.ts (một nguồn mỗi tầng)
 - [ ] Ghi nợ tường minh (`D-FB`): ngưỡng FPS, `BR-PRF-03/04/05` → **P1.2**; `fps_sample` và alert → **P1.16**.
 
 **Kiểm chứng**
-- [ ] `pnpm perf:budget` xanh trên repo sạch, đỏ trên fixture vượt ngân sách.
+- [ ] `pnpm --filter @mindkid/gates test` xanh trên repo sạch, đỏ trên fixture vượt ngân sách.
 - [ ] `pnpm test -- perf-budget` assertion tham chiếu `BR-PRF-01` `BR-PRF-02` `BR-PRF-08`.
 
 **Phụ thuộc:** T3 · **Cỡ:** M
@@ -214,7 +214,7 @@ T1 token + designTokens.ts (một nguồn mỗi tầng)
 
 - [ ] Mỗi cổng mới đều có **ít nhất một ca âm** làm nó đỏ (`D-FC`) — kiểm tay từng cái.
 - [ ] Không có nguồn thứ hai cho sàn chạm hay token màu.
-- [ ] `pnpm check && pnpm test && pnpm lint:specs && pnpm check:progress` xanh.
+- [ ] `pnpm check && pnpm test && pnpm --filter @mindkid/gates test && node packages/gates/scripts/check-progress.ts` xanh.
 - [ ] Không có file `.vue` nào chứa hex; không có kit thứ hai trong `pnpm-lock.yaml`.
 - [ ] Human review diff — đây là bước dựng cổng, cổng sai làm hỏng cả P1.
 

@@ -38,14 +38,14 @@
 
 ## WP96.4 — Cổng ma trận và sàn
 
-- [x] Cổng đọc ma trận 18 ô, sáu năng lực nhân ba dải tuổi (`scripts/lint-lesson-exemplar-matrix.ts`).
+- [x] Cổng đọc ma trận 18 ô, sáu năng lực nhân ba dải tuổi (`packages/db/tests/gates/lesson-exemplar-matrix.test.ts`).
 - [x] Sàn 18 tiết học mẫu.
-- [x] Fixture thiếu một ô; test khẳng định cổng đỏ (`scripts/tests/lint-lesson-exemplar-matrix.test.ts`).
+- [x] Fixture thiếu một ô; test khẳng định cổng đỏ (`packages/db/tests/gates/lesson-exemplar-matrix.test.ts`).
 
 ## WP96.5 — Đóng task
 
 - [x] 11 rule `BR-LEX` có test gọi tên mã.
 - [x] Lật `status` sang `implemented`.
-- [x] `pnpm check` · `pnpm test` · `pnpm check:progress` xanh.
+- [x] `pnpm check` · `pnpm test` · `node packages/gates/scripts/check-progress.ts` xanh.
 - [x] Mở PR cho người review diff, không tự merge.
 

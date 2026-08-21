@@ -88,3 +88,71 @@ export function formatClockTime(time: ClockTime): string {
   const mStr = String(time.minute).padStart(2, "0");
   return `${hStr}:${mStr}`;
 }
+
+// ─── GT-019 / Discrete 90° Piece Rotation & Flip Transformation ───
+
+export type RotationAngle90 = 0 | 90 | 180 | 270;
+export type FlipAxis = "none" | "horizontal" | "vertical";
+
+export interface PieceTransform {
+  readonly rotation: RotationAngle90;
+  readonly flip: FlipAxis;
+}
+
+/**
+ * Xoay mảnh ghép góc 90° (bằng nút bấm rời, cấm cử chỉ 2 ngón — BR-LVB-02, BR-ENG-12).
+ */
+export function rotatePiece90(
+  current: RotationAngle90,
+  direction: "cw" | "ccw" = "cw"
+): RotationAngle90 {
+  if (direction === "cw") {
+    switch (current) {
+      case 0:
+        return 90;
+      case 90:
+        return 180;
+      case 180:
+        return 270;
+      case 270:
+        return 0;
+      default:
+        return 0;
+    }
+  }
+  switch (current) {
+    case 0:
+      return 270;
+    case 90:
+      return 0;
+    case 180:
+      return 90;
+    case 270:
+      return 180;
+    default:
+      return 0;
+  }
+}
+
+/**
+ * Lật mảnh ghép theo trục ngang/dọc (nút bấm).
+ */
+export function togglePieceFlip(
+  current: FlipAxis,
+  axis: "horizontal" | "vertical"
+): FlipAxis {
+  if (current === axis) {
+    return "none";
+  }
+  return axis;
+}
+
+/**
+ * So khớp trạng thái transform của mảnh ghép với đích.
+ */
+export function isPieceTransformMatch(
+  current: PieceTransform,
+  target: PieceTransform
+): boolean {
+  return current.rotation === target.rotation && current.flip === target.flip;
+}

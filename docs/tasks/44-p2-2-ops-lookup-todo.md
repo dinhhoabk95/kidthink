@@ -21,7 +21,7 @@
 
 ### Task 1 — Mở rộng cổng quét route (làm TRƯỚC)
 
-- [x] Hàm quét thêm vào `scripts/check-child-data-compliance-gates.ts`, chạy trong `pnpm check`.
+- [x] Hàm quét thêm vào `apps/web/tests/gates/child-data-compliance.ts`, chạy trong `pnpm check`.
 - [x] `BR-USM-07`: không route admin nào `DELETE` hàng `users`.
 - [x] `BR-USM-08`: không handler admin nào ghi `password_hash`.
 - [x] `BR-CPA-01`: không route trả `child_profiles` thiếu ràng buộc `user_id`.
@@ -105,7 +105,7 @@
 - [x] Mở chi tiết User có trẻ hai lần → hai hàng audit; không có trẻ → không hàng nào.
 - [x] Không response admin nào chứa trường trẻ ngoài bốn trường projection.
 - [x] `content_reviewer` bị **403** ở cả ba bề mặt.
-- [x] `pnpm check && pnpm test && pnpm test:e2e && pnpm lint:specs && pnpm check:progress` xanh.
+- [x] `pnpm check && pnpm test && pnpm test:e2e && pnpm --filter @mindkid/gates test && node packages/gates/scripts/check-progress.ts` xanh.
 
 ---
 

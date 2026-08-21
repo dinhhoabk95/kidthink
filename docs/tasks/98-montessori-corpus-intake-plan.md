@@ -48,7 +48,7 @@ này **hoãn 24 dạng bài**, không cắt chúng.
    người **viết lời**, không cần xây cơ chế.
 9. `GT-001` nhận tối đa **6** phương án và `prompt` tối đa **80** ký tự. Đây là lý do bài loại
    trừ theo manh mối (bảng số 1 tới 10, ba manh mối) không chạy được trên khuôn hiện có.
-10. `pnpm lint:specs` xanh trên 155 spec; `pnpm lint:rule-ids` xanh trên 1405 rule.
+10. `pnpm --filter @mindkid/gates test` xanh trên 155 spec; `pnpm --filter @mindkid/gates test` xanh trên 1405 rule.
 
 ## 3. Assumptions và ranh giới
 
@@ -123,10 +123,10 @@ vào ma trận phủ nên không đụng cổng của lô A.
 
 | ID | Cỡ | Công việc | Kết quả kiểm được |
 |---|---:|---|---|
-| WP98.0 | S | Chụp baseline: `pnpm seed:report`, `pnpm check:coverage`, số hàng `game_levels` và `lessons` theo competency và band | Một file số đo trước, để mọi WP sau so được delta |
-| WP98.1 | M | Bảng tra 57 dạng bài dưới `docs/montessori/dataset/`: mã ổn định `WB<nn>-D<n>`, band, competency, strand, lô A hay B, khuôn | Tổng khớp 57; mỗi hàng có đủ sáu cột; `pnpm lint:specs` xanh |
+| WP98.0 | S | Chụp baseline: `pnpm --filter @mindkid/db seed:report`, `pnpm --filter @mindkid/db test`, số hàng `game_levels` và `lessons` theo competency và band | Một file số đo trước, để mọi WP sau so được delta |
+| WP98.1 | M | Bảng tra 57 dạng bài dưới `docs/montessori/dataset/`: mã ổn định `WB<nn>-D<n>`, band, competency, strand, lô A hay B, khuôn | Tổng khớp 57; mỗi hàng có đủ sáu cột; `pnpm --filter @mindkid/gates test` xanh |
 | WP98.2 | M | Cổng lô Montessori: hạn ngạch theo competency, `access_tier` theo `difficulty`, khối mã từ `0101`, một batch một workbook. Fixture vi phạm cho **từng** rule | Cổng đỏ trên bốn fixture sai; xanh trên seed hiện có |
-| WP98.3 | S | Lô A batch đầu — workbook 01, 3 dạng bài, 6 level `GT-001` và `GT-003`, band 3-4 | `pnpm seed:check` xanh; `seed:content --dry-run` xanh; cổng phủ không tụt ô nào |
+| WP98.3 | S | Lô A batch đầu — workbook 01, 3 dạng bài, 6 level `GT-001` và `GT-003`, band 3-4 | `pnpm --filter @mindkid/db seed:check` xanh; `seed:content --dry-run` xanh; cổng phủ không tụt ô nào |
 | WP98.4 | M | Lô A band 3-4 còn lại — workbook 02 · 03 · 05 · 06, 9 dạng bài, 18 level | Như trên, cộng: ô C1 và C4 band 3-4 tăng đúng số dự kiến |
 | WP98.5 | M | Lô A band 4-5 và 5-6 — workbook 10 · 11 · 15 · 18 · 19, 7 dạng bài, 14 level | Như trên; tổng lô A đạt 19 dạng bài và 38 level |
 | WP98.6 | M | 7 lesson band 3-4 cộng activity ngoài màn hình, seed `draft`; bảng thay giáo cụ được dùng và bổ sung khi thiếu hàng | Mỗi lesson có hoạt động ngoài màn hình làm hoạt động chính; không vật liệu nào phải mua; band 3-4 không vật dưới 3cm |
@@ -201,13 +201,13 @@ Scenario: Mã Montessori không đụng khối đã seed
 ```bash
 export PATH=/Users/macbook/.nvm/versions/node/v24.15.0/bin:$PATH
 pnpm lint                 # biome check ., KHÔNG dùng ultracite check
-pnpm lint:specs
-pnpm lint:rule-ids
+pnpm --filter @mindkid/gates test
+pnpm --filter @mindkid/gates test
 pnpm typecheck
-pnpm seed:check
-pnpm seed:content --dry-run
-pnpm check:coverage
-pnpm seed:report
+pnpm --filter @mindkid/db seed:check
+pnpm --filter @mindkid/db seed:content --dry-run
+pnpm --filter @mindkid/db test
+pnpm --filter @mindkid/db seed:report
 pnpm test
 ```
 
@@ -231,7 +231,7 @@ pnpm test
 |---|---|---|
 | 18 workbook thiếu gợi ý sư phạm; người biên soạn viết vội cho đủ | Cao | `BR-MCM-09` chặn ở cổng duyệt; WP98.3 làm mẫu ba mức cho workbook 01 trước, dùng làm chuẩn cho phần còn lại |
 | Cổng hạn ngạch chỉ có một ca âm rồi coi là đủ | Cao | Định nghĩa done của WP98.2 đòi fixture riêng cho **từng** rule. Đây là đúng cái bẫy mà `ultracite check` và `nuxt typecheck` đã mắc |
-| Trần C1 chạm sớm, workbook cuối không còn hạn ngạch | Trung bình | Thứ tự ưu tiên ở mục 7.5 của spec level đã cố định; `pnpm seed:report` in hạn ngạch còn lại sau mỗi batch |
+| Trần C1 chạm sớm, workbook cuối không còn hạn ngạch | Trung bình | Thứ tự ưu tiên ở mục 7.5 của spec level đã cố định; `pnpm --filter @mindkid/db seed:report` in hạn ngạch còn lại sau mỗi batch |
 | Lesson `draft` nằm im vô hạn vì không có chuyên gia | Trung bình | `D-RT` làm trạng thái này đọc được; nợ nằm ở câu hỏi mở số 1 của [`lesson-model.md`](../specs/05-content/lesson-model.md), không bị chôn |
 | Khuôn mới đội chi phí, nhóm B2 không bao giờ tới | Trung bình | `D-RN` cắt từ B2 lên. Nhóm A đã mở khoá 12 trên 16 workbook lô B mà không cần system nào |
 | Bảy `LayoutId` nhóm A hoá ra cần hàm hình học mới, chi phí nhóm A tăng | Thấp | WP98.9 kiểm giả thuyết ngay ở khuôn đầu, trước khi cam kết lịch cho A2 |

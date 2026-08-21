@@ -2,7 +2,7 @@
 spec: ROUND-SET-MODEL
 title: Chuỗi vòng trong một màn chơi — ràng buộc biên tập
 area: content
-status: draft
+status: implemented
 mvp: false
 phase: P2
 reviewed: 2026-08-21
@@ -256,6 +256,6 @@ Scenario: BR-RSM-13 — trộn band trong một set bị chặn
 | # | Câu hỏi | Chặn gì | Chặn phase | Chủ | Quyết định / Trạng thái |
 |---|---|---|---|---|---|
 | 1 | `game_level_rounds` là bảng con hay cột `rounds` jsonb trên `game_levels`? Bảng con cho phép ràng buộc UNIQUE và query từng vòng; jsonb rẻ hơn và khớp cách `content_pack` đang lưu | Hình dạng schema, migration | P2 | Backend | **Bảng con `game_level_rounds` (Task #100 WP100.1).** UNIQUE `(game_level_id, round_index)` ép bởi DB — ràng buộc index liên tục và không trùng vòng không cần code giữ. Query từng vòng cho phép migration và debug mà không parse jsonb. Spec mục 7.2 đã viết theo phương án này, không cần đổi |
-| 2 | Migrate level đã seed: copy `content_pack` hiện có thành `round_index = 0` rồi drop cột cũ theo expand-contract, hay giữ cột cũ vĩnh viễn làm vòng 0? | Kế hoạch migration | P2 | người quyết | **Expand-contract (Task #100 WP100.1).** Pha expand: tạo `game_level_rounds`, copy `content_pack`/`difficulty_params`/`instruction`/`instruction_audio_path` của mọi level thành `round_index = 0`. Pha contract: drop 4 cột cũ trên `game_levels` sau khi tất cả code đã đọc từ bảng mới. Repo đã có `scripts/lint-migration-expand.ts` nên pattern có sẵn. Giữ cột cũ vĩnh viễn tạo hai nguồn cho cùng dữ liệu — drift không tránh được |
+| 2 | Migrate level đã seed: copy `content_pack` hiện có thành `round_index = 0` rồi drop cột cũ theo expand-contract, hay giữ cột cũ vĩnh viễn làm vòng 0? | Kế hoạch migration | P2 | người quyết | **Expand-contract (Task #100 WP100.1).** Pha expand: tạo `game_level_rounds`, copy `content_pack`/`difficulty_params`/`instruction`/`instruction_audio_path` của mọi level thành `round_index = 0`. Pha contract: drop 4 cột cũ trên `game_levels` sau khi tất cả code đã đọc từ bảng mới. Repo đã có `packages/db/tests/gates/migration-expand.ts` nên pattern có sẵn. Giữ cột cũ vĩnh viễn tạo hai nguồn cho cùng dữ liệu — drift không tránh được |
 | 3 | Trần 4 vòng ở band 3–4 dựa trên suy luận về sức chú ý, chưa đo với trẻ. Con số đúng là bao nhiêu? | Trần mục 7.1 | P2 nghiệm thu | người quyết | Chờ dữ liệu từ [`pedagogical-evidence.md`](../08-quality/pedagogical-evidence.md) |
 | 4 | Set có nên cho phép vòng **tuỳ chọn** — vòng khó thêm chỉ hiện khi trẻ làm đúng hết các vòng trước? | Phạm vi P2 | P3 | người quyết | Hoãn. Vòng tuỳ chọn làm `rounds_total` khác nhau giữa hai lượt chơi cùng một level, phá tính so sánh của `first_try_ratio` |

@@ -160,8 +160,10 @@ export async function seed() {
 }
 
 if (process.argv[1]?.endsWith("seed.ts")) {
-  seed().catch((err) => {
-    console.error("Fatal error in seed:", err);
-    process.exit(1);
-  });
+  seed()
+    .then(() => process.exit(0))
+    .catch((err) => {
+      console.error("Fatal error in seed:", err);
+      process.exit(1);
+    });
 }

@@ -90,7 +90,7 @@ T0 provider/policy/kênh liên hệ preflight
       sách chưa chốt. Quyết định 2026-08-16 đóng được ngay, cùng câu trả lời FAQ trong
       [`faq-and-help.md`](../specs/02-public/faq-and-help.md) (`implemented`, P1).
 
-**Kiểm chứng:** decision record; `pnpm lint:specs` xanh sau khi đóng hai câu hỏi; không SDK/migration
+**Kiểm chứng:** decision record; `pnpm --filter @mindkid/gates test` xanh sau khi đóng hai câu hỏi; không SDK/migration
 trước khi các owner duyệt.
 
 **Phụ thuộc:** #70 + P4 · **Files:** evidence/task/spec decision + legal/account/FAQ specs ·
@@ -100,7 +100,7 @@ trước khi các owner duyệt.
 
 Đây là task đổi nhiều nhất so với bản 2026-08-11. Corpus hiện có một spec refund `approved` đầy
 đủ (state machine, BR, mã lỗi, event, câu hỏi mở). Bỏ refund mà không rút contract sẽ để lại
-mâu thuẫn `approved` và làm `pnpm lint:specs` gãy khi file bị xoá.
+mâu thuẫn `approved` và làm `pnpm --filter @mindkid/gates test` gãy khi file bị xoá.
 
 Đo tại `c444bff`: **không spec nào `depends_on: PAYMENT-REFUND`**, nên gỡ không chạm đồ thị phụ
 thuộc (`C7`/`C8`). Blast radius nằm hết ở registry, index, roadmap và [`SPEC.md`](../SPEC.md).
@@ -131,7 +131,7 @@ thuộc (`C7`/`C8`). Blast radius nằm hết ở registry, index, roadmap và [
       errors, audit actions và negative Gherkin đầy đủ.
 - [ ] Monthly offer chỉ public khi payment/renew/cancel path cùng sẵn sàng.
 
-**Kiểm chứng:** `pnpm lint:specs` xanh (chú ý `C2` owns, `C4` link chết, `C11` số spec/thư mục,
+**Kiểm chứng:** `pnpm --filter @mindkid/gates test` xanh (chú ý `C2` owns, `C4` link chết, `C11` số spec/thư mục,
 `C16`/`C17` câu hỏi mở); registry/index/dependency graph khớp.
 
 **Phụ thuộc:** T0 · **Files:** canonical specs/index/roadmap/SPEC.md/BR/error/event registries ·
@@ -229,7 +229,7 @@ kỳ sau của subscription và một đường vào admin đọc được cho c
 - [ ] Thông báo cho User khi gói bị huỷ, nêu ngày hết hiệu lực thực tế.
 
 **Kiểm chứng:** integration tests hai nhánh hiệu lực, duplicate cancel, 403 role, 404 ownership;
-E2E "khách yêu cầu huỷ → admin huỷ → quyền mất đúng thời điểm"; `pnpm lint:legal-review` cho trang
+E2E "khách yêu cầu huỷ → admin huỷ → quyền mất đúng thời điểm"; `pnpm --filter @mindkid/shared test` cho trang
 pháp lý.
 
 **Phụ thuộc:** T4 + policy T1 · **Files:** service/routes/admin UI/public legal pages/tests ·
@@ -258,7 +258,7 @@ pháp lý.
 - [ ] Mọi BR payment/huỷ gói mới có test mang mã; open questions P5 payment và hoàn tiền được đóng.
 - [ ] Spec chỉ `implemented` khi checkout, recurring, admin huỷ gói và fallback cùng xanh.
 - [ ] Không còn tham chiếu chết tới contract refund ở bất kỳ file nào trong `docs/`.
-- [ ] `pnpm check && pnpm test && pnpm lint:specs && pnpm check:services` xanh.
+- [ ] `pnpm check && pnpm test && pnpm --filter @mindkid/gates test && pnpm services` xanh.
 
 **Kiểm chứng:** progress evidence Task #71 + human Finance/Security review.
 

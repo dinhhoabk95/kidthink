@@ -124,7 +124,7 @@
 - [x] Rollback không sinh version mới; `content_reviewer` bị **403**.
 - [x] Nội dung `repo_seed` không xuất hiện trong hàng đợi.
 - [x] Đổi slug SEO tạo 301; thẻ `script` bị chặn ở cả ghi lẫn render.
-- [x] `pnpm check && pnpm test && pnpm test:e2e && pnpm lint:specs && pnpm check:progress` xanh.
+- [x] `pnpm check && pnpm test && pnpm test:e2e && pnpm --filter @mindkid/gates test && node packages/gates/scripts/check-progress.ts` xanh.
 
 ---
 

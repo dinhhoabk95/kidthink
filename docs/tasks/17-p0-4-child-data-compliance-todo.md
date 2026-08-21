@@ -63,7 +63,7 @@
 - [x] Bảng nợ `play_sessions` · `child_session_summaries` · ba bảng rollup vào [`schema-play-telemetry.md`](../specs/01-platform/schema-play-telemetry.md) §11, mỗi dòng có bước sở hữu.
 - [x] Ghi D-DN · D-DO · D-DP · D-DQ vào sổ quyết định [`data-model-overview.md`](../specs/01-platform/data-model-overview.md).
 - [x] Không đổi cột nào thuộc bảng nợ trong PR này.
-- [x] `pnpm lint:specs` 0 lỗi, 0 cảnh báo.
+- [x] `pnpm --filter @mindkid/gates test` 0 lỗi, 0 cảnh báo.
 
 ### Task 5 — Contract danh sách đóng ở tầng ứng dụng
 
@@ -93,7 +93,7 @@
 
 - [x] `child_profiles` đúng 12 cột hợp đồng, test hai chiều xanh.
 - [x] `telemetry_events` có `child_uuid` nullable, ca âm ẩn danh hoá xanh.
-- [x] `pnpm check && pnpm test && pnpm lint:specs && pnpm check:progress` xanh.
+- [x] `pnpm check && pnpm test && pnpm --filter @mindkid/gates test && node packages/gates/scripts/check-progress.ts` xanh.
 - [x] Human review diff vùng nhạy cảm dữ liệu trẻ; không auto-merge.
 - [x] Xác nhận P0.3 đã đóng **trước** khi mở khối B.
 
@@ -151,7 +151,7 @@
 - [x] [`child-data-compliance.md`](../specs/00-foundation/child-data-compliance.md) sang `implemented` chỉ khi đủ evidence.
 - [x] [`schema-play-telemetry.md`](../specs/01-platform/schema-play-telemetry.md) giữ `implemented` và mang bảng nợ Task 4.
 - [x] Tick **P0.4** ở [`14-implementation-sequence-todo.md`](14-implementation-sequence-todo.md) chỉ khi `check:progress` tự xanh.
-- [x] `pnpm check && pnpm test && pnpm lint:specs && pnpm check:progress` xanh.
+- [x] `pnpm check && pnpm test && pnpm --filter @mindkid/gates test && node packages/gates/scripts/check-progress.ts` xanh.
 
 ## Cổng dừng cuối
 

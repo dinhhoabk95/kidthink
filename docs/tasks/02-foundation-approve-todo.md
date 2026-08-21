@@ -25,7 +25,7 @@
 | 0/16 spec foundation `approved` | **16/16** |
 | 48 OQ không phân loại | 48/48 có `Chặn phase` + `Chủ`; 14 nhóm chặn P0 đã đóng |
 | Corpus không trong git | Trong `mindkid/`, `git log --follow` chạy được |
-| Không có cổng kiểm spec | `pnpm lint:specs` — 11 check, 11 ca âm |
+| Không có cổng kiểm spec | `pnpm --filter @mindkid/gates test` — 11 check, 11 ca âm |
 | `BR-RBS-04` chặn | **Mở khoá** |
 
 ---
@@ -57,9 +57,9 @@
 - [ ] Root không còn [`SPEC.md`](../SPEC.md) · `docs/specs/` · `docs/tasks/`
 - [ ] `docs/montessori/` **giữ nguyên** ở root
 
-## T3 — `scripts/lint-specs.ts` + `pnpm lint:specs`
+## T3 — `packages/gates/tests/lint-specs.test.ts` + `pnpm --filter @mindkid/gates test`
 
-- [ ] **Sửa spec trước** (`BR-RBS-08`): [`SPEC.md`](../SPEC.md) §7 — `check` thành 5 bước, thêm dòng `pnpm lint:specs`
+- [ ] **Sửa spec trước** (`BR-RBS-08`): [`SPEC.md`](../SPEC.md) §7 — `check` thành 5 bước, thêm dòng `pnpm --filter @mindkid/gates test`
 - [ ] C1 — 9 field frontmatter đủ, `status ∈ {draft, approved, implemented}`
 - [ ] C2 — `owns` không trùng giữa hai spec
 - [ ] C3 — 11 section đúng thứ tự (`07-addon/**` = 7)
@@ -79,7 +79,7 @@
 ## CHECKPOINT A — người duyệt
 
 - [ ] Corpus trong git, history truy được, 0 link vỡ
-- [ ] `pnpm lint:specs` **đỏ đúng chỗ** trên 3 vi phạm đã biết
+- [ ] `pnpm --filter @mindkid/gates test` **đỏ đúng chỗ** trên 3 vi phạm đã biết
 - [ ] 11/11 ca âm chặn đúng
 - [ ] Duyệt trước khi động vào **nội dung** spec
 
@@ -123,7 +123,7 @@
 
 ## CHECKPOINT B
 
-- [ ] `pnpm lint:specs` **exit 0** trên 130/130 — lần đầu corpus sạch cơ học **có đo**
+- [ ] `pnpm --filter @mindkid/gates test` **exit 0** trên 130/130 — lần đầu corpus sạch cơ học **có đo**
 - [ ] `pnpm check` (5 bước) exit 0
 - [ ] `pnpm test` exit 0 — 56/56
 - [ ] 1 commit / task, message ghi rõ đóng OQ nào
@@ -205,7 +205,7 @@ Mỗi quyết định đụng schema thì ghi thêm một dòng vào [`data-mode
 ## CHECKPOINT D — `BR-RBS-04` mở khoá
 
 - [ ] 16/16 `00-foundation` = `status: approved`
-- [ ] `pnpm lint:specs` exit 0 · `pnpm check` exit 0 · `pnpm test` exit 0
+- [ ] `pnpm --filter @mindkid/gates test` exit 0 · `pnpm check` exit 0 · `pnpm test` exit 0
 - [ ] **Ca âm cuối**: đặt [`glossary.md`](../specs/00-foundation/glossary.md) về `draft` thì C8 làm đỏ 11 spec phụ thuộc nó
 - [ ] [`todo.md`](../tasks/todo.md) ghi việc kế tiếp: **P0 bước 7** — [`data-model-overview.md`](../specs/01-platform/data-model-overview.md) → `schema-*`
 - [ ] người Người duyệt — hành động khó đảo, mở đường cho PR schema đầu tiên

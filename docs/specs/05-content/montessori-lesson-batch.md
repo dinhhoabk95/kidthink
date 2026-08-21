@@ -98,7 +98,7 @@ theo tuổi. Lý do ở mục 7.4.
 ## 7. Data
 
 **Đọc:** `game_levels` `published` · `skills` · bảng ánh xạ Montessori.
-**Ghi:** `lessons` · `activities` · `lesson_activities`, qua `pnpm seed:content`.
+**Ghi:** `lessons` · `activities` · `lesson_activities`, qua `pnpm --filter @mindkid/db seed:content`.
 
 ### 7.1 Hạn ngạch lô lesson
 

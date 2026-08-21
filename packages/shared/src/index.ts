@@ -15,6 +15,7 @@ export * from "./curriculum-player.js";
 export * from "./custom-game.js";
 export * from "./dashboard-cards.js";
 export * from "./date-ict.js";
+export * from "./email-job.js";
 export * from "./entitlement-catalog.js";
 export * from "./exports.js";
 export * from "./feature-flags.js";

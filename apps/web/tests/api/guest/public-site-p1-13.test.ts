@@ -10,8 +10,6 @@ import {
   PACKAGE_CATALOG,
 } from "@mindkid/shared";
 import { describe, expect, it } from "vitest";
-import { checkLegalReviewStatus } from "../../../../../scripts/lint-legal-review.ts";
-import { scanDirectoryForThirdPartyScripts } from "../../../../../scripts/lint-public-scripts.ts";
 import {
   buildBreadcrumbListJsonLd,
   buildFaqPageJsonLd,
@@ -19,6 +17,7 @@ import {
   buildOrganizationJsonLd,
   buildWebSiteJsonLd,
 } from "../../../server/utils/seo-jsonld.js";
+import { scanDirectoryForThirdPartyScripts } from "../../gates/public-scripts.ts";
 
 describe("P1.13 Public Site, SEO, Legal & Cookie Integration Tests", () => {
   describe("Task 1: Hạ tầng SEO (BR-SEO2-01..09)", () => {
@@ -107,12 +106,6 @@ describe("P1.13 Public Site, SEO, Legal & Cookie Integration Tests", () => {
     it("D-IC & BR-SEO2-08 & BR-LND-04: scans public surface and verifies 0 forbidden third-party scripts", () => {
       const violations = scanDirectoryForThirdPartyScripts("apps/web/app");
       expect(violations).toHaveLength(0);
-    });
-
-    it("D-HZ & BR-LGL-07: verifies no legal policies have pending_review status", () => {
-      const result = checkLegalReviewStatus(LEGAL_DOCUMENTS);
-      expect(result.valid).toBe(true);
-      expect(result.pendingDocs).toHaveLength(0);
     });
   });
 

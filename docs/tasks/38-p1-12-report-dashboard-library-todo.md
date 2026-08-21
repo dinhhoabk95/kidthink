@@ -107,7 +107,7 @@
 - [x] Không truy vấn báo cáo nào chạm `telemetry_events` hay `mastery_state`.
 - [x] Mỗi trang người lớn tối đa **một** CTA nâng cấp.
 - [x] Thư viện không rò sang user khác; nội dung khoá không mang `content_pack`.
-- [x] `pnpm check && pnpm test && pnpm test:e2e && pnpm lint:specs && pnpm check:progress` xanh.
+- [x] `pnpm check && pnpm test && pnpm test:e2e && pnpm --filter @mindkid/gates test && node packages/gates/scripts/check-progress.ts` xanh.
 
 ---
 

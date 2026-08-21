@@ -35,7 +35,7 @@ Dev UI · reviewer.
 
 1. Token khai báo ở **một nơi** mỗi tầng: CSS `@theme` cho Vue, `designTokens.ts` cho canvas.
 2. Component dùng token, không dùng giá trị thô.
-3. cổng tự động ép bằng `pnpm lint:tokens` và grep hex trong `.vue`.
+3. cổng tự động ép bằng `pnpm --filter @mindkid/gates test` và grep hex trong `.vue`.
 
 ## 5. Alternative flows
 
@@ -50,7 +50,7 @@ Dev UI · reviewer.
 | ID | Rule | Vì sao |
 |---|---|---|
 | `BR-DSC-01` | Cấm — **NEVER hex literal trong `.vue`** — template, `<style>`, hay inline `:style` | Màu ngoài token phá tính nhất quán và có thể không đạt contrast |
-| `BR-DSC-02` | Cấm — **NEVER hex literal trong `packages/game-engine`** ngoài `designTokens.ts` | Ép bằng `pnpm lint:tokens` |
+| `BR-DSC-02` | Cấm — **NEVER hex literal trong `packages/game-engine`** ngoài `designTokens.ts` | Ép bằng `pnpm --filter @mindkid/gates test` |
 | `BR-DSC-03` | **Nuxt UI v4 là kit duy nhất.** Cấm — NEVER tái sinh shadcn-vue (`components/ui/`, `cn()`, `cva`, `clsx`, `tailwind-merge`, `lucide-vue-next`) | Hai kit là hai hệ thống phải bảo trì |
 | `BR-DSC-04` | **Một icon library**: `i-lucide-*` qua `<UIcon>`. Icon dạng dữ liệu là **chuỗi** | Truyền component qua `<component :is>` làm không serialize được |
 | `BR-DSC-05` | Cấm — **NEVER emoji làm affordance** — nav, button, HUD, trạng thái, empty state đều SVG | Render khác theo OS · không recolour · không mang được focus ring |
@@ -117,7 +117,7 @@ Ngưỡng sàn chạm do `BR-A11-04` của [`accessibility.md`](accessibility.md
 grep -nE '#[0-9a-fA-F]{6}' <file .vue vừa sửa>
 grep -rnE 'lucide-vue-next|class-variance-authority|tailwind-merge|\bcn\(' apps packages
 grep -rn 'dark:' apps/web/app/components/kid apps/web/app/pages/play
-pnpm lint:tokens
+pnpm --filter @mindkid/gates test
 ```
 
 ## 8. API contract
@@ -132,7 +132,7 @@ Scenario: BR-DSC-01 — không hex trong .vue
   Then không có hex literal
 
 Scenario: BR-DSC-02 — không hex trong game-engine
-  When chạy pnpm lint:tokens
+  When chạy pnpm --filter @mindkid/gates test
   Then 0 vi phạm ngoài designTokens.ts
 
 Scenario: BR-DSC-03 — một kit duy nhất

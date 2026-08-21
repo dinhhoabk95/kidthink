@@ -108,7 +108,7 @@ T0 freeze manifest/evidence
 - [ ] Unresolved blocker giữ gate đỏ; spec/status/progress chỉ đổi sau review.
 - [ ] Full project gates xanh trên clean checkout.
 
-**Verification:** `pnpm check && pnpm test && pnpm lint:specs && pnpm check:services` + approved evidence index.
+**Verification:** `pnpm check && pnpm test && pnpm --filter @mindkid/gates test && pnpm services` + approved evidence index.
 
 **Dependencies:** T4 · **Files likely touched:** phase progress/spec status/evidence · **Estimated scope:** S.
 

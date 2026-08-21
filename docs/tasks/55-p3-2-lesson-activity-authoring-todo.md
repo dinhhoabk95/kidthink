@@ -110,7 +110,7 @@
 - [ ] Câu hỏi mở còn lại của bốn spec P3 đóng, hoặc hoãn kèm điều kiện mở lại đo được.
 - [ ] Không thêm spec thứ 131.
 - [ ] Không thêm mã lỗi ngoài [`error-codes.md`](../specs/00-foundation/error-codes.md).
-- [ ] `pnpm lint:specs` 0 lỗi, 0 cảnh báo mới.
+- [ ] `pnpm --filter @mindkid/gates test` 0 lỗi, 0 cảnh báo mới.
 
 ## Task 1b — Cổng máy cho ô bảng nhị phân
 
@@ -307,15 +307,15 @@
 - [ ] `D-KK` tier curriculum vẫn `pending_source: P3.3`.
 - [ ] `D-KP` export `curriculum_health` vẫn `pending_source: P3.3`.
 - [ ] Không thẻ dashboard nào bị bật sớm.
-- [ ] Tick **P3.2** trong Task #14 chỉ khi `pnpm check:progress` tự xanh.
+- [ ] Tick **P3.2** trong Task #14 chỉ khi `node packages/gates/scripts/check-progress.ts` tự xanh.
 
 ## Cổng dừng cuối
 
 - [ ] `pnpm check` xanh.
 - [ ] `pnpm test` xanh.
 - [ ] `pnpm test:e2e` xanh.
-- [ ] `pnpm lint:specs` xanh.
-- [ ] `pnpm check:progress` xanh.
+- [ ] `pnpm --filter @mindkid/gates test` xanh.
+- [ ] `node packages/gates/scripts/check-progress.ts` xanh.
 - [ ] Human review diff contract, migration, route và hai màn studio.
 - [ ] Không nội dung nền nào được soạn trong Task #55 — đó là Task #54.
 - [ ] Không phạm vi P3.3 lọt vào: không curriculum, không builder, không `curriculum_health`.

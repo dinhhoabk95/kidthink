@@ -34,7 +34,7 @@ Dev · reviewer · cổng tự động `pnpm check`.
 
 ## 3. Entry points
 
-`pnpm lint` (Biome) · `pnpm lint:type-safety` · `pnpm lint:route-validation` ·
+`pnpm lint` (Biome) · `pnpm --filter @mindkid/gates test` · `pnpm --filter @mindkid/gates test` ·
 rà soát trong code review.
 
 ## 4. Main flow
@@ -99,14 +99,14 @@ chế bậc thang với ép kiểu.
 | **Tổng (không kể test), 235 file** | **851** |
 | `any` trong 94 file test (`BR-TYP-08`) | **560** |
 
-Số thật lưu ở `scripts/type-safety-baseline.json`, theo từng file. Baseline chỉ được
-ghi lại khi số **giảm** — `pnpm lint:type-safety --update` từ chối ghi nếu có file tăng.
+Số thật lưu ở `packages/gates/src/type-safety-baseline.json`, theo từng file. Baseline chỉ được
+ghi lại khi số **giảm** — `node packages/gates/scripts/update-type-safety-baseline.ts` từ chối ghi nếu có file tăng.
 
 ### 7.2a Sổ nợ route chưa validate body (2026-08-17)
 
-**24** route đọc body mà chưa Zod parse, liệt kê ở `scripts/route-validation-debt.json`.
+**24** route đọc body mà chưa Zod parse, liệt kê ở `packages/gates/src/route-validation-debt.json`.
 Cổng cho phép đúng danh sách đó và không cho thêm mục mới; sửa được route nào thì
-`pnpm lint:route-validation --update` để rút danh sách. Không sửa cả 24 trong một lượt
+xoá tay khỏi sổ nợ rồi chạy `pnpm --filter @mindkid/gates test` để xác minh. Không sửa cả 24 trong một lượt
 vì mỗi schema là kiến thức domain riêng, và phần lớn test bao phủ chúng đang đỏ do DB
 dev lệch schema — viết schema mà không xác minh được là đổi hành vi trong bóng tối.
 
@@ -133,12 +133,13 @@ dev lệch schema — viết schema mà không xác minh được là đổi hà
 Không có route. Ràng buộc lên cổng tự động:
 
 ```
-biome noExplicitAny         → BR-TYP-01, mức error, đã bật
-lint:type-safety            → BR-TYP-02, so scripts/type-safety-baseline.json
-lint:route-validation       → BR-TYP-04, quét apps/*/server/api/**
+biome noExplicitAny                         → BR-TYP-01, mức error, đã bật
+packages/gates/tests/lint-type-safety       → BR-TYP-02, so type-safety-baseline.json
+packages/gates/tests/lint-route-validation  → BR-TYP-04, quét apps/*/server/api/**
 ```
 
-Cả hai script mới nằm trong `pnpm check`, cùng chuỗi với các `lint:*` sẵn có.
+Cả hai là **test vitest** trong `@mindkid/gates`, nên `pnpm test` (và `pnpm check`)
+phủ chúng — Cấm — NEVER thêm script `lint:*` riêng cho một rule (TESTING-STRATEGY §7.6).
 
 ## 9. Acceptance criteria
 

@@ -480,6 +480,283 @@ export const CONFIG_DICTIONARY: Record<string, FieldDictionaryEntry> = {
     label: "Xáo trộn vị trí ban đầu",
     help: "Đảo lộn thứ tự ban đầu để bé sắp xếp lại.",
   },
+
+  // Legacy v1 templates (GT-018..024)
+  audio_prompt: {
+    label: "Lời nhắc âm thanh",
+    help: "Cấu hình âm thanh lời nhắc hoặc chỉ dẫn nghe cho bé.",
+  },
+  audio_url: {
+    label: "Đường dẫn file âm thanh",
+    help: "Đường dẫn file âm thanh chỉ dẫn.",
+  },
+  response_mode: {
+    label: "Chế độ phản hồi",
+    help: "Chế độ phản hồi: chọn một (select) hoặc sắp xếp chuỗi (sequence).",
+  },
+  target_sequence: {
+    label: "Chuỗi mục tiêu đúng",
+    help: "Thứ tự danh sách mã vật phẩm đúng theo yêu cầu.",
+  },
+  auto_play_audio: {
+    label: "Tự động phát âm thanh",
+    help: "Tự động phát câu hỏi/chỉ dẫn khi bắt đầu lượt chơi.",
+  },
+  target_slots: {
+    label: "Danh sách ô đích",
+    help: "Các ô đích cần hoàn thiện hoặc ghép vào.",
+  },
+  target_rotation: {
+    label: "Góc quay mục tiêu",
+    help: "Góc quay mong đợi của ô đích (0, 90, 180, 270 độ).",
+  },
+  target_flip: {
+    label: "Trục lật mục tiêu",
+    help: "Trạng thái lật đối xứng mong đợi của ô đích.",
+  },
+  pieces: {
+    label: "Danh sách mảnh ghép",
+    help: "Các mảnh ghép bé cần xoay, lật hoặc lắp ghép.",
+  },
+  piece_id: {
+    label: "Mã mảnh ghép",
+    help: "Mã định danh duy nhất của mảnh ghép.",
+  },
+  initial_rotation: {
+    label: "Góc quay ban đầu",
+    help: "Góc xoay khởi tạo của mảnh ghép (0, 90, 180, 270 độ).",
+  },
+  initial_flip: {
+    label: "Trạng thái lật ban đầu",
+    help: "Trạng thái lật ban đầu của mảnh ghép.",
+  },
+  target_slot_id: {
+    label: "Mã ô đích tương ứng",
+    help: "Mã định danh của ô đích mà mảnh ghép cần đặt vào.",
+  },
+  allow_flip: {
+    label: "Cho phép lật hình",
+    help: "Bật nút lật đối xứng mảnh ghép.",
+  },
+  rotation_step: {
+    label: "Bước xoay (độ)",
+    help: "Góc xoay mỗi lần bấm nút (mặc định 90 độ).",
+  },
+  pair_key: {
+    label: "Khóa liên kết cặp",
+    help: "Khóa định danh chung của hai thẻ cùng cặp.",
+  },
+  card_a: {
+    label: "Thẻ thứ nhất trong cặp",
+    help: "Thông tin thẻ A.",
+  },
+  card_b: {
+    label: "Thẻ thứ hai trong cặp",
+    help: "Thông tin thẻ B.",
+  },
+  flip_back_delay_ms: {
+    label: "Thời gian chờ úp lại (ms)",
+    help: "Thời gian thẻ mở trước khi tự động úp lại nếu ghép sai.",
+  },
+  peek_all_initial_ms: {
+    label: "Thời gian xem trước ban đầu (ms)",
+    help: "Thời gian lật mở toàn bộ thẻ lúc đầu cho bé ghi nhớ.",
+  },
+  axis: {
+    label: "Trục đối xứng",
+    help: "Trục đối xứng đứng (vertical) hoặc ngang (horizontal).",
+  },
+  reference_pattern: {
+    label: "Mẫu tham chiếu",
+    help: "Mẫu hình nửa bên trái làm chuẩn đối xứng.",
+  },
+  expected_asset_ref: {
+    label: "Tài nguyên mong đợi",
+    help: "Mã tham chiếu của tài nguyên khớp đối xứng.",
+  },
+  asset_ref: {
+    label: "Mã tham chiếu tài nguyên",
+    help: "Mã định danh tham chiếu của hình ảnh hoặc emoji.",
+  },
+  show_axis_guide: {
+    label: "Hiện đường trục đối xứng",
+    help: "Hiển thị nét đứt trục đối xứng làm mốc định hướng.",
+  },
+  target_description: {
+    label: "Mô tả mục tiêu cần tìm",
+    help: "Mô tả ngắn về vật thể bé cần tìm trong tranh.",
+  },
+  scene_objects: {
+    label: "Danh sách vật thể trong cảnh",
+    help: "Các đối tượng nằm trong khung cảnh.",
+  },
+  is_hidden: {
+    label: "Ẩn sau vật che khuất",
+    help: "Vật thể bị che khuất và cần chạm mở trước khi tìm.",
+  },
+  show_target_counter: {
+    label: "Hiện bộ đếm mục tiêu",
+    help: "Hiển thị số lượng mục tiêu đã tìm được / tổng số.",
+  },
+  target_model: {
+    label: "Mô hình mẫu hoàn chỉnh",
+    help: "Hình ảnh hoặc tên của vật thể cần lắp ráp thành.",
+  },
+  name: {
+    label: "Tên hiển thị",
+    help: "Tên gọi của vật thể hoặc bộ phận.",
+  },
+  anchors: {
+    label: "Danh sách điểm gắn / neo",
+    help: "Các vị trí neo để gắn bộ phận vào.",
+  },
+  anchor_id: {
+    label: "Mã điểm neo",
+    help: "Mã định danh điểm neo gắn kết.",
+  },
+  accepted_part_id: {
+    label: "Mã bộ phận chấp nhận",
+    help: "Mã bộ phận hợp lệ để gắn vào điểm neo này.",
+  },
+  part_id: {
+    label: "Mã bộ phận",
+    help: "Mã định danh duy nhất của bộ phận.",
+  },
+  target_anchor_id: {
+    label: "Mã điểm neo đích",
+    help: "Điểm neo mà bộ phận này cần gắn vào.",
+  },
+  snap_radius_px: {
+    label: "Bán kính tự hít (pixel)",
+    help: "Khoảng cách tự động hít bộ phận vào điểm neo.",
+  },
+  show_anchor_outline: {
+    label: "Hiện viền điểm neo",
+    help: "Hiển thị đường viền mờ của khung neo hướng dẫn bé.",
+  },
+  shape_name: {
+    label: "Tên hình cần vẽ",
+    help: "Tên của hình học hoặc đối tượng cần nối điểm.",
+  },
+  guide_asset: {
+    label: "Hình mẫu hướng dẫn",
+    help: "Hình ảnh hoặc emoji mẫu của hình cần vẽ.",
+  },
+  waypoints: {
+    label: "Danh sách điểm mốc nối",
+    help: "Chuỗi các điểm neo cần nối theo thứ tự.",
+  },
+  order: {
+    label: "Thứ tự nối",
+    help: "Số thứ tự bước nối của điểm mốc.",
+  },
+  tolerance_px: {
+    label: "Dung sai độ chính xác (pixel)",
+    help: "Khoảng cách chấp nhận khi bé chạm/nối gần điểm mốc.",
+  },
+  show_numbered_dots: {
+    label: "Hiện số thứ tự trên điểm",
+    help: "Hiển thị số 1, 2, 3... trên các điểm mốc.",
+  },
+  show_guide_lines: {
+    label: "Hiện đường nét đứt hướng dẫn",
+    help: "Hiển thị đường nét đứt nối sẵn làm mẫu.",
+  },
+  // GT-025 spot-difference
+  left_objects: {
+    label: "Danh sách vật thể hình bên trái",
+    help: "Các đối tượng hiển thị ở nửa bên trái màn hình.",
+  },
+  right_objects: {
+    label: "Danh sách vật thể hình bên phải",
+    help: "Các đối tượng hiển thị ở nửa bên phải màn hình.",
+  },
+  differences: {
+    label: "Danh sách điểm khác nhau",
+    help: "Các cặp đối tượng có sự khác biệt giữa hai bên hình.",
+  },
+  left_id: {
+    label: "Mã vật thể bên trái",
+    help: "Mã định danh của vật thể ở hình bên trái.",
+  },
+  right_id: {
+    label: "Mã vật thể bên phải",
+    help: "Mã định danh của vật thể ở hình bên phải.",
+  },
+  description: {
+    label: "Mô tả chi tiết",
+    help: "Nội dung mô tả điểm khác biệt hoặc quy luật.",
+  },
+  show_counter: {
+    label: "Hiển thị bộ đếm số lượng",
+    help: "Bật/tắt hiển thị số điểm khác biệt đã tìm thấy.",
+  },
+  // GT-026 go-nogo
+  go_stimulus: {
+    label: "Đối tượng chạm (Go)",
+    help: "Kích thích mà bé phải chạm vào khi xuất hiện.",
+  },
+  nogo_stimulus: {
+    label: "Đối tượng dừng (No-Go)",
+    help: "Kích thích mà bé phải kìm lại, không được chạm vào.",
+  },
+  trials: {
+    label: "Danh sách lượt xuất hiện",
+    help: "Trình tự các lượt xuất hiện của kích thích trong màn chơi.",
+  },
+  kind: {
+    label: "Loại kích thích",
+    help: "Phân loại kích thích là go hay nogo.",
+  },
+  stimulus_window_ms: {
+    label: "Thời gian xuất hiện (ms)",
+    help: "Khoảng thời gian kích thích hiển thị trên màn hình trước khi biến mất.",
+  },
+  isi_ms: {
+    label: "Thời gian nghỉ giữa 2 lượt (ms)",
+    help: "Khoảng thời gian trống giữa hai lượt kích thích liên tiếp.",
+  },
+  // GT-027 rule-switch
+  rules: {
+    label: "Danh sách quy luật",
+    help: "Các quy luật phân loại lần lượt áp dụng trong màn chơi.",
+  },
+  dimension: {
+    label: "Thuộc tính phân loại",
+    help: "Chiều thuộc tính đang dùng để xét luật (color, shape, size).",
+  },
+  target_value: {
+    label: "Giá trị mục tiêu",
+    help: "Giá trị thuộc tính cần tìm theo luật hiện tại.",
+  },
+  signal_text: {
+    label: "Chữ báo đổi luật",
+    help: "Văn bản hiển thị thông báo đổi luật phân loại mới cho bé.",
+  },
+  signal_audio_text: {
+    label: "Lời đọc báo đổi luật",
+    help: "Nội dung đọc thành tiếng khi đổi sang luật phân loại mới.",
+  },
+  color: {
+    label: "Màu sắc",
+    help: "Màu sắc của vật thể.",
+  },
+  shape: {
+    label: "Hình dạng",
+    help: "Hình dạng của vật thể.",
+  },
+  size: {
+    label: "Kích thước",
+    help: "Kích thước của vật thể (small, medium, large).",
+  },
+  switch_after_trials: {
+    label: "Đổi luật sau số lượt",
+    help: "Số lượt thử đạt đúng trước khi chuyển sang quy luật tiếp theo.",
+  },
+  signal_duration_ms: {
+    label: "Thời gian thông báo đổi luật (ms)",
+    help: "Thời lượng hiệu ứng thông báo đổi luật xuất hiện.",
+  },
 };
 
 /**
@@ -536,6 +813,39 @@ export const TEXT_FALLBACK_ALLOWLIST: Record<string, string> = {
   allow_rotate: "Cờ cho phép xoay mô hình 3D.",
   hidden_cube_count: "Số lượng khối che khuất số nguyên.",
   side: "Cạnh tường mê cung.",
+  target_rotation: "Góc quay số nguyên mục tiêu (0, 90, 180, 270).",
+  initial_rotation: "Góc quay số nguyên ban đầu (0, 90, 180, 270).",
+  rotation_step: "Bước xoay số nguyên (90).",
+  order: "Thứ tự số nguyên của điểm mốc vẽ nét.",
+  axis: "Trục đối xứng chuỗi enum ('vertical' | 'horizontal').",
+  target_flip: "Trục lật chuỗi enum ('none' | 'horizontal' | 'vertical').",
+  initial_flip: "Trục lật chuỗi enum ('none' | 'horizontal' | 'vertical').",
+  piece_id: "Mã định danh mảnh ghép.",
+  target_slot_id: "Mã định danh ô đích.",
+  pair_key: "Khóa định danh cặp thẻ.",
+  expected_asset_ref: "Mã tham chiếu tài nguyên mong đợi.",
+  asset_ref: "Mã tham chiếu tài nguyên.",
+  target_description: "Mô tả mục tiêu cần tìm.",
+  anchor_id: "Mã định danh điểm neo.",
+  accepted_part_id: "Mã bộ phận chấp nhận.",
+  part_id: "Mã định danh bộ phận.",
+  target_anchor_id: "Mã điểm neo đích.",
+  shape_name: "Tên hình cần vẽ.",
+  name: "Tên hiển thị đối tượng.",
+  audio_url: "Đường dẫn URL âm thanh.",
+  response_mode: "Chế độ phản hồi ('select' | 'sequence').",
+  target_sequence: "Mã định danh vật phẩm trong chuỗi mục tiêu.",
+  left_id: "Mã định danh vật thể bên trái.",
+  right_id: "Mã định danh vật thể bên phải.",
+  description: "Mô tả chi tiết điểm khác biệt hoặc quy luật.",
+  kind: "Loại kích thích ('go' | 'nogo').",
+  dimension: "Chiều phân loại ('color' | 'shape' | 'size').",
+  target_value: "Giá trị thuộc tính mục tiêu.",
+  signal_text: "Văn bản báo hiệu đổi luật phân loại.",
+  signal_audio_text: "Lời đọc báo hiệu đổi luật phân loại.",
+  color: "Tên mã màu hoặc token màu của vật thể.",
+  shape: "Tên hình dạng của vật thể.",
+  size: "Kích thước của vật thể.",
 };
 
 export function getFieldDictionaryEntry(
