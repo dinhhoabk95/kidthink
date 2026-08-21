@@ -12,6 +12,7 @@ import {
   validateCurriculumModel,
 } from "./curriculum-model.js";
 import { validateLessonModel } from "./lesson-model.js";
+import { type RoundInput, validateRoundSet } from "./round-set-validation.js";
 import {
   validateWorksheetContent,
   WORKSHEET_LAYOUT_TEMPLATES,
@@ -501,6 +502,39 @@ function checkWorksheetRules(
   checkWorksheetBlockValidation(entity, missing);
 }
 
+function checkRoundSetRules(
+  entity: GenericEntityPayload,
+  missing: string[]
+): void {
+  const roundsRaw = entity.rounds;
+  if (!Array.isArray(roundsRaw) || roundsRaw.length === 0) {
+    return;
+  }
+  const rounds: RoundInput[] = roundsRaw;
+
+  const loCount =
+    (Array.isArray(entity.learningObjectiveIds)
+      ? entity.learningObjectiveIds.length
+      : 0) ||
+    (Array.isArray(entity.learning_objective_ids)
+      ? entity.learning_objective_ids.length
+      : 0) ||
+    (Array.isArray(entity.learningObjectives)
+      ? entity.learningObjectives.length
+      : 0);
+
+  const result = validateRoundSet({
+    rounds,
+    learning_objective_count: loCount || 1,
+  });
+
+  for (const violation of result.violations) {
+    const suffix =
+      violation.round_index === undefined ? "" : `[${violation.round_index}]`;
+    missing.push(`round_set_${violation.rule.toLowerCase()}${suffix}`);
+  }
+}
+
 export function validatePublishChecklist(
   entityType: EntityType,
   entity: GenericEntityPayload
@@ -511,6 +545,7 @@ export function validatePublishChecklist(
 
   if (entityType === "game_level") {
     checkGameLevelRules(entity, missing);
+    checkRoundSetRules(entity, missing);
   } else if (entityType === "activity") {
     checkActivityRules(entity, missing);
   } else if (entityType === "lesson") {

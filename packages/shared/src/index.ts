@@ -38,6 +38,8 @@ export * from "./pwa-offline-pack-contract.js";
 export * from "./rate-limit-middleware.js";
 export * from "./rate-limiting.js";
 export * from "./redactor.js";
+export * from "./round-event-gate.js";
+export * from "./round-set-validation.js";
 export * from "./scoring.js";
 export * from "./taxonomy-types.js";
 export * from "./versioning.js";

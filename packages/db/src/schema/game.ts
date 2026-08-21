@@ -143,3 +143,42 @@ export const gameLevels = pgTable(
     ),
   ]
 );
+
+export const gameLevelRounds = pgTable(
+  "game_level_rounds",
+  {
+    id: bigint("id", { mode: "number" })
+      .primaryKey()
+      .generatedAlwaysAsIdentity(),
+    gameLevelId: bigint("game_level_id", { mode: "number" })
+      .notNull()
+      .references(() => gameLevels.id, { onDelete: "cascade" }),
+    roundIndex: integer("round_index").notNull(),
+    instruction: text("instruction"),
+    instructionAudioPath: text("instruction_audio_path"),
+    contentPack: jsonb("content_pack").notNull(),
+    difficultyParams: jsonb("difficulty_params").notNull(),
+    difficulty: smallint("difficulty"),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+    updatedAt: timestamp("updated_at", { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+  },
+  (table) => [
+    unique("game_level_rounds_level_index_unique").on(
+      table.gameLevelId,
+      table.roundIndex
+    ),
+    index("idx_game_level_rounds_level_id").on(table.gameLevelId),
+    check(
+      "check_game_level_rounds_index_non_negative",
+      sql`${table.roundIndex} >= 0`
+    ),
+    check(
+      "check_game_level_rounds_difficulty_range",
+      sql`${table.difficulty} IS NULL OR (${table.difficulty} >= 1 AND ${table.difficulty} <= 5)`
+    ),
+  ]
+);

@@ -1,6 +1,11 @@
-import { gameLevels, gameTemplates, getOwnerDb } from "@mindkid/db";
+import {
+  gameLevelRounds,
+  gameLevels,
+  gameTemplates,
+  getOwnerDb,
+} from "@mindkid/db";
 import { allowedTiers } from "@mindkid/shared";
-import { and, eq, ne } from "drizzle-orm";
+import { and, asc, eq, ne } from "drizzle-orm";
 import { createError, defineEventHandler, getRouterParam } from "h3";
 
 const RE_COMPETENCY = /GL-(C[1-6])-/;
@@ -104,6 +109,22 @@ export default defineEventHandler(async (event) => {
     ctaAction = "upgrade_premium";
   }
 
+  // WP100.4: Load round set for this level
+  const rounds = await db
+    .select({
+      round_index: gameLevelRounds.roundIndex,
+      instruction: gameLevelRounds.instruction,
+      instruction_audio_path: gameLevelRounds.instructionAudioPath,
+      content_pack: gameLevelRounds.contentPack,
+      difficulty_params: gameLevelRounds.difficultyParams,
+      difficulty: gameLevelRounds.difficulty,
+    })
+    .from(gameLevelRounds)
+    .where(eq(gameLevelRounds.gameLevelId, level.id))
+    .orderBy(asc(gameLevelRounds.roundIndex));
+
+  const scoringMode = rounds.length > 1 ? "rounds" : "attempts";
+
   return {
     code: level.code,
     title: level.title,
@@ -121,6 +142,23 @@ export default defineEventHandler(async (event) => {
     mechanic_type: level.mechanicType,
     access_tier: level.accessTier,
     locked: isLocked,
+    scoring: {
+      mode: scoringMode,
+    },
+    // BR-GAT-01: assertContentAccess — strip paid content for guest
+    rounds: isLocked
+      ? rounds.map((r) => ({
+          round_index: r.round_index,
+          instruction: r.instruction,
+        }))
+      : rounds.map((r) => ({
+          round_index: r.round_index,
+          instruction: r.instruction,
+          instruction_audio_path: r.instruction_audio_path,
+          content_pack: r.content_pack,
+          difficulty_params: r.difficulty_params,
+          difficulty: r.difficulty,
+        })),
     cta: {
       text: ctaText,
       action: ctaAction,

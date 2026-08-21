@@ -108,7 +108,9 @@ client, tương đối so với `session.started_at`) · `content_version`.
 | `round_skipped` | `{ round_index, reason: "scaffold_exhausted"\|"user" }` |
 
 Event tương tác trong khuôn. Chúng mang **mã nội dung**, không mang toạ độ chạm (`BR-EVT-08`).
-`round_index` là tuỳ chọn: khuôn một vòng không phát nó.
+`round_index` là tuỳ chọn trong payload event tương tác: khuôn một vòng có thể bỏ trường
+này. Nhưng event `round_started` và `round_completed` **luôn phải phát** cho mọi vòng kể cả
+set một vòng — xem `BR-RSP-02` ở [`round-sequence-play.md`](../04-play/round-sequence-play.md).
 
 | Event | Payload | Khuôn phát |
 |---|---|---|

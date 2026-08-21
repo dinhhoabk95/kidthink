@@ -23,15 +23,15 @@ Bắt đầu từ [`../SPEC.md`](../SPEC.md) — contract toàn dự án. Rồi 
 | Khu vực | Spec | MVP |
 |---|---:|---:|
 | `00-foundation` | 16 | 16 |
-| `01-platform` | 40 | 33 |
+| `01-platform` | 41 | 33 |
 | `02-public` | 9 | 9 |
 | `03-account` | 22 | 19 |
-| `04-play` | 14 | 13 |
-| `05-content` | 9 | 4 |
+| `04-play` | 15 | 13 |
+| `05-content` | 10 | 4 |
 | `06-admin` | 30 | 29 |
 | `07-addon` | 7 | 0 |
 | `08-quality` | 8 | 7 |
-| **Tổng** | **155** | **130** |
+| **Tổng** | **158** | **130** |
 
 v1 có **31** spec cho cùng phạm vi. Xé nhỏ là chủ ý — xem [`AUDIT-v1.md`](AUDIT-v1.md) §1.2.
 2 spec cộng thêm 2026-08-05 ([`repo-bootstrap.md`](00-foundation/repo-bootstrap.md), [`monorepo-package-architecture.md`](00-foundation/monorepo-package-architecture.md)) lấp lỗ hổng
@@ -104,6 +104,7 @@ v1 có **31** spec cho cùng phạm vi. Xé nhỏ là chủ ý — xem [`AUDIT-v
 | [adaptive-engine](01-platform/adaptive-engine.md) | P3 | BKT, ZPD, nhãn báo cáo |
 | [pwa-install](01-platform/pwa-install.md) | P5 | Web install ngoài MVP; không phải native mobile app |
 | [montessori-template-batch](01-platform/montessori-template-batch.md) | P4 | Mười một khuôn `GT-007` tới `GT-017` cho cơ chế corpus Montessori |
+| [legacy-v1-template-batch](01-platform/legacy-v1-template-batch.md) | P5 | Bảy khuôn `GT-018` tới `GT-024` port cơ chế v1 |
 
 ## 02-public — khách chưa đăng nhập
 
@@ -160,6 +161,7 @@ v1 có **31** spec cho cùng phạm vi. Xé nhỏ là chủ ý — xem [`AUDIT-v
 | [parent-gate](04-play/parent-gate.md) | P1 | Long-press + phép nhân |
 | [healthy-play-limits](04-play/healthy-play-limits.md) | P1 | Hạn mức theo trẻ, theo ICT |
 | [play-entry-and-profile-select](04-play/play-entry-and-profile-select.md) | P1 | Sảnh trẻ, không bộ lọc chữ |
+| [round-sequence-play](04-play/round-sequence-play.md) | P2 | Nhiều vòng một phiên, luôn phát `round_started` |
 | [next-game-recommendation](04-play/next-game-recommendation.md) | P3 | Luật, không ML |
 | [curriculum-player](04-play/curriculum-player.md) | P3 | Ghim version, mở khoá tuần |
 | [progress-and-mastery](04-play/progress-and-mastery.md) | P3 | Bản đồ, huy hiệu không mất |
@@ -170,6 +172,7 @@ v1 có **31** spec cho cùng phạm vi. Xé nhỏ là chủ ý — xem [`AUDIT-v
 | Spec | Phase | Nội dung |
 |---|:--:|---|
 | [game-level-model](05-content/game-level-model.md) | P1 | Trần item theo band, chỉ dẫn ≤12 từ |
+| [round-set-model](05-content/round-set-model.md) | P2 | Một template, dãy vòng leo một chiều |
 | [lesson-model](05-content/lesson-model.md) | P3 | Cung bậc, ≥1 hoạt động ngoài màn hình |
 | [activity-model](05-content/activity-model.md) | P3 | Đứng độc lập, danh sách an toàn |
 | [curriculum-model](05-content/curriculum-model.md) | P3 | Thứ tự prerequisite, cân bằng |

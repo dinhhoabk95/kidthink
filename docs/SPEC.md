@@ -1222,7 +1222,7 @@ hình báo cáo mang câu này.
 
 Mỗi outcome có **đúng một** spec sở hữu. Spec khác **link tới**, không copy contract.
 
-**155 spec module.** Bản đồ đầy đủ: [`docs/specs/index.md`](specs/index.md).
+**158 spec module.** Bản đồ đầy đủ: [`docs/specs/index.md`](specs/index.md).
 
 ```
 docs/
@@ -1232,11 +1232,11 @@ docs/
     ├── CONVENTIONS.md         quy ước viết spec v2
     ├── TEMPLATE.md · index.md · roadmap.md
     ├── 00-foundation/  16     contract cắt ngang mọi bề mặt
-    ├── 01-platform/    40     năng lực nội bộ (gồm seeder nội dung + codegen + OAuth + browser push + thanh toán tự động + offline pack + audio storage + layout + ngẫu nhiên có seed + bộ dựng template + lô khuôn Montessori + hợp đồng biến môi trường + dựng máy + giám sát tiến trình + phát hành + quay lui)
+    ├── 01-platform/    41     năng lực nội bộ (gồm seeder nội dung + codegen + OAuth + browser push + thanh toán tự động + offline pack + audio storage + layout + ngẫu nhiên có seed + bộ dựng template + lô khuôn Montessori + hợp đồng biến môi trường + dựng máy + giám sát tiến trình + phát hành + quay lui)
     ├── 02-public/       9     khách chưa đăng nhập
     ├── 03-account/     22     User đã đăng nhập (gồm SNS login + linking + notification inbox + recurring billing)
-    ├── 04-play/        14     bề mặt trẻ — core business (gồm bề mặt chạy tiết học của người dạy)
-    ├── 05-content/      9     ràng buộc biên tập nội dung (gồm bộ tiết học mẫu + ba spec lô Montessori)
+    ├── 04-play/        15     bề mặt trẻ — core business (gồm bề mặt chạy tiết học của người dạy + chuỗi vòng trong một phiên)
+    ├── 05-content/     10     ràng buộc biên tập nội dung (gồm bộ tiết học mẫu + ba spec lô Montessori + chuỗi vòng)
     ├── 06-admin/       30     Manager (gồm studio + duyệt + huỷ gói)
     ├── 07-addon/        7     spec đủ, KHÔNG bán ở MVP
     └── 08-quality/      8     test · bảo mật · a11y · hiệu năng · design · phủ tư duy · an toàn kiểu
