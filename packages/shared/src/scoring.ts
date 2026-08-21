@@ -252,10 +252,14 @@ export function computeSessionResult(
 ): SessionResult {
   const metrics = reconstructRounds(events);
 
-  const first_try_ratio =
-    metrics.rounds_total > 0
-      ? metrics.rounds_correct / metrics.rounds_total
-      : 0;
+  let first_try_ratio: number;
+  if (metrics.rounds_total > 0) {
+    first_try_ratio = metrics.rounds_correct / metrics.rounds_total;
+  } else if (metrics.attempt_count > 0) {
+    first_try_ratio = metrics.correct_count / metrics.attempt_count;
+  } else {
+    first_try_ratio = 0;
+  }
 
   const accuracy =
     metrics.attempt_count > 0

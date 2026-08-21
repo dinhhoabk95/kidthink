@@ -109,6 +109,7 @@ nhất, bất biến và cảnh báo BR không được tham chiếu (`pnpm gen:
 | `BR-ENV` | [`env-contract.md`](../01-platform/env-contract.md) | | `BR-SRV` | [`server-provisioning.md`](../01-platform/server-provisioning.md) |
 | `BR-SUP` | [`process-supervision.md`](../01-platform/process-supervision.md) | | `BR-DEP` | [`release-deploy.md`](../01-platform/release-deploy.md) |
 | `BR-RBK` | [`release-rollback.md`](../01-platform/release-rollback.md) | | `BR-MTB` | [`montessori-template-batch.md`](../01-platform/montessori-template-batch.md) |
+| `BR-LVB` | [`legacy-v1-template-batch.md`](../01-platform/legacy-v1-template-batch.md) | | | |
 
 **Public**
 
@@ -147,6 +148,7 @@ nhất, bất biến và cảnh báo BR không được tham chiếu (`pnpm gen:
 | `BR-PGT` | [`parent-gate.md`](../04-play/parent-gate.md) | | `BR-HPL` | [`healthy-play-limits.md`](../04-play/healthy-play-limits.md) |
 | `BR-CUR` | [`curriculum-player.md`](../04-play/curriculum-player.md) | | `BR-PRG` | [`progress-and-mastery.md`](../04-play/progress-and-mastery.md) |
 | `BR-REC` | [`next-game-recommendation.md`](../04-play/next-game-recommendation.md) | | `BR-LSR` | [`lesson-session-runner.md`](../04-play/lesson-session-runner.md) |
+| `BR-RSP` | [`round-sequence-play.md`](../04-play/round-sequence-play.md) | | | |
 
 **Content**
 
@@ -156,7 +158,7 @@ nhất, bất biến và cảnh báo BR không được tham chiếu (`pnpm gen:
 | `BR-ACM` | [`activity-model.md`](../05-content/activity-model.md) | | `BR-CRM` | [`curriculum-model.md`](../05-content/curriculum-model.md) |
 | `BR-WSM` | [`worksheet-model.md`](../05-content/worksheet-model.md) | | `BR-LEX` | [`lesson-exemplar-set.md`](../05-content/lesson-exemplar-set.md) |
 | `BR-MCM` | [`montessori-corpus-mapping.md`](../05-content/montessori-corpus-mapping.md) | | `BR-MGL` | [`montessori-game-level-batch.md`](../05-content/montessori-game-level-batch.md) |
-| `BR-MLS` | [`montessori-lesson-batch.md`](../05-content/montessori-lesson-batch.md) | | | |
+| `BR-MLS` | [`montessori-lesson-batch.md`](../05-content/montessori-lesson-batch.md) | | `BR-RSM` | [`round-set-model.md`](../05-content/round-set-model.md) |
 
 **Admin**
 
@@ -200,9 +202,9 @@ nhất, bất biến và cảnh báo BR không được tham chiếu (`pnpm gen:
 
 | | Số |
 |---|---:|
-| Spec module | 155 |
-| Prefix BR | 155 |
-| Business rule | ~1405 |
+| Spec module | 158 |
+| Prefix BR | 158 |
+| Business rule | ~1447 |
 
 **Cảnh báo:** con số "spec module" trước 2026-08-05 ghi **123**, trong khi
 [`../index.md`](../index.md) đếm **124**. Lệch có từ trước, chưa truy nguyên. Đã đặt lại theo

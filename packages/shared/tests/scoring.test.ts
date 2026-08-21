@@ -421,4 +421,174 @@ describe("Task P1.7 — Scoring and Result Engine", () => {
       ).toBe(false);
     });
   });
+
+  describe("BR-RSP-02 — fallback khi rounds_total = 0", () => {
+    it("phiên không round_started, trả lời đúng hết → 3 sao", () => {
+      const events: TelemetryEventInput[] = [
+        {
+          sessionUuid: "s1",
+          seq: 1,
+          eventName: "game_started",
+          occurredAtMs: 0,
+        },
+        {
+          sessionUuid: "s1",
+          seq: 2,
+          eventName: "answer_selected",
+          occurredAtMs: 100,
+        },
+        {
+          sessionUuid: "s1",
+          seq: 3,
+          eventName: "answer_correct",
+          occurredAtMs: 200,
+        },
+        {
+          sessionUuid: "s1",
+          seq: 4,
+          eventName: "answer_selected",
+          occurredAtMs: 300,
+        },
+        {
+          sessionUuid: "s1",
+          seq: 5,
+          eventName: "answer_correct",
+          occurredAtMs: 400,
+        },
+        {
+          sessionUuid: "s1",
+          seq: 6,
+          eventName: "answer_selected",
+          occurredAtMs: 500,
+        },
+        {
+          sessionUuid: "s1",
+          seq: 7,
+          eventName: "answer_correct",
+          occurredAtMs: 600,
+        },
+        {
+          sessionUuid: "s1",
+          seq: 8,
+          eventName: "game_completed",
+          occurredAtMs: 700,
+        },
+      ];
+
+      const result = computeSessionResult(events);
+
+      expect(result.metrics.rounds_total).toBe(0);
+      expect(result.first_try_ratio).toBeGreaterThanOrEqual(0.85);
+      expect(result.normalized_score).toBeGreaterThanOrEqual(
+        SCORING_WEIGHTS.FIRST_TRY + SCORING_WEIGHTS.ACCURACY * 1
+      );
+      expect(computeStars(result.normalized_score, "completed")).toBe(3);
+    });
+
+    it("phiên không round_started, trả lời đúng một phần → 2 sao", () => {
+      const events: TelemetryEventInput[] = [
+        {
+          sessionUuid: "s1",
+          seq: 1,
+          eventName: "game_started",
+          occurredAtMs: 0,
+        },
+        {
+          sessionUuid: "s1",
+          seq: 2,
+          eventName: "answer_selected",
+          occurredAtMs: 100,
+        },
+        {
+          sessionUuid: "s1",
+          seq: 3,
+          eventName: "answer_correct",
+          occurredAtMs: 200,
+        },
+        {
+          sessionUuid: "s1",
+          seq: 4,
+          eventName: "answer_selected",
+          occurredAtMs: 300,
+        },
+        {
+          sessionUuid: "s1",
+          seq: 5,
+          eventName: "answer_incorrect",
+          occurredAtMs: 400,
+        },
+        {
+          sessionUuid: "s1",
+          seq: 6,
+          eventName: "answer_selected",
+          occurredAtMs: 500,
+        },
+        {
+          sessionUuid: "s1",
+          seq: 7,
+          eventName: "answer_correct",
+          occurredAtMs: 600,
+        },
+        {
+          sessionUuid: "s1",
+          seq: 8,
+          eventName: "game_completed",
+          occurredAtMs: 700,
+        },
+      ];
+
+      const result = computeSessionResult(events);
+
+      expect(result.metrics.rounds_total).toBe(0);
+      // accuracy = 2/3 ≈ 0.667, first_try_ratio fallback = 2/3
+      // normalized_score = 0.6 * 0.667 + 0.4 * 0.667 ≈ 0.667
+      expect(result.first_try_ratio).toBeCloseTo(2 / 3, 5);
+      expect(result.normalized_score).toBeGreaterThanOrEqual(0.55);
+      expect(result.normalized_score).toBeLessThan(0.85);
+      expect(computeStars(result.normalized_score, "completed")).toBe(2);
+    });
+
+    it("phiên có round_started → hành vi không đổi", () => {
+      const events: TelemetryEventInput[] = [
+        {
+          sessionUuid: "s1",
+          seq: 1,
+          eventName: "round_started",
+          occurredAtMs: 0,
+        },
+        {
+          sessionUuid: "s1",
+          seq: 2,
+          eventName: "answer_selected",
+          occurredAtMs: 100,
+        },
+        {
+          sessionUuid: "s1",
+          seq: 3,
+          eventName: "answer_correct",
+          occurredAtMs: 200,
+        },
+        {
+          sessionUuid: "s1",
+          seq: 4,
+          eventName: "round_completed",
+          occurredAtMs: 300,
+        },
+      ];
+
+      const result = computeSessionResult(events);
+
+      expect(result.metrics.rounds_total).toBe(1);
+      expect(result.first_try_ratio).toBe(1);
+      expect(computeStars(result.normalized_score, "completed")).toBe(3);
+    });
+
+    it("phiên rỗng → 0 sao (không đổi hành vi)", () => {
+      const result = computeSessionResult([]);
+
+      expect(result.metrics.rounds_total).toBe(0);
+      expect(result.first_try_ratio).toBe(0);
+      expect(result.normalized_score).toBe(0);
+    });
+  });
 });
