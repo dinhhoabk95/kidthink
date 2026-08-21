@@ -80,7 +80,7 @@ lọc theo một cây.
 |---|---|
 | **what** | `number` `quantity` `geometry` `space` `pattern` `colour` `size` `category` `sequence` `time` `money` `rule` `letter` `sound` |
 | **thinking** | `observe` `compare` `sort` `match` `sequence` `infer` `predict` `plan` `recall` `inhibit` `shift` `count` |
-| **mechanic** | `tap-select` `tap-select-multi` `drag-to-container` `sort-groups` `pair-match` `sequence-order` |
+| **mechanic** | `tap-select` `tap-select-multi` `drag-to-container` `sort-groups` `pair-match` `sequence-order` `number-bond` `drag-to-slot` `clue-deduction` `substitution` `matrix-choice` `flash-recall` `maze-route` `balance-scale` `sudoku-mini` `clock-hands` `block-stack` |
 
 Trục `mechanic` suy ra từ `game_templates.mechanic` — không nhập tay.
 

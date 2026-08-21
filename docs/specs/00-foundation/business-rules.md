@@ -108,7 +108,7 @@ nhất, bất biến và cảnh báo BR không được tham chiếu (`pnpm gen:
 | `BR-RNG` | [`deterministic-randomness.md`](../01-platform/deterministic-randomness.md) | | `BR-TAK` | [`template-authoring-kit.md`](../01-platform/template-authoring-kit.md) |
 | `BR-ENV` | [`env-contract.md`](../01-platform/env-contract.md) | | `BR-SRV` | [`server-provisioning.md`](../01-platform/server-provisioning.md) |
 | `BR-SUP` | [`process-supervision.md`](../01-platform/process-supervision.md) | | `BR-DEP` | [`release-deploy.md`](../01-platform/release-deploy.md) |
-| `BR-RBK` | [`release-rollback.md`](../01-platform/release-rollback.md) | | | |
+| `BR-RBK` | [`release-rollback.md`](../01-platform/release-rollback.md) | | `BR-MTB` | [`montessori-template-batch.md`](../01-platform/montessori-template-batch.md) |
 
 **Public**
 
@@ -155,6 +155,8 @@ nhất, bất biến và cảnh báo BR không được tham chiếu (`pnpm gen:
 | `BR-GLM` | [`game-level-model.md`](../05-content/game-level-model.md) | | `BR-LSM` | [`lesson-model.md`](../05-content/lesson-model.md) |
 | `BR-ACM` | [`activity-model.md`](../05-content/activity-model.md) | | `BR-CRM` | [`curriculum-model.md`](../05-content/curriculum-model.md) |
 | `BR-WSM` | [`worksheet-model.md`](../05-content/worksheet-model.md) | | `BR-LEX` | [`lesson-exemplar-set.md`](../05-content/lesson-exemplar-set.md) |
+| `BR-MCM` | [`montessori-corpus-mapping.md`](../05-content/montessori-corpus-mapping.md) | | `BR-MGL` | [`montessori-game-level-batch.md`](../05-content/montessori-game-level-batch.md) |
+| `BR-MLS` | [`montessori-lesson-batch.md`](../05-content/montessori-lesson-batch.md) | | | |
 
 **Admin**
 
@@ -198,9 +200,9 @@ nhất, bất biến và cảnh báo BR không được tham chiếu (`pnpm gen:
 
 | | Số |
 |---|---:|
-| Spec module | 151 |
-| Prefix BR | 151 |
-| Business rule | ~1332 |
+| Spec module | 155 |
+| Prefix BR | 155 |
+| Business rule | ~1405 |
 
 **Cảnh báo:** con số "spec module" trước 2026-08-05 ghi **123**, trong khi
 [`../index.md`](../index.md) đếm **124**. Lệch có từ trước, chưa truy nguyên. Đã đặt lại theo

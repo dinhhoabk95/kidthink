@@ -446,11 +446,14 @@ function checkGate7(seed: AnyContentSeed): GateResult {
   };
 }
 
+import { checkGateMontessori } from "./montessori-gate.js";
+
 export function runEightGates(
   seed: AnyContentSeed,
-  existingCodes: Set<string> = new Set()
+  existingCodes: Set<string> = new Set(),
+  batchCode?: string
 ): GateResult[] {
-  return [
+  const gates = [
     checkGate0(seed, existingCodes),
     checkGate1(seed),
     checkGate2(seed),
@@ -460,4 +463,17 @@ export function runEightGates(
     checkGate6(seed),
     checkGate7(seed),
   ];
+
+  // Nếu là Montessori seed, chạy thêm Gate 8
+  const montessoriGate = checkGateMontessori(seed, batchCode);
+  if (
+    montessoriGate.issues.length > 0 ||
+    seed.header.code.includes("-01") ||
+    seed.header.code.includes("-02") ||
+    batchCode?.startsWith("SEED-MONT-")
+  ) {
+    gates.push(montessoriGate);
+  }
+
+  return gates;
 }

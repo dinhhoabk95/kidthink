@@ -8,6 +8,17 @@ import GT003Template from "../templates/GT-003/template.js";
 import GT004Template from "../templates/GT-004/template.js";
 import GT005Template from "../templates/GT-005/template.js";
 import GT006Template from "../templates/GT-006/template.js";
+import GT007Template from "../templates/GT-007/template.js";
+import GT008Template from "../templates/GT-008/template.js";
+import GT009Template from "../templates/GT-009/template.js";
+import GT010Template from "../templates/GT-010/template.js";
+import GT011Template from "../templates/GT-011/template.js";
+import GT012Template from "../templates/GT-012/template.js";
+import GT013Template from "../templates/GT-013/template.js";
+import GT014Template from "../templates/GT-014/template.js";
+import GT015Template from "../templates/GT-015/template.js";
+import GT016Template from "../templates/GT-016/template.js";
+import GT017Template from "../templates/GT-017/template.js";
 
 export const ALL_TEMPLATES: Record<string, GameTemplate> = {
   "GT-001": GT001Template,
@@ -16,6 +27,17 @@ export const ALL_TEMPLATES: Record<string, GameTemplate> = {
   "GT-004": GT004Template,
   "GT-005": GT005Template,
   "GT-006": GT006Template,
+  "GT-007": GT007Template,
+  "GT-008": GT008Template,
+  "GT-009": GT009Template,
+  "GT-010": GT010Template,
+  "GT-011": GT011Template,
+  "GT-012": GT012Template,
+  "GT-013": GT013Template,
+  "GT-014": GT014Template,
+  "GT-015": GT015Template,
+  "GT-016": GT016Template,
+  "GT-017": GT017Template,
 };
 
 export const MVP_TEMPLATES = ALL_TEMPLATES;

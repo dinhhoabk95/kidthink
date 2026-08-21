@@ -308,9 +308,9 @@ describe("P3.1 Lesson & Activity Model & Seeder Tests", () => {
     });
   });
 
-  describe("Seed Content Library Validation: 60 Activities & 60 Lessons", () => {
-    it("All 60 seed activities pass 8 gates and validation rules cleanly", () => {
-      expect(ALL_SEED_ACTIVITIES.length).toBe(60);
+  describe("Seed Content Library Validation: Activities & Lessons", () => {
+    it("All seed activities pass 8 gates and validation rules cleanly", () => {
+      expect(ALL_SEED_ACTIVITIES.length).toBeGreaterThanOrEqual(60);
       const existingCodes = new Set<string>();
       for (const act of ALL_SEED_ACTIVITIES) {
         const gates = runEightGates(act, existingCodes);
@@ -320,8 +320,8 @@ describe("P3.1 Lesson & Activity Model & Seeder Tests", () => {
       }
     });
 
-    it("All 60 seed lessons pass 8 gates and validation rules cleanly", () => {
-      expect(ALL_SEED_LESSONS.length).toBe(60);
+    it("All seed lessons pass 8 gates and validation rules cleanly", () => {
+      expect(ALL_SEED_LESSONS.length).toBeGreaterThanOrEqual(60);
       const existingCodes = new Set<string>();
       for (const les of ALL_SEED_LESSONS) {
         const gates = runEightGates(les, existingCodes);
@@ -370,13 +370,14 @@ describe("P3.1 Lesson & Activity Model & Seeder Tests", () => {
       expect(les.origin).toBe("human");
 
       // Idempotent re-run
+      const totalCount = ALL_SEED_ACTIVITIES.length + ALL_SEED_LESSONS.length;
       const res2 = await executeSeedBatch(db, {
         batchCode: `${batchCode}-RERUN`,
         gitSha: "test-sha",
         prUrl: "test-pr",
         seeds: [...ALL_SEED_ACTIVITIES, ...ALL_SEED_LESSONS],
       });
-      expect(res2.rowsSkippedIdempotent).toBe(120);
+      expect(res2.rowsSkippedIdempotent).toBe(totalCount);
       expect(res2.rowsInserted).toBe(0);
     }, 30_000);
   });

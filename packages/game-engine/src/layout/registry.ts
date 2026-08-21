@@ -1,8 +1,15 @@
 import {
   computeBipartiteLayout,
+  computeClueBoardLayout,
+  computeEquationRowsLayout,
   computeGridLayout,
   computeHorizontalRowLayout,
+  computeHorizontalSlotTrackLayout,
+  computeMatrix3x3Layout,
+  computeMatrixSlotGridLayout,
   computeMultiBucketLayout,
+  computeNumberBondTreeLayout,
+  computeTenFrameSplitLayout,
   computeTrackLayout,
 } from "./geometry.js";
 import type { LayoutFn, LayoutId } from "./types.js";
@@ -20,6 +27,13 @@ export const LAYOUT_IDS: readonly LayoutId[] = [
   "card-flip-grid",
   "horizontal-track",
   "step-ladder",
+  "number-bond-tree",
+  "ten-frame-split",
+  "horizontal-slot-track",
+  "matrix-slot-grid",
+  "clue-board",
+  "matrix-3x3",
+  "equation-rows",
 ] as const;
 
 export const LAYOUT_REGISTRY: Record<LayoutId, LayoutFn> = {
@@ -46,6 +60,13 @@ export const LAYOUT_REGISTRY: Record<LayoutId, LayoutFn> = {
   "card-flip-grid": (input) => computeGridLayout(input, { fixedCols: 4 }),
   "horizontal-track": (input) => computeTrackLayout(input, { isLadder: false }),
   "step-ladder": (input) => computeTrackLayout(input, { isLadder: true }),
+  "number-bond-tree": (input) => computeNumberBondTreeLayout(input),
+  "ten-frame-split": (input) => computeTenFrameSplitLayout(input),
+  "horizontal-slot-track": (input) => computeHorizontalSlotTrackLayout(input),
+  "matrix-slot-grid": (input) => computeMatrixSlotGridLayout(input),
+  "clue-board": (input) => computeClueBoardLayout(input),
+  "matrix-3x3": (input) => computeMatrix3x3Layout(input),
+  "equation-rows": (input) => computeEquationRowsLayout(input),
 };
 
 export function isLayoutId(val: unknown): val is LayoutId {

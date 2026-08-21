@@ -7,6 +7,10 @@ import {
   GT004Session,
   GT005Session,
   GT006Session,
+  GT007_FIXTURES,
+  GT007Session,
+  GT008_FIXTURES,
+  GT008Session,
   InteractionManager,
 } from "../src/index";
 
@@ -265,5 +269,47 @@ describe("Task 6 & Task 7 — All 6 Template Sessions & Kid Surface Rules", () =
       expect(res.feedback).not.toBe("none");
       expect(res.feedback).toBeDefined();
     }
+  });
+
+  it("GT-007 (number-bond): completes session when correct part is filled", () => {
+    const session = new GT007Session(
+      GT007_FIXTURES[0].content,
+      GT007_FIXTURES[0].difficulty
+    );
+    session.setupEntities();
+
+    const wrongRes = session.validateAction({
+      type: "tap_option",
+      data: { option_id: "o1" },
+    });
+    expect(wrongRes.valid).toBe(false);
+
+    const correctRes = session.validateAction({
+      type: "tap_option",
+      data: { option_id: "o2" },
+    });
+    expect(correctRes.valid).toBe(true);
+
+    session.onPartFilled("o2", "p2");
+    expect(session.checkWinCondition()).toBe(true);
+  });
+
+  it("GT-008 (drag-to-slot): completes session when all slots are correctly filled", () => {
+    const session = new GT008Session(
+      GT008_FIXTURES[0].content,
+      GT008_FIXTURES[0].difficulty
+    );
+    session.setupEntities();
+
+    const wrongRes = session.validateAction({
+      type: "place_item",
+      data: { item_id: "car_2", slot_id: "s1" },
+    });
+    expect(wrongRes.valid).toBe(false);
+
+    session.onItemPlaced("car_1", "s1");
+    session.onItemPlaced("car_2", "s2");
+    session.onItemPlaced("car_3", "s3");
+    expect(session.checkWinCondition()).toBe(true);
   });
 });

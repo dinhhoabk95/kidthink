@@ -42,6 +42,37 @@ export const ALLOWED_EVENT_NAMES = new Set([
   "parent_gate_shown",
   "parent_gate_passed",
   "parent_gate_failed",
+  // Tương tác trong khuôn — catalog §7.2 (T99 WP99.0)
+  "item_selected",
+  "selection_submitted",
+  "item_dragged",
+  "item_dropped",
+  "item_sorted",
+  "item_placed",
+  "pair_selected",
+  "pair_matched",
+  "step_reordered",
+  "sequence_submitted",
+  "bond_selected",
+  "part_filled",
+  "clue_revealed",
+  "candidate_eliminated",
+  "option_previewed",
+  "option_selected",
+  "path_step",
+  "path_blocked",
+  "path_submitted",
+  "equation_solved",
+  "value_selected",
+  "flash_shown",
+  "flash_hidden",
+  "flash_replayed",
+  "balance_changed",
+  "cell_filled",
+  "constraint_violated",
+  "hand_rotated",
+  "time_submitted",
+  "model_rotated",
 ]);
 
 const PII_FIELDS = new Set([
@@ -103,9 +134,68 @@ const EVENT_PAYLOAD_FIELDS: Readonly<Record<string, ReadonlySet<string>>> = {
   parent_gate_shown: new Set(["trigger"]),
   parent_gate_passed: new Set(["attempts"]),
   parent_gate_failed: new Set(["attempts"]),
+  item_selected: new Set(["item_id", "is_correct", "round_index"]),
+  selection_submitted: new Set(["is_correct", "round_index"]),
+  item_dragged: new Set(["item_id", "round_index"]),
+  item_dropped: new Set([
+    "item_id",
+    "container_id",
+    "is_correct",
+    "round_index",
+  ]),
+  item_sorted: new Set(["item_id", "group_id", "is_correct", "round_index"]),
+  item_placed: new Set(["item_id", "slot_id", "is_correct", "round_index"]),
+  pair_selected: new Set(["item_id", "round_index"]),
+  pair_matched: new Set([
+    "pair_id",
+    "left_item_id",
+    "right_item_id",
+    "round_index",
+  ]),
+  step_reordered: new Set([
+    "from_index",
+    "to_index",
+    "current_sequence",
+    "round_index",
+  ]),
+  sequence_submitted: new Set(["is_correct", "round_index"]),
+  bond_selected: new Set(["option_id", "part_id", "is_correct", "round_index"]),
+  part_filled: new Set(["part_id", "value", "round_index"]),
+  clue_revealed: new Set([
+    "clue_id",
+    "revealed_count",
+    "remaining_count",
+    "round_index",
+  ]),
+  candidate_eliminated: new Set(["candidate_id", "clue_id", "round_index"]),
+  option_previewed: new Set([
+    "option_id",
+    "row_matches",
+    "col_matches",
+    "round_index",
+  ]),
+  option_selected: new Set(["option_id", "is_correct", "round_index"]),
+  path_step: new Set(["row", "col", "step_index", "round_index"]),
+  path_blocked: new Set(["row", "col", "reason", "retreated", "round_index"]),
+  path_submitted: new Set(["is_correct", "step_count", "round_index"]),
+  equation_solved: new Set(["symbol_id", "value", "round_index"]),
+  value_selected: new Set(["value", "is_correct", "round_index"]),
+  flash_shown: new Set(["duration_ms", "round_index"]),
+  flash_hidden: new Set(["elapsed_ms", "round_index"]),
+  flash_replayed: new Set(["round_index"]),
+  balance_changed: new Set(["tilt_angle", "state", "round_index"]),
+  cell_filled: new Set(["row", "col", "symbol_id", "is_valid", "round_index"]),
+  constraint_violated: new Set(["row", "col", "symbol_id", "round_index"]),
+  hand_rotated: new Set(["hand", "time", "round_index"]),
+  time_submitted: new Set(["time", "card_id", "is_correct", "round_index"]),
+  model_rotated: new Set(["angle", "hidden_cubes_remaining", "round_index"]),
 };
 
 const NON_NEGATIVE_INT = z.number().int().nonnegative();
+/** Mã nội dung trong payload event tương tác — không phải chuỗi tự do (BR-EVT-02). */
+const CONTENT_ID = z.string().regex(/^[a-zA-Z0-9_.:-]{1,64}$/);
+/** Khuôn một vòng không phát `round_index`; khuôn nhiều vòng thì có. */
+const OPTIONAL_ROUND_INDEX = NON_NEGATIVE_INT.optional();
 const EVENT_PAYLOAD_SCHEMAS: Readonly<Record<string, z.AnyZodObject>> = {
   game_started: z.object({
     template_code: z.string().max(64),
@@ -208,6 +298,168 @@ const EVENT_PAYLOAD_SCHEMAS: Readonly<Record<string, z.AnyZodObject>> = {
   parent_gate_shown: z.object({ trigger: z.enum(["exit", "settings"]) }),
   parent_gate_passed: z.object({ attempts: NON_NEGATIVE_INT }),
   parent_gate_failed: z.object({ attempts: NON_NEGATIVE_INT }),
+  item_selected: z.object({
+    item_id: CONTENT_ID,
+    is_correct: z.boolean(),
+    round_index: OPTIONAL_ROUND_INDEX,
+  }),
+  selection_submitted: z.object({
+    is_correct: z.boolean(),
+    round_index: OPTIONAL_ROUND_INDEX,
+  }),
+  item_dragged: z.object({
+    item_id: CONTENT_ID,
+    round_index: OPTIONAL_ROUND_INDEX,
+  }),
+  item_dropped: z.object({
+    item_id: CONTENT_ID,
+    container_id: CONTENT_ID,
+    is_correct: z.boolean(),
+    round_index: OPTIONAL_ROUND_INDEX,
+  }),
+  item_sorted: z.object({
+    item_id: CONTENT_ID,
+    group_id: CONTENT_ID,
+    is_correct: z.boolean(),
+    round_index: OPTIONAL_ROUND_INDEX,
+  }),
+  item_placed: z.object({
+    item_id: CONTENT_ID,
+    slot_id: CONTENT_ID,
+    is_correct: z.boolean(),
+    round_index: OPTIONAL_ROUND_INDEX,
+  }),
+  pair_selected: z.object({
+    item_id: CONTENT_ID,
+    round_index: OPTIONAL_ROUND_INDEX,
+  }),
+  pair_matched: z.object({
+    pair_id: CONTENT_ID,
+    left_item_id: CONTENT_ID,
+    right_item_id: CONTENT_ID,
+    round_index: OPTIONAL_ROUND_INDEX,
+  }),
+  step_reordered: z.object({
+    from_index: NON_NEGATIVE_INT,
+    to_index: NON_NEGATIVE_INT,
+    current_sequence: z.array(CONTENT_ID).max(16),
+    round_index: OPTIONAL_ROUND_INDEX,
+  }),
+  sequence_submitted: z.object({
+    is_correct: z.boolean(),
+    round_index: OPTIONAL_ROUND_INDEX,
+  }),
+  bond_selected: z.object({
+    option_id: CONTENT_ID,
+    part_id: CONTENT_ID,
+    is_correct: z.boolean(),
+    round_index: OPTIONAL_ROUND_INDEX,
+  }),
+  part_filled: z.object({
+    part_id: CONTENT_ID,
+    value: z.number().int(),
+    round_index: OPTIONAL_ROUND_INDEX,
+  }),
+  clue_revealed: z.object({
+    clue_id: CONTENT_ID,
+    revealed_count: NON_NEGATIVE_INT,
+    remaining_count: NON_NEGATIVE_INT,
+    round_index: OPTIONAL_ROUND_INDEX,
+  }),
+  candidate_eliminated: z.object({
+    candidate_id: CONTENT_ID,
+    clue_id: CONTENT_ID,
+    round_index: OPTIONAL_ROUND_INDEX,
+  }),
+  option_previewed: z.object({
+    option_id: CONTENT_ID,
+    row_matches: z.boolean(),
+    col_matches: z.boolean(),
+    round_index: OPTIONAL_ROUND_INDEX,
+  }),
+  option_selected: z.object({
+    option_id: CONTENT_ID,
+    is_correct: z.boolean(),
+    round_index: OPTIONAL_ROUND_INDEX,
+  }),
+  path_step: z.object({
+    row: NON_NEGATIVE_INT,
+    col: NON_NEGATIVE_INT,
+    step_index: NON_NEGATIVE_INT,
+    round_index: OPTIONAL_ROUND_INDEX,
+  }),
+  path_blocked: z.object({
+    row: z.number().int(),
+    col: z.number().int(),
+    reason: z.enum(["outside", "not_adjacent", "wall"]),
+    retreated: z.boolean(),
+    round_index: OPTIONAL_ROUND_INDEX,
+  }),
+  path_submitted: z.object({
+    is_correct: z.boolean(),
+    step_count: NON_NEGATIVE_INT,
+    round_index: OPTIONAL_ROUND_INDEX,
+  }),
+  equation_solved: z.object({
+    symbol_id: CONTENT_ID,
+    value: z.number().int(),
+    round_index: OPTIONAL_ROUND_INDEX,
+  }),
+  value_selected: z.object({
+    value: z.number().int(),
+    is_correct: z.boolean(),
+    round_index: OPTIONAL_ROUND_INDEX,
+  }),
+  flash_shown: z.object({
+    duration_ms: NON_NEGATIVE_INT,
+    round_index: OPTIONAL_ROUND_INDEX,
+  }),
+  flash_hidden: z.object({
+    elapsed_ms: NON_NEGATIVE_INT,
+    round_index: OPTIONAL_ROUND_INDEX,
+  }),
+  flash_replayed: z.object({
+    round_index: OPTIONAL_ROUND_INDEX,
+  }),
+  balance_changed: z.object({
+    tilt_angle: z.number(),
+    state: z.enum(["balanced", "left_heavy", "right_heavy"]),
+    round_index: OPTIONAL_ROUND_INDEX,
+  }),
+  cell_filled: z.object({
+    row: NON_NEGATIVE_INT,
+    col: NON_NEGATIVE_INT,
+    symbol_id: CONTENT_ID,
+    is_valid: z.boolean(),
+    round_index: OPTIONAL_ROUND_INDEX,
+  }),
+  constraint_violated: z.object({
+    row: NON_NEGATIVE_INT,
+    col: NON_NEGATIVE_INT,
+    symbol_id: CONTENT_ID,
+    round_index: OPTIONAL_ROUND_INDEX,
+  }),
+  hand_rotated: z.object({
+    hand: z.enum(["hour", "minute"]),
+    time: z.string().max(16),
+    round_index: OPTIONAL_ROUND_INDEX,
+  }),
+  time_submitted: z.object({
+    time: z.string().max(16).optional(),
+    card_id: CONTENT_ID.optional(),
+    is_correct: z.boolean(),
+    round_index: OPTIONAL_ROUND_INDEX,
+  }),
+  model_rotated: z.object({
+    angle: z.union([
+      z.literal(0),
+      z.literal(90),
+      z.literal(180),
+      z.literal(270),
+    ]),
+    hidden_cubes_remaining: NON_NEGATIVE_INT,
+    round_index: OPTIONAL_ROUND_INDEX,
+  }),
 };
 
 export interface MasteryEligibilityResult {

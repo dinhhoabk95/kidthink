@@ -297,7 +297,7 @@ Scenario: mỗi template có E2E journey
 | # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
 |---|---|---|---|---|
 | 1 | 60 game type của v1 port thành `content_pack` của 6 template được bao nhiêu phần trăm? Cần khảo sát trước khi cam kết | Phạm vi P1 — không chặn hình dạng contract | chờ P1 | hoãn — khảo sát trước khi vào P1 |
-| 2 | Template thứ 7–10 nên là gì? Maze, memory-flip, rotate đều thuộc mechanic PRD nêu nhưng chưa vào MVP | P4 | chờ P4 | hoãn |
+| ~~2~~ | ~~Template thứ 7–10 nên là gì?~~ **Đóng 2026-08-20 (T98, `D-RW`)**: mười một khuôn `GT-007` tới `GT-017` đã có danh mục, band tuổi và điều kiện nghiệm thu ở [`montessori-template-batch.md`](montessori-template-batch.md), suy ra từ 59 dạng bài của corpus Montessori chứ không từ danh sách mechanic của PRD. Maze và rotate nằm trong đó (`GT-013`, `GT-016`); memory-flip **không** — không dạng bài nguồn nào cần nó | — | Đã đóng | D-RW |
 | ~~3~~ | ~~`scoring` schema chung cho mọi template hay mỗi template một kiểu?~~ **Đóng 2026-08-09 (T13, `D-BA`)**: xem [`scoring-and-result.md`](../04-play/scoring-and-result.md) — P1 dùng `scoring` schema chung (rounds/timer), sequence-order chấm cả chuỗi ở P1 | — | Đã đóng | D-BA |
 
 | ~~4~~ | ~~Xuất Zod → JSON Schema mất `refine`, nên form studio không cảnh báo được ràng buộc quan hệ tới lúc submit. Có nên khai `refine` dạng ui-hint riêng để form biết trước không?~~ **Đóng 2026-08-09 (T13, `D-BK`)**: dùng custom serializer để khai `uiHint` cho `refine` đơn giản ở client — xem [`schema-driven-form.md`](../06-admin/schema-driven-form.md); các `refine` quan hệ phức tạp validate tại server | — | Đã đóng | D-BK |

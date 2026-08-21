@@ -107,6 +107,42 @@ client, tương đối so với `session.started_at`) · `content_version`.
 | `round_retried` | `{ round_index, retry_index }` |
 | `round_skipped` | `{ round_index, reason: "scaffold_exhausted"\|"user" }` |
 
+Event tương tác trong khuôn. Chúng mang **mã nội dung**, không mang toạ độ chạm (`BR-EVT-08`).
+`round_index` là tuỳ chọn: khuôn một vòng không phát nó.
+
+| Event | Payload | Khuôn phát |
+|---|---|---|
+| `item_selected` | `{ item_id, is_correct, round_index? }` | `GT-001` · `GT-002` |
+| `selection_submitted` | `{ is_correct, round_index? }` | `GT-002` |
+| `item_dragged` | `{ item_id, round_index? }` | `GT-003` · `GT-004` · `GT-008` |
+| `item_dropped` | `{ item_id, container_id, is_correct, round_index? }` | `GT-003` |
+| `item_sorted` | `{ item_id, group_id, is_correct, round_index? }` | `GT-004` |
+| `item_placed` | `{ item_id, slot_id, is_correct, round_index? }` | `GT-008` |
+| `pair_selected` | `{ item_id, round_index? }` | `GT-005` |
+| `pair_matched` | `{ pair_id, left_item_id, right_item_id, round_index? }` | `GT-005` |
+| `step_reordered` | `{ from_index, to_index, current_sequence, round_index? }` | `GT-006` |
+| `sequence_submitted` | `{ is_correct, round_index? }` | `GT-006` |
+| `bond_selected` | `{ option_id, part_id, is_correct, round_index? }` | `GT-007` |
+| `part_filled` | `{ part_id, value, round_index? }` | `GT-007` |
+| `clue_revealed` | `{ clue_id, revealed_count, remaining_count, round_index? }` | `GT-009` |
+| `candidate_eliminated` | `{ candidate_id, clue_id, round_index? }` | `GT-009` |
+| `option_previewed` | `{ option_id, row_matches, col_matches, round_index? }` | `GT-011` |
+| `option_selected` | `{ option_id, is_correct, round_index? }` | `GT-011` |
+| `path_step` | `{ row, col, step_index, round_index? }` | `GT-013` |
+| `path_blocked` | `{ row, col, reason: "outside"\|"not_adjacent"\|"wall", retreated, round_index? }` | `GT-013` |
+| `path_submitted` | `{ is_correct, step_count, round_index? }` | `GT-013` |
+| `equation_solved` | `{ symbol_id, value, round_index? }` | `GT-010` |
+| `value_selected` | `{ value, is_correct, round_index? }` | `GT-010` · `GT-012` |
+| `flash_shown` | `{ duration_ms, round_index? }` | `GT-012` |
+| `flash_hidden` | `{ elapsed_ms, round_index? }` | `GT-012` |
+| `flash_replayed` | `{ round_index? }` | `GT-012` |
+| `balance_changed` | `{ tilt_angle, state: "balanced"\|"left_heavy"\|"right_heavy", round_index? }` | `GT-014` |
+| `cell_filled` | `{ row, col, symbol_id, is_valid, round_index? }` | `GT-015` |
+| `constraint_violated` | `{ row, col, symbol_id, round_index? }` | `GT-015` |
+| `hand_rotated` | `{ hand: "hour"\|"minute", time, round_index? }` | `GT-016` |
+| `time_submitted` | `{ time?, card_id?, is_correct, round_index? }` | `GT-016` |
+| `model_rotated` | `{ angle: 0\|90\|180\|270, hidden_cubes_remaining, round_index? }` | `GT-017` |
+
 ### 7.3 Trợ giúp
 
 | Event | Payload |

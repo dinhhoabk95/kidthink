@@ -12,7 +12,14 @@ export type LayoutId =
   | "two-column-matching"
   | "card-flip-grid"
   | "horizontal-track"
-  | "step-ladder";
+  | "step-ladder"
+  | "number-bond-tree"
+  | "ten-frame-split"
+  | "horizontal-slot-track"
+  | "matrix-slot-grid"
+  | "clue-board"
+  | "matrix-3x3"
+  | "equation-rows";
 
 export type AgeBand = "3-4" | "4-5" | "5-6";
 export type ContentStatus =

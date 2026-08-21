@@ -49,9 +49,14 @@ export {
   computeBipartiteLayout,
   computeGridLayout,
   computeHorizontalRowLayout,
+  computeHorizontalSlotTrackLayout,
+  computeMatrixSlotGridLayout,
   computeMultiBucketLayout,
+  computeNumberBondTreeLayout,
+  computeTenFrameSplitLayout,
   computeTrackLayout,
 } from "./layout/geometry.js";
+
 export {
   isLayoutId,
   LAYOUT_IDS,
@@ -107,6 +112,30 @@ export {
   FORBIDDEN_WORDS,
   RETRY_ENCOURAGEMENTS,
 } from "./systems/feedback-system";
+export {
+  canMove,
+  cellKey,
+  cellTowards,
+  countDeadEnds,
+  findPath,
+  findRouteThrough,
+  isDeadEnd,
+  isInsideGrid,
+  isJunction,
+  isValidRoute,
+  type MazeBlockedReason,
+  type MazeCell,
+  type MazeGrid,
+  MazePathTracker,
+  type MazeSide,
+  type MazeStepResult,
+  type MazeStepStatus,
+  type MazeWall,
+  nearestJunctionIndex,
+  openNeighbors,
+  reachableCells,
+  sameCell,
+} from "./systems/maze-system.js";
 export { type Particle, RenderSystem } from "./systems/render-system";
 export {
   type AgeBand as ScaffoldingAgeBand,
@@ -157,4 +186,82 @@ export type {
   GT006Content,
   GT006Difficulty,
 } from "./templates/GT-006/template.js";
+export { GT007_FIXTURES } from "./templates/GT-007/fixtures.js";
+export { GT007Session } from "./templates/GT-007/session.js";
+export type {
+  GT007Content,
+  GT007Difficulty,
+} from "./templates/GT-007/template.js";
+export { GT008_FIXTURES } from "./templates/GT-008/fixtures.js";
+export { GT008Session } from "./templates/GT-008/session.js";
+export type {
+  GT008Content,
+  GT008Difficulty,
+} from "./templates/GT-008/template.js";
+export { GT009_FIXTURES } from "./templates/GT-009/fixtures.js";
+export { GT009Session } from "./templates/GT-009/session.js";
+export type {
+  GT009Content,
+  GT009Difficulty,
+} from "./templates/GT-009/template.js";
+export { GT010_FIXTURES } from "./templates/GT-010/fixtures.js";
+export {
+  GT010Session,
+  SubstitutionSession,
+} from "./templates/GT-010/session.js";
+export type {
+  GT010Content,
+  GT010Difficulty,
+} from "./templates/GT-010/template.js";
+export { GT011_FIXTURES } from "./templates/GT-011/fixtures.js";
+export { GT011Session } from "./templates/GT-011/session.js";
+export type {
+  GT011Content,
+  GT011Difficulty,
+} from "./templates/GT-011/template.js";
+export { GT012_FIXTURES } from "./templates/GT-012/fixtures.js";
+export {
+  FlashRecallSession,
+  GT012Session,
+} from "./templates/GT-012/session.js";
+export type {
+  GT012Content,
+  GT012Difficulty,
+} from "./templates/GT-012/template.js";
+export { GT013_FIXTURES } from "./templates/GT-013/fixtures.js";
+export {
+  GT013Session,
+  type MazeScaffoldHint,
+} from "./templates/GT-013/session.js";
+export type {
+  GT013Content,
+  GT013Difficulty,
+} from "./templates/GT-013/template.js";
+export { GT014_FIXTURES } from "./templates/GT-014/fixtures.js";
+export {
+  BalanceScaleSession,
+  GT014Session,
+} from "./templates/GT-014/session.js";
+export type {
+  GT014Content,
+  GT014Difficulty,
+} from "./templates/GT-014/template.js";
+export { GT015_FIXTURES } from "./templates/GT-015/fixtures.js";
+export { GT015Session, SudokuMiniSession } from "./templates/GT-015/session.js";
+export type {
+  GT015Content,
+  GT015Difficulty,
+} from "./templates/GT-015/template.js";
+export { GT016_FIXTURES } from "./templates/GT-016/fixtures.js";
+export { ClockHandsSession, GT016Session } from "./templates/GT-016/session.js";
+export type {
+  GT016Content,
+  GT016Difficulty,
+} from "./templates/GT-016/template.js";
+export { GT017_FIXTURES } from "./templates/GT-017/fixtures.js";
+export { BlockStackSession, GT017Session } from "./templates/GT-017/session.js";
+export type {
+  GT017Content,
+  GT017Difficulty,
+} from "./templates/GT-017/template.js";
 export { ObjectPool } from "./utils/object-pool.js";

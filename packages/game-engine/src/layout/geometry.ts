@@ -9,6 +9,20 @@ import {
 } from "./constants.js";
 import type { LayoutInput, Slot } from "./types.js";
 
+/** Hằng của `clue-board` (GT-009) — xem computeClueBoardLayout. */
+const CLUE_BOARD_MAX_CLUES = 3;
+const CLUE_BOARD_STRIP_RATIO = 0.28;
+const CLUE_BOARD_MAX_CLUE_W = 260;
+const CLUE_BOARD_MAX_CLUE_H = 96;
+const CLUE_BOARD_MAX_COLS = 5;
+const CLUE_BOARD_MAX_CARD = 120;
+
+/** Cạnh ô của `matrix-slot-grid` trước khi bị sàn chạm đẩy lên. */
+const MATRIX_SLOT_CELL_PX = 80;
+
+/** Cạnh ô của `matrix-3x3`; khay chọn nằm **dưới** ma trận, không nằm bên phải. */
+const MATRIX_3X3_CELL_PX = 96;
+
 /**
  * Tính toán bố cục dạng lưới (grid / grid-2x4 / card-flip-grid / flex-wrap).
  * Tự động phân trang khi số ô vượt quá sức chứa mà không được thu nhỏ dưới sàn chạm (BR-LAY-04).
@@ -426,6 +440,549 @@ export function computeTrackLayout(
         role: "target",
       });
     }
+  }
+
+  return slots;
+}
+
+/**
+ * Bố cục sơ đồ tách gộp hình cây (number-bond-tree).
+ * - 1 ô gốc (Whole) ở trên trung tâm
+ * - 2 hoặc 3 ô nhánh (Parts) ở hàng giữa
+ * - Các vật phẩm kéo/chọn (Sources) ở hàng dưới
+ */
+export function computeNumberBondTreeLayout(input: LayoutInput): Slot[] {
+  const { slotCount, ageBand, targetCount: rawBranchCount } = input;
+  const branchCount = rawBranchCount ?? 2;
+  const touchFloor = getTouchFloor(ageBand);
+
+  const slotW = Math.max(touchFloor, 80);
+  const slotH = Math.max(touchFloor, 80);
+  const slots: Slot[] = [];
+
+  // Slot 0: Whole (Ô tổng) ở đỉnh
+  const wholeX = LOGIC_WIDTH / 2;
+  const wholeY = SAFE_MARGIN_PX + slotH / 2 + 10;
+  slots.push({
+    index: 0,
+    x: Math.round(wholeX),
+    y: Math.round(wholeY),
+    w: Math.round(slotW),
+    h: Math.round(slotH),
+    hitW: Math.max(touchFloor, Math.round(slotW)),
+    hitH: Math.max(touchFloor, Math.round(slotH)),
+    page: 0,
+    role: "target",
+  });
+
+  // Slots 1..branchCount: Parts (Các ô nhánh)
+  const partSpacing = slotW + Math.max(SLOT_GAP_PX, 40);
+  const totalPartsW = (branchCount - 1) * partSpacing;
+  const partsStartX = wholeX - totalPartsW / 2;
+  const partsY = wholeY + slotH + Math.max(SLOT_GAP_PX, 30);
+
+  for (let b = 0; b < branchCount; b++) {
+    const px = partsStartX + b * partSpacing;
+    slots.push({
+      index: 1 + b,
+      x: Math.round(px),
+      y: Math.round(partsY),
+      w: Math.round(slotW),
+      h: Math.round(slotH),
+      hitW: Math.max(touchFloor, Math.round(slotW)),
+      hitH: Math.max(touchFloor, Math.round(slotH)),
+      page: 0,
+      role: "target",
+    });
+  }
+
+  // Source draggable slots ở hàng dưới
+  if (slotCount > 0) {
+    const sourceSpacing = slotW + SLOT_GAP_PX;
+    const totalSourceW = (slotCount - 1) * sourceSpacing;
+    const sourceStartX = LOGIC_WIDTH / 2 - totalSourceW / 2;
+    const sourceY = LOGIC_HEIGHT - SAFE_MARGIN_PX - slotH / 2 - 10;
+
+    for (let s = 0; s < slotCount; s++) {
+      const sx = sourceStartX + s * sourceSpacing;
+      slots.push({
+        index: 1 + branchCount + s,
+        x: Math.round(sx),
+        y: Math.round(sourceY),
+        w: Math.round(slotW),
+        h: Math.round(slotH),
+        hitW: Math.max(touchFloor, Math.round(slotW)),
+        hitH: Math.max(touchFloor, Math.round(slotH)),
+        page: 0,
+        role: "source",
+      });
+    }
+  }
+
+  return slots;
+}
+
+/**
+ * Bố cục khung 10 ô tách gộp (ten-frame-split).
+ * - Bảng 2 hàng x 5 cột (10 ô) ở giữa
+ * - Nguồn vật phẩm ở hàng dưới
+ */
+export function computeTenFrameSplitLayout(input: LayoutInput): Slot[] {
+  const { slotCount, ageBand } = input;
+  const touchFloor = getTouchFloor(ageBand);
+
+  const slotW = Math.max(touchFloor, 70);
+  const slotH = Math.max(touchFloor, 70);
+  const slots: Slot[] = [];
+
+  // 10 ô target (2 hàng x 5 cột)
+  const cols = 5;
+  const rows = 2;
+  const gridW = cols * slotW + (cols - 1) * SLOT_GAP_PX;
+  const gridStartX = (LOGIC_WIDTH - gridW) / 2;
+  const gridStartY = SAFE_MARGIN_PX + 20;
+
+  for (let r = 0; r < rows; r++) {
+    for (let c = 0; c < cols; c++) {
+      const idx = r * cols + c;
+      const cx = gridStartX + c * (slotW + SLOT_GAP_PX) + slotW / 2;
+      const cy = gridStartY + r * (slotH + SLOT_GAP_PX) + slotH / 2;
+      slots.push({
+        index: idx,
+        x: Math.round(cx),
+        y: Math.round(cy),
+        w: Math.round(slotW),
+        h: Math.round(slotH),
+        hitW: Math.max(touchFloor, Math.round(slotW)),
+        hitH: Math.max(touchFloor, Math.round(slotH)),
+        page: 0,
+        role: "target",
+      });
+    }
+  }
+
+  // Source slots ở đáy
+  if (slotCount > 0) {
+    const sourceW = slotCount * slotW + (slotCount - 1) * SLOT_GAP_PX;
+    const sourceStartX = (LOGIC_WIDTH - sourceW) / 2;
+    const sourceY = LOGIC_HEIGHT - SAFE_MARGIN_PX - slotH / 2 - 10;
+
+    for (let i = 0; i < slotCount; i++) {
+      const cx = sourceStartX + i * (slotW + SLOT_GAP_PX) + slotW / 2;
+      slots.push({
+        index: 10 + i,
+        x: Math.round(cx),
+        y: Math.round(sourceY),
+        w: Math.round(slotW),
+        h: Math.round(slotH),
+        hitW: Math.max(touchFloor, Math.round(slotW)),
+        hitH: Math.max(touchFloor, Math.round(slotH)),
+        page: 0,
+        role: "source",
+      });
+    }
+  }
+
+  return slots;
+}
+
+/**
+ * Bố cục khay ô chứa kéo thả ngang (horizontal-slot-track).
+ * - Hàng ô đích (target slots) ở giữa
+ * - Hàng vật phẩm kéo thả (source items) ở phía dưới
+ */
+export function computeHorizontalSlotTrackLayout(input: LayoutInput): Slot[] {
+  const { slotCount, ageBand, targetCount: rawTargetCount } = input;
+  const targetCount = rawTargetCount ?? slotCount;
+  const touchFloor = getTouchFloor(ageBand);
+
+  const slotW = Math.max(touchFloor, 80);
+  const slotH = Math.max(touchFloor, 80);
+  const slots: Slot[] = [];
+
+  // Hàng target slots
+  const targetTotalW = targetCount * slotW + (targetCount - 1) * SLOT_GAP_PX;
+  const targetStartX = (LOGIC_WIDTH - targetTotalW) / 2;
+  const targetY = LOGIC_HEIGHT * 0.35;
+
+  for (let t = 0; t < targetCount; t++) {
+    const cx = targetStartX + t * (slotW + SLOT_GAP_PX) + slotW / 2;
+    slots.push({
+      index: t,
+      x: Math.round(cx),
+      y: Math.round(targetY),
+      w: Math.round(slotW),
+      h: Math.round(slotH),
+      hitW: Math.max(touchFloor, Math.round(slotW)),
+      hitH: Math.max(touchFloor, Math.round(slotH)),
+      page: 0,
+      role: "target",
+    });
+  }
+
+  // Hàng source items
+  const sourceTotalW = slotCount * slotW + (slotCount - 1) * SLOT_GAP_PX;
+  const sourceStartX = (LOGIC_WIDTH - sourceTotalW) / 2;
+  const sourceY = LOGIC_HEIGHT * 0.72;
+
+  for (let s = 0; s < slotCount; s++) {
+    const cx = sourceStartX + s * (slotW + SLOT_GAP_PX) + slotW / 2;
+    slots.push({
+      index: targetCount + s,
+      x: Math.round(cx),
+      y: Math.round(sourceY),
+      w: Math.round(slotW),
+      h: Math.round(slotH),
+      hitW: Math.max(touchFloor, Math.round(slotW)),
+      hitH: Math.max(touchFloor, Math.round(slotH)),
+      page: 0,
+      role: "source",
+    });
+  }
+
+  return slots;
+}
+
+/**
+ * Bố cục ma trận ô chứa logic (matrix-slot-grid).
+ * - Khung lưới 2x2 hoặc 3x3 ở bên trái / giữa
+ * - Các thẻ lựa chọn ở bên phải
+ */
+export function computeMatrixSlotGridLayout(input: LayoutInput): Slot[] {
+  const { slotCount, ageBand, targetCount: rawGridSize } = input;
+  const gridSize = rawGridSize === 9 ? 3 : 2; // 2x2 hoặc 3x3
+  const touchFloor = getTouchFloor(ageBand);
+  const availH = LOGIC_HEIGHT - 2 * SAFE_MARGIN_PX;
+
+  const cell = Math.max(touchFloor, MATRIX_SLOT_CELL_PX);
+  const slots: Slot[] = [];
+
+  // Khung ma trận bên trái
+  const matrixTotalW = gridSize * cell + (gridSize - 1) * SLOT_GAP_PX;
+  const matrixTotalH = gridSize * cell + (gridSize - 1) * SLOT_GAP_PX;
+  const matrixStartX = SAFE_MARGIN_PX;
+  const matrixStartY =
+    SAFE_MARGIN_PX + Math.max(0, (availH - matrixTotalH) / 2);
+
+  for (let r = 0; r < gridSize; r++) {
+    for (let c = 0; c < gridSize; c++) {
+      slots.push({
+        index: r * gridSize + c,
+        x: Math.round(matrixStartX + c * (cell + SLOT_GAP_PX) + cell / 2),
+        y: Math.round(matrixStartY + r * (cell + SLOT_GAP_PX) + cell / 2),
+        w: Math.round(cell),
+        h: Math.round(cell),
+        hitW: Math.max(touchFloor, Math.round(cell)),
+        hitH: Math.max(touchFloor, Math.round(cell)),
+        page: 0,
+        role: "target",
+      });
+    }
+  }
+
+  // Khay lựa chọn bên phải — **xuống hàng** khi một cột không chứa hết.
+  // Một cột duy nhất tràn đáy từ 6 lựa chọn trở lên, và `GT-008` khai tới 9.
+  const trayStartX = matrixStartX + matrixTotalW + 2 * SLOT_GAP_PX;
+  const trayW = LOGIC_WIDTH - SAFE_MARGIN_PX - trayStartX;
+  const trayCols = Math.max(
+    1,
+    Math.min(
+      slotCount,
+      Math.floor((trayW + SLOT_GAP_PX) / (cell + SLOT_GAP_PX))
+    )
+  );
+  const trayRows = Math.max(1, Math.ceil(slotCount / trayCols));
+  const trayTotalH = trayRows * cell + (trayRows - 1) * SLOT_GAP_PX;
+  const trayStartY = SAFE_MARGIN_PX + Math.max(0, (availH - trayTotalH) / 2);
+
+  for (let o = 0; o < slotCount; o++) {
+    const row = Math.floor(o / trayCols);
+    const col = o % trayCols;
+    const inRow = Math.min(trayCols, slotCount - row * trayCols);
+    const rowW = inRow * cell + (inRow - 1) * SLOT_GAP_PX;
+    const rowStartX = trayStartX + Math.max(0, (trayW - rowW) / 2);
+    slots.push({
+      index: gridSize * gridSize + o,
+      x: Math.round(rowStartX + col * (cell + SLOT_GAP_PX) + cell / 2),
+      y: Math.round(trayStartY + row * (cell + SLOT_GAP_PX) + cell / 2),
+      w: Math.round(cell),
+      h: Math.round(cell),
+      hitW: Math.max(touchFloor, Math.round(cell)),
+      hitH: Math.max(touchFloor, Math.round(cell)),
+      page: 0,
+      role: "source",
+    });
+  }
+
+  return slots;
+}
+
+/**
+ * Bố cục bảng loại trừ theo manh mối (clue-board) — `GT-009`.
+ *
+ * Dải manh mối một hàng ở trên, bảng ứng viên ở dưới. Ứng viên **xuống hàng**
+ * thay vì co lại: `computeBipartiteLayout` dọc đặt cả hai vùng trên một hàng, và
+ * ở 10 ứng viên band 4-5 nó tràn ra 28..932 trong khi vùng an toàn là 32..928.
+ * Đó là lý do hàng registry không đủ và `clue-board` cần hàm riêng.
+ *
+ * `slotCount` là số ứng viên; `targetCount` là số manh mối (1–3).
+ */
+export function computeClueBoardLayout(input: LayoutInput): Slot[] {
+  const { slotCount, ageBand, targetCount: rawClueCount } = input;
+  const clueCount = Math.max(
+    1,
+    Math.min(CLUE_BOARD_MAX_CLUES, rawClueCount ?? 1)
+  );
+  const touchFloor = getTouchFloor(ageBand);
+  const availW = LOGIC_WIDTH - 2 * SAFE_MARGIN_PX;
+  const availH = LOGIC_HEIGHT - 2 * SAFE_MARGIN_PX;
+
+  const clueZoneH = Math.max(
+    touchFloor,
+    Math.round(availH * CLUE_BOARD_STRIP_RATIO)
+  );
+  const boardZoneH = availH - clueZoneH - SLOT_GAP_PX;
+
+  const slots: Slot[] = [
+    ...computeClueStrip({ clueCount, touchFloor, availW, clueZoneH }),
+  ];
+  slots.push(
+    ...computeCandidateBoard({
+      slotCount,
+      clueCount,
+      touchFloor,
+      availW,
+      boardZoneH,
+      boardStartY: SAFE_MARGIN_PX + clueZoneH + SLOT_GAP_PX,
+    })
+  );
+  return slots;
+}
+
+function computeClueStrip(args: {
+  clueCount: number;
+  touchFloor: number;
+  availW: number;
+  clueZoneH: number;
+}): Slot[] {
+  const { clueCount, touchFloor, availW, clueZoneH } = args;
+  const clueW = Math.max(
+    touchFloor,
+    Math.min(
+      CLUE_BOARD_MAX_CLUE_W,
+      (availW - (clueCount - 1) * SLOT_GAP_PX) / clueCount
+    )
+  );
+  const clueH = Math.max(
+    touchFloor,
+    Math.min(CLUE_BOARD_MAX_CLUE_H, clueZoneH)
+  );
+  const totalW = clueCount * clueW + (clueCount - 1) * SLOT_GAP_PX;
+  const startX = SAFE_MARGIN_PX + (availW - totalW) / 2;
+  const centerY = SAFE_MARGIN_PX + clueZoneH / 2;
+
+  const slots: Slot[] = [];
+  for (let i = 0; i < clueCount; i++) {
+    slots.push({
+      index: i,
+      x: Math.round(startX + i * (clueW + SLOT_GAP_PX) + clueW / 2),
+      y: Math.round(centerY),
+      w: Math.round(clueW),
+      h: Math.round(clueH),
+      hitW: Math.max(touchFloor, Math.round(clueW)),
+      hitH: Math.max(touchFloor, Math.round(clueH)),
+      page: 0,
+      role: "source",
+    });
+  }
+  return slots;
+}
+
+function computeCandidateBoard(args: {
+  slotCount: number;
+  clueCount: number;
+  touchFloor: number;
+  availW: number;
+  boardZoneH: number;
+  boardStartY: number;
+}): Slot[] {
+  const { slotCount, clueCount, touchFloor, availW, boardZoneH, boardStartY } =
+    args;
+  const maxColsByTouch = Math.max(
+    1,
+    Math.floor((availW + SLOT_GAP_PX) / (touchFloor + SLOT_GAP_PX))
+  );
+  const cols = Math.max(
+    1,
+    Math.min(
+      CLUE_BOARD_MAX_COLS,
+      maxColsByTouch,
+      slotCount <= CLUE_BOARD_MAX_COLS ? slotCount : Math.ceil(slotCount / 2)
+    )
+  );
+  const rows = Math.max(1, Math.ceil(slotCount / cols));
+
+  const cardW = Math.max(
+    touchFloor,
+    Math.min(CLUE_BOARD_MAX_CARD, (availW - (cols - 1) * SLOT_GAP_PX) / cols)
+  );
+  const cardH = Math.max(
+    touchFloor,
+    Math.min(
+      CLUE_BOARD_MAX_CARD,
+      (boardZoneH - (rows - 1) * SLOT_GAP_PX) / rows
+    )
+  );
+  const totalH = rows * cardH + (rows - 1) * SLOT_GAP_PX;
+  const startY = boardStartY + Math.max(0, (boardZoneH - totalH) / 2);
+
+  const slots: Slot[] = [];
+  for (let i = 0; i < slotCount; i++) {
+    const row = Math.floor(i / cols);
+    const col = i % cols;
+    const cardsInRow = Math.min(cols, slotCount - row * cols);
+    const rowW = cardsInRow * cardW + (cardsInRow - 1) * SLOT_GAP_PX;
+    const startX = SAFE_MARGIN_PX + (availW - rowW) / 2;
+    slots.push({
+      index: clueCount + i,
+      x: Math.round(startX + col * (cardW + SLOT_GAP_PX) + cardW / 2),
+      y: Math.round(startY + row * (cardH + SLOT_GAP_PX) + cardH / 2),
+      w: Math.round(cardW),
+      h: Math.round(cardH),
+      hitW: Math.max(touchFloor, Math.round(cardW)),
+      hitH: Math.max(touchFloor, Math.round(cardH)),
+      page: 0,
+      role: "target",
+    });
+  }
+  return slots;
+}
+
+/**
+ * Bố cục ma trận chọn hình (matrix-3x3) — `GT-011`.
+ *
+ * Khác `matrix-slot-grid` ở chỗ khay chọn nằm **dưới** ma trận chứ không bên phải
+ * (mục 7.3 spec khuôn). `computeGridLayout` không thay được: nó chỉ sinh một vùng
+ * `neutral` duy nhất, không tách được ô ma trận với thẻ chọn.
+ *
+ * `slotCount` là số thẻ chọn; `targetCount` >= 9 cho lưới 3×3, còn lại 2×2.
+ */
+export function computeMatrix3x3Layout(input: LayoutInput): Slot[] {
+  const { slotCount, ageBand, targetCount: rawGridSize } = input;
+  const gridSize = (rawGridSize ?? 0) >= 9 ? 3 : 2;
+  const touchFloor = getTouchFloor(ageBand);
+  const availW = LOGIC_WIDTH - 2 * SAFE_MARGIN_PX;
+  const availH = LOGIC_HEIGHT - 2 * SAFE_MARGIN_PX;
+
+  const cell = Math.max(touchFloor, MATRIX_3X3_CELL_PX);
+  const matrixH = gridSize * cell + (gridSize - 1) * SLOT_GAP_PX;
+  const matrixW = matrixH;
+
+  const trayCols = Math.max(
+    1,
+    Math.min(
+      slotCount,
+      Math.floor((availW + SLOT_GAP_PX) / (cell + SLOT_GAP_PX))
+    )
+  );
+  const trayRows = Math.max(1, Math.ceil(slotCount / trayCols));
+  const trayH = trayRows * cell + (trayRows - 1) * SLOT_GAP_PX;
+
+  const blockH = matrixH + SLOT_GAP_PX + trayH;
+  const blockStartY = SAFE_MARGIN_PX + Math.max(0, (availH - blockH) / 2);
+  const matrixStartX = SAFE_MARGIN_PX + (availW - matrixW) / 2;
+
+  const slots: Slot[] = [];
+  for (let r = 0; r < gridSize; r++) {
+    for (let c = 0; c < gridSize; c++) {
+      slots.push({
+        index: r * gridSize + c,
+        x: Math.round(matrixStartX + c * (cell + SLOT_GAP_PX) + cell / 2),
+        y: Math.round(blockStartY + r * (cell + SLOT_GAP_PX) + cell / 2),
+        w: Math.round(cell),
+        h: Math.round(cell),
+        hitW: Math.max(touchFloor, Math.round(cell)),
+        hitH: Math.max(touchFloor, Math.round(cell)),
+        page: 0,
+        role: "target",
+      });
+    }
+  }
+
+  const trayStartY = blockStartY + matrixH + SLOT_GAP_PX;
+  for (let o = 0; o < slotCount; o++) {
+    const row = Math.floor(o / trayCols);
+    const col = o % trayCols;
+    const inRow = Math.min(trayCols, slotCount - row * trayCols);
+    const rowW = inRow * cell + (inRow - 1) * SLOT_GAP_PX;
+    const rowStartX = SAFE_MARGIN_PX + (availW - rowW) / 2;
+    slots.push({
+      index: gridSize * gridSize + o,
+      x: Math.round(rowStartX + col * (cell + SLOT_GAP_PX) + cell / 2),
+      y: Math.round(trayStartY + row * (cell + SLOT_GAP_PX) + cell / 2),
+      w: Math.round(cell),
+      h: Math.round(cell),
+      hitW: Math.max(touchFloor, Math.round(cell)),
+      hitH: Math.max(touchFloor, Math.round(cell)),
+      page: 0,
+      role: "source",
+    });
+  }
+
+  return slots;
+}
+
+/**
+ * Bố cục phương trình hình ảnh (equation-rows) — `GT-010`.
+ * Hàng trên là 2-3 dòng phương trình, hàng dưới là khay chọn giá trị.
+ */
+export function computeEquationRowsLayout(input: LayoutInput): Slot[] {
+  const { slotCount, ageBand, targetCount: rawEqCount } = input;
+  const eqCount = Math.max(1, rawEqCount ?? 2);
+  const touchFloor = getTouchFloor(ageBand);
+  const availW = LOGIC_WIDTH - 2 * SAFE_MARGIN_PX;
+  const availH = LOGIC_HEIGHT - 2 * SAFE_MARGIN_PX;
+
+  const rowH = Math.min(80, Math.floor((availH * 0.6) / eqCount));
+  const card = Math.max(touchFloor, 64);
+
+  const slots: Slot[] = [];
+  const eqStartY = SAFE_MARGIN_PX + 10;
+  const eqGap = 12;
+
+  // Slots cho phương trình
+  for (let i = 0; i < eqCount; i++) {
+    slots.push({
+      index: i,
+      x: Math.round(SAFE_MARGIN_PX + availW / 2),
+      y: Math.round(eqStartY + i * (rowH + eqGap) + rowH / 2),
+      w: Math.round(availW * 0.8),
+      h: Math.round(rowH),
+      hitW: Math.round(availW * 0.8),
+      hitH: Math.max(touchFloor, rowH),
+      page: 0,
+      role: "target",
+    });
+  }
+
+  // Slots cho options
+  const trayStartY = eqStartY + eqCount * (rowH + eqGap) + 16;
+  const optCols = Math.max(1, slotCount);
+  const totalOptW = optCols * card + (optCols - 1) * SLOT_GAP_PX;
+  const optStartX = SAFE_MARGIN_PX + Math.max(0, (availW - totalOptW) / 2);
+
+  for (let o = 0; o < slotCount; o++) {
+    slots.push({
+      index: eqCount + o,
+      x: Math.round(optStartX + o * (card + SLOT_GAP_PX) + card / 2),
+      y: Math.round(trayStartY + card / 2),
+      w: Math.round(card),
+      h: Math.round(card),
+      hitW: Math.max(touchFloor, Math.round(card)),
+      hitH: Math.max(touchFloor, Math.round(card)),
+      page: 0,
+      role: "source",
+    });
   }
 
   return slots;

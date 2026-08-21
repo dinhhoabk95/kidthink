@@ -1,5 +1,6 @@
 import { eq } from "drizzle-orm";
 import { activities, gameLevels, getOwnerDb, lessons } from "../../index.js";
+import { checkGateMontessoriCorpus } from "../gates/montessori-gate.js";
 import { runEightGates } from "../gates/runner.js";
 import { ALL_SEED_CONTENT } from "../index.js";
 import type { AnyContentSeed, GateResult } from "../types.js";
@@ -89,6 +90,19 @@ export async function runSeedCheck(againstDb = false) {
     }
   }
 
+  // Cổng mức corpus: hạn ngạch competency của cả lô Montessori (BR-MGL-01).
+  // Chạy sau vòng lặp vì nó đo tổng, không đo từng item.
+  const corpusGate = checkGateMontessoriCorpus(seeds);
+  if (!corpusGate.passed) {
+    console.error("❌ [Gate Fail] Cổng corpus:");
+    for (const issue of corpusGate.issues) {
+      console.error(
+        `   - Gate ${corpusGate.gate} (${corpusGate.name}) [${corpusGate.kind}]: ${issue.code} — ${issue.message}`
+      );
+      totalIssues++;
+    }
+  }
+
   if (againstDb && driftList.length > 0) {
     console.error(
       `🚨 [DB Drift Detected] ${driftList.length} items differ from DB:`
@@ -104,7 +118,7 @@ export async function runSeedCheck(againstDb = false) {
     process.exit(1);
   }
 
-  console.log("🎉 [seed:check] All 8 gates passed cleanly!");
+  console.log("🎉 [seed:check] All 8 gates + cổng corpus passed cleanly!");
 }
 
 if (process.argv[1]?.endsWith("seed-check.ts")) {

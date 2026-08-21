@@ -9,6 +9,9 @@ import { LESSON_BATCH_07 } from "./batch-07.js";
 import { LESSON_BATCH_08 } from "./batch-08.js";
 import { LESSON_BATCH_09 } from "./batch-09.js";
 import { LESSON_BATCH_10 } from "./batch-10.js";
+import { SEED_MONT_L_01_07 } from "./seed-mont-l01-07.js";
+import { SEED_MONT_L_08_14 } from "./seed-mont-l08-14.js";
+import { SEED_MONT_L_15_21 } from "./seed-mont-l15-21.js";
 
 export const ALL_SEED_LESSONS: LessonSeed[] = [
   ...LESSON_BATCH_01,
@@ -21,4 +24,7 @@ export const ALL_SEED_LESSONS: LessonSeed[] = [
   ...LESSON_BATCH_08,
   ...LESSON_BATCH_09,
   ...LESSON_BATCH_10,
+  ...SEED_MONT_L_01_07,
+  ...SEED_MONT_L_08_14,
+  ...SEED_MONT_L_15_21,
 ];

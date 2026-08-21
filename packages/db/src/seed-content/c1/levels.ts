@@ -1,6 +1,19 @@
 import type { ContentSeed } from "../types.js";
+import { SEED_MONT_A01 } from "./seed-mont-a01.js";
+import { SEED_MONT_A02 } from "./seed-mont-a02.js";
+import { SEED_MONT_A05 } from "./seed-mont-a05.js";
+import { SEED_MONT_A06 } from "./seed-mont-a06.js";
+import { SEED_MONT_A07 } from "./seed-mont-a07.js";
+import { SEED_MONT_A08 } from "./seed-mont-a08.js";
+import { SEED_MONT_A11 } from "./seed-mont-a11.js";
+import { SEED_MONT_A13 } from "./seed-mont-a13.js";
+import { SEED_MONT_A15 } from "./seed-mont-a15.js";
+import { SEED_MONT_A18 } from "./seed-mont-a18.js";
+import { SEED_MONT_B02 } from "./seed-mont-b02.js";
+import { SEED_MONT_B11 } from "./seed-mont-b11.js";
+import { SEED_MONT_B15 } from "./seed-mont-b15.js";
 
-export const C1_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
+export const C1_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
   // Level 1 (Free)
   {
     header: {
@@ -600,4 +613,21 @@ export const C1_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
     },
     difficulty_params: { flash_duration_ms: 1200 },
   },
+];
+
+export const C1_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
+  ...C1_BASE_LEVELS,
+  ...SEED_MONT_A01,
+  ...SEED_MONT_A02,
+  ...SEED_MONT_A05,
+  ...SEED_MONT_A06,
+  ...SEED_MONT_A07,
+  ...SEED_MONT_A08,
+  ...SEED_MONT_A11,
+  ...SEED_MONT_A13,
+  ...SEED_MONT_A15,
+  ...SEED_MONT_A18,
+  ...SEED_MONT_B02,
+  ...SEED_MONT_B11,
+  ...SEED_MONT_B15,
 ];

@@ -181,6 +181,7 @@ image-upload · emoji-picker ──→ game-level-studio
 | 8 | Trưng bày chương trình ra public | [`program-showcase.md`](02-public/program-showcase.md) |
 | 9 | Tích hợp curriculum vào account: bật khối chương trình đang học, chốt bố cục nhiều trẻ và phạm vi thư viện theo trẻ | [`member-dashboard.md`](03-account/member-dashboard.md) · [`my-library.md`](03-account/my-library.md) · [`curriculum-player.md`](04-play/curriculum-player.md) — [`Task #82`](../tasks/82-p3-account-curriculum-integration-plan.md) |
 | 10 | Ma trận phủ tư duy và cổng phủ nội dung | [`thinking-coverage-matrix.md`](08-quality/thinking-coverage-matrix.md) |
+| 11 | Nạp corpus Montessori **lô A** — phần chạy được trên sáu khuôn hiện có, không dòng code engine nào | [`montessori-corpus-mapping.md`](05-content/montessori-corpus-mapping.md) → [`montessori-game-level-batch.md`](05-content/montessori-game-level-batch.md) · [`montessori-lesson-batch.md`](05-content/montessori-lesson-batch.md) |
 
 ## P4 — Add-on (ngoài MVP)
 
@@ -192,6 +193,14 @@ Ba spec add-on nữa nằm ngoài dòng catalog và có thứ tự riêng:
 `depends_on: LESSON-SESSION-RUNNER`; điều kiện mẫu được kiểm dựa trên bản ghi phiên chạy), còn
 [`template-authoring-kit.md`](01-platform/template-authoring-kit.md) chờ cả hai spec P1
 ở bước 2c vì nó khai `depends_on` cả hai.
+
+[`montessori-template-batch.md`](01-platform/montessori-template-batch.md) đứng sau cả ba spec P1 ở
+bước 2c và sau [`template-authoring-kit.md`](01-platform/template-authoring-kit.md) — nó cấp mười một mã khuôn
+`GT-007` tới `GT-017` cho corpus Montessori. Lô B của
+[`montessori-game-level-batch.md`](05-content/montessori-game-level-batch.md) (bước 3 tới 9 ở mục 7.3 của spec đó)
+mở khoá theo từng khuôn, không mở khoá cả lô một lúc. Mã cấp theo **lớp chi phí**: `GT-007` tới
+`GT-011` chỉ cần hàng layout mới trong registry, `GT-012` tới `GT-017` mỗi khuôn kéo theo một
+system engine chưa tồn tại. Nhóm đầu mở khoá 12 trên 16 workbook lô B mà không thêm system nào.
 
 [`worksheet-model.md`](05-content/worksheet-model.md) · [`lesson-plan-creator.md`](07-addon/lesson-plan-creator.md) → [`pdf-export.md`](07-addon/pdf-export.md) · [`personal-curriculum.md`](07-addon/personal-curriculum.md) · [`custom-game-builder.md`](07-addon/custom-game-builder.md) · [`ai-credit-ledger.md`](07-addon/ai-credit-ledger.md) → [`ai-assistant.md`](07-addon/ai-assistant.md) · [`semantic-search.md`](07-addon/semantic-search.md)
 
@@ -253,6 +262,8 @@ có task riêng.
 | #95 | [`lesson-session-runner.md`](04-play/lesson-session-runner.md) | ba bảng mới, và câu hỏi §11 Q3 định hình lược đồ |
 | #96 | [`lesson-exemplar-set.md`](05-content/lesson-exemplar-set.md) | Task #95, và chưa spec nào sở hữu nơi lưu bản ghi chơi thử |
 | #97 | [`template-authoring-kit.md`](01-platform/template-authoring-kit.md) | Task #92 và #93 |
+| [#98](../tasks/98-montessori-corpus-intake-plan.md) | [`montessori-corpus-mapping.md`](05-content/montessori-corpus-mapping.md) · [`montessori-game-level-batch.md`](05-content/montessori-game-level-batch.md) · [`montessori-lesson-batch.md`](05-content/montessori-lesson-batch.md) · [`montessori-template-batch.md`](01-platform/montessori-template-batch.md) | không còn bị chặn — 16 câu hỏi đóng bằng `D-RG` tới `D-RV` ngày 2026-08-20; lô A chạy được ngay, lô B chờ khuôn theo bốn nhóm |
+| [#99](../tasks/99-montessori-template-designs-plan.md) | chín khuôn còn lại của [`montessori-template-batch.md`](01-platform/montessori-template-batch.md) | trần C1 đã dùng hết — bốn khuôn chỉ phục vụ C1 không có nội dung nào seed được; chờ quyết định nới trần |
 
 Task #92 và #93 sửa một contract đã `implemented`: cột seed mới trên bảng phiên chơi kéo theo
 thay đổi payload của [`game-config-delivery.md`](04-play/game-config-delivery.md). Đó là lý do

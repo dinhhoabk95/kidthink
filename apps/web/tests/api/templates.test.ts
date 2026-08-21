@@ -36,7 +36,7 @@ describe("Game Template API Endpoints (BR-GTC-04, spec §8)", () => {
     const res = (await guestTemplatesHandler(event)) as any;
 
     expect(res.templates).toBeDefined();
-    expect(res.templates.length).toBe(6);
+    expect(res.templates.length).toBeGreaterThanOrEqual(6);
     expect(res.templates[0]).toHaveProperty("code");
     expect(res.templates[0]).toHaveProperty("name");
     expect(res.templates[0]).toHaveProperty("mechanic");

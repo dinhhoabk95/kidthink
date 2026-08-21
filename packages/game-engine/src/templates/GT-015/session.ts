@@ -1,0 +1,202 @@
+import {
+  ACTION_CORRECT,
+  ACTION_IGNORED,
+  ACTION_RETRY,
+  type ActionResult,
+  type GameAction,
+  TemplateGameSession,
+} from "../../game-session.js";
+import {
+  type ConstraintViolation,
+  findConstraintViolations,
+  isSudokuCompleteAndValid,
+  type SudokuCell,
+  type SudokuGrid,
+} from "../../systems/constraint-system.js";
+import type { GT015Content, GT015Difficulty } from "./template.js";
+
+export interface SudokuCellState {
+  readonly row: number;
+  readonly col: number;
+  readonly value: string | null;
+  readonly isInitial: boolean;
+}
+
+function extractFillCellData(
+  data: unknown
+): { row: number; col: number; symbol_id: string } | null {
+  if (
+    typeof data === "object" &&
+    data !== null &&
+    "row" in data &&
+    "col" in data &&
+    "symbol_id" in data
+  ) {
+    const r = Reflect.get(data, "row");
+    const c = Reflect.get(data, "col");
+    const s = Reflect.get(data, "symbol_id");
+    if (
+      typeof r === "number" &&
+      typeof c === "number" &&
+      typeof s === "string"
+    ) {
+      return { row: r, col: c, symbol_id: s };
+    }
+  }
+  return null;
+}
+
+export class SudokuMiniSession extends TemplateGameSession<
+  GT015Content,
+  GT015Difficulty
+> {
+  private readonly cellStates: Map<string, SudokuCellState> = new Map();
+  private selectedSymbolId: string | null = null;
+  private activeViolations: readonly ConstraintViolation[] = [];
+
+  setupEntities(): void {
+    this.cellStates.clear();
+    this.activeViolations = [];
+    this.selectedSymbolId = null;
+    this.isWon = false;
+
+    for (const c of this.content.cells) {
+      const key = `${c.row},${c.col}`;
+      this.cellStates.set(key, {
+        row: c.row,
+        col: c.col,
+        value: c.symbol_id,
+        isInitial: c.symbol_id !== null,
+      });
+    }
+
+    this.recordEvent("game_started", {
+      template_code: "GT-015",
+      grid_size: this.content.grid_size,
+    });
+  }
+
+  getGridSize(): number {
+    return this.content.grid_size;
+  }
+
+  getSymbols(): GT015Content["symbols"] {
+    return this.content.symbols;
+  }
+
+  getCellState(row: number, col: number): SudokuCellState | undefined {
+    return this.cellStates.get(`${row},${col}`);
+  }
+
+  getAllCellStates(): readonly SudokuCellState[] {
+    return Array.from(this.cellStates.values());
+  }
+
+  getSelectedSymbolId(): string | null {
+    return this.selectedSymbolId;
+  }
+
+  selectSymbol(symbolId: string | null): void {
+    this.selectedSymbolId = symbolId;
+  }
+
+  getViolations(): readonly ConstraintViolation[] {
+    return this.activeViolations;
+  }
+
+  isConflicted(row: number, col: number): boolean {
+    return this.activeViolations.some((v) => v.row === row && v.col === col);
+  }
+
+  fillCell(row: number, col: number, symbolId: string | null): boolean {
+    const key = `${row},${col}`;
+    const state = this.cellStates.get(key);
+    if (!state) {
+      return false;
+    }
+
+    if (state.isInitial) {
+      return false;
+    }
+
+    this.cellStates.set(key, {
+      ...state,
+      value: symbolId,
+    });
+
+    const grid = this.getCurrentGrid();
+    this.activeViolations = findConstraintViolations(grid);
+
+    if (symbolId !== null) {
+      const hasConflict = this.isConflicted(row, col);
+      this.recordEvent("cell_filled", {
+        row,
+        col,
+        symbol_id: symbolId,
+        is_valid: !hasConflict,
+      });
+
+      if (hasConflict) {
+        this.recordEvent("constraint_violated", {
+          row,
+          col,
+          symbol_id: symbolId,
+        });
+      }
+    }
+
+    if (this.checkWinCondition()) {
+      this.winSession();
+    }
+
+    return true;
+  }
+
+  clearCell(row: number, col: number): boolean {
+    return this.fillCell(row, col, null);
+  }
+
+  getCurrentGrid(): SudokuGrid<string> {
+    const cells: SudokuCell<string>[] = [];
+    for (const state of this.cellStates.values()) {
+      cells.push({
+        row: state.row,
+        col: state.col,
+        value: state.value,
+      });
+    }
+    return {
+      size: this.content.grid_size,
+      regions: this.content.regions,
+      cells,
+    };
+  }
+
+  validateAction(action: GameAction): ActionResult {
+    if (action.type === "fill_cell") {
+      const payload = extractFillCellData(action.data);
+      if (!payload) {
+        return ACTION_RETRY;
+      }
+      this.fillCell(payload.row, payload.col, payload.symbol_id);
+      return this.isConflicted(payload.row, payload.col)
+        ? ACTION_RETRY
+        : ACTION_CORRECT;
+    }
+    return ACTION_IGNORED;
+  }
+
+  override checkWinCondition(): boolean {
+    return isSudokuCompleteAndValid(this.getCurrentGrid());
+  }
+
+  override destroy(): void {
+    super.destroy();
+    this.cellStates.clear();
+    this.activeViolations = [];
+    this.selectedSymbolId = null;
+  }
+}
+
+export const GT015Session = SudokuMiniSession;
+export default SudokuMiniSession;

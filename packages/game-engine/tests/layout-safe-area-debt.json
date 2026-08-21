@@ -1,0 +1,10 @@
+{
+  "note": "Nợ BR-LAY-09 đo được ngày 2026-08-20 (T99 WP99.2). Mỗi hàng là số slot tràn vùng an toàn khi quét đúng dải limits mà chính khuôn khai. Cặp không có tên ở đây phải bằng 0. Số chỉ được giảm — tăng là hồi quy và test sẽ đỏ.",
+  "pairs": {
+    "GT-003/left-source-right-target": 24,
+    "GT-004/multi-bucket-bottom": 28,
+    "GT-004/split-columns": 420,
+    "GT-005/two-column-matching": 534,
+    "GT-008/horizontal-slot-track": 32
+  }
+}

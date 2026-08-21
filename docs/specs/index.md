@@ -23,15 +23,15 @@ Bắt đầu từ [`../SPEC.md`](../SPEC.md) — contract toàn dự án. Rồi 
 | Khu vực | Spec | MVP |
 |---|---:|---:|
 | `00-foundation` | 16 | 16 |
-| `01-platform` | 39 | 33 |
+| `01-platform` | 40 | 33 |
 | `02-public` | 9 | 9 |
 | `03-account` | 22 | 19 |
 | `04-play` | 14 | 13 |
-| `05-content` | 6 | 4 |
+| `05-content` | 9 | 4 |
 | `06-admin` | 30 | 29 |
 | `07-addon` | 7 | 0 |
 | `08-quality` | 8 | 7 |
-| **Tổng** | **151** | **130** |
+| **Tổng** | **155** | **130** |
 
 v1 có **31** spec cho cùng phạm vi. Xé nhỏ là chủ ý — xem [`AUDIT-v1.md`](AUDIT-v1.md) §1.2.
 2 spec cộng thêm 2026-08-05 ([`repo-bootstrap.md`](00-foundation/repo-bootstrap.md), [`monorepo-package-architecture.md`](00-foundation/monorepo-package-architecture.md)) lấp lỗ hổng
@@ -103,6 +103,7 @@ v1 có **31** spec cho cùng phạm vi. Xé nhỏ là chủ ý — xem [`AUDIT-v
 | [feature-flag-service](01-platform/feature-flag-service.md) | P2 | Cờ có hạn, mặc định an toàn |
 | [adaptive-engine](01-platform/adaptive-engine.md) | P3 | BKT, ZPD, nhãn báo cáo |
 | [pwa-install](01-platform/pwa-install.md) | P5 | Web install ngoài MVP; không phải native mobile app |
+| [montessori-template-batch](01-platform/montessori-template-batch.md) | P4 | Mười một khuôn `GT-007` tới `GT-017` cho cơ chế corpus Montessori |
 
 ## 02-public — khách chưa đăng nhập
 
@@ -174,6 +175,9 @@ v1 có **31** spec cho cùng phạm vi. Xé nhỏ là chủ ý — xem [`AUDIT-v
 | [curriculum-model](05-content/curriculum-model.md) | P3 | Thứ tự prerequisite, cân bằng |
 | [worksheet-model](05-content/worksheet-model.md) | P4 | Ngoài MVP |
 | [lesson-exemplar-set](05-content/lesson-exemplar-set.md) | P4 | Tiết học mẫu, ma trận 18 ô |
+| [montessori-corpus-mapping](05-content/montessori-corpus-mapping.md) | P3 | Ánh xạ 21 workbook sang strand, band tuổi, khuôn; ranh giới lô A và lô B |
+| [montessori-game-level-batch](05-content/montessori-game-level-batch.md) | P3 | Hạn ngạch theo competency, khối mã, thứ tự nạp |
+| [montessori-lesson-batch](05-content/montessori-lesson-batch.md) | P3 | 21 lesson, thay giáo cụ bằng vật liệu trong nhà |
 
 ## 06-admin — Manager
 

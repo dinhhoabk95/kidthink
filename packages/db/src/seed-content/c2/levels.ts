@@ -1,6 +1,7 @@
 import type { ContentSeed } from "../types.js";
+import { SEED_MONT_A19 } from "./seed-mont-a19.js";
 
-export const C2_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
+export const C2_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
   // Level 1 (Free)
   {
     header: {
@@ -573,4 +574,9 @@ export const C2_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
     },
     difficulty_params: { grid_size: 2 },
   },
+];
+
+export const C2_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
+  ...C2_BASE_LEVELS,
+  ...SEED_MONT_A19,
 ];

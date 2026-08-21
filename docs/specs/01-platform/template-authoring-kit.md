@@ -237,6 +237,6 @@ Scenario: BR-TAK-12 — cờ khai rồi bỏ đó bị chặn
 
 | # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
 |---|---|---|---|---|
-| 1 | Bốn nguyên thuỷ ở §7.3 có phủ được template 7–20 không? Cần liệt kê cơ chế dự kiến trước khi chốt danh sách | Hình dạng nguyên thuỷ | P4 | Nội dung |
+| ~~1~~ | ~~Bốn nguyên thuỷ ở §7.3 có phủ được template 7–20 không?~~ **Đóng 2026-08-20 (T98, `D-RX`)**: phủ được **năm** khuôn tiếp theo, không phủ sáu khuôn sau đó. Danh sách cơ chế đã có ở mục 7.1 của [`montessori-template-batch.md`](montessori-template-batch.md): `GT-007` tới `GT-011` dựng trọn trên `placement` và `selection`, chỉ thêm hàng layout; `GT-012` tới `GT-017` mỗi khuôn cần một system engine mới (hẹn giờ, mê cung, cân, ràng buộc lưới, xoay kim, phối cảnh đẳng cự). Ranh giới đó là lý do mã được cấp theo lớp chi phí | — | Đã đóng | D-RX |
 | 2 | Trần số template trước khi cần tách gói theo nhóm cơ chế là bao nhiêu? Phải đo kích thước Session class trung bình sau khi có nguyên thuỷ | `BR-TAK-08` | P4 | hoãn — đo được sau bước đầu |
 | 3 | 60 game type của v1 port sang bao nhiêu template mới, và bao nhiêu chỉ là `content_pack` khác? Trùng câu hỏi 1 ở [`game-template-contract.md`](game-template-contract.md) §11, giờ trả lời được vì có chi phí thật để so | Phạm vi P4 | P4 | hoãn — khảo sát trước |

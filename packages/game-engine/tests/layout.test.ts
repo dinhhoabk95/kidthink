@@ -12,7 +12,11 @@ import {
   SAFE_MARGIN_PX,
 } from "../src/layout/constants.js";
 import {
+  computeBipartiteLayout,
+  computeClueBoardLayout,
   computeGridLayout,
+  computeMatrix3x3Layout,
+  computeMatrixSlotGridLayout,
   computeTrackLayout,
 } from "../src/layout/geometry.js";
 import {
@@ -33,10 +37,17 @@ describe("Game Layout Engine (BR-LAY-01..10)", () => {
     }
   });
 
-  it("BR-LAY-02 — LayoutId là từ vựng đóng gồm đúng 12 giá trị; id lạ bị từ chối", () => {
-    expect(LAYOUT_IDS).toHaveLength(12);
+  it("BR-LAY-02 — LayoutId là từ vựng đóng gồm đúng 19 giá trị; id lạ bị từ chối", () => {
+    expect(LAYOUT_IDS).toHaveLength(19);
     expect(isLayoutId("grid")).toBe(true);
     expect(isLayoutId("step-ladder")).toBe(true);
+    expect(isLayoutId("number-bond-tree")).toBe(true);
+    expect(isLayoutId("ten-frame-split")).toBe(true);
+    expect(isLayoutId("horizontal-slot-track")).toBe(true);
+    expect(isLayoutId("matrix-slot-grid")).toBe(true);
+    expect(isLayoutId("clue-board")).toBe(true);
+    expect(isLayoutId("matrix-3x3")).toBe(true);
+    expect(isLayoutId("equation-rows")).toBe(true);
     expect(isLayoutId("random-unknown-layout")).toBe(false);
 
     expect(() => resolveLayout("invalid-layout" as LayoutId)).toThrowError(
@@ -296,5 +307,120 @@ describe("Game Layout Engine (BR-LAY-01..10)", () => {
 
     expect(engine.slots).toHaveLength(3);
     expect(engine.slots[0]!.hitW).toBeGreaterThanOrEqual(getTouchFloor("4-5"));
+  });
+});
+
+describe("clue-board — bảng loại trừ của GT-009 (BR-LAY-03, BR-LAY-09, BR-MTB-13)", () => {
+  const SAFE_LEFT = SAFE_MARGIN_PX;
+  const SAFE_RIGHT = LOGIC_WIDTH - SAFE_MARGIN_PX;
+
+  it("10 ứng viên xuống hai hàng thay vì tràn khỏi vùng an toàn", () => {
+    const slots = computeClueBoardLayout({
+      slotCount: 10,
+      ageBand: "4-5",
+      targetCount: 3,
+    });
+    const candidates = slots.filter((s) => s.role === "target");
+
+    expect(candidates).toHaveLength(10);
+    expect(new Set(candidates.map((s) => s.y)).size).toBe(2);
+    for (const s of candidates) {
+      expect(s.x - s.w / 2).toBeGreaterThanOrEqual(SAFE_LEFT - 2);
+      expect(s.x + s.w / 2).toBeLessThanOrEqual(SAFE_RIGHT + 2);
+      expect(s.hitW).toBeGreaterThanOrEqual(getTouchFloor("4-5"));
+    }
+  });
+
+  it("hàng registry không thay được: bipartite dọc tràn ở đúng ca 10 ứng viên", () => {
+    const bipartite = computeBipartiteLayout(
+      { slotCount: 3, ageBand: "4-5", targetCount: 10 },
+      { orientation: "vertical" }
+    );
+    const targets = bipartite.filter((s) => s.role === "target");
+    const left = Math.min(...targets.map((s) => s.x - s.w / 2));
+    const right = Math.max(...targets.map((s) => s.x + s.w / 2));
+
+    expect(left < SAFE_LEFT || right > SAFE_RIGHT).toBe(true);
+  });
+
+  it("dải manh mối nằm trên bảng ứng viên và giữ đúng số manh mối", () => {
+    for (const clueCount of [1, 2, 3]) {
+      const slots = computeClueBoardLayout({
+        slotCount: 6,
+        ageBand: "5-6",
+        targetCount: clueCount,
+      });
+      const clues = slots.filter((s) => s.role === "source");
+      const candidates = slots.filter((s) => s.role === "target");
+
+      expect(clues).toHaveLength(clueCount);
+      const lowestClue = Math.max(...clues.map((s) => s.y + s.h / 2));
+      const highestCandidate = Math.min(
+        ...candidates.map((s) => s.y - s.h / 2)
+      );
+      expect(highestCandidate).toBeGreaterThanOrEqual(lowestClue);
+    }
+  });
+
+  it("thuần: cùng đầu vào cho cùng kết quả", () => {
+    const input = { slotCount: 7, ageBand: "5-6" as const, targetCount: 2 };
+    expect(computeClueBoardLayout(input)).toEqual(
+      computeClueBoardLayout(input)
+    );
+  });
+});
+
+describe("matrix-3x3 và matrix-slot-grid — hai khay khác chỗ (BR-LAY-09, BR-MTB-13)", () => {
+  const SAFE_TOP = SAFE_MARGIN_PX;
+  const SAFE_BOTTOM = LOGIC_HEIGHT - SAFE_MARGIN_PX;
+
+  it("matrix-3x3 đặt khay chọn **dưới** ma trận và ở trong lề", () => {
+    const slots = computeMatrix3x3Layout({
+      slotCount: 6,
+      ageBand: "5-6",
+      targetCount: 9,
+    });
+    const cells = slots.filter((s) => s.role === "target");
+    const tray = slots.filter((s) => s.role === "source");
+
+    expect(cells).toHaveLength(9);
+    expect(tray).toHaveLength(6);
+    const lowestCell = Math.max(...cells.map((s) => s.y + s.h / 2));
+    const highestTray = Math.min(...tray.map((s) => s.y - s.h / 2));
+    expect(highestTray).toBeGreaterThanOrEqual(lowestCell);
+
+    for (const s of slots) {
+      expect(s.y - s.h / 2).toBeGreaterThanOrEqual(SAFE_TOP - 2);
+      expect(s.y + s.h / 2).toBeLessThanOrEqual(SAFE_BOTTOM + 2);
+    }
+  });
+
+  it("matrix-3x3 lưới 2×2 khi targetCount nhỏ hơn 9", () => {
+    const slots = computeMatrix3x3Layout({
+      slotCount: 3,
+      ageBand: "5-6",
+      targetCount: 4,
+    });
+    expect(slots.filter((s) => s.role === "target")).toHaveLength(4);
+  });
+
+  it("matrix-slot-grid xuống hàng thay vì tràn đáy ở 9 lựa chọn", () => {
+    const slots = computeMatrixSlotGridLayout({
+      slotCount: 9,
+      ageBand: "3-4",
+      targetCount: 9,
+    });
+    const tray = slots.filter((s) => s.role === "source");
+
+    expect(tray).toHaveLength(9);
+    expect(new Set(tray.map((s) => s.y)).size).toBeGreaterThan(1);
+    for (const s of slots) {
+      expect(s.y - s.h / 2).toBeGreaterThanOrEqual(SAFE_TOP - 2);
+      expect(s.y + s.h / 2).toBeLessThanOrEqual(SAFE_BOTTOM + 2);
+      expect(s.x - s.w / 2).toBeGreaterThanOrEqual(SAFE_MARGIN_PX - 2);
+      expect(s.x + s.w / 2).toBeLessThanOrEqual(
+        LOGIC_WIDTH - SAFE_MARGIN_PX + 2
+      );
+    }
   });
 });

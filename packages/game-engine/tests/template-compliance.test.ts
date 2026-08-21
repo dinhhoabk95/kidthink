@@ -9,6 +9,17 @@ import {
   GT004_FIXTURES,
   GT005_FIXTURES,
   GT006_FIXTURES,
+  GT007_FIXTURES,
+  GT008_FIXTURES,
+  GT009_FIXTURES,
+  GT010_FIXTURES,
+  GT011_FIXTURES,
+  GT012_FIXTURES,
+  GT013_FIXTURES,
+  GT014_FIXTURES,
+  GT015_FIXTURES,
+  GT016_FIXTURES,
+  GT017_FIXTURES,
   getGameTemplate,
   loadGameSession,
 } from "../src/index.js";
@@ -23,6 +34,17 @@ const FIXTURES_MAP: Record<
   "GT-004": GT004_FIXTURES,
   "GT-005": GT005_FIXTURES,
   "GT-006": GT006_FIXTURES,
+  "GT-007": GT007_FIXTURES,
+  "GT-008": GT008_FIXTURES,
+  "GT-009": GT009_FIXTURES,
+  "GT-010": GT010_FIXTURES,
+  "GT-011": GT011_FIXTURES,
+  "GT-012": GT012_FIXTURES,
+  "GT-013": GT013_FIXTURES,
+  "GT-014": GT014_FIXTURES,
+  "GT-015": GT015_FIXTURES,
+  "GT-016": GT016_FIXTURES,
+  "GT-017": GT017_FIXTURES,
 };
 
 describe("Universal Template Compliance Test Suite (§7.4, BR-TAK-01..14)", () => {
@@ -34,6 +56,17 @@ describe("Universal Template Compliance Test Suite (§7.4, BR-TAK-01..14)", () =
       "GT-004",
       "GT-005",
       "GT-006",
+      "GT-007",
+      "GT-008",
+      "GT-009",
+      "GT-010",
+      "GT-011",
+      "GT-012",
+      "GT-013",
+      "GT-014",
+      "GT-015",
+      "GT-016",
+      "GT-017",
     ]);
   });
 
