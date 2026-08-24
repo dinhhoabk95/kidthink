@@ -19,6 +19,7 @@ const PG_URL = requireEnv("DATABASE_URL");
 const VALKEY_URL = requireEnv("VALKEY_URL");
 
 const VALKEY_VERSION_PATTERN = /valkey_version:([\d.]+)/;
+const VALKEY_PROTOCOL_PATTERN = /^valkey:\/\//;
 
 /**
 /**
@@ -49,11 +50,14 @@ async function checkPostgres(): Promise<string> {
 }
 
 async function checkValkey(): Promise<string> {
-  const redis = new Redis(VALKEY_URL, {
-    lazyConnect: true,
-    maxRetriesPerRequest: 1,
-    retryStrategy: () => null,
-  });
+  const redis = new Redis(
+    VALKEY_URL.replace(VALKEY_PROTOCOL_PATTERN, "redis://"),
+    {
+      lazyConnect: true,
+      maxRetriesPerRequest: 1,
+      retryStrategy: () => null,
+    }
+  );
   try {
     await redis.connect();
     const info = await redis.info("server");

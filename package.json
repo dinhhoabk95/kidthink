@@ -33,7 +33,7 @@
     "db:migrate": "pnpm --filter @mindkid/db run migrate",
     "db:seed": "pnpm --filter @mindkid/db run seed",
     "db:restore": "pnpm --filter @mindkid/worker run restore",
-    "services": "node scripts/check-services.ts",
+    "services": "tsx scripts/check-services.ts",
     "deploy": "tsx scripts/deploy/cli.ts"
   },
   "devDependencies": {
