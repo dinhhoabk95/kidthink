@@ -13,9 +13,7 @@ import path from "node:path";
 import { repoPath } from "@mindkid/config/paths";
 import { stripCommentsAndStrings, walkSource } from "./lint-lib/source-scan.ts";
 
-const API_ROOTS = ["apps/web/server/api", "apps/admin/server/api"].map((dir) =>
-  repoPath(dir)
-);
+const API_ROOTS = ["apps/web/server/api"].map((dir) => repoPath(dir));
 const ALLOWLIST_PATH = path.join(
   import.meta.dirname,
   "route-validation-debt.json"

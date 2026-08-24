@@ -502,18 +502,15 @@
     grantError.value = null;
 
     try {
-      await globalThis.$fetch(
-        `/api/managers/users/${props.userUuid}/entitlements`,
-        {
-          method: "POST",
-          body: {
-            package_code: grantForm.package_code,
-            duration_days: grantForm.duration_days,
-            grant_reason: grantForm.grant_reason.trim(),
-            notify_user: grantForm.notify_user,
-          },
-        }
-      );
+      await apiFetch(`/api/managers/users/${props.userUuid}/entitlements`, {
+        method: "POST",
+        body: {
+          package_code: grantForm.package_code,
+          duration_days: grantForm.duration_days,
+          grant_reason: grantForm.grant_reason.trim(),
+          notify_user: grantForm.notify_user,
+        },
+      });
 
       closeGrantModal();
       emit("refresh");
@@ -548,7 +545,7 @@
     revokeError.value = null;
 
     try {
-      await globalThis.$fetch(
+      await apiFetch(
         `/api/managers/entitlements/${selectedEntitlement.value.id}`,
         {
           method: "DELETE",

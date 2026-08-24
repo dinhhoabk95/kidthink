@@ -15,9 +15,9 @@ import {
 } from "@mindkid/db";
 import { eq } from "drizzle-orm";
 import { beforeEach, describe, expect, it } from "vitest";
-import getOfflinePackHandler from "../../../server/api/users/curricula/[uuid]/offline-pack.get.js";
-import syncOfflineEventsHandler from "../../../server/api/users/offline/sync.post.js";
-import { invalidateUserEntitlementsCache } from "../../../server/utils/entitlements-runtime.js";
+import getOfflinePackHandler from "#server/api/users/curricula/[uuid]/offline-pack.get";
+import syncOfflineEventsHandler from "#server/api/users/offline/sync.post";
+import { invalidateUserEntitlementsCache } from "#server/utils/entitlements-runtime";
 
 const SHA256_HEX_REGEX = /^[a-f0-9]{64}$/i;
 

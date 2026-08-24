@@ -1,7 +1,7 @@
 import { getOwnerDb, seoPages, writeAudit } from "@mindkid/db";
 import { and, eq } from "drizzle-orm";
 import { createError, defineEventHandler, getRouterParam, readBody } from "h3";
-import { requireManagerSession } from "../../../../utils/admin-auth-runtime.js";
+import { requireManagerSession } from "#server/utils/admin-auth-runtime";
 
 const FORBIDDEN_LEGAL_SLUGS = [
   "terms",

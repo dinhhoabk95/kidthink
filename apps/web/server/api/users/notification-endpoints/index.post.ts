@@ -4,7 +4,7 @@ import { and, eq } from "drizzle-orm";
 import { createError, defineEventHandler, readBody } from "h3";
 import { z } from "zod";
 
-import { requireWebUserSession } from "../../../utils/auth-runtime.js";
+import { requireWebUserSession } from "#server/utils/auth-runtime";
 
 const endpointRegistrationSchema = z.object({
   provider: z.literal("fcm_web", {

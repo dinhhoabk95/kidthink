@@ -5,7 +5,7 @@ import {
   generateOAuthState,
   OAUTH_STATE_TTL_SECONDS,
   sanitizeReturnTo,
-} from "../src/index.js";
+} from "#src/index";
 
 describe("Task 2 — OAuth Security & State Invariants (BR-OAP-03, BR-OAP-04, BR-OAP-05, BR-OAP-07, BR-OAP-08, BR-OAP-10, BR-OAP-14, BR-OAP-15, D-IP)", () => {
   const SECRET = "super_secret_test_key_for_oauth_state_12345";

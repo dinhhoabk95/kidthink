@@ -22,14 +22,18 @@
     "baseUrl": ".",
     "paths": {
       "@mindkid/adaptive": ["./packages/adaptive/src/index.ts"],
+      "@mindkid/auth": ["./packages/auth/src/index.ts"],
+      "@mindkid/cache": ["./packages/cache/src/index.ts"],
       "@mindkid/config": ["./packages/config/src/index.ts"],
-      "@mindkid/shared": ["./packages/shared/src/index.ts"],
-      "@mindkid/taxonomy": ["./packages/taxonomy/src/index.ts"],
-      "@mindkid/emoji": ["./packages/emoji/src/index.ts"],
       "@mindkid/db": ["./packages/db/src/index.ts"],
+      "@mindkid/emoji": ["./packages/emoji/src/index.ts"],
       "@mindkid/game-engine": ["./packages/game-engine/src/index.ts"],
-      "@mindkid/storage": ["./packages/storage/src/index.ts"],
       "@mindkid/moderation": ["./packages/moderation/src/index.ts"],
+      "@mindkid/notification": ["./packages/notification/src/index.ts"],
+      "@mindkid/queue": ["./packages/queue/src/index.ts"],
+      "@mindkid/shared": ["./packages/shared/src/index.ts"],
+      "@mindkid/storage": ["./packages/storage/src/index.ts"],
+      "@mindkid/taxonomy": ["./packages/taxonomy/src/index.ts"],
       "@mindkid/ui": ["./packages/ui/src/index.ts"]
     }
   },

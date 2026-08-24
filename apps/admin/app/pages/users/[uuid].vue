@@ -134,29 +134,29 @@
 
 <script lang="ts" setup>
   import { computed, onMounted, reactive, ref } from "vue";
-  import { definePageMeta, useRoute, useUserSession } from "#imports";
-  import ForbiddenState from "../../components/forbidden-state.vue";
-  import LoadingState from "../../components/loading-state.vue";
-  import ChildArchiveModal from "../../components/users/child-archive-modal.vue";
-  import UserAccountSection from "../../components/users/user-account-section.vue";
-  import UserActionModal from "../../components/users/user-action-modal.vue";
+  import { definePageMeta, useRoute } from "#imports";
+  import ForbiddenState from "~/components/forbidden-state.vue";
+  import LoadingState from "~/components/loading-state.vue";
+  import ChildArchiveModal from "~/components/users/child-archive-modal.vue";
+  import UserAccountSection from "~/components/users/user-account-section.vue";
+  import UserActionModal from "~/components/users/user-action-modal.vue";
   import UserChildrenSection, {
     type ChildProfileItem,
-  } from "../../components/users/user-children-section.vue";
+  } from "~/components/users/user-children-section.vue";
   import UserEntitlementsSection, {
     type EntitlementItem,
-  } from "../../components/users/user-entitlements-section.vue";
+  } from "~/components/users/user-entitlements-section.vue";
   import UserPaymentsSection, {
     type PaymentOrderItem,
-  } from "../../components/users/user-payments-section.vue";
-  import type { ManagerRole } from "../../composables/nav-config.js";
+  } from "~/components/users/user-payments-section.vue";
+  import type { ManagerRole } from "~/composables/nav-config";
 
   definePageMeta({
     layout: "manager",
   });
 
   const route = useRoute();
-  const { user } = useUserSession();
+  const { user } = useAdminAuth();
 
   const isSuperAdmin = computed(() => {
     const role = (user.value as { role?: ManagerRole } | null)?.role;
@@ -241,7 +241,7 @@
     errorMessage.value = null;
 
     try {
-      const data = await globalThis.$fetch<UserDetailResponse>(
+      const data = await apiFetch<UserDetailResponse>(
         `/api/managers/users/${uuid}`
       );
       detail.value = data;
@@ -273,7 +273,7 @@
     const actionLabel = actionType === "suspend" ? "tạm khoá" : "mở khoá";
 
     try {
-      await globalThis.$fetch(
+      await apiFetch(
         `/api/managers/users/${detail.value.account.uuid}/${actionType}`,
         {
           method: "POST",
@@ -305,7 +305,7 @@
     successMessage.value = null;
 
     try {
-      await globalThis.$fetch(
+      await apiFetch(
         `/api/managers/users/${detail.value.account.uuid}/send-password-reset`,
         {
           method: "POST",
@@ -338,7 +338,7 @@
     successMessage.value = null;
 
     try {
-      await globalThis.$fetch(
+      await apiFetch(
         `/api/managers/children/${childArchiveModal.child.uuid}/archive`,
         {
           method: "POST",

@@ -19,7 +19,7 @@ import {
   makeSpecFile,
   parseFrontmatter,
   resetLintState,
-} from "../src/lint-specs-lib.ts";
+} from "#src/lint-specs-lib";
 
 beforeEach(() => {
   resetLintState();

@@ -5,7 +5,7 @@ import {
   getRouterParam,
   setResponseStatus,
 } from "h3";
-import { requireWebUserSession } from "../../../../../utils/auth-runtime.ts";
+import { requireWebUserSession } from "#server/utils/auth-runtime";
 
 export default defineEventHandler(async (event) => {
   const user = await requireWebUserSession(event);

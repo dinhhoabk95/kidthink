@@ -1,4 +1,4 @@
-import type { ContentSeed } from "../types.js";
+import type { ContentSeed } from "#src/seed-content/types";
 
 /**
  * Batch: SEED-MONT-B11

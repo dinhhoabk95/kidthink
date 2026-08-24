@@ -10,7 +10,7 @@ import {
   PAYMENT_ORDER_TERMINAL_STATES,
   PAYMENT_ORDER_TRANSITIONS,
   type PaymentOrderStatus,
-} from "../src/payment-state-machine.ts";
+} from "#src/payment-state-machine";
 
 const ERR_INVALID_TRANSITION = /INVALID_STATUS_TRANSITION/;
 const TRANSFER_NOTE_PATTERN = /^TM[A-Z0-9]{8}$/;

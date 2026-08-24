@@ -1,12 +1,12 @@
 import { getOwnerDb, managers } from "@mindkid/db";
 import { eq } from "drizzle-orm";
 import { beforeEach, describe, expect, it } from "vitest";
-import duplicateLevelHandler from "../../server/api/managers/levels/[code]/[version]/duplicate.post.js";
-import submitLevelHandler from "../../server/api/managers/levels/[code]/[version]/submit.post.js";
-import getLevelVersionHandler from "../../server/api/managers/levels/[code]/[version].get.js";
-import patchLevelHandler from "../../server/api/managers/levels/[code]/[version].patch.js";
-import getLevelConfigHandler from "../../server/api/managers/levels/[code]/config.get.js";
-import createLevelHandler from "../../server/api/managers/levels/index.post.js";
+import duplicateLevelHandler from "#server/api/managers/levels/[code]/[version]/duplicate.post";
+import submitLevelHandler from "#server/api/managers/levels/[code]/[version]/submit.post";
+import getLevelVersionHandler from "#server/api/managers/levels/[code]/[version].get";
+import patchLevelHandler from "#server/api/managers/levels/[code]/[version].patch";
+import getLevelConfigHandler from "#server/api/managers/levels/[code]/config.get";
+import createLevelHandler from "#server/api/managers/levels/index.post";
 
 const CSRF_TOKEN =
   "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef";

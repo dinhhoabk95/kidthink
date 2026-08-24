@@ -16,7 +16,7 @@ import {
   skillPrerequisites,
   skills,
   strands,
-} from "../../schema/taxonomy.js";
+} from "#src/schema/taxonomy";
 
 export interface ParsedSkill {
   code: string;

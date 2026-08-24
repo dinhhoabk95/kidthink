@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { validatePublishChecklist } from "../src/publish-checklist.ts";
+import { validatePublishChecklist } from "#src/publish-checklist";
 
 describe("P0.6 Task 3 — Checklist publish §7.3 & BR-CLC-09", () => {
   it("Thành công: game_level hợp lệ trả về ok = true, missing = []", () => {

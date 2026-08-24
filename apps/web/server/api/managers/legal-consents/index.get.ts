@@ -1,7 +1,7 @@
 import { consentRequirements, getOwnerDb } from "@mindkid/db";
 import { CONSENT_POLICY_MAP, type ConsentType } from "@mindkid/shared";
 import { defineEventHandler } from "h3";
-import { requireSuperAdminSession } from "../../../utils/admin-auth-runtime.js";
+import { requireSuperAdminSession } from "#server/utils/admin-auth-runtime";
 
 const CONSENT_TYPES: readonly ConsentType[] = [
   "terms",

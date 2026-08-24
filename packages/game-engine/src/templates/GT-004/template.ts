@@ -3,8 +3,8 @@ import {
   assetSchema,
   EmojiRef,
   promptFields,
-} from "../../contracts/shared-fields.js";
-import { defineTemplate } from "../../contracts/types.js";
+} from "#src/contracts/shared-fields";
+import { defineTemplate } from "#src/contracts/types";
 
 export function everyItemTargetsAnExistingGroup(data: {
   groups: { group_id: string }[];

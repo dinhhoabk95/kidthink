@@ -7,7 +7,7 @@ import {
 import { validatePublishChecklist } from "@mindkid/shared";
 import { and, eq, sql } from "drizzle-orm";
 import { createError, defineEventHandler, getRouterParam } from "h3";
-import { requireManagerSession } from "../../../../../utils/admin-auth-runtime.js";
+import { requireManagerSession } from "#server/utils/admin-auth-runtime";
 
 export default defineEventHandler(async (event) => {
   const manager = await requireManagerSession(event);

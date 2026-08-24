@@ -399,7 +399,7 @@
   async function loadSkillDetail() {
     const code = route.params.code as string;
     try {
-      const res = await globalThis.$fetch<SkillDetailData>(
+      const res = await apiFetch<SkillDetailData>(
         `/api/managers/taxonomy/skills/${code}`
       );
       skill.value = res;

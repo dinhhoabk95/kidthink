@@ -11,14 +11,14 @@ import {
   allowedTiers,
 } from "@mindkid/shared";
 import { and, desc, eq, gte, sql } from "drizzle-orm";
-import { getDb } from "../client.ts";
-import { masteryState } from "../schema/adaptive.ts";
-import { aiUsageLog } from "../schema/ai.ts";
-import { childProfiles } from "../schema/child.ts";
-import { lessons } from "../schema/content.ts";
-import { gameLevels } from "../schema/game.ts";
-import { playSessions } from "../schema/play.ts";
-import { skills } from "../schema/taxonomy.ts";
+import { getDb } from "#src/client";
+import { masteryState } from "#src/schema/adaptive";
+import { aiUsageLog } from "#src/schema/ai";
+import { childProfiles } from "#src/schema/child";
+import { lessons } from "#src/schema/content";
+import { gameLevels } from "#src/schema/game";
+import { playSessions } from "#src/schema/play";
+import { skills } from "#src/schema/taxonomy";
 import { debitCredits, refundCredits } from "./ai-credit.ts";
 import { validateAiReportEgress } from "./ai-egress-guard.ts";
 import { aiProvider } from "./ai-provider.ts";

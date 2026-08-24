@@ -3,7 +3,7 @@ import {
   type CustomGameValidationInput,
   extractEmojiRefsFromContentPack,
   validateCustomGameContent,
-} from "../src/index.js";
+} from "#src/index";
 
 describe("Custom Game Validation (BR-CGB-01..10, BR-GLM-01..10)", () => {
   const validGT001: CustomGameValidationInput = {

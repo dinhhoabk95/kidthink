@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { validateRoundEvents } from "../src/round-event-gate";
+import { validateRoundEvents } from "#src/round-event-gate";
 
 function makeEvent(
   name: string,

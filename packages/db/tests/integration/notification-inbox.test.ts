@@ -1,12 +1,12 @@
 import { eq } from "drizzle-orm";
 import { describe, expect, it } from "vitest";
-import { getOwnerDb } from "../../src/index.ts";
-import { users } from "../../src/schema/identity.ts";
+import { getOwnerDb } from "#src/index";
+import { users } from "#src/schema/identity";
 import {
   notificationEndpoints,
   notificationReads,
   notifications,
-} from "../../src/schema/ops.ts";
+} from "#src/schema/ops";
 
 describe("Notification Inbox & Endpoints DB Integration Tests", () => {
   it("BR-NIB-01 & BR-NIB-06: notification_reads maintains unique read state per notification", async () => {

@@ -7,7 +7,7 @@ import {
 } from "@mindkid/db";
 import { and, asc, desc, eq, sql } from "drizzle-orm";
 import { createError, defineEventHandler, getRouterParam } from "h3";
-import { requireManagerSession } from "../../../../../utils/admin-auth-runtime.js";
+import { requireManagerSession } from "#server/utils/admin-auth-runtime";
 
 export interface ContentVersionItem {
   id: number;

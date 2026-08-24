@@ -19,7 +19,7 @@ import { z } from "zod";
 import {
   getManagerRemoteIp,
   requireSuperAdminSession,
-} from "../../../../../utils/admin-auth-runtime.js";
+} from "#server/utils/admin-auth-runtime";
 
 const createMfaRecoverySchema = z.object({
   reason: z.string().min(10),

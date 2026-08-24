@@ -1,8 +1,5 @@
 import { describe, expect, it } from "vitest";
-import {
-  TraceSystem,
-  type TraceWaypoint,
-} from "../src/systems/trace-system.js";
+import { TraceSystem, type TraceWaypoint } from "#src/systems/trace-system";
 
 describe("traceSystem (BR-LVB-12 — independent test suite)", () => {
   const waypoints: TraceWaypoint[] = [

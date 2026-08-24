@@ -7,10 +7,10 @@ import {
   GT004Session,
   GT005Session,
   GT006Session,
-} from "../src/index.js";
-import { createRng, deriveStream } from "../src/rng/mulberry32.js";
-import { shuffle } from "../src/rng/shuffle.js";
-import type { RngStreamName } from "../src/rng/types.js";
+} from "#src/index";
+import { createRng, deriveStream } from "#src/rng/mulberry32";
+import { shuffle } from "#src/rng/shuffle";
+import type { RngStreamName } from "#src/rng/types";
 
 function findFilesRecursive(dir: string): string[] {
   let results: string[] = [];

@@ -6,7 +6,7 @@ import {
   searchEmoji,
 } from "@mindkid/emoji";
 import { defineEventHandler, getQuery, setHeader } from "h3";
-import { requireManagerSession } from "../../../utils/admin-auth-runtime.js";
+import { requireManagerSession } from "#server/utils/admin-auth-runtime";
 
 export default defineEventHandler(async (event) => {
   await requireManagerSession(event);

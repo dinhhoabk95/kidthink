@@ -1,4 +1,4 @@
-import type { ActivitySeed } from "../types.js";
+import type { ActivitySeed } from "#src/seed-content/types";
 import { C1_SEED_ACTIVITIES } from "./c1-activities.js";
 import { C2_SEED_ACTIVITIES } from "./c2-activities.js";
 import { C3_SEED_ACTIVITIES } from "./c3-activities.js";

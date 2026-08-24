@@ -7,8 +7,8 @@ import {
   readBody,
 } from "h3";
 import { z } from "zod";
-import { throwValidationError } from "../../../../../utils/api-error.js";
-import { requireWebUserSession } from "../../../../../utils/auth-runtime.js";
+import { throwValidationError } from "#server/utils/api-error";
+import { requireWebUserSession } from "#server/utils/auth-runtime";
 
 const completeItemSchema = z.object({
   personal_curriculum_item_id: z.number().int().positive(),

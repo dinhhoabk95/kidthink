@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { ALL_SEED_LEVELS } from "../../src/seed-content/index.js";
-import { validateSingleSeed } from "../../src/seed-content/service.js";
+import { ALL_SEED_LEVELS } from "#src/seed-content/index";
+import { validateSingleSeed } from "#src/seed-content/service";
 
 const WORD_SPLIT_REGEX = /\s+/;
 

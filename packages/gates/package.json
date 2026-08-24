@@ -15,6 +15,12 @@
   },
   "exports": {
     "./source-scan": "./src/lint-lib/source-scan.ts",
-    "./route-validation": "./src/lint-route-validation.ts"
+    "./route-validation": "./src/lint-route-validation.ts",
+    "./runtime-boundary": "./src/lint-runtime-boundary.ts"
+  },
+  "imports": {
+    "#src/*": "./src/*.ts",
+    "#tests/*": "./tests/*.ts",
+    "#scripts/*": "./scripts/*.ts"
   }
 }

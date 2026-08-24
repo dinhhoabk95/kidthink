@@ -62,13 +62,13 @@ export function generateTemplateRegistryCode(
 ): string {
   const imports: string[] = [
     'import { zodToJsonSchema } from "zod-to-json-schema";',
-    'import type { AgeBand, GameTemplate } from "../contracts/types.js";',
+    'import type { AgeBand, GameTemplate } from "#src/contracts/types";',
   ];
 
   for (const t of templates) {
     const importName = `${t.code.replace("-", "")}Template`;
     imports.push(
-      `import ${importName} from "../templates/${t.code}/template.js";`
+      `import ${importName} from "#src/templates/${t.code}/template";`
     );
   }
 
@@ -166,10 +166,10 @@ export function generateTemplateExportsCode(
   for (const t of templates) {
     const codeNum = t.code.replace("-", "");
     imports.push(
-      `import ${codeNum}Template, { type ${codeNum}Content, type ${codeNum}Difficulty } from "../templates/${t.code}/template.js";`
+      `import ${codeNum}Template, { type ${codeNum}Content, type ${codeNum}Difficulty } from "#src/templates/${t.code}/template";`
     );
     imports.push(
-      `import { ${codeNum}Session } from "../templates/${t.code}/session.js";`
+      `import { ${codeNum}Session } from "#src/templates/${t.code}/session";`
     );
     exports.push(
       `export { ${codeNum}Template, ${codeNum}Session, type ${codeNum}Content, type ${codeNum}Difficulty };`
@@ -186,7 +186,7 @@ export function generateSessionLoaderCode(
     .map((t) => {
       const codeNum = t.code.replace("-", "");
       return `    case "${t.code}": {
-      const mod = await import("../templates/${t.code}/session.js");
+      const mod = await import("#src/templates/${t.code}/session");
       return mod.${codeNum}Session;
     }`;
     })
@@ -195,7 +195,7 @@ export function generateSessionLoaderCode(
   const syncImports = templates
     .map(
       (t) =>
-        `import { ${t.code.replace("-", "")}Session } from "../templates/${t.code}/session.js";`
+        `import { ${t.code.replace("-", "")}Session } from "#src/templates/${t.code}/session";`
     )
     .join("\n");
 
@@ -206,8 +206,8 @@ export function generateSessionLoaderCode(
     )
     .join("\n");
 
-  return `${GENERATED_BANNER}import type { EngineConfig } from "../core.js";
-import type { GameSession } from "../game-session.js";
+  return `${GENERATED_BANNER}import type { EngineConfig } from "#src/core";
+import type { GameSession } from "#src/game-session";
 ${syncImports}
 
 /**
@@ -256,9 +256,7 @@ export function generateTemplateSeedCode(
   const imports: string[] = [];
   for (const t of templates) {
     const varName = `${t.code.replace("-", "")}Template`;
-    imports.push(
-      `import ${varName} from "../templates/${t.code}/template.js";`
-    );
+    imports.push(`import ${varName} from "#src/templates/${t.code}/template";`);
   }
 
   const entries = templates
@@ -293,9 +291,7 @@ export function generateStudioOptionsCode(
   const imports: string[] = [];
   for (const t of templates) {
     const varName = `${t.code.replace("-", "")}Template`;
-    imports.push(
-      `import ${varName} from "../templates/${t.code}/template.js";`
-    );
+    imports.push(`import ${varName} from "#src/templates/${t.code}/template";`);
   }
 
   const entries = templates

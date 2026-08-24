@@ -1,8 +1,8 @@
 import { eq } from "drizzle-orm";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
-import { getOwnerDb } from "../../src/client.ts";
-import { childProfiles } from "../../src/schema/child.ts";
-import { users } from "../../src/schema/identity.ts";
+import { getOwnerDb } from "#src/client";
+import { childProfiles } from "#src/schema/child";
+import { users } from "#src/schema/identity";
 import {
   createCustomGame,
   DEFAULT_CUSTOM_GAMES_SAVED_QUOTA,
@@ -12,7 +12,7 @@ import {
   listCustomGames,
   updateCustomGame,
   validateCustomGameRecord,
-} from "../../src/services/custom-game.ts";
+} from "#src/services/custom-game";
 
 describe("P4.5 Custom Game DB Service (BR-CGB-01..10)", () => {
   let userA: { id: number; email: string };

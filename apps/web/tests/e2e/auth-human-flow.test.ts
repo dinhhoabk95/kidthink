@@ -12,7 +12,7 @@ describe("Task 7 — Real Human End-toEnd Test Scenario", () => {
 
     // 1. REGISTER
     const { default: registerHandler } = await import(
-      "../../server/api/guest/auth/users/register.post"
+      "#server/api/guest/auth/users/register.post"
     );
 
     const regEvent = {
@@ -62,7 +62,7 @@ describe("Task 7 — Real Human End-toEnd Test Scenario", () => {
 
     // 3. VERIFY EMAIL
     const { default: verifyEmailHandler } = await import(
-      "../../server/api/guest/auth/users/verify-email.post"
+      "#server/api/guest/auth/users/verify-email.post"
     );
 
     const verifyEvent = {
@@ -76,7 +76,7 @@ describe("Task 7 — Real Human End-toEnd Test Scenario", () => {
 
     // 4. LOGIN
     const { default: loginHandler } = await import(
-      "../../server/api/guest/auth/users/login.post"
+      "#server/api/guest/auth/users/login.post"
     );
 
     const setCookies: string[] = [];
@@ -116,7 +116,7 @@ describe("Task 7 — Real Human End-toEnd Test Scenario", () => {
 
     // 5. LIST ACTIVE SESSIONS
     const { default: sessionsHandler } = await import(
-      "../../server/api/users/auth/sessions.get"
+      "#server/api/users/auth/sessions.get"
     );
 
     const csrf =
@@ -145,7 +145,7 @@ describe("Task 7 — Real Human End-toEnd Test Scenario", () => {
 
     // 6. FORGOT PASSWORD
     const { default: forgotHandler } = await import(
-      "../../server/api/guest/auth/users/forgot-password.post"
+      "#server/api/guest/auth/users/forgot-password.post"
     );
 
     const forgotEvent = {
@@ -173,7 +173,7 @@ describe("Task 7 — Real Human End-toEnd Test Scenario", () => {
 
     // 8. RESET PASSWORD
     const { default: resetHandler } = await import(
-      "../../server/api/guest/auth/users/reset-password.post"
+      "#server/api/guest/auth/users/reset-password.post"
     );
 
     const resetEvent = {
@@ -206,7 +206,7 @@ describe("Task 7 — Real Human End-toEnd Test Scenario", () => {
 
     // 11. LOGOUT
     const { default: logoutHandler } = await import(
-      "../../server/api/users/auth/logout.post"
+      "#server/api/users/auth/logout.post"
     );
 
     const logoutResHeaders: Record<string, string> = {};

@@ -333,9 +333,7 @@
 
   async function loadTaxonomy() {
     try {
-      const res = await globalThis.$fetch<TaxonomyResponse>(
-        "/api/managers/taxonomy"
-      );
+      const res = await apiFetch<TaxonomyResponse>("/api/managers/taxonomy");
       if (res) {
         asOf.value = res.as_of;
         summary.value = res.summary || summary.value;

@@ -1,4 +1,4 @@
-import { optionalEnv } from "@mindkid/config";
+import { optionalEnv, requireEnv } from "@mindkid/config";
 export type AlertSeverity =
   | "P0"
   | "P1"
@@ -55,7 +55,7 @@ export class EmailAlertAdapter implements AlertPort {
 
   constructor(opsEmail?: string) {
     this.opsEmail =
-      opsEmail || process.env.OPERATIONS_ALERT_EMAIL || "ops@mindkid.vn";
+      opsEmail === undefined ? requireEnv("OPERATIONS_ALERT_EMAIL") : opsEmail;
   }
 
   async sendAlert(payload: AlertPayload): Promise<void> {
@@ -82,16 +82,21 @@ export interface TelegramAdapterOptions {
 }
 
 export class TelegramAlertAdapter implements AlertPort {
-  readonly botToken: string;
-  readonly chatId: string;
-  readonly fallbackAdapter: AlertPort;
+  readonly botToken: string | undefined;
+  readonly chatId: string | undefined;
+  readonly fallbackAdapter: AlertPort | undefined;
   private readonly fetchFn: typeof fetch;
 
   constructor(options?: TelegramAdapterOptions) {
     this.botToken =
-      options?.botToken ?? optionalEnv("TELEGRAM_BOT_TOKEN") ?? "";
-    this.chatId = options?.chatId ?? optionalEnv("TELEGRAM_CHAT_ID") ?? "";
-    this.fallbackAdapter = options?.fallbackAdapter || new EmailAlertAdapter();
+      options?.botToken === undefined
+        ? optionalEnv("TELEGRAM_BOT_TOKEN")
+        : options.botToken;
+    this.chatId =
+      options?.chatId === undefined
+        ? optionalEnv("TELEGRAM_CHAT_ID")
+        : options.chatId;
+    this.fallbackAdapter = options?.fallbackAdapter;
     this.fetchFn = options?.fetchFn || globalThis.fetch;
   }
 
@@ -121,6 +126,12 @@ export class TelegramAlertAdapter implements AlertPort {
       ) {
         await activeDispatcher(`telegram:${this.chatId}`, payload);
         return;
+      }
+
+      if (!(this.botToken && this.chatId)) {
+        throw new Error(
+          "TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID are not configured"
+        );
       }
 
       const url = `https://api.telegram.org/bot${this.botToken}/sendMessage`;
@@ -153,7 +164,11 @@ export class TelegramAlertAdapter implements AlertPort {
           _fallback_reason: errorMsg,
         },
       };
-      await this.fallbackAdapter.sendAlert(fallbackPayload);
+      const fallbackAdapter =
+        this.fallbackAdapter === undefined
+          ? new EmailAlertAdapter()
+          : this.fallbackAdapter;
+      await fallbackAdapter.sendAlert(fallbackPayload);
     }
   }
 
@@ -171,19 +186,21 @@ export interface HealthchecksAdapterOptions {
 const TRAILING_SLASHES_REGEX = /\/+$/;
 
 export class HealthchecksAlertAdapter implements AlertPort {
-  readonly pingUrl: string;
+  readonly pingUrl: string | undefined;
   private readonly fetchFn: typeof fetch;
 
   constructor(options?: HealthchecksAdapterOptions) {
-    if (options?.pingUrl) {
-      this.pingUrl = options.pingUrl;
-    } else if (options?.checkUuid || process.env.HEALTHCHECKS_CHECK_UUID) {
-      const uuid = options?.checkUuid || process.env.HEALTHCHECKS_CHECK_UUID;
-      this.pingUrl = `https://hc-ping.com/${uuid}`;
-    } else {
+    if (options?.pingUrl === undefined) {
+      const uuid =
+        options?.checkUuid === undefined
+          ? optionalEnv("HEALTHCHECKS_CHECK_UUID")
+          : options.checkUuid;
       this.pingUrl =
-        process.env.HEALTHCHECKS_PING_URL ||
-        "https://hc-ping.com/00000000-0000-0000-0000-000000000000";
+        uuid === undefined
+          ? optionalEnv("HEALTHCHECKS_PING_URL")
+          : `https://hc-ping.com/${uuid}`;
+    } else {
+      this.pingUrl = options.pingUrl;
     }
     this.fetchFn = options?.fetchFn || globalThis.fetch;
   }
@@ -192,6 +209,11 @@ export class HealthchecksAlertAdapter implements AlertPort {
     status: "start" | "success" | "fail" | "log" = "success",
     message?: string
   ): Promise<void> {
+    if (this.pingUrl === undefined) {
+      throw new Error(
+        "HEALTHCHECKS_PING_URL or HEALTHCHECKS_CHECK_UUID is not configured"
+      );
+    }
     const endpoint =
       status === "success"
         ? this.pingUrl

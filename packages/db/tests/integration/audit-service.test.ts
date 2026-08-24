@@ -1,12 +1,8 @@
 import { eq } from "drizzle-orm";
 import { describe, expect, it } from "vitest";
-import { getOwnerDb, hardPurgeUser } from "../../src/index.ts";
-import { auditLogs } from "../../src/schema/ops.ts";
-import {
-  AuditError,
-  writeAudit,
-  writeAuditBatch,
-} from "../../src/services/audit.ts";
+import { getOwnerDb, hardPurgeUser } from "#src/index";
+import { auditLogs } from "#src/schema/ops";
+import { AuditError, writeAudit, writeAuditBatch } from "#src/services/audit";
 
 describe("Task 3 & 4 — writeAudit service (BR-AUD-02..08, D-EU..EW)", () => {
   it("BR-AUD-02: rolls back transaction if writeAudit fails", async () => {

@@ -18,5 +18,9 @@
   "exports": {
     ".": "./src/index.ts",
     "./css": "./assets/css/tailwind.css"
+  },
+  "imports": {
+    "#src/*": "./src/*.ts",
+    "#tests/*": "./tests/*.ts"
   }
 }

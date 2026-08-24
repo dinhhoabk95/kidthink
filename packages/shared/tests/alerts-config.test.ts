@@ -4,7 +4,7 @@ import {
   loadAndValidateAlertsFile,
   parseAlertsYaml,
   validateAlertsConfig,
-} from "../src/alerts-config.js";
+} from "#src/alerts-config";
 
 describe("Task 2 — alerts.yml & Go-Live Quality Gate (BR-MON-01, BR-MON-02, BR-MON-03, BR-MON-07, D-IR)", () => {
   const alertsYmlPath = resolve(

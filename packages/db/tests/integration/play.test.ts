@@ -1,10 +1,10 @@
 import { eq, sql } from "drizzle-orm";
 import { describe, expect, it } from "vitest";
-import { getOwnerDb } from "../../src/index.ts";
-import { childProfiles } from "../../src/schema/child.ts";
-import { gameLevels, gameTemplates } from "../../src/schema/game.ts";
-import { users } from "../../src/schema/identity.ts";
-import { playSessions, telemetryEvents } from "../../src/schema/play.ts";
+import { getOwnerDb } from "#src/index";
+import { childProfiles } from "#src/schema/child";
+import { gameLevels, gameTemplates } from "#src/schema/game";
+import { users } from "#src/schema/identity";
+import { playSessions, telemetryEvents } from "#src/schema/play";
 
 describe("Play Schema Integration Tests", () => {
   it("BR-SPT-03: duplicate (session_uuid, seq) in telemetry_events is rejected by composite PK", async () => {

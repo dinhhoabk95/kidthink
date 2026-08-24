@@ -17,7 +17,7 @@ import { z } from "zod";
 import {
   assertRequestBodySize,
   assertSameOriginRequest,
-} from "../../../../utils/auth-runtime";
+} from "#server/utils/auth-runtime";
 
 const ResetPasswordSchema = z
   .object({

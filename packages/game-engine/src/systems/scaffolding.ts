@@ -5,9 +5,9 @@
  * Never on request — a 3 year old will not ask for help (spec §7.3).
  */
 
-import type { AgeBand } from "../contracts/types";
+import type { AgeBand } from "#src/contracts/types";
 
-export type { AgeBand } from "../contracts/types";
+export type { AgeBand } from "#src/contracts/types";
 
 export type ScaffoldingLevel = 0 | 1 | 2 | 3;
 

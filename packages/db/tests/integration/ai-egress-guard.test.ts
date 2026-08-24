@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   AiEgressViolationError,
   validateAiReportEgress,
-} from "../../src/services/ai-egress-guard.ts";
+} from "#src/services/ai-egress-guard";
 
 describe("AI Egress Deep Scanner (BR-AIA-01, BR-AIA-02, BR-CDC-06)", () => {
   const validReportPayload = {

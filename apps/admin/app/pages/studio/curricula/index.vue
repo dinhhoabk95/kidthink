@@ -160,12 +160,12 @@
   import { computed, onMounted, ref } from "vue";
   import CurriculumActivityDrawer, {
     type LibraryItem,
-  } from "@/components/studio/curriculum-activity-drawer.vue";
-  import CurriculumBalancePanel from "@/components/studio/curriculum-balance-panel.vue";
+  } from "~/components/studio/curriculum-activity-drawer.vue";
+  import CurriculumBalancePanel from "~/components/studio/curriculum-balance-panel.vue";
   import CurriculumListTable, {
     type CurriculumTableItem,
-  } from "@/components/studio/curriculum-list-table.vue";
-  import CurriculumWeekMatrix from "@/components/studio/curriculum-week-matrix.vue";
+  } from "~/components/studio/curriculum-list-table.vue";
+  import CurriculumWeekMatrix from "~/components/studio/curriculum-week-matrix.vue";
 
   definePageMeta({
     layout: "manager",
@@ -317,7 +317,7 @@
         params.set("status", filters.value.status);
       }
 
-      const res = await $fetch<ApiCurriculaResponse>(
+      const res = await apiFetch<ApiCurriculaResponse>(
         `/api/managers/curricula?${params.toString()}`
       );
       curriculaList.value = res.items.map((i) => ({
@@ -344,7 +344,7 @@
   async function fetchLibraryItems() {
     try {
       const [lesRes, lvlRes] = await Promise.all([
-        $fetch<{
+        apiFetch<{
           items: Array<{
             entity_id: number;
             code: string;
@@ -354,7 +354,7 @@
         }>("/api/managers/content/search?type=lessons&limit=100").catch(() => ({
           items: [],
         })),
-        $fetch<{
+        apiFetch<{
           items: Array<{
             entity_id: number;
             code: string;
@@ -417,7 +417,7 @@
   async function openEditCurriculum(curr: CurriculumListItem) {
     isLoading.value = true;
     try {
-      const res = await $fetch<ApiCurriculumDetailResponse>(
+      const res = await apiFetch<ApiCurriculumDetailResponse>(
         `/api/managers/curricula/${curr.code}/${curr.content_version}`
       );
       activeCurriculum.value = {
@@ -570,7 +570,7 @@
         activeCurriculum.value.content_version
       ) {
         // Update metadata
-        await $fetch(
+        await apiFetch(
           `/api/managers/curricula/${activeCurriculum.value.code}/${activeCurriculum.value.content_version}`,
           {
             method: "PATCH",
@@ -589,7 +589,7 @@
         );
 
         // Update weeks
-        await $fetch(
+        await apiFetch(
           `/api/managers/curricula/${activeCurriculum.value.code}/${activeCurriculum.value.content_version}/weeks`,
           {
             method: "PUT",
@@ -604,7 +604,7 @@
         );
 
         // Update items
-        await $fetch(
+        await apiFetch(
           `/api/managers/curricula/${activeCurriculum.value.code}/${activeCurriculum.value.content_version}/items`,
           {
             method: "PUT",
@@ -626,7 +626,7 @@
           "Đã lưu toàn bộ khung chương trình thành công!";
       } else {
         // Create new
-        const created = await $fetch<{
+        const created = await apiFetch<{
           id: number;
           code: string;
           contentVersion: number;
@@ -663,7 +663,7 @@
       return;
     }
     try {
-      const dup = await $fetch<{
+      const dup = await apiFetch<{
         code: string;
         content_version?: number;
         contentVersion?: number;
@@ -686,7 +686,7 @@
 
   async function duplicateCurriculum(curr: CurriculumListItem) {
     try {
-      const dup = await $fetch<{ code: string }>(
+      const dup = await apiFetch<{ code: string }>(
         `/api/managers/curricula/${curr.code}/${curr.content_version}/duplicate`,
         {
           method: "POST",
@@ -702,7 +702,7 @@
 
   async function deleteCurriculum(curr: CurriculumListItem) {
     try {
-      await $fetch(
+      await apiFetch(
         `/api/managers/curricula/${curr.code}/${curr.content_version}`,
         {
           method: "DELETE",
@@ -723,7 +723,7 @@
       return;
     }
     try {
-      await $fetch(
+      await apiFetch(
         `/api/managers/content/curriculum/${activeCurriculum.value.id}/transition`,
         {
           method: "POST",

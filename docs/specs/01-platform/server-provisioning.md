@@ -34,7 +34,7 @@ Việt Nam, vì thứ nó cần chỉ là một bản Ubuntu 24.04 và một kho
 
 | Actor                         | Quyền cần                | Làm được gì ở đây                                     |
 | ----------------------------- | ------------------------ | ----------------------------------------------------- |
-| Người vận hành                | Khoá SSH vào `root`      | Chạy lệnh dựng máy, ghi ba file env                   |
+| Người vận hành                | Khoá SSH vào `root`      | Chạy lệnh dựng máy, ghi file env cho web và worker    |
 | Người dùng hệ thống `mindkid` | Không có shell đăng nhập | Chủ sở hữu tiến trình ứng dụng và thư mục release     |
 | `root`                        |                          | Chủ sở hữu file env, cấu hình Nginx, dịch vụ hệ thống |
 
@@ -63,7 +63,7 @@ Việt Nam, vì thứ nó cần chỉ là một bản Ubuntu 24.04 và một kho
 11. In báo cáo: phiên bản từng thành phần, việc còn phải làm tay
 ```
 
-Bước 11 luôn in ra hai việc mà script cố ý không tự làm: trỏ DNS về địa chỉ máy, và ghi ba file
+Bước 11 luôn in ra hai việc mà script cố ý không tự làm: trỏ DNS về địa chỉ máy, và ghi các file
 env theo [`env-contract.md`](env-contract.md) §7.3.
 
 ## 5. Alternative flows
@@ -107,7 +107,7 @@ env theo [`env-contract.md`](env-contract.md) §7.3.
 ├── shared/                  thứ sống lâu hơn một release
 ├── bin/                     mindkid.sh · lib/ · tests/
 └── compose/                 docker-compose.prod.yml · datastore.env · nginx/ · pm2/
-/etc/mindkid/env/           web.env · admin.env · worker.env  (0600 root)
+/etc/mindkid/env/           web.env · worker.env  (0600 root)
 /etc/mindkid/deploy.conf    đích thông báo của quy trình phát hành (0600 root)
 /var/log/mindkid/           deploy.log · log từng ứng dụng
 ```
@@ -116,8 +116,8 @@ Chủ sở hữu: `/opt/mindkid` thuộc `mindkid`, `/etc/mindkid` thuộc `root
 thuộc `mindkid` với quyền ghi cho trình giám sát tiến trình.
 
 `compose/datastore.env` chứa mật khẩu PostgreSQL của container, `0600 root:root`. Nó không nằm
-trong `/etc/mindkid/env/` vì ba tệp ở đó thuộc ba ứng dụng (`BR-ENV-04`); cơ sở dữ liệu không
-phải một trong ba.
+trong `/etc/mindkid/env/` vì các tệp ở đó thuộc các tiến trình runtime (`BR-ENV-04`); admin
+static nhận public API origin lúc build, còn cơ sở dữ liệu không phải một tiến trình ứng dụng.
 
 Ba lệnh của spec này và của hai spec phát hành đi qua **một** điểm vào: `bin/mindkid.sh <verb>`.
 Một script nghĩa là một khoá, một tệp log, và một đích cho cổng kiểm cú pháp shell.
@@ -141,14 +141,13 @@ Một script nghĩa là một khoá, một tệp log, và một đích cho cổn
 | 80 · 443    | Nginx               | Có                                                      |
 | 22          | SSH                 | Có, nên giới hạn theo địa chỉ nếu nhà cung cấp cho phép |
 | 3000        | `web`               | Không                                                   |
-| 3002        | `admin`             | Không                                                   |
 | 3099        | `worker`            | Không                                                   |
 | 5432 · 6379 | PostgreSQL · Valkey | Không                                                   |
 
 ## 8. API contract
 
-Không có route công khai. Nginx là thứ duy nhất nhận yêu cầu từ ngoài, và nó chuyển tiếp tới ba
-cổng nội bộ ở §7.3.
+Không có route công khai trong spec này. Nginx là thứ duy nhất nhận yêu cầu từ ngoài; nó phục vụ
+admin static trực tiếp, chuyển API và SSR web tới cổng 3000, còn worker nghe cổng nội bộ 3099.
 
 ## 9. Acceptance criteria
 
@@ -161,9 +160,9 @@ Scenario: BR-SRV-01 — chạy lại không đổi gì
   And mã thoát là 0
 
 Scenario: BR-SRV-02 — ứng dụng không chạy bằng root
-  Given ba tiến trình đang chạy
+  Given web và worker đang chạy
   When liệt kê tiến trình kèm chủ sở hữu
-  Then cả ba thuộc người dùng mindkid
+  Then cả hai thuộc người dùng mindkid
 
 Scenario: BR-SRV-03 — cơ sở dữ liệu không lộ ra ngoài
   Given máy chủ đã dựng xong
@@ -176,12 +175,12 @@ Scenario: BR-SRV-05 — phiên bản lệch thì dừng
   Then script dừng và nêu phiên bản đo được
 
 Scenario: BR-SRV-07 — không chạm file env và dữ liệu
-  Given ba file env đã có nội dung và cơ sở dữ liệu đã có dữ liệu
+  Given các file env đã có nội dung và cơ sở dữ liệu đã có dữ liệu
   When chạy lại lệnh dựng máy
-  Then nội dung ba file env không đổi
+  Then nội dung các file env không đổi
   And số hàng các bảng chính không đổi
 
-Scenario: BR-SRV-04 — chỉ ba cổng mở
+Scenario: BR-SRV-04 — chỉ cổng công khai cần thiết mở
   Given máy chủ đã dựng xong
   When liệt kê luật tường lửa
   Then chỉ có 22, 80, 443 được cho vào

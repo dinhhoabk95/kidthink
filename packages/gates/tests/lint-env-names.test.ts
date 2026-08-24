@@ -1,10 +1,7 @@
 import { resolve } from "node:path";
 import { REPO_ROOT } from "@mindkid/config/paths";
 import { describe, expect, it } from "vitest";
-import {
-  scanAllEnvNames,
-  scanContentForEnvNames,
-} from "../src/lint-env-names.ts";
+import { scanAllEnvNames, scanContentForEnvNames } from "#src/lint-env-names";
 
 const FIXTURES = resolve(import.meta.dirname, "fixtures/env-names");
 // vitest runs this project with `scripts/` as the working directory.
@@ -59,26 +56,34 @@ describe("Gate lint:env-names (BR-ENV-02, BR-ENV-03)", () => {
     expect(violations[0]?.kind).toBe("hardcoded-default");
   });
 
-  it("accepts devFallbackEnv, which throws in production", () => {
+  it("rejects devFallbackEnv because every env fallback must be explicit", () => {
     const violations = scanContentForEnvNames(
       "packages/cache/src/client.ts",
       'const url = devFallbackEnv("VALKEY_URL", "redis://localhost:6380");'
     );
-    expect(violations).toEqual([]);
+    expect(violations[0]?.kind).toBe("hardcoded-default");
   });
 
-  it("accepts a chain that falls back to another contract variable", () => {
+  it("rejects a chain that falls back to another env with ||", () => {
     const violations = scanContentForEnvNames(
       "packages/storage/src/index.ts",
       "const base = process.env.STORAGE_BASE_URL || process.env.SITE_URL;"
     );
-    expect(violations).toEqual([]);
+    expect(violations[0]?.kind).toBe("hardcoded-default");
+  });
+
+  it("rejects a fallback for an optional env variable too", () => {
+    const violations = scanContentForEnvNames(
+      "packages/shared/src/logger.ts",
+      'const dsn = process.env.SENTRY_DSN ?? "";'
+    );
+    expect(violations[0]?.kind).toBe("hardcoded-default");
   });
 
   it("allows a pinned value in a test file", () => {
     const violations = scanContentForEnvNames(
       "apps/web/tests/setup.ts",
-      'process.env.WEB_JWT_SECRET ||= "deterministic-test-secret";'
+      'process.env.NUXT_SESSION_PASSWORD ||= "deterministic-test-secret";'
     );
     expect(violations).toEqual([]);
   });

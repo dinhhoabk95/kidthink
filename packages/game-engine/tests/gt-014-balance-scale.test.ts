@@ -3,13 +3,13 @@ import {
   SAMPLE_LEVEL_1,
   SAMPLE_LEVEL_2,
   SAMPLE_LEVEL_3,
-} from "../src/templates/GT-014/fixtures.js";
-import { BalanceScaleSession } from "../src/templates/GT-014/session.js";
+} from "#src/templates/GT-014/fixtures";
+import { BalanceScaleSession } from "#src/templates/GT-014/session";
 import template, {
   GT014BaseSchema,
   GT014ContentSchema,
   GT014DifficultySchema,
-} from "../src/templates/GT-014/template.js";
+} from "#src/templates/GT-014/template";
 
 const RE_BALANCE_REACHABLE =
   /phải tồn tại cách đặt vật từ khay để 2 đĩa cân bằng nhau/;

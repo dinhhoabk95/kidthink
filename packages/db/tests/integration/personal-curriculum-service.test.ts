@@ -1,6 +1,6 @@
 import { eq, inArray } from "drizzle-orm";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
-import { getOwnerDb } from "../../src/client.ts";
+import { getOwnerDb } from "#src/client";
 import {
   childProfiles,
   curricula,
@@ -9,7 +9,7 @@ import {
   gameTemplates,
   lessons,
   users,
-} from "../../src/index.ts";
+} from "#src/index";
 import {
   completeChildPersonalCurriculumItem,
   copySystemCurriculum,
@@ -21,7 +21,7 @@ import {
   replacePersonalCurriculumItems,
   resolveChildPersonalCurriculumNextStep,
   updatePersonalCurriculumMeta,
-} from "../../src/services/personal-curriculum.ts";
+} from "#src/services/personal-curriculum";
 
 const ERR_ADDON_CURRICULUM = /Add-on Curriculum/;
 const ERR_TIER_FORBIDDEN = /vượt quyền/;

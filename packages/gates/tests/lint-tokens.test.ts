@@ -3,7 +3,7 @@ import {
   checkSecondKitInLockfile,
   runLintTokensOnContent,
   runTokenGate,
-} from "../src/lint-tokens.ts";
+} from "#src/lint-tokens";
 
 describe("Task 2: Expanded lint:tokens Rules & Negative Fixtures (D-FC)", () => {
   it("BR-DSC-01: flags hex literals in .vue files (template, style, inline style)", () => {

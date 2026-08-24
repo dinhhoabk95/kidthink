@@ -4,23 +4,19 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "nuxt build",
+    "build": "nuxt generate",
     "dev": "nuxt dev",
     "test": "vitest run",
     "typecheck": "nuxt typecheck"
   },
   "dependencies": {
-    "@mindkid/auth": "workspace:*",
-    "@mindkid/db": "workspace:*",
     "@mindkid/shared": "workspace:*"
   },
   "devDependencies": {
+    "@mindkid/config": "workspace:*",
     "nuxt": "catalog:",
-    "nuxt-auth-utils": "catalog:",
-    "nuxt-security": "catalog:",
     "typescript": "catalog:",
     "vitest": "catalog:",
-    "vue-tsc": "catalog:",
-    "@mindkid/config": "workspace:*"
+    "vue-tsc": "catalog:"
   }
 }

@@ -1,4 +1,4 @@
-import type { ContentSeed } from "../types.js";
+import type { ContentSeed } from "#src/seed-content/types";
 
 export const C5_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
   // Level 1 (Free)

@@ -1,4 +1,4 @@
-import type { EmojiEntry } from "../types";
+import type { EmojiEntry } from "#src/types";
 
 /** Lễ hội & Tết — ~25 emoji */
 export const FESTIVAL_EMOJIS: EmojiEntry[] = [

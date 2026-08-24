@@ -14,7 +14,7 @@ import {
   assertRequestBodySize,
   assertSameOriginRequest,
   getVerifiedRemoteIp,
-} from "../../../../utils/auth-runtime";
+} from "#server/utils/auth-runtime";
 
 const EmailSchema = z
   .object({ email: z.string().trim().email().max(255) })

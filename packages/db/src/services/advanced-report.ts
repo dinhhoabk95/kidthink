@@ -7,19 +7,19 @@ import {
   trendDirectionDescription,
 } from "@mindkid/adaptive";
 import { and, asc, eq, gte } from "drizzle-orm";
-import { getOwnerDb } from "../client.ts";
-import { masteryState } from "../schema/adaptive.ts";
-import { childProfiles } from "../schema/child.ts";
-import { skillActionSuggestions } from "../schema/content.ts";
-import { gameLevels } from "../schema/game.ts";
-import { playSessions } from "../schema/play.ts";
-import { contentSkillMap } from "../schema/tagging.ts";
+import { getOwnerDb } from "#src/client";
+import { masteryState } from "#src/schema/adaptive";
+import { childProfiles } from "#src/schema/child";
+import { skillActionSuggestions } from "#src/schema/content";
+import { gameLevels } from "#src/schema/game";
+import { playSessions } from "#src/schema/play";
+import { contentSkillMap } from "#src/schema/tagging";
 import {
   competencies,
   skillPrerequisites,
   skills,
   strands,
-} from "../schema/taxonomy.ts";
+} from "#src/schema/taxonomy";
 
 export interface CompetencyReportItem {
   code: string;

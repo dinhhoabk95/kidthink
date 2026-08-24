@@ -5,7 +5,7 @@ import {
   type ActionResult,
   type GameAction,
   TemplateGameSession,
-} from "../../game-session.js";
+} from "#src/game-session";
 import type { GT008Content, GT008Difficulty } from "./template.js";
 
 function extractSlotData(

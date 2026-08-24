@@ -8,6 +8,7 @@ import {
   requireUserAuth,
   sanitizeReturnTo,
 } from "@mindkid/auth";
+import { requireEnv } from "@mindkid/config";
 import { enforceTwoAxisRateLimit } from "@mindkid/shared";
 import {
   createError,
@@ -21,14 +22,11 @@ import {
 import {
   assertRateLimitAllowed,
   getVerifiedRemoteIp,
-} from "../../../../../utils/auth-runtime.js";
-import { requireReauth } from "../../../../../utils/reauth-runtime.js";
+} from "#server/utils/auth-runtime";
+import { requireReauth } from "#server/utils/reauth-runtime";
 
 function getOAuthStateSecret(): string {
-  return (
-    process.env.NUXT_SESSION_PASSWORD ||
-    "dev-secret-key-oauth-state-at-least-32-chars-long"
-  );
+  return requireEnv("NUXT_SESSION_PASSWORD");
 }
 
 export default defineEventHandler(async (event) => {

@@ -2,7 +2,7 @@ import { getOwnerDb, notificationReads, notifications } from "@mindkid/db";
 import { and, eq } from "drizzle-orm";
 import { createError, defineEventHandler, getRouterParam } from "h3";
 
-import { requireWebUserSession } from "../../../../utils/auth-runtime.js";
+import { requireWebUserSession } from "#server/utils/auth-runtime";
 
 export default defineEventHandler(async (event) => {
   const user = await requireWebUserSession(event);

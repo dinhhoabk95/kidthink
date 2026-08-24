@@ -10,7 +10,7 @@ import { z } from "zod";
 import {
   assertRequestBodySize,
   requireWebUserSession,
-} from "../../utils/auth-runtime.js";
+} from "#server/utils/auth-runtime";
 
 const ALLOWED_PREFERENCE_KEYS = new Set(["weekly_progress", "content_new"]);
 

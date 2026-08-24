@@ -5,8 +5,8 @@ import {
   type ActionResult,
   type GameAction,
   TemplateGameSession,
-} from "../../game-session.js";
-import { OrderingMechanic } from "../../mechanics/ordering-mechanic.js";
+} from "#src/game-session";
+import { OrderingMechanic } from "#src/mechanics/ordering-mechanic";
 import {
   canMove,
   cellKey,
@@ -18,7 +18,7 @@ import {
   MazePathTracker,
   type MazeSide,
   type MazeStepResult,
-} from "../../systems/maze-system.js";
+} from "#src/systems/maze-system";
 import type { GT013Content, GT013Difficulty } from "./template.js";
 
 export interface MazeScaffoldHint {

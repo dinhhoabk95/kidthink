@@ -36,7 +36,7 @@ describe("Task 2 — Email Verification (BR-EVF-01..08)", () => {
     });
 
     const { default: handler } = await import(
-      "../../../server/api/guest/auth/users/verify-email.post"
+      "#server/api/guest/auth/users/verify-email.post"
     );
 
     const event = {
@@ -86,7 +86,7 @@ describe("Task 2 — Email Verification (BR-EVF-01..08)", () => {
     });
 
     const { default: handler } = await import(
-      "../../../server/api/guest/auth/users/verify-email.post"
+      "#server/api/guest/auth/users/verify-email.post"
     );
 
     const event = {
@@ -126,7 +126,7 @@ describe("Task 2 — Email Verification (BR-EVF-01..08)", () => {
     });
 
     const { default: resendHandler } = await import(
-      "../../../server/api/users/auth/resend-verification.post"
+      "#server/api/users/auth/resend-verification.post"
     );
 
     const event = {
@@ -140,7 +140,7 @@ describe("Task 2 — Email Verification (BR-EVF-01..08)", () => {
 
     // Try verifying with old token -> 410 or 404 (BR-EVF-03)
     const { default: verifyHandler } = await import(
-      "../../../server/api/guest/auth/users/verify-email.post"
+      "#server/api/guest/auth/users/verify-email.post"
     );
 
     const verifyEvent = {

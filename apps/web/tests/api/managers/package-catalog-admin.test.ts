@@ -9,8 +9,8 @@ import {
   users,
 } from "@mindkid/db";
 import { beforeAll, describe, expect, it } from "vitest";
-import subscribersHandler from "../../../server/api/managers/packages/[code]/subscribers.get";
-import packagesListHandler from "../../../server/api/managers/packages/index.get";
+import subscribersHandler from "#server/api/managers/packages/[code]/subscribers.get";
+import packagesListHandler from "#server/api/managers/packages/index.get";
 
 function mockManagerEvent(
   managerRole?: "super_admin" | "content_reviewer",

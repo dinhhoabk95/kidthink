@@ -166,7 +166,7 @@ case_2_missing_env_var_stops_before_build() {
 
   add_commit "${root}/source" "second"
   # Remove one always-required variable from the file on the server.
-  node "${HARNESS_DIR}/make-env.ts" web WEB_JWT_SECRET >"${MK_ENV_DIR}/web.env"
+  node "${HARNESS_DIR}/make-env.ts" web NUXT_SESSION_PASSWORD >"${MK_ENV_DIR}/web.env"
 
   local output status
   output="$(bash "${MINDKID_SH}" release --ref main 2>&1)"
@@ -175,7 +175,7 @@ case_2_missing_env_var_stops_before_build() {
   assert_eq "1" "${status}" "exit status is non-zero"
   assert_eq "${before_count}" "$(release_count)" "no new release directory was created"
   assert_eq "${before_link}" "$(current_target)" "the running release still serves"
-  assert_contains "${output}" "WEB_JWT_SECRET" "the missing variable is named"
+  assert_contains "${output}" "NUXT_SESSION_PASSWORD" "the missing variable is named"
   assert_contains "${output}" "nothing was built" "the run stopped before the build"
   rm -rf "${root}"
 }
@@ -322,8 +322,8 @@ case_9_reload_order_is_contractual() {
 
   local order
   order="$(tr '\n' ' ' <"${MK_FAKE_STATE}/pm2.reload-order" | sed 's/ $//')"
-  assert_eq "mindkid-worker mindkid-admin mindkid-web" "${order}" \
-    "worker, then admin, then web (release-deploy.md §7.2)"
+  assert_eq "mindkid-worker mindkid-web" "${order}" \
+    "worker, then web (release-deploy.md §7.2)"
   rm -rf "${root}"
 }
 
@@ -399,6 +399,32 @@ case_12_missing_artifacts_block_rollback() {
   rm -rf "${root}"
 }
 
+case_13_missing_admin_build_var_stops_before_build() {
+  printf 'Case 13 — the admin static build has no API origin\n'
+  new_workspace
+  local root="${WORKSPACE_ROOT}"
+  seed_first_release
+  local before_count; before_count="$(release_count)"
+  local before_link; before_link="$(current_target)"
+
+  add_commit "${root}/source" "second"
+  # APP-RUNTIME-BOUNDARY BR-ARB-04: admin has no runtime process, so a missing
+  # NUXT_PUBLIC_API_BASE_URL can only be caught here — after the build it is
+  # baked (or missing) in a static bundle nobody can reconfigure.
+  node "${HARNESS_DIR}/make-env.ts" admin NUXT_PUBLIC_API_BASE_URL >"${MK_ENV_DIR}/admin.env"
+
+  local output status
+  output="$(bash "${MINDKID_SH}" release --ref main 2>&1)"
+  status=$?
+
+  assert_eq "1" "${status}" "exit status is non-zero"
+  assert_eq "${before_count}" "$(release_count)" "no new release directory was created"
+  assert_eq "${before_link}" "$(current_target)" "the running release still serves"
+  assert_contains "${output}" "NUXT_PUBLIC_API_BASE_URL" "the missing variable is named"
+  assert_contains "${output}" "nothing was built" "the run stopped before the build"
+  rm -rf "${root}"
+}
+
 # --- driver -----------------------------------------------------------------
 
 main() {
@@ -421,6 +447,7 @@ main() {
   case_10_prune_keeps_the_active_release
   case_11_no_secret_value_reaches_the_log
   case_12_missing_artifacts_block_rollback
+  case_13_missing_admin_build_var_stops_before_build
 
   printf '\n%s passed, %s failed\n' "${PASS}" "${FAIL}"
   [ "${FAIL}" -eq 0 ]

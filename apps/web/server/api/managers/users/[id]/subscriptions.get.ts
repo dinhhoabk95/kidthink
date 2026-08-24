@@ -2,7 +2,7 @@ import { appError } from "@mindkid/auth";
 import { getOwnerDb, recurringSubscriptions } from "@mindkid/db";
 import { desc, eq } from "drizzle-orm";
 import { defineEventHandler, getRouterParam } from "h3";
-import { requireSuperAdminSession } from "../../../../utils/admin-auth-runtime.ts";
+import { requireSuperAdminSession } from "#server/utils/admin-auth-runtime";
 
 export default defineEventHandler(async (event) => {
   requireSuperAdminSession(event);

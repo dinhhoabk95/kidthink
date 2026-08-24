@@ -3,7 +3,7 @@ import {
   NOTIFICATION_TYPES,
   OPTIONAL_NOTIFICATION_CODES,
   validateNotificationPreferencesUpdate,
-} from "../src/notifications.js";
+} from "#src/notifications";
 
 describe("Notification Registry & Preferences Guard (Task 2 / BR-NOT-01 & BR-NOT-06)", () => {
   it("has exactly 14 defined notification types as const", () => {

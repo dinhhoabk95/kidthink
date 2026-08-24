@@ -4,10 +4,10 @@ import {
   DEFAULT_EMBEDDING_MODEL,
 } from "@mindkid/shared";
 import { and, eq, sql } from "drizzle-orm";
-import { getOwnerDb } from "../client.ts";
-import { aiUsageLog } from "../schema/ai.ts";
-import { lessons } from "../schema/content.ts";
-import { gameLevels } from "../schema/game.ts";
+import { getOwnerDb } from "#src/client";
+import { aiUsageLog } from "#src/schema/ai";
+import { lessons } from "#src/schema/content";
+import { gameLevels } from "#src/schema/game";
 import { debitAiCredits, refundAiCredits } from "./ai-credit.ts";
 import { assertNoEgressViolation } from "./ai-egress-guard.ts";
 import { aiProvider } from "./ai-provider.ts";

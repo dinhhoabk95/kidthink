@@ -13,9 +13,9 @@ import { z } from "zod";
 import {
   getManagerRemoteIp,
   requireSuperAdminSession,
-} from "../../../../utils/admin-auth-runtime.ts";
-import { throwValidationError } from "../../../../utils/api-error.js";
-import { mutateUserEntitlements } from "../../../../utils/entitlements-runtime.ts";
+} from "#server/utils/admin-auth-runtime";
+import { throwValidationError } from "#server/utils/api-error";
+import { mutateUserEntitlements } from "#server/utils/entitlements-runtime";
 
 /**
  * D-JN: Schema receives ONLY package_code, duration_days, grant_reason, notify_user.

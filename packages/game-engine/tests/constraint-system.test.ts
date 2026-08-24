@@ -6,7 +6,7 @@ import {
   hasUniqueSolution,
   isSudokuCompleteAndValid,
   type SudokuGrid,
-} from "../src/systems/constraint-system.js";
+} from "#src/systems/constraint-system";
 
 describe("constraintSystem (BR-MTB-15)", () => {
   describe("get2x2BoxIndex", () => {

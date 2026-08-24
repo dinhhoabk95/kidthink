@@ -12,8 +12,8 @@ import {
   setResponseStatus,
 } from "h3";
 import { z } from "zod";
-import { requireManagerSession } from "../../../utils/admin-auth-runtime.js";
-import { throwValidationError } from "../../../utils/api-error.js";
+import { requireManagerSession } from "#server/utils/admin-auth-runtime";
+import { throwValidationError } from "#server/utils/api-error";
 
 const createLessonSchema = z.object({
   code: z

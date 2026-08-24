@@ -3,10 +3,10 @@ import {
   assertActiveChild,
   checkUserEntitlement,
   verifyChildOwnership,
-} from "../src/actor-boundaries";
-import type { UserTokenPayload } from "../src/contracts";
-import { createAuthContext } from "../src/contracts";
-import type { ChildOwnershipPort, EntitlementPort } from "../src/ports";
+} from "#src/actor-boundaries";
+import type { UserTokenPayload } from "#src/contracts";
+import { createAuthContext } from "#src/contracts";
+import type { ChildOwnershipPort, EntitlementPort } from "#src/ports";
 
 const userWithChild: UserTokenPayload = {
   user_id: 101,

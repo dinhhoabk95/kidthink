@@ -7,11 +7,11 @@ import {
 } from "@mindkid/db";
 import { eq } from "drizzle-orm";
 import { describe, expect, it } from "vitest";
-import revokeEndpointHandler from "../../server/api/users/notification-endpoints/[uuid].delete";
-import registerEndpointHandler from "../../server/api/users/notification-endpoints/index.post";
-import markReadHandler from "../../server/api/users/notifications/[uuid]/read.patch";
-import listNotificationsHandler from "../../server/api/users/notifications/index.get";
-import readAllNotificationsHandler from "../../server/api/users/notifications/read-all.post";
+import revokeEndpointHandler from "#server/api/users/notification-endpoints/[uuid].delete";
+import registerEndpointHandler from "#server/api/users/notification-endpoints/index.post";
+import markReadHandler from "#server/api/users/notifications/[uuid]/read.patch";
+import listNotificationsHandler from "#server/api/users/notifications/index.get";
+import readAllNotificationsHandler from "#server/api/users/notifications/read-all.post";
 
 function mockEvent(
   method: string,

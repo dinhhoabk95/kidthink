@@ -594,9 +594,9 @@
 
 <script lang="ts" setup>
   import { computed } from "vue";
-  import { definePageMeta, useFetch, useUserSession } from "#imports";
-  import ErrorState from "../components/error-state.vue";
-  import LoadingState from "../components/loading-state.vue";
+  import { definePageMeta } from "#imports";
+  import ErrorState from "~/components/error-state.vue";
+  import LoadingState from "~/components/loading-state.vue";
 
   interface ManagerSessionUser {
     role?: string;
@@ -659,7 +659,7 @@
     layout: "manager",
   });
 
-  const { user } = useUserSession();
+  const { user } = useAdminAuth();
 
   const isSuperAdmin = computed(() => {
     return (
@@ -672,7 +672,7 @@
     pending,
     error: dataError,
     refresh,
-  } = await useFetch<DashboardData>("/api/managers/dashboard", {
+  } = await useApiFetch<DashboardData>("/api/managers/dashboard", {
     lazy: true,
   });
 

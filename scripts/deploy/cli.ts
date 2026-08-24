@@ -79,7 +79,8 @@ function positionals(argv: string[]): string[] {
 }
 
 function parseOptions(argv: string[]): Options {
-  const host = flagValue(argv, "host") ?? process.env.MINDKID_SSH_HOST;
+  const hostFlag = flagValue(argv, "host");
+  const host = hostFlag === undefined ? process.env.MINDKID_SSH_HOST : hostFlag;
   if (!host) {
     throw new InvalidArgumentError(
       "No target host. Pass --host <name> or set MINDKID_SSH_HOST."

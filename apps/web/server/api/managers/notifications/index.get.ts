@@ -6,7 +6,7 @@ import {
 } from "@mindkid/db";
 import { and, desc, eq, gte, ilike, lte, or, type SQL } from "drizzle-orm";
 import { createError, defineEventHandler, getQuery } from "h3";
-import { requireManagerSession } from "../../../utils/admin-auth-runtime.js";
+import { requireManagerSession } from "#server/utils/admin-auth-runtime";
 
 /**
  * Mask email for privacy (BR-NTA-06, BR-LOG-04): j***@example.com

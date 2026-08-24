@@ -1,34 +1,34 @@
 /** @generated from TEMPLATES@a1b2c3d4 — DO NOT EDIT MANUALLY (BR-TAK-03) */
 
 import { zodToJsonSchema } from "zod-to-json-schema";
-import type { AgeBand, GameTemplate } from "../contracts/types.js";
-import GT001Template from "../templates/GT-001/template.js";
-import GT002Template from "../templates/GT-002/template.js";
-import GT003Template from "../templates/GT-003/template.js";
-import GT004Template from "../templates/GT-004/template.js";
-import GT005Template from "../templates/GT-005/template.js";
-import GT006Template from "../templates/GT-006/template.js";
-import GT007Template from "../templates/GT-007/template.js";
-import GT008Template from "../templates/GT-008/template.js";
-import GT009Template from "../templates/GT-009/template.js";
-import GT010Template from "../templates/GT-010/template.js";
-import GT011Template from "../templates/GT-011/template.js";
-import GT012Template from "../templates/GT-012/template.js";
-import GT013Template from "../templates/GT-013/template.js";
-import GT014Template from "../templates/GT-014/template.js";
-import GT015Template from "../templates/GT-015/template.js";
-import GT016Template from "../templates/GT-016/template.js";
-import GT017Template from "../templates/GT-017/template.js";
-import GT018Template from "../templates/GT-018/template.js";
-import GT019Template from "../templates/GT-019/template.js";
-import GT020Template from "../templates/GT-020/template.js";
-import GT021Template from "../templates/GT-021/template.js";
-import GT022Template from "../templates/GT-022/template.js";
-import GT023Template from "../templates/GT-023/template.js";
-import GT024Template from "../templates/GT-024/template.js";
-import GT025Template from "../templates/GT-025/template.js";
-import GT026Template from "../templates/GT-026/template.js";
-import GT027Template from "../templates/GT-027/template.js";
+import type { AgeBand, GameTemplate } from "#src/contracts/types";
+import GT001Template from "#src/templates/GT-001/template";
+import GT002Template from "#src/templates/GT-002/template";
+import GT003Template from "#src/templates/GT-003/template";
+import GT004Template from "#src/templates/GT-004/template";
+import GT005Template from "#src/templates/GT-005/template";
+import GT006Template from "#src/templates/GT-006/template";
+import GT007Template from "#src/templates/GT-007/template";
+import GT008Template from "#src/templates/GT-008/template";
+import GT009Template from "#src/templates/GT-009/template";
+import GT010Template from "#src/templates/GT-010/template";
+import GT011Template from "#src/templates/GT-011/template";
+import GT012Template from "#src/templates/GT-012/template";
+import GT013Template from "#src/templates/GT-013/template";
+import GT014Template from "#src/templates/GT-014/template";
+import GT015Template from "#src/templates/GT-015/template";
+import GT016Template from "#src/templates/GT-016/template";
+import GT017Template from "#src/templates/GT-017/template";
+import GT018Template from "#src/templates/GT-018/template";
+import GT019Template from "#src/templates/GT-019/template";
+import GT020Template from "#src/templates/GT-020/template";
+import GT021Template from "#src/templates/GT-021/template";
+import GT022Template from "#src/templates/GT-022/template";
+import GT023Template from "#src/templates/GT-023/template";
+import GT024Template from "#src/templates/GT-024/template";
+import GT025Template from "#src/templates/GT-025/template";
+import GT026Template from "#src/templates/GT-026/template";
+import GT027Template from "#src/templates/GT-027/template";
 
 export const ALL_TEMPLATES: Record<string, GameTemplate> = {
   "GT-001": GT001Template,

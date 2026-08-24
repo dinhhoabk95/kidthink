@@ -1,10 +1,7 @@
-import { describe, expect, it } from "vitest";
-import {
-  type AppType,
-  ENV_REGISTRY,
-  validateEnvFile,
-} from "../src/env-contract.ts";
-import { parseEnvFile } from "../src/env-file.ts";
+import { afterEach, describe, expect, it } from "vitest";
+import { type AppType, ENV_REGISTRY, validateEnvFile } from "#src/env-contract";
+import { parseEnvFile } from "#src/env-file";
+import { MissingEnvError, requireEnv } from "#src/require-env";
 
 const APPS: readonly AppType[] = ["web", "admin", "worker"];
 const LONG_SECRET = "0123456789abcdef0123456789abcdef01";
@@ -80,23 +77,27 @@ describe("validateEnvFile", () => {
   it("names a missing required variable", () => {
     const result = validateEnvFile(
       "web",
-      envFor("web", ["WEB_JWT_SECRET"]),
+      envFor("web", ["NUXT_SESSION_PASSWORD"]),
       true
     );
     expect(result.valid).toBe(false);
-    expect(result.errors.map((e) => e.varName)).toContain("WEB_JWT_SECRET");
+    expect(result.errors.map((e) => e.varName)).toContain(
+      "NUXT_SESSION_PASSWORD"
+    );
   });
 
   it("treats an empty value as missing", () => {
     const parsed = envFor("web");
-    parsed.set("WEB_JWT_SECRET", "   ");
+    parsed.set("NUXT_SESSION_PASSWORD", "   ");
     const result = validateEnvFile("web", parsed, true);
-    expect(result.errors.map((e) => e.varName)).toContain("WEB_JWT_SECRET");
+    expect(result.errors.map((e) => e.varName)).toContain(
+      "NUXT_SESSION_PASSWORD"
+    );
   });
 
   it("BR-ENV-11: rejects a secret under 32 bytes", () => {
     const parsed = envFor("web");
-    parsed.set("WEB_JWT_SECRET", "too-short");
+    parsed.set("NUXT_SESSION_PASSWORD", "too-short");
     const result = validateEnvFile("web", parsed, true);
     expect(result.errors[0]?.issue).toContain("32 bytes");
   });
@@ -142,16 +143,18 @@ describe("validateEnvFile", () => {
 
   it("BR-ENV-06: ignores the environment of the process running it", () => {
     // The shell has the value; the file does not. The file is what counts.
-    process.env.WEB_JWT_SECRET = LONG_SECRET;
+    process.env.NUXT_SESSION_PASSWORD = LONG_SECRET;
     try {
       const result = validateEnvFile(
         "web",
-        envFor("web", ["WEB_JWT_SECRET"]),
+        envFor("web", ["NUXT_SESSION_PASSWORD"]),
         true
       );
-      expect(result.errors.map((e) => e.varName)).toContain("WEB_JWT_SECRET");
+      expect(result.errors.map((e) => e.varName)).toContain(
+        "NUXT_SESSION_PASSWORD"
+      );
     } finally {
-      process.env.WEB_JWT_SECRET = undefined;
+      process.env.NUXT_SESSION_PASSWORD = undefined;
     }
   });
 });
@@ -183,5 +186,25 @@ describe("parseEnvFile", () => {
 
   it("lets a later declaration win, as a shell would", () => {
     expect(parseEnvFile("A=1\nA=2\n").get("A")).toBe("2");
+  });
+});
+
+describe("requireEnv", () => {
+  const variableName = "TEST_REQUIRED_ENV";
+
+  afterEach(() => {
+    delete process.env[variableName];
+  });
+
+  it("throws when the variable is missing", () => {
+    delete process.env[variableName];
+
+    expect(() => requireEnv(variableName)).toThrow(MissingEnvError);
+  });
+
+  it("throws when the variable is blank", () => {
+    process.env[variableName] = "   ";
+
+    expect(() => requireEnv(variableName)).toThrow(MissingEnvError);
   });
 });

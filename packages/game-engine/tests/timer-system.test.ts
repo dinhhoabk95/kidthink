@@ -3,7 +3,7 @@ import {
   FlashTimer,
   MAX_FLASH_MS,
   MIN_FLASH_MS,
-} from "../src/systems/timer-system.js";
+} from "#src/systems/timer-system";
 
 describe("timerSystem (BR-MTB-15)", () => {
   it("enforces floor of 800ms and ceiling of 3000ms", () => {

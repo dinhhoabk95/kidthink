@@ -1,4 +1,4 @@
-import type { ContentSeed } from "../types.js";
+import type { ContentSeed } from "#src/seed-content/types";
 
 export const SEED_GL_C1_CNT_0001: ContentSeed<
   { items: Array<{ id: string; emoji: string }>; target_count: number },

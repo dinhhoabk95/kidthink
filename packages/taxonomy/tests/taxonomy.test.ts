@@ -1,6 +1,6 @@
 import { CompetencyCodeSchema, StrandCodeSchema } from "@mindkid/shared";
 import { describe, expect, it } from "vitest";
-import { COMPETENCIES, STRANDS } from "../src/index.js";
+import { COMPETENCIES, STRANDS } from "#src/index";
 
 const CYCLE_REGEX =
   /Cycle detected in skill prerequisites: SKILL-A -> SKILL-B -> SKILL-A \(BR-TAX-01\)/;
@@ -289,4 +289,4 @@ import {
   resolvePath,
   resolveSkillsForCompetency,
   unlockedBy,
-} from "../src/index.js";
+} from "#src/index";

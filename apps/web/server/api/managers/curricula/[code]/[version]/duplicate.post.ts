@@ -14,7 +14,7 @@ import {
   setResponseStatus,
 } from "h3";
 import { z } from "zod";
-import { requireManagerSession } from "../../../../../utils/admin-auth-runtime.js";
+import { requireManagerSession } from "#server/utils/admin-auth-runtime";
 
 const duplicateCurriculumSchema = z.object({
   new_code: z

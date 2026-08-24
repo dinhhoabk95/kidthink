@@ -6,7 +6,7 @@ import {
   type RawCandidateLevel,
   RECOMMENDATION_REASONS,
   shuffleWithSeed,
-} from "../src/index.js";
+} from "#src/index";
 
 describe("packages/adaptive — Recommendation Ranking & Assembly (BR-REC-01..08, D-MQ, D-MT, D-MV)", () => {
   describe("Deterministic RNG & Seed Generation (D-MV, BR-REC-08)", () => {

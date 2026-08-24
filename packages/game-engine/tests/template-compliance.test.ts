@@ -32,7 +32,7 @@ import {
   GT027_FIXTURES,
   getGameTemplate,
   loadGameSession,
-} from "../src/index.js";
+} from "#src/index";
 
 const FIXTURES_MAP: Record<
   string,

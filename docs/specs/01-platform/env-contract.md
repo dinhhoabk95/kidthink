@@ -35,8 +35,9 @@ nó thành một cổng chặn phát hành.
 
 | Actor                                 | Quyền cần                    | Làm được gì ở đây                        |
 | ------------------------------------- | ---------------------------- | ---------------------------------------- |
-| Người vận hành                        | Truy cập `root` trên máy chủ | Ghi ba file env, chạy lệnh kiểm          |
-| Tiến trình `web` · `admin` · `worker` | Đọc file env của chính nó    | Nổ lúc khởi động nếu thiếu biến bắt buộc |
+| Người vận hành                        | Truy cập `root` trên máy chủ | Ghi file env cho web và worker, chạy lệnh kiểm |
+| Tiến trình `web` · `worker`             | Đọc file env của chính nó    | Nổ lúc khởi động nếu thiếu biến bắt buộc |
+| Quy trình build admin SPA               | Build environment             | Nướng `NUXT_PUBLIC_API_BASE_URL` vào bundle |
 | Quy trình phát hành                   | Đọc file env để kiểm         | Dừng trước khi build nếu danh mục lệch   |
 | Người phát triển                      | Máy trạm                     | Sinh lại `.env.example` từ registry      |
 
@@ -45,7 +46,7 @@ nó thành một cổng chặn phát hành.
 | Nơi                                                     | Actor            | Ghi chú                                    |
 | ------------------------------------------------------- | ---------------- | ------------------------------------------ |
 | `packages/config/src/env-contract.ts`                   | Người phát triển | Registry — nguồn sự thật duy nhất          |
-| `/etc/mindkid/env/web.env` · `admin.env` · `worker.env` | Người vận hành   | Chỉ trên máy chủ, quyền `0600`, chủ `root` |
+| `/etc/mindkid/env/web.env` · `worker.env`              | Người vận hành   | Chỉ trên máy chủ, quyền `0600`, chủ `root` |
 | `.env` ở gốc repo                                       | Người phát triển | Chỉ máy trạm, đã bị `.gitignore` chặn      |
 | `pnpm deploy env --host <tên> --check`                  | Người vận hành   | Đối chiếu máy chủ với registry             |
 
@@ -55,8 +56,8 @@ nó thành một cổng chặn phát hành.
 1. Khai biến trong registry: tên, tiến trình nào đọc, bắt buộc ở môi trường nào,
    kiểu (url | secret | email | port | enum | text), có phải bí mật hay không
 2. Sinh .env.example từ registry — không sửa tay file đó
-3. Người vận hành ghi ba file env trên máy chủ theo bảng sinh ra ở §7.1
-4. Phát hành: validator đọc nội dung ba file, đối chiếu registry
+3. Người vận hành ghi hai file env runtime trên máy chủ theo bảng sinh ra ở §7.1
+4. Phát hành: validator đọc nội dung hai file runtime, đối chiếu registry; build admin nhận public API origin
       thiếu | rỗng | sai kiểu | biến lạ  →  dừng, chưa build, máy vẫn chạy bản cũ
 5. Tiến trình khởi động: kiểm lại danh mục của chính nó, thiếu thì nổ ngay
 ```
@@ -76,7 +77,7 @@ nó thành một cổng chặn phát hành.
 | ----------- | ----------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | `BR-ENV-01` | Registry trong `packages/config` là nguồn sự thật duy nhất; biến không khai ở đó thì code không được đọc          | Đo 2026-08-18: 56 biến đọc rải rác, không có nơi nào nói biến nào bắt buộc. Không có danh mục thì không kiểm được, và không kiểm được thì lỗi cấu hình chỉ lộ ra trên máy chủ  |
 | `BR-ENV-02` | Mỗi khái niệm đúng **một** tên chính thức; tên đồng nghĩa bị cấm                                                  | Sáu nhóm ở §7.2 khiến "đã đặt biến" không đồng nghĩa với "code đọc được". Bốn tên cho một chuỗi kết nối là bốn cơ hội cấu hình đúng một nửa                                    |
-| `BR-ENV-03` | Biến bắt buộc mà thiếu thì tiến trình nổ lúc khởi động; cấm giá trị mặc định cho biến bí mật và cho URL công khai | Có 10 chỗ đang mặc định `https://mindkid.vn`. Mặc định đúng tình cờ vẫn là cấu hình sai, và nó chỉ sai lộ ra ở đường liên kết trong email hoặc thẻ chia sẻ — nơi không ai nhìn |
+| `BR-ENV-03` | Biến bắt buộc mà thiếu thì tiến trình nổ lúc khởi động; cấm mọi fallback literal hoặc fallback toán tử sau khi đọc env | Fallback làm thiếu setup trông như cấu hình hợp lệ; kể cả địa chỉ nội bộ, key test hay fallback sang tên env khác cũng che mất lỗi vận hành và làm contract khó truy |
 | `BR-ENV-04` | Mỗi tiến trình chỉ nhận biến nó thật sự đọc                                                                       | Tiến trình bị chiếm quyền chỉ để lộ những bí mật nó có. `worker` không cần khoá session, `web` không cần khoá mã hoá backup                                                    |
 | `BR-ENV-05` | File env production nằm ngoài thư mục release, quyền `0600`, chủ `root`                                           | Thư mục release bị tạo lại mỗi lần phát hành và bị xoá khi dọn bản cũ. Bí mật không được sống trong thứ có vòng đời của một lần build                                          |
 | `BR-ENV-06` | Validator **không** đọc biến môi trường của tiến trình đang chạy; chỉ nhận nội dung file được truyền vào          | Cổng nào đọc môi trường của người chạy sẽ xanh giả trên máy trạm — nơi có sẵn `.env` của dev. Đây là cách một cổng trở thành cổng trang trí                                    |
@@ -89,7 +90,7 @@ nó thành một cổng chặn phát hành.
 
 ## 7. Data
 
-**Đọc:** ba file env trên máy chủ, registry trong `packages/config`.
+**Đọc:** hai file env runtime trên máy chủ, registry trong `packages/config`.
 **Ghi:** không ghi gì. Kết quả kiểm chỉ đi ra mã thoát và log.
 
 ### 7.1 Một mục trong registry
@@ -97,7 +98,7 @@ nó thành một cổng chặn phát hành.
 | Field       | Kiểu    | Ràng buộc                                                   |
 | ----------- | ------- | ----------------------------------------------------------- |
 | `name`      | text    | Chữ in, gạch dưới; là tên duy nhất của khái niệm            |
-| `apps`      | tập hợp | Tập con của `web` · `admin` · `worker`                      |
+| `apps`      | tập hợp | Tập con của `web` · `admin` · `worker`; admin chỉ nhận public build config |
 | `required`  | enum    | `always` \| `production` \| `when-enabled` \| `optional`     |
 | `kind`      | enum    | `url` \| `secret` \| `email` \| `port` \| `enum` \| `text`  |
 | `secret`    | boolean | `true` thì giá trị không bao giờ được in ra                 |
@@ -109,7 +110,7 @@ nó thành một cổng chặn phát hành.
 nếu không, validator sẽ báo mọi dòng của nó là biến lạ.
 
 Số biến đo được ngày 2026-08-18, dùng làm điểm bắt đầu của danh mục: `apps/web` đọc 13,
-`apps/admin` đọc 2, `apps/worker` đọc 3, `packages/` đọc 43, tổng 56 tên khác nhau. Sau khi gộp
+`apps/admin` chỉ đọc public API origin lúc build, `apps/worker` đọc 3, `packages/` đọc 43. Sau khi gộp
 sáu nhóm đồng nghĩa ở §7.2, registry chốt lại 45 tên (đo ngày 2026-08-19). Điều kiện để một tên
 có mặt trong registry là **có mã đọc nó**: một tên không ai đọc làm validator đòi giá trị mà
 không tiến trình nào tiêu thụ.
@@ -122,8 +123,7 @@ tố của framework, vì các biến này chỉ được đọc ở phía máy 
 | Khái niệm                      | Tên đang tồn tại trong code                                   | Tên chốt                                                   |
 | ------------------------------ | ------------------------------------------------------------- | ---------------------------------------------------------- |
 | Mật khẩu niêm phong session    | `SESSION_SECRET` · `NUXT_SESSION_PASSWORD`                    | `NUXT_SESSION_PASSWORD` — thư viện session cố định tên này |
-| Khoá phát hành token của web   | `JWT_SECRET` · `JWT_ACCESS_SECRET` · `NUXT_WEB_JWT_SECRET`    | `WEB_JWT_SECRET`                                           |
-| Khoá phát hành token của admin | `ADMIN_JWT_SECRET` · `NUXT_ADMIN_JWT_SECRET`                  | `ADMIN_JWT_SECRET`                                         |
+| Origin API của static admin    | `NUXT_PUBLIC_API_BASE_URL` · origin tương đối                 | `NUXT_PUBLIC_API_BASE_URL` — chỉ là public build config   |
 | Chuỗi kết nối Valkey           | `REDIS_URL` · `VALKEY_URL` · `VALKEY_HOST` · `AUTH_REDIS_URL` | `VALKEY_URL`                                               |
 | Địa chỉ công khai của site     | `SITE_URL` · `NUXT_SITE_URL` · `NUXT_PUBLIC_SITE_URL`         | `SITE_URL`                                                 |
 | Bí mật Parent Gate             | `PARENT_GATE_SECRET` · `NUXT_PARENT_GATE_SECRET`              | `PARENT_GATE_SECRET`                                       |
@@ -132,15 +132,14 @@ Tiền tố `NUXT_PUBLIC_` trong danh sách trên là tên gây hiểu nhầm, k
 duyệt: cả 10 chỗ đọc nó đều nằm trong thư mục `server/` hoặc trong `packages/`. Không có biến nào
 bị nướng vào bundle của trình duyệt.
 
-### 7.3 Ba file trên máy chủ
+### 7.3 Hai file runtime trên máy chủ
 
 | File         | Nội dung                               | Quyền            |
 | ------------ | -------------------------------------- | ---------------- |
 | `web.env`    | Biến của `web` cộng biến dùng chung    | `0600 root:root` |
-| `admin.env`  | Biến của `admin` cộng biến dùng chung  | `0600 root:root` |
 | `worker.env` | Biến của `worker` cộng biến dùng chung | `0600 root:root` |
 
-Biến dùng chung nằm lặp trong cả ba file. Lặp ở đây rẻ hơn việc một tiến trình đọc được bí mật
+Biến dùng chung nằm lặp trong cả hai file. Lặp ở đây rẻ hơn việc một tiến trình đọc được bí mật
 nó không cần (`BR-ENV-04`).
 
 ## 8. API contract
@@ -186,8 +185,8 @@ Scenario: BR-ENV-09 — .env.example khớp registry
 
 Scenario: BR-ENV-12 — quy trình phát hành không ghi file env
   Given một lần phát hành thành công
-  When so mốc thời gian ba file env trước và sau
-  Then ba mốc không đổi
+  When so mốc thời gian hai file env trước và sau
+  Then hai mốc không đổi
 ```
 
 ## 10. Boundaries
@@ -217,6 +216,6 @@ Scenario: BR-ENV-12 — quy trình phát hành không ghi file env
 
 | #   | Câu hỏi                                                                                                                                                               | Chặn gì                      | Chặn phase | Chủ                                                   |
 | --- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------- | ---------- | ----------------------------------------------------- |
-| 1   | Ai giữ bản sao ngoài máy chủ của ba file env, và giữ ở đâu? Mất máy chủ mà không có bản sao thì mọi bí mật phải sinh lại, kéo theo mọi session và mọi token đang sống | Điều kiện go-live            | go-live    | người quyết                                           |
+| 1   | Ai giữ bản sao ngoài máy chủ của hai file env, và giữ ở đâu? Mất máy chủ mà không có bản sao thì mọi bí mật phải sinh lại, kéo theo mọi session và mọi token đang sống | Điều kiện go-live            | go-live    | người quyết                                           |
 | 2   | Có chuyển sang trình quản lý bí mật (AWS SSM, Vault) hay giữ file trên máy chủ?                                                                                       | Không chặn phát hành lần đầu | chờ P2     | hoãn — mở lại khi có người thứ hai cần quyền vận hành |
 | 3   | Biến của tính năng add-on P4 (trợ lý, tìm kiếm ngữ nghĩa) chưa tồn tại. Khai trước với `required: when-enabled` hay khai khi làm?                                     | Không chặn                   | chờ P4     | hoãn — khai khi làm, để registry không mọc mục chết   |

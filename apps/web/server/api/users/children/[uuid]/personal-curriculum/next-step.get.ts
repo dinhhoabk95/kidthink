@@ -1,7 +1,7 @@
 import { resolveChildPersonalCurriculumNextStep } from "@mindkid/db";
 import { defineEventHandler, getRouterParam } from "h3";
-import { requireWebUserSession } from "../../../../../utils/auth-runtime.js";
-import { resolveUserActiveEntitlements } from "../../../../../utils/entitlements-runtime.js";
+import { requireWebUserSession } from "#server/utils/auth-runtime";
+import { resolveUserActiveEntitlements } from "#server/utils/entitlements-runtime";
 
 export default defineEventHandler(async (event) => {
   const user = await requireWebUserSession(event);

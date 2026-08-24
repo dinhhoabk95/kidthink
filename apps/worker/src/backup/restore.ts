@@ -5,6 +5,7 @@ import path from "node:path";
 import { createInterface } from "node:readline";
 import { pipeline } from "node:stream/promises";
 import { createGunzip } from "node:zlib";
+import { requireEnv } from "@mindkid/config";
 import { backupLog, getOwnerDb } from "@mindkid/db";
 import { desc, eq } from "drizzle-orm";
 import postgres from "postgres";
@@ -18,23 +19,15 @@ const question = (query: string): Promise<string> =>
   new Promise((resolve) => rl.question(query, resolve));
 
 function getEncryptionKey() {
-  const encryptionKey = process.env.BACKUP_ENCRYPTION_KEY;
-  if (encryptionKey?.length !== 32) {
-    console.error(
-      "Missing or invalid BACKUP_ENCRYPTION_KEY (must be 32 chars)"
-    );
-    process.exit(1);
+  const encryptionKey = requireEnv("BACKUP_ENCRYPTION_KEY");
+  if (encryptionKey.length !== 32) {
+    throw new Error("BACKUP_ENCRYPTION_KEY must be 32 characters");
   }
   return encryptionKey;
 }
 
 function getDbUrl() {
-  const dbUrl = process.env.DATABASE_URL;
-  if (!dbUrl) {
-    console.error("Missing DATABASE_URL");
-    process.exit(1);
-  }
-  return dbUrl;
+  return requireEnv("DATABASE_URL");
 }
 
 async function main() {

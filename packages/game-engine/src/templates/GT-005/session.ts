@@ -2,10 +2,10 @@ import {
   type ActionResult,
   type GameAction,
   TemplateGameSession,
-} from "../../game-session.js";
-import { PairingMechanic } from "../../mechanics/pairing-mechanic.js";
-import { deriveStream } from "../../rng/mulberry32.js";
-import { shuffle } from "../../rng/shuffle.js";
+} from "#src/game-session";
+import { PairingMechanic } from "#src/mechanics/pairing-mechanic";
+import { deriveStream } from "#src/rng/mulberry32";
+import { shuffle } from "#src/rng/shuffle";
 import type { GT005Content, GT005Difficulty } from "./template.js";
 
 type LeftItem = GT005Content["pairs"][number]["left"];

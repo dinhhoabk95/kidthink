@@ -19,7 +19,7 @@ import {
   assertRequestBodySize,
   getVerifiedRemoteIp,
   requireWebUserSession,
-} from "../../../utils/auth-runtime.js";
+} from "#server/utils/auth-runtime";
 
 const SubmitConsentSchema = z
   .object({

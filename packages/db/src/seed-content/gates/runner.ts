@@ -11,11 +11,11 @@ import type {
   GateIssue,
   GateResult,
   LessonSeed,
-} from "../types.js";
+} from "#src/seed-content/types";
 import {
   isValidTagForAxis,
   PEDAGOGICAL_AXIS_REQUIREMENT,
-} from "../vocabulary.js";
+} from "#src/seed-content/vocabulary";
 import { scanChildContentSafety } from "./blocklist.js";
 
 const CODE_REGEX = /^GL-(?:\d{4}|C[1-6]-[A-Z]{2,5}-[A-Z]{2,5}-\d{4})$/;

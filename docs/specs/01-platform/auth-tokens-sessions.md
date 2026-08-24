@@ -56,10 +56,10 @@ Better-Auth, Sidebase AuthJS và `next-auth`.
 | Nơi | Trách nhiệm |
 |---|---|
 | `packages/auth/` | Sở hữu credential opaque, Redis session/remember/challenge adapter fail-closed, CSRF, domain context, Argon2id và TOTP |
-| `apps/*/server/plugins/auth-session.ts` | Nối adapter, `sessionHooks.fetch`, lifecycle và health check theo namespace |
-| `apps/*/nuxt.config.ts` | Khai `nuxt-auth-utils`, cookie locator, TTL một giờ và load strategy riêng app |
-| `apps/*/shared/types/auth.d.ts` | Khai safe projection và `SecureSessionData.session_token` app-local |
-| `apps/*/server/middleware/auth.ts` | Đọc locator, lookup Redis một lần, gắn context; guard domain đọc context đồng bộ |
+| `apps/web/server/plugins/auth-session.ts` | Nối adapter và `sessionHooks.fetch` cho user projection; hook chỉ chạy ở session introspection |
+| `apps/web/nuxt.config.ts` | Khai `nuxt-auth-utils`, user cookie locator và TTL một giờ |
+| `apps/web/server/middleware/auth.ts` | Chọn namespace theo `/api/users` hoặc `/api/managers`, đọc đúng cookie, lookup Redis một lần, gắn context |
+| `apps/admin/app/composables/use-api-client.ts` | Gọi API tuyệt đối tới web, `credentials: include`, giữ CSRF token trong memory |
 | `POST /api/guest/auth/{users\|managers}/login` | Xác thực đầu vào; User tạo session, Manager tạo opaque MFA challenge; nhận `rememberMe` |
 | `POST /api/guest/auth/{users\|managers}/mfa` | Tiêu thụ nguyên tử opaque MFA challenge đúng namespace rồi mới tạo session/remember |
 | `POST /api/guest/auth/{users\|managers}/remember` | Xoay remember credential và tạo session làm việc mới |
@@ -77,7 +77,8 @@ Better-Auth, Sidebase AuthJS và `next-auth`.
    Nếu `rememberMe=true`, cùng transaction tạo credential `r1.<selector>.<verifier>` với mỗi
    thành phần ngẫu nhiên 32 byte; chỉ lưu digest và
    `absolute_expires_at = login_at + 365 ngày`.
-3. `replaceUserSession()` seal **chỉ** `secure.session_token` vào cookie locator một giờ.
+3. `setUserSession()` seal **chỉ** `secure.session_token` vào cookie locator một giờ; Manager dùng
+   session config H3 riêng với cookie name riêng.
    `sessionHooks.fetch` dùng locator lookup Redis và hydrate safe `user` projection cho
    `useUserSession()`; locator không xuất hiện trong response.
 4. Mỗi request User/Manager: middleware hash locator, lookup Redis đúng namespace một lần, kiểm
@@ -121,7 +122,7 @@ credential của bước mật khẩu; client không thể thêm tuỳ chọn n�
 | `BR-AUT-09` | Rate limit đăng nhập theo **IP và account** | Hai trục chặn cả quét diện rộng lẫn nhắm một tài khoản |
 | `BR-AUT-10` | Lỗi đăng nhập không tiết lộ tài khoản tồn tại; thời gian phản hồi không lệch | Ngăn enumeration email |
 | `BR-AUT-11` | Manager không có endpoint đăng ký công khai | Manager là tài khoản vận hành, chỉ tạo qua luồng kiểm soát |
-| `BR-AUT-12` | Cookie Manager là host-only trên `admin.{domain}` | Tách bề mặt User và Manager |
+| `BR-AUT-12` | Cookie Manager là host-only trên `{domain}` với tên `mindkid-manager-session`; static `admin.{domain}` chỉ gọi API `{domain}` bằng `credentials: include` | Tách bề mặt User và Manager mà không cho admin static đọc hoặc phát hành credential |
 | `BR-AUT-13` | Thao tác nhạy cảm §7.5 cần reauth trong 5 phút | Phiên bị chiếm không được đổi khoá vào tài khoản |
 | `BR-AUT-14` | Reauth chấp nhận bất kỳ cách nào ở §7.5, không cứng mật khẩu | Tài khoản chỉ-SNS vẫn cần đổi cài đặt an toàn |
 | `BR-AUT-15` | Manager cấm đăng nhập bằng SNS | Sự cố provider không được thành sự cố quản trị |
@@ -238,8 +239,9 @@ hoặc dữ liệu trẻ ngoài allow-list.
 | `active_child_id` | Context do người lớn chọn, không phải auth credential | Cấm | Lax | `/` | 30 ngày |
 | `tm_did` | Guest device | Cấm | Lax | `/` | 1 năm |
 
-Mọi auth cookie `Secure` ở production và không đặt `Domain`. Secret seal của Web/Admin khác
-nhau; session locator vẫn không được tin nếu Redis không có record. CSRF token xoay ở mỗi lần
+Mọi auth cookie `Secure` ở production và không đặt `Domain`. User và Manager dùng hai cookie name
+host-only trên `{domain}`; admin static không giữ session cookie trên subdomain. Session locator
+vẫn không được tin nếu Redis không có record. CSRF token xoay ở mỗi lần
 đăng nhập đầy đủ hoặc remember restore thành công và bị xoá khi logout.
 
 ### 7.5 PostgreSQL metadata và reauth

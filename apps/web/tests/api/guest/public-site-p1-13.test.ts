@@ -16,8 +16,8 @@ import {
   buildLearningResourceJsonLd,
   buildOrganizationJsonLd,
   buildWebSiteJsonLd,
-} from "../../../server/utils/seo-jsonld.js";
-import { scanDirectoryForThirdPartyScripts } from "../../gates/public-scripts.ts";
+} from "#server/utils/seo-jsonld";
+import { scanDirectoryForThirdPartyScripts } from "~~/tests/gates/public-scripts";
 
 describe("P1.13 Public Site, SEO, Legal & Cookie Integration Tests", () => {
   describe("Task 1: Hạ tầng SEO (BR-SEO2-01..09)", () => {

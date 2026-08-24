@@ -12,7 +12,7 @@ import {
 import {
   assertRequestBodySize,
   requireWebUserSession,
-} from "../../../../utils/auth-runtime.js";
+} from "#server/utils/auth-runtime";
 
 function validatePatchDisplayName(name: string): string {
   const trimmed = name.trim();

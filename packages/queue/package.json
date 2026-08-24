@@ -17,5 +17,9 @@
   "devDependencies": {
     "@types/node": "catalog:",
     "vitest": "catalog:"
+  },
+  "imports": {
+    "#src/*": "./src/*.ts",
+    "#tests/*": "./tests/*.ts"
   }
 }

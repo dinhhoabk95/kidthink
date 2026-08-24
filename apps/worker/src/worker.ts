@@ -1,3 +1,4 @@
+import { requireEnv } from "@mindkid/config";
 import { alert, type JobName, QUEUE_NAME } from "@mindkid/queue";
 import { type Job, Worker } from "bullmq";
 import { runPostgresBackup } from "./backup/postgres.js";
@@ -79,9 +80,10 @@ export function startWorker() {
     return worker;
   }
 
-  const connectionOpts = process.env.VALKEY_URL
-    ? { url: process.env.VALKEY_URL, maxRetriesPerRequest: null as unknown }
-    : { host: "localhost", port: 6379, maxRetriesPerRequest: null as unknown };
+  const connectionOpts = {
+    url: requireEnv("VALKEY_URL"),
+    maxRetriesPerRequest: null as unknown,
+  };
 
   worker = new Worker(QUEUE_NAME, processJob, { connection: connectionOpts });
 

@@ -10,11 +10,11 @@ import { getGameTemplate } from "@mindkid/game-engine";
 import { eq, sql } from "drizzle-orm";
 import { createError, defineEventHandler } from "h3";
 import { z } from "zod";
-import { requireManagerSession } from "../../../utils/admin-auth-runtime.js";
-import { throwValidationError } from "../../../utils/api-error.js";
-import { syncContentAssetRefs } from "../../../utils/asset-refs.js";
-import { readPostgresErrorCode } from "../../../utils/pg-error.js";
-import { readRequestBody } from "../../../utils/request-body.js";
+import { requireManagerSession } from "#server/utils/admin-auth-runtime";
+import { throwValidationError } from "#server/utils/api-error";
+import { syncContentAssetRefs } from "#server/utils/asset-refs";
+import { readPostgresErrorCode } from "#server/utils/pg-error";
+import { readRequestBody } from "#server/utils/request-body";
 
 /**
  * BR-SEC-04: mọi route `/api/*` phải Zod validate body.

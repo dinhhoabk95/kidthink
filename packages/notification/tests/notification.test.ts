@@ -5,7 +5,7 @@ import {
   parseAndVerifySesNotification,
   renderEmailTemplate,
   verifySnsCertUrl,
-} from "../src/index.js";
+} from "#src/index";
 
 const FAKE_MSG_ID_REGEX = /^msg_fake_/;
 

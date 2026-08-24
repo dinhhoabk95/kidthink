@@ -5,9 +5,9 @@ import {
   assertManagerRequestBodySize,
   getManagerRemoteIp,
   requireSuperAdminSession,
-} from "../../../utils/admin-auth-runtime.js";
+} from "#server/utils/admin-auth-runtime";
 
-import { requireReauth } from "../../../utils/reauth-runtime.js";
+import { requireReauth } from "#server/utils/reauth-runtime";
 
 const ForceReconsentSchema = z
   .object({

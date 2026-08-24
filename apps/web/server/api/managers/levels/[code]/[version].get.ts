@@ -1,7 +1,7 @@
 import { gameLevels, gameTemplates, getOwnerDb } from "@mindkid/db";
 import { and, desc, eq } from "drizzle-orm";
 import { createError, defineEventHandler, getRouterParam } from "h3";
-import { requireManagerSession } from "../../../../utils/admin-auth-runtime.js";
+import { requireManagerSession } from "#server/utils/admin-auth-runtime";
 
 export default defineEventHandler(async (event) => {
   await requireManagerSession(event);

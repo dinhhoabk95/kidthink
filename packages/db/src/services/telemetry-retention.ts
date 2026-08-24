@@ -1,6 +1,6 @@
 import { lt } from "drizzle-orm";
-import { getOwnerDb } from "../client.ts";
-import { telemetryEvents } from "../schema/play.ts";
+import { getOwnerDb } from "#src/client";
+import { telemetryEvents } from "#src/schema/play";
 
 export interface CleanupResult {
   deletedCount: number;

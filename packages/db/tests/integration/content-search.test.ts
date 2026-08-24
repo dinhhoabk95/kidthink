@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { getOwnerDb } from "../../src/client.ts";
-import { searchGameLevels } from "../../src/services/content-search.ts";
+import { getOwnerDb } from "#src/client";
+import { searchGameLevels } from "#src/services/content-search";
 
 describe("Content Search Service & Invariants (BR-SRC-01..07)", () => {
   it("Scenario: BR-SRC-01 — locked items omit content_pack and difficulty_params", async () => {

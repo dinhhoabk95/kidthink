@@ -40,6 +40,7 @@ suy ra từ `depends_on` của các spec.
                                                  │
                                                  └──→ audit-log ──→ admin-auth
 
+   auth-tokens-sessions ──→ app-runtime-boundary ──→ admin-auth
    env-contract ──→ server-provisioning · process-supervision ──→ release-deploy ──→ release-rollback
 ```
 
@@ -62,6 +63,7 @@ Thứ tự làm:
 | 10 | Auth end-to-end **bằng email/mật khẩu** | [`registration.md`](03-account/registration.md) · [`email-verification.md`](03-account/email-verification.md) · [`login-and-session.md`](03-account/login-and-session.md) · [`password-recovery.md`](03-account/password-recovery.md) |
 | 11 | Audit log (trước mọi hành động cần audit) | [`audit-log.md`](01-platform/audit-log.md) |
 | 11b | Đăng nhập admin | [`admin-auth.md`](06-admin/admin-auth.md) |
+| 11c | Chốt boundary runtime admin static và web API owner | [`app-runtime-boundary.md`](00-foundation/app-runtime-boundary.md) |
 | 12 | Phát hành lên máy chủ bằng một lệnh, và ranh giới máy trạm với máy chủ | [`env-contract.md`](01-platform/env-contract.md) → [`server-provisioning.md`](01-platform/server-provisioning.md) · [`process-supervision.md`](01-platform/process-supervision.md) → [`release-deploy.md`](01-platform/release-deploy.md) → [`release-rollback.md`](01-platform/release-rollback.md) |
 
 Ghi chú:

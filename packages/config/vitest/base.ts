@@ -77,6 +77,28 @@ export function workspaceAliases(): ExactAlias[] {
   ];
 }
 
+export interface PrefixAlias {
+  readonly find: string;
+  readonly replacement: string;
+}
+
+/**
+ * Alias tiền tố dạng chuỗi dành riêng cho Nuxt apps (apps/web, apps/admin) dưới vitest.
+ *
+ * Dùng chuỗi trần thay vì RegExp vì các route file có thể chứa ký tự ngoặc vuông
+ * như `[uuid]`, nếu là RegExp sẽ bị hiểu nhầm là character class.
+ */
+export function nuxtAppAliases(appRoot: string): PrefixAlias[] {
+  return [
+    { find: "~", replacement: path.join(appRoot, "app") },
+    { find: "@", replacement: path.join(appRoot, "app") },
+    { find: "~~", replacement: appRoot },
+    { find: "@@", replacement: appRoot },
+    { find: "#server", replacement: path.join(appRoot, "server") },
+    { find: "#shared", replacement: path.join(appRoot, "shared") },
+  ];
+}
+
 /**
  * Chạy tuần tự là mặc định có chủ đích, không phải tối ưu bỏ sót: test tích hợp
  * dùng PostgreSQL + Valkey thật (BR-TST-02) nên hai file chạy song song sẽ tranh

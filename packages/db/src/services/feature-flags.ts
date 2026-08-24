@@ -1,7 +1,7 @@
 import { CODE_FEATURE_FLAGS, type FeatureFlagKey } from "@mindkid/shared";
 import { eq } from "drizzle-orm";
-import { getOwnerDb } from "../client.ts";
-import { featureFlags } from "../schema/ops.ts";
+import { getOwnerDb } from "#src/client";
+import { featureFlags } from "#src/schema/ops";
 
 export interface FlagContext {
   userId?: number;

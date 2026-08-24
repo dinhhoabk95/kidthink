@@ -1,7 +1,7 @@
 import crypto from "node:crypto";
 import { eq } from "drizzle-orm";
 import { beforeEach, describe, expect, it } from "vitest";
-import { exportJobs, getOwnerDb, users } from "../../src/index.ts";
+import { exportJobs, getOwnerDb, users } from "#src/index";
 
 describe("Task P4.2 — Database Schema & Invariants Integration Tests (BR-PDF-01..09)", () => {
   const db = getOwnerDb();

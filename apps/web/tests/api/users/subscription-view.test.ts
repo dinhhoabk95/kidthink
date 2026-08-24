@@ -10,7 +10,7 @@ import {
   users,
 } from "@mindkid/db";
 import { beforeEach, describe, expect, it } from "vitest";
-import subscriptionHandler from "../../../server/api/users/subscription.get";
+import subscriptionHandler from "#server/api/users/subscription.get";
 
 function mockUserEvent(userId?: number) {
   return {

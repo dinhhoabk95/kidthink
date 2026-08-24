@@ -15,8 +15,8 @@ import {
 } from "@mindkid/shared";
 import { eq, inArray } from "drizzle-orm";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
-import getCurriculumDetailHandler from "../../../server/api/guest/curricula/[code].get.js";
-import getCurriculaListHandler from "../../../server/api/guest/curricula/index.get.js";
+import getCurriculumDetailHandler from "#server/api/guest/curricula/[code].get";
+import getCurriculaListHandler from "#server/api/guest/curricula/index.get";
 
 function makeGuestEvent(
   params: Record<string, string> = {},

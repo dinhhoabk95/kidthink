@@ -17,14 +17,14 @@
  */
 
 import { and, eq } from "drizzle-orm";
-import { getAppDb } from "../client.ts";
-import { childProfiles } from "../schema/child.ts";
-import { activities, lessonActivities, lessons } from "../schema/content.ts";
+import { getAppDb } from "#src/client";
+import { childProfiles } from "#src/schema/child";
+import { activities, lessonActivities, lessons } from "#src/schema/content";
 import {
   lessonRunObservations,
   lessonRunSteps,
   lessonRuns,
-} from "../schema/lesson-runs.ts";
+} from "#src/schema/lesson-runs";
 
 export interface StartLessonRunInput {
   userId: number;

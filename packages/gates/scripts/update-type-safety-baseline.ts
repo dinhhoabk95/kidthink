@@ -12,7 +12,7 @@ import {
   scanRepo,
   total,
   writeBaseline,
-} from "../src/lint-type-safety.ts";
+} from "#src/lint-type-safety";
 
 const before = readBaseline();
 const current = scanRepo();

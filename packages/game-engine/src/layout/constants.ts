@@ -1,4 +1,4 @@
-import type { AgeBand } from "../contracts/types.js";
+import type { AgeBand } from "#src/contracts/types";
 
 export const LOGIC_WIDTH = 960;
 export const LOGIC_HEIGHT = 540;

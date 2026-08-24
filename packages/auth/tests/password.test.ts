@@ -5,7 +5,7 @@ import {
   hashSecureToken,
   validatePasswordStrength,
   verifyPassword,
-} from "../src/password";
+} from "#src/password";
 
 describe("password utilities (BR-REG-05, BR-EVF-01, BR-PWR-02, BR-PWR-08)", () => {
   it("validates password strength according to BR-REG-05", () => {

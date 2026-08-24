@@ -1,7 +1,4 @@
-import {
-  checkRateLimit,
-  type RateLimitCheckResult,
-} from "../../cache/src/index.js";
+import { checkRateLimit, type RateLimitCheckResult } from "@mindkid/cache";
 import {
   calculateProgressiveLockoutSeconds,
   getRouteClassConfig,

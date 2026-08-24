@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
-import guestTemplatesHandler from "../../server/api/guest/templates.get.js";
-import managerContractHandler from "../../server/api/managers/templates/[code]/contract.get.js";
-import createTemplateHandler from "../../server/api/managers/templates.post.js";
+import guestTemplatesHandler from "#server/api/guest/templates.get";
+import managerContractHandler from "#server/api/managers/templates/[code]/contract.get";
+import createTemplateHandler from "#server/api/managers/templates.post";
 
 function mockEvent(
   method: string,

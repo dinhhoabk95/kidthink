@@ -263,7 +263,7 @@ mk_prov_report() {
   log_step "Manual steps that remain:"
   log_info "1. Point DNS for ${site_domain} at this machine's address."
   local app missing=0
-  for app in "${MK_APPS[@]}"; do
+  for app in "${MK_ENV_APPS[@]}"; do
     [ -f "${MK_ENV_DIR}/${app}.env" ] || missing=1
   done
   if [ "${missing}" -eq 1 ]; then

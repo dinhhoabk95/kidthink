@@ -3,16 +3,12 @@ import {
   generateTotpSecret,
   generateTotpUri,
 } from "@mindkid/auth";
-import { requireEnv } from "@mindkid/config";
 import { getOwnerDb, mfaSettings, users } from "@mindkid/db";
 import { and, eq } from "drizzle-orm";
 import { createError, defineEventHandler } from "h3";
-import { requireWebUserSession } from "../../../utils/auth-runtime.js";
-import { requireReauth } from "../../../utils/reauth-runtime.js";
-
-function mfaSecretKey(): string {
-  return requireEnv("MFA_ENCRYPTION_KEY");
-}
+import { getMfaEncryptionKey } from "#server/utils/admin-auth-runtime";
+import { requireWebUserSession } from "#server/utils/auth-runtime";
+import { requireReauth } from "#server/utils/reauth-runtime";
 
 export default defineEventHandler(async (event) => {
   const session = requireWebUserSession(event);
@@ -35,7 +31,7 @@ export default defineEventHandler(async (event) => {
 
   // Generate TOTP secret via otpauth (BR-MFA-12)
   const secret = generateTotpSecret();
-  const encryptedSecret = encryptTotpSecret(secret, mfaSecretKey()); // BR-MFA-01
+  const encryptedSecret = encryptTotpSecret(secret, getMfaEncryptionKey()); // BR-MFA-01, BR-MFA-13
 
   // Upsert unconfirmed mfaSettings
   const [existing] = await db

@@ -12,8 +12,8 @@ import {
   users,
 } from "@mindkid/db";
 import { beforeAll, describe, expect, it } from "vitest";
-import getAdvancedReportHandler from "../../server/api/users/children/[uuid]/reports/advanced.get";
-import { invalidateUserEntitlementsCache } from "../../server/utils/entitlements-runtime.js";
+import getAdvancedReportHandler from "#server/api/users/children/[uuid]/reports/advanced.get";
+import { invalidateUserEntitlementsCache } from "#server/utils/entitlements-runtime";
 
 function mockEvent(
   method: string,

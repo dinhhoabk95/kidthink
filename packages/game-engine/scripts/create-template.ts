@@ -47,8 +47,8 @@ mkdirSync(templateDir, { recursive: true });
 const codeNum = code.replace("-", "");
 
 const templateContent = `import { z } from "zod";
-import { promptFields } from "../../contracts/shared-fields.js";
-import { defineTemplate, STANDARD_SCORING } from "../../contracts/types.js";
+import { promptFields } from "#src/contracts/shared-fields";
+import { defineTemplate, STANDARD_SCORING } from "#src/contracts/types";
 
 export const ${codeNum}ContentSchema = z.object({
   ...promptFields(),
@@ -98,7 +98,7 @@ import {
   type ActionResult,
   type GameAction,
   TemplateGameSession,
-} from "../../game-session.js";
+} from "#src/game-session";
 
 export class ${codeNum}Session extends TemplateGameSession<
   ${codeNum}Content,

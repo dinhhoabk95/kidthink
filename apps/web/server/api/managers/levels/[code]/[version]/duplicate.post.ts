@@ -1,8 +1,8 @@
 import { gameLevels, gameTemplates, getOwnerDb, writeAudit } from "@mindkid/db";
 import { and, eq, sql } from "drizzle-orm";
 import { createError, defineEventHandler, getRouterParam } from "h3";
-import { requireManagerSession } from "../../../../../utils/admin-auth-runtime.js";
-import { syncContentAssetRefs } from "../../../../../utils/asset-refs.js";
+import { requireManagerSession } from "#server/utils/admin-auth-runtime";
+import { syncContentAssetRefs } from "#server/utils/asset-refs";
 
 function generateLevelCode(
   templateCode: string,

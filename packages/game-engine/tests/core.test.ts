@@ -6,7 +6,7 @@ import {
   GT001_FIXTURES,
   GT001Session,
   ObjectPool,
-} from "../src/index";
+} from "#src/index";
 
 const RE_VUE = /from\s+['"]vue['"]/;
 const RE_PINIA = /from\s+['"]pinia['"]/;

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { getAuthNamespaceConfig } from "../src/auth-namespace";
+import { getAuthNamespaceConfig } from "#src/auth-namespace";
 
 describe("auth namespace runtime contract", () => {
   it("keeps User and Manager CSRF cookies separate", () => {

@@ -8,7 +8,7 @@ import {
 import {
   assertUserTermsAndPrivacyConsent,
   isAllowedConsentExemptPath,
-} from "../utils/consent-guard.js";
+} from "#server/utils/consent-guard";
 
 export default defineEventHandler(async (event) => {
   const url = getRequestURL(event);

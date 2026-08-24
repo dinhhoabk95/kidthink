@@ -7,6 +7,7 @@ import {
   requireUserAuth,
   validateCsrfToken,
 } from "@mindkid/auth";
+import { requireEnv } from "@mindkid/config";
 import {
   createError,
   deleteCookie,
@@ -21,6 +22,7 @@ const userConfig = getAuthNamespaceConfig("user");
 const CSRF_TOKEN = /^[0-9a-f]{64}$/;
 const INTEGER_TEXT = /^\d+$/;
 const GUEST_DEVICE_ID_REGEX = /^[0-9a-fA-F-]{16,64}$/;
+const ORIGIN_TRAILING_SLASH = /\/$/;
 
 export const USER_REMEMBER_COOKIE = "tm_u_remember";
 export const MANAGER_REMEMBER_COOKIE = "tm_m_remember";
@@ -51,7 +53,7 @@ export function assertSameOriginRequest(event: H3Event): void {
     return;
   }
   try {
-    if (new URL(origin).host !== host) {
+    if (!isAllowedApiOrigin(origin, host)) {
       throw appError("CSRF_INVALID");
     }
   } catch (error) {
@@ -60,6 +62,23 @@ export function assertSameOriginRequest(event: H3Event): void {
     }
     throw appError("CSRF_INVALID");
   }
+}
+
+export function isAllowedApiOrigin(
+  origin: string,
+  requestHost: string
+): boolean {
+  const parsedOrigin = new URL(origin);
+  if (parsedOrigin.host === requestHost) {
+    return true;
+  }
+
+  const configuredOrigins = requireEnv("NUXT_ALLOWED_ORIGINS")
+    .split(",")
+    .map((value) => value.trim().replace(ORIGIN_TRAILING_SLASH, ""))
+    .filter(Boolean);
+
+  return configuredOrigins.includes(parsedOrigin.origin);
 }
 
 export function assertRequestBodySize(
@@ -185,10 +204,7 @@ export function getOrSetGuestDeviceId(event: H3Event): string {
 }
 
 export function getParentGateSecret(_event?: H3Event): string {
-  return (
-    process.env.PARENT_GATE_SECRET ||
-    "test-parent-gate-secret-key-123456789012345678901234567890"
-  );
+  return requireEnv("PARENT_GATE_SECRET");
 }
 
 export function respondToUserAuthError(event: H3Event, error: unknown): never {

@@ -1,7 +1,7 @@
 import { getOwnerDb, saveLibraryItem } from "@mindkid/db";
 import { defineEventHandler, readBody, setResponseStatus } from "h3";
 import { z } from "zod";
-import { requireWebUserSession } from "../../../utils/auth-runtime.ts";
+import { requireWebUserSession } from "#server/utils/auth-runtime";
 
 const SaveLibraryItemSchema = z.object({
   entity_type: z.enum(["game_level", "lesson", "curriculum", "activity"]),

@@ -1,7 +1,7 @@
 import { eq } from "drizzle-orm";
 import { describe, expect, it } from "vitest";
-import { getOwnerDb } from "../../src/index.ts";
-import { gameLevels, gameTemplates } from "../../src/schema/game.ts";
+import { getOwnerDb } from "#src/index";
+import { gameLevels, gameTemplates } from "#src/schema/game";
 
 describe("Game Schema Integration Tests", () => {
   async function getUniqueGameLevelCode(prefix = "GL-C1-NUM-DRAG") {

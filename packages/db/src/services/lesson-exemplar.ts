@@ -16,11 +16,11 @@
  */
 
 import { and, count, eq, ne } from "drizzle-orm";
-import { getAppDb } from "../client.ts";
-import { activities, lessonActivities, lessons } from "../schema/content.ts";
-import { managers } from "../schema/identity.ts";
-import { lessonRuns } from "../schema/lesson-runs.ts";
-import { auditLogs } from "../schema/ops.ts";
+import { getAppDb } from "#src/client";
+import { activities, lessonActivities, lessons } from "#src/schema/content";
+import { managers } from "#src/schema/identity";
+import { lessonRuns } from "#src/schema/lesson-runs";
+import { auditLogs } from "#src/schema/ops";
 
 export type CompetencyCode = "C1" | "C2" | "C3" | "C4" | "C5" | "C6";
 export type AgeBand = "3-4" | "4-5" | "5-6";

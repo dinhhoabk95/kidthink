@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs";
 import { getOwnerDb, levelDailyStats } from "@mindkid/db";
 import { describe, expect, it } from "vitest";
-import handler from "../../../server/api/managers/dashboard.get.js";
+import handler from "#server/api/managers/dashboard.get";
 
 function mockEvent(managerRole?: "super_admin" | "content_reviewer") {
   return {

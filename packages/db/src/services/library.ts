@@ -1,10 +1,10 @@
 import { type AccessTier, TIER_ORDER, TIER_RANK } from "@mindkid/shared";
 import { and, desc, eq, sql } from "drizzle-orm";
 import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
-import { activities, lessons } from "../schema/content.ts";
-import { curricula } from "../schema/curriculum.ts";
-import { gameLevels } from "../schema/game.ts";
-import { collections, libraryItems, userTagMap } from "../schema/library.ts";
+import { activities, lessons } from "#src/schema/content";
+import { curricula } from "#src/schema/curriculum";
+import { gameLevels } from "#src/schema/game";
+import { collections, libraryItems, userTagMap } from "#src/schema/library";
 import { getGuestRecommendations } from "./recommendation.ts";
 
 export interface GetLibraryOptions {

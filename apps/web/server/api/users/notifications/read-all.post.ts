@@ -3,7 +3,7 @@ import { and, eq, isNull, lte } from "drizzle-orm";
 import { createError, defineEventHandler, readBody } from "h3";
 import { z } from "zod";
 
-import { requireWebUserSession } from "../../../utils/auth-runtime.js";
+import { requireWebUserSession } from "#server/utils/auth-runtime";
 
 const readAllSchema = z.object({
   snapshot_at: z

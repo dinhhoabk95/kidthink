@@ -14,7 +14,7 @@ import {
   reconcileCreditBalance,
   refundCredits,
   users,
-} from "../../src/index.ts";
+} from "#src/index";
 
 describe("AI Credit Ledger Integration Tests (BR-ACL-01..09)", () => {
   it("BR-ACL-01: records append-only ledger entries and maintains cached balance projection matching SUM(delta)", async () => {

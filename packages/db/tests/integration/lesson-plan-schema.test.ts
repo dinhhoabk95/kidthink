@@ -1,11 +1,6 @@
 import { eq } from "drizzle-orm";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
-import {
-  getOwnerDb,
-  lessonPlanItems,
-  lessonPlans,
-  users,
-} from "../../src/index.ts";
+import { getOwnerDb, lessonPlanItems, lessonPlans, users } from "#src/index";
 
 describe("Task P4.1 — Database Schema & Invariants Integration Tests (BR-LPC-01..09, D-P4A..D-P4D)", () => {
   const db = getOwnerDb();

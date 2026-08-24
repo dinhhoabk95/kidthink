@@ -4,7 +4,7 @@ import { describe, expect, it } from "vitest";
 import {
   getNavItemsForRole,
   MANAGER_NAV_ITEMS,
-} from "../../app/composables/nav-config.js";
+} from "~/composables/nav-config";
 
 const HEX_COLOR_REGEX = /#[0-9a-fA-F]{6}/;
 
@@ -33,7 +33,11 @@ describe("Task 1 & D-IW — Manager Shell Layout & Page Hosting Invariants", () 
       const relativePath = path.relative(pagesDir, file);
 
       if (relativePath === "login.vue") {
-        expect(content).toContain("layout: false");
+        expect(
+          content.includes('layout: "auth"') ||
+            content.includes("layout: 'auth'") ||
+            content.includes("layout: false")
+        ).toBe(true);
         continue;
       }
 

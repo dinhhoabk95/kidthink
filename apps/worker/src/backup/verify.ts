@@ -4,6 +4,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { pipeline } from "node:stream/promises";
 import { createGunzip } from "node:zlib";
+import { requireEnv } from "@mindkid/config";
 import { backupLog, getOwnerDb } from "@mindkid/db";
 
 const dbNameRegex = /\/[^/]+(\?.*)?$/;
@@ -13,8 +14,8 @@ import { desc, eq } from "drizzle-orm";
 import postgres from "postgres";
 
 export async function runVerifyBackup(jobId: string) {
-  const encryptionKey = process.env.BACKUP_ENCRYPTION_KEY;
-  if (encryptionKey?.length !== 32) {
+  const encryptionKey = requireEnv("BACKUP_ENCRYPTION_KEY");
+  if (encryptionKey.length !== 32) {
     throw new Error("BACKUP_ENCRYPTION_KEY must be a 32-character string");
   }
 
@@ -78,9 +79,7 @@ export async function runVerifyBackup(jobId: string) {
     const gunzip = createGunzip();
 
     // 3. Create temp database
-    const dbUrl =
-      process.env.DATABASE_URL ||
-      "postgres://postgres:postgres@localhost:5432/mindkid";
+    const dbUrl = requireEnv("DATABASE_URL");
     tempDbName = `verify_${crypto.randomBytes(4).toString("hex")}`;
 
     // Connect to default DB to create temp DB
@@ -153,9 +152,7 @@ export async function runVerifyBackup(jobId: string) {
   } catch (error: unknown) {
     if (tempDbName) {
       try {
-        const dbUrl =
-          process.env.DATABASE_URL ||
-          "postgres://postgres:postgres@localhost:5432/mindkid";
+        const dbUrl = requireEnv("DATABASE_URL");
         const sqlAdminCleanup = postgres(dbUrl);
         await sqlAdminCleanup.unsafe(`DROP DATABASE IF EXISTS ${tempDbName}`);
         await sqlAdminCleanup.end();

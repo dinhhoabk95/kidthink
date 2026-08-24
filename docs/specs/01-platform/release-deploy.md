@@ -40,7 +40,7 @@ chú thích. Không có quy trình phát hành nào tồn tại.
 | ------------------------- | ------------- | ----------------------------------- |
 | Người vận hành            | Khoá SSH      | Chạy lệnh phát hành từ máy trạm     |
 | Máy chủ                   | Quyền đọc kho | Tự lấy commit về, tự build          |
-| Trình giám sát tiến trình |               | Nạp lại ba ứng dụng sau khi đổi bản |
+| Trình giám sát tiến trình |               | Nạp lại web và worker sau khi đổi bản |
 | Kênh thông báo            |               | Nhận tin khi phát hành thất bại     |
 
 ## 3. Entry points
@@ -62,9 +62,9 @@ chú thích. Không có quy trình phát hành nào tồn tại.
 3. Kiểm biến môi trường  — thiếu, rỗng, sai kiểu thì DỪNG, chưa build gì
 4. Bày bản  — bung đúng cây tệp của commit đó vào releases/<mốc>-<sha>
 5. Cài phụ thuộc  — trong container build, khoá phiên bản, không dùng thư mục của máy trạm
-6. Build  — ba ứng dụng, trong cùng container build
+6. Build  — web runtime, worker và static admin SPA trong cùng container build
 7. Migration  — chạy trước khi đổi bản; chỉ migration cộng thêm
-8. Đổi bản  — đổi liên kết mềm bằng một thao tác nguyên tử, rồi nạp lại worker, admin, web
+8. Đổi bản  — đổi liên kết mềm bằng một thao tác nguyên tử, rồi nạp lại worker và web; Nginx đọc static admin từ release
 9. Cổng khói  — gọi endpoint sức khoẻ; không phải 200 thì quay lui và thoát khác 0
 10. Dọn  — giữ 5 bản gần nhất
 ```
@@ -107,7 +107,7 @@ bước nào được bỏ qua để đi tiếp.
 
 ## 7. Data
 
-**Đọc:** kho trên máy chủ, ba file env, tệp cấu hình máy chủ trên máy trạm.
+**Đọc:** kho trên máy chủ, hai file env runtime, public API build config và tệp cấu hình máy chủ trên máy trạm.
 **Ghi:** thư mục bản mới, liên kết mềm bản hiện hành, tệp log phát hành. Cơ sở dữ liệu chỉ bị ghi
 bởi bước migration.
 
@@ -125,8 +125,7 @@ bởi bước migration.
 | Thứ tự | Ứng dụng | Vì sao trước                                                             |
 | ------ | -------- | ------------------------------------------------------------------------ |
 | 1      | `worker` | Không phục vụ người dùng; nạp trước để mã tiêu thụ việc khớp lược đồ mới |
-| 2      | `admin`  | Ít người dùng, phát hiện lỗi sớm mà ảnh hưởng nhỏ                        |
-| 3      | `web`    | Bề mặt công khai, nạp cuối                                               |
+| 2      | `web`    | Bề mặt công khai, nạp cuối                                               |
 
 ### 7.3 Nội dung một dòng log
 
@@ -202,6 +201,9 @@ Scenario: BR-DEP-10 — log không lộ bí mật
 
 - Lấy code từ kho, bằng mã commit đầy đủ.
 - Kiểm biến môi trường trước khi build.
+- Nếu đổi `MFA_ENCRYPTION_KEY`: chạy `npx tsx packages/db/scripts/count-mfa-rows.ts` trên
+  production, kiểm số hàng `mfa_settings` đã `confirmed_at`. Có hàng → re-encrypt hoặc re-enroll
+  trước khi đổi khoá (`BR-MFA-13`).
 - Chạy migration trước khi đổi bản.
 - Đổi bản bằng thao tác nguyên tử rồi nạp lại theo thứ tự ở §7.2.
 - Chạy cổng khói và quay lui khi thất bại.

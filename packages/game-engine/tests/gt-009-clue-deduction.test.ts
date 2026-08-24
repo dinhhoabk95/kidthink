@@ -1,10 +1,10 @@
 import { describe, expect, it } from "vitest";
-import { GT009_FIXTURES, GT009Session } from "../src/index.js";
+import { GT009_FIXTURES, GT009Session } from "#src/index";
 import GT009Template, {
   GT009BaseSchema,
   GT009ContentSchema,
   GT009DifficultySchema,
-} from "../src/templates/GT-009/template.js";
+} from "#src/templates/GT-009/template";
 
 const [FIRST, SECOND, THIRD] = GT009_FIXTURES;
 

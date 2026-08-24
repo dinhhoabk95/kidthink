@@ -1,8 +1,8 @@
 import { sql } from "drizzle-orm";
 import { beforeAll, describe, expect, it } from "vitest";
-import { getOwnerDb } from "../../src/client.ts";
-import { aiUsageLog, contentEmbeddings, users } from "../../src/index.ts";
-import { createDeterministicEmbedding } from "../../src/services/ai-provider.ts";
+import { getOwnerDb } from "#src/client";
+import { aiUsageLog, contentEmbeddings, users } from "#src/index";
+import { createDeterministicEmbedding } from "#src/services/ai-provider";
 
 describe("Task P4.8 — Semantic Schema & pgvector (BR-SEM-01, BR-SEM-03, BR-SEM-08)", () => {
   const db = getOwnerDb();

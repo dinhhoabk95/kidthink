@@ -1,6 +1,6 @@
 import { childProfiles, getOwnerDb, users } from "@mindkid/db";
 import { describe, expect, it } from "vitest";
-import handler from "../../../server/api/managers/users/index.get";
+import handler from "#server/api/managers/users/index.get";
 
 function mockEvent(
   managerRole?: "super_admin" | "content_reviewer",

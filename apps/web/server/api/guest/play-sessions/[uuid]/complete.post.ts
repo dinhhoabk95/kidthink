@@ -7,7 +7,7 @@ import {
   assertRequestBodySize,
   assertSameOriginRequest,
   getOrSetGuestDeviceId,
-} from "../../../../utils/auth-runtime.js";
+} from "#server/utils/auth-runtime";
 
 const CompleteSchema = z
   .object({ last_seq: z.number().int().positive().optional() })

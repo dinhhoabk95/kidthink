@@ -4,9 +4,9 @@ import { z } from "zod";
 import {
   getManagerRemoteIp,
   requireSuperAdminSession,
-} from "../../../utils/admin-auth-runtime.ts";
-import { throwValidationError } from "../../../utils/api-error.js";
-import { revokeUserEntitlementById } from "../../../utils/entitlements-runtime.ts";
+} from "#server/utils/admin-auth-runtime";
+import { throwValidationError } from "#server/utils/api-error";
+import { revokeUserEntitlementById } from "#server/utils/entitlements-runtime";
 
 const revokeEntitlementSchema = z.object({
   reason: z

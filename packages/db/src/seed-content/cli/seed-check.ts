@@ -1,9 +1,9 @@
 import { eq } from "drizzle-orm";
-import { activities, gameLevels, getOwnerDb, lessons } from "../../index.js";
-import { checkGateMontessoriCorpus } from "../gates/montessori-gate.js";
-import { runEightGates } from "../gates/runner.js";
-import { ALL_SEED_CONTENT } from "../index.js";
-import type { AnyContentSeed, GateResult } from "../types.js";
+import { activities, gameLevels, getOwnerDb, lessons } from "#src/index";
+import { checkGateMontessoriCorpus } from "#src/seed-content/gates/montessori-gate";
+import { runEightGates } from "#src/seed-content/gates/runner";
+import { ALL_SEED_CONTENT } from "#src/seed-content/index";
+import type { AnyContentSeed, GateResult } from "#src/seed-content/types";
 
 async function checkSeedDrift(
   seed: AnyContentSeed

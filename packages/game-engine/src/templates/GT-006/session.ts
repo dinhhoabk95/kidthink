@@ -2,10 +2,10 @@ import {
   type ActionResult,
   type GameAction,
   TemplateGameSession,
-} from "../../game-session.js";
-import { OrderingMechanic } from "../../mechanics/ordering-mechanic.js";
-import { deriveStream } from "../../rng/mulberry32.js";
-import { shuffle } from "../../rng/shuffle.js";
+} from "#src/game-session";
+import { OrderingMechanic } from "#src/mechanics/ordering-mechanic";
+import { deriveStream } from "#src/rng/mulberry32";
+import { shuffle } from "#src/rng/shuffle";
 import type { GT006Content, GT006Difficulty } from "./template.js";
 
 export class GT006Session extends TemplateGameSession<

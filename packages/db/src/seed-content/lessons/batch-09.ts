@@ -1,4 +1,4 @@
-import type { LessonSeed } from "../types.js";
+import type { LessonSeed } from "#src/seed-content/types";
 
 export const LESSON_BATCH_09: LessonSeed[] = [
   {

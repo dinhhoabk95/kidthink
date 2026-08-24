@@ -1,3 +1,4 @@
+import { optionalEnv } from "@mindkid/config";
 import { redactPii } from "./redactor.js";
 
 export type LogLevel = "debug" | "info" | "warn" | "error";
@@ -55,9 +56,11 @@ export function shouldSampleClientError(
 }
 
 export function getSentryDsn(): string | undefined {
-  return (
-    process.env.SENTRY_DSN || process.env.NUXT_PUBLIC_SENTRY_DSN || undefined
-  );
+  const serverDsn = optionalEnv("SENTRY_DSN");
+  if (serverDsn !== undefined) {
+    return serverDsn;
+  }
+  return optionalEnv("NUXT_PUBLIC_SENTRY_DSN");
 }
 
 export function isSentryConfigured(): boolean {

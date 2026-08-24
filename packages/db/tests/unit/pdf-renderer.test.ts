@@ -4,7 +4,7 @@ import {
   type LessonPlanExportDTO,
   renderLessonPlanPdf,
   toUtf16BeHex,
-} from "../../src/services/pdf-renderer.ts";
+} from "#src/services/pdf-renderer";
 
 const PAGE_LIMIT_EXCEEDED_REGEX =
   /BR-PDF-05 Violation: Vượt quá giới hạn tối đa 20 trang/;

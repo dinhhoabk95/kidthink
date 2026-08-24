@@ -2,8 +2,8 @@ import { getOwnerDb, getUserLibrary } from "@mindkid/db";
 import { allowedTiers } from "@mindkid/shared";
 import { defineEventHandler, getQuery } from "h3";
 import { z } from "zod";
-import { requireWebUserSession } from "../../../utils/auth-runtime.ts";
-import { resolveUserActiveEntitlements } from "../../../utils/entitlements-runtime.ts";
+import { requireWebUserSession } from "#server/utils/auth-runtime";
+import { resolveUserActiveEntitlements } from "#server/utils/entitlements-runtime";
 
 const LibraryQuerySchema = z.object({
   entity_type: z

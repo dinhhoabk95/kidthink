@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   type AiEgressReportPayload,
   aiEgressReportPayloadSchema,
-} from "../src/ai-assistant.ts";
+} from "#src/ai-assistant";
 
 describe("AI Egress Gate Schema Compliance (BR-AIA-01, BR-AIA-02, BR-CDC-06)", () => {
   const validReportPayload: AiEgressReportPayload = {

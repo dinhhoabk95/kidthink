@@ -73,29 +73,3 @@ export function requireFirstEnv(
     hint ?? "See docs/specs/01-platform/env-contract.md §7.1."
   );
 }
-
-/**
- * A value that may fall back to a fixed local-development address, and only
- * there. In production the variable is mandatory (BR-ENV-03).
- *
- * This exists so `pnpm dev` needs no env file while a production process still
- * refuses to start against the wrong host. It is the ONLY sanctioned way to
- * write a literal next to an environment read; the `lint:env-names` gate knows
- * about it and rejects every other shape.
- */
-export function devFallbackEnv(
-  varName: string,
-  developmentValue: string
-): string {
-  const value = optionalEnv(varName);
-  if (value !== undefined) {
-    return value;
-  }
-  if (process.env.NODE_ENV === "production") {
-    throw new MissingEnvError(
-      varName,
-      "Required in production; the development fallback is not used there."
-    );
-  }
-  return developmentValue;
-}

@@ -1,11 +1,11 @@
 import { describe, expect, it } from "vitest";
-import { validateLessonModel } from "../src/lesson-model.js";
-import { validatePublishChecklist } from "../src/publish-checklist.js";
+import { validateLessonModel } from "#src/lesson-model";
+import { validatePublishChecklist } from "#src/publish-checklist";
 import {
   validateWorksheetContent,
   WORKSHEET_LAYOUT_TEMPLATES,
   worksheetFormSchema,
-} from "../src/worksheet-model.js";
+} from "#src/worksheet-model";
 
 describe("Worksheet Contract & Validation (BR-WSM-01..08)", () => {
   const samplePatternColoring = {

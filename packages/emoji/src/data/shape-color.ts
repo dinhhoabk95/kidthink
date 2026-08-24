@@ -1,4 +1,4 @@
-import type { EmojiEntry } from "../types";
+import type { EmojiEntry } from "#src/types";
 
 /** Hình dạng & Màu sắc — ~25 emoji */
 export const SHAPE_COLOR_EMOJIS: EmojiEntry[] = [

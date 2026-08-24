@@ -6,7 +6,7 @@ import {
   validateKidInstruction,
   validateKidTextSize,
   validateTouchTargetSize,
-} from "../src/index.js";
+} from "#src/index";
 
 const ERR_A11_11 = /BR-A11-11 Error/;
 const ERR_A11_03 = /BR-A11-03 Error/;

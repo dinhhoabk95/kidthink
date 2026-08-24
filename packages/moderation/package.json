@@ -14,5 +14,9 @@
     "@mindkid/config": "workspace:*",
     "typescript": "catalog:",
     "vitest": "catalog:"
+  },
+  "imports": {
+    "#src/*": "./src/*.ts",
+    "#tests/*": "./tests/*.ts"
   }
 }

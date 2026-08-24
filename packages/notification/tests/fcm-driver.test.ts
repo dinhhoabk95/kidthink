@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
-import { type FcmAdminMessaging, sendFcmWebPush } from "../src/fcm-driver";
+import { type FcmAdminMessaging, sendFcmWebPush } from "#src/fcm-driver";
 
 describe("FCM Server Driver Unit Tests", () => {
   it("BR-BPS-05 & BR-BPS-06: Sends minimal payload without child PII and returns dispatched status", async () => {

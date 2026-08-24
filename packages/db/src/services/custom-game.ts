@@ -11,9 +11,9 @@ import {
   validateCustomGameContent,
 } from "@mindkid/shared";
 import { and, desc, eq, sql } from "drizzle-orm";
-import { getDb } from "../client.ts";
-import { childProfiles } from "../schema/child.ts";
-import { type CustomGame, customGames } from "../schema/custom-game.ts";
+import { getDb } from "#src/client";
+import { childProfiles } from "#src/schema/child";
+import { type CustomGame, customGames } from "#src/schema/custom-game";
 import { writeAudit } from "./audit.ts";
 
 export const DEFAULT_CUSTOM_GAMES_SAVED_QUOTA = 10;

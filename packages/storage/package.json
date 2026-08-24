@@ -8,5 +8,8 @@
   },
   "dependencies": {
     "@mindkid/config": "workspace:*"
+  },
+  "imports": {
+    "#src/*": "./src/*.ts"
   }
 }

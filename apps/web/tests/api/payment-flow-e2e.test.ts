@@ -16,14 +16,14 @@ import { and, eq } from "drizzle-orm";
 import type { H3Event } from "h3";
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
-import packagesGetHandler from "../../server/api/guest/packages.get.ts";
-import managerApproveHandler from "../../server/api/managers/orders/[uuid]/approve.post.ts";
-import managerProofUrlHandler from "../../server/api/managers/orders/[uuid]/proof-url.get.ts";
-import managerRejectHandler from "../../server/api/managers/orders/[uuid]/reject.post.ts";
-import managerOrdersListHandler from "../../server/api/managers/orders/index.get.ts";
-import userOrderCancelHandler from "../../server/api/users/orders/[uuid]/cancel.post.ts";
-import userOrderGetHandler from "../../server/api/users/orders/[uuid]/index.get.ts";
-import userOrderCreateHandler from "../../server/api/users/orders/index.post.ts";
+import packagesGetHandler from "#server/api/guest/packages.get";
+import managerApproveHandler from "#server/api/managers/orders/[uuid]/approve.post";
+import managerProofUrlHandler from "#server/api/managers/orders/[uuid]/proof-url.get";
+import managerRejectHandler from "#server/api/managers/orders/[uuid]/reject.post";
+import managerOrdersListHandler from "#server/api/managers/orders/index.get";
+import userOrderCancelHandler from "#server/api/users/orders/[uuid]/cancel.post";
+import userOrderGetHandler from "#server/api/users/orders/[uuid]/index.get";
+import userOrderCreateHandler from "#server/api/users/orders/index.post";
 
 const TRANSFER_NOTE_REGEX = /^TM[0-9A-F]{8}$/;
 

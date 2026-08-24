@@ -1,4 +1,5 @@
 import {
+  appError,
   decryptTotpSecret,
   hashRecoveryCode,
   verifyTotpCode,
@@ -6,15 +7,12 @@ import {
 import { getOwnerDb, mfaRecoveryCodes, mfaSettings } from "@mindkid/db";
 import { and, eq, isNull } from "drizzle-orm";
 import { createError, defineEventHandler, readBody } from "h3";
-import { requireWebUserSession } from "../../../utils/auth-runtime.js";
-import { requireReauth } from "../../../utils/reauth-runtime.js";
+import { getMfaEncryptionKey } from "#server/utils/admin-auth-runtime";
+import { requireWebUserSession } from "#server/utils/auth-runtime";
+import { requireReauth } from "#server/utils/reauth-runtime";
 
-function mfaSecretKey(): string {
-  return requireEnv("MFA_ENCRYPTION_KEY");
-}
 const TOTP_REGEX = /^\d{6}$/;
 
-import { requireEnv } from "@mindkid/config";
 import { z } from "zod";
 
 const disableMfaSchema = z.object({
@@ -67,11 +65,12 @@ export default defineEventHandler(async (event) => {
     try {
       const decryptedSecret = decryptTotpSecret(
         setting.secretEncrypted,
-        mfaSecretKey()
+        getMfaEncryptionKey()
       );
       isCodeValid = verifyTotpCode(code, decryptedSecret);
     } catch {
-      isCodeValid = false;
+      // BR-MFA-13: decryption failure is a system error, not a wrong code
+      throw appError("MFA_SECRET_CORRUPTED");
     }
   }
 

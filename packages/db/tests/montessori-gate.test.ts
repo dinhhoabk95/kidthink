@@ -1,10 +1,10 @@
 import { describe, expect, it } from "vitest";
-import { C1_SEED_LEVELS } from "../src/seed-content/c1/levels.js";
-import { C2_SEED_LEVELS } from "../src/seed-content/c2/levels.js";
-import { C3_SEED_LEVELS } from "../src/seed-content/c3/levels.js";
-import { C4_SEED_LEVELS } from "../src/seed-content/c4/levels.js";
-import { C5_SEED_LEVELS } from "../src/seed-content/c5/levels.js";
-import { C6_SEED_LEVELS } from "../src/seed-content/c6/levels.js";
+import { C1_SEED_LEVELS } from "#src/seed-content/c1/levels";
+import { C2_SEED_LEVELS } from "#src/seed-content/c2/levels";
+import { C3_SEED_LEVELS } from "#src/seed-content/c3/levels";
+import { C4_SEED_LEVELS } from "#src/seed-content/c4/levels";
+import { C5_SEED_LEVELS } from "#src/seed-content/c5/levels";
+import { C6_SEED_LEVELS } from "#src/seed-content/c6/levels";
 import {
   checkGateMontessori,
   checkGateMontessoriCorpus,
@@ -12,8 +12,8 @@ import {
   checkMontessoriItemRules,
   checkMontessoriQuotas,
   isMontessoriLevel,
-} from "../src/seed-content/gates/montessori-gate.js";
-import type { ContentSeed } from "../src/seed-content/types.js";
+} from "#src/seed-content/gates/montessori-gate";
+import type { ContentSeed } from "#src/seed-content/types";
 
 describe("Montessori Batch & Quota Gate (BR-MGL-01, BR-MGL-02, BR-MGL-07, BR-MGL-12, BR-MCM-06)", () => {
   it("Negative Case 1: Cổng hạn ngạch báo lỗi khi C1 vượt 36 level (BR-MGL-01)", () => {

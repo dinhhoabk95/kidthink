@@ -1,7 +1,7 @@
 import crypto from "node:crypto";
 import { gameLevels, gameTemplates, getOwnerDb } from "@mindkid/db";
 import { describe, expect, it } from "vitest";
-import getGuestRecommendationsHandler from "../../server/api/guest/play/recommendations.get";
+import getGuestRecommendationsHandler from "#server/api/guest/play/recommendations.get";
 
 function mockGuestEvent(method: string, query: Record<string, string> = {}) {
   const responseHeaders: Record<string, string> = {};

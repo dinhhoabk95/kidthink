@@ -1,6 +1,6 @@
 import { getWorksheetByCode } from "@mindkid/db";
 import { createError, defineEventHandler, getQuery, getRouterParam } from "h3";
-import { requireManagerSession } from "../../../../utils/admin-auth-runtime.js";
+import { requireManagerSession } from "#server/utils/admin-auth-runtime";
 
 export default defineEventHandler(async (event) => {
   await requireManagerSession(event);

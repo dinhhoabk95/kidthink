@@ -3,7 +3,7 @@ import {
   CHILD_CONTENT_BLOCKLIST,
   moderateCustomGameMetadata,
   moderateText,
-} from "../src/index.js";
+} from "#src/index";
 
 describe("@mindkid/moderation", () => {
   it("passes clean and friendly content for children", () => {

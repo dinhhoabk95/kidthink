@@ -1,9 +1,6 @@
 import { describe, expect, it } from "vitest";
-import {
-  runKidSurfaceGate,
-  scanKidSurfaceRules,
-} from "../src/lint-kid-surface.ts";
-import type { FileItem } from "../src/lint-lib/codebase-files.ts";
+import { runKidSurfaceGate, scanKidSurfaceRules } from "#src/lint-kid-surface";
+import type { FileItem } from "#src/lint-lib/codebase-files";
 
 const RE_HPL_05 = /BR-HPL-05/;
 const RE_PGT_05 = /BR-PGT-05/;

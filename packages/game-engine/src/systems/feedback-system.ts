@@ -3,7 +3,7 @@
  * Implements BR-FBK-01..10 & spec FEEDBACK-AND-CELEBRATION.
  */
 
-import type { Rng } from "../rng/types.js";
+import type { Rng } from "#src/rng/types";
 
 export type FeedbackState = "lift" | "success" | "retry" | "celebrate_level";
 

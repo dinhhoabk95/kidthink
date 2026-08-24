@@ -1,6 +1,6 @@
-import type { AgeBand } from "../contracts/types.js";
+import type { AgeBand } from "#src/contracts/types";
 
-export type { LayoutId } from "../contracts/types.js";
+export type { LayoutId } from "#src/contracts/types";
 export type SlotRole = "source" | "target" | "neutral";
 
 export interface Slot {

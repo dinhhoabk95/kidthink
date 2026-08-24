@@ -37,7 +37,7 @@ import {
   GT026_FIXTURES,
   GT027_FIXTURES,
   RoundRunner,
-} from "../src/index.js";
+} from "#src/index";
 
 const FIXTURES_MAP: Record<
   string,

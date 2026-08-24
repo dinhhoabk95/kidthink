@@ -1,12 +1,12 @@
 import { describe, expect, it } from "vitest";
-import type { AgeBand } from "../src/contracts/types.js";
-import { ALL_TEMPLATES } from "../src/generated/template-registry.js";
+import type { AgeBand } from "#src/contracts/types";
+import { ALL_TEMPLATES } from "#src/generated/template-registry";
 import {
   LOGIC_HEIGHT,
   LOGIC_WIDTH,
   SAFE_MARGIN_PX,
-} from "../src/layout/constants.js";
-import { resolveLayout } from "../src/layout/registry.js";
+} from "#src/layout/constants";
+import { resolveLayout } from "#src/layout/registry";
 import DEBT from "./layout-safe-area-debt.json" with { type: "json" };
 
 /**

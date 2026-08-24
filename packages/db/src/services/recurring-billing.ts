@@ -6,9 +6,9 @@ import {
   DUNNING_MAX_ATTEMPTS,
 } from "@mindkid/shared";
 import { and, eq, inArray, isNotNull, lt } from "drizzle-orm";
-import { getOwnerDb } from "../client.js";
-import { entitlements, recurringSubscriptions } from "../schema/billing.js";
-import { auditLogs } from "../schema/ops.js";
+import { getOwnerDb } from "#src/client";
+import { entitlements, recurringSubscriptions } from "#src/schema/billing";
+import { auditLogs } from "#src/schema/ops";
 
 export interface CreateRecurringSubscriptionParams {
   userId: number;

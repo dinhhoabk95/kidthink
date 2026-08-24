@@ -1,12 +1,12 @@
 import { eq } from "drizzle-orm";
 import { describe, expect, it } from "vitest";
-import { getAppDb, getOwnerDb } from "../../src/index.ts";
+import { getAppDb, getOwnerDb } from "#src/index";
 import {
   auditLogs,
   contentReviewLog,
   notificationDeliveries,
   notifications,
-} from "../../src/schema/ops.ts";
+} from "#src/schema/ops";
 
 describe("Ops Schema Integration Tests", () => {
   it("BR-AUD-01: audit_logs is INSERT-only (UPDATE/DELETE by app role fails)", async () => {

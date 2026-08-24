@@ -1,4 +1,4 @@
-import type { ActivitySeed } from "../types.js";
+import type { ActivitySeed } from "#src/seed-content/types";
 
 export const C3_SEED_ACTIVITIES: ActivitySeed[] = [
   {

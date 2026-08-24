@@ -3,13 +3,13 @@ import {
   SAMPLE_LEVEL_1,
   SAMPLE_LEVEL_2,
   SAMPLE_LEVEL_3,
-} from "../src/templates/GT-015/fixtures.js";
-import { SudokuMiniSession } from "../src/templates/GT-015/session.js";
+} from "#src/templates/GT-015/fixtures";
+import { SudokuMiniSession } from "#src/templates/GT-015/session";
 import template, {
   GT015BaseSchema,
   GT015ContentSchema,
   GT015DifficultySchema,
-} from "../src/templates/GT-015/template.js";
+} from "#src/templates/GT-015/template";
 
 const RE_UNIQUE_SUDOKU = /đúng 1 nghiệm duy nhất/;
 

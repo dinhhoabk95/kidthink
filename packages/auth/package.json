@@ -11,7 +11,6 @@
     "@mindkid/config": "workspace:*",
     "argon2": "^0.45.1",
     "ioredis": "catalog:",
-    "jose": "catalog:",
     "openid-client": "catalog:",
     "otpauth": "catalog:"
   },
@@ -23,5 +22,9 @@
   },
   "exports": {
     ".": "./src/index.ts"
+  },
+  "imports": {
+    "#src/*": "./src/*.ts",
+    "#tests/*": "./tests/*.ts"
   }
 }

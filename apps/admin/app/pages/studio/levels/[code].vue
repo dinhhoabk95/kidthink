@@ -288,7 +288,7 @@
 
   async function fetchLevel() {
     try {
-      const res = await $fetch<LevelDetailResponse>(
+      const res = await apiFetch<LevelDetailResponse>(
         `/api/managers/levels/${code}/latest`
       );
       levelData.value = {
@@ -308,7 +308,7 @@
   async function fetchContract() {
     try {
       const tCode = templateCode.value;
-      const res = await $fetch<ContractResponse>(
+      const res = await apiFetch<ContractResponse>(
         `/api/managers/templates/${tCode}/contract`
       );
       contractData.value = res || {};
@@ -349,7 +349,7 @@
         expected_version: currentVersion.value,
       };
 
-      await $fetch(`/api/managers/levels/${code}/${currentVersion.value}`, {
+      await apiFetch(`/api/managers/levels/${code}/${currentVersion.value}`, {
         method: "PATCH",
         body: payload,
       });
@@ -378,7 +378,7 @@
   async function submitForReview() {
     try {
       await performSave();
-      await $fetch(
+      await apiFetch(
         `/api/managers/levels/${code}/${currentVersion.value}/submit`,
         {
           method: "POST",
@@ -396,7 +396,7 @@
 
   async function duplicateCurrentLevel() {
     try {
-      const res = await $fetch<{ code: string }>(
+      const res = await apiFetch<{ code: string }>(
         `/api/managers/levels/${code}/${currentVersion.value}/duplicate`,
         { method: "POST" }
       );

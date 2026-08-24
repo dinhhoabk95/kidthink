@@ -5,14 +5,14 @@ import {
   type ActionResult,
   type GameAction,
   TemplateGameSession,
-} from "../../game-session.js";
+} from "#src/game-session";
 import {
   type ConstraintViolation,
   findConstraintViolations,
   isSudokuCompleteAndValid,
   type SudokuCell,
   type SudokuGrid,
-} from "../../systems/constraint-system.js";
+} from "#src/systems/constraint-system";
 import type { GT015Content, GT015Difficulty } from "./template.js";
 
 export interface SudokuCellState {

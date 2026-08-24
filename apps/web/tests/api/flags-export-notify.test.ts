@@ -9,15 +9,15 @@ import {
 } from "@mindkid/db";
 import { eq } from "drizzle-orm";
 import { beforeAll, beforeEach, describe, expect, it } from "vitest";
-import sesSnsWebhookHandler from "../../server/api/guest/webhooks/ses-sns.post.js";
-import exportsHandler from "../../server/api/managers/exports/[kind].get.js";
-import flagsPatchHandler from "../../server/api/managers/feature-flags/[key].patch.js";
-import flagsGetHandler from "../../server/api/managers/feature-flags/index.get.js";
-import notificationTemplatesPatchHandler from "../../server/api/managers/notification-templates/[code]/[version].patch.js";
-import notificationTemplatesPreviewHandler from "../../server/api/managers/notification-templates/[code]/preview.post.js";
-import notificationTemplatesGetHandler from "../../server/api/managers/notification-templates/index.get.js";
-import notificationResendHandler from "../../server/api/managers/notifications/[id]/resend.post.js";
-import notificationsGetHandler from "../../server/api/managers/notifications/index.get.js";
+import sesSnsWebhookHandler from "#server/api/guest/webhooks/ses-sns.post";
+import exportsHandler from "#server/api/managers/exports/[kind].get";
+import flagsPatchHandler from "#server/api/managers/feature-flags/[key].patch";
+import flagsGetHandler from "#server/api/managers/feature-flags/index.get";
+import notificationTemplatesPatchHandler from "#server/api/managers/notification-templates/[code]/[version].patch";
+import notificationTemplatesPreviewHandler from "#server/api/managers/notification-templates/[code]/preview.post";
+import notificationTemplatesGetHandler from "#server/api/managers/notification-templates/index.get";
+import notificationResendHandler from "#server/api/managers/notifications/[id]/resend.post";
+import notificationsGetHandler from "#server/api/managers/notifications/index.get";
 
 const CSRF_TOKEN =
   "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef";

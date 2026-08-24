@@ -32,12 +32,8 @@ const apps: PmApp[] = config.apps;
 const byName = (name: string) => apps.find((a) => a.name === name) as PmApp;
 
 describe("Process supervision (BR-SUP-01..10, BR-SRV-02)", () => {
-  it("declares exactly the three applications", () => {
-    expect(apps.map((a) => a.name)).toEqual([
-      "mindkid-web",
-      "mindkid-admin",
-      "mindkid-worker",
-    ]);
+  it("declares the two server processes", () => {
+    expect(apps.map((a) => a.name)).toEqual(["mindkid-web", "mindkid-worker"]);
   });
 
   it("BR-SUP-03: the worker is one fork, never a cluster", () => {
@@ -71,16 +67,14 @@ describe("Process supervision (BR-SUP-01..10, BR-SRV-02)", () => {
 
   it("BR-SUP-04: each application loads only its own env file", () => {
     expect(byName("mindkid-web").env_file).toBe("/etc/mindkid/env/web.env");
-    expect(byName("mindkid-admin").env_file).toBe("/etc/mindkid/env/admin.env");
     expect(byName("mindkid-worker").env_file).toBe(
       "/etc/mindkid/env/worker.env"
     );
-    expect(new Set(apps.map((a) => a.env_file)).size).toBe(3);
+    expect(new Set(apps.map((a) => a.env_file)).size).toBe(2);
   });
 
   it("uses the loopback ports from server-provisioning.md §7.3", () => {
     expect(byName("mindkid-web").env.PORT).toBe("3000");
-    expect(byName("mindkid-admin").env.PORT).toBe("3002");
     expect(byName("mindkid-worker").env.PORT).toBe("3099");
   });
 

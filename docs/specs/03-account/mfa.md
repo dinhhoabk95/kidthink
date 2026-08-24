@@ -84,6 +84,7 @@ nhập, dùng chung cho cả mật khẩu và SNS).
 | `BR-MFA-10` | Bật MFA cũng cần **reauth**, không chỉ phiên hợp lệ | Kẻ chiếm phiên bật MFA bằng thiết bị của họ sẽ khoá chủ tài khoản ra ngoài vĩnh viễn |
 | `BR-MFA-11` | Sinh lại mã khôi phục cần **reauth + một mã hợp lệ**, và **vô hiệu toàn bộ** bộ cũ | Hai bộ mã cùng sống là hai cửa vào |
 | `BR-MFA-12` | Sinh secret, URI và validate HOTP/TOTP phải dùng `otpauth` trong `packages/auth`; Cấm — **NEVER** tự viết Base32, HMAC hoặc thuật toán TOTP | Crypto primitive tự viết khó review, dễ lệch window/encoding và không tạo giá trị sản phẩm |
+| `BR-MFA-13` | Secret TOTP mã hoá bằng đúng `MFA_ENCRYPTION_KEY` cho **mọi** account type. Cấm — **NEVER** dùng khoá khác, **NEVER** thử nhiều khoá. Đổi khoá bắt buộc re-encrypt toàn bộ trong cùng migration | Sai khoá cho ra bản rõ khác mà không báo lỗi — GCM auth tag chỉ nổ khi tag sai, SHA-256 hash của khoá khác vẫn tạo AES key hợp lệ. Thử nhiều khoá biến sai cấu hình thành im lặng |
 
 ## 7. Data
 
@@ -188,6 +189,18 @@ Scenario: BR-MFA-12 — không tự viết TOTP
   When quét implementation MFA
   Then mọi sinh secret, otpauth URI và validate mã đi qua package otpauth
   And không có Base32, HMAC hoặc HOTP/TOTP implementation tự viết
+
+Scenario: BR-MFA-13 — giải mã hỏng ném lỗi hệ thống, không rơi xuống recovery
+  Given manager có MFA bật, secret mã hoá bằng MFA_ENCRYPTION_KEY
+  When hệ thống cố giải mã bằng khoá khác
+  Then ném lỗi hệ thống MFA_SECRET_CORRUPTED
+  And ghi audit "mfa_decryption_failed"
+  And không thử mã khôi phục
+
+Scenario: BR-MFA-13 — mọi call site dùng cùng một helper
+  When quét mọi file gọi encryptTotpSecret hoặc decryptTotpSecret trong apps/
+  Then đối số khoá là getMfaEncryptionKey()
+  And không có call site nào truyền khoá khác
 ```
 
 ## 10. Boundaries

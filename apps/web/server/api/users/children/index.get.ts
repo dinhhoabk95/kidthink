@@ -3,7 +3,7 @@ import { deriveAgeBand } from "@mindkid/shared";
 import { eq } from "drizzle-orm";
 import { defineEventHandler } from "h3";
 
-import { requireWebUserSession } from "../../../utils/auth-runtime.js";
+import { requireWebUserSession } from "#server/utils/auth-runtime";
 
 export default defineEventHandler(async (event) => {
   const user = await requireWebUserSession(event);

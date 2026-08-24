@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { ACTIONS_REQUIRING_REASON, AUDIT_ACTIONS } from "../src/audit.js";
+import { ACTIONS_REQUIRING_REASON, AUDIT_ACTIONS } from "#src/audit";
 
 describe("Task 2 — Registry closed actions (BR-AUD-03, D-EV)", () => {
   it("contains valid closed actions", () => {

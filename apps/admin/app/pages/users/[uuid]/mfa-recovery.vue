@@ -284,9 +284,9 @@
 
 <script lang="ts" setup>
   import { computed, onMounted, ref } from "vue";
-  import { definePageMeta, useRoute, useUserSession } from "#imports";
-  import ForbiddenState from "../../../components/forbidden-state.vue";
-  import LoadingState from "../../../components/loading-state.vue";
+  import { definePageMeta, useRoute } from "#imports";
+  import ForbiddenState from "~/components/forbidden-state.vue";
+  import LoadingState from "~/components/loading-state.vue";
 
   definePageMeta({
     layout: "manager",
@@ -309,7 +309,7 @@
   }
 
   const route = useRoute();
-  const { session } = useUserSession();
+  const { session } = useAdminAuth();
   const isSuperAdmin = computed(() => session.value?.role === "super_admin");
   const userUuid = computed(() => String(route.params.uuid || ""));
 
@@ -404,7 +404,7 @@
     loading.value = true;
     errorMessage.value = "";
     try {
-      const res = await $fetch<{ requests: RecoveryRequest[] }>(
+      const res = await apiFetch<{ requests: RecoveryRequest[] }>(
         `/api/managers/users/${userUuid.value}/mfa-recovery-requests`
       );
       requests.value = res.requests || [];
@@ -430,7 +430,7 @@
     submitting.value = true;
     errorMessage.value = "";
     try {
-      await $fetch(
+      await apiFetch(
         `/api/managers/users/${userUuid.value}/mfa-recovery-requests`,
         {
           method: "POST",
@@ -455,7 +455,7 @@
     submitting.value = true;
     errorMessage.value = "";
     try {
-      await $fetch(
+      await apiFetch(
         `/api/managers/users/${userUuid.value}/mfa-recovery-requests/${reqUuid}/complete`,
         { method: "POST" }
       );
@@ -475,7 +475,7 @@
     submitting.value = true;
     errorMessage.value = "";
     try {
-      await $fetch(
+      await apiFetch(
         `/api/managers/users/${userUuid.value}/mfa-recovery-requests/${reqUuid}/cancel`,
         { method: "POST" }
       );

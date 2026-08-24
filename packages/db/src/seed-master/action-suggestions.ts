@@ -1,7 +1,7 @@
 import { sql } from "drizzle-orm";
 import type { NodePgDatabase } from "drizzle-orm/node-postgres";
-import { skillActionSuggestions } from "../schema/content.ts";
-import { skills } from "../schema/taxonomy.ts";
+import { skillActionSuggestions } from "#src/schema/content";
+import { skills } from "#src/schema/taxonomy";
 
 export interface SkillActionSeedItem {
   skillCode: string;

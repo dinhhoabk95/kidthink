@@ -1,6 +1,6 @@
 import { z } from "zod";
-import { assetSchema, promptFields } from "../../contracts/shared-fields.js";
-import { defineTemplate, STANDARD_SCORING } from "../../contracts/types.js";
+import { assetSchema, promptFields } from "#src/contracts/shared-fields";
+import { defineTemplate, STANDARD_SCORING } from "#src/contracts/types";
 
 export const GT027ContentSchema = z.object({
   ...promptFields(),

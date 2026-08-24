@@ -5,7 +5,7 @@ import {
   getUserRememberCookie,
   setUserRememberCookie,
   validateUserCsrf,
-} from "../../../utils/auth-runtime";
+} from "#server/utils/auth-runtime";
 
 export async function handleRestore(event: H3Event) {
   validateUserCsrf(event);

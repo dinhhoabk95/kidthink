@@ -2,7 +2,7 @@
 /**
  * Gate: lint:env-names
  * Rules: BR-ENV-02 (one canonical name per concept)
- *        BR-ENV-03 (no hardcoded fallback for a contract variable)
+ *        BR-ENV-03 (no fallback after an environment read)
  *
  * Both halves exist because the same class of bug came back twice: a rename
  * that only landed in half the files, and a `|| "https://..."` that let a
@@ -10,7 +10,6 @@
  */
 import { readdirSync, readFileSync } from "node:fs";
 import { join, relative, resolve } from "node:path";
-import { ENV_REGISTRY } from "@mindkid/config";
 import { REPO_ROOT } from "@mindkid/config/paths";
 import { isFixturePath } from "./lint-lib/source-scan.ts";
 
@@ -22,10 +21,12 @@ export interface DeprecatedEnvRule {
 /** env-contract.md §7.2 — the six groups that had to collapse. */
 export const DEPRECATED_ENV_NAMES: readonly DeprecatedEnvRule[] = [
   { bannedName: "SESSION_SECRET", replacement: "NUXT_SESSION_PASSWORD" },
-  { bannedName: "JWT_SECRET", replacement: "WEB_JWT_SECRET" },
-  { bannedName: "JWT_ACCESS_SECRET", replacement: "WEB_JWT_SECRET" },
-  { bannedName: "NUXT_WEB_JWT_SECRET", replacement: "WEB_JWT_SECRET" },
-  { bannedName: "NUXT_ADMIN_JWT_SECRET", replacement: "ADMIN_JWT_SECRET" },
+  { bannedName: "JWT_SECRET", replacement: "a purpose-specific secret" },
+  { bannedName: "JWT_ACCESS_SECRET", replacement: "a purpose-specific secret" },
+  { bannedName: "WEB_JWT_SECRET", replacement: "NUXT_SESSION_PASSWORD" },
+  { bannedName: "ADMIN_JWT_SECRET", replacement: "NUXT_SESSION_PASSWORD" },
+  { bannedName: "NUXT_WEB_JWT_SECRET", replacement: "NUXT_SESSION_PASSWORD" },
+  { bannedName: "NUXT_ADMIN_JWT_SECRET", replacement: "NUXT_SESSION_PASSWORD" },
   { bannedName: "REDIS_URL", replacement: "VALKEY_URL" },
   { bannedName: "AUTH_REDIS_URL", replacement: "VALKEY_URL" },
   { bannedName: "VALKEY_HOST", replacement: "VALKEY_URL" },
@@ -45,8 +46,8 @@ export interface EnvNameViolation {
   codeSnippet: string;
 }
 
-const SCAN_DIRS = ["apps", "packages"];
-const SCAN_EXTS = [".ts", ".js", ".vue", ".cjs", ".mjs"];
+const SCAN_DIRS = ["apps", "packages", "scripts"];
+const SCAN_EXTS = [".ts", ".tsx", ".js", ".jsx", ".vue", ".cjs", ".mjs"];
 const SKIP_DIRS = new Set([
   "node_modules",
   ".output",
@@ -94,42 +95,23 @@ const ALIAS_MATCHERS: readonly {
 }));
 
 /**
- * Cheap pre-filter: a line with no `process.env`, `requireEnv` or `optionalEnv`
+ * Cheap pre-filter: a line with no environment accessor
  * cannot violate either rule, and that is almost every line in the repository.
  */
-const CANDIDATE_LINE = /process\.env|requireEnv|optionalEnv/;
+const CANDIDATE_LINE = /process\.env|requireEnv|optionalEnv|devFallbackEnv/;
 
 /**
- * A string literal used as the fallback of a contract variable. Chained
- * `process.env.A || process.env.B` is fine — that is still the contract.
+ * Any fallback operator after an environment read hides a missing setup.
+ * Cross-variable fallback must use an explicit accessor such as
+ * `requireFirstEnv`, so the contract remains visible and fail-closed.
  */
-const HARDCODED_DEFAULT_PATTERN =
-  /process\.env\.([A-Z_][A-Z0-9_]*)\s*(?:\|\||\?\?)\s*["'`]([^"'`]*)["'`]/;
-const REQUIRE_ENV_DEFAULT_PATTERN =
-  /(?:requireEnv|optionalEnv)\(\s*["'`]([A-Z_][A-Z0-9_]*)["'`][^)]*\)\s*(?:\|\||\?\?)\s*["'`]/;
-
-// devFallbackEnv() is the sanctioned shape: it throws in production and only
-// returns its literal in development, so it is not a production default.
-const SANCTIONED_FALLBACK = /\bdevFallbackEnv\s*\(/;
-
-/** Names whose value decides identity or authenticity — a literal is never right. */
-function computeNoDefaultNames(): Set<string> {
-  const names = new Set<string>();
-  for (const def of ENV_REGISTRY) {
-    if (
-      (def.required === "always" || def.required === "production") &&
-      (def.kind === "url" || def.kind === "secret" || def.secret)
-    ) {
-      names.add(def.name);
-    }
-  }
-  for (const rule of DEPRECATED_ENV_NAMES) {
-    names.add(rule.bannedName);
-  }
-  return names;
-}
-
-const NO_DEFAULT_NAMES = computeNoDefaultNames();
+const PROCESS_ENV_FALLBACK_PATTERN =
+  /process\.env(?:\.[A-Z_][A-Z0-9_]*|\[[^\]]+\])\s*(?:\|\||\?\?)/g;
+const PROCESS_ENV_NAME_PATTERN = /process\.env\.([A-Z_][A-Z0-9_]*)/;
+const ACCESSOR_FALLBACK_PATTERN =
+  /\b(?:requireEnv|optionalEnv)\(\s*["'`]([A-Z_][A-Z0-9_]*)["'`][^)]*\)\s*(?:\|\||\?\?)/g;
+const DEV_FALLBACK_PATTERN =
+  /\bdevFallbackEnv\(\s*["'`]([A-Z_][A-Z0-9_]*)["'`]/g;
 
 function scanLineForAliases(
   relPath: string,
@@ -151,40 +133,63 @@ function scanLineForAliases(
   }
 }
 
-function scanLineForDefaults(
+function addDefaultViolation(
   relPath: string,
-  line: string,
-  lineNumber: number,
-  banned: Set<string>,
+  content: string,
+  offset: number,
+  name: string,
+  reason: string,
   found: EnvNameViolation[]
 ): void {
-  if (SANCTIONED_FALLBACK.test(line)) {
-    return;
+  const lineNumber = content.slice(0, offset).split("\n").length;
+  const line = content.split("\n")[lineNumber - 1] ?? "";
+  found.push({
+    file: relPath,
+    line: lineNumber,
+    kind: "hardcoded-default",
+    name,
+    advice: `${reason} — remove the fallback and let setup fail — BR-ENV-03`,
+    codeSnippet: line.trim(),
+  });
+}
+
+function scanContentForDefaults(
+  relPath: string,
+  content: string,
+  found: EnvNameViolation[]
+): void {
+  for (const match of content.matchAll(PROCESS_ENV_FALLBACK_PATTERN)) {
+    const nameMatch = PROCESS_ENV_NAME_PATTERN.exec(match[0]);
+    addDefaultViolation(
+      relPath,
+      content,
+      match.index ?? 0,
+      nameMatch?.[1] ?? "dynamic process.env access",
+      "Environment reads cannot fall back with || or ??",
+      found
+    );
   }
 
-  const direct = HARDCODED_DEFAULT_PATTERN.exec(line);
-  if (direct?.[1] && banned.has(direct[1])) {
-    found.push({
-      file: relPath,
-      line: lineNumber,
-      kind: "hardcoded-default",
-      name: direct[1],
-      advice: `Use requireEnv("${direct[1]}") and let startup fail — BR-ENV-03`,
-      codeSnippet: line.trim(),
-    });
-    return;
+  for (const match of content.matchAll(ACCESSOR_FALLBACK_PATTERN)) {
+    addDefaultViolation(
+      relPath,
+      content,
+      match.index ?? 0,
+      match[1] ?? "unknown",
+      "Environment accessors cannot fall back with || or ??",
+      found
+    );
   }
 
-  const wrapped = REQUIRE_ENV_DEFAULT_PATTERN.exec(line);
-  if (wrapped?.[1] && banned.has(wrapped[1])) {
-    found.push({
-      file: relPath,
-      line: lineNumber,
-      kind: "hardcoded-default",
-      name: wrapped[1],
-      advice: `Drop the literal fallback for ${wrapped[1]} — BR-ENV-03`,
-      codeSnippet: line.trim(),
-    });
+  for (const match of content.matchAll(DEV_FALLBACK_PATTERN)) {
+    addDefaultViolation(
+      relPath,
+      content,
+      match.index ?? 0,
+      match[1] ?? "unknown",
+      "devFallbackEnv is not allowed",
+      found
+    );
   }
 }
 
@@ -198,7 +203,6 @@ export function scanContentForEnvNames(
   }
 
   const lines = content.split("\n");
-  const skipDefaults = isTestPath(relPath);
 
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i] ?? "";
@@ -206,9 +210,10 @@ export function scanContentForEnvNames(
       continue;
     }
     scanLineForAliases(relPath, line, i + 1, found);
-    if (!skipDefaults) {
-      scanLineForDefaults(relPath, line, i + 1, NO_DEFAULT_NAMES, found);
-    }
+  }
+
+  if (!isTestPath(relPath)) {
+    scanContentForDefaults(relPath, content, found);
   }
 
   return found;

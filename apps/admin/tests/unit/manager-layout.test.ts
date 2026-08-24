@@ -1,7 +1,7 @@
 import { readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
-import { MANAGER_NAV_ITEMS } from "../../app/composables/nav-config.js";
+import { MANAGER_NAV_ITEMS } from "~/composables/nav-config";
 
 describe("Task 1 & Task 2 — Admin Shell Layout & Invariants (D-IW, D-IY)", () => {
   it("Scenario: D-IW & D-IY — MANAGER_NAV_ITEMS single canonical declaration with roles", () => {
@@ -63,6 +63,9 @@ describe("Task 1 & Task 2 — Admin Shell Layout & Invariants (D-IW, D-IY)", () 
     expect(pageFiles.length).toBeGreaterThanOrEqual(4);
 
     for (const filePath of pageFiles) {
+      if (filePath.endsWith("login.vue")) {
+        continue;
+      }
       const content = readFileSync(filePath, "utf-8");
       const hasManagerLayout =
         content.includes('layout: "manager"') ||

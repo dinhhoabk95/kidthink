@@ -27,7 +27,7 @@ export interface EnvVarDef {
   note: string;
 }
 
-const ALL_APPS: readonly AppType[] = ["web", "admin", "worker"];
+const ALL_APPS: readonly AppType[] = ["web", "worker"];
 
 export const ENV_REGISTRY: readonly EnvVarDef[] = [
   // ---- Runtime ------------------------------------------------------------
@@ -42,7 +42,7 @@ export const ENV_REGISTRY: readonly EnvVarDef[] = [
   },
   {
     name: "PORT",
-    apps: ALL_APPS,
+    apps: ["web", "worker"],
     required: "always",
     kind: "port",
     secret: false,
@@ -58,11 +58,19 @@ export const ENV_REGISTRY: readonly EnvVarDef[] = [
   },
   {
     name: "NUXT_ALLOWED_ORIGINS",
-    apps: ["web", "admin"],
-    required: "production",
+    apps: ["web"],
+    required: "always",
     kind: "text",
     secret: false,
-    note: "Danh sách origin được phép gọi API; đọc ở nuxt.config của hai app Nuxt",
+    note: "Danh sách origin được phép gọi API; web dùng cho CORS và CSRF allowlist",
+  },
+  {
+    name: "NUXT_PUBLIC_API_BASE_URL",
+    apps: ["admin"],
+    required: "always",
+    kind: "url",
+    secret: false,
+    note: "Origin tuyệt đối của web API được nướng vào static admin SPA",
   },
 
   // ---- Dữ liệu ------------------------------------------------------------
@@ -77,10 +85,10 @@ export const ENV_REGISTRY: readonly EnvVarDef[] = [
   {
     name: "DATABASE_URL_APP",
     apps: ALL_APPS,
-    required: "optional",
+    required: "always",
     kind: "url",
     secret: true,
-    note: "Chuỗi kết nối quyền hẹp cho ứng dụng; thiếu thì dùng DATABASE_URL",
+    note: "Chuỗi kết nối quyền hẹp cho ứng dụng",
   },
   {
     name: "VALKEY_URL",
@@ -94,27 +102,11 @@ export const ENV_REGISTRY: readonly EnvVarDef[] = [
   // ---- Bí mật phiên và token ----------------------------------------------
   {
     name: "NUXT_SESSION_PASSWORD",
-    apps: ["web", "admin"],
+    apps: ["web"],
     required: "always",
     kind: "secret",
     secret: true,
     note: "Mật khẩu niêm phong cookie phiên; tên do thư viện session cố định",
-  },
-  {
-    name: "WEB_JWT_SECRET",
-    apps: ["web"],
-    required: "always",
-    kind: "secret",
-    secret: true,
-    note: "Khoá ký token của bề mặt người dùng",
-  },
-  {
-    name: "ADMIN_JWT_SECRET",
-    apps: ["web"],
-    required: "always",
-    kind: "secret",
-    secret: true,
-    note: "Khoá ký token quản trị; đọc ở lớp API của web",
   },
   {
     name: "PARENT_GATE_SECRET",
@@ -253,7 +245,7 @@ export const ENV_REGISTRY: readonly EnvVarDef[] = [
   // ---- Đăng nhập bên thứ ba ----------------------------------------------
   {
     name: "GOOGLE_CLIENT_ID",
-    apps: ["web", "admin"],
+    apps: ["web"],
     required: "optional",
     kind: "text",
     secret: false,
@@ -261,7 +253,7 @@ export const ENV_REGISTRY: readonly EnvVarDef[] = [
   },
   {
     name: "GOOGLE_CLIENT_SECRET",
-    apps: ["web", "admin"],
+    apps: ["web"],
     required: "optional",
     kind: "secret",
     secret: true,
@@ -269,7 +261,7 @@ export const ENV_REGISTRY: readonly EnvVarDef[] = [
   },
   {
     name: "FACEBOOK_CLIENT_ID",
-    apps: ["web", "admin"],
+    apps: ["web"],
     required: "optional",
     kind: "text",
     secret: false,
@@ -277,7 +269,7 @@ export const ENV_REGISTRY: readonly EnvVarDef[] = [
   },
   {
     name: "FACEBOOK_CLIENT_SECRET",
-    apps: ["web", "admin"],
+    apps: ["web"],
     required: "optional",
     kind: "secret",
     secret: true,
@@ -381,7 +373,7 @@ export const ENV_REGISTRY: readonly EnvVarDef[] = [
   // ---- Vận hành một lần ---------------------------------------------------
   {
     name: "INITIAL_ADMIN_EMAIL",
-    apps: ["web", "admin"],
+    apps: ["web"],
     required: "optional",
     kind: "email",
     secret: false,
@@ -389,7 +381,7 @@ export const ENV_REGISTRY: readonly EnvVarDef[] = [
   },
   {
     name: "INITIAL_ADMIN_PASSWORD",
-    apps: ["web", "admin"],
+    apps: ["web"],
     required: "optional",
     kind: "secret",
     secret: true,

@@ -14,7 +14,7 @@ import {
   SEED_PACKAGES,
   userCancelRecurringSubscription,
   users,
-} from "../../src/index.js";
+} from "#src/index";
 
 const RE_INVALID_CANCEL_REASON = /Ghi chú|VALIDATION_FAILED/;
 

@@ -1,5 +1,5 @@
 import { defineEventHandler } from "h3";
-import { requireSuperAdminSession } from "../../../utils/admin-auth-runtime.js";
+import { requireSuperAdminSession } from "#server/utils/admin-auth-runtime";
 
 export interface SloStatus {
   name: string;

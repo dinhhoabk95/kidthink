@@ -5,14 +5,14 @@ import {
   type ActionResult,
   type GameAction,
   TemplateGameSession,
-} from "../../game-session.js";
+} from "#src/game-session";
 import {
   type ClockAngles,
   type ClockTime,
   formatClockTime,
   isSameTime,
   timeToAngles,
-} from "../../systems/rotation-system.js";
+} from "#src/systems/rotation-system";
 import type { GT016Content, GT016Difficulty } from "./template.js";
 
 export class ClockHandsSession extends TemplateGameSession<

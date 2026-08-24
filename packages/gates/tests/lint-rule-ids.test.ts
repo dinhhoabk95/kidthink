@@ -4,7 +4,7 @@ import {
   extractDefinedRules,
   extractInvariantRuleIds,
   extractRegisteredPrefixes,
-} from "../src/lint-rule-ids.ts";
+} from "#src/lint-rule-ids";
 
 describe("lint:rule-ids (BR-REG2-01..04)", () => {
   it("toàn bộ corpus hiện tại đạt chuẩn bất biến và không có vi phạm", () => {

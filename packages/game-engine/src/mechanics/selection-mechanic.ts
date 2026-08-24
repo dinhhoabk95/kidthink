@@ -4,7 +4,7 @@ import {
   ACTION_RETRY,
   type ActionResult,
   type GameAction,
-} from "../game-session.js";
+} from "#src/game-session";
 
 export interface SelectionItem {
   readonly id: string;

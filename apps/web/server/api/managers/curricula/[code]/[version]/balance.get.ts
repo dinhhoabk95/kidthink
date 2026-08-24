@@ -12,7 +12,7 @@ import {
 } from "@mindkid/shared";
 import { and, asc, eq } from "drizzle-orm";
 import { createError, defineEventHandler, getRouterParam } from "h3";
-import { requireManagerSession } from "../../../../../utils/admin-auth-runtime.js";
+import { requireManagerSession } from "#server/utils/admin-auth-runtime";
 
 const LES_COMPETENCY_REGEX = /LES-(C[1-6])/i;
 const GL_COMPETENCY_REGEX = /GL-(C[1-6])/i;

@@ -8,8 +8,8 @@ import {
   setResponseStatus,
 } from "h3";
 
-import { requireWebUserSession } from "../../../utils/auth-runtime.js";
-import { requireReauth } from "../../../utils/reauth-runtime.js";
+import { requireWebUserSession } from "#server/utils/auth-runtime";
+import { requireReauth } from "#server/utils/reauth-runtime";
 
 export default defineEventHandler(async (event) => {
   const userSession = await requireWebUserSession(event);

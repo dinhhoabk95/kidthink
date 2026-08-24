@@ -40,10 +40,10 @@ fi
 # A successful build leaves exactly the artefacts release_has_artifacts checks.
 if [[ "${command_text}" == *"pnpm build"* ]] && [ -n "${workspace}" ]; then
   mkdir -p "${workspace}/apps/web/.output/server" \
-           "${workspace}/apps/admin/.output/server" \
+           "${workspace}/apps/admin/.output/public" \
            "${workspace}/apps/worker/dist"
   echo "// built" >"${workspace}/apps/web/.output/server/index.mjs"
-  echo "// built" >"${workspace}/apps/admin/.output/server/index.mjs"
+  echo "<!doctype html>" >"${workspace}/apps/admin/.output/public/index.html"
   echo "// built" >"${workspace}/apps/worker/dist/index.js"
 fi
 

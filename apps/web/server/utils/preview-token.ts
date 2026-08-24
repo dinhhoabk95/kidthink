@@ -1,8 +1,7 @@
 import { createHmac, timingSafeEqual } from "node:crypto";
+import { requireEnv } from "@mindkid/config";
 
-const PREVIEW_SECRET =
-  process.env.NUXT_SESSION_PASSWORD ||
-  "mindkid-preview-token-secret-key-32-chars-minimum";
+const PREVIEW_SECRET = requireEnv("NUXT_SESSION_PASSWORD");
 
 const PREVIEW_TOKEN_TTL_MS = 30 * 60 * 1000; // 30 minutes
 

@@ -7,7 +7,7 @@ import {
   getOwnerDb,
   lessons,
   skills,
-} from "../../index.js";
+} from "#src/index";
 
 export async function runSeedReport() {
   console.log("📊 [seed:report] Generating content coverage report...\n");

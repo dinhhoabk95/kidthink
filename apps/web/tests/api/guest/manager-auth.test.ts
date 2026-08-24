@@ -16,8 +16,8 @@ import {
 
 import { and, eq } from "drizzle-orm";
 import { describe, expect, it } from "vitest";
-import loginHandler from "../../../server/api/guest/auth/managers/login.post";
-import mfaHandler from "../../../server/api/guest/auth/managers/mfa.post";
+import loginHandler from "#server/api/guest/auth/managers/login.post";
+import mfaHandler from "#server/api/guest/auth/managers/mfa.post";
 
 describe("Task 2 & 3 — Manager Login & MFA Handler (BR-ADA-01..08)", () => {
   it("Task 2: correct password returns 428 MFA_REQUIRED + challenge without creating active_session", async () => {
@@ -123,8 +123,7 @@ describe("Task 2 & 3 — Manager Login & MFA Handler (BR-ADA-01..08)", () => {
       accountId: manager.id,
       secretEncrypted: encryptTotpSecret(
         secret,
-        process.env.ADMIN_JWT_SECRET ??
-          "mindkid-dev-secret-mindkid-dev-secret-32bytes"
+        process.env.MFA_ENCRYPTION_KEY as string
       ),
       confirmedAt: new Date(),
     });

@@ -11,7 +11,7 @@ import {
 import { PACKAGE_CATALOG, type PackageDefinition } from "@mindkid/shared";
 import { and, count, desc, eq, inArray } from "drizzle-orm";
 import { defineEventHandler } from "h3";
-import { requireWebUserSession } from "../../utils/auth-runtime.ts";
+import { requireWebUserSession } from "#server/utils/auth-runtime";
 
 const DATA_PRESERVATION_NOTICE =
   "Khi gói hết hạn, hồ sơ của các bé và toàn bộ tiến độ học vẫn được giữ nguyên. Bạn chỉ tạm thời không truy cập được nội dung trả phí.";

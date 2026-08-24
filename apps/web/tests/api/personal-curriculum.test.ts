@@ -12,18 +12,18 @@ import {
 } from "@mindkid/db";
 import { eq } from "drizzle-orm";
 import { beforeEach, describe, expect, it } from "vitest";
-import enrollPersonalHandler from "../../server/api/users/children/[uuid]/enroll-personal.post.js";
-import completeItemHandler from "../../server/api/users/children/[uuid]/personal-curriculum/complete-item.post.js";
-import nextStepHandler from "../../server/api/users/children/[uuid]/personal-curriculum/next-step.get.js";
-import getBalanceHandler from "../../server/api/users/curricula/[uuid]/balance.get.js";
-import deleteCurriculumHandler from "../../server/api/users/curricula/[uuid]/index.delete.js";
-import getCurriculumHandler from "../../server/api/users/curricula/[uuid]/index.get.js";
-import putCurriculumHandler from "../../server/api/users/curricula/[uuid]/index.put.js";
-import putItemsHandler from "../../server/api/users/curricula/[uuid]/items.put.js";
-import copyCurriculumHandler from "../../server/api/users/curricula/copy.post.js";
-import listCurriculaHandler from "../../server/api/users/curricula/index.get.js";
-import createCurriculumHandler from "../../server/api/users/curricula/index.post.js";
-import { invalidateUserEntitlementsCache } from "../../server/utils/entitlements-runtime.js";
+import enrollPersonalHandler from "#server/api/users/children/[uuid]/enroll-personal.post";
+import completeItemHandler from "#server/api/users/children/[uuid]/personal-curriculum/complete-item.post";
+import nextStepHandler from "#server/api/users/children/[uuid]/personal-curriculum/next-step.get";
+import getBalanceHandler from "#server/api/users/curricula/[uuid]/balance.get";
+import deleteCurriculumHandler from "#server/api/users/curricula/[uuid]/index.delete";
+import getCurriculumHandler from "#server/api/users/curricula/[uuid]/index.get";
+import putCurriculumHandler from "#server/api/users/curricula/[uuid]/index.put";
+import putItemsHandler from "#server/api/users/curricula/[uuid]/items.put";
+import copyCurriculumHandler from "#server/api/users/curricula/copy.post";
+import listCurriculaHandler from "#server/api/users/curricula/index.get";
+import createCurriculumHandler from "#server/api/users/curricula/index.post";
+import { invalidateUserEntitlementsCache } from "#server/utils/entitlements-runtime";
 
 function makeUserEvent(
   userId: number,

@@ -11,7 +11,7 @@ import {
   sql,
 } from "drizzle-orm";
 import { defineEventHandler } from "h3";
-import { requireSuperAdminSession } from "../../../utils/admin-auth-runtime.ts";
+import { requireSuperAdminSession } from "#server/utils/admin-auth-runtime";
 
 export default defineEventHandler(async (event) => {
   requireSuperAdminSession(event);

@@ -1,7 +1,7 @@
 import { CHILD_PROFILE_CLOSED_COLUMNS } from "@mindkid/shared";
 import { sql } from "drizzle-orm";
 import { describe, expect, it } from "vitest";
-import { getOwnerDb } from "../../src/index.ts";
+import { getOwnerDb } from "#src/index";
 
 describe("Child Schema Integration Tests", () => {
   it("BR-CDC-01 & BR-SPT-01: child_profiles matches canonical closed 12-column list exactly", async () => {

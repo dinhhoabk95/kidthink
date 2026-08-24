@@ -2,7 +2,7 @@ import { getOwnerDb, notificationReads, notifications } from "@mindkid/db";
 import { and, desc, eq, getTableColumns, isNull, lte, sql } from "drizzle-orm";
 import { defineEventHandler, getQuery } from "h3";
 
-import { requireWebUserSession } from "../../../utils/auth-runtime.js";
+import { requireWebUserSession } from "#server/utils/auth-runtime";
 
 function sanitizeActionUrl(url: unknown): string {
   if (typeof url === "string" && url.startsWith("/") && !url.startsWith("//")) {

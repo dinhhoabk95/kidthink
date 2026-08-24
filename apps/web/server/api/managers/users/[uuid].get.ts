@@ -16,7 +16,7 @@ import { defineEventHandler, getHeader, getRouterParam, setHeader } from "h3";
 import {
   getManagerRemoteIp,
   requireSuperAdminSession,
-} from "../../../utils/admin-auth-runtime.js";
+} from "#server/utils/admin-auth-runtime";
 
 export default defineEventHandler(async (event) => {
   const session = await requireSuperAdminSession(event);

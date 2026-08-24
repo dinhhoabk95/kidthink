@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { type SceneObject, SceneSystem } from "../src/systems/scene-system.js";
+import { type SceneObject, SceneSystem } from "#src/systems/scene-system";
 
 describe("sceneSystem (BR-LVB-12 — independent test suite)", () => {
   const sampleObjects: SceneObject[] = [

@@ -331,7 +331,7 @@
         params.code = filterCode.value.trim();
       }
 
-      const res = await $fetch<{ items: DeliveryItem[] }>(
+      const res = await apiFetch<{ items: DeliveryItem[] }>(
         "/api/managers/notifications",
         { params }
       );
@@ -352,7 +352,7 @@
   async function fetchTemplates() {
     isLoadingTemplates.value = true;
     try {
-      const res = await $fetch<{ items: TemplateItem[] }>(
+      const res = await apiFetch<{ items: TemplateItem[] }>(
         "/api/managers/notification-templates"
       );
       templates.value = res.items || [];
@@ -371,7 +371,7 @@
     previewHtml.value = "";
 
     try {
-      const res = await $fetch<{ subject: string; html: string }>(
+      const res = await apiFetch<{ subject: string; html: string }>(
         `/api/managers/notification-templates/${code}/preview`,
         { method: "POST", body: {} }
       );
@@ -387,7 +387,7 @@
   async function resendNotification(notificationId: number) {
     isResendingId.value = notificationId;
     try {
-      await $fetch(`/api/managers/notifications/${notificationId}/resend`, {
+      await apiFetch(`/api/managers/notifications/${notificationId}/resend`, {
         method: "POST",
       });
       await fetchDeliveries();

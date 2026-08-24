@@ -1,4 +1,4 @@
-import type { EmojiEntry } from "../types";
+import type { EmojiEntry } from "#src/types";
 
 /** Biểu cảm & Cảm xúc — ~40 emoji */
 export const FACE_EMOTION_EMOJIS: EmojiEntry[] = [

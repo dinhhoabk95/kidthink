@@ -260,7 +260,7 @@
         params.created_by_manager_id = selectedAuthorId.value;
       }
 
-      const res = await $fetch<{ items: QueueItem[] }>(
+      const res = await apiFetch<{ items: QueueItem[] }>(
         "/api/managers/content/review-queue",
         { params }
       );
@@ -289,7 +289,7 @@
 
     isSubmitting.value = true;
     try {
-      await $fetch("/api/managers/content/review-queue/bulk-reject", {
+      await apiFetch("/api/managers/content/review-queue/bulk-reject", {
         method: "POST",
         body: {
           created_by_manager_id: selectedAuthorId.value,

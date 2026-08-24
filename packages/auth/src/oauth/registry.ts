@@ -35,8 +35,8 @@ function resolveOAuthDisplayName(
 export interface OAuthProviderConfig {
   readonly provider: OAuthProvider;
   readonly label: string;
-  readonly clientId: string;
-  readonly clientSecret: string;
+  readonly clientId: string | undefined;
+  readonly clientSecret: string | undefined;
   readonly callbackPath: string;
   readonly scopes: readonly string[];
   readonly isEnabled: boolean;
@@ -61,16 +61,22 @@ export class OAuthProviderRegistry {
     this.siteUrlOption = options.siteUrl;
 
     const googleId =
-      options.googleClientId ?? optionalEnv("GOOGLE_CLIENT_ID") ?? "";
+      options.googleClientId === undefined
+        ? optionalEnv("GOOGLE_CLIENT_ID")
+        : options.googleClientId;
     const googleSecret =
-      options.googleClientSecret ?? optionalEnv("GOOGLE_CLIENT_SECRET") ?? "";
+      options.googleClientSecret === undefined
+        ? optionalEnv("GOOGLE_CLIENT_SECRET")
+        : options.googleClientSecret;
 
     const facebookId =
-      options.facebookClientId ?? optionalEnv("FACEBOOK_CLIENT_ID") ?? "";
+      options.facebookClientId === undefined
+        ? optionalEnv("FACEBOOK_CLIENT_ID")
+        : options.facebookClientId;
     const facebookSecret =
-      options.facebookClientSecret ??
-      optionalEnv("FACEBOOK_CLIENT_SECRET") ??
-      "";
+      options.facebookClientSecret === undefined
+        ? optionalEnv("FACEBOOK_CLIENT_SECRET")
+        : options.facebookClientSecret;
 
     this.googleConfig = {
       provider: "google",
@@ -100,11 +106,23 @@ export class OAuthProviderRegistry {
    */
   private siteUrl(): string {
     if (this.siteUrlCache === undefined) {
-      this.siteUrlCache = (
-        this.siteUrlOption ?? requireEnv("SITE_URL")
-      ).replace(TRAILING_SLASH_REGEX, "");
+      const siteUrl =
+        this.siteUrlOption === undefined
+          ? requireEnv("SITE_URL")
+          : this.siteUrlOption;
+      this.siteUrlCache = siteUrl.replace(TRAILING_SLASH_REGEX, "");
     }
     return this.siteUrlCache;
+  }
+
+  private requireCredentials(config: OAuthProviderConfig): {
+    clientId: string;
+    clientSecret: string;
+  } {
+    if (!(config.clientId && config.clientSecret)) {
+      throw new Error(`OAUTH_PROVIDER_DISABLED: ${config.provider}`);
+    }
+    return { clientId: config.clientId, clientSecret: config.clientSecret };
   }
 
   private redirectUri(config: OAuthProviderConfig): string {
@@ -165,6 +183,7 @@ export class OAuthProviderRegistry {
     if (!config?.isEnabled) {
       throw new Error(`OAUTH_PROVIDER_DISABLED: ${provider}`);
     }
+    const { clientId } = this.requireCredentials(config);
 
     if (provider === "google") {
       const oidcConfig = await this.getGoogleOidcConfig();
@@ -181,7 +200,7 @@ export class OAuthProviderRegistry {
 
     // Facebook OAuth2 dialog URL
     const url = new URL("https://www.facebook.com/v21.0/dialog/oauth");
-    url.searchParams.set("client_id", config.clientId);
+    url.searchParams.set("client_id", clientId);
     url.searchParams.set("redirect_uri", this.redirectUri(config));
     url.searchParams.set("state", state);
     url.searchParams.set("response_type", "code");
@@ -204,6 +223,7 @@ export class OAuthProviderRegistry {
     if (!config?.isEnabled) {
       throw new Error(`OAUTH_PROVIDER_DISABLED: ${provider}`);
     }
+    this.requireCredentials(config);
 
     const currentUrl =
       typeof callbackUrl === "string" ? new URL(callbackUrl) : callbackUrl;
@@ -261,11 +281,11 @@ export class OAuthProviderRegistry {
     const tokenUrl = new URL(
       "https://graph.facebook.com/v21.0/oauth/access_token"
     );
-    tokenUrl.searchParams.set("client_id", this.facebookConfig.clientId);
-    tokenUrl.searchParams.set(
-      "client_secret",
-      this.facebookConfig.clientSecret
+    const { clientId, clientSecret } = this.requireCredentials(
+      this.facebookConfig
     );
+    tokenUrl.searchParams.set("client_id", clientId);
+    tokenUrl.searchParams.set("client_secret", clientSecret);
     tokenUrl.searchParams.set(
       "redirect_uri",
       this.redirectUri(this.facebookConfig)
@@ -327,11 +347,14 @@ export class OAuthProviderRegistry {
 
   private getGoogleOidcConfig(): Promise<Configuration> {
     if (!this.googleOidcConfigPromise) {
+      const { clientId, clientSecret } = this.requireCredentials(
+        this.googleConfig
+      );
       const issuerUrl = new URL("https://accounts.google.com");
       this.googleOidcConfigPromise = discovery(
         issuerUrl,
-        this.googleConfig.clientId,
-        this.googleConfig.clientSecret
+        clientId,
+        clientSecret
       );
     }
     return this.googleOidcConfigPromise;

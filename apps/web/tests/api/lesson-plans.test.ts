@@ -13,14 +13,14 @@ import {
 import { ENTITLEMENT_KEYS } from "@mindkid/shared";
 import { eq } from "drizzle-orm";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
-import exportPlanHandler from "../../server/api/users/lesson-plans/[uuid]/export.post.js";
-import putItemsHandler from "../../server/api/users/lesson-plans/[uuid]/items.put.js";
-import refreshItemHandler from "../../server/api/users/lesson-plans/[uuid]/refresh-item.post.js";
-import deletePlanHandler from "../../server/api/users/lesson-plans/[uuid].delete.js";
-import getPlanHandler from "../../server/api/users/lesson-plans/[uuid].get.js";
-import listPlansHandler from "../../server/api/users/lesson-plans/index.get.js";
-import createPlanHandler from "../../server/api/users/lesson-plans/index.post.js";
-import { invalidateUserEntitlementsCache } from "../../server/utils/entitlements-runtime.js";
+import exportPlanHandler from "#server/api/users/lesson-plans/[uuid]/export.post";
+import putItemsHandler from "#server/api/users/lesson-plans/[uuid]/items.put";
+import refreshItemHandler from "#server/api/users/lesson-plans/[uuid]/refresh-item.post";
+import deletePlanHandler from "#server/api/users/lesson-plans/[uuid].delete";
+import getPlanHandler from "#server/api/users/lesson-plans/[uuid].get";
+import listPlansHandler from "#server/api/users/lesson-plans/index.get";
+import createPlanHandler from "#server/api/users/lesson-plans/index.post";
+import { invalidateUserEntitlementsCache } from "#server/utils/entitlements-runtime";
 
 function makeUserEvent(
   userId: number,

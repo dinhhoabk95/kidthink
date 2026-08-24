@@ -1,6 +1,6 @@
 import { and, eq, inArray, isNotNull, lt } from "drizzle-orm";
-import { getOwnerDb } from "../client.js";
-import { entitlements, paymentOrders } from "../schema/billing.js";
+import { getOwnerDb } from "#src/client";
+import { entitlements, paymentOrders } from "#src/schema/billing";
 
 /**
  * Sweeps pending payment orders older than 48 hours (or expires_at < now)

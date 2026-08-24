@@ -15,16 +15,16 @@ import {
 } from "@mindkid/db";
 import { eq } from "drizzle-orm";
 import { beforeAll, beforeEach, describe, expect, it } from "vitest";
-import guestSeoHandler from "../../server/api/guest/seo-pages/[slug].get.js";
-import versionsHandler from "../../server/api/managers/content/[type]/[code]/versions.get.js";
-import transitionHandler from "../../server/api/managers/content/[type]/[id]/transition.post.js";
-import bulkRejectHandler from "../../server/api/managers/content/review-queue/bulk-reject.post.js";
-import reviewQueueHandler from "../../server/api/managers/content/review-queue/index.get.js";
-import levelConfigHandler from "../../server/api/managers/levels/[code]/config.get.js";
-import seoPatchHandler from "../../server/api/managers/seo-pages/[slug]/[version].patch.js";
-import seoPreviewHandler from "../../server/api/managers/seo-pages/[slug]/preview.get.js";
-import seoPagesPostHandler from "../../server/api/managers/seo-pages/index.post.js";
-import { issuePreviewToken } from "../../server/utils/preview-token.js";
+import guestSeoHandler from "#server/api/guest/seo-pages/[slug].get";
+import versionsHandler from "#server/api/managers/content/[type]/[code]/versions.get";
+import transitionHandler from "#server/api/managers/content/[type]/[id]/transition.post";
+import bulkRejectHandler from "#server/api/managers/content/review-queue/bulk-reject.post";
+import reviewQueueHandler from "#server/api/managers/content/review-queue/index.get";
+import levelConfigHandler from "#server/api/managers/levels/[code]/config.get";
+import seoPatchHandler from "#server/api/managers/seo-pages/[slug]/[version].patch";
+import seoPreviewHandler from "#server/api/managers/seo-pages/[slug]/preview.get";
+import seoPagesPostHandler from "#server/api/managers/seo-pages/index.post";
+import { issuePreviewToken } from "#server/utils/preview-token";
 
 const CSRF_TOKEN =
   "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef";

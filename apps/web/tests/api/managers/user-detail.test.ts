@@ -8,7 +8,7 @@ import {
 } from "@mindkid/db";
 import { and, eq } from "drizzle-orm";
 import { describe, expect, it } from "vitest";
-import handler from "../../../server/api/managers/users/[uuid].get";
+import handler from "#server/api/managers/users/[uuid].get";
 
 function mockEvent(
   managerRole?: "super_admin" | "content_reviewer",

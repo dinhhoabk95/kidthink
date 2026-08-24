@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { runAdaptiveReplay } from "../../scripts/replay-adaptive.ts";
+import { runAdaptiveReplay } from "#scripts/replay-adaptive";
 
 describe("scripts/replay-adaptive — Offline BKT Replay (BR-ADP-07, D-MP)", () => {
   it("executes without throwing and returns structured ReplayReport", async () => {

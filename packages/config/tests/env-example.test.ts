@@ -1,8 +1,8 @@
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
-import { generateEnvExample } from "../scripts/generate-env-example.ts";
-import { ENV_REGISTRY } from "../src/env-contract.ts";
-import { repoPath } from "../src/repo-paths.ts";
+import { generateEnvExample } from "#scripts/generate-env-example";
+import { ENV_REGISTRY } from "#src/env-contract";
+import { repoPath } from "#src/repo-paths";
 
 /**
  * BR-ENV-09 — `.env.example` là **file sinh ra** từ `ENV_REGISTRY`; ai sửa tay

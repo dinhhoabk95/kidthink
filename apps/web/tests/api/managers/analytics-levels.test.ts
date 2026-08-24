@@ -1,7 +1,7 @@
 import { getOwnerDb, levelDailyStats, managers } from "@mindkid/db";
 import { eq } from "drizzle-orm";
 import { describe, expect, it } from "vitest";
-import levelsAnalyticsHandler from "../../../server/api/managers/analytics/levels.get.ts";
+import levelsAnalyticsHandler from "#server/api/managers/analytics/levels.get";
 
 function mockEvent(
   managerContext?: {

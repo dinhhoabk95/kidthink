@@ -1,9 +1,5 @@
 import { describe, expect, it } from "vitest";
-import {
-  allowedTiers,
-  getEffectiveTier,
-  TIER_ORDER,
-} from "../src/access-ladder.js";
+import { allowedTiers, getEffectiveTier, TIER_ORDER } from "#src/access-ladder";
 
 describe("Task 6: access_tier and allowedTiers (BR-LAD-01, BR-LAD-02, BR-LAD-05)", () => {
   it("TIER_ORDER has four tiers: free < login < standard < premium", () => {

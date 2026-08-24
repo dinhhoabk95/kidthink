@@ -22,11 +22,11 @@ import {
   type UpdateLessonPlanMetaInput,
 } from "@mindkid/shared";
 import { and, asc, desc, eq, gte, inArray, or, sql } from "drizzle-orm";
-import { getDb } from "../client.ts";
-import { activities, lessonActivities, lessons } from "../schema/content.ts";
-import { gameLevels } from "../schema/game.ts";
-import { notificationDeliveries, notifications } from "../schema/ops.ts";
-import { lessonPlanItems, lessonPlans } from "../schema/planner.ts";
+import { getDb } from "#src/client";
+import { activities, lessonActivities, lessons } from "#src/schema/content";
+import { gameLevels } from "#src/schema/game";
+import { notificationDeliveries, notifications } from "#src/schema/ops";
+import { lessonPlanItems, lessonPlans } from "#src/schema/planner";
 import { writeAudit } from "./audit.ts";
 
 const DEFAULT_LESSON_PLANS_PER_MONTH = 20;

@@ -6,10 +6,10 @@ import {
   getOwnerDb,
   hardPurgeUser,
   requestUserDeletion,
-} from "../../src/index.ts";
-import { childProfiles } from "../../src/schema/child.ts";
-import { users } from "../../src/schema/identity.ts";
-import { telemetryEvents } from "../../src/schema/play.ts";
+} from "#src/index";
+import { childProfiles } from "#src/schema/child";
+import { users } from "#src/schema/identity";
+import { telemetryEvents } from "#src/schema/play";
 
 describe("Purge and Anonymization Integration Tests — Task 10", () => {
   it("BR-CDC-10 & BR-SPT-04: deletion request, grace period check, hard purge, and telemetry anonymization", async () => {

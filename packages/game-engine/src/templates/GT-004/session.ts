@@ -2,10 +2,10 @@ import {
   type ActionResult,
   type GameAction,
   TemplateGameSession,
-} from "../../game-session.js";
-import { PlacementMechanic } from "../../mechanics/placement-mechanic.js";
-import { deriveStream } from "../../rng/mulberry32.js";
-import { shuffle } from "../../rng/shuffle.js";
+} from "#src/game-session";
+import { PlacementMechanic } from "#src/mechanics/placement-mechanic";
+import { deriveStream } from "#src/rng/mulberry32";
+import { shuffle } from "#src/rng/shuffle";
 import type { GT004Content, GT004Difficulty } from "./template.js";
 
 type SortItem = GT004Content["items"][number];

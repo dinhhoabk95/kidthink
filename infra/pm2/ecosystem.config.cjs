@@ -58,10 +58,6 @@ module.exports = {
       instances: "max",
       exec_mode: "cluster",
     }),
-    app("admin", "./apps/admin/.output/server/index.mjs", 3002, {
-      instances: 1,
-      exec_mode: "fork",
-    }),
     // BR-SUP-03: concurrency is the queue's job, so exactly one consumer.
     app("worker", "./apps/worker/dist/index.js", 3099, {
       instances: 1,

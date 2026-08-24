@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Verb: env — report on the three env files without ever printing a value.
+# Verb: env — report on every env file without ever printing a value.
 # BR-ENV-08: names and verdicts only. BR-ENV-12: this verb never writes a file.
 
 cmd_env() {
@@ -11,7 +11,7 @@ cmd_env() {
   fi
 
   local app file mode owner
-  for app in "${MK_APPS[@]}"; do
+  for app in "${MK_ENV_APPS[@]}"; do
     file="${MK_ENV_DIR}/${app}.env"
     if [ ! -f "${file}" ]; then
       printf '%-12s MISSING\n' "${app}.env"

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { isOAuthProvider, OAuthProviderRegistry } from "../src/index.js";
+import { isOAuthProvider, OAuthProviderRegistry } from "#src/index";
 
 describe("Task 1 — OAuth Provider Registry (BR-OAP-01, BR-OAP-06, BR-OAP-09, BR-OAP-10, BR-OAP-13, BR-OAP-16, D-IL)", () => {
   it("BR-OAP-06: closed list contains only google and facebook", () => {

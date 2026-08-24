@@ -2,7 +2,7 @@ import { createHash } from "node:crypto";
 import type { AuditAction, AuditInput } from "@mindkid/shared";
 import { ACTIONS_REQUIRING_REASON } from "@mindkid/shared";
 import type { PgTransaction } from "drizzle-orm/pg-core";
-import { auditLogs } from "../schema/ops.ts";
+import { auditLogs } from "#src/schema/ops";
 
 export class AuditError extends Error {
   readonly code: string;

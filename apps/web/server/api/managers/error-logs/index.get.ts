@@ -1,7 +1,7 @@
 import { errorLogs, getOwnerDb } from "@mindkid/db";
 import { and, desc, eq, gte, ilike, lte, or, type SQL, sql } from "drizzle-orm";
 import { createError, defineEventHandler, getQuery } from "h3";
-import { requireManagerSession } from "../../../utils/admin-auth-runtime.js";
+import { requireManagerSession } from "#server/utils/admin-auth-runtime";
 
 export interface ErrorGroupItem {
   fingerprint: string;

@@ -326,7 +326,7 @@
     loading.value = true;
     errorMessage.value = null;
     try {
-      const data = await globalThis.$fetch<{ requirements: RequirementItem[] }>(
+      const data = await apiFetch<{ requirements: RequirementItem[] }>(
         "/api/managers/legal-consents"
       );
       if (data?.requirements) {
@@ -365,7 +365,7 @@
     successMessage.value = null;
 
     try {
-      await globalThis.$fetch("/api/managers/legal-consent-forces", {
+      await apiFetch("/api/managers/legal-consent-forces", {
         method: "POST",
         body: {
           consent_type: selectedRequirement.value.consent_type,

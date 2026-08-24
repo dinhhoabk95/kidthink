@@ -57,7 +57,7 @@ Checklist trong PR template · `pnpm check` · rà soát trước release.
 | `BR-SEC-07` | Record của người khác → **404** | `BR-ACT-03` |
 | `BR-SEC-08` | Code chạm auth, payment, hoặc dữ liệu trẻ → **bắt buộc review** người thứ hai | Một người viết và merge là một người quyết định; hai mắt thấy lỗi mà một mắt bỏ qua |
 | `BR-SEC-09` | Cấm — **NEVER dữ liệu trẻ ra khỏi hạ tầng** | `BR-CDC-06` |
-| `BR-SEC-10` | `apps/web` và `apps/admin` dùng `nuxt-security` cho CSP/header/CORS/request-size; rate limiter và CSRF tích hợp phải **tắt** | Hai implementation rate-limit/CSRF song song tạo thứ tự middleware và error contract không kiểm soát được; domain đã có owner riêng |
+| `BR-SEC-10` | `apps/web` dùng `nuxt-security` cho CSP, API CORS và request-size; admin static nhận security headers từ Nginx | Web là owner duy nhất của API; admin không có Nitro server để tạo middleware hoặc auth boundary thứ hai |
 
 ## 7. Data
 
@@ -97,7 +97,7 @@ dung là checklist an ninh áp cho mọi PR, chia theo mức độ chặn merge.
 - [ ] `v-html` chỉ với hằng số trong repo
 - [ ] Audit ghi cho hành động trong [`audit-log.md`](../01-platform/audit-log.md) §7.2
 - [ ] Cấm cache response chứa nội dung trả phí
-- [ ] `nuxt-security` bật CSP/header/CORS/request-size; limiter + CSRF tích hợp tắt
+- [ ] Web bật `nuxt-security` cho CSP/CORS/request-size; admin không mang server module và Nginx phục vụ header static
 - [ ] `script-src` production không có `unsafe-inline`; script runtime dùng nonce/strict-dynamic theo config đã test
 
 ### 7.3 MEDIUM
@@ -167,8 +167,9 @@ Scenario: BR-SEC-01 — CRITICAL chặn merge
   Then merge bị chặn
 
 Scenario: BR-SEC-10 — một owner cho rate limit và CSRF
-  When đọc cấu hình nuxt-security của web và admin
-  Then security headers, CSP, CORS và request-size được bật
+  When đọc cấu hình web và Nginx của admin
+  Then web có CSP, CORS và request-size
+  And Nginx có security headers cho admin static
   And rateLimiter và csrf của module bị tắt
   And route vẫn đi qua packages/cache và packages/auth tương ứng
 ```
@@ -179,7 +180,7 @@ Scenario: BR-SEC-10 — một owner cho rate limit và CSRF
 - Chạy checklist cho code chạm vùng nhạy cảm.
 - Xoay secret ngay khi nghi lộ.
 - Review người thứ hai cho auth, payment, dữ liệu trẻ.
-- Khai `nuxt-security` trực tiếp trong mỗi Nuxt app; giữ một owner cho rate limit và CSRF.
+- Khai `nuxt-security` trực tiếp trong `apps/web`; Nginx là owner header static, web là owner CORS/CSRF/rate limit.
 
 **Ask first**
 - Bỏ qua một mục CRITICAL.

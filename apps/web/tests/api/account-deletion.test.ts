@@ -1,7 +1,7 @@
 import { hardPurgeUser } from "@mindkid/db";
 import { describe, expect, it } from "vitest";
-import deleteAccountHandler from "../../server/api/users/account/delete.post";
-import deleteSummaryHandler from "../../server/api/users/account/delete-summary.get";
+import deleteAccountHandler from "#server/api/users/account/delete.post";
+import deleteSummaryHandler from "#server/api/users/account/delete-summary.get";
 
 function mockEvent(
   method: string,

@@ -1,6 +1,8 @@
 import { afterAll, describe, expect, it } from "vitest";
 import { disconnectQueue, enqueue } from "./index.js";
 
+process.env.VALKEY_URL = "redis://localhost:6380";
+
 describe("packages/queue", () => {
   afterAll(async () => {
     await disconnectQueue();

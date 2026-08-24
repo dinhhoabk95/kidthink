@@ -59,7 +59,7 @@ export function getS3PublicBucketName(): string {
  */
 function assetSigningSecret(): string {
   return requireFirstEnv(
-    ["STORAGE_SIGNING_SECRET", "WEB_JWT_SECRET"],
+    ["STORAGE_SIGNING_SECRET"],
     "Set STORAGE_SIGNING_SECRET in the env file of every process that serves assets."
   );
 }

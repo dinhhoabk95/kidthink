@@ -1,4 +1,4 @@
-import type { EmojiEntry } from "../types";
+import type { EmojiEntry } from "#src/types";
 
 /** Thể thao & Trò chơi — ~25 emoji */
 export const SPORT_GAME_EMOJIS: EmojiEntry[] = [

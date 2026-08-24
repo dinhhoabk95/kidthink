@@ -3,7 +3,7 @@ import { describe, expect, it } from "vitest";
 import {
   findUnvalidatedRoutes,
   readDebtList,
-} from "../src/lint-route-validation.ts";
+} from "#src/lint-route-validation";
 
 /**
  * TYPE-SAFETY `BR-TYP-07`: cổng phải có ca âm — một route mẫu vi phạm bắt buộc

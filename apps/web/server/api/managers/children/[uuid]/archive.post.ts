@@ -6,8 +6,8 @@ import { z } from "zod";
 import {
   getManagerRemoteIp,
   requireSuperAdminSession,
-} from "../../../../utils/admin-auth-runtime.js";
-import { executeArchiveChildProfile } from "../../../../utils/child-archive-runtime.js";
+} from "#server/utils/admin-auth-runtime";
+import { executeArchiveChildProfile } from "#server/utils/child-archive-runtime";
 
 const archiveBodySchema = z.object({
   reason: z.string().min(10),

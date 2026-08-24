@@ -1,18 +1,13 @@
 import crypto from "node:crypto";
-
-const DEFAULT_SECRET = "mindkid_fcm_token_secret_key_32bytes!!";
+import { optionalEnv, requireEnv } from "@mindkid/config";
 
 function getSecretKey(secret?: string): Buffer {
-  const rawSecret =
-    secret ||
-    process.env.FCM_ENCRYPTION_SECRET ||
-    process.env.NUXT_NOTIFICATION_TOKEN_ENCRYPTION_KEY;
-
-  if (!rawSecret) {
-    if (process.env.NODE_ENV === "production") {
-      throw new Error("MISSING_FCM_ENCRYPTION_SECRET");
-    }
-    return crypto.createHash("sha256").update(DEFAULT_SECRET).digest();
+  let rawSecret = secret;
+  if (rawSecret === undefined) {
+    rawSecret = optionalEnv("FCM_ENCRYPTION_SECRET");
+  }
+  if (rawSecret === undefined) {
+    rawSecret = requireEnv("NUXT_NOTIFICATION_TOKEN_ENCRYPTION_KEY");
   }
 
   return crypto.createHash("sha256").update(rawSecret).digest();

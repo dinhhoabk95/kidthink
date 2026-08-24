@@ -2,7 +2,7 @@ import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { designTokens } from "@mindkid/game-engine";
 import { describe, expect, it } from "vitest";
-import { DESIGN_TOKENS, SURFACE_RULES, TOUCH_FLOORS } from "../src/index.js";
+import { DESIGN_TOKENS, SURFACE_RULES, TOUCH_FLOORS } from "#src/index";
 
 describe("Task 1: Design Tokens & Single Source of Truth", () => {
   it("exports designTokens in game-engine matching @theme CSS values", () => {

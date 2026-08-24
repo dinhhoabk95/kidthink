@@ -313,6 +313,6 @@
     if (path.startsWith("http://") || path.startsWith("https://")) {
       return path;
     }
-    return `/api/guest/storage/${path}`;
+    return apiUrl(`/api/guest/storage/${path}`);
   }
 </script>

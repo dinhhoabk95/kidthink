@@ -10,7 +10,7 @@ import {
   rotateCubeZ,
   rotateModelZ,
   sortCubesForRender,
-} from "../src/systems/isometric-system.js";
+} from "#src/systems/isometric-system";
 
 describe("isometricSystem (BR-MTB-15)", () => {
   describe("rotateCubeZ & rotateModelZ", () => {

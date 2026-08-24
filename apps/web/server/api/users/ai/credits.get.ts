@@ -1,7 +1,7 @@
 import { getCreditBalance, listCreditTransactions } from "@mindkid/db";
 import { listCreditsQuerySchema } from "@mindkid/shared";
 import { defineEventHandler, getQuery, setHeader } from "h3";
-import { requireWebUserSession } from "../../../utils/auth-runtime.ts";
+import { requireWebUserSession } from "#server/utils/auth-runtime";
 
 export default defineEventHandler(async (event) => {
   const session = await requireWebUserSession(event);

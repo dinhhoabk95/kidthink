@@ -1,7 +1,7 @@
 import { eq } from "drizzle-orm";
 import { describe, expect, it } from "vitest";
-import { getOwnerDb } from "../../src/index.ts";
-import { lessons } from "../../src/schema/content.ts";
+import { getOwnerDb } from "#src/index";
+import { lessons } from "#src/schema/content";
 import {
   evaluateExemplarMatrix,
   type LessonExemplarRecord,

@@ -13,8 +13,8 @@ import type {
 } from "@mindkid/shared";
 import { validateWorksheetContent } from "@mindkid/shared";
 import { and, desc, eq, ilike, or, type SQL, sql } from "drizzle-orm";
-import { getOwnerDb } from "../client.ts";
-import { worksheets } from "../schema/content.ts";
+import { getOwnerDb } from "#src/client";
+import { worksheets } from "#src/schema/content";
 import { writeAudit } from "./audit.ts";
 import {
   computeWorksheetRenderHash,

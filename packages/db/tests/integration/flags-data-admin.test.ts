@@ -1,6 +1,6 @@
 import { CODE_FEATURE_FLAGS, type FeatureFlagKey } from "@mindkid/shared";
 import { describe, expect, it } from "vitest";
-import { isEnabled } from "../../src/services/feature-flags.js";
+import { isEnabled } from "#src/services/feature-flags";
 
 const MASK_EMAIL_REGEX = /(?<=^.).*(?=@)/;
 

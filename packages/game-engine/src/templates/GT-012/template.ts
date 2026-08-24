@@ -1,6 +1,6 @@
 import { z } from "zod";
-import { assetSchema, promptFields } from "../../contracts/shared-fields.js";
-import { defineTemplate } from "../../contracts/types.js";
+import { assetSchema, promptFields } from "#src/contracts/shared-fields";
+import { defineTemplate } from "#src/contracts/types";
 
 const flashItemSchema = () =>
   z.object({

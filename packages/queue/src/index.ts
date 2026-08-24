@@ -1,4 +1,4 @@
-import { devFallbackEnv } from "@mindkid/config";
+import { requireEnv } from "@mindkid/config";
 import { type Job, Queue } from "bullmq";
 import { Redis } from "ioredis";
 import { buildDeterministicJobId, getJobDefinition } from "./registry.js";
@@ -60,13 +60,10 @@ export const QUEUE_NAME = "mindkid-jobs";
 
 function getQueue() {
   if (!queue) {
-    connection = new Redis(
-      devFallbackEnv("VALKEY_URL", "redis://localhost:6380"),
-      {
-        maxRetriesPerRequest: null,
-        enableOfflineQueue: false,
-      }
-    );
+    connection = new Redis(requireEnv("VALKEY_URL"), {
+      maxRetriesPerRequest: null,
+      enableOfflineQueue: false,
+    });
     queue = new Queue(QUEUE_NAME, { connection });
   }
   return queue;

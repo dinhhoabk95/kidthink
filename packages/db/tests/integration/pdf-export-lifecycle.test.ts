@@ -12,7 +12,7 @@ import {
   requestExportJob,
   runPdfCleanupJob,
   users,
-} from "../../src/index.ts";
+} from "#src/index";
 
 describe("Task P4.2 — PDF Export Lifecycle Integration Tests (BR-PDF-01..09)", () => {
   const db = getOwnerDb();

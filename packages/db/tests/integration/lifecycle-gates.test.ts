@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { validateSeedBatchContent } from "../../src/index.ts";
+import { validateSeedBatchContent } from "#src/index";
 
 describe("P0.6 Task 7 — BR-CLC-11 Seed Batch Checklist Gate", () => {
   it("Thành công: Lô seed hợp lệ vượt qua checklist", () => {

@@ -4,7 +4,7 @@ import {
   checkWebpImageBudget,
   K6_HEALTH_CONFIG,
   PERFORMANCE_BUDGETS,
-} from "../src/lint-perf-budget.ts";
+} from "#src/lint-perf-budget";
 
 const ERR_PRF_01 = /BR-PRF-01 Error/;
 const ERR_PRF_08 = /BR-PRF-08 Error/;

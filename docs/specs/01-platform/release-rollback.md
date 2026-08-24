@@ -36,7 +36,7 @@ Spec này cũng là nơi phát ngôn một ràng buộc ngược lên cách vi�
 | Actor | Quyền cần | Làm được gì ở đây |
 |---|---|---|
 | Người vận hành | Khoá SSH | Chạy lệnh quay lui, đọc kết quả |
-| Trình giám sát tiến trình | | Nạp lại ba ứng dụng với bản cũ |
+| Trình giám sát tiến trình | | Nạp lại web và worker với bản cũ |
 | Người viết migration | | Chịu ràng buộc cộng thêm ở §6 |
 
 ## 3. Entry points
@@ -55,7 +55,7 @@ Spec này cũng là nơi phát ngôn một ràng buộc ngược lên cách vi�
 2. Chọn đích  — bản liền trước, hoặc bản được nêu tên nếu còn trong 5 bản giữ lại
 3. Kiểm đích  — thư mục bản còn nguyên và có artefact đã build; không thì dừng
 4. Đổi bản  — đổi liên kết mềm bằng một thao tác nguyên tử
-5. Nạp lại  — worker, admin, web theo đúng thứ tự của phát hành
+5. Nạp lại  — worker, web theo đúng thứ tự của phát hành
 6. Cổng khói  — endpoint sức khoẻ phải 200
 7. Ghi log và phát thông báo: đã quay lui từ bản nào về bản nào, ai chạy
 ```

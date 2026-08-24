@@ -172,7 +172,7 @@
     isExporting.value = true;
     errorMessage.value = "";
     try {
-      const res = await $fetch<{ url: string; row_count: number }>(
+      const res = await apiFetch<{ url: string; row_count: number }>(
         `/api/managers/exports/${selectedKind.value}`,
         {
           params: { reason: exportReason.value.trim() },

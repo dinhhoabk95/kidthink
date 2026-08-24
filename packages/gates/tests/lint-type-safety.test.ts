@@ -6,7 +6,7 @@ import {
   readBaseline,
   scanRepo,
   total,
-} from "../src/lint-type-safety.ts";
+} from "#src/lint-type-safety";
 
 /**
  * TYPE-SAFETY `BR-TYP-07`: cổng mới BẮT BUỘC có ca âm. Không có ca âm thì

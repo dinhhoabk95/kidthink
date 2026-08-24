@@ -30,7 +30,7 @@ import {
   ensureUserCsrfCookie,
   getVerifiedRemoteIp,
   setUserRememberCookie,
-} from "../../../../utils/auth-runtime";
+} from "#server/utils/auth-runtime";
 
 const DUMMY_HASH =
   "$argon2id$v=19$m=19456,p=1,t=2$Zmx0piJSIcdd2b8oaF8ZUg$U60ArJk0sNteiIdlfZyr7G0shEXA+IqCyWIKs1La4WE";

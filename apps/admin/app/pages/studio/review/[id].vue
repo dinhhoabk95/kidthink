@@ -376,7 +376,7 @@
     // Trigger preview config fetch to obtain server-signed preview_token (D-KG)
     if (levelData.value.code) {
       try {
-        const configRes = await $fetch<{ preview_token?: string }>(
+        const configRes = await apiFetch<{ preview_token?: string }>(
           `/api/managers/levels/${levelData.value.code}/config`,
           {
             params: { version: levelData.value.contentVersion },
@@ -410,7 +410,7 @@
     code: string
   ): Promise<Array<{ date: string; reason: string }>> {
     try {
-      const versionsRes = await $fetch<{
+      const versionsRes = await apiFetch<{
         versions: Array<{
           review_logs?: Array<{
             to_status: string;
@@ -439,7 +439,7 @@
 
   async function fetchDetail() {
     try {
-      const res = await $fetch<Record<string, unknown>>(
+      const res = await apiFetch<Record<string, unknown>>(
         `/api/managers/levels/${id}/latest`
       );
       levelData.value = res || {};
@@ -465,7 +465,7 @@
     }
     isProcessing.value = true;
     try {
-      await $fetch(`/api/managers/content/${entityType}/${id}/transition`, {
+      await apiFetch(`/api/managers/content/${entityType}/${id}/transition`, {
         method: "POST",
         body: {
           to_status: "approved",
@@ -487,7 +487,7 @@
     }
     isProcessing.value = true;
     try {
-      await $fetch(`/api/managers/content/${entityType}/${id}/transition`, {
+      await apiFetch(`/api/managers/content/${entityType}/${id}/transition`, {
         method: "POST",
         body: {
           to_status: "rejected",

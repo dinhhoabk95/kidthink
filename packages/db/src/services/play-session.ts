@@ -9,15 +9,15 @@ import { enqueue } from "@mindkid/queue";
 import { computeSessionResult, computeStars } from "@mindkid/shared";
 import { and, desc, eq, sql } from "drizzle-orm";
 import { z } from "zod";
-import { getOwnerDb } from "../client.ts";
-import { childBadges, masteryState } from "../schema/adaptive.ts";
-import { childProfiles } from "../schema/child.ts";
+import { getOwnerDb } from "#src/client";
+import { childBadges, masteryState } from "#src/schema/adaptive";
+import { childProfiles } from "#src/schema/child";
 import {
   childDailyStats,
   playSessions,
   telemetryEvents,
-} from "../schema/play.ts";
-import { contentSkillMap } from "../schema/tagging.ts";
+} from "#src/schema/play";
+import { contentSkillMap } from "#src/schema/tagging";
 
 export const ALLOWED_EVENT_NAMES = new Set([
   "game_started",

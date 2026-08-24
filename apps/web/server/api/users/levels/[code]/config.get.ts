@@ -2,8 +2,8 @@ import { createError, defineEventHandler, getRouterParam } from "h3";
 import {
   getActiveChildUuid,
   requireWebUserSession,
-} from "../../../../utils/auth-runtime.js";
-import { deliverGameConfig } from "../../../../utils/game-config-runtime.js";
+} from "#server/utils/auth-runtime";
+import { deliverGameConfig } from "#server/utils/game-config-runtime";
 
 export default defineEventHandler(async (event) => {
   const user = await requireWebUserSession(event);

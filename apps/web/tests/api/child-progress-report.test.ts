@@ -7,8 +7,8 @@ import {
 } from "@mindkid/db";
 
 import { describe, expect, it } from "vitest";
-import getProgressHandler from "../../server/api/users/children/[uuid]/progress.get";
-import { invalidateUserEntitlementsCache } from "../../server/utils/entitlements-runtime.js";
+import getProgressHandler from "#server/api/users/children/[uuid]/progress.get";
+import { invalidateUserEntitlementsCache } from "#server/utils/entitlements-runtime";
 
 function mockEvent(
   method: string,

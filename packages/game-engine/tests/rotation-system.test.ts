@@ -6,7 +6,7 @@ import {
   minuteAngleToMinute,
   snapMinuteAngle,
   timeToAngles,
-} from "../src/systems/rotation-system.js";
+} from "#src/systems/rotation-system";
 
 describe("rotationSystem (BR-MTB-15)", () => {
   it("converts ClockTime to angles correctly", () => {

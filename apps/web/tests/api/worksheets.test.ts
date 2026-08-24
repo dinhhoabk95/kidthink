@@ -9,16 +9,16 @@ import {
 import { ENTITLEMENT_KEYS } from "@mindkid/shared";
 import { eq } from "drizzle-orm";
 import { beforeEach, describe, expect, it } from "vitest";
-import getWorksheetByCodeHandler from "../../server/api/managers/worksheets/[code]/index.get.js";
-import getWorksheetPreviewHandler from "../../server/api/managers/worksheets/[code]/preview.get.js";
-import renderWorksheetHandler from "../../server/api/managers/worksheets/[code]/render.post.js";
-import listWorksheetsHandler from "../../server/api/managers/worksheets/index.get.js";
-import createWorksheetHandler from "../../server/api/managers/worksheets/index.post.js";
-import userDownloadWorksheetPdfHandler from "../../server/api/users/worksheets/[code]/pdf.get.js";
+import getWorksheetByCodeHandler from "#server/api/managers/worksheets/[code]/index.get";
+import getWorksheetPreviewHandler from "#server/api/managers/worksheets/[code]/preview.get";
+import renderWorksheetHandler from "#server/api/managers/worksheets/[code]/render.post";
+import listWorksheetsHandler from "#server/api/managers/worksheets/index.get";
+import createWorksheetHandler from "#server/api/managers/worksheets/index.post";
+import userDownloadWorksheetPdfHandler from "#server/api/users/worksheets/[code]/pdf.get";
 import {
   invalidateUserEntitlementsCache,
   mutateUserEntitlements,
-} from "../../server/utils/entitlements-runtime.js";
+} from "#server/utils/entitlements-runtime";
 
 const CSRF_TOKEN =
   "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef";

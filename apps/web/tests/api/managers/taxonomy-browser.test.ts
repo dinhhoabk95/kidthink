@@ -12,7 +12,7 @@ import { describe, expect, it } from "vitest";
 import handler, {
   invalidateTaxonomyManagerCache,
   TAXONOMY_SUFFICIENT_THRESHOLD,
-} from "../../../server/api/managers/taxonomy/index.get.js";
+} from "#server/api/managers/taxonomy/index.get";
 
 function mockEvent(
   managerRole?: "super_admin" | "content_reviewer",

@@ -1,6 +1,6 @@
 import { exportTemplateContracts, MVP_TEMPLATES } from "@mindkid/game-engine";
 import type { NodePgDatabase } from "drizzle-orm/node-postgres";
-import { gameTemplates } from "../schema/game.ts";
+import { gameTemplates } from "#src/schema/game";
 
 /**
  * Seeds Master Game Templates from `@mindkid/game-engine`.

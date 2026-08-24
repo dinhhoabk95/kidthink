@@ -5,7 +5,7 @@ import {
   validateEvidenceClaim,
   validatePlaytestSession,
   validateStratifiedSampling,
-} from "../src/pedagogical-evidence.js";
+} from "#src/pedagogical-evidence";
 
 describe("Pedagogical Evidence & Playtest Protocols (BR-PED-01 - BR-PED-06)", () => {
   describe("Scenario: BR-PED-01 — Validates evidence claim boundaries & claim ladder", () => {

@@ -4,15 +4,15 @@ import {
   type ActionResult,
   type GameAction,
   TemplateGameSession,
-} from "../../game-session.js";
-import { PairingMechanic } from "../../mechanics/pairing-mechanic.js";
-import { deriveStream } from "../../rng/mulberry32.js";
-import { shuffle } from "../../rng/shuffle.js";
+} from "#src/game-session";
+import { PairingMechanic } from "#src/mechanics/pairing-mechanic";
+import { deriveStream } from "#src/rng/mulberry32";
+import { shuffle } from "#src/rng/shuffle";
 import {
   type CardItem,
   CardSystem,
   type FlipResult,
-} from "../../systems/card-system.js";
+} from "#src/systems/card-system";
 import type { GT020Content, GT020Difficulty } from "./template.js";
 
 export interface FlatCard {

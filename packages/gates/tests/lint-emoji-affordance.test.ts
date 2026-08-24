@@ -4,7 +4,7 @@ import { describe, expect, it } from "vitest";
 import {
   lintEmojiAffordance,
   runEmojiAffordanceGate,
-} from "../src/lint-emoji-affordance.ts";
+} from "#src/lint-emoji-affordance";
 
 describe("lintEmojiAffordance (BR-EMJ-03)", () => {
   it("passes on clean vue fixture", () => {

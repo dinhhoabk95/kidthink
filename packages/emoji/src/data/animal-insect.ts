@@ -1,4 +1,4 @@
-import type { EmojiEntry } from "../types";
+import type { EmojiEntry } from "#src/types";
 
 /** Côn trùng — ~15 emoji */
 export const ANIMAL_INSECT_EMOJIS: EmojiEntry[] = [

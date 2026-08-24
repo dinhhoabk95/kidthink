@@ -8,7 +8,7 @@ import {
   reconstructRounds,
   SCORING_WEIGHTS,
   type TelemetryEventInput,
-} from "../src/scoring.js";
+} from "#src/scoring";
 
 describe("Task P1.7 — Scoring and Result Engine", () => {
   describe("Task 1 — Round Reconstruction & Anomaly Resolution", () => {

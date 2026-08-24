@@ -3,8 +3,8 @@ import { validateContentPack } from "@mindkid/game-engine";
 import type { AccessTier } from "@mindkid/shared";
 import { and, eq } from "drizzle-orm";
 import { createError, defineEventHandler, getRouterParam, readBody } from "h3";
-import { requireManagerSession } from "../../../../utils/admin-auth-runtime.js";
-import { syncContentAssetRefs } from "../../../../utils/asset-refs.js";
+import { requireManagerSession } from "#server/utils/admin-auth-runtime";
+import { syncContentAssetRefs } from "#server/utils/asset-refs";
 
 function buildLevelUpdates(
   body: Record<string, unknown>

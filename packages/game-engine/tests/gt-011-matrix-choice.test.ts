@@ -1,10 +1,10 @@
 import { describe, expect, it } from "vitest";
-import { GT011_FIXTURES, GT011Session } from "../src/index.js";
-import { colMatches, rowMatches } from "../src/templates/GT-011/matrix-rule.js";
+import { GT011_FIXTURES, GT011Session } from "#src/index";
+import { colMatches, rowMatches } from "#src/templates/GT-011/matrix-rule";
 import GT011Template, {
   GT011ContentSchema,
   GT011DifficultySchema,
-} from "../src/templates/GT-011/template.js";
+} from "#src/templates/GT-011/template";
 
 const [LATIN_3X3, GRID_2X2, ROTATION] = GT011_FIXTURES;
 

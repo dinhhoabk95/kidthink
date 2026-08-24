@@ -4,7 +4,7 @@ import { defineEventHandler } from "h3";
 import {
   getParentGateSecret,
   requireWebUserSession,
-} from "../../../utils/auth-runtime.js";
+} from "#server/utils/auth-runtime";
 
 export default defineEventHandler(async (event) => {
   await requireWebUserSession(event);

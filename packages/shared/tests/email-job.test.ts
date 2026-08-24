@@ -1,7 +1,7 @@
 import fs from "node:fs";
 import { beforeEach, describe, expect, it } from "vitest";
-import { clearExecutedJobIds, runSendEmail } from "../src/email-job.js";
-import { LocalFileEmailAdapter } from "../src/email-sender.js";
+import { clearExecutedJobIds, runSendEmail } from "#src/email-job";
+import { LocalFileEmailAdapter } from "#src/email-sender";
 
 describe("Job email:send Runner (Task 4 / BR-NOT-04..05)", () => {
   const testDir = ".backups/test-email-job";

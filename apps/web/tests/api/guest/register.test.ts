@@ -5,7 +5,7 @@ import { describe, expect, it } from "vitest";
 describe("Task 1 — POST /api/guest/auth/users/register (BR-REG-01..10)", () => {
   it("registers a user with valid data and records consents, verification token, session (BR-REG-01, BR-REG-03, BR-REG-05)", async () => {
     const { default: handler } = await import(
-      "../../../server/api/guest/auth/users/register.post"
+      "#server/api/guest/auth/users/register.post"
     );
 
     const email = `parent-reg-${Date.now()}-${Math.floor(Math.random() * 10_000)}@example.com`;
@@ -61,7 +61,7 @@ describe("Task 1 — POST /api/guest/auth/users/register (BR-REG-01..10)", () =>
 
   it("rejects registration without terms or privacy checkboxes (BR-REG-02)", async () => {
     const { default: handler } = await import(
-      "../../../server/api/guest/auth/users/register.post"
+      "#server/api/guest/auth/users/register.post"
     );
 
     const event = {
@@ -83,7 +83,7 @@ describe("Task 1 — POST /api/guest/auth/users/register (BR-REG-01..10)", () =>
 
   it("rejects weak or common passwords (BR-REG-05)", async () => {
     const { default: handler } = await import(
-      "../../../server/api/guest/auth/users/register.post"
+      "#server/api/guest/auth/users/register.post"
     );
 
     const event = {
@@ -105,7 +105,7 @@ describe("Task 1 — POST /api/guest/auth/users/register (BR-REG-01..10)", () =>
 
   it("rejects duplicate email case-insensitively with 409 without leaking provider (BR-REG-07, BR-REG-10)", async () => {
     const { default: handler } = await import(
-      "../../../server/api/guest/auth/users/register.post"
+      "#server/api/guest/auth/users/register.post"
     );
 
     const email = `dupe-${Date.now()}-${Math.floor(Math.random() * 10_000)}@example.com`;

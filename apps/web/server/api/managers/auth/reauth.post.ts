@@ -6,9 +6,9 @@ import { z } from "zod";
 import {
   assertManagerRequestBodySize,
   requireManagerSession,
-} from "../../../utils/admin-auth-runtime.js";
+} from "#server/utils/admin-auth-runtime";
 
-import { markCurrentSessionReauthenticated } from "../../../utils/reauth-runtime.js";
+import { markCurrentSessionReauthenticated } from "#server/utils/reauth-runtime";
 
 const ReauthSchema = z
   .object({

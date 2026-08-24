@@ -2,8 +2,8 @@ import {
   type ActionResult,
   type GameAction,
   TemplateGameSession,
-} from "../../game-session.js";
-import { SelectionMechanic } from "../../mechanics/selection-mechanic.js";
+} from "#src/game-session";
+import { SelectionMechanic } from "#src/mechanics/selection-mechanic";
 import type { GT002Content, GT002Difficulty } from "./template.js";
 
 type TargetItem = GT002Content["items"][number];

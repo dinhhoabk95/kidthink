@@ -5,14 +5,14 @@ import {
   type ActionResult,
   type GameAction,
   TemplateGameSession,
-} from "../../game-session.js";
+} from "#src/game-session";
 import {
   type BalanceState,
   computeTiltAngle,
   getBalanceState,
   sumWeights,
   type WeightedItem,
-} from "../../systems/balance-system.js";
+} from "#src/systems/balance-system";
 import type { GT014Content, GT014Difficulty } from "./template.js";
 
 export class BalanceScaleSession extends TemplateGameSession<

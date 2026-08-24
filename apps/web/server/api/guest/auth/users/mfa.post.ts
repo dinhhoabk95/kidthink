@@ -7,7 +7,6 @@ import {
   MfaChallengeService,
   verifyTotpCode,
 } from "@mindkid/auth";
-import { requireEnv } from "@mindkid/config";
 import {
   getAppSql,
   getOwnerDb,
@@ -21,9 +20,7 @@ import { defineEventHandler, readBody } from "h3";
 import { z } from "zod";
 import { setUserSession } from "#imports";
 
-function mfaSecretKey(): string {
-  return requireEnv("MFA_ENCRYPTION_KEY");
-}
+import { getMfaEncryptionKey } from "#server/utils/admin-auth-runtime";
 
 const MfaSchema = z
   .object({
@@ -35,8 +32,7 @@ const MfaSchema = z
 async function verifyUserMfa(
   db: ReturnType<typeof getOwnerDb>,
   userId: number,
-  code: string,
-  encryptionSecret: string
+  code: string
 ): Promise<{ verified: boolean; recoveryCodeId: number | null }> {
   const [mfaSetting] = await db
     .select()
@@ -52,13 +48,14 @@ async function verifyUserMfa(
     try {
       const secret = decryptTotpSecret(
         mfaSetting.secretEncrypted,
-        encryptionSecret
+        getMfaEncryptionKey()
       );
       if (verifyTotpCode(code, secret)) {
         return { verified: true, recoveryCodeId: null };
       }
     } catch {
-      // Ignore
+      // BR-MFA-13: decryption failure is a system error, not a wrong code
+      throw appError("MFA_SECRET_CORRUPTED");
     }
   }
 
@@ -108,7 +105,7 @@ export default defineEventHandler(async (event) => {
     throw appError("INVALID_CREDENTIALS");
   }
 
-  const mfaResult = await verifyUserMfa(db, user.id, code, mfaSecretKey());
+  const mfaResult = await verifyUserMfa(db, user.id, code);
 
   if (!mfaResult.verified) {
     throw appError("INVALID_CREDENTIALS");

@@ -1,9 +1,9 @@
-import { describe, expect, it } from "vitest";
 import {
   notificationDeliveries,
   notificationStatusEnum,
   notifications,
-} from "../../db/src/schema/ops.ts";
+} from "@mindkid/db";
+import { describe, expect, it } from "vitest";
 
 describe("Notification Schema & Invariants (Task 1 / BR-NOT-01..08)", () => {
   it("notificationStatusEnum contains 'suppressed'", () => {

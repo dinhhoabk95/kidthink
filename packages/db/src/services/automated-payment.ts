@@ -6,13 +6,13 @@ import {
   PACKAGE_CATALOG,
 } from "@mindkid/shared";
 import { and, eq, inArray } from "drizzle-orm";
-import { getOwnerDb } from "../client.js";
+import { getOwnerDb } from "#src/client";
 import {
   entitlements,
   paymentOrders,
   paymentTransactions,
-} from "../schema/billing.js";
-import { auditLogs } from "../schema/ops.js";
+} from "#src/schema/billing";
+import { auditLogs } from "#src/schema/ops";
 
 export interface ProcessWebhookResult {
   success: boolean;

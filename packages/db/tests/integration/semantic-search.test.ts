@@ -1,20 +1,20 @@
 import { sql } from "drizzle-orm";
 import { beforeAll, describe, expect, it } from "vitest";
-import { getOwnerDb } from "../../src/client.ts";
+import { getOwnerDb } from "#src/client";
 import {
   aiCreditBalance,
   contentEmbeddings,
   gameLevels,
   gameTemplates,
   users,
-} from "../../src/index.ts";
-import { grantAiCredits } from "../../src/services/ai-credit.ts";
-import { assertNoEgressViolation } from "../../src/services/ai-egress-guard.ts";
+} from "#src/index";
+import { grantAiCredits } from "#src/services/ai-credit";
+import { assertNoEgressViolation } from "#src/services/ai-egress-guard";
 import {
   createDeterministicEmbedding,
   setSimulatedAiFailure,
-} from "../../src/services/ai-provider.ts";
-import { performSemanticSearch } from "../../src/services/semantic-search.ts";
+} from "#src/services/ai-provider";
+import { performSemanticSearch } from "#src/services/semantic-search";
 
 const PRIVACY_VIOLATION_REGEX = /Privacy violation/;
 

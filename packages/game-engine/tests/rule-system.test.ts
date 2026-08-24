@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { RuleSystem } from "../src/systems/rule-system.js";
+import { RuleSystem } from "#src/systems/rule-system";
 
 describe("RuleSystem (BR-TGB-08, BR-TGB-07)", () => {
   interface CardItem {

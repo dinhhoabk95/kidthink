@@ -1,6 +1,6 @@
+import { clearInMemoryBuckets } from "@mindkid/cache";
 import { beforeEach, describe, expect, it } from "vitest";
-import { clearInMemoryBuckets } from "../../cache/src/index.js";
-import { enforceTwoAxisRateLimit } from "../src/rate-limit-middleware.js";
+import { enforceTwoAxisRateLimit } from "#src/rate-limit-middleware";
 
 describe("Two-Axis Rate Limiter Middleware (Task 8 / BR-RTL-01..07)", () => {
   beforeEach(() => {

@@ -16,7 +16,7 @@ import {
   setResponseStatus,
 } from "h3";
 
-import { requireWebUserSession } from "../../../utils/auth-runtime.js";
+import { requireWebUserSession } from "#server/utils/auth-runtime";
 
 export type StageVisualStatus = "not_started" | "learning" | "stable";
 

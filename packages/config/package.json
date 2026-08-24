@@ -19,5 +19,10 @@
     "test": "vitest run",
     "typecheck": "tsc --noEmit",
     "gen:env-example": "node scripts/generate-env-example.ts"
+  },
+  "imports": {
+    "#src/*": "./src/*.ts",
+    "#tests/*": "./tests/*.ts",
+    "#scripts/*": "./scripts/*.ts"
   }
 }

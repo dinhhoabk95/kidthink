@@ -21,7 +21,7 @@ import {
 } from "drizzle-orm";
 import { defineEventHandler, getQuery } from "h3";
 import { z } from "zod";
-import { requireSuperAdminSession } from "../../../utils/admin-auth-runtime.js";
+import { requireSuperAdminSession } from "#server/utils/admin-auth-runtime";
 
 /**
  * Escapes PostgreSQL LIKE wildcard characters (% and _)

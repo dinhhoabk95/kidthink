@@ -5,7 +5,7 @@
  * Danh sách activities kiểu digital_game nối bài học vào các game level.
  */
 
-import type { ActivitySeed } from "../types.js";
+import type { ActivitySeed } from "#src/seed-content/types";
 
 interface DigitalGameDef {
   code: string;

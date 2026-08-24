@@ -11,7 +11,7 @@ validate_env_files() {
   local validator="${release_dir}/packages/config/scripts/validate-env-file.ts"
 
   if [ ! -d "${MK_ENV_DIR}" ]; then
-    log_error "Environment directory '${MK_ENV_DIR}' does not exist. Write the three files described in env-contract.md §7.3 first."
+    log_error "Environment directory '${MK_ENV_DIR}' does not exist. Write the web, admin and worker files described in env-contract.md §7.3 first."
     return 1
   fi
   if [ ! -f "${validator}" ]; then
@@ -24,7 +24,7 @@ validate_env_files() {
   fi
 
   local app env_file failed=0
-  for app in "${MK_APPS[@]}"; do
+  for app in "${MK_ENV_APPS[@]}"; do
     env_file="${MK_ENV_DIR}/${app}.env"
 
     if [ ! -f "${env_file}" ]; then

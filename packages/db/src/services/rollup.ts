@@ -1,15 +1,15 @@
 import { getDateIct } from "@mindkid/shared";
 import { and, count, eq, gte, isNotNull, lt, sql } from "drizzle-orm";
-import { getOwnerDb } from "../client.ts";
-import { entitlements } from "../schema/billing.ts";
-import { gameLevels } from "../schema/game.ts";
+import { getOwnerDb } from "#src/client";
+import { entitlements } from "#src/schema/billing";
+import { gameLevels } from "#src/schema/game";
 import {
   childDailyStats,
   levelDailyStats,
   playSessions,
   skillDailyStats,
-} from "../schema/play.ts";
-import { contentSkillMap } from "../schema/tagging.ts";
+} from "#src/schema/play";
+import { contentSkillMap } from "#src/schema/tagging";
 
 export interface RollupDailyResult {
   dateIct: string;

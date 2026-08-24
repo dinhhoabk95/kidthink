@@ -3,8 +3,8 @@ import { allowedTiers } from "@mindkid/shared";
 import { and, eq, gte, lte, sql } from "drizzle-orm";
 import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 import { z } from "zod";
-import { activities, lessons } from "../schema/content.ts";
-import { gameLevels, gameTemplates } from "../schema/game.ts";
+import { activities, lessons } from "#src/schema/content";
+import { gameLevels, gameTemplates } from "#src/schema/game";
 
 export type SearchViewerRole = "guest" | "user" | "manager";
 
@@ -521,7 +521,7 @@ export async function searchContentPublished(
   query: string,
   options?: { limit?: number; userTier?: AccessTier }
 ) {
-  const db = (await import("../client.ts")).getDb();
+  const db = (await import("#src/client")).getDb();
   const limit = options?.limit ?? 10;
   const userTier = options?.userTier ?? "free";
   const gameRes = await searchGameLevels(

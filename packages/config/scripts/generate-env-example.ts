@@ -8,8 +8,8 @@
  *   node packages/config/scripts/generate-env-example.ts
  */
 import { writeFileSync } from "node:fs";
-import { ENV_REGISTRY, type EnvVarDef } from "../src/env-contract.ts";
-import { repoPath } from "../src/repo-paths.ts";
+import { ENV_REGISTRY, type EnvVarDef } from "#src/env-contract";
+import { repoPath } from "#src/repo-paths";
 
 function getUrlExample(name: string): string {
   if (name === "DATABASE_URL") {

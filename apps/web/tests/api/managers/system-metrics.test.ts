@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import handler from "../../../server/api/managers/system/metrics.get.js";
+import handler from "#server/api/managers/system/metrics.get";
 
 function mockEvent(
   managerRole?: "super_admin" | "content_reviewer",

@@ -1,4 +1,4 @@
-import type { EmojiEntry } from "../types";
+import type { EmojiEntry } from "#src/types";
 
 /** Động vật dưới nước — ~20 emoji */
 export const ANIMAL_WATER_EMOJIS: EmojiEntry[] = [

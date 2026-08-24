@@ -1,4 +1,4 @@
-import type { EmojiEntry } from "../types";
+import type { EmojiEntry } from "#src/types";
 
 /** Thời gian — ~20 emoji */
 export const TIME_EMOJIS: EmojiEntry[] = [

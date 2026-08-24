@@ -6,7 +6,7 @@ import {
   FORBIDDEN_PREDICTIVE_WORDS,
   trendDirectionDescription,
   validateReportLanguage,
-} from "../src/index.js";
+} from "#src/index";
 
 describe("P3.7 Report Language Gate & Trend Helpers (BR-ARP-01, BR-ARP-04, BR-ARP-05, BR-ARP-07)", () => {
   describe("Language Gate Negative Fixtures (BR-ARP-01, BR-ARP-05, BR-ARP-07)", () => {

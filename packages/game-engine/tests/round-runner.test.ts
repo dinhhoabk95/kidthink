@@ -5,8 +5,8 @@ import {
   type ActionResult,
   BaseGameSession,
   type GameAction,
-} from "../src/game-session";
-import { type RoundConfig, RoundRunner } from "../src/round-runner";
+} from "#src/game-session";
+import { type RoundConfig, RoundRunner } from "#src/round-runner";
 
 class MockSession extends BaseGameSession {
   private won = false;

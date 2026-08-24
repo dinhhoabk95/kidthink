@@ -1,10 +1,10 @@
 import { isValidRef, searchEmoji } from "@mindkid/emoji";
 import { describe, expect, it } from "vitest";
-import { getOwnerDb } from "../../src/client.ts";
+import { getOwnerDb } from "#src/client";
 import {
   hasSkinToneModifier,
   seedEmojiMasterData,
-} from "../../src/seed-master/emoji.ts";
+} from "#src/seed-master/emoji";
 
 describe("Emoji Master Seeder & Invariants (BR-EMJ-01..10)", () => {
   it("Ca âm BR-EMJ-09: hasSkinToneModifier detects skin tone glyphs", () => {

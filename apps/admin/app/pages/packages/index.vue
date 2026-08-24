@@ -292,16 +292,16 @@
 
 <script lang="ts" setup>
   import { computed, onMounted, ref } from "vue";
-  import { definePageMeta, useUserSession } from "#imports";
-  import ForbiddenState from "../../components/forbidden-state.vue";
-  import LoadingState from "../../components/loading-state.vue";
-  import type { ManagerRole } from "../../composables/nav-config.js";
+  import { definePageMeta } from "#imports";
+  import ForbiddenState from "~/components/forbidden-state.vue";
+  import LoadingState from "~/components/loading-state.vue";
+  import type { ManagerRole } from "~/composables/nav-config";
 
   definePageMeta({
     layout: "manager",
   });
 
-  const { user } = useUserSession();
+  const { user } = useAdminAuth();
   const isSuperAdmin = computed(() => {
     const role = (user.value as { role?: ManagerRole } | null)?.role;
     return role === "super_admin";
@@ -356,7 +356,7 @@
     errorMessage.value = null;
 
     try {
-      const data = await globalThis.$fetch<{ packages: PackageItem[] }>(
+      const data = await apiFetch<{ packages: PackageItem[] }>(
         "/api/managers/packages"
       );
       packagesList.value = data.packages;
@@ -377,7 +377,7 @@
     subscribersList.value = [];
 
     try {
-      const data = await globalThis.$fetch<{ subscribers: SubscriberItem[] }>(
+      const data = await apiFetch<{ subscribers: SubscriberItem[] }>(
         `/api/managers/packages/${code}/subscribers?limit=100`
       );
       subscribersList.value = data.subscribers;

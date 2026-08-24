@@ -1,9 +1,9 @@
 import { ENTITLEMENT_KEYS, PACKAGE_CATALOG } from "@mindkid/shared";
 import { count, inArray } from "drizzle-orm";
 import { describe, expect, it } from "vitest";
-import { getOwnerDb } from "../../src/index.ts";
-import { entitlementKeys, packages } from "../../src/schema/billing.ts";
-import { seed } from "../../src/seed.ts";
+import { getOwnerDb } from "#src/index";
+import { entitlementKeys, packages } from "#src/schema/billing";
+import { seed } from "#src/seed";
 
 describe("BR-ENT-03 & BR-PKG-04 & BR-PKG-05: Seed Integration & Two-way Matching", () => {
   it("seed() is idempotent and matches registry exactly (BR-ENT-03)", async () => {

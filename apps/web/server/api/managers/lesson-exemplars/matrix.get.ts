@@ -1,6 +1,6 @@
 import { LessonExemplarService } from "@mindkid/db";
 import { defineEventHandler } from "h3";
-import { requireSuperAdminSession } from "../../../utils/admin-auth-runtime.js";
+import { requireSuperAdminSession } from "#server/utils/admin-auth-runtime";
 
 export default defineEventHandler(async (event) => {
   requireSuperAdminSession(event);

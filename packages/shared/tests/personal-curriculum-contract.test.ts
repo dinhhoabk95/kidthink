@@ -5,7 +5,7 @@ import {
   personalCurriculumItemInputSchema,
   resolvePersonalCurriculumNextStep,
   updatePersonalCurriculumMetaSchema,
-} from "../src/personal-curriculum.ts";
+} from "#src/personal-curriculum";
 
 describe("Personal Curriculum Contract & Business Rules Tests (BR-PCU-01..08)", () => {
   it("Scenario: BR-PCU-01 — rejects invalid item inputs with negative entity IDs or invalid weeks", () => {

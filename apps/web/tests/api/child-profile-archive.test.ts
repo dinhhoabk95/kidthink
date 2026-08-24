@@ -1,8 +1,8 @@
 import { describe, expect, it } from "vitest";
-import archiveHandler from "../../server/api/users/children/[uuid]/archive.post";
-import cancelDeleteHandler from "../../server/api/users/children/[uuid]/delete/cancel.post";
-import deleteChildHandler from "../../server/api/users/children/[uuid]/index.delete";
-import restoreHandler from "../../server/api/users/children/[uuid]/restore.post";
+import archiveHandler from "#server/api/users/children/[uuid]/archive.post";
+import cancelDeleteHandler from "#server/api/users/children/[uuid]/delete/cancel.post";
+import deleteChildHandler from "#server/api/users/children/[uuid]/index.delete";
+import restoreHandler from "#server/api/users/children/[uuid]/restore.post";
 
 function mockEvent(
   method: string,

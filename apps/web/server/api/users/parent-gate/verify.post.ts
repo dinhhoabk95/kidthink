@@ -6,7 +6,7 @@ import {
   assertRequestBodySize,
   getParentGateSecret,
   requireWebUserSession,
-} from "../../../utils/auth-runtime.js";
+} from "#server/utils/auth-runtime";
 
 const ParentGateVerifySchema = z
   .object({

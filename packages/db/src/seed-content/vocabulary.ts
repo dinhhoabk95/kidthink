@@ -1,4 +1,4 @@
-import { SEED_CONTENT_TAGS } from "../seed-master/content-tags.js";
+import { SEED_CONTENT_TAGS } from "#src/seed-master/content-tags";
 
 export const PEDAGOGICAL_AXIS_REQUIREMENT = {
   what: true,

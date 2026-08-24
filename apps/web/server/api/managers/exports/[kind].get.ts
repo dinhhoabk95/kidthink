@@ -13,7 +13,7 @@ import {
 import { getPrivateSignedUrl, uploadPrivateAsset } from "@mindkid/storage";
 import { desc, eq, sql } from "drizzle-orm";
 import { createError, defineEventHandler, getQuery, getRouterParam } from "h3";
-import { requireManagerSession } from "../../../utils/admin-auth-runtime.js";
+import { requireManagerSession } from "#server/utils/admin-auth-runtime";
 
 const CLOSED_EXPORT_KINDS = [
   "revenue",

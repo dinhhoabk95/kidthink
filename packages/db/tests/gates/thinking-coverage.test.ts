@@ -98,9 +98,7 @@ describe("Task #94 — Thinking Coverage Matrix (BR-TCM-01..11)", () => {
   });
 
   it("BR-TCM-01: trục mechanic khớp từng cái một với registry template", async () => {
-    const { ALL_TEMPLATES } = await import(
-      "../../../game-engine/src/generated/template-registry.ts"
-    );
+    const { ALL_TEMPLATES } = await import("@mindkid/game-engine");
     const fromRegistry = new Set(
       Object.values(ALL_TEMPLATES).map((t) => t.mechanic)
     );

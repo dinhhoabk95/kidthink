@@ -14,7 +14,7 @@ import {
   PAYMENT_REPLAY_WINDOW_SECONDS,
   RecurringConsentSnapshotSchema,
   verifyPaymentWebhookSignature,
-} from "../src/index.js";
+} from "#src/index";
 
 describe("P5.0 Web Scale Contracts", () => {
   describe("BR-APM: Automated Payment & Webhook Verification", () => {

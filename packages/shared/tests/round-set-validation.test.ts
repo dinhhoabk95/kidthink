@@ -3,7 +3,7 @@ import {
   type RoundInput,
   type RoundSetInput,
   validateRoundSet,
-} from "../src/round-set-validation.js";
+} from "#src/round-set-validation";
 
 function makeRound(overrides: Partial<RoundInput> = {}): RoundInput {
   return {

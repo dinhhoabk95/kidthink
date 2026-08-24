@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { getDateIct, parseDateIct } from "../src/date-ict.ts";
+import { getDateIct, parseDateIct } from "#src/date-ict";
 
 describe("BR-TLM-08 & D-GB: ICT Date Boundary Helper", () => {
   it("formats dates into YYYY-MM-DD in UTC+7 (ICT)", () => {

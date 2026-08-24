@@ -3,8 +3,8 @@ import { join } from "node:path";
 import {
   discoverTemplates,
   generateAllTemplateArtifacts,
-} from "../../scripts/gen-templates-lib.ts";
-import { LAYOUT_IDS } from "../../src/layout/registry.ts";
+} from "#scripts/gen-templates-lib";
+import { LAYOUT_IDS } from "#src/layout/registry";
 
 export interface TemplateLintViolation {
   readonly templateCode?: string;

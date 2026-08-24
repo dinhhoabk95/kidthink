@@ -2,7 +2,7 @@ import { errorLogs, getOwnerDb, writeAudit } from "@mindkid/db";
 import { eq } from "drizzle-orm";
 import { createError, defineEventHandler, getRouterParam, readBody } from "h3";
 import { z } from "zod";
-import { requireManagerSession } from "../../../utils/admin-auth-runtime.js";
+import { requireManagerSession } from "#server/utils/admin-auth-runtime";
 
 const patchErrorLogSchema = z.object({
   status: z

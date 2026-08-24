@@ -2,7 +2,7 @@ import { LessonExemplarService } from "@mindkid/db";
 import { createError, defineEventHandler, readBody } from "h3";
 
 import { z } from "zod";
-import { requireSuperAdminSession } from "../../../utils/admin-auth-runtime.js";
+import { requireSuperAdminSession } from "#server/utils/admin-auth-runtime";
 
 const approveBodySchema = z.object({
   lesson_id: z.number().int().positive(),

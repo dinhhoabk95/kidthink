@@ -3,7 +3,10 @@ import {
   decryptFcmToken,
   encryptFcmToken,
   generateTokenFingerprint,
-} from "../src/fcm-crypto";
+} from "#src/fcm-crypto";
+
+process.env.NUXT_NOTIFICATION_TOKEN_ENCRYPTION_KEY =
+  "test-notification-token-key-0123456789ab";
 
 describe("FCM Cryptography Helper Tests", () => {
   it("BR-BPS-04: Encrypts token and decrypts back to original value", () => {
@@ -44,7 +47,7 @@ describe("FCM Cryptography Helper Tests", () => {
       delete process.env.NUXT_NOTIFICATION_TOKEN_ENCRYPTION_KEY;
 
       expect(() => encryptFcmToken("sample_token")).toThrow(
-        "MISSING_FCM_ENCRYPTION_SECRET"
+        "NUXT_NOTIFICATION_TOKEN_ENCRYPTION_KEY"
       );
     } finally {
       process.env.NODE_ENV = origEnv;

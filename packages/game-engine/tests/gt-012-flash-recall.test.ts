@@ -3,13 +3,13 @@ import {
   SAMPLE_LEVEL_1,
   SAMPLE_LEVEL_2,
   SAMPLE_LEVEL_3,
-} from "../src/templates/GT-012/fixtures.js";
-import { FlashRecallSession } from "../src/templates/GT-012/session.js";
+} from "#src/templates/GT-012/fixtures";
+import { FlashRecallSession } from "#src/templates/GT-012/session";
 import template, {
   GT012BaseSchema,
   GT012ContentSchema,
   GT012DifficultySchema,
-} from "../src/templates/GT-012/template.js";
+} from "#src/templates/GT-012/template";
 
 const RE_MATCH_COUNT = /khớp số lượng vật thể/;
 

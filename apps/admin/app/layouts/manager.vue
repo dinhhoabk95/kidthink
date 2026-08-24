@@ -138,15 +138,15 @@
 <script lang="ts" setup>
   import { computed } from "vue";
   import { useRoute, useRouter } from "vue-router";
-  import { useUserSession } from "#imports";
   import {
     MANAGER_NAV_ITEMS,
     type ManagerRole,
-  } from "../composables/nav-config.js";
+  } from "~/composables/nav-config";
 
   const route = useRoute();
   const router = useRouter();
-  const { user, clear } = useUserSession();
+  const { user, clear, fetchSession } = useAdminAuth();
+  await fetchSession();
 
   interface ManagerSessionUser {
     role?: string;

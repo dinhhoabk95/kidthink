@@ -5,7 +5,7 @@ import {
   PACKAGE_CATALOG,
   PENDING_PRICE_VND,
   QUOTA_KEYS,
-} from "../src/entitlement-catalog.js";
+} from "#src/entitlement-catalog";
 
 describe("Task 2 & 4: Entitlement and Catalog Registry (BR-ENT-01, BR-ENT-03, BR-PKG-04, BR-PKG-05, BR-PKG-08)", () => {
   it("BR-ENT-01 & BR-ENT-03: ENTITLEMENT_KEYS has exactly 16 keys, 8 MVP and 8 pre-declared", () => {

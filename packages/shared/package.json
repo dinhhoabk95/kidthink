@@ -15,12 +15,18 @@
     "@mindkid/emoji": "workspace:*",
     "@mindkid/game-engine": "workspace:*",
     "@mindkid/moderation": "workspace:*",
-    "zod": "catalog:"
+    "zod": "catalog:",
+    "@mindkid/cache": "workspace:*"
   },
   "devDependencies": {
     "@mindkid/config": "workspace:*",
     "fast-check": "catalog:",
     "typescript": "catalog:",
-    "vitest": "catalog:"
+    "vitest": "catalog:",
+    "@mindkid/db": "workspace:*"
+  },
+  "imports": {
+    "#src/*": "./src/*.ts",
+    "#tests/*": "./tests/*.ts"
   }
 }

@@ -4,7 +4,7 @@ import {
   MfaChallengeService,
   RedisSessionStore,
   sha256,
-} from "../src";
+} from "#src/index";
 
 describe("T1 Opaque Redis Session Foundation (BR-AUT-25 .. BR-AUT-38)", () => {
   it("creates a 1-hour opaque session without rememberMe by default (BR-AUT-25, BR-AUT-26, BR-AUT-27)", async () => {

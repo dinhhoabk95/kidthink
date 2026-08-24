@@ -1,9 +1,9 @@
 import { createLessonPlan } from "@mindkid/db";
 import { CreateLessonPlanSchema } from "@mindkid/shared";
 import { defineEventHandler, readBody, setResponseStatus } from "h3";
-import { throwValidationError } from "../../../utils/api-error.js";
-import { requireWebUserSession } from "../../../utils/auth-runtime.js";
-import { resolveUserActiveEntitlements } from "../../../utils/entitlements-runtime.js";
+import { throwValidationError } from "#server/utils/api-error";
+import { requireWebUserSession } from "#server/utils/auth-runtime";
+import { resolveUserActiveEntitlements } from "#server/utils/entitlements-runtime";
 
 export default defineEventHandler(async (event) => {
   const user = await requireWebUserSession(event);

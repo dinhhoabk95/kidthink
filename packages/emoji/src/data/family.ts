@@ -1,4 +1,4 @@
-import type { EmojiEntry } from "../types";
+import type { EmojiEntry } from "#src/types";
 
 /** Gia đình — ~30 emoji */
 export const FAMILY_EMOJIS: EmojiEntry[] = [

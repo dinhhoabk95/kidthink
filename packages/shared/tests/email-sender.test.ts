@@ -1,7 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
-import { LocalFileEmailAdapter } from "../src/email-sender.js";
+import { LocalFileEmailAdapter } from "#src/email-sender";
 
 describe("LocalFileEmailAdapter (Task 3 / BR-NOT-02)", () => {
   const testDir = ".backups/test-emails";

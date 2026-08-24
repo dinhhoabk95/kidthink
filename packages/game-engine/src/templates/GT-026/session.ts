@@ -5,11 +5,11 @@ import {
   type ActionResult,
   type GameAction,
   TemplateGameSession,
-} from "../../game-session.js";
+} from "#src/game-session";
 import {
   InhibitionSystem,
   type TrialItem,
-} from "../../systems/inhibition-system.js";
+} from "#src/systems/inhibition-system";
 import type { GT026Content, GT026Difficulty } from "./template.js";
 
 export class GT026Session extends TemplateGameSession<

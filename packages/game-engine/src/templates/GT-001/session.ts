@@ -2,10 +2,10 @@ import {
   type ActionResult,
   type GameAction,
   TemplateGameSession,
-} from "../../game-session.js";
-import { SelectionMechanic } from "../../mechanics/selection-mechanic.js";
-import { deriveStream } from "../../rng/mulberry32.js";
-import { shuffle } from "../../rng/shuffle.js";
+} from "#src/game-session";
+import { SelectionMechanic } from "#src/mechanics/selection-mechanic";
+import { deriveStream } from "#src/rng/mulberry32";
+import { shuffle } from "#src/rng/shuffle";
 import type { GT001Content, GT001Difficulty } from "./template.js";
 
 type OptionItem = GT001Content["options"][number];

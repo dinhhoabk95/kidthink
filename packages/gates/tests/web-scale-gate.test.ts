@@ -3,7 +3,7 @@ import {
   ACCEPTED_WEB_SCALE_MANIFEST,
   validateWebScaleManifest,
   type WebScaleManifestEntry,
-} from "../src/check-web-scale-gate-lib.ts";
+} from "#src/check-web-scale-gate-lib";
 
 const BASE_ENTRY = ACCEPTED_WEB_SCALE_MANIFEST[0];
 

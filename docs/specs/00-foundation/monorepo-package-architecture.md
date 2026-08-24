@@ -28,7 +28,8 @@ auth, cache hay queue (những spec đó vẫn sở hữu ở
 [`rate-limiting.md`](../01-platform/rate-limiting.md),
 [`job-queue.md`](../01-platform/job-queue.md)).
 
-Ba app (`web`, `admin`, `worker`) dùng chung cache, queue, và một phần auth. Không có package
+Hai runtime app (`web`, `worker`) và một static admin SPA dùng chung cache, queue, và phần auth
+do `web` sở hữu. Không có package
 driver, ba app tự import thư viện nền theo cách riêng, và đổi thư viện sau này thành sửa ba
 chỗ thay vì một.
 
@@ -70,7 +71,7 @@ chỗ thay vì một.
 | Nhánh | Điều kiện | Hành vi |
 |---|---|---|
 | Nuxt module cấu hình thuần (SEO, sitemap, robots, OG-image) | Chỉ khai trong `nuxt.config`, không có call site logic dùng lại ở app khác | **Không** bọc driver — cấu hình trực tiếp trong `apps/web/nuxt.config.ts` |
-| Nuxt auth module cần auto-import/composable của từng app | Module phải đăng ký trong Nuxt app để sinh integration runtime | Khai `nuxt-auth-utils` trực tiếp ở hai app; sealed cookie chỉ giữ locator, còn Redis session/remember, CSRF và domain type đi qua `@mindkid/auth` |
+| Nuxt auth module cần auto-import/composable của từng app | Module phải đăng ký trong Nuxt app để sinh integration runtime | Chỉ khai `nuxt-auth-utils` trong `apps/web`; sealed cookie chỉ giữ locator, còn Redis session/remember, CSRF và domain type đi qua `@mindkid/auth`. Admin static dùng API client |
 | Capability dùng ở đúng 1 app hiện tại nhưng roadmap ghi sẽ dùng ở app thứ 2 | Vd `packages/storage` (S3) hiện chỉ `apps/admin` dùng, `apps/web` sẽ dùng ở P2 | Tách package **ngay** — tách sau khi có app thứ hai là refactor lại toàn bộ call site |
 | Driver cần thay thư viện nền nhưng interface cũ không còn diễn tả được API mới | Vd chuyển từ client kiểu ioredis sang client kiểu khác hẳn (mảng thay vì spread arg) | Giữ nguyên interface hướng ra ngoài package (§4 bước 2); viết adapter bên trong driver — không đổi chữ ký hàm ở mọi call site |
 | Package driver phình quá 800 dòng | Kiểm tra định kỳ | Tách theo sub-module trong cùng package (`src/session.ts`, `src/oauth.ts`), **không** tách thành package mới nếu vẫn phục vụ một capability |
@@ -86,6 +87,7 @@ chỗ thay vì một.
 | `BR-MPA-05` | Package mới bắt buộc có **một** capability rõ trong tên — áp dụng luật "một outcome một file" của mục 1 của [`CONVENTIONS.md`](../CONVENTIONS.md) cho package | Package gộp nhiều capability (`utils`, `common`) là nơi code chết tích tụ |
 | `BR-MPA-06` | `packages/*` **NEVER** phụ thuộc ngược vào `apps/*`; cổng tự động kiểm bằng dependency-graph check | Phụ thuộc ngược tạo chu trình, packages không còn tái dùng được độc lập |
 | `BR-MPA-07` | Hai `apps/*` **NEVER** phụ thuộc thẳng vào nhau — chia sẻ luôn qua `packages/*` | `apps/admin` gọi thẳng code của `apps/web` là dấu hiệu thiếu một package |
+| `BR-MPA-08` | Cấm parent-relative (`../`) module specifier, cấm relative import xuyên package, bắt buộc dùng đúng alias token canonical của từng cây (`~` cho app, `#server` cho web nitro, `#src`/`#tests`/`#scripts` cho `packages/*`) | Import tương đối sâu làm vỡ liên kết khi di chuyển file và che giấu cấu trúc module |
 
 ## 7. Data
 
@@ -100,13 +102,13 @@ tiếp `jose`; mọi first-party auth credential đều opaque.
 
 | Capability | Package driver | Thư viện nền | Spec sở hữu hành vi |
 |---|---|---|---|
-| Auth session + OAuth (cả `apps/web` và `apps/admin`) | `packages/auth` cho opaque session/remember/challenge, Redis adapter và CSRF/domain guard; Nuxt module khai trực tiếp mỗi app | `ioredis` client riêng fail-closed + `nuxt-auth-utils` (sealed locator/projection) + `otpauth` + `openid-client`; không `jose` | [`auth-tokens-sessions.md`](../01-platform/auth-tokens-sessions.md), [`oauth-provider-registry.md`](../01-platform/oauth-provider-registry.md) |
+| Auth session + OAuth (`apps/web` sở hữu API) | `packages/auth` cho opaque session/remember/challenge, Redis adapter và CSRF/domain guard; admin chỉ gọi API | `ioredis` client riêng fail-closed + `nuxt-auth-utils` (sealed locator/projection) + `otpauth` + `openid-client`; không `jose` | [`auth-tokens-sessions.md`](../01-platform/auth-tokens-sessions.md), [`oauth-provider-registry.md`](../01-platform/oauth-provider-registry.md) |
 | Cache + rate limit | `packages/cache` | Cache: `unstorage` driver `redis`; rate limit: `rate-limiter-flexible`; mỗi adapter giữ client **`ioredis`** process-long, không tạo theo request | [`rate-limiting.md`](../01-platform/rate-limiting.md) |
 | Queue | `packages/queue` (định nghĩa job + producer) · `apps/worker` (consumer, Nitro plugin) | BullMQ, connection object thường (tự dựng **`ioredis`** nội bộ) | [`job-queue.md`](../01-platform/job-queue.md) |
 | Payment QR | `packages/payment` (nếu ≥2 app cần) hoặc inline `apps/web/server` (nếu chỉ web) | Gọi API `img.vietqr.io`, không thư viện QR local | [`payment-order-create.md`](../03-account/payment-order-create.md) |
 | Email | `packages/notification` | `nodemailer` SMTP transport tới AWS SES + `mjml` renderer | [`notification-service.md`](../01-platform/notification-service.md) |
 | Browser push (P5) | `packages/notification` cho server driver; plugin/service worker trong `apps/web` | `firebase-admin` (server) + `firebase` (web); chỉ cài khi Task #84 bắt đầu | [`browser-push.md`](../01-platform/browser-push.md) |
-| HTTP hardening | **Không cần driver** — cấu hình tại từng Nuxt app | `nuxt-security`; bật header/CSP/CORS/request-size, tắt limiter/CSRF tích hợp | [`security-checklist.md`](../08-quality/security-checklist.md) |
+| HTTP hardening | **Không cần driver** — cấu hình tại web và Nginx | `nuxt-security` ở web; Nginx header/static ở admin, tắt limiter/CSRF tích hợp | [`security-checklist.md`](../08-quality/security-checklist.md) |
 | Storage ảnh | `packages/storage` | S3 SDK + `sharp` (xử lý server) | [`image-storage.md`](../01-platform/image-storage.md) |
 | Error tracking | **Không cần driver riêng** — SDK gắn ở entry mỗi app | `@sentry/nuxt` | [`monitoring-and-alerting.md`](../01-platform/monitoring-and-alerting.md) |
 | Logging | `packages/config` (factory logger dùng chung) hoặc `packages/observability` nếu tách | `pino` + `pino-http` (Nitro plugin) | [`monitoring-and-alerting.md`](../01-platform/monitoring-and-alerting.md) |
@@ -138,7 +140,10 @@ duyệt thanh toán.
 |---|---|
 | `apps/worker` import `bullmq` trực tiếp để enqueue | `apps/worker` chỉ **consume**; enqueue đi qua `packages/queue` từ `apps/web` |
 | `apps/web/server/api/*` gọi `new Redis(...)` (`ioredis`/`iovalkey`) để cache thủ công | Gọi `packages/cache` — package đó là nơi duy nhất khởi tạo client Valkey |
-| `apps/admin` export type `#auth-utils` hoặc `ioredis` như domain contract | `#auth-utils` chỉ augmentation trong app; runtime import type domain (`AuthenticatedManager`) và Redis API từ `@mindkid/auth` |
+| `apps/admin` import server package, `ioredis`, `@mindkid/db` hoặc session module | Admin là static SPA; chỉ dùng API client và type/UI package, không chứa auth authority hay DB access |
+| `apps/web/server/api/*` import `../../../../../utils/auth-runtime` | Dùng `#server/utils/auth-runtime` |
+| `packages/shared` import `../../cache/src/index` | Dùng `@mindkid/cache` |
+| `apps/admin` import `@/components/...` song song `~/components/...` | Chỉ dùng `~/components/...` làm alias canonical |
 
 ## 8. API contract
 
@@ -149,6 +154,7 @@ Không sở hữu route. Ràng buộc áp lên **bề mặt export của mọi p
 | Export | Chỉ qua `src/index.ts`, không import path sâu (`@mindkid/cache/internal/*`) từ ngoài package |
 | Naming | Hàm/type theo domain dự án (tiếng Anh, `camelCase`/`PascalCase`) — không theo tên API thư viện nền |
 | Side effect lúc import | Không kết nối mạng khi module được import — khởi tạo lazy trong hàm gọi đầu tiên |
+| Import specifier | Không dùng `../` leo tầng; dùng alias token canonical của từng cây (`~` cho app, `#server` cho web nitro, `#src`/`#tests`/`#scripts` cho package, `@mindkid/*` cho cross-package) |
 
 Ví dụ mẫu — `packages/cache/src/index.ts`:
 
@@ -196,6 +202,13 @@ Scenario: BR-MPA-03 — đổi thư viện nền không đụng call site
 Scenario: BR-MPA-04 — module cấu hình thuần không bị ép bọc driver
   When rà soát packages/*
   Then không có package nào chỉ chứa lại cấu hình @nuxtjs/seo không có logic gì thêm
+
+Scenario: BR-MPA-08 — không dùng relative import leo tầng và dùng đúng alias canonical
+  When quét module specifier trong apps/ và packages/
+  Then không file nào chứa parent-relative specifier "../"
+  And không có relative import xuyên package
+  And apps/ chỉ dùng alias canonical ("~", "~~", "#server")
+  And packages/ chỉ dùng Node subpath imports ("#src/*", "#tests/*", "#scripts/*")
 ```
 
 ## 10. Boundaries
@@ -204,6 +217,7 @@ Scenario: BR-MPA-04 — module cấu hình thuần không bị ép bọc driver
 - Tách package khi capability dùng ở ≥ 2 app.
 - Export interface theo domain dự án, giấu thư viện nền sau `src/index.ts`.
 - Chạy dependency-graph check trong cổng tự động mỗi PR.
+- Dùng alias canonical của từng cây thay cho `../`.
 
 **Ask first**
 - Gộp hai package đã tách làm một.
@@ -214,11 +228,12 @@ Scenario: BR-MPA-04 — module cấu hình thuần không bị ép bọc driver
 - Import thư viện nền thẳng vào `apps/*` khi đã có driver cho nó.
 - Export type/instance của thư viện nền nguyên trạng ra ngoài package driver.
 - Để `packages/*` phụ thuộc vào `apps/*`, hoặc hai `apps/*` phụ thuộc thẳng vào nhau.
+- Dùng parent-relative import (`../`) hoặc relative import xuyên package thay cho alias canonical.
 
 ## 11. Open questions
 
 | # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
 |---|---|---|---|---|
 | ~~1~~ | ~~Dependency-graph check chạy bằng công cụ nào~~ **Đóng 2026-08-06 (`D-DI`)**: `dependency-cruiser ^18.1` — duy nhất hỗ trợ cấm thư viện ngoài cụ thể theo zone (`BR-MPA-01`), không chỉ graph nội bộ. Xem mục 7.1 của [`repo-bootstrap.md`](repo-bootstrap.md) | — | Đã đóng | D-DI |
-| ~~2~~ | ~~Tách `packages/auth-oauth`/`packages/auth-jwt`?~~ **Đóng 2026-08-09, sửa 2026-08-13 (`D-DJ`)**: giữ **một** `packages/auth` sở hữu opaque session/remember/challenge Redis adapter, CSRF và OAuth bridge. `nuxt-auth-utils` khai ở từng app nhưng chỉ sở hữu sealed locator/projection. Không có first-party JWT, không direct dependency `jose`, không phát sinh package auth thứ hai | — | Đã đóng | D-DJ |
+| ~~2~~ | ~~Tách `packages/auth-oauth`/`packages/auth-jwt`?~~ **Đóng 2026-08-09, sửa 2026-08-13 (`D-DJ`)**: giữ **một** `packages/auth` sở hữu opaque session/remember/challenge Redis adapter, CSRF và OAuth bridge. `nuxt-auth-utils` chỉ khai ở `apps/web`; admin static dùng API client. Không có first-party JWT, không direct dependency `jose`, không phát sinh package auth thứ hai | — | Đã đóng | D-DJ |
 | ~~3~~ | ~~Tách `packages/payment` và `packages/notification` ngay từ đầu hay inline~~ **Đóng 2026-08-06 (T9)**: **inline** tới khi `apps/admin` cần dùng lại. Tách sớm tạo package rỗng; inline trước rồi extract khi có 2 consumer | — | Đã đóng | D-X (T9) |

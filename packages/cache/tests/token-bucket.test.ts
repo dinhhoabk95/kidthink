@@ -3,7 +3,9 @@ import {
   checkRateLimit,
   clearInMemoryBuckets,
   hashRateLimitIdentifier,
-} from "../src/token-bucket.js";
+} from "#src/token-bucket";
+
+process.env.VALKEY_URL = "redis://localhost:6380";
 
 describe("Token Bucket Rate Limiter (Task 7 / BR-RTL-01)", () => {
   beforeEach(() => {

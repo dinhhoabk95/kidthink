@@ -30,7 +30,7 @@ describe("Task 4 — Password Recovery (BR-PWR-01..09)", () => {
       .returning();
 
     const { default: forgotHandler } = await import(
-      "../../../server/api/guest/auth/users/forgot-password.post"
+      "#server/api/guest/auth/users/forgot-password.post"
     );
 
     const event = {
@@ -103,7 +103,7 @@ describe("Task 4 — Password Recovery (BR-PWR-01..09)", () => {
     });
 
     const { default: resetHandler } = await import(
-      "../../../server/api/guest/auth/users/reset-password.post"
+      "#server/api/guest/auth/users/reset-password.post"
     );
 
     const event = {

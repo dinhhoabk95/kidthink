@@ -11,8 +11,8 @@ import {
 import {
   getManagerRemoteIp,
   requireSuperAdminSession,
-} from "../../../../utils/admin-auth-runtime.ts";
-import { throwValidationError } from "../../../../utils/api-error.js";
+} from "#server/utils/admin-auth-runtime";
+import { throwValidationError } from "#server/utils/api-error";
 
 export default defineEventHandler(async (event) => {
   const session = requireSuperAdminSession(event);

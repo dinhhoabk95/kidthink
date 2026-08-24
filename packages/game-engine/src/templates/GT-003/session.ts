@@ -2,8 +2,8 @@ import {
   type ActionResult,
   type GameAction,
   TemplateGameSession,
-} from "../../game-session.js";
-import { PlacementMechanic } from "../../mechanics/placement-mechanic.js";
+} from "#src/game-session";
+import { PlacementMechanic } from "#src/mechanics/placement-mechanic";
 import type { GT003Content, GT003Difficulty } from "./template.js";
 
 type DraggableItem = GT003Content["items"][number];

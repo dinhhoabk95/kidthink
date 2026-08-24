@@ -46,7 +46,7 @@
 
 <script lang="ts" setup>
   import { ref } from "vue";
-  import { usePwaInstall } from "../../composables/use-pwa-install.js";
+  import { usePwaInstall } from "~/composables/use-pwa-install";
 
   const props = withDefaults(
     defineProps<{

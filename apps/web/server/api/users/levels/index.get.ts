@@ -1,6 +1,6 @@
 import { getOwnerDb, searchGameLevels } from "@mindkid/db";
 import { defineEventHandler, getQuery, setHeader } from "h3";
-import { requireWebUserSession } from "../../../utils/auth-runtime.ts";
+import { requireWebUserSession } from "#server/utils/auth-runtime";
 
 export default defineEventHandler(async (event) => {
   let userPackage: string | undefined;

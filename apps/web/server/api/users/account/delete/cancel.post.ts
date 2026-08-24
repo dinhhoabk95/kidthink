@@ -10,7 +10,7 @@ import {
 } from "h3";
 import { z } from "zod";
 
-import { assertRequestBodySize } from "../../../../utils/auth-runtime.js";
+import { assertRequestBodySize } from "#server/utils/auth-runtime";
 
 const CancelDeletionSchema = z
   .object({

@@ -1,15 +1,11 @@
 import { eq } from "drizzle-orm";
 import { describe, expect, it } from "vitest";
-import { getOwnerDb, transitionContent } from "../../src/index.ts";
-import {
-  activities,
-  lessonActivities,
-  lessons,
-} from "../../src/schema/content.ts";
-import { gameLevels, gameTemplates } from "../../src/schema/game.ts";
-import { managers } from "../../src/schema/identity.ts";
-import { contentSkillMap } from "../../src/schema/tagging.ts";
-import { competencies, skills, strands } from "../../src/schema/taxonomy.ts";
+import { getOwnerDb, transitionContent } from "#src/index";
+import { activities, lessonActivities, lessons } from "#src/schema/content";
+import { gameLevels, gameTemplates } from "#src/schema/game";
+import { managers } from "#src/schema/identity";
+import { contentSkillMap } from "#src/schema/tagging";
+import { competencies, skills, strands } from "#src/schema/taxonomy";
 
 async function setupTestEnvironment() {
   const db = getOwnerDb();

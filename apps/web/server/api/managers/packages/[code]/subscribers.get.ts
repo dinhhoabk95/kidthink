@@ -3,7 +3,7 @@ import { entitlements, getDb, users } from "@mindkid/db";
 import { PACKAGE_CATALOG } from "@mindkid/shared";
 import { and, desc, eq, gte, inArray, isNull, lt, or } from "drizzle-orm";
 import { defineEventHandler, getQuery, getRouterParam } from "h3";
-import { requireSuperAdminSession } from "../../../../utils/admin-auth-runtime.ts";
+import { requireSuperAdminSession } from "#server/utils/admin-auth-runtime";
 
 export default defineEventHandler(async (event) => {
   requireSuperAdminSession(event);

@@ -84,6 +84,7 @@ nhất, bất biến và cảnh báo BR không được tham chiếu (`node pack
 | `BR-REG2` | [`business-rules.md`](business-rules.md) (file này) |
 | `BR-RBS` | [`repo-bootstrap.md`](repo-bootstrap.md) |
 | `BR-MPA` | [`monorepo-package-architecture.md`](monorepo-package-architecture.md) |
+| `BR-ARB` | [`app-runtime-boundary.md`](app-runtime-boundary.md) |
 
 **Platform**
 
@@ -166,6 +167,7 @@ nhất, bất biến và cảnh báo BR không được tham chiếu (`node pack
 | Prefix | Spec | | Prefix | Spec |
 |---|---|---|---|---|
 | `BR-ADA` | [`admin-auth.md`](../06-admin/admin-auth.md) | | `BR-DSH` | [`admin-dashboard.md`](../06-admin/admin-dashboard.md) |
+| `BR-MME` | [`manager-mfa-enrollment.md`](../06-admin/manager-mfa-enrollment.md) | | | |
 | `BR-USM` | [`user-management.md`](../06-admin/user-management.md) | | `BR-USD` | [`user-detail.md`](../06-admin/user-detail.md) |
 | `BR-CPA` | [`child-profile-admin.md`](../06-admin/child-profile-admin.md) | | `BR-EGR` | [`entitlement-grant.md`](../06-admin/entitlement-grant.md) |
 | `BR-PQU` | [`payment-queue.md`](../06-admin/payment-queue.md) | | `BR-PAP` | [`payment-approval.md`](../06-admin/payment-approval.md) |
@@ -203,8 +205,8 @@ nhất, bất biến và cảnh báo BR không được tham chiếu (`node pack
 
 | | Số |
 |---|---:|
-| Spec module | 161 |
-| Prefix BR | 161 |
+| Spec module | 162 |
+| Prefix BR | 162 |
 | Business rule | ~1473 |
 
 **Cảnh báo:** con số "spec module" trước 2026-08-05 ghi **123**, trong khi

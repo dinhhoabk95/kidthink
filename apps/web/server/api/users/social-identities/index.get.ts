@@ -1,8 +1,8 @@
 import { getOwnerDb, socialIdentities } from "@mindkid/db";
 import { eq } from "drizzle-orm";
 import { defineEventHandler } from "h3";
-import { requireWebUserSession } from "../../../utils/auth-runtime.js";
-import { maskEmail } from "../../guest/auth/oauth/[provider]/callback.get.js";
+import { maskEmail } from "#server/api/guest/auth/oauth/[provider]/callback.get";
+import { requireWebUserSession } from "#server/utils/auth-runtime";
 
 export default defineEventHandler(async (event) => {
   const userSession = await requireWebUserSession(event);

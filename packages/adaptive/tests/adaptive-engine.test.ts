@@ -12,7 +12,7 @@ import {
   type MasteryState,
   masteryLabel,
   selectNext,
-} from "../src/index.js";
+} from "#src/index";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 

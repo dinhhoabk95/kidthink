@@ -1,10 +1,10 @@
 import { describe, expect, it } from "vitest";
-import verifyEmailChangeHandler from "../../server/api/guest/auth/verify-email-change.post";
-import changeEmailHandler from "../../server/api/users/email.post";
-import updateNotificationPrefsHandler from "../../server/api/users/notification-preferences.put";
-import changePasswordHandler from "../../server/api/users/password.post";
-import setPasswordHandler from "../../server/api/users/password.put";
-import updateProfileHandler from "../../server/api/users/profile.patch";
+import verifyEmailChangeHandler from "#server/api/guest/auth/verify-email-change.post";
+import changeEmailHandler from "#server/api/users/email.post";
+import updateNotificationPrefsHandler from "#server/api/users/notification-preferences.put";
+import changePasswordHandler from "#server/api/users/password.post";
+import setPasswordHandler from "#server/api/users/password.put";
+import updateProfileHandler from "#server/api/users/profile.patch";
 
 function mockEvent(
   method: string,

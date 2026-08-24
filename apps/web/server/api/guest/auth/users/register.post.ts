@@ -33,7 +33,7 @@ import {
   assertSameOriginRequest,
   ensureUserCsrfCookie,
   getVerifiedRemoteIp,
-} from "../../../../utils/auth-runtime";
+} from "#server/utils/auth-runtime";
 
 const registerSchema = z
   .object({

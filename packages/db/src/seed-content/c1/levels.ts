@@ -1,4 +1,4 @@
-import type { ContentSeed } from "../types.js";
+import type { ContentSeed } from "#src/seed-content/types";
 import { SEED_MONT_A01 } from "./seed-mont-a01.js";
 import { SEED_MONT_A02 } from "./seed-mont-a02.js";
 import { SEED_MONT_A05 } from "./seed-mont-a05.js";

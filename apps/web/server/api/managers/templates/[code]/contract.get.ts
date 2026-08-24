@@ -1,7 +1,7 @@
 import { exportTemplateContracts, getGameTemplate } from "@mindkid/game-engine";
 import { CONFIG_DICTIONARY, introspectZodSchema } from "@mindkid/shared";
 import { createError, defineEventHandler, getRouterParam } from "h3";
-import { requireManagerSession } from "../../../../utils/admin-auth-runtime.js";
+import { requireManagerSession } from "#server/utils/admin-auth-runtime";
 
 export default defineEventHandler(async (event) => {
   await requireManagerSession(event);

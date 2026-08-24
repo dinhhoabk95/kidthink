@@ -1,11 +1,7 @@
 import { eq } from "drizzle-orm";
 import { describe, expect, it } from "vitest";
-import { getOwnerDb } from "../../src/index.ts";
-import {
-  activities,
-  lessonActivities,
-  lessons,
-} from "../../src/schema/content.ts";
+import { getOwnerDb } from "#src/index";
+import { activities, lessonActivities, lessons } from "#src/schema/content";
 
 const UNIQUE_DUP_REGEX = /unique|duplicate/i;
 

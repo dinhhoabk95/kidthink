@@ -2,13 +2,11 @@ import { createParentGateToken } from "@mindkid/auth";
 import { childDailyStats, childProfiles, getOwnerDb, users } from "@mindkid/db";
 import { getDateIct } from "@mindkid/shared";
 import { describe, expect, it } from "vitest";
-import grantExtraTimeHandler from "../../server/api/users/children/[uuid]/grant-extra-time.post";
-import playBudgetHandler from "../../server/api/users/children/[uuid]/play-budget.get";
-import updateSettingsHandler from "../../server/api/users/children/[uuid]/settings.patch";
+import grantExtraTimeHandler from "#server/api/users/children/[uuid]/grant-extra-time.post";
+import playBudgetHandler from "#server/api/users/children/[uuid]/play-budget.get";
+import updateSettingsHandler from "#server/api/users/children/[uuid]/settings.patch";
 
-const PARENT_GATE_SECRET =
-  process.env.PARENT_GATE_SECRET ||
-  "mindkid-parent-gate-secret-key-default-2026";
+const PARENT_GATE_SECRET = process.env.PARENT_GATE_SECRET as string;
 
 function mockEvent(
   method: string,

@@ -1,7 +1,7 @@
 import { z } from "zod";
-import { assetSchema, promptFields } from "../../contracts/shared-fields.js";
-import { defineTemplate } from "../../contracts/types.js";
-import { canAchieveBalance, sumWeights } from "../../systems/balance-system.js";
+import { assetSchema, promptFields } from "#src/contracts/shared-fields";
+import { defineTemplate } from "#src/contracts/types";
+import { canAchieveBalance, sumWeights } from "#src/systems/balance-system";
 
 const weightedItemSchema = () =>
   z.object({

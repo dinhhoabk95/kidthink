@@ -3,7 +3,7 @@ import {
   computeWorksheetRenderHash,
   inspectWorksheetPdf,
   renderWorksheetPdf,
-} from "../../src/services/worksheet-renderer.ts";
+} from "#src/services/worksheet-renderer";
 
 const SHA256_HEX_REGEX = /^[a-f0-9]{64}$/;
 

@@ -7,9 +7,9 @@ import {
 } from "@mindkid/db";
 import { and, eq } from "drizzle-orm";
 import { describe, expect, it } from "vitest";
-import reactivateHandler from "../../../server/api/managers/users/[uuid]/reactivate.post";
-import sendPasswordResetHandler from "../../../server/api/managers/users/[uuid]/send-password-reset.post";
-import suspendHandler from "../../../server/api/managers/users/[uuid]/suspend.post";
+import reactivateHandler from "#server/api/managers/users/[uuid]/reactivate.post";
+import sendPasswordResetHandler from "#server/api/managers/users/[uuid]/send-password-reset.post";
+import suspendHandler from "#server/api/managers/users/[uuid]/suspend.post";
 
 const CSRF_TOKEN =
   "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef";

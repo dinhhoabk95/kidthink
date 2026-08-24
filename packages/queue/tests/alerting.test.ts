@@ -5,7 +5,7 @@ import {
   LogOnlyAlertAdapter,
   registerAlertDispatcher,
   setAlertPort,
-} from "../src/alert.ts";
+} from "#src/alert";
 
 describe("Task 3 — Alert Port & Delivery (BR-JOB-03, BR-JOB-05, BR-TLM-06, D-FX)", () => {
   it("delivers alert to operational email recipient channel (D-FX)", async () => {

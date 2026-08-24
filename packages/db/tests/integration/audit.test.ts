@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { getOwnerDb } from "../../src/index.ts";
-import { auditLogs } from "../../src/schema/ops.ts";
+import { getOwnerDb } from "#src/index";
+import { auditLogs } from "#src/schema/ops";
 
 describe("Task 1 — Migration audit_logs (D-ET)", () => {
   it("writes audit log with before_data, after_data, and reason", async () => {

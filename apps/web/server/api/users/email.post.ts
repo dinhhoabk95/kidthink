@@ -13,8 +13,8 @@ import { z } from "zod";
 import {
   assertRequestBodySize,
   requireWebUserSession,
-} from "../../utils/auth-runtime.js";
-import { requireReauth } from "../../utils/reauth-runtime.js";
+} from "#server/utils/auth-runtime";
+import { requireReauth } from "#server/utils/reauth-runtime";
 
 const ChangeEmailSchema = z
   .object({

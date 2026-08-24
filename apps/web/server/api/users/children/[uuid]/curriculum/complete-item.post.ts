@@ -17,7 +17,7 @@ import { z } from "zod";
 import {
   assertRequestBodySize,
   requireWebUserSession,
-} from "../../../../../utils/auth-runtime.js";
+} from "#server/utils/auth-runtime";
 
 const completeItemSchema = z.object({
   curriculum_item_id: z.coerce.number().int().positive(),

@@ -377,16 +377,16 @@
 
 <script lang="ts" setup>
   import { computed, onMounted, reactive, ref } from "vue";
-  import { definePageMeta, useUserSession } from "#imports";
-  import ForbiddenState from "../../components/forbidden-state.vue";
-  import LoadingState from "../../components/loading-state.vue";
-  import type { ManagerRole } from "../../composables/nav-config.js";
+  import { definePageMeta } from "#imports";
+  import ForbiddenState from "~/components/forbidden-state.vue";
+  import LoadingState from "~/components/loading-state.vue";
+  import type { ManagerRole } from "~/composables/nav-config";
 
   definePageMeta({
     layout: "manager",
   });
 
-  const { user } = useUserSession();
+  const { user } = useAdminAuth();
 
   const isSuperAdmin = computed(() => {
     const role = (user.value as { role?: ManagerRole } | null)?.role;
@@ -516,7 +516,7 @@
         queryParams.set("sort", filterForm.sort);
       }
 
-      const data = await globalThis.$fetch<{ items: UserListItem[] }>(
+      const data = await apiFetch<{ items: UserListItem[] }>(
         `/api/managers/users?${queryParams.toString()}`
       );
       users.value = data?.items || [];
@@ -569,7 +569,7 @@
     const actionLabel = actionType === "suspend" ? "tạm khoá" : "mở khoá";
 
     try {
-      await globalThis.$fetch(`/api/managers/users/${userUuid}/${actionType}`, {
+      await apiFetch(`/api/managers/users/${userUuid}/${actionType}`, {
         method: "POST",
         body: {
           reason: actionModal.reason.trim(),

@@ -35,6 +35,10 @@ export const AUTH_ERROR_DEFINITIONS = {
     status: 409,
     message: "Email này đã được đăng ký tài khoản.",
   },
+  MFA_ALREADY_ENABLED: {
+    status: 409,
+    message: "Tài khoản quản trị đã thiết lập xác thực hai yếu tố.",
+  },
   INVALID_CREDENTIALS: {
     status: 401,
     message: "Email hoặc mật khẩu không chính xác.",
@@ -286,6 +290,10 @@ export const AUTH_ERROR_DEFINITIONS = {
   STORAGE_QUOTA_INSUFFICIENT: {
     status: 422,
     message: "Bộ nhớ thiết bị không đủ để tải gói offline.",
+  },
+  MFA_SECRET_CORRUPTED: {
+    status: 500,
+    message: "Hệ thống không đọc được khoá xác thực. Vui lòng liên hệ hỗ trợ.",
   },
 } as const;
 

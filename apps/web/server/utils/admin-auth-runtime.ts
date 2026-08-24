@@ -8,6 +8,7 @@ import {
   requireRole,
   validateCsrfToken,
 } from "@mindkid/auth";
+import { requireEnv } from "@mindkid/config";
 
 import {
   createError,
@@ -19,7 +20,7 @@ import {
   setResponseStatus,
 } from "h3";
 
-import { MANAGER_REMEMBER_COOKIE } from "./auth-runtime.js";
+import { isAllowedApiOrigin, MANAGER_REMEMBER_COOKIE } from "./auth-runtime.js";
 
 const managerConfig = getAuthNamespaceConfig("manager");
 const CSRF_TOKEN = /^[0-9a-f]{64}$/;
@@ -65,7 +66,7 @@ export function assertManagerSameOriginRequest(event: H3Event): void {
     return;
   }
   try {
-    if (new URL(origin).host !== host) {
+    if (!isAllowedApiOrigin(origin, host)) {
       throw appError("CSRF_INVALID");
     }
   } catch (error) {
@@ -76,13 +77,11 @@ export function assertManagerSameOriginRequest(event: H3Event): void {
   }
 }
 
-export function getAdminJwtSecret(_event: H3Event): string {
-  const secret =
-    process.env.ADMIN_JWT_SECRET ||
-    (process.env.NODE_ENV === "test" ? process.env.WEB_JWT_SECRET : undefined);
-  if (!secret || new TextEncoder().encode(secret).byteLength < 32) {
+export function getMfaEncryptionKey(): string {
+  const secret = requireEnv("MFA_ENCRYPTION_KEY");
+  if (new TextEncoder().encode(secret).byteLength < 32) {
     throw new Error(
-      "ADMIN_JWT_SECRET is not configured with at least 32 bytes"
+      "MFA_ENCRYPTION_KEY is not configured with at least 32 bytes"
     );
   }
   return secret;

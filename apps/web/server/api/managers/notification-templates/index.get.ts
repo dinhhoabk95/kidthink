@@ -1,6 +1,6 @@
 import { TEMPLATE_REGISTRY } from "@mindkid/notification";
 import { createError, defineEventHandler } from "h3";
-import { requireManagerSession } from "../../../utils/admin-auth-runtime.js";
+import { requireManagerSession } from "#server/utils/admin-auth-runtime";
 
 export default defineEventHandler(async (event) => {
   const manager = await requireManagerSession(event);

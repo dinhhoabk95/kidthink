@@ -10,7 +10,7 @@ import {
 import { computePaymentWebhookSignature } from "@mindkid/shared";
 import { eq } from "drizzle-orm";
 import { beforeEach, describe, expect, it } from "vitest";
-import paymentWebhookHandler from "../../../server/api/guest/webhooks/payments/[provider].post.js";
+import paymentWebhookHandler from "#server/api/guest/webhooks/payments/[provider].post";
 
 const RE_INVALID_PAYMENT_PROVIDER =
   /không được hỗ trợ|VALIDATION_FAILED|INVALID_PAYMENT_PROVIDER/;

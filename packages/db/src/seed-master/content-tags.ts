@@ -1,5 +1,5 @@
 import type { NodePgDatabase } from "drizzle-orm/node-postgres";
-import { contentTags } from "../schema/tagging.js";
+import { contentTags } from "#src/schema/tagging";
 
 export interface TagSeedItem {
   code: string;

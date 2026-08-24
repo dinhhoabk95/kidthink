@@ -1,11 +1,7 @@
 import { eq } from "drizzle-orm";
 import { describe, expect, it } from "vitest";
-import { getAppDb, getOwnerDb } from "../../src/index.ts";
-import {
-  consentLogs,
-  socialIdentities,
-  users,
-} from "../../src/schema/identity.ts";
+import { getAppDb, getOwnerDb } from "#src/index";
+import { consentLogs, socialIdentities, users } from "#src/schema/identity";
 
 describe("Identity Schema Integration Tests", () => {
   it("BR-SIB-07: enforces case-insensitive email UNIQUE on users", async () => {

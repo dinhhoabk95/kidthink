@@ -5,8 +5,8 @@ import {
   type ActionResult,
   type GameAction,
   TemplateGameSession,
-} from "../../game-session.js";
-import { PlacementMechanic } from "../../mechanics/placement-mechanic.js";
+} from "#src/game-session";
+import { PlacementMechanic } from "#src/mechanics/placement-mechanic";
 import {
   type FlipAxis,
   isPieceTransformMatch,
@@ -14,7 +14,7 @@ import {
   type RotationAngle90,
   rotatePiece90,
   togglePieceFlip,
-} from "../../systems/rotation-system.js";
+} from "#src/systems/rotation-system";
 import type { GT019Content, GT019Difficulty } from "./template.js";
 
 function toRotationAngle(val: number | undefined): RotationAngle90 {

@@ -1,6 +1,7 @@
-import { getOwnerDb } from "../../index.js";
-import { ALL_SEED_CONTENT } from "../index.js";
-import { executeSeedBatch } from "../service.js";
+import { optionalEnv } from "@mindkid/config";
+import { getOwnerDb } from "#src/index";
+import { ALL_SEED_CONTENT } from "#src/seed-content/index";
+import { executeSeedBatch } from "#src/seed-content/service";
 
 export async function runSeedContent(
   dryRun = false,
@@ -15,8 +16,8 @@ export async function runSeedContent(
     db,
     {
       batchCode,
-      gitSha: process.env.GIT_SHA || "local-dev",
-      prUrl: process.env.PR_URL || "local",
+      gitSha: optionalEnv("GIT_SHA"),
+      prUrl: optionalEnv("PR_URL"),
       seeds: ALL_SEED_CONTENT,
     },
     dryRun

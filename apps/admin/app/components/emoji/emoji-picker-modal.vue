@@ -284,7 +284,7 @@
       }
       params.set("limit", "100");
 
-      const res = await $fetch<{ items: EmojiItem[]; categories: string[] }>(
+      const res = await apiFetch<{ items: EmojiItem[]; categories: string[] }>(
         `/api/managers/emoji?${params.toString()}`
       );
       emojis.value = res.items || [];

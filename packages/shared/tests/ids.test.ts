@@ -14,7 +14,7 @@ import {
   StrandCodeSchema,
   ThemeCodeSchema,
   WorksheetCodeSchema,
-} from "../src/index.js";
+} from "#src/index";
 
 // Helper: assert parse succeeds — returns void, throws on failure
 function ok(schema: { parse: (v: string) => unknown }, value: string) {

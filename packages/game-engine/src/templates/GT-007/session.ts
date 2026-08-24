@@ -5,7 +5,7 @@ import {
   type ActionResult,
   type GameAction,
   TemplateGameSession,
-} from "../../game-session.js";
+} from "#src/game-session";
 import type { GT007Content, GT007Difficulty } from "./template.js";
 
 function extractOptionId(data: unknown): string | undefined {

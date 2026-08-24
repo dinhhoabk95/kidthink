@@ -1,8 +1,8 @@
 import { z } from "zod";
-import { promptFields } from "../../contracts/shared-fields.js";
-import type { AgeBand } from "../../contracts/types.js";
-import { defineTemplate } from "../../contracts/types.js";
-import { findRouteThrough, type MazeCell } from "../../systems/maze-system.js";
+import { promptFields } from "#src/contracts/shared-fields";
+import type { AgeBand } from "#src/contracts/types";
+import { defineTemplate } from "#src/contracts/types";
+import { findRouteThrough, type MazeCell } from "#src/systems/maze-system";
 
 /** Lưới tối đa 7×7 nên chỉ số ô chạy từ 0 tới 6. */
 const cellSchema = () =>

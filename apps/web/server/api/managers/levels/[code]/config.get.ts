@@ -1,9 +1,9 @@
 import { gameLevels, getOwnerDb } from "@mindkid/db";
 import { and, desc, eq } from "drizzle-orm";
 import { createError, defineEventHandler, getQuery, getRouterParam } from "h3";
-import { requireManagerSession } from "../../../../utils/admin-auth-runtime.js";
-import { deliverGameConfig } from "../../../../utils/game-config-runtime.js";
-import { issuePreviewToken } from "../../../../utils/preview-token.js";
+import { requireManagerSession } from "#server/utils/admin-auth-runtime";
+import { deliverGameConfig } from "#server/utils/game-config-runtime";
+import { issuePreviewToken } from "#server/utils/preview-token";
 
 export default defineEventHandler(async (event) => {
   const manager = await requireManagerSession(event);

@@ -1,7 +1,7 @@
 import { auditLogs, getOwnerDb } from "@mindkid/db";
 import { and, desc, eq, gte, ilike, inArray, lte, type SQL } from "drizzle-orm";
 import { createError, defineEventHandler, getQuery } from "h3";
-import { requireManagerSession } from "../../../utils/admin-auth-runtime.js";
+import { requireManagerSession } from "#server/utils/admin-auth-runtime";
 
 export interface FormattedAuditItem {
   id: number;

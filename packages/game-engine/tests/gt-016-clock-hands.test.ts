@@ -3,12 +3,12 @@ import {
   SAMPLE_LEVEL_1,
   SAMPLE_LEVEL_2,
   SAMPLE_LEVEL_3,
-} from "../src/templates/GT-016/fixtures.js";
-import { ClockHandsSession } from "../src/templates/GT-016/session.js";
+} from "#src/templates/GT-016/fixtures";
+import { ClockHandsSession } from "#src/templates/GT-016/session";
 import template, {
   GT016ContentSchema,
   GT016DifficultySchema,
-} from "../src/templates/GT-016/template.js";
+} from "#src/templates/GT-016/template";
 
 const RE_MATCH_TIME = /khớp với target_time/;
 

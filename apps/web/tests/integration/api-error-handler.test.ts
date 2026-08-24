@@ -1,7 +1,7 @@
 import { appError, ChildNotFoundError } from "@mindkid/auth";
 import { createError } from "h3";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import errorHandler from "../../server/error.ts";
+import errorHandler from "#server/error";
 
 /**
  * Handler lỗi chung của `/api/*` — ERROR-CODES §4 và §8.

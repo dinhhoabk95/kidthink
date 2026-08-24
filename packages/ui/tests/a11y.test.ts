@@ -4,7 +4,7 @@ import {
   auditDOMAccessibility,
   type PageObjectDefinition,
   validatePageObjectRegistry,
-} from "../src/index.js";
+} from "#src/index";
 
 const ERROR_GATE_REGEX = /BR-A11-01 Gate Error/;
 const REASON_REQUIRED_REGEX = /requires an explicit inline reason/;

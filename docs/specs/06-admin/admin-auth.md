@@ -19,8 +19,8 @@ depends_on:
 
 ## 1. Objective
 
-Bề mặt admin **tách hoàn toàn** khỏi bề mặt người dùng: subdomain riêng, cookie riêng,
-session namespace riêng, và MFA bắt buộc.
+Bề mặt admin **tách hoàn toàn** khỏi bề mặt người dùng: static SPA trên subdomain riêng, API và
+cookie host-only trên `{domain}`, session namespace riêng, và MFA bắt buộc.
 
 Manager có quyền chạm tiền và nội dung mà trẻ sẽ chơi. Đó là lý do bề mặt này chặt hơn.
 
@@ -33,8 +33,9 @@ Manager có quyền chạm tiền và nội dung mà trẻ sẽ chơi. Đó là 
 
 ## 3. Entry points
 
-`admin.{domain}/login` · `POST /api/guest/auth/managers/login` ·
-`POST /api/guest/auth/managers/mfa` · `POST /api/guest/auth/managers/remember` ·
+`admin.{domain}/login` · `POST /api/guest/auth/managers/login` trên `{domain}` ·
+`POST /api/guest/auth/managers/mfa` · `POST /api/guest/auth/managers/mfa-setup` (xem [`manager-mfa-enrollment.md`](manager-mfa-enrollment.md)) ·
+`POST /api/managers/auth/restore` · `GET /api/managers/auth/session` ·
 `POST /api/managers/auth/reauth` · `/logout`.
 
 ## 4. Main flow
@@ -47,7 +48,8 @@ Manager có quyền chạm tiền và nội dung mà trẻ sẽ chơi. Đó là 
 3. Nhập mã TOTP kèm challenge credential → xác thực → cấp opaque session một giờ; chỉ cấp
    remember credential tối đa 365 ngày nếu preference đã bind là true.
 4. Ghi Redis session authority + metadata `active_sessions` + audit `manager_login`.
-5. Mỗi route admin kiểm `requireManagerAuth()` và `requireRole()` khi cần.
+5. Mỗi API route manager trên `{domain}` kiểm `requireManagerAuth()` và `requireRole()` khi cần;
+   admin SPA không có route handler hoặc DB access.
 
 ## 5. Alternative flows
 
@@ -65,7 +67,7 @@ Manager có quyền chạm tiền và nội dung mà trẻ sẽ chơi. Đó là 
 | ID | Rule | Vì sao |
 |---|---|---|
 | `BR-ADA-01` | MFA **bắt buộc** cho mọi Manager | Tài khoản chạm tiền và nội dung cho trẻ |
-| `BR-ADA-02` | Cookie Manager giới hạn domain `admin.{domain}` | Tách bề mặt |
+| `BR-ADA-02` | Cookie Manager là host-only trên `{domain}`; admin gọi API tuyệt đối với credentials và CSRF header | Admin static không được đọc hoặc phát hành cookie, còn API vẫn nhận đúng namespace |
 | `BR-ADA-03` | Cấm — **NEVER endpoint public tạo Manager** | Ngăn ngừa rò rỉ tài khoản quản trị và tự nâng cấp quyền |
 | `BR-ADA-04` | `requireRole()` kiểm ở **server route**, không chỉ ẩn menu | Ẩn menu không phải phân quyền |
 | `BR-ADA-05` | Mọi đăng nhập và thất bại ghi `audit_logs` | Đảm bảo khả năng truy vết thao tác quản trị và phát hiện hành vi bất thường |
@@ -140,10 +142,11 @@ Scenario: BR-ADA-04 — phân quyền ở server
   Then trả 403
   And không phụ thuộc việc menu có hiện hay không
 
-Scenario: BR-ADA-02 — cookie không rò sang domain chính
+Scenario: BR-ADA-02 — admin gọi API bằng cookie host-only của API
   Given manager đã đăng nhập
-  When gửi request tới {domain}
-  Then cookie manager không được gửi kèm
+  When admin gọi GET /api/managers/auth/session trên {domain} với credentials include
+  Then cookie manager được gửi tới API
+  And admin origin không thể đọc cookie HttpOnly
 
 Scenario: BR-ADA-06 — không tự nâng quyền
   Given manager content_reviewer

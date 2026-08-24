@@ -5,9 +5,9 @@ import {
   type ActionResult,
   type GameAction,
   TemplateGameSession,
-} from "../../game-session.js";
-import { PlacementMechanic } from "../../mechanics/placement-mechanic.js";
-import { MirrorSystem } from "../../systems/mirror-system.js";
+} from "#src/game-session";
+import { PlacementMechanic } from "#src/mechanics/placement-mechanic";
+import { MirrorSystem } from "#src/systems/mirror-system";
 import type { GT021Content, GT021Difficulty } from "./template.js";
 
 export class GT021Session extends TemplateGameSession<

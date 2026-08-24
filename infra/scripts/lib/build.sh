@@ -29,6 +29,21 @@ build_release() {
     bash -c "corepack enable && pnpm config set store-dir /pnpm-store --location project && pnpm install --frozen-lockfile" \
     || return 1
 
+  # APP-RUNTIME-BOUNDARY §4.1: admin là SPA tĩnh, nên `NUXT_PUBLIC_API_BASE_URL`
+  # phải có mặt lúc **build** — sau bước này không còn tiến trình nào đọc được
+  # env cho admin nữa. Thiếu nó, bundle ra `apiBaseUrl: undefined` và mọi request
+  # của admin ném lỗi ở runtime, nên đây là điều kiện dừng chứ không phải cảnh báo.
+  local build_env_args=()
+  local build_app build_env_file
+  for build_app in "${MK_BUILD_ENV_APPS[@]}"; do
+    build_env_file="${MK_ENV_DIR}/${build_app}.env"
+    if [ ! -f "${build_env_file}" ]; then
+      log_error "Build env file '${build_env_file}' is missing; ${build_app} would be built without its public configuration."
+      return 1
+    fi
+    build_env_args+=(--env-file "${build_env_file}")
+  done
+
   log_info "Building applications in ${MK_BUILD_IMAGE}."
   docker run --rm \
     -v "${release_dir}:/workspace" \
@@ -36,6 +51,7 @@ build_release() {
     -w /workspace \
     -e CI=true \
     -e NODE_ENV=production \
+    "${build_env_args[@]}" \
     "${MK_BUILD_IMAGE}" \
     bash -c "corepack enable && pnpm build" \
     || return 1

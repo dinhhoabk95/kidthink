@@ -6,7 +6,7 @@ import {
   uploadPublicImage,
 } from "@mindkid/storage";
 import { createError, defineEventHandler, readMultipartFormData } from "h3";
-import { requireManagerSession } from "../../../utils/admin-auth-runtime.js";
+import { requireManagerSession } from "#server/utils/admin-auth-runtime";
 
 const MAX_FILE_SIZE = 2 * 1024 * 1024; // 2MB (BR-IMG-04, BR-IUP-04)
 

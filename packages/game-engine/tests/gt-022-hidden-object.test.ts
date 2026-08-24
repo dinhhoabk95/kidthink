@@ -4,8 +4,8 @@ import {
   GT022_FIXTURES,
   GT022Session,
   resolveLayout,
-} from "../src/index.js";
-import template from "../src/templates/GT-022/template.js";
+} from "#src/index";
+import template from "#src/templates/GT-022/template";
 
 const f2 = GT022_FIXTURES[1];
 const f3 = GT022_FIXTURES[2];

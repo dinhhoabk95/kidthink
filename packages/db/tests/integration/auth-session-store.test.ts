@@ -5,14 +5,14 @@ import {
   getOwnerDb,
   PostgresReauthMethodAvailability,
   PostgresSessionStore,
-} from "../../src/index.ts";
+} from "#src/index";
 import {
   activeSessions,
   managers,
   mfaSettings,
   socialIdentities,
   users,
-} from "../../src/schema/identity.ts";
+} from "#src/schema/identity";
 
 async function createUserFixture(label: string) {
   const db = getOwnerDb();

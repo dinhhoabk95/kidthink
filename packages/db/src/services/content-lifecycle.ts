@@ -5,23 +5,23 @@ import {
   validatePublishChecklist,
 } from "@mindkid/shared";
 import { and, asc, desc, eq, inArray, ne, or, sql } from "drizzle-orm";
-import { getOwnerDb } from "../client.ts";
-import { contentEmbeddings } from "../schema/ai.ts";
+import { getOwnerDb } from "#src/client";
+import { contentEmbeddings } from "#src/schema/ai";
 import {
   activities,
   lessonActivities,
   lessons,
   worksheets,
-} from "../schema/content.ts";
+} from "#src/schema/content";
 import {
   curricula,
   curriculumItems,
   curriculumWeeks,
-} from "../schema/curriculum.ts";
-import { gameLevels } from "../schema/game.ts";
-import { contentReviewLog } from "../schema/ops.ts";
-import { contentSkillMap } from "../schema/tagging.ts";
-import { skills } from "../schema/taxonomy.ts";
+} from "#src/schema/curriculum";
+import { gameLevels } from "#src/schema/game";
+import { contentReviewLog } from "#src/schema/ops";
+import { contentSkillMap } from "#src/schema/tagging";
+import { skills } from "#src/schema/taxonomy";
 import { aiProvider } from "./ai-provider.ts";
 import { writeAudit } from "./audit.ts";
 import { notifyLessonPlanSourceUpdated } from "./lesson-plan.ts";

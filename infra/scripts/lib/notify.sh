@@ -2,7 +2,7 @@
 # Failure notification (BR-DEP-11) and rollback notification (BR-RBK-07).
 #
 # Endpoints live in /etc/mindkid/deploy.conf (0600 root), deliberately outside
-# /etc/mindkid/env/: those three files belong to the three apps (BR-ENV-04) and
+# /etc/mindkid/env/: those files belong to the server apps (BR-ENV-04) and
 # the deploy tooling is not one of them.
 
 mk_load_notify_conf() {

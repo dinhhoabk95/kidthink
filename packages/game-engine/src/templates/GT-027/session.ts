@@ -5,8 +5,8 @@ import {
   type ActionResult,
   type GameAction,
   TemplateGameSession,
-} from "../../game-session.js";
-import { type RuleDefinition, RuleSystem } from "../../systems/rule-system.js";
+} from "#src/game-session";
+import { type RuleDefinition, RuleSystem } from "#src/systems/rule-system";
 import type { GT027Content, GT027Difficulty } from "./template.js";
 
 interface CardItem {

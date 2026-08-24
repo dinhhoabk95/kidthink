@@ -8,7 +8,7 @@ import {
 } from "@mindkid/db";
 import { eq } from "drizzle-orm";
 import { describe, expect, it } from "vitest";
-import handler from "../../../server/api/managers/taxonomy/skills/[code].get.js";
+import handler from "#server/api/managers/taxonomy/skills/[code].get";
 
 const AUTHOR_URL_REGEX =
   /(?:\/studio\/levels|\/admin\/seed-authoring)\?skill_code=C2\.GEO\.99/;

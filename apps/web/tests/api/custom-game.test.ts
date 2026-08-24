@@ -7,14 +7,14 @@ import {
 } from "@mindkid/db";
 import { eq } from "drizzle-orm";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
-import configHandler from "../../server/api/users/custom-games/[uuid]/config.get.js";
-import deleteCustomGameHandler from "../../server/api/users/custom-games/[uuid]/index.delete.js";
-import getCustomGameHandler from "../../server/api/users/custom-games/[uuid]/index.get.js";
-import patchCustomGameHandler from "../../server/api/users/custom-games/[uuid]/index.patch.js";
-import validateCustomGameHandler from "../../server/api/users/custom-games/[uuid]/validate.post.js";
-import listCustomGamesHandler from "../../server/api/users/custom-games/index.get.js";
-import createCustomGameHandler from "../../server/api/users/custom-games/index.post.js";
-import { invalidateUserEntitlementsCache } from "../../server/utils/entitlements-runtime.js";
+import configHandler from "#server/api/users/custom-games/[uuid]/config.get";
+import deleteCustomGameHandler from "#server/api/users/custom-games/[uuid]/index.delete";
+import getCustomGameHandler from "#server/api/users/custom-games/[uuid]/index.get";
+import patchCustomGameHandler from "#server/api/users/custom-games/[uuid]/index.patch";
+import validateCustomGameHandler from "#server/api/users/custom-games/[uuid]/validate.post";
+import listCustomGamesHandler from "#server/api/users/custom-games/index.get";
+import createCustomGameHandler from "#server/api/users/custom-games/index.post";
+import { invalidateUserEntitlementsCache } from "#server/utils/entitlements-runtime";
 
 function makeUserEvent(
   userId: number,

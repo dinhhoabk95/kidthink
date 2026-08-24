@@ -1,8 +1,8 @@
 import { eq } from "drizzle-orm";
 import fc from "fast-check";
 import { describe, expect, it } from "vitest";
-import { getOwnerDb } from "../../src/index.ts";
-import { competencies, skills, strands } from "../../src/schema/taxonomy.ts";
+import { getOwnerDb } from "#src/index";
+import { competencies, skills, strands } from "#src/schema/taxonomy";
 
 describe("Taxonomy Schema Integration Tests", () => {
   it("skills.code invalid format ('c1.cnt.3') is rejected by DB CHECK constraint", async () => {

@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { runGatingGate, scanGatingHandlers } from "../src/lint-gating.ts";
-import type { FileItem } from "../src/lint-lib/codebase-files.ts";
+import { runGatingGate, scanGatingHandlers } from "#src/lint-gating";
+import type { FileItem } from "#src/lint-lib/codebase-files";
 
 const RE_HANDLER_VIOLATION =
   /BR-GAT-01 VIOLATION: Handler ".*" returns content_pack\/difficulty_params without calling assertContentAccess\(\)/;

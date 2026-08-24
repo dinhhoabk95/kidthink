@@ -3,7 +3,7 @@ import {
   type AssemblyAnchor,
   type AssemblyPart,
   AssemblySystem,
-} from "../src/systems/assembly-system.js";
+} from "#src/systems/assembly-system";
 
 describe("assemblySystem (BR-LVB-12 — independent test suite)", () => {
   const anchors: AssemblyAnchor[] = [

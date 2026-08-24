@@ -2,7 +2,7 @@ import { appError } from "@mindkid/auth";
 import { userCancelRecurringSubscription } from "@mindkid/db";
 import { defineEventHandler, readBody } from "h3";
 import { z } from "zod";
-import { requireWebUserSession } from "../../../utils/auth-runtime.ts";
+import { requireWebUserSession } from "#server/utils/auth-runtime";
 
 const cancelSubscriptionSchema = z.object({
   subscription_id: z.number().int().positive({

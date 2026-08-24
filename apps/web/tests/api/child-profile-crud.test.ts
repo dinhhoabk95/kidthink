@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
-import patchChildHandler from "../../server/api/users/children/[uuid]/index.patch";
-import getChildrenHandler from "../../server/api/users/children/index.get";
-import createChildHandler from "../../server/api/users/children/index.post";
+import patchChildHandler from "#server/api/users/children/[uuid]/index.patch";
+import getChildrenHandler from "#server/api/users/children/index.get";
+import createChildHandler from "#server/api/users/children/index.post";
 
 function mockEvent(
   method: string,

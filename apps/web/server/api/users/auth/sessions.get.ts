@@ -1,7 +1,7 @@
 import { activeSessions, getAppDb } from "@mindkid/db";
 import { and, eq, gte } from "drizzle-orm";
 import { defineEventHandler, type H3Event } from "h3";
-import { requireWebUserSession } from "../../../utils/auth-runtime";
+import { requireWebUserSession } from "#server/utils/auth-runtime";
 
 function redactIpAddress(ipAddress: string | null): string | null {
   if (!ipAddress) {

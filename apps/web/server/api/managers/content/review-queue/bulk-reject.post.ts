@@ -8,7 +8,7 @@ import {
 import { and, eq } from "drizzle-orm";
 import { createError, defineEventHandler, readBody } from "h3";
 import { z } from "zod";
-import { requireManagerSession } from "../../../../utils/admin-auth-runtime.js";
+import { requireManagerSession } from "#server/utils/admin-auth-runtime";
 
 const bulkRejectSchema = z.object({
   created_by_manager_id: z.number().int().positive(),

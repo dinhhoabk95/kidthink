@@ -7,7 +7,7 @@ import {
   type ProgressSpec,
   parseRulePrefixRegistry,
   validateProgress,
-} from "../scripts/check-progress-lib.ts";
+} from "#scripts/check-progress-lib";
 
 const P0_SPEC: ProgressSpec = {
   id: "FOO",

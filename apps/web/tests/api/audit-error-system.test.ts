@@ -8,12 +8,12 @@ import {
 } from "@mindkid/db";
 import { eq } from "drizzle-orm";
 import { beforeEach, describe, expect, it } from "vitest";
-import clientErrorsPostHandler from "../../server/api/guest/client-errors.post.js";
-import auditLogsExportGetHandler from "../../server/api/managers/audit-logs/export.get.js";
-import auditLogsGetHandler from "../../server/api/managers/audit-logs/index.get.js";
-import errorLogsPatchHandler from "../../server/api/managers/error-logs/[fingerprint].patch.js";
-import errorLogsGetHandler from "../../server/api/managers/error-logs/index.get.js";
-import systemStatusGetHandler from "../../server/api/managers/system/status.get.js";
+import clientErrorsPostHandler from "#server/api/guest/client-errors.post";
+import auditLogsExportGetHandler from "#server/api/managers/audit-logs/export.get";
+import auditLogsGetHandler from "#server/api/managers/audit-logs/index.get";
+import errorLogsPatchHandler from "#server/api/managers/error-logs/[fingerprint].patch";
+import errorLogsGetHandler from "#server/api/managers/error-logs/index.get";
+import systemStatusGetHandler from "#server/api/managers/system/status.get";
 
 const CSRF_TOKEN =
   "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef";

@@ -13,7 +13,7 @@ import {
 } from "@mindkid/db";
 import { and, count, desc, eq, gt, gte, inArray, lt, sql } from "drizzle-orm";
 import { defineEventHandler } from "h3";
-import { requireManagerSession } from "../../utils/admin-auth-runtime.js";
+import { requireManagerSession } from "#server/utils/admin-auth-runtime";
 
 export interface PendingSourceMetric {
   status: "pending_source";

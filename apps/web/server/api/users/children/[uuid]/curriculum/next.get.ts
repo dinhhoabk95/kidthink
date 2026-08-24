@@ -8,8 +8,8 @@ import {
   setResponseStatus,
 } from "h3";
 
-import { requireWebUserSession } from "../../../../../utils/auth-runtime.js";
-import { resolveEnrolledChildCurriculum } from "../../../../../utils/curriculum-runtime.js";
+import { requireWebUserSession } from "#server/utils/auth-runtime";
+import { resolveEnrolledChildCurriculum } from "#server/utils/curriculum-runtime";
 
 export default defineEventHandler(async (event) => {
   const user = await requireWebUserSession(event);

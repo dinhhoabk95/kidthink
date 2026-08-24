@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { DegradationManager } from "../src/systems/degradation";
+import { DegradationManager } from "#src/systems/degradation";
 
 describe("Task 5 — Performance Budget Degradation (BR-PRF-03)", () => {
   it("degrades non-essential visual elements in strict order when FPS drops below 45", () => {

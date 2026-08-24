@@ -1,4 +1,4 @@
-import type { EmojiEntry } from "../types";
+import type { EmojiEntry } from "#src/types";
 
 /** Chim — ~20 emoji */
 export const ANIMAL_BIRD_EMOJIS: EmojiEntry[] = [

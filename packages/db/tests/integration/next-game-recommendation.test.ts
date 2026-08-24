@@ -2,29 +2,29 @@ import crypto from "node:crypto";
 import { shuffleWithSeed } from "@mindkid/adaptive";
 import { eq } from "drizzle-orm";
 import { beforeEach, describe, expect, it } from "vitest";
-import { getOwnerDb } from "../../src/index.ts";
-import { childProfiles } from "../../src/schema/child.ts";
+import { getOwnerDb } from "#src/index";
+import { childProfiles } from "#src/schema/child";
 import {
   curricula,
   curriculumEnrollments,
   curriculumItemProgress,
   curriculumItems,
   curriculumWeeks,
-} from "../../src/schema/curriculum.ts";
-import { gameLevels, gameTemplates } from "../../src/schema/game.ts";
-import { users } from "../../src/schema/identity.ts";
-import { levelDailyStats, playSessions } from "../../src/schema/play.ts";
-import { contentSkillMap } from "../../src/schema/tagging.ts";
+} from "#src/schema/curriculum";
+import { gameLevels, gameTemplates } from "#src/schema/game";
+import { users } from "#src/schema/identity";
+import { levelDailyStats, playSessions } from "#src/schema/play";
+import { contentSkillMap } from "#src/schema/tagging";
 import {
   competencies,
   skillPrerequisites,
   skills,
   strands,
-} from "../../src/schema/taxonomy.ts";
+} from "#src/schema/taxonomy";
 import {
   getGuestRecommendations,
   getRecommendationsForChild,
-} from "../../src/services/recommendation.ts";
+} from "#src/services/recommendation";
 
 describe("P3.6 Next Game Recommendation Invariants (BR-REC-01..08, D-MQ..D-MW)", () => {
   beforeEach(async () => {

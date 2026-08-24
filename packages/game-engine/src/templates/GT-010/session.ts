@@ -5,7 +5,7 @@ import {
   type ActionResult,
   type GameAction,
   TemplateGameSession,
-} from "../../game-session.js";
+} from "#src/game-session";
 import { evaluateQuestionAnswer, solveEquationSystem } from "./solver.js";
 import type { GT010Content, GT010Difficulty } from "./template.js";
 

@@ -4,8 +4,8 @@ import {
   GT019Session,
   rotatePiece90,
   togglePieceFlip,
-} from "../src/index.js";
-import template from "../src/templates/GT-019/template.js";
+} from "#src/index";
+import template from "#src/templates/GT-019/template";
 
 const f1 = GT019_FIXTURES[0];
 const f3 = GT019_FIXTURES[2];

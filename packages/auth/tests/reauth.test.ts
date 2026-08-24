@@ -1,15 +1,15 @@
 import { describe, expect, it, vi } from "vitest";
-import { createAuthContext } from "../src/contracts";
+import { createAuthContext } from "#src/contracts";
 import type {
   AccountReference,
   ReauthMethodAvailabilityPort,
   SessionStorePort,
-} from "../src/ports";
+} from "#src/ports";
 import {
   CurrentSessionReauthService,
   REAUTH_MAX_AGE_SECONDS,
   verifyReauthWindow,
-} from "../src/reauth";
+} from "#src/reauth";
 
 class ReauthSessionStore implements SessionStorePort {
   readonly states = new Map<string, Date | null>();

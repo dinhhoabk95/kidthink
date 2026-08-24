@@ -9,6 +9,7 @@ import {
   type OAuthProvider,
   type OAuthStatePayload,
 } from "@mindkid/auth";
+import { requireEnv } from "@mindkid/config";
 import {
   auditLogs,
   getAppDb,
@@ -39,13 +40,10 @@ import {
   assertRateLimitAllowed,
   ensureUserCsrfCookie,
   getVerifiedRemoteIp,
-} from "../../../../../utils/auth-runtime.js";
+} from "#server/utils/auth-runtime";
 
 function getOAuthStateSecret(): string {
-  return (
-    process.env.NUXT_SESSION_PASSWORD ||
-    "dev-secret-key-oauth-state-at-least-32-chars-long"
-  );
+  return requireEnv("NUXT_SESSION_PASSWORD");
 }
 
 export function maskEmail(email: string | null): string {

@@ -10,7 +10,7 @@ import type {
   ContentSeed,
   GateIssue,
   GateResult,
-} from "../types.js";
+} from "#src/seed-content/types";
 
 export const MONTESSORI_QUOTA_LIMITS: Record<string, number> = {
   C1: 36,

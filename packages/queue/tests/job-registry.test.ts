@@ -3,7 +3,7 @@ import {
   getJobDefinition,
   JOB_REGISTRY,
   validateJobRegistryConsumers,
-} from "../src/registry.ts";
+} from "#src/registry";
 
 describe("Task 1 — Job Registry & Boundaries (BR-JOB-04, BR-JOB-07)", () => {
   it("defines all 12 MVP jobs with exact specs (BR-JOB-01..08, BR-EGR-09)", () => {

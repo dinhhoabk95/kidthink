@@ -3,7 +3,7 @@ import {
   type ScaffoldAction,
   ScaffoldingSystem,
   type ScaffoldState,
-} from "../src/systems/scaffolding";
+} from "#src/systems/scaffolding";
 
 describe("ScaffoldingSystem (BR-SCF-01..08 & SCAFFOLDING-AND-HINTS spec)", () => {
   function createInitialState(): ScaffoldState {

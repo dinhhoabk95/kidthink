@@ -1,6 +1,6 @@
 import { createError, defineEventHandler, getRouterParam } from "h3";
-import { getOrSetGuestDeviceId } from "../../../../utils/auth-runtime.js";
-import { deliverGameConfig } from "../../../../utils/game-config-runtime.js";
+import { getOrSetGuestDeviceId } from "#server/utils/auth-runtime";
+import { deliverGameConfig } from "#server/utils/game-config-runtime";
 
 export default defineEventHandler(async (event) => {
   const code = getRouterParam(event, "code");

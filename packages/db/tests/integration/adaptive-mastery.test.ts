@@ -1,15 +1,15 @@
 import crypto from "node:crypto";
 import { and, eq } from "drizzle-orm";
 import { describe, expect, it } from "vitest";
-import { getOwnerDb } from "../../src/index.ts";
-import { masteryState } from "../../src/schema/adaptive.ts";
-import { childProfiles } from "../../src/schema/child.ts";
-import { gameLevels, gameTemplates } from "../../src/schema/game.ts";
-import { users } from "../../src/schema/identity.ts";
-import { playSessions, telemetryEvents } from "../../src/schema/play.ts";
-import { contentSkillMap } from "../../src/schema/tagging.ts";
-import { competencies, skills, strands } from "../../src/schema/taxonomy.ts";
-import { completePlaySession } from "../../src/services/play-session.ts";
+import { getOwnerDb } from "#src/index";
+import { masteryState } from "#src/schema/adaptive";
+import { childProfiles } from "#src/schema/child";
+import { gameLevels, gameTemplates } from "#src/schema/game";
+import { users } from "#src/schema/identity";
+import { playSessions, telemetryEvents } from "#src/schema/play";
+import { contentSkillMap } from "#src/schema/tagging";
+import { competencies, skills, strands } from "#src/schema/taxonomy";
+import { completePlaySession } from "#src/services/play-session";
 
 describe("P3.5 Adaptive & Mastery Integration Tests (PostgreSQL)", () => {
   async function createTestFixtures() {

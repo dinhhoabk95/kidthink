@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   InhibitionSystem,
   type TrialItem,
-} from "../src/systems/inhibition-system.js";
+} from "#src/systems/inhibition-system";
 
 describe("InhibitionSystem (BR-TGB-08, BR-TGB-04, BR-TGB-05)", () => {
   const sampleTrials: TrialItem[] = [

@@ -1,4 +1,4 @@
-import type { EmojiEntry } from "../types";
+import type { EmojiEntry } from "#src/types";
 
 /** Bầu trời & Không gian — ~18 emoji */
 export const SKY_SPACE_EMOJIS: EmojiEntry[] = [

@@ -208,7 +208,7 @@
   async function fetchFlags() {
     isLoading.value = true;
     try {
-      const res = await $fetch<{ flags: FlagItem[] }>(
+      const res = await apiFetch<{ flags: FlagItem[] }>(
         "/api/managers/feature-flags"
       );
       flags.value = res.flags || [];
@@ -234,7 +234,7 @@
     isSubmitting.value = true;
     errorMessage.value = "";
     try {
-      await $fetch(`/api/managers/feature-flags/${activeFlag.value.key}`, {
+      await apiFetch(`/api/managers/feature-flags/${activeFlag.value.key}`, {
         method: "PATCH",
         body: {
           enabled: !activeFlag.value.enabled,

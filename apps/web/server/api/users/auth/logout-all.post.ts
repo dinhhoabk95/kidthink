@@ -5,7 +5,7 @@ import { clearUserSession } from "#imports";
 import {
   clearUserRememberCookie,
   validateUserCsrf,
-} from "../../../utils/auth-runtime";
+} from "#server/utils/auth-runtime";
 
 export async function handleLogoutAll(event: H3Event) {
   validateUserCsrf(event);

@@ -21,7 +21,7 @@ import {
   MirrorSystem,
   SceneSystem,
   TraceSystem,
-} from "../src/index.js";
+} from "#src/index";
 
 describe("Legacy V1 Template Batch (§7.4, BR-LVB-01..15)", () => {
   const BATCH_CODES = [

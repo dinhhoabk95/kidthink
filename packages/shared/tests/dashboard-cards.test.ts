@@ -4,7 +4,7 @@ import {
   type DashboardCardDefinition,
   getDashboardCardById,
   getDashboardCardsForRole,
-} from "../src/dashboard-cards.js";
+} from "#src/dashboard-cards";
 
 describe("Task 3 — Dashboard Cards Registry & Invariants (D-IX, BR-DSH-02, BR-DSH-06)", () => {
   it("Scenario: D-IX — declares exactly 16 KPI cards matching Spec §7", () => {

@@ -10,7 +10,7 @@ import {
 } from "@mindkid/db";
 import { eq } from "drizzle-orm";
 import { beforeEach, describe, expect, it } from "vitest";
-import adminCancelHandler from "../../../server/api/managers/subscriptions/[id]/cancel.post.js";
+import adminCancelHandler from "#server/api/managers/subscriptions/[id]/cancel.post";
 
 const CSRF_TOKEN =
   "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef";

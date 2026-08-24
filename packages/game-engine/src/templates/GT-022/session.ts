@@ -5,14 +5,14 @@ import {
   type ActionResult,
   type GameAction,
   TemplateGameSession,
-} from "../../game-session.js";
-import { SelectionMechanic } from "../../mechanics/selection-mechanic.js";
-import { deriveStream } from "../../rng/mulberry32.js";
+} from "#src/game-session";
+import { SelectionMechanic } from "#src/mechanics/selection-mechanic";
+import { deriveStream } from "#src/rng/mulberry32";
 import {
   type FindResult,
   type SceneObject,
   SceneSystem,
-} from "../../systems/scene-system.js";
+} from "#src/systems/scene-system";
 import type { GT022Content, GT022Difficulty } from "./template.js";
 
 export class GT022Session extends TemplateGameSession<

@@ -1,19 +1,14 @@
 import { eq, or } from "drizzle-orm";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
-import { getOwnerDb } from "../../src/client.ts";
-import {
-  activities,
-  contentReviewLog,
-  managers,
-  worksheets,
-} from "../../src/index.ts";
-import { transitionContent } from "../../src/services/content-lifecycle.ts";
+import { getOwnerDb } from "#src/client";
+import { activities, contentReviewLog, managers, worksheets } from "#src/index";
+import { transitionContent } from "#src/services/content-lifecycle";
 import {
   createNewWorksheetVersion,
   createWorksheetDraft,
   getWorksheetById,
   renderWorksheetArtifact,
-} from "../../src/services/worksheet.ts";
+} from "#src/services/worksheet";
 
 const PUBLISH_CHECKLIST_FAILED_REGEX = /Publish checklist failed/;
 const CANNOT_ARCHIVE_WORKSHEET_REGEX = /Không thể archive worksheet/;

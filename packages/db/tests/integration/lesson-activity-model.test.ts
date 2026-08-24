@@ -11,12 +11,12 @@ import {
   lessons,
   runEightGates,
   skills,
-} from "../../src/index.js";
-import { ALL_SEED_ACTIVITIES } from "../../src/seed-content/activities/index.js";
-import { ALL_SEED_LESSONS } from "../../src/seed-content/lessons/index.js";
-import { executeSeedBatch } from "../../src/seed-content/service.js";
-import { seedContentTags } from "../../src/seed-master/content-tags.js";
-import { seedTaxonomyMasterData } from "../../src/seed-master/taxonomy/index.js";
+} from "#src/index";
+import { ALL_SEED_ACTIVITIES } from "#src/seed-content/activities/index";
+import { ALL_SEED_LESSONS } from "#src/seed-content/lessons/index";
+import { executeSeedBatch } from "#src/seed-content/service";
+import { seedContentTags } from "#src/seed-master/content-tags";
+import { seedTaxonomyMasterData } from "#src/seed-master/taxonomy/index";
 
 describe("P3.1 Lesson & Activity Model & Seeder Tests", () => {
   describe("BR-ACM-01 to BR-ACM-08: Activity Model Rules", () => {

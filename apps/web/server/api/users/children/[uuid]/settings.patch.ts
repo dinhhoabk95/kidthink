@@ -7,7 +7,7 @@ import { z } from "zod";
 import {
   assertRequestBodySize,
   requireWebUserSession,
-} from "../../../../utils/auth-runtime.js";
+} from "#server/utils/auth-runtime";
 
 const patchSettingsSchema = z.object({
   daily_play_cap_minutes: z.number().int(),

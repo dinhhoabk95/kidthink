@@ -1,6 +1,6 @@
+import { MVP_TEMPLATES } from "@mindkid/game-engine";
 import { describe, expect, it } from "vitest";
 import { z } from "zod";
-import { MVP_TEMPLATES } from "../../game-engine/src/index.ts";
 import {
   checkDepthGate,
   checkLabelGate,

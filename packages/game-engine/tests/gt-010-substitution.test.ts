@@ -3,13 +3,13 @@ import {
   SAMPLE_LEVEL_1,
   SAMPLE_LEVEL_2,
   SAMPLE_LEVEL_3,
-} from "../src/templates/GT-010/fixtures.js";
-import { SubstitutionSession } from "../src/templates/GT-010/session.js";
+} from "#src/templates/GT-010/fixtures";
+import { SubstitutionSession } from "#src/templates/GT-010/session";
 import template, {
   GT010BaseSchema,
   GT010ContentSchema,
   GT010DifficultySchema,
-} from "../src/templates/GT-010/template.js";
+} from "#src/templates/GT-010/template";
 
 const RE_UNIQUE_SOL = /nghiệm nguyên dương duy nhất/;
 

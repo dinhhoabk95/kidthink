@@ -282,7 +282,7 @@
   async function fetchPages() {
     isLoading.value = true;
     try {
-      const res = await $fetch<{ items: SeoPageItem[] }>(
+      const res = await apiFetch<{ items: SeoPageItem[] }>(
         "/api/managers/seo-pages"
       );
       pages.value = res.items || [];
@@ -308,7 +308,7 @@
     isSubmitting.value = true;
     errorMessage.value = "";
     try {
-      await $fetch("/api/managers/seo-pages", {
+      await apiFetch("/api/managers/seo-pages", {
         method: "POST",
         body: formData.value,
       });
@@ -325,6 +325,6 @@
   }
 
   function previewPage(slug: string) {
-    window.open(`/api/managers/seo-pages/${slug}/preview`, "_blank");
+    window.open(apiUrl(`/api/managers/seo-pages/${slug}/preview`), "_blank");
   }
 </script>

@@ -13,9 +13,9 @@ import {
   assertRequestBodySize,
   getVerifiedRemoteIp,
   requireWebUserSession,
-} from "../../../utils/auth-runtime.js";
-import { executeArchiveChildProfile } from "../../../utils/child-archive-runtime.js";
-import { requireReauth } from "../../../utils/reauth-runtime.js";
+} from "#server/utils/auth-runtime";
+import { executeArchiveChildProfile } from "#server/utils/child-archive-runtime";
+import { requireReauth } from "#server/utils/reauth-runtime";
 
 const WithdrawConsentSchema = z
   .object({

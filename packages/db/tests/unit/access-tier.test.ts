@@ -1,6 +1,6 @@
 import { TIER_ORDER } from "@mindkid/shared";
 import { describe, expect, it } from "vitest";
-import { accessTierEnum } from "../../src/schema/game";
+import { accessTierEnum } from "#src/schema/game";
 
 describe("BR-LAD-01: access_tier enum and TIER_ORDER match contract", () => {
   it("DB accessTierEnum has four tiers in exact order: free < login < standard < premium", () => {

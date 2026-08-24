@@ -1,8 +1,8 @@
 import { getOwnerDb, seoPages } from "@mindkid/db";
 import { desc, eq } from "drizzle-orm";
 import { createError, defineEventHandler, getRouterParam } from "h3";
-import { requireManagerSession } from "../../../../utils/admin-auth-runtime.js";
-import { issuePreviewToken } from "../../../../utils/preview-token.js";
+import { requireManagerSession } from "#server/utils/admin-auth-runtime";
+import { issuePreviewToken } from "#server/utils/preview-token";
 
 function buildStructuredData(page: typeof seoPages.$inferSelect) {
   const schemas: Record<string, unknown>[] = [];

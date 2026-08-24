@@ -1,8 +1,8 @@
 import { auditLogs, getAppDb, socialIdentities, users } from "@mindkid/db";
 import { and, eq } from "drizzle-orm";
 import { describe, expect, it } from "vitest";
-import deleteSocialIdentityHandler from "../../server/api/users/social-identities/[provider].delete.js";
-import getSocialIdentitiesHandler from "../../server/api/users/social-identities/index.get.js";
+import deleteSocialIdentityHandler from "#server/api/users/social-identities/[provider].delete";
+import getSocialIdentitiesHandler from "#server/api/users/social-identities/index.get";
 
 function mockEvent(
   method: string,

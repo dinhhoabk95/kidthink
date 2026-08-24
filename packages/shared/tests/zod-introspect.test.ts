@@ -5,7 +5,7 @@ import {
   getMaxNestingDepth,
   introspectZodSchema,
   resolveUiHintForField,
-} from "../src/zod-introspect";
+} from "#src/zod-introspect";
 
 describe("zodIntrospect — Schema to uiHint Engine (BR-SDF-02, BR-SDF-08, Spec §7.1)", () => {
   it("covers all 12 rows in Spec §7.1 with exact precedence", () => {

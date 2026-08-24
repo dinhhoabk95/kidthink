@@ -5,6 +5,7 @@ import {
   hashPassword,
   MfaChallengeService,
 } from "@mindkid/auth";
+import { requireEnv } from "@mindkid/config";
 import {
   getOwnerDb,
   managers,
@@ -15,22 +16,21 @@ import {
 } from "@mindkid/db";
 import { and, eq } from "drizzle-orm";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
-import guestMfaHandler from "../../server/api/guest/auth/users/mfa.post.js";
-import mfaRecoveryVerifyHandler from "../../server/api/guest/auth/users/mfa-recovery/verify.get.js";
-import mfaRecoveryCancelHandler from "../../server/api/managers/users/[uuid]/mfa-recovery-requests/[reqUuid]/cancel.post.js";
-import mfaRecoveryCompleteHandler from "../../server/api/managers/users/[uuid]/mfa-recovery-requests/[reqUuid]/complete.post.js";
-import mfaRecoveryListHandler from "../../server/api/managers/users/[uuid]/mfa-recovery-requests/index.get.js";
-import mfaRecoveryCreateHandler from "../../server/api/managers/users/[uuid]/mfa-recovery-requests/index.post.js";
-import mfaDisableHandler from "../../server/api/users/mfa/disable.post.js";
-import mfaRecoveryCodesHandler from "../../server/api/users/mfa/recovery-codes.post.js";
-import mfaSetupHandler from "../../server/api/users/mfa/setup.post.js";
-import mfaStatusHandler from "../../server/api/users/mfa/status.get.js";
-import mfaVerifyHandler from "../../server/api/users/mfa/verify.post.js";
+import guestMfaHandler from "#server/api/guest/auth/users/mfa.post";
+import mfaRecoveryVerifyHandler from "#server/api/guest/auth/users/mfa-recovery/verify.get";
+import mfaRecoveryCancelHandler from "#server/api/managers/users/[uuid]/mfa-recovery-requests/[reqUuid]/cancel.post";
+import mfaRecoveryCompleteHandler from "#server/api/managers/users/[uuid]/mfa-recovery-requests/[reqUuid]/complete.post";
+import mfaRecoveryListHandler from "#server/api/managers/users/[uuid]/mfa-recovery-requests/index.get";
+import mfaRecoveryCreateHandler from "#server/api/managers/users/[uuid]/mfa-recovery-requests/index.post";
+import mfaDisableHandler from "#server/api/users/mfa/disable.post";
+import mfaRecoveryCodesHandler from "#server/api/users/mfa/recovery-codes.post";
+import mfaSetupHandler from "#server/api/users/mfa/setup.post";
+import mfaStatusHandler from "#server/api/users/mfa/status.get";
+import mfaVerifyHandler from "#server/api/users/mfa/verify.post";
 
 const CSRF_TOKEN =
   "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef";
-const MFA_SECRET_KEY =
-  process.env.MFA_ENCRYPTION_KEY || "default_mfa_encryption_key_32bytes_!";
+const MFA_SECRET_KEY = requireEnv("MFA_ENCRYPTION_KEY");
 
 let testUserId = 1;
 let testUserUuid = "";

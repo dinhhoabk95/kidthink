@@ -1,5 +1,6 @@
 {
   "casts": {
+    "apps/admin/app/composables/use-api-client.ts": 1,
     "apps/admin/app/components/studio/image-crop-modal.vue": 3,
     "apps/admin/app/components/studio/schema-form-field.vue": 3,
     "apps/admin/app/components/studio/schema-form-renderer.vue": 12,
@@ -20,8 +21,6 @@
     "apps/admin/app/pages/users/[uuid].vue": 6,
     "apps/admin/app/pages/users/[uuid]/mfa-recovery.vue": 1,
     "apps/admin/app/pages/users/index.vue": 3,
-    "apps/admin/server/middleware/auth.ts": 1,
-    "apps/admin/server/plugins/auth-session.ts": 3,
     "apps/web/app/composables/use-pwa-install.ts": 6,
     "apps/web/app/pages/[slug].vue": 1,
     "apps/web/app/pages/consent-required.vue": 2,

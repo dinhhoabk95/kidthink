@@ -1,7 +1,7 @@
 import { z } from "zod";
-import { assetSchema, promptFields } from "../../contracts/shared-fields.js";
-import { defineTemplate } from "../../contracts/types.js";
-import { isSameTime } from "../../systems/rotation-system.js";
+import { assetSchema, promptFields } from "#src/contracts/shared-fields";
+import { defineTemplate } from "#src/contracts/types";
+import { isSameTime } from "#src/systems/rotation-system";
 
 const clockTimeSchema = () =>
   z.object({

@@ -8,9 +8,9 @@ import {
 import { resolveAssets } from "@mindkid/shared";
 import { and, eq } from "drizzle-orm";
 import { describe, expect, it } from "vitest";
-import guestConfigHandler from "../../server/api/guest/levels/[code]/config.get.js";
-import managerConfigHandler from "../../server/api/managers/levels/[code]/config.get.js";
-import userConfigHandler from "../../server/api/users/levels/[code]/config.get.js";
+import guestConfigHandler from "#server/api/guest/levels/[code]/config.get";
+import managerConfigHandler from "#server/api/managers/levels/[code]/config.get";
+import userConfigHandler from "#server/api/users/levels/[code]/config.get";
 
 function mockEvent(
   method: string,

@@ -3,7 +3,7 @@ import {
   CONTENT_LIFECYCLE_STATUSES,
   canTransition,
   isInitialStatusValid,
-} from "../src/lifecycle.ts";
+} from "#src/lifecycle";
 
 describe("P0.6 Task 2 — Bảng chuyển trạng thái (content-lifecycle.md §7.1)", () => {
   it("Kiểm tra đầy đủ 36 ô trong bảng chuyển trạng thái (6x6 matrix)", () => {

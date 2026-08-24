@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { calculateProgressiveLockoutSeconds } from "../src/rate-limiting.js";
+import { calculateProgressiveLockoutSeconds } from "#src/rate-limiting";
 
 describe("Progressive Login Lockout (Task 9 / BR-RTL-05)", () => {
   it("computes 0 seconds lock for 1 to 4 failed attempts", () => {

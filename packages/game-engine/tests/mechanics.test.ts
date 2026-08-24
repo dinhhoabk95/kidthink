@@ -4,7 +4,7 @@ import {
   PairingMechanic,
   PlacementMechanic,
   SelectionMechanic,
-} from "../src/index.js";
+} from "#src/index";
 
 describe("WP97.2 — Mechanism Primitives (BR-TAK-05, BR-TAK-06)", () => {
   describe("SelectionMechanic", () => {

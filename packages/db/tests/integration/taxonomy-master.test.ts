@@ -1,10 +1,10 @@
 import { describe, expect, it } from "vitest";
-import { getOwnerDb } from "../../src/client.ts";
+import { getOwnerDb } from "#src/client";
 import {
   parseTaxonomyDocs,
   seedTaxonomyMasterData,
   validateTaxonomyInvariants,
-} from "../../src/seed-master/taxonomy/index.ts";
+} from "#src/seed-master/taxonomy/index";
 
 const CYCLE_REGEX = /Cycle detected in skill prerequisites/;
 const BR_TAX_02_REGEX = /BR-TAX-02 violation/;

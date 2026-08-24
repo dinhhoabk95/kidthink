@@ -6,7 +6,7 @@ import {
   users,
 } from "@mindkid/db";
 import { describe, expect, it } from "vitest";
-import getPlayMapHandler from "../../server/api/users/play/map.get";
+import getPlayMapHandler from "#server/api/users/play/map.get";
 
 const P_LEARN_REGEX = /"p_learn"/i;
 const RANK_REGEX = /"rank"/i;

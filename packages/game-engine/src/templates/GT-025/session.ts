@@ -5,7 +5,7 @@ import {
   type ActionResult,
   type GameAction,
   TemplateGameSession,
-} from "../../game-session.js";
+} from "#src/game-session";
 import type { GT025Content, GT025Difficulty } from "./template.js";
 
 export class GT025Session extends TemplateGameSession<

@@ -11,5 +11,9 @@
   },
   "devDependencies": {
     "@mindkid/config": "workspace:*"
+  },
+  "imports": {
+    "#src/*": "./src/*.ts",
+    "#tests/*": "./tests/*.ts"
   }
 }

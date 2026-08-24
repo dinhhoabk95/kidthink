@@ -2,8 +2,8 @@ import {
   type ActionResult,
   type GameAction,
   TemplateGameSession,
-} from "../../game-session.js";
-import { SelectionMechanic } from "../../mechanics/selection-mechanic.js";
+} from "#src/game-session";
+import { SelectionMechanic } from "#src/mechanics/selection-mechanic";
 import { colMatches, findBlankCell, rowMatches } from "./matrix-rule.js";
 import type { GT011Content, GT011Difficulty } from "./template.js";
 

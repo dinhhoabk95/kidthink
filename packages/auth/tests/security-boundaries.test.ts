@@ -14,7 +14,7 @@ import {
   validateCsrfToken,
   verifyChildOwnership,
   verifyReauthWindow,
-} from "../src/index";
+} from "#src/index";
 
 describe("P0.3 Security Evidence — Business Rule Verification", () => {
   it("BR-ACT-01 & BR-ACT-02: Separate guards enforce explicit audience checks and reject cross-namespace tokens", async () => {

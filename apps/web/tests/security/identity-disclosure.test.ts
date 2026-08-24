@@ -37,7 +37,7 @@ describe("Task 5 — Identity Disclosure Prevention Test Suite (D-EP)", () => {
     });
 
     const { default: loginHandler } = await import(
-      "../../server/api/guest/auth/users/login.post"
+      "#server/api/guest/auth/users/login.post"
     );
 
     // Test 1: Non-existent user
@@ -132,7 +132,7 @@ describe("Task 5 — Identity Disclosure Prevention Test Suite (D-EP)", () => {
     });
 
     const { default: forgotHandler } = await import(
-      "../../server/api/guest/auth/users/forgot-password.post"
+      "#server/api/guest/auth/users/forgot-password.post"
     );
 
     const event1 = {
@@ -175,7 +175,7 @@ describe("Task 5 — Identity Disclosure Prevention Test Suite (D-EP)", () => {
     });
 
     const { default: registerHandler } = await import(
-      "../../server/api/guest/auth/users/register.post"
+      "#server/api/guest/auth/users/register.post"
     );
 
     const event = {

@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
-import { getOwnerDb } from "../../src/index.ts";
-import { contentLifecycleStatusEnum } from "../../src/schema/game.ts";
-import { contentReviewLog } from "../../src/schema/ops.ts";
+import { getOwnerDb } from "#src/index";
+import { contentLifecycleStatusEnum } from "#src/schema/game";
+import { contentReviewLog } from "#src/schema/ops";
 
 describe("P0.6 Task 1 — Enum in_review & content_review_log edge migration", () => {
   it("contentLifecycleStatusEnum must match spec §7.1 (in_review, not submitted)", () => {

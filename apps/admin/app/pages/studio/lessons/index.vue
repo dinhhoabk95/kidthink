@@ -260,11 +260,11 @@
 
 <script lang="ts" setup>
   import { onMounted, onUnmounted, ref } from "vue";
-  import LessonActivitiesPanel from "../../components/studio/lesson-activities-panel.vue";
-  import LessonEditorForm from "../../components/studio/lesson-editor-form.vue";
+  import LessonActivitiesPanel from "~/components/studio/lesson-activities-panel.vue";
+  import LessonEditorForm from "~/components/studio/lesson-editor-form.vue";
   import TeachingViewModal, {
     type TeachingViewResponse,
-  } from "../../components/studio/teaching-view-modal.vue";
+  } from "~/components/studio/teaching-view-modal.vue";
 
   definePageMeta({
     layout: "manager",
@@ -384,7 +384,7 @@
         params.set("status", filters.value.status);
       }
 
-      const res = await $fetch<{ items: LessonItem[] }>(
+      const res = await apiFetch<{ items: LessonItem[] }>(
         `/api/managers/lessons?${params.toString()}`
       );
       lessons.value = res.items || [];
@@ -397,7 +397,7 @@
 
   async function fetchActivityLibrary() {
     try {
-      const res = await $fetch<{ items: ActivityReference[] }>(
+      const res = await apiFetch<{ items: ActivityReference[] }>(
         "/api/managers/activities?limit=100"
       );
       availableActivities.value = res.items || [];
@@ -429,7 +429,7 @@
   async function openEditLesson(les: LessonItem) {
     currentLesson.value = { ...les };
     try {
-      const details = await $fetch<{ activities: AssembledActivityItem[] }>(
+      const details = await apiFetch<{ activities: AssembledActivityItem[] }>(
         `/api/managers/lessons/${les.code}/${les.content_version}`
       );
       assembledActivities.value = details.activities || [];
@@ -484,7 +484,7 @@
     }
     try {
       autosaveStatus.value = "Đang tự động lưu...";
-      await $fetch(
+      await apiFetch(
         `/api/managers/lessons/${currentLesson.value.code}/${currentLesson.value.content_version}`,
         {
           method: "PATCH",
@@ -500,7 +500,7 @@
   async function saveLesson() {
     try {
       if (currentLesson.value.code) {
-        await $fetch(
+        await apiFetch(
           `/api/managers/lessons/${currentLesson.value.code}/${currentLesson.value.content_version}`,
           {
             method: "PATCH",
@@ -509,7 +509,7 @@
         );
         actionNotification.value = "Cập nhật bài học thành công!";
       } else {
-        const created = await $fetch<LessonItem>("/api/managers/lessons", {
+        const created = await apiFetch<LessonItem>("/api/managers/lessons", {
           method: "POST",
           body: currentLesson.value,
         });
@@ -531,7 +531,7 @@
       return;
     }
     try {
-      await $fetch(
+      await apiFetch(
         `/api/managers/lessons/${currentLesson.value.code}/${currentLesson.value.content_version}/activities`,
         {
           method: "PUT",
@@ -554,7 +554,7 @@
 
   async function openTeachingView(les: Partial<LessonItem>) {
     try {
-      const data = await $fetch<TeachingViewResponse>(
+      const data = await apiFetch<TeachingViewResponse>(
         `/api/managers/lessons/${les.code}/${les.content_version || 1}/teaching-view`
       );
       teachingViewData.value = data;
@@ -568,7 +568,7 @@
 
   async function submitLessonForReview(les: LessonItem) {
     try {
-      await $fetch(`/api/managers/content/lesson/${les.id}/transition`, {
+      await apiFetch(`/api/managers/content/lesson/${les.id}/transition`, {
         method: "POST",
         body: {
           to_status: "in_review",

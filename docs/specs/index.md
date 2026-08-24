@@ -22,16 +22,16 @@ Bắt đầu từ [`../SPEC.md`](../SPEC.md) — contract toàn dự án. Rồi 
 
 | Khu vực | Spec | MVP |
 |---|---:|---:|
-| `00-foundation` | 16 | 16 |
+| `00-foundation` | 17 | 17 |
 | `01-platform` | 42 | 33 |
 | `02-public` | 9 | 9 |
 | `03-account` | 22 | 19 |
 | `04-play` | 15 | 13 |
 | `05-content` | 12 | 4 |
-| `06-admin` | 30 | 29 |
+| `06-admin` | 31 | 30 |
 | `07-addon` | 7 | 0 |
 | `08-quality` | 8 | 7 |
-| **Tổng** | **161** | **130** |
+| **Tổng** | **163** | **132** |
 
 v1 có **31** spec cho cùng phạm vi. Xé nhỏ là chủ ý — xem [`AUDIT-v1.md`](AUDIT-v1.md) §1.2.
 2 spec cộng thêm 2026-08-05 ([`repo-bootstrap.md`](00-foundation/repo-bootstrap.md), [`monorepo-package-architecture.md`](00-foundation/monorepo-package-architecture.md)) lấp lỗ hổng
@@ -45,6 +45,7 @@ v1 có **31** spec cho cùng phạm vi. Xé nhỏ là chủ ý — xem [`AUDIT-v
 |---|:--:|---|
 | **[repo-bootstrap](00-foundation/repo-bootstrap.md)** | P0 | **Chạy đầu tiên** — dựng repo, dependency baseline, port có chọn lọc từ v1 |
 | **[monorepo-package-architecture](00-foundation/monorepo-package-architecture.md)** | P0 | Quy tắc package/driver, khi nào adopt thư viện thay vì tự xây |
+| [app-runtime-boundary](00-foundation/app-runtime-boundary.md) | P0 | Static admin SPA, web SSR/API, cookie namespace và deploy boundary |
 | [glossary](00-foundation/glossary.md) | P0 | Từ vựng chuẩn, từ bị cấm |
 | [id-conventions](00-foundation/id-conventions.md) | P0 | Định dạng mã, mã bất biến |
 | [actors](00-foundation/actors.md) | P0 | Guest · User · Child · Manager, hai guard |
@@ -75,9 +76,9 @@ v1 có **31** spec cho cùng phạm vi. Xé nhỏ là chủ ý — xem [`AUDIT-v
 | [rate-limiting](01-platform/rate-limiting.md) | P0 | Hai trục IP + account |
 | [health-check](01-platform/health-check.md) | P0 | Cấm 200 cứng |
 | [backup-and-restore](01-platform/backup-and-restore.md) | P0 | Verify hàng tuần, chặn go-live |
-| [env-contract](01-platform/env-contract.md) | P0 | 56 biến, một tên một khái niệm, kiểm trước khi build |
+| [env-contract](01-platform/env-contract.md) | P0 | Runtime env tách khỏi public API build config, kiểm trước khi build |
 | [server-provisioning](01-platform/server-provisioning.md) | P0 | Máy trắng thành máy chạy được, chạy lại nhiều lần |
-| [process-supervision](01-platform/process-supervision.md) | P0 | Ba tiến trình, nạp lại không cắt, log có giới hạn |
+| [process-supervision](01-platform/process-supervision.md) | P0 | Hai tiến trình runtime, admin static, nạp lại không cắt, log có giới hạn |
 | [release-deploy](01-platform/release-deploy.md) | P0 | Một lệnh, nguồn là commit trên kho, cổng khói |
 | [release-rollback](01-platform/release-rollback.md) | P0 | Quay lui dưới 60 giây, chỉ migration cộng thêm |
 | **[ai-codegen-pipeline](01-platform/ai-codegen-pipeline.md)** | P0 | **Sinh code từ spec**, vùng cấm |
@@ -187,6 +188,7 @@ v1 có **31** spec cho cùng phạm vi. Xé nhỏ là chủ ý — xem [`AUDIT-v
 | Spec | Phase | Nội dung |
 |---|:--:|---|
 | [admin-auth](06-admin/admin-auth.md) | P0 | MFA bắt buộc, ma trận role, reauth thao tác toàn hệ thống |
+| [manager-mfa-enrollment](06-admin/manager-mfa-enrollment.md) | P0 | Thiết lập MFA lần đầu qua challenge, chưa cấp phiên |
 | [taxonomy-browser](06-admin/taxonomy-browser.md) | P1 | Chỉ đọc, chỉ báo khoảng trống |
 | [legal-consent-admin](06-admin/legal-consent-admin.md) | P1 | Force đồng ý lại tài liệu pháp lý |
 | [admin-dashboard](06-admin/admin-dashboard.md) | P2 | 4 nhóm thẻ, chỉ đọc |

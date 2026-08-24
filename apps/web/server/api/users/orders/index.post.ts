@@ -9,11 +9,11 @@ import {
 import { and, eq, inArray } from "drizzle-orm";
 import { defineEventHandler, readBody, setResponseStatus } from "h3";
 import { z } from "zod";
-import { throwValidationError } from "../../../utils/api-error.js";
+import { throwValidationError } from "#server/utils/api-error";
 import {
   assertUnrestrictedUser,
   requireWebUserSession,
-} from "../../../utils/auth-runtime.ts";
+} from "#server/utils/auth-runtime";
 
 const createOrderSchema = z.object({
   package_code: z.string().min(1),

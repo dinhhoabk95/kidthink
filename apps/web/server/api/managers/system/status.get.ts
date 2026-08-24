@@ -1,7 +1,7 @@
 import { backupLog, errorLogs, getOwnerDb } from "@mindkid/db";
 import { and, desc, eq, gte, sql } from "drizzle-orm";
 import { createError, defineEventHandler, setResponseHeader } from "h3";
-import { requireManagerSession } from "../../../utils/admin-auth-runtime.js";
+import { requireManagerSession } from "#server/utils/admin-auth-runtime";
 
 export type SystemHealthStatus = "ok" | "unknown" | "bad";
 

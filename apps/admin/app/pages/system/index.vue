@@ -348,7 +348,7 @@
   async function fetchSystemStatus() {
     isLoading.value = true;
     try {
-      const res = await $fetch<SystemStatusResponse>(
+      const res = await apiFetch<SystemStatusResponse>(
         "/api/managers/system/status"
       );
       systemData.value = res;

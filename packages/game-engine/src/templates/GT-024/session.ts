@@ -5,13 +5,13 @@ import {
   type ActionResult,
   type GameAction,
   TemplateGameSession,
-} from "../../game-session.js";
-import { OrderingMechanic } from "../../mechanics/ordering-mechanic.js";
+} from "#src/game-session";
+import { OrderingMechanic } from "#src/mechanics/ordering-mechanic";
 import {
   type TracePathResult,
   type TracePoint,
   TraceSystem,
-} from "../../systems/trace-system.js";
+} from "#src/systems/trace-system";
 import type { GT024Content, GT024Difficulty } from "./template.js";
 
 export class GT024Session extends TemplateGameSession<

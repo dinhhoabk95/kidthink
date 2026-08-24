@@ -1,15 +1,15 @@
 import { eq } from "drizzle-orm";
 import { describe, expect, it } from "vitest";
-import { getOwnerDb } from "../../src/index.ts";
-import { childProfiles } from "../../src/schema/child.ts";
+import { getOwnerDb } from "#src/index";
+import { childProfiles } from "#src/schema/child";
 import {
   curricula,
   curriculumEnrollments,
   curriculumItemProgress,
   curriculumItems,
-} from "../../src/schema/curriculum.ts";
-import { gameLevels, gameTemplates } from "../../src/schema/game.ts";
-import { users } from "../../src/schema/identity.ts";
+} from "#src/schema/curriculum";
+import { gameLevels, gameTemplates } from "#src/schema/game";
+import { users } from "#src/schema/identity";
 
 describe("Curriculum Schema Integration Tests", () => {
   async function getUniqueCurriculumCode() {

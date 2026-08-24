@@ -6,7 +6,7 @@ import {
   isSentryConfigured,
   redactPii,
   shouldSampleClientError,
-} from "../src/index.js";
+} from "#src/index";
 
 describe("Task 3 — Structured Logging & PII Redactor (BR-MON-05, BR-MON-06, D-IS, D-IP)", () => {
   it("Scenario: BR-MON-05 & D-IS — negative test: redactor strictly strips all 7 mandatory PII fields", () => {

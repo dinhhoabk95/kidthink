@@ -11,8 +11,8 @@ import {
 } from "@mindkid/db";
 import { eq } from "drizzle-orm";
 import { createError, defineEventHandler, getRouterParam, readBody } from "h3";
-import { requireManagerSession } from "../../../../../utils/admin-auth-runtime.js";
-import { verifyPreviewToken } from "../../../../../utils/preview-token.js";
+import { requireManagerSession } from "#server/utils/admin-auth-runtime";
+import { verifyPreviewToken } from "#server/utils/preview-token";
 
 const VALID_TYPES = [
   "game_level",

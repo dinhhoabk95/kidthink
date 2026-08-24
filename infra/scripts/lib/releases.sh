@@ -19,10 +19,14 @@ list_releases() {
 
 # A directory only counts as a release once it holds built output for all three
 # applications; rollback refuses anything else (release-rollback.md §4 step 3).
+# BR-ARB-01, BR-ARB-03: admin phải là cây file tĩnh. Một `.output/server` ở đó
+# nghĩa là build đã rơi về preset Nitro — chấp nhận nó là chấp nhận một tiến
+# trình Node đứng sau `admin.{domain}`, đúng thứ topology này bỏ đi.
 release_has_artifacts() {
   local dir="$1"
   [ -d "${dir}/apps/web/.output" ] \
-    && [ -d "${dir}/apps/admin/.output" ] \
+    && [ -d "${dir}/apps/admin/.output/public" ] \
+    && [ ! -d "${dir}/apps/admin/.output/server" ] \
     && [ -f "${dir}/apps/worker/dist/index.js" ]
 }
 

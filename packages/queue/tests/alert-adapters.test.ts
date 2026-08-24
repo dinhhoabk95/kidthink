@@ -7,7 +7,7 @@ import {
   HealthchecksAlertAdapter,
   setAlertPort,
   TelegramAlertAdapter,
-} from "../src/alert.js";
+} from "#src/alert";
 
 describe("Task 1 — Alert Adapters & Reliability (BR-MON-01, BR-MON-03, BR-MON-04, D-IQ, D-S)", () => {
   it("TelegramAlertAdapter formats message and dispatches to Telegram Bot API", async () => {

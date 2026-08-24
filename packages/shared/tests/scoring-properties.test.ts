@@ -4,7 +4,7 @@ import {
   computeSessionResult,
   computeStars,
   type TelemetryEventInput,
-} from "../src/scoring.js";
+} from "#src/scoring";
 
 describe("Task 6 — Scoring Property Tests (fast-check, >=500 runs)", () => {
   it("BR-SCO-03: adding hint_requested events NEVER decreases normalized_score", () => {

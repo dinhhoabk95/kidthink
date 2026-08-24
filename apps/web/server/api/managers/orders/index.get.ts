@@ -16,8 +16,8 @@ import {
 } from "drizzle-orm";
 import { defineEventHandler, getQuery } from "h3";
 import { z } from "zod";
-import { requireSuperAdminSession } from "../../../utils/admin-auth-runtime.ts";
-import { throwValidationError } from "../../../utils/api-error.js";
+import { requireSuperAdminSession } from "#server/utils/admin-auth-runtime";
+import { throwValidationError } from "#server/utils/api-error";
 
 const querySchema = z.object({
   status: z.string().optional().default("submitted,under_review"),

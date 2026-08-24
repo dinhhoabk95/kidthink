@@ -2,7 +2,7 @@ import { consentLogs, consentRequirements, getOwnerDb } from "@mindkid/db";
 import { CONSENT_POLICY_MAP, type ConsentType } from "@mindkid/shared";
 import { desc, eq } from "drizzle-orm";
 import { defineEventHandler } from "h3";
-import { requireWebUserSession } from "../../../utils/auth-runtime.js";
+import { requireWebUserSession } from "#server/utils/auth-runtime";
 
 const CONSENT_TYPES: readonly ConsentType[] = [
   "terms",

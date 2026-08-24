@@ -1,3 +1,5 @@
+import { requireEnv } from "@mindkid/config";
+
 export interface BankConfig {
   bankId: string;
   bankName: string;
@@ -7,11 +9,10 @@ export interface BankConfig {
 
 export function getBankConfig(): BankConfig {
   return {
-    bankId: process.env.VIETQR_BANK_ID || "MB",
-    bankName:
-      process.env.VIETQR_BANK_NAME || "Ngân hàng TMCP Quân Đội (MB Bank)",
-    accountNo: process.env.VIETQR_ACCOUNT_NO || "999988886666",
-    accountName: process.env.VIETQR_ACCOUNT_NAME || "CONG TY TNHH TINIMATH",
+    bankId: requireEnv("VIETQR_BANK_ID"),
+    bankName: requireEnv("VIETQR_BANK_NAME"),
+    accountNo: requireEnv("VIETQR_ACCOUNT_NO"),
+    accountName: requireEnv("VIETQR_ACCOUNT_NAME"),
   };
 }
 

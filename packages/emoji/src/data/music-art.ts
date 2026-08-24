@@ -1,4 +1,4 @@
-import type { EmojiEntry } from "../types";
+import type { EmojiEntry } from "#src/types";
 
 /** Âm nhạc & Nghệ thuật — ~22 emoji */
 export const MUSIC_ART_EMOJIS: EmojiEntry[] = [

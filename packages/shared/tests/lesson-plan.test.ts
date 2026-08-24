@@ -6,7 +6,7 @@ import {
   CreateLessonPlanSchema,
   ReplaceLessonPlanItemsSchema,
   UpdateLessonPlanMetaSchema,
-} from "../src/lesson-plan.js";
+} from "#src/lesson-plan";
 
 describe("Task P4.1 — Shared Lesson Plan Schemas & Snapshot Builders (BR-LPC-01..09, D-P4A..D-P4D)", () => {
   it("D-P4A: builds allow-list activity snapshot and strips internal admin data", () => {

@@ -1,14 +1,14 @@
 import { curricula, curriculumItems, getOwnerDb, managers } from "@mindkid/db";
 import { eq } from "drizzle-orm";
 import { beforeEach, describe, expect, it } from "vitest";
-import duplicateCurriculumHandler from "../../server/api/managers/curricula/[code]/[version]/duplicate.post.js";
-import putCurriculumItemsHandler from "../../server/api/managers/curricula/[code]/[version]/items.put.js";
-import putCurriculumWeeksHandler from "../../server/api/managers/curricula/[code]/[version]/weeks.put.js";
-import deleteCurriculumHandler from "../../server/api/managers/curricula/[code]/[version].delete.js";
-import getCurriculumHandler from "../../server/api/managers/curricula/[code]/[version].get.js";
-import patchCurriculumHandler from "../../server/api/managers/curricula/[code]/[version].patch.js";
-import getCurriculaHandler from "../../server/api/managers/curricula/index.get.js";
-import createCurriculumHandler from "../../server/api/managers/curricula/index.post.js";
+import duplicateCurriculumHandler from "#server/api/managers/curricula/[code]/[version]/duplicate.post";
+import putCurriculumItemsHandler from "#server/api/managers/curricula/[code]/[version]/items.put";
+import putCurriculumWeeksHandler from "#server/api/managers/curricula/[code]/[version]/weeks.put";
+import deleteCurriculumHandler from "#server/api/managers/curricula/[code]/[version].delete";
+import getCurriculumHandler from "#server/api/managers/curricula/[code]/[version].get";
+import patchCurriculumHandler from "#server/api/managers/curricula/[code]/[version].patch";
+import getCurriculaHandler from "#server/api/managers/curricula/index.get";
+import createCurriculumHandler from "#server/api/managers/curricula/index.post";
 
 const CSRF_TOKEN =
   "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef";

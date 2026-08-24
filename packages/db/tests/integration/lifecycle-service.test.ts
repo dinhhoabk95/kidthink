@@ -6,11 +6,11 @@ import {
   getOwnerDb,
   rollbackVersion,
   transitionContent,
-} from "../../src/index.ts";
-import { gameLevels, gameTemplates } from "../../src/schema/game.ts";
-import { managers } from "../../src/schema/identity.ts";
-import { contentSkillMap } from "../../src/schema/tagging.ts";
-import { competencies, skills, strands } from "../../src/schema/taxonomy.ts";
+} from "#src/index";
+import { gameLevels, gameTemplates } from "#src/schema/game";
+import { managers } from "#src/schema/identity";
+import { contentSkillMap } from "#src/schema/tagging";
+import { competencies, skills, strands } from "#src/schema/taxonomy";
 
 async function setupTestData() {
   const db = getOwnerDb();

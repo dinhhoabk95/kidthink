@@ -3,12 +3,22 @@
 Monorepo pnpm. Nuxt 4.5 + Nitro 2 + h3 v1 · Drizzle + PostgreSQL 17 · Valkey ·
 BullMQ · Zod 4 (dòng `zod@3.25`, API cổ điển) · Biome 2 qua `ultracite`.
 
-`apps/web` (bề mặt người dùng + toàn bộ `/api/*`) · `apps/admin` · `apps/worker` ·
+`apps/web` (bề mặt người dùng + toàn bộ `/api/*`) · `apps/admin` (static SPA) · `apps/worker` ·
 `packages/*` (driver dùng chung).
+
+## Runtime boundary — Task #104
+
+- `{domain}` chạy `apps/web` SSR và toàn bộ API. `admin.{domain}` chỉ nhận static files từ
+  `apps/admin/.output/public`; không có Nitro server, PM2 process, DB package hay auth module.
+- Admin gọi absolute `NUXT_PUBLIC_API_BASE_URL` với `credentials: include`; CSRF token manager
+  giữ trong memory. Cookie Manager là host-only trên `{domain}` và được web resolve trong Redis
+  namespace `manager`.
+- `nuxt-auth-utils` chỉ dùng trong web. Browser auth dùng opaque locator + Redis, không first-party
+  JWT hoặc refresh route. Nginx giữ proxy API, rate limit và static admin; Caddy chỉ là nghiên cứu.
 
 ## Spec là contract, không phải tài liệu
 
-`docs/specs/` có **146 spec, một outcome một file**. Trước khi sửa hành vi, đọc spec sở
+`docs/specs/` có **162 spec, một outcome một file**. Trước khi sửa hành vi, đọc spec sở
 hữu hành vi đó. Tra một `BR-*` về spec nào: `docs/specs/00-foundation/business-rules.md`.
 
 - Đổi hành vi mà spec đã chốt → sửa spec **trước**, trong cùng PR.

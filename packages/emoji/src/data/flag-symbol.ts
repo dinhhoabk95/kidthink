@@ -1,4 +1,4 @@
-import type { EmojiEntry } from "../types";
+import type { EmojiEntry } from "#src/types";
 
 /** Cờ & Biểu tượng — ~20 emoji */
 export const FLAG_SYMBOL_EMOJIS: EmojiEntry[] = [

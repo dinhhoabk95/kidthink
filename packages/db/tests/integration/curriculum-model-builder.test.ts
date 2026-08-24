@@ -9,7 +9,7 @@ import {
   curriculumWeeks,
   getOwnerDb,
   users,
-} from "../../src/index.ts";
+} from "#src/index";
 
 describe("P3.3 Database Schema & Invariants Integration Tests (Task 2)", () => {
   const db = getOwnerDb();

@@ -12,15 +12,15 @@ import {
 } from "@mindkid/shared";
 import { desc, eq, sql } from "drizzle-orm";
 import type { PgTransaction } from "drizzle-orm/pg-core";
-import { getDb } from "../client.ts";
+import { getDb } from "#src/client";
 import {
   type AiCreditBalance,
   type AiCreditLedgerEntry,
   aiCreditBalance,
   aiCreditLedger,
-} from "../schema/ai-credit.ts";
-import { users } from "../schema/identity.ts";
-import { notifications } from "../schema/ops.ts";
+} from "#src/schema/ai-credit";
+import { users } from "#src/schema/identity";
+import { notifications } from "#src/schema/ops";
 import { writeAudit } from "./audit.ts";
 
 export interface GrantCreditsParams {

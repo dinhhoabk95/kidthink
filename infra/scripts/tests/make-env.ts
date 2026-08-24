@@ -4,10 +4,7 @@
  * harness. Generated from the registry rather than hand-written so the fixtures
  * cannot drift away from the contract they are meant to satisfy.
  */
-import {
-  type AppType,
-  ENV_REGISTRY,
-} from "../../../packages/config/src/env-contract.ts";
+import { type AppType, ENV_REGISTRY } from "@mindkid/config";
 
 const SAMPLE_SECRET = "harness-secret-value-0123456789abcdef";
 

@@ -3,13 +3,13 @@ import {
   SAMPLE_LEVEL_1,
   SAMPLE_LEVEL_2,
   SAMPLE_LEVEL_3,
-} from "../src/templates/GT-017/fixtures.js";
-import { BlockStackSession } from "../src/templates/GT-017/session.js";
+} from "#src/templates/GT-017/fixtures";
+import { BlockStackSession } from "#src/templates/GT-017/session";
 import template, {
   GT017BaseSchema,
   GT017ContentSchema,
   GT017DifficultySchema,
-} from "../src/templates/GT-017/template.js";
+} from "#src/templates/GT-017/template";
 
 const RE_FLOATING = /Mô hình khối không được có khối lơ lửng/;
 const RE_ONE_CORRECT = /đúng 1 phương án mang is_correct = true/;

@@ -1,3 +1,4 @@
+import { requireEnv } from "@mindkid/config";
 import postgres from "postgres";
 
 /**
@@ -129,9 +130,7 @@ export async function truncateAllTestTables(
   tables: readonly string[] = TABLES
 ): Promise<void> {
   const url =
-    databaseUrl ??
-    process.env.DATABASE_URL ??
-    "postgres://postgres:postgres@localhost:5433/mindkid";
+    databaseUrl === undefined ? requireEnv("DATABASE_URL") : databaseUrl;
   assertDisposableDatabaseUrl(url);
   const sql = postgres(url, { max: 1 });
   try {

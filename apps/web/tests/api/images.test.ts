@@ -9,10 +9,10 @@ import {
 import { signedUrl, url } from "@mindkid/storage";
 import { eq } from "drizzle-orm";
 import { beforeEach, describe, expect, it } from "vitest";
-import assetUsageHandler from "../../server/api/managers/assets/[...ref]/usage.get.js";
-import deleteImageHandler from "../../server/api/managers/images/[id].delete.js";
-import uploadImageHandler from "../../server/api/managers/images/index.post.js";
-import createLevelHandler from "../../server/api/managers/levels/index.post.js";
+import assetUsageHandler from "#server/api/managers/assets/[...ref]/usage.get";
+import deleteImageHandler from "#server/api/managers/images/[id].delete";
+import uploadImageHandler from "#server/api/managers/images/index.post";
+import createLevelHandler from "#server/api/managers/levels/index.post";
 
 const CSRF_TOKEN =
   "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef";

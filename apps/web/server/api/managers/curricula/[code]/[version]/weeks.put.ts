@@ -7,7 +7,7 @@ import {
 import { and, eq } from "drizzle-orm";
 import { createError, defineEventHandler, getRouterParam, readBody } from "h3";
 import { z } from "zod";
-import { requireManagerSession } from "../../../../../utils/admin-auth-runtime.js";
+import { requireManagerSession } from "#server/utils/admin-auth-runtime";
 
 const putCurriculumWeeksSchema = z.object({
   expected_version: z.number().int({

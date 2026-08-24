@@ -295,7 +295,7 @@
   async function fetchErrors() {
     isLoading.value = true;
     try {
-      const res = await $fetch<{ groups: ErrorGroup[] }>(
+      const res = await apiFetch<{ groups: ErrorGroup[] }>(
         "/api/managers/error-logs",
         {
           params: {
@@ -327,7 +327,7 @@
 
     isSubmitting.value = true;
     try {
-      await $fetch(
+      await apiFetch(
         `/api/managers/error-logs/${activeGroup.value.fingerprint}`,
         {
           method: "PATCH",

@@ -9,7 +9,7 @@ import {
   setResponseStatus,
 } from "h3";
 
-import { requireWebUserSession } from "../../../utils/auth-runtime.js";
+import { requireWebUserSession } from "#server/utils/auth-runtime";
 
 export const COMPETENCY_CARDS = [
   { code: "C1", name: "Số & Đếm", icon_id: "topic-c1" },

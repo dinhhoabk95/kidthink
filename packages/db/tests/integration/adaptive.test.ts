@@ -1,7 +1,7 @@
 import fc from "fast-check";
 import { describe, expect, it } from "vitest";
-import { getOwnerDb } from "../../src/index.ts";
-import { masteryState } from "../../src/schema/adaptive.ts";
+import { getOwnerDb } from "#src/index";
+import { masteryState } from "#src/schema/adaptive";
 
 describe("Adaptive Schema Integration & Property Tests", () => {
   it("BR-SPT-05: mastery_state.skill_id nonexistent skill_id is rejected by FK constraint", async () => {

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { OfflineEventBuffer } from "../src/offline-buffer";
+import { OfflineEventBuffer } from "#src/offline-buffer";
 
 describe("Task P1.6 — OfflineEventBuffer (BR-OFF-01..06, BR-ING-05, BR-ING-08)", () => {
   it("BR-OFF-03: initializes session and generates sequential seq numbers starting from 1", () => {

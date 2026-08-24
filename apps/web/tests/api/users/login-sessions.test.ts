@@ -20,7 +20,7 @@ describe("Task 3 — Login & Session Management (BR-LGN-01..12)", () => {
       .returning();
 
     const { default: loginHandler } = await import(
-      "../../../server/api/guest/auth/users/login.post"
+      "#server/api/guest/auth/users/login.post"
     );
 
     const event = {
@@ -60,7 +60,7 @@ describe("Task 3 — Login & Session Management (BR-LGN-01..12)", () => {
     });
 
     const { default: loginHandler } = await import(
-      "../../../server/api/guest/auth/users/login.post"
+      "#server/api/guest/auth/users/login.post"
     );
 
     const wrongPassEvent = {
@@ -126,7 +126,7 @@ describe("Task 3 — Login & Session Management (BR-LGN-01..12)", () => {
       .returning();
 
     const { default: sessionsHandler } = await import(
-      "../../../server/api/users/auth/sessions.get"
+      "#server/api/users/auth/sessions.get"
     );
 
     const getEvent = {
@@ -146,7 +146,7 @@ describe("Task 3 — Login & Session Management (BR-LGN-01..12)", () => {
 
     // Revoke s2
     const { default: deleteSessionHandler } = await import(
-      "../../../server/api/users/auth/sessions/[id].delete"
+      "#server/api/users/auth/sessions/[id].delete"
     );
 
     const csrf =

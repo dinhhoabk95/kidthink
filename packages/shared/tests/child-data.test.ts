@@ -6,7 +6,7 @@ import {
   isValidAvatarId,
   isValidBirthYear,
   parseChildProfileInput,
-} from "../src/index.ts";
+} from "#src/index";
 
 describe("Child Data Compliance Tests — Tasks 5, 6, 7", () => {
   it("BR-CDC-01 & BR-SPT-01: CHILD_PROFILE_CLOSED_COLUMNS contains exact 13 columns", () => {

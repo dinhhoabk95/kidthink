@@ -1,4 +1,4 @@
-import type { EmojiEntry } from "../types";
+import type { EmojiEntry } from "#src/types";
 
 /** Cử chỉ tay — ~25 emoji */
 export const HAND_GESTURE_EMOJIS: EmojiEntry[] = [

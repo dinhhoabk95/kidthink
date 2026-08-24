@@ -20,17 +20,17 @@ import {
   type UpdatePersonalCurriculumMetaInput,
 } from "@mindkid/shared";
 import { and, asc, desc, eq, inArray, sql } from "drizzle-orm";
-import { getDb } from "../client.ts";
-import { childProfiles } from "../schema/child.ts";
-import { lessons } from "../schema/content.ts";
-import { curricula, curriculumItems } from "../schema/curriculum.ts";
-import { gameLevels } from "../schema/game.ts";
+import { getDb } from "#src/client";
+import { childProfiles } from "#src/schema/child";
+import { lessons } from "#src/schema/content";
+import { curricula, curriculumItems } from "#src/schema/curriculum";
+import { gameLevels } from "#src/schema/game";
 import {
   personalCurricula,
   personalCurriculumEnrollments,
   personalCurriculumItemProgress,
   personalCurriculumItems,
-} from "../schema/personal-curriculum.ts";
+} from "#src/schema/personal-curriculum";
 import { writeAudit } from "./audit.ts";
 
 const DEFAULT_MAX_PERSONAL_CURRICULA = 5;

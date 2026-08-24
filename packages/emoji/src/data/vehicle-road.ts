@@ -1,4 +1,4 @@
-import type { EmojiEntry } from "../types";
+import type { EmojiEntry } from "#src/types";
 
 /** Đường bộ — ~20 emoji */
 export const VEHICLE_ROAD_EMOJIS: EmojiEntry[] = [

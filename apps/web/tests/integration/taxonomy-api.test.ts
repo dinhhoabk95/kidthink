@@ -18,8 +18,8 @@ vi.mock("@mindkid/db", () => ({
 
 import { getOwnerDb } from "@mindkid/db";
 import { getQuery, getRouterParam, setHeader } from "h3";
-import taxonomyIndexHandler from "../../server/api/guest/taxonomy/index.get.ts";
-import skillDetailHandler from "../../server/api/guest/taxonomy/skills/[code].get.ts";
+import taxonomyIndexHandler from "#server/api/guest/taxonomy/index.get";
+import skillDetailHandler from "#server/api/guest/taxonomy/skills/[code].get";
 
 describe("Guest Taxonomy API & Performance (BR-TAX-06 & BR-TAX-10)", () => {
   let mockEvent: any;

@@ -1,34 +1,34 @@
 /** @generated from TEMPLATES@a1b2c3d4 — DO NOT EDIT MANUALLY (BR-TAK-03) */
 
-import type { EngineConfig } from "../core.js";
-import type { GameSession } from "../game-session.js";
-import { GT001Session } from "../templates/GT-001/session.js";
-import { GT002Session } from "../templates/GT-002/session.js";
-import { GT003Session } from "../templates/GT-003/session.js";
-import { GT004Session } from "../templates/GT-004/session.js";
-import { GT005Session } from "../templates/GT-005/session.js";
-import { GT006Session } from "../templates/GT-006/session.js";
-import { GT007Session } from "../templates/GT-007/session.js";
-import { GT008Session } from "../templates/GT-008/session.js";
-import { GT009Session } from "../templates/GT-009/session.js";
-import { GT010Session } from "../templates/GT-010/session.js";
-import { GT011Session } from "../templates/GT-011/session.js";
-import { GT012Session } from "../templates/GT-012/session.js";
-import { GT013Session } from "../templates/GT-013/session.js";
-import { GT014Session } from "../templates/GT-014/session.js";
-import { GT015Session } from "../templates/GT-015/session.js";
-import { GT016Session } from "../templates/GT-016/session.js";
-import { GT017Session } from "../templates/GT-017/session.js";
-import { GT018Session } from "../templates/GT-018/session.js";
-import { GT019Session } from "../templates/GT-019/session.js";
-import { GT020Session } from "../templates/GT-020/session.js";
-import { GT021Session } from "../templates/GT-021/session.js";
-import { GT022Session } from "../templates/GT-022/session.js";
-import { GT023Session } from "../templates/GT-023/session.js";
-import { GT024Session } from "../templates/GT-024/session.js";
-import { GT025Session } from "../templates/GT-025/session.js";
-import { GT026Session } from "../templates/GT-026/session.js";
-import { GT027Session } from "../templates/GT-027/session.js";
+import type { EngineConfig } from "#src/core";
+import type { GameSession } from "#src/game-session";
+import { GT001Session } from "#src/templates/GT-001/session";
+import { GT002Session } from "#src/templates/GT-002/session";
+import { GT003Session } from "#src/templates/GT-003/session";
+import { GT004Session } from "#src/templates/GT-004/session";
+import { GT005Session } from "#src/templates/GT-005/session";
+import { GT006Session } from "#src/templates/GT-006/session";
+import { GT007Session } from "#src/templates/GT-007/session";
+import { GT008Session } from "#src/templates/GT-008/session";
+import { GT009Session } from "#src/templates/GT-009/session";
+import { GT010Session } from "#src/templates/GT-010/session";
+import { GT011Session } from "#src/templates/GT-011/session";
+import { GT012Session } from "#src/templates/GT-012/session";
+import { GT013Session } from "#src/templates/GT-013/session";
+import { GT014Session } from "#src/templates/GT-014/session";
+import { GT015Session } from "#src/templates/GT-015/session";
+import { GT016Session } from "#src/templates/GT-016/session";
+import { GT017Session } from "#src/templates/GT-017/session";
+import { GT018Session } from "#src/templates/GT-018/session";
+import { GT019Session } from "#src/templates/GT-019/session";
+import { GT020Session } from "#src/templates/GT-020/session";
+import { GT021Session } from "#src/templates/GT-021/session";
+import { GT022Session } from "#src/templates/GT-022/session";
+import { GT023Session } from "#src/templates/GT-023/session";
+import { GT024Session } from "#src/templates/GT-024/session";
+import { GT025Session } from "#src/templates/GT-025/session";
+import { GT026Session } from "#src/templates/GT-026/session";
+import { GT027Session } from "#src/templates/GT-027/session";
 
 /**
  * Dynamic lazy loader for GameSession classes by template code (BR-TAK-08).
@@ -37,111 +37,111 @@ import { GT027Session } from "../templates/GT-027/session.js";
 export async function loadGameSession(templateCode: string): Promise<new (...args: any[]) => GameSession> {
   switch (templateCode) {
     case "GT-001": {
-      const mod = await import("../templates/GT-001/session.js");
+      const mod = await import("#src/templates/GT-001/session");
       return mod.GT001Session;
     }
     case "GT-002": {
-      const mod = await import("../templates/GT-002/session.js");
+      const mod = await import("#src/templates/GT-002/session");
       return mod.GT002Session;
     }
     case "GT-003": {
-      const mod = await import("../templates/GT-003/session.js");
+      const mod = await import("#src/templates/GT-003/session");
       return mod.GT003Session;
     }
     case "GT-004": {
-      const mod = await import("../templates/GT-004/session.js");
+      const mod = await import("#src/templates/GT-004/session");
       return mod.GT004Session;
     }
     case "GT-005": {
-      const mod = await import("../templates/GT-005/session.js");
+      const mod = await import("#src/templates/GT-005/session");
       return mod.GT005Session;
     }
     case "GT-006": {
-      const mod = await import("../templates/GT-006/session.js");
+      const mod = await import("#src/templates/GT-006/session");
       return mod.GT006Session;
     }
     case "GT-007": {
-      const mod = await import("../templates/GT-007/session.js");
+      const mod = await import("#src/templates/GT-007/session");
       return mod.GT007Session;
     }
     case "GT-008": {
-      const mod = await import("../templates/GT-008/session.js");
+      const mod = await import("#src/templates/GT-008/session");
       return mod.GT008Session;
     }
     case "GT-009": {
-      const mod = await import("../templates/GT-009/session.js");
+      const mod = await import("#src/templates/GT-009/session");
       return mod.GT009Session;
     }
     case "GT-010": {
-      const mod = await import("../templates/GT-010/session.js");
+      const mod = await import("#src/templates/GT-010/session");
       return mod.GT010Session;
     }
     case "GT-011": {
-      const mod = await import("../templates/GT-011/session.js");
+      const mod = await import("#src/templates/GT-011/session");
       return mod.GT011Session;
     }
     case "GT-012": {
-      const mod = await import("../templates/GT-012/session.js");
+      const mod = await import("#src/templates/GT-012/session");
       return mod.GT012Session;
     }
     case "GT-013": {
-      const mod = await import("../templates/GT-013/session.js");
+      const mod = await import("#src/templates/GT-013/session");
       return mod.GT013Session;
     }
     case "GT-014": {
-      const mod = await import("../templates/GT-014/session.js");
+      const mod = await import("#src/templates/GT-014/session");
       return mod.GT014Session;
     }
     case "GT-015": {
-      const mod = await import("../templates/GT-015/session.js");
+      const mod = await import("#src/templates/GT-015/session");
       return mod.GT015Session;
     }
     case "GT-016": {
-      const mod = await import("../templates/GT-016/session.js");
+      const mod = await import("#src/templates/GT-016/session");
       return mod.GT016Session;
     }
     case "GT-017": {
-      const mod = await import("../templates/GT-017/session.js");
+      const mod = await import("#src/templates/GT-017/session");
       return mod.GT017Session;
     }
     case "GT-018": {
-      const mod = await import("../templates/GT-018/session.js");
+      const mod = await import("#src/templates/GT-018/session");
       return mod.GT018Session;
     }
     case "GT-019": {
-      const mod = await import("../templates/GT-019/session.js");
+      const mod = await import("#src/templates/GT-019/session");
       return mod.GT019Session;
     }
     case "GT-020": {
-      const mod = await import("../templates/GT-020/session.js");
+      const mod = await import("#src/templates/GT-020/session");
       return mod.GT020Session;
     }
     case "GT-021": {
-      const mod = await import("../templates/GT-021/session.js");
+      const mod = await import("#src/templates/GT-021/session");
       return mod.GT021Session;
     }
     case "GT-022": {
-      const mod = await import("../templates/GT-022/session.js");
+      const mod = await import("#src/templates/GT-022/session");
       return mod.GT022Session;
     }
     case "GT-023": {
-      const mod = await import("../templates/GT-023/session.js");
+      const mod = await import("#src/templates/GT-023/session");
       return mod.GT023Session;
     }
     case "GT-024": {
-      const mod = await import("../templates/GT-024/session.js");
+      const mod = await import("#src/templates/GT-024/session");
       return mod.GT024Session;
     }
     case "GT-025": {
-      const mod = await import("../templates/GT-025/session.js");
+      const mod = await import("#src/templates/GT-025/session");
       return mod.GT025Session;
     }
     case "GT-026": {
-      const mod = await import("../templates/GT-026/session.js");
+      const mod = await import("#src/templates/GT-026/session");
       return mod.GT026Session;
     }
     case "GT-027": {
-      const mod = await import("../templates/GT-027/session.js");
+      const mod = await import("#src/templates/GT-027/session");
       return mod.GT027Session;
     }
     default:

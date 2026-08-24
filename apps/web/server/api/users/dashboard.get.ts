@@ -17,9 +17,9 @@ import {
   type H3Event,
   setResponseStatus,
 } from "h3";
-import { requireWebUserSession } from "../../utils/auth-runtime.ts";
-import { resolveEnrolledChildCurriculum } from "../../utils/curriculum-runtime.ts";
-import { resolveUserActiveEntitlements } from "../../utils/entitlements-runtime.ts";
+import { requireWebUserSession } from "#server/utils/auth-runtime";
+import { resolveEnrolledChildCurriculum } from "#server/utils/curriculum-runtime";
+import { resolveUserActiveEntitlements } from "#server/utils/entitlements-runtime";
 
 interface ChildRecord {
   id: number;

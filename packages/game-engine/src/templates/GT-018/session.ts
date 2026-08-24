@@ -5,9 +5,9 @@ import {
   type ActionResult,
   type GameAction,
   TemplateGameSession,
-} from "../../game-session.js";
-import { OrderingMechanic } from "../../mechanics/ordering-mechanic.js";
-import { SelectionMechanic } from "../../mechanics/selection-mechanic.js";
+} from "#src/game-session";
+import { OrderingMechanic } from "#src/mechanics/ordering-mechanic";
+import { SelectionMechanic } from "#src/mechanics/selection-mechanic";
 import type { GT018Content, GT018Difficulty } from "./template.js";
 
 export class GT018Session extends TemplateGameSession<

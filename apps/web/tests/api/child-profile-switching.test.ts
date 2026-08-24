@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import activateHandler from "../../server/api/users/children/[uuid]/activate.post";
-import clearActiveHandler from "../../server/api/users/children/active.delete";
+import activateHandler from "#server/api/users/children/[uuid]/activate.post";
+import clearActiveHandler from "#server/api/users/children/active.delete";
 
 function mockEvent(
   method: string,

@@ -12,7 +12,7 @@ import {
 import { uploadPrivateAsset } from "@mindkid/storage";
 import { and, eq } from "drizzle-orm";
 import { defineEventHandler, getRouterParam, readMultipartFormData } from "h3";
-import { requireWebUserSession } from "../../../../utils/auth-runtime.ts";
+import { requireWebUserSession } from "#server/utils/auth-runtime";
 
 interface ParsedProofInput {
   bankTxnRef: string;

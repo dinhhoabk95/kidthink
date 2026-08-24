@@ -1,4 +1,4 @@
-import type { LessonSeed } from "../types.js";
+import type { LessonSeed } from "#src/seed-content/types";
 import { LESSON_BATCH_01 } from "./batch-01.js";
 import { LESSON_BATCH_02 } from "./batch-02.js";
 import { LESSON_BATCH_03 } from "./batch-03.js";

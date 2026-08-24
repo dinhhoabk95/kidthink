@@ -24,7 +24,7 @@ import { ping } from "@mindkid/cache";
 import { getOwnerDb } from "@mindkid/db";
 import { alert, getWaitingCount } from "@mindkid/queue";
 import { setHeader, setResponseStatus } from "h3";
-import handler from "../../../server/api/guest/health.get.ts";
+import handler from "#server/api/guest/health.get";
 
 describe("Health Check API", () => {
   let mockEvent: any;

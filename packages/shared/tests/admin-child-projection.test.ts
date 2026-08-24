@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { projectChildForAdmin } from "../src/admin-child-projection.js";
+import { projectChildForAdmin } from "#src/admin-child-projection";
 
 describe("Task 4 & D-JF: Admin Child Projection (BR-CPA-02, BR-CPA-03, BR-USD-02)", () => {
   it("projects exact 4 fields (display_name, age_band, status, created_at) plus uuid and purge_at if present", () => {

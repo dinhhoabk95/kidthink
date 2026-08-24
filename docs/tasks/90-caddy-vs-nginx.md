@@ -89,11 +89,14 @@ Ba thứ đó lộ ra ngay khi viết `mindkid.sh provision`:
 {$MK_ADMIN_DOMAIN} {
 	import security_headers
 	header X-Frame-Options "DENY"
-	reverse_proxy 127.0.0.1:3002
+	root * /opt/mindkid/current/apps/admin/.output/public
+	try_files {path} {path}/ /index.html
+	file_server
 }
 ```
 
-Khoảng **60 dòng thay cho 129**, và biến mất hoàn toàn: khối chuyển hướng 80→443, mọi dòng
+Khoảng **60 dòng thay cho 129**, và biến mất hoàn toàn: admin không còn reverse proxy tới một
+cổng Node mà được phục vụ như static SPA; khối chuyển hướng 80→443, mọi dòng
 `ssl_*`, mọi dòng `proxy_set_header` (Caddy tự đặt `X-Forwarded-*` và tự xử lý nâng cấp
 WebSocket), tệp snippet `mindkid-proxy.conf`, tệp `map` cho `$connection_upgrade`, `envsubst`,
 và toàn bộ bước 9 của quy trình dựng máy.

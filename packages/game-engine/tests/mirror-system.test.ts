@@ -4,7 +4,7 @@ import {
   getSymmetricGridPosition,
   isMirroredPointMatch,
   MirrorSystem,
-} from "../src/systems/mirror-system.js";
+} from "#src/systems/mirror-system";
 
 describe("mirrorSystem (BR-LVB-12 — independent test suite)", () => {
   it("computes mirrored point across vertical axis (x = 480)", () => {

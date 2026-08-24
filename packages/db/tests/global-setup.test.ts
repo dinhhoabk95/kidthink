@@ -1,3 +1,4 @@
+import { requireEnv } from "@mindkid/config";
 import postgres from "postgres";
 import { afterAll, describe, expect, it } from "vitest";
 import {
@@ -16,9 +17,7 @@ const DUPLICATE_KEY_ERROR = /duplicate key/i;
  * song song (Vitest chạy nhiều file test cùng lúc theo mặc định).
  */
 describe("global-setup: truncateAllTestTables", () => {
-  const url =
-    process.env.DATABASE_URL ??
-    "postgres://postgres:postgres@localhost:5433/mindkid";
+  const url = requireEnv("DATABASE_URL");
   const sql = postgres(url);
   const probeTable = `_test_truncate_probe_${Date.now()}_${Math.floor(Math.random() * 1_000_000)}`;
 

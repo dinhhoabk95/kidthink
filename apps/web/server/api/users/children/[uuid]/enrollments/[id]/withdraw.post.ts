@@ -16,7 +16,7 @@ import {
 import {
   getVerifiedRemoteIp,
   requireWebUserSession,
-} from "../../../../../../utils/auth-runtime.js";
+} from "#server/utils/auth-runtime";
 
 export default defineEventHandler(async (event) => {
   const user = await requireWebUserSession(event);

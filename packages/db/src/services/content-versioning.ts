@@ -1,10 +1,10 @@
 import type { ContentLifecycleStatus, ManagerRole } from "@mindkid/shared";
 import { eq, sql } from "drizzle-orm";
-import { getOwnerDb } from "../client.ts";
-import { gameLevels } from "../schema/game.ts";
-import { contentReviewLog } from "../schema/ops.ts";
-import { playSessions } from "../schema/play.ts";
-import { contentSkillMap } from "../schema/tagging.ts";
+import { getOwnerDb } from "#src/client";
+import { gameLevels } from "#src/schema/game";
+import { contentReviewLog } from "#src/schema/ops";
+import { playSessions } from "#src/schema/play";
+import { contentSkillMap } from "#src/schema/tagging";
 import { writeAudit } from "./audit.ts";
 import { LifecycleError } from "./content-lifecycle.ts";
 

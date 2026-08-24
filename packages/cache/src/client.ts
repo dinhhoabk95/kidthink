@@ -1,11 +1,11 @@
-import { devFallbackEnv } from "@mindkid/config";
+import { requireEnv } from "@mindkid/config";
 import { Redis } from "ioredis";
 
 let client: Redis | undefined;
 
 export function getClient(): Redis {
   if (!client) {
-    client = new Redis(devFallbackEnv("VALKEY_URL", "redis://localhost:6380"), {
+    client = new Redis(requireEnv("VALKEY_URL"), {
       connectTimeout: 2000,
       commandTimeout: 2000,
       maxRetriesPerRequest: 1,

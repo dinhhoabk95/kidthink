@@ -4,7 +4,7 @@ import {
   generateParentGateChallenge,
   isValidParentGateToken,
   verifyParentGateChallenge,
-} from "../src/parent-gate";
+} from "#src/parent-gate";
 
 describe("ParentGate Utilities (BR-PGT-01..07 & D-GO)", () => {
   const testSecret = "test-parent-gate-secret-key-123456";

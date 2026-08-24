@@ -8,9 +8,9 @@ import {
 } from "@mindkid/db";
 import { eq } from "drizzle-orm";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
-import configHandler from "../../server/api/users/custom-games/[uuid]/config.get.js";
-import createCustomGameHandler from "../../server/api/users/custom-games/index.post.js";
-import { invalidateUserEntitlementsCache } from "../../server/utils/entitlements-runtime.js";
+import configHandler from "#server/api/users/custom-games/[uuid]/config.get";
+import createCustomGameHandler from "#server/api/users/custom-games/index.post";
+import { invalidateUserEntitlementsCache } from "#server/utils/entitlements-runtime";
 
 function makeUserEvent(
   userId: number,

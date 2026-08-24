@@ -331,7 +331,7 @@
         params.set("status", filters.value.status);
       }
 
-      const res = await $fetch<{ items: GameLevelListItem[] }>(
+      const res = await apiFetch<{ items: GameLevelListItem[] }>(
         `/api/managers/levels?${params.toString()}`
       );
       levels.value = res.items || [];
@@ -347,7 +347,7 @@
       return;
     }
     try {
-      const created = await $fetch<{ code: string }>("/api/managers/levels", {
+      const created = await apiFetch<{ code: string }>("/api/managers/levels", {
         method: "POST",
         body: newLevelForm.value,
       });
@@ -367,7 +367,7 @@
 
   async function duplicateLevel(code: string, version: number) {
     try {
-      const cloned = await $fetch<{ code: string }>(
+      const cloned = await apiFetch<{ code: string }>(
         `/api/managers/levels/${code}/${version}/duplicate`,
         { method: "POST" }
       );

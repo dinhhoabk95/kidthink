@@ -10,7 +10,7 @@ import {
   PWA_MIN_COMPLETED_SESSIONS,
   type PwaInstallState,
   validateStorageQuotaForPack,
-} from "../src/index.js";
+} from "#src/index";
 
 describe("PWA Install & Offline Pack Contract (BR-PWA, BR-OCP, BR-OFF)", () => {
   describe("PWA Install Rules (BR-PWA-01..05)", () => {

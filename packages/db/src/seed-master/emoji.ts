@@ -1,6 +1,6 @@
 import { ALL_EMOJIS, getEmojiCode } from "@mindkid/emoji";
 import type { NodePgDatabase } from "drizzle-orm/node-postgres";
-import { emojiRegistry } from "../schema/taxonomy.ts";
+import { emojiRegistry } from "#src/schema/taxonomy";
 
 const SKIN_TONE_REGEX = /[\u{1F3FB}-\u{1F3FF}]/u;
 

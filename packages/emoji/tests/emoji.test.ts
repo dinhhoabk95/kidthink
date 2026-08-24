@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import type { EmojiCategory } from "../src/index";
+import type { EmojiCategory } from "#src/index";
 import {
   ALL_CATEGORIES,
   ALL_EMOJIS,
@@ -11,7 +11,7 @@ import {
   getRandomEmojis,
   getTotalEmojiCount,
   searchEmoji,
-} from "../src/index";
+} from "#src/index";
 
 describe("@mindkid/emoji", () => {
   // ── Subtask 8.1: Test mỗi category có ít nhất 10 emoji entries ──

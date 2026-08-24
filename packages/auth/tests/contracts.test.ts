@@ -16,7 +16,7 @@ import {
   requireUserAuth,
   type SessionStorePort,
   type UserTokenPayload,
-} from "../src/index";
+} from "#src/index";
 
 const AUTH_VENDOR_PATTERN = /@sidebase\/nuxt-auth|next-auth|AuthJS/;
 

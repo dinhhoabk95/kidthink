@@ -9,7 +9,7 @@ import {
 import {
   getManagerRemoteIp,
   requireSuperAdminSession,
-} from "../../../utils/admin-auth-runtime.js";
+} from "#server/utils/admin-auth-runtime";
 
 function escapeLikeWildcards(text: string): string {
   return text.replace(/([%_\\])/g, "\\$1");

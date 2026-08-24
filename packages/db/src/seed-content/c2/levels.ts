@@ -1,4 +1,4 @@
-import type { ContentSeed } from "../types.js";
+import type { ContentSeed } from "#src/seed-content/types";
 import { SEED_MONT_A19 } from "./seed-mont-a19.js";
 
 export const C2_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [

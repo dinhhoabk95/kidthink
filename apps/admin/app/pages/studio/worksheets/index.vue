@@ -214,7 +214,7 @@
                   class="inline-block px-3 py-1.5 text-xs font-bold rounded-xl bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-200"
                   rel="noopener"
                   target="_blank"
-                  :href="`/api/managers/worksheets/${ws.code}/preview`"
+                  :href="apiUrl(`/api/managers/worksheets/${ws.code}/preview`)"
                 >
                   Xem PDF
                 </a>
@@ -411,6 +411,9 @@
 
 <script lang="ts" setup>
   import { onMounted, ref } from "vue";
+  // Import tường minh: `apiUrl` được dùng trong template, nên nó phải là một
+  // binding của setup scope chứ không chỉ là auto-import của script.
+  import { apiUrl } from "~/composables/use-api-client";
 
   definePageMeta({
     layout: "manager",
@@ -658,7 +661,7 @@
         params.set("status", filters.value.status);
       }
 
-      const res = await $fetch<{ items: WorksheetItem[] }>(
+      const res = await apiFetch<{ items: WorksheetItem[] }>(
         `/api/managers/worksheets?${params.toString()}`
       );
       worksheets.value = res.items || [];
@@ -701,7 +704,7 @@
   async function triggerRender(ws: WorksheetItem) {
     try {
       actionNotification.value = `Đang render PDF cho phiếu ${ws.code}...`;
-      const res = await $fetch<{
+      const res = await apiFetch<{
         success: boolean;
         inspection: { valid: boolean };
       }>(`/api/managers/worksheets/${ws.code}/render`, { method: "POST" });
@@ -735,13 +738,13 @@
       };
 
       if (isEditing.value) {
-        await $fetch(`/api/managers/worksheets/${activeForm.value.code}`, {
+        await apiFetch(`/api/managers/worksheets/${activeForm.value.code}`, {
           method: "PUT",
           body: payload,
         });
         actionNotification.value = "Cập nhật phiếu bài tập thành công!";
       } else {
-        await $fetch("/api/managers/worksheets", {
+        await apiFetch("/api/managers/worksheets", {
           method: "POST",
           body: payload,
         });
@@ -758,7 +761,7 @@
 
   async function submitForReview(ws: WorksheetItem) {
     try {
-      await $fetch(`/api/managers/content/worksheet/${ws.id}/transition`, {
+      await apiFetch(`/api/managers/content/worksheet/${ws.id}/transition`, {
         method: "POST",
         body: {
           to_status: "in_review",
@@ -776,7 +779,7 @@
 
   async function publishWorksheet(ws: WorksheetItem) {
     try {
-      await $fetch(`/api/managers/content/worksheet/${ws.id}/transition`, {
+      await apiFetch(`/api/managers/content/worksheet/${ws.id}/transition`, {
         method: "POST",
         body: {
           to_status: "published",

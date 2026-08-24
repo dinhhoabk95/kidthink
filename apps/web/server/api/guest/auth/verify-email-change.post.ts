@@ -13,7 +13,7 @@ import { z } from "zod";
 import {
   assertRequestBodySize,
   assertSameOriginRequest,
-} from "../../../utils/auth-runtime.js";
+} from "#server/utils/auth-runtime";
 
 const VerifyEmailChangeSchema = z
   .object({

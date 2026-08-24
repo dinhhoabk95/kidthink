@@ -14,7 +14,7 @@ import {
   SEED_ENTITLEMENT_KEYS,
   SEED_PACKAGES,
   users,
-} from "../../src/index.js";
+} from "#src/index";
 
 const RE_REPLAY_DETECTED = /quá thời gian|WEBHOOK_REPLAY_DETECTED/;
 const RE_RECONCILIATION_MISMATCH = /không khớp|RECONCILIATION_MISMATCH/;

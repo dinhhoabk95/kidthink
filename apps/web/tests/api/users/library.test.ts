@@ -9,9 +9,9 @@ import {
 } from "@mindkid/db";
 import { eq } from "drizzle-orm";
 import { beforeEach, describe, expect, it } from "vitest";
-import collectionsGetHandler from "../../../server/api/users/collections/index.get.ts";
-import libraryGetHandler from "../../../server/api/users/library/index.get.ts";
-import libraryDeleteHandler from "../../../server/api/users/library/items/[entityType]/[entityId].delete.ts";
+import collectionsGetHandler from "#server/api/users/collections/index.get";
+import libraryGetHandler from "#server/api/users/library/index.get";
+import libraryDeleteHandler from "#server/api/users/library/items/[entityType]/[entityId].delete";
 
 function mockUserEvent(
   userId?: number,

@@ -23,8 +23,8 @@ import {
   assertRequestBodySize,
   getVerifiedRemoteIp,
   requireWebUserSession,
-} from "../../../../../utils/auth-runtime.js";
-import { resolveUserActiveEntitlements } from "../../../../../utils/entitlements-runtime.js";
+} from "#server/utils/auth-runtime";
+import { resolveUserActiveEntitlements } from "#server/utils/entitlements-runtime";
 
 async function assertChildOwnership(
   db: ReturnType<typeof getOwnerDb>,

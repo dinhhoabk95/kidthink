@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { type CardItem, CardSystem } from "../src/systems/card-system.js";
+import { type CardItem, CardSystem } from "#src/systems/card-system";
 
 describe("cardSystem (BR-LVB-12 — independent test suite)", () => {
   const sampleCards: CardItem[] = [

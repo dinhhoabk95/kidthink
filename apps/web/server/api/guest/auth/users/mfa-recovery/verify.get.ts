@@ -2,7 +2,7 @@ import crypto from "node:crypto";
 import { auditLogs, getOwnerDb, mfaRecoveryRequests } from "@mindkid/db";
 import { and, eq, gt } from "drizzle-orm";
 import { createError, defineEventHandler, getHeader, getQuery } from "h3";
-import { getVerifiedRemoteIp } from "../../../../../utils/auth-runtime.js";
+import { getVerifiedRemoteIp } from "#server/utils/auth-runtime";
 
 export default defineEventHandler(async (event) => {
   const rawQuery =

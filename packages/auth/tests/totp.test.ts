@@ -8,7 +8,7 @@ import {
   generateTotpUri,
   hashRecoveryCode,
   verifyTotpCode,
-} from "../src/totp.js";
+} from "#src/totp";
 
 const SIX_DIGIT_PATTERN = /^[0-9]{6}$/;
 const RECOVERY_CODE_PATTERN = /^[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}$/;

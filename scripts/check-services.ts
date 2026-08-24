@@ -8,46 +8,19 @@
  * chỉ khẳng định "nối được".
  */
 
+import { requireEnv } from "@mindkid/config";
 import Redis from "ioredis";
 import postgres from "postgres";
 
 const EXPECTED_POSTGRES_MAJOR = 17;
 const EXPECTED_VALKEY_MAJOR = 9;
 
-/**
- * Default port phải khớp host port ở `docker-compose.yml` (5433/6380, không
- * phải 5432/6379 mặc định của image).
- *
- * Đo được 2026-08-06: default 5432/6379 nối vào container của stack KHÁC trên
- * máy dev này (`hlo-api-postgres-1`, `hlo-api-valkey-1`) và in `✅ Valkey 9.1.0`
- * — xanh giả, vì nó khẳng định version của service không thuộc repo này.
- * Version thật của mindkid là 9.1.1.
- */
-const PG_URL =
-  process.env.DATABASE_URL ??
-  "postgres://postgres:postgres@localhost:5433/mindkid";
-const VALKEY_HOST = process.env.VALKEY_HOST ?? "localhost";
-const DEFAULT_VALKEY_PORT = 6380;
-const MAX_PORT = 65_535;
+const PG_URL = requireEnv("DATABASE_URL");
+const VALKEY_URL = requireEnv("VALKEY_URL");
 
 const VALKEY_VERSION_PATTERN = /valkey_version:([\d.]+)/;
 
 /**
- * `Number("abc")` → NaN, và ioredis nối vào NaN sẽ fail bằng lỗi mạng khó hiểu.
- * Fail ngay tại nguồn với tên biến môi trường sai.
- */
-function envPort(name: string, fallback: number): number {
-  const raw = process.env[name];
-  if (raw === undefined || raw === "") {
-    return fallback;
-  }
-  const port = Number.parseInt(raw, 10);
-  if (!Number.isInteger(port) || port < 1 || port > MAX_PORT) {
-    throw new Error(`${name}="${raw}" không phải port hợp lệ (1–${MAX_PORT})`);
-  }
-  return port;
-}
-
 /**
  * Khẳng định major version khớp production (BR-RBS-07).
  * Tách "không đọc được version" khỏi "version sai" — bản cũ để cả hai rơi vào
@@ -76,11 +49,9 @@ async function checkPostgres(): Promise<string> {
 }
 
 async function checkValkey(): Promise<string> {
-  const redis = new Redis({
-    host: VALKEY_HOST,
+  const redis = new Redis(VALKEY_URL, {
     lazyConnect: true,
     maxRetriesPerRequest: 1,
-    port: envPort("VALKEY_PORT", DEFAULT_VALKEY_PORT),
     retryStrategy: () => null,
   });
   try {

@@ -1,10 +1,10 @@
 import { eq } from "drizzle-orm";
 import { describe, expect, it } from "vitest";
-import { getOwnerDb } from "../../src/client.ts";
-import { skillActionSuggestions } from "../../src/schema/content.ts";
-import { skills } from "../../src/schema/taxonomy.ts";
-import { seedSkillActionSuggestions } from "../../src/seed-master/action-suggestions.ts";
-import { seedTaxonomyMasterData } from "../../src/seed-master/taxonomy/index.ts";
+import { getOwnerDb } from "#src/client";
+import { skillActionSuggestions } from "#src/schema/content";
+import { skills } from "#src/schema/taxonomy";
+import { seedSkillActionSuggestions } from "#src/seed-master/action-suggestions";
+import { seedTaxonomyMasterData } from "#src/seed-master/taxonomy/index";
 
 describe("P3.7 Advanced Report Invariants (BR-ARP)", () => {
   describe("Advanced Report Invariants (BR-ARP-01..08)", () => {

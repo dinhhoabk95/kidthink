@@ -1,10 +1,9 @@
+import { checkRateLimit, clearInMemoryBuckets } from "@mindkid/cache";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { checkRateLimit, clearInMemoryBuckets } from "../../cache/src/index.js";
-import { enforceTwoAxisRateLimit } from "../src/rate-limit-middleware.js";
+import { enforceTwoAxisRateLimit } from "#src/rate-limit-middleware";
 
-vi.mock("../../cache/src/index.js", async (importOriginal) => {
-  const actual =
-    await importOriginal<typeof import("../../cache/src/index.js")>();
+vi.mock("@mindkid/cache", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("@mindkid/cache")>();
   return {
     ...actual,
     checkRateLimit: vi.fn((key: string, limit: number, windowSeconds: number) =>

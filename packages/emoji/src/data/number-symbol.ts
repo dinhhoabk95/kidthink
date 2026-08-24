@@ -1,4 +1,4 @@
-import type { EmojiEntry } from "../types";
+import type { EmojiEntry } from "#src/types";
 
 /** Số & Ký hiệu toán — ~22 emoji */
 export const NUMBER_SYMBOL_EMOJIS: EmojiEntry[] = [

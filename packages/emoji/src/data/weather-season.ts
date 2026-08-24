@@ -1,4 +1,4 @@
-import type { EmojiEntry } from "../types";
+import type { EmojiEntry } from "#src/types";
 
 /** Thời tiết & Mùa — ~25 emoji */
 export const WEATHER_SEASON_EMOJIS: EmojiEntry[] = [

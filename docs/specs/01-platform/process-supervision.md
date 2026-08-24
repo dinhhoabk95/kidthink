@@ -7,7 +7,7 @@ mvp: true
 phase: P0
 reviewed: 2026-08-18
 owns:
-  - Mô hình tiến trình của ba ứng dụng trên máy chủ
+  - Mô hình tiến trình của web và worker trên máy chủ
   - Chính sách khởi động lại và khởi động cùng máy
   - Luân chuyển log của tiến trình ứng dụng
 depends_on:
@@ -21,8 +21,9 @@ depends_on:
 
 ## 1. Objective
 
-Ba ứng dụng — `web`, `admin`, `worker` — phải chạy liên tục, tự sống lại sau khi chết, tự lên
-lại sau khi máy khởi động, và nạp bản mới **không cắt** yêu cầu đang xử lý. Hiện chưa có định
+Hai tiến trình runtime — `web` và `worker` — phải chạy liên tục, tự sống lại sau khi chết, tự lên
+lại sau khi máy khởi động, và nạp bản mới **không cắt** yêu cầu đang xử lý. `admin` là static SPA,
+được Nginx phục vụ từ release và không có tiến trình runtime riêng. Hiện chưa có định
 nghĩa nào cho việc đó: đo ngày 2026-08-18, kho không có tệp cấu hình trình giám sát tiến trình
 nào và không có dịch vụ hệ thống nào.
 
@@ -34,7 +35,7 @@ chỉ lộ ra vào lúc tệ nhất — lúc máy vừa khởi động lại, ho
 
 | Actor                     | Quyền cần                      | Làm được gì ở đây                                                         |
 | ------------------------- | ------------------------------ | ------------------------------------------------------------------------- |
-| Trình giám sát tiến trình | Chạy dưới người dùng `mindkid` | Giữ ba ứng dụng sống, nạp lại bản mới, ghi log                            |
+| Trình giám sát tiến trình | Chạy dưới người dùng `mindkid` | Giữ web và worker sống, nạp lại bản mới, ghi log                         |
 | Dịch vụ hệ thống          | `root`                         | Dựng trình giám sát khi máy khởi động                                     |
 | Người vận hành            | SSH                            | Xem trạng thái, xem log, nạp lại thủ công                                 |
 | Quy trình phát hành       |                                | Gọi nạp lại sau khi đổi bản, xem [`release-deploy.md`](release-deploy.md) |
@@ -43,8 +44,8 @@ chỉ lộ ra vào lúc tệ nhất — lúc máy vừa khởi động lại, ho
 
 | Nơi                                         | Actor            | Ghi chú                                 |
 | ------------------------------------------- | ---------------- | --------------------------------------- |
-| `infra/pm2/ecosystem.config.cjs`            | Người phát triển | Định nghĩa ba ứng dụng, nằm trong kho   |
-| `pnpm deploy status --host <tên>`           | Người vận hành   | Trạng thái ba tiến trình, bản đang chạy |
+| `infra/pm2/ecosystem.config.cjs`            | Người phát triển | Định nghĩa web và worker, nằm trong kho  |
+| `pnpm deploy status --host <tên>`           | Người vận hành   | Trạng thái hai tiến trình, bản đang chạy |
 | `pnpm deploy logs --host <tên> --app <tên>` | Người vận hành   | Log một ứng dụng                        |
 | `/var/log/mindkid/<app>/`                   |                  | Log ra tệp, có luân chuyển              |
 
@@ -53,10 +54,9 @@ chỉ lộ ra vào lúc tệ nhất — lúc máy vừa khởi động lại, ho
 ```
 1. Máy khởi động  →  dịch vụ hệ thống dựng trình giám sát dưới người dùng mindkid
 2. Trình giám sát đọc ecosystem.config.cjs trong thư mục current
-3. Mỗi ứng dụng nạp file env của riêng nó (web.env | admin.env | worker.env)
+3. Mỗi tiến trình nạp file env của riêng nó (web.env | worker.env); admin dùng config public lúc build
 4. Ứng dụng khởi động, tự kiểm danh mục biến của mình, thiếu thì thoát ngay
 5. web       chạy nhiều bản, chế độ cluster, số bản theo số vCPU
-   admin     chạy một bản
    worker    chạy một bản, chế độ fork — song song do hàng đợi tự quản
 6. Tiến trình chết  →  trình giám sát dựng lại, có giãn cách tăng dần
 7. Chết liên tục quá ngưỡng  →  ngừng dựng lại, phát thông báo
@@ -71,13 +71,13 @@ chỉ lộ ra vào lúc tệ nhất — lúc máy vừa khởi động lại, ho
 | Vượt ngưỡng bộ nhớ          | Một tiến trình phình bộ nhớ             | Trình giám sát dựng lại tiến trình đó và ghi log lý do                                  |
 | `worker` chết giữa một việc | Việc đang xử lý                         | Hàng đợi trả việc về, xem [`job-queue.md`](job-queue.md); tiến trình không tự xử lý lại |
 | Nạp lại thất bại            | Bản mới không lên được                  | Bản cũ vẫn phục vụ; quy trình phát hành đưa liên kết mềm về bản trước                   |
-| Máy khởi động lại           | Sau mất điện hoặc nâng cấp hệ điều hành | Ba ứng dụng tự lên, không cần người                                                     |
+| Máy khởi động lại           | Sau mất điện hoặc nâng cấp hệ điều hành | Hai tiến trình runtime tự lên; Nginx phục vụ admin static                          |
 
 ## 6. Business rules
 
 | ID          | Rule                                                                                     | Vì sao                                                                                                                                                                                       |
 | ----------- | ---------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `BR-SUP-01` | Ba ứng dụng phải tự lên lại sau khi máy khởi động                                        | Máy chủ sẽ khởi động lại, có kế hoạch hoặc không. Nếu cần người vào bật tay thì thời gian chết bằng thời gian người đó đọc được thông báo                                                    |
+| `BR-SUP-01` | Web và worker phải tự lên lại sau khi máy khởi động                                     | Máy chủ sẽ khởi động lại, có kế hoạch hoặc không. Admin static không cần supervisor                                                      |
 | `BR-SUP-02` | Đổi bản dùng **nạp lại** chứ không dừng rồi bật                                          | Dừng rồi bật cắt mọi yêu cầu đang xử lý. Nạp lại từng bản một giữ site sống suốt lần phát hành                                                                                               |
 | `BR-SUP-03` | `worker` chạy chế độ fork một bản, không chạy cluster                                    | Song số việc do hàng đợi quản. Nhân bản tiến trình tiêu thụ là cách nhân đôi công việc và nhân đôi email gửi ra                                                                              |
 | `BR-SUP-04` | Mỗi ứng dụng chỉ nạp file env của chính nó                                               | Thi hành `BR-ENV-04` ở tầng tiến trình. Một tệp env chung là cách nhanh nhất để mọi tiến trình biết mọi bí mật                                                                               |
@@ -98,15 +98,14 @@ tiến trình phục vụ người dùng thì không được là `root`. Trình
 xuống tiến trình con; tiến trình con không bao giờ mở tệp env.
 
 
-**Đọc:** tệp định nghĩa ứng dụng trong kho, ba file env trên máy chủ.
+**Đọc:** tệp định nghĩa ứng dụng trong kho, hai file env trên máy chủ.
 **Ghi:** log ứng dụng, trạng thái tiến trình của trình giám sát. Không ghi cơ sở dữ liệu.
 
-### 7.1 Ba ứng dụng
+### 7.1 Hai tiến trình runtime
 
 | Ứng dụng | Cổng | Chế độ  | Số bản                    | Lệnh chạy                          |
 | -------- | ---- | ------- | ------------------------- | ---------------------------------- |
 | `web`    | 3000 | cluster | theo số vCPU, tối thiểu 2 | mã Nitro đã build                  |
-| `admin`  | 3002 | fork    | 1                         | mã Nitro đã build                  |
 | `worker` | 3099 | fork    | 1                         | mã đã biên dịch, không dùng loader |
 
 ### 7.2 Ngưỡng
@@ -128,14 +127,14 @@ Không có route công khai. Trạng thái sống của ứng dụng được đ
 
 ```gherkin
 Scenario: BR-SUP-01 — tự lên sau khi máy khởi động
-  Given ba ứng dụng đang chạy
+  Given web và worker đang chạy
   When khởi động lại máy chủ
-  Then ba ứng dụng lên lại không cần người can thiệp
+  Then web và worker lên lại không cần người can thiệp
   And endpoint sức khoẻ trả 200
 
 Scenario: BR-SUP-02 — nạp lại không cắt yêu cầu
   Given một vòng lặp gọi trang công khai 10 lần mỗi giây
-  When nạp lại ba ứng dụng
+  When nạp lại web và worker
   Then không có yêu cầu nào trả mã 5xx
 
 Scenario: BR-SUP-05 — chết liên tục thì ngừng dựng lại
@@ -145,7 +144,7 @@ Scenario: BR-SUP-05 — chết liên tục thì ngừng dựng lại
   And một thông báo được phát
 
 Scenario: BR-SUP-03 — worker chỉ một bản
-  Given ba ứng dụng đang chạy
+  Given web và worker đang chạy
   When liệt kê tiến trình
   Then worker có đúng một bản
 
@@ -155,7 +154,7 @@ Scenario: BR-SUP-04 — tiến trình không thấy bí mật của tiến trìn
   Then không có biến bí mật nào của web trong đó
 
 Scenario: BR-SUP-09 — không chạy TypeScript qua loader
-  Given ba ứng dụng đang chạy
+  Given web và worker đang chạy
   When đọc dòng lệnh của từng tiến trình
   Then không dòng nào gọi loader phát triển
 
@@ -187,7 +186,7 @@ Scenario: BR-SUP-06 — log có giới hạn
 - Chạy TypeScript qua loader trên máy chủ.
 - Sửa danh sách ứng dụng trực tiếp trên máy chủ.
 - Ghi log không giới hạn dung lượng.
-- Cho một tệp env chung cho cả ba ứng dụng.
+- Cho một tệp env chung cho web và worker.
 
 ## 11. Open questions
 

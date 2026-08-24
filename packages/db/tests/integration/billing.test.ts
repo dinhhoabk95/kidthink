@@ -1,12 +1,8 @@
 import { eq } from "drizzle-orm";
 import { describe, expect, it } from "vitest";
-import { getOwnerDb } from "../../src/index.ts";
-import {
-  entitlements,
-  packages,
-  paymentOrders,
-} from "../../src/schema/billing.ts";
-import { users } from "../../src/schema/identity.ts";
+import { getOwnerDb } from "#src/index";
+import { entitlements, packages, paymentOrders } from "#src/schema/billing";
+import { users } from "#src/schema/identity";
 
 describe("Billing Schema Integration Tests", () => {
   it("BR-SIB-02: entitlements.entitlement_key is a real FK to entitlement_keys", async () => {

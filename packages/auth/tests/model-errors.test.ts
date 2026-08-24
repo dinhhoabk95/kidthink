@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { AppError } from "../src/errors";
+import { AppError } from "#src/errors";
 import {
   ChildNotFoundError,
   isModelBoundError,
@@ -8,7 +8,7 @@ import {
   modelErrorContext,
   PlaySessionNotFoundError,
   ValidationError,
-} from "../src/model-errors";
+} from "#src/model-errors";
 
 describe("ModelNotFoundError", () => {
   it("map sang NOT_FOUND 404 cho mọi model", () => {

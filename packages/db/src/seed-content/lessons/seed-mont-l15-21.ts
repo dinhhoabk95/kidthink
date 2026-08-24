@@ -1,4 +1,4 @@
-import type { LessonSeed } from "../types.js";
+import type { LessonSeed } from "#src/seed-content/types";
 
 /**
  * Batch: SEED-MONT-L15-21

@@ -12,7 +12,7 @@ import {
 } from "@mindkid/db";
 import { eq } from "drizzle-orm";
 import { beforeEach, describe, expect, it } from "vitest";
-import dashboardHandler from "../../server/api/users/dashboard.get.ts";
+import dashboardHandler from "#server/api/users/dashboard.get";
 
 function mockUserEvent(userId: number, query: Record<string, string> = {}) {
   const queryStr =

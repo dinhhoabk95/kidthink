@@ -1,7 +1,7 @@
 import { createCollection, getOwnerDb } from "@mindkid/db";
 import { defineEventHandler, readBody, setResponseStatus } from "h3";
 import { z } from "zod";
-import { requireWebUserSession } from "../../../utils/auth-runtime.ts";
+import { requireWebUserSession } from "#server/utils/auth-runtime";
 
 const CreateCollectionSchema = z.object({
   name: z.string().min(1, "Tên bộ sưu tập không được để trống").max(100),

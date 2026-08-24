@@ -4,7 +4,7 @@ import {
   REAUTH_MAX_AGE_SECONDS,
   SENSITIVE_REAUTH_ROUTES,
   verifyReauthWindow,
-} from "../src/index.js";
+} from "#src/index";
 
 describe("Task 1 — Shared Reauth Guard & Sensitive Routes Surface (BR-ACS-01, BR-ACS-03, BR-ADL-03, D-IJ)", () => {
   describe("D-IJ: Bidirectional Sensitive Reauth Routes Matrix", () => {

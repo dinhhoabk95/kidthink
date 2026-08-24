@@ -14,7 +14,7 @@ import { z } from "zod";
 import {
   assertRequestBodySize,
   requireWebUserSession,
-} from "../../../../utils/auth-runtime.js";
+} from "#server/utils/auth-runtime";
 
 const deleteChildSchema = z.object({
   password: z.string().optional().default(""),

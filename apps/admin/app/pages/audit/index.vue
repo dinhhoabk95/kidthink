@@ -529,7 +529,7 @@
   async function fetchLogs() {
     isLoading.value = true;
     try {
-      const res = await $fetch<{ items: AuditItem[] }>(
+      const res = await apiFetch<{ items: AuditItem[] }>(
         "/api/managers/audit-logs",
         {
           params: {
@@ -573,7 +573,9 @@
         queryParams.set("q", searchQuery.value);
       }
 
-      const url = `/api/managers/audit-logs/export?${queryParams.toString()}`;
+      const url = apiUrl(
+        `/api/managers/audit-logs/export?${queryParams.toString()}`
+      );
       window.open(url, "_blank");
     } catch (err) {
       console.error("Failed to export audit logs", err);

@@ -4,7 +4,7 @@ import {
   computeTiltAngle,
   getBalanceState,
   sumWeights,
-} from "../src/systems/balance-system.js";
+} from "#src/systems/balance-system";
 
 describe("balanceSystem (BR-MTB-15)", () => {
   it("computes sum of weights correctly", () => {

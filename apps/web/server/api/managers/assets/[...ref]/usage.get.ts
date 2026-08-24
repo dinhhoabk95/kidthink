@@ -8,7 +8,7 @@ import {
 } from "@mindkid/db";
 import { eq } from "drizzle-orm";
 import { createError, defineEventHandler, getQuery, getRouterParam } from "h3";
-import { requireManagerSession } from "../../../../utils/admin-auth-runtime.js";
+import { requireManagerSession } from "#server/utils/admin-auth-runtime";
 
 export interface AssetUsageItem {
   entity_type: string;

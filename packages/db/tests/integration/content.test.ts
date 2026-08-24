@@ -1,8 +1,8 @@
 import { eq } from "drizzle-orm";
 import { describe, expect, it } from "vitest";
-import { getOwnerDb } from "../../src/index.ts";
-import { contentImages } from "../../src/schema/assets.ts";
-import { activities, lessons, worksheets } from "../../src/schema/content.ts";
+import { getOwnerDb } from "#src/index";
+import { contentImages } from "#src/schema/assets";
+import { activities, lessons, worksheets } from "#src/schema/content";
 
 describe("Content Schema Integration Tests", () => {
   it("orphan content_images.(owner_type, owner_id) polymorphic check", async () => {

@@ -135,7 +135,7 @@
   async function fetchApprovedLevels() {
     isLoading.value = true;
     try {
-      const res = await $fetch<{ items: ApprovedLevel[] }>(
+      const res = await apiFetch<{ items: ApprovedLevel[] }>(
         "/api/managers/levels",
         {
           params: { status: "approved" },
@@ -152,7 +152,7 @@
   async function publishLevel(item: ApprovedLevel) {
     isPublishing.value = true;
     try {
-      await $fetch(`/api/managers/content/game_level/${item.id}/transition`, {
+      await apiFetch(`/api/managers/content/game_level/${item.id}/transition`, {
         method: "POST",
         body: {
           to_status: "published",

@@ -508,7 +508,7 @@
         params.set("status", filters.value.status);
       }
 
-      const res = await $fetch<{ items: ActivityItem[] }>(
+      const res = await apiFetch<{ items: ActivityItem[] }>(
         `/api/managers/activities?${params.toString()}`
       );
       activities.value = res.items || [];
@@ -546,7 +546,7 @@
   async function performAutosave() {
     try {
       autosaveStatus.value = "Đang tự động lưu...";
-      await $fetch(
+      await apiFetch(
         `/api/managers/activities/${activeForm.value.code}/${activeForm.value.content_version}`,
         {
           method: "PATCH",
@@ -562,7 +562,7 @@
   async function saveActivity() {
     try {
       if (isEditing.value) {
-        await $fetch(
+        await apiFetch(
           `/api/managers/activities/${activeForm.value.code}/${activeForm.value.content_version}`,
           {
             method: "PATCH",
@@ -571,7 +571,7 @@
         );
         actionNotification.value = "Cập nhật hoạt động thành công!";
       } else {
-        await $fetch("/api/managers/activities", {
+        await apiFetch("/api/managers/activities", {
           method: "POST",
           body: activeForm.value,
         });
@@ -588,7 +588,7 @@
 
   async function submitForReview(act: ActivityItem) {
     try {
-      await $fetch(`/api/managers/content/activity/${act.id}/transition`, {
+      await apiFetch(`/api/managers/content/activity/${act.id}/transition`, {
         method: "POST",
         body: {
           to_status: "in_review",
@@ -606,7 +606,7 @@
 
   async function promptArchiveActivity(act: ActivityItem) {
     try {
-      await $fetch(`/api/managers/content/activity/${act.id}/transition`, {
+      await apiFetch(`/api/managers/content/activity/${act.id}/transition`, {
         method: "POST",
         body: {
           to_status: "archived",

@@ -6,7 +6,7 @@ import { z } from "zod";
 import {
   assertRequestBodySize,
   assertSameOriginRequest,
-} from "../../../../utils/auth-runtime";
+} from "#server/utils/auth-runtime";
 
 const VerifyEmailSchema = z
   .object({ token: z.string().trim().min(1).max(512) })

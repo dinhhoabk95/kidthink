@@ -1,7 +1,7 @@
 import { featureFlags, getOwnerDb } from "@mindkid/db";
 import { CODE_FEATURE_FLAGS } from "@mindkid/shared";
 import { createError, defineEventHandler } from "h3";
-import { requireManagerSession } from "../../../utils/admin-auth-runtime.js";
+import { requireManagerSession } from "#server/utils/admin-auth-runtime";
 
 export interface MergedFeatureFlag {
   key: string;

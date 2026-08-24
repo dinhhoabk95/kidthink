@@ -4,7 +4,7 @@ import {
   MANAGER_CSRF_COOKIE_NAME,
   USER_CSRF_COOKIE_NAME,
   validateCsrfToken,
-} from "../src/csrf";
+} from "#src/csrf";
 
 describe("CSRF Double-Submit Protection", () => {
   it("uses separate cookie namespaces for User and Manager", () => {

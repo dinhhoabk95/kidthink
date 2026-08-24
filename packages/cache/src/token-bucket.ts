@@ -102,7 +102,7 @@ export async function checkRateLimit(
   windowSeconds: number,
   failOpen = true
 ): Promise<RateLimitCheckResult> {
-  if (process.env.NODE_ENV === "test" && !process.env.VALKEY_URL) {
+  if (process.env.NODE_ENV === "test") {
     return consumeMemoryRateLimit(key, limit, windowSeconds);
   }
 

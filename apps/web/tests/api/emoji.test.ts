@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import handler from "../../server/api/managers/emoji/index.get.js";
+import handler from "#server/api/managers/emoji/index.get";
 
 const CSRF_TOKEN =
   "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef";

@@ -1,4 +1,4 @@
-import type { EmojiEntry } from "../types";
+import type { EmojiEntry } from "#src/types";
 
 /** Phong cảnh — ~18 emoji */
 export const NATURE_LANDSCAPE_EMOJIS: EmojiEntry[] = [

@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   scanAllUserVocabulary,
   scanContentForRoleLabels,
-} from "../src/lint-user-vocabulary.ts";
+} from "#src/lint-user-vocabulary";
 
 describe("scanContentForRoleLabels (BR-GLOS-04)", () => {
   const REL = "apps/web/app/pages/index.vue";

@@ -1,7 +1,7 @@
 import { AppError } from "@mindkid/auth";
 import { and, eq, inArray, sql } from "drizzle-orm";
 import type { NodePgDatabase } from "drizzle-orm/node-postgres";
-import { contentTagMap, contentTags } from "../schema/tagging.js";
+import { contentTagMap, contentTags } from "#src/schema/tagging";
 
 export interface SkillMapInput {
   skillId: number;

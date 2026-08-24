@@ -18,12 +18,12 @@ import {
 } from "@mindkid/shared";
 import { eq } from "drizzle-orm";
 import { describe, expect, it } from "vitest";
-import completeItemHandler from "../../server/api/users/children/[uuid]/curriculum/complete-item.post.js";
-import nextStepHandler from "../../server/api/users/children/[uuid]/curriculum/next.get.js";
-import progressHandler from "../../server/api/users/children/[uuid]/curriculum/progress.get.js";
-import enrollHandler from "../../server/api/users/children/[uuid]/enrollments/index.post.js";
-import withdrawHandler from "../../server/api/users/children/[uuid]/enrollments/withdraw.post.js";
-import { invalidateUserEntitlementsCache } from "../../server/utils/entitlements-runtime.js";
+import completeItemHandler from "#server/api/users/children/[uuid]/curriculum/complete-item.post";
+import nextStepHandler from "#server/api/users/children/[uuid]/curriculum/next.get";
+import progressHandler from "#server/api/users/children/[uuid]/curriculum/progress.get";
+import enrollHandler from "#server/api/users/children/[uuid]/enrollments/index.post";
+import withdrawHandler from "#server/api/users/children/[uuid]/enrollments/withdraw.post";
+import { invalidateUserEntitlementsCache } from "#server/utils/entitlements-runtime";
 
 function makeUserEvent(
   userId: number,

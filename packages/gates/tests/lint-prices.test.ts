@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { runPriceGate, scanSourceForPrices } from "../src/lint-prices.ts";
+import { runPriceGate, scanSourceForPrices } from "#src/lint-prices";
 
 describe("Task 5: lint-prices gate (BR-PKG-02)", () => {
   it("allows price defined in entitlement-catalog.ts", () => {

@@ -2,7 +2,7 @@ import { appError } from "@mindkid/auth";
 import { getOwnerDb, mfaRecoveryRequests, users } from "@mindkid/db";
 import { desc, eq } from "drizzle-orm";
 import { defineEventHandler, getRouterParam } from "h3";
-import { requireManagerSession } from "../../../../../utils/admin-auth-runtime.js";
+import { requireManagerSession } from "#server/utils/admin-auth-runtime";
 
 export default defineEventHandler(async (event) => {
   await requireManagerSession(event);

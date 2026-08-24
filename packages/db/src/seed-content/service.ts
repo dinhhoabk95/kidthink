@@ -1,15 +1,15 @@
 import { AppError } from "@mindkid/auth";
 import { and, desc, eq } from "drizzle-orm";
 import type { NodePgDatabase } from "drizzle-orm/node-postgres";
-import { activities, lessonActivities, lessons } from "../schema/content.js";
-import { gameLevels, gameTemplates } from "../schema/game.js";
-import { contentReviewLog, contentSeedBatches } from "../schema/ops.js";
-import { contentSkillMap } from "../schema/tagging.js";
-import { skills } from "../schema/taxonomy.js";
+import { activities, lessonActivities, lessons } from "#src/schema/content";
+import { gameLevels, gameTemplates } from "#src/schema/game";
+import { contentReviewLog, contentSeedBatches } from "#src/schema/ops";
+import { contentSkillMap } from "#src/schema/tagging";
+import { skills } from "#src/schema/taxonomy";
 import {
   validateAndAssignTags,
   validateContentSkillMap,
-} from "../services/tagging.js";
+} from "#src/services/tagging";
 import { runEightGates } from "./gates/runner.js";
 import type {
   ActivitySeed,

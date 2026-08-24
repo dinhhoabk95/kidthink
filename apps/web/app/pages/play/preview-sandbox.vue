@@ -2,7 +2,7 @@
   import { type EngineConfig, GameEngine } from "@mindkid/game-engine";
   import { onMounted, onUnmounted, ref } from "vue";
   import { useRoute } from "vue-router";
-  import { createSessionFactory } from "../../utils/game-session-factory";
+  import { createSessionFactory } from "~/utils/game-session-factory";
 
   interface StudioUpdatePayload {
     templateCode?: string;

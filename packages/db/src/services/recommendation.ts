@@ -15,19 +15,19 @@ import {
 } from "@mindkid/shared";
 import { and, asc, desc, eq, inArray, sql } from "drizzle-orm";
 import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
-import { masteryState } from "../schema/adaptive.js";
-import { childProfiles } from "../schema/child.js";
+import { masteryState } from "#src/schema/adaptive";
+import { childProfiles } from "#src/schema/child";
 import {
   curricula,
   curriculumEnrollments,
   curriculumItemProgress,
   curriculumItems,
   curriculumWeeks,
-} from "../schema/curriculum.js";
-import { gameLevels } from "../schema/game.js";
-import { levelDailyStats, playSessions } from "../schema/play.js";
-import { contentSkillMap } from "../schema/tagging.js";
-import { skillPrerequisites } from "../schema/taxonomy.js";
+} from "#src/schema/curriculum";
+import { gameLevels } from "#src/schema/game";
+import { levelDailyStats, playSessions } from "#src/schema/play";
+import { contentSkillMap } from "#src/schema/tagging";
+import { skillPrerequisites } from "#src/schema/taxonomy";
 
 export interface GetChildRecommendationsOptions {
   childId: number;

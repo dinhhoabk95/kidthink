@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import challengeHandler from "../../server/api/users/parent-gate/challenge.post";
-import verifyHandler from "../../server/api/users/parent-gate/verify.post";
+import challengeHandler from "#server/api/users/parent-gate/challenge.post";
+import verifyHandler from "#server/api/users/parent-gate/verify.post";
 
 function mockEvent(method: string, userId = 101, body: any = {}) {
   const csrf =

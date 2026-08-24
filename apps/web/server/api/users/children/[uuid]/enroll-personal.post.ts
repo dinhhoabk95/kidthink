@@ -8,8 +8,8 @@ import {
   readBody,
   setResponseStatus,
 } from "h3";
-import { throwValidationError } from "../../../../utils/api-error.js";
-import { requireWebUserSession } from "../../../../utils/auth-runtime.js";
+import { throwValidationError } from "#server/utils/api-error";
+import { requireWebUserSession } from "#server/utils/auth-runtime";
 
 export default defineEventHandler(async (event) => {
   const user = await requireWebUserSession(event);

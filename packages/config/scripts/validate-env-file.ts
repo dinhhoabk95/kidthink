@@ -8,8 +8,8 @@
  * so it may only use Node built-ins and the registry source file.
  */
 import { readFileSync } from "node:fs";
-import { type AppType, validateEnvFile } from "../src/env-contract.ts";
-import { parseEnvFile } from "../src/env-file.ts";
+import { type AppType, validateEnvFile } from "#src/env-contract";
+import { parseEnvFile } from "#src/env-file";
 
 const VALID_APPS: readonly AppType[] = ["web", "admin", "worker"];
 

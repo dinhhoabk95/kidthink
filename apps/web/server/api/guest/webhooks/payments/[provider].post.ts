@@ -1,4 +1,5 @@
 import { appError } from "@mindkid/auth";
+import { requireFirstEnv } from "@mindkid/config";
 import { processAutomatedPaymentWebhook } from "@mindkid/db";
 import {
   AUTOMATED_PAYMENT_PROVIDERS,
@@ -45,10 +46,10 @@ export default defineEventHandler(async (event) => {
     (rawBody as { signature?: string })?.signature ||
     "";
 
-  const secretKey =
-    process.env[`PAYMENT_${provider.toUpperCase()}_WEBHOOK_SECRET`] ||
-    process.env.PAYMENT_WEBHOOK_SECRET ||
-    (process.env.NODE_ENV === "test" ? "test_webhook_secret_key_12345" : "");
+  const secretKey = requireFirstEnv([
+    `PAYMENT_${provider.toUpperCase()}_WEBHOOK_SECRET`,
+    "PAYMENT_WEBHOOK_SECRET",
+  ]);
 
   if (secretKey && signature) {
     const isSignatureValid = verifyPaymentWebhookSignature(

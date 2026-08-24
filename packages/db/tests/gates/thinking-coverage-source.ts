@@ -123,8 +123,8 @@ export function mapSeedLevels(
 /** Nạp corpus seed thật từ `packages/db` và registry template của engine. */
 export async function loadItemsFromSeedCorpus(): Promise<SeedCorpusLoad> {
   const [{ ALL_SEED_LEVELS }, { ALL_TEMPLATES }] = await Promise.all([
-    import("../../src/seed-content/index.ts"),
-    import("../../../game-engine/src/generated/template-registry.ts"),
+    import("#src/seed-content/index"),
+    import("@mindkid/game-engine"),
   ]);
 
   const mechanicByTemplateCode = new Map<string, string>(

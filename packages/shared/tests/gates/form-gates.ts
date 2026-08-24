@@ -5,12 +5,12 @@ import { type GameTemplate, MVP_TEMPLATES } from "@mindkid/game-engine";
 import {
   CONFIG_DICTIONARY,
   TEXT_FALLBACK_ALLOWLIST,
-} from "../../src/config-dictionary.ts";
+} from "#src/config-dictionary";
 import {
   getMaxNestingDepth,
   introspectZodSchema,
   type UiHintResult,
-} from "../../src/zod-introspect.ts";
+} from "#src/zod-introspect";
 
 export interface FormGateViolation {
   code: string;

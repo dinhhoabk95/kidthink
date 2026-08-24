@@ -1,13 +1,13 @@
 import { describe, expect, it } from "vitest";
-import { countDeadEnds } from "../src/systems/maze-system.js";
-import { GT013_FIXTURES } from "../src/templates/GT-013/fixtures.js";
-import { GT013Session } from "../src/templates/GT-013/session.js";
+import { countDeadEnds } from "#src/systems/maze-system";
+import { GT013_FIXTURES } from "#src/templates/GT-013/fixtures";
+import { GT013Session } from "#src/templates/GT-013/session";
 import GT013Template, {
   defaultInputModeForBand,
   GT013BaseSchema,
   GT013ContentSchema,
   GT013DifficultySchema,
-} from "../src/templates/GT-013/template.js";
+} from "#src/templates/GT-013/template";
 
 const [CORRIDOR, TRAP] = GT013_FIXTURES;
 

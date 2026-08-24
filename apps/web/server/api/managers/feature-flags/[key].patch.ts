@@ -8,7 +8,7 @@ import { CODE_FEATURE_FLAGS } from "@mindkid/shared";
 import { eq } from "drizzle-orm";
 import { createError, defineEventHandler, getRouterParam, readBody } from "h3";
 import { z } from "zod";
-import { requireManagerSession } from "../../../utils/admin-auth-runtime.js";
+import { requireManagerSession } from "#server/utils/admin-auth-runtime";
 
 const patchFlagSchema = z.object({
   reason: z.string().min(10),

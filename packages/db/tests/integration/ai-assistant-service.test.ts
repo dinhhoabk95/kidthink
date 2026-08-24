@@ -11,8 +11,8 @@ import {
   getOwnerDb,
   grantCredits,
   users,
-} from "../../src/index.ts";
-import { aiProvider } from "../../src/services/ai-provider.ts";
+} from "#src/index";
+import { aiProvider } from "#src/services/ai-provider";
 
 describe("AI Assistant Service Integration Tests (BR-AIA-01..11)", () => {
   afterEach(() => {

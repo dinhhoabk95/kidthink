@@ -5,8 +5,8 @@ import {
   type ActionResult,
   type GameAction,
   TemplateGameSession,
-} from "../../game-session.js";
-import { FlashTimer } from "../../systems/timer-system.js";
+} from "#src/game-session";
+import { FlashTimer } from "#src/systems/timer-system";
 import type { GT012Content, GT012Difficulty } from "./template.js";
 
 export class FlashRecallSession extends TemplateGameSession<

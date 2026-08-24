@@ -4,7 +4,7 @@ import {
   TEMPLATE_REGISTRY,
 } from "@mindkid/notification";
 import { createError, defineEventHandler, getRouterParam, readBody } from "h3";
-import { requireManagerSession } from "../../../../utils/admin-auth-runtime.js";
+import { requireManagerSession } from "#server/utils/admin-auth-runtime";
 
 const SCRIPT_TAG_REGEX = /<script/i;
 const EXTERNAL_IMG_REGEX = /<img[^>]+src=["']http/i;

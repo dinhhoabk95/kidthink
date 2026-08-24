@@ -1,7 +1,7 @@
 import { readdirSync, readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { describe, expect, it } from "vitest";
-import { BANNED_TERMS } from "../src/index.js";
+import { BANNED_TERMS } from "#src/index";
 
 const ROOT = resolve(import.meta.dirname, "../../..");
 const MindKid_SCOPE_PATTERN = /^@mindkid\//;

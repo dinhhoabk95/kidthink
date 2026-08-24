@@ -4,14 +4,15 @@ import fs from "node:fs";
 import path from "node:path";
 import { pipeline } from "node:stream/promises";
 import { createGzip } from "node:zlib";
+import { requireEnv } from "@mindkid/config";
 import { backupLog, getOwnerDb } from "@mindkid/db";
 import { eq } from "drizzle-orm";
 
 export const RETENTION_DAYS_POSTGRES = 30; // 30/12/24 khai thành hằng số có tên
 
 export async function runPostgresBackup(_jobId: string) {
-  const encryptionKey = process.env.BACKUP_ENCRYPTION_KEY;
-  if (encryptionKey?.length !== 32) {
+  const encryptionKey = requireEnv("BACKUP_ENCRYPTION_KEY");
+  if (encryptionKey.length !== 32) {
     throw new Error("BACKUP_ENCRYPTION_KEY must be a 32-character string");
   }
 
@@ -36,9 +37,7 @@ export async function runPostgresBackup(_jobId: string) {
   const storagePath = path.join(storageDir, filename);
 
   try {
-    const dbUrl =
-      process.env.DATABASE_URL ||
-      "postgres://postgres:postgres@localhost:5432/mindkid";
+    const dbUrl = requireEnv("DATABASE_URL");
 
     const dumpProcess = spawn("pg_dump", [dbUrl], {
       stdio: ["ignore", "pipe", "pipe"],

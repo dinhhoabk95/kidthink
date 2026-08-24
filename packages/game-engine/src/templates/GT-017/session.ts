@@ -5,14 +5,14 @@ import {
   type ActionResult,
   type GameAction,
   TemplateGameSession,
-} from "../../game-session.js";
+} from "#src/game-session";
 import {
   type CubeCoord,
   computeTopView,
   countHiddenCubes,
   type RotationAngle,
   sortCubesForRender,
-} from "../../systems/isometric-system.js";
+} from "#src/systems/isometric-system";
 import type { GT017Content, GT017Difficulty } from "./template.js";
 
 export class BlockStackSession extends TemplateGameSession<

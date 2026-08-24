@@ -1,6 +1,6 @@
 import { childProfiles, getOwnerDb, users } from "@mindkid/db";
 import { describe, expect, it } from "vitest";
-import getPlayHomeHandler from "../../server/api/users/play/home.get";
+import getPlayHomeHandler from "#server/api/users/play/home.get";
 
 function mockEvent(
   method: string,

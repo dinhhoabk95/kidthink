@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { SURFACE_RULES, TOUCH_FLOORS, validateIconName } from "../src/index.js";
+import { SURFACE_RULES, TOUCH_FLOORS, validateIconName } from "#src/index";
 
 describe("Task 3: Kit, Surfaces & Touch Floor Constants (BR-A11-04, BR-DSC-04)", () => {
   it("BR-A11-04: verifies touch floor single source of truth (D-FF)", () => {

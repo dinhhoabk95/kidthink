@@ -7,8 +7,8 @@ import { z } from "zod";
 import {
   assertRequestBodySize,
   requireWebUserSession,
-} from "../../../utils/auth-runtime.js";
-import { markCurrentSessionReauthenticated } from "../../../utils/reauth-runtime.js";
+} from "#server/utils/auth-runtime";
+import { markCurrentSessionReauthenticated } from "#server/utils/reauth-runtime";
 
 const ReauthSchema = z
   .object({

@@ -12,7 +12,7 @@ import {
   nearestJunctionIndex,
   openNeighbors,
   reachableCells,
-} from "../src/systems/maze-system.js";
+} from "#src/systems/maze-system";
 
 /**
  * `BR-MTB-15` — bộ test của `mazeSystem` **độc lập với khuôn**. File này chỉ nhập

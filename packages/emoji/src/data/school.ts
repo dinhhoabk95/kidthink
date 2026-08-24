@@ -1,4 +1,4 @@
-import type { EmojiEntry } from "../types";
+import type { EmojiEntry } from "#src/types";
 
 /** Trường mầm non — ~25 emoji */
 export const SCHOOL_EMOJIS: EmojiEntry[] = [

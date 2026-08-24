@@ -2,9 +2,9 @@ import { appError } from "@mindkid/auth";
 import { enqueue } from "@mindkid/queue";
 import { storage } from "@mindkid/storage";
 import { and, count, eq, gte, isNotNull, lte, ne } from "drizzle-orm";
-import { getDb } from "../client.ts";
-import { exportJobs } from "../schema/exports.ts";
-import { notificationDeliveries, notifications } from "../schema/ops.ts";
+import { getDb } from "#src/client";
+import { exportJobs } from "#src/schema/exports";
+import { notificationDeliveries, notifications } from "#src/schema/ops";
 import { writeAudit } from "./audit.ts";
 import { getLessonPlanByUuid } from "./lesson-plan.ts";
 import {

@@ -1,7 +1,7 @@
 import { getOwnerDb, levelDailyStats } from "@mindkid/db";
 import { and, desc, gte, lte, type SQL } from "drizzle-orm";
 import { defineEventHandler, getQuery } from "h3";
-import { requireManagerSession } from "../../../utils/admin-auth-runtime.js";
+import { requireManagerSession } from "#server/utils/admin-auth-runtime";
 
 export const CONTENT_KPI_THRESHOLDS = {
   HIGH_ABANDONMENT_RATE: 0.4, // > 40%

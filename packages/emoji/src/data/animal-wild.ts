@@ -1,4 +1,4 @@
-import type { EmojiEntry } from "../types";
+import type { EmojiEntry } from "#src/types";
 
 /** Động vật hoang dã — ~30 emoji */
 export const ANIMAL_WILD_EMOJIS: EmojiEntry[] = [

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { resolveAssets } from "../src/asset-resolver";
+import { resolveAssets } from "#src/asset-resolver";
 
 describe("Task 1 — Server Asset Resolution (BR-CFG-07)", () => {
   it("resolves emoji reference to glyph from registry", () => {

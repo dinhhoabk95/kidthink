@@ -17,8 +17,8 @@ import { z } from "zod";
 import {
   getManagerRemoteIp,
   requireSuperAdminSession,
-} from "../../../../utils/admin-auth-runtime.ts";
-import { invalidateUserEntitlementsCache } from "../../../../utils/entitlements-runtime.ts";
+} from "#server/utils/admin-auth-runtime";
+import { invalidateUserEntitlementsCache } from "#server/utils/entitlements-runtime";
 
 const rejectOrderSchema = z.object({
   admin_note: z

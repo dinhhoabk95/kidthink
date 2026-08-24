@@ -8,7 +8,7 @@ import {
 } from "@mindkid/db";
 import { eq } from "drizzle-orm";
 import { describe, expect, it } from "vitest";
-import getRecommendationsHandler from "../../server/api/users/play/recommendations.get";
+import getRecommendationsHandler from "#server/api/users/play/recommendations.get";
 
 const P_LEARN_REGEX = /"p_learn"/i;
 const MASTERY_REGEX = /"mastery"/i;

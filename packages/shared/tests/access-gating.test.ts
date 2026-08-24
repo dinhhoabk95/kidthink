@@ -9,10 +9,10 @@ import {
   getCallerStatus,
   getExpectedGatingStatus,
   getUpgradePackageCodes,
-} from "../src/access-gating.js";
-import { allowedTiers, type CallerIdentity } from "../src/access-ladder.js";
-import type { EntitlementKey } from "../src/entitlement-catalog.js";
-import type { AccessTier } from "../src/taxonomy-types.js";
+} from "#src/access-gating";
+import { allowedTiers, type CallerIdentity } from "#src/access-ladder";
+import type { EntitlementKey } from "#src/entitlement-catalog";
+import type { AccessTier } from "#src/taxonomy-types";
 
 describe("P1.3 Access Gating (BR-GAT-01 .. BR-GAT-08)", () => {
   const publishedFree: ContentTarget = {

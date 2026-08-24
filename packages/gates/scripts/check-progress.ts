@@ -8,7 +8,7 @@ import { execFileSync } from "node:child_process";
 import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
 import { join, relative } from "node:path";
 import { REPO_ROOT } from "@mindkid/config/paths";
-import { collectSpecFiles, parseFrontmatter } from "../src/lint-specs-lib.ts";
+import { collectSpecFiles, parseFrontmatter } from "#src/lint-specs-lib";
 import {
   ownedRuleIds,
   type ProgressSpec,

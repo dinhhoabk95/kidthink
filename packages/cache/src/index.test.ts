@@ -1,6 +1,8 @@
 import { afterAll, describe, expect, it } from "vitest";
 import { disconnect, ping } from "./index.js";
 
+process.env.VALKEY_URL = "redis://localhost:6380";
+
 describe("packages/cache", () => {
   afterAll(async () => {
     await disconnect();

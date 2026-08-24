@@ -1,4 +1,4 @@
-import type { ActivitySeed } from "../types.js";
+import type { ActivitySeed } from "#src/seed-content/types";
 
 /**
  * Batch: SEED-MONT-ACT15-21

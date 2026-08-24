@@ -1,12 +1,12 @@
 import { and, asc, eq } from "drizzle-orm";
-import type { getOwnerDb } from "../client.ts";
-import { lessons } from "../schema/content.ts";
+import type { getOwnerDb } from "#src/client";
+import { lessons } from "#src/schema/content";
 import {
   curricula,
   curriculumItems,
   curriculumWeeks,
-} from "../schema/curriculum.ts";
-import { gameLevels } from "../schema/game.ts";
+} from "#src/schema/curriculum";
+import { gameLevels } from "#src/schema/game";
 
 export interface MvpCurriculumConfig {
   code: string;

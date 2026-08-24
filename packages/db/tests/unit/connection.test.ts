@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { getAppDb, getOwnerDb } from "../../src/index";
+import { getAppDb, getOwnerDb } from "#src/index";
 
 describe("packages/db connection factories", () => {
   it("does not connect on module import (side-effect free)", () => {

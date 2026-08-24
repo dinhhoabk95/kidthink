@@ -2,7 +2,7 @@ import { appError, getBrowserSessionService } from "@mindkid/auth";
 import { activeSessions, getAppDb } from "@mindkid/db";
 import { and, eq } from "drizzle-orm";
 import { defineEventHandler, getRouterParam, type H3Event } from "h3";
-import { requireWebUserSession } from "../../../../utils/auth-runtime.js";
+import { requireWebUserSession } from "#server/utils/auth-runtime";
 
 export async function handleDeleteSession(event: H3Event) {
   const userSession = await requireWebUserSession(event);

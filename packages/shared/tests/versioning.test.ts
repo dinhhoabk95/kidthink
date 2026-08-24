@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { requiresVersionBump } from "../src/versioning.ts";
+import { requiresVersionBump } from "#src/versioning";
 
 const UNKNOWN_FIELD_REGEX = /BR-VER-08: Unknown field/;
 

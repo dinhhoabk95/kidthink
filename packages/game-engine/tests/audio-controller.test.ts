@@ -5,7 +5,7 @@ import {
   AudioController,
   ScaffoldingSystem,
   SpeechSynthesisAdapter,
-} from "../src";
+} from "#src/index";
 
 const FORBIDDEN_MIC_PATTERNS = [
   /getUserMedia/,

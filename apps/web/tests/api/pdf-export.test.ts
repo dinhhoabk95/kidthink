@@ -11,10 +11,10 @@ import {
 } from "@mindkid/db";
 import { ENTITLEMENT_KEYS } from "@mindkid/shared";
 import { beforeEach, describe, expect, it } from "vitest";
-import getExportStatusHandler from "../../server/api/users/exports/[uuid].get.js";
-import postExportHandler from "../../server/api/users/exports/index.post.js";
-import exportPlanHandler from "../../server/api/users/lesson-plans/[uuid]/export.post.js";
-import { invalidateUserEntitlementsCache } from "../../server/utils/entitlements-runtime.js";
+import getExportStatusHandler from "#server/api/users/exports/[uuid].get";
+import postExportHandler from "#server/api/users/exports/index.post";
+import exportPlanHandler from "#server/api/users/lesson-plans/[uuid]/export.post";
+import { invalidateUserEntitlementsCache } from "#server/utils/entitlements-runtime";
 
 function makeUserEvent(
   userId: number,

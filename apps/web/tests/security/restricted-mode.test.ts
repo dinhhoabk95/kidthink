@@ -4,7 +4,7 @@ import { describe, expect, it } from "vitest";
 import {
   assertUnrestrictedUser,
   respondToUserAuthError,
-} from "../../server/utils/auth-runtime";
+} from "#server/utils/auth-runtime";
 
 describe("Task 6 — Server-Enforced Restricted Mode (D-EQ)", () => {
   it("permits pending_verification user to read session status but blocks restricted actions with 403 RESTRICTED_MODE (BR-REG-08)", async () => {
@@ -26,7 +26,7 @@ describe("Task 6 — Server-Enforced Restricted Mode (D-EQ)", () => {
 
     // 1. Permitted action check (GET sessions)
     const { default: sessionsHandler } = await import(
-      "../../server/api/users/auth/sessions.get"
+      "#server/api/users/auth/sessions.get"
     );
 
     const event = {

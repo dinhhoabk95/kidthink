@@ -9,7 +9,7 @@ import {
 } from "@mindkid/db";
 import { sql } from "drizzle-orm";
 import { defineEventHandler, getQuery } from "h3";
-import { requireManagerSession } from "../../../utils/admin-auth-runtime.js";
+import { requireManagerSession } from "#server/utils/admin-auth-runtime";
 
 export const TAXONOMY_SUFFICIENT_THRESHOLD = 3;
 

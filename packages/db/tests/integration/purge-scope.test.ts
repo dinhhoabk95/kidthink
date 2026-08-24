@@ -3,7 +3,7 @@ import {
   PURGE_TABLE_CLASSIFICATIONS,
   PURGE_TABLE_MAP,
   validateSchemaTablesClassified,
-} from "../../src/index.js";
+} from "#src/index";
 
 const DIF_GATE_VIOLATION_REGEX = /D-IF GATE VIOLATION/;
 

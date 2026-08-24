@@ -7,7 +7,7 @@ import {
   isShellcheckAvailable,
   runShellcheck,
   scanAndLintShellScripts,
-} from "../src/lint-shell-scripts.ts";
+} from "#src/lint-shell-scripts";
 
 const BAD_FIXTURE = "packages/gates/tests/fixtures/shell/bad/unquoted.sh";
 

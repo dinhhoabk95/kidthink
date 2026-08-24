@@ -8,16 +8,16 @@ import {
   type OfflineSyncResponse,
 } from "@mindkid/shared";
 import { and, eq, inArray } from "drizzle-orm";
-import { getDb, getOwnerDb } from "../client.ts";
-import { childProfiles } from "../schema/child.ts";
-import { lessons } from "../schema/content.ts";
-import { curricula, curriculumItems } from "../schema/curriculum.ts";
-import { gameLevels } from "../schema/game.ts";
+import { getDb, getOwnerDb } from "#src/client";
+import { childProfiles } from "#src/schema/child";
+import { lessons } from "#src/schema/content";
+import { curricula, curriculumItems } from "#src/schema/curriculum";
+import { gameLevels } from "#src/schema/game";
 import {
   personalCurricula,
   personalCurriculumItems,
-} from "../schema/personal-curriculum.ts";
-import { playSessions, telemetryEvents } from "../schema/play.ts";
+} from "#src/schema/personal-curriculum";
+import { playSessions, telemetryEvents } from "#src/schema/play";
 import { writeAudit } from "./audit.ts";
 
 export interface OfflinePackCallerContext {

@@ -5,12 +5,12 @@ import {
   type ActionResult,
   type GameAction,
   TemplateGameSession,
-} from "../../game-session.js";
-import { PlacementMechanic } from "../../mechanics/placement-mechanic.js";
+} from "#src/game-session";
+import { PlacementMechanic } from "#src/mechanics/placement-mechanic";
 import {
   type AssemblyPlacementResult,
   AssemblySystem,
-} from "../../systems/assembly-system.js";
+} from "#src/systems/assembly-system";
 import type { GT023Content, GT023Difficulty } from "./template.js";
 
 export class GT023Session extends TemplateGameSession<

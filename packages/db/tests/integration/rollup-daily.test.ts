@@ -1,18 +1,15 @@
 import { eq } from "drizzle-orm";
 import { describe, expect, it } from "vitest";
-import { getOwnerDb } from "../../src/index.ts";
-import { childProfiles } from "../../src/schema/child.ts";
-import { gameLevels, gameTemplates } from "../../src/schema/game.ts";
-import { users } from "../../src/schema/identity.ts";
+import { getOwnerDb } from "#src/index";
+import { childProfiles } from "#src/schema/child";
+import { gameLevels, gameTemplates } from "#src/schema/game";
+import { users } from "#src/schema/identity";
 import {
   childDailyStats,
   levelDailyStats,
   playSessions,
-} from "../../src/schema/play.ts";
-import {
-  runDailyRollup,
-  runExpireEntitlements,
-} from "../../src/services/rollup.ts";
+} from "#src/schema/play";
+import { runDailyRollup, runExpireEntitlements } from "#src/services/rollup";
 
 describe("Task 5 — Daily Rollup & Entitlement Expire (BR-TLM-02, BR-TLM-05, BR-TLM-08)", () => {
   it("runs daily rollup idempotently and excludes guest sessions from child stats (BR-TLM-02, BR-TLM-05)", async () => {

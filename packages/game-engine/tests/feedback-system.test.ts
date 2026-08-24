@@ -5,7 +5,7 @@ import {
   FeedbackSystem,
   FORBIDDEN_WORDS,
   RETRY_ENCOURAGEMENTS,
-} from "../src/systems/feedback-system";
+} from "#src/systems/feedback-system";
 
 describe("FeedbackSystem (BR-FBK-01..10 & FEEDBACK-AND-CELEBRATION spec)", () => {
   it("BR-FBK-01 & BR-FBK-03: retry state uses amber token and never danger token", () => {

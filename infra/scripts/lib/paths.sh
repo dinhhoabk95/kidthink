@@ -28,12 +28,18 @@ MK_BUILD_IMAGE="${MK_BUILD_IMAGE:-node:24-bookworm}"
 MK_HEALTH_URL="${MK_HEALTH_URL:-http://127.0.0.1:3000/api/guest/health}"
 
 # release-deploy.md §7.2 — worker first, public surface last.
-MK_RELOAD_ORDER=(worker admin web)
-MK_APPS=(web admin worker)
+MK_RELOAD_ORDER=(worker web)
+MK_APPS=(web worker)
+
+# APP-RUNTIME-BOUNDARY §3: admin không có tiến trình, nhưng vẫn có env file —
+# `NUXT_PUBLIC_API_BASE_URL` được nướng vào bundle tĩnh lúc **build**. Nó là
+# public build config, không phải secret runtime, nên file này đi vào container
+# build chứ không vào PM2.
+MK_ENV_APPS=(web admin worker)
+MK_BUILD_ENV_APPS=(admin)
 
 # server-provisioning.md §7.3
 MK_PORT_WEB=3000
-MK_PORT_ADMIN=3002
 MK_PORT_WORKER=3099
 
 # Required component versions (server-provisioning.md §7.2). Drift stops provisioning.

@@ -1,11 +1,11 @@
 import { describe, expect, it } from "vitest";
-import { getOwnerDb } from "../../src/index.ts";
+import { getOwnerDb } from "#src/index";
 import {
   contentSkillMap,
   contentTagMap,
   contentTags,
-} from "../../src/schema/tagging.ts";
-import { skills } from "../../src/schema/taxonomy.ts";
+} from "#src/schema/tagging";
+import { skills } from "#src/schema/taxonomy";
 
 describe("Tagging Schema Integration Tests", () => {
   it("BR-SCT-07: content_skill_map.weight must be > 0 and <= 1", async () => {

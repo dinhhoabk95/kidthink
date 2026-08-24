@@ -13,8 +13,8 @@ import {
 } from "@mindkid/db";
 import { and, eq } from "drizzle-orm";
 import { beforeAll, describe, expect, it } from "vitest";
-import revokeHandler from "../../../server/api/managers/entitlements/[id].delete";
-import grantHandler from "../../../server/api/managers/users/[uuid]/entitlements.post";
+import revokeHandler from "#server/api/managers/entitlements/[id].delete";
+import grantHandler from "#server/api/managers/users/[uuid]/entitlements.post";
 
 const CSRF_TOKEN =
   "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef";

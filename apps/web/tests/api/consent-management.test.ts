@@ -9,17 +9,17 @@ import {
 import { CONSENT_POLICY_MAP, type ConsentType } from "@mindkid/shared";
 import { and, eq } from "drizzle-orm";
 import { beforeEach, describe, expect, it } from "vitest";
-import getGuestConsentRequirementsHandler from "../../server/api/guest/consent-requirements/index.get";
-import forceReconsentHandler from "../../server/api/managers/legal-consent-forces/index.post";
-import getManagerConsentsHandler from "../../server/api/managers/legal-consents/index.get";
-import getConsentsHandler from "../../server/api/users/consents/index.get";
-import submitConsentHandler from "../../server/api/users/consents/index.post";
-import withdrawConsentHandler from "../../server/api/users/consents/withdraw.post";
-import dataExportHandler from "../../server/api/users/data-export/index.get";
+import getGuestConsentRequirementsHandler from "#server/api/guest/consent-requirements/index.get";
+import forceReconsentHandler from "#server/api/managers/legal-consent-forces/index.post";
+import getManagerConsentsHandler from "#server/api/managers/legal-consents/index.get";
+import getConsentsHandler from "#server/api/users/consents/index.get";
+import submitConsentHandler from "#server/api/users/consents/index.post";
+import withdrawConsentHandler from "#server/api/users/consents/withdraw.post";
+import dataExportHandler from "#server/api/users/data-export/index.get";
 import {
   assertUserTermsAndPrivacyConsent,
   isAllowedConsentExemptPath,
-} from "../../server/utils/consent-guard";
+} from "#server/utils/consent-guard";
 
 const KEBAB_URL_REGEX = /^\/[a-z-]+$/;
 

@@ -20,9 +20,9 @@ export interface LessonVarietyCorpus {
 export async function loadLessonVarietyCorpus(): Promise<LessonVarietyCorpus> {
   const [{ ALL_SEED_LESSONS }, { ALL_SEED_ACTIVITIES }, { ALL_SEED_LEVELS }] =
     await Promise.all([
-      import("../../src/seed-content/lessons/index.ts"),
-      import("../../src/seed-content/activities/index.ts"),
-      import("../../src/seed-content/index.ts"),
+      import("#src/seed-content/lessons/index"),
+      import("#src/seed-content/activities/index"),
+      import("#src/seed-content/index"),
     ]);
 
   return {

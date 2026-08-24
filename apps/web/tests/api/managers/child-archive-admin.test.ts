@@ -1,7 +1,7 @@
 import { auditLogs, childProfiles, getOwnerDb, users } from "@mindkid/db";
 import { and, eq } from "drizzle-orm";
 import { describe, expect, it } from "vitest";
-import handler from "../../../server/api/managers/children/[uuid]/archive.post";
+import handler from "#server/api/managers/children/[uuid]/archive.post";
 
 const CSRF_TOKEN =
   "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef";

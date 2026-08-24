@@ -3,7 +3,7 @@ import {
   calculateProgressiveLockoutSeconds,
   getRouteClassConfig,
   RATE_LIMIT_CONFIGS,
-} from "../src/rate-limiting.js";
+} from "#src/rate-limiting";
 
 describe("Rate Limiting Registry (Task 6 / BR-RTL-01..05)", () => {
   it("defines exactly 16 route classes matching spec §7", () => {

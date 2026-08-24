@@ -2,15 +2,15 @@
 /* biome-ignore-all lint/performance/useTopLevelRegex: test regexes */
 
 import { describe, expect, it } from "vitest";
-import type { AgeBand } from "../src/contracts/types.js";
-import { GameEngine } from "../src/core.js";
-import { MVP_TEMPLATES } from "../src/index.js";
+import type { AgeBand } from "#src/contracts/types";
+import { GameEngine } from "#src/core";
+import { MVP_TEMPLATES } from "#src/index";
 import {
   getTouchFloor,
   LOGIC_HEIGHT,
   LOGIC_WIDTH,
   SAFE_MARGIN_PX,
-} from "../src/layout/constants.js";
+} from "#src/layout/constants";
 import {
   computeBipartiteLayout,
   computeClueBoardLayout,
@@ -18,13 +18,9 @@ import {
   computeMatrix3x3Layout,
   computeMatrixSlotGridLayout,
   computeTrackLayout,
-} from "../src/layout/geometry.js";
-import {
-  isLayoutId,
-  LAYOUT_IDS,
-  resolveLayout,
-} from "../src/layout/registry.js";
-import type { LayoutId } from "../src/layout/types.js";
+} from "#src/layout/geometry";
+import { isLayoutId, LAYOUT_IDS, resolveLayout } from "#src/layout/registry";
+import type { LayoutId } from "#src/layout/types";
 
 describe("Game Layout Engine (BR-LAY-01..10)", () => {
   it("BR-LAY-01 — hàm layout thuần: cùng đầu vào cho cùng kết quả 50 lần liên tiếp", () => {

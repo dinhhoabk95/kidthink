@@ -21,7 +21,7 @@ import {
 import {
   assertRequestBodySize,
   requireWebUserSession,
-} from "../../../utils/auth-runtime.js";
+} from "#server/utils/auth-runtime";
 
 function parseAndValidateInput(rawBody: unknown, currentYear: number) {
   try {

@@ -12,7 +12,7 @@ import {
   GT008_FIXTURES,
   GT008Session,
   InteractionManager,
-} from "../src/index";
+} from "#src/index";
 
 describe("Task 6 & Task 7 — All 6 Template Sessions & Kid Surface Rules", () => {
   it("GT-001 (tap-select): completes session upon correct selection", () => {

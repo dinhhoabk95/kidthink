@@ -1,9 +1,9 @@
 import { childProfiles, getOwnerDb, grantCredits, users } from "@mindkid/db";
 import { describe, expect, it } from "vitest";
-import explainReportHandler from "../../server/api/users/ai/explain-report.post.js";
-import rewriteGuideHandler from "../../server/api/users/ai/rewrite-guide.post.js";
-import suggestContentHandler from "../../server/api/users/ai/suggest-content.post.js";
-import summarizeReportHandler from "../../server/api/users/ai/summarize-report.post.js";
+import explainReportHandler from "#server/api/users/ai/explain-report.post";
+import rewriteGuideHandler from "#server/api/users/ai/rewrite-guide.post";
+import suggestContentHandler from "#server/api/users/ai/suggest-content.post";
+import summarizeReportHandler from "#server/api/users/ai/summarize-report.post";
 
 function mockEvent(
   method: string,

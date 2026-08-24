@@ -4,7 +4,7 @@ import {
   type CurriculumValidationInput,
   type CurriculumWeekMetadata,
   validateCurriculumModel,
-} from "../src/curriculum-model.js";
+} from "#src/curriculum-model";
 
 describe("P3.3 Curriculum Balance Engine & Rules (BR-CRM-01..11, BR-CBD-01..08, D-LS..D-LZ)", () => {
   function createBaseWeekItems(

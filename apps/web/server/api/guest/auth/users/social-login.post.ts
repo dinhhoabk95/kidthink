@@ -27,14 +27,14 @@ import {
 } from "h3";
 import { z } from "zod";
 import { setUserSession } from "#imports";
+import { OAUTH_TICKET_COOKIE_NAME } from "#server/api/guest/auth/oauth/[provider]/callback.get";
 import {
   assertRateLimitAllowed,
   assertRequestBodySize,
   assertSameOriginRequest,
   ensureUserCsrfCookie,
   getVerifiedRemoteIp,
-} from "../../../../utils/auth-runtime.js";
-import { OAUTH_TICKET_COOKIE_NAME } from "../oauth/[provider]/callback.get.js";
+} from "#server/utils/auth-runtime";
 
 const SocialRegisterSchema = z
   .object({

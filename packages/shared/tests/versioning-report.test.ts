@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { getVersionChangeMilestones } from "../src/versioning-report.ts";
+import { getVersionChangeMilestones } from "#src/versioning-report";
 
 describe("P0.6 Task 8 — Mốc đổi version cho báo cáo & BR-VER-04 / BR-VER-05", () => {
   it("Tính mốc đổi version từ chuỗi phiên chơi (BR-VER-05)", () => {

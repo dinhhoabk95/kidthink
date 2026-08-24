@@ -14,8 +14,8 @@ import {
   readBody,
   setResponseStatus,
 } from "h3";
-import { requireManagerSession } from "../../../utils/admin-auth-runtime.js";
-import { throwValidationError } from "../../../utils/api-error.js";
+import { requireManagerSession } from "#server/utils/admin-auth-runtime";
+import { throwValidationError } from "#server/utils/api-error";
 
 function generateActivityCode(existingCount: number): string {
   const numStr = String(existingCount + 1).padStart(4, "0");
