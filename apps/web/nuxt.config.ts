@@ -12,6 +12,7 @@ const allowedOrigins = requireEnv("NUXT_ALLOWED_ORIGINS")
   .filter(Boolean);
 
 export default defineNuxtConfig({
+  extends: ["@mindkid/ui"],
   alias: {
     "#server": fileURLToPath(new URL("./server", import.meta.url)),
   },

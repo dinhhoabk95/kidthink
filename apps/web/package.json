@@ -22,6 +22,7 @@
     "@mindkid/shared": "workspace:*",
     "@mindkid/storage": "workspace:*",
     "@mindkid/taxonomy": "workspace:*",
+    "@mindkid/ui": "workspace:*",
     "drizzle-orm": "catalog:",
     "firebase": "catalog:",
     "h3": "catalog:"

@@ -1,59 +1,129 @@
 /* @mindkid/ui — Design System Tokens (Canonical Single Source for Web CSS) */
 
 @import "tailwindcss";
+@import "@nuxt/ui";
 
-@theme {
-  /* Brand palette (Core brand-600: #7c3aed) */
-  --color-brand-50: #f5f3ff;
-  --color-brand-100: #ede9fe;
-  --color-brand-200: #ddd6fe;
-  --color-brand-300: #c4b5fd;
-  --color-brand-400: #a78bfa;
-  --color-brand-500: #8b5cf6;
-  --color-brand-600: #7c3aed;
-  --color-brand-700: #6d28d9;
-  --color-brand-800: #5b21b6;
-  --color-brand-900: #4c1d95;
+@theme static {
+  /* Brand palette (Paper & Wood / Calm growth - Core brand-600: #1a7f6b Teal) */
+  --color-brand-50: #f0fdf9;
+  --color-brand-100: #ccf0e8;
+  --color-brand-200: #99e1d1;
+  --color-brand-300: #5ec8b3;
+  --color-brand-400: #2ea992;
+  --color-brand-500: #1d917b;
+  --color-brand-600: #1a7f6b;
+  --color-brand-700: #166657;
+  --color-brand-800: #145247;
+  --color-brand-900: #13443b;
+  --color-brand-950: #0a2722;
 
-  /* CTA palette */
-  --color-cta: #f97316;
-  --color-cta-hover: #ea580c;
-  --color-cta-light: #ffedd5;
+  /* CTA palette (Core cta-600: #c2410c - >= 4.5:1 on white text) */
+  --color-cta-50: #fff7ed;
+  --color-cta-100: #ffedd5;
+  --color-cta-200: #fed7aa;
+  --color-cta-300: #fdba74;
+  --color-cta-400: #fb923c;
+  --color-cta-500: #f97316;
+  --color-cta-600: #c2410c;
+  --color-cta-700: #9a3412;
+  --color-cta-800: #7c2d12;
+  --color-cta-900: #431407;
+  --color-cta-950: #270b04;
 
-  /* Surface palette (Note: surface-400 is border/placeholder only, < 4.5:1 for body) */
-  --color-surface-50: #fafafa;
-  --color-surface-100: #f4f4f5;
-  --color-surface-200: #e4e4e7;
-  --color-surface-300: #d4d4d8;
-  --color-surface-400: #a1a1aa;
-  --color-surface-500: #71717a;
-  --color-surface-600: #52525b;
-  --color-surface-700: #3f3f46;
-  --color-surface-800: #27272a;
-  --color-surface-900: #18181b;
+  /* Surface palette (Warm stone - surface-400 is border/placeholder only) */
+  --color-surface-0: #ffffff;
+  --color-surface-50: #fafaf9;
+  --color-surface-100: #f5f5f4;
+  --color-surface-200: #e7e5e4;
+  --color-surface-300: #d6d3d1;
+  --color-surface-400: #a8a29e;
+  --color-surface-500: #78716c;
+  --color-surface-600: #57534e;
+  --color-surface-700: #44403c;
+  --color-surface-800: #292524;
+  --color-surface-900: #1c1917;
+  --color-surface-950: #0c0a09;
 
-  /* Semantic palette */
+  /* Retry palette (Amber - replaces danger on kid surface BR-DSC-07) */
+  --color-retry-50: #fffbeb;
+  --color-retry-100: #fef3c7;
+  --color-retry-200: #fde68a;
+  --color-retry-300: #fcd34d;
+  --color-retry-400: #fbbf24;
+  --color-retry-500: #f59e0b;
+  --color-retry-600: #d97706;
+  --color-retry-700: #b45309;
+  --color-retry-800: #92400e;
+  --color-retry-900: #78350f;
+  --color-retry-950: #451a03;
+
+  /* Semantic palette — Success (Adult surfaces) */
+  --color-success-50: #f0fdf4;
+  --color-success-100: #dcfce7;
+  --color-success-200: #bbf7d0;
+  --color-success-300: #86efac;
   --color-success-400: #4ade80;
   --color-success-500: #22c55e;
   --color-success-600: #16a34a;
+  --color-success-700: #15803d;
+  --color-success-800: #166534;
+  --color-success-900: #14532d;
+  --color-success-950: #052e16;
 
+  /* Semantic palette — Warning (Adult surfaces) */
+  --color-warning-50: #fefce8;
+  --color-warning-100: #fef9c3;
+  --color-warning-200: #fef08a;
+  --color-warning-300: #fde047;
   --color-warning-400: #facc15;
   --color-warning-500: #eab308;
   --color-warning-600: #ca8a04;
+  --color-warning-700: #a16207;
+  --color-warning-800: #854d0e;
+  --color-warning-900: #713f12;
+  --color-warning-950: #422006;
 
+  /* Semantic palette — Danger/Error (Adult surfaces only BR-DSC-07) */
+  --color-danger-50: #fef2f2;
+  --color-danger-100: #fee2e2;
+  --color-danger-200: #fecaca;
+  --color-danger-300: #fca5a5;
   --color-danger-400: #f87171;
   --color-danger-500: #ef4444;
   --color-danger-600: #dc2626;
+  --color-danger-700: #b91c1c;
+  --color-danger-800: #991b1b;
+  --color-danger-900: #7f1d1d;
+  --color-danger-950: #450a0a;
 
-  /* Canvas special token: retry amber (replaces danger red on kid surface BR-DSC-07) */
-  --color-retry: #d97706;
+  /* Competency tokens C1–C6 */
+  --color-competency-c1: #1d4ed8;
+  --color-competency-c2: #7c3aed;
+  --color-competency-c3: #4d7c0f;
+  --color-competency-c4: #0e7490;
+  --color-competency-c5: #be185d;
+  --color-competency-c6: #a16207;
 
-  /* Radius scale */
+  /* Typography */
+  --font-sans:
+    "Be Vietnam Pro", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    sans-serif;
+  --font-heading: "Baloo 2", cursive, sans-serif;
+
+  /* Radius scale (BR-DSC-14 / contract §7.3) */
   --radius-chip: 12px;
   --radius-button: 16px;
   --radius-card: 24px;
+  --radius-full: 9999px;
 
-  /* Motion scale */
+  /* Motion duration scale (contract §7.4) */
+  --duration-instant: 90ms;
+  --duration-quick: 160ms;
+  --duration-base: 200ms;
+  --duration-snap: 260ms;
+  --duration-settle: 340ms;
+
+  /* Motion ease scale */
   --ease-snap: cubic-bezier(0.34, 1.56, 0.64, 1);
   --ease-settle: ease-in-out;
 }
@@ -68,4 +138,10 @@
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
+}
+
+/* Global accessible focus ring (BR-A11-05) */
+:focus-visible {
+  outline: 2px solid var(--color-brand-600);
+  outline-offset: 2px;
 }

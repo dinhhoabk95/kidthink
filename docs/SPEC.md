@@ -970,7 +970,7 @@ không dựa vào padding một mình.
 ### 9.2 Game engine — bất biến
 
 - **Token only.** Mọi màu và font từ `systems/designTokens.ts`. Cấm hex literal, Cấm `ctx.font` inline.
-- **Sàn touch theo band tuổi** qua một hàm duy nhất — band 3–4: 96px; band 5–6: 72px; sàn
+- **Sàn touch theo band tuổi** qua một hàm duy nhất — band 3–4: 96px; band 5–6: 76px; sàn
   tuyệt đối 64px. Cấm — NEVER sàn tự viết kiểu `Math.max(20, …)`.
 - **Drag phải khoan dung** — hit band nới rộng, hoàn thành được không cần chính xác từng
   pixel, và **mọi game drag có fallback tap-tap cho band 3–4**.

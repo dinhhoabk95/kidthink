@@ -26,7 +26,8 @@ catalog:
   vue-tsc: ^3.3.9
 
   # UI Kit & Styling — Task 3 (BR-DSC-03, D-FE)
-  "@nuxt/ui": ^3.0.0
+  "@nuxt/ui": ^4.0.0
+  "@nuxt/fonts": ^0.10.0
   tailwindcss: ^4.0.0
 
   # Accessibility & Browser Testing — Task 4 (BR-A11-01)
@@ -75,3 +76,5 @@ allowBuilds:
   lefthook: false
   msgpackr-extract: false
   protobufjs: false
+  vue-demi: false
+

@@ -12,6 +12,9 @@
   },
   "devDependencies": {
     "@mindkid/config": "workspace:*",
+    "@nuxt/fonts": "catalog:",
+    "@nuxt/ui": "catalog:",
+    "tailwindcss": "catalog:",
     "typescript": "catalog:",
     "vitest": "catalog:"
   },

@@ -2,6 +2,7 @@ import { requireEnv } from "@mindkid/config";
 import { defineNuxtConfig } from "nuxt/config";
 
 export default defineNuxtConfig({
+  extends: ["@mindkid/ui"],
   ssr: false,
   runtimeConfig: {
     public: {

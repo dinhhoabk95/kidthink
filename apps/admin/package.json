@@ -10,7 +10,8 @@
     "typecheck": "nuxt typecheck"
   },
   "dependencies": {
-    "@mindkid/shared": "workspace:*"
+    "@mindkid/shared": "workspace:*",
+    "@mindkid/ui": "workspace:*"
   },
   "devDependencies": {
     "@mindkid/config": "workspace:*",

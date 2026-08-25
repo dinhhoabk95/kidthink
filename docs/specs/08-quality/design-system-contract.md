@@ -79,16 +79,24 @@ Ngưỡng sàn chạm do `BR-A11-04` của [`accessibility.md`](accessibility.md
 
 ### 7.2 Token
 
-| Họ | Token |
-|---|---|
-| Brand | `brand-50 … brand-900`, core `brand-600` |
-| CTA | `cta`, `cta-hover`, `cta-light` |
-| Surface | `surface-50 … surface-900` |
-| Semantic | `success-` / `warning-` / `danger-` × 400/500/600 |
-| Canvas riêng | `retry` (hổ phách) — thay `danger` trên bề mặt trẻ |
-| Font | `--font-sans` · `--font-heading` · canvas dùng font chữ số riêng |
+Mỗi họ màu dùng làm alias cho Nuxt UI v4 có đủ 11 bậc `50…950` để component kit không bị hỏng khi hiển thị trạng thái hover, focus hay subtle background.
+
+| Họ / Alias | Token | Neo 600 / Giá trị | Dùng ở đâu |
+|---|---|---|---|
+| `primary` / `brand` | `brand-50 … brand-950` | `#1a7f6b` (Teal) | Nhận diện, nav đang chọn, link, focus ring |
+| `cta` | `cta-50 … cta-950` | `#c2410c` (Cam) | Đúng một hành động chính mỗi màn (`BR-DSC-10`) |
+| `neutral` / `surface` | `surface-50 … surface-950` + `surface-0` (`#ffffff`) | `#57534e` (Stone) | Nền, chữ, viền (`surface-400` viền/placeholder) |
+| `retry` | `retry-50 … retry-950` | `#d97706` (Hổ phách) | **Chỉ** bề mặt trẻ, thay `danger`/đỏ (`BR-DSC-07`) |
+| `success` | `success-50 … success-950` | `#16a34a` (Lá) | Thành công, đạt mục tiêu (bề mặt người lớn) |
+| `warning` | `warning-50 … warning-950` | `#ca8a04` (Vàng) | Cảnh báo (bề mặt người lớn) |
+| `error` / `danger` | `danger-50 … danger-950` | `#dc2626` (Đỏ) | Lỗi, xoá, cảnh báo nghiêm trọng (bề mặt người lớn) |
+| `info` | Ánh xạ về họ `brand` | `#1a7f6b` | Thông tin phụ trợ |
+| `secondary` | Ánh xạ về họ `surface` | `#57534e` | Nút phụ, trung tính |
+| Năng lực C1–C6 | `competency-c1 … c6` | C1 `#1d4ed8`, C2 `#7c3aed`, C3 `#4d7c0f`, C4 `#0e7490`, C5 `#be185d`, C6 `#a16207` | Màu dữ liệu cho 6 năng lực tư duy |
+| Font | `--font-sans`: Be Vietnam Pro · `--font-heading`: Baloo 2 · Canvas dùng font số riêng |
 
 `surface-400` **chỉ** là màu viền/placeholder — không đạt 4,5:1 làm body text.
+
 
 ### 7.3 Radius
 
