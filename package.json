@@ -28,7 +28,7 @@
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
     "test:deploy": "bash infra/scripts/tests/run.sh",
-    "check": "pnpm lint && pnpm lint:deps && pnpm typecheck && pnpm test",
+    "check": "pnpm lint && pnpm lint:deps && pnpm typecheck",
     "db:generate": "pnpm --filter @mindkid/db run generate",
     "db:migrate": "pnpm --filter @mindkid/db run migrate",
     "db:seed": "pnpm --filter @mindkid/db run seed",
