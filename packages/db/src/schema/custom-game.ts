@@ -9,11 +9,11 @@ import {
   pgTable,
   smallint,
   text,
-  timestamp,
   uniqueIndex,
   uuid,
   varchar,
 } from "drizzle-orm/pg-core";
+import { timestamps } from "./columns.ts";
 import { users } from "./identity.ts";
 
 export const customGameStatusEnum = pgEnum("custom_game_status", [
@@ -42,12 +42,7 @@ export const customGames = pgTable(
     skillIds: jsonb("skill_ids").$type<number[]>(),
     status: customGameStatusEnum("status").notNull().default("draft"),
     version: integer("version").notNull().default(1),
-    createdAt: timestamp("created_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
-    updatedAt: timestamp("updated_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
+    ...timestamps(),
   },
   (table) => [
     index("idx_custom_games_user_status").on(table.userId, table.status),

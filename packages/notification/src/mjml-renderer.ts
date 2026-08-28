@@ -49,52 +49,52 @@ export const TEMPLATE_REGISTRY: Record<
 > = {
   email_verification: {
     requiredVars: ["url", "code"],
-    subject: (_vars) => "[TiniMath] Xác nhận địa chỉ email của bạn",
+    subject: (_vars) => "[MindKid] Xác nhận địa chỉ email của bạn",
     mjml: (vars) => `
       <mjml>
         <mj-body background-color="#f8fafc">
           <mj-section background-color="#ffffff" border-radius="16px">
             <mj-column>
-              <mj-text font-size="20px" font-weight="bold" color="#4f46e5">TiniMath</mj-text>
+              <mj-text font-size="20px" font-weight="bold" color="#1a7f6b">MindKid</mj-text>
               <mj-text font-size="16px" color="#334155">Xin chào,</mj-text>
               <mj-text font-size="14px" color="#475569">Mã xác thực email của bạn là: <strong>${vars.code}</strong></mj-text>
-              <mj-button background-color="#4f46e5" href="${vars.url}">Xác thực email</mj-button>
+              <mj-button background-color="#1a7f6b" href="${vars.url}">Xác thực email</mj-button>
             </mj-column>
           </mj-section>
         </mj-body>
       </mjml>
     `,
     plainText: (vars) =>
-      `TiniMath - Xác thực email\nMã xác thực của bạn: ${vars.code}\nHoặc truy cập: ${vars.url}`,
+      `MindKid - Xác thực email\nMã xác thực của bạn: ${vars.code}\nHoặc truy cập: ${vars.url}`,
   },
   password_reset: {
     requiredVars: ["url"],
-    subject: (_vars) => "[TiniMath] Yêu cầu đặt lại mật khẩu",
+    subject: (_vars) => "[MindKid] Yêu cầu đặt lại mật khẩu",
     mjml: (vars) => `
       <mjml>
         <mj-body background-color="#f8fafc">
           <mj-section background-color="#ffffff" border-radius="16px">
             <mj-column>
-              <mj-text font-size="20px" font-weight="bold" color="#4f46e5">TiniMath</mj-text>
+              <mj-text font-size="20px" font-weight="bold" color="#1a7f6b">MindKid</mj-text>
               <mj-text font-size="14px" color="#475569">Bấm vào nút bên dưới để đặt lại mật khẩu tài khoản của bạn:</mj-text>
-              <mj-button background-color="#4f46e5" href="${vars.url}">Đặt lại mật khẩu</mj-button>
+              <mj-button background-color="#1a7f6b" href="${vars.url}">Đặt lại mật khẩu</mj-button>
             </mj-column>
           </mj-section>
         </mj-body>
       </mjml>
     `,
     plainText: (vars) =>
-      `TiniMath - Đặt lại mật khẩu\nTruy cập đường dẫn sau để đặt lại mật khẩu: ${vars.url}`,
+      `MindKid - Đặt lại mật khẩu\nTruy cập đường dẫn sau để đặt lại mật khẩu: ${vars.url}`,
   },
   order_submitted: {
     requiredVars: ["orderCode", "packageName", "amountFormatted"],
-    subject: (vars) => `[TiniMath] Xác nhận đơn hàng #${vars.orderCode}`,
+    subject: (vars) => `[MindKid] Xác nhận đơn hàng #${vars.orderCode}`,
     mjml: (vars) => `
       <mjml>
         <mj-body background-color="#f8fafc">
           <mj-section background-color="#ffffff" border-radius="16px">
             <mj-column>
-              <mj-text font-size="20px" font-weight="bold" color="#4f46e5">TiniMath</mj-text>
+              <mj-text font-size="20px" font-weight="bold" color="#1a7f6b">MindKid</mj-text>
               <mj-text font-size="14px" color="#475569">Đơn hàng #${vars.orderCode} cho gói ${vars.packageName} (${vars.amountFormatted}) đã được tiếp nhận.</mj-text>
             </mj-column>
           </mj-section>
@@ -102,17 +102,17 @@ export const TEMPLATE_REGISTRY: Record<
       </mjml>
     `,
     plainText: (vars) =>
-      `TiniMath - Đơn hàng #${vars.orderCode} đã được nhận.\nGói: ${vars.packageName}\nSố tiền: ${vars.amountFormatted}`,
+      `MindKid - Đơn hàng #${vars.orderCode} đã được nhận.\nGói: ${vars.packageName}\nSố tiền: ${vars.amountFormatted}`,
   },
   order_approved: {
     requiredVars: ["orderCode", "packageName"],
-    subject: (vars) => `[TiniMath] Đơn hàng #${vars.orderCode} đã được duyệt!`,
+    subject: (vars) => `[MindKid] Đơn hàng #${vars.orderCode} đã được duyệt!`,
     mjml: (vars) => `
       <mjml>
         <mj-body background-color="#f8fafc">
           <mj-section background-color="#ffffff" border-radius="16px">
             <mj-column>
-              <mj-text font-size="20px" font-weight="bold" color="#4f46e5">TiniMath</mj-text>
+              <mj-text font-size="20px" font-weight="bold" color="#1a7f6b">MindKid</mj-text>
               <mj-text font-size="14px" color="#475569">Gói học ${vars.packageName} cho đơn hàng #${vars.orderCode} đã được kích hoạt thành công.</mj-text>
             </mj-column>
           </mj-section>
@@ -120,17 +120,17 @@ export const TEMPLATE_REGISTRY: Record<
       </mjml>
     `,
     plainText: (vars) =>
-      `TiniMath - Đơn hàng #${vars.orderCode} đã duyệt.\nGói học ${vars.packageName} đã được kích hoạt.`,
+      `MindKid - Đơn hàng #${vars.orderCode} đã duyệt.\nGói học ${vars.packageName} đã được kích hoạt.`,
   },
   order_rejected: {
     requiredVars: ["orderCode", "reason"],
-    subject: (vars) => `[TiniMath] Thông báo đơn hàng #${vars.orderCode}`,
+    subject: (vars) => `[MindKid] Thông báo đơn hàng #${vars.orderCode}`,
     mjml: (vars) => `
       <mjml>
         <mj-body background-color="#f8fafc">
           <mj-section background-color="#ffffff" border-radius="16px">
             <mj-column>
-              <mj-text font-size="20px" font-weight="bold" color="#4f46e5">TiniMath</mj-text>
+              <mj-text font-size="20px" font-weight="bold" color="#1a7f6b">MindKid</mj-text>
               <mj-text font-size="14px" color="#475569">Đơn hàng #${vars.orderCode} chưa được duyệt. Lý do: ${vars.reason}</mj-text>
             </mj-column>
           </mj-section>
@@ -138,17 +138,17 @@ export const TEMPLATE_REGISTRY: Record<
       </mjml>
     `,
     plainText: (vars) =>
-      `TiniMath - Đơn hàng #${vars.orderCode} chưa được duyệt.\nLý do: ${vars.reason}`,
+      `MindKid - Đơn hàng #${vars.orderCode} chưa được duyệt.\nLý do: ${vars.reason}`,
   },
   subscription_expiring: {
     requiredVars: ["packageName", "daysLeft"],
-    subject: (vars) => `[TiniMath] Gói ${vars.packageName} sắp hết hạn`,
+    subject: (vars) => `[MindKid] Gói ${vars.packageName} sắp hết hạn`,
     mjml: (vars) => `
       <mjml>
         <mj-body background-color="#f8fafc">
           <mj-section background-color="#ffffff" border-radius="16px">
             <mj-column>
-              <mj-text font-size="20px" font-weight="bold" color="#4f46e5">TiniMath</mj-text>
+              <mj-text font-size="20px" font-weight="bold" color="#1a7f6b">MindKid</mj-text>
               <mj-text font-size="14px" color="#475569">Gói ${vars.packageName} của bạn còn ${vars.daysLeft} ngày sử dụng.</mj-text>
             </mj-column>
           </mj-section>
@@ -156,34 +156,34 @@ export const TEMPLATE_REGISTRY: Record<
       </mjml>
     `,
     plainText: (vars) =>
-      `TiniMath - Gói ${vars.packageName} còn ${vars.daysLeft} ngày nữa sẽ hết hạn.`,
+      `MindKid - Gói ${vars.packageName} còn ${vars.daysLeft} ngày nữa sẽ hết hạn.`,
   },
   subscription_expired: {
     requiredVars: ["packageName"],
-    subject: (vars) => `[TiniMath] Gói ${vars.packageName} đã hết hạn`,
+    subject: (vars) => `[MindKid] Gói ${vars.packageName} đã hết hạn`,
     mjml: (vars) => `
       <mjml>
         <mj-body background-color="#f8fafc">
           <mj-section background-color="#ffffff" border-radius="16px">
             <mj-column>
-              <mj-text font-size="20px" font-weight="bold" color="#4f46e5">TiniMath</mj-text>
+              <mj-text font-size="20px" font-weight="bold" color="#1a7f6b">MindKid</mj-text>
               <mj-text font-size="14px" color="#475569">Gói ${vars.packageName} của bạn đã hết hạn. Hãy gia hạn để tiếp tục theo dõi tiến độ bé.</mj-text>
             </mj-column>
           </mj-section>
         </mj-body>
       </mjml>
     `,
-    plainText: (vars) => `TiniMath - Gói ${vars.packageName} đã hết hạn.`,
+    plainText: (vars) => `MindKid - Gói ${vars.packageName} đã hết hạn.`,
   },
   weekly_progress: {
     requiredVars: ["childName", "lessonsCompleted", "starsEarned"],
-    subject: (vars) => `[TiniMath] Báo cáo học tập tuần của ${vars.childName}`,
+    subject: (vars) => `[MindKid] Báo cáo học tập tuần của ${vars.childName}`,
     mjml: (vars) => `
       <mjml>
         <mj-body background-color="#f8fafc">
           <mj-section background-color="#ffffff" border-radius="16px">
             <mj-column>
-              <mj-text font-size="20px" font-weight="bold" color="#4f46e5">TiniMath</mj-text>
+              <mj-text font-size="20px" font-weight="bold" color="#1a7f6b">MindKid</mj-text>
               <mj-text font-size="14px" color="#475569">Bé ${vars.childName} đã hoàn thành ${vars.lessonsCompleted} bài học và nhận ${vars.starsEarned} ngôi sao trong tuần qua.</mj-text>
             </mj-column>
           </mj-section>
@@ -191,17 +191,17 @@ export const TEMPLATE_REGISTRY: Record<
       </mjml>
     `,
     plainText: (vars) =>
-      `TiniMath - Báo cáo tuần của ${vars.childName}:\nBài học: ${vars.lessonsCompleted}\nNgôi sao: ${vars.starsEarned}`,
+      `MindKid - Báo cáo tuần của ${vars.childName}:\nBài học: ${vars.lessonsCompleted}\nNgôi sao: ${vars.starsEarned}`,
   },
   content_new: {
     requiredVars: ["title", "description"],
-    subject: (vars) => `[TiniMath] Nội dung mới: ${vars.title}`,
+    subject: (vars) => `[MindKid] Nội dung mới: ${vars.title}`,
     mjml: (vars) => `
       <mjml>
         <mj-body background-color="#f8fafc">
           <mj-section background-color="#ffffff" border-radius="16px">
             <mj-column>
-              <mj-text font-size="20px" font-weight="bold" color="#4f46e5">TiniMath</mj-text>
+              <mj-text font-size="20px" font-weight="bold" color="#1a7f6b">MindKid</mj-text>
               <mj-text font-size="16px" font-weight="bold" color="#334155">${vars.title}</mj-text>
               <mj-text font-size="14px" color="#475569">${vars.description}</mj-text>
             </mj-column>
@@ -210,7 +210,7 @@ export const TEMPLATE_REGISTRY: Record<
       </mjml>
     `,
     plainText: (vars) =>
-      `TiniMath - Nội dung mới: ${vars.title}\n${vars.description}`,
+      `MindKid - Nội dung mới: ${vars.title}\n${vars.description}`,
   },
   admin_order_pending: {
     requiredVars: ["orderCode", "countPending"],
@@ -221,7 +221,7 @@ export const TEMPLATE_REGISTRY: Record<
         <mj-body background-color="#f8fafc">
           <mj-section background-color="#ffffff" border-radius="16px">
             <mj-column>
-              <mj-text font-size="20px" font-weight="bold" color="#4f46e5">TiniMath Admin</mj-text>
+              <mj-text font-size="20px" font-weight="bold" color="#1a7f6b">MindKid Admin</mj-text>
               <mj-text font-size="14px" color="#475569">Đơn hàng #${vars.orderCode} vừa được tạo. Tổng đơn chờ duyệt: ${vars.countPending}</mj-text>
             </mj-column>
           </mj-section>
@@ -229,7 +229,7 @@ export const TEMPLATE_REGISTRY: Record<
       </mjml>
     `,
     plainText: (vars) =>
-      `TiniMath Admin - Đơn hàng #${vars.orderCode} mới tạo. Tổng chờ duyệt: ${vars.countPending}`,
+      `MindKid Admin - Đơn hàng #${vars.orderCode} mới tạo. Tổng chờ duyệt: ${vars.countPending}`,
   },
   admin_alert: {
     requiredVars: ["alertTitle", "message"],
@@ -248,18 +248,18 @@ export const TEMPLATE_REGISTRY: Record<
       </mjml>
     `,
     plainText: (vars) =>
-      `TiniMath System Alert: ${vars.alertTitle}\n${vars.message}`,
+      `MindKid System Alert: ${vars.alertTitle}\n${vars.message}`,
   },
   lesson_plan_source_updated: {
     requiredVars: ["entity_code", "new_version", "plan_title"],
     subject: (vars) =>
-      `[TiniMath] Nội dung ${vars.entity_code} trong giáo án "${vars.plan_title}" có bản cập nhật mới`,
+      `[MindKid] Nội dung ${vars.entity_code} trong giáo án "${vars.plan_title}" có bản cập nhật mới`,
     mjml: (vars) => `
       <mjml>
         <mj-body background-color="#f8fafc">
           <mj-section background-color="#ffffff" border-radius="16px">
             <mj-column>
-              <mj-text font-size="20px" font-weight="bold" color="#4f46e5">TiniMath</mj-text>
+              <mj-text font-size="20px" font-weight="bold" color="#1a7f6b">MindKid</mj-text>
               <mj-text font-size="16px" font-weight="bold" color="#334155">Cập nhật nội dung giáo án</mj-text>
               <mj-text font-size="14px" color="#475569">Nội dung <strong>${vars.entity_code}</strong> trong giáo án "<strong>${vars.plan_title}</strong>" vừa được cập nhật lên phiên bản ${vars.new_version}.</mj-text>
             </mj-column>
@@ -272,14 +272,13 @@ export const TEMPLATE_REGISTRY: Record<
   },
   pdf_export_ready: {
     requiredVars: ["title"],
-    subject: (vars) =>
-      `[TiniMath] File PDF giáo án "${vars.title}" đã sẵn sàng`,
+    subject: (vars) => `[MindKid] File PDF giáo án "${vars.title}" đã sẵn sàng`,
     mjml: (vars) => `
       <mjml>
         <mj-body background-color="#f8fafc">
           <mj-section background-color="#ffffff" border-radius="16px">
             <mj-column>
-              <mj-text font-size="20px" font-weight="bold" color="#4f46e5">TiniMath</mj-text>
+              <mj-text font-size="20px" font-weight="bold" color="#1a7f6b">MindKid</mj-text>
               <mj-text font-size="16px" font-weight="bold" color="#334155">Xuất file PDF thành công</mj-text>
               <mj-text font-size="14px" color="#475569">File PDF cho giáo án "<strong>${vars.title}</strong>" đã được tạo thành công và sẵn sàng để tải về.</mj-text>
             </mj-column>
@@ -288,18 +287,18 @@ export const TEMPLATE_REGISTRY: Record<
       </mjml>
     `,
     plainText: (vars) =>
-      `TiniMath - File PDF cho giáo án "${vars.title}" đã sẵn sàng để tải về.`,
+      `MindKid - File PDF cho giáo án "${vars.title}" đã sẵn sàng để tải về.`,
   },
   pdf_export_failed: {
     requiredVars: ["title", "error"],
     subject: (vars) =>
-      `[TiniMath] Xuất PDF giáo án "${vars.title}" không thành công`,
+      `[MindKid] Xuất PDF giáo án "${vars.title}" không thành công`,
     mjml: (vars) => `
       <mjml>
         <mj-body background-color="#f8fafc">
           <mj-section background-color="#ffffff" border-radius="16px">
             <mj-column>
-              <mj-text font-size="20px" font-weight="bold" color="#4f46e5">TiniMath</mj-text>
+              <mj-text font-size="20px" font-weight="bold" color="#1a7f6b">MindKid</mj-text>
               <mj-text font-size="16px" font-weight="bold" color="#dc2626">Xuất PDF không thành công</mj-text>
               <mj-text font-size="14px" color="#475569">Rất tiếc, quá trình xuất file PDF cho giáo án "<strong>${vars.title}</strong>" gặp lỗi: ${vars.error}. Lượt xuất (quota) của bạn đã được hoàn lại.</mj-text>
             </mj-column>
@@ -308,7 +307,7 @@ export const TEMPLATE_REGISTRY: Record<
       </mjml>
     `,
     plainText: (vars) =>
-      `TiniMath - Xuất PDF cho giáo án "${vars.title}" không thành công: ${vars.error}. Lượt xuất đã được hoàn lại.`,
+      `MindKid - Xuất PDF cho giáo án "${vars.title}" không thành công: ${vars.error}. Lượt xuất đã được hoàn lại.`,
   },
 };
 

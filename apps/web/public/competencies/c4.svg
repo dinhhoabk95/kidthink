@@ -1,0 +1,21 @@
+<svg fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+  <title>C4</title>
+  <rect
+    fill="#0e7490"
+    fill-opacity="0.15"
+    height="44"
+    rx="14"
+    stroke="#0e7490"
+    stroke-width="3"
+    width="44"
+    x="2"
+    y="2"
+  />
+  <path
+    d="M24 10L38 24 24 38 10 24z"
+    stroke="#0e7490"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    stroke-width="3.5"
+  />
+</svg>

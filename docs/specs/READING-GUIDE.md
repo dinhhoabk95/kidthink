@@ -149,40 +149,11 @@ Ledger hiện tới `D-AE` (31 quyết định). Phân bố: `D-A`…`D-R` ở T
 `D-S`…`D-X` ở Task #2, `D-Y`…`D-AE` ở Task #3.
 
 Lưu ý: **Nợ đã biết:** `D-X` bị dùng lại cho 11 quyết định khác nhau ở Task #2 — nên `grep D-X`
-ra 11 kết quả không phân biệt được. Đã ghi trong [`todo.md`](../tasks/todo.md) mục "Ngoài task này".
+ra 11 kết quả không phân biệt được. Đã ghi trong [`02-foundation-approve-todo.md`](../tasks/02-foundation-approve-todo.md) mục "Ngoài task này".
 
 ---
 
-## 5. `C1`–`C13` — 13 cổng máy
-
-`pnpm --filter @mindkid/gates test` chạy 13 check trên 130 spec. Đọc log dạng
-`file.md:52  [C6]  <mô tả>`:
-
-| Mã | Kiểm gì | Mức |
-|---|---|---|
-| `C1` | Frontmatter đủ 9 field | error |
-| `C2` | Hai spec cùng `owns` một thứ | error |
-| `C3` | 11 section đúng tên, đúng thứ tự | error |
-| `C4` | Link nội bộ resolve được | error |
-| `C5` | Mã lỗi dùng ở §8 có đăng ký trong [`error-codes.md`](00-foundation/error-codes.md) | error |
-| `C6` | `BR-*` có cột "vì sao" · ID không trùng | **warning** / error |
-| `C7` | `depends_on` không tạo chu trình | **warning** |
-| `C8` | Spec `approved` không `depends_on` spec chưa `approved` | error |
-| `C9` | Từ bị cấm: `classification` · `tenant_id` · `persona enum` | error |
-| `C10` | Câu chữ bị cấm (ví dụ nhắc CI provider đã bỏ) | error |
-| `C11` | Số spec ở [`index.md`](index.md) + [`SPEC.md`](../SPEC.md) §14 khớp filesystem | error |
-| `C12` | Tên bảng [`data-model-overview.md`](01-platform/data-model-overview.md) §7 <-> `schema-*` §7.x, **hai chiều** | error |
-| `C13` | Mã ID khớp regex của chính prefix nó mang | error |
-
-**warning không làm exit 1.** Hiện có ~213 warning nền, gần hết là C6 "thiếu vì sao" ở
-spec chưa approve. Số này chỉ **giảm**: mỗi lần approve một spec là phải điền cho đủ.
-
-`C9` và `C10` có **ngữ cảnh phủ định** — dòng nào *định nghĩa lệnh cấm* thì không bị bắt.
-Nên viết `không dùng tenant_id` là hợp lệ, viết `dùng tenant_id` thì đỏ.
-
----
-
-## 6. Phase `P0`–`P5`
+## 5. Phase `P0`–`P5`
 
 **MVP = P0 → P3.** P4/P5 ngoài MVP.
 
@@ -200,7 +171,7 @@ Lý do: rẻ khi làm đúng lúc, rất đắt khi vá sau.
 
 ---
 
-## 7. Từ bị cấm — và dùng gì thay
+## 6. Từ bị cấm — và dùng gì thay
 
 | Cấm | Dùng gì | Vì sao |
 |---|---|---|
@@ -219,7 +190,7 @@ Lý do: rẻ khi làm đúng lúc, rất đắt khi vá sau.
 
 ---
 
-## 8. Giải mã văn phong
+## 7. Giải mã văn phong
 
 Corpus viết theo mấy quy ước cố định. Biết trước thì đọc nhanh hơn nhiều.
 
@@ -248,7 +219,7 @@ tiêu đề, cấm đọc tuần tự từng ô.
 
 ---
 
-## 9. Tra cứu nhanh
+## 8. Tra cứu nhanh
 
 | Muốn biết | Chạy lệnh / mở file |
 |---|---|
@@ -259,14 +230,13 @@ tiêu đề, cấm đọc tuần tự từng ô.
 | Format một loại mã | [`00-foundation/id-conventions.md`](00-foundation/id-conventions.md) §7 |
 | Spec nào đã approved | `grep -rl '^status: approved' docs/specs --include='*.md'` |
 | Còn câu hỏi nào mở chặn P0 | `grep -rn 'chặn P0' docs/specs/` |
-| Corpus có sạch không | `pnpm --filter @mindkid/gates test` |
 
 Lưu ý: Lệnh `grep` phải chạy từ `mindkid/` (nơi có `docs/`). Đo trên `docs/tasks/*.md` sẽ ra
 kết quả nhiễu — file task **nói về** ký hiệu nên chính nó chứa chuỗi đang tìm.
 
 ---
 
-## 10. Ba lỗi đọc thường gặp
+## 9. Ba lỗi đọc thường gặp
 
 **1. Tưởng `status: approved` nghĩa là đã code.**
 Không. Nó nghĩa là *contract đã chốt, được phép code theo*. Trạng thái code là `implemented`.

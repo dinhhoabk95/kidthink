@@ -28,6 +28,10 @@ catalog:
   # UI Kit & Styling — Task 3 (BR-DSC-03, D-FE)
   "@nuxt/ui": ^4.0.0
   "@nuxt/fonts": ^0.10.0
+  # Bộ icon local cho @nuxt/ui (mặc định của nó là lucide). Không có nó thì
+  # Nuxt Icon đi lấy icon qua api.iconify.design lúc chạy — CSP của apps/web
+  # là `default-src 'self'` nên ở production icon chết câm.
+  "@iconify-json/lucide": ^1.2.0
   tailwindcss: ^4.0.0
 
   # Accessibility & Browser Testing — Task 4 (BR-A11-01)
@@ -60,6 +64,18 @@ catalog:
   drizzle-kit: ^0.31.0
   ioredis: ^5.11.1 # ❌ NEVER ^6 — §7.1 pin 5.11 để khớp version BullMQ tự test
   bullmq: ^5.40.0
+  # apps/worker gói thành một file dist/index.js: các package workspace export
+  # TS thô nên `tsc` không dựng được output phẳng (BR-SUP-09 cấm chạy TS qua loader).
+  esbuild: ^0.25.12
+  # tsx — runner TS cho script vận hành (`pnpm services`, `pnpm deploy`,
+  # `db:migrate`, `db:seed`). Cấm — NEVER khai version rời ở package con: gốc và
+  # apps/worker cùng gọi nó, hai bản pin lệch là hai runtime TS khác nhau.
+  tsx: ^4.23.11
+  # argon2 — hash mật khẩu (auth-tokens-sessions.md §1). Từng khai `^0.45.1` rời
+  # ở CẢ packages/auth và apps/worker; bump một chỗ là chạy hai bản native
+  # addon trong cùng một process.
+  argon2: ^0.45.1
+  lefthook: ^2.1.10
 
 onlyBuiltDependencies:
   - sharp
@@ -78,3 +94,11 @@ allowBuilds:
   protobufjs: false
   vue-demi: false
 
+
+# unhead phải là MỘT bản duy nhất trong cây. nuxt 4.5.2 khai `unhead: ^3.3.1`
+# còn @nuxt/ui 4.11.0 khai `@unhead/vue: ^3.3.2`; lockfile chốt hai bản (3.3.1
+# và 3.4.0) nên `useSeoMeta` của bản này gọi vào head instance của bản kia và
+# SSR chết ngay ở trang đầu: "unhead.use is not a function".
+overrides:
+  unhead: 3.4.0
+  "@unhead/vue": 3.4.0

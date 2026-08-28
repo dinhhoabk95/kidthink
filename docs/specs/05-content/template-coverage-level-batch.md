@@ -8,7 +8,7 @@ phase: P5
 reviewed: 2026-08-22
 
 owns:
-  - Hạn ngạch game level cho khuôn chưa có nội dung
+  - Hạn ngạch game level cho khuôn chưa có nội dung (đã đạt 2026-08-29, bàn giao — xem mục 1.1)
   - Thứ tự nạp nội dung theo mức đói của năng lực
   - Ngưỡng khuôn ngoài rổ cơ bản trong mỗi ô phủ
 depends_on:
@@ -23,6 +23,8 @@ depends_on:
 # Lô game level phủ khuôn — mười sáu khuôn chưa có nội dung
 
 ## 1. Objective
+
+> **Trạng thái 2026-08-29 — hạn ngạch của file này đã đạt.** Xem mục 1.1.
 
 Engine có 24 khuôn trò chơi. Corpus nội dung dùng **tám**.
 
@@ -39,6 +41,27 @@ hai cơ chế; nó không chứng minh trẻ gặp thứ gì khác ngoài chạm
 
 File này sở hữu **hạn ngạch** để lấp chỗ đó: mỗi khuôn chưa có nội dung được cấp một số level
 tối thiểu, và mỗi ô phủ phải có ít nhất một level chạy trên khuôn ngoài rổ tám khuôn cơ bản.
+
+### 1.1 Hạn ngạch đã đạt, sàn thường trực bàn giao cho spec khác
+
+Đo lại ngày 2026-08-29, sau lô Montessori, lô kế thừa v1, và lô khoảng trống taxonomy:
+
+| Số đo | 2026-08-22 | 2026-08-29 |
+|---|---:|---:|
+| Engine trong registry | 24 | **27** |
+| Engine có ≥1 game level | 8 | **27** |
+| Engine có ≥3 game level (`BR-TCL-01`) | 8 | **27** |
+| Tổng game level | 172 | **228** |
+
+`BR-TCL-01` (hạn ngạch mỗi khuôn ≥3 level) **đạt trên toàn bộ 27 engine**. Lô này xong phần
+việc một lần của nó.
+
+Nhưng 21 engine dừng **đúng** ở 3 hoặc 4 level, và ba là con số của `fixtures.ts`, không phải
+con số của nội dung sản phẩm. Sàn thường trực từ đây thuộc
+[`engine-content-depth.md`](engine-content-depth.md): hạn ngạch ≥3 của file này trở thành
+**bậc 0** của bậc thang ở mục 7.3 spec đó, và bậc 1 nâng lên ≥6. Hai file không đặt hai sàn
+khác nhau cho cùng một thứ — file này sở hữu **lô một lần**, spec kia sở hữu **sàn không
+tụt**.
 
 Nó **không** định nghĩa khuôn — đó là việc của mục 7.1 của
 [`montessori-template-batch.md`](../01-platform/montessori-template-batch.md) và mục 7.1 của
@@ -92,9 +115,9 @@ Trình tự cho **một** khuôn trong lô:
 
 | ID | Rule | Vì sao |
 |---|---|---|
-| `BR-TCL-01` (hạn ngạch mỗi khuôn) | Mỗi khuôn trong mục 7.2 có **≥3** game level `published` thật trong corpus seed | Ba là con số `BR-TAK-09` đã dùng cho `fixtures.ts`. Fixture chứng minh contract chạy; level chứng minh trẻ chơi được |
+| `BR-TCL-01` (hạn ngạch mỗi khuôn) | Mỗi khuôn trong mục 7.2 có **≥3** game level `published` thật trong corpus seed. **Đạt 2026-08-29 trên 27 engine**; sàn thường trực tiếp theo ở `BR-ECD-01` | Ba là con số `BR-TAK-09` đã dùng cho `fixtures.ts`. Fixture chứng minh contract chạy; level chứng minh trẻ chơi được |
 | `BR-TCL-02` (level thật, không phải fixture) | Level của lô này nằm trong corpus seed, **không** tính `fixtures.ts` của thư mục khuôn | `fixtures.ts` không đi qua tám cổng nội dung, không có tag ba trục, không vào ma trận phủ. Đếm nó là tự lừa |
-| `BR-TCL-03` (parse được) | `content_pack` và `difficulty_params` của mọi level mới **parse được** bằng `content_contract` và `difficulty_contract` của khuôn | `BR-GTC-10`. Đo ngày 2026-08-22: 169 trên 172 level đang có trong corpus không parse được, và không cổng nào phát hiện. Lô này cấm làm con số đó to thêm |
+| `BR-TCL-03` (parse được) | `content_pack` và `difficulty_params` của mọi level mới **parse được** bằng `content_contract` và `difficulty_contract` của khuôn | `BR-GTC-10`. Đo lại ngày 2026-08-29 trên 228 level: **162 không parse được `content_pack`** và **170 không parse được `difficulty_params`**; sáu engine MVP trượt 100% vì thiếu trường `prompt`. Vẫn không cổng nào phát hiện — nguyên nhân đọc được ở mục 7.3a của [`content-seed-authoring.md`](../01-platform/content-seed-authoring.md). Lô này cấm làm con số đó to thêm |
 | `BR-TCL-04` (khuôn ngoài rổ cơ bản) | Mỗi ô `competency × band tuổi` có **≥1** level chạy trên khuôn ngoài `GT-001`..`GT-008` | Đây là chỗ chữ "đa dạng" thành số đếm được. Sàn hai `mechanic` của `BR-TCM-05` đạt được bằng hai khuôn dễ nhất, nên nó không đo được điều này |
 | `BR-TCL-05` (thứ tự theo mức đói) | Nạp theo thứ tự ở mục 7.3, năng lực đói nhất trước | C4 và C5 là hai khoảng trống lớn nhất của sản phẩm. Nạp theo thứ tự mã khuôn sẽ dồn nội dung vào C1 lần nữa |
 | `BR-TCL-06` (một level một skill) | Mỗi level trỏ đúng một skill `weight = 1.0` | Giữ nguyên mục 7.4 của [`game-level-model.md`](game-level-model.md). Level hai skill làm ma trận phủ đếm trùng |
@@ -232,7 +255,7 @@ Scenario: BR-TCL-08 — band khai trong khuôn thắng
 
 | # | Câu hỏi | Chặn gì | Chặn phase | Chủ | Quyết định / Trạng thái |
 |---|---|---|---|---|---|
-| 1 | 169 trên 172 level đang có trong corpus không parse được bằng `content_contract` của khuôn chúng khai. Sửa nội dung cũ trước, hay nạp nội dung mới song song rồi sửa sau? | Thứ tự việc của lô, và `BR-GTC-10` | P5 | người quyết | Mở. Trùng câu hỏi 5 ở mục 11 của [`thinking-coverage-matrix.md`](../08-quality/thinking-coverage-matrix.md) |
+| 1 | 162 trên 228 level không parse được `content_pack` và 170 không parse được `difficulty_params` (đo lại 2026-08-29). Sửa nội dung cũ trước, hay nạp nội dung mới song song rồi sửa sau? Bản published bất biến nên sửa là INSERT version mới cho từng level | Thứ tự việc của lô, và `BR-GTC-10`. Chặn cứng: bật `BR-CSA-16` (cổng 1 nạp contract thật) làm đỏ 162 level ngay | P5 | người quyết | Mở. Trùng câu hỏi 5 ở mục 11 của [`thinking-coverage-matrix.md`](../08-quality/thinking-coverage-matrix.md) |
 | 2 | Ba level mỗi khuôn có đủ để một khuôn "sống" không, hay cần đủ cả ba band tuổi mà khuôn mở? Mười sáu khuôn nhân ba band là 48 so với 144 | Hạn ngạch `BR-TCL-01` | P5 | Nội dung | Mở |
 | 3 | Ai soạn 48 level này? Lô Montessori có tiền lệ người soạn theo workbook, lô này không có nguồn tương đương | Kế hoạch người soạn | P5 | Nội dung | hoãn — chốt cùng lúc chốt người biên soạn |
 | 4 | `GT-018` cần audio tiếng Việt. Corpus chưa có đường sản xuất audio nào | Đợt một của mục 7.3 | P5 | Nội dung | Mở |

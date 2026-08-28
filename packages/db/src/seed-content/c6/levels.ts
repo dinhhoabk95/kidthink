@@ -594,7 +594,7 @@ export const C6_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
       learning_objective_codes: ["LO-C6.PLN.01-01"],
       what_tags: ["space"],
       thinking_tags: ["plan"],
-      theme_tag: "technology",
+      theme_tag: "home",
       origin: "human",
       authored_in: "repo_seed",
     },

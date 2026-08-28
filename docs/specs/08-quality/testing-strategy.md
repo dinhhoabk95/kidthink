@@ -120,40 +120,40 @@ Viewport mặc định **768×1024** tablet portrait · throttle 4G cho assertio
 Chrome + WebKit + Firefox, 2 major gần nhất · offline test dùng **Playwright offline mode**,
 không mock `navigator.onLine` · screenshot khi fail.
 
-### 7.6 Cổng contract là test, không phải script
+### 7.6 Cổng contract chỉ còn ở phạm vi một workspace
 
-Một rule contract (spec corpus, an toàn kiểu, từ vựng, corpus nội dung, mặt công khai)
-được cưỡng chế bằng **test vitest**, Cấm — NEVER bằng một script CLI đăng ký thêm vào
-`package.json`. Lý do: 30 script `lint:*` trước đây chỉ chạy khi ai đó nhớ gọi
-`pnpm check`, còn test của chúng phần lớn chỉ kiểm hàm bằng chuỗi fixture — nghĩa là
-`pnpm test` xanh mà rule không được đo.
+Cổng **chéo repo** đã bị gỡ 2026-08-29 cùng `packages/gates`: 253 test cưỡng chế 96 rule
+`BR-*` và 18 rule `C1`–`C18` không còn tồn tại. Quyết định của người dùng, lý do là trùng
+việc với Biome và `vue-tsc`.
+
+Hệ quả BẮT BUỘC nói thẳng: corpus spec, từ vựng, an toàn kiểu ngoài `tsc`, và mặt công
+khai **không còn thứ gì đo**. Chúng trôi được mà không cổng nào đỏ.
 
 | Cổng quét | Sống ở |
 |---|---|
 | Đường dẫn của **một** workspace | `<workspace>/tests/gates/` |
-| Chéo repo hoặc `docs/` | `packages/gates` |
+| Chéo repo hoặc `docs/` | Cấm — NEVER dựng lại ở đây; nếu cần thì hỏi trước |
 
-Mỗi cổng BẮT BUỘC có **hai** phần: quét nguồn thật (repo, corpus seed, hoặc DB thật) và
-**ca âm** (`BR-TYP-07`) — một mẫu vi phạm phải làm test đỏ. Mẫu vi phạm sống trong
+Cổng còn lại vẫn BẮT BUỘC có **hai** phần: quét nguồn thật (repo, corpus seed, hoặc DB
+thật) và **ca âm** — một mẫu vi phạm phải làm test đỏ. Mẫu vi phạm sống trong
 `tests/**/fixtures/`, Cấm — NEVER viết thẳng vào file test: nguồn dưới `apps/` và
 `packages/` là thứ các cổng khác đang quét.
-
-Ngoại lệ duy nhất là cổng dựa trên **diff git đang chờ** (`check-progress`): không có
-trạng thái repo cố định nào để assert, nên nó vẫn là script chạy tay.
 
 ## 8. API contract
 
 Không có. Ràng buộc lên cổng tự động:
 
 ```
-pnpm check            → lint + lint:deps + typecheck + test
-pnpm test             → unit + integration + property + CỔNG contract
+pnpm check            → lint + lint:deps + typecheck + test + test:deploy
+pnpm lint             → Biome
+pnpm lint:deps        → ranh giới package (dependency-cruiser)
+pnpm typecheck        → tsc + vue-tsc trên 10 project, bậc thang nợ
+pnpm test             → unit + integration + property + cổng của từng workspace
 pnpm test:coverage    → chặn khi tụt ngưỡng
 pnpm test:e2e         → Playwright
-node packages/gates/scripts/check-progress.ts        → spec ↔ code
 ```
 
-Cả năm phải xanh để merge.
+Cả năm bước của `pnpm check` phải xanh để merge.
 
 ## 9. Acceptance criteria
 

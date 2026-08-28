@@ -12,7 +12,8 @@
   "dependencies": {
     "@mindkid/config": "workspace:*",
     "bullmq": "catalog:",
-    "ioredis": "catalog:"
+    "ioredis": "catalog:",
+    "zod": "catalog:"
   },
   "devDependencies": {
     "@types/node": "catalog:",

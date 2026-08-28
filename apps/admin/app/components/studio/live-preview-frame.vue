@@ -1,15 +1,15 @@
 <template>
   <div
-    class="live-preview-container flex flex-col h-full bg-slate-900 rounded-3xl overflow-hidden border-2 border-slate-800 shadow-inner"
+    class="live-preview-container flex flex-col h-full bg-surface-900 rounded-3xl overflow-hidden border-2 border-surface-800 shadow-inner"
   >
     <!-- Preview Controls Toolbar -->
     <div
-      class="h-14 px-4 bg-slate-950 border-b border-slate-800 flex items-center justify-between shrink-0"
+      class="h-14 px-4 bg-surface-950 border-b border-surface-800 flex items-center justify-between shrink-0"
     >
       <div class="flex items-center gap-3">
         <!-- Age Band Scaffolding Level Selector (BR-LPV-01, BR-LPV-06) -->
         <div
-          class="flex items-center gap-1.5 bg-slate-900 p-1 rounded-2xl border border-slate-800"
+          class="flex items-center gap-1.5 bg-surface-900 p-1 rounded-2xl border border-surface-800"
         >
           <button
             type="button"
@@ -18,8 +18,8 @@
             :class="[
               'px-2.5 py-1 rounded-xl text-xs font-bold transition-all',
               selectedAgeBand === band.id
-                ? 'bg-indigo-600 text-white shadow-sm'
-                : 'text-slate-400 hover:text-white',
+                ? 'bg-brand-600 text-white shadow-sm'
+                : 'text-surface-400 hover:text-white',
             ]"
             @click="setAgeBand(band.id)"
           >
@@ -33,14 +33,14 @@
           :class="[
             'min-h-9 px-3 py-1 rounded-xl text-xs font-semibold border transition-all flex items-center gap-1.5',
             reducedMotion
-              ? 'bg-amber-500/20 border-amber-500 text-amber-300'
-              : 'border-slate-700 text-slate-400 hover:bg-slate-800',
+              ? 'bg-warning-500/20 border-warning-500 text-warning-300'
+              : 'border-surface-700 text-surface-400 hover:bg-surface-800',
           ]"
           @click="toggleReducedMotion"
         >
           <span>Reduced Motion</span>
           <span
-            class="w-1.5 h-1.5 rounded-full bg-amber-400"
+            class="w-1.5 h-1.5 rounded-full bg-warning-400"
             v-if="reducedMotion"
           ></span>
         </button>
@@ -51,8 +51,8 @@
           :class="[
             'min-h-9 px-3 py-1 rounded-xl text-xs font-semibold border transition-all flex items-center gap-1.5',
             isMuted
-              ? 'bg-rose-500/20 border-rose-500 text-rose-300'
-              : 'border-slate-700 text-slate-400 hover:bg-slate-800',
+              ? 'bg-danger-500/20 border-danger-500 text-danger-300'
+              : 'border-surface-700 text-surface-400 hover:bg-surface-800',
           ]"
           @click="toggleMute"
         >
@@ -65,8 +65,8 @@
           :class="[
             'min-h-9 px-3 py-1 rounded-xl text-xs font-semibold border transition-all flex items-center gap-1.5',
             scaleMode === '100%'
-              ? 'bg-indigo-600 border-indigo-600 text-white shadow-sm'
-              : 'border-slate-700 text-slate-400 hover:bg-slate-800',
+              ? 'bg-brand-600 border-brand-600 text-white shadow-sm'
+              : 'border-surface-700 text-surface-400 hover:bg-surface-800',
           ]"
           @click="toggleScaleMode"
         >
@@ -79,7 +79,7 @@
       <!-- Replay & Reload Controls -->
       <div class="flex items-center gap-2">
         <button
-          class="min-h-9 px-3 py-1 rounded-xl border border-slate-700 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold transition-all flex items-center gap-1"
+          class="min-h-9 px-3 py-1 rounded-xl border border-surface-700 bg-surface-800 hover:bg-surface-700 text-surface-200 text-xs font-bold transition-all flex items-center gap-1"
           type="button"
           @click="replaySession"
         >
@@ -90,29 +90,29 @@
 
     <!-- Live Preview Canvas Frame (16:9 fixed ratio logic space 960x540) -->
     <div
-      class="flex-1 p-4 flex flex-col items-center justify-center relative overflow-auto bg-slate-950"
+      class="flex-1 p-4 flex flex-col items-center justify-center relative overflow-auto bg-surface-950"
     >
       <!-- Validation Error Banner (BR-LPV-03) -->
       <div
-        class="absolute top-4 left-4 right-4 z-20 p-4 rounded-2xl bg-rose-950/90 border-2 border-rose-600 text-rose-200 text-sm shadow-xl backdrop-blur-sm"
+        class="absolute top-4 left-4 right-4 z-20 p-4 rounded-2xl bg-danger-950/90 border-2 border-danger-600 text-danger-200 text-sm shadow-xl backdrop-blur-sm"
         v-if="validationError"
       >
         <div class="font-bold flex items-center justify-between mb-1">
           <div class="flex items-center gap-2">
-            <span class="text-rose-400 text-base">⚠️</span>
+            <span class="text-danger-400 text-base">⚠️</span>
             <span
               >Dữ liệu màn chơi chưa hợp lệ với mẫu {{ templateCode }}:</span
             >
           </div>
           <button
-            class="text-xs px-2.5 py-1 rounded-xl bg-rose-800 hover:bg-rose-700 text-white font-mono transition-all"
+            class="text-xs px-2.5 py-1 rounded-xl bg-danger-800 hover:bg-danger-700 text-white font-mono transition-all"
             type="button"
             @click="copyErrorDetails"
           >
             Sao chép chi tiết
           </button>
         </div>
-        <div class="text-xs text-rose-300 font-mono">
+        <div class="text-xs text-danger-300 font-mono">
           {{ validationError.message }}
         </div>
         <ul
@@ -129,7 +129,7 @@
       <!-- Iframe Target -->
       <div
         :class="[
-          'relative rounded-2xl overflow-hidden border-2 border-slate-800 shadow-xl bg-slate-900 flex items-center justify-center transition-all',
+          'relative rounded-2xl overflow-hidden border-2 border-surface-800 shadow-xl bg-surface-900 flex items-center justify-center transition-all',
           scaleMode === '100%'
             ? 'w-[960px] h-[540px] shrink-0'
             : 'w-full max-w-[960px] aspect-[16/9]',
@@ -145,11 +145,11 @@
 
         <!-- Overlay when no iframe or loading -->
         <div
-          class="absolute inset-0 bg-slate-900 flex flex-col items-center justify-center text-slate-400 z-10"
+          class="absolute inset-0 bg-surface-900 flex flex-col items-center justify-center text-surface-400 z-10"
           v-if="isIframeLoading"
         >
           <div
-            class="w-8 h-8 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin mb-3"
+            class="w-8 h-8 border-4 border-brand-500 border-t-transparent rounded-full animate-spin mb-3"
           ></div>
           <span class="text-sm font-medium">Đang khởi tạo Game Engine...</span>
         </div>

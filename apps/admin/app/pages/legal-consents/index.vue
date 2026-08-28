@@ -13,11 +13,11 @@
 
     <!-- Error/Notice Alerts -->
     <div
-      class="p-4 rounded-xl bg-rose-50 border border-rose-200 text-sm text-rose-900 flex items-start gap-3"
+      class="p-4 rounded-xl bg-danger-50 border border-danger-200 text-sm text-danger-900 flex items-start gap-3"
       v-if="errorMessage"
     >
       <UIcon
-        class="w-5 h-5 text-rose-600 shrink-0 mt-0.5"
+        class="w-5 h-5 text-danger-600 shrink-0 mt-0.5"
         name="i-lucide-alert-triangle"
       />
       <div>
@@ -26,11 +26,11 @@
     </div>
 
     <div
-      class="p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-sm text-emerald-900 flex items-start gap-3"
+      class="p-4 rounded-xl bg-success-50 border border-success-200 text-sm text-success-900 flex items-start gap-3"
       v-if="successMessage"
     >
       <UIcon
-        class="w-5 h-5 text-emerald-600 shrink-0 mt-0.5"
+        class="w-5 h-5 text-success-600 shrink-0 mt-0.5"
         name="i-lucide-check-circle"
       />
       <div>
@@ -243,7 +243,7 @@
           </button>
 
           <button
-            class="min-h-11 px-6 py-2.5 bg-rose-600 hover:bg-rose-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold text-sm rounded-xl transition-all shadow-sm"
+            class="min-h-11 px-6 py-2.5 bg-danger-600 hover:bg-danger-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold text-sm rounded-xl transition-all shadow-sm"
             type="submit"
             :disabled="!canSubmitForce || submitting"
           >

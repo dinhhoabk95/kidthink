@@ -7,7 +7,11 @@
 
 services:
   postgres:
-    image: postgres:17-bookworm
+    # Same image line as docker-compose.yml on the development machine, and for
+    # the same reason as the major version: migration 0000 runs
+    # `CREATE EXTENSION vector`, which the stock postgres image cannot satisfy.
+    # A stock image here means the first release on a blank host dies at step 7.
+    image: pgvector/pgvector:pg17
     container_name: mindkid-postgres-prod
     restart: unless-stopped
     environment:
@@ -30,7 +34,17 @@ services:
     image: valkey/valkey:9-bookworm
     container_name: mindkid-valkey-prod
     restart: unless-stopped
-    command: valkey-server --appendonly yes --save 60 1
+    # `noeviction` is contractual, not a preference: infra/monitoring/alerts.yml
+    # treats any other policy as P0. Auth and rate-limit state live here, and
+    # silently dropping a key is a wrong answer rather than a slow one.
+    # `maxmemory` bounds it: without a ceiling the cache grows until the host
+    # OOM-kills whichever process the kernel picks, which is rarely this one.
+    command: >
+      valkey-server
+      --appendonly yes
+      --save 60 1
+      --maxmemory ${VALKEY_MAXMEMORY:-512mb}
+      --maxmemory-policy noeviction
     ports:
       - "127.0.0.1:6379:6379"
     volumes:

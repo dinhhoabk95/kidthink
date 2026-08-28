@@ -1,0 +1,21 @@
+<svg fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+  <title>C6</title>
+  <rect
+    fill="#a16207"
+    fill-opacity="0.15"
+    height="44"
+    rx="14"
+    stroke="#a16207"
+    stroke-width="3"
+    width="44"
+    x="2"
+    y="2"
+  />
+  <path
+    d="M24 8l14 8v16l-14 8-14-8V16z"
+    stroke="#a16207"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    stroke-width="3.5"
+  />
+</svg>

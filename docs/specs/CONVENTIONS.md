@@ -52,6 +52,11 @@ Khi phân vân: **tách**. Hai file nhỏ dễ gộp lại hơn một file to d�
 | `07-addon/` | Spec đầy đủ, **không lên catalog MVP** (§SPEC.md 1.6) |
 | `08-quality/` | Contract chất lượng cắt ngang: test, bảo mật, a11y, hiệu năng, design |
 
+**Một thư mục con duy nhất được phép:** `01-platform/engines/` chứa phiếu spec của từng game
+engine, một file cho một mã `GT`. Phiếu là spec **rút gọn** mười mục, không phải spec đủ 11
+mục — hình dạng và luật đối chiếu ở [`01-platform/engine-spec-sheet.md`](01-platform/engine-spec-sheet.md).
+Thư mục con khác cần quyết định, vì mỗi tầng lồng thêm là một chỗ nữa để một outcome trốn được.
+
 Mỗi outcome có **đúng một** spec sở hữu. Spec khác **link tới**, không copy contract.
 Contract bị copy sẽ drift.
 
@@ -100,6 +105,10 @@ v2 là greenfield — không có code để đối chiếu, và spec không mang
 
 Không bỏ section nào. Dùng `Không có.` khi sự vắng mặt là có ý nghĩa.
 Spec `07-addon/**` được rút gọn còn 1–2–6–7–8–9–11 (không có flow chi tiết).
+Phiếu engine `01-platform/engines/GT-*.md` dùng khuôn rút gọn riêng, mười mục, khai ở mục 7.1
+của [`01-platform/engine-spec-sheet.md`](01-platform/engine-spec-sheet.md). Lý do tách khuôn:
+bốn trong mười mục là **trích** từ registry engine và có cổng đối chiếu, nên chúng phải nằm
+đúng chỗ cổng biết tìm.
 
 ## 5. Business rule — đánh số và tra chéo được
 
@@ -248,7 +257,6 @@ CLC           →  content-lifecycle.md (liên kết)
 Tn (hồ sơ task)  →  "Bước n"
 Mn (hồ sơ task)  →  "Mâu thuẫn n"
 D-*           →  Giữ mã (spec khác trích nó), luôn kèm tên đọc được lần nhắc đầu
-Cn            →  Giữ mã (log `pnpm --filter @mindkid/gates test` in `[C6]`), luôn kèm tên đọc được lần nhắc đầu
 ```
 
 ### 11.3 Thuật ngữ chuyên môn giữ nguyên tiếng Anh
@@ -289,7 +297,7 @@ Sai:   Xem `access-ladder` §7.3.
 ```
 
 Với mã nguồn, trỏ dòng cụ thể dạng `đường-dẫn:số-dòng`, ví dụ
-[`packages/gates/src/lint-specs-lib.ts:297`](../../scripts/lint-specs-lib.ts).
+[`scripts/typecheck/typecheck-gate.ts:48`](../../scripts/typecheck/typecheck-gate.ts).
 
 ### 11.5 Mã hợp đồng luôn kèm tên đọc được
 
@@ -308,7 +316,8 @@ spec khác trích nó.
 6. Thay chữ viết tắt tự phát theo mục 11.2.
 7. Đổi tham chiếu trần thành liên kết có số mục.
 8. Mã hợp đồng kèm tên đọc được ở lần nhắc đầu tiên trong file.
-9. Chạy `pnpm --filter @mindkid/gates test`, đọc diff từng dòng, tự hỏi: có chỗ nào đổi nghĩa không.
+9. Đọc diff từng dòng, tự hỏi: có chỗ nào đổi nghĩa không. Không còn cổng máy nào
+   kiểm corpus spec — bước này là lượt đọc của người, cấm — NEVER bỏ.
 
 Cấm thay thế hàng loạt (`sed` trên toàn corpus) — dấu phủ định emoji không có một bản dịch duy
 nhất, mỗi câu cần đọc lại sau khi thay.
@@ -318,6 +327,11 @@ nhất, mỗi câu cần đọc lại sau khi thay.
 Mọi spec `status: approved` chứa bảng câu hỏi mở ở section "## 11. Open questions" bắt buộc phải sử dụng bảng 5 cột:
 
 | # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
+
+Cột thứ sáu `Quyết định / Trạng thái` được phép và đang dùng ở 8 spec; nó không thay thế cột
+`Chủ`. Đo ngày 2026-08-29 trên toàn corpus: **157** spec dùng đúng 5 cột, **8** dùng 6 cột,
+**2** dùng `Không có.` — không spec nào dưới 5 cột. [`TEMPLATE.md`](TEMPLATE.md) trước đó vẫn
+in khuôn 3 cột của v1 và đã sửa cùng ngày.
 
 `checkC16` báo lỗi `fail` nếu bảng dưới 5 cột hoặc ô `Chặn phase`/`Chủ` rỗng — nhưng `checkC16` chỉ
 hỏi ô có rỗng không, không hỏi ô **chứa gì**. `checkC17` (Task #13) hỏi tiếp câu đó: ô `Chủ` phải

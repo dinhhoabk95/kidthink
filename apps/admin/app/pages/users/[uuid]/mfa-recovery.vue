@@ -8,7 +8,7 @@
       <div class="border-b-2 border-surface-200 pb-5 space-y-2">
         <div class="flex items-center gap-2">
           <NuxtLink
-            class="text-xs font-bold font-heading text-indigo-600 hover:underline flex items-center gap-1"
+            class="text-xs font-bold font-heading text-brand-600 hover:underline flex items-center gap-1"
             :to="`/users/${userUuid}`"
           >
             ← Chi tiết người dùng
@@ -26,7 +26,7 @@
             </p>
           </div>
           <button
-            class="min-h-11 px-5 py-2.5 rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold font-heading text-xs transition-colors shadow-sm"
+            class="min-h-11 px-5 py-2.5 rounded-2xl bg-brand-600 hover:bg-brand-700 text-white font-bold font-heading text-xs transition-colors shadow-sm"
             type="button"
             :disabled="hasActiveRequest || submitting"
             @click="openCreateModal"
@@ -38,44 +38,44 @@
 
       <!-- Feedback Alerts -->
       <div
-        class="p-4 rounded-2xl bg-rose-50 border-2 border-rose-200 text-sm text-rose-900 flex items-start gap-3"
+        class="p-4 rounded-2xl bg-danger-50 border-2 border-danger-200 text-sm text-danger-900 flex items-start gap-3"
         v-if="errorMessage"
       >
         <span aria-hidden="true" class="text-lg">⚠️</span>
         <div class="flex-1 font-medium">{{ errorMessage }}</div>
         <button
-          class="text-rose-600 hover:text-rose-800 font-bold"
+          class="text-danger-600 hover:text-danger-800 font-bold"
           type="button"
           @click="errorMessage = ''"
         >
-          ✕
+          <UIcon class="w-5 h-5" name="i-lucide-x" />
         </button>
       </div>
 
       <div
-        class="p-4 rounded-2xl bg-emerald-50 border-2 border-emerald-200 text-sm text-emerald-900 flex items-start gap-3"
+        class="p-4 rounded-2xl bg-success-50 border-2 border-success-200 text-sm text-success-900 flex items-start gap-3"
         v-if="successMessage"
       >
         <span aria-hidden="true" class="text-lg">✅</span>
         <div class="flex-1 font-medium">{{ successMessage }}</div>
         <button
-          class="text-emerald-600 hover:text-emerald-800 font-bold"
+          class="text-success-600 hover:text-success-800 font-bold"
           type="button"
           @click="successMessage = ''"
         >
-          ✕
+          <UIcon class="w-5 h-5" name="i-lucide-x" />
         </button>
       </div>
 
       <!-- Rules Banner -->
       <div
-        class="bg-indigo-50 border-2 border-indigo-200 rounded-3xl p-5 text-xs text-indigo-900 space-y-2"
+        class="bg-brand-50 border-2 border-brand-200 rounded-3xl p-5 text-xs text-brand-900 space-y-2"
       >
         <h3 class="font-bold font-heading text-sm flex items-center gap-1.5">
           <span>🛡️</span>
           Quy trình khôi phục MFA (BR-MFA-11 & State Machine)
         </h3>
-        <ul class="list-disc pl-5 space-y-1 text-indigo-800">
+        <ul class="list-disc pl-5 space-y-1 text-brand-800">
           <li>
             <strong>Bước 1:</strong>
             Super Admin tạo yêu cầu có lý do chi tiết (tối thiểu 10 ký tự).
@@ -140,20 +140,25 @@
                 v-if="req.status === 'pending_verification' || req.status === 'waiting'"
               >
                 <button
-                  class="min-h-11 px-4 py-2 rounded-2xl bg-emerald-600 hover:bg-emerald-700 disabled:bg-surface-300 text-white font-bold font-heading text-xs transition-colors"
+                  class="min-h-11 px-4 py-2 rounded-2xl bg-success-600 hover:bg-success-700 disabled:bg-surface-300 text-white font-bold font-heading text-xs transition-colors"
                   type="button"
                   :disabled="!canComplete(req) || submitting"
                   @click="() => handleComplete(req.uuid)"
                 >
-                  ✓ Hoàn tất khôi phục
+                  <UIcon
+                    class="w-4 h-4 mr-1 inline-block"
+                    name="i-lucide-check"
+                  />
+                  Hoàn tất khôi phục
                 </button>
                 <button
-                  class="min-h-11 px-4 py-2 rounded-2xl border-2 border-rose-200 bg-rose-50 hover:bg-rose-100 text-rose-700 font-bold font-heading text-xs transition-colors"
+                  class="min-h-11 px-4 py-2 rounded-2xl border-2 border-danger-200 bg-danger-50 hover:bg-danger-100 text-danger-700 font-bold font-heading text-xs transition-colors"
                   type="button"
                   :disabled="submitting"
                   @click="() => handleCancel(req.uuid)"
                 >
-                  ✕ Huỷ yêu cầu
+                  <UIcon class="w-4 h-4 mr-1 inline-block" name="i-lucide-x" />
+                  Huỷ yêu cầu
                 </button>
               </div>
             </div>
@@ -171,12 +176,12 @@
               <div>
                 <span class="text-surface-400 block">Xác thực Email:</span>
                 <span
-                  class="font-bold text-emerald-700"
+                  class="font-bold text-success-700"
                   v-if="req.email_verified_at"
                 >
                   ✓ Đã xác thực ({{ formatDate(req.email_verified_at) }})
                 </span>
-                <span class="font-bold text-amber-700" v-else>
+                <span class="font-bold text-warning-700" v-else>
                   ⏳ Đang chờ người dùng bấm link
                 </span>
               </div>
@@ -194,7 +199,7 @@
                 <span class="text-surface-400 block"
                   >Trạng thái thời gian:</span
                 >
-                <span class="font-bold text-indigo-700" v-if="isEligible(req)">
+                <span class="font-bold text-brand-700" v-if="isEligible(req)">
                   ✓ Đã đủ 48 giờ
                 </span>
                 <span class="font-bold text-surface-600" v-else>
@@ -234,7 +239,7 @@
               type="button"
               @click="showCreateModal = false"
             >
-              ✕
+              <UIcon class="w-5 h-5" name="i-lucide-x" />
             </button>
           </div>
 
@@ -251,7 +256,7 @@
               Lý do khôi phục (tối thiểu 10 ký tự) *
             </label>
             <textarea
-              class="w-full p-3 rounded-2xl border-2 border-surface-300 focus:border-indigo-600 focus:outline-none text-xs text-surface-900"
+              class="w-full p-3 rounded-2xl border-2 border-surface-300 focus:border-brand-600 focus:outline-none text-xs text-surface-900"
               id="recoveryReason"
               placeholder="VD: Người dùng báo mất điện thoại và mất toàn bộ mã khôi phục, đã đối chiếu CMND..."
               rows="4"
@@ -268,7 +273,7 @@
               Huỷ
             </button>
             <button
-              class="min-h-11 px-5 py-2 rounded-2xl bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-white text-xs font-bold font-heading"
+              class="min-h-11 px-5 py-2 rounded-2xl bg-brand-600 hover:bg-brand-700 disabled:opacity-50 text-white text-xs font-bold font-heading"
               type="button"
               :disabled="createReason.trim().length < 10 || submitting"
               @click="executeCreateRequest"
@@ -364,15 +369,15 @@
   function getStatusBadgeClass(status: string): string {
     switch (status) {
       case "pending_verification":
-        return "bg-amber-100 text-amber-800 border border-amber-300";
+        return "bg-warning-100 text-warning-800 border border-warning-300";
       case "waiting":
-        return "bg-indigo-100 text-indigo-800 border border-indigo-300";
+        return "bg-brand-100 text-brand-800 border border-brand-300";
       case "completed":
-        return "bg-emerald-100 text-emerald-800 border border-emerald-300";
+        return "bg-success-100 text-success-800 border border-success-300";
       case "cancelled":
-        return "bg-slate-100 text-slate-700 border border-slate-300";
+        return "bg-surface-100 text-surface-700 border border-surface-300";
       case "expired":
-        return "bg-rose-100 text-rose-800 border border-rose-300";
+        return "bg-danger-100 text-danger-800 border border-danger-300";
       default:
         return "bg-surface-100 text-surface-800";
     }

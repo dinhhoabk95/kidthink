@@ -1,28 +1,29 @@
+import { checkRateLimit } from "@mindkid/cache";
 import { errorLogs, getOwnerDb } from "@mindkid/db";
 import { createError, defineEventHandler, readBody } from "h3";
+import { getVerifiedRemoteIp } from "#server/utils/auth-runtime";
 
 // Rate limiting: 10 req / min / IP (BR-ELV-05)
-const clientErrorRateLimit = new Map<
-  string,
-  { count: number; windowStart: number }
->();
+const CLIENT_ERROR_LIMIT = 10;
+const CLIENT_ERROR_WINDOW_SECONDS = 60;
 
-function checkClientErrorRateLimit(ip: string): void {
-  const now = Date.now();
-  const windowMs = 60 * 1000;
-  const record = clientErrorRateLimit.get(ip);
-
-  if (record && now - record.windowStart < windowMs) {
-    if (record.count >= 10) {
-      throw createError({
-        statusCode: 429,
-        statusMessage: "RATE_LIMIT_EXCEEDED",
-        message: "Quá giới hạn gửi báo cáo lỗi client (tối đa 10 lần/phút)",
-      });
-    }
-    record.count++;
-  } else {
-    clientErrorRateLimit.set(ip, { count: 1, windowStart: now });
+/**
+ * BR-RTL-08 — mọi lượt consume đi qua `rate-limiter-flexible` trong
+ * `packages/cache`. Bản trước đếm bằng một `Map` trong tiến trình: hạn mức reset
+ * mỗi lần deploy và không dùng chung giữa các tiến trình PM2.
+ */
+async function checkClientErrorRateLimit(ip: string): Promise<void> {
+  const result = await checkRateLimit(
+    `rl:ip:client-errors:${ip}`,
+    CLIENT_ERROR_LIMIT,
+    CLIENT_ERROR_WINDOW_SECONDS
+  );
+  if (!result.allowed) {
+    throw createError({
+      statusCode: 429,
+      statusMessage: "RATE_LIMIT_EXCEEDED",
+      message: "Quá giới hạn gửi báo cáo lỗi client (tối đa 10 lần/phút)",
+    });
   }
 }
 
@@ -76,11 +77,9 @@ const clientErrorSchema = z
   .optional();
 
 export default defineEventHandler(async (event) => {
-  const ip =
-    (event.node?.req?.headers?.["x-forwarded-for"] as string) ||
-    (event.node?.req?.socket?.remoteAddress as string) ||
-    "127.0.0.1";
-  checkClientErrorRateLimit(ip);
+  // BR-RTL-04 — bản trước lấy `X-Forwarded-For` thô, tức kẻ gọi tự chọn khoá
+  // giới hạn và đổi header mỗi request là đi vòng qua hạn mức.
+  await checkClientErrorRateLimit(getVerifiedRemoteIp(event));
 
   const raw =
     (event.context?.body as unknown) ||

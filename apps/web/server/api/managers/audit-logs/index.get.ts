@@ -1,7 +1,8 @@
 import { auditLogs, getOwnerDb } from "@mindkid/db";
 import { and, desc, eq, gte, ilike, inArray, lte, type SQL } from "drizzle-orm";
-import { createError, defineEventHandler, getQuery } from "h3";
+import { createError, defineEventHandler } from "h3";
 import { requireManagerSession } from "#server/utils/admin-auth-runtime";
+import { readRequestQuery } from "#server/utils/request-body";
 
 export interface FormattedAuditItem {
   id: number;
@@ -131,9 +132,7 @@ export default defineEventHandler(async (event) => {
     });
   }
 
-  const query =
-    ((event as Record<string, unknown>)._query as Record<string, unknown>) ||
-    getQuery(event);
+  const query = readRequestQuery(event);
 
   const limit = Math.min(Math.max(Number(query.limit) || 50, 1), 200);
   const dates = validateAuditDateRange(

@@ -7,11 +7,11 @@ import {
   pgEnum,
   pgTable,
   text,
-  timestamp,
   uniqueIndex,
   uuid,
   varchar,
 } from "drizzle-orm/pg-core";
+import { timestamps } from "./columns.ts";
 import { managers, users } from "./identity.ts";
 
 export const aiCreditReasonEnum = pgEnum("ai_credit_reason", [
@@ -41,12 +41,7 @@ export const aiCreditLedger = pgTable(
     }).references(() => managers.id),
     grantReason: text("grant_reason"),
     idempotencyKey: varchar("idempotency_key", { length: 128 }),
-    createdAt: timestamp("created_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
-    updatedAt: timestamp("updated_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
+    ...timestamps(),
   },
   (table) => [
     index("idx_ai_credit_ledger_user_created").on(
@@ -72,12 +67,7 @@ export const aiCreditBalance = pgTable(
     totalGranted: integer("total_granted").notNull().default(0),
     totalUsed: integer("total_used").notNull().default(0),
     version: integer("version").notNull().default(1),
-    updatedAt: timestamp("updated_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
-    createdAt: timestamp("created_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
+    ...timestamps(),
   },
   (table) => [
     check("check_ai_credit_balance_non_negative", sql`${table.balance} >= 0`),

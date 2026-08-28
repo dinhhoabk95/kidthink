@@ -414,13 +414,13 @@ backtick phải là liên kết) quét, vì hai check đó đi qua toàn bộ `d
 
 | File | Sở hữu |
 |---|---|
-| `README.md` | Chỉ mục và ranh giới: spec giữ ràng buộc kỹ thuật, thư mục này giữ ngôn ngữ thị giác |
-| `01-principles.md` | Sáu nguyên tắc §1.2 và hai thanh ghi, kèm neo về rule |
-| `02-color.md` | 11 bậc mỗi họ, bảng tương phản đo được, ánh xạ alias v4, C1–C6 |
-| `03-typography.md` | Cặp font, thang cỡ chữ, quy tắc tiếng Việt |
-| `04-iconography.md` | Ranh giới emoji-nội-dung với SVG-affordance, icon C1–C6, brief 12 avatar |
-| `05-motion-and-surface.md` | Thang chuyển động, độ nâng, nhiễu, và brief renderer canvas cho task ở §10 |
-| `06-voice.md` | Gom quy tắc copy tiếng Việt đang rải ở sáu spec |
+| [`README.md`](../design-system/README.md) | Chỉ mục và ranh giới: spec giữ ràng buộc kỹ thuật, thư mục này giữ ngôn ngữ thị giác |
+| [`01-principles.md`](../design-system/01-principles.md) | Sáu nguyên tắc §1.2 và hai thanh ghi, kèm neo về rule |
+| [`02-color.md`](../design-system/02-color.md) | 11 bậc mỗi họ, bảng tương phản đo được, ánh xạ alias v4, C1–C6 |
+| [`03-typography.md`](../design-system/03-typography.md) | Cặp font, thang cỡ chữ, quy tắc tiếng Việt |
+| [`04-iconography.md`](../design-system/04-iconography.md) | Ranh giới emoji-nội-dung với SVG-affordance, icon C1–C6, brief 12 avatar |
+| [`05-motion-and-surface.md`](../design-system/05-motion-and-surface.md) | Thang chuyển động, độ nâng, nhiễu, và brief renderer canvas cho task ở §10 |
+| [`06-voice.md`](../design-system/06-voice.md) | Gom quy tắc copy tiếng Việt đang rải ở sáu spec |
 
 Cấm — **NEVER copy contract từ spec sang đây**. Chỉ liên kết.
 
@@ -487,7 +487,7 @@ pnpm dev:admin
   [`game-engine-runtime.md`](../specs/01-platform/game-engine-runtime.md) và cần task riêng.
   Ngôn ngữ thị giác cho canvas vẫn viết được và vẫn đúng, nhưng nó chưa hiện ra pixel nào cho
   tới khi task đó xong — phải nói rõ khi báo cáo tiến độ. Task đó nhận
-  `05-motion-and-surface.md` làm đầu vào.
+  [`05-motion-and-surface.md`](../design-system/05-motion-and-surface.md) làm đầu vào.
 - Kiểm thử với trẻ thật và người dùng công nghệ trợ giúp —
   [`accessibility.md`](../specs/08-quality/accessibility.md) §11, chặn go-live.
 - Layout màn hình dọc — [`game-layout-engine.md`](../specs/01-platform/game-layout-engine.md) §11.

@@ -15,14 +15,31 @@
         <div class="hero-cta-group">
           <!-- BR-LND-01 & BR-LND-02: Play trial button above fold without registration -->
           <NuxtLink class="btn-cta-primary" to="/games/GL-C1-001">
-            Cho bé chơi thử ngay ➔
+            Cho bé chơi thử ngay
+            <UIcon
+              class="w-5 h-5 ml-1.5 inline-block"
+              name="i-lucide-arrow-right"
+            />
           </NuxtLink>
           <NuxtLink class="btn-cta-secondary" to="/games">
             Xem toàn bộ 120+ trò chơi
           </NuxtLink>
         </div>
-        <p class="hero-note">
-          ✓ Không cần đăng ký tài khoản · ✓ Không chứa quảng cáo
+        <p class="hero-note flex items-center gap-4 flex-wrap">
+          <span class="inline-flex items-center gap-1">
+            <UIcon
+              class="w-4 h-4 text-success-600 shrink-0"
+              name="i-lucide-check"
+            />
+            Không cần đăng ký tài khoản
+          </span>
+          <span class="inline-flex items-center gap-1">
+            <UIcon
+              class="w-4 h-4 text-success-600 shrink-0"
+              name="i-lucide-check"
+            />
+            Không chứa quảng cáo
+          </span>
         </p>
       </div>
       <div aria-hidden="true" class="hero-visual">

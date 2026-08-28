@@ -5,10 +5,10 @@
       class="flex flex-col sm:flex-row sm:items-center justify-between gap-4"
     >
       <div>
-        <h1 class="text-2xl font-bold text-slate-900 dark:text-white">
+        <h1 class="text-2xl font-bold text-surface-900 dark:text-white">
           Nhật Ký Kiểm Toán (Audit Logs)
         </h1>
-        <p class="text-sm text-slate-500 mt-1">
+        <p class="text-sm text-surface-500 mt-1">
           Truy vết toàn bộ thao tác bảo mật, xuất bản nội dung và thay đổi cấu
           hình (P2.10, BR-ALV-01..07).
         </p>
@@ -16,7 +16,7 @@
 
       <div class="flex items-center gap-2">
         <button
-          class="px-4 py-2 rounded-2xl border-2 border-indigo-600 bg-indigo-50 dark:bg-indigo-950/40 text-indigo-700 dark:text-indigo-300 hover:bg-indigo-600 hover:text-white text-xs font-bold transition-all flex items-center gap-1.5"
+          class="px-4 py-2 rounded-2xl border-2 border-brand-600 bg-brand-50 dark:bg-brand-950/40 text-brand-700 dark:text-brand-300 hover:bg-brand-600 hover:text-white text-xs font-bold transition-all flex items-center gap-1.5"
           type="button"
           :disabled="isExporting"
           @click="exportCsv"
@@ -26,7 +26,7 @@
         </button>
 
         <button
-          class="px-4 py-2 rounded-2xl border-2 border-slate-300 dark:border-slate-600 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-bold transition-all"
+          class="px-4 py-2 rounded-2xl border-2 border-surface-300 dark:border-surface-600 hover:bg-surface-100 dark:hover:bg-surface-700 text-surface-700 dark:text-surface-200 text-xs font-bold transition-all"
           type="button"
           @click="fetchLogs"
         >
@@ -37,16 +37,16 @@
 
     <!-- Filters -->
     <div
-      class="bg-white dark:bg-slate-800 rounded-3xl border-2 border-slate-200 dark:border-slate-700 p-4 grid grid-cols-1 sm:grid-cols-4 gap-4"
+      class="bg-white dark:bg-surface-800 rounded-3xl border-2 border-surface-200 dark:border-surface-700 p-4 grid grid-cols-1 sm:grid-cols-4 gap-4"
     >
       <div>
         <label
-          class="block text-xs font-bold text-slate-500 mb-1"
+          class="block text-xs font-bold text-surface-500 mb-1"
           for="filter-action"
           >Hành động (Action)</label
         >
         <select
-          class="w-full p-2 text-xs rounded-xl border border-slate-300 dark:border-slate-600 bg-transparent text-slate-900 dark:text-white focus:outline-none"
+          class="w-full p-2 text-xs rounded-xl border border-surface-300 dark:border-surface-600 bg-transparent text-surface-900 dark:text-white focus:outline-none"
           id="filter-action"
           v-model="actionFilter"
           @change="fetchLogs"
@@ -61,12 +61,12 @@
 
       <div>
         <label
-          class="block text-xs font-bold text-slate-500 mb-1"
+          class="block text-xs font-bold text-surface-500 mb-1"
           for="filter-entity"
           >Loại Entity</label
         >
         <input
-          class="w-full p-2 text-xs rounded-xl border border-slate-300 dark:border-slate-600 bg-transparent text-slate-900 dark:text-white focus:outline-none"
+          class="w-full p-2 text-xs rounded-xl border border-surface-300 dark:border-surface-600 bg-transparent text-surface-900 dark:text-white focus:outline-none"
           id="filter-entity"
           placeholder="game_level, user, flag..."
           type="text"
@@ -77,12 +77,12 @@
 
       <div>
         <label
-          class="block text-xs font-bold text-slate-500 mb-1"
+          class="block text-xs font-bold text-surface-500 mb-1"
           for="filter-entity-id"
           >Mã / ID Entity</label
         >
         <input
-          class="w-full p-2 text-xs rounded-xl border border-slate-300 dark:border-slate-600 bg-transparent text-slate-900 dark:text-white focus:outline-none"
+          class="w-full p-2 text-xs rounded-xl border border-surface-300 dark:border-surface-600 bg-transparent text-surface-900 dark:text-white focus:outline-none"
           id="filter-entity-id"
           placeholder="VD: C1.CNT.01, 42..."
           type="text"
@@ -93,12 +93,12 @@
 
       <div>
         <label
-          class="block text-xs font-bold text-slate-500 mb-1"
+          class="block text-xs font-bold text-surface-500 mb-1"
           for="filter-search"
           >Tìm kiếm lý do (q)</label
         >
         <input
-          class="w-full p-2 text-xs rounded-xl border border-slate-300 dark:border-slate-600 bg-transparent text-slate-900 dark:text-white focus:outline-none"
+          class="w-full p-2 text-xs rounded-xl border border-surface-300 dark:border-surface-600 bg-transparent text-surface-900 dark:text-white focus:outline-none"
           id="filter-search"
           placeholder="Tìm trong lý do..."
           type="text"
@@ -110,36 +110,36 @@
 
     <!-- Active Filter Summary -->
     <div
-      class="text-xs text-slate-500 flex items-center gap-2 flex-wrap"
+      class="text-xs text-surface-500 flex items-center gap-2 flex-wrap"
       v-if="hasActiveFilter"
     >
       <span class="font-bold">Bộ lọc đang áp dụng:</span>
       <span
-        class="px-2 py-0.5 rounded-full bg-indigo-50 dark:bg-indigo-950/30 text-indigo-700 dark:text-indigo-300"
+        class="px-2 py-0.5 rounded-full bg-brand-50 dark:bg-brand-950/30 text-brand-700 dark:text-brand-300"
         v-if="actionFilter"
       >
         Action: {{ actionFilter }}
       </span>
       <span
-        class="px-2 py-0.5 rounded-full bg-indigo-50 dark:bg-indigo-950/30 text-indigo-700 dark:text-indigo-300"
+        class="px-2 py-0.5 rounded-full bg-brand-50 dark:bg-brand-950/30 text-brand-700 dark:text-brand-300"
         v-if="entityTypeFilter"
       >
         Entity: {{ entityTypeFilter }}
       </span>
       <span
-        class="px-2 py-0.5 rounded-full bg-indigo-50 dark:bg-indigo-950/30 text-indigo-700 dark:text-indigo-300"
+        class="px-2 py-0.5 rounded-full bg-brand-50 dark:bg-brand-950/30 text-brand-700 dark:text-brand-300"
         v-if="entityIdFilter"
       >
         ID: {{ entityIdFilter }}
       </span>
       <span
-        class="px-2 py-0.5 rounded-full bg-indigo-50 dark:bg-indigo-950/30 text-indigo-700 dark:text-indigo-300"
+        class="px-2 py-0.5 rounded-full bg-brand-50 dark:bg-brand-950/30 text-brand-700 dark:text-brand-300"
         v-if="searchQuery"
       >
         q: "{{ searchQuery }}"
       </span>
       <button
-        class="text-indigo-600 dark:text-indigo-400 underline font-bold"
+        class="text-brand-600 dark:text-brand-400 underline font-bold"
         type="button"
         @click="clearFilters"
       >
@@ -149,32 +149,35 @@
 
     <!-- Audit Logs List -->
     <div
-      class="bg-white dark:bg-slate-800 rounded-3xl border-2 border-slate-200 dark:border-slate-700 overflow-hidden shadow-sm"
+      class="bg-white dark:bg-surface-800 rounded-3xl border-2 border-surface-200 dark:border-surface-700 overflow-hidden shadow-sm"
     >
-      <div class="p-12 text-center text-slate-400" v-if="isLoading">
+      <div class="p-12 text-center text-surface-400" v-if="isLoading">
         Đang tải nhật ký kiểm toán...
       </div>
 
       <div
-        class="p-12 text-center text-slate-500"
+        class="p-12 text-center text-surface-500"
         v-else-if="logs.length === 0"
       >
         <span class="text-3xl block mb-2">🛡️</span>
-        <p class="font-bold text-slate-700 dark:text-slate-300">
+        <p class="font-bold text-surface-700 dark:text-surface-300">
           Không tìm thấy bản ghi kiểm toán nào
         </p>
-        <p class="text-xs text-slate-500 mt-1" v-if="hasActiveFilter">
+        <p class="text-xs text-surface-500 mt-1" v-if="hasActiveFilter">
           Đang áp dụng bộ lọc: {{ activeFilterSummary }}. Thử xoá hoặc nới lỏng
           điều kiện tìm kiếm.
         </p>
-        <p class="text-xs text-slate-400 mt-1" v-else>
+        <p class="text-xs text-surface-400 mt-1" v-else>
           Chưa có nhật ký nào được ghi nhận trong 24h qua.
         </p>
       </div>
 
-      <div class="divide-y divide-slate-100 dark:divide-slate-700/60" v-else>
+      <div
+        class="divide-y divide-surface-100 dark:divide-surface-700/60"
+        v-else
+      >
         <button
-          class="w-full text-left p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:bg-slate-50 dark:hover:bg-slate-700/20 transition-all cursor-pointer"
+          class="w-full text-left p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:bg-surface-50 dark:hover:bg-surface-700/20 transition-all cursor-pointer"
           type="button"
           v-for="item in logs"
           :key="item.id"
@@ -183,27 +186,27 @@
           <div class="space-y-1">
             <div class="flex items-center gap-2.5 flex-wrap">
               <span
-                class="font-mono text-xs px-2.5 py-0.5 rounded-full bg-indigo-100 dark:bg-indigo-900/50 font-bold text-indigo-700 dark:text-indigo-300"
+                class="font-mono text-xs px-2.5 py-0.5 rounded-full bg-brand-100 dark:bg-brand-900/50 font-bold text-brand-700 dark:text-brand-300"
               >
                 {{ formatActionLabel(item.action) }}
               </span>
 
               <span
-                class="text-xs px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-700 font-semibold text-slate-600 dark:text-slate-300"
+                class="text-xs px-2 py-0.5 rounded-full bg-surface-100 dark:bg-surface-700 font-semibold text-surface-600 dark:text-surface-300"
               >
                 {{ item.entity_type }}: {{ item.entity_id }}
               </span>
 
-              <span class="text-xs text-slate-400">
+              <span class="text-xs text-surface-400">
                 {{ item.actor_name }}
               </span>
             </div>
 
-            <p class="text-xs text-slate-700 dark:text-slate-300">
+            <p class="text-xs text-surface-700 dark:text-surface-300">
               Lý do: <em>"{{ item.reason || 'Không có lý do' }}"</em>
             </p>
 
-            <p class="text-[11px] text-slate-400">
+            <p class="text-[11px] text-surface-400">
               {{ formatDate(item.created_at) }}
               • IP: {{ item.ip || 'Ẩn' }}
               <span v-if="item.request_id"
@@ -214,7 +217,7 @@
 
           <div class="flex items-center gap-2 shrink-0">
             <span
-              class="px-3.5 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-bold transition-all"
+              class="px-3.5 py-1.5 rounded-xl bg-surface-100 dark:bg-surface-700 text-surface-700 dark:text-surface-200 text-xs font-bold transition-all"
             >
               Xem Diff
             </span>
@@ -225,18 +228,18 @@
 
     <!-- Diff Detail Modal (BR-ALV-04) -->
     <div
-      class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm"
+      class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-surface-900/60 backdrop-blur-sm"
       v-if="isModalOpen"
     >
       <div
-        class="w-full max-w-3xl bg-white dark:bg-slate-800 rounded-3xl border-4 border-slate-200 dark:border-slate-700 p-6 shadow-2xl space-y-4 max-h-[85vh] overflow-y-auto"
+        class="w-full max-w-3xl bg-white dark:bg-surface-800 rounded-3xl border-4 border-surface-200 dark:border-surface-700 p-6 shadow-2xl space-y-4 max-h-[85vh] overflow-y-auto"
       >
         <div class="flex items-center justify-between">
-          <h2 class="text-lg font-bold text-slate-900 dark:text-white">
+          <h2 class="text-lg font-bold text-surface-900 dark:text-white">
             Chi Tiết Thay Đổi #{{ activeLog?.id }}
           </h2>
           <button
-            class="text-slate-400 hover:text-slate-600 text-xl font-bold"
+            class="text-surface-400 hover:text-surface-600 text-xl font-bold"
             type="button"
             @click="isModalOpen = false"
           >
@@ -245,30 +248,30 @@
         </div>
 
         <div
-          class="grid grid-cols-2 sm:grid-cols-4 gap-4 text-xs bg-slate-50 dark:bg-slate-900/40 p-4 rounded-2xl border border-slate-200 dark:border-slate-700"
+          class="grid grid-cols-2 sm:grid-cols-4 gap-4 text-xs bg-surface-50 dark:bg-surface-900/40 p-4 rounded-2xl border border-surface-200 dark:border-surface-700"
         >
           <div>
-            <span class="text-slate-400 block">Hành động:</span>
-            <strong class="text-slate-800 dark:text-slate-200"
+            <span class="text-surface-400 block">Hành động:</span>
+            <strong class="text-surface-800 dark:text-surface-200"
               >{{ activeLog?.action }}</strong
             >
           </div>
           <div>
-            <span class="text-slate-400 block">Thực hiện bởi:</span>
-            <strong class="text-slate-800 dark:text-slate-200"
+            <span class="text-surface-400 block">Thực hiện bởi:</span>
+            <strong class="text-surface-800 dark:text-surface-200"
               >{{ activeLog?.actor_name }}</strong
             >
           </div>
           <div>
-            <span class="text-slate-400 block">Đối tượng:</span>
-            <strong class="text-slate-800 dark:text-slate-200"
+            <span class="text-surface-400 block">Đối tượng:</span>
+            <strong class="text-surface-800 dark:text-surface-200"
               >{{ activeLog?.entity_type }}
               ({{ activeLog?.entity_id }})</strong
             >
           </div>
           <div>
-            <span class="text-slate-400 block">Thời gian:</span>
-            <strong class="text-slate-800 dark:text-slate-200"
+            <span class="text-surface-400 block">Thời gian:</span>
+            <strong class="text-surface-800 dark:text-surface-200"
               >{{ activeLog?.created_at ? formatDate(activeLog.created_at) : '' }}</strong
             >
           </div>
@@ -276,15 +279,15 @@
 
         <!-- Request ID cross link (D-KU) -->
         <div
-          class="flex items-center justify-between text-xs px-4 py-2 rounded-xl bg-indigo-50 dark:bg-indigo-950/30 border border-indigo-200 dark:border-indigo-800"
+          class="flex items-center justify-between text-xs px-4 py-2 rounded-xl bg-brand-50 dark:bg-brand-950/30 border border-brand-200 dark:border-brand-800"
           v-if="activeLog?.request_id"
         >
-          <span class="text-indigo-800 dark:text-indigo-300">
+          <span class="text-brand-800 dark:text-brand-300">
             Request ID:
             <code class="font-mono font-bold">{{ activeLog.request_id }}</code>
           </span>
           <NuxtLink
-            class="text-indigo-600 dark:text-indigo-400 font-bold hover:underline"
+            class="text-brand-600 dark:text-brand-400 font-bold hover:underline"
             :to="`/errors?q=${activeLog.request_id}`"
           >
             Tra cứu lỗi cùng Request →
@@ -295,12 +298,12 @@
         <div class="space-y-3">
           <div class="flex items-center justify-between">
             <h3
-              class="text-xs font-bold text-slate-700 dark:text-slate-300 tracking-wider"
+              class="text-xs font-bold text-surface-700 dark:text-surface-300 tracking-wider"
             >
               So sánh thay đổi từng trường (Field-by-Field Diff)
             </h3>
             <button
-              class="text-xs text-indigo-600 dark:text-indigo-400 font-bold hover:underline"
+              class="text-xs text-brand-600 dark:text-brand-400 font-bold hover:underline"
               type="button"
               @click="showRawJson = !showRawJson"
             >
@@ -310,47 +313,47 @@
 
           <!-- Structured diff table -->
           <div
-            class="border border-slate-200 dark:border-slate-700 rounded-2xl overflow-hidden text-xs"
+            class="border border-surface-200 dark:border-surface-700 rounded-2xl overflow-hidden text-xs"
             v-if="diffFields.length > 0"
           >
             <table
-              class="w-full divide-y divide-slate-200 dark:divide-slate-700"
+              class="w-full divide-y divide-surface-200 dark:divide-surface-700"
             >
-              <thead class="bg-slate-50 dark:bg-slate-900/50">
+              <thead class="bg-surface-50 dark:bg-surface-900/50">
                 <tr>
                   <th
-                    class="p-2.5 text-left font-bold text-slate-600 dark:text-slate-300"
+                    class="p-2.5 text-left font-bold text-surface-600 dark:text-surface-300"
                   >
                     Trường
                   </th>
                   <th
-                    class="p-2.5 text-left font-bold text-rose-700 dark:text-rose-400"
+                    class="p-2.5 text-left font-bold text-danger-700 dark:text-danger-400"
                   >
                     Trước (Before)
                   </th>
                   <th
-                    class="p-2.5 text-left font-bold text-emerald-700 dark:text-emerald-400"
+                    class="p-2.5 text-left font-bold text-success-700 dark:text-success-400"
                   >
                     Sau (After)
                   </th>
                 </tr>
               </thead>
               <tbody
-                class="divide-y divide-slate-100 dark:divide-slate-700/60 font-mono text-[11px]"
+                class="divide-y divide-surface-100 dark:divide-surface-700/60 font-mono text-[11px]"
               >
                 <tr v-for="df in diffFields" :key="df.field">
                   <td
-                    class="p-2.5 font-bold text-slate-800 dark:text-slate-200"
+                    class="p-2.5 font-bold text-surface-800 dark:text-surface-200"
                   >
                     {{ df.field }}
                   </td>
                   <td
-                    class="p-2.5 text-rose-700 dark:text-rose-300 bg-rose-50/50 dark:bg-rose-950/20 whitespace-pre-wrap"
+                    class="p-2.5 text-danger-700 dark:text-danger-300 bg-danger-50/50 dark:bg-danger-950/20 whitespace-pre-wrap"
                   >
                     {{ formatVal(df.before) }}
                   </td>
                   <td
-                    class="p-2.5 text-emerald-700 dark:text-emerald-300 bg-emerald-50/50 dark:bg-emerald-950/20 whitespace-pre-wrap"
+                    class="p-2.5 text-success-700 dark:text-success-300 bg-success-50/50 dark:bg-success-950/20 whitespace-pre-wrap"
                   >
                     {{ formatVal(df.after) }}
                   </td>
@@ -359,7 +362,7 @@
             </table>
           </div>
           <div
-            class="p-4 text-center text-xs text-slate-400 italic bg-slate-50 dark:bg-slate-900/30 rounded-2xl border border-slate-200 dark:border-slate-700"
+            class="p-4 text-center text-xs text-surface-400 italic bg-surface-50 dark:bg-surface-900/30 rounded-2xl border border-surface-200 dark:border-surface-700"
             v-else
           >
             Không có thay đổi payload trường cụ thể (trước/sau rỗng).
@@ -368,26 +371,26 @@
           <!-- Full JSON View toggle (BR-ALV-04) -->
           <div class="grid grid-cols-2 gap-4 pt-2" v-if="showRawJson">
             <div
-              class="bg-rose-50 dark:bg-rose-950/30 p-3 rounded-xl border border-rose-200 dark:border-rose-900/50"
+              class="bg-danger-50 dark:bg-danger-950/30 p-3 rounded-xl border border-danger-200 dark:border-danger-900/50"
             >
               <span
-                class="text-xs font-bold text-rose-700 dark:text-rose-400 block mb-1"
+                class="text-xs font-bold text-danger-700 dark:text-danger-400 block mb-1"
                 >Dữ liệu trước (Before):</span
               >
               <pre
-                class="text-[11px] text-rose-900 dark:text-rose-200 font-mono whitespace-pre-wrap overflow-x-auto max-h-48"
+                class="text-[11px] text-danger-900 dark:text-danger-200 font-mono whitespace-pre-wrap overflow-x-auto max-h-48"
               >{{ JSON.stringify(activeLog?.before_data || {}, null, 2) }}</pre>
             </div>
 
             <div
-              class="bg-emerald-50 dark:bg-emerald-950/30 p-3 rounded-xl border border-emerald-200 dark:border-emerald-900/50"
+              class="bg-success-50 dark:bg-success-950/30 p-3 rounded-xl border border-success-200 dark:border-success-900/50"
             >
               <span
-                class="text-xs font-bold text-emerald-700 dark:text-emerald-400 block mb-1"
+                class="text-xs font-bold text-success-700 dark:text-success-400 block mb-1"
                 >Dữ liệu sau (After):</span
               >
               <pre
-                class="text-[11px] text-emerald-900 dark:text-emerald-200 font-mono whitespace-pre-wrap overflow-x-auto max-h-48"
+                class="text-[11px] text-success-900 dark:text-success-200 font-mono whitespace-pre-wrap overflow-x-auto max-h-48"
               >{{ JSON.stringify(activeLog?.after_data || {}, null, 2) }}</pre>
             </div>
           </div>
@@ -395,7 +398,7 @@
 
         <div class="flex justify-end pt-2">
           <button
-            class="px-5 py-2 rounded-xl bg-slate-200 dark:bg-slate-700 font-bold text-xs hover:bg-slate-300 text-slate-800 dark:text-slate-200"
+            class="px-5 py-2 rounded-xl bg-surface-200 dark:bg-surface-700 font-bold text-xs hover:bg-surface-300 text-surface-800 dark:text-surface-200"
             type="button"
             @click="isModalOpen = false"
           >

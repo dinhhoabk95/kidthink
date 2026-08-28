@@ -10,6 +10,13 @@
     "@mindkid/config": "workspace:*"
   },
   "imports": {
-    "#src/*": "./src/*.ts"
+    "#src/*": "./src/*.ts",
+    "#tests/*": "./tests/*.ts"
+  },
+  "scripts": {
+    "test": "vitest run"
+  },
+  "devDependencies": {
+    "vitest": "catalog:"
   }
 }

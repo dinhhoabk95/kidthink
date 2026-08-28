@@ -5,17 +5,17 @@
       class="flex flex-col sm:flex-row sm:items-center justify-between gap-4"
     >
       <div>
-        <h1 class="text-2xl font-bold text-slate-900 dark:text-white">
+        <h1 class="text-2xl font-bold text-surface-900 dark:text-white">
           Nhật Ký Lỗi Hệ Thống (Error Logs)
         </h1>
-        <p class="text-sm text-slate-500 mt-1">
+        <p class="text-sm text-surface-500 mt-1">
           Gom nhóm theo dấu vân tay, thống kê số lượng và số người dùng bị ảnh
           hưởng (P2.10, BR-ELV-01..07).
         </p>
       </div>
 
       <button
-        class="px-4 py-2 rounded-2xl border-2 border-slate-300 dark:border-slate-600 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-bold transition-all"
+        class="px-4 py-2 rounded-2xl border-2 border-surface-300 dark:border-surface-600 hover:bg-surface-100 dark:hover:bg-surface-700 text-surface-700 dark:text-surface-200 text-xs font-bold transition-all"
         type="button"
         @click="fetchErrors"
       >
@@ -25,16 +25,16 @@
 
     <!-- Filters -->
     <div
-      class="bg-white dark:bg-slate-800 rounded-3xl border-2 border-slate-200 dark:border-slate-700 p-4 grid grid-cols-1 sm:grid-cols-3 gap-4"
+      class="bg-white dark:bg-surface-800 rounded-3xl border-2 border-surface-200 dark:border-surface-700 p-4 grid grid-cols-1 sm:grid-cols-3 gap-4"
     >
       <div>
         <label
-          class="block text-xs font-bold text-slate-500 mb-1"
+          class="block text-xs font-bold text-surface-500 mb-1"
           for="filter-status"
           >Trạng thái</label
         >
         <select
-          class="w-full p-2 text-xs rounded-xl border border-slate-300 dark:border-slate-600 bg-transparent text-slate-900 dark:text-white focus:outline-none"
+          class="w-full p-2 text-xs rounded-xl border border-surface-300 dark:border-surface-600 bg-transparent text-surface-900 dark:text-white focus:outline-none"
           id="filter-status"
           v-model="statusFilter"
           @change="fetchErrors"
@@ -48,12 +48,12 @@
 
       <div>
         <label
-          class="block text-xs font-bold text-slate-500 mb-1"
+          class="block text-xs font-bold text-surface-500 mb-1"
           for="filter-source"
           >Nguồn lỗi</label
         >
         <select
-          class="w-full p-2 text-xs rounded-xl border border-slate-300 dark:border-slate-600 bg-transparent text-slate-900 dark:text-white focus:outline-none"
+          class="w-full p-2 text-xs rounded-xl border border-surface-300 dark:border-surface-600 bg-transparent text-surface-900 dark:text-white focus:outline-none"
           id="filter-source"
           v-model="sourceFilter"
           @change="fetchErrors"
@@ -66,12 +66,12 @@
 
       <div>
         <label
-          class="block text-xs font-bold text-slate-500 mb-1"
+          class="block text-xs font-bold text-surface-500 mb-1"
           for="filter-search"
           >Tìm kiếm (Mã lỗi, thông điệp, req ID)</label
         >
         <input
-          class="w-full p-2 text-xs rounded-xl border border-slate-300 dark:border-slate-600 bg-transparent text-slate-900 dark:text-white focus:outline-none"
+          class="w-full p-2 text-xs rounded-xl border border-surface-300 dark:border-surface-600 bg-transparent text-surface-900 dark:text-white focus:outline-none"
           id="filter-search"
           placeholder="Tìm trong lỗi..."
           type="text"
@@ -83,36 +83,39 @@
 
     <!-- Error Groups List (BR-ELV-01) -->
     <div
-      class="bg-white dark:bg-slate-800 rounded-3xl border-2 border-slate-200 dark:border-slate-700 overflow-hidden shadow-sm"
+      class="bg-white dark:bg-surface-800 rounded-3xl border-2 border-surface-200 dark:border-surface-700 overflow-hidden shadow-sm"
     >
-      <div class="p-12 text-center text-slate-400" v-if="isLoading">
+      <div class="p-12 text-center text-surface-400" v-if="isLoading">
         Đang tải danh sách lỗi hệ thống...
       </div>
 
       <div
-        class="p-12 text-center text-slate-500"
+        class="p-12 text-center text-surface-500"
         v-else-if="groups.length === 0"
       >
         <span class="text-3xl block mb-2">🎉</span>
-        <p class="font-bold text-slate-700 dark:text-slate-300">
+        <p class="font-bold text-surface-700 dark:text-surface-300">
           Không có lỗi nào phù hợp
         </p>
-        <p class="text-xs text-slate-500 mt-1">
+        <p class="text-xs text-surface-500 mt-1">
           Hệ thống đang hoạt động ổn định hoặc không có lỗi theo điều kiện lọc
           hiện tại.
         </p>
       </div>
 
-      <div class="divide-y divide-slate-100 dark:divide-slate-700/60" v-else>
+      <div
+        class="divide-y divide-surface-100 dark:divide-surface-700/60"
+        v-else
+      >
         <div
-          class="p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:bg-slate-50 dark:hover:bg-slate-700/20 transition-all"
+          class="p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:bg-surface-50 dark:hover:bg-surface-700/20 transition-all"
           v-for="group in groups"
           :key="group.fingerprint"
         >
           <div class="space-y-1.5">
             <div class="flex items-center gap-2.5 flex-wrap">
               <span
-                class="font-mono text-xs px-2.5 py-0.5 rounded-full bg-rose-100 dark:bg-rose-950/50 font-bold text-rose-700 dark:text-rose-400"
+                class="font-mono text-xs px-2.5 py-0.5 rounded-full bg-danger-100 dark:bg-danger-950/50 font-bold text-danger-700 dark:text-danger-400"
               >
                 {{ group.code }}
               </span>
@@ -123,32 +126,32 @@
                 {{ group.status.toUpperCase() }}
               </span>
 
-              <span class="text-xs text-slate-400">
+              <span class="text-xs text-surface-400">
                 Nguồn: {{ group.source }}
               </span>
 
-              <span class="font-mono text-[11px] text-slate-400">
+              <span class="font-mono text-[11px] text-surface-400">
                 FP: {{ group.fingerprint }}
               </span>
             </div>
 
-            <p class="text-sm font-bold text-slate-900 dark:text-white">
+            <p class="text-sm font-bold text-surface-900 dark:text-white">
               {{ group.latest_message }}
             </p>
 
             <!-- Affected Users & Count (BR-ELV-02) -->
             <div
-              class="flex items-center gap-4 text-xs text-slate-500 flex-wrap"
+              class="flex items-center gap-4 text-xs text-surface-500 flex-wrap"
             >
               <span
                 >Số lần xảy ra:
-                <strong class="text-rose-600 font-bold"
+                <strong class="text-danger-600 font-bold"
                   >{{ group.total_occurrences }}</strong
                 ></span
               >
               <span
                 >Người ảnh hưởng:
-                <strong class="text-indigo-600 font-bold"
+                <strong class="text-brand-600 font-bold"
                   >{{ group.affected_users_count }}</strong
                 ></span
               >
@@ -157,7 +160,7 @@
             </div>
 
             <p
-              class="text-xs text-emerald-600 italic"
+              class="text-xs text-success-600 italic"
               v-if="group.resolved_notes"
             >
               Ghi chú xử lý: "{{ group.resolved_notes }}"
@@ -166,7 +169,7 @@
             <!-- Cross-link to audit (D-KU) -->
             <div class="pt-1">
               <NuxtLink
-                class="text-[11px] text-indigo-600 dark:text-indigo-400 font-semibold hover:underline flex items-center gap-1"
+                class="text-[11px] text-brand-600 dark:text-brand-400 font-semibold hover:underline flex items-center gap-1"
                 :to="`/audit?q=${group.fingerprint}`"
               >
                 <span>Tra cứu nhật ký kiểm toán liên quan →</span>
@@ -176,7 +179,7 @@
 
           <div class="flex items-center gap-2 shrink-0">
             <button
-              class="px-3.5 py-1.5 rounded-xl bg-amber-50 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300 hover:bg-amber-600 hover:text-white text-xs font-bold transition-all"
+              class="px-3.5 py-1.5 rounded-xl bg-warning-50 dark:bg-warning-900/30 text-warning-700 dark:text-warning-300 hover:bg-warning-600 hover:text-white text-xs font-bold transition-all"
               type="button"
               v-if="group.status === 'open'"
               @click="openResolveModal(group, 'ack')"
@@ -185,7 +188,7 @@
             </button>
 
             <button
-              class="px-3.5 py-1.5 rounded-xl bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 hover:bg-emerald-600 hover:text-white text-xs font-bold transition-all"
+              class="px-3.5 py-1.5 rounded-xl bg-success-50 dark:bg-success-900/30 text-success-700 dark:text-success-300 hover:bg-success-600 hover:text-white text-xs font-bold transition-all"
               type="button"
               v-if="group.status !== 'resolved'"
               @click="openResolveModal(group, 'resolved')"
@@ -199,16 +202,16 @@
 
     <!-- Resolve Modal (BR-ELV-07) -->
     <div
-      class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm"
+      class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-surface-900/60 backdrop-blur-sm"
       v-if="isModalOpen"
     >
       <div
-        class="w-full max-w-lg bg-white dark:bg-slate-800 rounded-3xl border-4 border-slate-200 dark:border-slate-700 p-6 shadow-2xl space-y-4"
+        class="w-full max-w-lg bg-white dark:bg-surface-800 rounded-3xl border-4 border-surface-200 dark:border-surface-700 p-6 shadow-2xl space-y-4"
       >
-        <h2 class="text-lg font-bold text-slate-900 dark:text-white">
+        <h2 class="text-lg font-bold text-surface-900 dark:text-white">
           Cập nhật trạng thái nhóm lỗi
         </h2>
-        <p class="text-xs text-slate-500">
+        <p class="text-xs text-surface-500">
           Chuyển trạng thái sang
           <strong
             >{{ targetStatus === 'resolved' ? 'ĐÃ XỬ LÝ (RESOLVED)' : 'ĐÃ GHI NHẬN (ACK)' }}</strong
@@ -217,13 +220,13 @@
 
         <div>
           <label
-            class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1"
+            class="block text-xs font-bold text-surface-700 dark:text-surface-300 mb-1"
             for="resolve-note"
           >
             Ghi chú giải quyết
           </label>
           <textarea
-            class="w-full p-3 text-sm rounded-xl border-2 border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:border-indigo-500 focus:outline-none"
+            class="w-full p-3 text-sm rounded-xl border-2 border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-900 text-surface-900 dark:text-white focus:border-brand-500 focus:outline-none"
             id="resolve-note"
             placeholder="Nêu giải pháp khắc phục hoặc ghi chú kỹ thuật..."
             rows="3"
@@ -233,14 +236,14 @@
 
         <div class="flex items-center justify-end gap-3 pt-2">
           <button
-            class="px-4 py-2 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 font-semibold text-sm"
+            class="px-4 py-2 rounded-xl text-surface-600 dark:text-surface-300 hover:bg-surface-100 dark:hover:bg-surface-700 font-semibold text-sm"
             type="button"
             @click="isModalOpen = false"
           >
             Huỷ
           </button>
           <button
-            class="px-5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-white font-semibold text-sm transition-all"
+            class="px-5 py-2 rounded-xl bg-brand-600 hover:bg-brand-700 disabled:opacity-50 text-white font-semibold text-sm transition-all"
             type="button"
             :disabled="isSubmitting"
             @click="confirmResolve"
@@ -349,11 +352,11 @@
   function statusClass(st: string): string {
     switch (st) {
       case "resolved":
-        return "bg-emerald-100 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-300";
+        return "bg-success-100 dark:bg-success-950/40 text-success-800 dark:text-success-300";
       case "ack":
-        return "bg-amber-100 dark:bg-amber-950/40 text-amber-800 dark:text-amber-300";
+        return "bg-warning-100 dark:bg-warning-950/40 text-warning-800 dark:text-warning-300";
       default:
-        return "bg-rose-100 dark:bg-rose-950/40 text-rose-800 dark:text-rose-300";
+        return "bg-danger-100 dark:bg-danger-950/40 text-danger-800 dark:text-danger-300";
     }
   }
 

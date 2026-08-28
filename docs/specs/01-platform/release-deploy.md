@@ -104,6 +104,7 @@ bước nào được bỏ qua để đi tiếp.
 | `BR-DEP-12` | Phát hành hai lần cùng một commit phải cho cùng kết quả, không được lỗi                              | Đây là tính chất rẻ nhất để kiểm rằng quy trình không dựa vào trạng thái còn sót của lần trước                                                                                                                                                                                                    |
 | `BR-DEP-13` | Cấm build hay chạy `pnpm` trong thư mục bản đang phục vụ                                             | Cài phụ thuộc trực tiếp vào bản đang chạy làm nó thay đổi dưới chân tiến trình đang phục vụ. Bản đã bày phải là thứ chỉ-đọc                                                                                                                                                                       |
 | `BR-DEP-14` | Chế độ in kế hoạch phải không đổi gì trên máy chủ                                                    | Người vận hành cần một cách xem sắp làm gì mà không phải tin lời mô tả                                                                                                                                                                                                                            |
+| `BR-DEP-15` | Cổng khói của bước build phải kiểm **artifact**, không chỉ mã thoát: server ESM khởi động được, static SPA có entry CSS, và chunk client không chứa code máy chủ | `nuxt build` trả 0 trong khi `.output/server/index.mjs` chết ngay lúc khởi động vì native addon bị inline (`BR-MPA-10`), và `nuxt generate` trả 0 trong khi không sinh byte CSS nào vì layer thiết kế bị bỏ qua (`BR-DSC-21`). Cả hai đã xảy ra thật 2026-08-29 |
 
 ## 7. Data
 
@@ -140,6 +141,14 @@ Không có route công khai. Quy trình phát hành **gọi** endpoint sức kho
 ## 9. Acceptance criteria
 
 ```gherkin
+Scenario: BR-DEP-15 — artifact chạy được, không chỉ build xanh
+  Given bước build vừa xong với mã thoát 0
+  When chạy node .output/server/index.mjs của apps/web rồi gọi GET /
+  Then trả 200 và tiến trình không ném ReferenceError về __dirname
+  And .output/public/_nuxt của apps/admin có đúng một entry CSS lớn hơn 100KB
+  And không chunk nào trong .output/public/_nuxt chứa node-gyp-build
+  And Cấm — NEVER coi mã thoát 0 của lệnh build là đã qua cổng này
+
 Scenario: BR-DEP-01 — tệp chưa commit không lên máy chủ
   Given máy trạm có một tệp đã sửa nhưng chưa commit
   When chạy lệnh phát hành

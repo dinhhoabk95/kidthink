@@ -4,14 +4,29 @@
  * harness. Generated from the registry rather than hand-written so the fixtures
  * cannot drift away from the contract they are meant to satisfy.
  */
-import { type AppType, ENV_REGISTRY } from "@mindkid/config";
+// Subpath, not the package barrel: this file runs under plain `node`, and the
+// barrel re-exports with .js specifiers that only a bundler resolves.
+import {
+  type AppType,
+  ENV_REGISTRY,
+  type EnvVarDef,
+} from "@mindkid/config/env-contract";
 
 const SAMPLE_SECRET = "harness-secret-value-0123456789abcdef";
 
-function sampleValue(kind: string, name: string): string {
-  switch (kind) {
-    case "url":
-      return `https://harness.example/${name.toLowerCase()}`;
+/**
+ * The value has to satisfy every rule the registry states about the variable,
+ * not just its kind. BR-ENV-13 constrains the protocol of a URL per variable,
+ * so a fixture that always emits https:// makes DATABASE_URL fail validation
+ * and every release in this harness die at the environment gate — a fixture
+ * bug that reads exactly like a contract violation.
+ */
+function sampleValue(def: EnvVarDef): string {
+  switch (def.kind) {
+    case "url": {
+      const protocol = def.urlProtocols?.[0] ?? "https:";
+      return `${protocol}//harness.example/${def.name.toLowerCase()}`;
+    }
     case "secret":
       return SAMPLE_SECRET;
     case "email":
@@ -19,9 +34,9 @@ function sampleValue(kind: string, name: string): string {
     case "port":
       return "3000";
     case "enum":
-      return "production";
+      return def.enumValues?.[0] ?? "production";
     default:
-      return `harness-${name.toLowerCase()}`;
+      return `harness-${def.name.toLowerCase()}`;
   }
 }
 
@@ -36,7 +51,7 @@ for (const def of ENV_REGISTRY) {
   if (def.required === "optional" || omit.has(def.name)) {
     continue;
   }
-  lines.push(`${def.name}=${sampleValue(def.kind, def.name)}`);
+  lines.push(`${def.name}=${sampleValue(def)}`);
 }
 
 process.stdout.write(`${lines.join("\n")}\n`);

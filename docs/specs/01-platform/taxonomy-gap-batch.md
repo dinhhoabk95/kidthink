@@ -22,6 +22,12 @@ depends_on:
 
 # Lô khuôn khoảng trống taxonomy — ba cơ chế không dạng bài v1 nào có
 
+> **2026-08-29:** mỗi mã trong lô này có một phiếu spec riêng ở
+> [`engines/index.md`](engines/index.md) — hình dạng `content_pack`, ma trận seed mục tiêu,
+> và ca sai không bắt được bằng schema. Danh mục lô vẫn thuộc file này; phiếu **trích**
+> contract chứ cấm — NEVER khai lại (`BR-ESS-03`).
+
+
 ## 1. Objective
 
 Mục 7.2 của [`legacy-v1-template-batch.md`](legacy-v1-template-batch.md) để lại ba tên khuôn

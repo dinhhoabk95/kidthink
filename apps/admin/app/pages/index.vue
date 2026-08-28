@@ -20,7 +20,7 @@
         class="inline-flex items-center gap-2 text-xs text-surface-600 bg-white border-2 border-surface-200 px-3.5 py-2 rounded-xl shadow-sm self-start"
         v-if="data?.as_of"
       >
-        <span aria-hidden="true" class="w-2 h-2 rounded-full bg-emerald-500" />
+        <span aria-hidden="true" class="w-2 h-2 rounded-full bg-success-500" />
         <span>Dữ liệu tính đến (as of):</span>
         <strong class="font-heading font-bold text-surface-900"
           >{{ formatDateTime(data.as_of) }}</strong
@@ -42,7 +42,7 @@
     >
       <template #action>
         <button
-          class="px-4 py-2 bg-indigo-600 text-white rounded-xl text-xs font-bold font-heading hover:bg-indigo-700 transition-colors focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:outline-none"
+          class="px-4 py-2 bg-brand-600 text-white rounded-xl text-xs font-bold font-heading hover:bg-brand-700 transition-colors focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:outline-none"
           type="button"
           @click="() => refresh()"
         >
@@ -66,7 +66,7 @@
             1. Việc cần làm hôm nay (Ưu tiên cao nhất)
           </h2>
           <span
-            class="px-2 py-0.5 text-[11px] font-bold font-heading bg-amber-100 text-amber-900 rounded-xl"
+            class="px-2 py-0.5 text-[11px] font-bold font-heading bg-warning-100 text-warning-900 rounded-xl"
           >
             Hành động ngay
           </span>
@@ -160,7 +160,7 @@
             class="p-5 rounded-2xl border-2 bg-white flex flex-col justify-between space-y-4 shadow-sm"
             :class="[
               data.todo.open_alerts.count > 0
-                ? 'border-rose-300 bg-rose-50/40'
+                ? 'border-danger-300 bg-danger-50/40'
                 : 'border-surface-200',
             ]"
           >
@@ -172,7 +172,7 @@
                   Vận hành
                 </span>
                 <span
-                  class="px-2 py-0.5 rounded-xl text-[10px] font-bold bg-rose-100 text-rose-800"
+                  class="px-2 py-0.5 rounded-xl text-[10px] font-bold bg-danger-100 text-danger-800"
                   v-if="data.todo.open_alerts.count > 0"
                 >
                   Cảnh báo mở
@@ -183,7 +183,7 @@
               </h3>
               <div
                 class="text-2xl font-bold font-heading"
-                :class="data.todo.open_alerts.count > 0 ? 'text-rose-700' : 'text-surface-900'"
+                :class="data.todo.open_alerts.count > 0 ? 'text-danger-700' : 'text-surface-900'"
               >
                 {{ data.todo.open_alerts.count }}
               </div>
@@ -194,12 +194,12 @@
             >
               <span
                 class="text-xs"
-                :class="data.todo.open_alerts.count > 0 ? 'text-rose-700 font-semibold' : 'text-emerald-700'"
+                :class="data.todo.open_alerts.count > 0 ? 'text-danger-700 font-semibold' : 'text-success-700'"
               >
                 {{ data.todo.open_alerts.count > 0 ? 'Cần xử lý ngay' : 'Hệ thống ổn định' }}
               </span>
               <NuxtLink
-                class="px-3 py-1.5 rounded-xl text-xs font-bold font-heading bg-indigo-600 hover:bg-indigo-700 text-white transition-colors focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:outline-none"
+                class="px-3 py-1.5 rounded-xl text-xs font-bold font-heading bg-brand-600 hover:bg-brand-700 text-white transition-colors focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:outline-none"
                 to="/system"
               >
                 Xem chi tiết
@@ -236,7 +236,7 @@
             <div class="text-xs flex items-center gap-1">
               <span
                 v-if="data.growth.new_users_7d.change_percent !== null"
-                :class="data.growth.new_users_7d.change_percent >= 0 ? 'text-emerald-600 font-bold' : 'text-rose-600 font-bold'"
+                :class="data.growth.new_users_7d.change_percent >= 0 ? 'text-success-600 font-bold' : 'text-danger-600 font-bold'"
               >
                 {{ data.growth.new_users_7d.change_percent >= 0 ? '↑' : '↓' }}
                 {{ Math.abs(data.growth.new_users_7d.change_percent) }}%
@@ -258,7 +258,7 @@
             <div class="text-xs flex items-center gap-1">
               <span
                 v-if="data.growth.active_users_7d.change_percent !== null"
-                :class="data.growth.active_users_7d.change_percent >= 0 ? 'text-emerald-600 font-bold' : 'text-rose-600 font-bold'"
+                :class="data.growth.active_users_7d.change_percent >= 0 ? 'text-success-600 font-bold' : 'text-danger-600 font-bold'"
               >
                 {{ data.growth.active_users_7d.change_percent >= 0 ? '↑' : '↓' }}
                 {{ Math.abs(data.growth.active_users_7d.change_percent) }}%
@@ -341,18 +341,18 @@
             class="p-5 rounded-2xl border-2 bg-white space-y-3 shadow-sm"
             :class="[
               data.content.skills_without_levels.count > 0
-                ? 'border-amber-300 bg-amber-50/30'
+                ? 'border-warning-300 bg-warning-50/30'
                 : 'border-surface-200',
             ]"
           >
             <div class="flex items-center justify-between">
               <span
-                class="text-xs font-bold font-heading text-amber-800 tracking-wider"
+                class="text-xs font-bold font-heading text-warning-800 tracking-wider"
               >
                 Khoảng trống nội dung
               </span>
               <span
-                class="px-2 py-0.5 rounded-xl text-[10px] font-bold bg-amber-100 text-amber-900"
+                class="px-2 py-0.5 rounded-xl text-[10px] font-bold bg-warning-100 text-warning-900"
                 v-if="data.content.skills_without_levels.count > 0"
               >
                 Cần bổ sung
@@ -364,12 +364,12 @@
             <div class="flex items-baseline justify-between">
               <div
                 class="text-3xl font-bold font-heading"
-                :class="data.content.skills_without_levels.count > 0 ? 'text-amber-700' : 'text-surface-900'"
+                :class="data.content.skills_without_levels.count > 0 ? 'text-warning-700' : 'text-surface-900'"
               >
                 {{ data.content.skills_without_levels.count }}
               </div>
               <NuxtLink
-                class="text-xs font-bold font-heading text-indigo-600 hover:text-indigo-800 underline focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:outline-none rounded-xl"
+                class="text-xs font-bold font-heading text-brand-600 hover:text-brand-800 underline focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:outline-none rounded-xl"
                 to="/taxonomy"
               >
                 Xem cây phân loại &rsaquo;
@@ -386,18 +386,18 @@
             class="p-5 rounded-2xl border-2 bg-white space-y-3 shadow-sm"
             :class="[
               data.content.levels_high_drop_rate.count > 0
-                ? 'border-rose-300 bg-rose-50/30'
+                ? 'border-danger-300 bg-danger-50/30'
                 : 'border-surface-200',
             ]"
           >
             <div class="flex items-center justify-between">
               <span
-                class="text-xs font-bold font-heading text-rose-800 tracking-wider"
+                class="text-xs font-bold font-heading text-danger-800 tracking-wider"
               >
                 Khó khăn sư phạm
               </span>
               <span
-                class="px-2 py-0.5 rounded-xl text-[10px] font-bold bg-rose-100 text-rose-900"
+                class="px-2 py-0.5 rounded-xl text-[10px] font-bold bg-danger-100 text-danger-900"
                 v-if="data.content.levels_high_drop_rate.count > 0"
               >
                 Tỉ lệ bỏ &gt; 40%
@@ -409,7 +409,7 @@
             <div class="flex items-baseline justify-between">
               <div
                 class="text-3xl font-bold font-heading"
-                :class="data.content.levels_high_drop_rate.count > 0 ? 'text-rose-700' : 'text-surface-900'"
+                :class="data.content.levels_high_drop_rate.count > 0 ? 'text-danger-700' : 'text-surface-900'"
               >
                 {{ data.content.levels_high_drop_rate.count }}
               </div>
@@ -461,7 +461,7 @@
             <div class="text-xs text-surface-500 font-medium">
               Levels đã xuất bản
             </div>
-            <div class="text-2xl font-bold font-heading text-emerald-700">
+            <div class="text-2xl font-bold font-heading text-success-700">
               {{ data.content.published_levels.count }}
             </div>
             <div class="text-xs text-surface-400">Sẵn sàng cho trẻ chơi</div>
@@ -474,7 +474,7 @@
             <div class="text-xs text-surface-500 font-medium">
               Levels bản nháp
             </div>
-            <div class="text-2xl font-bold font-heading text-amber-700">
+            <div class="text-2xl font-bold font-heading text-warning-700">
               {{ data.content.draft_levels.count }}
             </div>
             <div class="text-xs text-surface-400">
@@ -553,7 +553,7 @@
             <div class="text-xs text-surface-500">
               Đã kiểm tra khôi phục (verified):
               <strong
-                :class="data.system.last_backup.verified ? 'text-emerald-700' : 'text-amber-700'"
+                :class="data.system.last_backup.verified ? 'text-success-700' : 'text-warning-700'"
               >
                 {{ data.system.last_backup.verified ? 'Đạt yêu cầu' : 'Chưa khôi phục thử nghiệm' }}
               </strong>
@@ -678,10 +678,10 @@
 
   function getBackupStatusClass(status: string): string {
     if (status === "verified") {
-      return "bg-emerald-100 text-emerald-800";
+      return "bg-success-100 text-success-800";
     }
     if (status === "completed") {
-      return "bg-blue-100 text-blue-800";
+      return "bg-brand-100 text-brand-800";
     }
     return "bg-surface-100 text-surface-600";
   }

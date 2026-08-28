@@ -20,6 +20,12 @@ depends_on:
 
 # Lô khuôn trò chơi Montessori — mười một cơ chế còn thiếu
 
+> **2026-08-29:** mỗi mã trong lô này có một phiếu spec riêng ở
+> [`engines/index.md`](engines/index.md) — hình dạng `content_pack`, ma trận seed mục tiêu,
+> và ca sai không bắt được bằng schema. Danh mục lô vẫn thuộc file này; phiếu **trích**
+> contract chứ cấm — NEVER khai lại (`BR-ESS-03`).
+
+
 ## 1. Objective
 
 Mục 7.3 của [`montessori-corpus-mapping.md`](../05-content/montessori-corpus-mapping.md) đếm được mười một cơ chế chơi mà corpus

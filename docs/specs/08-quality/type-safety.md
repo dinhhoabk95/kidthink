@@ -34,8 +34,7 @@ Dev · reviewer · cổng tự động `pnpm check`.
 
 ## 3. Entry points
 
-`pnpm lint` (Biome) · `pnpm --filter @mindkid/gates test` · `pnpm --filter @mindkid/gates test` ·
-rà soát trong code review.
+`pnpm lint` (Biome) · `pnpm typecheck` (tsc + vue-tsc) · rà soát trong code review.
 
 ## 4. Main flow
 
@@ -61,13 +60,13 @@ rà soát trong code review.
 | ID | Rule | Vì sao |
 |---|---|---|
 | `BR-TYP-01` | Cấm — **NEVER `any` tường minh** trong `apps/*` và `packages/*`. Ép bằng Biome `noExplicitAny` mức error | `any` tắt mọi kiểm tra kiểu ở mọi chỗ giá trị đó đi qua, không chỉ dòng khai báo |
-| `BR-TYP-02` | Ép kiểu (`as T`, `<T>x`) là **nợ chỉ được giảm**: cổng đếm theo file so baseline, tăng thì fail | 840 chỗ hiện có không sửa được trong một PR; cấm tuyệt đối ngay là cổng ai cũng tắt |
+| `BR-TYP-02` | Ép kiểu (`as T`, `<T>x`) là **nợ chỉ được giảm** — nhưng KHÔNG còn cổng nào đếm (gỡ 2026-08-29). Còn là luật cho reviewer, không phải cổng máy | 840 chỗ hiện có không sửa được trong một PR; cấm tuyệt đối ngay là cổng ai cũng tắt |
 | `BR-TYP-03` | `unknown` **được phép và được khuyến khích** ở ranh giới hệ thống, nhưng phải qua schema parse hoặc hàm hẹp kiểu trước khi đọc field | `unknown` là lời thừa nhận trung thực; cấm nó sẽ đẩy người viết về `any` hoặc ép kiểu — tệ hơn hẳn |
-| `BR-TYP-04` | Mọi route `/api/*` đọc body, query hay param đều phải Zod parse trong cùng file. Ép bằng `lint:route-validation` | `BR-SEC-04` đã yêu cầu điều này từ P0 nhưng không có cổng nào đo |
+| `BR-TYP-04` | Mọi route `/api/*` đọc **body** phải Zod parse trong cùng file. Ép bằng `apps/web/tests/security/security-checklist.test.ts`. Query và param KHÔNG được cổng nào đo | `BR-SEC-04` đã yêu cầu điều này từ P0 nhưng không có cổng nào đo |
 | `BR-TYP-05` | Cấm — **NEVER `as const` bị tính là nợ** | `as const` làm kiểu **hẹp lại**, không nói dối; ngược hoàn toàn với `as T` |
 | `BR-TYP-06` | Cấm — **NEVER mass assignment**: map từng field từ dữ liệu đã parse sang bản ghi | `BR-SEC-05` |
 | `BR-TYP-07` | Cổng mới BẮT BUỘC có **ca âm** trong test: một mẫu vi phạm phải làm cổng fail | Cổng không có ca âm là cổng chưa biết mình có chạy hay không (`ultracite check` từng exit 0 với lỗi lint thật) |
-| `BR-TYP-08` | `any` trong file test là **nợ chỉ được giảm**, đếm bởi `lint:type-safety` | Đo được: ultracite **tắt** `noExplicitAny` cho đường dẫn test, nên `BR-TYP-01` không phủ tới đó. 560 chỗ hiện có cần cổng riêng thay vì một dòng luật không ai ép |
+| `BR-TYP-08` | `any` trong file test là **nợ chỉ được giảm** — cổng đếm đã gỡ 2026-08-29, giờ KHÔNG ai ép | Biome **tắt** `noExplicitAny` cho đường dẫn test, nên `BR-TYP-01` không phủ tới đó. 560 chỗ hiện có giờ trôi tự do |
 
 ## 7. Data
 
@@ -99,16 +98,14 @@ chế bậc thang với ép kiểu.
 | **Tổng (không kể test), 235 file** | **851** |
 | `any` trong 94 file test (`BR-TYP-08`) | **560** |
 
-Số thật lưu ở `packages/gates/src/type-safety-baseline.json`, theo từng file. Baseline chỉ được
-ghi lại khi số **giảm** — `node packages/gates/scripts/update-type-safety-baseline.ts` từ chối ghi nếu có file tăng.
+Số trên là ảnh chụp 2026-08-17. Baseline (`type-safety-baseline.json`) và cổng đọc nó đã bị
+gỡ 2026-08-29, nên các số này KHÔNG còn được cập nhật hay đối chiếu với thực tế.
 
 ### 7.2a Sổ nợ route chưa validate body (2026-08-17)
 
-**24** route đọc body mà chưa Zod parse, liệt kê ở `packages/gates/src/route-validation-debt.json`.
-Cổng cho phép đúng danh sách đó và không cho thêm mục mới; sửa được route nào thì
-xoá tay khỏi sổ nợ rồi chạy `pnpm --filter @mindkid/gates test` để xác minh. Không sửa cả 24 trong một lượt
-vì mỗi schema là kiến thức domain riêng, và phần lớn test bao phủ chúng đang đỏ do DB
-dev lệch schema — viết schema mà không xác minh được là đổi hành vi trong bóng tối.
+Sổ nợ đã **rỗng** trước khi bị gỡ: cả 24 route đều đã Zod parse body. Cổng hiện tại
+(`apps/web/tests/security/security-checklist.test.ts`, `BR-SEC-04`) assert danh sách vi phạm
+bằng rỗng — thêm route đọc body mà quên parse là test đỏ ngay, KHÔNG còn sổ nợ để trốn vào.
 
 ### 7.3 Thay ép kiểu bằng gì
 
@@ -133,13 +130,14 @@ dev lệch schema — viết schema mà không xác minh được là đổi hà
 Không có route. Ràng buộc lên cổng tự động:
 
 ```
-biome noExplicitAny                         → BR-TYP-01, mức error, đã bật
-packages/gates/tests/lint-type-safety       → BR-TYP-02, so type-safety-baseline.json
-packages/gates/tests/lint-route-validation  → BR-TYP-04, quét apps/*/server/api/**
+biome noExplicitAny                              → BR-TYP-01, mức error, đã bật
+scripts/typecheck/typecheck-gate.ts              → tsc + vue-tsc, nợ chỉ được giảm
+apps/web/tests/security/security-checklist.test  → BR-TYP-04 (body), qua BR-SEC-04
 ```
 
-Cả hai là **test vitest** trong `@mindkid/gates`, nên `pnpm test` (và `pnpm check`)
-phủ chúng — Cấm — NEVER thêm script `lint:*` riêng cho một rule (TESTING-STRATEGY §7.6).
+`BR-TYP-02` và `BR-TYP-08` KHÔNG còn cổng nào đo — cổng của chúng bị gỡ cùng
+`packages/gates`. Cấm — NEVER thêm script `lint:*` riêng cho một rule
+(TESTING-STRATEGY §7.6).
 
 ## 9. Acceptance criteria
 

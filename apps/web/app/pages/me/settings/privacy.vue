@@ -42,7 +42,7 @@
                 >Chưa ghi nhận đồng ý</span
               >
               <span
-                class="text-amber-600 font-semibold"
+                class="text-warning-600 font-semibold"
                 v-if="consent.requirement_at && consent.status === 'required'"
                 >• Cập nhật yêu cầu tái đồng ý:
                 {{ formatDate(consent.requirement_at) }}</span
@@ -53,19 +53,19 @@
           <!-- Status badge -->
           <div>
             <span
-              class="px-3 py-1 text-xs font-bold rounded-full bg-emerald-100 text-emerald-800"
+              class="px-3 py-1 text-xs font-bold rounded-full bg-success-100 text-success-800"
               v-if="consent.status === 'active'"
             >
               Đang hiệu lực
             </span>
             <span
-              class="px-3 py-1 text-xs font-bold rounded-full bg-amber-100 text-amber-800"
+              class="px-3 py-1 text-xs font-bold rounded-full bg-warning-100 text-warning-800"
               v-else-if="consent.status === 'required'"
             >
               Yêu cầu xem lại
             </span>
             <span
-              class="px-3 py-1 text-xs font-bold rounded-full bg-rose-100 text-rose-800"
+              class="px-3 py-1 text-xs font-bold rounded-full bg-danger-100 text-danger-800"
               v-else-if="consent.status === 'withdrawn'"
             >
               Đã rút đồng ý
@@ -102,7 +102,7 @@
 
             <!-- Withdraw action for child_data -->
             <button
-              class="min-h-11 px-4 py-2 text-rose-600 hover:text-rose-700 font-semibold text-sm transition-colors"
+              class="min-h-11 px-4 py-2 text-danger-600 hover:text-danger-700 font-semibold text-sm transition-colors"
               type="button"
               v-if="consent.consent_type === 'child_data' && consent.status === 'active'"
               @click="() => handleWithdrawAction(consent)"

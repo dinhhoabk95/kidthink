@@ -5,10 +5,10 @@ import {
   pgEnum,
   pgTable,
   text,
-  timestamp,
   unique,
   varchar,
 } from "drizzle-orm/pg-core";
+import { timestamps } from "./columns.ts";
 import { managers } from "./identity.ts";
 
 /**
@@ -60,12 +60,7 @@ export const contentImages = pgTable(
     uploadedByManagerId: bigint("uploaded_by_manager_id", {
       mode: "number",
     }).references(() => managers.id),
-    createdAt: timestamp("created_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
-    updatedAt: timestamp("updated_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
+    ...timestamps(),
   },
   (table) => [
     // Cặp đa hình: index, không khoá ngoại (BR-DM-04). Không UNIQUE — một owner
@@ -84,12 +79,7 @@ export const contentAssetRefs = pgTable(
     entityId: bigint("entity_id", { mode: "number" }).notNull(),
     assetKind: varchar("asset_kind", { length: 50 }).notNull(),
     assetRef: text("asset_ref").notNull(),
-    createdAt: timestamp("created_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
-    updatedAt: timestamp("updated_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
+    ...timestamps(),
   },
   (table) => [
     index("idx_content_asset_refs_asset_ref").on(table.assetRef),

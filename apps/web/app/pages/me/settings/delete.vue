@@ -11,7 +11,7 @@
           Quay lại Cài đặt
         </NuxtLink>
       </div>
-      <h1 class="text-2xl md:text-3xl font-bold font-heading text-rose-700">
+      <h1 class="text-2xl md:text-3xl font-bold font-heading text-danger-700">
         Xoá tài khoản và dữ liệu
       </h1>
       <p class="text-sm md:text-base text-surface-600 mt-1">
@@ -22,17 +22,17 @@
 
     <!-- Impact Details (BR-ADL-07) -->
     <div
-      class="bg-rose-50 border-2 border-rose-200 rounded-2xl p-5 md:p-6 space-y-4"
+      class="bg-danger-50 border-2 border-danger-200 rounded-2xl p-5 md:p-6 space-y-4"
     >
       <div
-        class="flex items-center gap-2 text-rose-800 font-bold font-heading text-lg"
+        class="flex items-center gap-2 text-danger-800 font-bold font-heading text-lg"
       >
-        <UIcon class="w-5 h-5 text-rose-600" name="i-lucide-alert-triangle" />
+        <UIcon class="w-5 h-5 text-danger-600" name="i-lucide-alert-triangle" />
         <span>Dữ liệu sẽ bị xoá vĩnh viễn sau 30 ngày:</span>
       </div>
 
       <ul
-        class="list-disc list-inside space-y-2 text-sm md:text-base text-rose-950"
+        class="list-disc list-inside space-y-2 text-sm md:text-base text-danger-950"
       >
         <li v-for="(item, idx) in summaryData.lost_data_items" :key="idx">
           {{ item }}
@@ -62,7 +62,7 @@
 
     <!-- 30-Day Grace Period Notice (BR-ADL-01, BR-ADL-02) -->
     <div
-      class="p-4 rounded-xl bg-amber-50 border border-amber-200 text-sm text-amber-900 space-y-1"
+      class="p-4 rounded-xl bg-warning-50 border border-warning-200 text-sm text-warning-900 space-y-1"
     >
       <p class="font-bold">Thời gian chờ 30 ngày trước khi xoá thật:</p>
       <p>
@@ -84,7 +84,7 @@
       </NuxtLink>
 
       <button
-        class="min-h-11 px-6 py-2.5 bg-rose-600 hover:bg-rose-700 text-white font-semibold rounded-xl transition-colors shadow-sm w-full sm:w-auto"
+        class="min-h-11 px-6 py-2.5 bg-danger-600 hover:bg-danger-700 text-white font-semibold rounded-xl transition-colors shadow-sm w-full sm:w-auto"
         type="button"
         @click="handleRequestDeletion"
       >

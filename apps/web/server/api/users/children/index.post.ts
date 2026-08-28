@@ -46,7 +46,7 @@ function parseAndValidateInput(rawBody: unknown, currentYear: number) {
         data: {
           code: "CHILD_AGE_OUT_OF_RANGE",
           message:
-            "TiniMath là sản phẩm dành riêng cho trẻ từ 3–6 tuổi. Vui lòng chọn năm sinh phù hợp.",
+            "MindKid là sản phẩm dành riêng cho trẻ từ 3–6 tuổi. Vui lòng chọn năm sinh phù hợp.",
         },
       });
     }
@@ -180,7 +180,7 @@ export default defineEventHandler(async (event) => {
       data: {
         code: "CHILD_AGE_OUT_OF_RANGE",
         message:
-          "TiniMath là sản phẩm dành riêng cho trẻ từ 3–6 tuổi. Vui lòng chọn năm sinh phù hợp.",
+          "MindKid là sản phẩm dành riêng cho trẻ từ 3–6 tuổi. Vui lòng chọn năm sinh phù hợp.",
       },
     });
   }

@@ -28,7 +28,9 @@
           type="button"
           @click="dismiss"
         >
-          <span class="text-base font-bold">✕</span>
+          <span class="text-base font-bold"
+            ><UIcon class="w-5 h-5" name="i-lucide-x" /></span
+          >
         </button>
       </div>
     </div>
@@ -43,7 +45,7 @@
     </div>
 
     <div
-      class="rounded-xl bg-amber-50 border border-amber-200 p-3 text-sm text-amber-800"
+      class="rounded-xl bg-warning-50 border border-warning-200 p-3 text-sm text-warning-800"
       v-else-if="errorMessage"
     >
       <p class="font-medium mb-1">{{ errorMessage }}</p>
@@ -81,7 +83,7 @@
 </template>
 
 <script lang="ts" setup>
-  import { AI_SUGGESTION_LABEL } from "@mindkid/shared";
+  import { AI_SUGGESTION_LABEL } from "@mindkid/shared/client";
   import { ref } from "vue";
 
   const props = withDefaults(

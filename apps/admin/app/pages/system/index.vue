@@ -5,22 +5,22 @@
       class="flex flex-col sm:flex-row sm:items-center justify-between gap-4"
     >
       <div>
-        <h1 class="text-2xl font-bold text-slate-900 dark:text-white">
+        <h1 class="text-2xl font-bold text-surface-900 dark:text-white">
           Trạng Thái Hệ Thống (System Activity & Health)
         </h1>
-        <p class="text-sm text-slate-500 mt-1">
+        <p class="text-sm text-surface-500 mt-1">
           Giám sát trạng thái dịch vụ, hàng đợi tác vụ, sao lưu và lỗi vận hành
           (P2.10, BR-SYS-01..06).
         </p>
       </div>
 
       <div class="flex items-center gap-3">
-        <span class="text-xs text-slate-400"
+        <span class="text-xs text-surface-400"
           >Cập nhật lúc:
           {{ systemData?.as_of ? formatTime(systemData.as_of) : '---' }}</span
         >
         <button
-          class="px-4 py-2 rounded-2xl border-2 border-slate-300 dark:border-slate-600 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-bold transition-all"
+          class="px-4 py-2 rounded-2xl border-2 border-surface-300 dark:border-surface-600 hover:bg-surface-100 dark:hover:bg-surface-700 text-surface-700 dark:text-surface-200 text-xs font-bold transition-all"
           type="button"
           @click="fetchSystemStatus"
         >
@@ -31,16 +31,16 @@
 
     <!-- Backup Warning Banner (BR-SYS-06) -->
     <div
-      class="p-4 rounded-3xl bg-rose-50 dark:bg-rose-950/40 border-2 border-rose-200 dark:border-rose-900/50 flex items-center justify-between gap-4 shadow-sm"
+      class="p-4 rounded-3xl bg-danger-50 dark:bg-danger-950/40 border-2 border-danger-200 dark:border-danger-900/50 flex items-center justify-between gap-4 shadow-sm"
       v-if="systemData?.backups?.warning"
     >
       <div class="flex items-center gap-3">
         <span class="text-2xl">🚨</span>
         <div>
-          <h2 class="text-sm font-bold text-rose-800 dark:text-rose-300">
+          <h2 class="text-sm font-bold text-danger-800 dark:text-danger-300">
             {{ systemData.backups.warning }}
           </h2>
-          <p class="text-xs text-rose-600 dark:text-rose-400">
+          <p class="text-xs text-danger-600 dark:text-danger-400">
             Dữ liệu học tập và tài khoản của trẻ có nguy cơ không thể khôi phục
             nếu xảy ra sự cố phần cứng (BR-BAK-06).
           </p>
@@ -48,7 +48,7 @@
       </div>
 
       <a
-        class="px-4 py-2 rounded-2xl bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs shrink-0 transition-all"
+        class="px-4 py-2 rounded-2xl bg-danger-600 hover:bg-danger-700 text-white font-bold text-xs shrink-0 transition-all"
         :href="systemData.backups.runbook_url"
       >
         Xem Runbook Phục Hồi
@@ -56,24 +56,24 @@
     </div>
 
     <!-- 4 System Groups Grid (BR-SYS-01, BR-SYS-04, D-KT) -->
-    <div class="p-12 text-center text-slate-400" v-if="isLoading">
+    <div class="p-12 text-center text-surface-400" v-if="isLoading">
       Đang kiểm tra trạng thái hệ thống...
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6" v-else>
       <!-- 1. Platform Services -->
       <div
-        class="bg-white dark:bg-slate-800 rounded-3xl border-2 border-slate-200 dark:border-slate-700 p-6 space-y-4 shadow-sm"
+        class="bg-white dark:bg-surface-800 rounded-3xl border-2 border-surface-200 dark:border-surface-700 p-6 space-y-4 shadow-sm"
       >
         <div class="flex items-center justify-between">
           <div class="flex items-center gap-2">
             <span class="text-xl">🗄️</span>
-            <h2 class="text-base font-bold text-slate-900 dark:text-white">
+            <h2 class="text-base font-bold text-surface-900 dark:text-white">
               1. Dịch Vụ Nền Tảng (Services)
             </h2>
           </div>
           <a
-            class="text-xs text-indigo-600 dark:text-indigo-400 font-bold hover:underline"
+            class="text-xs text-brand-600 dark:text-brand-400 font-bold hover:underline"
             :href="systemData?.services?.postgres?.runbook_url"
             >Runbook →</a
           >
@@ -81,7 +81,7 @@
 
         <div class="space-y-3 text-xs">
           <div
-            class="flex items-center justify-between p-3 rounded-2xl bg-slate-50 dark:bg-slate-900/40"
+            class="flex items-center justify-between p-3 rounded-2xl bg-surface-50 dark:bg-surface-900/40"
           >
             <span>PostgreSQL 17 Database</span>
             <span class="font-bold flex items-center gap-2">
@@ -99,7 +99,7 @@
           </div>
 
           <div
-            class="flex items-center justify-between p-3 rounded-2xl bg-slate-50 dark:bg-slate-900/40"
+            class="flex items-center justify-between p-3 rounded-2xl bg-surface-50 dark:bg-surface-900/40"
           >
             <span>Valkey / Redis Cache</span>
             <span class="font-bold flex items-center gap-2">
@@ -117,7 +117,7 @@
           </div>
 
           <div
-            class="flex items-center justify-between p-3 rounded-2xl bg-slate-50 dark:bg-slate-900/40"
+            class="flex items-center justify-between p-3 rounded-2xl bg-surface-50 dark:bg-surface-900/40"
           >
             <span>BullMQ Task Queue</span>
             <span class="font-bold flex items-center gap-2">
@@ -136,12 +136,12 @@
 
       <!-- 2. Jobs & Workers -->
       <div
-        class="bg-white dark:bg-slate-800 rounded-3xl border-2 border-slate-200 dark:border-slate-700 p-6 space-y-4 shadow-sm"
+        class="bg-white dark:bg-surface-800 rounded-3xl border-2 border-surface-200 dark:border-surface-700 p-6 space-y-4 shadow-sm"
       >
         <div class="flex items-center justify-between">
           <div class="flex items-center gap-2">
             <span class="text-xl">⚙️</span>
-            <h2 class="text-base font-bold text-slate-900 dark:text-white">
+            <h2 class="text-base font-bold text-surface-900 dark:text-white">
               2. Tiến Trình & Hàng Đợi (Jobs)
             </h2>
           </div>
@@ -159,30 +159,30 @@
 
         <div class="space-y-3 text-xs">
           <div
-            class="flex items-center justify-between p-3 rounded-2xl bg-slate-50 dark:bg-slate-900/40"
+            class="flex items-center justify-between p-3 rounded-2xl bg-surface-50 dark:bg-surface-900/40"
           >
             <span>Tác vụ đang chờ (Waiting Backlog)</span>
-            <span class="font-bold text-slate-800 dark:text-slate-200"
+            <span class="font-bold text-surface-800 dark:text-surface-200"
               >{{ systemData?.jobs?.waiting_count || 0 }}</span
             >
           </div>
 
           <div
-            class="flex items-center justify-between p-3 rounded-2xl bg-slate-50 dark:bg-slate-900/40"
+            class="flex items-center justify-between p-3 rounded-2xl bg-surface-50 dark:bg-surface-900/40"
           >
             <span>Tác vụ thất bại 24h</span>
             <span
-              :class="['font-bold', (systemData?.jobs?.failed_24h_count || 0) > 0 ? 'text-rose-600' : 'text-slate-800 dark:text-slate-200']"
+              :class="['font-bold', (systemData?.jobs?.failed_24h_count || 0) > 0 ? 'text-danger-600' : 'text-surface-800 dark:text-surface-200']"
             >
               {{ systemData?.jobs?.failed_24h_count || 0 }}
             </span>
           </div>
 
           <div
-            class="flex items-center justify-between p-3 rounded-2xl bg-slate-50 dark:bg-slate-900/40"
+            class="flex items-center justify-between p-3 rounded-2xl bg-surface-50 dark:bg-surface-900/40"
           >
             <span>Độ trễ tác vụ cũ nhất</span>
-            <span class="font-bold text-slate-800 dark:text-slate-200"
+            <span class="font-bold text-surface-800 dark:text-surface-200"
               >{{ systemData?.jobs?.oldest_job_age_seconds || 0 }}s</span
             >
           </div>
@@ -191,17 +191,17 @@
 
       <!-- 3. Backup & Restore -->
       <div
-        class="bg-white dark:bg-slate-800 rounded-3xl border-2 border-slate-200 dark:border-slate-700 p-6 space-y-4 shadow-sm"
+        class="bg-white dark:bg-surface-800 rounded-3xl border-2 border-surface-200 dark:border-surface-700 p-6 space-y-4 shadow-sm"
       >
         <div class="flex items-center justify-between">
           <div class="flex items-center gap-2">
             <span class="text-xl">💾</span>
-            <h2 class="text-base font-bold text-slate-900 dark:text-white">
+            <h2 class="text-base font-bold text-surface-900 dark:text-white">
               3. Sao Lưu & Phục Hồi (Backups)
             </h2>
           </div>
           <a
-            class="text-xs text-indigo-600 dark:text-indigo-400 font-bold hover:underline"
+            class="text-xs text-brand-600 dark:text-brand-400 font-bold hover:underline"
             :href="systemData?.backups?.runbook_url"
             >Runbook →</a
           >
@@ -209,20 +209,20 @@
 
         <div class="space-y-3 text-xs">
           <div
-            class="flex items-center justify-between p-3 rounded-2xl bg-slate-50 dark:bg-slate-900/40"
+            class="flex items-center justify-between p-3 rounded-2xl bg-surface-50 dark:bg-surface-900/40"
           >
             <span>Bản sao lưu gần nhất</span>
-            <span class="font-bold text-slate-800 dark:text-slate-200">
+            <span class="font-bold text-surface-800 dark:text-surface-200">
               {{ systemData?.backups?.latest_dump ? formatDate(systemData.backups.latest_dump.started_at) : 'Chưa có' }}
             </span>
           </div>
 
           <div
-            class="flex items-center justify-between p-3 rounded-2xl bg-slate-50 dark:bg-slate-900/40"
+            class="flex items-center justify-between p-3 rounded-2xl bg-surface-50 dark:bg-surface-900/40"
           >
             <span>Phục hồi thử nghiệm (Verify Drill)</span>
             <span
-              :class="['font-bold', systemData?.backups?.has_verified_backup ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400 font-bold']"
+              :class="['font-bold', systemData?.backups?.has_verified_backup ? 'text-success-600 dark:text-success-400' : 'text-danger-600 dark:text-danger-400 font-bold']"
             >
               {{ systemData?.backups?.has_verified_backup ? 'Đã xác nhận thành công' : 'CHƯA KIỂM TRA' }}
             </span>
@@ -232,17 +232,17 @@
 
       <!-- 4. Error Statistics -->
       <div
-        class="bg-white dark:bg-slate-800 rounded-3xl border-2 border-slate-200 dark:border-slate-700 p-6 space-y-4 shadow-sm"
+        class="bg-white dark:bg-surface-800 rounded-3xl border-2 border-surface-200 dark:border-surface-700 p-6 space-y-4 shadow-sm"
       >
         <div class="flex items-center justify-between">
           <div class="flex items-center gap-2">
             <span class="text-xl">⚠️</span>
-            <h2 class="text-base font-bold text-slate-900 dark:text-white">
+            <h2 class="text-base font-bold text-surface-900 dark:text-white">
               4. Sự Cố & Lỗi 24h (Errors)
             </h2>
           </div>
           <NuxtLink
-            class="text-xs text-indigo-600 dark:text-indigo-400 font-bold hover:underline"
+            class="text-xs text-brand-600 dark:text-brand-400 font-bold hover:underline"
             to="/errors"
             >Xem chi tiết lỗi →</NuxtLink
           >
@@ -250,29 +250,29 @@
 
         <div class="space-y-3 text-xs">
           <div
-            class="flex items-center justify-between p-3 rounded-2xl bg-slate-50 dark:bg-slate-900/40"
+            class="flex items-center justify-between p-3 rounded-2xl bg-surface-50 dark:bg-surface-900/40"
           >
             <span>Lỗi Server (5xx)</span>
-            <span class="font-bold text-slate-800 dark:text-slate-200"
+            <span class="font-bold text-surface-800 dark:text-surface-200"
               >{{ systemData?.errors?.server_errors_24h || 0 }}</span
             >
           </div>
 
           <div
-            class="flex items-center justify-between p-3 rounded-2xl bg-slate-50 dark:bg-slate-900/40"
+            class="flex items-center justify-between p-3 rounded-2xl bg-surface-50 dark:bg-surface-900/40"
           >
             <span>Lỗi Client / Tablet</span>
-            <span class="font-bold text-slate-800 dark:text-slate-200"
+            <span class="font-bold text-surface-800 dark:text-surface-200"
               >{{ systemData?.errors?.client_errors_24h || 0 }}</span
             >
           </div>
 
           <div
-            class="flex items-center justify-between p-3 rounded-2xl bg-slate-50 dark:bg-slate-900/40"
+            class="flex items-center justify-between p-3 rounded-2xl bg-surface-50 dark:bg-surface-900/40"
           >
             <span>Nhóm lỗi đang mở (Open)</span>
             <span
-              :class="['font-bold', (systemData?.errors?.open_error_groups || 0) > 0 ? 'text-amber-600 dark:text-amber-400' : 'text-slate-800 dark:text-slate-200']"
+              :class="['font-bold', (systemData?.errors?.open_error_groups || 0) > 0 ? 'text-warning-600 dark:text-warning-400' : 'text-surface-800 dark:text-surface-200']"
             >
               {{ systemData?.errors?.open_error_groups || 0 }}
             </span>
@@ -373,22 +373,22 @@
   function statusDotClass(status?: SystemHealthStatus): string {
     switch (status) {
       case "ok":
-        return "bg-emerald-500";
+        return "bg-success-500";
       case "bad":
-        return "bg-rose-500";
+        return "bg-danger-500";
       default:
-        return "bg-amber-500";
+        return "bg-warning-500";
     }
   }
 
   function statusTextClass(status?: SystemHealthStatus): string {
     switch (status) {
       case "ok":
-        return "text-emerald-700 dark:text-emerald-400";
+        return "text-success-700 dark:text-success-400";
       case "bad":
-        return "text-rose-700 dark:text-rose-400";
+        return "text-danger-700 dark:text-danger-400";
       default:
-        return "text-amber-700 dark:text-amber-400";
+        return "text-warning-700 dark:text-warning-400";
     }
   }
 

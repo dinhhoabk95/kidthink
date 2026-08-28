@@ -40,12 +40,12 @@
         <span class="text-xs text-surface-400 block">Xác thực Email:</span>
         <div class="flex items-center gap-2">
           <span
-            class="font-medium text-emerald-700"
+            class="font-medium text-success-700"
             v-if="account.email_verified"
           >
             ✓ Đã xác thực
           </span>
-          <span class="font-medium text-amber-700" v-else>
+          <span class="font-medium text-warning-700" v-else>
             ⚠ Chưa xác thực
           </span>
         </div>
@@ -56,12 +56,12 @@
           >Xác thực hai lớp (MFA):</span
         >
         <div class="flex items-center gap-2">
-          <span class="font-medium text-emerald-700" v-if="account.mfa_enabled">
+          <span class="font-medium text-success-700" v-if="account.mfa_enabled">
             ✓ Đang bật
           </span>
           <span class="font-medium text-surface-500" v-else> Chưa bật </span>
           <NuxtLink
-            class="text-xs font-bold text-indigo-600 hover:underline"
+            class="text-xs font-bold text-brand-600 hover:underline"
             v-if="account.mfa_enabled"
             :to="`/users/${account.uuid}/mfa-recovery`"
           >
@@ -94,7 +94,7 @@
       </div>
 
       <div
-        class="sm:col-span-2 text-rose-700 bg-rose-50 p-2.5 rounded-xl border border-rose-200"
+        class="sm:col-span-2 text-danger-700 bg-danger-50 p-2.5 rounded-xl border border-danger-200"
         v-if="account.suspended_reason"
       >
         <span class="text-xs font-bold block">Lý do tạm khoá:</span>
@@ -102,7 +102,7 @@
       </div>
 
       <div
-        class="sm:col-span-2 text-slate-700 bg-slate-100 p-2.5 rounded-xl border border-slate-200"
+        class="sm:col-span-2 text-surface-700 bg-surface-100 p-2.5 rounded-xl border border-surface-200"
         v-if="account.purge_at"
       >
         <span class="text-xs font-bold block"
@@ -151,13 +151,13 @@
   function getStatusBadgeClass(status: string): string {
     switch (status) {
       case "active":
-        return "bg-emerald-100 text-emerald-800 border border-emerald-200";
+        return "bg-success-100 text-success-800 border border-success-200";
       case "suspended":
-        return "bg-amber-100 text-amber-800 border border-amber-200";
+        return "bg-warning-100 text-warning-800 border border-warning-200";
       case "deleted":
-        return "bg-slate-100 text-slate-700 border border-slate-200";
+        return "bg-surface-100 text-surface-700 border border-surface-200";
       case "pending_verification":
-        return "bg-yellow-100 text-yellow-800 border border-yellow-200";
+        return "bg-warning-100 text-warning-800 border border-warning-200";
       default:
         return "bg-surface-100 text-surface-800";
     }

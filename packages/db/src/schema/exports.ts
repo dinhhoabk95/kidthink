@@ -12,6 +12,7 @@ import {
   uuid,
   varchar,
 } from "drizzle-orm/pg-core";
+import { timestamps } from "./columns.ts";
 import { users } from "./identity.ts";
 
 export const exportJobKindEnum = pgEnum("export_job_kind", [
@@ -44,12 +45,7 @@ export const exportJobs = pgTable(
     pageCount: integer("page_count"),
     expiresAt: timestamp("expires_at", { withTimezone: true }),
     error: text("error"),
-    createdAt: timestamp("created_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
-    updatedAt: timestamp("updated_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
+    ...timestamps(),
   },
   (table) => [
     uniqueIndex("idx_export_jobs_uuid").on(table.uuid),

@@ -48,7 +48,14 @@ nó thành một cổng chặn phát hành.
 | `packages/config/src/env-contract.ts`                   | Người phát triển | Registry — nguồn sự thật duy nhất          |
 | `/etc/mindkid/env/web.env` · `worker.env`              | Người vận hành   | Chỉ trên máy chủ, quyền `0600`, chủ `root` |
 | `.env` ở gốc repo                                       | Người phát triển | Chỉ máy trạm, đã bị `.gitignore` chặn      |
+| `apps/<app>/.env`                                       | Người phát triển | Chỉ máy trạm, **tuỳ chọn** — lớp đè lên `.env` gốc |
+| `apps/<app>/.env.example`                               | Người vận hành   | Mẫu sinh ra của file runtime ở §7.3        |
 | `pnpm deploy env --host <tên> --check`                  | Người vận hành   | Đối chiếu máy chủ với registry             |
+
+Trên máy trạm, bộ nạp đi từ `process.cwd()` lên gốc và nạp **mọi** `.env` gặp trên đường. Node
+không bao giờ ghi đè một tên đã có giá trị, nên file gần `cwd` nhất thắng, `.env` gốc chỉ lấp chỗ trống,
+và biến đã export trong shell thắng cả hai. Vì vậy `apps/<app>/.env` không bắt buộc tồn tại: chỉ
+tạo nó khi một tên phải khác nhau giữa các app.
 
 ## 4. Main flow
 
@@ -87,6 +94,7 @@ nó thành một cổng chặn phát hành.
 | `BR-ENV-10` | Đổi tên biến đang chạy production phải qua **hai** lần phát hành                                                  | Một lần phát hành không thể vừa đổi tên biến vừa giữ tiến trình cũ sống. Lần một đọc cả hai tên, lần hai bỏ tên cũ                                                             |
 | `BR-ENV-11` | Biến kiểu `secret` phải dài tối thiểu 32 byte và sinh bằng máy                                                    | Khoá do người nghĩ ra là khoá đoán được, và độ dài là thứ duy nhất kiểm được bằng máy                                                                                          |
 | `BR-ENV-12` | Cấm ghi hay sinh file env tự động trong quy trình phát hành                                                       | Quy trình phát hành chỉ **đọc để kiểm**. Nếu nó ghi được thì một lần chạy sai có thể xoá bí mật production, và không có bản sao nào ở nơi khác                                 |
+| `BR-ENV-13` | Biến `kind: url` phải khai `urlProtocols`; validator khẳng định giao thức của giá trị nằm trong danh sách đó | `new URL()` chấp mọi scheme, nên `DATABASE_URL_APP=https://example.com/endpoint` đi qua cổng env màu xanh rồi mới chết ở runtime — `getAppDb()` treo tới hết timeout. Kiểu chỉ nói *dạng*; giao thức mới nói **nó nối tới cái gì** |
 
 ## 7. Data
 
@@ -101,6 +109,7 @@ nó thành một cổng chặn phát hành.
 | `apps`      | tập hợp | Tập con của `web` · `admin` · `worker`; admin chỉ nhận public build config |
 | `required`  | enum    | `always` \| `production` \| `when-enabled` \| `optional`     |
 | `kind`      | enum    | `url` \| `secret` \| `email` \| `port` \| `enum` \| `text`  |
+| `urlProtocols` | tập hợp | Bắt buộc khi `kind` là `url`; liệt kê giao thức hợp lệ, ví dụ `postgres:` |
 | `secret`    | boolean | `true` thì giá trị không bao giờ được in ra                 |
 | `enabledBy` | text    | Tên cờ tính năng, chỉ dùng khi `required` là `when-enabled` |
 | `note`      | text    | Một câu: ai đọc và để làm gì                                |
@@ -142,6 +151,10 @@ bị nướng vào bundle của trình duyệt.
 Biến dùng chung nằm lặp trong cả hai file. Lặp ở đây rẻ hơn việc một tiến trình đọc được bí mật
 nó không cần (`BR-ENV-04`).
 
+Mẫu của mỗi file là `apps/<app>/.env.example`, sinh từ cùng registry và lọc theo trường `apps`, nên
+`BR-ENV-09` phủ luôn chúng: người vận hành chép mẫu rồi điền giá trị, Cấm — NEVER tự lọc bằng tay
+từ `.env.example` ở gốc.
+
 ## 8. API contract
 
 Không có route công khai. Việc kiểm chạy bằng lệnh, và kết quả đi ra mã thoát cộng danh sách tên
@@ -166,6 +179,12 @@ Scenario: BR-ENV-06 — validator không dựa vào môi trường của ngườ
   And file env truyền vào thiếu một biến bắt buộc
   When chạy validator
   Then validator báo thiếu biến đó
+
+Scenario: BR-ENV-13 — URL sai giao thức bị chặn ở cổng, không ở runtime
+  Given DATABASE_URL_APP khai `urlProtocols` là postgres: và postgresql:
+  And file env đặt DATABASE_URL_APP thành một địa chỉ https
+  When chạy validator
+  Then validator báo lỗi và nêu tên biến
 
 Scenario: BR-ENV-08 — không in giá trị bí mật
   Given một biến kiểu secret có giá trị sai kiểu

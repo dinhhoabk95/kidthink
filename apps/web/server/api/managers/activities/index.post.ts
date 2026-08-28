@@ -6,7 +6,7 @@ import {
   isEnabled as isFeatureEnabled,
   writeAudit,
 } from "@mindkid/db";
-import { activityFormSchema } from "@mindkid/shared";
+import { activityFormSchema, resolveActivityRefType } from "@mindkid/shared";
 import { eq } from "drizzle-orm";
 import {
   createError,
@@ -20,16 +20,6 @@ import { throwValidationError } from "#server/utils/api-error";
 function generateActivityCode(existingCount: number): string {
   const numStr = String(existingCount + 1).padStart(4, "0");
   return `ACT-${numStr}`;
-}
-
-function resolveRefType(kind: string): string | null {
-  if (kind === "digital_game") {
-    return "game_level";
-  }
-  if (kind === "worksheet") {
-    return "worksheet";
-  }
-  return null;
 }
 
 async function validateActivityCreation(
@@ -80,7 +70,7 @@ export default defineEventHandler(async (event) => {
 
   const code = data.code || generateActivityCode(Date.now() % 9000);
   const entityId = Date.now();
-  const refType = resolveRefType(data.kind);
+  const refType = resolveActivityRefType(data.kind);
   const refId = data.kind === "digital_game" ? data.ref_id : null;
 
   const [created] = await db

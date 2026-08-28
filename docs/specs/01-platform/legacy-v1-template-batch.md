@@ -22,6 +22,12 @@ depends_on:
 
 # Lô khuôn kế thừa v1 — bảy cơ chế còn lại
 
+> **2026-08-29:** mỗi mã trong lô này có một phiếu spec riêng ở
+> [`engines/index.md`](engines/index.md) — hình dạng `content_pack`, ma trận seed mục tiêu,
+> và ca sai không bắt được bằng schema. Danh mục lô vẫn thuộc file này; phiếu **trích**
+> contract chứ cấm — NEVER khai lại (`BR-ESS-03`).
+
+
 ## 1. Objective
 
 v1 có **60 game type** cài bằng 60 Session class viết tay, và đo được **59 giá trị `mechanic`

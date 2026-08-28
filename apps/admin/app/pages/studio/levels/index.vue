@@ -5,17 +5,17 @@
       class="flex flex-col sm:flex-row sm:items-center justify-between gap-4"
     >
       <div>
-        <h1 class="text-2xl font-bold text-slate-900 dark:text-white">
+        <h1 class="text-2xl font-bold text-surface-900 dark:text-white">
           Xưởng Soạn Màn Chơi (Game Level Studio)
         </h1>
-        <p class="text-sm text-slate-500 dark:text-slate-400">
+        <p class="text-sm text-surface-500 dark:text-surface-400">
           Tạo, chỉnh sửa và quản lý các màn chơi giáo dục tương tác cho trẻ 3-6
           tuổi.
         </p>
       </div>
 
       <button
-        class="min-h-11 px-5 py-2.5 rounded-2xl bg-indigo-600 hover:bg-indigo-700 active:scale-95 text-white font-semibold text-base shadow-sm transition-all flex items-center gap-2"
+        class="min-h-11 px-5 py-2.5 rounded-2xl bg-brand-600 hover:bg-brand-700 active:scale-95 text-white font-semibold text-base shadow-sm transition-all flex items-center gap-2"
         type="button"
         @click="openCreateModal"
       >
@@ -25,12 +25,12 @@
 
     <!-- Notification Banner -->
     <div
-      class="p-4 rounded-2xl bg-indigo-50 dark:bg-indigo-900/40 border border-indigo-200 dark:border-indigo-700 text-indigo-900 dark:text-indigo-200 text-sm flex items-center justify-between"
+      class="p-4 rounded-2xl bg-brand-50 dark:bg-brand-900/40 border border-brand-200 dark:border-brand-700 text-brand-900 dark:text-brand-200 text-sm flex items-center justify-between"
       v-if="actionNotification"
     >
       <span>{{ actionNotification }}</span>
       <button
-        class="text-xs font-bold text-indigo-600 dark:text-indigo-400 hover:underline"
+        class="text-xs font-bold text-brand-600 dark:text-brand-400 hover:underline"
         type="button"
         @click="dismissNotification"
       >
@@ -40,11 +40,11 @@
 
     <!-- Filters & Search -->
     <div
-      class="p-4 rounded-2xl bg-white dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 shadow-sm flex flex-wrap gap-4 items-center justify-between"
+      class="p-4 rounded-2xl bg-white dark:bg-surface-800 border-2 border-surface-200 dark:border-surface-700 shadow-sm flex flex-wrap gap-4 items-center justify-between"
     >
       <div class="flex flex-wrap gap-3 items-center flex-1">
         <input
-          class="min-h-10 px-4 py-2 text-sm rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:outline-none focus:border-indigo-500 w-64"
+          class="min-h-10 px-4 py-2 text-sm rounded-xl border border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-900 text-surface-900 dark:text-white focus:outline-none focus:border-brand-500 w-64"
           placeholder="Tìm mã màn chơi hoặc tiêu đề..."
           type="text"
           v-model="filters.q"
@@ -52,7 +52,7 @@
         >
 
         <select
-          class="min-h-10 px-3 py-2 text-sm rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:outline-none focus:border-indigo-500"
+          class="min-h-10 px-3 py-2 text-sm rounded-xl border border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-900 text-surface-900 dark:text-white focus:outline-none focus:border-brand-500"
           v-model="filters.template_code"
           @change="fetchLevels"
         >
@@ -66,7 +66,7 @@
         </select>
 
         <select
-          class="min-h-10 px-3 py-2 text-sm rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:outline-none focus:border-indigo-500"
+          class="min-h-10 px-3 py-2 text-sm rounded-xl border border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-900 text-surface-900 dark:text-white focus:outline-none focus:border-brand-500"
           v-model="filters.status"
           @change="fetchLevels"
         >
@@ -79,21 +79,21 @@
         </select>
       </div>
 
-      <span class="text-xs text-slate-500">
+      <span class="text-xs text-surface-500">
         Tổng: {{ levels.length }} màn chơi
       </span>
     </div>
 
     <!-- Levels Table -->
     <div
-      class="rounded-3xl border-2 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 shadow-sm overflow-hidden"
+      class="rounded-3xl border-2 border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 shadow-sm overflow-hidden"
     >
       <div class="overflow-x-auto">
         <table
-          class="w-full text-left text-sm text-slate-700 dark:text-slate-300"
+          class="w-full text-left text-sm text-surface-700 dark:text-surface-300"
         >
           <thead
-            class="bg-slate-50 dark:bg-slate-900/60 text-xs font-bold text-slate-500 border-b border-slate-200 dark:border-slate-700"
+            class="bg-surface-50 dark:bg-surface-900/60 text-xs font-bold text-surface-500 border-b border-surface-200 dark:border-surface-700"
           >
             <tr>
               <th class="px-5 py-3.5">Mã & Phiên bản</th>
@@ -104,24 +104,24 @@
               <th class="px-5 py-3.5 text-right">Thao tác</th>
             </tr>
           </thead>
-          <tbody class="divide-y divide-slate-100 dark:divide-slate-700/50">
+          <tbody class="divide-y divide-surface-100 dark:divide-surface-700/50">
             <tr v-if="isLoading">
-              <td class="px-5 py-10 text-center text-slate-400" colspan="6">
+              <td class="px-5 py-10 text-center text-surface-400" colspan="6">
                 Đang tải dữ liệu...
               </td>
             </tr>
             <tr v-else-if="levels.length === 0">
-              <td class="px-5 py-10 text-center text-slate-400" colspan="6">
+              <td class="px-5 py-10 text-center text-surface-400" colspan="6">
                 Chưa có màn chơi nào phù hợp với bộ lọc.
               </td>
             </tr>
             <tr
-              class="hover:bg-slate-50 dark:hover:bg-slate-700/30 transition-colors"
+              class="hover:bg-surface-50 dark:hover:bg-surface-700/30 transition-colors"
               v-for="lvl in levels"
               :key="lvl.id"
             >
               <td
-                class="px-5 py-4 font-mono font-bold text-indigo-600 dark:text-indigo-400"
+                class="px-5 py-4 font-mono font-bold text-brand-600 dark:text-brand-400"
               >
                 <NuxtLink
                   class="hover:underline"
@@ -130,28 +130,28 @@
                   {{ lvl.code }}
                 </NuxtLink>
                 <span
-                  class="ml-1.5 text-xs px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 font-sans"
+                  class="ml-1.5 text-xs px-2 py-0.5 rounded-full bg-surface-100 dark:bg-surface-700 text-surface-600 dark:text-surface-300 font-sans"
                 >
                   v{{ lvl.contentVersion }}
                 </span>
               </td>
               <td class="px-5 py-4">
-                <div class="font-semibold text-slate-900 dark:text-white">
+                <div class="font-semibold text-surface-900 dark:text-white">
                   {{ lvl.title }}
                 </div>
-                <div class="text-xs text-slate-500">
+                <div class="text-xs text-surface-500">
                   {{ lvl.templateCode || 'GT-001' }}
                 </div>
               </td>
               <td class="px-5 py-4">
                 <span
-                  class="text-xs font-medium text-slate-600 dark:text-slate-300"
+                  class="text-xs font-medium text-surface-600 dark:text-surface-300"
                 >
                   {{ lvl.ageMin }}-{{ lvl.ageMax }}
                   tuổi
                 </span>
                 <span
-                  class="ml-2 text-xs px-2 py-0.5 rounded-full bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 font-medium"
+                  class="ml-2 text-xs px-2 py-0.5 rounded-full bg-brand-50 dark:bg-brand-900/30 text-brand-700 dark:text-brand-300 font-medium"
                 >
                   {{ lvl.accessTier }}
                 </span>
@@ -166,18 +166,18 @@
                   {{ formatStatus(lvl.status) }}
                 </span>
               </td>
-              <td class="px-5 py-4 text-xs text-slate-500">
+              <td class="px-5 py-4 text-xs text-surface-500">
                 {{ formatDate(lvl.updatedAt || lvl.createdAt) }}
               </td>
               <td class="px-5 py-4 text-right space-x-2">
                 <NuxtLink
-                  class="inline-block px-3 py-1.5 text-xs font-semibold rounded-xl bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-300 hover:bg-indigo-100 transition-all"
+                  class="inline-block px-3 py-1.5 text-xs font-semibold rounded-xl bg-brand-50 dark:bg-brand-900/30 text-brand-600 dark:text-brand-300 hover:bg-brand-100 transition-all"
                   :to="`/studio/levels/${lvl.code}`"
                 >
                   Chỉnh sửa
                 </NuxtLink>
                 <button
-                  class="px-3 py-1.5 text-xs font-semibold rounded-xl bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-200 transition-all"
+                  class="px-3 py-1.5 text-xs font-semibold rounded-xl bg-surface-100 dark:bg-surface-700 text-surface-600 dark:text-surface-300 hover:bg-surface-200 transition-all"
                   type="button"
                   @click="onDuplicateLevel(lvl.code, lvl.contentVersion)"
                 >
@@ -192,25 +192,25 @@
 
     <!-- Create Modal -->
     <div
-      class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm"
+      class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-surface-900/60 backdrop-blur-sm"
       v-if="isCreateModalOpen"
     >
       <div
-        class="w-full max-w-md bg-white dark:bg-slate-800 rounded-3xl border-4 border-slate-200 dark:border-slate-700 p-6 shadow-2xl space-y-4"
+        class="w-full max-w-md bg-white dark:bg-surface-800 rounded-3xl border-4 border-surface-200 dark:border-surface-700 p-6 shadow-2xl space-y-4"
       >
-        <h2 class="text-lg font-bold text-slate-900 dark:text-white">
+        <h2 class="text-lg font-bold text-surface-900 dark:text-white">
           Tạo màn chơi mới
         </h2>
         <div class="space-y-3">
           <div>
             <label
-              class="block text-xs font-bold text-slate-500 mb-1"
+              class="block text-xs font-bold text-surface-500 mb-1"
               for="create-template-select"
             >
               Chọn Mẫu Gameplay (Template) *
             </label>
             <select
-              class="w-full min-h-11 px-3 py-2 text-base rounded-2xl border-2 border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:border-indigo-500 focus:outline-none"
+              class="w-full min-h-11 px-3 py-2 text-base rounded-2xl border-2 border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-900 text-surface-900 dark:text-white focus:border-brand-500 focus:outline-none"
               id="create-template-select"
               v-model="newLevelForm.template_code"
             >
@@ -225,13 +225,13 @@
 
           <div>
             <label
-              class="block text-xs font-bold text-slate-500 mb-1"
+              class="block text-xs font-bold text-surface-500 mb-1"
               for="create-title-input"
             >
               Tiêu đề bài học *
             </label>
             <input
-              class="w-full min-h-11 px-3 py-2 text-base rounded-2xl border-2 border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:border-indigo-500 focus:outline-none"
+              class="w-full min-h-11 px-3 py-2 text-base rounded-2xl border-2 border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-900 text-surface-900 dark:text-white focus:border-brand-500 focus:outline-none"
               id="create-title-input"
               placeholder="Ví dụ: Đếm quả táo trong vườn"
               type="text"
@@ -242,14 +242,14 @@
 
         <div class="flex justify-end gap-3 pt-3">
           <button
-            class="px-4 py-2 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100 font-semibold text-sm"
+            class="px-4 py-2 rounded-xl text-surface-600 dark:text-surface-300 hover:bg-surface-100 font-semibold text-sm"
             type="button"
             @click="closeCreateModal"
           >
             Huỷ
           </button>
           <button
-            class="px-5 py-2 rounded-xl bg-indigo-600 text-white font-semibold text-sm hover:bg-indigo-700 transition-all"
+            class="px-5 py-2 rounded-xl bg-brand-600 text-white font-semibold text-sm hover:bg-brand-700 transition-all"
             type="button"
             @click="submitCreateLevel"
           >
@@ -383,17 +383,17 @@
   function getStatusBadgeClass(status: string): string {
     switch (status) {
       case "draft":
-        return "bg-slate-100 text-slate-700 dark:bg-slate-700 dark:text-slate-300";
+        return "bg-surface-100 text-surface-700 dark:bg-surface-700 dark:text-surface-300";
       case "in_review":
-        return "bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-300";
+        return "bg-warning-100 text-warning-800 dark:bg-warning-900/40 dark:text-warning-300";
       case "approved":
-        return "bg-emerald-100 text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-300";
+        return "bg-success-100 text-success-800 dark:bg-success-900/40 dark:text-success-300";
       case "published":
-        return "bg-indigo-100 text-indigo-800 dark:bg-indigo-900/40 dark:text-indigo-300";
+        return "bg-brand-100 text-brand-800 dark:bg-brand-900/40 dark:text-brand-300";
       case "archived":
-        return "bg-rose-100 text-rose-800 dark:bg-rose-900/40 dark:text-rose-300";
+        return "bg-danger-100 text-danger-800 dark:bg-danger-900/40 dark:text-danger-300";
       default:
-        return "bg-slate-100 text-slate-600";
+        return "bg-surface-100 text-surface-600";
     }
   }
 

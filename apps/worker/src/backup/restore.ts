@@ -6,9 +6,11 @@ import { createInterface } from "node:readline";
 import { pipeline } from "node:stream/promises";
 import { createGunzip } from "node:zlib";
 import { requireEnv } from "@mindkid/config";
+import { BACKUP_DIR } from "@mindkid/config/backup";
 import { backupLog, getOwnerDb } from "@mindkid/db";
 import { desc, eq } from "drizzle-orm";
 import postgres from "postgres";
+import { readErrorMessage } from "#src/errors";
 
 const rl = createInterface({
   input: process.stdin,
@@ -48,12 +50,12 @@ async function main() {
   }
 
   console.log("\nAvailable Backups:");
-  const storageDir = path.join(process.cwd(), ".backups");
-
+  // The local copy is the bare filename in BACKUP_DIR; storagePath is the
+  // object key in the bucket, which carries a prefix and date directories.
   for (const b of backups) {
     let sizeStr = "Unknown";
     if (b.storagePath) {
-      const filePath = path.join(storageDir, b.storagePath);
+      const filePath = path.join(BACKUP_DIR, path.basename(b.storagePath));
       if (fs.existsSync(filePath)) {
         const stats = fs.statSync(filePath);
         sizeStr = `${(stats.size / 1024 / 1024).toFixed(2)} MB`;
@@ -67,14 +69,18 @@ async function main() {
   const selectedId = await question(
     "\nPaste the ID of the backup you want to restore: "
   );
-  const targetBackup = backups.find((b) => b.id === selectedId);
+  // `selectedId` đọc từ stdin nên là chuỗi; `b.id` là số.
+  const targetBackup = backups.find((b) => b.id === Number(selectedId));
 
   if (!targetBackup?.storagePath) {
     console.error("Invalid ID or missing storage path.");
     process.exit(1);
   }
 
-  const backupFile = path.join(storageDir, targetBackup.storagePath);
+  const backupFile = path.join(
+    BACKUP_DIR,
+    path.basename(targetBackup.storagePath)
+  );
   if (!fs.existsSync(backupFile)) {
     console.error(`Backup file not found: ${backupFile}`);
     process.exit(1);
@@ -176,7 +182,7 @@ async function main() {
       .update(backupLog)
       .set({
         status: "failed",
-        errorMessage: error.message || String(error),
+        errorMessage: readErrorMessage(error),
         finishedAt: new Date(),
       })
       .where(eq(backupLog.id, log.id));

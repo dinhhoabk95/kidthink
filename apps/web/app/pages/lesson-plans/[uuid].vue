@@ -40,30 +40,30 @@
 
       <!-- Toast Feedback Banner -->
       <div
-        class="mb-4 p-4 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-300 dark:border-emerald-700 text-emerald-800 dark:text-emerald-200 text-sm font-bold flex items-center justify-between"
+        class="mb-4 p-4 rounded-2xl bg-success-50 dark:bg-success-950/40 border border-success-300 dark:border-success-700 text-success-800 dark:text-success-200 text-sm font-bold flex items-center justify-between"
         v-if="pageMessage"
       >
         <span>{{ pageMessage }}</span>
         <button
-          class="text-emerald-700 dark:text-emerald-300 font-bold text-sm"
+          class="text-success-700 dark:text-success-300 font-bold text-sm"
           type="button"
           @click="pageMessage = null"
         >
-          ✕
+          <UIcon class="w-5 h-5" name="i-lucide-x" />
         </button>
       </div>
 
       <div
-        class="mb-4 p-4 rounded-2xl bg-red-50 dark:bg-red-950/40 border border-red-300 dark:border-red-700 text-red-800 dark:text-red-200 text-sm font-bold flex items-center justify-between"
+        class="mb-4 p-4 rounded-2xl bg-danger-50 dark:bg-danger-950/40 border border-danger-300 dark:border-danger-700 text-danger-800 dark:text-danger-200 text-sm font-bold flex items-center justify-between"
         v-if="pageError"
       >
         <span>{{ pageError }}</span>
         <button
-          class="text-red-700 dark:text-red-300 font-bold text-sm"
+          class="text-danger-700 dark:text-danger-300 font-bold text-sm"
           type="button"
           @click="pageError = null"
         >
-          ✕
+          <UIcon class="w-5 h-5" name="i-lucide-x" />
         </button>
       </div>
 
@@ -82,11 +82,11 @@
       </div>
 
       <div
-        class="p-6 rounded-3xl bg-red-50 dark:bg-red-950/30 border-2 border-red-200 dark:border-red-900 my-8 text-center"
+        class="p-6 rounded-3xl bg-danger-50 dark:bg-danger-950/30 border-2 border-danger-200 dark:border-danger-900 my-8 text-center"
         role="alert"
         v-else-if="fetchError"
       >
-        <p class="text-red-700 dark:text-red-300 font-bold mb-2">
+        <p class="text-danger-700 dark:text-danger-300 font-bold mb-2">
           Không tìm thấy hoặc không thể tải giáo án.
         </p>
         <NuxtLink
@@ -111,7 +111,7 @@
               Thông tin chung (Phiên bản {{ plan.version }})
             </h2>
             <span
-              class="text-xs font-bold text-emerald-600 dark:text-emerald-400"
+              class="text-xs font-bold text-success-600 dark:text-success-400"
               v-if="saveMessage"
             >
               {{ saveMessage }}
@@ -270,7 +270,7 @@
                     </span>
 
                     <span
-                      class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-100 text-amber-800 dark:bg-amber-950/50 dark:text-amber-300 border border-amber-300 dark:border-amber-700 flex items-center gap-1"
+                      class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-warning-100 text-warning-800 dark:bg-warning-950/50 dark:text-warning-300 border border-warning-300 dark:border-warning-700 flex items-center gap-1"
                       v-if="item.has_update"
                     >
                       ⚠️ Có bản mới (v{{ item.latest_version }})
@@ -318,7 +318,7 @@
                 class="flex items-center gap-2 shrink-0 self-end md:self-center"
               >
                 <button
-                  class="px-3 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-white text-xs font-bold min-h-11 shadow-sm"
+                  class="px-3 py-1.5 rounded-xl bg-warning-500 hover:bg-warning-600 text-white text-xs font-bold min-h-11 shadow-sm"
                   type="button"
                   v-if="item.has_update"
                   @click="refreshItemVersion(idx)"
@@ -333,7 +333,7 @@
                   :disabled="idx === 0"
                   @click="moveItem(idx, -1)"
                 >
-                  ↑
+                  <UIcon class="w-5 h-5" name="i-lucide-arrow-up" />
                 </button>
 
                 <button
@@ -343,16 +343,16 @@
                   :disabled="idx === items.length - 1"
                   @click="moveItem(idx, 1)"
                 >
-                  ↓
+                  <UIcon class="w-5 h-5" name="i-lucide-arrow-down" />
                 </button>
 
                 <button
                   aria-label="Xóa mục"
-                  class="w-11 h-11 rounded-xl bg-red-50 hover:bg-red-100 dark:bg-red-950/40 dark:hover:bg-red-900/50 text-red-600 dark:text-red-400 font-bold flex items-center justify-center min-h-11 min-w-11"
+                  class="w-11 h-11 rounded-xl bg-danger-50 hover:bg-danger-100 dark:bg-danger-950/40 dark:hover:bg-danger-900/50 text-danger-600 dark:text-danger-400 font-bold flex items-center justify-center min-h-11 min-w-11"
                   type="button"
                   @click="removeItem(idx)"
                 >
-                  ✕
+                  <UIcon class="w-5 h-5" name="i-lucide-trash-2" />
                 </button>
               </div>
             </div>
@@ -371,8 +371,14 @@
     LessonPlanItemInput,
     LessonPlanItemType,
     LessonPlanSnapshot,
-  } from "@mindkid/shared";
+  } from "@mindkid/shared/client";
   import { reactive, ref, watch } from "vue";
+
+  // Trang này tự dựng chrome (PublicNavbar + <main id="main-content"> +
+  // PublicFooter). Không tắt layout thì `default.vue` dựng thêm một bộ nữa:
+  // navbar và footer hiện hai lần, và có hai phần tử cùng id="main-content"
+  // nên skip-link của app.vue nhảy sai chỗ (BR-A11-05).
+  definePageMeta({ layout: false });
 
   interface EditableItem {
     position: number;
@@ -457,10 +463,10 @@
 
   function getTypeBadgeClass(type: LessonPlanItemType) {
     if (type === "activity") {
-      return "bg-blue-100 text-blue-800 dark:bg-blue-950 dark:text-blue-300";
+      return "bg-brand-100 text-brand-800 dark:bg-brand-950 dark:text-brand-300";
     }
     if (type === "game_level") {
-      return "bg-purple-100 text-purple-800 dark:bg-purple-950 dark:text-purple-300";
+      return "bg-cta-100 text-cta-800 dark:bg-cta-950 dark:text-cta-300";
     }
     return "bg-surface-200 text-surface-800 dark:bg-surface-700 dark:text-surface-300";
   }

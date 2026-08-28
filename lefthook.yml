@@ -1,12 +1,11 @@
 # Gate chất lượng — chạy LOCAL, không có CI remote (repo-bootstrap.md §7.1, §11 Q5).
 #
 # Phân tầng có chủ đích:
-#   pre-commit  = nhanh (lint + ranh giới package)  → không làm commit chậm tới mức người ta bỏ qua
+#   pre-commit  = nhanh (format staged + lint + ranh giới package) → không làm commit chậm tới mức người ta bỏ qua
 #   pre-push    = đủ (`pnpm check` = lint + deps + typecheck + test) → cổng thật trước khi code ra khỏi máy
 #
-# Cổng nội dung/spec/an toàn kiểu KHÔNG còn là script riêng: chúng là test vitest
-# trong package sở hữu đường dẫn chúng quét, nên `pnpm test` phủ hết
-# (docs/tasks/103-script-surface-refactor-plan.md).
+# Cổng lint tuỳ biến (`packages/gates`) đã bị gỡ. Lint chỉ còn Biome (`pnpm lint`),
+# ranh giới package (`pnpm lint:deps`) và vue-tsc/tsc (`pnpm typecheck`).
 #
 # ⛔ `git commit --no-verify` / `git push --no-verify` BỎ QUA hook này.
 # lefthook là gate local, ❌ KHÔNG phải cưỡng chế server-side. Xem repo-bootstrap §11 Q12.
@@ -17,6 +16,19 @@ skip_lfs: true
 pre-commit:
   parallel: false
   jobs:
+    # Định dạng + fix an toàn TRƯỚC khi lint đo. `stage_fixed` stage lại file đã
+    # sửa, nên commit chứa đúng bản đã định dạng — không có vòng "commit đỏ vì
+    # thiếu dấu cách, sửa, commit lại".
+    #
+    # Chỉ chạm {staged_files}: chạy `--write` trên cả cây sẽ nuốt thay đổi dở
+    # của người khác vào commit này.
+    - name: format
+      glob: "*.{ts,tsx,js,jsx,mjs,cjs,vue,json,jsonc,css}"
+      stage_fixed: true
+      run: pnpm exec biome check --write --no-errors-on-unmatched {staged_files}
+
+    # Cổng thật vẫn là lượt đo trên toàn cây: `--write` chỉ sửa được thứ Biome
+    # coi là an toàn, phần còn lại phải đỏ ở đây.
     - name: lint
       run: pnpm lint
 

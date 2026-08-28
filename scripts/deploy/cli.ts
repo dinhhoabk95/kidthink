@@ -228,8 +228,9 @@ function main(): number {
   const result = runRemote({
     host: options.host,
     argv: [REMOTE_SCRIPT, ...remoteArgv],
-    // Only the release plan is simulated locally; every other verb reaches the
-    // server, where --dry-run is the server's own concern.
+    // A release plan is produced BY THE SERVER: --dry-run is appended to the
+    // remote argv above and the command really runs, printing the plan there.
+    // Every other verb has no server-side dry run, so it is simulated here.
     dryRun: options.dryRun && verb !== "release",
   });
 

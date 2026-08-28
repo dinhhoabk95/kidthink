@@ -1,0 +1,18 @@
+{
+  // App Nuxt không extend `@mindkid/config/tsconfig.base.json`: Nuxt sinh
+  // `compilerOptions` riêng cho từng project ở `.nuxt/`. File này chỉ trỏ tới
+  // đúng bốn project đó để editor và `pnpm typecheck` nhìn cùng một tập file.
+  //
+  // Danh sách phải trùng khít `TYPECHECK_PROJECTS` của
+  // `scripts/typecheck/typecheck-delta.ts`. Cổng giữ bất biến đó đã bị gỡ
+  // 2026-08-29 — lệch giờ ❌ KHÔNG ai báo, phải tự đối chiếu khi sửa một trong
+  // hai file. Cấm — NEVER thêm `compilerOptions` ở đây: flag của app tới từ
+  // `.nuxt/`, khai chồng lên là drift.
+  "files": [],
+  "references": [
+    { "path": "./.nuxt/tsconfig.app.json" },
+    { "path": "./.nuxt/tsconfig.node.json" },
+    { "path": "./.nuxt/tsconfig.server.json" },
+    { "path": "./.nuxt/tsconfig.shared.json" }
+  ]
+}

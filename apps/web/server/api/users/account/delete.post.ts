@@ -1,5 +1,9 @@
-import { getOwnerDb, requestUserDeletion, users } from "@mindkid/db";
-import { enqueueJob } from "@mindkid/queue";
+import {
+  dispatchTransactionalEmail,
+  getOwnerDb,
+  requestUserDeletion,
+  users,
+} from "@mindkid/db";
 import { eq } from "drizzle-orm";
 import {
   createError,
@@ -49,15 +53,17 @@ export default defineEventHandler(async (event) => {
   deleteCookie(event, "active_child_id", { path: "/" });
 
   // Enqueue confirmation email with cancellation link (BR-ADL-01, BR-ADL-02)
-  await enqueueJob("email:send", {
+  await dispatchTransactionalEmail({
+    recipientType: "user",
+    recipientId: userId,
+    code: "account_deletion_confirmation",
     to: currentUser.email,
-    template: "account_deletion_confirmation",
-    data: {
+    payload: {
       purge_at: scheduledPurgeAt.toISOString(),
       grace_period_days: 30,
       cancel_url: "/me/settings/delete/cancel",
     },
-  }).catch(() => null);
+  });
 
   return {
     purge_at: scheduledPurgeAt.toISOString(),

@@ -5,10 +5,10 @@
       class="flex flex-col sm:flex-row sm:items-center justify-between gap-4"
     >
       <div>
-        <h1 class="text-2xl font-bold text-slate-900 dark:text-white">
+        <h1 class="text-2xl font-bold text-surface-900 dark:text-white">
           Hàng Đợi Duyệt Nội Dung
         </h1>
-        <p class="text-sm text-slate-500 mt-1">
+        <p class="text-sm text-surface-500 mt-1">
           Cổng kiểm soát chất lượng sư phạm và an toàn trước khi xuất bản
           (P2.8).
         </p>
@@ -17,7 +17,7 @@
       <!-- Bulk Reject by Author Action (BR-CRQ-01: Bulk reject allowed, bulk approve FORBIDDEN) -->
       <div class="flex items-center gap-3" v-if="selectedAuthorId">
         <button
-          class="px-4 py-2 rounded-2xl bg-rose-600 hover:bg-rose-700 active:scale-95 text-white font-semibold text-sm transition-all shadow-sm"
+          class="px-4 py-2 rounded-2xl bg-danger-600 hover:bg-danger-700 active:scale-95 text-white font-semibold text-sm transition-all shadow-sm"
           type="button"
           @click="openBulkRejectModal"
         >
@@ -28,17 +28,17 @@
 
     <!-- Filter Bar -->
     <div
-      class="p-4 bg-white dark:bg-slate-800 rounded-3xl border-2 border-slate-200 dark:border-slate-700 flex flex-wrap items-center gap-4"
+      class="p-4 bg-white dark:bg-surface-800 rounded-3xl border-2 border-surface-200 dark:border-surface-700 flex flex-wrap items-center gap-4"
     >
       <div>
         <label
-          class="block text-xs font-bold text-slate-600 dark:text-slate-400 mb-1"
+          class="block text-xs font-bold text-surface-600 dark:text-surface-400 mb-1"
           for="filter-entity-type"
         >
           Loại nội dung
         </label>
         <select
-          class="min-h-11 px-3 py-1.5 rounded-xl border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-900 text-sm text-slate-800 dark:text-slate-200"
+          class="min-h-11 px-3 py-1.5 rounded-xl border border-surface-300 dark:border-surface-600 bg-surface-50 dark:bg-surface-900 text-sm text-surface-800 dark:text-surface-200"
           id="filter-entity-type"
           v-model="selectedEntityType"
           @change="fetchQueue"
@@ -51,13 +51,13 @@
 
       <div>
         <label
-          class="block text-xs font-bold text-slate-600 dark:text-slate-400 mb-1"
+          class="block text-xs font-bold text-surface-600 dark:text-surface-400 mb-1"
           for="filter-origin"
         >
           Nguồn gốc (Origin)
         </label>
         <select
-          class="min-h-11 px-3 py-1.5 rounded-xl border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-900 text-sm text-slate-800 dark:text-slate-200"
+          class="min-h-11 px-3 py-1.5 rounded-xl border border-surface-300 dark:border-surface-600 bg-surface-50 dark:bg-surface-900 text-sm text-surface-800 dark:text-surface-200"
           id="filter-origin"
           v-model="selectedOrigin"
           @change="fetchQueue"
@@ -71,33 +71,36 @@
 
     <!-- Queue Table List -->
     <div
-      class="bg-white dark:bg-slate-800 rounded-3xl border-2 border-slate-200 dark:border-slate-700 overflow-hidden shadow-sm"
+      class="bg-white dark:bg-surface-800 rounded-3xl border-2 border-surface-200 dark:border-surface-700 overflow-hidden shadow-sm"
     >
-      <div class="p-12 text-center text-slate-400" v-if="isLoading">
+      <div class="p-12 text-center text-surface-400" v-if="isLoading">
         Đang tải danh sách chờ duyệt...
       </div>
 
       <div
-        class="p-12 text-center text-slate-500"
+        class="p-12 text-center text-surface-500"
         v-else-if="queueItems.length === 0"
       >
         <span class="text-3xl block mb-2">🎉</span>
-        <p class="font-bold text-slate-700 dark:text-slate-300">
+        <p class="font-bold text-surface-700 dark:text-surface-300">
           Hàng đợi trống
         </p>
         <p class="text-xs">Không có nội dung nào đang chờ duyệt lúc này.</p>
       </div>
 
-      <div class="divide-y divide-slate-100 dark:divide-slate-700/60" v-else>
+      <div
+        class="divide-y divide-surface-100 dark:divide-surface-700/60"
+        v-else
+      >
         <div
-          class="p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:bg-slate-50 dark:hover:bg-slate-700/30 transition-all"
+          class="p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:bg-surface-50 dark:hover:bg-surface-700/30 transition-all"
           v-for="item in queueItems"
           :key="`${item.entity_type}_${item.id}`"
         >
           <div class="space-y-1.5">
             <div class="flex items-center gap-2.5 flex-wrap">
               <span
-                class="font-mono text-xs px-2.5 py-0.5 rounded-full bg-slate-100 dark:bg-slate-700 font-bold text-slate-700 dark:text-slate-300"
+                class="font-mono text-xs px-2.5 py-0.5 rounded-full bg-surface-100 dark:bg-surface-700 font-bold text-surface-700 dark:text-surface-300"
               >
                 {{ item.code }}
                 v{{ item.version }}
@@ -105,7 +108,7 @@
 
               <!-- Priority badge -->
               <span
-                class="text-xs px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 font-semibold"
+                class="text-xs px-2 py-0.5 rounded-full bg-warning-100 text-warning-800 font-semibold"
                 v-if="item.priority_score >= 20"
               >
                 ⭐ Ưu tiên cao
@@ -113,7 +116,7 @@
 
               <!-- AI assisted label (BR-CRQ-04) -->
               <span
-                class="text-xs px-2 py-0.5 rounded-full bg-purple-100 text-purple-800 font-semibold"
+                class="text-xs px-2 py-0.5 rounded-full bg-brand-100 text-brand-800 font-semibold"
                 v-if="item.origin === 'ai_assisted'"
               >
                 🤖 AI Assisted
@@ -121,18 +124,18 @@
 
               <!-- Seeder drift warning label (BR-CRQ-05) -->
               <span
-                class="text-xs px-2 py-0.5 rounded-full bg-rose-100 text-rose-800 font-semibold"
+                class="text-xs px-2 py-0.5 rounded-full bg-danger-100 text-danger-800 font-semibold"
                 v-if="item.version > 1"
               >
                 ⚠️ Tách khỏi Seeder
               </span>
             </div>
 
-            <h2 class="text-base font-bold text-slate-900 dark:text-white">
+            <h2 class="text-base font-bold text-surface-900 dark:text-white">
               {{ item.title }}
             </h2>
 
-            <p class="text-xs text-slate-500">
+            <p class="text-xs text-surface-500">
               Tác giả: Manager #{{ item.created_by_manager_id || 'N/A' }}
               · Chờ duyệt từ: {{ formatDate(item.waiting_since) }}
             </p>
@@ -140,7 +143,7 @@
 
           <div class="flex items-center gap-3 shrink-0">
             <button
-              class="px-3 py-1.5 rounded-xl border border-slate-300 dark:border-slate-600 text-xs font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700"
+              class="px-3 py-1.5 rounded-xl border border-surface-300 dark:border-surface-600 text-xs font-semibold text-surface-600 dark:text-surface-300 hover:bg-surface-100 dark:hover:bg-surface-700"
               type="button"
               @click="selectAuthorForFilter(item.created_by_manager_id)"
             >
@@ -148,7 +151,7 @@
             </button>
 
             <NuxtLink
-              class="px-4 py-2 rounded-2xl bg-indigo-600 hover:bg-indigo-700 active:scale-95 text-white font-semibold text-sm transition-all"
+              class="px-4 py-2 rounded-2xl bg-brand-600 hover:bg-brand-700 active:scale-95 text-white font-semibold text-sm transition-all"
               :to="`/studio/review/${item.id}?type=${item.entity_type}`"
             >
               Mở duyệt
@@ -160,29 +163,29 @@
 
     <!-- Bulk Reject Modal -->
     <div
-      class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm"
+      class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-surface-900/60 backdrop-blur-sm"
       v-if="isBulkRejectModalOpen"
     >
       <div
-        class="w-full max-w-lg bg-white dark:bg-slate-800 rounded-3xl border-4 border-slate-200 dark:border-slate-700 p-6 shadow-2xl space-y-4"
+        class="w-full max-w-lg bg-white dark:bg-surface-800 rounded-3xl border-4 border-surface-200 dark:border-surface-700 p-6 shadow-2xl space-y-4"
       >
-        <h2 class="text-lg font-bold text-slate-900 dark:text-white">
+        <h2 class="text-lg font-bold text-surface-900 dark:text-white">
           Từ chối hàng loạt của tác giả #{{ selectedAuthorId }}
         </h2>
-        <p class="text-xs text-slate-500">
+        <p class="text-xs text-surface-500">
           Lý do từ chối là bắt buộc (tối thiểu 10 ký tự, BR-CRQ-03) và sẽ được
           ghi vào nhật ký kiểm duyệt cho từng bản.
         </p>
 
         <div>
           <label
-            class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1"
+            class="block text-xs font-bold text-surface-700 dark:text-surface-300 mb-1"
             for="bulk-reject-reason"
           >
             Lý do từ chối *
           </label>
           <textarea
-            class="w-full p-3 text-sm rounded-xl border-2 border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:border-rose-500 focus:outline-none"
+            class="w-full p-3 text-sm rounded-xl border-2 border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-900 text-surface-900 dark:text-white focus:border-danger-500 focus:outline-none"
             id="bulk-reject-reason"
             placeholder="Nêu rõ lý do từ chối cho tác giả..."
             rows="3"
@@ -192,14 +195,14 @@
 
         <div class="flex items-center justify-end gap-3 pt-2">
           <button
-            class="px-4 py-2 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 font-semibold text-sm"
+            class="px-4 py-2 rounded-xl text-surface-600 dark:text-surface-300 hover:bg-surface-100 dark:hover:bg-surface-700 font-semibold text-sm"
             type="button"
             @click="isBulkRejectModalOpen = false"
           >
             Huỷ
           </button>
           <button
-            class="px-5 py-2 rounded-xl bg-rose-600 hover:bg-rose-700 disabled:opacity-50 text-white font-semibold text-sm transition-all"
+            class="px-5 py-2 rounded-xl bg-danger-600 hover:bg-danger-700 disabled:opacity-50 text-white font-semibold text-sm transition-all"
             type="button"
             :disabled="bulkRejectReason.trim().length < 10 || isSubmitting"
             @click="confirmBulkReject"

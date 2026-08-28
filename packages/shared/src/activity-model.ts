@@ -28,6 +28,22 @@ export const ACTIVITY_KINDS: readonly ActivityKind[] = [
   "home_activity",
 ] as const;
 
+/**
+ * Nguồn sự thật duy nhất cho mapping kind → ref_type (BR-DM-04 phía
+ * activities.ref_type/ref_id). Trước đây bị chép tay ở 5 nơi độc lập —
+ * gom về đây để thêm activity kind mới không phải sửa nhiều chỗ rời rạc.
+ */
+export const ACTIVITY_REF_TYPE_BY_KIND: Partial<
+  Record<ActivityKind, "game_level" | "worksheet">
+> = {
+  digital_game: "game_level",
+  worksheet: "worksheet",
+};
+
+export function resolveActivityRefType(kind: string): string | null {
+  return ACTIVITY_REF_TYPE_BY_KIND[kind as ActivityKind] ?? null;
+}
+
 export interface ActivityStep {
   instruction: string;
   say_to_child: string;
@@ -147,14 +163,18 @@ function validateKindAndRef(
 
   if (
     kind === "digital_game" &&
-    (input.ref_type !== "game_level" || !(input.ref_id || input.ref_code))
+    (input.ref_type !== ACTIVITY_REF_TYPE_BY_KIND.digital_game ||
+      !(input.ref_id || input.ref_code))
   ) {
     errors.push(
       "D-LC: Hoạt động loại 'digital_game' bắt buộc phải liên kết tới một game level (ref_type = 'game_level' và có ref_id hoặc ref_code)."
     );
   }
 
-  if (kind === "worksheet" && input.ref_type !== "worksheet") {
+  if (
+    kind === "worksheet" &&
+    input.ref_type !== ACTIVITY_REF_TYPE_BY_KIND.worksheet
+  ) {
     errors.push(
       "D-LC: Hoạt động loại 'worksheet' bắt buộc phải có ref_type = 'worksheet'."
     );

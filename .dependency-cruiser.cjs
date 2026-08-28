@@ -39,13 +39,54 @@ module.exports = {
       },
     },
     {
+      // Danh sách này lấy nguyên văn từ auth-tokens-sessions.md §1 (quyết định
+      // D-CO, sửa lần cuối 2026-08-13). Bản trước cấm `nuxt-auth-utils` —
+      // ngược hẳn spec: nó LÀ module web khai trong nuxt.config.ts, chỉ seal
+      // locator. Rule cấm thứ repo bắt buộc dùng là rule không bao giờ đúng.
       name: "no-obsolete-auth-provider",
       comment:
-        "P0.3 chốt Sidebase Local; nuxt-auth-utils và AuthJS/next-auth không còn thuộc stack.",
+        "auth-tokens-sessions.md §1: session là opaque locator + Redis. NEVER " +
+        "thêm framework auth thứ hai — Supabase Auth, Better-Auth, Sidebase " +
+        "AuthJS, next-auth. Hai nguồn sự thật về phiên là hai cách hết hạn.",
       severity: "error",
       from: {},
       to: {
-        path: "node_modules/(nuxt-auth-utils|next-auth)(/|$)",
+        path: "node_modules/(@supabase/auth-helpers[^/]*|better-auth|@sidebase/nuxt-auth|@auth/core|next-auth)(/|$)",
+      },
+    },
+    {
+      // §1 cấm helper OAuth/password/WebAuthn *của* nuxt-auth-utils, không cấm
+      // chính module. Argon2id + openid-client + OTPAuth là đường đã chốt.
+      name: "no-nuxt-auth-utils-credential-helpers",
+      comment:
+        "auth-tokens-sessions.md §1: Cấm helper OAuth/password/WebAuthn tích " +
+        "hợp của nuxt-auth-utils. Password dùng Argon2id, OAuth dùng " +
+        "openid-client, TOTP dùng OTPAuth.",
+      severity: "error",
+      from: {},
+      to: {
+        path: "node_modules/nuxt-auth-utils/dist/runtime/server/lib/(oauth|webauthn)(/|$)",
+      },
+    },
+    {
+      name: "no-consumer-in-queue-package",
+      comment:
+        "BR-JOB-04 (job-queue.md §2): packages/queue là producer — NEVER chứa " +
+        "consumer. Consumer cần DB và storage, nên một cạnh tới hai driver đó " +
+        "là dấu hiệu vai trò đã trộn. Consumer sống ở apps/worker/src/consumers/.",
+      severity: "error",
+      from: { path: "^packages/queue/" },
+      to: { path: "^packages/(db|storage)/" },
+    },
+    {
+      name: "no-http-in-worker",
+      comment:
+        "BR-JOB-04 (job-queue.md §2, §10 Never): apps/worker là consumer — NEVER " +
+        "expose HTTP. Trộn hai vai biến worker thành một app web không ai bảo trì.",
+      severity: "error",
+      from: { path: "^apps/worker/" },
+      to: {
+        path: "node_modules/(h3|nitropack|express|fastify|koa)(/|$)",
       },
     },
     {

@@ -82,18 +82,50 @@ lọc theo một cây.
 | **thinking** | `observe` `compare` `sort` `match` `sequence` `infer` `predict` `plan` `recall` `inhibit` `shift` `count` |
 | **mechanic** | `tap-select` `tap-select-multi` `drag-to-container` `sort-groups` `pair-match` `sequence-order` `number-bond` `drag-to-slot` `clue-deduction` `substitution` `matrix-choice` `flash-recall` `maze-route` `balance-scale` `sudoku-mini` `clock-hands` `block-stack` `listen-respond` `rotate-transform` `memory-flip` `mirror-complete` `hidden-object` `construct` `trace-path` `spot-difference` `go-nogo` `rule-switch` |
 
-Trục `mechanic` suy ra từ `game_templates.mechanic` — không nhập tay.
+Trục `mechanic` suy ra từ `game_templates.mechanic` — không nhập tay. Hai mươi bảy giá trị
+khớp một–một với 27 engine ở [`engines/index.md`](engines/index.md).
 
-### 7.2 Tag chủ đề (trục thứ tư, tuỳ chọn)
+**Độ trôi đo ngày 2026-08-29 trên 228 game level:**
 
-`animal` `fruit` `vegetable` `vehicle` `shape` `family` `school` `weather` `festival`
-`body` `food` `nature` — dùng cho theme và tìm kiếm, không dùng cho sư phạm.
+| Trục | Lượt gắn trong từ vựng | Lượt gắn ngoài | Giá trị ngoài | Giá trị trong từ vựng chưa dùng |
+|---|---:|---:|---|---|
+| `thinking` | 284 | **0** | không có | không có |
+| `what` | 79 | **160** | `mem` `cnt` `shp` `voc` `spt` `pat` `cmp` `cls` `fnc` `log` `msr` | `quantity` `pattern` `size` `money` `letter` |
+
+Trục `thinking` đã được đóng thật kèm ca âm bởi `BR-TCM-01` (từ vựng đóng thật) và số đo
+chứng minh điều đó. Mười một giá trị ngoài của trục `what` là chữ viết tắt của
+`seed-master/content-tags.ts` (`mem` cho trí nhớ, `cnt` cho đếm, `shp` cho hình), không phải
+khái niệm mới.
+
+**Trục `what` có cổng, nhưng cổng đó ép trên một bộ khác.** `CANONICAL_WHAT_TAGS` ở
+`packages/db/tests/gates/thinking-coverage.ts` chứa **28** giá trị: 14 của mục 7.1 này cộng
+14 chữ viết tắt của Lớp 1, kèm chú thích `// DB seed-master abbreviations`. Vì vậy cổng xanh
+trong khi corpus dùng lẫn hai bộ.
+
+Cùng file đó **đã từ chối** làm đúng như vậy cho trục `thinking`: 12 giá trị viết tắt của Lớp
+1 từng được thêm vào rồi bị gỡ, với lý do ghi ngay trong mã nguồn — *"đúng thứ AGENTS.md cấm:
+không nới rule chỉ để code hiện tại qua được cổng"*. Trục `thinking` do đó đóng thật và corpus
+sạch. Trục `what` giữ nguyên phần nới. Đó là toàn bộ chênh lệch giữa 0 và 160 ở bảng trên.
+
+Xem câu hỏi 3 ở mục 11.
+
+### 7.2 Tag chủ đề (trục thứ tư) — chủ đã chuyển
+
+Trục `theme` **không còn thuộc file này**. Từ vựng, trần tập trung, và cổng cưỡng chế đã
+chuyển sang [`content-theme-registry.md`](../05-content/content-theme-registry.md) (Task #113,
+2026-08-29). File này giữ nguyên ba trục sư phạm `what`, `thinking`, `mechanic`.
+
+Vì sao chuyển: mười hai giá trị từng nằm ở đây (`animal` `fruit` `vegetable` `vehicle` `shape`
+`family` `school` `weather` `festival` `body` `food` `nature`) là một danh sách không ai sở
+hữu và không cổng nào ép — `BR-TAG-02` (mỗi nội dung `published` có ≥1 tag mỗi trục) cố ý chỉ
+ép ba trục sư phạm. Đo ngày 2026-08-29: **100 trên 228** game level mang giá trị ngoài danh
+sách đó, và giá trị dùng nhiều thứ hai toàn corpus (`farm`, 42 level) nằm ngoài. Một danh
+sách không có chủ và không có cổng là một danh sách sẽ trôi.
 
 Lưu trong `content_tags` với `axis = 'theme'` — cột `axis` của
 [`schema-content-taxonomy.md`](schema-content-taxonomy.md) §7.2 khai đúng 4 giá trị
-(`what`\|`thinking`\|`mechanic`\|`theme`); đây là chỗ giá trị thứ tư đó được dùng. "Tuỳ chọn"
-nghĩa là `BR-TAG-02` (mỗi nội dung `published` có ≥1 tag mỗi trục) chỉ ép ba trục sư phạm —
-`theme` không nằm trong ràng buộc đó, một level không có theme vẫn publish được.
+(`what`\|`thinking`\|`mechanic`\|`theme`); đây vẫn là chỗ giá trị thứ tư đó được dùng, và ràng
+buộc trên nó nay đọc ở spec mới.
 
 ### 7.3 Bảng
 
@@ -176,3 +208,4 @@ Scenario: BR-TAG-07 — orphan tag map bị bắt
 |---|---|---|---|---|
 | 1 | Từ vựng `what` và `thinking` đã đủ phủ 230 skill chưa? Cần đối chiếu. **Không chặn approve spec này** — từ vựng là Lớp 1, mở rộng qua PR như mọi hằng số Lớp 1 khác, không phải quyết định kiến trúc | [`content-seed-authoring.md`](content-seed-authoring.md) — lộ ra khi seeder thật cố gắn tag cho 230 skill | P1 | hoãn — đo được khi seed |
 | 2 | `weight` do người đặt hay suy từ mức độ khớp LO? | [`adaptive-engine.md`](adaptive-engine.md) | P3 | hoãn — P3, engine chưa tồn tại |
+| 3 | Trục `what` có 160 trên 239 lượt gắn nằm ngoài từ vựng, toàn chữ viết tắt tự phát. Gắn lại tag cho corpus theo 14 giá trị đang có, hay nâng danh sách viết tắt lên thành từ vựng? Bản published bất biến nên mọi cách đều là INSERT version mới | `BR-ECD-04` (đa dạng trục nội dung) của [`engine-content-depth.md`](../05-content/engine-content-depth.md) không đo được | P4 | người quyết |

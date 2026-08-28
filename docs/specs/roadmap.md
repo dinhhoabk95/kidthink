@@ -204,6 +204,36 @@ mở khoá theo từng khuôn, không mở khoá cả lô một lúc. Mã cấp 
 `GT-011` chỉ cần hàng layout mới trong registry, `GT-012` tới `GT-017` mỗi khuôn kéo theo một
 system engine chưa tồn tại. Nhóm đầu mở khoá 12 trên 16 workbook lô B mà không thêm system nào.
 
+**Chiều sâu engine (Task #113, 2026-08-29).** Bốn spec cộng thêm ở P4, đứng sau
+[`template-authoring-kit.md`](01-platform/template-authoring-kit.md) vì chúng giả định 27
+engine đã có và mọi điểm nối đã sinh tự động. Thứ tự bắt buộc:
+[`engine-spec-sheet.md`](01-platform/engine-spec-sheet.md) cùng
+[`content-theme-registry.md`](05-content/content-theme-registry.md) chạy song song →
+[`engine-content-depth.md`](05-content/engine-content-depth.md) (cần cả hai: phiếu để người
+soạn đọc được engine, từ vựng chủ đề để `BR-ECD-05` đo được) →
+[`level-generator-kit.md`](01-platform/level-generator-kit.md) (sàn bậc 2 không đạt được bằng
+tay). Hồ sơ: [`Task #113`](../tasks/113-game-engine-depth-and-seed-diversity-plan.md).
+
+**Go-live tầng game (Task #113, 2026-08-29).** Hai spec nữa, và chúng **đứng trước** bốn spec
+chiều sâu ở trên về mức chặn: [`engine-render-contract.md`](01-platform/engine-render-contract.md)
+sở hữu hợp đồng vẽ (0 trên 27 engine đang cài `render()`, nên canvas trống), và
+[`go-live-readiness.md`](08-quality/go-live-readiness.md) sở hữu câu "trẻ mở được chưa" — khác
+hẳn câu "cái gì thuộc MVP" mà [`mvp-scope.md`](00-foundation/mvp-scope.md) sở hữu. Sàn MVP
+≥120 game level đang đạt ở 228 trong khi không màn nào chơi được; đó là chỗ trống hai spec này
+lấp.
+
+**Trục giáo án.** Hai spec, và thứ tự bắt buộc:
+[`lesson-flow-model.md`](05-content/lesson-flow-model.md) trước — nó chốt mô hình (thư viện
+giáo án master, flow ghi danh, **tuổi là đề xuất chứ không phải khoá**, quyết định `D-SI`) —
+rồi [`lesson-corpus-depth.md`](05-content/lesson-corpus-depth.md) mới tính được cầu.
+
+Đổi mô hình làm cầu giảm từ 222 buổi phân vùng theo band xuống **126 tiết dùng chung**, tức
+flow dài nhất `CUR-J42`. Cung là **81 lesson**, thiếu **45**. Cộng thêm **48 game level** phải
+soạn để mỗi kỹ năng của thư viện có ≥2 level (`D-SJ` — soạn thêm level, cấm nối bừa).
+
+Phạm vi go-live chốt ngày 2026-08-29 là **27 engine và 126 tiết, không rút** — quyết định
+`D-SH`, ghi ở mục 1.1 của [`go-live-readiness.md`](08-quality/go-live-readiness.md).
+
 [`worksheet-model.md`](05-content/worksheet-model.md) · [`lesson-plan-creator.md`](07-addon/lesson-plan-creator.md) → [`pdf-export.md`](07-addon/pdf-export.md) · [`personal-curriculum.md`](07-addon/personal-curriculum.md) · [`custom-game-builder.md`](07-addon/custom-game-builder.md) · [`ai-credit-ledger.md`](07-addon/ai-credit-ledger.md) → [`ai-assistant.md`](07-addon/ai-assistant.md) · [`semantic-search.md`](07-addon/semantic-search.md)
 
 ## P5 — Web scale (ngoài MVP)
@@ -235,7 +265,7 @@ package đã được tách xuống cỡ S/M. Audit ngày 2026-08-12 cho kết q
 | P1 | Task #26–#42; contract closure ở [`Task #80`](../tasks/80-audio-contract-closure-plan.md) (implementation [`Task #87`](../tasks/87-p1-audio-runtime-delivery-plan.md)) và [`Task #81`](../tasks/81-pedagogical-evidence-contract-plan.md) | Contract audio và evidence sư phạm đã đóng; implementation audio runtime được giao tại Task #87 |
 | P2 | Task #43–#53 | Đủ cho 11 bước; audio storage P2 đã có spec [`audio-storage.md`](01-platform/audio-storage.md) tách biệt khỏi pipeline ảnh của Task #49 |
 | P3 | Task #54–#61 và lát account bổ sung [`Task #82`](../tasks/82-p3-account-curriculum-integration-plan.md) | Coverage cũ thiếu ba debt account từ P1.12; còn chặn người ở quyết định ≥60 hay ≥126 lesson và bố cục nhiều trẻ |
-| P4 | Task #62–#69 | Đủ 8 outcome add-on hiện hành; giá, quota, provider và schema vector vẫn là contract gate, không được thay bằng số placeholder |
+| P4 | Task #62–#69, chiều sâu engine [`Task #113`](../tasks/113-game-engine-depth-and-seed-diversity-plan.md), 11 task ngang [#115](../tasks/115-render-contract-core-plan.md)–[#125](../tasks/125-go-live-readiness-plan.md), và **27 lát dọc engine** [#130](../tasks/130-engine-gt-001-plan.md)–[#156](../tasks/156-engine-gt-027-plan.md) tách ra ở [`Task #114`](../tasks/114-next-roadmap-plan.md) | Đủ 8 outcome add-on hiện hành; giá, quota, provider và schema vector vẫn là contract gate, không được thay bằng số placeholder. Phạm vi mở của Task #113 đã chuyển chủ sang #115–#125 ngày 2026-08-29; chặn người còn lại là `Q114-1` (162 level không parse) và `Q114-2` (sàn bậc 2) |
 | P5 | Task #70–#72, #78 và #84 | Đủ ở mức contract-first cho Web scale; FCM/inbox đứng sau package core Task #83 và không chặn email |
 
 Task #14 là master dependency graph và phase gate; các task increment là lát dọc có acceptance
@@ -247,7 +277,12 @@ Audit task sizing ban đầu tìm thấy **19** work package tự gắn cỡ `L`
 dependency, gate và ranh giới PR; query `**Cỡ:** L|XL` hiện trả rỗng. Plan mới không được thêm
 lại nhãn L/XL không có lát con; mỗi package tiếp tục giữ khoảng 1–5 file và test RED riêng.
 
-### Thứ tự task cho spec chưa triển khai, chốt 2026-08-18
+### Thứ tự task cho spec chưa triển khai, chốt 2026-08-18 — ĐÃ THAY THẾ
+
+> Bảng dưới đây giữ lại để tra lịch sử. Thứ tự đang có hiệu lực nằm ở mục
+> [Thứ tự task cho spec chưa triển khai, chốt 2026-08-29](#thứ-tự-task-cho-spec-chưa-triển-khai-chốt-2026-08-29)
+> ngay sau đây. Corpus từ 2026-08-18 nhận thêm 8 spec `draft` và 27 phiếu engine, nên con số
+> "mười ba spec" ở đoạn dưới đã cũ — hôm nay là **22 spec cộng 27 phiếu**.
 
 Mười ba spec chưa mang `status: implemented`. Một trong số đó
 ([`business-rules.md`](00-foundation/business-rules.md)) là registry quản trị corpus, do
@@ -266,6 +301,66 @@ có task riêng.
 | #97 | [`template-authoring-kit.md`](01-platform/template-authoring-kit.md) | Task #92 và #93 |
 | [#98](../tasks/98-montessori-corpus-intake-plan.md) | [`montessori-corpus-mapping.md`](05-content/montessori-corpus-mapping.md) · [`montessori-game-level-batch.md`](05-content/montessori-game-level-batch.md) · [`montessori-lesson-batch.md`](05-content/montessori-lesson-batch.md) · [`montessori-template-batch.md`](01-platform/montessori-template-batch.md) | không còn bị chặn — 16 câu hỏi đóng bằng `D-RG` tới `D-RV` ngày 2026-08-20; lô A chạy được ngay, lô B chờ khuôn theo bốn nhóm |
 | [#99](../tasks/99-montessori-template-designs-plan.md) | chín khuôn còn lại của [`montessori-template-batch.md`](01-platform/montessori-template-batch.md) | trần C1 đã dùng hết — bốn khuôn chỉ phục vụ C1 không có nội dung nào seed được; chờ quyết định nới trần |
+
+### Thứ tự task cho spec chưa triển khai, chốt 2026-08-29
+
+Hồ sơ: [`Task #114`](../tasks/114-next-roadmap-plan.md).
+
+Đếm lại ngày 2026-08-29 trên toàn bộ `docs/specs/**`: **149** spec `implemented`, **14**
+`approved`, **8** spec `draft`, cộng **27** phiếu engine `draft`. Tổng **49 file chưa đóng**.
+
+Cả 49 file đều có plan sở hữu — không file nào mồ côi. Chỗ tắc là ba plan quá tải, nặng nhất
+là [`Task #113`](../tasks/113-game-engine-depth-and-seed-diversity-plan.md) (45/109), một plan
+gánh cùng lúc bốn loại việc có nhịp khác hẳn nhau: phê duyệt spec, thi công cổng, sửa nợ dữ
+liệu, và soạn nội dung. Task #114 tách phạm vi mở của nó thành 11 task ngang, xếp cùng 4 task
+đóng đuôi, rồi tách tiếp phần engine thành **27 lát dọc** — tổng **42 task**.
+
+| Task | Spec đóng | Loại | Chặn bởi |
+|---|---|---|---|
+| [#115](../tasks/115-render-contract-core-plan.md) | [`engine-render-contract`](01-platform/engine-render-contract.md) — hạ tầng vẽ và cổng `check:render` | cổng + mã | — |
+| [#116](../tasks/116-engine-vertical-slices-plan.md) | chương trình 27 lát dọc engine — không sở hữu spec nào | chương trình | #115 #120 |
+| [#117](../tasks/117-seed-gate-truth-plan.md) | nợ của [`content-seed-authoring`](01-platform/content-seed-authoring.md) | cổng + nợ dữ liệu | quyết định về 162 level |
+| [#118](../tasks/118-band-violation-cleanup-plan.md) | nợ 42 level ngoài band | nợ dữ liệu | #117, quyết định người |
+| [#119](../tasks/119-theme-registry-plan.md) | [`content-theme-registry`](05-content/content-theme-registry.md) | cổng + từ vựng | quyết định 14 giá trị |
+| [#120](../tasks/120-engine-spec-contract-plan.md) | [`engine-spec-sheet`](01-platform/engine-spec-sheet.md) — khuôn spec engine theo SDD | contract + cổng | — |
+| [#121](../tasks/121-level-generator-kit-plan.md) | [`level-generator-kit`](01-platform/level-generator-kit.md) | mã | #119, cách sinh |
+| [#122](../tasks/122-engine-content-depth-plan.md) | [`engine-content-depth`](05-content/engine-content-depth.md) | cổng + ngân sách | #117 #119 #120 #121 |
+| [#123](../tasks/123-lesson-flow-model-plan.md) | [`lesson-flow-model`](05-content/lesson-flow-model.md) | mã + UI | — |
+| [#124](../tasks/124-lesson-corpus-depth-plan.md) | [`lesson-corpus-depth`](05-content/lesson-corpus-depth.md) | nội dung + cổng | #123 |
+| [#125](../tasks/125-go-live-readiness-plan.md) | [`go-live-readiness`](08-quality/go-live-readiness.md) | cổng | #156 #122 #124 |
+| [#126](../tasks/126-montessori-closure-plan.md) | bốn spec Montessori | đóng đuôi | trần C1 |
+| [#127](../tasks/127-template-diversity-ratification-plan.md) | [`taxonomy-gap-batch`](01-platform/taxonomy-gap-batch.md) · [`lesson-template-variety`](05-content/lesson-template-variety.md) · [`template-coverage-level-batch`](05-content/template-coverage-level-batch.md) | đo + phê chuẩn | #117 #122 #124 |
+| [#128](../tasks/128-infra-go-live-plan.md) | năm spec phát hành P0 | hạ tầng | ba quyết định người |
+| [#129](../tasks/129-mfa-and-runtime-boundary-closure-plan.md) | [`manager-mfa-enrollment`](06-admin/manager-mfa-enrollment.md) · [`app-runtime-boundary`](00-foundation/app-runtime-boundary.md) | đóng đuôi | một số đo DB |
+| [#130](../tasks/130-engine-gt-001-plan.md) … [#156](../tasks/156-engine-gt-027-plan.md) | **27 spec engine** `GT-001`…`GT-027` — một task một spec | lát dọc | #115 #120; #130 là pilot |
+
+**Engine là core, nên engine chia theo lát dọc.** Quyết định ngày 2026-08-29: mỗi engine game
+là **một spec đầy đủ theo SDD** và **một plan**, thay vì gộp 27 engine vào ba task ngang. Lý do
+đo được: gộp ngang làm mất câu trả lời *"engine này xong chưa"* — mỗi engine luôn xong một phần
+ba ở ba task khác nhau, và không cái nào đóng được. Hai mươi bảy phiếu ở
+[`engines/`](01-platform/engines/index.md) được nâng thành spec đủ khuôn
+[`CONVENTIONS.md`](CONVENTIONS.md) cộng năm mục engine — khuôn chốt ở
+[`Task #120`](../tasks/120-engine-spec-contract-plan.md), chương trình ở
+[`Task #116`](../tasks/116-engine-vertical-slices-plan.md).
+
+Một engine **xong** khi cả bảy điều đúng: spec `implemented` · `render()` cài · `content_pack`
+parse được · `out_of_band_count` = 0 · đạt sàn bậc 1 · có cửa vào `free`/`login` · mở màn thật
+nhìn thấy hình. Không có trạng thái "xong một phần".
+
+Đường găng của go-live tầng game là `#115 ∥ #120 → #130 → (#131…#156) → #125`, và nó **không
+rút ngắn được bằng cách thêm dev** ở đoạn đầu: sàn MVP ≥120 game level đang đạt ở 229 trong khi
+**0 trên 27 engine** cài `render()`. Sau khi pilot `#130` merge, 26 task engine còn lại là
+nhánh song song rộng nhất của dự án — mỗi task chạm đúng thư mục engine của nó.
+
+#122 và #125 là hai điểm hợp lưu. Chúng cấm — NEVER bắt đầu trước khi mọi nhánh vào đã merge.
+
+Ba quyết định người chặn nhiều task nhất, ghi ở mục 5 của [`Task #114`](../tasks/114-next-roadmap-plan.md):
+
+| Mã | Câu hỏi | Chặn |
+|---|---|---|
+| `Q114-1` | 162 level không parse `content_contract`: sửa nội dung hay sửa contract | #117 #118 #122 #125 |
+| `Q114-2` | Sàn bậc 2 là 12 hay 20 level mỗi engine | #121 #122 #125 |
+| `Q114-3` | Nhà cung cấp VPS, tên miền thật, đích sao lưu ngoài máy | #128 và toàn bộ go-live |
 
 Task #92 và #93 sửa một contract đã `implemented`: cột seed mới trên bảng phiên chơi kéo theo
 thay đổi payload của [`game-config-delivery.md`](04-play/game-config-delivery.md). Đó là lý do

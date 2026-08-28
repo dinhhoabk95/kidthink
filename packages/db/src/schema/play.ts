@@ -14,6 +14,7 @@ import {
   varchar,
 } from "drizzle-orm/pg-core";
 import { childProfiles } from "./child.ts";
+import { timestamps } from "./columns.ts";
 import { gameLevels, gameTemplates } from "./game.ts";
 import { skills } from "./taxonomy.ts";
 
@@ -49,12 +50,7 @@ export const playSessions = pgTable(
       .defaultNow()
       .notNull(),
     completedAt: timestamp("completed_at", { withTimezone: true }),
-    updatedAt: timestamp("updated_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
-    createdAt: timestamp("created_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
+    ...timestamps(),
   },
   (table) => [
     check(
@@ -84,12 +80,7 @@ export const telemetryEvents = pgTable(
     ingestedAt: timestamp("ingested_at", { withTimezone: true })
       .defaultNow()
       .notNull(),
-    createdAt: timestamp("created_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
-    updatedAt: timestamp("updated_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
+    ...timestamps(),
   },
   (table) => [primaryKey({ columns: [table.sessionUuid, table.seq] })]
 );
@@ -118,12 +109,7 @@ export const childSessionSummaries = pgTable(
     hintsUsed: integer("hints_used").notNull().default(0),
     retriesCount: integer("retries_count").notNull().default(0),
     completedAt: timestamp("completed_at", { withTimezone: true }),
-    createdAt: timestamp("created_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
-    updatedAt: timestamp("updated_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
+    ...timestamps(),
   },
   (table) => [
     unique("child_session_summaries_child_session_unique").on(
@@ -154,12 +140,7 @@ export const childDailyStats = pgTable(
     extraTimeGrantedMinutes: integer("extra_time_granted_minutes")
       .notNull()
       .default(0),
-    updatedAt: timestamp("updated_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
-    createdAt: timestamp("created_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
+    ...timestamps(),
   },
   (table) => [
     unique("child_daily_stats_child_date_unique").on(
@@ -183,12 +164,7 @@ export const levelDailyStats = pgTable(
     abandonedCount: integer("abandoned_count").notNull().default(0),
     avgDurationSeconds: integer("avg_duration_seconds").notNull().default(0),
     avgHintsUsed: integer("avg_hints_used").notNull().default(0),
-    updatedAt: timestamp("updated_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
-    createdAt: timestamp("created_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
+    ...timestamps(),
   },
   (table) => [
     unique("level_daily_stats_level_version_date_unique").on(
@@ -211,12 +187,7 @@ export const skillDailyStats = pgTable(
     dateIct: varchar("date_ict", { length: 10 }).notNull(),
     exposureCount: integer("exposure_count").notNull().default(0),
     avgAccuracyPercent: integer("avg_accuracy_percent").notNull().default(0),
-    updatedAt: timestamp("updated_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
-    createdAt: timestamp("created_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
+    ...timestamps(),
   },
   (table) => [
     unique("skill_daily_stats_skill_date_unique").on(

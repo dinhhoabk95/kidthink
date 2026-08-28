@@ -44,30 +44,32 @@
 
       <!-- Feedback Banner -->
       <div
-        class="mt-4 p-4 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-300 dark:border-emerald-700 text-emerald-800 dark:text-emerald-200 text-sm font-bold flex items-center justify-between"
+        class="mt-4 p-4 rounded-2xl bg-success-50 dark:bg-success-950/40 border border-success-300 dark:border-success-700 text-success-800 dark:text-success-200 text-sm font-bold flex items-center justify-between"
         v-if="bannerMessage"
       >
         <span>{{ bannerMessage }}</span>
         <button
-          class="text-emerald-700 dark:text-emerald-300 font-bold text-sm"
+          aria-label="Đóng thông báo"
+          class="text-success-700 dark:text-success-300 font-bold text-sm min-h-11 min-w-11 flex items-center justify-center"
           type="button"
           @click="bannerMessage = null"
         >
-          ✕
+          <UIcon class="w-5 h-5" name="i-lucide-x" />
         </button>
       </div>
 
       <div
-        class="mt-4 p-4 rounded-2xl bg-red-50 dark:bg-red-950/40 border border-red-300 dark:border-red-700 text-red-800 dark:text-red-200 text-sm font-bold flex items-center justify-between"
+        class="mt-4 p-4 rounded-2xl bg-danger-50 dark:bg-danger-950/40 border border-danger-300 dark:border-danger-700 text-danger-800 dark:text-danger-200 text-sm font-bold flex items-center justify-between"
         v-if="bannerError"
       >
         <span>{{ bannerError }}</span>
         <button
-          class="text-red-700 dark:text-red-300 font-bold text-sm"
+          aria-label="Đóng thông báo lỗi"
+          class="text-danger-700 dark:text-danger-300 font-bold text-sm min-h-11 min-w-11 flex items-center justify-center"
           type="button"
           @click="bannerError = null"
         >
-          ✕
+          <UIcon class="w-5 h-5" name="i-lucide-x" />
         </button>
       </div>
 
@@ -87,11 +89,11 @@
 
       <!-- Error state -->
       <div
-        class="p-6 rounded-3xl bg-red-50 dark:bg-red-950/30 border-2 border-red-200 dark:border-red-900 my-8 text-center"
+        class="p-6 rounded-3xl bg-danger-50 dark:bg-danger-950/30 border-2 border-danger-200 dark:border-danger-900 my-8 text-center"
         role="alert"
         v-else-if="fetchError"
       >
-        <p class="text-red-700 dark:text-red-300 font-bold mb-2">
+        <p class="text-danger-700 dark:text-danger-300 font-bold mb-2">
           Không thể tải danh sách giáo án.
         </p>
         <button
@@ -197,12 +199,15 @@
 
             <div class="flex items-center gap-2">
               <button
-                class="px-3 py-1.5 rounded-xl bg-surface-200 hover:bg-surface-300 dark:bg-surface-700 dark:hover:bg-surface-600 text-surface-800 dark:text-surface-100 text-xs font-bold min-h-11 inline-flex items-center justify-center disabled:opacity-50"
+                class="px-3 py-1.5 rounded-xl bg-surface-200 hover:bg-surface-300 dark:bg-surface-700 dark:hover:bg-surface-600 text-surface-800 dark:text-surface-100 text-xs font-bold min-h-11 inline-flex items-center justify-center disabled:opacity-50 gap-1"
                 type="button"
                 :disabled="exportingUuid === plan.uuid"
                 @click="handleQuickExport(plan)"
               >
-                {{ exportingUuid === plan.uuid ? 'Đang xuất...' : '📄 Xuất PDF' }}
+                <UIcon class="w-4 h-4 shrink-0" name="i-lucide-file-text" />
+                <span
+                  >{{ exportingUuid === plan.uuid ? 'Đang xuất...' : 'Xuất PDF' }}</span
+                >
               </button>
               <NuxtLink
                 class="px-3 py-1.5 rounded-xl bg-brand-50 dark:bg-brand-950/40 text-brand-700 dark:text-brand-300 hover:bg-brand-100 text-xs font-bold min-h-11 inline-flex items-center justify-center"
@@ -212,7 +217,7 @@
               </NuxtLink>
               <button
                 aria-label="Xóa giáo án"
-                class="px-3 py-1.5 rounded-xl bg-surface-100 hover:bg-red-50 dark:bg-surface-700 dark:hover:bg-red-950/40 text-surface-600 hover:text-red-600 dark:text-surface-300 dark:hover:text-red-400 text-xs font-bold min-h-11"
+                class="px-3 py-1.5 rounded-xl bg-surface-100 hover:bg-danger-50 dark:bg-surface-700 dark:hover:bg-danger-950/40 text-surface-600 hover:text-danger-600 dark:text-surface-300 dark:hover:text-danger-400 text-xs font-bold min-h-11"
                 type="button"
                 @click="confirmDelete(plan)"
               >
@@ -249,7 +254,7 @@
                 class="block text-sm font-bold text-surface-700 dark:text-surface-300 mb-1"
                 for="plan-title"
               >
-                Tiêu đề giáo án <span class="text-red-500">*</span>
+                Tiêu đề giáo án <span class="text-danger-500">*</span>
               </label>
               <input
                 class="w-full px-4 py-2.5 rounded-2xl border-2 border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-900 text-surface-900 dark:text-white text-base focus:border-brand-500 focus:outline-none min-h-11"
@@ -336,7 +341,7 @@
           </div>
 
           <div
-            class="mt-4 p-3 rounded-xl bg-red-50 dark:bg-red-950/40 text-red-700 dark:text-red-300 text-sm font-medium"
+            class="mt-4 p-3 rounded-xl bg-danger-50 dark:bg-danger-950/40 text-danger-700 dark:text-danger-300 text-sm font-medium"
             v-if="createError"
           >
             {{ createError }}
@@ -387,7 +392,7 @@
         </p>
 
         <div
-          class="mb-4 p-3 rounded-xl bg-red-50 dark:bg-red-950/40 text-red-700 dark:text-red-300 text-sm font-medium"
+          class="mb-4 p-3 rounded-xl bg-danger-50 dark:bg-danger-950/40 text-danger-700 dark:text-danger-300 text-sm font-medium"
           v-if="deleteError"
         >
           {{ deleteError }}
@@ -402,7 +407,7 @@
             Hủy
           </button>
           <button
-            class="px-6 py-2.5 rounded-2xl bg-red-600 hover:bg-red-700 disabled:opacity-50 text-white font-bold min-h-11 shadow-md"
+            class="px-6 py-2.5 rounded-2xl bg-danger-600 hover:bg-danger-700 disabled:opacity-50 text-white font-bold min-h-11 shadow-md"
             type="button"
             :disabled="deleting"
             @click="handleDelete"
@@ -422,8 +427,14 @@
     CreateLessonPlanInput,
     LessonPlanDetail,
     LessonPlanSummary,
-  } from "@mindkid/shared";
+  } from "@mindkid/shared/client";
   import { computed, reactive, ref } from "vue";
+
+  // Trang này tự dựng chrome (PublicNavbar + <main id="main-content"> +
+  // PublicFooter). Không tắt layout thì `default.vue` dựng thêm một bộ nữa:
+  // navbar và footer hiện hai lần, và có hai phần tử cùng id="main-content"
+  // nên skip-link của app.vue nhảy sai chỗ (BR-A11-05).
+  definePageMeta({ layout: false });
 
   useHead({
     title: "Thư viện giáo án cá nhân | MindKid",

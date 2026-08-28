@@ -6,19 +6,19 @@
     >
       <div>
         <h1
-          class="text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-2"
+          class="text-2xl font-bold text-surface-900 dark:text-white flex items-center gap-2"
         >
           <span>📄</span>
           <span>Xưởng Phiếu Bài Tập (Worksheet Studio)</span>
         </h1>
-        <p class="text-sm text-slate-500 dark:text-slate-400">
+        <p class="text-sm text-surface-500 dark:text-surface-400">
           Soạn thảo và xuất bản phiếu bài tập 1 trang A4 đen trắng
           (BR-WSM-01..08) với cổng kiểm thử render bằng chứng vật lý.
         </p>
       </div>
 
       <button
-        class="min-h-11 px-5 py-2.5 rounded-2xl bg-indigo-600 hover:bg-indigo-700 active:scale-95 text-white font-semibold text-base shadow-sm transition-all flex items-center gap-2"
+        class="min-h-11 px-5 py-2.5 rounded-2xl bg-brand-600 hover:bg-brand-700 active:scale-95 text-white font-semibold text-base shadow-sm transition-all flex items-center gap-2"
         type="button"
         @click="openCreateModal"
       >
@@ -28,12 +28,12 @@
 
     <!-- Notification Banner -->
     <div
-      class="p-4 rounded-2xl bg-indigo-50 dark:bg-indigo-900/40 border border-indigo-200 dark:border-indigo-700 text-indigo-900 dark:text-indigo-200 text-sm flex items-center justify-between"
+      class="p-4 rounded-2xl bg-brand-50 dark:bg-brand-900/40 border border-brand-200 dark:border-brand-700 text-brand-900 dark:text-brand-200 text-sm flex items-center justify-between"
       v-if="actionNotification"
     >
       <span>{{ actionNotification }}</span>
       <button
-        class="text-xs font-bold text-indigo-600 dark:text-indigo-400 hover:underline"
+        class="text-xs font-bold text-brand-600 dark:text-brand-400 hover:underline"
         type="button"
         @click="dismissNotification"
       >
@@ -43,12 +43,12 @@
 
     <!-- Filters & Search -->
     <div
-      class="p-4 rounded-2xl bg-white dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 shadow-sm flex flex-wrap gap-4 items-center justify-between"
+      class="p-4 rounded-2xl bg-white dark:bg-surface-800 border-2 border-surface-200 dark:border-surface-700 shadow-sm flex flex-wrap gap-4 items-center justify-between"
     >
       <div class="flex flex-wrap gap-3 items-center flex-1">
         <label class="sr-only" for="filter-q">Tìm kiếm</label>
         <input
-          class="min-h-10 px-4 py-2 text-sm rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:outline-none focus:border-indigo-500 w-64"
+          class="min-h-10 px-4 py-2 text-sm rounded-xl border border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-900 text-surface-900 dark:text-white focus:outline-none focus:border-brand-500 w-64"
           id="filter-q"
           placeholder="Tìm mã hoặc tiêu đề phiếu..."
           type="text"
@@ -58,7 +58,7 @@
 
         <label class="sr-only" for="filter-template">Layout Template</label>
         <select
-          class="min-h-10 px-3 py-2 text-sm rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:outline-none focus:border-indigo-500"
+          class="min-h-10 px-3 py-2 text-sm rounded-xl border border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-900 text-surface-900 dark:text-white focus:outline-none focus:border-brand-500"
           id="filter-template"
           v-model="filters.template"
           @change="fetchWorksheets"
@@ -84,7 +84,7 @@
 
         <label class="sr-only" for="filter-status">Trạng thái</label>
         <select
-          class="min-h-10 px-3 py-2 text-sm rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:outline-none focus:border-indigo-500"
+          class="min-h-10 px-3 py-2 text-sm rounded-xl border border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-900 text-surface-900 dark:text-white focus:outline-none focus:border-brand-500"
           id="filter-status"
           v-model="filters.status"
           @change="fetchWorksheets"
@@ -98,7 +98,7 @@
         </select>
       </div>
 
-      <div class="text-xs text-slate-500 font-semibold">
+      <div class="text-xs text-surface-500 font-semibold">
         {{ worksheets.length }}
         phiếu bài tập
       </div>
@@ -106,14 +106,14 @@
 
     <!-- Worksheets Table -->
     <div
-      class="bg-white dark:bg-slate-800 rounded-3xl border-2 border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden"
+      class="bg-white dark:bg-surface-800 rounded-3xl border-2 border-surface-200 dark:border-surface-700 shadow-sm overflow-hidden"
     >
-      <div class="p-12 text-center text-slate-500" v-if="isLoading">
+      <div class="p-12 text-center text-surface-500" v-if="isLoading">
         Đang tải danh sách phiếu bài tập...
       </div>
 
       <div
-        class="p-12 text-center text-slate-500"
+        class="p-12 text-center text-surface-500"
         v-else-if="worksheets.length === 0"
       >
         Không tìm thấy phiếu bài tập nào phù hợp với bộ lọc.
@@ -122,7 +122,7 @@
       <div class="overflow-x-auto" v-else>
         <table class="w-full text-left text-sm">
           <thead
-            class="bg-slate-50 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-700 text-slate-500 text-xs font-bold"
+            class="bg-surface-50 dark:bg-surface-900 border-b border-surface-200 dark:border-surface-700 text-surface-500 text-xs font-bold"
           >
             <tr>
               <th class="py-3 px-4">Mã & Mẫu Layout</th>
@@ -133,29 +133,29 @@
               <th class="py-3 px-4 text-right">Thao tác</th>
             </tr>
           </thead>
-          <tbody class="divide-y divide-slate-100 dark:divide-slate-700">
+          <tbody class="divide-y divide-surface-100 dark:divide-surface-700">
             <tr
-              class="hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors"
+              class="hover:bg-surface-50 dark:hover:bg-surface-700/50 transition-colors"
               v-for="ws in worksheets"
               :key="ws.id"
             >
               <td class="py-3 px-4">
                 <div
-                  class="font-bold text-slate-900 dark:text-white flex items-center gap-1.5"
+                  class="font-bold text-surface-900 dark:text-white flex items-center gap-1.5"
                 >
                   <span>{{ getTemplateEmoji(ws.layout_template) }}</span>
                   <span>{{ ws.code }} (v{{ ws.content_version }})</span>
                 </div>
-                <div class="text-xs text-slate-500 font-mono">
+                <div class="text-xs text-surface-500 font-mono">
                   {{ ws.layout_template }}
                 </div>
               </td>
               <td
-                class="py-3 px-4 font-semibold text-slate-800 dark:text-slate-200"
+                class="py-3 px-4 font-semibold text-surface-800 dark:text-surface-200"
               >
                 {{ ws.title }}
                 <div
-                  class="text-xs text-slate-500 truncate max-w-xs font-normal"
+                  class="text-xs text-surface-500 truncate max-w-xs font-normal"
                   v-if="ws.instructions"
                 >
                   HD người lớn: {{ ws.instructions }}
@@ -166,12 +166,12 @@
                   <div class="flex items-center gap-1.5">
                     <span
                       class="px-2 py-0.5 rounded-full font-bold"
-                      :class="ws.render_status === 'done' ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'"
+                      :class="ws.render_status === 'done' ? 'bg-success-100 text-success-800' : 'bg-warning-100 text-warning-800'"
                     >
                       {{ ws.render_status === 'done' ? 'Artifact ✓' : 'Chưa render' }}
                     </span>
                     <span
-                      class="px-2 py-0.5 rounded-full font-bold bg-slate-100 text-slate-700"
+                      class="px-2 py-0.5 rounded-full font-bold bg-surface-100 text-surface-700"
                       v-if="ws.render_page_count"
                     >
                       {{ ws.render_page_count }}
@@ -179,7 +179,7 @@
                     </span>
                   </div>
                   <span
-                    class="text-[11px] text-slate-400 font-mono truncate max-w-[140px]"
+                    class="text-[11px] text-surface-400 font-mono truncate max-w-[140px]"
                     v-if="ws.render_input_hash"
                   >
                     Hash: {{ ws.render_input_hash.slice(0, 10) }}...
@@ -204,14 +204,14 @@
               </td>
               <td class="py-3 px-4 text-right space-x-2">
                 <button
-                  class="px-3 py-1.5 text-xs font-bold rounded-xl bg-indigo-50 dark:bg-indigo-900/40 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-100"
+                  class="px-3 py-1.5 text-xs font-bold rounded-xl bg-brand-50 dark:bg-brand-900/40 text-brand-600 dark:text-brand-400 hover:bg-brand-100"
                   type="button"
                   @click="triggerRender(ws)"
                 >
                   Render PDF
                 </button>
                 <a
-                  class="inline-block px-3 py-1.5 text-xs font-bold rounded-xl bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-200"
+                  class="inline-block px-3 py-1.5 text-xs font-bold rounded-xl bg-surface-100 dark:bg-surface-700 text-surface-700 dark:text-surface-200 hover:bg-surface-200"
                   rel="noopener"
                   target="_blank"
                   :href="apiUrl(`/api/managers/worksheets/${ws.code}/preview`)"
@@ -219,7 +219,7 @@
                   Xem PDF
                 </a>
                 <button
-                  class="px-3 py-1.5 text-xs font-bold rounded-xl bg-amber-500 text-white hover:bg-amber-600"
+                  class="px-3 py-1.5 text-xs font-bold rounded-xl bg-warning-500 text-white hover:bg-warning-600"
                   type="button"
                   v-if="ws.status === 'draft'"
                   @click="submitForReview(ws)"
@@ -227,7 +227,7 @@
                   Gửi duyệt
                 </button>
                 <button
-                  class="px-3 py-1.5 text-xs font-bold rounded-xl bg-emerald-600 text-white hover:bg-emerald-700"
+                  class="px-3 py-1.5 text-xs font-bold rounded-xl bg-success-600 text-white hover:bg-success-700"
                   type="button"
                   v-if="ws.status === 'approved'"
                   @click="publishWorksheet(ws)"
@@ -235,7 +235,7 @@
                   Xuất bản
                 </button>
                 <button
-                  class="px-3 py-1.5 text-xs font-bold rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700"
+                  class="px-3 py-1.5 text-xs font-bold rounded-xl bg-surface-100 hover:bg-surface-200 text-surface-700"
                   type="button"
                   @click="openEditModal(ws)"
                 >
@@ -250,16 +250,16 @@
 
     <!-- Create / Edit Modal -->
     <div
-      class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm"
+      class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-surface-900/50 backdrop-blur-sm"
       v-if="isModalOpen"
     >
       <div
-        class="bg-white dark:bg-slate-800 rounded-3xl border-4 border-slate-300 dark:border-slate-700 p-6 w-full max-w-3xl shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto"
+        class="bg-white dark:bg-surface-800 rounded-3xl border-4 border-surface-300 dark:border-surface-700 p-6 w-full max-w-3xl shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto"
       >
         <div
-          class="flex justify-between items-center border-b pb-3 dark:border-slate-700"
+          class="flex justify-between items-center border-b pb-3 dark:border-surface-700"
         >
-          <h2 class="text-lg font-bold text-slate-900 dark:text-white">
+          <h2 class="text-lg font-bold text-surface-900 dark:text-white">
             {{ isEditing ? `Chỉnh sửa phiếu: ${activeForm.code}` : 'Tạo phiếu bài tập mới (1 Trang A4 B&W)' }}
           </h2>
         </div>
@@ -268,13 +268,13 @@
           <div class="grid grid-cols-2 gap-4">
             <div>
               <label
-                class="block text-xs font-bold text-slate-500 mb-1"
+                class="block text-xs font-bold text-surface-500 mb-1"
                 for="form-tmpl"
               >
                 Mẫu Layout (Layout Template) *
               </label>
               <select
-                class="w-full min-h-11 px-3 py-2 rounded-2xl border-2 border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:border-indigo-500 focus:outline-none"
+                class="w-full min-h-11 px-3 py-2 rounded-2xl border-2 border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-900 text-surface-900 dark:text-white focus:border-brand-500 focus:outline-none"
                 id="form-tmpl"
                 v-model="activeForm.layout_template"
                 :disabled="isEditing && activeForm.status === 'published'"
@@ -303,13 +303,13 @@
 
             <div>
               <label
-                class="block text-xs font-bold text-slate-500 mb-1"
+                class="block text-xs font-bold text-surface-500 mb-1"
                 for="form-tier"
               >
                 Gói truy cập (Access Tier) *
               </label>
               <select
-                class="w-full min-h-11 px-3 py-2 rounded-2xl border-2 border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:border-indigo-500 focus:outline-none"
+                class="w-full min-h-11 px-3 py-2 rounded-2xl border-2 border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-900 text-surface-900 dark:text-white focus:border-brand-500 focus:outline-none"
                 id="form-tier"
                 v-model="activeForm.access_tier"
               >
@@ -324,13 +324,13 @@
           <div class="grid grid-cols-3 gap-4">
             <div class="col-span-1" v-if="!isEditing">
               <label
-                class="block text-xs font-bold text-slate-500 mb-1"
+                class="block text-xs font-bold text-surface-500 mb-1"
                 for="form-code"
               >
                 Mã phiếu (Code, định dạng WS-XXXX) *
               </label>
               <input
-                class="w-full min-h-11 px-3 py-2 rounded-2xl border-2 border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:border-indigo-500 focus:outline-none font-mono"
+                class="w-full min-h-11 px-3 py-2 rounded-2xl border-2 border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-900 text-surface-900 dark:text-white focus:border-brand-500 focus:outline-none font-mono"
                 id="form-code"
                 placeholder="WS-0001"
                 type="text"
@@ -340,13 +340,13 @@
 
             <div :class="isEditing ? 'col-span-3' : 'col-span-2'">
               <label
-                class="block text-xs font-bold text-slate-500 mb-1"
+                class="block text-xs font-bold text-surface-500 mb-1"
                 for="form-title"
               >
                 Tiêu đề phiếu tiếng Việt *
               </label>
               <input
-                class="w-full min-h-11 px-3 py-2 rounded-2xl border-2 border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:border-indigo-500 focus:outline-none"
+                class="w-full min-h-11 px-3 py-2 rounded-2xl border-2 border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-900 text-surface-900 dark:text-white focus:border-brand-500 focus:outline-none"
                 id="form-title"
                 placeholder="Ví dụ: Phiếu tô màu theo quy luật hình vuông - hình tròn"
                 type="text"
@@ -357,14 +357,14 @@
 
           <div>
             <label
-              class="block text-xs font-bold text-slate-500 mb-1"
+              class="block text-xs font-bold text-surface-500 mb-1"
               for="form-instructions"
             >
               Khung hướng dẫn người lớn ở chân trang (BR-WSM-05, Không có chữ
               hướng dẫn trẻ) *
             </label>
             <textarea
-              class="w-full min-h-20 px-3 py-2 rounded-2xl border-2 border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:border-indigo-500 focus:outline-none text-sm"
+              class="w-full min-h-20 px-3 py-2 rounded-2xl border-2 border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-900 text-surface-900 dark:text-white focus:border-brand-500 focus:outline-none text-sm"
               id="form-instructions"
               placeholder="Hướng dẫn người lớn: Giúp trẻ quan sát quy luật và tô màu vào hình còn trống."
               rows="3"
@@ -374,13 +374,13 @@
 
           <div>
             <label
-              class="block text-xs font-bold text-slate-500 mb-1"
+              class="block text-xs font-bold text-surface-500 mb-1"
               for="form-blocks"
             >
               Cấu hình nội dung (Content Blocks JSON) *
             </label>
             <textarea
-              class="w-full min-h-40 px-3 py-2 rounded-2xl border-2 border-slate-300 dark:border-slate-600 bg-slate-900 text-emerald-400 font-mono text-xs focus:border-indigo-500 focus:outline-none"
+              class="w-full min-h-40 px-3 py-2 rounded-2xl border-2 border-surface-300 dark:border-surface-600 bg-surface-900 text-success-400 font-mono text-xs focus:border-brand-500 focus:outline-none"
               id="form-blocks"
               rows="8"
               v-model="contentBlocksJson"
@@ -388,16 +388,18 @@
           </div>
         </div>
 
-        <div class="flex justify-end gap-3 pt-3 border-t dark:border-slate-700">
+        <div
+          class="flex justify-end gap-3 pt-3 border-t dark:border-surface-700"
+        >
           <button
-            class="px-4 py-2 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100 font-semibold text-sm"
+            class="px-4 py-2 rounded-xl text-surface-600 dark:text-surface-300 hover:bg-surface-100 font-semibold text-sm"
             type="button"
             @click="closeModal"
           >
             Đóng
           </button>
           <button
-            class="px-5 py-2 rounded-xl bg-indigo-600 text-white font-semibold text-sm hover:bg-indigo-700 transition-all"
+            class="px-5 py-2 rounded-xl bg-brand-600 text-white font-semibold text-sm hover:bg-brand-700 transition-all"
             type="button"
             @click="saveWorksheet"
           >
@@ -607,31 +609,31 @@
 
   function getTierBadgeClass(tier: string): string {
     if (tier === "free") {
-      return "bg-emerald-100 text-emerald-800";
+      return "bg-success-100 text-success-800";
     }
     if (tier === "login") {
-      return "bg-blue-100 text-blue-800";
+      return "bg-brand-100 text-brand-800";
     }
     if (tier === "standard") {
-      return "bg-indigo-100 text-indigo-800";
+      return "bg-brand-100 text-brand-800";
     }
-    return "bg-amber-100 text-amber-800";
+    return "bg-warning-100 text-warning-800";
   }
 
   function getStatusBadgeClass(status: string): string {
     if (status === "published") {
-      return "bg-emerald-500 text-white";
+      return "bg-success-500 text-white";
     }
     if (status === "approved") {
-      return "bg-blue-500 text-white";
+      return "bg-brand-500 text-white";
     }
     if (status === "in_review") {
-      return "bg-amber-500 text-white";
+      return "bg-warning-500 text-white";
     }
     if (status === "archived") {
-      return "bg-slate-400 text-white";
+      return "bg-surface-400 text-white";
     }
-    return "bg-slate-200 text-slate-700";
+    return "bg-surface-200 text-surface-700";
   }
 
   function dismissNotification() {

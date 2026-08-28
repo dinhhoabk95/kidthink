@@ -1,6 +1,10 @@
 import { appError, generateSecureToken, hashSecureToken } from "@mindkid/auth";
-import { getOwnerDb, users, verificationTokens } from "@mindkid/db";
-import { enqueueJob } from "@mindkid/queue";
+import {
+  dispatchTransactionalEmail,
+  getOwnerDb,
+  users,
+  verificationTokens,
+} from "@mindkid/db";
 import { and, eq, isNull } from "drizzle-orm";
 import {
   createError,
@@ -111,15 +115,17 @@ export default defineEventHandler(async (event) => {
   });
 
   // Enqueue verification email to the NEW email address (BR-ACS-03)
-  await enqueueJob("email:send", {
+  await dispatchTransactionalEmail({
+    recipientType: "user",
+    recipientId: userId,
+    code: "email_change_verification",
     to: newEmail,
-    template: "email_change_verification",
-    data: {
+    payload: {
       token: rawToken,
       new_email: newEmail,
       expires_at: expiresAt.toISOString(),
     },
-  }).catch(() => null);
+  });
 
   return {
     pending_email: newEmail,

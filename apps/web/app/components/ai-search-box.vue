@@ -47,7 +47,7 @@
     </div>
 
     <div
-      class="rounded-xl bg-amber-50 border border-amber-200 p-2.5 text-xs text-amber-800 flex items-center justify-between"
+      class="rounded-xl bg-warning-50 border border-warning-200 p-2.5 text-xs text-warning-800 flex items-center justify-between"
       v-if="isFallbackActive"
     >
       <span
@@ -55,11 +55,11 @@
         khóa cơ bản (hoàn 1 credit).</span
       >
       <button
-        class="text-amber-900 font-bold ml-2 hover:underline"
+        class="text-warning-900 font-bold ml-2 hover:underline"
         type="button"
         @click="isFallbackActive = false"
       >
-        ✕
+        <UIcon class="w-5 h-5" name="i-lucide-x" />
       </button>
     </div>
   </div>

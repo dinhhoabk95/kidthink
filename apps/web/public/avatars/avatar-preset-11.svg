@@ -1,0 +1,57 @@
+<svg fill="none" viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+  <title>Avatar Preset 11</title>
+  <circle
+    cx="40"
+    cy="40"
+    fill="#ffedd5"
+    r="36"
+    stroke="#b45309"
+    stroke-width="4"
+  />
+  <!-- Ears -->
+  <circle
+    cx="22"
+    cy="22"
+    fill="#d97706"
+    r="10"
+    stroke="#b45309"
+    stroke-width="3"
+  />
+  <circle
+    cx="58"
+    cy="22"
+    fill="#d97706"
+    r="10"
+    stroke="#b45309"
+    stroke-width="3"
+  />
+  <!-- Face -->
+  <circle
+    cx="40"
+    cy="44"
+    fill="#d97706"
+    r="26"
+    stroke="#b45309"
+    stroke-width="3.5"
+  />
+  <!-- Muzzle -->
+  <ellipse
+    cx="40"
+    cy="50"
+    fill="#ffffff"
+    rx="14"
+    ry="10"
+    stroke="#b45309"
+    stroke-width="2"
+  />
+  <ellipse cx="40" cy="46" fill="#b45309" rx="4" ry="3" />
+  <path
+    d="M40 49v4M37 53c1 2 5 2 6 0"
+    stroke="#b45309"
+    stroke-linecap="round"
+    stroke-width="2"
+  />
+  <!-- Eyes -->
+  <circle cx="31" cy="38" fill="#1c1917" r="3" />
+  <circle cx="49" cy="38" fill="#1c1917" r="3" />
+</svg>

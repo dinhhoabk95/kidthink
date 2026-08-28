@@ -93,7 +93,11 @@
                 class="footer-link highlight-child-policy"
                 to="/child-privacy"
               >
-                🛡️ Chính sách bảo vệ trẻ em
+                <UIcon
+                  class="w-4 h-4 mr-1 inline-block"
+                  name="i-lucide-shield"
+                />
+                Chính sách bảo vệ trẻ em
               </NuxtLink>
             </li>
             <li>

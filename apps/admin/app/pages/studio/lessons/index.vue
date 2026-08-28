@@ -5,17 +5,17 @@
       class="flex flex-col sm:flex-row sm:items-center justify-between gap-4"
     >
       <div>
-        <h1 class="text-2xl font-bold text-slate-900 dark:text-white">
+        <h1 class="text-2xl font-bold text-surface-900 dark:text-white">
           Xưởng Soạn Bài Học (Lesson Studio)
         </h1>
-        <p class="text-sm text-slate-500 dark:text-slate-400">
+        <p class="text-sm text-surface-500 dark:text-surface-400">
           Biên soạn kịch bản sư phạm 5 phần và lắp ráp các hoạt động học tập
           tương tác.
         </p>
       </div>
 
       <button
-        class="min-h-11 px-5 py-2.5 rounded-2xl bg-indigo-600 hover:bg-indigo-700 active:scale-95 text-white font-semibold text-base shadow-sm transition-all flex items-center gap-2"
+        class="min-h-11 px-5 py-2.5 rounded-2xl bg-brand-600 hover:bg-brand-700 active:scale-95 text-white font-semibold text-base shadow-sm transition-all flex items-center gap-2"
         type="button"
         @click="openCreateLesson"
       >
@@ -25,12 +25,12 @@
 
     <!-- Notification Banner -->
     <div
-      class="p-4 rounded-2xl bg-indigo-50 dark:bg-indigo-900/40 border border-indigo-200 dark:border-indigo-700 text-indigo-900 dark:text-indigo-200 text-sm flex items-center justify-between"
+      class="p-4 rounded-2xl bg-brand-50 dark:bg-brand-900/40 border border-brand-200 dark:border-brand-700 text-brand-900 dark:text-brand-200 text-sm flex items-center justify-between"
       v-if="actionNotification"
     >
       <span>{{ actionNotification }}</span>
       <button
-        class="text-xs font-bold text-indigo-600 dark:text-indigo-400 hover:underline"
+        class="text-xs font-bold text-brand-600 dark:text-brand-400 hover:underline"
         type="button"
         @click="dismissNotification"
       >
@@ -41,12 +41,12 @@
     <!-- Filter & List View (when not editing) -->
     <div class="space-y-4" v-if="!isEditorActive">
       <div
-        class="p-4 rounded-2xl bg-white dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 shadow-sm flex flex-wrap gap-4 items-center justify-between"
+        class="p-4 rounded-2xl bg-white dark:bg-surface-800 border-2 border-surface-200 dark:border-surface-700 shadow-sm flex flex-wrap gap-4 items-center justify-between"
       >
         <div class="flex flex-wrap gap-3 items-center flex-1">
           <label class="sr-only" for="filter-lesson-q">Tìm kiếm bài học</label>
           <input
-            class="min-h-10 px-4 py-2 text-sm rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:outline-none focus:border-indigo-500 w-64"
+            class="min-h-10 px-4 py-2 text-sm rounded-xl border border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-900 text-surface-900 dark:text-white focus:outline-none focus:border-brand-500 w-64"
             id="filter-lesson-q"
             placeholder="Tìm mã bài học hoặc tiêu đề..."
             type="text"
@@ -58,7 +58,7 @@
             >Trạng thái bài học</label
           >
           <select
-            class="min-h-10 px-3 py-2 text-sm rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:outline-none focus:border-indigo-500"
+            class="min-h-10 px-3 py-2 text-sm rounded-xl border border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-900 text-surface-900 dark:text-white focus:outline-none focus:border-brand-500"
             id="filter-lesson-status"
             v-model="filters.status"
             @change="fetchLessons"
@@ -72,7 +72,7 @@
           </select>
         </div>
 
-        <div class="text-xs text-slate-500 font-semibold">
+        <div class="text-xs text-surface-500 font-semibold">
           {{ lessons.length }}
           bài học
         </div>
@@ -80,14 +80,14 @@
 
       <!-- Lessons Table -->
       <div
-        class="bg-white dark:bg-slate-800 rounded-3xl border-2 border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden"
+        class="bg-white dark:bg-surface-800 rounded-3xl border-2 border-surface-200 dark:border-surface-700 shadow-sm overflow-hidden"
       >
-        <div class="p-12 text-center text-slate-500" v-if="isLoading">
+        <div class="p-12 text-center text-surface-500" v-if="isLoading">
           Đang tải danh sách bài học...
         </div>
 
         <div
-          class="p-12 text-center text-slate-500"
+          class="p-12 text-center text-surface-500"
           v-else-if="lessons.length === 0"
         >
           Không tìm thấy bài học nào.
@@ -96,7 +96,7 @@
         <div class="overflow-x-auto" v-else>
           <table class="w-full text-left text-sm">
             <thead
-              class="bg-slate-50 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-700 text-slate-500 text-xs font-bold"
+              class="bg-surface-50 dark:bg-surface-900 border-b border-surface-200 dark:border-surface-700 text-surface-500 text-xs font-bold"
             >
               <tr>
                 <th class="py-3 px-4">Mã bài học</th>
@@ -107,23 +107,25 @@
                 <th class="py-3 px-4 text-right">Thao tác</th>
               </tr>
             </thead>
-            <tbody class="divide-y divide-slate-100 dark:divide-slate-700">
+            <tbody class="divide-y divide-surface-100 dark:divide-surface-700">
               <tr
-                class="hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors"
+                class="hover:bg-surface-50 dark:hover:bg-surface-700/50 transition-colors"
                 v-for="les in lessons"
                 :key="les.id"
               >
-                <td class="py-3 px-4 font-bold text-slate-900 dark:text-white">
+                <td
+                  class="py-3 px-4 font-bold text-surface-900 dark:text-white"
+                >
                   {{ les.code }}
                   (v{{ les.content_version }})
                 </td>
                 <td
-                  class="py-3 px-4 font-semibold text-slate-800 dark:text-slate-200"
+                  class="py-3 px-4 font-semibold text-surface-800 dark:text-surface-200"
                 >
                   {{ les.title }}
                 </td>
                 <td
-                  class="py-3 px-4 text-slate-600 dark:text-slate-300 text-xs"
+                  class="py-3 px-4 text-surface-600 dark:text-surface-300 text-xs"
                 >
                   {{ les.target_age_min }}–{{ les.target_age_max }}
                   tuổi · ⏱️ {{ les.estimated_minutes }} phút
@@ -146,21 +148,21 @@
                 </td>
                 <td class="py-3 px-4 text-right space-x-2">
                   <button
-                    class="px-3 py-1.5 text-xs font-bold rounded-xl bg-indigo-50 text-indigo-600 hover:bg-indigo-100"
+                    class="px-3 py-1.5 text-xs font-bold rounded-xl bg-brand-50 text-brand-600 hover:bg-brand-100"
                     type="button"
                     @click="openTeachingView(les)"
                   >
                     Bản xem dạy
                   </button>
                   <button
-                    class="px-3 py-1.5 text-xs font-bold rounded-xl bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-200"
+                    class="px-3 py-1.5 text-xs font-bold rounded-xl bg-surface-100 dark:bg-surface-700 text-surface-700 dark:text-surface-200 hover:bg-surface-200"
                     type="button"
                     @click="openEditLesson(les)"
                   >
                     Mở xưởng
                   </button>
                   <button
-                    class="px-3 py-1.5 text-xs font-bold rounded-xl bg-amber-500 text-white hover:bg-amber-600"
+                    class="px-3 py-1.5 text-xs font-bold rounded-xl bg-warning-500 text-white hover:bg-warning-600"
                     type="button"
                     v-if="les.status === 'draft'"
                     @click="submitLessonForReview(les)"
@@ -201,45 +203,45 @@
 
     <!-- Add Activity Library Modal -->
     <div
-      class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm"
+      class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-surface-900/50 backdrop-blur-sm"
       v-if="isAddActivityModalOpen"
     >
       <div
-        class="bg-white dark:bg-slate-800 rounded-3xl border-4 border-slate-300 dark:border-slate-700 p-6 w-full max-w-xl shadow-2xl space-y-4 max-h-[85vh] overflow-y-auto"
+        class="bg-white dark:bg-surface-800 rounded-3xl border-4 border-surface-300 dark:border-surface-700 p-6 w-full max-w-xl shadow-2xl space-y-4 max-h-[85vh] overflow-y-auto"
       >
-        <h2 class="text-base font-bold text-slate-900 dark:text-white">
+        <h2 class="text-base font-bold text-surface-900 dark:text-white">
           Chọn hoạt động từ thư viện để lắp vào bài học
         </h2>
 
         <div class="space-y-2">
           <button
-            class="w-full text-left p-3 rounded-2xl border border-slate-200 dark:border-slate-700 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 flex items-center justify-between cursor-pointer transition-colors"
+            class="w-full text-left p-3 rounded-2xl border border-surface-200 dark:border-surface-700 hover:bg-brand-50 dark:hover:bg-brand-900/30 flex items-center justify-between cursor-pointer transition-colors"
             type="button"
             v-for="act in availableActivities"
             :key="act.id"
             @click="selectActivityToAdd(act)"
           >
             <div>
-              <div class="font-bold text-slate-900 dark:text-white text-xs">
+              <div class="font-bold text-surface-900 dark:text-white text-xs">
                 {{ act.code }}
                 — {{ act.title }}
               </div>
-              <div class="text-xs text-slate-500 font-mono">
+              <div class="text-xs text-surface-500 font-mono">
                 {{ act.kind }}
                 · ⏱️ {{ act.estimated_minutes }} phút
               </div>
             </div>
             <span
-              class="px-3 py-1 bg-indigo-600 text-white rounded-xl text-xs font-bold"
+              class="px-3 py-1 bg-brand-600 text-white rounded-xl text-xs font-bold"
             >
               + Chọn
             </span>
           </button>
         </div>
 
-        <div class="flex justify-end pt-3 border-t dark:border-slate-700">
+        <div class="flex justify-end pt-3 border-t dark:border-surface-700">
           <button
-            class="px-4 py-2 text-xs font-bold rounded-xl text-slate-600 hover:bg-slate-100"
+            class="px-4 py-2 text-xs font-bold rounded-xl text-surface-600 hover:bg-surface-100"
             type="button"
             @click="isAddActivityModalOpen = false"
           >
@@ -342,31 +344,31 @@
 
   function getTierBadgeClass(tier: string): string {
     if (tier === "free") {
-      return "bg-emerald-100 text-emerald-800";
+      return "bg-success-100 text-success-800";
     }
     if (tier === "login") {
-      return "bg-blue-100 text-blue-800";
+      return "bg-brand-100 text-brand-800";
     }
     if (tier === "standard") {
-      return "bg-indigo-100 text-indigo-800";
+      return "bg-brand-100 text-brand-800";
     }
-    return "bg-amber-100 text-amber-800";
+    return "bg-warning-100 text-warning-800";
   }
 
   function getStatusBadgeClass(status: string): string {
     if (status === "published") {
-      return "bg-emerald-500 text-white";
+      return "bg-success-500 text-white";
     }
     if (status === "approved") {
-      return "bg-blue-500 text-white";
+      return "bg-brand-500 text-white";
     }
     if (status === "in_review") {
-      return "bg-amber-500 text-white";
+      return "bg-warning-500 text-white";
     }
     if (status === "archived") {
-      return "bg-slate-400 text-white";
+      return "bg-surface-400 text-white";
     }
-    return "bg-slate-200 text-slate-700";
+    return "bg-surface-200 text-surface-700";
   }
 
   function dismissNotification() {

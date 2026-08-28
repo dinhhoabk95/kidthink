@@ -70,7 +70,7 @@
         <UIcon class="w-8 h-8" name="i-lucide-smile-plus" />
       </div>
       <h2 class="text-xl font-bold font-heading text-surface-900">
-        Chào mừng bạn đến với TiniMath!
+        Chào mừng bạn đến với MindKid!
       </h2>
       <p class="text-surface-600 text-sm">
         Hãy tạo hồ sơ cho bé để bắt đầu trải nghiệm các trò chơi tư duy và lộ

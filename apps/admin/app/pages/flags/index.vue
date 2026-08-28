@@ -5,10 +5,10 @@
       class="flex flex-col sm:flex-row sm:items-center justify-between gap-4"
     >
       <div>
-        <h1 class="text-2xl font-bold text-slate-900 dark:text-white">
+        <h1 class="text-2xl font-bold text-surface-900 dark:text-white">
           Quản Lý Cờ Tính Năng (Feature Flags)
         </h1>
-        <p class="text-sm text-slate-500 mt-1">
+        <p class="text-sm text-surface-500 mt-1">
           Bật/tắt khẩn cấp hoặc triển khai theo tỷ lệ mà không cần triển khai mã
           nguồn mới (P2.9).
         </p>
@@ -17,15 +17,18 @@
 
     <!-- Flags List -->
     <div
-      class="bg-white dark:bg-slate-800 rounded-3xl border-2 border-slate-200 dark:border-slate-700 overflow-hidden shadow-sm"
+      class="bg-white dark:bg-surface-800 rounded-3xl border-2 border-surface-200 dark:border-surface-700 overflow-hidden shadow-sm"
     >
-      <div class="p-12 text-center text-slate-400" v-if="isLoading">
+      <div class="p-12 text-center text-surface-400" v-if="isLoading">
         Đang tải cấu hình cờ tính năng...
       </div>
 
-      <div class="divide-y divide-slate-100 dark:divide-slate-700/60" v-else>
+      <div
+        class="divide-y divide-surface-100 dark:divide-surface-700/60"
+        v-else
+      >
         <div
-          class="p-6 space-y-3 hover:bg-slate-50 dark:hover:bg-slate-700/20 transition-all"
+          class="p-6 space-y-3 hover:bg-surface-50 dark:hover:bg-surface-700/20 transition-all"
           v-for="flag in flags"
           :key="flag.key"
         >
@@ -35,14 +38,14 @@
             <div class="space-y-1">
               <div class="flex items-center gap-2.5 flex-wrap">
                 <span
-                  class="font-mono text-xs px-2.5 py-0.5 rounded-full bg-slate-100 dark:bg-slate-700 font-bold text-slate-700 dark:text-slate-300"
+                  class="font-mono text-xs px-2.5 py-0.5 rounded-full bg-surface-100 dark:bg-surface-700 font-bold text-surface-700 dark:text-surface-300"
                 >
                   {{ flag.key }}
                 </span>
 
                 <!-- Expired badge (BR-FFA-02) -->
                 <span
-                  class="text-xs px-2 py-0.5 rounded-full bg-rose-100 text-rose-800 font-semibold"
+                  class="text-xs px-2 py-0.5 rounded-full bg-danger-100 text-danger-800 font-semibold"
                   v-if="flag.is_expired"
                 >
                   ⚠️ Quá hạn {{ flag.days_expired }} ngày
@@ -50,17 +53,17 @@
 
                 <!-- Orphan flag badge (BR-FFA-04) -->
                 <span
-                  class="text-xs px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 font-semibold"
+                  class="text-xs px-2 py-0.5 rounded-full bg-warning-100 text-warning-800 font-semibold"
                   v-if="flag.is_orphan"
                 >
                   ⚠️ Cờ mồ côi (không có trong code)
                 </span>
               </div>
 
-              <h2 class="text-base font-bold text-slate-900 dark:text-white">
+              <h2 class="text-base font-bold text-surface-900 dark:text-white">
                 {{ flag.name }}
               </h2>
-              <p class="text-xs text-slate-500">
+              <p class="text-xs text-surface-500">
                 {{ flag.description }}
               </p>
             </div>
@@ -68,8 +71,8 @@
             <!-- Current Switch & Safe Default (BR-FFA-05) -->
             <div class="flex items-center gap-4 shrink-0">
               <div class="text-right text-xs">
-                <span class="text-slate-400 block">Mặc định an toàn:</span>
-                <span class="font-bold text-slate-600 dark:text-slate-300">
+                <span class="text-surface-400 block">Mặc định an toàn:</span>
+                <span class="font-bold text-surface-600 dark:text-surface-300">
                   {{ flag.default_value ? 'BẬT (ON)' : 'TẮT (OFF)' }}
                 </span>
               </div>
@@ -79,8 +82,8 @@
                 :class="[
                   'min-h-10 px-4 py-2 rounded-2xl font-bold text-xs transition-all shadow-sm flex items-center gap-1.5',
                   flag.enabled
-                    ? 'bg-emerald-600 text-white hover:bg-emerald-700'
-                    : 'bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-300'
+                    ? 'bg-success-600 text-white hover:bg-success-700'
+                    : 'bg-surface-200 dark:bg-surface-700 text-surface-700 dark:text-surface-300 hover:bg-surface-300'
                 ]"
                 @click="openToggleModal(flag)"
               >
@@ -90,7 +93,7 @@
           </div>
 
           <div
-            class="text-xs text-slate-400 pt-1 border-t border-slate-100 dark:border-slate-700/50 flex flex-wrap items-center justify-between gap-2"
+            class="text-xs text-surface-400 pt-1 border-t border-surface-100 dark:border-surface-700/50 flex flex-wrap items-center justify-between gap-2"
           >
             <span>Phạm vi: <strong>{{ flag.scope }}</strong></span>
             <span
@@ -101,7 +104,7 @@
               >Lý do đổi gần nhất: <em>"{{ flag.update_reason }}"</em></span
             >
             <NuxtLink
-              class="text-indigo-600 dark:text-indigo-400 font-bold hover:underline"
+              class="text-brand-600 dark:text-brand-400 font-bold hover:underline"
               :to="`/audit?entity_type=feature_flag&entity_id=${flag.key}`"
             >
               Xem lịch sử đổi cờ →
@@ -113,16 +116,16 @@
 
     <!-- Toggle Reason Modal (BR-FFA-01, BR-FLG-04) -->
     <div
-      class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm"
+      class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-surface-900/60 backdrop-blur-sm"
       v-if="isModalOpen"
     >
       <div
-        class="w-full max-w-lg bg-white dark:bg-slate-800 rounded-3xl border-4 border-slate-200 dark:border-slate-700 p-6 shadow-2xl space-y-4"
+        class="w-full max-w-lg bg-white dark:bg-surface-800 rounded-3xl border-4 border-surface-200 dark:border-surface-700 p-6 shadow-2xl space-y-4"
       >
-        <h2 class="text-lg font-bold text-slate-900 dark:text-white">
+        <h2 class="text-lg font-bold text-surface-900 dark:text-white">
           Xác nhận đổi cờ '{{ activeFlag?.key }}'
         </h2>
-        <p class="text-xs text-slate-500">
+        <p class="text-xs text-surface-500">
           Chuyển trạng thái sang
           <strong>{{ activeFlag?.enabled ? 'TẮT' : 'BẬT' }}</strong>. Bắt buộc
           nêu rõ lý do để lưu vào nhật ký kiểm toán (tối thiểu 10 ký tự,
@@ -131,13 +134,13 @@
 
         <div>
           <label
-            class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1"
+            class="block text-xs font-bold text-surface-700 dark:text-surface-300 mb-1"
             for="flag-reason"
           >
             Lý do thay đổi cờ *
           </label>
           <textarea
-            class="w-full p-3 text-sm rounded-xl border-2 border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:border-indigo-500 focus:outline-none"
+            class="w-full p-3 text-sm rounded-xl border-2 border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-900 text-surface-900 dark:text-white focus:border-brand-500 focus:outline-none"
             id="flag-reason"
             placeholder="Nêu lý do vận hành hoặc phát hành..."
             rows="3"
@@ -145,20 +148,20 @@
           />
         </div>
 
-        <p class="text-xs text-rose-600 font-semibold" v-if="errorMessage">
+        <p class="text-xs text-danger-600 font-semibold" v-if="errorMessage">
           {{ errorMessage }}
         </p>
 
         <div class="flex items-center justify-end gap-3 pt-2">
           <button
-            class="px-4 py-2 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 font-semibold text-sm"
+            class="px-4 py-2 rounded-xl text-surface-600 dark:text-surface-300 hover:bg-surface-100 dark:hover:bg-surface-700 font-semibold text-sm"
             type="button"
             @click="isModalOpen = false"
           >
             Huỷ
           </button>
           <button
-            class="px-5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-white font-semibold text-sm transition-all"
+            class="px-5 py-2 rounded-xl bg-brand-600 hover:bg-brand-700 disabled:opacity-50 text-white font-semibold text-sm transition-all"
             type="button"
             :disabled="changeReason.trim().length < 10 || isSubmitting"
             @click="confirmToggle"

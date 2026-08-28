@@ -36,6 +36,20 @@ export function registerAlertDispatcher(dispatcher: AlertDispatcher): void {
   activeDispatcher = dispatcher;
 }
 
+/** Drops the dispatcher again, so a test can observe the production shape. */
+export function clearAlertDispatcher(): void {
+  activeDispatcher = undefined;
+}
+
+/**
+ * An env var that is present but empty is not configured. requireEnv already
+ * treats it that way (BR-ENV-01); an alert channel that trusted `""` would
+ * report itself reachable and then build a request against an empty URL.
+ */
+function blankToUndefined(value: string | undefined): string | undefined {
+  return value === undefined || value.trim().length === 0 ? undefined : value;
+}
+
 export class LogOnlyAlertAdapter implements AlertPort {
   sendAlert(payload: AlertPayload): Promise<void> {
     console.warn(
@@ -69,8 +83,18 @@ export class EmailAlertAdapter implements AlertPort {
     );
   }
 
+  /**
+   * True in production, and that is the point.
+   *
+   * There is no email transport in this repository yet — the notification path
+   * ends at LocalFileEmailAdapter — so without a dispatcher registered this
+   * class writes a line to a log file and nothing else. Claiming otherwise is
+   * what let a P0 alert channel look configured while nobody could receive
+   * anything: assertAlertingReachable() below can only work if this answer is
+   * honest.
+   */
   isLogOnly(): boolean {
-    return false;
+    return activeDispatcher === undefined;
   }
 }
 
@@ -88,14 +112,16 @@ export class TelegramAlertAdapter implements AlertPort {
   private readonly fetchFn: typeof fetch;
 
   constructor(options?: TelegramAdapterOptions) {
-    this.botToken =
+    this.botToken = blankToUndefined(
       options?.botToken === undefined
         ? optionalEnv("TELEGRAM_BOT_TOKEN")
-        : options.botToken;
-    this.chatId =
+        : options.botToken
+    );
+    this.chatId = blankToUndefined(
       options?.chatId === undefined
         ? optionalEnv("TELEGRAM_CHAT_ID")
-        : options.chatId;
+        : options.chatId
+    );
     this.fallbackAdapter = options?.fallbackAdapter;
     this.fetchFn = options?.fetchFn || globalThis.fetch;
   }
@@ -164,16 +190,24 @@ export class TelegramAlertAdapter implements AlertPort {
           _fallback_reason: errorMsg,
         },
       };
-      const fallbackAdapter =
-        this.fallbackAdapter === undefined
-          ? new EmailAlertAdapter()
-          : this.fallbackAdapter;
-      await fallbackAdapter.sendAlert(fallbackPayload);
+      await this.resolveFallback().sendAlert(fallbackPayload);
     }
   }
 
+  /**
+   * Healthchecks, not email, is the default second channel: it performs a real
+   * HTTPS request with no transport this repository still has to build, which
+   * is the difference between a fallback and the appearance of one (D-S).
+   */
+  private resolveFallback(): AlertPort {
+    return this.fallbackAdapter ?? new HealthchecksAlertAdapter();
+  }
+
   isLogOnly(): boolean {
-    return false;
+    if (this.botToken && this.chatId) {
+      return false;
+    }
+    return this.resolveFallback().isLogOnly();
   }
 }
 
@@ -190,17 +224,25 @@ export class HealthchecksAlertAdapter implements AlertPort {
   private readonly fetchFn: typeof fetch;
 
   constructor(options?: HealthchecksAdapterOptions) {
-    if (options?.pingUrl === undefined) {
-      const uuid =
-        options?.checkUuid === undefined
-          ? optionalEnv("HEALTHCHECKS_CHECK_UUID")
-          : options.checkUuid;
-      this.pingUrl =
-        uuid === undefined
-          ? optionalEnv("HEALTHCHECKS_PING_URL")
-          : `https://hc-ping.com/${uuid}`;
+    // Naming either option — even as a blank string — means the caller is
+    // configuring this adapter, so the environment is not consulted at all.
+    // Without that rule an explicit "no URL" would silently pick up whatever
+    // the developer happens to have in .env, and the deaf case would be
+    // untestable.
+    const configured =
+      options !== undefined && ("pingUrl" in options || "checkUuid" in options);
+
+    const pingUrl = blankToUndefined(
+      configured ? options.pingUrl : optionalEnv("HEALTHCHECKS_PING_URL")
+    );
+    const uuid = blankToUndefined(
+      configured ? options.checkUuid : optionalEnv("HEALTHCHECKS_CHECK_UUID")
+    );
+
+    if (uuid === undefined) {
+      this.pingUrl = pingUrl;
     } else {
-      this.pingUrl = options.pingUrl;
+      this.pingUrl = `https://hc-ping.com/${uuid}`;
     }
     this.fetchFn = options?.fetchFn || globalThis.fetch;
   }
@@ -242,7 +284,7 @@ export class HealthchecksAlertAdapter implements AlertPort {
   }
 
   isLogOnly(): boolean {
-    return false;
+    return this.pingUrl === undefined;
   }
 }
 
@@ -351,6 +393,32 @@ let currentAlertPort: AlertPort = new DeduplicatingAlertAdapter(
 
 export function setAlertPort(port: AlertPort): void {
   currentAlertPort = port;
+}
+
+export class AlertingUnreachableError extends Error {}
+
+/**
+ * BR-MON-01 — a P0 alert has to reach a person.
+ *
+ * Called at process start in production. Refusing to boot is deliberately
+ * harsher than warning: a process that runs while every alert channel is a
+ * console.warn is a process whose failures nobody will hear about, and the
+ * whole point of the alert contract is that this state is not allowed to be
+ * silent. The environment gate (BR-DEP-04) catches the same thing one step
+ * earlier, at release time; this is the backstop for a machine that was
+ * reconfigured by hand afterwards.
+ */
+export function assertAlertingReachable(
+  isProduction = process.env.NODE_ENV === "production"
+): void {
+  if (!isProduction) {
+    return;
+  }
+  if (currentAlertPort.isLogOnly()) {
+    throw new AlertingUnreachableError(
+      "No alert channel can reach a person: configure TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID, or HEALTHCHECKS_PING_URL. Refusing to start deaf."
+    );
+  }
 }
 
 export function getAlertPort(): AlertPort {

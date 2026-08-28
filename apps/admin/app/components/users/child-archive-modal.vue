@@ -25,7 +25,7 @@
             Lý do lưu trữ (tối thiểu 10 ký tự) *
           </label>
           <textarea
-            class="w-full p-3 rounded-2xl border-[3px] border-surface-200 focus:border-indigo-500 focus:outline-none text-sm"
+            class="w-full p-3 rounded-2xl border-[3px] border-surface-200 focus:border-brand-500 focus:outline-none text-sm"
             id="child-archive-reason"
             maxlength="500"
             minlength="10"
@@ -46,7 +46,7 @@
             Huỷ bỏ
           </button>
           <button
-            class="min-h-11 px-5 py-2 rounded-2xl bg-amber-600 hover:bg-amber-700 text-white font-bold text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+            class="min-h-11 px-5 py-2 rounded-2xl bg-warning-600 hover:bg-warning-700 text-white font-bold text-sm disabled:opacity-50 disabled:cursor-not-allowed"
             type="submit"
             :disabled="reason.trim().length < 10 || submitting"
           >

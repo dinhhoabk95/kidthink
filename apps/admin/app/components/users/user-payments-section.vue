@@ -107,11 +107,11 @@
   function getOrderStatusBadgeClass(status: string): string {
     switch (status) {
       case "approved":
-        return "bg-emerald-100 text-emerald-800";
+        return "bg-success-100 text-success-800";
       case "rejected":
-        return "bg-rose-100 text-rose-800";
+        return "bg-danger-100 text-danger-800";
       default:
-        return "bg-amber-100 text-amber-800";
+        return "bg-warning-100 text-warning-800";
     }
   }
 

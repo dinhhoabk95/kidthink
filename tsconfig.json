@@ -6,19 +6,16 @@
   // `include` cố ý dùng glob `packages/*`: package mới sinh ra là được phủ ngay,
   // ❌ không phải nhớ thêm tsconfig + script cho từng cái (thứ chắc chắn sẽ quên).
   //
-  // apps/* KHÔNG nằm đây — Nuxt sinh tsconfig riêng ở .nuxt/. Khi apps/web có
-  // code thật, app đó tự khai script `typecheck` (`nuxt typecheck`) và
-  // `pnpm --recursive run typecheck` nhặt lên.
+  // apps/* KHÔNG nằm đây — Nuxt sinh tsconfig riêng ở .nuxt/. Cổng phủ chúng là
+  // `pnpm typecheck` (`scripts/typecheck/typecheck-gate.ts`), chạy vue-tsc
+  // trên từng project .nuxt/tsconfig.*.json. ❌ NEVER dùng `nuxt typecheck`:
+  // nó nạp nuxt.config.ts nên chết vì thiếu env, và từng exit 0 im lặng.
+  //
+  // Mọi flag compiler sống ở packages/config/tsconfig.base.json — ❌ NEVER
+  // khai lại ở đây.
   "extends": "./packages/config/tsconfig.base.json",
   "compilerOptions": {
-    "noEmit": true,
     "types": ["node"],
-    // scripts/*.ts chạy trực tiếp bằng `node` (native TS strip-types, không qua
-    // bundler) — Node ESM cần extension đầy đủ trên relative import
-    // (`./lint-specs-lib.ts`), nên import trong scripts/ khai `.ts` tường minh.
-    // Flag này yêu cầu noEmit (đã set ở trên) — an toàn vì đây là single-project
-    // config, không có package nào dưới cây này thực sự emit output.
-    "allowImportingTsExtensions": true,
     "baseUrl": ".",
     "paths": {
       "@mindkid/adaptive": ["./packages/adaptive/src/index.ts"],
@@ -39,16 +36,29 @@
   },
   "include": [
     "scripts/**/*.ts",
+    "infra/**/*.ts",
     "*.config.ts",
     "packages/*/src/**/*.ts",
     "packages/*/tests/**/*.ts",
     // Tooling của workspace (cổng chất lượng, generator, script vận hành) nằm
     // trong package sở hữu nó, không còn ở scripts/ gốc — vẫn phải được typecheck.
     "packages/*/scripts/**/*.ts",
-    "packages/*/vitest/**/*.ts"
+    "packages/*/vitest/**/*.ts",
+    // File config ở gốc mỗi workspace (vitest.config.ts, drizzle.config.ts,
+    // app.config.ts). Trước dòng này 20 file như vậy không nằm trong bất kỳ
+    // project nào — sửa sai kiểu ở đó không cổng nào báo.
+    "packages/*/*.ts",
+    "apps/*/vitest.config.ts"
   ],
-  // Fixture của cổng lint là **mẫu văn bản** cho cổng quét, không phải code
-  // chạy được: chúng cố ý import h3/zod mà package cổng không có, và ca âm cố ý
-  // thiếu kiểu. Typecheck chúng là đo sai thứ.
-  "exclude": ["packages/*/tests/**/fixtures/**"]
+  "exclude": [
+    // Fixture của cổng lint là **mẫu văn bản** cho cổng quét, không phải code
+    // chạy được: chúng cố ý import h3/zod mà package cổng không có, và ca âm cố ý
+    // thiếu kiểu. Typecheck chúng là đo sai thứ.
+    "packages/*/tests/**/fixtures/**",
+    // Config của Nuxt layer (packages/ui) cần type Nuxt sinh ra lúc build app.
+    // Ngoài app không có `nuxt/config` lẫn auto-import `defineAppConfig`, nên
+    // chỗ kiểm chúng là project .nuxt/ của app nạp layer, không phải lưới này.
+    "packages/*/nuxt.config.ts",
+    "packages/*/app.config.ts"
+  ]
 }

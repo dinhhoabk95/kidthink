@@ -2,12 +2,12 @@
   <div class="schema-form-renderer space-y-6">
     <!-- Group 1: Thông tin cơ bản -->
     <div
-      class="rounded-3xl border-2 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-5 shadow-sm"
+      class="rounded-3xl border-2 border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 p-5 shadow-sm"
     >
       <h3
-        class="text-base font-bold text-slate-900 dark:text-white mb-4 flex items-center gap-2"
+        class="text-base font-bold text-surface-900 dark:text-white mb-4 flex items-center gap-2"
       >
-        <span class="w-2.5 h-2.5 rounded-full bg-indigo-600"></span>
+        <span class="w-2.5 h-2.5 rounded-full bg-brand-600"></span>
         Thông tin chung
       </h3>
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -46,12 +46,12 @@
 
     <!-- Group 2: Nội dung bài học (content_pack) -->
     <div
-      class="rounded-3xl border-2 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-5 shadow-sm"
+      class="rounded-3xl border-2 border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 p-5 shadow-sm"
     >
       <h3
-        class="text-base font-bold text-slate-900 dark:text-white mb-4 flex items-center gap-2"
+        class="text-base font-bold text-surface-900 dark:text-white mb-4 flex items-center gap-2"
       >
-        <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
+        <span class="w-2.5 h-2.5 rounded-full bg-success-500"></span>
         Nội dung bài học (Content Pack)
       </h3>
 
@@ -59,11 +59,11 @@
         <template v-for="(node, key) in contentHints" :key="key">
           <!-- Nested Object -->
           <div
-            class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700"
+            class="p-4 rounded-2xl bg-surface-50 dark:bg-surface-900/50 border border-surface-200 dark:border-surface-700"
             v-if="node.hint === 'object'"
           >
             <h4
-              class="text-sm font-bold text-slate-800 dark:text-slate-200 mb-3"
+              class="text-sm font-bold text-surface-800 dark:text-surface-200 mb-3"
             >
               {{ getLabel(String(key), String(key)) }}
             </h4>
@@ -93,16 +93,18 @@
 
           <!-- Nested Array -->
           <div
-            class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700"
+            class="p-4 rounded-2xl bg-surface-50 dark:bg-surface-900/50 border border-surface-200 dark:border-surface-700"
             v-else-if="node.hint === 'array'"
           >
             <div class="flex items-center justify-between mb-3">
-              <h4 class="text-sm font-bold text-slate-800 dark:text-slate-200">
+              <h4
+                class="text-sm font-bold text-surface-800 dark:text-surface-200"
+              >
                 {{ getLabel(String(key), String(key)) }}
                 ({{ getArrayLength(String(key)) }})
               </h4>
               <button
-                class="min-h-9 px-3 py-1.5 rounded-xl border border-indigo-600 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 text-sm font-medium hover:bg-indigo-100 transition-all"
+                class="min-h-9 px-3 py-1.5 rounded-xl border border-brand-600 bg-brand-50 dark:bg-brand-900/30 text-brand-700 dark:text-brand-300 text-sm font-medium hover:bg-brand-100 transition-all"
                 type="button"
                 @click="onAddArrayItem(String(key), node.elementHint)"
               >
@@ -112,16 +114,16 @@
 
             <div class="space-y-3">
               <div
-                class="p-3.5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 relative shadow-sm"
+                class="p-3.5 rounded-xl bg-white dark:bg-surface-800 border border-surface-200 dark:border-surface-700 relative shadow-sm"
                 v-for="(item, idx) in getArrayItems(String(key))"
                 :key="idx"
               >
                 <div class="flex items-center justify-between mb-2">
-                  <span class="text-xs font-semibold text-slate-500"
+                  <span class="text-xs font-semibold text-surface-500"
                     >Mục #{{ idx + 1 }}</span
                   >
                   <button
-                    class="text-xs text-rose-500 hover:text-rose-700 font-medium px-2 py-1"
+                    class="text-xs text-danger-500 hover:text-danger-700 font-medium px-2 py-1"
                     type="button"
                     @click="onRemoveArrayItem(String(key), idx)"
                   >
@@ -193,12 +195,12 @@
 
     <!-- Group 3: Thông số độ khó (difficulty_params) -->
     <div
-      class="rounded-3xl border-2 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-5 shadow-sm"
+      class="rounded-3xl border-2 border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 p-5 shadow-sm"
     >
       <h3
-        class="text-base font-bold text-slate-900 dark:text-white mb-4 flex items-center gap-2"
+        class="text-base font-bold text-surface-900 dark:text-white mb-4 flex items-center gap-2"
       >
-        <span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span>
+        <span class="w-2.5 h-2.5 rounded-full bg-warning-500"></span>
         Độ khó (Difficulty Parameters)
       </h3>
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -222,12 +224,12 @@
 
     <!-- Group 4: Quyền truy cập (access_tier) -->
     <div
-      class="rounded-3xl border-2 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-5 shadow-sm"
+      class="rounded-3xl border-2 border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 p-5 shadow-sm"
     >
       <h3
-        class="text-base font-bold text-slate-900 dark:text-white mb-4 flex items-center gap-2"
+        class="text-base font-bold text-surface-900 dark:text-white mb-4 flex items-center gap-2"
       >
-        <span class="w-2.5 h-2.5 rounded-full bg-violet-500"></span>
+        <span class="w-2.5 h-2.5 rounded-full bg-brand-500"></span>
         Quyền truy cập (Access Tier)
       </h3>
       <SchemaFormField
@@ -246,7 +248,7 @@
 </template>
 
 <script lang="ts" setup>
-  import type { UiHintResult } from "@mindkid/shared";
+  import type { UiHintResult } from "@mindkid/shared/client";
   import SchemaFormField from "./schema-form-field.vue";
 
   const props = withDefaults(

@@ -19,7 +19,7 @@
       v-else-if="loadError"
     >
       <div
-        class="max-w-md mx-auto p-6 rounded-3xl bg-rose-50 dark:bg-rose-950/40 border border-rose-300 text-rose-800 dark:text-rose-200"
+        class="max-w-md mx-auto p-6 rounded-3xl bg-danger-50 dark:bg-danger-950/40 border border-danger-300 text-danger-800 dark:text-danger-200"
       >
         <h2 class="text-lg font-heading font-extrabold mb-2">
           Không thể tải trò chơi
@@ -60,7 +60,7 @@
             </span>
             <span
               class="px-2 py-0.5 rounded-xl text-xs font-bold"
-              :class="game.status === 'ready' ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-300' : 'bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-300'"
+              :class="game.status === 'ready' ? 'bg-success-100 text-success-800 dark:bg-success-900/40 dark:text-success-300' : 'bg-warning-100 text-warning-800 dark:bg-warning-900/40 dark:text-warning-300'"
             >
               {{ game.status === 'ready' ? 'Sẵn sàng' : `Bản nháp (v${game.version})` }}
             </span>
@@ -83,7 +83,7 @@
           </button>
 
           <button
-            class="px-5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-heading font-bold text-sm shadow-md transition-all active:scale-95 min-h-11 inline-flex items-center justify-center"
+            class="px-5 py-2 rounded-xl bg-success-600 hover:bg-success-700 text-white font-heading font-bold text-sm shadow-md transition-all active:scale-95 min-h-11 inline-flex items-center justify-center"
             type="button"
             :disabled="saving"
             @click="saveChanges('ready')"
@@ -104,21 +104,21 @@
 
       <!-- Feedback message banner -->
       <div
-        class="mb-6 p-4 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-300 dark:border-emerald-700 text-emerald-800 dark:text-emerald-200 text-sm font-bold flex items-center justify-between"
+        class="mb-6 p-4 rounded-2xl bg-success-50 dark:bg-success-950/40 border border-success-300 dark:border-success-700 text-success-800 dark:text-success-200 text-sm font-bold flex items-center justify-between"
         v-if="feedbackMessage"
       >
         <span>{{ feedbackMessage }}</span>
         <button
-          class="text-emerald-700 dark:text-emerald-300 text-xs font-bold"
+          class="text-success-700 dark:text-success-300 text-xs font-bold"
           type="button"
           @click="feedbackMessage = ''"
         >
-          ✕
+          <UIcon class="w-5 h-5" name="i-lucide-x" />
         </button>
       </div>
 
       <div
-        class="mb-6 p-4 rounded-2xl bg-rose-50 dark:bg-rose-950/40 border border-rose-300 text-rose-800 dark:text-rose-200 text-sm font-bold"
+        class="mb-6 p-4 rounded-2xl bg-danger-50 dark:bg-danger-950/40 border border-danger-300 text-danger-800 dark:text-danger-200 text-sm font-bold"
         v-if="saveError"
       >
         {{ saveError }}
@@ -286,12 +286,12 @@
                       <span>Đáp án đúng</span>
                     </label>
                     <button
-                      class="text-xs text-rose-500 font-bold px-1.5 py-1"
+                      class="text-xs text-danger-500 font-bold px-1.5 py-1"
                       type="button"
                       v-if="game.contentPack.options.length > 2"
                       @click="removeGT001Option(idx)"
                     >
-                      ✕
+                      <UIcon class="w-5 h-5" name="i-lucide-x" />
                     </button>
                   </div>
                 </div>
@@ -305,7 +305,7 @@
                 {{ game.templateId }}:
               </p>
               <textarea
-                class="w-full p-3 rounded-2xl bg-surface-900 text-emerald-400 font-mono text-xs focus:outline-none"
+                class="w-full p-3 rounded-2xl bg-surface-900 text-success-400 font-mono text-xs focus:outline-none"
                 rows="8"
                 v-model="rawContentPackJson"
                 @input="parseRawJson"
@@ -328,7 +328,7 @@
               </h2>
               <span
                 class="px-2 py-0.5 rounded-xl text-xs font-bold"
-                :class="validationReport.ok ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-300' : 'bg-rose-100 text-rose-800 dark:bg-rose-950/40 dark:text-rose-300'"
+                :class="validationReport.ok ? 'bg-success-100 text-success-800 dark:bg-success-900/40 dark:text-success-300' : 'bg-danger-100 text-danger-800 dark:bg-danger-950/40 dark:text-danger-300'"
               >
                 {{ validationReport.ok ? 'Hợp lệ' : 'Chưa đạt' }}
               </span>
@@ -340,7 +340,7 @@
             </p>
 
             <div
-              class="p-3 rounded-2xl bg-emerald-50 dark:bg-emerald-950/30 text-emerald-800 dark:text-emerald-200 text-xs font-bold"
+              class="p-3 rounded-2xl bg-success-50 dark:bg-success-950/30 text-success-800 dark:text-success-200 text-xs font-bold"
               v-if="validationReport.ok"
             >
               ✓ Trò chơi đáp ứng đầy đủ tiêu chuẩn kiểm duyệt và cấu trúc sư
@@ -350,11 +350,11 @@
 
             <div class="space-y-2" v-else>
               <div
-                class="p-2.5 rounded-xl bg-rose-50 dark:bg-rose-950/30 text-rose-800 dark:text-rose-200 text-xs font-medium flex items-start gap-2"
+                class="p-2.5 rounded-xl bg-danger-50 dark:bg-danger-950/30 text-danger-800 dark:text-danger-200 text-xs font-medium flex items-start gap-2"
                 v-for="(issue, idx) in validationReport.issues"
                 :key="idx"
               >
-                <span class="text-rose-500 font-bold">•</span>
+                <span class="text-danger-500 font-bold">•</span>
                 <span>{{ issue }}</span>
               </div>
             </div>
@@ -435,6 +435,12 @@
 <script lang="ts" setup>
   import { onMounted, ref, watch } from "vue";
   import { useRoute } from "vue-router";
+
+  // Trang này tự dựng chrome (PublicNavbar + <main id="main-content"> +
+  // PublicFooter). Không tắt layout thì `default.vue` dựng thêm một bộ nữa:
+  // navbar và footer hiện hai lần, và có hai phần tử cùng id="main-content"
+  // nên skip-link của app.vue nhảy sai chỗ (BR-A11-05).
+  definePageMeta({ layout: false });
 
   const route = useRoute();
   const uuid = String(route.params.uuid || "");

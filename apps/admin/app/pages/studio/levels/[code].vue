@@ -1,25 +1,25 @@
 <template>
   <div
-    class="studio-workspace h-screen flex flex-col bg-slate-100 dark:bg-slate-900 overflow-hidden"
+    class="studio-workspace h-screen flex flex-col bg-surface-100 dark:bg-surface-900 overflow-hidden"
   >
     <!-- Top Action Bar -->
     <header
-      class="h-16 px-6 bg-white dark:bg-slate-800 border-b-2 border-slate-200 dark:border-slate-700 flex items-center justify-between z-10 shrink-0"
+      class="h-16 px-6 bg-white dark:bg-surface-800 border-b-2 border-surface-200 dark:border-surface-700 flex items-center justify-between z-10 shrink-0"
     >
       <div class="flex items-center gap-4">
         <NuxtLink
-          class="w-10 h-10 rounded-2xl flex items-center justify-center text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-700 transition-all font-bold"
+          class="w-10 h-10 rounded-2xl flex items-center justify-center text-surface-500 hover:bg-surface-100 dark:hover:bg-surface-700 transition-all font-bold"
           to="/studio/levels"
         >
           ←
         </NuxtLink>
         <div>
           <div class="flex items-center gap-2">
-            <h1 class="text-base font-bold text-slate-900 dark:text-white">
+            <h1 class="text-base font-bold text-surface-900 dark:text-white">
               {{ levelTitle }}
             </h1>
             <span
-              class="font-mono text-xs px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 font-semibold"
+              class="font-mono text-xs px-2 py-0.5 rounded-full bg-surface-100 dark:bg-surface-700 text-surface-600 dark:text-surface-300 font-semibold"
             >
               {{ code }}
               v{{ currentVersion }}
@@ -30,7 +30,7 @@
               {{ statusLabel }}
             </span>
           </div>
-          <span class="text-xs text-slate-500">
+          <span class="text-xs text-surface-500">
             {{ autosaveStatus }}
           </span>
         </div>
@@ -39,7 +39,7 @@
       <!-- Right Action Controls -->
       <div class="flex items-center gap-3">
         <button
-          class="min-h-10 px-4 py-2 rounded-2xl border-2 border-slate-300 dark:border-slate-600 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-semibold text-sm transition-all"
+          class="min-h-10 px-4 py-2 rounded-2xl border-2 border-surface-300 dark:border-surface-600 hover:bg-surface-100 dark:hover:bg-surface-700 text-surface-700 dark:text-surface-200 font-semibold text-sm transition-all"
           type="button"
           @click="duplicateCurrentLevel"
         >
@@ -47,7 +47,7 @@
         </button>
 
         <button
-          class="min-h-10 px-4 py-2 rounded-2xl border-2 border-indigo-600 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 font-semibold text-sm hover:bg-indigo-100 transition-all"
+          class="min-h-10 px-4 py-2 rounded-2xl border-2 border-brand-600 bg-brand-50 dark:bg-brand-900/30 text-brand-700 dark:text-brand-300 font-semibold text-sm hover:bg-brand-100 transition-all"
           type="button"
           :disabled="isSaving"
           @click="manualSave"
@@ -56,7 +56,7 @@
         </button>
 
         <button
-          class="min-h-10 px-5 py-2 rounded-2xl bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white font-semibold text-sm transition-all shadow-sm"
+          class="min-h-10 px-5 py-2 rounded-2xl bg-success-600 hover:bg-success-700 active:scale-95 text-white font-semibold text-sm transition-all shadow-sm"
           type="button"
           v-if="levelData.status === 'draft'"
           @click="submitForReview"
@@ -68,7 +68,7 @@
 
     <!-- Notification Toast/Banner -->
     <div
-      class="px-6 py-2 bg-indigo-600 text-white text-xs font-semibold flex items-center justify-between"
+      class="px-6 py-2 bg-brand-600 text-white text-xs font-semibold flex items-center justify-between"
       v-if="toastMessage"
     >
       <span>{{ toastMessage }}</span>
@@ -81,9 +81,9 @@
     <main class="flex-1 flex flex-col lg:flex-row overflow-hidden">
       <!-- Left Panel: 40% Schema Form -->
       <section
-        class="w-full lg:w-[40%] h-full overflow-y-auto p-6 border-r-2 border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/50"
+        class="w-full lg:w-[40%] h-full overflow-y-auto p-6 border-r-2 border-surface-200 dark:border-surface-700 bg-surface-50 dark:bg-surface-900/50"
       >
-        <div class="py-20 text-center text-slate-400" v-if="isLoading">
+        <div class="py-20 text-center text-surface-400" v-if="isLoading">
           Đang tải dữ liệu và cấu hình hợp đồng...
         </div>
 
@@ -100,7 +100,9 @@
       </section>
 
       <!-- Right Panel: 60% Live Preview Frame -->
-      <section class="w-full lg:w-[60%] h-full p-6 bg-slate-950 flex flex-col">
+      <section
+        class="w-full lg:w-[60%] h-full p-6 bg-surface-950 flex flex-col"
+      >
         <LivePreviewFrame
           :level-data="levelData"
           :template-code="templateCode"
@@ -127,7 +129,7 @@
 </template>
 
 <script lang="ts" setup>
-  import type { UiHintResult } from "@mindkid/shared";
+  import type { UiHintResult } from "@mindkid/shared/client";
   import { computed, onMounted, onUnmounted, ref, watch } from "vue";
   import { useRoute, useRouter } from "vue-router";
   import EmojiPickerModal from "~/components/emoji/emoji-picker-modal.vue";
@@ -241,15 +243,15 @@
     const st = String(levelData.value.status || "draft");
     switch (st) {
       case "draft":
-        return "bg-slate-200 text-slate-700";
+        return "bg-surface-200 text-surface-700";
       case "in_review":
-        return "bg-amber-100 text-amber-800";
+        return "bg-warning-100 text-warning-800";
       case "approved":
-        return "bg-emerald-100 text-emerald-800";
+        return "bg-success-100 text-success-800";
       case "published":
-        return "bg-indigo-100 text-indigo-800";
+        return "bg-brand-100 text-brand-800";
       default:
-        return "bg-slate-200 text-slate-600";
+        return "bg-surface-200 text-surface-600";
     }
   });
 

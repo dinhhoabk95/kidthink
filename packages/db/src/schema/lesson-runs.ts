@@ -10,6 +10,7 @@ import {
   varchar,
 } from "drizzle-orm/pg-core";
 import { childProfiles } from "./child.ts";
+import { timestamps } from "./columns.ts";
 import { activities, lessons } from "./content.ts";
 import { users } from "./identity.ts";
 
@@ -65,12 +66,7 @@ export const lessonRuns = pgTable(
       .defaultNow()
       .notNull(),
     endedAt: timestamp("ended_at", { withTimezone: true }),
-    createdAt: timestamp("created_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
-    updatedAt: timestamp("updated_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
+    ...timestamps(),
   },
   (table) => [
     index("idx_lesson_runs_user_child").on(table.userId, table.childProfileId),
@@ -96,12 +92,7 @@ export const lessonRunSteps = pgTable(
     outcome: lessonStepOutcomeEnum("outcome").notNull().default("pending"),
     startedAt: timestamp("started_at", { withTimezone: true }).defaultNow(),
     completedAt: timestamp("completed_at", { withTimezone: true }),
-    createdAt: timestamp("created_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
-    updatedAt: timestamp("updated_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
+    ...timestamps(),
   },
   (table) => [
     unique("lesson_run_steps_run_step_unique").on(

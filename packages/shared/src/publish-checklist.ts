@@ -3,7 +3,10 @@
  * Rule sở hữu: BR-CLC-09, BR-CLC-11
  */
 
-import { validateActivityModel } from "./activity-model.js";
+import {
+  ACTIVITY_REF_TYPE_BY_KIND,
+  validateActivityModel,
+} from "./activity-model.js";
 import {
   type CurriculumItemMetadata,
   type CurriculumValidationInput,
@@ -205,7 +208,7 @@ function checkDigitalGameRef(
   const refType = entity.refType ?? entity.ref_type;
   const refId = entity.refId ?? entity.ref_id;
   const refStatus = entity.refStatus ?? entity.ref_status;
-  if (refType !== "game_level" || !refId) {
+  if (refType !== ACTIVITY_REF_TYPE_BY_KIND.digital_game || !refId) {
     missing.push("digital_game_missing_level_ref");
   } else if (refStatus && refStatus !== "published") {
     missing.push("referenced_game_level_not_published");

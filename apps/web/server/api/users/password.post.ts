@@ -3,8 +3,12 @@ import {
   hashPassword,
   validatePasswordStrength,
 } from "@mindkid/auth";
-import { activeSessions, getOwnerDb, users } from "@mindkid/db";
-import { enqueueJob } from "@mindkid/queue";
+import {
+  activeSessions,
+  dispatchTransactionalEmail,
+  getOwnerDb,
+  users,
+} from "@mindkid/db";
 import { and, eq, ne } from "drizzle-orm";
 import {
   createError,
@@ -116,13 +120,13 @@ export default defineEventHandler(async (event) => {
     .catch(() => null);
 
   // Send notification to current email (BR-ACS-02, BR-NOT-01)
-  await enqueueJob("email:send", {
+  await dispatchTransactionalEmail({
+    recipientType: "user",
+    recipientId: userId,
+    code: "password_changed_notification",
     to: account.email,
-    template: "password_changed_notification",
-    data: {
-      timestamp: now.toISOString(),
-    },
-  }).catch(() => null);
+    payload: { timestamp: now.toISOString() },
+  });
 
   return {
     ok: true,

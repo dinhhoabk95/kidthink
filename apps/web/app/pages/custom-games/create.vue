@@ -88,7 +88,7 @@
               class="block text-sm font-bold text-surface-800 dark:text-surface-200 mb-1.5"
               for="game-title"
             >
-              Tiêu đề trò chơi <span class="text-rose-500">*</span>
+              Tiêu đề trò chơi <span class="text-danger-500">*</span>
             </label>
             <input
               class="w-full px-4 py-2.5 rounded-2xl bg-surface-50 dark:bg-surface-900 border-2 border-surface-300 dark:border-surface-700 text-surface-900 dark:text-white font-medium focus:border-brand-600 focus:outline-none min-h-11 text-base"
@@ -104,7 +104,7 @@
               class="block text-sm font-bold text-surface-800 dark:text-surface-200 mb-1.5"
               for="game-instruction"
             >
-              Chỉ dẫn giọng đọc cho bé <span class="text-rose-500">*</span>
+              Chỉ dẫn giọng đọc cho bé <span class="text-danger-500">*</span>
             </label>
             <textarea
               class="w-full px-4 py-2.5 rounded-2xl bg-surface-50 dark:bg-surface-900 border-2 border-surface-300 dark:border-surface-700 text-surface-900 dark:text-white font-medium focus:border-brand-600 focus:outline-none text-base"
@@ -158,7 +158,7 @@
         </div>
 
         <div
-          class="mt-4 p-4 rounded-2xl bg-rose-50 dark:bg-rose-950/40 border border-rose-300 text-rose-800 dark:text-rose-200 text-sm font-bold"
+          class="mt-4 p-4 rounded-2xl bg-danger-50 dark:bg-danger-950/40 border border-danger-300 text-danger-800 dark:text-danger-200 text-sm font-bold"
           v-if="submitError"
         >
           {{ submitError }}
@@ -188,6 +188,12 @@
 
 <script lang="ts" setup>
   import { ref } from "vue";
+
+  // Trang này tự dựng chrome (PublicNavbar + <main id="main-content"> +
+  // PublicFooter). Không tắt layout thì `default.vue` dựng thêm một bộ nữa:
+  // navbar và footer hiện hai lần, và có hai phần tử cùng id="main-content"
+  // nên skip-link của app.vue nhảy sai chỗ (BR-A11-05).
+  definePageMeta({ layout: false });
 
   const templates = [
     {

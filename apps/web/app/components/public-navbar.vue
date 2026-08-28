@@ -2,7 +2,7 @@
   <header class="site-header">
     <div class="header-container">
       <NuxtLink aria-label="Trang chủ MindKid" class="brand-logo" to="/">
-        <span aria-hidden="true" class="brand-emoji">🧠</span>
+        <UIcon class="w-7 h-7 text-brand-600" name="i-lucide-shapes" />
         <span class="brand-title">MindKid</span>
       </NuxtLink>
 
@@ -87,6 +87,11 @@
     color: var(--color-brand-600);
   }
 
+  .nav-link.router-link-active {
+    color: var(--color-brand-700);
+    font-weight: 700;
+  }
+
   .btn-play-trial {
     display: inline-flex;
     align-items: center;
@@ -99,7 +104,7 @@
     font-size: 0.95rem;
     border-radius: 1rem;
     text-decoration: none;
-    box-shadow: 0 4px 6px -1px rgba(249, 115, 22, 0.2);
+    box-shadow: 0 4px 6px -1px rgba(194, 65, 12, 0.2);
     transition:
       transform 0.15s,
       background-color 0.15s;
@@ -108,5 +113,10 @@
   .btn-play-trial:hover {
     background-color: var(--color-cta-hover);
     transform: translateY(-1px);
+  }
+
+  .btn-play-trial:active {
+    transform: translateY(1px);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
   }
 </style>

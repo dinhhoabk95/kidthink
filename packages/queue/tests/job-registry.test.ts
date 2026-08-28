@@ -1,30 +1,45 @@
 import { describe, expect, it } from "vitest";
-import {
-  getJobDefinition,
-  JOB_REGISTRY,
-  validateJobRegistryConsumers,
-} from "#src/registry";
+import { JOB_DEFINITIONS } from "#src/jobs/index";
+import { getJobDefinition, JOB_REGISTRY } from "#src/registry";
+import { defineEventJobWithoutIdempotencyKey } from "#tests/fixtures/event-job-without-idempotency-key";
+
+const CRON_PATTERN = /^[\d*/, -]+$/;
+const MISSING_KEY_MESSAGE = /BẮT BUỘC khai idempotencyKey/;
+
+const MVP_JOB_NAMES = [
+  "rollup:session",
+  "rollup:daily",
+  "sweep:abandoned",
+  "entitlement:expire",
+  "order:expire",
+  "account:purge",
+  "email:send",
+  "image:cleanup-orphan",
+  "backup:postgres",
+  "backup:verify",
+];
+
+const ADDON_JOB_NAMES = [
+  "entitlement:soft-unlock-expire",
+  "report:manual-grants-monthly",
+  "pdf:render",
+  "sweep:pdf-cleanup",
+  "embed:content",
+];
 
 describe("Task 1 — Job Registry & Boundaries (BR-JOB-04, BR-JOB-07)", () => {
-  it("defines all 12 MVP jobs with exact specs (BR-JOB-01..08, BR-EGR-09)", () => {
-    expect(JOB_REGISTRY).toHaveLength(15);
+  it("khai đủ 10 job MVP của job-queue.md §7.1 cộng 5 job add-on", () => {
+    const jobNames = JOB_REGISTRY.map((job) => job.name);
 
-    const jobNames = JOB_REGISTRY.map((j) => j.name);
-    expect(jobNames).toContain("rollup:session");
-    expect(jobNames).toContain("rollup:daily");
-    expect(jobNames).toContain("sweep:abandoned");
-    expect(jobNames).toContain("entitlement:expire");
-    expect(jobNames).toContain("order:expire");
-    expect(jobNames).toContain("entitlement:soft-unlock-expire");
-    expect(jobNames).toContain("account:purge");
-    expect(jobNames).toContain("email:send");
-    expect(jobNames).toContain("image:cleanup-orphan");
-    expect(jobNames).toContain("backup:postgres");
-    expect(jobNames).toContain("backup:verify");
-    expect(jobNames).toContain("report:manual-grants-monthly");
-    expect(jobNames).toContain("pdf:render");
-    expect(jobNames).toContain("sweep:pdf-cleanup");
-    expect(jobNames).toContain("embed:content");
+    for (const name of MVP_JOB_NAMES) {
+      expect(jobNames).toContain(name);
+    }
+    for (const name of ADDON_JOB_NAMES) {
+      expect(jobNames).toContain(name);
+    }
+    expect(JOB_REGISTRY).toHaveLength(
+      MVP_JOB_NAMES.length + ADDON_JOB_NAMES.length
+    );
 
     for (const job of JOB_REGISTRY) {
       expect(job.name).toBeDefined();
@@ -44,29 +59,33 @@ describe("Task 1 — Job Registry & Boundaries (BR-JOB-04, BR-JOB-07)", () => {
     expect(purgeJob?.retryPolicy.alertOnFailImmediately).toBe(true);
   });
 
-  it("validates registered consumers gate correctly (D-FW)", () => {
-    const implemented = [
-      "backup:postgres",
-      "backup:verify",
-      "email:send",
-      "rollup:daily",
-      "entitlement:expire",
-    ];
+  it("mọi job theo sự kiện đều khai idempotencyKey (BR-JOB-02)", () => {
+    const eventJobs = JOB_DEFINITIONS.filter(
+      (job) => job.schedule.kind === "event"
+    );
 
-    const gateResult = validateJobRegistryConsumers(implemented, "P1.5");
-    expect(gateResult.valid).toBe(true);
-    expect(gateResult.errors).toHaveLength(0);
+    expect(eventJobs.length).toBeGreaterThan(0);
+    for (const job of eventJobs) {
+      expect(job.idempotencyKey, job.name).toBeTypeOf("function");
+    }
+  });
 
-    // Negative test 1: Unknown consumer implemented -> RED
-    const invalidConsumers = [...implemented, "unknown:job"];
-    const gateResult1 = validateJobRegistryConsumers(invalidConsumers, "P1.5");
-    expect(gateResult1.valid).toBe(false);
-    expect(gateResult1.errors[0]).toContain("not registered in JOB_REGISTRY");
+  it("mọi job theo lịch đều khai cron pattern kèm timezone ICT", () => {
+    const cronJobs = JOB_DEFINITIONS.filter(
+      (job) => job.schedule.kind === "cron"
+    );
 
-    // Negative test 2: Step P1.5 passed but missing rollup:daily consumer -> RED
-    const missingDaily = implemented.filter((c) => c !== "rollup:daily");
-    const gateResult2 = validateJobRegistryConsumers(missingDaily, "P1.5");
-    expect(gateResult2.valid).toBe(false);
-    expect(gateResult2.errors[0]).toContain("must have an active consumer");
+    expect(cronJobs.length).toBeGreaterThan(0);
+    for (const job of cronJobs) {
+      if (job.schedule.kind !== "cron") {
+        continue;
+      }
+      expect(job.schedule.pattern, job.name).toMatch(CRON_PATTERN);
+      expect(job.schedule.tz, job.name).toBe("Asia/Ho_Chi_Minh");
+    }
+  });
+
+  it("ca âm BR-JOB-02: job sự kiện thiếu idempotencyKey bị từ chối lúc khai", () => {
+    expect(defineEventJobWithoutIdempotencyKey).toThrow(MISSING_KEY_MESSAGE);
   });
 });

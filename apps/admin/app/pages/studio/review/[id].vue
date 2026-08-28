@@ -1,31 +1,31 @@
 <template>
   <div
-    class="h-screen flex flex-col bg-slate-100 dark:bg-slate-900 overflow-hidden"
+    class="h-screen flex flex-col bg-surface-100 dark:bg-surface-900 overflow-hidden"
   >
     <!-- Top Action Bar -->
     <header
-      class="h-16 px-6 bg-white dark:bg-slate-800 border-b-2 border-slate-200 dark:border-slate-700 flex items-center justify-between z-10 shrink-0"
+      class="h-16 px-6 bg-white dark:bg-surface-800 border-b-2 border-surface-200 dark:border-surface-700 flex items-center justify-between z-10 shrink-0"
     >
       <div class="flex items-center gap-4">
         <NuxtLink
-          class="w-10 h-10 rounded-2xl flex items-center justify-center text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-700 transition-all font-bold"
+          class="w-10 h-10 rounded-2xl flex items-center justify-center text-surface-500 hover:bg-surface-100 dark:hover:bg-surface-700 transition-all font-bold"
           to="/studio/review"
         >
           ←
         </NuxtLink>
         <div>
           <div class="flex items-center gap-2">
-            <h1 class="text-base font-bold text-slate-900 dark:text-white">
+            <h1 class="text-base font-bold text-surface-900 dark:text-white">
               {{ levelData.title || 'Duyệt Nội Dung' }}
             </h1>
             <span
-              class="font-mono text-xs px-2.5 py-0.5 rounded-full bg-slate-100 dark:bg-slate-700 font-semibold text-slate-700 dark:text-slate-300"
+              class="font-mono text-xs px-2.5 py-0.5 rounded-full bg-surface-100 dark:bg-surface-700 font-semibold text-surface-700 dark:text-surface-300"
             >
               {{ levelData.code }}
               v{{ levelData.contentVersion }}
             </span>
             <span
-              class="text-xs px-2.5 py-0.5 rounded-full bg-purple-100 text-purple-800 font-semibold"
+              class="text-xs px-2.5 py-0.5 rounded-full bg-brand-100 text-brand-800 font-semibold"
               v-if="levelData.origin === 'ai_assisted'"
             >
               🤖 AI Assisted
@@ -37,7 +37,7 @@
       <!-- Action Buttons -->
       <div class="flex items-center gap-3">
         <button
-          class="min-h-10 px-4 py-2 rounded-2xl border-2 border-rose-500 text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 font-semibold text-sm transition-all"
+          class="min-h-10 px-4 py-2 rounded-2xl border-2 border-danger-500 text-danger-600 dark:text-danger-400 hover:bg-danger-50 dark:hover:bg-danger-950/40 font-semibold text-sm transition-all"
           type="button"
           @click="isRejectModalOpen = true"
         >
@@ -46,7 +46,7 @@
 
         <!-- Approve Button (BR-CRQ-02: Only enabled after viewing preview; BR-CRQ-07: All 6 checklist checked) -->
         <button
-          class="min-h-10 px-5 py-2 rounded-2xl bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold text-sm transition-all shadow-sm flex items-center gap-2"
+          class="min-h-10 px-5 py-2 rounded-2xl bg-success-600 hover:bg-success-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold text-sm transition-all shadow-sm flex items-center gap-2"
           type="button"
           :disabled="!canApprove || isProcessing"
           @click="approveContent"
@@ -60,11 +60,11 @@
     <main class="flex-1 flex flex-col lg:flex-row overflow-hidden">
       <!-- Left Panel: 50% Checklist & Metadata -->
       <section
-        class="w-full lg:w-1/2 h-full overflow-y-auto p-6 border-r-2 border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/50 space-y-6"
+        class="w-full lg:w-1/2 h-full overflow-y-auto p-6 border-r-2 border-surface-200 dark:border-surface-700 bg-surface-50 dark:bg-surface-900/50 space-y-6"
       >
         <!-- Preview Guard Hint Banner (BR-CRQ-02, D-KG) -->
         <div
-          class="p-4 rounded-2xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 text-amber-800 dark:text-amber-300 text-xs flex items-center gap-2"
+          class="p-4 rounded-2xl bg-warning-50 dark:bg-warning-950/40 border border-warning-200 dark:border-warning-800 text-warning-800 dark:text-warning-300 text-xs flex items-center gap-2"
           v-if="!hasPreviewed"
         >
           <span class="text-base">ℹ️</span>
@@ -77,7 +77,7 @@
 
         <!-- Seeder Drift Warning Label (BR-CRQ-05, D-KJ) -->
         <div
-          class="p-4 rounded-2xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800 text-rose-800 dark:text-rose-300 text-xs space-y-1"
+          class="p-4 rounded-2xl bg-danger-50 dark:bg-danger-950/40 border border-danger-200 dark:border-danger-800 text-danger-800 dark:text-danger-300 text-xs space-y-1"
           v-if="seederWarning"
         >
           <div class="font-bold flex items-center gap-1.5">
@@ -89,7 +89,7 @@
 
         <!-- AI-Assisted Prominent Notice (BR-CRQ-04) -->
         <div
-          class="p-4 rounded-2xl bg-purple-50 dark:bg-purple-950/40 border border-purple-200 dark:border-purple-800 text-purple-800 dark:text-purple-300 text-xs space-y-1"
+          class="p-4 rounded-2xl bg-brand-50 dark:bg-brand-950/40 border border-brand-200 dark:border-brand-800 text-brand-800 dark:text-brand-300 text-xs space-y-1"
           v-if="levelData.origin === 'ai_assisted'"
         >
           <div class="font-bold flex items-center gap-1.5">
@@ -104,10 +104,10 @@
 
         <!-- Previous Rejection History (BR-CRQ-03) -->
         <div
-          class="p-4 rounded-2xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 text-xs space-y-2"
+          class="p-4 rounded-2xl bg-surface-100 dark:bg-surface-800 border border-surface-200 dark:border-surface-700 text-surface-700 dark:text-surface-300 text-xs space-y-2"
           v-if="previousRejections.length > 0"
         >
-          <div class="font-bold text-slate-900 dark:text-white">
+          <div class="font-bold text-surface-900 dark:text-white">
             Lịch sử từ chối trước đây:
           </div>
           <ul class="space-y-1.5 list-disc list-inside">
@@ -120,28 +120,29 @@
 
         <!-- 6-Group Mandatory Checklist (BR-CRQ-07) -->
         <div
-          class="p-5 bg-white dark:bg-slate-800 rounded-3xl border-2 border-slate-200 dark:border-slate-700 space-y-4"
+          class="p-5 bg-white dark:bg-surface-800 rounded-3xl border-2 border-surface-200 dark:border-surface-700 space-y-4"
         >
           <h2
-            class="text-sm font-bold text-slate-900 dark:text-white tracking-wider text-xs"
+            class="text-sm font-bold text-surface-900 dark:text-white tracking-wider text-xs"
           >
             Checklist Kiểm Duyệt 6 Nhóm (BR-CRQ-07)
           </h2>
 
           <div class="space-y-3">
             <label
-              class="flex items-start gap-3 p-3 rounded-2xl border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700/20 cursor-pointer"
+              class="flex items-start gap-3 p-3 rounded-2xl border border-surface-200 dark:border-surface-700 hover:bg-surface-50 dark:hover:bg-surface-700/20 cursor-pointer"
             >
               <input
-                class="mt-0.5 w-4 h-4 rounded text-indigo-600"
+                class="mt-0.5 w-4 h-4 rounded text-brand-600"
                 type="checkbox"
                 v-model="checklist.pedagogy"
               >
               <div class="text-xs">
-                <span class="font-bold text-slate-800 dark:text-slate-200 block"
+                <span
+                  class="font-bold text-surface-800 dark:text-surface-200 block"
                   >1. Sư phạm</span
                 >
-                <span class="text-slate-500"
+                <span class="text-surface-500"
                   >Mục tiêu học tập khớp skill đã gắn · độ khó hợp band tuổi ·
                   mechanic phù hợp tuổi</span
                 >
@@ -149,18 +150,19 @@
             </label>
 
             <label
-              class="flex items-start gap-3 p-3 rounded-2xl border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700/20 cursor-pointer"
+              class="flex items-start gap-3 p-3 rounded-2xl border border-surface-200 dark:border-surface-700 hover:bg-surface-50 dark:hover:bg-surface-700/20 cursor-pointer"
             >
               <input
-                class="mt-0.5 w-4 h-4 rounded text-indigo-600"
+                class="mt-0.5 w-4 h-4 rounded text-brand-600"
                 type="checkbox"
                 v-model="checklist.content"
               >
               <div class="text-xs">
-                <span class="font-bold text-slate-800 dark:text-slate-200 block"
+                <span
+                  class="font-bold text-surface-800 dark:text-surface-200 block"
                   >2. Nội dung</span
                 >
-                <span class="text-slate-500"
+                <span class="text-surface-500"
                   >Đáp án đúng và duy nhất · không câu hỏi mơ hồ · vật gây nhiễu
                   hợp lý</span
                 >
@@ -168,18 +170,19 @@
             </label>
 
             <label
-              class="flex items-start gap-3 p-3 rounded-2xl border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700/20 cursor-pointer"
+              class="flex items-start gap-3 p-3 rounded-2xl border border-surface-200 dark:border-surface-700 hover:bg-surface-50 dark:hover:bg-surface-700/20 cursor-pointer"
             >
               <input
-                class="mt-0.5 w-4 h-4 rounded text-indigo-600"
+                class="mt-0.5 w-4 h-4 rounded text-brand-600"
                 type="checkbox"
                 v-model="checklist.language"
               >
               <div class="text-xs">
-                <span class="font-bold text-slate-800 dark:text-slate-200 block"
+                <span
+                  class="font-bold text-surface-800 dark:text-surface-200 block"
                   >3. Ngôn ngữ</span
                 >
-                <span class="text-slate-500"
+                <span class="text-surface-500"
                   >Câu ngắn, đọc thành tiếng được · từ vựng trong tầm tuổi ·
                   không lỗi chính tả/dấu</span
                 >
@@ -187,54 +190,57 @@
             </label>
 
             <label
-              class="flex items-start gap-3 p-3 rounded-2xl border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700/20 cursor-pointer"
+              class="flex items-start gap-3 p-3 rounded-2xl border border-surface-200 dark:border-surface-700 hover:bg-surface-50 dark:hover:bg-surface-700/20 cursor-pointer"
             >
               <input
-                class="mt-0.5 w-4 h-4 rounded text-indigo-600"
+                class="mt-0.5 w-4 h-4 rounded text-brand-600"
                 type="checkbox"
                 v-model="checklist.imagery"
               >
               <div class="text-xs">
-                <span class="font-bold text-slate-800 dark:text-slate-200 block"
+                <span
+                  class="font-bold text-surface-800 dark:text-surface-200 block"
                   >4. Hình ảnh</span
                 >
-                <span class="text-slate-500"
+                <span class="text-surface-500"
                   >Emoji/ảnh đúng nghĩa · nhìn rõ ở cỡ thật · không gây sợ</span
                 >
               </div>
             </label>
 
             <label
-              class="flex items-start gap-3 p-3 rounded-2xl border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700/20 cursor-pointer"
+              class="flex items-start gap-3 p-3 rounded-2xl border border-surface-200 dark:border-surface-700 hover:bg-surface-50 dark:hover:bg-surface-700/20 cursor-pointer"
             >
               <input
-                class="mt-0.5 w-4 h-4 rounded text-indigo-600"
+                class="mt-0.5 w-4 h-4 rounded text-brand-600"
                 type="checkbox"
                 v-model="checklist.safety"
               >
               <div class="text-xs">
-                <span class="font-bold text-slate-800 dark:text-slate-200 block"
+                <span
+                  class="font-bold text-surface-800 dark:text-surface-200 block"
                   >5. An toàn</span
                 >
-                <span class="text-slate-500"
+                <span class="text-surface-500"
                   >Không nội dung đáng sợ, bạo lực, phân biệt, thương hiệu</span
                 >
               </div>
             </label>
 
             <label
-              class="flex items-start gap-3 p-3 rounded-2xl border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700/20 cursor-pointer"
+              class="flex items-start gap-3 p-3 rounded-2xl border border-surface-200 dark:border-surface-700 hover:bg-surface-50 dark:hover:bg-surface-700/20 cursor-pointer"
             >
               <input
-                class="mt-0.5 w-4 h-4 rounded text-indigo-600"
+                class="mt-0.5 w-4 h-4 rounded text-brand-600"
                 type="checkbox"
                 v-model="checklist.technical"
               >
               <div class="text-xs">
-                <span class="font-bold text-slate-800 dark:text-slate-200 block"
+                <span
+                  class="font-bold text-surface-800 dark:text-surface-200 block"
                   >6. Kỹ thuật</span
                 >
-                <span class="text-slate-500"
+                <span class="text-surface-500"
                   >Preview chạy được · asset load đủ · sàn touch đạt tiêu chuẩn</span
                 >
               </div>
@@ -244,7 +250,7 @@
       </section>
 
       <!-- Right Panel: 50% Real-Engine Live Preview -->
-      <section class="w-full lg:w-1/2 h-full p-6 bg-slate-950 flex flex-col">
+      <section class="w-full lg:w-1/2 h-full p-6 bg-surface-950 flex flex-col">
         <LivePreviewFrame
           :level-data="previewPayload"
           :template-code="levelData.templateCode || 'GT-001'"
@@ -255,29 +261,29 @@
 
     <!-- Reject Reason Modal (BR-CRQ-03) -->
     <div
-      class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm"
+      class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-surface-900/60 backdrop-blur-sm"
       v-if="isRejectModalOpen"
     >
       <div
-        class="w-full max-w-lg bg-white dark:bg-slate-800 rounded-3xl border-4 border-slate-200 dark:border-slate-700 p-6 shadow-2xl space-y-4"
+        class="w-full max-w-lg bg-white dark:bg-surface-800 rounded-3xl border-4 border-surface-200 dark:border-surface-700 p-6 shadow-2xl space-y-4"
       >
-        <h2 class="text-lg font-bold text-slate-900 dark:text-white">
+        <h2 class="text-lg font-bold text-surface-900 dark:text-white">
           Từ Chối Duyệt Bản Này
         </h2>
-        <p class="text-xs text-slate-500">
+        <p class="text-xs text-surface-500">
           Nêu rõ lý do (tối thiểu 10 ký tự, BR-CRQ-03) để người soạn hiểu và sửa
           đúng ở lần cập nhật sau.
         </p>
 
         <div>
           <label
-            class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1"
+            class="block text-xs font-bold text-surface-700 dark:text-surface-300 mb-1"
             for="reject-reason"
           >
             Lý do từ chối *
           </label>
           <textarea
-            class="w-full p-3 text-sm rounded-xl border-2 border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:border-rose-500 focus:outline-none"
+            class="w-full p-3 text-sm rounded-xl border-2 border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-900 text-surface-900 dark:text-white focus:border-danger-500 focus:outline-none"
             id="reject-reason"
             placeholder="Ví dụ: Mục tiêu học tập chưa rõ ràng, từ ngữ câu hỏi quá dài..."
             rows="3"
@@ -287,14 +293,14 @@
 
         <div class="flex items-center justify-end gap-3 pt-2">
           <button
-            class="px-4 py-2 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 font-semibold text-sm"
+            class="px-4 py-2 rounded-xl text-surface-600 dark:text-surface-300 hover:bg-surface-100 dark:hover:bg-surface-700 font-semibold text-sm"
             type="button"
             @click="isRejectModalOpen = false"
           >
             Huỷ
           </button>
           <button
-            class="px-5 py-2 rounded-xl bg-rose-600 hover:bg-rose-700 disabled:opacity-50 text-white font-semibold text-sm transition-all"
+            class="px-5 py-2 rounded-xl bg-danger-600 hover:bg-danger-700 disabled:opacity-50 text-white font-semibold text-sm transition-all"
             type="button"
             :disabled="rejectReason.trim().length < 10 || isProcessing"
             @click="rejectContent"

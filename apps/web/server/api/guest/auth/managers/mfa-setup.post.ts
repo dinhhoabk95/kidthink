@@ -9,7 +9,7 @@ import {
 import { getOwnerDb, managers, mfaSettings } from "@mindkid/db";
 import { enforceTwoAxisRateLimit } from "@mindkid/shared";
 import { and, eq } from "drizzle-orm";
-import { defineEventHandler, readBody } from "h3";
+import { defineEventHandler } from "h3";
 import { z } from "zod";
 import {
   assertManagerRateLimitAllowed,
@@ -18,6 +18,7 @@ import {
   getManagerRemoteIp,
   getMfaEncryptionKey,
 } from "#server/utils/admin-auth-runtime";
+import { readRequestBody } from "#server/utils/request-body";
 
 const MfaSetupSchema = z
   .object({
@@ -28,7 +29,7 @@ const MfaSetupSchema = z
 export default defineEventHandler(async (event) => {
   assertManagerSameOriginRequest(event);
   assertManagerRequestBodySize(event, 16 * 1024);
-  const body = (await readBody(event).catch(() => null)) || event._body || {};
+  const body = await readRequestBody(event);
   const parsed = MfaSetupSchema.safeParse(body);
   if (!parsed.success) {
     throw appError("INVALID_CREDENTIALS");
@@ -123,7 +124,7 @@ export default defineEventHandler(async (event) => {
   const otpauthUri = generateTotpUri(
     totpSecret,
     manager.email,
-    "TiniMath Admin"
+    "MindKid Admin"
   );
 
   return {

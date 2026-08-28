@@ -61,7 +61,13 @@ Bốn game level, bốn competency, không dòng code mới.
 3. Viết Session class implement `GameSession`.
 4. Viết ≥3 game level mẫu để chứng minh contract dùng được.
 5. Viết E2E journey cho template.
-6. Seed vào `game_templates` qua PR.
+6. Viết phiếu spec `engines/GT-<nnn>.md` — `BR-ESS-07` (phiếu là một phần của định nghĩa xong)
+   làm PR thiếu phiếu không merge được.
+7. Seed vào `game_templates` qua PR.
+
+Ba level mẫu ở bước 4 là **bằng chứng contract chạy**, cấm — NEVER dùng làm nội dung sản phẩm.
+Sàn nội dung thật của một engine ở [`engine-content-depth.md`](../05-content/engine-content-depth.md);
+đo 2026-08-29, 21 trên 27 engine dừng đúng ở mức bằng chứng này.
 
 Template là **Lớp 1** — thêm template là việc của dev, không của Manager.
 
@@ -86,7 +92,7 @@ Template là **Lớp 1** — thêm template là việc của dev, không của M
 | `BR-GTC-07` (xuất JSON Schema) | `content_contract` phải xuất được sang **JSON Schema**, và phải **suy ra kiểu TS** được (`z.infer`) | JSON Schema cho studio sinh form ([`schema-driven-form.md`](../06-admin/schema-driven-form.md)); kiểu TS cho seeder bắt lỗi lúc `tsc` (`BR-CSA-12`) |
 | `BR-GTC-08` (breaking change) | Đổi `content_contract` của template đã publish = **breaking change**, cần migration kế hoạch | Mọi `game_level` đã seed giữ `content_pack` parse được bằng contract **cũ**. Đổi contract mà không migrate = level cũ fail parse ở `BR-GTC-02` — phát hiện lúc trẻ mở màn chơi, không phải lúc deploy |
 | `BR-GTC-09` (checkWinCondition thuần) | `checkWinCondition()` **thuần** — cấm side effect | Nó được gọi nhiều lần mỗi frame |
-| `BR-GTC-10` (round-trip test) | Test round-trip `content_pack` × `content_contract` chạy trên **toàn bộ** level đã seed | Một level lọt lưới là một đứa trẻ gặp màn hình trắng |
+| `BR-GTC-10` (round-trip test) | Test round-trip `content_pack` × `content_contract` chạy trên **toàn bộ** level đã seed. **Chưa nối vào cổng nào** — đo 2026-08-29: 162 trên 228 level không parse được, xem mục 7.3a của [`content-seed-authoring.md`](content-seed-authoring.md) | Một level lọt lưới là một đứa trẻ gặp màn hình trắng |
 
 ## 7. Data
 
@@ -119,6 +125,15 @@ interface GameTemplate {
 ```
 
 ### 7.2 Sáu template MVP
+
+> **Trạng thái 2026-08-29:** registry có **27** template, `GT-001` tới `GT-027`. Sáu template
+> dưới đây là lô MVP; 21 template còn lại thuộc ba lô sau, danh mục ở
+> [`montessori-template-batch.md`](montessori-template-batch.md),
+> [`legacy-v1-template-batch.md`](legacy-v1-template-batch.md) và
+> [`taxonomy-gap-batch.md`](taxonomy-gap-batch.md). Bảng tra đủ 27 mã kèm cơ chế, band tuổi và
+> fallback tap: [`engines/index.md`](engines/index.md). Mỗi mã có một phiếu spec riêng theo
+> [`engine-spec-sheet.md`](engine-spec-sheet.md).
+
 
 | Code | Tên | Mechanic | Band | Fallback tap | Giới hạn item |
 |---|---|---|---|:--:|---|
@@ -296,7 +311,7 @@ Scenario: mỗi template có E2E journey
 
 | # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
 |---|---|---|---|---|
-| 1 | 60 game type của v1 port thành `content_pack` của 6 template được bao nhiêu phần trăm? Cần khảo sát trước khi cam kết | Phạm vi P1 — không chặn hình dạng contract | chờ P1 | hoãn — khảo sát trước khi vào P1 |
+| ~~1~~ | ~~60 game type của v1 port thành `content_pack` của 6 template được bao nhiêu phần trăm?~~ **Đóng 2026-08-29 (T113, `D-SG`)**: không port sang 6 template mà cấp cơ chế riêng. 60 game type của [`game-type-migration.md`](../../taxonomy/game-type-migration.md) nay phủ bởi 27 engine — 6 MVP cộng 11 lô Montessori, 7 lô kế thừa v1, 3 lô khoảng trống taxonomy. Câu hỏi còn lại không phải số cơ chế mà là chiều sâu nội dung mỗi cơ chế, và nó chuyển sang [`engine-content-depth.md`](../05-content/engine-content-depth.md) | — | Đã đóng | D-SG |
 | ~~2~~ | ~~Template thứ 7–10 nên là gì?~~ **Đóng 2026-08-20 (T98, `D-RW`)**: mười một khuôn `GT-007` tới `GT-017` đã có danh mục, band tuổi và điều kiện nghiệm thu ở [`montessori-template-batch.md`](montessori-template-batch.md), suy ra từ 59 dạng bài của corpus Montessori chứ không từ danh sách mechanic của PRD. Maze và rotate nằm trong đó (`GT-013`, `GT-016`); memory-flip **không** — không dạng bài nguồn nào cần nó | — | Đã đóng | D-RW |
 | ~~3~~ | ~~`scoring` schema chung cho mọi template hay mỗi template một kiểu?~~ **Đóng 2026-08-09 (T13, `D-BA`)**: xem [`scoring-and-result.md`](../04-play/scoring-and-result.md) — P1 dùng `scoring` schema chung (rounds/timer), sequence-order chấm cả chuỗi ở P1 | — | Đã đóng | D-BA |
 

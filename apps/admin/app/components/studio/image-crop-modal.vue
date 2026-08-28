@@ -1,42 +1,42 @@
 <template>
   <div
-    class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm"
+    class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-surface-900/60 backdrop-blur-sm"
     v-if="isOpen"
   >
     <div
       aria-labelledby="image-crop-title"
       aria-modal="true"
-      class="w-full max-w-2xl bg-white dark:bg-slate-800 rounded-3xl border-4 border-slate-200 dark:border-slate-700 p-6 shadow-2xl flex flex-col max-h-[90vh] overflow-hidden"
+      class="w-full max-w-2xl bg-white dark:bg-surface-800 rounded-3xl border-4 border-surface-200 dark:border-surface-700 p-6 shadow-2xl flex flex-col max-h-[90vh] overflow-hidden"
       role="dialog"
     >
       <!-- Header -->
       <div
-        class="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-slate-700 shrink-0"
+        class="flex items-center justify-between pb-3 border-b border-surface-200 dark:border-surface-700 shrink-0"
       >
         <div>
           <h2
-            class="text-lg font-bold text-slate-900 dark:text-white"
+            class="text-lg font-bold text-surface-900 dark:text-white"
             id="image-crop-title"
           >
             Tải và Cắt Ảnh Minh Hoạ
           </h2>
-          <p class="text-xs text-slate-500">
+          <p class="text-xs text-surface-500">
             Tỉ lệ vuông 1:1, tối đa 2MB. Chuẩn hoá WebP chất lượng cao.
           </p>
         </div>
         <button
           aria-label="Đóng"
-          class="w-9 h-9 rounded-2xl flex items-center justify-center text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 transition-all font-bold text-lg"
+          class="w-9 h-9 rounded-2xl flex items-center justify-center text-surface-400 hover:text-surface-600 dark:hover:text-surface-200 hover:bg-surface-100 dark:hover:bg-surface-700 transition-all font-bold text-lg"
           type="button"
           @click="close"
         >
-          ✕
+          <UIcon class="w-5 h-5" name="i-lucide-x" />
         </button>
       </div>
 
       <!-- Child Privacy Warning Banner (BR-IUP-08, BR-CDC-04) -->
       <div
-        class="my-3 p-3 rounded-2xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800 flex items-center gap-2.5 text-xs text-rose-800 dark:text-rose-300 font-medium shrink-0"
+        class="my-3 p-3 rounded-2xl bg-danger-50 dark:bg-danger-950/40 border border-danger-200 dark:border-danger-800 flex items-center gap-2.5 text-xs text-danger-800 dark:text-danger-300 font-medium shrink-0"
       >
         <span class="text-base">⚠️</span>
         <span>
@@ -51,7 +51,7 @@
         <!-- 1. Dropzone if no image selected -->
         <button
           aria-label="Chọn hoặc kéo thả ảnh"
-          class="w-full border-2 border-dashed border-slate-300 dark:border-slate-600 rounded-3xl p-8 text-center hover:border-indigo-500 transition-all cursor-pointer bg-slate-50 dark:bg-slate-900/30 flex flex-col items-center justify-center min-h-[220px]"
+          class="w-full border-2 border-dashed border-surface-300 dark:border-surface-600 rounded-3xl p-8 text-center hover:border-brand-500 transition-all cursor-pointer bg-surface-50 dark:bg-surface-900/30 flex flex-col items-center justify-center min-h-[220px]"
           type="button"
           v-if="!imageSource"
           @click="triggerFileInput"
@@ -66,16 +66,16 @@
             @change="onFileSelected"
           >
           <div
-            class="w-12 h-12 rounded-2xl bg-indigo-50 dark:bg-indigo-900/40 text-indigo-600 dark:text-indigo-300 flex items-center justify-center text-2xl mb-3"
+            class="w-12 h-12 rounded-2xl bg-brand-50 dark:bg-brand-900/40 text-brand-600 dark:text-brand-300 flex items-center justify-center text-2xl mb-3"
           >
             📷
           </div>
           <span
-            class="text-sm font-bold text-slate-800 dark:text-slate-200 mb-1"
+            class="text-sm font-bold text-surface-800 dark:text-surface-200 mb-1"
           >
             Chọn hoặc kéo thả ảnh vào đây
           </span>
-          <span class="text-xs text-slate-500">
+          <span class="text-xs text-surface-500">
             Hỗ trợ PNG, JPG, WebP. Tối đa 2 MB. Cấm SVG.
           </span>
         </button>
@@ -83,11 +83,11 @@
         <!-- 2. Interactive Crop Canvas & Preview Area -->
         <div class="space-y-4" v-else>
           <div
-            class="flex flex-col sm:flex-row items-center gap-6 justify-center bg-slate-950 p-4 rounded-3xl"
+            class="flex flex-col sm:flex-row items-center gap-6 justify-center bg-surface-950 p-4 rounded-3xl"
           >
             <!-- Crop Viewport (Square Canvas) -->
             <div
-              class="relative w-64 h-64 bg-slate-900 border-2 border-indigo-500 rounded-2xl overflow-hidden shadow-inner flex items-center justify-center"
+              class="relative w-64 h-64 bg-surface-900 border-2 border-brand-500 rounded-2xl overflow-hidden shadow-inner flex items-center justify-center"
             >
               <canvas
                 class="w-full h-full object-contain"
@@ -99,11 +99,11 @@
 
             <!-- In-game Real-Size Preview Box (BR-IUP-02: 96x96px) -->
             <div class="flex flex-col items-center gap-2">
-              <span class="text-xs font-semibold text-slate-400">
+              <span class="text-xs font-semibold text-surface-400">
                 Cỡ thật trong game (96px)
               </span>
               <div
-                class="w-24 h-24 rounded-2xl border-2 border-slate-700 bg-slate-900 flex items-center justify-center overflow-hidden shadow-lg"
+                class="w-24 h-24 rounded-2xl border-2 border-surface-700 bg-surface-900 flex items-center justify-center overflow-hidden shadow-lg"
               >
                 <canvas
                   class="w-full h-full"
@@ -119,14 +119,14 @@
           <div class="flex items-center justify-between">
             <div class="flex items-center gap-2">
               <button
-                class="px-3.5 py-1.5 rounded-xl border border-slate-300 dark:border-slate-600 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 text-xs font-bold transition-all flex items-center gap-1.5"
+                class="px-3.5 py-1.5 rounded-xl border border-surface-300 dark:border-surface-600 hover:bg-surface-100 dark:hover:bg-surface-700 text-surface-700 dark:text-surface-300 text-xs font-bold transition-all flex items-center gap-1.5"
                 type="button"
                 @click="rotateClockwise"
               >
                 <span>↻ Xoay 90°</span>
               </button>
               <button
-                class="px-3.5 py-1.5 rounded-xl border border-slate-300 dark:border-slate-600 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 text-xs font-semibold transition-all"
+                class="px-3.5 py-1.5 rounded-xl border border-surface-300 dark:border-surface-600 hover:bg-surface-100 dark:hover:bg-surface-700 text-surface-700 dark:text-surface-300 text-xs font-semibold transition-all"
                 type="button"
                 @click="triggerFileInput"
               >
@@ -138,16 +138,16 @@
           <!-- Alt text input (BR-IUP-05: Mandatory) -->
           <div>
             <label
-              class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1"
+              class="block text-xs font-bold text-surface-700 dark:text-surface-300 mb-1"
               for="image-alt-input"
             >
               Mô tả ảnh (Alt text) *
-              <span class="text-rose-500 font-normal"
+              <span class="text-danger-500 font-normal"
                 >(Bắt buộc cho tiếp cận)</span
               >
             </label>
             <input
-              class="w-full min-h-11 px-3 py-2 text-sm rounded-xl border-2 border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:border-indigo-500 focus:outline-none"
+              class="w-full min-h-11 px-3 py-2 text-sm rounded-xl border-2 border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-900 text-surface-900 dark:text-white focus:border-brand-500 focus:outline-none"
               id="image-alt-input"
               placeholder="Ví dụ: Quả dưa hấu màu đỏ có hạt đen"
               type="text"
@@ -158,7 +158,7 @@
 
         <!-- Error feedback -->
         <p
-          class="text-xs text-rose-600 dark:text-rose-400 font-semibold"
+          class="text-xs text-danger-600 dark:text-danger-400 font-semibold"
           v-if="errorMessage"
         >
           {{ errorMessage }}
@@ -167,17 +167,17 @@
 
       <!-- Action Footer -->
       <div
-        class="flex items-center justify-end gap-3 pt-3 border-t border-slate-200 dark:border-slate-700 shrink-0"
+        class="flex items-center justify-end gap-3 pt-3 border-t border-surface-200 dark:border-surface-700 shrink-0"
       >
         <button
-          class="px-4 py-2 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 font-semibold text-sm"
+          class="px-4 py-2 rounded-xl text-surface-600 dark:text-surface-300 hover:bg-surface-100 dark:hover:bg-surface-700 font-semibold text-sm"
           type="button"
           @click="close"
         >
           Huỷ
         </button>
         <button
-          class="px-5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold text-sm shadow-sm transition-all flex items-center gap-2"
+          class="px-5 py-2 rounded-xl bg-brand-600 hover:bg-brand-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold text-sm shadow-sm transition-all flex items-center gap-2"
           type="button"
           v-if="imageSource"
           :disabled="!altText.trim() || isUploading"

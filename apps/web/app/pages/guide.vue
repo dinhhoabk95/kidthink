@@ -46,8 +46,12 @@
 
         <div class="guide-footer-cta">
           <NuxtLink class="btn-faq-link" to="/faq">
-            Xem thêm câu hỏi thường gặp ➔
-          </NuxtLink>
+            Xem thêm câu hỏi thường gặp
+            <UIcon
+              class="w-4 h-4 ml-1 inline-block"
+              name="i-lucide-arrow-right"
+            /></NuxtLink
+          >
         </div>
       </div>
     </main>
@@ -58,10 +62,16 @@
 </template>
 
 <script lang="ts" setup>
-  import { useHead, useSeoMeta } from "unhead";
+  import { useHead, useSeoMeta } from "#imports";
   import CookieNoticeBanner from "~/components/cookie-notice-banner.vue";
   import PublicFooter from "~/components/public-footer.vue";
   import PublicNavbar from "~/components/public-navbar.vue";
+
+  // Trang này tự dựng chrome (PublicNavbar + <main id="main-content"> +
+  // PublicFooter). Không tắt layout thì `default.vue` dựng thêm một bộ nữa:
+  // navbar và footer hiện hai lần, và có hai phần tử cùng id="main-content"
+  // nên skip-link của app.vue nhảy sai chỗ (BR-A11-05).
+  definePageMeta({ layout: false });
 
   useSeoMeta({
     title: "Hướng dẫn đồng hành cùng con — MindKid",

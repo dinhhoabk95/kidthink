@@ -33,7 +33,7 @@ describe("P1.13 Public Site, SEO, Legal & Cookie Invariants (BR-SEO2, BR-GCP, BR
 
     it("Scenario: BR-SEO2-04 — every public page has title, meta description, and canonical URL", () => {
       const pageMeta = {
-        title: "TiniMath - Học toán qua trò chơi cho trẻ 3-6 tuổi",
+        title: "MindKid - Học toán qua trò chơi cho trẻ 3-6 tuổi",
         description: "Thư viện tư duy qua trò chơi tương tác cho trẻ mầm non",
         canonical: "https://tinimath.vn/",
       };
@@ -297,13 +297,13 @@ describe("P1.13 Public Site, SEO, Legal & Cookie Invariants (BR-SEO2, BR-GCP, BR
 
     it("Scenario: BR-FAQ-05 — FAQ answers begin with a direct answer in the first sentence", () => {
       const answer =
-        "Có, TiniMath cung cấp 6 trò chơi miễn phí không cần đăng ký.";
+        "Có, MindKid cung cấp 6 trò chơi miễn phí không cần đăng ký.";
       expect(answer.startsWith("Có") || answer.startsWith("Không")).toBe(true);
     });
 
     it("Scenario: BR-FAQ-06 — FAQ explicitly acknowledges product limits", () => {
       const faqContent =
-        "TiniMath là công cụ hỗ trợ luyện tập, không phải dịch vụ chẩn đoán.";
+        "MindKid là công cụ hỗ trợ luyện tập, không phải dịch vụ chẩn đoán.";
       expect(faqContent).toContain("không phải");
     });
 

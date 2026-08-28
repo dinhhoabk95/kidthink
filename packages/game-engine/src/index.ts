@@ -25,7 +25,6 @@ export {
 export { STUDIO_TEMPLATE_OPTIONS } from "./generated/studio-options.js";
 export {
   ALL_TEMPLATE_CODES,
-  CUSTOM_GAME_TEMPLATE_CODES,
   type TemplateCode,
 } from "./generated/template-codes.js";
 export {

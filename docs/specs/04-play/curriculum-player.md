@@ -44,7 +44,8 @@ Player trả lời một câu hỏi mỗi lần mở: **hôm nay học gì tiế
 
 ## 4. Main flow
 
-1. Người lớn chọn curriculum hợp tuổi, ghi danh trẻ → `curriculum_enrollments`.
+1. Người lớn chọn curriculum, ghi danh trẻ → `curriculum_enrollments`. Tuổi là tín hiệu đề
+   xuất, cấm — NEVER dùng để chặn (`BR-LFM-02`).
 2. Player xác định **bước hiện tại**: item chưa hoàn thành, mở được, nhỏ nhất theo
    `(week_no, session_no, position)` trong tuần nhỏ nhất còn item bắt buộc mở được chưa xong (`D-MG`).
 3. Gating item đó. Bị khoá → hiện lời mời nâng cấp **trên bề mặt người lớn**.
@@ -129,7 +130,12 @@ progress    = denominator > 0 ? (numerator / denominator) : 0
 ### `POST /api/users/children/{uuid}/enrollments`
 
 Body `{ curriculum_code }`. 201 → ghim `curriculum_version` hiện tại.
-**409** `ALREADY_ENROLLED` (nếu đã có enrollment `active`) · **422** nếu tuổi trẻ ngoài khoảng curriculum hoặc không mở được item bắt buộc nào (`D-ME`).
+**409** `ALREADY_ENROLLED` (nếu đã có enrollment `active`) · **422** nếu không mở được item bắt buộc nào.
+
+**Đổi 2026-08-29 (`D-SI`):** điều kiện **422 khi tuổi trẻ ngoài khoảng curriculum** đã bỏ. Ghi
+danh thành công bất kể tuổi, response mang `age_gap` để giao diện dựng cảnh báo. Lý do và luật
+đầy đủ ở [`lesson-flow-model.md`](../05-content/lesson-flow-model.md) `BR-LFM-02`. Quyết định
+`D-ME` bị thay thế.
 
 ### `POST /api/users/children/{uuid}/enrollments/withdraw`
 

@@ -15,5 +15,8 @@
   "imports": {
     "#src/*": "./src/*.ts",
     "#tests/*": "./tests/*.ts"
+  },
+  "scripts": {
+    "test": "vitest run"
   }
 }

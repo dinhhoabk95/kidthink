@@ -6,7 +6,10 @@ import {
   isEnabled as isFeatureEnabled,
   writeAudit,
 } from "@mindkid/db";
-import { updateActivityFormSchema } from "@mindkid/shared";
+import {
+  resolveActivityRefType,
+  updateActivityFormSchema,
+} from "@mindkid/shared";
 import { and, eq } from "drizzle-orm";
 import { createError, defineEventHandler, getRouterParam, readBody } from "h3";
 import type { z } from "zod";
@@ -14,16 +17,6 @@ import { requireManagerSession } from "#server/utils/admin-auth-runtime";
 import { throwValidationError } from "#server/utils/api-error";
 
 type UpdateActivityInput = z.infer<typeof updateActivityFormSchema>;
-
-function resolveRefType(kind: string): string | null {
-  if (kind === "digital_game") {
-    return "game_level";
-  }
-  if (kind === "worksheet") {
-    return "worksheet";
-  }
-  return null;
-}
 
 async function validateActivityPatch(
   db: ReturnType<typeof getOwnerDb>,
@@ -106,7 +99,7 @@ async function handlePublishedActivityFork(
   managerId: number
 ) {
   const newVersion = existing.contentVersion + 1;
-  const refType = resolveRefType(targetKind);
+  const refType = resolveActivityRefType(targetKind);
   const refId =
     targetKind === "digital_game" ? data.ref_id || existing.refId : null;
 
@@ -163,7 +156,7 @@ async function handleDraftActivityUpdate(
 
   if (data.kind !== undefined) {
     patch.kind = data.kind;
-    patch.refType = resolveRefType(data.kind);
+    patch.refType = resolveActivityRefType(data.kind);
   }
   if (data.title !== undefined) {
     patch.title = data.title;

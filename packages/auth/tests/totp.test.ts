@@ -39,7 +39,7 @@ describe("Task #83 T8 — TOTP OTPAuth Adapter (D-PKG-D)", () => {
     const uri = generateTotpUri(secret, "admin@tinimath.vn");
     expect(uri).toContain("otpauth://totp/");
     expect(uri).toContain("secret=JBSWY3DPEHPK3PXP");
-    expect(uri).toContain("issuer=TiniMath");
+    expect(uri).toContain("issuer=MindKid");
   });
 
   it("RFC 6238 vector test with fixed seed and timestamp", () => {

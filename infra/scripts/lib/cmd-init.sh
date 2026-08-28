@@ -53,6 +53,19 @@ mk_init_layout() {
 
   chown -R "${MK_SYSTEM_USER}:${MK_SYSTEM_USER}" "${MK_ROOT}" "${MK_LOG_DIR}"
 
+  # Explicit, because `useradd --create-home` picks the mode from HOME_MODE in
+  # /etc/login.defs and some images ship 0700. Nginx runs as www-data and has to
+  # traverse this path to serve apps/web/.output/public/_nuxt and the admin
+  # tree; without the traverse bit both surfaces return 403 and nothing in the
+  # application logs explains why.
+  chmod 0755 "${MK_ROOT}" "${MK_RELEASES_DIR}"
+
+  # Dumps outlive releases, so they live outside the release root and stay
+  # readable by their owner only (BR-BAK-07).
+  mkdir -p "${MK_BACKUP_DIR}"
+  chown "${MK_SYSTEM_USER}:${MK_SYSTEM_USER}" "${MK_BACKUP_DIR}"
+  chmod 0700 "${MK_BACKUP_DIR}"
+
   # The env directory is root's and stays root's: the supervisor reads the files
   # as root and hands the values to a process running as mindkid (BR-ENV-05).
   mkdir -p "${MK_ENV_DIR}"

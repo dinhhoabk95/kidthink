@@ -147,7 +147,9 @@ Một script nghĩa là một khoá, một tệp log, và một đích cho cổn
 ## 8. API contract
 
 Không có route công khai trong spec này. Nginx là thứ duy nhất nhận yêu cầu từ ngoài; nó phục vụ
-admin static trực tiếp, chuyển API và SSR web tới cổng 3000, còn worker nghe cổng nội bộ 3099.
+admin static trực tiếp, và chuyển API cùng SSR web tới cổng 3000. Cổng 3099 được **giữ chỗ** cho
+`worker` trong bảng §7.3 nhưng không có socket nào lắng nghe ở đó: `BR-JOB-04` cấm `apps/worker`
+mở HTTP, và nó không mở. Giữ số đó ở đây để thứ khác không chiếm rồi gọi là vô tình.
 
 ## 9. Acceptance criteria
 
@@ -221,5 +223,5 @@ Scenario: BR-SRV-10 — có bản in phiên bản
 | 1   | Nhà cung cấp và cấu hình máy thật: EC2 vùng Singapore, hay VPS trong nước? Độ trễ tới người dùng Việt Nam đổi lấy việc ở cùng vùng với kho ảnh và dịch vụ email đang dùng | Chọn cấu hình, và bước kiểm thử trên máy thật | go-live    | người quyết                              |
 | 2   | Số vCPU quyết định số tiến trình và kích thước pool kết nối. Câu hỏi 9 của [`repo-bootstrap.md`](../00-foundation/repo-bootstrap.md) vẫn đang hoãn vì lý do này           | Tinh chỉnh, không chặn lần phát hành đầu      | chờ P1     | hoãn — mở lại khi biết cấu hình máy      |
 | 3   | Tên miền thật và ai giữ quyền quản trị DNS                                                                                                                                | Bước xin chứng chỉ TLS                        | go-live    | người quyết                              |
-| 4   | Build hai ứng dụng Nuxt trên máy 4 GB có đủ bộ nhớ không, hay cần thêm vùng nhớ tráo đổi                                                                                  | Chọn cấu hình máy                             | go-live    | Infra                                    |
+| 4   | ĐÃ TRẢ LỜI (Task #109): cần vùng nhớ tráo đổi. `provision` tạo tệp tráo đổi 4 GB khi RAM dưới 8 GB, ghi vào `/etc/fstab` để nó sống qua khởi động lại. Số đo bộ nhớ đỉnh lúc build vẫn phải lấy trên máy thật ở WP109.9 | Không còn chặn                                | đóng       | Infra                                    |
 | 5   | Có dựng máy thứ hai cho môi trường thử trước khi phát hành hay không                                                                                                      | Không chặn                                    | chờ P2     | hoãn — thêm khi có người thứ hai cần thử |

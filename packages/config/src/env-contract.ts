@@ -24,6 +24,15 @@ export interface EnvVarDef {
   secret: boolean;
   enabledBy?: string;
   enumValues?: readonly string[];
+  /**
+   * BR-ENV-13 — bắt buộc khi `kind` là `url`.
+   *
+   * `new URL()` chấp mọi scheme, nên nếu chỉ kiểm "phân tích được" thì
+   * `DATABASE_URL_APP=https://example.com/endpoint` qua cổng env màu xanh rồi
+   * mới chết ở runtime. Cổng giữ ràng buộc này là
+   * `packages/config/tests/env-contract.test.ts`.
+   */
+  urlProtocols?: readonly string[];
   note: string;
 }
 
@@ -53,6 +62,7 @@ export const ENV_REGISTRY: readonly EnvVarDef[] = [
     apps: ALL_APPS,
     required: "always",
     kind: "url",
+    urlProtocols: ["http:", "https:"],
     secret: false,
     note: "Địa chỉ công khai của site; dùng cho SEO, sitemap, OAuth callback, URL tài sản",
   },
@@ -65,10 +75,19 @@ export const ENV_REGISTRY: readonly EnvVarDef[] = [
     note: "Danh sách origin được phép gọi API; web dùng cho CORS và CSRF allowlist",
   },
   {
+    name: "TRUSTED_PROXY_IPS",
+    apps: ["web"],
+    required: "optional",
+    kind: "text",
+    secret: false,
+    note: "Danh sách IP proxy tin cậy; chỉ peer trong danh sách này mới được đọc X-Real-IP (BR-RTL-11). Vắng mặt thì mặc định 127.0.0.1,::1",
+  },
+  {
     name: "NUXT_PUBLIC_API_BASE_URL",
     apps: ["admin"],
     required: "always",
     kind: "url",
+    urlProtocols: ["http:", "https:"],
     secret: false,
     note: "Origin tuyệt đối của web API được nướng vào static admin SPA",
   },
@@ -79,6 +98,7 @@ export const ENV_REGISTRY: readonly EnvVarDef[] = [
     apps: ALL_APPS,
     required: "always",
     kind: "url",
+    urlProtocols: ["postgres:", "postgresql:"],
     secret: true,
     note: "Chuỗi kết nối PostgreSQL của tiến trình di trú và ứng dụng",
   },
@@ -87,6 +107,7 @@ export const ENV_REGISTRY: readonly EnvVarDef[] = [
     apps: ALL_APPS,
     required: "always",
     kind: "url",
+    urlProtocols: ["postgres:", "postgresql:"],
     secret: true,
     note: "Chuỗi kết nối quyền hẹp cho ứng dụng",
   },
@@ -95,6 +116,7 @@ export const ENV_REGISTRY: readonly EnvVarDef[] = [
     apps: ALL_APPS,
     required: "always",
     kind: "url",
+    urlProtocols: ["valkey:", "redis:", "rediss:"],
     secret: true,
     note: "Chuỗi kết nối Valkey cho cache, hàng đợi và giới hạn tần suất",
   },
@@ -198,6 +220,7 @@ export const ENV_REGISTRY: readonly EnvVarDef[] = [
     apps: ["web", "worker"],
     required: "production",
     kind: "url",
+    urlProtocols: ["http:", "https:"],
     secret: false,
     note: "Địa chỉ gốc phục vụ tài sản; thiếu thì rơi về SITE_URL",
   },
@@ -298,15 +321,15 @@ export const ENV_REGISTRY: readonly EnvVarDef[] = [
   {
     name: "TELEGRAM_BOT_TOKEN",
     apps: ["web", "worker"],
-    required: "optional",
+    required: "production",
     kind: "secret",
     secret: true,
-    note: "Token bot gửi cảnh báo vận hành",
+    note: "Token bot gửi cảnh báo vận hành. Thiếu nó ở production thì mọi cảnh báo P0 rơi xuống console.warn trong tệp log không ai đọc (BR-MON-01)",
   },
   {
     name: "TELEGRAM_CHAT_ID",
     apps: ["web", "worker"],
-    required: "optional",
+    required: "production",
     kind: "text",
     secret: false,
     note: "Nhóm nhận cảnh báo vận hành, đi cùng TELEGRAM_BOT_TOKEN",
@@ -314,10 +337,11 @@ export const ENV_REGISTRY: readonly EnvVarDef[] = [
   {
     name: "HEALTHCHECKS_PING_URL",
     apps: ["web", "worker"],
-    required: "optional",
+    required: "production",
     kind: "url",
+    urlProtocols: ["https:"],
     secret: true,
-    note: "Địa chỉ ping báo hiệu tiến trình định kỳ còn sống",
+    note: "Địa chỉ ping báo hiệu tiến trình định kỳ còn sống, và là kênh cảnh báo dự phòng khi Telegram hỏng. Bắt buộc ở production vì đường thư điện tử trong repo này vẫn là LocalFileEmailAdapter — nó ghi ra tệp, không gửi cho ai",
   },
   {
     name: "HEALTHCHECKS_CHECK_UUID",
@@ -330,16 +354,17 @@ export const ENV_REGISTRY: readonly EnvVarDef[] = [
   {
     name: "OPERATIONS_ALERT_EMAIL",
     apps: ["web", "worker"],
-    required: "optional",
+    required: "production",
     kind: "email",
     secret: false,
-    note: "Hộp thư nhận cảnh báo khi kênh chính im",
+    note: "Hộp thư nhận cảnh báo khi kênh chính im. Bắt buộc ở production vì nó là đường dự phòng duy nhất khi Telegram hỏng (D-S)",
   },
   {
     name: "SENTRY_DSN",
     apps: ALL_APPS,
     required: "optional",
     kind: "url",
+    urlProtocols: ["https:"],
     secret: true,
     note: "Đích gửi lỗi phía máy chủ; thiếu thì tắt thu thập",
   },
@@ -348,6 +373,7 @@ export const ENV_REGISTRY: readonly EnvVarDef[] = [
     apps: ALL_APPS,
     required: "optional",
     kind: "url",
+    urlProtocols: ["https:"],
     secret: false,
     note: "Đích gửi lỗi phía trình duyệt",
   },
@@ -368,6 +394,56 @@ export const ENV_REGISTRY: readonly EnvVarDef[] = [
     kind: "secret",
     secret: true,
     note: "Khoá mã hoá bản sao lưu cơ sở dữ liệu",
+  },
+
+  {
+    name: "BACKUP_S3_ENDPOINT",
+    apps: ["worker"],
+    required: "production",
+    kind: "url",
+    urlProtocols: ["https:"],
+    secret: false,
+    note: "Điểm cuối tương thích S3 nhận bản sao lưu. Chỉ https: — dump là toàn bộ dữ liệu trẻ trong một tệp di chuyển được",
+  },
+  {
+    name: "BACKUP_S3_BUCKET",
+    apps: ["worker"],
+    required: "production",
+    kind: "text",
+    secret: false,
+    note: "Bucket chứa dump. Cấm — NEVER dùng chung bucket với tài sản công khai (BR-BAK-07)",
+  },
+  {
+    name: "BACKUP_S3_REGION",
+    apps: ["worker"],
+    required: "production",
+    kind: "text",
+    secret: false,
+    note: "Vùng dùng để ký yêu cầu SigV4",
+  },
+  {
+    name: "BACKUP_S3_PREFIX",
+    apps: ["worker"],
+    required: "production",
+    kind: "text",
+    secret: false,
+    note: "Tiền tố khoá đối tượng, ví dụ 'postgres'. Không có mặc định (BR-ENV-03): nó quyết định chỗ dump nằm trong bucket",
+  },
+  {
+    name: "BACKUP_S3_ACCESS_KEY_ID",
+    apps: ["worker"],
+    required: "production",
+    kind: "text",
+    secret: false,
+    note: "Khoá truy cập RIÊNG cho bucket sao lưu. Không dùng lại AWS_ACCESS_KEY_ID: khoá của tầng lưu trữ ảnh không nên đọc được dump toàn bộ cơ sở dữ liệu",
+  },
+  {
+    name: "BACKUP_S3_SECRET_ACCESS_KEY",
+    apps: ["worker"],
+    required: "production",
+    kind: "secret",
+    secret: true,
+    note: "Bí mật đi cùng BACKUP_S3_ACCESS_KEY_ID",
   },
 
   // ---- Vận hành một lần ---------------------------------------------------
@@ -400,6 +476,7 @@ export const ENV_REGISTRY: readonly EnvVarDef[] = [
     apps: ALL_APPS,
     required: "optional",
     kind: "url",
+    urlProtocols: ["https:"],
     secret: false,
     note: "Đường dẫn pull request sinh ra bản này, dùng khi điều tra sự cố",
   },
@@ -441,6 +518,42 @@ function isMandatoryVariable(
   return false;
 }
 
+/**
+ * BR-ENV-13 — kiểm cả **dạng** lẫn **giao thức**.
+ *
+ * Chỉ kiểm `new URL()` là kiểm nửa vời: mọi scheme đều phân tích được, nên một
+ * địa chỉ `https` lọt vào biến chuỗi kết nối Postgres vẫn cho cổng màu xanh.
+ */
+function checkUrlValidation(
+  def: EnvVarDef,
+  rawVal: string,
+  errors: ValidationError[]
+) {
+  let parsed: URL;
+  try {
+    parsed = new URL(rawVal);
+  } catch {
+    errors.push({ varName: def.name, issue: "Invalid URL format" });
+    return;
+  }
+
+  const allowed = def.urlProtocols;
+  if (!allowed?.length) {
+    errors.push({
+      varName: def.name,
+      issue: "kind url must declare urlProtocols (BR-ENV-13)",
+    });
+    return;
+  }
+
+  if (!allowed.includes(parsed.protocol)) {
+    errors.push({
+      varName: def.name,
+      issue: `Protocol must be one of: ${allowed.join(", ")} (BR-ENV-13)`,
+    });
+  }
+}
+
 function checkKindValidation(
   def: EnvVarDef,
   rawVal: string,
@@ -457,11 +570,7 @@ function checkKindValidation(
     return;
   }
   if (def.kind === "url") {
-    try {
-      new URL(rawVal);
-    } catch {
-      errors.push({ varName: def.name, issue: "Invalid URL format" });
-    }
+    checkUrlValidation(def, rawVal, errors);
     return;
   }
   if (def.kind === "email" && !EMAIL_REGEX.test(rawVal)) {

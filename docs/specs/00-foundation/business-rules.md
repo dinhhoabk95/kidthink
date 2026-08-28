@@ -23,10 +23,11 @@ nghĩa.
 
 Cộng thêm §7.3: **danh sách rule không bao giờ được vi phạm**, bất kể áp lực lịch trình.
 
-Spec này đạt trạng thái `implemented` khi toàn bộ 4 rule `BR-REG2-01` đến `BR-REG2-04` được thi
-hành bằng cổng tự động (`lint:specs`, `lint:rule-ids`) và test đơn vị (`packages/gates/tests/lint-rule-ids.test.ts`).
-Trạng thái `implemented` của registry chứng minh rằng hệ thống quản trị quy tắc kinh doanh đang
-hoạt động và bảo vệ tính toàn vẹn của toàn bộ corpus.
+4 rule `BR-REG2-01` đến `BR-REG2-04` **không còn cổng máy nào đo**. Cổng cũ
+(`packages/gates`) đã bị gỡ vì trùng việc với Biome và `vue-tsc`; xem §11 câu 2.
+Từ đây chúng được giữ bằng **lượt đọc của reviewer** theo mục 11.6 của
+[`CONVENTIONS.md`](../CONVENTIONS.md) — nghĩa là chúng có thể trôi mà không ai
+biết, và người review là hàng phòng thủ duy nhất.
 
 ## 2. Actors
 
@@ -34,8 +35,8 @@ Dev · reviewer · test.
 
 ## 3. Entry points
 
-Mọi `BR-*` trong code, test, và PR. `pnpm --filter @mindkid/gates test` và `pnpm --filter @mindkid/gates test` kiểm tra tính duy
-nhất, bất biến và cảnh báo BR không được tham chiếu (`node packages/gates/scripts/check-progress.ts`).
+Mọi `BR-*` trong code, test, và PR. Tính duy nhất, tính bất biến, và BR không được
+tham chiếu — cấm — NEVER còn lệnh nào đo tự động; reviewer tra tay theo §7.1.
 
 ## 4. Main flow
 
@@ -111,6 +112,8 @@ nhất, bất biến và cảnh báo BR không được tham chiếu (`node pack
 | `BR-SUP` | [`process-supervision.md`](../01-platform/process-supervision.md) | | `BR-DEP` | [`release-deploy.md`](../01-platform/release-deploy.md) |
 | `BR-RBK` | [`release-rollback.md`](../01-platform/release-rollback.md) | | `BR-MTB` | [`montessori-template-batch.md`](../01-platform/montessori-template-batch.md) |
 | `BR-LVB` | [`legacy-v1-template-batch.md`](../01-platform/legacy-v1-template-batch.md) | | `BR-TGB` | [`taxonomy-gap-batch.md`](../01-platform/taxonomy-gap-batch.md) |
+| `BR-ESS` | [`engine-spec-sheet.md`](../01-platform/engine-spec-sheet.md) | | `BR-LGK` | [`level-generator-kit.md`](../01-platform/level-generator-kit.md) |
+| `BR-ERC` | [`engine-render-contract.md`](../01-platform/engine-render-contract.md) | | `BR-E001`…`BR-E027` | [`engines/index.md`](../01-platform/engines/index.md) (27 spec engine) |
 
 **Public**
 
@@ -161,6 +164,8 @@ nhất, bất biến và cảnh báo BR không được tham chiếu (`node pack
 | `BR-MCM` | [`montessori-corpus-mapping.md`](../05-content/montessori-corpus-mapping.md) | | `BR-MGL` | [`montessori-game-level-batch.md`](../05-content/montessori-game-level-batch.md) |
 | `BR-MLS` | [`montessori-lesson-batch.md`](../05-content/montessori-lesson-batch.md) | | `BR-RSM` | [`round-set-model.md`](../05-content/round-set-model.md) |
 | `BR-TCL` | [`template-coverage-level-batch.md`](../05-content/template-coverage-level-batch.md) | | `BR-LTV` | [`lesson-template-variety.md`](../05-content/lesson-template-variety.md) |
+| `BR-ECD` | [`engine-content-depth.md`](../05-content/engine-content-depth.md) | | `BR-CTR` | [`content-theme-registry.md`](../05-content/content-theme-registry.md) |
+| `BR-LCD` | [`lesson-corpus-depth.md`](../05-content/lesson-corpus-depth.md) | | `BR-LFM` | [`lesson-flow-model.md`](../05-content/lesson-flow-model.md) |
 
 **Admin**
 
@@ -200,6 +205,7 @@ nhất, bất biến và cảnh báo BR không được tham chiếu (`node pack
 | `BR-A11` | [`accessibility.md`](../08-quality/accessibility.md) | | `BR-PRF` | [`performance-budgets.md`](../08-quality/performance-budgets.md) |
 | `BR-DSC` | [`design-system-contract.md`](../08-quality/design-system-contract.md) | | `BR-PED` | [`pedagogical-evidence.md`](../08-quality/pedagogical-evidence.md) |
 | `BR-TCM` | [`thinking-coverage-matrix.md`](../08-quality/thinking-coverage-matrix.md) | | `BR-TYP` | [`type-safety.md`](../08-quality/type-safety.md) |
+| `BR-GLR` | [`go-live-readiness.md`](../08-quality/go-live-readiness.md) | | | |
 
 ### 7.2 Thống kê
 
@@ -354,4 +360,5 @@ Scenario: BR-REG2-02 — ID không tái dùng
 
 | # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
 |---|---|---|---|---|
-| 1 | Có tự sinh registry này từ corpus không, thay vì duy trì tay? `gen:spec-index` làm được | [`ai-codegen-pipeline.md`](../01-platform/ai-codegen-pipeline.md) | Hoãn, chặn phase P1 tooling | hoãn — bước dựng `packages/gates/tests/lint-specs.test.ts` ở Task #2 là bước đầu |
+| 1 | Có tự sinh registry này từ corpus không, thay vì duy trì tay? `gen:spec-index` làm được | [`ai-codegen-pipeline.md`](../01-platform/ai-codegen-pipeline.md) | Hoãn, chặn phase P1 tooling | hoãn — bước dựng cổng corpus ở Task #2 đã bị gỡ cùng `packages/gates` |
+| 2 | `status: implemented` của spec này còn đúng không, khi 4 rule `BR-REG2-*` không còn cổng nào đo? | Ý nghĩa của chính từ `implemented` trong corpus | Chưa chặn phase nào | mở — người dùng quyết xoá cổng 2026-08-29, chưa quyết hạ status |

@@ -15,12 +15,34 @@ export interface RateLimitOptions {
   failOpen?: boolean;
 }
 
+/** Tiền tố khoá của rate-limiter-flexible trong Valkey. */
+export const RATE_LIMIT_KEY_PREFIX = "rl";
+
 const memoryLimiters = new Map<string, RateLimiterMemory>();
 const redisLimiters = new Map<string, RateLimiterRedis>();
 
 export function clearInMemoryBuckets(): void {
   memoryLimiters.clear();
   redisLimiters.clear();
+}
+
+/**
+ * Xoá bộ đếm rate limit đang nằm trong Valkey.
+ *
+ * `clearInMemoryBuckets` chỉ dọn hai `Map` trong tiến trình. Điều đó đủ khi
+ * Valkey không kết nối được — và nó **đã** không kết nối được suốt thời gian
+ * `VALKEY_URL` mang scheme `valkey://` mà ioredis không hiểu, nên bộ đếm thật
+ * chưa bao giờ tồn tại để mà tồn đọng. Khi kết nối chạy thật, bộ đếm sống qua
+ * từng lần chạy test và lần chạy thứ hai đỏ.
+ */
+export async function clearRateLimitBuckets(): Promise<void> {
+  clearInMemoryBuckets();
+
+  const client = getClient();
+  const keys = await client.keys(`${RATE_LIMIT_KEY_PREFIX}:*`);
+  if (keys.length > 0) {
+    await client.del(...keys);
+  }
 }
 
 /**
@@ -60,7 +82,7 @@ function getRedisLimiter(points: number, duration: number): RateLimiterRedis {
       storeClient: redisClient,
       points,
       duration,
-      keyPrefix: "rl",
+      keyPrefix: RATE_LIMIT_KEY_PREFIX,
     });
     redisLimiters.set(mapKey, limiter);
   }

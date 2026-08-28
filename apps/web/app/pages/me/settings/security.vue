@@ -22,38 +22,40 @@
 
     <!-- Feedback Alerts -->
     <div
-      class="p-4 rounded-2xl bg-rose-50 border-2 border-rose-200 text-sm text-rose-900 flex items-start gap-3"
+      class="p-4 rounded-2xl bg-danger-50 border-2 border-danger-200 text-sm text-danger-900 flex items-start gap-3"
       v-if="errorMessage"
     >
       <UIcon
-        class="w-5 h-5 text-rose-600 flex-shrink-0 mt-0.5"
+        class="w-5 h-5 text-danger-600 flex-shrink-0 mt-0.5"
         name="i-lucide-alert-circle"
       />
       <div class="flex-1 font-medium">{{ errorMessage }}</div>
       <button
-        class="text-rose-600 hover:text-rose-800 font-bold"
+        aria-label="Đóng thông báo lỗi"
+        class="text-danger-600 hover:text-danger-800 font-bold min-h-11 min-w-11 flex items-center justify-center"
         type="button"
         @click="errorMessage = ''"
       >
-        ✕
+        <UIcon class="w-5 h-5" name="i-lucide-x" />
       </button>
     </div>
 
     <div
-      class="p-4 rounded-2xl bg-emerald-50 border-2 border-emerald-200 text-sm text-emerald-900 flex items-start gap-3"
+      class="p-4 rounded-2xl bg-success-50 border-2 border-success-200 text-sm text-success-900 flex items-start gap-3"
       v-if="successMessage"
     >
       <UIcon
-        class="w-5 h-5 text-emerald-600 flex-shrink-0 mt-0.5"
+        class="w-5 h-5 text-success-600 flex-shrink-0 mt-0.5"
         name="i-lucide-check-circle-2"
       />
       <div class="flex-1 font-medium">{{ successMessage }}</div>
       <button
-        class="text-emerald-600 hover:text-emerald-800 font-bold"
+        aria-label="Đóng thông báo"
+        class="text-success-600 hover:text-success-800 font-bold min-h-11 min-w-11 flex items-center justify-center"
         type="button"
         @click="successMessage = ''"
       >
-        ✕
+        <UIcon class="w-5 h-5" name="i-lucide-x" />
       </button>
     </div>
 
@@ -91,10 +93,10 @@
           <!-- Status badge -->
           <div>
             <span
-              class="px-3.5 py-1.5 text-xs font-bold rounded-full bg-emerald-100 text-emerald-800 border border-emerald-200 flex items-center gap-1.5"
+              class="px-3.5 py-1.5 text-xs font-bold rounded-full bg-success-100 text-success-800 border border-success-200 flex items-center gap-1.5"
               v-if="mfaStatus?.enabled"
             >
-              <UIcon class="w-4 h-4 text-emerald-600" name="i-lucide-check" />
+              <UIcon class="w-4 h-4 text-success-600" name="i-lucide-check" />
               Đang bật
             </span>
             <span
@@ -145,13 +147,13 @@
             </button>
 
             <button
-              class="min-h-11 px-5 py-2.5 rounded-xl border-2 border-rose-200 bg-rose-50 hover:bg-rose-100 text-rose-700 font-semibold text-sm transition-colors"
+              class="min-h-11 px-5 py-2.5 rounded-xl border-2 border-danger-200 bg-danger-50 hover:bg-danger-100 text-danger-700 font-semibold text-sm transition-colors"
               type="button"
               :disabled="submitting"
               @click="openDisableModal"
             >
               <UIcon
-                class="w-4 h-4 inline mr-1 text-rose-600"
+                class="w-4 h-4 inline mr-1 text-danger-600"
                 name="i-lucide-shield-off"
               />
               Tắt xác thực hai lớp
@@ -197,12 +199,13 @@
             {{ setupState.step === 'codes' ? 'Mã khôi phục dự phòng' : 'Thiết lập xác thực hai lớp' }}
           </h3>
           <button
-            class="text-surface-400 hover:text-surface-600 font-bold text-lg"
+            aria-label="Đóng modal"
+            class="text-surface-400 hover:text-surface-600 font-bold text-lg min-h-11 min-w-11 flex items-center justify-center"
             type="button"
             v-if="setupState.step !== 'codes'"
             @click="setupState.isOpen = false"
           >
-            ✕
+            <UIcon class="w-5 h-5" name="i-lucide-x" />
           </button>
         </div>
 
@@ -278,11 +281,11 @@
         <!-- Step 2: Show 10 Recovery Codes Once (BR-MFA-07) -->
         <div class="space-y-4" v-else-if="setupState.step === 'codes'">
           <div
-            class="p-3 bg-amber-50 rounded-xl border border-amber-200 text-xs text-amber-900 space-y-1"
+            class="p-3 bg-warning-50 rounded-xl border border-warning-200 text-xs text-warning-900 space-y-1"
           >
             <strong class="font-bold flex items-center gap-1">
               <UIcon
-                class="w-4 h-4 text-amber-700"
+                class="w-4 h-4 text-warning-700"
                 name="i-lucide-alert-triangle"
               />
               Lưu ý quan trọng (Chỉ hiển thị 1 lần duy nhất):
@@ -353,11 +356,12 @@
             Tắt xác thực hai lớp
           </h3>
           <button
-            class="text-surface-400 hover:text-surface-600 font-bold text-lg"
+            aria-label="Đóng modal"
+            class="text-surface-400 hover:text-surface-600 font-bold text-lg min-h-11 min-w-11 flex items-center justify-center"
             type="button"
             @click="disableModal.isOpen = false"
           >
-            ✕
+            <UIcon class="w-5 h-5" name="i-lucide-x" />
           </button>
         </div>
 
@@ -391,7 +395,7 @@
             Huỷ
           </button>
           <button
-            class="min-h-11 px-5 py-2 rounded-xl bg-rose-600 hover:bg-rose-700 disabled:opacity-50 text-white text-xs font-bold font-heading"
+            class="min-h-11 px-5 py-2 rounded-xl bg-danger-600 hover:bg-danger-700 disabled:opacity-50 text-white text-xs font-bold font-heading"
             type="button"
             :disabled="!disableModal.code.trim() || submitting"
             @click="handleDisableMfa"
@@ -417,11 +421,12 @@
             Sinh lại mã khôi phục
           </h3>
           <button
-            class="text-surface-400 hover:text-surface-600 font-bold text-lg"
+            aria-label="Đóng modal"
+            class="text-surface-400 hover:text-surface-600 font-bold text-lg min-h-11 min-w-11 flex items-center justify-center"
             type="button"
             @click="regenerateModal.isOpen = false"
           >
-            ✕
+            <UIcon class="w-5 h-5" name="i-lucide-x" />
           </button>
         </div>
 

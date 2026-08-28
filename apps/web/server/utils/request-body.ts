@@ -1,4 +1,4 @@
-import { type H3Event, readBody } from "h3";
+import { getQuery, type H3Event, readBody } from "h3";
 
 /**
  * Đọc body request rồi trả về `unknown` — **chưa tin được**, người gọi BẮT BUỘC
@@ -37,4 +37,19 @@ function isNonEmptyRecord(value: unknown): boolean {
   return (
     typeof value === "object" && value !== null && Object.keys(value).length > 0
   );
+}
+
+/**
+ * Đọc query string, ưu tiên `event._query` mà test đơn vị gắn sẵn.
+ *
+ * `Reflect.get` thay cho `event as Record<string, unknown>`: ép H3Event sang
+ * record là một `as` mà `tsc` từ chối (TS2352 — hai kiểu không đủ chồng lấn),
+ * và nợ ép kiểu của repo chỉ được giảm (TYPE-SAFETY `BR-TYP-02`).
+ */
+export function readRequestQuery(event: H3Event): Record<string, unknown> {
+  const injected = Reflect.get(event, "_query");
+  if (typeof injected === "object" && injected !== null) {
+    return injected as Record<string, unknown>;
+  }
+  return getQuery(event);
 }

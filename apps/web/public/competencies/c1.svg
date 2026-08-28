@@ -1,0 +1,21 @@
+<svg fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+  <title>C1</title>
+  <rect
+    fill="#1d4ed8"
+    fill-opacity="0.15"
+    height="44"
+    rx="14"
+    stroke="#1d4ed8"
+    stroke-width="3"
+    width="44"
+    x="2"
+    y="2"
+  />
+  <path
+    d="M16 8v32M32 8v32M8 16h32M8 32h32"
+    stroke="#1d4ed8"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    stroke-width="3.5"
+  />
+</svg>

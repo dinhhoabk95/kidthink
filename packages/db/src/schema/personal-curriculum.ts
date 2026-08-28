@@ -15,6 +15,7 @@ import {
   varchar,
 } from "drizzle-orm/pg-core";
 import { childProfiles } from "./child.ts";
+import { timestamps } from "./columns.ts";
 import {
   curriculumProgressStatusEnum,
   enrollmentStatusEnum,
@@ -43,12 +44,7 @@ export const personalCurricula = pgTable(
     sessionsPerWeek: smallint("sessions_per_week").notNull().default(3),
     status: personalCurriculumStatusEnum("status").notNull().default("draft"),
     version: integer("version").notNull().default(1),
-    createdAt: timestamp("created_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
-    updatedAt: timestamp("updated_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
+    ...timestamps(),
   },
   (table) => [
     index("idx_personal_curricula_user_id").on(table.userId),
@@ -80,12 +76,7 @@ export const personalCurriculumItems = pgTable(
     entityType: varchar("entity_type", { length: 50 }).notNull(),
     entityId: bigint("entity_id", { mode: "number" }).notNull(),
     isRequired: boolean("is_required").notNull().default(true),
-    createdAt: timestamp("created_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
-    updatedAt: timestamp("updated_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
+    ...timestamps(),
   },
   (table) => [
     // Cặp đa hình: index, không khoá ngoại (BR-DM-04).
@@ -124,12 +115,7 @@ export const personalCurriculumEnrollments = pgTable(
       .defaultNow()
       .notNull(),
     status: enrollmentStatusEnum("status").notNull().default("active"),
-    createdAt: timestamp("created_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
-    updatedAt: timestamp("updated_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
+    ...timestamps(),
   },
   (table) => [
     uniqueIndex("idx_personal_curriculum_enrollments_child_active_unique")
@@ -165,12 +151,7 @@ export const personalCurriculumItemProgress = pgTable(
       .notNull()
       .default("not_started"),
     completedAt: timestamp("completed_at", { withTimezone: true }),
-    updatedAt: timestamp("updated_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
-    createdAt: timestamp("created_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
+    ...timestamps(),
   },
   (table) => [
     unique("personal_curriculum_item_progress_enrollment_item_unique").on(

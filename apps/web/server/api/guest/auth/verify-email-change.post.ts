@@ -1,6 +1,10 @@
 import { appError, hashSecureToken } from "@mindkid/auth";
-import { getOwnerDb, users, verificationTokens } from "@mindkid/db";
-import { enqueueJob } from "@mindkid/queue";
+import {
+  dispatchTransactionalEmail,
+  getOwnerDb,
+  users,
+  verificationTokens,
+} from "@mindkid/db";
 import { and, eq, gt, isNull } from "drizzle-orm";
 import {
   createError,
@@ -108,14 +112,16 @@ export default defineEventHandler(async (event) => {
     .where(eq(verificationTokens.id, tokenRecord.id));
 
   // BR-ACS-05: Send notice to the OLD email address
-  await enqueueJob("email:send", {
+  await dispatchTransactionalEmail({
+    recipientType: "user",
+    recipientId: userId,
+    code: "email_changed_old_address_notice",
     to: oldEmail,
-    template: "email_changed_old_address_notice",
-    data: {
+    payload: {
       new_email: newEmail,
       timestamp: now.toISOString(),
     },
-  }).catch(() => null);
+  });
 
   return {
     ok: true,

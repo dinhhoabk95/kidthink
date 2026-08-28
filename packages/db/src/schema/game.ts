@@ -12,10 +12,11 @@ import {
   text,
   timestamp,
   unique,
-  uniqueIndex,
   varchar,
 } from "drizzle-orm/pg-core";
+import { timestamps } from "./columns.ts";
 import { managers } from "./identity.ts";
+import { versioningConstraints } from "./versioning.ts";
 
 export const gameTemplateStatusEnum = pgEnum("game_template_status", [
   "active",
@@ -68,12 +69,7 @@ export const gameTemplates = pgTable(
     engineSession: text("engine_session"),
     status: gameTemplateStatusEnum("status").notNull().default("active"),
     version: integer("version").notNull().default(1),
-    createdAt: timestamp("created_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
-    updatedAt: timestamp("updated_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
+    ...timestamps(),
   },
   (table) => [
     check(
@@ -119,21 +115,16 @@ export const gameLevels = pgTable(
     }).references(() => managers.id),
     publishedAt: timestamp("published_at", { withTimezone: true }),
     archivedAt: timestamp("archived_at", { withTimezone: true }),
-    createdAt: timestamp("created_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
-    updatedAt: timestamp("updated_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
+    ...timestamps(),
   },
   (table) => [
-    unique("game_levels_code_version_unique").on(
-      table.code,
-      table.contentVersion
-    ),
-    uniqueIndex("idx_game_levels_published_code")
-      .on(table.code)
-      .where(sql`${table.status} = 'published'`),
+    ...versioningConstraints({
+      uniqueName: "game_levels_code_version_unique",
+      publishedIndexName: "idx_game_levels_published_code",
+      keyColumn: table.code,
+      versionColumn: table.contentVersion,
+      statusColumn: table.status,
+    }),
     // Tra cứu nội dung theo khoá JSONB (content-search) — không có GIN thì mỗi
     // truy vấn quét toàn bảng game_levels.
     index("idx_game_levels_content_pack_gin").using("gin", table.contentPack),
@@ -159,12 +150,7 @@ export const gameLevelRounds = pgTable(
     contentPack: jsonb("content_pack").notNull(),
     difficultyParams: jsonb("difficulty_params").notNull(),
     difficulty: smallint("difficulty"),
-    createdAt: timestamp("created_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
-    updatedAt: timestamp("updated_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
+    ...timestamps(),
   },
   (table) => [
     unique("game_level_rounds_level_index_unique").on(

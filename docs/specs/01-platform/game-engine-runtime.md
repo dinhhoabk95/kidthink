@@ -74,7 +74,7 @@ một tầng theo dõi không đoán trước được vào đúng chỗ không 
 | `BR-ENG-01` (thuần TS) | TypeScript thuần. Cấm — NEVER Vue/Pinia/VueUse trong engine | RAF loop 60 lần/giây không chịu được tầng reactivity |
 | `BR-ENG-02` (không ghi DB) | Cấm — **NEVER ghi DB từ engine.** Engine phát event, server ghi | Client không phải nguồn sự thật |
 | `BR-ENG-03` (offline-first) | Cấm — **NEVER network call trong lúc chơi.** Offline-first | Mạng chập chờn không được làm đứng game |
-| `BR-ENG-04` (design token) | Mọi màu và font từ `designTokens.ts`. Cấm hex literal, cấm `ctx.font` inline | Ép bằng `pnpm --filter @mindkid/gates test` trong cổng tự động |
+| `BR-ENG-04` (design token) | Mọi màu và font từ `designTokens.ts`. Cấm hex literal, cấm `ctx.font` inline | Hex rải rác làm canvas lệch khỏi bảng token. KHÔNG còn cổng nào đo (gỡ 2026-08-29) — grep tay theo [`design-system-contract.md`](../08-quality/design-system-contract.md) §7.5 |
 | `BR-ENG-05` (sàn touch) | Sàn touch theo band tuổi qua **một hàm duy nhất**. Con số do [`accessibility.md`](../08-quality/accessibility.md) `BR-A11-04` sở hữu: band 3–4 **96px**, phần tử chính **76px**, sàn bề mặt trẻ **64px** | Sàn tự viết rải rác là 60 chỗ để lệch. Con số **không** khai lại ở đây — bản trước ghi "5–6: 72px" trong khi spec sở hữu ghi 76px, và không cổng nào bắt được vì hai file không đọc lẫn nhau (`D-AO`) |
 | `BR-ENG-06` (fallback tap) | Mọi mechanic drag có **hit band khoan dung** và **fallback tap-tap** cho band 3–4 | Drag là cử chỉ khó nhất ở tuổi này |
 | `BR-ENG-07` (sai có phản hồi) | Trả lời sai **phải có phản hồi**, và **không bao giờ trừng phạt**. Cấm đỏ, cấm buzzer, cấm trừ điểm — **im lặng cũng là defect** | Không phản hồi thì trẻ không biết mình đã thao tác |
@@ -159,7 +159,7 @@ Scenario: BR-ENG-01 — engine không phụ thuộc Vue
   Then không import nào từ vue, pinia, hay @vueuse
 
 Scenario: BR-ENG-04 — không hex literal
-  When chạy pnpm --filter @mindkid/gates test
+  When grep hex trong packages/game-engine/src
   Then 0 vi phạm ngoài designTokens.ts
 
 Scenario: BR-ENG-13 — checkWinCondition thuần

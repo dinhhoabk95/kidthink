@@ -99,7 +99,7 @@
                     Đang chờ xác nhận
                   </span>
                   <span
-                    class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 border border-emerald-300"
+                    class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-success-100 text-success-800 border border-success-300"
                     v-else
                   >
                     Đang hoạt động
@@ -404,7 +404,7 @@
   function orderStatusStyle(status: string): string {
     switch (status) {
       case "approved":
-        return "bg-emerald-100 text-emerald-800 border-emerald-300";
+        return "bg-success-100 text-success-800 border-success-300";
       case "under_review":
       case "submitted":
         return "bg-warning-100 text-warning-800 border-warning-300";

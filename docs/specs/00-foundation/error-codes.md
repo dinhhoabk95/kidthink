@@ -158,6 +158,7 @@ Mọi handler API. Mọi spec khai báo mã lỗi phải đăng ký ở đây.
 | `CONTENT_ARCHIVED` | 410 | Chương trình hoặc nội dung đã ngừng phát hành ([`program-showcase.md`](../02-public/program-showcase.md)) |
 | `AUDIO_FORMAT_INVALID` | 415 | Magic bytes không phải định dạng audio được hỗ trợ ([`audio-storage.md`](../01-platform/audio-storage.md)) |
 | `AUDIO_SIZE_LIMIT_EXCEEDED` | 413 | Dung lượng file audio vượt quá 500 KB hoặc thời lượng > 30s ([`audio-storage.md`](../01-platform/audio-storage.md)) |
+| `THEME_NOT_SUPPORTED` | 422 | Lọc hoặc gắn chủ đề ngoài từ vựng đóng ([`content-theme-registry.md`](../05-content/content-theme-registry.md)) |
 
 ### 7.5 Chơi
 

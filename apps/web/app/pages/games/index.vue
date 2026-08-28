@@ -178,13 +178,19 @@
 </template>
 
 <script lang="ts" setup>
-  import { FEATURED_GUEST_LEVELS } from "@mindkid/shared";
-  import { useHead, useSeoMeta } from "unhead";
+  import { FEATURED_GUEST_LEVELS } from "@mindkid/shared/client";
   import { computed, ref, watch } from "vue";
   import { useRoute, useRouter } from "vue-router";
+  import { useHead, useSeoMeta } from "#imports";
   import CookieNoticeBanner from "~/components/cookie-notice-banner.vue";
   import PublicFooter from "~/components/public-footer.vue";
   import PublicNavbar from "~/components/public-navbar.vue";
+
+  // Trang này tự dựng chrome (PublicNavbar + <main id="main-content"> +
+  // PublicFooter). Không tắt layout thì `default.vue` dựng thêm một bộ nữa:
+  // navbar và footer hiện hai lần, và có hai phần tử cùng id="main-content"
+  // nên skip-link của app.vue nhảy sai chỗ (BR-A11-05).
+  definePageMeta({ layout: false });
 
   const route = useRoute();
   const router = useRouter();

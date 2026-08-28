@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 # Fake curl: returns the status code the test asked for.
+#
+# Loopback and public answers are separate files. A release is judged on both
+# now (smoke.sh), and the interesting failure is exactly the one where the
+# process is healthy on 127.0.0.1 while nginx in front of it is not.
 set -uo pipefail
 state="${MK_FAKE_STATE:?}"
 printf 'curl %s\n' "$*" >>"${state}/curl.calls"
@@ -12,6 +16,18 @@ for arg in "$@"; do
   fi
 done
 
+url=""
+for arg in "$@"; do
+  case "${arg}" in
+    http://*|https://*) url="${arg}" ;;
+  esac
+done
+
 status_file="${state}/http_status"
+case "${url}" in
+  *127.0.0.1*) : ;;
+  *) [ -f "${state}/http_status_public" ] && status_file="${state}/http_status_public" ;;
+esac
+
 [ -f "${status_file}" ] && printf '%s' "$(cat "${status_file}")" && exit 0
 printf '200'

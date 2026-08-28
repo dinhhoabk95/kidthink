@@ -451,7 +451,11 @@ describe("Feature Flags, Data Export & Notification Admin (P2.9)", () => {
       }
     });
 
-    it("handles SES SNS webhook events", async () => {
+    // Đường thành công có chữ ký hợp lệ sống ở
+    // `tests/api/guest/webhooks-ses-sns.test.ts`. Ca này giữ lại đúng hình dạng
+    // payload mà route **từng** chấp nhận — sự kiện SES trần, không phong bì
+    // SNS, không chữ ký — để nếu ai đó nới lại thì cổng đỏ ngay.
+    it("refuses an unsigned SES event and leaves the delivery queued", async () => {
       const db = getOwnerDb();
       const messageId = `msg-ses-${Date.now()}`;
 
@@ -479,14 +483,13 @@ describe("Feature Flags, Data Export & Notification Admin (P2.9)", () => {
         },
       });
 
-      const res = (await sesSnsWebhookHandler(webhookEvt)) as any;
-      expect(res.status).toBe("processed");
+      await expect(sesSnsWebhookHandler(webhookEvt)).rejects.toThrow();
 
       const [delivery] = await db
         .select()
         .from(notificationDeliveries)
         .where(eq(notificationDeliveries.providerMessageId, messageId));
-      expect(delivery.status).toBe("dispatched");
+      expect(delivery.status).toBe("queued");
     });
   });
 

@@ -4,12 +4,11 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "test": "vitest run",
-    "typecheck": "tsc --noEmit"
+    "test": "vitest run"
   },
   "dependencies": {
     "@mindkid/config": "workspace:*",
-    "argon2": "^0.45.1",
+    "argon2": "catalog:",
     "ioredis": "catalog:",
     "openid-client": "catalog:",
     "otpauth": "catalog:"

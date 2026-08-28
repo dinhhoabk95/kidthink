@@ -459,7 +459,7 @@ export function renderWorksheetPdf(
   streamCommands.push("/F2 8 Tf");
   streamCommands.push("50 35 Td");
   streamCommands.push(
-    `${escapePdfText("TiniMath — Thư viện tư duy qua trò chơi cho trẻ mầm non (Bản in đen trắng A4)")} Tj`
+    `${escapePdfText("MindKid — Thư viện tư duy qua trò chơi cho trẻ mầm non (Bản in đen trắng A4)")} Tj`
   );
   streamCommands.push("ET");
 

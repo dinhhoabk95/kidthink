@@ -5,9 +5,8 @@
   "type": "module",
   "scripts": {
     "build": "nuxt generate",
-    "dev": "nuxt dev",
-    "test": "vitest run",
-    "typecheck": "nuxt typecheck"
+    "dev": "nuxt dev --port 3001",
+    "test": "vitest run"
   },
   "dependencies": {
     "@mindkid/shared": "workspace:*",
@@ -15,7 +14,10 @@
   },
   "devDependencies": {
     "@mindkid/config": "workspace:*",
+    "@nuxt/fonts": "catalog:",
+    "@nuxt/ui": "catalog:",
     "nuxt": "catalog:",
+    "tailwindcss": "catalog:",
     "typescript": "catalog:",
     "vitest": "catalog:",
     "vue-tsc": "catalog:"

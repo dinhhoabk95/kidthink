@@ -382,4 +382,54 @@ describe("Custom Game Validation (BR-CGB-01..10, BR-GLM-01..10)", () => {
     expect(refs).toContain("EMJ-red-apple");
     expect(refs).toContain("EMJ-banana");
   });
+
+  it("ensures exactly ONE definition of CUSTOM_GAME_TEMPLATE_CODES exists in monorepo (WP115.0)", async () => {
+    const fs = await import("node:fs");
+    const path = await import("node:path");
+    const { REPO_ROOT } = await import("@mindkid/config/paths");
+
+    const pattern = /export\s+const\s+CUSTOM_GAME_TEMPLATE_CODES\s*=/g;
+    const searchDirs = ["packages", "apps"];
+    let matchCount = 0;
+    const matches: string[] = [];
+
+    function walk(dir: string) {
+      const entries = fs.readdirSync(dir, { withFileTypes: true });
+      for (const entry of entries) {
+        if (
+          entry.name === "node_modules" ||
+          entry.name === "dist" ||
+          entry.name === ".nuxt" ||
+          entry.name === ".output"
+        ) {
+          continue;
+        }
+        const fullPath = path.join(dir, entry.name);
+        if (entry.isDirectory()) {
+          walk(fullPath);
+        } else if (
+          entry.isFile() &&
+          (entry.name.endsWith(".ts") ||
+            entry.name.endsWith(".vue") ||
+            entry.name.endsWith(".js"))
+        ) {
+          const content = fs.readFileSync(fullPath, "utf-8");
+          if (pattern.test(content)) {
+            matchCount++;
+            matches.push(path.relative(REPO_ROOT, fullPath));
+          }
+        }
+      }
+    }
+
+    for (const d of searchDirs) {
+      walk(path.join(REPO_ROOT, d));
+    }
+
+    expect(
+      matchCount,
+      `Found multiple definitions in: ${matches.join(", ")}`
+    ).toBe(1);
+    expect(matches).toEqual(["packages/shared/src/custom-game.ts"]);
+  });
 });

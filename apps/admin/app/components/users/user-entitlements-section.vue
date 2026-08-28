@@ -65,8 +65,8 @@
                   :class="[
                     'px-2 py-0.5 rounded-full text-[11px] font-bold',
                     e.source === 'manual_grant'
-                      ? 'bg-purple-100 text-purple-800 border border-purple-300'
-                      : 'bg-blue-100 text-blue-800 border border-blue-300'
+                      ? 'bg-brand-100 text-brand-800 border border-brand-300'
+                      : 'bg-brand-100 text-brand-800 border border-brand-300'
                   ]"
                 >
                   {{ e.source === 'manual_grant' ? 'Cấp tay' : 'Thanh toán' }}
@@ -74,13 +74,13 @@
               </td>
               <td class="p-3">
                 <span
-                  class="px-2 py-0.5 rounded-full text-[11px] font-bold bg-amber-100 text-amber-800 border border-amber-300"
+                  class="px-2 py-0.5 rounded-full text-[11px] font-bold bg-warning-100 text-warning-800 border border-warning-300"
                   v-if="e.status === 'soft_unlock'"
                 >
                   Tạm mở (soft_unlock)
                 </span>
                 <span
-                  class="px-2 py-0.5 rounded-full text-[11px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-300"
+                  class="px-2 py-0.5 rounded-full text-[11px] font-bold bg-success-100 text-success-800 border border-success-300"
                   v-else
                 >
                   Hoạt động
@@ -105,7 +105,7 @@
               </td>
               <td class="p-3 text-right">
                 <button
-                  class="px-2.5 py-1 rounded-xl border border-rose-300 bg-rose-50 hover:bg-rose-100 text-rose-800 text-[11px] font-bold transition-colors"
+                  class="px-2.5 py-1 rounded-xl border border-danger-300 bg-danger-50 hover:bg-danger-100 text-danger-800 text-[11px] font-bold transition-colors"
                   type="button"
                   @click="() => openRevokeModal(e)"
                 >
@@ -158,7 +158,7 @@
                 <span
                   :class="[
                     'px-2 py-0.5 rounded text-[10px] font-medium',
-                    e.status === 'cancelled' ? 'bg-rose-100 text-rose-800' : 'bg-surface-100 text-surface-600'
+                    e.status === 'cancelled' ? 'bg-danger-100 text-danger-800' : 'bg-surface-100 text-surface-600'
                   ]"
                 >
                   {{ e.status === 'cancelled' ? 'Đã thu hồi' : 'Hết hạn' }}
@@ -196,12 +196,12 @@
             type="button"
             @click="closeGrantModal"
           >
-            ✕
+            <UIcon class="w-5 h-5" name="i-lucide-x" />
           </button>
         </div>
 
         <div
-          class="p-3 rounded-2xl bg-rose-50 border border-rose-200 text-xs text-rose-800 font-medium"
+          class="p-3 rounded-2xl bg-danger-50 border border-danger-200 text-xs text-danger-800 font-medium"
           v-if="grantError"
         >
           {{ grantError }}
@@ -214,7 +214,7 @@
               class="font-bold text-surface-800 block"
               for="grant_package_code"
             >
-              Gói áp dụng (Package) <span class="text-rose-500">*</span>
+              Gói áp dụng (Package) <span class="text-danger-500">*</span>
             </label>
             <select
               class="w-full p-2.5 border-2 border-surface-200 rounded-2xl bg-white text-surface-800 text-xs font-medium focus:border-brand-500 focus:outline-none"
@@ -250,7 +250,7 @@
               class="font-bold text-surface-800 block"
               for="grant_duration_days"
             >
-              Thời hạn cấp (1 – 365 ngày) <span class="text-rose-500">*</span>
+              Thời hạn cấp (1 – 365 ngày) <span class="text-danger-500">*</span>
             </label>
             <input
               class="w-full p-2.5 border-2 border-surface-200 rounded-2xl text-surface-800 text-xs font-medium focus:border-brand-500 focus:outline-none"
@@ -262,7 +262,7 @@
               v-model.number="grantForm.duration_days"
             >
             <span
-              class="text-[11px] text-amber-600 font-medium block"
+              class="text-[11px] text-warning-600 font-medium block"
               v-if="grantForm.duration_days > 300"
             >
               ⚠️ Cảnh báo: Thời hạn cấp gần trần 365 ngày. Vui lòng xác nhận kỹ
@@ -278,12 +278,12 @@
                 for="grant_reason_input"
               >
                 Lý do cấp quyền (Bắt buộc tối thiểu 20 ký tự)
-                <span class="text-rose-500">*</span>
+                <span class="text-danger-500">*</span>
               </label>
               <span
                 :class="[
                   'text-[10px] font-bold',
-                  grantForm.grant_reason.trim().length >= 20 ? 'text-emerald-600' : 'text-rose-600'
+                  grantForm.grant_reason.trim().length >= 20 ? 'text-success-600' : 'text-danger-600'
                 ]"
               >
                 {{ grantForm.grant_reason.trim().length }}/20 ký tự
@@ -350,7 +350,7 @@
         <div
           class="flex items-center justify-between border-b pb-3 border-surface-100"
         >
-          <h3 class="text-lg font-bold font-heading text-rose-900">
+          <h3 class="text-lg font-bold font-heading text-danger-900">
             Thu hồi quyền sử dụng
           </h3>
           <button
@@ -358,12 +358,12 @@
             type="button"
             @click="closeRevokeModal"
           >
-            ✕
+            <UIcon class="w-5 h-5" name="i-lucide-x" />
           </button>
         </div>
 
         <div
-          class="p-3 rounded-2xl bg-rose-50 border border-rose-200 text-xs text-rose-800 font-medium"
+          class="p-3 rounded-2xl bg-danger-50 border border-danger-200 text-xs text-danger-800 font-medium"
           v-if="revokeError"
         >
           {{ revokeError }}
@@ -385,19 +385,19 @@
                 for="revoke_reason_input"
               >
                 Lý do thu hồi (Tối thiểu 10 ký tự)
-                <span class="text-rose-500">*</span>
+                <span class="text-danger-500">*</span>
               </label>
               <span
                 :class="[
                   'text-[10px] font-bold',
-                  revokeReason.trim().length >= 10 ? 'text-emerald-600' : 'text-rose-600'
+                  revokeReason.trim().length >= 10 ? 'text-success-600' : 'text-danger-600'
                 ]"
               >
                 {{ revokeReason.trim().length }}/10 ký tự
               </span>
             </div>
             <textarea
-              class="w-full p-2.5 border-2 border-surface-200 rounded-2xl text-surface-800 text-xs font-medium focus:border-rose-500 focus:outline-none"
+              class="w-full p-2.5 border-2 border-surface-200 rounded-2xl text-surface-800 text-xs font-medium focus:border-danger-500 focus:outline-none"
               id="revoke_reason_input"
               placeholder="Nhập lý do thu hồi quyền sử dụng..."
               required
@@ -417,7 +417,7 @@
               Huỷ
             </button>
             <button
-              class="min-h-11 px-5 py-2 rounded-2xl bg-rose-600 text-white font-bold hover:bg-rose-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors shadow-sm"
+              class="min-h-11 px-5 py-2 rounded-2xl bg-danger-600 text-white font-bold hover:bg-danger-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors shadow-sm"
               type="submit"
               :disabled="revokeReason.trim().length < 10 || isSubmitting"
             >

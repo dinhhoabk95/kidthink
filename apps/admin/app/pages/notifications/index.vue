@@ -5,10 +5,10 @@
       class="flex flex-col sm:flex-row sm:items-center justify-between gap-4"
     >
       <div>
-        <h1 class="text-2xl font-bold text-slate-900 dark:text-white">
+        <h1 class="text-2xl font-bold text-surface-900 dark:text-white">
           Quản Lý Thông Báo & Email (P2.9)
         </h1>
-        <p class="text-sm text-slate-500 mt-1">
+        <p class="text-sm text-surface-500 mt-1">
           Theo dõi nhật ký chuyển phát AWS SES, gửi lại thông báo giao dịch và
           quản lý mẫu email hệ thống.
         </p>
@@ -16,15 +16,15 @@
 
       <!-- Tab Switcher -->
       <div
-        class="flex items-center gap-2 bg-slate-100 dark:bg-slate-800 p-1.5 rounded-2xl border border-slate-200 dark:border-slate-700"
+        class="flex items-center gap-2 bg-surface-100 dark:bg-surface-800 p-1.5 rounded-2xl border border-surface-200 dark:border-surface-700"
       >
         <button
           type="button"
           :class="[
             'px-4 py-2 rounded-xl text-xs font-bold transition-all',
             activeTab === 'logs'
-              ? 'bg-white dark:bg-slate-700 text-indigo-600 dark:text-white shadow-sm'
-              : 'text-slate-600 dark:text-slate-400 hover:text-slate-900'
+              ? 'bg-white dark:bg-surface-700 text-brand-600 dark:text-white shadow-sm'
+              : 'text-surface-600 dark:text-surface-400 hover:text-surface-900'
           ]"
           @click="activeTab = 'logs'"
         >
@@ -35,8 +35,8 @@
           :class="[
             'px-4 py-2 rounded-xl text-xs font-bold transition-all',
             activeTab === 'templates'
-              ? 'bg-white dark:bg-slate-700 text-indigo-600 dark:text-white shadow-sm'
-              : 'text-slate-600 dark:text-slate-400 hover:text-slate-900'
+              ? 'bg-white dark:bg-surface-700 text-brand-600 dark:text-white shadow-sm'
+              : 'text-surface-600 dark:text-surface-400 hover:text-surface-900'
           ]"
           @click="activeTab = 'templates'"
         >
@@ -50,28 +50,28 @@
       <!-- Search & Filters -->
       <div class="flex flex-wrap items-center gap-3">
         <input
-          class="px-3.5 py-2 text-xs rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:border-indigo-500"
+          class="px-3.5 py-2 text-xs rounded-xl border border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-800 text-surface-900 dark:text-white focus:outline-none focus:border-brand-500"
           placeholder="Tìm theo email hoặc ID..."
           type="text"
           v-model="filterRecipient"
           @keyup.enter="fetchDeliveries"
         >
         <input
-          class="px-3.5 py-2 text-xs rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:border-indigo-500"
+          class="px-3.5 py-2 text-xs rounded-xl border border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-800 text-surface-900 dark:text-white focus:outline-none focus:border-brand-500"
           placeholder="Mã template (ví dụ: order_approved)..."
           type="text"
           v-model="filterCode"
           @keyup.enter="fetchDeliveries"
         >
         <button
-          class="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold transition-all"
+          class="px-4 py-2 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-xs font-bold transition-all"
           type="button"
           @click="fetchDeliveries"
         >
           Lọc
         </button>
         <button
-          class="px-4 py-2 rounded-xl border border-slate-300 dark:border-slate-600 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-bold transition-all"
+          class="px-4 py-2 rounded-xl border border-surface-300 dark:border-surface-600 hover:bg-surface-100 dark:hover:bg-surface-700 text-surface-700 dark:text-surface-200 text-xs font-bold transition-all"
           type="button"
           @click="resetFilters"
         >
@@ -81,18 +81,18 @@
 
       <!-- Deliveries Table -->
       <div
-        class="bg-white dark:bg-slate-800 rounded-3xl border-2 border-slate-200 dark:border-slate-700 overflow-hidden shadow-sm"
+        class="bg-white dark:bg-surface-800 rounded-3xl border-2 border-surface-200 dark:border-surface-700 overflow-hidden shadow-sm"
       >
-        <div class="p-12 text-center text-slate-400" v-if="isLoading">
+        <div class="p-12 text-center text-surface-400" v-if="isLoading">
           Đang tải nhật ký thông báo...
         </div>
 
         <div
-          class="p-12 text-center text-slate-500"
+          class="p-12 text-center text-surface-500"
           v-else-if="deliveries.length === 0"
         >
           <span class="text-3xl block mb-2">📬</span>
-          <p class="font-bold text-slate-700 dark:text-slate-300">
+          <p class="font-bold text-surface-700 dark:text-surface-300">
             Chưa có thông báo nào
           </p>
           <p class="text-xs">
@@ -100,16 +100,19 @@
           </p>
         </div>
 
-        <div class="divide-y divide-slate-100 dark:divide-slate-700/60" v-else>
+        <div
+          class="divide-y divide-surface-100 dark:divide-surface-700/60"
+          v-else
+        >
           <div
-            class="p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:bg-slate-50 dark:hover:bg-slate-700/20 transition-all"
+            class="p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:bg-surface-50 dark:hover:bg-surface-700/20 transition-all"
             v-for="item in deliveries"
             :key="item.id"
           >
             <div class="space-y-1">
               <div class="flex items-center gap-2.5 flex-wrap">
                 <span
-                  class="font-mono text-xs px-2.5 py-0.5 rounded-full bg-slate-100 dark:bg-slate-700 font-bold text-slate-700 dark:text-slate-300"
+                  class="font-mono text-xs px-2.5 py-0.5 rounded-full bg-surface-100 dark:bg-surface-700 font-bold text-surface-700 dark:text-surface-300"
                 >
                   {{ item.templateCode }}
                 </span>
@@ -120,34 +123,37 @@
                   {{ statusLabel(item.status) }}
                 </span>
 
-                <span class="text-xs text-slate-400">
+                <span class="text-xs text-surface-400">
                   Kênh: {{ item.channel }}
                 </span>
               </div>
 
-              <p class="text-sm font-bold text-slate-900 dark:text-white">
+              <p class="text-sm font-bold text-surface-900 dark:text-white">
                 Người nhận:
                 {{ item.recipientEmailMasked || item.recipientEmail || `User #${item.recipientId}` }}
               </p>
 
-              <p class="text-xs text-rose-600 font-semibold" v-if="item.error">
+              <p
+                class="text-xs text-danger-600 font-semibold"
+                v-if="item.error"
+              >
                 Lỗi: {{ item.error }}
               </p>
               <p
-                class="text-xs text-amber-600 font-semibold"
+                class="text-xs text-warning-600 font-semibold"
                 v-if="item.suppressedReason"
               >
                 Bị chặn: {{ item.suppressedReason }}
               </p>
 
-              <p class="text-xs text-slate-400">
+              <p class="text-xs text-surface-400">
                 Thời gian: {{ formatDate(item.createdAt) }}
               </p>
             </div>
 
             <div class="flex items-center gap-3 shrink-0">
               <button
-                class="px-3.5 py-1.5 rounded-xl bg-indigo-50 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-300 hover:bg-indigo-600 hover:text-white text-xs font-bold transition-all"
+                class="px-3.5 py-1.5 rounded-xl bg-brand-50 dark:bg-brand-900/40 text-brand-700 dark:text-brand-300 hover:bg-brand-600 hover:text-white text-xs font-bold transition-all"
                 type="button"
                 v-if="item.status === 'failed' || item.status === 'suppressed'"
                 :disabled="isResendingId === item.notificationId"
@@ -164,36 +170,42 @@
     <!-- TAB 2: Notification Templates -->
     <div class="space-y-4" v-else>
       <div
-        class="bg-white dark:bg-slate-800 rounded-3xl border-2 border-slate-200 dark:border-slate-700 overflow-hidden shadow-sm"
+        class="bg-white dark:bg-surface-800 rounded-3xl border-2 border-surface-200 dark:border-surface-700 overflow-hidden shadow-sm"
       >
-        <div class="p-12 text-center text-slate-400" v-if="isLoadingTemplates">
+        <div
+          class="p-12 text-center text-surface-400"
+          v-if="isLoadingTemplates"
+        >
           Đang tải danh sách mẫu thông báo...
         </div>
 
-        <div class="divide-y divide-slate-100 dark:divide-slate-700/60" v-else>
+        <div
+          class="divide-y divide-surface-100 dark:divide-surface-700/60"
+          v-else
+        >
           <div
-            class="p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:bg-slate-50 dark:hover:bg-slate-700/20 transition-all"
+            class="p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:bg-surface-50 dark:hover:bg-surface-700/20 transition-all"
             v-for="tpl in templates"
             :key="tpl.code"
           >
             <div class="space-y-1">
               <div class="flex items-center gap-2.5 flex-wrap">
                 <span
-                  class="font-mono text-xs px-2.5 py-0.5 rounded-full bg-slate-100 dark:bg-slate-700 font-bold text-slate-700 dark:text-slate-300"
+                  class="font-mono text-xs px-2.5 py-0.5 rounded-full bg-surface-100 dark:bg-surface-700 font-bold text-surface-700 dark:text-surface-300"
                 >
                   {{ tpl.code }}
                 </span>
                 <span
-                  class="text-xs px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-semibold"
+                  class="text-xs px-2 py-0.5 rounded-full bg-success-100 text-success-800 font-semibold"
                 >
                   Phiên bản {{ tpl.content_version }} ({{ tpl.status }})
                 </span>
               </div>
 
-              <p class="text-xs text-slate-500">
+              <p class="text-xs text-surface-500">
                 Biến bắt buộc:
                 <code
-                  class="font-mono text-xs bg-slate-100 dark:bg-slate-700 px-1.5 py-0.5 rounded"
+                  class="font-mono text-xs bg-surface-100 dark:bg-surface-700 px-1.5 py-0.5 rounded"
                   >{{ tpl.required_vars.join(', ') }}</code
                 >
               </p>
@@ -201,7 +213,7 @@
 
             <div class="flex items-center gap-3 shrink-0">
               <button
-                class="px-3.5 py-1.5 rounded-xl bg-indigo-50 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-300 hover:bg-indigo-600 hover:text-white text-xs font-bold transition-all"
+                class="px-3.5 py-1.5 rounded-xl bg-brand-50 dark:bg-brand-900/40 text-brand-700 dark:text-brand-300 hover:bg-brand-600 hover:text-white text-xs font-bold transition-all"
                 type="button"
                 @click="openPreviewModal(tpl.code)"
               >
@@ -215,41 +227,42 @@
 
     <!-- Preview Modal (§7.3) -->
     <div
-      class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm"
+      class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-surface-900/60 backdrop-blur-sm"
       v-if="isPreviewOpen"
     >
       <div
-        class="w-full max-w-2xl bg-white dark:bg-slate-800 rounded-3xl border-4 border-slate-200 dark:border-slate-700 p-6 shadow-2xl space-y-4"
+        class="w-full max-w-2xl bg-white dark:bg-surface-800 rounded-3xl border-4 border-surface-200 dark:border-surface-700 p-6 shadow-2xl space-y-4"
       >
         <div class="flex items-center justify-between">
-          <h2 class="text-lg font-bold text-slate-900 dark:text-white">
+          <h2 class="text-lg font-bold text-surface-900 dark:text-white">
             Xem trước mẫu: {{ previewCode }}
           </h2>
           <button
-            class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 font-bold text-sm"
+            class="text-surface-400 hover:text-surface-600 dark:hover:text-surface-200 font-bold text-sm"
             type="button"
             @click="isPreviewOpen = false"
           >
-            ✕
+            <UIcon class="w-5 h-5" name="i-lucide-x" />
           </button>
         </div>
 
-        <div class="p-8 text-center text-slate-400" v-if="isPreviewLoading">
+        <div class="p-8 text-center text-surface-400" v-if="isPreviewLoading">
           Đang kết xuất bản xem trước...
         </div>
 
         <div class="space-y-3" v-else>
           <div
-            class="p-3 bg-slate-50 dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-700"
+            class="p-3 bg-surface-50 dark:bg-surface-900 rounded-xl border border-surface-200 dark:border-surface-700"
           >
-            <span class="text-xs text-slate-400 block">Tiêu đề:</span>
-            <span class="text-sm font-bold text-slate-800 dark:text-slate-200"
+            <span class="text-xs text-surface-400 block">Tiêu đề:</span>
+            <span
+              class="text-sm font-bold text-surface-800 dark:text-surface-200"
               >{{ previewSubject }}</span
             >
           </div>
 
           <div
-            class="rounded-xl border border-slate-200 dark:border-slate-700 overflow-hidden max-h-96 overflow-y-auto p-4 bg-slate-50"
+            class="rounded-xl border border-surface-200 dark:border-surface-700 overflow-hidden max-h-96 overflow-y-auto p-4 bg-surface-50"
           >
             <div v-html="previewHtml" />
           </div>
@@ -257,7 +270,7 @@
 
         <div class="flex justify-end pt-2">
           <button
-            class="px-4 py-2 rounded-xl bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-300 font-semibold text-xs"
+            class="px-4 py-2 rounded-xl bg-surface-200 dark:bg-surface-700 text-surface-700 dark:text-surface-200 hover:bg-surface-300 font-semibold text-xs"
             type="button"
             @click="isPreviewOpen = false"
           >
@@ -401,13 +414,13 @@
   function statusClass(st: string): string {
     switch (st) {
       case "dispatched":
-        return "bg-emerald-100 text-emerald-800";
+        return "bg-success-100 text-success-800";
       case "failed":
-        return "bg-rose-100 text-rose-800";
+        return "bg-danger-100 text-danger-800";
       case "suppressed":
-        return "bg-amber-100 text-amber-800";
+        return "bg-warning-100 text-warning-800";
       default:
-        return "bg-slate-100 text-slate-700";
+        return "bg-surface-100 text-surface-700";
     }
   }
 

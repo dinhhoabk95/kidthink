@@ -5,17 +5,17 @@
       class="flex flex-col sm:flex-row sm:items-center justify-between gap-4"
     >
       <div>
-        <h1 class="text-2xl font-bold text-slate-900 dark:text-white">
+        <h1 class="text-2xl font-bold text-surface-900 dark:text-white">
           Xưởng Soạn Hoạt Động (Activity Studio)
         </h1>
-        <p class="text-sm text-slate-500 dark:text-slate-400">
+        <p class="text-sm text-surface-500 dark:text-surface-400">
           Tạo và quản lý 10 loại hoạt động giáo dục độc lập, tái sử dụng trong
           các bài học.
         </p>
       </div>
 
       <button
-        class="min-h-11 px-5 py-2.5 rounded-2xl bg-indigo-600 hover:bg-indigo-700 active:scale-95 text-white font-semibold text-base shadow-sm transition-all flex items-center gap-2"
+        class="min-h-11 px-5 py-2.5 rounded-2xl bg-brand-600 hover:bg-brand-700 active:scale-95 text-white font-semibold text-base shadow-sm transition-all flex items-center gap-2"
         type="button"
         @click="openCreateModal"
       >
@@ -25,12 +25,12 @@
 
     <!-- Notification Banner -->
     <div
-      class="p-4 rounded-2xl bg-indigo-50 dark:bg-indigo-900/40 border border-indigo-200 dark:border-indigo-700 text-indigo-900 dark:text-indigo-200 text-sm flex items-center justify-between"
+      class="p-4 rounded-2xl bg-brand-50 dark:bg-brand-900/40 border border-brand-200 dark:border-brand-700 text-brand-900 dark:text-brand-200 text-sm flex items-center justify-between"
       v-if="actionNotification"
     >
       <span>{{ actionNotification }}</span>
       <button
-        class="text-xs font-bold text-indigo-600 dark:text-indigo-400 hover:underline"
+        class="text-xs font-bold text-brand-600 dark:text-brand-400 hover:underline"
         type="button"
         @click="dismissNotification"
       >
@@ -40,12 +40,12 @@
 
     <!-- Filters & Search -->
     <div
-      class="p-4 rounded-2xl bg-white dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 shadow-sm flex flex-wrap gap-4 items-center justify-between"
+      class="p-4 rounded-2xl bg-white dark:bg-surface-800 border-2 border-surface-200 dark:border-surface-700 shadow-sm flex flex-wrap gap-4 items-center justify-between"
     >
       <div class="flex flex-wrap gap-3 items-center flex-1">
         <label class="sr-only" for="filter-q">Tìm kiếm</label>
         <input
-          class="min-h-10 px-4 py-2 text-sm rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:outline-none focus:border-indigo-500 w-64"
+          class="min-h-10 px-4 py-2 text-sm rounded-xl border border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-900 text-surface-900 dark:text-white focus:outline-none focus:border-brand-500 w-64"
           id="filter-q"
           placeholder="Tìm mã hoặc tiêu đề hoạt động..."
           type="text"
@@ -55,7 +55,7 @@
 
         <label class="sr-only" for="filter-kind">Loại hoạt động</label>
         <select
-          class="min-h-10 px-3 py-2 text-sm rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:outline-none focus:border-indigo-500"
+          class="min-h-10 px-3 py-2 text-sm rounded-xl border border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-900 text-surface-900 dark:text-white focus:outline-none focus:border-brand-500"
           id="filter-kind"
           v-model="filters.kind"
           @change="fetchActivities"
@@ -75,7 +75,7 @@
 
         <label class="sr-only" for="filter-status">Trạng thái</label>
         <select
-          class="min-h-10 px-3 py-2 text-sm rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:outline-none focus:border-indigo-500"
+          class="min-h-10 px-3 py-2 text-sm rounded-xl border border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-900 text-surface-900 dark:text-white focus:outline-none focus:border-brand-500"
           id="filter-status"
           v-model="filters.status"
           @change="fetchActivities"
@@ -89,7 +89,7 @@
         </select>
       </div>
 
-      <div class="text-xs text-slate-500 font-semibold">
+      <div class="text-xs text-surface-500 font-semibold">
         {{ activities.length }}
         hoạt động
       </div>
@@ -97,14 +97,14 @@
 
     <!-- Activities Table -->
     <div
-      class="bg-white dark:bg-slate-800 rounded-3xl border-2 border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden"
+      class="bg-white dark:bg-surface-800 rounded-3xl border-2 border-surface-200 dark:border-surface-700 shadow-sm overflow-hidden"
     >
-      <div class="p-12 text-center text-slate-500" v-if="isLoading">
+      <div class="p-12 text-center text-surface-500" v-if="isLoading">
         Đang tải danh sách hoạt động...
       </div>
 
       <div
-        class="p-12 text-center text-slate-500"
+        class="p-12 text-center text-surface-500"
         v-else-if="activities.length === 0"
       >
         Không tìm thấy hoạt động nào phù hợp với bộ lọc.
@@ -113,7 +113,7 @@
       <div class="overflow-x-auto" v-else>
         <table class="w-full text-left text-sm">
           <thead
-            class="bg-slate-50 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-700 text-slate-500 text-xs font-bold"
+            class="bg-surface-50 dark:bg-surface-900 border-b border-surface-200 dark:border-surface-700 text-surface-500 text-xs font-bold"
           >
             <tr>
               <th class="py-3 px-4">Mã & Loại</th>
@@ -124,35 +124,35 @@
               <th class="py-3 px-4 text-right">Thao tác</th>
             </tr>
           </thead>
-          <tbody class="divide-y divide-slate-100 dark:divide-slate-700">
+          <tbody class="divide-y divide-surface-100 dark:divide-surface-700">
             <tr
-              class="hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors"
+              class="hover:bg-surface-50 dark:hover:bg-surface-700/50 transition-colors"
               v-for="act in activities"
               :key="act.id"
             >
               <td class="py-3 px-4">
                 <div
-                  class="font-bold text-slate-900 dark:text-white flex items-center gap-1.5"
+                  class="font-bold text-surface-900 dark:text-white flex items-center gap-1.5"
                 >
                   <span>{{ getKindEmoji(act.kind) }}</span>
                   <span>{{ act.code }} (v{{ act.content_version }})</span>
                 </div>
-                <div class="text-xs text-slate-500 font-mono">
+                <div class="text-xs text-surface-500 font-mono">
                   {{ act.kind }}
                 </div>
               </td>
               <td
-                class="py-3 px-4 font-semibold text-slate-800 dark:text-slate-200"
+                class="py-3 px-4 font-semibold text-surface-800 dark:text-surface-200"
               >
                 {{ act.title }}
                 <div
-                  class="text-xs text-slate-500 truncate max-w-xs font-normal"
+                  class="text-xs text-surface-500 truncate max-w-xs font-normal"
                   v-if="act.materials"
                 >
                   Vật liệu: {{ act.materials }}
                 </div>
               </td>
-              <td class="py-3 px-4 text-slate-600 dark:text-slate-300">
+              <td class="py-3 px-4 text-surface-600 dark:text-surface-300">
                 ⏱️ {{ act.estimated_minutes }} phút
               </td>
               <td class="py-3 px-4">
@@ -173,7 +173,7 @@
               </td>
               <td class="py-3 px-4 text-right space-x-2">
                 <button
-                  class="px-3 py-1.5 text-xs font-bold rounded-xl bg-amber-500 text-white hover:bg-amber-600"
+                  class="px-3 py-1.5 text-xs font-bold rounded-xl bg-warning-500 text-white hover:bg-warning-600"
                   type="button"
                   v-if="act.status === 'draft'"
                   @click="submitForReview(act)"
@@ -181,14 +181,14 @@
                   Gửi duyệt
                 </button>
                 <button
-                  class="px-3 py-1.5 text-xs font-bold rounded-xl bg-indigo-50 dark:bg-indigo-900/40 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-100"
+                  class="px-3 py-1.5 text-xs font-bold rounded-xl bg-brand-50 dark:bg-brand-900/40 text-brand-600 dark:text-brand-400 hover:bg-brand-100"
                   type="button"
                   @click="openEditModal(act)"
                 >
                   Sửa
                 </button>
                 <button
-                  class="px-3 py-1.5 text-xs font-bold rounded-xl bg-rose-50 text-rose-600 hover:bg-rose-100"
+                  class="px-3 py-1.5 text-xs font-bold rounded-xl bg-danger-50 text-danger-600 hover:bg-danger-100"
                   type="button"
                   v-if="act.status !== 'archived'"
                   @click="promptArchiveActivity(act)"
@@ -204,19 +204,22 @@
 
     <!-- Create / Edit Modal -->
     <div
-      class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm"
+      class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-surface-900/50 backdrop-blur-sm"
       v-if="isModalOpen"
     >
       <div
-        class="bg-white dark:bg-slate-800 rounded-3xl border-4 border-slate-300 dark:border-slate-700 p-6 w-full max-w-2xl shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto"
+        class="bg-white dark:bg-surface-800 rounded-3xl border-4 border-surface-300 dark:border-surface-700 p-6 w-full max-w-2xl shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto"
       >
         <div
-          class="flex justify-between items-center border-b pb-3 dark:border-slate-700"
+          class="flex justify-between items-center border-b pb-3 dark:border-surface-700"
         >
-          <h2 class="text-lg font-bold text-slate-900 dark:text-white">
+          <h2 class="text-lg font-bold text-surface-900 dark:text-white">
             {{ isEditing ? `Chỉnh sửa hoạt động: ${activeForm.code}` : 'Tạo hoạt động mới' }}
           </h2>
-          <span class="text-xs text-slate-400 font-mono" v-if="autosaveStatus">
+          <span
+            class="text-xs text-surface-400 font-mono"
+            v-if="autosaveStatus"
+          >
             {{ autosaveStatus }}
           </span>
         </div>
@@ -225,12 +228,12 @@
           <div class="grid grid-cols-2 gap-4">
             <div>
               <label
-                class="block text-xs font-bold text-slate-500 mb-1"
+                class="block text-xs font-bold text-surface-500 mb-1"
                 for="form-kind"
                 >Loại hoạt động (Kind) *</label
               >
               <select
-                class="w-full min-h-11 px-3 py-2 rounded-2xl border-2 border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:border-indigo-500 focus:outline-none"
+                class="w-full min-h-11 px-3 py-2 rounded-2xl border-2 border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-900 text-surface-900 dark:text-white focus:border-brand-500 focus:outline-none"
                 id="form-kind"
                 v-model="activeForm.kind"
                 :disabled="isEditing && activeForm.status === 'published'"
@@ -256,12 +259,12 @@
 
             <div>
               <label
-                class="block text-xs font-bold text-slate-500 mb-1"
+                class="block text-xs font-bold text-surface-500 mb-1"
                 for="form-tier"
                 >Gói truy cập (Access Tier) *</label
               >
               <select
-                class="w-full min-h-11 px-3 py-2 rounded-2xl border-2 border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:border-indigo-500 focus:outline-none"
+                class="w-full min-h-11 px-3 py-2 rounded-2xl border-2 border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-900 text-surface-900 dark:text-white focus:border-brand-500 focus:outline-none"
                 id="form-tier"
                 v-model="activeForm.access_tier"
               >
@@ -275,12 +278,12 @@
 
           <div>
             <label
-              class="block text-xs font-bold text-slate-500 mb-1"
+              class="block text-xs font-bold text-surface-500 mb-1"
               for="form-title"
               >Tiêu đề hoạt động tiếng Việt *</label
             >
             <input
-              class="w-full min-h-11 px-3 py-2 rounded-2xl border-2 border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:border-indigo-500 focus:outline-none"
+              class="w-full min-h-11 px-3 py-2 rounded-2xl border-2 border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-900 text-surface-900 dark:text-white focus:border-brand-500 focus:outline-none"
               id="form-title"
               placeholder="Ví dụ: Đếm hạt đậu và ghép thẻ số"
               type="text"
@@ -290,12 +293,12 @@
 
           <div v-if="activeForm.kind === 'digital_game'">
             <label
-              class="block text-xs font-bold text-slate-500 mb-1"
+              class="block text-xs font-bold text-surface-500 mb-1"
               for="form-refid"
               >Liên kết Game Level ID *</label
             >
             <input
-              class="w-full min-h-11 px-3 py-2 rounded-2xl border-2 border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:border-indigo-500 focus:outline-none"
+              class="w-full min-h-11 px-3 py-2 rounded-2xl border-2 border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-900 text-surface-900 dark:text-white focus:border-brand-500 focus:outline-none"
               id="form-refid"
               placeholder="ID của màn chơi đã xuất bản"
               type="number"
@@ -306,12 +309,12 @@
           <div class="grid grid-cols-2 gap-4">
             <div>
               <label
-                class="block text-xs font-bold text-slate-500 mb-1"
+                class="block text-xs font-bold text-surface-500 mb-1"
                 for="form-mins"
                 >Thời lượng ước tính (2–20 phút) *</label
               >
               <input
-                class="w-full min-h-11 px-3 py-2 rounded-2xl border-2 border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:border-indigo-500 focus:outline-none"
+                class="w-full min-h-11 px-3 py-2 rounded-2xl border-2 border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-900 text-surface-900 dark:text-white focus:border-brand-500 focus:outline-none"
                 id="form-mins"
                 max="20"
                 min="2"
@@ -322,12 +325,12 @@
 
             <div>
               <label
-                class="block text-xs font-bold text-slate-500 mb-1"
+                class="block text-xs font-bold text-surface-500 mb-1"
                 for="form-materials"
                 >Vật liệu cần chuẩn bị</label
               >
               <input
-                class="w-full min-h-11 px-3 py-2 rounded-2xl border-2 border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:border-indigo-500 focus:outline-none"
+                class="w-full min-h-11 px-3 py-2 rounded-2xl border-2 border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-900 text-surface-900 dark:text-white focus:border-brand-500 focus:outline-none"
                 id="form-materials"
                 type="text"
                 v-model="activeForm.materials"
@@ -338,14 +341,14 @@
 
           <div>
             <label
-              class="block text-xs font-bold text-slate-500 mb-1"
+              class="block text-xs font-bold text-surface-500 mb-1"
               for="form-instruction"
             >
               Hướng dẫn thực hiện (Đủ 4 phần: Chuẩn bị, Thoại với bé trong ngoặc
               kép, Dễ hơn, Khó hơn) *
             </label>
             <textarea
-              class="w-full min-h-24 px-3 py-2 rounded-2xl border-2 border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:border-indigo-500 focus:outline-none text-sm"
+              class="w-full min-h-24 px-3 py-2 rounded-2xl border-2 border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-900 text-surface-900 dark:text-white focus:border-brand-500 focus:outline-none text-sm"
               id="form-instruction"
               placeholder='Chuẩn bị đồ dùng. "Bé hãy đếm xem có mấy hạt nào!". Dễ hơn: đếm 3 hạt. Khó hơn: đếm 10 hạt.'
               rows="4"
@@ -354,16 +357,18 @@
           </div>
         </div>
 
-        <div class="flex justify-end gap-3 pt-3 border-t dark:border-slate-700">
+        <div
+          class="flex justify-end gap-3 pt-3 border-t dark:border-surface-700"
+        >
           <button
-            class="px-4 py-2 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100 font-semibold text-sm"
+            class="px-4 py-2 rounded-xl text-surface-600 dark:text-surface-300 hover:bg-surface-100 font-semibold text-sm"
             type="button"
             @click="closeModal"
           >
             Đóng
           </button>
           <button
-            class="px-5 py-2 rounded-xl bg-indigo-600 text-white font-semibold text-sm hover:bg-indigo-700 transition-all"
+            class="px-5 py-2 rounded-xl bg-brand-600 text-white font-semibold text-sm hover:bg-brand-700 transition-all"
             type="button"
             @click="saveActivity"
           >
@@ -463,31 +468,31 @@
 
   function getTierBadgeClass(tier: string): string {
     if (tier === "free") {
-      return "bg-emerald-100 text-emerald-800";
+      return "bg-success-100 text-success-800";
     }
     if (tier === "login") {
-      return "bg-blue-100 text-blue-800";
+      return "bg-brand-100 text-brand-800";
     }
     if (tier === "standard") {
-      return "bg-indigo-100 text-indigo-800";
+      return "bg-brand-100 text-brand-800";
     }
-    return "bg-amber-100 text-amber-800";
+    return "bg-warning-100 text-warning-800";
   }
 
   function getStatusBadgeClass(status: string): string {
     if (status === "published") {
-      return "bg-emerald-500 text-white";
+      return "bg-success-500 text-white";
     }
     if (status === "approved") {
-      return "bg-blue-500 text-white";
+      return "bg-brand-500 text-white";
     }
     if (status === "in_review") {
-      return "bg-amber-500 text-white";
+      return "bg-warning-500 text-white";
     }
     if (status === "archived") {
-      return "bg-slate-400 text-white";
+      return "bg-surface-400 text-white";
     }
-    return "bg-slate-200 text-slate-700";
+    return "bg-surface-200 text-surface-700";
   }
 
   function dismissNotification() {

@@ -14,6 +14,7 @@ import {
   uuid,
   varchar,
 } from "drizzle-orm/pg-core";
+import { timestamps } from "./columns.ts";
 import { contentLifecycleStatusEnum } from "./game.ts";
 import { managerRoleEnum, managers, users } from "./identity.ts";
 
@@ -85,12 +86,7 @@ export const auditLogs = pgTable(
     reason: text("reason"),
     ipAddress: text("ip_address"),
     userAgent: text("user_agent"),
-    createdAt: timestamp("created_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
-    updatedAt: timestamp("updated_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
+    ...timestamps(),
   },
   (table) => [
     index("idx_audit_logs_actor_created").on(
@@ -131,12 +127,7 @@ export const contentReviewLog = pgTable(
     actorRole: managerRoleEnum("actor_role"),
     reason: text("reason"),
     checklistSnapshot: jsonb("checklist_snapshot"),
-    createdAt: timestamp("created_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
-    updatedAt: timestamp("updated_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
+    ...timestamps(),
   },
   (table) => [
     // Cặp đa hình: index, không khoá ngoại (BR-DM-04).
@@ -158,12 +149,7 @@ export const contentSeedBatches = pgTable("content_seed_batches", {
   seededAt: timestamp("seeded_at", { withTimezone: true })
     .defaultNow()
     .notNull(),
-  createdAt: timestamp("created_at", { withTimezone: true })
-    .defaultNow()
-    .notNull(),
-  updatedAt: timestamp("updated_at", { withTimezone: true })
-    .defaultNow()
-    .notNull(),
+  ...timestamps(),
 });
 
 export const backupLog = pgTable("backup_log", {
@@ -177,12 +163,7 @@ export const backupLog = pgTable("backup_log", {
   startedAt: timestamp("started_at", { withTimezone: true }).notNull(),
   finishedAt: timestamp("finished_at", { withTimezone: true }),
   errorMessage: text("error_message"),
-  createdAt: timestamp("created_at", { withTimezone: true })
-    .defaultNow()
-    .notNull(),
-  updatedAt: timestamp("updated_at", { withTimezone: true })
-    .defaultNow()
-    .notNull(),
+  ...timestamps(),
 });
 
 export const notifications = pgTable(
@@ -196,12 +177,7 @@ export const notifications = pgTable(
     recipientId: bigint("recipient_id", { mode: "number" }).notNull(),
     templateCode: varchar("template_code", { length: 60 }).notNull(),
     payload: jsonb("payload"),
-    createdAt: timestamp("created_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
-    updatedAt: timestamp("updated_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
+    ...timestamps(),
   },
   (table) => [
     // Cặp đa hình: index, không khoá ngoại (BR-DM-04).
@@ -228,12 +204,7 @@ export const notificationDeliveries = pgTable(
     providerMessageId: varchar("provider_message_id", { length: 100 }),
     dispatchedAt: timestamp("dispatched_at", { withTimezone: true }),
     error: text("error"),
-    createdAt: timestamp("created_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
-    updatedAt: timestamp("updated_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
+    ...timestamps(),
   },
   (table) => [
     uniqueIndex("idx_notification_deliveries_active_channel").on(
@@ -250,12 +221,7 @@ export const notificationReads = pgTable("notification_reads", {
     .unique()
     .references(() => notifications.id, { onDelete: "cascade" }),
   readAt: timestamp("read_at", { withTimezone: true }).notNull(),
-  createdAt: timestamp("created_at", { withTimezone: true })
-    .defaultNow()
-    .notNull(),
-  updatedAt: timestamp("updated_at", { withTimezone: true })
-    .defaultNow()
-    .notNull(),
+  ...timestamps(),
 });
 
 export const notificationEndpoints = pgTable(
@@ -277,12 +243,7 @@ export const notificationEndpoints = pgTable(
       .default("active"),
     lastSeenAt: timestamp("last_seen_at", { withTimezone: true }),
     invalidatedAt: timestamp("invalidated_at", { withTimezone: true }),
-    createdAt: timestamp("created_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
-    updatedAt: timestamp("updated_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
+    ...timestamps(),
   },
   (table) => [
     uniqueIndex("idx_notification_endpoints_user_installation").on(
@@ -318,12 +279,7 @@ export const featureFlags = pgTable("feature_flags", {
     mode: "number",
   }).references(() => managers.id),
   updateReason: text("update_reason"),
-  createdAt: timestamp("created_at", { withTimezone: true })
-    .defaultNow()
-    .notNull(),
-  updatedAt: timestamp("updated_at", { withTimezone: true })
-    .defaultNow()
-    .notNull(),
+  ...timestamps(),
 });
 
 export const errorLogs = pgTable(
@@ -348,12 +304,7 @@ export const errorLogs = pgTable(
     resolvedByManagerId: bigint("resolved_by_manager_id", {
       mode: "number",
     }).references(() => managers.id),
-    createdAt: timestamp("created_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
-    updatedAt: timestamp("updated_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
+    ...timestamps(),
   },
   (table) => [
     index("idx_error_logs_fingerprint_status").on(

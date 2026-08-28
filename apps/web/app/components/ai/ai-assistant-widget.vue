@@ -77,12 +77,12 @@
 
     <!-- Error Alert -->
     <div
-      class="p-4 rounded-2xl bg-amber-50 border-2 border-amber-200 text-sm text-amber-900 flex items-start gap-3"
+      class="p-4 rounded-2xl bg-warning-50 border-2 border-warning-200 text-sm text-warning-900 flex items-start gap-3"
       role="alert"
       v-if="errorMessage"
     >
       <UIcon
-        class="w-5 h-5 text-amber-600 mt-0.5 shrink-0"
+        class="w-5 h-5 text-warning-600 mt-0.5 shrink-0"
         name="i-lucide-alert-circle"
       />
       <div class="space-y-1">

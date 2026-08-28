@@ -75,7 +75,7 @@
 - [x] Tên thư mục bản `<mốc UTC>-<7 ký tự sha>` ([`release-deploy.md`](../specs/01-platform/release-deploy.md) §7.1) — đây là thứ làm cho phát hành lại cùng commit không xoá bản đang chạy.
 - [x] Bước kiểm env gọi validator thật, trước khi cài và build (`BR-DEP-04`).
 - [x] Cài và build trong container `node:24-bookworm` (`BR-DEP-05`), kho pnpm dùng chung ở `shared/`.
-- [x] Nạp lại theo thứ tự worker → admin → web ([`release-deploy.md`](../specs/01-platform/release-deploy.md) §7.2).
+- [x] Nạp lại theo thứ tự worker → web ([`release-deploy.md`](../specs/01-platform/release-deploy.md) §7.2). Admin không có tiến trình để nạp lại từ khi `BR-ARB-01` biến nó thành cây tĩnh — sửa lại dòng này ở Task #109.
 - [x] Thông báo khi thất bại (`BR-DEP-11`) qua `/etc/mindkid/deploy.conf`.
 - [x] Ghi `/var/log/mindkid/deploy.log` với mốc thời gian quốc tế.
 
@@ -120,7 +120,7 @@
 | 6 | Chế độ in kế hoạch | Không đổi liên kết mềm, không thêm thư mục bản |
 | 7 | Tham chiếu chưa đẩy lên kho | Dừng, không tạo thư mục nào |
 | 8 | Quay lui | Về bản trước, không chạy migration nào |
-| 9 | Thứ tự nạp lại | worker, admin, web |
+| 9 | Thứ tự nạp lại | worker, web |
 | 10 | Dọn bản cũ | Bản đang phục vụ không bị xoá dù nằm ngoài cửa sổ giữ lại |
 | 11 | Bí mật trong log | Không giá trị bí mật nào trong output và trong `deploy.log` |
 | 12 | Bản đích thiếu artefact | Quay lui từ chối, liên kết mềm không đổi |

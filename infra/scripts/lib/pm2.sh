@@ -5,8 +5,10 @@ mk_ecosystem_path() {
   printf '%s\n' "${MK_CURRENT_LINK}/infra/pm2/ecosystem.config.cjs"
 }
 
-# Reload order is contractual (release-deploy.md §7.2): worker consumes the new
-# schema first, admin is the low-traffic canary, web goes last.
+# Reload order is contractual (release-deploy.md §7.2): the worker consumes the
+# new schema first, the public surface goes last. Admin is not in the order and
+# has not been since BR-ARB-01 made it a static tree — it has no process, and
+# the `current` symlink swaps its files atomically like any other file.
 reload_apps() {
   local ecosystem
   ecosystem="$(mk_ecosystem_path)"

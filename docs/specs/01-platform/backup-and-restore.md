@@ -41,14 +41,14 @@ phải việc để sau.
 | Nơi | |
 |---|---|
 | `apps/worker` job `backup:postgres` · `backup:verify` | |
-| `infra/scripts/restore.sh` | Khôi phục thủ công |
+| `pnpm db:restore` (`apps/worker/src/backup/restore.ts`) | Khôi phục thủ công |
 | `backup_log` | Bản ghi mỗi lần chạy |
 
 ## 4. Main flow
 
 ```
 1. 01:00 ICT — pg_dump toàn bộ, nén, mã hoá
-2. Upload S3 s3://mindkid-backups/postgres/YYYY/MM/DD.dump.gz.enc
+2. Upload lên bucket tương thích S3, khoá `${BACKUP_S3_PREFIX}/YYYY/MM/DD/<tên tệp>`
 3. Ghi backup_log { started, finished, bytes, sha256, status }
 4. Thứ hai 05:00 ICT — backup:verify:
       restore bản mới nhất vào container tạm
@@ -106,7 +106,8 @@ phá sản.
 1. Xác nhận phạm vi mất mát và mốc thời gian cần về.
 2. Chọn dump gần nhất **đã verify**.
 3. Dừng ứng dụng — không restore lên DB đang nhận ghi.
-4. `bash infra/scripts/restore.sh <s3_key>`.
+4. `pnpm db:restore` — chọn bản trong danh sách nó in ra. Bản còn trên máy nằm ở
+   `/var/lib/mindkid/backups`; bản chỉ còn trên bucket thì tải về thư mục đó trước.
 5. Chạy smoke: đăng nhập, mở một phiên chơi, mở một báo cáo.
 6. Bật lại ứng dụng.
 7. Ghi sự cố: nguyên nhân, dữ liệu mất, thời gian thực tế.

@@ -11,7 +11,7 @@
         <div class="space-y-1">
           <div class="flex items-center gap-2">
             <NuxtLink
-              class="text-xs font-bold font-heading text-indigo-600 hover:underline flex items-center gap-1"
+              class="text-xs font-bold font-heading text-brand-600 hover:underline flex items-center gap-1"
               to="/users"
             >
               ← Danh sách người dùng
@@ -37,7 +37,7 @@
           </button>
 
           <button
-            class="min-h-11 px-4 py-2 rounded-2xl border-2 border-amber-300 bg-amber-50 hover:bg-amber-100 text-amber-800 text-xs font-bold font-heading transition-colors"
+            class="min-h-11 px-4 py-2 rounded-2xl border-2 border-warning-300 bg-warning-50 hover:bg-warning-100 text-warning-800 text-xs font-bold font-heading transition-colors"
             type="button"
             v-if="detail.account.status === 'active'"
             @click="() => openUserActionModal('suspend')"
@@ -46,7 +46,7 @@
           </button>
 
           <button
-            class="min-h-11 px-4 py-2 rounded-2xl border-2 border-emerald-300 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 text-xs font-bold font-heading transition-colors"
+            class="min-h-11 px-4 py-2 rounded-2xl border-2 border-success-300 bg-success-50 hover:bg-success-100 text-success-800 text-xs font-bold font-heading transition-colors"
             type="button"
             v-if="detail.account.status === 'suspended'"
             @click="() => openUserActionModal('reactivate')"
@@ -58,32 +58,32 @@
 
       <!-- Feedback Alerts -->
       <div
-        class="p-4 rounded-2xl bg-rose-50 border-2 border-rose-200 text-sm text-rose-900 flex items-start gap-3"
+        class="p-4 rounded-2xl bg-danger-50 border-2 border-danger-200 text-sm text-danger-900 flex items-start gap-3"
         v-if="errorMessage"
       >
         <span aria-hidden="true" class="text-lg">⚠️</span>
         <div class="flex-1 font-medium">{{ errorMessage }}</div>
         <button
-          class="text-rose-600 hover:text-rose-800 font-bold"
+          class="text-danger-600 hover:text-danger-800 font-bold"
           type="button"
           @click="dismissError"
         >
-          ✕
+          <UIcon class="w-5 h-5" name="i-lucide-x" />
         </button>
       </div>
 
       <div
-        class="p-4 rounded-2xl bg-emerald-50 border-2 border-emerald-200 text-sm text-emerald-900 flex items-start gap-3"
+        class="p-4 rounded-2xl bg-success-50 border-2 border-success-200 text-sm text-success-900 flex items-start gap-3"
         v-if="successMessage"
       >
         <span aria-hidden="true" class="text-lg">✅</span>
         <div class="flex-1 font-medium">{{ successMessage }}</div>
         <button
-          class="text-emerald-600 hover:text-emerald-800 font-bold"
+          class="text-success-600 hover:text-success-800 font-bold"
           type="button"
           @click="dismissSuccess"
         >
-          ✕
+          <UIcon class="w-5 h-5" name="i-lucide-x" />
         </button>
       </div>
 

@@ -7,10 +7,10 @@ import {
   primaryKey,
   smallint,
   text,
-  timestamp,
   unique,
   varchar,
 } from "drizzle-orm/pg-core";
+import { timestamps } from "./columns.ts";
 import { users } from "./identity.ts";
 import { contentTags } from "./tagging.ts";
 
@@ -25,12 +25,7 @@ export const collections = pgTable(
       .references(() => users.id, { onDelete: "cascade" }),
     name: varchar("name", { length: 100 }).notNull(),
     position: smallint("position").notNull().default(0),
-    createdAt: timestamp("created_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
-    updatedAt: timestamp("updated_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
+    ...timestamps(),
   },
   (table) => [
     // UNIQUE (user_id, name) đã phục vụ mọi tra cứu theo user_id — index
@@ -52,12 +47,7 @@ export const libraryItems = pgTable(
       { onDelete: "set null" }
     ),
     note: text("note"),
-    createdAt: timestamp("created_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
-    updatedAt: timestamp("updated_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
+    ...timestamps(),
   },
   (table) => [
     // PK (user_id, entity_type, entity_id) đã phủ tra cứu theo user_id.
@@ -82,12 +72,7 @@ export const userTagMap = pgTable(
       .references(() => contentTags.id, { onDelete: "cascade" }),
     entityType: varchar("entity_type", { length: 50 }).notNull(),
     entityId: bigint("entity_id", { mode: "number" }).notNull(),
-    createdAt: timestamp("created_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
-    updatedAt: timestamp("updated_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
+    ...timestamps(),
   },
   (table) => [
     primaryKey({

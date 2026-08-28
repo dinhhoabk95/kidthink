@@ -77,30 +77,32 @@
 
       <!-- Feedback Messages -->
       <div
-        class="p-4 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-300 dark:border-emerald-700 text-emerald-800 dark:text-emerald-200 text-sm font-bold flex items-center justify-between"
+        class="p-4 rounded-2xl bg-success-50 dark:bg-success-950/40 border border-success-300 dark:border-success-700 text-success-800 dark:text-success-200 text-sm font-bold flex items-center justify-between"
         v-if="successMessage"
       >
         <span>{{ successMessage }}</span>
         <button
-          class="font-bold text-sm min-h-11 min-w-11"
+          aria-label="Đóng thông báo"
+          class="font-bold text-sm min-h-11 min-w-11 flex items-center justify-center"
           type="button"
           @click="successMessage = null"
         >
-          ✕
+          <UIcon class="w-5 h-5" name="i-lucide-x" />
         </button>
       </div>
 
       <div
-        class="p-4 rounded-2xl bg-rose-50 dark:bg-rose-950/40 border border-rose-300 dark:border-rose-700 text-rose-800 dark:text-rose-200 text-sm font-bold flex items-center justify-between"
+        class="p-4 rounded-2xl bg-danger-50 dark:bg-danger-950/40 border border-danger-300 dark:border-danger-700 text-danger-800 dark:text-danger-200 text-sm font-bold flex items-center justify-between"
         v-if="errorMessage"
       >
         <span>{{ errorMessage }}</span>
         <button
-          class="font-bold text-sm min-h-11 min-w-11"
+          aria-label="Đóng thông báo lỗi"
+          class="font-bold text-sm min-h-11 min-w-11 flex items-center justify-center"
           type="button"
           @click="errorMessage = null"
         >
-          ✕
+          <UIcon class="w-5 h-5" name="i-lucide-x" />
         </button>
       </div>
 
@@ -128,7 +130,7 @@
                 <span
                   class="text-xs font-bold px-2.5 py-0.5 rounded-full"
                   :class="downloadedWeeks.has(week)
-                    ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/50 dark:text-emerald-200'
+                    ? 'bg-success-100 text-success-800 dark:bg-success-900/50 dark:text-success-200'
                     : 'bg-surface-100 text-surface-600 dark:bg-surface-700 dark:text-surface-300'"
                 >
                   {{ downloadedWeeks.has(week) ? 'Đã tải ngoại tuyến' : 'Chưa tải' }}
@@ -138,7 +140,7 @@
                 Dung lượng: ~25 MB • 3 buổi học (6 trò chơi & bài học)
               </p>
               <p
-                class="text-2xs text-emerald-600 dark:text-emerald-400 mt-1 font-semibold"
+                class="text-2xs text-success-600 dark:text-success-400 mt-1 font-semibold"
                 v-if="downloadedWeeks.has(week)"
               >
                 Hiệu lực lease còn lại: 7 ngày
@@ -158,7 +160,7 @@
               </button>
 
               <button
-                class="min-h-11 px-3 py-2 text-rose-600 hover:text-rose-700 text-xs font-bold rounded-xl border border-rose-200 hover:border-rose-300 transition-colors"
+                class="min-h-11 px-3 py-2 text-danger-600 hover:text-danger-700 text-xs font-bold rounded-xl border border-danger-200 hover:border-danger-300 transition-colors"
                 type="button"
                 v-if="downloadedWeeks.has(week)"
                 @click="deletePack(week)"
@@ -178,6 +180,12 @@
 <script lang="ts" setup>
   import { computed, onMounted, ref } from "vue";
   import { useRoute } from "#imports";
+
+  // Trang này tự dựng chrome (PublicNavbar + <main id="main-content"> +
+  // PublicFooter). Không tắt layout thì `default.vue` dựng thêm một bộ nữa:
+  // navbar và footer hiện hai lần, và có hai phần tử cùng id="main-content"
+  // nên skip-link của app.vue nhảy sai chỗ (BR-A11-05).
+  definePageMeta({ layout: false });
 
   const route = useRoute();
   const uuid = computed(() => String(route.params.uuid || ""));

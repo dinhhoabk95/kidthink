@@ -14,6 +14,7 @@ import {
   uuid,
   varchar,
 } from "drizzle-orm/pg-core";
+import { timestamps } from "./columns.ts";
 import { managers, users } from "./identity.ts";
 
 export const entitlementGroupEnum = pgEnum("entitlement_group", [
@@ -63,12 +64,7 @@ export const entitlementKeys = pgTable("entitlement_keys", {
   label: varchar("label", { length: 100 }).notNull(),
   description: text("description"),
   isMvp: boolean("is_mvp").notNull().default(true),
-  createdAt: timestamp("created_at", { withTimezone: true })
-    .defaultNow()
-    .notNull(),
-  updatedAt: timestamp("updated_at", { withTimezone: true })
-    .defaultNow()
-    .notNull(),
+  ...timestamps(),
 });
 
 export const packages = pgTable("packages", {
@@ -81,12 +77,7 @@ export const packages = pgTable("packages", {
   status: packageStatusEnum("status").notNull().default("active"),
   offers: jsonb("offers").notNull(),
   quotas: jsonb("quotas"),
-  createdAt: timestamp("created_at", { withTimezone: true })
-    .defaultNow()
-    .notNull(),
-  updatedAt: timestamp("updated_at", { withTimezone: true })
-    .defaultNow()
-    .notNull(),
+  ...timestamps(),
 });
 
 export const packageEntitlements = pgTable(
@@ -98,12 +89,7 @@ export const packageEntitlements = pgTable(
     entitlementKey: varchar("entitlement_key", { length: 60 })
       .notNull()
       .references(() => entitlementKeys.key, { onDelete: "cascade" }),
-    createdAt: timestamp("created_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
-    updatedAt: timestamp("updated_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
+    ...timestamps(),
   },
   (table) => [
     primaryKey({ columns: [table.packageCode, table.entitlementKey] }),
@@ -133,12 +119,7 @@ export const entitlements = pgTable(
       mode: "number",
     }).references(() => managers.id),
     grantReason: text("grant_reason"),
-    createdAt: timestamp("created_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
-    updatedAt: timestamp("updated_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
+    ...timestamps(),
   },
   (table) => [
     index("idx_entitlements_user_status_expires").on(
@@ -176,12 +157,7 @@ export const paymentOrders = pgTable(
     }).references(() => managers.id),
     adminNote: text("admin_note"),
     expiresAt: timestamp("expires_at", { withTimezone: true }),
-    createdAt: timestamp("created_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
-    updatedAt: timestamp("updated_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
+    ...timestamps(),
   },
   (table) => [
     uniqueIndex("idx_payment_orders_transfer_note").on(table.transferNote),
@@ -208,12 +184,7 @@ export const quotaUsage = pgTable(
     used: integer("used").notNull().default(0),
     limitSnapshot: integer("limit_snapshot").notNull(),
     periodEnd: timestamp("period_end", { withTimezone: true }).notNull(),
-    updatedAt: timestamp("updated_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
-    createdAt: timestamp("created_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
+    ...timestamps(),
   },
   (table) => [
     unique("quota_usage_user_key_period_unique").on(
@@ -248,12 +219,7 @@ export const paymentTransactions = pgTable(
     status: varchar("status", { length: 30 }).notNull(),
     rawPayload: jsonb("raw_payload"),
     reconciledAt: timestamp("reconciled_at", { withTimezone: true }),
-    createdAt: timestamp("created_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
-    updatedAt: timestamp("updated_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
+    ...timestamps(),
   },
   (table) => [
     uniqueIndex("idx_payment_transactions_provider_event").on(
@@ -301,12 +267,7 @@ export const recurringSubscriptions = pgTable(
     cancelledBy: varchar("cancelled_by", { length: 30 }),
     cancelReason: text("cancel_reason"),
     cancelNote: text("cancel_note"),
-    createdAt: timestamp("created_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
-    updatedAt: timestamp("updated_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
+    ...timestamps(),
   },
   (table) => [
     index("idx_recurring_subscriptions_user_status").on(

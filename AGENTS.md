@@ -54,11 +54,11 @@ Còn 33 khối `catch` trong `apps/*/server` — tất cả đều có logic th�
 | Thứ                               | Luật                                                                                                |
 | --------------------------------- | --------------------------------------------------------------------------------------------------- |
 | `any` tường minh, code production | Cấm. Biome `noExplicitAny` mức error, đang sạch                                                     |
-| `any` tường minh, file test       | Biome **không** phủ (ultracite tắt rule ở đường dẫn test). Nợ 560 chỗ, chỉ được giảm                |
-| `as T`                            | Nợ **chỉ được giảm**, 851 chỗ. `pnpm --filter @mindkid/gates test` so `packages/gates/src/type-safety-baseline.json`       |
+| `any` tường minh, file test       | Biome **không** phủ (rule tắt ở đường dẫn test). Nợ 560 chỗ và ❌ KHÔNG cổng nào đếm — trôi tự do   |
+| `as T`                            | Luật vẫn là nợ chỉ được giảm, nhưng ❌ KHÔNG còn cổng nào đếm (gỡ 2026-08-29). Con số 851 là ảnh chụp cũ                   |
 | `as const`                        | Được — làm kiểu hẹp lại, không nói dối                                                              |
 | `unknown`                         | **Được khuyến khích** ở ranh giới, nhưng phải parse hoặc hẹp kiểu trước khi đọc field               |
-| Body/query/param của route        | Phải Zod parse. `pnpm --filter @mindkid/gates test`, sổ nợ 24 route ở `packages/gates/src/route-validation-debt.json` |
+| Body của route `/api/*`           | Phải Zod parse cùng file. Cổng: `apps/web/tests/security/security-checklist.test.ts` (`BR-SEC-04`), sổ nợ đã rỗng. Query/param ❌ KHÔNG được đo |
 
 Thay ép kiểu bằng gì: `readRequestBody(event)` trả `unknown` ·
 `readPostgresErrorCode(err)` thay `(err as { code?: string }).code` ·
@@ -68,14 +68,31 @@ Thay ép kiểu bằng gì: `readRequestBody(event)` trả `unknown` ·
 
 Đo trước khi tin. Ba cổng dưới đây từng xanh giả:
 
-| Lệnh                                                          | Sự thật                                                            |
-| ------------------------------------------------------------- | ------------------------------------------------------------------ |
-| `ultracite check`                                             | **exit 0 dù có lỗi lint.** Dùng `pnpm lint` (`biome check .`)      |
-| `pnpm --filter @mindkid/web run typecheck` (`nuxt typecheck`) | **exit 0 im lặng.** Dùng `pnpm typecheck:web` (`vue-tsc`)          |
-| `pnpm typecheck`                                              | Không phủ `apps/*/server` — `tsconfig.json` gốc cố ý loại `apps/*` |
+| Lệnh              | Sự thật                                                                      |
+| ----------------- | ---------------------------------------------------------------------------- |
+| `ultracite check` | **exit 0 dù có lỗi lint.** Dùng `pnpm lint` (`biome check .`)                |
+| `nuxt typecheck`  | **exit 0 im lặng.** Không script nào gọi nó nữa — Cấm — NEVER thêm lại       |
+| `tsc -p tsconfig.json` một mình | Chỉ là 1/10 project. `apps/*` sinh tsconfig ở `.nuxt/`         |
 
-`pnpm typecheck:web` hiện có **685 lỗi** từ trước (đo 2026-08-23; con số 603 cũ đã lệch).
-Nó là cổng **delta**: đếm trước khi sửa, yêu cầu không tăng.
+`pnpm typecheck` chạy **cổng bậc thang** `scripts/typecheck/typecheck-gate.ts`:
+cả 10 project TypeScript của repo (root · worker · web:app/server/shared/node ·
+admin:app/server/shared/node), so từng file với
+`scripts/typecheck/typecheck-baseline.json`. File tăng lỗi hoặc file mới có lỗi → đỏ.
+Giảm → xanh kèm nhắc chạy `pnpm typecheck:update`. Đây là **chỗ duy nhất** typecheck
+chạy: không app hay package nào còn script `typecheck` riêng.
+
+Nợ tại thời điểm chốt baseline (đo lại 2026-08-29): **2.931 lỗi** — root 1.111 · worker 301 ·
+web:app 679 · web:server 669 · admin:app 171 · bốn project còn lại 0. Gần như toàn bộ là
+`TS18048`/`TS2532` do `noUncheckedIndexedAccess`. `pnpm typecheck --only web` chạy riêng
+một app; `--only web:app` chạy riêng một project.
+
+Convention của workspace — `tsconfig.json` extend đúng một base, `vitest.config.ts` đi
+qua `defineWorkspaceTest`, script `test`, dependency khai `catalog:`, `pnpm check` đủ
+bốn bước — ❌ KHÔNG còn cổng nào đo (gỡ 2026-08-29); giữ bằng lượt review. Workspace ❌ NEVER khai script `typecheck` riêng: lưới `root` đã include
+`packages/*/{src,tests,scripts,vitest}`, nên bản sao cấp workspace phủ thêm số không và
+đỏ ngay khi chạy vì không có baseline (Task #111). `apps/web`/`apps/admin` không extend base (Nuxt sinh
+`compilerOptions` riêng) — `tsconfig.json` của chúng chỉ `references` tới đúng danh sách
+project mà cổng typecheck chạy.
 
 ## Môi trường
 
@@ -85,23 +102,31 @@ Nó là cổng **delta**: đếm trước khi sửa, yêu cầu không tăng.
 - Postgres dev ở `127.0.0.1:5433`, Valkey `6380` (container giữ cổng mặc định).
 - Nếu `rtk` bọc lệnh làm output bị nén/mất dòng, chạy lại qua `rtk proxy "<lệnh>"`.
 
-## Cổng contract là test vitest, không phải script
+## Cổng lint tuỳ biến đã bị gỡ (2026-08-29)
 
-Task #103 xoá 30 script `lint:*` khỏi `package.json` gốc (47 script → 24). Rule không
-mất một cái nào — nó chuyển thành test:
+`packages/gates` — 97 file, 10.713 dòng, 253 test cưỡng chế 96 rule `BR-*` và 18 rule
+`C1`–`C18` — đã bị xoá theo quyết định người dùng: trùng việc với Biome và `vue-tsc`.
 
-| Cổng quét | Sống ở | Chạy bằng |
-| --- | --- | --- |
-| Đường dẫn của **một** workspace | `<workspace>/tests/gates/` | `pnpm --filter <pkg> test` |
-| Chéo repo hoặc `docs/` | `packages/gates` | `pnpm --filter @mindkid/gates test` |
-| Diff git đang chờ | `packages/gates/scripts/check-progress.ts` | `node` trực tiếp |
+Cổng còn lại, **đây là toàn bộ**:
 
-Mỗi cổng BẮT BUỘC có **hai** phần: quét nguồn thật và **ca âm** (`BR-TYP-07`).
-Fixture vi phạm sống trong `tests/**/fixtures/` — ❌ NEVER viết mẫu vi phạm thẳng vào
-file test, vì `apps/` và `packages/` là thứ các cổng khác đang quét (nhãn "phụ huynh"
-trong một file test đã làm `lint:user-vocabulary` đỏ đúng như vậy). `packages/gates`
-và `tests/**/fixtures/` được loại khỏi mọi cổng quét mã sản phẩm — xem
-`isFixturePath` trong `packages/gates/src/lint-lib/source-scan.ts`.
+| Lệnh | Đo gì |
+| --- | --- |
+| `pnpm lint` | Biome trên 1.312 file |
+| `pnpm lint:deps` | Ranh giới package (dependency-cruiser) |
+| `pnpm typecheck` | `tsc` + `vue-tsc` trên 10 project, bậc thang nợ |
+| `pnpm test` | Unit/integration + cổng trong `<workspace>/tests/gates/` |
+| `pnpm test:deploy` | Script hạ tầng |
+
+Thứ ❌ KHÔNG còn ai đo: corpus spec (frontmatter, section, link, mã lỗi), từ vựng
+người dùng, design token/hex literal, ép kiểu `as T`, `any` trong test, ranh giới
+runtime, tên biến môi trường, giá, mặt công khai cho trẻ, convention workspace.
+Chúng vẫn là luật trong `docs/specs/` — nhưng luật không có cổng thì trôi.
+
+Cổng mới ❌ NEVER dựng lại ở `packages/gates` — hỏi trước. Cổng phạm vi một workspace
+thì vào `<workspace>/tests/gates/`, và BẮT BUỘC có **hai** phần: quét nguồn thật và
+**ca âm** (một mẫu vi phạm phải làm test đỏ). Fixture vi phạm sống trong
+`tests/**/fixtures/` — ❌ NEVER viết mẫu vi phạm thẳng vào file test, vì `apps/` và
+`packages/` là thứ các cổng khác đang quét.
 
 Cổng ❌ NEVER đọc `process.cwd()`: vitest chạy với cwd là thư mục workspace. Gốc repo
 lấy từ `REPO_ROOT` / `repoPath()` của `@mindkid/config/paths`.
@@ -125,6 +150,6 @@ Trên 500 dòng thì viết codemod, đừng sửa tay. Bài học đã trả gi
   `} catch {` không tham số. Quét theo dòng, tìm dòng đóng ở đúng cột.
 - Chuẩn hoá chuỗi để so whitelist thì cả hai bên phải đi qua **cùng một hàm**.
 - Đếm `any` / `as` trên nguồn thô sẽ bắt cả chữ trong văn xuôi tiếng Việt và tên
-  biến. Bỏ comment và chuỗi trước khi đếm (`packages/gates/src/lint-lib/source-scan.ts`).
+  biến. Bỏ comment và chuỗi trước khi đếm.
 - Cây làm việc thường đang có thay đổi dở của người khác → **đừng** dùng
   `git checkout` để hoàn tác. Sao lưu file ra ngoài repo trước khi ghi.

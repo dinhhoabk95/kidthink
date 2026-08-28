@@ -53,8 +53,8 @@
                 class="px-2.5 py-0.5 rounded-full text-xs font-bold shrink-0"
                 :class="
                   editMeta.status === 'ready'
-                    ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/50 dark:text-emerald-200'
-                    : 'bg-amber-100 text-amber-800 dark:bg-amber-900/50 dark:text-amber-200'
+                    ? 'bg-success-100 text-success-800 dark:bg-success-900/50 dark:text-success-200'
+                    : 'bg-warning-100 text-warning-800 dark:bg-warning-900/50 dark:text-warning-200'
                 "
               >
                 {{ editMeta.status === 'ready' ? 'Sẵn sàng' : 'Bản nháp' }}
@@ -79,8 +79,8 @@
               type="button"
               :class="
                 editMeta.status === 'ready'
-                  ? 'border-amber-400 text-amber-700 dark:text-amber-300 hover:bg-amber-50 dark:hover:bg-amber-950/40'
-                  : 'border-emerald-500 text-emerald-700 dark:text-emerald-300 hover:bg-emerald-50 dark:hover:bg-emerald-950/40'
+                  ? 'border-warning-400 text-warning-700 dark:text-warning-300 hover:bg-warning-50 dark:hover:bg-warning-950/40'
+                  : 'border-success-500 text-success-700 dark:text-success-300 hover:bg-success-50 dark:hover:bg-success-950/40'
               "
               @click="toggleStatus"
             >
@@ -100,7 +100,7 @@
 
         <!-- Banner Feedback -->
         <div
-          class="p-4 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-300 dark:border-emerald-700 text-emerald-800 dark:text-emerald-200 text-sm font-bold flex items-center justify-between"
+          class="p-4 rounded-2xl bg-success-50 dark:bg-success-950/40 border border-success-300 dark:border-success-700 text-success-800 dark:text-success-200 text-sm font-bold flex items-center justify-between"
           v-if="bannerMessage"
         >
           <span>{{ bannerMessage }}</span>
@@ -109,12 +109,12 @@
             type="button"
             @click="bannerMessage = null"
           >
-            ✕
+            <UIcon class="w-5 h-5" name="i-lucide-x" />
           </button>
         </div>
 
         <div
-          class="p-4 rounded-2xl bg-rose-50 dark:bg-rose-950/40 border border-rose-300 dark:border-rose-700 text-rose-800 dark:text-rose-200 text-sm font-bold flex items-center justify-between"
+          class="p-4 rounded-2xl bg-danger-50 dark:bg-danger-950/40 border border-danger-300 dark:border-danger-700 text-danger-800 dark:text-danger-200 text-sm font-bold flex items-center justify-between"
           v-if="errorMessage"
         >
           <span>{{ errorMessage }}</span>
@@ -123,7 +123,7 @@
             type="button"
             @click="errorMessage = null"
           >
-            ✕
+            <UIcon class="w-5 h-5" name="i-lucide-x" />
           </button>
         </div>
 
@@ -149,17 +149,17 @@
             v-if="curriculum.warnings && curriculum.warnings.length > 0"
           >
             <div
-              class="p-3 rounded-2xl bg-amber-50 dark:bg-amber-950/30 border border-amber-300 dark:border-amber-700/60 text-amber-900 dark:text-amber-200 text-xs flex items-start gap-2"
+              class="p-3 rounded-2xl bg-warning-50 dark:bg-warning-950/30 border border-warning-300 dark:border-warning-700/60 text-warning-900 dark:text-warning-200 text-xs flex items-start gap-2"
               v-for="(w, idx) in curriculum.warnings"
               :key="idx"
             >
-              <span class="text-amber-600 font-bold shrink-0">⚠️ Lưu ý:</span>
+              <span class="text-warning-600 font-bold shrink-0">⚠️ Lưu ý:</span>
               <span>{{ w }}</span>
             </div>
           </div>
 
           <div
-            class="p-3 rounded-2xl bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-200 text-xs flex items-center gap-2 font-bold"
+            class="p-3 rounded-2xl bg-success-50 dark:bg-success-950/30 border border-success-200 dark:border-success-800 text-success-800 dark:text-success-200 text-xs flex items-center gap-2 font-bold"
             v-else
           >
             <span>✅</span>
@@ -237,12 +237,12 @@
                       </div>
 
                       <button
-                        class="text-rose-500 hover:text-rose-700 text-xs p-1 font-bold shrink-0"
+                        class="text-danger-500 hover:text-danger-700 text-xs p-1 font-bold shrink-0"
                         title="Xoá mục này"
                         type="button"
                         @click="removeItem(it)"
                       >
-                        ✕
+                        <UIcon class="w-5 h-5" name="i-lucide-x" />
                       </button>
                     </div>
 
@@ -282,7 +282,7 @@
             type="button"
             @click="showAddModal = false"
           >
-            ✕
+            <UIcon class="w-5 h-5" name="i-lucide-x" />
           </button>
         </div>
 
@@ -372,6 +372,12 @@
 <script lang="ts" setup>
   import { computed, ref, watch } from "vue";
   import { useFetch, useRoute } from "#imports";
+
+  // Trang này tự dựng chrome (PublicNavbar + <main id="main-content"> +
+  // PublicFooter). Không tắt layout thì `default.vue` dựng thêm một bộ nữa:
+  // navbar và footer hiện hai lần, và có hai phần tử cùng id="main-content"
+  // nên skip-link của app.vue nhảy sai chỗ (BR-A11-05).
+  definePageMeta({ layout: false });
 
   interface CurriculumItemRef {
     id?: number;

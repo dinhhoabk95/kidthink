@@ -89,7 +89,7 @@ describe("PDF Renderer Unit Tests (BR-PDF-04, 05, 06, 07)", () => {
     expect(pdfString).toContain("40 32 Td");
 
     const watermarkHex = toUtf16BeHex(
-      "TiniMath — Thư viện tư duy qua trò chơi cho trẻ mầm non"
+      "MindKid — Thư viện tư duy qua trò chơi cho trẻ mầm non"
     );
     expect(pdfString).toContain(watermarkHex);
   });

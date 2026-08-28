@@ -10,9 +10,9 @@ import {
   primaryKey,
   smallint,
   text,
-  timestamp,
   varchar,
 } from "drizzle-orm/pg-core";
+import { timestamps } from "./columns.ts";
 
 export const skillStatusEnum = pgEnum("skill_status", ["seeded", "deprecated"]);
 
@@ -28,12 +28,7 @@ export const competencies = pgTable(
     colorToken: varchar("color_token", { length: 50 }).notNull(),
     icon: varchar("icon", { length: 50 }).notNull(),
     position: integer("position").notNull().default(0),
-    createdAt: timestamp("created_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
-    updatedAt: timestamp("updated_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
+    ...timestamps(),
   },
   (table) => [
     check("check_competencies_code_format", sql`${table.code} ~ '^C[1-6]$'`),
@@ -56,12 +51,7 @@ export const strands = pgTable(
     name: varchar("name", { length: 100 }).notNull(),
     description: text("description"),
     position: integer("position").notNull().default(0),
-    createdAt: timestamp("created_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
-    updatedAt: timestamp("updated_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
+    ...timestamps(),
   },
   (table) => [
     check(
@@ -90,12 +80,7 @@ export const skills = pgTable(
     whatAxis: text("what_axis").array(),
     status: skillStatusEnum("status").notNull().default("seeded"),
     position: integer("position").notNull().default(0),
-    createdAt: timestamp("created_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
-    updatedAt: timestamp("updated_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
+    ...timestamps(),
   },
   (table) => [
     check(
@@ -130,12 +115,7 @@ export const skillPrerequisites = pgTable(
     strength: numeric("strength", { precision: 3, scale: 2 })
       .notNull()
       .default("1.00"),
-    createdAt: timestamp("created_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
-    updatedAt: timestamp("updated_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
+    ...timestamps(),
   },
   (table) => [
     primaryKey({ columns: [table.skillId, table.prerequisiteId] }),
@@ -159,12 +139,7 @@ export const learningObjectives = pgTable(
     behaviour: text("behaviour").notNull(),
     observableCriteria: text("observable_criteria"),
     position: integer("position").notNull().default(0),
-    createdAt: timestamp("created_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
-    updatedAt: timestamp("updated_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
+    ...timestamps(),
   },
   (table) => [
     check(
@@ -198,12 +173,7 @@ export const emojiRegistry = pgTable(
       .default("all"),
     whatAxis: varchar("what_axis", { length: 50 }),
     status: emojiStatusEnum("status").notNull().default("active"),
-    createdAt: timestamp("created_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
-    updatedAt: timestamp("updated_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
+    ...timestamps(),
   },
   (table) => [
     check(

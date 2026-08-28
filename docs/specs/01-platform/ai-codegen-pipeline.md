@@ -64,10 +64,13 @@ nhau.
 | `pnpm gen:routes` | Route skeleton: guard, Zod parse, mã lỗi, `TODO` thân hàm | xác định |
 | `pnpm gen:tests` | Vitest/Playwright skeleton từ Gherkin, mỗi scenario một `test.todo` | xác định |
 | `pnpm gen:session --template=GT-003` | Session class skeleton từ `content_contract` | LLM |
-| `node packages/gates/scripts/check-progress.ts` | So spec ↔ code, báo lệch | xác định |
 
-**Bảy lệnh, sáu là xác định.** Chỉ `gen:session` cần LLM, và output của nó vẫn phải qua
+**Sáu lệnh, năm là xác định.** Chỉ `gen:session` cần LLM, và output của nó vẫn phải qua
 cổng §6.
+
+> **Nợ đã biết (2026-08-29):** KHÔNG lệnh nào trong bảng này tồn tại trong
+> `package.json`. Cổng `check-progress` — thứ duy nhất từng chạy thật — đã bị gỡ cùng
+> `packages/gates`. Cả spec này mô tả pipeline **chưa được dựng**.
 
 ## 4. Main flow
 
@@ -79,7 +82,7 @@ cổng §6.
 5. Người viết logic nghiệp vụ vào chỗ TODO
 6. pnpm check && pnpm test      → phải xanh
 7. PR có người review           → merge
-8. node packages/gates/scripts/check-progress.ts trong cổng tự động      → chặn merge nếu spec và code lệch
+   (bước so spec ↔ code đã bị gỡ — ❌ KHÔNG còn gì chặn khi spec và code lệch)
 ```
 
 ## 5. Alternative flows
@@ -117,10 +120,10 @@ Ranh giới đặt theo *hậu quả khi sai*, không theo *độ khó khi viế
 | `BR-AIG-03` | Trong Task #14, AI được sinh code ở sáu vùng nhạy cảm mục 5 khi có spec-first, test âm, gate đầy đủ và người review diff; ngoài phạm vi này phải đổi canonical contract trước | Hậu quả khi sai vẫn lớn, nên quyền soạn code được tách khỏi quyền merge, chạy migration và phát hành |
 | `BR-AIG-04` | Code sinh ra mang header `@generated from <spec-id>@<sha>`; Cấm — **NEVER sửa tay** file `@generated` | Sửa tay file sinh ra sẽ mất ở lần sinh sau |
 | `BR-AIG-05` | Test sinh từ Gherkin ra dưới dạng `test.todo`, **không** dưới dạng test rỗng pass | Test rỗng pass là tệ hơn không có test — nó báo xanh giả |
-| `BR-AIG-06` | `node packages/gates/scripts/check-progress.ts` chạy trong cổng tự động, **chặn merge** khi spec và code lệch | Không có cổng này thì spec trôi khỏi code trong 3 sprint |
+| `BR-AIG-06` | ~~Cổng so spec ↔ code chặn merge khi lệch~~ — **rule chết 2026-08-29**, cổng đã gỡ | Lý do gốc vẫn đúng: không có cổng này thì spec trôi khỏi code trong 3 sprint. Giờ đó là rủi ro đã chấp nhận |
 | `BR-AIG-07` | Đổi contract → sửa **spec trước**, sinh lại, rồi sửa code. Cấm sửa code trước | Nếu code đi trước, spec thành tài liệu chết |
 | `BR-AIG-08` | Prompt của `gen:session` version trong repo | Prompt là code |
-| `BR-AIG-09` | Session class sinh ra phải qua `pnpm --filter @mindkid/gates test` — không hex literal | LLM rất hay sinh hex literal |
+| `BR-AIG-09` | Session class sinh ra không được có hex literal — kiểm bằng grep tay ([`design-system-contract.md`](../08-quality/design-system-contract.md) §7.5) | LLM rất hay sinh hex literal |
 | `BR-AIG-10` | Mọi PR có code sinh ra ghi rõ trong mô tả: lệnh nào sinh, spec nào, phần nào người viết | Review cần biết soi chỗ nào |
 
 ## 7. Data
@@ -215,16 +218,10 @@ Scenario: BR-AIG-05 — test sinh ra là test.todo, không phải test rỗng
   And pnpm test báo 8 todo
   And không test nào pass mà chưa có assertion
 
-Scenario: BR-AIG-06 — cổng tự động chặn khi spec và code lệch
-  Given một route tồn tại trong code nhưng không có trong spec nào
-  When chạy node packages/gates/scripts/check-progress.ts
-  Then kết quả có ít nhất một error
-  And cổng tự động fail
-
 Scenario: BR-AIG-04 — sửa tay file generated bị bắt
   Given một file .gen.ts đã sinh
   When ai đó sửa tay một dòng trong file đó
-  Then node packages/gates/scripts/check-progress.ts báo error hash lệch
+  Then người review bắt được trong diff — ❌ KHÔNG còn cổng máy nào so hash
 
 Scenario: BR-AIG-03 — ngoại lệ Task #14 vẫn giữ cổng người
   Given một increment Task #14 thuộc auth, thanh toán, gating, dữ liệu trẻ, migration hoặc nội dung published
@@ -236,8 +233,8 @@ Scenario: BR-AIG-03 — ngoại lệ Task #14 vẫn giữ cổng người
 
 Scenario: BR-AIG-09 — Session class sinh ra không có hex literal
   Given pnpm gen:session --template=GT-003 đã chạy
-  When chạy pnpm --filter @mindkid/gates test
-  Then không vi phạm nào trong file vừa sinh
+  When grep hex trong file vừa sinh
+  Then không vi phạm nào
 
 Scenario: BR-AIG-07 — đổi contract bắt đầu từ spec
   Given một dev đổi một route trong code mà không đổi spec
@@ -251,8 +248,8 @@ Scenario: sinh lại là idempotent
 
 Scenario: mọi mã lỗi trong code đều có trong registry
   Given code sử dụng appError với một mã chưa đăng ký
-  When chạy node packages/gates/scripts/check-progress.ts
-  Then kết quả có error trỏ tới mã đó
+  When người review đọc diff
+  Then mã đó bị bắt — ❌ KHÔNG còn cổng máy nào tra registry
 ```
 
 ## 10. Boundaries

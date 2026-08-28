@@ -1,0 +1,24 @@
+# Port 80 for both domains: certificate issuance and renewal, then redirect.
+# Spec: docs/specs/01-platform/server-provisioning.md §4 step 8
+#
+# Rendered FIRST, before any certificate exists, and it stays valid on its own.
+# The previous single-file layout rendered `ssl_certificate` paths that did not
+# exist yet, so `nginx -t` failed, so `certbot --nginx` — which runs `nginx -t`
+# before it touches anything — refused to issue the certificate that would have
+# made the configuration valid. Nothing broke the loop.
+
+server {
+    listen 80;
+    listen [::]:80;
+    server_name ${SITE_DOMAIN} ${ADMIN_DOMAIN};
+
+    # Must stay on port 80 and must come before the redirect: this is the path
+    # certbot writes into for both issuance and every renewal after it.
+    location /.well-known/acme-challenge/ {
+        root /var/www/html;
+    }
+
+    location / {
+        return 301 https://$host$request_uri;
+    }
+}

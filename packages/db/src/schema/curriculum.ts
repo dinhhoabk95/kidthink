@@ -15,6 +15,7 @@ import {
   varchar,
 } from "drizzle-orm/pg-core";
 import { childProfiles } from "./child.ts";
+import { timestamps } from "./columns.ts";
 import {
   accessTierEnum,
   authoredInEnum,
@@ -22,6 +23,7 @@ import {
   contentOriginEnum,
 } from "./game.ts";
 import { managers } from "./identity.ts";
+import { versioningConstraints } from "./versioning.ts";
 
 export const programTypeEnum = pgEnum("program_type", ["age_based", "journey"]);
 
@@ -67,21 +69,16 @@ export const curricula = pgTable(
     }).references(() => managers.id),
     publishedAt: timestamp("published_at", { withTimezone: true }),
     archivedAt: timestamp("archived_at", { withTimezone: true }),
-    createdAt: timestamp("created_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
-    updatedAt: timestamp("updated_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
+    ...timestamps(),
   },
   (table) => [
-    unique("curricula_code_version_unique").on(
-      table.code,
-      table.contentVersion
-    ),
-    uniqueIndex("idx_curricula_published_code")
-      .on(table.code)
-      .where(sql`${table.status} = 'published'`),
+    ...versioningConstraints({
+      uniqueName: "curricula_code_version_unique",
+      publishedIndexName: "idx_curricula_published_code",
+      keyColumn: table.code,
+      versionColumn: table.contentVersion,
+      statusColumn: table.status,
+    }),
     check(
       "check_curricula_code_format",
       sql`${table.code} ~ '^CUR-[A-Za-z0-9_-]+$'`
@@ -100,12 +97,7 @@ export const curriculumWeeks = pgTable(
       .references(() => curricula.id, { onDelete: "cascade" }),
     weekNo: smallint("week_no").notNull(),
     goal: text("goal").notNull(),
-    createdAt: timestamp("created_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
-    updatedAt: timestamp("updated_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
+    ...timestamps(),
   },
   (table) => [
     unique("curriculum_weeks_curriculum_id_week_no_unique").on(
@@ -130,12 +122,7 @@ export const curriculumItems = pgTable(
     entityType: varchar("entity_type", { length: 50 }).notNull(),
     entityId: bigint("entity_id", { mode: "number" }).notNull(),
     isRequired: boolean("is_required").notNull().default(true),
-    createdAt: timestamp("created_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
-    updatedAt: timestamp("updated_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
+    ...timestamps(),
   },
   (table) => [
     // Cặp đa hình: index, không khoá ngoại (BR-DM-04).
@@ -167,12 +154,7 @@ export const curriculumEnrollments = pgTable(
       .defaultNow()
       .notNull(),
     status: enrollmentStatusEnum("status").notNull().default("active"),
-    createdAt: timestamp("created_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
-    updatedAt: timestamp("updated_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
+    ...timestamps(),
   },
   (table) => [
     uniqueIndex("idx_curriculum_enrollments_child_active_unique")
@@ -201,12 +183,7 @@ export const curriculumItemProgress = pgTable(
       .notNull()
       .default("not_started"),
     completedAt: timestamp("completed_at", { withTimezone: true }),
-    updatedAt: timestamp("updated_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
-    createdAt: timestamp("created_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
+    ...timestamps(),
   },
   (table) => [
     unique("curriculum_item_progress_enrollment_item_unique").on(

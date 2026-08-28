@@ -1,12 +1,18 @@
-export interface RetryPolicy {
-  maxAttempts: number;
-  backoffType: "exponential" | "fixed" | "none";
-  backoffDelayMs: number;
-  alertOnFailImmediately?: boolean;
-}
+import type { RetryPolicy } from "./jobs/define.js";
+import { findJob, JOB_DEFINITIONS } from "./jobs/index.js";
 
-export interface JobDefinition {
+export type { RetryPolicy } from "./jobs/define.js";
+
+/**
+ * Hình chiếu phẳng của `JOB_DEFINITIONS` — không phải nguồn sự thật.
+ * Nguồn nằm ở `packages/queue/src/jobs/`, một file một job.
+ *
+ * Giữ lại vì hợp đồng nghiệp vụ đọc registry theo dạng bảng (`job-queue.md`
+ * §7.1) và các cổng đối chiếu spec dựa vào đúng sáu trường này.
+ */
+export interface JobRegistryEntry {
   name: string;
+  /** Nguyên văn ô "Lịch" trong §7.1. Cron thật nằm ở `schedule.pattern`. */
   schedule: string;
   idempotencyKeyFormat: string;
   timeoutSeconds: number;
@@ -14,269 +20,32 @@ export interface JobDefinition {
   retryPolicy: RetryPolicy;
 }
 
-export const JOB_REGISTRY: readonly JobDefinition[] = [
-  {
-    name: "rollup:session",
-    schedule: "event",
-    idempotencyKeyFormat: "session_uuid",
-    timeoutSeconds: 30,
-    ownerStep: "P1.7",
-    retryPolicy: {
-      maxAttempts: 3,
-      backoffType: "exponential",
-      backoffDelayMs: 5000,
-    },
-  },
-  {
-    name: "rollup:daily",
-    schedule: "02:00 ICT",
-    idempotencyKeyFormat: "date_ict",
-    timeoutSeconds: 600,
-    ownerStep: "P1.5",
-    retryPolicy: {
-      maxAttempts: 3,
-      backoffType: "exponential",
-      backoffDelayMs: 5000,
-    },
-  },
-  {
-    name: "sweep:abandoned",
-    schedule: "every 10m",
-    idempotencyKeyFormat: "window_start",
-    timeoutSeconds: 120,
-    ownerStep: "P1.6",
-    retryPolicy: {
-      maxAttempts: 3,
-      backoffType: "exponential",
-      backoffDelayMs: 5000,
-    },
-  },
-  {
-    name: "entitlement:expire",
-    schedule: "00:05 ICT",
-    idempotencyKeyFormat: "date_ict",
-    timeoutSeconds: 300,
-    ownerStep: "P1.5",
-    retryPolicy: {
-      maxAttempts: 3,
-      backoffType: "exponential",
-      backoffDelayMs: 5000,
-    },
-  },
-  {
-    name: "order:expire",
-    schedule: "every 1 hour",
-    idempotencyKeyFormat: "hour",
-    timeoutSeconds: 120,
-    ownerStep: "P2.3",
-    retryPolicy: {
-      maxAttempts: 3,
-      backoffType: "exponential",
-      backoffDelayMs: 5000,
-    },
-  },
-  {
-    name: "entitlement:soft-unlock-expire",
-    schedule: "every 1 hour",
-    idempotencyKeyFormat: "hour",
-    timeoutSeconds: 120,
-    ownerStep: "P2.3",
-    retryPolicy: {
-      maxAttempts: 3,
-      backoffType: "exponential",
-      backoffDelayMs: 5000,
-    },
-  },
-  {
-    name: "account:purge",
-    schedule: "03:00 ICT",
-    idempotencyKeyFormat: "date_ict",
-    timeoutSeconds: 900,
-    ownerStep: "P1.14",
-    retryPolicy: {
-      maxAttempts: 1,
-      backoffType: "none",
-      backoffDelayMs: 0,
-      alertOnFailImmediately: true,
-    },
-  },
-  {
-    name: "email:send",
-    schedule: "event",
-    idempotencyKeyFormat: "notification_id",
-    timeoutSeconds: 30,
-    ownerStep: "P0.9b",
-    retryPolicy: {
-      maxAttempts: 5,
-      backoffType: "exponential",
-      backoffDelayMs: 30_000,
-    },
-  },
-  {
-    name: "image:cleanup-orphan",
-    schedule: "04:00 ICT Sunday",
-    idempotencyKeyFormat: "week",
-    timeoutSeconds: 900,
-    ownerStep: "P2.7",
-    retryPolicy: {
-      maxAttempts: 3,
-      backoffType: "exponential",
-      backoffDelayMs: 5000,
-    },
-  },
-  {
-    name: "backup:postgres",
-    schedule: "01:00 ICT",
-    idempotencyKeyFormat: "date_ict",
-    timeoutSeconds: 1800,
-    ownerStep: "P0.8",
-    retryPolicy: {
-      maxAttempts: 2,
-      backoffType: "fixed",
-      backoffDelayMs: 300_000,
-    },
-  },
-  {
-    name: "backup:verify",
-    schedule: "05:00 ICT Monday",
-    idempotencyKeyFormat: "week",
-    timeoutSeconds: 1800,
-    ownerStep: "P0.8b",
-    retryPolicy: {
-      maxAttempts: 2,
-      backoffType: "fixed",
-      backoffDelayMs: 300_000,
-    },
-  },
-  {
-    name: "report:manual-grants-monthly",
-    schedule: "00:00 ICT 1st of month",
-    idempotencyKeyFormat: "month_ict",
-    timeoutSeconds: 300,
-    ownerStep: "P2.4",
-    retryPolicy: {
-      maxAttempts: 3,
-      backoffType: "exponential",
-      backoffDelayMs: 5000,
-    },
-  },
-  {
-    name: "pdf:render",
-    schedule: "event",
-    idempotencyKeyFormat: "export_job_uuid",
-    timeoutSeconds: 120,
-    ownerStep: "P4.2",
-    retryPolicy: {
-      maxAttempts: 2,
-      backoffType: "exponential",
-      backoffDelayMs: 5000,
-    },
-  },
-  {
-    name: "sweep:pdf-cleanup",
-    schedule: "04:00 ICT daily",
-    idempotencyKeyFormat: "date_ict",
-    timeoutSeconds: 300,
-    ownerStep: "P4.2",
-    retryPolicy: {
-      maxAttempts: 3,
-      backoffType: "exponential",
-      backoffDelayMs: 5000,
-    },
-  },
-  {
-    name: "embed:content",
-    schedule: "event",
-    idempotencyKeyFormat: "content_type:content_id:content_version:model",
-    timeoutSeconds: 30,
-    ownerStep: "P4.8",
-    retryPolicy: {
-      maxAttempts: 3,
-      backoffType: "exponential",
-      backoffDelayMs: 5000,
-    },
-  },
-] as const;
+export const JOB_REGISTRY: readonly JobRegistryEntry[] = JOB_DEFINITIONS.map(
+  (job) => ({
+    name: job.name,
+    schedule: job.schedule.spec,
+    idempotencyKeyFormat: job.idempotencyKeyFormat,
+    timeoutSeconds: job.timeoutSeconds,
+    ownerStep: job.ownerStep,
+    retryPolicy: job.retry,
+  })
+);
 
-export type RegisteredJobName = (typeof JOB_REGISTRY)[number]["name"];
+export type RegisteredJobName = (typeof JOB_DEFINITIONS)[number]["name"];
 
-export function getJobDefinition(name: string): JobDefinition | undefined {
-  return JOB_REGISTRY.find((j) => j.name === name);
+export function getJobDefinition(name: string): JobRegistryEntry | undefined {
+  return JOB_REGISTRY.find((job) => job.name === name);
 }
 
 /**
- * Deterministic jobId generator from job payload and business key.
+ * `BR-JOB-02` — jobId xác định từ khoá nghiệp vụ.
  */
 export function buildDeterministicJobId(
   name: string,
   businessKey: string | number
 ): string {
-  const def = getJobDefinition(name);
-  if (!def) {
+  if (!findJob(name)) {
     throw new Error(`Job ${name} is not registered in JOB_REGISTRY`);
   }
   return `${name}:${businessKey}`;
-}
-
-/**
- * Validates registry compliance for worker consumers and owner steps.
- */
-export function validateJobRegistryConsumers(
-  implementedConsumerNames: string[],
-  currentSequenceStep = "P1.5"
-): { valid: boolean; errors: string[] } {
-  const errors: string[] = [];
-
-  // Order of sequence steps to know which steps are past/current
-  const stepOrder = [
-    "P0.7",
-    "P0.8",
-    "P0.8b",
-    "P0.9b",
-    "P0.10",
-    "P0.11",
-    "P1.1",
-    "P1.2",
-    "P1.3",
-    "P1.4",
-    "P1.5",
-    "P1.6",
-    "P1.7",
-    "P1.14",
-    "P2.3",
-    "P2.4",
-    "P2.7",
-    "P4.2",
-    "P4.8",
-  ];
-
-  const currentIdx = stepOrder.indexOf(currentSequenceStep);
-
-  // 1. Consumer is not in registry -> RED
-  for (const consumer of implementedConsumerNames) {
-    if (!JOB_REGISTRY.some((j) => j.name === consumer)) {
-      errors.push(
-        `Consumer '${consumer}' is implemented in worker but not registered in JOB_REGISTRY`
-      );
-    }
-  }
-
-  // 2. Job with owner_step <= currentSequenceStep has no consumer -> RED
-  for (const job of JOB_REGISTRY) {
-    const jobStepIdx = stepOrder.indexOf(job.ownerStep);
-    if (
-      jobStepIdx !== -1 &&
-      jobStepIdx <= currentIdx &&
-      !implementedConsumerNames.includes(job.name)
-    ) {
-      errors.push(
-        `Job '${job.name}' (owner_step: ${job.ownerStep}) must have an active consumer by step ${currentSequenceStep}`
-      );
-    }
-  }
-
-  return {
-    valid: errors.length === 0,
-    errors,
-  };
 }

@@ -49,7 +49,7 @@
 
         <div class="flex items-center gap-3">
           <NuxtLink
-            class="px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white text-sm font-semibold rounded-xl transition-colors inline-flex items-center gap-1.5 shadow-sm"
+            class="px-4 py-2 bg-warning-600 hover:bg-warning-700 text-white text-sm font-semibold rounded-xl transition-colors inline-flex items-center gap-1.5 shadow-sm"
             :to="skill.actions.author_url"
           >
             <UIcon class="w-4 h-4" name="i-lucide-plus-circle" />
@@ -85,7 +85,7 @@
             <span class="text-surface-600">Trạng thái:</span>
             <span
               class="font-semibold"
-              :class="skill.identifiers.status === 'deprecated' ? 'text-rose-600' : 'text-emerald-700'"
+              :class="skill.identifiers.status === 'deprecated' ? 'text-danger-600' : 'text-success-700'"
             >
               {{ skill.identifiers.status === 'deprecated' ? 'Deprecated' : 'Seeded (Hoạt động)' }}
             </span>
@@ -226,7 +226,7 @@
         <h2
           class="text-base font-bold font-heading text-surface-900 flex items-center gap-2"
         >
-          <UIcon class="w-4 h-4 text-emerald-600" name="i-lucide-unlock" />
+          <UIcon class="w-4 h-4 text-success-600" name="i-lucide-unlock" />
           <span>Mở khoá kỹ năng tiếp theo (Downstream)</span>
         </h2>
         <div class="space-y-2" v-if="skill.prerequisites.downstream.length > 0">
@@ -236,7 +236,7 @@
             :key="d.code"
           >
             <div>
-              <span class="font-mono font-bold text-emerald-700"
+              <span class="font-mono font-bold text-success-700"
                 >{{ d.code }}</span
               >
               <span class="text-surface-800 ml-2 font-medium"
@@ -286,7 +286,7 @@
           <div class="flex items-center gap-2">
             <span
               class="px-2 py-0.5 rounded-full font-medium"
-              :class="level.status === 'published' ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'"
+              :class="level.status === 'published' ? 'bg-success-100 text-success-800' : 'bg-warning-100 text-warning-800'"
             >
               {{ level.status }}
             </span>

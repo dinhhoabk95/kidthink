@@ -17,6 +17,12 @@ depends_on:
 
 ## 1. Objective
 
+> **Đổi 2026-08-29 (`D-SI`).** Curriculum nay là **flow** lắp từ thư viện giáo án master, và
+> tuổi là tín hiệu đề xuất chứ không phải điều kiện ghi danh. Mô hình đầy đủ ở
+> [`lesson-flow-model.md`](lesson-flow-model.md). Ràng buộc sư phạm của file này không đổi —
+> và vì bỏ khoá tuổi, thứ tự prerequisite ở `BR-CRM-01` trở thành ràng buộc sư phạm **duy
+> nhất** còn lại, nên nó càng không được nới.
+
 Curriculum là **thứ tự có chủ đích**. Thứ tự sai làm trẻ gặp nội dung chưa đủ nền, thất bại
 liên tục, rồi bỏ.
 
@@ -49,7 +55,7 @@ Không có.
 | `BR-CRM-05` | Mỗi tuần có **≥1 hoạt động ngoài màn hình** | Cân bằng giữa tương tác màn hình và vận động thực tế theo định hướng giáo dục toàn diện |
 | `BR-CRM-06` | Tuần đầu **dễ có chủ ý** | Tuần đầu quyết định trẻ có quay lại không |
 | `BR-CRM-07` | Cấm — **NEVER quá 40%** item thuộc một competency trên toàn chương trình | Chương trình lệch là lỗi sư phạm khó thấy bằng mắt |
-| `BR-CRM-08` | Chương trình theo tuổi (`program_type = 'age_based'`) phải phủ **cả 6 competency** | Phát triển đồng đều toàn bộ 6 năng lực tư duy toán học cốt lõi cho trẻ |
+| `BR-CRM-08` | Chương trình theo tuổi (`program_type = 'age_based'`) phải phủ **cả 6 competency** | Phát triển đồng đều toàn bộ 6 năng lực tư duy toán học cốt lõi cho trẻ. **Từ 2026-08-29 (`D-SI`)**, `age_based` là **nhãn đề xuất** chứ không phải khoá ghi danh — luật phủ 6 competency vẫn giữ nguyên, xem [`lesson-flow-model.md`](lesson-flow-model.md) `BR-LFM-03` |
 | `BR-CRM-09` | Cấm — **NEVER lặp cùng một item trong 4 tuần liên tiếp** (đo trên **item**) | Duy trì sự mới mẻ và hứng thú học tập cho trẻ mầm non |
 | `BR-CRM-10` | Nêu rõ **mục tiêu của mỗi tuần** bằng một câu cho người lớn | Người lớn cần biết tuần này học gì |
 | `BR-CRM-11` | Cấm — **NEVER giới thiệu skill mới trong 3 tuần cuối** của một chương trình | 3 tuần cuối dành cho ôn tập và củng cố toàn diện, đảm bảo `BR-CRM-03` không vi phạm vì thiếu tuần phía sau (`D-LY`) |

@@ -127,8 +127,14 @@
   import type {
     ProgramGroupPublic,
     ProgramListPublicResponse,
-  } from "@mindkid/shared";
+  } from "@mindkid/shared/client";
   import { computed } from "vue";
+
+  // Trang này tự dựng chrome (PublicNavbar + <main id="main-content"> +
+  // PublicFooter). Không tắt layout thì `default.vue` dựng thêm một bộ nữa:
+  // navbar và footer hiện hai lần, và có hai phần tử cùng id="main-content"
+  // nên skip-link của app.vue nhảy sai chỗ (BR-A11-05).
+  definePageMeta({ layout: false });
 
   const siteUrl = "https://mindkid.vn";
 

@@ -59,7 +59,15 @@
       // không import path sâu". Kiến trúc BẮT BUỘC barrel file ở đúng một chỗ
       // mỗi package, nên noBarrelFile không áp được cho file đó.
       // Ngoài src/index.ts, rule vẫn bật.
-      "includes": ["packages/*/src/index.ts"],
+      //
+      // `src/client.ts` là cửa thứ hai, CHỜ RATIFY §8 — chưa có trong contract.
+      // Lý do mở: §8 chỉ cấm import path sâu vào nội bộ package, nhưng một cửa
+      // duy nhất buộc trang Vue phía client phải nuốt cả 11 module chạm node:
+      // builtin và package máy chủ trong barrel `@mindkid/shared` (Vite không
+      // tree-shake ở dev) — apps/web chết lúc khởi tạo, và bản build từng ship
+      // native addon argon2 xuống trình duyệt. `client.ts` vẫn là bề mặt export
+      // được khai báo trong `exports`, không phải path sâu vào internal.
+      "includes": ["packages/*/src/index.ts", "packages/*/src/client.ts"],
       "linter": {
         "rules": {
           "performance": {

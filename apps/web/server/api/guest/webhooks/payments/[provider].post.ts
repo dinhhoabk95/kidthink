@@ -34,7 +34,6 @@ export default defineEventHandler(async (event) => {
   const rawBodyString =
     typeof rawBody === "string" ? rawBody : JSON.stringify(rawBody);
 
-  // Check signature if secret is configured (or in test environment)
   const reqHeaders = event.node?.req?.headers as
     | Record<string, string | undefined>
     | undefined;
@@ -51,28 +50,30 @@ export default defineEventHandler(async (event) => {
     "PAYMENT_WEBHOOK_SECRET",
   ]);
 
-  if (secretKey && signature) {
-    const isSignatureValid = verifyPaymentWebhookSignature(
-      rawBodyString,
-      signature,
-      secretKey
-    );
+  // BR-APM-01: xác minh vô điều kiện. Bọc bước này trong `if (signature)` là
+  // fail-open — người gọi chỉ cần **bỏ** header chữ ký là qua được cửa, và
+  // `processAutomatedPaymentWebhook` sẽ duyệt một đơn chưa trả tiền.
+  // `requireFirstEnv` đã ném nếu thiếu bí mật, nên `secretKey` luôn có giá trị.
+  const isSignatureValid = verifyPaymentWebhookSignature(
+    rawBodyString,
+    signature,
+    secretKey
+  );
 
-    if (!isSignatureValid) {
-      throw appError(
-        401,
-        "WEBHOOK_SIGNATURE_INVALID",
-        "Chữ ký số webhook không hợp lệ (BR-APM-01)"
-      );
-    }
+  if (!isSignatureValid) {
+    throw appError(
+      "WEBHOOK_SIGNATURE_INVALID",
+      "Chữ ký số webhook không hợp lệ (BR-APM-01)"
+    );
   }
 
   const parseResult = AutomatedPaymentWebhookPayloadSchema.safeParse(rawBody);
 
   if (!parseResult.success) {
+    // `INVALID_WEBHOOK_PAYLOAD` chưa đăng ký trong error-codes.md, nên chưa
+    // dùng được; `VALIDATION_FAILED` là mã 422 đã có.
     throw appError(
-      422,
-      "INVALID_WEBHOOK_PAYLOAD",
+      "VALIDATION_FAILED",
       "Dữ liệu webhook không đúng định dạng schema chuẩn"
     );
   }

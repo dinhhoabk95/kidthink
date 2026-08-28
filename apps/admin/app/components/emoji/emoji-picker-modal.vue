@@ -1,43 +1,43 @@
 <template>
   <div
-    class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm"
+    class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-surface-900/60 backdrop-blur-sm"
     v-if="isOpen"
   >
     <div
       aria-labelledby="emoji-picker-title"
       aria-modal="true"
-      class="w-full max-w-2xl bg-white dark:bg-slate-800 rounded-3xl border-4 border-slate-200 dark:border-slate-700 p-6 shadow-2xl flex flex-col max-h-[85vh] overflow-hidden"
+      class="w-full max-w-2xl bg-white dark:bg-surface-800 rounded-3xl border-4 border-surface-200 dark:border-surface-700 p-6 shadow-2xl flex flex-col max-h-[85vh] overflow-hidden"
       role="dialog"
     >
       <!-- Header -->
       <div
-        class="flex items-center justify-between pb-4 border-b border-slate-200 dark:border-slate-700 shrink-0"
+        class="flex items-center justify-between pb-4 border-b border-surface-200 dark:border-surface-700 shrink-0"
       >
         <div>
           <h2
-            class="text-lg font-bold text-slate-900 dark:text-white"
+            class="text-lg font-bold text-surface-900 dark:text-white"
             id="emoji-picker-title"
           >
             Bộ chọn Emoji giáo dục
           </h2>
-          <p class="text-xs text-slate-500">
+          <p class="text-xs text-surface-500">
             Duyệt qua 32 nhóm chủ đề hoặc tìm kiếm bằng tiếng Việt
           </p>
         </div>
         <button
           aria-label="Đóng"
-          class="w-9 h-9 rounded-2xl flex items-center justify-center text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 transition-all font-bold text-lg"
+          class="w-9 h-9 rounded-2xl flex items-center justify-center text-surface-400 hover:text-surface-600 dark:hover:text-surface-200 hover:bg-surface-100 dark:hover:bg-surface-700 transition-all font-bold text-lg"
           type="button"
           @click="close"
         >
-          ✕
+          <UIcon class="w-5 h-5" name="i-lucide-x" />
         </button>
       </div>
 
       <!-- Search Input -->
       <div class="py-3 shrink-0">
         <input
-          class="w-full min-h-11 px-4 py-2 text-base rounded-2xl border-2 border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:border-indigo-500 focus:outline-none placeholder-slate-400"
+          class="w-full min-h-11 px-4 py-2 text-base rounded-2xl border-2 border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-900 text-surface-900 dark:text-white focus:border-brand-500 focus:outline-none placeholder-surface-400"
           placeholder="Tìm theo tên tiếng Việt (ví dụ: táo, mèo, số 1)..."
           type="text"
           ref="searchInputRef"
@@ -53,8 +53,8 @@
           :class="[
             'px-3.5 py-1.5 rounded-xl text-sm font-semibold whitespace-nowrap transition-all border',
             selectedCategory
-              ? 'bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 hover:bg-slate-100'
-              : 'bg-indigo-600 border-indigo-600 text-white shadow-sm',
+              ? 'bg-white dark:bg-surface-800 border-surface-300 dark:border-surface-600 text-surface-700 dark:text-surface-300 hover:bg-surface-100'
+              : 'bg-brand-600 border-brand-600 text-white shadow-sm',
           ]"
           @click="clearCategory"
         >
@@ -67,8 +67,8 @@
           :class="[
             'px-3.5 py-1.5 rounded-xl text-sm font-semibold whitespace-nowrap transition-all border',
             selectedCategory === cat
-              ? 'bg-indigo-600 border-indigo-600 text-white shadow-sm'
-              : 'bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700',
+              ? 'bg-brand-600 border-brand-600 text-white shadow-sm'
+              : 'bg-white dark:bg-surface-800 border-surface-300 dark:border-surface-600 text-surface-700 dark:text-surface-300 hover:bg-surface-100 dark:hover:bg-surface-700',
           ]"
           @click="selectCategory(cat)"
         >
@@ -81,12 +81,12 @@
         class="py-2 shrink-0"
         v-if="!(searchQuery || selectedCategory) && recentEmojis.length > 0"
       >
-        <div class="text-xs font-bold text-slate-400 tracking-wider mb-2">
+        <div class="text-xs font-bold text-surface-400 tracking-wider mb-2">
           Gần đây (Recent)
         </div>
         <div class="flex flex-wrap gap-2">
           <button
-            class="w-10 h-10 min-w-10 min-h-10 rounded-2xl flex items-center justify-center text-[28px] leading-none hover:bg-indigo-50 dark:hover:bg-slate-700 hover:scale-110 active:scale-95 transition-all font-emoji"
+            class="w-10 h-10 min-w-10 min-h-10 rounded-2xl flex items-center justify-center text-[28px] leading-none hover:bg-brand-50 dark:hover:bg-surface-700 hover:scale-110 active:scale-95 transition-all font-emoji"
             type="button"
             v-for="e in recentEmojis"
             :key="e"
@@ -99,25 +99,25 @@
 
       <!-- Emoji Grid (BR-EPK-01: Cell >= 40x40px, Glyph >= 28px; BR-EPK-06 Keyboard nav) -->
       <div
-        class="flex-1 overflow-y-auto pt-2 border-t border-slate-100 dark:border-slate-700/50"
+        class="flex-1 overflow-y-auto pt-2 border-t border-surface-100 dark:border-surface-700/50"
       >
-        <div class="py-12 text-center text-slate-400" v-if="isLoading">
+        <div class="py-12 text-center text-surface-400" v-if="isLoading">
           Đang tải emoji...
         </div>
 
         <div
-          class="py-12 text-center text-slate-400 space-y-3"
+          class="py-12 text-center text-surface-400 space-y-3"
           v-else-if="emojis.length === 0"
         >
           <p>Không tìm thấy emoji nào phù hợp.</p>
           <div
-            class="p-3 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-300 dark:border-emerald-700 text-emerald-800 dark:text-emerald-200 text-xs rounded-xl"
+            class="p-3 bg-success-50 dark:bg-success-950/40 border border-success-300 dark:border-success-700 text-success-800 dark:text-success-200 text-xs rounded-xl"
             v-if="missingReported"
           >
             Đã gửi yêu cầu bổ sung emoji cho nhóm phát triển.
           </div>
           <button
-            class="px-4 py-2 rounded-2xl bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-300 text-xs font-semibold hover:bg-indigo-100 transition-all"
+            class="px-4 py-2 rounded-2xl bg-brand-50 dark:bg-brand-900/30 text-brand-600 dark:text-brand-300 text-xs font-semibold hover:bg-brand-100 transition-all"
             type="button"
             v-else
             @click="reportMissingEmoji"
@@ -135,9 +135,9 @@
             v-for="(item, idx) in emojis"
             :key="item.emoji"
             :class="[
-              'w-11 h-11 min-w-11 min-h-11 rounded-2xl flex items-center justify-center text-[28px] leading-none hover:bg-indigo-50 dark:hover:bg-slate-700 hover:scale-110 active:scale-95 transition-all font-emoji',
+              'w-11 h-11 min-w-11 min-h-11 rounded-2xl flex items-center justify-center text-[28px] leading-none hover:bg-brand-50 dark:hover:bg-surface-700 hover:scale-110 active:scale-95 transition-all font-emoji',
               idx === focusedIndex
-                ? 'ring-2 ring-indigo-500 bg-indigo-50 dark:bg-slate-700'
+                ? 'ring-2 ring-brand-500 bg-brand-50 dark:bg-surface-700'
                 : '',
             ]"
             :title="item.name"

@@ -1,10 +1,10 @@
 # Skill Taxonomy Registry
 
-> **Sổ quản lý bộ xương dữ liệu của TiniMath.**
+> **Sổ quản lý bộ xương dữ liệu của MindKid.**
 > Đây là nguồn sự thật cho tầng L1–L3 (Competency → Strand → Skill).
 > Tầng L4 (Learning Objective) và L5 (Lesson) tham chiếu về skill code ở đây.
 > Contract kỹ thuật: [`../SPEC.md`](../SPEC.md) §2 (Content Architecture) + §3 (Data Model).
-> Spec sở hữu Phase A: [`../specs/platform/taxonomy-service/SPEC.md`](../specs/platform/taxonomy-service/SPEC.md).
+> Spec sở hữu Phase A: [`../specs/01-platform/taxonomy-service.md`](../specs/01-platform/taxonomy-service.md).
 
 ## Cách dùng file này
 

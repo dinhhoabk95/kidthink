@@ -3,7 +3,7 @@
     <!-- Header -->
     <div class="text-center space-y-2 border-b border-surface-200 pb-5">
       <div
-        class="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-amber-100 text-amber-700 mb-2"
+        class="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-warning-100 text-warning-700 mb-2"
       >
         <UIcon class="w-6 h-6" name="i-lucide-shield-alert" />
       </div>
@@ -18,11 +18,11 @@
 
     <!-- Error/Notice Banner -->
     <div
-      class="p-4 rounded-xl bg-amber-50 border border-amber-200 text-sm text-amber-900 flex items-start gap-3"
+      class="p-4 rounded-xl bg-warning-50 border border-warning-200 text-sm text-warning-900 flex items-start gap-3"
       v-if="errorMessage"
     >
       <UIcon
-        class="w-5 h-5 text-amber-600 shrink-0 mt-0.5"
+        class="w-5 h-5 text-warning-600 shrink-0 mt-0.5"
         name="i-lucide-alert-circle"
       />
       <div class="space-y-1">
@@ -59,7 +59,7 @@
             </p>
           </div>
           <span
-            class="px-2.5 py-1 text-xs font-bold rounded-full bg-amber-100 text-amber-800 shrink-0"
+            class="px-2.5 py-1 text-xs font-bold rounded-full bg-warning-100 text-warning-800 shrink-0"
           >
             Cần xem xét
           </span>
@@ -96,17 +96,17 @@
 
       <!-- No required consents left -->
       <div
-        class="text-center py-8 bg-emerald-50 border-2 border-emerald-200 rounded-2xl p-6 text-emerald-900 space-y-3"
+        class="text-center py-8 bg-success-50 border-2 border-success-200 rounded-2xl p-6 text-success-900 space-y-3"
         v-if="requiredConsents.length === 0"
       >
         <UIcon
-          class="w-10 h-10 text-emerald-600 mx-auto"
+          class="w-10 h-10 text-success-600 mx-auto"
           name="i-lucide-check-circle"
         />
         <h3 class="font-bold font-heading text-lg">
           Mọi điều khoản đã được xác nhận
         </h3>
-        <p class="text-sm text-emerald-800">
+        <p class="text-sm text-success-800">
           Bạn có thể tiếp tục sử dụng hệ thống bình thường.
         </p>
         <button

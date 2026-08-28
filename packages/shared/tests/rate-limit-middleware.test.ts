@@ -1,10 +1,11 @@
-import { clearInMemoryBuckets } from "@mindkid/cache";
+import { clearRateLimitBuckets } from "@mindkid/cache";
 import { beforeEach, describe, expect, it } from "vitest";
 import { enforceTwoAxisRateLimit } from "#src/rate-limit-middleware";
 
 describe("Two-Axis Rate Limiter Middleware (Task 8 / BR-RTL-01..07)", () => {
-  beforeEach(() => {
-    clearInMemoryBuckets();
+  beforeEach(async () => {
+    // Bộ đếm sống trong Valkey, không chỉ trong bộ nhớ tiến trình.
+    await clearRateLimitBuckets();
   });
 
   it("Ca âm BR-RTL-01 Axis 1 (IP): 50 requests from 1 IP for 50 emails blocks IP on 21st request", async () => {

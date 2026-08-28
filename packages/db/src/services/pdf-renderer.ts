@@ -524,7 +524,7 @@ function generatePdfBinary(
     streamCommands.push("/F2 8 Tf");
     streamCommands.push("40 32 Td");
     streamCommands.push(
-      `${escapePdfText("TiniMath — Thư viện tư duy qua trò chơi cho trẻ mầm non")} Tj`
+      `${escapePdfText("MindKid — Thư viện tư duy qua trò chơi cho trẻ mầm non")} Tj`
     );
     streamCommands.push("ET");
 

@@ -104,7 +104,7 @@ export function nuxtAppAliases(appRoot: string): PrefixAlias[] {
  * dùng PostgreSQL + Valkey thật (BR-TST-02) nên hai file chạy song song sẽ tranh
  * cùng một hàng dữ liệu. Package nào thuần pure function được phép ghi đè.
  */
-const SEQUENTIAL_DEFAULTS = {
+export const SEQUENTIAL_DEFAULTS = {
   fileParallelism: false,
   maxWorkers: 1,
   maxConcurrency: 1,
@@ -112,6 +112,33 @@ const SEQUENTIAL_DEFAULTS = {
 } as const;
 
 const BASE_TIMEOUT_MS = 30_000;
+
+/**
+ * Mọi test của repo sống dưới `src/` hoặc `tests/` của một workspace — không có
+ * ngoại lệ nào khác (đo 2026-08-28 trên 339 file).
+ *
+ * Khai ở đây thay vì trong từng `vitest.config.ts` vì bỏ sót một nhánh là test
+ * **im lặng không chạy**: `packages/shared/src/program-showcase.test.ts` từng
+ * nằm ngoài mọi `include` và không cổng nào báo. Cổng giữ bất biến này đã bị
+ * gỡ 2026-08-29 — file test nằm ngoài `include` giờ lại im lặng như cũ.
+ */
+export const WORKSPACE_TEST_INCLUDE: readonly string[] = [
+  "src/**/*.{test,spec}.{ts,tsx}",
+  "tests/**/*.{test,spec}.{ts,tsx}",
+];
+
+/**
+ * `tests/**​/fixtures/` là **mẫu văn bản** cho cổng quét, không phải test:
+ * ca âm cố ý sai kiểu, cố ý sai vị trí, cố ý import thứ package không có.
+ * Cùng lý do `tsconfig.json` gốc loại chúng khỏi typecheck.
+ */
+export const WORKSPACE_TEST_EXCLUDE: readonly string[] = [
+  "**/node_modules/**",
+  "**/dist/**",
+  "**/.nuxt/**",
+  "**/.output/**",
+  "**/fixtures/**",
+];
 
 /** Điểm vào duy nhất cho `vitest.config.ts` của workspace. */
 export function defineWorkspaceTest(
@@ -121,6 +148,8 @@ export function defineWorkspaceTest(
     resolve: { alias: workspaceAliases() },
     test: {
       environment: "node",
+      include: [...WORKSPACE_TEST_INCLUDE],
+      exclude: [...WORKSPACE_TEST_EXCLUDE],
       testTimeout: BASE_TIMEOUT_MS,
       ...SEQUENTIAL_DEFAULTS,
     },

@@ -472,4 +472,59 @@ describe("Consent Management — P1.14 & D12 (D-QV, D-QW, D-QX, D-QY, D-QZ)", ()
       }
     });
   });
+
+  describe("7. Consent gate isolates users (BR-CSM-05, D-QX)", () => {
+    it("does not accept another user's consent log when gating a user", async () => {
+      const db = getOwnerDb();
+      const [consented] = await db
+        .insert(users)
+        .values({
+          email: `consent_iso_a_${Date.now()}_${Math.random()}@mindkid.test`,
+          passwordHash: "hash123",
+          displayName: "Consented User",
+        })
+        .returning();
+      const [uninvolved] = await db
+        .insert(users)
+        .values({
+          email: `consent_iso_b_${Date.now()}_${Math.random()}@mindkid.test`,
+          passwordHash: "hash123",
+          displayName: "Uninvolved User",
+        })
+        .returning();
+
+      try {
+        await submitConsentHandler(
+          mockEvent("POST", consented.id, {
+            consent_type: "terms",
+            accept: true,
+          })
+        );
+        await submitConsentHandler(
+          mockEvent("POST", consented.id, {
+            consent_type: "privacy",
+            accept: true,
+          })
+        );
+
+        await expect(
+          assertUserTermsAndPrivacyConsent(consented.id)
+        ).resolves.toBeUndefined();
+        await expect(
+          assertUserTermsAndPrivacyConsent(uninvolved.id)
+        ).rejects.toThrow();
+      } finally {
+        for (const u of [consented, uninvolved]) {
+          await db
+            .delete(consentLogs)
+            .where(eq(consentLogs.userId, u.id))
+            .catch(() => null);
+          await db
+            .delete(users)
+            .where(eq(users.id, u.id))
+            .catch(() => null);
+        }
+      }
+    });
+  });
 });

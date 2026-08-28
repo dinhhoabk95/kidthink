@@ -42,6 +42,29 @@ cmd_status() {
     printf '  docker not installed\n'
   fi
 
-  printf '\nHealth endpoint:\n'
-  printf '  HTTP %s\n' "$(curl -s -o /dev/null -w '%{http_code}' "${MK_HEALTH_URL}" 2>/dev/null || echo unreachable)"
+  printf '\nHealth:\n'
+  printf '  %-46s HTTP %s\n' "${MK_HEALTH_URL}" \
+    "$(curl -s -o /dev/null -w '%{http_code}' "${MK_HEALTH_URL}" 2>/dev/null || echo unreachable)"
+
+  # The loopback answer above only proves the process is up. These two are the
+  # path a visitor takes, and they are the ones that catch nginx, TLS and file
+  # permission faults.
+  local url
+  for url in "${MK_PUBLIC_HEALTH_URL}" "${MK_PUBLIC_ADMIN_URL}"; do
+    [ -n "${url}" ] || continue
+    printf '  %-46s HTTP %s\n' "${url}" \
+      "$(curl -s -o /dev/null -w '%{http_code}' --max-time 15 "${url}" 2>/dev/null || echo unreachable)"
+  done
+  if [ -z "${MK_PUBLIC_HEALTH_URL}" ] && [ -z "${MK_PUBLIC_ADMIN_URL}" ]; then
+    printf '  (no public URL configured; set MK_PUBLIC_HEALTH_URL and MK_PUBLIC_ADMIN_URL in %s)\n' "${MK_CONF_FILE}"
+  fi
+
+  printf '\nBackups:\n'
+  if [ -d "${MK_BACKUP_DIR}" ]; then
+    printf '  %s  %s file(s), newest %s\n' "${MK_BACKUP_DIR}" \
+      "$(find "${MK_BACKUP_DIR}" -maxdepth 1 -type f | wc -l | tr -d ' ')" \
+      "$(find "${MK_BACKUP_DIR}" -maxdepth 1 -type f -exec basename {} \; 2>/dev/null | sort -r | head -1)"
+  else
+    printf '  %s missing — the backup job has nowhere to write\n' "${MK_BACKUP_DIR}"
+  fi
 }

@@ -14,6 +14,15 @@ USAGE
 MK_MIN_DISK_GB=40
 MK_MIN_MEMORY_MB=3800
 
+# server-provisioning.md §11 question 4 — "is 4 GB enough to build two Nuxt
+# applications". Answer: not without swap. The build runs on this host by
+# contract (BR-DEP-05), and a Nitro build peaks well above what is left after
+# PostgreSQL, Valkey and a web cluster have taken their share. Swap turns an
+# OOM kill mid-release into a slow release.
+MK_SWAP_THRESHOLD_MB=8000
+MK_SWAP_FILE=/swapfile
+MK_SWAP_SIZE_MB=4096
+
 mk_prov_preflight() {
   log_step "1. Checking host prerequisites."
 
@@ -45,6 +54,36 @@ mk_prov_preflight() {
   fi
 
   log_info "Host meets the minimum: ${arch}, ${free_gb:-?} GB free, ${mem_mb:-?} MB RAM."
+  mk_prov_swap "${mem_mb}"
+}
+
+# Idempotent by checking for the file, not by checking free memory: running
+# provision twice on a 4 GB host must not leave two swap files.
+mk_prov_swap() {
+  local mem_mb="$1"
+
+  if [ -z "${mem_mb}" ] || [ "${mem_mb}" -ge "${MK_SWAP_THRESHOLD_MB}" ]; then
+    return 0
+  fi
+  if [ -f "${MK_SWAP_FILE}" ]; then
+    log_info "Swap file ${MK_SWAP_FILE} already present."
+    swapon "${MK_SWAP_FILE}" 2>/dev/null || true
+    return 0
+  fi
+
+  log_info "Only ${mem_mb} MB RAM; creating a ${MK_SWAP_SIZE_MB} MB swap file so the build survives."
+  if ! fallocate -l "${MK_SWAP_SIZE_MB}M" "${MK_SWAP_FILE}" 2>/dev/null; then
+    dd if=/dev/zero of="${MK_SWAP_FILE}" bs=1M count="${MK_SWAP_SIZE_MB}" status=none
+  fi
+  chmod 0600 "${MK_SWAP_FILE}"
+  mkswap "${MK_SWAP_FILE}" >/dev/null
+  swapon "${MK_SWAP_FILE}"
+
+  # Without the fstab line the swap disappears on the next reboot, and the
+  # release that fails afterwards looks unrelated to this machine's memory.
+  if ! grep -q "^${MK_SWAP_FILE} " /etc/fstab 2>/dev/null; then
+    printf '%s none swap sw 0 0\n' "${MK_SWAP_FILE}" >>/etc/fstab
+  fi
 }
 
 mk_prov_base_system() {
@@ -54,8 +93,37 @@ mk_prov_base_system() {
   if command -v apt-get >/dev/null 2>&1; then
     export DEBIAN_FRONTEND=noninteractive
     apt-get update -qq
-    apt-get install -y -qq curl ca-certificates gnupg lsb-release logrotate gettext-base nginx certbot python3-certbot-nginx
+    # certbot only: TLS is issued with the webroot plugin, which needs no nginx
+    # integration and never edits a configuration this script owns.
+    apt-get install -y -qq curl ca-certificates gnupg lsb-release logrotate gettext-base nginx certbot
+    mk_prov_postgres_client || return 1
   fi
+}
+
+# BR-BAK-01/06: the backup and restore jobs run on this host and shell out to
+# pg_dump and psql. The database itself is in a container, so nothing installs
+# these as a side effect — and a missing binary makes the backup job die with
+# ENOENT, which is the quietest way possible to have no backups.
+#
+# The major must match the server: pg_dump refuses to dump from a newer server
+# than itself, and Debian's default postgresql-client is older than 17.
+mk_prov_postgres_client() {
+  local client_major
+  client_major="$(pg_dump --version 2>/dev/null | grep -oE '[0-9]+' | head -1)"
+
+  case "$(mk_prov_check_version 'pg_dump' "${client_major}" "${MK_POSTGRES_MAJOR}")" in
+    ok) return 0 ;;
+    drift) return 1 ;;
+  esac
+
+  log_info "Installing postgresql-client-${MK_POSTGRES_MAJOR} from the PostgreSQL project repository."
+  install -d -m 0755 /usr/share/postgresql-common/pgdg
+  curl -fsSL https://www.postgresql.org/media/keys/ACCC4CF8.asc \
+    -o /usr/share/postgresql-common/pgdg/apt.postgresql.org.asc
+  printf 'deb [signed-by=/usr/share/postgresql-common/pgdg/apt.postgresql.org.asc] https://apt.postgresql.org/pub/repos/apt %s-pgdg main\n' \
+    "$(lsb_release -cs)" >/etc/apt/sources.list.d/pgdg.list
+  apt-get update -qq
+  apt-get install -y -qq "postgresql-client-${MK_POSTGRES_MAJOR}"
 }
 
 # Steps 3 and 6 already ran during init; re-asserting them is cheap and keeps
@@ -173,39 +241,87 @@ mk_prov_datastores() {
   return 0
 }
 
-mk_prov_web_server() {
-  local site_domain="$1" admin_domain="$2"
-  log_step "8. Web server configuration."
+# Step 8a — the part of the web server that is valid with no certificate on the
+# machine. This is what breaks the bootstrap deadlock: certbot runs `nginx -t`
+# before it does anything, so a configuration that names certificates which do
+# not exist yet stops the very command that would create them.
+mk_prov_nginx_shared() {
+  mkdir -p /etc/nginx/snippets /etc/nginx/conf.d /var/www/html
 
-  local template="${MK_COMPOSE_DIR}/nginx/mindkid.conf.tmpl"
+  local src="${MK_COMPOSE_DIR}/nginx"
+  cp -f "${src}/mindkid-proxy.conf" /etc/nginx/snippets/mindkid-proxy.conf
+  cp -f "${src}/mindkid-upgrade-map.conf" /etc/nginx/conf.d/mindkid-upgrade-map.conf
+  cp -f "${src}/mindkid-limits.conf" /etc/nginx/conf.d/mindkid-limits.conf
+  cp -f "${src}/mindkid-tls-params.conf" /etc/nginx/conf.d/mindkid-tls-params.conf
+}
+
+# Renders one template into sites-available. The single quotes around the names
+# are required: envsubst substitutes only the names it is given and leaves
+# nginx's own $variables alone.
+mk_prov_render_site() {
+  local name="$1" site_domain="$2" admin_domain="$3"
+  local template="${MK_COMPOSE_DIR}/nginx/${name}.conf.tmpl"
+
   if [ ! -f "${template}" ]; then
     log_error "Nginx template missing at ${template}; run init first."
     return 1
   fi
 
-  mkdir -p /etc/nginx/snippets /etc/nginx/conf.d
-  cp -f "${MK_COMPOSE_DIR}/nginx/mindkid-proxy.conf" /etc/nginx/snippets/mindkid-proxy.conf
-  cp -f "${MK_COMPOSE_DIR}/nginx/mindkid-upgrade-map.conf" /etc/nginx/conf.d/mindkid-upgrade-map.conf
-
   # shellcheck disable=SC2016
-  # The single quotes are required: envsubst takes the placeholder names as a
-  # literal argument and substitutes only those, leaving nginx's own $variables
-  # untouched.
   SITE_DOMAIN="${site_domain}" ADMIN_DOMAIN="${admin_domain}" \
     envsubst '${SITE_DOMAIN} ${ADMIN_DOMAIN}' \
-    <"${template}" >/etc/nginx/sites-available/mindkid.conf
-  ln -sfn /etc/nginx/sites-available/mindkid.conf /etc/nginx/sites-enabled/mindkid.conf
-  rm -f /etc/nginx/sites-enabled/default
-
-  if nginx -t 2>/dev/null; then
-    systemctl reload nginx
-    log_info "Nginx configuration reloaded."
-  else
-    # Expected before certificates exist; the TLS step fixes it.
-    log_warn "Nginx rejected the configuration. This is normal before certificates exist."
-  fi
+    <"${template}" >"/etc/nginx/sites-available/${name}.conf"
 }
 
+mk_prov_enable_site() {
+  ln -sfn "/etc/nginx/sites-available/$1.conf" "/etc/nginx/sites-enabled/$1.conf"
+}
+
+mk_prov_disable_site() {
+  rm -f "/etc/nginx/sites-enabled/$1.conf"
+}
+
+# `nginx -t` is a stop condition everywhere it appears below. The previous
+# version downgraded it to a warning, which is how a host could finish
+# provisioning with a configuration nginx had already rejected.
+mk_prov_nginx_apply() {
+  local what="$1" output status
+
+  # The status is captured BEFORE the output is piped anywhere. `nginx -t | sed`
+  # reports sed's status unless `pipefail` happens to be set, and a gate whose
+  # correctness depends on a shell option set in another file is a gate that
+  # will go quietly green one day.
+  output="$(nginx -t 2>&1)"
+  status=$?
+  printf '%s\n' "${output}" | sed 's/^/  /'
+
+  if [ "${status}" -ne 0 ]; then
+    log_error "Nginx rejected the configuration after ${what}. Not reloading."
+    return 1
+  fi
+  systemctl reload nginx || systemctl start nginx
+  log_info "Nginx reloaded after ${what}."
+}
+
+mk_prov_web_server_http() {
+  local site_domain="$1" admin_domain="$2"
+  log_step "8a. Web server, port 80 only."
+
+  mk_prov_nginx_shared
+  mk_prov_render_site mindkid-acme "${site_domain}" "${admin_domain}" || return 1
+  mk_prov_enable_site mindkid-acme
+
+  # The single-file layout this replaced; leaving it enabled would redeclare
+  # every server block and the rate-limit zones.
+  rm -f /etc/nginx/sites-enabled/mindkid.conf /etc/nginx/sites-available/mindkid.conf
+  rm -f /etc/nginx/sites-enabled/default
+
+  mk_prov_nginx_apply "the port 80 configuration" || return 1
+}
+
+# Step 9 — certificates. `certonly --webroot` writes a file under the path the
+# port 80 server already serves and never edits nginx configuration, so it works
+# against a configuration this script fully controls.
 mk_prov_tls() {
   local site_domain="$1" admin_domain="$2" skip_tls="$3"
   log_step "9. TLS certificates."
@@ -217,23 +333,55 @@ mk_prov_tls() {
 
   local domain resolved
   for domain in "${site_domain}" "${admin_domain}"; do
+    if [ -d "/etc/letsencrypt/live/${domain}" ]; then
+      log_info "Certificate for ${domain} already present."
+      continue
+    fi
+
     resolved="$(getent hosts "${domain}" 2>/dev/null | awk '{print $1}' | head -1)"
     if [ -z "${resolved}" ]; then
       log_warn "${domain} does not resolve yet; skipping its certificate. Point DNS here, then run provision again."
       continue
     fi
-    if [ -d "/etc/letsencrypt/live/${domain}" ]; then
-      log_info "Certificate for ${domain} already present."
-      continue
-    fi
-    certbot --nginx -n --agree-tos --redirect \
+
+    # --deploy-hook: a renewed certificate that nginx never reloads is an
+    # expired certificate from the visitor's side.
+    certbot certonly --webroot -w /var/www/html -n --agree-tos \
       -d "${domain}" -m "${MK_TLS_CONTACT_EMAIL:-admin@${site_domain}}" \
+      --deploy-hook 'systemctl reload nginx' \
       || log_warn "Certificate request for ${domain} failed; the other steps still completed."
   done
 
   # BR-SRV-08: renewal must be automatic and observable.
   systemctl enable --now certbot.timer >/dev/null 2>&1 \
     || log_warn "Could not enable the certificate renewal timer."
+}
+
+# Step 8b — the TLS servers, one file per domain so a missing certificate takes
+# down only its own name instead of the whole configuration.
+mk_prov_web_server_tls() {
+  local site_domain="$1" admin_domain="$2"
+  log_step "8b. Web server, TLS servers for the domains that have a certificate."
+
+  local name domain
+  for name in mindkid-site mindkid-admin; do
+    if [ "${name}" = mindkid-site ]; then
+      domain="${site_domain}"
+    else
+      domain="${admin_domain}"
+    fi
+
+    if [ -d "/etc/letsencrypt/live/${domain}" ]; then
+      mk_prov_render_site "${name}" "${site_domain}" "${admin_domain}" || return 1
+      mk_prov_enable_site "${name}"
+      log_info "${domain} serves over TLS."
+    else
+      mk_prov_disable_site "${name}"
+      log_warn "${domain} has no certificate; its TLS server stays disabled and the name is dark over HTTPS."
+    fi
+  done
+
+  mk_prov_nginx_apply "the TLS configuration" || return 1
 }
 
 mk_prov_logging() {
@@ -258,6 +406,10 @@ mk_prov_report() {
   printf 'Docker     %s\n' "$(docker --version 2>/dev/null || echo absent)"
   printf 'PostgreSQL %s\n' "$(docker exec mindkid-postgres-prod postgres --version 2>/dev/null || echo absent)"
   printf 'Valkey     %s\n' "$(docker exec mindkid-valkey-prod valkey-server --version 2>/dev/null || echo absent)"
+  # The backup job shells out to these two; absent here means no backups at all.
+  printf 'pg_dump    %s\n' "$(pg_dump --version 2>/dev/null || echo absent)"
+  printf 'psql       %s\n' "$(psql --version 2>/dev/null || echo absent)"
+  printf 'Swap       %s\n' "$(swapon --show=NAME,SIZE --noheadings 2>/dev/null | tr '\n' ' ' | sed 's/ *$//' || true)"
 
   # The two things this script will not do for you (spec §4, closing note).
   log_step "Manual steps that remain:"
@@ -293,13 +445,14 @@ cmd_provision() {
   trap release_lock EXIT INT TERM
 
   mk_prov_preflight || return 1
-  mk_prov_base_system
+  mk_prov_base_system || return 1
   mk_prov_layout
   mk_prov_firewall
   mk_prov_runtime || return 1
   mk_prov_datastores || return 1
-  mk_prov_web_server "${site_domain}" "${admin_domain}" || return 1
+  mk_prov_web_server_http "${site_domain}" "${admin_domain}" || return 1
   mk_prov_tls "${site_domain}" "${admin_domain}" "${skip_tls}"
+  mk_prov_web_server_tls "${site_domain}" "${admin_domain}" || return 1
   mk_prov_logging || return 1
   mk_prov_report "${site_domain}"
 }

@@ -45,6 +45,7 @@ export * from "./services/lesson-exemplar.ts";
 export * from "./services/lesson-plan.ts";
 export * from "./services/lesson-session-runner.ts";
 export * from "./services/library.ts";
+export * from "./services/notification-dispatch.ts";
 export * from "./services/offline-pack.ts";
 export * from "./services/payment-jobs.ts";
 export * from "./services/pdf-export.ts";

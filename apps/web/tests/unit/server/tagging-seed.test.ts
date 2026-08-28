@@ -35,11 +35,30 @@ describe("Task P1.10 — Content Tagging & Seed Authoring Pipeline (BR-TAG-* & B
       authored_in: "repo_seed",
     },
     content_pack: {
-      items: [{ id: "apple", emoji: "🍎" }],
-      target_count: 1,
+      prompt: "Em hãy chọn quả táo đúng nhé",
+      prompt_audio_ref: "aud_prompt_apple",
+      target_item: {
+        item_id: "apple_1",
+        asset: { kind: "emoji", ref: "🍎" },
+      },
+      options: [
+        {
+          item_id: "opt_1",
+          asset: { kind: "emoji", ref: "🍎" },
+          is_correct: true,
+        },
+        {
+          item_id: "opt_2",
+          asset: { kind: "emoji", ref: "🍌" },
+          is_correct: false,
+        },
+      ],
     },
     difficulty_params: {
-      count_limit: 5,
+      distractor_count: 1,
+      hint_after_ms: 10_000,
+      allow_retry: true,
+      shuffle_items: true,
     },
   };
 

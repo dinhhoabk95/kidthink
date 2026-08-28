@@ -15,32 +15,82 @@
         <div class="benefit-col">
           <h3 class="benefit-heading">Khi dùng ở nhà</h3>
           <ul class="benefit-list">
-            <li>
-              ✓ Theo dõi tiến độ tư duy trực quan mà không tạo áp lực điểm số
+            <li class="flex items-start gap-2">
+              <UIcon
+                class="w-5 h-5 text-success-600 shrink-0 mt-0.5"
+                name="i-lucide-check"
+              />
+              <span
+                >Theo dõi tiến độ tư duy trực quan mà không tạo áp lực điểm số</span
+              >
             </li>
-            <li>
-              ✓ Hướng dẫn gợi ý hoạt động tương tác ngoài đời thực với con
+            <li class="flex items-start gap-2">
+              <UIcon
+                class="w-5 h-5 text-success-600 shrink-0 mt-0.5"
+                name="i-lucide-check"
+              />
+              <span
+                >Hướng dẫn gợi ý hoạt động tương tác ngoài đời thực với con</span
+              >
             </li>
-            <li>✓ Thiết lập thời lượng chơi an toàn, bảo vệ thị giác của bé</li>
-            <li>✓ Quản lý tối đa 5 bé độc lập trên cùng một tài khoản</li>
+            <li class="flex items-start gap-2">
+              <UIcon
+                class="w-5 h-5 text-success-600 shrink-0 mt-0.5"
+                name="i-lucide-check"
+              />
+              <span
+                >Thiết lập thời lượng chơi an toàn, bảo vệ thị giác của bé</span
+              >
+            </li>
+            <li class="flex items-start gap-2">
+              <UIcon
+                class="w-5 h-5 text-success-600 shrink-0 mt-0.5"
+                name="i-lucide-check"
+              />
+              <span>Quản lý tối đa 5 bé độc lập trên cùng một tài khoản</span>
+            </li>
           </ul>
         </div>
         <div class="benefit-col">
           <h3 class="benefit-heading">Khi dùng trên lớp</h3>
           <ul class="benefit-list">
-            <li>
-              ✓ Thư viện học liệu trò chơi đa dạng chuẩn hoá khung mầm non
+            <li class="flex items-start gap-2">
+              <UIcon
+                class="w-5 h-5 text-success-600 shrink-0 mt-0.5"
+                name="i-lucide-check"
+              />
+              <span
+                >Thư viện học liệu trò chơi đa dạng chuẩn hoá khung mầm non</span
+              >
             </li>
-            <li>
-              ✓ Hỗ trợ giờ hoạt động góc và bài học nhóm tương tác trực quan
+            <li class="flex items-start gap-2">
+              <UIcon
+                class="w-5 h-5 text-success-600 shrink-0 mt-0.5"
+                name="i-lucide-check"
+              />
+              <span
+                >Hỗ trợ giờ hoạt động góc và bài học nhóm tương tác trực quan</span
+              >
             </li>
-            <li>
-              ✓ Phân loại chính xác bài tập theo từng năng lực và kỹ năng chi
-              tiết
+            <li class="flex items-start gap-2">
+              <UIcon
+                class="w-5 h-5 text-success-600 shrink-0 mt-0.5"
+                name="i-lucide-check"
+              />
+              <span
+                >Phân loại chính xác bài tập theo từng năng lực và kỹ năng chi
+                tiết</span
+              >
             </li>
-            <li>
-              ✓ Dễ dàng quan sát mức độ hứng thú và khả năng nhận biết của từng
-              trẻ
+            <li class="flex items-start gap-2">
+              <UIcon
+                class="w-5 h-5 text-success-600 shrink-0 mt-0.5"
+                name="i-lucide-check"
+              />
+              <span
+                >Dễ dàng quan sát mức độ hứng thú và khả năng nhận biết của từng
+                trẻ</span
+              >
             </li>
           </ul>
         </div>

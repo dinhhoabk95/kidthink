@@ -7,11 +7,11 @@ import {
   integer,
   pgTable,
   text,
-  timestamp,
   uniqueIndex,
   uuid,
   varchar,
 } from "drizzle-orm/pg-core";
+import { timestamps } from "./columns.ts";
 import { users } from "./identity.ts";
 
 const LEADING_BRACKET = /^\[/;
@@ -53,12 +53,7 @@ export const contentEmbeddings = pgTable(
     embedding: vector("embedding", { dimensions: 1536 }).notNull(),
     chunkIndex: integer("chunk_index").notNull().default(0),
     chunkText: text("chunk_text").notNull(),
-    createdAt: timestamp("created_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
-    updatedAt: timestamp("updated_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
+    ...timestamps(),
   },
   (table) => [
     uniqueIndex("idx_content_embeddings_unique").on(
@@ -90,12 +85,7 @@ export const aiUsageLog = pgTable(
     outputTokens: integer("output_tokens").notNull().default(0),
     costUsdMicros: integer("cost_usd_micros").notNull().default(0),
     moderationPassed: boolean("moderation_passed").notNull().default(true),
-    createdAt: timestamp("created_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
-    updatedAt: timestamp("updated_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
+    ...timestamps(),
   },
   (table) => [
     index("idx_ai_usage_log_user_created").on(table.userId, table.createdAt),

@@ -5,17 +5,20 @@
   "type": "module",
   "scripts": {
     "dev": "tsx watch src/index.ts",
-    "build": "tsc",
+    "build": "node scripts/build.mjs",
     "start": "node dist/index.js",
     "restore": "tsx src/backup/restore.ts",
-    "test": "vitest run"
+    "test": "vitest run",
+    "backup:manual": "tsx src/scripts/backup-manual.ts"
   },
   "dependencies": {
     "@mindkid/cache": "workspace:*",
+    "@mindkid/config": "workspace:*",
     "@mindkid/db": "workspace:*",
     "@mindkid/queue": "workspace:*",
     "@mindkid/shared": "workspace:*",
     "@mindkid/storage": "workspace:*",
+    "argon2": "catalog:",
     "bullmq": "catalog:",
     "drizzle-orm": "catalog:",
     "ioredis": "catalog:",
@@ -23,9 +26,13 @@
   },
   "devDependencies": {
     "@types/node": "catalog:",
-    "tsx": "^4.23.11",
+    "esbuild": "catalog:",
+    "tsx": "catalog:",
     "typescript": "catalog:",
-    "vitest": "catalog:",
-    "@mindkid/config": "workspace:*"
+    "vitest": "catalog:"
+  },
+  "imports": {
+    "#src/*": "./src/*.ts",
+    "#tests/*": "./tests/*.ts"
   }
 }

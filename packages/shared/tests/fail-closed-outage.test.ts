@@ -1,4 +1,4 @@
-import { checkRateLimit, clearInMemoryBuckets } from "@mindkid/cache";
+import { checkRateLimit, clearRateLimitBuckets } from "@mindkid/cache";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { enforceTwoAxisRateLimit } from "#src/rate-limit-middleware";
 
@@ -47,7 +47,7 @@ describe("Rate Limiter Fail-Closed / Fail-Open Outage (Task 10 / BR-RTL-02 & BR-
   });
 
   it("BR-RTL-06: 30-minute play session sending regular telemetry events is not rate limited", async () => {
-    clearInMemoryBuckets();
+    await clearRateLimitBuckets();
     const sessionId = "session_play_30min";
 
     // 100 events every 10 min window (limit is 300) -> total 300 events

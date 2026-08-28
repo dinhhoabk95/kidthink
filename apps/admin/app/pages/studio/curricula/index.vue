@@ -5,10 +5,10 @@
       class="flex flex-col sm:flex-row sm:items-center justify-between gap-4"
     >
       <div>
-        <h1 class="text-2xl font-bold text-slate-900 dark:text-white">
+        <h1 class="text-2xl font-bold text-surface-900 dark:text-white">
           Xưởng Thiết Kế Khung Chương Trình (Curriculum Studio)
         </h1>
-        <p class="text-sm text-slate-500 dark:text-slate-400">
+        <p class="text-sm text-surface-500 dark:text-surface-400">
           Biên soạn khung phân phối 8–52 tuần, phân bổ cân bằng 6 năng lực sư
           phạm C1–C6.
         </p>
@@ -16,7 +16,7 @@
 
       <div class="flex items-center gap-3" v-if="!isEditorActive">
         <button
-          class="min-h-11 px-5 py-2.5 rounded-2xl bg-indigo-600 hover:bg-indigo-700 active:scale-95 text-white font-semibold text-base shadow-sm transition-all flex items-center gap-2"
+          class="min-h-11 px-5 py-2.5 rounded-2xl bg-brand-600 hover:bg-brand-700 active:scale-95 text-white font-semibold text-base shadow-sm transition-all flex items-center gap-2"
           type="button"
           @click="openCreateCurriculum"
         >
@@ -27,12 +27,12 @@
 
     <!-- Notification Banner -->
     <div
-      class="p-4 rounded-2xl bg-indigo-50 dark:bg-indigo-900/40 border border-indigo-200 dark:border-indigo-700 text-indigo-900 dark:text-indigo-200 text-sm flex items-center justify-between"
+      class="p-4 rounded-2xl bg-brand-50 dark:bg-brand-900/40 border border-brand-200 dark:border-brand-700 text-brand-900 dark:text-brand-200 text-sm flex items-center justify-between"
       v-if="actionNotification"
     >
       <span>{{ actionNotification }}</span>
       <button
-        class="text-xs font-bold text-indigo-600 dark:text-indigo-400 hover:underline"
+        class="text-xs font-bold text-brand-600 dark:text-brand-400 hover:underline"
         type="button"
         @click="dismissNotification"
       >
@@ -56,11 +56,11 @@
     <div class="space-y-6" v-else>
       <!-- Top Action Bar -->
       <div
-        class="p-4 rounded-3xl bg-white dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 shadow-sm flex flex-wrap gap-4 items-center justify-between sticky top-4 z-10"
+        class="p-4 rounded-3xl bg-white dark:bg-surface-800 border-2 border-surface-200 dark:border-surface-700 shadow-sm flex flex-wrap gap-4 items-center justify-between sticky top-4 z-10"
       >
         <div class="flex items-center gap-3">
           <button
-            class="min-h-10 px-3 py-2 text-sm font-semibold rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 dark:bg-slate-700 dark:text-slate-200"
+            class="min-h-10 px-3 py-2 text-sm font-semibold rounded-xl bg-surface-100 hover:bg-surface-200 text-surface-700 dark:bg-surface-700 dark:text-surface-200"
             type="button"
             @click="closeEditor"
           >
@@ -69,7 +69,7 @@
           <div>
             <div class="flex items-center gap-2">
               <span
-                class="font-mono font-bold text-slate-900 dark:text-white text-base"
+                class="font-mono font-bold text-surface-900 dark:text-white text-base"
               >
                 {{ activeCurriculum.code }}
                 v{{ activeCurriculum.content_version }}
@@ -81,13 +81,13 @@
                 {{ activeCurriculum.status }}
               </span>
               <span
-                class="px-2 py-0.5 text-xs font-mono rounded-xl bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300"
+                class="px-2 py-0.5 text-xs font-mono rounded-xl bg-surface-100 dark:bg-surface-700 text-surface-600 dark:text-surface-300"
                 title="Khóa kiểm soát đồng thời"
               >
                 Lock v{{ activeCurriculum.content_version }}
               </span>
             </div>
-            <span class="text-xs text-slate-500" v-if="autosaveStatus">
+            <span class="text-xs text-surface-500" v-if="autosaveStatus">
               {{ autosaveStatus }}
             </span>
           </div>
@@ -95,14 +95,14 @@
 
         <div class="flex items-center gap-3">
           <button
-            class="min-h-10 px-4 py-2 text-sm font-semibold rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 dark:bg-slate-700 dark:text-slate-200"
+            class="min-h-10 px-4 py-2 text-sm font-semibold rounded-xl bg-surface-100 hover:bg-surface-200 text-surface-700 dark:bg-surface-700 dark:text-surface-200"
             type="button"
             @click="duplicateActiveCurriculum"
           >
             Nhân bản (Clone)
           </button>
           <button
-            class="min-h-10 px-5 py-2 text-sm font-semibold rounded-xl bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white shadow-sm transition-all"
+            class="min-h-10 px-5 py-2 text-sm font-semibold rounded-xl bg-success-600 hover:bg-success-700 active:scale-95 text-white shadow-sm transition-all"
             type="button"
             v-if="activeCurriculum.status === 'draft'"
             @click="submitForReview"
@@ -110,7 +110,7 @@
             Gửi duyệt (Submit)
           </button>
           <button
-            class="min-h-10 px-6 py-2 text-sm font-bold rounded-xl bg-indigo-600 hover:bg-indigo-700 active:scale-95 text-white shadow-sm transition-all"
+            class="min-h-10 px-6 py-2 text-sm font-bold rounded-xl bg-brand-600 hover:bg-brand-700 active:scale-95 text-white shadow-sm transition-all"
             type="button"
             :disabled="isSaving"
             @click="saveAll"
@@ -156,7 +156,7 @@
 </template>
 
 <script lang="ts" setup>
-  import { calculateCurriculumBalance } from "@mindkid/shared";
+  import { calculateCurriculumBalance } from "@mindkid/shared/client";
   import { computed, onMounted, ref } from "vue";
   import CurriculumActivityDrawer, {
     type LibraryItem,
@@ -285,18 +285,18 @@
 
   function getStatusBadgeClass(status?: string): string {
     if (status === "published") {
-      return "bg-emerald-500 text-white";
+      return "bg-success-500 text-white";
     }
     if (status === "approved") {
-      return "bg-blue-500 text-white";
+      return "bg-brand-500 text-white";
     }
     if (status === "in_review") {
-      return "bg-amber-500 text-white";
+      return "bg-warning-500 text-white";
     }
     if (status === "archived") {
-      return "bg-slate-400 text-white";
+      return "bg-surface-400 text-white";
     }
-    return "bg-slate-200 text-slate-700 dark:bg-slate-700 dark:text-slate-300";
+    return "bg-surface-200 text-surface-700 dark:bg-surface-700 dark:text-surface-300";
   }
 
   function dismissNotification() {

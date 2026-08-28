@@ -117,7 +117,7 @@
       </div>
 
       <div
-        class="my-6 p-4 rounded-2xl bg-rose-50 dark:bg-rose-950/40 border border-rose-300 text-rose-800 dark:text-rose-200 text-sm font-bold"
+        class="my-6 p-4 rounded-2xl bg-danger-50 dark:bg-danger-950/40 border border-danger-300 text-danger-800 dark:text-danger-200 text-sm font-bold"
         v-else-if="errorMessage"
       >
         {{ errorMessage }}
@@ -167,7 +167,7 @@
               </span>
               <span
                 class="px-2.5 py-1 rounded-xl text-xs font-bold"
-                :class="game.status === 'ready' ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-300' : 'bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-300'"
+                :class="game.status === 'ready' ? 'bg-success-100 text-success-800 dark:bg-success-900/40 dark:text-success-300' : 'bg-warning-100 text-warning-800 dark:bg-warning-900/40 dark:text-warning-300'"
               >
                 {{ game.status === 'ready' ? 'Sẵn sàng chơi' : 'Bản nháp' }}
               </span>
@@ -206,7 +206,7 @@
 
             <div class="flex items-center gap-2">
               <button
-                class="inline-flex items-center justify-center px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-heading font-bold text-xs transition-all min-h-11"
+                class="inline-flex items-center justify-center px-3.5 py-2 rounded-xl bg-success-600 hover:bg-success-700 text-white font-heading font-bold text-xs transition-all min-h-11"
                 type="button"
                 v-if="game.status === 'ready'"
                 @click="openPlayModal(game)"
@@ -216,7 +216,7 @@
 
               <button
                 aria-label="Xóa trò chơi"
-                class="inline-flex items-center justify-center px-2.5 py-2 rounded-xl bg-rose-50 dark:bg-rose-950/40 hover:bg-rose-100 text-rose-700 dark:text-rose-300 text-xs font-bold transition-all min-h-11"
+                class="inline-flex items-center justify-center px-2.5 py-2 rounded-xl bg-danger-50 dark:bg-danger-950/40 hover:bg-danger-100 text-danger-700 dark:text-danger-300 text-xs font-bold transition-all min-h-11"
                 type="button"
                 @click="confirmDelete(game)"
               >
@@ -255,7 +255,7 @@
             Hủy
           </button>
           <button
-            class="px-4 py-2 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-heading font-bold text-sm min-h-11"
+            class="px-4 py-2 rounded-xl bg-danger-600 hover:bg-danger-700 text-white font-heading font-bold text-sm min-h-11"
             type="button"
             :disabled="deleting"
             @click="executeDelete"
@@ -270,6 +270,12 @@
 
 <script lang="ts" setup>
   import { onMounted, ref } from "vue";
+
+  // Trang này tự dựng chrome (PublicNavbar + <main id="main-content"> +
+  // PublicFooter). Không tắt layout thì `default.vue` dựng thêm một bộ nữa:
+  // navbar và footer hiện hai lần, và có hai phần tử cùng id="main-content"
+  // nên skip-link của app.vue nhảy sai chỗ (BR-A11-05).
+  definePageMeta({ layout: false });
 
   interface CustomGameItem {
     id: number;

@@ -5,7 +5,7 @@ area: foundation
 status: implemented
 mvp: true
 phase: P0
-reviewed: 2026-08-13
+reviewed: 2026-08-29
 owns:
   - Cấu trúc thư mục gốc `mindkid/` và trình tự dựng repo
   - Dependency/tech baseline (version tối thiểu từng lớp)
@@ -95,6 +95,8 @@ vì tự xây từ đầu, cùng mục).
 | `BR-RBS-06` | Version pin ở `engines` (root) + pnpm `catalog:` — package con **không tự ý** khai version khác catalog | Version rải rác từng package là nguồn drift kinh điển trong monorepo |
 | `BR-RBS-07` | `docker-compose.yml` dev phải chạy **đúng major version** production (PG 17, Valkey 9) trước khi bất kỳ ai viết schema | Test trên version khác production là kiểm tra sai thứ |
 | `BR-RBS-08` | Đổi bảng §7.1 (thêm/gỡ thư viện nền, đổi major version) là đổi spec — **không** sửa âm thầm trong PR cài dependency | Bảng này là contract; sửa không qua Specify làm mất lý do quyết định |
+| `BR-RBS-09` | Thư viện nào bị **hai** phụ thuộc kéo về hai version phải chốt về một bản bằng `overrides` trong `pnpm-workspace.yaml`, kèm lý do | Hai bản cùng tồn tại là hai instance runtime. Đo 2026-08-29: nuxt 4.5.2 khai `unhead ^3.3.1`, `@nuxt/ui` 4.11 khai `@unhead/vue ^3.3.2`, lockfile chốt cả 3.3.1 lẫn 3.4.0 |
+| `BR-RBS-10` | Cổng dev của từng app pin bằng **cờ CLI** trong `dev` script, không để rơi vào biến `PORT` | `PORT=3000` ở `.env` gốc được `require-env` nạp cho mọi tiến trình, nên `pnpm dev:all` cho web và admin tranh nhau 3000 — ai khởi động trước thắng, và `NUXT_PUBLIC_API_BASE_URL=http://localhost:3000` có lúc trỏ ngược vào chính admin |
 
 ## 7. Data
 
@@ -150,6 +152,32 @@ lấy bản vá/minor mới nhất cùng major đã chốt — không hạ versi
 `BR-RBS-08` — đổi bảng §7.1 là đổi spec, không sửa âm thầm trong PR cài dependency). Nguồn
 nghiên cứu chi tiết (npm registry, GitHub issue, docs) — xem lịch sử phiên làm việc 2026-08-05/06,
 không lặp lại ở đây theo [`CONVENTIONS.md`](../CONVENTIONS.md) (spec khác link tới, không copy).
+
+### 7.1a Chốt version chồng chéo và cổng dev — thêm 2026-08-29
+
+`pnpm-workspace.yaml` sở hữu ba thứ, không chỉ `catalog:`:
+
+| Khối | Dùng cho | Ghi chú |
+|---|---|---|
+| `catalog:` | Version của dependency dùng chung | Nguồn duy nhất (`BR-RBS-06`) |
+| `overrides:` | Ép về **một** bản khi hai phụ thuộc kéo hai version | `BR-RBS-09`. Hiện có: `unhead` và `@unhead/vue` chốt `3.4.0` |
+| `allowBuilds:` | Cho phép postinstall của native package | Đã có từ trước |
+
+Bộ icon local của kit nằm trong `catalog:` (`@iconify-json/lucide`) chứ không để Nuxt Icon gọi
+`api.iconify.design` lúc chạy — xem `BR-DSC-23` của
+[`design-system-contract.md`](../08-quality/design-system-contract.md).
+
+Cổng dev (`BR-RBS-10`) — đây là cổng **máy trạm**, không phải bảng cổng production ở §7.3 của
+[`server-provisioning.md`](../01-platform/server-provisioning.md) (production không có cổng cho
+admin: nginx phục vụ static trực tiếp):
+
+| App | Script | Cổng |
+|---|---|---|
+| `apps/web` | `nuxt dev --port 3000` | 3000 |
+| `apps/admin` | `nuxt dev --port 3001` | 3001 |
+| `apps/worker` | — | Không mở HTTP (`BR-JOB-04`) |
+
+`NUXT_ALLOWED_ORIGINS` phải liệt kê cả hai origin đó, nếu không admin gọi API sẽ vỡ CORS.
 
 ### 7.2 Cấu trúc thư mục
 
@@ -216,6 +244,23 @@ Scenario: BR-RBS-01 — không port business logic
   Then không có file trong apps/*/server/api hoặc packages/db/src/schema
   And chỉ có file thuộc danh sách §7.3
 
+Scenario: BR-RBS-09 — mỗi thư viện chồng chéo chỉ còn một bản
+  When đọc pnpm-lock.yaml
+  Then mỗi tên trong khối overrides chỉ xuất hiện đúng một version
+  And node_modules/.pnpm/<nuxt>/node_modules/unhead và của @nuxt/ui trỏ cùng một thư mục
+
+Scenario: BR-RBS-10 — hai app dev không tranh cổng
+  Given .env gốc có PORT=3000
+  When chạy pnpm dev:all
+  Then apps/web nghe 3000 và apps/admin nghe 3001, không phụ thuộc thứ tự khởi động
+  And NUXT_ALLOWED_ORIGINS chứa cả http://localhost:3000 và http://localhost:3001
+
+Scenario: BR-RBS-10 — ca âm, admin gọi API cross-origin không vỡ CORS
+  When gửi OPTIONS tới http://localhost:3000/api/managers/auth/session với Origin http://localhost:3001
+  Then trả 204
+  And header access-control-allow-origin đúng bằng http://localhost:3001
+  And header access-control-allow-credentials là true
+
 Scenario: BR-RBS-04 — chặn code nghiệp vụ trước foundation approved
   Given một spec 00-foundation còn status "draft"
   When có PR mở thêm route hoặc bảng DB ngoài §7.3
@@ -258,7 +303,7 @@ Scenario: BR-RBS-04 — chặn code nghiệp vụ trước foundation approved
 | 9 | Kích thước pool `postgres.js` (`max`) và `PG max_connections` phải tính theo **loại EC2 instance thật** (số vCPU × số PM2 instance) — chưa chốt vì chưa biết instance type production | [`data-model-overview.md`](../01-platform/data-model-overview.md), deploy | Hoãn, chặn phase P1 | hoãn |
 | ~~10~~ | ~~Chiến lược version control cho corpus spec ở workspace root.~~ **Đóng 2026-08-09 (T13)**: Lượt 3 khôi phục Lượt 1 (`D-U`) — corpus ở nguyên trong `mindkid/docs/`. **Ba lượt quyết định:** | — | Đã đóng | D-U |
 | | **Lượt 1 — 2026-08-06 (D-U, T2)**: chốt corpus spec ([`SPEC.md`](../../SPEC.md) + `docs/specs/` + `docs/tasks/`) chuyển vào `mindkid/docs/`, thuộc git repo code. `mindkid/SPEC.md` = symlink → `docs/SPEC.md`. `git log --follow` truy được vết. 223 link `.md` resolve, 0 vỡ. | | | |
-| | **Lượt 2 — 2026-08-07 sáng (quyết định người dùng)**: **đảo lại** — corpus spec ra khỏi `mindkid/`, về `docs/` ở workspace root (sibling của `mindkid/`), **không** track chung git repo code. Lý do lúc đó: docs đổi nhịp khác code và người duyệt khác nhau — tách để diff/review code không lẫn thay đổi markdown. Chưa kịp code hoá (`CORPUS_ROOT` chưa thêm vào `packages/gates/src/lint-specs-lib.ts`) thì đã đảo lại ở Lượt 3 — bản ghi lượt này giữ lại làm lịch sử, không phải trạng thái hiện hành | | | |
+| | **Lượt 2 — 2026-08-07 sáng (quyết định người dùng)**: **đảo lại** — corpus spec ra khỏi `mindkid/`, về `docs/` ở workspace root (sibling của `mindkid/`), **không** track chung git repo code. Lý do lúc đó: docs đổi nhịp khác code và người duyệt khác nhau — tách để diff/review code không lẫn thay đổi markdown. Chưa kịp code hoá (`CORPUS_ROOT` chưa thêm vào cổng lint-specs, cổng đó sau này bị gỡ hẳn 2026-08-29) thì đã đảo lại ở Lượt 3 — bản ghi lượt này giữ lại làm lịch sử, không phải trạng thái hiện hành | | | |
 | | **Lượt 3 — 2026-08-07 chiều (quyết định người dùng, đảo lại Lượt 2)**: **khôi phục Lượt 1** — corpus spec ([`SPEC.md`](../../SPEC.md) + `docs/specs/` + `docs/tasks/` + `docs/taxonomy/` + `docs/montessori/`) ở nguyên trong `mindkid/docs/`, thuộc git repo code, commit chung dòng lịch sử với task code (ví dụ Task #3). Lý do: tách riêng repo docs mới chỉ là quyết định trên giấy — chưa mang lại lợi ích gì (chưa review-tách-luồng nào từng chạy) mà đã phát sinh rủi ro thật: một bản `docs/` cũ bị bỏ quên ở workspace root làm `mindkid/SPEC.md` (symlink) trỏ nhầm sang nội dung lỗi thời. `mindkid/SPEC.md` = symlink → `docs/SPEC.md` (khôi phục, bỏ `../`). Xoá bản `docs/` trùng ở workspace root | | | |
 | ~~11~~ | ~~Bật lại CI cổng tự động khi nào~~ **Đóng 2026-08-06**: câu hỏi biến mất cùng provider — không còn CI để bật. Quy tắc `BR-RBS-03` (gate local phải xanh và chặn đúng ca âm trước khi mở PR chứa business logic) giờ đo bằng `lefthook run pre-push` + ca âm tại máy | — | Đã đóng | D-S (T1) |
 | ~~12~~ | ~~Gate local bỏ qua được bằng `--no-verify`~~ **Đóng dứt điểm 2026-08-09 (`D-CL`)**: giữ lefthook làm phản hồi nhanh local; `main` cấm direct/force push, bắt buộc PR + ít nhất một approving human review và dismiss approval khi có commit mới. Người bật rule trước PR seeder đầu tiên | — | Đã đóng | D-CL |

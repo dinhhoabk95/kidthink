@@ -5,7 +5,7 @@ area: quality
 status: implemented
 mvp: true
 phase: P1
-reviewed: 2026-08-08
+reviewed: 2026-08-29
 owns:
   - Token, kit component, quy tắc bốn bề mặt
 depends_on:
@@ -28,14 +28,16 @@ Dev UI · reviewer.
 
 ## 3. Entry points
 
-`packages/ui/assets/css/tailwind.css` `@theme` · `packages/ui/app.config.ts` ·
-`packages/game-engine/src/systems/designTokens.ts`.
+`packages/ui/nuxt.config.ts` (gốc layer) · `packages/ui/assets/css/tailwind.css` `@theme` ·
+`packages/ui/app.config.ts` · `packages/game-engine/src/systems/designTokens.ts`.
+
+Gốc layer là **thư mục** `packages/ui`, không phải tên package `@mindkid/ui`. Xem `BR-DSC-21`.
 
 ## 4. Main flow
 
 1. Token khai báo ở **một nơi** mỗi tầng: CSS `@theme` cho Vue, `designTokens.ts` cho canvas.
 2. Component dùng token, không dùng giá trị thô.
-3. cổng tự động ép bằng `pnpm --filter @mindkid/gates test` và grep hex trong `.vue`.
+3. Cổng đo token đã bị gỡ 2026-08-29 — giữ bằng `grep` tay ở §7.5 và lượt review.
 
 ## 5. Alternative flows
 
@@ -50,7 +52,7 @@ Dev UI · reviewer.
 | ID | Rule | Vì sao |
 |---|---|---|
 | `BR-DSC-01` | Cấm — **NEVER hex literal trong `.vue`** — template, `<style>`, hay inline `:style` | Màu ngoài token phá tính nhất quán và có thể không đạt contrast |
-| `BR-DSC-02` | Cấm — **NEVER hex literal trong `packages/game-engine`** ngoài `designTokens.ts` | Ép bằng `pnpm --filter @mindkid/gates test` |
+| `BR-DSC-02` | Cấm — **NEVER hex literal trong `packages/game-engine`** ngoài `designTokens.ts` | Hex rải rác làm canvas lệch khỏi bảng token. KHÔNG còn cổng nào đo — grep tay ở §7.5 |
 | `BR-DSC-03` | **Nuxt UI v4 là kit duy nhất.** Cấm — NEVER tái sinh shadcn-vue (`components/ui/`, `cn()`, `cva`, `clsx`, `tailwind-merge`, `lucide-vue-next`) | Hai kit là hai hệ thống phải bảo trì |
 | `BR-DSC-04` | **Một icon library**: `i-lucide-*` qua `<UIcon>`. Icon dạng dữ liệu là **chuỗi** | Truyền component qua `<component :is>` làm không serialize được |
 | `BR-DSC-05` | Cấm — **NEVER emoji làm affordance** — nav, button, HUD, trạng thái, empty state đều SVG | Render khác theo OS · không recolour · không mang được focus ring |
@@ -63,6 +65,15 @@ Dev UI · reviewer.
 | `BR-DSC-12` | Chỉ animate `transform` và `opacity`. Cấm — NEVER `width`/`height`/`top` | Gây reflow |
 | `BR-DSC-13` | File `.vue` ≤ **800 dòng** | File quá dài gây khó đọc và bảo trì, nên tách component |
 | `BR-DSC-14` | Cấm — **NEVER `rounded-md`/`rounded-lg`** — chúng là mặc định shadcn, ngoài hệ thống | Đảm bảo nhất quán với hệ thống radius thiết kế riêng |
+| `BR-DSC-15` | App có `.vue` bắt buộc nạp token qua layer `@mindkid/ui`, và phải có ca âm đo được ở §9 | Token khai mà không app nào nạp thì cổng xanh trong khi màn hình không có màu. Đo 2026-08-29: luật này đã có từ trước nhưng **không có scenario nào** ở §9, nên layer chết suốt mà không ai biết |
+| `BR-DSC-16` | Mọi `var(--…)` dùng trong `.vue` phải được định nghĩa trong file token | Biến không tồn tại trả về rỗng và không báo lỗi |
+| `BR-DSC-17` | Cấm — **NEVER họ màu Tailwind thô trong `.vue`** — chỉ dùng họ token | Hai bảng màu song song là hai hệ phải bảo trì |
+| `BR-DSC-18` | `dark:` chỉ hợp lệ khi app có cơ chế color-mode | Tránh dùng dark mode không kiểm soát khi chưa có công tắc chuyển đổi |
+| `BR-DSC-19` | Mở rộng `BR-DSC-05` sang text của template ở phần tử affordance | Cổng cũ chỉ quét aria-label nên emoji trong text nút bấm có thể bị lọt |
+| `BR-DSC-20` | Mọi họ màu dùng làm alias của kit phải có đủ 11 bậc `50…950` | Nuxt UI v4 dùng bậc thiếu cho hover và focus, thiếu bậc là component hỏng lặng lẽ |
+| `BR-DSC-21` | `extends` của layer thiết kế phải là **đường dẫn thư mục** (`fileURLToPath(new URL("../../packages/ui", import.meta.url))`). Cấm — **NEVER `extends: ["@mindkid/ui"]`** | `packages/ui/package.json` khai `exports["."] = "./src/index.ts"`; Nuxt phân giải tên package ra file rồi lấy `dirname()` = `packages/ui/src`, nơi không có `nuxt.config.ts`, rồi **bỏ qua layer không một dòng cảnh báo**. Đo 2026-08-29: 0 component Nuxt UI, `nuxt generate` của admin ra 0 byte entry CSS |
+| `BR-DSC-22` | Package layer thiết kế bắt buộc khai `nuxt` trong `devDependencies` | `nuxt.config.ts` của layer import `nuxt/config`; thiếu nó thì file lỗi TS2307 ngay khi layer bắt đầu được typecheck thật |
+| `BR-DSC-23` | Bộ icon của kit bắt buộc cài **local** (`@iconify-json/lucide`). Cấm — **NEVER để Nuxt Icon đi lấy icon qua `api.iconify.design` lúc chạy** | CSP của `apps/web` là `default-src 'self'` và không mở `connect-src` cho iconify — ở production icon chết câm. Cảnh báo dev là `[Icon] Collection lucide is not found locally` |
 
 ## 7. Data
 
@@ -125,8 +136,11 @@ Mỗi họ màu dùng làm alias cho Nuxt UI v4 có đủ 11 bậc `50…950` đ
 grep -nE '#[0-9a-fA-F]{6}' <file .vue vừa sửa>
 grep -rnE 'lucide-vue-next|class-variance-authority|tailwind-merge|\bcn\(' apps packages
 grep -rn 'dark:' apps/web/app/components/kid apps/web/app/pages/play
-pnpm --filter @mindkid/gates test
+grep -rnE '#[0-9a-fA-F]{6}' packages/game-engine/src --include='*.ts' | grep -v designTokens
 ```
+
+Bốn lệnh này là **toàn bộ** phần cưỡng chế còn lại của spec này: cổng máy đo token
+đã bị gỡ cùng `packages/gates`. Quên chạy là rule trôi.
 
 ## 8. API contract
 
@@ -140,7 +154,7 @@ Scenario: BR-DSC-01 — không hex trong .vue
   Then không có hex literal
 
 Scenario: BR-DSC-02 — không hex trong game-engine
-  When chạy pnpm --filter @mindkid/gates test
+  When grep hex trong packages/game-engine/src
   Then 0 vi phạm ngoài designTokens.ts
 
 Scenario: BR-DSC-03 — một kit duy nhất
@@ -166,6 +180,36 @@ Scenario: BR-DSC-10 — một CTA mỗi màn hình
 Scenario: BR-DSC-13 — file .vue đủ nhỏ
   When đếm dòng mọi file .vue
   Then không file nào vượt 800 dòng
+
+Scenario: BR-DSC-15 — layer thiết kế thật sự được nạp
+  Given apps/admin và apps/web đã chạy xong một lần build
+  When đọc .nuxt/components.d.ts của từng app
+  Then mỗi app có ít nhất một component tiền tố "U" của Nuxt UI
+  And .nuxt/app.config.mjs có dòng import cfg trỏ vào packages/ui/app.config.ts
+  And .nuxt/ui.css tồn tại
+
+Scenario: BR-DSC-15 — ca âm, layer bị bỏ qua thì phải đỏ
+  Given extends của một app trỏ vào một thư mục không có nuxt.config.ts
+  When chạy lại kiểm tra trên
+  Then kiểm tra báo đỏ
+  And Cấm — NEVER coi build exit 0 là bằng chứng layer đã nạp
+
+Scenario: BR-DSC-15 — bản phát hành có CSS thật
+  When chạy nuxt generate cho apps/admin
+  Then .output/public/_nuxt có đúng một entry CSS
+  And entry CSS đó lớn hơn 100KB
+  And entry CSS đó chứa --color-brand-600 và --color-surface-50
+  And 200.html có thẻ link stylesheet trỏ vào entry CSS đó
+
+Scenario: BR-DSC-21 — không extends bằng tên package
+  When quét extends trong mọi nuxt.config.ts của apps/*
+  Then không giá trị nào là chuỗi tên package "@mindkid/ui"
+  And .nuxt/tsconfig.json không chứa pattern "packages/ui/src/nuxt.config.*"
+
+Scenario: BR-DSC-23 — icon nằm trong bundle, không gọi mạng
+  When khởi động dev server của một app có .vue
+  Then log có dòng "discovered local-installed" kèm collection lucide
+  And log không có dòng "Collection lucide is not found locally"
 ```
 
 ## 10. Boundaries
@@ -181,6 +225,9 @@ Scenario: BR-DSC-13 — file .vue đủ nhỏ
 - Đổi thang radius hoặc motion.
 
 **Never**
+- `extends: ["@mindkid/ui"]` — layer phải trỏ bằng đường dẫn thư mục (`BR-DSC-21`).
+- Coi build exit 0 là bằng chứng layer thiết kế đã nạp — phải đo `.nuxt/components.d.ts` và entry CSS.
+- Để Nuxt Icon lấy icon qua mạng lúc chạy thay vì bộ collection cài local.
 - Hex literal trong `.vue` hoặc trong engine ngoài `designTokens.ts`.
 - Kit component thứ hai · icon library thứ hai.
 - Emoji làm affordance.

@@ -26,9 +26,12 @@ export default defineEventHandler(async (event) => {
   const parsed = cancelSubscriptionSchema.safeParse(rawBody);
 
   if (!parsed.success) {
+    // `appError(status, code, message)` không phải chữ ký của hàm: tham số đầu
+    // là `AuthErrorCode`. Truyền `422` vào làm `AUTH_ERROR_DEFINITIONS[422]`
+    // undefined → `status` undefined → Nitro trả 500. `VALIDATION_ERROR` cũng
+    // chưa đăng ký; mã 422 đã có là `VALIDATION_FAILED`.
     throw appError(
-      422,
-      "VALIDATION_ERROR",
+      "VALIDATION_FAILED",
       parsed.error.errors[0]?.message ?? "Dữ liệu yêu cầu huỷ không hợp lệ"
     );
   }

@@ -1,4 +1,4 @@
-import { requireEnv } from "@mindkid/config";
+import { requireValkeyUrl } from "@mindkid/config";
 import { Redis } from "ioredis";
 import {
   type BrowserSessionService,
@@ -11,7 +11,7 @@ let browserSessionService: BrowserSessionService | undefined;
 
 export function getAuthRedisClient(): MinimalRedisClient {
   if (!authRedisClient) {
-    const client = new Redis(requireEnv("VALKEY_URL"), {
+    const client = new Redis(requireValkeyUrl(), {
       connectTimeout: 2000,
       commandTimeout: 2000,
       maxRetriesPerRequest: 1,

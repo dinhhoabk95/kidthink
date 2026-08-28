@@ -58,7 +58,7 @@ người + AI agent IDE ──soạn──► file trong repo ──cổng tự 
 | Luồng            | Soạn gì                                                                                                   | Cổng                                                                           | Spec                                               |
 | ---------------- | --------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------ | -------------------------------------------------- |
 | **Nội dung nền** | Seeder cho game level · learning objective · lesson · curriculum, chia theo **năng lực C1–C6 × template** | 8 cổng tự động → PR review → `pnpm --filter @mindkid/db seed:content` ghi thẳng `published`         | `docs/specs/01-platform/content-seed-authoring.md` |
-| **Code**         | Zod · Drizzle · route skeleton · test từ Gherkin · Session class                                          | `node packages/gates/scripts/check-progress.ts` + PR có người review; sáu vùng nhạy cảm cần review tăng cường | `docs/specs/01-platform/ai-codegen-pipeline.md`    |
+| **Code**         | Zod · Drizzle · route skeleton · test từ Gherkin · Session class                                          | PR có người review; sáu vùng nhạy cảm cần review tăng cường (cổng so spec ↔ code đã gỡ 2026-08-29) | `docs/specs/01-platform/ai-codegen-pipeline.md`    |
 
 **Ngoại lệ Task #14, chốt ngày 2026-08-09:** trong phạm vi triển khai
 [`14-implementation-sequence-plan.md`](tasks/14-implementation-sequence-plan.md), AI được phép
@@ -743,20 +743,18 @@ pnpm dev:admin                                # admin SPA dev server (production
 pnpm dev:worker                               # worker     :3099
 
 # Quality gate — phải xanh trước khi merge
-pnpm check                                    # lint + lint:tokens + lint:deps + lint:specs + typecheck
+pnpm check                                    # lint + lint:deps + typecheck + test + test:deploy
 pnpm lint                                     # biome check .
 pnpm lint:fix                                 # biome check --write .
-pnpm --filter @mindkid/gates test                              # cấm hex literal ngoài designTokens.ts
 pnpm lint:deps                                # dependency-cruiser — chặn import xuyên ranh giới package/app
-pnpm --filter @mindkid/gates test                               # kiểm corpus spec: frontmatter, section, link, rule, mã lỗi
-pnpm typecheck                                # recursive
-pnpm format                                   # biome format --write .
+pnpm typecheck                                # tsc + vue-tsc, 10 project, bậc thang nợ
+pnpm typecheck:update                         # chốt baseline mới khi nợ giảm
 
 # Test
 pnpm test                                     # vitest run
 pnpm test:watch
 pnpm test:coverage                            # vitest run --coverage
-pnpm test:e2e                                 # playwright
+pnpm test:deploy                              # script hạ tầng
 pnpm services                           # verify PG + Valkey kết nối được từ Node (repo-bootstrap.md §4 bước 5)
 
 # Database

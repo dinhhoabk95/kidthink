@@ -75,7 +75,7 @@ Nó đo **catalog**, không đo trẻ. Trẻ học được gì thuộc [`pedago
 
 | ID | Rule | Vì sao |
 |---|---|---|
-| `BR-TCM-01` | Từ vựng ba trục **đóng thật**: giá trị ngoài danh sách làm cổng đỏ, không có nhánh slug dự phòng | Nhánh dự phòng hiện tại là lý do `gross_motor_counting` sống được trong seed. Một cổng nhận mọi thứ không phải cổng |
+| `BR-TCM-01` | Từ vựng ba trục **đóng thật**: giá trị ngoài danh sách làm cổng đỏ, không có nhánh slug dự phòng. Cổng sống ở `packages/db/tests/gates/thinking-coverage.ts`. **Trạng thái 2026-08-29:** đóng thật cho `thinking` và `mechanic`; **nới** cho `what` (28 giá trị, hợp hai bộ) và cho `theme` (22 giá trị, hợp hai bộ). Cổng seed thì vẫn có nhánh `SLUG_REGEX.test(tag)` — xem mục 7.3a của [`content-seed-authoring.md`](../01-platform/content-seed-authoring.md) | Nhánh dự phòng hiện tại là lý do `gross_motor_counting` sống được trong seed. Một cổng nhận mọi thứ không phải cổng |
 | `BR-TCM-02` | Cổng phải có **ca âm** trong test: một tag bịa đặt phải làm cổng đỏ | Bài học đã trả giá một lần với công cụ lint khác — cổng không có ca âm là cổng không biết mình hỏng |
 | `BR-TCM-03` | Ma trận đếm **chỉ nội dung `published`**, đọc từ corpus seed trong repo. Nguồn không đọc được hoặc hàng không quy được competency hay mechanic thì cổng đỏ, **cấm giá trị mặc định** | Phủ là thứ trẻ mở được hôm nay, không phải thứ đang nằm trong hàng đợi duyệt. Bản cũ trả `[]` khi mất kết nối và mặc định `"C1"` khi không quy được, nên nó in "18/18 ô thiếu" kèm mã thoát 0 và dồn mọi hàng lạ vào C1 |
 | `BR-TCM-04` | Mỗi ô `competency × band tuổi` đạt sàn số game level ở §7.3 | Đây là dạng kiểm được của câu "phủ đủ sáu năng lực cho mọi lứa" |
@@ -129,10 +129,33 @@ nhập tay.
 | Phủ tiến trình tư duy | ≥5 game level mỗi giá trị | P4 |
 | Luật cân bằng | tỉ lệ cao nhất trên thấp nhất ≤3 | P4 |
 
-Số đo ngày 2026-08-22, đọc từ corpus seed: 172 game level. Mọi ô trong 18 ô đạt sàn 6, và
-mọi ô đạt sàn 2 mechanic. Trục `thinking` còn ba giá trị dưới sàn P4 — `predict` 4,
-`plan` 1, `shift` 0. `shift` bằng 0 vì chưa `mechanic` nào sinh ra nó; đó là việc của
-lô khuôn khoảng trống taxonomy, không phải việc của người soạn nội dung.
+**Đo lại ngày 2026-08-29** (số cũ ngày 2026-08-22 là 172 game level):
+
+| Số đo | 2026-08-22 | 2026-08-29 |
+|---|---:|---:|
+| Game level trong corpus seed | 172 | **228** |
+| Ô đạt sàn 6 game level | 18 / 18 | 18 / 18 |
+| Ô đạt sàn 2 mechanic | 18 / 18 | 18 / 18 |
+| `predict` | 4 | **4** |
+| `plan` | 1 | **3** |
+| `shift` | 0 | **3** |
+| Lượt gắn trục `thinking` ngoài từ vựng | không đo | **0 / 284** |
+| Tỉ lệ competency cao nhất trên thấp nhất | không đo | **2,87** (C1 66, C5 23) |
+
+`shift` thoát khỏi 0 nhờ lô khuôn khoảng trống taxonomy — `GT-027` đổi luật giữa chừng là
+nguồn chính. Ba giá trị `predict`, `plan`, `shift` vẫn dưới sàn 5 của phase P4, và cả ba đều
+đến từ engine đang ở mức mẫu 3 level. Đó là lý do sàn theo trục engine ở
+[`engine-content-depth.md`](../05-content/engine-content-depth.md) bổ trợ cho ma trận này: ô
+`competency × band tuổi` đạt sàn không nói gì về việc engine sinh ra `shift` có nội dung hay
+không.
+
+Luật cân bằng ở `BR-TCM-07` (tỉ lệ cao nhất trên thấp nhất ≤3) đang đạt ở 2,87 — sát trần.
+
+**Cổng đang đỏ.** `packages/db/tests/gates/thinking-coverage.test.ts` fail với 7 vi phạm
+`BR-TCM-01`, tất cả ở trục `theme`: `household` (2 level), `art` (4), `technology` (1). Ba
+giá trị đó không có trong `CANONICAL_THEME_TAGS`. Đường sửa ở mục 7.1b của
+[`content-theme-registry.md`](../05-content/content-theme-registry.md): nhận `art` vào từ
+vựng, gắn lại 3 level còn lại bằng version mới.
 
 Sàn không phải để gây khó; nó để mức hiện có không tụt xuống mà không ai thấy.
 

@@ -2,9 +2,9 @@ import fs from "node:fs";
 import path from "node:path";
 import { appError, hashPassword } from "@mindkid/auth";
 import { childProfiles, getAppDb, users } from "@mindkid/db";
-import { findUnvalidatedRoutes } from "@mindkid/gates/route-validation";
 import { and, eq } from "drizzle-orm";
 import { describe, expect, it } from "vitest";
+import { findUnvalidatedRoutes } from "./route-validation.ts";
 
 const ENV_READ_PATTERN =
   /readFileSync\s*\([^)]*\.env|\.config\s*\(\s*\{[^}]*path:[^}]*\.env/i;

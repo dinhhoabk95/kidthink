@@ -1,11 +1,21 @@
 {
+  // Toàn bộ flag compiler sống ở `@mindkid/config/tsconfig.base.json` —
+  // ❌ NEVER khai lại flag ở đây. File này chỉ nói **những file nào** thuộc
+  // package, vì `include`/`exclude` của tsconfig cha luôn được TypeScript giải
+  // theo thư mục của file cha, nên chúng không thể dùng chung.
   "extends": "@mindkid/config/tsconfig.base.json",
   "compilerOptions": {
-    "noEmit": true,
     "baseUrl": ".",
-    "paths": {
-      "@mindkid/game-engine": ["../game-engine/src/index.ts"]
-    }
+    // @mindkid/game-engine là dependency workspace nhưng chưa có build output;
+    // trỏ thẳng vào nguồn để tsc đọc được kiểu thật.
+    "paths": { "@mindkid/game-engine": ["../game-engine/src/index.ts"] }
   },
-  "include": ["src/**/*", "tests/**/*"]
+  "include": ["src/**/*.ts", "tests/**/*.ts", "scripts/**/*.ts", "*.ts"],
+  "exclude": [
+    "tests/**/fixtures/**",
+    // Config của Nuxt layer cần type Nuxt sinh lúc build app — chỗ kiểm chúng
+    // là project .nuxt/ của app nạp layer, không phải package này.
+    "nuxt.config.ts",
+    "app.config.ts"
+  ]
 }

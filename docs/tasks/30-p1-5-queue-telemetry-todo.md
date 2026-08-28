@@ -120,3 +120,34 @@
 - [ ] Q2 vị trí worker — `D-FY` cùng instance khác process; Infra bác thì chỉ đổi cấu hình deploy.
 - [ ] Retention 90 ngày có đủ để replay adaptive — P3.
 - [ ] Bảng rollup theo tuần — P3.
+
+## Bổ sung 2026-08-27 — cổng thật cho các ô đã tick
+
+Đo lại toàn bộ sổ này khi sửa hệ thống worker. Các ô ở Task 1 và Task 2 đã tick
+nhưng cơ chế cưỡng chế **không tồn tại**: `.dependency-cruiser.cjs` không có
+rule nào liên quan `BR-JOB-04`, và không cổng nào quét hai ranh giới đó. Cổng
+duy nhất có thật (`validateJobRegistryConsumers`) nhận một danh sách tên
+hardcode trong chính test của nó, không đọc dispatcher thật — nên nó không bao
+giờ phát hiện được việc `account:purge` có handler mà không có nhánh xử lý.
+
+Nay các ô đó tick đúng, và đây là thứ giữ chúng đúng:
+
+| Ô | Cưỡng chế bởi |
+|---|---|
+| `BR-JOB-04` consumer trong `packages/queue` → đỏ | `packages/gates/tests/job-boundaries.test.ts` (quét nguồn thật + ca âm ở `tests/fixtures/job-boundaries/queue/`) |
+| `BR-JOB-04` route HTTP trong `apps/worker` → đỏ | cùng file trên, ca âm ở `tests/fixtures/job-boundaries/worker/` |
+| Rule `dependency-cruiser` ép hai ranh giới | `.dependency-cruiser.cjs` — `no-consumer-in-queue-package`, `no-http-in-worker` |
+| Consumer ngoài registry → đỏ | `CONSUMERS` là `Record<JobName, ErasedConsumer>` trong `apps/worker/src/consumers/index.ts`: thiếu **bất kỳ** job nào là lỗi biên dịch. Ca âm ở `apps/worker/tests/fixtures/incomplete-consumer-table.ts` |
+| `BR-JOB-02` `jobId` suy xác định từ khoá §7.1 | `idempotencyKey` khai trên từng job trong `packages/queue/src/jobs/`; job theo sự kiện thiếu nó bị `defineJob` từ chối ngay lúc khai |
+| Lịch chạy khớp §7.1 | `packages/gates/tests/job-queue-spec.test.ts` đối chiếu từng ô của bảng §7.1 với định nghĩa job, gồm cả giờ trong cron pattern |
+
+Ràng buộc còn để mở, Cấm — **NEVER** coi là đã xong:
+
+- `apps/web/server/api/guest/health.get.ts` trả `{ status }` trong khi
+  [`health-check.md`](../specs/01-platform/health-check.md) §7.2 chốt `{ status, checks: { db, cache, auth, queue } }`,
+  và chưa có bước sentinel write/read/delete ở auth keyspace mà `BR-HLT-02` đòi.
+- `NOTIFICATION_TYPES` thiếu bốn mã mà route đang dùng
+  (`email_change_verification`, `email_changed_old_address_notice`,
+  `password_changed_notification`, `account_deletion_confirmation`);
+  [`notification-service.md`](../specs/01-platform/notification-service.md) §7.1 chốt 11 loại và ghi rõ "Thêm loại mới = thêm
+  vào bảng này trước".

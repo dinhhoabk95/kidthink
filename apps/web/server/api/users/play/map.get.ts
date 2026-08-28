@@ -212,21 +212,24 @@ export default defineEventHandler(async (event) => {
 
   const childId = Number(activeChild.id);
 
-  // 2. Fetch taxonomy structure
-  const allCompetencies = await db
-    .select()
-    .from(competencies)
-    .orderBy(competencies.position);
-
-  const allStrands = await db.select().from(strands).orderBy(strands.position);
-
-  const allSkills = await db.select().from(skills).orderBy(skills.position);
-
-  // 3. Fetch child's mastery states
-  const childMasteryRows = await db
-    .select()
-    .from(masteryState)
-    .where(eq(masteryState.childProfileId, childId));
+  // 2+3+4. Taxonomy, mastery và badge không phụ thuộc nhau — chỉ phụ thuộc
+  // `childId` ở bước 1. Chờ tuần tự là năm lượt round-trip nối đuôi trên pool
+  // `max: 1`; gom vào một `Promise.all` để driver pipeline chúng.
+  const [allCompetencies, allStrands, allSkills, childMasteryRows, badgeRows] =
+    await Promise.all([
+      db.select().from(competencies).orderBy(competencies.position),
+      db.select().from(strands).orderBy(strands.position),
+      db.select().from(skills).orderBy(skills.position),
+      db
+        .select()
+        .from(masteryState)
+        .where(eq(masteryState.childProfileId, childId)),
+      db
+        .select()
+        .from(childBadges)
+        .where(eq(childBadges.childProfileId, childId))
+        .orderBy(childBadges.awardedAt),
+    ]);
 
   const masteryBySkillId = new Map(
     childMasteryRows.map((row) => [
@@ -244,13 +247,6 @@ export default defineEventHandler(async (event) => {
     allSkills,
     masteryBySkillId,
   });
-
-  // 4. Fetch unlocked badges
-  const badgeRows = await db
-    .select()
-    .from(childBadges)
-    .where(eq(childBadges.childProfileId, childId))
-    .orderBy(childBadges.awardedAt);
 
   const badges: MapBadgePayload[] = badgeRows.map((b) => ({
     badge_code: b.badgeCode,

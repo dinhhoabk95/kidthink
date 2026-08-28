@@ -7,13 +7,39 @@
  * wrong domain, or signs private URLs with a constant that lives in the repo.
  */
 
-// Auto-load .env if present in local development runtime
+import fs from "node:fs";
+import path from "node:path";
+
+/**
+ * Loads the developer machine's env files: walk from `process.cwd()` up to the
+ * filesystem root and load EVERY `.env` on the way, nearest first.
+ *
+ * `process.loadEnvFile` never overwrites a name that already has a value, so
+ * this order makes the file closest to the cwd win while the repo-root `.env`
+ * only fills the gaps — the same precedence a variable already exported in the
+ * shell already has over both.
+ *
+ * The loop used to `break` on the first file it found. Running with cwd
+ * `apps/web` therefore loaded `apps/web/.env` and hid the repo-root `.env`
+ * entirely, so every other required variable fell back to the ambient shell.
+ */
 try {
   if (
     typeof process !== "undefined" &&
     typeof process.loadEnvFile === "function"
   ) {
-    process.loadEnvFile();
+    let dir = process.cwd();
+    while (true) {
+      const candidate = path.join(dir, ".env");
+      if (fs.existsSync(candidate)) {
+        process.loadEnvFile(candidate);
+      }
+      const parent = path.dirname(dir);
+      if (parent === dir) {
+        break;
+      }
+      dir = parent;
+    }
   }
 } catch {
   // Ignored if .env does not exist (e.g. CI / production where env is injected)

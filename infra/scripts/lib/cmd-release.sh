@@ -24,12 +24,13 @@ mk_release_abort() {
 mk_release_plan() {
   local commit="$1"
   log_info "[plan] Resolve ref to ${commit}"
-  log_info "[plan] Validate ${MK_ENV_DIR}/{web,admin,worker}.env against the registry"
   log_info "[plan] Lay out ${MK_RELEASES_DIR}/<timestamp>-${commit:0:7}"
+  log_info "[plan] Validate ${MK_ENV_DIR}/{web,admin,worker}.env against THAT tree's registry"
   log_info "[plan] Install and build in ${MK_BUILD_IMAGE}"
   log_info "[plan] Run expand-only migrations"
+  log_info "[plan] Hand the tree to ${MK_SYSTEM_USER}"
   log_info "[plan] Switch ${MK_CURRENT_LINK} and reload ${MK_RELOAD_ORDER[*]}"
-  log_info "[plan] Smoke check ${MK_HEALTH_URL}, roll back on failure"
+  log_info "[plan] Smoke check ${MK_HEALTH_URL}${MK_PUBLIC_HEALTH_URL:+ and ${MK_PUBLIC_HEALTH_URL}}, roll back on failure"
   log_info "[plan] Keep the newest ${MK_KEEP_RELEASES} releases"
   log_info "[plan] Nothing above was executed."
 }
@@ -49,7 +50,7 @@ mk_release_rollback_to() {
   reload_apps || log_error "Reload after rollback reported an error."
 
   # BR-RBK-06: a rollback is a release switch too, so it gets the same gate.
-  if run_smoke_check "${MK_HEALTH_URL}" 10 3; then
+  if run_release_smoke 10 3; then
     log_warn "Rollback complete; ${previous##*/} is serving again."
     notify critical "Release failed smoke check; rolled back to ${previous##*/}."
   else
@@ -104,22 +105,7 @@ cmd_release() {
     return 0
   fi
 
-  # Step 3 — environment gate, before anything is installed or built
-  # (BR-DEP-04, BR-ENV-07). Runs against the release that is currently serving,
-  # because the new tree does not exist yet.
-  log_step "Validating environment files."
-  local validator_source="${MK_CURRENT_LINK}"
-  [ -d "${validator_source}" ] || validator_source=""
-  if [ -n "${validator_source}" ]; then
-    validate_env_files "${validator_source}" || {
-      mk_release_abort "Environment files do not satisfy the contract; nothing was built."
-      return 1
-    }
-  else
-    log_warn "No release is live yet; the environment gate runs against the new tree instead."
-  fi
-
-  # Step 4 — lay out the release.
+  # Step 3 — lay out the release.
   local release_name release_dir previous_release
   release_name="$(release_dir_name "${commit}")"
   release_dir="${MK_RELEASES_DIR}/${release_name}"
@@ -133,14 +119,21 @@ cmd_release() {
     return 1
   }
 
-  # First release on a fresh machine: the gate could not run in step 3.
-  if [ -z "${validator_source}" ]; then
-    validate_env_files "${release_dir}" || {
-      rm -rf "${release_dir}"
-      mk_release_abort "Environment files do not satisfy the contract; nothing was built."
-      return 1
-    }
-  fi
+  # Step 4 — environment gate, against the tree that is about to run
+  # (BR-DEP-04, BR-ENV-07).
+  #
+  # The validator has to come from the NEW tree, not from the live release: a
+  # commit that starts reading a new required variable ships the registry entry
+  # for it in the same commit. Validating with the old release's registry passes
+  # that commit and lets it fail at runtime instead — which is the exact outcome
+  # BR-DEP-04 exists to prevent. Exporting the tree first is cheap; it is a tar
+  # extract, and nothing has been installed or built yet.
+  log_step "Validating environment files."
+  validate_env_files "${release_dir}" || {
+    rm -rf "${release_dir}"
+    mk_release_abort "Environment files do not satisfy the contract; nothing was built."
+    return 1
+  }
 
   printf '%s\n' "${commit}" >"${release_dir}/RELEASE_COMMIT"
 
@@ -149,6 +142,16 @@ cmd_release() {
   build_release "${release_dir}" || {
     rm -rf "${release_dir}"
     mk_release_abort "Build failed for ${release_name}; the live release is untouched."
+    return 1
+  }
+
+  # The build container runs as root, so everything it wrote — node_modules,
+  # .output, dist — belongs to root. The applications run as the unprivileged
+  # system user (BR-SRV-02), so any runtime path that writes fails with EACCES
+  # until ownership is handed over.
+  log_step "Handing the release to ${MK_SYSTEM_USER}."
+  chown -R "${MK_SYSTEM_USER}:${MK_SYSTEM_USER}" "${release_dir}" || {
+    mk_release_abort "Could not hand ${release_name} to ${MK_SYSTEM_USER}; refusing to switch to a tree the applications cannot use."
     return 1
   }
 
@@ -172,7 +175,7 @@ cmd_release() {
 
   # Step 9 — smoke gate.
   log_step "Smoke checking ${release_name}."
-  if ! run_smoke_check "${MK_HEALTH_URL}" 10 3; then
+  if ! run_release_smoke 10 3; then
     mk_release_rollback_to "${previous_release}"
     return 1
   fi

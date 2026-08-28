@@ -4,9 +4,26 @@
 # `<UTC timestamp>-<7 char sha>`: the timestamp is what makes deploying the same
 # commit twice produce two directories, so a repeat release can never delete the
 # tree it is currently serving.
+#
+# The timestamp only resolves to the second, so two releases of the same commit
+# inside one second would collide and the second would extract on top of the
+# first. A numeric suffix keeps them apart, and it sorts after the bare name,
+# which is also the order they happened in.
 release_dir_name() {
   local commit="$1"
-  printf '%s-%s\n' "$(date -u '+%Y%m%dT%H%M%SZ')" "${commit:0:7}"
+  local base
+  base="$(date -u '+%Y%m%dT%H%M%SZ')-${commit:0:7}"
+
+  if [ ! -e "${MK_RELEASES_DIR}/${base}" ]; then
+    printf '%s\n' "${base}"
+    return 0
+  fi
+
+  local suffix=2
+  while [ -e "${MK_RELEASES_DIR}/${base}-${suffix}" ] && [ "${suffix}" -lt 100 ]; do
+    suffix=$((suffix + 1))
+  done
+  printf '%s-%s\n' "${base}" "${suffix}"
 }
 
 # Newest first, by directory name — which sorts chronologically by construction,

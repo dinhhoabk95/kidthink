@@ -32,15 +32,15 @@
 
       <!-- Price Modification Notice (BR-PCA-01, Spec §5) -->
       <div
-        class="p-4 rounded-2xl border-2 border-amber-200 bg-amber-50/70 flex items-start gap-3"
+        class="p-4 rounded-2xl border-2 border-warning-200 bg-warning-50/70 flex items-start gap-3"
       >
         <span class="text-lg">ℹ️</span>
-        <div class="text-xs text-amber-900 leading-relaxed">
+        <div class="text-xs text-warning-900 leading-relaxed">
           <strong>Lưu ý:</strong>
           Giá và quyền lợi gói là hợp đồng thương mại Lớp 1. Mọi thay đổi về giá
           hoặc thời hạn phải thực hiện qua Pull Request tại
           <code
-            class="font-mono bg-amber-100 px-1 py-0.5 rounded text-amber-950 font-bold"
+            class="font-mono bg-warning-100 px-1 py-0.5 rounded text-warning-950 font-bold"
             >packages/shared/src/entitlement-catalog.ts</code
           >, không chỉnh sửa trực tiếp từ giao diện quản trị.
         </div>
@@ -51,7 +51,7 @@
 
       <!-- Error State -->
       <div
-        class="p-4 rounded-2xl bg-rose-50 border-2 border-rose-200 text-sm text-rose-900"
+        class="p-4 rounded-2xl bg-danger-50 border-2 border-danger-200 text-sm text-danger-900"
         v-else-if="errorMessage"
       >
         {{ errorMessage }}
@@ -82,13 +82,13 @@
 
                 <!-- Public vs Non-Public Badges (BR-PCA-02, BR-PCA-04) -->
                 <span
-                  class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-purple-100 text-purple-800 border border-purple-300"
+                  class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-brand-100 text-brand-800 border border-brand-300"
                   v-if="!pkg.is_public"
                 >
                   Chưa lên catalog
                 </span>
                 <span
-                  class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-300"
+                  class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-success-100 text-success-800 border border-success-300"
                   v-else
                 >
                   Công khai
@@ -110,16 +110,16 @@
 
           <!-- Prerequisite Spec for Unreleased Add-ons (BR-PCA-04, D-JP) -->
           <div
-            class="p-2.5 rounded-xl bg-purple-50 border border-purple-200 text-[11px] text-purple-900"
+            class="p-2.5 rounded-xl bg-brand-50 border border-brand-200 text-[11px] text-brand-900"
             v-if="!pkg.is_public && pkg.requires_spec"
           >
             <span class="font-bold">Điều kiện lên catalog:</span>
             Spec
-            <code class="font-mono font-bold text-purple-950"
+            <code class="font-mono font-bold text-brand-950"
               >{{ pkg.requires_spec }}</code
             >
             phải đạt trạng thái
-            <span class="font-bold text-emerald-700">implemented</span>.
+            <span class="font-bold text-success-700">implemented</span>.
           </div>
 
           <!-- Metrics Row: Active Subscribers + 30d Revenue (BR-PCA-03, D-JO) -->
@@ -197,7 +197,7 @@
               type="button"
               @click="closeSubscribersModal"
             >
-              ✕
+              <UIcon class="w-5 h-5" name="i-lucide-x" />
             </button>
           </div>
 
@@ -243,8 +243,8 @@
                       :class="[
                         'px-2 py-0.5 rounded-full text-[10px] font-bold',
                         sub.source === 'manual_grant'
-                          ? 'bg-purple-100 text-purple-800'
-                          : 'bg-blue-100 text-blue-800'
+                          ? 'bg-brand-100 text-brand-800'
+                          : 'bg-brand-100 text-brand-800'
                       ]"
                     >
                       {{ sub.source === 'manual_grant' ? 'Cấp tay' : 'Thanh toán' }}
@@ -258,7 +258,7 @@
                   </td>
                   <td class="p-3 text-right">
                     <NuxtLink
-                      class="text-indigo-600 hover:underline font-bold"
+                      class="text-brand-600 hover:underline font-bold"
                       :to="`/users/${sub.user_uuid}`"
                     >
                       Xem hồ sơ
@@ -420,7 +420,7 @@
     if (pkg.is_public) {
       return `${base} border-brand-200 hover:border-brand-300`;
     }
-    return `${base} border-purple-200 hover:border-purple-300`;
+    return `${base} border-brand-200 hover:border-brand-300`;
   }
 
   onMounted(() => {

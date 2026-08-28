@@ -21,7 +21,6 @@ import { scanChildContentSafety } from "./blocklist.js";
 const CODE_REGEX = /^GL-(?:\d{4}|C[1-6]-[A-Z]{2,5}-[A-Z]{2,5}-\d{4})$/;
 const ACTIVITY_CODE_REGEX = /^ACT-(?:\d{4}|C[1-6]-[A-Z]{2,5}-\d{4})$/;
 const LESSON_CODE_REGEX = /^LES-(?:\d{4}|C[1-6]-[A-Z]{2,5}-\d{4})$/;
-const WHITESPACE_REGEX = /\s+/;
 
 function checkGate0(
   seed: AnyContentSeed,
@@ -126,22 +125,86 @@ function checkLessonGate1(les: LessonSeed, issues: GateIssue[]): void {
   }
 }
 
-function checkGameLevelGate1(gl: ContentSeed, issues: GateIssue[]): void {
+import { ALL_TEMPLATES, type GameTemplate } from "@mindkid/game-engine";
+
+function parseContractIssues(
+  prefix: string,
+  errorIssues: Array<{ path: Array<string | number>; message: string }>,
+  targetIssues: GateIssue[],
+  errorCode: string
+): void {
+  for (const issue of errorIssues) {
+    const fieldPath = issue.path.length > 0 ? issue.path.join(".") : "(root)";
+    targetIssues.push({
+      code: errorCode,
+      message: `${prefix}.${fieldPath}: ${issue.message}`,
+    });
+  }
+}
+
+export function checkGameLevelGate1(
+  gl: ContentSeed,
+  issues: GateIssue[],
+  registry: Record<string, GameTemplate> = ALL_TEMPLATES
+): void {
   if (!gl.content_pack || typeof gl.content_pack !== "object") {
     issues.push({
       code: "CONTENT_PACK_MISSING",
       message: "content_pack phải là object hợp lệ.",
     });
+    return;
   }
   if (!gl.difficulty_params || typeof gl.difficulty_params !== "object") {
     issues.push({
       code: "DIFFICULTY_PARAMS_MISSING",
       message: "difficulty_params phải là object hợp lệ.",
     });
+    return;
+  }
+
+  const templateCode = gl.header?.template_code;
+  const tmpl = templateCode ? registry?.[templateCode] : undefined;
+  if (!tmpl) {
+    issues.push({
+      code: "TEMPLATE_CODE_UNKNOWN",
+      message: `Mã template '${templateCode || "(empty)"}' không tồn tại trong template registry.`,
+    });
+    return;
+  }
+
+  if (!(tmpl.content_contract && tmpl.difficulty_contract)) {
+    issues.push({
+      code: "TEMPLATE_CONTRACT_MISSING",
+      message: `Template '${templateCode}' thiếu content_contract hoặc difficulty_contract.`,
+    });
+    return;
+  }
+
+  const contentParsed = tmpl.content_contract.safeParse(gl.content_pack);
+  if (!contentParsed.success) {
+    parseContractIssues(
+      "content_pack",
+      contentParsed.error.issues,
+      issues,
+      "CONTENT_PACK_SCHEMA_INVALID"
+    );
+  }
+
+  const diffParsed = tmpl.difficulty_contract.safeParse(gl.difficulty_params);
+  if (!diffParsed.success) {
+    parseContractIssues(
+      "difficulty_params",
+      diffParsed.error.issues,
+      issues,
+      "DIFFICULTY_PARAMS_SCHEMA_INVALID"
+    );
   }
 }
 
-function checkGate1(seed: AnyContentSeed): GateResult {
+function checkGate1(
+  seed: AnyContentSeed,
+  registry: Record<string, GameTemplate> = ALL_TEMPLATES
+): GateResult {
   const issues: GateIssue[] = [];
 
   if (seed.kind === "activity") {
@@ -149,7 +212,7 @@ function checkGate1(seed: AnyContentSeed): GateResult {
   } else if (seed.kind === "lesson") {
     checkLessonGate1(seed as LessonSeed, issues);
   } else {
-    checkGameLevelGate1(seed as ContentSeed, issues);
+    checkGameLevelGate1(seed as ContentSeed, issues, registry);
   }
 
   return {
@@ -161,86 +224,22 @@ function checkGate1(seed: AnyContentSeed): GateResult {
   };
 }
 
-function checkActivityGate2(act: ActivitySeed, issues: GateIssue[]): void {
-  if (act.header.estimated_minutes < 2 || act.header.estimated_minutes > 20) {
-    issues.push({
-      code: "ACTIVITY_DURATION_INVALID",
-      message: "Thời lượng hoạt động phải từ 2 đến 20 phút.",
-    });
-  }
-}
-
-function checkLessonGate2(les: LessonSeed, issues: GateIssue[]): void {
-  if (
-    les.header.target_age_min < 3 ||
-    les.header.target_age_max > 6 ||
-    les.header.target_age_min > les.header.target_age_max
-  ) {
-    issues.push({
-      code: "AGE_RANGE_INVALID",
-      message: "Độ tuổi bài học phải nằm trong phạm vi 3–6 tuổi.",
-    });
-  }
-  if (les.header.estimated_minutes < 5 || les.header.estimated_minutes > 45) {
-    issues.push({
-      code: "LESSON_DURATION_INVALID",
-      message: "Thời lượng bài học phải nằm trong phạm vi 5–45 phút.",
-    });
-  }
-  if (!les.header.activity_codes || les.header.activity_codes.length === 0) {
-    issues.push({
-      code: "LESSON_ACTIVITIES_EMPTY",
-      message: "Bài học phải chứa ít nhất một hoạt động (activity_codes).",
-    });
-  }
-}
-
-function checkGameLevelGate2(gl: ContentSeed, issues: GateIssue[]): void {
-  if (
-    gl.header.age_min < 3 ||
-    gl.header.age_max > 6 ||
-    gl.header.age_min > gl.header.age_max
-  ) {
-    issues.push({
-      code: "AGE_RANGE_INVALID",
-      message: "Độ tuổi phải nằm trong phạm vi 3–6 tuổi.",
-    });
-  }
-  if (gl.header.difficulty < 1 || gl.header.difficulty > 5) {
-    issues.push({
-      code: "DIFFICULTY_INVALID",
-      message: "Độ khó difficulty phải nằm trong [1, 5].",
-    });
-  }
-  if (
-    gl.header.age_max <= 4 &&
-    Array.isArray((gl.content_pack as Record<string, unknown>)?.items) &&
-    ((gl.content_pack as Record<string, unknown>).items as unknown[]).length > 4
-  ) {
-    issues.push({
-      code: "ITEM_COUNT_AGE_BAND_EXCEEDED",
-      message: "Trẻ 3–4 tuổi tối đa 4 items.",
-    });
-  }
-}
-
 function checkGate2(seed: AnyContentSeed): GateResult {
   const issues: GateIssue[] = [];
   const { header } = seed;
 
-  if (!header.title?.trim()) {
+  if (header.content_version < 1) {
     issues.push({
-      code: "TITLE_EMPTY",
-      message: "Tiêu đề tiếng Việt title không được rỗng.",
+      code: "CONTENT_VERSION_INVALID",
+      message: "content_version phải >= 1.",
     });
   }
 
-  if (seed.kind === "activity") {
-    checkActivityGate2(seed as ActivitySeed, issues);
-  } else if (seed.kind === "lesson") {
-    checkLessonGate2(seed as LessonSeed, issues);
-  } else {
-    checkGameLevelGate2(seed as ContentSeed, issues);
+  if (!header.title || header.title.trim().length === 0) {
+    issues.push({
+      code: "TITLE_EMPTY",
+      message: "Tiêu đề không được rỗng.",
+    });
   }
 
   return {
@@ -256,51 +255,30 @@ function checkGate3(seed: AnyContentSeed): GateResult {
   const issues: GateIssue[] = [];
   const { header } = seed;
 
-  if (!header.skill_codes || header.skill_codes.length === 0) {
+  if (header.age_min > header.age_max) {
     issues.push({
-      code: "SKILLS_EMPTY",
-      message: "Phải gắn ít nhất 1 skill_code.",
+      code: "AGE_RANGE_INVALID",
+      message: `age_min (${header.age_min}) phải <= age_max (${header.age_max}).`,
     });
   }
 
-  if (
-    seed.kind === "activity" &&
-    header.skill_codes &&
-    header.skill_codes.length > 2
-  ) {
+  if (header.age_min < 3 || header.age_max > 6) {
     issues.push({
-      code: "ACTIVITY_TOO_MANY_SKILLS",
-      message: "Hoạt động chỉ được gắn tối đa 2 skill.",
-    });
-  } else if (
-    seed.kind === "lesson" &&
-    header.skill_codes &&
-    header.skill_codes.length > 3
-  ) {
-    issues.push({
-      code: "LESSON_TOO_MANY_SKILLS",
-      message: "Bài học chỉ được gắn tối đa 3 skill.",
-    });
-  }
-
-  if (
-    !header.learning_objective_codes ||
-    header.learning_objective_codes.length === 0
-  ) {
-    issues.push({
-      code: "LEARNING_OBJECTIVES_EMPTY",
-      message: "Phải gắn ít nhất 1 learning_objective_code.",
+      code: "AGE_OUT_OF_BOUNDS",
+      message: `Độ tuổi [${header.age_min}, ${header.age_max}] phải nằm trong [3, 6].`,
     });
   }
 
   return {
     gate: 3,
-    name: "Taxonomy",
+    name: "Asset",
     kind: "xác định",
     passed: issues.length === 0,
     issues,
   };
 }
+
+const WHITESPACE_REGEX = /\s+/;
 
 function checkGate4(seed: AnyContentSeed): GateResult {
   const issues: GateIssue[] = [];
@@ -329,56 +307,156 @@ function checkGate4(seed: AnyContentSeed): GateResult {
 
   return {
     gate: 4,
-    name: "Sư phạm",
+    name: "Ngôn ngữ",
     kind: "heuristic",
     passed: issues.length === 0,
     issues,
   };
 }
 
-function checkGate5(seed: AnyContentSeed): GateResult {
+const SKILL_CODE_REGEX = /^C[1-6]\.[A-Z0-9]{2,5}\.\d{2}$/;
+const LO_CODE_REGEX = /^LO-C[1-6]\.[A-Z0-9]{2,5}\.\d{2}-\d{2}$/;
+
+function validateTaxonomyFkCodes(
+  codes: string[] | undefined,
+  regex: RegExp,
+  emptyCode: string,
+  invalidCode: string,
+  kindLabel: string,
+  issues: GateIssue[]
+): void {
+  if (!codes || codes.length === 0) {
+    issues.push({
+      code: emptyCode,
+      message: `Danh sách ${kindLabel} không được rỗng.`,
+    });
+    return;
+  }
+  for (const c of codes) {
+    if (!regex.test(c)) {
+      issues.push({
+        code: invalidCode,
+        message: `Mã ${kindLabel} '${c}' không đúng định dạng taxonomy.`,
+      });
+    }
+  }
+}
+
+function validateTagList(
+  axis: "what" | "thinking",
+  tags: string[] | undefined,
+  emptyCode: string,
+  emptyMessage: string,
+  issues: GateIssue[]
+): void {
+  if (!tags || tags.length === 0) {
+    issues.push({
+      code: emptyCode,
+      message: emptyMessage,
+    });
+    return;
+  }
+  for (const tag of tags) {
+    if (!isValidTagForAxis(axis, tag)) {
+      issues.push({
+        code: "TAG_NOT_IN_VOCABULARY",
+        message: `Tag '${tag}' không nằm trong từ vựng trục '${axis}'.`,
+      });
+    }
+  }
+}
+
+function resolveLevelAgeBand(min: number, max: number): "3-4" | "4-5" | "5-6" {
+  if (max <= 4) {
+    return "3-4";
+  }
+  if (min >= 5) {
+    return "5-6";
+  }
+  return "4-5";
+}
+
+function checkBannedAgeBand(
+  gl: ContentSeed,
+  registry: Record<string, GameTemplate>,
+  issues: GateIssue[]
+): void {
+  const templateCode = gl.header.template_code;
+  const tmpl = registry?.[templateCode];
+  if (!tmpl?.banned_age_bands || tmpl.banned_age_bands.length === 0) {
+    return;
+  }
+
+  const levelAgeBand = resolveLevelAgeBand(
+    gl.header.age_min,
+    gl.header.age_max
+  );
+  if (tmpl.banned_age_bands.includes(levelAgeBand)) {
+    issues.push({
+      code: "ENGINE_AGE_BAND_BANNED",
+      message: `Engine ${templateCode} cấm band tuổi '${levelAgeBand}'.`,
+    });
+  }
+}
+
+function checkGate5(
+  seed: AnyContentSeed,
+  registry: Record<string, GameTemplate> = ALL_TEMPLATES
+): GateResult {
   const issues: GateIssue[] = [];
   const { header } = seed;
 
-  if (
-    PEDAGOGICAL_AXIS_REQUIREMENT.what &&
-    (!header.what_tags || header.what_tags.length === 0)
-  ) {
+  if (header.difficulty < 1 || header.difficulty > 5) {
     issues.push({
-      code: "WHAT_TAGS_EMPTY",
-      message: "Thiếu tag cho trục nội dung (what_tags).",
-    });
-  }
-  if (
-    PEDAGOGICAL_AXIS_REQUIREMENT.thinking &&
-    (!header.thinking_tags || header.thinking_tags.length === 0)
-  ) {
-    issues.push({
-      code: "THINKING_TAGS_EMPTY",
-      message: "Thiếu tag cho trục tư duy (thinking_tags).",
+      code: "DIFFICULTY_INVALID",
+      message: `Độ khó difficulty phải nằm trong [1, 5] (nhận: ${header.difficulty}).`,
     });
   }
 
-  for (const tag of header.what_tags || []) {
-    if (!isValidTagForAxis("what", tag)) {
-      issues.push({
-        code: "TAG_NOT_IN_VOCABULARY",
-        message: `Tag '${tag}' không nằm trong từ vựng trục 'what'.`,
-      });
-    }
+  validateTaxonomyFkCodes(
+    header.skill_codes,
+    SKILL_CODE_REGEX,
+    "SKILL_CODES_EMPTY",
+    "SKILL_CODE_FORMAT_INVALID",
+    "skill_codes",
+    issues
+  );
+
+  validateTaxonomyFkCodes(
+    header.learning_objective_codes,
+    LO_CODE_REGEX,
+    "LO_CODES_EMPTY",
+    "LO_CODE_FORMAT_INVALID",
+    "learning_objective_codes",
+    issues
+  );
+
+  if (PEDAGOGICAL_AXIS_REQUIREMENT.what) {
+    validateTagList(
+      "what",
+      header.what_tags,
+      "WHAT_TAGS_EMPTY",
+      "Thiếu tag cho trục nội dung (what_tags).",
+      issues
+    );
   }
-  for (const tag of header.thinking_tags || []) {
-    if (!isValidTagForAxis("thinking", tag)) {
-      issues.push({
-        code: "TAG_NOT_IN_VOCABULARY",
-        message: `Tag '${tag}' không nằm trong từ vựng trục 'thinking'.`,
-      });
-    }
+  if (PEDAGOGICAL_AXIS_REQUIREMENT.thinking) {
+    validateTagList(
+      "thinking",
+      header.thinking_tags,
+      "THINKING_TAGS_EMPTY",
+      "Thiếu tag cho trục tư duy (thinking_tags).",
+      issues
+    );
+  }
+
+  if (seed.kind !== "activity" && seed.kind !== "lesson") {
+    checkBannedAgeBand(seed as ContentSeed, registry, issues);
   }
 
   return {
     gate: 5,
-    name: "Tagging",
+    name: "Sư phạm",
     kind: "xác định",
     passed: issues.length === 0,
     issues,
@@ -454,15 +532,16 @@ import { checkGateMontessori } from "./montessori-gate.js";
 export function runEightGates(
   seed: AnyContentSeed,
   existingCodes: Set<string> = new Set(),
-  batchCode?: string
+  batchCode?: string,
+  registry: Record<string, GameTemplate> = ALL_TEMPLATES
 ): GateResult[] {
   const gates = [
     checkGate0(seed, existingCodes),
-    checkGate1(seed),
+    checkGate1(seed, registry),
     checkGate2(seed),
     checkGate3(seed),
     checkGate4(seed),
-    checkGate5(seed),
+    checkGate5(seed, registry),
     checkGate6(seed),
     checkGate7(seed),
   ];

@@ -36,23 +36,23 @@
           </div>
           <div class="text-xs text-surface-600">Tổng kỹ năng</div>
         </div>
-        <div class="p-3 bg-emerald-50 rounded-xl border border-emerald-200">
-          <div class="text-2xl font-bold font-heading text-emerald-700">
+        <div class="p-3 bg-success-50 rounded-xl border border-success-200">
+          <div class="text-2xl font-bold font-heading text-success-700">
             {{ summary.total_published_levels }}
           </div>
-          <div class="text-xs text-emerald-800">Levels đã xuất bản</div>
+          <div class="text-xs text-success-800">Levels đã xuất bản</div>
         </div>
-        <div class="p-3 bg-amber-50 rounded-xl border border-amber-200">
-          <div class="text-2xl font-bold font-heading text-amber-700">
+        <div class="p-3 bg-warning-50 rounded-xl border border-warning-200">
+          <div class="text-2xl font-bold font-heading text-warning-700">
             {{ summary.total_draft_levels }}
           </div>
-          <div class="text-xs text-amber-800">Levels bản nháp</div>
+          <div class="text-xs text-warning-800">Levels bản nháp</div>
         </div>
-        <div class="p-3 bg-rose-50 rounded-xl border border-rose-200">
-          <div class="text-2xl font-bold font-heading text-rose-700">
+        <div class="p-3 bg-danger-50 rounded-xl border border-danger-200">
+          <div class="text-2xl font-bold font-heading text-danger-700">
             {{ summary.total_gaps }}
           </div>
-          <div class="text-xs text-rose-800">Kỹ năng chưa có nội dung</div>
+          <div class="text-xs text-danger-800">Kỹ năng chưa có nội dung</div>
         </div>
       </div>
 
@@ -62,21 +62,21 @@
       >
         <span class="font-semibold text-surface-700">Chỉ báo độ phủ:</span>
         <span
-          class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-emerald-100 text-emerald-800 font-medium"
+          class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-success-100 text-success-800 font-medium"
         >
-          <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+          <span class="w-2 h-2 rounded-full bg-success-500"></span>
           Đủ (&ge;3 levels)
         </span>
         <span
-          class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-amber-100 text-amber-800 font-medium"
+          class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-warning-100 text-warning-800 font-medium"
         >
-          <span class="w-2 h-2 rounded-full bg-amber-500"></span>
+          <span class="w-2 h-2 rounded-full bg-warning-500"></span>
           Mỏng (1–2 levels - kỳ vọng MVP)
         </span>
         <span
-          class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-rose-100 text-rose-800 font-medium"
+          class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-danger-100 text-danger-800 font-medium"
         >
-          <span class="w-2 h-2 rounded-full bg-rose-500"></span>
+          <span class="w-2 h-2 rounded-full bg-danger-500"></span>
           Chưa có (0 level)
         </span>
       </div>
@@ -131,7 +131,7 @@
             <span>&bull;</span>
             <span>{{ comp.total_skills }} kỹ năng</span>
             <span>&bull;</span>
-            <span class="text-emerald-700 font-medium"
+            <span class="text-success-700 font-medium"
               >{{ comp.published_count }}
               đã xuất bản</span
             >
@@ -176,9 +176,9 @@
                     <span
                       class="text-xs px-2 py-0.5 rounded-full font-medium"
                       :class="{
-                        'bg-emerald-100 text-emerald-800': skill.gap_status === 'sufficient',
-                        'bg-amber-100 text-amber-800': skill.gap_status === 'thin',
-                        'bg-rose-100 text-rose-800': skill.gap_status === 'empty'
+                        'bg-success-100 text-success-800': skill.gap_status === 'sufficient',
+                        'bg-warning-100 text-warning-800': skill.gap_status === 'thin',
+                        'bg-danger-100 text-danger-800': skill.gap_status === 'empty'
                       }"
                     >
                       {{ getGapLabel(skill.gap_status) }}
@@ -207,7 +207,7 @@
                   </span>
                   <div class="flex items-center gap-2">
                     <NuxtLink
-                      class="text-amber-700 hover:text-amber-800 font-medium"
+                      class="text-warning-700 hover:text-warning-800 font-medium"
                       :to="`/admin/seed-authoring?skill_code=${skill.code}`"
                     >
                       Soạn level

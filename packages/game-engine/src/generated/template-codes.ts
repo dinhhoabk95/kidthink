@@ -31,5 +31,3 @@ export const ALL_TEMPLATE_CODES = [
 ] as const;
 
 export type TemplateCode = (typeof ALL_TEMPLATE_CODES)[number];
-
-export const CUSTOM_GAME_TEMPLATE_CODES = ALL_TEMPLATE_CODES;

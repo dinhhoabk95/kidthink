@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+# Fake chown: records the call so a test can assert the release was handed to
+# the system user, without needing root or that user to exist on this machine.
+set -uo pipefail
+state="${MK_FAKE_STATE:?}"
+printf 'chown %s\n' "$*" >>"${state}/chown.calls"
+[ -f "${state}/chown_fails" ] && exit 1
+exit 0

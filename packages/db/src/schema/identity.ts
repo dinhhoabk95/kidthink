@@ -12,6 +12,7 @@ import {
   uuid,
   varchar,
 } from "drizzle-orm/pg-core";
+import { timestamps } from "./columns.ts";
 
 export const citext = customType<{ data: string }>({
   dataType() {
@@ -67,12 +68,7 @@ export const users = pgTable("users", {
   sessionVersion: integer("session_version").notNull().default(0),
   suspendedReason: text("suspended_reason"),
   purgeAt: timestamp("purge_at", { withTimezone: true }),
-  createdAt: timestamp("created_at", { withTimezone: true })
-    .defaultNow()
-    .notNull(),
-  updatedAt: timestamp("updated_at", { withTimezone: true })
-    .defaultNow()
-    .notNull(),
+  ...timestamps(),
 });
 
 export const managers = pgTable("managers", {
@@ -85,12 +81,7 @@ export const managers = pgTable("managers", {
   mfaEnabled: boolean("mfa_enabled").notNull().default(false),
   sessionVersion: integer("session_version").notNull().default(0),
   isActive: boolean("is_active").notNull().default(true),
-  createdAt: timestamp("created_at", { withTimezone: true })
-    .defaultNow()
-    .notNull(),
-  updatedAt: timestamp("updated_at", { withTimezone: true })
-    .defaultNow()
-    .notNull(),
+  ...timestamps(),
 });
 
 export const activeSessions = pgTable(
@@ -111,12 +102,7 @@ export const activeSessions = pgTable(
       .defaultNow()
       .notNull(),
     expiresAt: timestamp("expires_at", { withTimezone: true }).notNull(),
-    createdAt: timestamp("created_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
-    updatedAt: timestamp("updated_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
+    ...timestamps(),
   },
   (table) => [
     // Cặp đa hình: index, không khoá ngoại (BR-DM-04).
@@ -134,12 +120,7 @@ export const mfaSettings = pgTable(
     accountId: bigint("account_id", { mode: "number" }).notNull(),
     secretEncrypted: text("secret_encrypted").notNull(),
     confirmedAt: timestamp("confirmed_at", { withTimezone: true }),
-    createdAt: timestamp("created_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
-    updatedAt: timestamp("updated_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
+    ...timestamps(),
   },
   (table) => [
     // 1–1 với account: code đã tự upsert tay, UNIQUE biến bất biến đó thành ép được.
@@ -160,12 +141,7 @@ export const mfaRecoveryCodes = pgTable(
     accountId: bigint("account_id", { mode: "number" }).notNull(),
     codeHash: text("code_hash").notNull(),
     usedAt: timestamp("used_at", { withTimezone: true }),
-    createdAt: timestamp("created_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
-    updatedAt: timestamp("updated_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
+    ...timestamps(),
   },
   (table) => [
     // Cặp đa hình: index, không khoá ngoại (BR-DM-04).
@@ -188,12 +164,7 @@ export const verificationTokens = pgTable(
     tokenHash: text("token_hash").notNull().unique(),
     expiresAt: timestamp("expires_at", { withTimezone: true }).notNull(),
     usedAt: timestamp("used_at", { withTimezone: true }),
-    createdAt: timestamp("created_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
-    updatedAt: timestamp("updated_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
+    ...timestamps(),
   },
   (table) => [
     // Cặp đa hình: index, không khoá ngoại (BR-DM-04).
@@ -224,12 +195,7 @@ export const socialIdentities = pgTable(
       .defaultNow()
       .notNull(),
     lastLoginAt: timestamp("last_login_at", { withTimezone: true }),
-    createdAt: timestamp("created_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
-    updatedAt: timestamp("updated_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
+    ...timestamps(),
   },
   (table) => [
     unique("social_identities_provider_user_id_unique").on(
@@ -252,12 +218,7 @@ export const consentLogs = pgTable("consent_logs", {
   action: consentActionEnum("action").notNull().default("accepted"),
   ipAddress: text("ip_address").notNull(),
   userAgent: text("user_agent").notNull(),
-  createdAt: timestamp("created_at", { withTimezone: true })
-    .defaultNow()
-    .notNull(),
-  updatedAt: timestamp("updated_at", { withTimezone: true })
-    .defaultNow()
-    .notNull(),
+  ...timestamps(),
 });
 
 export const consentRequirements = pgTable("consent_requirements", {
@@ -266,12 +227,7 @@ export const consentRequirements = pgTable("consent_requirements", {
     withTimezone: true,
   }),
   notice: varchar("notice", { length: 500 }),
-  updatedAt: timestamp("updated_at", { withTimezone: true })
-    .defaultNow()
-    .notNull(),
-  createdAt: timestamp("created_at", { withTimezone: true })
-    .defaultNow()
-    .notNull(),
+  ...timestamps(),
 });
 
 export const mfaRecoveryStatusEnum = pgEnum("mfa_recovery_status", [
@@ -310,12 +266,7 @@ export const mfaRecoveryRequests = pgTable(
       mode: "number",
     }).references(() => managers.id, { onDelete: "set null" }),
     cancelledAt: timestamp("cancelled_at", { withTimezone: true }),
-    createdAt: timestamp("created_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
-    updatedAt: timestamp("updated_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
+    ...timestamps(),
   },
   (table) => [
     index("idx_mfa_recovery_requests_user_status").on(

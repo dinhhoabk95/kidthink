@@ -36,8 +36,12 @@
                 class="comp-link"
                 :to="`/games?competency=${comp.code}`"
               >
-                Khám phá trò chơi ➔
-              </NuxtLink>
+                Khám phá trò chơi
+                <UIcon
+                  class="w-4 h-4 ml-1 inline-block"
+                  name="i-lucide-arrow-right"
+                /></NuxtLink
+              >
             </div>
           </div>
         </div>
@@ -130,8 +134,12 @@
                 class="program-link"
                 :to="`/games?age_band=${prog.age_band}`"
               >
-                Xem {{ prog.levels_count }} trò chơi phù hợp ➔
-              </NuxtLink>
+                Xem {{ prog.levels_count }} trò chơi phù hợp
+                <UIcon
+                  class="w-4 h-4 ml-1 inline-block"
+                  name="i-lucide-arrow-right"
+                /></NuxtLink
+              >
             </div>
           </div>
         </div>
@@ -160,7 +168,11 @@
           </div>
           <div class="faq-footer-link">
             <NuxtLink class="btn-more-faq" to="/faq"
-              >Xem toàn bộ câu hỏi thường gặp ➔</NuxtLink
+              >Xem toàn bộ câu hỏi thường gặp
+              <UIcon
+                class="w-4 h-4 ml-1 inline-block"
+                name="i-lucide-arrow-right"
+              /></NuxtLink
             >
           </div>
         </div>
@@ -181,14 +193,20 @@
     FAQ_ITEMS,
     FEATURED_GUEST_LEVELS,
     PACKAGE_CATALOG,
-  } from "@mindkid/shared";
-  import { useHead, useSeoMeta } from "unhead";
+  } from "@mindkid/shared/client";
+  import { useHead, useSeoMeta } from "#imports";
   import CookieNoticeBanner from "~/components/cookie-notice-banner.vue";
   import LandingBenefits from "~/components/landing-benefits.vue";
   import LandingHero from "~/components/landing-hero.vue";
   import LandingPricing from "~/components/landing-pricing.vue";
   import PublicFooter from "~/components/public-footer.vue";
   import PublicNavbar from "~/components/public-navbar.vue";
+
+  // Trang này tự dựng chrome (PublicNavbar + <main id="main-content"> +
+  // PublicFooter). Không tắt layout thì `default.vue` dựng thêm một bộ nữa:
+  // navbar và footer hiện hai lần, và có hai phần tử cùng id="main-content"
+  // nên skip-link của app.vue nhảy sai chỗ (BR-A11-05).
+  definePageMeta({ layout: false });
 
   const homeData = {
     competencies: COMPETENCIES_INFO,

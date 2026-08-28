@@ -11,7 +11,9 @@ import { execFileSync, spawnSync } from "node:child_process";
 
 const HOST_PATTERN = /^(?:[A-Za-z0-9._-]+@)?[A-Za-z0-9._-]+$/;
 const REF_PATTERN = /^[A-Za-z0-9._/-]{1,200}$/;
-const RELEASE_NAME_PATTERN = /^\d{8}T\d{6}Z-[0-9a-f]{7}$/;
+// The optional numeric suffix is what release_dir_name adds when two releases
+// of the same commit land inside one second.
+const RELEASE_NAME_PATTERN = /^\d{8}T\d{6}Z-[0-9a-f]{7}(?:-\d{1,2})?$/;
 const APP_PATTERN = /^(?:web|admin|worker|deploy)$/;
 const COMMIT_PATTERN = /^[0-9a-f]{40}$/;
 
@@ -76,7 +78,12 @@ export function isCommitPushed(commit: string): boolean {
 
 export interface RemoteCommandOptions {
   host: string;
-  /** Argument vector, not a string: nothing is re-parsed by a remote shell. */
+  /**
+   * Argument vector. It is NOT protection on its own: ssh joins these with
+   * spaces and the login shell on the other side parses the result, so the
+   * validators above are the only thing standing between a value and a root
+   * shell. Keeping it a vector avoids quoting mistakes in this process.
+   */
   argv: string[];
   dryRun?: boolean;
   interactive?: boolean;

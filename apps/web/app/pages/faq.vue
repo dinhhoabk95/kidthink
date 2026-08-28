@@ -60,7 +60,10 @@
               <div class="legal-ref-box" v-if="item.legalLink">
                 <span class="ref-label">Xem văn bản pháp lý đầy đủ:</span>
                 <NuxtLink class="ref-link" :to="item.legalLink">
-                  ➔ {{ getLegalTitle(item.legalLink) }}
+                  <UIcon
+                    class="w-4 h-4 ml-1 inline-block"
+                    name="i-lucide-arrow-right"
+                  />{{ getLegalTitle(item.legalLink) }}
                 </NuxtLink>
               </div>
             </div>
@@ -101,13 +104,19 @@
 </template>
 
 <script lang="ts" setup>
-  import { FAQ_ITEMS, type FaqItem } from "@mindkid/shared";
-  import { useHead, useSeoMeta } from "unhead";
+  import { FAQ_ITEMS, type FaqItem } from "@mindkid/shared/client";
   import { computed, onMounted, ref } from "vue";
   import { useRoute, useRouter } from "vue-router";
+  import { useHead, useSeoMeta } from "#imports";
   import CookieNoticeBanner from "~/components/cookie-notice-banner.vue";
   import PublicFooter from "~/components/public-footer.vue";
   import PublicNavbar from "~/components/public-navbar.vue";
+
+  // Trang này tự dựng chrome (PublicNavbar + <main id="main-content"> +
+  // PublicFooter). Không tắt layout thì `default.vue` dựng thêm một bộ nữa:
+  // navbar và footer hiện hai lần, và có hai phần tử cùng id="main-content"
+  // nên skip-link của app.vue nhảy sai chỗ (BR-A11-05).
+  definePageMeta({ layout: false });
 
   const route = useRoute();
   const router = useRouter();

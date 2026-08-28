@@ -1,0 +1,42 @@
+<svg fill="none" viewBox="0 0 240 60" xmlns="http://www.w3.org/2000/svg">
+  <title>Logo</title>
+  <rect
+    fill="#1a7f6b"
+    height="44"
+    rx="14"
+    stroke="#166657"
+    stroke-width="3"
+    width="44"
+    x="4"
+    y="8"
+  />
+  <circle
+    cx="26"
+    cy="24"
+    fill="#fde047"
+    r="8"
+    stroke="#ca8a04"
+    stroke-width="2"
+  />
+  <rect
+    fill="#c2410c"
+    height="12"
+    rx="4"
+    stroke="#9a3412"
+    stroke-width="2"
+    width="16"
+    x="18"
+    y="32"
+  />
+  <text
+    fill="#1a7f6b"
+    font-family="Baloo 2, Fredoka, sans-serif"
+    font-size="28"
+    font-weight="700"
+    x="58"
+    y="38"
+  >
+    Mind
+    <tspan fill="#c2410c">Kid</tspan>
+  </text>
+</svg>

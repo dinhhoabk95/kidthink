@@ -37,6 +37,7 @@ export * from "./public-seo.js";
 export * from "./publish-checklist.js";
 export * from "./pwa-offline-pack-contract.js";
 export * from "./rate-limit-middleware.js";
+export * from "./rate-limit-routes.js";
 export * from "./rate-limiting.js";
 export * from "./redactor.js";
 export * from "./round-event-gate.js";

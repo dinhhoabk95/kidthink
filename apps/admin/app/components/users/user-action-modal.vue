@@ -20,7 +20,7 @@
             Lý do vận hành (tối thiểu 10 ký tự) *
           </label>
           <textarea
-            class="w-full p-3 rounded-2xl border-[3px] border-surface-200 focus:border-indigo-500 focus:outline-none text-sm"
+            class="w-full p-3 rounded-2xl border-[3px] border-surface-200 focus:border-brand-500 focus:outline-none text-sm"
             id="user-action-reason"
             maxlength="500"
             minlength="10"
@@ -45,8 +45,8 @@
             type="submit"
             :class="[
               modalType === 'suspend'
-                ? 'bg-amber-600 hover:bg-amber-700'
-                : 'bg-emerald-600 hover:bg-emerald-700',
+                ? 'bg-warning-600 hover:bg-warning-700'
+                : 'bg-success-600 hover:bg-success-700',
             ]"
             :disabled="reason.trim().length < 10 || submitting"
           >

@@ -1,6 +1,6 @@
 import { auditLogs, getOwnerDb } from "@mindkid/db";
 import { describe, expect, it } from "vitest";
-import handler from "#server/api/managers/audit-logs.get";
+import handler from "#server/api/managers/audit-logs/index.get";
 
 function mockEvent(
   managerRole?: "super_admin" | "content_reviewer",

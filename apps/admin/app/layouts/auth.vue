@@ -6,7 +6,7 @@
       <!-- Brand Header -->
       <div class="flex items-center justify-center gap-3 mb-8">
         <div
-          class="w-12 h-12 rounded-2xl bg-indigo-600 flex items-center justify-center text-white font-bold text-xl font-heading shadow-md"
+          class="w-12 h-12 rounded-2xl bg-brand-600 flex items-center justify-center text-white font-bold text-xl font-heading shadow-md"
         >
           KM
         </div>

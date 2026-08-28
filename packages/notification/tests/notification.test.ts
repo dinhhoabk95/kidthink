@@ -1,10 +1,13 @@
+import { createSign, generateKeyPairSync } from "node:crypto";
 import { describe, expect, it } from "vitest";
 import {
+  buildSnsStringToSign,
   FakeLocalEmailDriver,
   NodemailerSmtpDriver,
   parseAndVerifySesNotification,
   renderEmailTemplate,
   verifySnsCertUrl,
+  verifySnsSignatureWithCert,
 } from "#src/index";
 
 const FAKE_MSG_ID_REGEX = /^msg_fake_/;
@@ -192,6 +195,49 @@ describe("@mindkid/notification tests", () => {
 
       expect(res.valid).toBe(false);
       expect(res.error).toContain("TopicArn not in allow-list");
+    });
+
+    it("verifySnsSignatureWithCert rejects a forged signature", () => {
+      const { publicKey } = generateKeyPairSync("rsa", { modulusLength: 2048 });
+      const certPem = publicKey.export({ type: "spki", format: "pem" });
+
+      const forged = {
+        Type: "Notification",
+        MessageId: "sns-forged",
+        TopicArn: "arn:aws:sns:ap-southeast-1:123456789012:tinimath-ses-events",
+        Message: "{}",
+        Timestamp: new Date().toISOString(),
+        SignatureVersion: "1",
+        Signature: Buffer.from("not-a-real-signature").toString("base64"),
+        SigningCertURL: "https://sns.ap-southeast-1.amazonaws.com/cert.pem",
+      };
+
+      expect(verifySnsSignatureWithCert(forged, String(certPem))).toBe(false);
+    });
+
+    it("verifySnsSignatureWithCert accepts a signature made with the matching key", () => {
+      const { privateKey, publicKey } = generateKeyPairSync("rsa", {
+        modulusLength: 2048,
+      });
+      const certPem = String(publicKey.export({ type: "spki", format: "pem" }));
+
+      const msg = {
+        Type: "Notification",
+        MessageId: "sns-signed",
+        TopicArn: "arn:aws:sns:ap-southeast-1:123456789012:tinimath-ses-events",
+        Message: "{}",
+        Subject: "SES event",
+        Timestamp: new Date().toISOString(),
+        SignatureVersion: "1",
+        Signature: "",
+        SigningCertURL: "https://sns.ap-southeast-1.amazonaws.com/cert.pem",
+      };
+
+      const signer = createSign("RSA-SHA1");
+      signer.update(buildSnsStringToSign(msg) ?? "");
+      msg.Signature = signer.sign(privateKey, "base64");
+
+      expect(verifySnsSignatureWithCert(msg, certPem)).toBe(true);
     });
   });
 });

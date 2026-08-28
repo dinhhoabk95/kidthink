@@ -13,9 +13,9 @@ import {
   text,
   timestamp,
   unique,
-  uniqueIndex,
   varchar,
 } from "drizzle-orm/pg-core";
+import { timestamps } from "./columns.ts";
 import {
   accessTierEnum,
   authoredInEnum,
@@ -24,6 +24,7 @@ import {
 } from "./game.ts";
 import { managers } from "./identity.ts";
 import { skills } from "./taxonomy.ts";
+import { versioningConstraints } from "./versioning.ts";
 
 export const activityKindEnum = pgEnum("activity_kind", [
   "digital_game",
@@ -46,15 +47,6 @@ export const worksheetLayoutTemplateEnum = pgEnum("worksheet_layout_template", [
   "count_and_color",
   "spot_differences",
 ]);
-
-const timestamps = {
-  createdAt: timestamp("created_at", { withTimezone: true })
-    .defaultNow()
-    .notNull(),
-  updatedAt: timestamp("updated_at", { withTimezone: true })
-    .defaultNow()
-    .notNull(),
-};
 
 export const lessons = pgTable(
   "lessons",
@@ -97,13 +89,16 @@ export const lessons = pgTable(
     exemplarApprovedAt: timestamp("exemplar_approved_at", {
       withTimezone: true,
     }),
-    ...timestamps,
+    ...timestamps(),
   },
   (table) => [
-    unique("lessons_code_version_unique").on(table.code, table.contentVersion),
-    uniqueIndex("idx_lessons_published_code")
-      .on(table.code)
-      .where(sql`${table.status} = 'published'`),
+    ...versioningConstraints({
+      uniqueName: "lessons_code_version_unique",
+      publishedIndexName: "idx_lessons_published_code",
+      keyColumn: table.code,
+      versionColumn: table.contentVersion,
+      statusColumn: table.status,
+    }),
     index("idx_lessons_exemplar")
       .on(table.isExemplar, table.exemplarCompetency, table.exemplarAgeBand)
       .where(sql`${table.isExemplar} = true`),
@@ -156,19 +151,19 @@ export const activities = pgTable(
     }).references(() => managers.id),
     publishedAt: timestamp("published_at", { withTimezone: true }),
     archivedAt: timestamp("archived_at", { withTimezone: true }),
-    ...timestamps,
+    ...timestamps(),
   },
   (table) => [
     // Cặp đa hình: index, không khoá ngoại (BR-DM-04).
     index("idx_activities_ref").on(table.refType, table.refId),
 
-    unique("activities_code_version_unique").on(
-      table.code,
-      table.contentVersion
-    ),
-    uniqueIndex("idx_activities_published_code")
-      .on(table.code)
-      .where(sql`${table.status} = 'published'`),
+    ...versioningConstraints({
+      uniqueName: "activities_code_version_unique",
+      publishedIndexName: "idx_activities_published_code",
+      keyColumn: table.code,
+      versionColumn: table.contentVersion,
+      statusColumn: table.status,
+    }),
     index("idx_activities_entity_id").on(table.entityId),
     check("check_activities_code_format", sql`${table.code} ~ '^ACT-\\d{4}$'`),
     check(
@@ -187,12 +182,7 @@ export const lessonActivities = pgTable(
     position: integer("position").notNull(),
     activityId: bigint("activity_id", { mode: "number" }).notNull(),
     isRequired: boolean("is_required").notNull().default(true),
-    createdAt: timestamp("created_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
-    updatedAt: timestamp("updated_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
+    ...timestamps(),
   },
   (table) => [
     // Pivot: PK ghép theo hai cột khoá ngoại, không có id riêng.
@@ -245,16 +235,16 @@ export const worksheets = pgTable(
     }).references(() => managers.id),
     publishedAt: timestamp("published_at", { withTimezone: true }),
     archivedAt: timestamp("archived_at", { withTimezone: true }),
-    ...timestamps,
+    ...timestamps(),
   },
   (table) => [
-    unique("worksheets_code_version_unique").on(
-      table.code,
-      table.contentVersion
-    ),
-    uniqueIndex("idx_worksheets_published_code")
-      .on(table.code)
-      .where(sql`${table.status} = 'published'`),
+    ...versioningConstraints({
+      uniqueName: "worksheets_code_version_unique",
+      publishedIndexName: "idx_worksheets_published_code",
+      keyColumn: table.code,
+      versionColumn: table.contentVersion,
+      statusColumn: table.status,
+    }),
     index("idx_worksheets_entity_id").on(table.entityId),
     check("check_worksheets_code_format", sql`${table.code} ~ '^WS-\\d{4}$'`),
   ]
@@ -296,16 +286,16 @@ export const seoPages = pgTable(
       mode: "number",
     }).references(() => managers.id),
     publishedAt: timestamp("published_at", { withTimezone: true }),
-    ...timestamps,
+    ...timestamps(),
   },
   (table) => [
-    unique("seo_pages_slug_version_unique").on(
-      table.slug,
-      table.contentVersion
-    ),
-    uniqueIndex("idx_seo_pages_published_slug")
-      .on(table.slug)
-      .where(sql`${table.status} = 'published'`),
+    ...versioningConstraints({
+      uniqueName: "seo_pages_slug_version_unique",
+      publishedIndexName: "idx_seo_pages_published_slug",
+      keyColumn: table.slug,
+      versionColumn: table.contentVersion,
+      statusColumn: table.status,
+    }),
   ]
 );
 
@@ -338,7 +328,7 @@ export const skillActionSuggestions = pgTable(
       mode: "number",
     }).references(() => managers.id),
     publishedAt: timestamp("published_at", { withTimezone: true }),
-    ...timestamps,
+    ...timestamps(),
   },
   (table) => [
     unique("skill_action_suggestions_skill_order_unique").on(

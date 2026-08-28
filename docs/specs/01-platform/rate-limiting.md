@@ -67,24 +67,85 @@ Middleware trước mọi route. `packages/cache` bọc `rate-limiter-flexible` 
 | `BR-RTL-07` | Thông báo 429 không tiết lộ tài khoản tồn tại | Tiết lộ là cho kẻ tấn công biết email nào đã đăng ký, rút ngắn bước quét tiếp theo |
 | `BR-RTL-08` | Mọi consume/penalty/block đi qua `rate-limiter-flexible` trong `packages/cache` và dùng singleton `ioredis`; Cấm — **NEVER** tự ghép `INCR` + `EXPIRE` hay tạo Redis client theo request | Hai lệnh rời có thể mất TTL khi tiến trình chết; nhiều client theo request làm cạn connection trên t3.small |
 | `BR-RTL-09` | Key account chưa xác thực là HMAC của identifier đã normalize; Cấm — **NEVER** để email/identifier thô trong Valkey key, metric hay log | Redis key và log vận hành không được trở thành kho PII phụ |
+| `BR-RTL-10` | Mọi path `/api/*` giải ra đúng một lớp ở §7.2, hoặc một lý do miễn **đã liệt kê**; Cấm — **NEVER** để nhánh mặc định không giới hạn | Một lớp khai trong registry mà không route nào gọi là hạn mức trên giấy |
+| `BR-RTL-11` | IP client lấy từ `X-Real-IP` chỉ khi peer nằm trong `TRUSTED_PROXY_IPS`, còn lại dùng địa chỉ socket | Sau nginx, địa chỉ socket là loopback — trục IP sụp thành một bucket toàn cục và một người khoá được cả site |
 
 ## 7. Data
 
-| Route class | IP | Account | Cửa sổ |
-|---|---:|---:|---|
-| `auth:login` | 20 | 5 | 15 phút |
-| `auth:register` | 10 | — | 1 giờ |
-| `auth:forgot-password` | 10 | 3 | 1 giờ |
-| `auth:mfa` | 10 | 5 | 15 phút |
-| `auth:remember` | 60 | 60 | 15 phút |
-| `payment:create` | 20 | 5 | 1 giờ |
-| `payment:proof` | 20 | 10 | 1 giờ |
-| `upload:image` | 60 | 30 | 1 giờ |
-| `export:data` | 5 | 1 | 24 giờ |
-| `play:events` | 600 | 300 | 10 phút / phiên |
-| `search` | 300 | 200 | 5 phút |
-| `read:public` | 600 | — | 5 phút |
-| `managers:*` | 600 | 600 | 5 phút |
+### 7.1 Hạn mức theo lớp
+
+Bảng này là bản sao của `RATE_LIMIT_CONFIGS` trong `packages/shared/src/rate-limiting.ts`.
+Cổng giữ hai bên trùng nhau: `packages/shared/tests/rate-limiting-registry.test.ts`.
+
+| Route class | IP | Account | Cửa sổ | Fail mode |
+|---|---:|---:|---|---|
+| `auth:login` | 20 | 5 | 15 phút | closed |
+| `auth:register` | 10 | — | 1 giờ | closed |
+| `auth:forgot-password` | 10 | 3 | 1 giờ | closed |
+| `auth:mfa` | 10 | 5 | 15 phút | closed |
+| `auth:refresh` | 60 | 60 | 15 phút | closed |
+| `auth:social-login` | 20 | — | 15 phút | closed |
+| `auth:oauth:start` | 30 | — | 15 phút | closed |
+| `auth:oauth:callback` | 30 | — | 15 phút | closed |
+| `payment:create` | 20 | 5 | 1 giờ | closed |
+| `payment:proof` | 20 | 10 | 1 giờ | closed |
+| `upload:image` | 60 | 30 | 1 giờ | open |
+| `export:data` | 5 | 1 | 24 giờ | open |
+| `play:events` | 600 | 300 | 10 phút / phiên | open |
+| `search` | 300 | 200 | 5 phút | open |
+| `read:public` | 600 | — | 5 phút | open |
+| `managers:*` | 600 | 600 | 5 phút | open |
+
+`auth:refresh` là lớp cho đường khôi phục phiên bằng cookie remember-me. Bản trước của
+spec gọi nó là `auth:remember`; tên đó không tồn tại trong registry và không route nào
+tra được. Tên trong bảng giờ là tên thật trong code.
+
+### 7.2 Ánh xạ route → lớp
+
+`BR-RTL-10`: mọi path `/api/*` phải giải ra **đúng một** ô của bảng này. Không có nhánh
+mặc định "không giới hạn" — một path không khớp luật nào rơi về `read:public`, là lớp
+chặt nhất không cần trục account.
+
+Luật đọc **theo thứ tự**, luật đầu tiên khớp thì thắng. Nguồn sự thật là
+`resolveRateLimitRouteClass()` trong `packages/shared/src/rate-limit-routes.ts`.
+
+| # | Path (method) | Kết quả | Vì sao |
+|---|---|---|---|
+| 1 | không bắt đầu bằng `/api/` | miễn — `not-api` | trang SSR và tài sản tĩnh; nginx đã chặn theo IP |
+| 2 | 9 route auth **đang tự gọi**: `users/login` · `managers/login` · `users/register` · `users/forgot-password` · `users/social-login` · `managers/mfa` · `managers/mfa-setup` · `oauth/{p}/start` · `oauth/{p}/callback` | **trong route** | handler tự gọi vì trục account cần email trong body, middleware không đọc body |
+| 2b | 6 route auth còn lại: `users/mfa` → `auth:mfa` · `users/mfa-recovery/verify` → `auth:mfa` · `users/reset-password` → `auth:forgot-password` · `users/verify-email` → `auth:forgot-password` · `verify-email-change` → `auth:forgot-password` · `oauth/providers` → `read:public` | lớp tương ứng | không handler nào tự giới hạn; `reset-password` là bề mặt dò mã đặt lại mật khẩu |
+| 3 | `/api/users/auth/resend-verification` | **trong route** | như luật 2, `auth:forgot-password` |
+| 4 | `/api/guest/webhooks/**` | miễn — `provider-webhook` | callback nhà cung cấp đã xác thực bằng chữ ký (`BR-APM-01`, SNS RSA); giới hạn theo IP sẽ rớt burst thật từ IP dùng chung của nhà cung cấp |
+| 5 | `/api/guest/health` | miễn — `health-probe` | probe giám sát chạy mỗi phút, chặn nó là tự làm mù mình |
+| 6 | `/api/{users,managers}/auth/restore` | `auth:refresh` | khôi phục phiên bằng remember-me |
+| 7 | `/api/{users,managers}/auth/reauth` | `auth:login` | xác minh lại mật khẩu — cùng primitive, cùng mối đe doạ, nên **cùng bucket** với login |
+| 8 | `POST /api/managers/images` | `upload:image` | lớp hẹp hơn thắng `managers:*` |
+| 9 | `/api/managers/**` | `managers:*` | gồm cả `managers/exports/*` và `managers/audit-logs/export` |
+| 10 | `POST /api/users/orders` | `payment:create` | |
+| 11 | `POST /api/users/orders/{uuid}/proof` | `payment:proof` | |
+| 12 | `POST /api/{users,guest}/play-sessions/{uuid}/events` | `play:events` | `BR-RTL-06` |
+| 13 | `GET /api/users/ai/search` | `search` | tìm kiếm ngữ nghĩa, mỗi lần một lượt embedding |
+| 14 | `GET /api/users/data-export`, `POST /api/users/exports` | `export:data` | hai đường xuất dữ liệu cá nhân trọn gói |
+| 15 | `/api/guest/**` còn lại | `read:public` | |
+| 16 | `/api/users/**` còn lại | miễn — `unclassified-user-route` | §11 câu hỏi 3 |
+| 17 | còn lại | `read:public` | nhánh đáy, không phải nhánh mặc định im lặng |
+
+Luật 16 là **lỗ đã biết, không phải quyết định đã chốt**: §7.1 không có lớp nào mô tả
+traffic chung của người dùng đã đăng nhập. Ánh xạ tạm chúng vào `search` hay `read:public`
+là bịa hạn mức, nên bảng ghi thẳng chúng là miễn và đẩy sang §11.
+
+### 7.3 IP dùng để giới hạn
+
+`BR-RTL-11`: IP client là `X-Real-IP` **chỉ khi** peer của kết nối nằm trong
+`TRUSTED_PROXY_IPS`; mọi trường hợp khác dùng địa chỉ socket. Cấm — **NEVER** đọc
+`X-Forwarded-For` thô ở bất kỳ đâu.
+
+Vì sao cần: nginx là edge và proxy tới loopback (`infra/nginx/mindkid-proxy.conf:8`
+đặt `X-Real-IP $remote_addr`). Nếu đọc `socket.remoteAddress`, mọi request trong
+production đều mang IP `127.0.0.1` — trục IP sụp thành **một bucket toàn cục**, và 20 lần
+đăng nhập sai của một người khoá cả site trong 15 phút.
+
+`TRUSTED_PROXY_IPS` mặc định `127.0.0.1,::1` khi không khai, khớp cách triển khai hiện tại.
 
 Khoá tăng dần khi sai đăng nhập: 5 lần → 1 phút · 10 → 5 phút · 15 → 30 phút · reset sau
 24 giờ không sai.
@@ -136,6 +197,20 @@ Scenario: BR-RTL-08 — limiter dùng primitive nguyên tử và một client
   Then số lần consume và TTL nhất quán theo rate-limiter-flexible
   And số kết nối ioredis không tăng theo số request
 
+Scenario: BR-RTL-10 — không path nào rơi vào nhánh không giới hạn
+  Given danh sách mọi file route trong apps/web/server/api
+  When suy lớp cho từng path
+  Then mỗi path trả về một lớp trong §7.1 hoặc một lý do miễn đã liệt kê
+  And không path nào trả về undefined
+
+Scenario: BR-RTL-11 — chỉ tin X-Real-IP sau proxy tin cậy
+  Given TRUSTED_PROXY_IPS chứa 127.0.0.1
+  When request đến từ socket 127.0.0.1 kèm X-Real-IP 203.0.113.9
+  Then IP dùng để giới hạn là 203.0.113.9
+  When request đến thẳng từ socket 198.51.100.4 kèm X-Real-IP 203.0.113.9
+  Then IP dùng để giới hạn là 198.51.100.4
+  And X-Forwarded-For không được đọc trong cả hai trường hợp
+
 Scenario: BR-RTL-09 — key không chứa định danh thô
   Given login bằng email Parent@Example.com
   When đọc key Valkey và log rate-limit trong test
@@ -150,6 +225,7 @@ Scenario: BR-RTL-09 — key không chứa định danh thô
 - Lấy IP từ nguồn tin cậy đã cấu hình.
 - Bọc `rate-limiter-flexible` trong `packages/cache`; tái dùng singleton `ioredis`.
 - HMAC identifier trước khi tạo account key.
+- Suy lớp từ path bằng `resolveRateLimitRouteClass()`, không rải hằng số lớp khắp route.
 
 **Ask first**
 - Đổi hạn mức của một route class.
@@ -162,6 +238,8 @@ Scenario: BR-RTL-09 — key không chứa định danh thô
 - Thông báo tiết lộ tài khoản tồn tại.
 - `INCR` + `EXPIRE` tự ghép hoặc Redis client theo request.
 - Email/identifier thô trong key hay log.
+- Nhánh mặc định không giới hạn cho một path `/api/*`.
+- Đọc `X-Real-IP` khi peer không nằm trong `TRUSTED_PROXY_IPS`.
 
 ## 11. Open questions
 
@@ -169,3 +247,4 @@ Scenario: BR-RTL-09 — key không chứa định danh thô
 |---|---|---|---|---|
 | 1 | Có dùng CAPTCHA cho đăng ký không? CAPTCHA bên thứ ba đụng ràng buộc tracking | Đăng ký P1 | P1 | người quyết |
 | 2 | Hạn mức `play:events` đủ cho trẻ chơi nhanh không? Cần đo thực tế | Gameplay P1 | P1 | Studio UI |
+| 3 | §7.1 không có lớp nào cho traffic chung của user đã đăng nhập (~130 route `/api/users/**` ngoài payment/export/play/search). Cần một lớp `users:*` với hạn mức đo được, hay giữ nguyên nginx 20r/s? | Luật 16 của §7.2 | P1 | người quyết |

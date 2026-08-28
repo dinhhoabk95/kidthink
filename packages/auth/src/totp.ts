@@ -94,7 +94,7 @@ export function verifyTotpCode(
 export function generateTotpUri(
   secret: string,
   accountName: string,
-  issuer = "TiniMath"
+  issuer = "MindKid"
 ): string {
   const totp = new TOTP({
     issuer,

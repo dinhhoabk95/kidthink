@@ -98,6 +98,11 @@ Scenario: BR-XXX-01 — <tên>
 
 ## 11. Open questions
 
-| # | Câu hỏi | Chặn gì |
-|---|---|---|
+| # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
+|---|---|---|---|---|
+
+<!-- Cột `Chủ` chỉ nhận: `người quyết` · `hoãn` hoặc `hoãn — <điều kiện mở lại đo được>` ·
+     `Infra` `Backend` `Studio UI` `Nội dung` `Kế toán` · mã `D-XX` (chỉ cho hàng đã gạch).
+     Cấm rỗng, `-`, `—`, `TBD`. Xem mục 11.7 của CONVENTIONS.md.
+     Dùng `Không có.` thay cho bảng khi spec không còn câu hỏi mở. -->
 ```

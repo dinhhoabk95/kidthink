@@ -67,6 +67,7 @@ Bốn quyết định định hình toàn bộ schema, mỗi cái là một ràn
 | `BR-DM-03` | **`content_skill_map.weight ∈ [0,1]`** — 1.0 mục tiêu chính, 0.3 có chạm tới | Không có nó, một game đếm vô tình "dạy" mọi skill nó chạm tới |
 | `BR-DM-04` | **FK polymorphic không ép được ở Postgres** → toàn vẹn do tầng service giữ, **bắt buộc** integration test bắt orphan | Ràng buộc không ép được ở DB là ràng buộc sẽ bị vi phạm |
 | `BR-DM-05` | Bảng INSERT-only: `audit_logs` `consent_logs` `content_review_log` `telemetry_events` `play_sessions` (chỉ sau `completed`) — ép bằng **quyền DB** | Ép bằng quy ước là không ép |
+| `BR-DM-05a` | `BR-DM-05` chỉ có hiệu lực trên đường ghi đi qua `getAppDb()`; đường qua `getOwnerDb()` vượt mọi `REVOKE` | Quyền DB ép theo **role của kết nối**, không theo tên bảng. Đo 2026-08-28: 33 call site dùng `getAppDb()`, 277 dùng `getOwnerDb()`/`getDb()` — `BR-DM-05` phủ ~11% đường ghi. Xem §11 câu 5 |
 | `BR-DM-06` | **NEVER raw SQL** — chỉ Drizzle. Ngoại lệ: `sql\`\`` cho tăng nguyên tử và `coalesce` cross-table | Chuỗi SQL nối tay là đường vào injection, và né được typecheck nên đổi schema không làm nó đỏ. Hai ngoại lệ là chỗ Drizzle không diễn đạt được — giữ hẹp, không mở thành cửa chung |
 | `BR-DM-07` | Cột và bảng `snake_case`. Payload API giữ nguyên `snake_case`, không transform | Transform hai chiều là hai chỗ để lệch |
 | `BR-DM-08` | Mọi bảng có **cả** `created_at` và `updated_at` — không có ngoại lệ, kể cả bảng INSERT-only | Không có mốc thời gian thì không trả lời được "hàng này có từ bao giờ" lúc điều tra sự cố — và thêm cột sau khi đã có dữ liệu thì mọi hàng cũ mang giá trị bịa. Bản cũ chỉ bắt `updated_at` cho "bảng sửa được", nên mỗi lần thêm bảng lại phải cãi xem nó có sửa được không; siết thành mọi bảng (2026-08-16) bỏ hẳn cuộc cãi đó. Trên bảng INSERT-only cột này là cột chết — quyền DB đã REVOKE UPDATE nên không ai ghi được vào nó |
@@ -186,6 +187,12 @@ Scenario: BR-DM-05 — bảng INSERT-only ép ở tầng DB
   When chạy UPDATE hoặc DELETE trên hàng đó bằng role của ứng dụng
   Then quyền DB từ chối
 
+Scenario: BR-DM-05a — cùng câu lệnh đó bằng role owner thì không bị chặn
+  Given một hàng audit_logs tồn tại
+  When chạy UPDATE trên hàng đó bằng kết nối getOwnerDb()
+  Then câu lệnh thành công
+  And đó là lý do trích BR-DM-05 như bảo đảm phải kèm tên client của đường ghi
+
 Scenario: BR-DM-04 — orphan polymorphic bị bắt
   Given một hàng content_tag_map trỏ tới entity_id không tồn tại
   When chạy integration test toàn vẹn
@@ -242,4 +249,5 @@ Scenario: BR-DM-12 — trần phân trang ép ở server
 | ~~1~~ | ~~Partition `telemetry_events` theo tháng ngay từ đầu?~~ **Đóng 2026-08-07 (T5)**: quyết định sống ở [`event-catalog.md`](../00-foundation/event-catalog.md) Q2 — xem §7.3 dòng `event-catalog Q2`. Không partition ở P0; PK giữ `(session_uuid, seq)`. Ngưỡng kích hoạt: 5M hàng/2GB | — | đóng | D-Z |
 | 2 | Retention của `audit_logs` — giữ vĩnh viễn hay archive sang S3 sau 2 năm? | Vận hành — xem [`audit-log.md`](audit-log.md) §11 Q1, chủ duy nhất (cùng một câu hỏi, luật "một outcome một chủ") | P1 | hoãn — cần số dung lượng thật sau khi có seeder (`BR-AUD-08`) |
 | 3 | Có cần read replica cho báo cáo không, hay index đủ? | Hiệu năng | P3 | hoãn — tuning khi có lưu lượng |
+| 5 | Chuyển bao nhiêu trong 277 call site `getOwnerDb()` sang `getAppDb()`? Một số thật sự cần quyền owner (migration, seeder, job dọn dẹp); phần còn lại đang vượt `BR-DM-05` mà không ai biết. Cần một danh sách đường ghi **phải** đi role hẹp, rồi một cổng đếm | `BR-DM-05a` — bảo đảm INSERT-only chỉ đúng trên 11% đường ghi | P1 | người quyết |
 | ~~4~~ | ~~Sửa schema hay sửa spec khi `child_profiles` và `telemetry_events` đã ship lệch contract?~~ **Đóng 2026-08-09 (P0.4)**: Sửa schema cho khớp spec (D-DN). Không hạ trạng thái spec (D-DO). Migration tiến tới (D-DP). Chỉ sửa cột thuộc P0.4 (D-DQ). | — | đóng | D-DN |

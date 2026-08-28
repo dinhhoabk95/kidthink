@@ -1,44 +1,44 @@
 <template>
   <div
-    class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 p-4"
+    class="fixed inset-0 z-50 flex items-center justify-center bg-surface-900/60 p-4"
     v-if="isOpen"
   >
     <div
-      class="bg-white dark:bg-slate-800 rounded-3xl border-2 border-slate-200 dark:border-slate-700 shadow-2xl max-w-2xl w-full max-h-[85vh] flex flex-col overflow-hidden"
+      class="bg-white dark:bg-surface-800 rounded-3xl border-2 border-surface-200 dark:border-surface-700 shadow-2xl max-w-2xl w-full max-h-[85vh] flex flex-col overflow-hidden"
     >
       <div
-        class="p-5 border-b border-slate-200 dark:border-slate-700 flex items-center justify-between"
+        class="p-5 border-b border-surface-200 dark:border-surface-700 flex items-center justify-between"
       >
         <div>
-          <h3 class="text-base font-bold text-slate-900 dark:text-white">
+          <h3 class="text-base font-bold text-surface-900 dark:text-white">
             Thêm hoạt động vào Tuần {{ targetWeek }}, Buổi {{ targetSession }}
           </h3>
-          <p class="text-xs text-slate-500">
+          <p class="text-xs text-surface-500">
             Chọn bài học hoặc màn chơi tương tác từ kho học liệu
           </p>
         </div>
         <button
-          class="text-slate-400 hover:text-slate-600 dark:hover:text-white text-xl font-bold p-1"
+          class="text-surface-400 hover:text-surface-600 dark:hover:text-white text-xl font-bold p-1"
           type="button"
           @click="emit('close')"
         >
-          ✕
+          <UIcon class="w-5 h-5" name="i-lucide-x" />
         </button>
       </div>
 
       <!-- Filter & Search in Picker -->
       <div
-        class="p-4 bg-slate-50 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-700 flex gap-3"
+        class="p-4 bg-surface-50 dark:bg-surface-900 border-b border-surface-200 dark:border-surface-700 flex gap-3"
       >
         <select
-          class="px-3 py-1.5 text-xs rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-white"
+          class="px-3 py-1.5 text-xs rounded-xl border border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-800 text-surface-900 dark:text-white"
           v-model="pickerTab"
         >
           <option value="lesson">Bài học (Lessons)</option>
           <option value="game_level">Màn chơi (Game Levels)</option>
         </select>
         <input
-          class="flex-1 px-3 py-1.5 text-xs rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-white"
+          class="flex-1 px-3 py-1.5 text-xs rounded-xl border border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-800 text-surface-900 dark:text-white"
           placeholder="Tìm kiếm theo mã hoặc tiêu đề..."
           type="text"
           v-model="pickerSearch"
@@ -47,7 +47,7 @@
 
       <!-- Picker List -->
       <div
-        class="flex-1 overflow-y-auto p-4 space-y-2 divide-y divide-slate-100 dark:divide-slate-700/50"
+        class="flex-1 overflow-y-auto p-4 space-y-2 divide-y divide-surface-100 dark:divide-surface-700/50"
       >
         <div
           class="pt-2 flex items-center justify-between gap-3 text-xs"
@@ -57,7 +57,7 @@
           <div class="flex-1 min-w-0">
             <div class="flex items-center gap-2">
               <span
-                class="font-mono font-bold text-slate-900 dark:text-slate-100"
+                class="font-mono font-bold text-surface-900 dark:text-surface-100"
               >
                 {{ item.code }}
               </span>
@@ -65,20 +65,20 @@
                 class="px-1.5 py-0.5 text-[10px] font-bold rounded-xl"
                 :class="
                   item.entity_type === 'lesson'
-                    ? 'bg-amber-100 text-amber-800'
-                    : 'bg-emerald-100 text-emerald-800'
+                    ? 'bg-warning-100 text-warning-800'
+                    : 'bg-success-100 text-success-800'
                 "
               >
                 {{ item.entity_type === "lesson" ? "bài học" : "màn chơi" }}
               </span>
             </div>
-            <div class="truncate text-slate-600 dark:text-slate-300">
+            <div class="truncate text-surface-600 dark:text-surface-300">
               {{ item.title }}
             </div>
           </div>
 
           <button
-            class="px-3 py-1.5 text-xs font-semibold rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white shrink-0"
+            class="px-3 py-1.5 text-xs font-semibold rounded-xl bg-brand-600 hover:bg-brand-700 text-white shrink-0"
             type="button"
             @click="emit('select', item)"
           >
@@ -87,7 +87,7 @@
         </div>
 
         <div
-          class="p-8 text-center text-slate-400 text-xs"
+          class="p-8 text-center text-surface-400 text-xs"
           v-if="filteredItems.length === 0"
         >
           Không tìm thấy học liệu phù hợp.

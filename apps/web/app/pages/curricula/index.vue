@@ -51,30 +51,30 @@
 
       <!-- Feedback Banner -->
       <div
-        class="mt-4 p-4 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-300 dark:border-emerald-700 text-emerald-800 dark:text-emerald-200 text-sm font-bold flex items-center justify-between"
+        class="mt-4 p-4 rounded-2xl bg-success-50 dark:bg-success-950/40 border border-success-300 dark:border-success-700 text-success-800 dark:text-success-200 text-sm font-bold flex items-center justify-between"
         v-if="bannerMessage"
       >
         <span>{{ bannerMessage }}</span>
         <button
-          class="text-emerald-700 dark:text-emerald-300 font-bold text-sm"
+          class="text-success-700 dark:text-success-300 font-bold text-sm"
           type="button"
           @click="bannerMessage = null"
         >
-          ✕
+          <UIcon class="w-5 h-5" name="i-lucide-x" />
         </button>
       </div>
 
       <div
-        class="mt-4 p-4 rounded-2xl bg-rose-50 dark:bg-rose-950/40 border border-rose-300 dark:border-rose-700 text-rose-800 dark:text-rose-200 text-sm font-bold flex items-center justify-between"
+        class="mt-4 p-4 rounded-2xl bg-danger-50 dark:bg-danger-950/40 border border-danger-300 dark:border-danger-700 text-danger-800 dark:text-danger-200 text-sm font-bold flex items-center justify-between"
         v-if="errorMessage"
       >
         <span>{{ errorMessage }}</span>
         <button
-          class="text-rose-700 dark:text-rose-300 font-bold text-sm"
+          class="text-danger-700 dark:text-danger-300 font-bold text-sm"
           type="button"
           @click="errorMessage = null"
         >
-          ✕
+          <UIcon class="w-5 h-5" name="i-lucide-x" />
         </button>
       </div>
 
@@ -131,8 +131,8 @@
                   class="px-2.5 py-0.5 rounded-full text-xs font-bold"
                   :class="
                     item.status === 'ready'
-                      ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/50 dark:text-emerald-200'
-                      : 'bg-amber-100 text-amber-800 dark:bg-amber-900/50 dark:text-amber-200'
+                      ? 'bg-success-100 text-success-800 dark:bg-success-900/50 dark:text-success-200'
+                      : 'bg-warning-100 text-warning-800 dark:bg-warning-900/50 dark:text-warning-200'
                   "
                 >
                   {{ item.status === 'ready' ? 'Sẵn sàng' : 'Bản nháp' }}
@@ -199,7 +199,7 @@
                   Ghi danh trẻ
                 </button>
                 <button
-                  class="px-3 py-1.5 rounded-xl hover:bg-rose-50 dark:hover:bg-rose-950/40 text-rose-600 dark:text-rose-400 font-bold text-xs min-h-11"
+                  class="px-3 py-1.5 rounded-xl hover:bg-danger-50 dark:hover:bg-danger-950/40 text-danger-600 dark:text-danger-400 font-bold text-xs min-h-11"
                   type="button"
                   @click="confirmDelete(item)"
                 >
@@ -233,7 +233,7 @@
             type="button"
             @click="showCreateModal = false"
           >
-            ✕
+            <UIcon class="w-5 h-5" name="i-lucide-x" />
           </button>
         </div>
 
@@ -371,7 +371,7 @@
             type="button"
             @click="showCopyModal = false"
           >
-            ✕
+            <UIcon class="w-5 h-5" name="i-lucide-x" />
           </button>
         </div>
 
@@ -452,7 +452,7 @@
             type="button"
             @click="showEnrollModal = false"
           >
-            ✕
+            <UIcon class="w-5 h-5" name="i-lucide-x" />
           </button>
         </div>
 
@@ -538,7 +538,7 @@
             type="button"
             @click="showDeleteModal = false"
           >
-            ✕
+            <UIcon class="w-5 h-5" name="i-lucide-x" />
           </button>
         </div>
 
@@ -559,7 +559,7 @@
             Hủy
           </button>
           <button
-            class="px-6 py-2 rounded-2xl bg-rose-600 hover:bg-rose-700 text-white font-heading font-bold shadow-md text-sm transition-all active:scale-95 disabled:opacity-50 min-h-11"
+            class="px-6 py-2 rounded-2xl bg-danger-600 hover:bg-danger-700 text-white font-heading font-bold shadow-md text-sm transition-all active:scale-95 disabled:opacity-50 min-h-11"
             type="button"
             :disabled="isSubmitting"
             @click="handleDeleteSubmit"
@@ -577,6 +577,12 @@
 <script lang="ts" setup>
   import { computed, ref } from "vue";
   import { useFetch, useRouter } from "#imports";
+
+  // Trang này tự dựng chrome (PublicNavbar + <main id="main-content"> +
+  // PublicFooter). Không tắt layout thì `default.vue` dựng thêm một bộ nữa:
+  // navbar và footer hiện hai lần, và có hai phần tử cùng id="main-content"
+  // nên skip-link của app.vue nhảy sai chỗ (BR-A11-05).
+  definePageMeta({ layout: false });
 
   interface PersonalCurriculumItem {
     id: number;

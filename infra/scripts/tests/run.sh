@@ -54,6 +54,11 @@ make_source_repo() {
     cp "${REPO_ROOT}/packages/config/scripts/validate-env-file.ts" packages/config/scripts/
     cp "${REPO_ROOT}/packages/config/src/env-contract.ts" packages/config/src/
     cp "${REPO_ROOT}/packages/config/src/env-file.ts" packages/config/src/
+    # The validator imports "#src/env-contract", and Node reads that mapping
+    # from the nearest package.json. Omitting this file made every release in
+    # this harness fail at the environment gate with a resolution error, which
+    # looked exactly like a contract violation.
+    cp "${REPO_ROOT}/packages/config/package.json" packages/config/
     echo "// migration entrypoint" >packages/db/scripts/migrate.ts
     echo '{"name":"@mindkid/monorepo","type":"module"}' >package.json
 
@@ -425,6 +430,137 @@ case_13_missing_admin_build_var_stops_before_build() {
   rm -rf "${root}"
 }
 
+
+case_14_release_hands_tree_to_system_user() {
+  printf 'Case 14 — the built tree is handed to the system user\n'
+  new_workspace
+  local root="${WORKSPACE_ROOT}"
+
+  bash "${MINDKID_SH}" release --ref main >/dev/null 2>&1
+  local active; active="$(current_target)"
+
+  # The build container runs as root, so without this step every file in the
+  # release belongs to root while the applications run as an unprivileged user
+  # (BR-SRV-02) and cannot write anywhere in their own tree.
+  local calls; calls="$(cat "${MK_FAKE_STATE}/chown.calls" 2>/dev/null || true)"
+  assert_contains "${calls}" "mindkid:mindkid" "the tree is handed to the system user"
+  assert_contains "${calls}" "${active}" "it is the release that was just built"
+  rm -rf "${root}"
+}
+
+case_15_ownership_failure_stops_before_the_switch() {
+  printf 'Case 15 — handing the tree over fails\n'
+  new_workspace
+  local root="${WORKSPACE_ROOT}"
+  seed_first_release
+  local before_link; before_link="$(current_target)"
+
+  add_commit "${root}/source" "second"
+  touch "${MK_FAKE_STATE}/chown_fails"
+
+  local output status
+  output="$(bash "${MINDKID_SH}" release --ref main 2>&1)"
+  status=$?
+
+  assert_eq "1" "${status}" "exit status is non-zero"
+  assert_eq "${before_link}" "$(current_target)" "the symlink never moved"
+  assert_contains "${output}" "applications cannot use" "log says why the switch was refused"
+  rm -rf "${root}"
+}
+
+case_16_public_smoke_failure_rolls_back() {
+  printf 'Case 16 — the process is healthy but the public path is not\n'
+  new_workspace
+  local root="${WORKSPACE_ROOT}"
+  export MK_PUBLIC_HEALTH_URL="https://harness.example/api/guest/health"
+  seed_first_release
+  local first_release; first_release="$(current_target)"
+
+  add_commit "${root}/source" "second"
+  # Loopback stays 200: this is the state where only checking 127.0.0.1 would
+  # have called the release a success while nginx returns 502 to every visitor.
+  echo 200 >"${MK_FAKE_STATE}/http_status"
+  echo 502 >"${MK_FAKE_STATE}/http_status_public"
+
+  local output status
+  output="$(bash "${MINDKID_SH}" release --ref main 2>&1)"
+  status=$?
+
+  assert_eq "1" "${status}" "exit status is non-zero"
+  assert_contains "${output}" "Public site answered HTTP 502" "log names the public failure"
+  assert_contains "${output}" "Rolling back" "the release rolled back"
+  assert_eq "${first_release}" "$(current_target)" "symlink points back at the previous release"
+  unset MK_PUBLIC_HEALTH_URL
+  rm -rf "${root}"
+}
+
+case_17_env_gate_reads_the_new_tree() {
+  printf 'Case 17 — the incoming commit adds a required variable\n'
+  new_workspace
+  local root="${WORKSPACE_ROOT}"
+  seed_first_release
+  local before_count; before_count="$(release_count)"
+  local before_link; before_link="$(current_target)"
+
+  # The registry entry for a new variable ships in the same commit as the code
+  # that reads it. Validating with the LIVE release's registry would not know
+  # this name yet, pass the release, and let it fail at runtime instead.
+  (
+    cd "${root}/source" || exit 1
+    node -e '
+      const fs = require("node:fs");
+      const file = "packages/config/src/env-contract.ts";
+      const src = fs.readFileSync(file, "utf8");
+      const entry = `  {
+    name: "HARNESS_NEW_REQUIRED",
+    apps: ["web"],
+    required: "always",
+    kind: "text",
+    secret: false,
+    note: "Added by the incoming commit",
+  },
+`;
+      fs.writeFileSync(file, src.replace("export const ENV_REGISTRY: readonly EnvVarDef[] = [\n", "export const ENV_REGISTRY: readonly EnvVarDef[] = [\n" + entry));
+    '
+    git add -A
+    git commit -qm "add a required variable"
+  )
+
+  local output status
+  output="$(bash "${MINDKID_SH}" release --ref main 2>&1)"
+  status=$?
+
+  assert_eq "1" "${status}" "exit status is non-zero"
+  assert_contains "${output}" "HARNESS_NEW_REQUIRED" "the gate used the incoming registry, not the live one"
+  assert_eq "${before_count}" "$(release_count)" "no new release directory was left behind"
+  assert_eq "${before_link}" "$(current_target)" "the running release still serves"
+  rm -rf "${root}"
+}
+
+
+case_18_alerting_unconfigured_stops_release() {
+  printf 'Case 18 — production without an alert channel\n'
+  new_workspace
+  local root="${WORKSPACE_ROOT}"
+  seed_first_release
+  local before_count; before_count="$(release_count)"
+
+  add_commit "${root}/source" "second"
+  # BR-MON-01: with no channel configured every P0 alert becomes a console.warn
+  # in a log file nobody reads. The environment gate is the cheapest place to
+  # catch that, before anything is built.
+  node "${HARNESS_DIR}/make-env.ts" worker TELEGRAM_BOT_TOKEN >"${MK_ENV_DIR}/worker.env"
+
+  local output status
+  output="$(bash "${MINDKID_SH}" release --ref main 2>&1)"
+  status=$?
+
+  assert_eq "1" "${status}" "exit status is non-zero"
+  assert_contains "${output}" "TELEGRAM_BOT_TOKEN" "the missing channel is named"
+  assert_eq "${before_count}" "$(release_count)" "no new release directory was created"
+  rm -rf "${root}"
+}
+
 # --- driver -----------------------------------------------------------------
 
 main() {
@@ -448,6 +584,11 @@ main() {
   case_11_no_secret_value_reaches_the_log
   case_12_missing_artifacts_block_rollback
   case_13_missing_admin_build_var_stops_before_build
+  case_14_release_hands_tree_to_system_user
+  case_15_ownership_failure_stops_before_the_switch
+  case_16_public_smoke_failure_rolls_back
+  case_17_env_gate_reads_the_new_tree
+  case_18_alerting_unconfigured_stops_release
 
   printf '\n%s passed, %s failed\n' "${PASS}" "${FAIL}"
   [ "${FAIL}" -eq 0 ]

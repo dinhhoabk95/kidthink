@@ -1,17 +1,31 @@
 {
+  // Convention TypeScript dùng chung cho MỌI workspace (apps/* và packages/*).
+  // ❌ NEVER khai lại một flag ở tsconfig con: khai hai chỗ là drift, và drift
+  // kiểu này đã trả giá — `noUncheckedIndexedAccess` bật trong tsconfig Nuxt sinh
+  // ra mà tắt ở đây, nên `pnpm typecheck` xanh trong khi apps/web có 686 lỗi thật
+  // trên chính file của packages/*.
+  //
+  // Quy tắc thêm flag: flag nào Nuxt đã ép cho apps/* thì phải có ở đây, để
+  // package được kiểm đúng bằng luật mà app sẽ biên dịch nó.
   "compilerOptions": {
     "target": "ESNext",
     "module": "ESNext",
     "moduleResolution": "bundler",
     "strict": true,
+    // Nuxt bật hai flag dưới đây trong `.nuxt/tsconfig.app.json`.
+    "noUncheckedIndexedAccess": true,
+    "verbatimModuleSyntax": true,
+    "noImplicitOverride": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "declaration": true,
-    "declarationMap": true,
-    "sourceMap": true,
-    "noImplicitOverride": true
+    // Không workspace nào dựng output bằng tsc: packages/* export TS thô,
+    // apps/worker dùng esbuild, apps/* dùng Nuxt. `declaration`/`sourceMap`/
+    // `outDir` từng khai ở đây và ở 5 tsconfig con — tất cả đều chết.
+    "noEmit": true,
+    // Import khai `.ts` tường minh (Task #105) — cần noEmit, đã set ở trên.
+    "allowImportingTsExtensions": true
   }
 }

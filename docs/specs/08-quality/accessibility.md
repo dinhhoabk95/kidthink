@@ -5,7 +5,7 @@ area: quality
 status: implemented
 mvp: true
 phase: P1
-reviewed: 2026-08-08
+reviewed: 2026-08-29
 owns:
   - Ngưỡng a11y theo bề mặt
 depends_on: []
@@ -64,6 +64,7 @@ Trẻ 3–6 · người lớn · người dùng công nghệ trợ giúp.
 | `BR-A11-11` | Bề mặt trẻ: chỉ dẫn **không bao giờ chỉ bằng chữ** | Người dùng chưa đọc |
 | `BR-A11-12` | Modal trap focus và **trả focus** khi đóng | Tránh mất ngữ cảnh bàn phím |
 | `BR-A11-13` | Tab order khớp thứ tự thị giác | Đảm bảo thứ tự trải nghiệm nhất quán |
+| `BR-A11-14` | Một route chỉ được render **đúng một** `<main id="main-content">` và **đúng một** bộ chrome (navbar + footer). Trang tự dựng chrome bắt buộc `definePageMeta({ layout: false })` | Layout và trang cùng dựng thì navbar/footer hiện hai lần và có hai phần tử trùng `id`; skip-link của `app.vue` nhảy vào cái đầu tiên nên bàn phím rơi vào chrome thay vì nội dung. Đo 2026-08-29: 17/33 trang của `apps/web` bị trùng |
 
 ## 7. Data
 
@@ -113,6 +114,16 @@ Không có.
 Scenario: BR-A11-01 — 0 violation axe
   When chạy axe trên mọi page object
   Then không violation nào
+
+Scenario: BR-A11-14 — một landmark main mỗi route
+  When render từng route của apps/web và apps/admin
+  Then mỗi trang có đúng một phần tử id="main-content"
+  And mỗi trang có đúng một navbar và đúng một footer
+
+Scenario: BR-A11-14 — ca âm, trang tự dựng chrome mà quên tắt layout
+  Given một trang render PublicNavbar trong template mà không có definePageMeta layout false
+  When render route đó
+  Then phép kiểm báo đỏ vì đếm được hai id="main-content"
 
 Scenario: BR-A11-04 — sàn chạm bề mặt trẻ
   Given một level cho band 3-4

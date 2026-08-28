@@ -23,9 +23,12 @@
 -- BR-DM-05, còn owner thì REVOKE nào cũng vô nghĩa.
 DO $$
 BEGIN
-  IF NOT EXISTS (SELECT FROM pg_catalog.pg_roles WHERE rolname = 'mindkid_app') THEN
+  IF NOT EXISTS (SELECT 1 FROM pg_catalog.pg_roles WHERE rolname = 'mindkid_app') THEN
     CREATE ROLE mindkid_app WITH LOGIN PASSWORD 'mindkid_app_password';
   END IF;
+EXCEPTION
+  WHEN duplicate_object OR unique_violation THEN
+    NULL;
 END $$;--> statement-breakpoint
 
 -- `current_database()` thay vì tên cứng: cùng file này còn chạy trên DB scratch của

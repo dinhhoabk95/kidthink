@@ -5,9 +5,8 @@
   "type": "module",
   "scripts": {
     "build": "nuxt build",
-    "dev": "nuxt dev",
-    "test": "vitest run",
-    "typecheck": "nuxt typecheck"
+    "dev": "nuxt dev --port 3000",
+    "test": "vitest run"
   },
   "dependencies": {
     "@mindkid/adaptive": "workspace:*",
@@ -28,13 +27,15 @@
     "h3": "catalog:"
   },
   "devDependencies": {
+    "@nuxt/fonts": "catalog:",
+    "@nuxt/ui": "catalog:",
     "nuxt": "catalog:",
     "nuxt-auth-utils": "catalog:",
     "nuxt-security": "catalog:",
-    "zod": "catalog:",
+    "tailwindcss": "catalog:",
     "typescript": "catalog:",
     "vitest": "catalog:",
     "vue-tsc": "catalog:",
-    "@mindkid/gates": "workspace:*"
+    "zod": "catalog:"
   }
 }

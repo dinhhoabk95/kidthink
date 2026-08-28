@@ -1,5 +1,4 @@
 import {
-  activities,
   contentSkillMap,
   getOwnerDb,
   lessonActivities,
@@ -9,6 +8,7 @@ import {
 import { and, desc, eq } from "drizzle-orm";
 import { createError, defineEventHandler, getRouterParam } from "h3";
 import { requireManagerSession } from "#server/utils/admin-auth-runtime";
+import { loadLatestActivitiesByEntityId } from "#server/utils/lesson-activities";
 
 export default defineEventHandler(async (event) => {
   await requireManagerSession(event);
@@ -60,36 +60,17 @@ export default defineEventHandler(async (event) => {
     .where(eq(lessonActivities.lessonId, lesson.id))
     .orderBy(lessonActivities.position);
 
-  // For each attached activity, resolve details via entity_id (latest version)
-  const resolvedActivities = await Promise.all(
-    attachedActivities.map(async (item) => {
-      const [act] = await db
-        .select({
-          id: activities.id,
-          entityId: activities.entityId,
-          code: activities.code,
-          contentVersion: activities.contentVersion,
-          kind: activities.kind,
-          title: activities.title,
-          instruction: activities.instruction,
-          materials: activities.materials,
-          estimatedMinutes: activities.estimatedMinutes,
-          accessTier: activities.accessTier,
-          status: activities.status,
-        })
-        .from(activities)
-        .where(eq(activities.entityId, item.activityId))
-        .orderBy(desc(activities.contentVersion))
-        .limit(1);
-
-      return {
-        position: item.position,
-        activity_id: item.activityId,
-        is_required: item.isRequired,
-        activity: act || null,
-      };
-    })
+  // Một query cho cả tập, thay vì một query mỗi activity (pool là max: 1).
+  const latestActivities = await loadLatestActivitiesByEntityId(
+    attachedActivities.map((item) => item.activityId)
   );
+
+  const resolvedActivities = attachedActivities.map((item) => ({
+    position: item.position,
+    activity_id: item.activityId,
+    is_required: item.isRequired,
+    activity: latestActivities.get(item.activityId) ?? null,
+  }));
 
   // Fetch skills
   const attachedSkills = await db

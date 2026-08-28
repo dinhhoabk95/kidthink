@@ -5,7 +5,7 @@ area: foundation
 status: implemented
 mvp: true
 phase: P0
-reviewed: 2026-08-13
+reviewed: 2026-08-29
 owns:
   - Quy tắc khi nào tách package mới vs viết inline trong app
   - Pattern "driver" bọc thư viện bên thứ ba dùng chung nhiều app
@@ -88,6 +88,8 @@ chỗ thay vì một.
 | `BR-MPA-06` | `packages/*` **NEVER** phụ thuộc ngược vào `apps/*`; cổng tự động kiểm bằng dependency-graph check | Phụ thuộc ngược tạo chu trình, packages không còn tái dùng được độc lập |
 | `BR-MPA-07` | Hai `apps/*` **NEVER** phụ thuộc thẳng vào nhau — chia sẻ luôn qua `packages/*` | `apps/admin` gọi thẳng code của `apps/web` là dấu hiệu thiếu một package |
 | `BR-MPA-08` | Cấm parent-relative (`../`) module specifier, cấm relative import xuyên package, bắt buộc dùng đúng alias token canonical của từng cây (`~` cho app, `#server` cho web nitro, `#src`/`#tests`/`#scripts` cho `packages/*`) | Import tương đối sâu làm vỡ liên kết khi di chuyển file và che giấu cấu trúc module |
+| `BR-MPA-09` | Barrel mà code client (`apps/*/app/**`) import **NEVER** được với tới `node:` builtin hay package chỉ chạy máy chủ, kể cả **gián tiếp**. Package nào vừa phục vụ máy chủ vừa phục vụ trình duyệt phải mở entry thứ hai `./client` chỉ chứa tập con an toàn | Vite **không tree-shake ở chế độ dev**: một trang Vue import barrel là kéo cả cụm máy chủ vào bundle trình duyệt. Đo 2026-08-29 trên `@mindkid/shared`: 11/56 module chạm `node:fs/path/zlib/buffer/crypto` hoặc `@mindkid/config`, `@mindkid/cache`, `@mindkid/auth`, `@mindkid/moderation`; `apps/web` chết lúc khởi tạo (`does not provide an export named 'randomBytes'`) và bản build ship nguyên native addon argon2 xuống trình duyệt |
+| `BR-MPA-10` | Native addon (CommonJS + `node-gyp-build`, ví dụ `argon2`) bắt buộc khai external trong `nitro.externals.external` của app nào có nó trong cây phụ thuộc | Nó tới qua workspace package nên Nitro inline mặc định; thân CJS giữ nguyên `__dirname` và server build ESM chết ngay lúc khởi động: `__dirname is not defined in ES module scope` |
 
 ## 7. Data
 
@@ -151,7 +153,7 @@ Không sở hữu route. Ràng buộc áp lên **bề mặt export của mọi p
 
 | Ràng buộc | |
 |---|---|
-| Export | Chỉ qua `src/index.ts`, không import path sâu (`@mindkid/cache/internal/*`) từ ngoài package |
+| Export | Chỉ qua bề mặt **được khai trong `exports`**: `.` (`src/index.ts`) và — chỉ khi `BR-MPA-09` bắt buộc — `./client` (`src/client.ts`). Cấm import path sâu vào nội bộ (`@mindkid/cache/internal/*`, `@mindkid/auth/errors`) từ ngoài package |
 | Naming | Hàm/type theo domain dự án (tiếng Anh, `camelCase`/`PascalCase`) — không theo tên API thư viện nền |
 | Side effect lúc import | Không kết nối mạng khi module được import — khởi tạo lazy trong hàm gọi đầu tiên |
 | Import specifier | Không dùng `../` leo tầng; dùng alias token canonical của từng cây (`~` cho app, `#server` cho web nitro, `#src`/`#tests`/`#scripts` cho package, `@mindkid/*` cho cross-package) |
@@ -203,6 +205,28 @@ Scenario: BR-MPA-04 — module cấu hình thuần không bị ép bọc driver
   When rà soát packages/*
   Then không có package nào chỉ chứa lại cấu hình @nuxtjs/seo không có logic gì thêm
 
+Scenario: BR-MPA-09 — bundle trình duyệt không chứa code máy chủ
+  When build production apps/web rồi quét mọi chunk trong .output/public/_nuxt
+  Then không chunk nào chứa "node-gyp-build", "__dirname", hay thân CJS của argon2
+  And không chunk nào tham chiếu "node:fs", "node:crypto", hay "node:zlib"
+
+Scenario: BR-MPA-09 — ca âm, dev phải chết chứ không im lặng
+  Given một trang Vue import barrel "." của package có module chạm node: builtin
+  When mở trang đó bằng trình duyệt trên dev server
+  Then console có SyntaxError "__vite-browser-external"
+  And Cấm — NEVER coi "pnpm build" exit 0 là bằng chứng client sạch: Rollup tree-shake được node: builtin ở prod trong khi dev vẫn vỡ
+
+Scenario: BR-MPA-09 — entry ./client không rò ngược
+  When quét mọi "export * from" trong packages/*/src/client.ts
+  Then không module nào trong danh sách đó import node: builtin
+  And không module nào import @mindkid/config, @mindkid/cache, @mindkid/auth, @mindkid/db, @mindkid/queue, @mindkid/storage, @mindkid/notification, hay @mindkid/moderation
+  And phép kiểm chạy trên bao đóng bắc cầu, không chỉ import trực tiếp
+
+Scenario: BR-MPA-10 — server build khởi động được
+  When build apps/web rồi chạy node .output/server/index.mjs
+  Then tiến trình không ném ReferenceError "__dirname is not defined in ES module scope"
+  And GET / trả 200
+
 Scenario: BR-MPA-08 — không dùng relative import leo tầng và dùng đúng alias canonical
   When quét module specifier trong apps/ và packages/
   Then không file nào chứa parent-relative specifier "../"
@@ -216,6 +240,7 @@ Scenario: BR-MPA-08 — không dùng relative import leo tầng và dùng đúng
 **Always**
 - Tách package khi capability dùng ở ≥ 2 app.
 - Export interface theo domain dự án, giấu thư viện nền sau `src/index.ts`.
+- Đo bundle client bằng bản build **và** bằng console trình duyệt ở dev — hai chế độ hỏng khác nhau.
 - Chạy dependency-graph check trong cổng tự động mỗi PR.
 - Dùng alias canonical của từng cây thay cho `../`.
 
@@ -225,6 +250,8 @@ Scenario: BR-MPA-08 — không dùng relative import leo tầng và dùng đúng
 - Thêm package mới không nằm trong danh sách `../../SPEC.md` §8.
 
 **Never**
+- Để `apps/*/app/**` import barrel `.` của package có module chạm `node:` builtin — dùng `./client`.
+- Thêm entry `./client` cho package thuần dữ liệu chỉ để "cho gọn": entry thứ hai chỉ mở khi `BR-MPA-09` bắt buộc.
 - Import thư viện nền thẳng vào `apps/*` khi đã có driver cho nó.
 - Export type/instance của thư viện nền nguyên trạng ra ngoài package driver.
 - Để `packages/*` phụ thuộc vào `apps/*`, hoặc hai `apps/*` phụ thuộc thẳng vào nhau.
@@ -237,3 +264,4 @@ Scenario: BR-MPA-08 — không dùng relative import leo tầng và dùng đúng
 | ~~1~~ | ~~Dependency-graph check chạy bằng công cụ nào~~ **Đóng 2026-08-06 (`D-DI`)**: `dependency-cruiser ^18.1` — duy nhất hỗ trợ cấm thư viện ngoài cụ thể theo zone (`BR-MPA-01`), không chỉ graph nội bộ. Xem mục 7.1 của [`repo-bootstrap.md`](repo-bootstrap.md) | — | Đã đóng | D-DI |
 | ~~2~~ | ~~Tách `packages/auth-oauth`/`packages/auth-jwt`?~~ **Đóng 2026-08-09, sửa 2026-08-13 (`D-DJ`)**: giữ **một** `packages/auth` sở hữu opaque session/remember/challenge Redis adapter, CSRF và OAuth bridge. `nuxt-auth-utils` chỉ khai ở `apps/web`; admin static dùng API client. Không có first-party JWT, không direct dependency `jose`, không phát sinh package auth thứ hai | — | Đã đóng | D-DJ |
 | ~~3~~ | ~~Tách `packages/payment` và `packages/notification` ngay từ đầu hay inline~~ **Đóng 2026-08-06 (T9)**: **inline** tới khi `apps/admin` cần dùng lại. Tách sớm tạo package rỗng; inline trước rồi extract khi có 2 consumer | — | Đã đóng | D-X (T9) |
+| ~~4~~ | ~~§8 cho phép mấy cửa export mỗi package?~~ **Đóng 2026-08-29**: giữ `.` là cửa mặc định, mở thêm **đúng một** cửa `./client` và **chỉ khi** `BR-MPA-09` bắt buộc. Lý do: một cửa duy nhất ép trang Vue nuốt cả 11 module máy chủ trong barrel `@mindkid/shared` — `apps/web` chết lúc khởi tạo, bản build ship native addon argon2 xuống trình duyệt. Đo trước khi nới: phía máy chủ **146** import site, phía client **17**, nên đổi phía client rẻ hơn và không đụng ranh giới driver. `biome.jsonc` nới `noBarrelFile` cho `packages/*/src/client.ts` kèm lý do. Cấm — NEVER coi đây là giấy phép cho import path sâu vào internal | Bundle client của `apps/web` | Đã đóng | — |

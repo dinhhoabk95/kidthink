@@ -21,7 +21,11 @@
               :key="alt.code"
               :to="`/games/${alt.code}`"
             >
-              ➔ {{ alt.title }} ({{ alt.code }})
+              <UIcon
+                class="w-4 h-4 ml-1 inline-block"
+                name="i-lucide-arrow-right"
+              />{{ alt.title }}
+              ({{ alt.code }})
             </NuxtLink>
           </div>
         </div>
@@ -64,18 +68,30 @@
                 v-if="!game.locked"
                 :to="`/play/${game.code}`"
               >
-                Cho bé chơi ngay ➔
-              </NuxtLink>
+                Cho bé chơi ngay
+                <UIcon
+                  class="w-4 h-4 ml-1 inline-block"
+                  name="i-lucide-arrow-right"
+                /></NuxtLink
+              >
               <NuxtLink
                 class="btn-cta-login"
                 to="/login"
                 v-else-if="game.access_tier === 'login'"
               >
-                Đăng nhập để chơi ➔
-              </NuxtLink>
+                Đăng nhập để chơi
+                <UIcon
+                  class="w-4 h-4 ml-1 inline-block"
+                  name="i-lucide-arrow-right"
+                /></NuxtLink
+              >
               <NuxtLink class="btn-cta-upgrade" to="/#pricing" v-else>
-                Nâng cấp gói học ➔
-              </NuxtLink>
+                Nâng cấp gói học
+                <UIcon
+                  class="w-4 h-4 ml-1 inline-block"
+                  name="i-lucide-arrow-right"
+                /></NuxtLink
+              >
               <p class="cta-subtext">✓ Tự động lưu tiến độ vào hồ sơ của bé</p>
             </div>
           </div>
@@ -190,12 +206,18 @@
 </template>
 
 <script lang="ts" setup>
-  import { useHead, useSeoMeta } from "unhead";
   import { computed, ref } from "vue";
   import { useRoute } from "vue-router";
+  import { useHead, useSeoMeta } from "#imports";
   import CookieNoticeBanner from "~/components/cookie-notice-banner.vue";
   import PublicFooter from "~/components/public-footer.vue";
   import PublicNavbar from "~/components/public-navbar.vue";
+
+  // Trang này tự dựng chrome (PublicNavbar + <main id="main-content"> +
+  // PublicFooter). Không tắt layout thì `default.vue` dựng thêm một bộ nữa:
+  // navbar và footer hiện hai lần, và có hai phần tử cùng id="main-content"
+  // nên skip-link của app.vue nhảy sai chỗ (BR-A11-05).
+  definePageMeta({ layout: false });
 
   const route = useRoute();
   const code = computed(() => (route.params.code as string) || "GL-C1-001");

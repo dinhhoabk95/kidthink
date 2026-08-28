@@ -93,7 +93,7 @@ cmd_rollback() {
   reload_apps || log_error "Reload reported an error; continuing to the smoke gate."
 
   # Step 6 — a rollback is a release switch, so it is verified too (BR-RBK-06).
-  if ! run_smoke_check "${MK_HEALTH_URL}" 10 3; then
+  if ! run_release_smoke 10 3; then
     log_error "Smoke check failed after rolling back to ${target##*/}."
     log_error "The fault is not in the release: look at the database, the cache, or the network."
     notify critical "Rollback to ${target##*/} did not restore health. Manual intervention required."

@@ -1,4 +1,7 @@
-import { canPromptPwaInstall, type PwaInstallState } from "@mindkid/shared";
+import {
+  canPromptPwaInstall,
+  type PwaInstallState,
+} from "@mindkid/shared/client";
 import { computed, onMounted, ref } from "vue";
 
 const STORAGE_KEY = "mindkid_pwa_install_state";

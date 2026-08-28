@@ -197,12 +197,12 @@
 
         <!-- Premium Tier Card -->
         <div
-          class="flex flex-col bg-white dark:bg-surface-800 rounded-3xl border-4 border-cta dark:border-orange-500 p-6 sm:p-8 shadow-lg justify-between relative"
+          class="flex flex-col bg-white dark:bg-surface-800 rounded-3xl border-4 border-cta-600 dark:border-cta-500 p-6 sm:p-8 shadow-lg justify-between relative"
         >
           <div>
             <div class="mb-4">
               <span
-                class="inline-flex items-center px-3 py-1 rounded-xl text-sm font-semibold bg-orange-100 dark:bg-orange-950 text-cta dark:text-orange-300"
+                class="inline-flex items-center px-3 py-1 rounded-xl text-sm font-semibold bg-cta-100 dark:bg-cta-950 text-cta-600 dark:text-cta-300"
               >
                 Toàn diện nhất
               </span>
@@ -277,7 +277,7 @@
           </div>
 
           <NuxtLink
-            class="w-full inline-flex items-center justify-center px-6 py-3.5 border-[3px] border-cta bg-cta rounded-2xl font-heading font-bold text-white hover:bg-orange-600 transition min-h-11 shadow-sm"
+            class="w-full inline-flex items-center justify-center px-6 py-3.5 border-[3px] border-cta-600 bg-cta-600 rounded-2xl font-heading font-bold text-white hover:bg-cta-700 transition min-h-11 shadow-sm"
             :to="`/me/orders/create?package=${premiumPkg.code}`"
           >
             Chọn gói Cao cấp
@@ -337,7 +337,7 @@
 </template>
 
 <script lang="ts" setup>
-  import { PACKAGE_CATALOG } from "@mindkid/shared";
+  import { PACKAGE_CATALOG } from "@mindkid/shared/client";
   import { useHead, useSeoMeta } from "#imports";
 
   const standardPkg = PACKAGE_CATALOG["PKG-standard"] || {
@@ -366,9 +366,9 @@
   }
 
   useSeoMeta({
-    title: "Bảng giá gói học tập - TiniMath",
+    title: "Bảng giá gói học tập - MindKid",
     description:
-      "Bảng giá các gói học tập toán tư duy TiniMath cho trẻ 3-6 tuổi. Minh bạch, không tự động gia hạn, hỗ trợ dùng ngay.",
+      "Bảng giá các gói học tập toán tư duy MindKid cho trẻ 3-6 tuổi. Minh bạch, không tự động gia hạn, hỗ trợ dùng ngay.",
   });
 
   // Structured data Product + Offer (BR-PRC-08, D-JG)
@@ -379,7 +379,7 @@
         children: JSON.stringify({
           "@context": "https://schema.org",
           "@type": "Product",
-          name: "TiniMath - Nền tảng tư duy qua trò chơi",
+          name: "MindKid - Nền tảng tư duy qua trò chơi",
           description: "Thư viện tư duy qua trò chơi cho trẻ mầm non 3-6 tuổi",
           offers: [
             {

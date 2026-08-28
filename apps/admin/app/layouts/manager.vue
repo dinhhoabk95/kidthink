@@ -8,7 +8,7 @@
       <!-- Logo Brand -->
       <div class="p-6 border-b-2 border-surface-200 flex items-center gap-3">
         <div
-          class="w-10 h-10 rounded-2xl bg-indigo-600 flex items-center justify-center text-white font-bold text-lg font-heading shadow-md"
+          class="w-10 h-10 rounded-2xl bg-brand-600 flex items-center justify-center text-white font-bold text-lg font-heading shadow-md"
         >
           KM
         </div>
@@ -27,22 +27,29 @@
       <!-- Navigation Links -->
       <nav class="p-4 space-y-1.5 flex-1 overflow-y-auto">
         <NuxtLink
-          class="flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-bold font-heading transition-all duration-200 focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:outline-none"
+          class="flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-bold font-heading transition-all duration-200 focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:outline-none"
           v-for="item in visibleNavItems"
           :key="item.id"
           :class="[
             isActive(item.href)
-              ? 'bg-indigo-50 text-indigo-700 border-2 border-indigo-200'
+              ? 'bg-brand-50 text-brand-700 border-2 border-brand-200'
               : 'text-surface-600 hover:text-surface-900 hover:bg-surface-100 border-2 border-transparent',
           ]"
           :to="item.href"
         >
           <div class="flex items-center gap-3">
-            <span aria-hidden="true" class="text-base">{{ item.icon }}</span>
+            <UIcon
+              class="w-5 h-5 shrink-0 text-current"
+              v-if="item.icon.startsWith('i-')"
+              :name="item.icon"
+            />
+            <span aria-hidden="true" class="text-base" v-else
+              >{{ item.icon }}</span
+            >
             <span>{{ item.label }}</span>
           </div>
           <span
-            class="text-[10px] font-bold tracking-wider px-1.5 py-0.5 rounded-xl bg-indigo-100 text-indigo-800"
+            class="text-[10px] font-bold tracking-wider px-1.5 py-0.5 rounded-xl bg-brand-100 text-brand-800"
             v-if="item.badge"
           >
             {{ item.badge }}
@@ -84,7 +91,7 @@
           class="flex items-center gap-2 text-sm text-surface-500"
         >
           <NuxtLink
-            class="hover:text-surface-900 font-medium transition-colors focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:outline-none rounded-xl"
+            class="hover:text-surface-900 font-medium transition-colors focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:outline-none rounded-xl"
             to="/"
           >
             Trang chủ
@@ -110,15 +117,15 @@
             class="px-2.5 py-1 rounded-full text-xs font-bold font-heading"
             :class="[
               managerRole === 'super_admin'
-                ? 'bg-purple-100 text-purple-800 border border-purple-200'
-                : 'bg-blue-100 text-blue-800 border border-blue-200',
+                ? 'bg-brand-100 text-brand-800 border border-brand-200'
+                : 'bg-brand-100 text-brand-800 border border-brand-200',
             ]"
           >
             {{ roleLabel }}
           </span>
 
           <button
-            class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border-2 border-surface-200 hover:border-surface-300 bg-white hover:bg-surface-50 text-surface-700 text-xs font-bold font-heading transition-all duration-200 focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:outline-none"
+            class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border-2 border-surface-200 hover:border-surface-300 bg-white hover:bg-surface-50 text-surface-700 text-xs font-bold font-heading transition-all duration-200 focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:outline-none"
             type="button"
             @click="handleLogout"
           >

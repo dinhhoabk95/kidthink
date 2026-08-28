@@ -25,9 +25,14 @@ setTestEnv(
   "DATABASE_URL",
   "postgresql://postgres:postgres@localhost:5433/mindkid"
 );
+// Role `mindkid_app` chứ ❌ NEVER owner: ràng buộc INSERT-only
+// (`REVOKE UPDATE, DELETE ... FROM mindkid_app` trên `consent_logs`,
+// `audit_logs`, `content_review_log`) chỉ được ép ở role này. Trỏ về owner thì
+// mọi test đi qua `getAppDb()` đều là dương tính giả —
+// `docs/tasks/07-first-migration-plan.md` §262 đã cảnh báo đúng cái bẫy đó.
 setTestEnv(
   "DATABASE_URL_APP",
-  "postgresql://postgres:postgres@localhost:5433/mindkid"
+  "postgresql://mindkid_app:mindkid_app_password@localhost:5433/mindkid"
 );
 // Some suites call seed() to build their fixtures.
 setTestEnv("INITIAL_ADMIN_EMAIL", "admin@mindkid.test");

@@ -16,6 +16,18 @@ const SAMPLE_BY_KIND: Record<string, string> = {
   text: "value",
 };
 
+/**
+ * BR-ENV-13: mỗi biến `kind: url` khai giao thức riêng, nên một mẫu `https://`
+ * dùng chung sẽ làm hỏng chính những biến Postgres/Valkey mà rule này bảo vệ.
+ */
+function sampleValue(def: (typeof ENV_REGISTRY)[number]): string {
+  if (def.kind === "url") {
+    const protocol = def.urlProtocols?.[0] ?? "https:";
+    return `${protocol}//example.test/x`;
+  }
+  return SAMPLE_BY_KIND[def.kind] ?? "value";
+}
+
 /** A file that satisfies the contract for one app, minus anything named. */
 function envFor(
   app: AppType,
@@ -29,7 +41,7 @@ function envFor(
     if (omit.includes(def.name)) {
       continue;
     }
-    map.set(def.name, SAMPLE_BY_KIND[def.kind] ?? "value");
+    map.set(def.name, sampleValue(def));
   }
   return map;
 }
@@ -206,5 +218,57 @@ describe("requireEnv", () => {
     process.env[variableName] = "   ";
 
     expect(() => requireEnv(variableName)).toThrow(MissingEnvError);
+  });
+});
+
+describe("BR-ENV-13 — url phải khai và khớp giao thức", () => {
+  it("mọi mục kind url đều khai urlProtocols", () => {
+    const missing = ENV_REGISTRY.filter(
+      (def) => def.kind === "url" && !def.urlProtocols?.length
+    ).map((def) => def.name);
+
+    expect(missing).toEqual([]);
+  });
+
+  it("từ chối một địa chỉ https đặt vào biến chuỗi kết nối Postgres", () => {
+    const parsed = envFor("web");
+    parsed.set("DATABASE_URL_APP", "https://example.com/endpoint");
+
+    const result = validateEnvFile("web", parsed);
+
+    expect(result.valid).toBe(false);
+    expect(
+      result.errors.some((error) => error.varName === "DATABASE_URL_APP")
+    ).toBe(true);
+  });
+
+  it("nhận postgres: và postgresql: cho cùng biến đó", () => {
+    for (const value of [
+      "postgres://u:p@localhost:5433/mindkid",
+      "postgresql://u:p@localhost:5433/mindkid",
+    ]) {
+      const parsed = envFor("web");
+      parsed.set("DATABASE_URL_APP", value);
+
+      const result = validateEnvFile("web", parsed);
+
+      expect(
+        result.errors.filter((error) => error.varName === "DATABASE_URL_APP")
+      ).toEqual([]);
+    }
+  });
+
+  it("BR-ENV-08 — báo lỗi giao thức không in giá trị", () => {
+    const secretValue = "https://user:hunter2@example.com/endpoint";
+    const parsed = envFor("web");
+    parsed.set("DATABASE_URL_APP", secretValue);
+
+    const result = validateEnvFile("web", parsed);
+    const issue = result.errors.find(
+      (error) => error.varName === "DATABASE_URL_APP"
+    )?.issue;
+
+    expect(issue).toBeDefined();
+    expect(issue).not.toContain("hunter2");
   });
 });

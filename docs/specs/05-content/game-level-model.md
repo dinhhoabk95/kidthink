@@ -24,6 +24,10 @@ về mặt sư phạm dù đúng schema.
 
 Đây là tài liệu người soạn nội dung đọc, không phải dev.
 
+> **Ranh giới với chiều sâu nội dung.** File này sở hữu ràng buộc biên tập của **một** level.
+> Số lượng level mỗi engine và độ trải của chúng trên band tuổi, trục tư duy, chủ đề thuộc
+> [`engine-content-depth.md`](engine-content-depth.md) — thêm 2026-08-29, Task #113.
+
 ## 2. Actors
 
 Người soạn nội dung · người review · AI agent IDE lúc soạn seeder (dùng làm ràng buộc).

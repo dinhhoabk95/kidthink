@@ -9,12 +9,12 @@ import {
   pgTable,
   smallint,
   text,
-  timestamp,
   unique,
   uniqueIndex,
   uuid,
   varchar,
 } from "drizzle-orm/pg-core";
+import { timestamps } from "./columns.ts";
 import { users } from "./identity.ts";
 
 export const lessonPlanItemTypeEnum = pgEnum("lesson_plan_item_type", [
@@ -39,12 +39,7 @@ export const lessonPlans = pgTable(
     notes: text("notes"),
     sourceLessonCode: varchar("source_lesson_code", { length: 50 }),
     version: integer("version").notNull().default(1),
-    createdAt: timestamp("created_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
-    updatedAt: timestamp("updated_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
+    ...timestamps(),
   },
   (table) => [
     uniqueIndex("idx_lesson_plans_uuid").on(table.uuid),
@@ -77,12 +72,7 @@ export const lessonPlanItems = pgTable(
     sourceContentVersion: integer("source_content_version"),
     customInstruction: text("custom_instruction"),
     snapshot: jsonb("snapshot").notNull(),
-    createdAt: timestamp("created_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
-    updatedAt: timestamp("updated_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
+    ...timestamps(),
   },
   (table) => [
     unique("lesson_plan_items_plan_pos_unique").on(

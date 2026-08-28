@@ -10,6 +10,7 @@ owns:
   - Ranh giới giữa AI agent IDE hỗ trợ soạn và người phát hành
   - Vị trí, hình dạng, và quy ước đặt tên seeder nội dung
   - Tám cổng kiểm chạy trong cổng tự động trước khi merge
+  - Yêu cầu ca âm cho từng cổng
   - Đường ghi thẳng `published` từ seed và ràng buộc idempotency
   - `content_seed_batches` và cột provenance của nội dung nền
 depends_on:
@@ -145,6 +146,8 @@ deploy một lô nội dung đã merge.
 | `BR-CSA-12` (TS có kiểu) | `content_pack` viết bằng **TS có kiểu**, kiểu lấy từ `content_contract` của template. Cấm JSON trần | Sai schema bắt lúc `tsc` rẻ hơn bắt lúc cổng tự động, rẻ hơn nhiều bắt lúc trẻ đang chơi |
 | `BR-CSA-13` (chỉ emoji registry) | Emoji **chỉ** lấy từ `emoji_registry`. Cấm — NEVER emoji ngoài registry | [`emoji-registry.md`](emoji-registry.md) `BR-EMJ-*` — ref không resolve được là ô trống trên màn hình trẻ |
 | `BR-CSA-14` (provenance) | Mọi hàng seed mang `seed_batch_id` + `origin` + `authored_in = 'repo_seed'` | Khi phát hiện một lô sai, phải truy được lô nào cùng PR |
+| `BR-CSA-15` (mỗi cổng có ca âm) | Mỗi cổng ở §7.3 phải có **ít nhất một** test dựng nội dung vi phạm đúng cổng đó và khẳng định cổng đỏ | Không có ca âm thì một cổng chỉ kiểm `typeof` vẫn in "đạt" mãi mãi. Đo 2026-08-29: cổng 1 báo 552 đạt trong khi phép kiểm thật cho 162 trượt — xem §7.3a |
+| `BR-CSA-16` (cổng 1 nạp contract thật) | Cổng 1 **phải** nạp `content_contract` và `difficulty_contract` từ registry engine và gọi `parse`, kể cả `refine`. Cấm — NEVER thay bằng kiểm kiểu nông | `BR-GTC-02` parse lại ở server; nếu cổng seed không parse thì lỗi chỉ lộ ra lúc trẻ mở màn chơi, là chỗ đắt nhất để phát hiện |
 
 ## 7. Data
 
@@ -198,19 +201,37 @@ lỗi runtime. Đây là lý do seeder là TS chứ không phải JSON hay YAML.
 
 Chạy tuần tự. Trượt cổng nào thì dừng ở đó, in `file:line` và **PR không merge được**.
 
-| # | Cổng | Kiểm gì |
-|---|---|---|
-| 0 | **Định danh** | `code` duy nhất toàn corpus seeder · đúng format [`id-conventions.md`](../00-foundation/id-conventions.md) · cấm đụng `code` đã seed ở batch trước với `content_version` khác |
-| 1 | **Schema** | `content_pack` parse được bằng `content_contract` thật (Zod, còn đủ `refine`) · `difficulty_params` parse được bằng `difficulty_contract` |
-| 2 | **Cấu trúc** | ≥1 đáp án đúng · cấm prompt rỗng · số item trong `limits` của template · số distractor hợp lệ · cấm đáp án trùng nhau |
-| 3 | **Asset** | Mọi emoji ref tồn tại trong `emoji_registry` · mọi `image_path` resolve được |
-| 4 | **Ngôn ngữ** | Câu ≤ 12 từ · từ vựng trong tầm 3–6 tuổi · cấm từ cấm §7.5 · cấm lỗi dấu |
-| 5 | **Sư phạm** | `skill_codes` · `learning_objective_codes` là FK có thật · `age_min ≤ age_max ∈ [3,6]` · `difficulty ∈ [1,5]` · khớp band tuổi · mechanic hợp band (`BR-GTC-05`) |
-| 6 | **Trùng lặp** | Cấm gần trùng bản đã `published` — chuẩn hoá `content_pack` rồi so |
-| 7 | **An toàn** | Cấm bạo lực, đáng sợ, phân biệt, không hợp tuổi · cấm thương hiệu, cấm nhân vật có bản quyền. Cổng này **không** thay thế mắt người ở bước 6 §4 |
+| # | Cổng | Kiểm gì | Thi công |
+|---|---|---|---|
+| 0 | **Định danh** | `code` duy nhất toàn corpus seeder · đúng format [`id-conventions.md`](../00-foundation/id-conventions.md) · cấm đụng `code` đã seed ở batch trước với `content_version` khác | Đủ |
+| 1 | **Schema** | `content_pack` parse được bằng `content_contract` thật (Zod, còn đủ `refine`) · `difficulty_params` parse được bằng `difficulty_contract` | **Báo cáo + bậc thang nợ (Task #117)** — xem mục 7.3a |
+| 2 | **Cấu trúc** | ≥1 đáp án đúng · cấm prompt rỗng · số item trong `limits` của template · số distractor hợp lệ · cấm đáp án trùng nhau | Một phần |
+| 3 | **Asset** | Mọi emoji ref tồn tại trong `emoji_registry` · mọi `image_path` resolve được | Đủ |
+| 4 | **Ngôn ngữ** | Câu ≤ 12 từ · từ vựng trong tầm 3–6 tuổi · cấm từ cấm §7.5 · cấm lỗi dấu | Một phần |
+| 5 | **Sư phạm** | `skill_codes` · `learning_objective_codes` là FK có thật · `age_min ≤ age_max ∈ [3,6]` · `difficulty ∈ [1,5]` · khớp band tuổi · mechanic hợp band (`BR-GTC-05`) | **Đủ (Task #117)** — xem mục 7.3a |
+| 6 | **Trùng lặp** | Cấm gần trùng bản đã `published` — chuẩn hoá `content_pack` rồi so | Một phần |
+| 7 | **An toàn** | Cấm bạo lực, đáng sợ, phân biệt, không hợp tuổi · cấm thương hiệu, cấm nhân vật có bản quyền. Cổng này **không** thay thế mắt người ở bước 6 §4 | Một phần |
 
 Cổng 0–3 và 5 là **xác định**. Cổng 4, 6, 7 là **heuristic** — chúng lọc bớt, không kết
 luận. Đó là lý do bước review của người vẫn bắt buộc.
+
+### 7.3a Đóng xanh giả Cổng 1 và Cổng 5 — thi công 2026-08-29 (Task #117)
+
+Đo và khắc phục trên corpus 552 hàng seed (gồm 228 game level):
+
+| Phép kiểm | Cổng cũ | Cổng thật (Task #117) | Trạng thái xử lý |
+|---|---|---|---|
+| 8 cổng ca âm | Không có | **12/12 ca âm đỏ thật** (`eight-gates.test.ts`) | Đóng |
+| Cổng 1 — `content_pack` parse bằng `content_contract` | không kiểm (xanh giả) | **162 trên 228 level trượt** | Báo cáo + bậc thang nợ, giao sửa ở 27 task engine (#130–#156) |
+| Cổng 1 — `difficulty_params` parse bằng `difficulty_contract` | không kiểm (xanh giả) | **170 trên 228 level trượt** | Báo cáo + bậc thang nợ, giao sửa ở 27 task engine (#130–#156) |
+| Cổng 5 — bỏ `SLUG_REGEX`, từ vựng đóng | qua mọi slug | **0 trượt trên corpus hiện tại** (đã khớp 4 trục từ vựng) | Đóng |
+| Cổng 5 — FK taxonomy (`skill_codes`, `learning_objective_codes`) | không kiểm | **Kiểm tra định dạng & FK taxonomy** | Đóng |
+| Cổng 5 — `difficulty ∈ [1, 5]` & band engine | không kiểm | **Kiểm tra difficulty + cảnh báo band engine** | Đóng |
+
+Task #117 đã triển khai:
+- Tám cổng đều có test ca âm độc lập trong `packages/db/tests/gates/eight-gates.test.ts`.
+- Cổng 1 nạp `content_contract` và `difficulty_contract` thật từ `game-engine/templates`, gom lỗi chi tiết theo path trường Zod, và chạy cơ chế bậc thang không thoái lui (`packages/db/tests/gates/gate-ladder.test.ts`).
+- Cổng 5 đổi tên `"Sư phạm"`, xoá `SLUG_REGEX`, khoá bộ từ vựng đóng 4 trục (`what`, `thinking`, `mechanic`, `theme`), kiểm tra taxonomy FK codes và range difficulty.
 
 ### 7.4 `content_seed_batches` và cột provenance
 
@@ -346,6 +367,27 @@ Scenario: BR-CSA-08 — seeder không tạo được skill
   Given một seeder cố khai một skill mới
   When chạy pnpm --filter @mindkid/db seed:check
   Then cổng 5 fail với thông báo taxonomy là Lớp 1
+
+Scenario: BR-CSA-16 — cổng 1 bắt content_pack sai hình dạng
+  Given một seeder có content_pack thiếu trường prompt
+  When chạy 8 cổng
+  Then cổng 1 trượt
+  And thông báo nêu trường thiếu và mã level
+
+Scenario: BR-CSA-16 — cổng 1 bắt difficulty_params sai hình dạng
+  Given một seeder có difficulty_params thiếu hint_after_ms
+  When chạy 8 cổng
+  Then cổng 1 trượt
+
+Scenario: BR-CSA-15 — mỗi cổng có ca âm
+  When đọc bộ test của 8 cổng
+  Then mỗi cổng từ 0 tới 7 có ít nhất một test dựng vi phạm và khẳng định cổng đỏ
+
+Scenario: cổng 5 bắt band level ngoài band engine
+  Given một level GT-006 khai age_min là 4
+  And GT-006 khai age_min là 5
+  When chạy 8 cổng
+  Then cổng 5 trượt với lý do BR-GTC-05
 
 Scenario: BR-CSA-11 — lệch giữa repo và DB bị bắt
   Given một hàng trong DB bị sửa tay khác với seeder

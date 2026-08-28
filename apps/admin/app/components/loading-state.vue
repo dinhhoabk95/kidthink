@@ -6,7 +6,7 @@
   >
     <div
       aria-hidden="true"
-      class="w-8 h-8 border-3 border-indigo-600 border-t-transparent rounded-full animate-spin"
+      class="w-8 h-8 border-3 border-brand-600 border-t-transparent rounded-full animate-spin"
     />
     <p class="text-sm font-medium font-heading">
       {{ message || "Đang tải dữ liệu..." }}

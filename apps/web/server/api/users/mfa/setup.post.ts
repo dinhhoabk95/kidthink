@@ -60,7 +60,7 @@ export default defineEventHandler(async (event) => {
     });
   }
 
-  const otpauthUrl = generateTotpUri(secret, user.email, "TiniMath");
+  const otpauthUrl = generateTotpUri(secret, user.email, "MindKid");
 
   return {
     secret,

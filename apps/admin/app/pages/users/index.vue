@@ -21,32 +21,32 @@
 
       <!-- Feedback Alerts -->
       <div
-        class="p-4 rounded-2xl bg-rose-50 border-2 border-rose-200 text-sm text-rose-900 flex items-start gap-3"
+        class="p-4 rounded-2xl bg-danger-50 border-2 border-danger-200 text-sm text-danger-900 flex items-start gap-3"
         v-if="errorMessage"
       >
         <span aria-hidden="true" class="text-lg">⚠️</span>
         <div class="flex-1 font-medium">{{ errorMessage }}</div>
         <button
-          class="text-rose-600 hover:text-rose-800 font-bold"
+          class="text-danger-600 hover:text-danger-800 font-bold"
           type="button"
           @click="dismissError"
         >
-          ✕
+          <UIcon class="w-5 h-5" name="i-lucide-x" />
         </button>
       </div>
 
       <div
-        class="p-4 rounded-2xl bg-emerald-50 border-2 border-emerald-200 text-sm text-emerald-900 flex items-start gap-3"
+        class="p-4 rounded-2xl bg-success-50 border-2 border-success-200 text-sm text-success-900 flex items-start gap-3"
         v-if="successMessage"
       >
         <span aria-hidden="true" class="text-lg">✅</span>
         <div class="flex-1 font-medium">{{ successMessage }}</div>
         <button
-          class="text-emerald-600 hover:text-emerald-800 font-bold"
+          class="text-success-600 hover:text-success-800 font-bold"
           type="button"
           @click="dismissSuccess"
         >
-          ✕
+          <UIcon class="w-5 h-5" name="i-lucide-x" />
         </button>
       </div>
 
@@ -67,7 +67,7 @@
               Tìm kiếm (Email hoặc Tên hiển thị)
             </label>
             <input
-              class="w-full px-3.5 py-2.5 rounded-2xl border-[3px] border-surface-200 focus:border-indigo-500 focus:outline-none text-sm"
+              class="w-full px-3.5 py-2.5 rounded-2xl border-[3px] border-surface-200 focus:border-brand-500 focus:outline-none text-sm"
               id="filter-q"
               placeholder="Nhập email hoặc tên người dùng..."
               type="text"
@@ -84,7 +84,7 @@
               Trạng thái
             </label>
             <select
-              class="w-full px-3.5 py-2.5 rounded-2xl border-[3px] border-surface-200 focus:border-indigo-500 focus:outline-none text-sm bg-white"
+              class="w-full px-3.5 py-2.5 rounded-2xl border-[3px] border-surface-200 focus:border-brand-500 focus:outline-none text-sm bg-white"
               id="filter-status"
               v-model="filterForm.status"
             >
@@ -105,7 +105,7 @@
               Hồ sơ trẻ
             </label>
             <select
-              class="w-full px-3.5 py-2.5 rounded-2xl border-[3px] border-surface-200 focus:border-indigo-500 focus:outline-none text-sm bg-white"
+              class="w-full px-3.5 py-2.5 rounded-2xl border-[3px] border-surface-200 focus:border-brand-500 focus:outline-none text-sm bg-white"
               id="filter-has-children"
               v-model="filterForm.has_children"
             >
@@ -124,7 +124,7 @@
               Gói kích hoạt
             </label>
             <input
-              class="w-full px-3.5 py-2.5 rounded-2xl border-[3px] border-surface-200 focus:border-indigo-500 focus:outline-none text-sm"
+              class="w-full px-3.5 py-2.5 rounded-2xl border-[3px] border-surface-200 focus:border-brand-500 focus:outline-none text-sm"
               id="filter-pkg"
               placeholder="Mã gói (VD: content.standard)"
               type="text"
@@ -141,7 +141,7 @@
               Sắp xếp
             </label>
             <select
-              class="w-full px-3.5 py-2.5 rounded-2xl border-[3px] border-surface-200 focus:border-indigo-500 focus:outline-none text-sm bg-white"
+              class="w-full px-3.5 py-2.5 rounded-2xl border-[3px] border-surface-200 focus:border-brand-500 focus:outline-none text-sm bg-white"
               id="filter-sort"
               v-model="filterForm.sort"
             >
@@ -153,7 +153,7 @@
           <!-- Buttons -->
           <div class="sm:col-span-2 flex items-end gap-3 pt-1">
             <button
-              class="min-h-11 px-5 py-2 rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold font-heading transition-colors shadow-sm focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:outline-none"
+              class="min-h-11 px-5 py-2 rounded-2xl bg-brand-600 hover:bg-brand-700 text-white text-sm font-bold font-heading transition-colors shadow-sm focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:outline-none"
               type="submit"
             >
               Áp dụng lọc
@@ -201,7 +201,7 @@
                 <!-- Email & Display Name -->
                 <td class="px-5 py-4">
                   <NuxtLink
-                    class="font-bold text-indigo-700 hover:underline block"
+                    class="font-bold text-brand-700 hover:underline block"
                     :to="`/users/${u.uuid}`"
                   >
                     {{ u.email }}
@@ -253,7 +253,7 @@
 
                   <!-- Suspend Button -->
                   <button
-                    class="inline-flex items-center px-3 py-1.5 rounded-xl border-2 border-amber-300 bg-amber-50 hover:bg-amber-100 text-amber-800 text-xs font-bold font-heading transition-colors"
+                    class="inline-flex items-center px-3 py-1.5 rounded-xl border-2 border-warning-300 bg-warning-50 hover:bg-warning-100 text-warning-800 text-xs font-bold font-heading transition-colors"
                     type="button"
                     v-if="u.status === 'active'"
                     @click="() => openActionModal(u, 'suspend')"
@@ -263,7 +263,7 @@
 
                   <!-- Reactivate Button -->
                   <button
-                    class="inline-flex items-center px-3 py-1.5 rounded-xl border-2 border-emerald-300 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 text-xs font-bold font-heading transition-colors"
+                    class="inline-flex items-center px-3 py-1.5 rounded-xl border-2 border-success-300 bg-success-50 hover:bg-success-100 text-success-800 text-xs font-bold font-heading transition-colors"
                     type="button"
                     v-if="u.status === 'suspended'"
                     @click="() => openActionModal(u, 'reactivate')"
@@ -332,7 +332,7 @@
                 Lý do vận hành (bắt buộc tối thiểu 10 ký tự) *
               </label>
               <textarea
-                class="w-full p-3 rounded-2xl border-[3px] border-surface-200 focus:border-indigo-500 focus:outline-none text-sm"
+                class="w-full p-3 rounded-2xl border-[3px] border-surface-200 focus:border-brand-500 focus:outline-none text-sm"
                 id="action-reason"
                 maxlength="500"
                 minlength="10"
@@ -360,8 +360,8 @@
                 type="submit"
                 :class="[
                   actionModal.type === 'suspend'
-                    ? 'bg-amber-600 hover:bg-amber-700'
-                    : 'bg-emerald-600 hover:bg-emerald-700',
+                    ? 'bg-warning-600 hover:bg-warning-700'
+                    : 'bg-success-600 hover:bg-success-700',
                 ]"
                 :disabled="!isReasonValid || submitting"
               >
@@ -466,13 +466,13 @@
   function getStatusBadgeClass(status: string): string {
     switch (status) {
       case "active":
-        return "bg-emerald-100 text-emerald-800 border border-emerald-200";
+        return "bg-success-100 text-success-800 border border-success-200";
       case "suspended":
-        return "bg-amber-100 text-amber-800 border border-amber-200";
+        return "bg-warning-100 text-warning-800 border border-warning-200";
       case "deleted":
-        return "bg-slate-100 text-slate-700 border border-slate-200";
+        return "bg-surface-100 text-surface-700 border border-surface-200";
       case "pending_verification":
-        return "bg-yellow-100 text-yellow-800 border border-yellow-200";
+        return "bg-warning-100 text-warning-800 border border-warning-200";
       default:
         return "bg-surface-100 text-surface-800";
     }

@@ -1,7 +1,8 @@
-import { activities, getOwnerDb, lessonActivities, lessons } from "@mindkid/db";
+import { getOwnerDb, lessonActivities, lessons } from "@mindkid/db";
 import { and, desc, eq } from "drizzle-orm";
 import { createError, defineEventHandler, getRouterParam } from "h3";
 import { requireManagerSession } from "#server/utils/admin-auth-runtime";
+import { loadLatestActivitiesByEntityId } from "#server/utils/lesson-activities";
 
 const SPLIT_MATERIALS_REGEX = /[\n,;•\-*]/;
 
@@ -73,43 +74,29 @@ export default defineEventHandler(async (event) => {
     materialsSet.add(m);
   }
 
-  const activitiesView = await Promise.all(
-    attached.map(async (item) => {
-      const [act] = await db
-        .select({
-          id: activities.id,
-          entityId: activities.entityId,
-          code: activities.code,
-          contentVersion: activities.contentVersion,
-          kind: activities.kind,
-          title: activities.title,
-          instruction: activities.instruction,
-          materials: activities.materials,
-          estimatedMinutes: activities.estimatedMinutes,
-          accessTier: activities.accessTier,
-          status: activities.status,
-        })
-        .from(activities)
-        .where(eq(activities.entityId, item.activityId))
-        .orderBy(desc(activities.contentVersion))
-        .limit(1);
-
-      if (act) {
-        totalActivityMinutes += act.estimatedMinutes || 0;
-        for (const m of extractMaterialList(act.materials)) {
-          materialsSet.add(m);
-        }
-      }
-
-      return {
-        position: item.position,
-        activity_id: item.activityId,
-        is_required: item.isRequired,
-        is_offscreen: act ? act.kind !== "digital_game" : true,
-        activity: act || null,
-      };
-    })
+  // Một query cho cả tập, thay vì một query mỗi activity (pool là max: 1).
+  const latestActivities = await loadLatestActivitiesByEntityId(
+    attached.map((item) => item.activityId)
   );
+
+  const activitiesView = attached.map((item) => {
+    const act = latestActivities.get(item.activityId) ?? null;
+
+    if (act) {
+      totalActivityMinutes += act.estimatedMinutes || 0;
+      for (const m of extractMaterialList(act.materials)) {
+        materialsSet.add(m);
+      }
+    }
+
+    return {
+      position: item.position,
+      activity_id: item.activityId,
+      is_required: item.isRequired,
+      is_offscreen: act ? act.kind !== "digital_game" : true,
+      activity: act,
+    };
+  });
 
   const durationDiff = Math.abs(totalActivityMinutes - lesson.estimatedMinutes);
   let durationWarning: string | null = null;

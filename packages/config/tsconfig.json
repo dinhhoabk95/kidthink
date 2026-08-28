@@ -1,0 +1,13 @@
+{
+  // Toàn bộ flag compiler sống ở `@mindkid/config/tsconfig.base.json` —
+  // ❌ NEVER khai lại flag ở đây. File này chỉ nói **những file nào** thuộc
+  // package, vì `include`/`exclude` của tsconfig cha luôn được TypeScript giải
+  // theo thư mục của file cha, nên chúng không thể dùng chung.
+  // Package sở hữu chính file base nên trỏ tương đối: nó không tự khai
+  // dependency vào chính mình, `@mindkid/config/...` không resolve được ở đây.
+  "extends": "./tsconfig.base.json",
+  "include": ["src/**/*.ts", "tests/**/*.ts", "scripts/**/*.ts", "*.ts"],
+  // Fixture của cổng là mẫu văn bản cho cổng quét, cố ý sai kiểu — xem
+  // AGENTS.md §"Cổng contract là test vitest".
+  "exclude": ["tests/**/fixtures/**"]
+}

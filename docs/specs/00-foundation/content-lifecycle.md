@@ -9,7 +9,7 @@ reviewed: 2026-08-07
 owns:
   - Enum trạng thái nội dung và bảng chuyển trạng thái
   - Quy tắc ai được chuyển trạng thái nào
-  - Ngữ nghĩa ghi nhận content_review_log (❌ không định nghĩa cột — D-AC, xem
+  - Ngữ nghĩa ghi nhận content_review_log (không định nghĩa cột — D-AC, xem
     schema-identity-billing.md §7.10a)
 depends_on:
   - GLOSSARY

@@ -1,11 +1,11 @@
-import { requireEnv } from "@mindkid/config";
+import { requireValkeyUrl } from "@mindkid/config";
 import { Redis } from "ioredis";
 
 let client: Redis | undefined;
 
 export function getClient(): Redis {
   if (!client) {
-    client = new Redis(requireEnv("VALKEY_URL"), {
+    client = new Redis(requireValkeyUrl(), {
       connectTimeout: 2000,
       commandTimeout: 2000,
       maxRetriesPerRequest: 1,

@@ -10,6 +10,7 @@ import {
   uuid,
   varchar,
 } from "drizzle-orm/pg-core";
+import { timestamps } from "./columns.ts";
 import { users } from "./identity.ts";
 
 export const childRelationshipEnum = pgEnum("child_relationship", [
@@ -44,12 +45,7 @@ export const childProfiles = pgTable(
       .default(60),
     status: childStatusEnum("status").notNull().default("active"),
     purgeAt: timestamp("purge_at", { withTimezone: true }),
-    createdAt: timestamp("created_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
-    updatedAt: timestamp("updated_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
+    ...timestamps(),
   },
   (table) => [
     check(

@@ -1,7 +1,7 @@
 import { appError } from "@mindkid/auth";
 import { consentLogs, consentRequirements, getOwnerDb } from "@mindkid/db";
 import type { ConsentType } from "@mindkid/shared";
-import { desc, eq } from "drizzle-orm";
+import { and, desc, eq } from "drizzle-orm";
 
 /**
  * Closed allow-list of exempt paths when terms or privacy requires re-consent (D-QX, BR-CSM-05).
@@ -46,8 +46,9 @@ export async function requireConsentActive(
     db
       .select()
       .from(consentLogs)
-      .where(eq(consentLogs.userId, userId))
-      .where(eq(consentLogs.consentType, type))
+      .where(
+        and(eq(consentLogs.userId, userId), eq(consentLogs.consentType, type))
+      )
       .orderBy(desc(consentLogs.createdAt), desc(consentLogs.id))
       .limit(1)
       .then((rows) => rows[0]),

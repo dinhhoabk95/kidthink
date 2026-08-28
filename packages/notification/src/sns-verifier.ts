@@ -1,4 +1,15 @@
+import { createVerify } from "node:crypto";
+
 const AWS_SNS_DOMAIN_REGEX = /^sns\.[a-z0-9-]+\.amazonaws\.com$/;
+
+/** AWS ký `SignatureVersion: "1"` bằng SHA1, `"2"` bằng SHA256. */
+const SIGNATURE_ALGORITHMS: Record<string, string> = {
+  "1": "RSA-SHA1",
+  "2": "RSA-SHA256",
+};
+
+const CERT_CACHE_TTL_MS = 60 * 60 * 1000;
+const certCache = new Map<string, { pem: string; fetchedAt: number }>();
 
 export interface SnsMessage {
   Type: string;
@@ -47,32 +58,104 @@ export function verifySnsCertUrl(certUrl: string): boolean {
   }
 }
 
-export function verifySnsSignature(msg: SnsMessage): boolean {
+/**
+ * Dựng chuỗi ký chuẩn của AWS SNS: các trường theo **đúng thứ tự bảng chữ cái**,
+ * mỗi trường là hai dòng `tên\ngiá trị\n`. Sai một dấu xuống dòng là chữ ký
+ * không khớp, nên đây là hàm riêng để test ký được đúng thứ nó verify.
+ */
+export function buildSnsStringToSign(msg: SnsMessage): string | null {
+  if (msg.Type === "Notification") {
+    let stringToSign = `Message\n${msg.Message}\nMessageId\n${msg.MessageId}\n`;
+    if (msg.Subject) {
+      stringToSign += `Subject\n${msg.Subject}\n`;
+    }
+    return `${stringToSign}Timestamp\n${msg.Timestamp}\nTopicArn\n${msg.TopicArn}\nType\n${msg.Type}\n`;
+  }
+
+  if (
+    msg.Type === "SubscriptionConfirmation" ||
+    msg.Type === "UnsubscribeConfirmation"
+  ) {
+    return `Message\n${msg.Message}\nMessageId\n${msg.MessageId}\nSubscribeURL\n${msg.SubscribeURL}\nTimestamp\n${msg.Timestamp}\nToken\n${msg.Token ?? ""}\nTopicArn\n${msg.TopicArn}\nType\n${msg.Type}\n`;
+  }
+
+  return null;
+}
+
+/**
+ * Khẳng định chữ ký RSA khớp chứng chỉ đã cho.
+ *
+ * Bản trước của hàm này dựng đúng chuỗi ký rồi **vứt đi**, trả
+ * `Boolean(stringToSign && msg.Signature)` — nghĩa là bất kỳ chuỗi khác rỗng
+ * nào ở trường `Signature` cũng qua. Cấm — NEVER để một hàm tên `verify*` chỉ
+ * kiểm trường có tồn tại.
+ */
+export function verifySnsSignatureWithCert(
+  msg: SnsMessage,
+  certPem: string
+): boolean {
   if (!verifySnsCertUrl(msg.SigningCertURL)) {
     return false;
   }
 
-  if (msg.SignatureVersion !== "1") {
+  const algorithm = SIGNATURE_ALGORITHMS[msg.SignatureVersion];
+  if (!(algorithm && msg.Signature && certPem)) {
     return false;
   }
 
-  let stringToSign = "";
-  if (msg.Type === "Notification") {
-    stringToSign = `Message\n${msg.Message}\nMessageId\n${msg.MessageId}\n`;
-    if (msg.Subject) {
-      stringToSign += `Subject\n${msg.Subject}\n`;
+  const stringToSign = buildSnsStringToSign(msg);
+  if (!stringToSign) {
+    return false;
+  }
+
+  try {
+    const verifier = createVerify(algorithm);
+    verifier.update(stringToSign, "utf8");
+    verifier.end();
+    return verifier.verify(certPem, msg.Signature, "base64");
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Tải chứng chỉ ký từ `SigningCertURL`, có nhớ đệm theo URL.
+ *
+ * Host đã được `verifySnsCertUrl` chặn về đúng `sns.<region>.amazonaws.com`
+ * trước khi gọi — nếu bỏ bước đó thì đây là một lỗ SSRF: kẻ tấn công tự chọn
+ * URL và máy chủ sẽ đi tải nó.
+ */
+export async function fetchSnsSigningCert(
+  certUrl: string
+): Promise<string | null> {
+  if (!verifySnsCertUrl(certUrl)) {
+    return null;
+  }
+
+  const cached = certCache.get(certUrl);
+  if (cached && Date.now() - cached.fetchedAt < CERT_CACHE_TTL_MS) {
+    return cached.pem;
+  }
+
+  try {
+    const response = await fetch(certUrl);
+    if (!response.ok) {
+      return null;
     }
-    stringToSign += `Timestamp\n${msg.Timestamp}\nTopicArn\n${msg.TopicArn}\nType\n${msg.Type}\n`;
-  } else if (
-    msg.Type === "SubscriptionConfirmation" ||
-    msg.Type === "UnsubscribeConfirmation"
-  ) {
-    stringToSign = `Message\n${msg.Message}\nMessageId\n${msg.MessageId}\nSubscribeURL\n${msg.SubscribeURL}\nTimestamp\n${msg.Timestamp}\nToken\n${msg.Token ?? ""}\nTopicArn\n${msg.TopicArn}\nType\n${msg.Type}\n`;
-  } else {
+    const pem = await response.text();
+    certCache.set(certUrl, { pem, fetchedAt: Date.now() });
+    return pem;
+  } catch {
+    return null;
+  }
+}
+
+export async function verifySnsSignature(msg: SnsMessage): Promise<boolean> {
+  const certPem = await fetchSnsSigningCert(msg.SigningCertURL);
+  if (!certPem) {
     return false;
   }
-
-  return Boolean(stringToSign && msg.Signature);
+  return verifySnsSignatureWithCert(msg, certPem);
 }
 
 export function parseAndVerifySesNotification(

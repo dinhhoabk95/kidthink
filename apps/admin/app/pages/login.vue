@@ -15,7 +15,7 @@
 
       <!-- Error Alert -->
       <div
-        class="p-3 rounded-2xl bg-red-50 border border-red-200 text-red-700 text-xs font-medium flex items-center gap-2"
+        class="p-3 rounded-2xl bg-danger-50 border border-danger-200 text-danger-700 text-xs font-medium flex items-center gap-2"
         role="alert"
         v-if="errorMessage"
       >
@@ -33,7 +33,7 @@
           </label>
           <input
             autocomplete="username"
-            class="w-full px-3.5 py-2.5 rounded-2xl border-2 border-surface-200 focus:border-indigo-600 focus:outline-none text-sm text-surface-900 transition-colors"
+            class="w-full px-3.5 py-2.5 rounded-2xl border-2 border-surface-200 focus:border-brand-600 focus:outline-none text-sm text-surface-900 transition-colors"
             id="admin-email"
             placeholder="admin@tinimath.vn"
             required
@@ -51,7 +51,7 @@
           </label>
           <input
             autocomplete="current-password"
-            class="w-full px-3.5 py-2.5 rounded-2xl border-2 border-surface-200 focus:border-indigo-600 focus:outline-none text-sm text-surface-900 transition-colors"
+            class="w-full px-3.5 py-2.5 rounded-2xl border-2 border-surface-200 focus:border-brand-600 focus:outline-none text-sm text-surface-900 transition-colors"
             id="admin-password"
             placeholder="••••••••••••"
             required
@@ -62,7 +62,7 @@
 
         <div class="flex items-center gap-2 pt-1">
           <input
-            class="w-4 h-4 rounded-xl border-2 border-surface-300 text-indigo-600 focus:ring-indigo-500"
+            class="w-4 h-4 rounded-xl border-2 border-surface-300 text-brand-600 focus:ring-brand-500"
             id="admin-remember"
             type="checkbox"
             v-model="rememberMe"
@@ -76,7 +76,7 @@
         </div>
 
         <button
-          class="w-full py-3 rounded-2xl bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-white font-bold font-heading text-sm transition-all duration-200 shadow-sm focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:outline-none"
+          class="w-full py-3 rounded-2xl bg-brand-600 hover:bg-brand-700 disabled:opacity-50 text-white font-bold font-heading text-sm transition-all duration-200 shadow-sm focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:outline-none"
           type="submit"
           :disabled="isLoading"
         >
@@ -99,7 +99,7 @@
 
       <!-- Error Alert -->
       <div
-        class="p-3 rounded-2xl bg-red-50 border border-red-200 text-red-700 text-xs font-medium flex items-center gap-2"
+        class="p-3 rounded-2xl bg-danger-50 border border-danger-200 text-danger-700 text-xs font-medium flex items-center gap-2"
         role="alert"
         v-if="errorMessage"
       >
@@ -120,7 +120,7 @@
             {{ otpauthUri }}
           </div>
           <button
-            class="text-[11px] font-bold text-indigo-600 hover:text-indigo-800 underline"
+            class="text-[11px] font-bold text-brand-600 hover:text-brand-800 underline"
             type="button"
             @click="copyOtpauthUri"
           >
@@ -138,7 +138,7 @@
             </label>
             <input
               autocomplete="one-time-code"
-              class="w-full px-3.5 py-2.5 rounded-2xl border-2 border-surface-200 focus:border-indigo-600 focus:outline-none text-center font-mono text-lg tracking-widest text-surface-900 transition-colors"
+              class="w-full px-3.5 py-2.5 rounded-2xl border-2 border-surface-200 focus:border-brand-600 focus:outline-none text-center font-mono text-lg tracking-widest text-surface-900 transition-colors"
               id="enroll-totp-code"
               inputmode="numeric"
               maxlength="6"
@@ -151,7 +151,7 @@
           </div>
 
           <button
-            class="w-full py-3 rounded-2xl bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-white font-bold font-heading text-sm transition-all duration-200 shadow-sm focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:outline-none"
+            class="w-full py-3 rounded-2xl bg-brand-600 hover:bg-brand-700 disabled:opacity-50 text-white font-bold font-heading text-sm transition-all duration-200 shadow-sm focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:outline-none"
             type="submit"
             :disabled="isLoading || totpCode.length !== 6"
           >
@@ -206,7 +206,7 @@
       <div class="space-y-4">
         <div class="flex items-start gap-2">
           <input
-            class="w-4 h-4 mt-0.5 rounded-xl border-2 border-surface-300 text-indigo-600 focus:ring-indigo-500"
+            class="w-4 h-4 mt-0.5 rounded-xl border-2 border-surface-300 text-brand-600 focus:ring-brand-500"
             id="confirm-saved-recovery"
             type="checkbox"
             v-model="hasSavedRecoveryCodes"
@@ -221,7 +221,7 @@
         </div>
 
         <button
-          class="w-full py-3 rounded-2xl bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-white font-bold font-heading text-sm transition-all duration-200 shadow-sm focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:outline-none"
+          class="w-full py-3 rounded-2xl bg-brand-600 hover:bg-brand-700 disabled:opacity-50 text-white font-bold font-heading text-sm transition-all duration-200 shadow-sm focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:outline-none"
           type="button"
           :disabled="!hasSavedRecoveryCodes"
           @click="finishEnrollmentAndRedirect"
@@ -244,7 +244,7 @@
 
       <!-- Error Alert -->
       <div
-        class="p-3 rounded-2xl bg-red-50 border border-red-200 text-red-700 text-xs font-medium flex items-center gap-2"
+        class="p-3 rounded-2xl bg-danger-50 border border-danger-200 text-danger-700 text-xs font-medium flex items-center gap-2"
         role="alert"
         v-if="errorMessage"
       >
@@ -262,7 +262,7 @@
           </label>
           <input
             autocomplete="one-time-code"
-            class="w-full px-3.5 py-2.5 rounded-2xl border-2 border-surface-200 focus:border-indigo-600 focus:outline-none text-center font-mono text-lg tracking-widest text-surface-900 transition-colors"
+            class="w-full px-3.5 py-2.5 rounded-2xl border-2 border-surface-200 focus:border-brand-600 focus:outline-none text-center font-mono text-lg tracking-widest text-surface-900 transition-colors"
             id="mfa-code"
             required
             type="text"
@@ -273,7 +273,7 @@
         </div>
 
         <button
-          class="w-full py-3 rounded-2xl bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-white font-bold font-heading text-sm transition-all duration-200 shadow-sm focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:outline-none"
+          class="w-full py-3 rounded-2xl bg-brand-600 hover:bg-brand-700 disabled:opacity-50 text-white font-bold font-heading text-sm transition-all duration-200 shadow-sm focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:outline-none"
           type="submit"
           :disabled="isLoading || !totpCode.trim()"
         >
@@ -283,7 +283,7 @@
 
         <div class="flex items-center justify-between pt-2 text-xs">
           <button
-            class="text-indigo-600 hover:text-indigo-800 font-medium"
+            class="text-brand-600 hover:text-brand-800 font-medium"
             type="button"
             @click="toggleRecoveryMode"
           >

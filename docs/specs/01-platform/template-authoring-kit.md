@@ -30,6 +30,10 @@ barrel, bảng chọn của studio, hai trang chơi, hai trang trò chơi tự t
 tự tạo ở gói shared, danh sách hiển thị công khai, và seed. Không nơi nào được sinh tự động.
 Ở sáu template thì chấp nhận được; ở bốn mươi thì mỗi lần thêm là một lần bỏ sót.
 
+> **Trạng thái 2026-08-29:** bộ sinh mã đã chạy, registry có 27 template và mọi điểm nối sinh
+> tự động. Chi phí thêm một engine không còn là trần kỹ thuật. Trần đã dời sang **nội dung**:
+> 21 trên 27 engine dừng ở 3 level mẫu — xem [`engine-content-depth.md`](../05-content/engine-content-depth.md).
+
 Mục tiêu: **một template mới bằng một file mô tả**. Mọi điểm nối còn lại do sinh mã tạo ra.
 Con số template khi đó là quyết định sản phẩm, không phải trần kỹ thuật.
 
@@ -61,9 +65,17 @@ Con số template khi đó là quyết định sản phẩm, không phải trầ
 5. Dev chạy `pnpm --filter @mindkid/game-engine gen:templates`.
 6. Bộ sinh mã quét thư mục, sinh lại toàn bộ điểm nối ở §7.2.
 7. Bộ test tuân thủ tự nhận template mới và chạy toàn bộ kiểm ở §7.4 cho nó.
-8. Seed vào `game_templates` qua PR, như `BR-GTC` bước 6.
+8. Dev viết phiếu spec `docs/specs/01-platform/engines/GT-007.md` theo mười mục ở mục 7.1 của
+   [`engine-spec-sheet.md`](engine-spec-sheet.md), rồi chạy
+   `pnpm --filter @mindkid/game-engine gen:engine-index`.
+9. Seed vào `game_templates` qua PR, như `BR-GTC` bước 6.
 
-Bước 2, 3, 4 viết tay. Bước 5, 6, 7 không viết dòng nào.
+Bước 2, 3, 4, 8 viết tay. Bước 5, 6, 7 không viết dòng nào.
+
+Bước 8 là chi phí **cố ý** giữ lại. Bốn mục trích của phiếu sinh được từ registry, nhưng sáu
+mục còn lại — mục tiêu sư phạm, ma trận seed, ca sai không bắt được bằng schema — là phán
+đoán, và sinh máy chúng cho ra hai mươi bảy bản sao vô nghĩa. Cổng đối chiếu chỉ kiểm phần
+trích; phần phán đoán do người review PR đọc.
 
 ## 5. Alternative flows
 
