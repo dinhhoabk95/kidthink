@@ -1,3 +1,4 @@
+import { CONTENT_THEMES } from "@mindkid/shared";
 import type { NodePgDatabase } from "drizzle-orm/node-postgres";
 import { contentTags } from "#src/schema/tagging";
 
@@ -46,19 +47,12 @@ export const SEED_CONTENT_TAGS: TagSeedItem[] = [
   { code: "tracing", axis: "mechanic", label: "Tô & Vẽ nét" },
   { code: "memory_flip", axis: "mechanic", label: "Lật hình ghi nhớ" },
 
-  // Theme Axis (12 tags)
-  { code: "farm", axis: "theme", label: "Nông trại" },
-  { code: "jungle", axis: "theme", label: "Rừng xanh" },
-  { code: "ocean", axis: "theme", label: "Đại dương" },
-  { code: "space", axis: "theme", label: "Vũ trụ" },
-  { code: "school", axis: "theme", label: "Trường học" },
-  { code: "home", axis: "theme", label: "Gia đình & Nhà bếp" },
-  { code: "park", axis: "theme", label: "Công viên & Sân chơi" },
-  { code: "vehicles", axis: "theme", label: "Phương tiện giao thông" },
-  { code: "food", axis: "theme", label: "Món ăn & Hoa quả" },
-  { code: "dino", axis: "theme", label: "Khủng long" },
-  { code: "fairytale", axis: "theme", label: "Cổ tích & Phép thuật" },
-  { code: "seasons", axis: "theme", label: "Thời tiết & Bốn mùa" },
+  // Theme Axis (14 canonical themes from @mindkid/shared - BR-CTR-12)
+  ...CONTENT_THEMES.map((t) => ({
+    code: t.code,
+    axis: "theme" as const,
+    label: t.label,
+  })),
 ];
 
 export async function seedContentTags(

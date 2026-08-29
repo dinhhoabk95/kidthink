@@ -142,7 +142,7 @@ export const SEED_MONT_A06: ContentSeed<unknown, unknown>[] = [
   {
     header: {
       code: "GL-C1-CMP-CONT-0118",
-      content_version: 1,
+      content_version: 2,
       template_code: "GT-003",
       title: "Chia đều bóng vào rổ",
       instruction: "Bé kéo 2 bóng vào rổ để hai bên bằng nhau!",
@@ -154,7 +154,7 @@ export const SEED_MONT_A06: ContentSeed<unknown, unknown>[] = [
       learning_objective_codes: ["LO-C1.CMP.03-01"],
       what_tags: ["category"],
       thinking_tags: ["compare", "sort"],
-      theme_tag: "park",
+      theme_tag: "nature",
       origin: "human",
       authored_in: "repo_seed",
     },

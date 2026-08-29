@@ -10,7 +10,7 @@ export const SEED_MONT_A15: ContentSeed<unknown, unknown>[] = [
   {
     header: {
       code: "GL-C1-PAT-SEQ-0121",
-      content_version: 1,
+      content_version: 2,
       template_code: "GT-006",
       title: "Quy luật lặp quả Táo - Chuối (AB)",
       instruction: "Bé chọn loại quả tiếp theo theo đúng quy luật nhé!",
@@ -22,7 +22,7 @@ export const SEED_MONT_A15: ContentSeed<unknown, unknown>[] = [
       learning_objective_codes: ["LO-C1.PAT.01-01"],
       what_tags: ["category"],
       thinking_tags: ["infer", "predict"],
-      theme_tag: "fruit",
+      theme_tag: "food",
       origin: "human",
       authored_in: "repo_seed",
     },
@@ -49,7 +49,7 @@ export const SEED_MONT_A15: ContentSeed<unknown, unknown>[] = [
   {
     header: {
       code: "GL-C1-PAT-SEQ-0122",
-      content_version: 1,
+      content_version: 2,
       template_code: "GT-006",
       title: "Quy luật chuỗi 3 phần tử (ABC)",
       instruction: "Bé hãy tìm hình tiếp theo của chuỗi quy luật ABC!",
@@ -61,7 +61,7 @@ export const SEED_MONT_A15: ContentSeed<unknown, unknown>[] = [
       learning_objective_codes: ["LO-C1.PAT.04-01"],
       what_tags: ["geometry"],
       thinking_tags: ["infer", "predict"],
-      theme_tag: "shape",
+      theme_tag: "art",
       origin: "human",
       authored_in: "repo_seed",
     },

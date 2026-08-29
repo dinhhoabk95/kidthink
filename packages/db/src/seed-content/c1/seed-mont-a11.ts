@@ -47,7 +47,7 @@ export const SEED_MONT_A11: ContentSeed<unknown, unknown>[] = [
   {
     header: {
       code: "GL-C1-CNT-CARD-0120",
-      content_version: 1,
+      content_version: 2,
       template_code: "GT-001",
       title: "Đếm nhảy cóc cách 2 số lẻ",
       instruction: "Số lẻ nào còn thiếu ở ô trống, bé hãy chọn!",
@@ -59,7 +59,7 @@ export const SEED_MONT_A11: ContentSeed<unknown, unknown>[] = [
       learning_objective_codes: ["LO-C1.CNT.05-01"],
       what_tags: ["number"],
       thinking_tags: ["count", "infer"],
-      theme_tag: "park",
+      theme_tag: "nature",
       origin: "human",
       authored_in: "repo_seed",
     },

@@ -112,15 +112,11 @@ Xem câu hỏi 3 ở mục 11.
 ### 7.2 Tag chủ đề (trục thứ tư) — chủ đã chuyển
 
 Trục `theme` **không còn thuộc file này**. Từ vựng, trần tập trung, và cổng cưỡng chế đã
-chuyển sang [`content-theme-registry.md`](../05-content/content-theme-registry.md) (Task #113,
+chuyển sang [`content-theme-registry.md`](../05-content/content-theme-registry.md) (Task #113/#119,
 2026-08-29). File này giữ nguyên ba trục sư phạm `what`, `thinking`, `mechanic`.
 
-Vì sao chuyển: mười hai giá trị từng nằm ở đây (`animal` `fruit` `vegetable` `vehicle` `shape`
-`family` `school` `weather` `festival` `body` `food` `nature`) là một danh sách không ai sở
-hữu và không cổng nào ép — `BR-TAG-02` (mỗi nội dung `published` có ≥1 tag mỗi trục) cố ý chỉ
-ép ba trục sư phạm. Đo ngày 2026-08-29: **100 trên 228** game level mang giá trị ngoài danh
-sách đó, và giá trị dùng nhiều thứ hai toàn corpus (`farm`, 42 level) nằm ngoài. Một danh
-sách không có chủ và không có cổng là một danh sách sẽ trôi.
+Nguồn sự thật duy nhất cho từ vựng chủ đề định nghĩa tại
+`packages/shared/src/constants/content-themes.ts` (`BR-CTR-12`).
 
 Lưu trong `content_tags` với `axis = 'theme'` — cột `axis` của
 [`schema-content-taxonomy.md`](schema-content-taxonomy.md) §7.2 khai đúng 4 giá trị

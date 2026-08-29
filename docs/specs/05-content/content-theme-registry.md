@@ -2,7 +2,7 @@
 spec: CONTENT-THEME-REGISTRY
 title: Registry chủ đề nội dung — trục thứ tư, đóng và có trần
 area: content
-status: draft
+status: implemented
 mvp: false
 phase: P4
 reviewed: 2026-08-29

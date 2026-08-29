@@ -161,7 +161,7 @@ export const SEED_MONT_A01: ContentSeed<unknown, unknown>[] = [
   {
     header: {
       code: "GL-C1-CNT-CONT-0105",
-      content_version: 1,
+      content_version: 2,
       template_code: "GT-003",
       title: "Hái 2 quả táo vào giỏ",
       instruction: "Bé hãy kéo đúng 2 quả táo vào giỏ nhé!",
@@ -173,7 +173,7 @@ export const SEED_MONT_A01: ContentSeed<unknown, unknown>[] = [
       learning_objective_codes: ["LO-C1.CNT.01-01"],
       what_tags: ["category"],
       thinking_tags: ["count", "sort"],
-      theme_tag: "fruit",
+      theme_tag: "food",
       origin: "human",
       authored_in: "repo_seed",
     },

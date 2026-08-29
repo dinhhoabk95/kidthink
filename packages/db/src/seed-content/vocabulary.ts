@@ -378,48 +378,9 @@ const MECHANIC_TAGS = [
   "tracing",
 ];
 
-const THEME_TAGS = [
-  "algebra",
-  "animal",
-  "animals",
-  "art",
-  "body",
-  "clock",
-  "clothing",
-  "craft",
-  "detective",
-  "dino",
-  "fairytale",
-  "family",
-  "farm",
-  "flower",
-  "food",
-  "fruit",
-  "home",
-  "household",
-  "jungle",
-  "market",
-  "music",
-  "nature",
-  "ocean",
-  "park",
-  "profession",
-  "professions",
-  "puzzle",
-  "room",
-  "school",
-  "science",
-  "seasons",
-  "shape",
-  "space",
-  "tool",
-  "travel",
-  "vegetable",
-  "vehicle",
-  "vehicles",
-  "water",
-  "weather",
-];
+import { CANONICAL_THEME_CODES } from "@mindkid/shared";
+
+const THEME_TAGS = [...CANONICAL_THEME_CODES];
 
 const TAG_SET_BY_AXIS: Record<string, Set<string>> = {
   what: new Set(WHAT_TAGS),

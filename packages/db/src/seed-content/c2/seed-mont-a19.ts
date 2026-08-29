@@ -101,7 +101,7 @@ export const SEED_MONT_A19: ContentSeed<unknown, unknown>[] = [
   {
     header: {
       code: "GL-C2-PER-MATCH-0103",
-      content_version: 1,
+      content_version: 2,
       template_code: "GT-005",
       title: "Nhìn ngôi nhà từ phía trước và từ trên cao",
       instruction: "Bé nối đồ vật với hình nhìn từ trên cao nhé!",
@@ -113,7 +113,7 @@ export const SEED_MONT_A19: ContentSeed<unknown, unknown>[] = [
       learning_objective_codes: ["LO-C2.PER.01-01"],
       what_tags: ["space"],
       thinking_tags: ["observe", "infer"],
-      theme_tag: "park",
+      theme_tag: "nature",
       origin: "human",
       authored_in: "repo_seed",
     },
@@ -141,7 +141,7 @@ export const SEED_MONT_A19: ContentSeed<unknown, unknown>[] = [
   {
     header: {
       code: "GL-C2-PER-MATCH-0104",
-      content_version: 1,
+      content_version: 2,
       template_code: "GT-005",
       title: "Góc nhìn từ trên cao của 3 đồ vật",
       instruction: "Bé tìm hình chiếu từ trên xuống của từng đồ vật!",
@@ -153,7 +153,7 @@ export const SEED_MONT_A19: ContentSeed<unknown, unknown>[] = [
       learning_objective_codes: ["LO-C2.PER.03-01"],
       what_tags: ["space"],
       thinking_tags: ["observe", "infer"],
-      theme_tag: "park",
+      theme_tag: "nature",
       origin: "human",
       authored_in: "repo_seed",
     },

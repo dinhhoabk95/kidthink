@@ -10,7 +10,7 @@ export const SEED_MONT_B15: ContentSeed<unknown, unknown>[] = [
   {
     header: {
       code: "GL-C1-PAT-SLOT-0135",
-      content_version: 1,
+      content_version: 2,
       template_code: "GT-008",
       title: "Kéo hình hoàn thành quy luật hoa quả AB",
       instruction: "Bé kéo đúng quả vào các ô theo quy luật nhé!",
@@ -22,7 +22,7 @@ export const SEED_MONT_B15: ContentSeed<unknown, unknown>[] = [
       learning_objective_codes: ["LO-C1.PAT.01-01"],
       what_tags: ["category"],
       thinking_tags: ["infer", "predict"],
-      theme_tag: "fruit",
+      theme_tag: "food",
       origin: "human",
       authored_in: "repo_seed",
     },
@@ -69,7 +69,7 @@ export const SEED_MONT_B15: ContentSeed<unknown, unknown>[] = [
   {
     header: {
       code: "GL-C1-PAT-SLOT-0136",
-      content_version: 1,
+      content_version: 2,
       template_code: "GT-008",
       title: "Kéo hình vào ma trận 2x2 quy luật màu sắc",
       instruction: "Bé điền hình vào lưới ma trận 2x2 đúng quy luật!",
@@ -81,7 +81,7 @@ export const SEED_MONT_B15: ContentSeed<unknown, unknown>[] = [
       learning_objective_codes: ["LO-C1.PAT.04-01"],
       what_tags: ["geometry"],
       thinking_tags: ["infer", "predict"],
-      theme_tag: "shape",
+      theme_tag: "art",
       origin: "human",
       authored_in: "repo_seed",
     },

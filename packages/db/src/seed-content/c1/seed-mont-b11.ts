@@ -10,7 +10,7 @@ export const SEED_MONT_B11: ContentSeed<unknown, unknown>[] = [
   {
     header: {
       code: "GL-C1-CNT-SLOT-0133",
-      content_version: 1,
+      content_version: 2,
       template_code: "GT-008",
       title: "Kéo số chẵn vào trục đếm cách 2",
       instruction: "Bé kéo các số chẵn vào đúng ô trên trục nhé!",
@@ -22,7 +22,7 @@ export const SEED_MONT_B11: ContentSeed<unknown, unknown>[] = [
       learning_objective_codes: ["LO-C1.CNT.05-01"],
       what_tags: ["number"],
       thinking_tags: ["count", "sequence"],
-      theme_tag: "park",
+      theme_tag: "nature",
       origin: "human",
       authored_in: "repo_seed",
     },
@@ -50,7 +50,7 @@ export const SEED_MONT_B11: ContentSeed<unknown, unknown>[] = [
   {
     header: {
       code: "GL-C1-CNT-SLOT-0134",
-      content_version: 1,
+      content_version: 2,
       template_code: "GT-008",
       title: "Kéo số lẻ vào chuỗi đếm nhảy cóc 1-7",
       instruction: "Bé hoàn thành chuỗi số lẻ cách 2 đơn vị!",
@@ -62,7 +62,7 @@ export const SEED_MONT_B11: ContentSeed<unknown, unknown>[] = [
       learning_objective_codes: ["LO-C1.CNT.05-01"],
       what_tags: ["number"],
       thinking_tags: ["count", "sequence"],
-      theme_tag: "park",
+      theme_tag: "nature",
       origin: "human",
       authored_in: "repo_seed",
     },

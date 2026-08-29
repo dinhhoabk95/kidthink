@@ -10,7 +10,7 @@ export const SEED_MONT_A10: ContentSeed<unknown, unknown>[] = [
   {
     header: {
       code: "GL-C4-SEN-SORT-0107",
-      content_version: 1,
+      content_version: 2,
       template_code: "GT-004",
       title: "Phân loại đồ vật theo màu Đỏ và Vàng",
       instruction: "Bé hãy xếp đồ màu đỏ và vàng vào đúng rổ nhé!",
@@ -22,7 +22,7 @@ export const SEED_MONT_A10: ContentSeed<unknown, unknown>[] = [
       learning_objective_codes: ["LO-C4.SEN.01-01"],
       what_tags: ["colour"],
       thinking_tags: ["sort", "compare"],
-      theme_tag: "shape",
+      theme_tag: "art",
       origin: "human",
       authored_in: "repo_seed",
     },
@@ -49,7 +49,7 @@ export const SEED_MONT_A10: ContentSeed<unknown, unknown>[] = [
   {
     header: {
       code: "GL-C4-SEN-SORT-0108",
-      content_version: 1,
+      content_version: 2,
       template_code: "GT-004",
       title: "Phân loại 3 nhóm màu Xanh, Đỏ, Vàng",
       instruction: "Bé phân loại các đồ vật vào 3 hộp màu nhé!",
@@ -61,7 +61,7 @@ export const SEED_MONT_A10: ContentSeed<unknown, unknown>[] = [
       learning_objective_codes: ["LO-C4.SEN.01-01"],
       what_tags: ["colour"],
       thinking_tags: ["sort", "compare"],
-      theme_tag: "shape",
+      theme_tag: "art",
       origin: "human",
       authored_in: "repo_seed",
     },
@@ -91,7 +91,7 @@ export const SEED_MONT_A10: ContentSeed<unknown, unknown>[] = [
   {
     header: {
       code: "GL-C4-SEN-SEQ-0109",
-      content_version: 1,
+      content_version: 2,
       template_code: "GT-006",
       title: "Xếp 3 sắc độ màu từ nhạt đến đậm",
       instruction: "Bé xếp các thẻ màu từ nhạt nhất đến đậm nhất nhé!",
@@ -103,7 +103,7 @@ export const SEED_MONT_A10: ContentSeed<unknown, unknown>[] = [
       learning_objective_codes: ["LO-C4.SEN.01-01"],
       what_tags: ["colour"],
       thinking_tags: ["compare", "sequence"],
-      theme_tag: "shape",
+      theme_tag: "art",
       origin: "human",
       authored_in: "repo_seed",
     },
@@ -141,7 +141,7 @@ export const SEED_MONT_A10: ContentSeed<unknown, unknown>[] = [
   {
     header: {
       code: "GL-C4-SEN-SEQ-0110",
-      content_version: 1,
+      content_version: 2,
       template_code: "GT-006",
       title: "Xếp 4 sắc độ màu hồng nhạt đến đậm",
       instruction: "Bé xếp dải màu hồng theo thứ tự từ nhạt đến đậm!",
@@ -153,7 +153,7 @@ export const SEED_MONT_A10: ContentSeed<unknown, unknown>[] = [
       learning_objective_codes: ["LO-C4.SEN.01-01"],
       what_tags: ["colour"],
       thinking_tags: ["compare", "sequence"],
-      theme_tag: "shape",
+      theme_tag: "art",
       origin: "human",
       authored_in: "repo_seed",
     },

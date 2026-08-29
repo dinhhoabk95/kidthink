@@ -138,30 +138,9 @@ export const CANONICAL_MECHANIC_TAGS = new Set([
   "rule-switch",
 ]);
 
-export const CANONICAL_THEME_TAGS = new Set([
-  "farm",
-  "jungle",
-  "ocean",
-  "space",
-  "school",
-  "home",
-  "park",
-  "vehicles",
-  "food",
-  "dino",
-  "fairytale",
-  "seasons",
-  "animal",
-  "fruit",
-  "vegetable",
-  "vehicle",
-  "shape",
-  "family",
-  "weather",
-  "festival",
-  "body",
-  "nature",
-]);
+import { CANONICAL_THEME_CODES } from "@mindkid/shared";
+
+export const CANONICAL_THEME_TAGS = new Set(CANONICAL_THEME_CODES);
 
 export const CLOSED_TAG_VOCABULARY = {
   what: CANONICAL_WHAT_TAGS,
