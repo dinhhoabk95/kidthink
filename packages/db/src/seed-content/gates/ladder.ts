@@ -36,3 +36,25 @@ export interface Gate1CorpusReport {
   isLadderCompliant: boolean;
   regressionMessage?: string;
 }
+
+/**
+ * Bậc thang đo nợ và kiểm soát thoái lui cho Cổng 5 — Band tuổi bị cấm (BR-ECD-13, Task #118).
+ *
+ * Quy tắc: Con số level ngoài band chỉ được GIẢM khi 27 task engine (#130–#156) merge dọn dẹp;
+ * nếu con số trượt tăng lên bất kỳ lúc nào, gate/test phải ĐỎ ngay lập tức.
+ */
+export interface Gate5BandLadderBaselines {
+  maxOutOfBandLevels: number;
+}
+
+export const GATE_5_BAND_LADDER_BASELINES: Gate5BandLadderBaselines = {
+  maxOutOfBandLevels: 35,
+};
+
+export interface EngineBandViolationStat {
+  engineCode: string;
+  totalLevels: number;
+  outOfBandLevels: number;
+  bannedAgeBands: string[];
+  violatingLevelCodes: string[];
+}

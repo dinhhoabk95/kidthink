@@ -1,3 +1,4 @@
+import { ALL_TEMPLATES } from "@mindkid/game-engine";
 import { count } from "drizzle-orm";
 import {
   activities,
@@ -8,6 +9,43 @@ import {
   lessons,
   skills,
 } from "#src/index";
+import { ALL_SEED_LEVELS } from "#src/seed-content/index";
+
+function resolveLevelBand(min: number, max: number): "3-4" | "4-5" | "5-6" {
+  if (max <= 4) {
+    return "3-4";
+  }
+  if (min >= 5) {
+    return "5-6";
+  }
+  return "4-5";
+}
+
+function getOutOfBandLevels() {
+  const outOfBandList: Array<{
+    code: string;
+    engine: string;
+    band: string;
+    banned: string[];
+  }> = [];
+
+  for (const seed of ALL_SEED_LEVELS) {
+    const tmpl = ALL_TEMPLATES[seed.header.template_code];
+    if (!tmpl?.banned_age_bands || tmpl.banned_age_bands.length === 0) {
+      continue;
+    }
+    const band = resolveLevelBand(seed.header.age_min, seed.header.age_max);
+    if (tmpl.banned_age_bands.includes(band)) {
+      outOfBandList.push({
+        code: seed.header.code,
+        engine: seed.header.template_code,
+        band,
+        banned: tmpl.banned_age_bands,
+      });
+    }
+  }
+  return outOfBandList;
+}
 
 export async function runSeedReport() {
   console.log("📊 [seed:report] Generating content coverage report...\n");
@@ -32,7 +70,19 @@ export async function runSeedReport() {
   console.log(`- Published Lessons: ${totalLessons.value}`);
   console.log(`- Total Templates: ${totalTemplates.value}`);
   console.log(`- Total Skills: ${totalSkills.value}`);
-  console.log(`- Total Competencies: ${totalCompetencies.value}\n`);
+  console.log(`- Total Competencies: ${totalCompetencies.value}`);
+
+  // Đo nợ band tuổi theo BR-ECD-13 (Task #118)
+  const outOfBandList = getOutOfBandLevels();
+  console.log(`- Out of band levels: ${outOfBandList.length} (BR-ECD-13)\n`);
+
+  if (outOfBandList.length === 0) {
+    console.log("🎯 0 level ngoài band engine.\n");
+  } else {
+    console.log(
+      `⚠️ Có ${outOfBandList.length} level ngoài band engine (dọn ở 27 task engine #130–#156):\n`
+    );
+  }
 
   console.log("Competency Breakdown:");
   const compList = await db.select().from(competencies);

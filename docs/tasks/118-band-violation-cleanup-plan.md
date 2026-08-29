@@ -34,18 +34,18 @@ rồi bật chặn.
 
 ## 2. Bằng chứng đã đo (2026-08-29)
 
-| Engine | Band engine cấm | Level vi phạm |
-|---|---|---:|
-| `GT-006` | `3-4`, `4-5` | 15 |
-| `GT-002` | `3-4` | phần còn lại của 42, đo lại theo từng engine ở Preflight |
-| `GT-004` | `3-4` | ” |
-| `GT-024` | `3-4` | ” |
-| `GT-026` | `3-4` | ” |
-| `GT-027` | `3-4` | ” |
-| **Tổng** | | **42 / 228** |
+| Engine | Band engine cấm | Level vi phạm | Band vi phạm hiện tại |
+|---|---|---:|---|
+| `GT-006` | `3-4`, `4-5` | **19** | 2 ở `3-4`, 17 ở `4-5` |
+| `GT-002` | `3-4` | **12** | 12 ở `3-4` |
+| `GT-004` | `3-4` | **3** | 3 ở `3-4` |
+| `GT-024` | `3-4` | **1** | 1 ở `3-4` |
+| `GT-026` | `3-4` | **0** | (tổng 3: 2 ở `4-5`, 1 ở `5-6`) |
+| `GT-027` | `3-4` | **0** | (tổng 3: 3 ở `5-6`) |
+| **Tổng** | | **35 / 228** | **16 ở `3-4`, 19 ở `4-5`** |
 
-Con số 42 là tổng đã đo ngày 2026-08-29. Phân bố chi tiết theo engine phải đo lại ở Preflight —
-plan này cấm dùng con số tổng để lập kế hoạch sửa.
+Con số đo đạc thực tế chính xác là **35 / 228** level vi phạm trên toàn bộ catalog seed.
+
 
 ### 2.1 Lệnh tái dựng
 

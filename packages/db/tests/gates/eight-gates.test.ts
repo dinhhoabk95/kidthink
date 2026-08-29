@@ -132,6 +132,25 @@ describe("Tám cổng thẩm định nội dung seed (BR-CSA-02, Task #117)", ()
         true
       );
     });
+
+    it("fails when game level is assigned to a banned age band of the engine (BR-ECD-13)", () => {
+      const bannedSeed = {
+        ...VALID_GAME_LEVEL_SEED,
+        header: {
+          ...VALID_GAME_LEVEL_SEED.header,
+          code: "GL-C1-BANNED-BAND-0002",
+          template_code: "GT-006",
+          age_min: 4,
+          age_max: 5,
+        },
+      };
+      const results = runEightGates(bannedSeed, new Set());
+      const gate5 = results.find((r) => r.gate === 5);
+      expect(gate5?.passed).toBe(false);
+      expect(
+        gate5?.issues.some((i) => i.code === "ENGINE_AGE_BAND_BANNED")
+      ).toBe(true);
+    });
   });
 
   describe("Gate 6: Xuất xứ", () => {
