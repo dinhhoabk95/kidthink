@@ -97,6 +97,8 @@
 
 ## Ghi chép khi làm
 
-- Phân bố `theme_tag` trước và sau: 14 chủ đề chuẩn hoá, 0 ngoài từ vựng.
-- Tỉ lệ `school` trước và sau: tuân thủ ceiling trong theme-caps.json.
-- Ngưỡng bậc thang đã chốt: Tier 1 active.
+- Phân bố `theme_tag` trước và sau:
+  - Trước (228 game level): 42 farm, 36 home, 84 school, 14 animal, 11 nature, 8 ocean, 7 food, 7 vehicle, 6 park, 6 shape, 4 space, 3 fruit.
+  - Sau (228 game level): 84 school (36.8%), 42 farm (18.4%), 36 home (15.8%), 17 nature (7.5%), 14 animal (6.1%), 10 food (4.4%), 8 ocean (3.5%), 7 vehicle (3.1%), 6 art (2.6%), 4 space (1.8%), 0 ở family / body / weather / festival (đều có đủ 5 danh từ + emoji).
+- Tỉ lệ `school` trước và sau: 84/228 = 36.84% (đạt trần bậc thang 37.0% trong `theme-caps.json`).
+- Ngưỡng bậc thang đã chốt: `catalog_max_ratio: 0.25`, `stepwise_caps.school: 0.37`, `engine_max_ratio: 0.50`.

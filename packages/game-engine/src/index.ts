@@ -36,6 +36,15 @@ export {
   validateContentPack,
 } from "./generated/template-registry.js";
 export { TEMPLATE_SEED_ENTRIES } from "./generated/template-seed.js";
+export {
+  ALL_LEVEL_GENERATORS,
+  type GeneratedLevel,
+  type GeneratorInput,
+  getLevelGenerator,
+  type LevelGenerator,
+  type ThemeVocabulary,
+  type VocabularyEntry,
+} from "./generators/index.js";
 export { getMinTouchTargetSize, InteractionManager } from "./interaction";
 export {
   getTouchFloor,
@@ -57,7 +66,6 @@ export {
   computeTenFrameSplitLayout,
   computeTrackLayout,
 } from "./layout/geometry.js";
-
 export {
   isLayoutId,
   LAYOUT_IDS,
@@ -370,9 +378,4 @@ export type {
   GT026Difficulty,
 } from "./templates/GT-026/template.js";
 export { GT027_FIXTURES } from "./templates/GT-027/fixtures.js";
-export { GT027Session } from "./templates/GT-027/session.js";
-export type {
-  GT027Content,
-  GT027Difficulty,
-} from "./templates/GT-027/template.js";
 export { ObjectPool } from "./utils/object-pool.js";

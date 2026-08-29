@@ -36,7 +36,8 @@
     "seed:report": "tsx src/seed-content/cli/seed-report.ts",
     "report:tags": "tsx scripts/report-tag-vocabulary.ts",
     "replay:adaptive": "tsx scripts/replay-adaptive.ts",
-    "check:theme-registry": "vitest run tests/gates/theme-registry.test.ts"
+    "check:theme-registry": "vitest run tests/gates/theme-registry.test.ts",
+    "gen:levels": "tsx src/seed-content/cli/gen-levels.ts"
   },
   "imports": {
     "#src/*": "./src/*.ts",

@@ -2,10 +2,10 @@
 spec: LEVEL-GENERATOR-KIT
 title: Bộ sinh level — chi phí soạn màn chơi thứ tư tới thứ bốn mươi
 area: platform
-status: draft
+status: implemented
 mvp: false
 phase: P4
-reviewed: 2026-08-29
+reviewed: 2026-08-30
 owns:
   - Chi phí soạn game level thứ tư trở đi của một engine
   - Hình dạng bộ sinh content_pack gắn với một engine
