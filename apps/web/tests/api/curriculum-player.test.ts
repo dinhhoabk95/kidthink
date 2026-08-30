@@ -694,7 +694,7 @@ describe("Curriculum Player Suite — P3.4 (BR-CUR-01..10, D-MA..D-MG)", {
     expect(prog.completed_items).toBe(1);
   });
 
-  it("POST /enrollments rejects child with age out of range with 422 CHILD_AGE_OUT_OF_RANGE", async () => {
+  it("POST /enrollments allows child with age out of range and returns warning according to BR-LFM-04", async () => {
     const { db, user, curriculum } = await createTestFixtures();
 
     // Create child with birthYear 2018 (8 years old in 2026 -> outside 4..6 range)
@@ -709,15 +709,16 @@ describe("Curriculum Player Suite — P3.4 (BR-CUR-01..10, D-MA..D-MG)", {
       })
       .returning();
 
-    await expect(
-      enrollHandler(
-        makeUserEvent(
-          user.id,
-          { uuid: olderChild.uuid },
-          { curriculum_code: curriculum.code }
-        )
+    const res = await enrollHandler(
+      makeUserEvent(
+        user.id,
+        { uuid: olderChild.uuid },
+        { curriculum_code: curriculum.code }
       )
-    ).rejects.toThrow();
+    );
+
+    expect(res.status).toBe("active");
+    expect(res.warning).toContain("bé nhà bạn 8 tuổi");
   });
 
   it("POST /enrollments rejects when user tier opens 0 mandatory items with 422 VALIDATION_FAILED", async () => {
