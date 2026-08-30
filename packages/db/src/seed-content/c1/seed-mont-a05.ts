@@ -9,6 +9,7 @@ export const SEED_MONT_A05: ContentSeed<unknown, unknown>[] = [
   {
     header: {
       code: "GL-C1-CNT-PAIR-0111",
+      montessori_ref: "WB05-D1",
       content_version: 1,
       template_code: "GT-005",
       title: "Ghép nhóm hoa với thẻ số",
@@ -73,6 +74,7 @@ export const SEED_MONT_A05: ContentSeed<unknown, unknown>[] = [
   {
     header: {
       code: "GL-C1-CNT-PAIR-0112",
+      montessori_ref: "WB05-D1",
       content_version: 1,
       template_code: "GT-005",
       title: "Ghép nhóm lá xanh với số",
@@ -154,6 +156,7 @@ export const SEED_MONT_A05: ContentSeed<unknown, unknown>[] = [
   {
     header: {
       code: "GL-C1-CNT-CONT-0113",
+      montessori_ref: "WB05-D2",
       content_version: 1,
       template_code: "GT-003",
       title: "Kéo gà con vào chuồng",
@@ -217,6 +220,7 @@ export const SEED_MONT_A05: ContentSeed<unknown, unknown>[] = [
   {
     header: {
       code: "GL-C1-CNT-CONT-0114",
+      montessori_ref: "WB05-D2",
       content_version: 1,
       template_code: "GT-003",
       title: "Đếm nấm gom vào rổ",

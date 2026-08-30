@@ -9,6 +9,7 @@ export const SEED_MONT_A11: ContentSeed<unknown, unknown>[] = [
   {
     header: {
       code: "GL-C1-CNT-CARD-0119",
+      montessori_ref: "WB11-D1",
       content_version: 1,
       template_code: "GT-001",
       title: "Đếm nhảy cóc cách 2 số chẵn",
@@ -71,6 +72,7 @@ export const SEED_MONT_A11: ContentSeed<unknown, unknown>[] = [
   {
     header: {
       code: "GL-C1-CNT-CARD-0120",
+      montessori_ref: "WB11-D1",
       content_version: 2,
       template_code: "GT-001",
       title: "Đếm nhảy cóc cách 2 số lẻ",

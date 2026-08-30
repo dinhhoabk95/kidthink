@@ -10,6 +10,7 @@ export const SEED_MONT_A03: ContentSeed<unknown, unknown>[] = [
   {
     header: {
       code: "GL-C4-VIS-CARD-0101",
+      montessori_ref: "WB03-D1",
       content_version: 1,
       template_code: "GT-001",
       title: "Tìm bóng của chú hươu cao cổ",
@@ -72,6 +73,7 @@ export const SEED_MONT_A03: ContentSeed<unknown, unknown>[] = [
   {
     header: {
       code: "GL-C4-VIS-CARD-0102",
+      montessori_ref: "WB03-D1",
       content_version: 1,
       template_code: "GT-001",
       title: "Tìm bóng của chiếc ô tô",
@@ -134,6 +136,7 @@ export const SEED_MONT_A03: ContentSeed<unknown, unknown>[] = [
   {
     header: {
       code: "GL-C4-VIS-CARD-0103",
+      montessori_ref: "WB03-D1",
       content_version: 1,
       template_code: "GT-001",
       title: "Tìm bóng của chú bướm xinh",
@@ -196,6 +199,7 @@ export const SEED_MONT_A03: ContentSeed<unknown, unknown>[] = [
   {
     header: {
       code: "GL-C4-VIS-MATCH-0104",
+      montessori_ref: "WB03-D2",
       content_version: 1,
       template_code: "GT-005",
       title: "Ghép đôi 2 con vật với bóng",
@@ -260,6 +264,7 @@ export const SEED_MONT_A03: ContentSeed<unknown, unknown>[] = [
   {
     header: {
       code: "GL-C4-VIS-MATCH-0105",
+      montessori_ref: "WB03-D2",
       content_version: 1,
       template_code: "GT-005",
       title: "Ghép đôi 3 con vật với bóng",

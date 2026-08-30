@@ -24,6 +24,15 @@ export interface ContentSeedHeader {
   theme_tag?: string;
   origin: SeedOrigin;
   authored_in: SeedAuthoredIn;
+  /**
+   * Mã dạng bài trong lô Montessori, ví dụ `WB01-D1`.
+   *
+   * Trước đây nằm trong comment `// WB01-D1 Level 2 …` và
+   * `tests/gates/montessori-corpus.ts` đếm bằng cách quét văn bản file. Một
+   * codemod phát lại literal đã xoá sạch comment và cổng tụt từ 24 xuống 14 mà
+   * nội dung không mất gì — con số có cổng canh thì phải là dữ liệu.
+   */
+  montessori_ref?: string;
 }
 
 export interface ContentSeed<TPack = unknown, TParams = unknown> {

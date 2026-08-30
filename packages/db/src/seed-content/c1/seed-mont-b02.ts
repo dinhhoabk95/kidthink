@@ -9,6 +9,7 @@ export const SEED_MONT_B02: ContentSeed<unknown, unknown>[] = [
   {
     header: {
       code: "GL-C1-SEQ-SLOT-0131",
+      montessori_ref: "WB02-D2",
       content_version: 1,
       template_code: "GT-008",
       title: "Kéo 3 toa tàu vào đường ray thứ tự 1-3",
@@ -86,6 +87,7 @@ export const SEED_MONT_B02: ContentSeed<unknown, unknown>[] = [
   {
     header: {
       code: "GL-C1-SEQ-SLOT-0132",
+      montessori_ref: "WB02-D2",
       content_version: 1,
       template_code: "GT-008",
       title: "Xếp 4 số vào ô trống theo thứ tự 1-4",

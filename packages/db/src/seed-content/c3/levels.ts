@@ -1,4 +1,5 @@
 import type { ContentSeed } from "#src/seed-content/types";
+import { C3_MULTI_SELECT_LEVELS } from "./multi-select-levels.js";
 
 export const C3_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
   {
@@ -1992,4 +1993,9 @@ export const C3_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
       shuffle_sides: false,
     },
   },
+];
+
+export const C3_ALL_LEVELS: ContentSeed<unknown, unknown>[] = [
+  ...C3_SEED_LEVELS,
+  ...C3_MULTI_SELECT_LEVELS,
 ];

@@ -9,6 +9,7 @@ export const SEED_MONT_B15: ContentSeed<unknown, unknown>[] = [
   {
     header: {
       code: "GL-C1-PAT-SLOT-0135",
+      montessori_ref: "WB15-D2",
       content_version: 2,
       template_code: "GT-008",
       title: "Kéo hình hoàn thành quy luật hoa quả AB",
@@ -100,6 +101,7 @@ export const SEED_MONT_B15: ContentSeed<unknown, unknown>[] = [
   {
     header: {
       code: "GL-C1-PAT-SLOT-0136",
+      montessori_ref: "WB15-D2",
       content_version: 2,
       template_code: "GT-008",
       title: "Kéo hình vào ma trận 2x2 quy luật màu sắc",

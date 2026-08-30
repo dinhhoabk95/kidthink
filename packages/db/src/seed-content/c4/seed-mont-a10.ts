@@ -9,6 +9,7 @@ export const SEED_MONT_A10: ContentSeed<unknown, unknown>[] = [
   {
     header: {
       code: "GL-C4-SEN-SORT-0107",
+      montessori_ref: "WB10-D1",
       content_version: 2,
       template_code: "GT-004",
       title: "Phân loại đồ vật theo màu Đỏ và Vàng",
@@ -84,6 +85,7 @@ export const SEED_MONT_A10: ContentSeed<unknown, unknown>[] = [
   {
     header: {
       code: "GL-C4-SEN-SORT-0108",
+      montessori_ref: "WB10-D1",
       content_version: 2,
       template_code: "GT-004",
       title: "Phân loại 3 nhóm màu Xanh, Đỏ, Vàng",
@@ -180,6 +182,7 @@ export const SEED_MONT_A10: ContentSeed<unknown, unknown>[] = [
   {
     header: {
       code: "GL-C4-SEN-SEQ-0109",
+      montessori_ref: "WB10-D2",
       content_version: 2,
       template_code: "GT-006",
       title: "Xếp 3 sắc độ màu từ nhạt đến đậm",
@@ -237,6 +240,7 @@ export const SEED_MONT_A10: ContentSeed<unknown, unknown>[] = [
   {
     header: {
       code: "GL-C4-SEN-SEQ-0110",
+      montessori_ref: "WB10-D2",
       content_version: 2,
       template_code: "GT-006",
       title: "Xếp 4 sắc độ màu hồng nhạt đến đậm",

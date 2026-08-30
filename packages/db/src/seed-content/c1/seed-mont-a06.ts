@@ -9,6 +9,7 @@ export const SEED_MONT_A06: ContentSeed<unknown, unknown>[] = [
   {
     header: {
       code: "GL-C1-CMP-CARD-0115",
+      montessori_ref: "WB06-D1",
       content_version: 1,
       template_code: "GT-001",
       title: "Chọn đĩa có nhiều cá hơn",
@@ -55,6 +56,7 @@ export const SEED_MONT_A06: ContentSeed<unknown, unknown>[] = [
   {
     header: {
       code: "GL-C1-CMP-CARD-0116",
+      montessori_ref: "WB06-D1",
       content_version: 1,
       template_code: "GT-001",
       title: "Chọn bình có ít hoa hơn",
@@ -102,6 +104,7 @@ export const SEED_MONT_A06: ContentSeed<unknown, unknown>[] = [
   {
     header: {
       code: "GL-C1-CMP-CONT-0117",
+      montessori_ref: "WB06-D2",
       content_version: 1,
       template_code: "GT-003",
       title: "Tặng cà rốt cho thỏ",
@@ -174,6 +177,7 @@ export const SEED_MONT_A06: ContentSeed<unknown, unknown>[] = [
   {
     header: {
       code: "GL-C1-CMP-CONT-0118",
+      montessori_ref: "WB06-D2",
       content_version: 2,
       template_code: "GT-003",
       title: "Chia đều bóng vào rổ",

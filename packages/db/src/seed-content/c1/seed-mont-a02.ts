@@ -9,6 +9,7 @@ export const SEED_MONT_A02: ContentSeed<unknown, unknown>[] = [
   {
     header: {
       code: "GL-C1-NREC-CARD-0107",
+      montessori_ref: "WB02-D1",
       content_version: 1,
       template_code: "GT-001",
       title: "Điền số còn thiếu vào đoàn tàu 1-5",
@@ -71,6 +72,7 @@ export const SEED_MONT_A02: ContentSeed<unknown, unknown>[] = [
   {
     header: {
       code: "GL-C1-NREC-CARD-0108",
+      montessori_ref: "WB02-D1",
       content_version: 1,
       template_code: "GT-001",
       title: "Điền số còn thiếu vào đoàn tàu 6-10",
@@ -133,6 +135,7 @@ export const SEED_MONT_A02: ContentSeed<unknown, unknown>[] = [
   {
     header: {
       code: "GL-C1-SEQ-PAT-0109",
+      montessori_ref: "WB02-D3",
       content_version: 1,
       template_code: "GT-006",
       title: "Xếp thứ tự 3 toa tàu",
@@ -190,6 +193,7 @@ export const SEED_MONT_A02: ContentSeed<unknown, unknown>[] = [
   {
     header: {
       code: "GL-C1-SEQ-PAT-0110",
+      montessori_ref: "WB02-D3",
       content_version: 1,
       template_code: "GT-006",
       title: "Xếp thứ tự 4 toa tàu",

@@ -9,6 +9,7 @@ export const SEED_MONT_A19: ContentSeed<unknown, unknown>[] = [
   {
     header: {
       code: "GL-C2-GEO-MATCH-0101",
+      montessori_ref: "WB19-D1",
       content_version: 1,
       template_code: "GT-005",
       title: "Ghép đồ vật với khối hình tương ứng",
@@ -90,6 +91,7 @@ export const SEED_MONT_A19: ContentSeed<unknown, unknown>[] = [
   {
     header: {
       code: "GL-C2-GEO-MATCH-0102",
+      montessori_ref: "WB19-D1",
       content_version: 1,
       template_code: "GT-005",
       title: "Phân loại 4 đồ vật theo khối hình học",
@@ -188,6 +190,7 @@ export const SEED_MONT_A19: ContentSeed<unknown, unknown>[] = [
   {
     header: {
       code: "GL-C2-PER-MATCH-0103",
+      montessori_ref: "WB19-D2",
       content_version: 2,
       template_code: "GT-005",
       title: "Nhìn ngôi nhà từ phía trước và từ trên cao",
@@ -252,6 +255,7 @@ export const SEED_MONT_A19: ContentSeed<unknown, unknown>[] = [
   {
     header: {
       code: "GL-C2-PER-MATCH-0104",
+      montessori_ref: "WB19-D2",
       content_version: 2,
       template_code: "GT-005",
       title: "Góc nhìn từ trên cao của 3 đồ vật",

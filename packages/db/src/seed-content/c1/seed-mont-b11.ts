@@ -9,6 +9,7 @@ export const SEED_MONT_B11: ContentSeed<unknown, unknown>[] = [
   {
     header: {
       code: "GL-C1-CNT-SLOT-0133",
+      montessori_ref: "WB11-D2",
       content_version: 2,
       template_code: "GT-008",
       title: "Kéo số chẵn vào trục đếm cách 2",
@@ -86,6 +87,7 @@ export const SEED_MONT_B11: ContentSeed<unknown, unknown>[] = [
   {
     header: {
       code: "GL-C1-CNT-SLOT-0134",
+      montessori_ref: "WB11-D2",
       content_version: 2,
       template_code: "GT-008",
       title: "Kéo số lẻ vào chuỗi đếm nhảy cóc 1-7",

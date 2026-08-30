@@ -10,6 +10,7 @@ export const SEED_MONT_A15: ContentSeed<unknown, unknown>[] = [
   {
     header: {
       code: "GL-C1-PAT-SEQ-0121",
+      montessori_ref: "WB15-D1",
       content_version: 2,
       template_code: "GT-006",
       title: "Quy luật lặp quả Táo - Chuối (AB)",
@@ -49,6 +50,7 @@ export const SEED_MONT_A15: ContentSeed<unknown, unknown>[] = [
   {
     header: {
       code: "GL-C1-PAT-SEQ-0122",
+      montessori_ref: "WB15-D1",
       content_version: 2,
       template_code: "GT-006",
       title: "Quy luật chuỗi 3 phần tử (ABC)",

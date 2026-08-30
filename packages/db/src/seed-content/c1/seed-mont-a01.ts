@@ -9,6 +9,7 @@ export const SEED_MONT_A01: ContentSeed<unknown, unknown>[] = [
   {
     header: {
       code: "GL-C1-NREC-CARD-0101",
+      montessori_ref: "WB01-D1",
       content_version: 1,
       template_code: "GT-001",
       title: "Chạm vào số 3",
@@ -71,6 +72,7 @@ export const SEED_MONT_A01: ContentSeed<unknown, unknown>[] = [
   {
     header: {
       code: "GL-C1-NREC-CARD-0102",
+      montessori_ref: "WB01-D1",
       content_version: 1,
       template_code: "GT-001",
       title: "Tìm thẻ số 5",
@@ -133,6 +135,7 @@ export const SEED_MONT_A01: ContentSeed<unknown, unknown>[] = [
   {
     header: {
       code: "GL-C1-OTO-CARD-0103",
+      montessori_ref: "WB01-D2",
       content_version: 1,
       template_code: "GT-012",
       title: "Đếm số chú vịt vàng",
@@ -202,6 +205,7 @@ export const SEED_MONT_A01: ContentSeed<unknown, unknown>[] = [
   {
     header: {
       code: "GL-C1-OTO-CARD-0104",
+      montessori_ref: "WB01-D2",
       content_version: 1,
       template_code: "GT-012",
       title: "Đếm chú thỏ trắng",
@@ -278,6 +282,7 @@ export const SEED_MONT_A01: ContentSeed<unknown, unknown>[] = [
   {
     header: {
       code: "GL-C1-CNT-CONT-0105",
+      montessori_ref: "WB01-D3",
       content_version: 2,
       template_code: "GT-003",
       title: "Hái 2 quả táo vào giỏ",
@@ -341,6 +346,7 @@ export const SEED_MONT_A01: ContentSeed<unknown, unknown>[] = [
   {
     header: {
       code: "GL-C1-CNT-CONT-0106",
+      montessori_ref: "WB01-D3",
       content_version: 1,
       template_code: "GT-003",
       title: "Thu hoạch 3 củ cà rốt",

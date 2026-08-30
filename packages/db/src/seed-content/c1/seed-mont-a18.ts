@@ -9,6 +9,7 @@ export const SEED_MONT_A18: ContentSeed<unknown, unknown>[] = [
   {
     header: {
       code: "GL-C1-MEAS-CARD-0123",
+      montessori_ref: "WB18-D1",
       content_version: 1,
       template_code: "GT-016",
       title: "Đọc đồng hồ 3 giờ đúng",
@@ -61,6 +62,7 @@ export const SEED_MONT_A18: ContentSeed<unknown, unknown>[] = [
   {
     header: {
       code: "GL-C1-MEAS-CARD-0124",
+      montessori_ref: "WB18-D1",
       content_version: 1,
       template_code: "GT-016",
       title: "Đọc đồng hồ 9 giờ đúng",

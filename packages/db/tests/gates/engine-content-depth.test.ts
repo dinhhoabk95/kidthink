@@ -18,9 +18,10 @@ const ERR_EMPTY_SOURCE = /Nguồn corpus seed rỗng hoặc không đọc đư�
  * Tổng thiếu hụt `level_count` ở bậc 1, đo 2026-08-30 trên corpus thật.
  *
  * 55 → 52 sau khi soạn thêm 8 level band 3-4 để đóng `BR-TCL-04`/`BR-TCM-04`.
+ * 52 → 48 sau khi bổ sung level chuẩn hoá cho các template.
  * Số chỉ được GIẢM: tăng nghĩa là ai đó xoá level hoặc thêm engine chưa có nội dung.
  */
-const MAX_LEVEL_COUNT_DEFICIT_AT_STEP_1 = 52;
+const MAX_LEVEL_COUNT_DEFICIT_AT_STEP_1 = 48;
 
 describe("Sàn chiều sâu mỗi engine — Task #122 (BR-ECD-01..13)", () => {
   it("Bậc 0: toàn bộ 27 engine active đều đạt sàn baseline", () => {

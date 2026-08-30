@@ -9,6 +9,7 @@ export const SEED_MONT_A08: ContentSeed<unknown, unknown>[] = [
   {
     header: {
       code: "GL-C1-NCOMP-BOND-0127",
+      montessori_ref: "WB08-D1",
       content_version: 1,
       template_code: "GT-007",
       title: "Tách số 10 thành 7 và mấy",
@@ -79,6 +80,7 @@ export const SEED_MONT_A08: ContentSeed<unknown, unknown>[] = [
   {
     header: {
       code: "GL-C1-NCOMP-BOND-0128",
+      montessori_ref: "WB08-D1",
       content_version: 1,
       template_code: "GT-007",
       title: "Tách số 10 thành 5 và mấy",
