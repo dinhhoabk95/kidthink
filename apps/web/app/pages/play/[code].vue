@@ -205,7 +205,7 @@
       if (!loggedIn.value) {
         errorTitle.value = "Yêu cầu đăng nhập";
         errorEmoji.value = "🔒";
-        errorActionLink.value = "/login";
+        errorActionLink.value = `/login?redirect=/play/${levelCode}`;
         errorActionText.value = "Đăng nhập để chơi";
         return new Error(
           "Trò chơi này yêu cầu đăng nhập tài khoản để bé có thể tham gia và lưu tiến độ."
@@ -224,7 +224,7 @@
     if (status === 428) {
       errorTitle.value = "Chưa chọn hồ sơ bé";
       errorEmoji.value = "👶";
-      errorActionLink.value = "/me/children";
+      errorActionLink.value = `/me/children?redirect=/play/${levelCode}`;
       errorActionText.value = "Chọn hồ sơ bé";
       return new Error(
         "Vui lòng chọn hoặc tạo hồ sơ của bé trước khi bắt đầu bài học."

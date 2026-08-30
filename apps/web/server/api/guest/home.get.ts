@@ -83,7 +83,7 @@ export default defineEventHandler((event) => {
         "MindKid giúp bé rèn luyện 6 năng lực toán học nền tảng qua 120+ trò chơi kiến tạo sư phạm trực quan.",
       cta_primary: {
         text: "Cho bé chơi thử ngay",
-        url: "/games/GL-C1-001",
+        url: "/games/GL-C1-CNT-CARD-0001",
       },
       cta_secondary: {
         text: "Khám phá 6 năng lực",

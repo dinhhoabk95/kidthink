@@ -216,19 +216,24 @@ export function assertUnrestrictedUser(status: string): void {
   }
 }
 
-export function getActiveChildUuid(event: H3Event): string {
+export function getOptionalActiveChildUuid(event: H3Event): string | null {
   const cookieVal =
     getCookie(event, "active_child_id") ||
     getCookie(event, "active_child_uuid");
   const ctxVal =
     event.context?.user?.active_child_id || event.context?.active_child_id;
   const val = cookieVal || ctxVal;
+  return val ? String(val) : null;
+}
+
+export function getActiveChildUuid(event: H3Event): string {
+  const val = getOptionalActiveChildUuid(event);
   if (!val) {
     throw appError("NO_ACTIVE_CHILD", {
       reason: "Yêu cầu cần chọn hồ sơ trẻ đang hoạt động.",
     });
   }
-  return String(val);
+  return val;
 }
 
 export function getOrSetGuestDeviceId(event: H3Event): string {

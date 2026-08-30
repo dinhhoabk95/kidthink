@@ -13,6 +13,7 @@ import {
   assertContentAccess,
   type CallerIdentity,
   type ContentAccessResult,
+  type EntitlementKey,
   resolveAssets,
 } from "@mindkid/shared";
 import { and, asc, desc, eq } from "drizzle-orm";
@@ -25,6 +26,7 @@ export interface GameConfigDeliveryOptions {
   requiresChild?: boolean;
   guestDeviceId?: string;
   callerChildAge?: number;
+  activeKeys?: EntitlementKey[];
 }
 
 interface LevelTemplateRow {
@@ -123,6 +125,7 @@ async function runContentAccessGuard(
       },
       {
         caller: options.caller,
+        activeKeys: options.activeKeys,
         isManagerPreview: options.isManagerPreview,
         managerAudience: options.isManagerPreview,
         requiresChild: options.requiresChild,

@@ -1,4 +1,13 @@
+import path from "node:path";
 import { requireEnv } from "@mindkid/config";
+import {
+  databaseNameOf,
+  maintenanceDatabaseUrl,
+  TEST_DATABASE_SUFFIX,
+  testDatabaseUrls,
+} from "@mindkid/config/vitest/test-database";
+import { drizzle } from "drizzle-orm/postgres-js";
+import { migrate } from "drizzle-orm/postgres-js/migrator";
 import postgres from "postgres";
 
 /**
@@ -152,12 +161,66 @@ export async function truncateAllTestTables(
   }
 }
 
-export default async function setup(): Promise<void> {
-  if (process.env.DB_TRUNCATE_ON_SETUP !== "1") {
-    return;
+/**
+ * Dựng database test nếu chưa tồn tại, rồi chạy migration lên nó.
+ *
+ * `CREATE DATABASE` không chạy được trong transaction và không có dạng
+ * `IF NOT EXISTS` trên mọi phiên bản, nên kiểm `pg_database` trước.
+ */
+async function ensureTestDatabase(url: string): Promise<void> {
+  const name = databaseNameOf(url);
+  if (!name.endsWith(TEST_DATABASE_SUFFIX)) {
+    throw new Error(
+      `Từ chối dựng database test: '${name}' không có hậu tố '${TEST_DATABASE_SUFFIX}'. ` +
+        "Đây là chốt chặn cuối để một lượt chạy test không TRUNCATE database dev."
+    );
   }
+  const admin = postgres(maintenanceDatabaseUrl(url), { max: 1 });
   try {
-    await truncateAllTestTables();
+    const rows = await admin`
+      select 1 from pg_database where datname = ${name}
+    `;
+    if (rows.length === 0) {
+      await admin.unsafe(`create database "${name}"`);
+      console.log(`[test-db] đã tạo database ${name}`);
+    }
+  } finally {
+    await admin.end();
+  }
+
+  const sql = postgres(url, { max: 1 });
+  try {
+    await migrate(drizzle(sql), {
+      migrationsFolder: path.resolve(
+        import.meta.dirname,
+        "..",
+        "src",
+        "migrations"
+      ),
+    });
+  } finally {
+    await sql.end();
+  }
+}
+
+/**
+ * Chạy một lần trước mỗi `vitest run` của **mọi** workspace.
+ *
+ * Trước 2026-08-30 hàm này chỉ dọn khi có `DB_TRUNCATE_ON_SETUP=1`, vì dọn mặc
+ * định sẽ xoá database dev. Giờ test có database riêng
+ * (`packages/config/vitest/test-database.ts`) nên dọn là mặc định, và cờ cũ
+ * không còn ý nghĩa.
+ */
+export default async function setup(): Promise<void> {
+  // `test.env` của vitest chỉ áp cho worker chạy test, KHÔNG áp cho tiến trình
+  // chạy `globalSetup`. Đọc `process.env.DATABASE_URL` ở đây sẽ lấy đúng
+  // database dev từ `.env` — nên URL phải suy lại từ cùng một hàm mà
+  // `defineWorkspaceTest` dùng.
+  const url = testDatabaseUrls().owner;
+  try {
+    assertDisposableDatabaseUrl(url);
+    await ensureTestDatabase(url);
+    await truncateAllTestTables(url);
   } catch (err: unknown) {
     const errorObj = err as {
       code?: string;

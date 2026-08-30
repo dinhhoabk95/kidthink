@@ -1,14 +1,83 @@
+import { requireUserAuth, type UserTokenPayload } from "@mindkid/auth";
 import {
   gameLevelRounds,
   gameLevels,
   gameTemplates,
   getOwnerDb,
 } from "@mindkid/db";
-import { allowedTiers } from "@mindkid/shared";
+import { type AccessTier, allowedTiers } from "@mindkid/shared";
 import { and, asc, eq, ne } from "drizzle-orm";
-import { createError, defineEventHandler, getRouterParam } from "h3";
+import {
+  createError,
+  defineEventHandler,
+  getRouterParam,
+  type H3Event,
+} from "h3";
+import { getOptionalActiveChildUuid } from "#server/utils/auth-runtime";
+import { resolveUserActiveEntitlements } from "#server/utils/entitlements-runtime";
 
 const RE_COMPETENCY = /GL-(C[1-6])-/;
+
+interface CallerContext {
+  allowed: AccessTier[];
+  userSession: UserTokenPayload | null;
+  activeChildId: string | null;
+}
+
+async function resolveCallerContext(event: H3Event): Promise<CallerContext> {
+  try {
+    const userSession = requireUserAuth(event);
+    if (userSession) {
+      const activeChildId = getOptionalActiveChildUuid(event);
+      const activeKeys = await resolveUserActiveEntitlements(
+        userSession.user_id
+      );
+      const allowed = await allowedTiers(
+        {
+          kind: "user",
+          user_id: String(userSession.user_id),
+          active_child_id: activeChildId,
+        },
+        activeKeys
+      );
+      return { allowed, userSession, activeChildId };
+    }
+  } catch {
+    // Guest caller
+  }
+
+  const allowed = await allowedTiers({ kind: "guest" });
+  return { allowed, userSession: null, activeChildId: null };
+}
+
+function computeLevelCta(
+  isLocked: boolean,
+  userSession: UserTokenPayload | null,
+  activeChildId: string | null,
+  accessTier: string
+): { text: string; action: string } {
+  if (!isLocked) {
+    return { text: "Cho bé chơi ngay", action: "play" };
+  }
+
+  if (!userSession) {
+    if (accessTier === "login") {
+      return { text: "Đăng nhập để chơi", action: "login" };
+    }
+    if (accessTier === "standard") {
+      return { text: "Nâng cấp Gói Tiêu chuẩn", action: "upgrade_standard" };
+    }
+    return { text: "Nâng cấp Gói Premium", action: "upgrade_premium" };
+  }
+
+  if (!activeChildId && accessTier !== "free") {
+    return { text: "Chọn hồ sơ bé", action: "select_child" };
+  }
+  if (accessTier === "standard") {
+    return { text: "Nâng cấp Gói Tiêu chuẩn", action: "upgrade_standard" };
+  }
+  return { text: "Nâng cấp Gói Premium", action: "upgrade_premium" };
+}
 
 export default defineEventHandler(async (event) => {
   const code = getRouterParam(event, "code");
@@ -18,7 +87,6 @@ export default defineEventHandler(async (event) => {
 
   const db = getOwnerDb();
 
-  // Query level and template join
   const [level] = await db
     .select({
       id: gameLevels.id,
@@ -45,9 +113,7 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 404, statusMessage: "NOT_FOUND" });
   }
 
-  // BR-GDP-03 & D-IA: Archived games return HTTP 410 Gone with alternative suggestions
   if (level.status === "archived") {
-    // Find alternatives (up to 3 published games in same age band)
     const alternatives = await db
       .select({
         code: gameLevels.code,
@@ -69,21 +135,17 @@ export default defineEventHandler(async (event) => {
     });
   }
 
-  // For guest, only published levels are visible
   if (level.status !== "published") {
     throw createError({ statusCode: 404, statusMessage: "NOT_FOUND" });
   }
 
-  // Determine gating & lock state
-  const guestAllowed = await allowedTiers({ kind: "guest" });
-  const isLocked = !guestAllowed.includes(level.accessTier);
+  const { allowed, userSession, activeChildId } =
+    await resolveCallerContext(event);
+  const isLocked = !allowed.includes(level.accessTier as AccessTier);
 
-  // Derive competency from code prefix (e.g. GL-C1-001 -> C1)
   const competencyMatch = level.code.match(RE_COMPETENCY);
-
   const competency = competencyMatch ? competencyMatch[1] : "C1";
 
-  // Find related games (up to 4 published levels)
   const relatedLevels = await db
     .select({
       code: gameLevels.code,
@@ -95,21 +157,13 @@ export default defineEventHandler(async (event) => {
     .where(and(eq(gameLevels.status, "published"), ne(gameLevels.code, code)))
     .limit(4);
 
-  // BR-GDP-06: Compute required CTA and tier
-  let ctaText = "Cho bé chơi ngay";
-  let ctaAction = "play";
-  if (level.accessTier === "login") {
-    ctaText = "Đăng nhập để chơi";
-    ctaAction = "login";
-  } else if (level.accessTier === "standard") {
-    ctaText = "Nâng cấp Gói Tiêu chuẩn";
-    ctaAction = "upgrade_standard";
-  } else if (level.accessTier === "premium") {
-    ctaText = "Nâng cấp Gói Premium";
-    ctaAction = "upgrade_premium";
-  }
+  const cta = computeLevelCta(
+    isLocked,
+    userSession,
+    activeChildId,
+    level.accessTier
+  );
 
-  // WP100.4: Load round set for this level
   const rounds = await db
     .select({
       round_index: gameLevelRounds.roundIndex,
@@ -145,7 +199,6 @@ export default defineEventHandler(async (event) => {
     scoring: {
       mode: scoringMode,
     },
-    // BR-GAT-01: assertContentAccess — strip paid content for guest
     rounds: isLocked
       ? rounds.map((r) => ({
           round_index: r.round_index,
@@ -159,10 +212,7 @@ export default defineEventHandler(async (event) => {
           difficulty_params: r.difficulty_params,
           difficulty: r.difficulty,
         })),
-    cta: {
-      text: ctaText,
-      action: ctaAction,
-    },
+    cta,
     preview_images: [
       "/images/previews/game-preview-1.webp",
       "/images/previews/game-preview-2.webp",
@@ -173,7 +223,7 @@ export default defineEventHandler(async (event) => {
       title: g.title,
       difficulty: g.difficulty,
       access_tier: g.access_tier,
-      locked: !guestAllowed.includes(g.access_tier),
+      locked: !allowed.includes(g.access_tier as AccessTier),
     })),
   };
 });

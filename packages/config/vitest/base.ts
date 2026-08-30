@@ -1,6 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { defineConfig, mergeConfig, type ViteUserConfig } from "vitest/config";
+import { testDatabaseUrls } from "./test-database.ts";
 
 /**
  * Config vitest dùng chung cho mọi workspace (cấu hình chung sống ở đúng một
@@ -114,6 +115,23 @@ export const SEQUENTIAL_DEFAULTS = {
 const BASE_TIMEOUT_MS = 30_000;
 
 /**
+ * Một `globalSetup` cho mọi workspace: dựng database test nếu chưa có, chạy
+ * migration, rồi TRUNCATE.
+ *
+ * Đặt ở đây thay vì trong từng `vitest.config.ts` vì workspace nào quên khai
+ * sẽ chạy trên database dev — đúng cách 1.117 dòng fixture lọt vào catalog
+ * công khai. File sống trong `packages/db` vì nó cần biết danh sách bảng và
+ * thư mục migration.
+ */
+const DATABASE_GLOBAL_SETUP = path.join(
+  REPO_ROOT,
+  "packages",
+  "db",
+  "tests",
+  "global-setup.ts"
+);
+
+/**
  * Mọi test của repo sống dưới `src/` hoặc `tests/` của một workspace — không có
  * ngoại lệ nào khác (đo 2026-08-28 trên 339 file).
  *
@@ -144,6 +162,7 @@ export const WORKSPACE_TEST_EXCLUDE: readonly string[] = [
 export function defineWorkspaceTest(
   overrides: ViteUserConfig = {}
 ): ViteUserConfig {
+  const { owner, app } = testDatabaseUrls();
   const base = defineConfig({
     resolve: { alias: workspaceAliases() },
     test: {
@@ -151,6 +170,11 @@ export function defineWorkspaceTest(
       include: [...WORKSPACE_TEST_INCLUDE],
       exclude: [...WORKSPACE_TEST_EXCLUDE],
       testTimeout: BASE_TIMEOUT_MS,
+      // Database RIÊNG cho test, dựng và dọn bởi `globalSetup` bên dưới.
+      // `requireEnv` nạp `.env` nhưng Cấm — NEVER ghi đè biến đã có giá trị,
+      // nên hai dòng này thắng file `.env` của máy dev.
+      env: { DATABASE_URL: owner, DATABASE_URL_APP: app },
+      globalSetup: [DATABASE_GLOBAL_SETUP],
       ...SEQUENTIAL_DEFAULTS,
     },
   });

@@ -21,9 +21,13 @@ setTestEnv("STORAGE_BASE_URL", "http://localhost:3000");
 setTestEnv("AWS_S3_PUBLIC_BUCKET", "mindkid-test-public");
 setTestEnv("AWS_S3_PRIVATE_BUCKET", "mindkid-test-private");
 setTestEnv("NUXT_ALLOWED_ORIGINS", "http://localhost:3001");
+// `defineWorkspaceTest` đã đặt `DATABASE_URL`/`DATABASE_URL_APP` trỏ vào
+// database test (`mindkid_test`) qua `test.env`, nên hai lời gọi dưới đây chỉ
+// là lưới an toàn khi ai đó chạy file này ngoài vitest. ❌ NEVER trỏ chúng về
+// `mindkid`: đó là database mà `pnpm dev` đang phục vụ.
 setTestEnv(
   "DATABASE_URL",
-  "postgresql://postgres:postgres@localhost:5433/mindkid"
+  "postgresql://postgres:postgres@localhost:5433/mindkid_test"
 );
 // Role `mindkid_app` chứ ❌ NEVER owner: ràng buộc INSERT-only
 // (`REVOKE UPDATE, DELETE ... FROM mindkid_app` trên `consent_logs`,
@@ -32,7 +36,7 @@ setTestEnv(
 // `docs/tasks/07-first-migration-plan.md` §262 đã cảnh báo đúng cái bẫy đó.
 setTestEnv(
   "DATABASE_URL_APP",
-  "postgresql://mindkid_app:mindkid_app_password@localhost:5433/mindkid"
+  "postgresql://mindkid_app:mindkid_app_password@localhost:5433/mindkid_test"
 );
 // Some suites call seed() to build their fixtures.
 setTestEnv("INITIAL_ADMIN_EMAIL", "admin@mindkid.test");

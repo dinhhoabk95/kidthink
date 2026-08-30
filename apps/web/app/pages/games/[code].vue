@@ -82,33 +82,44 @@
             <div class="hero-cta-box">
               <NuxtLink
                 class="btn-cta-play"
-                v-if="!game.locked"
+                v-if="!game.locked || game.cta?.action === 'play'"
                 :to="`/play/${game.code}`"
               >
-                Cho bé chơi ngay
+                {{ game.cta?.text || 'Cho bé chơi ngay' }}
                 <UIcon
                   class="w-4 h-4 ml-1 inline-block"
                   name="i-lucide-arrow-right"
-                /></NuxtLink
-              >
+                />
+              </NuxtLink>
               <NuxtLink
                 class="btn-cta-login"
-                to="/login"
-                v-else-if="game.access_tier === 'login'"
+                v-else-if="game.cta?.action === 'login'"
+                :to="`/login?redirect=/play/${game.code}`"
               >
-                Đăng nhập để chơi
+                {{ game.cta?.text || 'Đăng nhập để chơi' }}
                 <UIcon
                   class="w-4 h-4 ml-1 inline-block"
                   name="i-lucide-arrow-right"
-                /></NuxtLink
+                />
+              </NuxtLink>
+              <NuxtLink
+                class="btn-cta-login"
+                v-else-if="game.cta?.action === 'select_child'"
+                :to="`/me/children?redirect=/play/${game.code}`"
               >
-              <NuxtLink class="btn-cta-upgrade" to="/#pricing" v-else>
-                Nâng cấp gói học
+                {{ game.cta?.text || 'Chọn hồ sơ bé' }}
                 <UIcon
                   class="w-4 h-4 ml-1 inline-block"
                   name="i-lucide-arrow-right"
-                /></NuxtLink
-              >
+                />
+              </NuxtLink>
+              <NuxtLink class="btn-cta-upgrade" to="/pricing" v-else>
+                {{ game.cta?.text || 'Nâng cấp gói học' }}
+                <UIcon
+                  class="w-4 h-4 ml-1 inline-block"
+                  name="i-lucide-arrow-right"
+                />
+              </NuxtLink>
               <p class="cta-subtext">✓ Tự động lưu tiến độ vào hồ sơ của bé</p>
             </div>
           </div>
@@ -290,7 +301,9 @@
   }
 
   const route = useRoute();
-  const code = computed(() => (route.params.code as string) || "GL-C1-001");
+  const code = computed(
+    () => (route.params.code as string) || "GL-C1-CNT-CARD-0001"
+  );
 
   const { data: gameData, error } = await useFetch<GameDetailResponse>(
     () => `/api/guest/levels/${code.value}`
@@ -311,9 +324,9 @@
       return errData.data.alternatives;
     }
     return [
-      { code: "GL-C1-001", title: "Đếm số trái cây" },
-      { code: "GL-C2-001", title: "Xếp hình ngôi nhà" },
-      { code: "GL-C3-001", title: "Quy luật sắc màu" },
+      { code: "GL-C1-CNT-CARD-0001", title: "Đếm số táo đỏ" },
+      { code: "GL-C2-SHP-CARD-0001", title: "Nhận biết hình tròn đỏ" },
+      { code: "GL-C3-PAT-CARD-0001", title: "Tìm thẻ theo quy luật" },
     ];
   });
 

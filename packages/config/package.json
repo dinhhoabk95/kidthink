@@ -13,6 +13,7 @@
     "./env-file": "./src/env-file.ts",
     "./tsconfig.base.json": "./tsconfig.base.json",
     "./vitest": "./vitest/base.ts",
+    "./vitest/test-database": "./vitest/test-database.ts",
     "./paths": "./src/repo-paths.ts"
   },
   "devDependencies": {
