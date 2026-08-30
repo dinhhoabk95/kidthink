@@ -217,7 +217,9 @@ describe("Task 5 — GET /api/managers/taxonomy (BR-TXB-01..03, BR-TXB-06, D-IT)
       // Verify draft vs published count structure on skills
       const c1 = res.competencies.find((c: any) => c.code === "C1");
       expect(c1).toBeDefined();
-      const numStrand = res.strands.find((s: any) => s.code === "C1.NUM");
+      const numStrand = res.strands.find(
+        (s: any) => s.code === "C1.CNT" || s.code === "C1.NUM"
+      );
       expect(numStrand).toBeDefined();
       const cntSkill = res.skills.find(
         (sk: any) => sk.code === "C1.CNT.99" || sk.code === "C1.CNT.01"

@@ -1,11 +1,31 @@
 import { ENTITLEMENT_KEYS, PACKAGE_CATALOG } from "@mindkid/shared";
 import { count, inArray } from "drizzle-orm";
-import { describe, expect, it } from "vitest";
+import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { getOwnerDb } from "#src/index";
 import { entitlementKeys, packages } from "#src/schema/billing";
 import { seed } from "#src/seed";
 
 describe("BR-ENT-03 & BR-PKG-04 & BR-PKG-05: Seed Integration & Two-way Matching", () => {
+  /**
+   * Chỉ gieo master data ở nhóm phép thử này.
+   *
+   * `seed()` giờ gieo cả nội dung (490 hạt, mỗi hạt nhiều truy vấn) — chạy hai
+   * lần để đo tính bất biến sẽ vượt `testTimeout`. Phần nội dung có phép thử
+   * riêng ở `seed-content-step.test.ts`.
+   */
+  const previous = process.env.MINDKID_SEED_MASTER_ONLY;
+  beforeAll(() => {
+    process.env.MINDKID_SEED_MASTER_ONLY = "1";
+  });
+  afterAll(() => {
+    if (previous === undefined) {
+      process.env.MINDKID_SEED_MASTER_ONLY = undefined;
+      delete process.env.MINDKID_SEED_MASTER_ONLY;
+    } else {
+      process.env.MINDKID_SEED_MASTER_ONLY = previous;
+    }
+  });
+
   it("seed() is idempotent and matches registry exactly (BR-ENT-03)", async () => {
     const db = getOwnerDb();
 
