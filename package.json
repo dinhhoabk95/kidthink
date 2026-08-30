@@ -30,6 +30,7 @@
     "db:generate": "pnpm --filter @mindkid/db run generate",
     "db:migrate": "pnpm --filter @mindkid/db run migrate",
     "db:seed": "pnpm --filter @mindkid/db run seed",
+    "db:reset-content": "pnpm --filter @mindkid/db run reset-content",
     "db:restore": "pnpm --filter @mindkid/worker run restore",
     "services": "tsx scripts/check-services.ts",
     "deploy": "tsx scripts/deploy/cli.ts"

@@ -12,6 +12,18 @@ HARNESS_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "${HARNESS_DIR}/../../.." && pwd)"
 MINDKID_SH="${REPO_ROOT}/infra/scripts/mindkid.sh"
 
+run_make_env() {
+  if command -v tsx >/dev/null 2>&1; then
+    tsx "${HARNESS_DIR}/make-env.ts" "$@"
+  elif command -v pnpm >/dev/null 2>&1; then
+    pnpm --dir "${REPO_ROOT}" exec tsx "${HARNESS_DIR}/make-env.ts" "$@"
+  elif node --experimental-strip-types "${HARNESS_DIR}/make-env.ts" "$@" 2>/dev/null; then
+    :
+  else
+    node --import tsx "${HARNESS_DIR}/make-env.ts" "$@"
+  fi
+}
+
 PASS=0
 FAIL=0
 
@@ -82,7 +94,7 @@ setup_env() {
 
   local app
   for app in web admin worker; do
-    node "${HARNESS_DIR}/make-env.ts" "${app}" >"${MK_ENV_DIR}/${app}.env"
+    run_make_env "${app}" >"${MK_ENV_DIR}/${app}.env"
   done
 }
 
@@ -171,7 +183,7 @@ case_2_missing_env_var_stops_before_build() {
 
   add_commit "${root}/source" "second"
   # Remove one always-required variable from the file on the server.
-  node "${HARNESS_DIR}/make-env.ts" web NUXT_SESSION_PASSWORD >"${MK_ENV_DIR}/web.env"
+  run_make_env web NUXT_SESSION_PASSWORD >"${MK_ENV_DIR}/web.env"
 
   local output status
   output="$(bash "${MINDKID_SH}" release --ref main 2>&1)"
@@ -416,7 +428,7 @@ case_13_missing_admin_build_var_stops_before_build() {
   # APP-RUNTIME-BOUNDARY BR-ARB-04: admin has no runtime process, so a missing
   # NUXT_PUBLIC_API_BASE_URL can only be caught here — after the build it is
   # baked (or missing) in a static bundle nobody can reconfigure.
-  node "${HARNESS_DIR}/make-env.ts" admin NUXT_PUBLIC_API_BASE_URL >"${MK_ENV_DIR}/admin.env"
+  run_make_env admin NUXT_PUBLIC_API_BASE_URL >"${MK_ENV_DIR}/admin.env"
 
   local output status
   output="$(bash "${MINDKID_SH}" release --ref main 2>&1)"
@@ -549,7 +561,7 @@ case_18_alerting_unconfigured_stops_release() {
   # BR-MON-01: with no channel configured every P0 alert becomes a console.warn
   # in a log file nobody reads. The environment gate is the cheapest place to
   # catch that, before anything is built.
-  node "${HARNESS_DIR}/make-env.ts" worker TELEGRAM_BOT_TOKEN >"${MK_ENV_DIR}/worker.env"
+  run_make_env worker TELEGRAM_BOT_TOKEN >"${MK_ENV_DIR}/worker.env"
 
   local output status
   output="$(bash "${MINDKID_SH}" release --ref main 2>&1)"

@@ -100,3 +100,69 @@ Nghiệm thu của bước này: `runEightGates` trên `ALL_SEED_CONTENT` trả 
 4. `apps/web/app/pages/play/*.vue` chưa có lời gọi dữ liệu nào; nối vào
    `GET /api/guest/levels/[code]/config`.
 5. Dọn 225 dòng rác `game_levels` từ hai lô `TEST-P31-*`.
+
+## Kết quả đo sau khi làm (2026-08-30)
+
+| Đo | Trước | Sau |
+|---|---|---|
+| Hạt trượt Cổng 1 | 175/560 | **73** (đều nằm trong `quarantine.ts`) |
+| Level gieo được | 0 (cả lô rollback) | **166**, phủ đủ C1–C6 |
+| Engine có nội dung hợp lệ | 19/27 | **27/27** |
+| `game_levels` published trong DB | 190 (toàn C1, rác test) | **166** (C1:52 C2:27 C3:24 C4:23 C5:13 C6:27) |
+| Glyph thô trong `ref` | 57 level · 77 glyph | **0 · 0** |
+| Tag `mechanic` trong DB | 6 | **26**, suy từ `ALL_TEMPLATES` |
+| Kỹ năng trong DB | 142 | **238** (gieo cả kỹ năng trạng thái `chờ`) |
+| Mã kỹ năng "ma" trong corpus | 20 (228 hạt trỏ vào) | **0** |
+| Thẻ trò chơi trên `/games` | 9 (mảng cứng) | **60/trang, 166 tổng** (SSR, từ API) |
+
+### Việc đã làm ngoài bảng ánh xạ
+
+- **Từ vựng tag.** `content_tags` chỉ có 14 mã `what` + 12 mã `thinking` trong khi
+  cổng 5 công nhận hàng trăm, nên `resolveAndEnsureTags` tự tạo mọi mã lạ với
+  trục `what` — 315 tag `thinking` nằm nhầm trục và mọi level publish trượt
+  `BR-TAG-02`. Nay `SEED_CONTENT_TAGS` suy từ `TAG_VOCABULARY`; 13 mã nằm ở cả
+  hai trục được chốt bằng bảng `AXIS_TIEBREAK` theo cách corpus dùng thật, và
+  `mechanic` thắng khi trùng (`matching` vừa là cơ chế vừa là tag tư duy).
+- **Kỹ năng trạng thái `chờ`.** `seedTaxonomyMasterData` lọc `status === "seeded"`
+  nên 88 kỹ năng có trong `docs/taxonomy/` mà không có dòng nào trong DB. Bỏ bộ
+  lọc, giữ nguyên cột `status`.
+- **Emoji.** 15 emoji corpus dùng nhưng registry thiếu (🍄 🧊 🛢️ 🚔 🥫 🚘 ⭕ ⛺ 🍾
+  🐮 🐭 ⬆️ ⬇️ ⬅️ ➡️ 💎) đã bổ sung; 239 `ref` đổi từ glyph sang mã.
+- **`GT-002` mất hết nội dung.** 27 level cũ của nó không level nào parse được;
+  sau khi chuyển đi theo cơ chế thật, engine còn 0. Soạn 3 level mới
+  (`c3/multi-select-levels.ts`) đúng cơ chế "chọn nhiều đáp án", band 4-5 và 5-6.
+- **5 giáo án có hai bước chơi trùng khuôn** sau khi 3 template sai gộp về
+  `GT-012`. Đổi bước thứ hai sang hoạt động khác cùng năng lực.
+- **Mã workbook Montessori** (`WB01-D1`) từng chỉ nằm trong comment và bị codemod
+  xoá; nay là dữ liệu ở `header.montessori_ref`.
+
+### Bậc thang đã hạ
+
+- `GATE_1_LADDER_BASELINES`: 175/162/170 → **73/73/71**.
+- `emoji-ref-debt`: 57/77 → **0/0**. Chưa siết `EmojiRef` thành regex vì 27 file
+  `templates/GT-0xx/fixtures.ts` còn dùng glyph thô — việc của một task riêng.
+
+### Database test tách khỏi database dev
+
+Bộ integration test ghi thẳng vào `mindkid` (database mà `pnpm dev` phục vụ):
+sau một lượt `pnpm test`, `game_levels` có 1.506 dòng trong khi corpus chỉ 166.
+Nay `defineWorkspaceTest` trỏ `DATABASE_URL`/`DATABASE_URL_APP` sang
+`mindkid_test`, và `globalSetup` dựng database đó, chạy migration rồi TRUNCATE
+trước mỗi lượt chạy. Không thêm biến môi trường mới — tên suy từ database hiện
+tại cộng hậu tố `_test`, và có chốt chặn từ chối mọi tên không mang hậu tố đó.
+
+Cách ly làm lộ một phép thử vốn xanh nhờ dữ liệu dùng chung:
+`taxonomy-browser.test.ts` đo `C1.CNT.01` (kỹ năng fixture không đụng tới) thay
+vì `C1.CNT.99` mà nó vừa dựng.
+
+Dọn phần đã lỡ tích tụ: `pnpm db:reset-content -- --yes` rồi `pnpm db:seed`.
+
+## Việc còn lại
+
+1. **73 level cách ly** cần soạn lại hoặc cần engine mới — bảng lý do trong
+   `packages/db/src/seed-content/quarantine.ts`. Ba nhóm lớn nhất: so sánh hai
+   nhóm (21), chọn phần tử tiếp theo của dãy (21), tìm vật theo vị trí trên lưới
+   2 ô (15).
+2. **`curriculum_items` vẫn gieo 0 dòng** — `seedCurriculaMasterData` dựng 5
+   chương trình và 74 tuần nhưng không có mục nào.
+3. **Siết `EmojiRef`** sau khi dọn glyph trong fixture của 27 template.
