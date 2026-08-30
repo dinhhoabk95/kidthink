@@ -88,27 +88,19 @@ async function assertNoActiveEnrollment(
   }
 }
 
-function assertChildAgeMatchesCurriculum(
+export function computeAgeRecommendationWarning(
   child: typeof childProfiles.$inferSelect,
-  curriculum: typeof curricula.$inferSelect,
-  event: H3Event
-) {
+  curriculum: typeof curricula.$inferSelect
+): string | undefined {
   const currentYear = new Date().getFullYear();
   const childAge = currentYear - child.birthYear;
-  if (
-    (curriculum.targetAgeMin && childAge < curriculum.targetAgeMin) ||
-    (curriculum.targetAgeMax && childAge > curriculum.targetAgeMax)
-  ) {
-    setResponseStatus(event, 422);
-    throw createError({
-      statusCode: 422,
-      statusMessage: "CHILD_AGE_OUT_OF_RANGE",
-      data: {
-        code: "CHILD_AGE_OUT_OF_RANGE",
-        message: `Chương trình dành cho độ tuổi ${curriculum.targetAgeMin ?? 3}–${curriculum.targetAgeMax ?? 6} tuổi.`,
-      },
-    });
+  const minAge = curriculum.targetAgeMin;
+  const maxAge = curriculum.targetAgeMax;
+
+  if ((minAge && childAge < minAge) || (maxAge && childAge > maxAge)) {
+    return `Flow này gợi ý cho trẻ ${minAge ?? 3}–${maxAge ?? 6} tuổi, bé nhà bạn ${childAge} tuổi`;
   }
+  return undefined;
 }
 
 async function assertGatingAllowance(
@@ -266,8 +258,8 @@ export default defineEventHandler(async (event) => {
     });
   }
 
-  // 4. Validate child's age against target_age_min / target_age_max
-  assertChildAgeMatchesCurriculum(child, curriculum, event);
+  // 4. Compute age recommendation warning (BR-LFM-02, BR-LFM-03, BR-LFM-04 - tuổi không chặn ghi danh)
+  const ageWarning = computeAgeRecommendationWarning(child, curriculum);
 
   // 5. Gating pre-check: User must be able to open at least 1 mandatory item (D-ME / BR-CUR-10)
   await assertGatingAllowance(db, userId, child.id, curriculum.id, event);
@@ -296,6 +288,7 @@ export default defineEventHandler(async (event) => {
       child_uuid: child.uuid,
       curriculum_code: curriculum.code,
       curriculum_version: curriculum.contentVersion,
+      age_warning: ageWarning,
     },
   });
 
@@ -306,5 +299,6 @@ export default defineEventHandler(async (event) => {
     curriculum_version: curriculum.contentVersion,
     status: enrollment.status,
     enrolled_at: enrollment.enrolledAt,
+    warning: ageWarning,
   };
 });

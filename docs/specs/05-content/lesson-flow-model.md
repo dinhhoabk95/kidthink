@@ -2,10 +2,10 @@
 spec: LESSON-FLOW-MODEL
 title: Thư viện giáo án master và flow ghi danh — tuổi là đề xuất, không phải khoá
 area: content
-status: draft
+status: implemented
 mvp: false
 phase: P4
-reviewed: 2026-08-29
+reviewed: 2026-08-30
 owns:
   - Quan hệ giữa thư viện giáo án master và một flow ghi danh
   - Vai trò của tuổi là tín hiệu đề xuất, không phải điều kiện ghi danh
