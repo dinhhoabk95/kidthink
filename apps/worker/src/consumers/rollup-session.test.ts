@@ -47,8 +47,9 @@ describe("Task 5 — rollup:session Integration Suite (BR-TLM-04 & BR-JOB-01)", 
       .onConflictDoNothing()
       .returning();
 
-    const glCode = `GL-C1-NUM-DRAG-${Math.floor(Math.random() * 8999 + 1000)}`;
-    const [gl] = await db
+    const randNum = String(Math.floor(Math.random() * 8999 + 1000));
+    const glCode = `GL-C1-NUM-DRAG-${randNum}`;
+    let [gl] = await db
       .insert(gameLevels)
       .values({
         entityId: Math.floor(Math.random() * 899_000 + 100_000),
@@ -61,7 +62,15 @@ describe("Task 5 — rollup:session Integration Suite (BR-TLM-04 & BR-JOB-01)", 
         accessTier: "free",
         status: "draft",
       })
+      .onConflictDoNothing()
       .returning();
+
+    if (!gl) {
+      [gl] = await db
+        .select()
+        .from(gameLevels)
+        .where(eq(gameLevels.code, glCode));
+    }
 
     // 3. Create play session in_progress
     const sessionUuid = `e0eebc99-9c0b-4ef8-bb6d-${Math.floor(Math.random() * 899_900_000_000 + 100_000_000_000)}`;

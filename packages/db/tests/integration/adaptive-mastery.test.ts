@@ -59,9 +59,9 @@ describe("P3.5 Adaptive & Mastery Integration Tests (PostgreSQL)", () => {
       { length: 3 },
       () => letters[Math.floor(Math.random() * letters.length)]
     ).join("");
-    const validStrandCode = `C1.AD${randLetters}`; // e.g. C1.ADXYZ
+    const validStrandCode = `C1.A${randLetters}`; // e.g. C1.AXYZ
 
-    const [strand] = await db
+    let [strand] = await db
       .insert(strands)
       .values({
         competencyId: comp.id,
@@ -69,7 +69,15 @@ describe("P3.5 Adaptive & Mastery Integration Tests (PostgreSQL)", () => {
         name: `Đếm số lượng ${validStrandCode}`,
         position: 1,
       })
+      .onConflictDoNothing()
       .returning();
+
+    if (!strand) {
+      [strand] = await db
+        .select()
+        .from(strands)
+        .where(eq(strands.code, validStrandCode));
+    }
 
     const skillCode = `${validStrandCode}.01`;
     const [skill] = await db
