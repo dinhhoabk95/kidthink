@@ -38,6 +38,7 @@
     "replay:adaptive": "tsx scripts/replay-adaptive.ts",
     "check:theme-registry": "vitest run tests/gates/theme-registry.test.ts",
     "check:engine-depth": "tsx src/seed-content/cli/check-engine-depth.ts",
+    "check:lesson-supply": "tsx src/seed-content/cli/check-lesson-supply.ts",
     "gen:levels": "tsx src/seed-content/cli/gen-levels.ts"
   },
   "imports": {

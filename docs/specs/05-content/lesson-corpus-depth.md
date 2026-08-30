@@ -2,10 +2,10 @@
 spec: LESSON-CORPUS-DEPTH
 title: Chiều sâu corpus giáo án — cung buổi học so với cầu của chương trình
 area: content
-status: draft
+status: implemented
 mvp: false
 phase: P4
-reviewed: 2026-08-29
+reviewed: 2026-08-30
 owns:
   - Quan hệ cung cầu giữa số tiết flow đòi và số lesson trong thư viện master
   - Cầu game level suy ra từ kỹ năng của thư viện giáo án
