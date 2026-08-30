@@ -2,10 +2,10 @@
 spec: LESSON-TEMPLATE-VARIETY
 title: Đa dạng khuôn trong một bài học — cùng một kỹ năng, nhiều hình dạng chơi
 area: content
-status: approved
+status: implemented
 mvp: false
 phase: P5
-reviewed: 2026-08-22
+reviewed: 2026-08-30
 
 owns:
   - Số khuôn trò chơi tối thiểu cho một bài học

@@ -2,10 +2,10 @@
 spec: TAXONOMY-GAP-BATCH
 title: Lô khuôn khoảng trống taxonomy — ba cơ chế không dạng bài v1 nào có
 area: platform
-status: approved
+status: implemented
 mvp: false
 phase: P5
-reviewed: 2026-08-22
+reviewed: 2026-08-30
 
 owns:
   - Danh mục ba khuôn trò chơi lô khoảng trống taxonomy

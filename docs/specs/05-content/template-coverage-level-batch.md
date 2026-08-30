@@ -2,10 +2,10 @@
 spec: TEMPLATE-COVERAGE-LEVEL-BATCH
 title: Lô game level phủ khuôn — mười sáu khuôn chưa có nội dung
 area: content
-status: approved
+status: implemented
 mvp: false
 phase: P5
-reviewed: 2026-08-22
+reviewed: 2026-08-30
 
 owns:
   - Hạn ngạch game level cho khuôn chưa có nội dung (đã đạt 2026-08-29, bàn giao — xem mục 1.1)
