@@ -22,7 +22,7 @@
     "typecheck:apps": "pnpm --recursive --filter \"./apps/*\" run typecheck",
     "typecheck": "tsc --noEmit && pnpm --recursive --filter \"./apps/*\" run typecheck",
     "typecheck:gate": "node scripts/typecheck/typecheck-gate.ts",
-    "test": "NODE_OPTIONS=--max-old-space-size=4096 vitest run",
+    "test": "NODE_OPTIONS=--max-old-space-size=4096 vitest run --maxWorkers=1",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
     "test:deploy": "bash infra/scripts/tests/run.sh",

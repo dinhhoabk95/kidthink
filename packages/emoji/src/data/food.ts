@@ -314,4 +314,12 @@ export const FOOD_EMOJIS: EmojiEntry[] = [
     keywords: ["ice cube", "viên đá", "khối lập phương", "đá lạnh"],
     name: "Viên đá",
   },
+  {
+    age_min: 3,
+    category: "food",
+    curriculum_themes: ["dinh_duong_suc_khoe"],
+    emoji: "🍬",
+    keywords: ["candy", "kẹo", "viên kẹo"],
+    name: "Kẹo",
+  },
 ];

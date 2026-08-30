@@ -19,9 +19,13 @@ const ERR_EMPTY_SOURCE = /Nguồn corpus seed rỗng hoặc không đọc đư�
  *
  * 55 → 52 sau khi soạn thêm 8 level band 3-4 để đóng `BR-TCL-04`/`BR-TCM-04`.
  * 52 → 48 sau khi bổ sung level chuẩn hoá cho các template.
+ * 48 → 45 sau khi soạn lại 73 level cách ly (task 162): chúng rời `GT-004`,
+ *   `GT-005`, `GT-006`, `GT-011` — nơi chúng từng được **đếm mà không chơi
+ *   được** — và phân lại theo cơ chế thật, đồng thời nâng `GT-004` và `GT-006`
+ *   lên sàn bậc 1.
  * Số chỉ được GIẢM: tăng nghĩa là ai đó xoá level hoặc thêm engine chưa có nội dung.
  */
-const MAX_LEVEL_COUNT_DEFICIT_AT_STEP_1 = 48;
+const MAX_LEVEL_COUNT_DEFICIT_AT_STEP_1 = 45;
 
 describe("Sàn chiều sâu mỗi engine — Task #122 (BR-ECD-01..13)", () => {
   it("Bậc 0: toàn bộ 27 engine active đều đạt sàn baseline", () => {

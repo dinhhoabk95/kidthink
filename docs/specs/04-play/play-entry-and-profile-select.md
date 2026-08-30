@@ -59,8 +59,9 @@ lại** endpoint đó khi luồng vào khu vực chơi cần chọn trẻ trư�
 | Nhánh | Hành vi |
 |---|---|
 | Guest vào thẳng `/play` | Thấy allow-list 6 game free. Cấm lưu tiến độ. Sau 5 lượt hiện lời mời đăng ký **trên bề mặt người lớn**, không giữa lúc chơi (`D-GX`) |
-| User chưa có trẻ nào | Chuyển về `/me/children/new` |
+| User chưa có trẻ nào | Chuyển về `/me/children/create` |
 | User chưa chọn trẻ, vào thẳng `/play/{code}` bậc ≥ login | **428** → màn hình chọn trẻ |
+| Vào `/me/children` kèm `redirect` | Chọn trẻ xong đi tiếp tới đích đó thay vì `/play`; đích đi qua whitelist đường dẫn nội bộ của `BR-OAP-05` — xem mục 6 của [`oauth-provider-registry.md`](../01-platform/oauth-provider-registry.md) |
 | Cookie trẻ trỏ tới trẻ đã archive | Xoá cookie, yêu cầu chọn lại |
 | Đổi trẻ | Qua **Parent Gate** |
 

@@ -1,11 +1,18 @@
-import { requireUserAuth, type UserTokenPayload } from "@mindkid/auth";
+import { requireUserAuth } from "@mindkid/auth";
 import {
   gameLevelRounds,
   gameLevels,
   gameTemplates,
   getOwnerDb,
 } from "@mindkid/db";
-import { type AccessTier, allowedTiers } from "@mindkid/shared";
+import {
+  type AccessTier,
+  allowedTiers,
+  type CtaViewer,
+  GUEST_CTA_VIEWER,
+  resolveLevelCta,
+  TIER_ENTITLEMENT,
+} from "@mindkid/shared";
 import { and, asc, eq, ne } from "drizzle-orm";
 import {
   createError,
@@ -20,8 +27,7 @@ const RE_COMPETENCY = /GL-(C[1-6])-/;
 
 interface CallerContext {
   allowed: AccessTier[];
-  userSession: UserTokenPayload | null;
-  activeChildId: string | null;
+  viewer: CtaViewer;
 }
 
 async function resolveCallerContext(event: H3Event): Promise<CallerContext> {
@@ -40,43 +46,21 @@ async function resolveCallerContext(event: H3Event): Promise<CallerContext> {
         },
         activeKeys
       );
-      return { allowed, userSession, activeChildId };
+      return {
+        allowed,
+        viewer: {
+          is_authenticated: true,
+          has_active_child: Boolean(activeChildId),
+          active_keys: activeKeys,
+        },
+      };
     }
   } catch {
     // Guest caller
   }
 
   const allowed = await allowedTiers({ kind: "guest" });
-  return { allowed, userSession: null, activeChildId: null };
-}
-
-function computeLevelCta(
-  isLocked: boolean,
-  userSession: UserTokenPayload | null,
-  activeChildId: string | null,
-  accessTier: string
-): { text: string; action: string } {
-  if (!isLocked) {
-    return { text: "Cho bé chơi ngay", action: "play" };
-  }
-
-  if (!userSession) {
-    if (accessTier === "login") {
-      return { text: "Đăng nhập để chơi", action: "login" };
-    }
-    if (accessTier === "standard") {
-      return { text: "Nâng cấp Gói Tiêu chuẩn", action: "upgrade_standard" };
-    }
-    return { text: "Nâng cấp Gói Premium", action: "upgrade_premium" };
-  }
-
-  if (!activeChildId && accessTier !== "free") {
-    return { text: "Chọn hồ sơ bé", action: "select_child" };
-  }
-  if (accessTier === "standard") {
-    return { text: "Nâng cấp Gói Tiêu chuẩn", action: "upgrade_standard" };
-  }
-  return { text: "Nâng cấp Gói Premium", action: "upgrade_premium" };
+  return { allowed, viewer: GUEST_CTA_VIEWER };
 }
 
 export default defineEventHandler(async (event) => {
@@ -139,8 +123,7 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 404, statusMessage: "NOT_FOUND" });
   }
 
-  const { allowed, userSession, activeChildId } =
-    await resolveCallerContext(event);
+  const { allowed, viewer } = await resolveCallerContext(event);
   const isLocked = !allowed.includes(level.accessTier as AccessTier);
 
   const competencyMatch = level.code.match(RE_COMPETENCY);
@@ -157,12 +140,7 @@ export default defineEventHandler(async (event) => {
     .where(and(eq(gameLevels.status, "published"), ne(gameLevels.code, code)))
     .limit(4);
 
-  const cta = computeLevelCta(
-    isLocked,
-    userSession,
-    activeChildId,
-    level.accessTier
-  );
+  const cta = resolveLevelCta(code, level.accessTier as AccessTier, viewer);
 
   const rounds = await db
     .select({
@@ -196,6 +174,9 @@ export default defineEventHandler(async (event) => {
     mechanic_type: level.mechanic,
     access_tier: level.accessTier,
     locked: isLocked,
+    required_entitlement: isLocked
+      ? TIER_ENTITLEMENT[level.accessTier as AccessTier]
+      : null,
     scoring: {
       mode: scoringMode,
     },

@@ -14,7 +14,7 @@
         </p>
         <div class="hero-cta-group">
           <!-- BR-LND-01 & BR-LND-02: Play trial button above fold without registration -->
-          <NuxtLink class="btn-cta-primary" to="/games/GL-C1-CNT-CARD-0001">
+          <NuxtLink class="btn-cta-primary" to="/play/GL-C1-CNT-CARD-0001">
             Cho bé chơi thử ngay
             <UIcon
               class="w-5 h-5 ml-1.5 inline-block"

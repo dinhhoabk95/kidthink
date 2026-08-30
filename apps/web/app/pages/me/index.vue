@@ -122,6 +122,13 @@
 
       <!-- Khối 2: Các bé (Child Profiles & Active Switcher) -->
       <section class="space-y-4">
+        <p
+          class="p-3 rounded-2xl border-2 border-danger-200 bg-danger-50/60 text-sm text-danger-800"
+          role="alert"
+          v-if="childSwitchError"
+        >
+          {{ childSwitchError }}
+        </p>
         <div class="flex items-center justify-between">
           <h2
             class="text-lg font-bold font-heading text-surface-900 flex items-center gap-2"
@@ -205,7 +212,7 @@
               <button
                 class="flex-1 min-h-11 py-2 px-3 bg-brand-600 hover:bg-brand-700 text-white font-bold font-heading rounded-2xl text-xs shadow transition-all flex items-center justify-center gap-1.5"
                 type="button"
-                @click="enterPlayMode(child.id)"
+                @click="enterPlayMode(child.uuid)"
               >
                 <UIcon class="w-4 h-4" name="i-lucide-play" />
                 <span>Cho bé chơi</span>
@@ -469,9 +476,12 @@
 <script lang="ts" setup>
   import { computed, ref, watch } from "vue";
   import { useRoute, useRouter } from "vue-router";
+  import { useCsrfHeaders } from "~/composables/use-csrf-fetch";
+  import { resolveAvatarEmoji } from "~/utils/child-avatar";
 
   const route = useRoute();
   const router = useRouter();
+  const { headers: csrfHeaders } = useCsrfHeaders();
 
   const selectedChildId = ref<number | null>(
     route.query.child_id ? Number(route.query.child_id) : null
@@ -588,37 +598,52 @@
     }
   }
 
-  function enterPlayMode(childId?: number | null) {
-    if (childId !== undefined && childId !== null) {
-      const cookie = useCookie("active_child_id", { path: "/" });
-      cookie.value = String(childId);
+  // Cookie `active_child_id` mang **UUID** — `game-config-runtime.ts` tra
+  // `childProfiles.uuid` bằng đúng giá trị này. Ghi id số vào đây làm mọi level
+  // bậc ≥ login trả 404. Và chỉ `activate.post.ts` mới được ghi nó: nó kiểm
+  // ownership ở DB, ép Parent Gate khi đổi trẻ (`BR-PEN-01`), và huỷ phiên chơi
+  // dở của trẻ trước.
+  const childSwitchError = ref<string | null>(null);
+
+  async function activateChildThenPlay(childUuid: string) {
+    childSwitchError.value = null;
+    try {
+      await $fetch(`/api/users/children/${childUuid}/activate`, {
+        method: "POST",
+        headers: csrfHeaders(),
+        credentials: "include",
+      });
+      await router.push("/play");
+    } catch (err: unknown) {
+      const activateError = err as {
+        data?: { code?: string; message?: string };
+        statusCode?: number;
+      };
+      childSwitchError.value =
+        activateError.data?.code === "PARENT_GATE_REQUIRED"
+          ? "Đổi hồ sơ bé cần xác nhận của người lớn. Anh chị vào Hồ sơ bé để đổi giúp em nhé."
+          : activateError.data?.message ||
+            "Chưa chuyển được sang hồ sơ bé. Anh chị thử lại giúp em nhé.";
     }
-    router.push("/play");
   }
 
-  function playNextCurriculumItem() {
-    if (selectedChildId.value) {
-      const cookie = useCookie("active_child_id", { path: "/" });
-      cookie.value = String(selectedChildId.value);
+  async function enterPlayMode(childUuid?: string | null) {
+    if (childUuid) {
+      await activateChildThenPlay(childUuid);
+      return;
     }
-    router.push("/play");
+    await router.push("/play");
   }
 
-  function resolveAvatarEmoji(avatarId?: string | null): string {
-    if (!avatarId) {
-      return "⭐";
+  async function playNextCurriculumItem() {
+    const child = dashboardData.value?.children?.find(
+      (candidate) => candidate.id === selectedChildId.value
+    );
+    if (child) {
+      await activateChildThenPlay(child.uuid);
+      return;
     }
-    const map: Record<string, string> = {
-      bear: "🐻",
-      rabbit: "🐰",
-      cat: "🐱",
-      dog: "🐶",
-      fox: "🦊",
-      panda: "🐼",
-      lion: "🦁",
-      tiger: "🐯",
-    };
-    return map[avatarId] || "⭐";
+    await router.push("/play");
   }
 
   function calculateAge(birthYear?: number | null): number {

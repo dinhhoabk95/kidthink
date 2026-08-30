@@ -202,4 +202,28 @@ export const HOUSEHOLD_EMOJIS: EmojiEntry[] = [
     keywords: ["package", "box", "hộp", "thùng", "đựng"],
     name: "Hộp",
   },
+  {
+    age_min: 4,
+    category: "household",
+    curriculum_themes: ["gia_dinh"],
+    emoji: "🫙",
+    keywords: ["jar", "lọ thuỷ tinh", "hũ"],
+    name: "Lọ thuỷ tinh",
+  },
+  {
+    age_min: 3,
+    category: "household",
+    curriculum_themes: ["dinh_duong_suc_khoe", "ban_than"],
+    emoji: "🧼",
+    keywords: ["soap", "xà phòng", "rửa tay"],
+    name: "Xà phòng",
+  },
+  {
+    age_min: 3,
+    category: "household",
+    curriculum_themes: ["nuoc_hien_tuong_tu_nhien"],
+    emoji: "🚰",
+    keywords: ["tap water", "vòi nước", "nước sạch"],
+    name: "Vòi nước",
+  },
 ];

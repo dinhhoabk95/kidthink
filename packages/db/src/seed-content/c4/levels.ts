@@ -124,7 +124,7 @@ export const C4_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
     header: {
       code: "GL-C4-OBS-CARD-0003",
       content_version: 1,
-      template_code: "GT-003",
+      template_code: "GT-001",
       title: "Tìm điểm khác biệt đơn giản",
       instruction: "Chọn hình khác loại với các hình còn lại.",
       age_min: 3,
@@ -140,23 +140,46 @@ export const C4_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
       authored_in: "repo_seed",
     },
     content_pack: {
-      left_group: [
+      prompt: "Bé chạm vào quả khác loại với hai quả kia!",
+      target_item: {
+        item_id: "banana",
+        asset: {
+          kind: "emoji",
+          ref: "EMJ-banana",
+        },
+      },
+      options: [
         {
-          emoji: "🍎",
+          item_id: "apple-1",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-red-apple",
+          },
+          is_correct: false,
         },
         {
-          emoji: "🍎",
+          item_id: "apple-2",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-red-apple",
+          },
+          is_correct: false,
+        },
+        {
+          item_id: "banana",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-banana",
+          },
+          is_correct: true,
         },
       ],
-      right_group: [
-        {
-          emoji: "🍌",
-        },
-      ],
-      target: "different",
     },
     difficulty_params: {
-      max_difference: 1,
+      distractor_count: 2,
+      hint_after_ms: 9000,
+      allow_retry: true,
+      shuffle_items: true,
     },
   },
   {
@@ -217,7 +240,7 @@ export const C4_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
     header: {
       code: "GL-C4-OBS-LOC-0005",
       content_version: 1,
-      template_code: "GT-005",
+      template_code: "GT-001",
       title: "Quan sát ô ly ẩn nấp",
       instruction: "Chạm vào chú bướm trên cành cây.",
       age_min: 3,
@@ -233,31 +256,53 @@ export const C4_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
       authored_in: "repo_seed",
     },
     content_pack: {
-      grid: [
-        [
-          {
-            id: "bf",
-            emoji: "🦋",
-            position: "tree",
+      prompt: "Bé chạm vào chú bướm nhé!",
+      target_item: {
+        item_id: "butterfly",
+        asset: {
+          kind: "emoji",
+          ref: "EMJ-butterfly",
+        },
+      },
+      options: [
+        {
+          item_id: "butterfly",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-butterfly",
           },
-          {
-            id: "lf",
-            emoji: "🍃",
-            position: "ground",
+          is_correct: true,
+        },
+        {
+          item_id: "leaf",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-leaf-fluttering",
           },
-        ],
+          is_correct: false,
+        },
+        {
+          item_id: "bee",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-bee",
+          },
+          is_correct: false,
+        },
       ],
-      target_id: "bf",
     },
     difficulty_params: {
-      grid_size: 2,
+      distractor_count: 2,
+      hint_after_ms: 9000,
+      allow_retry: true,
+      shuffle_items: true,
     },
   },
   {
     header: {
       code: "GL-C4-SEQ-OBS-0006",
       content_version: 1,
-      template_code: "GT-004",
+      template_code: "GT-008",
       title: "Theo dõi quy luật màu sắc",
       instruction: "Chọn màu tiếp theo đúng dãy.",
       age_min: 4,
@@ -273,19 +318,76 @@ export const C4_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
       authored_in: "repo_seed",
     },
     content_pack: {
-      sequence: ["🟢", "🟡", "🟢", "🟡"],
-      options: ["🟢", "🟡", "🔴"],
-      correct_option: "🟢",
+      prompt: "Bé kéo màu vào ô cho đúng quy luật nhé!",
+      slots: [
+        {
+          slot_id: "slot-1",
+          label: "Ô 1",
+          expected_item_id: "s1-1",
+        },
+        {
+          slot_id: "slot-2",
+          label: "Ô 2",
+          expected_item_id: "s1-2",
+        },
+        {
+          slot_id: "slot-3",
+          label: "Ô 3",
+          expected_item_id: "s2-1",
+        },
+        {
+          slot_id: "slot-4",
+          label: "Ô 4",
+          expected_item_id: "s2-2",
+        },
+      ],
+      items: [
+        {
+          item_id: "s2-2",
+          label: "Màu vàng",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-yellow-circle",
+          },
+        },
+        {
+          item_id: "s2-1",
+          label: "Màu xanh",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-green-circle",
+          },
+        },
+        {
+          item_id: "s1-2",
+          label: "Màu vàng",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-yellow-circle",
+          },
+        },
+        {
+          item_id: "s1-1",
+          label: "Màu xanh",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-green-circle",
+          },
+        },
+      ],
     },
     difficulty_params: {
-      pattern_length: 2,
+      slot_count: 4,
+      distractor_count: 0,
+      hint_after_ms: 10_000,
+      allow_retry: true,
     },
   },
   {
     header: {
       code: "GL-C4-DIF-CMP-0007",
       content_version: 1,
-      template_code: "GT-003",
+      template_code: "GT-001",
       title: "Tìm con vật khác nhóm",
       instruction: "Chọn chú chim giữa đàn cá.",
       age_min: 4,
@@ -301,23 +403,46 @@ export const C4_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
       authored_in: "repo_seed",
     },
     content_pack: {
-      left_group: [
+      prompt: "Bé chạm vào con vật không phải là cá nhé!",
+      target_item: {
+        item_id: "chick",
+        asset: {
+          kind: "emoji",
+          ref: "EMJ-front-facing-baby-chick",
+        },
+      },
+      options: [
         {
-          emoji: "🐠",
+          item_id: "fish-1",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-tropical-fish",
+          },
+          is_correct: false,
         },
         {
-          emoji: "🐠",
+          item_id: "fish-2",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-tropical-fish",
+          },
+          is_correct: false,
+        },
+        {
+          item_id: "chick",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-front-facing-baby-chick",
+          },
+          is_correct: true,
         },
       ],
-      right_group: [
-        {
-          emoji: "🐥",
-        },
-      ],
-      target: "different",
     },
     difficulty_params: {
-      max_difference: 1,
+      distractor_count: 2,
+      hint_after_ms: 9000,
+      allow_retry: true,
+      shuffle_items: true,
     },
   },
   {
@@ -378,7 +503,7 @@ export const C4_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
     header: {
       code: "GL-C4-OBS-LOC-0009",
       content_version: 1,
-      template_code: "GT-005",
+      template_code: "GT-022",
       title: "Quan sát bóng râm",
       instruction: "Chạm vào bóng cây dừa.",
       age_min: 4,
@@ -394,35 +519,57 @@ export const C4_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
       authored_in: "repo_seed",
     },
     content_pack: {
-      grid: [
-        [
-          {
-            id: "coconut_tree",
-            emoji: "🌴",
-            shadow: true,
+      prompt: "Bé tìm cây dừa trong khu vườn nhé!",
+      target_description: "Cây dừa",
+      scene_objects: [
+        {
+          id: "palm",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-palm-tree",
           },
-        ],
-        [
-          {
-            id: "stone",
-            emoji: "🪨",
-            shadow: false,
+          is_target: true,
+          is_hidden: false,
+          x: 480,
+          y: 270,
+        },
+        {
+          id: "rock",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-rock",
           },
-        ],
+          is_target: false,
+          is_hidden: false,
+          x: 180,
+          y: 420,
+        },
+        {
+          id: "tree",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-deciduous-tree",
+          },
+          is_target: false,
+          is_hidden: false,
+          x: 780,
+          y: 270,
+        },
       ],
-      target_id: "coconut_tree",
     },
     difficulty_params: {
-      grid_size: 2,
+      hint_after_ms: 9000,
+      allow_retry: true,
+      show_target_counter: true,
     },
   },
   {
     header: {
       code: "GL-C4-SUB-FAST-0010",
       content_version: 1,
-      template_code: "GT-006",
-      title: "Quan sát hình ảnh chớp nhoáng",
-      instruction: "Vật thể nào vừa chớp mắt qua.",
+      template_code: "GT-012",
+      title: "Nhìn nhanh đếm chiếc xe",
+      instruction: "Bé nhìn nhanh xem có mấy chiếc xe nhé!",
       age_min: 5,
       age_max: 6,
       difficulty: 2,
@@ -436,17 +583,53 @@ export const C4_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
       authored_in: "repo_seed",
     },
     content_pack: {
+      prompt: "Bé nhìn nhanh xem có mấy chiếc xe nhé!",
       flash_items: [
         {
-          emoji: "🚗",
+          item_id: "it-1",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-car",
+          },
+        },
+        {
+          item_id: "it-2",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-car",
+          },
+        },
+        {
+          item_id: "it-3",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-car",
+          },
         },
       ],
-      flash_duration_ms: 1500,
-      options: ["Xe ô tô", "Xe đạp"],
-      correct_answer: "Xe ô tô",
+      arrangement: "dice",
+      options: [
+        {
+          value: 2,
+          is_correct: false,
+        },
+        {
+          value: 3,
+          is_correct: true,
+        },
+        {
+          value: 4,
+          is_correct: false,
+        },
+      ],
     },
     difficulty_params: {
-      flash_duration_ms: 1500,
+      flash_ms: 1500,
+      item_count: 3,
+      distractor_count: 2,
+      allow_replay: true,
+      hint_after_ms: 9000,
+      allow_retry: true,
     },
   },
   {
@@ -522,7 +705,7 @@ export const C4_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
     header: {
       code: "GL-C4-SEQ-OBS-0012",
       content_version: 1,
-      template_code: "GT-004",
+      template_code: "GT-008",
       title: "Dãy hình ảnh động vật lặp lại",
       instruction: "Chọn con vật tiếp theo đúng dãy.",
       age_min: 4,
@@ -538,19 +721,76 @@ export const C4_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
       authored_in: "repo_seed",
     },
     content_pack: {
-      sequence: ["🐶", "🐱", "🐶", "🐱"],
-      options: ["🐶", "🐱", "🐭"],
-      correct_option: "🐶",
+      prompt: "Bé kéo con vật vào ô cho đúng quy luật nhé!",
+      slots: [
+        {
+          slot_id: "slot-1",
+          label: "Ô 1",
+          expected_item_id: "s1-1",
+        },
+        {
+          slot_id: "slot-2",
+          label: "Ô 2",
+          expected_item_id: "s1-2",
+        },
+        {
+          slot_id: "slot-3",
+          label: "Ô 3",
+          expected_item_id: "s2-1",
+        },
+        {
+          slot_id: "slot-4",
+          label: "Ô 4",
+          expected_item_id: "s2-2",
+        },
+      ],
+      items: [
+        {
+          item_id: "s2-2",
+          label: "Chú mèo",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-cat",
+          },
+        },
+        {
+          item_id: "s2-1",
+          label: "Chú chó",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-dog",
+          },
+        },
+        {
+          item_id: "s1-2",
+          label: "Chú mèo",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-cat",
+          },
+        },
+        {
+          item_id: "s1-1",
+          label: "Chú chó",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-dog",
+          },
+        },
+      ],
     },
     difficulty_params: {
-      pattern_length: 2,
+      slot_count: 4,
+      distractor_count: 0,
+      hint_after_ms: 10_000,
+      allow_retry: true,
     },
   },
   {
     header: {
       code: "GL-C4-DIF-CMP-0013",
       content_version: 1,
-      template_code: "GT-003",
+      template_code: "GT-001",
       title: "Tìm chi tiết khác màu sắc",
       instruction: "Chọn bông hoa có màu khác.",
       age_min: 4,
@@ -566,23 +806,46 @@ export const C4_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
       authored_in: "repo_seed",
     },
     content_pack: {
-      left_group: [
+      prompt: "Bé chạm vào bông hoa có màu khác nhé!",
+      target_item: {
+        item_id: "sunflower",
+        asset: {
+          kind: "emoji",
+          ref: "EMJ-sunflower",
+        },
+      },
+      options: [
         {
-          emoji: "🌹",
+          item_id: "rose-1",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-rose",
+          },
+          is_correct: false,
         },
         {
-          emoji: "🌹",
+          item_id: "rose-2",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-rose",
+          },
+          is_correct: false,
+        },
+        {
+          item_id: "sunflower",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-sunflower",
+          },
+          is_correct: true,
         },
       ],
-      right_group: [
-        {
-          emoji: "🌻",
-        },
-      ],
-      target: "different",
     },
     difficulty_params: {
-      max_difference: 1,
+      distractor_count: 2,
+      hint_after_ms: 9000,
+      allow_retry: true,
+      shuffle_items: true,
     },
   },
   {
@@ -643,9 +906,9 @@ export const C4_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
     header: {
       code: "GL-C4-SUB-FAST-0015",
       content_version: 1,
-      template_code: "GT-006",
-      title: "Nhìn tinh mắt tìm đồ chơi",
-      instruction: "Đồ chơi nào vừa ẩn sau màn.",
+      template_code: "GT-012",
+      title: "Nhìn nhanh đếm gấu bông",
+      instruction: "Bé nhìn nhanh xem có mấy gấu bông nhé!",
       age_min: 5,
       age_max: 6,
       difficulty: 3,
@@ -659,24 +922,53 @@ export const C4_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
       authored_in: "repo_seed",
     },
     content_pack: {
+      prompt: "Bé nhìn nhanh xem có mấy chú gấu bông nhé!",
       flash_items: [
         {
-          emoji: "🧸",
+          item_id: "it-1",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-teddy-bear",
+          },
+        },
+        {
+          item_id: "it-2",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-teddy-bear",
+          },
         },
       ],
-      flash_duration_ms: 1200,
-      options: ["Gấu bông", "Búp bê"],
-      correct_answer: "Gấu bông",
+      arrangement: "dice",
+      options: [
+        {
+          value: 1,
+          is_correct: false,
+        },
+        {
+          value: 2,
+          is_correct: true,
+        },
+        {
+          value: 3,
+          is_correct: false,
+        },
+      ],
     },
     difficulty_params: {
-      flash_duration_ms: 1200,
+      flash_ms: 1200,
+      item_count: 2,
+      distractor_count: 2,
+      allow_replay: true,
+      hint_after_ms: 9000,
+      allow_retry: true,
     },
   },
   {
     header: {
       code: "GL-C4-OBS-LOC-0016",
       content_version: 1,
-      template_code: "GT-005",
+      template_code: "GT-022",
       title: "Quan sát chi tiết bị che khuất",
       instruction: "Chạm vào ô có chú rùa xanh.",
       age_min: 5,
@@ -692,31 +984,66 @@ export const C4_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
       authored_in: "repo_seed",
     },
     content_pack: {
-      grid: [
-        [
-          {
-            id: "turtle",
-            emoji: "🐢",
-            hidden: false,
+      prompt: "Bé tìm chú rùa giữa những hòn đá nhé!",
+      target_description: "Chú rùa",
+      scene_objects: [
+        {
+          id: "turtle",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-sea-turtle",
           },
-          {
-            id: "rock",
-            emoji: "🪨",
-            hidden: false,
+          is_target: true,
+          is_hidden: false,
+          x: 480,
+          y: 420,
+        },
+        {
+          id: "rock-1",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-rock",
           },
-        ],
+          is_target: false,
+          is_hidden: false,
+          x: 180,
+          y: 270,
+        },
+        {
+          id: "rock-2",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-rock",
+          },
+          is_target: false,
+          is_hidden: false,
+          x: 780,
+          y: 420,
+        },
+        {
+          id: "fish",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-fish",
+          },
+          is_target: false,
+          is_hidden: false,
+          x: 480,
+          y: 120,
+        },
       ],
-      target_id: "turtle",
     },
     difficulty_params: {
-      grid_size: 2,
+      hint_after_ms: 9000,
+      allow_retry: true,
+      show_target_counter: true,
     },
   },
   {
     header: {
       code: "GL-C4-DIF-CMP-0017",
       content_version: 1,
-      template_code: "GT-003",
+      template_code: "GT-001",
       title: "Tìm chi tiết quay ngược hướng",
       instruction: "Chọn chiếc xe quay sang trái.",
       age_min: 5,
@@ -732,31 +1059,55 @@ export const C4_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
       authored_in: "repo_seed",
     },
     content_pack: {
-      left_group: [
+      prompt: "Bé chạm vào chiếc xe đang quay về phía bé!",
+      target_item: {
+        item_id: "oncoming",
+        asset: {
+          kind: "emoji",
+          ref: "EMJ-oncoming-automobile",
+        },
+      },
+      options: [
         {
-          emoji: "🚘",
-          dir: "left",
+          item_id: "oncoming",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-oncoming-automobile",
+          },
+          is_correct: true,
+        },
+        {
+          item_id: "car",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-car",
+          },
+          is_correct: false,
+        },
+        {
+          item_id: "taxi",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-taxi",
+          },
+          is_correct: false,
         },
       ],
-      right_group: [
-        {
-          emoji: "🚖",
-          dir: "right",
-        },
-      ],
-      target: "left",
     },
     difficulty_params: {
-      max_difference: 1,
+      distractor_count: 2,
+      hint_after_ms: 9000,
+      allow_retry: true,
+      shuffle_items: true,
     },
   },
   {
     header: {
       code: "GL-C4-SEQ-OBS-0018",
       content_version: 1,
-      template_code: "GT-004",
-      title: "Dãy hình ảnh có chi tiết thay đổi",
-      instruction: "Chọn hình tiếp theo trong chuỗi.",
+      template_code: "GT-006",
+      title: "Xếp thứ tự mặt trăng",
+      instruction: "Bé xếp mặt trăng từ tròn đầy đến tối dần nhé!",
       age_min: 5,
       age_max: 6,
       difficulty: 4,
@@ -770,21 +1121,50 @@ export const C4_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
       authored_in: "repo_seed",
     },
     content_pack: {
-      sequence: ["🌕", "🌖", "🌗", "🌘"],
-      options: ["🌑", "🌕", "🌔"],
-      correct_option: "🌑",
+      prompt: "Bé xếp mặt trăng từ tròn đầy đến tối dần nhé!",
+      sequence: [
+        {
+          step_id: "m-full",
+          order_index: 0,
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-full-moon",
+          },
+          label: "Trăng tròn",
+        },
+        {
+          step_id: "m-cres",
+          order_index: 1,
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-crescent-moon",
+          },
+          label: "Trăng khuyết",
+        },
+        {
+          step_id: "m-new",
+          order_index: 2,
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-new-moon",
+          },
+          label: "Trăng tối",
+        },
+      ],
     },
     difficulty_params: {
-      pattern_length: 4,
+      hint_after_ms: 12_000,
+      allow_retry: true,
+      shuffle_initial: true,
     },
   },
   {
     header: {
       code: "GL-C4-SUB-FAST-0019",
       content_version: 1,
-      template_code: "GT-006",
-      title: "Thử thách tinh mắt 1 giây",
-      instruction: "Quả bóng vừa hiện có màu gì.",
+      template_code: "GT-004",
+      title: "Phân loại theo màu đỏ và xanh",
+      instruction: "Bé xếp quả bóng vào đúng rổ theo màu nhé!",
       age_min: 5,
       age_max: 6,
       difficulty: 4,
@@ -798,17 +1178,59 @@ export const C4_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
       authored_in: "repo_seed",
     },
     content_pack: {
-      flash_items: [
+      prompt: "Bé xếp quả bóng vào đúng rổ theo màu nhé!",
+      groups: [
         {
-          emoji: "🔴",
+          group_id: "g0",
+          label: "Rổ màu đỏ",
+          label_emoji: "EMJ-red-circle",
+        },
+        {
+          group_id: "g1",
+          label: "Rổ màu xanh",
+          label_emoji: "EMJ-blue-circle",
         },
       ],
-      flash_duration_ms: 1000,
-      options: ["Màu đỏ", "Màu xanh"],
-      correct_answer: "Màu đỏ",
+      items: [
+        {
+          item_id: "r1",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-red-circle",
+          },
+          correct_group_id: "g0",
+        },
+        {
+          item_id: "r2",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-red-apple",
+          },
+          correct_group_id: "g0",
+        },
+        {
+          item_id: "b1",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-blue-circle",
+          },
+          correct_group_id: "g1",
+        },
+        {
+          item_id: "b2",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-blue-square",
+          },
+          correct_group_id: "g1",
+        },
+      ],
     },
     difficulty_params: {
-      flash_duration_ms: 1000,
+      distractor_count: 0,
+      hint_after_ms: 10_000,
+      allow_retry: true,
+      shuffle_items: true,
     },
   },
   {

@@ -8,6 +8,7 @@
   },
   "dependencies": {
     "@mindkid/config": "workspace:*",
+    "@mindkid/shared": "workspace:*",
     "argon2": "catalog:",
     "ioredis": "catalog:",
     "openid-client": "catalog:",
@@ -20,7 +21,8 @@
     "vitest": "catalog:"
   },
   "exports": {
-    ".": "./src/index.ts"
+    ".": "./src/index.ts",
+    "./redirect-target": "./src/redirect-target.ts"
   },
   "imports": {
     "#src/*": "./src/*.ts",

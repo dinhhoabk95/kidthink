@@ -8,6 +8,8 @@ import {
 } from "h3";
 import { z } from "zod";
 
+import { getOptionalActiveChildUuid } from "#server/utils/auth-runtime";
+
 const StartRunSchema = z.object({
   lesson_code: z.string().min(1),
   child_profile_uuid: z.string().uuid().optional(),
@@ -29,8 +31,13 @@ export default defineEventHandler(async (event) => {
   try {
     const result = await LessonSessionRunnerService.startLessonRun({
       userId: auth.user_id,
-      childProfileUuid: parsed.data.child_profile_uuid,
-      childProfileId: auth.active_child_id,
+      // Không truyền uuid trong body thì lấy trẻ đang chọn từ cookie. Bản cũ
+      // đọc `auth.active_child_id` — trường số chưa bao giờ được ghi vào
+      // session, nên nhánh dự phòng này luôn rỗng và client không gửi uuid thì
+      // luôn nhận NO_ACTIVE_CHILD.
+      childProfileUuid:
+        parsed.data.child_profile_uuid ??
+        (getOptionalActiveChildUuid(event) || undefined),
       lessonCode: parsed.data.lesson_code,
     });
 

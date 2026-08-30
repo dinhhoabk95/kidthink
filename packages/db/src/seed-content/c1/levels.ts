@@ -586,9 +586,9 @@ export const C1_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
     header: {
       code: "GL-C1-CMP-NUM-0010",
       content_version: 1,
-      template_code: "GT-003",
-      title: "So sánh đĩa trái cây",
-      instruction: "Chọn bên có nhiều trái cây hơn.",
+      template_code: "GT-012",
+      title: "Đếm nhanh số quả táo",
+      instruction: "Bé nhìn nhanh xem có mấy quả táo nhé!",
       age_min: 3,
       age_max: 4,
       difficulty: 2,
@@ -602,35 +602,62 @@ export const C1_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
       authored_in: "repo_seed",
     },
     content_pack: {
-      left_group: [
+      prompt: "Bé nhìn nhanh xem có mấy quả táo nhé!",
+      flash_items: [
         {
-          emoji: "🍎",
+          item_id: "it-1",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-red-apple",
+          },
         },
         {
-          emoji: "🍎",
+          item_id: "it-2",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-red-apple",
+          },
         },
         {
-          emoji: "🍎",
+          item_id: "it-3",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-red-apple",
+          },
         },
       ],
-      right_group: [
+      arrangement: "dice",
+      options: [
         {
-          emoji: "🍎",
+          value: 2,
+          is_correct: false,
+        },
+        {
+          value: 3,
+          is_correct: true,
+        },
+        {
+          value: 4,
+          is_correct: false,
         },
       ],
-      target: "more",
     },
     difficulty_params: {
-      max_difference: 2,
+      flash_ms: 1500,
+      item_count: 3,
+      distractor_count: 2,
+      allow_replay: true,
+      hint_after_ms: 9000,
+      allow_retry: true,
     },
   },
   {
     header: {
       code: "GL-C1-CMP-NUM-0011",
       content_version: 1,
-      template_code: "GT-003",
-      title: "So sánh số kẹo",
-      instruction: "Chọn bên có ít kẹo hơn nhé.",
+      template_code: "GT-012",
+      title: "Đếm nhanh số viên kẹo",
+      instruction: "Bé nhìn nhanh xem có mấy viên kẹo nhé!",
       age_min: 3,
       age_max: 4,
       difficulty: 2,
@@ -644,38 +671,69 @@ export const C1_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
       authored_in: "repo_seed",
     },
     content_pack: {
-      left_group: [
+      prompt: "Bé nhìn nhanh xem có mấy viên kẹo nhé!",
+      flash_items: [
         {
-          emoji: "🍬",
+          item_id: "it-1",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-candy",
+          },
+        },
+        {
+          item_id: "it-2",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-candy",
+          },
+        },
+        {
+          item_id: "it-3",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-candy",
+          },
+        },
+        {
+          item_id: "it-4",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-candy",
+          },
         },
       ],
-      right_group: [
+      arrangement: "dice",
+      options: [
         {
-          emoji: "🍬",
+          value: 3,
+          is_correct: false,
         },
         {
-          emoji: "🍬",
+          value: 4,
+          is_correct: true,
         },
         {
-          emoji: "🍬",
-        },
-        {
-          emoji: "🍬",
+          value: 5,
+          is_correct: false,
         },
       ],
-      target: "less",
     },
     difficulty_params: {
-      max_difference: 3,
+      flash_ms: 1500,
+      item_count: 4,
+      distractor_count: 2,
+      allow_replay: true,
+      hint_after_ms: 9000,
+      allow_retry: true,
     },
   },
   {
     header: {
       code: "GL-C1-CMP-NUM-0012",
       content_version: 1,
-      template_code: "GT-003",
-      title: "Bên nào nhiều bóng hơn",
-      instruction: "Chọn nhóm bóng nhiều hơn em nha.",
+      template_code: "GT-012",
+      title: "Đếm nhanh số quả bóng",
+      instruction: "Bé nhìn nhanh xem có mấy quả bóng nhé!",
       age_min: 4,
       age_max: 5,
       difficulty: 2,
@@ -689,41 +747,69 @@ export const C1_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
       authored_in: "repo_seed",
     },
     content_pack: {
-      left_group: [
+      prompt: "Bé nhìn nhanh xem có mấy quả bóng nhé!",
+      flash_items: [
         {
-          emoji: "⚽",
+          item_id: "it-1",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-soccer",
+          },
         },
         {
-          emoji: "⚽",
+          item_id: "it-2",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-soccer",
+          },
         },
         {
-          emoji: "⚽",
+          item_id: "it-3",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-soccer",
+          },
         },
         {
-          emoji: "⚽",
+          item_id: "it-4",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-soccer",
+          },
         },
       ],
-      right_group: [
+      arrangement: "dice",
+      options: [
         {
-          emoji: "⚽",
+          value: 3,
+          is_correct: false,
         },
         {
-          emoji: "⚽",
+          value: 4,
+          is_correct: true,
+        },
+        {
+          value: 5,
+          is_correct: false,
         },
       ],
-      target: "more",
     },
     difficulty_params: {
-      max_difference: 2,
+      flash_ms: 1500,
+      item_count: 4,
+      distractor_count: 2,
+      allow_replay: true,
+      hint_after_ms: 9000,
+      allow_retry: true,
     },
   },
   {
     header: {
       code: "GL-C1-CMP-NUM-0013",
       content_version: 1,
-      template_code: "GT-003",
-      title: "So sánh bánh ngọt",
-      instruction: "Chọn nhóm bánh ít hơn.",
+      template_code: "GT-012",
+      title: "Đếm nhanh số chiếc bánh",
+      instruction: "Bé nhìn nhanh xem có mấy chiếc bánh nhé!",
       age_min: 4,
       age_max: 5,
       difficulty: 3,
@@ -737,42 +823,74 @@ export const C1_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
       authored_in: "repo_seed",
     },
     content_pack: {
-      left_group: [
+      prompt: "Bé nhìn nhanh xem có mấy chiếc bánh nhé!",
+      flash_items: [
         {
-          emoji: "🧁",
+          item_id: "it-1",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-cupcake",
+          },
         },
         {
-          emoji: "🧁",
+          item_id: "it-2",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-cupcake",
+          },
+        },
+        {
+          item_id: "it-3",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-cupcake",
+          },
+        },
+        {
+          item_id: "it-4",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-cupcake",
+          },
+        },
+        {
+          item_id: "it-5",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-cupcake",
+          },
         },
       ],
-      right_group: [
+      arrangement: "dice",
+      options: [
         {
-          emoji: "🧁",
+          value: 4,
+          is_correct: false,
         },
         {
-          emoji: "🧁",
+          value: 5,
+          is_correct: true,
         },
         {
-          emoji: "🧁",
-        },
-        {
-          emoji: "🧁",
-        },
-        {
-          emoji: "🧁",
+          value: 6,
+          is_correct: false,
         },
       ],
-      target: "less",
     },
     difficulty_params: {
-      max_difference: 3,
+      flash_ms: 1500,
+      item_count: 5,
+      distractor_count: 2,
+      allow_replay: true,
+      hint_after_ms: 9000,
+      allow_retry: true,
     },
   },
   {
     header: {
       code: "GL-C1-SEQ-PAT-0014",
       content_version: 1,
-      template_code: "GT-004",
+      template_code: "GT-008",
       title: "Dãy quy luật hoa quả AB",
       instruction: "Chọn quả tiếp theo đúng quy luật.",
       age_min: 4,
@@ -788,21 +906,78 @@ export const C1_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
       authored_in: "repo_seed",
     },
     content_pack: {
-      sequence: ["🍎", "🍌", "🍎", "🍌", "🍎"],
-      options: ["🍎", "🍌", "🍊"],
-      correct_option: "🍌",
+      prompt: "Bé kéo quả vào ô cho đúng quy luật táo - chuối!",
+      slots: [
+        {
+          slot_id: "slot-1",
+          label: "Ô 1",
+          expected_item_id: "s1-1",
+        },
+        {
+          slot_id: "slot-2",
+          label: "Ô 2",
+          expected_item_id: "s1-2",
+        },
+        {
+          slot_id: "slot-3",
+          label: "Ô 3",
+          expected_item_id: "s2-1",
+        },
+        {
+          slot_id: "slot-4",
+          label: "Ô 4",
+          expected_item_id: "s2-2",
+        },
+      ],
+      items: [
+        {
+          item_id: "s2-2",
+          label: "Quả chuối",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-banana",
+          },
+        },
+        {
+          item_id: "s2-1",
+          label: "Quả táo",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-red-apple",
+          },
+        },
+        {
+          item_id: "s1-2",
+          label: "Quả chuối",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-banana",
+          },
+        },
+        {
+          item_id: "s1-1",
+          label: "Quả táo",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-red-apple",
+          },
+        },
+      ],
     },
     difficulty_params: {
-      pattern_length: 2,
+      slot_count: 4,
+      distractor_count: 0,
+      hint_after_ms: 10_000,
+      allow_retry: true,
     },
   },
   {
     header: {
       code: "GL-C1-SEQ-PAT-0015",
       content_version: 1,
-      template_code: "GT-004",
-      title: "Dãy số tự nhiên 1 đến 5",
-      instruction: "Điền số tiếp theo vào vị trí trống.",
+      template_code: "GT-008",
+      title: "Xếp dãy số 1 đến 5",
+      instruction: "Bé kéo thẻ số vào ô theo thứ tự 1-5!",
       age_min: 4,
       age_max: 5,
       difficulty: 3,
@@ -816,19 +991,89 @@ export const C1_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
       authored_in: "repo_seed",
     },
     content_pack: {
-      sequence: ["1", "2", "3", "4"],
-      options: ["3", "5", "6"],
-      correct_option: "5",
+      prompt: "Bé kéo các số vào đúng ô theo thứ tự 1 đến 5!",
+      slots: [
+        {
+          slot_id: "slot-1",
+          label: "Ô 1",
+          expected_item_id: "n1",
+        },
+        {
+          slot_id: "slot-2",
+          label: "Ô 2",
+          expected_item_id: "n2",
+        },
+        {
+          slot_id: "slot-3",
+          label: "Ô 3",
+          expected_item_id: "n3",
+        },
+        {
+          slot_id: "slot-4",
+          label: "Ô 4",
+          expected_item_id: "n4",
+        },
+        {
+          slot_id: "slot-5",
+          label: "Ô 5",
+          expected_item_id: "n5",
+        },
+      ],
+      items: [
+        {
+          item_id: "n5",
+          label: "5",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-five",
+          },
+        },
+        {
+          item_id: "n4",
+          label: "4",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-four",
+          },
+        },
+        {
+          item_id: "n3",
+          label: "3",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-three",
+          },
+        },
+        {
+          item_id: "n2",
+          label: "2",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-two",
+          },
+        },
+        {
+          item_id: "n1",
+          label: "1",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-one",
+          },
+        },
+      ],
     },
     difficulty_params: {
-      pattern_length: 5,
+      slot_count: 5,
+      distractor_count: 0,
+      hint_after_ms: 10_000,
+      allow_retry: true,
     },
   },
   {
     header: {
       code: "GL-C1-SEQ-PAT-0016",
       content_version: 1,
-      template_code: "GT-004",
+      template_code: "GT-011",
       title: "Quy luật xe chạy AABB",
       instruction: "Chọn chiếc xe tiếp theo trong hàng.",
       age_min: 5,
@@ -844,19 +1089,81 @@ export const C1_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
       authored_in: "repo_seed",
     },
     content_pack: {
-      sequence: ["🚗", "🚗", "🚕", "🚕", "🚗"],
-      options: ["🚗", "🚕", "🚙"],
-      correct_option: "🚗",
+      prompt: "Bé chọn chiếc xe điền vào ô trống nhé!",
+      matrix: {
+        rows: 2,
+        cols: 2,
+        cells: [
+          {
+            row: 0,
+            col: 0,
+            asset: {
+              kind: "emoji",
+              ref: "EMJ-car",
+            },
+          },
+          {
+            row: 0,
+            col: 1,
+            asset: {
+              kind: "emoji",
+              ref: "EMJ-taxi",
+            },
+          },
+          {
+            row: 1,
+            col: 0,
+            asset: {
+              kind: "emoji",
+              ref: "EMJ-taxi",
+            },
+          },
+          {
+            row: 1,
+            col: 1,
+            asset: null,
+          },
+        ],
+      },
+      options: [
+        {
+          option_id: "op-1",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-car",
+          },
+          is_correct: true,
+        },
+        {
+          option_id: "op-2",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-taxi",
+          },
+          is_correct: false,
+        },
+        {
+          option_id: "op-3",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-suv",
+          },
+          is_correct: false,
+        },
+      ],
     },
     difficulty_params: {
-      pattern_length: 4,
+      grid_size: 2,
+      distractor_count: 2,
+      hint_after_ms: 10_000,
+      allow_retry: true,
     },
   },
   {
     header: {
       code: "GL-C1-POS-LOC-0017",
       content_version: 1,
-      template_code: "GT-005",
+      template_code: "GT-001",
       title: "Vị trí quả táo trên bàn",
       instruction: "Chạm vào quả táo nằm phía trên.",
       age_min: 3,
@@ -872,33 +1179,53 @@ export const C1_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
       authored_in: "repo_seed",
     },
     content_pack: {
-      grid: [
-        [
-          {
-            id: "a_top",
-            emoji: "🍎",
-            position: "top",
+      prompt: "Bé chạm vào quả táo nhé!",
+      target_item: {
+        item_id: "apple",
+        asset: {
+          kind: "emoji",
+          ref: "EMJ-red-apple",
+        },
+      },
+      options: [
+        {
+          item_id: "apple",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-red-apple",
           },
-        ],
-        [
-          {
-            id: "b_bottom",
-            emoji: "🍌",
-            position: "bottom",
+          is_correct: true,
+        },
+        {
+          item_id: "banana",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-banana",
           },
-        ],
+          is_correct: false,
+        },
+        {
+          item_id: "orange",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-orange",
+          },
+          is_correct: false,
+        },
       ],
-      target_id: "a_top",
     },
     difficulty_params: {
-      grid_size: 2,
+      distractor_count: 2,
+      hint_after_ms: 9000,
+      allow_retry: true,
+      shuffle_items: true,
     },
   },
   {
     header: {
       code: "GL-C1-POS-LOC-0018",
       content_version: 1,
-      template_code: "GT-005",
+      template_code: "GT-022",
       title: "Tìm thỏ trong hang",
       instruction: "Chạm vào chú thỏ ở bên trái.",
       age_min: 4,
@@ -914,24 +1241,48 @@ export const C1_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
       authored_in: "repo_seed",
     },
     content_pack: {
-      grid: [
-        [
-          {
-            id: "r_left",
-            emoji: "🐰",
-            position: "left",
+      prompt: "Bé tìm chú thỏ ở phía bên trái nhé!",
+      target_description: "Chú thỏ ở bên trái",
+      scene_objects: [
+        {
+          id: "rabbit",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-rabbit-face",
           },
-          {
-            id: "r_right",
-            emoji: "🐻",
-            position: "right",
+          is_target: true,
+          is_hidden: false,
+          x: 180,
+          y: 270,
+        },
+        {
+          id: "bear",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-bear",
           },
-        ],
+          is_target: false,
+          is_hidden: false,
+          x: 780,
+          y: 270,
+        },
+        {
+          id: "bird",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-bird",
+          },
+          is_target: false,
+          is_hidden: false,
+          x: 480,
+          y: 120,
+        },
       ],
-      target_id: "r_left",
     },
     difficulty_params: {
-      grid_size: 2,
+      hint_after_ms: 9000,
+      allow_retry: true,
+      show_target_counter: true,
     },
   },
   {
@@ -1633,32 +1984,46 @@ export const C1_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
       authored_in: "repo_seed",
     },
     content_pack: {
-      prompt: "Bé hãy chọn chiếc đồng hồ chỉ đúng 9 giờ tối lúc bé đi ngủ nhé!",
-      mode: "match_activity",
+      prompt: "Bé chọn hoạt động diễn ra lúc 9 giờ tối nhé!",
+      mode: "match",
       target_time: {
-        hour: 21,
+        hour: 9,
         minute: 0,
       },
-      options: [],
       activity_cards: [
         {
-          activity_id: "act_sleep",
-          name_vi: "Bé đi ngủ buổi tối (9 giờ)",
+          card_id: "sleep",
           asset: {
             kind: "emoji",
             ref: "EMJ-bed",
           },
-          expected_time: {
-            hour: 21,
-            minute: 0,
+          hour: 9,
+          minute: 0,
+        },
+        {
+          card_id: "school",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-blue-book",
           },
+          hour: 8,
+          minute: 0,
+        },
+        {
+          card_id: "sun",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-sun",
+          },
+          hour: 6,
+          minute: 30,
         },
       ],
     },
     difficulty_params: {
-      minute_step: 60,
+      minute_step: 30,
       distractor_count: 2,
-      hint_after_ms: 8000,
+      hint_after_ms: 10_000,
       allow_retry: true,
     },
   },

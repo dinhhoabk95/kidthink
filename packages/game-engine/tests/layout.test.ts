@@ -196,16 +196,19 @@ describe("Game Layout Engine (BR-LAY-01..10)", () => {
       template_code: "GT-001",
       content_pack: {
         prompt: "Chọn quả táo đúng",
-        target_item: { item_id: "t1", asset: { kind: "emoji", ref: "apple" } },
+        target_item: {
+          item_id: "t1",
+          asset: { kind: "emoji", ref: "EMJ-red-apple" },
+        },
         options: [
           {
             item_id: "o1",
-            asset: { kind: "emoji", ref: "apple" },
+            asset: { kind: "emoji", ref: "EMJ-red-apple" },
             is_correct: true,
           },
           {
             item_id: "o2",
-            asset: { kind: "emoji", ref: "banana" },
+            asset: { kind: "emoji", ref: "EMJ-banana" },
             is_correct: false,
           },
         ],
@@ -253,21 +256,24 @@ describe("Game Layout Engine (BR-LAY-01..10)", () => {
       template_code: "GT-001",
       content_pack: {
         prompt: "Chọn quả táo đúng",
-        target_item: { item_id: "t1", asset: { kind: "emoji", ref: "apple" } },
+        target_item: {
+          item_id: "t1",
+          asset: { kind: "emoji", ref: "EMJ-red-apple" },
+        },
         options: [
           {
             item_id: "o1",
-            asset: { kind: "emoji", ref: "apple" },
+            asset: { kind: "emoji", ref: "EMJ-red-apple" },
             is_correct: true,
           },
           {
             item_id: "o2",
-            asset: { kind: "emoji", ref: "banana" },
+            asset: { kind: "emoji", ref: "EMJ-banana" },
             is_correct: false,
           },
           {
             item_id: "o3",
-            asset: { kind: "emoji", ref: "grape" },
+            asset: { kind: "emoji", ref: "EMJ-grapes" },
             is_correct: false,
           },
         ],

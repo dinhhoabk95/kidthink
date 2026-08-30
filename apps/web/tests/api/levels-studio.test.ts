@@ -108,17 +108,17 @@ describe("Game Level Studio & Management API (BR-STU-01 - BR-STU-10, Spec §7.2)
           prompt: "Tìm quả táo màu đỏ",
           target_item: {
             item_id: "apple_target",
-            asset: { kind: "emoji", ref: "🍎" },
+            asset: { kind: "emoji", ref: "EMJ-red-apple" },
           },
           options: [
             {
               item_id: "apple_opt",
-              asset: { kind: "emoji", ref: "🍎" },
+              asset: { kind: "emoji", ref: "EMJ-red-apple" },
               is_correct: true,
             },
             {
               item_id: "banana_opt",
-              asset: { kind: "emoji", ref: "🍌" },
+              asset: { kind: "emoji", ref: "EMJ-banana" },
               is_correct: false,
             },
           ],
@@ -311,17 +311,17 @@ describe("Game Level Studio & Management API (BR-STU-01 - BR-STU-10, Spec §7.2)
           prompt: "Tìm quả táo màu đỏ",
           target_item: {
             item_id: "apple_target",
-            asset: { kind: "emoji", ref: "🍎" },
+            asset: { kind: "emoji", ref: "EMJ-red-apple" },
           },
           options: [
             {
               item_id: "apple_opt",
-              asset: { kind: "emoji", ref: "🍎" },
+              asset: { kind: "emoji", ref: "EMJ-red-apple" },
               is_correct: true,
             },
             {
               item_id: "banana_opt",
-              asset: { kind: "emoji", ref: "🍌" },
+              asset: { kind: "emoji", ref: "EMJ-banana" },
               is_correct: false,
             },
           ],
@@ -357,16 +357,19 @@ describe("Game Level Studio & Management API (BR-STU-01 - BR-STU-10, Spec §7.2)
         },
         content_pack: {
           prompt: "Tìm quả táo",
-          target_item: { item_id: "t1", asset: { kind: "emoji", ref: "🍎" } },
+          target_item: {
+            item_id: "t1",
+            asset: { kind: "emoji", ref: "EMJ-red-apple" },
+          },
           options: [
             {
               item_id: "o1",
-              asset: { kind: "emoji", ref: "🍎" },
+              asset: { kind: "emoji", ref: "EMJ-red-apple" },
               is_correct: true,
             },
             {
               item_id: "o2",
-              asset: { kind: "emoji", ref: "🍌" },
+              asset: { kind: "emoji", ref: "EMJ-banana" },
               is_correct: false,
             },
           ],

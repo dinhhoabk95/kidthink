@@ -9,18 +9,20 @@ import { z } from "zod";
 export const EMOJI_REF_PATTERN = /^EMJ-[a-z0-9]+(?:-[a-z0-9]+)*$/;
 
 /**
- * Contract vẫn nhận chuỗi bất kỳ — **tạm thời**, và con số đã được đo lại.
+ * `EMJ-<slug>`, ❌ NEVER glyph thô.
  *
- * Corpus seed đã sạch: task 162 đổi 239 `ref` sang mã và bổ sung 15 emoji còn
- * thiếu vào registry, nên `packages/db/tests/gates/emoji-ref-debt.test.ts` giờ
- * đo **0** glyph thô và giữ nó ở 0.
+ * `packages/emoji/src/query.ts:getByCode` chỉ tra theo mã, nên một glyph lọt
+ * qua đây resolve ra `not_found` lúc render: trẻ thấy ô trống, và không cổng
+ * nào bắt được vì nội dung vẫn "hợp lệ".
  *
- * Chưa siết được thành `.regex(EMOJI_REF_PATTERN)` vì nợ còn ở chỗ khác: 27
- * file `templates/GT-0xx/fixtures.ts` và các test engine vẫn dùng glyph thô.
- * Siết ngay làm đỏ toàn bộ `packages/game-engine/tests`. Dọn nốt fixture rồi
- * đổi dòng dưới — đó là việc của một task riêng, không phải hiệu ứng phụ.
+ * Trường này từng nhận chuỗi bất kỳ vì nợ quá lớn để chặn tại contract: 57
+ * trên 228 level seed dùng glyph, cộng 27 file `templates/GT-0xx/fixtures.ts`
+ * và các test engine. Nợ được đo bằng bậc thang riêng thay vì chặn ở đây.
+ * Task 162 dọn hết — 239 `ref` trong corpus, 243 trong fixture engine, 50
+ * trong test — và bổ sung 23 emoji còn thiếu vào registry, nên bậc thang về 0
+ * và chỗ chặn đúng đắn quay lại đây.
  */
-export const EmojiRef = z.string().min(1);
+export const EmojiRef = z.string().regex(EMOJI_REF_PATTERN);
 
 /**
  * Asset reference shared by every template's content contract.

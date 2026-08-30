@@ -12,7 +12,10 @@ export const GT022Generator: LevelGenerator = {
     const nouns = getNouns(vocabulary, 10);
     const count = age_band === "3-4" ? 4 : 6;
     const sampled = sampleUnique(rng, nouns, count);
-    const target = sampled[0] || { emoji_ref: "🍎", label_vi: "Táo" };
+    const target = sampled[0] || {
+      emoji_ref: "EMJ-red-apple",
+      label_vi: "Táo",
+    };
 
     const scene_objects = sampled.map((item, idx) => ({
       id: `obj_${idx + 1}`,

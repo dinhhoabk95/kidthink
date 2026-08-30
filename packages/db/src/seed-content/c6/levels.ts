@@ -285,7 +285,7 @@ export const C6_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
     header: {
       code: "GL-C6-MEM-SEQ-0006",
       content_version: 1,
-      template_code: "GT-004",
+      template_code: "GT-008",
       title: "Ghi nhớ chuỗi 2 biểu tượng",
       instruction: "Chọn biểu tượng tiếp theo đúng trí nhớ.",
       age_min: 4,
@@ -301,19 +301,76 @@ export const C6_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
       authored_in: "repo_seed",
     },
     content_pack: {
-      sequence: ["🔴", "🟢", "🔴", "🟢"],
-      options: ["🔴", "🟢", "🔵"],
-      correct_option: "🔴",
+      prompt: "Bé kéo hình vào ô cho đúng quy luật nhé!",
+      slots: [
+        {
+          slot_id: "slot-1",
+          label: "Ô 1",
+          expected_item_id: "s1-1",
+        },
+        {
+          slot_id: "slot-2",
+          label: "Ô 2",
+          expected_item_id: "s1-2",
+        },
+        {
+          slot_id: "slot-3",
+          label: "Ô 3",
+          expected_item_id: "s2-1",
+        },
+        {
+          slot_id: "slot-4",
+          label: "Ô 4",
+          expected_item_id: "s2-2",
+        },
+      ],
+      items: [
+        {
+          item_id: "s2-2",
+          label: "Hình xanh",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-green-circle",
+          },
+        },
+        {
+          item_id: "s2-1",
+          label: "Hình đỏ",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-red-circle",
+          },
+        },
+        {
+          item_id: "s1-2",
+          label: "Hình xanh",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-green-circle",
+          },
+        },
+        {
+          item_id: "s1-1",
+          label: "Hình đỏ",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-red-circle",
+          },
+        },
+      ],
     },
     difficulty_params: {
-      pattern_length: 2,
+      slot_count: 4,
+      distractor_count: 0,
+      hint_after_ms: 10_000,
+      allow_retry: true,
     },
   },
   {
     header: {
       code: "GL-C6-MEM-CMP-0007",
       content_version: 1,
-      template_code: "GT-003",
+      template_code: "GT-001",
       title: "So sánh hình ảnh vừa nhớ",
       instruction: "Chọn hình giống hình vừa xem.",
       age_min: 4,
@@ -329,27 +386,45 @@ export const C6_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
       authored_in: "repo_seed",
     },
     content_pack: {
-      left_group: [
+      prompt: "Bé chạm vào quả táo XANH nhé!",
+      target_item: {
+        item_id: "green-apple",
+        asset: {
+          kind: "emoji",
+          ref: "EMJ-green-apple",
+        },
+      },
+      options: [
         {
-          emoji: "🍏",
+          item_id: "green-apple",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-green-apple",
+          },
+          is_correct: true,
+        },
+        {
+          item_id: "red-apple",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-red-apple",
+          },
+          is_correct: false,
         },
       ],
-      right_group: [
-        {
-          emoji: "🍎",
-        },
-      ],
-      target: "match",
     },
     difficulty_params: {
-      max_difference: 1,
+      distractor_count: 1,
+      hint_after_ms: 9000,
+      allow_retry: true,
+      shuffle_items: true,
     },
   },
   {
     header: {
       code: "GL-C6-ATT-LOC-0008",
       content_version: 1,
-      template_code: "GT-005",
+      template_code: "GT-022",
       title: "Tập trung thị giác tìm điểm giấu",
       instruction: "Chạm vào ô có chú ong vàng.",
       age_min: 4,
@@ -365,33 +440,68 @@ export const C6_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
       authored_in: "repo_seed",
     },
     content_pack: {
-      grid: [
-        [
-          {
-            id: "bee",
-            emoji: "🐝",
-            target: true,
+      prompt: "Bé tìm chú ong giữa vườn hoa nhé!",
+      target_description: "Chú ong",
+      scene_objects: [
+        {
+          id: "bee",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-bee",
           },
-          {
-            id: "flower",
-            emoji: "🌸",
-            target: false,
+          is_target: true,
+          is_hidden: false,
+          x: 780,
+          y: 120,
+        },
+        {
+          id: "flower-1",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-cherry-blossom",
           },
-        ],
+          is_target: false,
+          is_hidden: false,
+          x: 180,
+          y: 420,
+        },
+        {
+          id: "flower-2",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-hibiscus",
+          },
+          is_target: false,
+          is_hidden: false,
+          x: 480,
+          y: 270,
+        },
+        {
+          id: "flower-3",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-sunflower",
+          },
+          is_target: false,
+          is_hidden: false,
+          x: 780,
+          y: 420,
+        },
       ],
-      target_id: "bee",
     },
     difficulty_params: {
-      grid_size: 2,
+      hint_after_ms: 9000,
+      allow_retry: true,
+      show_target_counter: true,
     },
   },
   {
     header: {
       code: "GL-C6-SUB-FAST-0009",
       content_version: 1,
-      template_code: "GT-006",
-      title: "Nhớ nhanh 1 hình ảnh xuất hiện",
-      instruction: "Vật gì vừa chớp qua vậy em.",
+      template_code: "GT-012",
+      title: "Nhìn nhanh đếm tên lửa",
+      instruction: "Bé nhìn nhanh xem có mấy tên lửa nhé!",
       age_min: 5,
       age_max: 6,
       difficulty: 2,
@@ -405,17 +515,39 @@ export const C6_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
       authored_in: "repo_seed",
     },
     content_pack: {
+      prompt: "Bé nhìn nhanh xem có mấy tên lửa nhé!",
       flash_items: [
         {
-          emoji: "🚀",
+          item_id: "it-1",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-rocket",
+          },
         },
       ],
-      flash_duration_ms: 1500,
-      options: ["Tên lửa", "Ô tô"],
-      correct_answer: "Tên lửa",
+      arrangement: "dice",
+      options: [
+        {
+          value: 1,
+          is_correct: true,
+        },
+        {
+          value: 2,
+          is_correct: false,
+        },
+        {
+          value: 3,
+          is_correct: false,
+        },
+      ],
     },
     difficulty_params: {
-      flash_duration_ms: 1500,
+      flash_ms: 1500,
+      item_count: 1,
+      distractor_count: 2,
+      allow_replay: true,
+      hint_after_ms: 9000,
+      allow_retry: true,
     },
   },
   {
@@ -545,7 +677,7 @@ export const C6_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
     header: {
       code: "GL-C6-MEM-SEQ-0012",
       content_version: 1,
-      template_code: "GT-004",
+      template_code: "GT-008",
       title: "Ghi nhớ chuỗi 3 biểu tượng",
       instruction: "Chọn biểu tượng tiếp theo.",
       age_min: 4,
@@ -561,21 +693,104 @@ export const C6_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
       authored_in: "repo_seed",
     },
     content_pack: {
-      sequence: ["☀️", "🌙", "⭐️", "☀️", "🌙"],
-      options: ["☀️", "🌙", "⭐️"],
-      correct_option: "⭐️",
+      prompt: "Bé kéo hình vào ô cho đúng quy luật nhé!",
+      slots: [
+        {
+          slot_id: "slot-1",
+          label: "Ô 1",
+          expected_item_id: "s1-1",
+        },
+        {
+          slot_id: "slot-2",
+          label: "Ô 2",
+          expected_item_id: "s1-2",
+        },
+        {
+          slot_id: "slot-3",
+          label: "Ô 3",
+          expected_item_id: "s1-3",
+        },
+        {
+          slot_id: "slot-4",
+          label: "Ô 4",
+          expected_item_id: "s2-1",
+        },
+        {
+          slot_id: "slot-5",
+          label: "Ô 5",
+          expected_item_id: "s2-2",
+        },
+        {
+          slot_id: "slot-6",
+          label: "Ô 6",
+          expected_item_id: "s2-3",
+        },
+      ],
+      items: [
+        {
+          item_id: "s2-3",
+          label: "Ngôi sao",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-star",
+          },
+        },
+        {
+          item_id: "s2-2",
+          label: "Mặt trăng",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-crescent-moon",
+          },
+        },
+        {
+          item_id: "s2-1",
+          label: "Mặt trời",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-sun",
+          },
+        },
+        {
+          item_id: "s1-3",
+          label: "Ngôi sao",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-star",
+          },
+        },
+        {
+          item_id: "s1-2",
+          label: "Mặt trăng",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-crescent-moon",
+          },
+        },
+        {
+          item_id: "s1-1",
+          label: "Mặt trời",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-sun",
+          },
+        },
+      ],
     },
     difficulty_params: {
-      pattern_length: 3,
+      slot_count: 6,
+      distractor_count: 0,
+      hint_after_ms: 10_000,
+      allow_retry: true,
     },
   },
   {
     header: {
       code: "GL-C6-SUB-FAST-0013",
       content_version: 1,
-      template_code: "GT-006",
-      title: "Thử thách ghi nhớ chớp nhoáng 2 hình",
-      instruction: "Hai hình vừa rồi là quả gì.",
+      template_code: "GT-012",
+      title: "Nhìn nhanh đếm quả chuối",
+      instruction: "Bé nhìn nhanh xem có mấy quả chuối nhé!",
       age_min: 5,
       age_max: 6,
       difficulty: 3,
@@ -589,27 +804,74 @@ export const C6_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
       authored_in: "repo_seed",
     },
     content_pack: {
+      prompt: "Bé nhìn nhanh xem có mấy quả chuối nhé!",
       flash_items: [
         {
-          emoji: "🍎",
+          item_id: "it-1",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-banana",
+          },
         },
         {
-          emoji: "🍌",
+          item_id: "it-2",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-banana",
+          },
+        },
+        {
+          item_id: "it-3",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-banana",
+          },
+        },
+        {
+          item_id: "it-4",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-banana",
+          },
+        },
+        {
+          item_id: "it-5",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-banana",
+          },
         },
       ],
-      flash_duration_ms: 1200,
-      options: ["Táo và chuối", "Cam và dưa"],
-      correct_answer: "Táo và chuối",
+      arrangement: "dice",
+      options: [
+        {
+          value: 4,
+          is_correct: false,
+        },
+        {
+          value: 5,
+          is_correct: true,
+        },
+        {
+          value: 6,
+          is_correct: false,
+        },
+      ],
     },
     difficulty_params: {
-      flash_duration_ms: 1200,
+      flash_ms: 1200,
+      item_count: 5,
+      distractor_count: 2,
+      allow_replay: true,
+      hint_after_ms: 9000,
+      allow_retry: true,
     },
   },
   {
     header: {
       code: "GL-C6-ATT-LOC-0014",
       content_version: 1,
-      template_code: "GT-005",
+      template_code: "GT-022",
       title: "Quan sát điểm khác biệt ẩn trong lưới",
       instruction: "Chạm vào ô có kim cương đỏ.",
       age_min: 4,
@@ -625,33 +887,68 @@ export const C6_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
       authored_in: "repo_seed",
     },
     content_pack: {
-      grid: [
-        [
-          {
-            id: "d1",
-            emoji: "♦️",
-            target: true,
+      prompt: "Bé tìm viên kim cương giữa các hình tròn nhé!",
+      target_description: "Viên kim cương",
+      scene_objects: [
+        {
+          id: "gem",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-gem-stone",
           },
-          {
-            id: "d2",
-            emoji: "♣️",
-            target: false,
+          is_target: true,
+          is_hidden: false,
+          x: 480,
+          y: 270,
+        },
+        {
+          id: "circle-1",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-red-circle",
           },
-        ],
+          is_target: false,
+          is_hidden: false,
+          x: 180,
+          y: 120,
+        },
+        {
+          id: "circle-2",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-blue-circle",
+          },
+          is_target: false,
+          is_hidden: false,
+          x: 780,
+          y: 120,
+        },
+        {
+          id: "circle-3",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-yellow-circle",
+          },
+          is_target: false,
+          is_hidden: false,
+          x: 180,
+          y: 420,
+        },
       ],
-      target_id: "d1",
     },
     difficulty_params: {
-      grid_size: 2,
+      hint_after_ms: 9000,
+      allow_retry: true,
+      show_target_counter: true,
     },
   },
   {
     header: {
       code: "GL-C6-MEM-CMP-0015",
       content_version: 1,
-      template_code: "GT-003",
+      template_code: "GT-020",
       title: "Ghi nhớ cặp thẻ trùng khớp",
-      instruction: "Chọn nhóm thẻ có cùng loại trái cây.",
+      instruction: "Bé lật thẻ và tìm hai quả giống nhau nhé!",
       age_min: 5,
       age_max: 6,
       difficulty: 3,
@@ -665,26 +962,66 @@ export const C6_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
       authored_in: "repo_seed",
     },
     content_pack: {
-      left_group: [
+      prompt: "Bé lật thẻ tìm hai quả giống nhau nhé!",
+      pairs: [
         {
-          emoji: "🍇",
+          pair_key: "pair-1",
+          card_a: {
+            card_id: "c1a",
+            asset: {
+              kind: "emoji",
+              ref: "EMJ-grapes",
+            },
+          },
+          card_b: {
+            card_id: "c1b",
+            asset: {
+              kind: "emoji",
+              ref: "EMJ-grapes",
+            },
+          },
         },
         {
-          emoji: "🍇",
+          pair_key: "pair-2",
+          card_a: {
+            card_id: "c2a",
+            asset: {
+              kind: "emoji",
+              ref: "EMJ-orange",
+            },
+          },
+          card_b: {
+            card_id: "c2b",
+            asset: {
+              kind: "emoji",
+              ref: "EMJ-orange",
+            },
+          },
+        },
+        {
+          pair_key: "pair-3",
+          card_a: {
+            card_id: "c3a",
+            asset: {
+              kind: "emoji",
+              ref: "EMJ-red-apple",
+            },
+          },
+          card_b: {
+            card_id: "c3b",
+            asset: {
+              kind: "emoji",
+              ref: "EMJ-red-apple",
+            },
+          },
         },
       ],
-      right_group: [
-        {
-          emoji: "🍇",
-        },
-        {
-          emoji: "🍊",
-        },
-      ],
-      target: "match",
     },
     difficulty_params: {
-      max_difference: 1,
+      flip_back_delay_ms: 1500,
+      peek_all_initial_ms: 2000,
+      hint_after_ms: 9000,
+      allow_retry: true,
     },
   },
   {
@@ -745,9 +1082,9 @@ export const C6_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
     header: {
       code: "GL-C6-MEM-SEQ-0017",
       content_version: 1,
-      template_code: "GT-004",
-      title: "Ghi nhớ dãy số đảo ngược đơn giản",
-      instruction: "Chọn số tiếp theo trong dãy.",
+      template_code: "GT-006",
+      title: "Xếp dãy số đếm ngược",
+      instruction: "Bé xếp thẻ số theo thứ tự đếm ngược!",
       age_min: 5,
       age_max: 6,
       difficulty: 4,
@@ -761,12 +1098,59 @@ export const C6_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
       authored_in: "repo_seed",
     },
     content_pack: {
-      sequence: ["5", "4", "3", "2"],
-      options: ["1", "5", "0"],
-      correct_option: "1",
+      prompt: "Bé xếp các số theo thứ tự đếm ngược từ 5 về 1!",
+      sequence: [
+        {
+          step_id: "d5",
+          order_index: 0,
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-five",
+          },
+          label: "5",
+        },
+        {
+          step_id: "d4",
+          order_index: 1,
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-four",
+          },
+          label: "4",
+        },
+        {
+          step_id: "d3",
+          order_index: 2,
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-three",
+          },
+          label: "3",
+        },
+        {
+          step_id: "d2",
+          order_index: 3,
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-two",
+          },
+          label: "2",
+        },
+        {
+          step_id: "d1",
+          order_index: 4,
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-one",
+          },
+          label: "1",
+        },
+      ],
     },
     difficulty_params: {
-      pattern_length: 4,
+      hint_after_ms: 12_000,
+      allow_retry: true,
+      shuffle_initial: true,
     },
   },
   {

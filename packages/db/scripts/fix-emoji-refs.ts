@@ -27,8 +27,23 @@ const KNOWN_CODES = new Set(ALL_EMOJIS.map((entry) => getEmojiCode(entry)));
 // cũng không đếm chúng.
 const REF_FIELD_REGEX = /(?<![A-Za-z_])("?(?:ref|emoji_ref)"?:\s*)"([^"]+)"/g;
 
+/**
+ * `label_emoji` của `GT-004` cũng là `EmojiRef`, và fixture của vài template
+ * gói asset trong helper `emoji("…")` — hai dạng này không có khoá `ref` nên
+ * biểu thức trên bỏ sót.
+ */
+const OTHER_EMOJI_FIELD_REGEXES: RegExp[] = [
+  /(?<![A-Za-z_])("?label_emoji"?:\s*)"([^"]+)"/g,
+  /(emoji\()"([^"]+)"/g,
+];
+
+const SKIP_DIRS = new Set(["node_modules", "dist", ".nuxt", ".output", ".git"]);
+
 function walk(dir: string, out: string[]): string[] {
   for (const name of fs.readdirSync(dir)) {
+    if (SKIP_DIRS.has(name)) {
+      continue;
+    }
     const full = path.join(dir, name);
     if (fs.statSync(full).isDirectory()) {
       walk(full, out);
@@ -40,7 +55,12 @@ function walk(dir: string, out: string[]): string[] {
 }
 
 function main(): void {
-  const root = path.resolve(import.meta.dirname, "../src/seed-content");
+  const rootArg = process.argv
+    .find((arg) => arg.startsWith("--root="))
+    ?.slice("--root=".length);
+  const root = rootArg
+    ? path.resolve(process.cwd(), rootArg)
+    : path.resolve(import.meta.dirname, "../src/seed-content");
   const write = process.argv.includes("--write");
   const unresolved = new Map<string, number>();
   let replaced = 0;
@@ -49,7 +69,7 @@ function main(): void {
   for (const file of walk(root, [])) {
     const source = fs.readFileSync(file, "utf-8");
     let fileHits = 0;
-    const next = source.replace(REF_FIELD_REGEX, (whole, prefix, value) => {
+    const rewrite = (whole: string, prefix: string, value: string): string => {
       if (value.startsWith("EMJ-")) {
         return whole;
       }
@@ -66,7 +86,12 @@ function main(): void {
       fileHits++;
       replaced++;
       return `${prefix}"${code}"`;
-    });
+    };
+
+    let next = source.replace(REF_FIELD_REGEX, rewrite);
+    for (const pattern of OTHER_EMOJI_FIELD_REGEXES) {
+      next = next.replace(pattern, rewrite);
+    }
     if (fileHits > 0) {
       touched++;
       console.log(

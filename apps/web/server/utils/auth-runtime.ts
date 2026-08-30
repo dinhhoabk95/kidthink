@@ -216,14 +216,19 @@ export function assertUnrestrictedUser(status: string): void {
   }
 }
 
+/**
+ * Cookie `active_child_id` mang **UUID** của hồ sơ trẻ, không phải khoá chính.
+ * Mọi consumer tra bằng `childProfiles.uuid` (`game-config-runtime.ts`).
+ *
+ * Cấm — NEVER lấy lại giá trị này từ `event.context`: `UserTokenPayload` mang
+ * `active_child_db_id` kiểu số, và không route nào ghi nó. Nhánh fallback cũ
+ * `String()` một id số vào ô chờ UUID, làm mọi level bậc ≥ login trả 404.
+ */
 export function getOptionalActiveChildUuid(event: H3Event): string | null {
   const cookieVal =
     getCookie(event, "active_child_id") ||
     getCookie(event, "active_child_uuid");
-  const ctxVal =
-    event.context?.user?.active_child_id || event.context?.active_child_id;
-  const val = cookieVal || ctxVal;
-  return val ? String(val) : null;
+  return cookieVal ? String(cookieVal) : null;
 }
 
 export function getActiveChildUuid(event: H3Event): string {

@@ -1,29 +1,17 @@
 import crypto from "node:crypto";
+import type { RedirectTargetInput } from "@mindkid/shared";
+import { sanitizeRedirectTarget } from "../redirect-target.js";
 import { isOAuthProvider, type OAuthStatePayload } from "./types.js";
 
 export const OAUTH_COOKIE_NAME = "tm_oauth";
 export const OAUTH_STATE_TTL_SECONDS = 600; // 10 minutes (BR-OAP-03)
 
-const INTERNAL_PATH_PATTERN = /^\/[a-zA-Z0-9_\-/.]*$/;
-
 /**
- * Whitelists internal paths to prevent open redirect (BR-OAP-05).
- * Defaults to `/me` if invalid or external.
+ * Giữ tên cũ cho luồng OAuth. Thân hàm sống ở `../redirect-target.js` — module
+ * lá dùng chung với `redirect` của luồng email/mật khẩu (`BR-LGN-12`).
  */
-export function sanitizeReturnTo(returnTo: unknown): string {
-  if (typeof returnTo !== "string") {
-    return "/me";
-  }
-  const trimmed = returnTo.trim();
-  if (
-    trimmed.startsWith("/") &&
-    !trimmed.startsWith("//") &&
-    !trimmed.includes("://") &&
-    INTERNAL_PATH_PATTERN.test(trimmed)
-  ) {
-    return trimmed;
-  }
-  return "/me";
+export function sanitizeReturnTo(returnTo: RedirectTargetInput): string {
+  return sanitizeRedirectTarget(returnTo);
 }
 
 /**

@@ -38,7 +38,7 @@ User ở trạng thái `pending_verification`.
 2. Gửi email chứa link.
 3. Bấm link → xác thực token → `users.status = active`, `email_verified_at = now`.
 4. Token đánh dấu `used_at`.
-5. Chuyển tới `/me/children/new` — bước tiếp theo tự nhiên.
+5. Chuyển tới `/me/children/create` — bước tiếp theo tự nhiên.
 
 ## 5. Alternative flows
 
@@ -115,7 +115,7 @@ Scenario: BR-EVF-07 — hạn mức gửi lại
 
 Scenario: BR-EVF-08 — chuyển tới tạo hồ sơ trẻ
   When xác thực thành công
-  Then trang đích là /me/children/new
+  Then trang đích là /me/children/create
 ```
 
 ## 10. Boundaries

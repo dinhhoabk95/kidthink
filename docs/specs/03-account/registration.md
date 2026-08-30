@@ -35,7 +35,7 @@ Guest → User. Cấm Trẻ không đăng ký.
 
 ## 3. Entry points
 
-`/dang-ky` · `POST /api/guest/auth/users/register` · CTA sau khi guest chơi xong.
+`/register` · `POST /api/guest/auth/users/register` · CTA sau khi guest chơi xong.
 
 ## 4. Main flow
 

@@ -47,12 +47,19 @@
 
   definePageMeta({ layout: false });
 
+  type JsonPrimitive = string | number | boolean | null;
+  interface JsonObject {
+    [key: string]: JsonPrimitive | JsonObject | JsonArray;
+  }
+  type JsonArray = Array<JsonPrimitive | JsonObject | JsonArray>;
+  type JsonValue = JsonPrimitive | JsonObject | JsonArray;
+
   interface RoundPayload {
     round_index: number;
     instruction?: string | null;
     instruction_audio_path?: string | null;
-    content_pack: unknown;
-    difficulty_params: unknown;
+    content_pack: JsonObject;
+    difficulty_params: JsonObject;
     difficulty?: number;
   }
 
@@ -61,8 +68,8 @@
     code: string;
     content_version?: number;
     template_code: string;
-    content_pack?: unknown;
-    difficulty_params?: unknown;
+    content_pack?: JsonObject;
+    difficulty_params?: JsonObject;
     theme_id: string;
     age_band?: "3-4" | "4-5" | "5-6";
     scoring?: { mode: "rounds" | "attempts" };
@@ -201,6 +208,26 @@
   }
 
   function handleApiError(status: number, message?: string): Error {
+    if (status === 401) {
+      errorTitle.value = "Yêu cầu đăng nhập";
+      errorEmoji.value = "🔒";
+      errorActionLink.value = `/login?redirect=/play/${levelCode}`;
+      errorActionText.value = "Đăng nhập để chơi";
+      return new Error(
+        "Trò chơi này yêu cầu đăng nhập tài khoản để bé có thể tham gia và lưu tiến độ."
+      );
+    }
+
+    if (status === 410) {
+      errorTitle.value = "Trò chơi đã ngừng phát hành";
+      errorEmoji.value = "📦";
+      errorActionLink.value = "/games";
+      errorActionText.value = "Xem danh sách trò chơi";
+      return new Error(
+        "Nội dung bài học này đã hoàn thành chu kỳ sử dụng hoặc được thay thế."
+      );
+    }
+
     if (status === 403) {
       if (!loggedIn.value) {
         errorTitle.value = "Yêu cầu đăng nhập";
@@ -233,10 +260,12 @@
 
     if (status === 404) {
       errorTitle.value = "Không tìm thấy trò chơi";
-      errorEmoji.value = "📦";
+      errorEmoji.value = "🔍";
       errorActionLink.value = "/games";
       errorActionText.value = "Xem danh sách trò chơi";
-      return new Error("Trò chơi không tồn tại hoặc đã ngừng phát hành.");
+      return new Error(
+        "Trò chơi không tồn tại hoặc chưa được phát hành công khai."
+      );
     }
 
     errorTitle.value = "Lỗi tải trò chơi";
@@ -249,12 +278,13 @@
     firstRound?: RoundPayload
   ): EngineConfig {
     return {
-      level_code: payload.level_code || payload.code,
+      level_code: payload.code || payload.level_code || levelCode,
       content_version: payload.content_version ?? 1,
       template_code: payload.template_code,
-      content_pack: firstRound?.content_pack ?? payload.content_pack,
-      difficulty_params:
-        firstRound?.difficulty_params ?? payload.difficulty_params,
+      content_pack: (firstRound?.content_pack ??
+        payload.content_pack) as EngineConfig["content_pack"],
+      difficulty_params: (firstRound?.difficulty_params ??
+        payload.difficulty_params) as EngineConfig["difficulty_params"],
       theme_id: payload.theme_id,
       age_band: payload.age_band || "3-4",
       reduced_motion: payload.flags?.reduced_motion ?? false,
@@ -273,7 +303,7 @@
       ? `/api/users/levels/${levelCode}/config`
       : `/api/guest/levels/${levelCode}/config`;
 
-    const res = await fetch(endpoint);
+    const res = await fetch(endpoint, { credentials: "include" });
     if (!res.ok) {
       const errJson = (await res.json().catch(() => ({}))) as {
         statusMessage?: string;
@@ -304,7 +334,7 @@
       errorMessage.value = null;
       await fetchAndStartGame();
       isLoading.value = false;
-    } catch (err: unknown) {
+    } catch (err) {
       isLoading.value = false;
       errorMessage.value =
         err instanceof Error ? err.message : "Lỗi tải cấu hình game";
@@ -434,14 +464,14 @@
   }
 
   .btn-primary {
-    background-color: var(--color-cta, #f97316);
+    background-color: var(--color-cta);
     color: white;
     border: 2px solid transparent;
     box-shadow: 0 4px 0 rgba(0, 0, 0, 0.15);
   }
 
   .btn-primary:hover {
-    background-color: var(--color-cta-hover, #ea580c);
+    background-color: var(--color-cta-hover);
   }
 
   .btn-primary:active {

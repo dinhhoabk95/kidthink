@@ -9,6 +9,7 @@
 //
 // Cấm — NEVER thêm re-export của module chạm node: builtin hoặc package máy chủ.
 // Module bị loại: access-gating, alerts-config, custom-game, email-job, logger, payment-state-machine, publish-checklist, rate-limit-middleware, round-set-validation, vietqr, web-scale-contract.
+export * from "./access-cta.js";
 export * from "./access-ladder.js";
 export * from "./activity-model.js";
 export * from "./activity-schemas.js";
@@ -43,6 +44,7 @@ export * from "./pwa-offline-pack-contract.js";
 export * from "./rate-limit-routes.js";
 export * from "./rate-limiting.js";
 export * from "./redactor.js";
+export * from "./redirect.js";
 export * from "./round-event-gate.js";
 export * from "./scoring.js";
 export * from "./taxonomy-types.js";

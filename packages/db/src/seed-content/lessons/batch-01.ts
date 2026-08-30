@@ -66,7 +66,7 @@ export const LESSON_BATCH_01: LessonSeed[] = [
       access_tier: "free",
       skill_codes: ["C1.CNT.01", "C1.CNT.02"],
       learning_objective_codes: ["LO-C1.CNT.01-01", "LO-C1.CNT.02-01"],
-      activity_codes: ["ACT-0002", "ACT-0203", "ACT-0204"],
+      activity_codes: ["ACT-0002", "ACT-0203", "ACT-0202"],
       what_tags: ["auditory_math"],
       thinking_tags: ["gross_motor_counting"],
       theme_tag: "body",

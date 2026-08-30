@@ -33,7 +33,7 @@ User. Cấm Trẻ không đăng nhập.
 
 ## 3. Entry points
 
-`/dang-nhap` · `POST /api/guest/auth/users/login` · `POST /api/guest/auth/users/remember` ·
+`/login` · `POST /api/guest/auth/users/login` · `POST /api/guest/auth/users/remember` ·
 `/logout` · `/logout-all` · `GET /api/users/auth/sessions`.
 
 ## 4. Main flow
@@ -72,10 +72,11 @@ User. Cấm Trẻ không đăng nhập.
 | `BR-LGN-05` | Danh sách thiết bị hiện **nhãn thô** (loại trình duyệt, hệ điều hành, thành phố từ IP), không IP đầy đủ | Đủ để nhận ra, không đủ để lộ vị trí chính xác |
 | `BR-LGN-06` | Đổi mật khẩu → mọi phiên khác chết | Người đổi mật khẩu vì nghi lộ; phiên cũ còn sống là lỗ hổng |
 | `BR-LGN-07` | `rememberMe` mặc định false; khi chủ động chọn có hạn tuyệt đối tối đa 365 ngày, không sliding | Tôn trọng yêu cầu ghi nhớ mà không tạo phiên vĩnh viễn trên thiết bị dùng chung |
-| `BR-LGN-08` | Sau đăng nhập, **không tự vào khu vực chơi** — vào `/me` | Người lớn cần chọn trẻ trước |
+| `BR-LGN-08` | Sau đăng nhập, **không tự vào khu vực chơi khi chưa có `active_child_id`**. Không có đích dự định thì vào `/me`; có đích trong khu vực chơi mà chưa chọn trẻ thì vào màn hình chọn trẻ, mang theo đích đó | Người lớn cần chọn trẻ trước. Đẩy thẳng vào `/play/{code}` lúc chưa có trẻ chỉ dẫn tới màn hình lỗi 428. Nhưng chặn cứng ở `/me` thì người vừa bấm "Đăng nhập để chơi" mất luôn thứ họ định làm — nên giữ đích và bắt họ đi qua đúng một bước chọn trẻ có chủ đích |
 | `BR-LGN-09` | Tài khoản có `password_hash` NULL trả **cùng** `INVALID_CREDENTIALS` khi thử mật khẩu | `BR-ERR-02`. "Tài khoản này dùng Google" cho kẻ tấn công biết nên nhắm vào đâu, và đó là thông tin ta không nợ ai |
 | `BR-LGN-10` | Danh sách thiết bị hiện **cách đăng nhập** (`auth_method`) của từng phiên | Phiên tạo bằng SNS mà người dùng không nhớ đã bấm là dấu hiệu tài khoản SNS bị chiếm — họ cần thấy để nhận ra |
-| `BR-LGN-11` | Force Terms/Privacy không làm đăng nhập thất bại; sau khi xác thực phải vào `/consent-required` trước mọi `return_to` ngoài allowlist | User vẫn phải đăng nhập được để xem tài liệu, export dữ liệu, rút consent hoặc xoá tài khoản; session gate mới là nơi ép đúng phạm vi |
+| `BR-LGN-11` | Force Terms/Privacy không làm đăng nhập thất bại; sau khi xác thực phải vào `/consent-required` trước **mọi đích dự định** — cả `redirect` lẫn `return_to` — nằm ngoài allowlist | User vẫn phải đăng nhập được để xem tài liệu, export dữ liệu, rút consent hoặc xoá tài khoản; session gate mới là nơi ép đúng phạm vi. Nêu đủ hai tên tham số vì luật viết theo một tên sẽ để tên còn lại lọt qua |
+| `BR-LGN-12` | Đích dự định đi qua **hai** tên tham số: `redirect` cho luồng email/mật khẩu và cho xích chọn trẻ, `return_to` cho OAuth. Cả hai Cấm — NEVER có hàm kiểm tra riêng: dùng chung đúng một whitelist đường dẫn nội bộ của `BR-OAP-05` | Hai tên là món nợ lịch sử đã ghi nhận, không phải thiết kế. Cái Cấm được là hai đường validate — một đường quên whitelist là một lỗ open redirect, và lỗ đó sẽ nằm ở đường ít ai đọc. Whitelist ở mục 6 của [`oauth-provider-registry.md`](../01-platform/oauth-provider-registry.md) |
 
 ## 7. Data
 
@@ -98,6 +99,8 @@ User. Cấm Trẻ không đăng nhập.
 | Mặc định | `/me` |
 | Đến từ trang giá | `/me/subscription` |
 | Đến từ một game bị khoá | Trang game đó |
+| `redirect` trỏ vào `/play/{code}`, đã có `active_child_id` | `/play/{code}` |
+| `redirect` trỏ vào `/play/{code}`, chưa có `active_child_id` | `/me/children?redirect=/play/{code}` — `BR-LGN-08` |
 | `pending_verification` | `/me` + banner nhắc xác thực |
 | Thiếu Terms hoặc Privacy sau marker bắt buộc | `/consent-required`; đích dự định chỉ được dùng sau khi hoàn tất |
 
@@ -148,10 +151,25 @@ Scenario: BR-LGN-05 — không lộ IP đầy đủ
   When mở danh sách thiết bị
   Then không hiện địa chỉ IP đầy đủ
 
-Scenario: BR-LGN-08 — không tự vào khu vực chơi
-  When đăng nhập thành công
+Scenario: BR-LGN-08 — không có đích dự định thì vào /me
+  When đăng nhập thành công không kèm redirect
   Then trang đích là /me
   And không phải /play
+
+Scenario: BR-LGN-08 — chưa chọn trẻ thì dừng ở màn hình chọn trẻ
+  Given user chưa có active_child_id
+  When đăng nhập thành công với redirect là /play/GL-C1-CNT-CARD-0001
+  Then trang đích là /me/children kèm redirect đó
+  And không phải /play/GL-C1-CNT-CARD-0001
+
+Scenario: BR-LGN-08 — đã chọn trẻ thì đi thẳng tới đích
+  Given user đã có active_child_id hợp lệ
+  When đăng nhập thành công với redirect là /play/GL-C1-CNT-CARD-0001
+  Then trang đích là /play/GL-C1-CNT-CARD-0001
+
+Scenario: BR-LGN-12 — đích ngoài whitelist bị bỏ
+  When đăng nhập thành công với redirect là https://ngoai-mien.example/x
+  Then trang đích là /me
 
 Scenario: thu hồi một thiết bị
   Given user có 3 phiên
@@ -202,7 +220,8 @@ Scenario: BR-LGN-11 — force consent thắng return_to nhưng không chặn đ�
 - Phân biệt sai email và sai mật khẩu.
 - Tiết lộ tài khoản đăng nhập bằng cách nào qua lỗi đăng nhập.
 - Hiện IP đầy đủ.
-- Tự vào khu vực chơi sau đăng nhập.
+- Vào khu vực chơi sau đăng nhập khi chưa có `active_child_id`.
+- Viết hàm kiểm tra đích dự định thứ hai.
 - Bỏ qua MFA vì đã đăng nhập bằng SNS.
 
 ## 11. Open questions

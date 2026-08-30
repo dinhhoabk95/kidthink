@@ -84,13 +84,13 @@ export const SAMPLE_LEVEL_3: GameLevelFixture<GT016Content, GT016Difficulty> = {
     activity_cards: [
       {
         card_id: "breakfast",
-        asset: { kind: "emoji", ref: "🍳" },
+        asset: { kind: "emoji", ref: "EMJ-fried-egg" },
         hour: 7,
         minute: 0,
       },
       {
         card_id: "sleep",
-        asset: { kind: "emoji", ref: "🛏️" },
+        asset: { kind: "emoji", ref: "EMJ-bed" },
         hour: 9,
         minute: 0,
       },

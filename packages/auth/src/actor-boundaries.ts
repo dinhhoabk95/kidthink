@@ -5,10 +5,10 @@ import type { ChildOwnershipPort, EntitlementPort } from "./ports";
 
 export function assertActiveChild(event: AuthEvent): number {
   const user = requireUserAuth(event);
-  if (user.active_child_id === undefined || user.active_child_id <= 0) {
+  if (user.active_child_db_id === undefined || user.active_child_db_id <= 0) {
     throw appError("NO_ACTIVE_CHILD");
   }
-  return user.active_child_id;
+  return user.active_child_db_id;
 }
 
 export async function verifyChildOwnership(

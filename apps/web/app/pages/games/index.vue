@@ -16,7 +16,6 @@
         <!-- Bộ lọc (BR-GCP-03: phản ánh vào URL) -->
         <search aria-label="Bộ lọc trò chơi" class="filters-bar">
           <!-- Filter Competency -->
-
           <div class="filter-group">
             <label class="filter-label" for="filter-competency"
               >Năng lực:</label
@@ -88,7 +87,7 @@
           Không tải được danh sách trò chơi. Em thử tải lại trang giúp nhé.
         </p>
 
-        <!-- Lưới trò chơi (BR-GCP-01..08) -->
+        <!-- Lưới trò chơi (BR-GCP-01..08, BR-GCP-09) -->
         <div class="catalog-grid" v-else-if="levels.length > 0">
           <div class="catalog-card" v-for="game in levels" :key="game.code">
             <div class="card-top">
@@ -120,20 +119,15 @@
             </div>
 
             <div class="card-footer">
-              <!-- Không khoá thì chơi thẳng; khoá thì sang trang chi tiết -->
+              <!-- CTA theo bậc và trạng thái (BR-GCP-09) -->
               <NuxtLink
-                class="btn-card-action btn-play-free"
-                v-if="!game.locked"
-                :to="`/play/${game.code}`"
+                :class="[
+                  'btn-card-action',
+                  game.cta?.action === 'play' ? 'btn-play-free' : 'btn-view-detail'
+                ]"
+                :to="game.cta?.href || `/games/${game.code}`"
               >
-                Chơi ngay
-              </NuxtLink>
-              <NuxtLink
-                class="btn-card-action btn-view-detail"
-                v-else
-                :to="`/games/${game.code}`"
-              >
-                Xem chi tiết
+                {{ game.cta?.text || 'Xem chi tiết' }}
               </NuxtLink>
             </div>
           </div>
@@ -184,9 +178,22 @@
 </template>
 
 <script lang="ts" setup>
-  import { computed, ref, watch } from "vue";
+  import {
+    type AccessTier,
+    type CtaViewer,
+    type EntitlementKey,
+    type LevelCta,
+    resolveLevelCta,
+  } from "@mindkid/shared/client";
+  import { computed, onMounted, ref, watch } from "vue";
   import { useRoute, useRouter } from "vue-router";
-  import { useFetch, useHead, useSeoMeta } from "#imports";
+  import {
+    definePageMeta,
+    useFetch,
+    useHead,
+    useSeoMeta,
+    useUserSession,
+  } from "#imports";
   import CookieNoticeBanner from "~/components/cookie-notice-banner.vue";
   import PublicFooter from "~/components/public-footer.vue";
   import PublicNavbar from "~/components/public-navbar.vue";
@@ -203,9 +210,10 @@
     competency: string | null;
     age_band: string | null;
     difficulty: number | null;
-    access_tier: string;
+    access_tier: AccessTier;
     thumbnail_emoji: string | null;
     locked: boolean;
+    cta: LevelCta;
   }
 
   interface CatalogFacets {
@@ -220,6 +228,12 @@
     total: number;
     facets: CatalogFacets;
     next_cursor: string | null;
+  }
+
+  interface UserAccessContext {
+    has_active_child: boolean;
+    active_keys: string[];
+    allowed_tiers: string[];
   }
 
   const COMPETENCY_OPTIONS = [
@@ -250,19 +264,19 @@
 
   const route = useRoute();
   const router = useRouter();
+  const { loggedIn } = useUserSession();
 
   const selectedCompetency = ref((route.query.competency as string) || "");
   const selectedAge = ref((route.query.age as string) || "");
   const selectedTier = ref((route.query.access_tier as string) || "");
   const cursor = ref((route.query.cursor as string) || "");
 
+  const userAccessContext = ref<UserAccessContext | null>(null);
+
   /**
    * `useFetch` chạy trên server khi SSR, nên danh sách có trong HTML đầu tiên —
    * `BR-GCP-04` đòi trang hiện được cả khi JS tắt.
-   *
-   * Trang này trước đây dựng danh sách từ một mảng hằng số 9 phần tử trong
-   * chính file .vue, nên thư viện 353 trò chơi trong DB không bao giờ tới được
-   * người dùng.
+   * `items[].cta` được dựng theo góc nhìn guest ở server.
    */
   const {
     data,
@@ -287,7 +301,47 @@
     }),
   });
 
-  const levels = computed<CatalogItem[]>(() => data.value?.items ?? []);
+  onMounted(async () => {
+    if (loggedIn.value) {
+      try {
+        const ctx = await $fetch<UserAccessContext>(
+          "/api/users/access-context",
+          {
+            credentials: "include",
+          }
+        );
+        userAccessContext.value = ctx;
+      } catch {
+        // Keep guest perspective if access-context fails
+      }
+    }
+  });
+
+  // Hai pha: SSR dùng cta từ server (guest); client hydrate cập nhật lại theo session (BR-GCP-09)
+  const levels = computed<CatalogItem[]>(() => {
+    const rawItems = data.value?.items ?? [];
+    if (!userAccessContext.value) {
+      return rawItems;
+    }
+
+    const ctx = userAccessContext.value;
+    const viewer: CtaViewer = {
+      is_authenticated: true,
+      has_active_child: ctx.has_active_child,
+      active_keys: ctx.active_keys as EntitlementKey[],
+    };
+
+    return rawItems.map((item) => {
+      const tier = item.access_tier;
+      const isLocked = !ctx.allowed_tiers.includes(tier);
+      return {
+        ...item,
+        locked: isLocked,
+        cta: resolveLevelCta(item.code, tier, viewer),
+      };
+    });
+  });
+
   const totalCount = computed(() => data.value?.total ?? 0);
   const facets = computed<CatalogFacets | null>(
     () => data.value?.facets ?? null

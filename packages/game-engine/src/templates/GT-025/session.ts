@@ -52,7 +52,22 @@ export class GT025Session extends TemplateGameSession<
       return ACTION_IGNORED;
     }
 
-    // Find if objectId matches any difference pair (left or right)
+    const diff = this.content.differences.find(
+      (d) => d.left_id === objectId || d.right_id === objectId
+    );
+
+    if (!diff) {
+      return ACTION_RETRY;
+    }
+
+    if (this.foundDifferenceIds.has(diff.id)) {
+      return ACTION_IGNORED;
+    }
+
+    return ACTION_CORRECT;
+  }
+
+  onTapObject(objectId: string): ActionResult {
     const diff = this.content.differences.find(
       (d) => d.left_id === objectId || d.right_id === objectId
     );
@@ -66,7 +81,7 @@ export class GT025Session extends TemplateGameSession<
     }
 
     if (this.foundDifferenceIds.has(diff.id)) {
-      return ACTION_IGNORED; // Already found
+      return ACTION_IGNORED;
     }
 
     this.foundDifferenceIds.add(diff.id);
@@ -81,7 +96,7 @@ export class GT025Session extends TemplateGameSession<
     if (this.foundDifferenceIds.size >= this.content.differences.length) {
       this.isWon = true;
       this.recordEvent("round_completed", { round_index: 0 });
-      this.completeSession();
+      this.winSession();
     }
 
     return ACTION_CORRECT;
@@ -98,7 +113,10 @@ export class GT025Session extends TemplateGameSession<
   }
 
   override checkWinCondition(): boolean {
-    return this.isWon;
+    return (
+      this.content.differences.length > 0 &&
+      this.foundDifferenceIds.size >= this.content.differences.length
+    );
   }
 
   getFoundCount(): number {

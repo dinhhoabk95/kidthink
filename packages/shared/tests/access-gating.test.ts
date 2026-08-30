@@ -1,7 +1,7 @@
-import { AppError } from "@mindkid/auth";
 import fc from "fast-check";
 import { describe, expect, it } from "vitest";
 import {
+  AccessGatingError,
   assertContentAccess,
   CALLER_STATUSES,
   type CallerStatus,
@@ -123,10 +123,11 @@ describe("P1.3 Access Gating (BR-GAT-01 .. BR-GAT-08)", () => {
           caller: { kind: "guest" },
         });
         expect.unreachable("Should have thrown");
-      } catch (err: any) {
-        expect(err).toBeInstanceOf(AppError);
-        expect(err.code).toBe("NOT_FOUND");
-        expect(err.status).toBe(404);
+      } catch (err: unknown) {
+        expect(err).toBeInstanceOf(AccessGatingError);
+        const gatingErr = err as AccessGatingError;
+        expect(gatingErr.code).toBe("NOT_FOUND");
+        expect(gatingErr.status).toBe(404);
       }
 
       try {
@@ -134,10 +135,11 @@ describe("P1.3 Access Gating (BR-GAT-01 .. BR-GAT-08)", () => {
           caller: { kind: "guest" },
         });
         expect.unreachable("Should have thrown");
-      } catch (err: any) {
-        expect(err).toBeInstanceOf(AppError);
-        expect(err.code).toBe("NOT_FOUND");
-        expect(err.status).toBe(404);
+      } catch (err: unknown) {
+        expect(err).toBeInstanceOf(AccessGatingError);
+        const gatingErr = err as AccessGatingError;
+        expect(gatingErr.code).toBe("NOT_FOUND");
+        expect(gatingErr.status).toBe(404);
       }
     });
 
@@ -160,10 +162,11 @@ describe("P1.3 Access Gating (BR-GAT-01 .. BR-GAT-08)", () => {
         expect.unreachable(
           "Should have thrown 403 due to curriculum_tier premium"
         );
-      } catch (err: any) {
-        expect(err).toBeInstanceOf(AppError);
-        expect(err.code).toBe("TIER_LOCKED");
-        expect(err.status).toBe(403);
+      } catch (err: unknown) {
+        expect(err).toBeInstanceOf(AccessGatingError);
+        const gatingErr = err as AccessGatingError;
+        expect(gatingErr.code).toBe("TIER_LOCKED");
+        expect(gatingErr.status).toBe(403);
       }
     });
 
@@ -174,10 +177,11 @@ describe("P1.3 Access Gating (BR-GAT-01 .. BR-GAT-08)", () => {
           activeKeys: [],
         });
         expect.unreachable("Should have thrown 428");
-      } catch (err: any) {
-        expect(err).toBeInstanceOf(AppError);
-        expect(err.code).toBe("NO_ACTIVE_CHILD");
-        expect(err.status).toBe(428);
+      } catch (err: unknown) {
+        expect(err).toBeInstanceOf(AccessGatingError);
+        const gatingErr = err as AccessGatingError;
+        expect(gatingErr.code).toBe("NO_ACTIVE_CHILD");
+        expect(gatingErr.status).toBe(428);
       }
     });
 
@@ -188,10 +192,11 @@ describe("P1.3 Access Gating (BR-GAT-01 .. BR-GAT-08)", () => {
           activeKeys: ["play_standard_games"],
         });
         expect.unreachable("Should have thrown 403");
-      } catch (err: any) {
-        expect(err).toBeInstanceOf(AppError);
-        expect(err.code).toBe("TIER_LOCKED");
-        expect(err.status).toBe(403);
+      } catch (err: unknown) {
+        expect(err).toBeInstanceOf(AccessGatingError);
+        const gatingErr = err as AccessGatingError;
+        expect(gatingErr.code).toBe("TIER_LOCKED");
+        expect(gatingErr.status).toBe(403);
       }
     });
 
@@ -203,10 +208,11 @@ describe("P1.3 Access Gating (BR-GAT-01 .. BR-GAT-08)", () => {
           checkQuotaRemaining: () => false,
         });
         expect.unreachable("Should have thrown 402");
-      } catch (err: any) {
-        expect(err).toBeInstanceOf(AppError);
-        expect(err.code).toBe("DAILY_PLAY_CAP_REACHED");
-        expect(err.status).toBe(402);
+      } catch (err: unknown) {
+        expect(err).toBeInstanceOf(AccessGatingError);
+        const gatingErr = err as AccessGatingError;
+        expect(gatingErr.code).toBe("DAILY_PLAY_CAP_REACHED");
+        expect(gatingErr.status).toBe(402);
       }
     });
 
@@ -233,10 +239,11 @@ describe("P1.3 Access Gating (BR-GAT-01 .. BR-GAT-08)", () => {
         expect.unreachable(
           "Should have thrown 404 for child ownership mismatch"
         );
-      } catch (err: any) {
-        expect(err).toBeInstanceOf(AppError);
-        expect(err.code).toBe("NOT_FOUND");
-        expect(err.status).toBe(404);
+      } catch (err: unknown) {
+        expect(err).toBeInstanceOf(AccessGatingError);
+        const gatingErr = err as AccessGatingError;
+        expect(gatingErr.code).toBe("NOT_FOUND");
+        expect(gatingErr.status).toBe(404);
       }
     });
 
@@ -251,10 +258,11 @@ describe("P1.3 Access Gating (BR-GAT-01 .. BR-GAT-08)", () => {
             caller: { kind: "guest" },
           });
           expect.unreachable(`Should throw 403 for tier ${item.access_tier}`);
-        } catch (err: any) {
-          expect(err).toBeInstanceOf(AppError);
-          expect(err.code).toBe("TIER_LOCKED");
-          expect(err.status).toBe(403);
+        } catch (err: unknown) {
+          expect(err).toBeInstanceOf(AccessGatingError);
+          const gatingErr = err as AccessGatingError;
+          expect(gatingErr.code).toBe("TIER_LOCKED");
+          expect(gatingErr.status).toBe(403);
         }
       }
     });
@@ -266,10 +274,11 @@ describe("P1.3 Access Gating (BR-GAT-01 .. BR-GAT-08)", () => {
           activeKeys: [], // expired, no keys
         });
         expect.unreachable("Should throw 403");
-      } catch (err: any) {
-        expect(err).toBeInstanceOf(AppError);
-        expect(err.code).toBe("TIER_LOCKED");
-        expect(err.status).toBe(403);
+      } catch (err: unknown) {
+        expect(err).toBeInstanceOf(AccessGatingError);
+        const gatingErr = err as AccessGatingError;
+        expect(gatingErr.code).toBe("TIER_LOCKED");
+        expect(gatingErr.status).toBe(403);
       }
     });
   });
@@ -282,18 +291,21 @@ describe("P1.3 Access Gating (BR-GAT-01 .. BR-GAT-08)", () => {
           activeKeys: ["play_standard_games"],
         });
         expect.unreachable("Should have thrown 403");
-      } catch (err: any) {
-        expect(err).toBeInstanceOf(AppError);
-        expect(err.code).toBe("TIER_LOCKED");
-        expect(err.status).toBe(403);
+      } catch (err: unknown) {
+        expect(err).toBeInstanceOf(AccessGatingError);
+        const gatingErr = err as AccessGatingError;
+        expect(gatingErr.code).toBe("TIER_LOCKED");
+        expect(gatingErr.status).toBe(403);
 
-        const details = err.details as any;
+        const details = gatingErr.details as
+          | Record<string, unknown>
+          | undefined;
         expect(details).toBeDefined();
-        expect(details.code).toBe("TIER_LOCKED");
-        expect(details.access_tier).toBe("premium");
-        expect(details.required_entitlement).toBe("play_premium_games");
-        expect(details.upgrade_package_codes).toEqual(["PKG-premium"]);
-        expect(details.preview).toEqual({
+        expect(details?.code).toBe("TIER_LOCKED");
+        expect(details?.access_tier).toBe("premium");
+        expect(details?.required_entitlement).toBe("play_premium_games");
+        expect(details?.upgrade_package_codes).toEqual(["PKG-premium"]);
+        expect(details?.preview).toEqual({
           title: "Cộng trừ mầm non",
           competency: undefined,
           age_min: 5,
@@ -302,9 +314,9 @@ describe("P1.3 Access Gating (BR-GAT-01 .. BR-GAT-08)", () => {
         });
 
         // Ensure sensitive content fields are NOT present
-        expect(details.content_pack).toBeUndefined();
-        expect(details.difficulty_params).toBeUndefined();
-        expect(details.answers).toBeUndefined();
+        expect(details?.content_pack).toBeUndefined();
+        expect(details?.difficulty_params).toBeUndefined();
+        expect(details?.answers).toBeUndefined();
       }
     });
   });
@@ -330,10 +342,11 @@ describe("P1.3 Access Gating (BR-GAT-01 .. BR-GAT-08)", () => {
           managerAudience: false, // user identity, not manager!
         });
         expect.unreachable("Should throw 403");
-      } catch (err: any) {
-        expect(err).toBeInstanceOf(AppError);
-        expect(err.code).toBe("INSUFFICIENT_ROLE");
-        expect(err.status).toBe(403);
+      } catch (err: unknown) {
+        expect(err).toBeInstanceOf(AccessGatingError);
+        const gatingErr = err as AccessGatingError;
+        expect(gatingErr.code).toBe("INSUFFICIENT_ROLE");
+        expect(gatingErr.status).toBe(403);
       }
     });
   });
@@ -389,9 +402,10 @@ describe("P1.3 Access Gating (BR-GAT-01 .. BR-GAT-08)", () => {
               expect.unreachable(
                 `Cell [${callerStatus}, ${tier}] expected ${expectedStatus} but passed`
               );
-            } catch (err: any) {
-              expect(err).toBeInstanceOf(AppError);
-              expect(err.status).toBe(expectedStatus);
+            } catch (err: unknown) {
+              expect(err).toBeInstanceOf(AccessGatingError);
+              const gatingErr = err as AccessGatingError;
+              expect(gatingErr.status).toBe(expectedStatus);
             }
           }
         }

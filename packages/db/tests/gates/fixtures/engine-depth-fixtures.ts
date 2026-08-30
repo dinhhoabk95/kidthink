@@ -21,9 +21,16 @@ export const SAMPLE_LEVEL_SEED: ContentSeed<unknown, unknown> = {
   },
   content_pack: {
     prompt: "Test prompt",
-    target_item: { item_id: "1", asset: { kind: "emoji", ref: "🍎" } },
+    target_item: {
+      item_id: "1",
+      asset: { kind: "emoji", ref: "EMJ-red-apple" },
+    },
     options: [
-      { item_id: "1", asset: { kind: "emoji", ref: "🍎" }, is_correct: true },
+      {
+        item_id: "1",
+        asset: { kind: "emoji", ref: "EMJ-red-apple" },
+        is_correct: true,
+      },
     ],
   },
   difficulty_params: {

@@ -29,9 +29,9 @@ export const SAMPLE_LEVEL_1: GameLevelFixture<GT012Content, GT012Difficulty> = {
     prompt: "Bé hãy nhìn thật nhanh xem có mấy chấm tròn nhé!",
     arrangement: "dice",
     flash_items: [
-      { item_id: "dot_1", asset: { kind: "emoji", ref: "🔴" } },
-      { item_id: "dot_2", asset: { kind: "emoji", ref: "🔴" } },
-      { item_id: "dot_3", asset: { kind: "emoji", ref: "🔴" } },
+      { item_id: "dot_1", asset: { kind: "emoji", ref: "EMJ-red-circle" } },
+      { item_id: "dot_2", asset: { kind: "emoji", ref: "EMJ-red-circle" } },
+      { item_id: "dot_3", asset: { kind: "emoji", ref: "EMJ-red-circle" } },
     ],
     options: [
       { value: 2, is_correct: false },
@@ -61,10 +61,10 @@ export const SAMPLE_LEVEL_2: GameLevelFixture<GT012Content, GT012Difficulty> = {
     prompt: "Vừa có mấy chú gấu xuất hiện vậy bé ơi?",
     arrangement: "line",
     flash_items: [
-      { item_id: "bear_1", asset: { kind: "emoji", ref: "🐻" } },
-      { item_id: "bear_2", asset: { kind: "emoji", ref: "🐻" } },
-      { item_id: "bear_3", asset: { kind: "emoji", ref: "🐻" } },
-      { item_id: "bear_4", asset: { kind: "emoji", ref: "🐻" } },
+      { item_id: "bear_1", asset: { kind: "emoji", ref: "EMJ-bear" } },
+      { item_id: "bear_2", asset: { kind: "emoji", ref: "EMJ-bear" } },
+      { item_id: "bear_3", asset: { kind: "emoji", ref: "EMJ-bear" } },
+      { item_id: "bear_4", asset: { kind: "emoji", ref: "EMJ-bear" } },
     ],
     options: [
       { value: 3, is_correct: false },
@@ -94,11 +94,11 @@ export const SAMPLE_LEVEL_3: GameLevelFixture<GT012Content, GT012Difficulty> = {
     prompt: "Bé đếm xem có bao nhiêu ngôi sao vừa chớp sáng nhé!",
     arrangement: "triangle",
     flash_items: [
-      { item_id: "star_1", asset: { kind: "emoji", ref: "⭐" } },
-      { item_id: "star_2", asset: { kind: "emoji", ref: "⭐" } },
-      { item_id: "star_3", asset: { kind: "emoji", ref: "⭐" } },
-      { item_id: "star_4", asset: { kind: "emoji", ref: "⭐" } },
-      { item_id: "star_5", asset: { kind: "emoji", ref: "⭐" } },
+      { item_id: "star_1", asset: { kind: "emoji", ref: "EMJ-star" } },
+      { item_id: "star_2", asset: { kind: "emoji", ref: "EMJ-star" } },
+      { item_id: "star_3", asset: { kind: "emoji", ref: "EMJ-star" } },
+      { item_id: "star_4", asset: { kind: "emoji", ref: "EMJ-star" } },
+      { item_id: "star_5", asset: { kind: "emoji", ref: "EMJ-star" } },
     ],
     options: [
       { value: 4, is_correct: false },

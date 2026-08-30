@@ -29,14 +29,22 @@ export const SAMPLE_LEVEL_1: GameLevelFixture<GT014Content, GT014Difficulty> = {
     prompt: "Bé hãy chạm vào đĩa cân của loại quả NẶNG HƠN nhé!",
     goal: "pick_heavier",
     left_pan: [
-      { item_id: "watermelon", asset: { kind: "emoji", ref: "🍉" }, weight: 5 },
+      {
+        item_id: "watermelon",
+        asset: { kind: "emoji", ref: "EMJ-watermelon" },
+        weight: 5,
+      },
     ],
     right_pan: [
-      { item_id: "apple", asset: { kind: "emoji", ref: "🍎" }, weight: 1 },
+      {
+        item_id: "apple",
+        asset: { kind: "emoji", ref: "EMJ-red-apple" },
+        weight: 1,
+      },
     ],
     tray: [
-      { item_id: "w1", asset: { kind: "emoji", ref: "1️⃣" }, weight: 1 },
-      { item_id: "w2", asset: { kind: "emoji", ref: "2️⃣" }, weight: 2 },
+      { item_id: "w1", asset: { kind: "emoji", ref: "EMJ-one" }, weight: 1 },
+      { item_id: "w2", asset: { kind: "emoji", ref: "EMJ-two" }, weight: 2 },
     ],
   },
   difficulty_params: {
@@ -60,15 +68,31 @@ export const SAMPLE_LEVEL_2: GameLevelFixture<GT014Content, GT014Difficulty> = {
       "Bé hãy kéo quả cân thích hợp vào đĩa phải để chiếc cân thăng bằng nhé!",
     goal: "balance",
     left_pan: [
-      { item_id: "weight_8", asset: { kind: "emoji", ref: "8️⃣" }, weight: 8 },
+      {
+        item_id: "weight_8",
+        asset: { kind: "emoji", ref: "EMJ-eight" },
+        weight: 8,
+      },
     ],
     right_pan: [
-      { item_id: "weight_5", asset: { kind: "emoji", ref: "5️⃣" }, weight: 5 },
+      {
+        item_id: "weight_5",
+        asset: { kind: "emoji", ref: "EMJ-five" },
+        weight: 5,
+      },
     ],
     tray: [
-      { item_id: "opt_2", asset: { kind: "emoji", ref: "2️⃣" }, weight: 2 },
-      { item_id: "opt_3", asset: { kind: "emoji", ref: "3️⃣" }, weight: 3 },
-      { item_id: "opt_4", asset: { kind: "emoji", ref: "4️⃣" }, weight: 4 },
+      { item_id: "opt_2", asset: { kind: "emoji", ref: "EMJ-two" }, weight: 2 },
+      {
+        item_id: "opt_3",
+        asset: { kind: "emoji", ref: "EMJ-three" },
+        weight: 3,
+      },
+      {
+        item_id: "opt_4",
+        asset: { kind: "emoji", ref: "EMJ-four" },
+        weight: 4,
+      },
     ],
   },
   difficulty_params: {
@@ -91,16 +115,24 @@ export const SAMPLE_LEVEL_3: GameLevelFixture<GT014Content, GT014Difficulty> = {
     prompt: "Bé hãy giúp các bạn động vật ngồi cân bằng hai bên đĩa cân nhé!",
     goal: "balance",
     left_pan: [
-      { item_id: "fox", asset: { kind: "emoji", ref: "🦊" }, weight: 3 },
-      { item_id: "rabbit", asset: { kind: "emoji", ref: "🐰" }, weight: 2 },
+      { item_id: "fox", asset: { kind: "emoji", ref: "EMJ-fox" }, weight: 3 },
+      {
+        item_id: "rabbit",
+        asset: { kind: "emoji", ref: "EMJ-rabbit-face" },
+        weight: 2,
+      },
     ],
     right_pan: [
-      { item_id: "apple", asset: { kind: "emoji", ref: "🍎" }, weight: 1 },
+      {
+        item_id: "apple",
+        asset: { kind: "emoji", ref: "EMJ-red-apple" },
+        weight: 1,
+      },
     ],
     tray: [
-      { item_id: "bear", asset: { kind: "emoji", ref: "🐻" }, weight: 4 },
-      { item_id: "cat", asset: { kind: "emoji", ref: "🐱" }, weight: 2 },
-      { item_id: "dog", asset: { kind: "emoji", ref: "🐶" }, weight: 3 },
+      { item_id: "bear", asset: { kind: "emoji", ref: "EMJ-bear" }, weight: 4 },
+      { item_id: "cat", asset: { kind: "emoji", ref: "EMJ-cat" }, weight: 2 },
+      { item_id: "dog", asset: { kind: "emoji", ref: "EMJ-dog" }, weight: 3 },
     ],
   },
   difficulty_params: {

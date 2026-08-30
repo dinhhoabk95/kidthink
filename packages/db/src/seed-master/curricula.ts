@@ -311,8 +311,25 @@ async function seedCurriculumItemsData(
   return count;
 }
 
+export interface SeedCurriculaOptions {
+  /**
+   * Ném khi trong database chưa có bài học hay level nào.
+   *
+   * `curriculum_items` trỏ vào `lessons`/`game_levels` bằng id, nên gieo nó
+   * trước bước nội dung thì hai danh sách nguồn rỗng và
+   * `insertCurriculumItemForSession` lặng lẽ trả `false` cho mọi tiết —
+   * `pnpm db:seed` in "74 weeks, 0 items" rồi báo thành công. Đó chính là lỗi
+   * đã sống suốt: 5 chương trình có đủ tuần nhưng không tiết nào có nội dung.
+   *
+   * Đặt `false` khi cố tình chỉ gieo master data
+   * (`MINDKID_SEED_MASTER_ONLY=1`), lúc đó không có nội dung là đúng.
+   */
+  requireContent: boolean;
+}
+
 export async function seedCurriculaMasterData(
-  db: ReturnType<typeof getOwnerDb>
+  db: ReturnType<typeof getOwnerDb>,
+  options: SeedCurriculaOptions = { requireContent: true }
 ) {
   let seededCurriculaCount = 0;
   let seededWeeksCount = 0;
@@ -330,6 +347,17 @@ export async function seedCurriculaMasterData(
       .orderBy(asc(gameLevels.id))
       .limit(100),
   ]);
+
+  if (
+    options.requireContent &&
+    availableLessons.length === 0 &&
+    availableLevels.length === 0
+  ) {
+    throw new Error(
+      "Không thể gieo curriculum_items: database chưa có bài học hay level nào. " +
+        "Bước curricula phải chạy SAU bước gieo nội dung."
+    );
+  }
 
   for (const [idx, cfg] of MVP_CURRICULA_CONFIGS.entries()) {
     const { curriculumId, isNew } = await upsertCurriculumRecord(db, cfg, idx);

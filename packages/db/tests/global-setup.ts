@@ -204,6 +204,44 @@ async function ensureTestDatabase(url: string): Promise<void> {
 }
 
 /**
+ * Cờ đánh dấu database test đã được dựng + dọn trong lượt chạy hiện tại.
+ *
+ * `globalSetup` được khai trong `defineWorkspaceTest`, nên nó gắn vào **mọi**
+ * project vitest — `pnpm test` gọi hàm này 17 lần cho 17 project, và cả 17
+ * cùng trỏ vào một database `mindkid_test`. Vitest chạy globalSetup của các
+ * project trong cùng tiến trình chính nhưng không đợi hết mới bắt đầu test,
+ * nên một `TRUNCATE` của project sau rơi vào giữa transaction của project
+ * trước. Đo được 2026-08-31 trên `pnpm test`:
+ *
+ * ```
+ * PostgresError: deadlock detected
+ *   Process A waits for AccessShareLock on relation activities;
+ *   Process B waits for AccessExclusiveLock on relation content_review_log.
+ * ```
+ *
+ * Kèm theo là 4 phép thử khác đỏ vì hàng của chúng bị xoá giữa chừng
+ * (`Key (user_id)=(3) is not present in table "users"`).
+ *
+ * Dọn **một lần cho cả lượt chạy** là đủ để giữ đúng hợp đồng "test bắt đầu từ
+ * database sạch", và bỏ hẳn cửa sổ TRUNCATE-giữa-chừng. Cờ đi qua
+ * `process.env` vì mọi globalSetup chia sẻ một tiến trình; nếu vitest đổi sang
+ * chạy chúng ở tiến trình riêng thì cờ mất tác dụng và hành vi tụt về 17 lần
+ * dọn — an toàn nhưng chậm, nên `global-setup.test.ts` chốt bằng ca âm.
+ */
+const PREPARED_FLAG = "MINDKID_TEST_DB_PREPARED";
+
+/** Đúng một lần chuẩn bị cho mỗi `vitest run`, kể cả khi có nhiều project. */
+export function claimDatabasePreparation(
+  env: NodeJS.ProcessEnv = process.env
+): boolean {
+  if (env[PREPARED_FLAG] === "1") {
+    return false;
+  }
+  env[PREPARED_FLAG] = "1";
+  return true;
+}
+
+/**
  * Chạy một lần trước mỗi `vitest run` của **mọi** workspace.
  *
  * Trước 2026-08-30 hàm này chỉ dọn khi có `DB_TRUNCATE_ON_SETUP=1`, vì dọn mặc
@@ -212,6 +250,9 @@ async function ensureTestDatabase(url: string): Promise<void> {
  * không còn ý nghĩa.
  */
 export default async function setup(): Promise<void> {
+  if (!claimDatabasePreparation()) {
+    return;
+  }
   // `test.env` của vitest chỉ áp cho worker chạy test, KHÔNG áp cho tiến trình
   // chạy `globalSetup`. Đọc `process.env.DATABASE_URL` ở đây sẽ lấy đúng
   // database dev từ `.env` — nên URL phải suy lại từ cùng một hàm mà
@@ -221,6 +262,10 @@ export default async function setup(): Promise<void> {
     assertDisposableDatabaseUrl(url);
     await ensureTestDatabase(url);
     await truncateAllTestTables(url);
+    // Đếm được từ log: dòng này phải xuất hiện ĐÚNG một lần cho mỗi `pnpm test`.
+    console.log(
+      `[test-db] đã dọn ${databaseNameOf(url)} — một lần cho cả lượt chạy`
+    );
   } catch (err: unknown) {
     const errorObj = err as {
       code?: string;

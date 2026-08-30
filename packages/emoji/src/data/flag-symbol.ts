@@ -194,4 +194,20 @@ export const FLAG_SYMBOL_EMOJIS: EmojiEntry[] = [
     keywords: ["right arrow", "mũi tên phải", "hướng phải"],
     name: "Mũi tên phải",
   },
+  {
+    age_min: 4,
+    category: "flag-symbol",
+    curriculum_themes: ["truong_mam_non"],
+    emoji: "🚸",
+    keywords: ["children crossing", "biển báo trẻ em", "sang đường"],
+    name: "Biển báo trẻ em qua đường",
+  },
+  {
+    age_min: 4,
+    category: "flag-symbol",
+    curriculum_themes: ["truong_mam_non"],
+    emoji: "🛑",
+    keywords: ["stop sign", "biển báo dừng", "dừng lại"],
+    name: "Biển báo dừng",
+  },
 ];

@@ -37,17 +37,17 @@ export const SAMPLE_LEVEL_1: GameLevelFixture<GT017Content, GT017Difficulty> = {
     options: [
       {
         option_id: "opt_3",
-        asset: { kind: "emoji", ref: "3️⃣" },
+        asset: { kind: "emoji", ref: "EMJ-three" },
         is_correct: false,
       },
       {
         option_id: "opt_4",
-        asset: { kind: "emoji", ref: "4️⃣" },
+        asset: { kind: "emoji", ref: "EMJ-four" },
         is_correct: true,
       },
       {
         option_id: "opt_5",
-        asset: { kind: "emoji", ref: "5️⃣" },
+        asset: { kind: "emoji", ref: "EMJ-five" },
         is_correct: false,
       },
     ],
@@ -81,17 +81,17 @@ export const SAMPLE_LEVEL_2: GameLevelFixture<GT017Content, GT017Difficulty> = {
     options: [
       {
         option_id: "opt_l_shape",
-        asset: { kind: "emoji", ref: "🇱" },
+        asset: { kind: "emoji", ref: "EMJ-blue-square" },
         is_correct: true,
       },
       {
         option_id: "opt_line",
-        asset: { kind: "emoji", ref: "➖" },
+        asset: { kind: "emoji", ref: "EMJ-minus" },
         is_correct: false,
       },
       {
         option_id: "opt_square",
-        asset: { kind: "emoji", ref: "⬛" },
+        asset: { kind: "emoji", ref: "EMJ-black-square" },
         is_correct: false,
       },
     ],
@@ -130,17 +130,17 @@ export const SAMPLE_LEVEL_3: GameLevelFixture<GT017Content, GT017Difficulty> = {
     options: [
       {
         option_id: "opt_0",
-        asset: { kind: "emoji", ref: "0️⃣" },
+        asset: { kind: "emoji", ref: "EMJ-zero" },
         is_correct: false,
       },
       {
         option_id: "opt_1",
-        asset: { kind: "emoji", ref: "1️⃣" },
+        asset: { kind: "emoji", ref: "EMJ-one" },
         is_correct: true,
       },
       {
         option_id: "opt_2",
-        asset: { kind: "emoji", ref: "2️⃣" },
+        asset: { kind: "emoji", ref: "EMJ-two" },
         is_correct: false,
       },
     ],

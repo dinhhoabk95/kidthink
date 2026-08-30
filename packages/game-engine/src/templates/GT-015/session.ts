@@ -189,16 +189,49 @@ export class SudokuMiniSession extends TemplateGameSession<
     };
   }
 
+  private getSimulatedGrid(
+    targetRow: number,
+    targetCol: number,
+    targetSymbolId: string | null
+  ): SudokuGrid<string> {
+    const cells: SudokuCell<string>[] = [];
+    for (const state of this.cellStates.values()) {
+      cells.push({
+        row: state.row,
+        col: state.col,
+        value:
+          state.row === targetRow && state.col === targetCol
+            ? targetSymbolId
+            : state.value,
+      });
+    }
+    return {
+      size: this.content.grid_size,
+      regions: this.content.regions,
+      cells,
+    };
+  }
+
   validateAction(action: GameAction): ActionResult {
     if (action.type === "fill_cell") {
       const payload = extractFillCellData(action.data);
       if (!payload) {
         return ACTION_RETRY;
       }
-      this.fillCell(payload.row, payload.col, payload.symbol_id);
-      return this.isConflicted(payload.row, payload.col)
-        ? ACTION_RETRY
-        : ACTION_CORRECT;
+      const state = this.cellStates.get(`${payload.row},${payload.col}`);
+      if (!state || state.isInitial) {
+        return ACTION_IGNORED;
+      }
+      const simGrid = this.getSimulatedGrid(
+        payload.row,
+        payload.col,
+        payload.symbol_id
+      );
+      const violations = findConstraintViolations(simGrid);
+      const hasConflict = violations.some(
+        (v) => v.row === payload.row && v.col === payload.col
+      );
+      return hasConflict ? ACTION_RETRY : ACTION_CORRECT;
     }
     return ACTION_IGNORED;
   }

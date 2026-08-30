@@ -12,13 +12,14 @@ import { INVALID_CONTRACT_FIXTURE } from "./fixtures/quarantine-negative.ts";
  *
  * Một level không parse được `content_contract` là một trò chơi không dựng
  * được. Trước task 162, 175 hạt như vậy nằm im trong lô seed và làm cả lô
- * rollback; sau codemod còn 73. Phép đo này giữ hai bất biến:
+ * rollback; codemod chuyển 102, và 73 hạt còn lại đã được soạn lại nên trần
+ * giờ là **0**. Phép đo này giữ hai bất biến:
  *
  * 1. Danh sách chỉ ngắn đi — không ai được thêm nội dung hỏng rồi cách ly nó.
  * 2. Mọi mã trong danh sách vẫn **thật sự** hỏng — mã đã sửa xong mà còn nằm
  *    lại là nội dung bị giấu khỏi người dùng mà không ai biết.
  */
-const MAX_QUARANTINED = 73;
+const MAX_QUARANTINED = 0;
 
 interface LevelLike {
   header: { code: string; template_code: string };

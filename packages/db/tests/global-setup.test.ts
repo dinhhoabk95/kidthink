@@ -3,6 +3,7 @@ import postgres from "postgres";
 import { afterAll, describe, expect, it } from "vitest";
 import {
   assertDisposableDatabaseUrl,
+  claimDatabasePreparation,
   TABLES,
   truncateAllTestTables,
 } from "./global-setup.ts";
@@ -16,6 +17,40 @@ const DUPLICATE_KEY_ERROR = /duplicate key/i;
  * các integration test khác — tránh TRUNCATE bảng thật giữa lúc file khác đang chạy
  * song song (Vitest chạy nhiều file test cùng lúc theo mặc định).
  */
+/**
+ * `globalSetup` gắn vào mọi project vitest, nên `pnpm test` gọi nó 17 lần cho
+ * 17 project — tất cả trỏ vào cùng một `mindkid_test`. Lần dọn thứ hai trở đi
+ * rơi vào giữa transaction của project đang chạy: đo 2026-08-31 thấy
+ * `deadlock detected` giết transaction `seed()` và 4 phép thử khác đỏ vì hàng
+ * của chúng bị xoá (`Key (user_id)=(3) is not present in table "users"`).
+ */
+describe("global-setup: chỉ chuẩn bị database một lần cho mỗi lượt chạy", () => {
+  it("ca âm — không có cờ thì mọi project đều giành được quyền dọn", () => {
+    const withoutGuard = [1, 2, 3].map(() => {
+      const env: NodeJS.ProcessEnv = {};
+      return claimDatabasePreparation(env);
+    });
+
+    expect(withoutGuard).toEqual([true, true, true]);
+  });
+
+  it("project đầu tiên giành được quyền dọn, các project sau bỏ qua", () => {
+    const env: NodeJS.ProcessEnv = {};
+
+    const claims = [1, 2, 3].map(() => claimDatabasePreparation(env));
+
+    expect(claims).toEqual([true, false, false]);
+  });
+
+  it("cờ dùng chung `process.env` để mọi globalSetup trong một tiến trình thấy nhau", () => {
+    const env: NodeJS.ProcessEnv = {};
+
+    claimDatabasePreparation(env);
+
+    expect(env.MINDKID_TEST_DB_PREPARED).toBe("1");
+  });
+});
+
 describe("global-setup: truncateAllTestTables", () => {
   const url = requireEnv("DATABASE_URL");
   const sql = postgres(url);

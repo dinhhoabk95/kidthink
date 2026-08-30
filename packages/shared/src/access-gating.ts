@@ -1,4 +1,3 @@
-import { appError } from "@mindkid/auth";
 import {
   allowedTiers,
   buildTierLockedResponse,
@@ -7,9 +6,95 @@ import {
   TIER_ORDER,
   TIER_RANK,
   type TierLockedResponse,
+  upgradePackageCodesForTier,
 } from "./access-ladder.js";
-import { type EntitlementKey, PACKAGE_CATALOG } from "./entitlement-catalog.js";
+import type { EntitlementKey } from "./entitlement-catalog.js";
 import type { AccessTier } from "./taxonomy-types.js";
+
+export class AccessGatingError extends Error {
+  static readonly __h3_error__ = true;
+  readonly code: string;
+  readonly status: number;
+  readonly statusCode: number;
+  readonly statusMessage: string;
+  readonly data: {
+    code: string;
+    message: string;
+    details?: Record<string, unknown>;
+  };
+  readonly details?: Record<string, unknown>;
+
+  constructor(
+    code: string,
+    status: number,
+    message: string,
+    details?: Record<string, unknown>
+  ) {
+    super(message);
+    this.name = "AccessGatingError";
+    this.code = code;
+    this.status = status;
+    this.statusCode = status;
+    this.statusMessage = code;
+    this.details = details;
+    this.data = {
+      code,
+      message,
+      ...(details ? { details } : {}),
+    };
+  }
+}
+
+function gatingError(
+  code: string,
+  details?: Record<string, unknown>
+): AccessGatingError {
+  switch (code) {
+    case "NOT_FOUND":
+    case "CHILD_NOT_OWNED":
+      return new AccessGatingError(
+        code,
+        404,
+        "Không tìm thấy nội dung.",
+        details
+      );
+    case "NO_ACTIVE_CHILD":
+      return new AccessGatingError(
+        code,
+        428,
+        "Hãy chọn hồ sơ bé trước khi tiếp tục.",
+        details
+      );
+    case "INSUFFICIENT_ROLE":
+      return new AccessGatingError(
+        code,
+        403,
+        "Bạn không có quyền truy cập mục này.",
+        details
+      );
+    case "TIER_LOCKED":
+      return new AccessGatingError(
+        code,
+        403,
+        "Cần nâng cấp gói học để tiếp tục.",
+        details
+      );
+    case "DAILY_PLAY_CAP_REACHED":
+      return new AccessGatingError(
+        code,
+        402,
+        "Đã đạt giới hạn chơi trong ngày.",
+        details
+      );
+    default:
+      return new AccessGatingError(
+        code,
+        500,
+        "Đã xảy ra lỗi phân quyền.",
+        details
+      );
+  }
+}
 
 /**
  * BR-GAT-05: 5 caller statuses x 4 access tiers = 20 matrix cells
@@ -70,18 +155,7 @@ export function getCallerStatus(
  * Get package codes that grant the required entitlement dynamically from catalog
  */
 export function getUpgradePackageCodes(requiredTier: AccessTier): string[] {
-  let requiredKey: EntitlementKey = "play_login_games";
-  if (requiredTier === "premium") {
-    requiredKey = "play_premium_games";
-  } else if (requiredTier === "standard") {
-    requiredKey = "play_standard_games";
-  }
-
-  const matchingPackages = Object.values(PACKAGE_CATALOG).filter(
-    (pkg) => pkg.status === "active" && pkg.entitlements.includes(requiredKey)
-  );
-
-  return matchingPackages.map((pkg) => pkg.code);
+  return upgradePackageCodesForTier(requiredTier);
 }
 
 export interface ContentTarget {
@@ -149,7 +223,7 @@ async function verifyChildOwnership(
       caller.active_child_id
     );
     if (!isOwner) {
-      throw appError("NOT_FOUND");
+      throw gatingError("NOT_FOUND");
     }
   }
 }
@@ -175,7 +249,7 @@ async function checkTierAccess(
       previewMeta
     );
 
-    throw appError(
+    throw gatingError(
       "TIER_LOCKED",
       lockedResponse as unknown as Record<string, unknown>
     );
@@ -187,7 +261,7 @@ function validateManagerPreview(ctx: ContentAccessContext): boolean {
     return false;
   }
   if (!ctx.managerAudience) {
-    throw appError("INSUFFICIENT_ROLE");
+    throw gatingError("INSUFFICIENT_ROLE");
   }
   return true;
 }
@@ -196,7 +270,7 @@ async function validateQuota(ctx: ContentAccessContext): Promise<void> {
   if (ctx.checkQuotaRemaining) {
     const hasQuota = await ctx.checkQuotaRemaining();
     if (!hasQuota) {
-      throw appError("DAILY_PLAY_CAP_REACHED");
+      throw gatingError("DAILY_PLAY_CAP_REACHED");
     }
   }
 }
@@ -226,7 +300,7 @@ export async function assertContentAccess(
   ctx: ContentAccessContext
 ): Promise<ContentAccessResult> {
   if (!content || (content.status !== "published" && !ctx.isManagerPreview)) {
-    throw appError("NOT_FOUND");
+    throw gatingError("NOT_FOUND");
   }
 
   const effectiveTier = resolveEffectiveTier(content);
@@ -239,7 +313,7 @@ export async function assertContentAccess(
   if (!isPreview) {
     const needsChild = ctx.requiresChild ?? effectiveTier !== "free";
     if (caller.kind === "user" && needsChild && !caller.active_child_id) {
-      throw appError("NO_ACTIVE_CHILD");
+      throw gatingError("NO_ACTIVE_CHILD");
     }
 
     await checkTierAccess(caller, effectiveTier, content, ctx);

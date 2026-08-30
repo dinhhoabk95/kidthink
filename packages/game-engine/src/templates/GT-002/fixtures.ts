@@ -11,22 +11,22 @@ export const GT002_FIXTURES: {
       items: [
         {
           item_id: "apple",
-          asset: { kind: "emoji", ref: "🍎" },
+          asset: { kind: "emoji", ref: "EMJ-red-apple" },
           is_correct: true,
         },
         {
           item_id: "strawberry",
-          asset: { kind: "emoji", ref: "🍓" },
+          asset: { kind: "emoji", ref: "EMJ-strawberry" },
           is_correct: true,
         },
         {
           item_id: "banana",
-          asset: { kind: "emoji", ref: "🍌" },
+          asset: { kind: "emoji", ref: "EMJ-banana" },
           is_correct: false,
         },
         {
           item_id: "grape",
-          asset: { kind: "emoji", ref: "🍇" },
+          asset: { kind: "emoji", ref: "EMJ-grapes" },
           is_correct: false,
         },
       ],
@@ -45,17 +45,17 @@ export const GT002_FIXTURES: {
       items: [
         {
           item_id: "dog",
-          asset: { kind: "emoji", ref: "🐶" },
+          asset: { kind: "emoji", ref: "EMJ-dog" },
           is_correct: true,
         },
         {
           item_id: "cat",
-          asset: { kind: "emoji", ref: "🐱" },
+          asset: { kind: "emoji", ref: "EMJ-cat" },
           is_correct: true,
         },
         {
           item_id: "lion",
-          asset: { kind: "emoji", ref: "🦁" },
+          asset: { kind: "emoji", ref: "EMJ-lion" },
           is_correct: false,
         },
       ],
@@ -74,22 +74,22 @@ export const GT002_FIXTURES: {
       items: [
         {
           item_id: "square",
-          asset: { kind: "emoji", ref: "⬛" },
+          asset: { kind: "emoji", ref: "EMJ-black-square" },
           is_correct: true,
         },
         {
           item_id: "rect",
-          asset: { kind: "emoji", ref: "🟧" },
+          asset: { kind: "emoji", ref: "EMJ-orange-square" },
           is_correct: true,
         },
         {
           item_id: "triangle",
-          asset: { kind: "emoji", ref: "🔺" },
+          asset: { kind: "emoji", ref: "EMJ-red-triangle-up" },
           is_correct: false,
         },
         {
           item_id: "circle",
-          asset: { kind: "emoji", ref: "🔴" },
+          asset: { kind: "emoji", ref: "EMJ-red-circle" },
           is_correct: false,
         },
       ],

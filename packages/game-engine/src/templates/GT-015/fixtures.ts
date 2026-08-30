@@ -31,8 +31,8 @@ export const SAMPLE_LEVEL_1: GameLevelFixture<GT015Content, GT015Difficulty> = {
     grid_size: 2,
     regions: "row_col",
     symbols: [
-      { symbol_id: "cat", asset: { kind: "emoji", ref: "🐱" } },
-      { symbol_id: "dog", asset: { kind: "emoji", ref: "🐶" } },
+      { symbol_id: "cat", asset: { kind: "emoji", ref: "EMJ-cat" } },
+      { symbol_id: "dog", asset: { kind: "emoji", ref: "EMJ-dog" } },
     ],
     cells: [
       { row: 0, col: 0, symbol_id: "cat" },
@@ -62,9 +62,9 @@ export const SAMPLE_LEVEL_2: GameLevelFixture<GT015Content, GT015Difficulty> = {
     grid_size: 3,
     regions: "row_col",
     symbols: [
-      { symbol_id: "apple", asset: { kind: "emoji", ref: "🍎" } },
-      { symbol_id: "banana", asset: { kind: "emoji", ref: "🍌" } },
-      { symbol_id: "grapes", asset: { kind: "emoji", ref: "🍇" } },
+      { symbol_id: "apple", asset: { kind: "emoji", ref: "EMJ-red-apple" } },
+      { symbol_id: "banana", asset: { kind: "emoji", ref: "EMJ-banana" } },
+      { symbol_id: "grapes", asset: { kind: "emoji", ref: "EMJ-grapes" } },
     ],
     cells: [
       { row: 0, col: 0, symbol_id: "apple" },
@@ -98,10 +98,13 @@ export const SAMPLE_LEVEL_3: GameLevelFixture<GT015Content, GT015Difficulty> = {
     grid_size: 4,
     regions: "row_col_box",
     symbols: [
-      { symbol_id: "circle", asset: { kind: "emoji", ref: "🔴" } },
-      { symbol_id: "square", asset: { kind: "emoji", ref: "🟦" } },
-      { symbol_id: "triangle", asset: { kind: "emoji", ref: "🔺" } },
-      { symbol_id: "star", asset: { kind: "emoji", ref: "⭐" } },
+      { symbol_id: "circle", asset: { kind: "emoji", ref: "EMJ-red-circle" } },
+      { symbol_id: "square", asset: { kind: "emoji", ref: "EMJ-blue-square" } },
+      {
+        symbol_id: "triangle",
+        asset: { kind: "emoji", ref: "EMJ-red-triangle-up" },
+      },
+      { symbol_id: "star", asset: { kind: "emoji", ref: "EMJ-star" } },
     ],
     cells: [
       { row: 0, col: 0, symbol_id: "circle" },

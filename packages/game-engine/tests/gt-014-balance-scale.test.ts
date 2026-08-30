@@ -49,14 +49,30 @@ describe("GT-014: Cân hai bên (balance-scale)", () => {
         prompt: "Không thể cân bằng",
         goal: "balance" as const,
         left_pan: [
-          { item_id: "l1", asset: { kind: "emoji", ref: "🍎" }, weight: 10 },
+          {
+            item_id: "l1",
+            asset: { kind: "emoji", ref: "EMJ-red-apple" },
+            weight: 10,
+          },
         ],
         right_pan: [
-          { item_id: "r1", asset: { kind: "emoji", ref: "🍎" }, weight: 2 },
+          {
+            item_id: "r1",
+            asset: { kind: "emoji", ref: "EMJ-red-apple" },
+            weight: 2,
+          },
         ],
         tray: [
-          { item_id: "t1", asset: { kind: "emoji", ref: "🍎" }, weight: 1 },
-          { item_id: "t2", asset: { kind: "emoji", ref: "🍎" }, weight: 1 },
+          {
+            item_id: "t1",
+            asset: { kind: "emoji", ref: "EMJ-red-apple" },
+            weight: 1,
+          },
+          {
+            item_id: "t2",
+            asset: { kind: "emoji", ref: "EMJ-red-apple" },
+            weight: 1,
+          },
         ],
       };
       expect(GT014BaseSchema.safeParse(impossiblePack).success).toBe(true);

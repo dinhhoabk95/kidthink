@@ -67,7 +67,7 @@ export const LESSON_BATCH_03: LessonSeed[] = [
       access_tier: "standard",
       skill_codes: ["C2.GEO.01", "C2.CON.04"],
       learning_objective_codes: ["LO-C2.GEO.01-01", "LO-C2.CON.04-01"],
-      activity_codes: ["ACT-0015", "ACT-0227", "ACT-0228"],
+      activity_codes: ["ACT-0015", "ACT-0227", "ACT-0226"],
       what_tags: ["2d_3d_bridge"],
       thinking_tags: ["spatial_construction"],
       theme_tag: "art",

@@ -157,12 +157,93 @@ vì `C1.CNT.99` mà nó vừa dựng.
 
 Dọn phần đã lỡ tích tụ: `pnpm db:reset-content -- --yes` rồi `pnpm db:seed`.
 
+## Đợt hai (2026-08-31) — ba việc còn lại đã đóng
+
+### 1. 73 level cách ly — soạn lại, không thêm engine
+
+Bảng soạn lại nằm ở `seed-content/reauthored/authoring.ts` (73 mục) dựng trên
+`reauthored/builders.ts`. Ánh xạ theo cơ chế mà engine **thật sự** có:
+
+| Nhóm | Số | Engine đích | Vì sao |
+|---|---|---|---|
+| so sánh hai vật | 21 | `GT-001` | `GT-001` không render `target_item`, chỉ `prompt` + `options` |
+| dãy có thứ tự | 21 | `GT-006`, `GT-008` | `GT-011` là ô vuông Latinh, dãy AB không thoả |
+| vị trí trên lưới | 15 | `GT-022` | thêm toạ độ để đủ ≥ 3 vật trong cảnh |
+| nhìn chớp rồi chọn tên | 12 | `GT-012`, `GT-004` | `GT-012` chỉ nhận phương án là số |
+
+Ba vòng cân lại vì dồn quá nhiều vào `GT-012` làm `GT-004`/`GT-006` tụt sàn
+độ sâu engine, và 17 level lệch band tuổi của engine đích.
+
+Kết quả: `QUARANTINED_LEVEL_CODES` **rỗng**, `GATE_1_LADDER_BASELINES` cả ba
+trần về **0** — một level mới không parse được contract làm cổng đỏ ngay.
+
+### 2. `curriculum_items` — thứ tự seed sai, không phải thiếu dữ liệu
+
+`seedCurriculaMasterData` chạy ở bước 9, **trước** khi nội dung vào ở bước 10,
+nên danh sách lesson/level mà nó tra cứu luôn rỗng và nó dựng 5 chương trình +
+74 tuần với 0 mục. Đảo hai bước trong `seed.ts`, thêm cờ `requireContent` để
+seed dừng ngay thay vì gieo lặng lẽ 0 dòng.
+
+Cổng mới `tests/gates/curriculum-items-supply.test.ts` giữ thứ tự này: mọi
+chương trình phải có tiết học, và mọi tiết học phải trỏ vào nội dung có thật.
+
+### 3. `EmojiRef` — đã siết thành regex
+
+`EMOJI_REF_PATTERN = /^EMJ-[a-z0-9]+(?:-[a-z0-9]+)*$/` ở
+`packages/game-engine/src/contracts/shared-fields.ts`. Trước đó là
+`z.string().min(1)`, nhận cả glyph thô `"🍎"` — và `getByCode` chỉ tra theo mã
+nên glyph resolve ra `not_found` lúc render: trẻ thấy ô trống, không cổng nào
+bắt được.
+
+Dọn trước khi siết: 239 `ref` trong corpus, 243 trong fixture của 27 engine,
+50 trong test (gồm 15 ref trên 3 file test của `apps/web`). Thêm 23 emoji còn
+thiếu vào registry. `fix-emoji-refs.ts` được bổ sung `SKIP_DIRS` vì quét
+`packages/shared` đụng `ELOOP` trên symlink `node_modules` lồng nhau.
+
+Bậc thang `emoji-ref-debt` về 0 nên **đã xoá** cả file cổng lẫn fixture ca âm
+của nó — chính nó nói làm vậy khi nợ về 0.
+
+### 4. `globalSetup` dọn 17 lần trên cùng một database test
+
+Phát sinh khi chạy `pnpm test` toàn repo sau ba việc trên: 7 phép thử đỏ trên
+5 file, trong khi từng file chạy riêng đều xanh.
+
+`globalSetup` khai trong `defineWorkspaceTest` nên gắn vào **mọi** project
+vitest — 17 project, 17 lần `TRUNCATE` cùng một `mindkid_test`. Lần dọn thứ
+hai trở đi rơi vào giữa transaction của project đang chạy:
+
+```
+PostgresError: deadlock detected
+  Process A waits for AccessShareLock on relation activities;
+  Process B waits for AccessExclusiveLock on relation content_review_log.
+```
+
+Bốn phép thử còn lại đỏ vì hàng của chúng bị xoá giữa chừng
+(`Key (user_id)=(3) is not present in table "users"`).
+
+`claimDatabasePreparation()` cho đúng project đầu tiên giành quyền dọn, các
+project sau bỏ qua — một lần dọn cho cả lượt chạy, đếm được từ dòng log
+`[test-db] đã dọn mindkid_test`. Ca âm ở `global-setup.test.ts`.
+
+### Số đo sau đợt hai
+
+| Đo | Sau đợt một | Sau đợt hai |
+|---|---|---|
+| Hạt trượt Cổng 1 | 73 | **0** |
+| Level cách ly | 73 | **0** |
+| `game_levels` published | 166 | **239** (C1:66 C2:40 C3:36 C4:36 C5:25 C6:36) |
+| `curriculum_items` | 0 | **222** |
+| Kỹ năng trong DB | 238 | **256** |
+| Thẻ trên `/games` | 166 | **239** |
+| `EmojiRef` | `z.string().min(1)` | regex `EMJ-<slug>` |
+| Lần `TRUNCATE` mỗi `pnpm test` | 17 | **1** |
+
 ## Việc còn lại
 
-1. **73 level cách ly** cần soạn lại hoặc cần engine mới — bảng lý do trong
-   `packages/db/src/seed-content/quarantine.ts`. Ba nhóm lớn nhất: so sánh hai
-   nhóm (21), chọn phần tử tiếp theo của dãy (21), tìm vật theo vị trí trên lưới
-   2 ô (15).
-2. **`curriculum_items` vẫn gieo 0 dòng** — `seedCurriculaMasterData` dựng 5
-   chương trình và 74 tuần nhưng không có mục nào.
-3. **Siết `EmojiRef`** sau khi dọn glyph trong fixture của 27 template.
+1. **205 dòng rác `game_templates` trong database dev** — tên `Template test`
+   / `Template Rollup`, tạo trước 2026-08-30 13:51 khi test còn dùng chung
+   database với dev. Không dòng nào có level, phiên chơi, hay bản tóm tắt trỏ
+   vào. `db:reset-content` cố ý không đụng bảng master nên chúng còn lại; cần
+   một lần xoá có chủ đích. Ảnh hưởng: báo cáo seed đếm 232 template thay vì
+   27 engine thật. Không rò ra trang người dùng — catalog join từ
+   `game_levels` nên template mồ côi không xuất hiện.

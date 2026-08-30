@@ -54,12 +54,17 @@ describe("EMOJI_REF_PATTERN — mã, không phải glyph (BR-CTR-08)", () => {
     expect(EMOJI_REF_PATTERN.test("EMJ-")).toBe(false);
   });
 
-  it("contract CHƯA siết — nợ 57 level đang được đo ở packages/db, không bị bỏ qua", () => {
-    // Siết `EmojiRef` ngay làm 57 trên 228 level seed trượt `content_contract`.
-    // Nợ đó là thật nhưng dọn được nó là việc nội dung (7 glyph chưa có trong
-    // registry), nên nó được ĐO ở `tests/gates/emoji-ref-debt.test.ts` với bậc
-    // thang chỉ đi xuống, thay vì siết ở đây rồi phải nâng baseline cổng 1.
-    expect(EmojiRef.safeParse("🍎").success).toBe(true);
+  it("contract ĐÃ siết: glyph thô bị `EmojiRef` từ chối", () => {
+    // Trước 2026-08-30 trường này nhận chuỗi bất kỳ vì nợ quá lớn để chặn tại
+    // contract: 57 trên 228 level seed dùng glyph, cộng fixture của 27 template
+    // và các test engine. Nợ được đo bằng một bậc thang riêng ở
+    // `packages/db/tests/gates/emoji-ref-debt.test.ts`.
+    //
+    // Task 162 dọn hết và bổ sung 23 emoji còn thiếu vào registry, nên chỗ
+    // chặn đúng đắn quay lại đây: một glyph lọt qua contract sẽ `not_found`
+    // lúc render, và trẻ thấy ô trống.
+    expect(EmojiRef.safeParse("🍎").success).toBe(false);
+    expect(EmojiRef.safeParse("EMJ-red-apple").success).toBe(true);
   });
 });
 

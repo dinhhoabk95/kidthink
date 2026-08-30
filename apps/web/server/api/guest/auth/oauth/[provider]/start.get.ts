@@ -66,7 +66,16 @@ export default defineEventHandler(async (event) => {
   const query = getQuery(event);
   const rawIntent = String(query.intent || "login").toLowerCase();
   const intent = rawIntent === "link" ? ("link" as const) : ("login" as const);
-  const returnTo = sanitizeReturnTo(query.return_to);
+  let rawReturnTo: string | undefined;
+  if (typeof query.return_to === "string") {
+    rawReturnTo = query.return_to;
+  } else if (
+    Array.isArray(query.return_to) &&
+    typeof query.return_to[0] === "string"
+  ) {
+    rawReturnTo = query.return_to[0];
+  }
+  const returnTo = sanitizeReturnTo(rawReturnTo);
 
   let userId: number | undefined;
 

@@ -29,7 +29,7 @@ User (người lớn). Cấm Trẻ không tạo và không sửa.
 
 ## 3. Entry points
 
-`/me/children` · `/me/children/new` · `/me/children/{uuid}/edit` ·
+`/me/children` · `/me/children/create` · `/me/children/{uuid}/edit` ·
 `POST /api/users/children` · `PATCH /api/users/children/{uuid}`.
 
 **D-BZ** (T15, 2026-08-09): `depends_on` trước đây có `CONSENT-MANAGEMENT` (P1) — cạnh ngược

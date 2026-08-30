@@ -69,30 +69,48 @@ export class GT026Session extends TemplateGameSession<
       case "tap_stimulus":
       case "tap_card":
       case "select_item": {
-        const result = this.inhibitionSystem.handleAction();
-        if (!result) {
+        if (!this.inhibitionSystem || this.inhibitionSystem.isFinished()) {
           return ACTION_IGNORED;
         }
-
-        this.recordEvent("item_selected", {
-          outcome: result.outcome,
-          is_correct: result.isCorrect,
-          action_type: "tap",
-        });
-
-        if (this.inhibitionSystem.isFinished()) {
-          this.isWon =
-            this.inhibitionSystem.getCorrectCount() >=
-            Math.ceil(this.content.trials.length * 0.6);
-          this.recordEvent("round_completed", { round_index: 0 });
-          this.completeSession();
+        if (this.inhibitionSystem.getState() !== "stimulus") {
+          return ACTION_IGNORED;
         }
-
-        return result.isCorrect ? ACTION_CORRECT : ACTION_RETRY;
+        const trial = this.inhibitionSystem.getCurrentTrial();
+        if (!trial) {
+          return ACTION_IGNORED;
+        }
+        return trial.kind === "go" ? ACTION_CORRECT : ACTION_RETRY;
       }
       default:
         return ACTION_IGNORED;
     }
+  }
+
+  onTapStimulus(): ActionResult {
+    if (!this.inhibitionSystem || this.inhibitionSystem.isFinished()) {
+      return ACTION_IGNORED;
+    }
+
+    const result = this.inhibitionSystem.handleAction();
+    if (!result) {
+      return ACTION_IGNORED;
+    }
+
+    this.recordEvent("item_selected", {
+      outcome: result.outcome,
+      is_correct: result.isCorrect,
+      action_type: "tap",
+    });
+
+    if (this.inhibitionSystem.isFinished()) {
+      this.isWon =
+        this.inhibitionSystem.getCorrectCount() >=
+        Math.ceil(this.content.trials.length * 0.6);
+      this.recordEvent("round_completed", { round_index: 0 });
+      this.winSession();
+    }
+
+    return result.isCorrect ? ACTION_CORRECT : ACTION_RETRY;
   }
 
   // biome-ignore lint/suspicious/noConfusingVoidType: void needed for compatibility with update

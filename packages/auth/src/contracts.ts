@@ -6,7 +6,7 @@ export interface UserTokenPayload {
   readonly user_id: number;
   readonly display_name: string;
   readonly session_id: string;
-  readonly active_child_id?: number;
+  readonly active_child_db_id?: number;
 }
 
 export interface ManagerTokenPayload {

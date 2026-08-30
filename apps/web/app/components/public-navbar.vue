@@ -29,7 +29,7 @@
         </template>
         <template v-else>
           <NuxtLink class="nav-link-login" to="/login"> Đăng nhập </NuxtLink>
-          <NuxtLink class="btn-play-trial" to="/games/GL-C1-CNT-CARD-0001">
+          <NuxtLink class="btn-play-trial" to="/play/GL-C1-CNT-CARD-0001">
             Chơi thử miễn phí
           </NuxtLink>
         </template>

@@ -39,17 +39,17 @@ describe("Task P1.10 — Content Tagging & Seed Authoring Pipeline (BR-TAG-* & B
       prompt_audio_ref: "aud_prompt_apple",
       target_item: {
         item_id: "apple_1",
-        asset: { kind: "emoji", ref: "🍎" },
+        asset: { kind: "emoji", ref: "EMJ-red-apple" },
       },
       options: [
         {
           item_id: "opt_1",
-          asset: { kind: "emoji", ref: "🍎" },
+          asset: { kind: "emoji", ref: "EMJ-red-apple" },
           is_correct: true,
         },
         {
           item_id: "opt_2",
-          asset: { kind: "emoji", ref: "🍌" },
+          asset: { kind: "emoji", ref: "EMJ-banana" },
           is_correct: false,
         },
       ],

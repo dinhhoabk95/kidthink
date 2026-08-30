@@ -79,6 +79,7 @@ ra họ không có quyền.
 | `BR-GAT-06` | Property test khẳng định **tính bao hàm** trên mọi tổ hợp entitlement | Ví dụ không chứng minh được bao hàm |
 | `BR-GAT-07` | Bỏ token hoặc bỏ cookie ở phía client **không mở thêm quyền nào**. | Người gọi không có token là guest, và guest chỉ thấy nội dung tier `free`. |
 | `BR-GAT-08` | Preview của Manager không ghi `mastery_state`, và không đếm KPI (chỉ số hiệu suất theo dõi). | Manager chơi thử một level chục lần khi soạn nó. Nếu preview ghi mastery thì hồ sơ trẻ nào đang được chọn sẽ mang dữ liệu của người lớn, và báo cáo gửi người lớn nói sai về trẻ của họ. KPI nội dung cũng vậy: một level chưa publish sẽ trông như level được chơi nhiều nhất. Cột `play_sessions.is_preview` tồn tại để tách hai luồng này ngay ở tầng dữ liệu |
+| `BR-GAT-09` | **CTA tách khỏi mã HTTP.** Mã HTTP theo đúng thứ tự bảy bước mục 4; CTA trỏ tới rào chắn mà người dùng **tự gỡ được**. Hai thứ được phép khác nhau | Thứ tự bảy bước tồn tại để mã lỗi nói đúng lý do kỹ thuật, và nó đặt "chưa chọn trẻ" trước "thiếu gói". Nhưng người chưa mua gói mà được bảo "Chọn hồ sơ bé" thì chọn xong vẫn bị chặn — ta đẩy họ đi một vòng vô ích. Nút phải chỉ vào thứ thật sự đang chặn họ. Từ vựng CTA ở mục 7.4 của [`game-detail-public.md`](../02-public/game-detail-public.md) |
 
 ## 7. Data
 
@@ -94,6 +95,11 @@ ra họ không có quyền.
 
 Ô 428 quan trọng: chưa chọn trẻ thì **không phải** vấn đề quyền — nói 403 làm người dùng đi
 mua gói mà họ đã có.
+
+Bảng này là **mã HTTP**, không phải nhãn nút. Hàng "User, chưa chọn trẻ" vẫn trả 428 cho cả
+ba bậc, nhưng CTA hiển thị thì tuỳ người đó đã có entitlement hay chưa: có gói mà thiếu trẻ
+thì mời chọn trẻ, thiếu cả hai thì mời nâng cấp. Đó là `BR-GAT-09`; từ vựng ở mục 7.4 của
+[`game-detail-public.md`](../02-public/game-detail-public.md).
 
 ### 7.2 Metadata gate
 
@@ -144,6 +150,18 @@ Scenario Outline: BR-GAT-05 — ma trận gating đủ 20 ô
     | user_premium        | standard | 200 |
     | user_premium        | premium  | 200 |
 
+Scenario: BR-GAT-09 — 428 đi cùng CTA nâng cấp
+  Given user chưa mua gói nào và chưa chọn trẻ
+  When gọi một level tier standard
+  Then trả 428
+  And CTA của level đó là upgrade_standard
+
+Scenario: BR-GAT-09 — 428 đi cùng CTA chọn trẻ khi đã có gói
+  Given user standard chưa chọn trẻ
+  When gọi một level tier standard
+  Then trả 428
+  And CTA của level đó là select_child
+
 Scenario: BR-GAT-02 — 404 trước 403
   Given một game level ở trạng thái draft
   When guest gọi level đó
@@ -190,6 +208,7 @@ Scenario: BR-GAT-08 — preview của manager không ghi mastery
 **Ask first**
 - Đổi thứ tự bảy bước.
 - Thêm bậc hoặc thêm trạng thái người gọi.
+- Đổi ánh xạ CTA của `BR-GAT-09`.
 
 **Never**
 - Kiểm bậc ở client.

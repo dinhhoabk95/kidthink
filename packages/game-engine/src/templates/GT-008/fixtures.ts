@@ -13,9 +13,21 @@ export const GT008_FIXTURES: {
         { slot_id: "s3", label: "Toa 3", expected_item_id: "car_3" },
       ],
       items: [
-        { item_id: "car_2", label: "Số 2", asset: { kind: "emoji", ref: "2️⃣" } },
-        { item_id: "car_1", label: "Số 1", asset: { kind: "emoji", ref: "1️⃣" } },
-        { item_id: "car_3", label: "Số 3", asset: { kind: "emoji", ref: "3️⃣" } },
+        {
+          item_id: "car_2",
+          label: "Số 2",
+          asset: { kind: "emoji", ref: "EMJ-two" },
+        },
+        {
+          item_id: "car_1",
+          label: "Số 1",
+          asset: { kind: "emoji", ref: "EMJ-one" },
+        },
+        {
+          item_id: "car_3",
+          label: "Số 3",
+          asset: { kind: "emoji", ref: "EMJ-three" },
+        },
       ],
     },
     difficulty: {
@@ -38,22 +50,22 @@ export const GT008_FIXTURES: {
         {
           item_id: "red_sq",
           label: "Vuông đỏ",
-          asset: { kind: "emoji", ref: "🟥" },
+          asset: { kind: "emoji", ref: "EMJ-red-square" },
         },
         {
           item_id: "blue_sq",
           label: "Vuông xanh",
-          asset: { kind: "emoji", ref: "🟦" },
+          asset: { kind: "emoji", ref: "EMJ-blue-square" },
         },
         {
           item_id: "red_cir",
           label: "Tròn đỏ",
-          asset: { kind: "emoji", ref: "🔴" },
+          asset: { kind: "emoji", ref: "EMJ-red-circle" },
         },
         {
           item_id: "blue_cir",
           label: "Tròn xanh",
-          asset: { kind: "emoji", ref: "🔵" },
+          asset: { kind: "emoji", ref: "EMJ-blue-circle" },
         },
       ],
     },
@@ -73,9 +85,21 @@ export const GT008_FIXTURES: {
         { slot_id: "s3", label: "Ô 3", expected_item_id: "num_6" },
       ],
       items: [
-        { item_id: "num_6", label: "Số 6", asset: { kind: "emoji", ref: "6️⃣" } },
-        { item_id: "num_2", label: "Số 2", asset: { kind: "emoji", ref: "2️⃣" } },
-        { item_id: "num_4", label: "Số 4", asset: { kind: "emoji", ref: "4️⃣" } },
+        {
+          item_id: "num_6",
+          label: "Số 6",
+          asset: { kind: "emoji", ref: "EMJ-six" },
+        },
+        {
+          item_id: "num_2",
+          label: "Số 2",
+          asset: { kind: "emoji", ref: "EMJ-two" },
+        },
+        {
+          item_id: "num_4",
+          label: "Số 4",
+          asset: { kind: "emoji", ref: "EMJ-four" },
+        },
       ],
     },
     difficulty: {

@@ -11,9 +11,9 @@ export const SEED_MONT_A06: ContentSeed<unknown, unknown>[] = [
       code: "GL-C1-CMP-CARD-0115",
       montessori_ref: "WB06-D1",
       content_version: 1,
-      template_code: "GT-001",
-      title: "Chọn đĩa có nhiều cá hơn",
-      instruction: "Đĩa nào có nhiều chú cá hơn, bé hãy chạm vào nhé!",
+      template_code: "GT-012",
+      title: "Đếm nhanh số chú cá",
+      instruction: "Bé nhìn nhanh xem có mấy chú cá nhé!",
       age_min: 3,
       age_max: 4,
       difficulty: 1,
@@ -27,30 +27,60 @@ export const SEED_MONT_A06: ContentSeed<unknown, unknown>[] = [
       authored_in: "repo_seed",
     },
     content_pack: {
+      prompt: "Bé nhìn nhanh xem có mấy chú cá nhé!",
+      flash_items: [
+        {
+          item_id: "it-1",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-fish",
+          },
+        },
+        {
+          item_id: "it-2",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-fish",
+          },
+        },
+        {
+          item_id: "it-3",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-fish",
+          },
+        },
+        {
+          item_id: "it-4",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-fish",
+          },
+        },
+      ],
+      arrangement: "dice",
       options: [
         {
-          id: "opt-1",
-          label: "Đĩa A (4 cá)",
-          items: ["🐟", "🐟", "🐟", "🐟"],
-          count: 4,
+          value: 3,
+          is_correct: false,
+        },
+        {
+          value: 4,
           is_correct: true,
         },
         {
-          id: "opt-2",
-          label: "Đĩa B (2 cá)",
-          items: ["🐟", "🐟"],
-          count: 2,
+          value: 5,
           is_correct: false,
         },
       ],
-      scaffolding: {
-        l1_nudge: "Viền đĩa 4 cá nhấp nháy",
-        l2_guidance: "Bàn tay ảo đếm '4 cá nhiều hơn 2 cá' và chỉ đĩa A",
-        l3_demo: "Bàn tay ảo chọn đĩa A làm mẫu",
-      },
     },
     difficulty_params: {
-      option_count: 2,
+      flash_ms: 2000,
+      item_count: 4,
+      distractor_count: 2,
+      allow_replay: true,
+      hint_after_ms: 9000,
+      allow_retry: true,
     },
   },
   {
@@ -58,9 +88,9 @@ export const SEED_MONT_A06: ContentSeed<unknown, unknown>[] = [
       code: "GL-C1-CMP-CARD-0116",
       montessori_ref: "WB06-D1",
       content_version: 1,
-      template_code: "GT-001",
-      title: "Chọn bình có ít hoa hơn",
-      instruction: "Bình nào có ít bông hoa hơn, bé hãy chọn nhé!",
+      template_code: "GT-012",
+      title: "Đếm nhanh số bông hoa",
+      instruction: "Bé nhìn nhanh xem có mấy bông hoa nhé!",
       age_min: 3,
       age_max: 4,
       difficulty: 2,
@@ -74,31 +104,53 @@ export const SEED_MONT_A06: ContentSeed<unknown, unknown>[] = [
       authored_in: "repo_seed",
     },
     content_pack: {
+      prompt: "Bé nhìn nhanh xem có mấy bông hoa nhé!",
+      flash_items: [
+        {
+          item_id: "it-1",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-sunflower",
+          },
+        },
+        {
+          item_id: "it-2",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-sunflower",
+          },
+        },
+        {
+          item_id: "it-3",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-sunflower",
+          },
+        },
+      ],
+      arrangement: "dice",
       options: [
         {
-          id: "opt-1",
-          label: "Bình 1 bông",
-          items: ["🌻"],
-          count: 1,
+          value: 2,
+          is_correct: false,
+        },
+        {
+          value: 3,
           is_correct: true,
         },
         {
-          id: "opt-2",
-          label: "Bình 3 bông",
-          items: ["🌻", "🌻", "🌻"],
-          count: 3,
+          value: 4,
           is_correct: false,
         },
       ],
-      scaffolding: {
-        l1_nudge: "Bình 1 bông hoa phát sáng",
-        l2_guidance:
-          "Bàn tay ảo chỉ vào bình 1 bông và đọc '1 bông ít hơn 3 bông'",
-        l3_demo: "Bàn tay ảo chọn bình 1 bông",
-      },
     },
     difficulty_params: {
-      option_count: 2,
+      flash_ms: 2000,
+      item_count: 3,
+      distractor_count: 2,
+      allow_replay: true,
+      hint_after_ms: 9000,
+      allow_retry: true,
     },
   },
   {

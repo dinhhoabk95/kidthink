@@ -38,12 +38,12 @@ export class GT027Session extends TemplateGameSession<
   private readonly renderItemStates: Map<string, ItemVisualState> = new Map();
 
   private ruleSystem!: RuleSystem<CardItem>;
-  private readonly selectedItemIds = new Set<string>();
+  private successfulTrialCount = 0;
   private targetSuccessTotal = 0;
 
   setupEntities(): void {
     this.isWon = false;
-    this.selectedItemIds.clear();
+    this.successfulTrialCount = 0;
 
     const rules: RuleDefinition<CardItem>[] = this.content.rules.map((r) => ({
       id: r.id,
@@ -108,50 +108,63 @@ export class GT027Session extends TemplateGameSession<
         }
 
         const item = this.content.items.find((i) => i.id === itemId);
-        if (!item) {
+        if (!(item && this.ruleSystem)) {
           return ACTION_IGNORED;
         }
 
-        const evalResult = this.ruleSystem.evaluate(item);
-
-        if (!evalResult.valid) {
-          this.recordEvent("item_selected", {
-            item_id: itemId,
-            is_correct: false,
-            rule_id: this.ruleSystem.getActiveRule().id,
-          });
-          return ACTION_RETRY;
-        }
-
-        this.selectedItemIds.add(itemId);
-        this.recordEvent("item_selected", {
-          item_id: itemId,
-          is_correct: true,
-          rule_id: this.ruleSystem.getActiveRule().id,
-        });
-
-        if (evalResult.triggeredSwitch) {
-          // Báo hiệu đổi luật bằng âm thanh và hình ảnh (BR-TGB-07)
-          const newRule = this.ruleSystem.getActiveRule();
-          this.recordEvent("item_selected", {
-            item_id: itemId,
-            new_rule_id: newRule.id,
-            signal_text: newRule.signalText,
-            is_rule_switch: true,
-          });
-        }
-
-        if (this.selectedItemIds.size >= this.targetSuccessTotal) {
-          this.isWon = true;
-          this.recordEvent("round_completed", { round_index: 0 });
-          this.completeSession();
-        }
-
-        return ACTION_CORRECT;
+        const rule = this.ruleSystem.getActiveRule();
+        const isValid = rule.validator(item);
+        return isValid ? ACTION_CORRECT : ACTION_RETRY;
       }
       default:
         return ACTION_IGNORED;
     }
+  }
+
+  onSelectItem(itemId: string): ActionResult {
+    const item = this.content.items.find((i) => i.id === itemId);
+    if (!(item && this.ruleSystem)) {
+      return ACTION_IGNORED;
+    }
+
+    const evalResult = this.ruleSystem.evaluate(item);
+
+    if (!evalResult.valid) {
+      this.recordEvent("item_selected", {
+        item_id: itemId,
+        is_correct: false,
+        rule_id: this.ruleSystem.getActiveRule().id,
+      });
+      return ACTION_RETRY;
+    }
+
+    this.successfulTrialCount++;
+    this.recordEvent("item_selected", {
+      item_id: itemId,
+      is_correct: true,
+      rule_id: this.ruleSystem.getActiveRule().id,
+      trial_count: this.successfulTrialCount,
+      target_total: this.targetSuccessTotal,
+    });
+
+    if (evalResult.triggeredSwitch) {
+      // Báo hiệu đổi luật bằng âm thanh và hình ảnh (BR-TGB-07)
+      const newRule = this.ruleSystem.getActiveRule();
+      this.recordEvent("item_selected", {
+        item_id: itemId,
+        new_rule_id: newRule.id,
+        signal_text: newRule.signalText,
+        is_rule_switch: true,
+      });
+    }
+
+    if (this.successfulTrialCount >= this.targetSuccessTotal) {
+      this.isWon = true;
+      this.recordEvent("round_completed", { round_index: 0 });
+      this.winSession();
+    }
+
+    return ACTION_CORRECT;
   }
 
   // biome-ignore lint/suspicious/noConfusingVoidType: void needed for compatibility with update
@@ -164,11 +177,14 @@ export class GT027Session extends TemplateGameSession<
   }
 
   override checkWinCondition(): boolean {
-    return this.isWon;
+    return (
+      this.targetSuccessTotal > 0 &&
+      this.successfulTrialCount >= this.targetSuccessTotal
+    );
   }
 
   override destroy(): void {
-    this.selectedItemIds.clear();
+    this.renderItemStates.clear();
   }
 
   resolveSlots(ageBand: "3-4" | "4-5" | "5-6"): void {
@@ -208,9 +224,7 @@ export class GT027Session extends TemplateGameSession<
       drawSlotItem(ctx, rs, slot, {
         id: item.id,
         asset: item.asset,
-        state: this.selectedItemIds.has(item.id)
-          ? "selected"
-          : this.getRenderItemState(item.id),
+        state: this.getRenderItemState(item.id),
       });
     });
     this.drawRenderFeedback(rs, ctx);

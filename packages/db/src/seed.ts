@@ -151,23 +151,30 @@ export async function seed() {
       .onConflictDoNothing({ target: consentRequirements.consentType });
   }
 
-  // 9. Seed 5 MVP Curricula master data (Task 8, D-LA, D-LU)
-  const currStats = await seedCurriculaMasterData(db);
-  console.log(
-    `[db:seed] Curricula seeded: ${currStats.curriculaCount} curricula, ${currStats.weeksCount} weeks, ${currStats.itemsCount} items.`
-  );
-
-  // 10. Gieo nội dung thật: level, activity, lesson.
+  // 9. Gieo nội dung thật: level, activity, lesson.
   //
   // Trước đây `db:seed` dừng ở master data, còn nội dung nằm sau một lệnh
   // riêng `db:seed:content` mà không script nào gọi — nên một máy mới chạy
   // `pnpm db:seed` xong vẫn có 0 trò chơi. Bỏ qua bằng
   // `MINDKID_SEED_MASTER_ONLY=1` khi chỉ cần master data (ví dụ trong test).
-  if (process.env.MINDKID_SEED_MASTER_ONLY === "1") {
+  const masterOnly = process.env.MINDKID_SEED_MASTER_ONLY === "1";
+  if (masterOnly) {
     console.log("[db:seed] Bỏ qua nội dung (MINDKID_SEED_MASTER_ONLY=1).");
   } else {
     await runSeedContent(false, `SEED-${Date.now()}`);
   }
+
+  // 10. Chương trình học — PHẢI đứng SAU bước nội dung.
+  //
+  // `curriculum_items` trỏ vào `lessons`/`game_levels` bằng id. Bước này từng
+  // đứng trước bước 9, tức là trước khi database có bất kỳ bài học nào, nên nó
+  // dựng 5 chương trình và 74 tuần rồi in "0 items" mà không ai coi đó là lỗi.
+  const currStats = await seedCurriculaMasterData(db, {
+    requireContent: !masterOnly,
+  });
+  console.log(
+    `[db:seed] Curricula seeded: ${currStats.curriculaCount} curricula, ${currStats.weeksCount} weeks, ${currStats.itemsCount} items.`
+  );
 
   console.log("✅ [db:seed] Seed completed successfully.");
 }

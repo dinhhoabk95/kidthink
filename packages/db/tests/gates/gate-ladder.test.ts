@@ -122,9 +122,9 @@ describe("Cổng 1 Bậc thang & Đo nợ theo Engine (Task #117, WP117.2, WP117
     );
 
     // Khẳng định số liệu hiện tại đúng bằng giá trị đã đo
-    expect(totalContentPackFails).toBe(73);
-    expect(totalDifficultyParamsFails).toBe(71);
-    expect(totalFailingLevels).toBe(73);
+    expect(totalContentPackFails).toBe(0);
+    expect(totalDifficultyParamsFails).toBe(0);
+    expect(totalFailingLevels).toBe(0);
   });
 
   it("Test bậc thang: một level trượt thêm làm số đo vượt trần và cổng đỏ", () => {

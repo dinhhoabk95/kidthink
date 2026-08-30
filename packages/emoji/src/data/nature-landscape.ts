@@ -160,4 +160,12 @@ export const NATURE_LANDSCAPE_EMOJIS: EmojiEntry[] = [
     keywords: ["tent", "lều", "cắm trại"],
     name: "Lều trại",
   },
+  {
+    age_min: 3,
+    category: "nature-landscape",
+    curriculum_themes: ["que_huong_dat_nuoc"],
+    emoji: "🛖",
+    keywords: ["hut", "nhà lá", "nhà sàn"],
+    name: "Nhà lá",
+  },
 ];

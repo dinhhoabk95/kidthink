@@ -24,7 +24,7 @@ const user: UserTokenPayload = {
   user_id: 101,
   display_name: "Người dùng An",
   session_id: "session-user-1",
-  active_child_id: 301,
+  active_child_db_id: 301,
 };
 
 const reviewer: ManagerTokenPayload = {

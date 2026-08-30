@@ -1,3 +1,4 @@
+export * from "./access-cta.js";
 export * from "./access-gating.js";
 export * from "./access-ladder.js";
 export * from "./activity-model.js";
@@ -42,6 +43,7 @@ export * from "./rate-limit-middleware.js";
 export * from "./rate-limit-routes.js";
 export * from "./rate-limiting.js";
 export * from "./redactor.js";
+export * from "./redirect.js";
 export * from "./round-event-gate.js";
 export * from "./round-set-validation.js";
 export * from "./scoring.js";

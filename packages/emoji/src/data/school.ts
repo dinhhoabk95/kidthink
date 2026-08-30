@@ -280,4 +280,12 @@ export const SCHOOL_EMOJIS: EmojiEntry[] = [
     keywords: ["orange book", "sách", "cam", "đọc"],
     name: "Sách cam",
   },
+  {
+    age_min: 3,
+    category: "school",
+    curriculum_themes: ["truong_mam_non"],
+    emoji: "📄",
+    keywords: ["page", "tờ giấy", "trang giấy"],
+    name: "Tờ giấy",
+  },
 ];

@@ -49,10 +49,10 @@ File này bắt đầu từ `NormalizedProfile` trở đi.
 
 | Route / màn hình | Actor | Ghi chú |
 |---|---|---|
-| `/dang-ky` · `/dang-nhap` | Guest | Nút "Tiếp tục với Google" · "Tiếp tục với Facebook" |
+| `/register` · `/login` | Guest | Nút "Tiếp tục với Google" · "Tiếp tục với Facebook" |
 | `GET /api/guest/auth/oauth/{provider}/start?intent=login` | Guest | Bắt đầu |
 | `POST /api/guest/auth/users/social-login` | — | Nội bộ, gọi từ callback sau khi có `NormalizedProfile` |
-| `/dang-ky/dong-y` | Guest | Màn hình đồng ý, **chỉ** ở lần đăng ký đầu tiên |
+| `/register/consent` | Guest | Màn hình đồng ý, **chỉ** ở lần đăng ký đầu tiên |
 
 ## 4. Main flow
 
@@ -69,7 +69,7 @@ File này bắt đầu từ `NormalizedProfile` trở đi.
 
 1. Tra `(provider, provider_user_id)` → **không thấy**.
 2. Tra `users.email` = `email_at_provider` → **không thấy**.
-3. Hiện màn hình đồng ý `/dang-ky/dong-y`: tên hiển thị (điền sẵn từ provider, sửa được) +
+3. Hiện màn hình đồng ý `/register/consent`: tên hiển thị (điền sẵn từ provider, sửa được) +
    **hai checkbox riêng**, không tick sẵn, cùng marker Terms/Privacy hiện hành — `BR-REG-02`.
 4. Khoá và đối chiếu marker User đã xem; tạo `users` + hàng `social_identities` + 2 hàng
    `consent_logs` action `accepted` trong **một transaction**.
@@ -81,7 +81,7 @@ File này bắt đầu từ `NormalizedProfile` trở đi.
 
 1. Bước 1–2 như trên, nhưng tra `users.email` → **thấy**.
 2. **Dừng.** Cấm tạo tài khoản, không liên kết, không cấp phiên.
-3. **409** `SOCIAL_EMAIL_CONFLICT`, đưa về `/dang-nhap` kèm thông báo chỉ đường:
+3. **409** `SOCIAL_EMAIL_CONFLICT`, đưa về `/login` kèm thông báo chỉ đường:
    *"Email này đã có tài khoản MindKid. Hãy đăng nhập rồi liên kết {provider} trong
    Cài đặt → Bảo mật."* Xem `BR-SCL-04`.
 
@@ -89,7 +89,7 @@ File này bắt đầu từ `NormalizedProfile` trở đi.
 
 | Nhánh | Điều kiện | Hành vi |
 |---|---|---|
-| User huỷ ở màn hình provider | `error=access_denied` | Về `/dang-nhap`, không thông báo lỗi đỏ |
+| User huỷ ở màn hình provider | `error=access_denied` | Về `/login`, không thông báo lỗi đỏ |
 | Provider không trả email | Facebook cho phép | Màn hình đồng ý **bắt nhập email**; `users.email` NOT NULL như mọi tài khoản, `status = pending_verification` — `BR-SCL-06` |
 | Cấm Chưa tick đồng ý | Nhánh B bước 3 | **422**, không tạo tài khoản, không cấp phiên |
 | `users.status = suspended` | Nhánh A | **403** `ACCOUNT_SUSPENDED` — giống luồng mật khẩu |
@@ -260,7 +260,7 @@ Scenario: BR-SCL-14 — không tự vào khu vực chơi
 
 Scenario: BR-SCL-13 — provider tắt thì không hiện nút
   Given facebook có is_enabled false
-  When mở /dang-nhap
+  When mở /login
   Then không có nút Tiếp tục với Facebook
 ```
 

@@ -11,7 +11,10 @@ export const GT018Generator: LevelGenerator = {
   generate({ rng, vocabulary }) {
     const nouns = getNouns(vocabulary, 6);
     const sampled = sampleUnique(rng, nouns, 3);
-    const target = sampled[0] || { emoji_ref: "🍎", label_vi: "Táo" };
+    const target = sampled[0] || {
+      emoji_ref: "EMJ-red-apple",
+      label_vi: "Táo",
+    };
 
     const options = sampled.map((item, idx) => ({
       item_id: `opt_${idx + 1}`,

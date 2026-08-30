@@ -25,17 +25,17 @@ export const VALID_GAME_LEVEL_SEED: ContentSeed = {
     prompt_audio_ref: "aud_prompt_1",
     target_item: {
       item_id: "circle_1",
-      asset: { kind: "emoji", ref: "🔴" },
+      asset: { kind: "emoji", ref: "EMJ-red-circle" },
     },
     options: [
       {
         item_id: "opt_1",
-        asset: { kind: "emoji", ref: "🔴" },
+        asset: { kind: "emoji", ref: "EMJ-red-circle" },
         is_correct: true,
       },
       {
         item_id: "opt_2",
-        asset: { kind: "emoji", ref: "🟦" },
+        asset: { kind: "emoji", ref: "EMJ-blue-square" },
         is_correct: false,
       },
     ],

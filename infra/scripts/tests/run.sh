@@ -311,6 +311,7 @@ case_8_rollback_returns_to_previous() {
   bash "${MINDKID_SH}" release --ref main >/dev/null 2>&1
   local first_link; first_link="$(current_target)"
 
+  sleep 1
   add_commit "${root}/source" "second"
   bash "${MINDKID_SH}" release --ref main >/dev/null 2>&1
   local second_link; second_link="$(current_target)"
@@ -351,6 +352,7 @@ case_10_prune_keeps_the_active_release() {
 
   local i
   for i in 1 2 3; do
+    sleep 1
     add_commit "${root}/source" "commit ${i}"
     bash "${MINDKID_SH}" release --ref main >/dev/null 2>&1
   done
@@ -399,6 +401,7 @@ case_12_missing_artifacts_block_rollback() {
   bash "${MINDKID_SH}" release --ref main >/dev/null 2>&1
   local first_link; first_link="$(current_target)"
 
+  sleep 1
   add_commit "${root}/source" "second"
   bash "${MINDKID_SH}" release --ref main >/dev/null 2>&1
   local second_link; second_link="$(current_target)"

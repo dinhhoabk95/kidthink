@@ -1,7 +1,10 @@
-import { requireUserAuth } from "@mindkid/auth";
 import { getOwnerDb, searchGameLevels } from "@mindkid/db";
+import {
+  type AccessTier,
+  GUEST_CTA_VIEWER,
+  resolveLevelCta,
+} from "@mindkid/shared";
 import { defineEventHandler, getQuery, setHeader } from "h3";
-import { resolveUserActiveEntitlements } from "#server/utils/entitlements-runtime";
 
 /**
  * Danh mục công khai — `docs/specs/02-public/game-catalog-public.md`.
@@ -10,34 +13,16 @@ import { resolveUserActiveEntitlements } from "#server/utils/entitlements-runtim
  * `content_pack` hay `difficulty_params`. `searchGameLevels` trả hai trường đó
  * cho item không khoá vì `/api/users/levels` cần chúng; bề mặt guest thì không,
  * và mỗi byte nội dung lọt ra đây là một game chơi được mà không cần tài khoản.
+ *
+ * `BR-GCP-09`: route này Cấm — NEVER đọc session. `locked` và `cta` dựng theo
+ * **góc nhìn guest** để response giống nhau với mọi người gọi — điều kiện để
+ * prerender và cache được (`BR-GCP-04`). Client đọc ngữ cảnh quyền một lần qua
+ * `/api/users/access-context` rồi tự dựng lại CTA sau khi hydrate.
  */
 export default defineEventHandler(async (event) => {
-  let viewerRole: "guest" | "user" = "guest";
-  let userPackage: string | undefined;
-
-  try {
-    const userSession = requireUserAuth(event);
-    if (userSession) {
-      viewerRole = "user";
-      const activeKeys = await resolveUserActiveEntitlements(
-        userSession.user_id
-      );
-      if (activeKeys.includes("play_premium_games")) {
-        userPackage = "PKG-premium";
-      } else if (activeKeys.includes("play_standard_games")) {
-        userPackage = "PKG-standard";
-      }
-    }
-  } catch {
-    // Guest viewer
-  }
-
   const db = getOwnerDb();
   const query = getQuery(event);
-  const result = await searchGameLevels(db, query, {
-    role: viewerRole,
-    userPackage,
-  });
+  const result = await searchGameLevels(db, query, { role: "guest" });
 
   if (result.no_store) {
     setHeader(event, "Cache-Control", "no-store, no-cache, must-revalidate");
@@ -52,7 +37,15 @@ export default defineEventHandler(async (event) => {
       content_pack?: unknown;
       difficulty_params?: unknown;
     };
-    return card;
+
+    return {
+      ...card,
+      cta: resolveLevelCta(
+        card.code,
+        card.access_tier as AccessTier,
+        GUEST_CTA_VIEWER
+      ),
+    };
   });
 
   return {

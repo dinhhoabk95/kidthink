@@ -12,17 +12,17 @@ export interface Gate1LadderBaselines {
 }
 
 /**
- * Đo lại 2026-08-30 sau task 162: 175 → 73 level trượt Cổng 1.
+ * Đo lại 2026-08-30 sau task 162: 175 → **0** level trượt Cổng 1.
  *
  * Codemod hợp đồng chuyển 102 level về đúng `content_contract` của engine sở
- * hữu chúng. 73 level còn lại nằm trong `seed-content/quarantine.ts` — chúng
- * mã hoá cơ chế chơi mà 27 engine hiện có không diễn đạt được, nên gỡ chúng là
- * việc soạn nội dung hoặc thêm engine, không phải nới hợp đồng.
+ * hữu chúng; 73 level còn lại được soạn lại trong
+ * `seed-content/reauthored/authoring.ts` theo cơ chế mà engine thật sự có.
+ * Trần 0 nghĩa là một level mới không parse được contract làm cổng đỏ ngay.
  */
 export const GATE_1_LADDER_BASELINES: Gate1LadderBaselines = {
-  maxFailingGate1Levels: 73,
-  maxContentPackFails: 73,
-  maxDifficultyParamsFails: 71,
+  maxFailingGate1Levels: 0,
+  maxContentPackFails: 0,
+  maxDifficultyParamsFails: 0,
 };
 
 export interface EngineFailureStat {

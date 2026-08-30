@@ -52,17 +52,17 @@ describe("Task 6 & Task 7 — All 6 Template Sessions & Kid Surface Rules", () =
       items: [
         {
           item_id: "i1",
-          asset: { kind: "emoji" as const, ref: "🍎" },
+          asset: { kind: "emoji" as const, ref: "EMJ-red-apple" },
           is_correct: true,
         },
         {
           item_id: "i2",
-          asset: { kind: "emoji" as const, ref: "🍓" },
+          asset: { kind: "emoji" as const, ref: "EMJ-strawberry" },
           is_correct: true,
         },
         {
           item_id: "i3",
-          asset: { kind: "emoji" as const, ref: "🍌" },
+          asset: { kind: "emoji" as const, ref: "EMJ-banana" },
           is_correct: false,
         },
       ],
@@ -95,13 +95,13 @@ describe("Task 6 & Task 7 — All 6 Template Sessions & Kid Surface Rules", () =
         {
           item_id: "paper",
           attribute: "trash",
-          asset: { kind: "emoji" as const, ref: "📄" },
+          asset: { kind: "emoji" as const, ref: "EMJ-page" },
           is_correct: true,
         },
         {
           item_id: "apple_core",
           attribute: "trash",
-          asset: { kind: "emoji" as const, ref: "🍏" },
+          asset: { kind: "emoji" as const, ref: "EMJ-green-apple" },
           is_correct: true,
         },
       ],
@@ -131,28 +131,28 @@ describe("Task 6 & Task 7 — All 6 Template Sessions & Kid Surface Rules", () =
     const content = {
       prompt: "Phân loại động vật và thực vật",
       groups: [
-        { group_id: "g1", label: "Động vật", label_emoji: "🐶" },
-        { group_id: "g2", label: "Thực vật", label_emoji: "🌻" },
+        { group_id: "g1", label: "Động vật", label_emoji: "EMJ-dog" },
+        { group_id: "g2", label: "Thực vật", label_emoji: "EMJ-sunflower" },
       ],
       items: [
         {
           item_id: "dog",
-          asset: { kind: "emoji" as const, ref: "🐶" },
+          asset: { kind: "emoji" as const, ref: "EMJ-dog" },
           correct_group_id: "g1",
         },
         {
           item_id: "cat",
-          asset: { kind: "emoji" as const, ref: "🐱" },
+          asset: { kind: "emoji" as const, ref: "EMJ-cat" },
           correct_group_id: "g1",
         },
         {
           item_id: "flower",
-          asset: { kind: "emoji" as const, ref: "🌻" },
+          asset: { kind: "emoji" as const, ref: "EMJ-sunflower" },
           correct_group_id: "g2",
         },
         {
           item_id: "tree",
-          asset: { kind: "emoji" as const, ref: "🌲" },
+          asset: { kind: "emoji" as const, ref: "EMJ-evergreen-tree" },
           correct_group_id: "g2",
         },
       ],
@@ -182,22 +182,22 @@ describe("Task 6 & Task 7 — All 6 Template Sessions & Kid Surface Rules", () =
           pair_id: "p1",
           left: {
             item_id: "dog_mom",
-            asset: { kind: "emoji" as const, ref: "🐕" },
+            asset: { kind: "emoji" as const, ref: "EMJ-dog" },
           },
           right: {
             item_id: "puppy",
-            asset: { kind: "emoji" as const, ref: "🐶" },
+            asset: { kind: "emoji" as const, ref: "EMJ-dog" },
           },
         },
         {
           pair_id: "p2",
           left: {
             item_id: "cat_mom",
-            asset: { kind: "emoji" as const, ref: "🐈" },
+            asset: { kind: "emoji" as const, ref: "EMJ-cat" },
           },
           right: {
             item_id: "kitten",
-            asset: { kind: "emoji" as const, ref: "🐱" },
+            asset: { kind: "emoji" as const, ref: "EMJ-cat" },
           },
         },
       ],
@@ -222,17 +222,17 @@ describe("Task 6 & Task 7 — All 6 Template Sessions & Kid Surface Rules", () =
         {
           step_id: "s1",
           order_index: 0,
-          asset: { kind: "emoji" as const, ref: "🌱" },
+          asset: { kind: "emoji" as const, ref: "EMJ-seedling" },
         },
         {
           step_id: "s2",
           order_index: 1,
-          asset: { kind: "emoji" as const, ref: "🪴" },
+          asset: { kind: "emoji" as const, ref: "EMJ-potted-plant" },
         },
         {
           step_id: "s3",
           order_index: 2,
-          asset: { kind: "emoji" as const, ref: "🌳" },
+          asset: { kind: "emoji" as const, ref: "EMJ-deciduous-tree" },
         },
       ],
     };

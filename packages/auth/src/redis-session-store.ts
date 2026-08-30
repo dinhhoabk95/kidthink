@@ -337,7 +337,7 @@ export class RedisSessionStore {
             user_id: data.accountId,
             display_name: data.displayName,
             session_id: digest,
-            active_child_id: data.activeChildId,
+            active_child_db_id: data.activeChildId,
           },
         };
       }

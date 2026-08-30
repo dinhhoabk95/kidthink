@@ -55,12 +55,12 @@ describe("GT-017: Đếm khối lập phương 3D (block-stack)", () => {
         options: [
           {
             option_id: "o1",
-            asset: { kind: "emoji" as const, ref: "2️⃣" },
+            asset: { kind: "emoji" as const, ref: "EMJ-two" },
             is_correct: true,
           },
           {
             option_id: "o2",
-            asset: { kind: "emoji" as const, ref: "3️⃣" },
+            asset: { kind: "emoji" as const, ref: "EMJ-three" },
             is_correct: false,
           },
         ],
@@ -80,12 +80,12 @@ describe("GT-017: Đếm khối lập phương 3D (block-stack)", () => {
         options: [
           {
             option_id: "o1",
-            asset: { kind: "emoji" as const, ref: "2️⃣" },
+            asset: { kind: "emoji" as const, ref: "EMJ-two" },
             is_correct: false,
           },
           {
             option_id: "o2",
-            asset: { kind: "emoji" as const, ref: "3️⃣" },
+            asset: { kind: "emoji" as const, ref: "EMJ-three" },
             is_correct: false,
           },
         ],

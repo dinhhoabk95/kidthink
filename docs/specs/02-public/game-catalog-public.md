@@ -36,15 +36,18 @@ Guest. User đã đăng nhập thấy cùng trang nhưng có ngữ cảnh quyề
 
 1. Duyệt lưới game với bộ lọc §7.1.
 2. Mỗi thẻ hiện: tiêu đề · emoji · competency · band tuổi · độ khó · **trạng thái khoá**.
-3. Game `free` → chơi ngay. Game khoá → trang chi tiết + mời đăng ký/nâng cấp.
+3. Mỗi thẻ mang một CTA lấy từ tập đóng mục 7.4 của
+   [`game-detail-public.md`](game-detail-public.md) — game `free` đi thẳng `/play/{code}`,
+   game khoá đi tới đúng rào chắn còn thiếu.
 
 ## 5. Alternative flows
 
 | Nhánh | Hành vi |
 |---|---|
 | Lọc không ra kết quả | Gợi ý nới bộ lọc nào |
-| Guest bấm game khoá | Trang chi tiết + CTA, không phải lỗi 403 trần trụi |
-| User đã đăng nhập | Thẻ hiện đúng trạng thái theo quyền của họ |
+| Guest bấm game khoá | CTA đưa tới `/login` hoặc `/pricing` tuỳ bậc, không phải lỗi 403 trần trụi |
+| User đã đăng nhập | Sau khi hydrate, thẻ hiện đúng trạng thái theo quyền của họ — `BR-GCP-09` |
+| Tắt JavaScript | Thẻ giữ nguyên CTA góc nhìn guest do máy chủ dựng; mọi đích vẫn bấm được |
 | Nhiều bộ lọc | Phản ánh vào URL để chia sẻ và index được |
 
 ## 6. Business rules
@@ -59,6 +62,7 @@ Guest. User đã đăng nhập thấy cùng trang nhưng có ngữ cảnh quyề
 | `BR-GCP-06` | Chỉ hiện game `published` | Bảo vệ nội dung đang trong bản nháp hoặc thử nghiệm khỏi khách công khai |
 | `BR-GCP-07` | Mỗi game có URL riêng có thể index | [`game-detail-public.md`](game-detail-public.md) |
 | `BR-GCP-08` | Trần phân trang **60** | Tránh quá tải bộ nhớ client và tối ưu thời gian tải trang ban đầu |
+| `BR-GCP-09` | CTA của thẻ dựng **hai pha**: máy chủ trả CTA theo góc nhìn guest và Cấm — NEVER đọc session trong route danh mục; client dựng lại theo session thật sau khi hydrate, bằng **một** lần đọc ngữ cảnh quyền cho cả trang | Response danh mục phải giống nhau với mọi người gọi thì mới prerender và cache được (`BR-GCP-04`). Nhét session vào đó là biến trang đích SEO thành trang riêng từng người. Đọc ngữ cảnh quyền một lần cho cả trang thay vì một lần mỗi thẻ, vì 60 thẻ là 60 request |
 
 ## 7. Data
 
@@ -79,7 +83,8 @@ hay learning objective.
 | Competency | Chip màu theo token |
 | Band tuổi | "3–4 tuổi" |
 | Độ khó | 1–5 chấm |
-| Trạng thái | "Chơi ngay" · "Cần đăng nhập" · "Gói Tiêu chuẩn" · "Gói Premium" |
+| Trạng thái | Nhãn khoá trung tính: "Chơi ngay" · "Cần đăng nhập" · "Gói Tiêu chuẩn" · "Gói Premium" |
+| CTA | Từ tập đóng mục 7.4 của [`game-detail-public.md`](game-detail-public.md); pha đầu theo góc nhìn guest |
 
 ## 8. API contract
 
@@ -87,11 +92,21 @@ hay learning objective.
 
 | | |
 |---|---|
-| Auth | không |
+| Auth | không, và Cấm — NEVER đọc session ở đây (`BR-GCP-09`) |
 | Query | §7.1 + `limit` ≤60 + `cursor` |
 | 200 | `{ items: [...thẻ...], facets, next_cursor }` |
 
-`items[].locked` cho biết khoá; item khoá không có `content_pack`.
+`items[].locked` cho biết khoá theo góc nhìn guest; item khoá không có `content_pack`.
+`items[].cta` là `{ action, text, href }`, cũng theo góc nhìn guest.
+
+### `GET /api/users/access-context`
+
+| | |
+|---|---|
+| Auth | bắt buộc |
+| 200 | `{ has_active_child, active_keys, allowed_tiers }` |
+
+Client gọi **một** lần cho cả trang danh mục rồi tự dựng lại CTA từng thẻ (`BR-GCP-09`).
 
 `facets` trả số lượng mỗi giá trị bộ lọc — để không hiện bộ lọc dẫn tới 0 kết quả.
 
@@ -116,6 +131,19 @@ Scenario: BR-GCP-04 — danh sách hiện khi tắt JS
   Given JavaScript bị tắt
   When mở /games
   Then danh sách game vẫn hiển thị
+  And mỗi thẻ có một CTA bấm được
+
+Scenario: BR-GCP-09 — response danh mục không phụ thuộc người gọi
+  Given một user premium đã đăng nhập
+  When gọi GET /api/guest/levels có cookie phiên
+  And gọi lại đúng truy vấn đó không kèm cookie nào
+  Then hai response giống hệt nhau
+
+Scenario: BR-GCP-09 — client dựng lại CTA sau hydrate
+  Given user standard mở /games
+  When trang hydrate xong
+  Then thẻ của game tier standard có CTA đi tới /play/{code}
+  And trang chỉ gọi /api/users/access-context đúng một lần
 
 
 Scenario: BR-GCP-06 — chỉ game published
@@ -147,6 +175,8 @@ Scenario: facets không dẫn tới 0 kết quả
 - Trả `content_pack` cho game khoá.
 - Ẩn hoàn toàn game trả phí.
 - Phụ thuộc JS để hiện danh sách.
+- Đọc session trong `GET /api/guest/levels`.
+- Gọi ngữ cảnh quyền một lần mỗi thẻ.
 
 ## 11. Open questions
 

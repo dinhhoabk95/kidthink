@@ -59,6 +59,7 @@ Guest · User.
 | `BR-GDP-06` | CTA đổi theo **bậc còn thiếu**, không một CTA chung | "Đăng nhập" và "Nâng cấp Premium" là hai hành động khác nhau |
 | `BR-GDP-07` | Liên kết tới trang skill và competency | Nội bộ link giúp index |
 | `BR-GDP-08` | Cấm — **NEVER hứa hẹn kết quả học tập** | `BR-LND-06` |
+| `BR-GDP-09` | Từ vựng CTA là **tập đóng năm hành động** ở mục 7.4. Thêm hành động mới phải sửa spec này trước | Ba bề mặt cùng dựng nút này — trang chi tiết, danh mục, và màn hình lỗi của `/play/{code}`. Không chốt tập đóng thì mỗi bề mặt tự đặt một nhãn, và người dùng thấy ba câu chữ khác nhau cho cùng một rào chắn |
 
 ## 7. Data
 
@@ -85,6 +86,25 @@ Guest · User.
 `/games/{code}` với `code` là mã bất biến. Đổi tiêu đề không đổi URL —
 mã bất biến là lý do URL bền.
 
+### 7.4 Từ vựng CTA — tập đóng, `BR-GDP-09`
+
+| `action` | Nhãn | Đích | Khi nào |
+|---|---|---|---|
+| `play` | "Cho bé chơi ngay" | `/play/{code}` | Bậc nằm trong `allowedTiers` của người gọi |
+| `login` | "Đăng nhập để chơi" | `/login?redirect=/play/{code}` | Chưa đăng nhập, bậc là `login` |
+| `select_child` | "Chọn hồ sơ bé" | `/me/children?redirect=/play/{code}` | Đã đăng nhập, **có** entitlement đủ cho bậc này, chỉ thiếu `active_child_id` |
+| `upgrade_standard` | "Nâng cấp Gói Tiêu chuẩn" | `/pricing` | Thiếu `play_standard_games` |
+| `upgrade_premium` | "Nâng cấp Gói Premium" | `/pricing` | Thiếu `play_premium_games` |
+
+Thứ tự quyết định: `play` trước; nếu chưa đăng nhập thì `login` cho bậc `login` và hành
+động nâng cấp cho hai bậc trả phí; nếu đã đăng nhập thì `select_child` **chỉ khi** entitlement
+đã đủ, ngoài ra là hành động nâng cấp. Thiếu **cả** hồ sơ bé lẫn gói thì hiện hành động nâng
+cấp, vì mua gói là rào chắn thật — chọn bé xong vẫn bị chặn. Xem mục 6 của
+[`access-gating.md`](../04-play/access-gating.md), rule `BR-GAT-09`, về việc CTA tách khỏi mã HTTP.
+
+Đây là bề mặt **người lớn**. Bề mặt trẻ dưới `/play` Cấm — NEVER hiện hành động nâng cấp,
+theo `BR-PEN-04` mục 6 của [`play-entry-and-profile-select.md`](../04-play/play-entry-and-profile-select.md).
+
 
 ## 8. API contract
 
@@ -92,10 +112,12 @@ mã bất biến là lý do URL bền.
 
 | | |
 |---|---|
-| Auth | không |
-| 200 | Metadata đầy đủ + `locked` + `required_entitlement` |
+| Auth | không bắt buộc; có session thì `locked` và `cta` tính theo người gọi |
+| 200 | Metadata đầy đủ + `locked` + `required_entitlement` + `cta` |
 | 410 | Game archived, kèm `alternatives[]` |
 | 404 | Không tồn tại |
+
+`cta` là `{ action, text, href }` với `action` thuộc tập đóng mục 7.4.
 
 ## 9. Acceptance criteria
 
@@ -122,6 +144,22 @@ Scenario: BR-GDP-06 — CTA theo bậc thiếu
   Given user standard mở game premium
   Then CTA là nâng cấp Premium
 
+Scenario: BR-GDP-09 — thiếu hồ sơ bé nhưng đủ gói
+  Given user standard chưa chọn hồ sơ bé
+  When mở game tier standard
+  Then cta.action là select_child
+  And cta.href là /me/children?redirect=/play/{code}
+
+Scenario: BR-GDP-09 — thiếu cả hồ sơ bé lẫn gói
+  Given user chưa mua gói nào và chưa chọn hồ sơ bé
+  When mở game tier standard
+  Then cta.action là upgrade_standard
+  And cta.href là /pricing
+
+Scenario: BR-GDP-09 — action nằm ngoài tập đóng thì không hợp lệ
+  When đọc cta.action của mọi response chi tiết game
+  Then giá trị thuộc tập play, login, select_child, upgrade_standard, upgrade_premium
+
 Scenario: BR-GDP-04 — structured data đúng
   When kiểm JSON-LD của trang
   Then có LearningResource với teaches khớp learning objective thật
@@ -141,11 +179,13 @@ Scenario: URL bền khi đổi tiêu đề
 - URL theo mã bất biến.
 - Structured data sinh từ dữ liệu.
 - CTA theo bậc còn thiếu.
+- CTA lấy từ tập đóng năm hành động mục 7.4.
 - 410 cho game archived.
 
 **Ask first**
 - Đổi cấu trúc URL.
 - Thêm phần vào trang.
+- Thêm hành động CTA thứ sáu.
 
 **Never**
 - Trả `content_pack` khi khoá.

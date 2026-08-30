@@ -6,13 +6,12 @@ import type { ContentSeed } from "#src/seed-content/types";
  * 1 dạng bài (WB15-D1), 2 level, GT-006, band 5-6
  */
 export const SEED_MONT_A15: ContentSeed<unknown, unknown>[] = [
-  // WB15-D1 Level 1 (Diff 3 - Standard)
   {
     header: {
       code: "GL-C1-PAT-SEQ-0121",
       montessori_ref: "WB15-D1",
       content_version: 2,
-      template_code: "GT-006",
+      template_code: "GT-011",
       title: "Quy luật lặp quả Táo - Chuối (AB)",
       instruction: "Bé chọn loại quả tiếp theo theo đúng quy luật nhé!",
       age_min: 5,
@@ -28,31 +27,82 @@ export const SEED_MONT_A15: ContentSeed<unknown, unknown>[] = [
       authored_in: "repo_seed",
     },
     content_pack: {
-      pattern_type: "AB",
-      sequence: [
-        { id: "s1", emoji: "🍎" },
-        { id: "s2", emoji: "🍌" },
-        { id: "s3", emoji: "🍎" },
-        { id: "s4", emoji: "🍌" },
-        { id: "s5", emoji: "🍎" },
-      ],
-      next_item: { id: "ans", emoji: "🍌" },
-      scaffolding: {
-        l1_nudge: "Cặp quả táo và chuối đầu tiên sáng cùng lúc",
-        l2_guidance:
-          "Bàn tay ảo đọc nhịp điệu 'Táo, chuối, táo, chuối... táo, rồi đến...'",
-        l3_demo: "Bàn tay ảo chọn quả chuối làm mẫu",
+      prompt: "Bé chọn quả điền vào ô trống cho đúng quy luật!",
+      matrix: {
+        rows: 2,
+        cols: 2,
+        cells: [
+          {
+            row: 0,
+            col: 0,
+            asset: {
+              kind: "emoji",
+              ref: "EMJ-red-apple",
+            },
+          },
+          {
+            row: 0,
+            col: 1,
+            asset: {
+              kind: "emoji",
+              ref: "EMJ-banana",
+            },
+          },
+          {
+            row: 1,
+            col: 0,
+            asset: {
+              kind: "emoji",
+              ref: "EMJ-banana",
+            },
+          },
+          {
+            row: 1,
+            col: 1,
+            asset: null,
+          },
+        ],
       },
+      options: [
+        {
+          option_id: "op-1",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-red-apple",
+          },
+          is_correct: true,
+        },
+        {
+          option_id: "op-2",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-banana",
+          },
+          is_correct: false,
+        },
+        {
+          option_id: "op-3",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-orange",
+          },
+          is_correct: false,
+        },
+      ],
     },
-    difficulty_params: { pattern_length: 5 },
+    difficulty_params: {
+      grid_size: 2,
+      distractor_count: 2,
+      hint_after_ms: 10_000,
+      allow_retry: true,
+    },
   },
-  // WB15-D1 Level 2 (Diff 4 - Premium)
   {
     header: {
       code: "GL-C1-PAT-SEQ-0122",
       montessori_ref: "WB15-D1",
       content_version: 2,
-      template_code: "GT-006",
+      template_code: "GT-011",
       title: "Quy luật chuỗi 3 phần tử (ABC)",
       instruction: "Bé hãy tìm hình tiếp theo của chuỗi quy luật ABC!",
       age_min: 5,
@@ -68,23 +118,114 @@ export const SEED_MONT_A15: ContentSeed<unknown, unknown>[] = [
       authored_in: "repo_seed",
     },
     content_pack: {
-      pattern_type: "ABC",
-      sequence: [
-        { id: "p1", emoji: "🔴" },
-        { id: "p2", emoji: "🟢" },
-        { id: "p3", emoji: "🔵" },
-        { id: "p4", emoji: "🔴" },
-        { id: "p5", emoji: "🟢" },
-        { id: "p6", emoji: "🔵" },
-      ],
-      next_item: { id: "ans", emoji: "🔴" },
-      scaffolding: {
-        l1_nudge: "Nhóm 3 hình tròn đỏ - xanh lá - xanh dương phát sáng",
-        l2_guidance:
-          "Bàn tay ảo lặp lại chu kỳ 'Đỏ, xanh lá, xanh dương... lặp lại là Đỏ'",
-        l3_demo: "Bàn tay ảo chọn hình tròn đỏ",
+      prompt: "Bé chọn hình điền vào ô trống cho đủ ba màu!",
+      matrix: {
+        rows: 3,
+        cols: 3,
+        cells: [
+          {
+            row: 0,
+            col: 0,
+            asset: {
+              kind: "emoji",
+              ref: "EMJ-red-circle",
+            },
+          },
+          {
+            row: 0,
+            col: 1,
+            asset: {
+              kind: "emoji",
+              ref: "EMJ-green-circle",
+            },
+          },
+          {
+            row: 0,
+            col: 2,
+            asset: {
+              kind: "emoji",
+              ref: "EMJ-blue-circle",
+            },
+          },
+          {
+            row: 1,
+            col: 0,
+            asset: {
+              kind: "emoji",
+              ref: "EMJ-green-circle",
+            },
+          },
+          {
+            row: 1,
+            col: 1,
+            asset: {
+              kind: "emoji",
+              ref: "EMJ-blue-circle",
+            },
+          },
+          {
+            row: 1,
+            col: 2,
+            asset: {
+              kind: "emoji",
+              ref: "EMJ-red-circle",
+            },
+          },
+          {
+            row: 2,
+            col: 0,
+            asset: {
+              kind: "emoji",
+              ref: "EMJ-blue-circle",
+            },
+          },
+          {
+            row: 2,
+            col: 1,
+            asset: {
+              kind: "emoji",
+              ref: "EMJ-red-circle",
+            },
+          },
+          {
+            row: 2,
+            col: 2,
+            asset: null,
+          },
+        ],
       },
+      options: [
+        {
+          option_id: "op-1",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-green-circle",
+          },
+          is_correct: true,
+        },
+        {
+          option_id: "op-2",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-red-circle",
+          },
+          is_correct: false,
+        },
+        {
+          option_id: "op-3",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-blue-circle",
+          },
+          is_correct: false,
+        },
+      ],
     },
-    difficulty_params: { pattern_length: 6 },
+    difficulty_params: {
+      grid_size: 3,
+      distractor_count: 2,
+      hint_after_ms: 10_000,
+      allow_retry: true,
+    },
   },
 ];

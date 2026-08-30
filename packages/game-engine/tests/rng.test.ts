@@ -152,17 +152,17 @@ describe("Deterministic Randomness (BR-RNG-01..10)", () => {
       items: [
         {
           item_id: "i1",
-          asset: { kind: "emoji" as const, ref: "cat" },
+          asset: { kind: "emoji" as const, ref: "EMJ-cat" },
           correct_group_id: "g1",
         },
         {
           item_id: "i2",
-          asset: { kind: "emoji" as const, ref: "banana" },
+          asset: { kind: "emoji" as const, ref: "EMJ-banana" },
           correct_group_id: "g2",
         },
         {
           item_id: "i3",
-          asset: { kind: "emoji" as const, ref: "orange" },
+          asset: { kind: "emoji" as const, ref: "EMJ-orange" },
           correct_group_id: "g2",
         },
       ],
@@ -200,21 +200,24 @@ describe("Deterministic Randomness (BR-RNG-01..10)", () => {
     const gt1Session = new GT001Session(
       {
         prompt: "Chọn đúng",
-        target_item: { item_id: "t1", asset: { kind: "emoji", ref: "apple" } },
+        target_item: {
+          item_id: "t1",
+          asset: { kind: "emoji", ref: "EMJ-red-apple" },
+        },
         options: [
           {
             item_id: "o1",
-            asset: { kind: "emoji", ref: "apple" },
+            asset: { kind: "emoji", ref: "EMJ-red-apple" },
             is_correct: true,
           },
           {
             item_id: "o2",
-            asset: { kind: "emoji", ref: "banana" },
+            asset: { kind: "emoji", ref: "EMJ-banana" },
             is_correct: false,
           },
           {
             item_id: "o3",
-            asset: { kind: "emoji", ref: "cherry" },
+            asset: { kind: "emoji", ref: "EMJ-cherries" },
             is_correct: false,
           },
         ],
@@ -242,17 +245,17 @@ describe("Deterministic Randomness (BR-RNG-01..10)", () => {
           {
             step_id: "s1",
             order_index: 1,
-            asset: { kind: "emoji", ref: "seed" },
+            asset: { kind: "emoji", ref: "EMJ-seedling" },
           },
           {
             step_id: "s2",
             order_index: 2,
-            asset: { kind: "emoji", ref: "sprout" },
+            asset: { kind: "emoji", ref: "EMJ-seedling" },
           },
           {
             step_id: "s3",
             order_index: 3,
-            asset: { kind: "emoji", ref: "tree" },
+            asset: { kind: "emoji", ref: "EMJ-deciduous-tree" },
           },
         ],
       },
@@ -273,13 +276,16 @@ describe("Deterministic Randomness (BR-RNG-01..10)", () => {
         pairs: [
           {
             pair_id: "p1",
-            left: { item_id: "l1", asset: { kind: "emoji", ref: "mother" } },
-            right: { item_id: "r1", asset: { kind: "emoji", ref: "baby" } },
+            left: {
+              item_id: "l1",
+              asset: { kind: "emoji", ref: "EMJ-mother" },
+            },
+            right: { item_id: "r1", asset: { kind: "emoji", ref: "EMJ-baby" } },
           },
           {
             pair_id: "p2",
-            left: { item_id: "l2", asset: { kind: "emoji", ref: "cat" } },
-            right: { item_id: "r2", asset: { kind: "emoji", ref: "kitten" } },
+            left: { item_id: "l2", asset: { kind: "emoji", ref: "EMJ-cat" } },
+            right: { item_id: "r2", asset: { kind: "emoji", ref: "EMJ-cat" } },
           },
         ],
       },

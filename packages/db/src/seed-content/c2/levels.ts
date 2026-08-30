@@ -178,7 +178,7 @@ export const C2_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
     header: {
       code: "GL-C2-POS-LOC-0004",
       content_version: 1,
-      template_code: "GT-005",
+      template_code: "GT-001",
       title: "Vị trí trên và dưới",
       instruction: "Chạm vào đồ vật ở phía trên.",
       age_min: 3,
@@ -194,33 +194,53 @@ export const C2_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
       authored_in: "repo_seed",
     },
     content_pack: {
-      grid: [
-        [
-          {
-            id: "top_item",
-            emoji: "🧸",
-            position: "top",
+      prompt: "Bé chạm vào chú gấu bông nhé!",
+      target_item: {
+        item_id: "teddy",
+        asset: {
+          kind: "emoji",
+          ref: "EMJ-teddy-bear",
+        },
+      },
+      options: [
+        {
+          item_id: "teddy",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-teddy-bear",
           },
-        ],
-        [
-          {
-            id: "bot_item",
-            emoji: "📦",
-            position: "bottom",
+          is_correct: true,
+        },
+        {
+          item_id: "box",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-package",
           },
-        ],
+          is_correct: false,
+        },
+        {
+          item_id: "book",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-blue-book",
+          },
+          is_correct: false,
+        },
       ],
-      target_id: "top_item",
     },
     difficulty_params: {
-      grid_size: 2,
+      distractor_count: 2,
+      hint_after_ms: 9000,
+      allow_retry: true,
+      shuffle_items: true,
     },
   },
   {
     header: {
       code: "GL-C2-POS-LOC-0005",
       content_version: 1,
-      template_code: "GT-005",
+      template_code: "GT-001",
       title: "Vị trí trong và ngoài",
       instruction: "Chạm vào chú chó ở trong nhà.",
       age_min: 3,
@@ -236,24 +256,46 @@ export const C2_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
       authored_in: "repo_seed",
     },
     content_pack: {
-      grid: [
-        [
-          {
-            id: "inside_dog",
-            emoji: "🐶",
-            position: "inside",
+      prompt: "Bé chạm vào chú chó nhé!",
+      target_item: {
+        item_id: "dog",
+        asset: {
+          kind: "emoji",
+          ref: "EMJ-dog",
+        },
+      },
+      options: [
+        {
+          item_id: "dog",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-dog",
           },
-          {
-            id: "outside_cat",
-            emoji: "🐱",
-            position: "outside",
+          is_correct: true,
+        },
+        {
+          item_id: "cat",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-cat",
           },
-        ],
+          is_correct: false,
+        },
+        {
+          item_id: "house",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-house",
+          },
+          is_correct: false,
+        },
       ],
-      target_id: "inside_dog",
     },
     difficulty_params: {
-      grid_size: 2,
+      distractor_count: 2,
+      hint_after_ms: 9000,
+      allow_retry: true,
+      shuffle_items: true,
     },
   },
   {
@@ -368,7 +410,7 @@ export const C2_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
     header: {
       code: "GL-C2-CMP-SIZ-0008",
       content_version: 1,
-      template_code: "GT-003",
+      template_code: "GT-001",
       title: "So sánh to và nhỏ",
       instruction: "Chọn quả bóng to hơn.",
       age_min: 3,
@@ -384,29 +426,45 @@ export const C2_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
       authored_in: "repo_seed",
     },
     content_pack: {
-      left_group: [
+      prompt: "Bé chạm vào quả to hơn nhé!",
+      target_item: {
+        item_id: "watermelon",
+        asset: {
+          kind: "emoji",
+          ref: "EMJ-watermelon",
+        },
+      },
+      options: [
         {
-          emoji: "⚽",
-          size: "big",
+          item_id: "watermelon",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-watermelon",
+          },
+          is_correct: true,
+        },
+        {
+          item_id: "strawberry",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-strawberry",
+          },
+          is_correct: false,
         },
       ],
-      right_group: [
-        {
-          emoji: "⚽",
-          size: "small",
-        },
-      ],
-      target: "big",
     },
     difficulty_params: {
-      max_difference: 1,
+      distractor_count: 1,
+      hint_after_ms: 9000,
+      allow_retry: true,
+      shuffle_items: true,
     },
   },
   {
     header: {
       code: "GL-C2-CMP-SIZ-0009",
       content_version: 1,
-      template_code: "GT-003",
+      template_code: "GT-001",
       title: "Tìm cây cao hơn",
       instruction: "Chọn cái cây cao hơn nhé.",
       age_min: 4,
@@ -422,29 +480,45 @@ export const C2_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
       authored_in: "repo_seed",
     },
     content_pack: {
-      left_group: [
+      prompt: "Bé chạm vào cái cây cao hơn nhé!",
+      target_item: {
+        item_id: "tall-tree",
+        asset: {
+          kind: "emoji",
+          ref: "EMJ-evergreen-tree",
+        },
+      },
+      options: [
         {
-          emoji: "🌲",
-          height: "tall",
+          item_id: "tall-tree",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-evergreen-tree",
+          },
+          is_correct: true,
+        },
+        {
+          item_id: "seedling",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-seedling",
+          },
+          is_correct: false,
         },
       ],
-      right_group: [
-        {
-          emoji: "🌱",
-          height: "short",
-        },
-      ],
-      target: "tall",
     },
     difficulty_params: {
-      max_difference: 1,
+      distractor_count: 1,
+      hint_after_ms: 9000,
+      allow_retry: true,
+      shuffle_items: true,
     },
   },
   {
     header: {
       code: "GL-C2-DIR-NAV-0010",
       content_version: 1,
-      template_code: "GT-005",
+      template_code: "GT-022",
       title: "Hướng trái và phải",
       instruction: "Chạm vào chú chim bên phải.",
       age_min: 4,
@@ -460,31 +534,55 @@ export const C2_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
       authored_in: "repo_seed",
     },
     content_pack: {
-      grid: [
-        [
-          {
-            id: "b_left",
-            emoji: "🐥",
-            position: "left",
+      prompt: "Bé tìm chú chim ở phía bên phải nhé!",
+      target_description: "Chú chim ở bên phải",
+      scene_objects: [
+        {
+          id: "chick",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-front-facing-baby-chick",
           },
-          {
-            id: "b_right",
-            emoji: "🐦",
-            position: "right",
+          is_target: false,
+          is_hidden: false,
+          x: 180,
+          y: 270,
+        },
+        {
+          id: "bird",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-bird",
           },
-        ],
+          is_target: true,
+          is_hidden: false,
+          x: 780,
+          y: 270,
+        },
+        {
+          id: "bee",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-bee",
+          },
+          is_target: false,
+          is_hidden: false,
+          x: 480,
+          y: 420,
+        },
       ],
-      target_id: "b_right",
     },
     difficulty_params: {
-      grid_size: 2,
+      hint_after_ms: 9000,
+      allow_retry: true,
+      show_target_counter: true,
     },
   },
   {
     header: {
       code: "GL-C2-SEQ-PAT-0011",
       content_version: 1,
-      template_code: "GT-004",
+      template_code: "GT-008",
       title: "Quy luật hình dạng AB",
       instruction: "Chọn hình tiếp theo đúng quy luật.",
       age_min: 4,
@@ -500,19 +598,76 @@ export const C2_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
       authored_in: "repo_seed",
     },
     content_pack: {
-      sequence: ["🔴", "🟦", "🔴", "🟦"],
-      options: ["🔴", "🟦", "🟢"],
-      correct_option: "🔴",
+      prompt: "Bé kéo hình vào ô cho đúng quy luật nhé!",
+      slots: [
+        {
+          slot_id: "slot-1",
+          label: "Ô 1",
+          expected_item_id: "s1-1",
+        },
+        {
+          slot_id: "slot-2",
+          label: "Ô 2",
+          expected_item_id: "s1-2",
+        },
+        {
+          slot_id: "slot-3",
+          label: "Ô 3",
+          expected_item_id: "s2-1",
+        },
+        {
+          slot_id: "slot-4",
+          label: "Ô 4",
+          expected_item_id: "s2-2",
+        },
+      ],
+      items: [
+        {
+          item_id: "s2-2",
+          label: "Hình vuông xanh",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-blue-square",
+          },
+        },
+        {
+          item_id: "s2-1",
+          label: "Hình tròn đỏ",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-red-circle",
+          },
+        },
+        {
+          item_id: "s1-2",
+          label: "Hình vuông xanh",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-blue-square",
+          },
+        },
+        {
+          item_id: "s1-1",
+          label: "Hình tròn đỏ",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-red-circle",
+          },
+        },
+      ],
     },
     difficulty_params: {
-      pattern_length: 2,
+      slot_count: 4,
+      distractor_count: 0,
+      hint_after_ms: 10_000,
+      allow_retry: true,
     },
   },
   {
     header: {
       code: "GL-C2-SEQ-PAT-0012",
       content_version: 1,
-      template_code: "GT-004",
+      template_code: "GT-008",
       title: "Quy luật kích thước to nhỏ",
       instruction: "Chọn ngôi sao tiếp theo.",
       age_min: 4,
@@ -528,21 +683,78 @@ export const C2_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
       authored_in: "repo_seed",
     },
     content_pack: {
-      sequence: ["🌟", "⭐️", "🌟", "⭐️"],
-      options: ["🌟", "⭐️", "✨"],
-      correct_option: "🌟",
+      prompt: "Bé kéo ngôi sao vào ô cho đúng quy luật nhé!",
+      slots: [
+        {
+          slot_id: "slot-1",
+          label: "Ô 1",
+          expected_item_id: "s1-1",
+        },
+        {
+          slot_id: "slot-2",
+          label: "Ô 2",
+          expected_item_id: "s1-2",
+        },
+        {
+          slot_id: "slot-3",
+          label: "Ô 3",
+          expected_item_id: "s2-1",
+        },
+        {
+          slot_id: "slot-4",
+          label: "Ô 4",
+          expected_item_id: "s2-2",
+        },
+      ],
+      items: [
+        {
+          item_id: "s2-2",
+          label: "Sao nhỏ",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-star",
+          },
+        },
+        {
+          item_id: "s2-1",
+          label: "Sao lớn",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-glowing-star",
+          },
+        },
+        {
+          item_id: "s1-2",
+          label: "Sao nhỏ",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-star",
+          },
+        },
+        {
+          item_id: "s1-1",
+          label: "Sao lớn",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-glowing-star",
+          },
+        },
+      ],
     },
     difficulty_params: {
-      pattern_length: 2,
+      slot_count: 4,
+      distractor_count: 0,
+      hint_after_ms: 10_000,
+      allow_retry: true,
     },
   },
   {
     header: {
       code: "GL-C2-SUB-FAST-0013",
       content_version: 1,
-      template_code: "GT-006",
-      title: "Nhận biết hình khối nhanh",
-      instruction: "Hình gì vừa xuất hiện vậy em.",
+      template_code: "GT-004",
+      title: "Phân loại hình tròn và hình có góc",
+      instruction: "Bé xếp hình vào đúng rổ theo hình dạng nhé!",
       age_min: 5,
       age_max: 6,
       difficulty: 3,
@@ -556,24 +768,66 @@ export const C2_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
       authored_in: "repo_seed",
     },
     content_pack: {
-      flash_items: [
+      prompt: "Bé xếp hình vào đúng rổ theo hình dạng nhé!",
+      groups: [
         {
-          emoji: "🔺",
+          group_id: "g0",
+          label: "Rổ hình tròn",
+          label_emoji: "EMJ-red-circle",
+        },
+        {
+          group_id: "g1",
+          label: "Rổ hình có góc",
+          label_emoji: "EMJ-blue-square",
         },
       ],
-      flash_duration_ms: 1500,
-      options: ["Tam giác", "Hình tròn", "Hình vuông"],
-      correct_answer: "Tam giác",
+      items: [
+        {
+          item_id: "circle-red",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-red-circle",
+          },
+          correct_group_id: "g0",
+        },
+        {
+          item_id: "circle-blue",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-blue-circle",
+          },
+          correct_group_id: "g0",
+        },
+        {
+          item_id: "square",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-blue-square",
+          },
+          correct_group_id: "g1",
+        },
+        {
+          item_id: "triangle",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-red-triangle-up",
+          },
+          correct_group_id: "g1",
+        },
+      ],
     },
     difficulty_params: {
-      flash_duration_ms: 1500,
+      distractor_count: 0,
+      hint_after_ms: 10_000,
+      allow_retry: true,
+      shuffle_items: true,
     },
   },
   {
     header: {
       code: "GL-C2-POS-LOC-0014",
       content_version: 1,
-      template_code: "GT-005",
+      template_code: "GT-022",
       title: "Vị trí trước và sau",
       instruction: "Chạm vào ô tô ở đằng trước.",
       age_min: 4,
@@ -589,26 +843,48 @@ export const C2_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
       authored_in: "repo_seed",
     },
     content_pack: {
-      grid: [
-        [
-          {
-            id: "car_front",
-            emoji: "🚘",
-            position: "front",
+      prompt: "Bé tìm chiếc xe đi đằng trước nhé!",
+      target_description: "Chiếc xe đi đằng trước",
+      scene_objects: [
+        {
+          id: "front",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-oncoming-automobile",
           },
-        ],
-        [
-          {
-            id: "car_back",
-            emoji: "🚖",
-            position: "back",
+          is_target: true,
+          is_hidden: false,
+          x: 480,
+          y: 120,
+        },
+        {
+          id: "back",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-taxi",
           },
-        ],
+          is_target: false,
+          is_hidden: false,
+          x: 480,
+          y: 420,
+        },
+        {
+          id: "bus",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-suv",
+          },
+          is_target: false,
+          is_hidden: false,
+          x: 180,
+          y: 270,
+        },
       ],
-      target_id: "car_front",
     },
     difficulty_params: {
-      grid_size: 2,
+      hint_after_ms: 9000,
+      allow_retry: true,
+      show_target_counter: true,
     },
   },
   {
@@ -669,7 +945,7 @@ export const C2_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
     header: {
       code: "GL-C2-DIR-NAV-0016",
       content_version: 1,
-      template_code: "GT-005",
+      template_code: "GT-022",
       title: "Đi tìm kho báu ngôi sao",
       instruction: "Chọn đường đi sang bên trái.",
       age_min: 5,
@@ -685,31 +961,55 @@ export const C2_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
       authored_in: "repo_seed",
     },
     content_pack: {
-      grid: [
-        [
-          {
-            id: "star_left",
-            emoji: "⭐",
-            position: "left",
+      prompt: "Bé tìm ngôi sao ở phía bên trái nhé!",
+      target_description: "Ngôi sao ở bên trái",
+      scene_objects: [
+        {
+          id: "star",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-star",
           },
-          {
-            id: "moon_right",
-            emoji: "🌙",
-            position: "right",
+          is_target: true,
+          is_hidden: false,
+          x: 180,
+          y: 270,
+        },
+        {
+          id: "moon",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-crescent-moon",
           },
-        ],
+          is_target: false,
+          is_hidden: false,
+          x: 780,
+          y: 270,
+        },
+        {
+          id: "sun",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-sun",
+          },
+          is_target: false,
+          is_hidden: false,
+          x: 480,
+          y: 120,
+        },
       ],
-      target_id: "star_left",
     },
     difficulty_params: {
-      grid_size: 2,
+      hint_after_ms: 9000,
+      allow_retry: true,
+      show_target_counter: true,
     },
   },
   {
     header: {
       code: "GL-C2-CMP-SIZ-0017",
       content_version: 1,
-      template_code: "GT-003",
+      template_code: "GT-001",
       title: "So sánh con vật to nhỏ",
       instruction: "Chọn con vật to lớn hơn.",
       age_min: 4,
@@ -725,29 +1025,45 @@ export const C2_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
       authored_in: "repo_seed",
     },
     content_pack: {
-      left_group: [
+      prompt: "Bé chạm vào con vật to hơn nhé!",
+      target_item: {
+        item_id: "elephant",
+        asset: {
+          kind: "emoji",
+          ref: "EMJ-elephant",
+        },
+      },
+      options: [
         {
-          emoji: "🐘",
-          size: "big",
+          item_id: "elephant",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-elephant",
+          },
+          is_correct: true,
+        },
+        {
+          item_id: "mouse",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-mouse-face",
+          },
+          is_correct: false,
         },
       ],
-      right_group: [
-        {
-          emoji: "🐭",
-          size: "small",
-        },
-      ],
-      target: "big",
     },
     difficulty_params: {
-      max_difference: 1,
+      distractor_count: 1,
+      hint_after_ms: 9000,
+      allow_retry: true,
+      shuffle_items: true,
     },
   },
   {
     header: {
       code: "GL-C2-SEQ-PAT-0018",
       content_version: 1,
-      template_code: "GT-004",
+      template_code: "GT-011",
       title: "Chuỗi quy luật hình khối ABC",
       instruction: "Chọn hình tiếp theo trong chuỗi.",
       age_min: 5,
@@ -763,21 +1079,123 @@ export const C2_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
       authored_in: "repo_seed",
     },
     content_pack: {
-      sequence: ["🔴", "🟢", "🟡", "🔴", "🟢"],
-      options: ["🔴", "🟢", "🟡"],
-      correct_option: "🟡",
+      prompt: "Bé chọn hình điền vào ô trống cho đủ ba màu!",
+      matrix: {
+        rows: 3,
+        cols: 3,
+        cells: [
+          {
+            row: 0,
+            col: 0,
+            asset: {
+              kind: "emoji",
+              ref: "EMJ-red-circle",
+            },
+          },
+          {
+            row: 0,
+            col: 1,
+            asset: {
+              kind: "emoji",
+              ref: "EMJ-green-circle",
+            },
+          },
+          {
+            row: 0,
+            col: 2,
+            asset: {
+              kind: "emoji",
+              ref: "EMJ-yellow-circle",
+            },
+          },
+          {
+            row: 1,
+            col: 0,
+            asset: {
+              kind: "emoji",
+              ref: "EMJ-green-circle",
+            },
+          },
+          {
+            row: 1,
+            col: 1,
+            asset: {
+              kind: "emoji",
+              ref: "EMJ-yellow-circle",
+            },
+          },
+          {
+            row: 1,
+            col: 2,
+            asset: {
+              kind: "emoji",
+              ref: "EMJ-red-circle",
+            },
+          },
+          {
+            row: 2,
+            col: 0,
+            asset: {
+              kind: "emoji",
+              ref: "EMJ-yellow-circle",
+            },
+          },
+          {
+            row: 2,
+            col: 1,
+            asset: {
+              kind: "emoji",
+              ref: "EMJ-red-circle",
+            },
+          },
+          {
+            row: 2,
+            col: 2,
+            asset: null,
+          },
+        ],
+      },
+      options: [
+        {
+          option_id: "op-1",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-green-circle",
+          },
+          is_correct: true,
+        },
+        {
+          option_id: "op-2",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-red-circle",
+          },
+          is_correct: false,
+        },
+        {
+          option_id: "op-3",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-yellow-circle",
+          },
+          is_correct: false,
+        },
+      ],
     },
     difficulty_params: {
-      pattern_length: 3,
+      grid_size: 3,
+      distractor_count: 2,
+      hint_after_ms: 10_000,
+      allow_retry: true,
     },
   },
   {
     header: {
       code: "GL-C2-SUB-FAST-0019",
       content_version: 1,
-      template_code: "GT-006",
-      title: "Nhìn nhanh vị trí ngôi sao",
-      instruction: "Ngôi sao nằm ở phía nào vậy em.",
+      template_code: "GT-012",
+      title: "Nhìn nhanh đếm ngôi sao",
+      instruction: "Bé nhìn nhanh xem có mấy ngôi sao nhé!",
       age_min: 5,
       age_max: 6,
       difficulty: 4,
@@ -791,18 +1209,46 @@ export const C2_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
       authored_in: "repo_seed",
     },
     content_pack: {
+      prompt: "Bé nhìn nhanh xem có mấy ngôi sao nhé!",
       flash_items: [
         {
-          emoji: "⭐",
-          position: "top",
+          item_id: "it-1",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-star",
+          },
+        },
+        {
+          item_id: "it-2",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-star",
+          },
         },
       ],
-      flash_duration_ms: 1200,
-      options: ["Phía trên", "Phía dưới"],
-      correct_answer: "Phía trên",
+      arrangement: "dice",
+      options: [
+        {
+          value: 1,
+          is_correct: false,
+        },
+        {
+          value: 2,
+          is_correct: true,
+        },
+        {
+          value: 3,
+          is_correct: false,
+        },
+      ],
     },
     difficulty_params: {
-      flash_duration_ms: 1200,
+      flash_ms: 1200,
+      item_count: 2,
+      distractor_count: 2,
+      allow_replay: true,
+      hint_after_ms: 9000,
+      allow_retry: true,
     },
   },
   {

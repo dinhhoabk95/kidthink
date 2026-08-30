@@ -12,7 +12,7 @@ const userWithChild: UserTokenPayload = {
   user_id: 101,
   display_name: "Người dùng An",
   session_id: "sess-user-1",
-  active_child_id: 301,
+  active_child_db_id: 301,
 };
 
 const userWithoutChild: UserTokenPayload = {
@@ -37,14 +37,14 @@ const fakeEntitlementPort: EntitlementPort = {
 };
 
 describe("Actor-boundary ports and active-child helpers", () => {
-  it("assertActiveChild returns active_child_id when present", () => {
+  it("assertActiveChild returns active_child_db_id when present", () => {
     const event = { context: createAuthContext({ user: userWithChild }) };
     const childId = assertActiveChild(event);
 
     expect(childId).toBe(301);
   });
 
-  it("assertActiveChild throws NO_ACTIVE_CHILD (428) when active_child_id is missing", () => {
+  it("assertActiveChild throws NO_ACTIVE_CHILD (428) when active_child_db_id is missing", () => {
     const event = { context: createAuthContext({ user: userWithoutChild }) };
 
     expect(() => assertActiveChild(event)).toThrowError(

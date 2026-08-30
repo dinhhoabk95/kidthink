@@ -81,40 +81,10 @@
 
             <div class="hero-cta-box">
               <NuxtLink
-                class="btn-cta-play"
-                v-if="!game.locked || game.cta?.action === 'play'"
-                :to="`/play/${game.code}`"
+                :class="getCtaButtonClass(game.cta?.action)"
+                :to="game.cta?.href || `/play/${game.code}`"
               >
                 {{ game.cta?.text || 'Cho bé chơi ngay' }}
-                <UIcon
-                  class="w-4 h-4 ml-1 inline-block"
-                  name="i-lucide-arrow-right"
-                />
-              </NuxtLink>
-              <NuxtLink
-                class="btn-cta-login"
-                v-else-if="game.cta?.action === 'login'"
-                :to="`/login?redirect=/play/${game.code}`"
-              >
-                {{ game.cta?.text || 'Đăng nhập để chơi' }}
-                <UIcon
-                  class="w-4 h-4 ml-1 inline-block"
-                  name="i-lucide-arrow-right"
-                />
-              </NuxtLink>
-              <NuxtLink
-                class="btn-cta-login"
-                v-else-if="game.cta?.action === 'select_child'"
-                :to="`/me/children?redirect=/play/${game.code}`"
-              >
-                {{ game.cta?.text || 'Chọn hồ sơ bé' }}
-                <UIcon
-                  class="w-4 h-4 ml-1 inline-block"
-                  name="i-lucide-arrow-right"
-                />
-              </NuxtLink>
-              <NuxtLink class="btn-cta-upgrade" to="/pricing" v-else>
-                {{ game.cta?.text || 'Nâng cấp gói học' }}
                 <UIcon
                   class="w-4 h-4 ml-1 inline-block"
                   name="i-lucide-arrow-right"
@@ -286,6 +256,7 @@
     cta: {
       text: string;
       action: string;
+      href: string;
     };
     preview_images?: string[];
     related_games?: RelatedGame[];
@@ -312,9 +283,6 @@
   const hasError = computed(() => Boolean(error.value));
 
   const isArchived = computed(() => {
-    if (code.value.toLowerCase().includes("archived")) {
-      return true;
-    }
     return error.value?.statusCode === 410;
   });
 
@@ -332,6 +300,16 @@
 
   const game = computed(() => gameData.value);
   const relatedGames = computed(() => gameData.value?.related_games ?? []);
+
+  function getCtaButtonClass(action?: string): string {
+    if (action === "play") {
+      return "btn-cta-play";
+    }
+    if (action === "login" || action === "select_child") {
+      return "btn-cta-login";
+    }
+    return "btn-cta-upgrade";
+  }
 
   // BR-SEO2-04 & BR-GDP-04: Structured data & SEO meta
   useSeoMeta({
