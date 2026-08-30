@@ -221,9 +221,14 @@ describe("Task 5 — GET /api/managers/taxonomy (BR-TXB-01..03, BR-TXB-06, D-IT)
         (s: any) => s.code === "C1.CNT" || s.code === "C1.NUM"
       );
       expect(numStrand).toBeDefined();
-      const cntSkill = res.skills.find(
-        (sk: any) => sk.code === "C1.CNT.99" || sk.code === "C1.CNT.01"
-      );
+      // Đúng kỹ năng mà fixture ở trên vừa dựng và gắn level vào.
+      //
+      // Bản cũ nhận cả `C1.CNT.01` làm phương án dự phòng, và vì `find` lấy
+      // phần tử đầu tiên theo thứ tự mã, nó thường bắt được `C1.CNT.01` —
+      // một kỹ năng fixture không đụng tới. Phép thử vẫn xanh chỉ vì database
+      // dev dùng chung đã có sẵn level trỏ vào kỹ năng đó; trên database test
+      // sạch nó là 0. Đo đúng thứ mình dựng thì không phụ thuộc chuyện đó.
+      const cntSkill = res.skills.find((sk: any) => sk.code === "C1.CNT.99");
       expect(cntSkill).toBeDefined();
       expect(typeof cntSkill.published_count).toBe("number");
       expect(typeof cntSkill.draft_count).toBe("number");
