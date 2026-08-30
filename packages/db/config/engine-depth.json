@@ -16,7 +16,7 @@
       "theme_span": 1,
       "difficulty_span": 1,
       "min_free_or_login": 0,
-      "max_out_of_band": 35
+      "max_out_of_band": 0
     },
     "1": {
       "level_count": 6,

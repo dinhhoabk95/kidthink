@@ -35,15 +35,14 @@ export default defineEventHandler(async (event) => {
           .orderBy(desc(activities.contentVersion))
           .limit(1);
 
-  if (!rows || rows.length === 0) {
+  const activity = rows[0];
+  if (!activity) {
     throw createError({
       statusCode: 404,
       statusMessage: "ACTIVITY_NOT_FOUND",
       message: `Activity ${code} (version ${versionParam || "latest"}) not found`,
     });
   }
-
-  const activity = rows[0];
 
   // Fetch attached skills
   const attachedSkills = await db

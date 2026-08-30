@@ -1,5 +1,5 @@
 /**
- * @generated from LEVEL-GENERATOR-KIT@00000000
+ * @generated from LEVEL-GENERATOR-KIT@c9fd31f3f239
  * Engine: GT-002
  * Seed: 20260829
  * Theme: school
@@ -25,7 +25,7 @@ export const GEN_GT002_20260829: ContentSeed<unknown, unknown>[] = [
       "what_tags": [],
       "thinking_tags": [],
       "theme_tag": "school",
-      "origin": "generator",
+      "origin": "ai_assisted",
       "authored_in": "repo_seed"
     },
     "content_pack": {
@@ -36,7 +36,7 @@ export const GEN_GT002_20260829: ContentSeed<unknown, unknown>[] = [
           "item_id": "item_1",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-pencil"
+            "ref": "EMJ-ruler"
           },
           "is_correct": true
         },
@@ -44,7 +44,7 @@ export const GEN_GT002_20260829: ContentSeed<unknown, unknown>[] = [
           "item_id": "item_2",
           "asset": {
             "kind": "emoji",
-            "ref": "🍎"
+            "ref": "EMJ-crayon"
           },
           "is_correct": true
         },
@@ -52,7 +52,7 @@ export const GEN_GT002_20260829: ContentSeed<unknown, unknown>[] = [
           "item_id": "item_3",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-backpack"
+            "ref": "EMJ-scissors"
           },
           "is_correct": false
         },
@@ -60,7 +60,7 @@ export const GEN_GT002_20260829: ContentSeed<unknown, unknown>[] = [
           "item_id": "item_4",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-school"
+            "ref": "EMJ-abacus"
           },
           "is_correct": false
         }
@@ -89,7 +89,7 @@ export const GEN_GT002_20260829: ContentSeed<unknown, unknown>[] = [
       "what_tags": [],
       "thinking_tags": [],
       "theme_tag": "school",
-      "origin": "generator",
+      "origin": "ai_assisted",
       "authored_in": "repo_seed"
     },
     "content_pack": {
@@ -100,7 +100,7 @@ export const GEN_GT002_20260829: ContentSeed<unknown, unknown>[] = [
           "item_id": "item_1",
           "asset": {
             "kind": "emoji",
-            "ref": "🥕"
+            "ref": "EMJ-open-book"
           },
           "is_correct": true
         },
@@ -108,7 +108,7 @@ export const GEN_GT002_20260829: ContentSeed<unknown, unknown>[] = [
           "item_id": "item_2",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-books"
+            "ref": "EMJ-scissors"
           },
           "is_correct": true
         },
@@ -116,7 +116,7 @@ export const GEN_GT002_20260829: ContentSeed<unknown, unknown>[] = [
           "item_id": "item_3",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-ruler"
+            "ref": "EMJ-crayon"
           },
           "is_correct": false
         },
@@ -124,7 +124,7 @@ export const GEN_GT002_20260829: ContentSeed<unknown, unknown>[] = [
           "item_id": "item_4",
           "asset": {
             "kind": "emoji",
-            "ref": "🍎"
+            "ref": "EMJ-pencil"
           },
           "is_correct": false
         }
@@ -153,7 +153,7 @@ export const GEN_GT002_20260829: ContentSeed<unknown, unknown>[] = [
       "what_tags": [],
       "thinking_tags": [],
       "theme_tag": "school",
-      "origin": "generator",
+      "origin": "ai_assisted",
       "authored_in": "repo_seed"
     },
     "content_pack": {
@@ -164,7 +164,7 @@ export const GEN_GT002_20260829: ContentSeed<unknown, unknown>[] = [
           "item_id": "item_1",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-pencil"
+            "ref": "EMJ-crayon"
           },
           "is_correct": true
         },
@@ -172,7 +172,7 @@ export const GEN_GT002_20260829: ContentSeed<unknown, unknown>[] = [
           "item_id": "item_2",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-school"
+            "ref": "EMJ-backpack"
           },
           "is_correct": true
         },
@@ -180,7 +180,7 @@ export const GEN_GT002_20260829: ContentSeed<unknown, unknown>[] = [
           "item_id": "item_3",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-books"
+            "ref": "EMJ-scissors"
           },
           "is_correct": false
         },
@@ -188,7 +188,7 @@ export const GEN_GT002_20260829: ContentSeed<unknown, unknown>[] = [
           "item_id": "item_4",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-backpack"
+            "ref": "EMJ-books"
           },
           "is_correct": false
         }
@@ -217,7 +217,7 @@ export const GEN_GT002_20260829: ContentSeed<unknown, unknown>[] = [
       "what_tags": [],
       "thinking_tags": [],
       "theme_tag": "school",
-      "origin": "generator",
+      "origin": "ai_assisted",
       "authored_in": "repo_seed"
     },
     "content_pack": {
@@ -228,7 +228,7 @@ export const GEN_GT002_20260829: ContentSeed<unknown, unknown>[] = [
           "item_id": "item_1",
           "asset": {
             "kind": "emoji",
-            "ref": "🥕"
+            "ref": "EMJ-scissors"
           },
           "is_correct": true
         },
@@ -236,7 +236,7 @@ export const GEN_GT002_20260829: ContentSeed<unknown, unknown>[] = [
           "item_id": "item_2",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-backpack"
+            "ref": "EMJ-ruler"
           },
           "is_correct": true
         },
@@ -244,7 +244,7 @@ export const GEN_GT002_20260829: ContentSeed<unknown, unknown>[] = [
           "item_id": "item_3",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-ruler"
+            "ref": "EMJ-school"
           },
           "is_correct": false
         },
@@ -252,7 +252,7 @@ export const GEN_GT002_20260829: ContentSeed<unknown, unknown>[] = [
           "item_id": "item_4",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-books"
+            "ref": "EMJ-pencil"
           },
           "is_correct": false
         }
@@ -281,7 +281,7 @@ export const GEN_GT002_20260829: ContentSeed<unknown, unknown>[] = [
       "what_tags": [],
       "thinking_tags": [],
       "theme_tag": "school",
-      "origin": "generator",
+      "origin": "ai_assisted",
       "authored_in": "repo_seed"
     },
     "content_pack": {
@@ -292,7 +292,7 @@ export const GEN_GT002_20260829: ContentSeed<unknown, unknown>[] = [
           "item_id": "item_1",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-pencil"
+            "ref": "EMJ-school"
           },
           "is_correct": true
         },
@@ -300,7 +300,7 @@ export const GEN_GT002_20260829: ContentSeed<unknown, unknown>[] = [
           "item_id": "item_2",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-school"
+            "ref": "EMJ-books"
           },
           "is_correct": true
         },
@@ -308,7 +308,7 @@ export const GEN_GT002_20260829: ContentSeed<unknown, unknown>[] = [
           "item_id": "item_3",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-backpack"
+            "ref": "EMJ-open-book"
           },
           "is_correct": false
         },
@@ -316,7 +316,7 @@ export const GEN_GT002_20260829: ContentSeed<unknown, unknown>[] = [
           "item_id": "item_4",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-books"
+            "ref": "EMJ-backpack"
           },
           "is_correct": false
         }
@@ -345,7 +345,7 @@ export const GEN_GT002_20260829: ContentSeed<unknown, unknown>[] = [
       "what_tags": [],
       "thinking_tags": [],
       "theme_tag": "school",
-      "origin": "generator",
+      "origin": "ai_assisted",
       "authored_in": "repo_seed"
     },
     "content_pack": {
@@ -364,7 +364,7 @@ export const GEN_GT002_20260829: ContentSeed<unknown, unknown>[] = [
           "item_id": "item_2",
           "asset": {
             "kind": "emoji",
-            "ref": "🥕"
+            "ref": "EMJ-pencil"
           },
           "is_correct": true
         },
@@ -372,7 +372,7 @@ export const GEN_GT002_20260829: ContentSeed<unknown, unknown>[] = [
           "item_id": "item_3",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-pencil"
+            "ref": "EMJ-bell"
           },
           "is_correct": false
         },
@@ -380,7 +380,7 @@ export const GEN_GT002_20260829: ContentSeed<unknown, unknown>[] = [
           "item_id": "item_4",
           "asset": {
             "kind": "emoji",
-            "ref": "🍌"
+            "ref": "EMJ-school"
           },
           "is_correct": false
         }
@@ -409,7 +409,7 @@ export const GEN_GT002_20260829: ContentSeed<unknown, unknown>[] = [
       "what_tags": [],
       "thinking_tags": [],
       "theme_tag": "school",
-      "origin": "generator",
+      "origin": "ai_assisted",
       "authored_in": "repo_seed"
     },
     "content_pack": {
@@ -420,7 +420,7 @@ export const GEN_GT002_20260829: ContentSeed<unknown, unknown>[] = [
           "item_id": "item_1",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-backpack"
+            "ref": "EMJ-pencil"
           },
           "is_correct": true
         },
@@ -436,7 +436,7 @@ export const GEN_GT002_20260829: ContentSeed<unknown, unknown>[] = [
           "item_id": "item_3",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-school"
+            "ref": "EMJ-open-book"
           },
           "is_correct": false
         },
@@ -444,7 +444,7 @@ export const GEN_GT002_20260829: ContentSeed<unknown, unknown>[] = [
           "item_id": "item_4",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-ruler"
+            "ref": "EMJ-crayon"
           },
           "is_correct": false
         }
@@ -473,7 +473,7 @@ export const GEN_GT002_20260829: ContentSeed<unknown, unknown>[] = [
       "what_tags": [],
       "thinking_tags": [],
       "theme_tag": "school",
-      "origin": "generator",
+      "origin": "ai_assisted",
       "authored_in": "repo_seed"
     },
     "content_pack": {
@@ -484,7 +484,7 @@ export const GEN_GT002_20260829: ContentSeed<unknown, unknown>[] = [
           "item_id": "item_1",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-backpack"
+            "ref": "EMJ-open-book"
           },
           "is_correct": true
         },
@@ -492,7 +492,7 @@ export const GEN_GT002_20260829: ContentSeed<unknown, unknown>[] = [
           "item_id": "item_2",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-school"
+            "ref": "EMJ-crayon"
           },
           "is_correct": true
         },
@@ -500,7 +500,7 @@ export const GEN_GT002_20260829: ContentSeed<unknown, unknown>[] = [
           "item_id": "item_3",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-pencil"
+            "ref": "EMJ-scissors"
           },
           "is_correct": false
         },
@@ -508,7 +508,7 @@ export const GEN_GT002_20260829: ContentSeed<unknown, unknown>[] = [
           "item_id": "item_4",
           "asset": {
             "kind": "emoji",
-            "ref": "🍎"
+            "ref": "EMJ-books"
           },
           "is_correct": false
         }
@@ -537,7 +537,7 @@ export const GEN_GT002_20260829: ContentSeed<unknown, unknown>[] = [
       "what_tags": [],
       "thinking_tags": [],
       "theme_tag": "school",
-      "origin": "generator",
+      "origin": "ai_assisted",
       "authored_in": "repo_seed"
     },
     "content_pack": {
@@ -548,7 +548,7 @@ export const GEN_GT002_20260829: ContentSeed<unknown, unknown>[] = [
           "item_id": "item_1",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-school"
+            "ref": "EMJ-open-book"
           },
           "is_correct": true
         },
@@ -556,7 +556,7 @@ export const GEN_GT002_20260829: ContentSeed<unknown, unknown>[] = [
           "item_id": "item_2",
           "asset": {
             "kind": "emoji",
-            "ref": "🍎"
+            "ref": "EMJ-abacus"
           },
           "is_correct": true
         },
@@ -564,7 +564,7 @@ export const GEN_GT002_20260829: ContentSeed<unknown, unknown>[] = [
           "item_id": "item_3",
           "asset": {
             "kind": "emoji",
-            "ref": "🥕"
+            "ref": "EMJ-crayon"
           },
           "is_correct": false
         },
@@ -572,7 +572,7 @@ export const GEN_GT002_20260829: ContentSeed<unknown, unknown>[] = [
           "item_id": "item_4",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-backpack"
+            "ref": "EMJ-ruler"
           },
           "is_correct": false
         }
@@ -601,7 +601,7 @@ export const GEN_GT002_20260829: ContentSeed<unknown, unknown>[] = [
       "what_tags": [],
       "thinking_tags": [],
       "theme_tag": "school",
-      "origin": "generator",
+      "origin": "ai_assisted",
       "authored_in": "repo_seed"
     },
     "content_pack": {
@@ -612,7 +612,7 @@ export const GEN_GT002_20260829: ContentSeed<unknown, unknown>[] = [
           "item_id": "item_1",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-backpack"
+            "ref": "EMJ-bell"
           },
           "is_correct": true
         },
@@ -620,7 +620,7 @@ export const GEN_GT002_20260829: ContentSeed<unknown, unknown>[] = [
           "item_id": "item_2",
           "asset": {
             "kind": "emoji",
-            "ref": "🍌"
+            "ref": "EMJ-books"
           },
           "is_correct": true
         },
@@ -628,7 +628,7 @@ export const GEN_GT002_20260829: ContentSeed<unknown, unknown>[] = [
           "item_id": "item_3",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-school"
+            "ref": "EMJ-abacus"
           },
           "is_correct": false
         },
@@ -636,7 +636,7 @@ export const GEN_GT002_20260829: ContentSeed<unknown, unknown>[] = [
           "item_id": "item_4",
           "asset": {
             "kind": "emoji",
-            "ref": "🍎"
+            "ref": "EMJ-school"
           },
           "is_correct": false
         }

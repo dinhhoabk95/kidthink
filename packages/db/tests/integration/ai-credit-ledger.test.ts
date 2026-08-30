@@ -29,6 +29,9 @@ describe("AI Credit Ledger Integration Tests (BR-ACL-01..09)", () => {
         status: "active",
       })
       .returning();
+    if (!user) {
+      throw new Error("Failed to insert user");
+    }
 
     // Initial balance is 0
     const initialBal = await getCreditBalance(user.id);
@@ -92,6 +95,9 @@ describe("AI Credit Ledger Integration Tests (BR-ACL-01..09)", () => {
         status: "active",
       })
       .returning();
+    if (!user) {
+      throw new Error("Failed to insert user");
+    }
 
     await grantCredits({
       userId: user.id,
@@ -126,10 +132,10 @@ describe("AI Credit Ledger Integration Tests (BR-ACL-01..09)", () => {
     // Check ledger has both debit and refund rows (append-only)
     const txs = await listCreditTransactions(user.id);
     expect(txs.total).toBe(3);
-    expect(txs.items[0].reason).toBe("refund");
-    expect(txs.items[0].delta).toBe(2);
-    expect(txs.items[1].reason).toBe("usage");
-    expect(txs.items[1].delta).toBe(-2);
+    expect(txs.items[0]?.reason).toBe("refund");
+    expect(txs.items[0]?.delta).toBe(2);
+    expect(txs.items[1]?.reason).toBe("usage");
+    expect(txs.items[1]?.delta).toBe(-2);
   });
 
   it("BR-ACL-03: throws 402 INSUFFICIENT_CREDITS and prevents negative balance when balance is depleted", async () => {
@@ -144,6 +150,9 @@ describe("AI Credit Ledger Integration Tests (BR-ACL-01..09)", () => {
         status: "active",
       })
       .returning();
+    if (!user) {
+      throw new Error("Failed to insert user");
+    }
 
     await grantCredits({
       userId: user.id,
@@ -166,11 +175,16 @@ describe("AI Credit Ledger Integration Tests (BR-ACL-01..09)", () => {
         cost: 2,
         feature: "instruction_rewrite",
       });
-    } catch (err: any) {
-      expect(err.status).toBe(402);
-      expect(err.code).toBe("INSUFFICIENT_CREDITS");
-      expect(err.details?.required).toBe(2);
-      expect(err.details?.current).toBe(1);
+    } catch (err: unknown) {
+      const error = err as {
+        status?: number;
+        code?: string;
+        details?: { required?: number; current?: number };
+      };
+      expect(error.status).toBe(402);
+      expect(error.code).toBe("INSUFFICIENT_CREDITS");
+      expect(error.details?.required).toBe(2);
+      expect(error.details?.current).toBe(1);
     }
 
     // Verify balance remains non-negative (still 1)
@@ -190,6 +204,9 @@ describe("AI Credit Ledger Integration Tests (BR-ACL-01..09)", () => {
         status: "active",
       })
       .returning();
+    if (!user) {
+      throw new Error("Failed to insert user");
+    }
 
     const { ledgerEntry } = await grantCredits({
       userId: user.id,
@@ -199,7 +216,7 @@ describe("AI Credit Ledger Integration Tests (BR-ACL-01..09)", () => {
 
     expect(ledgerEntry.createdAt).toBeDefined();
     // Verify ledger table schema has no expires_at column
-    expect((ledgerEntry as any).expiresAt).toBeUndefined();
+    expect((ledgerEntry as Record<string, unknown>).expiresAt).toBeUndefined();
   });
 
   it("BR-ACL-05: atomic debit with row locking prevents race condition on concurrent requests", async () => {
@@ -214,6 +231,9 @@ describe("AI Credit Ledger Integration Tests (BR-ACL-01..09)", () => {
         status: "active",
       })
       .returning();
+    if (!user) {
+      throw new Error("Failed to insert user");
+    }
 
     // User has exactly 1 credit
     await grantCredits({
@@ -260,6 +280,9 @@ describe("AI Credit Ledger Integration Tests (BR-ACL-01..09)", () => {
         status: "active",
       })
       .returning();
+    if (!user) {
+      throw new Error("Failed to insert user");
+    }
 
     await grantCredits({
       userId: user.id,
@@ -271,8 +294,8 @@ describe("AI Credit Ledger Integration Tests (BR-ACL-01..09)", () => {
     expect(bal.balance).toBe(500);
 
     // AI credit is completely isolated from content entitlements
-    expect((bal as any).accessTier).toBeUndefined();
-    expect((bal as any).entitlements).toBeUndefined();
+    expect((bal as Record<string, unknown>).accessTier).toBeUndefined();
+    expect((bal as Record<string, unknown>).entitlements).toBeUndefined();
   });
 
   it("BR-ACL-07: manual grant by Super Admin requires reason >= 20 chars and logs audit entry", async () => {
@@ -288,6 +311,9 @@ describe("AI Credit Ledger Integration Tests (BR-ACL-01..09)", () => {
         passwordHash: "hash-mock",
       })
       .returning();
+    if (!manager) {
+      throw new Error("Failed to insert manager");
+    }
 
     const [user] = await db
       .insert(users)
@@ -297,6 +323,9 @@ describe("AI Credit Ledger Integration Tests (BR-ACL-01..09)", () => {
         status: "active",
       })
       .returning();
+    if (!user) {
+      throw new Error("Failed to insert user");
+    }
 
     // 1. Reject if reason is too short (< 20 chars)
     await expect(
@@ -335,9 +364,9 @@ describe("AI Credit Ledger Integration Tests (BR-ACL-01..09)", () => {
       .orderBy(eq(auditLogs.id, auditLogs.id));
 
     expect(auditLog).toBeDefined();
-    expect(auditLog.action).toBe("entitlement_granted");
-    expect(auditLog.actorType).toBe("manager");
-    expect(auditLog.actorId).toBe(manager.id);
+    expect(auditLog?.action).toBe("entitlement_granted");
+    expect(auditLog?.actorType).toBe("manager");
+    expect(auditLog?.actorId).toBe(manager.id);
   });
 
   it("BR-ACL-08: real USD cost is recorded separately from credit ledger (ledger contains only integer credits)", async () => {
@@ -352,6 +381,9 @@ describe("AI Credit Ledger Integration Tests (BR-ACL-01..09)", () => {
         status: "active",
       })
       .returning();
+    if (!user) {
+      throw new Error("Failed to insert user");
+    }
 
     const { ledgerEntry } = await grantCredits({
       userId: user.id,
@@ -361,8 +393,10 @@ describe("AI Credit Ledger Integration Tests (BR-ACL-01..09)", () => {
 
     expect(typeof ledgerEntry.delta).toBe("number");
     expect(Number.isInteger(ledgerEntry.delta)).toBe(true);
-    expect((ledgerEntry as any).costUsd).toBeUndefined();
-    expect((ledgerEntry as any).costUsdMicros).toBeUndefined();
+    expect((ledgerEntry as Record<string, unknown>).costUsd).toBeUndefined();
+    expect(
+      (ledgerEntry as Record<string, unknown>).costUsdMicros
+    ).toBeUndefined();
   });
 
   it("BR-ACL-09: triggers low-credit warning notification when balance drops below 20%", async () => {
@@ -377,6 +411,9 @@ describe("AI Credit Ledger Integration Tests (BR-ACL-01..09)", () => {
         status: "active",
       })
       .returning();
+    if (!user) {
+      throw new Error("Failed to insert user");
+    }
 
     // User is granted 100 credits -> 20% threshold is 20
     await grantCredits({
@@ -415,7 +452,10 @@ describe("AI Credit Ledger Integration Tests (BR-ACL-01..09)", () => {
       (n) => n.templateCode === "ai_credits_low"
     );
     expect(lowCreditNotifs.length).toBe(1);
-    expect((lowCreditNotifs[0].payload as any).remaining_credits).toBe(15);
+    expect(
+      (lowCreditNotifs[0]?.payload as Record<string, unknown>)
+        ?.remaining_credits
+    ).toBe(15);
   });
 
   it("Idempotency: repeated calls with identical idempotencyKey return cached result without double charging", async () => {
@@ -430,6 +470,9 @@ describe("AI Credit Ledger Integration Tests (BR-ACL-01..09)", () => {
         status: "active",
       })
       .returning();
+    if (!user) {
+      throw new Error("Failed to insert user");
+    }
 
     const idempKey = `grant-idemp-${uid}`;
 

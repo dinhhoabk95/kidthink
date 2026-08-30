@@ -10,12 +10,13 @@ export default defineEventHandler(async (event) => {
   const db = getOwnerDb();
 
   // Count non-archived children
-  const [{ value: childCount }] = await db
+  const [childCountRow] = await db
     .select({ value: count() })
     .from(childProfiles)
     .where(
       and(eq(childProfiles.userId, userId), eq(childProfiles.status, "active"))
     );
+  const childCount = childCountRow?.value ?? 0;
 
   // Check active subscription days remaining
   const now = new Date();

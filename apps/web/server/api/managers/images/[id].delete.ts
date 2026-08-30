@@ -1,10 +1,10 @@
 import {
   contentAssetRefs,
   contentImages,
-  type DatabaseOwner,
   gameLevels,
   getOwnerDb,
   lessons,
+  type OwnerDb,
   seoPages,
   worksheets,
   writeAudit,
@@ -21,7 +21,7 @@ interface PublishedUsageRef {
 }
 
 async function checkRefRowPublished(
-  db: DatabaseOwner,
+  db: OwnerDb,
   refRow: { entityType: string; entityId: number }
 ): Promise<PublishedUsageRef | null> {
   if (refRow.entityType === "game_level") {
@@ -97,7 +97,7 @@ async function checkRefRowPublished(
 }
 
 async function findPublishedUsage(
-  db: DatabaseOwner,
+  db: OwnerDb,
   storagePath: string
 ): Promise<PublishedUsageRef[]> {
   const usedBy: PublishedUsageRef[] = [];
@@ -156,19 +156,21 @@ export default defineEventHandler(async (event) => {
     .delete(contentAssetRefs)
     .where(eq(contentAssetRefs.assetRef, imageRecord.storagePath));
 
-  const managerId = manager.manager_id || manager.id || 1;
-  await writeAudit(db, {
-    actor_type: "manager",
-    actor_id: managerId,
-    action: "image_deleted",
-    reason: "Xoá ảnh không còn sử dụng",
-    entity_type: "content_image",
-    entity_id: id.toString(),
-    before_data: {
-      path: imageRecord.storagePath,
-      owner_type: imageRecord.ownerType,
-      owner_id: imageRecord.ownerId,
-    },
+  const managerId = manager.manager_id;
+  await db.transaction(async (tx) => {
+    await writeAudit(tx, {
+      actor_type: "manager",
+      actor_id: managerId,
+      action: "image_deleted",
+      reason: "Xoá ảnh không còn sử dụng",
+      entity_type: "content_image",
+      entity_id: id.toString(),
+      before_data: {
+        path: imageRecord.storagePath,
+        owner_type: imageRecord.ownerType,
+        owner_id: imageRecord.ownerId,
+      },
+    });
   });
 
   return { success: true };

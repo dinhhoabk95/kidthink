@@ -14,13 +14,15 @@ describe("P2.9 Feature Flags, Data Export & Notification Admin Invariants (BR-FL
     });
 
     it("Scenario: BR-FLG-02 — evaluates to safe hardcoded default value if flag service or cache fails (D-KM)", async () => {
-      const safeDefault = CODE_FEATURE_FLAGS.ai_content_pipeline.defaultValue;
+      const safeDefault = CODE_FEATURE_FLAGS.ai_content_pipeline?.defaultValue;
       expect(safeDefault).toBe(false);
 
       const val = await isEnabled("ai_content_pipeline");
       expect(typeof val).toBe("boolean");
 
-      const unknownFlag = await isEnabled("unknown_flag_xyz" as any);
+      const unknownFlag = await isEnabled(
+        "unknown_flag_xyz" as unknown as FeatureFlagKey
+      );
       expect(unknownFlag).toBe(false);
     });
 
@@ -82,11 +84,13 @@ describe("P2.9 Feature Flags, Data Export & Notification Admin Invariants (BR-FL
       for (const key of expectedKeys) {
         expect(CODE_FEATURE_FLAGS[key]).toBeDefined();
       }
-      expect(CODE_FEATURE_FLAGS.ai_content_pipeline.defaultValue).toBe(false);
-      expect(CODE_FEATURE_FLAGS.payment_soft_unlock.defaultValue).toBe(true);
-      expect(CODE_FEATURE_FLAGS.weekly_progress_email.defaultValue).toBe(false);
-      expect(CODE_FEATURE_FLAGS.studio_publish.defaultValue).toBe(true);
-      expect(CODE_FEATURE_FLAGS.guest_play.defaultValue).toBe(true);
+      expect(CODE_FEATURE_FLAGS.ai_content_pipeline?.defaultValue).toBe(false);
+      expect(CODE_FEATURE_FLAGS.payment_soft_unlock?.defaultValue).toBe(true);
+      expect(CODE_FEATURE_FLAGS.weekly_progress_email?.defaultValue).toBe(
+        false
+      );
+      expect(CODE_FEATURE_FLAGS.studio_publish?.defaultValue).toBe(true);
+      expect(CODE_FEATURE_FLAGS.guest_play?.defaultValue).toBe(true);
     });
   });
 
@@ -103,7 +107,7 @@ describe("P2.9 Feature Flags, Data Export & Notification Admin Invariants (BR-FL
     it("Scenario: BR-FFA-02 — flags past expiration date display visual alert warning indicator", () => {
       const now = new Date("2027-01-01").getTime();
       const flagExp = new Date(
-        CODE_FEATURE_FLAGS.ai_content_pipeline.expiresAt
+        CODE_FEATURE_FLAGS.ai_content_pipeline?.expiresAt ?? ""
       ).getTime();
       const isExpired = now > flagExp;
       expect(isExpired).toBe(true);

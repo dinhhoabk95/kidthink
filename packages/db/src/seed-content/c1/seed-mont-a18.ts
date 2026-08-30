@@ -6,12 +6,11 @@ import type { ContentSeed } from "#src/seed-content/types";
  * 1 dạng bài (WB18-D1), 2 level, GT-001, band 5-6
  */
 export const SEED_MONT_A18: ContentSeed<unknown, unknown>[] = [
-  // WB18-D1 Level 1 (Diff 3 - Standard)
   {
     header: {
       code: "GL-C1-MEAS-CARD-0123",
       content_version: 1,
-      template_code: "GT-001",
+      template_code: "GT-016",
       title: "Đọc đồng hồ 3 giờ đúng",
       instruction: "Đồng hồ đang chỉ mấy giờ, bé hãy chọn số đúng nhé!",
       age_min: 5,
@@ -27,28 +26,43 @@ export const SEED_MONT_A18: ContentSeed<unknown, unknown>[] = [
       authored_in: "repo_seed",
     },
     content_pack: {
-      clock_display: { hour: 3, minute: 0, emoji: "🕒" },
-      target: "3:00",
-      options: [
-        { id: "opt-1", text: "3:00", is_correct: true },
-        { id: "opt-2", text: "12:00", is_correct: false },
-        { id: "opt-3", text: "4:00", is_correct: false },
-      ],
-      scaffolding: {
-        l1_nudge: "Kim ngắn màu đỏ chỉ vào số 3 phát sáng",
-        l2_guidance:
-          "Bàn tay ảo chỉ 'Kim ngắn chỉ số 3, kim dài chỉ số 12 là 3 giờ đúng'",
-        l3_demo: "Bàn tay ảo chọn thẻ 3:00 làm mẫu",
+      prompt: "Đồng hồ đang chỉ mấy giờ, bé hãy chọn số đúng nhé!",
+      mode: "read",
+      target_time: {
+        hour: 3,
+        minute: 0,
       },
+      options: [
+        {
+          hour: 3,
+          minute: 0,
+          is_correct: true,
+        },
+        {
+          hour: 12,
+          minute: 0,
+          is_correct: false,
+        },
+        {
+          hour: 4,
+          minute: 0,
+          is_correct: false,
+        },
+      ],
+      activity_cards: [],
     },
-    difficulty_params: { count: 3, distractor_count: 2 },
+    difficulty_params: {
+      minute_step: 30,
+      distractor_count: 2,
+      hint_after_ms: 9000,
+      allow_retry: true,
+    },
   },
-  // WB18-D1 Level 2 (Diff 4 - Premium)
   {
     header: {
       code: "GL-C1-MEAS-CARD-0124",
       content_version: 1,
-      template_code: "GT-001",
+      template_code: "GT-016",
       title: "Đọc đồng hồ 9 giờ đúng",
       instruction: "Bé nhìn kim ngắn và kim dài xem là mấy giờ nhé!",
       age_min: 5,
@@ -64,19 +78,36 @@ export const SEED_MONT_A18: ContentSeed<unknown, unknown>[] = [
       authored_in: "repo_seed",
     },
     content_pack: {
-      clock_display: { hour: 9, minute: 0, emoji: "🕘" },
-      target: "9:00",
-      options: [
-        { id: "opt-1", text: "6:00", is_correct: false },
-        { id: "opt-2", text: "9:00", is_correct: true },
-        { id: "opt-3", text: "10:00", is_correct: false },
-      ],
-      scaffolding: {
-        l1_nudge: "Kim ngắn chỉ số 9 nhấp nháy nhẹ",
-        l2_guidance: "Bàn tay ảo chỉ vào số 9 và đọc 'Chín giờ đúng'",
-        l3_demo: "Bàn tay ảo chọn 9:00",
+      prompt: "Bé nhìn kim ngắn và kim dài xem là mấy giờ nhé!",
+      mode: "read",
+      target_time: {
+        hour: 9,
+        minute: 0,
       },
+      options: [
+        {
+          hour: 6,
+          minute: 0,
+          is_correct: false,
+        },
+        {
+          hour: 9,
+          minute: 0,
+          is_correct: true,
+        },
+        {
+          hour: 10,
+          minute: 0,
+          is_correct: false,
+        },
+      ],
+      activity_cards: [],
     },
-    difficulty_params: { count: 3, distractor_count: 2 },
+    difficulty_params: {
+      minute_step: 30,
+      distractor_count: 2,
+      hint_after_ms: 9000,
+      allow_retry: true,
+    },
   },
 ];

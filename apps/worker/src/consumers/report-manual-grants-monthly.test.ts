@@ -40,6 +40,12 @@ describe("Task 5 — report:manual-grants-monthly Suite (BR-EGR-09)", () => {
       })
       .returning();
 
+    expect(manager).toBeDefined();
+    expect(user).toBeDefined();
+    if (!(manager && user)) {
+      return;
+    }
+
     // 3. Create manual grant within target month 2026-07
     const grantDate = new Date("2026-07-15T10:00:00Z");
     const expiryDate = new Date("2026-08-15T10:00:00Z");

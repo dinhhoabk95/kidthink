@@ -2,6 +2,7 @@ import { appError, generateSecureToken, hashSecureToken } from "@mindkid/auth";
 import {
   auditLogs,
   getOwnerDb,
+  notificationDeliveries,
   notifications,
   users,
   verificationTokens,
@@ -62,18 +63,27 @@ export default defineEventHandler(async (event) => {
     expiresAt,
   });
 
-  await db.insert(notifications).values({
-    recipientType: "user",
-    recipientId: targetUser.id,
-    channel: "email",
-    templateCode: "password_reset",
-    payload: {
-      token: rawToken,
-      email: targetUser.email,
-      displayName: targetUser.displayName,
-    },
-    status: "queued",
-  });
+  const [createdNotification] = await db
+    .insert(notifications)
+    .values({
+      recipientType: "user",
+      recipientId: targetUser.id,
+      templateCode: "password_reset",
+      payload: {
+        token: rawToken,
+        email: targetUser.email,
+        displayName: targetUser.displayName,
+      },
+    })
+    .returning();
+
+  if (createdNotification) {
+    await db.insert(notificationDeliveries).values({
+      notificationId: createdNotification.id,
+      channel: "email",
+      status: "queued",
+    });
+  }
 
   // Record audit log
   await db.insert(auditLogs).values({

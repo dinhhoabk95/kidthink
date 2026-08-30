@@ -253,7 +253,7 @@
       <section class="w-full lg:w-1/2 h-full p-6 bg-surface-950 flex flex-col">
         <LivePreviewFrame
           :level-data="previewPayload"
-          :template-code="levelData.templateCode || 'GT-001'"
+          :template-code="typeof levelData.templateCode === 'string' ? levelData.templateCode : 'GT-001'"
           @preview-loaded="markPreviewed"
         />
       </section>
@@ -402,7 +402,7 @@
     authoredIn?: unknown
   ): string | null {
     const match = codeStr.match(GL_CODE_PREFIX_REGEX);
-    if (match && authoredIn === "repo_seed") {
+    if (match?.[1] && authoredIn === "repo_seed") {
       return `Bản này tách khỏi seeder — vui lòng cập nhật lại file 'packages/db/src/seed-content/${match[1].toLowerCase()}/levels.ts' trong repo (BR-CRQ-05)`;
     }
     if (authoredIn === "repo_seed") {

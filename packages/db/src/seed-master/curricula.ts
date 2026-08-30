@@ -216,6 +216,65 @@ async function seedCurriculumWeeksData(
   return count;
 }
 
+async function insertCurriculumItemForSession(
+  db: ReturnType<typeof getOwnerDb>,
+  params: {
+    curriculumId: number;
+    weekNo: number;
+    sessionNo: number;
+    lessonsList: Array<{ id: number; code: string }>;
+    levelsList: Array<{ id: number; code: string }>;
+    sessionsPerWeek: number;
+  }
+): Promise<boolean> {
+  const {
+    curriculumId,
+    weekNo,
+    sessionNo,
+    lessonsList,
+    levelsList,
+    sessionsPerWeek,
+  } = params;
+  const slotIdx = weekNo * sessionsPerWeek + sessionNo;
+
+  if (lessonsList.length > 0 && sessionNo % 2 === 1) {
+    const lesson = lessonsList[slotIdx % lessonsList.length];
+    if (lesson) {
+      await db
+        .insert(curriculumItems)
+        .values({
+          curriculumId,
+          weekNo,
+          sessionNo,
+          position: 1,
+          entityType: "lesson",
+          entityId: lesson.id,
+          isRequired: true,
+        })
+        .onConflictDoNothing();
+      return true;
+    }
+  } else if (levelsList.length > 0) {
+    const level = levelsList[slotIdx % levelsList.length];
+    if (level) {
+      await db
+        .insert(curriculumItems)
+        .values({
+          curriculumId,
+          weekNo,
+          sessionNo,
+          position: 1,
+          entityType: "game_level",
+          entityId: level.id,
+          isRequired: true,
+        })
+        .onConflictDoNothing();
+      return true;
+    }
+  }
+  return false;
+}
+
 async function seedCurriculumItemsData(
   db: ReturnType<typeof getOwnerDb>,
   curriculumId: number,
@@ -236,39 +295,15 @@ async function seedCurriculumItemsData(
   let count = 0;
   for (let w = 1; w <= cfg.durationWeeks; w++) {
     for (let s = 1; s <= cfg.sessionsPerWeek; s++) {
-      const lessonIdx =
-        (w * cfg.sessionsPerWeek + s) % (lessonsList.length || 1);
-      const levelIdx = (w * cfg.sessionsPerWeek + s) % (levelsList.length || 1);
-
-      if (lessonsList.length > 0 && s % 2 === 1) {
-        const lesson = lessonsList[lessonIdx];
-        await db
-          .insert(curriculumItems)
-          .values({
-            curriculumId,
-            weekNo: w,
-            sessionNo: s,
-            position: 1,
-            entityType: "lesson",
-            entityId: lesson.id,
-            isRequired: true,
-          })
-          .onConflictDoNothing();
-        count++;
-      } else if (levelsList.length > 0) {
-        const level = levelsList[levelIdx];
-        await db
-          .insert(curriculumItems)
-          .values({
-            curriculumId,
-            weekNo: w,
-            sessionNo: s,
-            position: 1,
-            entityType: "game_level",
-            entityId: level.id,
-            isRequired: true,
-          })
-          .onConflictDoNothing();
+      const inserted = await insertCurriculumItemForSession(db, {
+        curriculumId,
+        weekNo: w,
+        sessionNo: s,
+        lessonsList,
+        levelsList,
+        sessionsPerWeek: cfg.sessionsPerWeek,
+      });
+      if (inserted) {
         count++;
       }
     }

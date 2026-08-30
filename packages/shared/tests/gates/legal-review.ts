@@ -26,7 +26,7 @@ export function checkLegalReviewStatus(
   while (match !== null) {
     const slug = match[1];
     const status = match[2];
-    if (status === "pending_review") {
+    if (slug && status === "pending_review") {
       pendingMatches.push(slug);
     }
     match = docBlockRegex.exec(content);

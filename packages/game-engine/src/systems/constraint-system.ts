@@ -62,10 +62,43 @@ export function toMatrix<T>(grid: SudokuGrid<T>): (T | null)[][] {
       cell.col >= 0 &&
       cell.col < grid.size
     ) {
-      matrix[cell.row][cell.col] = cell.value;
+      const row = matrix[cell.row];
+      if (row) {
+        row[cell.col] = cell.value;
+      }
     }
   }
   return matrix;
+}
+
+function checkRowViolations<T>(
+  r: number,
+  row: (T | null)[],
+  size: number,
+  violations: ConstraintViolation[]
+): void {
+  for (let c1 = 0; c1 < size; c1++) {
+    const val1 = row[c1];
+    if (val1 === null || val1 === undefined) {
+      continue;
+    }
+    for (let c2 = c1 + 1; c2 < size; c2++) {
+      if (row[c2] === val1) {
+        violations.push({
+          row: r,
+          col: c1,
+          conflictingWith: { row: r, col: c2 },
+          kind: "row",
+        });
+        violations.push({
+          row: r,
+          col: c2,
+          conflictingWith: { row: r, col: c1 },
+          kind: "row",
+        });
+      }
+    }
+  }
 }
 
 function findRowViolations<T>(
@@ -74,30 +107,42 @@ function findRowViolations<T>(
 ): ConstraintViolation[] {
   const violations: ConstraintViolation[] = [];
   for (let r = 0; r < size; r++) {
-    for (let c1 = 0; c1 < size; c1++) {
-      const val1 = matrix[r][c1];
-      if (val1 === null) {
-        continue;
-      }
-      for (let c2 = c1 + 1; c2 < size; c2++) {
-        if (matrix[r][c2] === val1) {
-          violations.push({
-            row: r,
-            col: c1,
-            conflictingWith: { row: r, col: c2 },
-            kind: "row",
-          });
-          violations.push({
-            row: r,
-            col: c2,
-            conflictingWith: { row: r, col: c1 },
-            kind: "row",
-          });
-        }
-      }
+    const row = matrix[r];
+    if (row) {
+      checkRowViolations(r, row, size, violations);
     }
   }
   return violations;
+}
+
+function checkColViolations<T>(
+  c: number,
+  matrix: (T | null)[][],
+  size: number,
+  violations: ConstraintViolation[]
+): void {
+  for (let r1 = 0; r1 < size; r1++) {
+    const val1 = matrix[r1]?.[c];
+    if (val1 === null || val1 === undefined) {
+      continue;
+    }
+    for (let r2 = r1 + 1; r2 < size; r2++) {
+      if (matrix[r2]?.[c] === val1) {
+        violations.push({
+          row: r1,
+          col: c,
+          conflictingWith: { row: r2, col: c },
+          kind: "col",
+        });
+        violations.push({
+          row: r2,
+          col: c,
+          conflictingWith: { row: r1, col: c },
+          kind: "col",
+        });
+      }
+    }
+  }
 }
 
 function findColViolations<T>(
@@ -106,28 +151,7 @@ function findColViolations<T>(
 ): ConstraintViolation[] {
   const violations: ConstraintViolation[] = [];
   for (let c = 0; c < size; c++) {
-    for (let r1 = 0; r1 < size; r1++) {
-      const val1 = matrix[r1][c];
-      if (val1 === null) {
-        continue;
-      }
-      for (let r2 = r1 + 1; r2 < size; r2++) {
-        if (matrix[r2][c] === val1) {
-          violations.push({
-            row: r1,
-            col: c,
-            conflictingWith: { row: r2, col: c },
-            kind: "col",
-          });
-          violations.push({
-            row: r2,
-            col: c,
-            conflictingWith: { row: r1, col: c },
-            kind: "col",
-          });
-        }
-      }
-    }
+    checkColViolations(c, matrix, size, violations);
   }
   return violations;
 }
@@ -143,8 +167,9 @@ function collectBoxCells<T>(
     for (let dc = 0; dc < 2; dc++) {
       const r = boxRowStart + dr;
       const c = boxColStart + dc;
-      const val = matrix[r][c];
-      if (val !== null) {
+      const row = matrix[r];
+      const val = row?.[c];
+      if (val !== null && val !== undefined) {
         cells.push({ row: r, col: c, val });
       }
     }
@@ -152,29 +177,44 @@ function collectBoxCells<T>(
   return cells;
 }
 
+function checkCellPairInBox<T>(
+  c1: { row: number; col: number; val: T },
+  c2: { row: number; col: number; val: T },
+  violations: ConstraintViolation[]
+): void {
+  if (c1.val !== c2.val) {
+    return;
+  }
+  if (c1.row === c2.row || c1.col === c2.col) {
+    return;
+  }
+  violations.push({
+    row: c1.row,
+    col: c1.col,
+    conflictingWith: { row: c2.row, col: c2.col },
+    kind: "box",
+  });
+  violations.push({
+    row: c2.row,
+    col: c2.col,
+    conflictingWith: { row: c1.row, col: c1.col },
+    kind: "box",
+  });
+}
+
 function checkPairsInBox<T>(
   cells: Array<{ row: number; col: number; val: T }>,
   violations: ConstraintViolation[]
 ): void {
   for (let i = 0; i < cells.length; i++) {
+    const c1 = cells[i];
+    if (!c1) {
+      continue;
+    }
     for (let j = i + 1; j < cells.length; j++) {
-      if (cells[i].val === cells[j].val) {
-        const sameRow = cells[i].row === cells[j].row;
-        const sameCol = cells[i].col === cells[j].col;
-        if (!(sameRow || sameCol)) {
-          violations.push({
-            row: cells[i].row,
-            col: cells[i].col,
-            conflictingWith: { row: cells[j].row, col: cells[j].col },
-            kind: "box",
-          });
-          violations.push({
-            row: cells[j].row,
-            col: cells[j].col,
-            conflictingWith: { row: cells[i].row, col: cells[i].col },
-            kind: "box",
-          });
-        }
+      const c2 = cells[j];
+      if (c2) {
+        checkCellPairInBox(c1, c2, violations);
       }
     }
   }
@@ -220,13 +260,14 @@ function checkRowColConflict<T>(
   col: number,
   val: T
 ): boolean {
+  const rRow = matrix[row];
   for (let c = 0; c < size; c++) {
-    if (c !== col && matrix[row][c] === val) {
+    if (c !== col && rRow?.[c] === val) {
       return true;
     }
   }
   for (let r = 0; r < size; r++) {
-    if (r !== row && matrix[r][col] === val) {
+    if (r !== row && matrix[r]?.[col] === val) {
       return true;
     }
   }
@@ -243,7 +284,7 @@ function checkBoxConflict<T>(
   const boxColStart = Math.floor(col / 2) * 2;
   for (let r = boxRowStart; r < boxRowStart + 2; r++) {
     for (let c = boxColStart; c < boxColStart + 2; c++) {
-      if ((r !== row || c !== col) && matrix[r][c] === val) {
+      if ((r !== row || c !== col) && matrix[r]?.[c] === val) {
         return true;
       }
     }
@@ -291,6 +332,26 @@ export function countSudokuSolutions<T>(
   const matrix = toMatrix(grid);
   let count = 0;
 
+  function trySingleValue(
+    r: number,
+    c: number,
+    val: T,
+    nextR: number,
+    nextC: number
+  ): void {
+    if (!isValidPlacement(matrix, size, regions, r, c, val)) {
+      return;
+    }
+    const row = matrix[r];
+    if (row) {
+      row[c] = val;
+    }
+    solveCell(nextR, nextC);
+    if (row) {
+      row[c] = null;
+    }
+  }
+
   function tryValuesAt(
     r: number,
     c: number,
@@ -298,13 +359,9 @@ export function countSudokuSolutions<T>(
     nextC: number
   ): void {
     for (const val of possibleValues) {
-      if (isValidPlacement(matrix, size, regions, r, c, val)) {
-        matrix[r][c] = val;
-        solveCell(nextR, nextC);
-        matrix[r][c] = null;
-        if (count >= maxCount) {
-          return;
-        }
+      trySingleValue(r, c, val, nextR, nextC);
+      if (count >= maxCount) {
+        return;
       }
     }
   }
@@ -321,7 +378,8 @@ export function countSudokuSolutions<T>(
     const nextR = c + 1 === size ? r + 1 : r;
     const nextC = c + 1 === size ? 0 : c + 1;
 
-    if (matrix[r][c] !== null) {
+    const row = matrix[r];
+    if (row && row[c] !== null) {
       solveCell(nextR, nextC);
       return;
     }

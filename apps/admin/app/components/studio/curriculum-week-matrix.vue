@@ -30,7 +30,7 @@
             placeholder="Nhập mục tiêu sư phạm tuần..."
             type="text"
             :value="getWeekGoal(w)"
-            @input="(e) => emit('update-goal', w, (e.target as HTMLInputElement).value)"
+            @input="(e: Event) => emit('update-goal', w, (e.target as HTMLInputElement).value)"
           >
         </div>
         <span class="text-xs text-surface-400">

@@ -12,7 +12,7 @@ const nominateBodySchema = z.object({
 });
 
 export default defineEventHandler(async (event) => {
-  const manager = requireSuperAdminSession(event);
+  const manager = await requireSuperAdminSession(event);
   const rawBody = await readBody(event);
   const parsed = nominateBodySchema.safeParse(rawBody);
 
@@ -27,7 +27,7 @@ export default defineEventHandler(async (event) => {
   try {
     const result = await LessonExemplarService.nominateExemplar({
       lessonId: parsed.data.lesson_id,
-      managerId: manager.id,
+      managerId: manager.manager_id,
       competency: parsed.data.competency,
       ageBand: parsed.data.age_band,
       notes: parsed.data.notes,

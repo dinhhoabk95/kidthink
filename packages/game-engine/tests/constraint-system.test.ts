@@ -53,8 +53,8 @@ describe("constraintSystem (BR-MTB-15)", () => {
       };
       const violations = findConstraintViolations(grid);
       expect(violations.length).toBe(2);
-      expect(violations[0].kind).toBe("row");
-      expect(violations[0].row).toBe(0);
+      expect(violations[0]?.kind).toBe("row");
+      expect(violations[0]?.row).toBe(0);
     });
 
     it("detects column duplicates", () => {
@@ -69,8 +69,8 @@ describe("constraintSystem (BR-MTB-15)", () => {
       };
       const violations = findConstraintViolations(grid);
       expect(violations.length).toBe(2);
-      expect(violations[0].kind).toBe("col");
-      expect(violations[0].col).toBe(0);
+      expect(violations[0]?.kind).toBe("col");
+      expect(violations[0]?.col).toBe(0);
     });
 
     it("detects 2x2 box duplicates in 4x4 grid when regions = row_col_box", () => {

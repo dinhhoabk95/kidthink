@@ -104,7 +104,11 @@ describe("Level Generator Kit — Task #121 (BR-LGK-01..10)", () => {
         instruction: string;
       };
     }>) {
-      expect(item.header.origin).toBe("generator");
+      // `BR-LGK-06` chỉ đòi "phân biệt được với human". Q3 của
+      // `level-generator-kit.md` (giá trị origin cho nội dung sinh máy) vẫn mở,
+      // nên dùng giá trị CÓ THẬT trong enum thay vì bịa "generator" — thứ sinh
+      // ra đúng 180 lỗi TS2322 rồi bị ghi vào baseline.
+      expect(item.header.origin).toBe("ai_assisted");
       expect(item.header.origin).not.toBe("human");
       expect(item.header.thinking_tags).toEqual([]);
       expect(item.header.what_tags).toEqual([]);

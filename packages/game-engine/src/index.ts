@@ -1,5 +1,7 @@
+/// <reference lib="dom" />
 // Public barrel entry point for @mindkid/game-engine (BR-MPA-01)
 
+export { EMOJI_REF_PATTERN } from "./contracts/shared-fields";
 export type {
   AgeBand,
   ContentStatus,
@@ -7,6 +9,7 @@ export type {
   GameTemplateLimits,
   ScoringSchema,
 } from "./contracts/types";
+export { AGE_BANDS } from "./contracts/types";
 export { type EngineConfig, type EventCallback, GameEngine } from "./core";
 export {
   type ActionResult,

@@ -6,19 +6,36 @@ import {
   type GameAction,
   TemplateGameSession,
 } from "#src/game-session";
+import { resolveLayout } from "#src/layout/registry";
+import type { Slot } from "#src/layout/types";
 import { SelectionMechanic } from "#src/mechanics/selection-mechanic";
 import { deriveStream } from "#src/rng/mulberry32";
+import type { DegradationState } from "#src/systems/degradation";
+import type { Particle, RenderSystem } from "#src/systems/render-system";
 import {
   type FindResult,
   type SceneObject,
   SceneSystem,
 } from "#src/systems/scene-system";
+import {
+  drawPromptText,
+  drawSceneBackground,
+  type ItemVisualState,
+  sceneBox,
+  updateParticles,
+} from "../shared-render.js";
+import { drawSceneObjectAt } from "../shared-render-shapes.js";
 import type { GT022Content, GT022Difficulty } from "./template.js";
 
 export class GT022Session extends TemplateGameSession<
   GT022Content,
   GT022Difficulty
 > {
+  slots: readonly Slot[] = [];
+  degradation: DegradationState | null = null;
+  private renderParticles: Particle[] = [];
+  private readonly renderItemStates: Map<string, ItemVisualState> = new Map();
+
   readonly sceneSystem = new SceneSystem();
   private readonly selectionMechanic = new SelectionMechanic();
   resolvedObjects: SceneObject[] = [];
@@ -124,6 +141,64 @@ export class GT022Session extends TemplateGameSession<
 
   override checkWinCondition(): boolean {
     return this.sceneSystem.isAllFound();
+  }
+
+  resolveSlots(ageBand: "3-4" | "4-5" | "5-6"): void {
+    const layoutFn = resolveLayout("free-scene");
+    this.slots = layoutFn({
+      slotCount: this.content.scene_objects.length,
+      ageBand,
+    });
+  }
+
+  setRenderItemState(itemId: string, state: ItemVisualState): void {
+    this.renderItemStates.set(itemId, state);
+  }
+
+  getRenderItemState(itemId: string): ItemVisualState {
+    return this.renderItemStates.get(itemId) ?? "idle";
+  }
+
+  render(
+    ctx: CanvasRenderingContext2D,
+    rs: RenderSystem,
+    _timeMs: number
+  ): void {
+    drawSceneBackground(ctx, rs);
+    drawPromptText(ctx, rs, this.content.prompt);
+    // free-scene: toạ độ tới từ content (đã ở không gian logic), ô nào thiếu
+    // toạ độ thì rơi về slot của layout.
+    const scene = sceneBox(rs);
+    const assetById = new Map(
+      this.content.scene_objects.map((o) => [o.id, o.asset])
+    );
+    this.resolvedObjects.forEach((obj, i) => {
+      const state = this.sceneSystem.getObjectState(obj.id);
+      // Vật ẩn sau lớp phủ chỉ hiện sau khi trẻ lật ra — ❌ NEVER vẽ sẵn.
+      if (obj.isHidden && state?.isRevealed !== true) {
+        return;
+      }
+      drawSceneObjectAt(
+        ctx,
+        rs,
+        scene,
+        { id: obj.id, asset: assetById.get(obj.id), x: obj.x, y: obj.y },
+        this.slots[i],
+        { found: state?.isFound === true }
+      );
+    });
+    this.drawRenderFeedback(rs, ctx);
+  }
+
+  private drawRenderFeedback(
+    rs: RenderSystem,
+    ctx: CanvasRenderingContext2D
+  ): void {
+    if (this.degradation?.particles_enabled === false) {
+      return;
+    }
+    this.renderParticles = updateParticles(this.renderParticles);
+    rs.drawParticles(ctx, this.renderParticles);
   }
 }
 

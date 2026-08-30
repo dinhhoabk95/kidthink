@@ -43,6 +43,9 @@ describe("Tagging Schema Integration Tests", () => {
         label: "Nhận biết số",
       })
       .returning();
+    if (!tag) {
+      throw new Error("Failed to insert tag");
+    }
 
     const randomTagEntityId =
       Math.floor(Math.random() * 900_000_000) + 100_000_000;
@@ -56,7 +59,7 @@ describe("Tagging Schema Integration Tests", () => {
       .returning();
 
     expect(map).toBeDefined();
-    expect(map.entityId).toBe(randomTagEntityId);
+    expect(map?.entityId).toBe(randomTagEntityId);
   });
 
   it("orphan content_skill_map.(entity_type, entity_id) polymorphic check", async () => {
@@ -78,7 +81,7 @@ describe("Tagging Schema Integration Tests", () => {
         .returning();
 
       expect(map).toBeDefined();
-      expect(map.entityId).toBe(randomSkillEntityId);
+      expect(map?.entityId).toBe(randomSkillEntityId);
     }
   });
 });

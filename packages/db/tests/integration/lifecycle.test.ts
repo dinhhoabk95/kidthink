@@ -27,7 +27,7 @@ describe("P0.6 Task 1 — Enum in_review & content_review_log edge migration", (
       .returning();
 
     expect(log).toBeDefined();
-    expect(log.fromStatus).toBe("approved");
-    expect(log.toStatus).toBe("published");
+    expect(log?.fromStatus).toBe("approved");
+    expect(log?.toStatus).toBe("published");
   });
 });

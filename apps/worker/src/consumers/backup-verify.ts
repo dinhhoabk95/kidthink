@@ -41,6 +41,10 @@ export async function runVerifyBackup(
     })
     .returning();
 
+  if (!log) {
+    throw new Error("Failed to create backup log");
+  }
+
   let tempDbName = "";
 
   try {
@@ -145,7 +149,7 @@ export async function runVerifyBackup(
       SELECT count(*) FROM information_schema.tables WHERE table_schema = 'public'
     `);
 
-    const restoredRows = Number.parseInt(result[0].count, 10);
+    const restoredRows = Number.parseInt(result[0]?.count ?? "0", 10);
     if (restoredRows === 0) {
       throw new Error("Verify failed: restored 0 rows");
     }

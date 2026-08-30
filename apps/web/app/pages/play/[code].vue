@@ -1,10 +1,29 @@
 <template>
   <div class="game-play-container">
     <div class="loading-state" v-if="isLoading">
-      <p>Đang tải trò chơi...</p>
+      <div class="loading-box">
+        <span aria-hidden="true" class="loading-emoji animate-bounce">🎮</span>
+        <p class="loading-text">Đang tải trò chơi cho bé...</p>
+      </div>
     </div>
     <div class="error-state" v-else-if="errorMessage">
-      <p>{{ errorMessage }}</p>
+      <div class="error-card">
+        <span aria-hidden="true" class="error-emoji">{{ errorEmoji }}</span>
+        <h2 class="error-title">{{ errorTitle }}</h2>
+        <p class="error-desc">{{ errorMessage }}</p>
+        <div class="error-actions">
+          <NuxtLink
+            class="btn-primary"
+            v-if="errorActionLink"
+            :to="errorActionLink"
+          >
+            {{ errorActionText }}
+          </NuxtLink>
+          <NuxtLink class="btn-secondary" to="/games">
+            Về danh sách trò chơi
+          </NuxtLink>
+        </div>
+      </div>
     </div>
     <template v-else>
       <KidRoundProgressIndicator :current="currentRound" :total="totalRounds" />
@@ -23,7 +42,10 @@
   } from "@mindkid/game-engine";
   import { onMounted, onUnmounted, ref } from "vue";
   import { useRoute } from "vue-router";
+  import { definePageMeta, useUserSession } from "#imports";
   import { createSessionFactory } from "~/utils/game-session-factory";
+
+  definePageMeta({ layout: false });
 
   interface RoundPayload {
     round_index: number;
@@ -60,9 +82,15 @@
 
   const route = useRoute();
   const levelCode = route.params.code as string;
+  const { loggedIn, fetch: fetchSession } = useUserSession();
 
   const isLoading = ref(true);
   const errorMessage = ref<string | null>(null);
+  const errorTitle = ref<string>("Đã có lỗi xảy ra");
+  const errorEmoji = ref<string>("😢");
+  const errorActionLink = ref<string | null>(null);
+  const errorActionText = ref<string>("Thử lại");
+
   const canvasRef = ref<HTMLCanvasElement | null>(null);
   const currentRound = ref(0);
   const totalRounds = ref(1);
@@ -172,24 +200,55 @@
     }
   }
 
-  async function fetchAndStartGame() {
-    const res = await fetch(`/api/users/levels/${levelCode}/config`);
-    if (!res.ok) {
-      const errJson = (await res.json().catch(() => ({}))) as {
-        message?: string;
-      };
-      throw new Error(errJson.message || `Lỗi ${res.status}`);
+  function handleApiError(status: number, message?: string): Error {
+    if (status === 403) {
+      if (!loggedIn.value) {
+        errorTitle.value = "Yêu cầu đăng nhập";
+        errorEmoji.value = "🔒";
+        errorActionLink.value = "/login";
+        errorActionText.value = "Đăng nhập để chơi";
+        return new Error(
+          "Trò chơi này yêu cầu đăng nhập tài khoản để bé có thể tham gia và lưu tiến độ."
+        );
+      }
+
+      errorTitle.value = "Cần nâng cấp gói học";
+      errorEmoji.value = "⭐";
+      errorActionLink.value = "/pricing";
+      errorActionText.value = "Xem các gói học";
+      return new Error(
+        "Trò chơi này thuộc gói nâng cấp. Phụ huynh vui lòng mở khoá gói học để bé tiếp tục trải nghiệm."
+      );
     }
-    const payload: ConfigPayload = await res.json();
 
-    if (payload.assets && Array.isArray(payload.assets)) {
-      await preloadAssets(payload.assets);
+    if (status === 428) {
+      errorTitle.value = "Chưa chọn hồ sơ bé";
+      errorEmoji.value = "👶";
+      errorActionLink.value = "/me/children";
+      errorActionText.value = "Chọn hồ sơ bé";
+      return new Error(
+        "Vui lòng chọn hoặc tạo hồ sơ của bé trước khi bắt đầu bài học."
+      );
     }
 
-    const rounds = payload.rounds ?? [];
-    const firstRound = rounds[0];
+    if (status === 404) {
+      errorTitle.value = "Không tìm thấy trò chơi";
+      errorEmoji.value = "📦";
+      errorActionLink.value = "/games";
+      errorActionText.value = "Xem danh sách trò chơi";
+      return new Error("Trò chơi không tồn tại hoặc đã ngừng phát hành.");
+    }
 
-    const engineConfig: EngineConfig = {
+    errorTitle.value = "Lỗi tải trò chơi";
+    errorEmoji.value = "⚠️";
+    return new Error(message || `Lỗi tải cấu hình trò chơi (${status})`);
+  }
+
+  function buildEngineConfig(
+    payload: ConfigPayload,
+    firstRound?: RoundPayload
+  ): EngineConfig {
+    return {
       level_code: payload.level_code || payload.code,
       content_version: payload.content_version ?? 1,
       template_code: payload.template_code,
@@ -201,6 +260,36 @@
       reduced_motion: payload.flags?.reduced_motion ?? false,
       audio_enabled: payload.flags?.audio_enabled ?? true,
     };
+  }
+
+  async function fetchAndStartGame() {
+    if (!loggedIn.value) {
+      await fetchSession().catch(() => {
+        // session not established yet
+      });
+    }
+
+    const endpoint = loggedIn.value
+      ? `/api/users/levels/${levelCode}/config`
+      : `/api/guest/levels/${levelCode}/config`;
+
+    const res = await fetch(endpoint);
+    if (!res.ok) {
+      const errJson = (await res.json().catch(() => ({}))) as {
+        statusMessage?: string;
+        message?: string;
+      };
+      throw handleApiError(res.status, errJson.message);
+    }
+
+    const payload: ConfigPayload = await res.json();
+
+    if (payload.assets && Array.isArray(payload.assets)) {
+      await preloadAssets(payload.assets);
+    }
+
+    const rounds = payload.rounds ?? [];
+    const engineConfig = buildEngineConfig(payload, rounds[0]);
 
     if (rounds.length > 1) {
       startMultiRound(payload, rounds, engineConfig);
@@ -243,6 +332,7 @@
     justify-content: center;
     background-color: var(--color-surface-100);
     position: relative;
+    overflow: hidden;
   }
 
   .game-canvas {
@@ -253,8 +343,123 @@
 
   .loading-state,
   .error-state {
-    font-family: system-ui, sans-serif;
-    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+    width: 100%;
+    max-width: 32rem;
+  }
+
+  .loading-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    background-color: white;
+    padding: 2.5rem 2rem;
+    border-radius: 1.5rem;
+    border: 3px solid var(--color-surface-200);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    text-align: center;
+  }
+
+  .loading-emoji {
+    font-size: 3.5rem;
+    line-height: 1;
+  }
+
+  .loading-text {
+    font-family: var(--font-heading, system-ui, sans-serif);
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--color-surface-800);
+    margin: 0;
+  }
+
+  .error-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: white;
+    padding: 2.5rem 2rem;
+    border-radius: 1.5rem;
+    border: 3px solid var(--color-surface-300);
+    box-shadow: 0 8px 0 var(--color-surface-300);
+    text-align: center;
+    width: 100%;
+  }
+
+  .error-emoji {
+    font-size: 3.5rem;
+    margin-bottom: 0.75rem;
+    line-height: 1;
+  }
+
+  .error-title {
+    font-family: var(--font-heading, "Fredoka", system-ui, sans-serif);
+    font-size: 1.5rem;
+    font-weight: 700;
     color: var(--color-surface-900);
+    margin: 0 0 0.5rem 0;
+  }
+
+  .error-desc {
+    font-size: 1rem;
+    line-height: 1.5;
+    color: var(--color-surface-600);
+    margin: 0 0 1.75rem 0;
+  }
+
+  .error-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    width: 100%;
+  }
+
+  .btn-primary,
+  .btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 52px;
+    padding: 0.75rem 1.5rem;
+    border-radius: 1rem;
+    font-family: var(--font-heading, system-ui, sans-serif);
+    font-weight: 700;
+    font-size: 1rem;
+    text-decoration: none;
+    transition: all 0.15s ease;
+  }
+
+  .btn-primary {
+    background-color: var(--color-cta, #f97316);
+    color: white;
+    border: 2px solid transparent;
+    box-shadow: 0 4px 0 rgba(0, 0, 0, 0.15);
+  }
+
+  .btn-primary:hover {
+    background-color: var(--color-cta-hover, #ea580c);
+  }
+
+  .btn-primary:active {
+    transform: translateY(2px);
+    box-shadow: 0 2px 0 rgba(0, 0, 0, 0.15);
+  }
+
+  .btn-secondary {
+    background-color: var(--color-surface-100);
+    color: var(--color-surface-700);
+    border: 2px solid var(--color-surface-300);
+  }
+
+  .btn-secondary:hover {
+    background-color: var(--color-surface-200);
+  }
+
+  .btn-secondary:active {
+    transform: translateY(2px);
   }
 </style>

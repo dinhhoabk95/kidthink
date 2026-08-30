@@ -1,6 +1,7 @@
 import { appError, generateSecureToken, hashSecureToken } from "@mindkid/auth";
 import {
   getAppDb,
+  notificationDeliveries,
   notifications,
   users,
   verificationTokens,
@@ -89,18 +90,27 @@ export async function handleResendVerification(
   });
 
   // Create notification
-  await db.insert(notifications).values({
-    recipientType: "user",
-    recipientId: user.id,
-    channel: "email",
-    templateCode: "email_verification",
-    payload: {
-      token: rawToken,
-      email: user.email,
-      displayName: user.displayName,
-    },
-    status: "queued",
-  });
+  const [createdNotification] = await db
+    .insert(notifications)
+    .values({
+      recipientType: "user",
+      recipientId: user.id,
+      templateCode: "email_verification",
+      payload: {
+        token: rawToken,
+        email: user.email,
+        displayName: user.displayName,
+      },
+    })
+    .returning();
+
+  if (createdNotification) {
+    await db.insert(notificationDeliveries).values({
+      notificationId: createdNotification.id,
+      channel: "email",
+      status: "queued",
+    });
+  }
 
   return { ok: true };
 }

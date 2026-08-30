@@ -290,4 +290,28 @@ export const FOOD_EMOJIS: EmojiEntry[] = [
     keywords: ["dango", "skewered dumplings", "bánh", "que"],
     name: "Bánh dango",
   },
+  {
+    age_min: 3,
+    category: "food",
+    curriculum_themes: ["dinh_duong_suc_khoe"],
+    emoji: "🥫",
+    keywords: ["canned food", "lon", "hộp thiếc", "đồ hộp"],
+    name: "Lon đồ hộp",
+  },
+  {
+    age_min: 4,
+    category: "food",
+    curriculum_themes: ["dinh_duong_suc_khoe"],
+    emoji: "🍾",
+    keywords: ["bottle", "chai", "chai nước"],
+    name: "Chai",
+  },
+  {
+    age_min: 3,
+    category: "food",
+    curriculum_themes: ["nuoc_hien_tuong_tu_nhien"],
+    emoji: "🧊",
+    keywords: ["ice cube", "viên đá", "khối lập phương", "đá lạnh"],
+    name: "Viên đá",
+  },
 ];

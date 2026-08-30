@@ -1,6 +1,5 @@
 import { getBrowserSessionService } from "@mindkid/auth";
 import { defineEventHandler, type H3Event } from "h3";
-import { setUserSession } from "#imports";
 import {
   getManagerRememberCookie,
   setManagerRememberCookie,

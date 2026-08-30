@@ -300,8 +300,9 @@ export default defineEventHandler(async (event) => {
     );
     if (resolved.code) {
       const match = resolved.code.match(COMPETENCY_REGEX);
-      if (match) {
-        const comp = match[1].toUpperCase();
+      const matchedComp = match?.[1];
+      if (matchedComp) {
+        const comp = matchedComp.toUpperCase();
         competencyCounts.set(comp, (competencyCounts.get(comp) || 0) + 1);
         totalCountedItems++;
       }

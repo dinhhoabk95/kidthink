@@ -11,7 +11,12 @@ import {
 } from "@mindkid/shared";
 import { uploadPrivateAsset } from "@mindkid/storage";
 import { and, eq } from "drizzle-orm";
-import { defineEventHandler, getRouterParam, readMultipartFormData } from "h3";
+import {
+  defineEventHandler,
+  getRouterParam,
+  type H3Event,
+  readMultipartFormData,
+} from "h3";
 import { requireWebUserSession } from "#server/utils/auth-runtime";
 
 interface ParsedProofInput {

@@ -47,8 +47,9 @@ async function enrichCurriculumItem(
       statusStr = les.status;
       minsNum = les.estimatedMinutes ?? 20;
       const match = les.code.match(LES_COMPETENCY_REGEX);
-      if (match) {
-        compStr = match[1].toUpperCase();
+      const matchComp = match?.[1];
+      if (matchComp) {
+        compStr = matchComp.toUpperCase();
       }
     }
   } else if (it.entityType === "game_level") {
@@ -71,8 +72,9 @@ async function enrichCurriculumItem(
       diffNum = lvl.difficulty ?? 1;
       minsNum = 10;
       const match = lvl.code.match(GL_COMPETENCY_REGEX);
-      if (match) {
-        compStr = match[1].toUpperCase();
+      const matchComp = match?.[1];
+      if (matchComp) {
+        compStr = matchComp.toUpperCase();
       }
     }
   }

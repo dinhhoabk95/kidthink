@@ -116,45 +116,50 @@ function generateDefaultLOs(code: string, name: string) {
   ];
 }
 
+function extractTableCells(line: string): string[] | null {
+  if (!(line.startsWith("|") && line.includes("C")) || line.includes("Code")) {
+    return null;
+  }
+  const cells = line
+    .split("|")
+    .map((c) => c.trim())
+    .filter((_, idx, arr) => idx > 0 && idx < arr.length - 1);
+  return cells.length >= 6 ? cells : null;
+}
+
+function parseSkillStatus(statusStr: string): "seeded" | "planned" | "drafted" {
+  if (statusStr.includes("chờ") || statusStr.includes("draft")) {
+    return "planned";
+  }
+  return "seeded";
+}
+
 function parseSkillTableRow(
   line: string,
   currentStrandCode: string,
   currentCompCode: string
 ): ParsedSkill | null {
-  if (!(line.startsWith("|") && line.includes("C")) || line.includes("Code")) {
-    return null;
-  }
-
-  const cells = line
-    .split("|")
-    .map((c) => c.trim())
-    .filter((_, idx, arr) => idx > 0 && idx < arr.length - 1);
-
-  if (cells.length < 6) {
+  const cells = extractTableCells(line);
+  if (!cells) {
     return null;
   }
 
   const code = cells[0];
-  if (!SKILL_CODE_REGEX.test(code)) {
+  const name = cells[1];
+  if (!(code && name && SKILL_CODE_REGEX.test(code))) {
     return null;
   }
 
-  const name = cells[1];
-  const { age_min, age_max } = parseAgeRange(cells[2]);
-  const difficulty = Number.parseInt(cells[3], 10) || 1;
-  const prerequisites = parsePrereqs(cells[4]);
-  const thinking_processes = parseThinkingProcesses(cells[5]);
-  const statusStr = cells[6] ?? "";
-
-  const status: "seeded" | "planned" | "drafted" =
-    statusStr.includes("chờ") || statusStr.includes("draft")
-      ? "planned"
-      : "seeded";
+  const { age_min, age_max } = parseAgeRange(cells[2] ?? "");
+  const difficulty = Number.parseInt(cells[3] ?? "", 10) || 1;
+  const prerequisites = parsePrereqs(cells[4] ?? "");
+  const thinking_processes = parseThinkingProcesses(cells[5] ?? "");
+  const status = parseSkillStatus(cells[6] ?? "");
 
   return {
     code,
     strand_code: currentStrandCode || code.slice(0, code.lastIndexOf(".")),
-    competency_code: currentCompCode || code.split(".")[0],
+    competency_code: currentCompCode || (code.split(".")[0] ?? ""),
     name,
     age_min,
     age_max,
@@ -171,14 +176,15 @@ function resolveTaxonomyDocsDir(docsDir: string): string {
     ? docsDir
     : path.resolve(process.cwd(), docsDir);
 
-  if (fs.existsSync(path.join(resolvedDir, COMPETENCY_FILES[0]))) {
+  const firstCompFile = COMPETENCY_FILES[0];
+  if (firstCompFile && fs.existsSync(path.join(resolvedDir, firstCompFile))) {
     return resolvedDir;
   }
 
   let curr = process.cwd();
   for (let i = 0; i < 4; i++) {
     const candidate = path.resolve(curr, "docs/taxonomy");
-    if (fs.existsSync(path.join(candidate, COMPETENCY_FILES[0]))) {
+    if (firstCompFile && fs.existsSync(path.join(candidate, firstCompFile))) {
       return candidate;
     }
     const parent = path.dirname(curr);
@@ -214,8 +220,8 @@ export function parseTaxonomyDocs(docsDir: string): ParsedSkill[] {
 
       const strandMatch = line.match(STRAND_HEADER_REGEX);
       if (strandMatch) {
-        currentStrandCode = strandMatch[1];
-        currentCompCode = currentStrandCode.split(".")[0];
+        currentStrandCode = strandMatch[1] ?? "";
+        currentCompCode = currentStrandCode.split(".")[0] ?? "";
         continue;
       }
 
@@ -561,15 +567,21 @@ export async function seedTaxonomyMasterData(
 
   validateTaxonomyInvariants(allParsedSkills);
 
-  const seededSkills = allParsedSkills.filter((s) => s.status === "seeded");
-
+  // Gieo **mọi** kỹ năng đã phân tích, giữ nguyên `status`.
+  //
+  // Bản cũ lọc `status === "seeded"` nên 88 kỹ năng trạng thái `chờ` không có
+  // dòng nào trong DB — trong khi corpus nội dung đã trỏ vào chúng
+  // (`C1.CNT.06`, `C4.VIS.01`, `C4.VIS.02`, `C4.SEN.01`, `C5.LIS.01`).
+  // `linkGameLevelSkills` ném khi không tra được mã, nên cả lô seed chết.
+  // Trạng thái vẫn nằm ở cột `status`; chỗ nào cần "đã sẵn sàng" thì lọc theo
+  // cột đó, không lọc bằng cách không tồn tại.
   const compIdMap = await seedCompetenciesStep(db);
   const strandIdMap = await seedStrandsStep(db, compIdMap);
-  const skillIdMap = await seedSkillsStep(db, seededSkills, strandIdMap);
-  await seedPrerequisitesStep(db, seededSkills, skillIdMap);
+  const skillIdMap = await seedSkillsStep(db, allParsedSkills, strandIdMap);
+  await seedPrerequisitesStep(db, allParsedSkills, skillIdMap);
   const loCount = await seedLearningObjectivesStep(
     db,
-    seededSkills,
+    allParsedSkills,
     skillIdMap
   );
 

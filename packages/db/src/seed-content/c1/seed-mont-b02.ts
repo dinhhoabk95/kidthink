@@ -6,7 +6,6 @@ import type { ContentSeed } from "#src/seed-content/types";
  * 1 dạng bài (WB02-D2), 2 level, GT-008, band 3-4
  */
 export const SEED_MONT_B02: ContentSeed<unknown, unknown>[] = [
-  // WB02-D2 Level 1 (Diff 2 - Login)
   {
     header: {
       code: "GL-C1-SEQ-SLOT-0131",
@@ -29,14 +28,47 @@ export const SEED_MONT_B02: ContentSeed<unknown, unknown>[] = [
     content_pack: {
       prompt: "Kéo các toa tàu theo thứ tự 1, 2, 3",
       slots: [
-        { slot_id: "slot_1", label: "Toa 1", expected_item_id: "car_1" },
-        { slot_id: "slot_2", label: "Toa 2", expected_item_id: "car_2" },
-        { slot_id: "slot_3", label: "Toa 3", expected_item_id: "car_3" },
+        {
+          slot_id: "slot_1",
+          label: "Toa 1",
+          expected_item_id: "car_1",
+        },
+        {
+          slot_id: "slot_2",
+          label: "Toa 2",
+          expected_item_id: "car_2",
+        },
+        {
+          slot_id: "slot_3",
+          label: "Toa 3",
+          expected_item_id: "car_3",
+        },
       ],
       items: [
-        { item_id: "car_2", label: "Số 2", asset: { kind: "emoji", ref: "2️⃣" } },
-        { item_id: "car_1", label: "Số 1", asset: { kind: "emoji", ref: "1️⃣" } },
-        { item_id: "car_3", label: "Số 3", asset: { kind: "emoji", ref: "3️⃣" } },
+        {
+          item_id: "car_2",
+          label: "Số 2",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-two",
+          },
+        },
+        {
+          item_id: "car_1",
+          label: "Số 1",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-one",
+          },
+        },
+        {
+          item_id: "car_3",
+          label: "Số 3",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-three",
+          },
+        },
       ],
       scaffolding: {
         l1_nudge: "Toa số 1 và ô đầu tiên phát sáng",
@@ -44,9 +76,13 @@ export const SEED_MONT_B02: ContentSeed<unknown, unknown>[] = [
         l3_demo: "Bàn tay ảo kéo toa 1 vào ô 1 làm mẫu",
       },
     },
-    difficulty_params: { slot_count: 3, distractor_count: 0 },
+    difficulty_params: {
+      slot_count: 3,
+      distractor_count: 0,
+      hint_after_ms: 9000,
+      allow_retry: true,
+    },
   },
-  // WB02-D2 Level 2 (Diff 3 - Standard)
   {
     header: {
       code: "GL-C1-SEQ-SLOT-0132",
@@ -69,16 +105,60 @@ export const SEED_MONT_B02: ContentSeed<unknown, unknown>[] = [
     content_pack: {
       prompt: "Xếp các số vào ô theo thứ tự 1 đến 4",
       slots: [
-        { slot_id: "slot_1", label: "Ô 1", expected_item_id: "num_1" },
-        { slot_id: "slot_2", label: "Ô 2", expected_item_id: "num_2" },
-        { slot_id: "slot_3", label: "Ô 3", expected_item_id: "num_3" },
-        { slot_id: "slot_4", label: "Ô 4", expected_item_id: "num_4" },
+        {
+          slot_id: "slot_1",
+          label: "Ô 1",
+          expected_item_id: "num_1",
+        },
+        {
+          slot_id: "slot_2",
+          label: "Ô 2",
+          expected_item_id: "num_2",
+        },
+        {
+          slot_id: "slot_3",
+          label: "Ô 3",
+          expected_item_id: "num_3",
+        },
+        {
+          slot_id: "slot_4",
+          label: "Ô 4",
+          expected_item_id: "num_4",
+        },
       ],
       items: [
-        { item_id: "num_3", label: "Số 3", asset: { kind: "emoji", ref: "3️⃣" } },
-        { item_id: "num_1", label: "Số 1", asset: { kind: "emoji", ref: "1️⃣" } },
-        { item_id: "num_4", label: "Số 4", asset: { kind: "emoji", ref: "4️⃣" } },
-        { item_id: "num_2", label: "Số 2", asset: { kind: "emoji", ref: "2️⃣" } },
+        {
+          item_id: "num_3",
+          label: "Số 3",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-three",
+          },
+        },
+        {
+          item_id: "num_1",
+          label: "Số 1",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-one",
+          },
+        },
+        {
+          item_id: "num_4",
+          label: "Số 4",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-four",
+          },
+        },
+        {
+          item_id: "num_2",
+          label: "Số 2",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-two",
+          },
+        },
       ],
       scaffolding: {
         l1_nudge: "Số 1 nhấp nháy phát sáng nhẹ",
@@ -86,6 +166,11 @@ export const SEED_MONT_B02: ContentSeed<unknown, unknown>[] = [
         l3_demo: "Bàn tay ảo kéo số 1 vào ô 1",
       },
     },
-    difficulty_params: { slot_count: 4, distractor_count: 0 },
+    difficulty_params: {
+      slot_count: 4,
+      distractor_count: 0,
+      hint_after_ms: 9000,
+      allow_retry: true,
+    },
   },
 ];

@@ -9,6 +9,7 @@
     "start": "node dist/index.js",
     "restore": "tsx src/backup/restore.ts",
     "test": "vitest run",
+    "typecheck": "tsc --noEmit",
     "backup:manual": "tsx src/scripts/backup-manual.ts"
   },
   "dependencies": {

@@ -19,10 +19,38 @@ export interface RenderGateResult {
 const GT_CODE_REGEX = /^GT-\d{3}$/;
 const RENDER_METHOD_REGEX =
   /\brender\s*\(\s*ctx\s*:\s*CanvasRenderingContext2D/m;
+/**
+ * Mọi lối vẽ thô trên context, không chỉ sáu tên cũ. `ctx.` theo sau bất kỳ
+ * phương thức Canvas2D nào đều là vi phạm trong file engine.
+ */
 const RAW_CANVAS_METHOD_REGEX =
-  /\bctx\.(fillRect|arc|font|beginPath|strokeRect|clearRect)\b/;
+  /\bctx\.(fillRect|fillText|strokeRect|strokeText|clearRect|arc|arcTo|ellipse|rect|roundRect|beginPath|closePath|moveTo|lineTo|quadraticCurveTo|bezierCurveTo|fill|stroke|clip|drawImage|putImageData|setLineDash|createLinearGradient|createRadialGradient|createPattern)\b/;
+
+/**
+ * Toạ độ cứng trong lời gọi vẽ — **bất kỳ** hàm `draw*` nào nhận hai số liền
+ * nhau ở vị trí x, y, chứ không phải danh sách ba tên như bản trước.
+ *
+ * Bản cũ chỉ khớp `drawClayBody|drawClayContainer|drawScaffoldingHighlight`.
+ * Khi thư viện nguyên thuỷ đổi sang `drawSlotItem`/`drawGlyphInSlot`/…, không
+ * tên nào trong ba tên đó còn tồn tại, nên `BR-ERC-03` khớp **0 dòng** trong
+ * repo thật — luật còn trong mã nhưng không đo gì.
+ */
 const HARDCODED_COORD_DRAW_REGEX =
-  /\b(drawClayBody|drawClayContainer|drawScaffoldingHighlight)\s*\(\s*[^,]+,\s*\d+(\.\d+)?\s*,\s*\d+(\.\d+)?\b/;
+  /\b(?:rs\.)?draw[A-Z]\w*\s*\(\s*ctx\s*,\s*-?\d+(?:\.\d+)?\s*,\s*-?\d+(?:\.\d+)?\b/;
+
+/**
+ * Thư viện nguyên thuỷ dùng chung — chỗ **được phép** chạm `ctx` trực tiếp.
+ *
+ * Danh sách này là ngoại lệ **tường minh và có ca âm**. Không có nó, `BR-ERC-05`
+ * bị đi vòng bằng cách dời lời gọi `ctx.*` sang một file cạnh bên: cổng chỉ quét
+ * `session.ts` nên một `shared-render.ts` chứa toàn bộ lời gọi thô vẫn xanh.
+ * Giờ cổng quét **mọi** file trong `templates/`, và chỉ hai file dưới đây được
+ * miễn — thêm file vào đây là một quyết định phải review, không phải mặc định.
+ */
+const PRIMITIVE_MODULES: readonly string[] = [
+  "shared-render.ts",
+  "shared-render-shapes.ts",
+];
 
 function checkSessionDrawLines(
   templateCode: string,
@@ -86,11 +114,10 @@ export function lintSingleSessionFile(
 
   const content = readFileSync(sessionFile, "utf-8");
 
-  if (
-    mustHaveRender &&
-    !RENDER_METHOD_REGEX.test(content) &&
-    !content.includes("render(")
-  ) {
+  // ❌ NEVER thêm lại nhánh `content.includes("render(")`: nó nhận mọi chuỗi
+  // chứa `render(` — kể cả `this.renderSystem.render(` hay một comment — nên
+  // phép kiểm "có render()" thoả bằng chuỗi con thay vì bằng chữ ký thật.
+  if (mustHaveRender && !RENDER_METHOD_REGEX.test(content)) {
     violations.push({
       templateCode,
       file: sessionFile,
@@ -102,6 +129,74 @@ export function lintSingleSessionFile(
   const lines = content.split("\n");
   violations.push(...checkSessionDrawLines(templateCode, sessionFile, lines));
 
+  return violations;
+}
+
+/**
+ * File phụ trong `templates/` — không cần có `render()`, nhưng vẫn cấm chạm
+ * `ctx` thô và cấm toạ độ cứng trong lời gọi vẽ.
+ */
+export function lintAuxiliaryFile(
+  templateCode: string | undefined,
+  file: string
+): RenderLintViolation[] {
+  if (!existsSync(file)) {
+    return [];
+  }
+  const lines = readFileSync(file, "utf-8").split("\n");
+  return checkSessionDrawLines(templateCode ?? "", file, lines);
+}
+
+function loadImplementedCodes(
+  renderImplementedConfigPath: string | undefined,
+  violations: RenderLintViolation[]
+): string[] {
+  if (
+    !(renderImplementedConfigPath && existsSync(renderImplementedConfigPath))
+  ) {
+    return [];
+  }
+  try {
+    const raw = readFileSync(renderImplementedConfigPath, "utf-8");
+    return JSON.parse(raw);
+  } catch {
+    violations.push({
+      file: renderImplementedConfigPath,
+      rule: "BR-ERC-01",
+      message: `Failed to parse render implemented config: ${renderImplementedConfigPath}`,
+    });
+    return [];
+  }
+}
+
+function lintTemplateDirectory(
+  templatesDir: string,
+  entry: string,
+  isImplemented: boolean
+): RenderLintViolation[] {
+  const violations: RenderLintViolation[] = [];
+  const sessionFile = join(templatesDir, entry, "session.ts");
+  violations.push(...lintSingleSessionFile(entry, sessionFile, isImplemented));
+
+  for (const sibling of readdirSync(join(templatesDir, entry))) {
+    if (sibling.endsWith(".ts") && sibling !== "session.ts") {
+      violations.push(
+        ...lintAuxiliaryFile(entry, join(templatesDir, entry, sibling))
+      );
+    }
+  }
+  return violations;
+}
+
+function lintRootTemplateFiles(templatesDir: string): RenderLintViolation[] {
+  const violations: RenderLintViolation[] = [];
+  for (const file of readdirSync(templatesDir)) {
+    if (file.endsWith(".ts") && !PRIMITIVE_MODULES.includes(file)) {
+      violations.push(
+        ...lintAuxiliaryFile(undefined, join(templatesDir, file))
+      );
+    }
+  }
   return violations;
 }
 
@@ -126,24 +221,14 @@ export function scanRenderGate(
     };
   }
 
-  let implementedCodes: string[] = [];
-  if (renderImplementedConfigPath && existsSync(renderImplementedConfigPath)) {
-    try {
-      const raw = readFileSync(renderImplementedConfigPath, "utf-8");
-      implementedCodes = JSON.parse(raw);
-    } catch {
-      violations.push({
-        file: renderImplementedConfigPath,
-        rule: "BR-ERC-01",
-        message: `Failed to parse render implemented config: ${renderImplementedConfigPath}`,
-      });
-    }
-  }
-
-  const entries = readdirSync(templatesDir).filter((e) =>
-    GT_CODE_REGEX.test(e)
+  const implementedCodes = loadImplementedCodes(
+    renderImplementedConfigPath,
+    violations
   );
-  entries.sort();
+
+  const entries = readdirSync(templatesDir)
+    .filter((e) => GT_CODE_REGEX.test(e))
+    .sort();
 
   if (entries.length === 0) {
     violations.push({
@@ -165,12 +250,13 @@ export function scanRenderGate(
   }
 
   for (const entry of entries) {
-    const sessionFile = join(templatesDir, entry, "session.ts");
     const isImplemented = implementedSet.has(entry);
     violations.push(
-      ...lintSingleSessionFile(entry, sessionFile, isImplemented)
+      ...lintTemplateDirectory(templatesDir, entry, isImplemented)
     );
   }
+
+  violations.push(...lintRootTemplateFiles(templatesDir));
 
   const activeCount = entries.length;
   const implementedCount = implementedCodes.length;

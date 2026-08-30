@@ -43,9 +43,9 @@ describe("Montessori Batch & Quota Gate (BR-MGL-01, BR-MGL-02, BR-MGL-07, BR-MGL
 
     const issues = checkMontessoriQuotas(levels);
     expect(issues.length).toBeGreaterThan(0);
-    expect(issues[0].code).toBe("MONTESSORI_QUOTA_EXCEEDED");
-    expect(issues[0].message).toContain("C1");
-    expect(issues[0].message).toContain("37 > 36");
+    expect(issues[0]?.code).toBe("MONTESSORI_QUOTA_EXCEEDED");
+    expect(issues[0]?.message).toContain("C1");
+    expect(issues[0]?.message).toContain("37 > 36");
   });
 
   it("Negative Case 2: Cổng tier báo lỗi khi difficulty 1 khai access_tier premium (BR-MGL-12, D-RR)", () => {

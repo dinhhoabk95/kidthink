@@ -7,6 +7,7 @@ import {
 import {
   activeSessions,
   getAppDb,
+  notificationDeliveries,
   notifications,
   users,
   verificationTokens,
@@ -65,6 +66,10 @@ export async function handleResetPassword(event: H3Event, testBody?: unknown) {
   }
 
   const vToken = tokenRows[0];
+  if (!vToken) {
+    throw appError("NOT_FOUND");
+  }
+
   if (vToken.usedAt !== null || vToken.expiresAt <= new Date()) {
     throw appError("TOKEN_EXPIRED");
   }
@@ -117,17 +122,26 @@ export async function handleResetPassword(event: H3Event, testBody?: unknown) {
         )
       );
 
-    await tx.insert(notifications).values({
-      recipientType: "user",
-      recipientId: user.id,
-      channel: "email",
-      templateCode: "password_changed",
-      payload: {
-        email: user.email,
-        displayName: user.displayName,
-      },
-      status: "queued",
-    });
+    const [createdNotification] = await tx
+      .insert(notifications)
+      .values({
+        recipientType: "user",
+        recipientId: user.id,
+        templateCode: "password_changed",
+        payload: {
+          email: user.email,
+          displayName: user.displayName,
+        },
+      })
+      .returning();
+
+    if (createdNotification) {
+      await tx.insert(notificationDeliveries).values({
+        notificationId: createdNotification.id,
+        channel: "email",
+        status: "queued",
+      });
+    }
   });
 
   return { ok: true };

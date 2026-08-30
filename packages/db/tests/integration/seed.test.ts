@@ -49,7 +49,7 @@ describe("BR-ENT-03 & BR-PKG-04 & BR-PKG-05: Seed Integration & Two-way Matching
       .from(packages)
       .where(inArray(packages.code, Object.keys(PACKAGE_CATALOG)));
 
-    expect(keyCount2.value).toBe(ENTITLEMENT_KEYS.length);
-    expect(pkgCount2.value).toBe(Object.keys(PACKAGE_CATALOG).length);
+    expect(keyCount2?.value).toBe(ENTITLEMENT_KEYS.length);
+    expect(pkgCount2?.value).toBe(Object.keys(PACKAGE_CATALOG).length);
   }, 60_000);
 });

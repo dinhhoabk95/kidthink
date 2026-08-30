@@ -98,7 +98,7 @@ describe("RoundRunner (BR-RSP)", () => {
     const events = runner.getAllTelemetry();
     const roundStarted = events.filter((e) => e.event_name === "round_started");
     expect(roundStarted).toHaveLength(1);
-    expect(roundStarted[0].data).toEqual(
+    expect(roundStarted[0]?.data).toEqual(
       expect.objectContaining({ round_index: 0 })
     );
   });
@@ -145,9 +145,9 @@ describe("RoundRunner (BR-RSP)", () => {
     runner.completeCurrentRound();
 
     // First session must be destroyed before second starts
-    expect(sessions[0].isDestroyed()).toBe(true);
+    expect(sessions[0]?.isDestroyed()).toBe(true);
     expect(sessions).toHaveLength(2);
-    expect(sessions[1].isDestroyed()).toBe(false);
+    expect(sessions[1]?.isDestroyed()).toBe(false);
 
     runner.destroy();
   });
@@ -170,7 +170,7 @@ describe("RoundRunner (BR-RSP)", () => {
     const events = runner.getAllTelemetry();
     const skipped = events.filter((e) => e.event_name === "round_skipped");
     expect(skipped).toHaveLength(1);
-    expect(skipped[0].data).toEqual(
+    expect(skipped[0]?.data).toEqual(
       expect.objectContaining({
         round_index: 0,
         reason: "scaffold_exhausted",
@@ -241,7 +241,7 @@ describe("RoundRunner (BR-RSP)", () => {
     runner.startFirstRound();
     runner.destroy();
 
-    expect(sessions[0].isDestroyed()).toBe(true);
+    expect(sessions[0]?.isDestroyed()).toBe(true);
     expect(runner.getState().isFinished).toBe(true);
   });
 });

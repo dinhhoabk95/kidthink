@@ -134,12 +134,19 @@ export function calculateActivityAgeBand(skills?: SkillAgeConstraint[]): {
   if (!skills || skills.length === 0) {
     return { target_age_min: 3, target_age_max: 6, valid: true };
   }
-  let intersectionMin = skills[0].age_min;
-  let intersectionMax = skills[0].age_max;
+  const firstSkill = skills[0];
+  if (!firstSkill) {
+    return { target_age_min: 3, target_age_max: 6, valid: true };
+  }
+  let intersectionMin = firstSkill.age_min;
+  let intersectionMax = firstSkill.age_max;
 
   for (let i = 1; i < skills.length; i++) {
-    intersectionMin = Math.max(intersectionMin, skills[i].age_min);
-    intersectionMax = Math.min(intersectionMax, skills[i].age_max);
+    const s = skills[i];
+    if (s) {
+      intersectionMin = Math.max(intersectionMin, s.age_min);
+      intersectionMax = Math.min(intersectionMax, s.age_max);
+    }
   }
 
   const valid = intersectionMin <= intersectionMax;

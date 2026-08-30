@@ -45,15 +45,14 @@ export default defineEventHandler(async (event) => {
           .orderBy(desc(lessons.contentVersion))
           .limit(1);
 
-  if (!rows || rows.length === 0) {
+  const lesson = rows[0];
+  if (!lesson) {
     throw createError({
       statusCode: 404,
       statusMessage: "LESSON_NOT_FOUND",
       message: `Lesson ${code} (version ${versionParam || "latest"}) not found`,
     });
   }
-
-  const lesson = rows[0];
 
   // Fetch attached activities
   const attached = await db
@@ -98,12 +97,13 @@ export default defineEventHandler(async (event) => {
     };
   });
 
-  const durationDiff = Math.abs(totalActivityMinutes - lesson.estimatedMinutes);
+  const estimatedMinutes = lesson.estimatedMinutes ?? 20;
+  const durationDiff = Math.abs(totalActivityMinutes - estimatedMinutes);
   let durationWarning: string | null = null;
   if (totalActivityMinutes > 45) {
     durationWarning = `Tổng thời lượng hoạt động (${totalActivityMinutes} phút) vượt quá trần 45 phút`;
   } else if (durationDiff > 5) {
-    durationWarning = `Tổng thời lượng các hoạt động (${totalActivityMinutes} phút) lệch quá 5 phút so với thời lượng bài học (${lesson.estimatedMinutes} phút)`;
+    durationWarning = `Tổng thời lượng các hoạt động (${totalActivityMinutes} phút) lệch quá 5 phút so với thời lượng bài học (${estimatedMinutes} phút)`;
   }
 
   return {

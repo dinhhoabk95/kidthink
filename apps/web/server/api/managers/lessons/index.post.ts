@@ -137,6 +137,14 @@ export default defineEventHandler(async (event) => {
     })
     .returning();
 
+  if (!created) {
+    throw createError({
+      statusCode: 500,
+      statusMessage: "LESSON_CREATE_FAILED",
+      message: "Tạo bài học thất bại",
+    });
+  }
+
   await attachLessonActivitiesAndSkills(
     db,
     created.id,
@@ -145,14 +153,16 @@ export default defineEventHandler(async (event) => {
     data.skill_ids
   );
 
-  await writeAudit(db, {
-    actorType: "manager",
-    actorId: session.manager_id,
-    action: "create",
-    entityType: "lesson",
-    entityId: String(created.id),
-    afterState: created,
-    reason: "Manager created lesson via Studio",
+  await db.transaction(async (tx) => {
+    await writeAudit(tx, {
+      actor_type: "manager",
+      actor_id: session.manager_id,
+      action: "content_created",
+      entity_type: "lesson",
+      entity_id: String(created.id),
+      after_data: created as unknown as Record<string, unknown>,
+      reason: "Manager created lesson via Studio",
+    });
   });
 
   setResponseStatus(event, 201);

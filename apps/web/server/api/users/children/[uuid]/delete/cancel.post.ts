@@ -54,6 +54,10 @@ export default defineEventHandler(async (event) => {
     .where(eq(childProfiles.id, child.id))
     .returning();
 
+  if (!updated) {
+    throw createError({ statusCode: 500, statusMessage: "CANCEL_FAILED" });
+  }
+
   return {
     uuid: updated.uuid,
     status: updated.status,

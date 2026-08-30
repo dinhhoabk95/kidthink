@@ -148,11 +148,11 @@ describe("program-showcase projections (Task #61 / P3.8)", () => {
     expect(detail.weeks).toHaveLength(4);
 
     // Week 1: detailed items
-    expect(detail.weeks[0].week_no).toBe(1);
-    expect(detail.weeks[0].goal).toBe("Khám phá hình khối và số đếm 1-3");
-    expect(detail.weeks[0].items).toBeDefined();
-    expect(detail.weeks[0].items).toHaveLength(2);
-    expect(detail.weeks[0].items?.[0]).toEqual({
+    expect(detail.weeks[0]?.week_no).toBe(1);
+    expect(detail.weeks[0]?.goal).toBe("Khám phá hình khối và số đếm 1-3");
+    expect(detail.weeks[0]?.items).toBeDefined();
+    expect(detail.weeks[0]?.items).toHaveLength(2);
+    expect(detail.weeks[0]?.items?.[0]).toEqual({
       entity_type: "lesson",
       code: "LES-C1-001",
       title: "Đếm hạt dẻ",
@@ -161,19 +161,19 @@ describe("program-showcase projections (Task #61 / P3.8)", () => {
     });
 
     // Week 2: detailed items
-    expect(detail.weeks[1].week_no).toBe(2);
-    expect(detail.weeks[1].items).toBeDefined();
-    expect(detail.weeks[1].items).toHaveLength(1);
+    expect(detail.weeks[1]?.week_no).toBe(2);
+    expect(detail.weeks[1]?.items).toBeDefined();
+    expect(detail.weeks[1]?.items).toHaveLength(1);
 
     // Week 3+: summary only, NO items field (BR-PSH-01, BR-PSH-02)
-    expect(detail.weeks[2].week_no).toBe(3);
-    expect(detail.weeks[2].goal).toBe("Quy luật lặp lại đơn giản");
-    expect(detail.weeks[2].items).toBeUndefined();
-    expect(detail.weeks[2].item_count).toBe(1);
+    expect(detail.weeks[2]?.week_no).toBe(3);
+    expect(detail.weeks[2]?.goal).toBe("Quy luật lặp lại đơn giản");
+    expect(detail.weeks[2]?.items).toBeUndefined();
+    expect(detail.weeks[2]?.item_count).toBe(1);
 
-    expect(detail.weeks[3].week_no).toBe(4);
-    expect(detail.weeks[3].items).toBeUndefined();
-    expect(detail.weeks[3].item_count).toBe(1);
+    expect(detail.weeks[3]?.week_no).toBe(4);
+    expect(detail.weeks[3]?.items).toBeUndefined();
+    expect(detail.weeks[3]?.item_count).toBe(1);
 
     // Deep forbidden keys check (BR-PSH-03, D-NF)
     const audit = hasForbiddenPublicKeys(detail);

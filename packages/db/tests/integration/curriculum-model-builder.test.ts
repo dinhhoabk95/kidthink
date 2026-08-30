@@ -32,6 +32,9 @@ describe("P3.3 Database Schema & Invariants Integration Tests (Task 2)", () => {
         displayName: "Parent Test",
       })
       .returning();
+    if (!user) {
+      throw new Error("Failed to insert user");
+    }
     testUserId = user.id;
 
     const [child] = await db
@@ -43,6 +46,9 @@ describe("P3.3 Database Schema & Invariants Integration Tests (Task 2)", () => {
         avatarId: "avatar-bear",
       })
       .returning();
+    if (!child) {
+      throw new Error("Failed to insert child");
+    }
     testChildId = child.id;
 
     // Create a base curriculum
@@ -63,6 +69,9 @@ describe("P3.3 Database Schema & Invariants Integration Tests (Task 2)", () => {
         status: "draft",
       })
       .returning();
+    if (!curr) {
+      throw new Error("Failed to insert curr");
+    }
     testCurriculumId = curr.id;
   });
 
@@ -93,6 +102,9 @@ describe("P3.3 Database Schema & Invariants Integration Tests (Task 2)", () => {
         .select()
         .from(curricula)
         .where(eq(curricula.id, testCurriculumId));
+      if (!row) {
+        throw new Error("Failed to select row");
+      }
 
       expect(row).toBeDefined();
       expect(row.code).toBe(testCurriculumCode);
@@ -136,6 +148,9 @@ describe("P3.3 Database Schema & Invariants Integration Tests (Task 2)", () => {
             eq(curriculumWeeks.weekNo, 1)
           )
         );
+      if (!week) {
+        throw new Error("Failed to select week");
+      }
 
       expect(week.goal).toBe("Làm quen với số lượng và đếm trong phạm vi 3");
 
@@ -166,6 +181,9 @@ describe("P3.3 Database Schema & Invariants Integration Tests (Task 2)", () => {
         .select()
         .from(curriculumItems)
         .where(eq(curriculumItems.curriculumId, testCurriculumId));
+      if (!item) {
+        throw new Error("Failed to select item");
+      }
 
       expect(item.weekNo).toBe(1);
       expect(item.sessionNo).toBe(1);
@@ -210,6 +228,9 @@ describe("P3.3 Database Schema & Invariants Integration Tests (Task 2)", () => {
           status: "active",
         })
         .returning();
+      if (!enrollment) {
+        throw new Error("Failed to insert enrollment");
+      }
 
       expect(enrollment.status).toBe("active");
       expect(enrollment.childId).toBe(testChildId);
@@ -234,6 +255,9 @@ describe("P3.3 Database Schema & Invariants Integration Tests (Task 2)", () => {
           status: "active",
         })
         .returning();
+      if (!enrollment) {
+        throw new Error("Failed to insert enrollment");
+      }
 
       const [item] = await db
         .insert(curriculumItems)
@@ -247,6 +271,9 @@ describe("P3.3 Database Schema & Invariants Integration Tests (Task 2)", () => {
           isRequired: true,
         })
         .returning();
+      if (!item) {
+        throw new Error("Failed to insert item");
+      }
 
       const [progress] = await db
         .insert(curriculumItemProgress)
@@ -258,6 +285,9 @@ describe("P3.3 Database Schema & Invariants Integration Tests (Task 2)", () => {
           completedAt: new Date(),
         })
         .returning();
+      if (!progress) {
+        throw new Error("Failed to insert progress");
+      }
 
       expect(progress.status).toBe("completed");
       expect(progress.completedAt).toBeDefined();

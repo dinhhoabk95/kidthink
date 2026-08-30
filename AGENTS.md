@@ -53,16 +53,12 @@ Còn 33 khối `catch` trong `apps/*/server` — tất cả đều có logic th�
 
 | Thứ                               | Luật                                                                                                |
 | --------------------------------- | --------------------------------------------------------------------------------------------------- |
-| `any` tường minh, code production | Cấm. Biome `noExplicitAny` mức error, đang sạch                                                     |
-| `any` tường minh, file test       | Biome **không** phủ (rule tắt ở đường dẫn test). Nợ 560 chỗ và ❌ KHÔNG cổng nào đếm — trôi tự do   |
-| `as T`                            | Luật vẫn là nợ chỉ được giảm, nhưng ❌ KHÔNG còn cổng nào đếm (gỡ 2026-08-29). Con số 851 là ảnh chụp cũ                   |
+| `any` tường minh, mọi nơi         | **CẤM**. Không define `any` trong production code lẫn file test. Khai báo type tường minh đầy đủ.  |
+| `unknown`                         | **CẤM define mới**. Bắt buộc khai báo interface/type cụ thể hoặc generic có ràng buộc.             |
+| `as T`                            | Không dùng `as any` hay `as unknown as T` để trốn type error. Dùng type guard / narrowing chuẩn.   |
 | `as const`                        | Được — làm kiểu hẹp lại, không nói dối                                                              |
-| `unknown`                         | **Được khuyến khích** ở ranh giới, nhưng phải parse hoặc hẹp kiểu trước khi đọc field               |
+| Type declarations                 | BẮT BUỘC khai báo type đầy đủ cho mọi function, parameter, return type, object structure.          |
 | Body của route `/api/*`           | Phải Zod parse cùng file. Cổng: `apps/web/tests/security/security-checklist.test.ts` (`BR-SEC-04`), sổ nợ đã rỗng. Query/param ❌ KHÔNG được đo |
-
-Thay ép kiểu bằng gì: `readRequestBody(event)` trả `unknown` ·
-`readPostgresErrorCode(err)` thay `(err as { code?: string }).code` ·
-`throwValidationError(zodError)` thay bốn cách dựng `VALIDATION_FAILED` cũ.
 
 ## Cổng nào thật, cổng nào nói dối
 
@@ -81,10 +77,16 @@ admin:app/server/shared/node), so từng file với
 Giảm → xanh kèm nhắc chạy `pnpm typecheck:update`. Đây là **chỗ duy nhất** typecheck
 chạy: không app hay package nào còn script `typecheck` riêng.
 
-Nợ tại thời điểm chốt baseline (đo lại 2026-08-29): **2.931 lỗi** — root 1.111 · worker 301 ·
-web:app 679 · web:server 669 · admin:app 171 · bốn project còn lại 0. Gần như toàn bộ là
-`TS18048`/`TS2532` do `noUncheckedIndexedAccess`. `pnpm typecheck --only web` chạy riêng
-một app; `--only web:app` chạy riêng một project.
+Nợ theo `typecheck-baseline.json` hiện tại: **3.142 lỗi** — root 1.318 · worker 312 ·
+web:app 685 · web:server 680 · admin:app 147 · bốn project còn lại 0. Con số **2.931** ghi
+trước đây sai ở mọi hạng mục. Trong 3.142 đó có **+194 lỗi mà Task #124 và #125 ghi THÊM**
+vào baseline cho mã vừa viết — bậc thang khi ấy chỉ là lời khuyên. Từ nay `--update` **từ
+chối** mọi lần tăng (`scripts/typecheck/ratchet.ts:refuseIncrease`); muốn tăng phải có
+`--allow-increase` kèm lý do trong PR. Sau khi sửa `origin` của bộ sinh level, root đo được
+**1.139** (−179) → tổng thực đo **2.963**; chưa chốt được vì cây làm việc còn lỗi mới chưa
+commit nằm ngoài phạm vi review. Gần như toàn bộ phần còn lại là `TS18048`/`TS2532` do
+`noUncheckedIndexedAccess`. `pnpm typecheck --only web` chạy riêng một app; `--only web:app`
+chạy riêng một project.
 
 Convention của workspace — `tsconfig.json` extend đúng một base, `vitest.config.ts` đi
 qua `defineWorkspaceTest`, script `test`, dependency khai `catalog:`, `pnpm check` đủ
@@ -118,8 +120,16 @@ Cổng còn lại, **đây là toàn bộ**:
 | `pnpm test:deploy` | Script hạ tầng |
 
 Thứ ❌ KHÔNG còn ai đo: corpus spec (frontmatter, section, link, mã lỗi), từ vựng
-người dùng, design token/hex literal, ép kiểu `as T`, `any` trong test, ranh giới
-runtime, tên biến môi trường, giá, mặt công khai cho trẻ, convention workspace.
+người dùng, design token/hex literal, ép kiểu `as T`, `any` trong test, tên biến môi
+trường, giá, mặt công khai cho trẻ, convention workspace, **ngân sách hiệu năng**
+(`BR-PRF-01/02/08`), **emoji affordance** (`BR-EMJ-03`), **vệ sinh script shell**,
+**vệ sinh đường dẫn import**, **24 rule manifest web-scale**, và **nửa phần quét của
+`BR-GAT-01`**. Năm khoản in đậm KHÔNG có trong danh sách §4 của
+`112-gates-package-removal-plan.md` — bổ sung 2026-08-30.
+
+Đã khôi phục: `BR-ARB-04` (`apps/admin/tests/gates/`) và `BR-MFA-13`
+(`apps/web/tests/gates/mfa-key-custody.ts`). Bảng đủ 17 khoản:
+`docs/specs/08-quality/runtime-gates.md` §3.
 Chúng vẫn là luật trong `docs/specs/` — nhưng luật không có cổng thì trôi.
 
 Cổng mới ❌ NEVER dựng lại ở `packages/gates` — hỏi trước. Cổng phạm vi một workspace

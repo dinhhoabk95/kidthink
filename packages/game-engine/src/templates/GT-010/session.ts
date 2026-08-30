@@ -6,6 +6,19 @@ import {
   type GameAction,
   TemplateGameSession,
 } from "#src/game-session";
+import { resolveLayout } from "#src/layout/registry";
+import type { Slot } from "#src/layout/types";
+import type { DegradationState } from "#src/systems/degradation";
+import type { Particle, RenderSystem } from "#src/systems/render-system";
+import {
+  drawLabelText,
+  drawPromptText,
+  drawSceneBackground,
+  drawSlotItem,
+  type ItemVisualState,
+  resolveEmojiGlyph,
+  updateParticles,
+} from "../shared-render.js";
 import { evaluateQuestionAnswer, solveEquationSystem } from "./solver.js";
 import type { GT010Content, GT010Difficulty } from "./template.js";
 
@@ -13,6 +26,11 @@ export class SubstitutionSession extends TemplateGameSession<
   GT010Content,
   GT010Difficulty
 > {
+  slots: readonly Slot[] = [];
+  degradation: DegradationState | null = null;
+  private renderParticles: Particle[] = [];
+  private readonly renderItemStates: Map<string, ItemVisualState> = new Map();
+
   private readonly pinnedSymbols: Map<string, number> = new Map();
   private selectedValue: number | null = null;
 
@@ -84,10 +102,11 @@ export class SubstitutionSession extends TemplateGameSession<
   getExpectedAnswer(): number {
     const symbolIds = this.content.symbols.map((s) => s.symbol_id);
     const solutions = solveEquationSystem(symbolIds, this.content.equations);
-    if (solutions.length === 0) {
+    const firstSol = solutions[0];
+    if (!firstSol) {
       return 0;
     }
-    return evaluateQuestionAnswer(solutions[0], this.content.question);
+    return evaluateQuestionAnswer(firstSol, this.content.question);
   }
 
   validateAction(action: GameAction): ActionResult {
@@ -119,6 +138,89 @@ export class SubstitutionSession extends TemplateGameSession<
     super.destroy();
     this.pinnedSymbols.clear();
     this.selectedValue = null;
+  }
+
+  resolveSlots(ageBand: "3-4" | "4-5" | "5-6"): void {
+    const layoutFn = resolveLayout("equation-rows");
+    this.slots = layoutFn({
+      slotCount: this.content.options.length,
+      targetCount: this.content.equations.length,
+      ageBand,
+    });
+  }
+
+  setRenderItemState(itemId: string, state: ItemVisualState): void {
+    this.renderItemStates.set(itemId, state);
+  }
+
+  getRenderItemState(itemId: string): ItemVisualState {
+    return this.renderItemStates.get(itemId) ?? "idle";
+  }
+
+  render(
+    ctx: CanvasRenderingContext2D,
+    rs: RenderSystem,
+    _timeMs: number
+  ): void {
+    drawSceneBackground(ctx, rs);
+    drawPromptText(ctx, rs, this.content.prompt);
+    const eqSlots = this.slots.filter((s) => s.role === "target");
+    const optionSlots = this.slots.filter((s) => s.role === "source");
+    const glyphOf = (symbolId: string): string => {
+      const sym = this.content.symbols.find((s) => s.symbol_id === symbolId);
+      if (sym?.asset.kind !== "emoji") {
+        return "?";
+      }
+      return resolveEmojiGlyph(sym.asset.ref) ?? "?";
+    };
+
+    this.content.equations.forEach((eq, i) => {
+      const slot = eqSlots[i];
+      if (!slot) {
+        return;
+      }
+      const lhs = eq.left.map(glyphOf).join(" + ");
+      const pinned = eq.left
+        .map((id) => this.pinnedSymbols.get(id))
+        .filter((v): v is number => v !== undefined);
+      const hint =
+        pinned.length === eq.left.length ? `  (${pinned.join(" + ")})` : "";
+      drawLabelText(
+        ctx,
+        `${lhs} = ${eq.right_value}${hint}`,
+        slot.x,
+        slot.y,
+        26
+      );
+    });
+
+    this.content.options.forEach((opt, i) => {
+      const slot = optionSlots[i];
+      if (!slot) {
+        return;
+      }
+      let state: "correct" | "wrong" | "idle" = "idle";
+      if (this.selectedValue === opt.value) {
+        state = opt.is_correct ? "correct" : "wrong";
+      }
+      drawSlotItem(ctx, rs, slot, {
+        id: `opt-${i}`,
+        text: String(opt.value),
+        state,
+      });
+    });
+    this.drawRenderFeedback(rs, ctx);
+  }
+
+  private drawRenderFeedback(
+    rs: RenderSystem,
+    ctx: CanvasRenderingContext2D
+  ): void {
+    if (this.degradation?.particles_enabled === false) {
+      return;
+    }
+    this.renderParticles = updateParticles(this.renderParticles);
+    rs.drawParticles(ctx, this.renderParticles);
   }
 }
 

@@ -59,6 +59,10 @@ export const AUTH_ERROR_DEFINITIONS = {
     status: 503,
     message: "Hệ thống tạm thời không khả dụng. Vui lòng thử lại sau.",
   },
+  INTERNAL_ERROR: {
+    status: 500,
+    message: "Hệ thống gặp sự cố. Vui lòng thử lại sau ít phút.",
+  },
   TOKEN_EXPIRED: {
     status: 410,
     message: "Mã xác thực đã hết hạn hoặc không còn hiệu lực.",

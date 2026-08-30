@@ -257,6 +257,10 @@ export async function startLessonRun(
     })
     .returning();
 
+  if (!newRun) {
+    throw new Error("Failed to create lesson run");
+  }
+
   await createStepsForRun(newRun.id, lesson.id, now);
   return await getLessonRun(newRun.uuid, input.userId);
 }

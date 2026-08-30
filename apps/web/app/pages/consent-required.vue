@@ -156,7 +156,7 @@
 <script lang="ts" setup>
   import { computed, onMounted, reactive, ref } from "vue";
 
-  globalThis.definePageMeta?.({
+  definePageMeta({
     middleware: ["user-auth"],
   });
 
@@ -178,8 +178,8 @@
     };
   }
 
-  const route = globalThis.useRoute?.() || { query: {} };
-  const router = globalThis.useRouter?.();
+  const route = useRoute();
+  const router = useRouter();
 
   const loading = ref(true);
   const submitting = ref(false);

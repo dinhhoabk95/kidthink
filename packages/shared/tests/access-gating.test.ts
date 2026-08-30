@@ -420,7 +420,7 @@ describe("P1.3 Access Gating (BR-GAT-01 .. BR-GAT-08)", () => {
             };
 
             const allowed = await allowedTiers(caller, keys);
-            const tiers: AccessTier[] = [
+            const tiers: readonly AccessTier[] = [
               "free",
               "login",
               "standard",
@@ -429,11 +429,17 @@ describe("P1.3 Access Gating (BR-GAT-01 .. BR-GAT-08)", () => {
 
             for (let n = 0; n < tiers.length; n++) {
               const tierN = tiers[n];
+              if (!tierN) {
+                continue;
+              }
               const canAccessN = allowed.includes(tierN);
 
               if (canAccessN) {
                 for (let m = 0; m < n; m++) {
                   const tierM = tiers[m];
+                  if (!tierM) {
+                    continue;
+                  }
                   const canAccessM = allowed.includes(tierM);
                   expect(
                     canAccessM,

@@ -39,15 +39,14 @@ export default defineEventHandler(async (event) => {
           .orderBy(desc(lessons.contentVersion))
           .limit(1);
 
-  if (!rows || rows.length === 0) {
+  const lesson = rows[0];
+  if (!lesson) {
     throw createError({
       statusCode: 404,
       statusMessage: "LESSON_NOT_FOUND",
       message: `Lesson ${code} (version ${versionParam || "latest"}) not found`,
     });
   }
-
-  const lesson = rows[0];
 
   // Fetch attached activities with current metadata
   const attachedActivities = await db

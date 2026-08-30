@@ -295,7 +295,7 @@
 <script lang="ts" setup>
   import { computed, onMounted, reactive, ref } from "vue";
 
-  globalThis.definePageMeta?.({
+  definePageMeta({
     middleware: ["user-auth"],
   });
 

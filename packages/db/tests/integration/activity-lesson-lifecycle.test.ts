@@ -38,6 +38,9 @@ async function setupTestEnvironment() {
       role: "super_admin",
     })
     .returning();
+  if (!mgr) {
+    throw new Error("Failed to insert manager");
+  }
 
   // 2. Competency, Strand, Skill
   const compCode = `C${(Number(seq) % 6) + 1}`;
@@ -57,6 +60,9 @@ async function setupTestEnvironment() {
       set: { name: "Năng lực tư duy" },
     })
     .returning();
+  if (!comp) {
+    throw new Error("Failed to insert competency");
+  }
 
   const [strd] = await db
     .insert(strands)
@@ -70,6 +76,9 @@ async function setupTestEnvironment() {
       set: { competencyId: comp.id, name: "Mạch số lượng" },
     })
     .returning();
+  if (!strd) {
+    throw new Error("Failed to insert strand");
+  }
 
   const [sk] = await db
     .insert(skills)
@@ -86,6 +95,9 @@ async function setupTestEnvironment() {
       set: { strandId: strd.id, name: "Kỹ năng đếm tương ứng 1-1" },
     })
     .returning();
+  if (!sk) {
+    throw new Error("Failed to insert skill");
+  }
 
   // 3. Game Template & Level
   const randNum = Math.floor(Math.random() * 900) + 100;
@@ -109,14 +121,20 @@ async function setupTestEnvironment() {
     })
     .returning();
 
-  const tmplId = tmpl
-    ? tmpl.id
-    : (
-        await db
-          .select({ id: gameTemplates.id })
-          .from(gameTemplates)
-          .where(eq(gameTemplates.code, gtCode))
-      )[0].id;
+  let tmplId: number;
+  if (tmpl) {
+    tmplId = tmpl.id;
+  } else {
+    const tmplRows = await db
+      .select({ id: gameTemplates.id })
+      .from(gameTemplates)
+      .where(eq(gameTemplates.code, gtCode));
+    const firstTmpl = tmplRows[0];
+    if (!firstTmpl) {
+      throw new Error("Failed to find template");
+    }
+    tmplId = firstTmpl.id;
+  }
 
   const [level] = await db
     .insert(gameLevels)
@@ -136,6 +154,9 @@ async function setupTestEnvironment() {
       createdByManagerId: mgr.id,
     })
     .returning();
+  if (!level) {
+    throw new Error("Failed to insert level");
+  }
 
   await db.insert(contentSkillMap).values({
     entityType: "game_level",
@@ -169,6 +190,9 @@ describe("Activity & Lesson Lifecycle Transitions & Gating (BR-ACA-04, BR-LSA-03
         createdByManagerId: mgr.id,
       })
       .returning();
+    if (!act) {
+      throw new Error("Failed to insert activity");
+    }
 
     await db.insert(contentSkillMap).values({
       entityType: "activity",
@@ -229,6 +253,9 @@ describe("Activity & Lesson Lifecycle Transitions & Gating (BR-ACA-04, BR-LSA-03
         createdByManagerId: mgr.id,
       })
       .returning();
+    if (!act) {
+      throw new Error("Failed to insert activity");
+    }
 
     // Create active lesson referencing this activity
     const [les] = await db
@@ -248,6 +275,9 @@ describe("Activity & Lesson Lifecycle Transitions & Gating (BR-ACA-04, BR-LSA-03
         createdByManagerId: mgr.id,
       })
       .returning();
+    if (!les) {
+      throw new Error("Failed to insert lesson");
+    }
 
     // Link activity to lesson
     await db.insert(lessonActivities).values({
@@ -292,6 +322,9 @@ describe("Activity & Lesson Lifecycle Transitions & Gating (BR-ACA-04, BR-LSA-03
         createdByManagerId: mgr.id,
       })
       .returning();
+    if (!act) {
+      throw new Error("Failed to insert activity");
+    }
 
     // Create approved lesson
     const [les] = await db
@@ -311,6 +344,9 @@ describe("Activity & Lesson Lifecycle Transitions & Gating (BR-ACA-04, BR-LSA-03
         createdByManagerId: mgr.id,
       })
       .returning();
+    if (!les) {
+      throw new Error("Failed to insert lesson");
+    }
 
     await db.insert(contentSkillMap).values({
       entityType: "lesson",

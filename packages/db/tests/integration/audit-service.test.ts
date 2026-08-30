@@ -60,7 +60,7 @@ describe("Task 3 & 4 — writeAudit service (BR-AUD-02..08, D-EU..EW)", () => {
         .from(auditLogs)
         .where(eq(auditLogs.entityId, id));
       expect(rows).toHaveLength(1);
-      expect(rows[0].entityId).toBe(id);
+      expect(rows[0]?.entityId).toBe(id);
     }
   });
 
@@ -146,6 +146,6 @@ describe("Task 3 & 4 — writeAudit service (BR-AUD-02..08, D-EU..EW)", () => {
       .from(auditLogs)
       .where(eq(auditLogs.id, logId));
     expect(rows).toHaveLength(1);
-    expect(rows[0].entityId).toBe(testEntityId);
+    expect(rows[0]?.entityId).toBe(testEntityId);
   });
 });

@@ -26,7 +26,6 @@ import {
   setResponseStatus,
 } from "h3";
 import { z } from "zod";
-import { setUserSession } from "#imports";
 import { OAUTH_TICKET_COOKIE_NAME } from "#server/api/guest/auth/oauth/[provider]/callback.get";
 import {
   assertRateLimitAllowed,

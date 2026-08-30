@@ -127,8 +127,12 @@ export function isModelConnected(model: readonly CubeCoord[]): boolean {
   const coordSet = new Set(model.map(key));
   const visited = new Set<string>();
 
-  const queue: CubeCoord[] = [model[0]];
-  visited.add(key(model[0]));
+  const first = model[0];
+  if (!first) {
+    return true;
+  }
+  const queue: CubeCoord[] = [first];
+  visited.add(key(first));
 
   const deltas = [
     { dx: 1, dy: 0, dz: 0 },
@@ -227,7 +231,11 @@ export function computeTopView(
 
   for (const c of model) {
     if (c.x >= 0 && c.x < gridSize && c.y >= 0 && c.y < gridSize) {
-      heights[c.y][c.x] = Math.max(heights[c.y][c.x], c.z + 1);
+      const row = heights[c.y];
+      const cur = row?.[c.x];
+      if (row && cur !== undefined) {
+        row[c.x] = Math.max(cur, c.z + 1);
+      }
     }
   }
 

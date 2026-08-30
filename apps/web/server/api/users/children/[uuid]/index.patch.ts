@@ -156,6 +156,14 @@ export default defineEventHandler(async (event) => {
     .where(eq(childProfiles.id, child.id))
     .returning();
 
+  if (!updated) {
+    throw createError({
+      statusCode: 500,
+      statusMessage: "CHILD_UPDATE_FAILED",
+      message: "Cập nhật thông tin trẻ thất bại",
+    });
+  }
+
   return {
     uuid: updated.uuid,
     display_name: updated.displayName,

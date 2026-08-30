@@ -115,9 +115,7 @@ function buildAuditConditions(
 
 export default defineEventHandler(async (event) => {
   const session = await requireSuperAdminSession(event);
-  const query =
-    ((event as Record<string, unknown>)._query as Record<string, unknown>) ||
-    getQuery(event);
+  const query = getQuery(event);
 
   const limit = Math.min(Math.max(Number(query.limit) || 5000, 1), 10_000);
   const dates = validateAuditDateRange(
@@ -137,22 +135,24 @@ export default defineEventHandler(async (event) => {
     .limit(limit);
 
   // BR-ALV-06: Log data_exported in audit_logs
-  await writeAudit(db, {
-    actor_type: "manager",
-    actor_id: session.manager_id,
-    action: "data_exported",
-    reason:
-      typeof query.reason === "string" && query.reason.trim()
-        ? query.reason.trim()
-        : "Xuất dữ liệu kiểm toán CSV (BR-ALV-06)",
-    entity_type: "audit_logs",
-    entity_id: `export_${Date.now()}`,
-    after_data: {
-      exported_row_count: rows.length,
-      filter_action: query.action || null,
-      filter_entity_type: query.entity_type || null,
-    },
-    ip_address: getManagerRemoteIp(event),
+  await db.transaction(async (tx) => {
+    await writeAudit(tx, {
+      actor_type: "manager",
+      actor_id: session.manager_id,
+      action: "data_exported",
+      reason:
+        typeof query.reason === "string" && query.reason.trim()
+          ? query.reason.trim()
+          : "Xuất dữ liệu kiểm toán CSV (BR-ALV-06)",
+      entity_type: "audit_logs",
+      entity_id: `export_${Date.now()}`,
+      after_data: {
+        exported_row_count: rows.length,
+        filter_action: query.action || null,
+        filter_entity_type: query.entity_type || null,
+      },
+      ip_address: getManagerRemoteIp(event),
+    });
   });
 
   // Generate UTF-8 BOM CSV

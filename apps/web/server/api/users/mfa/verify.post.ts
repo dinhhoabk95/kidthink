@@ -6,7 +6,7 @@ import {
   verifyTotpCode,
 } from "@mindkid/auth";
 import { getOwnerDb, mfaRecoveryCodes, mfaSettings, users } from "@mindkid/db";
-import { and, eq } from "drizzle-orm";
+import { and, eq, sql } from "drizzle-orm";
 import { createError, defineEventHandler, readBody } from "h3";
 import { z } from "zod";
 
@@ -18,13 +18,10 @@ const verifyMfaSchema = z.object({
 });
 
 export default defineEventHandler(async (event) => {
-  const session = requireWebUserSession(event);
+  const session = await requireWebUserSession(event);
   const userId = session.user_id;
 
-  const raw =
-    (event.context?.body as unknown) ||
-    ((event as Record<string, unknown>)._body as unknown) ||
-    (await readBody(event).catch(() => ({})));
+  const raw = event.context?.body ?? (await readBody(event).catch(() => ({})));
 
   const parsedResult = verifyMfaSchema.safeParse(raw);
   if (!parsedResult.success) {
@@ -108,7 +105,7 @@ export default defineEventHandler(async (event) => {
   await db
     .update(users)
     .set({
-      sessionVersion: (session.session_version || 0) + 1,
+      sessionVersion: sql`${users.sessionVersion} + 1`,
       updatedAt: new Date(),
     })
     .where(eq(users.id, userId));

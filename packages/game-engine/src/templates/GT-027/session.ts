@@ -6,7 +6,19 @@ import {
   type GameAction,
   TemplateGameSession,
 } from "#src/game-session";
+import { resolveLayout } from "#src/layout/registry";
+import type { Slot } from "#src/layout/types";
+import type { DegradationState } from "#src/systems/degradation";
+import type { Particle, RenderSystem } from "#src/systems/render-system";
 import { type RuleDefinition, RuleSystem } from "#src/systems/rule-system";
+import {
+  drawPromptText,
+  drawSceneBackground,
+  drawSlotItem,
+  drawSubPromptText,
+  type ItemVisualState,
+  updateParticles,
+} from "../shared-render.js";
 import type { GT027Content, GT027Difficulty } from "./template.js";
 
 interface CardItem {
@@ -20,6 +32,11 @@ export class GT027Session extends TemplateGameSession<
   GT027Content,
   GT027Difficulty
 > {
+  slots: readonly Slot[] = [];
+  degradation: DegradationState | null = null;
+  private renderParticles: Particle[] = [];
+  private readonly renderItemStates: Map<string, ItemVisualState> = new Map();
+
   private ruleSystem!: RuleSystem<CardItem>;
   private readonly selectedItemIds = new Set<string>();
   private targetSuccessTotal = 0;
@@ -152,5 +169,61 @@ export class GT027Session extends TemplateGameSession<
 
   override destroy(): void {
     this.selectedItemIds.clear();
+  }
+
+  resolveSlots(ageBand: "3-4" | "4-5" | "5-6"): void {
+    const layoutFn = resolveLayout("grid");
+    this.slots = layoutFn({
+      slotCount: this.content.items.length,
+      ageBand,
+    });
+  }
+
+  setRenderItemState(itemId: string, state: ItemVisualState): void {
+    this.renderItemStates.set(itemId, state);
+  }
+
+  getRenderItemState(itemId: string): ItemVisualState {
+    return this.renderItemStates.get(itemId) ?? "idle";
+  }
+
+  render(
+    ctx: CanvasRenderingContext2D,
+    rs: RenderSystem,
+    _timeMs: number
+  ): void {
+    drawSceneBackground(ctx, rs);
+    drawPromptText(ctx, rs, this.content.prompt);
+    const rule = this.ruleSystem.getActiveRule();
+    const signal = this.ruleSystem.getSignalInfo();
+    // Luật đang hiệu lực phải hiện thường trực: trẻ đổi luật giữa chừng, không
+    // ai được yêu cầu nhớ luật cũ.
+    drawSubPromptText(ctx, rs, signal?.text ?? rule.description);
+
+    this.content.items.forEach((item, i) => {
+      const slot = this.slots[i];
+      if (!slot) {
+        return;
+      }
+      drawSlotItem(ctx, rs, slot, {
+        id: item.id,
+        asset: item.asset,
+        state: this.selectedItemIds.has(item.id)
+          ? "selected"
+          : this.getRenderItemState(item.id),
+      });
+    });
+    this.drawRenderFeedback(rs, ctx);
+  }
+
+  private drawRenderFeedback(
+    rs: RenderSystem,
+    ctx: CanvasRenderingContext2D
+  ): void {
+    if (this.degradation?.particles_enabled === false) {
+      return;
+    }
+    this.renderParticles = updateParticles(this.renderParticles);
+    rs.drawParticles(ctx, this.renderParticles);
   }
 }

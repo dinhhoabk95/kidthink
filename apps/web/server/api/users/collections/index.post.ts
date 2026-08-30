@@ -24,7 +24,7 @@ export default defineEventHandler(async (event) => {
       id: created.id,
       name: created.name,
       position: created.position,
-      created_at: created.createdAt.toISOString(),
+      created_at: created.created_at,
     },
   };
 });

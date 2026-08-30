@@ -69,25 +69,35 @@ export default defineEventHandler(async (event) => {
     })
     .returning();
 
+  if (!newNotification) {
+    throw createError({
+      statusCode: 500,
+      statusMessage: "NOTIFICATION_INSERT_FAILED",
+      message: "Tạo bản ghi thông báo mới thất bại",
+    });
+  }
+
   await db.insert(notificationDeliveries).values({
     notificationId: newNotification.id,
     channel: "email",
     status: "queued",
   });
 
-  const managerId = manager.manager_id || manager.id || 1;
-  await writeAudit(db, {
-    actor_type: "manager",
-    actor_id: managerId,
-    action: "notification_resent",
-    reason: "Gửi lại thông báo giao dịch theo yêu cầu quản trị viên",
-    entity_type: "notification",
-    entity_id: newNotification.id.toString(),
-    after_data: {
-      original_notification_id: id,
-      new_notification_id: newNotification.id,
-      template_code: original.templateCode,
-    },
+  const managerId = manager.manager_id;
+  await db.transaction(async (tx) => {
+    await writeAudit(tx, {
+      actor_type: "manager",
+      actor_id: managerId,
+      action: "content_created",
+      reason: "Gửi lại thông báo giao dịch theo yêu cầu quản trị viên",
+      entity_type: "notification",
+      entity_id: newNotification.id.toString(),
+      after_data: {
+        original_notification_id: id,
+        new_notification_id: newNotification.id,
+        template_code: original.templateCode,
+      },
+    });
   });
 
   return {

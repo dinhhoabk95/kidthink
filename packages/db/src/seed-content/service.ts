@@ -39,6 +39,67 @@ type DbTransaction = Parameters<
   Parameters<NodePgDatabase<Record<string, unknown>>["transaction"]>[0]
 >[0];
 
+async function checkExistingLevelVersion(
+  tx: DbTransaction,
+  code: string,
+  contentVersion: number
+): Promise<{ shouldSkip: boolean; existingEntityId?: number }> {
+  const [existing] = await tx
+    .select()
+    .from(gameLevels)
+    .where(eq(gameLevels.code, code));
+
+  if (!existing) {
+    return { shouldSkip: false };
+  }
+
+  if (existing.contentVersion === contentVersion) {
+    return { shouldSkip: true };
+  }
+  if (existing.contentVersion > contentVersion) {
+    throw new AppError(
+      "VALIDATION_FAILED",
+      `Mã ${code} đã có version lớn hơn.`
+    );
+  }
+  await tx
+    .update(gameLevels)
+    .set({ status: "archived" })
+    .where(eq(gameLevels.id, existing.id));
+
+  return { shouldSkip: false, existingEntityId: existing.entityId };
+}
+
+async function linkGameLevelSkills(
+  tx: DbTransaction,
+  newLevelId: number,
+  skillCodes: string[]
+): Promise<void> {
+  const skillMapEntries: Array<{ skillId: number; weight: number }> = [];
+  for (let i = 0; i < skillCodes.length; i++) {
+    const sc = skillCodes[i];
+    if (!sc) {
+      continue;
+    }
+    const [skill] = await tx.select().from(skills).where(eq(skills.code, sc));
+    if (!skill) {
+      throw new AppError("VALIDATION_FAILED", `Skill ${sc} không tồn tại.`);
+    }
+    skillMapEntries.push({ skillId: skill.id, weight: i === 0 ? 1.0 : 0.5 });
+  }
+
+  validateContentSkillMap(skillMapEntries);
+
+  for (const entry of skillMapEntries) {
+    await tx.insert(contentSkillMap).values({
+      entityType: "game_level",
+      entityId: newLevelId,
+      skillId: entry.skillId,
+      weight: entry.weight.toString(),
+    });
+  }
+}
+
 async function processGameLevelSeed(
   tx: DbTransaction,
   seed: ContentSeed<unknown, unknown>,
@@ -60,32 +121,19 @@ async function processGameLevelSeed(
     );
   }
 
-  const [existing] = await tx
-    .select()
-    .from(gameLevels)
-    .where(eq(gameLevels.code, header.code));
-
-  if (existing) {
-    if (existing.contentVersion === header.content_version) {
-      return "skipped";
-    }
-    if (existing.contentVersion > header.content_version) {
-      throw new AppError(
-        "VALIDATION_FAILED",
-        `Mã ${header.code} đã có version lớn hơn.`
-      );
-    }
-    await tx
-      .update(gameLevels)
-      .set({ status: "archived" })
-      .where(eq(gameLevels.id, existing.id));
+  const { shouldSkip, existingEntityId } = await checkExistingLevelVersion(
+    tx,
+    header.code,
+    header.content_version
+  );
+  if (shouldSkip) {
+    return "skipped";
   }
 
-  const entityId = existing
-    ? existing.entityId
-    : Math.floor(Date.now() / 1000) * 1000 + sequenceIndex;
+  const entityId =
+    existingEntityId ?? Math.floor(Date.now() / 1000) * 1000 + sequenceIndex;
 
-  const [newLevel] = await tx
+  const newLevels = await tx
     .insert(gameLevels)
     .values({
       entityId,
@@ -105,27 +153,12 @@ async function processGameLevelSeed(
       authoredIn: header.authored_in,
     })
     .returning();
-
-  const skillMapEntries: Array<{ skillId: number; weight: number }> = [];
-  for (let i = 0; i < header.skill_codes.length; i++) {
-    const sc = header.skill_codes[i];
-    const [skill] = await tx.select().from(skills).where(eq(skills.code, sc));
-    if (!skill) {
-      throw new AppError("VALIDATION_FAILED", `Skill ${sc} không tồn tại.`);
-    }
-    skillMapEntries.push({ skillId: skill.id, weight: i === 0 ? 1.0 : 0.5 });
+  const newLevel = newLevels[0];
+  if (!newLevel) {
+    throw new Error("Failed to insert game level");
   }
 
-  validateContentSkillMap(skillMapEntries);
-
-  for (const entry of skillMapEntries) {
-    await tx.insert(contentSkillMap).values({
-      entityType: "game_level",
-      entityId: newLevel.id,
-      skillId: entry.skillId,
-      weight: entry.weight.toString(),
-    });
-  }
+  await linkGameLevelSkills(tx, newLevel.id, header.skill_codes);
 
   await validateAndAssignTags(
     tx,
@@ -259,7 +292,7 @@ async function processActivitySeed(
     }
   }
 
-  const [newActivity] = await tx
+  const newActivities = await tx
     .insert(activities)
     .values({
       entityId,
@@ -279,6 +312,10 @@ async function processActivitySeed(
       publishedAt: new Date(),
     })
     .returning();
+  const newActivity = newActivities[0];
+  if (!newActivity) {
+    throw new Error("Failed to insert activity");
+  }
 
   await linkEntitySkills(tx, "activity", newActivity.id, header.skill_codes);
 
@@ -312,6 +349,9 @@ async function linkLessonActivities(
 ): Promise<void> {
   for (let i = 0; i < activityCodes.length; i++) {
     const actCode = activityCodes[i];
+    if (!actCode) {
+      continue;
+    }
     const [act] = await tx
       .select({ entityId: activities.entityId })
       .from(activities)
@@ -406,7 +446,7 @@ async function processLessonSeed(
       ? header.guide
       : JSON.stringify(header.guide);
 
-  const [newLesson] = await tx
+  const newLessons = await tx
     .insert(lessons)
     .values({
       entityId,
@@ -429,6 +469,10 @@ async function processLessonSeed(
       publishedAt: new Date(),
     })
     .returning();
+  const newLesson = newLessons[0];
+  if (!newLesson) {
+    throw new Error("Failed to insert lesson");
+  }
 
   await linkLessonActivities(tx, newLesson.id, header.activity_codes);
   await assignLessonSkillsAndTags(tx, newLesson.id, header);
@@ -510,10 +554,11 @@ export async function executeSeedBatch(
         existingCodes.add(seed.header.code);
 
         const failed = gates.filter((g) => !g.passed);
-        if (failed.length > 0) {
+        const firstFailed = failed[0];
+        if (firstFailed) {
           throw new AppError(
             "VALIDATION_FAILED",
-            `Nội dung ${seed.header.code} trượt Cổng ${failed[0].gate}: ${failed[0].issues[0]?.message}`
+            `Nội dung ${seed.header.code} trượt Cổng ${firstFailed.gate}: ${firstFailed.issues[0]?.message ?? ""}`
           );
         }
 

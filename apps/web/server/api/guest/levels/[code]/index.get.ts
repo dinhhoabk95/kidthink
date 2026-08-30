@@ -34,7 +34,7 @@ export default defineEventHandler(async (event) => {
       templateId: gameLevels.templateId,
       templateCode: gameTemplates.code,
       templateName: gameTemplates.name,
-      mechanicType: gameTemplates.mechanicType,
+      mechanic: gameTemplates.mechanic,
       contentVersion: gameLevels.contentVersion,
     })
     .from(gameLevels)
@@ -75,7 +75,7 @@ export default defineEventHandler(async (event) => {
   }
 
   // Determine gating & lock state
-  const guestAllowed = allowedTiers({ kind: "guest" });
+  const guestAllowed = await allowedTiers({ kind: "guest" });
   const isLocked = !guestAllowed.includes(level.accessTier);
 
   // Derive competency from code prefix (e.g. GL-C1-001 -> C1)
@@ -87,7 +87,7 @@ export default defineEventHandler(async (event) => {
   const relatedLevels = await db
     .select({
       code: gameLevels.code,
-      title: gameLevels.name,
+      title: gameLevels.title,
       difficulty: gameLevels.difficulty,
       access_tier: gameLevels.accessTier,
     })
@@ -139,7 +139,7 @@ export default defineEventHandler(async (event) => {
     theme_id: level.themeId,
     template_code: level.templateCode,
     template_name: level.templateName,
-    mechanic_type: level.mechanicType,
+    mechanic_type: level.mechanic,
     access_tier: level.accessTier,
     locked: isLocked,
     scoring: {

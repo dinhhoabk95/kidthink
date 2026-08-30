@@ -6,7 +6,10 @@ import {
   type GameAction,
   TemplateGameSession,
 } from "#src/game-session";
+import { resolveLayout } from "#src/layout/registry";
+import type { Slot } from "#src/layout/types";
 import { OrderingMechanic } from "#src/mechanics/ordering-mechanic";
+import type { DegradationState } from "#src/systems/degradation";
 import {
   canMove,
   cellKey,
@@ -19,6 +22,18 @@ import {
   type MazeSide,
   type MazeStepResult,
 } from "#src/systems/maze-system";
+import type { Particle, RenderSystem } from "#src/systems/render-system";
+import {
+  drawPromptText,
+  drawSceneBackground,
+  type ItemVisualState,
+  updateParticles,
+} from "../shared-render.js";
+import {
+  boxFromSlots,
+  drawMazeBoard,
+  drawRequiredCells,
+} from "../shared-render-shapes.js";
 import type { GT013Content, GT013Difficulty } from "./template.js";
 
 export interface MazeScaffoldHint {
@@ -61,6 +76,11 @@ export class GT013Session extends TemplateGameSession<
   GT013Content,
   GT013Difficulty
 > {
+  slots: readonly Slot[] = [];
+  degradation: DegradationState | null = null;
+  private renderParticles: Particle[] = [];
+  private readonly renderItemStates: Map<string, ItemVisualState> = new Map();
+
   private readonly ordering = new OrderingMechanic();
   private tracker: MazePathTracker = new MazePathTracker(this.content.grid);
 
@@ -196,6 +216,51 @@ export class GT013Session extends TemplateGameSession<
       count++;
     }
     return [...ahead];
+  }
+
+  resolveSlots(ageBand: "3-4" | "4-5" | "5-6"): void {
+    const layoutFn = resolveLayout("grid");
+    this.slots = layoutFn({
+      slotCount: this.content.grid.rows * this.content.grid.cols,
+      targetCount: this.content.grid.cols,
+      ageBand,
+    });
+  }
+
+  setRenderItemState(itemId: string, state: ItemVisualState): void {
+    this.renderItemStates.set(itemId, state);
+  }
+
+  getRenderItemState(itemId: string): ItemVisualState {
+    return this.renderItemStates.get(itemId) ?? "idle";
+  }
+
+  render(
+    ctx: CanvasRenderingContext2D,
+    rs: RenderSystem,
+    _timeMs: number
+  ): void {
+    drawSceneBackground(ctx, rs);
+    drawPromptText(ctx, rs, this.content.prompt);
+    const box = boxFromSlots(this.slots);
+    if (!box) {
+      this.drawRenderFeedback(rs, ctx);
+      return;
+    }
+    drawMazeBoard(ctx, this.content.grid, box, this.tracker.getPath());
+    drawRequiredCells(ctx, this.content.grid, box, this.content.required_cells);
+    this.drawRenderFeedback(rs, ctx);
+  }
+
+  private drawRenderFeedback(
+    rs: RenderSystem,
+    ctx: CanvasRenderingContext2D
+  ): void {
+    if (this.degradation?.particles_enabled === false) {
+      return;
+    }
+    this.renderParticles = updateParticles(this.renderParticles);
+    rs.drawParticles(ctx, this.renderParticles);
   }
 }
 

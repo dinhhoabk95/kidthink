@@ -177,9 +177,40 @@
 </template>
 
 <script lang="ts" setup>
-  import type { BalanceReport } from "@mindkid/shared/client";
+  export interface AdminBalanceIndicators {
+    competency_distribution?: {
+      distinct_competencies?: number;
+      distribution?: Record<string, number>;
+    };
+    activity_type_balance?: {
+      lessons_count?: number;
+      game_levels_count?: number;
+      lesson_ratio?: number;
+      game_level_ratio?: number;
+    };
+    cognitive_load?: {
+      max_minutes_in_week?: number;
+    };
+    progression_smoothness?: {
+      is_smooth?: boolean;
+    };
+    prerequisite_satisfaction?: {
+      is_satisfied?: boolean;
+    };
+    retention_spacing?: {
+      has_review?: boolean;
+    };
+  }
+
+  export interface AdminBalanceReport {
+    is_balanced?: boolean;
+    violations?: string[];
+    errors?: string[];
+    warnings?: string[];
+    indicators?: AdminBalanceIndicators;
+  }
 
   defineProps<{
-    report: BalanceReport;
+    report: AdminBalanceReport;
   }>();
 </script>

@@ -6,16 +6,34 @@ import {
   type GameAction,
   TemplateGameSession,
 } from "#src/game-session";
+import { resolveLayout } from "#src/layout/registry";
+import type { Slot } from "#src/layout/types";
+import type { DegradationState } from "#src/systems/degradation";
 import {
   InhibitionSystem,
   type TrialItem,
 } from "#src/systems/inhibition-system";
+import type { Particle, RenderSystem } from "#src/systems/render-system";
+import {
+  drawProgressBadge,
+  drawPromptText,
+  drawSceneBackground,
+  drawSlotItem,
+  drawSubPromptText,
+  type ItemVisualState,
+  updateParticles,
+} from "../shared-render.js";
 import type { GT026Content, GT026Difficulty } from "./template.js";
 
 export class GT026Session extends TemplateGameSession<
   GT026Content,
   GT026Difficulty
 > {
+  slots: readonly Slot[] = [];
+  degradation: DegradationState | null = null;
+  private renderParticles: Particle[] = [];
+  private readonly renderItemStates: Map<string, ItemVisualState> = new Map();
+
   private inhibitionSystem!: InhibitionSystem;
 
   setupEntities(): void {
@@ -113,5 +131,68 @@ export class GT026Session extends TemplateGameSession<
 
   override destroy(): void {
     // cleanup
+  }
+
+  resolveSlots(ageBand: "3-4" | "4-5" | "5-6"): void {
+    const layoutFn = resolveLayout("grid");
+    this.slots = layoutFn({
+      slotCount: 1,
+      ageBand,
+    });
+  }
+
+  setRenderItemState(itemId: string, state: ItemVisualState): void {
+    this.renderItemStates.set(itemId, state);
+  }
+
+  getRenderItemState(itemId: string): ItemVisualState {
+    return this.renderItemStates.get(itemId) ?? "idle";
+  }
+
+  render(
+    ctx: CanvasRenderingContext2D,
+    rs: RenderSystem,
+    _timeMs: number
+  ): void {
+    drawSceneBackground(ctx, rs);
+    drawPromptText(ctx, rs, this.content.prompt);
+    const trial = this.inhibitionSystem.getCurrentTrial();
+    drawProgressBadge(
+      ctx,
+      rs,
+      this.inhibitionSystem.getCurrentTrialIndex(),
+      this.inhibitionSystem.getTotalTrials()
+    );
+
+    if (!trial || this.inhibitionSystem.getState() !== "stimulus") {
+      // Khoảng nghỉ giữa hai lượt: màn phải trống, đó là phần của bài kiểm ức chế.
+      this.drawRenderFeedback(rs, ctx);
+      return;
+    }
+
+    const stimulus =
+      trial.kind === "go"
+        ? this.content.go_stimulus
+        : this.content.nogo_stimulus;
+    drawSubPromptText(ctx, rs, stimulus.label);
+    const slot = this.slots[0];
+    if (slot) {
+      drawSlotItem(ctx, rs, slot, {
+        id: trial.id,
+        asset: stimulus.asset,
+      });
+    }
+    this.drawRenderFeedback(rs, ctx);
+  }
+
+  private drawRenderFeedback(
+    rs: RenderSystem,
+    ctx: CanvasRenderingContext2D
+  ): void {
+    if (this.degradation?.particles_enabled === false) {
+      return;
+    }
+    this.renderParticles = updateParticles(this.renderParticles);
+    rs.drawParticles(ctx, this.renderParticles);
   }
 }

@@ -324,12 +324,18 @@
     let curr: Record<string, unknown> = updated;
     for (let i = 0; i < pathParts.length - 1; i++) {
       const part = pathParts[i];
+      if (!part) {
+        continue;
+      }
       if (!curr[part] || typeof curr[part] !== "object") {
         curr[part] = {};
       }
       curr = curr[part] as Record<string, unknown>;
     }
-    curr[pathParts.at(-1)] = val;
+    const lastKey = pathParts.at(-1);
+    if (lastKey) {
+      curr[lastKey] = val;
+    }
     emit("update:modelValue", updated);
   }
 

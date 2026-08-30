@@ -21,7 +21,6 @@ import { enforceTwoAxisRateLimit } from "@mindkid/shared";
 import { and, eq, isNull } from "drizzle-orm";
 import { defineEventHandler, readBody } from "h3";
 import { z } from "zod";
-import { setUserSession } from "#imports";
 import {
   assertManagerRateLimitAllowed,
   assertManagerRequestBodySize,
@@ -89,7 +88,7 @@ async function verifyManagerMfa(
 export default defineEventHandler(async (event) => {
   assertManagerSameOriginRequest(event);
   assertManagerRequestBodySize(event, 16 * 1024);
-  const body = (await readBody(event).catch(() => null)) || event._body || {};
+  const body = (await readBody(event).catch(() => null)) ?? {};
   const parsed = MfaSchema.safeParse(body);
   if (!parsed.success) {
     throw appError("INVALID_CREDENTIALS");
@@ -194,14 +193,6 @@ export default defineEventHandler(async (event) => {
         entity_type: "manager",
         entity_id: manager.id.toString(),
       });
-
-      await writeAudit(tx, {
-        actor_type: "manager",
-        actor_id: manager.id,
-        action: "manager_login",
-        entity_type: "manager",
-        entity_id: manager.id.toString(),
-      });
     });
   } else if (mfaResult.recoveryCodeId === null) {
     await db.transaction(async (tx) => {
@@ -214,13 +205,14 @@ export default defineEventHandler(async (event) => {
       });
     });
   } else {
+    const recoveryCodeId = mfaResult.recoveryCodeId;
     await db.transaction(async (tx) => {
       const [claimed] = await tx
         .update(mfaRecoveryCodes)
         .set({ usedAt: new Date() })
         .where(
           and(
-            eq(mfaRecoveryCodes.id, mfaResult.recoveryCodeId),
+            eq(mfaRecoveryCodes.id, recoveryCodeId),
             isNull(mfaRecoveryCodes.usedAt)
           )
         )

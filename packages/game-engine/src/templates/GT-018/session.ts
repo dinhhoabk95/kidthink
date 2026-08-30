@@ -6,14 +6,31 @@ import {
   type GameAction,
   TemplateGameSession,
 } from "#src/game-session";
+import { resolveLayout } from "#src/layout/registry";
+import type { Slot } from "#src/layout/types";
 import { OrderingMechanic } from "#src/mechanics/ordering-mechanic";
 import { SelectionMechanic } from "#src/mechanics/selection-mechanic";
+import type { DegradationState } from "#src/systems/degradation";
+import type { Particle, RenderSystem } from "#src/systems/render-system";
+import {
+  drawPromptText,
+  drawSceneBackground,
+  drawSlotItem,
+  drawSubPromptText,
+  type ItemVisualState,
+  updateParticles,
+} from "../shared-render.js";
 import type { GT018Content, GT018Difficulty } from "./template.js";
 
 export class GT018Session extends TemplateGameSession<
   GT018Content,
   GT018Difficulty
 > {
+  slots: readonly Slot[] = [];
+  degradation: DegradationState | null = null;
+  private renderParticles: Particle[] = [];
+  private readonly renderItemStates: Map<string, ItemVisualState> = new Map();
+
   private readonly selectionMechanic = new SelectionMechanic({
     mode: "single",
   });
@@ -125,6 +142,66 @@ export class GT018Session extends TemplateGameSession<
       isCorrect: opt.is_correct === true,
     }));
     return this.selectionMechanic.isSelectionComplete(items);
+  }
+
+  resolveSlots(ageBand: "3-4" | "4-5" | "5-6"): void {
+    const layoutFn = resolveLayout("grid");
+    this.slots = layoutFn({
+      slotCount: this.content.options.length,
+      ageBand,
+    });
+  }
+
+  setRenderItemState(itemId: string, state: ItemVisualState): void {
+    this.renderItemStates.set(itemId, state);
+  }
+
+  getRenderItemState(itemId: string): ItemVisualState {
+    return this.renderItemStates.get(itemId) ?? "idle";
+  }
+
+  render(
+    ctx: CanvasRenderingContext2D,
+    rs: RenderSystem,
+    _timeMs: number
+  ): void {
+    drawSceneBackground(ctx, rs);
+    drawPromptText(ctx, rs, this.content.prompt);
+    drawSubPromptText(ctx, rs, this.content.audio_prompt.text);
+
+    const chosenOrder =
+      this.content.response_mode === "sequence"
+        ? this.orderingMechanic.getCurrentSequence()
+        : [];
+
+    this.content.options.forEach((opt, i) => {
+      const slot = this.slots[i];
+      if (!slot) {
+        return;
+      }
+      const orderIndex = chosenOrder.indexOf(opt.item_id);
+      const selected =
+        this.selectedItemId === opt.item_id ||
+        this.selectionMechanic.isSelected(opt.item_id);
+      drawSlotItem(ctx, rs, slot, {
+        id: opt.item_id,
+        asset: opt.asset,
+        label: orderIndex >= 0 ? String(orderIndex + 1) : undefined,
+        state: selected ? "selected" : this.getRenderItemState(opt.item_id),
+      });
+    });
+    this.drawRenderFeedback(rs, ctx);
+  }
+
+  private drawRenderFeedback(
+    rs: RenderSystem,
+    ctx: CanvasRenderingContext2D
+  ): void {
+    if (this.degradation?.particles_enabled === false) {
+      return;
+    }
+    this.renderParticles = updateParticles(this.renderParticles);
+    rs.drawParticles(ctx, this.renderParticles);
   }
 }
 

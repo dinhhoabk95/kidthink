@@ -7,7 +7,6 @@ import type { ContentSeed } from "#src/seed-content/types";
  * WB03-D2 giữ 2 level (sàn tối thiểu); level thứ ba gỡ ở T99 WP99.0 để C4 về trần 9.
  */
 export const SEED_MONT_A03: ContentSeed<unknown, unknown>[] = [
-  // WB03-D1 Level 1 (Diff 1 - Free)
   {
     header: {
       code: "GL-C4-VIS-CARD-0101",
@@ -28,27 +27,48 @@ export const SEED_MONT_A03: ContentSeed<unknown, unknown>[] = [
       authored_in: "repo_seed",
     },
     content_pack: {
-      target_item: { id: "g1", emoji: "🦒", name: "Hươu cao cổ" },
+      prompt: "Bé hãy chọn bóng đúng của chú hươu cao cổ nhé!",
+      target_item: {
+        item_id: "g1",
+        asset: {
+          kind: "emoji",
+          ref: "EMJ-giraffe",
+        },
+      },
       options: [
         {
-          id: "opt-1",
-          label: "Bóng hươu cao cổ",
+          item_id: "opt-1",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-giraffe",
+          },
           is_correct: true,
-          emoji: "🦒",
         },
-        { id: "opt-2", label: "Bóng chú voi", is_correct: false, emoji: "🐘" },
-        { id: "opt-3", label: "Bóng chú ngựa", is_correct: false, emoji: "🐎" },
+        {
+          item_id: "opt-2",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-elephant",
+          },
+          is_correct: false,
+        },
+        {
+          item_id: "opt-3",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-racehorse",
+          },
+          is_correct: false,
+        },
       ],
-      scaffolding: {
-        l1_nudge: "Viền chiếc cổ dài của bóng đúng phát sáng nhẹ",
-        l2_guidance:
-          "Bàn tay ảo so sánh chiếc cổ dài của hình mẫu và bóng đúng",
-        l3_demo: "Bàn tay ảo chạm vào bóng hươu cao cổ làm mẫu",
-      },
     },
-    difficulty_params: { count: 3, distractor_count: 2 },
+    difficulty_params: {
+      distractor_count: 2,
+      hint_after_ms: 9000,
+      allow_retry: true,
+      shuffle_items: true,
+    },
   },
-  // WB03-D1 Level 2 (Diff 2 - Login)
   {
     header: {
       code: "GL-C4-VIS-CARD-0102",
@@ -69,21 +89,48 @@ export const SEED_MONT_A03: ContentSeed<unknown, unknown>[] = [
       authored_in: "repo_seed",
     },
     content_pack: {
-      target_item: { id: "car1", emoji: "🚗", name: "Ô tô con" },
-      options: [
-        { id: "opt-1", label: "Bóng máy bay", is_correct: false, emoji: "✈️" },
-        { id: "opt-2", label: "Bóng ô tô con", is_correct: true, emoji: "🚗" },
-        { id: "opt-3", label: "Bóng xe buýt", is_correct: false, emoji: "🚌" },
-      ],
-      scaffolding: {
-        l1_nudge: "Hai bánh xe tròn của bóng ô tô nhấp nháy",
-        l2_guidance: "Bàn tay ảo chỉ vào đường viền mui xe và bánh xe",
-        l3_demo: "Bàn tay ảo chọn bóng ô tô",
+      prompt: "Bé hãy chọn chiếc bóng vừa vặn với ô tô nhé!",
+      target_item: {
+        item_id: "car1",
+        asset: {
+          kind: "emoji",
+          ref: "EMJ-car",
+        },
       },
+      options: [
+        {
+          item_id: "opt-1",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-airplane",
+          },
+          is_correct: false,
+        },
+        {
+          item_id: "opt-2",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-car",
+          },
+          is_correct: true,
+        },
+        {
+          item_id: "opt-3",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-bus",
+          },
+          is_correct: false,
+        },
+      ],
     },
-    difficulty_params: { count: 3, distractor_count: 2 },
+    difficulty_params: {
+      distractor_count: 2,
+      hint_after_ms: 9000,
+      allow_retry: true,
+      shuffle_items: true,
+    },
   },
-  // WB03-D1 Level 3 (Diff 3 - Standard)
   {
     header: {
       code: "GL-C4-VIS-CARD-0103",
@@ -104,26 +151,48 @@ export const SEED_MONT_A03: ContentSeed<unknown, unknown>[] = [
       authored_in: "repo_seed",
     },
     content_pack: {
-      target_item: { id: "bf1", emoji: "🦋", name: "Bướm hoa" },
+      prompt: "Bé tìm bóng của chú bướm đang xòe cánh nhé!",
+      target_item: {
+        item_id: "bf1",
+        asset: {
+          kind: "emoji",
+          ref: "EMJ-butterfly",
+        },
+      },
       options: [
-        { id: "opt-1", label: "Bóng chú ong", is_correct: false, emoji: "🐝" },
-        { id: "opt-2", label: "Bóng bướm hoa", is_correct: true, emoji: "🦋" },
         {
-          id: "opt-3",
-          label: "Bóng chuồn chuồn",
+          item_id: "opt-1",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-bee",
+          },
           is_correct: false,
-          emoji: "🦗",
+        },
+        {
+          item_id: "opt-2",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-butterfly",
+          },
+          is_correct: true,
+        },
+        {
+          item_id: "opt-3",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-sparrow",
+          },
+          is_correct: false,
         },
       ],
-      scaffolding: {
-        l1_nudge: "Viền đôi cánh bướm đối xứng phát sáng",
-        l2_guidance: "Bàn tay ảo chỉ vào hai cánh bướm xoè rộng",
-        l3_demo: "Bàn tay ảo chạm bóng bướm hoa",
-      },
     },
-    difficulty_params: { count: 3, distractor_count: 2 },
+    difficulty_params: {
+      distractor_count: 2,
+      hint_after_ms: 9000,
+      allow_retry: true,
+      shuffle_items: true,
+    },
   },
-  // WB03-D2 Level 1 (Diff 1 - Free)
   {
     header: {
       code: "GL-C4-VIS-MATCH-0104",
@@ -144,25 +213,50 @@ export const SEED_MONT_A03: ContentSeed<unknown, unknown>[] = [
       authored_in: "repo_seed",
     },
     content_pack: {
+      prompt: "Bé nối từng con vật với chiếc bóng tương ứng nhé!",
       pairs: [
         {
-          left: { id: "cat", emoji: "🐱" },
-          right: { id: "cat-shadow", emoji: "🐱" },
+          pair_id: "pair-1",
+          left: {
+            item_id: "cat",
+            asset: {
+              kind: "emoji",
+              ref: "EMJ-cat",
+            },
+          },
+          right: {
+            item_id: "cat-shadow",
+            asset: {
+              kind: "emoji",
+              ref: "EMJ-cat",
+            },
+          },
         },
         {
-          left: { id: "rabbit", emoji: "🐰" },
-          right: { id: "rabbit-shadow", emoji: "🐰" },
+          pair_id: "pair-2",
+          left: {
+            item_id: "rabbit",
+            asset: {
+              kind: "emoji",
+              ref: "EMJ-rabbit-face",
+            },
+          },
+          right: {
+            item_id: "rabbit-shadow",
+            asset: {
+              kind: "emoji",
+              ref: "EMJ-rabbit-face",
+            },
+          },
         },
       ],
-      scaffolding: {
-        l1_nudge: "Chú mèo và bóng mèo cùng sáng nhẹ",
-        l2_guidance: "Bàn tay ảo chỉ từ chú mèo sang bóng mèo",
-        l3_demo: "Bàn tay ảo nối mẫu cặp chú mèo",
-      },
     },
-    difficulty_params: { pair_count: 2 },
+    difficulty_params: {
+      hint_after_ms: 9000,
+      allow_retry: true,
+      shuffle_sides: false,
+    },
   },
-  // WB03-D2 Level 2 (Diff 2 - Login)
   {
     header: {
       code: "GL-C4-VIS-MATCH-0105",
@@ -183,26 +277,65 @@ export const SEED_MONT_A03: ContentSeed<unknown, unknown>[] = [
       authored_in: "repo_seed",
     },
     content_pack: {
+      prompt: "Bé tìm bóng cho mèo, thỏ và rùa nhé!",
       pairs: [
         {
-          left: { id: "cat", emoji: "🐱" },
-          right: { id: "cat-shadow", emoji: "🐱" },
+          pair_id: "pair-1",
+          left: {
+            item_id: "cat",
+            asset: {
+              kind: "emoji",
+              ref: "EMJ-cat",
+            },
+          },
+          right: {
+            item_id: "cat-shadow",
+            asset: {
+              kind: "emoji",
+              ref: "EMJ-cat",
+            },
+          },
         },
         {
-          left: { id: "rabbit", emoji: "🐰" },
-          right: { id: "rabbit-shadow", emoji: "🐰" },
+          pair_id: "pair-2",
+          left: {
+            item_id: "rabbit",
+            asset: {
+              kind: "emoji",
+              ref: "EMJ-rabbit-face",
+            },
+          },
+          right: {
+            item_id: "rabbit-shadow",
+            asset: {
+              kind: "emoji",
+              ref: "EMJ-rabbit-face",
+            },
+          },
         },
         {
-          left: { id: "turtle", emoji: "🐢" },
-          right: { id: "turtle-shadow", emoji: "🐢" },
+          pair_id: "pair-3",
+          left: {
+            item_id: "turtle",
+            asset: {
+              kind: "emoji",
+              ref: "EMJ-sea-turtle",
+            },
+          },
+          right: {
+            item_id: "turtle-shadow",
+            asset: {
+              kind: "emoji",
+              ref: "EMJ-sea-turtle",
+            },
+          },
         },
       ],
-      scaffolding: {
-        l1_nudge: "Tai thỏ dài và bóng tai thỏ nhấp nháy",
-        l2_guidance: "Bàn tay ảo chỉ vào đôi tai dài của chú thỏ",
-        l3_demo: "Bàn tay ảo nối mẫu cặp thỏ",
-      },
     },
-    difficulty_params: { pair_count: 3 },
+    difficulty_params: {
+      hint_after_ms: 9000,
+      allow_retry: true,
+      shuffle_sides: false,
+    },
   },
 ];

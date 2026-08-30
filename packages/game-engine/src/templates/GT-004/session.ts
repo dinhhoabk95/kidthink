@@ -3,9 +3,24 @@ import {
   type GameAction,
   TemplateGameSession,
 } from "#src/game-session";
+import { resolveLayout } from "#src/layout/registry";
+import type { Slot } from "#src/layout/types";
 import { PlacementMechanic } from "#src/mechanics/placement-mechanic";
 import { deriveStream } from "#src/rng/mulberry32";
 import { shuffle } from "#src/rng/shuffle";
+import type { DegradationState } from "#src/systems/degradation";
+import type { Particle, RenderSystem } from "#src/systems/render-system";
+import {
+  drawEmptyTargetSlot,
+  drawGlyphInSlot,
+  drawPromptText,
+  drawSceneBackground,
+  drawSlotItem,
+  drawSlotLabel,
+  getColorsForState,
+  type ItemVisualState,
+  updateParticles,
+} from "../shared-render.js";
 import type { GT004Content, GT004Difficulty } from "./template.js";
 
 type SortItem = GT004Content["items"][number];
@@ -14,6 +29,11 @@ export class GT004Session extends TemplateGameSession<
   GT004Content,
   GT004Difficulty
 > {
+  slots: readonly Slot[] = [];
+  degradation: DegradationState | null = null;
+  private renderParticles: Particle[] = [];
+  private readonly renderItemStates: Map<string, ItemVisualState> = new Map();
+
   displayItems: readonly SortItem[] = [];
   private readonly mechanic = new PlacementMechanic();
 
@@ -71,6 +91,75 @@ export class GT004Session extends TemplateGameSession<
       isCorrect: true,
     }));
     return this.mechanic.isPlacementComplete(items);
+  }
+
+  resolveSlots(ageBand: "3-4" | "4-5" | "5-6"): void {
+    const layoutFn = resolveLayout("multi-bucket-bottom");
+    this.slots = layoutFn({
+      slotCount: this.displayItems.length,
+      targetCount: this.content.groups.length,
+      ageBand,
+    });
+  }
+
+  setRenderItemState(itemId: string, state: ItemVisualState): void {
+    this.renderItemStates.set(itemId, state);
+  }
+
+  getRenderItemState(itemId: string): ItemVisualState {
+    return this.renderItemStates.get(itemId) ?? "idle";
+  }
+
+  render(
+    ctx: CanvasRenderingContext2D,
+    rs: RenderSystem,
+    _timeMs: number
+  ): void {
+    drawSceneBackground(ctx, rs);
+    drawPromptText(ctx, rs, this.content.prompt);
+    const targets = this.slots.filter((s) => s.role === "target");
+    const sources = this.slots.filter((s) => s.role === "source");
+    const placements = this.mechanic.getPlacements();
+
+    this.content.groups.forEach((group, i) => {
+      const slot = targets[i];
+      if (!slot) {
+        return;
+      }
+      const { fill, border } = getColorsForState("idle");
+      rs.drawClayContainer(ctx, slot.x, slot.y, slot.w, slot.h, fill, border);
+      drawGlyphInSlot(ctx, group.label_emoji, slot);
+      drawSlotLabel(ctx, group.label, slot);
+    });
+
+    this.displayItems.forEach((item, i) => {
+      const slot = sources[i];
+      if (!slot) {
+        return;
+      }
+      const placedIn = placements.get(item.item_id);
+      if (placedIn) {
+        drawEmptyTargetSlot(ctx, slot);
+        return;
+      }
+      drawSlotItem(ctx, rs, slot, {
+        id: item.item_id,
+        asset: item.asset,
+        state: this.getRenderItemState(item.item_id),
+      });
+    });
+    this.drawRenderFeedback(rs, ctx);
+  }
+
+  private drawRenderFeedback(
+    rs: RenderSystem,
+    ctx: CanvasRenderingContext2D
+  ): void {
+    if (this.degradation?.particles_enabled === false) {
+      return;
+    }
+    this.renderParticles = updateParticles(this.renderParticles);
+    rs.drawParticles(ctx, this.renderParticles);
   }
 }
 

@@ -6,17 +6,36 @@ import {
   type GameAction,
   TemplateGameSession,
 } from "#src/game-session";
+import { resolveLayout } from "#src/layout/registry";
+import type { Slot } from "#src/layout/types";
 import { PlacementMechanic } from "#src/mechanics/placement-mechanic";
 import {
   type AssemblyPlacementResult,
   AssemblySystem,
 } from "#src/systems/assembly-system";
+import type { DegradationState } from "#src/systems/degradation";
+import type { Particle, RenderSystem } from "#src/systems/render-system";
+import {
+  drawEmptyTargetSlot,
+  drawPromptText,
+  drawSceneBackground,
+  drawSlotItem,
+  drawSlotLabel,
+  type ItemVisualState,
+  updateParticles,
+} from "../shared-render.js";
+import { slotAtPoint } from "../shared-render-shapes.js";
 import type { GT023Content, GT023Difficulty } from "./template.js";
 
 export class GT023Session extends TemplateGameSession<
   GT023Content,
   GT023Difficulty
 > {
+  slots: readonly Slot[] = [];
+  degradation: DegradationState | null = null;
+  private renderParticles: Particle[] = [];
+  private readonly renderItemStates: Map<string, ItemVisualState> = new Map();
+
   readonly assemblySystem = new AssemblySystem();
   private readonly placementMechanic = new PlacementMechanic();
 
@@ -112,6 +131,80 @@ export class GT023Session extends TemplateGameSession<
 
   override checkWinCondition(): boolean {
     return this.assemblySystem.isAllAssembled();
+  }
+
+  resolveSlots(ageBand: "3-4" | "4-5" | "5-6"): void {
+    const layoutFn = resolveLayout("top-source-bottom-target");
+    this.slots = layoutFn({
+      slotCount: this.content.parts.length,
+      targetCount: this.content.anchors.length,
+      ageBand,
+    });
+  }
+
+  setRenderItemState(itemId: string, state: ItemVisualState): void {
+    this.renderItemStates.set(itemId, state);
+  }
+
+  getRenderItemState(itemId: string): ItemVisualState {
+    return this.renderItemStates.get(itemId) ?? "idle";
+  }
+
+  render(
+    ctx: CanvasRenderingContext2D,
+    rs: RenderSystem,
+    _timeMs: number
+  ): void {
+    drawSceneBackground(ctx, rs);
+    drawPromptText(ctx, rs, this.content.prompt);
+    const sources = this.slots.filter((s) => s.role === "source");
+    const placements = this.assemblySystem.getPlacements();
+    const partById = new Map(this.content.parts.map((p) => [p.part_id, p]));
+    const placedPartIds = new Set(placements.values());
+
+    // Mỏ neo có toạ độ riêng trong content — đó là hình dạng của mô hình đích.
+    for (const anchor of this.content.anchors) {
+      const slot = slotAtPoint(anchor.x, anchor.y);
+      const partId = placements.get(anchor.anchor_id);
+      const part = partId ? partById.get(partId) : undefined;
+      if (!part) {
+        drawEmptyTargetSlot(ctx, slot);
+        if (anchor.label) {
+          drawSlotLabel(ctx, anchor.label, slot);
+        }
+        continue;
+      }
+      drawSlotItem(ctx, rs, slot, {
+        id: part.part_id,
+        asset: part.asset,
+        state: "correct",
+      });
+    }
+
+    this.content.parts.forEach((part, i) => {
+      const slot = sources[i];
+      if (!slot || placedPartIds.has(part.part_id)) {
+        return;
+      }
+      drawSlotItem(ctx, rs, slot, {
+        id: part.part_id,
+        asset: part.asset,
+        label: part.name,
+        state: this.getRenderItemState(part.part_id),
+      });
+    });
+    this.drawRenderFeedback(rs, ctx);
+  }
+
+  private drawRenderFeedback(
+    rs: RenderSystem,
+    ctx: CanvasRenderingContext2D
+  ): void {
+    if (this.degradation?.particles_enabled === false) {
+      return;
+    }
+    this.renderParticles = updateParticles(this.renderParticles);
+    rs.drawParticles(ctx, this.renderParticles);
   }
 }
 

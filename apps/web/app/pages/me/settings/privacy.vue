@@ -140,7 +140,7 @@
 <script lang="ts" setup>
   import { onMounted, ref } from "vue";
 
-  globalThis.definePageMeta?.({
+  definePageMeta({
     middleware: ["user-auth"],
   });
 

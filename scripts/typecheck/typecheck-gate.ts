@@ -12,8 +12,14 @@
 import { spawnSync } from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
+import { pathToFileURL } from "node:url";
 import { REPO_ROOT } from "@mindkid/config/paths";
-import { compareToBaseline, hasRegression, total } from "./ratchet.ts";
+import {
+  compareToBaseline,
+  hasRegression,
+  refuseIncrease,
+  total,
+} from "./ratchet.ts";
 import {
   type ProjectErrors,
   parseCompilerOutput,
@@ -62,8 +68,69 @@ function runProject(project: TypecheckProject): ProjectErrors {
     ["--noEmit", "-p", project.project],
     { cwd, encoding: "utf8", maxBuffer: 64 * 1024 * 1024 }
   );
+  return interpretCompilerRun(result, project.cwd);
+}
+
+/** Hình dạng của `spawnSync` mà cổng thực sự đọc — tách ra để kiểm được. */
+export interface CompilerRun {
+  readonly status: number | null;
+  readonly signal: NodeJS.Signals | null;
+  readonly error?: Error;
+  readonly stdout?: string;
+  readonly stderr?: string;
+}
+
+/**
+ * Trạng thái thoát của trình biên dịch là **dữ liệu của cổng**, không phải rác.
+ *
+ * Bản cũ vứt cả ba (`status`, `signal`, `error`) và chỉ parse stdout/stderr.
+ * Hậu quả cụ thể: `vue-tsc` trên `web:app` (685 lỗi, 172 file) bị OOM kill sau
+ * khi in 200 diagnostic → parser đọc 200 → mọi file đều "giảm" →
+ * `hasRegression` chỉ nhìn `increased`/`added` nên không thấy gì →
+ * cổng in `⬇ -485`, exit 0, rồi **bảo người chạy `typecheck:update`**, tức xoá
+ * vĩnh viễn 485 lỗi đã biết khỏi bậc thang. Một stack trace của trình biên dịch
+ * hay `ENOBUFS` ở mốc 64 MB cũng cho ra đúng kết quả xanh đó.
+ *
+ * `global.length > 0` đã buộc `regressed` ở `reportProject`, nên mọi nhánh dưới
+ * đây đi thẳng ra exit 1.
+ */
+export function interpretCompilerRun(
+  result: CompilerRun,
+  cwd: string
+): ProjectErrors {
+  if (result.error) {
+    return {
+      files: {},
+      global: [`không chạy được trình biên dịch — ${result.error.message}`],
+    };
+  }
+  if (result.signal !== null) {
+    return {
+      files: {},
+      global: [
+        `trình biên dịch bị giết bởi ${result.signal} — kết quả không dùng được`,
+      ],
+    };
+  }
+
   const output = `${result.stdout ?? ""}\n${result.stderr ?? ""}`;
-  return parseCompilerOutput(output, project.cwd);
+  const parsed = parseCompilerOutput(output, cwd);
+
+  // `tsc`: 0 = sạch, 1/2 = có diagnostic. Khác 0 mà không đọc được diagnostic
+  // nào nghĩa là nó nổ, hoặc định dạng output đã đổi.
+  if (
+    result.status !== 0 &&
+    parsed.global.length === 0 &&
+    total(parsed.files) === 0
+  ) {
+    return {
+      ...parsed,
+      global: [
+        `exit ${result.status} nhưng không phân tích được diagnostic nào — định dạng output đã đổi?`,
+      ],
+    };
+  }
+  return parsed;
 }
 
 interface ProjectReport {
@@ -129,9 +196,57 @@ function selectProjects(only: string): readonly TypecheckProject[] {
   );
 }
 
+/**
+ * Ghi baseline mới — chỉ khi lượt chạy sạch và bậc thang không đi lên.
+ *
+ * Hai chốt chặn, cả hai đều thiếu ở bản cũ:
+ * 1. Một project không chạy xong có `files` rỗng; ghi nó xuống là **xoá sạch**
+ *    bậc thang của project đó.
+ * 2. `--update` cũ ghi đè bằng số hiện tại bất kể tăng hay giảm, và nó đã được
+ *    dùng đúng như thế: +187 lỗi ở Task #124, +7 ở Task #125.
+ */
+function applyUpdate(
+  reports: readonly ProjectReport[],
+  baseline: TypecheckBaseline,
+  allowIncrease: boolean
+): void {
+  const broken = reports.filter((r) => r.errors.global.length > 0);
+  if (broken.length > 0) {
+    process.stderr.write(
+      `\n❌ --update bị từ chối: ${broken.map((r) => r.project.name).join(", ")} không chạy xong.\n`
+    );
+    process.exit(1);
+  }
+
+  const next: TypecheckBaseline = { ...baseline };
+  const worse: string[] = [];
+  for (const report of reports) {
+    const previous = baseline[report.project.name] ?? {};
+    for (const item of refuseIncrease(report.errors.files, previous)) {
+      worse.push(
+        `${report.project.name} · ${item.file}: ${item.from} → ${item.to}`
+      );
+    }
+    next[report.project.name] = report.errors.files;
+  }
+
+  if (worse.length > 0 && !allowIncrease) {
+    process.stderr.write(
+      "\n❌ --update sẽ TĂNG nợ ở những file dưới đây. Bậc thang chỉ đi xuống:\n" +
+        worse.map((line) => `   ${line}\n`).join("") +
+        "   Sửa lỗi, hoặc chạy lại với --allow-increase kèm lý do trong PR.\n"
+    );
+    process.exit(1);
+  }
+
+  writeTypecheckBaseline(next);
+  process.stdout.write("\n✅ đã ghi typecheck-baseline.json\n");
+}
+
 function main(): void {
   const args = process.argv.slice(2);
   const update = args.includes("--update");
+  const allowIncrease = args.includes("--allow-increase");
   const onlyIndex = args.indexOf("--only");
   const only = onlyIndex === -1 ? undefined : args[onlyIndex + 1];
   const projects = only ? selectProjects(only) : TYPECHECK_PROJECTS;
@@ -154,12 +269,7 @@ function main(): void {
   }
 
   if (update) {
-    const next: TypecheckBaseline = { ...baseline };
-    for (const report of reports) {
-      next[report.project.name] = report.errors.files;
-    }
-    writeTypecheckBaseline(next);
-    process.stdout.write("\n✅ đã ghi typecheck-baseline.json\n");
+    applyUpdate(reports, baseline, allowIncrease);
     return;
   }
 
@@ -192,4 +302,6 @@ function main(): void {
   }
 }
 
-main();
+if (import.meta.url === pathToFileURL(process.argv[1] ?? "").href) {
+  main();
+}

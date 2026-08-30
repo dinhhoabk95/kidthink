@@ -14,7 +14,7 @@ const patchFlagSchema = z.object({
   reason: z.string().min(10),
   enabled: z.boolean().optional().default(false),
   scope: z
-    .enum(["global", "beta_users", "percentage"])
+    .enum(["global", "user_ids", "percentage"])
     .optional()
     .default("global"),
   scope_value: z.record(z.unknown()).nullable().optional(),
@@ -37,10 +37,7 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 404, statusMessage: "FLAG_NOT_FOUND" });
   }
 
-  const raw =
-    (event.context?.body as unknown) ||
-    ((event as Record<string, unknown>)._body as unknown) ||
-    (await readBody(event).catch(() => ({})));
+  const raw = event.context?.body ?? (await readBody(event).catch(() => ({})));
 
   const parsedResult = patchFlagSchema.safeParse(raw);
   if (!parsedResult.success) {
@@ -66,7 +63,7 @@ export default defineEventHandler(async (event) => {
     .from(featureFlags)
     .where(eq(featureFlags.key, key));
 
-  const managerId = manager.manager_id || manager.id || 1;
+  const managerId = manager.manager_id;
 
   let updatedRecord: typeof featureFlags.$inferSelect;
   if (existing) {
@@ -82,6 +79,12 @@ export default defineEventHandler(async (event) => {
       })
       .where(eq(featureFlags.id, existing.id))
       .returning();
+    if (!upd) {
+      throw createError({
+        statusCode: 500,
+        statusMessage: "FLAG_UPDATE_FAILED",
+      });
+    }
     updatedRecord = upd;
   } else {
     const [ins] = await db
@@ -97,6 +100,12 @@ export default defineEventHandler(async (event) => {
         updateReason: reason,
       })
       .returning();
+    if (!ins) {
+      throw createError({
+        statusCode: 500,
+        statusMessage: "FLAG_INSERT_FAILED",
+      });
+    }
     updatedRecord = ins;
   }
 
@@ -104,17 +113,19 @@ export default defineEventHandler(async (event) => {
   invalidateFlagCache(key);
 
   // BR-FFA-01, BR-FLG-04: Write audit_logs
-  await writeAudit(db, {
-    actor_type: "manager",
-    actor_id: managerId,
-    action: "feature_flag_changed",
-    reason,
-    entity_type: "feature_flag",
-    entity_id: key,
-    before_data: existing
-      ? { enabled: existing.enabled, scope: existing.scope }
-      : { enabled: defaultValue },
-    after_data: { enabled, scope, scope_value: scopeValue },
+  await db.transaction(async (tx) => {
+    await writeAudit(tx, {
+      actor_type: "manager",
+      actor_id: managerId,
+      action: "feature_flag_changed",
+      reason,
+      entity_type: "feature_flag",
+      entity_id: key,
+      before_data: existing
+        ? { enabled: existing.enabled, scope: existing.scope }
+        : { enabled: defaultValue },
+      after_data: { enabled, scope, scope_value: scopeValue },
+    });
   });
 
   return updatedRecord;

@@ -8,7 +8,11 @@ import {
   getOwnerDb,
   lessons,
 } from "@mindkid/db";
-import { type AccessTier, allowedTiers } from "@mindkid/shared";
+import {
+  type AccessTier,
+  allowedTiers,
+  buildAgeRecommendationWarning,
+} from "@mindkid/shared";
 import { and, eq, inArray } from "drizzle-orm";
 import {
   createError,
@@ -88,19 +92,21 @@ async function assertNoActiveEnrollment(
   }
 }
 
+/**
+ * `BR-LFM-04`. Luật sống ở `@mindkid/shared`, không nằm trong route: bản cũ
+ * viết chuỗi cảnh báo ngay tại đây, rồi file test chép lại nguyên văn — nên
+ * phép thử vẫn xanh kể cả khi route bị xoá.
+ */
 export function computeAgeRecommendationWarning(
   child: typeof childProfiles.$inferSelect,
   curriculum: typeof curricula.$inferSelect
 ): string | undefined {
   const currentYear = new Date().getFullYear();
-  const childAge = currentYear - child.birthYear;
-  const minAge = curriculum.targetAgeMin;
-  const maxAge = curriculum.targetAgeMax;
-
-  if ((minAge && childAge < minAge) || (maxAge && childAge > maxAge)) {
-    return `Flow này gợi ý cho trẻ ${minAge ?? 3}–${maxAge ?? 6} tuổi, bé nhà bạn ${childAge} tuổi`;
-  }
-  return undefined;
+  return buildAgeRecommendationWarning({
+    childAge: currentYear - child.birthYear,
+    targetAgeMin: curriculum.targetAgeMin,
+    targetAgeMax: curriculum.targetAgeMax,
+  });
 }
 
 async function assertGatingAllowance(
@@ -275,15 +281,23 @@ export default defineEventHandler(async (event) => {
     })
     .returning();
 
+  if (!enrollment) {
+    throw createError({
+      statusCode: 500,
+      statusMessage: "ENROLLMENT_FAILED",
+      message: "Ghi danh lộ trình thất bại",
+    });
+  }
+
   // 7. Audit log (INSERT-only)
   await db.insert(auditLogs).values({
     actorType: "user",
     actorId: userId,
     action: "curriculum.enrolled",
     entityType: "curriculum_enrollment",
-    entityId: enrollment.id,
+    entityId: String(enrollment.id),
     ipAddress: getVerifiedRemoteIp(event),
-    metadata: {
+    afterData: {
       child_id: child.id,
       child_uuid: child.uuid,
       curriculum_code: curriculum.code,

@@ -22,6 +22,9 @@ describe("Ops Schema Integration Tests", () => {
         entityId: "1",
       })
       .returning();
+    if (!log) {
+      throw new Error("Failed to insert log");
+    }
 
     expect(log).toBeDefined();
 
@@ -53,6 +56,9 @@ describe("Ops Schema Integration Tests", () => {
         reason: "Test review log entry",
       })
       .returning();
+    if (!log) {
+      throw new Error("Failed to insert log");
+    }
 
     expect(log).toBeDefined();
     expect(log.entityId).toBe(999_999_999);
@@ -74,6 +80,9 @@ describe("Ops Schema Integration Tests", () => {
             payload: { test: true },
           })
           .returning();
+        if (!notif) {
+          throw new Error("Failed to insert notif");
+        }
 
         await tx.insert(notificationDeliveries).values({
           notificationId: notif.id,

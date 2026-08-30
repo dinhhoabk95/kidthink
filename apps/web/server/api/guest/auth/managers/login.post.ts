@@ -30,7 +30,7 @@ const ManagerLoginSchema = z
 export default defineEventHandler(async (event) => {
   assertManagerSameOriginRequest(event);
   assertManagerRequestBodySize(event, 16 * 1024);
-  const body = (await readBody(event).catch(() => null)) || event._body || {};
+  const body = (await readBody(event).catch(() => null)) ?? {};
   const parsed = ManagerLoginSchema.safeParse(body);
   if (!parsed.success) {
     throw appError("INVALID_CREDENTIALS");
@@ -94,12 +94,7 @@ export default defineEventHandler(async (event) => {
     ipAddress: getManagerRemoteIp(event),
   });
 
-  if (
-    event?.node?.res?.setHeader ||
-    event?.node?.res?.statusCode !== undefined
-  ) {
-    setResponseStatus(event, 428);
-  }
+  setResponseStatus(event, 428);
 
   return {
     status: "MFA_REQUIRED",

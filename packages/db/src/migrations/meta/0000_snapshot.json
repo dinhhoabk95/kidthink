@@ -1,5 +1,5 @@
 {
-  "id": "07d21054-49ea-46b6-98e6-8017b9fd3f62",
+  "id": "ed351a8e-6b19-46a8-85aa-f66eecc844c9",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -135,15 +135,15 @@
           "notNull": true,
           "default": "'1.0000'"
         },
-        "updated_at": {
-          "name": "updated_at",
+        "created_at": {
+          "name": "created_at",
           "type": "timestamp with time zone",
           "primaryKey": false,
           "notNull": true,
           "default": "now()"
         },
-        "created_at": {
-          "name": "created_at",
+        "updated_at": {
+          "name": "updated_at",
           "type": "timestamp with time zone",
           "primaryKey": false,
           "notNull": true,
@@ -264,15 +264,15 @@
           "primaryKey": false,
           "notNull": false
         },
-        "updated_at": {
-          "name": "updated_at",
+        "created_at": {
+          "name": "created_at",
           "type": "timestamp with time zone",
           "primaryKey": false,
           "notNull": true,
           "default": "now()"
         },
-        "created_at": {
-          "name": "created_at",
+        "updated_at": {
+          "name": "updated_at",
           "type": "timestamp with time zone",
           "primaryKey": false,
           "notNull": true,
@@ -384,15 +384,15 @@
           "notNull": true,
           "default": 1
         },
-        "updated_at": {
-          "name": "updated_at",
+        "created_at": {
+          "name": "created_at",
           "type": "timestamp with time zone",
           "primaryKey": false,
           "notNull": true,
           "default": "now()"
         },
-        "created_at": {
-          "name": "created_at",
+        "updated_at": {
+          "name": "updated_at",
           "type": "timestamp with time zone",
           "primaryKey": false,
           "notNull": true,
@@ -2004,15 +2004,15 @@
           "primaryKey": false,
           "notNull": true
         },
-        "updated_at": {
-          "name": "updated_at",
+        "created_at": {
+          "name": "created_at",
           "type": "timestamp with time zone",
           "primaryKey": false,
           "notNull": true,
           "default": "now()"
         },
-        "created_at": {
-          "name": "created_at",
+        "updated_at": {
+          "name": "updated_at",
           "type": "timestamp with time zone",
           "primaryKey": false,
           "notNull": true,
@@ -2905,6 +2905,37 @@
           "primaryKey": false,
           "notNull": false
         },
+        "is_exemplar": {
+          "name": "is_exemplar",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        },
+        "exemplar_competency": {
+          "name": "exemplar_competency",
+          "type": "varchar(10)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "exemplar_age_band": {
+          "name": "exemplar_age_band",
+          "type": "varchar(10)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "exemplar_approved_by_id": {
+          "name": "exemplar_approved_by_id",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "exemplar_approved_at": {
+          "name": "exemplar_approved_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
         "created_at": {
           "name": "created_at",
           "type": "timestamp with time zone",
@@ -2936,6 +2967,34 @@
           "concurrently": false,
           "method": "btree",
           "with": {}
+        },
+        "idx_lessons_exemplar": {
+          "name": "idx_lessons_exemplar",
+          "columns": [
+            {
+              "expression": "is_exemplar",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "exemplar_competency",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "exemplar_age_band",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "where": "\"lessons\".\"is_exemplar\" = true",
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
         }
       },
       "foreignKeys": {
@@ -2953,6 +3012,15 @@
           "tableFrom": "lessons",
           "tableTo": "managers",
           "columnsFrom": ["reviewed_by_manager_id"],
+          "columnsTo": ["id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "lessons_exemplar_approved_by_id_managers_id_fk": {
+          "name": "lessons_exemplar_approved_by_id_managers_id_fk",
+          "tableFrom": "lessons",
+          "tableTo": "managers",
+          "columnsFrom": ["exemplar_approved_by_id"],
           "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
@@ -2975,6 +3043,18 @@
         "check_lessons_estimated_minutes": {
           "name": "check_lessons_estimated_minutes",
           "value": "\"lessons\".\"estimated_minutes\" >= 5 AND \"lessons\".\"estimated_minutes\" <= 45"
+        },
+        "check_lessons_exemplar_competency": {
+          "name": "check_lessons_exemplar_competency",
+          "value": "\"lessons\".\"exemplar_competency\" IS NULL OR \"lessons\".\"exemplar_competency\" ~ '^C[1-6]$'"
+        },
+        "check_lessons_exemplar_age_band": {
+          "name": "check_lessons_exemplar_age_band",
+          "value": "\"lessons\".\"exemplar_age_band\" IS NULL OR \"lessons\".\"exemplar_age_band\" IN ('3-4', '4-5', '5-6')"
+        },
+        "check_lessons_exemplar_invariants": {
+          "name": "check_lessons_exemplar_invariants",
+          "value": "(\"lessons\".\"is_exemplar\" = false) OR (\"lessons\".\"is_exemplar\" = true AND \"lessons\".\"exemplar_competency\" IS NOT NULL AND \"lessons\".\"exemplar_age_band\" IS NOT NULL AND \"lessons\".\"exemplar_approved_by_id\" IS NOT NULL AND \"lessons\".\"access_tier\" = 'free' AND \"lessons\".\"origin\" = 'human')"
         }
       },
       "isRLSEnabled": false
@@ -4001,15 +4081,15 @@
           "primaryKey": false,
           "notNull": false
         },
-        "updated_at": {
-          "name": "updated_at",
+        "created_at": {
+          "name": "created_at",
           "type": "timestamp with time zone",
           "primaryKey": false,
           "notNull": true,
           "default": "now()"
         },
-        "created_at": {
-          "name": "created_at",
+        "updated_at": {
+          "name": "updated_at",
           "type": "timestamp with time zone",
           "primaryKey": false,
           "notNull": true,
@@ -4699,6 +4779,133 @@
       },
       "isRLSEnabled": false
     },
+    "public.game_level_rounds": {
+      "name": "game_level_rounds",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "bigint",
+          "primaryKey": true,
+          "notNull": true,
+          "identity": {
+            "type": "always",
+            "name": "game_level_rounds_id_seq",
+            "schema": "public",
+            "increment": "1",
+            "startWith": "1",
+            "minValue": "1",
+            "maxValue": "9223372036854775807",
+            "cache": "1",
+            "cycle": false
+          }
+        },
+        "game_level_id": {
+          "name": "game_level_id",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "round_index": {
+          "name": "round_index",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "instruction": {
+          "name": "instruction",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "instruction_audio_path": {
+          "name": "instruction_audio_path",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "content_pack": {
+          "name": "content_pack",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "difficulty_params": {
+          "name": "difficulty_params",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "difficulty": {
+          "name": "difficulty",
+          "type": "smallint",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "idx_game_level_rounds_level_id": {
+          "name": "idx_game_level_rounds_level_id",
+          "columns": [
+            {
+              "expression": "game_level_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "game_level_rounds_game_level_id_game_levels_id_fk": {
+          "name": "game_level_rounds_game_level_id_game_levels_id_fk",
+          "tableFrom": "game_level_rounds",
+          "tableTo": "game_levels",
+          "columnsFrom": ["game_level_id"],
+          "columnsTo": ["id"],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "game_level_rounds_level_index_unique": {
+          "name": "game_level_rounds_level_index_unique",
+          "nullsNotDistinct": false,
+          "columns": ["game_level_id", "round_index"]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {
+        "check_game_level_rounds_index_non_negative": {
+          "name": "check_game_level_rounds_index_non_negative",
+          "value": "\"game_level_rounds\".\"round_index\" >= 0"
+        },
+        "check_game_level_rounds_difficulty_range": {
+          "name": "check_game_level_rounds_difficulty_range",
+          "value": "\"game_level_rounds\".\"difficulty\" IS NULL OR (\"game_level_rounds\".\"difficulty\" >= 1 AND \"game_level_rounds\".\"difficulty\" <= 5)"
+        }
+      },
+      "isRLSEnabled": false
+    },
     "public.game_levels": {
       "name": "game_levels",
       "schema": "",
@@ -5367,15 +5574,15 @@
           "primaryKey": false,
           "notNull": false
         },
-        "updated_at": {
-          "name": "updated_at",
+        "created_at": {
+          "name": "created_at",
           "type": "timestamp with time zone",
           "primaryKey": false,
           "notNull": true,
           "default": "now()"
         },
-        "created_at": {
-          "name": "created_at",
+        "updated_at": {
+          "name": "updated_at",
           "type": "timestamp with time zone",
           "primaryKey": false,
           "notNull": true,
@@ -6187,6 +6394,390 @@
           "name": "verification_tokens_token_hash_unique",
           "nullsNotDistinct": false,
           "columns": ["token_hash"]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.lesson_run_observations": {
+      "name": "lesson_run_observations",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "bigint",
+          "primaryKey": true,
+          "notNull": true,
+          "identity": {
+            "type": "always",
+            "name": "lesson_run_observations_id_seq",
+            "schema": "public",
+            "increment": "1",
+            "startWith": "1",
+            "minValue": "1",
+            "maxValue": "9223372036854775807",
+            "cache": "1",
+            "cycle": false
+          }
+        },
+        "lesson_run_id": {
+          "name": "lesson_run_id",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "objective_code": {
+          "name": "objective_code",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "level": {
+          "name": "level",
+          "type": "observation_level",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "observed_at": {
+          "name": "observed_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "lesson_run_observations_lesson_run_id_lesson_runs_id_fk": {
+          "name": "lesson_run_observations_lesson_run_id_lesson_runs_id_fk",
+          "tableFrom": "lesson_run_observations",
+          "tableTo": "lesson_runs",
+          "columnsFrom": ["lesson_run_id"],
+          "columnsTo": ["id"],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "lesson_run_obs_run_obj_unique": {
+          "name": "lesson_run_obs_run_obj_unique",
+          "nullsNotDistinct": false,
+          "columns": ["lesson_run_id", "objective_code"]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.lesson_run_steps": {
+      "name": "lesson_run_steps",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "bigint",
+          "primaryKey": true,
+          "notNull": true,
+          "identity": {
+            "type": "always",
+            "name": "lesson_run_steps_id_seq",
+            "schema": "public",
+            "increment": "1",
+            "startWith": "1",
+            "minValue": "1",
+            "maxValue": "9223372036854775807",
+            "cache": "1",
+            "cycle": false
+          }
+        },
+        "lesson_run_id": {
+          "name": "lesson_run_id",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "step_index": {
+          "name": "step_index",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "activity_id": {
+          "name": "activity_id",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "kind": {
+          "name": "kind",
+          "type": "lesson_step_kind",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "outcome": {
+          "name": "outcome",
+          "type": "lesson_step_outcome",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'pending'"
+        },
+        "started_at": {
+          "name": "started_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        },
+        "completed_at": {
+          "name": "completed_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "lesson_run_steps_lesson_run_id_lesson_runs_id_fk": {
+          "name": "lesson_run_steps_lesson_run_id_lesson_runs_id_fk",
+          "tableFrom": "lesson_run_steps",
+          "tableTo": "lesson_runs",
+          "columnsFrom": ["lesson_run_id"],
+          "columnsTo": ["id"],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "lesson_run_steps_activity_id_activities_id_fk": {
+          "name": "lesson_run_steps_activity_id_activities_id_fk",
+          "tableFrom": "lesson_run_steps",
+          "tableTo": "activities",
+          "columnsFrom": ["activity_id"],
+          "columnsTo": ["id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "lesson_run_steps_run_step_unique": {
+          "name": "lesson_run_steps_run_step_unique",
+          "nullsNotDistinct": false,
+          "columns": ["lesson_run_id", "step_index"]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.lesson_runs": {
+      "name": "lesson_runs",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "bigint",
+          "primaryKey": true,
+          "notNull": true,
+          "identity": {
+            "type": "always",
+            "name": "lesson_runs_id_seq",
+            "schema": "public",
+            "increment": "1",
+            "startWith": "1",
+            "minValue": "1",
+            "maxValue": "9223372036854775807",
+            "cache": "1",
+            "cycle": false
+          }
+        },
+        "uuid": {
+          "name": "uuid",
+          "type": "varchar(36)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "child_profile_id": {
+          "name": "child_profile_id",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "lesson_id": {
+          "name": "lesson_id",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "content_version": {
+          "name": "content_version",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 1
+        },
+        "status": {
+          "name": "status",
+          "type": "lesson_run_status",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'in_progress'"
+        },
+        "current_step": {
+          "name": "current_step",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 0
+        },
+        "started_at": {
+          "name": "started_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "ended_at": {
+          "name": "ended_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "idx_lesson_runs_user_child": {
+          "name": "idx_lesson_runs_user_child",
+          "columns": [
+            {
+              "expression": "user_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "child_profile_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "idx_lesson_runs_lesson": {
+          "name": "idx_lesson_runs_lesson",
+          "columns": [
+            {
+              "expression": "lesson_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "idx_lesson_runs_status": {
+          "name": "idx_lesson_runs_status",
+          "columns": [
+            {
+              "expression": "status",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "lesson_runs_user_id_users_id_fk": {
+          "name": "lesson_runs_user_id_users_id_fk",
+          "tableFrom": "lesson_runs",
+          "tableTo": "users",
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "lesson_runs_child_profile_id_child_profiles_id_fk": {
+          "name": "lesson_runs_child_profile_id_child_profiles_id_fk",
+          "tableFrom": "lesson_runs",
+          "tableTo": "child_profiles",
+          "columnsFrom": ["child_profile_id"],
+          "columnsTo": ["id"],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "lesson_runs_lesson_id_lessons_id_fk": {
+          "name": "lesson_runs_lesson_id_lessons_id_fk",
+          "tableFrom": "lesson_runs",
+          "tableTo": "lessons",
+          "columnsFrom": ["lesson_id"],
+          "columnsTo": ["id"],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "lesson_runs_uuid_unique": {
+          "name": "lesson_runs_uuid_unique",
+          "nullsNotDistinct": false,
+          "columns": ["uuid"]
         }
       },
       "policies": {},
@@ -8146,15 +8737,15 @@
           "primaryKey": false,
           "notNull": false
         },
-        "updated_at": {
-          "name": "updated_at",
+        "created_at": {
+          "name": "created_at",
           "type": "timestamp with time zone",
           "primaryKey": false,
           "notNull": true,
           "default": "now()"
         },
-        "created_at": {
-          "name": "created_at",
+        "updated_at": {
+          "name": "updated_at",
           "type": "timestamp with time zone",
           "primaryKey": false,
           "notNull": true,
@@ -8792,15 +9383,15 @@
           "notNull": true,
           "default": 0
         },
-        "updated_at": {
-          "name": "updated_at",
+        "created_at": {
+          "name": "created_at",
           "type": "timestamp with time zone",
           "primaryKey": false,
           "notNull": true,
           "default": "now()"
         },
-        "created_at": {
-          "name": "created_at",
+        "updated_at": {
+          "name": "updated_at",
           "type": "timestamp with time zone",
           "primaryKey": false,
           "notNull": true,
@@ -9060,15 +9651,15 @@
           "notNull": true,
           "default": 0
         },
-        "updated_at": {
-          "name": "updated_at",
+        "created_at": {
+          "name": "created_at",
           "type": "timestamp with time zone",
           "primaryKey": false,
           "notNull": true,
           "default": "now()"
         },
-        "created_at": {
-          "name": "created_at",
+        "updated_at": {
+          "name": "updated_at",
           "type": "timestamp with time zone",
           "primaryKey": false,
           "notNull": true,
@@ -9167,6 +9758,12 @@
           "primaryKey": false,
           "notNull": false
         },
+        "layout_seed": {
+          "name": "layout_seed",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false
+        },
         "stars_earned": {
           "name": "stars_earned",
           "type": "smallint",
@@ -9201,15 +9798,15 @@
           "primaryKey": false,
           "notNull": false
         },
-        "updated_at": {
-          "name": "updated_at",
+        "created_at": {
+          "name": "created_at",
           "type": "timestamp with time zone",
           "primaryKey": false,
           "notNull": true,
           "default": "now()"
         },
-        "created_at": {
-          "name": "created_at",
+        "updated_at": {
+          "name": "updated_at",
           "type": "timestamp with time zone",
           "primaryKey": false,
           "notNull": true,
@@ -9253,6 +9850,10 @@
         "check_play_sessions_identity": {
           "name": "check_play_sessions_identity",
           "value": "\"play_sessions\".\"child_profile_id\" IS NOT NULL OR \"play_sessions\".\"guest_device_id\" IS NOT NULL"
+        },
+        "check_play_sessions_layout_seed": {
+          "name": "check_play_sessions_layout_seed",
+          "value": "\"play_sessions\".\"layout_seed\" IS NULL OR (\"play_sessions\".\"layout_seed\" >= 0 AND \"play_sessions\".\"layout_seed\" <= 4294967295)"
         }
       },
       "isRLSEnabled": false
@@ -9304,15 +9905,15 @@
           "notNull": true,
           "default": 0
         },
-        "updated_at": {
-          "name": "updated_at",
+        "created_at": {
+          "name": "created_at",
           "type": "timestamp with time zone",
           "primaryKey": false,
           "notNull": true,
           "default": "now()"
         },
-        "created_at": {
-          "name": "created_at",
+        "updated_at": {
+          "name": "updated_at",
           "type": "timestamp with time zone",
           "primaryKey": false,
           "notNull": true,
@@ -10592,6 +11193,32 @@
       "name": "verification_purpose",
       "schema": "public",
       "values": ["email_verify", "password_reset"]
+    },
+    "public.lesson_run_status": {
+      "name": "lesson_run_status",
+      "schema": "public",
+      "values": ["in_progress", "completed", "abandoned"]
+    },
+    "public.lesson_step_kind": {
+      "name": "lesson_step_kind",
+      "schema": "public",
+      "values": [
+        "warm_up",
+        "off_screen",
+        "digital_game",
+        "reflection",
+        "assessment"
+      ]
+    },
+    "public.lesson_step_outcome": {
+      "name": "lesson_step_outcome",
+      "schema": "public",
+      "values": ["pending", "done", "skipped"]
+    },
+    "public.observation_level": {
+      "name": "observation_level",
+      "schema": "public",
+      "values": ["did_it", "with_help", "not_yet"]
     },
     "public.actor_type": {
       "name": "actor_type",

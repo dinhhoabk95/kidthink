@@ -81,6 +81,9 @@ describe("Task #82 — P3 Account & Curriculum Integration (BR-MDB, BR-MLB, BR-C
         displayName: "Parent User 1",
       })
       .returning();
+    if (!u1) {
+      throw new Error("Failed to insert u1");
+    }
     user1Id = u1.id;
 
     const [u2] = await db
@@ -91,6 +94,9 @@ describe("Task #82 — P3 Account & Curriculum Integration (BR-MDB, BR-MLB, BR-C
         displayName: "Parent User 2",
       })
       .returning();
+    if (!u2) {
+      throw new Error("Failed to insert u2");
+    }
     user2Id = u2.id;
 
     // 2. Seed Child Profiles for User 1
@@ -103,6 +109,9 @@ describe("Task #82 — P3 Account & Curriculum Integration (BR-MDB, BR-MLB, BR-C
         avatarId: "bear",
       })
       .returning();
+    if (!cA) {
+      throw new Error("Failed to insert cA");
+    }
     childAId = cA.id;
 
     const [cB] = await db
@@ -114,6 +123,9 @@ describe("Task #82 — P3 Account & Curriculum Integration (BR-MDB, BR-MLB, BR-C
         avatarId: "rabbit",
       })
       .returning();
+    if (!cB) {
+      throw new Error("Failed to insert cB");
+    }
     childBId = cB.id;
 
     // 3. Seed Templates & Levels
@@ -137,7 +149,7 @@ describe("Task #82 — P3 Account & Curriculum Integration (BR-MDB, BR-MLB, BR-C
       .insert(gameLevels)
       .values({
         code: await makeLevelCode("GL-C1-NUM-CNT"),
-        entityId: Math.floor(100_000 + Math.random() * 800_000),
+        entityId: Math.floor(80_000_000 + Math.random() * 10_000_000),
         templateId,
         difficulty: 1,
         title: "Đếm số vui vẻ",
@@ -147,13 +159,16 @@ describe("Task #82 — P3 Account & Curriculum Integration (BR-MDB, BR-MLB, BR-C
         difficultyParams: { count: 3 },
       })
       .returning();
+    if (!gl1) {
+      throw new Error("Failed to insert gl1");
+    }
     gameLevel1Id = gl1.entityId;
 
     const [gl2] = await db
       .insert(gameLevels)
       .values({
         code: await makeLevelCode("GL-C2-SHP-REC"),
-        entityId: Math.floor(100_000 + Math.random() * 800_000),
+        entityId: Math.floor(80_000_000 + Math.random() * 10_000_000),
         templateId,
         difficulty: 2,
         title: "Nhận biết hình khối",
@@ -163,6 +178,9 @@ describe("Task #82 — P3 Account & Curriculum Integration (BR-MDB, BR-MLB, BR-C
         difficultyParams: { count: 4 },
       })
       .returning();
+    if (!gl2) {
+      throw new Error("Failed to insert gl2");
+    }
     gameLevel2Id = gl2.entityId;
 
     // 4. Seed Curriculum & Enroll child A
@@ -178,6 +196,9 @@ describe("Task #82 — P3 Account & Curriculum Integration (BR-MDB, BR-MLB, BR-C
         sessionsPerWeek: 3,
       })
       .returning();
+    if (!curr1) {
+      throw new Error("Failed to insert curr1");
+    }
     curriculum1Id = curr1.id;
 
     await db.insert(curriculumWeeks).values({
@@ -198,6 +219,9 @@ describe("Task #82 — P3 Account & Curriculum Integration (BR-MDB, BR-MLB, BR-C
         isRequired: true,
       })
       .returning();
+    if (!cItem1) {
+      throw new Error("Failed to insert cItem1");
+    }
 
     const [enrA] = await db
       .insert(curriculumEnrollments)
@@ -207,6 +231,9 @@ describe("Task #82 — P3 Account & Curriculum Integration (BR-MDB, BR-MLB, BR-C
         status: "active",
       })
       .returning();
+    if (!enrA) {
+      throw new Error("Failed to insert enrA");
+    }
 
     await db.insert(curriculumItemProgress).values({
       enrollmentId: enrA.id,
@@ -228,7 +255,7 @@ describe("Task #82 — P3 Account & Curriculum Integration (BR-MDB, BR-MLB, BR-C
         entityId: gameLevel1Id,
         note: "Bài tập yêu thích của An",
       });
-      expect(saved.entityId).toBe(gameLevel1Id);
+      expect(saved?.entityId).toBe(gameLevel1Id);
 
       // Save premium item (user has free tier)
       await saveLibraryItem(db, {
@@ -341,7 +368,7 @@ describe("Task #82 — P3 Account & Curriculum Integration (BR-MDB, BR-MLB, BR-C
           )
         );
       expect(enrollmentA).toBeDefined();
-      expect(enrollmentA.curriculumId).toBe(curriculum1Id);
+      expect(enrollmentA?.curriculumId).toBe(curriculum1Id);
 
       // Verify Child B has no enrollments
       const enrollmentsB = await db

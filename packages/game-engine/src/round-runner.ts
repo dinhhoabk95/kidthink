@@ -108,7 +108,7 @@ export class RoundRunner {
     if (this.currentRoundIndex >= this.rounds.length) {
       return null;
     }
-    return this.rounds[this.currentRoundIndex];
+    return this.rounds[this.currentRoundIndex] ?? null;
   }
 
   /** Start the first round. Call once after construction. */
@@ -212,6 +212,9 @@ export class RoundRunner {
 
     this.currentRoundIndex = index;
     const config = this.rounds[index];
+    if (!config) {
+      return;
+    }
 
     this.recordEvent("round_started", {
       round_index: index,

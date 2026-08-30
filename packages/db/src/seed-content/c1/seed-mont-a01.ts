@@ -6,7 +6,6 @@ import type { ContentSeed } from "#src/seed-content/types";
  * 3 dạng bài, 6 level, GT-001 và GT-003, band 3-4
  */
 export const SEED_MONT_A01: ContentSeed<unknown, unknown>[] = [
-  // WB01-D1 Level 1 (Diff 1 - Free)
   {
     header: {
       code: "GL-C1-NREC-CARD-0101",
@@ -27,21 +26,48 @@ export const SEED_MONT_A01: ContentSeed<unknown, unknown>[] = [
       authored_in: "repo_seed",
     },
     content_pack: {
-      target: 3,
-      options: [
-        { id: "opt-1", text: "3", is_correct: true },
-        { id: "opt-2", text: "8", is_correct: false },
-        { id: "opt-3", text: "5", is_correct: false },
-      ],
-      scaffolding: {
-        l1_nudge: "Nhấp nháy viền thẻ số 3",
-        l2_guidance: "Bàn tay ảo chỉ vào số 3 và đọc 'Ba'",
-        l3_demo: "Bàn tay ảo tự động chạm vào số 3 làm mẫu",
+      prompt: "Bé hãy chạm vào số 3 nhé!",
+      target_item: {
+        item_id: "opt-1",
+        asset: {
+          kind: "emoji",
+          ref: "EMJ-three",
+        },
       },
+      options: [
+        {
+          item_id: "opt-1",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-three",
+          },
+          is_correct: true,
+        },
+        {
+          item_id: "opt-2",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-eight",
+          },
+          is_correct: false,
+        },
+        {
+          item_id: "opt-3",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-five",
+          },
+          is_correct: false,
+        },
+      ],
     },
-    difficulty_params: { count: 3, distractor_count: 2 },
+    difficulty_params: {
+      distractor_count: 2,
+      hint_after_ms: 9000,
+      allow_retry: true,
+      shuffle_items: true,
+    },
   },
-  // WB01-D1 Level 2 (Diff 2 - Login)
   {
     header: {
       code: "GL-C1-NREC-CARD-0102",
@@ -62,26 +88,53 @@ export const SEED_MONT_A01: ContentSeed<unknown, unknown>[] = [
       authored_in: "repo_seed",
     },
     content_pack: {
-      target: 5,
-      options: [
-        { id: "opt-1", text: "2", is_correct: false },
-        { id: "opt-2", text: "5", is_correct: true },
-        { id: "opt-3", text: "6", is_correct: false },
-      ],
-      scaffolding: {
-        l1_nudge: "Viền thẻ số 5 phát sáng nhẹ",
-        l2_guidance: "Bàn tay ảo chỉ vào số 5 và phát âm 'Năm'",
-        l3_demo: "Bàn tay ảo chạm vào số 5",
+      prompt: "Bé chọn thẻ số 5 giúp bạn gấu nhé!",
+      target_item: {
+        item_id: "opt-2",
+        asset: {
+          kind: "emoji",
+          ref: "EMJ-five",
+        },
       },
+      options: [
+        {
+          item_id: "opt-1",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-two",
+          },
+          is_correct: false,
+        },
+        {
+          item_id: "opt-2",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-five",
+          },
+          is_correct: true,
+        },
+        {
+          item_id: "opt-3",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-six",
+          },
+          is_correct: false,
+        },
+      ],
     },
-    difficulty_params: { count: 3, distractor_count: 2 },
+    difficulty_params: {
+      distractor_count: 2,
+      hint_after_ms: 9000,
+      allow_retry: true,
+      shuffle_items: true,
+    },
   },
-  // WB01-D2 Level 1 (Diff 1 - Free)
   {
     header: {
       code: "GL-C1-OTO-CARD-0103",
       content_version: 1,
-      template_code: "GT-001",
+      template_code: "GT-012",
       title: "Đếm số chú vịt vàng",
       instruction: "Có mấy chú vịt đang bơi, bé chọn số đúng nhé!",
       age_min: 3,
@@ -97,31 +150,60 @@ export const SEED_MONT_A01: ContentSeed<unknown, unknown>[] = [
       authored_in: "repo_seed",
     },
     content_pack: {
-      items: [
-        { id: "d1", emoji: "🦆" },
-        { id: "d2", emoji: "🦆" },
-        { id: "d3", emoji: "🦆" },
+      prompt: "Có mấy chú vịt đang bơi, bé chọn số đúng nhé!",
+      flash_items: [
+        {
+          item_id: "d1",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-duck",
+          },
+        },
+        {
+          item_id: "d2",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-duck",
+          },
+        },
+        {
+          item_id: "d3",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-duck",
+          },
+        },
       ],
-      target_count: 3,
+      arrangement: "line",
       options: [
-        { id: "opt-1", text: "2", is_correct: false },
-        { id: "opt-2", text: "3", is_correct: true },
-        { id: "opt-3", text: "4", is_correct: false },
+        {
+          value: 2,
+          is_correct: false,
+        },
+        {
+          value: 3,
+          is_correct: true,
+        },
+        {
+          value: 4,
+          is_correct: false,
+        },
       ],
-      scaffolding: {
-        l1_nudge: "Viền từng chú vịt sáng lần lượt",
-        l2_guidance: "Bàn tay ảo chỉ vào từng chú vịt đếm 'Một, hai, ba'",
-        l3_demo: "Bàn tay ảo đếm xong và chọn số 3",
-      },
     },
-    difficulty_params: { count: 3, distractor_count: 2 },
+    difficulty_params: {
+      flash_ms: 3000,
+      item_count: 3,
+      distractor_count: 2,
+      allow_replay: true,
+      hint_after_ms: 9000,
+      allow_retry: true,
+    },
   },
-  // WB01-D2 Level 2 (Diff 2 - Login)
   {
     header: {
       code: "GL-C1-OTO-CARD-0104",
       content_version: 1,
-      template_code: "GT-001",
+      template_code: "GT-012",
       title: "Đếm chú thỏ trắng",
       instruction: "Bé hãy đếm xem có bao nhiêu chú thỏ nhé!",
       age_min: 3,
@@ -137,27 +219,62 @@ export const SEED_MONT_A01: ContentSeed<unknown, unknown>[] = [
       authored_in: "repo_seed",
     },
     content_pack: {
-      items: [
-        { id: "r1", emoji: "🐰" },
-        { id: "r2", emoji: "🐰" },
-        { id: "r3", emoji: "🐰" },
-        { id: "r4", emoji: "🐰" },
+      prompt: "Bé hãy đếm xem có bao nhiêu chú thỏ nhé!",
+      flash_items: [
+        {
+          item_id: "r1",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-rabbit-face",
+          },
+        },
+        {
+          item_id: "r2",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-rabbit-face",
+          },
+        },
+        {
+          item_id: "r3",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-rabbit-face",
+          },
+        },
+        {
+          item_id: "r4",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-rabbit-face",
+          },
+        },
       ],
-      target_count: 4,
+      arrangement: "line",
       options: [
-        { id: "opt-1", text: "3", is_correct: false },
-        { id: "opt-2", text: "4", is_correct: true },
-        { id: "opt-3", text: "5", is_correct: false },
+        {
+          value: 3,
+          is_correct: false,
+        },
+        {
+          value: 4,
+          is_correct: true,
+        },
+        {
+          value: 5,
+          is_correct: false,
+        },
       ],
-      scaffolding: {
-        l1_nudge: "Nhấp nháy viền từng chú thỏ",
-        l2_guidance: "Bàn tay ảo đếm nhịp '1, 2, 3, 4' chú thỏ",
-        l3_demo: "Bàn tay ảo chọn số 4",
-      },
     },
-    difficulty_params: { count: 4, distractor_count: 2 },
+    difficulty_params: {
+      flash_ms: 3000,
+      item_count: 4,
+      distractor_count: 2,
+      allow_replay: true,
+      hint_after_ms: 9000,
+      allow_retry: true,
+    },
   },
-  // WB01-D3 Level 1 (Diff 1 - Free)
   {
     header: {
       code: "GL-C1-CNT-CONT-0105",
@@ -178,21 +295,49 @@ export const SEED_MONT_A01: ContentSeed<unknown, unknown>[] = [
       authored_in: "repo_seed",
     },
     content_pack: {
-      source_items: [
-        { id: "a1", emoji: "🍎" },
-        { id: "a2", emoji: "🍎" },
-        { id: "a3", emoji: "🍎" },
-      ],
-      target_container: { id: "basket", label: "Giỏ số 2", target_count: 2 },
-      scaffolding: {
-        l1_nudge: "Quả táo đầu tiên phát sáng nhẹ",
-        l2_guidance: "Bàn tay ảo chỉ từ quả táo đến miệng giỏ",
-        l3_demo: "Bàn tay ảo kéo 1 quả táo mẫu vào giỏ",
+      prompt: "Bé hãy kéo đúng 2 quả táo vào giỏ nhé!",
+      container: {
+        container_id: "basket",
+        label: "Giỏ số 2",
+        accepts_attribute: "target",
       },
+      items: [
+        {
+          item_id: "a1",
+          attribute: "target",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-red-apple",
+          },
+          is_correct: true,
+        },
+        {
+          item_id: "a2",
+          attribute: "target",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-red-apple",
+          },
+          is_correct: true,
+        },
+        {
+          item_id: "a3",
+          attribute: "target",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-red-apple",
+          },
+          is_correct: false,
+        },
+      ],
     },
-    difficulty_params: { target_count: 2, source_count: 3 },
+    difficulty_params: {
+      distractor_count: 1,
+      target_count: 2,
+      hint_after_ms: 9000,
+      allow_retry: true,
+    },
   },
-  // WB01-D3 Level 2 (Diff 2 - Login)
   {
     header: {
       code: "GL-C1-CNT-CONT-0106",
@@ -213,19 +358,56 @@ export const SEED_MONT_A01: ContentSeed<unknown, unknown>[] = [
       authored_in: "repo_seed",
     },
     content_pack: {
-      source_items: [
-        { id: "c1", emoji: "🥕" },
-        { id: "c2", emoji: "🥕" },
-        { id: "c3", emoji: "🥕" },
-        { id: "c4", emoji: "🥕" },
-      ],
-      target_container: { id: "box", label: "Sọt số 3", target_count: 3 },
-      scaffolding: {
-        l1_nudge: "Củ cà rốt đầu tiên nhấp nháy viền",
-        l2_guidance: "Bàn tay ảo di chuyển từ củ cà rốt vào sọt",
-        l3_demo: "Bàn tay ảo kéo 1 củ cà rốt vào sọt làm mẫu",
+      prompt: "Bé hãy thu hoạch 3 củ cà rốt vào sọt nhé!",
+      container: {
+        container_id: "box",
+        label: "Sọt số 3",
+        accepts_attribute: "target",
       },
+      items: [
+        {
+          item_id: "c1",
+          attribute: "target",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-carrot",
+          },
+          is_correct: true,
+        },
+        {
+          item_id: "c2",
+          attribute: "target",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-carrot",
+          },
+          is_correct: true,
+        },
+        {
+          item_id: "c3",
+          attribute: "target",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-carrot",
+          },
+          is_correct: true,
+        },
+        {
+          item_id: "c4",
+          attribute: "target",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-carrot",
+          },
+          is_correct: false,
+        },
+      ],
     },
-    difficulty_params: { target_count: 3, source_count: 4 },
+    difficulty_params: {
+      distractor_count: 1,
+      target_count: 3,
+      hint_after_ms: 9000,
+      allow_retry: true,
+    },
   },
 ];

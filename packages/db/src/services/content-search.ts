@@ -12,6 +12,14 @@ export const SearchParamsSchema = z.object({
   q: z.string().optional(),
   age_min: z.coerce.number().min(3).max(6).optional(),
   age_max: z.coerce.number().min(3).max(6).optional(),
+  /**
+   * Một tuổi cụ thể — `GAME-CATALOG-PUBLIC` §3 dùng `/games?competency=C1&age=4`.
+   *
+   * Khác `age_min`/`age_max`: hai tham số kia hỏi "band nằm gọn trong khoảng
+   * này", còn `age` hỏi "band có chứa tuổi này không". Dùng `age_min=4` cho
+   * một đứa trẻ 4 tuổi sẽ loại mọi level band 3–4 — đúng cú pháp, sai câu hỏi.
+   */
+  age: z.coerce.number().min(3).max(6).optional(),
   competency: z.enum(["C1", "C2", "C3", "C4", "C5", "C6"]).optional(),
   strand: z.string().optional(),
   skill: z.string().optional(),
@@ -75,6 +83,10 @@ function buildBasicConditions(
   }
   if (params.age_max !== undefined) {
     conditions.push(lte(gameLevels.ageMax, params.age_max));
+  }
+  if (params.age !== undefined) {
+    conditions.push(lte(gameLevels.ageMin, params.age));
+    conditions.push(gte(gameLevels.ageMax, params.age));
   }
   if (params.difficulty !== undefined) {
     conditions.push(eq(gameLevels.difficulty, params.difficulty));
@@ -162,29 +174,36 @@ interface RawRow {
   createdAt: Date;
 }
 
+/**
+ * Năng lực đọc từ mã level — `GL-C3-...` thuộc C3.
+ *
+ * Không có cột `competency` trên `game_levels`; bộ lọc của
+ * `buildSearchWhereConditions` cũng khớp bằng `code LIKE 'GL-C3-%'`, nên đây là
+ * cùng một nguồn sự thật chứ không phải một cách suy diễn thứ hai.
+ */
+const LEVEL_COMPETENCY_REGEX = /^GL-(C[1-6])-/;
+
+export function competencyFromCode(code: string): string | null {
+  const match = LEVEL_COMPETENCY_REGEX.exec(code);
+  return match?.[1] ?? null;
+}
+
+/** "3-4" — thẻ trò chơi hiện band, không hiện hai số rời (`BR-GCP` §7.2). */
+export function ageBandLabel(
+  ageMin: number | null | undefined,
+  ageMax: number | null | undefined
+): string | null {
+  if (ageMin == null || ageMax == null) {
+    return null;
+  }
+  return `${ageMin}-${ageMax}`;
+}
+
 function formatSearchItem(row: RawRow, userAllowedTiers: AccessTier[]) {
   const isAccessible = userAllowedTiers.includes(row.accessTier as AccessTier);
   const isLocked = !isAccessible;
 
-  if (isLocked) {
-    return {
-      id: row.id,
-      code: row.code,
-      title: row.title,
-      description: row.description,
-      instruction: row.instruction,
-      thumbnail_emoji: row.thumbnailEmoji,
-      theme_id: row.themeId,
-      age_min: row.ageMin,
-      age_max: row.ageMax,
-      difficulty: row.difficulty,
-      access_tier: row.accessTier,
-      status: row.status,
-      locked: true,
-    };
-  }
-
-  return {
+  const card = {
     id: row.id,
     code: row.code,
     title: row.title,
@@ -192,11 +211,21 @@ function formatSearchItem(row: RawRow, userAllowedTiers: AccessTier[]) {
     instruction: row.instruction,
     thumbnail_emoji: row.thumbnailEmoji,
     theme_id: row.themeId,
+    competency: competencyFromCode(row.code),
+    age_band: ageBandLabel(row.ageMin, row.ageMax),
     age_min: row.ageMin,
     age_max: row.ageMax,
     difficulty: row.difficulty,
     access_tier: row.accessTier,
     status: row.status,
+  };
+
+  if (isLocked) {
+    return { ...card, locked: true };
+  }
+
+  return {
+    ...card,
     locked: false,
     content_pack: row.contentPack,
     difficulty_params: row.difficultyParams,
@@ -259,11 +288,100 @@ export async function searchGameLevels(
     (item) => item.locked || item.access_tier !== "free"
   );
 
+  const facets = await buildGameLevelFacets(db, params, viewer.role);
+
   return {
     items,
     next_cursor: nextCursor,
+    total: facets.total,
+    facets,
     no_store: hasPaidOrLockedContent,
   };
+}
+
+export interface GameLevelFacets {
+  total: number;
+  competency: Record<string, number>;
+  age: Record<string, number>;
+  access_tier: Record<string, number>;
+}
+
+/**
+ * Số lượng cho từng giá trị bộ lọc — `GAME-CATALOG-PUBLIC` §8.
+ *
+ * Mỗi trục được đếm với **mọi bộ lọc khác trừ chính nó**. Đếm với cả bộ lọc
+ * hiện tại thì mọi lựa chọn chưa chọn đều ra 0 và giao diện sẽ vô hiệu hết —
+ * đúng ngược với lý do facet tồn tại.
+ */
+async function buildGameLevelFacets(
+  db: PostgresJsDatabase<Record<string, unknown>>,
+  params: SearchParams,
+  viewerRole: SearchViewerRole
+): Promise<GameLevelFacets> {
+  const countWith = async (
+    overrides: Partial<SearchParams>
+  ): Promise<Array<{ key: string; count: number }>> => {
+    const scoped = { ...params, ...overrides };
+    const conditions = buildSearchWhereConditions(scoped, viewerRole);
+    const rows = await db
+      .select({
+        code: gameLevels.code,
+        ageMin: gameLevels.ageMin,
+        ageMax: gameLevels.ageMax,
+        accessTier: gameLevels.accessTier,
+      })
+      .from(gameLevels)
+      .leftJoin(gameTemplates, eq(gameLevels.templateId, gameTemplates.id))
+      .where(conditions.length > 0 ? and(...conditions) : undefined);
+    return rows.map((row) => ({
+      key: row.code,
+      count: 1,
+      ...row,
+    })) as unknown as Array<{ key: string; count: number }>;
+  };
+
+  const clearCursor = { cursor: undefined };
+
+  const competencyRows = (await countWith({
+    ...clearCursor,
+    competency: undefined,
+  })) as unknown as Array<{ code: string }>;
+  const ageRows = (await countWith({
+    ...clearCursor,
+    age: undefined,
+    age_min: undefined,
+    age_max: undefined,
+  })) as unknown as Array<{ ageMin: number | null; ageMax: number | null }>;
+  const tierRows = (await countWith({
+    ...clearCursor,
+    access_tier: undefined,
+  })) as unknown as Array<{ accessTier: string }>;
+  const totalRows = await countWith(clearCursor);
+
+  const competency: Record<string, number> = {};
+  for (const row of competencyRows) {
+    const code = competencyFromCode(row.code);
+    if (code) {
+      competency[code] = (competency[code] ?? 0) + 1;
+    }
+  }
+
+  const age: Record<string, number> = {};
+  for (const row of ageRows) {
+    if (row.ageMin == null || row.ageMax == null) {
+      continue;
+    }
+    for (let year = row.ageMin; year <= row.ageMax; year++) {
+      age[String(year)] = (age[String(year)] ?? 0) + 1;
+    }
+  }
+
+  const access_tier: Record<string, number> = {};
+  for (const row of tierRows) {
+    access_tier[row.accessTier] = (access_tier[row.accessTier] ?? 0) + 1;
+  }
+
+  return { total: totalRows.length, competency, age, access_tier };
 }
 
 function buildActivityConditions(

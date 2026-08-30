@@ -477,10 +477,9 @@
 
 <script lang="ts" setup>
   import { onMounted, reactive, ref } from "vue";
-  import { definePageMeta } from "#imports";
 
   definePageMeta({
-    middleware: "auth",
+    middleware: ["user-auth"],
   });
 
   interface MfaStatusResponse {

@@ -53,12 +53,13 @@ export default defineEventHandler(async (event) => {
     maxAllowedChildren = 3;
   }
 
-  const [{ value: activeChildCount }] = await db
+  const [activeChildRow] = await db
     .select({ value: count() })
     .from(childProfiles)
     .where(
       and(eq(childProfiles.userId, userId), eq(childProfiles.status, "active"))
     );
+  const activeChildCount = activeChildRow?.value ?? 0;
 
   if (activeChildCount >= maxAllowedChildren) {
     setResponseStatus(event, 402);
@@ -81,6 +82,10 @@ export default defineEventHandler(async (event) => {
     })
     .where(eq(childProfiles.id, child.id))
     .returning();
+
+  if (!updated) {
+    throw createError({ statusCode: 500, statusMessage: "RESTORE_FAILED" });
+  }
 
   return {
     uuid: updated.uuid,

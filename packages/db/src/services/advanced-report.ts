@@ -521,7 +521,7 @@ function buildReinforcementSection(
       name: sk.name,
       mastery_label: label,
       actions: formattedActions,
-      alt_text: `Kỹ năng ${sk.name} (${sk.code}): Đang ở mức ${label}. Gợi ý hỗ trợ: ${formattedActions[0].text}`,
+      alt_text: `Kỹ năng ${sk.name} (${sk.code}): Đang ở mức ${label}. Gợi ý hỗ trợ: ${formattedActions[0]?.text ?? ""}`,
     });
   }
 
@@ -557,6 +557,9 @@ function buildReadyForNextSection(
     }
 
     const nextSkill = successors[0];
+    if (!nextSkill) {
+      continue;
+    }
     const label = masteryLabel({
       p_learn: pLearn,
       attempts_total: ms.attemptsTotal ?? touchedSessions,
@@ -685,6 +688,81 @@ function indexSessionTouches(
   };
 }
 
+function buildReportLookupMaps(params: {
+  allCompetencies: (typeof competencies.$inferSelect)[];
+  allStrands: (typeof strands.$inferSelect)[];
+  allLevels: (typeof gameLevels.$inferSelect)[];
+  allMappings: (typeof contentSkillMap.$inferSelect)[];
+  childMasteryList: (typeof masteryState.$inferSelect)[];
+  actionSuggestionsList: (typeof skillActionSuggestions.$inferSelect)[];
+  allPrereqs: (typeof skillPrerequisites.$inferSelect)[];
+  skillById: Map<number, typeof skills.$inferSelect>;
+}) {
+  const competencyById = new Map<number, typeof competencies.$inferSelect>();
+  for (const c of params.allCompetencies) {
+    competencyById.set(Number(c.id), c);
+  }
+
+  const strandById = new Map<number, typeof strands.$inferSelect>();
+  for (const s of params.allStrands) {
+    strandById.set(Number(s.id), s);
+  }
+
+  const levelById = new Map<number, typeof gameLevels.$inferSelect>();
+  for (const l of params.allLevels) {
+    levelById.set(Number(l.id), l);
+  }
+
+  const skillsByLevelId = new Map<number, number[]>();
+  for (const m of params.allMappings) {
+    const lId = Number(m.entityId);
+    const sId = Number(m.skillId);
+    const list = skillsByLevelId.get(lId) ?? [];
+    list.push(sId);
+    skillsByLevelId.set(lId, list);
+  }
+
+  const masteryMap = new Map<number, typeof masteryState.$inferSelect>();
+  for (const ms of params.childMasteryList) {
+    masteryMap.set(Number(ms.skillId), ms);
+  }
+
+  const actionsBySkillId = new Map<
+    number,
+    (typeof skillActionSuggestions.$inferSelect)[]
+  >();
+  for (const act of params.actionSuggestionsList) {
+    const skId = Number(act.skillId);
+    const list = actionsBySkillId.get(skId) ?? [];
+    list.push(act);
+    actionsBySkillId.set(skId, list);
+  }
+
+  const prereqSuccessorsBySkillId = new Map<
+    number,
+    (typeof skills.$inferSelect)[]
+  >();
+  for (const pr of params.allPrereqs) {
+    const reqSkillId = Number(pr.prerequisiteId);
+    const targetSkill = params.skillById.get(Number(pr.skillId));
+    if (targetSkill) {
+      const list = prereqSuccessorsBySkillId.get(reqSkillId) ?? [];
+      list.push(targetSkill);
+      prereqSuccessorsBySkillId.set(reqSkillId, list);
+    }
+  }
+
+  return {
+    competencyById,
+    strandById,
+    levelById,
+    skillsByLevelId,
+    masteryMap,
+    actionsBySkillId,
+    prereqSuccessorsBySkillId,
+  };
+}
+
 export async function buildAdvancedReport(params: {
   childId: number;
   period: "30d" | "90d";
@@ -745,32 +823,32 @@ export async function buildAdvancedReport(params: {
     db.select().from(skillPrerequisites),
   ]);
 
-  const competencyById = new Map<number, typeof competencies.$inferSelect>();
-  for (const c of allCompetencies) {
-    competencyById.set(Number(c.id), c);
-  }
-
-  const strandById = new Map<number, typeof strands.$inferSelect>();
+  const rawStrandById = new Map<number, typeof strands.$inferSelect>();
   for (const s of allStrands) {
-    strandById.set(Number(s.id), s);
+    rawStrandById.set(Number(s.id), s);
   }
 
   const { skillById, skillsByCompetencyId, skillsByStrandId } =
-    indexSkillsAndTaxonomy(allSkills, strandById);
+    indexSkillsAndTaxonomy(allSkills, rawStrandById);
 
-  const levelById = new Map<number, typeof gameLevels.$inferSelect>();
-  for (const l of allLevels) {
-    levelById.set(Number(l.id), l);
-  }
-
-  const skillsByLevelId = new Map<number, number[]>();
-  for (const m of allMappings) {
-    const lId = Number(m.entityId);
-    const sId = Number(m.skillId);
-    const list = skillsByLevelId.get(lId) ?? [];
-    list.push(sId);
-    skillsByLevelId.set(lId, list);
-  }
+  const {
+    competencyById,
+    strandById,
+    levelById,
+    skillsByLevelId,
+    masteryMap,
+    actionsBySkillId,
+    prereqSuccessorsBySkillId,
+  } = buildReportLookupMaps({
+    allCompetencies,
+    allStrands,
+    allLevels,
+    allMappings,
+    childMasteryList,
+    actionSuggestionsList,
+    allPrereqs,
+    skillById,
+  });
 
   const {
     sessionIdsBySkillId,
@@ -782,36 +860,6 @@ export async function buildAdvancedReport(params: {
     skillById,
     strandById
   );
-
-  const masteryMap = new Map<number, typeof masteryState.$inferSelect>();
-  for (const ms of childMasteryList) {
-    masteryMap.set(Number(ms.skillId), ms);
-  }
-
-  const actionsBySkillId = new Map<
-    number,
-    (typeof skillActionSuggestions.$inferSelect)[]
-  >();
-  for (const act of actionSuggestionsList) {
-    const skId = Number(act.skillId);
-    const list = actionsBySkillId.get(skId) ?? [];
-    list.push(act);
-    actionsBySkillId.set(skId, list);
-  }
-
-  const prereqSuccessorsBySkillId = new Map<
-    number,
-    (typeof skills.$inferSelect)[]
-  >();
-  for (const pr of allPrereqs) {
-    const reqSkillId = Number(pr.prerequisiteId);
-    const targetSkill = skillById.get(Number(pr.skillId));
-    if (targetSkill) {
-      const list = prereqSuccessorsBySkillId.get(reqSkillId) ?? [];
-      list.push(targetSkill);
-      prereqSuccessorsBySkillId.set(reqSkillId, list);
-    }
-  }
 
   const aggregatedData: AggregatedTaxonomyData = {
     allCompetencies,
@@ -853,8 +901,8 @@ export async function buildAdvancedReport(params: {
       avatar_id: child.avatarId ?? "default",
     },
     period,
-    from_date: startDate.toISOString().split("T")[0],
-    to_date: now.toISOString().split("T")[0],
+    from_date: startDate.toISOString().split("T")[0] ?? "",
+    to_date: now.toISOString().split("T")[0] ?? "",
     sections: {
       competencies: competencyItems,
       strands: strandItems,

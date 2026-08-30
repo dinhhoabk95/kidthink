@@ -150,10 +150,7 @@ export default defineEventHandler(async (event) => {
     });
   }
 
-  const raw =
-    (event.context?.body as unknown) ||
-    ((event as Record<string, unknown>)._body as unknown) ||
-    (await readBody(event).catch(() => ({})));
+  const raw = event.context?.body ?? (await readBody(event).catch(() => ({})));
 
   const body = patchSeoPageSchema.parse(raw);
 
@@ -165,14 +162,24 @@ export default defineEventHandler(async (event) => {
     .where(eq(seoPages.id, existing.id))
     .returning();
 
-  const managerId = manager.manager_id || manager.id || 1;
-  await writeAudit(db, {
-    actor_type: "manager",
-    actor_id: managerId,
-    action: "content_updated",
-    entity_type: "seo_page",
-    entity_id: existing.id.toString(),
-    after_data: updates,
+  if (!updated) {
+    throw createError({
+      statusCode: 500,
+      statusMessage: "SEO_PAGE_UPDATE_FAILED",
+      message: "Cập nhật trang SEO thất bại",
+    });
+  }
+
+  const managerId = manager.manager_id;
+  await db.transaction(async (tx) => {
+    await writeAudit(tx, {
+      actor_type: "manager",
+      actor_id: managerId,
+      action: "content_created",
+      entity_type: "seo_page",
+      entity_id: existing.id.toString(),
+      after_data: updates,
+    });
   });
 
   return updated;

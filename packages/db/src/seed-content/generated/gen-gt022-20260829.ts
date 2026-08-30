@@ -1,5 +1,5 @@
 /**
- * @generated from LEVEL-GENERATOR-KIT@00000000
+ * @generated from LEVEL-GENERATOR-KIT@c9fd31f3f239
  * Engine: GT-022
  * Seed: 20260829
  * Theme: school
@@ -25,18 +25,18 @@ export const GEN_GT022_20260829: ContentSeed<unknown, unknown>[] = [
       "what_tags": [],
       "thinking_tags": [],
       "theme_tag": "school",
-      "origin": "generator",
+      "origin": "ai_assisted",
       "authored_in": "repo_seed"
     },
     "content_pack": {
-      "prompt": "Bé hãy tìm hình Bút chì trong bức tranh nhé!",
-      "target_description": "Bút chì",
+      "prompt": "Bé hãy tìm hình Thước kẻ trong bức tranh nhé!",
+      "target_description": "Thước kẻ",
       "scene_objects": [
         {
           "id": "obj_1",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-pencil"
+            "ref": "EMJ-ruler"
           },
           "is_target": true,
           "is_hidden": false,
@@ -47,7 +47,7 @@ export const GEN_GT022_20260829: ContentSeed<unknown, unknown>[] = [
           "id": "obj_2",
           "asset": {
             "kind": "emoji",
-            "ref": "🥕"
+            "ref": "EMJ-crayon"
           },
           "is_target": false,
           "is_hidden": false,
@@ -58,7 +58,7 @@ export const GEN_GT022_20260829: ContentSeed<unknown, unknown>[] = [
           "id": "obj_3",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-backpack"
+            "ref": "EMJ-scissors"
           },
           "is_target": false,
           "is_hidden": false,
@@ -69,7 +69,7 @@ export const GEN_GT022_20260829: ContentSeed<unknown, unknown>[] = [
           "id": "obj_4",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-school"
+            "ref": "EMJ-abacus"
           },
           "is_target": false,
           "is_hidden": false,
@@ -99,18 +99,18 @@ export const GEN_GT022_20260829: ContentSeed<unknown, unknown>[] = [
       "what_tags": [],
       "thinking_tags": [],
       "theme_tag": "school",
-      "origin": "generator",
+      "origin": "ai_assisted",
       "authored_in": "repo_seed"
     },
     "content_pack": {
-      "prompt": "Bé hãy tìm hình Dâu tây trong bức tranh nhé!",
-      "target_description": "Dâu tây",
+      "prompt": "Bé hãy tìm hình Sách mở trong bức tranh nhé!",
+      "target_description": "Sách mở",
       "scene_objects": [
         {
           "id": "obj_1",
           "asset": {
             "kind": "emoji",
-            "ref": "🍓"
+            "ref": "EMJ-open-book"
           },
           "is_target": true,
           "is_hidden": false,
@@ -121,7 +121,7 @@ export const GEN_GT022_20260829: ContentSeed<unknown, unknown>[] = [
           "id": "obj_2",
           "asset": {
             "kind": "emoji",
-            "ref": "🍎"
+            "ref": "EMJ-scissors"
           },
           "is_target": false,
           "is_hidden": false,
@@ -132,7 +132,7 @@ export const GEN_GT022_20260829: ContentSeed<unknown, unknown>[] = [
           "id": "obj_3",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-ruler"
+            "ref": "EMJ-crayon"
           },
           "is_target": false,
           "is_hidden": false,
@@ -143,7 +143,7 @@ export const GEN_GT022_20260829: ContentSeed<unknown, unknown>[] = [
           "id": "obj_4",
           "asset": {
             "kind": "emoji",
-            "ref": "🥕"
+            "ref": "EMJ-pencil"
           },
           "is_target": false,
           "is_hidden": false,
@@ -173,18 +173,18 @@ export const GEN_GT022_20260829: ContentSeed<unknown, unknown>[] = [
       "what_tags": [],
       "thinking_tags": [],
       "theme_tag": "school",
-      "origin": "generator",
+      "origin": "ai_assisted",
       "authored_in": "repo_seed"
     },
     "content_pack": {
-      "prompt": "Bé hãy tìm hình Sách trong bức tranh nhé!",
-      "target_description": "Sách",
+      "prompt": "Bé hãy tìm hình Bút sáp trong bức tranh nhé!",
+      "target_description": "Bút sáp",
       "scene_objects": [
         {
           "id": "obj_1",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-books"
+            "ref": "EMJ-crayon"
           },
           "is_target": true,
           "is_hidden": false,
@@ -195,7 +195,7 @@ export const GEN_GT022_20260829: ContentSeed<unknown, unknown>[] = [
           "id": "obj_2",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-school"
+            "ref": "EMJ-backpack"
           },
           "is_target": false,
           "is_hidden": false,
@@ -206,7 +206,7 @@ export const GEN_GT022_20260829: ContentSeed<unknown, unknown>[] = [
           "id": "obj_3",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-pencil"
+            "ref": "EMJ-scissors"
           },
           "is_target": false,
           "is_hidden": false,
@@ -217,7 +217,7 @@ export const GEN_GT022_20260829: ContentSeed<unknown, unknown>[] = [
           "id": "obj_4",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-backpack"
+            "ref": "EMJ-books"
           },
           "is_target": false,
           "is_hidden": false,
@@ -247,18 +247,18 @@ export const GEN_GT022_20260829: ContentSeed<unknown, unknown>[] = [
       "what_tags": [],
       "thinking_tags": [],
       "theme_tag": "school",
-      "origin": "generator",
+      "origin": "ai_assisted",
       "authored_in": "repo_seed"
     },
     "content_pack": {
-      "prompt": "Bé hãy tìm hình Nho trong bức tranh nhé!",
-      "target_description": "Nho",
+      "prompt": "Bé hãy tìm hình Cái kéo trong bức tranh nhé!",
+      "target_description": "Cái kéo",
       "scene_objects": [
         {
           "id": "obj_1",
           "asset": {
             "kind": "emoji",
-            "ref": "🍇"
+            "ref": "EMJ-scissors"
           },
           "is_target": true,
           "is_hidden": false,
@@ -269,7 +269,7 @@ export const GEN_GT022_20260829: ContentSeed<unknown, unknown>[] = [
           "id": "obj_2",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-pencil"
+            "ref": "EMJ-ruler"
           },
           "is_target": false,
           "is_hidden": false,
@@ -280,7 +280,7 @@ export const GEN_GT022_20260829: ContentSeed<unknown, unknown>[] = [
           "id": "obj_3",
           "asset": {
             "kind": "emoji",
-            "ref": "🍌"
+            "ref": "EMJ-school"
           },
           "is_target": false,
           "is_hidden": false,
@@ -291,7 +291,7 @@ export const GEN_GT022_20260829: ContentSeed<unknown, unknown>[] = [
           "id": "obj_4",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-ruler"
+            "ref": "EMJ-pencil"
           },
           "is_target": false,
           "is_hidden": false,
@@ -321,18 +321,18 @@ export const GEN_GT022_20260829: ContentSeed<unknown, unknown>[] = [
       "what_tags": [],
       "thinking_tags": [],
       "theme_tag": "school",
-      "origin": "generator",
+      "origin": "ai_assisted",
       "authored_in": "repo_seed"
     },
     "content_pack": {
-      "prompt": "Bé hãy tìm hình Bút chì trong bức tranh nhé!",
-      "target_description": "Bút chì",
+      "prompt": "Bé hãy tìm hình Trường học trong bức tranh nhé!",
+      "target_description": "Trường học",
       "scene_objects": [
         {
           "id": "obj_1",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-pencil"
+            "ref": "EMJ-school"
           },
           "is_target": true,
           "is_hidden": false,
@@ -343,7 +343,7 @@ export const GEN_GT022_20260829: ContentSeed<unknown, unknown>[] = [
           "id": "obj_2",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-school"
+            "ref": "EMJ-books"
           },
           "is_target": false,
           "is_hidden": false,
@@ -354,7 +354,7 @@ export const GEN_GT022_20260829: ContentSeed<unknown, unknown>[] = [
           "id": "obj_3",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-backpack"
+            "ref": "EMJ-open-book"
           },
           "is_target": false,
           "is_hidden": false,
@@ -365,7 +365,7 @@ export const GEN_GT022_20260829: ContentSeed<unknown, unknown>[] = [
           "id": "obj_4",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-ruler"
+            "ref": "EMJ-backpack"
           },
           "is_target": false,
           "is_hidden": false,
@@ -395,7 +395,7 @@ export const GEN_GT022_20260829: ContentSeed<unknown, unknown>[] = [
       "what_tags": [],
       "thinking_tags": [],
       "theme_tag": "school",
-      "origin": "generator",
+      "origin": "ai_assisted",
       "authored_in": "repo_seed"
     },
     "content_pack": {
@@ -417,7 +417,7 @@ export const GEN_GT022_20260829: ContentSeed<unknown, unknown>[] = [
           "id": "obj_2",
           "asset": {
             "kind": "emoji",
-            "ref": "🍇"
+            "ref": "EMJ-pencil"
           },
           "is_target": false,
           "is_hidden": false,
@@ -428,7 +428,7 @@ export const GEN_GT022_20260829: ContentSeed<unknown, unknown>[] = [
           "id": "obj_3",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-books"
+            "ref": "EMJ-bell"
           },
           "is_target": false,
           "is_hidden": false,
@@ -439,7 +439,7 @@ export const GEN_GT022_20260829: ContentSeed<unknown, unknown>[] = [
           "id": "obj_4",
           "asset": {
             "kind": "emoji",
-            "ref": "🥕"
+            "ref": "EMJ-school"
           },
           "is_target": false,
           "is_hidden": false,
@@ -469,18 +469,18 @@ export const GEN_GT022_20260829: ContentSeed<unknown, unknown>[] = [
       "what_tags": [],
       "thinking_tags": [],
       "theme_tag": "school",
-      "origin": "generator",
+      "origin": "ai_assisted",
       "authored_in": "repo_seed"
     },
     "content_pack": {
-      "prompt": "Bé hãy tìm hình Cặp sách trong bức tranh nhé!",
-      "target_description": "Cặp sách",
+      "prompt": "Bé hãy tìm hình Bút chì trong bức tranh nhé!",
+      "target_description": "Bút chì",
       "scene_objects": [
         {
           "id": "obj_1",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-backpack"
+            "ref": "EMJ-pencil"
           },
           "is_target": true,
           "is_hidden": false,
@@ -491,7 +491,7 @@ export const GEN_GT022_20260829: ContentSeed<unknown, unknown>[] = [
           "id": "obj_2",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-ruler"
+            "ref": "EMJ-books"
           },
           "is_target": false,
           "is_hidden": false,
@@ -502,7 +502,7 @@ export const GEN_GT022_20260829: ContentSeed<unknown, unknown>[] = [
           "id": "obj_3",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-pencil"
+            "ref": "EMJ-open-book"
           },
           "is_target": false,
           "is_hidden": false,
@@ -513,7 +513,7 @@ export const GEN_GT022_20260829: ContentSeed<unknown, unknown>[] = [
           "id": "obj_4",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-books"
+            "ref": "EMJ-crayon"
           },
           "is_target": false,
           "is_hidden": false,
@@ -543,18 +543,18 @@ export const GEN_GT022_20260829: ContentSeed<unknown, unknown>[] = [
       "what_tags": [],
       "thinking_tags": [],
       "theme_tag": "school",
-      "origin": "generator",
+      "origin": "ai_assisted",
       "authored_in": "repo_seed"
     },
     "content_pack": {
-      "prompt": "Bé hãy tìm hình Cặp sách trong bức tranh nhé!",
-      "target_description": "Cặp sách",
+      "prompt": "Bé hãy tìm hình Sách mở trong bức tranh nhé!",
+      "target_description": "Sách mở",
       "scene_objects": [
         {
           "id": "obj_1",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-backpack"
+            "ref": "EMJ-open-book"
           },
           "is_target": true,
           "is_hidden": false,
@@ -565,7 +565,7 @@ export const GEN_GT022_20260829: ContentSeed<unknown, unknown>[] = [
           "id": "obj_2",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-pencil"
+            "ref": "EMJ-crayon"
           },
           "is_target": false,
           "is_hidden": false,
@@ -576,7 +576,7 @@ export const GEN_GT022_20260829: ContentSeed<unknown, unknown>[] = [
           "id": "obj_3",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-books"
+            "ref": "EMJ-scissors"
           },
           "is_target": false,
           "is_hidden": false,
@@ -587,7 +587,7 @@ export const GEN_GT022_20260829: ContentSeed<unknown, unknown>[] = [
           "id": "obj_4",
           "asset": {
             "kind": "emoji",
-            "ref": "🍌"
+            "ref": "EMJ-books"
           },
           "is_target": false,
           "is_hidden": false,
@@ -617,18 +617,18 @@ export const GEN_GT022_20260829: ContentSeed<unknown, unknown>[] = [
       "what_tags": [],
       "thinking_tags": [],
       "theme_tag": "school",
-      "origin": "generator",
+      "origin": "ai_assisted",
       "authored_in": "repo_seed"
     },
     "content_pack": {
-      "prompt": "Bé hãy tìm hình Trường học trong bức tranh nhé!",
-      "target_description": "Trường học",
+      "prompt": "Bé hãy tìm hình Sách mở trong bức tranh nhé!",
+      "target_description": "Sách mở",
       "scene_objects": [
         {
           "id": "obj_1",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-school"
+            "ref": "EMJ-open-book"
           },
           "is_target": true,
           "is_hidden": false,
@@ -639,7 +639,7 @@ export const GEN_GT022_20260829: ContentSeed<unknown, unknown>[] = [
           "id": "obj_2",
           "asset": {
             "kind": "emoji",
-            "ref": "🥕"
+            "ref": "EMJ-abacus"
           },
           "is_target": false,
           "is_hidden": false,
@@ -650,7 +650,7 @@ export const GEN_GT022_20260829: ContentSeed<unknown, unknown>[] = [
           "id": "obj_3",
           "asset": {
             "kind": "emoji",
-            "ref": "🍓"
+            "ref": "EMJ-crayon"
           },
           "is_target": false,
           "is_hidden": false,
@@ -661,7 +661,7 @@ export const GEN_GT022_20260829: ContentSeed<unknown, unknown>[] = [
           "id": "obj_4",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-backpack"
+            "ref": "EMJ-ruler"
           },
           "is_target": false,
           "is_hidden": false,
@@ -691,18 +691,18 @@ export const GEN_GT022_20260829: ContentSeed<unknown, unknown>[] = [
       "what_tags": [],
       "thinking_tags": [],
       "theme_tag": "school",
-      "origin": "generator",
+      "origin": "ai_assisted",
       "authored_in": "repo_seed"
     },
     "content_pack": {
-      "prompt": "Bé hãy tìm hình Bút chì trong bức tranh nhé!",
-      "target_description": "Bút chì",
+      "prompt": "Bé hãy tìm hình Cái chuông trong bức tranh nhé!",
+      "target_description": "Cái chuông",
       "scene_objects": [
         {
           "id": "obj_1",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-pencil"
+            "ref": "EMJ-bell"
           },
           "is_target": true,
           "is_hidden": false,
@@ -713,7 +713,7 @@ export const GEN_GT022_20260829: ContentSeed<unknown, unknown>[] = [
           "id": "obj_2",
           "asset": {
             "kind": "emoji",
-            "ref": "🍓"
+            "ref": "EMJ-books"
           },
           "is_target": false,
           "is_hidden": false,
@@ -724,7 +724,7 @@ export const GEN_GT022_20260829: ContentSeed<unknown, unknown>[] = [
           "id": "obj_3",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-school"
+            "ref": "EMJ-abacus"
           },
           "is_target": false,
           "is_hidden": false,
@@ -735,7 +735,7 @@ export const GEN_GT022_20260829: ContentSeed<unknown, unknown>[] = [
           "id": "obj_4",
           "asset": {
             "kind": "emoji",
-            "ref": "🍌"
+            "ref": "EMJ-school"
           },
           "is_target": false,
           "is_hidden": false,

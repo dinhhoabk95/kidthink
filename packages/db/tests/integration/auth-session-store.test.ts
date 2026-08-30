@@ -32,6 +32,9 @@ async function createUserFixture(label: string) {
           status: "active",
         })
         .returning();
+      if (!user) {
+        throw new Error("Failed to insert user");
+      }
       return user;
     }
   }
@@ -61,9 +64,9 @@ describe("PostgresSessionStore (Metadata Only under Task #85)", () => {
       .from(activeSessions)
       .where(eq(activeSessions.id, created.id));
 
-    expect(row.deviceId).toBe("dev_phone_101");
-    expect(row.remembered).toBe(true);
-    expect(row.revokedAt).toBeNull();
+    expect(row?.deviceId).toBe("dev_phone_101");
+    expect(row?.remembered).toBe(true);
+    expect(row?.revokedAt).toBeNull();
   });
 
   it("marks all sessions revoked and increments session_version", async () => {
@@ -92,13 +95,13 @@ describe("PostgresSessionStore (Metadata Only under Task #85)", () => {
       .from(activeSessions)
       .where(eq(activeSessions.accountId, user.id));
 
-    expect(reloadedUser.sessionVersion).toBe(1);
-    expect(row.revokedAt).not.toBeNull();
+    expect(reloadedUser?.sessionVersion).toBe(1);
+    expect(row?.revokedAt).not.toBeNull();
   });
 
   it("BR-AUT-14: resolves User reauth methods from password, linked SNS and confirmed TOTP state", async () => {
     const db = getOwnerDb();
-    let user: any;
+    let user: typeof users.$inferSelect | undefined;
     while (!user) {
       const email = `reauth-user-${Math.floor(100_000 + Math.random() * 899_999)}-${Date.now()}@example.com`;
       const [existing] = await db
@@ -117,6 +120,9 @@ describe("PostgresSessionStore (Metadata Only under Task #85)", () => {
           })
           .returning();
       }
+    }
+    if (!user) {
+      throw new Error("Failed to insert user");
     }
 
     await db.insert(socialIdentities).values({
@@ -142,7 +148,7 @@ describe("PostgresSessionStore (Metadata Only under Task #85)", () => {
 
   it("BR-AUT-15: Manager reauth exposes password/TOTP and never social", async () => {
     const db = getOwnerDb();
-    let manager: any;
+    let manager: typeof managers.$inferSelect | undefined;
     while (!manager) {
       const email = `reauth-manager-${Math.floor(100_000 + Math.random() * 899_999)}-${Date.now()}@example.com`;
       const [existing] = await db
@@ -162,6 +168,9 @@ describe("PostgresSessionStore (Metadata Only under Task #85)", () => {
           })
           .returning();
       }
+    }
+    if (!manager) {
+      throw new Error("Failed to insert manager");
     }
 
     await db.insert(mfaSettings).values({

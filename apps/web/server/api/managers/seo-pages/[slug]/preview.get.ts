@@ -81,7 +81,7 @@ export default defineEventHandler(async (event) => {
   }
 
   const structuredData = buildStructuredData(page);
-  const managerId = manager.manager_id || manager.id || 1;
+  const managerId = manager.manager_id;
 
   const previewToken = issuePreviewToken({
     entityType: "seo_page",

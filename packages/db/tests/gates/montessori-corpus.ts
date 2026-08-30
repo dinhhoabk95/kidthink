@@ -56,53 +56,82 @@ function cells(row: string): string[] {
   return row.split("|").map((c) => c.trim());
 }
 
+interface CorpusRowState {
+  seen: Set<string>;
+  duplicates: string[];
+  workbooks: Set<string>;
+  sourceByCompetency: Record<string, number>;
+  acceptedByCompetency: Record<string, number>;
+  accepted: number;
+  deferred: number;
+  batchA: number;
+  batchB: number;
+}
+
+function processCorpusRow(
+  code: string,
+  matchRow: string,
+  state: CorpusRowState
+): void {
+  const [, competency, , , , status] = cells(matchRow);
+  if (state.seen.has(code)) {
+    state.duplicates.push(code);
+  }
+  state.seen.add(code);
+  state.workbooks.add(code.slice(0, 4));
+  if (competency) {
+    bump(state.sourceByCompetency, competency);
+  }
+  if (status === DEFERRED_CELL) {
+    state.deferred++;
+    return;
+  }
+  state.accepted++;
+  if (competency) {
+    bump(state.acceptedByCompetency, competency);
+  }
+  if (status === BATCH_A_CELL) {
+    state.batchA++;
+  } else {
+    state.batchB++;
+  }
+}
+
 /** Đếm lại từ mục 1 của bảng tra — nguồn sự thật cho mọi con số khác. */
 export function countCorpusTable(markdown: string): CorpusCounts {
-  const sourceByCompetency: Record<string, number> = {};
-  const acceptedByCompetency: Record<string, number> = {};
-  const seen = new Set<string>();
-  const duplicates: string[] = [];
-  const workbooks = new Set<string>();
-  let accepted = 0;
-  let deferred = 0;
-  let batchA = 0;
-  let batchB = 0;
+  const state: CorpusRowState = {
+    sourceByCompetency: {},
+    acceptedByCompetency: {},
+    seen: new Set<string>(),
+    duplicates: [],
+    workbooks: new Set<string>(),
+    accepted: 0,
+    deferred: 0,
+    batchA: 0,
+    batchB: 0,
+  };
 
   TABLE_ROW_REGEX.lastIndex = 0;
   let match = TABLE_ROW_REGEX.exec(markdown);
   while (match !== null) {
     const code = match[1];
-    const [, competency, , , , status] = cells(match[2]);
-    if (seen.has(code)) {
-      duplicates.push(code);
-    }
-    seen.add(code);
-    workbooks.add(code.slice(0, 4));
-    bump(sourceByCompetency, competency);
-    if (status === DEFERRED_CELL) {
-      deferred++;
-    } else {
-      accepted++;
-      bump(acceptedByCompetency, competency);
-      if (status === BATCH_A_CELL) {
-        batchA++;
-      } else {
-        batchB++;
-      }
+    const matchRow = match[2];
+    if (code && matchRow) {
+      processCorpusRow(code, matchRow, state);
     }
     match = TABLE_ROW_REGEX.exec(markdown);
   }
 
   return {
-    total: seen.size,
-    accepted,
-    deferred,
-    batchA,
-    batchB,
-    workbooks: workbooks.size,
-    sourceByCompetency,
-    acceptedByCompetency,
-    duplicates,
+    total: state.seen.size,
+    accepted: state.accepted,
+    deferred: state.deferred,
+    batchA: state.batchA,
+    batchB: state.batchB,
+    workbooks: state.workbooks.size,
+    sourceByCompetency: state.sourceByCompetency,
+    acceptedByCompetency: state.acceptedByCompetency,
+    duplicates: state.duplicates,
   };
 }
 
@@ -128,7 +157,9 @@ function tallySeederFile(
   let level = LEVEL_CODE_REGEX.exec(content);
   while (level !== null) {
     tally.levels++;
-    bump(tally.levelsByCompetency, level[2]);
+    if (level[2]) {
+      bump(tally.levelsByCompetency, level[2]);
+    }
     level = LEVEL_CODE_REGEX.exec(content);
   }
 }
@@ -199,7 +230,9 @@ function readSummary(markdown: string): Record<string, number> {
   SUMMARY_ROW_REGEX.lastIndex = 0;
   let row = SUMMARY_ROW_REGEX.exec(markdown);
   while (row !== null) {
-    summary[row[1].replaceAll("*", "").trim()] = Number(row[2]);
+    if (row[1] && row[2]) {
+      summary[row[1].replaceAll("*", "").trim()] = Number(row[2]);
+    }
     row = SUMMARY_ROW_REGEX.exec(markdown);
   }
   return summary;
@@ -290,44 +323,48 @@ function checkSpecTable(
   let row = SPEC_ROW_REGEX.exec(section);
   while (row !== null) {
     const competency = row[1];
-    const [source, , acceptedCell, seededTypes, seededLevels] = cells(row[2]);
-    compare(
-      violations,
-      "D-RQ",
-      spec,
-      `${competency} dạng bài trong nguồn`,
-      Number(source),
-      counts.sourceByCompetency[competency] ?? 0
-    );
-    compare(
-      violations,
-      "D-RQ",
-      spec,
-      `${competency} dạng bài nhận đợt này`,
-      Number(acceptedCell),
-      counts.acceptedByCompetency[competency] ?? 0
-    );
-    compare(
-      violations,
-      "BR-MGL-01",
-      spec,
-      `${competency} dạng bài đã soạn`,
-      Number(seededTypes),
-      seeded.typesByCompetency[competency] ?? 0
-    );
-    compare(
-      violations,
-      "BR-MGL-01",
-      spec,
-      `${competency} level đã soạn`,
-      Number(seededLevels),
-      seeded.levelsByCompetency[competency] ?? 0
-    );
+    const rowContent = row[2];
+    if (competency && rowContent) {
+      const [source, , acceptedCell, seededTypes, seededLevels] =
+        cells(rowContent);
+      compare(
+        violations,
+        "D-RQ",
+        spec,
+        `${competency} dạng bài trong nguồn`,
+        Number(source),
+        counts.sourceByCompetency[competency] ?? 0
+      );
+      compare(
+        violations,
+        "D-RQ",
+        spec,
+        `${competency} dạng bài nhận đợt này`,
+        Number(acceptedCell),
+        counts.acceptedByCompetency[competency] ?? 0
+      );
+      compare(
+        violations,
+        "BR-MGL-01",
+        spec,
+        `${competency} dạng bài đã soạn`,
+        Number(seededTypes),
+        seeded.typesByCompetency[competency] ?? 0
+      );
+      compare(
+        violations,
+        "BR-MGL-01",
+        spec,
+        `${competency} level đã soạn`,
+        Number(seededLevels),
+        seeded.levelsByCompetency[competency] ?? 0
+      );
+    }
     row = SPEC_ROW_REGEX.exec(section);
   }
 
   const totalRow = SPEC_TOTAL_REGEX.exec(section);
-  if (totalRow) {
+  if (totalRow?.[1]) {
     const [source, , acceptedCell, seededTypes, seededLevels] = cells(
       totalRow[1]
     ).map((c) => c.replaceAll("*", ""));

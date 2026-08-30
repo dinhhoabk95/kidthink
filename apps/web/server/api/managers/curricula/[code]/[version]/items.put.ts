@@ -40,10 +40,7 @@ export default defineEventHandler(async (event) => {
   }
 
   const rawBody =
-    (event.context?.body as unknown) ??
-    (event as Record<string, unknown>)._body ??
-    (await readBody(event).catch(() => ({}))) ??
-    {};
+    event.context?.body ?? (await readBody(event).catch(() => ({}))) ?? {};
   const parsed = putCurriculumItemsSchema.safeParse(rawBody);
   if (!parsed.success) {
     throw createError({
@@ -55,7 +52,7 @@ export default defineEventHandler(async (event) => {
 
   const data = parsed.data;
   const db = getOwnerDb();
-  const managerId = session.manager_id || session.id || 1;
+  const managerId = session.manager_id;
 
   const [curr] = await db
     .select()
@@ -114,7 +111,7 @@ export default defineEventHandler(async (event) => {
       .where(eq(curricula.id, curr.id))
       .for("update");
 
-    if (lockedCurr.contentVersion !== data.expected_version) {
+    if (!lockedCurr || lockedCurr.contentVersion !== data.expected_version) {
       throw createError({
         statusCode: 409,
         statusMessage: "VERSION_CONFLICT",
@@ -146,21 +143,20 @@ export default defineEventHandler(async (event) => {
       .where(eq(curricula.id, curr.id));
   });
 
-  await writeAudit(db, {
-    action: "content_created",
-    actor_type: "manager",
-    actor_id: managerId,
-    entity_type: "curriculum",
-    entity_id: String(curr.id),
-    after_data: {
-      code: curr.code,
-      version: curr.contentVersion,
-      items_count: data.items.length,
-    },
+  await db.transaction(async (tx) => {
+    await writeAudit(tx, {
+      action: "content_created",
+      actor_type: "manager",
+      actor_id: managerId,
+      entity_type: "curriculum",
+      entity_id: String(curr.id),
+      after_data: {
+        code: curr.code,
+        version: curr.contentVersion,
+        items_count: data.items.length,
+      },
+    });
   });
 
-  return {
-    ok: true,
-    count: data.items.length,
-  };
+  return { ok: true, count: data.items.length };
 });

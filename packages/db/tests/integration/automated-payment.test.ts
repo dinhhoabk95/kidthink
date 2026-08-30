@@ -46,6 +46,9 @@ describe("Automated Payment Integration Tests (P5.1 / Task #71)", () => {
         displayName: "Auto Pay User",
       })
       .returning();
+    if (!user) {
+      throw new Error("Failed to insert user");
+    }
 
     const [order] = await db
       .insert(paymentOrders)
@@ -57,6 +60,9 @@ describe("Automated Payment Integration Tests (P5.1 / Task #71)", () => {
         status: "pending",
       })
       .returning();
+    if (!order) {
+      throw new Error("Failed to insert order");
+    }
 
     const now = new Date();
     const timestampSeconds = Math.floor(now.getTime() / 1000);
@@ -83,7 +89,7 @@ describe("Automated Payment Integration Tests (P5.1 / Task #71)", () => {
       .select()
       .from(paymentOrders)
       .where(eq(paymentOrders.id, order.id));
-    expect(updatedOrder.status).toBe("approved");
+    expect(updatedOrder?.status).toBe("approved");
 
     // Verify payment_transactions ledger record
     const [txRecord] = await db
@@ -93,8 +99,8 @@ describe("Automated Payment Integration Tests (P5.1 / Task #71)", () => {
         eq(paymentTransactions.providerEventId, payload.provider_event_id)
       );
     expect(txRecord).toBeDefined();
-    expect(txRecord.amountVnd).toBe(299_000);
-    expect(txRecord.status).toBe("success");
+    expect(txRecord?.amountVnd).toBe(299_000);
+    expect(txRecord?.status).toBe("success");
 
     // Verify entitlements granted
     const userEntitlements = await db
@@ -102,7 +108,7 @@ describe("Automated Payment Integration Tests (P5.1 / Task #71)", () => {
       .from(entitlements)
       .where(eq(entitlements.userId, user.id));
     expect(userEntitlements.length).toBeGreaterThanOrEqual(1);
-    expect(userEntitlements[0].status).toBe("active");
+    expect(userEntitlements[0]?.status).toBe("active");
 
     // Verify audit log
     const [audit] = await db
@@ -115,7 +121,7 @@ describe("Automated Payment Integration Tests (P5.1 / Task #71)", () => {
         )
       );
     expect(audit).toBeDefined();
-    expect(audit.action).toBe("payment_order.approved_webhook");
+    expect(audit?.action).toBe("payment_order.approved_webhook");
   });
 
   it("Scenario: BR-APM-03 — enforces idempotency on duplicate webhook delivery", async () => {
@@ -128,6 +134,9 @@ describe("Automated Payment Integration Tests (P5.1 / Task #71)", () => {
         displayName: "Dup Pay User",
       })
       .returning();
+    if (!user) {
+      throw new Error("Failed to insert user");
+    }
 
     const [order] = await db
       .insert(paymentOrders)
@@ -139,6 +148,9 @@ describe("Automated Payment Integration Tests (P5.1 / Task #71)", () => {
         status: "pending",
       })
       .returning();
+    if (!order) {
+      throw new Error("Failed to insert order");
+    }
 
     const now = new Date();
     const timestampSeconds = Math.floor(now.getTime() / 1000);
@@ -201,6 +213,9 @@ describe("Automated Payment Integration Tests (P5.1 / Task #71)", () => {
         displayName: "Mismatch Pay User",
       })
       .returning();
+    if (!user) {
+      throw new Error("Failed to insert user");
+    }
 
     const [order] = await db
       .insert(paymentOrders)
@@ -212,6 +227,9 @@ describe("Automated Payment Integration Tests (P5.1 / Task #71)", () => {
         status: "pending",
       })
       .returning();
+    if (!order) {
+      throw new Error("Failed to insert order");
+    }
 
     const now = new Date();
     const timestampSeconds = Math.floor(now.getTime() / 1000);
@@ -235,7 +253,7 @@ describe("Automated Payment Integration Tests (P5.1 / Task #71)", () => {
       .select()
       .from(paymentOrders)
       .where(eq(paymentOrders.id, order.id));
-    expect(unchangedOrder.status).toBe("pending");
+    expect(unchangedOrder?.status).toBe("pending");
   });
 
   it("Scenario: BR-APM-06 — reconciliation service reports matched and mismatched records correctly", async () => {
@@ -248,6 +266,9 @@ describe("Automated Payment Integration Tests (P5.1 / Task #71)", () => {
         displayName: "Rec User",
       })
       .returning();
+    if (!user) {
+      throw new Error("Failed to insert user");
+    }
 
     const [order] = await db
       .insert(paymentOrders)
@@ -259,6 +280,9 @@ describe("Automated Payment Integration Tests (P5.1 / Task #71)", () => {
         status: "approved",
       })
       .returning();
+    if (!order) {
+      throw new Error("Failed to insert order");
+    }
 
     const eventId = `evt_rec_${crypto.randomUUID()}`;
 
@@ -293,7 +317,7 @@ describe("Automated Payment Integration Tests (P5.1 / Task #71)", () => {
     expect(report.totalChecked).toBe(2);
     expect(report.matchedCount).toBe(1);
     expect(report.mismatchedCount).toBe(1);
-    expect(report.mismatches[0].reason).toContain(
+    expect(report.mismatches[0]?.reason).toContain(
       "TRANSACTION_MISSING_IN_INTERNAL_LEDGER"
     );
   });

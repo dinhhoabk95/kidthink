@@ -73,7 +73,7 @@ export default defineEventHandler(async (event) => {
     entityType: "game_level",
     entityDbId: level.id,
     toStatus: "in_review",
-    actorManagerId: manager.id,
+    actorManagerId: manager.manager_id,
     actorRole: manager.role,
     expectedVersion: version,
   });

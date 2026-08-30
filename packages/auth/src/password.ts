@@ -79,6 +79,9 @@ export async function verifyPassword(
   }
   const salt = parts[1];
   const originalKeyHex = parts[2];
+  if (!(salt && originalKeyHex)) {
+    return false;
+  }
   const originalBuffer = Buffer.from(originalKeyHex, "hex");
 
   try {

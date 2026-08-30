@@ -52,6 +52,9 @@ export async function handleVerifyEmail(event: H3Event, testBody?: unknown) {
   }
 
   const vToken = tokenRows[0];
+  if (!vToken) {
+    throw appError("NOT_FOUND");
+  }
   const now = new Date();
   const [user] = await db
     .select()

@@ -382,6 +382,22 @@ import { CANONICAL_THEME_CODES } from "@mindkid/shared";
 
 const THEME_TAGS = [...CANONICAL_THEME_CODES];
 
+/**
+ * Từ vựng chuẩn của bốn trục, xuất ra để `seed-master/content-tags.ts` gieo
+ * đúng những mã này vào `content_tags`.
+ *
+ * Trước đây hai bên tách rời: cổng 5 kiểm theo danh sách ở file này (hàng trăm
+ * mã), còn DB chỉ có 14 tag `what` + 12 tag `thinking`. Hệ quả là
+ * `resolveAndEnsureTags` tự tạo mọi mã lạ với trục `what` — 315 tag `thinking`
+ * nằm nhầm trục `what` trong DB, và mọi level publish đều trượt `BR-TAG-02`.
+ */
+export const TAG_VOCABULARY = {
+  what: WHAT_TAGS,
+  thinking: THINKING_TAGS,
+  mechanic: MECHANIC_TAGS,
+  theme: THEME_TAGS,
+} as const;
+
 const TAG_SET_BY_AXIS: Record<string, Set<string>> = {
   what: new Set(WHAT_TAGS),
   thinking: new Set(THINKING_TAGS),

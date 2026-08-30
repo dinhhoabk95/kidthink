@@ -24,8 +24,9 @@ export function getSeederFilePathForCode(code: string): string | null {
   }
 
   const match = code.match(LEVEL_COMPETENCY_REGEX);
-  if (match?.[1] && SEED_MANIFEST_MAP[match[1]]) {
-    return SEED_MANIFEST_MAP[match[1]];
+  const key = match?.[1];
+  if (key && SEED_MANIFEST_MAP[key]) {
+    return SEED_MANIFEST_MAP[key] ?? null;
   }
 
   return null;

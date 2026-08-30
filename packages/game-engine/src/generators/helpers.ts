@@ -31,35 +31,27 @@ export function pickOne<T>(rng: Rng, array: T[]): T {
   return item;
 }
 
-const FALLBACK_NOUNS: VocabularyEntry[] = [
-  { emoji_ref: "🍎", label_vi: "Táo" },
-  { emoji_ref: "🍌", label_vi: "Chuối" },
-  { emoji_ref: "🥕", label_vi: "Cà rốt" },
-  { emoji_ref: "🍓", label_vi: "Dâu tây" },
-  { emoji_ref: "🍇", label_vi: "Nho" },
-  { emoji_ref: "🍉", label_vi: "Dưa hấu" },
-  { emoji_ref: "🐱", label_vi: "Mèo" },
-  { emoji_ref: "🐶", label_vi: "Chó" },
-  { emoji_ref: "⭐", label_vi: "Ngôi sao" },
-  { emoji_ref: "🚗", label_vi: "Ô tô" },
-  { emoji_ref: "🎈", label_vi: "Bóng bay" },
-  { emoji_ref: "🎁", label_vi: "Hộp quà" },
-];
-
+/**
+ * Kho từ ngắn hơn yêu cầu là **lỗi dữ liệu**, không phải điều kiện runtime —
+ * nên nó ném, Cấm — NEVER độn thầm.
+ *
+ * Bản cũ độn từ một danh sách hoa quả cố định. Vì mọi chủ đề chỉ có 5 danh từ
+ * còn generator xin 6–10, nhánh độn là đường đi **mặc định**: cả 21 file sinh
+ * ra đều dính emoji lạc chủ đề (một level `school` chứa 🍎🍌🥕🍓🍇) trong khi
+ * `gen-levels.ts` vẫn đóng dấu `theme_tag: "school"` lên nó. Tệ hơn, danh sách
+ * độn dùng **glyph thô** ở `emoji_ref` trong khi registry tra theo mã `EMJ-*`,
+ * nên mọi mục độn đều `not_found` lúc render.
+ */
 export function getNouns(
   vocab: ThemeVocabulary,
   minCount = 6
 ): VocabularyEntry[] {
   const result = [...(vocab?.nouns || [])];
   if (result.length < minCount) {
-    for (const fb of FALLBACK_NOUNS) {
-      if (!result.some((r) => r.emoji_ref === fb.emoji_ref)) {
-        result.push(fb);
-      }
-      if (result.length >= minCount) {
-        break;
-      }
-    }
+    throw new Error(
+      `Chủ đề '${vocab?.theme ?? "?"}' thiếu danh từ: có ${result.length}, cần ${minCount}. ` +
+        "Bổ sung vào CONTENT_THEMES thay vì độn từ ngoài chủ đề."
+    );
   }
   return result;
 }

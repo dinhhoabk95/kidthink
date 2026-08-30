@@ -21,6 +21,9 @@ describe("Purge and Anonymization Integration Tests — Task 10", () => {
       .insert(users)
       .values({ email, displayName: "Parent Purge Test" })
       .returning();
+    if (!u) {
+      throw new Error("Failed to insert user");
+    }
 
     // 2. Create Consent Log
     const [consent] = await db
@@ -33,6 +36,9 @@ describe("Purge and Anonymization Integration Tests — Task 10", () => {
         userAgent: "test-agent",
       })
       .returning();
+    if (!consent) {
+      throw new Error("Failed to insert consent");
+    }
 
     // 3. Create Child Profile
     const [child] = await db
@@ -44,6 +50,9 @@ describe("Purge and Anonymization Integration Tests — Task 10", () => {
         avatarId: "preset_cat_01",
       })
       .returning();
+    if (!child) {
+      throw new Error("Failed to insert child");
+    }
 
     // 4. Create Telemetry Events
     const sessionUuid = crypto.randomUUID();
@@ -60,18 +69,18 @@ describe("Purge and Anonymization Integration Tests — Task 10", () => {
 
     // Verify user & child status
     const [uDeleted] = await db.select().from(users).where(eq(users.id, u.id));
-    expect(uDeleted.status).toBe("deleted");
+    expect(uDeleted?.status).toBe("deleted");
 
     const [childPending] = await db
       .select()
       .from(childProfiles)
       .where(eq(childProfiles.id, child.id));
-    expect(childPending.status).toBe("pending_deletion");
+    expect(childPending?.status).toBe("pending_deletion");
 
     // Step B: Cancel deletion test
     await cancelUserDeletion(db, u.id);
     const [uRestored] = await db.select().from(users).where(eq(users.id, u.id));
-    expect(uRestored.status).toBe("active");
+    expect(uRestored?.status).toBe("active");
 
     // Re-request deletion for hard purge test
     const { scheduledPurgeAt: purgeAt2 } = await requestUserDeletion(
@@ -114,7 +123,7 @@ describe("Purge and Anonymization Integration Tests — Task 10", () => {
       .where(eq(telemetryEvents.sessionUuid, sessionUuid));
 
     expect(telemetryAfter).toBeDefined();
-    expect(telemetryAfter.childUuid).toBeNull();
+    expect(telemetryAfter?.childUuid).toBeNull();
 
     // Verify consent_logs REMAIN INTACT
     const [consentIntact] = await db
@@ -122,6 +131,6 @@ describe("Purge and Anonymization Integration Tests — Task 10", () => {
       .from(consentLogs)
       .where(eq(consentLogs.id, consent.id));
     expect(consentIntact).toBeDefined();
-    expect(consentIntact.userId).toBe(u.id);
+    expect(consentIntact?.userId).toBe(u.id);
   });
 });

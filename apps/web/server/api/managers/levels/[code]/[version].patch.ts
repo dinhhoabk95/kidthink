@@ -77,14 +77,7 @@ export default defineEventHandler(async (event) => {
   }
 
   const version = Number(versionParam);
-  const parsedBody = await readBody(event).catch(() => ({}));
-  const fallbackBody = (event as Record<string, unknown>)._body as
-    | Record<string, unknown>
-    | undefined;
-  const rawBody =
-    (parsedBody && Object.keys(parsedBody).length > 0
-      ? parsedBody
-      : fallbackBody) || {};
+  const rawBody = (await readBody(event).catch(() => ({}))) || {};
 
   const body = patchLevelSchema.parse(rawBody);
 
@@ -148,23 +141,33 @@ export default defineEventHandler(async (event) => {
     .where(eq(gameLevels.id, existing.level.id))
     .returning();
 
+  if (!updated) {
+    throw createError({
+      statusCode: 500,
+      statusMessage: "LEVEL_UPDATE_FAILED",
+      message: "Cập nhật màn chơi thất bại",
+    });
+  }
+
   await syncContentAssetRefs(db, "game_level", updated.id, updated.contentPack);
 
-  const managerId = manager.manager_id || manager.id || 1;
-  await writeAudit(db, {
-    actor_type: "manager",
-    actor_id: managerId,
-    action: "game_level_updated",
-    entity_type: "game_level",
-    entity_id: updated.id.toString(),
-    before_data: {
-      title: existing.level.title,
-      version: existing.level.contentVersion,
-    },
-    after_data: {
-      title: updated.title,
-      version: updated.contentVersion,
-    },
+  const managerId = manager.manager_id;
+  await db.transaction(async (tx) => {
+    await writeAudit(tx, {
+      actor_type: "manager",
+      actor_id: managerId,
+      action: "content_created",
+      entity_type: "game_level",
+      entity_id: updated.id.toString(),
+      before_data: {
+        title: existing.level.title,
+        status: existing.level.status,
+      },
+      after_data: {
+        title: updated.title,
+        status: updated.status,
+      },
+    });
   });
 
   return updated;

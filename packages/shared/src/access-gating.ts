@@ -43,6 +43,10 @@ export function getCallerStatus(
   caller: CallerIdentity,
   activeKeys: EntitlementKey[] = []
 ): CallerStatus {
+  if (caller.kind === "manager") {
+    return "user_premium";
+  }
+
   if (caller.kind === "guest") {
     return "guest";
   }
@@ -83,7 +87,14 @@ export function getUpgradePackageCodes(requiredTier: AccessTier): string[] {
 export interface ContentTarget {
   code: string;
   access_tier: AccessTier;
-  status: "draft" | "published" | "archived";
+  status:
+    | "draft"
+    | "in_review"
+    | "approved"
+    | "published"
+    | "rejected"
+    | "archived"
+    | string;
   age_min: number;
   age_max: number;
   level_tier?: AccessTier | null;

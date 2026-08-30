@@ -82,35 +82,45 @@ function checkFlowLessonAssignments(
   return violations;
 }
 
+/**
+ * Đếm số level published cho từng kỹ năng mà thư viện tiết đang nhắm tới.
+ *
+ * `skill_codes` là trường THẬT trên header seed, và nó là **một mảng**: một
+ * tiết có thể nhắm nhiều kỹ năng. Bản cũ đọc `les.metadata.target_skill_code`
+ * — `metadata` không tồn tại trên `LessonSeed` — nên tập kỹ năng luôn rỗng và
+ * `min_levels_per_skill` là luật không thể vi phạm.
+ *
+ * Seed trong repo đều là nội dung đã xuất bản theo định nghĩa: không có trường
+ * `status` để lọc, và lọc theo một trường không tồn tại thì cho ra 0.
+ */
+export function computeSkillLevelCoverage(
+  lessons: LessonSeed[],
+  gameLevels: ContentSeed<unknown, unknown>[]
+): Map<string, number> {
+  const counts = new Map<string, number>();
+  for (const les of lessons) {
+    for (const sk of les.header.skill_codes) {
+      counts.set(sk, 0);
+    }
+  }
+  for (const gl of gameLevels) {
+    for (const glSkill of gl.header.skill_codes) {
+      if (counts.has(glSkill)) {
+        counts.set(glSkill, (counts.get(glSkill) ?? 0) + 1);
+      }
+    }
+  }
+  return counts;
+}
+
 function evaluateSkillLevels(
   publishedLessons: LessonSeed[],
   gameLevels: ContentSeed<unknown, unknown>[]
 ) {
-  const skillSet = new Set<string>();
-  for (const les of publishedLessons) {
-    const sk = (les.metadata as { target_skill_code?: string })
-      ?.target_skill_code;
-    if (sk) {
-      skillSet.add(sk);
-    }
-  }
-
-  const publishedGameLevels = gameLevels.filter(
-    (gl) => gl.header.status === "published"
+  const skillLevelCounts = computeSkillLevelCoverage(
+    publishedLessons,
+    gameLevels
   );
-  const skillLevelCounts = new Map<string, number>();
-
-  for (const sk of skillSet) {
-    skillLevelCounts.set(sk, 0);
-  }
-
-  for (const gl of publishedGameLevels) {
-    const glSkill = (gl.metadata as { target_skill_code?: string })
-      ?.target_skill_code;
-    if (glSkill && skillLevelCounts.has(glSkill)) {
-      skillLevelCounts.set(glSkill, (skillLevelCounts.get(glSkill) ?? 0) + 1);
-    }
-  }
 
   const skillsWithZeroLevels: string[] = [];
   const skillsWithOneLevel: string[] = [];
@@ -130,7 +140,7 @@ function evaluateSkillLevels(
   }
 
   return {
-    totalUniqueSkills: skillSet.size,
+    totalUniqueSkills: skillLevelCounts.size,
     skillsWithZeroLevels,
     skillsWithOneLevel,
     skillsWithSufficientLevels,
@@ -188,9 +198,8 @@ export function evaluateLessonSupply(
     calculateFlowDemand(publishedCurricula);
 
   // 2. Đếm cung tiết (BR-LCD-03)
-  const publishedLessons = lessons.filter(
-    (l) => l.header.status === "published"
-  );
+  // Seed repo = đã xuất bản. `LessonSeedHeader` không có `status`.
+  const publishedLessons = lessons;
   const publishedLessonCount = publishedLessons.length;
   const missingLessonCount = Math.max(
     0,

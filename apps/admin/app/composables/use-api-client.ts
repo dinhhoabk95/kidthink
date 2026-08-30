@@ -44,11 +44,11 @@ export function useApiClient() {
       return loadingSession;
     }
 
-    loadingSession = $fetch<ManagerSessionResponse>(
+    const sessionPromise = $fetch<ManagerSessionResponse>(
       apiUrl("/api/managers/auth/session"),
       { credentials: "include" }
     )
-      .then((response) => {
+      .then((response: ManagerSessionResponse) => {
         csrfToken.value = response.csrf_token;
       })
       .catch(() => {
@@ -58,7 +58,8 @@ export function useApiClient() {
         loadingSession = undefined;
       });
 
-    return loadingSession;
+    loadingSession = sessionPromise;
+    return sessionPromise;
   }
 
   async function request<T>(

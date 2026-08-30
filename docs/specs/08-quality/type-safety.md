@@ -148,30 +148,21 @@ Scenario: BR-TYP-01 — any tường minh chặn merge
   Then Biome báo lint/suspicious/noExplicitAny
   And cổng exit khác 0
 
-Scenario: BR-TYP-02 — thêm ép kiểu mới thì fail
-  Given một file đang có 3 chỗ ép kiểu trong baseline
-  When thêm chỗ thứ 4
-  Then lint:type-safety fail và chỉ ra đúng file đó
-
-Scenario: BR-TYP-02 — bớt ép kiểu thì xanh
-  Given cùng file đó giảm còn 1 chỗ
-  When chạy lint:type-safety
-  Then cổng xanh
-  And nhắc chạy --update để hạ baseline
-
-Scenario: BR-TYP-02 — file mới có ép kiểu thì fail
-  Given một file chưa có trong baseline
-  When file đó chứa một chỗ ép kiểu
-  Then cổng fail
-
-Scenario: BR-TYP-05 — as const không bị tính
-  Given một file chỉ chứa `status: "draft" as const`
-  When chạy lint:type-safety
-  Then file đó không xuất hiện trong báo cáo nợ
+> **CHƯA CÓ CỔNG.** `lint:type-safety` bị gỡ cùng `packages/gates` ngày 2026-08-29,
+> đúng như §8 của chính file này đã ghi. Bốn kịch bản `BR-TYP-02` / `BR-TYP-05` dưới đây
+> mô tả một cổng **không còn tồn tại** — giữ lại làm đặc tả cho lần dựng lại, Cấm — NEVER
+> đọc chúng như phép kiểm đang chạy. Sổ nợ: [`runtime-gates.md`](runtime-gates.md) §3.
+>
+> ```gherkin
+> Scenario: BR-TYP-02 — thêm ép kiểu mới thì fail
+> Scenario: BR-TYP-02 — bớt ép kiểu thì xanh
+> Scenario: BR-TYP-02 — file mới có ép kiểu thì fail
+> Scenario: BR-TYP-05 — as const không bị tính
+> ```
 
 Scenario: BR-TYP-04 — route đọc body mà không parse thì fail
   Given một route gọi readBody nhưng không có safeParse hay parse nào
-  When chạy lint:route-validation
+  When chạy `pnpm test --filter @mindkid/web` (cổng ở apps/web/tests/security/)
   Then cổng fail và chỉ ra route đó
 
 Scenario: BR-TYP-07 — cổng có ca âm

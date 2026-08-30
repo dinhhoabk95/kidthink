@@ -128,17 +128,26 @@ async function handlePublishedActivityFork(
     })
     .returning();
 
+  if (!created) {
+    throw createError({
+      statusCode: 500,
+      statusMessage: "ACTIVITY_CREATE_FAILED",
+    });
+  }
+
   await syncActivitySkills(db, existing.entityId, data.skill_ids);
 
-  await writeAudit(db, {
-    actorType: "manager",
-    actorId: managerId,
-    action: "create",
-    entityType: "activity",
-    entityId: String(created.id),
-    beforeState: existing,
-    afterState: created,
-    reason: `Manager created new draft version ${newVersion} from published activity`,
+  await db.transaction(async (tx) => {
+    await writeAudit(tx, {
+      actor_type: "manager",
+      actor_id: managerId,
+      action: "content_created",
+      entity_type: "activity",
+      entity_id: String(created.id),
+      before_data: existing as unknown as Record<string, unknown>,
+      after_data: created as unknown as Record<string, unknown>,
+      reason: `Manager created new draft version ${newVersion} from published activity`,
+    });
   });
 
   return created;
@@ -183,17 +192,26 @@ async function handleDraftActivityUpdate(
     .where(eq(activities.id, existing.id))
     .returning();
 
+  if (!updated) {
+    throw createError({
+      statusCode: 500,
+      statusMessage: "ACTIVITY_UPDATE_FAILED",
+    });
+  }
+
   await syncActivitySkills(db, existing.entityId, data.skill_ids);
 
-  await writeAudit(db, {
-    actorType: "manager",
-    actorId: managerId,
-    action: "update",
-    entityType: "activity",
-    entityId: String(updated.id),
-    beforeState: existing,
-    afterState: updated,
-    reason: "Manager updated activity via Studio",
+  await db.transaction(async (tx) => {
+    await writeAudit(tx, {
+      actor_type: "manager",
+      actor_id: managerId,
+      action: "content_created",
+      entity_type: "activity",
+      entity_id: String(updated.id),
+      before_data: existing as unknown as Record<string, unknown>,
+      after_data: updated as unknown as Record<string, unknown>,
+      reason: "Manager updated activity via Studio",
+    });
   });
 
   return updated;

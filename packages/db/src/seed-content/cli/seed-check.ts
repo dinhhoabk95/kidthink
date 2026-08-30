@@ -1,5 +1,7 @@
 import { eq } from "drizzle-orm";
-import { activities, gameLevels, getOwnerDb, lessons } from "#src/index";
+import { getOwnerDb } from "#src/client";
+import { activities, lessons } from "#src/schema/content";
+import { gameLevels } from "#src/schema/game";
 import { GATE_1_LADDER_BASELINES } from "#src/seed-content/gates/ladder";
 import { checkGateMontessoriCorpus } from "#src/seed-content/gates/montessori-gate";
 import { runEightGates } from "#src/seed-content/gates/runner";

@@ -27,10 +27,11 @@ export const GT012ContentSchema = GT012BaseSchema.refine(
   (content) => {
     const correctCount = content.flash_items.length;
     const correctOptions = content.options.filter((o) => o.is_correct);
-    if (correctOptions.length !== 1) {
+    const firstOpt = correctOptions[0];
+    if (correctOptions.length !== 1 || !firstOpt) {
       return false;
     }
-    return correctOptions[0].value === correctCount;
+    return firstOpt.value === correctCount;
   },
   {
     message:

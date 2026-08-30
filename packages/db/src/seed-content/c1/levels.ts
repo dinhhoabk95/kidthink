@@ -14,12 +14,11 @@ import { SEED_MONT_B11 } from "./seed-mont-b11.js";
 import { SEED_MONT_B15 } from "./seed-mont-b15.js";
 
 export const C1_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
-  // Level 1 (Free)
   {
     header: {
       code: "GL-C1-CNT-CARD-0001",
       content_version: 1,
-      template_code: "GT-001",
+      template_code: "GT-012",
       title: "Đếm số táo đỏ",
       instruction: "Em hãy đếm xem có mấy quả táo nhé.",
       age_min: 3,
@@ -35,21 +34,60 @@ export const C1_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
       authored_in: "repo_seed",
     },
     content_pack: {
-      items: [
-        { id: "a1", emoji: "🍎" },
-        { id: "a2", emoji: "🍎" },
-        { id: "a3", emoji: "🍎" },
+      prompt: "Em hãy đếm xem có mấy quả táo nhé.",
+      flash_items: [
+        {
+          item_id: "a1",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-red-apple",
+          },
+        },
+        {
+          item_id: "a2",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-red-apple",
+          },
+        },
+        {
+          item_id: "a3",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-red-apple",
+          },
+        },
       ],
-      target_count: 3,
+      arrangement: "line",
+      options: [
+        {
+          value: 2,
+          is_correct: false,
+        },
+        {
+          value: 3,
+          is_correct: true,
+        },
+        {
+          value: 4,
+          is_correct: false,
+        },
+      ],
     },
-    difficulty_params: { count_limit: 5 },
+    difficulty_params: {
+      flash_ms: 3000,
+      item_count: 3,
+      distractor_count: 2,
+      allow_replay: true,
+      hint_after_ms: 9000,
+      allow_retry: true,
+    },
   },
-  // Level 2 (Login)
   {
     header: {
       code: "GL-C1-CNT-CARD-0002",
       content_version: 1,
-      template_code: "GT-001",
+      template_code: "GT-012",
       title: "Đếm chuối vàng",
       instruction: "Em đếm xem có bao nhiêu quả chuối.",
       age_min: 3,
@@ -65,20 +103,53 @@ export const C1_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
       authored_in: "repo_seed",
     },
     content_pack: {
-      items: [
-        { id: "b1", emoji: "🍌" },
-        { id: "b2", emoji: "🍌" },
+      prompt: "Em đếm xem có bao nhiêu quả chuối.",
+      flash_items: [
+        {
+          item_id: "b1",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-banana",
+          },
+        },
+        {
+          item_id: "b2",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-banana",
+          },
+        },
       ],
-      target_count: 2,
+      arrangement: "line",
+      options: [
+        {
+          value: 1,
+          is_correct: false,
+        },
+        {
+          value: 2,
+          is_correct: true,
+        },
+        {
+          value: 3,
+          is_correct: false,
+        },
+      ],
     },
-    difficulty_params: { count_limit: 5 },
+    difficulty_params: {
+      flash_ms: 3000,
+      item_count: 2,
+      distractor_count: 2,
+      allow_replay: true,
+      hint_after_ms: 9000,
+      allow_retry: true,
+    },
   },
-  // Level 3 (Login)
   {
     header: {
       code: "GL-C1-CNT-CARD-0003",
       content_version: 1,
-      template_code: "GT-001",
+      template_code: "GT-012",
       title: "Đếm cam mọng nước",
       instruction: "Cùng đếm số quả cam nào em nhé.",
       age_min: 3,
@@ -94,22 +165,67 @@ export const C1_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
       authored_in: "repo_seed",
     },
     content_pack: {
-      items: [
-        { id: "o1", emoji: "🍊" },
-        { id: "o2", emoji: "🍊" },
-        { id: "o3", emoji: "🍊" },
-        { id: "o4", emoji: "🍊" },
+      prompt: "Cùng đếm số quả cam nào em nhé.",
+      flash_items: [
+        {
+          item_id: "o1",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-orange",
+          },
+        },
+        {
+          item_id: "o2",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-orange",
+          },
+        },
+        {
+          item_id: "o3",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-orange",
+          },
+        },
+        {
+          item_id: "o4",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-orange",
+          },
+        },
       ],
-      target_count: 4,
+      arrangement: "line",
+      options: [
+        {
+          value: 3,
+          is_correct: false,
+        },
+        {
+          value: 4,
+          is_correct: true,
+        },
+        {
+          value: 5,
+          is_correct: false,
+        },
+      ],
     },
-    difficulty_params: { count_limit: 5 },
+    difficulty_params: {
+      flash_ms: 3000,
+      item_count: 4,
+      distractor_count: 2,
+      allow_replay: true,
+      hint_after_ms: 9000,
+      allow_retry: true,
+    },
   },
-  // Level 4 (Login)
   {
     header: {
       code: "GL-C1-CNT-CARD-0004",
       content_version: 1,
-      template_code: "GT-001",
+      template_code: "GT-012",
       title: "Đếm dưa hấu",
       instruction: "Hãy đếm số miếng dưa hấu tươi mát.",
       age_min: 4,
@@ -125,23 +241,74 @@ export const C1_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
       authored_in: "repo_seed",
     },
     content_pack: {
-      items: [
-        { id: "w1", emoji: "🍉" },
-        { id: "w2", emoji: "🍉" },
-        { id: "w3", emoji: "🍉" },
-        { id: "w4", emoji: "🍉" },
-        { id: "w5", emoji: "🍉" },
+      prompt: "Hãy đếm số miếng dưa hấu tươi mát.",
+      flash_items: [
+        {
+          item_id: "w1",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-watermelon",
+          },
+        },
+        {
+          item_id: "w2",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-watermelon",
+          },
+        },
+        {
+          item_id: "w3",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-watermelon",
+          },
+        },
+        {
+          item_id: "w4",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-watermelon",
+          },
+        },
+        {
+          item_id: "w5",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-watermelon",
+          },
+        },
       ],
-      target_count: 5,
+      arrangement: "line",
+      options: [
+        {
+          value: 4,
+          is_correct: false,
+        },
+        {
+          value: 5,
+          is_correct: true,
+        },
+        {
+          value: 6,
+          is_correct: false,
+        },
+      ],
     },
-    difficulty_params: { count_limit: 5 },
+    difficulty_params: {
+      flash_ms: 3000,
+      item_count: 5,
+      distractor_count: 2,
+      allow_replay: true,
+      hint_after_ms: 9000,
+      allow_retry: true,
+    },
   },
-  // Level 5 (Login)
   {
     header: {
       code: "GL-C1-CNT-CARD-0005",
       content_version: 1,
-      template_code: "GT-001",
+      template_code: "GT-012",
       title: "Đếm chùm nho ngọt",
       instruction: "Em đếm xem có mấy chùm nho.",
       age_min: 4,
@@ -157,24 +324,57 @@ export const C1_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
       authored_in: "repo_seed",
     },
     content_pack: {
-      items: [
-        { id: "g1", emoji: "🍇" },
-        { id: "g2", emoji: "🍇" },
+      prompt: "Em đếm xem có mấy chùm nho.",
+      flash_items: [
+        {
+          item_id: "g1",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-grapes",
+          },
+        },
+        {
+          item_id: "g2",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-grapes",
+          },
+        },
       ],
-      target_count: 2,
+      arrangement: "line",
+      options: [
+        {
+          value: 1,
+          is_correct: false,
+        },
+        {
+          value: 2,
+          is_correct: true,
+        },
+        {
+          value: 3,
+          is_correct: false,
+        },
+      ],
     },
-    difficulty_params: { count_limit: 5 },
+    difficulty_params: {
+      flash_ms: 3000,
+      item_count: 2,
+      distractor_count: 2,
+      allow_replay: true,
+      hint_after_ms: 9000,
+      allow_retry: true,
+    },
   },
-  // Level 6 (Login)
   {
     header: {
       code: "GL-C1-SORT-BOX-0006",
       content_version: 1,
-      template_code: "GT-002",
+      template_code: "GT-003",
       title: "Phân loại quả đỏ và quả vàng",
       instruction: "Bỏ quả đỏ vào giỏ đỏ em nhé.",
-      age_min: 3,
-      age_max: 4,
+      age_min: 4,
+      age_max: 5,
       difficulty: 1,
       access_tier: "login",
       skill_codes: ["C1.CNT.01"],
@@ -186,24 +386,49 @@ export const C1_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
       authored_in: "repo_seed",
     },
     content_pack: {
-      containers: [{ id: "red_basket", label: "Giỏ đỏ", target_color: "red" }],
-      drag_items: [
-        { id: "a1", emoji: "🍎", color: "red" },
-        { id: "b1", emoji: "🍌", color: "yellow" },
+      prompt: "Bỏ quả đỏ vào giỏ đỏ em nhé.",
+      container: {
+        container_id: "red_basket",
+        label: "Giỏ đỏ",
+        accepts_attribute: "red",
+      },
+      items: [
+        {
+          item_id: "a1",
+          attribute: "red",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-red-apple",
+          },
+          is_correct: true,
+        },
+        {
+          item_id: "b1",
+          attribute: "yellow",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-banana",
+          },
+          is_correct: false,
+        },
       ],
     },
-    difficulty_params: { item_count: 2 },
+    difficulty_params: {
+      distractor_count: 1,
+      target_count: 1,
+      hint_after_ms: 9000,
+      allow_retry: true,
+    },
   },
-  // Level 7 (Standard)
   {
     header: {
       code: "GL-C1-SORT-BOX-0007",
       content_version: 1,
-      template_code: "GT-002",
+      template_code: "GT-003",
       title: "Thu hoạch dâu tây",
       instruction: "Em kéo dâu tây vào hộp nhựa.",
-      age_min: 3,
-      age_max: 4,
+      age_min: 4,
+      age_max: 5,
       difficulty: 2,
       access_tier: "standard",
       skill_codes: ["C1.CNT.01"],
@@ -215,22 +440,45 @@ export const C1_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
       authored_in: "repo_seed",
     },
     content_pack: {
-      containers: [
-        { id: "strawberry_box", label: "Hộp dâu", target_type: "strawberry" },
-      ],
-      drag_items: [
-        { id: "s1", emoji: "🍓", type: "strawberry" },
-        { id: "c1", emoji: "🥕", type: "carrot" },
+      prompt: "Em kéo dâu tây vào hộp nhựa.",
+      container: {
+        container_id: "strawberry_box",
+        label: "Hộp dâu",
+        accepts_attribute: "strawberry",
+      },
+      items: [
+        {
+          item_id: "s1",
+          attribute: "strawberry",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-strawberry",
+          },
+          is_correct: true,
+        },
+        {
+          item_id: "c1",
+          attribute: "carrot",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-carrot",
+          },
+          is_correct: false,
+        },
       ],
     },
-    difficulty_params: { item_count: 2 },
+    difficulty_params: {
+      distractor_count: 1,
+      target_count: 1,
+      hint_after_ms: 9000,
+      allow_retry: true,
+    },
   },
-  // Level 8 (Standard)
   {
     header: {
       code: "GL-C1-SORT-BOX-0008",
       content_version: 1,
-      template_code: "GT-002",
+      template_code: "GT-003",
       title: "Xếp dứa chín",
       instruction: "Hãy xếp quả dứa vào giỏ cây.",
       age_min: 4,
@@ -246,22 +494,45 @@ export const C1_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
       authored_in: "repo_seed",
     },
     content_pack: {
-      containers: [
-        { id: "pineapple_basket", label: "Giỏ dứa", target_type: "pineapple" },
-      ],
-      drag_items: [
-        { id: "p1", emoji: "🍍", type: "pineapple" },
-        { id: "p2", emoji: "🍍", type: "pineapple" },
+      prompt: "Hãy xếp quả dứa vào giỏ cây.",
+      container: {
+        container_id: "pineapple_basket",
+        label: "Giỏ dứa",
+        accepts_attribute: "pineapple",
+      },
+      items: [
+        {
+          item_id: "p1",
+          attribute: "pineapple",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-pineapple",
+          },
+          is_correct: true,
+        },
+        {
+          item_id: "p2",
+          attribute: "pineapple",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-pineapple",
+          },
+          is_correct: true,
+        },
       ],
     },
-    difficulty_params: { item_count: 2 },
+    difficulty_params: {
+      distractor_count: 0,
+      target_count: 2,
+      hint_after_ms: 9000,
+      allow_retry: true,
+    },
   },
-  // Level 9 (Standard)
   {
     header: {
       code: "GL-C1-SORT-BOX-0009",
       content_version: 1,
-      template_code: "GT-002",
+      template_code: "GT-003",
       title: "Thu gom cà rốt",
       instruction: "Hãy kéo cà rốt vào túi thỏ.",
       age_min: 4,
@@ -277,17 +548,40 @@ export const C1_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
       authored_in: "repo_seed",
     },
     content_pack: {
-      containers: [
-        { id: "carrot_bag", label: "Túi cà rốt", target_type: "carrot" },
-      ],
-      drag_items: [
-        { id: "c1", emoji: "🥕", type: "carrot" },
-        { id: "c2", emoji: "🥕", type: "carrot" },
+      prompt: "Hãy kéo cà rốt vào túi thỏ.",
+      container: {
+        container_id: "carrot_bag",
+        label: "Túi cà rốt",
+        accepts_attribute: "carrot",
+      },
+      items: [
+        {
+          item_id: "c1",
+          attribute: "carrot",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-carrot",
+          },
+          is_correct: true,
+        },
+        {
+          item_id: "c2",
+          attribute: "carrot",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-carrot",
+          },
+          is_correct: true,
+        },
       ],
     },
-    difficulty_params: { item_count: 2 },
+    difficulty_params: {
+      distractor_count: 0,
+      target_count: 2,
+      hint_after_ms: 9000,
+      allow_retry: true,
+    },
   },
-  // Level 10 (Standard)
   {
     header: {
       code: "GL-C1-CMP-NUM-0010",
@@ -308,13 +602,28 @@ export const C1_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
       authored_in: "repo_seed",
     },
     content_pack: {
-      left_group: [{ emoji: "🍎" }, { emoji: "🍎" }, { emoji: "🍎" }],
-      right_group: [{ emoji: "🍎" }],
+      left_group: [
+        {
+          emoji: "🍎",
+        },
+        {
+          emoji: "🍎",
+        },
+        {
+          emoji: "🍎",
+        },
+      ],
+      right_group: [
+        {
+          emoji: "🍎",
+        },
+      ],
       target: "more",
     },
-    difficulty_params: { max_difference: 2 },
+    difficulty_params: {
+      max_difference: 2,
+    },
   },
-  // Level 11 (Standard)
   {
     header: {
       code: "GL-C1-CMP-NUM-0011",
@@ -335,18 +644,31 @@ export const C1_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
       authored_in: "repo_seed",
     },
     content_pack: {
-      left_group: [{ emoji: "🍬" }],
+      left_group: [
+        {
+          emoji: "🍬",
+        },
+      ],
       right_group: [
-        { emoji: "🍬" },
-        { emoji: "🍬" },
-        { emoji: "🍬" },
-        { emoji: "🍬" },
+        {
+          emoji: "🍬",
+        },
+        {
+          emoji: "🍬",
+        },
+        {
+          emoji: "🍬",
+        },
+        {
+          emoji: "🍬",
+        },
       ],
       target: "less",
     },
-    difficulty_params: { max_difference: 3 },
+    difficulty_params: {
+      max_difference: 3,
+    },
   },
-  // Level 12 (Standard)
   {
     header: {
       code: "GL-C1-CMP-NUM-0012",
@@ -368,17 +690,33 @@ export const C1_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
     },
     content_pack: {
       left_group: [
-        { emoji: "⚽" },
-        { emoji: "⚽" },
-        { emoji: "⚽" },
-        { emoji: "⚽" },
+        {
+          emoji: "⚽",
+        },
+        {
+          emoji: "⚽",
+        },
+        {
+          emoji: "⚽",
+        },
+        {
+          emoji: "⚽",
+        },
       ],
-      right_group: [{ emoji: "⚽" }, { emoji: "⚽" }],
+      right_group: [
+        {
+          emoji: "⚽",
+        },
+        {
+          emoji: "⚽",
+        },
+      ],
       target: "more",
     },
-    difficulty_params: { max_difference: 2 },
+    difficulty_params: {
+      max_difference: 2,
+    },
   },
-  // Level 13 (Premium)
   {
     header: {
       code: "GL-C1-CMP-NUM-0013",
@@ -399,19 +737,37 @@ export const C1_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
       authored_in: "repo_seed",
     },
     content_pack: {
-      left_group: [{ emoji: "🧁" }, { emoji: "🧁" }],
+      left_group: [
+        {
+          emoji: "🧁",
+        },
+        {
+          emoji: "🧁",
+        },
+      ],
       right_group: [
-        { emoji: "🧁" },
-        { emoji: "🧁" },
-        { emoji: "🧁" },
-        { emoji: "🧁" },
-        { emoji: "🧁" },
+        {
+          emoji: "🧁",
+        },
+        {
+          emoji: "🧁",
+        },
+        {
+          emoji: "🧁",
+        },
+        {
+          emoji: "🧁",
+        },
+        {
+          emoji: "🧁",
+        },
       ],
       target: "less",
     },
-    difficulty_params: { max_difference: 3 },
+    difficulty_params: {
+      max_difference: 3,
+    },
   },
-  // Level 14 (Premium)
   {
     header: {
       code: "GL-C1-SEQ-PAT-0014",
@@ -436,9 +792,10 @@ export const C1_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
       options: ["🍎", "🍌", "🍊"],
       correct_option: "🍌",
     },
-    difficulty_params: { pattern_length: 2 },
+    difficulty_params: {
+      pattern_length: 2,
+    },
   },
-  // Level 15 (Premium)
   {
     header: {
       code: "GL-C1-SEQ-PAT-0015",
@@ -463,9 +820,10 @@ export const C1_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
       options: ["3", "5", "6"],
       correct_option: "5",
     },
-    difficulty_params: { pattern_length: 5 },
+    difficulty_params: {
+      pattern_length: 5,
+    },
   },
-  // Level 16 (Premium)
   {
     header: {
       code: "GL-C1-SEQ-PAT-0016",
@@ -490,9 +848,10 @@ export const C1_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
       options: ["🚗", "🚕", "🚙"],
       correct_option: "🚗",
     },
-    difficulty_params: { pattern_length: 4 },
+    difficulty_params: {
+      pattern_length: 4,
+    },
   },
-  // Level 17 (Premium)
   {
     header: {
       code: "GL-C1-POS-LOC-0017",
@@ -514,14 +873,27 @@ export const C1_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
     },
     content_pack: {
       grid: [
-        [{ id: "a_top", emoji: "🍎", position: "top" }],
-        [{ id: "b_bottom", emoji: "🍌", position: "bottom" }],
+        [
+          {
+            id: "a_top",
+            emoji: "🍎",
+            position: "top",
+          },
+        ],
+        [
+          {
+            id: "b_bottom",
+            emoji: "🍌",
+            position: "bottom",
+          },
+        ],
       ],
       target_id: "a_top",
     },
-    difficulty_params: { grid_size: 2 },
+    difficulty_params: {
+      grid_size: 2,
+    },
   },
-  // Level 18 (Premium)
   {
     header: {
       code: "GL-C1-POS-LOC-0018",
@@ -544,24 +916,33 @@ export const C1_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
     content_pack: {
       grid: [
         [
-          { id: "r_left", emoji: "🐰", position: "left" },
-          { id: "r_right", emoji: "🐻", position: "right" },
+          {
+            id: "r_left",
+            emoji: "🐰",
+            position: "left",
+          },
+          {
+            id: "r_right",
+            emoji: "🐻",
+            position: "right",
+          },
         ],
       ],
       target_id: "r_left",
     },
-    difficulty_params: { grid_size: 2 },
+    difficulty_params: {
+      grid_size: 2,
+    },
   },
-  // Level 19 (Premium)
   {
     header: {
       code: "GL-C1-SUB-FAST-0019",
       content_version: 1,
-      template_code: "GT-006",
+      template_code: "GT-012",
       title: "Nhìn nhanh số lượng sao",
       instruction: "Nhìn nhanh xem có mấy ngôi sao.",
-      age_min: 4,
-      age_max: 5,
+      age_min: 5,
+      age_max: 6,
       difficulty: 3,
       access_tier: "premium",
       skill_codes: ["C1.CNT.11"],
@@ -573,23 +954,64 @@ export const C1_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
       authored_in: "repo_seed",
     },
     content_pack: {
-      flash_items: [{ emoji: "⭐️" }, { emoji: "⭐️" }, { emoji: "⭐️" }],
-      flash_duration_ms: 1500,
-      options: [2, 3, 4],
-      correct_answer: 3,
+      prompt: "Nhìn nhanh xem có mấy ngôi sao.",
+      flash_items: [
+        {
+          item_id: "it-1",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-star",
+          },
+        },
+        {
+          item_id: "it-2",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-star",
+          },
+        },
+        {
+          item_id: "it-3",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-star",
+          },
+        },
+      ],
+      arrangement: "dice",
+      options: [
+        {
+          value: 2,
+          is_correct: false,
+        },
+        {
+          value: 3,
+          is_correct: true,
+        },
+        {
+          value: 4,
+          is_correct: false,
+        },
+      ],
     },
-    difficulty_params: { flash_duration_ms: 1500 },
+    difficulty_params: {
+      flash_ms: 1500,
+      item_count: 3,
+      distractor_count: 2,
+      allow_replay: true,
+      hint_after_ms: 9000,
+      allow_retry: true,
+    },
   },
-  // Level 20 (Premium)
   {
     header: {
       code: "GL-C1-SUB-FAST-0020",
       content_version: 1,
-      template_code: "GT-006",
+      template_code: "GT-012",
       title: "Nhìn nhanh chùm bóng bay",
       instruction: "Nói xem có bao nhiêu quả bóng.",
-      age_min: 4,
-      age_max: 5,
+      age_min: 5,
+      age_max: 6,
       difficulty: 4,
       access_tier: "premium",
       skill_codes: ["C1.CNT.11"],
@@ -601,19 +1023,62 @@ export const C1_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
       authored_in: "repo_seed",
     },
     content_pack: {
+      prompt: "Nói xem có bao nhiêu quả bóng.",
       flash_items: [
-        { emoji: "🎈" },
-        { emoji: "🎈" },
-        { emoji: "🎈" },
-        { emoji: "🎈" },
+        {
+          item_id: "it-1",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-balloon",
+          },
+        },
+        {
+          item_id: "it-2",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-balloon",
+          },
+        },
+        {
+          item_id: "it-3",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-balloon",
+          },
+        },
+        {
+          item_id: "it-4",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-balloon",
+          },
+        },
       ],
-      flash_duration_ms: 1200,
-      options: [3, 4, 5],
-      correct_answer: 4,
+      arrangement: "dice",
+      options: [
+        {
+          value: 3,
+          is_correct: false,
+        },
+        {
+          value: 4,
+          is_correct: true,
+        },
+        {
+          value: 5,
+          is_correct: false,
+        },
+      ],
     },
-    difficulty_params: { flash_duration_ms: 1200 },
+    difficulty_params: {
+      flash_ms: 1200,
+      item_count: 4,
+      distractor_count: 2,
+      allow_replay: true,
+      hint_after_ms: 9000,
+      allow_retry: true,
+    },
   },
-  // Level 31 (GT-010 - Substitution)
   {
     header: {
       code: "GL-C1-SUB-SYM-0031",
@@ -636,19 +1101,54 @@ export const C1_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
     content_pack: {
       prompt: "Bé hãy suy nghĩ xem Quả chuối có giá trị bằng mấy nhé!",
       symbols: [
-        { symbol_id: "apple", asset: { kind: "emoji", ref: "🍎" } },
-        { symbol_id: "banana", asset: { kind: "emoji", ref: "🍌" } },
+        {
+          symbol_id: "apple",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-red-apple",
+          },
+        },
+        {
+          symbol_id: "banana",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-banana",
+          },
+        },
       ],
       equations: [
-        { equation_id: "eq_1", left: ["apple", "apple"], right_value: 10 },
-        { equation_id: "eq_2", left: ["apple", "banana"], right_value: 8 },
+        {
+          equation_id: "eq_1",
+          left: ["apple", "apple"],
+          right_value: 10,
+        },
+        {
+          equation_id: "eq_2",
+          left: ["apple", "banana"],
+          right_value: 8,
+        },
       ],
-      question: { kind: "value", symbol_id: "banana" },
+      question: {
+        kind: "value",
+        symbol_id: "banana",
+      },
       options: [
-        { value: 2, is_correct: false },
-        { value: 3, is_correct: true },
-        { value: 5, is_correct: false },
-        { value: 8, is_correct: false },
+        {
+          value: 2,
+          is_correct: false,
+        },
+        {
+          value: 3,
+          is_correct: true,
+        },
+        {
+          value: 5,
+          is_correct: false,
+        },
+        {
+          value: 8,
+          is_correct: false,
+        },
       ],
     },
     difficulty_params: {
@@ -659,7 +1159,6 @@ export const C1_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
       allow_retry: true,
     },
   },
-  // Level 32 (GT-010 - Substitution)
   {
     header: {
       code: "GL-C1-SUB-SYM-0032",
@@ -682,18 +1181,50 @@ export const C1_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
     content_pack: {
       prompt: "Bé hãy tính xem Bông hoa hướng dương có giá trị là bao nhiêu?",
       symbols: [
-        { symbol_id: "rose", asset: { kind: "emoji", ref: "🌹" } },
-        { symbol_id: "sunflower", asset: { kind: "emoji", ref: "🌻" } },
+        {
+          symbol_id: "rose",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-rose",
+          },
+        },
+        {
+          symbol_id: "sunflower",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-sunflower",
+          },
+        },
       ],
       equations: [
-        { equation_id: "eq_1", left: ["rose", "rose", "rose"], right_value: 9 },
-        { equation_id: "eq_2", left: ["rose", "sunflower"], right_value: 7 },
+        {
+          equation_id: "eq_1",
+          left: ["rose", "rose", "rose"],
+          right_value: 9,
+        },
+        {
+          equation_id: "eq_2",
+          left: ["rose", "sunflower"],
+          right_value: 7,
+        },
       ],
-      question: { kind: "value", symbol_id: "sunflower" },
+      question: {
+        kind: "value",
+        symbol_id: "sunflower",
+      },
       options: [
-        { value: 3, is_correct: false },
-        { value: 4, is_correct: true },
-        { value: 5, is_correct: false },
+        {
+          value: 3,
+          is_correct: false,
+        },
+        {
+          value: 4,
+          is_correct: true,
+        },
+        {
+          value: 5,
+          is_correct: false,
+        },
       ],
     },
     difficulty_params: {
@@ -704,7 +1235,6 @@ export const C1_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
       allow_retry: true,
     },
   },
-  // Level 33 (GT-010 - Substitution)
   {
     header: {
       code: "GL-C1-SUB-SYM-0033",
@@ -727,18 +1257,50 @@ export const C1_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
     content_pack: {
       prompt: "Bé hãy tìm giá trị của Mèo con nhé!",
       symbols: [
-        { symbol_id: "dog", asset: { kind: "emoji", ref: "🐶" } },
-        { symbol_id: "cat", asset: { kind: "emoji", ref: "🐱" } },
+        {
+          symbol_id: "dog",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-dog",
+          },
+        },
+        {
+          symbol_id: "cat",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-cat",
+          },
+        },
       ],
       equations: [
-        { equation_id: "e1", left: ["dog", "dog"], right_value: 12 },
-        { equation_id: "e2", left: ["dog", "cat"], right_value: 10 },
+        {
+          equation_id: "e1",
+          left: ["dog", "dog"],
+          right_value: 12,
+        },
+        {
+          equation_id: "e2",
+          left: ["dog", "cat"],
+          right_value: 10,
+        },
       ],
-      question: { kind: "value", symbol_id: "cat" },
+      question: {
+        kind: "value",
+        symbol_id: "cat",
+      },
       options: [
-        { value: 2, is_correct: false },
-        { value: 4, is_correct: true },
-        { value: 6, is_correct: false },
+        {
+          value: 2,
+          is_correct: false,
+        },
+        {
+          value: 4,
+          is_correct: true,
+        },
+        {
+          value: 6,
+          is_correct: false,
+        },
       ],
     },
     difficulty_params: {
@@ -749,7 +1311,6 @@ export const C1_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
       allow_retry: true,
     },
   },
-  // Level 34 (GT-014 - Balance Scale)
   {
     header: {
       code: "GL-C1-BAL-SCL-0034",
@@ -761,8 +1322,8 @@ export const C1_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
       age_max: 6,
       difficulty: 2,
       access_tier: "login",
-      skill_codes: ["C1.MSR.01"],
-      learning_objective_codes: ["LO-C1.MSR.01-01"],
+      skill_codes: ["C1.MEAS.01"],
+      learning_objective_codes: ["LO-C1.MEAS.01-01"],
       what_tags: ["msr"],
       thinking_tags: ["compare"],
       theme_tag: "food",
@@ -775,16 +1336,40 @@ export const C1_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
       left_pan: [
         {
           item_id: "watermelon",
-          asset: { kind: "emoji", ref: "🍉" },
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-watermelon",
+          },
           weight: 5,
         },
       ],
       right_pan: [
-        { item_id: "apple", asset: { kind: "emoji", ref: "🍎" }, weight: 1 },
+        {
+          item_id: "apple",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-red-apple",
+          },
+          weight: 1,
+        },
       ],
       tray: [
-        { item_id: "w1", asset: { kind: "emoji", ref: "1️⃣" }, weight: 1 },
-        { item_id: "w2", asset: { kind: "emoji", ref: "2️⃣" }, weight: 2 },
+        {
+          item_id: "w1",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-one",
+          },
+          weight: 1,
+        },
+        {
+          item_id: "w2",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-two",
+          },
+          weight: 2,
+        },
       ],
     },
     difficulty_params: {
@@ -794,7 +1379,6 @@ export const C1_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
       allow_retry: true,
     },
   },
-  // Level 35 (GT-014 - Balance Scale)
   {
     header: {
       code: "GL-C1-BAL-SCL-0035",
@@ -806,8 +1390,8 @@ export const C1_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
       age_max: 6,
       difficulty: 3,
       access_tier: "standard",
-      skill_codes: ["C1.MSR.01"],
-      learning_objective_codes: ["LO-C1.MSR.01-01"],
+      skill_codes: ["C1.MEAS.01"],
+      learning_objective_codes: ["LO-C1.MEAS.01-01"],
       what_tags: ["msr"],
       thinking_tags: ["compare"],
       theme_tag: "school",
@@ -819,13 +1403,41 @@ export const C1_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
         "Bé hãy kéo quả cân thích hợp vào đĩa phải để chiếc cân thăng bằng nhé!",
       goal: "balance",
       left_pan: [
-        { item_id: "gift", asset: { kind: "emoji", ref: "🎁" }, weight: 3 },
+        {
+          item_id: "gift",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-gift",
+          },
+          weight: 3,
+        },
       ],
       right_pan: [],
       tray: [
-        { item_id: "w1", asset: { kind: "emoji", ref: "1️⃣" }, weight: 1 },
-        { item_id: "w2", asset: { kind: "emoji", ref: "2️⃣" }, weight: 2 },
-        { item_id: "w3", asset: { kind: "emoji", ref: "3️⃣" }, weight: 3 },
+        {
+          item_id: "w1",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-one",
+          },
+          weight: 1,
+        },
+        {
+          item_id: "w2",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-two",
+          },
+          weight: 2,
+        },
+        {
+          item_id: "w3",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-three",
+          },
+          weight: 3,
+        },
       ],
     },
     difficulty_params: {
@@ -835,7 +1447,6 @@ export const C1_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
       allow_retry: true,
     },
   },
-  // Level 36 (GT-014 - Balance Scale)
   {
     header: {
       code: "GL-C1-BAL-SCL-0036",
@@ -847,8 +1458,8 @@ export const C1_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
       age_max: 6,
       difficulty: 4,
       access_tier: "premium",
-      skill_codes: ["C1.MSR.01"],
-      learning_objective_codes: ["LO-C1.MSR.01-01"],
+      skill_codes: ["C1.MEAS.01"],
+      learning_objective_codes: ["LO-C1.MEAS.01-01"],
       what_tags: ["msr"],
       thinking_tags: ["compare"],
       theme_tag: "animal",
@@ -861,23 +1472,46 @@ export const C1_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
       left_pan: [
         {
           item_id: "elephant",
-          asset: { kind: "emoji", ref: "🐘" },
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-elephant",
+          },
           weight: 10,
         },
       ],
       right_pan: [
-        { item_id: "bear", asset: { kind: "emoji", ref: "🐻" }, weight: 5 },
+        {
+          item_id: "bear",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-bear",
+          },
+          weight: 5,
+        },
       ],
       tray: [
         {
           item_id: "opt_elephant",
-          asset: { kind: "emoji", ref: "🐘" },
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-elephant",
+          },
           weight: 10,
         },
-        { item_id: "opt_bear", asset: { kind: "emoji", ref: "🐻" }, weight: 5 },
+        {
+          item_id: "opt_bear",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-bear",
+          },
+          weight: 5,
+        },
         {
           item_id: "opt_mouse",
-          asset: { kind: "emoji", ref: "🐭" },
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-mouse-face",
+          },
           weight: 1,
         },
       ],
@@ -889,7 +1523,6 @@ export const C1_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
       allow_retry: true,
     },
   },
-  // Level 37 (GT-016 - Clock Hands)
   {
     header: {
       code: "GL-C1-CLK-HND-0037",
@@ -901,8 +1534,8 @@ export const C1_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
       age_max: 6,
       difficulty: 2,
       access_tier: "login",
-      skill_codes: ["C1.MSR.04"],
-      learning_objective_codes: ["LO-C1.MSR.04-01"],
+      skill_codes: ["C1.MEAS.04"],
+      learning_objective_codes: ["LO-C1.MEAS.04-01"],
       what_tags: ["time"],
       thinking_tags: ["observe"],
       theme_tag: "home",
@@ -912,11 +1545,26 @@ export const C1_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
     content_pack: {
       prompt: "Đồng hồ đang chỉ mấy giờ vậy bé ơi?",
       mode: "read",
-      target_time: { hour: 8, minute: 0 },
+      target_time: {
+        hour: 8,
+        minute: 0,
+      },
       options: [
-        { hour: 7, minute: 0, is_correct: false },
-        { hour: 8, minute: 0, is_correct: true },
-        { hour: 9, minute: 0, is_correct: false },
+        {
+          hour: 7,
+          minute: 0,
+          is_correct: false,
+        },
+        {
+          hour: 8,
+          minute: 0,
+          is_correct: true,
+        },
+        {
+          hour: 9,
+          minute: 0,
+          is_correct: false,
+        },
       ],
       activity_cards: [],
     },
@@ -927,7 +1575,6 @@ export const C1_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
       allow_retry: true,
     },
   },
-  // Level 38 (GT-016 - Clock Hands)
   {
     header: {
       code: "GL-C1-CLK-HND-0038",
@@ -939,8 +1586,8 @@ export const C1_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
       age_max: 6,
       difficulty: 3,
       access_tier: "standard",
-      skill_codes: ["C1.MSR.04"],
-      learning_objective_codes: ["LO-C1.MSR.04-01"],
+      skill_codes: ["C1.MEAS.04"],
+      learning_objective_codes: ["LO-C1.MEAS.04-01"],
       what_tags: ["time"],
       thinking_tags: ["observe"],
       theme_tag: "school",
@@ -950,19 +1597,22 @@ export const C1_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
     content_pack: {
       prompt: "Bé hãy xoay kim đồng hồ về đúng 4 giờ 30 phút nhé!",
       mode: "set",
-      target_time: { hour: 4, minute: 30 },
-      initial_time: { hour: 12, minute: 0 },
-      options: [],
-      activity_cards: [],
+      target_time: {
+        hour: 4,
+        minute: 30,
+      },
+      initial_time: {
+        hour: 12,
+        minute: 0,
+      },
     },
     difficulty_params: {
       minute_step: 30,
-      distractor_count: 0,
+      distractor_count: 1,
       hint_after_ms: 8000,
       allow_retry: true,
     },
   },
-  // Level 39 (GT-016 - Clock Hands)
   {
     header: {
       code: "GL-C1-CLK-HND-0039",
@@ -974,8 +1624,8 @@ export const C1_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
       age_max: 6,
       difficulty: 4,
       access_tier: "premium",
-      skill_codes: ["C1.MSR.04"],
-      learning_objective_codes: ["LO-C1.MSR.04-01"],
+      skill_codes: ["C1.MEAS.04"],
+      learning_objective_codes: ["LO-C1.MEAS.04-01"],
       what_tags: ["time"],
       thinking_tags: ["observe"],
       theme_tag: "home",
@@ -985,14 +1635,23 @@ export const C1_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
     content_pack: {
       prompt: "Bé hãy chọn chiếc đồng hồ chỉ đúng 9 giờ tối lúc bé đi ngủ nhé!",
       mode: "match_activity",
-      target_time: { hour: 21, minute: 0 },
+      target_time: {
+        hour: 21,
+        minute: 0,
+      },
       options: [],
       activity_cards: [
         {
           activity_id: "act_sleep",
           name_vi: "Bé đi ngủ buổi tối (9 giờ)",
-          asset: { kind: "emoji", ref: "🛏️" },
-          expected_time: { hour: 21, minute: 0 },
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-bed",
+          },
+          expected_time: {
+            hour: 21,
+            minute: 0,
+          },
         },
       ],
     },
@@ -1003,7 +1662,6 @@ export const C1_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
       allow_retry: true,
     },
   },
-  // Level 40 (GT-012 - Flash Recall for C1)
   {
     header: {
       code: "GL-C1-MEM-FLASH-0040",
@@ -1027,14 +1685,41 @@ export const C1_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
       prompt: "Bé nhìn thật nhanh có mấy quả táo nhé!",
       arrangement: "dice",
       flash_items: [
-        { item_id: "ap_1", asset: { kind: "emoji", ref: "🍎" } },
-        { item_id: "ap_2", asset: { kind: "emoji", ref: "🍎" } },
-        { item_id: "ap_3", asset: { kind: "emoji", ref: "🍎" } },
+        {
+          item_id: "ap_1",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-red-apple",
+          },
+        },
+        {
+          item_id: "ap_2",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-red-apple",
+          },
+        },
+        {
+          item_id: "ap_3",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-red-apple",
+          },
+        },
       ],
       options: [
-        { value: 2, is_correct: false },
-        { value: 3, is_correct: true },
-        { value: 4, is_correct: false },
+        {
+          value: 2,
+          is_correct: false,
+        },
+        {
+          value: 3,
+          is_correct: true,
+        },
+        {
+          value: 4,
+          is_correct: false,
+        },
       ],
     },
     difficulty_params: {

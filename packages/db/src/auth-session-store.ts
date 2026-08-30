@@ -22,7 +22,7 @@ export class PostgresSessionStore {
   async recordSession(
     input: RecordDeviceSessionInput
   ): Promise<{ id: number }> {
-    const [row] = await this.sql<{ id: string }[]>`
+    const rows = await this.sql<{ id: string }[]>`
       insert into active_sessions (
         account_type,
         account_id,
@@ -44,6 +44,10 @@ export class PostgresSessionStore {
       )
       returning id::text
     `;
+    const row = rows[0];
+    if (!row) {
+      throw new Error("Insert active_sessions failed");
+    }
     return { id: Number(row.id) };
   }
 

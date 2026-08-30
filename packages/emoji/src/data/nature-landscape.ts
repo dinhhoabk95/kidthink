@@ -152,4 +152,12 @@ export const NATURE_LANDSCAPE_EMOJIS: EmojiEntry[] = [
     keywords: ["construction", "building", "công trình", "xây dựng", "cần cẩu"],
     name: "Công trình",
   },
+  {
+    age_min: 3,
+    category: "nature-landscape",
+    curriculum_themes: ["que_huong_dat_nuoc"],
+    emoji: "⛺",
+    keywords: ["tent", "lều", "cắm trại"],
+    name: "Lều trại",
+  },
 ];

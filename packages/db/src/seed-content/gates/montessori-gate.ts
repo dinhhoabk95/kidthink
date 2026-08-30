@@ -136,6 +136,9 @@ export function checkMontessoriBatchRules(
   }
 
   const wbNum = match[1]; // e.g. "01"
+  if (!wbNum) {
+    return issues;
+  }
   // Kiểm tra mọi seed trong batch phải cùng 1 workbook (dựa vào code hoặc workbook metadata)
   for (const seed of seeds) {
     const wbTag = seed.header.what_tags?.find(
@@ -172,8 +175,8 @@ export function checkMontessoriQuotas(
     const parts = lvl.header.code.split("-");
     if (parts.length >= 2) {
       const comp = parts[1]; // "C1", "C2", etc.
-      if (counts[comp] !== undefined) {
-        counts[comp]++;
+      if (comp && counts[comp] !== undefined) {
+        counts[comp] = (counts[comp] ?? 0) + 1;
       }
     }
   }

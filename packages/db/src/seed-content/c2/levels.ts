@@ -2,12 +2,11 @@ import type { ContentSeed } from "#src/seed-content/types";
 import { SEED_MONT_A19 } from "./seed-mont-a19.js";
 
 export const C2_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
-  // Level 1 (Free)
   {
     header: {
       code: "GL-C2-SHP-CARD-0001",
       content_version: 1,
-      template_code: "GT-001",
+      template_code: "GT-012",
       title: "Nhận biết hình vuông",
       instruction: "Em hãy chọn hình vuông màu đỏ.",
       age_min: 3,
@@ -22,15 +21,47 @@ export const C2_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
       origin: "human",
       authored_in: "repo_seed",
     },
-    content_pack: { items: [{ id: "sq", emoji: "🟥" }], target_count: 1 },
-    difficulty_params: { count_limit: 3 },
+    content_pack: {
+      prompt: "Em hãy chọn hình vuông màu đỏ.",
+      flash_items: [
+        {
+          item_id: "sq",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-red-square",
+          },
+        },
+      ],
+      arrangement: "line",
+      options: [
+        {
+          value: 1,
+          is_correct: true,
+        },
+        {
+          value: 2,
+          is_correct: false,
+        },
+        {
+          value: 3,
+          is_correct: false,
+        },
+      ],
+    },
+    difficulty_params: {
+      flash_ms: 3000,
+      item_count: 1,
+      distractor_count: 2,
+      allow_replay: true,
+      hint_after_ms: 9000,
+      allow_retry: true,
+    },
   },
-  // Level 2 (Login)
   {
     header: {
       code: "GL-C2-SHP-CARD-0002",
       content_version: 1,
-      template_code: "GT-001",
+      template_code: "GT-012",
       title: "Nhận biết hình tròn xanh",
       instruction: "Em hãy chọn quả bóng hình tròn.",
       age_min: 3,
@@ -46,20 +77,53 @@ export const C2_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
       authored_in: "repo_seed",
     },
     content_pack: {
-      items: [
-        { id: "cr", emoji: "🔵" },
-        { id: "cr2", emoji: "🔵" },
+      prompt: "Em hãy chọn quả bóng hình tròn.",
+      flash_items: [
+        {
+          item_id: "cr",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-blue-circle",
+          },
+        },
+        {
+          item_id: "cr2",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-blue-circle",
+          },
+        },
       ],
-      target_count: 2,
+      arrangement: "line",
+      options: [
+        {
+          value: 1,
+          is_correct: false,
+        },
+        {
+          value: 2,
+          is_correct: true,
+        },
+        {
+          value: 3,
+          is_correct: false,
+        },
+      ],
     },
-    difficulty_params: { count_limit: 3 },
+    difficulty_params: {
+      flash_ms: 3000,
+      item_count: 2,
+      distractor_count: 2,
+      allow_replay: true,
+      hint_after_ms: 9000,
+      allow_retry: true,
+    },
   },
-  // Level 3 (Login)
   {
     header: {
       code: "GL-C2-SHP-CARD-0003",
       content_version: 1,
-      template_code: "GT-001",
+      template_code: "GT-012",
       title: "Nhận biết hình tam giác",
       instruction: "Chạm vào hình tam giác màu vàng.",
       age_min: 3,
@@ -74,10 +138,42 @@ export const C2_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
       origin: "human",
       authored_in: "repo_seed",
     },
-    content_pack: { items: [{ id: "tr", emoji: "🔺" }], target_count: 1 },
-    difficulty_params: { count_limit: 3 },
+    content_pack: {
+      prompt: "Chạm vào hình tam giác màu vàng.",
+      flash_items: [
+        {
+          item_id: "tr",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-red-triangle-up",
+          },
+        },
+      ],
+      arrangement: "line",
+      options: [
+        {
+          value: 1,
+          is_correct: true,
+        },
+        {
+          value: 2,
+          is_correct: false,
+        },
+        {
+          value: 3,
+          is_correct: false,
+        },
+      ],
+    },
+    difficulty_params: {
+      flash_ms: 3000,
+      item_count: 1,
+      distractor_count: 2,
+      allow_replay: true,
+      hint_after_ms: 9000,
+      allow_retry: true,
+    },
   },
-  // Level 4 (Login)
   {
     header: {
       code: "GL-C2-POS-LOC-0004",
@@ -99,14 +195,27 @@ export const C2_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
     },
     content_pack: {
       grid: [
-        [{ id: "top_item", emoji: "🧸", position: "top" }],
-        [{ id: "bot_item", emoji: "📦", position: "bottom" }],
+        [
+          {
+            id: "top_item",
+            emoji: "🧸",
+            position: "top",
+          },
+        ],
+        [
+          {
+            id: "bot_item",
+            emoji: "📦",
+            position: "bottom",
+          },
+        ],
       ],
       target_id: "top_item",
     },
-    difficulty_params: { grid_size: 2 },
+    difficulty_params: {
+      grid_size: 2,
+    },
   },
-  // Level 5 (Login)
   {
     header: {
       code: "GL-C2-POS-LOC-0005",
@@ -129,24 +238,33 @@ export const C2_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
     content_pack: {
       grid: [
         [
-          { id: "inside_dog", emoji: "🐶", position: "inside" },
-          { id: "outside_cat", emoji: "🐱", position: "outside" },
+          {
+            id: "inside_dog",
+            emoji: "🐶",
+            position: "inside",
+          },
+          {
+            id: "outside_cat",
+            emoji: "🐱",
+            position: "outside",
+          },
         ],
       ],
       target_id: "inside_dog",
     },
-    difficulty_params: { grid_size: 2 },
+    difficulty_params: {
+      grid_size: 2,
+    },
   },
-  // Level 6 (Login)
   {
     header: {
       code: "GL-C2-SORT-SHP-0006",
       content_version: 1,
-      template_code: "GT-002",
+      template_code: "GT-003",
       title: "Phân loại hình khối",
       instruction: "Kéo hình tròn vào khung tròn.",
-      age_min: 3,
-      age_max: 4,
+      age_min: 4,
+      age_max: 5,
       difficulty: 2,
       access_tier: "login",
       skill_codes: ["C2.GEO.01"],
@@ -158,22 +276,45 @@ export const C2_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
       authored_in: "repo_seed",
     },
     content_pack: {
-      containers: [
-        { id: "circle_frame", label: "Khung tròn", target_shape: "circle" },
-      ],
-      drag_items: [
-        { id: "c1", emoji: "🔵", shape: "circle" },
-        { id: "s1", emoji: "🟥", shape: "square" },
+      prompt: "Kéo hình tròn vào khung tròn.",
+      container: {
+        container_id: "circle_frame",
+        label: "Khung tròn",
+        accepts_attribute: "circle",
+      },
+      items: [
+        {
+          item_id: "c1",
+          attribute: "circle",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-blue-circle",
+          },
+          is_correct: true,
+        },
+        {
+          item_id: "s1",
+          attribute: "square",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-red-square",
+          },
+          is_correct: false,
+        },
       ],
     },
-    difficulty_params: { item_count: 2 },
+    difficulty_params: {
+      distractor_count: 1,
+      target_count: 1,
+      hint_after_ms: 9000,
+      allow_retry: true,
+    },
   },
-  // Level 7 (Standard)
   {
     header: {
       code: "GL-C2-SORT-SHP-0007",
       content_version: 1,
-      template_code: "GT-002",
+      template_code: "GT-003",
       title: "Phân loại hình tam giác",
       instruction: "Kéo tam giác vào ô tam giác.",
       age_min: 4,
@@ -189,17 +330,40 @@ export const C2_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
       authored_in: "repo_seed",
     },
     content_pack: {
-      containers: [
-        { id: "tri_frame", label: "Khung tam giác", target_shape: "triangle" },
-      ],
-      drag_items: [
-        { id: "t1", emoji: "🔺", shape: "triangle" },
-        { id: "c1", emoji: "🟢", shape: "circle" },
+      prompt: "Kéo tam giác vào ô tam giác.",
+      container: {
+        container_id: "tri_frame",
+        label: "Khung tam giác",
+        accepts_attribute: "triangle",
+      },
+      items: [
+        {
+          item_id: "t1",
+          attribute: "triangle",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-red-triangle-up",
+          },
+          is_correct: true,
+        },
+        {
+          item_id: "c1",
+          attribute: "circle",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-green-circle",
+          },
+          is_correct: false,
+        },
       ],
     },
-    difficulty_params: { item_count: 2 },
+    difficulty_params: {
+      distractor_count: 1,
+      target_count: 1,
+      hint_after_ms: 9000,
+      allow_retry: true,
+    },
   },
-  // Level 8 (Standard)
   {
     header: {
       code: "GL-C2-CMP-SIZ-0008",
@@ -220,13 +384,24 @@ export const C2_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
       authored_in: "repo_seed",
     },
     content_pack: {
-      left_group: [{ emoji: "⚽", size: "big" }],
-      right_group: [{ emoji: "⚽", size: "small" }],
+      left_group: [
+        {
+          emoji: "⚽",
+          size: "big",
+        },
+      ],
+      right_group: [
+        {
+          emoji: "⚽",
+          size: "small",
+        },
+      ],
       target: "big",
     },
-    difficulty_params: { max_difference: 1 },
+    difficulty_params: {
+      max_difference: 1,
+    },
   },
-  // Level 9 (Standard)
   {
     header: {
       code: "GL-C2-CMP-SIZ-0009",
@@ -247,13 +422,24 @@ export const C2_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
       authored_in: "repo_seed",
     },
     content_pack: {
-      left_group: [{ emoji: "🌲", height: "tall" }],
-      right_group: [{ emoji: "🌱", height: "short" }],
+      left_group: [
+        {
+          emoji: "🌲",
+          height: "tall",
+        },
+      ],
+      right_group: [
+        {
+          emoji: "🌱",
+          height: "short",
+        },
+      ],
       target: "tall",
     },
-    difficulty_params: { max_difference: 1 },
+    difficulty_params: {
+      max_difference: 1,
+    },
   },
-  // Level 10 (Standard)
   {
     header: {
       code: "GL-C2-DIR-NAV-0010",
@@ -276,15 +462,24 @@ export const C2_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
     content_pack: {
       grid: [
         [
-          { id: "b_left", emoji: "🐥", position: "left" },
-          { id: "b_right", emoji: "🐦", position: "right" },
+          {
+            id: "b_left",
+            emoji: "🐥",
+            position: "left",
+          },
+          {
+            id: "b_right",
+            emoji: "🐦",
+            position: "right",
+          },
         ],
       ],
       target_id: "b_right",
     },
-    difficulty_params: { grid_size: 2 },
+    difficulty_params: {
+      grid_size: 2,
+    },
   },
-  // Level 11 (Standard)
   {
     header: {
       code: "GL-C2-SEQ-PAT-0011",
@@ -309,9 +504,10 @@ export const C2_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
       options: ["🔴", "🟦", "🟢"],
       correct_option: "🔴",
     },
-    difficulty_params: { pattern_length: 2 },
+    difficulty_params: {
+      pattern_length: 2,
+    },
   },
-  // Level 12 (Standard)
   {
     header: {
       code: "GL-C2-SEQ-PAT-0012",
@@ -336,9 +532,10 @@ export const C2_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
       options: ["🌟", "⭐️", "✨"],
       correct_option: "🌟",
     },
-    difficulty_params: { pattern_length: 2 },
+    difficulty_params: {
+      pattern_length: 2,
+    },
   },
-  // Level 13 (Premium)
   {
     header: {
       code: "GL-C2-SUB-FAST-0013",
@@ -346,8 +543,8 @@ export const C2_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
       template_code: "GT-006",
       title: "Nhận biết hình khối nhanh",
       instruction: "Hình gì vừa xuất hiện vậy em.",
-      age_min: 4,
-      age_max: 5,
+      age_min: 5,
+      age_max: 6,
       difficulty: 3,
       access_tier: "premium",
       skill_codes: ["C2.GEO.01"],
@@ -359,14 +556,19 @@ export const C2_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
       authored_in: "repo_seed",
     },
     content_pack: {
-      flash_items: [{ emoji: "🔺" }],
+      flash_items: [
+        {
+          emoji: "🔺",
+        },
+      ],
       flash_duration_ms: 1500,
       options: ["Tam giác", "Hình tròn", "Hình vuông"],
       correct_answer: "Tam giác",
     },
-    difficulty_params: { flash_duration_ms: 1500 },
+    difficulty_params: {
+      flash_duration_ms: 1500,
+    },
   },
-  // Level 14 (Premium)
   {
     header: {
       code: "GL-C2-POS-LOC-0014",
@@ -388,19 +590,32 @@ export const C2_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
     },
     content_pack: {
       grid: [
-        [{ id: "car_front", emoji: "🚘", position: "front" }],
-        [{ id: "car_back", emoji: "🚖", position: "back" }],
+        [
+          {
+            id: "car_front",
+            emoji: "🚘",
+            position: "front",
+          },
+        ],
+        [
+          {
+            id: "car_back",
+            emoji: "🚖",
+            position: "back",
+          },
+        ],
       ],
       target_id: "car_front",
     },
-    difficulty_params: { grid_size: 2 },
+    difficulty_params: {
+      grid_size: 2,
+    },
   },
-  // Level 15 (Premium)
   {
     header: {
       code: "GL-C2-SORT-SHP-0015",
       content_version: 1,
-      template_code: "GT-002",
+      template_code: "GT-003",
       title: "Phân loại khối vuông và tròn",
       instruction: "Bỏ khối vuông vào hộp vuông.",
       age_min: 5,
@@ -416,17 +631,40 @@ export const C2_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
       authored_in: "repo_seed",
     },
     content_pack: {
-      containers: [
-        { id: "sq_box", label: "Hộp vuông", target_shape: "square" },
-      ],
-      drag_items: [
-        { id: "s1", emoji: "🟨", shape: "square" },
-        { id: "c1", emoji: "🟢", shape: "circle" },
+      prompt: "Bỏ khối vuông vào hộp vuông.",
+      container: {
+        container_id: "sq_box",
+        label: "Hộp vuông",
+        accepts_attribute: "square",
+      },
+      items: [
+        {
+          item_id: "s1",
+          attribute: "square",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-yellow-square",
+          },
+          is_correct: true,
+        },
+        {
+          item_id: "c1",
+          attribute: "circle",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-green-circle",
+          },
+          is_correct: false,
+        },
       ],
     },
-    difficulty_params: { item_count: 2 },
+    difficulty_params: {
+      distractor_count: 1,
+      target_count: 1,
+      hint_after_ms: 9000,
+      allow_retry: true,
+    },
   },
-  // Level 16 (Premium)
   {
     header: {
       code: "GL-C2-DIR-NAV-0016",
@@ -449,15 +687,24 @@ export const C2_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
     content_pack: {
       grid: [
         [
-          { id: "star_left", emoji: "⭐", position: "left" },
-          { id: "moon_right", emoji: "🌙", position: "right" },
+          {
+            id: "star_left",
+            emoji: "⭐",
+            position: "left",
+          },
+          {
+            id: "moon_right",
+            emoji: "🌙",
+            position: "right",
+          },
         ],
       ],
       target_id: "star_left",
     },
-    difficulty_params: { grid_size: 2 },
+    difficulty_params: {
+      grid_size: 2,
+    },
   },
-  // Level 17 (Premium)
   {
     header: {
       code: "GL-C2-CMP-SIZ-0017",
@@ -478,13 +725,24 @@ export const C2_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
       authored_in: "repo_seed",
     },
     content_pack: {
-      left_group: [{ emoji: "🐘", size: "big" }],
-      right_group: [{ emoji: "🐭", size: "small" }],
+      left_group: [
+        {
+          emoji: "🐘",
+          size: "big",
+        },
+      ],
+      right_group: [
+        {
+          emoji: "🐭",
+          size: "small",
+        },
+      ],
       target: "big",
     },
-    difficulty_params: { max_difference: 1 },
+    difficulty_params: {
+      max_difference: 1,
+    },
   },
-  // Level 18 (Premium)
   {
     header: {
       code: "GL-C2-SEQ-PAT-0018",
@@ -509,9 +767,10 @@ export const C2_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
       options: ["🔴", "🟢", "🟡"],
       correct_option: "🟡",
     },
-    difficulty_params: { pattern_length: 3 },
+    difficulty_params: {
+      pattern_length: 3,
+    },
   },
-  // Level 19 (Premium)
   {
     header: {
       code: "GL-C2-SUB-FAST-0019",
@@ -519,8 +778,8 @@ export const C2_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
       template_code: "GT-006",
       title: "Nhìn nhanh vị trí ngôi sao",
       instruction: "Ngôi sao nằm ở phía nào vậy em.",
-      age_min: 4,
-      age_max: 5,
+      age_min: 5,
+      age_max: 6,
       difficulty: 4,
       access_tier: "premium",
       skill_codes: ["C2.ORI.07"],
@@ -532,19 +791,25 @@ export const C2_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
       authored_in: "repo_seed",
     },
     content_pack: {
-      flash_items: [{ emoji: "⭐", position: "top" }],
+      flash_items: [
+        {
+          emoji: "⭐",
+          position: "top",
+        },
+      ],
       flash_duration_ms: 1200,
       options: ["Phía trên", "Phía dưới"],
       correct_answer: "Phía trên",
     },
-    difficulty_params: { flash_duration_ms: 1200 },
+    difficulty_params: {
+      flash_duration_ms: 1200,
+    },
   },
-  // Level 20 (Premium)
   {
     header: {
       code: "GL-C2-POS-LOC-0020",
       content_version: 1,
-      template_code: "GT-005",
+      template_code: "GT-022",
       title: "Tìm ô góc trên bên trái",
       instruction: "Chạm vào ô góc trên bên trái.",
       age_min: 5,
@@ -560,21 +825,53 @@ export const C2_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
       authored_in: "repo_seed",
     },
     content_pack: {
-      grid: [
-        [
-          { id: "tl", emoji: "🎁", position: "top_left" },
-          { id: "tr", emoji: "🎈", position: "top_right" },
-        ],
-        [
-          { id: "bl", emoji: "🧸", position: "bottom_left" },
-          { id: "br", emoji: "⚽", position: "bottom_right" },
-        ],
+      prompt: "Chạm vào ô góc trên bên trái.",
+      target_description: "Tìm ô góc trên bên trái",
+      scene_objects: [
+        {
+          id: "tl",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-gift",
+          },
+          is_target: true,
+          is_hidden: false,
+        },
+        {
+          id: "tr",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-balloon",
+          },
+          is_target: false,
+          is_hidden: false,
+        },
+        {
+          id: "bl",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-teddy-bear",
+          },
+          is_target: false,
+          is_hidden: false,
+        },
+        {
+          id: "br",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-soccer",
+          },
+          is_target: false,
+          is_hidden: false,
+        },
       ],
-      target_id: "tl",
     },
-    difficulty_params: { grid_size: 2 },
+    difficulty_params: {
+      hint_after_ms: 9000,
+      allow_retry: true,
+      show_target_counter: true,
+    },
   },
-  // Level 21 (GT-019 - Rotate Transform)
   {
     header: {
       code: "GL-C2-ROT-TRANS-0021",
@@ -601,7 +898,10 @@ export const C2_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
           slot_id: "slot-1",
           target_rotation: 0,
           target_flip: "none",
-          asset: { kind: "emoji", ref: "⬆️" },
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-up-arrow",
+          },
         },
       ],
       pieces: [
@@ -610,7 +910,10 @@ export const C2_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
           initial_rotation: 90,
           initial_flip: "none",
           target_slot_id: "slot-1",
-          asset: { kind: "emoji", ref: "⬆️" },
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-up-arrow",
+          },
         },
       ],
     },
@@ -621,7 +924,6 @@ export const C2_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
       allow_retry: true,
     },
   },
-  // Level 22 (GT-019 - Rotate Transform)
   {
     header: {
       code: "GL-C2-ROT-TRANS-0022",
@@ -648,13 +950,19 @@ export const C2_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
           slot_id: "slot-triangle",
           target_rotation: 0,
           target_flip: "none",
-          asset: { kind: "emoji", ref: "🔺" },
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-red-triangle-up",
+          },
         },
         {
           slot_id: "slot-star",
           target_rotation: 180,
           target_flip: "none",
-          asset: { kind: "emoji", ref: "⭐" },
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-star",
+          },
         },
       ],
       pieces: [
@@ -663,14 +971,20 @@ export const C2_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
           initial_rotation: 270,
           initial_flip: "none",
           target_slot_id: "slot-triangle",
-          asset: { kind: "emoji", ref: "🔺" },
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-red-triangle-up",
+          },
         },
         {
           piece_id: "piece-star",
           initial_rotation: 90,
           initial_flip: "none",
           target_slot_id: "slot-star",
-          asset: { kind: "emoji", ref: "⭐" },
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-star",
+          },
         },
       ],
     },
@@ -681,7 +995,6 @@ export const C2_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
       allow_retry: true,
     },
   },
-  // Level 23 (GT-019 - Rotate Transform)
   {
     header: {
       code: "GL-C2-ROT-TRANS-0023",
@@ -708,7 +1021,10 @@ export const C2_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
           slot_id: "slot-fish",
           target_rotation: 0,
           target_flip: "none",
-          asset: { kind: "emoji", ref: "🐠" },
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-tropical-fish",
+          },
         },
       ],
       pieces: [
@@ -717,7 +1033,10 @@ export const C2_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
           initial_rotation: 180,
           initial_flip: "horizontal",
           target_slot_id: "slot-fish",
-          asset: { kind: "emoji", ref: "🐠" },
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-tropical-fish",
+          },
         },
       ],
     },
@@ -728,7 +1047,6 @@ export const C2_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
       allow_retry: true,
     },
   },
-  // Level 24 (GT-021 - Mirror Complete)
   {
     header: {
       code: "GL-C2-MIR-COMP-0024",
@@ -755,7 +1073,10 @@ export const C2_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
       reference_pattern: [
         {
           slot_id: "left-wing",
-          asset: { kind: "emoji", ref: "🦋" },
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-butterfly",
+          },
         },
       ],
       target_slots: [
@@ -767,12 +1088,18 @@ export const C2_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
       options: [
         {
           item_id: "opt-wing",
-          asset: { kind: "emoji", ref: "🦋" },
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-butterfly",
+          },
           asset_ref: "butterfly-wing",
         },
         {
           item_id: "opt-flower",
-          asset: { kind: "emoji", ref: "🌸" },
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-cherry-blossom",
+          },
           asset_ref: "flower",
         },
       ],
@@ -783,7 +1110,6 @@ export const C2_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
       allow_retry: true,
     },
   },
-  // Level 25 (GT-021 - Mirror Complete)
   {
     header: {
       code: "GL-C2-MIR-COMP-0025",
@@ -809,11 +1135,17 @@ export const C2_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
       reference_pattern: [
         {
           slot_id: "top-left",
-          asset: { kind: "emoji", ref: "🔴" },
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-red-circle",
+          },
         },
         {
           slot_id: "bottom-left",
-          asset: { kind: "emoji", ref: "🟦" },
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-blue-square",
+          },
         },
       ],
       target_slots: [
@@ -829,17 +1161,26 @@ export const C2_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
       options: [
         {
           item_id: "opt-red",
-          asset: { kind: "emoji", ref: "🔴" },
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-red-circle",
+          },
           asset_ref: "red-circle",
         },
         {
           item_id: "opt-blue",
-          asset: { kind: "emoji", ref: "🟦" },
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-blue-square",
+          },
           asset_ref: "blue-square",
         },
         {
           item_id: "opt-yellow",
-          asset: { kind: "emoji", ref: "🟡" },
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-yellow-circle",
+          },
           asset_ref: "yellow-circle",
         },
       ],
@@ -850,7 +1191,6 @@ export const C2_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
       allow_retry: true,
     },
   },
-  // Level 26 (GT-021 - Mirror Complete)
   {
     header: {
       code: "GL-C2-MIR-COMP-0026",
@@ -876,11 +1216,17 @@ export const C2_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
       reference_pattern: [
         {
           slot_id: "r1",
-          asset: { kind: "emoji", ref: "⭐" },
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-star",
+          },
         },
         {
           slot_id: "r2",
-          asset: { kind: "emoji", ref: "💎" },
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-gem-stone",
+          },
         },
       ],
       target_slots: [
@@ -896,12 +1242,18 @@ export const C2_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
       options: [
         {
           item_id: "opt-star",
-          asset: { kind: "emoji", ref: "⭐" },
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-star",
+          },
           asset_ref: "star",
         },
         {
           item_id: "opt-diamond",
-          asset: { kind: "emoji", ref: "💎" },
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-gem-stone",
+          },
           asset_ref: "diamond",
         },
       ],
@@ -912,7 +1264,6 @@ export const C2_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
       allow_retry: true,
     },
   },
-  // Level 27 (GT-023 - Construct)
   {
     header: {
       code: "GL-C2-CON-SHP-0027",
@@ -920,8 +1271,8 @@ export const C2_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
       template_code: "GT-023",
       title: "Lắp ráp ngôi nhà đơn giản",
       instruction: "Bé ghép mái nhà và thân nhà.",
-      age_min: 3,
-      age_max: 4,
+      age_min: 4,
+      age_max: 5,
       difficulty: 1,
       access_tier: "free",
       skill_codes: ["C2.GEO.01"],
@@ -936,7 +1287,10 @@ export const C2_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
       prompt: "Bé hãy ghép mái nhà và thân nhà để tạo thành ngôi nhà nhé!",
       target_model: {
         name: "Ngôi nhà",
-        asset: { kind: "emoji", ref: "🏠" },
+        asset: {
+          kind: "emoji",
+          ref: "EMJ-house",
+        },
       },
       anchors: [
         {
@@ -958,13 +1312,19 @@ export const C2_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
         {
           part_id: "part-roof",
           target_anchor_id: "anchor-roof",
-          asset: { kind: "emoji", ref: "🔺" },
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-red-triangle-up",
+          },
           name: "Mái tam giác",
         },
         {
           part_id: "part-wall",
           target_anchor_id: "anchor-wall",
-          asset: { kind: "emoji", ref: "🟦" },
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-blue-square",
+          },
           name: "Tường vuông",
         },
       ],
@@ -976,7 +1336,6 @@ export const C2_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
       allow_retry: true,
     },
   },
-  // Level 28 (GT-023 - Construct)
   {
     header: {
       code: "GL-C2-CON-SHP-0028",
@@ -1000,7 +1359,10 @@ export const C2_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
       prompt: "Bé hãy lắp 2 bánh xe vào thân xe ô tô nhé!",
       target_model: {
         name: "Xe ô tô",
-        asset: { kind: "emoji", ref: "🚗" },
+        asset: {
+          kind: "emoji",
+          ref: "EMJ-car",
+        },
       },
       anchors: [
         {
@@ -1029,19 +1391,28 @@ export const C2_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
         {
           part_id: "part-body",
           target_anchor_id: "anchor-body",
-          asset: { kind: "emoji", ref: "🚙" },
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-suv",
+          },
           name: "Thân xe",
         },
         {
           part_id: "part-w1",
           target_anchor_id: "anchor-w1",
-          asset: { kind: "emoji", ref: "⚫" },
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-black-circle",
+          },
           name: "Bánh xe 1",
         },
         {
           part_id: "part-w2",
           target_anchor_id: "anchor-w2",
-          asset: { kind: "emoji", ref: "⚫" },
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-black-circle",
+          },
           name: "Bánh xe 2",
         },
       ],
@@ -1053,7 +1424,6 @@ export const C2_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
       allow_retry: true,
     },
   },
-  // Level 29 (GT-023 - Construct)
   {
     header: {
       code: "GL-C2-CON-SHP-0029",
@@ -1077,7 +1447,10 @@ export const C2_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
       prompt: "Bé hãy ghép 3 bộ phận để tạo thành chiếc tên lửa nhé!",
       target_model: {
         name: "Tên lửa",
-        asset: { kind: "emoji", ref: "🚀" },
+        asset: {
+          kind: "emoji",
+          ref: "EMJ-rocket",
+        },
       },
       anchors: [
         {
@@ -1106,19 +1479,28 @@ export const C2_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
         {
           part_id: "p-tip",
           target_anchor_id: "a-tip",
-          asset: { kind: "emoji", ref: "🔺" },
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-red-triangle-up",
+          },
           name: "Mũi tên lửa",
         },
         {
           part_id: "p-body",
           target_anchor_id: "a-body",
-          asset: { kind: "emoji", ref: "⬜" },
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-white-square",
+          },
           name: "Thân tên lửa",
         },
         {
           part_id: "p-booster",
           target_anchor_id: "a-booster",
-          asset: { kind: "emoji", ref: "🔥" },
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-fire",
+          },
           name: "Động cơ đẩy",
         },
       ],
@@ -1130,7 +1512,6 @@ export const C2_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
       allow_retry: true,
     },
   },
-  // Level 30 (GT-024 - Trace Path)
   {
     header: {
       code: "GL-C2-TRC-PTH-0030",
@@ -1138,8 +1519,8 @@ export const C2_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
       template_code: "GT-024",
       title: "Vẽ theo nét hình tam giác",
       instruction: "Bé nối các điểm vẽ hình tam giác.",
-      age_min: 3,
-      age_max: 4,
+      age_min: 5,
+      age_max: 6,
       difficulty: 1,
       access_tier: "free",
       skill_codes: ["C2.GEO.01"],
@@ -1153,12 +1534,39 @@ export const C2_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
     content_pack: {
       prompt: "Bé hãy nối các điểm theo thứ tự 1-2-3 để vẽ hình tam giác nhé!",
       shape_name: "Hình tam giác",
-      guide_asset: { kind: "emoji", ref: "🔺" },
+      guide_asset: {
+        kind: "emoji",
+        ref: "EMJ-red-triangle-up",
+      },
       waypoints: [
-        { id: "wp-top", x: 480, y: 150, order: 0, label: "1" },
-        { id: "wp-right", x: 650, y: 380, order: 1, label: "2" },
-        { id: "wp-left", x: 310, y: 380, order: 2, label: "3" },
-        { id: "wp-top-close", x: 480, y: 150, order: 3, label: "1" },
+        {
+          id: "wp-top",
+          x: 480,
+          y: 150,
+          order: 0,
+          label: "1",
+        },
+        {
+          id: "wp-right",
+          x: 650,
+          y: 380,
+          order: 1,
+          label: "2",
+        },
+        {
+          id: "wp-left",
+          x: 310,
+          y: 380,
+          order: 2,
+          label: "3",
+        },
+        {
+          id: "wp-top-close",
+          x: 480,
+          y: 150,
+          order: 3,
+          label: "1",
+        },
       ],
     },
     difficulty_params: {
@@ -1169,7 +1577,6 @@ export const C2_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
       allow_retry: true,
     },
   },
-  // Level 31 (GT-024 - Trace Path)
   {
     header: {
       code: "GL-C2-TRC-PTH-0031",
@@ -1177,8 +1584,8 @@ export const C2_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
       template_code: "GT-024",
       title: "Vẽ theo nét hình vuông",
       instruction: "Bé nối các điểm vẽ hình vuông.",
-      age_min: 4,
-      age_max: 5,
+      age_min: 5,
+      age_max: 6,
       difficulty: 2,
       access_tier: "login",
       skill_codes: ["C2.GEO.01"],
@@ -1192,13 +1599,46 @@ export const C2_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
     content_pack: {
       prompt: "Bé hãy nối 4 điểm theo thứ tự để tạo thành hình vuông nhé!",
       shape_name: "Hình vuông",
-      guide_asset: { kind: "emoji", ref: "🟦" },
+      guide_asset: {
+        kind: "emoji",
+        ref: "EMJ-blue-square",
+      },
       waypoints: [
-        { id: "wp-tl", x: 340, y: 180, order: 0, label: "1" },
-        { id: "wp-tr", x: 620, y: 180, order: 1, label: "2" },
-        { id: "wp-br", x: 620, y: 420, order: 2, label: "3" },
-        { id: "wp-bl", x: 340, y: 420, order: 3, label: "4" },
-        { id: "wp-tl-close", x: 340, y: 180, order: 4, label: "1" },
+        {
+          id: "wp-tl",
+          x: 340,
+          y: 180,
+          order: 0,
+          label: "1",
+        },
+        {
+          id: "wp-tr",
+          x: 620,
+          y: 180,
+          order: 1,
+          label: "2",
+        },
+        {
+          id: "wp-br",
+          x: 620,
+          y: 420,
+          order: 2,
+          label: "3",
+        },
+        {
+          id: "wp-bl",
+          x: 340,
+          y: 420,
+          order: 3,
+          label: "4",
+        },
+        {
+          id: "wp-tl-close",
+          x: 340,
+          y: 180,
+          order: 4,
+          label: "1",
+        },
       ],
     },
     difficulty_params: {
@@ -1209,7 +1649,6 @@ export const C2_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
       allow_retry: true,
     },
   },
-  // Level 32 (GT-024 - Trace Path)
   {
     header: {
       code: "GL-C2-TRC-PTH-0032",
@@ -1233,19 +1672,88 @@ export const C2_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
       prompt:
         "Bé hãy nối các điểm theo thứ tự từ 1 đến 5 để vẽ ngôi sao sáng nhé!",
       shape_name: "Ngôi sao",
-      guide_asset: { kind: "emoji", ref: "⭐" },
+      guide_asset: {
+        kind: "emoji",
+        ref: "EMJ-star",
+      },
       waypoints: [
-        { id: "wp-1", x: 480, y: 120, order: 0, label: "1" },
-        { id: "wp-2", x: 530, y: 270, order: 1, label: "2" },
-        { id: "wp-3", x: 680, y: 270, order: 2, label: "3" },
-        { id: "wp-4", x: 560, y: 360, order: 3, label: "4" },
-        { id: "wp-5", x: 600, y: 500, order: 4, label: "5" },
-        { id: "wp-6", x: 480, y: 410, order: 5, label: "6" },
-        { id: "wp-7", x: 360, y: 500, order: 6, label: "7" },
-        { id: "wp-8", x: 400, y: 360, order: 7, label: "8" },
-        { id: "wp-9", x: 280, y: 270, order: 8, label: "9" },
-        { id: "wp-10", x: 430, y: 270, order: 9, label: "10" },
-        { id: "wp-close", x: 480, y: 120, order: 10, label: "1" },
+        {
+          id: "wp-1",
+          x: 480,
+          y: 120,
+          order: 0,
+          label: "1",
+        },
+        {
+          id: "wp-2",
+          x: 530,
+          y: 270,
+          order: 1,
+          label: "2",
+        },
+        {
+          id: "wp-3",
+          x: 680,
+          y: 270,
+          order: 2,
+          label: "3",
+        },
+        {
+          id: "wp-4",
+          x: 560,
+          y: 360,
+          order: 3,
+          label: "4",
+        },
+        {
+          id: "wp-5",
+          x: 600,
+          y: 500,
+          order: 4,
+          label: "5",
+        },
+        {
+          id: "wp-6",
+          x: 480,
+          y: 410,
+          order: 5,
+          label: "6",
+        },
+        {
+          id: "wp-7",
+          x: 360,
+          y: 500,
+          order: 6,
+          label: "7",
+        },
+        {
+          id: "wp-8",
+          x: 400,
+          y: 360,
+          order: 7,
+          label: "8",
+        },
+        {
+          id: "wp-9",
+          x: 280,
+          y: 270,
+          order: 8,
+          label: "9",
+        },
+        {
+          id: "wp-10",
+          x: 430,
+          y: 270,
+          order: 9,
+          label: "10",
+        },
+        {
+          id: "wp-close",
+          x: 480,
+          y: 120,
+          order: 10,
+          label: "1",
+        },
       ],
     },
     difficulty_params: {
@@ -1256,7 +1764,6 @@ export const C2_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
       allow_retry: true,
     },
   },
-  // Level 33 (GT-017 - Block Stack)
   {
     header: {
       code: "GL-C2-BLK-STK-0033",
@@ -1280,25 +1787,50 @@ export const C2_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
       prompt: "Bé hãy đếm xem có tất cả bao nhiêu khối lập phương nhé!",
       question: "count_cubes",
       model: [
-        { x: 0, y: 0, z: 0 },
-        { x: 1, y: 0, z: 0 },
-        { x: 0, y: 1, z: 0 },
-        { x: 0, y: 0, z: 1 },
+        {
+          x: 0,
+          y: 0,
+          z: 0,
+        },
+        {
+          x: 1,
+          y: 0,
+          z: 0,
+        },
+        {
+          x: 0,
+          y: 1,
+          z: 0,
+        },
+        {
+          x: 0,
+          y: 0,
+          z: 1,
+        },
       ],
       options: [
         {
           option_id: "opt_3",
-          asset: { kind: "emoji", ref: "3️⃣" },
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-three",
+          },
           is_correct: false,
         },
         {
           option_id: "opt_4",
-          asset: { kind: "emoji", ref: "4️⃣" },
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-four",
+          },
           is_correct: true,
         },
         {
           option_id: "opt_5",
-          asset: { kind: "emoji", ref: "5️⃣" },
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-five",
+          },
           is_correct: false,
         },
       ],
@@ -1311,7 +1843,6 @@ export const C2_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
       allow_retry: true,
     },
   },
-  // Level 34 (GT-017 - Block Stack)
   {
     header: {
       code: "GL-C2-BLK-STK-0034",
@@ -1335,26 +1866,55 @@ export const C2_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
       prompt: "Bé hãy đếm xem chiếc tháp có bao nhiêu khối gạch nhé!",
       question: "count_cubes",
       model: [
-        { x: 0, y: 0, z: 0 },
-        { x: 1, y: 0, z: 0 },
-        { x: 0, y: 1, z: 0 },
-        { x: 1, y: 1, z: 0 },
-        { x: 0, y: 0, z: 1 },
+        {
+          x: 0,
+          y: 0,
+          z: 0,
+        },
+        {
+          x: 1,
+          y: 0,
+          z: 0,
+        },
+        {
+          x: 0,
+          y: 1,
+          z: 0,
+        },
+        {
+          x: 1,
+          y: 1,
+          z: 0,
+        },
+        {
+          x: 0,
+          y: 0,
+          z: 1,
+        },
       ],
       options: [
         {
           option_id: "o4",
-          asset: { kind: "emoji", ref: "4️⃣" },
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-four",
+          },
           is_correct: false,
         },
         {
           option_id: "o5",
-          asset: { kind: "emoji", ref: "5️⃣" },
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-five",
+          },
           is_correct: true,
         },
         {
           option_id: "o6",
-          asset: { kind: "emoji", ref: "6️⃣" },
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-six",
+          },
           is_correct: false,
         },
       ],
@@ -1367,7 +1927,6 @@ export const C2_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
       allow_retry: true,
     },
   },
-  // Level 35 (GT-017 - Block Stack)
   {
     header: {
       code: "GL-C2-BLK-STK-0035",
@@ -1392,27 +1951,60 @@ export const C2_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
         "Bé xoay hình để đếm xem có tất cả bao nhiêu khối lập phương nhé!",
       question: "count_cubes",
       model: [
-        { x: 0, y: 0, z: 0 },
-        { x: 1, y: 0, z: 0 },
-        { x: 0, y: 1, z: 0 },
-        { x: 1, y: 1, z: 0 },
-        { x: 0, y: 0, z: 1 },
-        { x: 1, y: 1, z: 1 },
+        {
+          x: 0,
+          y: 0,
+          z: 0,
+        },
+        {
+          x: 1,
+          y: 0,
+          z: 0,
+        },
+        {
+          x: 0,
+          y: 1,
+          z: 0,
+        },
+        {
+          x: 1,
+          y: 1,
+          z: 0,
+        },
+        {
+          x: 0,
+          y: 0,
+          z: 1,
+        },
+        {
+          x: 1,
+          y: 1,
+          z: 1,
+        },
       ],
       options: [
         {
           option_id: "o5",
-          asset: { kind: "emoji", ref: "5️⃣" },
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-five",
+          },
           is_correct: false,
         },
         {
           option_id: "o6",
-          asset: { kind: "emoji", ref: "6️⃣" },
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-six",
+          },
           is_correct: true,
         },
         {
           option_id: "o7",
-          asset: { kind: "emoji", ref: "7️⃣" },
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-seven",
+          },
           is_correct: false,
         },
       ],
@@ -1422,6 +2014,71 @@ export const C2_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
       allow_rotate: true,
       distractor_count: 2,
       hint_after_ms: 8000,
+      allow_retry: true,
+    },
+  },
+  {
+    header: {
+      code: "GL-C2-SHP-FLIP-0030",
+      content_version: 1,
+      template_code: "GT-020",
+      title: "Lật thẻ tìm cặp hình giống nhau",
+      instruction: "Bé lật thẻ và tìm hai hình giống hệt nhau nhé!",
+      age_min: 3,
+      age_max: 4,
+      difficulty: 1,
+      access_tier: "free",
+      skill_codes: ["C2.GEO.01"],
+      learning_objective_codes: ["LO-C2.GEO.01-01"],
+      what_tags: ["shp"],
+      thinking_tags: ["observe"],
+      theme_tag: "school",
+      origin: "human",
+      authored_in: "repo_seed",
+    },
+    content_pack: {
+      prompt: "Bé lật thẻ tìm hai hình giống nhau nhé!",
+      pairs: [
+        {
+          pair_key: "circle",
+          card_a: {
+            card_id: "circle-1",
+            asset: {
+              kind: "emoji",
+              ref: "EMJ-red-circle",
+            },
+          },
+          card_b: {
+            card_id: "circle-2",
+            asset: {
+              kind: "emoji",
+              ref: "EMJ-red-circle",
+            },
+          },
+        },
+        {
+          pair_key: "square",
+          card_a: {
+            card_id: "square-1",
+            asset: {
+              kind: "emoji",
+              ref: "EMJ-blue-square",
+            },
+          },
+          card_b: {
+            card_id: "square-2",
+            asset: {
+              kind: "emoji",
+              ref: "EMJ-blue-square",
+            },
+          },
+        },
+      ],
+    },
+    difficulty_params: {
+      flip_back_delay_ms: 1800,
+      peek_all_initial_ms: 2500,
+      hint_after_ms: 9000,
       allow_retry: true,
     },
   },

@@ -18,6 +18,9 @@ describe("Task P4.2 — Database Schema & Invariants Integration Tests (BR-PDF-0
         displayName: "Người Dùng PDF",
       })
       .returning();
+    if (!user) {
+      throw new Error("Failed to insert user");
+    }
     testUserId = user.id;
   });
 
@@ -31,16 +34,16 @@ describe("Task P4.2 — Database Schema & Invariants Integration Tests (BR-PDF-0
       })
       .returning();
 
-    expect(job.id).toBeDefined();
-    expect(job.uuid).toBeDefined();
-    expect(job.userId).toBe(testUserId);
-    expect(job.kind).toBe("lesson_plan");
-    expect(job.refId).toBe("plan-uuid-12345");
-    expect(job.status).toBe("queued");
-    expect(job.filePath).toBeNull();
-    expect(job.pageCount).toBeNull();
-    expect(job.expiresAt).toBeNull();
-    expect(job.error).toBeNull();
+    expect(job?.id).toBeDefined();
+    expect(job?.uuid).toBeDefined();
+    expect(job?.userId).toBe(testUserId);
+    expect(job?.kind).toBe("lesson_plan");
+    expect(job?.refId).toBe("plan-uuid-12345");
+    expect(job?.status).toBe("queued");
+    expect(job?.filePath).toBeNull();
+    expect(job?.pageCount).toBeNull();
+    expect(job?.expiresAt).toBeNull();
+    expect(job?.error).toBeNull();
   });
 
   it("[BR-PDF-05] enforces pageCount constraint (1 <= pageCount <= 20)", async () => {
@@ -54,7 +57,7 @@ describe("Task P4.2 — Database Schema & Invariants Integration Tests (BR-PDF-0
         pageCount: 1,
       })
       .returning();
-    expect(jobValidMin.pageCount).toBe(1);
+    expect(jobValidMin?.pageCount).toBe(1);
 
     // Valid pageCount = 20
     const [jobValidMax] = await db
@@ -66,7 +69,7 @@ describe("Task P4.2 — Database Schema & Invariants Integration Tests (BR-PDF-0
         pageCount: 20,
       })
       .returning();
-    expect(jobValidMax.pageCount).toBe(20);
+    expect(jobValidMax?.pageCount).toBe(20);
 
     // Invalid pageCount = 0 -> throws check constraint violation
     await expect(
@@ -98,6 +101,9 @@ describe("Task P4.2 — Database Schema & Invariants Integration Tests (BR-PDF-0
         refId: "plan-del",
       })
       .returning();
+    if (!job) {
+      throw new Error("Failed to insert job");
+    }
 
     expect(job.id).toBeDefined();
 

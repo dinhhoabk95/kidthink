@@ -49,7 +49,7 @@ cổng tự động size check · Playwright throttle 4G · k6 · `fps_sample` t
 
 | ID | Rule | Vì sao |
 |---|---|---|
-| `BR-PRF-01` | Vượt ngân sách **chặn merge** | Ngân sách không ép là ngân sách không tồn tại |
+| `BR-PRF-01` | Vượt ngân sách **chặn merge** — ⚠️ **CHƯA DỰNG** | Ngân sách không ép là ngân sách không tồn tại. Câu đó hiện đúng với chính luật này: `size-limit` và `k6` **không có trong `package.json` nào**, và `lint-perf-budget.ts` — thứ duy nhất từng mã hoá các con số này — bị xoá cùng `packages/gates` ngày 2026-08-29. Xem [`runtime-gates.md`](runtime-gates.md) §3 và `Q-RG-2` |
 | `BR-PRF-02` | Đo trên **thiết bị và mạng mục tiêu**, không trên máy dev | Máy dev nhanh gấp 5 lần thiết bị thật |
 | `BR-PRF-03` | Suy giảm khi tải nặng: bỏ **hạt và bóng**, Cấm — **NEVER sàn touch hay kênh phản hồi** | Đẹp hy sinh được; dùng được thì không |
 | `BR-PRF-04` | Cấm — **NEVER network call trong lúc chơi** | `BR-ENG-03` |
@@ -105,17 +105,20 @@ Puppeteer là câu hỏi mở ([`pdf-export.md`](../07-addon/pdf-export.md) §11
 
 ## 8. API contract
 
-Không có. Ràng buộc lên cổng tự động:
+Không có. Ràng buộc lên cổng tự động — ⚠️ **cả ba đều CHƯA được wire vào repo**
+(đo 2026-08-30: `size-limit` và `k6` không xuất hiện trong `package.json` nào,
+`@playwright/test` chỉ là mục catalog không có script):
 
 ```
-size-limit        → ngân sách §7.1
-playwright perf   → ngưỡng §7.2 với throttle 4G
-k6                → API P95
+size-limit        → ngân sách §7.1     (chưa dựng)
+playwright perf   → ngưỡng §7.2 4G     (chưa dựng)
+k6                → API P95            (chưa dựng)
 ```
 
 ## 9. Acceptance criteria
 
 ```gherkin
+# ⚠️ CHƯA DỰNG — không có cổng nào chạy kịch bản này. Giữ làm đặc tả.
 Scenario: BR-PRF-01 — vượt ngân sách chặn merge
   Given một thay đổi làm app shell vượt 180 KB gzipped
   When cổng tự động chạy

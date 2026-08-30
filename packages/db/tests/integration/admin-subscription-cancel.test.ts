@@ -45,6 +45,9 @@ describe("Admin & User Subscription Cancellation Integration Tests (P5.1 / Task 
         displayName: "Self Cancel User",
       })
       .returning();
+    if (!user) {
+      throw new Error("Failed to insert user");
+    }
 
     const now = new Date();
     const sub = await createRecurringSubscription(
@@ -58,6 +61,9 @@ describe("Admin & User Subscription Cancellation Integration Tests (P5.1 / Task 
       },
       now
     );
+    if (!sub) {
+      throw new Error("Failed to create subscription");
+    }
 
     // Grant active entitlement
     await db.insert(entitlements).values({
@@ -78,6 +84,9 @@ describe("Admin & User Subscription Cancellation Integration Tests (P5.1 / Task 
       .select()
       .from(recurringSubscriptions)
       .where(eq(recurringSubscriptions.id, sub.id));
+    if (!dbSub) {
+      throw new Error("dbSub not found");
+    }
     expect(dbSub.status).toBe("cancelled");
     expect(dbSub.autoRenew).toBe(false);
     expect(dbSub.cancelledBy).toBe("user");
@@ -87,6 +96,9 @@ describe("Admin & User Subscription Cancellation Integration Tests (P5.1 / Task 
       .select()
       .from(entitlements)
       .where(eq(entitlements.userId, user.id));
+    if (!dbEntitlement) {
+      throw new Error("dbEntitlement not found");
+    }
     expect(dbEntitlement.status).toBe("active");
     expect(dbEntitlement.expiresAt).toBeDefined();
     expect(new Date(dbEntitlement.expiresAt ?? "").getTime()).toBe(
@@ -104,6 +116,9 @@ describe("Admin & User Subscription Cancellation Integration Tests (P5.1 / Task 
         displayName: "Admin Cancel User",
       })
       .returning();
+    if (!user) {
+      throw new Error("Failed to insert user");
+    }
 
     const now = new Date();
     const sub = await createRecurringSubscription(
@@ -117,6 +132,9 @@ describe("Admin & User Subscription Cancellation Integration Tests (P5.1 / Task 
       },
       now
     );
+    if (!sub) {
+      throw new Error("Failed to create subscription");
+    }
 
     await db.insert(entitlements).values({
       userId: user.id,
@@ -145,6 +163,9 @@ describe("Admin & User Subscription Cancellation Integration Tests (P5.1 / Task 
       .select()
       .from(entitlements)
       .where(eq(entitlements.userId, user.id));
+    if (!dbEntitlement) {
+      throw new Error("dbEntitlement not found");
+    }
     expect(dbEntitlement.status).toBe("active");
 
     // Audit log written
@@ -157,6 +178,9 @@ describe("Admin & User Subscription Cancellation Integration Tests (P5.1 / Task 
           eq(auditLogs.entityId, String(sub.id))
         )
       );
+    if (!audit) {
+      throw new Error("audit not found");
+    }
     expect(audit).toBeDefined();
     expect(audit.action).toBe("subscription.cancelled_by_admin");
   });
@@ -171,6 +195,9 @@ describe("Admin & User Subscription Cancellation Integration Tests (P5.1 / Task 
         displayName: "Admin Revoke User",
       })
       .returning();
+    if (!user) {
+      throw new Error("Failed to insert user");
+    }
 
     const now = new Date();
     const sub = await createRecurringSubscription(
@@ -184,6 +211,9 @@ describe("Admin & User Subscription Cancellation Integration Tests (P5.1 / Task 
       },
       now
     );
+    if (!sub) {
+      throw new Error("Failed to create subscription");
+    }
 
     await db.insert(entitlements).values({
       userId: user.id,
@@ -212,6 +242,9 @@ describe("Admin & User Subscription Cancellation Integration Tests (P5.1 / Task 
       .select()
       .from(entitlements)
       .where(eq(entitlements.userId, user.id));
+    if (!dbEntitlement) {
+      throw new Error("dbEntitlement not found");
+    }
     expect(dbEntitlement.status).toBe("cancelled");
   });
 
@@ -236,6 +269,9 @@ describe("Admin & User Subscription Cancellation Integration Tests (P5.1 / Task 
         displayName: "Dunning User",
       })
       .returning();
+    if (!user) {
+      throw new Error("Failed to insert user");
+    }
 
     const pastDate = new Date(Date.now() - 10 * 86_400_000); // 10 days ago
 
@@ -256,6 +292,9 @@ describe("Admin & User Subscription Cancellation Integration Tests (P5.1 / Task 
         consentTermsVersion: "v1.0",
       })
       .returning();
+    if (!sub) {
+      throw new Error("Failed to insert sub");
+    }
 
     await db.insert(entitlements).values({
       userId: user.id,
@@ -275,6 +314,9 @@ describe("Admin & User Subscription Cancellation Integration Tests (P5.1 / Task 
       .select()
       .from(recurringSubscriptions)
       .where(eq(recurringSubscriptions.id, sub.id));
+    if (!updatedSub) {
+      throw new Error("updatedSub not found");
+    }
     expect(updatedSub.status).toBe("cancelled");
 
     // Grace period entitlement is cancelled
@@ -282,6 +324,9 @@ describe("Admin & User Subscription Cancellation Integration Tests (P5.1 / Task 
       .select()
       .from(entitlements)
       .where(eq(entitlements.userId, user.id));
+    if (!updatedEntitlement) {
+      throw new Error("updatedEntitlement not found");
+    }
     expect(updatedEntitlement.status).toBe("cancelled");
   });
 });

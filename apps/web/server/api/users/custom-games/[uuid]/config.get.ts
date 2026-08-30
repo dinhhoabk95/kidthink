@@ -7,9 +7,7 @@ export default defineEventHandler(async (event) => {
   const user = await requireWebUserSession(event);
   const userId = Number(user.user_id);
   const uuid = getRouterParam(event, "uuid") || "";
-  const query =
-    (event.context as { query?: Record<string, unknown> })?.query ??
-    getQuery(event);
+  const query = getQuery(event) || {};
 
   const childUuid =
     (typeof query.child_uuid === "string" ? query.child_uuid : "") ||

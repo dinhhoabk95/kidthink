@@ -45,8 +45,8 @@ export async function runManualGrantReportJob(
   if (input?.month) {
     monthStr = input.month;
     const parts = input.month.split("-").map(Number);
-    const y = parts[0];
-    const m = parts[1];
+    const y = parts[0] ?? now.getFullYear();
+    const m = parts[1] ?? now.getMonth() + 1;
     startOfMonth = new Date(Date.UTC(y, m - 1, 1, 0, 0, 0));
     endOfMonth = new Date(Date.UTC(y, m, 1, 0, 0, 0));
   } else {

@@ -30,6 +30,23 @@
           </div>
         </div>
 
+        <!-- 404 Not Found State -->
+        <div class="archived-notice-card" role="alert" v-else-if="hasError">
+          <span aria-hidden="true" class="archived-emoji">🔍</span>
+          <h1 class="archived-title">Không tìm thấy trò chơi</h1>
+          <p class="archived-desc">
+            Trò chơi này không tồn tại hoặc chưa được phát hành công khai.
+          </p>
+          <div class="alternatives-grid">
+            <NuxtLink class="alt-card-link" to="/games">
+              <UIcon
+                class="w-4 h-4 ml-1 inline-block"
+                name="i-lucide-arrow-right"
+              />Khám phá thư viện trò chơi
+            </NuxtLink>
+          </div>
+        </div>
+
         <!-- Normal Game Detail Content -->
         <article class="game-detail-article" v-else-if="game">
           <!-- Breadcrumb -->
@@ -206,9 +223,9 @@
 </template>
 
 <script lang="ts" setup>
-  import { computed, ref } from "vue";
+  import { computed } from "vue";
   import { useRoute } from "vue-router";
-  import { useHead, useSeoMeta } from "#imports";
+  import { definePageMeta, useFetch, useHead, useSeoMeta } from "#imports";
   import CookieNoticeBanner from "~/components/cookie-notice-banner.vue";
   import PublicFooter from "~/components/public-footer.vue";
   import PublicNavbar from "~/components/public-navbar.vue";
@@ -219,62 +236,98 @@
   // nên skip-link của app.vue nhảy sai chỗ (BR-A11-05).
   definePageMeta({ layout: false });
 
+  interface RelatedGame {
+    code: string;
+    title: string;
+    difficulty?: number;
+    access_tier: string;
+    locked: boolean;
+    emoji?: string;
+    age_band?: string;
+  }
+
+  interface AlternativeGame {
+    code: string;
+    title: string;
+    access_tier?: string;
+  }
+
+  interface GameDetailResponse {
+    code: string;
+    title: string;
+    description: string;
+    competency: string;
+    age_min: number;
+    age_max: number;
+    age_band: string;
+    difficulty: number;
+    theme_id: string;
+    template_code: string;
+    template_name: string;
+    mechanic_type: string;
+    access_tier: string;
+    locked: boolean;
+    scoring: { mode: string };
+    rounds: Array<{
+      round_index: number;
+      instruction?: string | null;
+    }>;
+    cta: {
+      text: string;
+      action: string;
+    };
+    preview_images?: string[];
+    related_games?: RelatedGame[];
+    thumbnail_emoji?: string;
+  }
+
+  interface ApiErrorData {
+    code?: string;
+    data?: {
+      code?: string;
+      alternatives?: AlternativeGame[];
+    };
+  }
+
   const route = useRoute();
   const code = computed(() => (route.params.code as string) || "GL-C1-001");
 
-  // Check if archived simulation
-  const isArchived = computed(() =>
-    code.value.toLowerCase().includes("archived")
+  const { data: gameData, error } = await useFetch<GameDetailResponse>(
+    () => `/api/guest/levels/${code.value}`
   );
 
-  const alternatives = ref([
-    { code: "GL-C1-001", title: "Đếm số trái cây" },
-    { code: "GL-C2-001", title: "Xếp hình ngôi nhà" },
-    { code: "GL-C3-001", title: "Quy luật sắc màu" },
-  ]);
+  const hasError = computed(() => Boolean(error.value));
 
-  // Initial game data mock / SSR state
-  const game = ref({
-    code: code.value,
-    title: "Đếm số trái cây trong vườn",
-    description:
-      "Bé làm quen với số lượng trong phạm vi 5, thực hành đếm các loại trái cây quen thuộc và gắn kết số tương ứng.",
-    competency: "C1 (Số & Lượng)",
-    age_band: "3-4",
-    difficulty: 1,
-    access_tier: "free",
-    locked: false,
-    thumbnail_emoji: "🍎",
+  const isArchived = computed(() => {
+    if (code.value.toLowerCase().includes("archived")) {
+      return true;
+    }
+    return error.value?.statusCode === 410;
   });
 
-  const relatedGames = ref([
-    {
-      code: "GL-C1-002",
-      title: "Đếm hạt dẻ mùa thu",
-      emoji: "🌰",
-      age_band: "3-4",
-    },
-    {
-      code: "GL-C1-003",
-      title: "Tìm bóng con số",
-      emoji: "🔢",
-      age_band: "3-4",
-    },
-    {
-      code: "GL-C1-004",
-      title: "Hái táo vào giỏ",
-      emoji: "🧺",
-      age_band: "3-4",
-    },
-  ]);
+  const alternatives = computed<AlternativeGame[]>(() => {
+    const errData = error.value?.data as ApiErrorData | undefined;
+    if (errData?.data?.alternatives && errData.data.alternatives.length > 0) {
+      return errData.data.alternatives;
+    }
+    return [
+      { code: "GL-C1-001", title: "Đếm số trái cây" },
+      { code: "GL-C2-001", title: "Xếp hình ngôi nhà" },
+      { code: "GL-C3-001", title: "Quy luật sắc màu" },
+    ];
+  });
+
+  const game = computed(() => gameData.value);
+  const relatedGames = computed(() => gameData.value?.related_games ?? []);
 
   // BR-SEO2-04 & BR-GDP-04: Structured data & SEO meta
   useSeoMeta({
-    title: `${game.value.title} — Trò chơi tư duy cho bé ${game.value.age_band} tuổi | MindKid`,
-    description: game.value.description,
-    ogTitle: `${game.value.title} — MindKid`,
-    ogDescription: game.value.description,
-    ogImage: `https://mindkid.vn/images/og-${code.value}.png`,
+    title: () =>
+      `${game.value?.title || "Trò chơi tư duy"} — Trò chơi cho bé ${game.value?.age_band || "3–6"} tuổi | MindKid`,
+    description: () => game.value?.description || "",
+    ogTitle: () => `${game.value?.title || "Trò chơi tư duy"} — MindKid`,
+    ogDescription: () => game.value?.description || "",
+    ogImage: () => `https://mindkid.vn/images/og-${code.value}.png`,
     ogType: "article",
   });
 
@@ -286,17 +339,18 @@
     script: [
       {
         type: "application/ld+json",
-        innerHTML: JSON.stringify({
-          "@context": "https://schema.org",
-          "@type": "LearningResource",
-          name: game.value.title,
-          description: game.value.description,
-          learningResourceType: "Interactive Game",
-          educationalLevel: `Trẻ mầm non ${game.value.age_band} tuổi`,
-          inLanguage: "vi-VN",
-          isAccessibleForFree: game.value.access_tier === "free",
-          url: `https://mindkid.vn/games/${code.value}`,
-        }),
+        innerHTML: () =>
+          JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "LearningResource",
+            name: game.value?.title || "Trò chơi tư duy",
+            description: game.value?.description || "",
+            learningResourceType: "Interactive Game",
+            educationalLevel: `Trẻ mầm non ${game.value?.age_band || "3–6"} tuổi`,
+            inLanguage: "vi-VN",
+            isAccessibleForFree: game.value?.access_tier === "free",
+            url: `https://mindkid.vn/games/${code.value}`,
+          }),
       },
     ],
   });

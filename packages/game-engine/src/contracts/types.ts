@@ -23,7 +23,16 @@ export type LayoutId =
   | "mirror-axis-split"
   | "free-scene";
 
-export type AgeBand = "3-4" | "4-5" | "5-6";
+/**
+ * Bộ giá trị band ở dạng **runtime**, không chỉ dạng kiểu.
+ *
+ * Không có nó thì mọi chỗ nhận band từ ngoài (CLI, query, JSON) chỉ còn cách
+ * ép kiểu `as AgeBand` — và `gen-levels.ts` đã làm đúng thế: `--band=banana`
+ * qua được rồi im lặng rơi về band đầu tiên.
+ */
+export const AGE_BANDS = ["3-4", "4-5", "5-6"] as const;
+
+export type AgeBand = (typeof AGE_BANDS)[number];
 export type ContentStatus =
   | "draft"
   | "in_review"

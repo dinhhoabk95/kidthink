@@ -18,7 +18,6 @@ import {
 import { and, eq, isNull } from "drizzle-orm";
 import { defineEventHandler, readBody } from "h3";
 import { z } from "zod";
-import { setUserSession } from "#imports";
 
 import { getMfaEncryptionKey } from "#server/utils/admin-auth-runtime";
 
@@ -78,10 +77,7 @@ async function verifyUserMfa(
 }
 
 export default defineEventHandler(async (event) => {
-  const body =
-    (await readBody(event).catch(() => null)) ||
-    (event as Record<string, unknown>)._body ||
-    {};
+  const body = (await readBody(event).catch(() => null)) ?? {};
   const parsed = MfaSchema.safeParse(body);
   if (!parsed.success) {
     throw appError("INVALID_CREDENTIALS");

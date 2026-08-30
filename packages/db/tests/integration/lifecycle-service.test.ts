@@ -42,14 +42,14 @@ async function setupTestData() {
     })
     .returning();
 
-  const compId = comp
-    ? comp.id
-    : (
-        await db
-          .select()
-          .from(competencies)
-          .where(eq(competencies.code, compCode))
-      )[0].id;
+  const compRows = await db
+    .select()
+    .from(competencies)
+    .where(eq(competencies.code, compCode));
+  const compId = comp ? comp.id : compRows[0]?.id;
+  if (!compId) {
+    throw new Error("Failed to find competency id");
+  }
 
   const [strd] = await db
     .insert(strands)
@@ -64,10 +64,14 @@ async function setupTestData() {
     })
     .returning();
 
-  const strdId = strd
-    ? strd.id
-    : (await db.select().from(strands).where(eq(strands.code, strandCode)))[0]
-        .id;
+  const strdRows = await db
+    .select()
+    .from(strands)
+    .where(eq(strands.code, strandCode));
+  const strdId = strd ? strd.id : strdRows[0]?.id;
+  if (!strdId) {
+    throw new Error("Failed to find strand id");
+  }
 
   const [sk] = await db
     .insert(skills)
@@ -85,9 +89,14 @@ async function setupTestData() {
     })
     .returning();
 
-  const skillId = sk
-    ? sk.id
-    : (await db.select().from(skills).where(eq(skills.code, skillCode)))[0].id;
+  const skillRows = await db
+    .select()
+    .from(skills)
+    .where(eq(skills.code, skillCode));
+  const skillId = sk ? sk.id : skillRows[0]?.id;
+  if (!skillId) {
+    throw new Error("Failed to find skill id");
+  }
 
   // Insert template
   const [gt] = await db
@@ -100,14 +109,14 @@ async function setupTestData() {
     .onConflictDoNothing()
     .returning();
 
-  const templateId = gt
-    ? gt.id
-    : (
-        await db
-          .select()
-          .from(gameTemplates)
-          .where(eq(gameTemplates.code, gtCode))
-      )[0].id;
+  const templateRows = await db
+    .select()
+    .from(gameTemplates)
+    .where(eq(gameTemplates.code, gtCode));
+  const templateId = gt ? gt.id : templateRows[0]?.id;
+  if (!templateId) {
+    throw new Error("Failed to find template id");
+  }
 
   // Insert manager
   const [mgr] = await db
@@ -119,6 +128,9 @@ async function setupTestData() {
       role: "content_reviewer",
     })
     .returning();
+  if (!mgr) {
+    throw new Error("Failed to insert mgr");
+  }
 
   // Insert super_admin manager
   const [admin] = await db
@@ -130,6 +142,9 @@ async function setupTestData() {
       role: "super_admin",
     })
     .returning();
+  if (!admin) {
+    throw new Error("Failed to insert admin");
+  }
 
   // Insert initial game level draft
   const [level] = await db
@@ -154,6 +169,9 @@ async function setupTestData() {
       createdByManagerId: mgr.id,
     })
     .returning();
+  if (!level) {
+    throw new Error("Failed to insert level");
+  }
 
   // Insert contentSkillMap
   await db.insert(contentSkillMap).values({
@@ -315,8 +333,8 @@ describe("P0.6 Tasks 5, 6, 7 — Lifecycle & Versioning Services Integration Tes
       .from(gameLevels)
       .where(eq(gameLevels.id, v2.id));
 
-    expect(v1Row.status).toBe("archived");
-    expect(v2Row.status).toBe("published");
+    expect(v1Row?.status).toBe("archived");
+    expect(v2Row?.status).toBe("published");
   });
 
   it("Task 6: Rollback — super_admin rollback về bản v1 mà không đổi số version (BR-VER-06)", async () => {
@@ -373,7 +391,9 @@ describe("P0.6 Tasks 5, 6, 7 — Lifecycle & Versioning Services Integration Tes
     // content_reviewer calling rollback -> 403 INSUFFICIENT_ROLE
     await expect(
       rollbackVersion("game_level", glCode, 1, mgr.id, "content_reviewer")
-    ).rejects.toSatisfy((err: any) => err.code === "INSUFFICIENT_ROLE");
+    ).rejects.toSatisfy(
+      (err: unknown) => (err as { code?: string })?.code === "INSUFFICIENT_ROLE"
+    );
 
     // super_admin rollback to v1 -> succeeds
     const rb = await rollbackVersion(
@@ -395,8 +415,8 @@ describe("P0.6 Tasks 5, 6, 7 — Lifecycle & Versioning Services Integration Tes
       .from(gameLevels)
       .where(eq(gameLevels.id, v2.id));
 
-    expect(v1Row.status).toBe("published");
-    expect(v2Row.status).toBe("archived");
+    expect(v1Row?.status).toBe("published");
+    expect(v2Row?.status).toBe("archived");
   });
 
   it("Task 7: BR-CLC-04 (cấm máy tự chuyển) & BR-CLC-08 (xoá cứng bị chặn khi đã published)", async () => {
@@ -408,11 +428,12 @@ describe("P0.6 Tasks 5, 6, 7 — Lifecycle & Versioning Services Integration Tes
         entityType: "game_level",
         entityDbId: level.id,
         toStatus: "in_review",
-        actorManagerId: undefined as any,
+        actorManagerId: undefined as unknown as number,
         actorRole: "content_reviewer",
       })
     ).rejects.toSatisfy(
-      (err: any) => err.code === "MACHINE_TRANSITION_FORBIDDEN"
+      (err: unknown) =>
+        (err as { code?: string })?.code === "MACHINE_TRANSITION_FORBIDDEN"
     );
 
     // Publish level
@@ -440,7 +461,7 @@ describe("P0.6 Tasks 5, 6, 7 — Lifecycle & Versioning Services Integration Tes
 
     // BR-CLC-08: Deleting published content fails with CONTENT_IN_USE
     await expect(deleteContentEntity("game_level", level.id)).rejects.toSatisfy(
-      (err: any) => err.code === "CONTENT_IN_USE"
+      (err: unknown) => (err as { code?: string })?.code === "CONTENT_IN_USE"
     );
   });
 });

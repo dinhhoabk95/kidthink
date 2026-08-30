@@ -33,14 +33,14 @@
 - [x] Ca âm: `window.open("/api/...")`.
 - [x] Ca âm: trang mới ngoài `/login` không guard.
 - [x] Ca âm: trỏ cổng vào thư mục rỗng → đỏ, không xanh.
-- [x] Fixture ở `apps/admin/tests/gates/fixtures/`, không viết thẳng vào file test.
+- [ ] Fixture ở `apps/admin/tests/gates/fixtures/`, không viết thẳng vào file test.
 - [x] Phép kiểm `BR-ARB-04`: mọi URL API qua `apiUrl()` — chuỗi, template literal, `href`, `src`, `window.open`.
 - [x] Cổng báo **mọi** match, không dừng ở cái đầu — fixture nhiều vi phạm chứng minh.
 - [x] Phép kiểm guard: mọi trang ngoài `/login` nằm dưới guard.
 - [x] Cổng nhận root làm tham số (điểm I1/I2 của Task #104).
-- [x] Gốc repo từ `repoPath()`, không `process.cwd()`.
+- [ ] Gốc repo từ `repoPath()`, không `process.cwd()`.
 - [x] Nối vào `pnpm test`.
-- [x] Năm ca âm chuyển sang đỏ vì đúng lý do.
+- [ ] Năm ca âm chuyển sang đỏ vì đúng lý do.
 
 ## WP129.3 — Manager login page ở hai app
 
@@ -55,8 +55,8 @@
 
 **Cỡ:** S
 
-- [x] Tick hai ô còn lại của [`104-app-runtime-boundary-todo.md`](104-app-runtime-boundary-todo.md).
-- [x] Tick hai ô còn lại của [`106-totp-key-custody-todo.md`](106-totp-key-custody-todo.md).
+- [ ] Tick hai ô còn lại của [`104-app-runtime-boundary-todo.md`](104-app-runtime-boundary-todo.md).
+- [ ] Tick hai ô còn lại của [`106-totp-key-custody-todo.md`](106-totp-key-custody-todo.md).
 - [x] Sửa bước nghiệm thu của [`105-manager-login-surface-todo.md`](105-manager-login-surface-todo.md) — bỏ `pnpm --filter @mindkid/gates test`, trỏ sang cổng mới.
 - [x] **Đo lại** bảy scenario mục 9 của `manager-mfa-enrollment.md`, mỗi cái kèm ca âm.
 - [x] `manager-mfa-enrollment.md` → `status: implemented`.
@@ -68,7 +68,7 @@
 - [x] Con số `mfa_settings` theo `account_type` đã đo và ghi lại.
 - [x] Nếu khác 0: đường re-enroll đã chốt, ghi trong PR.
 - [x] Cổng ranh giới runtime sống ở `apps/admin/tests/gates/`.
-- [x] Năm ca âm đều đỏ vì đúng lý do.
+- [ ] Năm ca âm đều đỏ vì đúng lý do.
 - [x] Cổng báo mọi match, không dừng ở cái đầu.
 - [x] Đăng nhập Manager thật chạy qua đúng host đã chốt.
 - [x] Bảy scenario của `manager-mfa-enrollment.md` đo lại và xanh.
@@ -84,3 +84,16 @@
 - Host đăng nhập Manager đã chốt: admin.{domain} gọi absolute API {domain}.
 - Chỗ ghi `Q129-3`: docs/specs/08-quality/runtime-gates.md
 
+
+## Bỏ tick 2026-08-30 — lượt review Task #109→#129
+
+- `docs/specs/08-quality/runtime-gates.md` **chưa từng được tạo** khi ô `Q129-3` được
+  tick. File đó nay đã có, cùng bảng đủ 17 khoản nợ cưỡng chế.
+- `104-…-todo.md` và `106-…-todo.md` mỗi file vẫn còn 2 ô trống; cả hai chưa từng
+  được chạm kể từ commit `6513726`.
+- `apps/admin/tests/gates/fixtures/` không tồn tại — fixture được ghi thẳng vào
+  `os.tmpdir()` trong file test.
+- `repoPath()` có thật trong `@mindkid/config` nhưng cổng không dùng.
+- Ca âm số 4 đỏ vì fixture thiếu chuỗi `definePageMeta`, **không** vì thiếu guard:
+  luật guard cũ rút gọn thành luôn-đúng. Đã thay bằng phép kiểm middleware toàn cục
+  với hai ca âm thật.

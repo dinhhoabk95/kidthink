@@ -41,10 +41,9 @@ function readSheets(): Sheet[] {
 }
 
 function main(): void {
-  const templates = MVP_TEMPLATES as Record<string, Record<string, unknown>>;
   const sheets = readSheets();
   const sheetCodes = new Set(sheets.map((s) => s.code));
-  const registryCodes = new Set(Object.keys(templates));
+  const registryCodes = new Set(Object.keys(MVP_TEMPLATES));
 
   const missing = [...registryCodes].filter((c) => !sheetCodes.has(c)).sort();
   const orphan = [...sheetCodes].filter((c) => !registryCodes.has(c)).sort();
@@ -59,7 +58,7 @@ function main(): void {
   }
 
   const rows = sheets.map((s) => {
-    const t = templates[s.code] as {
+    const t = MVP_TEMPLATES[s.code] as {
       mechanic: string;
       age_min: number;
       age_max: number;

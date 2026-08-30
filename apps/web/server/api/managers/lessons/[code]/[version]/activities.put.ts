@@ -154,13 +154,18 @@ export default defineEventHandler(async (event) => {
       .where(eq(lessons.id, lesson.id));
   });
 
-  await writeAudit(db, {
-    actorType: "manager",
-    actorId: session.manager_id,
-    action: "update",
-    entityType: "lesson",
-    entityId: String(lesson.id),
-    reason: `Manager updated lesson activities composition (${resolvedItems.length} items)`,
+  await db.transaction(async (tx) => {
+    await writeAudit(tx, {
+      actor_type: "manager",
+      actor_id: session.manager_id,
+      action: "content_created",
+      entity_type: "lesson",
+      entity_id: String(lesson.id),
+      reason: `Manager updated lesson activities composition (${resolvedItems.length} items)`,
+      after_data: {
+        activities_count: resolvedItems.length,
+      },
+    });
   });
 
   return {

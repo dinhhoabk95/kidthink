@@ -1,14 +1,9 @@
 import { ALL_TEMPLATES } from "@mindkid/game-engine";
 import { count } from "drizzle-orm";
-import {
-  activities,
-  competencies,
-  gameLevels,
-  gameTemplates,
-  getOwnerDb,
-  lessons,
-  skills,
-} from "#src/index";
+import { getOwnerDb } from "#src/client";
+import { activities, lessons } from "#src/schema/content";
+import { gameLevels, gameTemplates } from "#src/schema/game";
+import { competencies, skills } from "#src/schema/taxonomy";
 import { ALL_SEED_LEVELS } from "#src/seed-content/index";
 
 function resolveLevelBand(min: number, max: number): "3-4" | "4-5" | "5-6" {
@@ -65,12 +60,12 @@ export async function runSeedReport() {
     .from(competencies);
 
   console.log("Summary metrics:");
-  console.log(`- Published Game Levels: ${totalLevels.value}`);
-  console.log(`- Published Activities: ${totalActivities.value}`);
-  console.log(`- Published Lessons: ${totalLessons.value}`);
-  console.log(`- Total Templates: ${totalTemplates.value}`);
-  console.log(`- Total Skills: ${totalSkills.value}`);
-  console.log(`- Total Competencies: ${totalCompetencies.value}`);
+  console.log(`- Published Game Levels: ${totalLevels?.value ?? 0}`);
+  console.log(`- Published Activities: ${totalActivities?.value ?? 0}`);
+  console.log(`- Published Lessons: ${totalLessons?.value ?? 0}`);
+  console.log(`- Total Templates: ${totalTemplates?.value ?? 0}`);
+  console.log(`- Total Skills: ${totalSkills?.value ?? 0}`);
+  console.log(`- Total Competencies: ${totalCompetencies?.value ?? 0}`);
 
   // Đo nợ band tuổi theo BR-ECD-13 (Task #118)
   const outOfBandList = getOutOfBandLevels();

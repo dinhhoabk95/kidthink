@@ -294,9 +294,7 @@ async function querySystemMetrics(db: OwnerDb) {
 
   const rawStatus = latestBackupRow[0]?.status;
   let backupStatus: "completed" | "verified" | "failed" | "pending" = "pending";
-  if (rawStatus === "verified") {
-    backupStatus = "verified";
-  } else if (rawStatus === "completed") {
+  if (rawStatus === "success") {
     backupStatus = "completed";
   } else if (rawStatus === "failed") {
     backupStatus = "failed";

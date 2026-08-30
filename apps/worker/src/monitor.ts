@@ -24,12 +24,24 @@ const FAILED_WINDOW_MS = 60 * 60 * 1000;
 
 const SAMPLE_INTERVAL_MS = 60 * 1000;
 
-interface MonitorState {
+export interface MonitorState {
   /** Thời điểm backlog bắt đầu vượt ngưỡng; `undefined` khi đang dưới ngưỡng. */
   waitingHighSince?: number;
   /** Mốc đếm `failed` của cửa sổ một giờ hiện tại. */
   failedWindowStart: number;
-  failedAtWindowStart: number;
+  /**
+   * Số `failed` tại đầu cửa sổ — `undefined` cho tới khi đo được mẫu đầu tiên.
+   *
+   * Cấm — NEVER gieo bằng `0`. `getFailedCount()` trả tổng **trọn đời** của
+   * queue, nên so nó với 0 là báo "vượt ngưỡng" ngay tick đầu tiên sau mỗi lần
+   * khởi động lại, mãi mãi. Mốc thật chỉ biết được sau khi đã đọc một lần.
+   */
+  failedAtWindowStart?: number;
+}
+
+/** Trạng thái lúc worker vừa lên: có mốc thời gian, chưa có mốc số đếm. */
+export function initialMonitorState(now = Date.now()): MonitorState {
+  return { failedWindowStart: now };
 }
 
 export async function checkQueueHealth(
@@ -62,7 +74,12 @@ export async function checkQueueHealth(
   }
 
   let { failedWindowStart, failedAtWindowStart } = state;
-  if (now - failedWindowStart >= FAILED_WINDOW_MS) {
+  if (failedAtWindowStart === undefined) {
+    // Mẫu đầu tiên chỉ đặt mốc. Không có nhánh này thì mọi lần deploy đều phát
+    // một alert backlog giả với `failedInWindow` bằng tổng trọn đời.
+    failedWindowStart = now;
+    failedAtWindowStart = failed;
+  } else if (now - failedWindowStart >= FAILED_WINDOW_MS) {
     failedWindowStart = now;
     failedAtWindowStart = failed;
   } else if (failed - failedAtWindowStart > FAILED_THRESHOLD) {
@@ -79,10 +96,7 @@ export async function checkQueueHealth(
 }
 
 export function startBacklogMonitor(): NodeJS.Timeout {
-  let state: MonitorState = {
-    failedWindowStart: Date.now(),
-    failedAtWindowStart: 0,
-  };
+  let state: MonitorState = initialMonitorState();
 
   const timer = setInterval(() => {
     checkQueueHealth(state)

@@ -162,4 +162,12 @@ export const TOOL_EMOJIS: EmojiEntry[] = [
     keywords: ["syringe", "injection", "ống tiêm", "tiêm", "bệnh viện"],
     name: "Ống tiêm",
   },
+  {
+    age_min: 4,
+    category: "tool",
+    curriculum_themes: ["nghe_nghiep"],
+    emoji: "🛢️",
+    keywords: ["oil drum", "thùng phuy", "khối trụ"],
+    name: "Thùng phuy",
+  },
 ];

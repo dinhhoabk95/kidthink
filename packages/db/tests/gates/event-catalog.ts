@@ -42,7 +42,9 @@ function matchAll(source: string, regex: RegExp): string[] {
   regex.lastIndex = 0;
   let m = regex.exec(source);
   while (m !== null) {
-    out.push(m[1]);
+    if (m[1] !== undefined) {
+      out.push(m[1]);
+    }
     m = regex.exec(source);
   }
   return out;
@@ -74,7 +76,7 @@ export function parseAllowedEventNames(
   label = "play-session"
 ): Set<string> {
   const block = ALLOWED_BLOCK_REGEX.exec(content);
-  if (!block) {
+  if (!block?.[1]) {
     throw new Error(`Không tìm thấy ALLOWED_EVENT_NAMES trong ${label}`);
   }
   return new Set(matchAll(block[1], QUOTED_NAME_REGEX));
@@ -89,7 +91,7 @@ export function collectAllowedEventNames(playSessionFile: string): Set<string> {
 
 function collectKeys(content: string, blockRegex: RegExp): Set<string> {
   const block = blockRegex.exec(content);
-  if (!block) {
+  if (!block?.[1]) {
     return new Set();
   }
   return new Set(matchAll(block[1], KEY_REGEX));
@@ -113,7 +115,7 @@ export function collectTemplateEvents(
     }
     const templateSource = readFileSync(join(dirPath, "template.ts"), "utf8");
     const declaredBlock = TEMPLATE_EVENTS_REGEX.exec(templateSource);
-    const declared = declaredBlock
+    const declared = declaredBlock?.[1]
       ? matchAll(declaredBlock[1], QUOTED_NAME_REGEX)
       : [];
 

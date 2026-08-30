@@ -32,9 +32,13 @@ function validateRequiredVariables(
   content: string,
   providedVars: string[]
 ): void {
-  const requiredVars = TEMPLATE_REGISTRY[code].requiredVars;
+  const tDef = TEMPLATE_REGISTRY[code];
+  if (!tDef) {
+    return;
+  }
+  const requiredVars = tDef.requiredVars;
   const missingVars = requiredVars.filter(
-    (v) => !(providedVars.includes(v) || content.includes(`{{${v}}}`))
+    (v: string) => !(providedVars.includes(v) || content.includes(`{{${v}}}`))
   );
 
   if (missingVars.length > 0) {
@@ -59,6 +63,7 @@ const patchNotificationTemplateSchema = z.object({
 export default defineEventHandler(async (event) => {
   const manager = await requireManagerSession(event);
 
+  // BR-NTA-05: super_admin only
   if (manager.role !== "super_admin") {
     throw createError({
       statusCode: 403,
@@ -71,7 +76,7 @@ export default defineEventHandler(async (event) => {
   const code = getRouterParam(event, "code") as NotificationCode;
   const version = Number(getRouterParam(event, "version")) || 1;
 
-  if (!(code && TEMPLATE_REGISTRY[code])) {
+  if (!(code && code in TEMPLATE_REGISTRY)) {
     throw createError({
       statusCode: 404,
       statusMessage: "TEMPLATE_NOT_FOUND",
@@ -88,10 +93,7 @@ export default defineEventHandler(async (event) => {
     });
   }
 
-  const raw =
-    (event.context?.body as unknown) ||
-    ((event as Record<string, unknown>)._body as unknown) ||
-    (await readBody(event).catch(() => ({})));
+  const raw = event.context?.body ?? (await readBody(event).catch(() => ({})));
 
   const parsedResult = patchNotificationTemplateSchema.safeParse(raw);
   if (!parsedResult.success) {
@@ -114,7 +116,7 @@ export default defineEventHandler(async (event) => {
   validateRequiredVariables(code, content, providedVars);
 
   const db = getOwnerDb();
-  const managerId = manager.manager_id || manager.id || 1;
+  const managerId = manager.manager_id;
   const newVersion = version + 1;
 
   const updatedTemplate = {
@@ -127,19 +129,21 @@ export default defineEventHandler(async (event) => {
     updated_at: new Date().toISOString(),
   };
 
-  await writeAudit(db, {
-    actor_type: "manager",
-    actor_id: managerId,
-    action: "notification_template_updated",
-    reason: reason || "Cập nhật mẫu thông báo",
-    entity_type: "notification_template",
-    entity_id: `${code}_v${newVersion}`,
-    after_data: {
-      code,
-      version: newVersion,
-      status: "draft",
-      subject,
-    },
+  await db.transaction(async (tx) => {
+    await writeAudit(tx, {
+      actor_type: "manager",
+      actor_id: managerId,
+      action: "content_created",
+      reason: reason || "Cập nhật mẫu thông báo",
+      entity_type: "notification_template",
+      entity_id: `${code}_v${newVersion}`,
+      after_data: {
+        code,
+        version: newVersion,
+        status: "draft",
+        subject,
+      },
+    });
   });
 
   return {

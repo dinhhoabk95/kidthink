@@ -2,7 +2,7 @@
 spec: PROCESS-SUPERVISION
 title: Giám sát tiến trình và luân chuyển log
 area: platform
-status: implemented
+status: approved
 mvp: true
 phase: P0
 reviewed: 2026-08-30

@@ -116,6 +116,14 @@ export default defineEventHandler(async (event) => {
     })
     .returning();
 
+  if (!insertedOrder) {
+    throw createError({
+      statusCode: 500,
+      statusMessage: "ORDER_CREATE_FAILED",
+      message: "Tạo đơn hàng thất bại",
+    });
+  }
+
   const vietQr = generateVietQrPayload({
     amountVnd,
     transferNote,

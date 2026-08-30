@@ -1,3 +1,4 @@
+export type { NotificationCode } from "@mindkid/shared";
 export * from "./fcm-crypto";
 export * from "./fcm-driver";
 export * from "./mjml-renderer";

@@ -1,10 +1,10 @@
 /**
- * @generated from LEVEL-GENERATOR-KIT@00000000
+ * @generated from LEVEL-GENERATOR-KIT@c9fd31f3f239
  * Engine: GT-018
  * Seed: 20260829
  * Theme: school
  * Band: 4-5
- * Total generated: 9
+ * Total generated: 10
  */
 import type { ContentSeed } from "#src/seed-content/types";
 
@@ -25,13 +25,13 @@ export const GEN_GT018_20260829: ContentSeed<unknown, unknown>[] = [
       "what_tags": [],
       "thinking_tags": [],
       "theme_tag": "school",
-      "origin": "generator",
+      "origin": "ai_assisted",
       "authored_in": "repo_seed"
     },
     "content_pack": {
       "prompt": "Bé hãy lắng nghe âm thanh và chọn hình tương ứng nhé!",
       "audio_prompt": {
-        "text": "Cặp sách"
+        "text": "Thước kẻ"
       },
       "response_mode": "select",
       "options": [
@@ -39,7 +39,7 @@ export const GEN_GT018_20260829: ContentSeed<unknown, unknown>[] = [
           "item_id": "opt_1",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-backpack"
+            "ref": "EMJ-ruler"
           },
           "is_correct": true
         },
@@ -47,7 +47,7 @@ export const GEN_GT018_20260829: ContentSeed<unknown, unknown>[] = [
           "item_id": "opt_2",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-ruler"
+            "ref": "EMJ-crayon"
           },
           "is_correct": false
         },
@@ -55,7 +55,7 @@ export const GEN_GT018_20260829: ContentSeed<unknown, unknown>[] = [
           "item_id": "opt_3",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-school"
+            "ref": "EMJ-scissors"
           },
           "is_correct": false
         }
@@ -83,13 +83,13 @@ export const GEN_GT018_20260829: ContentSeed<unknown, unknown>[] = [
       "what_tags": [],
       "thinking_tags": [],
       "theme_tag": "school",
-      "origin": "generator",
+      "origin": "ai_assisted",
       "authored_in": "repo_seed"
     },
     "content_pack": {
       "prompt": "Bé hãy lắng nghe âm thanh và chọn hình tương ứng nhé!",
       "audio_prompt": {
-        "text": "Táo"
+        "text": "Bàn tính"
       },
       "response_mode": "select",
       "options": [
@@ -97,7 +97,7 @@ export const GEN_GT018_20260829: ContentSeed<unknown, unknown>[] = [
           "item_id": "opt_1",
           "asset": {
             "kind": "emoji",
-            "ref": "🍎"
+            "ref": "EMJ-abacus"
           },
           "is_correct": true
         },
@@ -105,7 +105,7 @@ export const GEN_GT018_20260829: ContentSeed<unknown, unknown>[] = [
           "item_id": "opt_2",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-pencil"
+            "ref": "EMJ-open-book"
           },
           "is_correct": false
         },
@@ -113,7 +113,7 @@ export const GEN_GT018_20260829: ContentSeed<unknown, unknown>[] = [
           "item_id": "opt_3",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-books"
+            "ref": "EMJ-scissors"
           },
           "is_correct": false
         }
@@ -141,13 +141,13 @@ export const GEN_GT018_20260829: ContentSeed<unknown, unknown>[] = [
       "what_tags": [],
       "thinking_tags": [],
       "theme_tag": "school",
-      "origin": "generator",
+      "origin": "ai_assisted",
       "authored_in": "repo_seed"
     },
     "content_pack": {
       "prompt": "Bé hãy lắng nghe âm thanh và chọn hình tương ứng nhé!",
       "audio_prompt": {
-        "text": "Cặp sách"
+        "text": "Bút sáp"
       },
       "response_mode": "select",
       "options": [
@@ -155,7 +155,7 @@ export const GEN_GT018_20260829: ContentSeed<unknown, unknown>[] = [
           "item_id": "opt_1",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-backpack"
+            "ref": "EMJ-crayon"
           },
           "is_correct": true
         },
@@ -163,7 +163,7 @@ export const GEN_GT018_20260829: ContentSeed<unknown, unknown>[] = [
           "item_id": "opt_2",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-school"
+            "ref": "EMJ-books"
           },
           "is_correct": false
         },
@@ -171,7 +171,7 @@ export const GEN_GT018_20260829: ContentSeed<unknown, unknown>[] = [
           "item_id": "opt_3",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-pencil"
+            "ref": "EMJ-scissors"
           },
           "is_correct": false
         }
@@ -199,13 +199,13 @@ export const GEN_GT018_20260829: ContentSeed<unknown, unknown>[] = [
       "what_tags": [],
       "thinking_tags": [],
       "theme_tag": "school",
-      "origin": "generator",
+      "origin": "ai_assisted",
       "authored_in": "repo_seed"
     },
     "content_pack": {
       "prompt": "Bé hãy lắng nghe âm thanh và chọn hình tương ứng nhé!",
       "audio_prompt": {
-        "text": "Táo"
+        "text": "Bút chì"
       },
       "response_mode": "select",
       "options": [
@@ -213,7 +213,7 @@ export const GEN_GT018_20260829: ContentSeed<unknown, unknown>[] = [
           "item_id": "opt_1",
           "asset": {
             "kind": "emoji",
-            "ref": "🍎"
+            "ref": "EMJ-pencil"
           },
           "is_correct": true
         },
@@ -221,7 +221,7 @@ export const GEN_GT018_20260829: ContentSeed<unknown, unknown>[] = [
           "item_id": "opt_2",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-backpack"
+            "ref": "EMJ-scissors"
           },
           "is_correct": false
         },
@@ -257,13 +257,13 @@ export const GEN_GT018_20260829: ContentSeed<unknown, unknown>[] = [
       "what_tags": [],
       "thinking_tags": [],
       "theme_tag": "school",
-      "origin": "generator",
+      "origin": "ai_assisted",
       "authored_in": "repo_seed"
     },
     "content_pack": {
       "prompt": "Bé hãy lắng nghe âm thanh và chọn hình tương ứng nhé!",
       "audio_prompt": {
-        "text": "Trường học"
+        "text": "Cái kéo"
       },
       "response_mode": "select",
       "options": [
@@ -271,7 +271,7 @@ export const GEN_GT018_20260829: ContentSeed<unknown, unknown>[] = [
           "item_id": "opt_1",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-school"
+            "ref": "EMJ-scissors"
           },
           "is_correct": true
         },
@@ -279,7 +279,7 @@ export const GEN_GT018_20260829: ContentSeed<unknown, unknown>[] = [
           "item_id": "opt_2",
           "asset": {
             "kind": "emoji",
-            "ref": "🍎"
+            "ref": "EMJ-ruler"
           },
           "is_correct": false
         },
@@ -287,7 +287,7 @@ export const GEN_GT018_20260829: ContentSeed<unknown, unknown>[] = [
           "item_id": "opt_3",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-pencil"
+            "ref": "EMJ-school"
           },
           "is_correct": false
         }
@@ -315,7 +315,7 @@ export const GEN_GT018_20260829: ContentSeed<unknown, unknown>[] = [
       "what_tags": [],
       "thinking_tags": [],
       "theme_tag": "school",
-      "origin": "generator",
+      "origin": "ai_assisted",
       "authored_in": "repo_seed"
     },
     "content_pack": {
@@ -337,7 +337,7 @@ export const GEN_GT018_20260829: ContentSeed<unknown, unknown>[] = [
           "item_id": "opt_2",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-pencil"
+            "ref": "EMJ-school"
           },
           "is_correct": false
         },
@@ -345,7 +345,7 @@ export const GEN_GT018_20260829: ContentSeed<unknown, unknown>[] = [
           "item_id": "opt_3",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-school"
+            "ref": "EMJ-ruler"
           },
           "is_correct": false
         }
@@ -373,13 +373,13 @@ export const GEN_GT018_20260829: ContentSeed<unknown, unknown>[] = [
       "what_tags": [],
       "thinking_tags": [],
       "theme_tag": "school",
-      "origin": "generator",
+      "origin": "ai_assisted",
       "authored_in": "repo_seed"
     },
     "content_pack": {
       "prompt": "Bé hãy lắng nghe âm thanh và chọn hình tương ứng nhé!",
       "audio_prompt": {
-        "text": "Trường học"
+        "text": "Thước kẻ"
       },
       "response_mode": "select",
       "options": [
@@ -387,7 +387,7 @@ export const GEN_GT018_20260829: ContentSeed<unknown, unknown>[] = [
           "item_id": "opt_1",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-school"
+            "ref": "EMJ-ruler"
           },
           "is_correct": true
         },
@@ -395,7 +395,7 @@ export const GEN_GT018_20260829: ContentSeed<unknown, unknown>[] = [
           "item_id": "opt_2",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-backpack"
+            "ref": "EMJ-school"
           },
           "is_correct": false
         },
@@ -431,13 +431,13 @@ export const GEN_GT018_20260829: ContentSeed<unknown, unknown>[] = [
       "what_tags": [],
       "thinking_tags": [],
       "theme_tag": "school",
-      "origin": "generator",
+      "origin": "ai_assisted",
       "authored_in": "repo_seed"
     },
     "content_pack": {
       "prompt": "Bé hãy lắng nghe âm thanh và chọn hình tương ứng nhé!",
       "audio_prompt": {
-        "text": "Trường học"
+        "text": "Cặp sách"
       },
       "response_mode": "select",
       "options": [
@@ -445,7 +445,7 @@ export const GEN_GT018_20260829: ContentSeed<unknown, unknown>[] = [
           "item_id": "opt_1",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-school"
+            "ref": "EMJ-backpack"
           },
           "is_correct": true
         },
@@ -453,7 +453,7 @@ export const GEN_GT018_20260829: ContentSeed<unknown, unknown>[] = [
           "item_id": "opt_2",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-ruler"
+            "ref": "EMJ-bell"
           },
           "is_correct": false
         },
@@ -461,7 +461,7 @@ export const GEN_GT018_20260829: ContentSeed<unknown, unknown>[] = [
           "item_id": "opt_3",
           "asset": {
             "kind": "emoji",
-            "ref": "🍎"
+            "ref": "EMJ-school"
           },
           "is_correct": false
         }
@@ -489,13 +489,13 @@ export const GEN_GT018_20260829: ContentSeed<unknown, unknown>[] = [
       "what_tags": [],
       "thinking_tags": [],
       "theme_tag": "school",
-      "origin": "generator",
+      "origin": "ai_assisted",
       "authored_in": "repo_seed"
     },
     "content_pack": {
       "prompt": "Bé hãy lắng nghe âm thanh và chọn hình tương ứng nhé!",
       "audio_prompt": {
-        "text": "Cặp sách"
+        "text": "Bút chì"
       },
       "response_mode": "select",
       "options": [
@@ -503,7 +503,7 @@ export const GEN_GT018_20260829: ContentSeed<unknown, unknown>[] = [
           "item_id": "opt_1",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-backpack"
+            "ref": "EMJ-pencil"
           },
           "is_correct": true
         },
@@ -511,7 +511,7 @@ export const GEN_GT018_20260829: ContentSeed<unknown, unknown>[] = [
           "item_id": "opt_2",
           "asset": {
             "kind": "emoji",
-            "ref": "🍎"
+            "ref": "EMJ-books"
           },
           "is_correct": false
         },
@@ -519,7 +519,65 @@ export const GEN_GT018_20260829: ContentSeed<unknown, unknown>[] = [
           "item_id": "opt_3",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-school"
+            "ref": "EMJ-open-book"
+          },
+          "is_correct": false
+        }
+      ]
+    },
+    "difficulty_params": {
+      "hint_after_ms": 8000,
+      "allow_retry": true,
+      "auto_play_audio": true
+    }
+  },
+  {
+    "header": {
+      "code": "GL-GEN-GT-018-20260829-10",
+      "content_version": 1,
+      "template_code": "GT-018",
+      "title": "",
+      "instruction": "",
+      "age_min": 4,
+      "age_max": 5,
+      "difficulty": 1,
+      "access_tier": "free",
+      "skill_codes": [],
+      "learning_objective_codes": [],
+      "what_tags": [],
+      "thinking_tags": [],
+      "theme_tag": "school",
+      "origin": "ai_assisted",
+      "authored_in": "repo_seed"
+    },
+    "content_pack": {
+      "prompt": "Bé hãy lắng nghe âm thanh và chọn hình tương ứng nhé!",
+      "audio_prompt": {
+        "text": "Cái kéo"
+      },
+      "response_mode": "select",
+      "options": [
+        {
+          "item_id": "opt_1",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-scissors"
+          },
+          "is_correct": true
+        },
+        {
+          "item_id": "opt_2",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-ruler"
+          },
+          "is_correct": false
+        },
+        {
+          "item_id": "opt_3",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-crayon"
           },
           "is_correct": false
         }

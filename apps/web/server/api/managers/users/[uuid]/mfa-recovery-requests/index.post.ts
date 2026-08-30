@@ -119,6 +119,14 @@ export default defineEventHandler(async (event) => {
     })
     .returning();
 
+  if (!createdRequest) {
+    throw createError({
+      statusCode: 500,
+      statusMessage: "REQUEST_CREATE_FAILED",
+      message: "Tạo yêu cầu khôi phục thất bại",
+    });
+  }
+
   await db.insert(auditLogs).values({
     actorType: "manager",
     actorId: session.manager_id,

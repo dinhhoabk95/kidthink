@@ -26,6 +26,14 @@ export default defineEventHandler(async (event) => {
     note: parsed.note,
   });
 
+  if (!saved) {
+    throw createError({
+      statusCode: 500,
+      statusMessage: "SAVE_FAILED",
+      message: "Lưu mục thư viện thất bại",
+    });
+  }
+
   setResponseStatus(event, 201);
   return {
     success: true,

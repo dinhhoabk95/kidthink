@@ -3,8 +3,7 @@ import {
   type ManagerTokenPayload,
   type UserTokenPayload,
 } from "@mindkid/auth";
-import { defineEventHandler, getHeader } from "h3";
-import { getUserSession } from "#imports";
+import { defineEventHandler, getHeader, type H3Event } from "h3";
 import {
   getManagerSession,
   getManagerSessionToken,
@@ -31,9 +30,10 @@ function isUserApiPath(path: string): boolean {
   return path === "/api" || path.startsWith("/api/");
 }
 
-async function resolveUserSession(event: Parameters<typeof getUserSession>[0]) {
+async function resolveUserSession(event: H3Event) {
   const session = await getUserSession(event);
-  const token = session.secure?.session_token;
+  const secure = session.secure as { session_token?: string } | undefined;
+  const token = secure?.session_token;
   if (typeof token !== "string" || token.length === 0) {
     return undefined;
   }
@@ -42,15 +42,14 @@ async function resolveUserSession(event: Parameters<typeof getUserSession>[0]) {
   return authContext?.user;
 }
 
-async function resolveManagerSession(
-  event: Parameters<typeof getUserSession>[0]
-) {
+async function resolveManagerSession(event: H3Event) {
   if (!getManagerSessionToken(event)) {
     return undefined;
   }
 
   const session = await getManagerSession(event);
-  const token = session.data.secure?.session_token;
+  const secure = session.data.secure as { session_token?: string } | undefined;
+  const token = secure?.session_token;
   if (typeof token !== "string" || token.length === 0) {
     return undefined;
   }

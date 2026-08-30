@@ -20,9 +20,14 @@ describe("Taxonomy Schema Integration Tests", () => {
       .onConflictDoNothing()
       .returning();
 
-    const compId = comp
-      ? comp.id
-      : (await db.select().from(competencies).where(sqlEqual("C1")))[0].id;
+    const compRows = await db
+      .select()
+      .from(competencies)
+      .where(eq(competencies.code, "C1"));
+    const compId = comp?.id ?? compRows[0]?.id;
+    if (!compId) {
+      throw new Error("Failed to find compId");
+    }
 
     const [str] = await db
       .insert(strands)
@@ -34,9 +39,14 @@ describe("Taxonomy Schema Integration Tests", () => {
       .onConflictDoNothing()
       .returning();
 
-    const strandId = str
-      ? str.id
-      : (await db.select().from(strands).where(sqlEqualStrand("C1.NUM")))[0].id;
+    const strRows = await db
+      .select()
+      .from(strands)
+      .where(eq(strands.code, "C1.NUM"));
+    const strandId = str?.id ?? strRows[0]?.id;
+    if (!strandId) {
+      throw new Error("Failed to find strandId");
+    }
 
     // 2. Inserting skill with invalid code "c1.cnt.3" (lowercase, wrong format) must fail CHECK
     await expect(
@@ -65,9 +75,14 @@ describe("Taxonomy Schema Integration Tests", () => {
       .onConflictDoNothing()
       .returning();
 
-    const compId = comp
-      ? comp.id
-      : (await db.select().from(competencies))[0].id;
+    const comp2Rows = await db
+      .select()
+      .from(competencies)
+      .where(eq(competencies.code, "C2"));
+    const compId = comp?.id ?? comp2Rows[0]?.id;
+    if (!compId) {
+      throw new Error("Failed to find compId");
+    }
 
     // Level 0 strand
     const [s0] = await db
@@ -80,9 +95,14 @@ describe("Taxonomy Schema Integration Tests", () => {
       .onConflictDoNothing()
       .returning();
 
-    const s0Id = s0
-      ? s0.id
-      : (await db.select().from(strands).where(sqlEqualStrand("C2.GEO")))[0].id;
+    const s0Rows = await db
+      .select()
+      .from(strands)
+      .where(eq(strands.code, "C2.GEO"));
+    const s0Id = s0?.id ?? s0Rows[0]?.id;
+    if (!s0Id) {
+      throw new Error("Failed to find s0Id");
+    }
 
     // Level 1 strand (parent = s0)
     const [s1] = await db
@@ -96,9 +116,14 @@ describe("Taxonomy Schema Integration Tests", () => {
       .onConflictDoNothing()
       .returning();
 
-    const s1Id = s1
-      ? s1.id
-      : (await db.select().from(strands).where(sqlEqualStrand("C2.SHP")))[0].id;
+    const s1Rows = await db
+      .select()
+      .from(strands)
+      .where(eq(strands.code, "C2.SHP"));
+    const s1Id = s1?.id ?? s1Rows[0]?.id;
+    if (!s1Id) {
+      throw new Error("Failed to find s1Id");
+    }
 
     // Helper service function enforcing <=1 nesting level constraint
     async function createSubStrand(input: {
@@ -111,7 +136,7 @@ describe("Taxonomy Schema Integration Tests", () => {
         const [parent] = await db
           .select()
           .from(strands)
-          .where(sqlIdEqual(input.parentStrandId));
+          .where(eq(strands.id, input.parentStrandId));
         if (
           parent?.parentStrandId !== null &&
           parent?.parentStrandId !== undefined
@@ -223,15 +248,3 @@ describe("Taxonomy Schema Integration Tests", () => {
     );
   });
 });
-
-function sqlEqual(code: string) {
-  return eq(competencies.code, code);
-}
-
-function sqlEqualStrand(code: string) {
-  return eq(strands.code, code);
-}
-
-function sqlIdEqual(id: number) {
-  return eq(strands.id, id);
-}

@@ -28,11 +28,15 @@ export function getVersionChangeMilestones(
   );
 
   const milestones: VersionChangeMilestone[] = [];
-  let currentVersion = sorted[0].contentVersion;
+  const first = sorted[0];
+  if (!first) {
+    return [];
+  }
+  let currentVersion = first.contentVersion;
 
   for (let i = 1; i < sorted.length; i++) {
     const s = sorted[i];
-    if (s.contentVersion !== currentVersion) {
+    if (s && s.contentVersion !== currentVersion) {
       milestones.push({
         entityId: s.entityId,
         previousVersion: currentVersion,

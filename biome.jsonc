@@ -37,7 +37,26 @@
       "defineProps",
       "defineEmits",
       "withDefaults",
-      "$event"
+      "$event",
+      "defineEventHandler",
+      "readBody",
+      "getQuery",
+      "getRouterParam",
+      "getHeader",
+      "setHeader",
+      "deleteCookie",
+      "getCookie",
+      "setCookie",
+      "sendRedirect",
+      "sendNoContent",
+      "setResponseStatus",
+      "setUserSession",
+      "getUserSession",
+      "clearUserSession",
+      "useUserSession",
+      "defineNitroPlugin",
+      "useStorage",
+      "readMultipartFormData"
     ]
   },
 

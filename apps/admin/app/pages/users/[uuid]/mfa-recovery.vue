@@ -314,8 +314,8 @@
   }
 
   const route = useRoute();
-  const { session } = useAdminAuth();
-  const isSuperAdmin = computed(() => session.value?.role === "super_admin");
+  const { user } = useAdminAuth();
+  const isSuperAdmin = computed(() => user.value?.role === "super_admin");
   const userUuid = computed(() => String(route.params.uuid || ""));
 
   const loading = ref(true);

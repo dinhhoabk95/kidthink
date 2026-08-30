@@ -22,6 +22,9 @@ async function makeUser(): Promise<number> {
       displayName: "Dispatch Test",
     })
     .returning();
+  if (!row) {
+    throw new Error("Failed to insert user");
+  }
   return row.id;
 }
 
@@ -89,12 +92,27 @@ describe("dispatchTransactionalEmail (BR-JOB-01, BR-JOB-02)", () => {
   });
 
   it("idempotency đọc trạng thái delivery, không đọc bộ nhớ tiến trình", async () => {
-    const { notificationId } = await dispatchTransactionalEmail({
-      recipientType: "user",
-      recipientId: userId,
-      code: CODE,
-      to: "c@example.com",
-      payload: {},
+    // Dựng thẳng hàng notification + delivery thay vì đi qua
+    // `dispatchTransactionalEmail`: hàm đang đo là `isEmailAlreadyDispatched`,
+    // và bản cũ của phép thử này đua với hàng đợi. `mindkid-jobs` dùng chung
+    // với mọi thứ đang nối cùng Valkey — kể cả một `pnpm dev` đang chạy — nên
+    // một worker thật có thể gửi email và đánh `dispatched` trước khi dòng
+    // dưới kịp đọc. Khi đó phép thử đỏ vì môi trường, không vì hành vi.
+    const db = getOwnerDb();
+    const [notification] = await db
+      .insert(notifications)
+      .values({
+        recipientType: "user",
+        recipientId: userId,
+        templateCode: CODE,
+        payload: {},
+      })
+      .returning();
+    const notificationId = notification?.id ?? 0;
+    await db.insert(notificationDeliveries).values({
+      notificationId,
+      channel: "email",
+      status: "queued",
     });
     created.push(notificationId);
 

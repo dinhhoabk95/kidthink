@@ -58,6 +58,7 @@ function mockEvent(
           "x-csrf-token": CSRF_TOKEN,
           cookie: `tm_m_csrf=${CSRF_TOKEN}`,
         },
+        body,
       },
       res: {
         setHeader: (k: string, v: string) => {
@@ -82,6 +83,7 @@ function mockEvent(
       body,
     },
     query,
+    _requestBody: body,
     _body: body,
   } as any;
 }

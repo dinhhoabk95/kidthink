@@ -322,6 +322,10 @@ export async function createPersonalCurriculum(
       })
       .returning();
 
+    if (!created) {
+      throw new Error("Failed to create personal curriculum");
+    }
+
     if (items.length > 0) {
       await tx.insert(personalCurriculumItems).values(
         items.map((item) => ({
@@ -683,6 +687,10 @@ export async function copySystemCurriculum(
       })
       .returning();
 
+    if (!created) {
+      throw new Error("Failed to clone personal curriculum");
+    }
+
     if (itemsToCopy.length > 0) {
       await tx.insert(personalCurriculumItems).values(
         itemsToCopy.map((item) => ({
@@ -825,6 +833,10 @@ export async function enrollChildInPersonalCurriculum(
         status: "active",
       })
       .returning();
+
+    if (!enr) {
+      throw new Error("Failed to enroll child");
+    }
 
     await writeAudit(tx, {
       actor_type: "user",
@@ -1045,6 +1057,10 @@ export async function completeChildPersonalCurriculumItem(
         },
       })
       .returning();
+
+    if (!prog) {
+      throw new Error("Failed to record item progress");
+    }
 
     await writeAudit(tx, {
       actor_type: "user",

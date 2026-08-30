@@ -369,8 +369,8 @@
   import type {
     LessonPlanDetail,
     LessonPlanItemInput,
+    LessonPlanItemSnapshot,
     LessonPlanItemType,
-    LessonPlanSnapshot,
   } from "@mindkid/shared/client";
   import { reactive, ref, watch } from "vue";
 
@@ -388,7 +388,7 @@
     source_content_version?: number | null;
     custom_instruction?: string | null;
     custom_note?: string;
-    snapshot?: LessonPlanSnapshot | null;
+    snapshot?: LessonPlanItemSnapshot | null;
     has_update?: boolean;
     latest_version?: number | null;
   }

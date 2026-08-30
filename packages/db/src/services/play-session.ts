@@ -733,7 +733,7 @@ export async function ingestPlayEvents(
     .orderBy(desc(telemetryEvents.seq));
 
   const existingSeqs = new Set(existingEvents.map((e) => e.seq));
-  const currentMaxSeq = existingEvents.length > 0 ? existingEvents[0].seq : 0;
+  const currentMaxSeq = existingEvents[0]?.seq ?? 0;
 
   if (
     session.completionStatus === "completed" ||

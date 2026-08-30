@@ -5,7 +5,7 @@ import { defineEventHandler, getRouterParam } from "h3";
 import { requireSuperAdminSession } from "#server/utils/admin-auth-runtime";
 
 export default defineEventHandler(async (event) => {
-  const session = requireSuperAdminSession(event);
+  const session = await requireSuperAdminSession(event);
   const orderUuid = getRouterParam(event, "uuid");
   if (!orderUuid) {
     throw appError("VALIDATION_FAILED", "Order UUID is required");
@@ -42,7 +42,9 @@ export default defineEventHandler(async (event) => {
       })
       .where(eq(paymentOrders.id, order.id))
       .returning();
-    updatedStatus = updated.status;
+    if (updated) {
+      updatedStatus = updated.status;
+    }
   }
 
   return {

@@ -37,10 +37,13 @@ export type AuthContext =
   | GuestAuthContext;
 
 export interface AuthEvent {
-  readonly context: {
-    readonly user?: UserTokenPayload;
-    readonly manager?: ManagerTokenPayload;
-  };
+  readonly context:
+    | AuthContext
+    | {
+        readonly user?: UserTokenPayload;
+        readonly manager?: ManagerTokenPayload;
+        readonly [key: string]: unknown;
+      };
 }
 
 export function createAuthContext(context: AuthContext): AuthContext {

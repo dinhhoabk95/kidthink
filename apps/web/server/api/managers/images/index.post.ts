@@ -5,7 +5,12 @@ import {
   isSvgContent,
   uploadPublicImage,
 } from "@mindkid/storage";
-import { createError, defineEventHandler, readMultipartFormData } from "h3";
+import {
+  createError,
+  defineEventHandler,
+  readMultipartFormData,
+  setResponseStatus,
+} from "h3";
 import { requireManagerSession } from "#server/utils/admin-auth-runtime";
 
 const MAX_FILE_SIZE = 2 * 1024 * 1024; // 2MB (BR-IMG-04, BR-IUP-04)
@@ -40,9 +45,9 @@ function processField(
   }
 }
 
-function parseMultipartItems(
-  items: Array<{ name?: string; data?: Buffer; filename?: string }> | null
-) {
+import type { MultiPartData } from "h3";
+
+function parseMultipartItems(items: MultiPartData[] | null | undefined) {
   const result = {
     fileBuffer: null as Buffer | null,
     fileName: "upload.webp",
@@ -111,9 +116,10 @@ export default defineEventHandler(async (event) => {
   const manager = await requireManagerSession(event);
 
   const rawFormData =
-    ((event as Record<string, unknown>)._multipartFormData as
-      | Array<{ name?: string; data?: Buffer; filename?: string }>
-      | undefined) || (await readMultipartFormData(event).catch(() => null));
+    (event as { _multipartFormData?: MultiPartData[] })._multipartFormData ??
+    (event.context as { multipartFormData?: MultiPartData[] })
+      ?.multipartFormData ??
+    (await readMultipartFormData(event).catch(() => null));
 
   const { fileBuffer, fileName, ownerType, ownerId, alt } =
     parseMultipartItems(rawFormData);
@@ -140,7 +146,7 @@ export default defineEventHandler(async (event) => {
     contentType: "image/webp",
   });
 
-  const managerId = manager.manager_id || manager.id || 1;
+  const managerId = manager.manager_id;
 
   const db = getOwnerDb();
   const [imageRecord] = await db
@@ -161,21 +167,31 @@ export default defineEventHandler(async (event) => {
     })
     .returning();
 
-  await writeAudit(db, {
-    actor_type: "manager",
-    actor_id: managerId,
-    action: "image_uploaded",
-    entity_type: "content_image",
-    entity_id: imageRecord.id.toString(),
-    after_data: {
-      path: relativePath,
-      owner_type: ownerType,
-      owner_id: ownerId,
-      alt,
-    },
+  if (!imageRecord) {
+    throw createError({
+      statusCode: 500,
+      statusMessage: "IMAGE_INSERT_FAILED",
+      message: "Lưu bản ghi ảnh thất bại",
+    });
+  }
+
+  await db.transaction(async (tx) => {
+    await writeAudit(tx, {
+      actor_type: "manager",
+      actor_id: managerId,
+      action: "image_uploaded",
+      entity_type: "content_image",
+      entity_id: imageRecord.id.toString(),
+      after_data: {
+        path: relativePath,
+        owner_type: ownerType,
+        owner_id: ownerId,
+        alt,
+      },
+    });
   });
 
-  event.node.res.statusCode = 201;
+  setResponseStatus(event, 201);
   return {
     id: imageRecord.id,
     path: relativePath,

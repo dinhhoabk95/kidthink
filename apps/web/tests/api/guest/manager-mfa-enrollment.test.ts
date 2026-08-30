@@ -30,8 +30,9 @@ interface AppErrorLike {
 function mockH3Event(body: Record<string, unknown>): H3Event {
   return {
     method: "POST",
-    node: { req: {}, res: {} },
-    context: {},
+    node: { req: { headers: {}, body }, res: {} },
+    context: { body },
+    _requestBody: body,
     _body: body,
   } as unknown as H3Event;
 }

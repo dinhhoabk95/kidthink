@@ -17,6 +17,16 @@ export default defineConfig({
     projects: [
       path.resolve(import.meta.dirname, "apps/*"),
       path.resolve(import.meta.dirname, "packages/*"),
+      // `scripts/` được typecheck bởi project `root` nhưng trước đây KHÔNG
+      // thuộc project vitest nào — nên cổng bậc thang typecheck, thứ mọi cổng
+      // khác dựa vào, là mã duy nhất trong repo không có phép thử nào chạy.
+      {
+        test: {
+          name: "scripts",
+          root: path.resolve(import.meta.dirname, "scripts"),
+          include: ["**/*.{test,spec}.ts"],
+        },
+      },
     ],
     ...SEQUENTIAL_DEFAULTS,
   },

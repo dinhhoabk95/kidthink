@@ -24,7 +24,7 @@ function generateActivityCode(existingCount: number): string {
 
 async function validateActivityCreation(
   db: ReturnType<typeof getOwnerDb>,
-  data: { kind: string; ref_id?: number }
+  data: { kind: string; ref_id?: number | null }
 ) {
   if (data.kind === "worksheet") {
     const isWorksheetEnabled = await isFeatureEnabled("worksheet_activity");
@@ -94,6 +94,13 @@ export default defineEventHandler(async (event) => {
     })
     .returning();
 
+  if (!created) {
+    throw createError({
+      statusCode: 500,
+      statusMessage: "ACTIVITY_CREATE_FAILED",
+    });
+  }
+
   if (data.skill_ids && data.skill_ids.length > 0) {
     const weightPerSkill = (1.0 / data.skill_ids.length).toFixed(2);
     await db
@@ -109,14 +116,16 @@ export default defineEventHandler(async (event) => {
       .onConflictDoNothing();
   }
 
-  await writeAudit(db, {
-    actorType: "manager",
-    actorId: session.manager_id,
-    action: "create",
-    entityType: "activity",
-    entityId: String(created.id),
-    afterState: created,
-    reason: "Manager created activity via Studio",
+  await db.transaction(async (tx) => {
+    await writeAudit(tx, {
+      actor_type: "manager",
+      actor_id: session.manager_id,
+      action: "content_created",
+      entity_type: "activity",
+      entity_id: String(created.id),
+      after_data: created as unknown as Record<string, unknown>,
+      reason: "Manager created activity via Studio",
+    });
   });
 
   setResponseStatus(event, 201);

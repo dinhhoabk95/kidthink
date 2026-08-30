@@ -17,10 +17,7 @@ const bulkRejectSchema = z.object({
 
 export default defineEventHandler(async (event) => {
   const manager = await requireManagerSession(event);
-  const raw =
-    (event.context?.body as unknown) ||
-    ((event as Record<string, unknown>)._body as unknown) ||
-    (await readBody(event).catch(() => ({})));
+  const raw = event.context?.body ?? (await readBody(event).catch(() => ({})));
 
   const parsedResult = bulkRejectSchema.safeParse(raw);
   if (!parsedResult.success) {
@@ -72,7 +69,7 @@ export default defineEventHandler(async (event) => {
       contentVersion: lvl.version,
       fromStatus: "in_review",
       toStatus: "rejected",
-      actorManagerId: manager.manager_id || manager.id || 1,
+      actorManagerId: manager.manager_id,
       actorRole: (manager.role || "content_reviewer") as
         | "super_admin"
         | "content_reviewer",
@@ -109,7 +106,7 @@ export default defineEventHandler(async (event) => {
       contentVersion: les.version,
       fromStatus: "in_review",
       toStatus: "rejected",
-      actorManagerId: manager.manager_id || manager.id || 1,
+      actorManagerId: manager.manager_id,
       actorRole: (manager.role || "content_reviewer") as
         | "super_admin"
         | "content_reviewer",
@@ -119,18 +116,20 @@ export default defineEventHandler(async (event) => {
     rejectedIds.push({ type: "lesson", id: les.id, code: les.code });
   }
 
-  const managerId = manager.manager_id || manager.id || 1;
-  await writeAudit(db, {
-    actor_type: "manager",
-    actor_id: managerId,
-    action: "content_rejected",
-    reason,
-    entity_type: "bulk_review",
-    entity_id: createdByManagerId.toString(),
-    after_data: {
-      rejected_count: rejectedIds.length,
-      items: rejectedIds,
-    },
+  const managerId = manager.manager_id;
+  await db.transaction(async (tx) => {
+    await writeAudit(tx, {
+      actor_type: "manager",
+      actor_id: managerId,
+      action: "content_rejected",
+      reason,
+      entity_type: "bulk_review",
+      entity_id: createdByManagerId.toString(),
+      after_data: {
+        rejected_count: rejectedIds.length,
+        items: rejectedIds,
+      },
+    });
   });
 
   return {

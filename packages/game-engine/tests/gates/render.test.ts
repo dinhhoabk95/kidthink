@@ -3,6 +3,7 @@ import { REPO_ROOT } from "@mindkid/config/paths";
 import { describe, expect, it } from "vitest";
 import {
   formatRenderReport,
+  lintAuxiliaryFile,
   lintSingleSessionFile,
   scanRenderGate,
 } from "./render.ts";
@@ -14,15 +15,58 @@ const configPath = resolve(gameEngineDir, "config", "render-implemented.json");
 const fixturesDir = resolve(gameEngineDir, "tests", "gates", "fixtures");
 
 describe("Engine Render Quality Gates (BR-ERC-01..05)", () => {
-  it("passes cleanly on canonical repository templates with initial ratchet", () => {
+  /**
+   * Bậc thang phải đo bằng số **chính xác**, không phải `>= 1` / `<= 26`.
+   *
+   * `toBeGreaterThanOrEqual(1)` xanh cả khi mới có 1 engine cài render, và
+   * `toContain("27 engine active")` bỏ luôn hai con số còn lại khỏi phép so.
+   * Số hiện tại đã biết và đếm được, nên nó được ghi thẳng: tiến hay lùi đều
+   * làm test đỏ, và đó là điều bậc thang tồn tại để làm.
+   */
+  it("passes cleanly on canonical repository templates with current ratchet", () => {
     const result = scanRenderGate(templatesDir, configPath);
     expect(result.violations).toEqual([]);
     expect(result.activeCount).toBe(27);
-    expect(result.implementedCount).toBe(0);
-    expect(result.missingCount).toBe(27);
+    expect(result.implementedCount).toBe(27);
+    expect(result.missingCount).toBe(0);
 
     const report = formatRenderReport(result);
-    expect(report).toBe("27 engine active, 0 cài render, 27 thiếu");
+    expect(report).toBe("27 engine active, 27 cài render, 0 thiếu");
+  });
+
+  it("ca âm: file phụ cạnh session.ts chứa ctx thô vẫn bị bắt (BR-ERC-05)", () => {
+    // Đây là lối đi vòng đã từng dùng: dời mọi lời gọi `ctx.*` sang một file
+    // bên cạnh, vì cổng cũ chỉ quét `session.ts`.
+    const auxFile = resolve(
+      fixturesDir,
+      "aux-raw-canvas",
+      "GT-001",
+      "render-helpers.ts"
+    );
+    const violations = lintAuxiliaryFile("GT-001", auxFile);
+    expect(violations.some((v) => v.rule === "BR-ERC-05")).toBe(true);
+  });
+
+  it("ca âm: toạ độ cứng trong hàm draw* ngoài ba tên cũ vẫn bị bắt (BR-ERC-03)", () => {
+    // Regex cũ chỉ biết drawClayBody|drawClayContainer|drawScaffoldingHighlight,
+    // nên khi thư viện đổi tên hàm thì luật khớp 0 dòng mà cổng vẫn xanh.
+    const auxFile = resolve(fixturesDir, "hardcoded-coords-aux", "helper.ts");
+    const violations = lintAuxiliaryFile(undefined, auxFile);
+    expect(violations.some((v) => v.rule === "BR-ERC-03")).toBe(true);
+    expect(violations.some((v) => v.message.includes("drawSlotItem"))).toBe(
+      true
+    );
+  });
+
+  it('ca âm: session chỉ chứa chuỗi "render(" mà không có chữ ký thì đỏ (BR-ERC-01)', () => {
+    const sessionFile = resolve(
+      fixturesDir,
+      "substring-render",
+      "GT-001",
+      "session.ts"
+    );
+    const violations = lintSingleSessionFile("GT-001", sessionFile, true);
+    expect(violations.some((v) => v.rule === "BR-ERC-01")).toBe(true);
   });
 
   it("negative case: flags BR-ERC-01 when engine in ratchet list lacks render()", () => {

@@ -31,6 +31,9 @@ describe("AI Assistant Service Integration Tests (BR-AIA-01..11)", () => {
         status: "active",
       })
       .returning();
+    if (!user) {
+      throw new Error("Failed to insert user");
+    }
 
     const [child] = await db
       .insert(childProfiles)
@@ -41,6 +44,9 @@ describe("AI Assistant Service Integration Tests (BR-AIA-01..11)", () => {
         avatarId: "preset_lion_01",
       })
       .returning();
+    if (!child) {
+      throw new Error("Failed to insert child");
+    }
 
     if (initialCredits > 0) {
       await grantCredits({

@@ -3,15 +3,31 @@ import {
   type GameAction,
   TemplateGameSession,
 } from "#src/game-session";
+import { resolveLayout } from "#src/layout/registry";
+import type { Slot } from "#src/layout/types";
 import { OrderingMechanic } from "#src/mechanics/ordering-mechanic";
 import { deriveStream } from "#src/rng/mulberry32";
 import { shuffle } from "#src/rng/shuffle";
+import type { DegradationState } from "#src/systems/degradation";
+import type { Particle, RenderSystem } from "#src/systems/render-system";
+import {
+  drawPromptText,
+  drawSceneBackground,
+  drawSlotItem,
+  type ItemVisualState,
+  updateParticles,
+} from "../shared-render.js";
 import type { GT006Content, GT006Difficulty } from "./template.js";
 
 export class GT006Session extends TemplateGameSession<
   GT006Content,
   GT006Difficulty
 > {
+  slots: readonly Slot[] = [];
+  degradation: DegradationState | null = null;
+  private renderParticles: Particle[] = [];
+  private readonly renderItemStates: Map<string, ItemVisualState> = new Map();
+
   private readonly mechanic = new OrderingMechanic();
 
   setupEntities(): void {
@@ -71,6 +87,65 @@ export class GT006Session extends TemplateGameSession<
       .map((s) => s.step_id);
 
     return this.mechanic.isSequenceCorrect(targetSequence);
+  }
+
+  resolveSlots(ageBand: "3-4" | "4-5" | "5-6"): void {
+    const layoutFn = resolveLayout("horizontal-track");
+    this.slots = layoutFn({
+      slotCount: this.content.sequence.length,
+      ageBand,
+    });
+  }
+
+  setRenderItemState(itemId: string, state: ItemVisualState): void {
+    this.renderItemStates.set(itemId, state);
+  }
+
+  getRenderItemState(itemId: string): ItemVisualState {
+    return this.renderItemStates.get(itemId) ?? "idle";
+  }
+
+  render(
+    ctx: CanvasRenderingContext2D,
+    rs: RenderSystem,
+    _timeMs: number
+  ): void {
+    drawSceneBackground(ctx, rs);
+    drawPromptText(ctx, rs, this.content.prompt);
+    const order = this.mechanic.getCurrentSequence();
+    const byId = new Map(this.content.sequence.map((s) => [s.step_id, s]));
+
+    order.forEach((stepId, i) => {
+      const slot = this.slots[i];
+      const step = byId.get(stepId);
+      if (!(slot && step)) {
+        return;
+      }
+      drawSlotItem(
+        ctx,
+        rs,
+        slot,
+        {
+          id: stepId,
+          asset: step.asset,
+          label: step.label ?? String(i + 1),
+          state: this.getRenderItemState(stepId),
+        },
+        "square"
+      );
+    });
+    this.drawRenderFeedback(rs, ctx);
+  }
+
+  private drawRenderFeedback(
+    rs: RenderSystem,
+    ctx: CanvasRenderingContext2D
+  ): void {
+    if (this.degradation?.particles_enabled === false) {
+      return;
+    }
+    this.renderParticles = updateParticles(this.renderParticles);
+    rs.drawParticles(ctx, this.renderParticles);
   }
 }
 

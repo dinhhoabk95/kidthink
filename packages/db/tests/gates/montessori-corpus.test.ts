@@ -51,7 +51,7 @@ describe("Cổng số corpus Montessori (D-RQ, BR-MGL-01)", () => {
       seeded,
     });
     expect(violations).toHaveLength(1);
-    expect(violations[0].message).toContain("viết 57, đo được 59");
+    expect(violations[0]?.message).toContain("viết 57, đo được 59");
   });
 
   it("ca âm: mục 7.5 của spec lệch với bảng tra", () => {
@@ -80,8 +80,8 @@ describe("Cổng số corpus Montessori (D-RQ, BR-MGL-01)", () => {
       seeded,
     });
     expect(violations).toHaveLength(1);
-    expect(violations[0].rule).toBe("BR-MGL-01");
-    expect(violations[0].message).toContain(
+    expect(violations[0]?.rule).toBe("BR-MGL-01");
+    expect(violations[0]?.message).toContain(
       "C4 level đã soạn: viết 10, đo được 9"
     );
   });

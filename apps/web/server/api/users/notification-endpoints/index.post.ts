@@ -19,11 +19,7 @@ const endpointRegistrationSchema = z.object({
 export default defineEventHandler(async (event) => {
   const user = await requireWebUserSession(event);
   const userId = Number(user.user_id);
-  const body =
-    (await readBody(event).catch(() => null)) ||
-    event._body ||
-    event.context?.body ||
-    {};
+  const body = (await readBody(event).catch(() => ({}))) || {};
   const parsed = endpointRegistrationSchema.safeParse(body);
 
   if (!parsed.success) {
@@ -93,6 +89,10 @@ export default defineEventHandler(async (event) => {
       .returning();
 
     resultEndpoint = created;
+  }
+
+  if (!resultEndpoint) {
+    throw createError({ statusCode: 500, statusMessage: "ENDPOINT_FAILED" });
   }
 
   // BR-BPS-04: Token is NEVER echoed back in response

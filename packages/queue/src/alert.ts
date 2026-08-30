@@ -12,6 +12,20 @@ export interface AlertContext {
   [key: string]: unknown;
 }
 
+/**
+ * Hạn cứng cho mọi request HTTP của kênh cảnh báo.
+ *
+ * Không có hạn thì một endpoint chấp nhận kết nối rồi im lặng làm promise
+ * Cấm — NEVER settle. `alert()` được `await` bên trong `setInterval` của
+ * `apps/worker/src/monitor.ts`, nên mỗi phút lại chồng thêm một lần đo treo:
+ * monitor kẹt vĩnh viễn, rò việc đang bay, mà nhìn từ ngoài vẫn "đang sống".
+ */
+export const ALERT_HTTP_TIMEOUT_MS = 10_000;
+
+function readErrorMessage(error: unknown): string {
+  return error instanceof Error ? error.message : String(error);
+}
+
 export interface AlertPayload {
   timestamp: string;
   severity: AlertSeverity;
@@ -169,6 +183,7 @@ export class TelegramAlertAdapter implements AlertPort {
           text,
           parse_mode: "HTML",
         }),
+        signal: AbortSignal.timeout(ALERT_HTTP_TIMEOUT_MS),
       });
 
       if (!response.ok) {
@@ -177,7 +192,7 @@ export class TelegramAlertAdapter implements AlertPort {
         );
       }
     } catch (err: unknown) {
-      const errorMsg = err instanceof Error ? err.message : String(err);
+      const errorMsg = readErrorMessage(err);
       console.warn(
         `[ALERT_FALLBACK_TRIGGERED] Telegram alert failed, fell back to email adapter: ${errorMsg}`
       );
@@ -190,7 +205,19 @@ export class TelegramAlertAdapter implements AlertPort {
           _fallback_reason: errorMsg,
         },
       };
-      await this.resolveFallback().sendAlert(fallbackPayload);
+
+      try {
+        await this.resolveFallback().sendAlert(fallbackPayload);
+      } catch (fallbackErr: unknown) {
+        // Cả hai kênh chết là trạng thái "điếc" mà BR-MON-01 tồn tại để cấm.
+        // Nó không thể bị bắt lúc khởi động — assertAlertingReachable() chỉ đo
+        // cấu hình — nên chỗ duy nhất nói được là ngay đây, và phải nêu ĐỦ hai
+        // nguyên nhân: nếu chỉ ghi cái sau thì người trực đi sửa nhầm kênh.
+        console.warn(
+          `[ALERT_LOST] Không kênh nào nhận được cảnh báo '${payload.message}'. ` +
+            `telegram: ${errorMsg}; fallback: ${readErrorMessage(fallbackErr)}`
+        );
+      }
     }
   }
 
@@ -265,11 +292,16 @@ export class HealthchecksAlertAdapter implements AlertPort {
       await this.fetchFn(endpoint, {
         method: "POST",
         body: message,
+        signal: AbortSignal.timeout(ALERT_HTTP_TIMEOUT_MS),
       });
     } catch (err) {
-      console.warn(
-        `[HEALTHCHECKS_PING_FAILED] Ping to ${endpoint} failed:`,
-        err
+      // Ném tiếp, Cấm — NEVER nuốt. Đây là kênh dự phòng: nuốt lỗi ở đây làm
+      // `TelegramAlertAdapter` tin rằng cảnh báo đã tới người, trong khi không
+      // kênh nào nhận được gì. Người gọi duy nhất ở tầng trên đã xử lý bằng
+      // dòng `[ALERT_LOST]`.
+      throw new Error(
+        `Healthchecks ping tới ${endpoint} hỏng: ${readErrorMessage(err)}`,
+        { cause: err }
       );
     }
   }

@@ -1,6 +1,11 @@
 import { gameLevels, gameTemplates, getOwnerDb, writeAudit } from "@mindkid/db";
 import { and, eq, sql } from "drizzle-orm";
-import { createError, defineEventHandler, getRouterParam } from "h3";
+import {
+  createError,
+  defineEventHandler,
+  getRouterParam,
+  setResponseStatus,
+} from "h3";
 import { requireManagerSession } from "#server/utils/admin-auth-runtime";
 import { syncContentAssetRefs } from "#server/utils/asset-refs";
 
@@ -122,25 +127,33 @@ export default defineEventHandler(async (event) => {
     });
   }
 
-  const cloned = await createClonedLevel(db, existing, manager.id);
+  const managerId = manager.manager_id;
+  const cloned = await createClonedLevel(db, existing, managerId);
+  if (!cloned) {
+    throw createError({
+      statusCode: 500,
+      statusMessage: "LEVEL_DUPLICATE_FAILED",
+      message: "Nhân bản màn chơi thất bại",
+    });
+  }
   await syncContentAssetRefs(db, "game_level", cloned.id, cloned.contentPack);
 
-  const managerId = manager.manager_id || manager.id || 1;
-
-  await writeAudit(db, {
-    actor_type: "manager",
-    actor_id: managerId,
-    action: "game_level_duplicated",
-    entity_type: "game_level",
-    entity_id: cloned.id.toString(),
-    after_data: {
-      source_code: code,
-      source_version: version,
-      new_code: cloned.code,
-      new_version: 1,
-    },
+  await db.transaction(async (tx) => {
+    await writeAudit(tx, {
+      actor_type: "manager",
+      actor_id: managerId,
+      action: "content_created",
+      entity_type: "game_level",
+      entity_id: cloned.id.toString(),
+      after_data: {
+        source_code: code,
+        source_version: version,
+        new_code: cloned.code,
+        new_version: 1,
+      },
+    });
   });
 
-  event.node.res.statusCode = 201;
+  setResponseStatus(event, 201);
   return cloned;
 });

@@ -68,11 +68,11 @@ describe("global-setup: truncateAllTestTables", () => {
     await truncateAllTestTables(url, [probeTable]);
 
     const before = await sql`select count(*) c from ${sql(probeTable)}`;
-    expect(Number(before[0].c)).toBe(0);
+    expect(Number(before[0]?.c)).toBe(0);
 
     // Cùng code vừa gây duplicate key ở test trên giờ insert được — chứng minh dọn thật.
     const [row] =
       await sql`insert into ${sql(probeTable)} (code) values ('DUP-CODE') returning id`;
-    expect(Number(row.id)).toBe(1);
+    expect(Number(row?.id)).toBe(1);
   });
 });

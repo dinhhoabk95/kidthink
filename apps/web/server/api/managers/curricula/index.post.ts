@@ -62,8 +62,9 @@ async function generateNextCurriculumCode(
   let maxNum = 0;
   for (const r of rows) {
     const match = r.code.match(CUR_CODE_REGEX);
-    if (match) {
-      const num = Number.parseInt(match[1], 10);
+    const matchNum = match?.[1];
+    if (matchNum) {
+      const num = Number.parseInt(matchNum, 10);
       if (!Number.isNaN(num) && num > maxNum) {
         maxNum = num;
       }
@@ -154,10 +155,11 @@ async function createCurriculumRecord(
         })
         .returning();
 
-      await insertInitialWeeks(db, created.id, data.weeks);
-      await insertInitialItems(db, created.id, data.items);
-
-      return created;
+      if (created) {
+        await insertInitialWeeks(db, created.id, data.weeks);
+        await insertInitialItems(db, created.id, data.items);
+        return created;
+      }
     } catch (err: unknown) {
       lastErr = err;
       const errCode =
@@ -175,10 +177,7 @@ async function createCurriculumRecord(
 export default defineEventHandler(async (event) => {
   const session = await requireManagerSession(event);
   const rawBody =
-    (event.context?.body as unknown) ??
-    (event as Record<string, unknown>)._body ??
-    (await readBody(event).catch(() => ({}))) ??
-    {};
+    event.context?.body ?? (await readBody(event).catch(() => ({}))) ?? {};
 
   const parsed = createCurriculumSchema.safeParse(rawBody);
   if (!parsed.success) {
@@ -191,22 +190,24 @@ export default defineEventHandler(async (event) => {
 
   const db = getOwnerDb();
   const data = parsed.data;
-  const managerId = session.manager_id || session.id || 1;
+  const managerId = session.manager_id;
 
   const created = await createCurriculumRecord(db, data, managerId);
 
-  await writeAudit(db, {
-    action: "content_created",
-    actor_type: "manager",
-    actor_id: managerId,
-    entity_type: "curriculum",
-    entity_id: String(created.id),
-    after_data: {
-      code: created.code,
-      version: created.contentVersion,
-      title: created.title,
-      program_type: created.programType,
-    },
+  await db.transaction(async (tx) => {
+    await writeAudit(tx, {
+      action: "content_created",
+      actor_type: "manager",
+      actor_id: managerId,
+      entity_type: "curriculum",
+      entity_id: String(created.id),
+      after_data: {
+        code: created.code,
+        version: created.contentVersion,
+        title: created.title,
+        program_type: created.programType,
+      },
+    });
   });
 
   setResponseStatus(event, 201);

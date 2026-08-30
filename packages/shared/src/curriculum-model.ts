@@ -104,20 +104,20 @@ function extractCompetency(item: CurriculumItemMetadata): string | null {
   }
   if (item.strand_code?.trim()) {
     const match = item.strand_code.match(STRAND_COMPETENCY_REGEX);
-    if (match) {
+    if (match?.[1]) {
       return match[1].toUpperCase();
     }
   }
   if (Array.isArray(item.skill_codes) && item.skill_codes.length > 0) {
     const firstSkill = item.skill_codes[0];
-    const match = firstSkill.match(SKILL_COMPETENCY_REGEX);
-    if (match) {
+    const match = firstSkill?.match(SKILL_COMPETENCY_REGEX);
+    if (match?.[1]) {
       return match[1].toUpperCase();
     }
   }
   if (item.code) {
     const match = item.code.match(CODE_COMPETENCY_REGEX);
-    if (match) {
+    if (match?.[1]) {
       return match[1].toUpperCase();
     }
   }
@@ -286,9 +286,9 @@ function checkDifficultySlope(
   }
 
   for (let w = 1; w < difficultySlope.length; w++) {
-    const prev = difficultySlope[w - 1].avg_difficulty;
-    const curr = difficultySlope[w].avg_difficulty;
-    if (curr < prev - 1.5) {
+    const prev = difficultySlope[w - 1]?.avg_difficulty;
+    const curr = difficultySlope[w]?.avg_difficulty;
+    if (prev !== undefined && curr !== undefined && curr < prev - 1.5) {
       warnings.push(
         `BR-CRM-04: Độ khó tuần ${w + 1} (${curr}) giảm mạnh so với tuần ${w} (${prev})`
       );
@@ -334,10 +334,12 @@ function checkRepeatedItems(
 ): RepeatedItemFinding[] {
   const repeatedItems: RepeatedItemFinding[] = [];
   const itemWeekOccurrences = new Map<number, number[]>();
+
   for (const item of items) {
-    const list = itemWeekOccurrences.get(item.entity_id) || [];
+    const entityId = item.entity_id;
+    const list = itemWeekOccurrences.get(entityId) || [];
     list.push(item.week_no);
-    itemWeekOccurrences.set(item.entity_id, list);
+    itemWeekOccurrences.set(entityId, list);
   }
 
   for (const [entityId, weekNos] of itemWeekOccurrences.entries()) {
@@ -345,7 +347,7 @@ function checkRepeatedItems(
     for (let i = 0; i < sortedWeeks.length - 1; i++) {
       const w1 = sortedWeeks[i];
       const w2 = sortedWeeks[i + 1];
-      if (w2 - w1 <= 3) {
+      if (w1 !== undefined && w2 !== undefined && w2 - w1 <= 3) {
         const itemObj = items.find((it) => it.entity_id === entityId);
         repeatedItems.push({
           entity_id: entityId,
@@ -452,6 +454,45 @@ function checkSkillReviewAndLastWeeks(
   }
 }
 
+function detectPrerequisiteCycles(
+  prereqsMap: Record<string, string[]> | undefined,
+  errors: string[]
+): void {
+  if (!prereqsMap) {
+    return;
+  }
+
+  const visited = new Map<string, number>(); // 0: unvisited, 1: visiting, 2: visited
+
+  function dfs(node: string, path: string[]): boolean {
+    visited.set(node, 1);
+    const neighbors = prereqsMap?.[node] || [];
+    for (const next of neighbors) {
+      if (visited.get(next) === 1) {
+        const cycle = [...path, next];
+        errors.push(
+          `BR-CBD-07 / BR-CBD-08: Phát hiện chu trình phụ thuộc tiên quyết (circular prerequisite): ${cycle.join(" -> ")}`
+        );
+        return true;
+      }
+      if (
+        (!visited.has(next) || visited.get(next) === 0) &&
+        dfs(next, [...path, next])
+      ) {
+        return true;
+      }
+    }
+    visited.set(node, 2);
+    return false;
+  }
+
+  for (const node of Object.keys(prereqsMap)) {
+    if ((!visited.has(node) || visited.get(node) === 0) && dfs(node, [node])) {
+      break;
+    }
+  }
+}
+
 function checkPrerequisitesAndProgression(
   durationWeeks: number,
   items: CurriculumItemMetadata[],
@@ -459,6 +500,7 @@ function checkPrerequisitesAndProgression(
   errors: string[],
   warnings: string[]
 ): PrerequisiteViolation[] {
+  detectPrerequisiteCycles(prereqsMap, errors);
   const { skillFirstSeenWeek, skillAllWeeks } = collectSkillOccurrences(items);
   const prerequisiteViolations = checkPrerequisiteRules(
     prereqsMap,

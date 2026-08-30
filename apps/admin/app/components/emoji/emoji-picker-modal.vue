@@ -231,7 +231,10 @@
       focusedIndex.value < emojis.value.length
     ) {
       e.preventDefault();
-      selectEmoji(emojis.value[focusedIndex.value].emoji);
+      const target = emojis.value[focusedIndex.value];
+      if (target) {
+        selectEmoji(target.emoji);
+      }
     }
   }
 

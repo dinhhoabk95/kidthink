@@ -581,6 +581,9 @@ export async function getRecommendationsForChild(
   }
 
   const fallbackLevel = allPublishedLevels[0];
+  if (!fallbackLevel) {
+    throw new Error("No published game levels available for recommendation");
+  }
   return {
     primary: formatRecommendationItem(
       {

@@ -8,8 +8,8 @@
         <div class="catalog-header">
           <h1 class="catalog-title">Thư viện trò chơi tư duy</h1>
           <p class="catalog-subtitle">
-            Khám phá hơn 120 trò chơi toán học tương tác chia theo 6 nhóm năng
-            lực và độ tuổi mầm non (3–6 tuổi).
+            Khám phá {{ totalCount }} trò chơi toán học tương tác chia theo 6
+            nhóm năng lực và độ tuổi mầm non (3–6 tuổi).
           </p>
         </div>
 
@@ -28,12 +28,14 @@
               @change="updateFilters"
             >
               <option value="">Tất cả 6 năng lực</option>
-              <option value="C1">C1: Số & Lượng</option>
-              <option value="C2">C2: Hình & Không gian</option>
-              <option value="C3">C3: Quy luật & Chuỗi</option>
-              <option value="C4">C4: Đo lường & Đại lượng</option>
-              <option value="C5">C5: Phân loại & Tập hợp</option>
-              <option value="C6">C6: Suy luận & Logic</option>
+              <option
+                v-for="option in COMPETENCY_OPTIONS"
+                :key="option.value"
+                :disabled="isFacetEmpty('competency', option.value)"
+                :value="option.value"
+              >
+                {{ facetLabel(option.label, "competency", option.value) }}
+              </option>
             </select>
           </div>
 
@@ -47,10 +49,14 @@
               @change="updateFilters"
             >
               <option value="">Tất cả độ tuổi</option>
-              <option value="3">3 tuổi (Lớp Mầm)</option>
-              <option value="4">4 tuổi (Lớp Chồi)</option>
-              <option value="5">5 tuổi (Lớp Lá)</option>
-              <option value="6">6 tuổi (Chuẩn bị vào lớp 1)</option>
+              <option
+                v-for="option in AGE_OPTIONS"
+                :key="option.value"
+                :disabled="isFacetEmpty('age', option.value)"
+                :value="option.value"
+              >
+                {{ facetLabel(option.label, "age", option.value) }}
+              </option>
             </select>
           </div>
 
@@ -66,16 +72,24 @@
               @change="updateFilters"
             >
               <option value="">Tất cả các gói</option>
-              <option value="free">Miễn phí chơi thử</option>
-              <option value="login">Cần đăng ký tài khoản</option>
-              <option value="standard">Gói Tiêu chuẩn</option>
-              <option value="premium">Gói Premium</option>
+              <option
+                v-for="option in TIER_OPTIONS"
+                :key="option.value"
+                :disabled="isFacetEmpty('access_tier', option.value)"
+                :value="option.value"
+              >
+                {{ facetLabel(option.label, "access_tier", option.value) }}
+              </option>
             </select>
           </div>
         </search>
 
+        <p class="catalog-error" v-if="fetchError">
+          Không tải được danh sách trò chơi. Em thử tải lại trang giúp nhé.
+        </p>
+
         <!-- Lưới trò chơi (BR-GCP-01..08) -->
-        <div class="catalog-grid" v-if="levels.length > 0">
+        <div class="catalog-grid" v-else-if="levels.length > 0">
           <div class="catalog-card" v-for="game in levels" :key="game.code">
             <div class="card-top">
               <span aria-hidden="true" class="card-emoji"
@@ -106,10 +120,10 @@
             </div>
 
             <div class="card-footer">
-              <!-- If free tier -> direct play trial, otherwise to detail page -->
+              <!-- Không khoá thì chơi thẳng; khoá thì sang trang chi tiết -->
               <NuxtLink
                 class="btn-card-action btn-play-free"
-                v-if="game.access_tier === 'free'"
+                v-if="!game.locked"
                 :to="`/play/${game.code}`"
               >
                 Chơi ngay
@@ -125,7 +139,7 @@
           </div>
         </div>
 
-        <div class="catalog-empty" v-else>
+        <div class="catalog-empty" v-else-if="!pending">
           <p class="empty-text">
             Không tìm thấy trò chơi nào phù hợp với bộ lọc đã chọn.
           </p>
@@ -134,36 +148,28 @@
           </button>
         </div>
 
-        <!-- Phân trang (BR-GCP-08 & D-CU) -->
+        <!-- Phân trang bằng cursor (BR-GCP-08 & D-CU) -->
         <nav
           aria-label="Phân trang trò chơi"
           class="pagination-bar"
-          v-if="totalPages > 1"
+          v-if="hasPrevPage || nextCursor"
         >
           <button
             class="page-nav-btn"
             type="button"
-            :disabled="currentPage <= 1"
+            :disabled="!hasPrevPage"
             @click="prevPage"
           >
             ← Trang trước
           </button>
-          <div class="page-numbers">
-            <button
-              type="button"
-              v-for="p in totalPages"
-              :key="p"
-              :class="['page-num-btn', { active: currentPage === p }]"
-              :data-page="p"
-              @click="onPageClick"
-            >
-              {{ p }}
-            </button>
-          </div>
+          <span class="page-status">
+            {{ levels.length }}
+            / {{ totalCount }} trò chơi
+          </span>
           <button
             class="page-nav-btn"
             type="button"
-            :disabled="currentPage >= totalPages"
+            :disabled="!nextCursor"
             @click="nextPage"
           >
             Trang sau →
@@ -178,10 +184,9 @@
 </template>
 
 <script lang="ts" setup>
-  import { FEATURED_GUEST_LEVELS } from "@mindkid/shared/client";
   import { computed, ref, watch } from "vue";
   import { useRoute, useRouter } from "vue-router";
-  import { useHead, useSeoMeta } from "#imports";
+  import { useFetch, useHead, useSeoMeta } from "#imports";
   import CookieNoticeBanner from "~/components/cookie-notice-banner.vue";
   import PublicFooter from "~/components/public-footer.vue";
   import PublicNavbar from "~/components/public-navbar.vue";
@@ -192,82 +197,179 @@
   // nên skip-link của app.vue nhảy sai chỗ (BR-A11-05).
   definePageMeta({ layout: false });
 
+  interface CatalogItem {
+    code: string;
+    title: string;
+    competency: string | null;
+    age_band: string | null;
+    difficulty: number | null;
+    access_tier: string;
+    thumbnail_emoji: string | null;
+    locked: boolean;
+  }
+
+  interface CatalogFacets {
+    total: number;
+    competency: Record<string, number>;
+    age: Record<string, number>;
+    access_tier: Record<string, number>;
+  }
+
+  interface CatalogResponse {
+    items: CatalogItem[];
+    total: number;
+    facets: CatalogFacets;
+    next_cursor: string | null;
+  }
+
+  const COMPETENCY_OPTIONS = [
+    { value: "C1", label: "C1: Số & Lượng" },
+    { value: "C2", label: "C2: Hình & Không gian" },
+    { value: "C3", label: "C3: Quy luật & Chuỗi" },
+    { value: "C4", label: "C4: Đo lường & Đại lượng" },
+    { value: "C5", label: "C5: Phân loại & Tập hợp" },
+    { value: "C6", label: "C6: Suy luận & Logic" },
+  ] as const;
+
+  const AGE_OPTIONS = [
+    { value: "3", label: "3 tuổi (Lớp Mầm)" },
+    { value: "4", label: "4 tuổi (Lớp Chồi)" },
+    { value: "5", label: "5 tuổi (Lớp Lá)" },
+    { value: "6", label: "6 tuổi (Chuẩn bị vào lớp 1)" },
+  ] as const;
+
+  const TIER_OPTIONS = [
+    { value: "free", label: "Miễn phí chơi thử" },
+    { value: "login", label: "Cần đăng ký tài khoản" },
+    { value: "standard", label: "Gói Tiêu chuẩn" },
+    { value: "premium", label: "Gói Premium" },
+  ] as const;
+
+  /** `BR-GCP-08` — trần phân trang 60. */
+  const PAGE_SIZE = 60;
+
   const route = useRoute();
   const router = useRouter();
 
   const selectedCompetency = ref((route.query.competency as string) || "");
   const selectedAge = ref((route.query.age as string) || "");
   const selectedTier = ref((route.query.access_tier as string) || "");
-  const currentPage = ref(
-    Number.parseInt((route.query.page as string) || "1", 10) || 1
-  );
+  const cursor = ref((route.query.cursor as string) || "");
 
-  // Mock / Initial SSR levels list (can be populated via useFetch in runtime)
-  const allLevels = [
-    ...FEATURED_GUEST_LEVELS.map((g) => ({
-      code: g.code,
-      title: g.title,
-      competency: g.competency,
-      age_band: g.age_band,
-      difficulty: g.difficulty,
-      access_tier: "free",
-      thumbnail_emoji: g.emoji,
-    })),
-    {
-      code: "GL-C1-002",
-      title: "Đếm hạt dẻ mùa thu",
-      competency: "C1",
-      age_band: "3-4",
-      difficulty: 2,
-      access_tier: "login",
-      thumbnail_emoji: "🌰",
-    },
-    {
-      code: "GL-C2-002",
-      title: "Xếp hình xe buýt",
-      competency: "C2",
-      age_band: "4-5",
-      difficulty: 2,
-      access_tier: "standard",
-      thumbnail_emoji: "🚌",
-    },
-    {
-      code: "GL-C3-002",
-      title: "Vòng xoay màu sắc",
-      competency: "C3",
-      age_band: "5-6",
-      difficulty: 3,
-      access_tier: "premium",
-      thumbnail_emoji: "🎡",
-    },
-  ];
-
-  const filteredLevels = computed(() => {
-    return allLevels.filter((lvl) => {
-      if (
-        selectedCompetency.value &&
-        lvl.competency !== selectedCompetency.value
-      ) {
-        return false;
+  /**
+   * `useFetch` chạy trên server khi SSR, nên danh sách có trong HTML đầu tiên —
+   * `BR-GCP-04` đòi trang hiện được cả khi JS tắt.
+   *
+   * Trang này trước đây dựng danh sách từ một mảng hằng số 9 phần tử trong
+   * chính file .vue, nên thư viện 353 trò chơi trong DB không bao giờ tới được
+   * người dùng.
+   */
+  const {
+    data,
+    pending,
+    error: fetchError,
+  } = await useFetch<CatalogResponse>("/api/guest/levels", {
+    query: computed(() => {
+      const query: Record<string, string> = { limit: String(PAGE_SIZE) };
+      if (selectedCompetency.value) {
+        query.competency = selectedCompetency.value;
       }
-      if (selectedAge.value && !lvl.age_band.includes(selectedAge.value)) {
-        return false;
+      if (selectedAge.value) {
+        query.age = selectedAge.value;
       }
-      if (selectedTier.value && lvl.access_tier !== selectedTier.value) {
-        return false;
+      if (selectedTier.value) {
+        query.access_tier = selectedTier.value;
       }
-      return true;
-    });
+      if (cursor.value) {
+        query.cursor = cursor.value;
+      }
+      return query;
+    }),
   });
 
-  const PAGE_SIZE = 60; // BR-GCP-08 capped at 60
-  const totalPages = computed(
-    () => Math.ceil(filteredLevels.value.length / PAGE_SIZE) || 1
+  const levels = computed<CatalogItem[]>(() => data.value?.items ?? []);
+  const totalCount = computed(() => data.value?.total ?? 0);
+  const facets = computed<CatalogFacets | null>(
+    () => data.value?.facets ?? null
   );
-  const levels = computed(() => {
-    const start = (currentPage.value - 1) * PAGE_SIZE;
-    return filteredLevels.value.slice(start, start + PAGE_SIZE);
-  });
+  const nextCursor = computed(() => data.value?.next_cursor ?? null);
+
+  /** Lịch sử con trỏ để lùi được — API phân trang bằng cursor, không bằng offset. */
+  const cursorStack = ref<string[]>([]);
+  const hasPrevPage = computed(() => cursorStack.value.length > 0);
+
+  function facetCount(axis: keyof CatalogFacets, key: string): number | null {
+    const bucket = facets.value?.[axis];
+    if (!bucket || typeof bucket === "number") {
+      return null;
+    }
+    return bucket[key] ?? 0;
+  }
+
+  /** `BR-GCP` §8 — lựa chọn 0 kết quả bị vô hiệu, không để người dùng lọc vào ngõ cụt. */
+  function isFacetEmpty(axis: keyof CatalogFacets, key: string): boolean {
+    return facetCount(axis, key) === 0;
+  }
+
+  function facetLabel(
+    base: string,
+    axis: keyof CatalogFacets,
+    key: string
+  ): string {
+    const count = facetCount(axis, key);
+    return count === null ? base : `${base} (${count})`;
+  }
+
+  function pushQuery(): void {
+    const query: Record<string, string> = {};
+    if (selectedCompetency.value) {
+      query.competency = selectedCompetency.value;
+    }
+    if (selectedAge.value) {
+      query.age = selectedAge.value;
+    }
+    if (selectedTier.value) {
+      query.access_tier = selectedTier.value;
+    }
+    if (cursor.value) {
+      query.cursor = cursor.value;
+    }
+    // `BR-GCP-03` — bộ lọc phản ánh vào URL để chia sẻ và index được.
+    router.push({ path: "/games", query });
+  }
+
+  function updateFilters(): void {
+    cursor.value = "";
+    cursorStack.value = [];
+    pushQuery();
+  }
+
+  function resetFilters(): void {
+    selectedCompetency.value = "";
+    selectedAge.value = "";
+    selectedTier.value = "";
+    updateFilters();
+  }
+
+  function nextPage(): void {
+    const next = nextCursor.value;
+    if (!next) {
+      return;
+    }
+    cursorStack.value = [...cursorStack.value, cursor.value];
+    cursor.value = next;
+    pushQuery();
+  }
+
+  function prevPage(): void {
+    if (cursorStack.value.length === 0) {
+      return;
+    }
+    const previous = cursorStack.value.at(-1) ?? "";
+    cursorStack.value = cursorStack.value.slice(0, -1);
+    cursor.value = previous;
+    pushQuery();
+  }
 
   function getTierLabel(tier: string): string {
     switch (tier) {
@@ -284,77 +386,21 @@
     }
   }
 
-  function updateFilters() {
-    currentPage.value = 1;
-    const query: Record<string, string> = {};
-    if (selectedCompetency.value) {
-      query.competency = selectedCompetency.value;
-    }
-    if (selectedAge.value) {
-      query.age = selectedAge.value;
-    }
-    if (selectedTier.value) {
-      query.access_tier = selectedTier.value;
-    }
-    router.push({ path: "/games", query });
-  }
-
-  function resetFilters() {
-    selectedCompetency.value = "";
-    selectedAge.value = "";
-    selectedTier.value = "";
-    currentPage.value = 1;
-    router.push({ path: "/games" });
-  }
-
-  function goToPage(page: number) {
-    currentPage.value = page;
-    const query = {
-      ...route.query,
-      page: page > 1 ? page.toString() : undefined,
-    };
-    router.push({ path: "/games", query });
-  }
-
-  function prevPage() {
-    if (currentPage.value > 1) {
-      goToPage(currentPage.value - 1);
-    }
-  }
-
-  function nextPage() {
-    if (currentPage.value < totalPages.value) {
-      goToPage(currentPage.value + 1);
-    }
-  }
-
-  function onPageClick(event: MouseEvent) {
-    const pageStr = (event.currentTarget as HTMLElement).dataset.page;
-    if (pageStr) {
-      const p = Number.parseInt(pageStr, 10);
-      if (!Number.isNaN(p)) {
-        goToPage(p);
-      }
-    }
-  }
-
-  // Watch route changes
   watch(
     () => route.query,
     (newQuery) => {
       selectedCompetency.value = (newQuery.competency as string) || "";
       selectedAge.value = (newQuery.age as string) || "";
       selectedTier.value = (newQuery.access_tier as string) || "";
-      currentPage.value =
-        Number.parseInt((newQuery.page as string) || "1", 10) || 1;
+      cursor.value = (newQuery.cursor as string) || "";
     }
   );
 
   useSeoMeta({
-    title: "Thư viện 120+ trò chơi tư duy cho bé 3–6 tuổi — MindKid",
+    title: "Thư viện trò chơi tư duy cho bé 3–6 tuổi — MindKid",
     description:
       "Duyệt danh mục trò chơi phát triển tư duy toán học cho trẻ mầm non. Lọc theo năng lực C1–C6, độ tuổi 3–6 và độ khó.",
-    ogTitle: "Thư viện 120+ trò chơi tư duy cho bé 3–6 tuổi — MindKid",
+    ogTitle: "Thư viện trò chơi tư duy cho bé 3–6 tuổi — MindKid",
     ogDescription:
       "Danh mục trò chơi toán học tương tác mầm non phân theo 6 nhóm năng lực chuẩn sư phạm.",
     ogType: "website",
@@ -637,8 +683,17 @@
     border-color: var(--color-brand-600);
   }
 
-  .page-numbers {
-    display: flex;
-    gap: 0.5rem;
+  .page-status {
+    font-size: 0.9rem;
+    color: var(--color-surface-600);
+  }
+
+  .catalog-error {
+    padding: 2rem 1rem;
+    text-align: center;
+    color: var(--color-surface-700);
+    background-color: white;
+    border: 1px dashed var(--color-surface-300);
+    border-radius: 1rem;
   }
 </style>

@@ -1,6 +1,23 @@
 import { z } from "zod";
 
-export const EmojiRef = z.string().min(1);
+/**
+ * `BR-CTR-08` — asset emoji tham chiếu bằng **mã** `EMJ-<slug>`, không phải
+ * glyph. `packages/emoji/src/query.ts:getByCode` chỉ tra theo mã, nên một glyph
+ * thô lọt qua contract sẽ hỏng lúc render với `not_found` — quá muộn để ai đó
+ * nhìn thấy. `z.string().min(1)` cũ nhận mọi thứ, kể cả "🍎".
+ */
+export const EMOJI_REF_PATTERN = /^EMJ-[a-z0-9]+(?:-[a-z0-9]+)*$/;
+
+/**
+ * `EMJ-<slug>`, không phải glyph.
+ *
+ * Trước đây trường này nhận chuỗi bất kỳ vì 57 trên 228 level seed dùng glyph
+ * thô có sẵn từ thời chưa có contract, và nợ đó được đo bằng một bậc thang
+ * riêng thay vì chặn tại contract. Task 162 dọn hết: 239 `ref` đã đổi sang mã,
+ * 15 emoji thiếu đã bổ sung vào registry, bậc thang về 0 và đã xoá.
+ * Một glyph thô lọt qua đây sẽ `not_found` lúc render — trẻ thấy ô trống.
+ */
+export const EmojiRef = z.string().regex(EMOJI_REF_PATTERN);
 
 /**
  * Asset reference shared by every template's content contract.

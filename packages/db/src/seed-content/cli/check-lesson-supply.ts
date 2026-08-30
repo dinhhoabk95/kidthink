@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+import { pathToFileURL } from "node:url";
 
 /**
  * CLI Runner cho Cổng Cung Cầu Giáo Án
@@ -29,7 +30,7 @@ export function runLessonSupplyGate(options?: { quiet?: boolean }): number {
   return evaluation.isPassed ? 0 : 1;
 }
 
-if (import.meta.url === `file://${process.argv[1]}`) {
+if (import.meta.url === pathToFileURL(process.argv[1] ?? "").href) {
   const exitCode = runLessonSupplyGate();
   process.exit(exitCode);
 }

@@ -3,7 +3,23 @@ import {
   type GameAction,
   TemplateGameSession,
 } from "#src/game-session";
+import { resolveLayout } from "#src/layout/registry";
+import type { Slot } from "#src/layout/types";
 import { SelectionMechanic } from "#src/mechanics/selection-mechanic";
+import type { DegradationState } from "#src/systems/degradation";
+import type { Particle, RenderSystem } from "#src/systems/render-system";
+import {
+  drawCheckMark,
+  drawCounterBadge,
+  drawEmojiContent,
+  drawPlaceholderBox,
+  drawPromptText,
+  drawSceneBackground,
+  getColorsForState,
+  type ItemVisualState,
+  spawnParticlesAtSlot,
+  updateParticles,
+} from "../shared-render.js";
 import type { GT002Content, GT002Difficulty } from "./template.js";
 
 type TargetItem = GT002Content["items"][number];
@@ -14,15 +30,39 @@ export class GT002Session extends TemplateGameSession<
 > {
   displayItems: readonly TargetItem[] = [];
   private readonly mechanic = new SelectionMechanic({ mode: "multi" });
+  slots: readonly Slot[] = [];
+  degradation: DegradationState | null = null;
+  private particles: Particle[] = [];
+  private itemStates: Map<string, ItemVisualState> = new Map();
 
   setupEntities(): void {
     this.mechanic.reset();
     this.isWon = false;
+    this.particles = [];
+    this.itemStates = new Map();
     this.displayItems = [...this.content.items];
+  }
+
+  resolveSlots(ageBand: "3-4" | "4-5" | "5-6"): void {
+    const layoutFn = resolveLayout("grid-2x4");
+    this.slots = layoutFn({
+      slotCount: this.displayItems.length,
+      ageBand,
+    });
+  }
+
+  private getItemState(itemId: string): ItemVisualState {
+    return this.itemStates.get(itemId) ?? "idle";
+  }
+
+  setItemState(itemId: string, state: ItemVisualState): void {
+    this.itemStates.set(itemId, state);
   }
 
   toggleItemSelection(itemId: string): void {
     this.mechanic.toggle(itemId);
+    const current = this.getItemState(itemId);
+    this.setItemState(itemId, current === "selected" ? "idle" : "selected");
   }
 
   validateAction(action: GameAction): ActionResult {
@@ -33,6 +73,7 @@ export class GT002Session extends TemplateGameSession<
     return this.mechanic.validate(action, items);
   }
 
+  // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: game submit logic requires branching
   onSubmitSelection(): void {
     const { valid } = this.validateAction({
       type: "submit_selection",
@@ -40,7 +81,24 @@ export class GT002Session extends TemplateGameSession<
     });
     this.recordEvent("selection_submitted", { is_correct: valid });
     if (valid) {
+      for (const item of this.displayItems) {
+        if (item.is_correct) {
+          this.setItemState(item.item_id, "correct");
+          const idx = this.displayItems.indexOf(item);
+          const slot = this.slots[idx];
+          if (slot) {
+            this.particles.push(...spawnParticlesAtSlot(slot, 6));
+          }
+        }
+      }
       this.winSession();
+    } else {
+      for (const item of this.displayItems) {
+        const state = this.getItemState(item.item_id);
+        if (state === "selected" && !item.is_correct) {
+          this.setItemState(item.item_id, "wrong");
+        }
+      }
     }
   }
 
@@ -50,6 +108,75 @@ export class GT002Session extends TemplateGameSession<
       isCorrect: i.is_correct,
     }));
     return this.mechanic.isSelectionComplete(items);
+  }
+
+  private getSelectedCount(): number {
+    let count = 0;
+    for (const [, state] of this.itemStates) {
+      if (state === "selected" || state === "correct") {
+        count++;
+      }
+    }
+    return count;
+  }
+
+  render(
+    ctx: CanvasRenderingContext2D,
+    rs: RenderSystem,
+    timeMs: number
+  ): void {
+    const slots = this.slots;
+    drawSceneBackground(ctx, rs);
+    drawPromptText(ctx, rs, this.content.prompt);
+    drawCounterBadge(
+      ctx,
+      900,
+      30,
+      this.getSelectedCount(),
+      this.difficulty.target_count
+    );
+    this.drawInteractive(rs, ctx, slots);
+    this.drawFeedback(rs, ctx, timeMs);
+  }
+
+  private drawInteractive(
+    rs: RenderSystem,
+    ctx: CanvasRenderingContext2D,
+    slots: readonly Slot[]
+  ): void {
+    for (let i = 0; i < this.displayItems.length; i++) {
+      const item = this.displayItems[i];
+      const slot = slots[i];
+      if (!(slot && item)) {
+        continue;
+      }
+      const state = this.getItemState(item.item_id);
+      const { fill, border } = getColorsForState(state);
+      const r = Math.min(slot.hitW, slot.hitH) / 2;
+      rs.drawClayBody(ctx, slot.x, slot.y, r, fill, border);
+
+      if (item.asset.kind === "emoji") {
+        drawEmojiContent(ctx, item.asset.ref, slot);
+      } else {
+        drawPlaceholderBox(ctx, slot);
+      }
+
+      if (state === "selected") {
+        drawCheckMark(ctx, slot);
+      }
+    }
+  }
+
+  private drawFeedback(
+    rs: RenderSystem,
+    ctx: CanvasRenderingContext2D,
+    _timeMs: number
+  ): void {
+    if (this.degradation?.particles_enabled === false) {
+      return;
+    }
+    this.particles = updateParticles(this.particles);
+    rs.drawParticles(ctx, this.particles);
   }
 }
 

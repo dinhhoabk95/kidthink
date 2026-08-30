@@ -50,11 +50,11 @@ function checkExportRateLimit(managerId: number): void {
 
 function redactEmail(email: string): string {
   const parts = email.split("@");
-  if (parts.length !== 2) {
-    return "***";
-  }
   const name = parts[0];
   const domain = parts[1];
+  if (!(name && domain) || parts.length !== 2) {
+    return "***";
+  }
   const redactedName =
     name.length <= 2
       ? `${name[0]}*`
@@ -265,9 +265,7 @@ export default defineEventHandler(async (event) => {
     });
   }
 
-  const query =
-    ((event as Record<string, unknown>)._query as Record<string, unknown>) ||
-    getQuery(event);
+  const query = getQuery(event);
   const reason = typeof query.reason === "string" ? query.reason.trim() : "";
   if (!reason || reason.length < 10) {
     throw createError({
@@ -277,7 +275,7 @@ export default defineEventHandler(async (event) => {
     });
   }
 
-  const managerId = manager.manager_id || manager.id || 1;
+  const managerId = manager.manager_id;
   checkExportRateLimit(managerId);
 
   const db = getOwnerDb();
@@ -306,24 +304,24 @@ export default defineEventHandler(async (event) => {
   });
 
   // Write audit_logs data_exported (BR-EXP-03)
-  await writeAudit(db, {
-    actor_type: "manager",
-    actor_id: managerId,
-    action: "data_exported",
-    reason,
-    entity_type: "data_export",
-    entity_id: kind,
-    after_data: {
-      kind,
-      from: query.from || null,
-      to: query.to || null,
-      row_count: rowCount,
-      expires_at: signedUrlRes.expiresAt.toISOString(),
-    },
+  await db.transaction(async (tx) => {
+    await writeAudit(tx, {
+      actor_type: "manager",
+      actor_id: managerId,
+      action: "data_exported",
+      reason,
+      entity_type: "data_export",
+      entity_id: kind,
+      after_data: {
+        row_count: rowCount,
+        export_key: exportKey,
+      },
+    });
   });
 
   return {
     url: signedUrlRes.url,
+    export_url: signedUrlRes.url,
     expires_at: signedUrlRes.expiresAt.toISOString(),
     row_count: rowCount,
   };

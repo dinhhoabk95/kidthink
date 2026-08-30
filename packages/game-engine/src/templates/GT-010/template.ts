@@ -73,13 +73,19 @@ export const GT010ContentSchema = GT010BaseSchema.refine(
       return false;
     }
 
-    const correctValue = evaluateQuestionAnswer(solutions[0], content.question);
-    const correctOptions = content.options.filter((o) => o.is_correct);
-    if (correctOptions.length !== 1) {
+    const firstSol = solutions[0];
+    if (!firstSol) {
       return false;
     }
 
-    return correctOptions[0].value === correctValue;
+    const correctValue = evaluateQuestionAnswer(firstSol, content.question);
+    const correctOptions = content.options.filter((o) => o.is_correct);
+    const firstOpt = correctOptions[0];
+    if (correctOptions.length !== 1 || !firstOpt) {
+      return false;
+    }
+
+    return firstOpt.value === correctValue;
   },
   {
     message:

@@ -6,7 +6,11 @@ import {
   type GameAction,
   TemplateGameSession,
 } from "#src/game-session";
+import { resolveLayout } from "#src/layout/registry";
+import type { Slot } from "#src/layout/types";
 import { PlacementMechanic } from "#src/mechanics/placement-mechanic";
+import type { DegradationState } from "#src/systems/degradation";
+import type { Particle, RenderSystem } from "#src/systems/render-system";
 import {
   type FlipAxis,
   isPieceTransformMatch,
@@ -15,6 +19,15 @@ import {
   rotatePiece90,
   togglePieceFlip,
 } from "#src/systems/rotation-system";
+import {
+  drawEmptyTargetSlot,
+  drawPromptText,
+  drawSceneBackground,
+  drawSlotItem,
+  drawSlotLabel,
+  type ItemVisualState,
+  updateParticles,
+} from "../shared-render.js";
 import type { GT019Content, GT019Difficulty } from "./template.js";
 
 function toRotationAngle(val: number | undefined): RotationAngle90 {
@@ -35,6 +48,11 @@ export class GT019Session extends TemplateGameSession<
   GT019Content,
   GT019Difficulty
 > {
+  slots: readonly Slot[] = [];
+  degradation: DegradationState | null = null;
+  private renderParticles: Particle[] = [];
+  private readonly renderItemStates: Map<string, ItemVisualState> = new Map();
+
   private readonly placementMechanic = new PlacementMechanic();
   private readonly pieceTransforms: Map<string, PieceTransform> = new Map();
 
@@ -217,6 +235,84 @@ export class GT019Session extends TemplateGameSession<
       };
       return isPieceTransformMatch(transform, targetTransform);
     });
+  }
+
+  resolveSlots(ageBand: "3-4" | "4-5" | "5-6"): void {
+    const layoutFn = resolveLayout("grid");
+    this.slots = layoutFn({
+      slotCount: this.content.pieces.length,
+      targetCount: this.content.target_slots.length,
+      ageBand,
+    });
+  }
+
+  setRenderItemState(itemId: string, state: ItemVisualState): void {
+    this.renderItemStates.set(itemId, state);
+  }
+
+  getRenderItemState(itemId: string): ItemVisualState {
+    return this.renderItemStates.get(itemId) ?? "idle";
+  }
+
+  render(
+    ctx: CanvasRenderingContext2D,
+    rs: RenderSystem,
+    _timeMs: number
+  ): void {
+    drawSceneBackground(ctx, rs);
+    drawPromptText(ctx, rs, this.content.prompt);
+    const targets = this.slots.filter((s) => s.role === "target");
+    const sources = this.slots.filter((s) => s.role === "source");
+    const placements = this.placementMechanic.getPlacements();
+    const pieceById = new Map(this.content.pieces.map((p) => [p.piece_id, p]));
+    const placedPieceIds = new Set(placements.keys());
+
+    this.content.target_slots.forEach((target, i) => {
+      const slot = targets[i];
+      if (!slot) {
+        return;
+      }
+      const pieceId = [...placements.entries()].find(
+        ([, slotId]) => slotId === target.slot_id
+      )?.[0];
+      const piece = pieceId ? pieceById.get(pieceId) : undefined;
+      if (!piece) {
+        drawEmptyTargetSlot(ctx, slot);
+        drawSlotLabel(ctx, `${target.target_rotation}°`, slot);
+        return;
+      }
+      drawSlotItem(ctx, rs, slot, {
+        id: piece.piece_id,
+        asset: piece.asset,
+        state: "correct",
+      });
+    });
+
+    this.content.pieces.forEach((piece, i) => {
+      const slot = sources[i];
+      if (!slot || placedPieceIds.has(piece.piece_id)) {
+        return;
+      }
+      const transform = this.pieceTransforms.get(piece.piece_id);
+      drawSlotItem(ctx, rs, slot, {
+        id: piece.piece_id,
+        asset: piece.asset,
+        label: `${transform?.rotation ?? piece.initial_rotation}°`,
+        state: this.getRenderItemState(piece.piece_id),
+      });
+    });
+    this.drawRenderFeedback(rs, ctx);
+  }
+
+  private drawRenderFeedback(
+    rs: RenderSystem,
+    ctx: CanvasRenderingContext2D
+  ): void {
+    if (this.degradation?.particles_enabled === false) {
+      return;
+    }
+    this.renderParticles = updateParticles(this.renderParticles);
+    rs.drawParticles(ctx, this.renderParticles);
   }
 }
 

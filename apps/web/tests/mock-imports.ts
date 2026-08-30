@@ -1,5 +1,6 @@
 // Mock implementation of #imports (nuxt-auth-utils and Nitro auto-imports) for Vitest
-import type { H3Event } from "h3";
+import { type H3Event, useSession } from "h3";
+import { getUserSessionConfig } from "../server/utils/session-runtime.js";
 
 interface AuthError extends Error {
   statusCode: number;
@@ -13,7 +14,7 @@ function createAuthError(message: string, statusCode: number): AuthError {
 
 const sessions = new WeakMap<H3Event, Record<string, unknown>>();
 
-export function setUserSession(
+export async function setUserSession(
   event: H3Event,
   data: Record<string, unknown>
 ): Promise<void> {
@@ -21,25 +22,45 @@ export function setUserSession(
   if (event.context) {
     event.context.userSession = data;
   }
-  return Promise.resolve();
+  try {
+    const session = await useSession(event, getUserSessionConfig());
+    await session.update(data);
+  } catch {
+    // ignore
+  }
 }
 
-export function getUserSession(
+export async function getUserSession(
   event: H3Event
 ): Promise<Record<string, unknown>> {
-  return Promise.resolve(
+  const mem =
     sessions.get(event) ||
-      (event.context?.userSession as Record<string, unknown>) ||
-      {}
-  );
+    (event.context?.userSession as Record<string, unknown>);
+  if (mem) {
+    return mem;
+  }
+  try {
+    const session = await useSession(event, getUserSessionConfig());
+    if (session?.data && Object.keys(session.data).length > 0) {
+      return session.data;
+    }
+  } catch {
+    // ignore
+  }
+  return {};
 }
 
-export function clearUserSession(event: H3Event): Promise<void> {
+export async function clearUserSession(event: H3Event): Promise<void> {
   sessions.delete(event);
   if (event.context) {
     event.context.userSession = undefined;
   }
-  return Promise.resolve();
+  try {
+    const session = await useSession(event, getUserSessionConfig());
+    await session.clear();
+  } catch {
+    // ignore
+  }
 }
 
 export async function requireUserSession(

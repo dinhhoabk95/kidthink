@@ -1,5 +1,5 @@
 /**
- * @generated from LEVEL-GENERATOR-KIT@00000000
+ * @generated from LEVEL-GENERATOR-KIT@c9fd31f3f239
  * Engine: GT-001
  * Seed: 12345
  * Theme: school
@@ -25,16 +25,16 @@ export const GEN_GT001_12345: ContentSeed<unknown, unknown>[] = [
       "what_tags": [],
       "thinking_tags": [],
       "theme_tag": "school",
-      "origin": "generator",
+      "origin": "ai_assisted",
       "authored_in": "repo_seed"
     },
     "content_pack": {
       "prompt": "Bé hãy chạm vào hình giống mẫu nhé!",
       "target_item": {
-        "item_id": "item_EMJ-books",
+        "item_id": "item_EMJ-open-book",
         "asset": {
           "kind": "emoji",
-          "ref": "EMJ-books"
+          "ref": "EMJ-open-book"
         }
       },
       "options": [
@@ -42,15 +42,15 @@ export const GEN_GT001_12345: ContentSeed<unknown, unknown>[] = [
           "item_id": "opt_1",
           "asset": {
             "kind": "emoji",
-            "ref": "🍎"
+            "ref": "EMJ-open-book"
           },
-          "is_correct": false
+          "is_correct": true
         },
         {
           "item_id": "opt_2",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-ruler"
+            "ref": "EMJ-school"
           },
           "is_correct": false
         },
@@ -58,9 +58,9 @@ export const GEN_GT001_12345: ContentSeed<unknown, unknown>[] = [
           "item_id": "opt_3",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-books"
+            "ref": "EMJ-ruler"
           },
-          "is_correct": true
+          "is_correct": false
         }
       ]
     },
@@ -87,16 +87,16 @@ export const GEN_GT001_12345: ContentSeed<unknown, unknown>[] = [
       "what_tags": [],
       "thinking_tags": [],
       "theme_tag": "school",
-      "origin": "generator",
+      "origin": "ai_assisted",
       "authored_in": "repo_seed"
     },
     "content_pack": {
       "prompt": "Bé hãy chạm vào hình giống mẫu nhé!",
       "target_item": {
-        "item_id": "item_EMJ-ruler",
+        "item_id": "item_EMJ-bell",
         "asset": {
           "kind": "emoji",
-          "ref": "EMJ-ruler"
+          "ref": "EMJ-bell"
         }
       },
       "options": [
@@ -104,7 +104,7 @@ export const GEN_GT001_12345: ContentSeed<unknown, unknown>[] = [
           "item_id": "opt_1",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-pencil"
+            "ref": "EMJ-backpack"
           },
           "is_correct": false
         },
@@ -112,17 +112,17 @@ export const GEN_GT001_12345: ContentSeed<unknown, unknown>[] = [
           "item_id": "opt_2",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-ruler"
+            "ref": "EMJ-abacus"
           },
-          "is_correct": true
+          "is_correct": false
         },
         {
           "item_id": "opt_3",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-backpack"
+            "ref": "EMJ-bell"
           },
-          "is_correct": false
+          "is_correct": true
         }
       ]
     },
@@ -149,16 +149,16 @@ export const GEN_GT001_12345: ContentSeed<unknown, unknown>[] = [
       "what_tags": [],
       "thinking_tags": [],
       "theme_tag": "school",
-      "origin": "generator",
+      "origin": "ai_assisted",
       "authored_in": "repo_seed"
     },
     "content_pack": {
       "prompt": "Bé hãy chạm vào hình giống mẫu nhé!",
       "target_item": {
-        "item_id": "item_EMJ-books",
+        "item_id": "item_EMJ-open-book",
         "asset": {
           "kind": "emoji",
-          "ref": "EMJ-books"
+          "ref": "EMJ-open-book"
         }
       },
       "options": [
@@ -166,7 +166,7 @@ export const GEN_GT001_12345: ContentSeed<unknown, unknown>[] = [
           "item_id": "opt_1",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-ruler"
+            "ref": "EMJ-backpack"
           },
           "is_correct": false
         },
@@ -174,17 +174,17 @@ export const GEN_GT001_12345: ContentSeed<unknown, unknown>[] = [
           "item_id": "opt_2",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-books"
+            "ref": "EMJ-ruler"
           },
-          "is_correct": true
+          "is_correct": false
         },
         {
           "item_id": "opt_3",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-pencil"
+            "ref": "EMJ-open-book"
           },
-          "is_correct": false
+          "is_correct": true
         }
       ]
     },

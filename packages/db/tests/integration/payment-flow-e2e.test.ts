@@ -13,7 +13,7 @@ describe("P2.3 End-to-End Payment Flow Invariants (BR-PAY, BR-PRC, BR-POC, BR-PP
         expired: [],
       };
       expect(allowedTransitions.pending).toContain("submitted");
-      expect(allowedTransitions.approved.length).toBe(0);
+      expect(allowedTransitions.approved?.length).toBe(0);
     });
 
     it("Scenario: BR-PAY-02 — VietQR code is generated server-side with exact order amount and transfer note", () => {

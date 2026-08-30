@@ -2,7 +2,7 @@
 spec: RELEASE-DEPLOY
 title: Quy trình phát hành không gián đoạn
 area: platform
-status: implemented
+status: approved
 mvp: true
 phase: P0
 reviewed: 2026-08-30

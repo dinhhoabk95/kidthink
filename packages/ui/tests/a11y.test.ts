@@ -102,8 +102,8 @@ describe("Task 4: Accessibility Harness & Page Objects (BR-A11-01, BR-A11-05, BR
 
     const { violations } = auditDOMAccessibility(badPageObjectHtml);
     expect(violations.length).toBe(1);
-    expect(violations[0].id).toBe("button-name");
-    expect(violations[0].help).toContain("BR-A11-06");
+    expect(violations[0]?.id).toBe("button-name");
+    expect(violations[0]?.help).toContain("BR-A11-06");
   });
 
   it("D-FC Negative Test: missing a required surface page object throws gate error", () => {

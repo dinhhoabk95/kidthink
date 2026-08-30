@@ -6,6 +6,9 @@ import {
   type GameAction,
   TemplateGameSession,
 } from "#src/game-session";
+import { resolveLayout } from "#src/layout/registry";
+import type { Slot } from "#src/layout/types";
+import type { DegradationState } from "#src/systems/degradation";
 import {
   type CubeCoord,
   computeTopView,
@@ -13,12 +16,27 @@ import {
   type RotationAngle,
   sortCubesForRender,
 } from "#src/systems/isometric-system";
+import type { Particle, RenderSystem } from "#src/systems/render-system";
+import {
+  drawPromptText,
+  drawSceneBackground,
+  drawSlotItem,
+  type ItemVisualState,
+  sceneBox,
+  updateParticles,
+} from "../shared-render.js";
+import { drawIsometricModel, insetBox } from "../shared-render-shapes.js";
 import type { GT017Content, GT017Difficulty } from "./template.js";
 
 export class BlockStackSession extends TemplateGameSession<
   GT017Content,
   GT017Difficulty
 > {
+  slots: readonly Slot[] = [];
+  degradation: DegradationState | null = null;
+  private renderParticles: Particle[] = [];
+  private readonly renderItemStates: Map<string, ItemVisualState> = new Map();
+
   private currentRotation: RotationAngle = 0;
   private selectedOptionId: string | null = null;
 
@@ -75,7 +93,7 @@ export class BlockStackSession extends TemplateGameSession<
     const currIdx = angles.indexOf(this.currentRotation);
     const nextIdx = direction === "cw" ? (currIdx + 1) % 4 : (currIdx + 3) % 4;
 
-    this.currentRotation = angles[nextIdx];
+    this.currentRotation = angles[nextIdx] ?? 0;
 
     this.recordEvent("model_rotated", {
       angle: this.currentRotation,
@@ -134,6 +152,69 @@ export class BlockStackSession extends TemplateGameSession<
     super.destroy();
     this.selectedOptionId = null;
     this.currentRotation = 0;
+  }
+
+  resolveSlots(ageBand: "3-4" | "4-5" | "5-6"): void {
+    const layoutFn = resolveLayout("split-columns");
+    this.slots = layoutFn({
+      slotCount: this.content.options.length,
+      targetCount: 1,
+      ageBand,
+    });
+  }
+
+  setRenderItemState(itemId: string, state: ItemVisualState): void {
+    this.renderItemStates.set(itemId, state);
+  }
+
+  getRenderItemState(itemId: string): ItemVisualState {
+    return this.renderItemStates.get(itemId) ?? "idle";
+  }
+
+  render(
+    ctx: CanvasRenderingContext2D,
+    rs: RenderSystem,
+    _timeMs: number
+  ): void {
+    drawSceneBackground(ctx, rs);
+    drawPromptText(ctx, rs, this.content.prompt);
+    const scene = insetBox(sceneBox(rs), 0.08);
+    drawIsometricModel(
+      ctx,
+      { x: scene.x, y: scene.y, w: scene.w, h: scene.h * 0.6 },
+      this.content.model,
+      this.currentRotation
+    );
+
+    const optionSlots = this.slots.filter((s) => s.role === "source");
+    this.content.options.forEach((opt, i) => {
+      const slot = optionSlots[i] ?? this.slots[i];
+      if (!slot) {
+        return;
+      }
+      const chosen = this.selectedOptionId === opt.option_id;
+      let state: "correct" | "wrong" | "idle" = "idle";
+      if (chosen) {
+        state = opt.is_correct ? "correct" : "wrong";
+      }
+      drawSlotItem(ctx, rs, slot, {
+        id: opt.option_id,
+        asset: opt.asset,
+        state,
+      });
+    });
+    this.drawRenderFeedback(rs, ctx);
+  }
+
+  private drawRenderFeedback(
+    rs: RenderSystem,
+    ctx: CanvasRenderingContext2D
+  ): void {
+    if (this.degradation?.particles_enabled === false) {
+      return;
+    }
+    this.renderParticles = updateParticles(this.renderParticles);
+    rs.drawParticles(ctx, this.renderParticles);
   }
 }
 

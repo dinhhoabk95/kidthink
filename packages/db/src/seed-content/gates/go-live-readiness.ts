@@ -3,6 +3,9 @@
  * Rules: BR-GLR-01..09
  */
 
+import { readFileSync } from "node:fs";
+import { repoPath } from "@mindkid/config/paths";
+import { z } from "zod";
 import type { ContentSeed, LessonSeed } from "#src/seed-content/types";
 import type { MvpCurriculumConfig } from "#src/seed-master/curricula";
 
@@ -50,7 +53,8 @@ export interface GoLiveEvaluation {
 function checkScopeAndRender(
   scopeEngines: string[],
   activeEngineIds: string[],
-  implementedRenderEngineIds: string[]
+  implementedRenderEngineIds: string[],
+  requiredCoveragePercent: number
 ): { items: GoLiveCheckItem[]; violations: string[]; passed: boolean } {
   const items: GoLiveCheckItem[] = [];
   const violations: string[] = [];
@@ -77,13 +81,20 @@ function checkScopeAndRender(
   const missingRender = scopeEngines.filter(
     (id) => !implementedRenderEngineIds.includes(id)
   );
-  const renderPassed = missingRender.length === 0;
+  // `engine_render_coverage_percent` từng được khai trong kiểu, được zod
+  // validate, rồi ❌ KHÔNG nhánh nào đọc — một ngưỡng chết. Ngưỡng cấu hình phải
+  // là thứ quyết định đạt hay trượt, nếu không thì đừng khai nó.
+  const coveragePercent =
+    scopeEngines.length === 0
+      ? 100
+      : (implementedRenderEngineIds.length / scopeEngines.length) * 100;
+  const renderPassed = coveragePercent >= requiredCoveragePercent;
   items.push({
-    name: "27/27 engine cài đặt render() (BR-ERC-01)",
+    name: `Phủ render() >= ${requiredCoveragePercent}% (BR-ERC-01)`,
     axis: "game_template",
     isHardBlock: true,
-    expected: `${scopeEngines.length}/${scopeEngines.length} engine`,
-    actual: `${implementedRenderEngineIds.length}/${scopeEngines.length} engine`,
+    expected: `>= ${requiredCoveragePercent}%`,
+    actual: `${coveragePercent.toFixed(0)}% (${implementedRenderEngineIds.length}/${scopeEngines.length} engine)`,
     passed: renderPassed,
     message: renderPassed
       ? undefined
@@ -91,7 +102,7 @@ function checkScopeAndRender(
   });
   if (!renderPassed) {
     violations.push(
-      `BR-ERC-01: Có ${missingRender.length} engine chưa cài đặt render(): ${missingRender.join(", ")}`
+      `BR-ERC-01: Phủ render() ${coveragePercent.toFixed(0)}% < ${requiredCoveragePercent}%; thiếu ${missingRender.length} engine: ${missingRender.join(", ")}`
     );
   }
 
@@ -133,7 +144,9 @@ function checkDepthAndFreeEntry(
     freeCount.set(id, 0);
   }
   for (const gl of gameLevels) {
-    const typeId = (gl.metadata as { game_type_id?: string })?.game_type_id;
+    // Engine của một level nằm ở `header.template_code`. `metadata.game_type_id`
+    // không tồn tại, nên phép đếm này trước đây luôn ra 0/27.
+    const typeId = gl.header.template_code;
     const tier = gl.header.access_tier;
     if (
       typeId &&
@@ -179,7 +192,8 @@ function evaluateGameAxis(
   const res1 = checkScopeAndRender(
     scopeEngines,
     activeEngineIds,
-    implementedRenderEngineIds
+    implementedRenderEngineIds,
+    config.thresholds.engine_render_coverage_percent
   );
   const res2 = checkDepthAndFreeEntry(
     scopeEngines,
@@ -251,9 +265,7 @@ function checkSkillLevelCoverage(
 
   const skillSet = new Set<string>();
   for (const les of publishedLessons) {
-    const sk = (les.metadata as { target_skill_code?: string })
-      ?.target_skill_code;
-    if (sk) {
+    for (const sk of les.header.skill_codes) {
       skillSet.add(sk);
     }
   }
@@ -263,10 +275,8 @@ function checkSkillLevelCoverage(
     skillLevelCounts.set(sk, 0);
   }
   for (const gl of gameLevels) {
-    if (gl.header.status === "published") {
-      const glSkill = (gl.metadata as { target_skill_code?: string })
-        ?.target_skill_code;
-      if (glSkill && skillLevelCounts.has(glSkill)) {
+    for (const glSkill of gl.header.skill_codes) {
+      if (skillLevelCounts.has(glSkill)) {
         skillLevelCounts.set(glSkill, (skillLevelCounts.get(glSkill) ?? 0) + 1);
       }
     }
@@ -302,9 +312,8 @@ function evaluateLessonAxis(
   lessons: LessonSeed[],
   gameLevels: ContentSeed<unknown, unknown>[]
 ): { items: GoLiveCheckItem[]; isPassed: boolean; violations: string[] } {
-  const publishedLessons = lessons.filter(
-    (l) => l.header.status === "published"
-  );
+  // Seed repo = đã xuất bản; `LessonSeedHeader` không có trường `status`.
+  const publishedLessons = lessons;
   const res1 = checkLessonSupplyAndFlow(
     publishedLessons,
     config.thresholds.lesson_supply_target,
@@ -438,4 +447,45 @@ export function formatGoLiveReport(evaluation: GoLiveEvaluation): string {
   lines.push("===============================================================");
 
   return lines.join("\n");
+}
+
+/**
+ * Cấu hình là dữ liệu **ngoài** mã nguồn, nên nó được parse chứ không ép kiểu.
+ *
+ * `JSON.parse(raw) as GoLiveConfig` là một lời nói dối: không gì kiểm hình dạng.
+ * Mất `min_levels_per_skill` thì `count < undefined` là `false` — luật phủ kỹ
+ * năng biến mất trong im lặng và cổng vẫn xanh. Một ngưỡng `undefined` phải làm
+ * cổng ĐỎ, Cấm — NEVER thành "không có gì vi phạm".
+ */
+export const goLiveConfigSchema = z.object({
+  version: z.number(),
+  last_updated: z.string(),
+  active_engines: z.array(z.string()).min(1),
+  thresholds: z.object({
+    engine_render_coverage_percent: z.number(),
+    longest_flow_code: z.string().min(1),
+    lesson_supply_target: z.number().int().positive(),
+    min_levels_per_skill: z.number().int().positive(),
+    content_depth_step: z.number().int().nonnegative(),
+  }),
+});
+
+export function parseGoLiveConfig(raw: unknown): GoLiveConfig {
+  const result = goLiveConfigSchema.safeParse(raw);
+  if (!result.success) {
+    throw new Error(
+      `config/go-live.json sai hình dạng: ${result.error.issues
+        .map((i) => `${i.path.join(".")}: ${i.message}`)
+        .join("; ")}`
+    );
+  }
+  return result.data;
+}
+
+export function loadGoLiveConfig(rawOverride?: unknown): GoLiveConfig {
+  if (rawOverride !== undefined) {
+    return parseGoLiveConfig(rawOverride);
+  }
+  const configPath = repoPath("packages/db/config/go-live.json");
+  return parseGoLiveConfig(JSON.parse(readFileSync(configPath, "utf8")));
 }

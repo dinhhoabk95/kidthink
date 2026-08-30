@@ -48,7 +48,10 @@ export interface Gate5BandLadderBaselines {
 }
 
 export const GATE_5_BAND_LADDER_BASELINES: Gate5BandLadderBaselines = {
-  maxOutOfBandLevels: 35,
+  // Dọn xong trong dải task #130–#156: 42 level đã được nâng lên band hợp lệ
+  // thấp nhất của engine sở hữu chúng. Trần 0 nghĩa là mọi level mới gắn sai
+  // band đều làm cổng đỏ ngay, thay vì chui vào một hạn ngạch còn chỗ trống.
+  maxOutOfBandLevels: 0,
 };
 
 export interface EngineBandViolationStat {

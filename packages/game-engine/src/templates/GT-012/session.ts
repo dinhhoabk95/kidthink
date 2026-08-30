@@ -6,13 +6,30 @@ import {
   type GameAction,
   TemplateGameSession,
 } from "#src/game-session";
+import { resolveLayout } from "#src/layout/registry";
+import type { Slot } from "#src/layout/types";
+import type { DegradationState } from "#src/systems/degradation";
+import type { Particle, RenderSystem } from "#src/systems/render-system";
 import { FlashTimer } from "#src/systems/timer-system";
+import {
+  drawPromptText,
+  drawSceneBackground,
+  drawSlotItem,
+  drawSubPromptText,
+  type ItemVisualState,
+  updateParticles,
+} from "../shared-render.js";
 import type { GT012Content, GT012Difficulty } from "./template.js";
 
 export class FlashRecallSession extends TemplateGameSession<
   GT012Content,
   GT012Difficulty
 > {
+  slots: readonly Slot[] = [];
+  degradation: DegradationState | null = null;
+  private renderParticles: Particle[] = [];
+  private readonly renderItemStates: Map<string, ItemVisualState> = new Map();
+
   private readonly timer: FlashTimer;
   private selectedValue: number | null = null;
   private wasVisible = false;
@@ -140,6 +157,75 @@ export class FlashRecallSession extends TemplateGameSession<
     this.timer.reset();
     this.selectedValue = null;
     this.wasVisible = false;
+  }
+
+  resolveSlots(ageBand: "3-4" | "4-5" | "5-6"): void {
+    const layoutFn = resolveLayout("grid");
+    this.slots = layoutFn({
+      slotCount: Math.max(
+        this.content.flash_items.length,
+        this.content.options.length
+      ),
+      ageBand,
+    });
+  }
+
+  setRenderItemState(itemId: string, state: ItemVisualState): void {
+    this.renderItemStates.set(itemId, state);
+  }
+
+  getRenderItemState(itemId: string): ItemVisualState {
+    return this.renderItemStates.get(itemId) ?? "idle";
+  }
+
+  render(
+    ctx: CanvasRenderingContext2D,
+    rs: RenderSystem,
+    _timeMs: number
+  ): void {
+    drawSceneBackground(ctx, rs);
+    drawPromptText(ctx, rs, this.content.prompt);
+    // Hai pha: đang loé thì chỉ thấy vật; hết loé mới thấy phương án.
+    if (this.timer.isVisible()) {
+      drawSubPromptText(ctx, rs, "Nhìn nhanh!");
+      this.content.flash_items.forEach((item, i) => {
+        const slot = this.slots[i];
+        if (!slot) {
+          return;
+        }
+        drawSlotItem(ctx, rs, slot, { id: item.item_id, asset: item.asset });
+      });
+      this.drawRenderFeedback(rs, ctx);
+      return;
+    }
+
+    this.content.options.forEach((opt, i) => {
+      const slot = this.slots[i];
+      if (!slot) {
+        return;
+      }
+      let state: "correct" | "wrong" | "idle" = "idle";
+      if (this.selectedValue === opt.value) {
+        state = opt.is_correct ? "correct" : "wrong";
+      }
+      drawSlotItem(ctx, rs, slot, {
+        id: `opt-${opt.value}`,
+        text: String(opt.value),
+        state,
+      });
+    });
+    this.drawRenderFeedback(rs, ctx);
+  }
+
+  private drawRenderFeedback(
+    rs: RenderSystem,
+    ctx: CanvasRenderingContext2D
+  ): void {
+    if (this.degradation?.particles_enabled === false) {
+      return;
+    }
+    this.renderParticles = updateParticles(this.renderParticles);
+    rs.drawParticles(ctx, this.renderParticles);
   }
 }
 

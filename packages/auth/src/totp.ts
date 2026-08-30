@@ -118,9 +118,12 @@ export function generateRecoveryCodes(count = 10): string[] {
     let part3 = "";
 
     for (let j = 0; j < 4; j++) {
-      part1 += chars[bytes[j] % chars.length];
-      part2 += chars[bytes[j + 1] % chars.length];
-      part3 += chars[bytes[j + 2] % chars.length];
+      const b0 = bytes[j] ?? 0;
+      const b1 = bytes[j + 1] ?? 0;
+      const b2 = bytes[j + 2] ?? 0;
+      part1 += chars[b0 % chars.length] ?? "";
+      part2 += chars[b1 % chars.length] ?? "";
+      part3 += chars[b2 % chars.length] ?? "";
     }
     codes.push(`${part1}-${part2}-${part3}`);
   }

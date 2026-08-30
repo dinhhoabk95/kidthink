@@ -23,6 +23,9 @@ describe("Notification Inbox & Endpoints DB Integration Tests", () => {
         payload: { title: "Test Title", body: "Test Body" },
       })
       .returning();
+    if (!notif) {
+      throw new Error("Failed to insert notification");
+    }
 
     const readTime = new Date();
 
@@ -36,7 +39,7 @@ describe("Notification Inbox & Endpoints DB Integration Tests", () => {
       .returning();
 
     expect(readRow).toBeDefined();
-    expect(readRow.notificationId).toBe(notif.id);
+    expect(readRow?.notificationId).toBe(notif.id);
 
     // Duplicate read for same notification fails (PK constraint)
     await expect(
@@ -52,7 +55,7 @@ describe("Notification Inbox & Endpoints DB Integration Tests", () => {
 
   it("BR-BPS-04 & BR-BPS-08: notification_endpoints supports encryption storage and unique fingerprint", async () => {
     const db = getOwnerDb();
-    let user: any;
+    let user: typeof users.$inferSelect | undefined;
     while (!user) {
       const email = `notif_ep_user_${Math.floor(100_000 + Math.random() * 899_999)}_${Date.now()}@example.com`;
       const [existing] = await db
@@ -70,6 +73,9 @@ describe("Notification Inbox & Endpoints DB Integration Tests", () => {
           .returning();
       }
     }
+    if (!user) {
+      throw new Error("Failed to insert user");
+    }
 
     const installationId = crypto.randomUUID();
     const fingerprint = `hmac_fp_${Date.now()}_${Math.random()}`;
@@ -86,6 +92,9 @@ describe("Notification Inbox & Endpoints DB Integration Tests", () => {
         status: "active",
       })
       .returning();
+    if (!endpoint) {
+      throw new Error("Failed to insert endpoint");
+    }
 
     expect(endpoint).toBeDefined();
     expect(endpoint.userId).toBe(user.id);

@@ -1,14 +1,14 @@
 import {
-  type DatabaseOwner,
   gameLevels,
   gameTemplates,
   getOwnerDb,
   managers,
+  type OwnerDb,
   writeAudit,
 } from "@mindkid/db";
 import { getGameTemplate } from "@mindkid/game-engine";
 import { eq, sql } from "drizzle-orm";
-import { createError, defineEventHandler } from "h3";
+import { createError, defineEventHandler, setResponseStatus } from "h3";
 import { z } from "zod";
 import { requireManagerSession } from "#server/utils/admin-auth-runtime";
 import { throwValidationError } from "#server/utils/api-error";
@@ -54,7 +54,7 @@ function generateLevelCode(
   return `GL-C${tNum}-STD-LVL-${numStr}`;
 }
 
-async function ensureDbTemplate(db: DatabaseOwner, templateCode: string) {
+async function ensureDbTemplate(db: OwnerDb, templateCode: string) {
   const template = getGameTemplate(templateCode);
   if (!template) {
     throw createError({
@@ -87,6 +87,14 @@ async function ensureDbTemplate(db: DatabaseOwner, templateCode: string) {
       .from(gameTemplates)
       .where(eq(gameTemplates.code, templateCode));
     dbTemplate = found;
+  }
+
+  if (!dbTemplate) {
+    throw createError({
+      statusCode: 500,
+      statusMessage: "TEMPLATE_NOT_FOUND",
+      message: `Không tìm thấy template '${templateCode}' trong cơ sở dữ liệu`,
+    });
   }
 
   return { template, dbTemplate };
@@ -276,19 +284,21 @@ export default defineEventHandler(async (event) => {
     newLevel.contentPack
   );
 
-  await writeAudit(db, {
-    actor_type: "manager",
-    actor_id: validManagerId || 1,
-    action: "game_level_created",
-    entity_type: "game_level",
-    entity_id: newLevel.id.toString(),
-    after_data: {
-      code: newLevel.code,
-      version: newLevel.contentVersion,
-      template: templateCode,
-    },
+  await db.transaction(async (tx) => {
+    await writeAudit(tx, {
+      actor_type: "manager",
+      actor_id: validManagerId,
+      action: "content_created",
+      entity_type: "game_level",
+      entity_id: newLevel.id.toString(),
+      after_data: {
+        code: newLevel.code,
+        version: newLevel.contentVersion,
+        template: templateCode,
+      },
+    });
   });
 
-  event.node.res.statusCode = 201;
+  setResponseStatus(event, 201);
   return newLevel;
 });

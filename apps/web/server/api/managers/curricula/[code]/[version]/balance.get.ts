@@ -42,7 +42,7 @@ async function fetchLessonMeta(
     titleViStr: les.title,
     statusStr: les.status,
     minsNum: les.estimatedMinutes ?? 20,
-    compStr: match ? match[1].toUpperCase() : undefined,
+    compStr: match?.[1] ? match[1].toUpperCase() : undefined,
   };
 }
 
@@ -72,15 +72,24 @@ async function fetchGameLevelMeta(
     statusStr: lvl.status,
     diffNum: lvl.difficulty ?? 1,
     minsNum: 10,
-    compStr: match ? match[1].toUpperCase() : undefined,
+    compStr: match?.[1] ? match[1].toUpperCase() : undefined,
   };
+}
+
+interface ResolvedMeta {
+  codeStr?: string;
+  titleViStr?: string;
+  statusStr?: string;
+  compStr?: string;
+  diffNum?: number;
+  minsNum?: number;
 }
 
 async function resolveCurriculumItemMetadata(
   db: ReturnType<typeof getOwnerDb>,
   it: typeof curriculumItems.$inferSelect
 ): Promise<CurriculumItemMetadata> {
-  let resolved: Record<string, unknown> = {};
+  let resolved: ResolvedMeta = {};
   if (it.entityType === "lesson") {
     resolved = await fetchLessonMeta(db, it.entityId);
   } else if (it.entityType === "game_level") {

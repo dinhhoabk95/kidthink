@@ -26,7 +26,7 @@ và một cổng bảo mật.
 | `typecheck-gate.ts` · `typecheck-delta.ts` · `ratchet.ts` · `typecheck-baseline.json` | `scripts/typecheck/` | Đây **chính là** `vue-tsc`: không workspace nào có script `typecheck` riêng, cả 10 project chạy qua file này |
 | `findUnvalidatedRoutes` | `apps/web/tests/security/route-validation.ts` | `BR-SEC-04` — route `/api/*` đọc body phải Zod parse. Viết lại tự chứa, hết phụ thuộc package cũ |
 
-Baseline có sẵn **2.950 lỗi** kiểu tại thời điểm gỡ (chốt lại còn **2.931** sau khi bỏ 5 mục trỏ `packages/gates` và một lượt giảm ở `admin:app`). Bỏ bậc thang thì `pnpm typecheck`
+Baseline có sẵn **2.950 lỗi** kiểu tại thời điểm gỡ (chốt lại còn **2.948** — con số **2.931** ghi ở đây và ở `CLAUDE.md` sai, sửa 2026-08-30; sau khi bỏ 5 mục trỏ `packages/gates` và một lượt giảm ở `admin:app`). Bỏ bậc thang thì `pnpm typecheck`
 đỏ ngay từ lần chạy đầu, nên bậc thang được giữ nguyên.
 
 ## 3. Cổng còn lại — đây là toàn bộ
@@ -87,3 +87,16 @@ thắc mắc thì tra về đây.
 |---|---|---|
 | 1 | `business-rules.md` còn xứng `status: implemented` không, khi `BR-REG2-*` mất cổng? | mở |
 | 2 | Bốn rule mất cổng nhưng có `grep` thay thế (`BR-DSC-02`, `BR-ENG-04`) có nên vào `pnpm check` dạng một dòng grep không? | mở |
+
+## Bổ sung 2026-08-30 — danh sách nợ §4 chưa đủ
+
+Lượt review Task #109→#129 đối chiếu 75 file đã xoá với cổng còn lại và tìm thấy **tám**
+khoản mất cưỡng chế không có trong §4, trong đó `BR-MFA-13` là khoản nặng nhất:
+spec `mfa.md` §7 nói rõ sai khoá TOTP hỏng **im lặng**, nên phép quét tĩnh là detector
+duy nhất. Đã khôi phục tại `apps/web/tests/gates/mfa-key-custody.ts`.
+
+Bảy khoản còn lại: `BR-PRF-01/02/08`, `BR-EMJ-03`, vệ sinh script shell, vệ sinh
+đường dẫn import, 24 rule manifest `BR-APM/ASC/OCP/OFF/PWA/RBL`, và nửa phần quét của
+`BR-GAT-01`.
+
+Bảng đủ nay ở [`docs/specs/08-quality/runtime-gates.md`](../specs/08-quality/runtime-gates.md) §3.

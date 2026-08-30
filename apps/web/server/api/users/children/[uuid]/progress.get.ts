@@ -78,7 +78,7 @@ function processSkillProgress(params: {
 
   if (pLearn >= 0.8) {
     const successors = allPrereqs.filter(
-      (pr) => Number(pr.prerequisiteSkillId) === Number(skill.id)
+      (pr) => Number(pr.prerequisiteId) === Number(skill.id)
     );
     for (const succ of successors) {
       const nextSkill = skillsById.get(Number(succ.skillId));

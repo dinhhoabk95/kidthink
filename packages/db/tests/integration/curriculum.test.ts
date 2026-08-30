@@ -57,6 +57,9 @@ describe("Curriculum Schema Integration Tests", () => {
         status: "draft",
       })
       .returning();
+    if (!cur) {
+      throw new Error("Failed to insert cur");
+    }
 
     const [item] = await db
       .insert(curriculumItems)
@@ -69,6 +72,9 @@ describe("Curriculum Schema Integration Tests", () => {
         entityId: 999_111_222,
       })
       .returning();
+    if (!item) {
+      throw new Error("Failed to insert item");
+    }
 
     expect(item).toBeDefined();
     expect(item.entityId).toBe(999_111_222);
@@ -79,7 +85,7 @@ describe("Curriculum Schema Integration Tests", () => {
 
     // 1. Create Game Template & Published Game Level Version 1
     const gtCode = `GT-${(Math.floor(Math.random() * 899) + 100).toString()}`;
-    const [gtInserted] = await db
+    const [gt] = await db
       .insert(gameTemplates)
       .values({
         code: gtCode,
@@ -89,14 +95,14 @@ describe("Curriculum Schema Integration Tests", () => {
       .onConflictDoNothing()
       .returning();
 
-    const gtId = gtInserted
-      ? gtInserted.id
-      : (
-          await db
-            .select()
-            .from(gameTemplates)
-            .where(eq(gameTemplates.code, gtCode))
-        )[0].id;
+    const templateRows = await db
+      .select()
+      .from(gameTemplates)
+      .where(eq(gameTemplates.code, gtCode));
+    const gtId = gt ? gt.id : templateRows[0]?.id;
+    if (!gtId) {
+      throw new Error("Failed to find template id");
+    }
 
     const glCode = await getUniqueGameLevelCode();
     const lineageAnchorEntityId = Math.floor(Math.random() * 900_000) + 100_000;
@@ -115,6 +121,9 @@ describe("Curriculum Schema Integration Tests", () => {
         status: "published",
       })
       .returning();
+    if (!glV1) {
+      throw new Error("Failed to insert glV1");
+    }
 
     // 2. Create Curriculum and Curriculum Item pointing to lineage anchor
     const curCode = await getUniqueCurriculumCode();
@@ -129,6 +138,9 @@ describe("Curriculum Schema Integration Tests", () => {
         status: "published",
       })
       .returning();
+    if (!cur) {
+      throw new Error("Failed to insert cur");
+    }
 
     const [item] = await db
       .insert(curriculumItems)
@@ -141,6 +153,9 @@ describe("Curriculum Schema Integration Tests", () => {
         entityId: lineageAnchorEntityId,
       })
       .returning();
+    if (!item) {
+      throw new Error("Failed to insert item");
+    }
 
     // Query published game level version for curriculum item before update -> returns V1
     const [publishedBefore] = await db
@@ -148,7 +163,7 @@ describe("Curriculum Schema Integration Tests", () => {
       .from(gameLevels)
       .where(eq(gameLevels.entityId, item.entityId));
 
-    expect(publishedBefore.title).toBe("Version 1");
+    expect(publishedBefore?.title).toBe("Version 1");
 
     // 3. Archive V1 and create Published Game Level Version 2 with same lineageAnchorEntityId
     await db
@@ -194,6 +209,9 @@ describe("Curriculum Schema Integration Tests", () => {
         status: "active",
       })
       .returning();
+    if (!user) {
+      throw new Error("Failed to insert user");
+    }
 
     const [child] = await db
       .insert(childProfiles)
@@ -204,6 +222,9 @@ describe("Curriculum Schema Integration Tests", () => {
         avatarId: "panda",
       })
       .returning();
+    if (!child) {
+      throw new Error("Failed to insert child");
+    }
 
     const [cur1] = await db
       .insert(curricula)
@@ -216,6 +237,9 @@ describe("Curriculum Schema Integration Tests", () => {
         status: "published",
       })
       .returning();
+    if (!cur1) {
+      throw new Error("Failed to insert cur1");
+    }
 
     const [cur2] = await db
       .insert(curricula)
@@ -228,6 +252,9 @@ describe("Curriculum Schema Integration Tests", () => {
         status: "published",
       })
       .returning();
+    if (!cur2) {
+      throw new Error("Failed to insert cur2");
+    }
 
     // First active enrollment succeeds
     await db.insert(curriculumEnrollments).values({
@@ -259,6 +286,9 @@ describe("Curriculum Schema Integration Tests", () => {
         status: "active",
       })
       .returning();
+    if (!user) {
+      throw new Error("Failed to insert user");
+    }
 
     const [child] = await db
       .insert(childProfiles)
@@ -269,6 +299,9 @@ describe("Curriculum Schema Integration Tests", () => {
         avatarId: "panda",
       })
       .returning();
+    if (!child) {
+      throw new Error("Failed to insert child");
+    }
 
     const [cur] = await db
       .insert(curricula)
@@ -281,6 +314,9 @@ describe("Curriculum Schema Integration Tests", () => {
         status: "published",
       })
       .returning();
+    if (!cur) {
+      throw new Error("Failed to insert cur");
+    }
 
     const [item] = await db
       .insert(curriculumItems)
@@ -293,6 +329,9 @@ describe("Curriculum Schema Integration Tests", () => {
         entityId: uid + 2,
       })
       .returning();
+    if (!item) {
+      throw new Error("Failed to insert item");
+    }
 
     const [enrollment] = await db
       .insert(curriculumEnrollments)
@@ -302,6 +341,9 @@ describe("Curriculum Schema Integration Tests", () => {
         status: "active",
       })
       .returning();
+    if (!enrollment) {
+      throw new Error("Failed to insert enrollment");
+    }
 
     // First progress insert
     await db.insert(curriculumItemProgress).values({

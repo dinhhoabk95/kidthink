@@ -6,18 +6,35 @@ import {
   type GameAction,
   TemplateGameSession,
 } from "#src/game-session";
+import { resolveLayout } from "#src/layout/registry";
+import type { Slot } from "#src/layout/types";
 import { OrderingMechanic } from "#src/mechanics/ordering-mechanic";
+import type { DegradationState } from "#src/systems/degradation";
+import type { Particle, RenderSystem } from "#src/systems/render-system";
 import {
   type TracePathResult,
   type TracePoint,
   TraceSystem,
 } from "#src/systems/trace-system";
+import {
+  drawPromptText,
+  drawSceneBackground,
+  drawSubPromptText,
+  type ItemVisualState,
+  updateParticles,
+} from "../shared-render.js";
+import { drawWaypointPath } from "../shared-render-shapes.js";
 import type { GT024Content, GT024Difficulty } from "./template.js";
 
 export class GT024Session extends TemplateGameSession<
   GT024Content,
   GT024Difficulty
 > {
+  slots: readonly Slot[] = [];
+  degradation: DegradationState | null = null;
+  private renderParticles: Particle[] = [];
+  private readonly renderItemStates: Map<string, ItemVisualState> = new Map();
+
   readonly traceSystem = new TraceSystem();
   private readonly orderingMechanic = new OrderingMechanic();
 
@@ -93,6 +110,49 @@ export class GT024Session extends TemplateGameSession<
 
   override checkWinCondition(): boolean {
     return this.traceSystem.isComplete();
+  }
+
+  resolveSlots(ageBand: "3-4" | "4-5" | "5-6"): void {
+    const layoutFn = resolveLayout("grid");
+    this.slots = layoutFn({
+      slotCount: this.content.waypoints.length,
+      ageBand,
+    });
+  }
+
+  setRenderItemState(itemId: string, state: ItemVisualState): void {
+    this.renderItemStates.set(itemId, state);
+  }
+
+  getRenderItemState(itemId: string): ItemVisualState {
+    return this.renderItemStates.get(itemId) ?? "idle";
+  }
+
+  render(
+    ctx: CanvasRenderingContext2D,
+    rs: RenderSystem,
+    _timeMs: number
+  ): void {
+    drawSceneBackground(ctx, rs);
+    drawPromptText(ctx, rs, this.content.prompt);
+    drawSubPromptText(ctx, rs, this.content.shape_name);
+    drawWaypointPath(
+      ctx,
+      this.content.waypoints,
+      this.traceSystem.getCurrentOrderIndex()
+    );
+    this.drawRenderFeedback(rs, ctx);
+  }
+
+  private drawRenderFeedback(
+    rs: RenderSystem,
+    ctx: CanvasRenderingContext2D
+  ): void {
+    if (this.degradation?.particles_enabled === false) {
+      return;
+    }
+    this.renderParticles = updateParticles(this.renderParticles);
+    rs.drawParticles(ctx, this.renderParticles);
   }
 }
 

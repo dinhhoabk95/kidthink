@@ -146,7 +146,10 @@ describe("P3.3 Curriculum Balance Engine & Rules (BR-CRM-01..11, BR-CBD-01..08, 
     const input = createValidCurriculum(8);
     // Set 60% of items to C1
     for (let i = 0; i < input.items.length * 0.6; i++) {
-      input.items[i].competency_code = "C1";
+      const itm = input.items[i];
+      if (itm) {
+        itm.competency_code = "C1";
+      }
     }
 
     const result = validateCurriculumModel(input);
@@ -197,14 +200,34 @@ describe("P3.3 Curriculum Balance Engine & Rules (BR-CRM-01..11, BR-CBD-01..08, 
     };
 
     // Place C1.SKL.02 in week 1 and C1.SKL.01 in week 4
-    input.items[0].skill_codes = ["C1.SKL.02"];
-    input.items[9].skill_codes = ["C1.SKL.01"];
+    if (input.items[0]) {
+      input.items[0].skill_codes = ["C1.SKL.02"];
+    }
+    if (input.items[9]) {
+      input.items[9].skill_codes = ["C1.SKL.01"];
+    }
 
     const result = validateCurriculumModel(input);
     expect(result.ok).toBe(false);
     expect(
       result.errors.some(
         (e) => e.includes("BR-CRM-01") || e.includes("BR-CBD-06")
+      )
+    ).toBe(true);
+  });
+
+  it("BR-CBD-07 & BR-CBD-08: detects circular prerequisites in skill graph as fatal error", () => {
+    const input = createValidCurriculum(8);
+    input.skill_prerequisites_map = {
+      "C1.SKL.01": ["C1.SKL.02"],
+      "C1.SKL.02": ["C1.SKL.01"], // Cycle!
+    };
+
+    const result = validateCurriculumModel(input);
+    expect(result.ok).toBe(false);
+    expect(
+      result.errors.some(
+        (e) => e.includes("BR-CBD-07") || e.includes("BR-CBD-08")
       )
     ).toBe(true);
   });
@@ -268,7 +291,9 @@ describe("P3.3 Curriculum Balance Engine & Rules (BR-CRM-01..11, BR-CBD-01..08, 
 
   it("BR-CBD-03: detects unpublished items when validating published curriculum", () => {
     const input = createValidCurriculum(8);
-    input.items[0].status = "draft";
+    if (input.items[0]) {
+      input.items[0].status = "draft";
+    }
 
     const result = validateCurriculumModel(input);
     expect(result.ok).toBe(false);

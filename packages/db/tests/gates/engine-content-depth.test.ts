@@ -14,6 +14,14 @@ import { SAMPLE_LEVEL_SEED } from "./fixtures/engine-depth-fixtures.js";
 const ERR_HISTORY_DOWNGRADE = /Bậc thang một chiều/;
 const ERR_EMPTY_SOURCE = /Nguồn corpus seed rỗng hoặc không đọc được/;
 
+/**
+ * Tổng thiếu hụt `level_count` ở bậc 1, đo 2026-08-30 trên corpus thật.
+ *
+ * 55 → 52 sau khi soạn thêm 8 level band 3-4 để đóng `BR-TCL-04`/`BR-TCM-04`.
+ * Số chỉ được GIẢM: tăng nghĩa là ai đó xoá level hoặc thêm engine chưa có nội dung.
+ */
+const MAX_LEVEL_COUNT_DEFICIT_AT_STEP_1 = 52;
+
 describe("Sàn chiều sâu mỗi engine — Task #122 (BR-ECD-01..13)", () => {
   it("Bậc 0: toàn bộ 27 engine active đều đạt sàn baseline", () => {
     const config = loadEngineDepthConfig();
@@ -259,34 +267,22 @@ describe("Sàn chiều sâu mỗi engine — Task #122 (BR-ECD-01..13)", () => {
 
       for (const [code, info] of Object.entries(report.perEngine)) {
         totalLevelsDeficit += info.deficits.level_count;
-        if (
-          [
-            "GT-001",
-            "GT-002",
-            "GT-003",
-            "GT-004",
-            "GT-005",
-            "GT-006",
-            "GT-007",
-            "GT-008",
-          ].includes(code)
-        ) {
-          expect(info.deficits.level_count, `${code} đã có ≥6 level`).toBe(0);
-        } else if (["GT-012", "GT-025"].includes(code)) {
-          expect(
-            info.deficits.level_count,
-            `${code} đang có 4 level, thiếu 2`
-          ).toBe(2);
-        } else {
-          expect(
-            info.deficits.level_count,
-            `${code} đang có 3 level, thiếu 3`
-          ).toBe(3);
-        }
+        // Thiếu hụt ❌ NEVER âm: một engine vượt sàn thì thiếu hụt là 0, không
+        // phải số âm bù trừ cho engine khác.
+        expect(
+          info.deficits.level_count,
+          `${code} thiếu hụt âm`
+        ).toBeGreaterThanOrEqual(0);
       }
 
-      // Tổng deficit level_count đúng bằng 55: (2 engine * 2) + (17 engine * 3) = 4 + 51 = 55
-      expect(totalLevelsDeficit).toBe(55);
+      // Bậc thang tổng: chỉ được GIẢM. Phân hoạch cứng theo tên engine như bản
+      // trước ("GT-012 và GT-025 thiếu 2, còn lại thiếu 3") biến mọi lần soạn
+      // thêm level — kể cả đúng hướng — thành một test đỏ phải sửa tay, nên nó
+      // đo danh sách tên chứ không đo tiến độ.
+      expect(totalLevelsDeficit).toBeLessThanOrEqual(
+        MAX_LEVEL_COUNT_DEFICIT_AT_STEP_1
+      );
+      expect(totalLevelsDeficit).toBe(MAX_LEVEL_COUNT_DEFICIT_AT_STEP_1);
     });
   });
 });

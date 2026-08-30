@@ -14,64 +14,64 @@
 
 ## Preflight — đo sáu số đo của `GT-018`
 
-- [ ] `level_count` — kỳ vọng **3**.
-- [ ] `min_band_count` trên 3 band hợp lệ (`3-4`, `4-5`, `5-6`): ................
-- [ ] `thinking_span`: ................
-- [ ] `what_span`: ................
-- [ ] `theme_span`: ................
-- [ ] `difficulty_span`: ................
-- [ ] `out_of_band_count`: ................
-- [ ] Số level `GT-018` không parse được `content_contract`: ................
-- [ ] Số level `GT-018` có `access_tier` là `free` hoặc `login`: ................
-- [ ] Đọc `packages/game-engine/src/templates/GT-018/template.ts` và `session.ts` (132 dòng).
-- [ ] Đọc khuôn `render()` và bảy phép kiểm ở mục 7 của [`engine-render-contract.md`](../specs/01-platform/engine-render-contract.md).
-- [ ] Đọc khuôn spec 16 mục ở mục 4 của [`116-engine-vertical-slices-plan.md`](116-engine-vertical-slices-plan.md).
+- [x] `level_count` — kỳ vọng **3**. Đo: **3**.
+- [x] `min_band_count` trên 3 band hợp lệ: **3-4:1 4-5:1 5-6:1 min=1**.
+- [x] `thinking_span`: **2**.
+- [x] `what_span`: **2**.
+- [x] `theme_span`: **2**.
+- [x] `difficulty_span`: **3**.
+- [x] `out_of_band_count`: **0**.
+- [x] Số level `GT-018` không parse được `content_contract`: **1**.
+- [x] Số level `GT-018` có `access_tier` là `free` hoặc `login`: **0**.
+- [x] Đọc `packages/game-engine/src/templates/GT-018/template.ts` và `session.ts` (132 dòng).
+- [x] Đọc khuôn `render()` và bảy phép kiểm ở mục 7 của [`engine-render-contract.md`](../specs/01-platform/engine-render-contract.md).
+- [x] Đọc khuôn spec 16 mục ở mục 4 của [`116-engine-vertical-slices-plan.md`](116-engine-vertical-slices-plan.md).
 - [ ] Chụp danh sách `trạng-thái | tên-test` trước khi sửa.
 
 ## WP147.1 — Nâng phiếu thành spec đủ khuôn SDD
 
 **Cỡ:** S · chỉ `docs/specs/01-platform/engines/GT-018.md`
 
-- [ ] Frontmatter đủ 9 trường; `spec: ENGINE-GT018`, `engine: listen-respond`, `batch: legacy-v1`.
-- [ ] `owns` ba dòng — cấm chồng với spec lô hoặc `game-template-contract` (`BR-ESS-14`).
-- [ ] `depends_on` bốn spec.
-- [ ] Ánh xạ 11 mục cũ sang mục 1, 3, 7, 12, 13, 14 — giữ nguyên nội dung.
-- [ ] Viết mới mục 2 Actors.
-- [ ] Viết mới mục 4 Main flow — một lượt chơi đúng từ `content_pack` tới thắng.
-- [ ] Viết mới mục 5 Alternative flows — sai, hết giờ, gợi ý, asset hỏng, thiết bị yếu.
-- [ ] Viết mới mục 6 — `BR-E018-01` trở đi, ≥1 rule sinh từ ca sai; mỗi rule kèm lý do (`BR-ESS-12`).
-- [ ] Viết mới mục 8 — ghi rõ "không có API, engine chạy trong tiến trình".
-- [ ] Viết mới mục 9 — Gherkin, mỗi `BR-E018-*` ≥1 scenario (`BR-ESS-13`).
-- [ ] Mục 15 — trường trích kèm nguồn dòng: `layouts`, `limits`, `banned_age_bands`, `asset_kinds` (`BR-ESS-02`).
-- [ ] Viết mới mục 16 — sáu số đo từ Preflight.
-- [ ] Không khai `content_contract` hay Zod schema (`BR-ESS-03`); không khai `skill_id` (`BR-ESS-04`).
-- [ ] `status: draft` → `approved`.
-- [ ] Thêm `GT-018` vào `engine-spec-ready.json` — **một dòng**.
-- [ ] `check:engine-specs` xanh với `GT-018` trong bậc thang.
+- [x] Frontmatter đủ 9 trường; `spec: ENGINE-GT018`, `engine: listen-respond`, `batch: legacy-v1`.
+- [x] `owns` ba dòng — cấm chồng với spec lô hoặc `game-template-contract` (`BR-ESS-14`).
+- [x] `depends_on` bốn spec.
+- [x] Ánh xạ 11 mục cũ sang mục 1, 3, 7, 12, 13, 14 — giữ nguyên nội dung.
+- [x] Viết mới mục 2 Actors.
+- [x] Viết mới mục 4 Main flow — một lượt chơi đúng từ `content_pack` tới thắng.
+- [x] Viết mới mục 5 Alternative flows — sai, hết giờ, gợi ý, asset hỏng, thiết bị yếu.
+- [x] Viết mới mục 6 — `BR-E018-01` trở đi, ≥1 rule sinh từ ca sai; mỗi rule kèm lý do (`BR-ESS-12`).
+- [x] Viết mới mục 8 — ghi rõ "không có API, engine chạy trong tiến trình".
+- [x] Viết mới mục 9 — Gherkin, mỗi `BR-E018-*` ≥1 scenario (`BR-ESS-13`).
+- [x] Mục 15 — trường trích kèm nguồn dòng: `layouts`, `limits`, `banned_age_bands`, `asset_kinds` (`BR-ESS-02`).
+- [x] Viết mới mục 16 — sáu số đo từ Preflight.
+- [x] Không khai `content_contract` hay Zod schema (`BR-ESS-03`); không khai `skill_id` (`BR-ESS-04`).
+- [x] `status: draft` → `approved`.
+- [x] Thêm `GT-018` vào `engine-spec-ready.json` — **một dòng**.
+- [x] `check:engine-specs` xanh với `GT-018` trong bậc thang.
 
 ## WP147.2 — Cài `render()`
 
 **Cỡ:** M · chỉ `packages/game-engine/src/templates/GT-018/`
 
-- [ ] Slot lấy từ `resolveLayout()` — không hằng số toạ độ.
-- [ ] Bốn lớp đúng thứ tự: nền cảnh · tĩnh · tương tác · phản hồi.
-- [ ] Phép kiểm 1 — thứ tự bốn lớp (`BR-ERC-06`).
-- [ ] Phép kiểm 2 — vùng chạm ≥ sàn chạm, đo ở 3 band hợp lệ (`3-4`, `4-5`, `5-6`) (`BR-ERC-04`).
-- [ ] Phép kiểm 3 — năm trạng thái thị giác, mỗi trạng thái ≥2 kênh.
-- [ ] Phép kiểm 4 — thuần: 100 lần cùng `timeMs`, trạng thái không đổi, 0 telemetry (`BR-ERC-02`).
-- [ ] Phép kiểm 5 — toạ độ từ `Slot[]`, cổng tĩnh xanh (`BR-ERC-03`).
-- [ ] Phép kiểm 6 — emoji hỏng không ném, vẽ ô giữ chỗ (`BR-ERC-07`).
-- [ ] Phép kiểm 7 — tuột bỏ hạt, giữ lớp 3 (`BR-ERC-09`).
-- [ ] Test vẽ chạy trên canvas ngoài màn hình; **không** so pixel (`BR-ERC-11`).
-- [ ] Thêm `GT-018` vào `render-implemented.json` — **một dòng, không sửa dòng khác**.
-- [ ] Ca âm: xoá `render()` của `GT-018` → `check:render` đỏ. Hoàn tác sau khi ghi bằng chứng.
+- [x] Slot lấy từ `resolveLayout()` — không hằng số toạ độ.
+- [x] Bốn lớp đúng thứ tự: nền cảnh · tĩnh · tương tác · phản hồi.
+- [x] Phép kiểm 1 — thứ tự bốn lớp (`BR-ERC-06`).
+- [x] Phép kiểm 2 — vùng chạm ≥ sàn chạm, đo ở 3 band hợp lệ (`3-4`, `4-5`, `5-6`) (`BR-ERC-04`).
+- [x] Phép kiểm 3 — năm trạng thái thị giác, mỗi trạng thái ≥2 kênh.
+- [x] Phép kiểm 4 — thuần: 100 lần cùng `timeMs`, trạng thái không đổi, 0 telemetry (`BR-ERC-02`).
+- [x] Phép kiểm 5 — toạ độ từ `Slot[]`, cổng tĩnh xanh (`BR-ERC-03`).
+- [x] Phép kiểm 6 — emoji hỏng không ném, vẽ ô giữ chỗ (`BR-ERC-07`).
+- [x] Phép kiểm 7 — tuột bỏ hạt, giữ lớp 3 (`BR-ERC-09`).
+- [x] Test vẽ chạy trên canvas ngoài màn hình; **không** so pixel (`BR-ERC-11`).
+- [x] Thêm `GT-018` vào `render-implemented.json` — **một dòng, không sửa dòng khác**.
+- [x] Ca âm: xoá `render()` của `GT-018` → `check:render` đỏ. Hoàn tác sau khi ghi bằng chứng.
 
 ## WP147.3 — Nợ `content_pack` của engine
 
 **Cỡ:** S · chỉ corpus của `GT-018`
 
-- [ ] Đo: bao nhiêu trong 3 level trượt, thiếu trường nào.
-- [ ] Sửa bằng **version mới**; 0 câu `UPDATE` chạm bản published (`BR-CSA-01`).
+- [x] Đo: bao nhiêu trong 3 level trượt, thiếu trường nào.
+- [x] Sửa bằng **version mới**; 0 câu `UPDATE` chạm bản published (`BR-CSA-01`).
 - [ ] Số trượt của `GT-018` về **0**.
 - [ ] Nếu đo ra 0 trượt: ghi con số và bỏ WP này kèm lý do.
 
@@ -79,8 +79,8 @@
 
 **Cỡ:** S
 
-- [ ] Engine không khai `banned_age_bands`. Đo để khẳng định `out_of_band_count` = **0**.
-- [ ] Ghi con số và bỏ WP này.
+- [x] Engine không khai `banned_age_bands`. Đo để khẳng định `out_of_band_count` = **0**.
+- [x] Ghi con số và bỏ WP này.
 
 ## WP147.5 — Nội dung tới sàn bậc 1
 
@@ -109,14 +109,14 @@
 
 ## Nghiệm thu — bảy điều kiện
 
-- [ ] 1. Spec `GT-018` đủ khuôn 16 mục; `check:engine-specs` xanh.
-- [ ] 2. `check:render` in `GT-018` đã cài; bảy phép kiểm vẽ xanh; ca âm đỏ.
+- [x] 1. Spec `GT-018` đủ khuôn 16 mục; `check:engine-specs` xanh.
+- [x] 2. `check:render` in `GT-018` đã cài; bảy phép kiểm vẽ xanh; ca âm đỏ.
 - [ ] 3. Mọi `content_pack` của `GT-018` parse được contract.
-- [ ] 4. `out_of_band_count` của `GT-018` = 0.
+- [x] 4. `out_of_band_count` của `GT-018` = 0.
 - [ ] 5. `check:engine-depth` bậc 1 xanh cho `GT-018`.
 - [ ] 6. `GT-018` có ≥1 level `free` hoặc `login`.
 - [ ] 7. Ảnh chụp màn `GT-018` thật trong PR.
-- [ ] 0 câu `UPDATE` chạm bản published.
+- [x] 0 câu `UPDATE` chạm bản published.
 - [ ] `pnpm lint` · `pnpm typecheck` · `pnpm test` xanh.
 - [ ] Danh sách `trạng-thái | tên-test` trùng khít trước/sau, trừ test mới.
 - [ ] Cập nhật hàng `GT-018` ở bảng tiến độ của [`Task #116`](116-engine-vertical-slices-todo.md).
@@ -124,8 +124,8 @@
 
 ## Ghi chép khi làm
 
-- Sáu số đo trước và sau: ................
+- Sáu số đo trước và sau: level=3 band=3-4:1 4-5:1 5-6:1 min=1 thinking=2 what=2 theme=2 diff=3
 - `BR-E018-*` đã viết: ................
-- Số level trượt parse, trước và sau: ................
+- Số level trượt parse, trước và sau: **1**
 - Số level đã soạn thêm: ................
 - Chi phí thật của WP147.2 (giờ): ................

@@ -1,3 +1,4 @@
+import { resolve } from "node:path";
 import { repoPath } from "@mindkid/config/paths";
 import { describe, expect, it } from "vitest";
 import {
@@ -6,6 +7,12 @@ import {
   scanEngineSpecsGate,
 } from "./engine-specs.js";
 
+const fixtureSpecPath = resolve(
+  import.meta.dirname,
+  "fixtures",
+  "incomplete-spec.md"
+);
+
 describe("Gate check:engine-specs (BR-ESS-01..14)", () => {
   const specsDir = repoPath("docs/specs/01-platform/engines");
   const templatesDir = repoPath("packages/game-engine/src/templates");
@@ -13,11 +20,11 @@ describe("Gate check:engine-specs (BR-ESS-01..14)", () => {
     "packages/game-engine/config/engine-spec-ready.json"
   );
 
-  it("baseline gate: 27 templates and 27 specs exist with empty ready ladder", () => {
+  it("baseline gate: 27 templates and 27 specs exist with current ready ladder", () => {
     const result = scanEngineSpecsGate(specsDir, templatesDir, configPath);
     expect(result.totalTemplates).toBe(27);
     expect(result.totalSpecs).toBe(27);
-    expect(result.readyCount).toBe(0);
+    expect(result.readyCount).toBeGreaterThanOrEqual(1);
     expect(result.violations).toHaveLength(0);
 
     const report = formatEngineSpecsReport(result);
@@ -49,23 +56,22 @@ describe("Gate check:engine-specs (BR-ESS-01..14)", () => {
 
   // Ca âm 3: Spec thiếu owns hoặc frontmatter không đủ -> Đỏ (BR-ESS-11)
   it("Ca âm 3: spec thiếu trường frontmatter hoặc owns rỗng làm cổng đỏ (BR-ESS-11)", () => {
-    const specPath = repoPath("docs/specs/01-platform/engines/GT-001.md");
-    // GT-001 hiện tại chưa lên chuẩn SDD (chưa có owns, mvp, phase...) nên khi isReady=true sẽ đỏ
-    const violations = lintSingleEngineSpec("GT-001", specPath, true);
+    // Dùng fixture spec không có owns/mvp/phase
+    const violations = lintSingleEngineSpec("GT-999", fixtureSpecPath, true);
     expect(violations.some((v) => v.rule === "BR-ESS-11")).toBe(true);
   });
 
   // Ca âm 4: Mục 6 rỗng hoặc không có BR-E<nnn>-* -> Đỏ (BR-ESS-12)
   it("Ca âm 4: mục 6 không có BR-E riêng của engine làm cổng đỏ (BR-ESS-12)", () => {
-    const specPath = repoPath("docs/specs/01-platform/engines/GT-001.md");
-    const violations = lintSingleEngineSpec("GT-001", specPath, true);
+    // Dùng fixture spec không có mục 6 Business rules
+    const violations = lintSingleEngineSpec("GT-999", fixtureSpecPath, true);
     expect(violations.some((v) => v.rule === "BR-ESS-12")).toBe(true);
   });
 
   // Ca âm 5: Một BR-E<nnn>-* không có scenario Gherkin tương ứng ở mục 9 -> Đỏ (BR-ESS-13)
   it("Ca âm 5: business rule không có Gherkin scenario làm cổng đỏ (BR-ESS-13)", () => {
-    const specPath = repoPath("docs/specs/01-platform/engines/GT-002.md");
-    const violations = lintSingleEngineSpec("GT-002", specPath, true);
+    // Fixture spec không có Gherkin scenarios
+    const violations = lintSingleEngineSpec("GT-999", fixtureSpecPath, true);
     expect(
       violations.some((v) => v.rule === "BR-ESS-12" || v.rule === "BR-ESS-13")
     ).toBe(true);
@@ -73,10 +79,8 @@ describe("Gate check:engine-specs (BR-ESS-01..14)", () => {
 
   // Ca âm 6: Ô ma trận ghi chữ "đa dạng" -> Đỏ (BR-ESS-05)
   it("Ca âm 6: ô ma trận ghi chữ đa dạng làm cổng đỏ (BR-ESS-05)", () => {
-    const specPath = repoPath("docs/specs/01-platform/engines/GT-001.md");
-    // Giả định test trực tiếp parser
-    const violations = lintSingleEngineSpec("GT-001", specPath, true);
-    // GT-001 chưa đủ mục 13 nên sẽ đỏ BR-ESS-05
+    // Fixture spec thiếu mục 13
+    const violations = lintSingleEngineSpec("GT-999", fixtureSpecPath, true);
     expect(violations.some((v) => v.rule === "BR-ESS-05")).toBe(true);
   });
 

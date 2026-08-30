@@ -12,12 +12,16 @@ export const TIER_RANK: Record<AccessTier, number> = {
 
 export type CallerIdentity =
   | { kind: "guest" }
-  | { kind: "user"; user_id: string; active_child_id?: string | null };
+  | { kind: "user"; user_id: string; active_child_id?: string | null }
+  | { kind: "manager"; manager_id: string; role?: string };
 
 export function allowedTiers(
   caller: CallerIdentity,
   activeKeys: EntitlementKey[] = []
 ): Promise<AccessTier[]> {
+  if (caller.kind === "manager") {
+    return Promise.resolve([...TIER_ORDER]);
+  }
   if (caller.kind === "guest") {
     return Promise.resolve(["free"]);
   }

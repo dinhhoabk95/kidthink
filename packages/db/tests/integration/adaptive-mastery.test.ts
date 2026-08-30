@@ -23,6 +23,9 @@ describe("P3.5 Adaptive & Mastery Integration Tests (PostgreSQL)", () => {
         displayName: "Parent ADP",
       })
       .returning();
+    if (!u) {
+      throw new Error("Failed to insert user");
+    }
 
     const [child] = await db
       .insert(childProfiles)
@@ -33,6 +36,9 @@ describe("P3.5 Adaptive & Mastery Integration Tests (PostgreSQL)", () => {
         avatarId: "preset_01",
       })
       .returning();
+    if (!child) {
+      throw new Error("Failed to insert child");
+    }
 
     // 2. Create taxonomy: competency, unique strand, unique skill
     let [comp] = await db
@@ -52,6 +58,9 @@ describe("P3.5 Adaptive & Mastery Integration Tests (PostgreSQL)", () => {
           position: 1,
         })
         .returning();
+    }
+    if (!comp) {
+      throw new Error("Failed to insert competency");
     }
 
     const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -78,6 +87,9 @@ describe("P3.5 Adaptive & Mastery Integration Tests (PostgreSQL)", () => {
         .from(strands)
         .where(eq(strands.code, validStrandCode));
     }
+    if (!strand) {
+      throw new Error("Failed to find strand");
+    }
 
     const skillCode = `${validStrandCode}.01`;
     const [skill] = await db
@@ -92,9 +104,12 @@ describe("P3.5 Adaptive & Mastery Integration Tests (PostgreSQL)", () => {
         position: 1,
       })
       .returning();
+    if (!skill) {
+      throw new Error("Failed to insert skill");
+    }
 
     // 3. Create game template and level
-    let template: any;
+    let template: typeof gameTemplates.$inferSelect | undefined;
     const templateCode = `GT-${String(Math.floor(Math.random() * 899 + 100)).padStart(3, "0")}`;
     const [existingTemplate] = await db
       .select()
@@ -115,8 +130,11 @@ describe("P3.5 Adaptive & Mastery Integration Tests (PostgreSQL)", () => {
         })
         .returning();
     }
+    if (!template) {
+      throw new Error("Failed to insert template");
+    }
 
-    let level: any;
+    let level: typeof gameLevels.$inferSelect | undefined;
     const levelCode = `GL-C1-CNT-TAP-${String(Math.floor(Math.random() * 8999 + 1000)).padStart(4, "0")}`;
     const [existingLevel] = await db
       .select()
@@ -140,6 +158,9 @@ describe("P3.5 Adaptive & Mastery Integration Tests (PostgreSQL)", () => {
           status: "published",
         })
         .returning();
+    }
+    if (!level) {
+      throw new Error("Failed to insert level");
     }
 
     // 4. Map level to skill
@@ -225,6 +246,9 @@ describe("P3.5 Adaptive & Mastery Integration Tests (PostgreSQL)", () => {
       );
 
     expect(row).toBeDefined();
+    if (!row) {
+      throw new Error("row not found");
+    }
     expect(Number(row.pLearn)).toBeGreaterThan(0.1);
     expect(Number(row.bestPLearn)).toBe(Number(row.pLearn));
     expect(row.attemptsTotal).toBe(1);
@@ -294,6 +318,9 @@ describe("P3.5 Adaptive & Mastery Integration Tests (PostgreSQL)", () => {
           eq(masteryState.skillId, skill.id)
         )
       );
+    if (!state1) {
+      throw new Error("state1 not found");
+    }
 
     const highPLearn = Number(state1.pLearn);
     expect(Number(state1.bestPLearn)).toBe(highPLearn);
@@ -357,6 +384,9 @@ describe("P3.5 Adaptive & Mastery Integration Tests (PostgreSQL)", () => {
           eq(masteryState.skillId, skill.id)
         )
       );
+    if (!state2) {
+      throw new Error("state2 not found");
+    }
 
     expect(Number(state2.pLearn)).toBeLessThan(highPLearn);
     // bestPLearn must NOT regress

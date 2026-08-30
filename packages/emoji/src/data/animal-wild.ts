@@ -354,4 +354,12 @@ export const ANIMAL_WILD_EMOJIS: EmojiEntry[] = [
     keywords: ["polar bear", "arctic", "gấu", "tuyết", "lạnh"],
     name: "Gấu tuyết",
   },
+  {
+    age_min: 3,
+    category: "animal-wild",
+    curriculum_themes: ["dong_vat", "the_gioi_dong_vat"],
+    emoji: "🐭",
+    keywords: ["mouse face", "mặt chuột", "con chuột"],
+    name: "Mặt chuột",
+  },
 ];

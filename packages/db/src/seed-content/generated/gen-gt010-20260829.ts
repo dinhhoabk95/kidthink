@@ -1,10 +1,10 @@
 /**
- * @generated from LEVEL-GENERATOR-KIT@00000000
+ * @generated from LEVEL-GENERATOR-KIT@c9fd31f3f239
  * Engine: GT-010
  * Seed: 20260829
  * Theme: school
  * Band: 4-5
- * Total generated: 9
+ * Total generated: 10
  */
 import type { ContentSeed } from "#src/seed-content/types";
 
@@ -25,7 +25,7 @@ export const GEN_GT010_20260829: ContentSeed<unknown, unknown>[] = [
       "what_tags": [],
       "thinking_tags": [],
       "theme_tag": "school",
-      "origin": "generator",
+      "origin": "ai_assisted",
       "authored_in": "repo_seed"
     },
     "content_pack": {
@@ -33,102 +33,16 @@ export const GEN_GT010_20260829: ContentSeed<unknown, unknown>[] = [
       "symbols": [
         {
           "symbol_id": "sym_1",
-          "asset": {
-            "kind": "emoji",
-            "ref": "EMJ-backpack"
-          }
-        },
-        {
-          "symbol_id": "sym_2",
           "asset": {
             "kind": "emoji",
             "ref": "EMJ-ruler"
           }
-        }
-      ],
-      "equations": [
-        {
-          "equation_id": "eq_1",
-          "left": [
-            "sym_1",
-            "sym_1"
-          ],
-          "right_value": 4
-        },
-        {
-          "equation_id": "eq_2",
-          "left": [
-            "sym_1",
-            "sym_2"
-          ],
-          "right_value": 3
-        }
-      ],
-      "question": {
-        "kind": "value",
-        "symbol_id": "sym_2"
-      },
-      "options": [
-        {
-          "value": 1,
-          "is_correct": true
-        },
-        {
-          "value": 2,
-          "is_correct": false
-        },
-        {
-          "value": 3,
-          "is_correct": false
-        },
-        {
-          "value": 2,
-          "is_correct": false
-        }
-      ]
-    },
-    "difficulty_params": {
-      "equation_count": 2,
-      "step_count": 2,
-      "distractor_count": 3,
-      "hint_after_ms": 10000,
-      "allow_retry": true
-    }
-  },
-  {
-    "header": {
-      "code": "GL-GEN-GT-010-20260829-02",
-      "content_version": 1,
-      "template_code": "GT-010",
-      "title": "",
-      "instruction": "",
-      "age_min": 4,
-      "age_max": 5,
-      "difficulty": 1,
-      "access_tier": "free",
-      "skill_codes": [],
-      "learning_objective_codes": [],
-      "what_tags": [],
-      "thinking_tags": [],
-      "theme_tag": "school",
-      "origin": "generator",
-      "authored_in": "repo_seed"
-    },
-    "content_pack": {
-      "prompt": "Bé hãy tính xem hình sau có giá trị bằng bao nhiêu nhé!",
-      "symbols": [
-        {
-          "symbol_id": "sym_1",
-          "asset": {
-            "kind": "emoji",
-            "ref": "🍎"
-          }
         },
         {
           "symbol_id": "sym_2",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-pencil"
+            "ref": "EMJ-crayon"
           }
         }
       ],
@@ -165,6 +79,92 @@ export const GEN_GT010_20260829: ContentSeed<unknown, unknown>[] = [
         },
         {
           "value": 3,
+          "is_correct": false
+        },
+        {
+          "value": 6,
+          "is_correct": false
+        }
+      ]
+    },
+    "difficulty_params": {
+      "equation_count": 2,
+      "step_count": 2,
+      "distractor_count": 3,
+      "hint_after_ms": 10000,
+      "allow_retry": true
+    }
+  },
+  {
+    "header": {
+      "code": "GL-GEN-GT-010-20260829-02",
+      "content_version": 1,
+      "template_code": "GT-010",
+      "title": "",
+      "instruction": "",
+      "age_min": 4,
+      "age_max": 5,
+      "difficulty": 1,
+      "access_tier": "free",
+      "skill_codes": [],
+      "learning_objective_codes": [],
+      "what_tags": [],
+      "thinking_tags": [],
+      "theme_tag": "school",
+      "origin": "ai_assisted",
+      "authored_in": "repo_seed"
+    },
+    "content_pack": {
+      "prompt": "Bé hãy tính xem hình sau có giá trị bằng bao nhiêu nhé!",
+      "symbols": [
+        {
+          "symbol_id": "sym_1",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-open-book"
+          }
+        },
+        {
+          "symbol_id": "sym_2",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-scissors"
+          }
+        }
+      ],
+      "equations": [
+        {
+          "equation_id": "eq_1",
+          "left": [
+            "sym_1",
+            "sym_1"
+          ],
+          "right_value": 8
+        },
+        {
+          "equation_id": "eq_2",
+          "left": [
+            "sym_1",
+            "sym_2"
+          ],
+          "right_value": 6
+        }
+      ],
+      "question": {
+        "kind": "value",
+        "symbol_id": "sym_2"
+      },
+      "options": [
+        {
+          "value": 2,
+          "is_correct": true
+        },
+        {
+          "value": 3,
+          "is_correct": false
+        },
+        {
+          "value": 1,
           "is_correct": false
         },
         {
@@ -197,7 +197,7 @@ export const GEN_GT010_20260829: ContentSeed<unknown, unknown>[] = [
       "what_tags": [],
       "thinking_tags": [],
       "theme_tag": "school",
-      "origin": "generator",
+      "origin": "ai_assisted",
       "authored_in": "repo_seed"
     },
     "content_pack": {
@@ -207,93 +207,7 @@ export const GEN_GT010_20260829: ContentSeed<unknown, unknown>[] = [
           "symbol_id": "sym_1",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-backpack"
-          }
-        },
-        {
-          "symbol_id": "sym_2",
-          "asset": {
-            "kind": "emoji",
-            "ref": "EMJ-school"
-          }
-        }
-      ],
-      "equations": [
-        {
-          "equation_id": "eq_1",
-          "left": [
-            "sym_1",
-            "sym_1"
-          ],
-          "right_value": 4
-        },
-        {
-          "equation_id": "eq_2",
-          "left": [
-            "sym_1",
-            "sym_2"
-          ],
-          "right_value": 3
-        }
-      ],
-      "question": {
-        "kind": "value",
-        "symbol_id": "sym_2"
-      },
-      "options": [
-        {
-          "value": 1,
-          "is_correct": true
-        },
-        {
-          "value": 2,
-          "is_correct": false
-        },
-        {
-          "value": 3,
-          "is_correct": false
-        },
-        {
-          "value": 2,
-          "is_correct": false
-        }
-      ]
-    },
-    "difficulty_params": {
-      "equation_count": 2,
-      "step_count": 2,
-      "distractor_count": 3,
-      "hint_after_ms": 10000,
-      "allow_retry": true
-    }
-  },
-  {
-    "header": {
-      "code": "GL-GEN-GT-010-20260829-04",
-      "content_version": 1,
-      "template_code": "GT-010",
-      "title": "",
-      "instruction": "",
-      "age_min": 4,
-      "age_max": 5,
-      "difficulty": 1,
-      "access_tier": "free",
-      "skill_codes": [],
-      "learning_objective_codes": [],
-      "what_tags": [],
-      "thinking_tags": [],
-      "theme_tag": "school",
-      "origin": "generator",
-      "authored_in": "repo_seed"
-    },
-    "content_pack": {
-      "prompt": "Bé hãy tính xem hình sau có giá trị bằng bao nhiêu nhé!",
-      "symbols": [
-        {
-          "symbol_id": "sym_1",
-          "asset": {
-            "kind": "emoji",
-            "ref": "🍎"
+            "ref": "EMJ-crayon"
           }
         },
         {
@@ -355,7 +269,7 @@ export const GEN_GT010_20260829: ContentSeed<unknown, unknown>[] = [
   },
   {
     "header": {
-      "code": "GL-GEN-GT-010-20260829-05",
+      "code": "GL-GEN-GT-010-20260829-04",
       "content_version": 1,
       "template_code": "GT-010",
       "title": "",
@@ -369,7 +283,7 @@ export const GEN_GT010_20260829: ContentSeed<unknown, unknown>[] = [
       "what_tags": [],
       "thinking_tags": [],
       "theme_tag": "school",
-      "origin": "generator",
+      "origin": "ai_assisted",
       "authored_in": "repo_seed"
     },
     "content_pack": {
@@ -379,100 +293,14 @@ export const GEN_GT010_20260829: ContentSeed<unknown, unknown>[] = [
           "symbol_id": "sym_1",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-school"
+            "ref": "EMJ-scissors"
           }
         },
         {
           "symbol_id": "sym_2",
           "asset": {
             "kind": "emoji",
-            "ref": "🍎"
-          }
-        }
-      ],
-      "equations": [
-        {
-          "equation_id": "eq_1",
-          "left": [
-            "sym_1",
-            "sym_1"
-          ],
-          "right_value": 6
-        },
-        {
-          "equation_id": "eq_2",
-          "left": [
-            "sym_1",
-            "sym_2"
-          ],
-          "right_value": 7
-        }
-      ],
-      "question": {
-        "kind": "value",
-        "symbol_id": "sym_2"
-      },
-      "options": [
-        {
-          "value": 4,
-          "is_correct": true
-        },
-        {
-          "value": 5,
-          "is_correct": false
-        },
-        {
-          "value": 3,
-          "is_correct": false
-        },
-        {
-          "value": 3,
-          "is_correct": false
-        }
-      ]
-    },
-    "difficulty_params": {
-      "equation_count": 2,
-      "step_count": 2,
-      "distractor_count": 3,
-      "hint_after_ms": 10000,
-      "allow_retry": true
-    }
-  },
-  {
-    "header": {
-      "code": "GL-GEN-GT-010-20260829-06",
-      "content_version": 1,
-      "template_code": "GT-010",
-      "title": "",
-      "instruction": "",
-      "age_min": 4,
-      "age_max": 5,
-      "difficulty": 1,
-      "access_tier": "free",
-      "skill_codes": [],
-      "learning_objective_codes": [],
-      "what_tags": [],
-      "thinking_tags": [],
-      "theme_tag": "school",
-      "origin": "generator",
-      "authored_in": "repo_seed"
-    },
-    "content_pack": {
-      "prompt": "Bé hãy tính xem hình sau có giá trị bằng bao nhiêu nhé!",
-      "symbols": [
-        {
-          "symbol_id": "sym_1",
-          "asset": {
-            "kind": "emoji",
-            "ref": "EMJ-backpack"
-          }
-        },
-        {
-          "symbol_id": "sym_2",
-          "asset": {
-            "kind": "emoji",
-            "ref": "EMJ-pencil"
+            "ref": "EMJ-ruler"
           }
         }
       ],
@@ -512,7 +340,7 @@ export const GEN_GT010_20260829: ContentSeed<unknown, unknown>[] = [
           "is_correct": false
         },
         {
-          "value": 2,
+          "value": 4,
           "is_correct": false
         }
       ]
@@ -527,7 +355,7 @@ export const GEN_GT010_20260829: ContentSeed<unknown, unknown>[] = [
   },
   {
     "header": {
-      "code": "GL-GEN-GT-010-20260829-07",
+      "code": "GL-GEN-GT-010-20260829-05",
       "content_version": 1,
       "template_code": "GT-010",
       "title": "",
@@ -541,7 +369,7 @@ export const GEN_GT010_20260829: ContentSeed<unknown, unknown>[] = [
       "what_tags": [],
       "thinking_tags": [],
       "theme_tag": "school",
-      "origin": "generator",
+      "origin": "ai_assisted",
       "authored_in": "repo_seed"
     },
     "content_pack": {
@@ -558,7 +386,7 @@ export const GEN_GT010_20260829: ContentSeed<unknown, unknown>[] = [
           "symbol_id": "sym_2",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-backpack"
+            "ref": "EMJ-books"
           }
         }
       ],
@@ -569,7 +397,7 @@ export const GEN_GT010_20260829: ContentSeed<unknown, unknown>[] = [
             "sym_1",
             "sym_1"
           ],
-          "right_value": 4
+          "right_value": 6
         },
         {
           "equation_id": "eq_2",
@@ -586,19 +414,19 @@ export const GEN_GT010_20260829: ContentSeed<unknown, unknown>[] = [
       },
       "options": [
         {
-          "value": 2,
+          "value": 1,
           "is_correct": true
+        },
+        {
+          "value": 2,
+          "is_correct": false
         },
         {
           "value": 3,
           "is_correct": false
         },
         {
-          "value": 1,
-          "is_correct": false
-        },
-        {
-          "value": 2,
+          "value": 4,
           "is_correct": false
         }
       ]
@@ -613,7 +441,7 @@ export const GEN_GT010_20260829: ContentSeed<unknown, unknown>[] = [
   },
   {
     "header": {
-      "code": "GL-GEN-GT-010-20260829-08",
+      "code": "GL-GEN-GT-010-20260829-06",
       "content_version": 1,
       "template_code": "GT-010",
       "title": "",
@@ -627,7 +455,7 @@ export const GEN_GT010_20260829: ContentSeed<unknown, unknown>[] = [
       "what_tags": [],
       "thinking_tags": [],
       "theme_tag": "school",
-      "origin": "generator",
+      "origin": "ai_assisted",
       "authored_in": "repo_seed"
     },
     "content_pack": {
@@ -637,14 +465,14 @@ export const GEN_GT010_20260829: ContentSeed<unknown, unknown>[] = [
           "symbol_id": "sym_1",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-school"
+            "ref": "EMJ-backpack"
           }
         },
         {
           "symbol_id": "sym_2",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-ruler"
+            "ref": "EMJ-pencil"
           }
         }
       ],
@@ -680,11 +508,183 @@ export const GEN_GT010_20260829: ContentSeed<unknown, unknown>[] = [
           "is_correct": false
         },
         {
+          "value": 5,
+          "is_correct": false
+        },
+        {
           "value": 3,
+          "is_correct": false
+        }
+      ]
+    },
+    "difficulty_params": {
+      "equation_count": 2,
+      "step_count": 2,
+      "distractor_count": 3,
+      "hint_after_ms": 10000,
+      "allow_retry": true
+    }
+  },
+  {
+    "header": {
+      "code": "GL-GEN-GT-010-20260829-07",
+      "content_version": 1,
+      "template_code": "GT-010",
+      "title": "",
+      "instruction": "",
+      "age_min": 4,
+      "age_max": 5,
+      "difficulty": 1,
+      "access_tier": "free",
+      "skill_codes": [],
+      "learning_objective_codes": [],
+      "what_tags": [],
+      "thinking_tags": [],
+      "theme_tag": "school",
+      "origin": "ai_assisted",
+      "authored_in": "repo_seed"
+    },
+    "content_pack": {
+      "prompt": "Bé hãy tính xem hình sau có giá trị bằng bao nhiêu nhé!",
+      "symbols": [
+        {
+          "symbol_id": "sym_1",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-pencil"
+          }
+        },
+        {
+          "symbol_id": "sym_2",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-books"
+          }
+        }
+      ],
+      "equations": [
+        {
+          "equation_id": "eq_1",
+          "left": [
+            "sym_1",
+            "sym_1"
+          ],
+          "right_value": 6
+        },
+        {
+          "equation_id": "eq_2",
+          "left": [
+            "sym_1",
+            "sym_2"
+          ],
+          "right_value": 6
+        }
+      ],
+      "question": {
+        "kind": "value",
+        "symbol_id": "sym_2"
+      },
+      "options": [
+        {
+          "value": 3,
+          "is_correct": true
+        },
+        {
+          "value": 4,
+          "is_correct": false
+        },
+        {
+          "value": 2,
           "is_correct": false
         },
         {
           "value": 5,
+          "is_correct": false
+        }
+      ]
+    },
+    "difficulty_params": {
+      "equation_count": 2,
+      "step_count": 2,
+      "distractor_count": 3,
+      "hint_after_ms": 10000,
+      "allow_retry": true
+    }
+  },
+  {
+    "header": {
+      "code": "GL-GEN-GT-010-20260829-08",
+      "content_version": 1,
+      "template_code": "GT-010",
+      "title": "",
+      "instruction": "",
+      "age_min": 4,
+      "age_max": 5,
+      "difficulty": 1,
+      "access_tier": "free",
+      "skill_codes": [],
+      "learning_objective_codes": [],
+      "what_tags": [],
+      "thinking_tags": [],
+      "theme_tag": "school",
+      "origin": "ai_assisted",
+      "authored_in": "repo_seed"
+    },
+    "content_pack": {
+      "prompt": "Bé hãy tính xem hình sau có giá trị bằng bao nhiêu nhé!",
+      "symbols": [
+        {
+          "symbol_id": "sym_1",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-open-book"
+          }
+        },
+        {
+          "symbol_id": "sym_2",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-crayon"
+          }
+        }
+      ],
+      "equations": [
+        {
+          "equation_id": "eq_1",
+          "left": [
+            "sym_1",
+            "sym_1"
+          ],
+          "right_value": 8
+        },
+        {
+          "equation_id": "eq_2",
+          "left": [
+            "sym_1",
+            "sym_2"
+          ],
+          "right_value": 6
+        }
+      ],
+      "question": {
+        "kind": "value",
+        "symbol_id": "sym_2"
+      },
+      "options": [
+        {
+          "value": 2,
+          "is_correct": true
+        },
+        {
+          "value": 3,
+          "is_correct": false
+        },
+        {
+          "value": 1,
+          "is_correct": false
+        },
+        {
+          "value": 4,
           "is_correct": false
         }
       ]
@@ -713,7 +713,7 @@ export const GEN_GT010_20260829: ContentSeed<unknown, unknown>[] = [
       "what_tags": [],
       "thinking_tags": [],
       "theme_tag": "school",
-      "origin": "generator",
+      "origin": "ai_assisted",
       "authored_in": "repo_seed"
     },
     "content_pack": {
@@ -723,14 +723,14 @@ export const GEN_GT010_20260829: ContentSeed<unknown, unknown>[] = [
           "symbol_id": "sym_1",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-backpack"
+            "ref": "EMJ-open-book"
           }
         },
         {
           "symbol_id": "sym_2",
           "asset": {
             "kind": "emoji",
-            "ref": "🍎"
+            "ref": "EMJ-abacus"
           }
         }
       ],
@@ -741,7 +741,7 @@ export const GEN_GT010_20260829: ContentSeed<unknown, unknown>[] = [
             "sym_1",
             "sym_1"
           ],
-          "right_value": 4
+          "right_value": 10
         },
         {
           "equation_id": "eq_2",
@@ -749,7 +749,7 @@ export const GEN_GT010_20260829: ContentSeed<unknown, unknown>[] = [
             "sym_1",
             "sym_2"
           ],
-          "right_value": 5
+          "right_value": 8
         }
       ],
       "question": {
@@ -770,7 +770,93 @@ export const GEN_GT010_20260829: ContentSeed<unknown, unknown>[] = [
           "is_correct": false
         },
         {
+          "value": 5,
+          "is_correct": false
+        }
+      ]
+    },
+    "difficulty_params": {
+      "equation_count": 2,
+      "step_count": 2,
+      "distractor_count": 3,
+      "hint_after_ms": 10000,
+      "allow_retry": true
+    }
+  },
+  {
+    "header": {
+      "code": "GL-GEN-GT-010-20260829-10",
+      "content_version": 1,
+      "template_code": "GT-010",
+      "title": "",
+      "instruction": "",
+      "age_min": 4,
+      "age_max": 5,
+      "difficulty": 1,
+      "access_tier": "free",
+      "skill_codes": [],
+      "learning_objective_codes": [],
+      "what_tags": [],
+      "thinking_tags": [],
+      "theme_tag": "school",
+      "origin": "ai_assisted",
+      "authored_in": "repo_seed"
+    },
+    "content_pack": {
+      "prompt": "Bé hãy tính xem hình sau có giá trị bằng bao nhiêu nhé!",
+      "symbols": [
+        {
+          "symbol_id": "sym_1",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-bell"
+          }
+        },
+        {
+          "symbol_id": "sym_2",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-books"
+          }
+        }
+      ],
+      "equations": [
+        {
+          "equation_id": "eq_1",
+          "left": [
+            "sym_1",
+            "sym_1"
+          ],
+          "right_value": 10
+        },
+        {
+          "equation_id": "eq_2",
+          "left": [
+            "sym_1",
+            "sym_2"
+          ],
+          "right_value": 6
+        }
+      ],
+      "question": {
+        "kind": "value",
+        "symbol_id": "sym_2"
+      },
+      "options": [
+        {
+          "value": 1,
+          "is_correct": true
+        },
+        {
           "value": 2,
+          "is_correct": false
+        },
+        {
+          "value": 5,
+          "is_correct": false
+        },
+        {
+          "value": 3,
           "is_correct": false
         }
       ]

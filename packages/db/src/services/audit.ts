@@ -162,6 +162,10 @@ export async function writeAudit<A extends AuditAction>(
     })
     .returning();
 
+  if (!row) {
+    throw new Error("Failed to insert audit log");
+  }
+
   return row;
 }
 

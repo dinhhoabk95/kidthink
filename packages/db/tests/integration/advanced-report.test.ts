@@ -87,6 +87,9 @@ describe("P3.7 Advanced Report Invariants (BR-ARP)", () => {
         .where(eq(skills.code, "C1.CNT.01"));
 
       expect(sampleSkill).toBeDefined();
+      if (!sampleSkill) {
+        throw new Error("sampleSkill not found");
+      }
 
       const suggestions = await db
         .select()
@@ -94,8 +97,8 @@ describe("P3.7 Advanced Report Invariants (BR-ARP)", () => {
         .where(eq(skillActionSuggestions.skillId, Number(sampleSkill.id)));
 
       expect(suggestions.length).toBeGreaterThanOrEqual(1);
-      expect(suggestions[0].text).toBeDefined();
-      expect(["home_activity", "in_app"]).toContain(suggestions[0].kind);
+      expect(suggestions[0]?.text).toBeDefined();
+      expect(["home_activity", "in_app"]).toContain(suggestions[0]?.kind);
     });
   });
 });

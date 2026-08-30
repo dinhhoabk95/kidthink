@@ -48,6 +48,9 @@ export function solveEquationSystem(
     }
 
     const sym = symbolIds[idx];
+    if (!sym) {
+      return;
+    }
     for (let v = 1; v <= maxVal; v++) {
       current[sym] = v;
       search(idx + 1, current);

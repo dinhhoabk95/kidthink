@@ -6,6 +6,8 @@ import {
   type GameAction,
   TemplateGameSession,
 } from "#src/game-session";
+import { resolveLayout } from "#src/layout/registry";
+import type { Slot } from "#src/layout/types";
 import {
   type ConstraintViolation,
   findConstraintViolations,
@@ -13,6 +15,16 @@ import {
   type SudokuCell,
   type SudokuGrid,
 } from "#src/systems/constraint-system";
+import type { DegradationState } from "#src/systems/degradation";
+import type { Particle, RenderSystem } from "#src/systems/render-system";
+import {
+  drawEmptyTargetSlot,
+  drawPromptText,
+  drawSceneBackground,
+  drawSlotItem,
+  type ItemVisualState,
+  updateParticles,
+} from "../shared-render.js";
 import type { GT015Content, GT015Difficulty } from "./template.js";
 
 export interface SudokuCellState {
@@ -50,6 +62,11 @@ export class SudokuMiniSession extends TemplateGameSession<
   GT015Content,
   GT015Difficulty
 > {
+  slots: readonly Slot[] = [];
+  degradation: DegradationState | null = null;
+  private renderParticles: Particle[] = [];
+  private readonly renderItemStates: Map<string, ItemVisualState> = new Map();
+
   private readonly cellStates: Map<string, SudokuCellState> = new Map();
   private selectedSymbolId: string | null = null;
   private activeViolations: readonly ConstraintViolation[] = [];
@@ -195,6 +212,96 @@ export class SudokuMiniSession extends TemplateGameSession<
     this.cellStates.clear();
     this.activeViolations = [];
     this.selectedSymbolId = null;
+  }
+
+  resolveSlots(ageBand: "3-4" | "4-5" | "5-6"): void {
+    const layoutFn = resolveLayout("matrix-slot-grid");
+    this.slots = layoutFn({
+      slotCount: this.content.symbols.length,
+      targetCount: this.content.grid_size,
+      ageBand,
+    });
+  }
+
+  setRenderItemState(itemId: string, state: ItemVisualState): void {
+    this.renderItemStates.set(itemId, state);
+  }
+
+  getRenderItemState(itemId: string): ItemVisualState {
+    return this.renderItemStates.get(itemId) ?? "idle";
+  }
+
+  render(
+    ctx: CanvasRenderingContext2D,
+    rs: RenderSystem,
+    _timeMs: number
+  ): void {
+    drawSceneBackground(ctx, rs);
+    drawPromptText(ctx, rs, this.content.prompt);
+    const cellCount = this.content.grid_size * this.content.grid_size;
+    const cellSlots = this.slots.slice(0, cellCount);
+    const paletteSlots = this.slots.slice(cellCount);
+    const size = this.content.grid_size;
+    const assetOf = (symbolId: string) =>
+      this.content.symbols.find((s) => s.symbol_id === symbolId)?.asset;
+    // Một vi phạm nêu cả ô sai lẫn ô xung đột — tô đỏ cả hai thì trẻ thấy
+    // ĐƯỢC quan hệ, thay vì chỉ thấy một ô bị chê.
+    const violated = new Set(
+      this.activeViolations.flatMap((v) => [
+        `${v.row},${v.col}`,
+        `${v.conflictingWith.row},${v.conflictingWith.col}`,
+      ])
+    );
+
+    for (const cell of this.content.cells) {
+      const slot = cellSlots[cell.row * size + cell.col];
+      if (!slot) {
+        continue;
+      }
+      const filled = this.cellStates.get(`${cell.row},${cell.col}`);
+      const symbolId = filled?.value ?? cell.symbol_id;
+      if (!symbolId) {
+        drawEmptyTargetSlot(ctx, slot);
+        continue;
+      }
+      let state: "wrong" | "locked" | "correct" = "correct";
+      if (violated.has(`${cell.row},${cell.col}`)) {
+        state = "wrong";
+      } else if (cell.symbol_id) {
+        state = "locked";
+      }
+      drawSlotItem(
+        ctx,
+        rs,
+        slot,
+        { id: `${cell.row},${cell.col}`, asset: assetOf(symbolId), state },
+        "square"
+      );
+    }
+
+    this.content.symbols.forEach((sym, i) => {
+      const slot = paletteSlots[i];
+      if (!slot) {
+        return;
+      }
+      drawSlotItem(ctx, rs, slot, {
+        id: sym.symbol_id,
+        asset: sym.asset,
+        state: this.selectedSymbolId === sym.symbol_id ? "selected" : "idle",
+      });
+    });
+    this.drawRenderFeedback(rs, ctx);
+  }
+
+  private drawRenderFeedback(
+    rs: RenderSystem,
+    ctx: CanvasRenderingContext2D
+  ): void {
+    if (this.degradation?.particles_enabled === false) {
+      return;
+    }
+    this.renderParticles = updateParticles(this.renderParticles);
+    rs.drawParticles(ctx, this.renderParticles);
   }
 }
 

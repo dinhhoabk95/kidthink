@@ -72,8 +72,11 @@ export function shuffleWithSeed<T>(items: readonly T[], seed: number): T[] {
   for (let i = result.length - 1; i > 0; i--) {
     const j = Math.floor(rng() * (i + 1));
     const temp = result[i];
-    result[i] = result[j];
-    result[j] = temp;
+    const itemJ = result[j];
+    if (temp !== undefined && itemJ !== undefined) {
+      result[i] = itemJ;
+      result[j] = temp;
+    }
   }
   return result;
 }
@@ -171,8 +174,9 @@ function collectRecommendationItems(
 
   if (unlocked.length === 0) {
     // D-MT: All candidates are locked -> exactly 1 locked item, 0 unlocked
-    if (locked.length > 0) {
-      result.push(formatRecommendationItem(locked[0], true));
+    const firstLocked = locked[0];
+    if (firstLocked !== undefined) {
+      result.push(formatRecommendationItem(firstLocked, true));
     }
     return result;
   }
@@ -186,8 +190,9 @@ function collectRecommendationItems(
   }
 
   // BR-REC-07: Up to 1 locked item if there's room
-  if (result.length < maxTotal && locked.length > 0) {
-    result.push(formatRecommendationItem(locked[0], true));
+  const firstLocked = locked[0];
+  if (result.length < maxTotal && firstLocked !== undefined) {
+    result.push(formatRecommendationItem(firstLocked, true));
   }
 
   return result;
@@ -221,14 +226,15 @@ export function assembleRecommendations(
   const { unlocked, locked } = partitionByAccess(validCandidates, allowedTiers);
   const resultItems = collectRecommendationItems(unlocked, locked, maxTotal);
 
-  if (resultItems.length === 0) {
+  const primary = resultItems[0];
+  if (!primary) {
     return null;
   }
 
-  const [primary, ...alternatives] = resultItems;
+  const alternatives = resultItems.slice(1, 5);
 
   return {
     primary,
-    alternatives: alternatives.slice(0, 4),
+    alternatives,
   };
 }

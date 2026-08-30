@@ -6,6 +6,8 @@ import {
   type GameAction,
   TemplateGameSession,
 } from "#src/game-session";
+import { resolveLayout } from "#src/layout/registry";
+import type { Slot } from "#src/layout/types";
 import {
   type BalanceState,
   computeTiltAngle,
@@ -13,12 +15,32 @@ import {
   sumWeights,
   type WeightedItem,
 } from "#src/systems/balance-system";
+import type { DegradationState } from "#src/systems/degradation";
+import type { Particle, RenderSystem } from "#src/systems/render-system";
+import {
+  drawPromptText,
+  drawSceneBackground,
+  drawSlotItem,
+  type ItemVisualState,
+  sceneBox,
+  updateParticles,
+} from "../shared-render.js";
+import {
+  drawBalanceScale,
+  drawPanItems,
+  insetBox,
+} from "../shared-render-shapes.js";
 import type { GT014Content, GT014Difficulty } from "./template.js";
 
 export class BalanceScaleSession extends TemplateGameSession<
   GT014Content,
   GT014Difficulty
 > {
+  slots: readonly Slot[] = [];
+  degradation: DegradationState | null = null;
+  private renderParticles: Particle[] = [];
+  private readonly renderItemStates: Map<string, ItemVisualState> = new Map();
+
   private leftItems: WeightedItem[] = [];
   private rightItems: WeightedItem[] = [];
   private trayItems: WeightedItem[] = [];
@@ -72,7 +94,10 @@ export class BalanceScaleSession extends TemplateGameSession<
       return false;
     }
 
-    const [item] = this.trayItems.splice(idx, 1);
+    const item = this.trayItems.splice(idx, 1)[0];
+    if (!item) {
+      return false;
+    }
     if (targetPan === "left") {
       this.leftItems.push(item);
     } else {
@@ -103,7 +128,10 @@ export class BalanceScaleSession extends TemplateGameSession<
       return false;
     }
 
-    const [item] = pan.splice(idx, 1);
+    const item = pan.splice(idx, 1)[0];
+    if (!item) {
+      return false;
+    }
     this.trayItems.push(item);
 
     this.recordEvent("balance_changed", {
@@ -170,6 +198,78 @@ export class BalanceScaleSession extends TemplateGameSession<
     this.rightItems = [];
     this.trayItems = [];
     this.selectedSide = null;
+  }
+
+  resolveSlots(ageBand: "3-4" | "4-5" | "5-6"): void {
+    const layoutFn = resolveLayout("split-columns");
+    this.slots = layoutFn({
+      slotCount: this.trayItems.length,
+      targetCount: 2,
+      ageBand,
+    });
+  }
+
+  setRenderItemState(itemId: string, state: ItemVisualState): void {
+    this.renderItemStates.set(itemId, state);
+  }
+
+  getRenderItemState(itemId: string): ItemVisualState {
+    return this.renderItemStates.get(itemId) ?? "idle";
+  }
+
+  render(
+    ctx: CanvasRenderingContext2D,
+    rs: RenderSystem,
+    _timeMs: number
+  ): void {
+    drawSceneBackground(ctx, rs);
+    drawPromptText(ctx, rs, this.content.prompt);
+    const sources = this.slots.filter((s) => s.role === "source");
+    // `WeightedItem` chỉ mang id + khối lượng; asset nằm ở content.
+    const assetById = new Map(
+      [
+        ...this.content.left_pan,
+        ...this.content.right_pan,
+        ...this.content.tray,
+      ].map((i) => [i.item_id, i.asset])
+    );
+    const positioned = (items: readonly { item_id: string }[]) =>
+      items.map((i) => ({ id: i.item_id, asset: assetById.get(i.item_id) }));
+
+    const scaleBox = insetBox(sceneBox(rs), 0.12);
+    const { leftPan, rightPan } = drawBalanceScale(
+      ctx,
+      scaleBox,
+      this.leftItems,
+      this.rightItems
+    );
+    drawPanItems(ctx, rs, leftPan, positioned(this.leftItems));
+    drawPanItems(ctx, rs, rightPan, positioned(this.rightItems));
+
+    this.trayItems.forEach((item, i) => {
+      const slot = sources[i];
+      if (!slot) {
+        return;
+      }
+      drawSlotItem(ctx, rs, slot, {
+        id: item.item_id,
+        asset: assetById.get(item.item_id),
+        label: String(item.weight),
+        state: this.getRenderItemState(item.item_id),
+      });
+    });
+    this.drawRenderFeedback(rs, ctx);
+  }
+
+  private drawRenderFeedback(
+    rs: RenderSystem,
+    ctx: CanvasRenderingContext2D
+  ): void {
+    if (this.degradation?.particles_enabled === false) {
+      return;
+    }
+    this.renderParticles = updateParticles(this.renderParticles);
+    rs.drawParticles(ctx, this.renderParticles);
   }
 }
 

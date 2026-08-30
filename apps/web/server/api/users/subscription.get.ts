@@ -113,8 +113,8 @@ function resolvePackages(
       (pkg.entitlements as readonly string[]).includes(e.key)
     );
 
-    if (matching.length > 0) {
-      const primary = matching[0];
+    const primary = matching[0];
+    if (primary) {
       const expiresAtDate = primary.expiresAt
         ? new Date(primary.expiresAt)
         : null;

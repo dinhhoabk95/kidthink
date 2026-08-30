@@ -145,6 +145,46 @@ async function checkAndSendLowBalanceWarning(
 /**
  * Grants AI credits to a user (append-only ledger + cache projection) (BR-ACL-01, BR-ACL-07).
  */
+async function applyCreditGrantBalance(
+  // biome-ignore lint/suspicious/noExplicitAny: generic transaction
+  activeTx: PgTransaction<any, any, any>,
+  userId: number,
+  delta: number,
+  reason: string,
+  now: Date
+): Promise<number> {
+  const [existingBal] = await activeTx
+    .select()
+    .from(aiCreditBalance)
+    .where(eq(aiCreditBalance.userId, userId))
+    .for("update");
+
+  if (existingBal) {
+    const updatedBalance = existingBal.balance + delta;
+    await activeTx
+      .update(aiCreditBalance)
+      .set({
+        balance: updatedBalance,
+        totalGranted:
+          existingBal.totalGranted + (reason === "refund" ? 0 : delta),
+        version: existingBal.version + 1,
+        updatedAt: now,
+      })
+      .where(eq(aiCreditBalance.userId, userId));
+    return updatedBalance;
+  }
+
+  await activeTx.insert(aiCreditBalance).values({
+    userId,
+    balance: delta,
+    totalGranted: delta,
+    totalUsed: 0,
+    version: 1,
+    updatedAt: now,
+  });
+  return delta;
+}
+
 export async function grantCredits(
   params: GrantCreditsParams
 ): Promise<{ ledgerEntry: AiCreditLedgerEntry; balance: number }> {
@@ -179,36 +219,17 @@ export async function grantCredits(
       })
       .returning();
 
-    const [existingBal] = await activeTx
-      .select()
-      .from(aiCreditBalance)
-      .where(eq(aiCreditBalance.userId, params.userId))
-      .for("update");
-
-    let updatedBalance = params.delta;
-    if (existingBal) {
-      updatedBalance = existingBal.balance + params.delta;
-      await activeTx
-        .update(aiCreditBalance)
-        .set({
-          balance: updatedBalance,
-          totalGranted:
-            existingBal.totalGranted +
-            (params.reason === "refund" ? 0 : params.delta),
-          version: existingBal.version + 1,
-          updatedAt: now,
-        })
-        .where(eq(aiCreditBalance.userId, params.userId));
-    } else {
-      await activeTx.insert(aiCreditBalance).values({
-        userId: params.userId,
-        balance: params.delta,
-        totalGranted: params.delta,
-        totalUsed: 0,
-        version: 1,
-        updatedAt: now,
-      });
+    if (!ledgerEntry) {
+      throw new Error("Failed to create ledger entry");
     }
+
+    const updatedBalance = await applyCreditGrantBalance(
+      activeTx,
+      params.userId,
+      params.delta,
+      params.reason,
+      now
+    );
 
     if (params.notifyUser) {
       await activeTx.insert(notifications).values({
@@ -287,6 +308,10 @@ export async function debitCredits(params: DebitCreditsParams): Promise<{
       })
       .returning();
 
+    if (!ledgerEntry) {
+      throw new Error("Failed to create ledger entry");
+    }
+
     const newBalance = currentBalance - params.cost;
     const newTotalUsed = (existingBal?.totalUsed ?? 0) + params.cost;
 
@@ -361,6 +386,10 @@ export async function refundCredits(params: RefundCreditsParams): Promise<{
         idempotencyKey: params.idempotencyKey ?? null,
       })
       .returning();
+
+    if (!ledgerEntry) {
+      throw new Error("Failed to create ledger entry");
+    }
 
     const [existingBal] = await activeTx
       .select()

@@ -1,5 +1,5 @@
 import { optionalEnv } from "@mindkid/config";
-import { getOwnerDb } from "#src/index";
+import { getOwnerDb } from "#src/client";
 import { ALL_SEED_CONTENT } from "#src/seed-content/index";
 import { executeSeedBatch } from "#src/seed-content/service";
 

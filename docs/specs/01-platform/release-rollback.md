@@ -2,7 +2,7 @@
 spec: RELEASE-ROLLBACK
 title: Quay lui bản phát hành
 area: platform
-status: implemented
+status: approved
 mvp: true
 phase: P0
 reviewed: 2026-08-30

@@ -6,7 +6,6 @@ import type { ContentSeed } from "#src/seed-content/types";
  * 1 dạng bài (WB11-D1), 2 level, GT-001, band 4-5
  */
 export const SEED_MONT_A11: ContentSeed<unknown, unknown>[] = [
-  // WB11-D1 Level 1 (Diff 2 - Login)
   {
     header: {
       code: "GL-C1-CNT-CARD-0119",
@@ -27,23 +26,48 @@ export const SEED_MONT_A11: ContentSeed<unknown, unknown>[] = [
       authored_in: "repo_seed",
     },
     content_pack: {
-      sequence: ["2", "4", "?", "8", "10"],
-      missing_index: 2,
-      target: "6",
-      options: [
-        { id: "opt-1", text: "5", is_correct: false },
-        { id: "opt-2", text: "6", is_correct: true },
-        { id: "opt-3", text: "7", is_correct: false },
-      ],
-      scaffolding: {
-        l1_nudge: "Chú ếch nhảy qua từng số phát sáng",
-        l2_guidance: "Bàn tay ảo đếm 'Hai, bốn... sáu, tám, mười'",
-        l3_demo: "Bàn tay ảo chọn thẻ số 6",
+      prompt: "Bé chọn số còn thiếu trong dãy đếm cách 2 nhé!",
+      target_item: {
+        item_id: "opt-2",
+        asset: {
+          kind: "emoji",
+          ref: "EMJ-six",
+        },
       },
+      options: [
+        {
+          item_id: "opt-1",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-five",
+          },
+          is_correct: false,
+        },
+        {
+          item_id: "opt-2",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-six",
+          },
+          is_correct: true,
+        },
+        {
+          item_id: "opt-3",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-seven",
+          },
+          is_correct: false,
+        },
+      ],
     },
-    difficulty_params: { count: 3, distractor_count: 2 },
+    difficulty_params: {
+      distractor_count: 2,
+      hint_after_ms: 9000,
+      allow_retry: true,
+      shuffle_items: true,
+    },
   },
-  // WB11-D1 Level 2 (Diff 3 - Standard)
   {
     header: {
       code: "GL-C1-CNT-CARD-0120",
@@ -64,20 +88,46 @@ export const SEED_MONT_A11: ContentSeed<unknown, unknown>[] = [
       authored_in: "repo_seed",
     },
     content_pack: {
-      sequence: ["1", "3", "5", "?", "9"],
-      missing_index: 3,
-      target: "7",
-      options: [
-        { id: "opt-1", text: "6", is_correct: false },
-        { id: "opt-2", text: "7", is_correct: true },
-        { id: "opt-3", text: "8", is_correct: false },
-      ],
-      scaffolding: {
-        l1_nudge: "Ô đá số 7 nhấp nháy phát sáng nhẹ",
-        l2_guidance: "Bàn tay ảo đếm nhịp cách 2: 'Một, ba, năm... bảy!'",
-        l3_demo: "Bàn tay ảo chạm thẻ số 7 làm mẫu",
+      prompt: "Số lẻ nào còn thiếu ở ô trống, bé hãy chọn!",
+      target_item: {
+        item_id: "opt-2",
+        asset: {
+          kind: "emoji",
+          ref: "EMJ-seven",
+        },
       },
+      options: [
+        {
+          item_id: "opt-1",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-six",
+          },
+          is_correct: false,
+        },
+        {
+          item_id: "opt-2",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-seven",
+          },
+          is_correct: true,
+        },
+        {
+          item_id: "opt-3",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-eight",
+          },
+          is_correct: false,
+        },
+      ],
     },
-    difficulty_params: { count: 3, distractor_count: 2 },
+    difficulty_params: {
+      distractor_count: 2,
+      hint_after_ms: 9000,
+      allow_retry: true,
+      shuffle_items: true,
+    },
   },
 ];

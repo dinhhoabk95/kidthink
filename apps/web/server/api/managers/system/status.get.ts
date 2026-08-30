@@ -113,13 +113,11 @@ export default defineEventHandler(async (event) => {
     .orderBy(desc(backupLog.startedAt))
     .limit(5);
 
-  const latestDump = latestBackups.find((b) => b.backupType === "full_pg_dump");
-  const latestVerify = latestBackups.find(
-    (b) => b.backupType === "restore_verify"
-  );
+  const latestDump = latestBackups.find((b) => b.backupType === "dump");
+  const latestVerify = latestBackups.find((b) => b.backupType === "verify");
 
   const hasVerifiedBackup = Boolean(
-    latestVerify && latestVerify.status === "completed"
+    latestVerify && latestVerify.status === "success"
   );
 
   const backups = {

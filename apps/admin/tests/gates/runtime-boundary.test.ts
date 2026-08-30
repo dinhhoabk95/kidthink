@@ -2,7 +2,10 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
-import { scanRuntimeBoundary } from "./runtime-boundary.ts";
+import {
+  checkGlobalAuthGuard,
+  scanRuntimeBoundary,
+} from "./runtime-boundary.ts";
 
 describe("Admin Runtime Boundary Gate (BR-ARB-04)", () => {
   it("passes on real apps/admin codebase without boundary violations", () => {
@@ -57,21 +60,56 @@ describe("Admin Runtime Boundary Gate (BR-ARB-04)", () => {
     fs.rmSync(tempDir, { recursive: true, force: true });
   });
 
-  it("ca âm 4: detects page outside login without auth middleware", () => {
+  it("ca âm 4: detects interpolated api URL built by interpolation", () => {
     const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "gate-test-4-"));
-    const pagesDir = path.join(tempDir, "pages");
-    fs.mkdirSync(pagesDir, { recursive: true });
-    const file = path.join(pagesDir, "unprotected.vue");
     fs.writeFileSync(
-      file,
-      "<template><div>Secret Manager Page</div></template>"
+      path.join(tempDir, "Interpolated.vue"),
+      [
+        "<script setup>",
+        "const u = `",
+        "$",
+        "{base}/api/managers/export`;",
+        "</script>",
+      ].join("")
     );
 
     const violations = scanRuntimeBoundary(tempDir);
-    expect(violations.length).toBeGreaterThan(0);
-    expect(violations[0].reason).toContain(
-      "Admin pages outside login must define auth guard middleware"
+    expect(violations.some((v) => v.reason.includes("nội suy"))).toBe(true);
+    fs.rmSync(tempDir, { recursive: true, force: true });
+  });
+
+  it("guard thật: apps/admin có middleware toàn cục đưa về /login", () => {
+    const dir = path.resolve(import.meta.dirname, "../../app/middleware");
+    expect(checkGlobalAuthGuard(dir).ok).toBe(true);
+  });
+
+  it("ca âm: không có middleware `.global.` nào → đỏ", () => {
+    // Luật cũ kiểm `definePageMeta` trên từng trang — một mô hình app này không
+    // dùng — và rút gọn thành luôn-đúng, nên nó Cấm — NEVER đỏ được.
+    const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "gate-guard-"));
+    fs.mkdirSync(path.join(tempDir, "middleware"), { recursive: true });
+    fs.writeFileSync(
+      path.join(tempDir, "middleware", "auth.ts"),
+      "export default () => undefined;"
     );
+
+    const result = checkGlobalAuthGuard(path.join(tempDir, "middleware"));
+    expect(result.ok).toBe(false);
+    expect(result.reason).toContain("global");
+    fs.rmSync(tempDir, { recursive: true, force: true });
+  });
+
+  it("ca âm: middleware toàn cục không chuyển hướng /login → đỏ", () => {
+    const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "gate-guard2-"));
+    fs.mkdirSync(path.join(tempDir, "middleware"), { recursive: true });
+    fs.writeFileSync(
+      path.join(tempDir, "middleware", "noop.global.ts"),
+      "export default () => undefined;"
+    );
+
+    const result = checkGlobalAuthGuard(path.join(tempDir, "middleware"));
+    expect(result.ok).toBe(false);
+    expect(result.reason).toContain("/login");
     fs.rmSync(tempDir, { recursive: true, force: true });
   });
 

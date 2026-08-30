@@ -20,16 +20,13 @@ const disableMfaSchema = z.object({
 });
 
 export default defineEventHandler(async (event) => {
-  const session = requireWebUserSession(event);
+  const session = await requireWebUserSession(event);
   const userId = session.user_id;
 
   // BR-MFA-03: Disable requires recent reauth (<= 5 min)
   requireReauth(event);
 
-  const raw =
-    (event.context?.body as unknown) ||
-    ((event as Record<string, unknown>)._body as unknown) ||
-    (await readBody(event).catch(() => ({})));
+  const raw = event.context?.body ?? (await readBody(event).catch(() => ({})));
 
   const parsedResult = disableMfaSchema.safeParse(raw);
   if (!parsedResult.success) {

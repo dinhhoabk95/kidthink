@@ -22,7 +22,6 @@ import {
   setResponseStatus,
 } from "h3";
 import { z } from "zod";
-import { setUserSession } from "#imports";
 import {
   assertRateLimitAllowed,
   assertRequestBodySize,

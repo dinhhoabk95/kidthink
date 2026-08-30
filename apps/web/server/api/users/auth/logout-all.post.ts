@@ -1,7 +1,6 @@
 import { getBrowserSessionService, requireUserAuth } from "@mindkid/auth";
 import { getAppSql, PostgresSessionStore } from "@mindkid/db";
 import { defineEventHandler, type H3Event } from "h3";
-import { clearUserSession } from "#imports";
 import {
   clearUserRememberCookie,
   validateUserCsrf,

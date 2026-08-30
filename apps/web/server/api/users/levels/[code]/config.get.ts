@@ -18,7 +18,7 @@ export default defineEventHandler(async (event) => {
   return await deliverGameConfig(event, code, {
     caller: {
       kind: "user",
-      account_id: String(user.user_id),
+      user_id: String(user.user_id),
       active_child_id: activeChildUuid,
     },
     requiresChild: true,

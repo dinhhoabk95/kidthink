@@ -34,6 +34,9 @@ describe("Task P4.8 — Semantic Search Service (BR-SEM-01..08)", () => {
         displayName: "Semantic Search Tester",
       })
       .returning();
+    if (!user) {
+      throw new Error("Failed to insert user");
+    }
     testUserId = user.id;
 
     await grantAiCredits({
@@ -54,15 +57,18 @@ describe("Task P4.8 — Semantic Search Service (BR-SEM-01..08)", () => {
       .onConflictDoNothing()
       .returning();
 
-    const templateId =
-      template?.id ??
-      (
-        await db
-          .select()
-          .from(gameTemplates)
-          .where(sql`code = 'GT-001'`)
-          .limit(1)
-      )[0].id;
+    let templateId = template?.id;
+    if (!templateId) {
+      const [existingTemplate] = await db
+        .select()
+        .from(gameTemplates)
+        .where(sql`code = 'GT-001'`)
+        .limit(1);
+      if (!existingTemplate) {
+        throw new Error("Failed to find or create GT-001");
+      }
+      templateId = existingTemplate.id;
+    }
 
     // 3. Create game levels
     const freeEntityId = Math.floor(Math.random() * 900_000) + 100_000;
@@ -85,6 +91,9 @@ describe("Task P4.8 — Semantic Search Service (BR-SEM-01..08)", () => {
         difficultyParams: { count: 3 },
       })
       .returning();
+    if (!freeLevel) {
+      throw new Error("Failed to insert freeLevel");
+    }
     freeGameId = freeLevel.id;
 
     const premEntityId = Math.floor(Math.random() * 900_000) + 100_000;
@@ -107,6 +116,9 @@ describe("Task P4.8 — Semantic Search Service (BR-SEM-01..08)", () => {
         difficultyParams: { count: 5 },
       })
       .returning();
+    if (!premiumLevel) {
+      throw new Error("Failed to insert premiumLevel");
+    }
     premiumGameId = premiumLevel.id;
 
     // 3. Insert vector embeddings
@@ -190,7 +202,7 @@ describe("Task P4.8 — Semantic Search Service (BR-SEM-01..08)", () => {
       .select()
       .from(aiCreditBalance)
       .where(sql`user_id = ${testUserId}`);
-    const initialBalance = beforeBal.balance;
+    const initialBalance = beforeBal?.balance ?? 0;
 
     const res = await performSemanticSearch(testUserId, "hoa quả táo");
     expect(res.credits_spent).toBe(1);
@@ -199,7 +211,7 @@ describe("Task P4.8 — Semantic Search Service (BR-SEM-01..08)", () => {
       .select()
       .from(aiCreditBalance)
       .where(sql`user_id = ${testUserId}`);
-    expect(afterBal.balance).toBe(initialBalance - 1);
+    expect(afterBal?.balance).toBe(initialBalance - 1);
   });
 
   it("BR-SEM-05 & BR-SEM-06: sorts by Access Ladder and strips content_pack for locked items", async () => {
@@ -234,7 +246,7 @@ describe("Task P4.8 — Semantic Search Service (BR-SEM-01..08)", () => {
       .select()
       .from(aiCreditBalance)
       .where(sql`user_id = ${testUserId}`);
-    const balanceBefore = beforeBal.balance;
+    const balanceBefore = beforeBal?.balance ?? 0;
 
     // Simulate provider failure
     setSimulatedAiFailure(true);
@@ -249,7 +261,7 @@ describe("Task P4.8 — Semantic Search Service (BR-SEM-01..08)", () => {
         .select()
         .from(aiCreditBalance)
         .where(sql`user_id = ${testUserId}`);
-      expect(afterBal.balance).toBe(balanceBefore);
+      expect(afterBal?.balance).toBe(balanceBefore);
     } finally {
       setSimulatedAiFailure(false);
     }

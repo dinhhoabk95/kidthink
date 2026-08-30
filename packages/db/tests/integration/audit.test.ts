@@ -19,6 +19,9 @@ describe("Task 1 — Migration audit_logs (D-ET)", () => {
         reason: "Violation of terms of service",
       })
       .returning();
+    if (!log) {
+      throw new Error("Failed to insert log");
+    }
 
     expect(log).toBeDefined();
     expect(log.beforeData).toEqual({ is_active: true });

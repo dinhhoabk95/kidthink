@@ -467,7 +467,9 @@
       return;
     }
     const item = assembledActivities.value.splice(index, 1)[0];
-    assembledActivities.value.splice(newIndex, 0, item);
+    if (item) {
+      assembledActivities.value.splice(newIndex, 0, item);
+    }
     assembledActivities.value.forEach((a, i) => {
       a.position = i + 1;
     });

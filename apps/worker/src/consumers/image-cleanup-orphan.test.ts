@@ -71,6 +71,13 @@ describe("Orphan Image Cleanup Worker Job (BR-AUT2-05, D-BD, Task #49 T5)", () =
       })
       .returning();
 
+    expect(oldOrphan).toBeDefined();
+    expect(newOrphan).toBeDefined();
+    expect(proofImg).toBeDefined();
+    if (!(oldOrphan && newOrphan && proofImg)) {
+      return;
+    }
+
     // 4. Run cleanup job
     const result = await runOrphanImageCleanupJob("test-orphan-job", { now });
     expect(result.purged_count).toBeGreaterThanOrEqual(1);

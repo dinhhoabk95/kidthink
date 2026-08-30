@@ -13,8 +13,7 @@ export default defineEventHandler(async (event) => {
   }
 
   const query = getQuery(event);
-  const rawParam =
-    query.version ?? (event as Record<string, unknown>).query?.version;
+  const rawParam = query.version;
 
   let version: number | undefined;
   if (rawParam !== undefined && rawParam !== null) {
@@ -27,16 +26,16 @@ export default defineEventHandler(async (event) => {
   // Deliver game config in manager preview mode
   const config = await deliverGameConfig(event, code, {
     caller: {
-      kind: "user",
-      account_id: manager.id,
-      role: "manager",
+      kind: "manager",
+      manager_id: String(manager.manager_id),
+      role: manager.role,
     },
     version,
     isManagerPreview: true,
   });
 
   const db = getOwnerDb();
-  const managerId = manager.manager_id || manager.id || 1;
+  const managerId = manager.manager_id;
 
   const [level] = await db
     .select({ id: gameLevels.id, contentVersion: gameLevels.contentVersion })

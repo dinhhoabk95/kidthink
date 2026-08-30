@@ -92,10 +92,6 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 404, statusMessage: "NOT_FOUND" });
   }
 
-  if (account.status === "purged") {
-    throw appError("ACCOUNT_PURGED");
-  }
-
   const now = new Date();
   if (account.purgeAt && account.purgeAt.getTime() <= now.getTime()) {
     throw appError("ACCOUNT_PURGED");

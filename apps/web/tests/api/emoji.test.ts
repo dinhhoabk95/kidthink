@@ -9,8 +9,11 @@ function mockEvent(
   query: Record<string, string> = {}
 ) {
   const qStr = new URLSearchParams(query).toString();
+  const url = `/api/managers/emoji${qStr ? `?${qStr}` : ""}`;
   return {
     method: "GET",
+    path: url,
+    url,
     node: {
       req: {
         headers: {
@@ -18,7 +21,7 @@ function mockEvent(
           "x-csrf-token": CSRF_TOKEN,
           cookie: `tm_m_csrf=${CSRF_TOKEN}`,
         },
-        url: `/api/managers/emoji${qStr ? `?${qStr}` : ""}`,
+        url,
       },
       res: {
         setHeader: (_name: string, _value: string) => {

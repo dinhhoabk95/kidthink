@@ -6,7 +6,6 @@ import type { ContentSeed } from "#src/seed-content/types";
  * 2 dạng bài (WB02-D1, WB02-D3), 4 level, GT-001 và GT-006, band 3-4
  */
 export const SEED_MONT_A02: ContentSeed<unknown, unknown>[] = [
-  // WB02-D1 Level 1 (Diff 1 - Free)
   {
     header: {
       code: "GL-C1-NREC-CARD-0107",
@@ -27,23 +26,48 @@ export const SEED_MONT_A02: ContentSeed<unknown, unknown>[] = [
       authored_in: "repo_seed",
     },
     content_pack: {
-      sequence: ["1", "2", "?", "4", "5"],
-      missing_index: 2,
-      target: "3",
-      options: [
-        { id: "opt-1", text: "2", is_correct: false },
-        { id: "opt-2", text: "3", is_correct: true },
-        { id: "opt-3", text: "6", is_correct: false },
-      ],
-      scaffolding: {
-        l1_nudge: "Ô dấu hỏi chấm nhấp nháy phát sáng",
-        l2_guidance: "Bàn tay ảo đếm thành tiếng 'Một, hai... ba!'",
-        l3_demo: "Bàn tay ảo chọn thẻ số 3",
+      prompt: "Bé chọn số còn thiếu để hoàn thành đoàn tàu nhé!",
+      target_item: {
+        item_id: "opt-2",
+        asset: {
+          kind: "emoji",
+          ref: "EMJ-three",
+        },
       },
+      options: [
+        {
+          item_id: "opt-1",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-two",
+          },
+          is_correct: false,
+        },
+        {
+          item_id: "opt-2",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-three",
+          },
+          is_correct: true,
+        },
+        {
+          item_id: "opt-3",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-six",
+          },
+          is_correct: false,
+        },
+      ],
     },
-    difficulty_params: { count: 3, distractor_count: 2 },
+    difficulty_params: {
+      distractor_count: 2,
+      hint_after_ms: 9000,
+      allow_retry: true,
+      shuffle_items: true,
+    },
   },
-  // WB02-D1 Level 2 (Diff 2 - Login)
   {
     header: {
       code: "GL-C1-NREC-CARD-0108",
@@ -64,23 +88,48 @@ export const SEED_MONT_A02: ContentSeed<unknown, unknown>[] = [
       authored_in: "repo_seed",
     },
     content_pack: {
-      sequence: ["6", "?", "8", "9", "10"],
-      missing_index: 1,
-      target: "7",
-      options: [
-        { id: "opt-1", text: "5", is_correct: false },
-        { id: "opt-2", text: "7", is_correct: true },
-        { id: "opt-3", text: "8", is_correct: false },
-      ],
-      scaffolding: {
-        l1_nudge: "Viền ô trống phát sáng nhẹ",
-        l2_guidance: "Bàn tay ảo chỉ vào ô trống và đọc 'Sáu, bảy, tám'",
-        l3_demo: "Bàn tay ảo chọn số 7 làm mẫu",
+      prompt: "Số nào còn thiếu ở ô trống, bé hãy chọn nhé!",
+      target_item: {
+        item_id: "opt-2",
+        asset: {
+          kind: "emoji",
+          ref: "EMJ-seven",
+        },
       },
+      options: [
+        {
+          item_id: "opt-1",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-five",
+          },
+          is_correct: false,
+        },
+        {
+          item_id: "opt-2",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-seven",
+          },
+          is_correct: true,
+        },
+        {
+          item_id: "opt-3",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-eight",
+          },
+          is_correct: false,
+        },
+      ],
     },
-    difficulty_params: { count: 3, distractor_count: 2 },
+    difficulty_params: {
+      distractor_count: 2,
+      hint_after_ms: 9000,
+      allow_retry: true,
+      shuffle_items: true,
+    },
   },
-  // WB02-D3 Level 1 (Diff 1 - Free)
   {
     header: {
       code: "GL-C1-SEQ-PAT-0109",
@@ -88,8 +137,8 @@ export const SEED_MONT_A02: ContentSeed<unknown, unknown>[] = [
       template_code: "GT-006",
       title: "Xếp thứ tự 3 toa tàu",
       instruction: "Bé kéo các toa tàu theo thứ tự 1 đến 3 nhé!",
-      age_min: 3,
-      age_max: 4,
+      age_min: 5,
+      age_max: 6,
       difficulty: 1,
       access_tier: "free",
       skill_codes: ["C1.NREC.09"],
@@ -101,21 +150,43 @@ export const SEED_MONT_A02: ContentSeed<unknown, unknown>[] = [
       authored_in: "repo_seed",
     },
     content_pack: {
-      items: [
-        { id: "c2", label: "2", position: 0 },
-        { id: "c1", label: "1", position: 1 },
-        { id: "c3", label: "3", position: 2 },
+      prompt: "Bé kéo các toa tàu theo thứ tự 1 đến 3 nhé!",
+      sequence: [
+        {
+          step_id: "c2",
+          order_index: 1,
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-two",
+          },
+          label: "2",
+        },
+        {
+          step_id: "c1",
+          order_index: 0,
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-one",
+          },
+          label: "1",
+        },
+        {
+          step_id: "c3",
+          order_index: 2,
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-three",
+          },
+          label: "3",
+        },
       ],
-      correct_order: ["1", "2", "3"],
-      scaffolding: {
-        l1_nudge: "Toa số 1 nhấp nháy viền",
-        l2_guidance: "Bàn tay ảo chỉ vào toa 1 rồi trỏ vào vị trí đầu tiên",
-        l3_demo: "Bàn tay ảo kéo toa 1 vào vị trí đầu tiên",
-      },
     },
-    difficulty_params: { item_count: 3 },
+    difficulty_params: {
+      hint_after_ms: 12_000,
+      allow_retry: true,
+      shuffle_initial: true,
+    },
   },
-  // WB02-D3 Level 2 (Diff 2 - Login)
   {
     header: {
       code: "GL-C1-SEQ-PAT-0110",
@@ -123,8 +194,8 @@ export const SEED_MONT_A02: ContentSeed<unknown, unknown>[] = [
       template_code: "GT-006",
       title: "Xếp thứ tự 4 toa tàu",
       instruction: "Bé xếp các toa theo thứ tự 1 đến 4 nhé!",
-      age_min: 3,
-      age_max: 4,
+      age_min: 5,
+      age_max: 6,
       difficulty: 2,
       access_tier: "login",
       skill_codes: ["C1.NREC.09"],
@@ -136,19 +207,50 @@ export const SEED_MONT_A02: ContentSeed<unknown, unknown>[] = [
       authored_in: "repo_seed",
     },
     content_pack: {
-      items: [
-        { id: "c4", label: "4", position: 0 },
-        { id: "c2", label: "2", position: 1 },
-        { id: "c1", label: "1", position: 2 },
-        { id: "c3", label: "3", position: 3 },
+      prompt: "Bé xếp các toa theo thứ tự 1 đến 4 nhé!",
+      sequence: [
+        {
+          step_id: "c4",
+          order_index: 3,
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-four",
+          },
+          label: "4",
+        },
+        {
+          step_id: "c2",
+          order_index: 1,
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-two",
+          },
+          label: "2",
+        },
+        {
+          step_id: "c1",
+          order_index: 0,
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-one",
+          },
+          label: "1",
+        },
+        {
+          step_id: "c3",
+          order_index: 2,
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-three",
+          },
+          label: "3",
+        },
       ],
-      correct_order: ["1", "2", "3", "4"],
-      scaffolding: {
-        l1_nudge: "Toa mang số 1 phát sáng",
-        l2_guidance: "Bàn tay ảo chỉ vào toa 1 rồi di chuyển về vị trí 1",
-        l3_demo: "Bàn tay ảo kéo toa 1 mẫu",
-      },
     },
-    difficulty_params: { item_count: 4 },
+    difficulty_params: {
+      hint_after_ms: 12_000,
+      allow_retry: true,
+      shuffle_initial: true,
+    },
   },
 ];

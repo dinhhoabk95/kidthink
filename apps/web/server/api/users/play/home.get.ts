@@ -1,4 +1,9 @@
-import { childProfiles, getOwnerDb, playSessions } from "@mindkid/db";
+import {
+  childProfiles,
+  gameLevels,
+  getOwnerDb,
+  playSessions,
+} from "@mindkid/db";
 import { deriveAgeBand } from "@mindkid/shared";
 import { and, desc, eq } from "drizzle-orm";
 import {
@@ -70,8 +75,12 @@ export default defineEventHandler(async (event) => {
 
   // Fetch continue level session if any
   const [lastSession] = await db
-    .select()
+    .select({
+      sessionUuid: playSessions.sessionUuid,
+      gameLevelCode: gameLevels.code,
+    })
     .from(playSessions)
+    .leftJoin(gameLevels, eq(playSessions.gameLevelId, gameLevels.id))
     .where(
       and(
         eq(playSessions.childProfileId, activeChild.id),
@@ -83,8 +92,8 @@ export default defineEventHandler(async (event) => {
 
   const continueLevel = lastSession
     ? {
-        session_uuid: lastSession.uuid,
-        game_level_code: lastSession.gameLevelCode,
+        session_uuid: lastSession.sessionUuid,
+        game_level_code: lastSession.gameLevelCode ?? "",
       }
     : null;
 

@@ -347,7 +347,10 @@ export function evaluateThinkingCoverage(
   // 3. Evaluate Competency x AgeBand Floor (BR-TCM-04)
   for (const c of competencies) {
     for (const b of ageBands) {
-      const cell = competencyMatrix[c][b];
+      const cell = competencyMatrix[c]?.[b];
+      if (!cell) {
+        continue;
+      }
       const floor = config.gameLevelPerCellFloor;
       if (cell.count < floor) {
         const missing = floor - cell.count;
@@ -367,7 +370,10 @@ export function evaluateThinkingCoverage(
   // 4. Evaluate Mechanics Diversity Floor (BR-TCM-05)
   for (const c of competencies) {
     for (const b of ageBands) {
-      const cell = competencyMatrix[c][b];
+      const cell = competencyMatrix[c]?.[b];
+      if (!cell) {
+        continue;
+      }
       const floor = config.mechanicPerCellFloor;
       if (cell.mechanics.length < floor) {
         const missing = floor - cell.mechanics.length;
@@ -495,6 +501,9 @@ export function formatCoverageReport(
   const competencies = Object.keys(result.competencyMatrix);
   for (const c of competencies) {
     const row = result.competencyMatrix[c];
+    if (!row) {
+      continue;
+    }
     const parts = Object.entries(row).map(([band, data]) => {
       const diff = config.gameLevelPerCellFloor - data.count;
       const note = diff > 0 ? ` (thiếu ${diff})` : "";
@@ -507,6 +516,9 @@ export function formatCoverageReport(
   lines.push(`Đa dạng cơ chế (sàn ${config.mechanicPerCellFloor} mechanic)`);
   for (const c of competencies) {
     const row = result.competencyMatrix[c];
+    if (!row) {
+      continue;
+    }
     for (const [band, data] of Object.entries(row)) {
       if (data.mechanics.length < config.mechanicPerCellFloor) {
         const diff = config.mechanicPerCellFloor - data.mechanics.length;

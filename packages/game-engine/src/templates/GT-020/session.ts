@@ -5,6 +5,8 @@ import {
   type GameAction,
   TemplateGameSession,
 } from "#src/game-session";
+import { resolveLayout } from "#src/layout/registry";
+import type { Slot } from "#src/layout/types";
 import { PairingMechanic } from "#src/mechanics/pairing-mechanic";
 import { deriveStream } from "#src/rng/mulberry32";
 import { shuffle } from "#src/rng/shuffle";
@@ -13,6 +15,17 @@ import {
   CardSystem,
   type FlipResult,
 } from "#src/systems/card-system";
+import type { DegradationState } from "#src/systems/degradation";
+import type { Particle, RenderSystem } from "#src/systems/render-system";
+import {
+  drawLabelText,
+  drawPromptText,
+  drawSceneBackground,
+  drawSlotItem,
+  getColorsForState,
+  type ItemVisualState,
+  updateParticles,
+} from "../shared-render.js";
 import type { GT020Content, GT020Difficulty } from "./template.js";
 
 export interface FlatCard {
@@ -25,6 +38,11 @@ export class GT020Session extends TemplateGameSession<
   GT020Content,
   GT020Difficulty
 > {
+  slots: readonly Slot[] = [];
+  degradation: DegradationState | null = null;
+  private renderParticles: Particle[] = [];
+  private readonly renderItemStates: Map<string, ItemVisualState> = new Map();
+
   readonly cardSystem = new CardSystem();
   private readonly pairingMechanic = new PairingMechanic();
   displayCards: readonly FlatCard[] = [];
@@ -114,6 +132,76 @@ export class GT020Session extends TemplateGameSession<
 
   override checkWinCondition(): boolean {
     return this.cardSystem.isAllMatched();
+  }
+
+  resolveSlots(ageBand: "3-4" | "4-5" | "5-6"): void {
+    const layoutFn = resolveLayout("card-flip-grid");
+    this.slots = layoutFn({
+      slotCount: this.displayCards.length,
+      ageBand,
+    });
+  }
+
+  setRenderItemState(itemId: string, state: ItemVisualState): void {
+    this.renderItemStates.set(itemId, state);
+  }
+
+  getRenderItemState(itemId: string): ItemVisualState {
+    return this.renderItemStates.get(itemId) ?? "idle";
+  }
+
+  render(
+    ctx: CanvasRenderingContext2D,
+    rs: RenderSystem,
+    _timeMs: number
+  ): void {
+    drawSceneBackground(ctx, rs);
+    drawPromptText(ctx, rs, this.content.prompt);
+    this.displayCards.forEach((card, i) => {
+      const slot = this.slots[i];
+      if (!slot) {
+        return;
+      }
+      const state = this.cardSystem.getCard(card.cardId)?.state ?? "face_down";
+      if (state === "face_down") {
+        // Mặt úp: thân bài trơn, ❌ NEVER lộ asset — đó là cả trò chơi.
+        const { fill, border } = getColorsForState("locked");
+        rs.drawClayBody(
+          ctx,
+          slot.x,
+          slot.y,
+          Math.min(slot.w, slot.h) / 2,
+          fill,
+          border,
+          "square"
+        );
+        drawLabelText(ctx, "?", slot.x, slot.y, 28);
+        return;
+      }
+      drawSlotItem(
+        ctx,
+        rs,
+        slot,
+        {
+          id: card.cardId,
+          asset: card.asset,
+          state: state === "matched" ? "correct" : "selected",
+        },
+        "square"
+      );
+    });
+    this.drawRenderFeedback(rs, ctx);
+  }
+
+  private drawRenderFeedback(
+    rs: RenderSystem,
+    ctx: CanvasRenderingContext2D
+  ): void {
+    if (this.degradation?.particles_enabled === false) {
+      return;
+    }
+    this.renderParticles = updateParticles(this.renderParticles);
+    rs.drawParticles(ctx, this.renderParticles);
   }
 }
 

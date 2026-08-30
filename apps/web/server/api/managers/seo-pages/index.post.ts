@@ -1,6 +1,11 @@
 import { getOwnerDb, seoPages, writeAudit } from "@mindkid/db";
 import { and, eq } from "drizzle-orm";
-import { createError, defineEventHandler, readBody } from "h3";
+import {
+  createError,
+  defineEventHandler,
+  readBody,
+  setResponseStatus,
+} from "h3";
 import { requireManagerSession } from "#server/utils/admin-auth-runtime";
 
 const FORBIDDEN_LEGAL_SLUGS = [
@@ -126,12 +131,9 @@ function validateAndBuildSeoInsert(
 
 export default defineEventHandler(async (event) => {
   const manager = await requireManagerSession(event);
-  const body =
-    (event.context?.body as Record<string, unknown>) ||
-    ((event as Record<string, unknown>)._body as Record<string, unknown>) ||
-    (await readBody(event).catch(() => ({})));
+  const body = event.context?.body ?? (await readBody(event).catch(() => ({})));
 
-  const managerId = manager.manager_id || manager.id || 1;
+  const managerId = manager.manager_id;
   const insertData = validateAndBuildSeoInsert(body, managerId);
   const rawSlug = insertData.slug;
   const db = getOwnerDb();
@@ -152,19 +154,29 @@ export default defineEventHandler(async (event) => {
 
   const [created] = await db.insert(seoPages).values(insertData).returning();
 
-  await writeAudit(db, {
-    actor_type: "manager",
-    actor_id: managerId,
-    action: "content_created",
-    entity_type: "seo_page",
-    entity_id: created.id.toString(),
-    after_data: {
-      slug: rawSlug,
-      title: insertData.title,
-      page_type: insertData.pageType,
-    },
+  if (!created) {
+    throw createError({
+      statusCode: 500,
+      statusMessage: "SEO_PAGE_CREATE_FAILED",
+      message: "Tạo trang SEO thất bại",
+    });
+  }
+
+  await db.transaction(async (tx) => {
+    await writeAudit(tx, {
+      actor_type: "manager",
+      actor_id: managerId,
+      action: "content_created",
+      entity_type: "seo_page",
+      entity_id: created.id.toString(),
+      after_data: {
+        slug: rawSlug,
+        title: insertData.title,
+        page_type: insertData.pageType,
+      },
+    });
   });
 
-  event.node.res.statusCode = 201;
+  setResponseStatus(event, 201);
   return created;
 });

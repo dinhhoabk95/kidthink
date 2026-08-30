@@ -1,6 +1,5 @@
 import { getBrowserSessionService } from "@mindkid/auth";
 import { defineEventHandler, type H3Event } from "h3";
-import { clearUserSession } from "#imports";
 import {
   clearManagerRememberCookie,
   validateManagerCsrf,

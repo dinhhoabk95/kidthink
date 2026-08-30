@@ -2,7 +2,7 @@
 spec: SERVER-PROVISIONING
 title: Dựng máy chủ từ máy trắng
 area: platform
-status: implemented
+status: approved
 mvp: true
 phase: P0
 reviewed: 2026-08-30

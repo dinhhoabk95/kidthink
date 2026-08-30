@@ -56,6 +56,14 @@ export default defineEventHandler(async (event) => {
     .where(eq(paymentOrders.id, order.id))
     .returning();
 
+  if (!updatedOrder) {
+    throw createError({
+      statusCode: 500,
+      statusMessage: "ORDER_CANCEL_FAILED",
+      message: "Huỷ đơn hàng thất bại",
+    });
+  }
+
   return {
     uuid: updatedOrder.uuid,
     status: updatedOrder.status,

@@ -21,7 +21,12 @@ import { resolveUserActiveEntitlements } from "./entitlements-runtime.js";
 
 export interface ResolvedCurriculumData {
   child: typeof childProfiles.$inferSelect;
-  enrollment: typeof curriculumEnrollments.$inferSelect & {
+  enrollment: {
+    id: number;
+    childId: number;
+    curriculumId: number;
+    enrolledAt: Date;
+    status: (typeof curriculumEnrollments.$inferSelect)["status"];
     curriculum_code: string;
     curriculum_version: number;
     curriculum_title: string;

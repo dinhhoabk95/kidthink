@@ -9,10 +9,19 @@ import GT013Template, {
   GT013DifficultySchema,
 } from "#src/templates/GT-013/template";
 
-const [CORRIDOR, TRAP] = GT013_FIXTURES;
+function getFixture<T>(fixtures: readonly T[], index: number): T {
+  const item = fixtures[index];
+  if (!item) {
+    throw new Error(`Fixture at index ${index} not found`);
+  }
+  return item;
+}
+
+const CORRIDOR = getFixture(GT013_FIXTURES, 0);
+const TRAP = getFixture(GT013_FIXTURES, 1);
 
 function newSession(index = 0): GT013Session {
-  const fixture = GT013_FIXTURES[index];
+  const fixture = GT013_FIXTURES[index] ?? CORRIDOR;
   const session = new GT013Session(fixture.content, fixture.difficulty);
   session.setupEntities();
   return session;

@@ -6,10 +6,20 @@ import GT009Template, {
   GT009DifficultySchema,
 } from "#src/templates/GT-009/template";
 
-const [FIRST, SECOND, THIRD] = GT009_FIXTURES;
+function getFixture<T>(fixtures: readonly T[], index: number): T {
+  const item = fixtures[index];
+  if (!item) {
+    throw new Error(`Fixture at index ${index} not found`);
+  }
+  return item;
+}
+
+const FIRST = getFixture(GT009_FIXTURES, 0);
+const SECOND = getFixture(GT009_FIXTURES, 1);
+const THIRD = getFixture(GT009_FIXTURES, 2);
 
 function newSession(index = 1): GT009Session {
-  const fixture = GT009_FIXTURES[index];
+  const fixture = GT009_FIXTURES[index] ?? FIRST;
   const session = new GT009Session(fixture.content, fixture.difficulty);
   session.setupEntities();
   return session;
@@ -239,7 +249,7 @@ describe("GT-009 — ba bậc gợi ý (điều kiện nghiệm thu 15)", () => 
 
   it("hết manh mối chưa dùng thì gợi ý trỏ vào manh mối cuối, không trả null", () => {
     const session = newSession(1);
-    for (const clue of GT009_FIXTURES[1].content.clues) {
+    for (const clue of SECOND.content.clues) {
       session.onClueRevealed(clue.clue_id);
     }
 

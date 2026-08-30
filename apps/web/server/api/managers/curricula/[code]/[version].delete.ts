@@ -18,7 +18,7 @@ export default defineEventHandler(async (event) => {
   }
 
   const db = getOwnerDb();
-  const managerId = session.manager_id || session.id || 1;
+  const managerId = session.manager_id;
 
   const [curr] = await db
     .select()
@@ -45,19 +45,21 @@ export default defineEventHandler(async (event) => {
 
   await db.delete(curricula).where(eq(curricula.id, curr.id));
 
-  await writeAudit(db, {
-    action: "content_deleted",
-    actor_type: "manager",
-    actor_id: managerId,
-    entity_type: "curriculum",
-    entity_id: String(curr.id),
-    reason: "Manager deleted draft curriculum",
-    before_data: {
-      code: curr.code,
-      version: curr.contentVersion,
-      title: curr.title,
-    },
+  await db.transaction(async (tx) => {
+    await writeAudit(tx, {
+      action: "content_deleted",
+      actor_type: "manager",
+      actor_id: managerId,
+      entity_type: "curriculum",
+      entity_id: String(curr.id),
+      reason: "Manager deleted draft curriculum",
+      before_data: {
+        code: curr.code,
+        version: curr.contentVersion,
+        title: curr.title,
+      },
+    });
   });
 
-  return { ok: true };
+  return { ok: true, success: true };
 });

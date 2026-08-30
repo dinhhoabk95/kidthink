@@ -10,7 +10,7 @@ export default defineEventHandler(async (event) => {
   const code = getRouterParam(event, "code");
 
   if (!code) {
-    throw appError("VALIDATION_ERROR", "Worksheet code is required");
+    throw appError("VALIDATION_FAILED", "Worksheet code is required");
   }
 
   const ws = await getPublishedWorksheetByCode(code);

@@ -13,6 +13,9 @@ describe("Billing Schema Integration Tests", () => {
       .insert(users)
       .values({ email, displayName: "Billing User 1" })
       .returning();
+    if (!u) {
+      throw new Error("Failed to insert u");
+    }
 
     // Inserting entitlement with non-existent key must be rejected by Postgres FK
     await expect(
@@ -33,6 +36,9 @@ describe("Billing Schema Integration Tests", () => {
       .insert(users)
       .values({ email, displayName: "Billing User 2" })
       .returning();
+    if (!u) {
+      throw new Error("Failed to insert u");
+    }
 
     const pkgCode = `PKG-TEST-${Date.now()}`;
     try {
@@ -66,6 +72,9 @@ describe("Billing Schema Integration Tests", () => {
           status: "pending_proof",
         })
         .returning();
+      if (!order) {
+        throw new Error("Failed to insert order");
+      }
 
       expect(order.amountVnd).toBe(500_000);
 
@@ -89,6 +98,9 @@ describe("Billing Schema Integration Tests", () => {
         .select()
         .from(paymentOrders)
         .where(eq(paymentOrders.id, order.id));
+      if (!fetchedOrder) {
+        throw new Error("Failed to find fetchedOrder");
+      }
 
       expect(fetchedOrder.amountVnd).toBe(500_000);
     } finally {

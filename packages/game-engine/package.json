@@ -17,6 +17,7 @@
     "vitest": "catalog:"
   },
   "dependencies": {
+    "@mindkid/emoji": "workspace:*",
     "zod": "catalog:",
     "zod-to-json-schema": "catalog:"
   },

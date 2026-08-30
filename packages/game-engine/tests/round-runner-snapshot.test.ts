@@ -84,12 +84,13 @@ describe("WP100.5 — RoundRunner snapshot comparison for 17 templates", () => {
         return;
       }
 
+      const nonNullFixture = fixture;
       const baseCfg: EngineConfig = {
         level_code: `${code}-LV1`,
         content_version: 1,
         template_code: code,
-        content_pack: fixture.content,
-        difficulty_params: fixture.difficulty,
+        content_pack: nonNullFixture.content,
+        difficulty_params: nonNullFixture.difficulty,
         theme_id: "default",
         age_band: "4-5",
         reduced_motion: false,
@@ -105,8 +106,8 @@ describe("WP100.5 — RoundRunner snapshot comparison for 17 templates", () => {
           rounds: [
             {
               round_index: 0,
-              content_pack: fixture.content,
-              difficulty_params: fixture.difficulty,
+              content_pack: nonNullFixture.content,
+              difficulty_params: nonNullFixture.difficulty,
             },
           ],
           sessionFactory: (contentPack, difficultyParams, _seed) => {
@@ -168,7 +169,7 @@ describe("WP100.5 — RoundRunner snapshot comparison for 17 templates", () => {
 
         const started = events.filter((e) => e.wasSkipped === undefined);
         expect(started.length).toBe(1);
-        expect(started[0].roundIndex).toBe(0);
+        expect(started[0]?.roundIndex).toBe(0);
       });
 
       it("destroy cleans up without error", () => {

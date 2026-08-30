@@ -41,8 +41,9 @@ function createMockCatalog(): ContentItem[] {
     for (const b of bands) {
       // 7 levels per cell (above floor 6)
       for (let i = 0; i < 7; i++) {
-        const mech = mechanics[i % mechanics.length];
-        const tTag = thinkingTags[(idCounter - 1) % thinkingTags.length];
+        const mech = mechanics[i % mechanics.length] ?? "tap-select";
+        const tTag =
+          thinkingTags[(idCounter - 1) % thinkingTags.length] ?? "count";
         items.push({
           id: idCounter,
           code: `GL-${c}-${b}-${String(i + 1).padStart(4, "0")}`,
@@ -165,7 +166,7 @@ describe("Task #94 — Thinking Coverage Matrix (BR-TCM-01..11)", () => {
     ];
 
     const result = evaluateThinkingCoverage(items);
-    expect(result.competencyMatrix.C1["3-4"].count).toBe(1);
+    expect(result.competencyMatrix.C1?.["3-4"]?.count).toBe(1);
     expect(result.totalPublished).toBe(1);
   });
 

@@ -149,6 +149,9 @@ function mockEvent(
 
   return {
     method,
+    path: url,
+    url,
+    query,
     node: {
       req: {
         method,
@@ -158,6 +161,7 @@ function mockEvent(
           "x-csrf-token": CSRF_TOKEN,
           cookie: `tm_m_csrf=${CSRF_TOKEN}`,
         },
+        body,
       },
       res: {
         statusCode: 200,
@@ -179,19 +183,26 @@ function mockEvent(
         role,
       },
       params,
+      query,
+      body,
     },
+    _query: query,
+    _requestBody: body,
     _body: body,
   } as any;
 }
 
 function mockGuestEvent(params: Record<string, string> = {}) {
   const headersMap: Record<string, string> = {};
+  const url = `/api/guest/seo-pages/${params.slug || ""}`;
   return {
     method: "GET",
+    path: url,
+    url,
     node: {
       req: {
         method: "GET",
-        url: `/api/guest/seo-pages/${params.slug || ""}`,
+        url,
         headers: {},
       },
       res: {

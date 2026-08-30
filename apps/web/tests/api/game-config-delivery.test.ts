@@ -31,7 +31,8 @@ function mockEvent(
 
   return {
     method,
-    path,
+    path: url,
+    url,
     node: {
       req: { headers: {}, url, originalUrl: url },
       res: {

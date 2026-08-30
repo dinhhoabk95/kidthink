@@ -95,7 +95,7 @@ async function main() {
     AND state = 'active'
   `;
 
-  if (Number.parseInt(activity[0].count, 10) > 0) {
+  if (Number.parseInt(activity[0]?.count ?? "0", 10) > 0) {
     console.error(
       "ERROR: Target database has active connections and might be receiving writes. Aborting restore to prevent data corruption."
     );
@@ -121,6 +121,11 @@ async function main() {
       startedAt: new Date(),
     })
     .returning();
+
+  if (!log) {
+    console.error("Failed to create backup log");
+    process.exit(1);
+  }
 
   try {
     const fileHandle = await fs.promises.open(backupFile, "r");

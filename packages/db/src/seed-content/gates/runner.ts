@@ -17,6 +17,7 @@ import {
   PEDAGOGICAL_AXIS_REQUIREMENT,
 } from "#src/seed-content/vocabulary";
 import { scanChildContentSafety } from "./blocklist.js";
+import { isLevelOutOfBand } from "./engine-content-depth.js";
 
 const CODE_REGEX = /^GL-(?:\d{4}|C[1-6]-[A-Z]{2,5}-[A-Z]{2,5}-\d{4})$/;
 const ACTIVITY_CODE_REGEX = /^ACT-(?:\d{4}|C[1-6]-[A-Z]{2,5}-\d{4})$/;
@@ -255,18 +256,20 @@ function checkGate3(seed: AnyContentSeed): GateResult {
   const issues: GateIssue[] = [];
   const { header } = seed;
 
-  if (header.age_min > header.age_max) {
-    issues.push({
-      code: "AGE_RANGE_INVALID",
-      message: `age_min (${header.age_min}) phải <= age_max (${header.age_max}).`,
-    });
-  }
+  if ("age_min" in header && "age_max" in header) {
+    if (header.age_min > header.age_max) {
+      issues.push({
+        code: "AGE_RANGE_INVALID",
+        message: `age_min (${header.age_min}) phải <= age_max (${header.age_max}).`,
+      });
+    }
 
-  if (header.age_min < 3 || header.age_max > 6) {
-    issues.push({
-      code: "AGE_OUT_OF_BOUNDS",
-      message: `Độ tuổi [${header.age_min}, ${header.age_max}] phải nằm trong [3, 6].`,
-    });
+    if (header.age_min < 3 || header.age_max > 6) {
+      issues.push({
+        code: "AGE_OUT_OF_BOUNDS",
+        message: `Độ tuổi [${header.age_min}, ${header.age_max}] phải nằm trong [3, 6].`,
+      });
+    }
   }
 
   return {
@@ -383,7 +386,9 @@ function checkBannedAgeBand(
 ): void {
   const templateCode = gl.header.template_code;
   const tmpl = registry?.[templateCode];
-  if (!tmpl?.banned_age_bands || tmpl.banned_age_bands.length === 0) {
+  // Không có `banned_age_bands` KHÔNG có nghĩa là miễn kiểm: vế khoảng tuổi của
+  // template vẫn phải đo. `return` sớm ở đây từng miễn kiểm 21 trên 27 engine.
+  if (!tmpl) {
     return;
   }
 
@@ -391,7 +396,7 @@ function checkBannedAgeBand(
     gl.header.age_min,
     gl.header.age_max
   );
-  if (tmpl.banned_age_bands.includes(levelAgeBand)) {
+  if (isLevelOutOfBand(gl, tmpl, levelAgeBand)) {
     issues.push({
       code: "ENGINE_AGE_BAND_BANNED",
       message: `Engine ${templateCode} cấm band tuổi '${levelAgeBand}'.`,
@@ -406,7 +411,11 @@ function checkGate5(
   const issues: GateIssue[] = [];
   const { header } = seed;
 
-  if (header.difficulty < 1 || header.difficulty > 5) {
+  if (
+    "difficulty" in header &&
+    typeof header.difficulty === "number" &&
+    (header.difficulty < 1 || header.difficulty > 5)
+  ) {
     issues.push({
       code: "DIFFICULTY_INVALID",
       message: `Độ khó difficulty phải nằm trong [1, 5] (nhận: ${header.difficulty}).`,

@@ -1,12 +1,11 @@
 import type { ContentSeed } from "#src/seed-content/types";
 
 export const C6_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
-  // Level 1 (Free)
   {
     header: {
       code: "GL-C6-MEM-CARD-0001",
       content_version: 1,
-      template_code: "GT-001",
+      template_code: "GT-012",
       title: "Ghi nhớ đồ vật đã thấy",
       instruction: "Em hãy chọn hình chiếc nơ đỏ.",
       age_min: 3,
@@ -21,15 +20,47 @@ export const C6_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
       origin: "human",
       authored_in: "repo_seed",
     },
-    content_pack: { items: [{ id: "ribbon", emoji: "🎀" }], target_count: 1 },
-    difficulty_params: { count_limit: 3 },
+    content_pack: {
+      prompt: "Em hãy chọn hình chiếc nơ đỏ.",
+      flash_items: [
+        {
+          item_id: "ribbon",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-ribbon",
+          },
+        },
+      ],
+      arrangement: "line",
+      options: [
+        {
+          value: 1,
+          is_correct: true,
+        },
+        {
+          value: 2,
+          is_correct: false,
+        },
+        {
+          value: 3,
+          is_correct: false,
+        },
+      ],
+    },
+    difficulty_params: {
+      flash_ms: 3000,
+      item_count: 1,
+      distractor_count: 2,
+      allow_replay: true,
+      hint_after_ms: 9000,
+      allow_retry: true,
+    },
   },
-  // Level 2 (Login)
   {
     header: {
       code: "GL-C6-MEM-CARD-0002",
       content_version: 1,
-      template_code: "GT-001",
+      template_code: "GT-012",
       title: "Ghi nhớ hình ảnh chuông vàng",
       instruction: "Em chọn hình chiếc chuông xinh.",
       age_min: 3,
@@ -45,20 +76,53 @@ export const C6_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
       authored_in: "repo_seed",
     },
     content_pack: {
-      items: [
-        { id: "b1", emoji: "🔔" },
-        { id: "b2", emoji: "🔔" },
+      prompt: "Em chọn hình chiếc chuông xinh.",
+      flash_items: [
+        {
+          item_id: "b1",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-bell",
+          },
+        },
+        {
+          item_id: "b2",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-bell",
+          },
+        },
       ],
-      target_count: 2,
+      arrangement: "line",
+      options: [
+        {
+          value: 1,
+          is_correct: false,
+        },
+        {
+          value: 2,
+          is_correct: true,
+        },
+        {
+          value: 3,
+          is_correct: false,
+        },
+      ],
     },
-    difficulty_params: { count_limit: 3 },
+    difficulty_params: {
+      flash_ms: 3000,
+      item_count: 2,
+      distractor_count: 2,
+      allow_replay: true,
+      hint_after_ms: 9000,
+      allow_retry: true,
+    },
   },
-  // Level 3 (Login)
   {
     header: {
       code: "GL-C6-ATT-CARD-0003",
       content_version: 1,
-      template_code: "GT-001",
+      template_code: "GT-012",
       title: "Tập trung tìm món quà",
       instruction: "Chạm vào hộp quà màu sinh nhật.",
       age_min: 3,
@@ -73,19 +137,51 @@ export const C6_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
       origin: "human",
       authored_in: "repo_seed",
     },
-    content_pack: { items: [{ id: "gift", emoji: "🎁" }], target_count: 1 },
-    difficulty_params: { count_limit: 3 },
+    content_pack: {
+      prompt: "Chạm vào hộp quà màu sinh nhật.",
+      flash_items: [
+        {
+          item_id: "gift",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-gift",
+          },
+        },
+      ],
+      arrangement: "line",
+      options: [
+        {
+          value: 1,
+          is_correct: true,
+        },
+        {
+          value: 2,
+          is_correct: false,
+        },
+        {
+          value: 3,
+          is_correct: false,
+        },
+      ],
+    },
+    difficulty_params: {
+      flash_ms: 3000,
+      item_count: 1,
+      distractor_count: 2,
+      allow_replay: true,
+      hint_after_ms: 9000,
+      allow_retry: true,
+    },
   },
-  // Level 4 (Login)
   {
     header: {
       code: "GL-C6-MEM-BOX-0004",
       content_version: 1,
-      template_code: "GT-002",
+      template_code: "GT-003",
       title: "Cất đồ chơi vào đúng chỗ",
       instruction: "Kéo ô tô chơi vào giỏ đồ.",
-      age_min: 3,
-      age_max: 4,
+      age_min: 4,
+      age_max: 5,
       difficulty: 1,
       access_tier: "login",
       skill_codes: ["C6.WM.03"],
@@ -97,26 +193,49 @@ export const C6_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
       authored_in: "repo_seed",
     },
     content_pack: {
-      containers: [
-        { id: "toy_basket", label: "Giỏ đồ chơi", target_type: "toy" },
-      ],
-      drag_items: [
-        { id: "car", emoji: "🚗", type: "toy" },
-        { id: "book", emoji: "📖", type: "book" },
+      prompt: "Kéo ô tô chơi vào giỏ đồ.",
+      container: {
+        container_id: "toy_basket",
+        label: "Giỏ đồ chơi",
+        accepts_attribute: "toy",
+      },
+      items: [
+        {
+          item_id: "car",
+          attribute: "toy",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-car",
+          },
+          is_correct: true,
+        },
+        {
+          item_id: "book",
+          attribute: "book",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-open-book",
+          },
+          is_correct: false,
+        },
       ],
     },
-    difficulty_params: { item_count: 2 },
+    difficulty_params: {
+      distractor_count: 1,
+      target_count: 1,
+      hint_after_ms: 9000,
+      allow_retry: true,
+    },
   },
-  // Level 5 (Login)
   {
     header: {
       code: "GL-C6-ATT-BOX-0005",
       content_version: 1,
-      template_code: "GT-002",
+      template_code: "GT-003",
       title: "Kiềm chế chú ý khi chọn đồ",
       instruction: "Chỉ chọn quả bóng tròn nhẵn.",
-      age_min: 3,
-      age_max: 4,
+      age_min: 4,
+      age_max: 5,
       difficulty: 2,
       access_tier: "login",
       skill_codes: ["C6.INH.01"],
@@ -128,15 +247,40 @@ export const C6_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
       authored_in: "repo_seed",
     },
     content_pack: {
-      containers: [{ id: "ball_box", label: "Hộp bóng", target_type: "ball" }],
-      drag_items: [
-        { id: "b1", emoji: "⚽", type: "ball" },
-        { id: "c1", emoji: "🎲", type: "dice" },
+      prompt: "Chỉ chọn quả bóng tròn nhẵn.",
+      container: {
+        container_id: "ball_box",
+        label: "Hộp bóng",
+        accepts_attribute: "ball",
+      },
+      items: [
+        {
+          item_id: "b1",
+          attribute: "ball",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-soccer",
+          },
+          is_correct: true,
+        },
+        {
+          item_id: "c1",
+          attribute: "dice",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-die",
+          },
+          is_correct: false,
+        },
       ],
     },
-    difficulty_params: { item_count: 2 },
+    difficulty_params: {
+      distractor_count: 1,
+      target_count: 1,
+      hint_after_ms: 9000,
+      allow_retry: true,
+    },
   },
-  // Level 6 (Login)
   {
     header: {
       code: "GL-C6-MEM-SEQ-0006",
@@ -144,8 +288,8 @@ export const C6_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
       template_code: "GT-004",
       title: "Ghi nhớ chuỗi 2 biểu tượng",
       instruction: "Chọn biểu tượng tiếp theo đúng trí nhớ.",
-      age_min: 3,
-      age_max: 4,
+      age_min: 4,
+      age_max: 5,
       difficulty: 2,
       access_tier: "login",
       skill_codes: ["C6.WM.03"],
@@ -161,9 +305,10 @@ export const C6_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
       options: ["🔴", "🟢", "🔵"],
       correct_option: "🔴",
     },
-    difficulty_params: { pattern_length: 2 },
+    difficulty_params: {
+      pattern_length: 2,
+    },
   },
-  // Level 7 (Standard)
   {
     header: {
       code: "GL-C6-MEM-CMP-0007",
@@ -184,13 +329,22 @@ export const C6_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
       authored_in: "repo_seed",
     },
     content_pack: {
-      left_group: [{ emoji: "🍏" }],
-      right_group: [{ emoji: "🍎" }],
+      left_group: [
+        {
+          emoji: "🍏",
+        },
+      ],
+      right_group: [
+        {
+          emoji: "🍎",
+        },
+      ],
       target: "match",
     },
-    difficulty_params: { max_difference: 1 },
+    difficulty_params: {
+      max_difference: 1,
+    },
   },
-  // Level 8 (Standard)
   {
     header: {
       code: "GL-C6-ATT-LOC-0008",
@@ -213,15 +367,24 @@ export const C6_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
     content_pack: {
       grid: [
         [
-          { id: "bee", emoji: "🐝", target: true },
-          { id: "flower", emoji: "🌸", target: false },
+          {
+            id: "bee",
+            emoji: "🐝",
+            target: true,
+          },
+          {
+            id: "flower",
+            emoji: "🌸",
+            target: false,
+          },
         ],
       ],
       target_id: "bee",
     },
-    difficulty_params: { grid_size: 2 },
+    difficulty_params: {
+      grid_size: 2,
+    },
   },
-  // Level 9 (Standard)
   {
     header: {
       code: "GL-C6-SUB-FAST-0009",
@@ -229,8 +392,8 @@ export const C6_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
       template_code: "GT-006",
       title: "Nhớ nhanh 1 hình ảnh xuất hiện",
       instruction: "Vật gì vừa chớp qua vậy em.",
-      age_min: 4,
-      age_max: 5,
+      age_min: 5,
+      age_max: 6,
       difficulty: 2,
       access_tier: "standard",
       skill_codes: ["C6.WM.03"],
@@ -242,19 +405,24 @@ export const C6_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
       authored_in: "repo_seed",
     },
     content_pack: {
-      flash_items: [{ emoji: "🚀" }],
+      flash_items: [
+        {
+          emoji: "🚀",
+        },
+      ],
       flash_duration_ms: 1500,
       options: ["Tên lửa", "Ô tô"],
       correct_answer: "Tên lửa",
     },
-    difficulty_params: { flash_duration_ms: 1500 },
+    difficulty_params: {
+      flash_duration_ms: 1500,
+    },
   },
-  // Level 10 (Standard)
   {
     header: {
       code: "GL-C6-MEM-CARD-0010",
       content_version: 1,
-      template_code: "GT-001",
+      template_code: "GT-012",
       title: "Nhớ vị trí hình ảnh 3 đối tượng",
       instruction: "Đếm số bông hoa cúc vừa hiện.",
       age_min: 4,
@@ -270,21 +438,60 @@ export const C6_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
       authored_in: "repo_seed",
     },
     content_pack: {
-      items: [
-        { id: "f1", emoji: "🌼" },
-        { id: "f2", emoji: "🌼" },
-        { id: "f3", emoji: "🌼" },
+      prompt: "Đếm số bông hoa cúc vừa hiện.",
+      flash_items: [
+        {
+          item_id: "f1",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-blossom",
+          },
+        },
+        {
+          item_id: "f2",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-blossom",
+          },
+        },
+        {
+          item_id: "f3",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-blossom",
+          },
+        },
       ],
-      target_count: 3,
+      arrangement: "line",
+      options: [
+        {
+          value: 2,
+          is_correct: false,
+        },
+        {
+          value: 3,
+          is_correct: true,
+        },
+        {
+          value: 4,
+          is_correct: false,
+        },
+      ],
     },
-    difficulty_params: { count_limit: 5 },
+    difficulty_params: {
+      flash_ms: 3000,
+      item_count: 3,
+      distractor_count: 2,
+      allow_replay: true,
+      hint_after_ms: 9000,
+      allow_retry: true,
+    },
   },
-  // Level 11 (Standard)
   {
     header: {
       code: "GL-C6-ATT-BOX-0011",
       content_version: 1,
-      template_code: "GT-002",
+      template_code: "GT-003",
       title: "Phân loại tập trung không xao nhãng",
       instruction: "Bỏ khối vuông đỏ vào hộp.",
       age_min: 4,
@@ -300,15 +507,40 @@ export const C6_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
       authored_in: "repo_seed",
     },
     content_pack: {
-      containers: [{ id: "red_sq_box", label: "Hộp đỏ", target_color: "red" }],
-      drag_items: [
-        { id: "rs", emoji: "🟥", color: "red" },
-        { id: "bs", emoji: "🟦", color: "blue" },
+      prompt: "Bỏ khối vuông đỏ vào hộp.",
+      container: {
+        container_id: "red_sq_box",
+        label: "Hộp đỏ",
+        accepts_attribute: "red",
+      },
+      items: [
+        {
+          item_id: "rs",
+          attribute: "red",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-red-square",
+          },
+          is_correct: true,
+        },
+        {
+          item_id: "bs",
+          attribute: "blue",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-blue-square",
+          },
+          is_correct: false,
+        },
       ],
     },
-    difficulty_params: { item_count: 2 },
+    difficulty_params: {
+      distractor_count: 1,
+      target_count: 1,
+      hint_after_ms: 9000,
+      allow_retry: true,
+    },
   },
-  // Level 12 (Standard)
   {
     header: {
       code: "GL-C6-MEM-SEQ-0012",
@@ -333,9 +565,10 @@ export const C6_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
       options: ["☀️", "🌙", "⭐️"],
       correct_option: "⭐️",
     },
-    difficulty_params: { pattern_length: 3 },
+    difficulty_params: {
+      pattern_length: 3,
+    },
   },
-  // Level 13 (Premium)
   {
     header: {
       code: "GL-C6-SUB-FAST-0013",
@@ -343,8 +576,8 @@ export const C6_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
       template_code: "GT-006",
       title: "Thử thách ghi nhớ chớp nhoáng 2 hình",
       instruction: "Hai hình vừa rồi là quả gì.",
-      age_min: 4,
-      age_max: 5,
+      age_min: 5,
+      age_max: 6,
       difficulty: 3,
       access_tier: "premium",
       skill_codes: ["C6.WM.03"],
@@ -356,14 +589,22 @@ export const C6_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
       authored_in: "repo_seed",
     },
     content_pack: {
-      flash_items: [{ emoji: "🍎" }, { emoji: "🍌" }],
+      flash_items: [
+        {
+          emoji: "🍎",
+        },
+        {
+          emoji: "🍌",
+        },
+      ],
       flash_duration_ms: 1200,
       options: ["Táo và chuối", "Cam và dưa"],
       correct_answer: "Táo và chuối",
     },
-    difficulty_params: { flash_duration_ms: 1200 },
+    difficulty_params: {
+      flash_duration_ms: 1200,
+    },
   },
-  // Level 14 (Premium)
   {
     header: {
       code: "GL-C6-ATT-LOC-0014",
@@ -386,15 +627,24 @@ export const C6_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
     content_pack: {
       grid: [
         [
-          { id: "d1", emoji: "♦️", target: true },
-          { id: "d2", emoji: "♣️", target: false },
+          {
+            id: "d1",
+            emoji: "♦️",
+            target: true,
+          },
+          {
+            id: "d2",
+            emoji: "♣️",
+            target: false,
+          },
         ],
       ],
       target_id: "d1",
     },
-    difficulty_params: { grid_size: 2 },
+    difficulty_params: {
+      grid_size: 2,
+    },
   },
-  // Level 15 (Premium)
   {
     header: {
       code: "GL-C6-MEM-CMP-0015",
@@ -415,18 +665,33 @@ export const C6_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
       authored_in: "repo_seed",
     },
     content_pack: {
-      left_group: [{ emoji: "🍇" }, { emoji: "🍇" }],
-      right_group: [{ emoji: "🍇" }, { emoji: "🍊" }],
+      left_group: [
+        {
+          emoji: "🍇",
+        },
+        {
+          emoji: "🍇",
+        },
+      ],
+      right_group: [
+        {
+          emoji: "🍇",
+        },
+        {
+          emoji: "🍊",
+        },
+      ],
       target: "match",
     },
-    difficulty_params: { max_difference: 1 },
+    difficulty_params: {
+      max_difference: 1,
+    },
   },
-  // Level 16 (Premium)
   {
     header: {
       code: "GL-C6-ATT-BOX-0016",
       content_version: 1,
-      template_code: "GT-002",
+      template_code: "GT-003",
       title: "Phân loại chú ý kháng xao nhãng cao",
       instruction: "Bỏ sinh vật biển vào bể kính.",
       age_min: 5,
@@ -442,15 +707,40 @@ export const C6_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
       authored_in: "repo_seed",
     },
     content_pack: {
-      containers: [{ id: "aquarium", label: "Bể cá", target_habitat: "water" }],
-      drag_items: [
-        { id: "octopus", emoji: "🐙", habitat: "water" },
-        { id: "duck", emoji: "🦆", habitat: "land" },
+      prompt: "Bỏ sinh vật biển vào bể kính.",
+      container: {
+        container_id: "aquarium",
+        label: "Bể cá",
+        accepts_attribute: "water",
+      },
+      items: [
+        {
+          item_id: "octopus",
+          attribute: "water",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-octopus",
+          },
+          is_correct: true,
+        },
+        {
+          item_id: "duck",
+          attribute: "land",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-duck",
+          },
+          is_correct: false,
+        },
       ],
     },
-    difficulty_params: { item_count: 2 },
+    difficulty_params: {
+      distractor_count: 1,
+      target_count: 1,
+      hint_after_ms: 9000,
+      allow_retry: true,
+    },
   },
-  // Level 17 (Premium)
   {
     header: {
       code: "GL-C6-MEM-SEQ-0017",
@@ -475,18 +765,19 @@ export const C6_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
       options: ["1", "5", "0"],
       correct_option: "1",
     },
-    difficulty_params: { pattern_length: 4 },
+    difficulty_params: {
+      pattern_length: 4,
+    },
   },
-  // Level 18 (Premium)
   {
     header: {
       code: "GL-C6-SUB-FAST-0018",
       content_version: 1,
-      template_code: "GT-006",
+      template_code: "GT-012",
       title: "Thử thách ghi nhớ cực nhanh 1000ms",
       instruction: "Số lượng chấm tròn vừa chớp là bao nhiêu.",
-      age_min: 4,
-      age_max: 5,
+      age_min: 5,
+      age_max: 6,
       difficulty: 4,
       access_tier: "premium",
       skill_codes: ["C6.WM.03"],
@@ -498,24 +789,67 @@ export const C6_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
       authored_in: "repo_seed",
     },
     content_pack: {
+      prompt: "Số lượng chấm tròn vừa chớp là bao nhiêu.",
       flash_items: [
-        { emoji: "🔴" },
-        { emoji: "🔴" },
-        { emoji: "🔴" },
-        { emoji: "🔴" },
+        {
+          item_id: "it-1",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-red-circle",
+          },
+        },
+        {
+          item_id: "it-2",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-red-circle",
+          },
+        },
+        {
+          item_id: "it-3",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-red-circle",
+          },
+        },
+        {
+          item_id: "it-4",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-red-circle",
+          },
+        },
       ],
-      flash_duration_ms: 1000,
-      options: [3, 4, 5],
-      correct_answer: 4,
+      arrangement: "dice",
+      options: [
+        {
+          value: 3,
+          is_correct: false,
+        },
+        {
+          value: 4,
+          is_correct: true,
+        },
+        {
+          value: 5,
+          is_correct: false,
+        },
+      ],
     },
-    difficulty_params: { flash_duration_ms: 1000 },
+    difficulty_params: {
+      flash_ms: 1000,
+      item_count: 4,
+      distractor_count: 2,
+      allow_replay: true,
+      hint_after_ms: 9000,
+      allow_retry: true,
+    },
   },
-  // Level 19 (Premium)
   {
     header: {
       code: "GL-C6-ATT-LOC-0019",
       content_version: 1,
-      template_code: "GT-005",
+      template_code: "GT-022",
       title: "Tập trung chú ý tìm ô vuông màu sắc",
       instruction: "Chạm vào ô vuông màu vàng.",
       age_min: 5,
@@ -531,26 +865,58 @@ export const C6_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
       authored_in: "repo_seed",
     },
     content_pack: {
-      grid: [
-        [
-          { id: "ys", emoji: "🟨", target: true },
-          { id: "rs", emoji: "🟥", target: false },
-        ],
-        [
-          { id: "bs", emoji: "🟦", target: false },
-          { id: "gs", emoji: "🟩", target: false },
-        ],
+      prompt: "Chạm vào ô vuông màu vàng.",
+      target_description: "Tập trung chú ý tìm ô vuông màu sắc",
+      scene_objects: [
+        {
+          id: "ys",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-yellow-square",
+          },
+          is_target: true,
+          is_hidden: false,
+        },
+        {
+          id: "rs",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-red-square",
+          },
+          is_target: false,
+          is_hidden: false,
+        },
+        {
+          id: "bs",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-blue-square",
+          },
+          is_target: false,
+          is_hidden: false,
+        },
+        {
+          id: "gs",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-green-square",
+          },
+          is_target: false,
+          is_hidden: false,
+        },
       ],
-      target_id: "ys",
     },
-    difficulty_params: { grid_size: 2 },
+    difficulty_params: {
+      hint_after_ms: 9000,
+      allow_retry: true,
+      show_target_counter: true,
+    },
   },
-  // Level 20 (Premium)
   {
     header: {
       code: "GL-C6-MEM-BOX-0020",
       content_version: 1,
-      template_code: "GT-002",
+      template_code: "GT-003",
       title: "Sắp xếp bộ nhớ làm việc đa đối tượng",
       instruction: "Bỏ rau củ quả vào giỏ đi chợ.",
       age_min: 5,
@@ -566,19 +932,40 @@ export const C6_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
       authored_in: "repo_seed",
     },
     content_pack: {
-      containers: [
-        { id: "market_basket", label: "Giỏ đi chợ", target_category: "veggie" },
-      ],
-      drag_items: [
-        { id: "v1", emoji: "🥦", category: "veggie" },
-        { id: "t1", emoji: "⚽", category: "toy" },
+      prompt: "Bỏ rau củ quả vào giỏ đi chợ.",
+      container: {
+        container_id: "market_basket",
+        label: "Giỏ đi chợ",
+        accepts_attribute: "veggie",
+      },
+      items: [
+        {
+          item_id: "v1",
+          attribute: "veggie",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-broccoli",
+          },
+          is_correct: true,
+        },
+        {
+          item_id: "t1",
+          attribute: "toy",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-soccer",
+          },
+          is_correct: false,
+        },
       ],
     },
-    difficulty_params: { item_count: 2 },
+    difficulty_params: {
+      distractor_count: 1,
+      target_count: 1,
+      hint_after_ms: 9000,
+      allow_retry: true,
+    },
   },
-  // Level 21 (Premium) — khuôn ngoài rổ GT-001..GT-008: maze-route ở chế độ `arrows`
-  // cho C6 band 5-6. Bấm mũi tên buộc trẻ dựng cả đường đi trước khi chạy, nên đây là
-  // level đầu tiên của corpus mang tag tiến trình tư duy `plan`.
   {
     header: {
       code: "GL-C6-PLN-MAZE-0021",
@@ -592,7 +979,7 @@ export const C6_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
       access_tier: "premium",
       skill_codes: ["C6.PLN.01"],
       learning_objective_codes: ["LO-C6.PLN.01-01"],
-      what_tags: ["space"],
+      what_tags: ["spt"],
       thinking_tags: ["plan"],
       theme_tag: "home",
       origin: "human",
@@ -604,13 +991,32 @@ export const C6_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
         rows: 4,
         cols: 4,
         walls: [
-          { row: 1, col: 0, side: "e" },
-          { row: 2, col: 1, side: "n" },
+          {
+            row: 1,
+            col: 0,
+            side: "e",
+          },
+          {
+            row: 2,
+            col: 1,
+            side: "n",
+          },
         ],
-        start: { row: 0, col: 0 },
-        goal: { row: 3, col: 3 },
+        start: {
+          row: 0,
+          col: 0,
+        },
+        goal: {
+          row: 3,
+          col: 3,
+        },
       },
-      required_cells: [{ row: 1, col: 2 }],
+      required_cells: [
+        {
+          row: 1,
+          col: 2,
+        },
+      ],
       input_mode: "arrows",
     },
     difficulty_params: {
@@ -620,7 +1026,6 @@ export const C6_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
       allow_retry: true,
     },
   },
-  // Level 22 (GT-013)
   {
     header: {
       code: "GL-C6-PLN-MAZE-0022",
@@ -634,7 +1039,7 @@ export const C6_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
       access_tier: "login",
       skill_codes: ["C6.PLN.01"],
       learning_objective_codes: ["LO-C6.PLN.01-01"],
-      what_tags: ["space"],
+      what_tags: ["spt"],
       thinking_tags: ["plan"],
       theme_tag: "animal",
       origin: "human",
@@ -646,13 +1051,35 @@ export const C6_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
         rows: 3,
         cols: 3,
         walls: [
-          { row: 0, col: 0, side: "e" },
-          { row: 1, col: 0, side: "e" },
-          { row: 2, col: 1, side: "n" },
-          { row: 2, col: 2, side: "n" },
+          {
+            row: 0,
+            col: 0,
+            side: "e",
+          },
+          {
+            row: 1,
+            col: 0,
+            side: "e",
+          },
+          {
+            row: 2,
+            col: 1,
+            side: "n",
+          },
+          {
+            row: 2,
+            col: 2,
+            side: "n",
+          },
         ],
-        start: { row: 0, col: 0 },
-        goal: { row: 2, col: 2 },
+        start: {
+          row: 0,
+          col: 0,
+        },
+        goal: {
+          row: 2,
+          col: 2,
+        },
       },
       required_cells: [],
       input_mode: "draw",
@@ -664,7 +1091,6 @@ export const C6_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
       allow_retry: true,
     },
   },
-  // Level 23 (GT-013)
   {
     header: {
       code: "GL-C6-PLN-MAZE-0023",
@@ -678,7 +1104,7 @@ export const C6_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
       access_tier: "standard",
       skill_codes: ["C6.PLN.01"],
       learning_objective_codes: ["LO-C6.PLN.01-01"],
-      what_tags: ["space"],
+      what_tags: ["spt"],
       thinking_tags: ["plan"],
       theme_tag: "home",
       origin: "human",
@@ -690,17 +1116,55 @@ export const C6_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
         rows: 3,
         cols: 3,
         walls: [
-          { row: 0, col: 0, side: "s" },
-          { row: 0, col: 2, side: "s" },
-          { row: 1, col: 0, side: "e" },
-          { row: 1, col: 1, side: "e" },
-          { row: 2, col: 0, side: "e" },
-          { row: 2, col: 1, side: "e" },
-          { row: 1, col: 0, side: "s" },
-          { row: 1, col: 2, side: "s" },
+          {
+            row: 0,
+            col: 0,
+            side: "s",
+          },
+          {
+            row: 0,
+            col: 2,
+            side: "s",
+          },
+          {
+            row: 1,
+            col: 0,
+            side: "e",
+          },
+          {
+            row: 1,
+            col: 1,
+            side: "e",
+          },
+          {
+            row: 2,
+            col: 0,
+            side: "e",
+          },
+          {
+            row: 2,
+            col: 1,
+            side: "e",
+          },
+          {
+            row: 1,
+            col: 0,
+            side: "s",
+          },
+          {
+            row: 1,
+            col: 2,
+            side: "s",
+          },
         ],
-        start: { row: 0, col: 0 },
-        goal: { row: 0, col: 2 },
+        start: {
+          row: 0,
+          col: 0,
+        },
+        goal: {
+          row: 0,
+          col: 2,
+        },
       },
       required_cells: [],
       input_mode: "draw",
@@ -712,7 +1176,6 @@ export const C6_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
       allow_retry: true,
     },
   },
-  // Level 24 (GT-020 - Memory Flip)
   {
     header: {
       code: "GL-C6-MEM-FLIP-0024",
@@ -737,13 +1200,37 @@ export const C6_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
       pairs: [
         {
           pair_key: "cat",
-          card_a: { card_id: "cat-1", asset: { kind: "emoji", ref: "🐱" } },
-          card_b: { card_id: "cat-2", asset: { kind: "emoji", ref: "🐱" } },
+          card_a: {
+            card_id: "cat-1",
+            asset: {
+              kind: "emoji",
+              ref: "EMJ-cat",
+            },
+          },
+          card_b: {
+            card_id: "cat-2",
+            asset: {
+              kind: "emoji",
+              ref: "EMJ-cat",
+            },
+          },
         },
         {
           pair_key: "dog",
-          card_a: { card_id: "dog-1", asset: { kind: "emoji", ref: "🐶" } },
-          card_b: { card_id: "dog-2", asset: { kind: "emoji", ref: "🐶" } },
+          card_a: {
+            card_id: "dog-1",
+            asset: {
+              kind: "emoji",
+              ref: "EMJ-dog",
+            },
+          },
+          card_b: {
+            card_id: "dog-2",
+            asset: {
+              kind: "emoji",
+              ref: "EMJ-dog",
+            },
+          },
         },
       ],
     },
@@ -754,7 +1241,6 @@ export const C6_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
       allow_retry: true,
     },
   },
-  // Level 25 (GT-020 - Memory Flip)
   {
     header: {
       code: "GL-C6-MEM-FLIP-0025",
@@ -779,18 +1265,54 @@ export const C6_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
       pairs: [
         {
           pair_key: "apple",
-          card_a: { card_id: "apple-1", asset: { kind: "emoji", ref: "🍎" } },
-          card_b: { card_id: "apple-2", asset: { kind: "emoji", ref: "🍎" } },
+          card_a: {
+            card_id: "apple-1",
+            asset: {
+              kind: "emoji",
+              ref: "EMJ-red-apple",
+            },
+          },
+          card_b: {
+            card_id: "apple-2",
+            asset: {
+              kind: "emoji",
+              ref: "EMJ-red-apple",
+            },
+          },
         },
         {
           pair_key: "banana",
-          card_a: { card_id: "banana-1", asset: { kind: "emoji", ref: "🍌" } },
-          card_b: { card_id: "banana-2", asset: { kind: "emoji", ref: "🍌" } },
+          card_a: {
+            card_id: "banana-1",
+            asset: {
+              kind: "emoji",
+              ref: "EMJ-banana",
+            },
+          },
+          card_b: {
+            card_id: "banana-2",
+            asset: {
+              kind: "emoji",
+              ref: "EMJ-banana",
+            },
+          },
         },
         {
           pair_key: "strawberry",
-          card_a: { card_id: "sb-1", asset: { kind: "emoji", ref: "🍓" } },
-          card_b: { card_id: "sb-2", asset: { kind: "emoji", ref: "🍓" } },
+          card_a: {
+            card_id: "sb-1",
+            asset: {
+              kind: "emoji",
+              ref: "EMJ-strawberry",
+            },
+          },
+          card_b: {
+            card_id: "sb-2",
+            asset: {
+              kind: "emoji",
+              ref: "EMJ-strawberry",
+            },
+          },
         },
       ],
     },
@@ -801,7 +1323,6 @@ export const C6_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
       allow_retry: true,
     },
   },
-  // Level 26 (GT-020 - Memory Flip)
   {
     header: {
       code: "GL-C6-MEM-FLIP-0026",
@@ -826,23 +1347,71 @@ export const C6_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
       pairs: [
         {
           pair_key: "car",
-          card_a: { card_id: "car-1", asset: { kind: "emoji", ref: "🚗" } },
-          card_b: { card_id: "car-2", asset: { kind: "emoji", ref: "🚗" } },
+          card_a: {
+            card_id: "car-1",
+            asset: {
+              kind: "emoji",
+              ref: "EMJ-car",
+            },
+          },
+          card_b: {
+            card_id: "car-2",
+            asset: {
+              kind: "emoji",
+              ref: "EMJ-car",
+            },
+          },
         },
         {
           pair_key: "ball",
-          card_a: { card_id: "ball-1", asset: { kind: "emoji", ref: "⚽" } },
-          card_b: { card_id: "ball-2", asset: { kind: "emoji", ref: "⚽" } },
+          card_a: {
+            card_id: "ball-1",
+            asset: {
+              kind: "emoji",
+              ref: "EMJ-soccer",
+            },
+          },
+          card_b: {
+            card_id: "ball-2",
+            asset: {
+              kind: "emoji",
+              ref: "EMJ-soccer",
+            },
+          },
         },
         {
           pair_key: "bear",
-          card_a: { card_id: "bear-1", asset: { kind: "emoji", ref: "🧸" } },
-          card_b: { card_id: "bear-2", asset: { kind: "emoji", ref: "🧸" } },
+          card_a: {
+            card_id: "bear-1",
+            asset: {
+              kind: "emoji",
+              ref: "EMJ-teddy-bear",
+            },
+          },
+          card_b: {
+            card_id: "bear-2",
+            asset: {
+              kind: "emoji",
+              ref: "EMJ-teddy-bear",
+            },
+          },
         },
         {
           pair_key: "train",
-          card_a: { card_id: "train-1", asset: { kind: "emoji", ref: "🚂" } },
-          card_b: { card_id: "train-2", asset: { kind: "emoji", ref: "🚂" } },
+          card_a: {
+            card_id: "train-1",
+            asset: {
+              kind: "emoji",
+              ref: "EMJ-locomotive",
+            },
+          },
+          card_b: {
+            card_id: "train-2",
+            asset: {
+              kind: "emoji",
+              ref: "EMJ-locomotive",
+            },
+          },
         },
       ],
     },
@@ -853,7 +1422,6 @@ export const C6_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
       allow_retry: true,
     },
   },
-  // Level 27 (GT-012 - Flash Recall)
   {
     header: {
       code: "GL-C6-MEM-FLASH-0027",
@@ -877,14 +1445,41 @@ export const C6_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
       prompt: "Bé hãy nhìn thật nhanh xem có mấy chấm tròn nhé!",
       arrangement: "dice",
       flash_items: [
-        { item_id: "dot_1", asset: { kind: "emoji", ref: "🔴" } },
-        { item_id: "dot_2", asset: { kind: "emoji", ref: "🔴" } },
-        { item_id: "dot_3", asset: { kind: "emoji", ref: "🔴" } },
+        {
+          item_id: "dot_1",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-red-circle",
+          },
+        },
+        {
+          item_id: "dot_2",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-red-circle",
+          },
+        },
+        {
+          item_id: "dot_3",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-red-circle",
+          },
+        },
       ],
       options: [
-        { value: 2, is_correct: false },
-        { value: 3, is_correct: true },
-        { value: 4, is_correct: false },
+        {
+          value: 2,
+          is_correct: false,
+        },
+        {
+          value: 3,
+          is_correct: true,
+        },
+        {
+          value: 4,
+          is_correct: false,
+        },
       ],
     },
     difficulty_params: {
@@ -896,7 +1491,6 @@ export const C6_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
       allow_retry: true,
     },
   },
-  // Level 28 (GT-012 - Flash Recall)
   {
     header: {
       code: "GL-C6-MEM-FLASH-0028",
@@ -920,15 +1514,48 @@ export const C6_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
       prompt: "Đoàn gấu bông vừa đi qua có mấy bạn gấu?",
       arrangement: "line",
       flash_items: [
-        { item_id: "b1", asset: { kind: "emoji", ref: "🧸" } },
-        { item_id: "b2", asset: { kind: "emoji", ref: "🧸" } },
-        { item_id: "b3", asset: { kind: "emoji", ref: "🧸" } },
-        { item_id: "b4", asset: { kind: "emoji", ref: "🧸" } },
+        {
+          item_id: "b1",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-teddy-bear",
+          },
+        },
+        {
+          item_id: "b2",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-teddy-bear",
+          },
+        },
+        {
+          item_id: "b3",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-teddy-bear",
+          },
+        },
+        {
+          item_id: "b4",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-teddy-bear",
+          },
+        },
       ],
       options: [
-        { value: 3, is_correct: false },
-        { value: 4, is_correct: true },
-        { value: 5, is_correct: false },
+        {
+          value: 3,
+          is_correct: false,
+        },
+        {
+          value: 4,
+          is_correct: true,
+        },
+        {
+          value: 5,
+          is_correct: false,
+        },
       ],
     },
     difficulty_params: {
@@ -940,7 +1567,6 @@ export const C6_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
       allow_retry: true,
     },
   },
-  // Level 29 (GT-012 - Flash Recall)
   {
     header: {
       code: "GL-C6-MEM-FLASH-0029",
@@ -962,18 +1588,57 @@ export const C6_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
     },
     content_pack: {
       prompt: "Bé đếm nhanh có mấy ngôi sao trên bầu trời?",
-      arrangement: "scattered",
+      arrangement: "random",
       flash_items: [
-        { item_id: "s1", asset: { kind: "emoji", ref: "⭐" } },
-        { item_id: "s2", asset: { kind: "emoji", ref: "⭐" } },
-        { item_id: "s3", asset: { kind: "emoji", ref: "⭐" } },
-        { item_id: "s4", asset: { kind: "emoji", ref: "⭐" } },
-        { item_id: "s5", asset: { kind: "emoji", ref: "⭐" } },
+        {
+          item_id: "s1",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-star",
+          },
+        },
+        {
+          item_id: "s2",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-star",
+          },
+        },
+        {
+          item_id: "s3",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-star",
+          },
+        },
+        {
+          item_id: "s4",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-star",
+          },
+        },
+        {
+          item_id: "s5",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-star",
+          },
+        },
       ],
       options: [
-        { value: 4, is_correct: false },
-        { value: 5, is_correct: true },
-        { value: 6, is_correct: false },
+        {
+          value: 4,
+          is_correct: false,
+        },
+        {
+          value: 5,
+          is_correct: true,
+        },
+        {
+          value: 6,
+          is_correct: false,
+        },
       ],
     },
     difficulty_params: {
@@ -985,7 +1650,6 @@ export const C6_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
       allow_retry: true,
     },
   },
-  // Level 30 (GT-026 - Go/No-Go)
   {
     header: {
       code: "GL-C6-INH-NOGO-0030",
@@ -1010,19 +1674,43 @@ export const C6_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
         "Bé chỉ chạm khi thấy chú thỏ xanh nhé, thấy cáo đỏ thì đứng yên!",
       go_stimulus: {
         label: "Thỏ xanh",
-        asset: { kind: "emoji", ref: "🐰" },
+        asset: {
+          kind: "emoji",
+          ref: "EMJ-rabbit-face",
+        },
       },
       nogo_stimulus: {
         label: "Cáo đỏ",
-        asset: { kind: "emoji", ref: "🦊" },
+        asset: {
+          kind: "emoji",
+          ref: "EMJ-fox",
+        },
       },
       trials: [
-        { id: "tr-1", kind: "go" },
-        { id: "tr-2", kind: "go" },
-        { id: "tr-3", kind: "nogo" },
-        { id: "tr-4", kind: "go" },
-        { id: "tr-5", kind: "nogo" },
-        { id: "tr-6", kind: "go" },
+        {
+          id: "tr-1",
+          kind: "go",
+        },
+        {
+          id: "tr-2",
+          kind: "go",
+        },
+        {
+          id: "tr-3",
+          kind: "nogo",
+        },
+        {
+          id: "tr-4",
+          kind: "go",
+        },
+        {
+          id: "tr-5",
+          kind: "nogo",
+        },
+        {
+          id: "tr-6",
+          kind: "go",
+        },
       ],
     },
     difficulty_params: {
@@ -1032,7 +1720,6 @@ export const C6_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
       allow_retry: true,
     },
   },
-  // Level 31 (GT-026 - Go/No-Go)
   {
     header: {
       code: "GL-C6-INH-NOGO-0031",
@@ -1056,19 +1743,43 @@ export const C6_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
       prompt: "Chạm vào ngôi sao vàng, gặp đám mây xám thì giữ tay nhé!",
       go_stimulus: {
         label: "Ngôi sao vàng",
-        asset: { kind: "emoji", ref: "⭐" },
+        asset: {
+          kind: "emoji",
+          ref: "EMJ-star",
+        },
       },
       nogo_stimulus: {
         label: "Đám mây xám",
-        asset: { kind: "emoji", ref: "☁️" },
+        asset: {
+          kind: "emoji",
+          ref: "EMJ-cloud",
+        },
       },
       trials: [
-        { id: "t1", kind: "go" },
-        { id: "t2", kind: "nogo" },
-        { id: "t3", kind: "go" },
-        { id: "t4", kind: "go" },
-        { id: "t5", kind: "nogo" },
-        { id: "t6", kind: "go" },
+        {
+          id: "t1",
+          kind: "go",
+        },
+        {
+          id: "t2",
+          kind: "nogo",
+        },
+        {
+          id: "t3",
+          kind: "go",
+        },
+        {
+          id: "t4",
+          kind: "go",
+        },
+        {
+          id: "t5",
+          kind: "nogo",
+        },
+        {
+          id: "t6",
+          kind: "go",
+        },
       ],
     },
     difficulty_params: {
@@ -1078,7 +1789,6 @@ export const C6_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
       allow_retry: true,
     },
   },
-  // Level 32 (GT-026 - Go/No-Go)
   {
     header: {
       code: "GL-C6-INH-NOGO-0032",
@@ -1103,21 +1813,51 @@ export const C6_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
         "Thấy quả táo đỏ thì hái (chạm), thấy quả chanh vàng thì giữ tay nhé!",
       go_stimulus: {
         label: "Táo đỏ",
-        asset: { kind: "emoji", ref: "🍎" },
+        asset: {
+          kind: "emoji",
+          ref: "EMJ-red-apple",
+        },
       },
       nogo_stimulus: {
         label: "Chanh vàng",
-        asset: { kind: "emoji", ref: "🍋" },
+        asset: {
+          kind: "emoji",
+          ref: "EMJ-lemon",
+        },
       },
       trials: [
-        { id: "tr1", kind: "go" },
-        { id: "tr2", kind: "go" },
-        { id: "tr3", kind: "nogo" },
-        { id: "tr4", kind: "go" },
-        { id: "tr5", kind: "nogo" },
-        { id: "tr6", kind: "go" },
-        { id: "tr7", kind: "go" },
-        { id: "tr8", kind: "nogo" },
+        {
+          id: "tr1",
+          kind: "go",
+        },
+        {
+          id: "tr2",
+          kind: "go",
+        },
+        {
+          id: "tr3",
+          kind: "nogo",
+        },
+        {
+          id: "tr4",
+          kind: "go",
+        },
+        {
+          id: "tr5",
+          kind: "nogo",
+        },
+        {
+          id: "tr6",
+          kind: "go",
+        },
+        {
+          id: "tr7",
+          kind: "go",
+        },
+        {
+          id: "tr8",
+          kind: "nogo",
+        },
       ],
     },
     difficulty_params: {
@@ -1127,7 +1867,6 @@ export const C6_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
       allow_retry: true,
     },
   },
-  // Level 33 (GT-027 - Rule Switch)
   {
     header: {
       code: "GL-C6-FLX-SWT-0033",
@@ -1172,37 +1911,55 @@ export const C6_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
       items: [
         {
           id: "it-1",
-          asset: { kind: "emoji", ref: "🔴" },
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-red-circle",
+          },
           color: "red",
           shape: "circle",
         },
         {
           id: "it-2",
-          asset: { kind: "emoji", ref: "🟥" },
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-red-square",
+          },
           color: "red",
           shape: "square",
         },
         {
           id: "it-3",
-          asset: { kind: "emoji", ref: "⭐" },
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-star",
+          },
           color: "yellow",
           shape: "star",
         },
         {
           id: "it-4",
-          asset: { kind: "emoji", ref: "🌟" },
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-glowing-star",
+          },
           color: "blue",
           shape: "star",
         },
         {
           id: "it-5",
-          asset: { kind: "emoji", ref: "🟢" },
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-green-circle",
+          },
           color: "green",
           shape: "circle",
         },
         {
           id: "it-6",
-          asset: { kind: "emoji", ref: "🟦" },
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-blue-square",
+          },
           color: "blue",
           shape: "square",
         },
@@ -1215,7 +1972,6 @@ export const C6_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
       allow_retry: true,
     },
   },
-  // Level 34 (GT-027 - Rule Switch)
   {
     header: {
       code: "GL-C6-FLX-SWT-0034",
@@ -1260,31 +2016,46 @@ export const C6_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
       items: [
         {
           id: "sq-1",
-          asset: { kind: "emoji", ref: "🟧" },
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-orange-square",
+          },
           color: "orange",
           shape: "square",
         },
         {
           id: "sq-2",
-          asset: { kind: "emoji", ref: "🟩" },
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-green-square",
+          },
           color: "green",
           shape: "square",
         },
         {
           id: "bl-1",
-          asset: { kind: "emoji", ref: "🔵" },
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-blue-circle",
+          },
           color: "blue",
           shape: "circle",
         },
         {
           id: "bl-2",
-          asset: { kind: "emoji", ref: "🔷" },
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-blue-diamond",
+          },
           color: "blue",
           shape: "diamond",
         },
         {
           id: "ot-1",
-          asset: { kind: "emoji", ref: "🟡" },
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-yellow-circle",
+          },
           color: "yellow",
           shape: "circle",
         },
@@ -1297,7 +2068,6 @@ export const C6_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
       allow_retry: true,
     },
   },
-  // Level 35 (GT-027 - Rule Switch)
   {
     header: {
       code: "GL-C6-FLX-SWT-0035",
@@ -1342,31 +2112,46 @@ export const C6_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
       items: [
         {
           id: "c-1",
-          asset: { kind: "emoji", ref: "🔴" },
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-red-circle",
+          },
           color: "red",
           shape: "circle",
         },
         {
           id: "c-2",
-          asset: { kind: "emoji", ref: "🟢" },
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-green-circle",
+          },
           color: "green",
           shape: "circle",
         },
         {
           id: "y-1",
-          asset: { kind: "emoji", ref: "⭐" },
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-star",
+          },
           color: "yellow",
           shape: "star",
         },
         {
           id: "y-2",
-          asset: { kind: "emoji", ref: "🧀" },
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-cheese",
+          },
           color: "yellow",
           shape: "triangle",
         },
         {
           id: "d-1",
-          asset: { kind: "emoji", ref: "⬛" },
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-black-square",
+          },
           color: "black",
           shape: "square",
         },
@@ -1376,6 +2161,71 @@ export const C6_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
     difficulty_params: {
       signal_duration_ms: 2000,
       hint_after_ms: 8000,
+      allow_retry: true,
+    },
+  },
+  {
+    header: {
+      code: "GL-C6-MEM-FLIP-0034",
+      content_version: 1,
+      template_code: "GT-020",
+      title: "Lật thẻ tìm cặp đồ chơi",
+      instruction: "Bé lật thẻ và tìm hai đồ chơi giống nhau nhé!",
+      age_min: 3,
+      age_max: 4,
+      difficulty: 1,
+      access_tier: "free",
+      skill_codes: ["C6.WM.03"],
+      learning_objective_codes: ["LO-C6.WM.03-01"],
+      what_tags: ["mem"],
+      thinking_tags: ["recall"],
+      theme_tag: "home",
+      origin: "human",
+      authored_in: "repo_seed",
+    },
+    content_pack: {
+      prompt: "Bé lật thẻ tìm hai đồ chơi giống nhau nhé!",
+      pairs: [
+        {
+          pair_key: "bear",
+          card_a: {
+            card_id: "bear-1",
+            asset: {
+              kind: "emoji",
+              ref: "EMJ-teddy-bear",
+            },
+          },
+          card_b: {
+            card_id: "bear-2",
+            asset: {
+              kind: "emoji",
+              ref: "EMJ-teddy-bear",
+            },
+          },
+        },
+        {
+          pair_key: "car",
+          card_a: {
+            card_id: "car-1",
+            asset: {
+              kind: "emoji",
+              ref: "EMJ-car",
+            },
+          },
+          card_b: {
+            card_id: "car-2",
+            asset: {
+              kind: "emoji",
+              ref: "EMJ-car",
+            },
+          },
+        },
+      ],
+    },
+    difficulty_params: {
+      flip_back_delay_ms: 1800,
+      peek_all_initial_ms: 2500,
+      hint_after_ms: 9000,
       allow_retry: true,
     },
   },

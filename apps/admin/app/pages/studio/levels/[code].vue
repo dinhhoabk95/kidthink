@@ -442,6 +442,9 @@
     let curr: Record<string, unknown> = levelData.value;
     for (let i = 0; i < pathParts.length - 1; i++) {
       const part = pathParts[i];
+      if (!part) {
+        continue;
+      }
       if (!curr[part] || typeof curr[part] !== "object") {
         curr[part] = {};
       }
@@ -462,6 +465,9 @@
     let curr: Record<string, unknown> = levelData.value;
     for (let i = 0; i < pathParts.length - 1; i++) {
       const part = pathParts[i];
+      if (!part) {
+        continue;
+      }
       if (!curr[part] || typeof curr[part] !== "object") {
         curr[part] = {};
       }

@@ -284,6 +284,10 @@ async function copyFromSourceLesson(
       })
       .returning();
 
+    if (!insertedPlan) {
+      throw new Error("Failed to create lesson plan");
+    }
+
     let insertedItems: LessonPlanItem[] = [];
 
     if (attachedActivities.length > 0) {
@@ -368,6 +372,10 @@ async function createBlankPlan(
         version: 1,
       })
       .returning();
+
+    if (!insertedPlan) {
+      throw new Error("Failed to create lesson plan");
+    }
 
     await writeAudit(tx, {
       actor_type: "user",
@@ -685,6 +693,10 @@ export async function updateLessonPlanMeta(
       .where(eq(lessonPlans.id, plan.id))
       .returning();
 
+    if (!updatedPlan) {
+      throw new Error("Failed to update lesson plan");
+    }
+
     const [countResult] = await tx
       .select({ count: sql<number>`count(*)::int` })
       .from(lessonPlanItems)
@@ -767,12 +779,11 @@ export async function replaceLessonPlanItems(
 
   const preparedItems: PreparedItem[] = [];
   for (let i = 0; i < input.items.length; i++) {
-    const prepared = await prepareSingleItem(
-      db,
-      input.items[i],
-      i,
-      entitlements
-    );
+    const rawItem = input.items[i];
+    if (!rawItem) {
+      continue;
+    }
+    const prepared = await prepareSingleItem(db, rawItem, i, entitlements);
     preparedItems.push(prepared);
   }
 
@@ -808,6 +819,10 @@ export async function replaceLessonPlanItems(
       })
       .where(eq(lessonPlans.id, plan.id))
       .returning();
+
+    if (!p) {
+      throw new Error("Failed to update lesson plan items");
+    }
 
     await writeAudit(tx, {
       actor_type: "user",

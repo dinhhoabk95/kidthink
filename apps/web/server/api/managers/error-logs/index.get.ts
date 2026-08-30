@@ -91,9 +91,7 @@ export default defineEventHandler(async (event) => {
     });
   }
 
-  const query =
-    ((event as Record<string, unknown>)._query as Record<string, unknown>) ||
-    getQuery(event);
+  const query = getQuery(event);
 
   const limit = Math.min(Number(query.limit) || 50, 100);
   const conditions = buildErrorLogConditions(query);

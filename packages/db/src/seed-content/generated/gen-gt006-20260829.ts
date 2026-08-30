@@ -1,10 +1,10 @@
 /**
- * @generated from LEVEL-GENERATOR-KIT@00000000
+ * @generated from LEVEL-GENERATOR-KIT@c9fd31f3f239
  * Engine: GT-006
  * Seed: 20260829
  * Theme: school
  * Band: 5-6
- * Total generated: 9
+ * Total generated: 10
  */
 import type { ContentSeed } from "#src/seed-content/types";
 
@@ -25,7 +25,7 @@ export const GEN_GT006_20260829: ContentSeed<unknown, unknown>[] = [
       "what_tags": [],
       "thinking_tags": [],
       "theme_tag": "school",
-      "origin": "generator",
+      "origin": "ai_assisted",
       "authored_in": "repo_seed"
     },
     "content_pack": {
@@ -36,27 +36,27 @@ export const GEN_GT006_20260829: ContentSeed<unknown, unknown>[] = [
           "order_index": 0,
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-backpack"
+            "ref": "EMJ-ruler"
           },
-          "label": "Cặp sách"
+          "label": "Thước kẻ"
         },
         {
           "step_id": "step_2",
           "order_index": 1,
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-ruler"
+            "ref": "EMJ-crayon"
           },
-          "label": "Thước kẻ"
+          "label": "Bút sáp"
         },
         {
           "step_id": "step_3",
           "order_index": 2,
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-school"
+            "ref": "EMJ-scissors"
           },
-          "label": "Trường học"
+          "label": "Cái kéo"
         }
       ]
     },
@@ -82,7 +82,7 @@ export const GEN_GT006_20260829: ContentSeed<unknown, unknown>[] = [
       "what_tags": [],
       "thinking_tags": [],
       "theme_tag": "school",
-      "origin": "generator",
+      "origin": "ai_assisted",
       "authored_in": "repo_seed"
     },
     "content_pack": {
@@ -93,27 +93,27 @@ export const GEN_GT006_20260829: ContentSeed<unknown, unknown>[] = [
           "order_index": 0,
           "asset": {
             "kind": "emoji",
-            "ref": "🍎"
+            "ref": "EMJ-abacus"
           },
-          "label": "Táo"
+          "label": "Bàn tính"
         },
         {
           "step_id": "step_2",
           "order_index": 1,
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-pencil"
+            "ref": "EMJ-open-book"
           },
-          "label": "Bút chì"
+          "label": "Sách mở"
         },
         {
           "step_id": "step_3",
           "order_index": 2,
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-books"
+            "ref": "EMJ-scissors"
           },
-          "label": "Sách"
+          "label": "Cái kéo"
         }
       ]
     },
@@ -139,7 +139,7 @@ export const GEN_GT006_20260829: ContentSeed<unknown, unknown>[] = [
       "what_tags": [],
       "thinking_tags": [],
       "theme_tag": "school",
-      "origin": "generator",
+      "origin": "ai_assisted",
       "authored_in": "repo_seed"
     },
     "content_pack": {
@@ -150,27 +150,27 @@ export const GEN_GT006_20260829: ContentSeed<unknown, unknown>[] = [
           "order_index": 0,
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-backpack"
+            "ref": "EMJ-crayon"
           },
-          "label": "Cặp sách"
+          "label": "Bút sáp"
         },
         {
           "step_id": "step_2",
           "order_index": 1,
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-school"
+            "ref": "EMJ-books"
           },
-          "label": "Trường học"
+          "label": "Sách"
         },
         {
           "step_id": "step_3",
           "order_index": 2,
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-pencil"
+            "ref": "EMJ-scissors"
           },
-          "label": "Bút chì"
+          "label": "Cái kéo"
         }
       ]
     },
@@ -196,7 +196,7 @@ export const GEN_GT006_20260829: ContentSeed<unknown, unknown>[] = [
       "what_tags": [],
       "thinking_tags": [],
       "theme_tag": "school",
-      "origin": "generator",
+      "origin": "ai_assisted",
       "authored_in": "repo_seed"
     },
     "content_pack": {
@@ -207,18 +207,18 @@ export const GEN_GT006_20260829: ContentSeed<unknown, unknown>[] = [
           "order_index": 0,
           "asset": {
             "kind": "emoji",
-            "ref": "🍎"
+            "ref": "EMJ-pencil"
           },
-          "label": "Táo"
+          "label": "Bút chì"
         },
         {
           "step_id": "step_2",
           "order_index": 1,
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-backpack"
+            "ref": "EMJ-scissors"
           },
-          "label": "Cặp sách"
+          "label": "Cái kéo"
         },
         {
           "step_id": "step_3",
@@ -253,7 +253,7 @@ export const GEN_GT006_20260829: ContentSeed<unknown, unknown>[] = [
       "what_tags": [],
       "thinking_tags": [],
       "theme_tag": "school",
-      "origin": "generator",
+      "origin": "ai_assisted",
       "authored_in": "repo_seed"
     },
     "content_pack": {
@@ -264,27 +264,27 @@ export const GEN_GT006_20260829: ContentSeed<unknown, unknown>[] = [
           "order_index": 0,
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-school"
+            "ref": "EMJ-scissors"
           },
-          "label": "Trường học"
+          "label": "Cái kéo"
         },
         {
           "step_id": "step_2",
           "order_index": 1,
           "asset": {
             "kind": "emoji",
-            "ref": "🍎"
+            "ref": "EMJ-ruler"
           },
-          "label": "Táo"
+          "label": "Thước kẻ"
         },
         {
           "step_id": "step_3",
           "order_index": 2,
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-pencil"
+            "ref": "EMJ-school"
           },
-          "label": "Bút chì"
+          "label": "Trường học"
         }
       ]
     },
@@ -310,7 +310,7 @@ export const GEN_GT006_20260829: ContentSeed<unknown, unknown>[] = [
       "what_tags": [],
       "thinking_tags": [],
       "theme_tag": "school",
-      "origin": "generator",
+      "origin": "ai_assisted",
       "authored_in": "repo_seed"
     },
     "content_pack": {
@@ -330,18 +330,18 @@ export const GEN_GT006_20260829: ContentSeed<unknown, unknown>[] = [
           "order_index": 1,
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-pencil"
+            "ref": "EMJ-school"
           },
-          "label": "Bút chì"
+          "label": "Trường học"
         },
         {
           "step_id": "step_3",
           "order_index": 2,
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-school"
+            "ref": "EMJ-ruler"
           },
-          "label": "Trường học"
+          "label": "Thước kẻ"
         }
       ]
     },
@@ -367,7 +367,7 @@ export const GEN_GT006_20260829: ContentSeed<unknown, unknown>[] = [
       "what_tags": [],
       "thinking_tags": [],
       "theme_tag": "school",
-      "origin": "generator",
+      "origin": "ai_assisted",
       "authored_in": "repo_seed"
     },
     "content_pack": {
@@ -378,18 +378,18 @@ export const GEN_GT006_20260829: ContentSeed<unknown, unknown>[] = [
           "order_index": 0,
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-school"
+            "ref": "EMJ-ruler"
           },
-          "label": "Trường học"
+          "label": "Thước kẻ"
         },
         {
           "step_id": "step_2",
           "order_index": 1,
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-backpack"
+            "ref": "EMJ-school"
           },
-          "label": "Cặp sách"
+          "label": "Trường học"
         },
         {
           "step_id": "step_3",
@@ -424,7 +424,7 @@ export const GEN_GT006_20260829: ContentSeed<unknown, unknown>[] = [
       "what_tags": [],
       "thinking_tags": [],
       "theme_tag": "school",
-      "origin": "generator",
+      "origin": "ai_assisted",
       "authored_in": "repo_seed"
     },
     "content_pack": {
@@ -435,27 +435,27 @@ export const GEN_GT006_20260829: ContentSeed<unknown, unknown>[] = [
           "order_index": 0,
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-school"
+            "ref": "EMJ-backpack"
           },
-          "label": "Trường học"
+          "label": "Cặp sách"
         },
         {
           "step_id": "step_2",
           "order_index": 1,
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-ruler"
+            "ref": "EMJ-bell"
           },
-          "label": "Thước kẻ"
+          "label": "Cái chuông"
         },
         {
           "step_id": "step_3",
           "order_index": 2,
           "asset": {
             "kind": "emoji",
-            "ref": "🍎"
+            "ref": "EMJ-school"
           },
-          "label": "Táo"
+          "label": "Trường học"
         }
       ]
     },
@@ -481,7 +481,7 @@ export const GEN_GT006_20260829: ContentSeed<unknown, unknown>[] = [
       "what_tags": [],
       "thinking_tags": [],
       "theme_tag": "school",
-      "origin": "generator",
+      "origin": "ai_assisted",
       "authored_in": "repo_seed"
     },
     "content_pack": {
@@ -492,27 +492,84 @@ export const GEN_GT006_20260829: ContentSeed<unknown, unknown>[] = [
           "order_index": 0,
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-backpack"
+            "ref": "EMJ-pencil"
           },
-          "label": "Cặp sách"
+          "label": "Bút chì"
         },
         {
           "step_id": "step_2",
           "order_index": 1,
           "asset": {
             "kind": "emoji",
-            "ref": "🍎"
+            "ref": "EMJ-books"
           },
-          "label": "Táo"
+          "label": "Sách"
         },
         {
           "step_id": "step_3",
           "order_index": 2,
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-school"
+            "ref": "EMJ-open-book"
           },
-          "label": "Trường học"
+          "label": "Sách mở"
+        }
+      ]
+    },
+    "difficulty_params": {
+      "hint_after_ms": 15000,
+      "allow_retry": true,
+      "shuffle_initial": true
+    }
+  },
+  {
+    "header": {
+      "code": "GL-GEN-GT-006-20260829-10",
+      "content_version": 1,
+      "template_code": "GT-006",
+      "title": "",
+      "instruction": "",
+      "age_min": 5,
+      "age_max": 6,
+      "difficulty": 1,
+      "access_tier": "free",
+      "skill_codes": [],
+      "learning_objective_codes": [],
+      "what_tags": [],
+      "thinking_tags": [],
+      "theme_tag": "school",
+      "origin": "ai_assisted",
+      "authored_in": "repo_seed"
+    },
+    "content_pack": {
+      "prompt": "Bé hãy xếp các thẻ theo đúng thứ tự nhé!",
+      "sequence": [
+        {
+          "step_id": "step_1",
+          "order_index": 0,
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-scissors"
+          },
+          "label": "Cái kéo"
+        },
+        {
+          "step_id": "step_2",
+          "order_index": 1,
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-ruler"
+          },
+          "label": "Thước kẻ"
+        },
+        {
+          "step_id": "step_3",
+          "order_index": 2,
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-crayon"
+          },
+          "label": "Bút sáp"
         }
       ]
     },

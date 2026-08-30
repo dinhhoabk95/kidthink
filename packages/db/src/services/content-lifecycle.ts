@@ -779,6 +779,10 @@ async function executeTransitionTransaction(
       })
       .returning();
 
+    if (!reviewLog) {
+      throw new Error("Failed to record review log");
+    }
+
     const auditAction = getAuditActionForTransition(
       currentStatus,
       req.toStatus
@@ -870,6 +874,9 @@ export function validateSeedBatchContent(
 ): { ok: boolean; failedIndex?: number; missing?: string[] } {
   for (let i = 0; i < items.length; i++) {
     const item = items[i];
+    if (!item) {
+      continue;
+    }
     const res = validatePublishChecklist(item.entityType, item.payload);
     if (!res.ok) {
       return { ok: false, failedIndex: i, missing: res.missing };

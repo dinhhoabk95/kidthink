@@ -6,24 +6,25 @@
  *   pnpm --filter @mindkid/db check:engine-depth
  */
 
-import { ALL_SEED_LEVELS } from "#src/seed-content/index";
+import { pathToFileURL } from "node:url";
 import {
   evaluateEngineDepth,
   formatEngineDepthReport,
   loadEngineDepthConfig,
-} from "../gates/engine-content-depth.js";
+} from "#src/seed-content/gates/engine-content-depth";
+import { ALL_SEED_LEVELS } from "#src/seed-content/index";
 
-function main(): void {
+export function runEngineDepthGate(options?: { quiet?: boolean }): number {
   const config = loadEngineDepthConfig();
   const report = evaluateEngineDepth(ALL_SEED_LEVELS, config);
 
-  console.log(formatEngineDepthReport(report));
-
-  if (!report.passed) {
-    process.exit(1);
+  if (!options?.quiet) {
+    console.log(formatEngineDepthReport(report));
   }
+
+  return report.passed ? 0 : 1;
 }
 
-if (import.meta.url === `file://${process.argv[1]}`) {
-  main();
+if (import.meta.url === pathToFileURL(process.argv[1] ?? "").href) {
+  process.exit(runEngineDepthGate());
 }

@@ -358,16 +358,16 @@ describe("P3.1 Lesson & Activity Model & Seeder Tests", () => {
         .from(activities)
         .where(eq(activities.code, "ACT-0001"));
       expect(act).toBeDefined();
-      expect(act.status).toBe("published");
-      expect(act.origin).toBe("human");
+      expect(act?.status).toBe("published");
+      expect(act?.origin).toBe("human");
 
       const [les] = await db
         .select()
         .from(lessons)
         .where(eq(lessons.code, "LES-0001"));
       expect(les).toBeDefined();
-      expect(les.status).toBe("published");
-      expect(les.origin).toBe("human");
+      expect(les?.status).toBe("published");
+      expect(les?.origin).toBe("human");
 
       // Idempotent re-run
       const totalCount = ALL_SEED_ACTIVITIES.length + ALL_SEED_LESSONS.length;

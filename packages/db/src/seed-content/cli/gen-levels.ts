@@ -1,14 +1,58 @@
 #!/usr/bin/env node
+import { createHash } from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
+import { pathToFileURL } from "node:url";
 import {
+  AGE_BANDS,
   type AgeBand,
+  ALL_LEVEL_GENERATORS,
   ALL_TEMPLATES,
-  createRng,
   deriveStream,
   getLevelGenerator,
 } from "@mindkid/game-engine";
+import { CANONICAL_THEME_CODES } from "@mindkid/shared";
 import { getThemeVocabulary } from "../vocab/themes.js";
+
+/**
+ * Số lần rút lại tối đa khi ứng viên trùng hoặc trượt contract.
+ *
+ * Bản cũ bỏ qua ứng viên trùng mà Cấm — NEVER rút lại, nên `--count=9` có thể
+ * ghi ra 6 file mà vẫn exit 0 (`gen-gt012-20260829.ts` là ví dụ thật).
+ */
+const MAX_ATTEMPTS_PER_ITEM = 12;
+
+/**
+ * Dòng provenance đặt lên đầu mỗi file sinh ra.
+ *
+ * Khuôn: `@generated from LEVEL-GENERATOR-KIT@8a45c58db673` — `BR-AIG-04` đòi
+ * tên bộ sinh và một mã băm hex, và phép kiểm ở
+ * `packages/shared/tests/quality-rules.test.ts` quét **cả file này**, nên ví dụ
+ * hợp lệ ở trên là một phần của hợp đồng chứ không phải trang trí.
+ */
+function buildProvenanceHeader(version: string): string {
+  return `@generated from LEVEL-GENERATOR-KIT@${version}`;
+}
+
+/**
+ * Dấu vết phiên bản bộ sinh — băm trên **mã nguồn** của mọi generator đang
+ * đăng ký, không phải hằng số.
+ *
+ * Bản cũ đóng dấu `LEVEL-GENERATOR-KIT@00000000` lên mọi file, nên header
+ * Cấm — NEVER trả lời được đúng câu hỏi mà provenance tồn tại để trả lời: file
+ * này sinh bởi bộ sinh nào. Băm theo `generate.toString()` đổi ngay khi logic
+ * của bất kỳ engine nào đổi, tức là phát hiện được file đã cũ.
+ */
+export function computeKitVersion(): string {
+  const payload = Object.entries(ALL_LEVEL_GENERATORS)
+    .sort(([a], [b]) => a.localeCompare(b))
+    .map(
+      ([code, gen]) =>
+        `${code}|${JSON.stringify(gen.axes)}|${gen.generate.toString()}`
+    )
+    .join("\n");
+  return createHash("sha256").update(payload).digest("hex").slice(0, 12);
+}
 
 export interface GenOptions {
   engine: string;
@@ -31,19 +75,31 @@ export interface GenResult {
   items: unknown[];
 }
 
+/**
+ * Band không hợp lệ phải **dừng**, Cấm — NEVER im lặng rơi về band đầu tiên.
+ *
+ * Bản cũ nhận `--band=<bất kỳ>` bằng một phép ép kiểu rồi rơi về
+ * `allowedBands[0]`, nên `--band=3-4` trên một engine chỉ hỗ trợ `4-5` sinh ra
+ * level `4-5` và exit 0 — người gọi tin rằng mình đã sinh cho lứa 3-4.
+ */
 function resolveTargetBand(
   engine: string,
   band: AgeBand | undefined,
   allowedBands: AgeBand[]
 ): AgeBand {
-  if (band && allowedBands.includes(band)) {
-    return band;
-  }
   const first = allowedBands[0];
   if (!first) {
     throw new Error(`Engine ${engine} không có age_band hợp lệ.`);
   }
-  return first;
+  if (band === undefined) {
+    return first;
+  }
+  if (!allowedBands.includes(band)) {
+    throw new Error(
+      `Engine ${engine} không hỗ trợ band '${band}'. Band hợp lệ: ${allowedBands.join(", ")}.`
+    );
+  }
+  return band;
 }
 
 function getAgeRange(band: AgeBand): { min: number; max: number } {
@@ -72,7 +128,7 @@ function writeGeneratedFile(
   fs.mkdirSync(path.dirname(filePath), { recursive: true });
 
   const fileContent = `/**
- * @generated from LEVEL-GENERATOR-KIT@00000000
+ * ${buildProvenanceHeader(computeKitVersion())}
  * Engine: ${engine}
  * Seed: ${seed}
  * Theme: ${theme}
@@ -111,35 +167,53 @@ export function generateLevelsCore(options: GenOptions): GenResult {
   const vocab = getThemeVocabulary(theme);
   const ageRange = getAgeRange(targetBand);
 
-  deriveStream(seed, "items");
+  // Một luồng cho cả lượt sinh: level thứ i+1 đi tiếp chuỗi thay vì khởi tạo
+  // một PRNG mới. Bản cũ gọi `deriveStream` rồi **vứt** giá trị trả về và tự
+  // dựng `createRng(seed * 1000 + i)`; tích đó vượt 2^32 nên hai seed cách nhau
+  // đúng 2^32/1000 cho ra cùng một chuỗi.
+  const itemRng = deriveStream(seed, "items");
   const candidates: unknown[] = [];
   let contractRejectedCount = 0;
   let duplicatesCount = 0;
+  let candidatesGenerated = 0;
   const seenHashes = new Set<string>();
 
   for (let i = 0; i < count; i++) {
-    const itemRng = createRng(seed * 1000 + i);
-    const generated = generator.generate({
-      rng: itemRng,
-      age_band: targetBand,
-      theme,
-      vocabulary: vocab,
-    });
+    let parsed: unknown;
+    let difficultyParams: unknown;
+    for (let attempt = 0; attempt < MAX_ATTEMPTS_PER_ITEM; attempt++) {
+      candidatesGenerated++;
+      const generated = generator.generate({
+        rng: itemRng,
+        age_band: targetBand,
+        theme,
+        vocabulary: vocab,
+      });
 
-    const parseResult = template.content_contract.safeParse(
-      generated.content_pack
-    );
-    if (!parseResult.success) {
-      contractRejectedCount++;
-      continue;
+      const parseResult = template.content_contract.safeParse(
+        generated.content_pack
+      );
+      if (!parseResult.success) {
+        contractRejectedCount++;
+        continue;
+      }
+
+      const contentHash = JSON.stringify(parseResult.data);
+      if (seenHashes.has(contentHash)) {
+        duplicatesCount++;
+        continue;
+      }
+      seenHashes.add(contentHash);
+      parsed = parseResult.data;
+      difficultyParams = generated.difficulty_params;
+      break;
     }
 
-    const contentHash = JSON.stringify(parseResult.data);
-    if (seenHashes.has(contentHash)) {
-      duplicatesCount++;
-      continue;
+    if (parsed === undefined) {
+      // Hết lượt rút mà vẫn không có ứng viên mới: vốn từ đã cạn. Dừng vòng và
+      // để người gọi thấy `writtenCount < countRequested`.
+      break;
     }
-    seenHashes.add(contentHash);
 
     const levelSeed = {
       header: {
@@ -157,11 +231,11 @@ export function generateLevelsCore(options: GenOptions): GenResult {
         what_tags: [],
         thinking_tags: [],
         theme_tag: theme,
-        origin: "generator",
+        origin: "ai_assisted",
         authored_in: "repo_seed",
       },
-      content_pack: parseResult.data,
-      difficulty_params: generated.difficulty_params,
+      content_pack: parsed,
+      difficulty_params: difficultyParams,
     };
 
     candidates.push(levelSeed);
@@ -182,7 +256,7 @@ export function generateLevelsCore(options: GenOptions): GenResult {
   return {
     engine,
     countRequested: count,
-    candidatesGenerated: count,
+    candidatesGenerated,
     contractRejectedCount,
     duplicatesCount,
     writtenCount: candidates.length,
@@ -191,35 +265,83 @@ export function generateLevelsCore(options: GenOptions): GenResult {
   };
 }
 
+/**
+ * Mọi tham số đều được kiểm, và sai thì **ném**.
+ *
+ * Bản cũ nhận thẳng: `--seed=abc` cho `NaN`, mà `mulberry32` làm `NaN >>> 0`
+ * = `0` — nên nó sinh bằng seed 0 trong khi header ghi `Seed: NaN` và file
+ * xuất ra `export const GEN_GT001_NaN`. `--seed=-5` còn tệ hơn:
+ * `GEN_GT001_-5` là lỗi cú pháp trong một file đã commit.
+ */
+function parsePositiveInt(raw: string, flag: string): number {
+  const value = Number.parseInt(raw, 10);
+  if (!(Number.isSafeInteger(value) && value >= 0) || String(value) !== raw) {
+    throw new Error(`${flag} phải là số nguyên không âm, nhận '${raw}'.`);
+  }
+  return value;
+}
+
+function parseBand(raw: string): AgeBand {
+  if (!(AGE_BANDS as readonly string[]).includes(raw)) {
+    throw new Error(
+      `--band phải thuộc ${AGE_BANDS.join(" | ")}, nhận '${raw}'.`
+    );
+  }
+  return raw as AgeBand;
+}
+
+function readFlag(arg: string, name: string): string | undefined {
+  const prefix = `--${name}=`;
+  return arg.startsWith(prefix) ? arg.slice(prefix.length) : undefined;
+}
+
 export function parseArgs(args: string[]): GenOptions {
-  let engine = "GT-001";
-  let count = 9;
-  let seed = 20_260_829;
-  let theme = "school";
-  let band: AgeBand | undefined;
-  let out: string | undefined;
+  const options: GenOptions = {
+    engine: "GT-001",
+    count: 9,
+    seed: 20_260_829,
+    theme: "school",
+  };
 
   for (const arg of args) {
-    if (arg.startsWith("--engine=")) {
-      engine = arg.slice("--engine=".length);
-    } else if (arg.startsWith("--count=")) {
-      count = Number.parseInt(arg.slice("--count=".length), 10);
-    } else if (arg.startsWith("--seed=")) {
-      seed = Number.parseInt(arg.slice("--seed=".length), 10);
-    } else if (arg.startsWith("--theme=")) {
-      theme = arg.slice("--theme=".length);
-    } else if (arg.startsWith("--band=")) {
-      band = arg.slice("--band=".length) as AgeBand;
-    } else if (arg.startsWith("--out=")) {
-      out = arg.slice("--out=".length);
+    const engine = readFlag(arg, "engine");
+    const count = readFlag(arg, "count");
+    const seed = readFlag(arg, "seed");
+    const theme = readFlag(arg, "theme");
+    const band = readFlag(arg, "band");
+    const out = readFlag(arg, "out");
+
+    if (engine !== undefined) {
+      options.engine = engine;
+    }
+    if (count !== undefined) {
+      options.count = parsePositiveInt(count, "--count");
+    }
+    if (seed !== undefined) {
+      options.seed = parsePositiveInt(seed, "--seed");
+    }
+    if (theme !== undefined) {
+      options.theme = theme;
+    }
+    if (band !== undefined) {
+      options.band = parseBand(band);
+    }
+    if (out !== undefined) {
+      options.out = out;
     }
   }
 
-  return { engine, count, seed, theme, band, out };
+  if (!CANONICAL_THEME_CODES.has(options.theme)) {
+    throw new Error(
+      `--theme '${options.theme}' không thuộc CONTENT_THEMES. Một chủ đề lạ trước đây được nhận và đóng dấu thẳng vào 'theme_tag'.`
+    );
+  }
+
+  return options;
 }
 
 // CLI execution
-if (import.meta.url === `file://${process.argv[1]}`) {
+if (import.meta.url === pathToFileURL(process.argv[1] ?? "").href) {
   const options = parseArgs(process.argv.slice(2));
   const res = generateLevelsCore(options);
 
@@ -235,4 +357,12 @@ if (import.meta.url === `file://${process.argv[1]}`) {
   console.log(
     "  chưa đặt mã, chưa đặt tag, chưa có instruction — bước 6 thuộc về người"
   );
+
+  // Thiếu hàng so với `--count` là một kết quả THẤT BẠI, không phải ghi chú.
+  if (res.writtenCount < res.countRequested) {
+    console.error(
+      `\n❌ chỉ ghi được ${res.writtenCount}/${res.countRequested} level — vốn từ của chủ đề '${options.theme}' đã cạn.`
+    );
+    process.exit(1);
+  }
 }

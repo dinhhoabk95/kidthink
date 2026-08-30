@@ -206,7 +206,9 @@
       }
     } else {
       // Default open first 2 items
-      expandedItems.value = [FAQ_ITEMS[0].id, FAQ_ITEMS[1].id];
+      expandedItems.value = [FAQ_ITEMS[0]?.id, FAQ_ITEMS[1]?.id].filter(
+        (id): id is string => Boolean(id)
+      );
     }
   });
 

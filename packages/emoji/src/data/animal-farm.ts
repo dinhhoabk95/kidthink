@@ -202,4 +202,12 @@ export const ANIMAL_FARM_EMOJIS: EmojiEntry[] = [
     keywords: ["llama", "alpaca", "lạc đà"],
     name: "Lạc đà không bướu",
   },
+  {
+    age_min: 3,
+    category: "animal-farm",
+    curriculum_themes: ["dong_vat", "the_gioi_dong_vat"],
+    emoji: "🐮",
+    keywords: ["cow face", "mặt bò", "con bò"],
+    name: "Mặt bò",
+  },
 ];

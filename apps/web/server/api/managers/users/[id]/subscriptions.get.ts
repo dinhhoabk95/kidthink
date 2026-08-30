@@ -5,13 +5,13 @@ import { defineEventHandler, getRouterParam } from "h3";
 import { requireSuperAdminSession } from "#server/utils/admin-auth-runtime";
 
 export default defineEventHandler(async (event) => {
-  requireSuperAdminSession(event);
+  await requireSuperAdminSession(event);
 
   const idParam = getRouterParam(event, "id");
   const userId = Number(idParam);
 
   if (!idParam || Number.isNaN(userId) || userId <= 0) {
-    throw appError("INVALID_USER_ID", "ID người dùng không hợp lệ");
+    throw appError("VALIDATION_FAILED", "ID người dùng không hợp lệ");
   }
 
   const db = getOwnerDb();

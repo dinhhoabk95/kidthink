@@ -6,7 +6,6 @@ import type { ContentSeed } from "#src/seed-content/types";
  * 1 dạng bài (WB13-D1), 2 level, GT-007, band 5-6
  */
 export const SEED_MONT_A13: ContentSeed<unknown, unknown>[] = [
-  // WB13-D1 Level 1 (Diff 3 - Standard)
   {
     header: {
       code: "GL-C1-NCOMP-BOND-0129",
@@ -28,15 +27,41 @@ export const SEED_MONT_A13: ContentSeed<unknown, unknown>[] = [
     },
     content_pack: {
       prompt: "Số 15 gồm 10 và mấy?",
-      whole: { id: "w15", value: 15, label: "15" },
+      whole: {
+        id: "w15",
+        value: 15,
+        label: "15",
+      },
       parts: [
-        { id: "p1", value: 10, is_target: false, label: "10" },
-        { id: "p2", value: 5, is_target: true, label: "?" },
+        {
+          id: "p1",
+          value: 10,
+          is_target: false,
+          label: "10",
+        },
+        {
+          id: "p2",
+          value: 5,
+          is_target: true,
+          label: "?",
+        },
       ],
       options: [
-        { id: "opt-1", value: 4, is_correct: false },
-        { id: "opt-2", value: 5, is_correct: true },
-        { id: "opt-3", value: 6, is_correct: false },
+        {
+          id: "opt-1",
+          value: 4,
+          is_correct: false,
+        },
+        {
+          id: "opt-2",
+          value: 5,
+          is_correct: true,
+        },
+        {
+          id: "opt-3",
+          value: 6,
+          is_correct: false,
+        },
       ],
       scaffolding: {
         l1_nudge: "Bó 10 que tính phát sáng",
@@ -44,9 +69,13 @@ export const SEED_MONT_A13: ContentSeed<unknown, unknown>[] = [
         l3_demo: "Bàn tay ảo chọn thẻ số 5",
       },
     },
-    difficulty_params: { part_count: 2, distractor_count: 2 },
+    difficulty_params: {
+      part_count: 2,
+      distractor_count: 2,
+      hint_after_ms: 9000,
+      allow_retry: true,
+    },
   },
-  // WB13-D1 Level 2 (Diff 4 - Premium)
   {
     header: {
       code: "GL-C1-NCOMP-BOND-0130",
@@ -68,15 +97,41 @@ export const SEED_MONT_A13: ContentSeed<unknown, unknown>[] = [
     },
     content_pack: {
       prompt: "Số 20 gồm 12 và mấy?",
-      whole: { id: "w20", value: 20, label: "20" },
+      whole: {
+        id: "w20",
+        value: 20,
+        label: "20",
+      },
       parts: [
-        { id: "p1", value: 12, is_target: false, label: "12" },
-        { id: "p2", value: 8, is_target: true, label: "?" },
+        {
+          id: "p1",
+          value: 12,
+          is_target: false,
+          label: "12",
+        },
+        {
+          id: "p2",
+          value: 8,
+          is_target: true,
+          label: "?",
+        },
       ],
       options: [
-        { id: "opt-1", value: 7, is_correct: false },
-        { id: "opt-2", value: 8, is_correct: true },
-        { id: "opt-3", value: 9, is_correct: false },
+        {
+          id: "opt-1",
+          value: 7,
+          is_correct: false,
+        },
+        {
+          id: "opt-2",
+          value: 8,
+          is_correct: true,
+        },
+        {
+          id: "opt-3",
+          value: 9,
+          is_correct: false,
+        },
       ],
       scaffolding: {
         l1_nudge: "Ô chấm hỏi phát sáng nhẹ",
@@ -84,6 +139,11 @@ export const SEED_MONT_A13: ContentSeed<unknown, unknown>[] = [
         l3_demo: "Bàn tay ảo chọn thẻ số 8",
       },
     },
-    difficulty_params: { part_count: 2, distractor_count: 2 },
+    difficulty_params: {
+      part_count: 2,
+      distractor_count: 2,
+      hint_after_ms: 9000,
+      allow_retry: true,
+    },
   },
 ];

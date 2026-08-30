@@ -28,7 +28,7 @@ export default defineEventHandler(async (event) => {
   }
 
   const code = getRouterParam(event, "code") as NotificationCode;
-  if (!(code && TEMPLATE_REGISTRY[code])) {
+  if (!(code && code in TEMPLATE_REGISTRY)) {
     throw createError({
       statusCode: 404,
       statusMessage: "TEMPLATE_NOT_FOUND",
@@ -36,10 +36,7 @@ export default defineEventHandler(async (event) => {
     });
   }
 
-  const raw =
-    (event.context?.body as unknown) ||
-    ((event as Record<string, unknown>)._body as unknown) ||
-    (await readBody(event).catch(() => ({})));
+  const raw = event.context?.body ?? (await readBody(event).catch(() => ({})));
 
   const parsed = previewTemplateSchema.parse(raw);
   const body = (parsed || {}) as Record<string, unknown>;
@@ -49,6 +46,13 @@ export default defineEventHandler(async (event) => {
 
   // Provide sensible defaults for preview if missing
   const templateDef = TEMPLATE_REGISTRY[code];
+  if (!templateDef) {
+    throw createError({
+      statusCode: 404,
+      statusMessage: "TEMPLATE_NOT_FOUND",
+      message: `Không tìm thấy mẫu thông báo mã '${code}'`,
+    });
+  }
   const previewPayload: Record<string, unknown> = { ...sampleData };
   for (const reqVar of templateDef.requiredVars) {
     if (previewPayload[reqVar] === undefined) {

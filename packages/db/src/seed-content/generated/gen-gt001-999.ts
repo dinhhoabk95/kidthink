@@ -1,5 +1,5 @@
 /**
- * @generated from LEVEL-GENERATOR-KIT@00000000
+ * @generated from LEVEL-GENERATOR-KIT@c9fd31f3f239
  * Engine: GT-001
  * Seed: 999
  * Theme: farm
@@ -25,16 +25,16 @@ export const GEN_GT001_999: ContentSeed<unknown, unknown>[] = [
       "what_tags": [],
       "thinking_tags": [],
       "theme_tag": "farm",
-      "origin": "generator",
+      "origin": "ai_assisted",
       "authored_in": "repo_seed"
     },
     "content_pack": {
       "prompt": "Bé hãy chạm vào hình giống mẫu nhé!",
       "target_item": {
-        "item_id": "item_EMJ-tractor",
+        "item_id": "item_EMJ-duck",
         "asset": {
           "kind": "emoji",
-          "ref": "EMJ-tractor"
+          "ref": "EMJ-duck"
         }
       },
       "options": [
@@ -42,23 +42,23 @@ export const GEN_GT001_999: ContentSeed<unknown, unknown>[] = [
           "item_id": "opt_1",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-cow"
+            "ref": "EMJ-duck"
           },
-          "is_correct": false
+          "is_correct": true
         },
         {
           "item_id": "opt_2",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-tractor"
+            "ref": "EMJ-sheep"
           },
-          "is_correct": true
+          "is_correct": false
         },
         {
           "item_id": "opt_3",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-pig"
+            "ref": "EMJ-rooster"
           },
           "is_correct": false
         }
@@ -87,16 +87,16 @@ export const GEN_GT001_999: ContentSeed<unknown, unknown>[] = [
       "what_tags": [],
       "thinking_tags": [],
       "theme_tag": "farm",
-      "origin": "generator",
+      "origin": "ai_assisted",
       "authored_in": "repo_seed"
     },
     "content_pack": {
       "prompt": "Bé hãy chạm vào hình giống mẫu nhé!",
       "target_item": {
-        "item_id": "item_EMJ-pig",
+        "item_id": "item_EMJ-goat",
         "asset": {
           "kind": "emoji",
-          "ref": "EMJ-pig"
+          "ref": "EMJ-goat"
         }
       },
       "options": [
@@ -104,7 +104,7 @@ export const GEN_GT001_999: ContentSeed<unknown, unknown>[] = [
           "item_id": "opt_1",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-cow"
+            "ref": "EMJ-sheep"
           },
           "is_correct": false
         },
@@ -112,7 +112,7 @@ export const GEN_GT001_999: ContentSeed<unknown, unknown>[] = [
           "item_id": "opt_2",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-pig"
+            "ref": "EMJ-goat"
           },
           "is_correct": true
         },
@@ -120,7 +120,7 @@ export const GEN_GT001_999: ContentSeed<unknown, unknown>[] = [
           "item_id": "opt_3",
           "asset": {
             "kind": "emoji",
-            "ref": "🍎"
+            "ref": "EMJ-duck"
           },
           "is_correct": false
         }
@@ -149,7 +149,7 @@ export const GEN_GT001_999: ContentSeed<unknown, unknown>[] = [
       "what_tags": [],
       "thinking_tags": [],
       "theme_tag": "farm",
-      "origin": "generator",
+      "origin": "ai_assisted",
       "authored_in": "repo_seed"
     },
     "content_pack": {
@@ -166,7 +166,7 @@ export const GEN_GT001_999: ContentSeed<unknown, unknown>[] = [
           "item_id": "opt_1",
           "asset": {
             "kind": "emoji",
-            "ref": "🍎"
+            "ref": "EMJ-goat"
           },
           "is_correct": false
         },
@@ -174,7 +174,7 @@ export const GEN_GT001_999: ContentSeed<unknown, unknown>[] = [
           "item_id": "opt_2",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-pig"
+            "ref": "EMJ-rooster"
           },
           "is_correct": false
         },
@@ -211,16 +211,16 @@ export const GEN_GT001_999: ContentSeed<unknown, unknown>[] = [
       "what_tags": [],
       "thinking_tags": [],
       "theme_tag": "farm",
-      "origin": "generator",
+      "origin": "ai_assisted",
       "authored_in": "repo_seed"
     },
     "content_pack": {
       "prompt": "Bé hãy chạm vào hình giống mẫu nhé!",
       "target_item": {
-        "item_id": "item_EMJ-tractor",
+        "item_id": "item_EMJ-horse",
         "asset": {
           "kind": "emoji",
-          "ref": "EMJ-tractor"
+          "ref": "EMJ-horse"
         }
       },
       "options": [
@@ -228,7 +228,7 @@ export const GEN_GT001_999: ContentSeed<unknown, unknown>[] = [
           "item_id": "opt_1",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-tractor"
+            "ref": "EMJ-horse"
           },
           "is_correct": true
         },
@@ -236,7 +236,7 @@ export const GEN_GT001_999: ContentSeed<unknown, unknown>[] = [
           "item_id": "opt_2",
           "asset": {
             "kind": "emoji",
-            "ref": "🍎"
+            "ref": "EMJ-duck"
           },
           "is_correct": false
         },
@@ -244,7 +244,7 @@ export const GEN_GT001_999: ContentSeed<unknown, unknown>[] = [
           "item_id": "opt_3",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-rice"
+            "ref": "EMJ-cow"
           },
           "is_correct": false
         }
@@ -273,16 +273,16 @@ export const GEN_GT001_999: ContentSeed<unknown, unknown>[] = [
       "what_tags": [],
       "thinking_tags": [],
       "theme_tag": "farm",
-      "origin": "generator",
+      "origin": "ai_assisted",
       "authored_in": "repo_seed"
     },
     "content_pack": {
       "prompt": "Bé hãy chạm vào hình giống mẫu nhé!",
       "target_item": {
-        "item_id": "item_EMJ-pig",
+        "item_id": "item_EMJ-tractor",
         "asset": {
           "kind": "emoji",
-          "ref": "EMJ-pig"
+          "ref": "EMJ-tractor"
         }
       },
       "options": [
@@ -290,15 +290,15 @@ export const GEN_GT001_999: ContentSeed<unknown, unknown>[] = [
           "item_id": "opt_1",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-pig"
+            "ref": "EMJ-sheep"
           },
-          "is_correct": true
+          "is_correct": false
         },
         {
           "item_id": "opt_2",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-cow"
+            "ref": "EMJ-rooster"
           },
           "is_correct": false
         },
@@ -308,7 +308,7 @@ export const GEN_GT001_999: ContentSeed<unknown, unknown>[] = [
             "kind": "emoji",
             "ref": "EMJ-tractor"
           },
-          "is_correct": false
+          "is_correct": true
         }
       ]
     },

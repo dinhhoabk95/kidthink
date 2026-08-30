@@ -19,6 +19,16 @@ import { describe, expect, it } from "vitest";
 import loginHandler from "#server/api/guest/auth/managers/login.post";
 import mfaHandler from "#server/api/guest/auth/managers/mfa.post";
 
+function mockEvent(body: unknown) {
+  return {
+    method: "POST",
+    node: { req: { headers: {}, body }, res: {} },
+    context: { body },
+    _requestBody: body,
+    _body: body,
+  } as any;
+}
+
 describe("Task 2 & 3 — Manager Login & MFA Handler (BR-ADA-01..08)", () => {
   it("Task 2: correct password returns 428 MFA_REQUIRED + challenge without creating active_session", async () => {
     const db = getOwnerDb();
@@ -36,15 +46,10 @@ describe("Task 2 & 3 — Manager Login & MFA Handler (BR-ADA-01..08)", () => {
       })
       .returning();
 
-    const event = {
-      method: "POST",
-      node: { req: {}, res: {} },
-      context: {},
-      _body: {
-        email: testEmail,
-        password: "AdminSecret123!",
-      },
-    } as any;
+    const event = mockEvent({
+      email: testEmail,
+      password: "AdminSecret123!",
+    });
 
     const res = await loginHandler(event);
     expect(res).toBeDefined();
@@ -76,15 +81,10 @@ describe("Task 2 & 3 — Manager Login & MFA Handler (BR-ADA-01..08)", () => {
       role: "super_admin",
     });
 
-    const event = {
-      method: "POST",
-      node: { req: {}, res: {} },
-      context: {},
-      _body: {
-        email: testEmail,
-        password: "WrongPassword!",
-      },
-    } as any;
+    const event = mockEvent({
+      email: testEmail,
+      password: "WrongPassword!",
+    });
 
     try {
       await loginHandler(event);
@@ -129,25 +129,18 @@ describe("Task 2 & 3 — Manager Login & MFA Handler (BR-ADA-01..08)", () => {
     });
 
     // Step 1: Login to get challenge
-    const loginEvent = {
-      method: "POST",
-      node: { req: {}, res: {} },
-      context: {},
-      _body: { email: testEmail, password: "AdminSecret123!" },
-    } as any;
+    const loginEvent = mockEvent({
+      email: testEmail,
+      password: "AdminSecret123!",
+    });
     const loginRes = await loginHandler(loginEvent);
 
     // Step 2: MFA submit
     const totpCode = generateTotpCode(secret);
-    const mfaEvent = {
-      method: "POST",
-      node: { req: {}, res: {} },
-      context: {},
-      _body: {
-        challenge: loginRes.challenge,
-        code: totpCode,
-      },
-    } as any;
+    const mfaEvent = mockEvent({
+      challenge: loginRes.challenge,
+      code: totpCode,
+    });
 
     const mfaRes = await mfaHandler(mfaEvent);
     expect(mfaRes.status).toBe("ok");
@@ -196,23 +189,17 @@ describe("Task 2 & 3 — Manager Login & MFA Handler (BR-ADA-01..08)", () => {
       .returning();
 
     // Login
-    const loginRes = await loginHandler({
-      method: "POST",
-      node: { req: {}, res: {} },
-      context: {},
-      _body: { email: testEmail, password: "AdminSecret123!" },
-    } as any);
+    const loginRes = await loginHandler(
+      mockEvent({ email: testEmail, password: "AdminSecret123!" })
+    );
 
     // MFA submit recovery code
-    const mfaRes = await mfaHandler({
-      method: "POST",
-      node: { req: {}, res: {} },
-      context: {},
-      _body: {
+    const mfaRes = await mfaHandler(
+      mockEvent({
         challenge: loginRes.challenge,
         code: recoveryCode,
-      },
-    } as any);
+      })
+    );
 
     expect(mfaRes.status).toBe("ok");
 

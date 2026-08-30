@@ -3,6 +3,7 @@ export const AUDIT_ACTIONS = {
   MANAGER_LOGIN: "manager_login",
   MANAGER_LOGIN_FAILED: "manager_login_failed",
   MANAGER_MFA_FAILED: "manager_mfa_failed",
+  MANAGER_MFA_ENROLLED: "manager_mfa_enrolled",
 
   // User
   USER_SUSPENDED: "user_suspended",

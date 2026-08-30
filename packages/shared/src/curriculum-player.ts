@@ -323,5 +323,6 @@ export function selectVariant<
     return last ? { ...last } : { ...item };
   }
 
-  return { ...candidates[0] };
+  const first = candidates[0];
+  return first ? { ...first } : { ...item };
 }

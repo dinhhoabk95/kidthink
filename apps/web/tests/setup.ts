@@ -54,6 +54,23 @@ setTestEnv("PAYMENT_WEBHOOK_SECRET", "test-payos-webhook-secret-0123456789");
 import { InMemoryRedisClient, setAuthRedisClient } from "@mindkid/auth";
 import { clearInMemoryBuckets } from "@mindkid/cache";
 import { beforeEach } from "vitest";
+import {
+  clearUserSession,
+  getUserSession,
+  requireManagerSession,
+  requireSuperAdminSession,
+  requireUserSession,
+  setUserSession,
+} from "./mock-imports.js";
+
+Object.assign(globalThis, {
+  setUserSession,
+  getUserSession,
+  clearUserSession,
+  requireUserSession,
+  requireManagerSession,
+  requireSuperAdminSession,
+});
 
 setAuthRedisClient(new InMemoryRedisClient());
 beforeEach(() => clearInMemoryBuckets());

@@ -24,18 +24,7 @@ export default defineEventHandler(async (event) => {
     });
   }
 
-  const parsedBody = await readBody(event).catch(() => ({}));
-  const fallbackBody =
-    ((event as Record<string, unknown>)._body as Record<string, unknown>) ||
-    ((event.context as Record<string, unknown>)?.body as Record<
-      string,
-      unknown
-    >) ||
-    {};
-  const rawBody =
-    parsedBody && Object.keys(parsedBody).length > 0
-      ? parsedBody
-      : fallbackBody;
+  const rawBody = (await readBody(event).catch(() => ({}))) || {};
   const parsed = worksheetFormSchema.partial().safeParse(rawBody);
   if (!parsed.success) {
     throwValidationError(parsed.error);

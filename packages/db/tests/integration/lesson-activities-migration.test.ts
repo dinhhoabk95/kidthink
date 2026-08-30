@@ -56,6 +56,9 @@ describe("lesson_activities Migration & Constraint Tests (Task 2)", () => {
         status: "draft",
       })
       .returning();
+    if (!les) {
+      throw new Error("Failed to insert lesson");
+    }
 
     const [act] = await db
       .insert(activities)
@@ -71,6 +74,9 @@ describe("lesson_activities Migration & Constraint Tests (Task 2)", () => {
         status: "draft",
       })
       .returning();
+    if (!act) {
+      throw new Error("Failed to insert activity");
+    }
 
     // First attach should succeed
     await db.insert(lessonActivities).values({
@@ -81,7 +87,7 @@ describe("lesson_activities Migration & Constraint Tests (Task 2)", () => {
     });
 
     // Second attach with same activityId (even different position) MUST fail
-    let error: any = null;
+    let error: unknown = null;
     try {
       await db.insert(lessonActivities).values({
         lessonId: les.id,
@@ -94,7 +100,9 @@ describe("lesson_activities Migration & Constraint Tests (Task 2)", () => {
     }
 
     expect(error).not.toBeNull();
-    const cause = error?.cause ?? error;
+    const cause =
+      (error as { cause?: { code?: string; message?: string } })?.cause ??
+      (error as { code?: string; message?: string });
     expect(
       cause?.code === "23505" ||
         UNIQUE_DUP_REGEX.test(String(cause?.message || cause))
@@ -122,6 +130,9 @@ describe("lesson_activities Migration & Constraint Tests (Task 2)", () => {
         status: "draft",
       })
       .returning();
+    if (!les) {
+      throw new Error("Failed to insert lesson");
+    }
 
     const [act1] = await db
       .insert(activities)
@@ -137,6 +148,9 @@ describe("lesson_activities Migration & Constraint Tests (Task 2)", () => {
         status: "draft",
       })
       .returning();
+    if (!act1) {
+      throw new Error("Failed to insert act1");
+    }
 
     const [act2] = await db
       .insert(activities)
@@ -152,6 +166,9 @@ describe("lesson_activities Migration & Constraint Tests (Task 2)", () => {
         status: "draft",
       })
       .returning();
+    if (!act2) {
+      throw new Error("Failed to insert act2");
+    }
 
     // Initial order: pos 1 -> act1, pos 2 -> act2
     await db.insert(lessonActivities).values([
@@ -233,6 +250,9 @@ describe("lesson_activities Migration & Constraint Tests (Task 2)", () => {
         status: "draft",
       })
       .returning();
+    if (!les) {
+      throw new Error("Failed to insert lesson");
+    }
 
     // Inserting activityId directly (entity_id reference) succeeds at DB level
     const [inserted] = await db
@@ -244,6 +264,9 @@ describe("lesson_activities Migration & Constraint Tests (Task 2)", () => {
         isRequired: true,
       })
       .returning();
+    if (!inserted) {
+      throw new Error("Failed to insert lessonActivity");
+    }
 
     expect(inserted.activityId).toBe(nonExistentEntityId);
   });

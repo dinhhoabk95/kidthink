@@ -1,26 +1,3 @@
--- Migration nền của MindKid — gộp toàn bộ 52 migration cũ (0000–0051) thành một
--- file duy nhất. Lịch sử cũ chưa từng chạy ở đâu ngoài máy dev nên không có gì để
--- bảo toàn; ngược lại chuỗi cũ đã lệch khỏi `src/schema/*.ts` đủ để
--- `pnpm db:migrate && pnpm db:seed` trên DB rỗng đứt ở seed — đúng cái mà
--- `docs/specs/01-platform/data-model-overview.md` §9 bắt phải chạy được.
---
--- Năm quy ước schema toàn cục (Task #88) đã áp vào file này: không hậu tố `_vi`,
--- không refresh token, mọi bảng có `created_at`/`updated_at`, cặp đa hình có index
--- (không FK), mọi bảng có `id` tự tăng trừ bảng pivot.
---
--- Bố cục file, theo đúng thứ tự bắt buộc:
---   §1 role ứng dụng + default privileges  (phải trước khi tạo bảng)
---   §2 extension                            (citext cho email, vector cho embedding)
---   §3 schema do `drizzle-kit generate` sinh ra — KHÔNG sửa tay
---   §4 function + trigger bất biến nội dung  (Drizzle không mô tả được)
---   §5 quyền bảng: ép BR-DM-05 (bảng INSERT-only) bằng quyền DB, không bằng quy ước
---
--- Sửa §3 bằng cách sửa `src/schema/*.ts` rồi chạy `pnpm db:generate` — nó sinh
--- migration 0001 kế tiếp. Sửa §1/§2/§4/§5 thì viết migration mới bằng tay.
-
--- ═══ §1. Role ứng dụng ═══════════════════════════════════════════════════════
--- App chạy bằng `mindkid_app`, không phải owner: quyền hẹp là thứ ép được
--- BR-DM-05, còn owner thì REVOKE nào cũng vô nghĩa.
 DO $$
 BEGIN
   IF NOT EXISTS (SELECT 1 FROM pg_catalog.pg_roles WHERE rolname = 'mindkid_app') THEN
@@ -30,25 +7,15 @@ EXCEPTION
   WHEN duplicate_object OR unique_violation THEN
     NULL;
 END $$;--> statement-breakpoint
-
--- `current_database()` thay vì tên cứng: cùng file này còn chạy trên DB scratch của
--- CI và của test, tên khác `mindkid`.
 DO $$
 BEGIN
   EXECUTE format('GRANT CONNECT ON DATABASE %I TO mindkid_app', current_database());
 END $$;--> statement-breakpoint
-
 GRANT USAGE ON SCHEMA public TO mindkid_app;--> statement-breakpoint
 ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT SELECT, INSERT, UPDATE, DELETE ON TABLES TO mindkid_app;--> statement-breakpoint
 ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT USAGE, SELECT ON SEQUENCES TO mindkid_app;--> statement-breakpoint
-
--- ═══ §2. Extension ═══════════════════════════════════════════════════════════
--- citext: `users.email` UNIQUE không phân biệt hoa thường (BR-SIB-07).
--- vector:  `content_embeddings.embedding` cho semantic search.
-CREATE EXTENSION IF NOT EXISTS citext;--> statement-breakpoint
-CREATE EXTENSION IF NOT EXISTS vector;--> statement-breakpoint
-
--- ═══ §3. Schema (sinh bởi drizzle-kit) ═══════════════════════════════════════
+CREATE EXTENSION IF NOT EXISTS "citext";--> statement-breakpoint
+CREATE EXTENSION IF NOT EXISTS "vector";--> statement-breakpoint
 CREATE TYPE "public"."ai_credit_reason" AS ENUM('purchase', 'usage', 'manual_grant', 'refund');--> statement-breakpoint
 CREATE TYPE "public"."image_owner_type" AS ENUM('game_level', 'lesson', 'activity', 'worksheet', 'payment_order', 'payment_proof', 'custom_game', 'user_avatar', 'manager_avatar');--> statement-breakpoint
 CREATE TYPE "public"."image_status" AS ENUM('active', 'orphan', 'archived');--> statement-breakpoint
@@ -85,6 +52,10 @@ CREATE TYPE "public"."mfa_recovery_status" AS ENUM('pending_verification', 'wait
 CREATE TYPE "public"."social_provider" AS ENUM('google', 'facebook');--> statement-breakpoint
 CREATE TYPE "public"."user_status" AS ENUM('pending_verification', 'active', 'suspended', 'deleted');--> statement-breakpoint
 CREATE TYPE "public"."verification_purpose" AS ENUM('email_verify', 'password_reset');--> statement-breakpoint
+CREATE TYPE "public"."lesson_run_status" AS ENUM('in_progress', 'completed', 'abandoned');--> statement-breakpoint
+CREATE TYPE "public"."lesson_step_kind" AS ENUM('warm_up', 'off_screen', 'digital_game', 'reflection', 'assessment');--> statement-breakpoint
+CREATE TYPE "public"."lesson_step_outcome" AS ENUM('pending', 'done', 'skipped');--> statement-breakpoint
+CREATE TYPE "public"."observation_level" AS ENUM('did_it', 'with_help', 'not_yet');--> statement-breakpoint
 CREATE TYPE "public"."actor_type" AS ENUM('user', 'manager', 'system');--> statement-breakpoint
 CREATE TYPE "public"."backup_status" AS ENUM('started', 'success', 'failed');--> statement-breakpoint
 CREATE TYPE "public"."backup_type" AS ENUM('dump', 'verify', 'drill');--> statement-breakpoint
@@ -122,8 +93,8 @@ CREATE TABLE "level_params" (
 	"game_level_id" bigint NOT NULL,
 	"param_overrides" jsonb,
 	"adaptive_factor" numeric(5, 4) DEFAULT '1.0000' NOT NULL,
-	"updated_at" timestamp with time zone DEFAULT now() NOT NULL,
 	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"updated_at" timestamp with time zone DEFAULT now() NOT NULL,
 	CONSTRAINT "level_params_child_game_level_unique" UNIQUE("child_profile_id","game_level_id")
 );
 --> statement-breakpoint
@@ -138,8 +109,8 @@ CREATE TABLE "mastery_state" (
 	"best_p_learn" numeric(5, 4) DEFAULT '0.1000' NOT NULL,
 	"params_version" varchar(20) DEFAULT 'v1' NOT NULL,
 	"last_seen_at" timestamp with time zone,
-	"updated_at" timestamp with time zone DEFAULT now() NOT NULL,
 	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"updated_at" timestamp with time zone DEFAULT now() NOT NULL,
 	CONSTRAINT "mastery_state_child_skill_unique" UNIQUE("child_profile_id","skill_id"),
 	CONSTRAINT "check_mastery_state_p_learn" CHECK ("mastery_state"."p_learn" >= 0 AND "mastery_state"."p_learn" <= 1),
 	CONSTRAINT "check_mastery_state_ema_correct" CHECK ("mastery_state"."ema_correct" >= 0 AND "mastery_state"."ema_correct" <= 1),
@@ -154,8 +125,8 @@ CREATE TABLE "ai_credit_balance" (
 	"total_granted" integer DEFAULT 0 NOT NULL,
 	"total_used" integer DEFAULT 0 NOT NULL,
 	"version" integer DEFAULT 1 NOT NULL,
-	"updated_at" timestamp with time zone DEFAULT now() NOT NULL,
 	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"updated_at" timestamp with time zone DEFAULT now() NOT NULL,
 	CONSTRAINT "ai_credit_balance_user_id_unique" UNIQUE("user_id"),
 	CONSTRAINT "check_ai_credit_balance_non_negative" CHECK ("ai_credit_balance"."balance" >= 0)
 );
@@ -329,8 +300,8 @@ CREATE TABLE "quota_usage" (
 	"used" integer DEFAULT 0 NOT NULL,
 	"limit_snapshot" integer NOT NULL,
 	"period_end" timestamp with time zone NOT NULL,
-	"updated_at" timestamp with time zone DEFAULT now() NOT NULL,
 	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"updated_at" timestamp with time zone DEFAULT now() NOT NULL,
 	CONSTRAINT "quota_usage_user_key_period_unique" UNIQUE("user_id","quota_key","period_start")
 );
 --> statement-breakpoint
@@ -439,11 +410,19 @@ CREATE TABLE "lessons" (
 	"reviewed_by_manager_id" bigint,
 	"published_at" timestamp with time zone,
 	"archived_at" timestamp with time zone,
+	"is_exemplar" boolean DEFAULT false NOT NULL,
+	"exemplar_competency" varchar(10),
+	"exemplar_age_band" varchar(10),
+	"exemplar_approved_by_id" bigint,
+	"exemplar_approved_at" timestamp with time zone,
 	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
 	"updated_at" timestamp with time zone DEFAULT now() NOT NULL,
 	CONSTRAINT "lessons_code_version_unique" UNIQUE("code","content_version"),
 	CONSTRAINT "check_lessons_code_format" CHECK ("lessons"."code" ~ '^LES-\d{4}$'),
-	CONSTRAINT "check_lessons_estimated_minutes" CHECK ("lessons"."estimated_minutes" >= 5 AND "lessons"."estimated_minutes" <= 45)
+	CONSTRAINT "check_lessons_estimated_minutes" CHECK ("lessons"."estimated_minutes" >= 5 AND "lessons"."estimated_minutes" <= 45),
+	CONSTRAINT "check_lessons_exemplar_competency" CHECK ("lessons"."exemplar_competency" IS NULL OR "lessons"."exemplar_competency" ~ '^C[1-6]$'),
+	CONSTRAINT "check_lessons_exemplar_age_band" CHECK ("lessons"."exemplar_age_band" IS NULL OR "lessons"."exemplar_age_band" IN ('3-4', '4-5', '5-6')),
+	CONSTRAINT "check_lessons_exemplar_invariants" CHECK (("lessons"."is_exemplar" = false) OR ("lessons"."is_exemplar" = true AND "lessons"."exemplar_competency" IS NOT NULL AND "lessons"."exemplar_age_band" IS NOT NULL AND "lessons"."exemplar_approved_by_id" IS NOT NULL AND "lessons"."access_tier" = 'free' AND "lessons"."origin" = 'human'))
 );
 --> statement-breakpoint
 CREATE TABLE "seo_pages" (
@@ -567,8 +546,8 @@ CREATE TABLE "curriculum_item_progress" (
 	"curriculum_item_id" bigint NOT NULL,
 	"status" "curriculum_progress_status" DEFAULT 'not_started' NOT NULL,
 	"completed_at" timestamp with time zone,
-	"updated_at" timestamp with time zone DEFAULT now() NOT NULL,
 	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"updated_at" timestamp with time zone DEFAULT now() NOT NULL,
 	CONSTRAINT "curriculum_item_progress_enrollment_item_unique" UNIQUE("enrollment_id","curriculum_item_id")
 );
 --> statement-breakpoint
@@ -631,6 +610,22 @@ CREATE TABLE "export_jobs" (
 	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
 	"updated_at" timestamp with time zone DEFAULT now() NOT NULL,
 	CONSTRAINT "check_export_jobs_page_count" CHECK ("export_jobs"."page_count" IS NULL OR ("export_jobs"."page_count" >= 1 AND "export_jobs"."page_count" <= 20))
+);
+--> statement-breakpoint
+CREATE TABLE "game_level_rounds" (
+	"id" bigint PRIMARY KEY GENERATED ALWAYS AS IDENTITY (sequence name "game_level_rounds_id_seq" INCREMENT BY 1 MINVALUE 1 MAXVALUE 9223372036854775807 START WITH 1 CACHE 1),
+	"game_level_id" bigint NOT NULL,
+	"round_index" integer NOT NULL,
+	"instruction" text,
+	"instruction_audio_path" text,
+	"content_pack" jsonb NOT NULL,
+	"difficulty_params" jsonb NOT NULL,
+	"difficulty" smallint,
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"updated_at" timestamp with time zone DEFAULT now() NOT NULL,
+	CONSTRAINT "game_level_rounds_level_index_unique" UNIQUE("game_level_id","round_index"),
+	CONSTRAINT "check_game_level_rounds_index_non_negative" CHECK ("game_level_rounds"."round_index" >= 0),
+	CONSTRAINT "check_game_level_rounds_difficulty_range" CHECK ("game_level_rounds"."difficulty" IS NULL OR ("game_level_rounds"."difficulty" >= 1 AND "game_level_rounds"."difficulty" <= 5))
 );
 --> statement-breakpoint
 CREATE TABLE "game_levels" (
@@ -721,8 +716,8 @@ CREATE TABLE "consent_requirements" (
 	"consent_type" "consent_type" PRIMARY KEY NOT NULL,
 	"reconsent_required_at" timestamp with time zone,
 	"notice" varchar(500),
-	"updated_at" timestamp with time zone DEFAULT now() NOT NULL,
-	"created_at" timestamp with time zone DEFAULT now() NOT NULL
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"updated_at" timestamp with time zone DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE "managers" (
@@ -825,6 +820,46 @@ CREATE TABLE "verification_tokens" (
 	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
 	"updated_at" timestamp with time zone DEFAULT now() NOT NULL,
 	CONSTRAINT "verification_tokens_token_hash_unique" UNIQUE("token_hash")
+);
+--> statement-breakpoint
+CREATE TABLE "lesson_run_observations" (
+	"id" bigint PRIMARY KEY GENERATED ALWAYS AS IDENTITY (sequence name "lesson_run_observations_id_seq" INCREMENT BY 1 MINVALUE 1 MAXVALUE 9223372036854775807 START WITH 1 CACHE 1),
+	"lesson_run_id" bigint NOT NULL,
+	"objective_code" varchar(50) NOT NULL,
+	"level" "observation_level" NOT NULL,
+	"observed_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
+	CONSTRAINT "lesson_run_obs_run_obj_unique" UNIQUE("lesson_run_id","objective_code")
+);
+--> statement-breakpoint
+CREATE TABLE "lesson_run_steps" (
+	"id" bigint PRIMARY KEY GENERATED ALWAYS AS IDENTITY (sequence name "lesson_run_steps_id_seq" INCREMENT BY 1 MINVALUE 1 MAXVALUE 9223372036854775807 START WITH 1 CACHE 1),
+	"lesson_run_id" bigint NOT NULL,
+	"step_index" integer NOT NULL,
+	"activity_id" bigint,
+	"kind" "lesson_step_kind" NOT NULL,
+	"outcome" "lesson_step_outcome" DEFAULT 'pending' NOT NULL,
+	"started_at" timestamp with time zone DEFAULT now(),
+	"completed_at" timestamp with time zone,
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"updated_at" timestamp with time zone DEFAULT now() NOT NULL,
+	CONSTRAINT "lesson_run_steps_run_step_unique" UNIQUE("lesson_run_id","step_index")
+);
+--> statement-breakpoint
+CREATE TABLE "lesson_runs" (
+	"id" bigint PRIMARY KEY GENERATED ALWAYS AS IDENTITY (sequence name "lesson_runs_id_seq" INCREMENT BY 1 MINVALUE 1 MAXVALUE 9223372036854775807 START WITH 1 CACHE 1),
+	"uuid" varchar(36) DEFAULT gen_random_uuid() NOT NULL,
+	"user_id" bigint NOT NULL,
+	"child_profile_id" bigint NOT NULL,
+	"lesson_id" bigint NOT NULL,
+	"content_version" integer DEFAULT 1 NOT NULL,
+	"status" "lesson_run_status" DEFAULT 'in_progress' NOT NULL,
+	"current_step" integer DEFAULT 0 NOT NULL,
+	"started_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"ended_at" timestamp with time zone,
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"updated_at" timestamp with time zone DEFAULT now() NOT NULL,
+	CONSTRAINT "lesson_runs_uuid_unique" UNIQUE("uuid")
 );
 --> statement-breakpoint
 CREATE TABLE "collections" (
@@ -1048,8 +1083,8 @@ CREATE TABLE "personal_curriculum_item_progress" (
 	"personal_curriculum_item_id" bigint NOT NULL,
 	"status" "curriculum_progress_status" DEFAULT 'not_started' NOT NULL,
 	"completed_at" timestamp with time zone,
-	"updated_at" timestamp with time zone DEFAULT now() NOT NULL,
 	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"updated_at" timestamp with time zone DEFAULT now() NOT NULL,
 	CONSTRAINT "personal_curriculum_item_progress_enrollment_item_unique" UNIQUE("enrollment_id","personal_curriculum_item_id")
 );
 --> statement-breakpoint
@@ -1110,8 +1145,8 @@ CREATE TABLE "child_daily_stats" (
 	"skills_touched" integer DEFAULT 0 NOT NULL,
 	"stars_earned" integer DEFAULT 0 NOT NULL,
 	"extra_time_granted_minutes" integer DEFAULT 0 NOT NULL,
-	"updated_at" timestamp with time zone DEFAULT now() NOT NULL,
 	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"updated_at" timestamp with time zone DEFAULT now() NOT NULL,
 	CONSTRAINT "child_daily_stats_child_date_unique" UNIQUE("child_profile_id","date_ict")
 );
 --> statement-breakpoint
@@ -1144,8 +1179,8 @@ CREATE TABLE "level_daily_stats" (
 	"abandoned_count" integer DEFAULT 0 NOT NULL,
 	"avg_duration_seconds" integer DEFAULT 0 NOT NULL,
 	"avg_hints_used" integer DEFAULT 0 NOT NULL,
-	"updated_at" timestamp with time zone DEFAULT now() NOT NULL,
 	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"updated_at" timestamp with time zone DEFAULT now() NOT NULL,
 	CONSTRAINT "level_daily_stats_level_version_date_unique" UNIQUE("level_code","content_version","date_ict")
 );
 --> statement-breakpoint
@@ -1160,14 +1195,16 @@ CREATE TABLE "play_sessions" (
 	"is_preview" boolean DEFAULT false NOT NULL,
 	"completion_status" varchar(20) DEFAULT 'in_progress' NOT NULL,
 	"access_tier_at_start" varchar(20),
+	"layout_seed" bigint,
 	"stars_earned" smallint DEFAULT 0,
 	"score" integer DEFAULT 0,
 	"duration_seconds" integer DEFAULT 0,
 	"started_at" timestamp with time zone DEFAULT now() NOT NULL,
 	"completed_at" timestamp with time zone,
-	"updated_at" timestamp with time zone DEFAULT now() NOT NULL,
 	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
-	CONSTRAINT "check_play_sessions_identity" CHECK ("play_sessions"."child_profile_id" IS NOT NULL OR "play_sessions"."guest_device_id" IS NOT NULL)
+	"updated_at" timestamp with time zone DEFAULT now() NOT NULL,
+	CONSTRAINT "check_play_sessions_identity" CHECK ("play_sessions"."child_profile_id" IS NOT NULL OR "play_sessions"."guest_device_id" IS NOT NULL),
+	CONSTRAINT "check_play_sessions_layout_seed" CHECK ("play_sessions"."layout_seed" IS NULL OR ("play_sessions"."layout_seed" >= 0 AND "play_sessions"."layout_seed" <= 4294967295))
 );
 --> statement-breakpoint
 CREATE TABLE "skill_daily_stats" (
@@ -1176,8 +1213,8 @@ CREATE TABLE "skill_daily_stats" (
 	"date_ict" varchar(10) NOT NULL,
 	"exposure_count" integer DEFAULT 0 NOT NULL,
 	"avg_accuracy_percent" integer DEFAULT 0 NOT NULL,
-	"updated_at" timestamp with time zone DEFAULT now() NOT NULL,
 	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"updated_at" timestamp with time zone DEFAULT now() NOT NULL,
 	CONSTRAINT "skill_daily_stats_skill_date_unique" UNIQUE("skill_id","date_ict")
 );
 --> statement-breakpoint
@@ -1356,6 +1393,7 @@ ALTER TABLE "activities" ADD CONSTRAINT "activities_reviewed_by_manager_id_manag
 ALTER TABLE "lesson_activities" ADD CONSTRAINT "lesson_activities_lesson_id_lessons_id_fk" FOREIGN KEY ("lesson_id") REFERENCES "public"."lessons"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "lessons" ADD CONSTRAINT "lessons_created_by_manager_id_managers_id_fk" FOREIGN KEY ("created_by_manager_id") REFERENCES "public"."managers"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "lessons" ADD CONSTRAINT "lessons_reviewed_by_manager_id_managers_id_fk" FOREIGN KEY ("reviewed_by_manager_id") REFERENCES "public"."managers"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "lessons" ADD CONSTRAINT "lessons_exemplar_approved_by_id_managers_id_fk" FOREIGN KEY ("exemplar_approved_by_id") REFERENCES "public"."managers"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "seo_pages" ADD CONSTRAINT "seo_pages_created_by_manager_id_managers_id_fk" FOREIGN KEY ("created_by_manager_id") REFERENCES "public"."managers"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "seo_pages" ADD CONSTRAINT "seo_pages_reviewed_by_manager_id_managers_id_fk" FOREIGN KEY ("reviewed_by_manager_id") REFERENCES "public"."managers"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "skill_action_suggestions" ADD CONSTRAINT "skill_action_suggestions_skill_id_skills_id_fk" FOREIGN KEY ("skill_id") REFERENCES "public"."skills"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
@@ -1374,6 +1412,7 @@ ALTER TABLE "curriculum_items" ADD CONSTRAINT "curriculum_items_curriculum_id_cu
 ALTER TABLE "curriculum_weeks" ADD CONSTRAINT "curriculum_weeks_curriculum_id_curricula_id_fk" FOREIGN KEY ("curriculum_id") REFERENCES "public"."curricula"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "custom_games" ADD CONSTRAINT "custom_games_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "export_jobs" ADD CONSTRAINT "export_jobs_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "game_level_rounds" ADD CONSTRAINT "game_level_rounds_game_level_id_game_levels_id_fk" FOREIGN KEY ("game_level_id") REFERENCES "public"."game_levels"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "game_levels" ADD CONSTRAINT "game_levels_template_id_game_templates_id_fk" FOREIGN KEY ("template_id") REFERENCES "public"."game_templates"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "game_levels" ADD CONSTRAINT "game_levels_created_by_manager_id_managers_id_fk" FOREIGN KEY ("created_by_manager_id") REFERENCES "public"."managers"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "game_levels" ADD CONSTRAINT "game_levels_reviewed_by_manager_id_managers_id_fk" FOREIGN KEY ("reviewed_by_manager_id") REFERENCES "public"."managers"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
@@ -1382,6 +1421,12 @@ ALTER TABLE "mfa_recovery_requests" ADD CONSTRAINT "mfa_recovery_requests_user_i
 ALTER TABLE "mfa_recovery_requests" ADD CONSTRAINT "mfa_recovery_requests_requested_by_manager_id_managers_id_fk" FOREIGN KEY ("requested_by_manager_id") REFERENCES "public"."managers"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "mfa_recovery_requests" ADD CONSTRAINT "mfa_recovery_requests_completed_by_manager_id_managers_id_fk" FOREIGN KEY ("completed_by_manager_id") REFERENCES "public"."managers"("id") ON DELETE set null ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "social_identities" ADD CONSTRAINT "social_identities_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "lesson_run_observations" ADD CONSTRAINT "lesson_run_observations_lesson_run_id_lesson_runs_id_fk" FOREIGN KEY ("lesson_run_id") REFERENCES "public"."lesson_runs"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "lesson_run_steps" ADD CONSTRAINT "lesson_run_steps_lesson_run_id_lesson_runs_id_fk" FOREIGN KEY ("lesson_run_id") REFERENCES "public"."lesson_runs"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "lesson_run_steps" ADD CONSTRAINT "lesson_run_steps_activity_id_activities_id_fk" FOREIGN KEY ("activity_id") REFERENCES "public"."activities"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "lesson_runs" ADD CONSTRAINT "lesson_runs_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "lesson_runs" ADD CONSTRAINT "lesson_runs_child_profile_id_child_profiles_id_fk" FOREIGN KEY ("child_profile_id") REFERENCES "public"."child_profiles"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "lesson_runs" ADD CONSTRAINT "lesson_runs_lesson_id_lessons_id_fk" FOREIGN KEY ("lesson_id") REFERENCES "public"."lessons"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "collections" ADD CONSTRAINT "collections_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "library_items" ADD CONSTRAINT "library_items_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "library_items" ADD CONSTRAINT "library_items_collection_id_collections_id_fk" FOREIGN KEY ("collection_id") REFERENCES "public"."collections"("id") ON DELETE set null ON UPDATE no action;--> statement-breakpoint
@@ -1446,6 +1491,7 @@ CREATE UNIQUE INDEX "idx_activities_published_code" ON "activities" USING btree 
 CREATE INDEX "idx_activities_entity_id" ON "activities" USING btree ("entity_id");--> statement-breakpoint
 CREATE INDEX "idx_lesson_activities_activity_id" ON "lesson_activities" USING btree ("activity_id");--> statement-breakpoint
 CREATE UNIQUE INDEX "idx_lessons_published_code" ON "lessons" USING btree ("code") WHERE "lessons"."status" = 'published';--> statement-breakpoint
+CREATE INDEX "idx_lessons_exemplar" ON "lessons" USING btree ("is_exemplar","exemplar_competency","exemplar_age_band") WHERE "lessons"."is_exemplar" = true;--> statement-breakpoint
 CREATE UNIQUE INDEX "idx_seo_pages_published_slug" ON "seo_pages" USING btree ("slug") WHERE "seo_pages"."status" = 'published';--> statement-breakpoint
 CREATE UNIQUE INDEX "idx_worksheets_published_code" ON "worksheets" USING btree ("code") WHERE "worksheets"."status" = 'published';--> statement-breakpoint
 CREATE INDEX "idx_worksheets_entity_id" ON "worksheets" USING btree ("entity_id");--> statement-breakpoint
@@ -1463,6 +1509,7 @@ CREATE UNIQUE INDEX "idx_export_jobs_uuid" ON "export_jobs" USING btree ("uuid")
 CREATE INDEX "idx_export_jobs_user_id" ON "export_jobs" USING btree ("user_id");--> statement-breakpoint
 CREATE INDEX "idx_export_jobs_status" ON "export_jobs" USING btree ("status");--> statement-breakpoint
 CREATE INDEX "idx_export_jobs_expires_at" ON "export_jobs" USING btree ("expires_at");--> statement-breakpoint
+CREATE INDEX "idx_game_level_rounds_level_id" ON "game_level_rounds" USING btree ("game_level_id");--> statement-breakpoint
 CREATE UNIQUE INDEX "idx_game_levels_published_code" ON "game_levels" USING btree ("code") WHERE "game_levels"."status" = 'published';--> statement-breakpoint
 CREATE INDEX "idx_game_levels_content_pack_gin" ON "game_levels" USING gin ("content_pack");--> statement-breakpoint
 CREATE INDEX "idx_active_sessions_account" ON "active_sessions" USING btree ("account_type","account_id");--> statement-breakpoint
@@ -1470,6 +1517,9 @@ CREATE INDEX "idx_mfa_recovery_codes_account" ON "mfa_recovery_codes" USING btre
 CREATE INDEX "idx_mfa_recovery_requests_user_status" ON "mfa_recovery_requests" USING btree ("user_id","status");--> statement-breakpoint
 CREATE INDEX "idx_mfa_recovery_requests_token_hash" ON "mfa_recovery_requests" USING btree ("verification_token_hash");--> statement-breakpoint
 CREATE INDEX "idx_verification_tokens_account" ON "verification_tokens" USING btree ("account_type","account_id");--> statement-breakpoint
+CREATE INDEX "idx_lesson_runs_user_child" ON "lesson_runs" USING btree ("user_id","child_profile_id");--> statement-breakpoint
+CREATE INDEX "idx_lesson_runs_lesson" ON "lesson_runs" USING btree ("lesson_id");--> statement-breakpoint
+CREATE INDEX "idx_lesson_runs_status" ON "lesson_runs" USING btree ("status");--> statement-breakpoint
 CREATE INDEX "idx_library_items_collection_id" ON "library_items" USING btree ("collection_id");--> statement-breakpoint
 CREATE INDEX "idx_library_items_entity" ON "library_items" USING btree ("entity_type","entity_id");--> statement-breakpoint
 CREATE INDEX "idx_user_tag_map_entity" ON "user_tag_map" USING btree ("entity_type","entity_id");--> statement-breakpoint
@@ -1497,10 +1547,6 @@ CREATE INDEX "idx_lesson_plan_items_source_entity" ON "lesson_plan_items" USING 
 CREATE UNIQUE INDEX "idx_lesson_plans_uuid" ON "lesson_plans" USING btree ("uuid");--> statement-breakpoint
 CREATE INDEX "idx_lesson_plans_user_id" ON "lesson_plans" USING btree ("user_id");--> statement-breakpoint
 CREATE INDEX "idx_lesson_plans_source_lesson_code" ON "lesson_plans" USING btree ("source_lesson_code");--> statement-breakpoint
-
--- ═══ §4. Bất biến nội dung — function + trigger ══════════════════════════════
--- BR-CLC-01/BR-SCT-05: hàng `published` là bất biến; sửa nội dung phải tạo version
--- mới. Ép ở trigger vì đây là ràng buộc giữa OLD và NEW — CHECK không thấy OLD.
 CREATE OR REPLACE FUNCTION prevent_published_game_level_update()
 RETURNS TRIGGER AS $$
 BEGIN
@@ -1510,7 +1556,28 @@ BEGIN
     RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;--> statement-breakpoint
+CREATE OR REPLACE FUNCTION prevent_published_lesson_update()
+RETURNS TRIGGER AS $$
+BEGIN
+    IF OLD.status = 'published' AND NEW.status = 'published' THEN
+        IF (
+            OLD.entity_id = NEW.entity_id AND
+            OLD.code = NEW.code AND
+            OLD.content_version = NEW.content_version AND
+            OLD.title = NEW.title AND
+            OLD.guide IS NOT DISTINCT FROM NEW.guide AND
+            OLD.access_tier = NEW.access_tier AND
+            OLD.origin = NEW.origin AND
+            OLD.authored_in = NEW.authored_in
+        ) THEN
+            RETURN NEW;
+        END IF;
 
+        RAISE EXCEPTION 'BR-CLC-01/BR-SCT-05: Cannot update published content version. Create a new version instead.';
+    END IF;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;--> statement-breakpoint
 CREATE OR REPLACE FUNCTION prevent_published_content_update()
 RETURNS TRIGGER AS $$
 BEGIN
@@ -1520,8 +1587,6 @@ BEGIN
     RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;--> statement-breakpoint
-
--- BR-SPT-07: phiên chơi đã kết thúc là bản ghi lịch sử, không sửa lại được.
 CREATE OR REPLACE FUNCTION prevent_completed_play_session_update()
 RETURNS TRIGGER AS $$
 BEGIN
@@ -1531,39 +1596,34 @@ BEGIN
     RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;--> statement-breakpoint
-
+DROP TRIGGER IF EXISTS trigger_prevent_published_game_level_update ON "game_levels";--> statement-breakpoint
 CREATE TRIGGER trigger_prevent_published_game_level_update
   BEFORE UPDATE ON "game_levels"
   FOR EACH ROW EXECUTE FUNCTION prevent_published_game_level_update();--> statement-breakpoint
+DROP TRIGGER IF EXISTS trigger_prevent_published_lessons_update ON "lessons";--> statement-breakpoint
 CREATE TRIGGER trigger_prevent_published_lessons_update
   BEFORE UPDATE ON "lessons"
-  FOR EACH ROW EXECUTE FUNCTION prevent_published_content_update();--> statement-breakpoint
+  FOR EACH ROW EXECUTE FUNCTION prevent_published_lesson_update();--> statement-breakpoint
+DROP TRIGGER IF EXISTS trigger_prevent_published_activities_update ON "activities";--> statement-breakpoint
 CREATE TRIGGER trigger_prevent_published_activities_update
   BEFORE UPDATE ON "activities"
   FOR EACH ROW EXECUTE FUNCTION prevent_published_content_update();--> statement-breakpoint
+DROP TRIGGER IF EXISTS trigger_prevent_published_worksheets_update ON "worksheets";--> statement-breakpoint
 CREATE TRIGGER trigger_prevent_published_worksheets_update
   BEFORE UPDATE ON "worksheets"
   FOR EACH ROW EXECUTE FUNCTION prevent_published_content_update();--> statement-breakpoint
+DROP TRIGGER IF EXISTS trigger_prevent_published_curricula_update ON "curricula";--> statement-breakpoint
 CREATE TRIGGER trigger_prevent_published_curricula_update
   BEFORE UPDATE ON "curricula"
   FOR EACH ROW EXECUTE FUNCTION prevent_published_content_update();--> statement-breakpoint
+DROP TRIGGER IF EXISTS trigger_prevent_completed_play_session_update ON "play_sessions";--> statement-breakpoint
 CREATE TRIGGER trigger_prevent_completed_play_session_update
   BEFORE UPDATE ON "play_sessions"
   FOR EACH ROW EXECUTE FUNCTION prevent_completed_play_session_update();--> statement-breakpoint
-
--- ═══ §5. Quyền bảng ══════════════════════════════════════════════════════════
--- ALTER DEFAULT PRIVILEGES ở §1 đã phủ các bảng tạo sau nó; hai GRANT dưới đây là
--- lưới an toàn cho bảng nào lọt ra ngoài (vd. tạo bởi migration chạy dưới role khác).
 GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA public TO mindkid_app;--> statement-breakpoint
 GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA public TO mindkid_app;--> statement-breakpoint
-
--- BR-DM-05 + BR-SIB-06: bảng INSERT-only. Đây là bằng chứng pháp lý và vết điều
--- tra — ép bằng quyền DB, vì quy ước code không ép được gì.
 REVOKE UPDATE, DELETE ON consent_logs FROM mindkid_app;--> statement-breakpoint
 REVOKE UPDATE, DELETE ON audit_logs FROM mindkid_app;--> statement-breakpoint
 REVOKE UPDATE, DELETE ON content_review_log FROM mindkid_app;--> statement-breakpoint
 REVOKE UPDATE, DELETE ON telemetry_events FROM mindkid_app;--> statement-breakpoint
-
--- `payment_orders` sửa được (status chuyển trạng thái) nhưng không xoá được: đơn
--- đã tạo là chứng từ tiền.
 REVOKE DELETE ON payment_orders FROM mindkid_app;

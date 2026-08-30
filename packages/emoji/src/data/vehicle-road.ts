@@ -162,4 +162,20 @@ export const VEHICLE_ROAD_EMOJIS: EmojiEntry[] = [
     keywords: ["fuel pump", "gas station", "trạm xăng", "xăng", "đổ xăng"],
     name: "Trạm xăng",
   },
+  {
+    age_min: 3,
+    category: "vehicle-road",
+    curriculum_themes: ["phuong_tien"],
+    emoji: "🚔",
+    keywords: ["oncoming police car", "xe cảnh sát", "xe công an"],
+    name: "Xe cảnh sát",
+  },
+  {
+    age_min: 3,
+    category: "vehicle-road",
+    curriculum_themes: ["phuong_tien"],
+    emoji: "🚘",
+    keywords: ["oncoming automobile", "ô tô phía trước", "xe hơi"],
+    name: "Ô tô đi tới",
+  },
 ];

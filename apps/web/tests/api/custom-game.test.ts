@@ -31,6 +31,9 @@ function makeUserEvent(
 
   return {
     method: resolvedMethod,
+    path: url,
+    url,
+    query,
     node: {
       req: {
         method: resolvedMethod,
@@ -42,6 +45,7 @@ function makeUserEvent(
         },
         url,
         originalUrl: url,
+        body,
       },
       res: {
         setHeader: (name: string, value: string) => {
@@ -62,6 +66,8 @@ function makeUserEvent(
       body,
       query,
     },
+    _requestBody: body,
+    _body: body,
   } as any;
 }
 

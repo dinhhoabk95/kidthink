@@ -48,6 +48,9 @@ export function decryptFcmToken(
   }
 
   const [ivBase64, authTagBase64, encryptedBase64] = parts;
+  if (!(ivBase64 && authTagBase64 && encryptedBase64)) {
+    throw new Error("INVALID_ENCRYPTED_TOKEN_FORMAT");
+  }
   const key = getSecretKey(customSecret);
   const iv = Buffer.from(ivBase64, "base64");
   const authTag = Buffer.from(authTagBase64, "base64");
@@ -55,10 +58,14 @@ export function decryptFcmToken(
   const decipher = crypto.createDecipheriv("aes-256-gcm", key, iv);
   decipher.setAuthTag(authTag);
 
-  let decrypted = decipher.update(encryptedBase64, "base64", "utf8");
-  decrypted += decipher.final("utf8");
+  const decryptedPart1: string = decipher.update(
+    encryptedBase64,
+    "base64",
+    "utf8"
+  );
+  const decryptedPart2: string = decipher.final("utf8");
 
-  return decrypted;
+  return decryptedPart1 + decryptedPart2;
 }
 
 /**

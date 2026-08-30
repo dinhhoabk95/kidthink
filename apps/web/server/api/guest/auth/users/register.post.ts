@@ -26,7 +26,6 @@ import {
   setResponseStatus,
 } from "h3";
 import { z } from "zod";
-import { setUserSession } from "#imports";
 import {
   assertRateLimitAllowed,
   assertRequestBodySize,
@@ -142,6 +141,10 @@ export async function handleRegister(event: H3Event, testBody?: unknown) {
     })
     .returning();
 
+  if (!newUser) {
+    throw appError("SERVICE_UNAVAILABLE");
+  }
+
   const userAgent = getHeader(event, "user-agent") || "unknown";
 
   // BR-REG-03: Insert 2 consent logs
@@ -179,14 +182,12 @@ export async function handleRegister(event: H3Event, testBody?: unknown) {
   await db.insert(notifications).values({
     recipientType: "user",
     recipientId: newUser.id,
-    channel: "email",
     templateCode: "email_verification",
     payload: {
       token: rawToken,
       email: newUser.email,
       displayName: newUser.displayName,
     },
-    status: "queued",
   });
 
   // Create opaque session in Redis

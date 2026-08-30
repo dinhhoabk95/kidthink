@@ -288,7 +288,7 @@
                     <button
                       class="text-xs text-danger-500 font-bold px-1.5 py-1"
                       type="button"
-                      v-if="game.contentPack.options.length > 2"
+                      v-if="(game.contentPack.options?.length ?? 0) > 2"
                       @click="removeGT001Option(idx)"
                     >
                       <UIcon class="w-5 h-5" name="i-lucide-x" />
@@ -453,9 +453,33 @@
   const showPlayModal = ref(false);
   const rawContentPackJson = ref("");
 
+  interface GT001Option {
+    item_id?: string;
+    asset: { kind: string; ref: string };
+    is_correct?: boolean;
+  }
+
+  interface CustomGameData {
+    uuid: string;
+    templateId: string;
+    title: string;
+    instruction: string;
+    themeId: string;
+    ageMin: number;
+    ageMax: number;
+    contentPack: {
+      prompt?: string;
+      options?: GT001Option[];
+      [key: string]: unknown;
+    };
+    difficultyParams: Record<string, unknown>;
+    status: "draft" | "ready";
+    version: number;
+  }
+
   const ageBandSelection = ref("3-4");
 
-  const game = ref({
+  const game = ref<CustomGameData>({
     uuid: "",
     templateId: "GT-001",
     title: "",
@@ -463,9 +487,9 @@
     themeId: "farm",
     ageMin: 3,
     ageMax: 4,
-    contentPack: {} as Record<string, unknown>,
-    difficultyParams: {} as Record<string, unknown>,
-    status: "draft" as "draft" | "ready",
+    contentPack: {},
+    difficultyParams: {},
+    status: "draft",
     version: 1,
   });
 
@@ -539,7 +563,7 @@
   }
 
   function removeGT001Option(idx: number) {
-    const options = (game.value.contentPack.options || []) as unknown[];
+    const options = (game.value.contentPack.options || []) as GT001Option[];
     if (options.length <= 2) {
       return;
     }

@@ -12,25 +12,25 @@ describe("Rate Limiting Registry (Task 6 / BR-RTL-01..05)", () => {
   });
 
   it("auth and payment route classes failMode is 'closed'", () => {
-    expect(RATE_LIMIT_CONFIGS["auth:login"].failMode).toBe("closed");
-    expect(RATE_LIMIT_CONFIGS["auth:register"].failMode).toBe("closed");
-    expect(RATE_LIMIT_CONFIGS["auth:forgot-password"].failMode).toBe("closed");
-    expect(RATE_LIMIT_CONFIGS["auth:mfa"].failMode).toBe("closed");
-    expect(RATE_LIMIT_CONFIGS["auth:refresh"].failMode).toBe("closed");
-    expect(RATE_LIMIT_CONFIGS["auth:social-login"].failMode).toBe("closed");
-    expect(RATE_LIMIT_CONFIGS["auth:oauth:start"].failMode).toBe("closed");
-    expect(RATE_LIMIT_CONFIGS["auth:oauth:callback"].failMode).toBe("closed");
-    expect(RATE_LIMIT_CONFIGS["payment:create"].failMode).toBe("closed");
-    expect(RATE_LIMIT_CONFIGS["payment:proof"].failMode).toBe("closed");
+    expect(RATE_LIMIT_CONFIGS["auth:login"]?.failMode).toBe("closed");
+    expect(RATE_LIMIT_CONFIGS["auth:register"]?.failMode).toBe("closed");
+    expect(RATE_LIMIT_CONFIGS["auth:forgot-password"]?.failMode).toBe("closed");
+    expect(RATE_LIMIT_CONFIGS["auth:mfa"]?.failMode).toBe("closed");
+    expect(RATE_LIMIT_CONFIGS["auth:refresh"]?.failMode).toBe("closed");
+    expect(RATE_LIMIT_CONFIGS["auth:social-login"]?.failMode).toBe("closed");
+    expect(RATE_LIMIT_CONFIGS["auth:oauth:start"]?.failMode).toBe("closed");
+    expect(RATE_LIMIT_CONFIGS["auth:oauth:callback"]?.failMode).toBe("closed");
+    expect(RATE_LIMIT_CONFIGS["payment:create"]?.failMode).toBe("closed");
+    expect(RATE_LIMIT_CONFIGS["payment:proof"]?.failMode).toBe("closed");
   });
 
   it("non-auth/payment route classes failMode is 'open'", () => {
-    expect(RATE_LIMIT_CONFIGS["upload:image"].failMode).toBe("open");
-    expect(RATE_LIMIT_CONFIGS["export:data"].failMode).toBe("open");
-    expect(RATE_LIMIT_CONFIGS["play:events"].failMode).toBe("open");
-    expect(RATE_LIMIT_CONFIGS.search.failMode).toBe("open");
-    expect(RATE_LIMIT_CONFIGS["read:public"].failMode).toBe("open");
-    expect(RATE_LIMIT_CONFIGS["managers:*"].failMode).toBe("open");
+    expect(RATE_LIMIT_CONFIGS["upload:image"]?.failMode).toBe("open");
+    expect(RATE_LIMIT_CONFIGS["export:data"]?.failMode).toBe("open");
+    expect(RATE_LIMIT_CONFIGS["play:events"]?.failMode).toBe("open");
+    expect(RATE_LIMIT_CONFIGS.search?.failMode).toBe("open");
+    expect(RATE_LIMIT_CONFIGS["read:public"]?.failMode).toBe("open");
+    expect(RATE_LIMIT_CONFIGS["managers:*"]?.failMode).toBe("open");
   });
 
   it("getRouteClassConfig throws error for unregistered route class (no unlimited fallback)", () => {

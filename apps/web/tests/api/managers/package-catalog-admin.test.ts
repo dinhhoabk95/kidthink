@@ -28,6 +28,9 @@ function mockManagerEvent(
 
   return {
     method: "GET",
+    path: url,
+    url,
+    query: parsedQuery,
     node: {
       req: {
         headers: {},

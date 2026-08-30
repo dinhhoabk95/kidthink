@@ -82,6 +82,14 @@ export default defineEventHandler(async (event) => {
     .where(eq(childProfiles.id, child.id))
     .returning();
 
+  if (!updatedChild) {
+    throw createError({
+      statusCode: 500,
+      statusMessage: "SETTINGS_UPDATE_FAILED",
+      message: "Cập nhật cài đặt thất bại",
+    });
+  }
+
   return {
     uuid: updatedChild.uuid,
     daily_play_cap_minutes: updatedChild.dailyPlayCapMinutes,

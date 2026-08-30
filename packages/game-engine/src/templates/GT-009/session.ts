@@ -4,7 +4,20 @@ import {
   type GameAction,
   TemplateGameSession,
 } from "#src/game-session";
+import { resolveLayout } from "#src/layout/registry";
+import type { Slot } from "#src/layout/types";
 import { SelectionMechanic } from "#src/mechanics/selection-mechanic";
+import type { DegradationState } from "#src/systems/degradation";
+import type { Particle, RenderSystem } from "#src/systems/render-system";
+import {
+  drawLabelText,
+  drawPromptText,
+  drawSceneBackground,
+  drawSlotItem,
+  getColorsForState,
+  type ItemVisualState,
+  updateParticles,
+} from "../shared-render.js";
 import { survivingCandidates } from "./deduction.js";
 import type { GT009Content, GT009Difficulty } from "./template.js";
 
@@ -19,6 +32,11 @@ export class GT009Session extends TemplateGameSession<
   GT009Content,
   GT009Difficulty
 > {
+  slots: readonly Slot[] = [];
+  degradation: DegradationState | null = null;
+  private renderParticles: Particle[] = [];
+  private readonly renderItemStates: Map<string, ItemVisualState> = new Map();
+
   private readonly mechanic = new SelectionMechanic({ mode: "single" });
   private readonly revealedClueIds: string[] = [];
   private readonly eliminatedIds: Set<string> = new Set();
@@ -136,6 +154,96 @@ export class GT009Session extends TemplateGameSession<
       id: c.candidate_id,
       isCorrect: c.candidate_id === this.content.answer_candidate_id,
     }));
+  }
+
+  resolveSlots(ageBand: "3-4" | "4-5" | "5-6"): void {
+    const layoutFn = resolveLayout("clue-board");
+    this.slots = layoutFn({
+      slotCount: this.content.candidates.length,
+      targetCount: this.content.clues.length,
+      ageBand,
+    });
+  }
+
+  setRenderItemState(itemId: string, state: ItemVisualState): void {
+    this.renderItemStates.set(itemId, state);
+  }
+
+  getRenderItemState(itemId: string): ItemVisualState {
+    return this.renderItemStates.get(itemId) ?? "idle";
+  }
+
+  render(
+    ctx: CanvasRenderingContext2D,
+    rs: RenderSystem,
+    _timeMs: number
+  ): void {
+    drawSceneBackground(ctx, rs);
+    drawPromptText(ctx, rs, this.content.prompt);
+    // clue-board xếp dải manh mối trước, rồi tới bàn ứng viên.
+    const clueSlots = this.slots.slice(0, this.content.clues.length);
+    const boardSlots = this.slots.slice(this.content.clues.length);
+
+    this.content.clues.forEach((clue, i) => {
+      const slot = clueSlots[i];
+      if (!slot) {
+        return;
+      }
+      const revealed = this.revealedClueIds.includes(clue.clue_id);
+      const { fill, border } = getColorsForState(
+        revealed ? "selected" : "idle"
+      );
+      rs.drawClayBody(
+        ctx,
+        slot.x,
+        slot.y,
+        Math.min(slot.w, slot.h) / 2,
+        fill,
+        border,
+        "square"
+      );
+      drawLabelText(ctx, revealed ? clue.text : "?", slot.x, slot.y, 16);
+    });
+
+    this.content.candidates.forEach((cand, i) => {
+      const slot = boardSlots[i];
+      if (!slot) {
+        return;
+      }
+      const eliminated = this.eliminatedIds.has(cand.candidate_id);
+      let state = this.getRenderItemState(cand.candidate_id);
+      if (eliminated) {
+        state = "locked";
+      } else if (this.mechanic.isSelected(cand.candidate_id)) {
+        state = "selected";
+      }
+      if (cand.asset) {
+        drawSlotItem(ctx, rs, slot, {
+          id: cand.candidate_id,
+          asset: cand.asset,
+          label: String(cand.value),
+          state,
+        });
+      } else {
+        drawSlotItem(ctx, rs, slot, {
+          id: cand.candidate_id,
+          text: String(cand.value),
+          state,
+        });
+      }
+    });
+    this.drawRenderFeedback(rs, ctx);
+  }
+
+  private drawRenderFeedback(
+    rs: RenderSystem,
+    ctx: CanvasRenderingContext2D
+  ): void {
+    if (this.degradation?.particles_enabled === false) {
+      return;
+    }
+    this.renderParticles = updateParticles(this.renderParticles);
+    rs.drawParticles(ctx, this.renderParticles);
   }
 }
 

@@ -118,7 +118,10 @@ function difficultyDimensions(params: unknown): Record<string, number> {
 }
 
 function checkOneTemplate(rounds: RoundInput[], v: RoundSetViolation[]): void {
-  const first = rounds[0].template_code;
+  const first = rounds[0]?.template_code;
+  if (!first) {
+    return;
+  }
   for (const round of rounds) {
     if (round.template_code !== first) {
       v.push({
@@ -140,7 +143,11 @@ function checkOneLO(count: number, v: RoundSetViolation[]): void {
 }
 
 function checkBandCeiling(rounds: RoundInput[], v: RoundSetViolation[]): void {
-  const band = ageBandKey(rounds[0].age_min, rounds[0].age_max);
+  const r0 = rounds[0];
+  if (!r0) {
+    return;
+  }
+  const band = ageBandKey(r0.age_min, r0.age_max);
   const maxRounds = MAX_ROUNDS_BY_BAND[band];
   if (maxRounds !== undefined && rounds.length > maxRounds) {
     v.push({
@@ -175,8 +182,13 @@ function checkDifficultySteps(
   v: RoundSetViolation[]
 ): void {
   for (let i = 1; i < rounds.length; i++) {
-    const prev = difficultyDimensions(rounds[i - 1].difficulty_params);
-    const curr = difficultyDimensions(rounds[i].difficulty_params);
+    const prevRound = rounds[i - 1];
+    const currRound = rounds[i];
+    if (!(prevRound && currRound)) {
+      continue;
+    }
+    const prev = difficultyDimensions(prevRound.difficulty_params);
+    const curr = difficultyDimensions(currRound.difficulty_params);
     const allKeys = new Set([...Object.keys(prev), ...Object.keys(curr)]);
     let increased = 0;
     for (const key of allKeys) {
@@ -187,7 +199,7 @@ function checkDifficultySteps(
     if (increased > 1) {
       v.push({
         rule: "BR-RSM-05",
-        round_index: rounds[i].round_index,
+        round_index: currRound.round_index,
         message: `Round increases ${increased} difficulty dimensions (max 1)`,
       });
     }
@@ -201,14 +213,22 @@ function checkFirstRoundEasiest(
   if (rounds.length <= 1) {
     return;
   }
-  const firstD = rounds[0].difficulty ?? 0;
+  const r0 = rounds[0];
+  if (!r0) {
+    return;
+  }
+  const firstD = r0.difficulty ?? 0;
   for (let i = 1; i < rounds.length; i++) {
-    const d = rounds[i].difficulty ?? 0;
+    const ri = rounds[i];
+    if (!ri) {
+      continue;
+    }
+    const d = ri.difficulty ?? 0;
     if (d < firstD) {
       v.push({
         rule: "BR-RSM-06",
         round_index: 0,
-        message: `First round difficulty (${firstD}) is not the lowest in set (round ${rounds[i].round_index} has ${d})`,
+        message: `First round difficulty (${firstD}) is not the lowest in set (round ${ri.round_index} has ${d})`,
       });
       return;
     }
@@ -222,13 +242,21 @@ function checkConsistentTheme(
   if (rounds.length <= 1) {
     return;
   }
-  const theme = rounds[0].theme_id;
+  const r0 = rounds[0];
+  if (!r0) {
+    return;
+  }
+  const theme = r0.theme_id;
   for (let i = 1; i < rounds.length; i++) {
-    if (rounds[i].theme_id !== theme) {
+    const ri = rounds[i];
+    if (!ri) {
+      continue;
+    }
+    if (ri.theme_id !== theme) {
       v.push({
         rule: "BR-RSM-07",
-        round_index: rounds[i].round_index,
-        message: `Round uses theme '${rounds[i].theme_id}' but set uses '${theme}'`,
+        round_index: ri.round_index,
+        message: `Round uses theme '${ri.theme_id}' but set uses '${theme}'`,
       });
     }
   }
@@ -239,12 +267,17 @@ function checkAdjacentContent(
   v: RoundSetViolation[]
 ): void {
   for (let i = 1; i < rounds.length; i++) {
-    const prevFP = contentPackFingerprint(rounds[i - 1].content_pack);
-    const currFP = contentPackFingerprint(rounds[i].content_pack);
+    const prevRound = rounds[i - 1];
+    const currRound = rounds[i];
+    if (!(prevRound && currRound)) {
+      continue;
+    }
+    const prevFP = contentPackFingerprint(prevRound.content_pack);
+    const currFP = contentPackFingerprint(currRound.content_pack);
     if (prevFP === currFP) {
       v.push({
         rule: "BR-RSM-08",
-        round_index: rounds[i].round_index,
+        round_index: currRound.round_index,
         message:
           "Adjacent rounds have identical content (reordering options does not count as different)",
       });
@@ -298,13 +331,21 @@ function checkConsistentBand(
   if (rounds.length <= 1) {
     return;
   }
-  const firstBand = ageBandKey(rounds[0].age_min, rounds[0].age_max);
+  const r0 = rounds[0];
+  if (!r0) {
+    return;
+  }
+  const firstBand = ageBandKey(r0.age_min, r0.age_max);
   for (let i = 1; i < rounds.length; i++) {
-    const band = ageBandKey(rounds[i].age_min, rounds[i].age_max);
+    const ri = rounds[i];
+    if (!ri) {
+      continue;
+    }
+    const band = ageBandKey(ri.age_min, ri.age_max);
     if (band !== firstBand) {
       v.push({
         rule: "BR-RSM-13",
-        round_index: rounds[i].round_index,
+        round_index: ri.round_index,
         message: `Round uses band ${band} but set uses ${firstBand}`,
       });
     }
@@ -317,11 +358,12 @@ function checkIndexContinuity(
 ): void {
   const sorted = rounds.map((r) => r.round_index).sort((a, b) => a - b);
   for (let i = 0; i < sorted.length; i++) {
-    if (sorted[i] !== i) {
+    const val = sorted[i];
+    if (val !== undefined && val !== i) {
       v.push({
         rule: "BR-RSM-04",
-        round_index: sorted[i],
-        message: `round_index must be continuous from 0, expected ${i} but got ${sorted[i]}`,
+        round_index: val,
+        message: `round_index must be continuous from 0, expected ${i} but got ${val}`,
       });
       return;
     }

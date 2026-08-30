@@ -37,6 +37,9 @@ describe("Identity Schema Integration Tests", () => {
         status: "active",
       })
       .returning();
+    if (!inserted) {
+      throw new Error("Failed to insert user");
+    }
 
     expect(inserted).toBeDefined();
     expect(inserted.passwordHash).toBeNull();
@@ -53,10 +56,17 @@ describe("Identity Schema Integration Tests", () => {
       .insert(users)
       .values({ email: email1, displayName: "U1" })
       .returning();
+    if (!u1) {
+      throw new Error("Failed to insert u1");
+    }
+
     const [u2] = await db
       .insert(users)
       .values({ email: email2, displayName: "U2" })
       .returning();
+    if (!u2) {
+      throw new Error("Failed to insert u2");
+    }
 
     // 1. First social identity
     await db.insert(socialIdentities).values({
@@ -108,6 +118,9 @@ describe("Identity Schema Integration Tests", () => {
       .insert(users)
       .values({ email, displayName: "Delete Me" })
       .returning();
+    if (!u) {
+      throw new Error("Failed to insert u");
+    }
 
     await db.insert(socialIdentities).values({
       userId: u.id,
@@ -137,6 +150,9 @@ describe("Identity Schema Integration Tests", () => {
       .insert(users)
       .values({ email, displayName: "Consent User" })
       .returning();
+    if (!u) {
+      throw new Error("Failed to insert u");
+    }
 
     const [log] = await appDb
       .insert(consentLogs)
@@ -148,6 +164,9 @@ describe("Identity Schema Integration Tests", () => {
         userAgent: "test-agent",
       })
       .returning();
+    if (!log) {
+      throw new Error("Failed to insert log");
+    }
 
     expect(log).toBeDefined();
 
@@ -173,6 +192,9 @@ describe("Identity Schema Integration Tests", () => {
       .insert(users)
       .values({ email, displayName: "CDC Consent User" })
       .returning();
+    if (!u) {
+      throw new Error("Failed to insert u");
+    }
 
     // 1. Missing consent -> CONSENT_REQUIRED (428)
     const emptyLogs = await ownerDb
@@ -192,6 +214,9 @@ describe("Identity Schema Integration Tests", () => {
         userAgent: "test-agent",
       })
       .returning();
+    if (!c1) {
+      throw new Error("Failed to insert c1");
+    }
 
     expect(c1.action).toBe("accepted");
     expect(c1.consentType).toBe("child_data");
@@ -213,7 +238,7 @@ describe("Identity Schema Integration Tests", () => {
 
     // Both rows must exist intact (INSERT-only)
     expect(allLogs.length).toBe(2);
-    expect(allLogs[0].action).toBe("accepted");
-    expect(allLogs[1].action).toBe("withdrawn");
+    expect(allLogs[0]?.action).toBe("accepted");
+    expect(allLogs[1]?.action).toBe("withdrawn");
   });
 });

@@ -6,7 +6,6 @@ import type { ContentSeed } from "#src/seed-content/types";
  * 2 dạng bài (WB19-D1, WB19-D2), 4 level, GT-005, band 5-6
  */
 export const SEED_MONT_A19: ContentSeed<unknown, unknown>[] = [
-  // WB19-D1 Level 1 (Diff 3 - Standard)
   {
     header: {
       code: "GL-C2-GEO-MATCH-0101",
@@ -27,29 +26,67 @@ export const SEED_MONT_A19: ContentSeed<unknown, unknown>[] = [
       authored_in: "repo_seed",
     },
     content_pack: {
+      prompt: "Bé nối quả bóng và hộp quà với khối hình dạng đúng!",
       pairs: [
         {
-          left: { id: "ball", label: "Quả bóng tròn", emoji: "⚽" },
-          right: { id: "sphere", label: "Khối cầu", emoji: "⚪" },
+          pair_id: "pair-1",
+          left: {
+            item_id: "ball",
+            asset: {
+              kind: "emoji",
+              ref: "EMJ-soccer",
+            },
+          },
+          right: {
+            item_id: "sphere",
+            asset: {
+              kind: "emoji",
+              ref: "EMJ-white-circle",
+            },
+          },
         },
         {
-          left: { id: "box", label: "Hộp quà vuông", emoji: "🎁" },
-          right: { id: "cube", label: "Khối lập phương", emoji: "🧊" },
+          pair_id: "pair-2",
+          left: {
+            item_id: "box",
+            asset: {
+              kind: "emoji",
+              ref: "EMJ-gift",
+            },
+          },
+          right: {
+            item_id: "cube",
+            asset: {
+              kind: "emoji",
+              ref: "EMJ-ice-cube",
+            },
+          },
         },
         {
-          left: { id: "can", label: "Lon nước ngọt", emoji: "🥫" },
-          right: { id: "cylinder", label: "Khối trụ", emoji: "🛢️" },
+          pair_id: "pair-3",
+          left: {
+            item_id: "can",
+            asset: {
+              kind: "emoji",
+              ref: "EMJ-canned-food",
+            },
+          },
+          right: {
+            item_id: "cylinder",
+            asset: {
+              kind: "emoji",
+              ref: "EMJ-oil-drum",
+            },
+          },
         },
       ],
-      scaffolding: {
-        l1_nudge: "Quả bóng tròn và khối cầu cùng phát sáng",
-        l2_guidance: "Bàn tay ảo chỉ 'Quả bóng tròn có hình dạng khối cầu'",
-        l3_demo: "Bàn tay ảo nối quả bóng sang khối cầu làm mẫu",
-      },
     },
-    difficulty_params: { pair_count: 3 },
+    difficulty_params: {
+      hint_after_ms: 9000,
+      allow_retry: true,
+      shuffle_sides: false,
+    },
   },
-  // WB19-D1 Level 2 (Diff 4 - Premium)
   {
     header: {
       code: "GL-C2-GEO-MATCH-0102",
@@ -70,34 +107,84 @@ export const SEED_MONT_A19: ContentSeed<unknown, unknown>[] = [
       authored_in: "repo_seed",
     },
     content_pack: {
+      prompt: "Bé hãy ghép 4 đồ vật với dạng khối 3D tương ứng!",
       pairs: [
         {
-          left: { id: "hat", label: "Mũ sinh nhật", emoji: "🎉" },
-          right: { id: "cone", label: "Khối nón", emoji: "🍦" },
+          pair_id: "pair-1",
+          left: {
+            item_id: "hat",
+            asset: {
+              kind: "emoji",
+              ref: "EMJ-party-popper",
+            },
+          },
+          right: {
+            item_id: "cone",
+            asset: {
+              kind: "emoji",
+              ref: "EMJ-ice-cream",
+            },
+          },
         },
         {
-          left: { id: "dice", label: "Hạt xúc xắc", emoji: "🎲" },
-          right: { id: "cube", label: "Khối lập phương", emoji: "🧊" },
+          pair_id: "pair-2",
+          left: {
+            item_id: "dice",
+            asset: {
+              kind: "emoji",
+              ref: "EMJ-die",
+            },
+          },
+          right: {
+            item_id: "cube",
+            asset: {
+              kind: "emoji",
+              ref: "EMJ-ice-cube",
+            },
+          },
         },
         {
-          left: { id: "globe", label: "Quả địa cầu", emoji: "🌍" },
-          right: { id: "sphere", label: "Khối cầu", emoji: "⚪" },
+          pair_id: "pair-3",
+          left: {
+            item_id: "globe",
+            asset: {
+              kind: "emoji",
+              ref: "EMJ-earth",
+            },
+          },
+          right: {
+            item_id: "sphere",
+            asset: {
+              kind: "emoji",
+              ref: "EMJ-white-circle",
+            },
+          },
         },
         {
-          left: { id: "drum", label: "Chiếc trống nhỏ", emoji: "🥁" },
-          right: { id: "cylinder", label: "Khối trụ", emoji: "🛢️" },
+          pair_id: "pair-4",
+          left: {
+            item_id: "drum",
+            asset: {
+              kind: "emoji",
+              ref: "EMJ-drum",
+            },
+          },
+          right: {
+            item_id: "cylinder",
+            asset: {
+              kind: "emoji",
+              ref: "EMJ-oil-drum",
+            },
+          },
         },
       ],
-      scaffolding: {
-        l1_nudge: "Mũ sinh nhật và cây kem ốc quế nhấp nháy",
-        l2_guidance:
-          "Bàn tay ảo chỉ vào đỉnh nhọn của mũ sinh nhật và khối nón",
-        l3_demo: "Bàn tay ảo nối mẫu mũ sinh nhật",
-      },
     },
-    difficulty_params: { pair_count: 4 },
+    difficulty_params: {
+      hint_after_ms: 9000,
+      allow_retry: true,
+      shuffle_sides: false,
+    },
   },
-  // WB19-D2 Level 1 (Diff 3 - Standard)
   {
     header: {
       code: "GL-C2-PER-MATCH-0103",
@@ -111,33 +198,57 @@ export const SEED_MONT_A19: ContentSeed<unknown, unknown>[] = [
       access_tier: "standard",
       skill_codes: ["C2.PER.01"],
       learning_objective_codes: ["LO-C2.PER.01-01"],
-      what_tags: ["space"],
+      what_tags: ["spt"],
       thinking_tags: ["observe", "infer"],
       theme_tag: "nature",
       origin: "human",
       authored_in: "repo_seed",
     },
     content_pack: {
+      prompt: "Bé nối đồ vật với hình nhìn từ trên cao nhé!",
       pairs: [
         {
-          left: { id: "house", label: "Ngôi nhà nhìn thẳng", emoji: "🏠" },
-          right: { id: "roof-top", label: "Mái nhà nhìn từ trên", emoji: "🔺" },
+          pair_id: "pair-1",
+          left: {
+            item_id: "house",
+            asset: {
+              kind: "emoji",
+              ref: "EMJ-house",
+            },
+          },
+          right: {
+            item_id: "roof-top",
+            asset: {
+              kind: "emoji",
+              ref: "EMJ-red-triangle-up",
+            },
+          },
         },
         {
-          left: { id: "car", label: "Ô tô nhìn ngang", emoji: "🚗" },
-          right: { id: "car-top", label: "Nóc ô tô nhìn từ trên", emoji: "🚘" },
+          pair_id: "pair-2",
+          left: {
+            item_id: "car",
+            asset: {
+              kind: "emoji",
+              ref: "EMJ-car",
+            },
+          },
+          right: {
+            item_id: "car-top",
+            asset: {
+              kind: "emoji",
+              ref: "EMJ-oncoming-automobile",
+            },
+          },
         },
       ],
-      scaffolding: {
-        l1_nudge: "Mái nhà tam giác phát sáng",
-        l2_guidance:
-          "Bàn tay ảo di chuyển từ ngôi nhà lên góc nhìn từ trên cao",
-        l3_demo: "Bàn tay ảo nối mẫu ngôi nhà",
-      },
     },
-    difficulty_params: { pair_count: 2 },
+    difficulty_params: {
+      hint_after_ms: 9000,
+      allow_retry: true,
+      shuffle_sides: false,
+    },
   },
-  // WB19-D2 Level 2 (Diff 4 - Premium)
   {
     header: {
       code: "GL-C2-PER-MATCH-0104",
@@ -151,34 +262,72 @@ export const SEED_MONT_A19: ContentSeed<unknown, unknown>[] = [
       access_tier: "premium",
       skill_codes: ["C2.PER.03"],
       learning_objective_codes: ["LO-C2.PER.03-01"],
-      what_tags: ["space"],
+      what_tags: ["spt"],
       thinking_tags: ["observe", "infer"],
       theme_tag: "nature",
       origin: "human",
       authored_in: "repo_seed",
     },
     content_pack: {
+      prompt: "Bé tìm hình chiếu từ trên xuống của từng đồ vật!",
       pairs: [
         {
-          left: { id: "cup", label: "Cốc nước", emoji: "🥛" },
-          right: { id: "cup-top", label: "Miệng cốc tròn", emoji: "⭕" },
+          pair_id: "pair-1",
+          left: {
+            item_id: "cup",
+            asset: {
+              kind: "emoji",
+              ref: "EMJ-milk",
+            },
+          },
+          right: {
+            item_id: "cup-top",
+            asset: {
+              kind: "emoji",
+              ref: "EMJ-hollow-circle",
+            },
+          },
         },
         {
-          left: { id: "table", label: "Chiếc bàn chữ nhật", emoji: "🪑" },
-          right: { id: "table-top", label: "Mặt bàn phẳng", emoji: "🟫" },
+          pair_id: "pair-2",
+          left: {
+            item_id: "table",
+            asset: {
+              kind: "emoji",
+              ref: "EMJ-chair",
+            },
+          },
+          right: {
+            item_id: "table-top",
+            asset: {
+              kind: "emoji",
+              ref: "EMJ-brown-square",
+            },
+          },
         },
         {
-          left: { id: "tent", label: "Lều trại chóp", emoji: "⛺" },
-          right: { id: "tent-top", label: "Chóp lều", emoji: "🔺" },
+          pair_id: "pair-3",
+          left: {
+            item_id: "tent",
+            asset: {
+              kind: "emoji",
+              ref: "EMJ-tent",
+            },
+          },
+          right: {
+            item_id: "tent-top",
+            asset: {
+              kind: "emoji",
+              ref: "EMJ-red-triangle-up",
+            },
+          },
         },
       ],
-      scaffolding: {
-        l1_nudge: "Miệng cốc tròn phát sáng",
-        l2_guidance:
-          "Bàn tay ảo chỉ 'Cốc nước nhìn từ trên xuống là một hình tròn'",
-        l3_demo: "Bàn tay ảo nối cốc nước với hình tròn",
-      },
     },
-    difficulty_params: { pair_count: 3 },
+    difficulty_params: {
+      hint_after_ms: 9000,
+      allow_retry: true,
+      shuffle_sides: false,
+    },
   },
 ];

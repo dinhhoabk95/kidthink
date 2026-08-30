@@ -57,6 +57,9 @@ describe("Personal Curriculum Service & Lifecycle Integration Tests (Task #65 / 
         displayName: "User A (Teacher/Parent)",
       })
       .returning();
+    if (!uA) {
+      throw new Error("Failed to insert uA");
+    }
     userAId = uA.id;
 
     const [uB] = await db
@@ -67,6 +70,9 @@ describe("Personal Curriculum Service & Lifecycle Integration Tests (Task #65 / 
         displayName: "User B (Other Parent)",
       })
       .returning();
+    if (!uB) {
+      throw new Error("Failed to insert uB");
+    }
     userBId = uB.id;
 
     // 2. Create child profiles
@@ -79,6 +85,9 @@ describe("Personal Curriculum Service & Lifecycle Integration Tests (Task #65 / 
         avatarId: "bear",
       })
       .returning();
+    if (!cA) {
+      throw new Error("Failed to insert cA");
+    }
     childAUuid = cA.uuid;
 
     const [cB] = await db
@@ -90,6 +99,9 @@ describe("Personal Curriculum Service & Lifecycle Integration Tests (Task #65 / 
         avatarId: "rabbit",
       })
       .returning();
+    if (!cB) {
+      throw new Error("Failed to insert cB");
+    }
     childBUuid = cB.uuid;
 
     // 3. Create or get game template
@@ -110,8 +122,12 @@ describe("Personal Curriculum Service & Lifecycle Integration Tests (Task #65 / 
         .from(gameTemplates)
         .where(eq(gameTemplates.code, "GT-999"))
         .limit(1);
+      if (!existing) {
+        throw new Error("Failed to find or insert GT-999");
+      }
       templateId = existing.id;
     }
+    const safeTemplateId: number = templateId;
 
     // 4. Create standard & premium game levels
     async function insertUniqueGameLevel(
@@ -133,7 +149,7 @@ describe("Personal Curriculum Service & Lifecycle Integration Tests (Task #65 / 
             .values({
               code,
               entityId,
-              templateId,
+              templateId: safeTemplateId,
               difficulty,
               title,
               accessTier,
@@ -142,6 +158,9 @@ describe("Personal Curriculum Service & Lifecycle Integration Tests (Task #65 / 
               difficultyParams: {},
             })
             .returning();
+          if (!res) {
+            throw new Error("Failed to insert gameLevel");
+          }
           return res.id;
         }
       }
@@ -187,6 +206,9 @@ describe("Personal Curriculum Service & Lifecycle Integration Tests (Task #65 / 
               contentVersion: 1,
             })
             .returning();
+          if (!res) {
+            throw new Error("Failed to insert lesson");
+          }
           return res.id;
         }
       }
@@ -218,6 +240,9 @@ describe("Personal Curriculum Service & Lifecycle Integration Tests (Task #65 / 
         sessionsPerWeek: 3,
       })
       .returning();
+    if (!sysCurr) {
+      throw new Error("Failed to insert sysCurr");
+    }
     systemCurriculumId = sysCurr.id;
 
     await db.insert(curriculumItems).values([
@@ -509,7 +534,7 @@ describe("Personal Curriculum Service & Lifecycle Integration Tests (Task #65 / 
       expect(copied.title).toBe("Bản sao lớp Mầm của cô");
       expect(copied.status).toBe("draft");
       expect(copied.items.length).toBe(2);
-      expect(copied.items[0].code).toContain("GL-C1-");
+      expect(copied.items[0]?.code).toContain("GL-C1-");
     });
   });
 

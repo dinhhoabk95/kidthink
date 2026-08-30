@@ -56,7 +56,7 @@ describe("Game Schema Integration Tests", () => {
             .select()
             .from(gameTemplates)
             .where(eq(gameTemplates.code, gtCode))
-        )[0].id;
+        )[0]?.id;
 
     // Inserting gameLevel without access_tier must fail NOT NULL constraint
     await expect(
@@ -89,14 +89,14 @@ describe("Game Schema Integration Tests", () => {
       .onConflictDoNothing()
       .returning();
 
-    const gtId = gt
-      ? gt.id
-      : (
-          await db
-            .select()
-            .from(gameTemplates)
-            .where(eq(gameTemplates.code, gtCode))
-        )[0].id;
+    const templateRows = await db
+      .select()
+      .from(gameTemplates)
+      .where(eq(gameTemplates.code, gtCode));
+    const gtId = gt ? gt.id : templateRows[0]?.id;
+    if (!gtId) {
+      throw new Error("Failed to find template id");
+    }
 
     // 1. Insert version 1 published
     const [gl1] = await db
@@ -147,14 +147,14 @@ describe("Game Schema Integration Tests", () => {
       .onConflictDoNothing()
       .returning();
 
-    const gtId = gt
-      ? gt.id
-      : (
-          await db
-            .select()
-            .from(gameTemplates)
-            .where(eq(gameTemplates.code, gtCode))
-        )[0].id;
+    const templateRows3 = await db
+      .select()
+      .from(gameTemplates)
+      .where(eq(gameTemplates.code, gtCode));
+    const gtId = gt ? gt.id : templateRows3[0]?.id;
+    if (!gtId) {
+      throw new Error("Failed to find template id");
+    }
 
     const [gl] = await db
       .insert(gameLevels)
@@ -170,6 +170,9 @@ describe("Game Schema Integration Tests", () => {
         status: "published",
       })
       .returning();
+    if (!gl) {
+      throw new Error("Failed to insert gl");
+    }
 
     expect(gl).toBeDefined();
 

@@ -115,7 +115,7 @@ export default defineEventHandler(async (event) => {
 
   const data = parsed.data;
   const db = getOwnerDb();
-  const managerId = session.manager_id || session.id || 1;
+  const managerId = session.manager_id;
 
   const existing = await getExistingCurriculumForPatch(
     db,
@@ -132,17 +132,27 @@ export default defineEventHandler(async (event) => {
     .where(eq(curricula.id, existing.id))
     .returning();
 
-  await writeAudit(db, {
-    action: "content_created",
-    actor_type: "manager",
-    actor_id: managerId,
-    entity_type: "curriculum",
-    entity_id: String(updated.id),
-    after_data: {
-      code: updated.code,
-      version: updated.contentVersion,
-      changes: Object.keys(updatePayload),
-    },
+  if (!updated) {
+    throw createError({
+      statusCode: 500,
+      statusMessage: "CURRICULUM_UPDATE_FAILED",
+      message: "Cập nhật chương trình thất bại",
+    });
+  }
+
+  await db.transaction(async (tx) => {
+    await writeAudit(tx, {
+      action: "content_created",
+      actor_type: "manager",
+      actor_id: managerId,
+      entity_type: "curriculum",
+      entity_id: String(updated.id),
+      after_data: {
+        code: updated.code,
+        version: updated.contentVersion,
+        changes: Object.keys(updatePayload),
+      },
+    });
   });
 
   return updated;

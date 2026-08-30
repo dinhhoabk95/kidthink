@@ -209,6 +209,8 @@
     items?: CurriculumItemRow[];
   }
 
+  type CurriculumListItem = CurriculumData;
+
   interface ApiCurriculaResponse {
     items: Array<{
       id: number;

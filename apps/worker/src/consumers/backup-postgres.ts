@@ -122,6 +122,10 @@ export async function runPostgresBackup(
     })
     .returning();
 
+  if (!log) {
+    throw new Error("Failed to create backup log");
+  }
+
   const startedAt = new Date();
   const filename = backupFilename(startedAt);
 

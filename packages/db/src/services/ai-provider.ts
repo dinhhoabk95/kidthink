@@ -51,7 +51,8 @@ export function createDeterministicEmbedding(
     hash ^= normalized.charCodeAt(i);
     hash = Math.imul(hash, 0x01_00_01_93);
     const bucket = Math.abs(hash) % dimensions;
-    vector[bucket] += 1;
+    const prev = vector[bucket] ?? 0;
+    vector[bucket] = prev + 1;
   }
 
   // Add character unigrams & bigrams to capture semantics
@@ -65,18 +66,21 @@ export function createDeterministicEmbedding(
       wordHash |= 0;
     }
     const idx = Math.abs(wordHash) % dimensions;
-    vector[idx] += 2.0;
+    const prev = vector[idx] ?? 0;
+    vector[idx] = prev + 2.0;
   }
 
   // Normalize to unit vector L2 norm
   let sumSquares = 0;
   for (let i = 0; i < dimensions; i++) {
-    sumSquares += vector[i] * vector[i];
+    const val = vector[i] ?? 0;
+    sumSquares += val * val;
   }
 
   const norm = Math.sqrt(sumSquares) || 1.0;
   for (let i = 0; i < dimensions; i++) {
-    vector[i] = Number((vector[i] / norm).toFixed(6));
+    const val = vector[i] ?? 0;
+    vector[i] = Number((val / norm).toFixed(6));
   }
 
   return vector;

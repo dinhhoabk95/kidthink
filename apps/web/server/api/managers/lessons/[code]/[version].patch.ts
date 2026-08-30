@@ -94,6 +94,14 @@ async function handlePublishedLessonFork(
     })
     .returning();
 
+  if (!created) {
+    throw createError({
+      statusCode: 500,
+      statusMessage: "LESSON_CREATE_FAILED",
+      message: "Tạo phiên bản bài học mới thất bại",
+    });
+  }
+
   const existingActivities = await db
     .select()
     .from(lessonActivities)
@@ -112,15 +120,17 @@ async function handlePublishedLessonFork(
 
   await syncLessonSkills(db, existing.entityId, data.skill_ids);
 
-  await writeAudit(db, {
-    actorType: "manager",
-    actorId: managerId,
-    action: "create",
-    entityType: "lesson",
-    entityId: String(created.id),
-    beforeState: existing,
-    afterState: created,
-    reason: `Manager created new draft version ${newVersion} from published lesson`,
+  await db.transaction(async (tx) => {
+    await writeAudit(tx, {
+      actor_type: "manager",
+      actor_id: managerId,
+      action: "content_created",
+      entity_type: "lesson",
+      entity_id: String(created.id),
+      before_data: existing as unknown as Record<string, unknown>,
+      after_data: created as unknown as Record<string, unknown>,
+      reason: `Manager created new draft version ${newVersion} from published lesson`,
+    });
   });
 
   return created;
@@ -176,17 +186,27 @@ async function handleDraftLessonUpdate(
     .where(eq(lessons.id, existing.id))
     .returning();
 
+  if (!updated) {
+    throw createError({
+      statusCode: 500,
+      statusMessage: "LESSON_UPDATE_FAILED",
+      message: "Cập nhật bài học thất bại",
+    });
+  }
+
   await syncLessonSkills(db, existing.entityId, data.skill_ids);
 
-  await writeAudit(db, {
-    actorType: "manager",
-    actorId: managerId,
-    action: "update",
-    entityType: "lesson",
-    entityId: String(updated.id),
-    beforeState: existing,
-    afterState: updated,
-    reason: "Manager updated lesson via Studio",
+  await db.transaction(async (tx) => {
+    await writeAudit(tx, {
+      actor_type: "manager",
+      actor_id: managerId,
+      action: "content_created",
+      entity_type: "lesson",
+      entity_id: String(updated.id),
+      before_data: existing as unknown as Record<string, unknown>,
+      after_data: updated as unknown as Record<string, unknown>,
+      reason: "Manager updated lesson via Studio",
+    });
   });
 
   return updated;

@@ -1,7 +1,11 @@
-import { enqueue } from "@mindkid/queue";
+import { alert, enqueue } from "@mindkid/queue";
 import { and, eq } from "drizzle-orm";
 import { getDb } from "#src/client";
 import { notificationDeliveries, notifications } from "#src/schema/ops";
+
+function readErrorMessage(error: unknown): string {
+  return error instanceof Error ? error.message : String(error);
+}
 
 export interface TransactionalEmailInput {
   recipientType: "user" | "manager";
@@ -26,37 +30,65 @@ export async function dispatchTransactionalEmail(
 ): Promise<{ notificationId: number }> {
   const db = getDb();
 
-  const [notification] = await db
-    .insert(notifications)
-    .values({
-      recipientType: input.recipientType,
-      recipientId: input.recipientId,
-      templateCode: input.code,
-      payload: input.payload,
-    })
-    .returning();
+  // Hai hàng này là một sự việc: một notification luôn có hàng delivery của nó.
+  // Không gói transaction thì một lỗi giữa chừng để lại notification mồ côi
+  // không ai gửi và không ai quét.
+  const notificationId = await db.transaction(async (tx) => {
+    const [notification] = await tx
+      .insert(notifications)
+      .values({
+        recipientType: input.recipientType,
+        recipientId: input.recipientId,
+        templateCode: input.code,
+        payload: input.payload,
+      })
+      .returning();
 
-  if (!notification) {
-    throw new Error(
-      `Không tạo được bản ghi notification cho mã '${input.code}'.`
-    );
+    if (!notification) {
+      throw new Error(
+        `Không tạo được bản ghi notification cho mã '${input.code}'.`
+      );
+    }
+
+    // §7.3 — một hàng mỗi channel, `queued` cho tới khi worker gửi xong.
+    await tx.insert(notificationDeliveries).values({
+      notificationId: notification.id,
+      channel: "email",
+      status: "queued",
+    });
+
+    return notification.id;
+  });
+
+  // Hàng đợi nằm ngoài transaction vì nó là hệ thống khác — commit rồi mới đẩy.
+  // Nhưng `enableOfflineQueue: false` khiến `enqueue` từ chối ngay khi Valkey
+  // không với tới được, và trước sửa đổi này hàng delivery ở lại `queued` vĩnh
+  // viễn: Cấm — NEVER có gì quét lại hàng `queued`, nên email xác nhận đổi mật
+  // khẩu mất hẳn, im lặng, trong khi route trả 500 cho người đã đổi xong.
+  try {
+    await enqueue("email:send", {
+      notificationId,
+      to: input.to,
+      code: input.code,
+      payload: input.payload,
+    });
+  } catch (error: unknown) {
+    const message = readErrorMessage(error);
+
+    await recordEmailDeliveryOutcome(notificationId, {
+      status: "failed",
+      error: message,
+    });
+    await alert("error", "Không đẩy được email giao dịch vào hàng đợi", {
+      notificationId,
+      code: input.code,
+      error: message,
+    });
+
+    throw error;
   }
 
-  // §7.3 — một hàng mỗi channel, `queued` cho tới khi worker gửi xong.
-  await db.insert(notificationDeliveries).values({
-    notificationId: notification.id,
-    channel: "email",
-    status: "queued",
-  });
-
-  await enqueue("email:send", {
-    notificationId: notification.id,
-    to: input.to,
-    code: input.code,
-    payload: input.payload,
-  });
-
-  return { notificationId: notification.id };
+  return { notificationId };
 }
 
 export interface EmailDeliveryOutcome {

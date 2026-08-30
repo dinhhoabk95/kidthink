@@ -6,10 +6,20 @@ import GT011Template, {
   GT011DifficultySchema,
 } from "#src/templates/GT-011/template";
 
-const [LATIN_3X3, GRID_2X2, ROTATION] = GT011_FIXTURES;
+function getFixture<T>(fixtures: readonly T[], index: number): T {
+  const item = fixtures[index];
+  if (!item) {
+    throw new Error(`Fixture at index ${index} not found`);
+  }
+  return item;
+}
+
+const LATIN_3X3 = getFixture(GT011_FIXTURES, 0);
+const GRID_2X2 = getFixture(GT011_FIXTURES, 1);
+const ROTATION = getFixture(GT011_FIXTURES, 2);
 
 function newSession(index = 0): GT011Session {
-  const fixture = GT011_FIXTURES[index];
+  const fixture = GT011_FIXTURES[index] ?? LATIN_3X3;
   const session = new GT011Session(fixture.content, fixture.difficulty);
   session.setupEntities();
   return session;

@@ -281,6 +281,10 @@ describe("User MFA Flow (P2.11, BR-MFA-01 - BR-MFA-12)", () => {
     });
 
     const code = generateTotpCode(currentTotpSecret);
+    const body1 = {
+      challenge: challenge.challengeToken,
+      code,
+    };
     const guestEvent = {
       method: "POST",
       node: {
@@ -289,6 +293,7 @@ describe("User MFA Flow (P2.11, BR-MFA-01 - BR-MFA-12)", () => {
           headers: {
             "user-agent": "VitestRunner/1.0",
           },
+          body: body1,
         },
         res: {
           statusCode: 200,
@@ -298,15 +303,10 @@ describe("User MFA Flow (P2.11, BR-MFA-01 - BR-MFA-12)", () => {
         },
       },
       context: {
-        body: {
-          challenge: challenge.challengeToken,
-          code,
-        },
+        body: body1,
       },
-      _body: {
-        challenge: challenge.challengeToken,
-        code,
-      },
+      _requestBody: body1,
+      _body: body1,
     } as any;
 
     const res = (await guestMfaHandler(guestEvent)) as any;
@@ -325,6 +325,10 @@ describe("User MFA Flow (P2.11, BR-MFA-01 - BR-MFA-12)", () => {
     });
 
     const recoveryCodeToUse = storedRecoveryCodes[0];
+    const body2 = {
+      challenge: challenge.challengeToken,
+      code: recoveryCodeToUse,
+    };
     const guestEvent = {
       method: "POST",
       node: {
@@ -333,6 +337,7 @@ describe("User MFA Flow (P2.11, BR-MFA-01 - BR-MFA-12)", () => {
           headers: {
             "user-agent": "VitestRunner/1.0",
           },
+          body: body2,
         },
         res: {
           statusCode: 200,
@@ -342,15 +347,10 @@ describe("User MFA Flow (P2.11, BR-MFA-01 - BR-MFA-12)", () => {
         },
       },
       context: {
-        body: {
-          challenge: challenge.challengeToken,
-          code: recoveryCodeToUse,
-        },
+        body: body2,
       },
-      _body: {
-        challenge: challenge.challengeToken,
-        code: recoveryCodeToUse,
-      },
+      _requestBody: body2,
+      _body: body2,
     } as any;
 
     const res = (await guestMfaHandler(guestEvent)) as any;
@@ -370,10 +370,14 @@ describe("User MFA Flow (P2.11, BR-MFA-01 - BR-MFA-12)", () => {
       rememberMe: false,
       ipAddress: "127.0.0.1",
     });
+    const body3 = {
+      challenge: challenge2.challengeToken,
+      code: recoveryCodeToUse,
+    };
     const guestEvent2 = {
       method: "POST",
       node: {
-        req: { method: "POST", headers: {} },
+        req: { method: "POST", headers: {}, body: body3 },
         res: {
           setHeader: () => {
             /* mock */
@@ -381,12 +385,10 @@ describe("User MFA Flow (P2.11, BR-MFA-01 - BR-MFA-12)", () => {
         },
       },
       context: {
-        body: {
-          challenge: challenge2.challengeToken,
-          code: recoveryCodeToUse,
-        },
+        body: body3,
       },
-      _body: { challenge: challenge2.challengeToken, code: recoveryCodeToUse },
+      _requestBody: body3,
+      _body: body3,
     } as any;
 
     try {

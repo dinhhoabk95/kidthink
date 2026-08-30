@@ -78,7 +78,10 @@ describe("P4.5 Custom Game DB Service (BR-CGB-01..10)", () => {
         passwordHash: "dummy-hash",
       })
       .returning();
-    userA = uA;
+    if (!uA) {
+      throw new Error("Failed to insert uA");
+    }
+    userA = { id: uA.id, email: uA.email };
 
     const [uB] = await db
       .insert(users)
@@ -88,7 +91,10 @@ describe("P4.5 Custom Game DB Service (BR-CGB-01..10)", () => {
         passwordHash: "dummy-hash",
       })
       .returning();
-    userB = uB;
+    if (!uB) {
+      throw new Error("Failed to insert uB");
+    }
+    userB = { id: uB.id, email: uB.email };
 
     // Create child profile for User A
     const [cA] = await db
@@ -101,7 +107,10 @@ describe("P4.5 Custom Game DB Service (BR-CGB-01..10)", () => {
         status: "active",
       })
       .returning();
-    childA = cA;
+    if (!cA) {
+      throw new Error("Failed to insert cA");
+    }
+    childA = { id: cA.id, uuid: cA.uuid };
   });
 
   it("Scenario: BR-CGB-01 & BR-CGB-05 — creates draft and ready custom games with validation", async () => {

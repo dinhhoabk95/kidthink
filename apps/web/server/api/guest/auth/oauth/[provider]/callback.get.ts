@@ -35,7 +35,6 @@ import {
   setCookie,
   setResponseStatus,
 } from "h3";
-import { setUserSession } from "#imports";
 import {
   assertRateLimitAllowed,
   ensureUserCsrfCookie,

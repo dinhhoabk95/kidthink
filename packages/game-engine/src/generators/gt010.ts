@@ -33,11 +33,25 @@ export const GT010Generator: LevelGenerator = {
       },
     ];
 
+    // Nhiễu phải KHÁC đáp án và khác nhau. Bản cũ rút `valA` (2..5) và `valB`
+    // (1..4) từ hai khoảng chồng nhau rồi đặt cả hai vào cùng danh sách mà
+    // không loại trừ: 7 trên 9 level đã commit có hai ô hiện cùng một số, chỉ
+    // một ô được chấm đúng. Trẻ chạm ô kia là sai, dù hai ô nhìn y hệt.
+    const distractors: number[] = [];
+    for (const candidate of [valB + 1, valB - 1, valA, valB + 2, valB + 3]) {
+      if (
+        distractors.length < 3 &&
+        candidate > 0 &&
+        candidate !== valB &&
+        !distractors.includes(candidate)
+      ) {
+        distractors.push(candidate);
+      }
+    }
+
     const options = [
       { value: valB, is_correct: true },
-      { value: valB + 1, is_correct: false },
-      { value: valB > 1 ? valB - 1 : valB + 2, is_correct: false },
-      { value: valA, is_correct: false },
+      ...distractors.map((value) => ({ value, is_correct: false })),
     ];
 
     return {

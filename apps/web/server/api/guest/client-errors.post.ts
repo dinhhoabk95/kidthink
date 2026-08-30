@@ -81,10 +81,7 @@ export default defineEventHandler(async (event) => {
   // giới hạn và đổi header mỗi request là đi vòng qua hạn mức.
   await checkClientErrorRateLimit(getVerifiedRemoteIp(event));
 
-  const raw =
-    (event.context?.body as unknown) ||
-    ((event as Record<string, unknown>)._body as unknown) ||
-    (await readBody(event).catch(() => ({})));
+  const raw = event.context?.body ?? (await readBody(event).catch(() => ({})));
 
   const parsed = clientErrorSchema.parse(raw);
   const body = parsed || {};

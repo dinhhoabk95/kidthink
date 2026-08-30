@@ -118,6 +118,10 @@ export async function userCancelRecurringSubscription(
       .where(eq(recurringSubscriptions.id, sub.id))
       .returning();
 
+    if (!updatedSub) {
+      throw new Error("Failed to update subscription");
+    }
+
     // Audit log
     await tx.insert(auditLogs).values({
       actorType: "user",
@@ -194,6 +198,10 @@ export async function adminCancelSubscription(
       })
       .where(eq(recurringSubscriptions.id, sub.id))
       .returning();
+
+    if (!updatedSub) {
+      throw new Error("Failed to update subscription");
+    }
 
     // 2. Handle entitlements according to revoke_immediate
     if (revokeImmediate) {

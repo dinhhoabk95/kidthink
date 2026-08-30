@@ -28,6 +28,9 @@ describe("Task P4.1 — Database Schema & Invariants Integration Tests (BR-LPC-0
         displayName: "Cô Giáo Test",
       })
       .returning();
+    if (!user) {
+      throw new Error("Failed to insert user");
+    }
     testUserId = user.id;
   });
 
@@ -43,13 +46,16 @@ describe("Task P4.1 — Database Schema & Invariants Integration Tests (BR-LPC-0
         version: 1,
       })
       .returning();
+    if (!plan) {
+      throw new Error("Failed to insert plan");
+    }
 
     expect(plan.id).toBeDefined();
     expect(plan.uuid).toBeDefined();
     expect(plan.userId).toBe(testUserId);
     expect(plan.version).toBe(1);
-    expect((plan as any).childId).toBeUndefined();
-    expect((plan as any).child_profile_id).toBeUndefined();
+    expect((plan as Record<string, unknown>).childId).toBeUndefined();
+    expect((plan as Record<string, unknown>).child_profile_id).toBeUndefined();
   });
 
   it("enforces targetAge check constraint (3..6) on lesson_plans", async () => {
@@ -79,6 +85,9 @@ describe("Task P4.1 — Database Schema & Invariants Integration Tests (BR-LPC-0
         version: 1,
       })
       .returning();
+    if (!plan) {
+      throw new Error("Failed to insert plan");
+    }
 
     await db.insert(lessonPlanItems).values({
       lessonPlanId: plan.id,
@@ -107,6 +116,9 @@ describe("Task P4.1 — Database Schema & Invariants Integration Tests (BR-LPC-0
         version: 1,
       })
       .returning();
+    if (!plan) {
+      throw new Error("Failed to insert plan");
+    }
 
     await db.insert(lessonPlanItems).values([
       {

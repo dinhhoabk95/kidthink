@@ -150,4 +150,12 @@ export const VEGETABLE_EMOJIS: EmojiEntry[] = [
     keywords: ["chestnut", "hạt dẻ", "hạt", "mùa thu"],
     name: "Hạt dẻ",
   },
+  {
+    age_min: 3,
+    category: "vegetable",
+    curriculum_themes: ["thuc_vat", "dinh_duong_suc_khoe"],
+    emoji: "🍄",
+    keywords: ["mushroom", "nấm", "cây nấm"],
+    name: "Nấm",
+  },
 ];

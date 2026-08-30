@@ -43,29 +43,34 @@ describe("Cổng Cung Cầu Giáo Án — Task #124 (BR-LCD-01..11)", () => {
     skillCode = "C1.CNT.01"
   ): LessonSeed[] {
     return Array.from({ length: count }, (_, i) => ({
+      // Hình dạng THẬT của `LessonSeed`: `skill_codes` là mảng trên header, và
+      // Cấm — NEVER có `metadata` hay `status`. Mock cũ mang hai trường không tồn
+      // tại, nên nó kiểm một thế giới khác với repo — đúng lý do cổng đọc ra 0
+      // mà không test nào đỏ.
       kind: "lesson",
       header: {
         code: `LES-TEST-${String(i + 1).padStart(3, "0")}`,
         content_version: 1,
-        status: "published",
-        access_tier: "free",
-        pedagogical_axes: {
-          what_tags: ["concept"],
-          thinking_tags: ["count"],
-          theme_tag: "nature",
-          origin: "human",
-          authored_in: "repo_seed",
+        title: `Bài học ${i + 1}`,
+        guide: {
+          outcome: "Kết quả mong đợi",
+          preparation: ["Chuẩn bị"],
+          opening: "Bắt đầu bài học",
+          if_child_succeeds: "Khen ngợi trẻ",
+          if_child_needs_help: "Hướng dẫn từng bước",
         },
-      },
-      metadata: {
-        title_vi: `Bài học ${i + 1}`,
-        description_vi: "Mô tả",
         target_age_min: 3,
         target_age_max: 6,
-        target_skill_code: skillCode,
-      },
-      content_pack: {
-        activities: [],
+        estimated_minutes: 15,
+        access_tier: "free",
+        skill_codes: [skillCode],
+        learning_objective_codes: [],
+        activity_codes: [],
+        what_tags: ["concept"],
+        thinking_tags: ["count"],
+        theme_tag: "nature",
+        origin: "human",
+        authored_in: "repo_seed",
       },
     }));
   }
@@ -80,23 +85,23 @@ describe("Cổng Cung Cầu Giáo Án — Task #124 (BR-LCD-01..11)", () => {
         header: {
           code: `GL-TEST-${sk}-${idx + 1}`,
           content_version: 1,
-          status: "published",
+          template_code: "GT-001",
+          title: `Level ${sk} ${idx + 1}`,
+          instruction: "Bé hãy thử nhé",
+          age_min: 3,
+          age_max: 6,
+          difficulty: 1,
           access_tier: "free",
-          pedagogical_axes: {
-            what_tags: ["concept"],
-            thinking_tags: ["count"],
-            theme_tag: "nature",
-            origin: "human",
-            authored_in: "repo_seed",
-          },
-        },
-        metadata: {
-          title_vi: `Level ${sk} ${idx + 1}`,
-          target_age_min: 3,
-          target_age_max: 6,
-          target_skill_code: sk,
+          skill_codes: [sk],
+          learning_objective_codes: [],
+          what_tags: ["concept"],
+          thinking_tags: ["count"],
+          theme_tag: "nature",
+          origin: "human",
+          authored_in: "repo_seed",
         },
         content_pack: {},
+        difficulty_params: {},
       }))
     );
   }

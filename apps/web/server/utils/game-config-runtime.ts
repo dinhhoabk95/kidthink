@@ -10,9 +10,9 @@ import {
 } from "@mindkid/db";
 import { validateContentPack } from "@mindkid/game-engine";
 import {
-  type AssetAccessResult,
   assertContentAccess,
   type CallerIdentity,
+  type ContentAccessResult,
   resolveAssets,
 } from "@mindkid/shared";
 import { and, asc, desc, eq } from "drizzle-orm";
@@ -104,12 +104,12 @@ async function fetchLevelAndTemplate(
   return levelRow;
 }
 
-async function performAccessControl(
+async function runContentAccessGuard(
   level: typeof gameLevels.$inferSelect,
   options: GameConfigDeliveryOptions,
   event: H3Event,
   ownedChild: typeof childProfiles.$inferSelect | null
-): Promise<AssetAccessResult> {
+): Promise<ContentAccessResult> {
   try {
     return await assertContentAccess(
       {
@@ -186,24 +186,13 @@ async function createPlaySessionRecord(
   return { sessionUuid, startedAt, layoutSeed };
 }
 
-export async function deliverGameConfig(
+function validateLevelAndRounds(
   event: H3Event,
-  code: string,
-  options: GameConfigDeliveryOptions
-) {
-  const db = getOwnerDb();
-  const { level, template } = await fetchLevelAndTemplate(code, options);
-  const ownedChild = await resolveOwnedChild(db, options.caller);
-
-  const accessResult = await performAccessControl(
-    level,
-    options,
-    event,
-    ownedChild
-  );
-
-  // 3. Validate content_pack using Zod schema (BR-CFG-03 / D-FS)
-  const validation = validateContentPack(template.code, level.contentPack);
+  templateCode: string,
+  level: { code: string; contentVersion: number; contentPack: unknown },
+  rounds: Array<{ round_index: number; content_pack: unknown }>
+): void {
+  const validation = validateContentPack(templateCode, level.contentPack);
   if (!validation.success) {
     console.error(
       `[ALERT] CONTENT_PACK_INVALID for level ${level.code} v${level.contentVersion}:`,
@@ -221,23 +210,9 @@ export async function deliverGameConfig(
     });
   }
 
-  // 3b. WP100.4: Load and validate rounds
-  const rounds = await db
-    .select({
-      round_index: gameLevelRounds.roundIndex,
-      instruction: gameLevelRounds.instruction,
-      instruction_audio_path: gameLevelRounds.instructionAudioPath,
-      content_pack: gameLevelRounds.contentPack,
-      difficulty_params: gameLevelRounds.difficultyParams,
-      difficulty: gameLevelRounds.difficulty,
-    })
-    .from(gameLevelRounds)
-    .where(eq(gameLevelRounds.gameLevelId, level.id))
-    .orderBy(asc(gameLevelRounds.roundIndex));
-
   for (const round of rounds) {
     const roundValidation = validateContentPack(
-      template.code,
+      templateCode,
       round.content_pack
     );
     if (!roundValidation.success) {
@@ -253,6 +228,52 @@ export async function deliverGameConfig(
       });
     }
   }
+}
+
+function applyGameConfigCacheHeader(
+  event: H3Event,
+  accessTier: string,
+  callerKind: string
+): void {
+  if (accessTier === "free" && callerKind === "guest") {
+    setHeader(event, "Cache-Control", "public, max-age=300");
+  } else {
+    setHeader(event, "Cache-Control", "private, no-store");
+  }
+}
+
+export async function deliverGameConfig(
+  event: H3Event,
+  code: string,
+  options: GameConfigDeliveryOptions
+) {
+  const db = getOwnerDb();
+  const { level, template } = await fetchLevelAndTemplate(code, options);
+  const ownedChild = await resolveOwnedChild(db, options.caller);
+
+  const accessResult = await runContentAccessGuard(
+    level,
+    options,
+    event,
+    ownedChild
+  );
+
+  // 3b. WP100.4: Load and validate rounds
+  const rounds = await db
+    .select({
+      round_index: gameLevelRounds.roundIndex,
+      instruction: gameLevelRounds.instruction,
+      instruction_audio_path: gameLevelRounds.instructionAudioPath,
+      content_pack: gameLevelRounds.contentPack,
+      difficulty_params: gameLevelRounds.difficultyParams,
+      difficulty: gameLevelRounds.difficulty,
+    })
+    .from(gameLevelRounds)
+    .where(eq(gameLevelRounds.gameLevelId, level.id))
+    .orderBy(asc(gameLevelRounds.roundIndex));
+
+  // 3. Validate content_pack using Zod schema (BR-CFG-03 / D-FS)
+  validateLevelAndRounds(event, template.code, level, rounds);
 
   const scoringMode = rounds.length > 1 ? "rounds" : "attempts";
 
@@ -276,11 +297,7 @@ export async function deliverGameConfig(
   const assets = allContentPacks.flatMap((pack) => resolveAssets(pack));
 
   // 6. Set Cache-Control header (BR-CFG-04 & BR-CFG-05 / D-FT)
-  if (level.accessTier === "free" && options.caller.kind === "guest") {
-    setHeader(event, "Cache-Control", "public, max-age=300");
-  } else {
-    setHeader(event, "Cache-Control", "private, no-store");
-  }
+  applyGameConfigCacheHeader(event, level.accessTier, options.caller.kind);
 
   // 7. Construct payload §7.1
   return {
@@ -296,7 +313,9 @@ export async function deliverGameConfig(
     theme_id: level.themeId || "general",
     age_band: `${level.ageMin ?? 3}-${level.ageMax ?? 6}`,
     scoring: {
-      ...template.scoring,
+      ...(typeof template.scoring === "object" && template.scoring !== null
+        ? (template.scoring as Record<string, unknown>)
+        : {}),
       mode: scoringMode,
     },
     rounds: rounds.map((r) => ({
@@ -314,7 +333,7 @@ export async function deliverGameConfig(
     flags: {
       reduced_motion: false,
       audio_enabled: true,
-      tap_fallback: template.requires_tap_fallback ?? true,
+      tap_fallback: template.requiresTapFallback ?? true,
     },
     assets,
     age_mismatch: accessResult.age_mismatch,

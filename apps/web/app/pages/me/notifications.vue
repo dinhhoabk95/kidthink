@@ -220,7 +220,7 @@
   async function onItemClick(item: NotificationItem) {
     if (!item.read_at) {
       try {
-        await globalThis.$fetch(`/api/users/notifications/${item.uuid}/read`, {
+        await $fetch(`/api/users/notifications/${item.uuid}/read`, {
           method: "PATCH",
         });
         item.read_at = new Date().toISOString();
@@ -233,7 +233,7 @@
     }
 
     const targetUrl = item.action_url.startsWith("/") ? item.action_url : "/me";
-    globalThis.navigateTo(targetUrl);
+    navigateTo(targetUrl);
   }
 
   async function markAllAsRead() {
@@ -241,7 +241,7 @@
       return;
     }
     try {
-      await globalThis.$fetch("/api/users/notifications/read-all", {
+      await $fetch("/api/users/notifications/read-all", {
         method: "POST",
         body: { snapshot_at: snapshotAt.value },
       });

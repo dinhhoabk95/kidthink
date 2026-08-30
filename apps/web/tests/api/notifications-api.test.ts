@@ -34,6 +34,7 @@ function mockEvent(
         },
         url: "/",
         originalUrl: "/",
+        body,
       },
       res: {
         setHeader: (name: string, value: string) => {
@@ -53,6 +54,7 @@ function mockEvent(
       params: routerParams,
       query,
     },
+    _requestBody: body,
     _body: body,
   } as any;
 }

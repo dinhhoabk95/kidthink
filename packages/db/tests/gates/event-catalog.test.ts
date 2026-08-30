@@ -100,8 +100,8 @@ describe("Cổng catalog event (BR-EVT-01, BR-EVT-02, BR-EVT-07)", () => {
       ],
     });
     expect(violations).toHaveLength(1);
-    expect(violations[0].rule).toBe("BR-EVT-07");
-    expect(violations[0].message).toContain("trường events của khuôn");
+    expect(violations[0]?.rule).toBe("BR-EVT-07");
+    expect(violations[0]?.message).toContain("trường events của khuôn");
   });
 
   it("ca âm: server nhận tên mà catalog không khai", () => {
@@ -130,7 +130,7 @@ describe("Cổng catalog event (BR-EVT-01, BR-EVT-02, BR-EVT-07)", () => {
       templates: [],
     });
     expect(violations).toHaveLength(1);
-    expect(violations[0].source).toBe("EVENT_PAYLOAD_SCHEMAS");
-    expect(violations[0].eventName).toBe("item_selected");
+    expect(violations[0]?.source).toBe("EVENT_PAYLOAD_SCHEMAS");
+    expect(violations[0]?.eventName).toBe("item_selected");
   });
 });

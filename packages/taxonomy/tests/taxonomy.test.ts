@@ -213,8 +213,9 @@ describe("Taxonomy API functions & DAG validation", () => {
         const prereqs: string[] = [];
         for (let p = 0; p < prereqCount; p++) {
           const parentIdx = Math.floor(Math.random() * idx);
-          if (!prereqs.includes(nodes[parentIdx])) {
-            prereqs.push(nodes[parentIdx]);
+          const parent = nodes[parentIdx];
+          if (parent !== undefined && !prereqs.includes(parent)) {
+            prereqs.push(parent);
           }
         }
         return {

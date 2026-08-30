@@ -14,11 +14,23 @@ import {
   InteractionManager,
 } from "#src/index";
 
+function getFixture<T>(fixtures: readonly T[], index: number): T {
+  const item = fixtures[index];
+  if (!item) {
+    throw new Error(`Fixture at index ${index} not found`);
+  }
+  return item;
+}
+
+const GT001_FIXTURE_0 = getFixture(GT001_FIXTURES, 0);
+const GT007_FIXTURE_0 = getFixture(GT007_FIXTURES, 0);
+const GT008_FIXTURE_0 = getFixture(GT008_FIXTURES, 0);
+
 describe("Task 6 & Task 7 — All 6 Template Sessions & Kid Surface Rules", () => {
   it("GT-001 (tap-select): completes session upon correct selection", () => {
     const session = new GT001Session(
-      GT001_FIXTURES[0].content,
-      GT001_FIXTURES[0].difficulty
+      GT001_FIXTURE_0.content,
+      GT001_FIXTURE_0.difficulty
     );
     session.setupEntities();
 
@@ -238,8 +250,8 @@ describe("Task 6 & Task 7 — All 6 Template Sessions & Kid Surface Rules", () =
 
   it("BR-ENG-07: wrong answer produces amber_soft non-punitive feedback", () => {
     const session = new GT001Session(
-      GT001_FIXTURES[0].content,
-      GT001_FIXTURES[0].difficulty
+      GT001_FIXTURE_0.content,
+      GT001_FIXTURE_0.difficulty
     );
     session.setupEntities();
 
@@ -253,12 +265,12 @@ describe("Task 6 & Task 7 — All 6 Template Sessions & Kid Surface Rules", () =
 
   it("BR-ENG-07 (negative): wrong answer NEVER returns 'none' feedback", () => {
     const session = new GT001Session(
-      GT001_FIXTURES[0].content,
-      GT001_FIXTURES[0].difficulty
+      GT001_FIXTURE_0.content,
+      GT001_FIXTURE_0.difficulty
     );
     session.setupEntities();
 
-    const wrongItems = GT001_FIXTURES[0].content.options.filter(
+    const wrongItems = GT001_FIXTURE_0.content.options.filter(
       (o) => !o.is_correct
     );
     for (const item of wrongItems) {
@@ -273,8 +285,8 @@ describe("Task 6 & Task 7 — All 6 Template Sessions & Kid Surface Rules", () =
 
   it("GT-007 (number-bond): completes session when correct part is filled", () => {
     const session = new GT007Session(
-      GT007_FIXTURES[0].content,
-      GT007_FIXTURES[0].difficulty
+      GT007_FIXTURE_0.content,
+      GT007_FIXTURE_0.difficulty
     );
     session.setupEntities();
 
@@ -296,8 +308,8 @@ describe("Task 6 & Task 7 — All 6 Template Sessions & Kid Surface Rules", () =
 
   it("GT-008 (drag-to-slot): completes session when all slots are correctly filled", () => {
     const session = new GT008Session(
-      GT008_FIXTURES[0].content,
-      GT008_FIXTURES[0].difficulty
+      GT008_FIXTURE_0.content,
+      GT008_FIXTURE_0.difficulty
     );
     session.setupEntities();
 

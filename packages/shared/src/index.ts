@@ -24,6 +24,7 @@ export * from "./glossary.js";
 export * from "./healthy-play-limits.js";
 export * from "./ids.js";
 export * from "./legal-summary.js";
+export * from "./lesson-flow.js";
 export * from "./lesson-model.js";
 export * from "./lesson-plan.js";
 export * from "./lifecycle.js";

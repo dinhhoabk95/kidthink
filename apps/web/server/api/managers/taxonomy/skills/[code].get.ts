@@ -19,7 +19,7 @@ export default defineEventHandler(async (event) => {
 
   const code = getRouterParam(event, "code");
   if (!code) {
-    throw appError("VALIDATION_ERROR");
+    throw appError("VALIDATION_FAILED");
   }
 
   const db = getOwnerDb();
@@ -49,11 +49,10 @@ export default defineEventHandler(async (event) => {
     .where(eq(skills.code, code))
     .limit(1);
 
-  if (skillRows.length === 0) {
+  const skill = skillRows[0];
+  if (!skill) {
     throw appError("NOT_FOUND");
   }
-
-  const skill = skillRows[0];
 
   // 2. Fetch learning objectives
   const los = await db

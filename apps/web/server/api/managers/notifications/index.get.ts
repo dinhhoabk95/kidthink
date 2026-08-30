@@ -13,11 +13,11 @@ import { requireManagerSession } from "#server/utils/admin-auth-runtime";
  */
 function redactEmail(email: string): string {
   const parts = email.split("@");
-  if (parts.length !== 2) {
-    return email;
-  }
   const name = parts[0];
   const domain = parts[1];
+  if (!(name && domain) || parts.length !== 2) {
+    return email;
+  }
   const firstChar = name.charAt(0) || "u";
   return `${firstChar}***@${domain}`;
 }

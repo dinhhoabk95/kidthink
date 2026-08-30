@@ -20,16 +20,14 @@ export default defineEventHandler(async (event) => {
   const db = getOwnerDb();
 
   const skillRows = await db.select().from(skills).where(eq(skills.code, code));
-
-  if (skillRows.length === 0 || skillRows[0].status !== "seeded") {
+  const targetSkill = skillRows[0];
+  if (targetSkill?.status !== "seeded") {
     throw createError({
       statusCode: 404,
       statusMessage: "NOT_FOUND",
       data: { code: "NOT_FOUND" },
     });
   }
-
-  const targetSkill = skillRows[0];
 
   const loRows = await db
     .select()

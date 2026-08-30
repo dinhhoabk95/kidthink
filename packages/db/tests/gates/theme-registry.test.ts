@@ -10,6 +10,11 @@ import {
   validateThemeCapsHistory,
 } from "#src/seed-content/gates/theme-registry";
 import { ALL_SEED_LEVELS } from "#src/seed-content/index";
+
+/** Chỉ khớp lời gọi import THẬT của biểu tượng nguồn, không phải mọi lần nhắc tên. */
+const CANONICAL_IMPORT_REGEX =
+  /import\s[^;]*\b(?:CONTENT_THEMES|CANONICAL_THEME_CODES)\b[^;]*from/;
+
 import type { ContentSeed } from "#src/seed-content/types";
 import { VALID_GAME_LEVEL_SEED } from "./fixtures/eight-gates-fixtures.js";
 import {
@@ -60,10 +65,14 @@ describe("Task #119 — Registry chủ đề (BR-CTR-01..12)", () => {
               content.includes("CANONICAL_THEME") ||
               content.includes("THEME_TAGS") ||
               content.includes("CONTENT_THEMES");
-            const isImporting =
-              content.includes("import { CONTENT_THEMES") ||
-              content.includes("import { CANONICAL_THEME_CODES") ||
-              content.includes('from "@mindkid/shared"');
+            // Chỉ miễn khi file thật sự IMPORT đúng biểu tượng nguồn.
+            //
+            // Điều kiện cũ có thêm nhánh `from "@mindkid/shared"` trần, nên
+            // bất kỳ file nào import BẤT KỲ THỨ GÌ từ shared đều được miễn —
+            // kể cả `thinking-coverage.ts`, chính file từng giữ danh sách chủ
+            // đề trùng trước commit 61e2b21. Còn `content-themes.ts` (nguồn
+            // duy nhất) thì Cấm — NEVER tự miễn: nó *khai báo* chứ không import.
+            const isImporting = CANONICAL_IMPORT_REGEX.test(content);
 
             if (hasMultipleThemes && hasThemeConstant && !isImporting) {
               found.push(fullPath);

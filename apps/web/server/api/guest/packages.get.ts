@@ -6,9 +6,9 @@ export default defineEventHandler(() => {
     .filter((pkg) => pkg.is_public && pkg.status === "active")
     .map((pkg) => ({
       code: pkg.code,
-      title: pkg.title,
+      name: pkg.name,
       description: pkg.description,
-      tier: pkg.tier,
+      audience: pkg.audience,
       entitlements: pkg.entitlements,
       offers: pkg.offers,
     }));

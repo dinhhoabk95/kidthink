@@ -92,15 +92,19 @@ export default defineEventHandler(async (event) => {
     .where(eq(curriculumEnrollments.id, activeEnrollment.id))
     .returning();
 
+  if (!updated) {
+    throw createError({ statusCode: 500, statusMessage: "WITHDRAW_FAILED" });
+  }
+
   // 4. Audit log
   await db.insert(auditLogs).values({
     actorType: "user",
     actorId: userId,
     action: "curriculum.withdrawn",
     entityType: "curriculum_enrollment",
-    entityId: activeEnrollment.id,
+    entityId: String(activeEnrollment.id),
     ipAddress: getVerifiedRemoteIp(event),
-    metadata: {
+    afterData: {
       child_id: child.id,
       child_uuid: child.uuid,
       curriculum_code: activeEnrollment.code,

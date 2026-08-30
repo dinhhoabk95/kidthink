@@ -22,7 +22,7 @@ export interface OrphanImageCleanupResult {
  */
 export async function runOrphanImageCleanupJob(
   jobId?: string,
-  options?: { now?: Date; cutoffDays?: number }
+  options?: { now?: Date; cutoffDays?: number; signal?: AbortSignal }
 ): Promise<OrphanImageCleanupResult> {
   const db = getOwnerDb();
   const now = options?.now || new Date();
@@ -45,6 +45,13 @@ export async function runOrphanImageCleanupJob(
   let purgedBytes = 0;
 
   for (const img of candidateImages) {
+    // Cùng lý do như `account-purge`: hết timeout thì job đã bị đánh `failed`,
+    // nhưng vòng lặp vẫn xoá file và hàng DB nếu không tự dừng. Audit log bên
+    // dưới vẫn được ghi với số đã xoá thật, nên phần việc đã làm không biến mất.
+    if (options?.signal?.aborted) {
+      break;
+    }
+
     // Delete from storage
     if (img.storagePath) {
       deletePublicImage(img.storagePath);
@@ -92,7 +99,9 @@ export const imageCleanupOrphan: Consumer<"image:cleanup-orphan"> = async (
   _payload,
   ctx
 ) => {
-  const result = await runOrphanImageCleanupJob(ctx.jobId);
+  const result = await runOrphanImageCleanupJob(ctx.jobId, {
+    signal: ctx.signal,
+  });
 
   logJobDone("image:cleanup-orphan", ctx, {
     purged: result.purged_count,

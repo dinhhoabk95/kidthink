@@ -63,6 +63,9 @@ describe("P2.7 Image Storage, Upload & Asset Usage Tracking Invariants (BR-IMG, 
           status: "active",
         })
         .returning();
+      if (!img) {
+        throw new Error("Failed to insert img");
+      }
 
       expect(img.storagePath).not.toContain("http://");
       expect(img.storagePath).not.toContain("https://");
@@ -93,6 +96,9 @@ describe("P2.7 Image Storage, Upload & Asset Usage Tracking Invariants (BR-IMG, 
           status: "active",
         })
         .returning();
+      if (!proofImg) {
+        throw new Error("Failed to insert proofImg");
+      }
 
       expect(proofImg.visibility).toBe("private");
       expect(proofImg.thumbPath).toBeNull();
@@ -116,13 +122,16 @@ describe("P2.7 Image Storage, Upload & Asset Usage Tracking Invariants (BR-IMG, 
           status: "orphan",
         })
         .returning();
+      if (!img) {
+        throw new Error("Failed to insert img");
+      }
 
       const [found] = await db
         .select()
         .from(contentImages)
         .where(eq(contentImages.id, img.id));
       expect(found).toBeDefined();
-      expect(found.ownerId).toBe(nonExistentOwnerId);
+      expect(found?.ownerId).toBe(nonExistentOwnerId);
 
       // Clean up
       await db.delete(contentImages).where(eq(contentImages.id, img.id));
@@ -149,6 +158,9 @@ describe("P2.7 Image Storage, Upload & Asset Usage Tracking Invariants (BR-IMG, 
           })
           .returning();
       }
+      if (!tpl) {
+        throw new Error("Failed to find or insert tpl");
+      }
 
       const assetRef = `content/2026/08/shared_icon_${Date.now()}.webp`;
 
@@ -167,6 +179,9 @@ describe("P2.7 Image Storage, Upload & Asset Usage Tracking Invariants (BR-IMG, 
           status: "published",
         })
         .returning();
+      if (!pubLevel) {
+        throw new Error("Failed to insert pubLevel");
+      }
 
       const [draftLevel] = await db
         .insert(gameLevels)
@@ -182,6 +197,9 @@ describe("P2.7 Image Storage, Upload & Asset Usage Tracking Invariants (BR-IMG, 
           status: "draft",
         })
         .returning();
+      if (!draftLevel) {
+        throw new Error("Failed to insert draftLevel");
+      }
 
       // 3. Populate content_asset_refs in same transaction (D-KB)
       await db.insert(contentAssetRefs).values([

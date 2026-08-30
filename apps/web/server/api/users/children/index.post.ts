@@ -107,7 +107,7 @@ async function verifyChildConsentAndQuota(event: H3Event, userId: number) {
     maxAllowedChildren = 3;
   }
 
-  const [{ value: childCount }] = await db
+  const [childCountRow] = await db
     .select({ value: count() })
     .from(childProfiles)
     .where(
@@ -116,6 +116,7 @@ async function verifyChildConsentAndQuota(event: H3Event, userId: number) {
         ne(childProfiles.status, "archived")
       )
     );
+  const childCount = childCountRow?.value ?? 0;
 
   if (childCount >= maxAllowedChildren) {
     setResponseStatus(event, 402);
@@ -202,6 +203,14 @@ export default defineEventHandler(async (event) => {
       status: "active",
     })
     .returning();
+
+  if (!newChild) {
+    throw createError({
+      statusCode: 500,
+      statusMessage: "CHILD_CREATE_FAILED",
+      message: "Tạo hồ sơ trẻ thất bại",
+    });
+  }
 
   setResponseStatus(event, 201);
   return {

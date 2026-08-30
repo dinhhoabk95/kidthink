@@ -54,6 +54,14 @@ export default defineEventHandler(async (event) => {
     .where(eq(users.id, targetUser.id))
     .returning();
 
+  if (!updatedUser) {
+    throw createError({
+      statusCode: 500,
+      statusMessage: "USER_UPDATE_FAILED",
+      message: "Cập nhật tài khoản thất bại",
+    });
+  }
+
   // Insert audit log
   await db.insert(auditLogs).values({
     actorType: "manager",

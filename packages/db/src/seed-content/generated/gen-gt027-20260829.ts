@@ -1,10 +1,10 @@
 /**
- * @generated from LEVEL-GENERATOR-KIT@00000000
+ * @generated from LEVEL-GENERATOR-KIT@c9fd31f3f239
  * Engine: GT-027
  * Seed: 20260829
  * Theme: school
  * Band: 5-6
- * Total generated: 9
+ * Total generated: 10
  */
 import type { ContentSeed } from "#src/seed-content/types";
 
@@ -25,7 +25,7 @@ export const GEN_GT027_20260829: ContentSeed<unknown, unknown>[] = [
       "what_tags": [],
       "thinking_tags": [],
       "theme_tag": "school",
-      "origin": "generator",
+      "origin": "ai_assisted",
       "authored_in": "repo_seed"
     },
     "content_pack": {
@@ -53,7 +53,7 @@ export const GEN_GT027_20260829: ContentSeed<unknown, unknown>[] = [
           "id": "item_1",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-backpack"
+            "ref": "EMJ-ruler"
           },
           "color": "red",
           "shape": "circle"
@@ -62,7 +62,7 @@ export const GEN_GT027_20260829: ContentSeed<unknown, unknown>[] = [
           "id": "item_2",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-ruler"
+            "ref": "EMJ-crayon"
           },
           "color": "red",
           "shape": "square"
@@ -71,7 +71,7 @@ export const GEN_GT027_20260829: ContentSeed<unknown, unknown>[] = [
           "id": "item_3",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-school"
+            "ref": "EMJ-scissors"
           },
           "color": "blue",
           "shape": "circle"
@@ -80,7 +80,7 @@ export const GEN_GT027_20260829: ContentSeed<unknown, unknown>[] = [
           "id": "item_4",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-pencil"
+            "ref": "EMJ-abacus"
           },
           "color": "blue",
           "shape": "square"
@@ -110,7 +110,7 @@ export const GEN_GT027_20260829: ContentSeed<unknown, unknown>[] = [
       "what_tags": [],
       "thinking_tags": [],
       "theme_tag": "school",
-      "origin": "generator",
+      "origin": "ai_assisted",
       "authored_in": "repo_seed"
     },
     "content_pack": {
@@ -138,7 +138,7 @@ export const GEN_GT027_20260829: ContentSeed<unknown, unknown>[] = [
           "id": "item_1",
           "asset": {
             "kind": "emoji",
-            "ref": "🍎"
+            "ref": "EMJ-open-book"
           },
           "color": "red",
           "shape": "circle"
@@ -147,7 +147,7 @@ export const GEN_GT027_20260829: ContentSeed<unknown, unknown>[] = [
           "id": "item_2",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-pencil"
+            "ref": "EMJ-scissors"
           },
           "color": "red",
           "shape": "square"
@@ -156,7 +156,7 @@ export const GEN_GT027_20260829: ContentSeed<unknown, unknown>[] = [
           "id": "item_3",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-books"
+            "ref": "EMJ-crayon"
           },
           "color": "blue",
           "shape": "circle"
@@ -165,7 +165,7 @@ export const GEN_GT027_20260829: ContentSeed<unknown, unknown>[] = [
           "id": "item_4",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-ruler"
+            "ref": "EMJ-pencil"
           },
           "color": "blue",
           "shape": "square"
@@ -195,7 +195,7 @@ export const GEN_GT027_20260829: ContentSeed<unknown, unknown>[] = [
       "what_tags": [],
       "thinking_tags": [],
       "theme_tag": "school",
-      "origin": "generator",
+      "origin": "ai_assisted",
       "authored_in": "repo_seed"
     },
     "content_pack": {
@@ -223,7 +223,7 @@ export const GEN_GT027_20260829: ContentSeed<unknown, unknown>[] = [
           "id": "item_1",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-backpack"
+            "ref": "EMJ-crayon"
           },
           "color": "red",
           "shape": "circle"
@@ -232,7 +232,7 @@ export const GEN_GT027_20260829: ContentSeed<unknown, unknown>[] = [
           "id": "item_2",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-school"
+            "ref": "EMJ-backpack"
           },
           "color": "red",
           "shape": "square"
@@ -241,7 +241,7 @@ export const GEN_GT027_20260829: ContentSeed<unknown, unknown>[] = [
           "id": "item_3",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-pencil"
+            "ref": "EMJ-scissors"
           },
           "color": "blue",
           "shape": "circle"
@@ -280,7 +280,7 @@ export const GEN_GT027_20260829: ContentSeed<unknown, unknown>[] = [
       "what_tags": [],
       "thinking_tags": [],
       "theme_tag": "school",
-      "origin": "generator",
+      "origin": "ai_assisted",
       "authored_in": "repo_seed"
     },
     "content_pack": {
@@ -308,7 +308,7 @@ export const GEN_GT027_20260829: ContentSeed<unknown, unknown>[] = [
           "id": "item_1",
           "asset": {
             "kind": "emoji",
-            "ref": "🍎"
+            "ref": "EMJ-scissors"
           },
           "color": "red",
           "shape": "circle"
@@ -317,7 +317,7 @@ export const GEN_GT027_20260829: ContentSeed<unknown, unknown>[] = [
           "id": "item_2",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-backpack"
+            "ref": "EMJ-ruler"
           },
           "color": "red",
           "shape": "square"
@@ -326,7 +326,7 @@ export const GEN_GT027_20260829: ContentSeed<unknown, unknown>[] = [
           "id": "item_3",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-books"
+            "ref": "EMJ-school"
           },
           "color": "blue",
           "shape": "circle"
@@ -365,7 +365,7 @@ export const GEN_GT027_20260829: ContentSeed<unknown, unknown>[] = [
       "what_tags": [],
       "thinking_tags": [],
       "theme_tag": "school",
-      "origin": "generator",
+      "origin": "ai_assisted",
       "authored_in": "repo_seed"
     },
     "content_pack": {
@@ -402,7 +402,7 @@ export const GEN_GT027_20260829: ContentSeed<unknown, unknown>[] = [
           "id": "item_2",
           "asset": {
             "kind": "emoji",
-            "ref": "🍎"
+            "ref": "EMJ-books"
           },
           "color": "red",
           "shape": "square"
@@ -411,7 +411,7 @@ export const GEN_GT027_20260829: ContentSeed<unknown, unknown>[] = [
           "id": "item_3",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-pencil"
+            "ref": "EMJ-open-book"
           },
           "color": "blue",
           "shape": "circle"
@@ -420,7 +420,7 @@ export const GEN_GT027_20260829: ContentSeed<unknown, unknown>[] = [
           "id": "item_4",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-ruler"
+            "ref": "EMJ-backpack"
           },
           "color": "blue",
           "shape": "square"
@@ -450,7 +450,7 @@ export const GEN_GT027_20260829: ContentSeed<unknown, unknown>[] = [
       "what_tags": [],
       "thinking_tags": [],
       "theme_tag": "school",
-      "origin": "generator",
+      "origin": "ai_assisted",
       "authored_in": "repo_seed"
     },
     "content_pack": {
@@ -496,7 +496,7 @@ export const GEN_GT027_20260829: ContentSeed<unknown, unknown>[] = [
           "id": "item_3",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-school"
+            "ref": "EMJ-bell"
           },
           "color": "blue",
           "shape": "circle"
@@ -505,7 +505,7 @@ export const GEN_GT027_20260829: ContentSeed<unknown, unknown>[] = [
           "id": "item_4",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-books"
+            "ref": "EMJ-school"
           },
           "color": "blue",
           "shape": "square"
@@ -535,7 +535,7 @@ export const GEN_GT027_20260829: ContentSeed<unknown, unknown>[] = [
       "what_tags": [],
       "thinking_tags": [],
       "theme_tag": "school",
-      "origin": "generator",
+      "origin": "ai_assisted",
       "authored_in": "repo_seed"
     },
     "content_pack": {
@@ -563,7 +563,7 @@ export const GEN_GT027_20260829: ContentSeed<unknown, unknown>[] = [
           "id": "item_1",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-school"
+            "ref": "EMJ-pencil"
           },
           "color": "red",
           "shape": "circle"
@@ -572,7 +572,7 @@ export const GEN_GT027_20260829: ContentSeed<unknown, unknown>[] = [
           "id": "item_2",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-backpack"
+            "ref": "EMJ-books"
           },
           "color": "red",
           "shape": "square"
@@ -581,7 +581,7 @@ export const GEN_GT027_20260829: ContentSeed<unknown, unknown>[] = [
           "id": "item_3",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-pencil"
+            "ref": "EMJ-open-book"
           },
           "color": "blue",
           "shape": "circle"
@@ -590,7 +590,7 @@ export const GEN_GT027_20260829: ContentSeed<unknown, unknown>[] = [
           "id": "item_4",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-ruler"
+            "ref": "EMJ-crayon"
           },
           "color": "blue",
           "shape": "square"
@@ -620,7 +620,7 @@ export const GEN_GT027_20260829: ContentSeed<unknown, unknown>[] = [
       "what_tags": [],
       "thinking_tags": [],
       "theme_tag": "school",
-      "origin": "generator",
+      "origin": "ai_assisted",
       "authored_in": "repo_seed"
     },
     "content_pack": {
@@ -648,7 +648,7 @@ export const GEN_GT027_20260829: ContentSeed<unknown, unknown>[] = [
           "id": "item_1",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-school"
+            "ref": "EMJ-open-book"
           },
           "color": "red",
           "shape": "circle"
@@ -657,7 +657,7 @@ export const GEN_GT027_20260829: ContentSeed<unknown, unknown>[] = [
           "id": "item_2",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-ruler"
+            "ref": "EMJ-crayon"
           },
           "color": "red",
           "shape": "square"
@@ -666,7 +666,7 @@ export const GEN_GT027_20260829: ContentSeed<unknown, unknown>[] = [
           "id": "item_3",
           "asset": {
             "kind": "emoji",
-            "ref": "🍎"
+            "ref": "EMJ-scissors"
           },
           "color": "blue",
           "shape": "circle"
@@ -675,7 +675,7 @@ export const GEN_GT027_20260829: ContentSeed<unknown, unknown>[] = [
           "id": "item_4",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-backpack"
+            "ref": "EMJ-books"
           },
           "color": "blue",
           "shape": "square"
@@ -705,7 +705,7 @@ export const GEN_GT027_20260829: ContentSeed<unknown, unknown>[] = [
       "what_tags": [],
       "thinking_tags": [],
       "theme_tag": "school",
-      "origin": "generator",
+      "origin": "ai_assisted",
       "authored_in": "repo_seed"
     },
     "content_pack": {
@@ -733,7 +733,7 @@ export const GEN_GT027_20260829: ContentSeed<unknown, unknown>[] = [
           "id": "item_1",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-backpack"
+            "ref": "EMJ-open-book"
           },
           "color": "red",
           "shape": "circle"
@@ -742,7 +742,7 @@ export const GEN_GT027_20260829: ContentSeed<unknown, unknown>[] = [
           "id": "item_2",
           "asset": {
             "kind": "emoji",
-            "ref": "🍎"
+            "ref": "EMJ-abacus"
           },
           "color": "red",
           "shape": "square"
@@ -751,7 +751,7 @@ export const GEN_GT027_20260829: ContentSeed<unknown, unknown>[] = [
           "id": "item_3",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-school"
+            "ref": "EMJ-crayon"
           },
           "color": "blue",
           "shape": "circle"
@@ -761,6 +761,91 @@ export const GEN_GT027_20260829: ContentSeed<unknown, unknown>[] = [
           "asset": {
             "kind": "emoji",
             "ref": "EMJ-ruler"
+          },
+          "color": "blue",
+          "shape": "square"
+        }
+      ],
+      "switch_after_trials": 2
+    },
+    "difficulty_params": {
+      "signal_duration_ms": 2000,
+      "hint_after_ms": 8000,
+      "allow_retry": true
+    }
+  },
+  {
+    "header": {
+      "code": "GL-GEN-GT-027-20260829-10",
+      "content_version": 1,
+      "template_code": "GT-027",
+      "title": "",
+      "instruction": "",
+      "age_min": 5,
+      "age_max": 6,
+      "difficulty": 1,
+      "access_tier": "free",
+      "skill_codes": [],
+      "learning_objective_codes": [],
+      "what_tags": [],
+      "thinking_tags": [],
+      "theme_tag": "school",
+      "origin": "ai_assisted",
+      "authored_in": "repo_seed"
+    },
+    "content_pack": {
+      "prompt": "Bé hãy chú ý lắng nghe hiệu lệnh để đổi luật phân loại nhé!",
+      "rules": [
+        {
+          "id": "rule_1",
+          "name": "Luật màu đỏ",
+          "description": "Chọn theo màu",
+          "dimension": "color",
+          "target_value": "red",
+          "signal_text": "Chọn đồ vật màu đỏ"
+        },
+        {
+          "id": "rule_2",
+          "name": "Luật hình tròn",
+          "description": "Chọn theo hình",
+          "dimension": "shape",
+          "target_value": "circle",
+          "signal_text": "Đổi luật: Chọn đồ vật hình tròn"
+        }
+      ],
+      "items": [
+        {
+          "id": "item_1",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-bell"
+          },
+          "color": "red",
+          "shape": "circle"
+        },
+        {
+          "id": "item_2",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-books"
+          },
+          "color": "red",
+          "shape": "square"
+        },
+        {
+          "id": "item_3",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-abacus"
+          },
+          "color": "blue",
+          "shape": "circle"
+        },
+        {
+          "id": "item_4",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-school"
           },
           "color": "blue",
           "shape": "square"

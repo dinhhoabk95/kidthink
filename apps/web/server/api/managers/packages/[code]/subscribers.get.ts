@@ -6,7 +6,7 @@ import { defineEventHandler, getQuery, getRouterParam } from "h3";
 import { requireSuperAdminSession } from "#server/utils/admin-auth-runtime";
 
 export default defineEventHandler(async (event) => {
-  requireSuperAdminSession(event);
+  await requireSuperAdminSession(event);
   const code = getRouterParam(event, "code");
   if (!code) {
     throw appError("VALIDATION_FAILED", "Mã gói là bắt buộc.");
@@ -17,10 +17,7 @@ export default defineEventHandler(async (event) => {
     throw appError("PACKAGE_NOT_FOUND", "Gói không tồn tại trong catalog.");
   }
 
-  const customEvent = event as unknown as {
-    context?: { query?: Record<string, unknown> };
-  };
-  const query = customEvent.context?.query ?? getQuery(event);
+  const query = getQuery(event) || {};
   const limit = Math.min(Math.max(Number(query.limit) || 50, 1), 100);
   const cursor = query.cursor ? Number(query.cursor) : 0;
 

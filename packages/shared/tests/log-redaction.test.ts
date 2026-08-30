@@ -52,7 +52,7 @@ describe("Task 3 — Structured Logging & PII Redactor (BR-MON-05, BR-MON-06, D-
 
     // Assert that arrays are also stripped
     expect(redacted.array_data[0]).not.toHaveProperty("email");
-    expect(redacted.array_data[0].count).toBe(1);
+    expect(redacted.array_data[0]?.count).toBe(1);
   });
 
   it("Scenario: D-IP — negative test: provider access tokens and credentials do not leak into logs", () => {

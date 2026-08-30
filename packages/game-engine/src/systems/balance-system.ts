@@ -80,7 +80,11 @@ export function canAchieveBalance(
       return currentLeft === currentRight;
     }
 
-    const itemWeight = tray[idx].weight;
+    const item = tray[idx];
+    if (!item) {
+      return currentLeft === currentRight;
+    }
+    const itemWeight = item.weight;
     // Cách 1: Cho vào đĩa trái
     if (search(idx + 1, currentLeft + itemWeight, currentRight)) {
       return true;

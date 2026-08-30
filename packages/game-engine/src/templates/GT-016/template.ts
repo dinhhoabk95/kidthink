@@ -40,10 +40,11 @@ export const GT016ContentSchema = GT016BaseSchema.refine(
         return false;
       }
       const correct = content.options.filter((o) => o.is_correct);
-      if (correct.length !== 1) {
+      const firstCorrect = correct[0];
+      if (correct.length !== 1 || !firstCorrect) {
         return false;
       }
-      return isSameTime(correct[0], content.target_time);
+      return isSameTime(firstCorrect, content.target_time);
     }
     if (content.mode === "match") {
       return content.activity_cards.length >= 2;

@@ -27,7 +27,7 @@ interface ChildRecord {
   displayName: string;
   birthYear: number;
   avatarId: string;
-  relationship: string;
+  relationship: string | null;
   status: string;
 }
 
@@ -129,7 +129,7 @@ async function resolveCurriculumBlock(
     return {
       enrolled: true,
       enrollment_id: enrollment.id,
-      curriculum_id: enrollment.curriculum_id,
+      curriculum_id: enrollment.curriculumId,
       curriculum_code: enrollment.curriculum_code,
       title: enrollment.curriculum_title,
       duration_weeks: enrollment.duration_weeks,
@@ -231,11 +231,12 @@ async function buildTodoList(
     )
     .limit(1);
 
-  if (pendingOrders.length > 0) {
+  const pendingOrder = pendingOrders[0];
+  if (pendingOrder) {
     todoList.push({
       type: "pending_order",
       title: "Đơn hàng đang chờ duyệt",
-      message: `Đơn #${pendingOrders[0].transferNote || pendingOrders[0].id} đang chờ đối soát thanh toán.`,
+      message: `Đơn #${pendingOrder.transferNote || pendingOrder.id} đang chờ đối soát thanh toán.`,
       cta: "/me/subscription",
     });
   }

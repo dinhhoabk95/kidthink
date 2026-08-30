@@ -24,5 +24,5 @@
 - [x] Gate quét `apps/admin/app/pages/**`: mọi trang ngoài `/login` nằm dưới guard, có
       fixture âm.
 - [x] Cập nhật `docs/specs/index.md`, [`roadmap.md`](../specs/roadmap.md), `.agents` nếu có mô tả luồng đăng nhập.
-- [x] Chạy `pnpm --filter @mindkid/gates test`, `pnpm typecheck:root`, `pnpm lint`.
+- [x] Chạy `pnpm --filter @mindkid/admin test`, `pnpm typecheck`, `pnpm lint`. (`@mindkid/gates` bị xoá 2026-08-29; cổng ranh giới runtime nay ở `apps/admin/tests/gates/`.)
 - [x] Chụp danh sách `trạng-thái | tên-test` trước và sau, yêu cầu trùng khít trừ test mới.

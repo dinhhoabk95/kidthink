@@ -23,6 +23,9 @@ describe("Task 5 — Daily Rollup & Entitlement Expire (BR-TLM-02, BR-TLM-05, BR
       .insert(users)
       .values({ email, displayName: "Rollup Parent" })
       .returning();
+    if (!u) {
+      throw new Error("Failed to insert user");
+    }
 
     const [child] = await db
       .insert(childProfiles)
@@ -33,6 +36,9 @@ describe("Task 5 — Daily Rollup & Entitlement Expire (BR-TLM-02, BR-TLM-05, BR
         avatarId: "preset_01",
       })
       .returning();
+    if (!child) {
+      throw new Error("Failed to insert child");
+    }
 
     // 2. Create Game Template & Level
     let [gt] = await db.select().from(gameTemplates).limit(1);
@@ -45,6 +51,9 @@ describe("Task 5 — Daily Rollup & Entitlement Expire (BR-TLM-02, BR-TLM-05, BR
           mechanic: "tap_target",
         })
         .returning();
+    }
+    if (!gt) {
+      throw new Error("Failed to find or insert gt");
     }
 
     const num4 = Math.floor(Math.random() * 8999) + 1000;
@@ -63,6 +72,9 @@ describe("Task 5 — Daily Rollup & Entitlement Expire (BR-TLM-02, BR-TLM-05, BR
         status: "published",
       })
       .returning();
+    if (!gl) {
+      throw new Error("Failed to insert gl");
+    }
 
     // 3. Create Registered Child Session
     await db.insert(playSessions).values({
@@ -101,16 +113,16 @@ describe("Task 5 — Daily Rollup & Entitlement Expire (BR-TLM-02, BR-TLM-05, BR
       .from(childDailyStats)
       .where(eq(childDailyStats.childProfileId, child.id));
     expect(childStats1).toHaveLength(1);
-    expect(childStats1[0].sessionsCount).toBe(1);
-    expect(childStats1[0].totalPlayTimeSeconds).toBe(120);
+    expect(childStats1[0]?.sessionsCount).toBe(1);
+    expect(childStats1[0]?.totalPlayTimeSeconds).toBe(120);
 
     const levelStats1 = await db
       .select()
       .from(levelDailyStats)
       .where(eq(levelDailyStats.levelCode, glCode));
     expect(levelStats1).toHaveLength(1);
-    expect(levelStats1[0].playsCount).toBe(2); // Both child + guest included in level stats
-    expect(levelStats1[0].completionsCount).toBe(2);
+    expect(levelStats1[0]?.playsCount).toBe(2); // Both child + guest included in level stats
+    expect(levelStats1[0]?.completionsCount).toBe(2);
 
     // 6. Run daily rollup 2nd & 3rd time (BR-TLM-02 Idempotency Check)
     await runDailyRollup(dateIct);
@@ -121,15 +133,15 @@ describe("Task 5 — Daily Rollup & Entitlement Expire (BR-TLM-02, BR-TLM-05, BR
       .from(childDailyStats)
       .where(eq(childDailyStats.childProfileId, child.id));
     expect(childStats3).toHaveLength(1);
-    expect(childStats3[0].sessionsCount).toBe(1);
-    expect(childStats3[0].totalPlayTimeSeconds).toBe(120);
+    expect(childStats3[0]?.sessionsCount).toBe(1);
+    expect(childStats3[0]?.totalPlayTimeSeconds).toBe(120);
 
     const levelStats3 = await db
       .select()
       .from(levelDailyStats)
       .where(eq(levelDailyStats.levelCode, glCode));
     expect(levelStats3).toHaveLength(1);
-    expect(levelStats3[0].playsCount).toBe(2);
+    expect(levelStats3[0]?.playsCount).toBe(2);
   }, 30_000);
 
   it("runs entitlement expiration job safely", async () => {

@@ -29,6 +29,10 @@ export async function executeArchiveChildProfile(
     .where(eq(childProfiles.id, input.childId))
     .returning();
 
+  if (!updated) {
+    throw new Error("ARCHIVE_FAILED");
+  }
+
   return {
     uuid: updated.uuid,
     status: updated.status,

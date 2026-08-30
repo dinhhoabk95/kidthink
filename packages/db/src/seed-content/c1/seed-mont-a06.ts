@@ -6,7 +6,6 @@ import type { ContentSeed } from "#src/seed-content/types";
  * 2 dạng bài, 4 level, GT-001 và GT-003, band 3-4
  */
 export const SEED_MONT_A06: ContentSeed<unknown, unknown>[] = [
-  // WB06-D1 Level 1 (Diff 1 - Free)
   {
     header: {
       code: "GL-C1-CMP-CARD-0115",
@@ -49,9 +48,10 @@ export const SEED_MONT_A06: ContentSeed<unknown, unknown>[] = [
         l3_demo: "Bàn tay ảo chọn đĩa A làm mẫu",
       },
     },
-    difficulty_params: { option_count: 2 },
+    difficulty_params: {
+      option_count: 2,
+    },
   },
-  // WB06-D1 Level 2 (Diff 2 - Login)
   {
     header: {
       code: "GL-C1-CMP-CARD-0116",
@@ -95,9 +95,10 @@ export const SEED_MONT_A06: ContentSeed<unknown, unknown>[] = [
         l3_demo: "Bàn tay ảo chọn bình 1 bông",
       },
     },
-    difficulty_params: { option_count: 2 },
+    difficulty_params: {
+      option_count: 2,
+    },
   },
-  // WB06-D2 Level 1 (Diff 1 - Free)
   {
     header: {
       code: "GL-C1-CMP-CONT-0117",
@@ -118,27 +119,58 @@ export const SEED_MONT_A06: ContentSeed<unknown, unknown>[] = [
       authored_in: "repo_seed",
     },
     content_pack: {
-      source_items: [
-        { id: "cr1", emoji: "🥕" },
-        { id: "cr2", emoji: "🥕" },
-        { id: "cr3", emoji: "🥕" },
-        { id: "cr4", emoji: "🥕" },
-      ],
-      target_container: {
-        id: "rabbits",
+      prompt: "Bé kéo đúng 3 củ cà rốt cho 3 bạn thỏ nhé!",
+      container: {
+        container_id: "rabbits",
         label: "Khay 3 bạn thỏ",
-        target_count: 3,
+        accepts_attribute: "target",
       },
-      scaffolding: {
-        l1_nudge: "Củ cà rốt đầu tiên sáng lên",
-        l2_guidance:
-          "Bàn tay ảo ghép từng củ cà rốt tương ứng với từng bạn thỏ",
-        l3_demo: "Bàn tay ảo kéo 1 củ cà rốt mẫu",
-      },
+      items: [
+        {
+          item_id: "cr1",
+          attribute: "target",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-carrot",
+          },
+          is_correct: true,
+        },
+        {
+          item_id: "cr2",
+          attribute: "target",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-carrot",
+          },
+          is_correct: true,
+        },
+        {
+          item_id: "cr3",
+          attribute: "target",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-carrot",
+          },
+          is_correct: true,
+        },
+        {
+          item_id: "cr4",
+          attribute: "target",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-carrot",
+          },
+          is_correct: false,
+        },
+      ],
     },
-    difficulty_params: { target_count: 3, source_count: 4 },
+    difficulty_params: {
+      distractor_count: 1,
+      target_count: 3,
+      hint_after_ms: 9000,
+      allow_retry: true,
+    },
   },
-  // WB06-D2 Level 2 (Diff 2 - Login)
   {
     header: {
       code: "GL-C1-CMP-CONT-0118",
@@ -159,23 +191,47 @@ export const SEED_MONT_A06: ContentSeed<unknown, unknown>[] = [
       authored_in: "repo_seed",
     },
     content_pack: {
-      source_items: [
-        { id: "b1", emoji: "⚽" },
-        { id: "b2", emoji: "⚽" },
-        { id: "b3", emoji: "⚽" },
-      ],
-      target_container: {
-        id: "basket-right",
+      prompt: "Bé kéo 2 bóng vào rổ để hai bên bằng nhau!",
+      container: {
+        container_id: "basket-right",
         label: "Rổ cân bằng",
-        target_count: 2,
+        accepts_attribute: "target",
       },
-      scaffolding: {
-        l1_nudge: "Quả bóng đầu tiên phát sáng nhẹ",
-        l2_guidance:
-          "Bàn tay ảo chỉ vào rổ cần thêm 2 bóng để bằng 2 bóng bên kia",
-        l3_demo: "Bàn tay ảo kéo 1 bóng vào rổ",
-      },
+      items: [
+        {
+          item_id: "b1",
+          attribute: "target",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-soccer",
+          },
+          is_correct: true,
+        },
+        {
+          item_id: "b2",
+          attribute: "target",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-soccer",
+          },
+          is_correct: true,
+        },
+        {
+          item_id: "b3",
+          attribute: "target",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-soccer",
+          },
+          is_correct: false,
+        },
+      ],
     },
-    difficulty_params: { target_count: 2, source_count: 3 },
+    difficulty_params: {
+      distractor_count: 1,
+      target_count: 2,
+      hint_after_ms: 9000,
+      allow_retry: true,
+    },
   },
 ];

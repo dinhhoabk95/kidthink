@@ -1,4 +1,4 @@
-import { contentAssetRefs, type DatabaseOwner } from "@mindkid/db";
+import { contentAssetRefs, type OwnerDb } from "@mindkid/db";
 import { and, eq } from "drizzle-orm";
 
 export interface ExtractedAssetRef {
@@ -105,7 +105,7 @@ export function extractAssetRefs(contentPack: unknown): ExtractedAssetRef[] {
  * Maintain reverse index in content_asset_refs in same transaction (D-KB)
  */
 export async function syncContentAssetRefs(
-  tx: DatabaseOwner,
+  tx: OwnerDb,
   entityType: string,
   entityId: number,
   contentPack: unknown

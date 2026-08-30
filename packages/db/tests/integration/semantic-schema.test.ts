@@ -17,6 +17,9 @@ describe("Task P4.8 — Semantic Schema & pgvector (BR-SEM-01, BR-SEM-03, BR-SEM
         displayName: "Semantic Schema User",
       })
       .returning();
+    if (!user) {
+      throw new Error("Failed to insert user");
+    }
     testUserId = user.id;
   });
 
@@ -41,19 +44,19 @@ describe("Task P4.8 — Semantic Schema & pgvector (BR-SEM-01, BR-SEM-03, BR-SEM
       })
       .returning();
 
-    expect(inserted.id).toBeDefined();
-    expect(inserted.contentType).toBe("game_level");
-    expect(inserted.contentVersion).toBe(1);
+    expect(inserted?.id).toBeDefined();
+    expect(inserted?.contentType).toBe("game_level");
+    expect(inserted?.contentVersion).toBe(1);
 
     // Test pgvector cosine distance calculation
     const vectorStr = `[${dummyVector.join(",")}]`;
     const res = await db.execute<{ cosine_dist: number }>(
-      sql`SELECT (embedding <=> ${vectorStr}::vector) as cosine_dist FROM content_embeddings WHERE id = ${inserted.id}`
+      sql`SELECT (embedding <=> ${vectorStr}::vector) as cosine_dist FROM content_embeddings WHERE id = ${inserted?.id}`
     );
 
     expect(res.length).toBe(1);
     // Cosine distance of identical vector should be ~0.0
-    expect(Number(res[0].cosine_dist)).toBeLessThan(0.001);
+    expect(Number(res[0]?.cosine_dist)).toBeLessThan(0.001);
   });
 
   it("enforces unique constraint on (content_type, content_id, content_version, model, chunk_index)", async () => {
@@ -88,10 +91,10 @@ describe("Task P4.8 — Semantic Schema & pgvector (BR-SEM-01, BR-SEM-03, BR-SEM
       })
       .returning();
 
-    expect(log.id).toBeDefined();
-    expect(log.uuid).toBeDefined();
-    expect(log.userId).toBe(testUserId);
-    expect(log.feature).toBe("semantic_search");
-    expect(log.creditsSpent).toBe(1);
+    expect(log?.id).toBeDefined();
+    expect(log?.uuid).toBeDefined();
+    expect(log?.userId).toBe(testUserId);
+    expect(log?.feature).toBe("semantic_search");
+    expect(log?.creditsSpent).toBe(1);
   });
 });

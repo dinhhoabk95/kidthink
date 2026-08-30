@@ -17,6 +17,9 @@ describe("Content Schema Integration Tests", () => {
         altText: "Ảnh test",
       })
       .returning();
+    if (!img) {
+      throw new Error("Failed to insert img");
+    }
 
     expect(img).toBeDefined();
     expect(img.ownerId).toBe(999_888_777);
@@ -24,7 +27,7 @@ describe("Content Schema Integration Tests", () => {
 
   it("orphan activities.(ref_type, ref_id) polymorphic check", async () => {
     const db = getOwnerDb();
-    let act: any;
+    let act: typeof activities.$inferSelect | undefined;
     for (let attempt = 0; attempt < 50; attempt++) {
       const code = `ACT-${(Math.floor(Math.random() * 9000) + 1000).toString()}`;
       const [created] = await db
@@ -47,6 +50,9 @@ describe("Content Schema Integration Tests", () => {
         break;
       }
     }
+    if (!act) {
+      throw new Error("Failed to insert act");
+    }
 
     expect(act).toBeDefined();
     expect(act.refId).toBe(666_555_444);
@@ -56,7 +62,7 @@ describe("Content Schema Integration Tests", () => {
     const db = getOwnerDb();
 
     // 1. Published lesson
-    let les: any;
+    let les: typeof lessons.$inferSelect | undefined;
     for (let attempt = 0; attempt < 50; attempt++) {
       const lesCode = `LES-${(Math.floor(Math.random() * 9000) + 1000).toString()}`;
       const [created] = await db
@@ -76,6 +82,9 @@ describe("Content Schema Integration Tests", () => {
         break;
       }
     }
+    if (!les) {
+      throw new Error("Failed to insert les");
+    }
 
     await expect(
       db.update(lessons).set({ title: "Changed" }).where(eq(lessons.id, les.id))
@@ -87,7 +96,7 @@ describe("Content Schema Integration Tests", () => {
     });
 
     // 2. Published activity
-    let act: any;
+    let act: typeof activities.$inferSelect | undefined;
     for (let attempt = 0; attempt < 50; attempt++) {
       const actCode = `ACT-${(Math.floor(Math.random() * 9000) + 1000).toString()}`;
       const [created] = await db
@@ -108,6 +117,9 @@ describe("Content Schema Integration Tests", () => {
         break;
       }
     }
+    if (!act) {
+      throw new Error("Failed to insert act");
+    }
 
     expect(act).toBeDefined();
     await expect(
@@ -123,7 +135,7 @@ describe("Content Schema Integration Tests", () => {
     });
 
     // 3. Published worksheet
-    let ws: any;
+    let ws: typeof worksheets.$inferSelect | undefined;
     for (let attempt = 0; attempt < 50; attempt++) {
       const wsCode = `WS-${(Math.floor(Math.random() * 9000) + 1000).toString()}`;
       const [created] = await db
@@ -142,6 +154,9 @@ describe("Content Schema Integration Tests", () => {
         ws = created;
         break;
       }
+    }
+    if (!ws) {
+      throw new Error("Failed to insert ws");
     }
 
     await expect(

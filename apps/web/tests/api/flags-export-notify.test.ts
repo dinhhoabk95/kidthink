@@ -135,6 +135,9 @@ function mockManagerEvent(
 
   return {
     method,
+    path: url,
+    url,
+    query,
     node: {
       req: {
         method,
@@ -144,6 +147,7 @@ function mockManagerEvent(
           "x-csrf-token": CSRF_TOKEN,
           cookie: `tm_m_csrf=${CSRF_TOKEN}`,
         },
+        body,
       },
       res: {
         statusCode: 200,
@@ -157,9 +161,11 @@ function mockManagerEvent(
         role,
       },
       params,
+      query,
       body,
     },
     _query: query,
+    _requestBody: body,
     _body: body,
   } as any;
 }
@@ -167,6 +173,8 @@ function mockManagerEvent(
 function mockWebhookEvent(body: unknown) {
   return {
     method: "POST",
+    path: "/api/guest/webhooks/ses-sns",
+    url: "/api/guest/webhooks/ses-sns",
     node: {
       req: {
         method: "POST",
@@ -175,12 +183,14 @@ function mockWebhookEvent(body: unknown) {
           "user-agent": "Amazon Simple Notification Service Agent",
           "content-type": "application/json",
         },
+        body,
       },
       res: {},
     },
     context: {
       body,
     },
+    _requestBody: body,
     _body: body,
   } as any;
 }

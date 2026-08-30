@@ -60,6 +60,9 @@ describe("P2.4 Entitlement Grant, Package Catalog Admin & Subscription View Inva
           displayName: "EGR-03 User",
         })
         .returning();
+      if (!u) {
+        throw new Error("Failed to insert u");
+      }
 
       await db.insert(auditLogs).values({
         actorType: "manager",
@@ -81,6 +84,9 @@ describe("P2.4 Entitlement Grant, Package Catalog Admin & Subscription View Inva
             eq(auditLogs.entityId, String(u.id))
           )
         );
+      if (!entry) {
+        throw new Error("Failed to find entry");
+      }
 
       expect(entry).toBeDefined();
       expect(entry.reason).toContain("Cấp quyền sử dụng 30 ngày");
@@ -119,6 +125,9 @@ describe("P2.4 Entitlement Grant, Package Catalog Admin & Subscription View Inva
           displayName: "EGR-06 User",
         })
         .returning();
+      if (!u) {
+        throw new Error("Failed to insert u");
+      }
 
       const [ent] = await db
         .insert(entitlements)
@@ -129,6 +138,9 @@ describe("P2.4 Entitlement Grant, Package Catalog Admin & Subscription View Inva
           status: "active",
         })
         .returning();
+      if (!ent) {
+        throw new Error("Failed to insert ent");
+      }
 
       await db
         .update(entitlements)
@@ -139,6 +151,9 @@ describe("P2.4 Entitlement Grant, Package Catalog Admin & Subscription View Inva
         .select()
         .from(entitlements)
         .where(eq(entitlements.id, ent.id));
+      if (!updated) {
+        throw new Error("Failed to find updated");
+      }
 
       expect(updated.status).toBe("cancelled");
     });
@@ -174,6 +189,9 @@ describe("P2.4 Entitlement Grant, Package Catalog Admin & Subscription View Inva
           displayName: "EGR-08 User",
         })
         .returning();
+      if (!u) {
+        throw new Error("Failed to insert u");
+      }
 
       // Insert manual grant
       await db.insert(entitlements).values({
@@ -203,6 +221,9 @@ describe("P2.4 Entitlement Grant, Package Catalog Admin & Subscription View Inva
           passwordHash: "mock-pwd-hash",
         })
         .returning();
+      if (!mgr) {
+        throw new Error("Failed to insert mgr");
+      }
 
       expect(mgr.role).toBe("super_admin");
       expect(mgr.email).toBeDefined();
@@ -238,6 +259,9 @@ describe("P2.4 Entitlement Grant, Package Catalog Admin & Subscription View Inva
           displayName: "PCA-03 User",
         })
         .returning();
+      if (!u) {
+        throw new Error("Failed to insert u");
+      }
 
       await db.insert(entitlements).values({
         userId: u.id,
@@ -280,6 +304,9 @@ describe("P2.4 Entitlement Grant, Package Catalog Admin & Subscription View Inva
   describe("Subscription View Invariants (BR-SBV-01..07)", () => {
     it("Scenario: BR-SBV-01 — user subscription view resolves effective entitlements dynamically from package_entitlements", () => {
       const pkgStandard = PACKAGE_CATALOG["PKG-standard"];
+      if (!pkgStandard) {
+        throw new Error("PKG-standard not found");
+      }
       expect(pkgStandard.entitlements).toContain("play_standard_games");
       expect(pkgStandard.entitlements).toContain("manage_children");
     });
@@ -301,6 +328,9 @@ describe("P2.4 Entitlement Grant, Package Catalog Admin & Subscription View Inva
           displayName: "SBV-03 User",
         })
         .returning();
+      if (!u) {
+        throw new Error("Failed to insert u");
+      }
 
       await db.insert(paymentOrders).values([
         {
@@ -353,8 +383,9 @@ describe("P2.4 Entitlement Grant, Package Catalog Admin & Subscription View Inva
     });
 
     it("Scenario: BR-SBV-05 — multiple active package grants combine entitlement keys seamlessly", () => {
-      const standardKeys = PACKAGE_CATALOG["PKG-standard"].entitlements;
-      const addonKeys = PACKAGE_CATALOG["PKG-addon_lesson_plan"].entitlements;
+      const standardKeys = PACKAGE_CATALOG["PKG-standard"]?.entitlements ?? [];
+      const addonKeys =
+        PACKAGE_CATALOG["PKG-addon_lesson_plan"]?.entitlements ?? [];
 
       const combined = Array.from(new Set([...standardKeys, ...addonKeys]));
       expect(combined).toContain("play_standard_games");

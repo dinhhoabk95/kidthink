@@ -104,7 +104,40 @@ export function validateThemeCapsHistory(config: ThemeCapsConfig): {
     }
   }
 
+  errors.push(...compareLiveCapsToHistory(config, history));
+
   return { valid: errors.length === 0, errors };
+}
+
+/**
+ * Ngưỡng ĐANG DÙNG phải khớp mốc lịch sử mới nhất.
+ *
+ * Bản cũ chỉ duyệt `history` theo cặp, tức nó canh **sổ ghi chép** chứ không
+ * canh ngưỡng thật. Nâng `stepwise_caps.school` từ 0.37 lên 0.90 mà không thêm
+ * dòng history nào thì validator vẫn xanh, còn `checkCatalogCaps` thì đọc con
+ * số đã nâng. Bậc thang khi ấy chỉ cách một lần sửa tay.
+ */
+function compareLiveCapsToHistory(
+  config: ThemeCapsConfig,
+  history: Record<string, number | string>[]
+): string[] {
+  const newest = history.at(-1);
+  const live = (config as { stepwise_caps?: Record<string, number> })
+    .stepwise_caps;
+  if (!(newest && live)) {
+    return [];
+  }
+
+  const errors: string[] = [];
+  for (const [theme, cap] of Object.entries(live)) {
+    const recorded = newest[theme];
+    if (typeof recorded === "number" && cap > recorded) {
+      errors.push(
+        `BR-CTR-09 (Bậc thang một chiều): stepwise_caps.${theme} = ${cap} cao hơn mốc lịch sử mới nhất (${recorded}). Ngưỡng chỉ được giảm.`
+      );
+    }
+  }
+  return errors;
 }
 
 function validateAgeFloor(

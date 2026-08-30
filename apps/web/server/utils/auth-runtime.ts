@@ -221,9 +221,7 @@ export function getActiveChildUuid(event: H3Event): string {
     getCookie(event, "active_child_id") ||
     getCookie(event, "active_child_uuid");
   const ctxVal =
-    event.context?.user?.active_child_id ||
-    event.context?.active_child_id ||
-    event.context?.user?.activeChildUuid;
+    event.context?.user?.active_child_id || event.context?.active_child_id;
   const val = cookieVal || ctxVal;
   if (!val) {
     throw appError("NO_ACTIVE_CHILD", {

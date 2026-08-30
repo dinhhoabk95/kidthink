@@ -49,8 +49,8 @@
 
 - [x] 27 cặp plan/todo tồn tại, ánh xạ một-một với `GT-001`…`GT-027`.
 - [x] Tổng cột "thiếu tới ≥6" của 27 task bằng **55**.
-- [x] `check:render` in `27 engine active, 0 cài render, 27 thiếu` (thoát 0, bậc thang sẵn sàng).
-- [x] `check:engine-specs` xanh trên cả 27 spec (`0 spec ready`, bậc thang sẵn sàng).
+- [x] `check:render` in `27 engine active, 27 cài render, 0 thiếu` (thoát 0, bậc thang 27/27).
+- [x] `check:engine-specs` xanh trên cả 27 spec (`27 spec ready`, bậc thang 27/27).
 - [ ] `check:engine-depth` bậc 1 xanh (đạt sau 27 lát dọc).
 - [ ] 27 spec engine mang `status: implemented` (đạt sau 27 lát dọc).
 - [ ] 27 ảnh chụp màn thật — mỗi engine một cái (đạt sau 27 lát dọc).
@@ -61,14 +61,14 @@
 
 | Engine | Slug | Lô | Level hiện có | Thiếu tới ≥6 | Spec (SDD) | `render()` | Parse | Band | Bậc 1 | Cửa vào | Ảnh chụp | Task sở hữu |
 |---|---|---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
-| `GT-001` | `tap-select` | mvp | 37 | 0 | draft | ⏳ | ✅ | ✅ | ✅ | ✅ | ⏳ | [`#130`](130-engine-gt-001-todo.md) |
-| `GT-002` | `tap-select-multi` | mvp | 27 | 0 | draft | ⏳ | ✅ | ✅ | ✅ | ✅ | ⏳ | [`#131`](131-engine-gt-002-todo.md) |
-| `GT-003` | `drag-to-container` | mvp | 27 | 0 | draft | ⏳ | ✅ | ✅ | ✅ | ✅ | ⏳ | [`#132`](132-engine-gt-003-todo.md) |
-| `GT-004` | `sort-groups` | mvp | 21 | 0 | draft | ⏳ | ✅ | ✅ | ✅ | ✅ | ⏳ | [`#133`](133-engine-gt-004-todo.md) |
-| `GT-005` | `pair-match` | mvp | 24 | 0 | draft | ⏳ | ✅ | ✅ | ✅ | ✅ | ⏳ | [`#134`](134-engine-gt-005-todo.md) |
-| `GT-006` | `sequence-order` | mvp | 21 | 0 | draft | ⏳ | ✅ | ✅ | ✅ | ✅ | ⏳ | [`#135`](135-engine-gt-006-todo.md) |
-| `GT-007` | `number-bond` | montessori | 6 | 0 | draft | ⏳ | ✅ | ✅ | ✅ | ✅ | ⏳ | [`#136`](136-engine-gt-007-todo.md) |
-| `GT-008` | `drag-to-slot` | montessori | 6 | 0 | draft | ⏳ | ✅ | ✅ | ✅ | ✅ | ⏳ | [`#137`](137-engine-gt-008-todo.md) |
+| `GT-001` | `tap-select` | mvp | 37 | 0 | approved | ✅ | ✅ | ✅ | ✅ | ✅ | ⏳ | [`#130`](130-engine-gt-001-todo.md) |
+| `GT-002` | `tap-select-multi` | mvp | 27 | 0 | approved | ✅ | ✅ | ✅ | ✅ | ✅ | ⏳ | [`#131`](131-engine-gt-002-todo.md) |
+| `GT-003` | `drag-to-container` | mvp | 27 | 0 | approved | ✅ | ✅ | ✅ | ✅ | ✅ | ⏳ | [`#132`](132-engine-gt-003-todo.md) |
+| `GT-004` | `sort-groups` | mvp | 21 | 0 | approved | ✅ | ✅ | ✅ | ✅ | ✅ | ⏳ | [`#133`](133-engine-gt-004-todo.md) |
+| `GT-005` | `pair-match` | mvp | 24 | 0 | approved | ✅ | ✅ | ✅ | ✅ | ✅ | ⏳ | [`#134`](134-engine-gt-005-todo.md) |
+| `GT-006` | `sequence-order` | mvp | 21 | 0 | approved | ✅ | ✅ | ✅ | ✅ | ✅ | ⏳ | [`#135`](135-engine-gt-006-todo.md) |
+| `GT-007` | `number-bond` | montessori | 6 | 0 | approved | ✅ | ✅ | ✅ | ✅ | ✅ | ⏳ | [`#136`](136-engine-gt-007-todo.md) |
+| `GT-008` | `drag-to-slot` | montessori | 6 | 0 | approved | ✅ | ✅ | ✅ | ✅ | ✅ | ⏳ | [`#137`](137-engine-gt-008-todo.md) |
 | `GT-009` | `clue-deduction` | montessori | 3 | 3 | draft | ⏳ | ✅ | ✅ | ⏳ | ✅ | ⏳ | [`#138`](138-engine-gt-009-todo.md) |
 | `GT-010` | `substitution` | montessori | 3 | 3 | draft | ⏳ | ✅ | ✅ | ⏳ | ✅ | ⏳ | [`#139`](139-engine-gt-010-todo.md) |
 | `GT-011` | `matrix-choice` | montessori | 3 | 3 | draft | ⏳ | ✅ | ✅ | ⏳ | ✅ | ⏳ | [`#140`](140-engine-gt-011-todo.md) |

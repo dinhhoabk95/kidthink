@@ -12,6 +12,7 @@ import {
   packages,
 } from "./schema/billing.ts";
 import { consentRequirements, managers } from "./schema/identity.ts";
+import { runSeedContent } from "./seed-content/cli/seed-content.ts";
 import { seedSkillActionSuggestions } from "./seed-master/action-suggestions.ts";
 import { seedContentTags } from "./seed-master/content-tags.ts";
 import { seedCurriculaMasterData } from "./seed-master/curricula.ts";
@@ -155,6 +156,18 @@ export async function seed() {
   console.log(
     `[db:seed] Curricula seeded: ${currStats.curriculaCount} curricula, ${currStats.weeksCount} weeks, ${currStats.itemsCount} items.`
   );
+
+  // 10. Gieo nội dung thật: level, activity, lesson.
+  //
+  // Trước đây `db:seed` dừng ở master data, còn nội dung nằm sau một lệnh
+  // riêng `db:seed:content` mà không script nào gọi — nên một máy mới chạy
+  // `pnpm db:seed` xong vẫn có 0 trò chơi. Bỏ qua bằng
+  // `MINDKID_SEED_MASTER_ONLY=1` khi chỉ cần master data (ví dụ trong test).
+  if (process.env.MINDKID_SEED_MASTER_ONLY === "1") {
+    console.log("[db:seed] Bỏ qua nội dung (MINDKID_SEED_MASTER_ONLY=1).");
+  } else {
+    await runSeedContent(false, `SEED-${Date.now()}`);
+  }
 
   console.log("✅ [db:seed] Seed completed successfully.");
 }

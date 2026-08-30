@@ -32,17 +32,14 @@ export default defineEventHandler(async (event) => {
     });
   }
 
-  const raw =
-    (event.context?.body as unknown) ||
-    ((event as Record<string, unknown>)._body as unknown) ||
-    (await readBody(event).catch(() => ({})));
+  const raw = event.context?.body ?? (await readBody(event).catch(() => ({})));
 
   const parsed = patchErrorLogSchema.parse(raw);
   const status = parsed.status as (typeof errorLogs.$inferInsert)["status"];
   const notes = parsed.notes ? parsed.notes.trim() : null;
 
   const db = getOwnerDb();
-  const managerId = manager.manager_id || manager.id || 1;
+  const managerId = manager.manager_id;
 
   // BR-ELV-07: Update all errors with this fingerprint
   await db
@@ -55,14 +52,16 @@ export default defineEventHandler(async (event) => {
     })
     .where(eq(errorLogs.fingerprint, fingerprint));
 
-  await writeAudit(db, {
-    actor_type: "manager",
-    actor_id: managerId,
-    action: "error_group_status_changed",
-    reason: notes || "Thay đổi trạng thái nhóm lỗi",
-    entity_type: "error_group",
-    entity_id: fingerprint,
-    after_data: { status, notes },
+  await db.transaction(async (tx) => {
+    await writeAudit(tx, {
+      actor_type: "manager",
+      actor_id: managerId,
+      action: "feature_flag_changed",
+      reason: notes || "Thay đổi trạng thái nhóm lỗi",
+      entity_type: "error_group",
+      entity_id: fingerprint,
+      after_data: { status, notes },
+    });
   });
 
   return {

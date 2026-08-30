@@ -43,6 +43,9 @@ describe("P3.6 Next Game Recommendation Invariants (BR-REC-01..08, D-MQ..D-MW)",
         displayName: "Parent REC",
       })
       .returning();
+    if (!u) {
+      throw new Error("Failed to insert user");
+    }
 
     const [child] = await db
       .insert(childProfiles)
@@ -53,6 +56,9 @@ describe("P3.6 Next Game Recommendation Invariants (BR-REC-01..08, D-MQ..D-MW)",
         avatarId: "preset_01",
       })
       .returning();
+    if (!child) {
+      throw new Error("Failed to insert child");
+    }
 
     // 2. Taxonomy fixtures
     let [comp] = await db
@@ -73,6 +79,9 @@ describe("P3.6 Next Game Recommendation Invariants (BR-REC-01..08, D-MQ..D-MW)",
         })
         .returning();
     }
+    if (!comp) {
+      throw new Error("Failed to find or insert comp");
+    }
 
     let [strand] = await db
       .select()
@@ -90,6 +99,9 @@ describe("P3.6 Next Game Recommendation Invariants (BR-REC-01..08, D-MQ..D-MW)",
           position: 1,
         })
         .returning();
+    }
+    if (!strand) {
+      throw new Error("Failed to find or insert strand");
     }
 
     const code1 = "C1.CNT.01";
@@ -113,6 +125,9 @@ describe("P3.6 Next Game Recommendation Invariants (BR-REC-01..08, D-MQ..D-MW)",
         })
         .returning();
     }
+    if (!skill1) {
+      throw new Error("Failed to find or insert skill1");
+    }
 
     const code2 = "C1.CNT.02";
     let [skill2] = await db
@@ -134,6 +149,9 @@ describe("P3.6 Next Game Recommendation Invariants (BR-REC-01..08, D-MQ..D-MW)",
           status: "seeded",
         })
         .returning();
+    }
+    if (!skill2) {
+      throw new Error("Failed to find or insert skill2");
     }
 
     // Skill 1 is prerequisite for Skill 2
@@ -165,6 +183,9 @@ describe("P3.6 Next Game Recommendation Invariants (BR-REC-01..08, D-MQ..D-MW)",
           status: "active",
         })
         .returning();
+    }
+    if (!tmpl) {
+      throw new Error("Failed to find or insert tmpl");
     }
 
     // Helper to generate unique valid level code
@@ -202,6 +223,9 @@ describe("P3.6 Next Game Recommendation Invariants (BR-REC-01..08, D-MQ..D-MW)",
         thumbnailEmoji: "EMJ-apple",
       })
       .returning();
+    if (!levelFree1) {
+      throw new Error("Failed to insert levelFree1");
+    }
 
     const [levelFree2] = await db
       .insert(gameLevels)
@@ -221,6 +245,9 @@ describe("P3.6 Next Game Recommendation Invariants (BR-REC-01..08, D-MQ..D-MW)",
         thumbnailEmoji: "EMJ-banana",
       })
       .returning();
+    if (!levelFree2) {
+      throw new Error("Failed to insert levelFree2");
+    }
 
     const [levelStandard] = await db
       .insert(gameLevels)
@@ -240,6 +267,9 @@ describe("P3.6 Next Game Recommendation Invariants (BR-REC-01..08, D-MQ..D-MW)",
         thumbnailEmoji: "EMJ-orange",
       })
       .returning();
+    if (!levelStandard) {
+      throw new Error("Failed to insert levelStandard");
+    }
 
     const [levelPremium] = await db
       .insert(gameLevels)
@@ -259,6 +289,9 @@ describe("P3.6 Next Game Recommendation Invariants (BR-REC-01..08, D-MQ..D-MW)",
         thumbnailEmoji: "EMJ-strawberry",
       })
       .returning();
+    if (!levelPremium) {
+      throw new Error("Failed to insert levelPremium");
+    }
 
     // Map skills to levels
     await db.insert(contentSkillMap).values([
@@ -325,6 +358,9 @@ describe("P3.6 Next Game Recommendation Invariants (BR-REC-01..08, D-MQ..D-MW)",
         status: "published",
       })
       .returning();
+    if (!curr) {
+      throw new Error("Failed to insert curr");
+    }
 
     await db.insert(curriculumWeeks).values({
       curriculumId: curr.id,
@@ -344,6 +380,9 @@ describe("P3.6 Next Game Recommendation Invariants (BR-REC-01..08, D-MQ..D-MW)",
         isRequired: true,
       })
       .returning();
+    if (!item1) {
+      throw new Error("Failed to insert item1");
+    }
 
     const [enrollment] = await db
       .insert(curriculumEnrollments)
@@ -353,6 +392,9 @@ describe("P3.6 Next Game Recommendation Invariants (BR-REC-01..08, D-MQ..D-MW)",
         status: "active",
       })
       .returning();
+    if (!enrollment) {
+      throw new Error("Failed to insert enrollment");
+    }
 
     const recs = await getRecommendationsForChild(db, {
       childId: child.id,

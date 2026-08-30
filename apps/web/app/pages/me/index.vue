@@ -477,12 +477,86 @@
     route.query.child_id ? Number(route.query.child_id) : null
   );
 
+  interface DashboardChild {
+    id: number;
+    uuid: string;
+    display_name: string;
+    birth_year: number;
+    avatar_id: string;
+    relationship: string | null;
+    days_played_7d?: number;
+    latest_level?: string | null;
+  }
+
+  interface DashboardRecentProgress {
+    child_id: number;
+    child_uuid: string;
+    display_name: string;
+    days_played_7d: number;
+    total_play_time_minutes_7d: number;
+    levels_completed_7d: number;
+    report_url: string;
+  }
+
+  interface DashboardNextItem {
+    entity_type: string;
+    entity_code: string;
+    title: string;
+    instruction?: string;
+    locked?: boolean;
+  }
+
+  interface DashboardCurriculum {
+    enrolled: boolean;
+    enrollment_id?: number;
+    curriculum_id?: number;
+    curriculum_code?: string;
+    title?: string;
+    duration_weeks?: number;
+    current_week?: number;
+    current_session?: number;
+    progress?: number;
+    week_progress?: number;
+    week_blocked_by_tier?: boolean;
+    is_completed?: boolean;
+    next_item?: DashboardNextItem | null;
+  }
+
+  interface DashboardSubscription {
+    package_name?: string;
+    status?: string;
+    expires_at?: string | null;
+    days_left?: number | null;
+    upgrade_cta?: { label: string; url?: string } | null;
+    quota?: {
+      show_quota_indicator: boolean;
+      children_count: number;
+      max_children: number;
+      usage_ratio: number;
+    };
+  }
+
+  interface DashboardResponse {
+    todo?: Array<{
+      type: string;
+      title: string;
+      message: string;
+      cta: string;
+    }>;
+    children?: DashboardChild[];
+    recent_progress?: DashboardRecentProgress[];
+    curriculum?: DashboardCurriculum | null;
+    subscription?: DashboardSubscription | null;
+    active_child_id?: number | null;
+    active_child_uuid?: string | null;
+  }
+
   const {
     data: dashboardData,
     pending,
     error: fetchError,
     refresh,
-  } = await useFetch("/api/users/dashboard", {
+  } = await useFetch<DashboardResponse>("/api/users/dashboard", {
     query: computed(() => ({
       child_id: selectedChildId.value || undefined,
     })),
@@ -503,20 +577,22 @@
       return null;
     }
     const found = dashboardData.value.children.find(
-      (c: { id: number; display_name: string }) =>
-        c.id === selectedChildId.value
+      (c) => c.id === selectedChildId.value
     );
     return found?.display_name || null;
   });
 
-  function selectChild(childId: number) {
-    selectedChildId.value = childId;
+  function selectChild(childId?: number | null) {
+    if (childId !== undefined && childId !== null) {
+      selectedChildId.value = childId;
+    }
   }
 
-  function enterPlayMode(childId: number) {
-    // Set active child cookie and navigate to /play
-    const cookie = useCookie("active_child_id", { path: "/" });
-    cookie.value = String(childId);
+  function enterPlayMode(childId?: number | null) {
+    if (childId !== undefined && childId !== null) {
+      const cookie = useCookie("active_child_id", { path: "/" });
+      cookie.value = String(childId);
+    }
     router.push("/play");
   }
 
@@ -528,7 +604,10 @@
     router.push("/play");
   }
 
-  function resolveAvatarEmoji(avatarId: string): string {
+  function resolveAvatarEmoji(avatarId?: string | null): string {
+    if (!avatarId) {
+      return "⭐";
+    }
     const map: Record<string, string> = {
       bear: "🐻",
       rabbit: "🐰",
@@ -542,7 +621,10 @@
     return map[avatarId] || "⭐";
   }
 
-  function calculateAge(birthYear: number): number {
+  function calculateAge(birthYear?: number | null): number {
+    if (!birthYear) {
+      return 3;
+    }
     const currentYear = new Date().getFullYear();
     return Math.max(1, currentYear - birthYear);
   }

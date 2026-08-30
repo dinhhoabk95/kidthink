@@ -285,9 +285,9 @@ lại nhãn L/XL không có lát con; mỗi package tiếp tục giữ khoảng 
 > "mười ba spec" ở đoạn dưới đã cũ — hôm nay là **22 spec cộng 27 phiếu**.
 
 Mười ba spec chưa mang `status: implemented`. Một trong số đó
-([`business-rules.md`](00-foundation/business-rules.md)) là registry quản trị corpus, do
-`lint:specs` thi hành chứ không do test runtime, nên nó nằm trong task bằng chứng test chứ không
-có task riêng.
+([`business-rules.md`](00-foundation/business-rules.md)) là registry quản trị corpus. Nó **từng** do `lint:specs` thi hành; `lint:specs` mất cùng
+`packages/gates` ngày 2026-08-29, nên hiện registry này **không có cổng nào** và cũng không có
+task riêng. Khoản nợ đó nằm ở [`08-quality/runtime-gates.md`](08-quality/runtime-gates.md) §3.
 
 | Task | Spec đóng | Chặn bởi |
 |---|---|---|

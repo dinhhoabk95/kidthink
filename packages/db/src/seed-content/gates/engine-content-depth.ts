@@ -10,7 +10,7 @@ import { repoPath } from "@mindkid/config/paths";
 import {
   type AgeBand,
   ALL_TEMPLATES,
-  type GameTemplateDef,
+  type GameTemplate,
 } from "@mindkid/game-engine";
 import type { ContentSeed } from "#src/seed-content/types";
 
@@ -108,6 +108,42 @@ export function toAgeBand(ageMin: number, ageMax?: number): AgeBand {
   return "4-5";
 }
 
+/**
+ * `BR-ECD-13` có **hai** vế, và bản cũ chỉ cài một.
+ *
+ * Vế đã cài: band thuộc `banned_age_bands` — nhưng mảng đó chỉ có mặt trên 6
+ * trên 27 template. Vế bị bỏ: khoảng tuổi của level nằm ngoài khoảng tuổi của
+ * chính template. Thiếu vế thứ hai, 7 level đặt trẻ 3 tuổi lên engine tự khai
+ * 4+ mà không cổng nào thấy, và con số thiếu (35 thay vì 42 như spec ghi) đã
+ * bị chốt làm baseline ở ba nơi.
+ */
+export function isLevelOutOfBand(
+  level: { header: { age_min: number; age_max: number } },
+  template: {
+    age_min?: number;
+    age_max?: number;
+    banned_age_bands?: AgeBand[];
+  },
+  band: AgeBand
+): boolean {
+  if (template.banned_age_bands?.includes(band)) {
+    return true;
+  }
+  if (
+    typeof template.age_min === "number" &&
+    level.header.age_min < template.age_min
+  ) {
+    return true;
+  }
+  if (
+    typeof template.age_max === "number" &&
+    level.header.age_max > template.age_max
+  ) {
+    return true;
+  }
+  return false;
+}
+
 export function loadEngineDepthConfig(customPath?: string): EngineDepthConfig {
   const configPath =
     customPath || repoPath("packages/db/config/engine-depth.json");
@@ -178,7 +214,7 @@ function accumulateSpans(
 }
 
 export function computeEngineMetrics(
-  template: GameTemplateDef,
+  template: GameTemplate,
   levels: ContentSeed<unknown, unknown>[]
 ): EngineMetrics {
   const engineLevels = levels.filter(
@@ -198,7 +234,7 @@ export function computeEngineMetrics(
   for (const lvl of engineLevels) {
     const band = toAgeBand(lvl.header.age_min, lvl.header.age_max);
     bandCounts[band] = (bandCounts[band] || 0) + 1;
-    if (bannedBands.has(band)) {
+    if (isLevelOutOfBand(lvl, template, band)) {
       out_of_band_count++;
     }
   }
@@ -340,7 +376,7 @@ function collectViolationsForEngine(
 export function evaluateEngineDepth(
   levels: ContentSeed<unknown, unknown>[],
   config: EngineDepthConfig,
-  customTemplates?: Record<string, GameTemplateDef>
+  customTemplates?: Record<string, GameTemplate>
 ): EngineDepthReport {
   validateEngineDepthHistory(config);
 
@@ -351,9 +387,7 @@ export function evaluateEngineDepth(
   }
 
   const templates = customTemplates || ALL_TEMPLATES;
-  const activeTemplates = Object.values(templates).filter(
-    (t) => (t as GameTemplateDef & { status?: string }).status !== "deprecated"
-  );
+  const activeTemplates = Object.values(templates);
 
   const stepCriteria = config.steps[String(config.active_step)];
   if (!stepCriteria) {

@@ -191,7 +191,7 @@ function evaluateRoundsCorrect(rounds: RoundState[]): number {
 
     if (round.attempts.length > 0) {
       round.attempts.sort((a, b) => a.seq - b.seq);
-      if (round.attempts[0].type === "correct") {
+      if (round.attempts[0]?.type === "correct") {
         correctCount++;
       }
     }

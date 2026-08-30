@@ -28,6 +28,9 @@ describe("Task P4.2 — PDF Export Lifecycle Integration Tests (BR-PDF-01..09)",
         displayName: "Cô Giáo Lifecycle",
       })
       .returning();
+    if (!user) {
+      throw new Error("Failed to insert user");
+    }
     testUserId = user.id;
 
     const [plan] = await db
@@ -41,6 +44,9 @@ describe("Task P4.2 — PDF Export Lifecycle Integration Tests (BR-PDF-01..09)",
         version: 1,
       })
       .returning();
+    if (!plan) {
+      throw new Error("Failed to insert plan");
+    }
     testPlanUuid = plan.uuid;
 
     await db.insert(lessonPlanItems).values([
@@ -89,13 +95,13 @@ describe("Task P4.2 — PDF Export Lifecycle Integration Tests (BR-PDF-01..09)",
       .where(eq(exportJobs.uuid, res.job_uuid));
 
     expect(jobInDb).toBeDefined();
-    expect(jobInDb.status).toBe("queued");
-    expect(jobInDb.userId).toBe(testUserId);
-    expect(jobInDb.refId).toBe(testPlanUuid);
+    expect(jobInDb?.status).toBe("queued");
+    expect(jobInDb?.userId).toBe(testUserId);
+    expect(jobInDb?.refId).toBe(testPlanUuid);
   });
 
   it("[BR-PDF-02] Từ chối khi thiếu entitlement export_pdf", async () => {
-    let error: any;
+    let error: unknown;
     try {
       await requestExportJob(testUserId, "lesson_plan", testPlanUuid, {
         userEntitlements: ["create_lesson_plan"], // missing export_pdf
@@ -104,7 +110,7 @@ describe("Task P4.2 — PDF Export Lifecycle Integration Tests (BR-PDF-01..09)",
       error = e;
     }
     expect(error).toBeDefined();
-    expect(error.code).toBe("ENTITLEMENT_REQUIRED");
+    expect((error as { code?: string })?.code).toBe("ENTITLEMENT_REQUIRED");
   });
 
   it("[BR-PDF-02] Kiểm soát quota tối đa 20 lượt xuất trong tháng", async () => {
@@ -124,7 +130,7 @@ describe("Task P4.2 — PDF Export Lifecycle Integration Tests (BR-PDF-01..09)",
     expect(currentUsage).toBe(20);
 
     // 21st attempt must throw QUOTA_EXCEEDED
-    let error: any;
+    let error: unknown;
     try {
       await requestExportJob(testUserId, "lesson_plan", testPlanUuid, {
         userEntitlements: ["export_pdf"],
@@ -133,7 +139,7 @@ describe("Task P4.2 — PDF Export Lifecycle Integration Tests (BR-PDF-01..09)",
       error = e;
     }
     expect(error).toBeDefined();
-    expect(error.code).toBe("QUOTA_EXCEEDED");
+    expect((error as { code?: string })?.code).toBe("QUOTA_EXCEEDED");
   });
 
   it("[BR-PDF-01, 03, 08] Worker render hoàn tất cập nhật status done, số trang, signed URL và hạn 7 ngày", async () => {
@@ -181,6 +187,10 @@ describe("Task P4.2 — PDF Export Lifecycle Integration Tests (BR-PDF-01..09)",
       })
       .returning();
 
+    if (!brokenJob) {
+      throw new Error("Failed to insert brokenJob");
+    }
+
     // Worker fails to process
     await expect(processPdfRenderJob(brokenJob.uuid)).rejects.toThrow();
 
@@ -189,8 +199,8 @@ describe("Task P4.2 — PDF Export Lifecycle Integration Tests (BR-PDF-01..09)",
       .from(exportJobs)
       .where(eq(exportJobs.id, brokenJob.id));
 
-    expect(updatedJob.status).toBe("failed");
-    expect(updatedJob.error).toBeDefined();
+    expect(updatedJob?.status).toBe("failed");
+    expect(updatedJob?.error).toBeDefined();
 
     // Verify failed jobs do not count towards monthly quota (BR-PDF-09 / refund)
     const usage = await getUserMonthlyExportCount(testUserId, db);
@@ -216,6 +226,10 @@ describe("Task P4.2 — PDF Export Lifecycle Integration Tests (BR-PDF-01..09)",
       })
       .returning();
 
+    if (!expiredJob) {
+      throw new Error("Failed to insert expiredJob");
+    }
+
     const cleanupRes = await runPdfCleanupJob();
     expect(cleanupRes.cleanedCount).toBeGreaterThanOrEqual(1);
 
@@ -224,6 +238,6 @@ describe("Task P4.2 — PDF Export Lifecycle Integration Tests (BR-PDF-01..09)",
       .from(exportJobs)
       .where(eq(exportJobs.id, expiredJob.id));
 
-    expect(cleanedJob.filePath).toBeNull();
+    expect(cleanedJob?.filePath).toBeNull();
   });
 });

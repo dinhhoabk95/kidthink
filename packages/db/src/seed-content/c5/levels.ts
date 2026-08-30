@@ -1,12 +1,11 @@
 import type { ContentSeed } from "#src/seed-content/types";
 
 export const C5_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
-  // Level 1 (Free)
   {
     header: {
       code: "GL-C5-VOC-CARD-0001",
       content_version: 1,
-      template_code: "GT-001",
+      template_code: "GT-012",
       title: "Học từ vựng con vật",
       instruction: "Em hãy chọn hình chú chó nhé.",
       age_min: 3,
@@ -21,15 +20,47 @@ export const C5_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
       origin: "human",
       authored_in: "repo_seed",
     },
-    content_pack: { items: [{ id: "dog", emoji: "🐶" }], target_count: 1 },
-    difficulty_params: { count_limit: 3 },
+    content_pack: {
+      prompt: "Em hãy chọn hình chú chó nhé.",
+      flash_items: [
+        {
+          item_id: "dog",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-dog",
+          },
+        },
+      ],
+      arrangement: "line",
+      options: [
+        {
+          value: 1,
+          is_correct: true,
+        },
+        {
+          value: 2,
+          is_correct: false,
+        },
+        {
+          value: 3,
+          is_correct: false,
+        },
+      ],
+    },
+    difficulty_params: {
+      flash_ms: 3000,
+      item_count: 1,
+      distractor_count: 2,
+      allow_replay: true,
+      hint_after_ms: 9000,
+      allow_retry: true,
+    },
   },
-  // Level 2 (Login)
   {
     header: {
       code: "GL-C5-VOC-CARD-0002",
       content_version: 1,
-      template_code: "GT-001",
+      template_code: "GT-012",
       title: "Học từ vựng con mèo",
       instruction: "Em chọn hình chú mèo ngoan.",
       age_min: 3,
@@ -45,20 +76,53 @@ export const C5_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
       authored_in: "repo_seed",
     },
     content_pack: {
-      items: [
-        { id: "cat1", emoji: "🐱" },
-        { id: "cat2", emoji: "🐱" },
+      prompt: "Em chọn hình chú mèo ngoan.",
+      flash_items: [
+        {
+          item_id: "cat1",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-cat",
+          },
+        },
+        {
+          item_id: "cat2",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-cat",
+          },
+        },
       ],
-      target_count: 2,
+      arrangement: "line",
+      options: [
+        {
+          value: 1,
+          is_correct: false,
+        },
+        {
+          value: 2,
+          is_correct: true,
+        },
+        {
+          value: 3,
+          is_correct: false,
+        },
+      ],
     },
-    difficulty_params: { count_limit: 3 },
+    difficulty_params: {
+      flash_ms: 3000,
+      item_count: 2,
+      distractor_count: 2,
+      allow_replay: true,
+      hint_after_ms: 9000,
+      allow_retry: true,
+    },
   },
-  // Level 3 (Login)
   {
     header: {
       code: "GL-C5-VOC-CARD-0003",
       content_version: 1,
-      template_code: "GT-001",
+      template_code: "GT-012",
       title: "Học từ vựng chú gà gáy",
       instruction: "Chạm vào chú gà trống báo thức.",
       age_min: 3,
@@ -73,19 +137,51 @@ export const C5_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
       origin: "human",
       authored_in: "repo_seed",
     },
-    content_pack: { items: [{ id: "rooster", emoji: "🐓" }], target_count: 1 },
-    difficulty_params: { count_limit: 3 },
+    content_pack: {
+      prompt: "Chạm vào chú gà trống báo thức.",
+      flash_items: [
+        {
+          item_id: "rooster",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-rooster",
+          },
+        },
+      ],
+      arrangement: "line",
+      options: [
+        {
+          value: 1,
+          is_correct: true,
+        },
+        {
+          value: 2,
+          is_correct: false,
+        },
+        {
+          value: 3,
+          is_correct: false,
+        },
+      ],
+    },
+    difficulty_params: {
+      flash_ms: 3000,
+      item_count: 1,
+      distractor_count: 2,
+      allow_replay: true,
+      hint_after_ms: 9000,
+      allow_retry: true,
+    },
   },
-  // Level 4 (Login)
   {
     header: {
       code: "GL-C5-VOC-BOX-0004",
       content_version: 1,
-      template_code: "GT-002",
+      template_code: "GT-003",
       title: "Ghép thẻ từ vựng trái cây",
       instruction: "Kéo quả táo vào ô chữ táo.",
-      age_min: 3,
-      age_max: 4,
+      age_min: 4,
+      age_max: 5,
       difficulty: 1,
       access_tier: "login",
       skill_codes: ["C5.STO.01"],
@@ -97,24 +193,49 @@ export const C5_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
       authored_in: "repo_seed",
     },
     content_pack: {
-      containers: [{ id: "word_apple", label: "Táo", target_word: "apple" }],
-      drag_items: [
-        { id: "a1", emoji: "🍎", word: "apple" },
-        { id: "b1", emoji: "🍌", word: "banana" },
+      prompt: "Kéo quả táo vào ô chữ táo.",
+      container: {
+        container_id: "word_apple",
+        label: "Táo",
+        accepts_attribute: "apple",
+      },
+      items: [
+        {
+          item_id: "a1",
+          attribute: "apple",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-red-apple",
+          },
+          is_correct: true,
+        },
+        {
+          item_id: "b1",
+          attribute: "banana",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-banana",
+          },
+          is_correct: false,
+        },
       ],
     },
-    difficulty_params: { item_count: 2 },
+    difficulty_params: {
+      distractor_count: 1,
+      target_count: 1,
+      hint_after_ms: 9000,
+      allow_retry: true,
+    },
   },
-  // Level 5 (Login)
   {
     header: {
       code: "GL-C5-VOC-BOX-0005",
       content_version: 1,
-      template_code: "GT-002",
+      template_code: "GT-003",
       title: "Ghép thẻ từ vựng chuối",
       instruction: "Kéo quả chuối vào ô chữ chuối.",
-      age_min: 3,
-      age_max: 4,
+      age_min: 4,
+      age_max: 5,
       difficulty: 2,
       access_tier: "login",
       skill_codes: ["C5.STO.01"],
@@ -126,17 +247,40 @@ export const C5_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
       authored_in: "repo_seed",
     },
     content_pack: {
-      containers: [
-        { id: "word_banana", label: "Chuối", target_word: "banana" },
-      ],
-      drag_items: [
-        { id: "b1", emoji: "🍌", word: "banana" },
-        { id: "o1", emoji: "🍊", word: "orange" },
+      prompt: "Kéo quả chuối vào ô chữ chuối.",
+      container: {
+        container_id: "word_banana",
+        label: "Chuối",
+        accepts_attribute: "banana",
+      },
+      items: [
+        {
+          item_id: "b1",
+          attribute: "banana",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-banana",
+          },
+          is_correct: true,
+        },
+        {
+          item_id: "o1",
+          attribute: "orange",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-orange",
+          },
+          is_correct: false,
+        },
       ],
     },
-    difficulty_params: { item_count: 2 },
+    difficulty_params: {
+      distractor_count: 1,
+      target_count: 1,
+      hint_after_ms: 9000,
+      allow_retry: true,
+    },
   },
-  // Level 6 (Login)
   {
     header: {
       code: "GL-C5-EXP-CMP-0006",
@@ -157,13 +301,24 @@ export const C5_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
       authored_in: "repo_seed",
     },
     content_pack: {
-      left_group: [{ emoji: "🏠", concept: "big" }],
-      right_group: [{ emoji: "🛖", concept: "small" }],
+      left_group: [
+        {
+          emoji: "🏠",
+          concept: "big",
+        },
+      ],
+      right_group: [
+        {
+          emoji: "🛖",
+          concept: "small",
+        },
+      ],
       target: "big",
     },
-    difficulty_params: { max_difference: 1 },
+    difficulty_params: {
+      max_difference: 1,
+    },
   },
-  // Level 7 (Standard)
   {
     header: {
       code: "GL-C5-EXP-CMP-0007",
@@ -184,13 +339,24 @@ export const C5_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
       authored_in: "repo_seed",
     },
     content_pack: {
-      left_group: [{ emoji: "🦒", concept: "tall" }],
-      right_group: [{ emoji: "🐿️", concept: "short" }],
+      left_group: [
+        {
+          emoji: "🦒",
+          concept: "tall",
+        },
+      ],
+      right_group: [
+        {
+          emoji: "🐿️",
+          concept: "short",
+        },
+      ],
       target: "tall",
     },
-    difficulty_params: { max_difference: 1 },
+    difficulty_params: {
+      max_difference: 1,
+    },
   },
-  // Level 8 (Standard)
   {
     header: {
       code: "GL-C5-VOC-SEQ-0008",
@@ -215,9 +381,10 @@ export const C5_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
       options: ["👨", "👩", "👶"],
       correct_option: "👨",
     },
-    difficulty_params: { pattern_length: 2 },
+    difficulty_params: {
+      pattern_length: 2,
+    },
   },
-  // Level 9 (Standard)
   {
     header: {
       code: "GL-C5-VOC-LOC-0009",
@@ -240,15 +407,24 @@ export const C5_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
     content_pack: {
       grid: [
         [
-          { id: "book", emoji: "📘", word: "book" },
-          { id: "pen", emoji: "✏️", word: "pen" },
+          {
+            id: "book",
+            emoji: "📘",
+            word: "book",
+          },
+          {
+            id: "pen",
+            emoji: "✏️",
+            word: "pen",
+          },
         ],
       ],
       target_id: "book",
     },
-    difficulty_params: { grid_size: 2 },
+    difficulty_params: {
+      grid_size: 2,
+    },
   },
-  // Level 10 (Standard)
   {
     header: {
       code: "GL-C5-SUB-FAST-0010",
@@ -256,8 +432,8 @@ export const C5_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
       template_code: "GT-006",
       title: "Nghe từ nhận diện nhanh",
       instruction: "Hình nào mang từ vựng quả táo.",
-      age_min: 4,
-      age_max: 5,
+      age_min: 5,
+      age_max: 6,
       difficulty: 2,
       access_tier: "standard",
       skill_codes: ["C5.STO.01"],
@@ -269,19 +445,24 @@ export const C5_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
       authored_in: "repo_seed",
     },
     content_pack: {
-      flash_items: [{ emoji: "🍎" }],
+      flash_items: [
+        {
+          emoji: "🍎",
+        },
+      ],
       flash_duration_ms: 1500,
       options: ["Quả táo", "Quả cam"],
       correct_answer: "Quả táo",
     },
-    difficulty_params: { flash_duration_ms: 1500 },
+    difficulty_params: {
+      flash_duration_ms: 1500,
+    },
   },
-  // Level 11 (Standard)
   {
     header: {
       code: "GL-C5-VOC-CARD-0011",
       content_version: 1,
-      template_code: "GT-001",
+      template_code: "GT-012",
       title: "Học từ vựng xe cảnh sát",
       instruction: "Đếm số chiếc xe cảnh sát.",
       age_min: 4,
@@ -297,20 +478,53 @@ export const C5_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
       authored_in: "repo_seed",
     },
     content_pack: {
-      items: [
-        { id: "p1", emoji: "🚔" },
-        { id: "p2", emoji: "🚔" },
+      prompt: "Đếm số chiếc xe cảnh sát.",
+      flash_items: [
+        {
+          item_id: "p1",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-oncoming-police-car",
+          },
+        },
+        {
+          item_id: "p2",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-oncoming-police-car",
+          },
+        },
       ],
-      target_count: 2,
+      arrangement: "line",
+      options: [
+        {
+          value: 1,
+          is_correct: false,
+        },
+        {
+          value: 2,
+          is_correct: true,
+        },
+        {
+          value: 3,
+          is_correct: false,
+        },
+      ],
     },
-    difficulty_params: { count_limit: 5 },
+    difficulty_params: {
+      flash_ms: 3000,
+      item_count: 2,
+      distractor_count: 2,
+      allow_replay: true,
+      hint_after_ms: 9000,
+      allow_retry: true,
+    },
   },
-  // Level 12 (Standard)
   {
     header: {
       code: "GL-C5-VOC-BOX-0012",
       content_version: 1,
-      template_code: "GT-002",
+      template_code: "GT-003",
       title: "Ghép từ vựng phương tiện bay",
       instruction: "Kéo máy bay vào bầu trời.",
       age_min: 4,
@@ -326,15 +540,40 @@ export const C5_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
       authored_in: "repo_seed",
     },
     content_pack: {
-      containers: [{ id: "sky", label: "Bầu trời", target_category: "air" }],
-      drag_items: [
-        { id: "plane", emoji: "✈️", category: "air" },
-        { id: "boat", emoji: "⛵", category: "water" },
+      prompt: "Kéo máy bay vào bầu trời.",
+      container: {
+        container_id: "sky",
+        label: "Bầu trời",
+        accepts_attribute: "air",
+      },
+      items: [
+        {
+          item_id: "plane",
+          attribute: "air",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-airplane",
+          },
+          is_correct: true,
+        },
+        {
+          item_id: "boat",
+          attribute: "water",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-sailboat",
+          },
+          is_correct: false,
+        },
       ],
     },
-    difficulty_params: { item_count: 2 },
+    difficulty_params: {
+      distractor_count: 1,
+      target_count: 1,
+      hint_after_ms: 9000,
+      allow_retry: true,
+    },
   },
-  // Level 13 (Premium)
   {
     header: {
       code: "GL-C5-EXP-CMP-0013",
@@ -355,13 +594,24 @@ export const C5_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
       authored_in: "repo_seed",
     },
     content_pack: {
-      left_group: [{ emoji: "🌱", stage: "first" }],
-      right_group: [{ emoji: "🌳", stage: "second" }],
+      left_group: [
+        {
+          emoji: "🌱",
+          stage: "first",
+        },
+      ],
+      right_group: [
+        {
+          emoji: "🌳",
+          stage: "second",
+        },
+      ],
       target: "first",
     },
-    difficulty_params: { max_difference: 1 },
+    difficulty_params: {
+      max_difference: 1,
+    },
   },
-  // Level 14 (Premium)
   {
     header: {
       code: "GL-C5-VOC-SEQ-0014",
@@ -386,9 +636,10 @@ export const C5_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
       options: ["🐔", "🥚", "🦆"],
       correct_option: "🐔",
     },
-    difficulty_params: { pattern_length: 3 },
+    difficulty_params: {
+      pattern_length: 3,
+    },
   },
-  // Level 15 (Premium)
   {
     header: {
       code: "GL-C5-VOC-LOC-0015",
@@ -411,15 +662,24 @@ export const C5_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
     content_pack: {
       grid: [
         [
-          { id: "crosswalk", emoji: "🚸", sign: "crosswalk" },
-          { id: "stop", emoji: "🛑", sign: "stop" },
+          {
+            id: "crosswalk",
+            emoji: "🚸",
+            sign: "crosswalk",
+          },
+          {
+            id: "stop",
+            emoji: "🛑",
+            sign: "stop",
+          },
         ],
       ],
       target_id: "crosswalk",
     },
-    difficulty_params: { grid_size: 2 },
+    difficulty_params: {
+      grid_size: 2,
+    },
   },
-  // Level 16 (Premium)
   {
     header: {
       code: "GL-C5-SUB-FAST-0016",
@@ -427,8 +687,8 @@ export const C5_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
       template_code: "GT-006",
       title: "Nhớ từ vựng siêu tốc",
       instruction: "Từ vựng nào vừa xuất hiện.",
-      age_min: 4,
-      age_max: 5,
+      age_min: 5,
+      age_max: 6,
       difficulty: 3,
       access_tier: "premium",
       skill_codes: ["C5.STO.01"],
@@ -440,14 +700,19 @@ export const C5_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
       authored_in: "repo_seed",
     },
     content_pack: {
-      flash_items: [{ emoji: "🚀" }],
+      flash_items: [
+        {
+          emoji: "🚀",
+        },
+      ],
       flash_duration_ms: 1200,
       options: ["Tên lửa", "Máy bay"],
       correct_answer: "Tên lửa",
     },
-    difficulty_params: { flash_duration_ms: 1200 },
+    difficulty_params: {
+      flash_duration_ms: 1200,
+    },
   },
-  // Level 17 (Premium)
   {
     header: {
       code: "GL-C5-EXP-CMP-0017",
@@ -468,18 +733,29 @@ export const C5_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
       authored_in: "repo_seed",
     },
     content_pack: {
-      left_group: [{ emoji: "😄", word: "happy" }],
-      right_group: [{ emoji: "😢", word: "sad" }],
+      left_group: [
+        {
+          emoji: "😄",
+          word: "happy",
+        },
+      ],
+      right_group: [
+        {
+          emoji: "😢",
+          word: "sad",
+        },
+      ],
       target: "happy",
     },
-    difficulty_params: { max_difference: 1 },
+    difficulty_params: {
+      max_difference: 1,
+    },
   },
-  // Level 18 (Premium)
   {
     header: {
       code: "GL-C5-VOC-BOX-0018",
       content_version: 1,
-      template_code: "GT-002",
+      template_code: "GT-003",
       title: "Phân loại nhóm từ chỉ nghề nghiệp",
       instruction: "Kéo dụng cụ bác sĩ vào túi.",
       age_min: 5,
@@ -495,17 +771,40 @@ export const C5_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
       authored_in: "repo_seed",
     },
     content_pack: {
-      containers: [
-        { id: "doctor_kit", label: "Túi bác sĩ", target_job: "doctor" },
-      ],
-      drag_items: [
-        { id: "d1", emoji: "🩺", job: "doctor" },
-        { id: "p1", emoji: "🎨", job: "artist" },
+      prompt: "Kéo dụng cụ bác sĩ vào túi.",
+      container: {
+        container_id: "doctor_kit",
+        label: "Túi bác sĩ",
+        accepts_attribute: "doctor",
+      },
+      items: [
+        {
+          item_id: "d1",
+          attribute: "doctor",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-stethoscope",
+          },
+          is_correct: true,
+        },
+        {
+          item_id: "p1",
+          attribute: "artist",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-artist-palette",
+          },
+          is_correct: false,
+        },
       ],
     },
-    difficulty_params: { item_count: 2 },
+    difficulty_params: {
+      distractor_count: 1,
+      target_count: 1,
+      hint_after_ms: 9000,
+      allow_retry: true,
+    },
   },
-  // Level 19 (Premium)
   {
     header: {
       code: "GL-C5-VOC-SEQ-0019",
@@ -530,9 +829,10 @@ export const C5_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
       options: ["❄️", "🌸", "🌧️"],
       correct_option: "❄️",
     },
-    difficulty_params: { pattern_length: 4 },
+    difficulty_params: {
+      pattern_length: 4,
+    },
   },
-  // Level 20 (Premium)
   {
     header: {
       code: "GL-C5-SUB-FAST-0020",
@@ -540,8 +840,8 @@ export const C5_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
       template_code: "GT-006",
       title: "Thử thách nhận diện biểu cảm nhanh",
       instruction: "Khuôn mặt vừa rồi có cảm xúc gì.",
-      age_min: 4,
-      age_max: 5,
+      age_min: 5,
+      age_max: 6,
       difficulty: 4,
       access_tier: "premium",
       skill_codes: ["C5.DES.01"],
@@ -553,14 +853,19 @@ export const C5_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
       authored_in: "repo_seed",
     },
     content_pack: {
-      flash_items: [{ emoji: "😍" }],
+      flash_items: [
+        {
+          emoji: "😍",
+        },
+      ],
       flash_duration_ms: 1000,
       options: ["Yêu thương", "Tức giận"],
       correct_answer: "Yêu thương",
     },
-    difficulty_params: { flash_duration_ms: 1000 },
+    difficulty_params: {
+      flash_duration_ms: 1000,
+    },
   },
-  // Level 21 (Premium) — khuôn ngoài rổ GT-001..GT-008: listen-respond cho C5 band 5-6.
   {
     header: {
       code: "GL-C5-LIS-AUDIO-0021",
@@ -590,22 +895,34 @@ export const C5_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
       options: [
         {
           item_id: "apple",
-          asset: { kind: "emoji", ref: "🍎" },
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-red-apple",
+          },
           is_correct: true,
         },
         {
           item_id: "banana",
-          asset: { kind: "emoji", ref: "🍌" },
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-banana",
+          },
           is_correct: true,
         },
         {
           item_id: "milk",
-          asset: { kind: "emoji", ref: "🥛" },
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-milk",
+          },
           is_correct: true,
         },
         {
           item_id: "bread",
-          asset: { kind: "emoji", ref: "🍞" },
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-bread",
+          },
           is_correct: false,
         },
       ],
@@ -616,7 +933,6 @@ export const C5_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
       auto_play_audio: true,
     },
   },
-  // Level 22 (GT-018)
   {
     header: {
       code: "GL-C5-LIS-AUDIO-0022",
@@ -624,8 +940,8 @@ export const C5_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
       template_code: "GT-018",
       title: "Nghe tiếng kêu đoán con vật",
       instruction: "Bé nghe tiếng kêu và chạm vào đúng con vật.",
-      age_min: 3,
-      age_max: 4,
+      age_min: 4,
+      age_max: 5,
       difficulty: 1,
       access_tier: "standard",
       skill_codes: ["C5.LIS.01"],
@@ -641,25 +957,34 @@ export const C5_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
       audio_prompt: {
         text: "Gâu gâu, đây là tiếng con gì?",
       },
-      response_mode: "single",
-      target_item_id: "dog",
+      response_mode: "select",
       options: [
         {
           item_id: "dog",
-          asset: { kind: "emoji", ref: "🐶" },
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-dog",
+          },
           is_correct: true,
         },
         {
           item_id: "cat",
-          asset: { kind: "emoji", ref: "🐱" },
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-cat",
+          },
           is_correct: false,
         },
         {
           item_id: "duck",
-          asset: { kind: "emoji", ref: "🦆" },
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-duck",
+          },
           is_correct: false,
         },
       ],
+      target_sequence: ["dog"],
     },
     difficulty_params: {
       hint_after_ms: 8000,
@@ -667,7 +992,6 @@ export const C5_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
       auto_play_audio: true,
     },
   },
-  // Level 23 (GT-018)
   {
     header: {
       code: "GL-C5-LIS-AUDIO-0023",
@@ -697,17 +1021,26 @@ export const C5_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
       options: [
         {
           item_id: "cat",
-          asset: { kind: "emoji", ref: "🐱" },
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-cat",
+          },
           is_correct: true,
         },
         {
           item_id: "pig",
-          asset: { kind: "emoji", ref: "🐷" },
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-pig",
+          },
           is_correct: true,
         },
         {
           item_id: "cow",
-          asset: { kind: "emoji", ref: "🐮" },
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-cow-face",
+          },
           is_correct: false,
         },
       ],
@@ -716,6 +1049,130 @@ export const C5_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
       hint_after_ms: 8000,
       allow_retry: true,
       auto_play_audio: true,
+    },
+  },
+  {
+    header: {
+      code: "GL-C5-VOC-FLIP-0033",
+      content_version: 1,
+      template_code: "GT-020",
+      title: "Lật thẻ tìm cặp đồ vật trong nhà",
+      instruction: "Bé lật thẻ và tìm hai đồ vật giống nhau nhé!",
+      age_min: 3,
+      age_max: 4,
+      difficulty: 1,
+      access_tier: "free",
+      skill_codes: ["C5.STO.01"],
+      learning_objective_codes: ["LO-C5.STO.01-01"],
+      what_tags: ["voc"],
+      thinking_tags: ["match"],
+      theme_tag: "home",
+      origin: "human",
+      authored_in: "repo_seed",
+    },
+    content_pack: {
+      prompt: "Bé lật thẻ tìm hai đồ vật giống nhau nhé!",
+      pairs: [
+        {
+          pair_key: "bed",
+          card_a: {
+            card_id: "bed-1",
+            asset: {
+              kind: "emoji",
+              ref: "EMJ-bed",
+            },
+          },
+          card_b: {
+            card_id: "bed-2",
+            asset: {
+              kind: "emoji",
+              ref: "EMJ-bed",
+            },
+          },
+        },
+        {
+          pair_key: "lamp",
+          card_a: {
+            card_id: "lamp-1",
+            asset: {
+              kind: "emoji",
+              ref: "EMJ-light-bulb",
+            },
+          },
+          card_b: {
+            card_id: "lamp-2",
+            asset: {
+              kind: "emoji",
+              ref: "EMJ-light-bulb",
+            },
+          },
+        },
+      ],
+    },
+    difficulty_params: {
+      flip_back_delay_ms: 1800,
+      peek_all_initial_ms: 2500,
+      hint_after_ms: 9000,
+      allow_retry: true,
+    },
+  },
+  {
+    header: {
+      code: "GL-C5-VOC-SLOT-0034",
+      content_version: 1,
+      template_code: "GT-008",
+      title: "Đặt đồ vật vào đúng ô",
+      instruction: "Bé đặt mỗi đồ vật vào ô có tên của nó nhé!",
+      age_min: 3,
+      age_max: 4,
+      difficulty: 1,
+      access_tier: "free",
+      skill_codes: ["C5.STO.01"],
+      learning_objective_codes: ["LO-C5.STO.01-01"],
+      what_tags: ["voc"],
+      thinking_tags: ["match"],
+      theme_tag: "home",
+      origin: "human",
+      authored_in: "repo_seed",
+    },
+    content_pack: {
+      prompt: "Bé đặt mỗi đồ vật vào ô có tên của nó nhé!",
+      slots: [
+        {
+          slot_id: "slot-bed",
+          label: "Cái giường",
+          expected_item_id: "bed",
+        },
+        {
+          slot_id: "slot-car",
+          label: "Ô tô",
+          expected_item_id: "car",
+        },
+      ],
+      items: [
+        {
+          item_id: "bed",
+          label: "Cái giường",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-bed",
+          },
+        },
+        {
+          item_id: "car",
+          label: "Ô tô",
+          asset: {
+            kind: "emoji",
+            ref: "EMJ-car",
+          },
+        },
+      ],
+    },
+    difficulty_params: {
+      slot_count: 2,
+      distractor_count: 0,
+      hint_after_ms: 9000,
+      allow_retry: true,
     },
   },
 ];

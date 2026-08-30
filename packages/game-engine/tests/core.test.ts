@@ -36,6 +36,10 @@ describe("Task 3 & Task 4 — Core Engine & GT-001 End-to-End (BR-ENG-01..17)", 
   it("BR-ENG-03: zero network requests emitted during active gameplay", () => {
     const engine = new GameEngine();
     const fixture = GT001_FIXTURES[0];
+    expect(fixture).toBeDefined();
+    if (!fixture) {
+      return;
+    }
 
     engine.load(
       {
@@ -59,6 +63,10 @@ describe("Task 3 & Task 4 — Core Engine & GT-001 End-to-End (BR-ENG-01..17)", 
 
   it("BR-ENG-13: checkWinCondition() is pure and free of side effects across 100 calls", () => {
     const fixture = GT001_FIXTURES[0];
+    expect(fixture).toBeDefined();
+    if (!fixture) {
+      return;
+    }
     const session = new GT001Session(fixture.content, fixture.difficulty);
     session.setupEntities();
 
@@ -106,6 +114,9 @@ describe("Task 3 & Task 4 — Core Engine & GT-001 End-to-End (BR-ENG-01..17)", 
   it("Task 4 — GT-001 E2E Journey: load -> start -> select correct option -> complete", () => {
     const engine = new GameEngine();
     const fixture = GT001_FIXTURES[0];
+    if (!fixture) {
+      throw new Error("Fixture missing");
+    }
     const eventsEmitted: string[] = [];
 
     engine.on("*", (evt) => {
@@ -166,6 +177,9 @@ describe("Task 3 & Task 4 — Core Engine & GT-001 End-to-End (BR-ENG-01..17)", 
 
   it("BR-ENG-14: loop() draws through session.render when a canvas is attached", () => {
     const fixture = GT001_FIXTURES[0];
+    if (!fixture) {
+      throw new Error("Fixture missing");
+    }
     const rendered: number[] = [];
     const ctxStub = { clearRect: () => undefined, scale: () => undefined };
     const canvasStub = {
@@ -208,6 +222,9 @@ describe("Task 3 & Task 4 — Core Engine & GT-001 End-to-End (BR-ENG-01..17)", 
 
   it("BR-ENG-14: loop() skips drawing when no canvas is attached", () => {
     const fixture = GT001_FIXTURES[0];
+    if (!fixture) {
+      throw new Error("Fixture missing");
+    }
     let renderCalls = 0;
 
     const engine = new GameEngine();

@@ -76,6 +76,9 @@ describe("Worksheet Lifecycle & Render Evidence Integration Tests (Task #64 / P4
         role: "super_admin",
       })
       .returning();
+    if (!mgr) {
+      throw new Error("Failed to insert manager");
+    }
     managerId = mgr.id;
   });
 

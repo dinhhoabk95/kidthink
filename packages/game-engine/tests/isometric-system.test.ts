@@ -111,8 +111,10 @@ describe("isometricSystem (BR-MTB-15)", () => {
         { x: 0, y: 1, z: 0 }, // left
       ];
 
-      expect(isCubeHidden(model[0], model, 0)).toBe(true);
-      expect(isCubeHidden(model[1], model, 0)).toBe(false);
+      if (model[0] && model[1]) {
+        expect(isCubeHidden(model[0], model, 0)).toBe(true);
+        expect(isCubeHidden(model[1], model, 0)).toBe(false);
+      }
       expect(countHiddenCubes(model, 0)).toBe(1);
 
       // When rotated 180 degrees, the cube at (0,0,0) becomes visible from the back!
@@ -130,10 +132,10 @@ describe("isometricSystem (BR-MTB-15)", () => {
       ];
 
       const topView = computeTopView(model, 3);
-      expect(topView[0][0]).toBe(2);
-      expect(topView[0][1]).toBe(1);
-      expect(topView[2][2]).toBe(1);
-      expect(topView[1][1]).toBe(0);
+      expect(topView[0]?.[0]).toBe(2);
+      expect(topView[0]?.[1]).toBe(1);
+      expect(topView[2]?.[2]).toBe(1);
+      expect(topView[1]?.[1]).toBe(0);
     });
   });
 });

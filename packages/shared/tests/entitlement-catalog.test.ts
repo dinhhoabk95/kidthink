@@ -42,8 +42,10 @@ describe("Task 2 & 4: Entitlement and Catalog Registry (BR-ENT-01, BR-ENT-03, BR
     expect(std).toBeDefined();
     expect(prem).toBeDefined();
 
-    for (const key of std.entitlements) {
-      expect(prem.entitlements).toContain(key);
+    if (std && prem) {
+      for (const key of std.entitlements) {
+        expect(prem.entitlements).toContain(key);
+      }
     }
   });
 

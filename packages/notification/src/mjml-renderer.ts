@@ -356,7 +356,7 @@ export async function renderEmailTemplate(
 
   if (renderResult.errors && renderResult.errors.length > 0) {
     throw new Error(
-      `MJML strict validation error for template '${code}': ${renderResult.errors[0].formattedMessage}`
+      `MJML strict validation error for template '${code}': ${renderResult.errors[0]?.formattedMessage ?? "Unknown error"}`
     );
   }
 

@@ -115,7 +115,9 @@ async function createDuplicateRecord(
         })
         .returning();
 
-      return created;
+      if (created) {
+        return created;
+      }
     } catch (err: unknown) {
       lastErr = err;
       if (
@@ -146,10 +148,7 @@ export default defineEventHandler(async (event) => {
   }
 
   const rawBody =
-    (event.context?.body as unknown) ??
-    (event as Record<string, unknown>)._body ??
-    (await readBody(event).catch(() => ({}))) ??
-    {};
+    event.context?.body ?? (await readBody(event).catch(() => ({}))) ?? {};
   const parsed = duplicateCurriculumSchema.safeParse(rawBody);
   if (!parsed.success) {
     throw createError({
@@ -160,7 +159,7 @@ export default defineEventHandler(async (event) => {
   }
 
   const db = getOwnerDb();
-  const managerId = session.manager_id || session.id || 1;
+  const managerId = session.manager_id;
 
   const [source] = await db
     .select()
@@ -188,18 +187,20 @@ export default defineEventHandler(async (event) => {
 
   await copyWeeksAndItems(db, source.id, created.id);
 
-  await writeAudit(db, {
-    action: "content_created",
-    actor_type: "manager",
-    actor_id: managerId,
-    entity_type: "curriculum",
-    entity_id: String(created.id),
-    after_data: {
-      source_code: source.code,
-      source_version: source.contentVersion,
-      new_code: created.code,
-      new_version: created.contentVersion,
-    },
+  await db.transaction(async (tx) => {
+    await writeAudit(tx, {
+      action: "content_created",
+      actor_type: "manager",
+      actor_id: managerId,
+      entity_type: "curriculum",
+      entity_id: String(created.id),
+      after_data: {
+        source_code: source.code,
+        source_version: source.contentVersion,
+        new_code: created.code,
+        new_version: created.contentVersion,
+      },
+    });
   });
 
   setResponseStatus(event, 201);

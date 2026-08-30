@@ -6,6 +6,10 @@ import {
   type GameAction,
   TemplateGameSession,
 } from "#src/game-session";
+import { resolveLayout } from "#src/layout/registry";
+import type { Slot } from "#src/layout/types";
+import type { DegradationState } from "#src/systems/degradation";
+import type { Particle, RenderSystem } from "#src/systems/render-system";
 import {
   type ClockAngles,
   type ClockTime,
@@ -13,12 +17,26 @@ import {
   isSameTime,
   timeToAngles,
 } from "#src/systems/rotation-system";
+import {
+  drawPromptText,
+  drawSceneBackground,
+  drawSlotItem,
+  type ItemVisualState,
+  sceneBox,
+  updateParticles,
+} from "../shared-render.js";
+import { drawClockFace, insetBox, squareBox } from "../shared-render-shapes.js";
 import type { GT016Content, GT016Difficulty } from "./template.js";
 
 export class ClockHandsSession extends TemplateGameSession<
   GT016Content,
   GT016Difficulty
 > {
+  slots: readonly Slot[] = [];
+  degradation: DegradationState | null = null;
+  private renderParticles: Particle[] = [];
+  private readonly renderItemStates: Map<string, ItemVisualState> = new Map();
+
   private currentTime: ClockTime;
   private selectedOptionIndex: number | null = null;
   private readonly matchedCardIds: Set<string> = new Set();
@@ -185,6 +203,89 @@ export class ClockHandsSession extends TemplateGameSession<
     super.destroy();
     this.selectedOptionIndex = null;
     this.matchedCardIds.clear();
+  }
+
+  resolveSlots(ageBand: "3-4" | "4-5" | "5-6"): void {
+    const layoutFn = resolveLayout("grid");
+    this.slots = layoutFn({
+      slotCount: Math.max(
+        this.content.options.length,
+        this.content.activity_cards.length,
+        1
+      ),
+      ageBand,
+    });
+  }
+
+  setRenderItemState(itemId: string, state: ItemVisualState): void {
+    this.renderItemStates.set(itemId, state);
+  }
+
+  getRenderItemState(itemId: string): ItemVisualState {
+    return this.renderItemStates.get(itemId) ?? "idle";
+  }
+
+  render(
+    ctx: CanvasRenderingContext2D,
+    rs: RenderSystem,
+    _timeMs: number
+  ): void {
+    drawSceneBackground(ctx, rs);
+    drawPromptText(ctx, rs, this.content.prompt);
+    const scene = insetBox(sceneBox(rs), 0.08);
+    const faceBox = squareBox({
+      x: scene.x,
+      y: scene.y,
+      w: scene.w,
+      h: scene.h * 0.58,
+    });
+    drawClockFace(ctx, faceBox, this.currentTime);
+
+    if (this.content.mode === "match") {
+      this.content.activity_cards.forEach((card, i) => {
+        const slot = this.slots[i];
+        if (!slot) {
+          return;
+        }
+        drawSlotItem(ctx, rs, slot, {
+          id: card.card_id,
+          asset: card.asset,
+          label: formatClockTime({ hour: card.hour, minute: card.minute }),
+          state: this.matchedCardIds.has(card.card_id) ? "correct" : "idle",
+        });
+      });
+      this.drawRenderFeedback(rs, ctx);
+      return;
+    }
+
+    this.content.options.forEach((opt, i) => {
+      const slot = this.slots[i];
+      if (!slot) {
+        return;
+      }
+      const chosen = this.selectedOptionIndex === i;
+      let state: "correct" | "wrong" | "idle" = "idle";
+      if (chosen) {
+        state = opt.is_correct ? "correct" : "wrong";
+      }
+      drawSlotItem(ctx, rs, slot, {
+        id: `opt-${i}`,
+        text: formatClockTime({ hour: opt.hour, minute: opt.minute }),
+        state,
+      });
+    });
+    this.drawRenderFeedback(rs, ctx);
+  }
+
+  private drawRenderFeedback(
+    rs: RenderSystem,
+    ctx: CanvasRenderingContext2D
+  ): void {
+    if (this.degradation?.particles_enabled === false) {
+      return;
+    }
+    this.renderParticles = updateParticles(this.renderParticles);
+    rs.drawParticles(ctx, this.renderParticles);
   }
 }
 

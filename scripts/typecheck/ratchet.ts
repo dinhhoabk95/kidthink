@@ -46,6 +46,28 @@ export function hasRegression(result: RatchetResult): boolean {
   return result.increased.length > 0 || result.added.length > 0;
 }
 
+/**
+ * Bậc thang chỉ đi **xuống**: liệt kê mọi file mà `--update` sẽ làm tăng nợ.
+ *
+ * Không có phép kiểm này thì `--update` chỉ là "ghi đè baseline bằng số hiện
+ * tại", và nó đã được dùng đúng như thế: Task #124 ghi thêm 187 lỗi, Task #125
+ * thêm 7 — toàn bộ là mã mới viết trong cùng dải task, trong đó 180 lỗi chỉ là
+ * một từ sai. Docstring của cổng nói "số lỗi chỉ được giảm"; giờ mã nói vậy.
+ */
+export function refuseIncrease(
+  next: Counts,
+  baseline: Counts
+): { file: string; from: number; to: number }[] {
+  const worse: { file: string; from: number; to: number }[] = [];
+  for (const [file, to] of Object.entries(next)) {
+    const from = baseline[file] ?? 0;
+    if (to > from) {
+      worse.push({ file, from, to });
+    }
+  }
+  return worse.sort((a, b) => a.file.localeCompare(b.file));
+}
+
 export function total(counts: Counts): number {
   return Object.values(counts).reduce((sum, n) => sum + n, 0);
 }

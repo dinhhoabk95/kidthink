@@ -43,21 +43,29 @@ describe("Cổng Điều Kiện Sẵn Sàng Go-Live — Task #125 (BR-GLR-01..09
       header: {
         code: `LES-TEST-${String(i + 1).padStart(3, "0")}`,
         content_version: 1,
-        status: "published",
-        access_tier: "free",
-        pedagogical_axes: {
-          what_tags: ["concept"],
-          thinking_tags: ["count"],
-          theme_tag: "nature",
-          origin: "human",
-          authored_in: "repo_seed",
+        title: `Bài ${i + 1}`,
+        guide: {
+          outcome: "Kết quả mong đợi",
+          preparation: ["Chuẩn bị"],
+          opening: "Bắt đầu bài học",
+          if_child_succeeds: "Khen ngợi trẻ",
+          if_child_needs_help: "Hướng dẫn từng bước",
         },
+        target_age_min: 3,
+        target_age_max: 6,
+        estimated_minutes: 15,
+        access_tier: "free",
+        // Hình dạng THẬT: `skill_codes` mảng trên header, Cấm — NEVER có
+        // `metadata` hay `status`.
+        skill_codes: [skill],
+        learning_objective_codes: [],
+        activity_codes: [],
+        what_tags: ["concept"],
+        thinking_tags: ["count"],
+        theme_tag: "nature",
+        origin: "human",
+        authored_in: "repo_seed",
       },
-      metadata: {
-        title_vi: `Bài ${i + 1}`,
-        target_skill_code: skill,
-      },
-      content_pack: { activities: [] },
     }));
   }
 
@@ -72,22 +80,25 @@ describe("Cổng Điều Kiện Sẵn Sàng Go-Live — Task #125 (BR-GLR-01..09
         header: {
           code: `GL-TEST-${eng}-${idx + 1}`,
           content_version: 1,
-          status: "published",
+          // Engine của level nằm ở `template_code`, không phải
+          // `metadata.game_type_id` — trường sau chưa từng tồn tại.
+          template_code: eng,
+          title: `Level ${eng} ${idx + 1}`,
+          instruction: "Bé hãy thử nhé",
+          age_min: 3,
+          age_max: 6,
+          difficulty: 1,
           access_tier: idx === 0 ? ("free" as const) : ("standard" as const),
-          pedagogical_axes: {
-            what_tags: ["concept"],
-            thinking_tags: ["count"],
-            theme_tag: "nature",
-            origin: "human",
-            authored_in: "repo_seed",
-          },
-        },
-        metadata: {
-          title_vi: `Level ${eng} ${idx + 1}`,
-          game_type_id: eng,
-          target_skill_code: skill,
+          skill_codes: [skill],
+          learning_objective_codes: [],
+          what_tags: ["concept"],
+          thinking_tags: ["count"],
+          theme_tag: "nature",
+          origin: "human",
+          authored_in: "repo_seed",
         },
         content_pack: {},
+        difficulty_params: {},
       }))
     );
   }

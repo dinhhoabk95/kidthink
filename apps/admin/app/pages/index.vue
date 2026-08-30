@@ -159,7 +159,7 @@
           <div
             class="p-5 rounded-2xl border-2 bg-white flex flex-col justify-between space-y-4 shadow-sm"
             :class="[
-              data.todo.open_alerts.count > 0
+              (data.todo?.open_alerts?.count ?? 0) > 0
                 ? 'border-danger-300 bg-danger-50/40'
                 : 'border-surface-200',
             ]"
@@ -173,7 +173,7 @@
                 </span>
                 <span
                   class="px-2 py-0.5 rounded-xl text-[10px] font-bold bg-danger-100 text-danger-800"
-                  v-if="data.todo.open_alerts.count > 0"
+                  v-if="(data.todo?.open_alerts?.count ?? 0) > 0"
                 >
                   Cảnh báo mở
                 </span>
@@ -183,9 +183,9 @@
               </h3>
               <div
                 class="text-2xl font-bold font-heading"
-                :class="data.todo.open_alerts.count > 0 ? 'text-danger-700' : 'text-surface-900'"
+                :class="(data.todo?.open_alerts?.count ?? 0) > 0 ? 'text-danger-700' : 'text-surface-900'"
               >
-                {{ data.todo.open_alerts.count }}
+                {{ data.todo?.open_alerts?.count ?? 0 }}
               </div>
             </div>
 
@@ -194,9 +194,9 @@
             >
               <span
                 class="text-xs"
-                :class="data.todo.open_alerts.count > 0 ? 'text-danger-700 font-semibold' : 'text-success-700'"
+                :class="(data.todo?.open_alerts?.count ?? 0) > 0 ? 'text-danger-700 font-semibold' : 'text-success-700'"
               >
-                {{ data.todo.open_alerts.count > 0 ? 'Cần xử lý ngay' : 'Hệ thống ổn định' }}
+                {{ (data.todo?.open_alerts?.count ?? 0) > 0 ? 'Cần xử lý ngay' : 'Hệ thống ổn định' }}
               </span>
               <NuxtLink
                 class="px-3 py-1.5 rounded-xl text-xs font-bold font-heading bg-brand-600 hover:bg-brand-700 text-white transition-colors focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:outline-none"
@@ -603,55 +603,54 @@
     [key: string]: unknown;
   }
 
+  interface MetricWithComparison {
+    current: number;
+    prev: number;
+    change_percent: number | null;
+  }
+
+  interface PendingSourceMetric {
+    status: "pending_source";
+    owner_step: string;
+  }
+
   interface DashboardData {
     as_of: string;
     todo?: {
-      pending_payments: { count: number; status: string; owner_step: string };
-      pending_content: { count: number; status: string; owner_step: string };
+      pending_payments: { count: number };
+      pending_content: { count: number };
+      open_alerts?: {
+        count: number;
+        items: Array<{
+          name: string;
+          severity: "P0" | "P1" | "P2";
+          triggered_at: string;
+          message: string;
+        }>;
+      };
     };
     growth?: {
-      active_children_today: { count: number };
-      monthly_revenue: {
-        amount_vnd: number;
-        status: string;
-        owner_step: string;
-      };
+      new_users_7d: MetricWithComparison;
+      active_users_7d: MetricWithComparison;
+      active_child_profiles: MetricWithComparison;
+      active_subscriptions: { current: number };
+      monthly_revenue: { current_vnd: number };
     };
-    content: {
-      feedback_ratings_7d: { avg_stars: number; count: number };
-      feedback_reports_7d: { count: number };
-      content_distribution: { competencies: Record<string, number> };
-      curriculum_coverage: {
-        total_strands: number;
-        curriculum_weeks_incomplete: {
-          count: number;
-          status: string;
-          owner_step: string;
-        };
-        published_lessons: {
-          count: number;
-          status: string;
-          owner_step: string;
-        };
-      };
-      games_total: number;
-      levels_published: number;
-      levels_draft: number;
+    content?: {
+      skills_without_levels: { count: number; is_feedback: true };
+      levels_high_drop_rate: { count: number; is_feedback: true };
+      curriculum_weeks_incomplete: PendingSourceMetric & { is_feedback: true };
+      published_levels: { count: number };
+      draft_levels: { count: number };
+      published_lessons: { count: number };
     };
     system?: {
-      database_size_bytes: number;
-      database_connections: number;
-      active_sessions_count: number;
       last_backup: {
         as_of: string | null;
-        status: string;
+        status: "completed" | "verified" | "failed" | "pending";
         verified: boolean;
       };
-      llm_cost_month: {
-        amount_usd: number;
-        status: string;
-        owner_step: string;
-      };
+      llm_cost_month: PendingSourceMetric;
     };
   }
 

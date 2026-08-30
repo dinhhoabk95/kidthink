@@ -202,4 +202,20 @@ export const SHAPE_COLOR_EMOJIS: EmojiEntry[] = [
     keywords: ["star", "gold star", "ngôi sao", "vàng", "sao"],
     name: "Ngôi sao vàng",
   },
+  {
+    age_min: 3,
+    category: "shape-color",
+    curriculum_themes: ["ban_than"],
+    emoji: "⭕",
+    keywords: ["hollow circle", "vòng tròn", "hình tròn rỗng"],
+    name: "Vòng tròn",
+  },
+  {
+    age_min: 4,
+    category: "shape-color",
+    curriculum_themes: ["ban_than"],
+    emoji: "💎",
+    keywords: ["gem stone", "viên kim cương", "hình thoi"],
+    name: "Viên kim cương",
+  },
 ];

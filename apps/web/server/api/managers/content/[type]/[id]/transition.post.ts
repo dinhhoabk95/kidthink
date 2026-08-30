@@ -1,15 +1,15 @@
 import {
   activities,
-  type ContentLifecycleStatus,
   curricula,
   gameLevels,
   getOwnerDb,
   lessons,
-  type ManagerRole,
   seoPages,
   transitionContentStatus,
 } from "@mindkid/db";
+import type { ContentLifecycleStatus, ManagerRole } from "@mindkid/shared";
 import { eq } from "drizzle-orm";
+import type { H3Event } from "h3";
 import { createError, defineEventHandler, getRouterParam, readBody } from "h3";
 import { requireManagerSession } from "#server/utils/admin-auth-runtime";
 import { verifyPreviewToken } from "#server/utils/preview-token";
@@ -161,10 +161,7 @@ const transitionBodySchema = z.object({
 });
 
 async function parseTransitionBody(event: H3Event) {
-  const raw =
-    ((event.context as Record<string, unknown>)?.body as unknown) ||
-    ((event as Record<string, unknown>)._body as unknown) ||
-    (await readBody(event).catch(() => ({})));
+  const raw = event.context?.body ?? (await readBody(event).catch(() => ({})));
   const parsed = transitionBodySchema.parse(raw);
   return {
     toStatus: parsed.to_status as ContentLifecycleStatus,
@@ -193,7 +190,7 @@ export default defineEventHandler(async (event) => {
     await parseTransitionBody(event);
 
   const managerRole = (manager.role || "content_reviewer") as ManagerRole;
-  const managerId = manager.manager_id || manager.id || 1;
+  const managerId = manager.manager_id;
 
   // BR-CRQ-07 & D-KG: When transitioning in_review -> approved, verify checklist + preview_token
   if (toStatus === "approved") {

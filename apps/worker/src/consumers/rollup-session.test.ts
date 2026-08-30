@@ -25,6 +25,11 @@ describe("Task 5 — rollup:session Integration Suite (BR-TLM-04 & BR-JOB-01)", 
       })
       .returning();
 
+    expect(u).toBeDefined();
+    if (!u) {
+      return;
+    }
+
     const [child] = await db
       .insert(childProfiles)
       .values({
@@ -34,6 +39,11 @@ describe("Task 5 — rollup:session Integration Suite (BR-TLM-04 & BR-JOB-01)", 
         avatarId: "preset_02",
       })
       .returning();
+
+    expect(child).toBeDefined();
+    if (!child) {
+      return;
+    }
 
     // 2. Create game template & level
     const gtCode = `GT-${Math.floor(Math.random() * 899 + 100)}`;
@@ -70,6 +80,11 @@ describe("Task 5 — rollup:session Integration Suite (BR-TLM-04 & BR-JOB-01)", 
         .select()
         .from(gameLevels)
         .where(eq(gameLevels.code, glCode));
+    }
+
+    expect(gl).toBeDefined();
+    if (!gl) {
+      return;
     }
 
     // 3. Create play session in_progress
@@ -145,9 +160,9 @@ describe("Task 5 — rollup:session Integration Suite (BR-TLM-04 & BR-JOB-01)", 
       .where(eq(playSessions.sessionUuid, sessionUuid));
 
     // BR-TLM-04: Official score is 1 (raw_score = 1 round correct), NOT 9999 from client!
-    expect(updatedPs1.score).toBe(1);
-    expect(updatedPs1.starsEarned).toBe(3); // normalized_score = 1.0 -> 3 stars
-    expect(updatedPs1.durationSeconds).toBe(1);
+    expect(updatedPs1?.score).toBe(1);
+    expect(updatedPs1?.starsEarned).toBe(3); // normalized_score = 1.0 -> 3 stars
+    expect(updatedPs1?.durationSeconds).toBe(1);
 
     // Verify child_session_summaries created
     const summaries1 = await db
@@ -157,7 +172,7 @@ describe("Task 5 — rollup:session Integration Suite (BR-TLM-04 & BR-JOB-01)", 
 
     expect(summaries1.length).toBeGreaterThanOrEqual(1);
     expect(summaries1[0]).toBeDefined();
-    expect(summaries1[0].completionStatus).toBe("completed");
+    expect(summaries1[0]?.completionStatus).toBe("completed");
 
     // 6. Run rollup:session job second time -> IDEMPOTENT (BR-JOB-01)
     await runSessionRollup(sessionUuid);
@@ -167,7 +182,7 @@ describe("Task 5 — rollup:session Integration Suite (BR-TLM-04 & BR-JOB-01)", 
       .from(playSessions)
       .where(eq(playSessions.sessionUuid, sessionUuid));
 
-    expect(updatedPs2.score).toBe(updatedPs1.score);
-    expect(updatedPs2.starsEarned).toBe(updatedPs1.starsEarned);
+    expect(updatedPs2?.score).toBe(updatedPs1?.score);
+    expect(updatedPs2?.starsEarned).toBe(updatedPs1?.starsEarned);
   });
 });

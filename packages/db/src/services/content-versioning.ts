@@ -69,8 +69,18 @@ export async function createNewVersion(
     );
   }
 
-  const maxVersion = levels[0].contentVersion;
-  const sourceLevel = levels.find((l) => l.status === "published") ?? levels[0];
+  const firstLevel = levels[0];
+  if (!firstLevel) {
+    throw new LifecycleError(
+      `Entity with code '${code}' not found`,
+      "ENTITY_NOT_FOUND",
+      404
+    );
+  }
+
+  const maxVersion = firstLevel.contentVersion;
+  const sourceLevel =
+    levels.find((l) => l.status === "published") ?? firstLevel;
   const nextVersion = maxVersion + 1;
 
   // Insert new version row copying content from sourceLevel
@@ -99,6 +109,10 @@ export async function createNewVersion(
       createdByManagerId: actorManagerId,
     })
     .returning();
+
+  if (!newLevel) {
+    throw new Error("Failed to create version draft");
+  }
 
   // Copy contentSkillMap entries to new version
   const sourceSkills = await db
