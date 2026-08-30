@@ -2,10 +2,10 @@
 spec: MONTESSORI-LESSON-BATCH
 title: Lô bài học Montessori — hai mươi mốt lesson và hoạt động ngoài màn hình
 area: content
-status: approved
+status: implemented
 mvp: false
 phase: P3
-reviewed: 2026-08-20
+reviewed: 2026-08-30
 owns:
   - Hạn ngạch và cấu trúc lô lesson Montessori
   - Quy tắc thay giáo cụ Montessori bằng vật liệu có sẵn trong nhà

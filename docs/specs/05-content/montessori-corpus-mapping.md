@@ -2,10 +2,10 @@
 spec: MONTESSORI-CORPUS-MAPPING
 title: Ánh xạ corpus Montessori sang taxonomy và khuôn trò chơi
 area: content
-status: approved
+status: implemented
 mvp: false
 phase: P3
-reviewed: 2026-08-20
+reviewed: 2026-08-30
 owns:
   - Ánh xạ bất biến từ workbook Montessori sang strand, band tuổi và khuôn trò chơi
   - Quy tắc tái biên soạn nội dung nguồn bên thứ ba cho corpus Montessori

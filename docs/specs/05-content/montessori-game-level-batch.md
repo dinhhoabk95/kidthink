@@ -2,10 +2,10 @@
 spec: MONTESSORI-GAME-LEVEL-BATCH
 title: Lô game level Montessori — hạn ngạch, mã và thứ tự nạp
 area: content
-status: approved
+status: implemented
 mvp: false
 phase: P3
-reviewed: 2026-08-20
+reviewed: 2026-08-30
 owns:
   - Hạn ngạch lô game level Montessori theo competency
   - Khối mã dành riêng cho game level Montessori

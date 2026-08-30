@@ -2,10 +2,10 @@
 spec: MONTESSORI-TEMPLATE-BATCH
 title: Lô khuôn trò chơi Montessori — mười một cơ chế còn thiếu
 area: platform
-status: approved
+status: implemented
 mvp: false
 phase: P4
-reviewed: 2026-08-20
+reviewed: 2026-08-30
 owns:
   - Danh mục mười một khuôn trò chơi lô Montessori
   - Thứ tự cấp mã GT cho lô Montessori
