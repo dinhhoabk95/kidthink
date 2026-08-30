@@ -2,10 +2,10 @@
 spec: RELEASE-ROLLBACK
 title: Quay lui bản phát hành
 area: platform
-status: approved
+status: implemented
 mvp: true
 phase: P0
-reviewed: 2026-08-18
+reviewed: 2026-08-30
 owns:
   - Quy trình quay lui và giới hạn của nó
   - Số bản giữ lại để quay lui được

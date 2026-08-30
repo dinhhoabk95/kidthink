@@ -2,10 +2,10 @@
 spec: PROCESS-SUPERVISION
 title: Giám sát tiến trình và luân chuyển log
 area: platform
-status: approved
+status: implemented
 mvp: true
 phase: P0
-reviewed: 2026-08-18
+reviewed: 2026-08-30
 owns:
   - Mô hình tiến trình của web và worker trên máy chủ
   - Chính sách khởi động lại và khởi động cùng máy

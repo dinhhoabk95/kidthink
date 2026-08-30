@@ -2,10 +2,10 @@
 spec: SERVER-PROVISIONING
 title: Dựng máy chủ từ máy trắng
 area: platform
-status: approved
+status: implemented
 mvp: true
 phase: P0
-reviewed: 2026-08-18
+reviewed: 2026-08-30
 owns:
   - Trạng thái chuẩn của một máy chủ chạy MindKid
   - Bố cục thư mục và tài khoản hệ thống trên máy chủ

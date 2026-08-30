@@ -2,10 +2,10 @@
 spec: RELEASE-DEPLOY
 title: Quy trình phát hành không gián đoạn
 area: platform
-status: approved
+status: implemented
 mvp: true
 phase: P0
-reviewed: 2026-08-18
+reviewed: 2026-08-30
 owns:
   - Quy trình phát hành và điều kiện dừng của từng bước
   - Nguồn code được phép đi lên máy chủ

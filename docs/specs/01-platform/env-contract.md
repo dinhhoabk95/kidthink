@@ -2,10 +2,10 @@
 spec: ENV-CONTRACT
 title: Hợp đồng biến môi trường
 area: platform
-status: approved
+status: implemented
 mvp: true
 phase: P0
-reviewed: 2026-08-18
+reviewed: 2026-08-30
 owns:
   - Danh mục biến môi trường và tên chính thức của từng khái niệm
   - Quy tắc kiểm biến môi trường lúc khởi động và lúc phát hành
