@@ -55,6 +55,8 @@ interface CodeLists {
   loCode?: string;
 }
 
+type ArrayField = "skill_codes" | "learning_objective_codes";
+
 /** Đọc một cây seed-content: mã nội dung → hai mảng mã. */
 // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: one-off codemod script
 function readLists(root: string): Map<string, CodeLists> {
@@ -87,7 +89,10 @@ function readLists(root: string): Map<string, CodeLists> {
       if (!(open && currentCode)) {
         continue;
       }
-      const field = open[2] as keyof CodeLists;
+      const field = open[2] as string;
+      if (field !== "skill_codes" && field !== "learning_objective_codes") {
+        continue;
+      }
       const { values, end } = readArray(lines, i);
       i = end;
       const entry = result.get(currentCode) ?? {
@@ -184,18 +189,26 @@ function rewriteFile(
       out.push(line);
       continue;
     }
-    const field = open[2] as keyof CodeLists;
+    const field = open[2] as string;
+    if (field !== "skill_codes" && field !== "learning_objective_codes") {
+      out.push(line);
+      continue;
+    }
     const indent = open[1] as string;
     const { values, end } = readArray(lines, i);
-    const desired = target[field];
-    if (desired.length === 0 || values.join("|") === desired.join("|")) {
+    const desired = target[field as ArrayField];
+    if (
+      !desired ||
+      desired.length === 0 ||
+      values.join("|") === desired.join("|")
+    ) {
       for (let k = i; k <= end; k++) {
         out.push(lines[k] as string);
       }
       i = end;
       continue;
     }
-    const quoted = desired.map((value) => `"${value}"`).join(", ");
+    const quoted = desired.map((value: string) => `"${value}"`).join(", ");
     out.push(`${indent}"${field}": [${quoted}],`);
     hits++;
     i = end;
