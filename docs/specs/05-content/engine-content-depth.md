@@ -2,10 +2,10 @@
 spec: ENGINE-CONTENT-DEPTH
 title: Chiều sâu nội dung mỗi engine — sàn theo bậc thang
 area: content
-status: draft
+status: implemented
 mvp: false
 phase: P4
-reviewed: 2026-08-29
+reviewed: 2026-08-30
 owns:
   - Sàn số game level tính trên từng engine
   - Ma trận đa dạng bên trong một engine
