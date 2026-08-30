@@ -2,10 +2,10 @@
 spec: GO-LIVE-READINESS
 title: Điều kiện go-live của tầng game — khác MVP
 area: quality
-status: draft
+status: implemented
 mvp: false
 phase: P4
-reviewed: 2026-08-29
+reviewed: 2026-08-30
 owns:
   - Định nghĩa go-live của tầng game và chỗ nó khác MVP
   - Danh sách chặn cứng đo được trước khi mở cho người dùng thật
@@ -130,9 +130,9 @@ bằng chứng hiệu quả sư phạm; ranh giới đó thuộc
 | `BR-GLR-01` (go-live khác MVP) | Đạt sàn MVP **không** đủ để go-live. Hai bộ điều kiện tách rời | Corpus đạt sàn 120 level trong khi 0 màn vẽ được. Trộn hai câu hỏi làm câu thứ hai không bao giờ được hỏi |
 | `BR-GLR-02` (đo trên thứ trẻ mở được) | Mọi phép đo chạy đầu cuối: từ `content_pack` trong corpus tới lệnh vẽ | Đếm hàng trong bảng không chứng minh màn chơi chạy. Ba lỗ hổng ở mục 1 đều lọt qua phép đếm hàng |
 | `BR-GLR-03` (chặn cứng không miễn trừ) | Mục chặn cứng ở mục 7.2 cấm — NEVER miễn trừ, kể cả tạm thời | Miễn trừ tạm thời trước ngày phát hành là cách mọi ngưỡng chết |
-| `BR-GLR-04` (không rút phạm vi, không hạ ngưỡng) | Phạm vi go-live là **27 engine và 222 buổi**. Chưa đạt thì **lùi ngày**, cấm — NEVER bớt engine, cấm bớt chương trình, cấm hạ ngưỡng | Quyết định của chủ dự án 2026-08-29 (mục 1.1). Bản trước cho phép bớt engine; quy tắc đó **đã bãi bỏ**. Lý do: core sản phẩm là game template cộng giáo án, nên rút bớt một trong hai là ra một sản phẩm khác chứ không phải sản phẩm nhỏ hơn |
+| `BR-GLR-04` (không rút phạm vi, không hạ ngưỡng) | Phạm vi go-live là **27 engine và 126 tiết**. Chưa đạt thì **lùi ngày**, cấm — NEVER bớt engine, cấm bớt chương trình, cấm hạ ngưỡng | Quyết định của chủ dự án 2026-08-29 (mục 1.1). Bản trước cho phép bớt engine; quy tắc đó **đã bãi bỏ**. Lý do: core sản phẩm là game template cộng giáo án, nên rút bớt một trong hai là ra một sản phẩm khác chứ không phải sản phẩm nhỏ hơn |
 | `BR-GLR-05` (không có engine ngoài phạm vi) | Mọi engine `active` nằm trong phạm vi go-live. Cấm — NEVER trạng thái "có level published nhưng chưa sẵn sàng" | Hệ quả trực tiếp của `BR-GLR-04`. Trước đây quy tắc này nói cách ẩn engine chưa sẵn sàng; nay không có engine nào ở trạng thái đó |
-| `BR-GLR-09` (hai trục cùng đạt) | Go-live đòi **cả** trục game template **và** trục giáo án đạt. Đạt một trục không cho phép tuyên bố | 27 engine vẽ được mà chỉ có 81 trên 222 buổi là một chương trình đứt ở tuần chín. 222 buổi mà engine không vẽ là một lịch học dẫn tới màn hình trống |
+| `BR-GLR-09` (hai trục cùng đạt) | Go-live đòi **cả** trục game template **và** trục giáo án đạt. Đạt một trục không cho phép tuyên bố | 27 engine vẽ được mà chỉ có 81 trên 126 tiết là một chương trình đứt ở tuần chín. 126 tiết mà engine không vẽ là một lịch học dẫn tới màn hình trống |
 | `BR-GLR-06` (cổng đỏ khi không đọc được nguồn) | Nguồn không đọc được thì đỏ, cấm giá trị mặc định | Cùng bài học `BR-TCM-03` đã trả giá: bản cũ trả rỗng khi mất kết nối rồi báo mã thoát 0 |
 | `BR-GLR-07` (không phải bằng chứng sư phạm) | Bảng này cấm — NEVER dùng để tuyên bố hiệu quả học tập | Nó đo sản phẩm chạy được, không đo trẻ học được |
 | `BR-GLR-08` (ngưỡng ở tệp cấu hình) | Ngưỡng và danh sách engine trong phạm vi nằm ở tệp cấu hình ngoài mã nguồn | Cho phép mở phạm vi dần mà không sửa mã, và để mỗi lần đổi là một diff đọc được |
