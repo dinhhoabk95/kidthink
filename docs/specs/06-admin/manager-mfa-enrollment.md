@@ -2,10 +2,10 @@
 spec: MANAGER-MFA-ENROLLMENT
 title: Thiết lập MFA lần đầu cho Manager
 area: admin
-status: approved
+status: implemented
 mvp: true
 phase: P0
-reviewed: 2026-08-24
+reviewed: 2026-08-30
 owns:
   - Thiết lập MFA lần đầu cho Manager khi chưa có phiên
   - Vòng đời challenge giữa các bước enrollment

@@ -2,10 +2,10 @@
 spec: APP-RUNTIME-BOUNDARY
 title: Ranh giới runtime giữa web và admin
 area: foundation
-status: approved
+status: implemented
 mvp: true
 phase: P0
-reviewed: 2026-08-23
+reviewed: 2026-08-30
 owns:
   - Topology runtime của apps/web và apps/admin
   - Quyền sở hữu route API và cách admin SPA gọi API
