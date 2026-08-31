@@ -13,22 +13,35 @@ const fixtureSpecPath = resolve(
   "incomplete-spec.md"
 );
 
-describe("Gate check:engine-specs (BR-ESS-01..14)", () => {
+describe("Gate check:engine-specs (BR-ESS-01..15)", () => {
   const specsDir = repoPath("docs/specs/01-platform/engines");
   const templatesDir = repoPath("packages/game-engine/src/templates");
   const configPath = repoPath(
     "packages/game-engine/config/engine-spec-ready.json"
   );
+  const plannedPath = repoPath(
+    "packages/game-engine/config/engine-spec-planned.json"
+  );
+  const repoRoot = repoPath(".");
 
-  it("baseline gate: 27 templates and 27 specs exist with current ready ladder", () => {
-    const result = scanEngineSpecsGate(specsDir, templatesDir, configPath);
-    expect(result.totalTemplates).toBe(27);
-    expect(result.totalSpecs).toBe(27);
+  it("baseline gate: 27 templates, 36 specs, 9 đặt trước, 0 mồ côi", () => {
+    const result = scanEngineSpecsGate(
+      specsDir,
+      templatesDir,
+      configPath,
+      plannedPath,
+      repoRoot
+    );
+    expect(result.totalTemplates).toBe(28);
+    expect(result.totalSpecs).toBe(36);
+    expect(result.plannedCount).toBe(8);
+    expect(result.orphanCount).toBe(0);
     expect(result.readyCount).toBeGreaterThanOrEqual(1);
     expect(result.violations).toHaveLength(0);
 
     const report = formatEngineSpecsReport(result);
-    expect(report).toContain("27 mã trong registry, 27 spec tồn tại, 0 mồ côi");
+    expect(report).toContain("28 mã trong registry, 36 spec tồn tại, 0 mồ côi");
+    expect(report).toContain("8 spec chờ template");
   });
 
   // Ca âm 1: Xoá một spec engine -> Đỏ (BR-ESS-01)
@@ -100,5 +113,58 @@ describe("Gate check:engine-specs (BR-ESS-01..14)", () => {
       templatesDir
     );
     expect(result.violations.some((v) => v.rule === "BR-ESS-01")).toBe(true);
+  });
+
+  // Ca âm 9: Bỏ danh sách đặt trước -> 9 spec chưa có khuôn thành mồ côi (BR-ESS-01)
+  it("Ca âm 9: spec không khai đặt trước vẫn là mồ côi (BR-ESS-01)", () => {
+    const result = scanEngineSpecsGate(specsDir, templatesDir, configPath);
+    expect(result.orphanCount).toBe(8);
+    const orphanCodes = result.violations
+      .filter((v) => v.rule === "BR-ESS-01")
+      .map((v) => v.templateCode);
+    expect(orphanCodes).toContain("GT-029");
+    expect(orphanCodes).toContain("GT-036");
+  });
+
+  // Ca âm 10: Mã đã có khuôn mà vẫn nằm trong danh sách đặt trước -> Đỏ (BR-ESS-15)
+  it("Ca âm 10: khuôn đã dựng mà mã còn đặt trước làm cổng đỏ (BR-ESS-15)", () => {
+    const conflictPath = resolve(
+      import.meta.dirname,
+      "fixtures",
+      "planned-conflict.json"
+    );
+    const result = scanEngineSpecsGate(
+      specsDir,
+      templatesDir,
+      configPath,
+      conflictPath,
+      repoRoot
+    );
+    expect(
+      result.violations.some(
+        (v) => v.rule === "BR-ESS-15" && v.templateCode === "GT-001"
+      )
+    ).toBe(true);
+  });
+
+  // Ca âm 11: Hàng đặt trước trỏ tới plan không tồn tại -> Đỏ (BR-ESS-15)
+  it("Ca âm 11: hàng đặt trước trỏ tới plan không có thật làm cổng đỏ (BR-ESS-15)", () => {
+    const missingPlanPath = resolve(
+      import.meta.dirname,
+      "fixtures",
+      "planned-missing-plan.json"
+    );
+    const result = scanEngineSpecsGate(
+      specsDir,
+      templatesDir,
+      configPath,
+      missingPlanPath,
+      repoRoot
+    );
+    expect(
+      result.violations.some(
+        (v) => v.rule === "BR-ESS-15" && v.message.includes("does not exist")
+      )
+    ).toBe(true);
   });
 });

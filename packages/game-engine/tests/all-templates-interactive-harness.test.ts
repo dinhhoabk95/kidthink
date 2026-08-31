@@ -30,6 +30,7 @@ import {
   GT025_FIXTURES,
   GT026_FIXTURES,
   GT027_FIXTURES,
+  GT028_FIXTURES,
   RenderSystem,
 } from "#src/index";
 
@@ -78,6 +79,7 @@ const FIXTURES_MAP: Record<
   "GT-025": GT025_FIXTURES,
   "GT-026": GT026_FIXTURES,
   "GT-027": GT027_FIXTURES,
+  "GT-028": GT028_FIXTURES,
 };
 
 function createMockCanvasContext(): CanvasRenderingContext2D {
@@ -1033,6 +1035,40 @@ describe("All 27 Game Engine Templates Interactive & Visual Harness", () => {
         );
         s.onSelectItem(matchingItem.id);
       }
+      expect(s.checkWinCondition()).toBe(true);
+    });
+
+    it("GT-028 wins when tapped count equals target_total and submitted", () => {
+      const f = getFixture(GT028_FIXTURES, 0);
+      const s = createGameSessionSync("GT-028", {
+        level_code: "GT-028-TEST",
+        content_version: 1,
+        template_code: "GT-028",
+        content_pack: f.content,
+        difficulty_params: f.difficulty,
+        theme_id: "default",
+        age_band: "4-5",
+        reduced_motion: false,
+        audio_enabled: true,
+      }) as unknown as {
+        setupEntities: () => void;
+        onTapItem: (id: string) => { valid: boolean; feedback: string };
+        onSubmitCount: () => { valid: boolean; feedback: string };
+        checkWinCondition: () => boolean;
+        content: {
+          step: number;
+          target_total: number;
+          items: { item_id: string }[];
+        };
+      };
+      s.setupEntities();
+      const neededItems = s.content.target_total / s.content.step;
+      for (let i = 0; i < neededItems; i++) {
+        const item = expectDefined(s.content.items[i]);
+        s.onTapItem(item.item_id);
+      }
+      const res = s.onSubmitCount();
+      expect(res.valid).toBe(true);
       expect(s.checkWinCondition()).toBe(true);
     });
   });

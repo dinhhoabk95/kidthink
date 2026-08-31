@@ -30,6 +30,7 @@ import {
   GT025_FIXTURES,
   GT026_FIXTURES,
   GT027_FIXTURES,
+  GT028_FIXTURES,
   getGameTemplate,
   loadGameSession,
 } from "#src/index";
@@ -65,6 +66,7 @@ const FIXTURES_MAP: Record<
   "GT-025": GT025_FIXTURES,
   "GT-026": GT026_FIXTURES,
   "GT-027": GT027_FIXTURES,
+  "GT-028": GT028_FIXTURES,
 };
 
 describe("Universal Template Compliance Test Suite (§7.4, BR-TAK-01..14)", () => {
@@ -97,6 +99,7 @@ describe("Universal Template Compliance Test Suite (§7.4, BR-TAK-01..14)", () =
       "GT-025",
       "GT-026",
       "GT-027",
+      "GT-028",
     ]);
   });
 

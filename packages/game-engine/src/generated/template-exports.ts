@@ -54,6 +54,8 @@ import GT026Template, { type GT026Content, type GT026Difficulty } from "#src/tem
 import { GT026Session } from "#src/templates/GT-026/session";
 import GT027Template, { type GT027Content, type GT027Difficulty } from "#src/templates/GT-027/template";
 import { GT027Session } from "#src/templates/GT-027/session";
+import GT028Template, { type GT028Content, type GT028Difficulty } from "#src/templates/GT-028/template";
+import { GT028Session } from "#src/templates/GT-028/session";
 
 export { GT001Template, GT001Session, type GT001Content, type GT001Difficulty };
 export { GT002Template, GT002Session, type GT002Content, type GT002Difficulty };
@@ -82,3 +84,4 @@ export { GT024Template, GT024Session, type GT024Content, type GT024Difficulty };
 export { GT025Template, GT025Session, type GT025Content, type GT025Difficulty };
 export { GT026Template, GT026Session, type GT026Content, type GT026Difficulty };
 export { GT027Template, GT027Session, type GT027Content, type GT027Difficulty };
+export { GT028Template, GT028Session, type GT028Content, type GT028Difficulty };

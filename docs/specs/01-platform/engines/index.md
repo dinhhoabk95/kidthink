@@ -2,10 +2,12 @@
 
 # Danh mục phiếu engine
 
-27 engine, 27 phiếu, 0 mồ côi.
+28 engine trong registry, 36 phiếu, 8 đặt trước, 0 mồ côi.
 
 Hình dạng phiếu và luật đối chiếu: [`engine-spec-sheet.md`](../engine-spec-sheet.md).
 Sàn nội dung mỗi engine: [`engine-content-depth.md`](../../05-content/engine-content-depth.md).
+
+## Engine trong registry
 
 | Mã | Tên | Cơ chế | Band | Band bị cấm | Fallback tap | Lô |
 |---|---|---|:--:|---|:--:|---|
@@ -36,3 +38,20 @@ Sàn nội dung mỗi engine: [`engine-content-depth.md`](../../05-content/engin
 | [`GT-025`](GT-025.md) | Tìm điểm khác biệt | `spot-difference` | 4–6 | — | Không | taxonomy-gap |
 | [`GT-026`](GT-026.md) | Chỉ chạm khi đúng dấu | `go-nogo` | 4–6 | 3-4 | Không | taxonomy-gap |
 | [`GT-027`](GT-027.md) | Đổi luật giữa chừng | `rule-switch` | 5–6 | 3-4 | Không | taxonomy-gap |
+| [`GT-028`](GT-028.md) | Chạm đếm tích luỹ | `tap-count` | 4–6 | 3-4 | Không | legacy-v1 |
+
+## Engine đặt trước — spec có, `template.ts` chưa
+
+Cột lấy từ frontmatter của chính phiếu, không lấy từ registry: `BR-ESS-15` cho phép phiếu
+ra đời trước khuôn, và cổng đối chiếu trường trích chỉ bật khi khuôn có mặt.
+
+| Mã | Tên | Cơ chế đặt trước | Lô | Plan sở hữu |
+|---|---|---|---|---|
+| [`GT-029`](GT-029.md) | Bớt khỏi nhóm | `remove-from-set` | legacy-v1 | [`182-engine-gt-029-remove-from-set-plan.md`](../../../tasks/182-engine-gt-029-remove-from-set-plan.md) |
+| [`GT-030`](GT-030.md) | Đo bằng đơn vị lặp | `measure-with-unit` | legacy-v1 | [`183-engine-gt-030-measure-with-unit-plan.md`](../../../tasks/183-engine-gt-030-measure-with-unit-plan.md) |
+| [`GT-031`](GT-031.md) | Gộp tiền xu | `coin-compose` | legacy-v1 | [`184-engine-gt-031-coin-compose-plan.md`](../../../tasks/184-engine-gt-031-coin-compose-plan.md) |
+| [`GT-032`](GT-032.md) | So lượng chất lỏng | `pour-quantity` | legacy-v1 | [`185-engine-gt-032-pour-quantity-plan.md`](../../../tasks/185-engine-gt-032-pour-quantity-plan.md) |
+| [`GT-033`](GT-033.md) | Dệt hoa văn lưới | `weave-grid` | legacy-v1 | [`186-engine-gt-033-weave-grid-plan.md`](../../../tasks/186-engine-gt-033-weave-grid-plan.md) |
+| [`GT-034`](GT-034.md) | Gõ theo nhịp | `beat-sequence` | legacy-v1 | [`187-engine-gt-034-beat-sequence-plan.md`](../../../tasks/187-engine-gt-034-beat-sequence-plan.md) |
+| [`GT-035`](GT-035.md) | Xếp hàng lệnh | `command-sequence` | legacy-v1 | [`188-engine-gt-035-command-sequence-plan.md`](../../../tasks/188-engine-gt-035-command-sequence-plan.md) |
+| [`GT-036`](GT-036.md) | Tự tạo quy luật | `free-create` | legacy-v1 | [`189-engine-gt-036-free-create-plan.md`](../../../tasks/189-engine-gt-036-free-create-plan.md) |

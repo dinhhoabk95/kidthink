@@ -1,9 +1,14 @@
 import { describe, expect, it } from "vitest";
 import { EMOJI_REF_PATTERN, EmojiRef } from "#src/contracts/shared-fields";
 import { GT010Generator } from "#src/generators/gt010";
+import { GT028Generator } from "#src/generators/gt028";
 import { getNouns } from "#src/generators/helpers";
 import type { ThemeVocabulary } from "#src/generators/types";
 import { createRng } from "#src/rng/mulberry32";
+import type {
+  GT028Content,
+  GT028Difficulty,
+} from "#src/templates/GT-028/template";
 
 const SHORT_POOL_RE = /thiếu danh từ/;
 const THEME_RE = /school/;
@@ -101,6 +106,32 @@ describe("GT-010 — đáp án phải phân biệt được (BR-ECD-01)", () => 
       }) as { content_pack: { options: { is_correct: boolean }[] } };
 
       expect(content_pack.options.filter((o) => o.is_correct)).toHaveLength(1);
+    }
+  });
+});
+
+describe("GT-028 — generator contract conformity", () => {
+  const themeVocab = vocab(10);
+
+  it("generates valid levels for all supported age bands across seeds", () => {
+    for (const age_band of ["4-5", "5-6"] as const) {
+      for (let seed = 1; seed <= 30; seed++) {
+        const { content_pack, difficulty_params } = GT028Generator.generate({
+          rng: createRng(seed),
+          age_band,
+          theme: "school",
+          vocabulary: themeVocab,
+        }) as {
+          content_pack: GT028Content;
+          difficulty_params: GT028Difficulty;
+        };
+
+        expect(content_pack.target_total % content_pack.step).toBe(0);
+        expect(
+          content_pack.items.length * content_pack.step
+        ).toBeGreaterThanOrEqual(content_pack.target_total);
+        expect(difficulty_params.step).toBe(content_pack.step);
+      }
     }
   });
 });

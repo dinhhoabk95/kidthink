@@ -17,6 +17,7 @@ import { GT023Generator } from "./gt023.js";
 import { GT025Generator } from "./gt025.js";
 import { GT026Generator } from "./gt026.js";
 import { GT027Generator } from "./gt027.js";
+import { GT028Generator } from "./gt028.js";
 import type { LevelGenerator } from "./types.js";
 
 export type {
@@ -47,6 +48,7 @@ export const ALL_LEVEL_GENERATORS: Record<string, LevelGenerator> = {
   "GT-025": GT025Generator,
   "GT-026": GT026Generator,
   "GT-027": GT027Generator,
+  "GT-028": GT028Generator,
 };
 
 export function getLevelGenerator(code: string): LevelGenerator | undefined {

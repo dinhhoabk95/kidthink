@@ -376,9 +376,16 @@ export type {
 } from "./templates/GT-025/template.js";
 export { GT026_FIXTURES } from "./templates/GT-026/fixtures.js";
 export { GT026Session } from "./templates/GT-026/session.js";
-export type {
-  GT026Content,
-  GT026Difficulty,
-} from "./templates/GT-026/template.js";
 export { GT027_FIXTURES } from "./templates/GT-027/fixtures.js";
+export { GT027Session } from "./templates/GT-027/session.js";
+export type {
+  GT027Content,
+  GT027Difficulty,
+} from "./templates/GT-027/template.js";
+export { GT028_FIXTURES } from "./templates/GT-028/fixtures.js";
+export { GT028Session } from "./templates/GT-028/session.js";
+export type {
+  GT028Content,
+  GT028Difficulty,
+} from "./templates/GT-028/template.js";
 export { ObjectPool } from "./utils/object-pool.js";
