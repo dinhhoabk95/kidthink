@@ -33,6 +33,7 @@ export interface ContentSeedHeader {
    * nội dung không mất gì — con số có cổng canh thì phải là dữ liệu.
    */
   montessori_ref?: string;
+  legacy_v1_ref?: string;
 }
 
 export interface ContentSeed<TPack = unknown, TParams = unknown> {
