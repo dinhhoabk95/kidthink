@@ -757,6 +757,20 @@ export const CONFIG_DICTIONARY: Record<string, FieldDictionaryEntry> = {
     label: "Thời gian thông báo đổi luật (ms)",
     help: "Thời lượng hiệu ứng thông báo đổi luật xuất hiện.",
   },
+
+  // GT-028: Tap Count
+  step: {
+    label: "Bước nhảy đếm",
+    help: "Giá trị mỗi bước đếm tích luỹ (2, 5, 10...).",
+  },
+  target_total: {
+    label: "Tổng mục tiêu cần đếm",
+    help: "Số lượng tổng cần tích luỹ đạt đến.",
+  },
+  allow_undo: {
+    label: "Cho phép hoàn tác",
+    help: "Bé có thể bấm lại vào vật phẩm đã chọn để hoàn tác bước đếm.",
+  },
 };
 
 /**
@@ -764,6 +778,8 @@ export const CONFIG_DICTIONARY: Record<string, FieldDictionaryEntry> = {
  * Every entry must have a clear documented rationale.
  */
 export const TEXT_FALLBACK_ALLOWLIST: Record<string, string> = {
+  step: "Bước nhảy số nguyên đếm tích luỹ.",
+  target_total: "Tổng số nguyên mục tiêu cần đạt.",
   prompt: "Câu hỏi chính của bài học, dạng văn bản ngắn đọc cho bé.",
   item_id: "Mã định danh kỹ thuật của vật phẩm trong content pack.",
   id: "Mã định danh đối tượng.",
