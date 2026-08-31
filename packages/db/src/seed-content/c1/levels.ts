@@ -1,4 +1,5 @@
 import type { ContentSeed } from "#src/seed-content/types";
+import { SEED_GT028 } from "./seed-gt028.js";
 import { SEED_MONT_A01 } from "./seed-mont-a01.js";
 import { SEED_MONT_A02 } from "./seed-mont-a02.js";
 import { SEED_MONT_A05 } from "./seed-mont-a05.js";
@@ -2113,4 +2114,5 @@ export const C1_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
   ...SEED_MONT_B02,
   ...SEED_MONT_B11,
   ...SEED_MONT_B15,
+  ...SEED_GT028,
 ];

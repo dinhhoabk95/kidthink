@@ -90,8 +90,9 @@ describe("Content Schema Integration Tests", () => {
       db.update(lessons).set({ title: "Changed" }).where(eq(lessons.id, les.id))
     ).rejects.toSatisfy((err: unknown) => {
       const e = err as { message?: string; cause?: { message?: string } };
-      return ((e.message ?? "") + (e.cause?.message ?? "")).includes(
-        "BR-SCT-05"
+      return (
+        (e.message ?? "").includes("BR-SCT-05") ||
+        (e.cause?.message ?? "").includes("BR-SCT-05")
       );
     });
 
@@ -129,8 +130,9 @@ describe("Content Schema Integration Tests", () => {
         .where(eq(activities.id, act.id))
     ).rejects.toSatisfy((err: unknown) => {
       const e = err as { message?: string; cause?: { message?: string } };
-      return ((e.message ?? "") + (e.cause?.message ?? "")).includes(
-        "BR-SCT-05"
+      return (
+        (e.message ?? "").includes("BR-SCT-05") ||
+        (e.cause?.message ?? "").includes("BR-SCT-05")
       );
     });
 
@@ -166,8 +168,9 @@ describe("Content Schema Integration Tests", () => {
         .where(eq(worksheets.id, ws.id))
     ).rejects.toSatisfy((err: unknown) => {
       const e = err as { message?: string; cause?: { message?: string } };
-      return ((e.message ?? "") + (e.cause?.message ?? "")).includes(
-        "BR-SCT-05"
+      return (
+        (e.message ?? "").includes("BR-SCT-05") ||
+        (e.cause?.message ?? "").includes("BR-SCT-05")
       );
     });
   });

@@ -6,7 +6,11 @@ import {
 } from "@mindkid/adaptive";
 import { AppError } from "@mindkid/auth";
 import { enqueue } from "@mindkid/queue";
-import { computeSessionResult, computeStars } from "@mindkid/shared";
+import {
+  computeSessionResult,
+  computeStars,
+  formatKidSurfaceResponse,
+} from "@mindkid/shared";
 import { and, desc, eq, sql } from "drizzle-orm";
 import { z } from "zod";
 import { getOwnerDb } from "#src/client";
@@ -76,6 +80,9 @@ export const ALLOWED_EVENT_NAMES = new Set([
   "item_revealed",
   "checkpoint_reached",
   "trace_completed",
+  "item_tapped",
+  "count_undone",
+  "count_submitted",
 ]);
 
 const PII_FIELDS = new Set([
@@ -200,6 +207,14 @@ const EVENT_PAYLOAD_FIELDS: Readonly<Record<string, ReadonlySet<string>>> = {
     "round_index",
   ]),
   trace_completed: new Set(["shape_name", "round_index"]),
+  item_tapped: new Set(["item_id", "current_total", "step", "round_index"]),
+  count_undone: new Set(["item_id", "current_total", "step", "round_index"]),
+  count_submitted: new Set([
+    "submitted_total",
+    "target_total",
+    "is_correct",
+    "round_index",
+  ]),
 };
 
 const NON_NEGATIVE_INT = z.number().int().nonnegative();
@@ -483,6 +498,24 @@ const EVENT_PAYLOAD_SCHEMAS: Readonly<Record<string, z.AnyZodObject>> = {
   }),
   trace_completed: z.object({
     shape_name: z.string().max(64),
+    round_index: OPTIONAL_ROUND_INDEX,
+  }),
+  item_tapped: z.object({
+    item_id: CONTENT_ID,
+    current_total: NON_NEGATIVE_INT,
+    step: NON_NEGATIVE_INT,
+    round_index: OPTIONAL_ROUND_INDEX,
+  }),
+  count_undone: z.object({
+    item_id: CONTENT_ID,
+    current_total: NON_NEGATIVE_INT,
+    step: NON_NEGATIVE_INT,
+    round_index: OPTIONAL_ROUND_INDEX,
+  }),
+  count_submitted: z.object({
+    submitted_total: NON_NEGATIVE_INT,
+    target_total: NON_NEGATIVE_INT,
+    is_correct: z.boolean(),
     round_index: OPTIONAL_ROUND_INDEX,
   }),
 };
@@ -1090,12 +1123,22 @@ export async function completePlaySession(
     );
   }
 
+  // Hình dạng response do mục 8 `scoring-and-result.md` sở hữu:
+  // `stars` · `rounds_correct` · `rounds_total` · `celebration` · `next_suggestion`,
+  // và Cấm — NEVER trả `normalized_score` hay `raw_score` xuống bề mặt trẻ.
+  //
+  // Bản trước trả `stars: null` dù đã tính `stars` ở trên và ghi nó vào
+  // `starsEarned`, thiếu `celebration`, và trả thêm hai khoá spec cấm. Mục 7.3
+  // nói mọi trẻ hoàn thành đều có **ít nhất một sao**, nên `null` ở đây là lỗi.
+  //
+  // `formatKidSurfaceResponse` đã dựng đúng hình dạng đó từ trước và cũng chưa
+  // có caller production nào — dùng lại thay vì chép logic lần thứ hai.
   return {
-    score: null,
-    normalized_score: null,
-    stars: null,
-    rounds_correct: scoringResult.metrics.rounds_correct ?? 0,
-    rounds_total: scoringResult.metrics.rounds_total ?? 0,
+    ...formatKidSurfaceResponse({
+      normalized_score: scoringResult.normalized_score,
+      completionStatus: "completed",
+      metrics: scoringResult.metrics,
+    }),
     next_suggestion: nextSuggestion ?? null,
   };
 }
