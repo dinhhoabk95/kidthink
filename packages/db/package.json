@@ -42,6 +42,7 @@
     "check:skill-quota": "tsx scripts/check-skill-quota.ts",
     "check:go-live": "tsx src/seed-content/cli/check-go-live.ts",
     "check:round-sets": "tsx src/seed-content/gates/round-sets.ts",
+    "check:legacy-v1": "tsx src/seed-content/gates/legacy-v1-coverage.ts",
     "gen:levels": "tsx src/seed-content/cli/gen-levels.ts",
     "gen:corpus": "tsx src/seed-content/cli/gen-corpus.ts",
     "reset-content": "tsx scripts/reset-content.ts"

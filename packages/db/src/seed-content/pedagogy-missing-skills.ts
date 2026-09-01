@@ -1625,7 +1625,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
           option_id: "opt_dist_1",
           asset: {
             kind: "emoji",
-            ref: "EMJ-circle",
+            ref: "EMJ-red-circle",
           },
           is_correct: false,
         },
@@ -1633,7 +1633,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
           option_id: "opt_dist_2",
           asset: {
             kind: "emoji",
-            ref: "EMJ-triangle",
+            ref: "EMJ-red-triangle-up",
           },
           is_correct: false,
         },

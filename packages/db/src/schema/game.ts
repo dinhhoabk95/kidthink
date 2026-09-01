@@ -103,6 +103,7 @@ export const gameLevels = pgTable(
     difficulty: smallint("difficulty"),
     accessTier: accessTierEnum("access_tier").notNull(),
     thumbnailEmoji: varchar("thumbnail_emoji", { length: 50 }),
+    legacyV1Ref: text("legacy_v1_ref"),
     status: contentLifecycleStatusEnum("status").notNull().default("draft"),
     origin: contentOriginEnum("origin").notNull().default("human"),
     authoredIn: authoredInEnum("authored_in").notNull().default("studio"),

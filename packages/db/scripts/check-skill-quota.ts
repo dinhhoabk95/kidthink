@@ -30,6 +30,10 @@ function main(): void {
     console.log(
       `\n❌ CỔNG ĐỎ: Còn ${report.deficits.length} skill chưa đạt hạn ngạch hoặc vi phạm trần/đa dạng.`
     );
+    console.log("Chi tiết vi phạm:");
+    for (const v of report.violations) {
+      console.log(`  - [${v.ruleId}] ${v.message}`);
+    }
     process.exit(1);
   }
 }

@@ -7,17 +7,24 @@ import {
   createRng,
   getLevelGenerator,
 } from "@mindkid/game-engine";
+import { CONTENT_THEMES } from "@mindkid/shared";
 import {
-  type LevelAllocationRow,
+  type AllocationRow,
   loadLevelAllocationPlan,
 } from "#src/seed-content/gates/level-allocation";
 import { runEightGates } from "#src/seed-content/gates/runner";
-import { ALL_SEED_LEVELS } from "#src/seed-content/index";
+import { STATIC_SEED_LEVELS } from "#src/seed-content/index";
 import type { ContentSeed } from "#src/seed-content/types";
 import { resolveEnginePhrases } from "#src/seed-content/vocab/phrases";
 import { getThemeVocabulary } from "#src/seed-content/vocab/themes";
-import { isValidTagForAxis } from "#src/seed-content/vocabulary";
+import { SEED_CONTENT_TAGS } from "#src/seed-master/content-tags";
 import { parseTaxonomyDocs } from "#src/seed-master/taxonomy/index";
+
+const DB_TAG_AXIS_MAP = new Map(SEED_CONTENT_TAGS.map((t) => [t.code, t.axis]));
+
+function isValidDbTagForAxis(axis: "what" | "thinking", tag: string): boolean {
+  return DB_TAG_AXIS_MAP.get(tag) === axis;
+}
 
 const __filename = fileURLToPath(import.meta.url);
 const isDirectCli = process.argv[1] === __filename;
@@ -87,14 +94,83 @@ function resolveAccessTier(
   return "premium";
 }
 
-function resolveAgeRange(ageBand: string): [number, number] {
-  if (ageBand === "3-4") {
-    return [3, 4];
+const THEME_BY_CODE = new Map(CONTENT_THEMES.map((t) => [t.code, t]));
+
+function resolveValidTheme(
+  requestedTheme: string,
+  allThemes: readonly string[],
+  ageMax: number
+): string {
+  const reqDef = THEME_BY_CODE.get(requestedTheme);
+  if (reqDef && reqDef.age_floor <= ageMax) {
+    return requestedTheme;
   }
-  if (ageBand === "4-5") {
-    return [4, 5];
+  const validFromList = allThemes.find((t) => {
+    const d = THEME_BY_CODE.get(t);
+    return d && d.age_floor <= ageMax;
+  });
+  if (validFromList) {
+    return validFromList;
   }
-  return [5, 6];
+  const validFallback = CONTENT_THEMES.find((t) => t.age_floor <= ageMax);
+  return validFallback?.code ?? "school";
+}
+
+function resolveValidAgeBand(
+  requestedBand: "3-4" | "4-5" | "5-6",
+  templateCode: string
+): { ageBand: "3-4" | "4-5" | "5-6"; ageMin: number; ageMax: number } {
+  const tmpl = ALL_TEMPLATES[templateCode];
+  const banned = tmpl?.banned_age_bands ?? [];
+  const ageMin = tmpl?.age_min ?? 3;
+  const ageMax = tmpl?.age_max ?? 6;
+
+  const isBandValid = (b: "3-4" | "4-5" | "5-6"): boolean => {
+    if (banned.includes(b)) {
+      return false;
+    }
+    if (b === "3-4" && ageMin > 3) {
+      return false;
+    }
+    if (b === "5-6" && ageMax < 6) {
+      return false;
+    }
+    if (b === "4-5" && (ageMin > 4 || ageMax < 5)) {
+      return false;
+    }
+    return true;
+  };
+
+  let actualBand = requestedBand;
+  if (!isBandValid(actualBand)) {
+    const candidates: Array<"3-4" | "4-5" | "5-6"> = ["4-5", "5-6", "3-4"];
+    const found = candidates.find(isBandValid);
+    if (found) {
+      actualBand = found;
+    }
+  }
+
+  let min = 3;
+  let max = 6;
+  if (actualBand === "3-4") {
+    min = 3;
+    max = 4;
+  } else if (actualBand === "4-5") {
+    min = 4;
+    max = 5;
+  } else {
+    min = 5;
+    max = 6;
+  }
+
+  if (min < ageMin) {
+    min = ageMin;
+  }
+  if (max > ageMax) {
+    max = ageMax;
+  }
+
+  return { ageBand: actualBand, ageMin: min, ageMax: max };
 }
 
 function generateSingleCandidate(params: {
@@ -181,7 +257,7 @@ function generateSingleCandidate(params: {
       difficulty_params: generated.difficulty_params,
     };
 
-    const gateResults = runEightGates(candidate, existingCodes);
+    const gateResults = runEightGates(candidate, new Set(existingCodes));
     if (gateResults.every((r) => r.passed)) {
       return candidate;
     }
@@ -201,7 +277,7 @@ function generateSingleCandidate(params: {
 }
 
 function generateLevelsForAllocationRow(params: {
-  row: LevelAllocationRow;
+  row: AllocationRow;
   needToGenerate: number;
   skill: { thinking_processes: string[] };
   generator: ReturnType<typeof getLevelGenerator>;
@@ -224,19 +300,22 @@ function generateLevelsForAllocationRow(params: {
   const mechSlug = TEMPLATE_MECH_SLUGS[row.template_code] || "GAME";
 
   const whatTags =
-    generator?.axes.what.filter((w) => isValidTagForAxis("what", w)) ?? [];
+    generator?.axes.what.filter((w) => isValidDbTagForAxis("what", w)) ?? [];
   if (whatTags.length === 0) {
     whatTags.push("classification");
   }
 
   const thinkingTags = skill.thinking_processes.filter((t) =>
-    isValidTagForAxis("thinking", t)
+    isValidDbTagForAxis("thinking", t)
   );
   if (thinkingTags.length === 0) {
     thinkingTags.push("observe");
   }
 
-  const [ageMin, ageMax] = resolveAgeRange(row.age_band);
+  const { ageBand, ageMin, ageMax } = resolveValidAgeBand(
+    row.age_band,
+    row.template_code
+  );
   const [diffMin, diffMax] = row.difficulty_range;
   const loCodes = [
     `LO-${row.skill_code}-01`,
@@ -251,7 +330,9 @@ function generateLevelsForAllocationRow(params: {
     templateLevelIndex.set(row.template_code, globalIdx + 1);
 
     const accessTier = resolveAccessTier(globalIdx);
-    const themeTag = row.theme_tags[i % row.theme_tags.length] || "school";
+    const requestedTheme =
+      row.theme_tags[i % row.theme_tags.length] || "school";
+    const themeTag = resolveValidTheme(requestedTheme, row.theme_tags, ageMax);
     const vocab = getThemeVocabulary(themeTag);
     const noun = vocab.nouns[i % vocab.nouns.length] ??
       vocab.nouns[0] ?? { emoji_ref: "EMJ-star", label_vi: "bạn nhỏ" };
@@ -272,7 +353,7 @@ function generateLevelsForAllocationRow(params: {
     const { title, instruction } = resolveEnginePhrases(
       row.template_code,
       themeTag,
-      row.age_band,
+      ageBand,
       noun.label_vi
     );
 
@@ -280,7 +361,7 @@ function generateLevelsForAllocationRow(params: {
       skillCode: row.skill_code,
       templateCode: row.template_code,
       themeTag,
-      ageBand: row.age_band,
+      ageBand,
       index: i,
       levelCode,
       title,
@@ -311,7 +392,7 @@ function collectExistingLevelsAndCounts(): {
   const existingCodes = new Set<string>();
   const existingPairCounts = new Map<string, number>();
 
-  for (const level of ALL_SEED_LEVELS) {
+  for (const level of STATIC_SEED_LEVELS) {
     existingCodes.add(level.header.code);
     const templateCode = level.header.template_code;
     for (const sc of level.header.skill_codes) {

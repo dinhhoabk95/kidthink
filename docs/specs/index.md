@@ -254,6 +254,7 @@ v1 có **31** spec cho cùng phạm vi. Xé nhỏ là chủ ý — xem [`AUDIT-v
 | [thinking-coverage-matrix](08-quality/thinking-coverage-matrix.md) | P3 | Cổng đo phủ 6 năng lực, từ vựng đóng thật |
 | [go-live-readiness](08-quality/go-live-readiness.md) | P4 | Điều kiện trẻ mở được, khác sàn MVP |
 | [type-safety](08-quality/type-safety.md) | P0 | Cấm any, nợ ép kiểu chỉ giảm, dữ liệu vào qua schema |
+| [legacy-v1-coverage](08-quality/legacy-v1-coverage.md) | P0 | Cổng phủ 60 game types v1 và xương truy vết |
 
 ---
 

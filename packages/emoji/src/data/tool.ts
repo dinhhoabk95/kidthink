@@ -170,4 +170,12 @@ export const TOOL_EMOJIS: EmojiEntry[] = [
     keywords: ["oil drum", "thùng phuy", "khối trụ"],
     name: "Thùng phuy",
   },
+  {
+    age_min: 3,
+    category: "tool",
+    curriculum_themes: ["gia_dinh"],
+    emoji: "🔋",
+    keywords: ["battery", "pin", "năng lượng", "điện"],
+    name: "Pin",
+  },
 ];

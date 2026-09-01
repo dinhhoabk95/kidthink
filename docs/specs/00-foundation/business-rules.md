@@ -205,7 +205,7 @@ tham chiếu — cấm — NEVER còn lệnh nào đo tự động; reviewer tra
 | `BR-A11` | [`accessibility.md`](../08-quality/accessibility.md) | | `BR-PRF` | [`performance-budgets.md`](../08-quality/performance-budgets.md) |
 | `BR-DSC` | [`design-system-contract.md`](../08-quality/design-system-contract.md) | | `BR-PED` | [`pedagogical-evidence.md`](../08-quality/pedagogical-evidence.md) |
 | `BR-TCM` | [`thinking-coverage-matrix.md`](../08-quality/thinking-coverage-matrix.md) | | `BR-TYP` | [`type-safety.md`](../08-quality/type-safety.md) |
-| `BR-GLR` | [`go-live-readiness.md`](../08-quality/go-live-readiness.md) | | | |
+| `BR-GLR` | [`go-live-readiness.md`](../08-quality/go-live-readiness.md) | | `BR-LVC` | [`legacy-v1-coverage.md`](../08-quality/legacy-v1-coverage.md) |
 
 ### 7.2 Thống kê
 

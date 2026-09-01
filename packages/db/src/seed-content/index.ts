@@ -20,7 +20,7 @@ export * from "./quarantine.js";
 export * from "./service.js";
 export * from "./types.js";
 
-export const ALL_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
+export const STATIC_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
   ...C1_SEED_LEVELS,
   ...C2_SEED_LEVELS,
   ...C3_ALL_LEVELS,
@@ -28,6 +28,10 @@ export const ALL_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
   ...C5_SEED_LEVELS,
   ...C6_SEED_LEVELS,
   ...PEDAGOGY_MISSING_SKILL_LEVELS,
+];
+
+export const ALL_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
+  ...STATIC_SEED_LEVELS,
   ...ALL_GENERATED_LEVELS,
 ];
 

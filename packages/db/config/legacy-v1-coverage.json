@@ -1,0 +1,37 @@
+{
+  "active_step": 0,
+  "steps": [
+    {
+      "step": 0,
+      "min_levels_per_type": 1,
+      "min_types_covered": 20,
+      "description": "Bậc 0: Khởi tạo xương truy vết v1 (audit 20/60 game types có level mẫu hợp lệ)"
+    },
+    {
+      "step": 1,
+      "min_levels_per_type": 10,
+      "min_types_covered": 51,
+      "description": "Bậc 1: Phủ 51 game type trên template có sẵn"
+    },
+    {
+      "step": 2,
+      "min_levels_per_type": 10,
+      "min_types_covered": 57,
+      "description": "Bậc 2: Phủ 57 game type"
+    },
+    {
+      "step": 3,
+      "min_levels_per_type": 10,
+      "min_types_covered": 60,
+      "description": "Bậc 3: Hoàn thành 100% 60 game types (600 level)"
+    }
+  ],
+  "history": [
+    {
+      "date": "2026-09-01",
+      "step": 0,
+      "task": "Task #170",
+      "note": "Thiết lập xương truy vết v1, đo được 20/60 game types có level hợp lệ"
+    }
+  ]
+}

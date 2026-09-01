@@ -8,6 +8,13 @@
       "when": 1788140629988,
       "tag": "0000_bumpy_secret_warriors",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1788200000000,
+      "tag": "0001_add_legacy_v1_ref",
+      "breakpoints": true
     }
   ]
 }

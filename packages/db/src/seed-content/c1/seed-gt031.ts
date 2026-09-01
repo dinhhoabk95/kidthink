@@ -195,7 +195,7 @@ export const SEED_GT031: ContentSeed<unknown, unknown>[] = [
       target_amount: 5,
       item_to_buy: {
         label: "Hộp sữa",
-        asset: { kind: "emoji", ref: "EMJ-glass-of-milk" },
+        asset: { kind: "emoji", ref: "EMJ-milk" },
       },
       coins: [
         {
@@ -293,8 +293,8 @@ export const SEED_GT031: ContentSeed<unknown, unknown>[] = [
       age_max: 6,
       difficulty: 3,
       access_tier: "login",
-      skill_codes: ["C1.MEAS.14"],
-      learning_objective_codes: ["LO-C1.MEAS.14-01"],
+      skill_codes: ["C1.MEAS.15"],
+      learning_objective_codes: ["LO-C1.MEAS.15-01"],
       what_tags: ["money"],
       thinking_tags: ["count", "plan"],
       theme_tag: "vehicle",
@@ -306,7 +306,7 @@ export const SEED_GT031: ContentSeed<unknown, unknown>[] = [
       target_amount: 7,
       item_to_buy: {
         label: "Ô tô",
-        asset: { kind: "emoji", ref: "EMJ-automobile" },
+        asset: { kind: "emoji", ref: "EMJ-car" },
       },
       coins: [
         {
@@ -351,8 +351,8 @@ export const SEED_GT031: ContentSeed<unknown, unknown>[] = [
       age_max: 6,
       difficulty: 3,
       access_tier: "login",
-      skill_codes: ["C1.MEAS.14"],
-      learning_objective_codes: ["LO-C1.MEAS.14-01"],
+      skill_codes: ["C1.MEAS.15"],
+      learning_objective_codes: ["LO-C1.MEAS.15-01"],
       what_tags: ["money"],
       thinking_tags: ["count", "plan"],
       theme_tag: "school",
@@ -409,8 +409,8 @@ export const SEED_GT031: ContentSeed<unknown, unknown>[] = [
       age_max: 6,
       difficulty: 3,
       access_tier: "login",
-      skill_codes: ["C1.MEAS.14"],
-      learning_objective_codes: ["LO-C1.MEAS.14-01"],
+      skill_codes: ["C1.MEAS.15"],
+      learning_objective_codes: ["LO-C1.MEAS.15-01"],
       what_tags: ["money"],
       thinking_tags: ["count", "plan"],
       theme_tag: "festival",
@@ -467,8 +467,8 @@ export const SEED_GT031: ContentSeed<unknown, unknown>[] = [
       age_max: 6,
       difficulty: 4,
       access_tier: "login",
-      skill_codes: ["C1.MEAS.14"],
-      learning_objective_codes: ["LO-C1.MEAS.14-01"],
+      skill_codes: ["C1.MEAS.15"],
+      learning_objective_codes: ["LO-C1.MEAS.15-01"],
       what_tags: ["money"],
       thinking_tags: ["count", "plan"],
       theme_tag: "school",
@@ -480,7 +480,7 @@ export const SEED_GT031: ContentSeed<unknown, unknown>[] = [
       target_amount: 10,
       item_to_buy: {
         label: "Quả bóng",
-        asset: { kind: "emoji", ref: "EMJ-soccer-ball" },
+        asset: { kind: "emoji", ref: "EMJ-soccer" },
       },
       coins: [
         {
@@ -525,8 +525,8 @@ export const SEED_GT031: ContentSeed<unknown, unknown>[] = [
       age_max: 6,
       difficulty: 4,
       access_tier: "login",
-      skill_codes: ["C1.MEAS.14"],
-      learning_objective_codes: ["LO-C1.MEAS.14-01"],
+      skill_codes: ["C1.MEAS.15"],
+      learning_objective_codes: ["LO-C1.MEAS.15-01"],
       what_tags: ["money"],
       thinking_tags: ["count", "plan"],
       theme_tag: "festival",

@@ -84,6 +84,35 @@ describe("Tám cổng thẩm định nội dung seed (BR-CSA-02, Task #117)", ()
         )
       ).toBe(true);
     });
+
+    it("fails with LEGACY_V1_REF_INVALID when legacy_v1_ref is not in 60 legacy game types (WP170.2)", () => {
+      const seedWithInvalidLegacyRef = {
+        ...VALID_GAME_LEVEL_SEED,
+        header: {
+          ...VALID_GAME_LEVEL_SEED.header,
+          legacy_v1_ref: "D9-99",
+        },
+      };
+      const results = runEightGates(seedWithInvalidLegacyRef, new Set());
+      const gate2 = results.find((r) => r.gate === 2);
+      expect(gate2?.passed).toBe(false);
+      expect(
+        gate2?.issues.some((i) => i.code === "LEGACY_V1_REF_INVALID")
+      ).toBe(true);
+    });
+
+    it("passes Gate 2 when legacy_v1_ref is a valid legacy game type code", () => {
+      const seedWithValidLegacyRef = {
+        ...VALID_GAME_LEVEL_SEED,
+        header: {
+          ...VALID_GAME_LEVEL_SEED.header,
+          legacy_v1_ref: "D1-01",
+        },
+      };
+      const results = runEightGates(seedWithValidLegacyRef, new Set());
+      const gate2 = results.find((r) => r.gate === 2);
+      expect(gate2?.passed).toBe(true);
+    });
   });
 
   describe("Gate 3: Asset & Tuổi", () => {

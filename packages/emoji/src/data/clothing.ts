@@ -242,4 +242,12 @@ export const CLOTHING_EMOJIS: EmojiEntry[] = [
     keywords: ["military helmet", "mũ lính", "quân đội", "bộ đội"],
     name: "Mũ lính",
   },
+  {
+    age_min: 3,
+    category: "clothing",
+    curriculum_themes: ["ban_than"],
+    emoji: "🧶",
+    keywords: ["yarn", "wool", "cuộn len", "len", "đan len"],
+    name: "Cuộn len",
+  },
 ];

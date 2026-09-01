@@ -13,6 +13,7 @@ export * from "./child-data.js";
 export * from "./competency-catalog.js";
 export * from "./config-dictionary.js";
 export * from "./constants/content-themes.js";
+export * from "./constants/legacy-v1-game-types.js";
 export * from "./curriculum-model.js";
 export * from "./curriculum-player.js";
 export * from "./custom-game.js";

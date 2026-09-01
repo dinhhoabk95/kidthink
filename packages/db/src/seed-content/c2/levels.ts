@@ -1321,6 +1321,7 @@ export const C2_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
   {
     header: {
       code: "GL-C2-ROT-TRANS-0021",
+      legacy_v1_ref: "D2-04",
       content_version: 1,
       template_code: "GT-019",
       title: "Xoay mũi tên lên trên",
@@ -1373,6 +1374,7 @@ export const C2_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
   {
     header: {
       code: "GL-C2-ROT-TRANS-0022",
+      legacy_v1_ref: "D2-04",
       content_version: 1,
       template_code: "GT-019",
       title: "Xoay hai mảnh ghép đúng chiều",
@@ -1444,6 +1446,7 @@ export const C2_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
   {
     header: {
       code: "GL-C2-ROT-TRANS-0023",
+      legacy_v1_ref: "D2-04",
       content_version: 1,
       template_code: "GT-019",
       title: "Xoay và lật hình cá bơi lội",
@@ -1496,6 +1499,7 @@ export const C2_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
   {
     header: {
       code: "GL-C2-MIR-COMP-0024",
+      legacy_v1_ref: "D2-03",
       content_version: 1,
       template_code: "GT-021",
       title: "Hoàn thiện cánh bướm đối xứng",
@@ -1559,6 +1563,7 @@ export const C2_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
   {
     header: {
       code: "GL-C2-MIR-COMP-0025",
+      legacy_v1_ref: "D2-03",
       content_version: 1,
       template_code: "GT-021",
       title: "Xếp khối màu đối xứng trục dọc",
@@ -1640,6 +1645,7 @@ export const C2_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
   {
     header: {
       code: "GL-C2-MIR-COMP-0026",
+      legacy_v1_ref: "D2-03",
       content_version: 1,
       template_code: "GT-021",
       title: "Đối xứng trục ngang bốn ô",
@@ -1713,6 +1719,7 @@ export const C2_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
   {
     header: {
       code: "GL-C2-CON-SHP-0027",
+      legacy_v1_ref: "D2-07",
       content_version: 1,
       template_code: "GT-023",
       title: "Lắp ráp ngôi nhà đơn giản",
@@ -1785,6 +1792,7 @@ export const C2_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
   {
     header: {
       code: "GL-C2-CON-SHP-0028",
+      legacy_v1_ref: "D2-07",
       content_version: 1,
       template_code: "GT-023",
       title: "Lắp ráp xe ô tô nhỏ",
@@ -1873,6 +1881,7 @@ export const C2_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
   {
     header: {
       code: "GL-C2-CON-SHP-0029",
+      legacy_v1_ref: "D2-07",
       content_version: 1,
       template_code: "GT-023",
       title: "Lắp ráp tên lửa vũ trụ",
@@ -1961,6 +1970,7 @@ export const C2_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
   {
     header: {
       code: "GL-C2-TRC-PTH-0030",
+      legacy_v1_ref: "D2-09",
       content_version: 1,
       template_code: "GT-024",
       title: "Vẽ theo nét hình tam giác",
@@ -2026,6 +2036,7 @@ export const C2_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
   {
     header: {
       code: "GL-C2-TRC-PTH-0031",
+      legacy_v1_ref: "D2-09",
       content_version: 1,
       template_code: "GT-024",
       title: "Vẽ theo nét hình vuông",
@@ -2098,6 +2109,7 @@ export const C2_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
   {
     header: {
       code: "GL-C2-TRC-PTH-0032",
+      legacy_v1_ref: "D2-09",
       content_version: 1,
       template_code: "GT-024",
       title: "Nối điểm vẽ ngôi sao năm cánh",
@@ -2213,6 +2225,7 @@ export const C2_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
   {
     header: {
       code: "GL-C2-BLK-STK-0033",
+      legacy_v1_ref: "D6-10",
       content_version: 1,
       template_code: "GT-017",
       title: "Đếm số khối lập phương đơn giản",
@@ -2292,6 +2305,7 @@ export const C2_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
   {
     header: {
       code: "GL-C2-BLK-STK-0034",
+      legacy_v1_ref: "D6-10",
       content_version: 1,
       template_code: "GT-017",
       title: "Xếp tháp năm khối lập phương",
@@ -2376,6 +2390,7 @@ export const C2_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
   {
     header: {
       code: "GL-C2-BLK-STK-0035",
+      legacy_v1_ref: "D6-10",
       content_version: 1,
       template_code: "GT-017",
       title: "Đếm khối lập phương có phần bị che",
@@ -2466,6 +2481,7 @@ export const C2_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
   {
     header: {
       code: "GL-C2-SHP-FLIP-0030",
+      legacy_v1_ref: "D6-11",
       content_version: 1,
       template_code: "GT-020",
       title: "Lật thẻ tìm cặp hình giống nhau",

@@ -895,8 +895,8 @@ export const C3_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
       age_max: 5,
       difficulty: 3,
       access_tier: "premium",
-      skill_codes: ["C3.CLS.01"],
-      learning_objective_codes: ["LO-C3.CLS.01-01"],
+      skill_codes: ["C3.CLS.02"],
+      learning_objective_codes: ["LO-C3.CLS.02-01"],
       what_tags: ["cls"],
       thinking_tags: ["compare"],
       theme_tag: "school",
@@ -1366,6 +1366,7 @@ export const C3_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
   {
     header: {
       code: "GL-C3-CLU-DED-0021",
+      legacy_v1_ref: "D6-07",
       content_version: 1,
       template_code: "GT-009",
       title: "Tìm số bí ẩn lớn hơn bốn",
@@ -1424,6 +1425,7 @@ export const C3_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
   {
     header: {
       code: "GL-C3-CLU-DED-0022",
+      legacy_v1_ref: "D6-07",
       content_version: 1,
       template_code: "GT-009",
       title: "Tìm số bé hơn năm và khác hai",
@@ -1502,6 +1504,7 @@ export const C3_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
   {
     header: {
       code: "GL-C3-CLU-DED-0023",
+      legacy_v1_ref: "D6-07",
       content_version: 1,
       template_code: "GT-009",
       title: "Tìm số chẵn nằm giữa ba và bảy",
@@ -1886,6 +1889,7 @@ export const C3_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
   {
     header: {
       code: "GL-C3-SUD-MIN-0027",
+      legacy_v1_ref: "D6-02",
       content_version: 1,
       template_code: "GT-015",
       title: "Sudoku mini hai nhân hai động vật",
@@ -1955,6 +1959,7 @@ export const C3_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
   {
     header: {
       code: "GL-C3-SUD-MIN-0028",
+      legacy_v1_ref: "D6-02",
       content_version: 1,
       template_code: "GT-015",
       title: "Sudoku mini ba nhân ba trái cây",
@@ -2055,6 +2060,7 @@ export const C3_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
   {
     header: {
       code: "GL-C3-SUD-MIN-0029",
+      legacy_v1_ref: "D6-02",
       content_version: 1,
       template_code: "GT-015",
       title: "Sudoku bốn nhân bốn hình khối",
@@ -2292,6 +2298,7 @@ export const C3_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
   {
     header: {
       code: "GL-C3-CLS-FLIP-0031",
+      legacy_v1_ref: "D6-11",
       content_version: 1,
       template_code: "GT-020",
       title: "Lật thẻ tìm cặp cùng màu",

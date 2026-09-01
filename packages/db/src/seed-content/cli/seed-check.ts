@@ -3,6 +3,10 @@ import { getOwnerDb } from "#src/client";
 import { activities, lessons } from "#src/schema/content";
 import { gameLevels } from "#src/schema/game";
 import { GATE_1_LADDER_BASELINES } from "#src/seed-content/gates/ladder";
+import {
+  checkLegacyV1Coverage,
+  printLegacyV1CoverageReport,
+} from "#src/seed-content/gates/legacy-v1-coverage";
 import { checkGateMontessoriCorpus } from "#src/seed-content/gates/montessori-gate";
 import { runEightGates } from "#src/seed-content/gates/runner";
 import { ALL_SEED_CONTENT, ALL_SEED_LEVELS } from "#src/seed-content/index";
@@ -235,6 +239,12 @@ export async function runSeedCheck(againstDb = false) {
 
   printGate1Report(tracker);
   blockingIssues += validateLadderBaselines(tracker);
+
+  const legacyV1Report = checkLegacyV1Coverage(ALL_SEED_LEVELS);
+  printLegacyV1CoverageReport(legacyV1Report);
+  if (!legacyV1Report.passed) {
+    blockingIssues++;
+  }
 
   if (againstDb) {
     const driftCount = await checkAllDrifts(ALL_SEED_CONTENT);

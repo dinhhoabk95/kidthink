@@ -5,13 +5,14 @@ import type { ContentSeed } from "#src/seed-content/types";
 import { VALID_GAME_LEVEL_SEED } from "./fixtures/eight-gates-fixtures.js";
 
 describe("Task #196 — Cổng hạn ngạch và đa dạng skill (check:skill-quota / BR-SKQ-01..05)", () => {
-  it("CHỐT KIỂM 0: Chạy trên corpus seed hiện tại và ĐỎ ĐÚNG CHỖ (181 skill trắng, 27 skill 1 khuôn)", () => {
+  it("CHỐT KIỂM: Chạy trên full corpus seed hiện tại và XANH TOÀN BỘ 230/230 skills", () => {
     const report = evaluateSkillQuota(ALL_SEED_LEVELS);
     expect(report.totalSkills).toBe(230);
-    expect(report.totalValidLevels).toBe(384);
-    expect(report.skillsWithZeroLevelsCount).toBe(158);
-    expect(report.skillsSingleTemplateCount).toBe(24);
-    expect(report.passed).toBe(false);
+    expect(report.totalValidLevels).toBeGreaterThanOrEqual(3550);
+    expect(report.skillsWithZeroLevelsCount).toBe(0);
+    expect(report.skillsSingleTemplateCount).toBe(0);
+    expect(report.violations.length).toBe(0);
+    expect(report.passed).toBe(true);
   });
 
   describe("Bốn ca âm bắt buộc (BR-SKQ-01..04)", () => {

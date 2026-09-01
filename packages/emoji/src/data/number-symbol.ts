@@ -178,4 +178,12 @@ export const NUMBER_SYMBOL_EMOJIS: EmojiEntry[] = [
     keywords: ["hash", "number sign", "dấu thăng", "số", "hashtag"],
     name: "Dấu thăng",
   },
+  {
+    age_min: 3,
+    category: "number-symbol",
+    curriculum_themes: ["truong_mam_non"],
+    emoji: "🪙",
+    keywords: ["coin", "đồng xu", "tiền xu", "xu"],
+    name: "Đồng xu",
+  },
 ];

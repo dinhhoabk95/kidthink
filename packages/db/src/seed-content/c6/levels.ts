@@ -945,6 +945,7 @@ export const C6_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
   {
     header: {
       code: "GL-C6-MEM-CMP-0015",
+      legacy_v1_ref: "D6-11",
       content_version: 1,
       template_code: "GT-020",
       title: "Ghi nhớ cặp thẻ trùng khớp",
@@ -1164,8 +1165,8 @@ export const C6_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
       age_max: 6,
       difficulty: 4,
       access_tier: "premium",
-      skill_codes: ["C6.WM.03"],
-      learning_objective_codes: ["LO-C6.WM.03-01"],
+      skill_codes: ["C6.WM.04"],
+      learning_objective_codes: ["LO-C6.WM.04-01"],
       what_tags: ["mem"],
       thinking_tags: ["inhibit"],
       theme_tag: "school",
@@ -1353,6 +1354,7 @@ export const C6_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
   {
     header: {
       code: "GL-C6-PLN-MAZE-0021",
+      legacy_v1_ref: "D6-01",
       content_version: 1,
       template_code: "GT-013",
       title: "Vạch đường cho robot về nhà",
@@ -1413,6 +1415,7 @@ export const C6_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
   {
     header: {
       code: "GL-C6-PLN-MAZE-0022",
+      legacy_v1_ref: "D6-01",
       content_version: 1,
       template_code: "GT-013",
       title: "Đưa chú thỏ về hang ăn cà rốt",
@@ -1478,6 +1481,7 @@ export const C6_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
   {
     header: {
       code: "GL-C6-PLN-MAZE-0023",
+      legacy_v1_ref: "D6-01",
       content_version: 1,
       template_code: "GT-013",
       title: "Tìm lối đi an toàn về ngôi nhà",
@@ -1817,8 +1821,8 @@ export const C6_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
       age_max: 4,
       difficulty: 1,
       access_tier: "free",
-      skill_codes: ["C6.WM.03"],
-      learning_objective_codes: ["LO-C6.WM.03-01"],
+      skill_codes: ["C6.WM.04"],
+      learning_objective_codes: ["LO-C6.WM.04-01"],
       what_tags: ["mem", "cnt"],
       thinking_tags: ["recall", "count"],
       theme_tag: "school",
@@ -1886,8 +1890,8 @@ export const C6_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
       age_max: 5,
       difficulty: 2,
       access_tier: "login",
-      skill_codes: ["C6.WM.03"],
-      learning_objective_codes: ["LO-C6.WM.03-01"],
+      skill_codes: ["C6.WM.04"],
+      learning_objective_codes: ["LO-C6.WM.04-01"],
       what_tags: ["mem", "cnt"],
       thinking_tags: ["recall", "count"],
       theme_tag: "school",
@@ -1962,8 +1966,8 @@ export const C6_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
       age_max: 6,
       difficulty: 3,
       access_tier: "standard",
-      skill_codes: ["C6.WM.03"],
-      learning_objective_codes: ["LO-C6.WM.03-01"],
+      skill_codes: ["C6.WM.04"],
+      learning_objective_codes: ["LO-C6.WM.04-01"],
       what_tags: ["mem", "cnt"],
       thinking_tags: ["recall", "count"],
       theme_tag: "space",

@@ -1,0 +1,7765 @@
+[
+  {
+    "header": {
+      "code": "GL-C1-SUB-TAP-0001",
+      "template_code": "GT-001",
+      "title": "Tìm Trường học giống mẫu",
+      "instruction": "Bé chạm vào Trường học giống mẫu nhé!",
+      "theme_tag": "school",
+      "what_tags": ["classification", "number"],
+      "thinking_tags": ["count", "solve"],
+      "skill_codes": ["C1.SUB.01"],
+      "learning_objective_codes": [
+        "LO-C1.SUB.01-01",
+        "LO-C1.SUB.01-02",
+        "LO-C1.SUB.01-03"
+      ],
+      "difficulty": 1,
+      "age_min": 3,
+      "age_max": 4,
+      "access_tier": "premium",
+      "content_version": 1,
+      "authored_in": "repo_seed",
+      "origin": "ai_assisted"
+    },
+    "content_pack": {
+      "prompt": "Bé hãy chạm vào hình giống mẫu nhé!",
+      "target_item": {
+        "item_id": "item_EMJ-abacus",
+        "asset": {
+          "kind": "emoji",
+          "ref": "EMJ-abacus"
+        }
+      },
+      "options": [
+        {
+          "item_id": "opt_1",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-abacus"
+          },
+          "is_correct": true
+        },
+        {
+          "item_id": "opt_2",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-scissors"
+          },
+          "is_correct": false
+        },
+        {
+          "item_id": "opt_3",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-bell"
+          },
+          "is_correct": false
+        }
+      ]
+    },
+    "difficulty_params": {
+      "distractor_count": 2,
+      "hint_after_ms": 10000,
+      "allow_retry": true,
+      "shuffle_items": true
+    }
+  },
+  {
+    "header": {
+      "code": "GL-C1-SUB-TAP-0002",
+      "template_code": "GT-001",
+      "title": "Tìm Bò sữa giống mẫu",
+      "instruction": "Bé chạm vào Bò sữa giống mẫu nhé!",
+      "theme_tag": "farm",
+      "what_tags": ["classification", "number"],
+      "thinking_tags": ["count", "solve"],
+      "skill_codes": ["C1.SUB.01"],
+      "learning_objective_codes": [
+        "LO-C1.SUB.01-01",
+        "LO-C1.SUB.01-02",
+        "LO-C1.SUB.01-03"
+      ],
+      "difficulty": 2,
+      "age_min": 3,
+      "age_max": 4,
+      "access_tier": "standard",
+      "content_version": 1,
+      "authored_in": "repo_seed",
+      "origin": "ai_assisted"
+    },
+    "content_pack": {
+      "prompt": "Bé hãy chạm vào hình giống mẫu nhé!",
+      "target_item": {
+        "item_id": "item_EMJ-tractor",
+        "asset": {
+          "kind": "emoji",
+          "ref": "EMJ-tractor"
+        }
+      },
+      "options": [
+        {
+          "item_id": "opt_1",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-pig"
+          },
+          "is_correct": false
+        },
+        {
+          "item_id": "opt_2",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-goat"
+          },
+          "is_correct": false
+        },
+        {
+          "item_id": "opt_3",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-duck"
+          },
+          "is_correct": false
+        },
+        {
+          "item_id": "opt_4",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-tractor"
+          },
+          "is_correct": true
+        }
+      ]
+    },
+    "difficulty_params": {
+      "distractor_count": 3,
+      "hint_after_ms": 10000,
+      "allow_retry": true,
+      "shuffle_items": true
+    }
+  },
+  {
+    "header": {
+      "code": "GL-C1-SUB-TAP-0003",
+      "template_code": "GT-001",
+      "title": "Tìm Cái ghế giống mẫu",
+      "instruction": "Bé chạm vào Cái ghế giống mẫu nhé!",
+      "theme_tag": "home",
+      "what_tags": ["classification", "number"],
+      "thinking_tags": ["count", "solve"],
+      "skill_codes": ["C1.SUB.01"],
+      "learning_objective_codes": [
+        "LO-C1.SUB.01-01",
+        "LO-C1.SUB.01-02",
+        "LO-C1.SUB.01-03"
+      ],
+      "difficulty": 3,
+      "age_min": 3,
+      "age_max": 4,
+      "access_tier": "premium",
+      "content_version": 1,
+      "authored_in": "repo_seed",
+      "origin": "ai_assisted"
+    },
+    "content_pack": {
+      "prompt": "Bé hãy chạm vào hình giống mẫu nhé!",
+      "target_item": {
+        "item_id": "item_EMJ-window",
+        "asset": {
+          "kind": "emoji",
+          "ref": "EMJ-window"
+        }
+      },
+      "options": [
+        {
+          "item_id": "opt_1",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-door"
+          },
+          "is_correct": false
+        },
+        {
+          "item_id": "opt_2",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-window"
+          },
+          "is_correct": true
+        },
+        {
+          "item_id": "opt_3",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-spoon"
+          },
+          "is_correct": false
+        },
+        {
+          "item_id": "opt_4",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-chair"
+          },
+          "is_correct": false
+        }
+      ]
+    },
+    "difficulty_params": {
+      "distractor_count": 3,
+      "hint_after_ms": 10000,
+      "allow_retry": true,
+      "shuffle_items": true
+    }
+  },
+  {
+    "header": {
+      "code": "GL-C1-SUB-TAP-0004",
+      "template_code": "GT-001",
+      "title": "Tìm Khỉ giống mẫu",
+      "instruction": "Bé chạm vào Khỉ giống mẫu nhé!",
+      "theme_tag": "animal",
+      "what_tags": ["classification", "number"],
+      "thinking_tags": ["count", "solve"],
+      "skill_codes": ["C1.SUB.01"],
+      "learning_objective_codes": [
+        "LO-C1.SUB.01-01",
+        "LO-C1.SUB.01-02",
+        "LO-C1.SUB.01-03"
+      ],
+      "difficulty": 1,
+      "age_min": 3,
+      "age_max": 4,
+      "access_tier": "standard",
+      "content_version": 1,
+      "authored_in": "repo_seed",
+      "origin": "ai_assisted"
+    },
+    "content_pack": {
+      "prompt": "Bé hãy chạm vào hình giống mẫu nhé!",
+      "target_item": {
+        "item_id": "item_EMJ-lion",
+        "asset": {
+          "kind": "emoji",
+          "ref": "EMJ-lion"
+        }
+      },
+      "options": [
+        {
+          "item_id": "opt_1",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-lion"
+          },
+          "is_correct": true
+        },
+        {
+          "item_id": "opt_2",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-rabbit"
+          },
+          "is_correct": false
+        },
+        {
+          "item_id": "opt_3",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-elephant"
+          },
+          "is_correct": false
+        }
+      ]
+    },
+    "difficulty_params": {
+      "distractor_count": 2,
+      "hint_after_ms": 10000,
+      "allow_retry": true,
+      "shuffle_items": true
+    }
+  },
+  {
+    "header": {
+      "code": "GL-C1-SUB-TCNT-0001",
+      "template_code": "GT-002",
+      "title": "Đếm số lượng Cây xanh",
+      "instruction": "Bé đếm số Cây xanh rồi chọn số đúng!",
+      "theme_tag": "nature",
+      "what_tags": ["category"],
+      "thinking_tags": ["count", "solve"],
+      "skill_codes": ["C1.SUB.01"],
+      "learning_objective_codes": [
+        "LO-C1.SUB.01-01",
+        "LO-C1.SUB.01-02",
+        "LO-C1.SUB.01-03"
+      ],
+      "difficulty": 1,
+      "age_min": 4,
+      "age_max": 5,
+      "access_tier": "standard",
+      "content_version": 1,
+      "authored_in": "repo_seed",
+      "origin": "ai_assisted"
+    },
+    "content_pack": {
+      "prompt": "Bé hãy chọn tất cả các hình theo yêu cầu nhé!",
+      "target_criterion": "Cùng nhóm chủ đề",
+      "items": [
+        {
+          "item_id": "item_1",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-maple-leaf"
+          },
+          "is_correct": true
+        },
+        {
+          "item_id": "item_2",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-mountain"
+          },
+          "is_correct": true
+        },
+        {
+          "item_id": "item_3",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-seedling"
+          },
+          "is_correct": false
+        },
+        {
+          "item_id": "item_4",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-deciduous-tree"
+          },
+          "is_correct": false
+        }
+      ]
+    },
+    "difficulty_params": {
+      "distractor_count": 2,
+      "target_count": 2,
+      "hint_after_ms": 12000,
+      "allow_retry": true
+    }
+  },
+  {
+    "header": {
+      "code": "GL-C1-SUB-TCNT-0002",
+      "template_code": "GT-002",
+      "title": "Đếm số lượng Cá heo",
+      "instruction": "Bé đếm số Cá heo rồi chọn số đúng!",
+      "theme_tag": "ocean",
+      "what_tags": ["category"],
+      "thinking_tags": ["count", "solve"],
+      "skill_codes": ["C1.SUB.01"],
+      "learning_objective_codes": [
+        "LO-C1.SUB.01-01",
+        "LO-C1.SUB.01-02",
+        "LO-C1.SUB.01-03"
+      ],
+      "difficulty": 2,
+      "age_min": 4,
+      "age_max": 5,
+      "access_tier": "premium",
+      "content_version": 1,
+      "authored_in": "repo_seed",
+      "origin": "ai_assisted"
+    },
+    "content_pack": {
+      "prompt": "Bé hãy chọn tất cả các hình theo yêu cầu nhé!",
+      "target_criterion": "Cùng nhóm chủ đề",
+      "items": [
+        {
+          "item_id": "item_1",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-sea-turtle"
+          },
+          "is_correct": true
+        },
+        {
+          "item_id": "item_2",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-shark"
+          },
+          "is_correct": true
+        },
+        {
+          "item_id": "item_3",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-jellyfish"
+          },
+          "is_correct": false
+        },
+        {
+          "item_id": "item_4",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-shell"
+          },
+          "is_correct": false
+        }
+      ]
+    },
+    "difficulty_params": {
+      "distractor_count": 2,
+      "target_count": 2,
+      "hint_after_ms": 12000,
+      "allow_retry": true
+    }
+  },
+  {
+    "header": {
+      "code": "GL-C1-SUB-TCNT-0003",
+      "template_code": "GT-002",
+      "title": "Đếm số lượng Bánh mì",
+      "instruction": "Bé đếm số Bánh mì rồi chọn số đúng!",
+      "theme_tag": "food",
+      "what_tags": ["category"],
+      "thinking_tags": ["count", "solve"],
+      "skill_codes": ["C1.SUB.01"],
+      "learning_objective_codes": [
+        "LO-C1.SUB.01-01",
+        "LO-C1.SUB.01-02",
+        "LO-C1.SUB.01-03"
+      ],
+      "difficulty": 3,
+      "age_min": 4,
+      "age_max": 5,
+      "access_tier": "standard",
+      "content_version": 1,
+      "authored_in": "repo_seed",
+      "origin": "ai_assisted"
+    },
+    "content_pack": {
+      "prompt": "Bé hãy chọn tất cả các hình theo yêu cầu nhé!",
+      "target_criterion": "Cùng nhóm chủ đề",
+      "items": [
+        {
+          "item_id": "item_1",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-noodles"
+          },
+          "is_correct": true
+        },
+        {
+          "item_id": "item_2",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-milk"
+          },
+          "is_correct": true
+        },
+        {
+          "item_id": "item_3",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-red-apple"
+          },
+          "is_correct": false
+        },
+        {
+          "item_id": "item_4",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-banana"
+          },
+          "is_correct": false
+        }
+      ]
+    },
+    "difficulty_params": {
+      "distractor_count": 2,
+      "target_count": 2,
+      "hint_after_ms": 12000,
+      "allow_retry": true
+    }
+  },
+  {
+    "header": {
+      "code": "GL-C1-SUB-TCNT-0004",
+      "template_code": "GT-002",
+      "title": "Đếm số lượng Tàu hoả",
+      "instruction": "Bé đếm số Tàu hoả rồi chọn số đúng!",
+      "theme_tag": "vehicle",
+      "what_tags": ["category"],
+      "thinking_tags": ["count", "solve"],
+      "skill_codes": ["C1.SUB.01"],
+      "learning_objective_codes": [
+        "LO-C1.SUB.01-01",
+        "LO-C1.SUB.01-02",
+        "LO-C1.SUB.01-03"
+      ],
+      "difficulty": 1,
+      "age_min": 4,
+      "age_max": 5,
+      "access_tier": "premium",
+      "content_version": 1,
+      "authored_in": "repo_seed",
+      "origin": "ai_assisted"
+    },
+    "content_pack": {
+      "prompt": "Bé hãy chọn tất cả các hình theo yêu cầu nhé!",
+      "target_criterion": "Cùng nhóm chủ đề",
+      "items": [
+        {
+          "item_id": "item_1",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-airplane"
+          },
+          "is_correct": true
+        },
+        {
+          "item_id": "item_2",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-sailboat"
+          },
+          "is_correct": true
+        },
+        {
+          "item_id": "item_3",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-car"
+          },
+          "is_correct": false
+        },
+        {
+          "item_id": "item_4",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-bicycle"
+          },
+          "is_correct": false
+        }
+      ]
+    },
+    "difficulty_params": {
+      "distractor_count": 2,
+      "target_count": 2,
+      "hint_after_ms": 12000,
+      "allow_retry": true
+    }
+  },
+  {
+    "header": {
+      "code": "GL-C1-SUB-TCMP-0001",
+      "template_code": "GT-003",
+      "title": "So sánh nhóm Bảng vẽ",
+      "instruction": "Bé chọn nhóm nhiều Bảng vẽ hơn nhé!",
+      "theme_tag": "art",
+      "what_tags": ["classification"],
+      "thinking_tags": ["count", "solve"],
+      "skill_codes": ["C1.SUB.01"],
+      "learning_objective_codes": [
+        "LO-C1.SUB.01-01",
+        "LO-C1.SUB.01-02",
+        "LO-C1.SUB.01-03"
+      ],
+      "difficulty": 1,
+      "age_min": 3,
+      "age_max": 4,
+      "access_tier": "premium",
+      "content_version": 1,
+      "authored_in": "repo_seed",
+      "origin": "ai_assisted"
+    },
+    "content_pack": {
+      "prompt": "Bé hãy kéo các đồ vật thích hợp vào giỏ nhé!",
+      "container": {
+        "container_id": "basket_1",
+        "label": "Giỏ đồ",
+        "accepts_attribute": "target_attr"
+      },
+      "items": [
+        {
+          "item_id": "item_1",
+          "attribute": "target_attr",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-crayon"
+          },
+          "is_correct": true
+        },
+        {
+          "item_id": "item_2",
+          "attribute": "target_attr",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-piano"
+          },
+          "is_correct": true
+        },
+        {
+          "item_id": "item_3",
+          "attribute": "other_attr",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-artist-palette"
+          },
+          "is_correct": false
+        }
+      ]
+    },
+    "difficulty_params": {
+      "distractor_count": 1,
+      "target_count": 2,
+      "hint_after_ms": 10000,
+      "allow_retry": true
+    }
+  },
+  {
+    "header": {
+      "code": "GL-C1-SUB-TCMP-0002",
+      "template_code": "GT-003",
+      "title": "So sánh nhóm Cây đàn ghi-ta",
+      "instruction": "Bé chọn nhóm nhiều Cây đàn ghi-ta hơn nhé!",
+      "theme_tag": "art",
+      "what_tags": ["classification"],
+      "thinking_tags": ["count", "solve"],
+      "skill_codes": ["C1.SUB.01"],
+      "learning_objective_codes": [
+        "LO-C1.SUB.01-01",
+        "LO-C1.SUB.01-02",
+        "LO-C1.SUB.01-03"
+      ],
+      "difficulty": 2,
+      "age_min": 3,
+      "age_max": 4,
+      "access_tier": "standard",
+      "content_version": 1,
+      "authored_in": "repo_seed",
+      "origin": "ai_assisted"
+    },
+    "content_pack": {
+      "prompt": "Bé hãy kéo các đồ vật thích hợp vào giỏ nhé!",
+      "container": {
+        "container_id": "basket_1",
+        "label": "Giỏ đồ",
+        "accepts_attribute": "target_attr"
+      },
+      "items": [
+        {
+          "item_id": "item_1",
+          "attribute": "target_attr",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-guitar"
+          },
+          "is_correct": true
+        },
+        {
+          "item_id": "item_2",
+          "attribute": "target_attr",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-trumpet"
+          },
+          "is_correct": true
+        },
+        {
+          "item_id": "item_3",
+          "attribute": "other_attr",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-artist-palette"
+          },
+          "is_correct": false
+        }
+      ]
+    },
+    "difficulty_params": {
+      "distractor_count": 1,
+      "target_count": 2,
+      "hint_after_ms": 10000,
+      "allow_retry": true
+    }
+  },
+  {
+    "header": {
+      "code": "GL-C1-SUB-TCMP-0003",
+      "template_code": "GT-003",
+      "title": "So sánh nhóm Bà",
+      "instruction": "Bé chọn nhóm nhiều Bà hơn nhé!",
+      "theme_tag": "family",
+      "what_tags": ["classification"],
+      "thinking_tags": ["count", "solve"],
+      "skill_codes": ["C1.SUB.01"],
+      "learning_objective_codes": [
+        "LO-C1.SUB.01-01",
+        "LO-C1.SUB.01-02",
+        "LO-C1.SUB.01-03"
+      ],
+      "difficulty": 3,
+      "age_min": 3,
+      "age_max": 4,
+      "access_tier": "premium",
+      "content_version": 1,
+      "authored_in": "repo_seed",
+      "origin": "ai_assisted"
+    },
+    "content_pack": {
+      "prompt": "Bé hãy kéo các đồ vật thích hợp vào giỏ nhé!",
+      "container": {
+        "container_id": "basket_1",
+        "label": "Giỏ đồ",
+        "accepts_attribute": "target_attr"
+      },
+      "items": [
+        {
+          "item_id": "item_1",
+          "attribute": "target_attr",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-grandmother"
+          },
+          "is_correct": true
+        },
+        {
+          "item_id": "item_2",
+          "attribute": "target_attr",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-family"
+          },
+          "is_correct": true
+        },
+        {
+          "item_id": "item_3",
+          "attribute": "other_attr",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-boy"
+          },
+          "is_correct": false
+        }
+      ]
+    },
+    "difficulty_params": {
+      "distractor_count": 1,
+      "target_count": 2,
+      "hint_after_ms": 10000,
+      "allow_retry": true
+    }
+  },
+  {
+    "header": {
+      "code": "GL-C1-SUB-TCMP-0004",
+      "template_code": "GT-003",
+      "title": "So sánh nhóm Miệng",
+      "instruction": "Bé chọn nhóm nhiều Miệng hơn nhé!",
+      "theme_tag": "body",
+      "what_tags": ["classification"],
+      "thinking_tags": ["count", "solve"],
+      "skill_codes": ["C1.SUB.01"],
+      "learning_objective_codes": [
+        "LO-C1.SUB.01-01",
+        "LO-C1.SUB.01-02",
+        "LO-C1.SUB.01-03"
+      ],
+      "difficulty": 1,
+      "age_min": 3,
+      "age_max": 4,
+      "access_tier": "standard",
+      "content_version": 1,
+      "authored_in": "repo_seed",
+      "origin": "ai_assisted"
+    },
+    "content_pack": {
+      "prompt": "Bé hãy kéo các đồ vật thích hợp vào giỏ nhé!",
+      "container": {
+        "container_id": "basket_1",
+        "label": "Giỏ đồ",
+        "accepts_attribute": "target_attr"
+      },
+      "items": [
+        {
+          "item_id": "item_1",
+          "attribute": "target_attr",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-eyes"
+          },
+          "is_correct": true
+        },
+        {
+          "item_id": "item_2",
+          "attribute": "target_attr",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-leg"
+          },
+          "is_correct": true
+        },
+        {
+          "item_id": "item_3",
+          "attribute": "other_attr",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-tongue"
+          },
+          "is_correct": false
+        }
+      ]
+    },
+    "difficulty_params": {
+      "distractor_count": 1,
+      "target_count": 2,
+      "hint_after_ms": 10000,
+      "allow_retry": true
+    }
+  },
+  {
+    "header": {
+      "code": "GL-C1-SUB-SHAD-0001",
+      "template_code": "GT-007",
+      "title": "Tìm bóng của Mặt trời",
+      "instruction": "Bé tìm bóng của Mặt trời nhé!",
+      "theme_tag": "weather",
+      "what_tags": ["classification"],
+      "thinking_tags": ["count", "solve"],
+      "skill_codes": ["C1.SUB.01"],
+      "learning_objective_codes": [
+        "LO-C1.SUB.01-01",
+        "LO-C1.SUB.01-02",
+        "LO-C1.SUB.01-03"
+      ],
+      "difficulty": 1,
+      "age_min": 3,
+      "age_max": 4,
+      "access_tier": "premium",
+      "content_version": 1,
+      "authored_in": "repo_seed",
+      "origin": "ai_assisted"
+    },
+    "content_pack": {
+      "prompt": "Bé hãy tìm số còn thiếu để ghép thành số đúng nhé!",
+      "whole": {
+        "id": "whole_1",
+        "value": 6,
+        "label": "6",
+        "asset": {
+          "kind": "emoji",
+          "ref": "EMJ-thunderstorm"
+        }
+      },
+      "parts": [
+        {
+          "id": "part_1",
+          "value": 4,
+          "is_target": false,
+          "label": "4"
+        },
+        {
+          "id": "part_2",
+          "value": 2,
+          "is_target": true,
+          "label": "?"
+        }
+      ],
+      "options": [
+        {
+          "id": "opt_1",
+          "value": 2,
+          "label": "2",
+          "is_correct": true
+        },
+        {
+          "id": "opt_2",
+          "value": 1,
+          "label": "1",
+          "is_correct": false
+        },
+        {
+          "id": "opt_3",
+          "value": 3,
+          "label": "3",
+          "is_correct": false
+        }
+      ]
+    },
+    "difficulty_params": {
+      "part_count": 2,
+      "distractor_count": 2,
+      "hint_after_ms": 12000,
+      "allow_retry": true
+    }
+  },
+  {
+    "header": {
+      "code": "GL-C1-SUB-SHAD-0002",
+      "template_code": "GT-007",
+      "title": "Tìm bóng của Bao lì xì",
+      "instruction": "Bé tìm bóng của Bao lì xì nhé!",
+      "theme_tag": "festival",
+      "what_tags": ["classification"],
+      "thinking_tags": ["count", "solve"],
+      "skill_codes": ["C1.SUB.01"],
+      "learning_objective_codes": [
+        "LO-C1.SUB.01-01",
+        "LO-C1.SUB.01-02",
+        "LO-C1.SUB.01-03"
+      ],
+      "difficulty": 2,
+      "age_min": 3,
+      "age_max": 4,
+      "access_tier": "standard",
+      "content_version": 1,
+      "authored_in": "repo_seed",
+      "origin": "ai_assisted"
+    },
+    "content_pack": {
+      "prompt": "Bé hãy tìm số còn thiếu để ghép thành số đúng nhé!",
+      "whole": {
+        "id": "whole_1",
+        "value": 7,
+        "label": "7",
+        "asset": {
+          "kind": "emoji",
+          "ref": "EMJ-red-envelope"
+        }
+      },
+      "parts": [
+        {
+          "id": "part_1",
+          "value": 4,
+          "is_target": false,
+          "label": "4"
+        },
+        {
+          "id": "part_2",
+          "value": 3,
+          "is_target": true,
+          "label": "?"
+        }
+      ],
+      "options": [
+        {
+          "id": "opt_1",
+          "value": 3,
+          "label": "3",
+          "is_correct": true
+        },
+        {
+          "id": "opt_2",
+          "value": 2,
+          "label": "2",
+          "is_correct": false
+        },
+        {
+          "id": "opt_3",
+          "value": 4,
+          "label": "4",
+          "is_correct": false
+        }
+      ]
+    },
+    "difficulty_params": {
+      "part_count": 2,
+      "distractor_count": 2,
+      "hint_after_ms": 12000,
+      "allow_retry": true
+    }
+  },
+  {
+    "header": {
+      "code": "GL-C1-SUB-SHAD-0003",
+      "template_code": "GT-007",
+      "title": "Tìm bóng của Bút chì",
+      "instruction": "Bé tìm bóng của Bút chì nhé!",
+      "theme_tag": "school",
+      "what_tags": ["classification"],
+      "thinking_tags": ["count", "solve"],
+      "skill_codes": ["C1.SUB.01"],
+      "learning_objective_codes": [
+        "LO-C1.SUB.01-01",
+        "LO-C1.SUB.01-02",
+        "LO-C1.SUB.01-03"
+      ],
+      "difficulty": 3,
+      "age_min": 3,
+      "age_max": 4,
+      "access_tier": "premium",
+      "content_version": 1,
+      "authored_in": "repo_seed",
+      "origin": "ai_assisted"
+    },
+    "content_pack": {
+      "prompt": "Bé hãy tìm số còn thiếu để ghép thành số đúng nhé!",
+      "whole": {
+        "id": "whole_1",
+        "value": 9,
+        "label": "9",
+        "asset": {
+          "kind": "emoji",
+          "ref": "EMJ-bell"
+        }
+      },
+      "parts": [
+        {
+          "id": "part_1",
+          "value": 1,
+          "is_target": false,
+          "label": "1"
+        },
+        {
+          "id": "part_2",
+          "value": 8,
+          "is_target": true,
+          "label": "?"
+        }
+      ],
+      "options": [
+        {
+          "id": "opt_1",
+          "value": 8,
+          "label": "8",
+          "is_correct": true
+        },
+        {
+          "id": "opt_2",
+          "value": 7,
+          "label": "7",
+          "is_correct": false
+        },
+        {
+          "id": "opt_3",
+          "value": 9,
+          "label": "9",
+          "is_correct": false
+        }
+      ]
+    },
+    "difficulty_params": {
+      "part_count": 2,
+      "distractor_count": 2,
+      "hint_after_ms": 12000,
+      "allow_retry": true
+    }
+  },
+  {
+    "header": {
+      "code": "GL-C1-SUB-SHAD-0004",
+      "template_code": "GT-007",
+      "title": "Tìm bóng của Heo",
+      "instruction": "Bé tìm bóng của Heo nhé!",
+      "theme_tag": "farm",
+      "what_tags": ["classification"],
+      "thinking_tags": ["count", "solve"],
+      "skill_codes": ["C1.SUB.01"],
+      "learning_objective_codes": [
+        "LO-C1.SUB.01-01",
+        "LO-C1.SUB.01-02",
+        "LO-C1.SUB.01-03"
+      ],
+      "difficulty": 1,
+      "age_min": 3,
+      "age_max": 4,
+      "access_tier": "standard",
+      "content_version": 1,
+      "authored_in": "repo_seed",
+      "origin": "ai_assisted"
+    },
+    "content_pack": {
+      "prompt": "Bé hãy tìm số còn thiếu để ghép thành số đúng nhé!",
+      "whole": {
+        "id": "whole_1",
+        "value": 6,
+        "label": "6",
+        "asset": {
+          "kind": "emoji",
+          "ref": "EMJ-chicken"
+        }
+      },
+      "parts": [
+        {
+          "id": "part_1",
+          "value": 4,
+          "is_target": false,
+          "label": "4"
+        },
+        {
+          "id": "part_2",
+          "value": 2,
+          "is_target": true,
+          "label": "?"
+        }
+      ],
+      "options": [
+        {
+          "id": "opt_1",
+          "value": 2,
+          "label": "2",
+          "is_correct": true
+        },
+        {
+          "id": "opt_2",
+          "value": 1,
+          "label": "1",
+          "is_correct": false
+        },
+        {
+          "id": "opt_3",
+          "value": 3,
+          "label": "3",
+          "is_correct": false
+        }
+      ]
+    },
+    "difficulty_params": {
+      "part_count": 2,
+      "distractor_count": 2,
+      "hint_after_ms": 12000,
+      "allow_retry": true
+    }
+  },
+  {
+    "header": {
+      "code": "GL-C1-SUB-MEMO-0001",
+      "template_code": "GT-012",
+      "title": "Tìm cặp thẻ Ngôi nhà giống nhau",
+      "instruction": "Bé lật mở cặp Ngôi nhà giống nhau nhé!",
+      "theme_tag": "home",
+      "what_tags": ["subitizing", "number"],
+      "thinking_tags": ["count", "solve"],
+      "skill_codes": ["C1.SUB.01"],
+      "learning_objective_codes": [
+        "LO-C1.SUB.01-01",
+        "LO-C1.SUB.01-02",
+        "LO-C1.SUB.01-03"
+      ],
+      "difficulty": 1,
+      "age_min": 3,
+      "age_max": 4,
+      "access_tier": "standard",
+      "content_version": 1,
+      "authored_in": "repo_seed",
+      "origin": "ai_assisted"
+    },
+    "content_pack": {
+      "prompt": "Bé hãy nhìn nhanh và nhớ xem có bao nhiêu hình nhé!",
+      "flash_items": [
+        {
+          "item_id": "flash_1",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-bed"
+          }
+        },
+        {
+          "item_id": "flash_2",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-bed"
+          }
+        }
+      ],
+      "arrangement": "dice",
+      "options": [
+        {
+          "value": 2,
+          "is_correct": true
+        },
+        {
+          "value": 1,
+          "is_correct": false
+        },
+        {
+          "value": 3,
+          "is_correct": false
+        }
+      ]
+    },
+    "difficulty_params": {
+      "flash_ms": 1500,
+      "item_count": 2,
+      "distractor_count": 2,
+      "allow_replay": true,
+      "hint_after_ms": 10000,
+      "allow_retry": true
+    }
+  },
+  {
+    "header": {
+      "code": "GL-C1-SUB-MEMO-0002",
+      "template_code": "GT-012",
+      "title": "Tìm cặp thẻ Voi giống nhau",
+      "instruction": "Bé lật mở cặp Voi giống nhau nhé!",
+      "theme_tag": "animal",
+      "what_tags": ["subitizing", "number"],
+      "thinking_tags": ["count", "solve"],
+      "skill_codes": ["C1.SUB.01"],
+      "learning_objective_codes": [
+        "LO-C1.SUB.01-01",
+        "LO-C1.SUB.01-02",
+        "LO-C1.SUB.01-03"
+      ],
+      "difficulty": 2,
+      "age_min": 3,
+      "age_max": 4,
+      "access_tier": "premium",
+      "content_version": 1,
+      "authored_in": "repo_seed",
+      "origin": "ai_assisted"
+    },
+    "content_pack": {
+      "prompt": "Bé hãy nhìn nhanh và nhớ xem có bao nhiêu hình nhé!",
+      "flash_items": [
+        {
+          "item_id": "flash_1",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-bear"
+          }
+        },
+        {
+          "item_id": "flash_2",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-bear"
+          }
+        },
+        {
+          "item_id": "flash_3",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-bear"
+          }
+        }
+      ],
+      "arrangement": "dice",
+      "options": [
+        {
+          "value": 3,
+          "is_correct": true
+        },
+        {
+          "value": 2,
+          "is_correct": false
+        },
+        {
+          "value": 4,
+          "is_correct": false
+        }
+      ]
+    },
+    "difficulty_params": {
+      "flash_ms": 1500,
+      "item_count": 3,
+      "distractor_count": 2,
+      "allow_replay": true,
+      "hint_after_ms": 10000,
+      "allow_retry": true
+    }
+  },
+  {
+    "header": {
+      "code": "GL-C1-SUB-MEMO-0003",
+      "template_code": "GT-012",
+      "title": "Tìm cặp thẻ Cỏ bốn lá giống nhau",
+      "instruction": "Bé lật mở cặp Cỏ bốn lá giống nhau nhé!",
+      "theme_tag": "nature",
+      "what_tags": ["subitizing", "number"],
+      "thinking_tags": ["count", "solve"],
+      "skill_codes": ["C1.SUB.01"],
+      "learning_objective_codes": [
+        "LO-C1.SUB.01-01",
+        "LO-C1.SUB.01-02",
+        "LO-C1.SUB.01-03"
+      ],
+      "difficulty": 3,
+      "age_min": 3,
+      "age_max": 4,
+      "access_tier": "standard",
+      "content_version": 1,
+      "authored_in": "repo_seed",
+      "origin": "ai_assisted"
+    },
+    "content_pack": {
+      "prompt": "Bé hãy nhìn nhanh và nhớ xem có bao nhiêu hình nhé!",
+      "flash_items": [
+        {
+          "item_id": "flash_1",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-cactus"
+          }
+        },
+        {
+          "item_id": "flash_2",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-cactus"
+          }
+        },
+        {
+          "item_id": "flash_3",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-cactus"
+          }
+        }
+      ],
+      "arrangement": "dice",
+      "options": [
+        {
+          "value": 3,
+          "is_correct": true
+        },
+        {
+          "value": 2,
+          "is_correct": false
+        },
+        {
+          "value": 4,
+          "is_correct": false
+        }
+      ]
+    },
+    "difficulty_params": {
+      "flash_ms": 1500,
+      "item_count": 3,
+      "distractor_count": 2,
+      "allow_replay": true,
+      "hint_after_ms": 10000,
+      "allow_retry": true
+    }
+  },
+  {
+    "header": {
+      "code": "GL-C1-SUB-MEMO-0004",
+      "template_code": "GT-012",
+      "title": "Tìm cặp thẻ Cua giống nhau",
+      "instruction": "Bé lật mở cặp Cua giống nhau nhé!",
+      "theme_tag": "ocean",
+      "what_tags": ["subitizing", "number"],
+      "thinking_tags": ["count", "solve"],
+      "skill_codes": ["C1.SUB.01"],
+      "learning_objective_codes": [
+        "LO-C1.SUB.01-01",
+        "LO-C1.SUB.01-02",
+        "LO-C1.SUB.01-03"
+      ],
+      "difficulty": 1,
+      "age_min": 3,
+      "age_max": 4,
+      "access_tier": "premium",
+      "content_version": 1,
+      "authored_in": "repo_seed",
+      "origin": "ai_assisted"
+    },
+    "content_pack": {
+      "prompt": "Bé hãy nhìn nhanh và nhớ xem có bao nhiêu hình nhé!",
+      "flash_items": [
+        {
+          "item_id": "flash_1",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-whale"
+          }
+        },
+        {
+          "item_id": "flash_2",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-whale"
+          }
+        }
+      ],
+      "arrangement": "dice",
+      "options": [
+        {
+          "value": 2,
+          "is_correct": true
+        },
+        {
+          "value": 1,
+          "is_correct": false
+        },
+        {
+          "value": 3,
+          "is_correct": false
+        }
+      ]
+    },
+    "difficulty_params": {
+      "flash_ms": 1500,
+      "item_count": 2,
+      "distractor_count": 2,
+      "allow_replay": true,
+      "hint_after_ms": 10000,
+      "allow_retry": true
+    }
+  },
+  {
+    "header": {
+      "code": "GL-C1-SUB-PICT-0001",
+      "template_code": "GT-031",
+      "title": "Biểu đồ tranh Táo đỏ",
+      "instruction": "Bé phân tích biểu đồ tranh để chọn đáp án!",
+      "theme_tag": "food",
+      "what_tags": ["money", "number", "quantity"],
+      "thinking_tags": ["solve"],
+      "skill_codes": ["C1.SUB.02"],
+      "learning_objective_codes": [
+        "LO-C1.SUB.02-01",
+        "LO-C1.SUB.02-02",
+        "LO-C1.SUB.02-03"
+      ],
+      "difficulty": 2,
+      "age_min": 5,
+      "age_max": 6,
+      "access_tier": "standard",
+      "content_version": 1,
+      "authored_in": "repo_seed",
+      "origin": "ai_assisted"
+    },
+    "content_pack": {
+      "prompt": "Bé hãy chọn các đồng xu để trả đúng 20 đồng nhé!",
+      "target_amount": 20,
+      "item_to_buy": {
+        "label": "Táo đỏ",
+        "asset": {
+          "kind": "emoji",
+          "ref": "EMJ-red-apple"
+        }
+      },
+      "coins": [
+        {
+          "coin_id": "coin_1_val10",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-coin"
+          },
+          "value": 10
+        },
+        {
+          "coin_id": "coin_2_val10",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-coin"
+          },
+          "value": 10
+        },
+        {
+          "coin_id": "coin_3_val10",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-coin"
+          },
+          "value": 10
+        }
+      ]
+    },
+    "difficulty_params": {
+      "coin_kind_count": 1,
+      "target_amount": 20,
+      "exact_change": true,
+      "allow_retry": true,
+      "hint_after_ms": 8000
+    }
+  },
+  {
+    "header": {
+      "code": "GL-C1-SUB-PICT-0002",
+      "template_code": "GT-031",
+      "title": "Biểu đồ tranh Xe buýt",
+      "instruction": "Bé phân tích biểu đồ tranh để chọn đáp án!",
+      "theme_tag": "vehicle",
+      "what_tags": ["money", "number", "quantity"],
+      "thinking_tags": ["solve"],
+      "skill_codes": ["C1.SUB.02"],
+      "learning_objective_codes": [
+        "LO-C1.SUB.02-01",
+        "LO-C1.SUB.02-02",
+        "LO-C1.SUB.02-03"
+      ],
+      "difficulty": 3,
+      "age_min": 5,
+      "age_max": 6,
+      "access_tier": "premium",
+      "content_version": 1,
+      "authored_in": "repo_seed",
+      "origin": "ai_assisted"
+    },
+    "content_pack": {
+      "prompt": "Bé hãy chọn các đồng xu để trả đúng 30 đồng nhé!",
+      "target_amount": 30,
+      "item_to_buy": {
+        "label": "Ô tô",
+        "asset": {
+          "kind": "emoji",
+          "ref": "EMJ-car"
+        }
+      },
+      "coins": [
+        {
+          "coin_id": "coin_1_val10",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-coin"
+          },
+          "value": 10
+        },
+        {
+          "coin_id": "coin_2_val5",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-coin"
+          },
+          "value": 5
+        },
+        {
+          "coin_id": "coin_3_val5",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-coin"
+          },
+          "value": 5
+        },
+        {
+          "coin_id": "coin_4_val10",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-coin"
+          },
+          "value": 10
+        },
+        {
+          "coin_id": "coin_5_val1",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-coin"
+          },
+          "value": 1
+        },
+        {
+          "coin_id": "coin_6_val2",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-coin"
+          },
+          "value": 2
+        }
+      ]
+    },
+    "difficulty_params": {
+      "coin_kind_count": 4,
+      "target_amount": 30,
+      "exact_change": true,
+      "allow_retry": true,
+      "hint_after_ms": 8000
+    }
+  },
+  {
+    "header": {
+      "code": "GL-C1-SUB-PICT-0003",
+      "template_code": "GT-031",
+      "title": "Biểu đồ tranh Kèn saxophone",
+      "instruction": "Bé phân tích biểu đồ tranh để chọn đáp án!",
+      "theme_tag": "art",
+      "what_tags": ["money", "number", "quantity"],
+      "thinking_tags": ["solve"],
+      "skill_codes": ["C1.SUB.02"],
+      "learning_objective_codes": [
+        "LO-C1.SUB.02-01",
+        "LO-C1.SUB.02-02",
+        "LO-C1.SUB.02-03"
+      ],
+      "difficulty": 4,
+      "age_min": 5,
+      "age_max": 6,
+      "access_tier": "standard",
+      "content_version": 1,
+      "authored_in": "repo_seed",
+      "origin": "ai_assisted"
+    },
+    "content_pack": {
+      "prompt": "Bé hãy chọn các đồng xu để trả đúng 3 đồng nhé!",
+      "target_amount": 3,
+      "item_to_buy": {
+        "label": "Bảng vẽ",
+        "asset": {
+          "kind": "emoji",
+          "ref": "EMJ-artist-palette"
+        }
+      },
+      "coins": [
+        {
+          "coin_id": "coin_1_val1",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-coin"
+          },
+          "value": 1
+        },
+        {
+          "coin_id": "coin_2_val2",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-coin"
+          },
+          "value": 2
+        },
+        {
+          "coin_id": "coin_3_val10",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-coin"
+          },
+          "value": 10
+        }
+      ]
+    },
+    "difficulty_params": {
+      "coin_kind_count": 3,
+      "target_amount": 3,
+      "exact_change": true,
+      "allow_retry": true,
+      "hint_after_ms": 8000
+    }
+  },
+  {
+    "header": {
+      "code": "GL-C1-SUB-PICT-0004",
+      "template_code": "GT-031",
+      "title": "Biểu đồ tranh Phi hành gia",
+      "instruction": "Bé phân tích biểu đồ tranh để chọn đáp án!",
+      "theme_tag": "space",
+      "what_tags": ["money", "number", "quantity"],
+      "thinking_tags": ["solve"],
+      "skill_codes": ["C1.SUB.02"],
+      "learning_objective_codes": [
+        "LO-C1.SUB.02-01",
+        "LO-C1.SUB.02-02",
+        "LO-C1.SUB.02-03"
+      ],
+      "difficulty": 2,
+      "age_min": 5,
+      "age_max": 6,
+      "access_tier": "premium",
+      "content_version": 1,
+      "authored_in": "repo_seed",
+      "origin": "ai_assisted"
+    },
+    "content_pack": {
+      "prompt": "Bé hãy chọn các đồng xu để trả đúng 21 đồng nhé!",
+      "target_amount": 21,
+      "item_to_buy": {
+        "label": "Tên lửa",
+        "asset": {
+          "kind": "emoji",
+          "ref": "EMJ-rocket"
+        }
+      },
+      "coins": [
+        {
+          "coin_id": "coin_1_val1",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-coin"
+          },
+          "value": 1
+        },
+        {
+          "coin_id": "coin_2_val10",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-coin"
+          },
+          "value": 10
+        },
+        {
+          "coin_id": "coin_3_val10",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-coin"
+          },
+          "value": 10
+        },
+        {
+          "coin_id": "coin_4_val1",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-coin"
+          },
+          "value": 1
+        },
+        {
+          "coin_id": "coin_5_val10",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-coin"
+          },
+          "value": 10
+        }
+      ]
+    },
+    "difficulty_params": {
+      "coin_kind_count": 2,
+      "target_amount": 21,
+      "exact_change": true,
+      "allow_retry": true,
+      "hint_after_ms": 8000
+    }
+  },
+  {
+    "header": {
+      "code": "GL-C1-SUB-PICT-0005",
+      "template_code": "GT-031",
+      "title": "Biểu đồ tranh Mẹ",
+      "instruction": "Bé phân tích biểu đồ tranh để chọn đáp án!",
+      "theme_tag": "family",
+      "what_tags": ["money", "number", "quantity"],
+      "thinking_tags": ["solve"],
+      "skill_codes": ["C1.SUB.02"],
+      "learning_objective_codes": [
+        "LO-C1.SUB.02-01",
+        "LO-C1.SUB.02-02",
+        "LO-C1.SUB.02-03"
+      ],
+      "difficulty": 3,
+      "age_min": 5,
+      "age_max": 6,
+      "access_tier": "standard",
+      "content_version": 1,
+      "authored_in": "repo_seed",
+      "origin": "ai_assisted"
+    },
+    "content_pack": {
+      "prompt": "Bé hãy chọn các đồng xu để trả đúng 6 đồng nhé!",
+      "target_amount": 6,
+      "item_to_buy": {
+        "label": "Gia đình",
+        "asset": {
+          "kind": "emoji",
+          "ref": "EMJ-family"
+        }
+      },
+      "coins": [
+        {
+          "coin_id": "coin_1_val5",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-coin"
+          },
+          "value": 5
+        },
+        {
+          "coin_id": "coin_2_val1",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-coin"
+          },
+          "value": 1
+        },
+        {
+          "coin_id": "coin_3_val2",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-coin"
+          },
+          "value": 2
+        }
+      ]
+    },
+    "difficulty_params": {
+      "coin_kind_count": 3,
+      "target_amount": 6,
+      "exact_change": true,
+      "allow_retry": true,
+      "hint_after_ms": 8000
+    }
+  },
+  {
+    "header": {
+      "code": "GL-C1-SUB-TAP-0005",
+      "template_code": "GT-001",
+      "title": "Tìm Mắt giống mẫu",
+      "instruction": "Bé tìm Mắt giống hình mẫu nhé!",
+      "theme_tag": "body",
+      "what_tags": ["classification", "number"],
+      "thinking_tags": ["solve"],
+      "skill_codes": ["C1.SUB.02"],
+      "learning_objective_codes": [
+        "LO-C1.SUB.02-01",
+        "LO-C1.SUB.02-02",
+        "LO-C1.SUB.02-03"
+      ],
+      "difficulty": 2,
+      "age_min": 4,
+      "age_max": 5,
+      "access_tier": "premium",
+      "content_version": 1,
+      "authored_in": "repo_seed",
+      "origin": "ai_assisted"
+    },
+    "content_pack": {
+      "prompt": "Bé hãy chạm vào hình giống mẫu nhé!",
+      "target_item": {
+        "item_id": "item_EMJ-tooth",
+        "asset": {
+          "kind": "emoji",
+          "ref": "EMJ-tooth"
+        }
+      },
+      "options": [
+        {
+          "item_id": "opt_1",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-eyes"
+          },
+          "is_correct": false
+        },
+        {
+          "item_id": "opt_2",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-tongue"
+          },
+          "is_correct": false
+        },
+        {
+          "item_id": "opt_3",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-tooth"
+          },
+          "is_correct": true
+        },
+        {
+          "item_id": "opt_4",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-heart"
+          },
+          "is_correct": false
+        }
+      ]
+    },
+    "difficulty_params": {
+      "distractor_count": 3,
+      "hint_after_ms": 15000,
+      "allow_retry": true,
+      "shuffle_items": true
+    }
+  },
+  {
+    "header": {
+      "code": "GL-C1-SUB-TAP-0006",
+      "template_code": "GT-001",
+      "title": "Tìm Mây giống mẫu",
+      "instruction": "Bé tìm Mây giống hình mẫu nhé!",
+      "theme_tag": "weather",
+      "what_tags": ["classification", "number"],
+      "thinking_tags": ["solve"],
+      "skill_codes": ["C1.SUB.02"],
+      "learning_objective_codes": [
+        "LO-C1.SUB.02-01",
+        "LO-C1.SUB.02-02",
+        "LO-C1.SUB.02-03"
+      ],
+      "difficulty": 3,
+      "age_min": 4,
+      "age_max": 5,
+      "access_tier": "standard",
+      "content_version": 1,
+      "authored_in": "repo_seed",
+      "origin": "ai_assisted"
+    },
+    "content_pack": {
+      "prompt": "Bé hãy chạm vào hình giống mẫu nhé!",
+      "target_item": {
+        "item_id": "item_EMJ-thunderstorm",
+        "asset": {
+          "kind": "emoji",
+          "ref": "EMJ-thunderstorm"
+        }
+      },
+      "options": [
+        {
+          "item_id": "opt_1",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-thunderstorm"
+          },
+          "is_correct": true
+        },
+        {
+          "item_id": "opt_2",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-wind"
+          },
+          "is_correct": false
+        },
+        {
+          "item_id": "opt_3",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-snowman"
+          },
+          "is_correct": false
+        },
+        {
+          "item_id": "opt_4",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-sun"
+          },
+          "is_correct": false
+        },
+        {
+          "item_id": "opt_5",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-cloud"
+          },
+          "is_correct": false
+        }
+      ]
+    },
+    "difficulty_params": {
+      "distractor_count": 4,
+      "hint_after_ms": 15000,
+      "allow_retry": true,
+      "shuffle_items": true
+    }
+  },
+  {
+    "header": {
+      "code": "GL-C1-SUB-TAP-0007",
+      "template_code": "GT-001",
+      "title": "Tìm Pháo hoa giống mẫu",
+      "instruction": "Bé tìm Pháo hoa giống hình mẫu nhé!",
+      "theme_tag": "festival",
+      "what_tags": ["classification", "number"],
+      "thinking_tags": ["solve"],
+      "skill_codes": ["C1.SUB.02"],
+      "learning_objective_codes": [
+        "LO-C1.SUB.02-01",
+        "LO-C1.SUB.02-02",
+        "LO-C1.SUB.02-03"
+      ],
+      "difficulty": 4,
+      "age_min": 4,
+      "age_max": 5,
+      "access_tier": "premium",
+      "content_version": 1,
+      "authored_in": "repo_seed",
+      "origin": "ai_assisted"
+    },
+    "content_pack": {
+      "prompt": "Bé hãy chạm vào hình giống mẫu nhé!",
+      "target_item": {
+        "item_id": "item_EMJ-christmas-tree",
+        "asset": {
+          "kind": "emoji",
+          "ref": "EMJ-christmas-tree"
+        }
+      },
+      "options": [
+        {
+          "item_id": "opt_1",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-christmas-tree"
+          },
+          "is_correct": true
+        },
+        {
+          "item_id": "opt_2",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-red-envelope"
+          },
+          "is_correct": false
+        },
+        {
+          "item_id": "opt_3",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-red-lantern"
+          },
+          "is_correct": false
+        },
+        {
+          "item_id": "opt_4",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-birthday-cake"
+          },
+          "is_correct": false
+        },
+        {
+          "item_id": "opt_5",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-fireworks"
+          },
+          "is_correct": false
+        }
+      ]
+    },
+    "difficulty_params": {
+      "distractor_count": 4,
+      "hint_after_ms": 15000,
+      "allow_retry": true,
+      "shuffle_items": true
+    }
+  },
+  {
+    "header": {
+      "code": "GL-C1-SUB-TAP-0008",
+      "template_code": "GT-001",
+      "title": "Tìm Sách giống mẫu",
+      "instruction": "Bé tìm Sách giống hình mẫu nhé!",
+      "theme_tag": "school",
+      "what_tags": ["classification", "number"],
+      "thinking_tags": ["solve"],
+      "skill_codes": ["C1.SUB.02"],
+      "learning_objective_codes": [
+        "LO-C1.SUB.02-01",
+        "LO-C1.SUB.02-02",
+        "LO-C1.SUB.02-03"
+      ],
+      "difficulty": 2,
+      "age_min": 4,
+      "age_max": 5,
+      "access_tier": "standard",
+      "content_version": 1,
+      "authored_in": "repo_seed",
+      "origin": "ai_assisted"
+    },
+    "content_pack": {
+      "prompt": "Bé hãy chạm vào hình giống mẫu nhé!",
+      "target_item": {
+        "item_id": "item_EMJ-pencil",
+        "asset": {
+          "kind": "emoji",
+          "ref": "EMJ-pencil"
+        }
+      },
+      "options": [
+        {
+          "item_id": "opt_1",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-bell"
+          },
+          "is_correct": false
+        },
+        {
+          "item_id": "opt_2",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-pencil"
+          },
+          "is_correct": true
+        },
+        {
+          "item_id": "opt_3",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-abacus"
+          },
+          "is_correct": false
+        },
+        {
+          "item_id": "opt_4",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-ruler"
+          },
+          "is_correct": false
+        }
+      ]
+    },
+    "difficulty_params": {
+      "distractor_count": 3,
+      "hint_after_ms": 15000,
+      "allow_retry": true,
+      "shuffle_items": true
+    }
+  },
+  {
+    "header": {
+      "code": "GL-C1-SUB-TAP-0009",
+      "template_code": "GT-001",
+      "title": "Tìm Lúa giống mẫu",
+      "instruction": "Bé tìm Lúa giống hình mẫu nhé!",
+      "theme_tag": "farm",
+      "what_tags": ["classification", "number"],
+      "thinking_tags": ["solve"],
+      "skill_codes": ["C1.SUB.02"],
+      "learning_objective_codes": [
+        "LO-C1.SUB.02-01",
+        "LO-C1.SUB.02-02",
+        "LO-C1.SUB.02-03"
+      ],
+      "difficulty": 3,
+      "age_min": 4,
+      "age_max": 5,
+      "access_tier": "premium",
+      "content_version": 1,
+      "authored_in": "repo_seed",
+      "origin": "ai_assisted"
+    },
+    "content_pack": {
+      "prompt": "Bé hãy chạm vào hình giống mẫu nhé!",
+      "target_item": {
+        "item_id": "item_EMJ-rice",
+        "asset": {
+          "kind": "emoji",
+          "ref": "EMJ-rice"
+        }
+      },
+      "options": [
+        {
+          "item_id": "opt_1",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-sheep"
+          },
+          "is_correct": false
+        },
+        {
+          "item_id": "opt_2",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-chicken"
+          },
+          "is_correct": false
+        },
+        {
+          "item_id": "opt_3",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-duck"
+          },
+          "is_correct": false
+        },
+        {
+          "item_id": "opt_4",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-rice"
+          },
+          "is_correct": true
+        },
+        {
+          "item_id": "opt_5",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-pig"
+          },
+          "is_correct": false
+        }
+      ]
+    },
+    "difficulty_params": {
+      "distractor_count": 4,
+      "hint_after_ms": 15000,
+      "allow_retry": true,
+      "shuffle_items": true
+    }
+  },
+  {
+    "header": {
+      "code": "GL-C1-SUB-TCMP-0005",
+      "template_code": "GT-003",
+      "title": "So sánh nhóm Ngôi nhà",
+      "instruction": "Bé chọn nhóm có nhiều Ngôi nhà hơn nhé!",
+      "theme_tag": "home",
+      "what_tags": ["classification"],
+      "thinking_tags": ["solve"],
+      "skill_codes": ["C1.SUB.02"],
+      "learning_objective_codes": [
+        "LO-C1.SUB.02-01",
+        "LO-C1.SUB.02-02",
+        "LO-C1.SUB.02-03"
+      ],
+      "difficulty": 2,
+      "age_min": 4,
+      "age_max": 5,
+      "access_tier": "premium",
+      "content_version": 1,
+      "authored_in": "repo_seed",
+      "origin": "ai_assisted"
+    },
+    "content_pack": {
+      "prompt": "Bé hãy kéo các đồ vật thích hợp vào giỏ nhé!",
+      "container": {
+        "container_id": "basket_1",
+        "label": "Giỏ đồ",
+        "accepts_attribute": "target_attr"
+      },
+      "items": [
+        {
+          "item_id": "item_1",
+          "attribute": "target_attr",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-broom"
+          },
+          "is_correct": true
+        },
+        {
+          "item_id": "item_2",
+          "attribute": "target_attr",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-bed"
+          },
+          "is_correct": true
+        },
+        {
+          "item_id": "item_3",
+          "attribute": "other_attr",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-door"
+          },
+          "is_correct": false
+        },
+        {
+          "item_id": "item_4",
+          "attribute": "other_attr",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-plate"
+          },
+          "is_correct": false
+        }
+      ]
+    },
+    "difficulty_params": {
+      "distractor_count": 2,
+      "target_count": 2,
+      "hint_after_ms": 10000,
+      "allow_retry": true
+    }
+  },
+  {
+    "header": {
+      "code": "GL-C1-SUB-TCMP-0006",
+      "template_code": "GT-003",
+      "title": "So sánh nhóm Voi",
+      "instruction": "Bé chọn nhóm có nhiều Voi hơn nhé!",
+      "theme_tag": "animal",
+      "what_tags": ["classification"],
+      "thinking_tags": ["solve"],
+      "skill_codes": ["C1.SUB.02"],
+      "learning_objective_codes": [
+        "LO-C1.SUB.02-01",
+        "LO-C1.SUB.02-02",
+        "LO-C1.SUB.02-03"
+      ],
+      "difficulty": 3,
+      "age_min": 4,
+      "age_max": 5,
+      "access_tier": "standard",
+      "content_version": 1,
+      "authored_in": "repo_seed",
+      "origin": "ai_assisted"
+    },
+    "content_pack": {
+      "prompt": "Bé hãy kéo các đồ vật thích hợp vào giỏ nhé!",
+      "container": {
+        "container_id": "basket_1",
+        "label": "Giỏ đồ",
+        "accepts_attribute": "target_attr"
+      },
+      "items": [
+        {
+          "item_id": "item_1",
+          "attribute": "target_attr",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-bear"
+          },
+          "is_correct": true
+        },
+        {
+          "item_id": "item_2",
+          "attribute": "target_attr",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-fox"
+          },
+          "is_correct": true
+        },
+        {
+          "item_id": "item_3",
+          "attribute": "other_attr",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-panda"
+          },
+          "is_correct": false
+        },
+        {
+          "item_id": "item_4",
+          "attribute": "other_attr",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-rabbit"
+          },
+          "is_correct": false
+        }
+      ]
+    },
+    "difficulty_params": {
+      "distractor_count": 2,
+      "target_count": 2,
+      "hint_after_ms": 10000,
+      "allow_retry": true
+    }
+  },
+  {
+    "header": {
+      "code": "GL-C1-SUB-TCMP-0007",
+      "template_code": "GT-003",
+      "title": "So sánh nhóm Cỏ bốn lá",
+      "instruction": "Bé chọn nhóm có nhiều Cỏ bốn lá hơn nhé!",
+      "theme_tag": "nature",
+      "what_tags": ["classification"],
+      "thinking_tags": ["solve"],
+      "skill_codes": ["C1.SUB.02"],
+      "learning_objective_codes": [
+        "LO-C1.SUB.02-01",
+        "LO-C1.SUB.02-02",
+        "LO-C1.SUB.02-03"
+      ],
+      "difficulty": 4,
+      "age_min": 4,
+      "age_max": 5,
+      "access_tier": "premium",
+      "content_version": 1,
+      "authored_in": "repo_seed",
+      "origin": "ai_assisted"
+    },
+    "content_pack": {
+      "prompt": "Bé hãy kéo các đồ vật thích hợp vào giỏ nhé!",
+      "container": {
+        "container_id": "basket_1",
+        "label": "Giỏ đồ",
+        "accepts_attribute": "target_attr"
+      },
+      "items": [
+        {
+          "item_id": "item_1",
+          "attribute": "target_attr",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-deciduous-tree"
+          },
+          "is_correct": true
+        },
+        {
+          "item_id": "item_2",
+          "attribute": "target_attr",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-palm-tree"
+          },
+          "is_correct": true
+        },
+        {
+          "item_id": "item_3",
+          "attribute": "other_attr",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-four-leaf-clover"
+          },
+          "is_correct": false
+        },
+        {
+          "item_id": "item_4",
+          "attribute": "other_attr",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-rose"
+          },
+          "is_correct": false
+        }
+      ]
+    },
+    "difficulty_params": {
+      "distractor_count": 2,
+      "target_count": 2,
+      "hint_after_ms": 10000,
+      "allow_retry": true
+    }
+  },
+  {
+    "header": {
+      "code": "GL-C1-SUB-TCMP-0008",
+      "template_code": "GT-003",
+      "title": "So sánh nhóm Cua",
+      "instruction": "Bé chọn nhóm có nhiều Cua hơn nhé!",
+      "theme_tag": "ocean",
+      "what_tags": ["classification"],
+      "thinking_tags": ["solve"],
+      "skill_codes": ["C1.SUB.02"],
+      "learning_objective_codes": [
+        "LO-C1.SUB.02-01",
+        "LO-C1.SUB.02-02",
+        "LO-C1.SUB.02-03"
+      ],
+      "difficulty": 2,
+      "age_min": 4,
+      "age_max": 5,
+      "access_tier": "standard",
+      "content_version": 1,
+      "authored_in": "repo_seed",
+      "origin": "ai_assisted"
+    },
+    "content_pack": {
+      "prompt": "Bé hãy kéo các đồ vật thích hợp vào giỏ nhé!",
+      "container": {
+        "container_id": "basket_1",
+        "label": "Giỏ đồ",
+        "accepts_attribute": "target_attr"
+      },
+      "items": [
+        {
+          "item_id": "item_1",
+          "attribute": "target_attr",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-shark"
+          },
+          "is_correct": true
+        },
+        {
+          "item_id": "item_2",
+          "attribute": "target_attr",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-shrimp"
+          },
+          "is_correct": true
+        },
+        {
+          "item_id": "item_3",
+          "attribute": "other_attr",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-crab"
+          },
+          "is_correct": false
+        },
+        {
+          "item_id": "item_4",
+          "attribute": "other_attr",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-octopus"
+          },
+          "is_correct": false
+        }
+      ]
+    },
+    "difficulty_params": {
+      "distractor_count": 2,
+      "target_count": 2,
+      "hint_after_ms": 10000,
+      "allow_retry": true
+    }
+  },
+  {
+    "header": {
+      "code": "GL-C1-SUB-TCMP-0009",
+      "template_code": "GT-003",
+      "title": "So sánh nhóm Bắp ngô",
+      "instruction": "Bé chọn nhóm có nhiều Bắp ngô hơn nhé!",
+      "theme_tag": "food",
+      "what_tags": ["classification"],
+      "thinking_tags": ["solve"],
+      "skill_codes": ["C1.SUB.02"],
+      "learning_objective_codes": [
+        "LO-C1.SUB.02-01",
+        "LO-C1.SUB.02-02",
+        "LO-C1.SUB.02-03"
+      ],
+      "difficulty": 3,
+      "age_min": 4,
+      "age_max": 5,
+      "access_tier": "premium",
+      "content_version": 1,
+      "authored_in": "repo_seed",
+      "origin": "ai_assisted"
+    },
+    "content_pack": {
+      "prompt": "Bé hãy kéo các đồ vật thích hợp vào giỏ nhé!",
+      "container": {
+        "container_id": "basket_1",
+        "label": "Giỏ đồ",
+        "accepts_attribute": "target_attr"
+      },
+      "items": [
+        {
+          "item_id": "item_1",
+          "attribute": "target_attr",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-rice"
+          },
+          "is_correct": true
+        },
+        {
+          "item_id": "item_2",
+          "attribute": "target_attr",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-noodles"
+          },
+          "is_correct": true
+        },
+        {
+          "item_id": "item_3",
+          "attribute": "other_attr",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-red-apple"
+          },
+          "is_correct": false
+        },
+        {
+          "item_id": "item_4",
+          "attribute": "other_attr",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-milk"
+          },
+          "is_correct": false
+        }
+      ]
+    },
+    "difficulty_params": {
+      "distractor_count": 2,
+      "target_count": 2,
+      "hint_after_ms": 10000,
+      "allow_retry": true
+    }
+  },
+  {
+    "header": {
+      "code": "GL-C1-SUB-PATT-0001",
+      "template_code": "GT-005",
+      "title": "Xếp Ô tô theo quy luật",
+      "instruction": "Bé tìm Ô tô còn thiếu trong dãy quy luật!",
+      "theme_tag": "vehicle",
+      "what_tags": ["classification"],
+      "thinking_tags": ["solve"],
+      "skill_codes": ["C1.SUB.02"],
+      "learning_objective_codes": [
+        "LO-C1.SUB.02-01",
+        "LO-C1.SUB.02-02",
+        "LO-C1.SUB.02-03"
+      ],
+      "difficulty": 2,
+      "age_min": 4,
+      "age_max": 5,
+      "access_tier": "premium",
+      "content_version": 1,
+      "authored_in": "repo_seed",
+      "origin": "ai_assisted"
+    },
+    "content_pack": {
+      "prompt": "Bé hãy nối các cặp hình tương ứng nhé!",
+      "pairs": [
+        {
+          "pair_id": "pair_1",
+          "left": {
+            "item_id": "left_1",
+            "asset": {
+              "kind": "emoji",
+              "ref": "EMJ-train"
+            }
+          },
+          "right": {
+            "item_id": "right_1",
+            "asset": {
+              "kind": "emoji",
+              "ref": "EMJ-bus"
+            }
+          }
+        },
+        {
+          "pair_id": "pair_2",
+          "left": {
+            "item_id": "left_2",
+            "asset": {
+              "kind": "emoji",
+              "ref": "EMJ-airplane"
+            }
+          },
+          "right": {
+            "item_id": "right_2",
+            "asset": {
+              "kind": "emoji",
+              "ref": "EMJ-car"
+            }
+          }
+        },
+        {
+          "pair_id": "pair_3",
+          "left": {
+            "item_id": "left_3",
+            "asset": {
+              "kind": "emoji",
+              "ref": "EMJ-helicopter"
+            }
+          },
+          "right": {
+            "item_id": "right_3",
+            "asset": {
+              "kind": "emoji",
+              "ref": "EMJ-bicycle"
+            }
+          }
+        }
+      ]
+    },
+    "difficulty_params": {
+      "hint_after_ms": 10000,
+      "allow_retry": true,
+      "shuffle_sides": true
+    }
+  },
+  {
+    "header": {
+      "code": "GL-C1-SUB-PATT-0002",
+      "template_code": "GT-005",
+      "title": "Xếp Cây đàn ghi-ta theo quy luật",
+      "instruction": "Bé tìm Cây đàn ghi-ta còn thiếu trong dãy quy luật!",
+      "theme_tag": "art",
+      "what_tags": ["classification"],
+      "thinking_tags": ["solve"],
+      "skill_codes": ["C1.SUB.02"],
+      "learning_objective_codes": [
+        "LO-C1.SUB.02-01",
+        "LO-C1.SUB.02-02",
+        "LO-C1.SUB.02-03"
+      ],
+      "difficulty": 3,
+      "age_min": 4,
+      "age_max": 5,
+      "access_tier": "standard",
+      "content_version": 1,
+      "authored_in": "repo_seed",
+      "origin": "ai_assisted"
+    },
+    "content_pack": {
+      "prompt": "Bé hãy nối các cặp hình tương ứng nhé!",
+      "pairs": [
+        {
+          "pair_id": "pair_1",
+          "left": {
+            "item_id": "left_1",
+            "asset": {
+              "kind": "emoji",
+              "ref": "EMJ-violin"
+            }
+          },
+          "right": {
+            "item_id": "right_1",
+            "asset": {
+              "kind": "emoji",
+              "ref": "EMJ-trumpet"
+            }
+          }
+        },
+        {
+          "pair_id": "pair_2",
+          "left": {
+            "item_id": "left_2",
+            "asset": {
+              "kind": "emoji",
+              "ref": "EMJ-piano"
+            }
+          },
+          "right": {
+            "item_id": "right_2",
+            "asset": {
+              "kind": "emoji",
+              "ref": "EMJ-crayon"
+            }
+          }
+        },
+        {
+          "pair_id": "pair_3",
+          "left": {
+            "item_id": "left_3",
+            "asset": {
+              "kind": "emoji",
+              "ref": "EMJ-camera"
+            }
+          },
+          "right": {
+            "item_id": "right_3",
+            "asset": {
+              "kind": "emoji",
+              "ref": "EMJ-guitar"
+            }
+          }
+        }
+      ]
+    },
+    "difficulty_params": {
+      "hint_after_ms": 10000,
+      "allow_retry": true,
+      "shuffle_sides": true
+    }
+  },
+  {
+    "header": {
+      "code": "GL-C1-SUB-PATT-0003",
+      "template_code": "GT-005",
+      "title": "Xếp Ngôi sao theo quy luật",
+      "instruction": "Bé tìm Ngôi sao còn thiếu trong dãy quy luật!",
+      "theme_tag": "space",
+      "what_tags": ["classification"],
+      "thinking_tags": ["solve"],
+      "skill_codes": ["C1.SUB.02"],
+      "learning_objective_codes": [
+        "LO-C1.SUB.02-01",
+        "LO-C1.SUB.02-02",
+        "LO-C1.SUB.02-03"
+      ],
+      "difficulty": 4,
+      "age_min": 4,
+      "age_max": 5,
+      "access_tier": "premium",
+      "content_version": 1,
+      "authored_in": "repo_seed",
+      "origin": "ai_assisted"
+    },
+    "content_pack": {
+      "prompt": "Bé hãy nối các cặp hình tương ứng nhé!",
+      "pairs": [
+        {
+          "pair_id": "pair_1",
+          "left": {
+            "item_id": "left_1",
+            "asset": {
+              "kind": "emoji",
+              "ref": "EMJ-full-moon"
+            }
+          },
+          "right": {
+            "item_id": "right_1",
+            "asset": {
+              "kind": "emoji",
+              "ref": "EMJ-glowing-star"
+            }
+          }
+        },
+        {
+          "pair_id": "pair_2",
+          "left": {
+            "item_id": "left_2",
+            "asset": {
+              "kind": "emoji",
+              "ref": "EMJ-earth"
+            }
+          },
+          "right": {
+            "item_id": "right_2",
+            "asset": {
+              "kind": "emoji",
+              "ref": "EMJ-crescent-moon"
+            }
+          }
+        },
+        {
+          "pair_id": "pair_3",
+          "left": {
+            "item_id": "left_3",
+            "asset": {
+              "kind": "emoji",
+              "ref": "EMJ-ringed-planet"
+            }
+          },
+          "right": {
+            "item_id": "right_3",
+            "asset": {
+              "kind": "emoji",
+              "ref": "EMJ-rocket"
+            }
+          }
+        }
+      ]
+    },
+    "difficulty_params": {
+      "hint_after_ms": 10000,
+      "allow_retry": true,
+      "shuffle_sides": true
+    }
+  },
+  {
+    "header": {
+      "code": "GL-C1-SUB-PATT-0004",
+      "template_code": "GT-005",
+      "title": "Xếp Ông theo quy luật",
+      "instruction": "Bé tìm Ông còn thiếu trong dãy quy luật!",
+      "theme_tag": "family",
+      "what_tags": ["classification"],
+      "thinking_tags": ["solve"],
+      "skill_codes": ["C1.SUB.02"],
+      "learning_objective_codes": [
+        "LO-C1.SUB.02-01",
+        "LO-C1.SUB.02-02",
+        "LO-C1.SUB.02-03"
+      ],
+      "difficulty": 2,
+      "age_min": 4,
+      "age_max": 5,
+      "access_tier": "standard",
+      "content_version": 1,
+      "authored_in": "repo_seed",
+      "origin": "ai_assisted"
+    },
+    "content_pack": {
+      "prompt": "Bé hãy nối các cặp hình tương ứng nhé!",
+      "pairs": [
+        {
+          "pair_id": "pair_1",
+          "left": {
+            "item_id": "left_1",
+            "asset": {
+              "kind": "emoji",
+              "ref": "EMJ-house-with-garden"
+            }
+          },
+          "right": {
+            "item_id": "right_1",
+            "asset": {
+              "kind": "emoji",
+              "ref": "EMJ-grandmother"
+            }
+          }
+        },
+        {
+          "pair_id": "pair_2",
+          "left": {
+            "item_id": "left_2",
+            "asset": {
+              "kind": "emoji",
+              "ref": "EMJ-mother"
+            }
+          },
+          "right": {
+            "item_id": "right_2",
+            "asset": {
+              "kind": "emoji",
+              "ref": "EMJ-boy"
+            }
+          }
+        },
+        {
+          "pair_id": "pair_3",
+          "left": {
+            "item_id": "left_3",
+            "asset": {
+              "kind": "emoji",
+              "ref": "EMJ-girl"
+            }
+          },
+          "right": {
+            "item_id": "right_3",
+            "asset": {
+              "kind": "emoji",
+              "ref": "EMJ-family"
+            }
+          }
+        }
+      ]
+    },
+    "difficulty_params": {
+      "hint_after_ms": 10000,
+      "allow_retry": true,
+      "shuffle_sides": true
+    }
+  },
+  {
+    "header": {
+      "code": "GL-C1-SUB-PATT-0005",
+      "template_code": "GT-005",
+      "title": "Xếp Bàn chân theo quy luật",
+      "instruction": "Bé tìm Bàn chân còn thiếu trong dãy quy luật!",
+      "theme_tag": "body",
+      "what_tags": ["classification"],
+      "thinking_tags": ["solve"],
+      "skill_codes": ["C1.SUB.02"],
+      "learning_objective_codes": [
+        "LO-C1.SUB.02-01",
+        "LO-C1.SUB.02-02",
+        "LO-C1.SUB.02-03"
+      ],
+      "difficulty": 3,
+      "age_min": 4,
+      "age_max": 5,
+      "access_tier": "premium",
+      "content_version": 1,
+      "authored_in": "repo_seed",
+      "origin": "ai_assisted"
+    },
+    "content_pack": {
+      "prompt": "Bé hãy nối các cặp hình tương ứng nhé!",
+      "pairs": [
+        {
+          "pair_id": "pair_1",
+          "left": {
+            "item_id": "left_1",
+            "asset": {
+              "kind": "emoji",
+              "ref": "EMJ-tongue"
+            }
+          },
+          "right": {
+            "item_id": "right_1",
+            "asset": {
+              "kind": "emoji",
+              "ref": "EMJ-nose"
+            }
+          }
+        },
+        {
+          "pair_id": "pair_2",
+          "left": {
+            "item_id": "left_2",
+            "asset": {
+              "kind": "emoji",
+              "ref": "EMJ-eyes"
+            }
+          },
+          "right": {
+            "item_id": "right_2",
+            "asset": {
+              "kind": "emoji",
+              "ref": "EMJ-foot"
+            }
+          }
+        },
+        {
+          "pair_id": "pair_3",
+          "left": {
+            "item_id": "left_3",
+            "asset": {
+              "kind": "emoji",
+              "ref": "EMJ-heart"
+            }
+          },
+          "right": {
+            "item_id": "right_3",
+            "asset": {
+              "kind": "emoji",
+              "ref": "EMJ-raised-hand"
+            }
+          }
+        }
+      ]
+    },
+    "difficulty_params": {
+      "hint_after_ms": 10000,
+      "allow_retry": true,
+      "shuffle_sides": true
+    }
+  },
+  {
+    "header": {
+      "code": "GL-C1-SUB-PICT-0006",
+      "template_code": "GT-031",
+      "title": "Biểu đồ tranh Mặt trời",
+      "instruction": "Bé phân tích biểu đồ tranh để chọn đáp án!",
+      "theme_tag": "weather",
+      "what_tags": ["money", "number", "quantity"],
+      "thinking_tags": ["solve"],
+      "skill_codes": ["C1.SUB.03"],
+      "learning_objective_codes": [
+        "LO-C1.SUB.03-01",
+        "LO-C1.SUB.03-02",
+        "LO-C1.SUB.03-03"
+      ],
+      "difficulty": 2,
+      "age_min": 5,
+      "age_max": 6,
+      "access_tier": "premium",
+      "content_version": 1,
+      "authored_in": "repo_seed",
+      "origin": "ai_assisted"
+    },
+    "content_pack": {
+      "prompt": "Bé hãy chọn các đồng xu để trả đúng 9 đồng nhé!",
+      "target_amount": 9,
+      "item_to_buy": {
+        "label": "Mặt trời",
+        "asset": {
+          "kind": "emoji",
+          "ref": "EMJ-sun"
+        }
+      },
+      "coins": [
+        {
+          "coin_id": "coin_1_val2",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-coin"
+          },
+          "value": 2
+        },
+        {
+          "coin_id": "coin_2_val5",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-coin"
+          },
+          "value": 5
+        },
+        {
+          "coin_id": "coin_3_val5",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-coin"
+          },
+          "value": 5
+        },
+        {
+          "coin_id": "coin_4_val2",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-coin"
+          },
+          "value": 2
+        }
+      ]
+    },
+    "difficulty_params": {
+      "coin_kind_count": 2,
+      "target_amount": 9,
+      "exact_change": true,
+      "allow_retry": true,
+      "hint_after_ms": 8000
+    }
+  },
+  {
+    "header": {
+      "code": "GL-C1-SUB-PICT-0007",
+      "template_code": "GT-031",
+      "title": "Biểu đồ tranh Bao lì xì",
+      "instruction": "Bé phân tích biểu đồ tranh để chọn đáp án!",
+      "theme_tag": "festival",
+      "what_tags": ["money", "number", "quantity"],
+      "thinking_tags": ["solve"],
+      "skill_codes": ["C1.SUB.03"],
+      "learning_objective_codes": [
+        "LO-C1.SUB.03-01",
+        "LO-C1.SUB.03-02",
+        "LO-C1.SUB.03-03"
+      ],
+      "difficulty": 3,
+      "age_min": 5,
+      "age_max": 6,
+      "access_tier": "standard",
+      "content_version": 1,
+      "authored_in": "repo_seed",
+      "origin": "ai_assisted"
+    },
+    "content_pack": {
+      "prompt": "Bé hãy chọn các đồng xu để trả đúng 13 đồng nhé!",
+      "target_amount": 13,
+      "item_to_buy": {
+        "label": "Đèn lồng",
+        "asset": {
+          "kind": "emoji",
+          "ref": "EMJ-red-lantern"
+        }
+      },
+      "coins": [
+        {
+          "coin_id": "coin_1_val1",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-coin"
+          },
+          "value": 1
+        },
+        {
+          "coin_id": "coin_2_val1",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-coin"
+          },
+          "value": 1
+        },
+        {
+          "coin_id": "coin_3_val2",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-coin"
+          },
+          "value": 2
+        },
+        {
+          "coin_id": "coin_4_val10",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-coin"
+          },
+          "value": 10
+        }
+      ]
+    },
+    "difficulty_params": {
+      "coin_kind_count": 3,
+      "target_amount": 13,
+      "exact_change": true,
+      "allow_retry": true,
+      "hint_after_ms": 8000
+    }
+  },
+  {
+    "header": {
+      "code": "GL-C1-SUB-PICT-0008",
+      "template_code": "GT-031",
+      "title": "Biểu đồ tranh Bút chì",
+      "instruction": "Bé phân tích biểu đồ tranh để chọn đáp án!",
+      "theme_tag": "school",
+      "what_tags": ["money", "number", "quantity"],
+      "thinking_tags": ["solve"],
+      "skill_codes": ["C1.SUB.03"],
+      "learning_objective_codes": [
+        "LO-C1.SUB.03-01",
+        "LO-C1.SUB.03-02",
+        "LO-C1.SUB.03-03"
+      ],
+      "difficulty": 4,
+      "age_min": 5,
+      "age_max": 6,
+      "access_tier": "premium",
+      "content_version": 1,
+      "authored_in": "repo_seed",
+      "origin": "ai_assisted"
+    },
+    "content_pack": {
+      "prompt": "Bé hãy chọn các đồng xu để trả đúng 16 đồng nhé!",
+      "target_amount": 16,
+      "item_to_buy": {
+        "label": "Trường học",
+        "asset": {
+          "kind": "emoji",
+          "ref": "EMJ-school"
+        }
+      },
+      "coins": [
+        {
+          "coin_id": "coin_1_val10",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-coin"
+          },
+          "value": 10
+        },
+        {
+          "coin_id": "coin_2_val2",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-coin"
+          },
+          "value": 2
+        },
+        {
+          "coin_id": "coin_3_val10",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-coin"
+          },
+          "value": 10
+        },
+        {
+          "coin_id": "coin_4_val5",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-coin"
+          },
+          "value": 5
+        },
+        {
+          "coin_id": "coin_5_val1",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-coin"
+          },
+          "value": 1
+        }
+      ]
+    },
+    "difficulty_params": {
+      "coin_kind_count": 4,
+      "target_amount": 16,
+      "exact_change": true,
+      "allow_retry": true,
+      "hint_after_ms": 8000
+    }
+  },
+  {
+    "header": {
+      "code": "GL-C1-SUB-PICT-0009",
+      "template_code": "GT-031",
+      "title": "Biểu đồ tranh Heo",
+      "instruction": "Bé phân tích biểu đồ tranh để chọn đáp án!",
+      "theme_tag": "farm",
+      "what_tags": ["money", "number", "quantity"],
+      "thinking_tags": ["solve"],
+      "skill_codes": ["C1.SUB.03"],
+      "learning_objective_codes": [
+        "LO-C1.SUB.03-01",
+        "LO-C1.SUB.03-02",
+        "LO-C1.SUB.03-03"
+      ],
+      "difficulty": 2,
+      "age_min": 5,
+      "age_max": 6,
+      "access_tier": "standard",
+      "content_version": 1,
+      "authored_in": "repo_seed",
+      "origin": "ai_assisted"
+    },
+    "content_pack": {
+      "prompt": "Bé hãy chọn các đồng xu để trả đúng 19 đồng nhé!",
+      "target_amount": 19,
+      "item_to_buy": {
+        "label": "Máy kéo",
+        "asset": {
+          "kind": "emoji",
+          "ref": "EMJ-tractor"
+        }
+      },
+      "coins": [
+        {
+          "coin_id": "coin_1_val2",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-coin"
+          },
+          "value": 2
+        },
+        {
+          "coin_id": "coin_2_val10",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-coin"
+          },
+          "value": 10
+        },
+        {
+          "coin_id": "coin_3_val5",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-coin"
+          },
+          "value": 5
+        },
+        {
+          "coin_id": "coin_4_val2",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-coin"
+          },
+          "value": 2
+        },
+        {
+          "coin_id": "coin_5_val5",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-coin"
+          },
+          "value": 5
+        }
+      ]
+    },
+    "difficulty_params": {
+      "coin_kind_count": 3,
+      "target_amount": 19,
+      "exact_change": true,
+      "allow_retry": true,
+      "hint_after_ms": 8000
+    }
+  },
+  {
+    "header": {
+      "code": "GL-C1-SUB-PICT-0010",
+      "template_code": "GT-031",
+      "title": "Biểu đồ tranh Nồi thức ăn",
+      "instruction": "Bé phân tích biểu đồ tranh để chọn đáp án!",
+      "theme_tag": "home",
+      "what_tags": ["money", "number", "quantity"],
+      "thinking_tags": ["solve"],
+      "skill_codes": ["C1.SUB.03"],
+      "learning_objective_codes": [
+        "LO-C1.SUB.03-01",
+        "LO-C1.SUB.03-02",
+        "LO-C1.SUB.03-03"
+      ],
+      "difficulty": 3,
+      "age_min": 5,
+      "age_max": 6,
+      "access_tier": "premium",
+      "content_version": 1,
+      "authored_in": "repo_seed",
+      "origin": "ai_assisted"
+    },
+    "content_pack": {
+      "prompt": "Bé hãy chọn các đồng xu để trả đúng 20 đồng nhé!",
+      "target_amount": 20,
+      "item_to_buy": {
+        "label": "Ngôi nhà",
+        "asset": {
+          "kind": "emoji",
+          "ref": "EMJ-house"
+        }
+      },
+      "coins": [
+        {
+          "coin_id": "coin_1_val5",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-coin"
+          },
+          "value": 5
+        },
+        {
+          "coin_id": "coin_2_val5",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-coin"
+          },
+          "value": 5
+        },
+        {
+          "coin_id": "coin_3_val5",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-coin"
+          },
+          "value": 5
+        },
+        {
+          "coin_id": "coin_4_val5",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-coin"
+          },
+          "value": 5
+        },
+        {
+          "coin_id": "coin_5_val10",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-coin"
+          },
+          "value": 10
+        }
+      ]
+    },
+    "difficulty_params": {
+      "coin_kind_count": 2,
+      "target_amount": 20,
+      "exact_change": true,
+      "allow_retry": true,
+      "hint_after_ms": 8000
+    }
+  },
+  {
+    "header": {
+      "code": "GL-C1-SUB-TAP-0010",
+      "template_code": "GT-001",
+      "title": "Tìm Sư tử giống mẫu",
+      "instruction": "Bé tìm Sư tử giống hình mẫu nhé!",
+      "theme_tag": "animal",
+      "what_tags": ["classification", "number"],
+      "thinking_tags": ["solve"],
+      "skill_codes": ["C1.SUB.03"],
+      "learning_objective_codes": [
+        "LO-C1.SUB.03-01",
+        "LO-C1.SUB.03-02",
+        "LO-C1.SUB.03-03"
+      ],
+      "difficulty": 2,
+      "age_min": 4,
+      "age_max": 5,
+      "access_tier": "standard",
+      "content_version": 1,
+      "authored_in": "repo_seed",
+      "origin": "ai_assisted"
+    },
+    "content_pack": {
+      "prompt": "Bé hãy chạm vào hình giống mẫu nhé!",
+      "target_item": {
+        "item_id": "item_EMJ-monkey",
+        "asset": {
+          "kind": "emoji",
+          "ref": "EMJ-monkey"
+        }
+      },
+      "options": [
+        {
+          "item_id": "opt_1",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-fox"
+          },
+          "is_correct": false
+        },
+        {
+          "item_id": "opt_2",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-lion"
+          },
+          "is_correct": false
+        },
+        {
+          "item_id": "opt_3",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-zebra"
+          },
+          "is_correct": false
+        },
+        {
+          "item_id": "opt_4",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-monkey"
+          },
+          "is_correct": true
+        }
+      ]
+    },
+    "difficulty_params": {
+      "distractor_count": 3,
+      "hint_after_ms": 15000,
+      "allow_retry": true,
+      "shuffle_items": true
+    }
+  },
+  {
+    "header": {
+      "code": "GL-C1-SUB-TAP-0011",
+      "template_code": "GT-001",
+      "title": "Tìm Hoa hướng dương giống mẫu",
+      "instruction": "Bé tìm Hoa hướng dương giống hình mẫu nhé!",
+      "theme_tag": "nature",
+      "what_tags": ["classification", "number"],
+      "thinking_tags": ["solve"],
+      "skill_codes": ["C1.SUB.03"],
+      "learning_objective_codes": [
+        "LO-C1.SUB.03-01",
+        "LO-C1.SUB.03-02",
+        "LO-C1.SUB.03-03"
+      ],
+      "difficulty": 3,
+      "age_min": 4,
+      "age_max": 5,
+      "access_tier": "premium",
+      "content_version": 1,
+      "authored_in": "repo_seed",
+      "origin": "ai_assisted"
+    },
+    "content_pack": {
+      "prompt": "Bé hãy chạm vào hình giống mẫu nhé!",
+      "target_item": {
+        "item_id": "item_EMJ-palm-tree",
+        "asset": {
+          "kind": "emoji",
+          "ref": "EMJ-palm-tree"
+        }
+      },
+      "options": [
+        {
+          "item_id": "opt_1",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-cactus"
+          },
+          "is_correct": false
+        },
+        {
+          "item_id": "opt_2",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-palm-tree"
+          },
+          "is_correct": true
+        },
+        {
+          "item_id": "opt_3",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-maple-leaf"
+          },
+          "is_correct": false
+        },
+        {
+          "item_id": "opt_4",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-deciduous-tree"
+          },
+          "is_correct": false
+        },
+        {
+          "item_id": "opt_5",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-mountain"
+          },
+          "is_correct": false
+        }
+      ]
+    },
+    "difficulty_params": {
+      "distractor_count": 4,
+      "hint_after_ms": 15000,
+      "allow_retry": true,
+      "shuffle_items": true
+    }
+  },
+  {
+    "header": {
+      "code": "GL-C1-SUB-TAP-0012",
+      "template_code": "GT-001",
+      "title": "Tìm Bạch tuộc giống mẫu",
+      "instruction": "Bé tìm Bạch tuộc giống hình mẫu nhé!",
+      "theme_tag": "ocean",
+      "what_tags": ["classification", "number"],
+      "thinking_tags": ["solve"],
+      "skill_codes": ["C1.SUB.03"],
+      "learning_objective_codes": [
+        "LO-C1.SUB.03-01",
+        "LO-C1.SUB.03-02",
+        "LO-C1.SUB.03-03"
+      ],
+      "difficulty": 4,
+      "age_min": 4,
+      "age_max": 5,
+      "access_tier": "standard",
+      "content_version": 1,
+      "authored_in": "repo_seed",
+      "origin": "ai_assisted"
+    },
+    "content_pack": {
+      "prompt": "Bé hãy chạm vào hình giống mẫu nhé!",
+      "target_item": {
+        "item_id": "item_EMJ-shark",
+        "asset": {
+          "kind": "emoji",
+          "ref": "EMJ-shark"
+        }
+      },
+      "options": [
+        {
+          "item_id": "opt_1",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-fish"
+          },
+          "is_correct": false
+        },
+        {
+          "item_id": "opt_2",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-dolphin"
+          },
+          "is_correct": false
+        },
+        {
+          "item_id": "opt_3",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-whale"
+          },
+          "is_correct": false
+        },
+        {
+          "item_id": "opt_4",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-shark"
+          },
+          "is_correct": true
+        },
+        {
+          "item_id": "opt_5",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-shell"
+          },
+          "is_correct": false
+        }
+      ]
+    },
+    "difficulty_params": {
+      "distractor_count": 4,
+      "hint_after_ms": 15000,
+      "allow_retry": true,
+      "shuffle_items": true
+    }
+  },
+  {
+    "header": {
+      "code": "GL-C1-SUB-TAP-0013",
+      "template_code": "GT-001",
+      "title": "Tìm Cà rốt giống mẫu",
+      "instruction": "Bé tìm Cà rốt giống hình mẫu nhé!",
+      "theme_tag": "food",
+      "what_tags": ["classification", "number"],
+      "thinking_tags": ["solve"],
+      "skill_codes": ["C1.SUB.03"],
+      "learning_objective_codes": [
+        "LO-C1.SUB.03-01",
+        "LO-C1.SUB.03-02",
+        "LO-C1.SUB.03-03"
+      ],
+      "difficulty": 2,
+      "age_min": 4,
+      "age_max": 5,
+      "access_tier": "premium",
+      "content_version": 1,
+      "authored_in": "repo_seed",
+      "origin": "ai_assisted"
+    },
+    "content_pack": {
+      "prompt": "Bé hãy chạm vào hình giống mẫu nhé!",
+      "target_item": {
+        "item_id": "item_EMJ-noodles",
+        "asset": {
+          "kind": "emoji",
+          "ref": "EMJ-noodles"
+        }
+      },
+      "options": [
+        {
+          "item_id": "opt_1",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-milk"
+          },
+          "is_correct": false
+        },
+        {
+          "item_id": "opt_2",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-banana"
+          },
+          "is_correct": false
+        },
+        {
+          "item_id": "opt_3",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-noodles"
+          },
+          "is_correct": true
+        },
+        {
+          "item_id": "opt_4",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-bread"
+          },
+          "is_correct": false
+        }
+      ]
+    },
+    "difficulty_params": {
+      "distractor_count": 3,
+      "hint_after_ms": 15000,
+      "allow_retry": true,
+      "shuffle_items": true
+    }
+  },
+  {
+    "header": {
+      "code": "GL-C1-SUB-TAP-0014",
+      "template_code": "GT-001",
+      "title": "Tìm Tàu thủy giống mẫu",
+      "instruction": "Bé tìm Tàu thủy giống hình mẫu nhé!",
+      "theme_tag": "vehicle",
+      "what_tags": ["classification", "number"],
+      "thinking_tags": ["solve"],
+      "skill_codes": ["C1.SUB.03"],
+      "learning_objective_codes": [
+        "LO-C1.SUB.03-01",
+        "LO-C1.SUB.03-02",
+        "LO-C1.SUB.03-03"
+      ],
+      "difficulty": 3,
+      "age_min": 4,
+      "age_max": 5,
+      "access_tier": "standard",
+      "content_version": 1,
+      "authored_in": "repo_seed",
+      "origin": "ai_assisted"
+    },
+    "content_pack": {
+      "prompt": "Bé hãy chạm vào hình giống mẫu nhé!",
+      "target_item": {
+        "item_id": "item_EMJ-car",
+        "asset": {
+          "kind": "emoji",
+          "ref": "EMJ-car"
+        }
+      },
+      "options": [
+        {
+          "item_id": "opt_1",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-truck"
+          },
+          "is_correct": false
+        },
+        {
+          "item_id": "opt_2",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-motorcycle"
+          },
+          "is_correct": false
+        },
+        {
+          "item_id": "opt_3",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-car"
+          },
+          "is_correct": true
+        },
+        {
+          "item_id": "opt_4",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-helicopter"
+          },
+          "is_correct": false
+        },
+        {
+          "item_id": "opt_5",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-bicycle"
+          },
+          "is_correct": false
+        }
+      ]
+    },
+    "difficulty_params": {
+      "distractor_count": 4,
+      "hint_after_ms": 15000,
+      "allow_retry": true,
+      "shuffle_items": true
+    }
+  },
+  {
+    "header": {
+      "code": "GL-C1-SUB-TCMP-0010",
+      "template_code": "GT-003",
+      "title": "So sánh nhóm Bảng vẽ",
+      "instruction": "Bé chọn nhóm có nhiều Bảng vẽ hơn nhé!",
+      "theme_tag": "art",
+      "what_tags": ["classification"],
+      "thinking_tags": ["solve"],
+      "skill_codes": ["C1.SUB.03"],
+      "learning_objective_codes": [
+        "LO-C1.SUB.03-01",
+        "LO-C1.SUB.03-02",
+        "LO-C1.SUB.03-03"
+      ],
+      "difficulty": 2,
+      "age_min": 4,
+      "age_max": 5,
+      "access_tier": "standard",
+      "content_version": 1,
+      "authored_in": "repo_seed",
+      "origin": "ai_assisted"
+    },
+    "content_pack": {
+      "prompt": "Bé hãy kéo các đồ vật thích hợp vào giỏ nhé!",
+      "container": {
+        "container_id": "basket_1",
+        "label": "Giỏ đồ",
+        "accepts_attribute": "target_attr"
+      },
+      "items": [
+        {
+          "item_id": "item_1",
+          "attribute": "target_attr",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-saxophone"
+          },
+          "is_correct": true
+        },
+        {
+          "item_id": "item_2",
+          "attribute": "target_attr",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-piano"
+          },
+          "is_correct": true
+        },
+        {
+          "item_id": "item_3",
+          "attribute": "other_attr",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-trumpet"
+          },
+          "is_correct": false
+        },
+        {
+          "item_id": "item_4",
+          "attribute": "other_attr",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-camera"
+          },
+          "is_correct": false
+        }
+      ]
+    },
+    "difficulty_params": {
+      "distractor_count": 2,
+      "target_count": 2,
+      "hint_after_ms": 10000,
+      "allow_retry": true
+    }
+  },
+  {
+    "header": {
+      "code": "GL-C1-SUB-TCMP-0011",
+      "template_code": "GT-003",
+      "title": "So sánh nhóm Hành tinh",
+      "instruction": "Bé chọn nhóm có nhiều Hành tinh hơn nhé!",
+      "theme_tag": "space",
+      "what_tags": ["classification"],
+      "thinking_tags": ["solve"],
+      "skill_codes": ["C1.SUB.03"],
+      "learning_objective_codes": [
+        "LO-C1.SUB.03-01",
+        "LO-C1.SUB.03-02",
+        "LO-C1.SUB.03-03"
+      ],
+      "difficulty": 3,
+      "age_min": 4,
+      "age_max": 5,
+      "access_tier": "premium",
+      "content_version": 1,
+      "authored_in": "repo_seed",
+      "origin": "ai_assisted"
+    },
+    "content_pack": {
+      "prompt": "Bé hãy kéo các đồ vật thích hợp vào giỏ nhé!",
+      "container": {
+        "container_id": "basket_1",
+        "label": "Giỏ đồ",
+        "accepts_attribute": "target_attr"
+      },
+      "items": [
+        {
+          "item_id": "item_1",
+          "attribute": "target_attr",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-sparkles"
+          },
+          "is_correct": true
+        },
+        {
+          "item_id": "item_2",
+          "attribute": "target_attr",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-earth"
+          },
+          "is_correct": true
+        },
+        {
+          "item_id": "item_3",
+          "attribute": "other_attr",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-astronaut"
+          },
+          "is_correct": false
+        },
+        {
+          "item_id": "item_4",
+          "attribute": "other_attr",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-crescent-moon"
+          },
+          "is_correct": false
+        }
+      ]
+    },
+    "difficulty_params": {
+      "distractor_count": 2,
+      "target_count": 2,
+      "hint_after_ms": 10000,
+      "allow_retry": true
+    }
+  },
+  {
+    "header": {
+      "code": "GL-C1-SUB-TCMP-0012",
+      "template_code": "GT-003",
+      "title": "So sánh nhóm Bà",
+      "instruction": "Bé chọn nhóm có nhiều Bà hơn nhé!",
+      "theme_tag": "family",
+      "what_tags": ["classification"],
+      "thinking_tags": ["solve"],
+      "skill_codes": ["C1.SUB.03"],
+      "learning_objective_codes": [
+        "LO-C1.SUB.03-01",
+        "LO-C1.SUB.03-02",
+        "LO-C1.SUB.03-03"
+      ],
+      "difficulty": 4,
+      "age_min": 4,
+      "age_max": 5,
+      "access_tier": "standard",
+      "content_version": 1,
+      "authored_in": "repo_seed",
+      "origin": "ai_assisted"
+    },
+    "content_pack": {
+      "prompt": "Bé hãy kéo các đồ vật thích hợp vào giỏ nhé!",
+      "container": {
+        "container_id": "basket_1",
+        "label": "Giỏ đồ",
+        "accepts_attribute": "target_attr"
+      },
+      "items": [
+        {
+          "item_id": "item_1",
+          "attribute": "target_attr",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-father"
+          },
+          "is_correct": true
+        },
+        {
+          "item_id": "item_2",
+          "attribute": "target_attr",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-boy"
+          },
+          "is_correct": true
+        },
+        {
+          "item_id": "item_3",
+          "attribute": "other_attr",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-house-with-garden"
+          },
+          "is_correct": false
+        },
+        {
+          "item_id": "item_4",
+          "attribute": "other_attr",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-grandmother"
+          },
+          "is_correct": false
+        }
+      ]
+    },
+    "difficulty_params": {
+      "distractor_count": 2,
+      "target_count": 2,
+      "hint_after_ms": 10000,
+      "allow_retry": true
+    }
+  },
+  {
+    "header": {
+      "code": "GL-C1-SUB-TCMP-0013",
+      "template_code": "GT-003",
+      "title": "So sánh nhóm Miệng",
+      "instruction": "Bé chọn nhóm có nhiều Miệng hơn nhé!",
+      "theme_tag": "body",
+      "what_tags": ["classification"],
+      "thinking_tags": ["solve"],
+      "skill_codes": ["C1.SUB.03"],
+      "learning_objective_codes": [
+        "LO-C1.SUB.03-01",
+        "LO-C1.SUB.03-02",
+        "LO-C1.SUB.03-03"
+      ],
+      "difficulty": 2,
+      "age_min": 4,
+      "age_max": 5,
+      "access_tier": "premium",
+      "content_version": 1,
+      "authored_in": "repo_seed",
+      "origin": "ai_assisted"
+    },
+    "content_pack": {
+      "prompt": "Bé hãy kéo các đồ vật thích hợp vào giỏ nhé!",
+      "container": {
+        "container_id": "basket_1",
+        "label": "Giỏ đồ",
+        "accepts_attribute": "target_attr"
+      },
+      "items": [
+        {
+          "item_id": "item_1",
+          "attribute": "target_attr",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-tooth"
+          },
+          "is_correct": true
+        },
+        {
+          "item_id": "item_2",
+          "attribute": "target_attr",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-foot"
+          },
+          "is_correct": true
+        },
+        {
+          "item_id": "item_3",
+          "attribute": "other_attr",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-leg"
+          },
+          "is_correct": false
+        },
+        {
+          "item_id": "item_4",
+          "attribute": "other_attr",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-ear"
+          },
+          "is_correct": false
+        }
+      ]
+    },
+    "difficulty_params": {
+      "distractor_count": 2,
+      "target_count": 2,
+      "hint_after_ms": 10000,
+      "allow_retry": true
+    }
+  },
+  {
+    "header": {
+      "code": "GL-C1-SUB-TCMP-0014",
+      "template_code": "GT-003",
+      "title": "So sánh nhóm Bông tuyết",
+      "instruction": "Bé chọn nhóm có nhiều Bông tuyết hơn nhé!",
+      "theme_tag": "weather",
+      "what_tags": ["classification"],
+      "thinking_tags": ["solve"],
+      "skill_codes": ["C1.SUB.03"],
+      "learning_objective_codes": [
+        "LO-C1.SUB.03-01",
+        "LO-C1.SUB.03-02",
+        "LO-C1.SUB.03-03"
+      ],
+      "difficulty": 3,
+      "age_min": 4,
+      "age_max": 5,
+      "access_tier": "standard",
+      "content_version": 1,
+      "authored_in": "repo_seed",
+      "origin": "ai_assisted"
+    },
+    "content_pack": {
+      "prompt": "Bé hãy kéo các đồ vật thích hợp vào giỏ nhé!",
+      "container": {
+        "container_id": "basket_1",
+        "label": "Giỏ đồ",
+        "accepts_attribute": "target_attr"
+      },
+      "items": [
+        {
+          "item_id": "item_1",
+          "attribute": "target_attr",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-snowman"
+          },
+          "is_correct": true
+        },
+        {
+          "item_id": "item_2",
+          "attribute": "target_attr",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-thunderstorm"
+          },
+          "is_correct": true
+        },
+        {
+          "item_id": "item_3",
+          "attribute": "other_attr",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-umbrella-with-rain"
+          },
+          "is_correct": false
+        },
+        {
+          "item_id": "item_4",
+          "attribute": "other_attr",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-snowflake"
+          },
+          "is_correct": false
+        }
+      ]
+    },
+    "difficulty_params": {
+      "distractor_count": 2,
+      "target_count": 2,
+      "hint_after_ms": 10000,
+      "allow_retry": true
+    }
+  },
+  {
+    "header": {
+      "code": "GL-C1-SUB-PATT-0006",
+      "template_code": "GT-005",
+      "title": "Xếp Đèn lồng theo quy luật",
+      "instruction": "Bé tìm Đèn lồng còn thiếu trong dãy quy luật!",
+      "theme_tag": "festival",
+      "what_tags": ["classification"],
+      "thinking_tags": ["solve"],
+      "skill_codes": ["C1.SUB.03"],
+      "learning_objective_codes": [
+        "LO-C1.SUB.03-01",
+        "LO-C1.SUB.03-02",
+        "LO-C1.SUB.03-03"
+      ],
+      "difficulty": 2,
+      "age_min": 4,
+      "age_max": 5,
+      "access_tier": "standard",
+      "content_version": 1,
+      "authored_in": "repo_seed",
+      "origin": "ai_assisted"
+    },
+    "content_pack": {
+      "prompt": "Bé hãy nối các cặp hình tương ứng nhé!",
+      "pairs": [
+        {
+          "pair_id": "pair_1",
+          "left": {
+            "item_id": "left_1",
+            "asset": {
+              "kind": "emoji",
+              "ref": "EMJ-red-envelope"
+            }
+          },
+          "right": {
+            "item_id": "right_1",
+            "asset": {
+              "kind": "emoji",
+              "ref": "EMJ-gift"
+            }
+          }
+        },
+        {
+          "pair_id": "pair_2",
+          "left": {
+            "item_id": "left_2",
+            "asset": {
+              "kind": "emoji",
+              "ref": "EMJ-jack-o-lantern"
+            }
+          },
+          "right": {
+            "item_id": "right_2",
+            "asset": {
+              "kind": "emoji",
+              "ref": "EMJ-christmas-tree"
+            }
+          }
+        },
+        {
+          "pair_id": "pair_3",
+          "left": {
+            "item_id": "left_3",
+            "asset": {
+              "kind": "emoji",
+              "ref": "EMJ-fireworks"
+            }
+          },
+          "right": {
+            "item_id": "right_3",
+            "asset": {
+              "kind": "emoji",
+              "ref": "EMJ-confetti-ball"
+            }
+          }
+        }
+      ]
+    },
+    "difficulty_params": {
+      "hint_after_ms": 10000,
+      "allow_retry": true,
+      "shuffle_sides": true
+    }
+  },
+  {
+    "header": {
+      "code": "GL-C1-SUB-PATT-0007",
+      "template_code": "GT-005",
+      "title": "Xếp Cặp sách theo quy luật",
+      "instruction": "Bé tìm Cặp sách còn thiếu trong dãy quy luật!",
+      "theme_tag": "school",
+      "what_tags": ["classification"],
+      "thinking_tags": ["solve"],
+      "skill_codes": ["C1.SUB.03"],
+      "learning_objective_codes": [
+        "LO-C1.SUB.03-01",
+        "LO-C1.SUB.03-02",
+        "LO-C1.SUB.03-03"
+      ],
+      "difficulty": 3,
+      "age_min": 4,
+      "age_max": 5,
+      "access_tier": "premium",
+      "content_version": 1,
+      "authored_in": "repo_seed",
+      "origin": "ai_assisted"
+    },
+    "content_pack": {
+      "prompt": "Bé hãy nối các cặp hình tương ứng nhé!",
+      "pairs": [
+        {
+          "pair_id": "pair_1",
+          "left": {
+            "item_id": "left_1",
+            "asset": {
+              "kind": "emoji",
+              "ref": "EMJ-backpack"
+            }
+          },
+          "right": {
+            "item_id": "right_1",
+            "asset": {
+              "kind": "emoji",
+              "ref": "EMJ-ruler"
+            }
+          }
+        },
+        {
+          "pair_id": "pair_2",
+          "left": {
+            "item_id": "left_2",
+            "asset": {
+              "kind": "emoji",
+              "ref": "EMJ-abacus"
+            }
+          },
+          "right": {
+            "item_id": "right_2",
+            "asset": {
+              "kind": "emoji",
+              "ref": "EMJ-crayon"
+            }
+          }
+        },
+        {
+          "pair_id": "pair_3",
+          "left": {
+            "item_id": "left_3",
+            "asset": {
+              "kind": "emoji",
+              "ref": "EMJ-open-book"
+            }
+          },
+          "right": {
+            "item_id": "right_3",
+            "asset": {
+              "kind": "emoji",
+              "ref": "EMJ-pencil"
+            }
+          }
+        }
+      ]
+    },
+    "difficulty_params": {
+      "hint_after_ms": 10000,
+      "allow_retry": true,
+      "shuffle_sides": true
+    }
+  },
+  {
+    "header": {
+      "code": "GL-C1-SUB-PATT-0008",
+      "template_code": "GT-005",
+      "title": "Xếp Gà trống theo quy luật",
+      "instruction": "Bé tìm Gà trống còn thiếu trong dãy quy luật!",
+      "theme_tag": "farm",
+      "what_tags": ["classification"],
+      "thinking_tags": ["solve"],
+      "skill_codes": ["C1.SUB.03"],
+      "learning_objective_codes": [
+        "LO-C1.SUB.03-01",
+        "LO-C1.SUB.03-02",
+        "LO-C1.SUB.03-03"
+      ],
+      "difficulty": 4,
+      "age_min": 4,
+      "age_max": 5,
+      "access_tier": "standard",
+      "content_version": 1,
+      "authored_in": "repo_seed",
+      "origin": "ai_assisted"
+    },
+    "content_pack": {
+      "prompt": "Bé hãy nối các cặp hình tương ứng nhé!",
+      "pairs": [
+        {
+          "pair_id": "pair_1",
+          "left": {
+            "item_id": "left_1",
+            "asset": {
+              "kind": "emoji",
+              "ref": "EMJ-duck"
+            }
+          },
+          "right": {
+            "item_id": "right_1",
+            "asset": {
+              "kind": "emoji",
+              "ref": "EMJ-cow"
+            }
+          }
+        },
+        {
+          "pair_id": "pair_2",
+          "left": {
+            "item_id": "left_2",
+            "asset": {
+              "kind": "emoji",
+              "ref": "EMJ-horse"
+            }
+          },
+          "right": {
+            "item_id": "right_2",
+            "asset": {
+              "kind": "emoji",
+              "ref": "EMJ-chicken"
+            }
+          }
+        },
+        {
+          "pair_id": "pair_3",
+          "left": {
+            "item_id": "left_3",
+            "asset": {
+              "kind": "emoji",
+              "ref": "EMJ-rice"
+            }
+          },
+          "right": {
+            "item_id": "right_3",
+            "asset": {
+              "kind": "emoji",
+              "ref": "EMJ-goat"
+            }
+          }
+        }
+      ]
+    },
+    "difficulty_params": {
+      "hint_after_ms": 10000,
+      "allow_retry": true,
+      "shuffle_sides": true
+    }
+  },
+  {
+    "header": {
+      "code": "GL-C1-SUB-PATT-0009",
+      "template_code": "GT-005",
+      "title": "Xếp Cái cửa theo quy luật",
+      "instruction": "Bé tìm Cái cửa còn thiếu trong dãy quy luật!",
+      "theme_tag": "home",
+      "what_tags": ["classification"],
+      "thinking_tags": ["solve"],
+      "skill_codes": ["C1.SUB.03"],
+      "learning_objective_codes": [
+        "LO-C1.SUB.03-01",
+        "LO-C1.SUB.03-02",
+        "LO-C1.SUB.03-03"
+      ],
+      "difficulty": 2,
+      "age_min": 4,
+      "age_max": 5,
+      "access_tier": "premium",
+      "content_version": 1,
+      "authored_in": "repo_seed",
+      "origin": "ai_assisted"
+    },
+    "content_pack": {
+      "prompt": "Bé hãy nối các cặp hình tương ứng nhé!",
+      "pairs": [
+        {
+          "pair_id": "pair_1",
+          "left": {
+            "item_id": "left_1",
+            "asset": {
+              "kind": "emoji",
+              "ref": "EMJ-broom"
+            }
+          },
+          "right": {
+            "item_id": "right_1",
+            "asset": {
+              "kind": "emoji",
+              "ref": "EMJ-bed"
+            }
+          }
+        },
+        {
+          "pair_id": "pair_2",
+          "left": {
+            "item_id": "left_2",
+            "asset": {
+              "kind": "emoji",
+              "ref": "EMJ-chair"
+            }
+          },
+          "right": {
+            "item_id": "right_2",
+            "asset": {
+              "kind": "emoji",
+              "ref": "EMJ-window"
+            }
+          }
+        },
+        {
+          "pair_id": "pair_3",
+          "left": {
+            "item_id": "left_3",
+            "asset": {
+              "kind": "emoji",
+              "ref": "EMJ-couch"
+            }
+          },
+          "right": {
+            "item_id": "right_3",
+            "asset": {
+              "kind": "emoji",
+              "ref": "EMJ-house"
+            }
+          }
+        }
+      ]
+    },
+    "difficulty_params": {
+      "hint_after_ms": 10000,
+      "allow_retry": true,
+      "shuffle_sides": true
+    }
+  },
+  {
+    "header": {
+      "code": "GL-C1-SUB-PATT-0010",
+      "template_code": "GT-005",
+      "title": "Xếp Hươu cao cổ theo quy luật",
+      "instruction": "Bé tìm Hươu cao cổ còn thiếu trong dãy quy luật!",
+      "theme_tag": "animal",
+      "what_tags": ["classification"],
+      "thinking_tags": ["solve"],
+      "skill_codes": ["C1.SUB.03"],
+      "learning_objective_codes": [
+        "LO-C1.SUB.03-01",
+        "LO-C1.SUB.03-02",
+        "LO-C1.SUB.03-03"
+      ],
+      "difficulty": 3,
+      "age_min": 4,
+      "age_max": 5,
+      "access_tier": "standard",
+      "content_version": 1,
+      "authored_in": "repo_seed",
+      "origin": "ai_assisted"
+    },
+    "content_pack": {
+      "prompt": "Bé hãy nối các cặp hình tương ứng nhé!",
+      "pairs": [
+        {
+          "pair_id": "pair_1",
+          "left": {
+            "item_id": "left_1",
+            "asset": {
+              "kind": "emoji",
+              "ref": "EMJ-bear"
+            }
+          },
+          "right": {
+            "item_id": "right_1",
+            "asset": {
+              "kind": "emoji",
+              "ref": "EMJ-fox"
+            }
+          }
+        },
+        {
+          "pair_id": "pair_2",
+          "left": {
+            "item_id": "left_2",
+            "asset": {
+              "kind": "emoji",
+              "ref": "EMJ-zebra"
+            }
+          },
+          "right": {
+            "item_id": "right_2",
+            "asset": {
+              "kind": "emoji",
+              "ref": "EMJ-rabbit"
+            }
+          }
+        },
+        {
+          "pair_id": "pair_3",
+          "left": {
+            "item_id": "left_3",
+            "asset": {
+              "kind": "emoji",
+              "ref": "EMJ-panda"
+            }
+          },
+          "right": {
+            "item_id": "right_3",
+            "asset": {
+              "kind": "emoji",
+              "ref": "EMJ-monkey"
+            }
+          }
+        }
+      ]
+    },
+    "difficulty_params": {
+      "hint_after_ms": 10000,
+      "allow_retry": true,
+      "shuffle_sides": true
+    }
+  },
+  {
+    "header": {
+      "code": "GL-C1-SUB-PICT-0011",
+      "template_code": "GT-031",
+      "title": "Biểu đồ tranh Cây xanh",
+      "instruction": "Bé phân tích biểu đồ tranh để chọn đáp án!",
+      "theme_tag": "nature",
+      "what_tags": ["money", "number", "quantity"],
+      "thinking_tags": ["solve"],
+      "skill_codes": ["C1.SUB.04"],
+      "learning_objective_codes": [
+        "LO-C1.SUB.04-01",
+        "LO-C1.SUB.04-02",
+        "LO-C1.SUB.04-03"
+      ],
+      "difficulty": 3,
+      "age_min": 5,
+      "age_max": 6,
+      "access_tier": "standard",
+      "content_version": 1,
+      "authored_in": "repo_seed",
+      "origin": "ai_assisted"
+    },
+    "content_pack": {
+      "prompt": "Bé hãy chọn các đồng xu để trả đúng 11 đồng nhé!",
+      "target_amount": 11,
+      "item_to_buy": {
+        "label": "Cây xanh",
+        "asset": {
+          "kind": "emoji",
+          "ref": "EMJ-deciduous-tree"
+        }
+      },
+      "coins": [
+        {
+          "coin_id": "coin_1_val1",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-coin"
+          },
+          "value": 1
+        },
+        {
+          "coin_id": "coin_2_val10",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-coin"
+          },
+          "value": 10
+        },
+        {
+          "coin_id": "coin_3_val1",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-coin"
+          },
+          "value": 1
+        },
+        {
+          "coin_id": "coin_4_val2",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-coin"
+          },
+          "value": 2
+        }
+      ]
+    },
+    "difficulty_params": {
+      "coin_kind_count": 3,
+      "target_amount": 11,
+      "exact_change": true,
+      "allow_retry": true,
+      "hint_after_ms": 8000
+    }
+  },
+  {
+    "header": {
+      "code": "GL-C1-SUB-PICT-0012",
+      "template_code": "GT-031",
+      "title": "Biểu đồ tranh Cá heo",
+      "instruction": "Bé phân tích biểu đồ tranh để chọn đáp án!",
+      "theme_tag": "ocean",
+      "what_tags": ["money", "number", "quantity"],
+      "thinking_tags": ["solve"],
+      "skill_codes": ["C1.SUB.04"],
+      "learning_objective_codes": [
+        "LO-C1.SUB.04-01",
+        "LO-C1.SUB.04-02",
+        "LO-C1.SUB.04-03"
+      ],
+      "difficulty": 4,
+      "age_min": 5,
+      "age_max": 6,
+      "access_tier": "premium",
+      "content_version": 1,
+      "authored_in": "repo_seed",
+      "origin": "ai_assisted"
+    },
+    "content_pack": {
+      "prompt": "Bé hãy chọn các đồng xu để trả đúng 24 đồng nhé!",
+      "target_amount": 24,
+      "item_to_buy": {
+        "label": "Cá voi",
+        "asset": {
+          "kind": "emoji",
+          "ref": "EMJ-whale"
+        }
+      },
+      "coins": [
+        {
+          "coin_id": "coin_1_val10",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-coin"
+          },
+          "value": 10
+        },
+        {
+          "coin_id": "coin_2_val2",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-coin"
+          },
+          "value": 2
+        },
+        {
+          "coin_id": "coin_3_val2",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-coin"
+          },
+          "value": 2
+        },
+        {
+          "coin_id": "coin_4_val1",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-coin"
+          },
+          "value": 1
+        },
+        {
+          "coin_id": "coin_5_val10",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-coin"
+          },
+          "value": 10
+        }
+      ]
+    },
+    "difficulty_params": {
+      "coin_kind_count": 3,
+      "target_amount": 24,
+      "exact_change": true,
+      "allow_retry": true,
+      "hint_after_ms": 8000
+    }
+  },
+  {
+    "header": {
+      "code": "GL-C1-SUB-PICT-0013",
+      "template_code": "GT-031",
+      "title": "Biểu đồ tranh Bánh mì",
+      "instruction": "Bé phân tích biểu đồ tranh để chọn đáp án!",
+      "theme_tag": "food",
+      "what_tags": ["money", "number", "quantity"],
+      "thinking_tags": ["solve"],
+      "skill_codes": ["C1.SUB.04"],
+      "learning_objective_codes": [
+        "LO-C1.SUB.04-01",
+        "LO-C1.SUB.04-02",
+        "LO-C1.SUB.04-03"
+      ],
+      "difficulty": 5,
+      "age_min": 5,
+      "age_max": 6,
+      "access_tier": "standard",
+      "content_version": 1,
+      "authored_in": "repo_seed",
+      "origin": "ai_assisted"
+    },
+    "content_pack": {
+      "prompt": "Bé hãy chọn các đồng xu để trả đúng 5 đồng nhé!",
+      "target_amount": 5,
+      "item_to_buy": {
+        "label": "Táo đỏ",
+        "asset": {
+          "kind": "emoji",
+          "ref": "EMJ-red-apple"
+        }
+      },
+      "coins": [
+        {
+          "coin_id": "coin_1_val2",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-coin"
+          },
+          "value": 2
+        },
+        {
+          "coin_id": "coin_2_val2",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-coin"
+          },
+          "value": 2
+        },
+        {
+          "coin_id": "coin_3_val1",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-coin"
+          },
+          "value": 1
+        },
+        {
+          "coin_id": "coin_4_val10",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-coin"
+          },
+          "value": 10
+        },
+        {
+          "coin_id": "coin_5_val1",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-coin"
+          },
+          "value": 1
+        },
+        {
+          "coin_id": "coin_6_val1",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-coin"
+          },
+          "value": 1
+        }
+      ]
+    },
+    "difficulty_params": {
+      "coin_kind_count": 3,
+      "target_amount": 5,
+      "exact_change": true,
+      "allow_retry": true,
+      "hint_after_ms": 8000
+    }
+  },
+  {
+    "header": {
+      "code": "GL-C1-SUB-PICT-0014",
+      "template_code": "GT-031",
+      "title": "Biểu đồ tranh Tàu hoả",
+      "instruction": "Bé phân tích biểu đồ tranh để chọn đáp án!",
+      "theme_tag": "vehicle",
+      "what_tags": ["money", "number", "quantity"],
+      "thinking_tags": ["solve"],
+      "skill_codes": ["C1.SUB.04"],
+      "learning_objective_codes": [
+        "LO-C1.SUB.04-01",
+        "LO-C1.SUB.04-02",
+        "LO-C1.SUB.04-03"
+      ],
+      "difficulty": 3,
+      "age_min": 5,
+      "age_max": 6,
+      "access_tier": "premium",
+      "content_version": 1,
+      "authored_in": "repo_seed",
+      "origin": "ai_assisted"
+    },
+    "content_pack": {
+      "prompt": "Bé hãy chọn các đồng xu để trả đúng 12 đồng nhé!",
+      "target_amount": 12,
+      "item_to_buy": {
+        "label": "Ô tô",
+        "asset": {
+          "kind": "emoji",
+          "ref": "EMJ-car"
+        }
+      },
+      "coins": [
+        {
+          "coin_id": "coin_1_val10",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-coin"
+          },
+          "value": 10
+        },
+        {
+          "coin_id": "coin_2_val2",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-coin"
+          },
+          "value": 2
+        },
+        {
+          "coin_id": "coin_3_val1",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-coin"
+          },
+          "value": 1
+        },
+        {
+          "coin_id": "coin_4_val2",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-coin"
+          },
+          "value": 2
+        }
+      ]
+    },
+    "difficulty_params": {
+      "coin_kind_count": 3,
+      "target_amount": 12,
+      "exact_change": true,
+      "allow_retry": true,
+      "hint_after_ms": 8000
+    }
+  },
+  {
+    "header": {
+      "code": "GL-C1-SUB-PICT-0015",
+      "template_code": "GT-031",
+      "title": "Biểu đồ tranh Trống",
+      "instruction": "Bé phân tích biểu đồ tranh để chọn đáp án!",
+      "theme_tag": "art",
+      "what_tags": ["money", "number", "quantity"],
+      "thinking_tags": ["solve"],
+      "skill_codes": ["C1.SUB.04"],
+      "learning_objective_codes": [
+        "LO-C1.SUB.04-01",
+        "LO-C1.SUB.04-02",
+        "LO-C1.SUB.04-03"
+      ],
+      "difficulty": 4,
+      "age_min": 5,
+      "age_max": 6,
+      "access_tier": "standard",
+      "content_version": 1,
+      "authored_in": "repo_seed",
+      "origin": "ai_assisted"
+    },
+    "content_pack": {
+      "prompt": "Bé hãy chọn các đồng xu để trả đúng 10 đồng nhé!",
+      "target_amount": 10,
+      "item_to_buy": {
+        "label": "Bảng vẽ",
+        "asset": {
+          "kind": "emoji",
+          "ref": "EMJ-artist-palette"
+        }
+      },
+      "coins": [
+        {
+          "coin_id": "coin_1_val5",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-coin"
+          },
+          "value": 5
+        },
+        {
+          "coin_id": "coin_2_val1",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-coin"
+          },
+          "value": 1
+        },
+        {
+          "coin_id": "coin_3_val5",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-coin"
+          },
+          "value": 5
+        }
+      ]
+    },
+    "difficulty_params": {
+      "coin_kind_count": 2,
+      "target_amount": 10,
+      "exact_change": true,
+      "allow_retry": true,
+      "hint_after_ms": 8000
+    }
+  },
+  {
+    "header": {
+      "code": "GL-C1-SUB-TAP-0015",
+      "template_code": "GT-001",
+      "title": "Tìm Tên lửa giống mẫu",
+      "instruction": "Bé quan sát và chọn Tên lửa giống mẫu nhé!",
+      "theme_tag": "space",
+      "what_tags": ["classification", "number"],
+      "thinking_tags": ["solve"],
+      "skill_codes": ["C1.SUB.04"],
+      "learning_objective_codes": [
+        "LO-C1.SUB.04-01",
+        "LO-C1.SUB.04-02",
+        "LO-C1.SUB.04-03"
+      ],
+      "difficulty": 3,
+      "age_min": 5,
+      "age_max": 6,
+      "access_tier": "premium",
+      "content_version": 1,
+      "authored_in": "repo_seed",
+      "origin": "ai_assisted"
+    },
+    "content_pack": {
+      "prompt": "Bé hãy chạm vào hình giống mẫu nhé!",
+      "target_item": {
+        "item_id": "item_EMJ-full-moon",
+        "asset": {
+          "kind": "emoji",
+          "ref": "EMJ-full-moon"
+        }
+      },
+      "options": [
+        {
+          "item_id": "opt_1",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-ringed-planet"
+          },
+          "is_correct": false
+        },
+        {
+          "item_id": "opt_2",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-flying-saucer"
+          },
+          "is_correct": false
+        },
+        {
+          "item_id": "opt_3",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-astronaut"
+          },
+          "is_correct": false
+        },
+        {
+          "item_id": "opt_4",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-earth"
+          },
+          "is_correct": false
+        },
+        {
+          "item_id": "opt_5",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-full-moon"
+          },
+          "is_correct": true
+        }
+      ]
+    },
+    "difficulty_params": {
+      "distractor_count": 4,
+      "hint_after_ms": 15000,
+      "allow_retry": true,
+      "shuffle_items": true
+    }
+  },
+  {
+    "header": {
+      "code": "GL-C1-SUB-TAP-0016",
+      "template_code": "GT-001",
+      "title": "Tìm Em bé giống mẫu",
+      "instruction": "Bé quan sát và chọn Em bé giống mẫu nhé!",
+      "theme_tag": "family",
+      "what_tags": ["classification", "number"],
+      "thinking_tags": ["solve"],
+      "skill_codes": ["C1.SUB.04"],
+      "learning_objective_codes": [
+        "LO-C1.SUB.04-01",
+        "LO-C1.SUB.04-02",
+        "LO-C1.SUB.04-03"
+      ],
+      "difficulty": 4,
+      "age_min": 5,
+      "age_max": 6,
+      "access_tier": "standard",
+      "content_version": 1,
+      "authored_in": "repo_seed",
+      "origin": "ai_assisted"
+    },
+    "content_pack": {
+      "prompt": "Bé hãy chạm vào hình giống mẫu nhé!",
+      "target_item": {
+        "item_id": "item_EMJ-baby",
+        "asset": {
+          "kind": "emoji",
+          "ref": "EMJ-baby"
+        }
+      },
+      "options": [
+        {
+          "item_id": "opt_1",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-baby"
+          },
+          "is_correct": true
+        },
+        {
+          "item_id": "opt_2",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-mother"
+          },
+          "is_correct": false
+        },
+        {
+          "item_id": "opt_3",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-father"
+          },
+          "is_correct": false
+        },
+        {
+          "item_id": "opt_4",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-girl"
+          },
+          "is_correct": false
+        },
+        {
+          "item_id": "opt_5",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-family"
+          },
+          "is_correct": false
+        },
+        {
+          "item_id": "opt_6",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-house-with-garden"
+          },
+          "is_correct": false
+        }
+      ]
+    },
+    "difficulty_params": {
+      "distractor_count": 5,
+      "hint_after_ms": 15000,
+      "allow_retry": true,
+      "shuffle_items": true
+    }
+  },
+  {
+    "header": {
+      "code": "GL-C1-SUB-TAP-0017",
+      "template_code": "GT-001",
+      "title": "Tìm Mũi giống mẫu",
+      "instruction": "Bé quan sát và chọn Mũi giống mẫu nhé!",
+      "theme_tag": "body",
+      "what_tags": ["classification", "number"],
+      "thinking_tags": ["solve"],
+      "skill_codes": ["C1.SUB.04"],
+      "learning_objective_codes": [
+        "LO-C1.SUB.04-01",
+        "LO-C1.SUB.04-02",
+        "LO-C1.SUB.04-03"
+      ],
+      "difficulty": 5,
+      "age_min": 5,
+      "age_max": 6,
+      "access_tier": "premium",
+      "content_version": 1,
+      "authored_in": "repo_seed",
+      "origin": "ai_assisted"
+    },
+    "content_pack": {
+      "prompt": "Bé hãy chạm vào hình giống mẫu nhé!",
+      "target_item": {
+        "item_id": "item_EMJ-tooth",
+        "asset": {
+          "kind": "emoji",
+          "ref": "EMJ-tooth"
+        }
+      },
+      "options": [
+        {
+          "item_id": "opt_1",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-leg"
+          },
+          "is_correct": false
+        },
+        {
+          "item_id": "opt_2",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-heart"
+          },
+          "is_correct": false
+        },
+        {
+          "item_id": "opt_3",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-ear"
+          },
+          "is_correct": false
+        },
+        {
+          "item_id": "opt_4",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-tooth"
+          },
+          "is_correct": true
+        },
+        {
+          "item_id": "opt_5",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-tongue"
+          },
+          "is_correct": false
+        },
+        {
+          "item_id": "opt_6",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-raised-hand"
+          },
+          "is_correct": false
+        }
+      ]
+    },
+    "difficulty_params": {
+      "distractor_count": 5,
+      "hint_after_ms": 15000,
+      "allow_retry": true,
+      "shuffle_items": true
+    }
+  },
+  {
+    "header": {
+      "code": "GL-C1-SUB-TAP-0018",
+      "template_code": "GT-001",
+      "title": "Tìm Cầu vồng giống mẫu",
+      "instruction": "Bé quan sát và chọn Cầu vồng giống mẫu nhé!",
+      "theme_tag": "weather",
+      "what_tags": ["classification", "number"],
+      "thinking_tags": ["solve"],
+      "skill_codes": ["C1.SUB.04"],
+      "learning_objective_codes": [
+        "LO-C1.SUB.04-01",
+        "LO-C1.SUB.04-02",
+        "LO-C1.SUB.04-03"
+      ],
+      "difficulty": 3,
+      "age_min": 5,
+      "age_max": 6,
+      "access_tier": "standard",
+      "content_version": 1,
+      "authored_in": "repo_seed",
+      "origin": "ai_assisted"
+    },
+    "content_pack": {
+      "prompt": "Bé hãy chạm vào hình giống mẫu nhé!",
+      "target_item": {
+        "item_id": "item_EMJ-cloud",
+        "asset": {
+          "kind": "emoji",
+          "ref": "EMJ-cloud"
+        }
+      },
+      "options": [
+        {
+          "item_id": "opt_1",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-snowflake"
+          },
+          "is_correct": false
+        },
+        {
+          "item_id": "opt_2",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-droplet"
+          },
+          "is_correct": false
+        },
+        {
+          "item_id": "opt_3",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-cloud"
+          },
+          "is_correct": true
+        },
+        {
+          "item_id": "opt_4",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-rain"
+          },
+          "is_correct": false
+        },
+        {
+          "item_id": "opt_5",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-wind"
+          },
+          "is_correct": false
+        }
+      ]
+    },
+    "difficulty_params": {
+      "distractor_count": 4,
+      "hint_after_ms": 15000,
+      "allow_retry": true,
+      "shuffle_items": true
+    }
+  },
+  {
+    "header": {
+      "code": "GL-C1-SUB-TAP-0019",
+      "template_code": "GT-001",
+      "title": "Tìm Cây thông Noel giống mẫu",
+      "instruction": "Bé quan sát và chọn Cây thông Noel giống mẫu nhé!",
+      "theme_tag": "festival",
+      "what_tags": ["classification", "number"],
+      "thinking_tags": ["solve"],
+      "skill_codes": ["C1.SUB.04"],
+      "learning_objective_codes": [
+        "LO-C1.SUB.04-01",
+        "LO-C1.SUB.04-02",
+        "LO-C1.SUB.04-03"
+      ],
+      "difficulty": 4,
+      "age_min": 5,
+      "age_max": 6,
+      "access_tier": "premium",
+      "content_version": 1,
+      "authored_in": "repo_seed",
+      "origin": "ai_assisted"
+    },
+    "content_pack": {
+      "prompt": "Bé hãy chạm vào hình giống mẫu nhé!",
+      "target_item": {
+        "item_id": "item_EMJ-christmas-tree",
+        "asset": {
+          "kind": "emoji",
+          "ref": "EMJ-christmas-tree"
+        }
+      },
+      "options": [
+        {
+          "item_id": "opt_1",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-gift"
+          },
+          "is_correct": false
+        },
+        {
+          "item_id": "opt_2",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-christmas-tree"
+          },
+          "is_correct": true
+        },
+        {
+          "item_id": "opt_3",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-red-lantern"
+          },
+          "is_correct": false
+        },
+        {
+          "item_id": "opt_4",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-balloon"
+          },
+          "is_correct": false
+        },
+        {
+          "item_id": "opt_5",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-candle"
+          },
+          "is_correct": false
+        },
+        {
+          "item_id": "opt_6",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-birthday-cake"
+          },
+          "is_correct": false
+        }
+      ]
+    },
+    "difficulty_params": {
+      "distractor_count": 5,
+      "hint_after_ms": 15000,
+      "allow_retry": true,
+      "shuffle_items": true
+    }
+  },
+  {
+    "header": {
+      "code": "GL-C1-SUB-TCMP-0015",
+      "template_code": "GT-003",
+      "title": "So sánh nhóm Trường học",
+      "instruction": "Bé so sánh số lượng Trường học giữa các nhóm!",
+      "theme_tag": "school",
+      "what_tags": ["classification"],
+      "thinking_tags": ["solve"],
+      "skill_codes": ["C1.SUB.04"],
+      "learning_objective_codes": [
+        "LO-C1.SUB.04-01",
+        "LO-C1.SUB.04-02",
+        "LO-C1.SUB.04-03"
+      ],
+      "difficulty": 3,
+      "age_min": 5,
+      "age_max": 6,
+      "access_tier": "premium",
+      "content_version": 1,
+      "authored_in": "repo_seed",
+      "origin": "ai_assisted"
+    },
+    "content_pack": {
+      "prompt": "Bé hãy kéo các đồ vật thích hợp vào giỏ nhé!",
+      "container": {
+        "container_id": "basket_1",
+        "label": "Giỏ đồ",
+        "accepts_attribute": "target_attr"
+      },
+      "items": [
+        {
+          "item_id": "item_1",
+          "attribute": "target_attr",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-abacus"
+          },
+          "is_correct": true
+        },
+        {
+          "item_id": "item_2",
+          "attribute": "target_attr",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-books"
+          },
+          "is_correct": true
+        },
+        {
+          "item_id": "item_3",
+          "attribute": "other_attr",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-scissors"
+          },
+          "is_correct": false
+        },
+        {
+          "item_id": "item_4",
+          "attribute": "other_attr",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-ruler"
+          },
+          "is_correct": false
+        }
+      ]
+    },
+    "difficulty_params": {
+      "distractor_count": 2,
+      "target_count": 2,
+      "hint_after_ms": 10000,
+      "allow_retry": true
+    }
+  },
+  {
+    "header": {
+      "code": "GL-C1-SUB-TCMP-0016",
+      "template_code": "GT-003",
+      "title": "So sánh nhóm Bò sữa",
+      "instruction": "Bé so sánh số lượng Bò sữa giữa các nhóm!",
+      "theme_tag": "farm",
+      "what_tags": ["classification"],
+      "thinking_tags": ["solve"],
+      "skill_codes": ["C1.SUB.04"],
+      "learning_objective_codes": [
+        "LO-C1.SUB.04-01",
+        "LO-C1.SUB.04-02",
+        "LO-C1.SUB.04-03"
+      ],
+      "difficulty": 4,
+      "age_min": 5,
+      "age_max": 6,
+      "access_tier": "standard",
+      "content_version": 1,
+      "authored_in": "repo_seed",
+      "origin": "ai_assisted"
+    },
+    "content_pack": {
+      "prompt": "Bé hãy kéo các đồ vật thích hợp vào giỏ nhé!",
+      "container": {
+        "container_id": "basket_1",
+        "label": "Giỏ đồ",
+        "accepts_attribute": "target_attr"
+      },
+      "items": [
+        {
+          "item_id": "item_1",
+          "attribute": "target_attr",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-rooster"
+          },
+          "is_correct": true
+        },
+        {
+          "item_id": "item_2",
+          "attribute": "target_attr",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-sheep"
+          },
+          "is_correct": true
+        },
+        {
+          "item_id": "item_3",
+          "attribute": "other_attr",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-rice"
+          },
+          "is_correct": false
+        },
+        {
+          "item_id": "item_4",
+          "attribute": "other_attr",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-goat"
+          },
+          "is_correct": false
+        }
+      ]
+    },
+    "difficulty_params": {
+      "distractor_count": 2,
+      "target_count": 2,
+      "hint_after_ms": 10000,
+      "allow_retry": true
+    }
+  },
+  {
+    "header": {
+      "code": "GL-C1-SUB-TCMP-0017",
+      "template_code": "GT-003",
+      "title": "So sánh nhóm Cái ghế",
+      "instruction": "Bé so sánh số lượng Cái ghế giữa các nhóm!",
+      "theme_tag": "home",
+      "what_tags": ["classification"],
+      "thinking_tags": ["solve"],
+      "skill_codes": ["C1.SUB.04"],
+      "learning_objective_codes": [
+        "LO-C1.SUB.04-01",
+        "LO-C1.SUB.04-02",
+        "LO-C1.SUB.04-03"
+      ],
+      "difficulty": 5,
+      "age_min": 5,
+      "age_max": 6,
+      "access_tier": "premium",
+      "content_version": 1,
+      "authored_in": "repo_seed",
+      "origin": "ai_assisted"
+    },
+    "content_pack": {
+      "prompt": "Bé hãy kéo các đồ vật thích hợp vào giỏ nhé!",
+      "container": {
+        "container_id": "basket_1",
+        "label": "Giỏ đồ",
+        "accepts_attribute": "target_attr"
+      },
+      "items": [
+        {
+          "item_id": "item_1",
+          "attribute": "target_attr",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-house"
+          },
+          "is_correct": true
+        },
+        {
+          "item_id": "item_2",
+          "attribute": "target_attr",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-plate"
+          },
+          "is_correct": true
+        },
+        {
+          "item_id": "item_3",
+          "attribute": "other_attr",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-bed"
+          },
+          "is_correct": false
+        },
+        {
+          "item_id": "item_4",
+          "attribute": "other_attr",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-couch"
+          },
+          "is_correct": false
+        }
+      ]
+    },
+    "difficulty_params": {
+      "distractor_count": 2,
+      "target_count": 2,
+      "hint_after_ms": 10000,
+      "allow_retry": true
+    }
+  },
+  {
+    "header": {
+      "code": "GL-C1-SUB-TCMP-0018",
+      "template_code": "GT-003",
+      "title": "So sánh nhóm Khỉ",
+      "instruction": "Bé so sánh số lượng Khỉ giữa các nhóm!",
+      "theme_tag": "animal",
+      "what_tags": ["classification"],
+      "thinking_tags": ["solve"],
+      "skill_codes": ["C1.SUB.04"],
+      "learning_objective_codes": [
+        "LO-C1.SUB.04-01",
+        "LO-C1.SUB.04-02",
+        "LO-C1.SUB.04-03"
+      ],
+      "difficulty": 3,
+      "age_min": 5,
+      "age_max": 6,
+      "access_tier": "standard",
+      "content_version": 1,
+      "authored_in": "repo_seed",
+      "origin": "ai_assisted"
+    },
+    "content_pack": {
+      "prompt": "Bé hãy kéo các đồ vật thích hợp vào giỏ nhé!",
+      "container": {
+        "container_id": "basket_1",
+        "label": "Giỏ đồ",
+        "accepts_attribute": "target_attr"
+      },
+      "items": [
+        {
+          "item_id": "item_1",
+          "attribute": "target_attr",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-lion"
+          },
+          "is_correct": true
+        },
+        {
+          "item_id": "item_2",
+          "attribute": "target_attr",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-monkey"
+          },
+          "is_correct": true
+        },
+        {
+          "item_id": "item_3",
+          "attribute": "other_attr",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-rabbit"
+          },
+          "is_correct": false
+        },
+        {
+          "item_id": "item_4",
+          "attribute": "other_attr",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-fox"
+          },
+          "is_correct": false
+        }
+      ]
+    },
+    "difficulty_params": {
+      "distractor_count": 2,
+      "target_count": 2,
+      "hint_after_ms": 10000,
+      "allow_retry": true
+    }
+  },
+  {
+    "header": {
+      "code": "GL-C1-SUB-TCMP-0019",
+      "template_code": "GT-003",
+      "title": "So sánh nhóm Lá phong",
+      "instruction": "Bé so sánh số lượng Lá phong giữa các nhóm!",
+      "theme_tag": "nature",
+      "what_tags": ["classification"],
+      "thinking_tags": ["solve"],
+      "skill_codes": ["C1.SUB.04"],
+      "learning_objective_codes": [
+        "LO-C1.SUB.04-01",
+        "LO-C1.SUB.04-02",
+        "LO-C1.SUB.04-03"
+      ],
+      "difficulty": 4,
+      "age_min": 5,
+      "age_max": 6,
+      "access_tier": "premium",
+      "content_version": 1,
+      "authored_in": "repo_seed",
+      "origin": "ai_assisted"
+    },
+    "content_pack": {
+      "prompt": "Bé hãy kéo các đồ vật thích hợp vào giỏ nhé!",
+      "container": {
+        "container_id": "basket_1",
+        "label": "Giỏ đồ",
+        "accepts_attribute": "target_attr"
+      },
+      "items": [
+        {
+          "item_id": "item_1",
+          "attribute": "target_attr",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-seedling"
+          },
+          "is_correct": true
+        },
+        {
+          "item_id": "item_2",
+          "attribute": "target_attr",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-deciduous-tree"
+          },
+          "is_correct": true
+        },
+        {
+          "item_id": "item_3",
+          "attribute": "other_attr",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-palm-tree"
+          },
+          "is_correct": false
+        },
+        {
+          "item_id": "item_4",
+          "attribute": "other_attr",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-four-leaf-clover"
+          },
+          "is_correct": false
+        }
+      ]
+    },
+    "difficulty_params": {
+      "distractor_count": 2,
+      "target_count": 2,
+      "hint_after_ms": 10000,
+      "allow_retry": true
+    }
+  },
+  {
+    "header": {
+      "code": "GL-C1-SUB-PATT-0011",
+      "template_code": "GT-005",
+      "title": "Xếp Cá voi theo quy luật",
+      "instruction": "Bé quan sát quy luật và điền Cá voi thích hợp!",
+      "theme_tag": "ocean",
+      "what_tags": ["classification"],
+      "thinking_tags": ["solve"],
+      "skill_codes": ["C1.SUB.04"],
+      "learning_objective_codes": [
+        "LO-C1.SUB.04-01",
+        "LO-C1.SUB.04-02",
+        "LO-C1.SUB.04-03"
+      ],
+      "difficulty": 3,
+      "age_min": 5,
+      "age_max": 6,
+      "access_tier": "premium",
+      "content_version": 1,
+      "authored_in": "repo_seed",
+      "origin": "ai_assisted"
+    },
+    "content_pack": {
+      "prompt": "Bé hãy nối các cặp hình tương ứng nhé!",
+      "pairs": [
+        {
+          "pair_id": "pair_1",
+          "left": {
+            "item_id": "left_1",
+            "asset": {
+              "kind": "emoji",
+              "ref": "EMJ-shrimp"
+            }
+          },
+          "right": {
+            "item_id": "right_1",
+            "asset": {
+              "kind": "emoji",
+              "ref": "EMJ-dolphin"
+            }
+          }
+        },
+        {
+          "pair_id": "pair_2",
+          "left": {
+            "item_id": "left_2",
+            "asset": {
+              "kind": "emoji",
+              "ref": "EMJ-fish"
+            }
+          },
+          "right": {
+            "item_id": "right_2",
+            "asset": {
+              "kind": "emoji",
+              "ref": "EMJ-crab"
+            }
+          }
+        },
+        {
+          "pair_id": "pair_3",
+          "left": {
+            "item_id": "left_3",
+            "asset": {
+              "kind": "emoji",
+              "ref": "EMJ-jellyfish"
+            }
+          },
+          "right": {
+            "item_id": "right_3",
+            "asset": {
+              "kind": "emoji",
+              "ref": "EMJ-octopus"
+            }
+          }
+        }
+      ]
+    },
+    "difficulty_params": {
+      "hint_after_ms": 10000,
+      "allow_retry": true,
+      "shuffle_sides": true
+    }
+  },
+  {
+    "header": {
+      "code": "GL-C1-SUB-PATT-0012",
+      "template_code": "GT-005",
+      "title": "Xếp Chuối theo quy luật",
+      "instruction": "Bé quan sát quy luật và điền Chuối thích hợp!",
+      "theme_tag": "food",
+      "what_tags": ["classification"],
+      "thinking_tags": ["solve"],
+      "skill_codes": ["C1.SUB.04"],
+      "learning_objective_codes": [
+        "LO-C1.SUB.04-01",
+        "LO-C1.SUB.04-02",
+        "LO-C1.SUB.04-03"
+      ],
+      "difficulty": 4,
+      "age_min": 5,
+      "age_max": 6,
+      "access_tier": "standard",
+      "content_version": 1,
+      "authored_in": "repo_seed",
+      "origin": "ai_assisted"
+    },
+    "content_pack": {
+      "prompt": "Bé hãy nối các cặp hình tương ứng nhé!",
+      "pairs": [
+        {
+          "pair_id": "pair_1",
+          "left": {
+            "item_id": "left_1",
+            "asset": {
+              "kind": "emoji",
+              "ref": "EMJ-egg"
+            }
+          },
+          "right": {
+            "item_id": "right_1",
+            "asset": {
+              "kind": "emoji",
+              "ref": "EMJ-rice"
+            }
+          }
+        },
+        {
+          "pair_id": "pair_2",
+          "left": {
+            "item_id": "left_2",
+            "asset": {
+              "kind": "emoji",
+              "ref": "EMJ-red-apple"
+            }
+          },
+          "right": {
+            "item_id": "right_2",
+            "asset": {
+              "kind": "emoji",
+              "ref": "EMJ-carrot"
+            }
+          }
+        },
+        {
+          "pair_id": "pair_3",
+          "left": {
+            "item_id": "left_3",
+            "asset": {
+              "kind": "emoji",
+              "ref": "EMJ-corn"
+            }
+          },
+          "right": {
+            "item_id": "right_3",
+            "asset": {
+              "kind": "emoji",
+              "ref": "EMJ-bread"
+            }
+          }
+        }
+      ]
+    },
+    "difficulty_params": {
+      "hint_after_ms": 10000,
+      "allow_retry": true,
+      "shuffle_sides": true
+    }
+  },
+  {
+    "header": {
+      "code": "GL-C1-SUB-PATT-0013",
+      "template_code": "GT-005",
+      "title": "Xếp Máy bay theo quy luật",
+      "instruction": "Bé quan sát quy luật và điền Máy bay thích hợp!",
+      "theme_tag": "vehicle",
+      "what_tags": ["classification"],
+      "thinking_tags": ["solve"],
+      "skill_codes": ["C1.SUB.04"],
+      "learning_objective_codes": [
+        "LO-C1.SUB.04-01",
+        "LO-C1.SUB.04-02",
+        "LO-C1.SUB.04-03"
+      ],
+      "difficulty": 5,
+      "age_min": 5,
+      "age_max": 6,
+      "access_tier": "premium",
+      "content_version": 1,
+      "authored_in": "repo_seed",
+      "origin": "ai_assisted"
+    },
+    "content_pack": {
+      "prompt": "Bé hãy nối các cặp hình tương ứng nhé!",
+      "pairs": [
+        {
+          "pair_id": "pair_1",
+          "left": {
+            "item_id": "left_1",
+            "asset": {
+              "kind": "emoji",
+              "ref": "EMJ-truck"
+            }
+          },
+          "right": {
+            "item_id": "right_1",
+            "asset": {
+              "kind": "emoji",
+              "ref": "EMJ-bus"
+            }
+          }
+        },
+        {
+          "pair_id": "pair_2",
+          "left": {
+            "item_id": "left_2",
+            "asset": {
+              "kind": "emoji",
+              "ref": "EMJ-motorcycle"
+            }
+          },
+          "right": {
+            "item_id": "right_2",
+            "asset": {
+              "kind": "emoji",
+              "ref": "EMJ-sailboat"
+            }
+          }
+        },
+        {
+          "pair_id": "pair_3",
+          "left": {
+            "item_id": "left_3",
+            "asset": {
+              "kind": "emoji",
+              "ref": "EMJ-bicycle"
+            }
+          },
+          "right": {
+            "item_id": "right_3",
+            "asset": {
+              "kind": "emoji",
+              "ref": "EMJ-car"
+            }
+          }
+        }
+      ]
+    },
+    "difficulty_params": {
+      "hint_after_ms": 10000,
+      "allow_retry": true,
+      "shuffle_sides": true
+    }
+  },
+  {
+    "header": {
+      "code": "GL-C1-SUB-PATT-0014",
+      "template_code": "GT-005",
+      "title": "Xếp Nốt nhạc theo quy luật",
+      "instruction": "Bé quan sát quy luật và điền Nốt nhạc thích hợp!",
+      "theme_tag": "art",
+      "what_tags": ["classification"],
+      "thinking_tags": ["solve"],
+      "skill_codes": ["C1.SUB.04"],
+      "learning_objective_codes": [
+        "LO-C1.SUB.04-01",
+        "LO-C1.SUB.04-02",
+        "LO-C1.SUB.04-03"
+      ],
+      "difficulty": 3,
+      "age_min": 5,
+      "age_max": 6,
+      "access_tier": "standard",
+      "content_version": 1,
+      "authored_in": "repo_seed",
+      "origin": "ai_assisted"
+    },
+    "content_pack": {
+      "prompt": "Bé hãy nối các cặp hình tương ứng nhé!",
+      "pairs": [
+        {
+          "pair_id": "pair_1",
+          "left": {
+            "item_id": "left_1",
+            "asset": {
+              "kind": "emoji",
+              "ref": "EMJ-piano"
+            }
+          },
+          "right": {
+            "item_id": "right_1",
+            "asset": {
+              "kind": "emoji",
+              "ref": "EMJ-musical-notes"
+            }
+          }
+        },
+        {
+          "pair_id": "pair_2",
+          "left": {
+            "item_id": "left_2",
+            "asset": {
+              "kind": "emoji",
+              "ref": "EMJ-drum"
+            }
+          },
+          "right": {
+            "item_id": "right_2",
+            "asset": {
+              "kind": "emoji",
+              "ref": "EMJ-crayon"
+            }
+          }
+        },
+        {
+          "pair_id": "pair_3",
+          "left": {
+            "item_id": "left_3",
+            "asset": {
+              "kind": "emoji",
+              "ref": "EMJ-trumpet"
+            }
+          },
+          "right": {
+            "item_id": "right_3",
+            "asset": {
+              "kind": "emoji",
+              "ref": "EMJ-violin"
+            }
+          }
+        }
+      ]
+    },
+    "difficulty_params": {
+      "hint_after_ms": 10000,
+      "allow_retry": true,
+      "shuffle_sides": true
+    }
+  },
+  {
+    "header": {
+      "code": "GL-C1-SUB-PATT-0015",
+      "template_code": "GT-005",
+      "title": "Xếp Đĩa bay theo quy luật",
+      "instruction": "Bé quan sát quy luật và điền Đĩa bay thích hợp!",
+      "theme_tag": "space",
+      "what_tags": ["classification"],
+      "thinking_tags": ["solve"],
+      "skill_codes": ["C1.SUB.04"],
+      "learning_objective_codes": [
+        "LO-C1.SUB.04-01",
+        "LO-C1.SUB.04-02",
+        "LO-C1.SUB.04-03"
+      ],
+      "difficulty": 4,
+      "age_min": 5,
+      "age_max": 6,
+      "access_tier": "premium",
+      "content_version": 1,
+      "authored_in": "repo_seed",
+      "origin": "ai_assisted"
+    },
+    "content_pack": {
+      "prompt": "Bé hãy nối các cặp hình tương ứng nhé!",
+      "pairs": [
+        {
+          "pair_id": "pair_1",
+          "left": {
+            "item_id": "left_1",
+            "asset": {
+              "kind": "emoji",
+              "ref": "EMJ-crescent-moon"
+            }
+          },
+          "right": {
+            "item_id": "right_1",
+            "asset": {
+              "kind": "emoji",
+              "ref": "EMJ-sparkles"
+            }
+          }
+        },
+        {
+          "pair_id": "pair_2",
+          "left": {
+            "item_id": "left_2",
+            "asset": {
+              "kind": "emoji",
+              "ref": "EMJ-rocket"
+            }
+          },
+          "right": {
+            "item_id": "right_2",
+            "asset": {
+              "kind": "emoji",
+              "ref": "EMJ-glowing-star"
+            }
+          }
+        },
+        {
+          "pair_id": "pair_3",
+          "left": {
+            "item_id": "left_3",
+            "asset": {
+              "kind": "emoji",
+              "ref": "EMJ-flying-saucer"
+            }
+          },
+          "right": {
+            "item_id": "right_3",
+            "asset": {
+              "kind": "emoji",
+              "ref": "EMJ-full-moon"
+            }
+          }
+        }
+      ]
+    },
+    "difficulty_params": {
+      "hint_after_ms": 10000,
+      "allow_retry": true,
+      "shuffle_sides": true
+    }
+  },
+  {
+    "header": {
+      "code": "GL-C1-SUB-PAIR-0001",
+      "template_code": "GT-004",
+      "title": "Ghép đôi Gia đình tương ứng",
+      "instruction": "Bé ghép đôi các Gia đình tương ứng nhé!",
+      "theme_tag": "family",
+      "what_tags": ["classification"],
+      "thinking_tags": ["infer", "solve"],
+      "skill_codes": ["C1.SUB.05"],
+      "learning_objective_codes": [
+        "LO-C1.SUB.05-01",
+        "LO-C1.SUB.05-02",
+        "LO-C1.SUB.05-03"
+      ],
+      "difficulty": 3,
+      "age_min": 4,
+      "age_max": 5,
+      "access_tier": "standard",
+      "content_version": 1,
+      "authored_in": "repo_seed",
+      "origin": "ai_assisted"
+    },
+    "content_pack": {
+      "prompt": "Bé hãy phân loại các đồ vật vào đúng nhóm nhé!",
+      "groups": [
+        {
+          "group_id": "g1",
+          "label": "Nhóm 1",
+          "label_emoji": "EMJ-grandmother"
+        },
+        {
+          "group_id": "g2",
+          "label": "Nhóm 2",
+          "label_emoji": "EMJ-boy"
+        }
+      ],
+      "items": [
+        {
+          "item_id": "item_1",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-family"
+          },
+          "correct_group_id": "g1"
+        },
+        {
+          "item_id": "item_2",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-mother"
+          },
+          "correct_group_id": "g1"
+        },
+        {
+          "item_id": "item_3",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-father"
+          },
+          "correct_group_id": "g2"
+        },
+        {
+          "item_id": "item_4",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-house-with-garden"
+          },
+          "correct_group_id": "g2"
+        }
+      ]
+    },
+    "difficulty_params": {
+      "distractor_count": 0,
+      "hint_after_ms": 15000,
+      "allow_retry": true,
+      "shuffle_items": true
+    }
+  },
+  {
+    "header": {
+      "code": "GL-C1-SUB-PAIR-0002",
+      "template_code": "GT-004",
+      "title": "Ghép đôi Tai tương ứng",
+      "instruction": "Bé ghép đôi các Tai tương ứng nhé!",
+      "theme_tag": "body",
+      "what_tags": ["classification"],
+      "thinking_tags": ["infer", "solve"],
+      "skill_codes": ["C1.SUB.05"],
+      "learning_objective_codes": [
+        "LO-C1.SUB.05-01",
+        "LO-C1.SUB.05-02",
+        "LO-C1.SUB.05-03"
+      ],
+      "difficulty": 4,
+      "age_min": 4,
+      "age_max": 5,
+      "access_tier": "premium",
+      "content_version": 1,
+      "authored_in": "repo_seed",
+      "origin": "ai_assisted"
+    },
+    "content_pack": {
+      "prompt": "Bé hãy phân loại các đồ vật vào đúng nhóm nhé!",
+      "groups": [
+        {
+          "group_id": "g1",
+          "label": "Nhóm 1",
+          "label_emoji": "EMJ-ear"
+        },
+        {
+          "group_id": "g2",
+          "label": "Nhóm 2",
+          "label_emoji": "EMJ-tooth"
+        }
+      ],
+      "items": [
+        {
+          "item_id": "item_1",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-mouth"
+          },
+          "correct_group_id": "g1"
+        },
+        {
+          "item_id": "item_2",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-nose"
+          },
+          "correct_group_id": "g1"
+        },
+        {
+          "item_id": "item_3",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-tongue"
+          },
+          "correct_group_id": "g2"
+        },
+        {
+          "item_id": "item_4",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-raised-hand"
+          },
+          "correct_group_id": "g2"
+        }
+      ]
+    },
+    "difficulty_params": {
+      "distractor_count": 0,
+      "hint_after_ms": 15000,
+      "allow_retry": true,
+      "shuffle_items": true
+    }
+  },
+  {
+    "header": {
+      "code": "GL-C1-SUB-PAIR-0003",
+      "template_code": "GT-004",
+      "title": "Ghép đôi Mưa tương ứng",
+      "instruction": "Bé ghép đôi các Mưa tương ứng nhé!",
+      "theme_tag": "weather",
+      "what_tags": ["classification"],
+      "thinking_tags": ["infer", "solve"],
+      "skill_codes": ["C1.SUB.05"],
+      "learning_objective_codes": [
+        "LO-C1.SUB.05-01",
+        "LO-C1.SUB.05-02",
+        "LO-C1.SUB.05-03"
+      ],
+      "difficulty": 5,
+      "age_min": 4,
+      "age_max": 5,
+      "access_tier": "standard",
+      "content_version": 1,
+      "authored_in": "repo_seed",
+      "origin": "ai_assisted"
+    },
+    "content_pack": {
+      "prompt": "Bé hãy phân loại các đồ vật vào đúng nhóm nhé!",
+      "groups": [
+        {
+          "group_id": "g1",
+          "label": "Nhóm 1",
+          "label_emoji": "EMJ-rain"
+        },
+        {
+          "group_id": "g2",
+          "label": "Nhóm 2",
+          "label_emoji": "EMJ-sun"
+        }
+      ],
+      "items": [
+        {
+          "item_id": "item_1",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-wind"
+          },
+          "correct_group_id": "g1"
+        },
+        {
+          "item_id": "item_2",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-cloud"
+          },
+          "correct_group_id": "g1"
+        },
+        {
+          "item_id": "item_3",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-thunderstorm"
+          },
+          "correct_group_id": "g2"
+        },
+        {
+          "item_id": "item_4",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-snowflake"
+          },
+          "correct_group_id": "g2"
+        }
+      ]
+    },
+    "difficulty_params": {
+      "distractor_count": 0,
+      "hint_after_ms": 15000,
+      "allow_retry": true,
+      "shuffle_items": true
+    }
+  },
+  {
+    "header": {
+      "code": "GL-C1-SUB-PAIR-0004",
+      "template_code": "GT-004",
+      "title": "Ghép đôi Bí ngô Halloween tương ứng",
+      "instruction": "Bé ghép đôi các Bí ngô Halloween tương ứng nhé!",
+      "theme_tag": "festival",
+      "what_tags": ["classification"],
+      "thinking_tags": ["infer", "solve"],
+      "skill_codes": ["C1.SUB.05"],
+      "learning_objective_codes": [
+        "LO-C1.SUB.05-01",
+        "LO-C1.SUB.05-02",
+        "LO-C1.SUB.05-03"
+      ],
+      "difficulty": 3,
+      "age_min": 4,
+      "age_max": 5,
+      "access_tier": "premium",
+      "content_version": 1,
+      "authored_in": "repo_seed",
+      "origin": "ai_assisted"
+    },
+    "content_pack": {
+      "prompt": "Bé hãy phân loại các đồ vật vào đúng nhóm nhé!",
+      "groups": [
+        {
+          "group_id": "g1",
+          "label": "Nhóm 1",
+          "label_emoji": "EMJ-balloon"
+        },
+        {
+          "group_id": "g2",
+          "label": "Nhóm 2",
+          "label_emoji": "EMJ-gift"
+        }
+      ],
+      "items": [
+        {
+          "item_id": "item_1",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-fireworks"
+          },
+          "correct_group_id": "g1"
+        },
+        {
+          "item_id": "item_2",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-candle"
+          },
+          "correct_group_id": "g1"
+        },
+        {
+          "item_id": "item_3",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-christmas-tree"
+          },
+          "correct_group_id": "g2"
+        },
+        {
+          "item_id": "item_4",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-birthday-cake"
+          },
+          "correct_group_id": "g2"
+        }
+      ]
+    },
+    "difficulty_params": {
+      "distractor_count": 0,
+      "hint_after_ms": 15000,
+      "allow_retry": true,
+      "shuffle_items": true
+    }
+  },
+  {
+    "header": {
+      "code": "GL-C1-SUB-SORT-0001",
+      "template_code": "GT-006",
+      "title": "Phân loại Trường học theo nhóm",
+      "instruction": "Bé phân loại Trường học theo đặc điểm phù hợp!",
+      "theme_tag": "school",
+      "what_tags": ["classification"],
+      "thinking_tags": ["infer", "solve"],
+      "skill_codes": ["C1.SUB.05"],
+      "learning_objective_codes": [
+        "LO-C1.SUB.05-01",
+        "LO-C1.SUB.05-02",
+        "LO-C1.SUB.05-03"
+      ],
+      "difficulty": 3,
+      "age_min": 5,
+      "age_max": 6,
+      "access_tier": "premium",
+      "content_version": 1,
+      "authored_in": "repo_seed",
+      "origin": "ai_assisted"
+    },
+    "content_pack": {
+      "prompt": "Bé hãy xếp các thẻ theo đúng thứ tự nhé!",
+      "sequence": [
+        {
+          "step_id": "step_1",
+          "order_index": 0,
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-pencil"
+          },
+          "label": "Bút chì"
+        },
+        {
+          "step_id": "step_2",
+          "order_index": 1,
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-bell"
+          },
+          "label": "Cái chuông"
+        },
+        {
+          "step_id": "step_3",
+          "order_index": 2,
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-scissors"
+          },
+          "label": "Cái kéo"
+        }
+      ]
+    },
+    "difficulty_params": {
+      "hint_after_ms": 15000,
+      "allow_retry": true,
+      "shuffle_initial": true
+    }
+  },
+  {
+    "header": {
+      "code": "GL-C1-SUB-SORT-0002",
+      "template_code": "GT-006",
+      "title": "Phân loại Bò sữa theo nhóm",
+      "instruction": "Bé phân loại Bò sữa theo đặc điểm phù hợp!",
+      "theme_tag": "farm",
+      "what_tags": ["classification"],
+      "thinking_tags": ["infer", "solve"],
+      "skill_codes": ["C1.SUB.05"],
+      "learning_objective_codes": [
+        "LO-C1.SUB.05-01",
+        "LO-C1.SUB.05-02",
+        "LO-C1.SUB.05-03"
+      ],
+      "difficulty": 4,
+      "age_min": 5,
+      "age_max": 6,
+      "access_tier": "standard",
+      "content_version": 1,
+      "authored_in": "repo_seed",
+      "origin": "ai_assisted"
+    },
+    "content_pack": {
+      "prompt": "Bé hãy xếp các thẻ theo đúng thứ tự nhé!",
+      "sequence": [
+        {
+          "step_id": "step_1",
+          "order_index": 0,
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-goat"
+          },
+          "label": "Dê"
+        },
+        {
+          "step_id": "step_2",
+          "order_index": 1,
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-cow"
+          },
+          "label": "Bò sữa"
+        },
+        {
+          "step_id": "step_3",
+          "order_index": 2,
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-horse"
+          },
+          "label": "Ngựa"
+        }
+      ]
+    },
+    "difficulty_params": {
+      "hint_after_ms": 15000,
+      "allow_retry": true,
+      "shuffle_initial": true
+    }
+  },
+  {
+    "header": {
+      "code": "GL-C1-SUB-SORT-0003",
+      "template_code": "GT-006",
+      "title": "Phân loại Cái ghế theo nhóm",
+      "instruction": "Bé phân loại Cái ghế theo đặc điểm phù hợp!",
+      "theme_tag": "home",
+      "what_tags": ["classification"],
+      "thinking_tags": ["infer", "solve"],
+      "skill_codes": ["C1.SUB.05"],
+      "learning_objective_codes": [
+        "LO-C1.SUB.05-01",
+        "LO-C1.SUB.05-02",
+        "LO-C1.SUB.05-03"
+      ],
+      "difficulty": 5,
+      "age_min": 5,
+      "age_max": 6,
+      "access_tier": "premium",
+      "content_version": 1,
+      "authored_in": "repo_seed",
+      "origin": "ai_assisted"
+    },
+    "content_pack": {
+      "prompt": "Bé hãy xếp các thẻ theo đúng thứ tự nhé!",
+      "sequence": [
+        {
+          "step_id": "step_1",
+          "order_index": 0,
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-chair"
+          },
+          "label": "Cái ghế"
+        },
+        {
+          "step_id": "step_2",
+          "order_index": 1,
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-door"
+          },
+          "label": "Cái cửa"
+        },
+        {
+          "step_id": "step_3",
+          "order_index": 2,
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-window"
+          },
+          "label": "Cửa sổ"
+        }
+      ]
+    },
+    "difficulty_params": {
+      "hint_after_ms": 15000,
+      "allow_retry": true,
+      "shuffle_initial": true
+    }
+  },
+  {
+    "header": {
+      "code": "GL-C1-SUB-SORT-0004",
+      "template_code": "GT-006",
+      "title": "Phân loại Khỉ theo nhóm",
+      "instruction": "Bé phân loại Khỉ theo đặc điểm phù hợp!",
+      "theme_tag": "animal",
+      "what_tags": ["classification"],
+      "thinking_tags": ["infer", "solve"],
+      "skill_codes": ["C1.SUB.05"],
+      "learning_objective_codes": [
+        "LO-C1.SUB.05-01",
+        "LO-C1.SUB.05-02",
+        "LO-C1.SUB.05-03"
+      ],
+      "difficulty": 3,
+      "age_min": 5,
+      "age_max": 6,
+      "access_tier": "standard",
+      "content_version": 1,
+      "authored_in": "repo_seed",
+      "origin": "ai_assisted"
+    },
+    "content_pack": {
+      "prompt": "Bé hãy xếp các thẻ theo đúng thứ tự nhé!",
+      "sequence": [
+        {
+          "step_id": "step_1",
+          "order_index": 0,
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-monkey"
+          },
+          "label": "Khỉ"
+        },
+        {
+          "step_id": "step_2",
+          "order_index": 1,
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-tiger"
+          },
+          "label": "Hổ"
+        },
+        {
+          "step_id": "step_3",
+          "order_index": 2,
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-panda"
+          },
+          "label": "Gấu trúc"
+        }
+      ]
+    },
+    "difficulty_params": {
+      "hint_after_ms": 15000,
+      "allow_retry": true,
+      "shuffle_initial": true
+    }
+  },
+  {
+    "header": {
+      "code": "GL-C1-SUB-SHAD-0005",
+      "template_code": "GT-007",
+      "title": "Tìm bóng của Cây xanh",
+      "instruction": "Bé tìm chiếc bóng đúng của Cây xanh nhé!",
+      "theme_tag": "nature",
+      "what_tags": ["classification"],
+      "thinking_tags": ["infer", "solve"],
+      "skill_codes": ["C1.SUB.05"],
+      "learning_objective_codes": [
+        "LO-C1.SUB.05-01",
+        "LO-C1.SUB.05-02",
+        "LO-C1.SUB.05-03"
+      ],
+      "difficulty": 3,
+      "age_min": 4,
+      "age_max": 5,
+      "access_tier": "premium",
+      "content_version": 1,
+      "authored_in": "repo_seed",
+      "origin": "ai_assisted"
+    },
+    "content_pack": {
+      "prompt": "Bé hãy tìm số còn thiếu để ghép thành số đúng nhé!",
+      "whole": {
+        "id": "whole_1",
+        "value": 6,
+        "label": "6",
+        "asset": {
+          "kind": "emoji",
+          "ref": "EMJ-rose"
+        }
+      },
+      "parts": [
+        {
+          "id": "part_1",
+          "value": 4,
+          "is_target": false,
+          "label": "4"
+        },
+        {
+          "id": "part_2",
+          "value": 2,
+          "is_target": true,
+          "label": "?"
+        }
+      ],
+      "options": [
+        {
+          "id": "opt_1",
+          "value": 2,
+          "label": "2",
+          "is_correct": true
+        },
+        {
+          "id": "opt_2",
+          "value": 1,
+          "label": "1",
+          "is_correct": false
+        },
+        {
+          "id": "opt_3",
+          "value": 3,
+          "label": "3",
+          "is_correct": false
+        }
+      ]
+    },
+    "difficulty_params": {
+      "part_count": 2,
+      "distractor_count": 2,
+      "hint_after_ms": 12000,
+      "allow_retry": true
+    }
+  },
+  {
+    "header": {
+      "code": "GL-C1-SUB-SHAD-0006",
+      "template_code": "GT-007",
+      "title": "Tìm bóng của Cá heo",
+      "instruction": "Bé tìm chiếc bóng đúng của Cá heo nhé!",
+      "theme_tag": "ocean",
+      "what_tags": ["classification"],
+      "thinking_tags": ["infer", "solve"],
+      "skill_codes": ["C1.SUB.05"],
+      "learning_objective_codes": [
+        "LO-C1.SUB.05-01",
+        "LO-C1.SUB.05-02",
+        "LO-C1.SUB.05-03"
+      ],
+      "difficulty": 4,
+      "age_min": 4,
+      "age_max": 5,
+      "access_tier": "standard",
+      "content_version": 1,
+      "authored_in": "repo_seed",
+      "origin": "ai_assisted"
+    },
+    "content_pack": {
+      "prompt": "Bé hãy tìm số còn thiếu để ghép thành số đúng nhé!",
+      "whole": {
+        "id": "whole_1",
+        "value": 6,
+        "label": "6",
+        "asset": {
+          "kind": "emoji",
+          "ref": "EMJ-shrimp"
+        }
+      },
+      "parts": [
+        {
+          "id": "part_1",
+          "value": 4,
+          "is_target": false,
+          "label": "4"
+        },
+        {
+          "id": "part_2",
+          "value": 2,
+          "is_target": true,
+          "label": "?"
+        }
+      ],
+      "options": [
+        {
+          "id": "opt_1",
+          "value": 2,
+          "label": "2",
+          "is_correct": true
+        },
+        {
+          "id": "opt_2",
+          "value": 1,
+          "label": "1",
+          "is_correct": false
+        },
+        {
+          "id": "opt_3",
+          "value": 3,
+          "label": "3",
+          "is_correct": false
+        }
+      ]
+    },
+    "difficulty_params": {
+      "part_count": 2,
+      "distractor_count": 2,
+      "hint_after_ms": 12000,
+      "allow_retry": true
+    }
+  },
+  {
+    "header": {
+      "code": "GL-C1-SUB-SHAD-0007",
+      "template_code": "GT-007",
+      "title": "Tìm bóng của Bánh mì",
+      "instruction": "Bé tìm chiếc bóng đúng của Bánh mì nhé!",
+      "theme_tag": "food",
+      "what_tags": ["classification"],
+      "thinking_tags": ["infer", "solve"],
+      "skill_codes": ["C1.SUB.05"],
+      "learning_objective_codes": [
+        "LO-C1.SUB.05-01",
+        "LO-C1.SUB.05-02",
+        "LO-C1.SUB.05-03"
+      ],
+      "difficulty": 5,
+      "age_min": 4,
+      "age_max": 5,
+      "access_tier": "premium",
+      "content_version": 1,
+      "authored_in": "repo_seed",
+      "origin": "ai_assisted"
+    },
+    "content_pack": {
+      "prompt": "Bé hãy tìm số còn thiếu để ghép thành số đúng nhé!",
+      "whole": {
+        "id": "whole_1",
+        "value": 4,
+        "label": "4",
+        "asset": {
+          "kind": "emoji",
+          "ref": "EMJ-milk"
+        }
+      },
+      "parts": [
+        {
+          "id": "part_1",
+          "value": 3,
+          "is_target": false,
+          "label": "3"
+        },
+        {
+          "id": "part_2",
+          "value": 1,
+          "is_target": true,
+          "label": "?"
+        }
+      ],
+      "options": [
+        {
+          "id": "opt_1",
+          "value": 1,
+          "label": "1",
+          "is_correct": true
+        },
+        {
+          "id": "opt_2",
+          "value": 3,
+          "label": "3",
+          "is_correct": false
+        },
+        {
+          "id": "opt_3",
+          "value": 2,
+          "label": "2",
+          "is_correct": false
+        }
+      ]
+    },
+    "difficulty_params": {
+      "part_count": 2,
+      "distractor_count": 2,
+      "hint_after_ms": 12000,
+      "allow_retry": true
+    }
+  },
+  {
+    "header": {
+      "code": "GL-C1-SUB-SHAD-0008",
+      "template_code": "GT-007",
+      "title": "Tìm bóng của Tàu hoả",
+      "instruction": "Bé tìm chiếc bóng đúng của Tàu hoả nhé!",
+      "theme_tag": "vehicle",
+      "what_tags": ["classification"],
+      "thinking_tags": ["infer", "solve"],
+      "skill_codes": ["C1.SUB.05"],
+      "learning_objective_codes": [
+        "LO-C1.SUB.05-01",
+        "LO-C1.SUB.05-02",
+        "LO-C1.SUB.05-03"
+      ],
+      "difficulty": 3,
+      "age_min": 4,
+      "age_max": 5,
+      "access_tier": "standard",
+      "content_version": 1,
+      "authored_in": "repo_seed",
+      "origin": "ai_assisted"
+    },
+    "content_pack": {
+      "prompt": "Bé hãy tìm số còn thiếu để ghép thành số đúng nhé!",
+      "whole": {
+        "id": "whole_1",
+        "value": 4,
+        "label": "4",
+        "asset": {
+          "kind": "emoji",
+          "ref": "EMJ-airplane"
+        }
+      },
+      "parts": [
+        {
+          "id": "part_1",
+          "value": 3,
+          "is_target": false,
+          "label": "3"
+        },
+        {
+          "id": "part_2",
+          "value": 1,
+          "is_target": true,
+          "label": "?"
+        }
+      ],
+      "options": [
+        {
+          "id": "opt_1",
+          "value": 1,
+          "label": "1",
+          "is_correct": true
+        },
+        {
+          "id": "opt_2",
+          "value": 3,
+          "label": "3",
+          "is_correct": false
+        },
+        {
+          "id": "opt_3",
+          "value": 2,
+          "label": "2",
+          "is_correct": false
+        }
+      ]
+    },
+    "difficulty_params": {
+      "part_count": 2,
+      "distractor_count": 2,
+      "hint_after_ms": 12000,
+      "allow_retry": true
+    }
+  },
+  {
+    "header": {
+      "code": "GL-C1-SUB-SIZE-0001",
+      "template_code": "GT-009",
+      "title": "Xếp Bảng vẽ theo kích thước",
+      "instruction": "Bé sắp xếp Bảng vẽ theo kích thước nhé!",
+      "theme_tag": "art",
+      "what_tags": ["deduction", "logic", "number", "comparison"],
+      "thinking_tags": ["infer", "solve"],
+      "skill_codes": ["C1.SUB.05"],
+      "learning_objective_codes": [
+        "LO-C1.SUB.05-01",
+        "LO-C1.SUB.05-02",
+        "LO-C1.SUB.05-03"
+      ],
+      "difficulty": 3,
+      "age_min": 4,
+      "age_max": 5,
+      "access_tier": "standard",
+      "content_version": 1,
+      "authored_in": "repo_seed",
+      "origin": "ai_assisted"
+    },
+    "content_pack": {
+      "prompt": "Bé hãy dựa vào các manh mối để tìm ra đồ vật bí mật nhé!",
+      "candidates": [
+        {
+          "candidate_id": "cand_1",
+          "value": 3,
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-violin"
+          }
+        },
+        {
+          "candidate_id": "cand_2",
+          "value": 5,
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-saxophone"
+          }
+        },
+        {
+          "candidate_id": "cand_3",
+          "value": 7,
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-piano"
+          }
+        },
+        {
+          "candidate_id": "cand_4",
+          "value": 9,
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-trumpet"
+          }
+        }
+      ],
+      "clues": [
+        {
+          "clue_id": "clue_1",
+          "text": "Số lượng lớn hơn 3",
+          "predicate": {
+            "kind": "greater_than",
+            "value": 3
+          }
+        },
+        {
+          "clue_id": "clue_2",
+          "text": "Số lượng nhỏ hơn 7",
+          "predicate": {
+            "kind": "less_than",
+            "value": 7
+          }
+        }
+      ],
+      "answer_candidate_id": "cand_2"
+    },
+    "difficulty_params": {
+      "clue_count": 2,
+      "candidate_count": 4,
+      "hint_after_ms": 10000,
+      "allow_retry": true
+    }
+  },
+  {
+    "header": {
+      "code": "GL-C1-SUB-SIZE-0002",
+      "template_code": "GT-009",
+      "title": "Xếp Hành tinh theo kích thước",
+      "instruction": "Bé sắp xếp Hành tinh theo kích thước nhé!",
+      "theme_tag": "space",
+      "what_tags": ["deduction", "logic", "number", "comparison"],
+      "thinking_tags": ["infer", "solve"],
+      "skill_codes": ["C1.SUB.05"],
+      "learning_objective_codes": [
+        "LO-C1.SUB.05-01",
+        "LO-C1.SUB.05-02",
+        "LO-C1.SUB.05-03"
+      ],
+      "difficulty": 4,
+      "age_min": 4,
+      "age_max": 5,
+      "access_tier": "premium",
+      "content_version": 1,
+      "authored_in": "repo_seed",
+      "origin": "ai_assisted"
+    },
+    "content_pack": {
+      "prompt": "Bé hãy dựa vào các manh mối để tìm ra đồ vật bí mật nhé!",
+      "candidates": [
+        {
+          "candidate_id": "cand_1",
+          "value": 3,
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-sparkles"
+          }
+        },
+        {
+          "candidate_id": "cand_2",
+          "value": 5,
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-glowing-star"
+          }
+        },
+        {
+          "candidate_id": "cand_3",
+          "value": 7,
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-earth"
+          }
+        },
+        {
+          "candidate_id": "cand_4",
+          "value": 9,
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-crescent-moon"
+          }
+        }
+      ],
+      "clues": [
+        {
+          "clue_id": "clue_1",
+          "text": "Số lượng lớn hơn 5",
+          "predicate": {
+            "kind": "greater_than",
+            "value": 5
+          }
+        },
+        {
+          "clue_id": "clue_2",
+          "text": "Số lượng nhỏ hơn 9",
+          "predicate": {
+            "kind": "less_than",
+            "value": 9
+          }
+        }
+      ],
+      "answer_candidate_id": "cand_3"
+    },
+    "difficulty_params": {
+      "clue_count": 2,
+      "candidate_count": 4,
+      "hint_after_ms": 10000,
+      "allow_retry": true
+    }
+  },
+  {
+    "header": {
+      "code": "GL-C1-SUB-SIZE-0003",
+      "template_code": "GT-009",
+      "title": "Xếp Bà theo kích thước",
+      "instruction": "Bé sắp xếp Bà theo kích thước nhé!",
+      "theme_tag": "family",
+      "what_tags": ["deduction", "logic", "number", "comparison"],
+      "thinking_tags": ["infer", "solve"],
+      "skill_codes": ["C1.SUB.05"],
+      "learning_objective_codes": [
+        "LO-C1.SUB.05-01",
+        "LO-C1.SUB.05-02",
+        "LO-C1.SUB.05-03"
+      ],
+      "difficulty": 5,
+      "age_min": 4,
+      "age_max": 5,
+      "access_tier": "standard",
+      "content_version": 1,
+      "authored_in": "repo_seed",
+      "origin": "ai_assisted"
+    },
+    "content_pack": {
+      "prompt": "Bé hãy dựa vào các manh mối để tìm ra đồ vật bí mật nhé!",
+      "candidates": [
+        {
+          "candidate_id": "cand_1",
+          "value": 4,
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-girl"
+          }
+        },
+        {
+          "candidate_id": "cand_2",
+          "value": 6,
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-family"
+          }
+        },
+        {
+          "candidate_id": "cand_3",
+          "value": 8,
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-house-with-garden"
+          }
+        },
+        {
+          "candidate_id": "cand_4",
+          "value": 10,
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-grandmother"
+          }
+        }
+      ],
+      "clues": [
+        {
+          "clue_id": "clue_1",
+          "text": "Số lượng lớn hơn 4",
+          "predicate": {
+            "kind": "greater_than",
+            "value": 4
+          }
+        },
+        {
+          "clue_id": "clue_2",
+          "text": "Số lượng nhỏ hơn 8",
+          "predicate": {
+            "kind": "less_than",
+            "value": 8
+          }
+        }
+      ],
+      "answer_candidate_id": "cand_2"
+    },
+    "difficulty_params": {
+      "clue_count": 2,
+      "candidate_count": 4,
+      "hint_after_ms": 10000,
+      "allow_retry": true
+    }
+  },
+  {
+    "header": {
+      "code": "GL-C1-SUB-SIZE-0004",
+      "template_code": "GT-009",
+      "title": "Xếp Miệng theo kích thước",
+      "instruction": "Bé sắp xếp Miệng theo kích thước nhé!",
+      "theme_tag": "body",
+      "what_tags": ["deduction", "logic", "number", "comparison"],
+      "thinking_tags": ["infer", "solve"],
+      "skill_codes": ["C1.SUB.05"],
+      "learning_objective_codes": [
+        "LO-C1.SUB.05-01",
+        "LO-C1.SUB.05-02",
+        "LO-C1.SUB.05-03"
+      ],
+      "difficulty": 3,
+      "age_min": 4,
+      "age_max": 5,
+      "access_tier": "premium",
+      "content_version": 1,
+      "authored_in": "repo_seed",
+      "origin": "ai_assisted"
+    },
+    "content_pack": {
+      "prompt": "Bé hãy dựa vào các manh mối để tìm ra đồ vật bí mật nhé!",
+      "candidates": [
+        {
+          "candidate_id": "cand_1",
+          "value": 4,
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-heart"
+          }
+        },
+        {
+          "candidate_id": "cand_2",
+          "value": 6,
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-foot"
+          }
+        },
+        {
+          "candidate_id": "cand_3",
+          "value": 8,
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-tooth"
+          }
+        },
+        {
+          "candidate_id": "cand_4",
+          "value": 10,
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-eyes"
+          }
+        }
+      ],
+      "clues": [
+        {
+          "clue_id": "clue_1",
+          "text": "Số lượng lớn hơn 6",
+          "predicate": {
+            "kind": "greater_than",
+            "value": 6
+          }
+        },
+        {
+          "clue_id": "clue_2",
+          "text": "Số lượng nhỏ hơn 10",
+          "predicate": {
+            "kind": "less_than",
+            "value": 10
+          }
+        }
+      ],
+      "answer_candidate_id": "cand_3"
+    },
+    "difficulty_params": {
+      "clue_count": 2,
+      "candidate_count": 4,
+      "hint_after_ms": 10000,
+      "allow_retry": true
+    }
+  },
+  {
+    "header": {
+      "code": "GL-C1-SUB-PUZZ-0001",
+      "template_code": "GT-010",
+      "title": "Ghép hình Mặt trời hoàn chỉnh",
+      "instruction": "Bé ghép các mảnh thành hình Mặt trời nhé!",
+      "theme_tag": "weather",
+      "what_tags": ["logic"],
+      "thinking_tags": ["infer", "solve"],
+      "skill_codes": ["C1.SUB.05"],
+      "learning_objective_codes": [
+        "LO-C1.SUB.05-01",
+        "LO-C1.SUB.05-02",
+        "LO-C1.SUB.05-03"
+      ],
+      "difficulty": 3,
+      "age_min": 4,
+      "age_max": 5,
+      "access_tier": "standard",
+      "content_version": 1,
+      "authored_in": "repo_seed",
+      "origin": "ai_assisted"
+    },
+    "content_pack": {
+      "prompt": "Bé hãy tính xem hình sau có giá trị bằng bao nhiêu nhé!",
+      "symbols": [
+        {
+          "symbol_id": "sym_1",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-droplet"
+          }
+        },
+        {
+          "symbol_id": "sym_2",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-rain"
+          }
+        }
+      ],
+      "equations": [
+        {
+          "equation_id": "eq_1",
+          "left": ["sym_1", "sym_1"],
+          "right_value": 4
+        },
+        {
+          "equation_id": "eq_2",
+          "left": ["sym_1", "sym_2"],
+          "right_value": 5
+        }
+      ],
+      "question": {
+        "kind": "value",
+        "symbol_id": "sym_2"
+      },
+      "options": [
+        {
+          "value": 3,
+          "is_correct": true
+        },
+        {
+          "value": 4,
+          "is_correct": false
+        },
+        {
+          "value": 2,
+          "is_correct": false
+        },
+        {
+          "value": 5,
+          "is_correct": false
+        }
+      ]
+    },
+    "difficulty_params": {
+      "equation_count": 2,
+      "step_count": 2,
+      "distractor_count": 3,
+      "hint_after_ms": 10000,
+      "allow_retry": true
+    }
+  },
+  {
+    "header": {
+      "code": "GL-C1-SUB-PUZZ-0002",
+      "template_code": "GT-010",
+      "title": "Ghép hình Bao lì xì hoàn chỉnh",
+      "instruction": "Bé ghép các mảnh thành hình Bao lì xì nhé!",
+      "theme_tag": "festival",
+      "what_tags": ["logic"],
+      "thinking_tags": ["infer", "solve"],
+      "skill_codes": ["C1.SUB.05"],
+      "learning_objective_codes": [
+        "LO-C1.SUB.05-01",
+        "LO-C1.SUB.05-02",
+        "LO-C1.SUB.05-03"
+      ],
+      "difficulty": 4,
+      "age_min": 4,
+      "age_max": 5,
+      "access_tier": "premium",
+      "content_version": 1,
+      "authored_in": "repo_seed",
+      "origin": "ai_assisted"
+    },
+    "content_pack": {
+      "prompt": "Bé hãy tính xem hình sau có giá trị bằng bao nhiêu nhé!",
+      "symbols": [
+        {
+          "symbol_id": "sym_1",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-fireworks"
+          }
+        },
+        {
+          "symbol_id": "sym_2",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-red-lantern"
+          }
+        }
+      ],
+      "equations": [
+        {
+          "equation_id": "eq_1",
+          "left": ["sym_1", "sym_1"],
+          "right_value": 10
+        },
+        {
+          "equation_id": "eq_2",
+          "left": ["sym_1", "sym_2"],
+          "right_value": 9
+        }
+      ],
+      "question": {
+        "kind": "value",
+        "symbol_id": "sym_2"
+      },
+      "options": [
+        {
+          "value": 4,
+          "is_correct": true
+        },
+        {
+          "value": 5,
+          "is_correct": false
+        },
+        {
+          "value": 3,
+          "is_correct": false
+        },
+        {
+          "value": 6,
+          "is_correct": false
+        }
+      ]
+    },
+    "difficulty_params": {
+      "equation_count": 2,
+      "step_count": 2,
+      "distractor_count": 3,
+      "hint_after_ms": 10000,
+      "allow_retry": true
+    }
+  },
+  {
+    "header": {
+      "code": "GL-C1-SUB-PUZZ-0003",
+      "template_code": "GT-010",
+      "title": "Ghép hình Bút chì hoàn chỉnh",
+      "instruction": "Bé ghép các mảnh thành hình Bút chì nhé!",
+      "theme_tag": "school",
+      "what_tags": ["logic"],
+      "thinking_tags": ["infer", "solve"],
+      "skill_codes": ["C1.SUB.05"],
+      "learning_objective_codes": [
+        "LO-C1.SUB.05-01",
+        "LO-C1.SUB.05-02",
+        "LO-C1.SUB.05-03"
+      ],
+      "difficulty": 5,
+      "age_min": 4,
+      "age_max": 5,
+      "access_tier": "standard",
+      "content_version": 1,
+      "authored_in": "repo_seed",
+      "origin": "ai_assisted"
+    },
+    "content_pack": {
+      "prompt": "Bé hãy tính xem hình sau có giá trị bằng bao nhiêu nhé!",
+      "symbols": [
+        {
+          "symbol_id": "sym_1",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-books"
+          }
+        },
+        {
+          "symbol_id": "sym_2",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-bell"
+          }
+        }
+      ],
+      "equations": [
+        {
+          "equation_id": "eq_1",
+          "left": ["sym_1", "sym_1"],
+          "right_value": 4
+        },
+        {
+          "equation_id": "eq_2",
+          "left": ["sym_1", "sym_2"],
+          "right_value": 3
+        }
+      ],
+      "question": {
+        "kind": "value",
+        "symbol_id": "sym_2"
+      },
+      "options": [
+        {
+          "value": 1,
+          "is_correct": true
+        },
+        {
+          "value": 2,
+          "is_correct": false
+        },
+        {
+          "value": 3,
+          "is_correct": false
+        },
+        {
+          "value": 4,
+          "is_correct": false
+        }
+      ]
+    },
+    "difficulty_params": {
+      "equation_count": 2,
+      "step_count": 2,
+      "distractor_count": 3,
+      "hint_after_ms": 10000,
+      "allow_retry": true
+    }
+  },
+  {
+    "header": {
+      "code": "GL-C1-SUB-PUZZ-0004",
+      "template_code": "GT-010",
+      "title": "Ghép hình Heo hoàn chỉnh",
+      "instruction": "Bé ghép các mảnh thành hình Heo nhé!",
+      "theme_tag": "farm",
+      "what_tags": ["logic"],
+      "thinking_tags": ["infer", "solve"],
+      "skill_codes": ["C1.SUB.05"],
+      "learning_objective_codes": [
+        "LO-C1.SUB.05-01",
+        "LO-C1.SUB.05-02",
+        "LO-C1.SUB.05-03"
+      ],
+      "difficulty": 3,
+      "age_min": 4,
+      "age_max": 5,
+      "access_tier": "premium",
+      "content_version": 1,
+      "authored_in": "repo_seed",
+      "origin": "ai_assisted"
+    },
+    "content_pack": {
+      "prompt": "Bé hãy tính xem hình sau có giá trị bằng bao nhiêu nhé!",
+      "symbols": [
+        {
+          "symbol_id": "sym_1",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-rice"
+          }
+        },
+        {
+          "symbol_id": "sym_2",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-cow"
+          }
+        }
+      ],
+      "equations": [
+        {
+          "equation_id": "eq_1",
+          "left": ["sym_1", "sym_1"],
+          "right_value": 8
+        },
+        {
+          "equation_id": "eq_2",
+          "left": ["sym_1", "sym_2"],
+          "right_value": 7
+        }
+      ],
+      "question": {
+        "kind": "value",
+        "symbol_id": "sym_2"
+      },
+      "options": [
+        {
+          "value": 3,
+          "is_correct": true
+        },
+        {
+          "value": 4,
+          "is_correct": false
+        },
+        {
+          "value": 2,
+          "is_correct": false
+        },
+        {
+          "value": 5,
+          "is_correct": false
+        }
+      ]
+    },
+    "difficulty_params": {
+      "equation_count": 2,
+      "step_count": 2,
+      "distractor_count": 3,
+      "hint_after_ms": 10000,
+      "allow_retry": true
+    }
+  }
+]

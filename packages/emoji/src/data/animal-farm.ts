@@ -210,4 +210,12 @@ export const ANIMAL_FARM_EMOJIS: EmojiEntry[] = [
     keywords: ["cow face", "mặt bò", "con bò"],
     name: "Mặt bò",
   },
+  {
+    age_min: 3,
+    category: "animal-farm",
+    curriculum_themes: ["dong_vat", "the_gioi_dong_vat"],
+    emoji: "🛖",
+    keywords: ["barn", "hut", "chuồng", "nhà kho", "nông trại"],
+    name: "Nhà kho",
+  },
 ];

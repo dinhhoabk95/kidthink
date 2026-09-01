@@ -1886,6 +1886,7 @@ export const C1_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
   {
     header: {
       code: "GL-C1-CLK-HND-0037",
+      legacy_v1_ref: "D5-08",
       content_version: 1,
       template_code: "GT-016",
       title: "Đọc đồng hồ giờ đúng",
@@ -1938,6 +1939,7 @@ export const C1_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
   {
     header: {
       code: "GL-C1-CLK-HND-0038",
+      legacy_v1_ref: "D5-08",
       content_version: 1,
       template_code: "GT-016",
       title: "Xoay kim đặt bốn giờ rưỡi",
@@ -1976,6 +1978,7 @@ export const C1_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
   {
     header: {
       code: "GL-C1-CLK-HND-0039",
+      legacy_v1_ref: "D5-08",
       content_version: 1,
       template_code: "GT-016",
       title: "Ghép đồng hồ với hoạt động trong ngày",

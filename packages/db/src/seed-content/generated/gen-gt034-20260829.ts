@@ -1,5 +1,5 @@
 /**
- * @generated from LEVEL-GENERATOR-KIT@b0662435f64e
+ * @generated from LEVEL-GENERATOR-KIT@b0b36bbbcbad
  * Engine: GT-034
  * Seed: 20260829
  * Theme: school
@@ -114,23 +114,23 @@ export const GEN_GT034_20260829: ContentSeed<unknown, unknown>[] = [
           "name_vi": "Trống trường"
         },
         {
-          "instrument_id": "whistle",
+          "instrument_id": "flute",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-whistle"
+            "ref": "EMJ-flute"
           },
           "freq": 980,
           "type": "triangle",
-          "name_vi": "Còi"
+          "name_vi": "Sáo trúc"
         }
       ],
       "target_pattern": [
         "bell",
         "drum",
-        "whistle",
+        "flute",
         "bell",
         "drum",
-        "whistle"
+        "flute"
       ],
       "tempo_bpm": 90
     },
@@ -186,23 +186,23 @@ export const GEN_GT034_20260829: ContentSeed<unknown, unknown>[] = [
           "name_vi": "Trống trường"
         },
         {
-          "instrument_id": "whistle",
+          "instrument_id": "flute",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-whistle"
+            "ref": "EMJ-flute"
           },
           "freq": 980,
           "type": "triangle",
-          "name_vi": "Còi"
+          "name_vi": "Sáo trúc"
         }
       ],
       "target_pattern": [
         "bell",
         "drum",
-        "whistle",
+        "flute",
         "bell",
         "drum",
-        "whistle"
+        "flute"
       ],
       "tempo_bpm": 93
     },
@@ -320,23 +320,23 @@ export const GEN_GT034_20260829: ContentSeed<unknown, unknown>[] = [
           "name_vi": "Trống trường"
         },
         {
-          "instrument_id": "whistle",
+          "instrument_id": "flute",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-whistle"
+            "ref": "EMJ-flute"
           },
           "freq": 980,
           "type": "triangle",
-          "name_vi": "Còi"
+          "name_vi": "Sáo trúc"
         }
       ],
       "target_pattern": [
         "bell",
         "drum",
-        "whistle",
+        "flute",
         "bell",
         "drum",
-        "whistle"
+        "flute"
       ],
       "tempo_bpm": 77
     },

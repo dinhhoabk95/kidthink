@@ -155,6 +155,7 @@ async function processGameLevelSeed(
       difficulty: header.difficulty,
       accessTier: header.access_tier,
       themeId: header.theme_tag || null,
+      legacyV1Ref: header.legacy_v1_ref || null,
       contentPack: content_pack,
       difficultyParams: difficulty_params,
       status: "published",

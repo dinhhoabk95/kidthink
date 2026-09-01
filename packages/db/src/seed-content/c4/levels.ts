@@ -1871,6 +1871,7 @@ export const C4_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
   {
     header: {
       code: "GL-C4-OBS-FLIP-0032",
+      legacy_v1_ref: "D6-11",
       content_version: 1,
       template_code: "GT-020",
       title: "Lật thẻ tìm cặp con vật ở trang trại",

@@ -1,0 +1,126 @@
+{
+  "baseUrl": "http://localhost:3000",
+  "records": [
+    {
+      "ageBand": "4-5",
+      "canvas": {
+        "backingHeight": 1688,
+        "backingWidth": 780,
+        "cssHeight": 844,
+        "cssWidth": 390,
+        "devicePixelRatio": 2,
+        "transform": [2, 0, 0, 2, 0, 0]
+      },
+      "consoleErrors": [],
+      "engineError": "CONTENT_PACK_INVALID: Content pack invalid for GT-001",
+      "levelCode": "GL-C1-CNT-STEP-0005",
+      "pageErrors": [],
+      "screenshot": "GT-001-mobile-390x844.png",
+      "templateCode": "GT-001",
+      "verdict": "CẮT — cảnh logic tràn ra ngoài hộp (246%×64%)",
+      "viewport": "mobile-390x844",
+      "visibleErrorText": null
+    },
+    {
+      "ageBand": "5-6",
+      "canvas": {
+        "backingHeight": 1688,
+        "backingWidth": 780,
+        "cssHeight": 844,
+        "cssWidth": 390,
+        "devicePixelRatio": 2,
+        "transform": [2, 0, 0, 2, 0, 0]
+      },
+      "consoleErrors": [],
+      "engineError": "CONTENT_PACK_INVALID: Content pack invalid for GT-033",
+      "levelCode": "GL-C1-PAT-WEAVE-0001",
+      "pageErrors": [],
+      "screenshot": "GT-033-mobile-390x844.png",
+      "templateCode": "GT-033",
+      "verdict": "CẮT — cảnh logic tràn ra ngoài hộp (246%×64%)",
+      "viewport": "mobile-390x844",
+      "visibleErrorText": null
+    },
+    {
+      "ageBand": "4-5",
+      "canvas": {
+        "backingHeight": 2360,
+        "backingWidth": 1640,
+        "cssHeight": 1180,
+        "cssWidth": 820,
+        "devicePixelRatio": 2,
+        "transform": [2, 0, 0, 2, 0, 0]
+      },
+      "consoleErrors": [],
+      "engineError": "CONTENT_PACK_INVALID: Content pack invalid for GT-001",
+      "levelCode": "GL-C1-CNT-STEP-0005",
+      "pageErrors": [],
+      "screenshot": "GT-001-tablet-820x1180.png",
+      "templateCode": "GT-001",
+      "verdict": "CẮT — cảnh logic tràn ra ngoài hộp (117%×46%)",
+      "viewport": "tablet-820x1180",
+      "visibleErrorText": null
+    },
+    {
+      "ageBand": "5-6",
+      "canvas": {
+        "backingHeight": 2360,
+        "backingWidth": 1640,
+        "cssHeight": 1180,
+        "cssWidth": 820,
+        "devicePixelRatio": 2,
+        "transform": [2, 0, 0, 2, 0, 0]
+      },
+      "consoleErrors": [],
+      "engineError": "CONTENT_PACK_INVALID: Content pack invalid for GT-033",
+      "levelCode": "GL-C1-PAT-WEAVE-0001",
+      "pageErrors": [],
+      "screenshot": "GT-033-tablet-820x1180.png",
+      "templateCode": "GT-033",
+      "verdict": "CẮT — cảnh logic tràn ra ngoài hộp (117%×46%)",
+      "viewport": "tablet-820x1180",
+      "visibleErrorText": null
+    },
+    {
+      "ageBand": "4-5",
+      "canvas": {
+        "backingHeight": 1800,
+        "backingWidth": 2880,
+        "cssHeight": 900,
+        "cssWidth": 1440,
+        "devicePixelRatio": 2,
+        "transform": [2, 0, 0, 2, 0, 0]
+      },
+      "consoleErrors": [],
+      "engineError": "CONTENT_PACK_INVALID: Content pack invalid for GT-001",
+      "levelCode": "GL-C1-CNT-STEP-0005",
+      "pageErrors": [],
+      "screenshot": "GT-001-desktop-1440x900.png",
+      "templateCode": "GT-001",
+      "verdict": "KHÔNG LẤP — cảnh chỉ chiếm 67%×60% hộp",
+      "viewport": "desktop-1440x900",
+      "visibleErrorText": null
+    },
+    {
+      "ageBand": "5-6",
+      "canvas": {
+        "backingHeight": 1800,
+        "backingWidth": 2880,
+        "cssHeight": 900,
+        "cssWidth": 1440,
+        "devicePixelRatio": 2,
+        "transform": [2, 0, 0, 2, 0, 0]
+      },
+      "consoleErrors": [],
+      "engineError": "CONTENT_PACK_INVALID: Content pack invalid for GT-033",
+      "levelCode": "GL-C1-PAT-WEAVE-0001",
+      "pageErrors": [],
+      "screenshot": "GT-033-desktop-1440x900.png",
+      "templateCode": "GT-033",
+      "verdict": "KHÔNG LẤP — cảnh chỉ chiếm 67%×60% hộp",
+      "viewport": "desktop-1440x900",
+      "visibleErrorText": null
+    }
+  ],
+  "stamp": "2026-09-01"
+}

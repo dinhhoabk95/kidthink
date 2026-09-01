@@ -4,7 +4,11 @@
  */
 
 import { isValidRef } from "@mindkid/emoji";
-import { validateActivityModel, validateLessonModel } from "@mindkid/shared";
+import {
+  isValidLegacyV1Ref,
+  validateActivityModel,
+  validateLessonModel,
+} from "@mindkid/shared";
 import type {
   ActivitySeed,
   AnyContentSeed,
@@ -241,6 +245,17 @@ function checkGate2(seed: AnyContentSeed): GateResult {
     issues.push({
       code: "TITLE_EMPTY",
       message: "Tiêu đề không được rỗng.",
+    });
+  }
+
+  if (
+    "legacy_v1_ref" in header &&
+    header.legacy_v1_ref &&
+    !isValidLegacyV1Ref(header.legacy_v1_ref)
+  ) {
+    issues.push({
+      code: "LEGACY_V1_REF_INVALID",
+      message: `Mã legacy_v1_ref '${header.legacy_v1_ref}' không thuộc 60 mã game type v1 hợp lệ.`,
     });
   }
 

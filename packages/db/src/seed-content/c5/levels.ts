@@ -911,8 +911,8 @@ export const C5_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
       age_max: 6,
       difficulty: 3,
       access_tier: "premium",
-      skill_codes: ["C5.STO.01"],
-      learning_objective_codes: ["LO-C5.STO.01-01"],
+      skill_codes: ["C5.STO.02"],
+      learning_objective_codes: ["LO-C5.STO.02-01"],
       what_tags: ["voc"],
       thinking_tags: ["match"],
       theme_tag: "school",
@@ -1221,6 +1221,7 @@ export const C5_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
   {
     header: {
       code: "GL-C5-LIS-AUDIO-0021",
+      legacy_v1_ref: "D6-09",
       content_version: 1,
       template_code: "GT-018",
       title: "Nghe ba bước rồi làm theo",
@@ -1288,6 +1289,7 @@ export const C5_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
   {
     header: {
       code: "GL-C5-LIS-AUDIO-0022",
+      legacy_v1_ref: "D6-09",
       content_version: 1,
       template_code: "GT-018",
       title: "Nghe tiếng kêu đoán con vật",
@@ -1347,6 +1349,7 @@ export const C5_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
   {
     header: {
       code: "GL-C5-LIS-AUDIO-0023",
+      legacy_v1_ref: "D6-09",
       content_version: 1,
       template_code: "GT-018",
       title: "Nghe hai âm thanh liên tiếp",
@@ -1406,6 +1409,7 @@ export const C5_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
   {
     header: {
       code: "GL-C5-VOC-FLIP-0033",
+      legacy_v1_ref: "D6-11",
       content_version: 1,
       template_code: "GT-020",
       title: "Lật thẻ tìm cặp đồ vật trong nhà",

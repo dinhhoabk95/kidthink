@@ -146,4 +146,12 @@ export const SKY_SPACE_EMOJIS: EmojiEntry[] = [
     keywords: ["milky way", "galaxy", "ngân hà", "vũ trụ", "dải sao"],
     name: "Dải ngân hà",
   },
+  {
+    age_min: 4,
+    category: "sky-space",
+    curriculum_themes: ["nuoc_hien_tuong_tu_nhien"],
+    emoji: "🛰️",
+    keywords: ["satellite", "vệ tinh", "vũ trụ", "không gian"],
+    name: "Vệ tinh",
+  },
 ];
