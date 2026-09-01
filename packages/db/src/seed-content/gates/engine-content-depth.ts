@@ -222,7 +222,20 @@ export function computeEngineMetrics(
   );
 
   const bannedBands = new Set<string>(template.banned_age_bands || []);
-  const validBands = ALL_AGE_BANDS.filter((b) => !bannedBands.has(b));
+  const validBands = ALL_AGE_BANDS.filter((b) => {
+    if (bannedBands.has(b)) {
+      return false;
+    }
+    const low = Number(b.split("-")[0]);
+    const high = Number(b.split("-")[1]);
+    if (typeof template.age_min === "number" && high <= template.age_min) {
+      return false;
+    }
+    if (typeof template.age_max === "number" && low >= template.age_max) {
+      return false;
+    }
+    return true;
+  });
 
   const bandCounts: Record<AgeBand, number> = {
     "3-4": 0,

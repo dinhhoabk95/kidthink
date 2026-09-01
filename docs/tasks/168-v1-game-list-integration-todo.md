@@ -31,17 +31,17 @@
 - [x] [`#171`](171-solver-backed-generators-plan.md) Bốn bộ sinh cần bộ giải: `GT-009` `GT-013` `GT-014` `GT-015` — L
 - [x] [`#172`](172-geometry-checked-generators-plan.md) Bốn bộ sinh cần kiểm hình học: `GT-016` `GT-017` `GT-021` `GT-024` — L
 - [x] [`#173`](173-generator-theme-axis-expansion-plan.md) Mở trục chủ đề 19 bộ sinh, 5 → ≥8 — M
-- [ ] [`#174`](174-engine-depth-step-1-plan.md) Bật `engine-depth` bậc 1 — M
+- [x] [`#174`](174-engine-depth-step-1-plan.md) Bật `engine-depth` bậc 1 — M
 
 ### ═══ CHỐT KIỂM 1 ═══
 
-- [ ] `ALL_LEVEL_GENERATORS` đủ **27** khoá.
-- [ ] Không bộ sinh nào khai dưới **8** chủ đề; ≥12/14 chủ đề được dùng.
-- [ ] `LEGACY_V1_GAME_TYPES` đủ **60** hàng, property test song ánh xanh.
-- [ ] Cổng phủ v1 in số thật, kể cả 0/60.
-- [ ] **Audit trả lời: bao nhiêu trong 250 level hiện có gắn được `legacy_v1_ref`.**
+- [x] `ALL_LEVEL_GENERATORS` đủ **27** khoá (hiện 36 khoá).
+- [x] Không bộ sinh nào khai dưới **8** chủ đề; ≥12/14 chủ đề được dùng (hiện 14/14).
+- [x] `LEGACY_V1_GAME_TYPES` đủ **60** hàng, property test song ánh xanh.
+- [x] Cổng phủ v1 in số thật, kể cả 0/60 (hiện 20/60 Bậc 0 xanh).
+- [x] **Audit trả lời: 20/60 game types (126 levels) đã gắn `legacy_v1_ref`.**
       Số này quyết định kích thước sáu task đợt 2 — **viết plan đợt 2 sau chốt kiểm này**.
-- [ ] `check:engine-depth` xanh bậc 1 · `pnpm check` xanh.
+- [x] `check:engine-depth` xanh bậc 1 · `pnpm check` xanh.
 
 ## Đợt 2 — backfill 51 game type, 510 level
 
