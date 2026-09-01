@@ -218,6 +218,69 @@ describe("GT-010 — đáp án phải phân biệt được (BR-ECD-01)", () => 
   });
 });
 
+describe("Theme Axis Expansion (Task #173, BR-CTR-09)", () => {
+  it("mọi bộ sinh đã đăng ký đều khai ít nhất 8 chủ đề trong axes.theme", () => {
+    for (const [code, gen] of Object.entries(ALL_LEVEL_GENERATORS)) {
+      expect(
+        gen.axes.theme.length,
+        `Bộ sinh ${code} khai ít hơn 8 chủ đề: ${gen.axes.theme.length}`
+      ).toBeGreaterThanOrEqual(8);
+    }
+  });
+
+  it("toàn bộ các bộ sinh phủ ít nhất 12 trên 14 chủ đề hợp lệ", () => {
+    const usedThemes = new Set<string>();
+    for (const gen of Object.values(ALL_LEVEL_GENERATORS)) {
+      for (const t of gen.axes.theme) {
+        usedThemes.add(t);
+      }
+    }
+    expect(usedThemes.size).toBeGreaterThanOrEqual(12);
+  });
+
+  it("hai chủ đề khác nhau với cùng seed sinh ra nội dung khác nhau", () => {
+    const vocabA: ThemeVocabulary = {
+      theme: "school",
+      nouns: [
+        { emoji_ref: "EMJ-book", label_vi: "quyển sách" },
+        { emoji_ref: "EMJ-pencil", label_vi: "bút chì" },
+        { emoji_ref: "EMJ-school-bag", label_vi: "cặp sách" },
+        { emoji_ref: "EMJ-scissors", label_vi: "cái kéo" },
+        { emoji_ref: "EMJ-crayon", label_vi: "bút màu" },
+        { emoji_ref: "EMJ-ruler", label_vi: "thước kẻ" },
+      ],
+    };
+    const vocabB: ThemeVocabulary = {
+      theme: "ocean",
+      nouns: [
+        { emoji_ref: "EMJ-fish", label_vi: "con cá" },
+        { emoji_ref: "EMJ-dolphin", label_vi: "cá heo" },
+        { emoji_ref: "EMJ-whale", label_vi: "cá voi" },
+        { emoji_ref: "EMJ-crab", label_vi: "con cua" },
+        { emoji_ref: "EMJ-octopus", label_vi: "bạch tuộc" },
+        { emoji_ref: "EMJ-turtle", label_vi: "con rùa" },
+      ],
+    };
+
+    const levelA = GT001Generator.generate({
+      rng: createRng(42),
+      age_band: "3-4",
+      theme: "school",
+      vocabulary: vocabA,
+    });
+    const levelB = GT001Generator.generate({
+      rng: createRng(42),
+      age_band: "3-4",
+      theme: "ocean",
+      vocabulary: vocabB,
+    });
+
+    expect(JSON.stringify(levelA.content_pack)).not.toBe(
+      JSON.stringify(levelB.content_pack)
+    );
+  });
+});
+
 describe("GT-028 — generator contract conformity", () => {
   const themeVocab = vocab(10);
 
