@@ -8,6 +8,7 @@ import {
   computeHorizontalSlotTrackLayout,
   computeMatrix3x3Layout,
   computeMatrixSlotGridLayout,
+  computeMeasureStripLayout,
   computeMirrorAxisSplitLayout,
   computeMultiBucketLayout,
   computeNumberBondTreeLayout,
@@ -38,6 +39,7 @@ export const LAYOUT_IDS: readonly LayoutId[] = [
   "equation-rows",
   "mirror-axis-split",
   "free-scene",
+  "measure-strip",
 ] as const;
 
 export const LAYOUT_REGISTRY: Record<LayoutId, LayoutFn> = {
@@ -73,6 +75,7 @@ export const LAYOUT_REGISTRY: Record<LayoutId, LayoutFn> = {
   "equation-rows": (input) => computeEquationRowsLayout(input),
   "mirror-axis-split": (input) => computeMirrorAxisSplitLayout(input),
   "free-scene": (input) => computeFreeSceneLayout(input),
+  "measure-strip": (input) => computeMeasureStripLayout(input),
 };
 
 export function isLayoutId(val: unknown): val is LayoutId {

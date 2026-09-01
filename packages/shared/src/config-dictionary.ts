@@ -789,6 +789,32 @@ export const CONFIG_DICTIONARY: Record<string, FieldDictionaryEntry> = {
     label: "Số lượng ban đầu",
     help: "Số lượng vật phẩm ban đầu trong nhóm.",
   },
+
+  // GT-030: Measure with Unit
+  object: {
+    label: "Vật cần đo",
+    help: "Đối tượng được đo chiều dài bằng đơn vị lặp.",
+  },
+  unit: {
+    label: "Đơn vị đo lặp",
+    help: "Đơn vị quy ước được đặt lặp lại dọc theo vật cần đo.",
+  },
+  object_id: {
+    label: "Mã định danh vật cần đo",
+    help: "Mã định danh duy nhất của vật thể.",
+  },
+  unit_id: {
+    label: "Mã định danh đơn vị đo",
+    help: "Mã định danh duy nhất của đơn vị đo.",
+  },
+  length_in_units: {
+    label: "Chiều dài theo đơn vị đo",
+    help: "Số lượng đơn vị lặp vừa vặn chiều dài của vật (2-10).",
+  },
+  gap_tolerance_pct: {
+    label: "Dung sai khe hở (%)",
+    help: "Phần trăm khoảng cách cho phép lệch giữa các đơn vị liên tiếp.",
+  },
 };
 
 /**
@@ -801,6 +827,10 @@ export const TEXT_FALLBACK_ALLOWLIST: Record<string, string> = {
   remove_count: "Số nguyên vật phẩm cần bớt ra khỏi nhóm.",
   initial_count: "Số nguyên lượng vật phẩm ban đầu.",
   value: "Giá trị số nguyên của đáp án lựa chọn.",
+  object_id: "Mã định danh vật thể cần đo.",
+  unit_id: "Mã định danh đơn vị đo phi chuẩn.",
+  length_in_units: "Số nguyên chiều dài vật thể theo đơn vị đo.",
+  gap_tolerance_pct: "Số phần trăm dung sai khe hở giữa các đơn vị đo.",
   prompt: "Câu hỏi chính của bài học, dạng văn bản ngắn đọc cho bé.",
   item_id: "Mã định danh kỹ thuật của vật phẩm trong content pack.",
   id: "Mã định danh đối tượng.",

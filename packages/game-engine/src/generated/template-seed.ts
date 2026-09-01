@@ -29,6 +29,7 @@ import GT026Template from "#src/templates/GT-026/template";
 import GT027Template from "#src/templates/GT-027/template";
 import GT028Template from "#src/templates/GT-028/template";
 import GT029Template from "#src/templates/GT-029/template";
+import GT030Template from "#src/templates/GT-030/template";
 
 export const TEMPLATE_SEED_ENTRIES = [
   {
@@ -523,5 +524,22 @@ export const TEMPLATE_SEED_ENTRIES = [
     engineSession: GT029Template.engine_session,
     status: GT029Template.status,
     version: GT029Template.version,
+  },
+  {
+    templateCode: GT030Template.code,
+    nameVi: GT030Template.name,
+    mechanic: GT030Template.mechanic,
+    layouts: GT030Template.layouts,
+    limits: GT030Template.limits,
+    ageMin: GT030Template.age_min,
+    ageMax: GT030Template.age_max,
+    bannedAgeBands: GT030Template.banned_age_bands ?? [],
+    requiresTapFallback: GT030Template.requires_tap_fallback,
+    assetKinds: GT030Template.asset_kinds,
+    scoring: GT030Template.scoring,
+    events: GT030Template.events,
+    engineSession: GT030Template.engine_session,
+    status: GT030Template.status,
+    version: GT030Template.version,
   },
 ];

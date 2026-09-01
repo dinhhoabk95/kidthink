@@ -1104,3 +1104,114 @@ export function computeFreeSceneLayout(input: LayoutInput): Slot[] {
 
   return slots;
 }
+
+/**
+ * Bố cục dải đo bằng đơn vị lặp (measure-strip) — `GT-030`.
+ * - Slot 0: Vật mẫu được đo (neutral) trên dải đo trên.
+ * - Slot 1..N: Các vị trí đặt đơn vị liên tiếp dọc vật (target).
+ * - Slot N+1: Đơn vị nguồn trong khay (source).
+ * - Slot N+2..N+1+M: Các ô đáp án lựa chọn ở khay dưới (neutral).
+ */
+export function computeMeasureStripLayout(input: LayoutInput): Slot[] {
+  const { slotCount: rawOptionCount, ageBand, targetCount: rawUnits } = input;
+  const units = Math.max(2, Math.min(10, rawUnits ?? 4));
+  const optionCount = Math.max(1, rawOptionCount ?? 3);
+  const touchFloor = getTouchFloor(ageBand);
+
+  const availW = LOGIC_WIDTH - 2 * SAFE_MARGIN_PX;
+  const unitW = Math.max(
+    touchFloor,
+    Math.min(96, Math.floor((availW - (units - 1) * SLOT_GAP_PX) / units))
+  );
+  const stripW = units * unitW + (units - 1) * SLOT_GAP_PX;
+  const stripStartX = Math.round((LOGIC_WIDTH - stripW) / 2);
+
+  const slots: Slot[] = [];
+
+  // Slot 0: Vật được đo (dải trên)
+  slots.push({
+    index: 0,
+    x: Math.round(LOGIC_WIDTH / 2),
+    y: 180,
+    w: Math.round(stripW),
+    h: 80,
+    hitW: Math.round(stripW),
+    hitH: Math.max(touchFloor, 80),
+    page: 0,
+    role: "neutral",
+  });
+
+  // Slot 1..units: Các ô đặt đơn vị trên dải đo (ngay dưới vật)
+  for (let i = 0; i < units; i++) {
+    slots.push({
+      index: 1 + i,
+      x: Math.round(stripStartX + i * (unitW + SLOT_GAP_PX) + unitW / 2),
+      y: 280,
+      w: Math.round(unitW),
+      h: Math.round(unitW),
+      hitW: Math.max(touchFloor, Math.round(unitW)),
+      hitH: Math.max(touchFloor, Math.round(unitW)),
+      page: 0,
+      role: "target",
+    });
+  }
+
+  // Slot 1+units: Đơn vị nguồn trong khay
+  const trayY = 430;
+  const trayX = SAFE_MARGIN_PX + Math.round(unitW / 2) + 20;
+  slots.push({
+    index: 1 + units,
+    x: trayX,
+    y: trayY,
+    w: Math.round(unitW),
+    h: Math.round(unitW),
+    hitW: Math.max(touchFloor, Math.round(unitW)),
+    hitH: Math.max(touchFloor, Math.round(unitW)),
+    page: 0,
+    role: "source",
+  });
+
+  // Slot 2+units..: Các ô đáp án lựa chọn
+  const optionsAreaLeft = trayX + Math.round(unitW / 2) + 30;
+  const optionsAreaRight = LOGIC_WIDTH - SAFE_MARGIN_PX;
+  const optionsAvailW = Math.max(100, optionsAreaRight - optionsAreaLeft);
+
+  let optGap = 16;
+  let optCell = Math.max(
+    touchFloor,
+    Math.min(
+      96,
+      Math.floor((optionsAvailW - (optionCount - 1) * optGap) / optionCount)
+    )
+  );
+
+  let optionsTotalW = optionCount * optCell + (optionCount - 1) * optGap;
+  if (optionsTotalW > optionsAvailW && optionCount > 1) {
+    optGap = Math.max(
+      4,
+      Math.floor((optionsAvailW - optionCount * touchFloor) / (optionCount - 1))
+    );
+    optCell = touchFloor;
+    optionsTotalW = optionCount * optCell + (optionCount - 1) * optGap;
+  }
+
+  const optStartX =
+    optionsAreaLeft +
+    Math.max(0, Math.round((optionsAvailW - optionsTotalW) / 2));
+
+  for (let j = 0; j < optionCount; j++) {
+    slots.push({
+      index: 2 + units + j,
+      x: Math.round(optStartX + j * (optCell + optGap) + optCell / 2),
+      y: trayY,
+      w: Math.round(optCell),
+      h: Math.round(optCell),
+      hitW: Math.max(touchFloor, Math.round(optCell)),
+      hitH: Math.max(touchFloor, Math.round(optCell)),
+      page: 0,
+      role: "neutral",
+    });
+  }
+
+  return slots;
+}

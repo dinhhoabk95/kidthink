@@ -21,7 +21,8 @@ export type LayoutId =
   | "matrix-3x3"
   | "equation-rows"
   | "mirror-axis-split"
-  | "free-scene";
+  | "free-scene"
+  | "measure-strip";
 
 /**
  * Bộ giá trị band ở dạng **runtime**, không chỉ dạng kiểu.

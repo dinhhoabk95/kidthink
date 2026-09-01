@@ -138,6 +138,7 @@ export const CANONICAL_MECHANIC_TAGS = new Set([
   "rule-switch",
   "tap-count",
   "remove-from-set",
+  "measure-with-unit",
 ]);
 
 import { CANONICAL_THEME_CODES } from "@mindkid/shared";

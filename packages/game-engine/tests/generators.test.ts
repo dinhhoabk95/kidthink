@@ -3,6 +3,7 @@ import { EMOJI_REF_PATTERN, EmojiRef } from "#src/contracts/shared-fields";
 import { GT010Generator } from "#src/generators/gt010";
 import { GT028Generator } from "#src/generators/gt028";
 import { GT029Generator } from "#src/generators/gt029";
+import { GT030Generator } from "#src/generators/gt030";
 import { getNouns } from "#src/generators/helpers";
 import type { ThemeVocabulary } from "#src/generators/types";
 import { createRng } from "#src/rng/mulberry32";
@@ -16,6 +17,12 @@ import {
   type GT029Difficulty,
   GT029DifficultySchema,
 } from "#src/templates/GT-029/template";
+import {
+  type GT030Content,
+  GT030ContentSchema,
+  type GT030Difficulty,
+  GT030DifficultySchema,
+} from "#src/templates/GT-030/template";
 
 const SHORT_POOL_RE = /thiếu danh từ/;
 const THEME_RE = /school/;
@@ -175,6 +182,33 @@ describe("GT-029 — generator contract conformity", () => {
           content_pack.initial_items.length - content_pack.remove_count
         );
       }
+    }
+  });
+});
+
+describe("GT-030 — generator contract conformity", () => {
+  const themeVocab = vocab(10);
+
+  it("generates valid levels for age band 5-6 across seeds", () => {
+    for (let seed = 1; seed <= 30; seed++) {
+      const { content_pack, difficulty_params } = GT030Generator.generate({
+        rng: createRng(seed),
+        age_band: "5-6",
+        theme: "school",
+        vocabulary: themeVocab,
+      }) as {
+        content_pack: GT030Content;
+        difficulty_params: GT030Difficulty;
+      };
+
+      const parsedContent = GT030ContentSchema.parse(content_pack);
+      const parsedDiff = GT030DifficultySchema.parse(difficulty_params);
+      expect(parsedContent).toBeDefined();
+      expect(parsedDiff).toBeDefined();
+
+      const correctOpt = content_pack.answer_options.find((o) => o.is_correct);
+      expect(correctOpt).toBeDefined();
+      expect(correctOpt?.value).toBe(content_pack.object.length_in_units);
     }
   });
 });

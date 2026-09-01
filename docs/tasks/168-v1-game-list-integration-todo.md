@@ -63,7 +63,7 @@
 
 - [x] [`#181`](181-engine-gt-028-tap-count-plan.md) `GT-028` `tap-count` ← `D1-10` — 10 level
 - [x] [`#182`](182-engine-gt-029-remove-from-set-plan.md) `GT-029` `remove-from-set` ← `D1-12` — 10 level
-- [ ] [`#183`](183-engine-gt-030-measure-with-unit-plan.md) `GT-030` `measure-with-unit` ← `D5-04` — 10 level
+- [x] [`#183`](183-engine-gt-030-measure-with-unit-plan.md) `GT-030` `measure-with-unit` ← `D5-04` — 10 level
 - [ ] [`#184`](184-engine-gt-031-coin-compose-plan.md) `GT-031` `coin-compose` ← `D5-10` — 10 level
 - [ ] [`#185`](185-engine-gt-032-pour-quantity-plan.md) `GT-032` `pour-quantity` ← `D5-09` — 10 level
 - [ ] [`#186`](186-engine-gt-033-weave-grid-plan.md) `GT-033` `weave-grid` ← `D3-07` — 10 level

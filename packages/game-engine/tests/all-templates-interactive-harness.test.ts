@@ -32,6 +32,7 @@ import {
   GT027_FIXTURES,
   GT028_FIXTURES,
   GT029_FIXTURES,
+  GT030_FIXTURES,
   RenderSystem,
 } from "#src/index";
 
@@ -82,6 +83,7 @@ const FIXTURES_MAP: Record<
   "GT-027": GT027_FIXTURES,
   "GT-028": GT028_FIXTURES,
   "GT-029": GT029_FIXTURES,
+  "GT-030": GT030_FIXTURES,
 };
 
 function createMockCanvasContext(): CanvasRenderingContext2D {
@@ -1105,6 +1107,48 @@ describe("All 27 Game Engine Templates Interactive & Visual Harness", () => {
         s.validateAction({
           type: "remove_item",
           data: { item_id: item.item_id },
+        });
+      }
+      const correctOpt = expectDefined(
+        s.content.answer_options.find((o) => o.is_correct)
+      );
+      const res = s.validateAction({
+        type: "select_option",
+        data: { option_id: correctOpt.option_id },
+      });
+      expect(res.valid).toBe(true);
+      expect(s.checkWinCondition()).toBe(true);
+    });
+
+    it("GT-030: placement and answer selection simulation succeeds", () => {
+      const f = getFixture(GT030_FIXTURES, 0);
+      const s = createGameSessionSync("GT-030", {
+        level_code: "GT-030-TEST",
+        content_version: 1,
+        template_code: "GT-030",
+        content_pack: f.content,
+        difficulty_params: f.difficulty,
+        theme_id: "default",
+        age_band: "5-6",
+        reduced_motion: false,
+        audio_enabled: true,
+      }) as unknown as {
+        setupEntities: () => void;
+        validateAction: (action: {
+          type: string;
+          data: Record<string, unknown>;
+        }) => { valid: boolean; feedback: string };
+        checkWinCondition: () => boolean;
+        content: {
+          object: { length_in_units: number };
+          answer_options: { option_id: string; is_correct: boolean }[];
+        };
+      };
+      s.setupEntities();
+      for (let i = 0; i < s.content.object.length_in_units; i++) {
+        s.validateAction({
+          type: "place_unit",
+          data: {},
         });
       }
       const correctOpt = expectDefined(

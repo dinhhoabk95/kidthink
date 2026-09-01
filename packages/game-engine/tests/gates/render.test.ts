@@ -26,12 +26,12 @@ describe("Engine Render Quality Gates (BR-ERC-01..05)", () => {
   it("passes cleanly on canonical repository templates with current ratchet", () => {
     const result = scanRenderGate(templatesDir, configPath);
     expect(result.violations).toEqual([]);
-    expect(result.activeCount).toBe(29);
-    expect(result.implementedCount).toBe(29);
+    expect(result.activeCount).toBe(30);
+    expect(result.implementedCount).toBe(30);
     expect(result.missingCount).toBe(0);
 
     const report = formatRenderReport(result);
-    expect(report).toBe("29 engine active, 29 cài render, 0 thiếu");
+    expect(report).toBe("30 engine active, 30 cài render, 0 thiếu");
   });
 
   it("ca âm: file phụ cạnh session.ts chứa ctx thô vẫn bị bắt (BR-ERC-05)", () => {

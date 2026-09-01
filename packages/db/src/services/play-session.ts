@@ -85,6 +85,8 @@ export const ALLOWED_EVENT_NAMES = new Set([
   "count_submitted",
   "item_removed",
   "item_restored",
+  "unit_placed",
+  "unit_removed",
 ]);
 
 const PII_FIELDS = new Set([
@@ -233,6 +235,13 @@ const EVENT_PAYLOAD_FIELDS: Readonly<Record<string, ReadonlySet<string>>> = {
     "remaining_needed",
     "round_index",
   ]),
+  unit_placed: new Set([
+    "slot_index",
+    "placed_count",
+    "target_count",
+    "round_index",
+  ]),
+  unit_removed: new Set(["slot_index", "placed_count", "round_index"]),
 };
 
 const NON_NEGATIVE_INT = z.number().int().nonnegative();
@@ -549,6 +558,17 @@ const EVENT_PAYLOAD_SCHEMAS: Readonly<Record<string, z.AnyZodObject>> = {
     item_id: CONTENT_ID,
     removed_count: NON_NEGATIVE_INT,
     remaining_needed: NON_NEGATIVE_INT,
+    round_index: OPTIONAL_ROUND_INDEX,
+  }),
+  unit_placed: z.object({
+    slot_index: NON_NEGATIVE_INT,
+    placed_count: NON_NEGATIVE_INT,
+    target_count: NON_NEGATIVE_INT,
+    round_index: OPTIONAL_ROUND_INDEX,
+  }),
+  unit_removed: z.object({
+    slot_index: NON_NEGATIVE_INT,
+    placed_count: NON_NEGATIVE_INT,
     round_index: OPTIONAL_ROUND_INDEX,
   }),
 };
