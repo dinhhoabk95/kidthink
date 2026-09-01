@@ -66,7 +66,7 @@ không phải `──→ schema-driven-form`).
 | `BR-SDF-01` | Cấm — **NEVER viết form riêng cho một template** | N template × form viết tay = N chỗ để lệch |
 | `BR-SDF-02` | `uiHint` suy từ **tên field theo quy ước**, không từ bảng mapping | Quy ước đặt tên rẻ hơn một bảng mapping phải bảo trì. Đánh đổi có ý thức |
 | `BR-SDF-03` | Field màu chọn từ **token**, Cấm — **NEVER color wheel tự do** | Màu ngoài hệ thống phá design system và có thể không đạt contrast |
-| `BR-SDF-04` | Field emoji dùng **picker**, không input text | `BR-EMJ-01` |
+| `BR-SDF-04` | Field emoji mở **picker** mặc định; vẫn nhập tay được | `BR-EPK-03` — picker là đường nhanh, không phải đường duy nhất |
 | `BR-SDF-05` | Validate client dùng **cùng schema** với server | Hai bộ luật là hai kết quả |
 | `BR-SDF-06` | Nhãn tiếng Việt bắt buộc cho mọi field hiện ra | Manager nghĩ bằng tiếng Việt |
 | `BR-SDF-07` | Input giữ `font-size ≥ 16px` | Dưới đó iOS tự zoom |

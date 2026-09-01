@@ -1,3 +1,4 @@
+import type { GameMechanic } from "@mindkid/shared";
 import type { z } from "zod";
 
 export type LayoutId =
@@ -66,7 +67,7 @@ export interface GameTemplate<
 > {
   code: `GT-${string}`;
   name: string;
-  mechanic: string;
+  mechanic: GameMechanic;
   layouts: LayoutId[];
   content_contract: C;
   difficulty_contract: D;

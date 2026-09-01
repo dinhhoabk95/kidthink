@@ -43,7 +43,7 @@ Mọi field có `uiHint = emoji` (§[`schema-driven-form.md`](schema-driven-form
 | Nhánh | Hành vi |
 |---|---|
 | Tìm không ra | Hiện nhóm gần nhất + nút "báo thiếu emoji" gửi cho dev |
-| Gõ ký tự emoji trực tiếp | Bị chặn, hiện gợi ý dùng picker |
+| Gõ ký tự emoji trực tiếp | Cho phép — lưu nguyên glyph. Nếu glyph ngoài danh mục, hiện nhắc mềm "chưa có trong danh mục", không chặn |
 | Emoji bị gỡ khỏi package | Không còn trong picker; nội dung cũ vẫn render vì ref *là* glyph, và cổng `emoji-glyph-integrity` báo ref mồ côi (`BR-EMJ-10`) |
 | Nội dung cho trẻ | Lọc theo `age_min` của hàng |
 
@@ -53,7 +53,7 @@ Mọi field có `uiHint = emoji` (§[`schema-driven-form.md`](schema-driven-form
 |---|---|---|
 | `BR-EPK-01` | Ô emoji ≥ **40×40px**, glyph render ≥ **28px** | Nhỏ hơn thì nhiều emoji trông giống nhau — sai emoji là sai bài học |
 | `BR-EPK-02` | Tìm kiếm **bắt buộc** hoạt động tiếng Việt, có dấu và không dấu | `BR-EMJ-04` |
-| `BR-EPK-03` | Cấm — **NEVER cho gõ emoji ngoài registry** | `BR-EMJ-01` — picker là đường duy nhất; glyph ngoài danh sách bị `EmojiRef` từ chối ở contract (`BR-EMJ-12`) |
+| `BR-EPK-03` | Picker là **đường nhanh**, không phải đường duy nhất — nhập trực tiếp một glyph vẫn lưu được | `BR-EMJ-01` — chốt 2026-09-01: field emoji là text thường. Chặn tay ở đây chỉ làm manager kẹt khi danh mục thiếu glyph |
 | `BR-EPK-04` | 12 emoji **gần đây** hiện đầu tiên | Một level thường dùng lặp một bộ nhỏ |
 | `BR-EPK-05` | Duyệt theo **32 nhóm chủ đề học**, không theo Unicode block | Manager nghĩ theo chủ đề dạy |
 | `BR-EPK-06` | Bàn phím: mũi tên di chuyển, Enter chọn, Esc đóng | Chọn hàng chục emoji bằng chuột là chậm |
@@ -101,9 +101,10 @@ Scenario: BR-EPK-01 — ô đủ lớn
   Then mỗi ô ít nhất 40x40px
   And glyph render ít nhất 28px
 
-Scenario: BR-EPK-03 — không gõ được emoji tự do
-  When dán một ký tự emoji vào ô tìm kiếm
-  Then không lưu được giá trị đó vào field
+Scenario: BR-EPK-03 — nhập trực tiếp vẫn lưu được
+  When dán "🦖" vào field emoji
+  Then giá trị lưu là "🦖"
+  And hiện nhắc mềm rằng glyph chưa có trong danh mục
 
 Scenario: BR-EPK-04 — gần đây hiện đầu
   Given manager vừa dùng 3 emoji
@@ -143,12 +144,12 @@ Scenario: BR-EPK-09 — chọn xong lưu ký tự, không lưu mã
 - Điều hướng bàn phím đầy đủ.
 
 **Ask first**
+- Bỏ nhắc mềm khi glyph ngoài danh mục.
 - Đổi số lượng gần đây.
 - Đổi bố cục nhóm.
 
 **Never**
 - Lưu mã `EMJ-<slug>`.
-- Cho gõ emoji tự do.
 - Ô nhỏ hơn 40px.
 - Emoji làm chrome của chính picker.
 - Nhóm theo Unicode block.

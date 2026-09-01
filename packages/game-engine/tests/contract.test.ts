@@ -1,5 +1,7 @@
+import { ALL_GAME_MECHANICS, RESERVED_MECHANICS } from "@mindkid/shared";
 import { describe, expect, it } from "vitest";
 import {
+  ALL_TEMPLATES,
   exportTemplateContracts,
   getGameTemplate,
   MVP_TEMPLATES,
@@ -130,5 +132,48 @@ describe("Task 2 — Game Template Contracts (BR-GTC-01..07)", () => {
 
     expect(everyItemTargetsAnExistingGroup(invalidGroupTarget)).toBe(false);
     expect(everyGroupHasAtLeastOneItem(unassignedGroup)).toBe(false);
+  });
+
+  describe("Task #169 — GameMechanic Vocabulary & Template Alignment", () => {
+    it("every template mechanic belongs to ALL_GAME_MECHANICS", () => {
+      const allowed = new Set(ALL_GAME_MECHANICS);
+      for (const [code, template] of Object.entries(ALL_TEMPLATES)) {
+        expect(
+          allowed.has(template.mechanic),
+          `Template ${code} has unknown mechanic: '${template.mechanic}'`
+        ).toBe(true);
+      }
+    });
+
+    it("every mechanic in ALL_GAME_MECHANICS is either used by a template or in RESERVED_MECHANICS", () => {
+      const usedMechanics = new Set(
+        Object.values(ALL_TEMPLATES).map((t) => t.mechanic)
+      );
+      const reserved = new Set(RESERVED_MECHANICS.map((r) => r.mechanic));
+
+      for (const mechanic of ALL_GAME_MECHANICS) {
+        const isCovered = usedMechanics.has(mechanic) || reserved.has(mechanic);
+        expect(
+          isCovered,
+          `Mechanic '${mechanic}' is neither used in ALL_TEMPLATES nor listed in RESERVED_MECHANICS`
+        ).toBe(true);
+      }
+    });
+
+    it("RESERVED_MECHANICS does not contain mechanics that are already used in ALL_TEMPLATES", () => {
+      const usedMechanics = new Set(
+        Object.values(ALL_TEMPLATES).map((t) => t.mechanic)
+      );
+      for (const item of RESERVED_MECHANICS) {
+        expect(
+          usedMechanics.has(item.mechanic),
+          `Mechanic '${item.mechanic}' is in RESERVED_MECHANICS but is already implemented in templates`
+        ).toBe(false);
+      }
+    });
+
+    it("ALL_GAME_MECHANICS contains exactly 36 values", () => {
+      expect(ALL_GAME_MECHANICS).toHaveLength(36);
+    });
   });
 });

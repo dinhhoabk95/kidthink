@@ -469,6 +469,9 @@ importers:
       '@mindkid/emoji':
         specifier: workspace:*
         version: link:../emoji
+      '@mindkid/shared':
+        specifier: workspace:*
+        version: link:../shared
       zod:
         specifier: 'catalog:'
         version: 3.25.76
@@ -562,9 +565,6 @@ importers:
       '@mindkid/emoji':
         specifier: workspace:*
         version: link:../emoji
-      '@mindkid/game-engine':
-        specifier: workspace:*
-        version: link:../game-engine
       '@mindkid/moderation':
         specifier: workspace:*
         version: link:../moderation
@@ -578,6 +578,9 @@ importers:
       '@mindkid/db':
         specifier: workspace:*
         version: link:../db
+      '@mindkid/game-engine':
+        specifier: workspace:*
+        version: link:../game-engine
       fast-check:
         specifier: 'catalog:'
         version: 3.23.2

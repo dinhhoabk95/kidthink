@@ -1,7 +1,28 @@
 import { isValidRef } from "@mindkid/emoji";
-import { MVP_TEMPLATES } from "@mindkid/game-engine";
 import { moderateCustomGameMetadata } from "@mindkid/moderation";
 import { z } from "zod";
+
+export type CustomGameSafeParseResult =
+  | { success: true; data: unknown }
+  | {
+      success: false;
+      error: { issues: Array<{ path: (string | number)[]; message: string }> };
+    };
+
+export interface CustomGameTemplateLike {
+  name: string;
+  banned_age_bands?: readonly string[];
+  content_contract: {
+    safeParse: (data: unknown) => CustomGameSafeParseResult;
+  };
+  difficulty_contract: {
+    safeParse: (data: unknown) => CustomGameSafeParseResult;
+  };
+}
+
+export type CustomGameTemplateProvider = (
+  code: string
+) => CustomGameTemplateLike | undefined;
 
 /**
  * 6 MVP Template Codes supported for Custom Games (BR-CGB-07)
@@ -195,7 +216,7 @@ function validateMetadataAndVocabulary(
 
 function validateTemplateSchemaAndBands(
   input: CustomGameValidationInput,
-  template: (typeof MVP_TEMPLATES)[keyof typeof MVP_TEMPLATES],
+  template: CustomGameTemplateLike,
   ageBand: "3-4" | "4-5" | "5-6",
   issues: string[],
   missing: string[]
@@ -345,7 +366,8 @@ function validateEmojiReferences(
  * Server-enforced before marking status = 'ready' (BR-CGB-05).
  */
 export function validateCustomGameContent(
-  input: CustomGameValidationInput
+  input: CustomGameValidationInput,
+  templateProvider?: CustomGameTemplateProvider
 ): CustomGameValidationResult {
   const issues: string[] = [];
   const missing: string[] = [];
@@ -353,7 +375,9 @@ export function validateCustomGameContent(
   const ageMin = input.age_min ?? 3;
   const ageMax = input.age_max ?? 6;
 
-  const template = MVP_TEMPLATES[input.template_code];
+  const template = templateProvider
+    ? templateProvider(input.template_code)
+    : undefined;
   if (!template) {
     missing.push("template_not_supported");
     issues.push(`Mẫu trò chơi ${input.template_code} không được hỗ trợ.`);

@@ -80,10 +80,10 @@ lọc theo một cây.
 |---|---|
 | **what** | `number` `quantity` `geometry` `space` `pattern` `colour` `size` `category` `sequence` `time` `money` `rule` `letter` `sound` |
 | **thinking** | `observe` `compare` `sort` `match` `sequence` `infer` `predict` `plan` `recall` `inhibit` `shift` `count` |
-| **mechanic** | `tap-select` `tap-select-multi` `drag-to-container` `sort-groups` `pair-match` `sequence-order` `number-bond` `drag-to-slot` `clue-deduction` `substitution` `matrix-choice` `flash-recall` `maze-route` `balance-scale` `sudoku-mini` `clock-hands` `block-stack` `listen-respond` `rotate-transform` `memory-flip` `mirror-complete` `hidden-object` `construct` `trace-path` `spot-difference` `go-nogo` `rule-switch` |
+| **mechanic** | `tap-select` `tap-select-multi` `drag-to-container` `sort-groups` `pair-match` `sequence-order` `number-bond` `drag-to-slot` `clue-deduction` `substitution` `matrix-choice` `flash-recall` `maze-route` `balance-scale` `sudoku-mini` `clock-hands` `block-stack` `listen-respond` `rotate-transform` `memory-flip` `mirror-complete` `hidden-object` `construct` `trace-path` `spot-difference` `go-nogo` `rule-switch` `tap-count` `remove-from-set` `measure-with-unit` `coin-compose` `pour-quantity` `weave-grid` `beat-sequence` `command-sequence` `free-create` |
 
-Trục `mechanic` suy ra từ `game_templates.mechanic` — không nhập tay. Hai mươi bảy giá trị
-khớp một–một với 27 engine ở [`engines/index.md`](engines/index.md).
+Trục `mechanic` suy ra từ `game_templates.mechanic` — không nhập tay. Ba mươi sáu giá trị
+khớp một–một với 36 engine ở [`engines/index.md`](engines/index.md).
 
 **Độ trôi đo ngày 2026-08-29 trên 228 game level:**
 

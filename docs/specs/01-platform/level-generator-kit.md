@@ -82,7 +82,7 @@ Bước 6 là bước không bỏ được. Mọi thứ trước nó là dựng 
 | Engine chưa có `generator.ts` | Engine mới, hoặc cơ chế không sinh máy được | `gen:levels` dừng với thông báo nêu engine thiếu bộ sinh. Soạn tay vẫn hợp lệ |
 | Ứng viên trượt `content_contract` | Vốn từ không khớp `limits` | Bỏ ứng viên, đếm vào báo cáo. Cấm — NEVER sửa tự động cho vừa contract |
 | Ứng viên trùng ứng viên đã có | Vốn từ hẹp | Cổng 6 (trùng lặp) của [`content-seed-authoring.md`](content-seed-authoring.md) bắt. Bộ sinh cũng tự lọc trước để đỡ lãng phí lượt đọc của người |
-| Emoji không có trong registry | Vốn từ tự chế | Bỏ ứng viên. `BR-EMJ-*` và `BR-CSA-13` (chỉ emoji registry) không nới |
+| Emoji không có trong danh mục | Vốn từ tự chế | Nhận, nhưng ghi vào báo cáo kiểm kê — danh mục là vốn từ khuyến nghị (`BR-EMJ-01`) |
 | Người soạn muốn ghi thẳng vào database | Vội | Không có đường. `gen:levels` cấm — NEVER mở kết nối database |
 
 ## 6. Business rules
@@ -135,7 +135,7 @@ Không có trường `thinking_tags`, không có `skill_codes` — theo `BR-LGK-
 | Trường | Kiểu | Ràng buộc |
 |---|---|---|
 | `theme` | `ThemeTag` | Thuộc từ vựng đóng ở [`content-theme-registry.md`](../05-content/content-theme-registry.md) |
-| `nouns` | `{ emoji_ref, label_vi }[]` | `emoji_ref` là **ký tự UTF-8**, phải là thành viên `@mindkid/emoji` (`BR-CSA-13`) |
+| `nouns` | `{ emoji_ref, label_vi }[]` | `emoji_ref` là **ký tự UTF-8**; nên lấy từ `@mindkid/emoji` để có tên tiếng Việt tra ngược |
 | `containers` | `{ emoji_ref, label_vi }[]` | Dùng cho engine có đích chứa: `GT-003`, `GT-004`, `GT-008` |
 | `settings` | `string[]` | Bối cảnh cho câu lệnh, người soạn viết lại ở bước 6 |
 | `age_floor` | `3 \| 4 \| 5 \| 6` | Chủ đề không hợp lứa thì không đưa vào ứng viên cho band đó |

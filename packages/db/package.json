@@ -43,6 +43,7 @@
     "check:go-live": "tsx src/seed-content/cli/check-go-live.ts",
     "check:round-sets": "tsx src/seed-content/gates/round-sets.ts",
     "gen:levels": "tsx src/seed-content/cli/gen-levels.ts",
+    "gen:corpus": "tsx src/seed-content/cli/gen-corpus.ts",
     "reset-content": "tsx scripts/reset-content.ts"
   },
   "imports": {

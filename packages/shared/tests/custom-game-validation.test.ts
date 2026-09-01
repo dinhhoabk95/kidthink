@@ -1,9 +1,13 @@
+import { MVP_TEMPLATES } from "@mindkid/game-engine";
 import { describe, expect, it } from "vitest";
 import {
   type CustomGameValidationInput,
   extractEmojiRefsFromContentPack,
-  validateCustomGameContent,
+  validateCustomGameContent as validateCustomGameContentRaw,
 } from "#src/index";
+
+const validateCustomGameContent = (input: CustomGameValidationInput) =>
+  validateCustomGameContentRaw(input, (code) => MVP_TEMPLATES[code]);
 
 describe("Custom Game Validation (BR-CGB-01..10, BR-GLM-01..10)", () => {
   const validGT001: CustomGameValidationInput = {

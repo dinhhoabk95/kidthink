@@ -42,7 +42,7 @@ của Manager, và đó là một luồng khác chưa có ở phiên bản này.
 | `BR-CGB-01` | Game do User tạo **chỉ trẻ của User đó** chơi được | Cấm có kiểm duyệt; nội dung chưa duyệt không được tới trẻ khác |
 | `BR-CGB-02` | Cấm — **NEVER vào catalog công khai** | Nội dung do người dùng tự tạo chưa qua kiểm duyệt sư phạm chuyên sâu không được phát hành công khai |
 | `BR-CGB-03` | Dùng **cùng `content_contract`** và **cùng validation** với studio | Một bộ luật, không hai |
-| `BR-CGB-04` | Chỉ dùng **emoji registry**; ảnh upload trừ quota `upload_mb` | `BR-EMJ-01` |
+| `BR-CGB-04` | Emoji **bắt buộc** nằm trong danh mục `@mindkid/emoji` — ngoại lệ duy nhất của `BR-EMJ-01`; ảnh upload trừ quota `upload_mb` | `BR-EMJ-12` — `packages/moderation` chỉ quét `title` và `instruction`, không quét emoji. Đây là chỗ duy nhất còn chặn tư cách thành viên |
 | `BR-CGB-05` | Validation §7.1 chạy ở **server** trước khi lưu | Sai schema làm crash engine trước mặt trẻ |
 | `BR-CGB-06` | Game custom **không cập nhật `mastery_state`** | Nội dung chưa kiểm duyệt không được đẩy dữ liệu học chính thức |
 | `BR-CGB-07` | Chỉ **6 template MVP** dùng được. Danh sách sống ở **một** chỗ: `packages/shared/src/custom-game.ts`; mọi nơi khác import từ đó | Hạn chế phạm vi thử nghiệm ở các khuôn mẫu ổn định nhất đã được tối ưu hóa cho mầm non. Phần "một chỗ" thêm 2026-08-29 — xem mục 6.1 |
@@ -126,9 +126,10 @@ Scenario: BR-CGB-10 — áp ràng buộc biên tập
   When validate
   Then báo lỗi vượt trần item của band
 
-Scenario: BR-CGB-04 — chỉ emoji trong registry
-  When dùng emoji ngoài registry
-  Then trả 422
+Scenario: BR-CGB-04 — chỉ emoji trong danh mục
+  When User dùng "🔞" trong custom game
+  Then trả 422 invalid_emoji_ref
+  And nêu rõ glyph nào ngoài danh mục
 
 Scenario: BR-CGB-09 — qua kiểm duyệt nội dung
   Given tiêu đề chứa từ không phù hợp

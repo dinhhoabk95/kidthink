@@ -1,81 +1,74 @@
-# Todo — Task #202: Emoji là package mã cứng, ký tự UTF-8 thật, bỏ hẳn bảng DB
+# Todo — Task #202: Emoji là danh mục mã cứng, ký tự UTF-8 thật, bỏ hẳn bảng DB
 
 Kế hoạch: [`202-emoji-package-single-source-plan.md`](202-emoji-package-single-source-plan.md)
 
-Thứ tự **T3 → T4 → T5** là bắt buộc (D-EG). Đảo là đổi glyph render mà diff không cho thấy.
+Thứ tự **T3 → T4 → T5** là bắt buộc (D-EJ). Đảo là đổi glyph render mà diff không cho thấy.
 
 ## Điều kiện vào
 
-- [ ] Cây làm việc sạch. Hiện có **59 file đang sửa dở** trên `main` — commit hoặc stash trước.
 - [ ] Nhánh riêng, không làm trên `main`.
-- [ ] `pnpm check` xanh trước khi bắt đầu (mốc so sánh).
+- [ ] Node 24 (`.nvmrc`) — node mặc định máy là v20, `pnpm` sẽ chết với `ERR_UNKNOWN_BUILTIN_MODULE`.
+- [ ] Chụp `pnpm test` ra danh sách `trạng-thái | tên-test` làm mốc so sánh (dùng lại ở T9).
+- [ ] Chụp `scripts/typecheck/typecheck-baseline.json` tổng nợ hiện tại làm mốc.
+- [ ] 59 file đang sửa dở trên `main`: người đặt việc chốt **bỏ qua** — Cấm — NEVER `git checkout` để hoàn tác; sao lưu ra ngoài repo trước khi ghi đè.
 
 ---
 
-## T1 — Spec: contract mới
+## T1 — Spec ✅ ĐÃ XONG (2026-09-01)
 
-- [ ] `01-platform/emoji-registry.md` §7.1: bỏ bảng `emoji_registry`, thay bằng hình dạng `EmojiEntry`.
-- [ ] `01-platform/emoji-registry.md` `BR-EMJ-02` đảo chiều: lưu **ký tự UTF-8**, Cấm — NEVER lưu mã `EMJ-<slug>`. Cột "Vì sao" nêu số đo: 60 mã trùng, 15 mã trỏ hai glyph, 50 mã không tra được.
-- [ ] Thêm `BR-EMJ-11`: glyph là khoá chính, duy nhất, chuẩn NFC.
-- [ ] `01-platform/emoji-registry.md` §7.3 + §8: API package và route đổi sang `getByGlyph` / `isValidGlyph`; response trả `emoji` thay `code`.
-- [ ] `01-platform/emoji-registry.md` §9: viết lại Gherkin `BR-EMJ-02`; thêm scenario 15 mã nhập nhằng không còn tồn tại được.
-- [ ] `06-admin/emoji-picker.md` §4 bước 5 + §8: lưu glyph. `BR-EPK-03` giữ nguyên.
-- [ ] `01-platform/content-seed-authoring.md` `BR-CSA-13` + cổng 3 (§108, §147, §209, §350, §434).
-- [ ] `01-platform/game-template-contract.md:159` bỏ chú "FK logic tới emoji_registry".
-- [ ] `01-platform/level-generator-kit.md` §85 §108 §138.
-- [ ] `05-content/content-theme-registry.md:197` `icon_emoji_ref` là glyph.
-- [ ] `05-content/montessori-corpus-mapping.md` §102 §207.
-- [ ] `06-admin/asset-usage-tracking.md:117` bỏ scenario "không route nào xoá hàng emoji_registry".
-- [ ] `08-quality/runtime-gates.md:41` thay cổng ma bằng `emoji-glyph-integrity.test.ts`.
-- [ ] `04-play/game-config-delivery.md` `BR-CFG-07`.
-- [ ] `00-foundation/business-rules.md` · `00-foundation/id-conventions.md`: gỡ `EMJ-<slug>`.
-- [ ] `docs/SPEC.md:246`: bỏ `emoji_registry` khỏi danh sách bảng.
-
-**Xong khi:**
-- [ ] `grep -rn 'emoji_registry' docs/specs docs/SPEC.md` → 0.
-- [ ] `grep -rn 'EMJ-' docs/specs docs/SPEC.md` → 0.
+- [x] `01-platform/emoji-registry.md` viết lại: `BR-EMJ-01` thành vốn từ khuyến nghị · `BR-EMJ-02` đảo chiều · thêm `BR-EMJ-10/11/12` · §7.4 phân giải là identity.
+- [x] `06-admin/emoji-picker.md`: `BR-EPK-03` nới — picker là đường nhanh, không phải đường duy nhất.
+- [x] `01-platform/content-seed-authoring.md`: `BR-CSA-13` + cổng 3 không kiểm emoji; thêm scenario ca dương "glyph ngoài danh mục KHÔNG bị chặn".
+- [x] `01-platform/game-template-contract.md`: `EmojiRef` → `z.string().min(1)`.
+- [x] `01-platform/level-generator-kit.md` · `05-content/content-theme-registry.md` · `05-content/montessori-corpus-mapping.md`.
+- [x] `07-addon/custom-game-builder.md`: `BR-CGB-04` là ngoại lệ duy nhất, lý do đo được.
+- [x] `06-admin/schema-driven-form.md` `BR-SDF-04` · `06-admin/asset-usage-tracking.md`.
+- [x] `08-quality/runtime-gates.md:41`: cổng ma → `packages/emoji/tests/gates/catalog-integrity.test.ts`.
+- [x] `04-play/*` · `00-foundation/id-conventions.md` · `01-platform/schema-content-taxonomy.md` · `READING-GUIDE.md` · `docs/SPEC.md`.
+- [x] `grep 'emoji_registry' docs/specs docs/SPEC.md` → 0 (trừ Gherkin ca âm).
 
 ---
 
 ## T2 — Package API
 
 - [ ] `types.ts`: `category: EmojiCategory` → `categories: EmojiCategory[]`; xoá trường `code?`.
-- [ ] `query.ts`: xoá `getEmojiCode` · `getByCode` · `isValidRef`; thêm `getByGlyph` · `isValidGlyph` (nhận cả bản đã tước `U+FE0F`, D-ED).
-- [ ] `registry.ts`: `EMOJI_CATEGORIES` dựng bằng `categories.includes(cat)`, không đọc `category`.
+- [ ] `query.ts`: xoá `getEmojiCode` · `getByCode` · `isValidRef`; thêm `getByGlyph` · `isInCatalog` (nhận cả bản đã tước `U+FE0F`, D-EH).
+- [ ] `registry.ts`: `EMOJI_CATEGORIES` dựng bằng `categories.includes(cat)`.
 - [ ] `index.ts`: cập nhật export.
-- [ ] `tests/emoji.test.ts`: đổi sang glyph; thêm ca `getByGlyph("🕊")` và `getByGlyph("🕊️")` cùng ra một entry.
+- [ ] `tests/emoji.test.ts`: đổi sang glyph; thêm ca `getByGlyph("🕊")` và `getByGlyph("🕊️")` cùng ra một hàng.
 
 **Xong khi:**
 - [ ] `pnpm --filter @mindkid/emoji test` xanh.
-- [ ] `grep -rn 'getByCode\|getEmojiCode\|EMOJI_REF_PATTERN' packages/emoji` → 0.
+- [ ] `grep -rn 'getByCode\|getEmojiCode\|isValidRef\|EMOJI_REF_PATTERN' packages/emoji` → 0.
 
 ---
 
-## T3 — Bổ sung 50 emoji thiếu (điều kiện tiên quyết của T4)
+## T3 — Bảng ánh xạ 50 mã (điều kiện tiên quyết của T4)
 
-- [ ] Viết `scripts/emoji/audit-refs.ts`: quét corpus, in mã `EMJ-*` không tra được kèm số lần và file.
+- [ ] Viết `scripts/emoji/audit-refs.ts`: quét corpus, in mã `EMJ-*` không có glyph kèm số lần và file. Cấm — NEVER đọc `process.cwd()`; dùng `repoPath()` của `@mindkid/config/paths`.
 - [ ] Chạy audit, xác nhận đúng **50 mã · 297 lần** như §2.4 của plan.
-- [ ] Soạn hàng cho `EMJ-coin` → 🪙 (`number-symbol`) — 84 lần dùng.
-- [ ] Soạn hàng cho `EMJ-yarn` → 🧶 (`tool`) — 52 lần dùng.
-- [ ] Soạn 48 hàng còn lại; mỗi hàng đủ `name` tiếng Việt · `keywords` ≥2 (Anh + Việt) · `categories` · `curriculum_themes` · `age_min`.
-- [ ] `EMJ-nonexistent-999` (fixture ca âm): đổi thành một glyph ngoài danh sách, không thêm vào registry.
+- [ ] `EMJ-coin` → 🪙 (`number-symbol`) — 84 lần dùng.
+- [ ] `EMJ-yarn` → 🧶 (`tool`) — 52 lần dùng.
+- [ ] 48 mã còn lại: soạn glyph + hàng danh mục thật (`name` tiếng Việt · `keywords` ≥2 Anh+Việt · `categories` · `curriculum_themes` · `age_min`).
+- [ ] `EMJ-nonexistent-999` (fixture ca âm của `BR-CGB-04`): đổi thành glyph ngoài danh mục, Cấm — NEVER thêm vào danh mục.
 
 **Xong khi:**
-- [ ] `audit-refs.ts` báo 0 mã không tra được.
-- [ ] **Ca âm:** xoá một hàng vừa thêm → audit đỏ, nêu đúng mã đó.
+- [ ] `audit-refs.ts` báo 0 mã thiếu ánh xạ.
+- [ ] **Ca âm:** xoá một dòng ánh xạ → audit đỏ, nêu đúng mã đó.
 
 ---
 
-## T4 — Codemod `EMJ-*` → glyph (3.249 chỗ)
+## T4 — Codemod `EMJ-*` → glyph (3.249 chỗ, ~2.600 file)
 
 - [ ] Viết `scripts/emoji/codemod-to-glyph.ts` (thay `packages/db/scripts/fix-emoji-refs.ts`).
-- [ ] Bản đồ mã→glyph dựng **trước khi gộp trùng**, lấy hàng đầu theo `Object.values(EMOJI_CATEGORIES).flat()` (D-EG).
+- [ ] Bản đồ mã→glyph dựng **trước khi gộp trùng**, lấy hàng đầu theo `Object.values(EMOJI_CATEGORIES).flat()` (D-EJ).
 - [ ] Trường quét: `ref` · `emoji_ref` · `label_emoji` · `icon_emoji_ref` · `thumbnail_emoji` · helper `emoji("…")`.
+- [ ] Quét theo dòng, Cấm — NEVER neo theo thụt lề rồi nhảy bằng regex.
 - [ ] Chạy `--dry-run`, kiểm ba phần báo cáo:
   - [ ] phần 1 — số ref đổi trên từng file;
   - [ ] phần 2 — **15 mã nhập nhằng** và glyph `find()` chọn;
   - [ ] phần 3 — ref không đổi được, phải **rỗng**.
-- [ ] Người soạn nội dung duyệt bảng phần 2. 4 mã nghề nghiệp (`EMJ-doctor` `EMJ-teacher` `EMJ-chef` `EMJ-farmer`) tách hai hàng nam/nữ thay vì chọn một (câu hỏi mở #1).
+- [ ] Người soạn nội dung duyệt bảng phần 2 (11 mã không phải nghề nghiệp; 4 mã nghề đi theo D-EG).
 - [ ] Chạy `--write`.
 - [ ] Xoá `packages/db/scripts/fix-emoji-refs.ts`.
 
@@ -86,61 +79,67 @@ Thứ tự **T3 → T4 → T5** là bắt buộc (D-EG). Đảo là đổi glyph
 
 ---
 
-## T5 — Gộp 66 hàng trùng (825 → 759)
+## T5 — Gộp danh mục 825 → 759
 
-- [ ] 49 hàng trùng xuyên nhóm: gộp `categories`, hợp `keywords` và `curriculum_themes`.
+- [ ] 49 hàng trùng xuyên nhóm: gộp `categories`, hợp `keywords` + `curriculum_themes`.
 - [ ] 12 hàng trùng trong một nhóm (`animal-water` chiếm phần lớn): giữ tên ngắn hơn, hợp `keywords`.
-- [ ] 5 hàng còn lại xử theo bảng phần 2 của T4.
+- [ ] 8 hàng nghề có giới → 4 hàng trung tính 🧑‍⚕️ 🧑‍🏫 🧑‍🍳 🧑‍🌾 (D-EG); keyword giữ cả "thầy giáo" và "cô giáo".
+- [ ] 5 hàng còn lại theo bảng phần 2 của T4.
 
 **Xong khi:**
 - [ ] `ALL_EMOJIS.length === 759`.
 - [ ] `new Set(ALL_EMOJIS.map(e => e.emoji)).size === ALL_EMOJIS.length`.
 - [ ] Picker vẫn hiện ⭐ ở cả `school`, `shape-color`, `sky-space`.
+- [ ] `searchEmoji("cô giáo")` và `searchEmoji("thầy giáo")` cùng ra hàng 🧑‍🏫.
 
 ---
 
-## T6 — Cổng toàn vẹn (mọi kiểm phải có ca âm chạy được)
+## T6 — Cổng danh mục
 
-Tạo `packages/db/tests/gates/emoji-glyph-integrity.test.ts`.
+Tạo `packages/emoji/tests/gates/catalog-integrity.test.ts`. Mẫu vi phạm sống ở
+`packages/emoji/tests/gates/fixtures/` — Cấm — **NEVER** viết thẳng vào file test.
 
-- [ ] Kiểm: mọi glyph duy nhất — **ca âm:** thêm hàng trùng → đỏ.
-- [ ] Kiểm: mọi glyph là NFC — **ca âm:** thêm hàng NFD → đỏ.
-- [ ] Kiểm: Cấm — NEVER skin tone modifier (`BR-EMJ-09`, chuyển từ `seed-master/emoji.ts`) — **ca âm:** thêm 👍🏽 → đỏ.
-- [ ] Kiểm: mọi `ref` emoji trong corpus seed là thành viên — **ca âm:** đổi một ref thành 🦖 → đỏ.
-- [ ] Kiểm: mọi `icon_emoji_ref` của 14 chủ đề là thành viên — **ca âm:** xoá một hàng → đỏ.
-- [ ] Đăng ký cổng trong `docs/specs/08-quality/runtime-gates.md`.
+- [ ] Kiểm: mọi glyph duy nhất — **ca âm:** fixture có glyph trùng → đỏ.
+- [ ] Kiểm: mọi glyph là NFC — **ca âm:** fixture NFD → đỏ.
+- [ ] Kiểm: Cấm — NEVER skin tone modifier (`BR-EMJ-09`, chuyển từ `seed-master/emoji.ts`) — **ca âm:** fixture 👍🏽 → đỏ.
+- [ ] Kiểm: Cấm — NEVER hàng nghề có giới (`BR-EMJ-10`) — **ca âm:** fixture 👩‍⚕️ → đỏ.
+- [ ] Cấm — **NEVER** thêm phép kiểm tư cách thành viên trên corpus vào cổng này (D-EC).
+- [ ] Cổng Cấm — NEVER đọc `process.cwd()`; dùng `repoPath()`.
+- [x] Đăng ký trong `docs/specs/08-quality/runtime-gates.md` (làm ở T1).
 
 **Xong khi:**
-- [ ] Cả năm ca âm được **chạy** và chứng minh đỏ, không chỉ khai là có.
+- [ ] Cả bốn ca âm được **chạy** và chứng minh đỏ, không chỉ khai là có.
 
 ---
 
-## T7 — Contract Zod
+## T7 — Gỡ ràng buộc
 
-- [ ] `packages/game-engine/src/contracts/shared-fields.ts`: xoá `EMOJI_REF_PATTERN`; `EmojiRef = z.string().refine(isValidGlyph, …)`.
-- [ ] `packages/shared/src/custom-game.ts:327–341`: `validateEmojiReferences` dùng `isValidGlyph`; đổi thông điệp lỗi tiếng Việt.
-- [ ] `packages/db/src/seed-content/gates/theme-registry.ts:290` + `tests/gates/theme-registry.test.ts:201`.
-- [ ] `packages/game-engine/tests/generators.test.ts:99–123`: đảo khẳng định — `"🍎"` **được chấp nhận**, `"EMJ-red-apple"` **bị từ chối**.
-- [ ] JSON Schema: `.refine` không xuất được. Bổ sung `enum` 759 glyph vào schema công bố (câu hỏi mở #2).
-- [ ] Kiểm `schema-driven-form` / `GameConfigVisualEditor` vẫn ràng buộc được ô emoji.
+- [ ] `packages/game-engine/src/contracts/shared-fields.ts`: xoá `EMOJI_REF_PATTERN`; `EmojiRef` → `z.string().min(1)`.
+- [ ] `packages/game-engine/tests/generators.test.ts:99–123`: đảo khẳng định — `"🍎"` **được chấp nhận**, `"EMJ-red-apple"` bị từ chối.
+- [ ] `packages/shared/src/asset-resolver.ts`: `resolveEmojiRef` → identity (`glyph = ref`); xoá `emojiRegistryLookup` và nhánh `not_found` của emoji.
+- [ ] `packages/shared/tests/asset-resolver.test.ts`: 3 test dùng `emojiRegistryLookup`.
+- [ ] `packages/db/src/services/recommendation.ts:51`: `resolveThumbnailEmoji` → identity + fallback `"🎮"`.
+- [ ] `packages/db/src/seed-content/gates/theme-registry.ts:290` + `tests/gates/theme-registry.test.ts:201`: bỏ kiểm thành viên trên `noun.emoji_ref`.
+- [ ] `packages/shared/src/custom-game.ts:327`: **GIỮ** kiểm — đổi `isValidRef` → `isInCatalog` (D-ED, `BR-EMJ-12`).
+- [ ] `apps/web/server/utils/asset-refs.ts`: xác nhận không còn nhánh nào giả định tiền tố `EMJ-`.
 
 **Xong khi:**
 - [ ] `pnpm --filter @mindkid/game-engine test` và `--filter @mindkid/shared test` xanh.
-- [ ] JSON Schema xuất ra chứa danh sách đóng, không phải `z.string()` trần.
+- [ ] JSON Schema xuất ra cho field emoji là `{"type":"string","minLength":1}`.
+- [ ] Custom game chứa 🔞 vẫn trả 422 `invalid_emoji_ref`.
 
 ---
 
 ## T8 — Xoá DB
 
 - [ ] `packages/db/src/schema/taxonomy.ts:152–184`: xoá `emojiRegistry`, `emojiAgeSuitabilityEnum`, `emojiStatusEnum`, CHECK.
+- [ ] Chuyển `hasSkinToneModifier` sang cổng T6 **trước khi** xoá file seeder.
 - [ ] Xoá `packages/db/src/seed-master/emoji.ts`; gỡ lời gọi trong `seed.ts`.
-- [ ] Chuyển `hasSkinToneModifier` sang cổng T6 trước khi xoá file.
 - [ ] `packages/db/tests/global-setup.ts:65`: bỏ `"emoji_registry"`.
 - [ ] `packages/db/src/purge-scope.ts:295`: bỏ mục.
 - [ ] Xoá `packages/db/tests/integration/emoji-master.test.ts`.
-- [ ] `packages/shared/src/asset-resolver.ts`: xoá `emojiRegistryLookup` (hook chết, không runtime nào truyền) + 3 test dùng nó ở `tests/asset-resolver.test.ts`.
 - [ ] `packages/db/scripts/reset-content.ts:25`: sửa comment.
-- [ ] Migration expand mới — Cấm — NEVER sửa `0000_bumpy_secret_warriors.sql`:
+- [ ] Migration expand mới — Cấm — **NEVER** sửa `0000_bumpy_secret_warriors.sql`:
   ```sql
   DROP TABLE IF EXISTS "emoji_registry";
   DROP TYPE IF EXISTS "emoji_age_suitability";
@@ -149,7 +148,7 @@ Tạo `packages/db/tests/gates/emoji-glyph-integrity.test.ts`.
 - [ ] Kiểm ba dòng `CREATE EXTENSION` viết tay ở `0000` còn nguyên sau khi regenerate.
 
 **Xong khi:**
-- [ ] `\dx` đúng DB; `\dt` không còn `emoji_registry`.
+- [ ] `\dt` đúng DB (`127.0.0.1:5433`) không còn `emoji_registry`.
 - [ ] `pnpm db:migrate && pnpm db:seed` trên DB sạch xanh.
 - [ ] `packages/db/tests/gates/migration-expand.test.ts` xanh.
 
@@ -160,11 +159,12 @@ Tạo `packages/db/tests/gates/emoji-glyph-integrity.test.ts`.
 - [ ] `grep -rn 'EMJ-' packages apps docs` → 0.
 - [ ] `grep -rn 'emoji_registry' packages apps docs` → 0.
 - [ ] `grep -rn 'getByCode\|getEmojiCode\|EMOJI_REF_PATTERN\|isValidRef\|emojiRegistryLookup' packages apps` → 0.
-- [ ] `pnpm lint` xanh — đọc output thật, không tin dòng tóm tắt.
-- [ ] `pnpm typecheck` xanh (`typecheck:web` cho server Nuxt).
-- [ ] `pnpm test` xanh.
-- [ ] `pnpm check` xanh.
-- [ ] Chạy app: mở `/games`, một trang `/play/[code]`, và picker trong studio — xác nhận glyph render thật, không ô trống.
+- [ ] `pnpm lint` — đọc output thật; `ultracite check` exit 0 dù có lỗi, và hook `rtk` từng bóp méo dòng tóm tắt của Biome.
+- [ ] `pnpm lint:deps`.
+- [ ] `pnpm typecheck` — bậc thang **không được tăng**. Cấm — NEVER `--allow-increase` cho task này.
+- [ ] `pnpm test` — so danh sách `trạng-thái | tên-test` với mốc chụp ở Điều kiện vào, đòi **trùng khít**. Test đổi trạng thái, kể cả fail→pass, là dấu hiệu đổi hành vi — giải thích từng cái.
+- [ ] `pnpm check`.
+- [ ] Chạy app: `/games`, một `/play/[code]`, picker trong studio — xác nhận glyph render thật, không ô trống.
 
 ---
 
@@ -175,7 +175,10 @@ Tạo `packages/db/tests/gates/emoji-glyph-integrity.test.ts`.
 | Hàng trong `packages/emoji` | 825 | 759 | |
 | Glyph phân biệt | 759 | 759 | |
 | Mã `EMJ-*` trong code | 3.249 | 0 | |
-| Mã corpus không tra được | 50 (297 lần) | 0 | |
+| Mã corpus không có glyph | 50 (297 lần) | 0 | |
 | Mã trỏ hai glyph khác nhau | 15 | 0 | |
+| Hàng nghề có giới | 8 | 0 | |
 | Bảng DB emoji | 1 | 0 | |
-| Cổng emoji có ca âm | 0 | 5 | |
+| Chỗ ràng buộc emoji | 2 (regex vô dụng + custom game) | 1 (custom game) | |
+| Cổng emoji có ca âm | 0 | 4 | |
+| Nợ typecheck | (chụp lúc vào) | ≤ mốc | |

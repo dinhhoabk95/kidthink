@@ -4,6 +4,7 @@
  */
 
 import { appError } from "@mindkid/auth";
+import { getGameTemplate } from "@mindkid/game-engine";
 import {
   type CreateCustomGameInput,
   type CustomGameValidationResult,
@@ -58,18 +59,21 @@ export async function createCustomGame(
 
   // 2. If status is 'ready', enforce validation before saving (BR-CGB-05)
   if (input.status === "ready") {
-    const valResult = validateCustomGameContent({
-      template_code: input.template_code,
-      title: input.title,
-      instruction: input.instruction,
-      content_pack: input.content_pack as Record<string, unknown>,
-      difficulty_params:
-        (input.difficulty_params as Record<string, unknown>) || {},
-      theme_id: input.theme_id,
-      age_min: input.age_min,
-      age_max: input.age_max,
-      skill_ids: input.skill_ids,
-    });
+    const valResult = validateCustomGameContent(
+      {
+        template_code: input.template_code,
+        title: input.title,
+        instruction: input.instruction,
+        content_pack: input.content_pack as Record<string, unknown>,
+        difficulty_params:
+          (input.difficulty_params as Record<string, unknown>) || {},
+        theme_id: input.theme_id,
+        age_min: input.age_min,
+        age_max: input.age_max,
+        skill_ids: input.skill_ids,
+      },
+      getGameTemplate
+    );
 
     if (!valResult.ok) {
       throw appError("VALIDATION_FAILED", {
@@ -229,7 +233,7 @@ export async function updateCustomGame(
 
   // If status is ready, enforce validation
   if (merged.status === "ready") {
-    const valResult = validateCustomGameContent(merged);
+    const valResult = validateCustomGameContent(merged, getGameTemplate);
     if (!valResult.ok) {
       throw appError("VALIDATION_FAILED", {
         message: "Không thể lưu ở trạng thái sẵn sàng: dữ liệu chưa hợp lệ.",
@@ -315,17 +319,20 @@ export async function validateCustomGameRecord(
   uuid: string
 ): Promise<CustomGameValidationResult> {
   const game = await getCustomGameByUuid(userId, uuid);
-  return validateCustomGameContent({
-    template_code: game.templateId,
-    title: game.title,
-    instruction: game.instruction,
-    content_pack: game.contentPack as Record<string, unknown>,
-    difficulty_params: game.difficultyParams as Record<string, unknown>,
-    theme_id: game.themeId,
-    age_min: game.ageMin,
-    age_max: game.ageMax,
-    skill_ids: game.skillIds,
-  });
+  return validateCustomGameContent(
+    {
+      template_code: game.templateId,
+      title: game.title,
+      instruction: game.instruction,
+      content_pack: game.contentPack as Record<string, unknown>,
+      difficulty_params: game.difficultyParams as Record<string, unknown>,
+      theme_id: game.themeId,
+      age_min: game.ageMin,
+      age_max: game.ageMax,
+      skill_ids: game.skillIds,
+    },
+    getGameTemplate
+  );
 }
 
 /**

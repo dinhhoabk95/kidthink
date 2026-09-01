@@ -18,6 +18,7 @@
   },
   "dependencies": {
     "@mindkid/emoji": "workspace:*",
+    "@mindkid/shared": "workspace:*",
     "zod": "catalog:",
     "zod-to-json-schema": "catalog:"
   },

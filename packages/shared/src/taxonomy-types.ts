@@ -92,37 +92,53 @@ export type ContentWhat =
 // ─── Game mechanic ───────────────────────────────────────────────────
 // Axis 3 from taxonomy index.md §Trục 3
 
-export type GameMechanic =
-  | "drag-to-container"
-  | "drag-to-slot"
-  | "drag-to-order"
-  | "number-bond"
-  | "pair-match"
-  | "clue-deduction"
-  | "substitution"
-  | "matrix-choice"
-  | "tap-select"
-  | "tap-select-multi"
-  | "tap-count"
-  | "flash-recall"
-  | "memory-flip"
-  | "maze-route"
-  | "balance-scale"
-  | "sudoku-mini"
-  | "clock-hands"
-  | "block-stack"
-  | "sort-groups"
-  | "sequence-order"
-  | "construct"
-  | "rotate-transform"
-  | "balance"
-  | "trace-path"
-  | "sequence-arrange"
-  | "listen-respond"
-  | "mirror-complete"
-  | "hidden-object"
-  | "remove-from-set"
-  | "free-create";
+export const ALL_GAME_MECHANICS = [
+  "drag-to-container",
+  "drag-to-slot",
+  "number-bond",
+  "pair-match",
+  "clue-deduction",
+  "substitution",
+  "matrix-choice",
+  "tap-select",
+  "tap-select-multi",
+  "tap-count",
+  "flash-recall",
+  "memory-flip",
+  "maze-route",
+  "balance-scale",
+  "sudoku-mini",
+  "clock-hands",
+  "block-stack",
+  "sort-groups",
+  "sequence-order",
+  "construct",
+  "rotate-transform",
+  "trace-path",
+  "listen-respond",
+  "mirror-complete",
+  "hidden-object",
+  "spot-difference",
+  "go-nogo",
+  "rule-switch",
+  "remove-from-set",
+  "measure-with-unit",
+  "coin-compose",
+  "pour-quantity",
+  "weave-grid",
+  "beat-sequence",
+  "command-sequence",
+  "free-create",
+] as const;
+
+export type GameMechanic = (typeof ALL_GAME_MECHANICS)[number];
+
+export interface ReservedMechanicEntry {
+  readonly mechanic: GameMechanic;
+  readonly task: string;
+}
+
+export const RESERVED_MECHANICS: readonly ReservedMechanicEntry[] = [] as const;
 
 // ─── Game template & level ───────────────────────────────────────────
 

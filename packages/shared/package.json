@@ -12,13 +12,13 @@
   },
   "dependencies": {
     "@mindkid/emoji": "workspace:*",
-    "@mindkid/game-engine": "workspace:*",
     "@mindkid/moderation": "workspace:*",
     "zod": "catalog:",
     "@mindkid/cache": "workspace:*"
   },
   "devDependencies": {
     "@mindkid/config": "workspace:*",
+    "@mindkid/game-engine": "workspace:*",
     "fast-check": "catalog:",
     "typescript": "catalog:",
     "vitest": "catalog:",

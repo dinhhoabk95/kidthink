@@ -5,6 +5,7 @@ import { C3_ALL_LEVELS } from "./c3/levels.js";
 import { C4_SEED_LEVELS } from "./c4/levels.js";
 import { C5_SEED_LEVELS } from "./c5/levels.js";
 import { C6_SEED_LEVELS } from "./c6/levels.js";
+import { ALL_GENERATED_LEVELS } from "./corpus/index.js";
 import { ALL_SEED_LESSONS } from "./lessons/index.js";
 import { PEDAGOGY_MISSING_SKILL_LEVELS } from "./pedagogy-missing-skills.js";
 import { QUARANTINED_LEVEL_SET } from "./quarantine.js";
@@ -12,6 +13,7 @@ import type { AnyContentSeed, ContentSeed } from "./types.js";
 
 // biome-ignore lint/performance/noBarrelFile: internal seed-content barrel
 export * from "./activities/index.js";
+export * from "./corpus/index.js";
 export * from "./gates/runner.js";
 export * from "./lessons/index.js";
 export * from "./quarantine.js";
@@ -26,6 +28,7 @@ export const ALL_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
   ...C5_SEED_LEVELS,
   ...C6_SEED_LEVELS,
   ...PEDAGOGY_MISSING_SKILL_LEVELS,
+  ...ALL_GENERATED_LEVELS,
 ];
 
 /**

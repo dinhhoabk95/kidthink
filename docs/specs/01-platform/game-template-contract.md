@@ -156,12 +156,12 @@ const SortGroupsContent = z.object({
   groups: z.array(z.object({
     group_id: z.string().regex(/^g[0-9]$/),
     label: z.string().max(24),
-    label_emoji: EmojiRef,          // ký tự UTF-8, thành viên @mindkid/emoji
+    label_emoji: z.string().min(1),  // ký tự UTF-8, không ràng buộc (BR-EMJ-01)
   })).min(2).max(4),
   items: z.array(z.object({
     item_id: z.string(),
     asset: z.discriminatedUnion("kind", [
-      z.object({ kind: z.literal("emoji"), ref: EmojiRef }),
+      z.object({ kind: z.literal("emoji"), ref: z.string().min(1) }),
       z.object({ kind: z.literal("image"), path: z.string() }),
     ]),
     correct_group_id: z.string(),   // refine: phải thuộc groups[]

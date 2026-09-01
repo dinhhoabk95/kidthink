@@ -154,6 +154,7 @@ async function processGameLevelSeed(
       ageMax: header.age_max,
       difficulty: header.difficulty,
       accessTier: header.access_tier,
+      themeId: header.theme_tag || null,
       contentPack: content_pack,
       difficultyParams: difficulty_params,
       status: "published",
@@ -193,12 +194,18 @@ async function processGameLevelSeed(
 
   await linkGameLevelSkills(tx, newLevel.id, header.skill_codes);
 
+  const levelTagCodes = [
+    ...header.what_tags,
+    ...header.thinking_tags,
+    ...(header.theme_tag ? [header.theme_tag] : []),
+  ];
+
   await validateAndAssignTags(
     tx,
     {
       entityType: "game_level",
       entityId: newLevel.id,
-      tagCodes: [...header.what_tags, ...header.thinking_tags],
+      tagCodes: levelTagCodes,
       mechanicTagCode: template.mechanic || undefined,
     },
     true

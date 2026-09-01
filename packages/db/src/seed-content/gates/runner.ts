@@ -3,6 +3,7 @@
  * Rule sở hữu: BR-CSA-02, BR-TAG-01, BR-TAG-02
  */
 
+import { isValidRef } from "@mindkid/emoji";
 import { validateActivityModel, validateLessonModel } from "@mindkid/shared";
 import type {
   ActivitySeed,
@@ -252,6 +253,32 @@ function checkGate2(seed: AnyContentSeed): GateResult {
   };
 }
 
+function collectEmojiRefs(
+  value: unknown,
+  refs: Set<string> = new Set()
+): Set<string> {
+  if (!value || typeof value !== "object") {
+    return refs;
+  }
+  if (Array.isArray(value)) {
+    for (const item of value) {
+      collectEmojiRefs(item, refs);
+    }
+    return refs;
+  }
+  const record = value as Record<string, unknown>;
+  if (record.kind === "emoji" && typeof record.ref === "string") {
+    refs.add(record.ref);
+  }
+  if (typeof record.emoji_ref === "string") {
+    refs.add(record.emoji_ref);
+  }
+  for (const v of Object.values(record)) {
+    collectEmojiRefs(v, refs);
+  }
+  return refs;
+}
+
 function checkGate3(seed: AnyContentSeed): GateResult {
   const issues: GateIssue[] = [];
   const { header } = seed;
@@ -268,6 +295,16 @@ function checkGate3(seed: AnyContentSeed): GateResult {
       issues.push({
         code: "AGE_OUT_OF_BOUNDS",
         message: `Độ tuổi [${header.age_min}, ${header.age_max}] phải nằm trong [3, 6].`,
+      });
+    }
+  }
+
+  const refs = collectEmojiRefs(seed);
+  for (const ref of refs) {
+    if (!isValidRef(ref)) {
+      issues.push({
+        code: "ASSET_REF_INVALID",
+        message: `Mã emoji '${ref}' không tồn tại trong emoji registry.`,
       });
     }
   }

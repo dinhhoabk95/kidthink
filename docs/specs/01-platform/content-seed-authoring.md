@@ -105,7 +105,7 @@ deploy một lô nội dung đã merge.
 1. Chọn khoảng trống cần lấp:  pnpm --filter @mindkid/db seed:report  → skill nào chưa có level published
 2. Người biên soạn + AI agent IDE soạn seeder file
        ├── kiểu content_pack suy ra từ content_contract của template (§7.2)
-       ├── emoji chỉ lấy từ @mindkid/emoji
+       ├── emoji: ký tự UTF-8; @mindkid/emoji là vốn từ gợi ý
        └── skill_codes / learning_objective_codes là FK có thật
 3. pnpm --filter @mindkid/db seed:check                 → 8 cổng, chạy local, sửa cho tới khi xanh
 4. Mở PR
@@ -144,7 +144,7 @@ deploy một lô nội dung đã merge.
 | `BR-CSA-10` (code bất biến) | `code` trong seeder **bất biến** sau khi merge | [`id-conventions.md`](../00-foundation/id-conventions.md) — mã published là neo của mọi telemetry và báo cáo |
 | `BR-CSA-11` (nguồn sự thật) | Seeder file là **nguồn sự thật** của lô nền. `pnpm --filter @mindkid/db seed:check --against-db` báo lệch giữa repo và DB | Sửa DB tay rồi quên seeder = môi trường tiếp theo mất bản sửa |
 | `BR-CSA-12` (TS có kiểu) | `content_pack` viết bằng **TS có kiểu**, kiểu lấy từ `content_contract` của template. Cấm JSON trần | Sai schema bắt lúc `tsc` rẻ hơn bắt lúc cổng tự động, rẻ hơn nhiều bắt lúc trẻ đang chơi |
-| `BR-CSA-13` (chỉ emoji registry) | Emoji **chỉ** lấy từ `@mindkid/emoji`, tham chiếu bằng **ký tự UTF-8**. Cấm — NEVER emoji ngoài registry | [`emoji-registry.md`](emoji-registry.md) `BR-EMJ-*` — ref không resolve được là ô trống trên màn hình trẻ |
+| `BR-CSA-13` (emoji là ký tự) | Emoji tham chiếu bằng **ký tự UTF-8**. Cấm — NEVER mã `EMJ-<slug>`. `@mindkid/emoji` là **vốn từ khuyến nghị**, không phải ràng buộc | [`emoji-registry.md`](emoji-registry.md) `BR-EMJ-01`/`BR-EMJ-02` — ref *là* glyph nên không còn phép tra để hỏng; đổi lại cổng 3 không kiểm emoji nữa |
 | `BR-CSA-14` (provenance) | Mọi hàng seed mang `seed_batch_id` + `origin` + `authored_in = 'repo_seed'` | Khi phát hiện một lô sai, phải truy được lô nào cùng PR |
 | `BR-CSA-15` (mỗi cổng có ca âm) | Mỗi cổng ở §7.3 phải có **ít nhất một** test dựng nội dung vi phạm đúng cổng đó và khẳng định cổng đỏ | Không có ca âm thì một cổng chỉ kiểm `typeof` vẫn in "đạt" mãi mãi. Đo 2026-08-29: cổng 1 báo 552 đạt trong khi phép kiểm thật cho 162 trượt — xem §7.3a |
 | `BR-CSA-16` (cổng 1 nạp contract thật) | Cổng 1 **phải** nạp `content_contract` và `difficulty_contract` từ registry engine và gọi `parse`, kể cả `refine`. Cấm — NEVER thay bằng kiểm kiểu nông | `BR-GTC-02` parse lại ở server; nếu cổng seed không parse thì lỗi chỉ lộ ra lúc trẻ mở màn chơi, là chỗ đắt nhất để phát hiện |
@@ -206,7 +206,7 @@ Chạy tuần tự. Trượt cổng nào thì dừng ở đó, in `file:line` v�
 | 0 | **Định danh** | `code` duy nhất toàn corpus seeder · đúng format [`id-conventions.md`](../00-foundation/id-conventions.md) · cấm đụng `code` đã seed ở batch trước với `content_version` khác | Đủ |
 | 1 | **Schema** | `content_pack` parse được bằng `content_contract` thật (Zod, còn đủ `refine`) · `difficulty_params` parse được bằng `difficulty_contract` | **Báo cáo + bậc thang nợ (Task #117)** — xem mục 7.3a |
 | 2 | **Cấu trúc** | ≥1 đáp án đúng · cấm prompt rỗng · số item trong `limits` của template · số distractor hợp lệ · cấm đáp án trùng nhau | Một phần |
-| 3 | **Asset** | Mọi glyph emoji là thành viên `@mindkid/emoji` (`isValidGlyph`) · mọi `image_path` resolve được | Đủ |
+| 3 | **Asset** | Emoji không kiểm (là text thường, `BR-EMJ-01`) · mọi `image_path` resolve được | Đủ |
 | 4 | **Ngôn ngữ** | Câu ≤ 12 từ · từ vựng trong tầm 3–6 tuổi · cấm từ cấm §7.5 · cấm lỗi dấu | Một phần |
 | 5 | **Sư phạm** | `skill_codes` · `learning_objective_codes` là FK có thật · `age_min ≤ age_max ∈ [3,6]` · `difficulty ∈ [1,5]` · khớp band tuổi · mechanic hợp band (`BR-GTC-05`) | **Đủ (Task #117)** — xem mục 7.3a |
 | 6 | **Trùng lặp** | Cấm gần trùng bản đã `published` — chuẩn hoá `content_pack` rồi so | Một phần |
@@ -346,11 +346,17 @@ Scenario: BR-CSA-12 — sai content_pack bắt được lúc tsc
   Then biên dịch fail
   And lỗi trỏ đúng file và dòng của item sai
 
-Scenario: BR-CSA-13 — emoji ngoài registry bị chặn
-  Given một seeder dùng glyph không có trong @mindkid/emoji
+Scenario: BR-CSA-13 — mã EMJ-* bị chặn
+  Given một seeder dùng "EMJ-red-apple" làm emoji ref
   When chạy pnpm --filter @mindkid/db seed:check
   Then cổng 3 fail
-  And thông báo nêu rõ ref nào không hợp lệ
+  And thông báo nêu rõ ref nào còn là mã
+
+Scenario: BR-CSA-13 — glyph ngoài danh mục KHÔNG bị chặn
+  Given một seeder dùng "🦖" và 🦖 chưa có trong @mindkid/emoji
+  When chạy pnpm --filter @mindkid/db seed:check
+  Then cổng 3 đạt
+  And báo cáo kiểm kê liệt kê 🦖 là glyph ngoài danh mục
 
 Scenario: cổng 5 — mechanic không phù hợp tuổi bị chặn
   Given một seeder dùng GT-006 với age_min = 3
@@ -431,7 +437,6 @@ Scenario: dry-run không chạm DB thật
 - Bỏ qua một cổng.
 - Approve PR nội dung theo lô mà không mở từng bản.
 - Cho AI sinh `skills` hoặc `strands`.
-- Emoji ngoài `@mindkid/emoji`.
 - Mã `EMJ-<slug>` — tham chiếu là ký tự UTF-8 (`BR-EMJ-02`).
 - Chạy seed trong đường request.
 - Sửa DB tay mà không sửa seeder.

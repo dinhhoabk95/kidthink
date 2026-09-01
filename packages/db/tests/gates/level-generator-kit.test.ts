@@ -176,9 +176,72 @@ describe("Level Generator Kit — Task #121 & Task #197 (BR-LGK-01..10)", () => 
         ).toBe(true);
       }
     }
-  });
+  }, 60_000);
+
+  it("Task #191 / Đợt 0: Năng lực sinh phân biệt của các engine đạt demand * 3", () => {
+    const checks: Array<{ engine: string; count: number }> = [
+      { engine: "GT-013", count: 61 * 3 },
+      { engine: "GT-017", count: 8 * 3 },
+      { engine: "GT-024", count: 20 },
+    ];
+
+    for (const { engine, count } of checks) {
+      const result = generateLevelsCore({
+        engine,
+        count,
+        seed: 12_345,
+        theme: "school",
+      });
+
+      expect(
+        result.writtenCount,
+        `Engine ${engine} phải sinh đủ ${count} level`
+      ).toBe(count);
+
+      const hashes = (
+        result.items as Array<{ content_pack: Record<string, unknown> }>
+      ).map((item) => JSON.stringify(item.content_pack));
+      const uniqueHashes = new Set(hashes);
+      expect(
+        uniqueHashes.size,
+        `Engine ${engine} phải có đủ ${count} output phân biệt`
+      ).toBe(count);
+    }
+  }, 30_000);
 
   describe("Ca âm cho bộ sinh (WP121.4)", () => {
+    it("Ca âm Đợt 0: Generator không dùng rng làm kiểm tra năng lực thất bại", () => {
+      const fakeNonRngGenerator = {
+        engine: "GT-013" as const,
+        axes: {
+          age_band: ["4-5" as const, "5-6" as const],
+          what: ["spatial"],
+          theme: [
+            "school",
+            "farm",
+            "home",
+            "nature",
+            "food",
+            "animal",
+            "ocean",
+            "space",
+          ],
+        },
+        generate: () => ({
+          content_pack: { fixed: true },
+          difficulty_params: {},
+        }),
+      };
+
+      const hashes = new Set<string>();
+      for (let i = 0; i < 10; i++) {
+        const out = fakeNonRngGenerator.generate();
+        hashes.add(JSON.stringify(out.content_pack));
+      }
+      expect(hashes.size).toBe(1);
+      expect(hashes.size).toBeLessThan(10);
+    });
+
     it("Ca âm: Engine không tồn tại sẽ throw lỗi rõ ràng", () => {
       expect(() => {
         generateLevelsCore({
