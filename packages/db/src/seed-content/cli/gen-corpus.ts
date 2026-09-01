@@ -17,14 +17,7 @@ import { STATIC_SEED_LEVELS } from "#src/seed-content/index";
 import type { ContentSeed } from "#src/seed-content/types";
 import { resolveEnginePhrases } from "#src/seed-content/vocab/phrases";
 import { getThemeVocabulary } from "#src/seed-content/vocab/themes";
-import { SEED_CONTENT_TAGS } from "#src/seed-master/content-tags";
 import { parseTaxonomyDocs } from "#src/seed-master/taxonomy/index";
-
-const DB_TAG_AXIS_MAP = new Map(SEED_CONTENT_TAGS.map((t) => [t.code, t.axis]));
-
-function isValidDbTagForAxis(axis: "what" | "thinking", tag: string): boolean {
-  return DB_TAG_AXIS_MAP.get(tag) === axis;
-}
 
 const __filename = fileURLToPath(import.meta.url);
 const isDirectCli = process.argv[1] === __filename;
@@ -276,6 +269,140 @@ function generateSingleCandidate(params: {
   );
 }
 
+const WHAT_NORMALIZATION_MAP: Record<string, string> = {
+  classification: "cls",
+  category: "cls",
+  attributes: "cls",
+  "drag-to-container": "cls",
+  "sort-groups": "cls",
+  pairing: "cls",
+  matching: "cls",
+  ordering: "cmp",
+  comparison: "cmp",
+  "number-bond": "ops",
+  addition: "ops",
+  decomposition: "ops",
+  arithmetic: "ops",
+  placement: "spt",
+  "slot-matching": "spt",
+  spatial: "spt",
+  path: "flw",
+  planning: "flw",
+  maze: "spt",
+  "3d": "shp",
+  assembly: "shp",
+  construction: "shp",
+  rotation: "spt",
+  symmetry: "shp",
+  mirror: "shp",
+  deduction: "log",
+  logic: "log",
+  equation: "log",
+  substitution: "log",
+  matrix: "log",
+  constraint: "log",
+  memory: "mem",
+  "card-flip": "mem",
+  subitizing: "cnt",
+  counting: "cnt",
+  weight: "msr",
+  measurement: "msr",
+  balance: "msr",
+  capacity: "msr",
+  clock: "time",
+  angle: "shp",
+  auditory: "lst",
+  listening: "lst",
+  observation: "shp",
+  "hidden-object": "shp",
+  scene: "shp",
+  "spot-difference": "shp",
+  motor: "fnc",
+  writing: "fnc",
+  inhibition: "fnc",
+  attention: "fnc",
+  reaction: "fnc",
+  "cognitive-flexibility": "fnc",
+  "rule-switch": "rule",
+};
+
+const THINKING_NORMALIZATION_MAP: Record<string, string> = {
+  observe: "observe",
+  observation: "observe",
+  compare: "compare",
+  comparison: "compare",
+  sort: "sort",
+  match: "match",
+  sequence: "sequence",
+  infer: "infer",
+  predict: "predict",
+  plan: "plan",
+  recall: "recall",
+  inhibit: "inhibit",
+  inhibitory: "inhibit",
+  shift: "shift",
+  count: "count",
+  counting: "count",
+  visual: "observe",
+  auditory: "observe",
+  spatial: "plan",
+  analytical: "infer",
+  abstract: "infer",
+  deductive: "infer",
+  inductive: "predict",
+  sequential: "sequence",
+  associative: "match",
+  critical: "compare",
+  flexible: "shift",
+  solve: "infer",
+};
+
+const CANONICAL_WHAT_SET = new Set([
+  "number",
+  "quantity",
+  "geometry",
+  "space",
+  "pattern",
+  "colour",
+  "size",
+  "category",
+  "sequence",
+  "time",
+  "money",
+  "rule",
+  "letter",
+  "sound",
+  "cnt",
+  "cmp",
+  "ops",
+  "shp",
+  "spt",
+  "msr",
+  "pat",
+  "cls",
+  "log",
+  "mem",
+  "voc",
+  "lst",
+  "flw",
+  "fnc",
+]);
+
+const CANONICAL_THINKING_SET = new Set([
+  "observe",
+  "compare",
+  "sort",
+  "match",
+  "sequence",
+  "infer",
+  "predict",
+  "plan",
+  "recall",
+  "inhibit",
+  "shift",
+  "count",
+]);
+
 function generateLevelsForAllocationRow(params: {
   row: AllocationRow;
   needToGenerate: number;
@@ -299,14 +426,25 @@ function generateLevelsForAllocationRow(params: {
   const strandPart = strandCode.split(".")[1] || "GEN";
   const mechSlug = TEMPLATE_MECH_SLUGS[row.template_code] || "GAME";
 
-  const whatTags =
-    generator?.axes.what.filter((w) => isValidDbTagForAxis("what", w)) ?? [];
+  const rawWhat = generator?.axes.what || [];
+  const whatTags = Array.from(
+    new Set(
+      rawWhat
+        .map((w) => WHAT_NORMALIZATION_MAP[w] || w)
+        .filter((w) => CANONICAL_WHAT_SET.has(w))
+    )
+  );
   if (whatTags.length === 0) {
-    whatTags.push("classification");
+    whatTags.push("cls");
   }
 
-  const thinkingTags = skill.thinking_processes.filter((t) =>
-    isValidDbTagForAxis("thinking", t)
+  const rawThinking = skill.thinking_processes || [];
+  const thinkingTags = Array.from(
+    new Set(
+      rawThinking
+        .map((t) => THINKING_NORMALIZATION_MAP[t] || t)
+        .filter((t) => CANONICAL_THINKING_SET.has(t))
+    )
   );
   if (thinkingTags.length === 0) {
     thinkingTags.push("observe");

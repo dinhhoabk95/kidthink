@@ -144,8 +144,9 @@ export const GT024Generator: LevelGenerator = {
     const waypoints = preset.points.map((pt, idx) => {
       const rx = Math.round(centerX + (pt.x - centerX) * scale + dx);
       const ry = Math.round(centerY + (pt.y - centerY) * scale + dy);
-      const clampedX = Math.max(50, Math.min(910, rx));
-      const clampedY = Math.max(50, Math.min(490, ry));
+      // Safe margin 48px trên canvas 960x540
+      const clampedX = Math.max(64, Math.min(896, rx));
+      const clampedY = Math.max(64, Math.min(476, ry));
 
       return {
         id: `p${idx + 1}`,
@@ -155,6 +156,16 @@ export const GT024Generator: LevelGenerator = {
         label: `${idx + 1}`,
       };
     });
+
+    // Kiểm tra hình học: mọi điểm nằm trọn vẹn trong vùng an toàn
+    const isInsideSafeArea = waypoints.every(
+      (p) => p.x >= 48 && p.x <= 912 && p.y >= 48 && p.y <= 492
+    );
+    if (!isInsideSafeArea) {
+      throw new Error(
+        "GT-024 geometry check failed: waypoints exceed safe area boundaries"
+      );
+    }
 
     const nouns = getNouns(vocabulary, 1);
     const guideNoun = nouns[0];

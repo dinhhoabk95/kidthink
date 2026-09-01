@@ -29,7 +29,7 @@
 - [x] [`#169`](169-mechanic-vocabulary-enforcement-plan.md) Từ vựng `mechanic` khớp registry và ép bằng kiểu — M
 - [x] [`#170`](170-legacy-v1-traceability-spine-plan.md) Xương truy vết v1: registry 60 · `legacy_v1_ref` · cổng phủ · audit 250 level — L
 - [x] [`#171`](171-solver-backed-generators-plan.md) Bốn bộ sinh cần bộ giải: `GT-009` `GT-013` `GT-014` `GT-015` — L
-- [ ] [`#172`](172-geometry-checked-generators-plan.md) Bốn bộ sinh cần kiểm hình học: `GT-016` `GT-017` `GT-021` `GT-024` — L
+- [x] [`#172`](172-geometry-checked-generators-plan.md) Bốn bộ sinh cần kiểm hình học: `GT-016` `GT-017` `GT-021` `GT-024` — L
 - [ ] [`#173`](173-generator-theme-axis-expansion-plan.md) Mở trục chủ đề 19 bộ sinh, 5 → ≥8 — M
 - [ ] [`#174`](174-engine-depth-step-1-plan.md) Bật `engine-depth` bậc 1 — M
 

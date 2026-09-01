@@ -6,6 +6,10 @@ import { GT010Generator } from "#src/generators/gt010";
 import { GT013Generator } from "#src/generators/gt013";
 import { GT014Generator } from "#src/generators/gt014";
 import { GT015Generator } from "#src/generators/gt015";
+import { GT016Generator } from "#src/generators/gt016";
+import { GT017Generator } from "#src/generators/gt017";
+import { GT021Generator } from "#src/generators/gt021";
+import { GT024Generator } from "#src/generators/gt024";
 import { GT028Generator } from "#src/generators/gt028";
 import { GT029Generator } from "#src/generators/gt029";
 import { GT030Generator } from "#src/generators/gt030";
@@ -42,6 +46,30 @@ import {
   type GT015Difficulty,
   GT015DifficultySchema,
 } from "#src/templates/GT-015/template";
+import {
+  type GT016Content,
+  GT016ContentSchema,
+  type GT016Difficulty,
+  GT016DifficultySchema,
+} from "#src/templates/GT-016/template";
+import {
+  type GT017Content,
+  GT017ContentSchema,
+  type GT017Difficulty,
+  GT017DifficultySchema,
+} from "#src/templates/GT-017/template";
+import {
+  type GT021Content,
+  GT021ContentSchema,
+  type GT021Difficulty,
+  GT021DifficultySchema,
+} from "#src/templates/GT-021/template";
+import {
+  type GT024Content,
+  GT024ContentSchema,
+  type GT024Difficulty,
+  GT024DifficultySchema,
+} from "#src/templates/GT-024/template";
 import type {
   GT028Content,
   GT028Difficulty,
@@ -652,6 +680,185 @@ describe("GT-034 — generator contract conformity", () => {
         })),
       };
       expect(() => GT015ContentSchema.parse(invalidPack)).toThrow();
+    });
+  });
+
+  describe("GT-016 — generator contract conformity & angle geometry verification", () => {
+    const themeVocab = vocab(10);
+
+    it("generates valid clock hand levels for age band 5-6 across seeds", () => {
+      for (let seed = 1; seed <= 20; seed++) {
+        const { content_pack, difficulty_params } = GT016Generator.generate({
+          rng: createRng(seed),
+          age_band: "5-6",
+          theme: "school",
+          vocabulary: themeVocab,
+        }) as {
+          content_pack: GT016Content;
+          difficulty_params: GT016Difficulty;
+        };
+
+        const parsedContent = GT016ContentSchema.parse(content_pack);
+        const parsedDiff = GT016DifficultySchema.parse(difficulty_params);
+        expect(parsedContent).toBeDefined();
+        expect(parsedDiff).toBeDefined();
+
+        expect(content_pack.target_time.hour).toBeGreaterThanOrEqual(1);
+        expect(content_pack.target_time.hour).toBeLessThanOrEqual(12);
+        expect(content_pack.options.filter((o) => o.is_correct)).toHaveLength(
+          1
+        );
+      }
+    });
+
+    it("ca âm: không có đáp án đúng bị schema từ chối", () => {
+      const { content_pack } = GT016Generator.generate({
+        rng: createRng(1),
+        age_band: "5-6",
+        theme: "school",
+        vocabulary: themeVocab,
+      }) as { content_pack: GT016Content };
+
+      const invalidPack = {
+        ...content_pack,
+        options: content_pack.options.map((o) => ({ ...o, is_correct: false })),
+      };
+      expect(() => GT016ContentSchema.parse(invalidPack)).toThrow();
+    });
+  });
+
+  describe("GT-017 — generator contract conformity & isometric geometry verification", () => {
+    const themeVocab = vocab(10);
+
+    it("generates valid isometric block models for age bands 4-5 and 5-6 across seeds", () => {
+      for (const age_band of ["4-5", "5-6"] as const) {
+        for (let seed = 1; seed <= 20; seed++) {
+          const { content_pack, difficulty_params } = GT017Generator.generate({
+            rng: createRng(seed),
+            age_band,
+            theme: "school",
+            vocabulary: themeVocab,
+          }) as {
+            content_pack: GT017Content;
+            difficulty_params: GT017Difficulty;
+          };
+
+          const parsedContent = GT017ContentSchema.parse(content_pack);
+          const parsedDiff = GT017DifficultySchema.parse(difficulty_params);
+          expect(parsedContent).toBeDefined();
+          expect(parsedDiff).toBeDefined();
+
+          expect(content_pack.model.length).toBeGreaterThanOrEqual(
+            age_band === "4-5" ? 3 : 4
+          );
+        }
+      }
+    });
+
+    it("ca âm: mô hình có khối lơ lửng bị schema từ chối", () => {
+      const { content_pack } = GT017Generator.generate({
+        rng: createRng(1),
+        age_band: "4-5",
+        theme: "school",
+        vocabulary: themeVocab,
+      }) as { content_pack: GT017Content };
+
+      // Thêm 1 khối lơ lửng ở z=2 khi z=1 không có khối
+      const invalidPack = {
+        ...content_pack,
+        model: [...content_pack.model, { x: 3, y: 3, z: 2 }],
+      };
+      expect(() => GT017ContentSchema.parse(invalidPack)).toThrow();
+    });
+  });
+
+  describe("GT-021 — generator contract conformity & mirror symmetry verification", () => {
+    const themeVocab = vocab(10);
+
+    it("generates valid mirror symmetry levels for age bands 4-5 and 5-6 across seeds", () => {
+      for (const age_band of ["4-5", "5-6"] as const) {
+        for (let seed = 1; seed <= 20; seed++) {
+          const { content_pack, difficulty_params } = GT021Generator.generate({
+            rng: createRng(seed),
+            age_band,
+            theme: "school",
+            vocabulary: themeVocab,
+          }) as {
+            content_pack: GT021Content;
+            difficulty_params: GT021Difficulty;
+          };
+
+          const parsedContent = GT021ContentSchema.parse(content_pack);
+          const parsedDiff = GT021DifficultySchema.parse(difficulty_params);
+          expect(parsedContent).toBeDefined();
+          expect(parsedDiff).toBeDefined();
+
+          expect(content_pack.reference_pattern.length).toBe(
+            content_pack.target_slots.length
+          );
+        }
+      }
+    });
+
+    it("ca âm: reference_pattern rỗng bị schema từ chối", () => {
+      const { content_pack } = GT021Generator.generate({
+        rng: createRng(1),
+        age_band: "4-5",
+        theme: "school",
+        vocabulary: themeVocab,
+      }) as { content_pack: GT021Content };
+
+      const invalidPack = { ...content_pack, reference_pattern: [] };
+      expect(() => GT021ContentSchema.parse(invalidPack)).toThrow();
+    });
+  });
+
+  describe("GT-024 — generator contract conformity & safe area trace verification", () => {
+    const themeVocab = vocab(10);
+
+    it("generates valid trace path levels within safe area boundaries for age band 5-6 across seeds", () => {
+      for (let seed = 1; seed <= 20; seed++) {
+        const { content_pack, difficulty_params } = GT024Generator.generate({
+          rng: createRng(seed),
+          age_band: "5-6",
+          theme: "school",
+          vocabulary: themeVocab,
+        }) as {
+          content_pack: GT024Content;
+          difficulty_params: GT024Difficulty;
+        };
+
+        const parsedContent = GT024ContentSchema.parse(content_pack);
+        const parsedDiff = GT024DifficultySchema.parse(difficulty_params);
+        expect(parsedContent).toBeDefined();
+        expect(parsedDiff).toBeDefined();
+
+        expect(content_pack.waypoints.length).toBeGreaterThanOrEqual(3);
+        for (const wp of content_pack.waypoints) {
+          expect(wp.x).toBeGreaterThanOrEqual(48);
+          expect(wp.x).toBeLessThanOrEqual(912);
+          expect(wp.y).toBeGreaterThanOrEqual(48);
+          expect(wp.y).toBeLessThanOrEqual(492);
+        }
+      }
+    });
+
+    it("ca âm: waypoint vượt ra ngoài canvas 960x540 bị schema từ chối", () => {
+      const { content_pack } = GT024Generator.generate({
+        rng: createRng(1),
+        age_band: "5-6",
+        theme: "school",
+        vocabulary: themeVocab,
+      }) as { content_pack: GT024Content };
+
+      const invalidPack = {
+        ...content_pack,
+        waypoints: [
+          { id: "p0", x: 1200, y: 300, order: 0 },
+          ...content_pack.waypoints,
+        ],
+      };
+      expect(() => GT024ContentSchema.parse(invalidPack)).toThrow();
     });
   });
 });

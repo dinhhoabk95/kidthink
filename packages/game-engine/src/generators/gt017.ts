@@ -1,4 +1,9 @@
 import {
+  countHiddenCubes,
+  hasNoFloatingCubes,
+  isModelConnected,
+} from "../systems/isometric-system.js";
+import {
   getNouns,
   pickOne,
   sampleUnique,
@@ -13,27 +18,19 @@ interface CubeCoord {
   colorToken?: string;
 }
 
-export const GT017Generator: LevelGenerator = {
-  engine: "GT-017",
-  axes: {
-    age_band: ["4-5", "5-6"],
-    what: ["spatial", "3d", "geometry", "counting"],
-    theme: [...VALID_GENERATOR_THEMES],
-  },
-  generate({ rng, age_band, vocabulary }) {
-    const minCubes = age_band === "4-5" ? 3 : 4;
-    const maxExtra = age_band === "4-5" ? 2 : 4;
-    const targetCubeCount = minCubes + rng.nextInt(maxExtra);
+function buildValidIsometricModel(
+  rng: Parameters<LevelGenerator["generate"]>[0]["rng"],
+  targetCubeCount: number,
+  chosenColor: string
+): CubeCoord[] {
+  let model: CubeCoord[] = [{ x: 0, y: 0, z: 0, colorToken: chosenColor }];
+  let occupied = new Set<string>(["0,0,0"]);
 
-    const model: CubeCoord[] = [{ x: 0, y: 0, z: 0 }];
-    const occupied = new Set<string>(["0,0,0"]);
+  for (let genAttempts = 0; genAttempts < 20; genAttempts++) {
+    model = [{ x: 0, y: 0, z: 0, colorToken: chosenColor }];
+    occupied = new Set<string>(["0,0,0"]);
 
-    const colorTokens = ["berry", "amber", "mint", "sky", "violet", "peach"];
-    const chosenColor = pickOne(rng, colorTokens);
-
-    let attempts = 0;
-    while (model.length < targetCubeCount && attempts < 100) {
-      attempts++;
+    for (let step = 0; step < 100 && model.length < targetCubeCount; step++) {
       const baseCube = pickOne(rng, model);
       const candidates: Array<{ x: number; y: number; z: number }> = [
         { x: baseCube.x + 1, y: baseCube.y, z: baseCube.z },
@@ -50,7 +47,6 @@ export const GT017Generator: LevelGenerator = {
         if (occupied.has(`${c.x},${c.y},${c.z}`)) {
           return false;
         }
-        // Kiểm tra không lơ lửng nếu z > 0
         if (c.z > 0 && !occupied.has(`${c.x},${c.y},${c.z - 1}`)) {
           return false;
         }
@@ -62,6 +58,42 @@ export const GT017Generator: LevelGenerator = {
         model.push({ ...nextCoord, colorToken: chosenColor });
         occupied.add(`${nextCoord.x},${nextCoord.y},${nextCoord.z}`);
       }
+    }
+
+    if (
+      hasNoFloatingCubes(model) &&
+      isModelConnected(model) &&
+      countHiddenCubes(model, 0) === 0
+    ) {
+      return model;
+    }
+  }
+
+  return model;
+}
+
+export const GT017Generator: LevelGenerator = {
+  engine: "GT-017",
+  axes: {
+    age_band: ["4-5", "5-6"],
+    what: ["spatial", "3d", "geometry", "counting"],
+    theme: [...VALID_GENERATOR_THEMES],
+  },
+  generate({ rng, age_band, vocabulary }) {
+    const minCubes = age_band === "4-5" ? 3 : 4;
+    const maxExtra = age_band === "4-5" ? 2 : 4;
+    const targetCubeCount = minCubes + rng.nextInt(maxExtra);
+
+    const colorTokens = ["berry", "amber", "mint", "sky", "violet", "peach"];
+    const chosenColor = pickOne(rng, colorTokens);
+
+    const model = buildValidIsometricModel(rng, targetCubeCount, chosenColor);
+
+    if (
+      !(hasNoFloatingCubes(model) && isModelConnected(model)) ||
+      countHiddenCubes(model, 0) > 0
+    ) {
+      throw new Error("GT-017 geometry check failed");
     }
 
     const correctCount = model.length;
@@ -100,9 +132,9 @@ export const GT017Generator: LevelGenerator = {
         options,
       },
       difficulty_params: {
-        hidden_cube_count: model.filter((c) => c.z > 0).length > 0 ? 1 : 0,
+        hidden_cube_count: 0,
         distractor_count: options.length - 1,
-        allow_rotate: age_band === "5-6",
+        allow_rotate: false,
         hint_after_ms: age_band === "4-5" ? 10_000 : 15_000,
         allow_retry: true,
       },
