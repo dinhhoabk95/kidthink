@@ -166,6 +166,10 @@ set một vòng — xem `BR-RSP-02` ở [`round-sequence-play.md`](../04-play/ro
 | `command_removed` | `{ command, command_index, round_index? }` | `GT-035` |
 | `program_run` | `{ command_count, round_index? }` | `GT-035` |
 | `program_failed` | `{ failed_step, reason, round_index? }` | `GT-035` |
+| `element_placed` | `{ slot_index, element_id, round_index? }` | `GT-036` |
+| `element_removed` | `{ slot_index, removed_id?, round_index? }` | `GT-036` |
+| `creation_submitted` | `{ placed_items?, round_index? }` | `GT-036` |
+| `rule_detected` | `{ detected, motif, repetitions, score, is_win, round_index? }` | `GT-036` |
 
 
 ### 7.3 Trợ giúp

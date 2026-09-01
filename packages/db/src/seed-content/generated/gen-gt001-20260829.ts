@@ -1,5 +1,5 @@
 /**
- * @generated from LEVEL-GENERATOR-KIT@6b50e175e1fc
+ * @generated from LEVEL-GENERATOR-KIT@2603751deab2
  * Engine: GT-001
  * Seed: 20260829
  * Theme: school

@@ -7,11 +7,8 @@ import {
   scanEngineSpecsGate,
 } from "./engine-specs.js";
 
-const fixtureSpecPath = resolve(
-  import.meta.dirname,
-  "fixtures",
-  "incomplete-spec.md"
-);
+const fixturesDir = resolve(import.meta.dirname, "fixtures");
+const fixtureSpecPath = resolve(fixturesDir, "incomplete-spec.md");
 
 describe("Gate check:engine-specs (BR-ESS-01..15)", () => {
   const specsDir = repoPath("docs/specs/01-platform/engines");
@@ -24,7 +21,7 @@ describe("Gate check:engine-specs (BR-ESS-01..15)", () => {
   );
   const repoRoot = repoPath(".");
 
-  it("baseline gate: 35 templates, 36 specs, 1 đặt trước, 0 mồ côi", () => {
+  it("baseline gate: 36 templates, 36 specs, 0 đặt trước, 0 mồ côi", () => {
     const result = scanEngineSpecsGate(
       specsDir,
       templatesDir,
@@ -32,16 +29,16 @@ describe("Gate check:engine-specs (BR-ESS-01..15)", () => {
       plannedPath,
       repoRoot
     );
-    expect(result.totalTemplates).toBe(35);
+    expect(result.totalTemplates).toBe(36);
     expect(result.totalSpecs).toBe(36);
-    expect(result.plannedCount).toBe(1);
+    expect(result.plannedCount).toBe(0);
     expect(result.orphanCount).toBe(0);
     expect(result.readyCount).toBeGreaterThanOrEqual(1);
     expect(result.violations).toHaveLength(0);
 
     const report = formatEngineSpecsReport(result);
-    expect(report).toContain("35 mã trong registry, 36 spec tồn tại, 0 mồ côi");
-    expect(report).toContain("1 spec chờ template");
+    expect(report).toContain("36 mã trong registry, 36 spec tồn tại, 0 mồ côi");
+    expect(report).toContain("0 spec chờ template");
   });
 
   // Ca âm 1: Xoá một spec engine -> Đỏ (BR-ESS-01)
@@ -115,14 +112,12 @@ describe("Gate check:engine-specs (BR-ESS-01..15)", () => {
     expect(result.violations.some((v) => v.rule === "BR-ESS-01")).toBe(true);
   });
 
-  // Ca âm 9: Bỏ danh sách đặt trước -> 1 spec chưa có khuôn thành mồ côi (BR-ESS-01)
-  it("Ca âm 9: spec không khai đặt trước vẫn là mồ côi (BR-ESS-01)", () => {
-    const result = scanEngineSpecsGate(specsDir, templatesDir, configPath);
-    expect(result.orphanCount).toBe(1);
-    const orphanCodes = result.violations
-      .filter((v) => v.rule === "BR-ESS-01")
-      .map((v) => v.templateCode);
-    expect(orphanCodes).toContain("GT-036");
+  // Ca âm 9: Thư mục templates thiếu khuôn và không khai đặt trước -> mồ côi (BR-ESS-01)
+  it("Ca âm 9: spec không khai đặt trước và chưa có khuôn là mồ côi (BR-ESS-01)", () => {
+    const mockTemplatesDir = resolve(fixturesDir, "aux-raw-canvas");
+    const result = scanEngineSpecsGate(specsDir, mockTemplatesDir, configPath);
+    expect(result.orphanCount).toBeGreaterThanOrEqual(1);
+    expect(result.violations.some((v) => v.rule === "BR-ESS-01")).toBe(true);
   });
 
   // Ca âm 10: Mã đã có khuôn mà vẫn nằm trong danh sách đặt trước -> Đỏ (BR-ESS-15)

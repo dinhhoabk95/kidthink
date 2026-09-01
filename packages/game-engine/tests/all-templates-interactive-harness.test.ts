@@ -38,6 +38,7 @@ import {
   GT033_FIXTURES,
   GT034_FIXTURES,
   GT035_FIXTURES,
+  GT036_FIXTURES,
   RenderSystem,
 } from "#src/index";
 
@@ -94,6 +95,7 @@ const FIXTURES_MAP: Record<
   "GT-033": GT033_FIXTURES,
   "GT-034": GT034_FIXTURES,
   "GT-035": GT035_FIXTURES,
+  "GT-036": GT036_FIXTURES,
 };
 
 function createMockCanvasContext(): CanvasRenderingContext2D {

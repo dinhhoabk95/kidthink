@@ -99,6 +99,10 @@ export const ALLOWED_EVENT_NAMES = new Set([
   "command_removed",
   "program_run",
   "program_failed",
+  "element_placed",
+  "element_removed",
+  "creation_submitted",
+  "rule_detected",
 ]);
 
 const PII_FIELDS = new Set([
@@ -306,6 +310,17 @@ const EVENT_PAYLOAD_FIELDS: Readonly<Record<string, ReadonlySet<string>>> = {
   command_removed: new Set(["command", "command_index", "round_index"]),
   program_run: new Set(["command_count", "round_index"]),
   program_failed: new Set(["failed_step", "reason", "round_index"]),
+  element_placed: new Set(["slot_index", "element_id", "round_index"]),
+  element_removed: new Set(["slot_index", "removed_id", "round_index"]),
+  creation_submitted: new Set(["placed_items", "round_index"]),
+  rule_detected: new Set([
+    "detected",
+    "motif",
+    "repetitions",
+    "score",
+    "is_win",
+    "round_index",
+  ]),
 };
 
 const NON_NEGATIVE_INT = z.number().int().nonnegative();
@@ -705,6 +720,28 @@ const EVENT_PAYLOAD_SCHEMAS: Readonly<Record<string, z.AnyZodObject>> = {
   program_failed: z.object({
     failed_step: z.number().int(),
     reason: z.string().max(64),
+    round_index: OPTIONAL_ROUND_INDEX,
+  }),
+  element_placed: z.object({
+    slot_index: NON_NEGATIVE_INT,
+    element_id: CONTENT_ID,
+    round_index: OPTIONAL_ROUND_INDEX,
+  }),
+  element_removed: z.object({
+    slot_index: NON_NEGATIVE_INT,
+    removed_id: CONTENT_ID.nullable().optional(),
+    round_index: OPTIONAL_ROUND_INDEX,
+  }),
+  creation_submitted: z.object({
+    placed_items: z.array(z.string().nullable()).optional(),
+    round_index: OPTIONAL_ROUND_INDEX,
+  }),
+  rule_detected: z.object({
+    detected: z.boolean(),
+    motif: z.array(z.string()),
+    repetitions: NON_NEGATIVE_INT,
+    score: NON_NEGATIVE_INT,
+    is_win: z.boolean(),
     round_index: OPTIONAL_ROUND_INDEX,
   }),
 };

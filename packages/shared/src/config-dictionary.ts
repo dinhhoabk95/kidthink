@@ -975,6 +975,24 @@ export const CONFIG_DICTIONARY: Record<string, FieldDictionaryEntry> = {
     label: "Cho phép lệnh lặp",
     help: "Bật tắt khối lệnh lặp lại cho trẻ.",
   },
+
+  // GT-036: Free Create
+  track_length: {
+    label: "Độ dài dải ô",
+    help: "Số lượng ô trên dải để bé xếp quy luật.",
+  },
+  min_repetitions: {
+    label: "Số lần lặp tối thiểu",
+    help: "Số lần lặp lại tối thiểu của mô-típ để đạt yêu cầu bài học.",
+  },
+  palette_size: {
+    label: "Số lượng phần tử trong bảng",
+    help: "Số lượng phần tử được cung cấp trong bảng chọn.",
+  },
+  strictness: {
+    label: "Độ nghiêm ngặt ranh giới",
+    help: "Chế độ kiểm tra ranh giới quy luật (relaxed hoặc strict).",
+  },
 };
 
 /**
@@ -982,6 +1000,7 @@ export const CONFIG_DICTIONARY: Record<string, FieldDictionaryEntry> = {
  * Every entry must have a clear documented rationale.
  */
 export const TEXT_FALLBACK_ALLOWLIST: Record<string, string> = {
+  strictness: "Chế độ nghiêm ngặt ranh giới quy luật (relaxed hoặc strict).",
   facing: "Hướng nhìn của nhân vật trên lưới.",
   allowed_commands: "Danh sách khối lệnh cho phép.",
   command: "Khối lệnh điều khiển nhân vật.",

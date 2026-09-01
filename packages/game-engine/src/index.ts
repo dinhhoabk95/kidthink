@@ -188,6 +188,11 @@ export {
   togglePieceFlip,
 } from "./systems/rotation-system.js";
 export {
+  detectRule,
+  type RuleDetectionOptions,
+  type RuleDetectionResult,
+} from "./systems/rule-detection-system.js";
+export {
   type AgeBand as ScaffoldingAgeBand,
   type ScaffoldAction,
   type ScaffoldingBandThresholds,
@@ -431,4 +436,14 @@ export type {
   GT035Content,
   GT035Difficulty,
 } from "./templates/GT-035/template.js";
+export {
+  GT036Fixtures,
+  GT036Fixtures as GT036_FIXTURES,
+} from "./templates/GT-036/fixtures.js";
+export { GT036Session } from "./templates/GT-036/session.js";
+export type {
+  GT036Content,
+  GT036Difficulty,
+  GT036PaletteItem,
+} from "./templates/GT-036/template.js";
 export { ObjectPool } from "./utils/object-pool.js";

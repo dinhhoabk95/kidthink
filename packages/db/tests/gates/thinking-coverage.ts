@@ -144,6 +144,7 @@ export const CANONICAL_MECHANIC_TAGS = new Set([
   "weave-grid",
   "beat-sequence",
   "command-sequence",
+  "free-create",
 ]);
 
 import { CANONICAL_THEME_CODES } from "@mindkid/shared";
