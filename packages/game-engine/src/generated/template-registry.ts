@@ -33,6 +33,7 @@ import GT028Template from "#src/templates/GT-028/template";
 import GT029Template from "#src/templates/GT-029/template";
 import GT030Template from "#src/templates/GT-030/template";
 import GT031Template from "#src/templates/GT-031/template";
+import GT032Template from "#src/templates/GT-032/template";
 
 export const ALL_TEMPLATES: Record<string, GameTemplate> = {
   "GT-001": GT001Template,
@@ -66,6 +67,7 @@ export const ALL_TEMPLATES: Record<string, GameTemplate> = {
   "GT-029": GT029Template,
   "GT-030": GT030Template,
   "GT-031": GT031Template,
+  "GT-032": GT032Template,
 };
 
 export const MVP_TEMPLATES = ALL_TEMPLATES;

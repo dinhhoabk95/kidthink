@@ -841,6 +841,40 @@ export const CONFIG_DICTIONARY: Record<string, FieldDictionaryEntry> = {
     label: "Yêu cầu trả đúng số tiền",
     help: "Bắt buộc trả chính xác không thừa tiền.",
   },
+
+  // GT-032: Pour Quantity
+  cups: {
+    label: "Danh sách cốc nước",
+    help: "Các chiếc cốc với hình dáng và mức nước khác nhau.",
+  },
+  cup_id: {
+    label: "Mã định danh cốc",
+    help: "Mã định danh duy nhất của từng chiếc cốc.",
+  },
+  capacity_units: {
+    label: "Dung tích cốc (đơn vị)",
+    help: "Số đơn vị thể tích tối đa của cốc.",
+  },
+  fill_units: {
+    label: "Mức nước (đơn vị)",
+    help: "Số đơn vị thể tích chất lỏng đang có trong cốc.",
+  },
+  question_type: {
+    label: "Loại câu hỏi",
+    help: "Yêu cầu tìm cốc nhiều hơn, ít hơn hoặc bằng nhau.",
+  },
+  conservation_trap: {
+    label: "Bẫy bảo toàn Piaget",
+    help: "Bật tình huống thử thách sự hiểu biết về bảo toàn thể tích.",
+  },
+  cup_count: {
+    label: "Số lượng cốc",
+    help: "Số lượng cốc hiển thị trên màn hình.",
+  },
+  level_steps: {
+    label: "Số vạch chia mức",
+    help: "Số vạch chia đơn vị dung tích trên cốc.",
+  },
 };
 
 /**
@@ -860,6 +894,11 @@ export const TEXT_FALLBACK_ALLOWLIST: Record<string, string> = {
   coin_id: "Mã định danh đồng xu trong bài toán tiền.",
   target_amount: "Số nguyên tổng tiền mục tiêu cần trả.",
   coin_kind_count: "Số nguyên lượng loại mệnh giá.",
+  cup_id: "Mã định danh cốc nước.",
+  capacity_units: "Số nguyên dung tích cốc.",
+  fill_units: "Số nguyên mức nước trong cốc.",
+  cup_count: "Số nguyên lượng cốc hiển thị.",
+  level_steps: "Số nguyên vạch chia mức cốc.",
   prompt: "Câu hỏi chính của bài học, dạng văn bản ngắn đọc cho bé.",
   item_id: "Mã định danh kỹ thuật của vật phẩm trong content pack.",
   id: "Mã định danh đối tượng.",

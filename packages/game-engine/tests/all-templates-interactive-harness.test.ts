@@ -34,6 +34,7 @@ import {
   GT029_FIXTURES,
   GT030_FIXTURES,
   GT031_FIXTURES,
+  GT032_FIXTURES,
   RenderSystem,
 } from "#src/index";
 
@@ -86,6 +87,7 @@ const FIXTURES_MAP: Record<
   "GT-029": GT029_FIXTURES,
   "GT-030": GT030_FIXTURES,
   "GT-031": GT031_FIXTURES,
+  "GT-032": GT032_FIXTURES,
 };
 
 function createMockCanvasContext(): CanvasRenderingContext2D {
@@ -1201,6 +1203,40 @@ describe("All 27 Game Engine Templates Interactive & Visual Harness", () => {
       const res = s.validateAction({
         type: "deposit_coin",
         data: { coin_id: c2.coin_id },
+      });
+      expect(res.valid).toBe(true);
+      expect(s.checkWinCondition()).toBe(true);
+    });
+
+    it("GT-032: cup selection for quantity comparison simulation succeeds", () => {
+      const f = getFixture(GT032_FIXTURES, 0); // Fixture 0: question_type is "more", cup_b has 5 (more than cup_a with 2)
+      const s = createGameSessionSync("GT-032", {
+        level_code: "GT-032-TEST",
+        content_version: 1,
+        template_code: "GT-032",
+        content_pack: f.content,
+        difficulty_params: f.difficulty,
+        theme_id: "default",
+        age_band: "5-6",
+        reduced_motion: false,
+        audio_enabled: true,
+      }) as unknown as {
+        setupEntities: () => void;
+        validateAction: (action: {
+          type: string;
+          data: Record<string, unknown>;
+        }) => { valid: boolean; feedback: string };
+        checkWinCondition: () => boolean;
+        content: {
+          question_type: string;
+          cups: { cup_id: string; fill_units: number }[];
+        };
+      };
+      s.setupEntities();
+
+      const res = s.validateAction({
+        type: "select_cup",
+        data: { cup_id: "cup_b" },
       });
       expect(res.valid).toBe(true);
       expect(s.checkWinCondition()).toBe(true);

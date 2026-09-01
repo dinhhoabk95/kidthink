@@ -140,6 +140,7 @@ export const CANONICAL_MECHANIC_TAGS = new Set([
   "remove-from-set",
   "measure-with-unit",
   "coin-compose",
+  "pour-quantity",
 ]);
 
 import { CANONICAL_THEME_CODES } from "@mindkid/shared";

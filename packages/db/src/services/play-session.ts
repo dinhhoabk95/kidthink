@@ -89,6 +89,8 @@ export const ALLOWED_EVENT_NAMES = new Set([
   "unit_removed",
   "coin_placed",
   "coin_removed",
+  "cup_selected",
+  "liquid_poured",
 ]);
 
 const PII_FIELDS = new Set([
@@ -256,6 +258,13 @@ const EVENT_PAYLOAD_FIELDS: Readonly<Record<string, ReadonlySet<string>>> = {
     "value",
     "current_total",
     "target_amount",
+    "round_index",
+  ]),
+  cup_selected: new Set(["cup_id", "fill_units", "is_correct", "round_index"]),
+  liquid_poured: new Set([
+    "cup_id",
+    "fill_units",
+    "target_units",
     "round_index",
   ]),
 };
@@ -599,6 +608,18 @@ const EVENT_PAYLOAD_SCHEMAS: Readonly<Record<string, z.AnyZodObject>> = {
     value: NON_NEGATIVE_INT,
     current_total: NON_NEGATIVE_INT,
     target_amount: NON_NEGATIVE_INT,
+    round_index: OPTIONAL_ROUND_INDEX,
+  }),
+  cup_selected: z.object({
+    cup_id: CONTENT_ID,
+    fill_units: NON_NEGATIVE_INT,
+    is_correct: z.boolean(),
+    round_index: OPTIONAL_ROUND_INDEX,
+  }),
+  liquid_poured: z.object({
+    cup_id: CONTENT_ID,
+    fill_units: NON_NEGATIVE_INT,
+    target_units: NON_NEGATIVE_INT,
     round_index: OPTIONAL_ROUND_INDEX,
   }),
 };

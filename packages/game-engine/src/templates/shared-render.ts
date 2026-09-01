@@ -720,3 +720,112 @@ export function updateParticles(particles: readonly Particle[]): Particle[] {
   }
   return next;
 }
+
+export interface LiquidCupParams {
+  readonly cupId: string;
+  readonly shape: "standard" | "narrow_tall" | "wide_short" | "fluted";
+  readonly capacityUnits: number;
+  readonly fillUnits: number;
+  readonly color?: string;
+  readonly isSelected?: boolean;
+  readonly showHintMarks?: boolean;
+}
+
+export function drawLiquidCup(
+  ctx: CanvasRenderingContext2D,
+  _rs: RenderSystem,
+  slot: Slot,
+  params: LiquidCupParams
+): void {
+  const baseW = slot.w * 0.8;
+  const baseH = slot.h * 0.85;
+
+  let wFactor = 1.0;
+  let hFactor = 1.0;
+
+  if (params.shape === "narrow_tall") {
+    wFactor = 0.7;
+    hFactor = 1.25;
+  } else if (params.shape === "wide_short") {
+    wFactor = 1.35;
+    hFactor = 0.75;
+  } else if (params.shape === "fluted") {
+    wFactor = 1.1;
+    hFactor = 1.0;
+  }
+
+  const cupW = baseW * wFactor;
+  const cupH = baseH * hFactor;
+  const x = slot.x - cupW / 2;
+  const y = slot.y - cupH / 2 + (baseH - cupH) / 2;
+
+  ctx.save();
+
+  // Glass Background
+  ctx.fillStyle = "rgba(255, 255, 255, 0.5)";
+  ctx.strokeStyle = designTokens.colors.surface[400];
+  ctx.lineWidth = 4;
+
+  ctx.beginPath();
+  ctx.roundRect(x, y, cupW, cupH, [6, 6, 16, 16]);
+  ctx.fill();
+  ctx.stroke();
+
+  // Liquid fill calculation (BR-E032-03)
+  const fillRatio =
+    params.capacityUnits > 0
+      ? Math.min(1, Math.max(0, params.fillUnits / params.capacityUnits))
+      : 0;
+
+  const liquidH = cupH * fillRatio;
+  const liquidY = y + cupH - liquidH;
+
+  if (liquidH > 0) {
+    ctx.save();
+    // Clip inside cup
+    ctx.beginPath();
+    ctx.roundRect(x + 2, y + 2, cupW - 4, cupH - 4, [4, 4, 14, 14]);
+    ctx.clip();
+
+    // Draw liquid
+    ctx.fillStyle = designTokens.colors.brand[500];
+    if (params.color === "mint") {
+      ctx.fillStyle = designTokens.colors.semantic.success[500];
+    } else if (params.color === "berry") {
+      ctx.fillStyle = designTokens.colors.semantic.danger[400];
+    } else if (params.color === "amber") {
+      ctx.fillStyle = designTokens.colors.retry[500];
+    }
+
+    ctx.fillRect(x, liquidY, cupW, liquidH);
+
+    // Meniscus / surface highlight
+    ctx.fillStyle = "rgba(255, 255, 255, 0.4)";
+    ctx.fillRect(x, liquidY, cupW, Math.min(6, liquidH));
+    ctx.restore();
+  }
+
+  // Hint Marks (tick marks)
+  if (params.showHintMarks) {
+    ctx.strokeStyle = "rgba(100, 116, 139, 0.6)";
+    ctx.lineWidth = 2;
+    for (let step = 1; step < params.capacityUnits; step++) {
+      const stepY = y + cupH - (cupH * step) / params.capacityUnits;
+      ctx.beginPath();
+      ctx.moveTo(x + 4, stepY);
+      ctx.lineTo(x + 14, stepY);
+      ctx.stroke();
+    }
+  }
+
+  // Selected highlight
+  if (params.isSelected) {
+    ctx.strokeStyle = designTokens.colors.semantic.success[500];
+    ctx.lineWidth = 6;
+    ctx.beginPath();
+    ctx.roundRect(x - 4, y - 4, cupW + 8, cupH + 8, [10, 10, 20, 20]);
+    ctx.stroke();
+  }
+
+  ctx.restore();
+}

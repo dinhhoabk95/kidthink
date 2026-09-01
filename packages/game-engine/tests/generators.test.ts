@@ -5,6 +5,7 @@ import { GT028Generator } from "#src/generators/gt028";
 import { GT029Generator } from "#src/generators/gt029";
 import { GT030Generator } from "#src/generators/gt030";
 import { GT031Generator } from "#src/generators/gt031";
+import { GT032Generator } from "#src/generators/gt032";
 import { getNouns } from "#src/generators/helpers";
 import type { ThemeVocabulary } from "#src/generators/types";
 import { createRng } from "#src/rng/mulberry32";
@@ -31,6 +32,12 @@ import {
   type GT031Difficulty,
   GT031DifficultySchema,
 } from "#src/templates/GT-031/template";
+import {
+  type GT032Content,
+  GT032ContentSchema,
+  type GT032Difficulty,
+  GT032DifficultySchema,
+} from "#src/templates/GT-032/template";
 
 const SHORT_POOL_RE = /thiếu danh từ/;
 const THEME_RE = /school/;
@@ -245,6 +252,44 @@ describe("GT-031 — generator contract conformity", () => {
       expect(canFormTargetAmount(coinValues, content_pack.target_amount)).toBe(
         true
       );
+    }
+  });
+});
+
+describe("GT-032 — generator contract conformity", () => {
+  const themeVocab = vocab(10);
+
+  it("generates valid levels for age band 5-6 across seeds", () => {
+    for (let seed = 1; seed <= 30; seed++) {
+      const { content_pack, difficulty_params } = GT032Generator.generate({
+        rng: createRng(seed),
+        age_band: "5-6",
+        theme: "school",
+        vocabulary: themeVocab,
+      }) as {
+        content_pack: GT032Content;
+        difficulty_params: GT032Difficulty;
+      };
+
+      const parsedContent = GT032ContentSchema.parse(content_pack);
+      const parsedDiff = GT032DifficultySchema.parse(difficulty_params);
+      expect(parsedContent).toBeDefined();
+      expect(parsedDiff).toBeDefined();
+
+      expect(
+        content_pack.cups.every((cup) => cup.fill_units <= cup.capacity_units)
+      ).toBe(true);
+
+      if (content_pack.conservation_trap) {
+        const hasValidTrap = content_pack.cups.some((c1, i) =>
+          content_pack.cups
+            .slice(i + 1)
+            .some(
+              (c2) => c1.fill_units === c2.fill_units && c1.shape !== c2.shape
+            )
+        );
+        expect(hasValidTrap).toBe(true);
+      }
     }
   });
 });

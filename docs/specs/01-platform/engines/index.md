@@ -2,7 +2,7 @@
 
 # Danh mục phiếu engine
 
-31 engine trong registry, 36 phiếu, 5 đặt trước, 0 mồ côi.
+32 engine trong registry, 36 phiếu, 4 đặt trước, 0 mồ côi.
 
 Hình dạng phiếu và luật đối chiếu: [`engine-spec-sheet.md`](../engine-spec-sheet.md).
 Sàn nội dung mỗi engine: [`engine-content-depth.md`](../../05-content/engine-content-depth.md).
@@ -42,6 +42,7 @@ Sàn nội dung mỗi engine: [`engine-content-depth.md`](../../05-content/engin
 | [`GT-029`](GT-029.md) | Bớt khỏi nhóm | `remove-from-set` | 4–6 | 3-4 | Có | legacy-v1 |
 | [`GT-030`](GT-030.md) | Đo bằng đơn vị lặp | `measure-with-unit` | 5–6 | 3-4 · 4-5 | Có | legacy-v1 |
 | [`GT-031`](GT-031.md) | Gộp tiền xu | `coin-compose` | 5–6 | 3-4 · 4-5 | Có | legacy-v1 |
+| [`GT-032`](GT-032.md) | So lượng chất lỏng | `pour-quantity` | 5–6 | 3-4 · 4-5 | Không | legacy-v1 |
 
 ## Engine đặt trước — spec có, `template.ts` chưa
 
@@ -50,7 +51,6 @@ ra đời trước khuôn, và cổng đối chiếu trường trích chỉ bậ
 
 | Mã | Tên | Cơ chế đặt trước | Lô | Plan sở hữu |
 |---|---|---|---|---|
-| [`GT-032`](GT-032.md) | So lượng chất lỏng | `pour-quantity` | legacy-v1 | [`185-engine-gt-032-pour-quantity-plan.md`](../../../tasks/185-engine-gt-032-pour-quantity-plan.md) |
 | [`GT-033`](GT-033.md) | Dệt hoa văn lưới | `weave-grid` | legacy-v1 | [`186-engine-gt-033-weave-grid-plan.md`](../../../tasks/186-engine-gt-033-weave-grid-plan.md) |
 | [`GT-034`](GT-034.md) | Gõ theo nhịp | `beat-sequence` | legacy-v1 | [`187-engine-gt-034-beat-sequence-plan.md`](../../../tasks/187-engine-gt-034-beat-sequence-plan.md) |
 | [`GT-035`](GT-035.md) | Xếp hàng lệnh | `command-sequence` | legacy-v1 | [`188-engine-gt-035-command-sequence-plan.md`](../../../tasks/188-engine-gt-035-command-sequence-plan.md) |

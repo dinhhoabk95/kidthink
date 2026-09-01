@@ -32,6 +32,7 @@ export const ALL_TEMPLATE_CODES = [
   "GT-029",
   "GT-030",
   "GT-031",
+  "GT-032",
 ] as const;
 
 export type TemplateCode = (typeof ALL_TEMPLATE_CODES)[number];
