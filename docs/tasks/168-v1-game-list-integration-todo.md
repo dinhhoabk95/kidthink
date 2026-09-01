@@ -66,7 +66,7 @@
 - [x] [`#183`](183-engine-gt-030-measure-with-unit-plan.md) `GT-030` `measure-with-unit` ← `D5-04` — 10 level
 - [x] [`#184`](184-engine-gt-031-coin-compose-plan.md) `GT-031` `coin-compose` ← `D5-10` — 10 level
 - [x] [`#185`](185-engine-gt-032-pour-quantity-plan.md) `GT-032` `pour-quantity` ← `D5-09` — 10 level
-- [ ] [`#186`](186-engine-gt-033-weave-grid-plan.md) `GT-033` `weave-grid` ← `D3-07` — 10 level
+- [x] [`#186`](186-engine-gt-033-weave-grid-plan.md) `GT-033` `weave-grid` ← `D3-07` — 10 level
 
 ### ═══ CHỐT KIỂM 3 ═══
 

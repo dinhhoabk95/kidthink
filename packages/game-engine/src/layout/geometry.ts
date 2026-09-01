@@ -1215,3 +1215,103 @@ export function computeMeasureStripLayout(input: LayoutInput): Slot[] {
 
   return slots;
 }
+
+/**
+ * Bố cục dệt hoa văn lưới (weave-grid).
+ * - Khung lưới ô vuông matrix ở trên (targets)
+ * - Khay màu/sợi ở dưới (sources)
+ */
+export function computeWeaveGridLayout(input: LayoutInput): Slot[] {
+  const { slotCount, ageBand, targetCount: rawCellCount } = input;
+  const touchFloor = getTouchFloor(ageBand);
+  const totalCells = rawCellCount && rawCellCount >= 4 ? rawCellCount : 4;
+  const gridDimension = Math.round(Math.sqrt(totalCells));
+  const rows = gridDimension;
+  const cols = Math.ceil(totalCells / rows);
+
+  const availGridW = LOGIC_WIDTH - 2 * SAFE_MARGIN_PX;
+  const availGridH = 260;
+
+  const maxCellW = Math.floor((availGridW - (cols - 1) * 8) / cols);
+  const maxCellH = Math.floor((availGridH - (rows - 1) * 8) / rows);
+  const cell = Math.max(touchFloor, Math.min(68, Math.min(maxCellW, maxCellH)));
+  const gap = Math.max(
+    4,
+    Math.min(8, Math.floor((availGridW - cols * cell) / Math.max(1, cols - 1)))
+  );
+
+  const gridTotalW = cols * cell + (cols - 1) * gap;
+  const gridTotalH = rows * cell + (rows - 1) * gap;
+  const gridStartX = Math.max(SAFE_MARGIN_PX, (LOGIC_WIDTH - gridTotalW) / 2);
+  const gridStartY = Math.max(
+    SAFE_MARGIN_PX + 40,
+    100 + (availGridH - gridTotalH) / 2
+  );
+
+  const slots: Slot[] = [];
+
+  for (let r = 0; r < rows; r++) {
+    for (let c = 0; c < cols; c++) {
+      const idx = r * cols + c;
+      if (idx < totalCells) {
+        slots.push({
+          index: idx,
+          x: Math.round(gridStartX + c * (cell + gap) + cell / 2),
+          y: Math.round(gridStartY + r * (cell + gap) + cell / 2),
+          w: Math.round(cell),
+          h: Math.round(cell),
+          hitW: Math.max(touchFloor, Math.round(cell)),
+          hitH: Math.max(touchFloor, Math.round(cell)),
+          page: 0,
+          role: "target",
+        });
+      }
+    }
+  }
+
+  // Khay màu/sợi bên dưới
+  const availPaletteW = LOGIC_WIDTH - 2 * SAFE_MARGIN_PX;
+  let paletteGap = 12;
+  let paletteW = Math.max(
+    touchFloor,
+    Math.min(
+      64,
+      Math.floor(
+        (availPaletteW - (slotCount - 1) * paletteGap) / Math.max(1, slotCount)
+      )
+    )
+  );
+  if (
+    slotCount * paletteW + (slotCount - 1) * paletteGap > availPaletteW &&
+    slotCount > 1
+  ) {
+    paletteGap = Math.max(
+      2,
+      Math.floor((availPaletteW - slotCount * touchFloor) / (slotCount - 1))
+    );
+    paletteW = touchFloor;
+  }
+  const paletteH = paletteW;
+  const paletteTotalW = slotCount * paletteW + (slotCount - 1) * paletteGap;
+  const paletteStartX = Math.max(
+    SAFE_MARGIN_PX,
+    (LOGIC_WIDTH - paletteTotalW) / 2
+  );
+  const paletteY = Math.min(LOGIC_HEIGHT - SAFE_MARGIN_PX - paletteH / 2, 450);
+
+  for (let p = 0; p < slotCount; p++) {
+    slots.push({
+      index: totalCells + p,
+      x: Math.round(paletteStartX + p * (paletteW + paletteGap) + paletteW / 2),
+      y: Math.round(paletteY),
+      w: Math.round(paletteW),
+      h: Math.round(paletteH),
+      hitW: Math.max(touchFloor, Math.round(paletteW)),
+      hitH: Math.max(touchFloor, Math.round(paletteH)),
+      page: 0,
+      role: "source",
+    });
+  }
+
+  return slots;
+}

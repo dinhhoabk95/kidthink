@@ -4,6 +4,7 @@ import { SEED_GT029 } from "./seed-gt029.js";
 import { SEED_GT030 } from "./seed-gt030.js";
 import { SEED_GT031 } from "./seed-gt031.js";
 import { SEED_GT032 } from "./seed-gt032.js";
+import { SEED_GT033 } from "./seed-gt033.js";
 import { SEED_MONT_A01 } from "./seed-mont-a01.js";
 import { SEED_MONT_A02 } from "./seed-mont-a02.js";
 import { SEED_MONT_A05 } from "./seed-mont-a05.js";
@@ -2123,4 +2124,5 @@ export const C1_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
   ...SEED_GT030,
   ...SEED_GT031,
   ...SEED_GT032,
+  ...SEED_GT033,
 ];

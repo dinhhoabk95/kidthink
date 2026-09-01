@@ -829,3 +829,96 @@ export function drawLiquidCup(
 
   ctx.restore();
 }
+
+export interface WeaveCellParams {
+  readonly cellIndex: number;
+  readonly colorId: string | null;
+  readonly isOriginal: boolean;
+  readonly isSelected?: boolean;
+  readonly isBrokenRow?: boolean;
+  readonly isBrokenCol?: boolean;
+}
+
+export function drawWeaveCell(
+  ctx: CanvasRenderingContext2D,
+  _rs: RenderSystem,
+  slot: Slot,
+  params: WeaveCellParams
+): void {
+  const w = slot.w;
+  const h = slot.h;
+  const x = slot.x - w / 2;
+  const y = slot.y - h / 2;
+
+  ctx.save();
+
+  // Cell base background
+  ctx.fillStyle = params.colorId
+    ? getColorForYarn(params.colorId)
+    : designTokens.colors.surface[100];
+  ctx.strokeStyle = designTokens.colors.surface[300];
+  ctx.lineWidth = 2;
+
+  if (params.isBrokenRow || params.isBrokenCol) {
+    ctx.strokeStyle = designTokens.colors.retry[500];
+    ctx.lineWidth = 4;
+  }
+
+  if (params.isSelected) {
+    ctx.strokeStyle = designTokens.colors.semantic.success[500];
+    ctx.lineWidth = 4;
+  }
+
+  ctx.beginPath();
+  ctx.roundRect(x, y, w, h, 8);
+  ctx.fill();
+  ctx.stroke();
+
+  // Weave texture lines if color is present
+  if (params.colorId) {
+    ctx.strokeStyle = "rgba(255, 255, 255, 0.35)";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    // Horizontal yarn line
+    ctx.moveTo(x + 4, y + h / 2);
+    ctx.lineTo(x + w - 4, y + h / 2);
+    // Vertical yarn line
+    ctx.moveTo(x + w / 2, y + 4);
+    ctx.lineTo(x + w / 2, y + h - 4);
+    ctx.stroke();
+  } else {
+    // Empty dashed border indicator
+    ctx.setLineDash([4, 4]);
+    ctx.strokeStyle = designTokens.colors.surface[400];
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.roundRect(x + 4, y + 4, w - 8, h - 8, 4);
+    ctx.stroke();
+  }
+
+  ctx.restore();
+}
+
+function getColorForYarn(colorId: string): string {
+  switch (colorId.toLowerCase()) {
+    case "red":
+    case "berry":
+      return designTokens.colors.semantic.danger[400];
+    case "blue":
+    case "sky":
+      return designTokens.colors.brand[500];
+    case "yellow":
+    case "amber":
+      return designTokens.colors.montessori.amber;
+    case "green":
+    case "mint":
+      return designTokens.colors.semantic.success[500];
+    case "purple":
+    case "indigo":
+      return designTokens.colors.montessori.indigo;
+    case "orange":
+      return designTokens.colors.cta[500];
+    default:
+      return designTokens.colors.brand[400];
+  }
+}

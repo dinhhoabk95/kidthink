@@ -412,4 +412,10 @@ export type {
   GT032Content,
   GT032Difficulty,
 } from "./templates/GT-032/template.js";
+export { GT033_FIXTURES } from "./templates/GT-033/fixtures.js";
+export { GT033Session } from "./templates/GT-033/session.js";
+export type {
+  GT033Content,
+  GT033Difficulty,
+} from "./templates/GT-033/template.js";
 export { ObjectPool } from "./utils/object-pool.js";

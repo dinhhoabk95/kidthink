@@ -33,10 +33,11 @@ describe("Game Layout Engine (BR-LAY-01..10)", () => {
     }
   });
 
-  it("BR-LAY-02 — LayoutId là từ vựng đóng gồm đúng 22 giá trị; id lạ bị từ chối", () => {
-    expect(LAYOUT_IDS).toHaveLength(22);
+  it("BR-LAY-02 — LayoutId là từ vựng đóng gồm đúng 23 giá trị; id lạ bị từ chối", () => {
+    expect(LAYOUT_IDS).toHaveLength(23);
     expect(isLayoutId("grid")).toBe(true);
     expect(isLayoutId("measure-strip")).toBe(true);
+    expect(isLayoutId("weave-grid")).toBe(true);
     expect(isLayoutId("step-ladder")).toBe(true);
     expect(isLayoutId("number-bond-tree")).toBe(true);
     expect(isLayoutId("ten-frame-split")).toBe(true);

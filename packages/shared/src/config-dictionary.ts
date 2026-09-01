@@ -875,6 +875,36 @@ export const CONFIG_DICTIONARY: Record<string, FieldDictionaryEntry> = {
     label: "Số vạch chia mức",
     help: "Số vạch chia đơn vị dung tích trên cốc.",
   },
+
+  // GT-033: Weave Grid
+  palette: {
+    label: "Bảng màu / sợi len",
+    help: "Danh sách các màu sợi len có sẵn để dệt vào lưới.",
+  },
+  color_id: {
+    label: "Mã màu sợi len",
+    help: "Mã định danh của màu sợi len.",
+  },
+  row_rule: {
+    label: "Quy luật theo hàng",
+    help: "Mô tả quy luật phân bố màu sắc theo từng hàng.",
+  },
+  col_rule: {
+    label: "Quy luật theo cột",
+    help: "Mô tả quy luật phân bố màu sắc theo từng cột.",
+  },
+  solution: {
+    label: "Đáp án ma trận hoàn chỉnh",
+    help: "Danh sách màu sắc chính xác của toàn bộ các ô trong lưới.",
+  },
+  color_count: {
+    label: "Số lượng màu sợi",
+    help: "Số lượng màu sắc sợi len khác nhau trong bài.",
+  },
+  name_vi: {
+    label: "Tên tiếng Việt",
+    help: "Tên hiển thị tiếng Việt của đối tượng hoặc màu sắc.",
+  },
 };
 
 /**
@@ -899,6 +929,10 @@ export const TEXT_FALLBACK_ALLOWLIST: Record<string, string> = {
   fill_units: "Số nguyên mức nước trong cốc.",
   cup_count: "Số nguyên lượng cốc hiển thị.",
   level_steps: "Số nguyên vạch chia mức cốc.",
+  color_id: "Mã định danh màu sợi len.",
+  row_rule: "Mô tả quy luật hàng.",
+  col_rule: "Mô tả quy luật cột.",
+  color_count: "Số lượng màu sợi len số nguyên.",
   prompt: "Câu hỏi chính của bài học, dạng văn bản ngắn đọc cho bé.",
   item_id: "Mã định danh kỹ thuật của vật phẩm trong content pack.",
   id: "Mã định danh đối tượng.",

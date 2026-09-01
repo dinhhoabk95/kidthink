@@ -141,6 +141,7 @@ export const CANONICAL_MECHANIC_TAGS = new Set([
   "measure-with-unit",
   "coin-compose",
   "pour-quantity",
+  "weave-grid",
 ]);
 
 import { CANONICAL_THEME_CODES } from "@mindkid/shared";

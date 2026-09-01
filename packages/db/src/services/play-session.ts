@@ -91,6 +91,8 @@ export const ALLOWED_EVENT_NAMES = new Set([
   "coin_removed",
   "cup_selected",
   "liquid_poured",
+  "yarn_placed",
+  "yarn_removed",
 ]);
 
 const PII_FIELDS = new Set([
@@ -265,6 +267,21 @@ const EVENT_PAYLOAD_FIELDS: Readonly<Record<string, ReadonlySet<string>>> = {
     "cup_id",
     "fill_units",
     "target_units",
+    "round_index",
+  ]),
+  yarn_placed: new Set([
+    "cell_index",
+    "color_id",
+    "is_correct",
+    "row",
+    "col",
+    "round_index",
+  ]),
+  yarn_removed: new Set([
+    "cell_index",
+    "color_id",
+    "row",
+    "col",
     "round_index",
   ]),
 };
@@ -620,6 +637,21 @@ const EVENT_PAYLOAD_SCHEMAS: Readonly<Record<string, z.AnyZodObject>> = {
     cup_id: CONTENT_ID,
     fill_units: NON_NEGATIVE_INT,
     target_units: NON_NEGATIVE_INT,
+    round_index: OPTIONAL_ROUND_INDEX,
+  }),
+  yarn_placed: z.object({
+    cell_index: NON_NEGATIVE_INT,
+    color_id: CONTENT_ID,
+    is_correct: z.boolean(),
+    row: NON_NEGATIVE_INT,
+    col: NON_NEGATIVE_INT,
+    round_index: OPTIONAL_ROUND_INDEX,
+  }),
+  yarn_removed: z.object({
+    cell_index: NON_NEGATIVE_INT,
+    color_id: CONTENT_ID,
+    row: NON_NEGATIVE_INT,
+    col: NON_NEGATIVE_INT,
     round_index: OPTIONAL_ROUND_INDEX,
   }),
 };

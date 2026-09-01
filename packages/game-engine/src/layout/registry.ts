@@ -14,6 +14,7 @@ import {
   computeNumberBondTreeLayout,
   computeTenFrameSplitLayout,
   computeTrackLayout,
+  computeWeaveGridLayout,
 } from "./geometry.js";
 import type { LayoutFn, LayoutId } from "./types.js";
 
@@ -40,6 +41,7 @@ export const LAYOUT_IDS: readonly LayoutId[] = [
   "mirror-axis-split",
   "free-scene",
   "measure-strip",
+  "weave-grid",
 ] as const;
 
 export const LAYOUT_REGISTRY: Record<LayoutId, LayoutFn> = {
@@ -76,6 +78,7 @@ export const LAYOUT_REGISTRY: Record<LayoutId, LayoutFn> = {
   "mirror-axis-split": (input) => computeMirrorAxisSplitLayout(input),
   "free-scene": (input) => computeFreeSceneLayout(input),
   "measure-strip": (input) => computeMeasureStripLayout(input),
+  "weave-grid": (input) => computeWeaveGridLayout(input),
 };
 
 export function isLayoutId(val: unknown): val is LayoutId {

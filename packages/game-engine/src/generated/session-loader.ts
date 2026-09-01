@@ -34,6 +34,7 @@ import { GT029Session } from "#src/templates/GT-029/session";
 import { GT030Session } from "#src/templates/GT-030/session";
 import { GT031Session } from "#src/templates/GT-031/session";
 import { GT032Session } from "#src/templates/GT-032/session";
+import { GT033Session } from "#src/templates/GT-033/session";
 
 /**
  * Dynamic lazy loader for GameSession classes by template code (BR-TAK-08).
@@ -169,6 +170,10 @@ export async function loadGameSession(templateCode: string): Promise<new (...arg
       const mod = await import("#src/templates/GT-032/session");
       return mod.GT032Session;
     }
+    case "GT-033": {
+      const mod = await import("#src/templates/GT-033/session");
+      return mod.GT033Session;
+    }
     default:
       throw new Error(`TEMPLATE_NOT_SUPPORTED: ${templateCode}`);
   }
@@ -243,6 +248,8 @@ export function createGameSessionSync(templateCode: string, cfg: EngineConfig): 
       return Reflect.construct(GT031Session, [cfg.content_pack, cfg.difficulty_params]);
     case "GT-032":
       return Reflect.construct(GT032Session, [cfg.content_pack, cfg.difficulty_params]);
+    case "GT-033":
+      return Reflect.construct(GT033Session, [cfg.content_pack, cfg.difficulty_params]);
     default:
       throw new Error(`TEMPLATE_NOT_SUPPORTED: ${templateCode}`);
   }

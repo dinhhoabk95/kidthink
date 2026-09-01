@@ -22,7 +22,8 @@ export type LayoutId =
   | "equation-rows"
   | "mirror-axis-split"
   | "free-scene"
-  | "measure-strip";
+  | "measure-strip"
+  | "weave-grid";
 
 /**
  * Bộ giá trị band ở dạng **runtime**, không chỉ dạng kiểu.
