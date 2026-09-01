@@ -8,8 +8,8 @@
         <div class="catalog-header">
           <h1 class="catalog-title">Thư viện trò chơi tư duy</h1>
           <p class="catalog-subtitle">
-            Khám phá {{ totalCount }} trò chơi toán học tương tác chia theo 6
-            nhóm năng lực và độ tuổi mầm non (3–6 tuổi).
+            Khám phá {{ totalCount }} trò chơi tư duy tương tác chia theo 6 nhóm
+            năng lực và độ tuổi mầm non (3–6 tuổi).
           </p>
         </div>
 
@@ -38,23 +38,23 @@
             </select>
           </div>
 
-          <!-- Filter Age -->
+          <!-- Filter Age band -->
           <div class="filter-group">
             <label class="filter-label" for="filter-age">Độ tuổi:</label>
             <select
               class="filter-select"
               id="filter-age"
-              v-model="selectedAge"
+              v-model="selectedAgeBand"
               @change="updateFilters"
             >
               <option value="">Tất cả độ tuổi</option>
               <option
-                v-for="option in AGE_OPTIONS"
+                v-for="option in AGE_BAND_OPTIONS"
                 :key="option.value"
-                :disabled="isFacetEmpty('age', option.value)"
+                :disabled="isFacetEmpty('age_band', option.value)"
                 :value="option.value"
               >
-                {{ facetLabel(option.label, "age", option.value) }}
+                {{ facetLabel(option.label, "age_band", option.value) }}
               </option>
             </select>
           </div>
@@ -107,7 +107,11 @@
                 </NuxtLink>
               </h2>
               <div class="card-tags">
-                <span class="tag-badge">{{ game.competency || 'C1' }}</span>
+                <span class="tag-badge"
+                  >{{ findCompetency(game.competency ?? '')?.name ||
+                  game.competency ||
+                  'Tư duy toán học' }}</span
+                >
                 <span class="tag-badge">{{ game.age_band || '3-4' }} tuổi</span>
                 <span
                   class="tag-badge difficulty-dots"
@@ -180,8 +184,10 @@
 <script lang="ts" setup>
   import {
     type AccessTier,
+    COMPETENCY_CATALOG,
     type CtaViewer,
     type EntitlementKey,
+    findCompetency,
     type LevelCta,
     resolveLevelCta,
   } from "@mindkid/shared/client";
@@ -219,6 +225,7 @@
   interface CatalogFacets {
     total: number;
     competency: Record<string, number>;
+    age_band: Record<string, number>;
     age: Record<string, number>;
     access_tier: Record<string, number>;
   }
@@ -236,20 +243,23 @@
     allowed_tiers: string[];
   }
 
-  const COMPETENCY_OPTIONS = [
-    { value: "C1", label: "C1: Số & Lượng" },
-    { value: "C2", label: "C2: Hình & Không gian" },
-    { value: "C3", label: "C3: Quy luật & Chuỗi" },
-    { value: "C4", label: "C4: Đo lường & Đại lượng" },
-    { value: "C5", label: "C5: Phân loại & Tập hợp" },
-    { value: "C6", label: "C6: Suy luận & Logic" },
-  ] as const;
+  /** Nhãn dẫn xuất từ nguồn duy nhất — Cấm — NEVER chép tay lại (task 165). */
+  const COMPETENCY_OPTIONS = COMPETENCY_CATALOG.map((entry) => ({
+    value: entry.code,
+    label: entry.name,
+  }));
 
-  const AGE_OPTIONS = [
-    { value: "3", label: "3 tuổi (Lớp Mầm)" },
-    { value: "4", label: "4 tuổi (Lớp Chồi)" },
-    { value: "5", label: "5 tuổi (Lớp Lá)" },
-    { value: "6", label: "6 tuổi (Chuẩn bị vào lớp 1)" },
+  /**
+   * Lọc theo **band** chứ không theo một tuổi lẻ — `GAME-CATALOG-PUBLIC` §7.1.
+   *
+   * Level chỉ tồn tại ở ba band này. `age=4` hỏi "band có chứa tuổi 4" nên khớp
+   * cả 3-4 lẫn 4-5; trang chủ hứa "trò chơi của Lớp Chồi" thì phải là 4-5 đúng
+   * hai đầu. Tham số `age` vẫn được API nhận cho link cũ.
+   */
+  const AGE_BAND_OPTIONS = [
+    { value: "3-4", label: "3–4 tuổi (Lớp Mầm)" },
+    { value: "4-5", label: "4–5 tuổi (Lớp Chồi)" },
+    { value: "5-6", label: "5–6 tuổi (Lớp Lá)" },
   ] as const;
 
   const TIER_OPTIONS = [
@@ -267,7 +277,9 @@
   const { loggedIn } = useUserSession();
 
   const selectedCompetency = ref((route.query.competency as string) || "");
-  const selectedAge = ref((route.query.age as string) || "");
+  const selectedAgeBand = ref((route.query.age_band as string) || "");
+  /** Link cũ `?age=4` vẫn lọc được; giao diện không sinh tham số này nữa. */
+  const legacyAge = ref((route.query.age as string) || "");
   const selectedTier = ref((route.query.access_tier as string) || "");
   const cursor = ref((route.query.cursor as string) || "");
 
@@ -288,8 +300,11 @@
       if (selectedCompetency.value) {
         query.competency = selectedCompetency.value;
       }
-      if (selectedAge.value) {
-        query.age = selectedAge.value;
+      if (selectedAgeBand.value) {
+        query.age_band = selectedAgeBand.value;
+      }
+      if (legacyAge.value) {
+        query.age = legacyAge.value;
       }
       if (selectedTier.value) {
         query.access_tier = selectedTier.value;
@@ -379,8 +394,11 @@
     if (selectedCompetency.value) {
       query.competency = selectedCompetency.value;
     }
-    if (selectedAge.value) {
-      query.age = selectedAge.value;
+    if (selectedAgeBand.value) {
+      query.age_band = selectedAgeBand.value;
+    }
+    if (legacyAge.value) {
+      query.age = legacyAge.value;
     }
     if (selectedTier.value) {
       query.access_tier = selectedTier.value;
@@ -400,7 +418,8 @@
 
   function resetFilters(): void {
     selectedCompetency.value = "";
-    selectedAge.value = "";
+    selectedAgeBand.value = "";
+    legacyAge.value = "";
     selectedTier.value = "";
     updateFilters();
   }
@@ -444,7 +463,8 @@
     () => route.query,
     (newQuery) => {
       selectedCompetency.value = (newQuery.competency as string) || "";
-      selectedAge.value = (newQuery.age as string) || "";
+      selectedAgeBand.value = (newQuery.age_band as string) || "";
+      legacyAge.value = (newQuery.age as string) || "";
       selectedTier.value = (newQuery.access_tier as string) || "";
       cursor.value = (newQuery.cursor as string) || "";
     }
@@ -453,10 +473,10 @@
   useSeoMeta({
     title: "Thư viện trò chơi tư duy cho bé 3–6 tuổi — MindKid",
     description:
-      "Duyệt danh mục trò chơi phát triển tư duy toán học cho trẻ mầm non. Lọc theo năng lực C1–C6, độ tuổi 3–6 và độ khó.",
+      "Duyệt danh mục trò chơi phát triển tư duy cho trẻ mầm non. Lọc theo 6 nhóm năng lực tư duy, độ tuổi 3–6 và độ khó.",
     ogTitle: "Thư viện trò chơi tư duy cho bé 3–6 tuổi — MindKid",
     ogDescription:
-      "Danh mục trò chơi toán học tương tác mầm non phân theo 6 nhóm năng lực chuẩn sư phạm.",
+      "Danh mục trò chơi tư duy tương tác mầm non phân theo 6 nhóm năng lực chuẩn sư phạm.",
     ogType: "website",
   });
 

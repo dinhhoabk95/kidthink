@@ -108,8 +108,16 @@ export const AUTH_ERROR_DEFINITIONS = {
     message: "Kích thước lô sự kiện vượt quá giới hạn.",
   },
   PAYLOAD_TOO_LARGE: {
+    /**
+     * Mã chung cho mọi loại payload vượt trần — cột "Khi nào" của
+     * `error-codes.md` mục 7 để **rỗng** đúng vì vậy.
+     *
+     * Message cũ viết "Dữ liệu sự kiện" nên chỉ đúng cho một trong sáu chỗ đang
+     * ném mã này: hai guard body request, upload ảnh, ảnh chứng từ đơn hàng, lô
+     * event của phiên chơi, và trần payload config ở `game-config-runtime.ts`.
+     */
     status: 413,
-    message: "Dữ liệu sự kiện vượt quá giới hạn.",
+    message: "Dữ liệu vượt quá giới hạn cho phép.",
   },
   INVALID_SEQUENCE: {
     status: 400,

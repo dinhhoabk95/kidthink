@@ -1,0 +1,4 @@
+export const HERO_COPY = {
+  subtitle: "MindKid có 120+ trò chơi cho bé",
+  cta: "Xem 48 trò chơi phù hợp",
+};

@@ -943,6 +943,38 @@ export const CONFIG_DICTIONARY: Record<string, FieldDictionaryEntry> = {
     label: "Dạng sóng âm thanh",
     help: "Kiểu dạng sóng dao động (sine, triangle, square, sawtooth) của nốt nhạc.",
   },
+  facing: {
+    label: "Hướng nhìn nhân vật",
+    help: "Hướng nhìn xuất phát của nhân vật trên lưới.",
+  },
+  obstacles: {
+    label: "Chướng ngại vật",
+    help: "Danh sách toạ độ các chướng ngại vật trên lưới.",
+  },
+  collectibles: {
+    label: "Vật phẩm thu thập",
+    help: "Danh sách toạ độ và hình ảnh các vật phẩm cần thu thập.",
+  },
+  allowed_commands: {
+    label: "Khối lệnh cho phép",
+    help: "Danh sách các khối lệnh cho phép sử dụng.",
+  },
+  max_commands: {
+    label: "Giới hạn số lượng lệnh",
+    help: "Số lượng khối lệnh tối đa trong hàng lệnh.",
+  },
+  obstacle_count: {
+    label: "Số lượng chướng ngại vật",
+    help: "Số lượng chướng ngại vật xuất hiện trên lưới.",
+  },
+  collectible_count: {
+    label: "Số lượng vật phẩm thu thập",
+    help: "Số lượng vật phẩm xuất hiện cần thu thập.",
+  },
+  allow_loop: {
+    label: "Cho phép lệnh lặp",
+    help: "Bật tắt khối lệnh lặp lại cho trẻ.",
+  },
 };
 
 /**
@@ -950,6 +982,9 @@ export const CONFIG_DICTIONARY: Record<string, FieldDictionaryEntry> = {
  * Every entry must have a clear documented rationale.
  */
 export const TEXT_FALLBACK_ALLOWLIST: Record<string, string> = {
+  facing: "Hướng nhìn của nhân vật trên lưới.",
+  allowed_commands: "Danh sách khối lệnh cho phép.",
+  command: "Khối lệnh điều khiển nhân vật.",
   instrument_id: "Mã định danh nhạc cụ phát âm thanh.",
   target_pattern: "Mã nhạc cụ hoặc null tại từng bước trong chuỗi nhịp.",
   step: "Bước nhảy số nguyên đếm tích luỹ.",

@@ -21,34 +21,11 @@
         <div class="footer-col">
           <h3 class="footer-heading">Chương trình</h3>
           <ul class="footer-list">
-            <li>
-              <NuxtLink class="footer-link" to="/games?competency=C1"
-                >Số & Lượng (C1)</NuxtLink
-              >
-            </li>
-            <li>
-              <NuxtLink class="footer-link" to="/games?competency=C2"
-                >Hình & Không gian (C2)</NuxtLink
-              >
-            </li>
-            <li>
-              <NuxtLink class="footer-link" to="/games?competency=C3"
-                >Quy luật & Chuỗi (C3)</NuxtLink
-              >
-            </li>
-            <li>
-              <NuxtLink class="footer-link" to="/games?competency=C4"
-                >Đo lường & Đại lượng (C4)</NuxtLink
-              >
-            </li>
-            <li>
-              <NuxtLink class="footer-link" to="/games?competency=C5"
-                >Phân loại & Tập hợp (C5)</NuxtLink
-              >
-            </li>
-            <li>
-              <NuxtLink class="footer-link" to="/games?competency=C6"
-                >Suy luận & Logic (C6)</NuxtLink
+            <li v-for="comp in COMPETENCY_CATALOG" :key="comp.code">
+              <NuxtLink
+                class="footer-link"
+                :to="`/games?competency=${comp.code}`"
+                >{{ comp.name }}</NuxtLink
               >
             </li>
           </ul>
@@ -60,7 +37,7 @@
           <ul class="footer-list">
             <li>
               <NuxtLink class="footer-link" to="/games"
-                >Thư viện 120+ trò chơi</NuxtLink
+                >Thư viện trò chơi</NuxtLink
               >
             </li>
             <li>
@@ -141,6 +118,14 @@
 
 <script lang="ts" setup>
   // Public Footer Component with mandatory link to /child-privacy (BR-LGL-08)
+  //
+  // Nhãn năng lực đến từ `COMPETENCY_CATALOG` — sáu `<li>` chép tay ở đây từng
+  // là bản sao thứ hai của taxonomy toán v1 (task 165).
+  //
+  // `BR-LND-09`: footer nằm trên mọi trang nên Cấm — NEVER in số lượng trò chơi
+  // ở đây; một con số cứng là thứ không ai nhớ sửa, còn fetch cho mọi trang chỉ
+  // để in một số là quá đắt.
+  import { COMPETENCY_CATALOG } from "@mindkid/shared/client";
 </script>
 
 <style scoped>

@@ -67,7 +67,9 @@
               <div class="hero-info">
                 <div class="hero-tags">
                   <span class="tag-competency"
-                    >{{ game.competency || 'C1' }}</span
+                    >{{ findCompetency(game.competency)?.name ||
+                    game.competency ||
+                    'Tư duy toán học' }}</span
                   >
                   <span class="tag-age">{{ game.age_band }} tuổi</span>
                   <span class="tag-tier" :class="`tier-${game.access_tier}`">
@@ -150,7 +152,11 @@
                   </li>
                   <li>
                     <span class="meta-label">Năng lực trọng tâm:</span>
-                    <span class="meta-val">{{ game.competency || 'C1' }}</span>
+                    <span class="meta-val"
+                      >{{ findCompetency(game.competency)?.name ||
+                      game.competency ||
+                      'Tư duy toán học' }}</span
+                    >
                   </li>
                   <li>
                     <span class="meta-label">Độ khó bài tập:</span>
@@ -204,6 +210,7 @@
 </template>
 
 <script lang="ts" setup>
+  import { findCompetency } from "@mindkid/shared/client";
   import { computed } from "vue";
   import { useRoute } from "vue-router";
   import { definePageMeta, useFetch, useHead, useSeoMeta } from "#imports";

@@ -4,7 +4,7 @@
 
     <main id="main-content">
       <!-- Khối 1: Hero -->
-      <LandingHero />
+      <LandingHero :library-size="homeData.library_size" />
 
       <!-- Khối 2: 6 Năng lực tư duy -->
       <section
@@ -30,7 +30,7 @@
               <span aria-hidden="true" class="comp-emoji"
                 >{{ comp.emoji }}</span
               >
-              <h3 class="comp-name">{{ comp.name }} ({{ comp.code }})</h3>
+              <h3 class="comp-name">{{ comp.name }}</h3>
               <p class="comp-desc">{{ comp.description }}</p>
               <NuxtLink
                 class="comp-link"
@@ -78,7 +78,8 @@
               Trò chơi nổi bật — Chơi thử ngay
             </h2>
             <p class="section-subtitle">
-              6 trò chơi đại diện 6 năng lực cho bé trải nghiệm trực tiếp
+              {{ homeData.featured_levels.length }}
+              trò chơi đại diện 6 năng lực cho bé trải nghiệm trực tiếp
             </p>
           </div>
           <div class="games-grid">
@@ -95,7 +96,9 @@
               </div>
               <h3 class="game-title">{{ game.title }}</h3>
               <div class="game-meta">
-                <span class="badge-competency">{{ game.competency }}</span>
+                <span class="badge-competency"
+                  >{{ findCompetency(game.competency)?.name || game.competency }}</span
+                >
                 <span class="badge-age">{{ game.age_band }} tuổi</span>
               </div>
               <NuxtLink class="btn-game-play" :to="`/play/${game.code}`">
@@ -189,12 +192,12 @@
 
 <script lang="ts" setup>
   import {
-    COMPETENCIES_INFO,
     FAQ_ITEMS,
     FEATURED_GUEST_LEVELS,
-    PACKAGE_CATALOG,
+    findCompetency,
   } from "@mindkid/shared/client";
-  import { useHead, useSeoMeta } from "#imports";
+  import { computed } from "vue";
+  import { useFetch, useHead, useSeoMeta } from "#imports";
   import CookieNoticeBanner from "~/components/cookie-notice-banner.vue";
   import LandingBenefits from "~/components/landing-benefits.vue";
   import LandingHero from "~/components/landing-hero.vue";
@@ -208,99 +211,74 @@
   // nên skip-link của app.vue nhảy sai chỗ (BR-A11-05).
   definePageMeta({ layout: false });
 
-  const homeData = {
-    competencies: COMPETENCIES_INFO,
-    how_it_works: [
-      {
-        step: 1,
-        title: "Chọn hồ sơ cho bé",
-        description:
-          "Tạo hồ sơ với tên gọi thân mật và độ tuổi (3–6 tuổi), không cần thông tin cá nhân nhạy cảm.",
-      },
-      {
-        step: 2,
-        title: "Bé chơi vui và tương tác",
-        description:
-          "Bé tự chọn trò chơi hoặc theo lộ trình thích ứng có hướng dẫn bằng giọng thuyết minh tiếng Việt chuẩn.",
-      },
-      {
-        step: 3,
-        title: "Người lớn theo dõi tiến bộ",
-        description:
-          "Xem báo cáo trực quan về mức độ thuần thục của bé ở từng năng lực mà không có điểm số áp lực.",
-      },
-    ],
+  interface HomePayload {
+    hero: { title: string; subtitle: string };
+    competencies: {
+      code: string;
+      name: string;
+      emoji: string;
+      description: string;
+    }[];
+    how_it_works: { step: number; title: string; description: string }[];
+    featured_levels: readonly {
+      code: string;
+      title: string;
+      competency: string;
+      age_band: string;
+      emoji: string;
+    }[];
+    programs: {
+      age_band: string;
+      title: string;
+      focus: string;
+      levels_count: number;
+    }[];
+    packages: {
+      sku: string;
+      name: string;
+      price_vnd: number;
+      duration_months: number;
+      description: string;
+      features: string[];
+      cta_text: string;
+    }[];
+    faq: readonly { id: string; question: string; answer: string }[];
+    library_size: string;
+    total_levels: number;
+  }
+
+  /**
+   * `BR-LND-03` — `useFetch` chạy trên máy chủ khi SSR nên toàn bộ nội dung có
+   * trong HTML đầu tiên, không phụ thuộc JS.
+   *
+   * Trang này từng dựng lại **nguyên payload** ngay trong file `.vue`: nhãn
+   * năng lực v1, ba số 24 · 48 · 48 và chuỗi "120+" đều là bản sao cứng của
+   * `/api/guest/home`, và cả ba đã lệch khỏi DB (task 165).
+   */
+  const { data } = await useFetch<HomePayload>("/api/guest/home");
+
+  const fallback: HomePayload = {
+    hero: { title: "", subtitle: "" },
+    competencies: [],
+    how_it_works: [],
     featured_levels: FEATURED_GUEST_LEVELS,
-    programs: [
-      {
-        age_band: "3-4",
-        title: "Lớp Mầm (3–4 tuổi)",
-        focus:
-          "Làm quen số lượng 1–5, nhận biết hình phẳng cơ bản, cảm nhận không gian và phân loại đồ vật thân quen.",
-        levels_count: 24,
-      },
-      {
-        age_band: "4-5",
-        title: "Lớp Chồi (4–5 tuổi)",
-        focus:
-          "Đếm và so sánh lượng đến 10, chuỗi quy luật 2–3 yếu tố, hình khối không gian, đo lường ước lượng.",
-        levels_count: 48,
-      },
-      {
-        age_band: "5-6",
-        title: "Lớp Lá (5–6 tuổi)",
-        focus:
-          "Tách gộp số trong phạm vi 10, chuỗi logic đa thuộc tính, tư duy không gian xoay chiều, tiền đề vào lớp 1.",
-        levels_count: 48,
-      },
-    ],
-    packages: [
-      {
-        sku: "standard",
-        name: PACKAGE_CATALOG["PKG-standard"]?.name || "Gói Tiêu chuẩn",
-        price_vnd: PACKAGE_CATALOG["PKG-standard"]?.offers[0]?.price_vnd ?? 0,
-        duration_months: 12,
-        description:
-          PACKAGE_CATALOG["PKG-standard"]?.description ||
-          "Dành cho người dùng theo dõi tiến độ của 3 trẻ",
-        features: [
-          "Toàn bộ 60+ trò chơi rèn luyện 6 năng lực tư duy",
-          "Lộ trình học thích ứng theo độ tuổi",
-          "Báo cáo tiến độ chơi cơ bản hằng tuần",
-          "Tối đa 3 hồ sơ bé trên cùng tài khoản",
-        ],
-        cta_text: "Đăng ký Gói Tiêu chuẩn",
-      },
-      {
-        sku: "premium",
-        name: PACKAGE_CATALOG["PKG-premium"]?.name || "Gói Premium",
-        price_vnd: PACKAGE_CATALOG["PKG-premium"]?.offers[0]?.price_vnd ?? 0,
-        duration_months: 12,
-        description:
-          PACKAGE_CATALOG["PKG-premium"]?.description ||
-          "Mở khoá toàn bộ game, lộ trình nâng cao và tối đa 5 trẻ",
-        features: [
-          "Toàn bộ 120+ trò chơi nâng cao và bài học mở rộng",
-          "Thuật toán thích ứng ZPD cá nhân hoá từng kỹ năng",
-          "Phân tích chuyên sâu 6 năng lực tư duy cho người lớn",
-          "Hỗ trợ ưu tiên và cập nhật liên tục trò chơi mới",
-        ],
-        cta_text: "Đăng ký Gói Premium",
-      },
-    ],
+    programs: [],
+    packages: [],
     faq: FAQ_ITEMS.slice(0, 6),
+    library_size: "",
+    total_levels: 0,
   };
+
+  const homeData = computed<HomePayload>(() => data.value ?? fallback);
 
   // BR-SEO2-04 & BR-SEO2-09: Meta and hreflang
   useSeoMeta({
     title:
       "MindKid — Thư viện tư duy qua trò chơi tương tác cho trẻ mầm non 3–6 tuổi",
-    description:
-      "Phát triển 6 năng lực toán học nền tảng cho bé 3–6 tuổi qua 120+ trò chơi tương tác chuẩn sư phạm mầm non. Chơi thử miễn phí ngay không cần đăng ký.",
+    description: `Phát triển 6 năng lực tư duy nền tảng cho bé 3–6 tuổi qua ${homeData.value.library_size} trò chơi tương tác chuẩn sư phạm mầm non. Chơi thử miễn phí ngay không cần đăng ký.`,
     ogTitle:
       "MindKid — Thư viện tư duy qua trò chơi tương tác cho trẻ mầm non 3–6 tuổi",
-    ogDescription:
-      "Phát triển 6 năng lực toán học nền tảng cho bé qua 120+ trò chơi tương tác chuẩn sư phạm mầm non.",
+    ogDescription: `Phát triển 6 năng lực tư duy nền tảng cho bé qua ${homeData.value.library_size} trò chơi tương tác chuẩn sư phạm mầm non.`,
     ogImage: "https://mindkid.vn/images/og-home.png",
     ogType: "website",
     twitterCard: "summary_large_image",

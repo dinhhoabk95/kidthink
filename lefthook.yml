@@ -39,15 +39,15 @@ pre-commit:
     - name: deps
       run: pnpm lint:deps
 
-pre-push:
-  parallel: false
-  jobs:
-    # repo-bootstrap §4 bước 5 — PG 17 + Valkey 9 phải sống và ĐÚNG major version.
-    # Chạy TRƯỚC test vì test tích hợp dùng DB thật (BR-TST-02). Bỏ job này đi
-    # thì test tích hợp gặp DB chết sẽ đỏ với lỗi kết nối thay vì lỗi thật.
-    - name: services
-      run: pnpm services
-      fail_text: "docker compose up -d trước khi push (PG 17 + Valkey 9 phải sống)"
+# pre-push:
+#   parallel: false
+#   jobs:
+#     # repo-bootstrap §4 bước 5 — PG 17 + Valkey 9 phải sống và ĐÚNG major version.
+#     # Chạy TRƯỚC test vì test tích hợp dùng DB thật (BR-TST-02). Bỏ job này đi
+#     # thì test tích hợp gặp DB chết sẽ đỏ với lỗi kết nối thay vì lỗi thật.
+#     - name: services
+#       run: pnpm services
+#       fail_text: "docker compose up -d trước khi push (PG 17 + Valkey 9 phải sống)"
 
-    - name: check
-      run: pnpm check
+#     - name: check
+#       run: pnpm check

@@ -9,8 +9,8 @@
           Xưởng Thiết Kế Khung Chương Trình (Curriculum Studio)
         </h1>
         <p class="text-sm text-surface-500 dark:text-surface-400">
-          Biên soạn khung phân phối 8–52 tuần, phân bổ cân bằng 6 năng lực sư
-          phạm C1–C6.
+          Biên soạn khung phân phối 8–52 tuần, phân bổ cân bằng 6 nhóm năng lực
+          tư duy.
         </p>
       </div>
 

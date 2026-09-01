@@ -95,6 +95,10 @@ export const ALLOWED_EVENT_NAMES = new Set([
   "yarn_removed",
   "pattern_played",
   "beat_tapped",
+  "command_added",
+  "command_removed",
+  "program_run",
+  "program_failed",
 ]);
 
 const PII_FIELDS = new Set([
@@ -298,6 +302,10 @@ const EVENT_PAYLOAD_FIELDS: Readonly<Record<string, ReadonlySet<string>>> = {
     "is_correct",
     "round_index",
   ]),
+  command_added: new Set(["command", "command_index", "round_index"]),
+  command_removed: new Set(["command", "command_index", "round_index"]),
+  program_run: new Set(["command_count", "round_index"]),
+  program_failed: new Set(["failed_step", "reason", "round_index"]),
 };
 
 const NON_NEGATIVE_INT = z.number().int().nonnegative();
@@ -678,6 +686,25 @@ const EVENT_PAYLOAD_SCHEMAS: Readonly<Record<string, z.AnyZodObject>> = {
     instrument_id: CONTENT_ID,
     step_index: NON_NEGATIVE_INT,
     is_correct: z.boolean().optional(),
+    round_index: OPTIONAL_ROUND_INDEX,
+  }),
+  command_added: z.object({
+    command: z.enum(["forward", "turn_left", "turn_right", "loop"]),
+    command_index: NON_NEGATIVE_INT,
+    round_index: OPTIONAL_ROUND_INDEX,
+  }),
+  command_removed: z.object({
+    command: z.enum(["forward", "turn_left", "turn_right", "loop"]),
+    command_index: NON_NEGATIVE_INT,
+    round_index: OPTIONAL_ROUND_INDEX,
+  }),
+  program_run: z.object({
+    command_count: NON_NEGATIVE_INT,
+    round_index: OPTIONAL_ROUND_INDEX,
+  }),
+  program_failed: z.object({
+    failed_step: z.number().int(),
+    reason: z.string().max(64),
     round_index: OPTIONAL_ROUND_INDEX,
   }),
 };

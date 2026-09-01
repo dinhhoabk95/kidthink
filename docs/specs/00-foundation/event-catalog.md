@@ -162,6 +162,10 @@ set một vòng — xem `BR-RSP-02` ở [`round-sequence-play.md`](../04-play/ro
 | `yarn_removed` | `{ cell_index, color_id, row, col, round_index? }` | `GT-033` |
 | `pattern_played` | `{ tempo_bpm, pattern_length, is_replay, round_index? }` | `GT-034` |
 | `beat_tapped` | `{ instrument_id, step_index, is_correct, round_index? }` | `GT-034` |
+| `command_added` | `{ command, command_index, round_index? }` | `GT-035` |
+| `command_removed` | `{ command, command_index, round_index? }` | `GT-035` |
+| `program_run` | `{ command_count, round_index? }` | `GT-035` |
+| `program_failed` | `{ failed_step, reason, round_index? }` | `GT-035` |
 
 
 ### 7.3 Trợ giúp

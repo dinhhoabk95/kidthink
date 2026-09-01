@@ -1,10 +1,5 @@
 import { requireUserAuth } from "@mindkid/auth";
-import {
-  gameLevelRounds,
-  gameLevels,
-  gameTemplates,
-  getOwnerDb,
-} from "@mindkid/db";
+import { gameLevels, gameTemplates, getOwnerDb } from "@mindkid/db";
 import {
   type AccessTier,
   allowedTiers,
@@ -13,7 +8,7 @@ import {
   resolveLevelCta,
   TIER_ENTITLEMENT,
 } from "@mindkid/shared";
-import { and, asc, eq, ne } from "drizzle-orm";
+import { and, eq, ne } from "drizzle-orm";
 import {
   createError,
   defineEventHandler,
@@ -22,6 +17,10 @@ import {
 } from "h3";
 import { getOptionalActiveChildUuid } from "#server/utils/auth-runtime";
 import { resolveUserActiveEntitlements } from "#server/utils/entitlements-runtime";
+import {
+  loadRoundSet,
+  RUNTIME_SCORING_MODE,
+} from "#server/utils/round-set-runtime";
 
 const RE_COMPETENCY = /GL-(C[1-6])-/;
 
@@ -88,6 +87,11 @@ export default defineEventHandler(async (event) => {
       templateName: gameTemplates.name,
       mechanic: gameTemplates.mechanic,
       contentVersion: gameLevels.contentVersion,
+      // WP167.1: cần cho vòng mặc định khi level chưa có hàng game_level_rounds
+      instruction: gameLevels.instruction,
+      instructionAudioPath: gameLevels.instructionAudioPath,
+      contentPack: gameLevels.contentPack,
+      difficultyParams: gameLevels.difficultyParams,
     })
     .from(gameLevels)
     .leftJoin(gameTemplates, eq(gameLevels.templateId, gameTemplates.id))
@@ -142,20 +146,9 @@ export default defineEventHandler(async (event) => {
 
   const cta = resolveLevelCta(code, level.accessTier as AccessTier, viewer);
 
-  const rounds = await db
-    .select({
-      round_index: gameLevelRounds.roundIndex,
-      instruction: gameLevelRounds.instruction,
-      instruction_audio_path: gameLevelRounds.instructionAudioPath,
-      content_pack: gameLevelRounds.contentPack,
-      difficulty_params: gameLevelRounds.difficultyParams,
-      difficulty: gameLevelRounds.difficulty,
-    })
-    .from(gameLevelRounds)
-    .where(eq(gameLevelRounds.gameLevelId, level.id))
-    .orderBy(asc(gameLevelRounds.roundIndex));
-
-  const scoringMode = rounds.length > 1 ? "rounds" : "attempts";
+  // WP167.1: cùng một nguồn với đường config — trước đây đây là bản chép thứ hai
+  // của cùng truy vấn, kèm cả dòng `rounds.length > 1 ? "rounds" : "attempts"`.
+  const rounds = await loadRoundSet(db, level);
 
   return {
     code: level.code,
@@ -178,7 +171,7 @@ export default defineEventHandler(async (event) => {
       ? TIER_ENTITLEMENT[level.accessTier as AccessTier]
       : null,
     scoring: {
-      mode: scoringMode,
+      mode: RUNTIME_SCORING_MODE,
     },
     rounds: isLocked
       ? rounds.map((r) => ({

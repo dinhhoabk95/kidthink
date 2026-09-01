@@ -1,12 +1,42 @@
 import {
-  COMPETENCIES_INFO,
+  countPublishedLevels,
+  getOwnerDb,
+  roundedLibrarySize,
+} from "@mindkid/db";
+import {
+  COMPETENCY_CATALOG,
   FAQ_ITEMS,
   FEATURED_GUEST_LEVELS,
   PACKAGE_CATALOG,
 } from "@mindkid/shared";
 import { defineEventHandler, setHeader } from "h3";
 
-export default defineEventHandler((event) => {
+/** Thứ tự ba lớp mầm non — trùng với band tuổi của `game_levels`. */
+const PROGRAM_BANDS = [
+  {
+    age_band: "3-4",
+    title: "Lớp Mầm (3–4 tuổi)",
+    focus:
+      "Làm quen số lượng 1–5, nhận biết hình phẳng cơ bản, cảm nhận không gian và phân loại đồ vật thân quen.",
+  },
+  {
+    age_band: "4-5",
+    title: "Lớp Chồi (4–5 tuổi)",
+    focus:
+      "Đếm và so sánh lượng đến 10, chuỗi quy luật 2–3 yếu tố, hình khối không gian, đo lường ước lượng.",
+  },
+  {
+    age_band: "5-6",
+    title: "Lớp Lá (5–6 tuổi)",
+    focus:
+      "Tách gộp số trong phạm vi 10, chuỗi logic đa thuộc tính, tư duy không gian xoay chiều, tiền đề vào lớp 1.",
+  },
+] as const;
+
+/** Gói Tiêu chuẩn mở tới `standard`; `premium` là phần còn lại. */
+const STANDARD_TIERS = ["free", "login", "standard"];
+
+export default defineEventHandler(async (event) => {
   // Cache-Control header public 300s
   setHeader(
     event,
@@ -14,29 +44,23 @@ export default defineEventHandler((event) => {
     "public, max-age=300, stale-while-revalidate=600"
   );
 
-  const programs = [
-    {
-      age_band: "3-4",
-      title: "Lớp Mầm (3–4 tuổi)",
-      focus:
-        "Làm quen số lượng 1–5, nhận biết hình phẳng cơ bản, cảm nhận không gian và phân loại đồ vật thân quen.",
-      levels_count: 24,
-    },
-    {
-      age_band: "4-5",
-      title: "Lớp Chồi (4–5 tuổi)",
-      focus:
-        "Đếm và so sánh lượng đến 10, chuỗi quy luật 2–3 yếu tố, hình khối không gian, đo lường ước lượng.",
-      levels_count: 48,
-    },
-    {
-      age_band: "5-6",
-      title: "Lớp Lá (5–6 tuổi)",
-      focus:
-        "Tách gộp số trong phạm vi 10, chuỗi logic đa thuộc tính, tư duy không gian xoay chiều, tiền đề vào lớp 1.",
-      levels_count: 48,
-    },
-  ];
+  /**
+   * `BR-LND-09` — mọi số lượng nội dung trên trang chủ đến từ DB.
+   *
+   * Ba số cứng 24 · 48 · 48 ở đây từng lệch thật (60 · 84 · 95) và người lớn
+   * bấm sang danh mục là thấy ngay.
+   */
+  const counts = await countPublishedLevels(getOwnerDb());
+  const standardCount = STANDARD_TIERS.reduce(
+    (sum, tier) => sum + (counts.by_access_tier[tier] ?? 0),
+    0
+  );
+  const librarySize = roundedLibrarySize(counts.total);
+
+  const programs = PROGRAM_BANDS.map((band) => ({
+    ...band,
+    levels_count: counts.by_age_band[band.age_band] ?? 0,
+  }));
 
   const standardPkg = PACKAGE_CATALOG["PKG-standard"];
   const premiumPkg = PACKAGE_CATALOG["PKG-premium"];
@@ -51,7 +75,7 @@ export default defineEventHandler((event) => {
         standardPkg?.description ||
         "Dành cho người dùng theo dõi tiến độ của 3 trẻ",
       features: [
-        "Toàn bộ 60+ trò chơi rèn luyện 6 năng lực tư duy",
+        `Toàn bộ ${standardCount} trò chơi rèn luyện 6 năng lực tư duy`,
         "Lộ trình học thích ứng theo độ tuổi",
         "Báo cáo tiến độ chơi cơ bản hằng tuần",
         "Tối đa 3 hồ sơ bé trên cùng tài khoản",
@@ -67,7 +91,7 @@ export default defineEventHandler((event) => {
         premiumPkg?.description ||
         "Mở khoá toàn bộ game, lộ trình nâng cao và tối đa 5 trẻ",
       features: [
-        "Toàn bộ 120+ trò chơi nâng cao và bài học mở rộng",
+        `Toàn bộ ${counts.total} trò chơi nâng cao và bài học mở rộng`,
         "Thuật toán thích ứng ZPD cá nhân hoá từng kỹ năng",
         "Phân tích chuyên sâu 6 năng lực tư duy cho người lớn",
         "Hỗ trợ ưu tiên và cập nhật liên tục trò chơi mới",
@@ -79,8 +103,7 @@ export default defineEventHandler((event) => {
   return {
     hero: {
       title: "Phát triển tư duy cho trẻ 3–6 tuổi qua trò chơi tương tác",
-      subtitle:
-        "MindKid giúp bé rèn luyện 6 năng lực toán học nền tảng qua 120+ trò chơi kiến tạo sư phạm trực quan.",
+      subtitle: `MindKid giúp bé rèn luyện 6 năng lực tư duy nền tảng qua ${librarySize} trò chơi kiến tạo sư phạm trực quan.`,
       cta_primary: {
         text: "Cho bé chơi thử ngay",
         url: "/games/GL-C1-CNT-CARD-0001",
@@ -90,7 +113,14 @@ export default defineEventHandler((event) => {
         url: "/#competencies",
       },
     },
-    competencies: COMPETENCIES_INFO,
+    competencies: COMPETENCY_CATALOG.map((entry) => ({
+      code: entry.code,
+      name: entry.name,
+      emoji: entry.emoji,
+      description: entry.tagline,
+    })),
+    library_size: librarySize,
+    total_levels: counts.total,
     how_it_works: [
       {
         step: 1,

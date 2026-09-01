@@ -40,7 +40,7 @@
         <div
           class="flex justify-between font-semibold text-surface-700 dark:text-surface-300"
         >
-          <span>1. Phân bổ Năng lực (C1–C6)</span>
+          <span>1. Phân bổ năng lực tư duy</span>
           <span
             >{{ report.indicators?.competency_distribution
                 ?.distinct_competencies ?? 0 }}/6</span

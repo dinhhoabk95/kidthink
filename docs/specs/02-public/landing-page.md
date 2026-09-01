@@ -58,6 +58,7 @@ Guest — người lớn. Cấm Trẻ không phải đối tượng của trang 
 | `BR-LND-06` | Cấm — **NEVER hứa hẹn kết quả học tập** — không "giúp bé thông minh hơn", không "tăng IQ" | Vượt ranh giới của một sản phẩm giáo dục và có rủi ro pháp lý |
 | `BR-LND-07` | Cấm — **NEVER dùng ảnh trẻ em thật** làm minh hoạ | Nhất quán với ràng buộc dữ liệu trẻ |
 | `BR-LND-08` | LCP < **2,5 s** trên 4G | Đảm bảo trải nghiệm tải trang nhanh và tối ưu điểm Core Web Vitals (LCP) |
+| `BR-LND-09` | Mọi **số lượng nội dung** và **nhãn năng lực** trên trang lấy từ dữ liệu — Cấm NEVER viết số hay nhãn cứng vào trang, component hay handler | Trang chủ từng in 24 · 48 · 48 và "120+" trong khi DB có 60 · 84 · 95 và 239. Người lớn bấm sang danh mục là thấy số khác ngay ở dòng đầu |
 
 ## 7. Data
 
@@ -126,6 +127,18 @@ Scenario: BR-LND-08 — LCP đạt mục tiêu
 Scenario: BR-LND-05 — giá khớp catalog
   When so giá trên trang với PACKAGE_CATALOG
   Then khớp hoàn toàn
+
+Scenario: BR-LND-09 — số lượng khớp danh mục
+  Given kho có N trò chơi published
+  When guest mở trang chủ
+  Then tổng ba số của ba lộ trình theo lứa tuổi bằng N
+  And bấm một lộ trình mở danh mục lọc đúng band đó với đúng số đó
+  And không chuỗi nào trong trang chứa số lượng viết cứng
+
+Scenario: BR-LND-09 — nhãn năng lực khớp taxonomy
+  Given bảng `competencies` có sáu dòng
+  When guest mở trang chủ
+  Then sáu thẻ năng lực hiện đúng sáu tên đó
 ```
 
 ## 10. Boundaries

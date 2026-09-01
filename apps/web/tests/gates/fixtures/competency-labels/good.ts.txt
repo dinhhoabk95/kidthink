@@ -1,0 +1,6 @@
+import { COMPETENCY_CATALOG } from "@mindkid/shared";
+
+export const OPTIONS = COMPETENCY_CATALOG.map((entry) => ({
+  value: entry.code,
+  label: `${entry.code}: ${entry.name}`,
+}));

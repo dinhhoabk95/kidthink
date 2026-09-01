@@ -74,6 +74,18 @@ bằng `pnpm dev` + `pnpm dev:admin`.
 8. **Cập nhật** `docs/specs/index.md`, [`roadmap.md`](../specs/roadmap.md) và `.agents` nếu luồng đăng nhập được
    mô tả ở đó.
 
+### Phase 4 — Gieo tài khoản kiểm thử hạt giống (Seed Test Accounts & Env-Free)
+
+9. **Tạo `packages/db/src/seed-master/accounts.ts`:**
+   - Seed mặc định 2 Manager: `admin@mindkid.test` (`xK9#mQ2$vL8!wP5@`, `super_admin`, MFA off), `reviewer@mindkid.test` (`jR4$yT7#nE2!zM9&`, `content_reviewer`, MFA off).
+   - Seed mặc định 3 User: `parent.free@mindkid.test` (`hB8#kF3$sV6!dQ1*`), `parent.standard@mindkid.test` (`wP2$uN9#tX4!cA7^`), `parent.pro@mindkid.test` (`qM5#gH8$rK3!yB6%`).
+   - Tự động gắn 5 hồ sơ trẻ `child_profiles`, gói `entitlements` tương ứng và `consent_logs`.
+10. **Cập nhật `packages/db/src/seed.ts`:**
+    - Gỡ bỏ `requireEnv("INITIAL_ADMIN_EMAIL")` và `requireEnv("INITIAL_ADMIN_PASSWORD")` bắt buộc; gọi `seedInitialAccounts(db)`.
+    - Cho phép chạy `pnpm db:seed` ngay lập tức mà không đòi hỏi file cấu hình `.env`.
+11. **Integration Test `packages/db/tests/integration/seed-accounts.test.ts`:**
+    - Kiểm tra luỹ đẳng (idempotent), xác thực mật khẩu argon2id sau seed.
+
 ## 4. Verification
 
 ```bash

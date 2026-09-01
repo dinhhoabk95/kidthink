@@ -9,15 +9,17 @@
     :aria-valuenow="current + 1"
   >
     <div
-      class="round-dot"
+      class="round-star-pill"
       v-for="i in total"
       :key="i"
       :class="{
-        'round-dot--done': i - 1 < current,
-        'round-dot--active': i - 1 === current,
-        'round-dot--future': i - 1 > current,
+        'round-star--done': i - 1 < current,
+        'round-star--active': i - 1 === current,
+        'round-star--future': i - 1 > current,
       }"
-    />
+    >
+      <span class="star-icon">⭐</span>
+    </div>
   </div>
 </template>
 
@@ -31,42 +33,58 @@
 <style scoped>
   .round-progress {
     display: flex;
-    gap: 12px;
+    gap: 8px;
     align-items: center;
     justify-content: center;
-    padding: 12px 16px;
-    pointer-events: none;
-    position: absolute;
-    top: 16px;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 10;
+    background-color: rgba(245, 243, 239, 0.9);
+    backdrop-filter: blur(6px);
+    border: 2px solid #d4c5ab;
+    border-radius: 9999px;
+    padding: 6px 16px;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.04);
   }
 
-  .round-dot {
-    width: 16px;
-    height: 16px;
+  .round-star-pill {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     border-radius: 50%;
-    transition:
-      transform 200ms ease,
-      background-color 200ms ease,
-      box-shadow 200ms ease;
+    transition: all 250ms cubic-bezier(0.34, 1.56, 0.64, 1);
   }
 
-  .round-dot--done {
-    background-color: var(--color-success-500);
-    transform: scale(1);
+  .round-star--done {
+    filter: drop-shadow(0 2px 4px rgba(16, 185, 129, 0.35));
+    transform: scale(1.05);
   }
 
-  .round-dot--active {
-    background-color: var(--color-brand-600);
+  .round-star--active {
+    filter: drop-shadow(0 4px 8px rgba(255, 191, 0, 0.5));
     transform: scale(1.25);
-    box-shadow: 0 0 0 4px
-      color-mix(in srgb, var(--color-brand-600) 25%, transparent);
+    animation: pulseActive 2s infinite ease-in-out;
   }
 
-  .round-dot--future {
-    background-color: var(--color-surface-300);
-    transform: scale(1);
+  .round-star--future {
+    opacity: 0.35;
+    filter: grayscale(1);
+    transform: scale(0.85);
+  }
+
+  .star-icon {
+    font-size: 18px;
+    line-height: 1;
+  }
+
+  @keyframes pulseActive {
+    0% {
+      transform: scale(1.2);
+    }
+    50% {
+      transform: scale(1.32);
+    }
+    100% {
+      transform: scale(1.2);
+    }
   }
 </style>

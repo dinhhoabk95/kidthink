@@ -329,10 +329,7 @@
                     :key="comp.code"
                   >
                     <div class="flex justify-between text-xs font-bold">
-                      <span class="text-surface-700"
-                        >{{ comp.label }}
-                        ({{ comp.code }})</span
-                      >
+                      <span class="text-surface-700">{{ comp.label }}</span>
                       <span class="text-brand-600"
                         >{{ Math.round(comp.share * 100) }}%</span
                       >

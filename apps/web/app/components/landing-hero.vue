@@ -8,9 +8,10 @@
           Thư viện tư duy qua trò chơi tương tác cho bé
         </h1>
         <p class="hero-desc">
-          MindKid giúp bé rèn luyện 6 năng lực toán học nền tảng qua 120+ trò
-          chơi kiến tạo sư phạm trực quan, nói không với học vẹt và áp lực điểm
-          số.
+          MindKid giúp bé rèn luyện 6 năng lực tư duy nền tảng qua
+          {{ librarySize }}
+          trò chơi kiến tạo sư phạm trực quan, nói không với học vẹt và áp lực
+          điểm số.
         </p>
         <div class="hero-cta-group">
           <!-- BR-LND-01 & BR-LND-02: Play trial button above fold without registration -->
@@ -22,7 +23,7 @@
             />
           </NuxtLink>
           <NuxtLink class="btn-cta-secondary" to="/games">
-            Xem toàn bộ 120+ trò chơi
+            Xem toàn bộ {{ librarySize }} trò chơi
           </NuxtLink>
         </div>
         <p class="hero-note flex items-center gap-4 flex-wrap">
@@ -54,7 +55,14 @@
   </section>
 </template>
 
-<script lang="ts" setup></script>
+<script lang="ts" setup>
+  /**
+   * `BR-LND-09` — số lượng thư viện đến từ `/api/guest/home`, Cấm — NEVER viết
+   * số cứng vào template. Mặc định là chuỗi rỗng chứ Cấm — NEVER là một con số
+   * đoán: thà thiếu chữ còn hơn in sai.
+   */
+  defineProps<{ librarySize?: string }>();
+</script>
 
 <style scoped>
   .hero-section {

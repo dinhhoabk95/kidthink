@@ -141,12 +141,7 @@
             v-for="comp in staticMockup.competencies"
             :key="comp.code"
           >
-            <div class="flex items-center justify-between">
-              <span
-                class="text-xs font-bold font-heading px-2.5 py-1 rounded-xl bg-surface-100 text-surface-700"
-              >
-                {{ comp.code }}
-              </span>
+            <div class="flex items-center justify-end">
               <span class="text-xs font-bold text-surface-600">5/5 phiên</span>
             </div>
             <h3 class="text-lg font-bold font-heading text-surface-900">
@@ -206,12 +201,7 @@
             :key="comp.code"
             :aria-label="comp.alt_text"
           >
-            <div class="flex items-center justify-between">
-              <span
-                class="text-xs font-bold font-heading px-2.5 py-1 rounded-xl bg-surface-100 text-surface-800"
-              >
-                {{ comp.code }}
-              </span>
+            <div class="flex items-center justify-end">
               <span
                 :class="[
                   'text-xs font-bold px-2.5 py-0.5 rounded-full',
@@ -297,7 +287,8 @@
                 </p>
                 <p class="text-xs text-surface-500">
                   {{ str.code }}
-                  ({{ str.competency_code }})
+                  ·
+                  {{ findCompetency(str.competency_code)?.name || str.competency_code }}
                 </p>
               </div>
               <div class="text-right">
@@ -702,6 +693,7 @@
 
 <script lang="ts" setup>
   import type { AdvancedReportResult } from "@mindkid/db";
+  import { findCompetency } from "@mindkid/shared/client";
   import { computed, ref } from "vue";
   import { useRoute } from "vue-router";
 

@@ -26,3 +26,10 @@
 - [x] Cập nhật `docs/specs/index.md`, [`roadmap.md`](../specs/roadmap.md), `.agents` nếu có mô tả luồng đăng nhập.
 - [x] Chạy `pnpm --filter @mindkid/admin test`, `pnpm typecheck`, `pnpm lint`. (`@mindkid/gates` bị xoá 2026-08-29; cổng ranh giới runtime nay ở `apps/admin/tests/gates/`.)
 - [x] Chụp danh sách `trạng-thái | tên-test` trước và sau, yêu cầu trùng khít trừ test mới.
+
+## Phase 4 — Gieo tài khoản kiểm thử hạt giống (Seed Test Accounts & Env-Free)
+
+- [x] Tạo `packages/db/src/seed-master/accounts.ts` với strict typing (2 Managers, 3 Users, 5 Child Profiles, Entitlements).
+- [x] Cập nhật `packages/db/src/seed.ts` gọi `seedInitialAccounts(db)` và bỏ bắt buộc `requireEnv("INITIAL_ADMIN_*")`.
+- [x] Viết test `packages/db/tests/integration/seed-accounts.test.ts`.
+- [x] Chạy `pnpm check` và `pnpm --filter @mindkid/db test` kiểm tra 100% xanh.

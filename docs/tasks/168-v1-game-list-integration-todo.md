@@ -76,8 +76,8 @@
 
 ## Đợt 4 — ba khuôn cần hệ thống mới
 
-- [ ] [`#187`](187-engine-gt-034-beat-sequence-plan.md) `GT-034` `beat-sequence` ← `D3-06` — 10 level
-- [ ] [`#188`](188-engine-gt-035-command-sequence-plan.md) `GT-035` `command-sequence` ← `D6-05` — 10 level
+- [x] [`#187`](187-engine-gt-034-beat-sequence-plan.md) `GT-034` `beat-sequence` ← `D3-06` — 10 level
+- [x] [`#188`](188-engine-gt-035-command-sequence-plan.md) `GT-035` `command-sequence` ← `D6-05` — 10 level
 - [ ] [`#189`](189-engine-gt-036-free-create-plan.md) `GT-036` `free-create` ← `D3-05` — 10 level
 
 ### ═══ CHỐT KIỂM 4 — đóng chương trình ═══

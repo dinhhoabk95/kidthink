@@ -88,7 +88,7 @@ describe("Child Play Map API (BR-PRG-02..05, D-MJ, D-MK)", () => {
       .insert(competencies)
       .values({
         code: "C1",
-        name: "Số & Đếm",
+        name: "Tư duy toán học",
         colorToken: "blue",
         icon: "icon-c1",
         position: 1,

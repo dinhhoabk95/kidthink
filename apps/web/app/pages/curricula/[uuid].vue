@@ -139,7 +139,7 @@
               <span>Chỉ số cân bằng sư phạm</span>
             </h3>
             <span class="text-xs text-surface-500"
-              >Tự động phân tích theo taxonomy C1-C6</span
+              >Tự động phân tích theo 6 nhóm năng lực tư duy</span
             >
           </div>
 
@@ -231,7 +231,8 @@
                           </div>
                           <div class="text-3xs text-surface-500 truncate">
                             {{ it.code }}
-                            · {{ it.competency_code || 'Toán' }}
+                            ·
+                            {{ findCompetency(it.competency_code ?? '')?.name || it.competency_code || 'Tư duy toán học' }}
                           </div>
                         </div>
                       </div>
@@ -370,6 +371,7 @@
 </template>
 
 <script lang="ts" setup>
+  import { findCompetency } from "@mindkid/shared/client";
   import { computed, ref, watch } from "vue";
   import { useFetch, useRoute } from "#imports";
 

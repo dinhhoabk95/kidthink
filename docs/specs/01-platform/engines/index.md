@@ -2,7 +2,7 @@
 
 # Danh mục phiếu engine
 
-34 engine trong registry, 36 phiếu, 2 đặt trước, 0 mồ côi.
+35 engine trong registry, 36 phiếu, 1 đặt trước, 0 mồ côi.
 
 Hình dạng phiếu và luật đối chiếu: [`engine-spec-sheet.md`](../engine-spec-sheet.md).
 Sàn nội dung mỗi engine: [`engine-content-depth.md`](../../05-content/engine-content-depth.md).
@@ -45,6 +45,7 @@ Sàn nội dung mỗi engine: [`engine-content-depth.md`](../../05-content/engin
 | [`GT-032`](GT-032.md) | So lượng chất lỏng | `pour-quantity` | 5–6 | 3-4 · 4-5 | Không | legacy-v1 |
 | [`GT-033`](GT-033.md) | Dệt hoa văn lưới | `weave-grid` | 5–6 | 3-4 · 4-5 | Có | legacy-v1 |
 | [`GT-034`](GT-034.md) | Gõ theo nhịp | `beat-sequence` | 5–6 | 3-4 · 4-5 | Có | legacy-v1 |
+| [`GT-035`](GT-035.md) | Xếp hàng lệnh | `command-sequence` | 5–6 | 3-4 · 4-5 | Có | legacy-v1 |
 
 ## Engine đặt trước — spec có, `template.ts` chưa
 
@@ -53,5 +54,4 @@ ra đời trước khuôn, và cổng đối chiếu trường trích chỉ bậ
 
 | Mã | Tên | Cơ chế đặt trước | Lô | Plan sở hữu |
 |---|---|---|---|---|
-| [`GT-035`](GT-035.md) | Xếp hàng lệnh | `command-sequence` | legacy-v1 | [`188-engine-gt-035-command-sequence-plan.md`](../../../tasks/188-engine-gt-035-command-sequence-plan.md) |
 | [`GT-036`](GT-036.md) | Tự tạo quy luật | `free-create` | legacy-v1 | [`189-engine-gt-036-free-create-plan.md`](../../../tasks/189-engine-gt-036-free-create-plan.md) |

@@ -28,14 +28,14 @@ const ERR_EMPTY_SOURCE = /Nguồn corpus seed rỗng hoặc không đọc đư�
 const MAX_LEVEL_COUNT_DEFICIT_AT_STEP_1 = 45;
 
 describe("Sàn chiều sâu mỗi engine — Task #122 (BR-ECD-01..13)", () => {
-  it("Bậc 0: toàn bộ 33 engine active đều đạt sàn baseline", () => {
+  it("Bậc 0: toàn bộ 35 engine active đều đạt sàn baseline", () => {
     const config = loadEngineDepthConfig();
     expect(config.active_step).toBe(0);
 
     const report = evaluateEngineDepth(ALL_SEED_LEVELS, config);
     expect(report.passed).toBe(true);
-    expect(report.totalEngines).toBe(33);
-    expect(report.passedEnginesCount).toBe(33);
+    expect(report.totalEngines).toBe(35);
+    expect(report.passedEnginesCount).toBe(35);
     expect(report.failedEnginesCount).toBe(0);
     expect(report.violations.length).toBe(0);
   });
@@ -47,7 +47,7 @@ describe("Sàn chiều sâu mỗi engine — Task #122 (BR-ECD-01..13)", () => {
 
     expect(formatted).not.toContain("%");
     expect(formatted).toContain("check:engine-depth");
-    expect(formatted).toContain("33 engine active");
+    expect(formatted).toContain("35 engine active");
   });
 
   it("Scenario: Cổng không mở kết nối database (DATABASE_URL trỏ host giả)", () => {

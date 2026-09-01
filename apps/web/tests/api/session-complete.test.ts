@@ -78,9 +78,16 @@ describe("Task P1.6 — Session Complete Route & Contracts (BR-PSL-01, BR-PSL-03
       isUserCall: false,
       guestDeviceId: "device-complete-1",
     });
-    expect(res.stars).toBeNull();
+    // Mục 7.3 `scoring-and-result.md`: **mọi trẻ hoàn thành đều có ít nhất một
+    // sao**. Bản trước của test này assert `stars` là `null` — nó khoá đúng lỗi
+    // mà mục 8 của spec cấm: response phải mang `stars` và `celebration`, và
+    // Cấm — NEVER mang `normalized_score` hay `raw_score` xuống bề mặt trẻ.
+    expect(res.stars).toBe(1);
+    expect(res.celebration).toBe("nice_try");
     expect(res.rounds_correct).toBe(0);
     expect(res.rounds_total).toBe(0);
+    expect(res).not.toHaveProperty("normalized_score");
+    expect(res).not.toHaveProperty("score");
   });
 
   it("BR-PSL-01: completing an already completed session throws 409 SESSION_ALREADY_COMPLETED", async () => {

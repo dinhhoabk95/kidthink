@@ -89,7 +89,7 @@ Không có luồng người dùng. Spec ràng buộc. Trình tự biên tập m�
 | `BR-RSM-07` (theme nhất quán) | Một theme cho cả set | Kế thừa `BR-GLM-10` (theme nhất quán trong một level). Đổi theme giữa set đọc như đổi sang game khác |
 | `BR-RSM-08` (vòng phải khác nhau) | Cấm — **NEVER hai vòng liền kề trùng nội dung.** Đổi thứ tự option không tính là khác | Kế thừa `BR-GLM-07` (level cùng skill phải khác nhau về nội dung). Lặp lại cùng một câu là luyện trí nhớ vị trí, không phải luyện tư duy |
 | `BR-RSM-09` (set một vòng hợp lệ) | Round set **một phần tử** là hợp lệ và là mặc định khi migrate | Toàn bộ level đã seed phải chạy tiếp không cần soạn lại. Ép mọi level thành nhiều vòng là ép biên tập lại cả kho nội dung |
-| `BR-RSM-10` (trần payload cả set) | Tổng payload **cả set** ≤ 200 KB gzipped | `BR-CFG-08` (payload ≤ 200 KB gzipped) là trần của một phiên, không phải của một vòng. Nhân theo số vòng thì trần cũ vỡ im lặng |
+| `BR-RSM-10` (trần payload cả set) | Tổng payload **cả set** ≤ 200 KB gzipped, đo ở **hai** chỗ: lúc duyệt và lúc giao config | `BR-CFG-08` (payload ≤ 200 KB gzipped) là trần của một phiên, không phải của một vòng. Nhân theo số vòng thì trần cũ vỡ im lặng — và nó đã vỡ đúng như vậy: tới 2026-08-31 chỗ duyệt tự tắt vì `entity.rounds` không bao giờ được truyền, còn delivery không có một dòng đo nào. `D-167A` nâng trần vòng lên 10 làm ngân sách rơi về 20 KB một vòng, nên một chỗ đo là không đủ |
 | `BR-RSM-11` (chỉ dẫn mỗi vòng) | Mỗi vòng có chỉ dẫn riêng, ≤ 12 từ, không phủ định | Kế thừa `BR-GLM-04` và `BR-GLM-05`. Một chỉ dẫn dùng chung cho cả set buộc nó nói chung chung, và chung chung thì trẻ không biết phải làm gì |
 | `BR-RSM-12` (độ dài set) | Một set nhắm thời lượng ≤ **5 phút** ở band tuổi của nó | Trần phút chơi trong ngày ở [`healthy-play-limits.md`](../04-play/healthy-play-limits.md) đo theo ngày, không chặn một phiên dài. Set dài biến một màn chơi thành một buổi ngồi máy |
 | `BR-RSM-13` (không trộn band) | Mọi vòng trong set dùng **cùng** `age_min`/`age_max` của level | Band tuổi quyết định sàn touch (`BR-ENG-05`) và trần item. Đổi band giữa set làm sàn touch đổi giữa lúc trẻ đang chạm |
@@ -105,11 +105,13 @@ mô tả **hình dạng biên tập**, không thay thế spec schema — xem câ
 
 ### 7.1 Số vòng theo band tuổi
 
+Trần nâng ngày 2026-08-31 theo quyết định `D-167A` ở mục 11. Trần cũ là `4 · 6 · 8`.
+
 | Band | Vòng tối thiểu | Vòng tối đa |
 |---|---:|---:|
-| 3–4 | 1 | 4 |
-| 4–5 | 1 | 6 |
-| 5–6 | 1 | 8 |
+| 3–4 | 1 | 6 |
+| 4–5 | 1 | 8 |
+| 5–6 | 1 | 10 |
 
 Trần này nhân với trần item của mục 7.1
 [`game-level-model.md`](game-level-model.md), không thay thế nó: một set band 3–4 có 4 vòng,
@@ -257,5 +259,6 @@ Scenario: BR-RSM-13 — trộn band trong một set bị chặn
 |---|---|---|---|---|---|
 | 1 | `game_level_rounds` là bảng con hay cột `rounds` jsonb trên `game_levels`? Bảng con cho phép ràng buộc UNIQUE và query từng vòng; jsonb rẻ hơn và khớp cách `content_pack` đang lưu | Hình dạng schema, migration | P2 | Backend | **Bảng con `game_level_rounds` (Task #100 WP100.1).** UNIQUE `(game_level_id, round_index)` ép bởi DB — ràng buộc index liên tục và không trùng vòng không cần code giữ. Query từng vòng cho phép migration và debug mà không parse jsonb. Spec mục 7.2 đã viết theo phương án này, không cần đổi |
 | 2 | Migrate level đã seed: copy `content_pack` hiện có thành `round_index = 0` rồi drop cột cũ theo expand-contract, hay giữ cột cũ vĩnh viễn làm vòng 0? | Kế hoạch migration | P2 | người quyết | **Expand-contract (Task #100 WP100.1).** Pha expand: tạo `game_level_rounds`, copy `content_pack`/`difficulty_params`/`instruction`/`instruction_audio_path` của mọi level thành `round_index = 0`. Pha contract: drop 4 cột cũ trên `game_levels` sau khi tất cả code đã đọc từ bảng mới. Repo đã có `packages/db/tests/gates/migration-expand.ts` nên pattern có sẵn. Giữ cột cũ vĩnh viễn tạo hai nguồn cho cùng dữ liệu — drift không tránh được |
-| 3 | Trần 4 vòng ở band 3–4 dựa trên suy luận về sức chú ý, chưa đo với trẻ. Con số đúng là bao nhiêu? | Trần mục 7.1 | P2 nghiệm thu | người quyết | Chờ dữ liệu từ [`pedagogical-evidence.md`](../08-quality/pedagogical-evidence.md) |
+| 3 | Trần vòng ở band 3–4 dựa trên suy luận về sức chú ý, chưa đo với trẻ. Con số đúng là bao nhiêu? | Trần mục 7.1 | P2 nghiệm thu | người quyết | **Vẫn mở.** `D-167A` nâng trần lên `6 · 8 · 10` nhưng **không** đóng câu hỏi này: nó nâng bằng lập luận thời lượng, không bằng dữ liệu quan sát trẻ. Chờ dữ liệu từ [`pedagogical-evidence.md`](../08-quality/pedagogical-evidence.md) |
+| 5 | Trần vòng tối đa của một set là bao nhiêu? (`D-167A`) | Trần mục 7.1, ngân sách payload | P2 | chủ dự án | **Tối đa 10 vòng, chốt 2026-08-31 ([`Task #167`](../../tasks/167-round-loop-closure-plan.md) WP167.0).** Thi công theo thang `3-4: 6 · 4-5: 8 · 5-6: 10`, giữ hình dạng thang vì trần thời lượng `BR-RSM-12` không bảo vệ được sức chú ý của band nhỏ — 10 vòng band 3–4 vẫn dưới 5 phút mà vẫn là một dãy dài với trẻ 3 tuổi. Số đo hậu thuẫn: 10 vòng nhân ~20 giây là 3,3 phút, còn dư dưới trần 5 phút; `first_try_ratio` được 11 mức nên hai ngưỡng 0,55 và 0,85 mới có nghĩa; đổi lại ngân sách payload rơi về **20 KB một vòng**, nên cùng lô đã bắt `BR-RSM-10` đo **cả ở delivery-time** chứ không chỉ lúc duyệt |
 | 4 | Set có nên cho phép vòng **tuỳ chọn** — vòng khó thêm chỉ hiện khi trẻ làm đúng hết các vòng trước? | Phạm vi P2 | P3 | người quyết | Hoãn. Vòng tuỳ chọn làm `rounds_total` khác nhau giữa hai lượt chơi cùng một level, phá tính so sánh của `first_try_ratio` |

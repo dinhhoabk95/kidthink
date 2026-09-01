@@ -1,8 +1,7 @@
 import { randomUUID } from "node:crypto";
-import { AppError } from "@mindkid/auth";
+import { AppError, appError } from "@mindkid/auth";
 import {
   childProfiles,
-  gameLevelRounds,
   gameLevels,
   gameTemplates,
   getOwnerDb,
@@ -14,10 +13,16 @@ import {
   type CallerIdentity,
   type ContentAccessResult,
   type EntitlementKey,
+  MAX_PAYLOAD_BYTES_GZIPPED,
+  measureRoundSetPayloadBytes,
   resolveAssets,
 } from "@mindkid/shared";
-import { and, asc, desc, eq } from "drizzle-orm";
+import { and, desc, eq } from "drizzle-orm";
 import { createError, type H3Event, setHeader, setResponseStatus } from "h3";
+import {
+  loadRoundSet,
+  RUNTIME_SCORING_MODE,
+} from "#server/utils/round-set-runtime";
 
 export interface GameConfigDeliveryOptions {
   caller: CallerIdentity;
@@ -233,6 +238,40 @@ function validateLevelAndRounds(
   }
 }
 
+/**
+ * `BR-CFG-08` và `BR-RSM-10` — trần 200 KB gzipped của **cả set**.
+ *
+ * Trước Task #167 trần này chỉ đo lúc duyệt nội dung, và chỗ duyệt đó lại tự tắt
+ * (xem `checkRoundSetRules` ở `publish-checklist.ts`), nên không ai đo. Test
+ * `BR-CFG-08` cũ đo chính fixture nhỏ của nó nên không bao giờ đỏ được.
+ *
+ * Đo **trước** khi tạo `play_sessions`: chặn sau khi tạo phiên để lại một hàng
+ * `in_progress` mà không client nào đóng được, và đó đúng là loại rác mà Task
+ * #167 đang dọn.
+ *
+ * Đo content pack chứ không đo payload cuối cùng, vì payload cuối cần
+ * `layout_seed` và `session.uuid` — hai thứ chỉ có sau khi tạo phiên. Content
+ * pack là phần người soạn kiểm soát và là phần duy nhất lớn lên theo số vòng;
+ * asset chỉ thêm URL đã phân giải.
+ */
+function assertPayloadWithinCap(
+  levelCode: string,
+  contentPacks: readonly unknown[]
+): void {
+  const bytes = measureRoundSetPayloadBytes(contentPacks);
+  if (bytes <= MAX_PAYLOAD_BYTES_GZIPPED) {
+    return;
+  }
+  console.error(
+    `[ALERT] PAYLOAD_TOO_LARGE for level ${levelCode}: ${bytes} bytes gzipped over ${MAX_PAYLOAD_BYTES_GZIPPED}`
+  );
+  throw appError("PAYLOAD_TOO_LARGE", {
+    level_code: levelCode,
+    measured_bytes: bytes,
+    limit_bytes: MAX_PAYLOAD_BYTES_GZIPPED,
+  });
+}
+
 function applyGameConfigCacheHeader(
   event: H3Event,
   accessTier: string,
@@ -261,24 +300,21 @@ export async function deliverGameConfig(
     ownedChild
   );
 
-  // 3b. WP100.4: Load and validate rounds
-  const rounds = await db
-    .select({
-      round_index: gameLevelRounds.roundIndex,
-      instruction: gameLevelRounds.instruction,
-      instruction_audio_path: gameLevelRounds.instructionAudioPath,
-      content_pack: gameLevelRounds.contentPack,
-      difficulty_params: gameLevelRounds.difficultyParams,
-      difficulty: gameLevelRounds.difficulty,
-    })
-    .from(gameLevelRounds)
-    .where(eq(gameLevelRounds.gameLevelId, level.id))
-    .orderBy(asc(gameLevelRounds.roundIndex));
+  // 3b. WP167.1: round set Cấm — NEVER rỗng (BR-RSM-09, BR-RSP-02)
+  const rounds = await loadRoundSet(db, level);
 
   // 3. Validate content_pack using Zod schema (BR-CFG-03 / D-FS)
   validateLevelAndRounds(event, template.code, level, rounds);
 
-  const scoringMode = rounds.length > 1 ? "rounds" : "attempts";
+  // 3c. WP167.0: trần payload đo trước khi tạo phiên (BR-CFG-08, BR-RSM-10)
+  //
+  // Đo cả `level.contentPack` **và** từng vòng, vì payload §7.1 mang cả hai.
+  // Với set một vòng dựng từ chính level thì round 0 trùng `level.contentPack`,
+  // và dây thật cũng chở nó hai lần — nên đếm hai lần là đúng, không phải lỗi.
+  assertPayloadWithinCap(level.code, [
+    level.contentPack,
+    ...rounds.map((r) => r.content_pack),
+  ]);
 
   // 4. Create minimum play_sessions row (D-FR, BR-RNG-06, BR-RNG-07)
   const { sessionUuid, startedAt, layoutSeed } = await createPlaySessionRecord(
@@ -319,7 +355,7 @@ export async function deliverGameConfig(
       ...(typeof template.scoring === "object" && template.scoring !== null
         ? (template.scoring as Record<string, unknown>)
         : {}),
-      mode: scoringMode,
+      mode: RUNTIME_SCORING_MODE,
     },
     rounds: rounds.map((r) => ({
       round_index: r.round_index,

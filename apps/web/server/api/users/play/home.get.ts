@@ -4,7 +4,7 @@ import {
   getOwnerDb,
   playSessions,
 } from "@mindkid/db";
-import { deriveAgeBand } from "@mindkid/shared";
+import { COMPETENCY_CATALOG, deriveAgeBand } from "@mindkid/shared";
 import { and, desc, eq } from "drizzle-orm";
 import {
   createError,
@@ -16,14 +16,17 @@ import {
 
 import { requireWebUserSession } from "#server/utils/auth-runtime";
 
-export const COMPETENCY_CARDS = [
-  { code: "C1", name: "Số & Đếm", icon_id: "topic-c1" },
-  { code: "C2", name: "Hình học & Không gian", icon_id: "topic-c2" },
-  { code: "C3", name: "Đo lường & So sánh", icon_id: "topic-c3" },
-  { code: "C4", name: "Quy luật & Phân loại", icon_id: "topic-c4" },
-  { code: "C5", name: "Tư duy Logic", icon_id: "topic-c5" },
-  { code: "C6", name: "Giải quyết vấn đề", icon_id: "topic-c6" },
-];
+/**
+ * Sáu thẻ năng lực của sảnh chơi — dẫn xuất từ `COMPETENCY_CATALOG`.
+ *
+ * Bảng viết tay ở đây từng là bộ nhãn **thứ tư** của repo và lệch cả với
+ * taxonomy toán v1 mà ba bảng kia dùng (task 165).
+ */
+export const COMPETENCY_CARDS = COMPETENCY_CATALOG.map((entry) => ({
+  code: entry.code,
+  name: entry.name,
+  icon_id: `topic-${entry.code.toLowerCase()}`,
+}));
 
 export default defineEventHandler(async (event) => {
   const user = await requireWebUserSession(event);

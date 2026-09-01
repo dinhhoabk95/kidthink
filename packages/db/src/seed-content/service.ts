@@ -44,30 +44,37 @@ async function checkExistingLevelVersion(
   code: string,
   contentVersion: number
 ): Promise<{ shouldSkip: boolean; existingEntityId?: number }> {
-  const [existing] = await tx
+  const existingList = await tx
     .select()
     .from(gameLevels)
-    .where(eq(gameLevels.code, code));
+    .where(eq(gameLevels.code, code))
+    .orderBy(desc(gameLevels.contentVersion));
 
-  if (!existing) {
+  const exactMatch = existingList.find(
+    (e) => e.contentVersion === contentVersion
+  );
+  if (exactMatch) {
+    return { shouldSkip: true, existingEntityId: exactMatch.entityId };
+  }
+
+  const latest = existingList[0];
+  if (!latest) {
     return { shouldSkip: false };
   }
 
-  if (existing.contentVersion === contentVersion) {
-    return { shouldSkip: true };
-  }
-  if (existing.contentVersion > contentVersion) {
+  if (latest.contentVersion > contentVersion) {
     throw new AppError(
       "VALIDATION_FAILED",
-      `Mã ${code} đã có version lớn hơn.`
+      `Mã ${code} đã có version lớn hơn (${latest.contentVersion} > ${contentVersion}).`
     );
   }
+
   await tx
     .update(gameLevels)
     .set({ status: "archived" })
-    .where(eq(gameLevels.id, existing.id));
+    .where(eq(gameLevels.id, latest.id));
 
-  return { shouldSkip: false, existingEntityId: existing.entityId };
+  return { shouldSkip: false, existingEntityId: latest.entityId };
 }
 
 async function linkGameLevelSkills(

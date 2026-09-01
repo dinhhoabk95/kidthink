@@ -1,5 +1,7 @@
+import { randomBytes } from "node:crypto";
 import { gzipSync } from "node:zlib";
 import {
+  gameLevelRounds,
   gameLevels,
   gameTemplates,
   getOwnerDb,
@@ -160,6 +162,54 @@ async function seedTestLevel(options: {
     .returning();
 
   return { level, template: gt };
+}
+
+/**
+ * Gieo `count` hàng `game_level_rounds` hợp lệ cho một level.
+ *
+ * Cần helper riêng vì không có chỗ nào trong repo ghi bảng này — seeder nội dung
+ * insert bảy bảng và không có bảng vòng. Đó là lý do delivery chưa bao giờ thấy
+ * một round set thật.
+ */
+async function seedTestRounds(gameLevelId: number, count: number) {
+  const db = getOwnerDb();
+  await db
+    .delete(gameLevelRounds)
+    .where(eq(gameLevelRounds.gameLevelId, gameLevelId));
+
+  const rows = Array.from({ length: count }, (_, i) => ({
+    gameLevelId,
+    roundIndex: i,
+    instruction: `Bé làm bước ${i + 1} nhé!`,
+    contentPack: {
+      prompt: "Bé hãy chọn quả táo đỏ",
+      target_item: {
+        item_id: `i${i}`,
+        asset: { kind: "emoji", ref: "EMJ-red-apple" },
+      },
+      options: [
+        {
+          item_id: `i${i}`,
+          asset: { kind: "emoji", ref: "EMJ-red-apple" },
+          is_correct: true,
+        },
+        {
+          item_id: `j${i}`,
+          asset: { kind: "emoji", ref: "EMJ-green-apple" },
+          is_correct: false,
+        },
+      ],
+    },
+    difficultyParams: {
+      distractor_count: 1,
+      hint_after_ms: 10_000,
+      allow_retry: true,
+      shuffle_items: true,
+    },
+    difficulty: Math.min(i + 1, 5),
+  }));
+
+  await db.insert(gameLevelRounds).values(rows);
 }
 
 describe("Task P1.4 — Game Config Delivery End-to-End Suite", () => {
@@ -387,6 +437,157 @@ describe("Task P1.4 — Game Config Delivery End-to-End Suite", () => {
 
       const cacheHeader = event.__responseHeaders["cache-control"];
       expect(cacheHeader).not.toContain("no-store");
+    });
+  });
+
+  /**
+   * Ca âm của `BR-CFG-08`, thêm ở Task #167 WP167.0.
+   *
+   * Test "payload size is under 200 KB" ngay dưới đây đo **chính fixture nhỏ của
+   * nó**, nên nó không bao giờ đỏ được dù server không có một dòng đo kích
+   * thước nào. Đó là cổng xanh giả. `D-167A` nâng trần vòng lên 10, tức ngân
+   * sách rơi về 20 KB một vòng, nên trần này phải có guard thật ở delivery.
+   *
+   * `item_id` của `GT-001` là `z.string()` không giới hạn, nên một pack vẫn
+   * parse được mà vượt trần. Dùng base64 ngẫu nhiên vì gzip nén chuỗi lặp rất
+   * tốt — một chuỗi 'a' dài 10 MB chỉ còn khoảng 10 KB.
+   */
+  describe("Task #167 WP167.0 — trần payload đo ở delivery (BR-CFG-08)", () => {
+    it("chặn level có payload vượt 200 KB gzipped, kèm số byte đo được", async () => {
+      const code = `GL-C1-CNT-OVER-${Math.floor(Math.random() * 8999 + 1000)}`;
+      const incompressible = randomBytes(320 * 1024).toString("base64");
+
+      await seedTestLevel({
+        code,
+        accessTier: "free",
+        contentPack: {
+          prompt: "Bé hãy chọn quả táo đỏ",
+          target_item: {
+            item_id: "i1",
+            asset: { kind: "emoji", ref: "EMJ-red-apple" },
+          },
+          options: [
+            {
+              item_id: `i1-${incompressible}`,
+              asset: { kind: "emoji", ref: "EMJ-red-apple" },
+              is_correct: true,
+            },
+            {
+              item_id: "i2",
+              asset: { kind: "emoji", ref: "EMJ-green-apple" },
+              is_correct: false,
+            },
+          ],
+        },
+      });
+
+      const event = mockEvent("GET", undefined, { code });
+
+      // `PAYLOAD_TOO_LARGE` đã có trong registry là **413**, không phải 422 —
+      // mục 7 của `error-codes.md` để cột "Khi nào" rỗng vì nó là mã chung.
+      await expect(guestConfigHandler(event)).rejects.toMatchObject({
+        statusCode: 413,
+        statusMessage: "PAYLOAD_TOO_LARGE",
+      });
+    });
+
+    it("không tạo play_session khi chặn vì payload vượt trần", async () => {
+      const code = `GL-C1-CNT-ORPH-${Math.floor(Math.random() * 8999 + 1000)}`;
+      const incompressible = randomBytes(320 * 1024).toString("base64");
+
+      const { level } = await seedTestLevel({
+        code,
+        accessTier: "free",
+        contentPack: {
+          prompt: "Bé hãy chọn quả táo đỏ",
+          target_item: {
+            item_id: "i1",
+            asset: { kind: "emoji", ref: "EMJ-red-apple" },
+          },
+          options: [
+            {
+              item_id: `i1-${incompressible}`,
+              asset: { kind: "emoji", ref: "EMJ-red-apple" },
+              is_correct: true,
+            },
+            {
+              item_id: "i2",
+              asset: { kind: "emoji", ref: "EMJ-green-apple" },
+              is_correct: false,
+            },
+          ],
+        },
+      });
+
+      const event = mockEvent("GET", undefined, { code });
+      await expect(guestConfigHandler(event)).rejects.toBeDefined();
+
+      const db = getOwnerDb();
+      const sessions = await db
+        .select({ id: playSessions.id })
+        .from(playSessions)
+        .where(eq(playSessions.gameLevelId, level.id));
+
+      expect(sessions).toHaveLength(0);
+    });
+
+    it("cho qua level dưới trần", async () => {
+      const code = `GL-C1-CNT-UNDR-${Math.floor(Math.random() * 8999 + 1000)}`;
+      await seedTestLevel({ code, accessTier: "free" });
+
+      const event = mockEvent("GET", undefined, { code });
+      await expect(guestConfigHandler(event)).resolves.toBeDefined();
+    });
+  });
+
+  /**
+   * `BR-RSM-09` tuyên set một vòng là **hợp lệ và là mặc định**, và `BR-RSP-02`
+   * bắt phát `round_started` cho **mọi** set kể cả set một vòng. Nhưng tới
+   * 2026-08-31 `game_level_rounds` không có writer nào trong repo, nên delivery
+   * trả `rounds: []` cho mọi level, `scoring.mode` luôn là `attempts`, và nhánh
+   * nhiều vòng ở `play/[code].vue` không bao giờ tới được.
+   *
+   * Đường sửa là dựng vòng mặc định ở delivery, để client chỉ còn **một** hình
+   * dạng dữ liệu phải xử lý.
+   */
+  describe("Task #167 WP167.1 — rounds[] Cấm — NEVER rỗng", () => {
+    it("dựng một vòng từ content_pack khi level không có hàng vòng nào", async () => {
+      const code = `GL-C1-CNT-DFLT-${Math.floor(Math.random() * 8999 + 1000)}`;
+      const { level } = await seedTestLevel({ code, accessTier: "free" });
+
+      const event = mockEvent("GET", undefined, { code });
+      const payload = (await guestConfigHandler(event)) as any;
+
+      expect(payload.rounds).toHaveLength(1);
+      expect(payload.rounds[0].round_index).toBe(0);
+      expect(payload.rounds[0].content_pack).toEqual(level.contentPack);
+      expect(payload.rounds[0].difficulty_params).toEqual(
+        level.difficultyParams
+      );
+      expect(payload.rounds[0].instruction).toBe(level.instruction);
+    });
+
+    it("scoring.mode là rounds kể cả với set một vòng", async () => {
+      const code = `GL-C1-CNT-MODE-${Math.floor(Math.random() * 8999 + 1000)}`;
+      await seedTestLevel({ code, accessTier: "free" });
+
+      const event = mockEvent("GET", undefined, { code });
+      const payload = (await guestConfigHandler(event)) as any;
+
+      expect(payload.scoring.mode).toBe("rounds");
+    });
+
+    it("giữ nguyên số vòng thật khi level đã có hàng vòng", async () => {
+      const code = `GL-C1-CNT-REAL-${Math.floor(Math.random() * 8999 + 1000)}`;
+      const { level } = await seedTestLevel({ code, accessTier: "free" });
+      await seedTestRounds(level.id, 3);
+
+      const event = mockEvent("GET", undefined, { code });
+      const payload = (await guestConfigHandler(event)) as any;
+
+      expect(payload.rounds).toHaveLength(3);
+      expect(payload.rounds.map((r: any) => r.round_index)).toEqual([0, 1, 2]);
+      expect(payload.rounds[1].instruction).toBe("Bé làm bước 2 nhé!");
     });
   });
 

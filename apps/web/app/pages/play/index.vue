@@ -91,60 +91,65 @@
 </template>
 
 <script lang="ts" setup>
-  const competencies = [
-    {
-      code: "C1",
-      title: "Số & Lượng",
-      desc: "Đếm, so sánh và nhận biết số",
-      icon: "/competencies/c1.svg",
+  /**
+   * Sảnh chơi cho trẻ — nhãn dẫn xuất từ `COMPETENCY_CATALOG` (task 165).
+   *
+   * Bảng viết tay ở đây là bản sao **thứ năm** của sáu năng lực và mang
+   * taxonomy toán v1 đã bỏ. Chỉ phần trình bày theo mã (màu viền, nền biểu
+   * tượng) còn ở lại — đó là quyết định thiết kế, không phải dữ liệu taxonomy.
+   */
+  import { COMPETENCY_CATALOG } from "@mindkid/shared/client";
+
+  interface CompetencyStyle {
+    borderClass: string;
+    iconBgClass: string;
+    hoverBgClass: string;
+  }
+
+  const COMPETENCY_STYLES: Record<string, CompetencyStyle> = {
+    C1: {
       borderClass: "border-brand-300 hover:border-brand-500",
       iconBgClass: "bg-brand-50 border-brand-200",
       hoverBgClass: "hover:bg-brand-50/50",
     },
-    {
-      code: "C2",
-      title: "Hình & Không gian",
-      desc: "Hình khối, phương hướng và vị trí",
-      icon: "/competencies/c2.svg",
+    C2: {
       borderClass: "border-cta-300 hover:border-cta-500",
       iconBgClass: "bg-cta-50 border-cta-200",
       hoverBgClass: "hover:bg-cta-50/50",
     },
-    {
-      code: "C3",
-      title: "Quy luật & Chuỗi",
-      desc: "Tìm mẫu lặp và xếp thứ tự",
-      icon: "/competencies/c3.svg",
+    C3: {
       borderClass: "border-warning-300 hover:border-warning-500",
       iconBgClass: "bg-warning-50 border-warning-200",
       hoverBgClass: "hover:bg-warning-50/50",
     },
-    {
-      code: "C4",
-      title: "Đo lường",
-      desc: "Dài ngắn, nặng nhẹ, dung tích",
-      icon: "/competencies/c4.svg",
+    C4: {
       borderClass: "border-success-300 hover:border-success-500",
       iconBgClass: "bg-success-50 border-success-200",
       hoverBgClass: "hover:bg-success-50/50",
     },
-    {
-      code: "C5",
-      title: "Phân loại",
-      desc: "Gom nhóm theo thuộc tính",
-      icon: "/competencies/c5.svg",
+    C5: {
       borderClass: "border-brand-400 hover:border-brand-600",
       iconBgClass: "bg-brand-100/50 border-brand-300",
       hoverBgClass: "hover:bg-brand-50/70",
     },
-    {
-      code: "C6",
-      title: "Suy luận & Logic",
-      desc: "Giải đố và tư duy nguyên nhân",
-      icon: "/competencies/c6.svg",
+    C6: {
       borderClass: "border-cta-400 hover:border-cta-600",
       iconBgClass: "bg-cta-100/50 border-cta-300",
       hoverBgClass: "hover:bg-cta-50/70",
     },
-  ];
+  };
+
+  const FALLBACK_STYLE: CompetencyStyle = {
+    borderClass: "border-surface-300 hover:border-surface-500",
+    iconBgClass: "bg-surface-50 border-surface-200",
+    hoverBgClass: "hover:bg-surface-50/50",
+  };
+
+  const competencies = COMPETENCY_CATALOG.map((entry) => ({
+    code: entry.code,
+    title: entry.name,
+    desc: entry.short,
+    icon: `/competencies/${entry.code.toLowerCase()}.svg`,
+    ...(COMPETENCY_STYLES[entry.code] ?? FALLBACK_STYLE),
+  }));
 </script>

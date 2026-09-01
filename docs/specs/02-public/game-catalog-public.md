@@ -30,7 +30,7 @@ Guest. User đã đăng nhập thấy cùng trang nhưng có ngữ cảnh quyề
 
 ## 3. Entry points
 
-`/games` · `/games?competency=C1&age=4` · `GET /api/guest/levels`.
+`/games` · `/games?competency=C1&age_band=4-5` · `GET /api/guest/levels`.
 
 ## 4. Main flow
 
@@ -68,8 +68,13 @@ Guest. User đã đăng nhập thấy cùng trang nhưng có ngữ cảnh quyề
 
 ### 7.1 Bộ lọc hiển thị
 
-Độ tuổi (3/4/5/6) · Năng lực (C1–C6) · Kỹ năng · Độ khó (1–5) · Cơ chế chơi ·
-Miễn phí / trả phí · Chủ đề.
+Lứa tuổi (`3-4` · `4-5` · `5-6`) · Năng lực (C1–C6) · Kỹ năng · Độ khó (1–5) ·
+Cơ chế chơi · Miễn phí / trả phí · Chủ đề.
+
+Bộ lọc tuổi đi theo **band**, không theo một tuổi lẻ: level chỉ tồn tại ở ba band
+trên, và `age=4` hỏi một câu khác — "band có chứa tuổi 4" — nên khớp cả `3-4` lẫn
+`4-5`. Trang chủ hứa "trò chơi của Lớp Chồi" thì phải là `4-5` đúng hai đầu.
+`age` vẫn được API nhận cho link đã phát tán, nhưng giao diện Cấm — NEVER sinh nó.
 
 Bộ lọc rút gọn so với [`content-search.md`](../01-platform/content-search.md) — bề mặt công khai không cần lọc theo trạng thái
 hay learning objective.

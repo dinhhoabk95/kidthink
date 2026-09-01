@@ -1,5 +1,5 @@
 import {
-  COMPETENCIES_INFO,
+  COMPETENCY_CATALOG,
   ESSENTIAL_COOKIES,
   FAQ_ITEMS,
   FEATURED_GUEST_LEVELS,
@@ -63,7 +63,7 @@ describe("P1.13 Public Site, SEO, Legal & Cookie Integration Tests", () => {
         code: "GL-C1-001",
         title: "Đếm số trái cây",
         age_band: "3-4",
-        competency_name: "Số & Lượng",
+        competency_name: "Tư duy toán học",
         is_free: true,
       });
       expect(resource["@type"]).toBe("LearningResource");
@@ -187,9 +187,9 @@ describe("P1.13 Public Site, SEO, Legal & Cookie Integration Tests", () => {
         "đột phá",
         "vượt trội",
       ];
-      for (const comp of COMPETENCIES_INFO) {
+      for (const comp of COMPETENCY_CATALOG) {
         for (const claim of prohibitedClaims) {
-          expect(comp.description.toLowerCase()).not.toContain(claim);
+          expect(comp.tagline.toLowerCase()).not.toContain(claim);
         }
       }
     });

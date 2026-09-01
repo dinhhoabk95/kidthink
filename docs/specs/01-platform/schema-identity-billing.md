@@ -55,6 +55,7 @@ Không có.
 | `BR-SIB-10` (cấm cột token provider) | `social_identities` cấm — **NEVER có cột token** của nhà cung cấp | [`oauth-provider-registry.md`](oauth-provider-registry.md) `BR-OAP-07` (không lưu token provider). Cột không tồn tại thì không rò được |
 | `BR-SIB-11` | Xoá `users` **cascade** xoá `social_identities` | Danh tính mồ côi làm `UNIQUE (provider, provider_user_id)` chặn người dùng đăng ký lại sau khi đã xoá tài khoản |
 | `BR-SIB-12` (singleton force marker) | `consent_requirements` có đúng ba khoá `terms` · `privacy` · `child_data`; marker chỉ UPDATE tiến tới, không có policy version | Một hàng cho mỗi loại cho phép kiểm consent bằng một so sánh thời gian, không fan-out theo User và không dựng kho version trá hình |
+| `BR-SIB-13` (seed test accounts) | Seeder cung cấp sẵn bộ tài khoản kiểm thử mặc định (2 Manager, 3 User, 5 Child, Package Entitlements) với mật khẩu ngẫu nhiên băm argon2id, không bắt buộc biến `.env` | Cho phép kiểm thử cục bộ và chạy dev trơn tru ngay từ lần seed đầu tiên |
 
 ## 7. Data
 

@@ -1,0 +1,13 @@
+<template>
+  <ul>
+    <li>
+      <NuxtLink to="/games?competency=C1">Số & Lượng (C1)</NuxtLink>
+    </li>
+  </ul>
+</template>
+
+<script lang="ts" setup>
+  const COMPETENCY_OPTIONS = [
+    { value: "C4", label: "Đo lường & Đại lượng" },
+  ];
+</script>

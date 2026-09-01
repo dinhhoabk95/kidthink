@@ -5,10 +5,11 @@ area: platform
 status: implemented
 mvp: false
 phase: P4
-reviewed: 2026-08-29
+reviewed: 2026-08-31
 owns:
   - Hình dạng spec chuẩn của một game engine
   - Luật mọi mã GT đã đăng ký phải có đúng một spec
+  - Luật spec đặt trước cho engine chưa có template
   - Cổng đối chiếu spec với registry engine
 depends_on:
   - GAME-TEMPLATE-CONTRACT
@@ -48,9 +49,10 @@ Nó cấm — NEVER định nghĩa lại contract. Contract sống ở
 
 | Route / màn hình | Actor | Ghi chú |
 |---|---|---|
-| `docs/specs/01-platform/engines/GT-<nnn>.md` | mọi actor | Một spec, một mã (`GT-001`…`GT-027`) |
+| `docs/specs/01-platform/engines/GT-<nnn>.md` | mọi actor | Một spec, một mã |
 | `docs/specs/01-platform/engines/TEMPLATE.md` | Dev | Khuôn spec mẫu 16 mục |
-| `docs/specs/01-platform/engines/index.md` | mọi actor | Bảng 27 hàng, sinh tự động từ các spec |
+| `docs/specs/01-platform/engines/index.md` | mọi actor | Hai bảng sinh tự động: engine trong registry và engine đặt trước |
+| `packages/game-engine/config/engine-spec-planned.json` | Dev | Danh sách mã **đặt trước**, ánh xạ mã tới plan sở hữu (`BR-ESS-15`) |
 | `pnpm --filter @mindkid/game-engine check:engine-specs` | Cổng đối chiếu | Chạy trong cổng tự động trước khi merge |
 | [`template-authoring-kit.md`](template-authoring-kit.md) mục 4 | Dev | Bước viết spec chèn vào luồng thêm engine |
 
@@ -70,7 +72,9 @@ Nó cấm — NEVER định nghĩa lại contract. Contract sống ở
 | Nhánh | Điều kiện | Hành vi |
 |---|---|---|
 | Có mã trong registry, không có spec | Dev quên bước 2 | Cổng đỏ, nêu mã thiếu. Không có nhánh cảnh báo |
-| Có spec, không có mã trong registry | Xoá engine mà quên spec | Cổng đỏ, nêu spec mồ côi |
+| Có spec, không có mã trong registry, **không** khai đặt trước | Xoá engine mà quên spec | Cổng đỏ, nêu spec mồ côi |
+| Có spec, không có mã trong registry, **có** khai đặt trước | Viết spec trước khi dựng khuôn (`BR-ESS-15`) | Cổng xanh. Spec vào bảng đặt trước của index, cổng trường trích chưa bật |
+| Có mã trong registry mà vẫn còn trong danh sách đặt trước | Dựng xong khuôn mà quên gỡ khỏi danh sách | Cổng đỏ. Danh sách đặt trước cấm — NEVER phình ra |
 | Trường trích lệch với `template.ts` | Đổi `limits` mà quên spec | Cổng đỏ, in cả hai giá trị |
 | Engine `deprecated` | Ngừng cấp level mới | Spec **giữ nguyên**, thêm dòng trạng thái ở mục 1. Level cũ vẫn chạy nên spec vẫn phải đọc được |
 | Đổi `content_contract` của engine đã publish | Breaking change `BR-GTC-08` | Spec phải sửa **cùng PR**. Cổng đỏ nếu contract đổi mà spec không đổi |
@@ -93,12 +97,14 @@ Nó cấm — NEVER định nghĩa lại contract. Contract sống ở
 | `BR-ESS-12` (rule riêng engine) | Mục 6 của spec có ≥1 `BR-E<nnn>-*`. Rule của engine cấm — NEVER trùng rule của spec lô | Mỗi engine có bất biến nghiệp vụ riêng cần bảo vệ |
 | `BR-ESS-13` (Gherkin bắt buộc) | Mỗi `BR-E<nnn>-*` phải có ≥1 scenario Gherkin tương ứng ở mục 9 | Kiểm chứng tính đúng đắn qua kịch bản hành vi rõ ràng |
 | `BR-ESS-14` (không sở hữu chồng) | `owns` của spec engine cấm chứa thứ mà spec lô hoặc `game-template-contract` đã sở hữu | Tránh xung đột phạm vi sở hữu giữa các spec |
+| `BR-ESS-15` (spec đặt trước) | Spec **được phép** ra đời trước `template.ts` khi mã có mặt trong `engine-spec-planned.json`. Mỗi hàng phải trỏ tới một plan **có thật**, và mã phải **rời danh sách trong cùng PR** dựng khuôn. Mã không khai đặt trước mà không có khuôn vẫn là spec mồ côi | `BR-ESS-07` nói spec là một phần của định nghĩa xong, nhưng nó chỉ chặn được PR *thêm* engine. Chín engine của chương trình `#168` có plan trước khuôn hàng tháng, và khoản mồ côi của `BR-ESS-01` khiến viết spec sớm **làm cổng đỏ** — tức hợp đồng đang phạt đúng thứ nó muốn khuyến khích. Hai ràng buộc kèm theo giữ cho "đặt trước" cấm — NEVER thành lối đi vòng: có plan thật, và tự rỗng đi |
 
 ## 7. Data
 
 **Đọc:** `packages/game-engine/src/generated/template-registry.ts` ·
 `packages/game-engine/src/templates/<code>/template.ts` · các spec trong
-`docs/specs/01-platform/engines/`.
+`docs/specs/01-platform/engines/` · `packages/game-engine/config/engine-spec-ready.json` ·
+`packages/game-engine/config/engine-spec-planned.json`.
 **Ghi:** `docs/specs/01-platform/engines/index.md` (sinh tự động). Không ghi vào database.
 
 ### 7.1 Mười sáu mục của một spec engine
@@ -158,11 +164,17 @@ Spec engine gồm 11 mục theo chuẩn [`CONVENTIONS.md`](../CONVENTIONS.md) v�
 
 Cổng so **danh sách khoá bậc một**, không so cấu trúc lồng (`BR-ESS-03`).
 
+Với spec **đặt trước** (`BR-ESS-15`) thì chưa có gì để so: mục 15 ghi **giá trị đặt trước** kèm
+plan làm nguồn, và cổng đối chiếu trường trích bật đúng lúc khuôn xuất hiện — cũng là lúc mã rời
+`engine-spec-planned.json`. Giá trị đặt trước vì thế là **cam kết với cổng**, không phải ghi chú:
+khuôn dựng lệch nó thì `BR-ESS-02` đỏ ngay ở PR đó.
+
 ### 7.4 Hình dạng đầu ra của cổng
 
 ```
 check:engine-specs
-  27 mã trong registry, 27 spec tồn tại, 0 mồ côi
+  27 mã trong registry, 36 spec tồn tại, 0 mồ côi
+  Đặt trước (engine-spec-planned.json): 9 spec chờ template
   Bậc thang engine-spec-ready.json: N spec sẵn sàng
   GT-014: limits.item_count spec ghi [2,6], registry [2,8]   LỆCH
   exit 1
@@ -229,6 +241,31 @@ Scenario: BR-ESS-09 — cổng có ca âm
   When đọc danh sách test
   Then có ít nhất 8 test ca âm bao phủ các điều kiện vi phạm
 
+Scenario: BR-ESS-15 — spec đặt trước không bị tính là mồ côi
+  Given GT-028 có spec và không có template trong registry
+  And engine-spec-planned.json khai GT-028 trỏ tới plan có thật
+  When chạy check:engine-specs
+  Then cổng thoát với mã 0
+  And báo cáo đếm GT-028 vào số spec đặt trước
+
+Scenario: BR-ESS-15 — spec không khai đặt trước vẫn là mồ côi
+  Given GT-028 có spec và không có template trong registry
+  And engine-spec-planned.json không khai GT-028
+  When chạy check:engine-specs
+  Then cổng thoát với mã khác 0
+  And thông báo nêu GT-028 là spec mồ côi
+
+Scenario: BR-ESS-15 — khuôn đã dựng mà mã còn trong danh sách đặt trước làm cổng đỏ
+  Given GT-001 có template trong registry
+  And engine-spec-planned.json vẫn khai GT-001
+  When chạy check:engine-specs
+  Then cổng thoát với mã khác 0
+
+Scenario: BR-ESS-15 — hàng đặt trước trỏ tới plan không tồn tại làm cổng đỏ
+  Given engine-spec-planned.json khai một mã trỏ tới plan không có thật
+  When chạy check:engine-specs
+  Then cổng thoát với mã khác 0
+
 Scenario: BR-ESS-08 — index sinh lại đúng
   Given 27 spec hợp lệ
   When sinh lại engines/index.md
@@ -243,7 +280,8 @@ Scenario: BR-ESS-03 — spec không khai schema riêng
 ## 10. Boundaries
 
 **Always**
-- Viết spec cùng PR thêm/sửa engine.
+- Viết spec cùng PR thêm/sửa engine, hoặc sớm hơn qua danh sách đặt trước (`BR-ESS-15`).
+- Gỡ mã khỏi `engine-spec-planned.json` trong chính PR dựng `template.ts`.
 - Ghi nguồn dòng cho mọi trường trích.
 - Nêu ít nhất một ca sai không bắt được bằng schema ở mục 14.
 - Nêu hợp đồng vẽ riêng của engine ở mục 12.
@@ -258,6 +296,7 @@ Scenario: BR-ESS-03 — spec không khai schema riêng
 - Gắn skill hay competency vào spec (`BR-ESS-04`).
 - Sửa tay `engines/index.md` (`BR-ESS-08`).
 - Merge PR thêm engine mà thiếu spec (`BR-ESS-07`).
+- Thêm mã vào `engine-spec-planned.json` mà không có plan sở hữu (`BR-ESS-15`).
 - Để AI agent IDE sinh spec thay người.
 
 ## 11. Open questions

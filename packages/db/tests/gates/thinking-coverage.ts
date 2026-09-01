@@ -142,6 +142,8 @@ export const CANONICAL_MECHANIC_TAGS = new Set([
   "coin-compose",
   "pour-quantity",
   "weave-grid",
+  "beat-sequence",
+  "command-sequence",
 ]);
 
 import { CANONICAL_THEME_CODES } from "@mindkid/shared";

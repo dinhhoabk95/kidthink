@@ -8,6 +8,7 @@ import { GT031Generator } from "#src/generators/gt031";
 import { GT032Generator } from "#src/generators/gt032";
 import { GT033Generator } from "#src/generators/gt033";
 import { GT034Generator } from "#src/generators/gt034";
+import { GT035Generator } from "#src/generators/gt035";
 import { getNouns } from "#src/generators/helpers";
 import type { ThemeVocabulary } from "#src/generators/types";
 import { createRng } from "#src/rng/mulberry32";
@@ -52,6 +53,12 @@ import {
   type GT034Difficulty,
   GT034DifficultySchema,
 } from "#src/templates/GT-034/template";
+import {
+  type GT035Content,
+  GT035ContentSchema,
+  type GT035Difficulty,
+  GT035DifficultySchema,
+} from "#src/templates/GT-035/template";
 
 const SHORT_POOL_RE = /thiếu danh từ/;
 const THEME_RE = /school/;
@@ -361,6 +368,29 @@ describe("GT-034 — generator contract conformity", () => {
 
       expect(content_pack.target_pattern.length).toBeGreaterThanOrEqual(4);
       expect(content_pack.instruments.length).toBeGreaterThanOrEqual(2);
+    }
+  });
+
+  it("generates valid command sequence levels with solvable paths across seeds", () => {
+    for (let seed = 1; seed <= 30; seed++) {
+      const { content_pack, difficulty_params } = GT035Generator.generate({
+        rng: createRng(seed),
+        age_band: "5-6",
+        theme: "space",
+        vocabulary: themeVocab,
+      }) as {
+        content_pack: GT035Content;
+        difficulty_params: GT035Difficulty;
+      };
+
+      const parsedContent = GT035ContentSchema.parse(content_pack);
+      const parsedDiff = GT035DifficultySchema.parse(difficulty_params);
+      expect(parsedContent).toBeDefined();
+      expect(parsedDiff).toBeDefined();
+
+      expect(content_pack.grid.rows).toBeGreaterThanOrEqual(3);
+      expect(content_pack.grid.cols).toBeGreaterThanOrEqual(3);
+      expect(content_pack.allowed_commands.length).toBeGreaterThanOrEqual(3);
     }
   });
 });
