@@ -12,19 +12,7 @@ import { SHIPPABLE_SEED_LEVELS } from "#src/seed-content/index";
  * script nào gọi, nên một máy mới chạy `pnpm db:seed` xong vẫn có **0** trò
  * chơi và trang `/games` phải dựng từ một mảng hằng số 9 phần tử.
  */
-describe("db:seed gieo cả nội dung", () => {
-  it("sau seed(), số game level trong DB ít nhất bằng corpus gieo được", async () => {
-    await seed();
-
-    const db = getOwnerDb();
-    const [row] = await db.select({ total: count() }).from(gameLevels);
-
-    expect(SHIPPABLE_SEED_LEVELS.length).toBeGreaterThan(0);
-    expect(row?.total ?? 0).toBeGreaterThanOrEqual(
-      SHIPPABLE_SEED_LEVELS.length
-    );
-  }, 300_000);
-
+describe.sequential("db:seed gieo cả nội dung", () => {
   it("ca âm: MINDKID_SEED_MASTER_ONLY=1 thì bỏ qua bước nội dung", async () => {
     const previous = process.env.MINDKID_SEED_MASTER_ONLY;
     process.env.MINDKID_SEED_MASTER_ONLY = "1";
@@ -43,4 +31,16 @@ describe("db:seed gieo cả nội dung", () => {
     // ngắn hơn hẳn. Ngưỡng rộng để không phụ thuộc tốc độ máy.
     expect(Date.now() - startedAt).toBeLessThan(120_000);
   }, 180_000);
+
+  it("sau seed(), số game level trong DB ít nhất bằng corpus gieo được", async () => {
+    await seed();
+
+    const db = getOwnerDb();
+    const [row] = await db.select({ total: count() }).from(gameLevels);
+
+    expect(SHIPPABLE_SEED_LEVELS.length).toBeGreaterThan(0);
+    expect(row?.total ?? 0).toBeGreaterThanOrEqual(
+      SHIPPABLE_SEED_LEVELS.length
+    );
+  }, 300_000);
 });

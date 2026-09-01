@@ -6,6 +6,13 @@ import {
 import { getNouns, sampleUnique, VALID_GENERATOR_THEMES } from "./helpers.js";
 import type { LevelGenerator } from "./types.js";
 
+interface GT014WeightedItem extends WeightedItem {
+  asset: {
+    kind: "emoji";
+    ref: string;
+  };
+}
+
 export const GT014Generator: LevelGenerator = {
   engine: "GT-014",
   axes: {
@@ -28,7 +35,7 @@ export const GT014Generator: LevelGenerator = {
     const rightWeight = Math.max(1, leftWeight - delta);
     const neededWeight = leftWeight - rightWeight;
 
-    const leftPan: WeightedItem[] = [
+    const leftPan: GT014WeightedItem[] = [
       {
         item_id: "left_1",
         asset: {
@@ -39,7 +46,7 @@ export const GT014Generator: LevelGenerator = {
       },
     ];
 
-    const rightPan: WeightedItem[] = [
+    const rightPan: GT014WeightedItem[] = [
       {
         item_id: "right_1",
         asset: {
@@ -56,7 +63,7 @@ export const GT014Generator: LevelGenerator = {
     const distractor2Weight =
       neededWeight + 2 <= 10 ? neededWeight + 2 : Math.max(1, neededWeight - 2);
 
-    const tray: WeightedItem[] = [
+    const tray: GT014WeightedItem[] = [
       {
         item_id: "tray_1",
         asset: {
