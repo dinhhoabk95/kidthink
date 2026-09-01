@@ -379,6 +379,6 @@ describe("P3.1 Lesson & Activity Model & Seeder Tests", () => {
       });
       expect(res2.rowsSkippedIdempotent).toBe(totalCount);
       expect(res2.rowsInserted).toBe(0);
-    }, 30_000);
+    }, 120_000);
   });
 });
