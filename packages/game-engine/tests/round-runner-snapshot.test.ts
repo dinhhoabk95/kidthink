@@ -39,6 +39,7 @@ import {
   GT028_FIXTURES,
   GT029_FIXTURES,
   GT030_FIXTURES,
+  GT031_FIXTURES,
   RoundRunner,
 } from "#src/index";
 
@@ -76,6 +77,7 @@ const FIXTURES_MAP: Record<
   "GT-028": GT028_FIXTURES,
   "GT-029": GT029_FIXTURES,
   "GT-030": GT030_FIXTURES,
+  "GT-031": GT031_FIXTURES,
 };
 
 describe("WP100.5 — RoundRunner snapshot comparison for 17 templates", () => {

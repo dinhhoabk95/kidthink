@@ -154,6 +154,8 @@ set một vòng — xem `BR-RSP-02` ở [`round-sequence-play.md`](../04-play/ro
 | `item_restored` | `{ item_id, removed_count, remaining_needed, round_index? }` | `GT-029` |
 | `unit_placed` | `{ slot_index, placed_count, target_count, round_index? }` | `GT-030` |
 | `unit_removed` | `{ slot_index, placed_count, round_index? }` | `GT-030` |
+| `coin_placed` | `{ coin_id, value, current_total, target_amount, round_index? }` | `GT-031` |
+| `coin_removed` | `{ coin_id, value, current_total, target_amount, round_index? }` | `GT-031` |
 
 ### 7.3 Trợ giúp
 

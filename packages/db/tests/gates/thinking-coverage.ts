@@ -139,6 +139,7 @@ export const CANONICAL_MECHANIC_TAGS = new Set([
   "tap-count",
   "remove-from-set",
   "measure-with-unit",
+  "coin-compose",
 ]);
 
 import { CANONICAL_THEME_CODES } from "@mindkid/shared";

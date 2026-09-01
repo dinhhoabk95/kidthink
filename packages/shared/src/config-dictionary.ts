@@ -815,6 +815,32 @@ export const CONFIG_DICTIONARY: Record<string, FieldDictionaryEntry> = {
     label: "Dung sai khe hở (%)",
     help: "Phần trăm khoảng cách cho phép lệch giữa các đơn vị liên tiếp.",
   },
+
+  // GT-031: Coin Compose
+  coins: {
+    label: "Danh sách đồng xu",
+    help: "Các đồng xu với mệnh giá khác nhau có sẵn để bé chọn.",
+  },
+  coin_id: {
+    label: "Mã định danh đồng xu",
+    help: "Mã định danh duy nhất của từng đồng xu.",
+  },
+  target_amount: {
+    label: "Số tiền cần trả",
+    help: "Tổng giá trị tiền xu mục tiêu bé cần gộp.",
+  },
+  item_to_buy: {
+    label: "Món đồ cần mua",
+    help: "Vật phẩm minh hoạ trong bối cảnh mua sắm.",
+  },
+  coin_kind_count: {
+    label: "Số loại mệnh giá",
+    help: "Số loại mệnh giá tiền xu khác nhau trong bài.",
+  },
+  exact_change: {
+    label: "Yêu cầu trả đúng số tiền",
+    help: "Bắt buộc trả chính xác không thừa tiền.",
+  },
 };
 
 /**
@@ -831,6 +857,9 @@ export const TEXT_FALLBACK_ALLOWLIST: Record<string, string> = {
   unit_id: "Mã định danh đơn vị đo phi chuẩn.",
   length_in_units: "Số nguyên chiều dài vật thể theo đơn vị đo.",
   gap_tolerance_pct: "Số phần trăm dung sai khe hở giữa các đơn vị đo.",
+  coin_id: "Mã định danh đồng xu trong bài toán tiền.",
+  target_amount: "Số nguyên tổng tiền mục tiêu cần trả.",
+  coin_kind_count: "Số nguyên lượng loại mệnh giá.",
   prompt: "Câu hỏi chính của bài học, dạng văn bản ngắn đọc cho bé.",
   item_id: "Mã định danh kỹ thuật của vật phẩm trong content pack.",
   id: "Mã định danh đối tượng.",

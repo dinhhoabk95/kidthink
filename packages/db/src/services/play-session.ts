@@ -87,6 +87,8 @@ export const ALLOWED_EVENT_NAMES = new Set([
   "item_restored",
   "unit_placed",
   "unit_removed",
+  "coin_placed",
+  "coin_removed",
 ]);
 
 const PII_FIELDS = new Set([
@@ -242,6 +244,20 @@ const EVENT_PAYLOAD_FIELDS: Readonly<Record<string, ReadonlySet<string>>> = {
     "round_index",
   ]),
   unit_removed: new Set(["slot_index", "placed_count", "round_index"]),
+  coin_placed: new Set([
+    "coin_id",
+    "value",
+    "current_total",
+    "target_amount",
+    "round_index",
+  ]),
+  coin_removed: new Set([
+    "coin_id",
+    "value",
+    "current_total",
+    "target_amount",
+    "round_index",
+  ]),
 };
 
 const NON_NEGATIVE_INT = z.number().int().nonnegative();
@@ -569,6 +585,20 @@ const EVENT_PAYLOAD_SCHEMAS: Readonly<Record<string, z.AnyZodObject>> = {
   unit_removed: z.object({
     slot_index: NON_NEGATIVE_INT,
     placed_count: NON_NEGATIVE_INT,
+    round_index: OPTIONAL_ROUND_INDEX,
+  }),
+  coin_placed: z.object({
+    coin_id: CONTENT_ID,
+    value: NON_NEGATIVE_INT,
+    current_total: NON_NEGATIVE_INT,
+    target_amount: NON_NEGATIVE_INT,
+    round_index: OPTIONAL_ROUND_INDEX,
+  }),
+  coin_removed: z.object({
+    coin_id: CONTENT_ID,
+    value: NON_NEGATIVE_INT,
+    current_total: NON_NEGATIVE_INT,
+    target_amount: NON_NEGATIVE_INT,
     round_index: OPTIONAL_ROUND_INDEX,
   }),
 };

@@ -24,7 +24,7 @@ describe("Gate check:engine-specs (BR-ESS-01..15)", () => {
   );
   const repoRoot = repoPath(".");
 
-  it("baseline gate: 30 templates, 36 specs, 6 đặt trước, 0 mồ côi", () => {
+  it("baseline gate: 31 templates, 36 specs, 5 đặt trước, 0 mồ côi", () => {
     const result = scanEngineSpecsGate(
       specsDir,
       templatesDir,
@@ -32,16 +32,16 @@ describe("Gate check:engine-specs (BR-ESS-01..15)", () => {
       plannedPath,
       repoRoot
     );
-    expect(result.totalTemplates).toBe(30);
+    expect(result.totalTemplates).toBe(31);
     expect(result.totalSpecs).toBe(36);
-    expect(result.plannedCount).toBe(6);
+    expect(result.plannedCount).toBe(5);
     expect(result.orphanCount).toBe(0);
     expect(result.readyCount).toBeGreaterThanOrEqual(1);
     expect(result.violations).toHaveLength(0);
 
     const report = formatEngineSpecsReport(result);
-    expect(report).toContain("30 mã trong registry, 36 spec tồn tại, 0 mồ côi");
-    expect(report).toContain("6 spec chờ template");
+    expect(report).toContain("31 mã trong registry, 36 spec tồn tại, 0 mồ côi");
+    expect(report).toContain("5 spec chờ template");
   });
 
   // Ca âm 1: Xoá một spec engine -> Đỏ (BR-ESS-01)
@@ -118,11 +118,11 @@ describe("Gate check:engine-specs (BR-ESS-01..15)", () => {
   // Ca âm 9: Bỏ danh sách đặt trước -> 9 spec chưa có khuôn thành mồ côi (BR-ESS-01)
   it("Ca âm 9: spec không khai đặt trước vẫn là mồ côi (BR-ESS-01)", () => {
     const result = scanEngineSpecsGate(specsDir, templatesDir, configPath);
-    expect(result.orphanCount).toBe(6);
+    expect(result.orphanCount).toBe(5);
     const orphanCodes = result.violations
       .filter((v) => v.rule === "BR-ESS-01")
       .map((v) => v.templateCode);
-    expect(orphanCodes).toContain("GT-031");
+    expect(orphanCodes).toContain("GT-032");
     expect(orphanCodes).toContain("GT-036");
   });
 

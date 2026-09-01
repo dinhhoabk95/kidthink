@@ -4,6 +4,7 @@ import { GT010Generator } from "#src/generators/gt010";
 import { GT028Generator } from "#src/generators/gt028";
 import { GT029Generator } from "#src/generators/gt029";
 import { GT030Generator } from "#src/generators/gt030";
+import { GT031Generator } from "#src/generators/gt031";
 import { getNouns } from "#src/generators/helpers";
 import type { ThemeVocabulary } from "#src/generators/types";
 import { createRng } from "#src/rng/mulberry32";
@@ -23,6 +24,13 @@ import {
   type GT030Difficulty,
   GT030DifficultySchema,
 } from "#src/templates/GT-030/template";
+import {
+  canFormTargetAmount,
+  type GT031Content,
+  GT031ContentSchema,
+  type GT031Difficulty,
+  GT031DifficultySchema,
+} from "#src/templates/GT-031/template";
 
 const SHORT_POOL_RE = /thiếu danh từ/;
 const THEME_RE = /school/;
@@ -209,6 +217,34 @@ describe("GT-030 — generator contract conformity", () => {
       const correctOpt = content_pack.answer_options.find((o) => o.is_correct);
       expect(correctOpt).toBeDefined();
       expect(correctOpt?.value).toBe(content_pack.object.length_in_units);
+    }
+  });
+});
+
+describe("GT-031 — generator contract conformity", () => {
+  const themeVocab = vocab(10);
+
+  it("generates valid levels for age band 5-6 across seeds", () => {
+    for (let seed = 1; seed <= 30; seed++) {
+      const { content_pack, difficulty_params } = GT031Generator.generate({
+        rng: createRng(seed),
+        age_band: "5-6",
+        theme: "school",
+        vocabulary: themeVocab,
+      }) as {
+        content_pack: GT031Content;
+        difficulty_params: GT031Difficulty;
+      };
+
+      const parsedContent = GT031ContentSchema.parse(content_pack);
+      const parsedDiff = GT031DifficultySchema.parse(difficulty_params);
+      expect(parsedContent).toBeDefined();
+      expect(parsedDiff).toBeDefined();
+
+      const coinValues = content_pack.coins.map((c) => c.value);
+      expect(canFormTargetAmount(coinValues, content_pack.target_amount)).toBe(
+        true
+      );
     }
   });
 });

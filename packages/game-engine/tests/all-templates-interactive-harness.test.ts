@@ -33,6 +33,7 @@ import {
   GT028_FIXTURES,
   GT029_FIXTURES,
   GT030_FIXTURES,
+  GT031_FIXTURES,
   RenderSystem,
 } from "#src/index";
 
@@ -84,6 +85,7 @@ const FIXTURES_MAP: Record<
   "GT-028": GT028_FIXTURES,
   "GT-029": GT029_FIXTURES,
   "GT-030": GT030_FIXTURES,
+  "GT-031": GT031_FIXTURES,
 };
 
 function createMockCanvasContext(): CanvasRenderingContext2D {
@@ -1157,6 +1159,48 @@ describe("All 27 Game Engine Templates Interactive & Visual Harness", () => {
       const res = s.validateAction({
         type: "select_option",
         data: { option_id: correctOpt.option_id },
+      });
+      expect(res.valid).toBe(true);
+      expect(s.checkWinCondition()).toBe(true);
+    });
+
+    it("GT-031: coin composition to target amount simulation succeeds", () => {
+      const f = getFixture(GT031_FIXTURES, 0);
+      const s = createGameSessionSync("GT-031", {
+        level_code: "GT-031-TEST",
+        content_version: 1,
+        template_code: "GT-031",
+        content_pack: f.content,
+        difficulty_params: f.difficulty,
+        theme_id: "default",
+        age_band: "5-6",
+        reduced_motion: false,
+        audio_enabled: true,
+      }) as unknown as {
+        setupEntities: () => void;
+        validateAction: (action: {
+          type: string;
+          data: Record<string, unknown>;
+        }) => { valid: boolean; feedback: string };
+        checkWinCondition: () => boolean;
+        content: {
+          target_amount: number;
+          coins: { coin_id: string; value: number }[];
+        };
+      };
+      s.setupEntities();
+
+      // For fixture 0: coins has 1, 1, 2, target is 3. We deposit coin c1_1 (1) and c2_1 (2)
+      const c1 = expectDefined(s.content.coins.find((c) => c.value === 1));
+      const c2 = expectDefined(s.content.coins.find((c) => c.value === 2));
+
+      s.validateAction({
+        type: "deposit_coin",
+        data: { coin_id: c1.coin_id },
+      });
+      const res = s.validateAction({
+        type: "deposit_coin",
+        data: { coin_id: c2.coin_id },
       });
       expect(res.valid).toBe(true);
       expect(s.checkWinCondition()).toBe(true);
