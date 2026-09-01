@@ -905,6 +905,44 @@ export const CONFIG_DICTIONARY: Record<string, FieldDictionaryEntry> = {
     label: "Tên tiếng Việt",
     help: "Tên hiển thị tiếng Việt của đối tượng hoặc màu sắc.",
   },
+
+  // GT-034: Beat Sequence
+  instruments: {
+    label: "Danh sách nhạc cụ",
+    help: "Các nhạc cụ phát âm thanh trong bài.",
+  },
+  instrument_id: {
+    label: "Mã nhạc cụ",
+    help: "Mã định danh của nhạc cụ.",
+  },
+  target_pattern: {
+    label: "Mẫu nhịp mục tiêu",
+    help: "Chuỗi các bước nhịp điệu cần gõ lại.",
+  },
+  tempo_bpm: {
+    label: "Tốc độ nhịp (BPM)",
+    help: "Số nhịp mỗi phút của giai điệu.",
+  },
+  freq: {
+    label: "Tần số âm thanh (Hz)",
+    help: "Tần số phát ra của nốt nhạc.",
+  },
+  pattern_length: {
+    label: "Độ dài chuỗi nhịp",
+    help: "Số lượng bước nhịp trong chuỗi.",
+  },
+  instrument_count: {
+    label: "Số lượng nhạc cụ",
+    help: "Số lượng nhạc cụ xuất hiện trong bài.",
+  },
+  replay_limit: {
+    label: "Giới hạn số lần nghe lại",
+    help: "Số lần tối đa trẻ được bấm nghe lại giai điệu.",
+  },
+  type: {
+    label: "Dạng sóng âm thanh",
+    help: "Kiểu dạng sóng dao động (sine, triangle, square, sawtooth) của nốt nhạc.",
+  },
 };
 
 /**
@@ -912,6 +950,8 @@ export const CONFIG_DICTIONARY: Record<string, FieldDictionaryEntry> = {
  * Every entry must have a clear documented rationale.
  */
 export const TEXT_FALLBACK_ALLOWLIST: Record<string, string> = {
+  instrument_id: "Mã định danh nhạc cụ phát âm thanh.",
+  target_pattern: "Mã nhạc cụ hoặc null tại từng bước trong chuỗi nhịp.",
   step: "Bước nhảy số nguyên đếm tích luỹ.",
   target_total: "Tổng số nguyên mục tiêu cần đạt.",
   remove_count: "Số nguyên vật phẩm cần bớt ra khỏi nhóm.",

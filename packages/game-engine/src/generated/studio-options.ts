@@ -33,6 +33,7 @@ import GT030Template from "#src/templates/GT-030/template";
 import GT031Template from "#src/templates/GT-031/template";
 import GT032Template from "#src/templates/GT-032/template";
 import GT033Template from "#src/templates/GT-033/template";
+import GT034Template from "#src/templates/GT-034/template";
 
 export const STUDIO_TEMPLATE_OPTIONS = [
   {
@@ -232,5 +233,11 @@ export const STUDIO_TEMPLATE_OPTIONS = [
     label: `${GT033Template.code}: ${GT033Template.name}`,
     mechanic: GT033Template.mechanic,
     ageRange: `${GT033Template.age_min}-${GT033Template.age_max}`,
+  },
+  {
+    value: GT034Template.code,
+    label: `${GT034Template.code}: ${GT034Template.name}`,
+    mechanic: GT034Template.mechanic,
+    ageRange: `${GT034Template.age_min}-${GT034Template.age_max}`,
   },
 ];

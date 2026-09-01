@@ -36,6 +36,7 @@ import {
   GT031_FIXTURES,
   GT032_FIXTURES,
   GT033_FIXTURES,
+  GT034_FIXTURES,
   RenderSystem,
 } from "#src/index";
 
@@ -90,6 +91,7 @@ const FIXTURES_MAP: Record<
   "GT-031": GT031_FIXTURES,
   "GT-032": GT032_FIXTURES,
   "GT-033": GT033_FIXTURES,
+  "GT-034": GT034_FIXTURES,
 };
 
 function createMockCanvasContext(): CanvasRenderingContext2D {
@@ -1275,6 +1277,41 @@ describe("All 27 Game Engine Templates Interactive & Visual Harness", () => {
         data: { cell_index: 3, color_id: "red" },
       });
       expect(res.valid).toBe(true);
+      expect(s.checkWinCondition()).toBe(true);
+    });
+
+    it("GT-034: beat sequence tapping simulation succeeds", () => {
+      const f = getFixture(GT034_FIXTURES, 0); // Fixture 0: ["drum", "cymbal", "drum", "cymbal"]
+      const s = createGameSessionSync("GT-034", {
+        level_code: "GT-034-TEST",
+        content_version: 1,
+        template_code: "GT-034",
+        content_pack: f.content,
+        difficulty_params: f.difficulty,
+        theme_id: "default",
+        age_band: "5-6",
+        reduced_motion: false,
+        audio_enabled: true,
+      }) as unknown as {
+        setupEntities: () => void;
+        validateAction: (action: {
+          type: string;
+          data: Record<string, unknown>;
+        }) => { valid: boolean; feedback: string };
+        checkWinCondition: () => boolean;
+        content: {
+          target_pattern: (string | null)[];
+        };
+      };
+      s.setupEntities();
+
+      for (const step of f.content.target_pattern) {
+        const res = s.validateAction({
+          type: "tap_instrument",
+          data: { instrument_id: step },
+        });
+        expect(res.valid).toBe(true);
+      }
       expect(s.checkWinCondition()).toBe(true);
     });
   });

@@ -19,7 +19,7 @@ const SILENCE = 0.0001;
 /** Tail padding so the oscillator outlives its own release. */
 const STOP_PADDING_SEC = 0.01;
 
-interface NoteRecipe {
+export interface NoteRecipe {
   /** Offset from the moment `play()` is called. */
   delaySec: number;
   type: OscillatorType;
@@ -135,6 +135,25 @@ export class SFXEngine {
     }
     for (const note of SFX_RECIPES[type]) {
       playNote(ctx, note, ctx.currentTime + note.delaySec);
+    }
+  }
+
+  /**
+   * Play an arbitrary sequence of notes, enforcing BR-ENG-16 safety invariants:
+   * ramp-in >= 20ms, ramp-out >= 40ms, safe volume ceiling.
+   */
+  playSequence(recipes: readonly NoteRecipe[]): void {
+    const ctx = this.getCtx();
+    if (!ctx) {
+      return;
+    }
+    for (const rawNote of recipes) {
+      const safeNote: NoteRecipe = {
+        ...rawNote,
+        volume: Math.min(0.2, Math.max(SILENCE, rawNote.volume)),
+        rampOutSec: Math.max(0.04, rawNote.rampOutSec),
+      };
+      playNote(ctx, safeNote, ctx.currentTime + Math.max(0, safeNote.delaySec));
     }
   }
 }

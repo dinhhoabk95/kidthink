@@ -93,6 +93,8 @@ export const ALLOWED_EVENT_NAMES = new Set([
   "liquid_poured",
   "yarn_placed",
   "yarn_removed",
+  "pattern_played",
+  "beat_tapped",
 ]);
 
 const PII_FIELDS = new Set([
@@ -282,6 +284,18 @@ const EVENT_PAYLOAD_FIELDS: Readonly<Record<string, ReadonlySet<string>>> = {
     "color_id",
     "row",
     "col",
+    "round_index",
+  ]),
+  pattern_played: new Set([
+    "tempo_bpm",
+    "pattern_length",
+    "is_replay",
+    "round_index",
+  ]),
+  beat_tapped: new Set([
+    "instrument_id",
+    "step_index",
+    "is_correct",
     "round_index",
   ]),
 };
@@ -652,6 +666,18 @@ const EVENT_PAYLOAD_SCHEMAS: Readonly<Record<string, z.AnyZodObject>> = {
     color_id: CONTENT_ID,
     row: NON_NEGATIVE_INT,
     col: NON_NEGATIVE_INT,
+    round_index: OPTIONAL_ROUND_INDEX,
+  }),
+  pattern_played: z.object({
+    tempo_bpm: NON_NEGATIVE_INT,
+    pattern_length: NON_NEGATIVE_INT,
+    is_replay: z.boolean(),
+    round_index: OPTIONAL_ROUND_INDEX,
+  }),
+  beat_tapped: z.object({
+    instrument_id: CONTENT_ID,
+    step_index: NON_NEGATIVE_INT,
+    is_correct: z.boolean().optional(),
     round_index: OPTIONAL_ROUND_INDEX,
   }),
 };
