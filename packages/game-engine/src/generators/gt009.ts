@@ -1,3 +1,4 @@
+import { cluesNarrowToExactlyOne } from "../templates/GT-009/deduction.js";
 import { getNouns, sampleUnique, VALID_GENERATOR_THEMES } from "./helpers.js";
 import type { LevelGenerator } from "./types.js";
 
@@ -10,7 +11,8 @@ export const GT009Generator: LevelGenerator = {
   },
   generate({ rng, age_band, vocabulary }) {
     const nouns = getNouns(vocabulary, 6);
-    const candidateCount = age_band === "4-5" ? 4 : 5;
+    // Band 4-5 giữ trần 4..6 ứng viên
+    const candidateCount = age_band === "4-5" ? 4 : 5 + rng.nextInt(2);
     const sampledNouns = sampleUnique(rng, nouns, candidateCount);
 
     // Tạo danh sách giá trị cách đều (vd: 2, 4, 6, 8, 10)
@@ -51,13 +53,23 @@ export const GT009Generator: LevelGenerator = {
       },
     ];
 
+    const contentPack = {
+      prompt: "Bé hãy dựa vào các manh mối để tìm ra đồ vật bí mật nhé!",
+      candidates,
+      clues,
+      answer_candidate_id: answerId,
+    };
+
+    // Bộ giải kiểm tra: sau khi áp hết manh mối còn đúng một ứng viên sống
+    const surviving = cluesNarrowToExactlyOne(contentPack);
+    if (surviving.length !== 1 || surviving[0]?.candidate_id !== answerId) {
+      throw new Error(
+        `GT-009 solver verification failed: expected 1 surviving candidate (${answerId}), got ${surviving.length}`
+      );
+    }
+
     return {
-      content_pack: {
-        prompt: "Bé hãy dựa vào các manh mối để tìm ra đồ vật bí mật nhé!",
-        candidates,
-        clues,
-        answer_candidate_id: answerId,
-      },
+      content_pack: contentPack,
       difficulty_params: {
         clue_count: clues.length,
         candidate_count: candidates.length,

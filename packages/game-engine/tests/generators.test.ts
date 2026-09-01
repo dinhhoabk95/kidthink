@@ -1,7 +1,11 @@
 import { describe, expect, it } from "vitest";
 import { EMOJI_REF_PATTERN, EmojiRef } from "#src/contracts/shared-fields";
 import { GT001Generator } from "#src/generators/gt001";
+import { GT009Generator } from "#src/generators/gt009";
 import { GT010Generator } from "#src/generators/gt010";
+import { GT013Generator } from "#src/generators/gt013";
+import { GT014Generator } from "#src/generators/gt014";
+import { GT015Generator } from "#src/generators/gt015";
 import { GT028Generator } from "#src/generators/gt028";
 import { GT029Generator } from "#src/generators/gt029";
 import { GT030Generator } from "#src/generators/gt030";
@@ -11,8 +15,33 @@ import { GT033Generator } from "#src/generators/gt033";
 import { GT034Generator } from "#src/generators/gt034";
 import { GT035Generator } from "#src/generators/gt035";
 import { getNouns } from "#src/generators/helpers";
+import { ALL_LEVEL_GENERATORS } from "#src/generators/index";
 import type { ThemeVocabulary } from "#src/generators/types";
 import { createRng } from "#src/rng/mulberry32";
+import {
+  type GT009Content,
+  GT009ContentSchema,
+  type GT009Difficulty,
+  GT009DifficultySchema,
+} from "#src/templates/GT-009/template";
+import {
+  type GT013Content,
+  GT013ContentSchema,
+  type GT013Difficulty,
+  GT013DifficultySchema,
+} from "#src/templates/GT-013/template";
+import {
+  type GT014Content,
+  GT014ContentSchema,
+  type GT014Difficulty,
+  GT014DifficultySchema,
+} from "#src/templates/GT-014/template";
+import {
+  type GT015Content,
+  GT015ContentSchema,
+  type GT015Difficulty,
+  GT015DifficultySchema,
+} from "#src/templates/GT-015/template";
 import type {
   GT028Content,
   GT028Difficulty,
@@ -440,6 +469,189 @@ describe("GT-034 — generator contract conformity", () => {
       for (const count of optionCounts) {
         expect(count).toBeLessThanOrEqual(4); // Band 3-4 cap is 4 items
       }
+    });
+  });
+
+  describe("ALL_LEVEL_GENERATORS registry", () => {
+    it("chứa ít nhất 23 bộ sinh (mục tiêu Task #171: 23/27)", () => {
+      const keys = Object.keys(ALL_LEVEL_GENERATORS);
+      expect(keys.length).toBeGreaterThanOrEqual(23);
+      expect(keys).toContain("GT-009");
+      expect(keys).toContain("GT-013");
+      expect(keys).toContain("GT-014");
+      expect(keys).toContain("GT-015");
+    });
+  });
+
+  describe("GT-009 — generator contract conformity & solver verification", () => {
+    const themeVocab = vocab(10);
+
+    it("generates valid clue deduction levels for age bands 4-5 and 5-6 across seeds", () => {
+      for (const age_band of ["4-5", "5-6"] as const) {
+        for (let seed = 1; seed <= 20; seed++) {
+          const { content_pack, difficulty_params } = GT009Generator.generate({
+            rng: createRng(seed),
+            age_band,
+            theme: "school",
+            vocabulary: themeVocab,
+          }) as {
+            content_pack: GT009Content;
+            difficulty_params: GT009Difficulty;
+          };
+
+          const parsedContent = GT009ContentSchema.parse(content_pack);
+          const parsedDiff = GT009DifficultySchema.parse(difficulty_params);
+          expect(parsedContent).toBeDefined();
+          expect(parsedDiff).toBeDefined();
+
+          if (age_band === "4-5") {
+            expect(content_pack.candidates.length).toBeLessThanOrEqual(6);
+          }
+        }
+      }
+    });
+
+    it("ca âm: manh mối dẫn tới 0 hoặc >1 ứng viên bị schema từ chối", () => {
+      const { content_pack } = GT009Generator.generate({
+        rng: createRng(1),
+        age_band: "4-5",
+        theme: "school",
+        vocabulary: themeVocab,
+      }) as { content_pack: GT009Content };
+
+      // Xoá hết manh mối -> tất cả ứng viên đều sống (đa nghiệm)
+      const invalidPack = { ...content_pack, clues: [] };
+      expect(() => GT009ContentSchema.parse(invalidPack)).toThrow();
+    });
+  });
+
+  describe("GT-013 — generator contract conformity & solver verification", () => {
+    const themeVocab = vocab(10);
+
+    it("generates valid solvable maze levels for age bands 4-5 and 5-6 across seeds", () => {
+      for (const age_band of ["4-5", "5-6"] as const) {
+        for (let seed = 1; seed <= 20; seed++) {
+          const { content_pack, difficulty_params } = GT013Generator.generate({
+            rng: createRng(seed),
+            age_band,
+            theme: "school",
+            vocabulary: themeVocab,
+          }) as {
+            content_pack: GT013Content;
+            difficulty_params: GT013Difficulty;
+          };
+
+          const parsedContent = GT013ContentSchema.parse(content_pack);
+          const parsedDiff = GT013DifficultySchema.parse(difficulty_params);
+          expect(parsedContent).toBeDefined();
+          expect(parsedDiff).toBeDefined();
+
+          expect(content_pack.grid.start).not.toEqual(content_pack.grid.goal);
+        }
+      }
+    });
+
+    it("ca âm: lưới có start trùng goal bị schema từ chối", () => {
+      const { content_pack } = GT013Generator.generate({
+        rng: createRng(1),
+        age_band: "4-5",
+        theme: "school",
+        vocabulary: themeVocab,
+      }) as { content_pack: GT013Content };
+
+      const invalidPack = {
+        ...content_pack,
+        grid: { ...content_pack.grid, start: content_pack.grid.goal },
+      };
+      expect(() => GT013ContentSchema.parse(invalidPack)).toThrow();
+    });
+  });
+
+  describe("GT-014 — generator contract conformity & solver verification", () => {
+    const themeVocab = vocab(10);
+
+    it("generates valid balance scale levels for age band 5-6 across seeds", () => {
+      for (let seed = 1; seed <= 20; seed++) {
+        const { content_pack, difficulty_params } = GT014Generator.generate({
+          rng: createRng(seed),
+          age_band: "5-6",
+          theme: "school",
+          vocabulary: themeVocab,
+        }) as {
+          content_pack: GT014Content;
+          difficulty_params: GT014Difficulty;
+        };
+
+        const parsedContent = GT014ContentSchema.parse(content_pack);
+        const parsedDiff = GT014DifficultySchema.parse(difficulty_params);
+        expect(parsedContent).toBeDefined();
+        expect(parsedDiff).toBeDefined();
+
+        expect(content_pack.left_pan.length).toBeGreaterThan(0);
+        expect(content_pack.right_pan.length).toBeGreaterThan(0);
+        expect(content_pack.tray.length).toBeGreaterThanOrEqual(2);
+      }
+    });
+
+    it("ca âm: khay rỗng không thể làm cân bằng bị schema từ chối", () => {
+      const { content_pack } = GT014Generator.generate({
+        rng: createRng(1),
+        age_band: "5-6",
+        theme: "school",
+        vocabulary: themeVocab,
+      }) as { content_pack: GT014Content };
+
+      const invalidPack = { ...content_pack, tray: [] };
+      expect(() => GT014ContentSchema.parse(invalidPack)).toThrow();
+    });
+  });
+
+  describe("GT-015 — generator contract conformity & solver verification", () => {
+    const themeVocab = vocab(10);
+
+    it("generates valid mini sudoku levels with unique solution for age bands 4-5 and 5-6 across seeds", () => {
+      for (const age_band of ["4-5", "5-6"] as const) {
+        for (let seed = 1; seed <= 20; seed++) {
+          const { content_pack, difficulty_params } = GT015Generator.generate({
+            rng: createRng(seed),
+            age_band,
+            theme: "school",
+            vocabulary: themeVocab,
+          }) as {
+            content_pack: GT015Content;
+            difficulty_params: GT015Difficulty;
+          };
+
+          const parsedContent = GT015ContentSchema.parse(content_pack);
+          const parsedDiff = GT015DifficultySchema.parse(difficulty_params);
+          expect(parsedContent).toBeDefined();
+          expect(parsedDiff).toBeDefined();
+
+          expect(content_pack.symbols.length).toBe(content_pack.grid_size);
+          expect(content_pack.cells.length).toBe(
+            content_pack.grid_size * content_pack.grid_size
+          );
+        }
+      }
+    });
+
+    it("ca âm: lưới không có ô trống bị schema từ chối", () => {
+      const { content_pack } = GT015Generator.generate({
+        rng: createRng(1),
+        age_band: "4-5",
+        theme: "school",
+        vocabulary: themeVocab,
+      }) as { content_pack: GT015Content };
+
+      // Thay ô trống bằng ký hiệu -> không còn ô trống
+      const invalidPack = {
+        ...content_pack,
+        cells: content_pack.cells.map((c) => ({
+          ...c,
+          symbol_id: c.symbol_id ?? "sym_1",
+        })),
+      };
+      expect(() => GT015ContentSchema.parse(invalidPack)).toThrow();
     });
   });
 });

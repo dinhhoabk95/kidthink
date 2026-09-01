@@ -1,6 +1,7 @@
 import {
   findRouteThrough,
   type MazeCell,
+  type MazeGrid,
   type MazeWall,
 } from "../systems/maze-system.js";
 import { getNouns, sampleUnique, VALID_GENERATOR_THEMES } from "./helpers.js";
@@ -32,7 +33,7 @@ function buildMazeWalls(
       break;
     }
     const testWalls = [...walls, wall];
-    const grid = { ...gridBase, walls: testWalls };
+    const grid: MazeGrid = { ...gridBase, walls: testWalls };
     if (findRouteThrough(grid, []) !== null) {
       walls.push(wall);
     }
@@ -79,12 +80,17 @@ export const GT013Generator: LevelGenerator = {
       candidateWalls.length
     );
 
-    const walls = buildMazeWalls(shuffledWalls, targetWallCount, {
-      rows,
-      cols,
-      start,
-      goal,
-    });
+    const gridBase = { rows, cols, start, goal };
+    const walls = buildMazeWalls(shuffledWalls, targetWallCount, gridBase);
+
+    // Bộ giải kiểm tra: tồn tại đường đi hợp lệ từ start đến goal
+    const testGrid: MazeGrid = { ...gridBase, walls };
+    const route = findRouteThrough(testGrid, []);
+    if (!route || route.length < (age_band === "4-5" ? 4 : 5)) {
+      throw new Error(
+        `GT-013 solver verification failed: route missing or too short (length: ${route?.length ?? 0})`
+      );
+    }
 
     const inputMode =
       age_band === "5-6" ? ("arrows" as const) : ("draw" as const);

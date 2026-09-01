@@ -1,3 +1,8 @@
+import {
+  canAchieveBalance,
+  sumWeights,
+  type WeightedItem,
+} from "../systems/balance-system.js";
 import { getNouns, sampleUnique, VALID_GENERATOR_THEMES } from "./helpers.js";
 import type { LevelGenerator } from "./types.js";
 
@@ -16,37 +21,49 @@ export const GT014Generator: LevelGenerator = {
     const rightNoun = sampled[1] ?? nouns[1];
     const trayNouns = sampled.slice(2);
 
-    // Đĩa trái nặng 5, đĩa phải nặng 2. Cần thêm 3 vào đĩa phải để cân bằng.
-    const leftPan = [
+    // Khối lượng là nội dung, sinh động ngẫu nhiên theo rng
+    // Đĩa trái nặng hơn đĩa phải từ 2..5 đơn vị
+    const leftWeight = 4 + rng.nextInt(4); // 4..7
+    const delta = 2 + rng.nextInt(3); // 2..4
+    const rightWeight = Math.max(1, leftWeight - delta);
+    const neededWeight = leftWeight - rightWeight;
+
+    const leftPan: WeightedItem[] = [
       {
         item_id: "left_1",
         asset: {
           kind: "emoji" as const,
           ref: leftNoun?.emoji_ref ?? "EMJ-apple",
         },
-        weight: 5,
+        weight: leftWeight,
       },
     ];
 
-    const rightPan = [
+    const rightPan: WeightedItem[] = [
       {
         item_id: "right_1",
         asset: {
           kind: "emoji" as const,
           ref: rightNoun?.emoji_ref ?? "EMJ-banana",
         },
-        weight: 2,
+        weight: rightWeight,
       },
     ];
 
-    const tray = [
+    // Khay chứa: 1 vật cân bằng chính xác + các vật gây nhiễu
+    const distractor1Weight =
+      neededWeight + 1 <= 10 ? neededWeight + 1 : neededWeight - 1;
+    const distractor2Weight =
+      neededWeight + 2 <= 10 ? neededWeight + 2 : Math.max(1, neededWeight - 2);
+
+    const tray: WeightedItem[] = [
       {
         item_id: "tray_1",
         asset: {
           kind: "emoji" as const,
           ref: trayNouns[0]?.emoji_ref ?? "EMJ-carrot",
         },
-        weight: 3, // Vật cân bằng chính xác
+        weight: neededWeight, // Vật cân bằng chính xác
       },
       {
         item_id: "tray_2",
@@ -54,7 +71,7 @@ export const GT014Generator: LevelGenerator = {
           kind: "emoji" as const,
           ref: trayNouns[1]?.emoji_ref ?? "EMJ-grape",
         },
-        weight: 1, // Nhiễu
+        weight: distractor1Weight, // Nhiễu
       },
       {
         item_id: "tray_3",
@@ -62,9 +79,23 @@ export const GT014Generator: LevelGenerator = {
           kind: "emoji" as const,
           ref: trayNouns[2]?.emoji_ref ?? "EMJ-lemon",
         },
-        weight: 4, // Nhiễu
+        weight: distractor2Weight, // Nhiễu
       },
     ];
+
+    // Bộ giải kiểm tra: loại bỏ trường hợp tầm thường (2 đĩa đã bằng nhau sẵn)
+    if (sumWeights(leftPan) === sumWeights(rightPan)) {
+      throw new Error(
+        "GT-014 solver verification failed: initial scale must not be already balanced"
+      );
+    }
+
+    // Bộ giải kiểm tra: phải tồn tại cách đặt vật từ khay để cân bằng
+    if (!canAchieveBalance(leftPan, rightPan, tray)) {
+      throw new Error(
+        "GT-014 solver verification failed: balance cannot be achieved with given tray items"
+      );
+    }
 
     return {
       content_pack: {
@@ -76,7 +107,7 @@ export const GT014Generator: LevelGenerator = {
       },
       difficulty_params: {
         tray_count: tray.length,
-        weight_span: 5,
+        weight_span: Math.max(leftWeight, rightWeight, neededWeight),
         hint_after_ms: 12_000,
         allow_retry: true,
       },
