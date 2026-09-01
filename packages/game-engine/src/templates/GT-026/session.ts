@@ -23,6 +23,7 @@ import {
   type ItemVisualState,
   updateParticles,
 } from "../shared-render.js";
+import { drawPedestalTarget } from "../shared-render-shapes.js";
 import type { GT026Content, GT026Difficulty } from "./template.js";
 
 export class GT026Session extends TemplateGameSession<
@@ -195,6 +196,7 @@ export class GT026Session extends TemplateGameSession<
     drawSubPromptText(ctx, rs, stimulus.label);
     const slot = this.slots[0];
     if (slot) {
+      drawPedestalTarget(ctx, slot);
       drawSlotItem(ctx, rs, slot, {
         id: trial.id,
         asset: stimulus.asset,

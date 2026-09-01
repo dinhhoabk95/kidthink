@@ -7,18 +7,16 @@ import { resolveLayout } from "#src/layout/registry";
 import type { Slot } from "#src/layout/types";
 import { PlacementMechanic } from "#src/mechanics/placement-mechanic";
 import type { DegradationState } from "#src/systems/degradation";
-import { designTokens } from "#src/systems/designTokens";
 import type { Particle, RenderSystem } from "#src/systems/render-system";
 import {
-  drawEmojiContent,
-  drawPlaceholderBox,
   drawPromptText,
   drawSceneBackground,
-  getColorsForState,
+  drawSlotItem,
   type ItemVisualState,
   spawnParticlesAtSlot,
   updateParticles,
 } from "../shared-render.js";
+import { drawNestTarget } from "../shared-render-shapes.js";
 import type { GT003Content, GT003Difficulty } from "./template.js";
 
 type DraggableItem = GT003Content["items"][number];
@@ -135,7 +133,7 @@ export class GT003Session extends TemplateGameSession<
   }
 
   private drawContainer(
-    rs: RenderSystem,
+    _rs: RenderSystem,
     ctx: CanvasRenderingContext2D,
     slots: readonly Slot[]
   ): void {
@@ -143,15 +141,7 @@ export class GT003Session extends TemplateGameSession<
     if (!containerSlot) {
       return;
     }
-    rs.drawClayContainer(
-      ctx,
-      containerSlot.x,
-      containerSlot.y,
-      containerSlot.hitW,
-      containerSlot.hitH,
-      designTokens.colors.surface[100],
-      designTokens.colors.surface[300]
-    );
+    drawNestTarget(ctx, containerSlot);
   }
 
   private drawInteractive(
@@ -159,25 +149,25 @@ export class GT003Session extends TemplateGameSession<
     ctx: CanvasRenderingContext2D,
     slots: readonly Slot[]
   ): void {
+    const sourceSlots = slots.slice(0, -1);
     for (let i = 0; i < this.displayItems.length; i++) {
       const item = this.displayItems[i];
-      const slot = slots[i];
+      const slot = sourceSlots[i];
       if (!(slot && item)) {
         continue;
       }
       const state = this.getItemState(item.item_id);
-      if (state === "correct") {
-        continue;
-      }
-      const { fill, border } = getColorsForState(state);
-      const r = Math.min(slot.hitW, slot.hitH) / 2;
-      rs.drawClayBody(ctx, slot.x, slot.y, r, fill, border);
-
-      if (item.asset.kind === "emoji") {
-        drawEmojiContent(ctx, item.asset.ref, slot);
-      } else {
-        drawPlaceholderBox(ctx, slot);
-      }
+      drawSlotItem(
+        ctx,
+        rs,
+        slot,
+        {
+          id: item.item_id,
+          asset: item.asset,
+          state,
+        },
+        "circle"
+      );
     }
   }
 

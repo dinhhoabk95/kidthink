@@ -12,10 +12,12 @@ import type { DegradationState } from "#src/systems/degradation";
 import type { Particle, RenderSystem } from "#src/systems/render-system";
 import { type RuleDefinition, RuleSystem } from "#src/systems/rule-system";
 import {
+  drawProgressBadge,
   drawPromptText,
   drawSceneBackground,
   drawSlotItem,
   drawSubPromptText,
+  drawWoodenTokenDock,
   type ItemVisualState,
   updateParticles,
 } from "../shared-render.js";
@@ -210,11 +212,18 @@ export class GT027Session extends TemplateGameSession<
   ): void {
     drawSceneBackground(ctx, rs);
     drawPromptText(ctx, rs, this.content.prompt);
+    drawProgressBadge(
+      ctx,
+      rs,
+      this.successfulTrialCount,
+      this.targetSuccessTotal
+    );
     const rule = this.ruleSystem.getActiveRule();
     const signal = this.ruleSystem.getSignalInfo();
     // Luật đang hiệu lực phải hiện thường trực: trẻ đổi luật giữa chừng, không
     // ai được yêu cầu nhớ luật cũ.
     drawSubPromptText(ctx, rs, signal?.text ?? rule.description);
+    drawWoodenTokenDock(ctx, rs);
 
     this.content.items.forEach((item, i) => {
       const slot = this.slots[i];

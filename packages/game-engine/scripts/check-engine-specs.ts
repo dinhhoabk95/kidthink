@@ -18,8 +18,17 @@ function main(): void {
   const configPath = repoPath(
     "packages/game-engine/config/engine-spec-ready.json"
   );
+  const plannedPath = repoPath(
+    "packages/game-engine/config/engine-spec-planned.json"
+  );
 
-  const result = scanEngineSpecsGate(specsDir, templatesDir, configPath);
+  const result = scanEngineSpecsGate(
+    specsDir,
+    templatesDir,
+    configPath,
+    plannedPath,
+    repoPath(".")
+  );
   const report = formatEngineSpecsReport(result);
 
   console.log("check:engine-specs");

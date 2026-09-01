@@ -13,9 +13,11 @@ import {
   drawPromptText,
   drawSceneBackground,
   drawSlotItem,
+  drawWoodenTokenDock,
   type ItemVisualState,
   updateParticles,
 } from "../shared-render.js";
+import { boxFromSlots, drawShapeTray } from "../shared-render-shapes.js";
 import { colMatches, findBlankCell, rowMatches } from "./matrix-rule.js";
 import type { GT011Content, GT011Difficulty } from "./template.js";
 
@@ -141,6 +143,11 @@ export class GT011Session extends TemplateGameSession<
     const cellCount = this.content.matrix.rows * this.content.matrix.cols;
     const cellSlots = this.slots.slice(0, cellCount);
     const optionSlots = this.slots.slice(cellCount);
+    const matrixBox = boxFromSlots(cellSlots);
+    if (matrixBox) {
+      drawShapeTray(ctx, matrixBox);
+    }
+    drawWoodenTokenDock(ctx, rs);
     const { cols } = this.content.matrix;
 
     for (const cell of this.content.matrix.cells) {

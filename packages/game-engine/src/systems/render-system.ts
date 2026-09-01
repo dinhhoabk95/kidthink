@@ -65,7 +65,17 @@ export class RenderSystem {
     ctx.save();
     ctx.translate(x, y);
 
-    // 1. Drop shadow offset
+    // 1. Warm ambient drop shadow
+    ctx.save();
+    ctx.shadowColor = "rgba(130, 118, 96, 0.18)";
+    ctx.shadowBlur = 10;
+    ctx.shadowOffsetY = 4;
+    ctx.fillStyle = border;
+    this.traceRoundShape(ctx, r, shape);
+    ctx.fill();
+    ctx.restore();
+
+    // 2. Bottom 3D slab offset
     ctx.save();
     ctx.translate(0, 5);
     ctx.fillStyle = border;
@@ -73,19 +83,19 @@ export class RenderSystem {
     ctx.fill();
     ctx.restore();
 
-    // 2. Main fill body
+    // 3. Main fill body
     ctx.fillStyle = fill;
     this.traceRoundShape(ctx, r, shape);
     ctx.fill();
 
-    // 3. Thick outline
+    // 4. Thick tactile outline
     ctx.strokeStyle = border;
     ctx.lineWidth = 4;
     this.traceRoundShape(ctx, r, shape);
     ctx.stroke();
 
-    // 4. White top specular highlight
-    ctx.strokeStyle = "rgba(255, 255, 255, 0.72)";
+    // 5. White top specular highlight
+    ctx.strokeStyle = "rgba(255, 255, 255, 0.76)";
     ctx.lineWidth = 3;
     ctx.beginPath();
     if (shape === "square") {
@@ -99,7 +109,7 @@ export class RenderSystem {
     ctx.restore();
   }
 
-  /** Ported from v1: Clay container basket for GT-003 and GT-004 sort dropzones */
+  /** Montessori wooden tray/basket container for dropzones */
   drawClayContainer(
     ctx: CanvasRenderingContext2D,
     x: number,
@@ -112,7 +122,17 @@ export class RenderSystem {
     ctx.save();
     ctx.translate(x, y);
 
-    // Drop shadow
+    // Warm ambient shadow
+    ctx.save();
+    ctx.shadowColor = "rgba(130, 118, 96, 0.16)";
+    ctx.shadowBlur = 12;
+    ctx.shadowOffsetY = 6;
+    ctx.fillStyle = border;
+    this.traceContainerBody(ctx, w, h, 6);
+    ctx.fill();
+    ctx.restore();
+
+    // Drop shadow slab
     ctx.fillStyle = border;
     this.traceContainerBody(ctx, w, h, 6);
     ctx.fill();
@@ -125,10 +145,18 @@ export class RenderSystem {
     ctx.fill();
     ctx.stroke();
 
+    // Top rim highlight
+    ctx.strokeStyle = "rgba(255, 255, 255, 0.55)";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(-w * 0.42, -h * 0.18);
+    ctx.lineTo(w * 0.42, -h * 0.18);
+    ctx.stroke();
+
     ctx.restore();
   }
 
-  /** Ported from v1: Scaffolding pulse ring animation for hints (BR-ENG-05) */
+  /** Montessori Scaffolding golden pulse ring animation for hints (BR-ENG-05) */
   drawScaffoldingHighlight(
     ctx: CanvasRenderingContext2D,
     x: number,
@@ -141,7 +169,7 @@ export class RenderSystem {
 
     ctx.save();
     ctx.translate(x, y);
-    ctx.strokeStyle = designTokens.colors.brand[600]; // Indigo hint pulse
+    ctx.strokeStyle = designTokens.colors.montessori.amber; // Honey Amber hint pulse
     ctx.lineWidth = 4;
     ctx.setLineDash([8, 6]);
     ctx.beginPath();
@@ -150,7 +178,7 @@ export class RenderSystem {
     ctx.restore();
   }
 
-  /** Ported from v1: Confetti particle burst celebration renderer */
+  /** Confetti & star particle burst celebration renderer */
   drawParticles(ctx: CanvasRenderingContext2D, particles: Particle[]): void {
     ctx.save();
     for (const p of particles) {

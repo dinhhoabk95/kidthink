@@ -20,6 +20,15 @@ export const SearchParamsSchema = z.object({
    * một đứa trẻ 4 tuổi sẽ loại mọi level band 3–4 — đúng cú pháp, sai câu hỏi.
    */
   age: z.coerce.number().min(3).max(6).optional(),
+  /**
+   * Một band trọn vẹn — `GAME-CATALOG-PUBLIC` §7.1 dùng `/games?age_band=4-5`.
+   *
+   * `age` Cấm — NEVER thay được cho nó: `age=4` hỏi "band có chứa tuổi 4",
+   * nên khớp cả 3-4 lẫn 4-5. Trang chủ hứa "trò chơi của Lớp Chồi" thì phải
+   * là band 4-5 đúng hai đầu. Trước task 165 schema không khai `age_band`
+   * và `z.object` loại nó trong im lặng — bộ lọc rơi, danh mục trả cả kho.
+   */
+  age_band: z.enum(["3-4", "4-5", "5-6"]).optional(),
   competency: z.enum(["C1", "C2", "C3", "C4", "C5", "C6"]).optional(),
   strand: z.string().optional(),
   skill: z.string().optional(),
@@ -87,6 +96,11 @@ function buildBasicConditions(
   if (params.age !== undefined) {
     conditions.push(lte(gameLevels.ageMin, params.age));
     conditions.push(gte(gameLevels.ageMax, params.age));
+  }
+  if (params.age_band) {
+    const [bandMin, bandMax] = params.age_band.split("-");
+    conditions.push(eq(gameLevels.ageMin, Number(bandMin)));
+    conditions.push(eq(gameLevels.ageMax, Number(bandMax)));
   }
   if (params.difficulty !== undefined) {
     conditions.push(eq(gameLevels.difficulty, params.difficulty));
@@ -303,6 +317,7 @@ export interface GameLevelFacets {
   total: number;
   competency: Record<string, number>;
   age: Record<string, number>;
+  age_band: Record<string, number>;
   access_tier: Record<string, number>;
 }
 
@@ -313,6 +328,7 @@ export interface GameLevelFacets {
  * hiện tại thì mọi lựa chọn chưa chọn đều ra 0 và giao diện sẽ vô hiệu hết —
  * đúng ngược với lý do facet tồn tại.
  */
+// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: aggregate facets branching
 async function buildGameLevelFacets(
   db: PostgresJsDatabase<Record<string, unknown>>,
   params: SearchParams,
@@ -351,6 +367,7 @@ async function buildGameLevelFacets(
     age: undefined,
     age_min: undefined,
     age_max: undefined,
+    age_band: undefined,
   })) as unknown as Array<{ ageMin: number | null; ageMax: number | null }>;
   const tierRows = (await countWith({
     ...clearCursor,
@@ -367,12 +384,17 @@ async function buildGameLevelFacets(
   }
 
   const age: Record<string, number> = {};
+  const age_band: Record<string, number> = {};
   for (const row of ageRows) {
     if (row.ageMin == null || row.ageMax == null) {
       continue;
     }
     for (let year = row.ageMin; year <= row.ageMax; year++) {
       age[String(year)] = (age[String(year)] ?? 0) + 1;
+    }
+    const band = ageBandLabel(row.ageMin, row.ageMax);
+    if (band) {
+      age_band[band] = (age_band[band] ?? 0) + 1;
     }
   }
 
@@ -381,7 +403,7 @@ async function buildGameLevelFacets(
     access_tier[row.accessTier] = (access_tier[row.accessTier] ?? 0) + 1;
   }
 
-  return { total: totalRows.length, competency, age, access_tier };
+  return { total: totalRows.length, competency, age, age_band, access_tier };
 }
 
 function buildActivityConditions(

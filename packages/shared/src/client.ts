@@ -19,6 +19,7 @@ export * from "./ai-credit.js";
 export * from "./asset-resolver.js";
 export * from "./audit.js";
 export * from "./child-data.js";
+export * from "./competency-catalog.js";
 export * from "./config-dictionary.js";
 export * from "./curriculum-model.js";
 export * from "./curriculum-player.js";

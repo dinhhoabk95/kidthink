@@ -9,17 +9,15 @@ import { SelectionMechanic } from "#src/mechanics/selection-mechanic";
 import type { DegradationState } from "#src/systems/degradation";
 import type { Particle, RenderSystem } from "#src/systems/render-system";
 import {
-  drawCheckMark,
-  drawCounterBadge,
-  drawEmojiContent,
-  drawPlaceholderBox,
+  drawProgressBadge,
   drawPromptText,
   drawSceneBackground,
-  getColorsForState,
+  drawSlotItem,
   type ItemVisualState,
   spawnParticlesAtSlot,
   updateParticles,
 } from "../shared-render.js";
+import { drawWoodenPlate } from "../shared-render-shapes.js";
 import type { GT002Content, GT002Difficulty } from "./template.js";
 
 type TargetItem = GT002Content["items"][number];
@@ -128,10 +126,9 @@ export class GT002Session extends TemplateGameSession<
     const slots = this.slots;
     drawSceneBackground(ctx, rs);
     drawPromptText(ctx, rs, this.content.prompt);
-    drawCounterBadge(
+    drawProgressBadge(
       ctx,
-      900,
-      30,
+      rs,
       this.getSelectedCount(),
       this.difficulty.target_count
     );
@@ -151,19 +148,19 @@ export class GT002Session extends TemplateGameSession<
         continue;
       }
       const state = this.getItemState(item.item_id);
-      const { fill, border } = getColorsForState(state);
-      const r = Math.min(slot.hitW, slot.hitH) / 2;
-      rs.drawClayBody(ctx, slot.x, slot.y, r, fill, border);
-
-      if (item.asset.kind === "emoji") {
-        drawEmojiContent(ctx, item.asset.ref, slot);
-      } else {
-        drawPlaceholderBox(ctx, slot);
-      }
-
-      if (state === "selected") {
-        drawCheckMark(ctx, slot);
-      }
+      const isSelected = state === "selected" || state === "correct";
+      drawWoodenPlate(ctx, slot, isSelected);
+      drawSlotItem(
+        ctx,
+        rs,
+        slot,
+        {
+          id: item.item_id,
+          asset: item.asset,
+          state,
+        },
+        "circle"
+      );
     }
   }
 

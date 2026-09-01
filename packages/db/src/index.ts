@@ -36,6 +36,7 @@ export * from "./services/ai-egress-guard.ts";
 export * from "./services/ai-provider.ts";
 export * from "./services/audit.ts";
 export * from "./services/automated-payment.ts";
+export * from "./services/catalog-counts.ts";
 export * from "./services/content-lifecycle.ts";
 export * from "./services/content-search.ts";
 export * from "./services/content-versioning.ts";

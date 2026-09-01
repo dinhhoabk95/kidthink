@@ -16,9 +16,11 @@ import {
   drawSceneBackground,
   drawSlotItem,
   drawSubPromptText,
+  drawWoodenTokenDock,
   type ItemVisualState,
   updateParticles,
 } from "../shared-render.js";
+import { drawClocheScene } from "../shared-render-shapes.js";
 import type { GT012Content, GT012Difficulty } from "./template.js";
 
 export class FlashRecallSession extends TemplateGameSession<
@@ -185,9 +187,23 @@ export class FlashRecallSession extends TemplateGameSession<
   ): void {
     drawSceneBackground(ctx, rs);
     drawPromptText(ctx, rs, this.content.prompt);
-    // Hai pha: đang loé thì chỉ thấy vật; hết loé mới thấy phương án.
+
+    const plateSlot: Slot = {
+      index: 0,
+      x: rs.LOGIC_WIDTH / 2,
+      y: rs.LOGIC_HEIGHT * 0.38,
+      w: 220,
+      h: 220,
+      hitW: 220,
+      hitH: 220,
+      page: 0,
+      role: "target",
+    };
+
+    // Hai pha: đang loé thì mở nắp cloche thấy vật; hết loé thì đậy nắp cloche và hiện thẻ chọn.
     if (this.timer.isVisible()) {
       drawSubPromptText(ctx, rs, "Nhìn nhanh!");
+      drawClocheScene(ctx, plateSlot, true);
       this.content.flash_items.forEach((item, i) => {
         const slot = this.slots[i];
         if (!slot) {
@@ -198,6 +214,10 @@ export class FlashRecallSession extends TemplateGameSession<
       this.drawRenderFeedback(rs, ctx);
       return;
     }
+
+    drawSubPromptText(ctx, rs, "Bé nhớ có bao nhiêu đồ vật?");
+    drawClocheScene(ctx, plateSlot, false);
+    drawWoodenTokenDock(ctx, rs);
 
     this.content.options.forEach((opt, i) => {
       const slot = this.slots[i];

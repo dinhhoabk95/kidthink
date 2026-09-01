@@ -771,6 +771,24 @@ export const CONFIG_DICTIONARY: Record<string, FieldDictionaryEntry> = {
     label: "Cho phép hoàn tác",
     help: "Bé có thể bấm lại vào vật phẩm đã chọn để hoàn tác bước đếm.",
   },
+
+  // GT-029: Remove from Set
+  initial_items: {
+    label: "Danh sách vật phẩm ban đầu",
+    help: "Các vật phẩm trong nhóm ban đầu trước khi bớt.",
+  },
+  remove_count: {
+    label: "Số lượng cần bớt",
+    help: "Số lượng vật phẩm cần lấy ra khỏi nhóm ban đầu.",
+  },
+  answer_options: {
+    label: "Danh sách lựa chọn đáp án",
+    help: "Các phương án số lượng còn lại cho bé chọn.",
+  },
+  initial_count: {
+    label: "Số lượng ban đầu",
+    help: "Số lượng vật phẩm ban đầu trong nhóm.",
+  },
 };
 
 /**
@@ -780,6 +798,9 @@ export const CONFIG_DICTIONARY: Record<string, FieldDictionaryEntry> = {
 export const TEXT_FALLBACK_ALLOWLIST: Record<string, string> = {
   step: "Bước nhảy số nguyên đếm tích luỹ.",
   target_total: "Tổng số nguyên mục tiêu cần đạt.",
+  remove_count: "Số nguyên vật phẩm cần bớt ra khỏi nhóm.",
+  initial_count: "Số nguyên lượng vật phẩm ban đầu.",
+  value: "Giá trị số nguyên của đáp án lựa chọn.",
   prompt: "Câu hỏi chính của bài học, dạng văn bản ngắn đọc cho bé.",
   item_id: "Mã định danh kỹ thuật của vật phẩm trong content pack.",
   id: "Mã định danh đối tượng.",

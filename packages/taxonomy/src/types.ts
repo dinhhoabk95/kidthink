@@ -14,6 +14,7 @@ import type {
   StrandCode,
   StrandTier,
 } from "@mindkid/shared";
+import { COMPETENCY_TIERS } from "@mindkid/shared";
 
 // Re-export all taxonomy types for convenience
 export type {
@@ -33,38 +34,14 @@ export type {
 
 // ─── Competency constants ────────────────────────────────────────────
 
-export const COMPETENCIES: readonly CompetencyTier[] = [
-  {
-    code: "C1" as CompetencyCode,
-    description: "Mathematical Thinking",
-    name: "Tư duy toán học",
-  },
-  {
-    code: "C2" as CompetencyCode,
-    description: "Spatial Thinking",
-    name: "Tư duy không gian",
-  },
-  {
-    code: "C3" as CompetencyCode,
-    description: "Logical Thinking",
-    name: "Tư duy logic",
-  },
-  {
-    code: "C4" as CompetencyCode,
-    description: "Observation Thinking",
-    name: "Tư duy quan sát",
-  },
-  {
-    code: "C5" as CompetencyCode,
-    description: "Language Thinking",
-    name: "Tư duy ngôn ngữ",
-  },
-  {
-    code: "C6" as CompetencyCode,
-    description: "Executive Function",
-    name: "Chức năng điều hành",
-  },
-] as const;
+/**
+ * Tầng L1 — dẫn xuất từ `COMPETENCY_CATALOG` của `@mindkid/shared`.
+ *
+ * Bảng nhãn sống ở `shared` vì bề mặt công khai (component Vue) cũng cần nó và
+ * chỉ với ra được `@mindkid/shared/client`. Khai lại ở đây là mở lại đúng khe
+ * đã sinh ra bốn bảng lệch nhau trước task 165.
+ */
+export const COMPETENCIES: readonly CompetencyTier[] = COMPETENCY_TIERS;
 
 // ─── Strand constants ────────────────────────────────────────────────
 

@@ -45,7 +45,19 @@ export interface RoundRunnerOptions {
 export interface RoundRunnerState {
   currentRoundIndex: number;
   roundsTotal: number;
-  roundsCorrect: number;
+  /**
+   * Số vòng đã **hoàn thành**, không phải số vòng đúng ngay lần đầu.
+   *
+   * Cấm — NEVER gửi giá trị này lên server, và Cấm — NEVER dùng nó làm
+   * `rounds_correct` của mục 7.1 `scoring-and-result.md`: định nghĩa ở đó là
+   * vòng có `answer_correct` **ở lần thử đầu**, còn biến này tăng ở mọi
+   * `completeCurrentRound()` bất kể trẻ thử mấy lần. `BR-RSP-12` bắt server tự
+   * dựng `rounds_total` và `rounds_correct` từ chuỗi event.
+   *
+   * Tên cũ của nó trùng tên chỉ số của server, và cái tên đó là một lời mời gửi
+   * nó đi.
+   */
+  roundsCompleted: number;
   roundsSkipped: number;
   isFinished: boolean;
   hintCountTotal: number;
@@ -66,7 +78,7 @@ export class RoundRunner {
   private readonly onAllRoundsCompleted?: () => void;
 
   private currentRoundIndex = 0;
-  private roundsCorrect = 0;
+  private roundsCompleted = 0;
   private roundsSkipped = 0;
   private hintCountTotal = 0;
   private isFinished = false;
@@ -93,7 +105,7 @@ export class RoundRunner {
     return {
       currentRoundIndex: this.currentRoundIndex,
       roundsTotal: this.rounds.length,
-      roundsCorrect: this.roundsCorrect,
+      roundsCompleted: this.roundsCompleted,
       roundsSkipped: this.roundsSkipped,
       isFinished: this.isFinished,
       hintCountTotal: this.hintCountTotal,
@@ -150,7 +162,7 @@ export class RoundRunner {
     this.currentSession.completeSession();
     this.currentSession.destroy();
     this.currentSession = null;
-    this.roundsCorrect++;
+    this.roundsCompleted++;
 
     this.onRoundCompleted?.(this.currentRoundIndex, false);
 

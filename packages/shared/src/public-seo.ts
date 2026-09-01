@@ -525,49 +525,11 @@ export const FEATURED_GUEST_LEVELS = [
 ] as const;
 
 /**
- * 6 Competencies definitions
+ * Nhãn sáu năng lực đã chuyển sang `competency-catalog.ts` — nguồn duy nhất
+ * mà `@mindkid/taxonomy` và seeder `competencies` cùng dùng.
+ *
+ * `COMPETENCIES_INFO` cũ ở đây mang taxonomy toán v1 đã bỏ, và là một trong
+ * bốn bảng viết tay lệch nhau (task 165).
+ * Cấm — NEVER khai lại bảng nhãn ở file này, và Cấm — NEVER re-export từ đây:
+ * hai `export *` cùng tên trong barrel `.` bị ESM bỏ trong im lặng.
  */
-export const COMPETENCIES_INFO = [
-  {
-    code: "C1",
-    name: "Số & Lượng",
-    emoji: "🔢",
-    description:
-      "Làm quen đếm số, nhận biết lượng và các phép so sánh số học cơ bản.",
-  },
-  {
-    code: "C2",
-    name: "Hình & Không gian",
-    emoji: "📐",
-    description:
-      "Nhận biết hình khối, định hướng không gian và phát triển thị giác không gian.",
-  },
-  {
-    code: "C3",
-    name: "Quy luật & Chuỗi",
-    emoji: "🧩",
-    description:
-      "Phát hiện, dự đoán và sáng tạo các chuỗi quy luật logic tuần hoàn.",
-  },
-  {
-    code: "C4",
-    name: "Đo lường & Đại lượng",
-    emoji: "📏",
-    description:
-      "Cảm nhận kích thước, chiều dài, cân nặng, dung tích và thời gian.",
-  },
-  {
-    code: "C5",
-    name: "Phân loại & Tập hợp",
-    emoji: "🧺",
-    description:
-      "Nhóm các đối tượng theo thuộc tính màu sắc, hình dáng, công dụng và số lượng.",
-  },
-  {
-    code: "C6",
-    name: "Suy luận & Logic",
-    emoji: "💡",
-    description:
-      "Rèn luyện tư duy loại trừ, tìm điểm bất hợp lý và giải quyết vấn đề.",
-  },
-] as const;

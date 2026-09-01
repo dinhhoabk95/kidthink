@@ -1,5 +1,4 @@
 import { hashPassword } from "@mindkid/auth";
-import { requireEnv } from "@mindkid/config";
 import {
   ENTITLEMENT_KEYS,
   PACKAGE_CATALOG,
@@ -13,6 +12,7 @@ import {
 } from "./schema/billing.ts";
 import { consentRequirements, managers } from "./schema/identity.ts";
 import { runSeedContent } from "./seed-content/cli/seed-content.ts";
+import { seedInitialAccounts } from "./seed-master/accounts.ts";
 import { seedSkillActionSuggestions } from "./seed-master/action-suggestions.ts";
 import { seedContentTags } from "./seed-master/content-tags.ts";
 import { seedCurriculaMasterData } from "./seed-master/curricula.ts";
@@ -115,28 +115,29 @@ export async function seed() {
     `[db:seed] Skill action suggestions seeded: ${actionStats.seededCount} items.`
   );
 
-  // 7. Seed initial super_admin manager
-  const initialAdminEmail = requireEnv(
-    "INITIAL_ADMIN_EMAIL",
-    "Seeding creates the first super admin; name the account explicitly."
+  // 8. Seed initial test accounts (Managers and Users)
+  const accountStats = await seedInitialAccounts(db);
+  console.log(
+    `[db:seed] Initial accounts seeded: ${accountStats.managerCount} managers, ${accountStats.userCount} users, ${accountStats.childProfileCount} children, ${accountStats.entitlementCount} entitlements.`
   );
-  const initialAdminPassword = requireEnv(
-    "INITIAL_ADMIN_PASSWORD",
-    "Seeding creates the first super admin; supply its password explicitly."
-  );
-  const initialAdminHash = await hashPassword(initialAdminPassword);
 
-  await db
-    .insert(managers)
-    .values({
-      email: initialAdminEmail,
-      passwordHash: initialAdminHash,
-      displayName: "Super Admin",
-      role: "super_admin",
-      mfaEnabled: false,
-      isActive: true,
-    })
-    .onConflictDoNothing({ target: managers.email });
+  // Optional: If custom initial admin is explicitly provided via env, ensure it exists
+  const envAdminEmail = process.env.INITIAL_ADMIN_EMAIL;
+  const envAdminPassword = process.env.INITIAL_ADMIN_PASSWORD;
+  if (envAdminEmail && envAdminPassword) {
+    const envAdminHash = await hashPassword(envAdminPassword);
+    await db
+      .insert(managers)
+      .values({
+        email: envAdminEmail,
+        passwordHash: envAdminHash,
+        displayName: "Super Admin (Env)",
+        role: "super_admin",
+        mfaEnabled: false,
+        isActive: true,
+      })
+      .onConflictDoNothing({ target: managers.email });
+  }
 
   // 8. Seed consent_requirements 3 singleton rows (D-QW, D-QZ)
   const CONSENT_TYPES = ["terms", "privacy", "child_data"] as const;

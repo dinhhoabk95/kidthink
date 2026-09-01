@@ -19,6 +19,7 @@ import {
   type ItemVisualState,
   updateParticles,
 } from "../shared-render.js";
+import { boxFromSlots, drawShapeTray } from "../shared-render-shapes.js";
 import type { GT008Content, GT008Difficulty } from "./template.js";
 
 function extractSlotData(
@@ -136,6 +137,10 @@ export class GT008Session extends TemplateGameSession<
     drawPromptText(ctx, rs, this.content.prompt);
     const targets = this.slots.filter((s) => s.role === "target");
     const sources = this.slots.filter((s) => s.role === "source");
+    const targetBox = boxFromSlots(targets);
+    if (targetBox) {
+      drawShapeTray(ctx, targetBox);
+    }
     const itemById = new Map(this.content.items.map((i) => [i.item_id, i]));
     const placedItemIds = new Set(this.placedSlots.values());
 

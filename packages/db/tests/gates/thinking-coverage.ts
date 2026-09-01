@@ -137,6 +137,7 @@ export const CANONICAL_MECHANIC_TAGS = new Set([
   "go-nogo",
   "rule-switch",
   "tap-count",
+  "remove-from-set",
 ]);
 
 import { CANONICAL_THEME_CODES } from "@mindkid/shared";

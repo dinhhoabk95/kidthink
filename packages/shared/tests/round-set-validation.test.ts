@@ -31,6 +31,36 @@ function makeSet(
   };
 }
 
+/**
+ * Dựng một set `count` vòng hợp lệ ở mọi rule **trừ** trần band, để test
+ * `BR-RSM-03` một mình: nội dung khác nhau (`BR-RSM-08`), leo đúng một chiều
+ * (`BR-RSM-05`), vòng đầu dễ nhất (`BR-RSM-06`), chỉ dẫn riêng dưới 12 từ
+ * (`BR-RSM-11`), cùng theme và cùng band (`BR-RSM-07`, `BR-RSM-13`).
+ *
+ * `difficulty` chặn ở 5 vì thang độ khó là 1–5; set 10 vòng phải chững lại chứ
+ * không leo tới 10. `BR-RSM-06` chỉ đòi vòng đầu thấp nhất, không đòi tăng đều.
+ */
+function makeBandRounds(count: number, ageMin: number, ageMax: number) {
+  return Array.from({ length: count }, (_, i) =>
+    makeRound({
+      round_index: i,
+      age_min: ageMin,
+      age_max: ageMax,
+      content_pack: { options: [{ id: `item-${i}`, emoji: "🍎" }] },
+      difficulty: Math.min(i + 1, 5),
+      difficulty_params: { item_count: 3 + i },
+      instruction: `Bé làm bước ${i + 1} nhé!`,
+    })
+  );
+}
+
+function bandCeilingViolations(count: number, ageMin: number, ageMax: number) {
+  const result = validateRoundSet(
+    makeSet(makeBandRounds(count, ageMin, ageMax))
+  );
+  return result.violations.filter((v) => v.rule === "BR-RSM-03");
+}
+
 describe("BR-RSM — Round Set Validation", () => {
   describe("BR-RSM-01: one template per set", () => {
     it("rejects set with mixed templates", () => {
@@ -90,36 +120,49 @@ describe("BR-RSM — Round Set Validation", () => {
     });
   });
 
-  describe("BR-RSM-03: round count within band ceiling", () => {
-    it("rejects band 3-4 with 5 rounds", () => {
-      const rounds = Array.from({ length: 5 }, (_, i) =>
-        makeRound({
-          round_index: i,
-          content_pack: { options: [{ id: `item-${i}`, emoji: "🍎" }] },
-          difficulty: i + 1 > 5 ? 5 : i + 1,
-          difficulty_params: { item_count: 3 + i },
-          instruction: `Bé làm bước ${i + 1} nhé!`,
-        })
-      );
-      const result = validateRoundSet(makeSet(rounds));
-      expect(result.violations).toContainEqual(
+  /**
+   * Trần vòng theo `D-167A` (chủ dự án, 2026-08-31): tối đa 10 vòng, thi công
+   * theo thang `3-4: 6 · 4-5: 8 · 5-6: 10`. Trần cũ là `4 · 6 · 8`.
+   *
+   * Mỗi band có **hai** ca kề nhau — đúng trần thì xanh, trần cộng một thì đỏ.
+   * Chỉ có cặp kề mới chứng minh được cổng bám đúng con số; một ca "11 vòng đỏ"
+   * đứng một mình vẫn xanh giả khi trần bị hạ về 4.
+   */
+  describe("BR-RSM-03: round count within band ceiling (D-167A)", () => {
+    it("accepts band 3-4 with 6 rounds", () => {
+      expect(bandCeilingViolations(6, 3, 4)).toHaveLength(0);
+    });
+
+    it("rejects band 3-4 with 7 rounds", () => {
+      expect(bandCeilingViolations(7, 3, 4)).toContainEqual(
         expect.objectContaining({ rule: "BR-RSM-03" })
       );
     });
 
-    it("accepts band 3-4 with 4 rounds", () => {
-      const rounds = Array.from({ length: 4 }, (_, i) =>
-        makeRound({
-          round_index: i,
-          content_pack: { options: [{ id: `item-${i}`, emoji: "🍎" }] },
-          difficulty: i + 1,
-          difficulty_params: { item_count: 3 + i },
-          instruction: `Bé làm bước ${i + 1} nhé!`,
-        })
+    it("accepts band 4-5 with 8 rounds", () => {
+      expect(bandCeilingViolations(8, 4, 5)).toHaveLength(0);
+    });
+
+    it("rejects band 4-5 with 9 rounds", () => {
+      expect(bandCeilingViolations(9, 4, 5)).toContainEqual(
+        expect.objectContaining({ rule: "BR-RSM-03" })
       );
-      const result = validateRoundSet(makeSet(rounds));
-      const rsm03 = result.violations.filter((v) => v.rule === "BR-RSM-03");
-      expect(rsm03).toHaveLength(0);
+    });
+
+    it("accepts band 5-6 with 10 rounds", () => {
+      expect(bandCeilingViolations(10, 5, 6)).toHaveLength(0);
+    });
+
+    it("rejects band 5-6 with 11 rounds", () => {
+      expect(bandCeilingViolations(11, 5, 6)).toContainEqual(
+        expect.objectContaining({ rule: "BR-RSM-03" })
+      );
+    });
+
+    it("reports the band and the ceiling it enforced", () => {
+      const [violation] = bandCeilingViolations(11, 5, 6);
+      expect(violation?.message).toContain("5-6");
+      expect(violation?.message).toContain("10");
     });
   });
 

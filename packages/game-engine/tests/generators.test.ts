@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import { EMOJI_REF_PATTERN, EmojiRef } from "#src/contracts/shared-fields";
 import { GT010Generator } from "#src/generators/gt010";
 import { GT028Generator } from "#src/generators/gt028";
+import { GT029Generator } from "#src/generators/gt029";
 import { getNouns } from "#src/generators/helpers";
 import type { ThemeVocabulary } from "#src/generators/types";
 import { createRng } from "#src/rng/mulberry32";
@@ -9,6 +10,12 @@ import type {
   GT028Content,
   GT028Difficulty,
 } from "#src/templates/GT-028/template";
+import {
+  type GT029Content,
+  GT029ContentSchema,
+  type GT029Difficulty,
+  GT029DifficultySchema,
+} from "#src/templates/GT-029/template";
 
 const SHORT_POOL_RE = /thiếu danh từ/;
 const THEME_RE = /school/;
@@ -131,6 +138,42 @@ describe("GT-028 — generator contract conformity", () => {
           content_pack.items.length * content_pack.step
         ).toBeGreaterThanOrEqual(content_pack.target_total);
         expect(difficulty_params.step).toBe(content_pack.step);
+      }
+    }
+  });
+});
+
+describe("GT-029 — generator contract conformity", () => {
+  const themeVocab = vocab(10);
+
+  it("generates valid levels for all supported age bands across seeds", () => {
+    for (const age_band of ["4-5", "5-6"] as const) {
+      for (let seed = 1; seed <= 30; seed++) {
+        const { content_pack, difficulty_params } = GT029Generator.generate({
+          rng: createRng(seed),
+          age_band,
+          theme: "school",
+          vocabulary: themeVocab,
+        }) as {
+          content_pack: GT029Content;
+          difficulty_params: GT029Difficulty;
+        };
+
+        const parsedContent = GT029ContentSchema.parse(content_pack);
+        const parsedDiff = GT029DifficultySchema.parse(difficulty_params);
+        expect(parsedContent).toBeDefined();
+        expect(parsedDiff).toBeDefined();
+
+        expect(content_pack.remove_count).toBeLessThan(
+          content_pack.initial_items.length
+        );
+        const correctOpt = content_pack.answer_options.find(
+          (o) => o.is_correct
+        );
+        expect(correctOpt).toBeDefined();
+        expect(correctOpt?.value).toBe(
+          content_pack.initial_items.length - content_pack.remove_count
+        );
       }
     }
   });

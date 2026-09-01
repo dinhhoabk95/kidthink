@@ -1,20 +1,5 @@
-DO $$
-BEGIN
-  IF NOT EXISTS (SELECT 1 FROM pg_catalog.pg_roles WHERE rolname = 'mindkid_app') THEN
-    CREATE ROLE mindkid_app WITH LOGIN PASSWORD 'mindkid_app_password';
-  END IF;
-EXCEPTION
-  WHEN duplicate_object OR unique_violation THEN
-    NULL;
-END $$;--> statement-breakpoint
-DO $$
-BEGIN
-  EXECUTE format('GRANT CONNECT ON DATABASE %I TO mindkid_app', current_database());
-END $$;--> statement-breakpoint
-GRANT USAGE ON SCHEMA public TO mindkid_app;--> statement-breakpoint
-ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT SELECT, INSERT, UPDATE, DELETE ON TABLES TO mindkid_app;--> statement-breakpoint
-ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT USAGE, SELECT ON SEQUENCES TO mindkid_app;--> statement-breakpoint
 CREATE EXTENSION IF NOT EXISTS "citext";--> statement-breakpoint
+CREATE EXTENSION IF NOT EXISTS "pgcrypto";--> statement-breakpoint
 CREATE EXTENSION IF NOT EXISTS "vector";--> statement-breakpoint
 CREATE TYPE "public"."ai_credit_reason" AS ENUM('purchase', 'usage', 'manual_grant', 'refund');--> statement-breakpoint
 CREATE TYPE "public"."image_owner_type" AS ENUM('game_level', 'lesson', 'activity', 'worksheet', 'payment_order', 'payment_proof', 'custom_game', 'user_avatar', 'manager_avatar');--> statement-breakpoint
@@ -1546,84 +1531,4 @@ CREATE INDEX "idx_lesson_plan_items_plan_id" ON "lesson_plan_items" USING btree 
 CREATE INDEX "idx_lesson_plan_items_source_entity" ON "lesson_plan_items" USING btree ("source_entity_id");--> statement-breakpoint
 CREATE UNIQUE INDEX "idx_lesson_plans_uuid" ON "lesson_plans" USING btree ("uuid");--> statement-breakpoint
 CREATE INDEX "idx_lesson_plans_user_id" ON "lesson_plans" USING btree ("user_id");--> statement-breakpoint
-CREATE INDEX "idx_lesson_plans_source_lesson_code" ON "lesson_plans" USING btree ("source_lesson_code");--> statement-breakpoint
-CREATE OR REPLACE FUNCTION prevent_published_game_level_update()
-RETURNS TRIGGER AS $$
-BEGIN
-    IF OLD.status = 'published' AND NEW.status = 'published' THEN
-        RAISE EXCEPTION 'BR-CLC-01/BR-SCT-05: Cannot update published game level version. Create a new version instead.';
-    END IF;
-    RETURN NEW;
-END;
-$$ LANGUAGE plpgsql;--> statement-breakpoint
-CREATE OR REPLACE FUNCTION prevent_published_lesson_update()
-RETURNS TRIGGER AS $$
-BEGIN
-    IF OLD.status = 'published' AND NEW.status = 'published' THEN
-        IF (
-            OLD.entity_id = NEW.entity_id AND
-            OLD.code = NEW.code AND
-            OLD.content_version = NEW.content_version AND
-            OLD.title = NEW.title AND
-            OLD.guide IS NOT DISTINCT FROM NEW.guide AND
-            OLD.access_tier = NEW.access_tier AND
-            OLD.origin = NEW.origin AND
-            OLD.authored_in = NEW.authored_in
-        ) THEN
-            RETURN NEW;
-        END IF;
-
-        RAISE EXCEPTION 'BR-CLC-01/BR-SCT-05: Cannot update published content version. Create a new version instead.';
-    END IF;
-    RETURN NEW;
-END;
-$$ LANGUAGE plpgsql;--> statement-breakpoint
-CREATE OR REPLACE FUNCTION prevent_published_content_update()
-RETURNS TRIGGER AS $$
-BEGIN
-    IF OLD.status = 'published' AND NEW.status = 'published' THEN
-        RAISE EXCEPTION 'BR-CLC-01/BR-SCT-05: Cannot update published content version. Create a new version instead.';
-    END IF;
-    RETURN NEW;
-END;
-$$ LANGUAGE plpgsql;--> statement-breakpoint
-CREATE OR REPLACE FUNCTION prevent_completed_play_session_update()
-RETURNS TRIGGER AS $$
-BEGIN
-    IF OLD.completion_status IN ('completed', 'abandoned') THEN
-        RAISE EXCEPTION 'BR-SPT-07: Cannot update play session after completion or abandonment.';
-    END IF;
-    RETURN NEW;
-END;
-$$ LANGUAGE plpgsql;--> statement-breakpoint
-DROP TRIGGER IF EXISTS trigger_prevent_published_game_level_update ON "game_levels";--> statement-breakpoint
-CREATE TRIGGER trigger_prevent_published_game_level_update
-  BEFORE UPDATE ON "game_levels"
-  FOR EACH ROW EXECUTE FUNCTION prevent_published_game_level_update();--> statement-breakpoint
-DROP TRIGGER IF EXISTS trigger_prevent_published_lessons_update ON "lessons";--> statement-breakpoint
-CREATE TRIGGER trigger_prevent_published_lessons_update
-  BEFORE UPDATE ON "lessons"
-  FOR EACH ROW EXECUTE FUNCTION prevent_published_lesson_update();--> statement-breakpoint
-DROP TRIGGER IF EXISTS trigger_prevent_published_activities_update ON "activities";--> statement-breakpoint
-CREATE TRIGGER trigger_prevent_published_activities_update
-  BEFORE UPDATE ON "activities"
-  FOR EACH ROW EXECUTE FUNCTION prevent_published_content_update();--> statement-breakpoint
-DROP TRIGGER IF EXISTS trigger_prevent_published_worksheets_update ON "worksheets";--> statement-breakpoint
-CREATE TRIGGER trigger_prevent_published_worksheets_update
-  BEFORE UPDATE ON "worksheets"
-  FOR EACH ROW EXECUTE FUNCTION prevent_published_content_update();--> statement-breakpoint
-DROP TRIGGER IF EXISTS trigger_prevent_published_curricula_update ON "curricula";--> statement-breakpoint
-CREATE TRIGGER trigger_prevent_published_curricula_update
-  BEFORE UPDATE ON "curricula"
-  FOR EACH ROW EXECUTE FUNCTION prevent_published_content_update();--> statement-breakpoint
-DROP TRIGGER IF EXISTS trigger_prevent_completed_play_session_update ON "play_sessions";--> statement-breakpoint
-CREATE TRIGGER trigger_prevent_completed_play_session_update
-  BEFORE UPDATE ON "play_sessions"
-  FOR EACH ROW EXECUTE FUNCTION prevent_completed_play_session_update();--> statement-breakpoint
-GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA public TO mindkid_app;--> statement-breakpoint
-GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA public TO mindkid_app;--> statement-breakpoint
-REVOKE UPDATE, DELETE ON consent_logs FROM mindkid_app;--> statement-breakpoint
-REVOKE UPDATE, DELETE ON audit_logs FROM mindkid_app;--> statement-breakpoint
-REVOKE UPDATE, DELETE ON content_review_log FROM mindkid_app;--> statement-breakpoint
-REVOKE UPDATE, DELETE ON telemetry_events FROM mindkid_app;--> statement-breakpoint
-REVOKE DELETE ON payment_orders FROM mindkid_app;
+CREATE INDEX "idx_lesson_plans_source_lesson_code" ON "lesson_plans" USING btree ("source_lesson_code");

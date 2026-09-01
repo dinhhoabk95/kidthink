@@ -3,6 +3,7 @@
  * Business rules: BR-PSH-01..07, D-NF..D-NL
  */
 
+import { COMPETENCY_CATALOG } from "./competency-catalog.js";
 import type { AccessTier } from "./taxonomy-types.js";
 
 export type ShowcaseGroup = "age" | "journey" | "competency" | "topic";
@@ -73,14 +74,14 @@ export interface ProgramArchivedResponse {
   suggestions: ProgramAlternativeSuggestion[];
 }
 
-export const COMPETENCY_LABELS: Record<string, string> = {
-  C1: "Số & Đếm",
-  C2: "Hình học & Không gian",
-  C3: "Quy luật & Logic",
-  C4: "Đo lường & So sánh",
-  C5: "Phân loại & Dữ liệu",
-  C6: "Giải quyết vấn đề",
-};
+/**
+ * Nhãn năng lực cho trang chương trình — dẫn xuất từ `COMPETENCY_CATALOG`.
+ *
+ * Bảng viết tay ở đây là bản sao **thứ sáu** của sáu năng lực (task 165).
+ */
+export const COMPETENCY_LABELS: Record<string, string> = Object.fromEntries(
+  COMPETENCY_CATALOG.map((entry) => [entry.code, entry.name])
+);
 
 export const SHOWCASE_GROUP_LABELS: Record<ShowcaseGroup, string> = {
   age: "Chương trình theo độ tuổi",

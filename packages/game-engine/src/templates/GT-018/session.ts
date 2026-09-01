@@ -17,9 +17,11 @@ import {
   drawSceneBackground,
   drawSlotItem,
   drawSubPromptText,
+  drawWoodenTokenDock,
   type ItemVisualState,
   updateParticles,
 } from "../shared-render.js";
+import { drawGramophone } from "../shared-render-shapes.js";
 import type { GT018Content, GT018Difficulty } from "./template.js";
 
 export class GT018Session extends TemplateGameSession<
@@ -168,6 +170,20 @@ export class GT018Session extends TemplateGameSession<
     drawSceneBackground(ctx, rs);
     drawPromptText(ctx, rs, this.content.prompt);
     drawSubPromptText(ctx, rs, this.content.audio_prompt.text);
+
+    const gramophoneSlot: Slot = {
+      index: 0,
+      x: rs.LOGIC_WIDTH / 2,
+      y: rs.LOGIC_HEIGHT * 0.32,
+      w: 130,
+      h: 130,
+      hitW: 130,
+      hitH: 130,
+      page: 0,
+      role: "target",
+    };
+    drawGramophone(ctx, gramophoneSlot, false);
+    drawWoodenTokenDock(ctx, rs);
 
     const chosenOrder =
       this.content.response_mode === "sequence"

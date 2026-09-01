@@ -39,13 +39,26 @@ export interface RoundSetValidationResult {
   violations: RoundSetViolation[];
 }
 
+/**
+ * Trần vòng theo band, mục 7.1 của `round-set-model.md`.
+ *
+ * `D-167A` (chủ dự án, 2026-08-31) nâng trần từ `4 · 6 · 8` lên `6 · 8 · 10`.
+ * Quyết định gốc là "tối đa 10 vòng"; thang giữ nguyên hình dạng vì lý do của
+ * `BR-RSM-03` là sức chú ý theo tuổi, và trần thời lượng `BR-RSM-12` không bảo
+ * vệ được điều đó — 10 vòng band 3–4 vẫn dưới 5 phút mà vẫn là một dãy dài với
+ * trẻ 3 tuổi.
+ *
+ * Cấm — NEVER hạ trần này để một corpus đang đỏ thành xanh: mỗi band có một cặp
+ * test kề nhau (đúng trần xanh, trần cộng một đỏ) ở
+ * `tests/round-set-validation.test.ts`, và hạ trần làm nửa "xanh" của cặp đỏ.
+ */
 const MAX_ROUNDS_BY_BAND: Record<string, number> = {
-  "3-4": 4,
-  "4-5": 6,
-  "5-6": 8,
+  "3-4": 6,
+  "4-5": 8,
+  "5-6": 10,
 };
 
-const MAX_PAYLOAD_BYTES_GZIPPED = 200 * 1024;
+export const MAX_PAYLOAD_BYTES_GZIPPED = 200 * 1024;
 const MAX_INSTRUCTION_WORDS = 12;
 
 const WHITESPACE_RE = /\s+/;
@@ -285,13 +298,27 @@ function checkAdjacentContent(
   }
 }
 
+/**
+ * Đo kích thước gzipped của **cả set**, đơn vị byte.
+ *
+ * Export vì trần này phải đo ở hai chỗ, không phải một: `BR-RSM-10` đo lúc
+ * duyệt, còn `BR-CFG-08` đo lúc giao config. Trước `D-167A` chỉ có chỗ duyệt,
+ * nên một set nhiều vòng vượt trần đi thẳng ra tablet mà không ai đo. Nâng trần
+ * vòng lên 10 làm ngân sách rơi về 20 KB một vòng, tức đúng chỗ trần này vỡ.
+ */
+export function measureRoundSetPayloadBytes(
+  contentPacks: readonly unknown[]
+): number {
+  const payload = JSON.stringify(contentPacks);
+  return gzipSync(Buffer.from(payload, "utf-8")).length;
+}
+
 function checkPayloadSize(rounds: RoundInput[], v: RoundSetViolation[]): void {
-  const payload = JSON.stringify(rounds.map((r) => r.content_pack));
-  const gz = gzipSync(Buffer.from(payload, "utf-8"));
-  if (gz.length > MAX_PAYLOAD_BYTES_GZIPPED) {
+  const bytes = measureRoundSetPayloadBytes(rounds.map((r) => r.content_pack));
+  if (bytes > MAX_PAYLOAD_BYTES_GZIPPED) {
     v.push({
       rule: "BR-RSM-10",
-      message: `Total payload ${gz.length} bytes gzipped exceeds ${MAX_PAYLOAD_BYTES_GZIPPED} byte limit`,
+      message: `Total payload ${bytes} bytes gzipped exceeds ${MAX_PAYLOAD_BYTES_GZIPPED} byte limit`,
     });
   }
 }

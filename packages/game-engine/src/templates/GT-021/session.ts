@@ -17,10 +17,15 @@ import {
   drawPromptText,
   drawSceneBackground,
   drawSlotItem,
+  drawWoodenTokenDock,
   type ItemVisualState,
+  sceneBox,
   updateParticles,
 } from "../shared-render.js";
-import { drawMirrorAxis } from "../shared-render-shapes.js";
+import {
+  drawButterflyWingsBoard,
+  drawMirrorAxis,
+} from "../shared-render-shapes.js";
 import type { GT021Content, GT021Difficulty } from "./template.js";
 
 export class GT021Session extends TemplateGameSession<
@@ -146,7 +151,9 @@ export class GT021Session extends TemplateGameSession<
   ): void {
     drawSceneBackground(ctx, rs);
     drawPromptText(ctx, rs, this.content.prompt);
+    drawButterflyWingsBoard(ctx, sceneBox(rs));
     drawMirrorAxis(ctx, rs, this.content.axis);
+    drawWoodenTokenDock(ctx, rs);
 
     const targets = this.slots.filter((s) => s.role === "target");
     const sources = this.slots.filter((s) => s.role === "source");

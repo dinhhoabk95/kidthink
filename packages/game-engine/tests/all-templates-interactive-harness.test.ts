@@ -31,6 +31,7 @@ import {
   GT026_FIXTURES,
   GT027_FIXTURES,
   GT028_FIXTURES,
+  GT029_FIXTURES,
   RenderSystem,
 } from "#src/index";
 
@@ -80,6 +81,7 @@ const FIXTURES_MAP: Record<
   "GT-026": GT026_FIXTURES,
   "GT-027": GT027_FIXTURES,
   "GT-028": GT028_FIXTURES,
+  "GT-029": GT029_FIXTURES,
 };
 
 function createMockCanvasContext(): CanvasRenderingContext2D {
@@ -1068,6 +1070,50 @@ describe("All 27 Game Engine Templates Interactive & Visual Harness", () => {
         s.onTapItem(item.item_id);
       }
       const res = s.onSubmitCount();
+      expect(res.valid).toBe(true);
+      expect(s.checkWinCondition()).toBe(true);
+    });
+
+    it("GT-029 wins when remove_count items are removed and correct answer is chosen", () => {
+      const f = getFixture(GT029_FIXTURES, 0);
+      const s = createGameSessionSync("GT-029", {
+        level_code: "GT-029-TEST",
+        content_version: 1,
+        template_code: "GT-029",
+        content_pack: f.content,
+        difficulty_params: f.difficulty,
+        theme_id: "default",
+        age_band: "4-5",
+        reduced_motion: false,
+        audio_enabled: true,
+      }) as unknown as {
+        setupEntities: () => void;
+        validateAction: (action: {
+          type: string;
+          data: Record<string, unknown>;
+        }) => { valid: boolean; feedback: string };
+        checkWinCondition: () => boolean;
+        content: {
+          initial_items: { item_id: string }[];
+          remove_count: number;
+          answer_options: { option_id: string; is_correct: boolean }[];
+        };
+      };
+      s.setupEntities();
+      for (let i = 0; i < s.content.remove_count; i++) {
+        const item = expectDefined(s.content.initial_items[i]);
+        s.validateAction({
+          type: "remove_item",
+          data: { item_id: item.item_id },
+        });
+      }
+      const correctOpt = expectDefined(
+        s.content.answer_options.find((o) => o.is_correct)
+      );
+      const res = s.validateAction({
+        type: "select_option",
+        data: { option_id: correctOpt.option_id },
+      });
       expect(res.valid).toBe(true);
       expect(s.checkWinCondition()).toBe(true);
     });

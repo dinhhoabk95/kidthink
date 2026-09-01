@@ -15,8 +15,10 @@ import {
   drawSceneBackground,
   drawSlotItem,
   type ItemVisualState,
+  sceneBox,
   updateParticles,
 } from "../shared-render.js";
+import { drawLocomotive, drawTrainRailway } from "../shared-render-shapes.js";
 import type { GT006Content, GT006Difficulty } from "./template.js";
 
 export class GT006Session extends TemplateGameSession<
@@ -112,6 +114,17 @@ export class GT006Session extends TemplateGameSession<
   ): void {
     drawSceneBackground(ctx, rs);
     drawPromptText(ctx, rs, this.content.prompt);
+    drawTrainRailway(ctx, sceneBox(rs));
+    const firstSlot = this.slots[0];
+    if (firstSlot) {
+      drawLocomotive(
+        ctx,
+        Math.max(80, firstSlot.x - firstSlot.w * 1.5),
+        firstSlot.y,
+        90,
+        70
+      );
+    }
     const order = this.mechanic.getCurrentSequence();
     const byId = new Map(this.content.sequence.map((s) => [s.step_id, s]));
 

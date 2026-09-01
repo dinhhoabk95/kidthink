@@ -13,8 +13,14 @@ export interface EngineSpecGateResult {
   readonly totalSpecs: number;
   readonly readyCount: number;
   readonly readyCodes: readonly string[];
+  readonly plannedCount: number;
+  readonly plannedCodes: readonly string[];
+  readonly orphanCount: number;
   readonly violations: readonly EngineSpecViolation[];
 }
+
+/** Mã đã khai đặt trước, ánh xạ về plan sở hữu nó (`BR-ESS-15`). */
+export type PlannedSpecMap = Readonly<Record<string, string>>;
 
 const GT_CODE_REGEX = /^GT-\d{3}$/;
 const SPEC_FILE_REGEX = /^GT-\d{3}\.md$/;
@@ -363,10 +369,105 @@ export function lintSingleEngineSpec(
   return violations;
 }
 
+/**
+ * Nạp danh sách mã **đặt trước** — spec viết trước khi `template.ts` ra đời
+ * (`BR-ESS-15`). Giá trị của mỗi mã là plan sở hữu nó, đường dẫn tương đối gốc repo.
+ *
+ * Danh sách là **dữ liệu có cổng canh**, không phải ghi chú: mỗi hàng phải trỏ tới một
+ * plan có thật, và phải rời danh sách ngay khi template xuất hiện. Không có hai ràng
+ * buộc đó thì "đặt trước" trở thành lối đi vòng của khoản mồ côi ở `BR-ESS-01`.
+ */
+function loadPlannedMap(
+  plannedConfigPath: string | undefined,
+  violations: EngineSpecViolation[]
+): PlannedSpecMap {
+  if (!(plannedConfigPath && existsSync(plannedConfigPath))) {
+    return {};
+  }
+
+  try {
+    const raw = readFileSync(plannedConfigPath, "utf-8");
+    const parsed: unknown = JSON.parse(raw);
+    if (
+      parsed === null ||
+      typeof parsed !== "object" ||
+      Array.isArray(parsed)
+    ) {
+      violations.push({
+        file: plannedConfigPath,
+        rule: "BR-ESS-15",
+        message: `Planned config must be an object mapping GT code to plan path: ${plannedConfigPath}`,
+      });
+      return {};
+    }
+    return parsed as PlannedSpecMap;
+  } catch {
+    violations.push({
+      file: plannedConfigPath,
+      rule: "BR-ESS-15",
+      message: `Failed to parse engine-spec-planned config: ${plannedConfigPath}`,
+    });
+    return {};
+  }
+}
+
+/**
+ * Ba luật của danh sách đặt trước (`BR-ESS-15`): mã phải đúng khuôn `GT-<nnn>`,
+ * plan phải tồn tại, và mã đã có template thì phải rời danh sách.
+ */
+function checkPlannedEntries(
+  planned: PlannedSpecMap,
+  templateCodes: readonly string[],
+  specCodes: readonly string[],
+  repoRoot: string | undefined
+): EngineSpecViolation[] {
+  const violations: EngineSpecViolation[] = [];
+
+  for (const [code, planPath] of Object.entries(planned)) {
+    if (!GT_CODE_REGEX.test(code)) {
+      violations.push({
+        templateCode: code,
+        rule: "BR-ESS-15",
+        message: `Planned entry "${code}" is not a valid GT-<nnn> code.`,
+      });
+      continue;
+    }
+
+    if (templateCodes.includes(code)) {
+      violations.push({
+        templateCode: code,
+        rule: "BR-ESS-15",
+        message: `${code} has a template in registry but is still listed as planned. Remove it from engine-spec-planned.json in the same PR.`,
+      });
+    }
+
+    if (!specCodes.includes(code)) {
+      violations.push({
+        templateCode: code,
+        rule: "BR-ESS-15",
+        message: `${code} is listed as planned but has no spec file. Planned means spec-first, not spec-later.`,
+      });
+    }
+
+    if (repoRoot && !existsSync(join(repoRoot, planPath))) {
+      violations.push({
+        templateCode: code,
+        file: planPath,
+        rule: "BR-ESS-15",
+        message: `Planned entry ${code} points at a plan that does not exist: ${planPath}`,
+      });
+    }
+  }
+
+  return violations;
+}
+
 export function scanEngineSpecsGate(
   specsDir: string,
   templatesDir: string,
-  readyConfigPath?: string
+  readyConfigPath?: string,
+  plannedConfigPath?: string,
+  repoRoot?: string
 ): EngineSpecGateResult {
   const violations: EngineSpecViolation[] = [];
 
@@ -376,6 +477,9 @@ export function scanEngineSpecsGate(
       totalSpecs: 0,
       readyCount: 0,
       readyCodes: [],
+      plannedCount: 0,
+      plannedCodes: [],
+      orphanCount: 0,
       violations: [
         {
           rule: "BR-ESS-01",
@@ -391,6 +495,9 @@ export function scanEngineSpecsGate(
       totalSpecs: 0,
       readyCount: 0,
       readyCodes: [],
+      plannedCount: 0,
+      plannedCodes: [],
+      orphanCount: 0,
       violations: [
         {
           rule: "BR-ESS-01",
@@ -415,6 +522,9 @@ export function scanEngineSpecsGate(
   }
 
   const readySet = new Set(readyCodes);
+  const planned = loadPlannedMap(plannedConfigPath, violations);
+  const plannedCodes = Object.keys(planned).sort();
+  const plannedSet = new Set(plannedCodes);
 
   const templateEntries = readdirSync(templatesDir).filter((e) =>
     GT_CODE_REGEX.test(e)
@@ -437,16 +547,23 @@ export function scanEngineSpecsGate(
     }
   }
 
+  let orphanCount = 0;
   for (const specCode of specCodes) {
-    if (!templateEntries.includes(specCode)) {
-      violations.push({
-        templateCode: specCode,
-        file: join(specsDir, `${specCode}.md`),
-        rule: "BR-ESS-01",
-        message: `Spec ${specCode}.md exists but ${specCode} is not in templates registry (orphan spec).`,
-      });
+    if (templateEntries.includes(specCode) || plannedSet.has(specCode)) {
+      continue;
     }
+    orphanCount++;
+    violations.push({
+      templateCode: specCode,
+      file: join(specsDir, `${specCode}.md`),
+      rule: "BR-ESS-01",
+      message: `Spec ${specCode}.md exists but ${specCode} is neither in templates registry nor declared in engine-spec-planned.json (orphan spec).`,
+    });
   }
+
+  violations.push(
+    ...checkPlannedEntries(planned, templateEntries, specCodes, repoRoot)
+  );
 
   for (const specCode of specCodes) {
     const specPath = join(specsDir, `${specCode}.md`);
@@ -459,13 +576,17 @@ export function scanEngineSpecsGate(
     totalSpecs: specCodes.length,
     readyCount: readyCodes.length,
     readyCodes,
+    plannedCount: plannedCodes.length,
+    plannedCodes,
+    orphanCount,
     violations,
   };
 }
 
 export function formatEngineSpecsReport(result: EngineSpecGateResult): string {
   const lines: string[] = [
-    `${result.totalTemplates} mã trong registry, ${result.totalSpecs} spec tồn tại, 0 mồ côi`,
+    `${result.totalTemplates} mã trong registry, ${result.totalSpecs} spec tồn tại, ${result.orphanCount} mồ côi`,
+    `Đặt trước (engine-spec-planned.json): ${result.plannedCount} spec chờ template`,
     `Bậc thang engine-spec-ready.json: ${result.readyCount} spec sẵn sàng`,
   ];
 

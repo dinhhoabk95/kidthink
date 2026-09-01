@@ -9,6 +9,7 @@ import { PlacementMechanic } from "#src/mechanics/placement-mechanic";
 import { deriveStream } from "#src/rng/mulberry32";
 import { shuffle } from "#src/rng/shuffle";
 import type { DegradationState } from "#src/systems/degradation";
+import { designTokens } from "#src/systems/designTokens";
 import type { Particle, RenderSystem } from "#src/systems/render-system";
 import {
   drawEmptyTargetSlot,
@@ -16,11 +17,10 @@ import {
   drawPromptText,
   drawSceneBackground,
   drawSlotItem,
-  drawSlotLabel,
-  getColorsForState,
   type ItemVisualState,
   updateParticles,
 } from "../shared-render.js";
+import { drawBasketSlot } from "../shared-render-shapes.js";
 import type { GT004Content, GT004Difficulty } from "./template.js";
 
 type SortItem = GT004Content["items"][number];
@@ -126,10 +126,12 @@ export class GT004Session extends TemplateGameSession<
       if (!slot) {
         return;
       }
-      const { fill, border } = getColorsForState("idle");
-      rs.drawClayContainer(ctx, slot.x, slot.y, slot.w, slot.h, fill, border);
+      const rimColor =
+        i === 0
+          ? designTokens.colors.montessori.coral
+          : designTokens.colors.montessori.amber;
+      drawBasketSlot(ctx, slot, group.label, rimColor);
       drawGlyphInSlot(ctx, group.label_emoji, slot);
-      drawSlotLabel(ctx, group.label, slot);
     });
 
     this.displayItems.forEach((item, i) => {

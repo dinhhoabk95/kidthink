@@ -144,6 +144,15 @@ export class GameEngine {
     }
 
     this.activeSession = sessionFactory(config);
+    if (
+      "resolveSlots" in this.activeSession &&
+      typeof (this.activeSession as { resolveSlots?: (band: AgeBand) => void })
+        .resolveSlots === "function"
+    ) {
+      (
+        this.activeSession as { resolveSlots: (band: AgeBand) => void }
+      ).resolveSlots(config.age_band);
+    }
     this.activeSession.setupEntities();
   }
 

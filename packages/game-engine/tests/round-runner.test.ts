@@ -82,7 +82,7 @@ describe("RoundRunner (BR-RSP)", () => {
     }
 
     expect(runner.getState().isFinished).toBe(true);
-    expect(runner.getState().roundsCorrect).toBe(4);
+    expect(runner.getState().roundsCompleted).toBe(4);
     expect(runner.getState().roundsSkipped).toBe(0);
     expect(completedRounds).toEqual([0, 1, 2, 3]);
   });
@@ -223,6 +223,67 @@ describe("RoundRunner (BR-RSP)", () => {
     runner.completeCurrentRound();
 
     expect(allComplete).toHaveBeenCalledOnce();
+  });
+
+  /**
+   * Cơ chế mà `settleRoundIfWon()` ở `play/[code].vue` dựa vào (Task #167 WP167.2).
+   *
+   * Tới 2026-08-31 `completeCurrentRound()` **chưa từng được gọi** ở bất kỳ đâu
+   * trong `apps/web`, nên chuỗi dưới đây chưa bao giờ chạy thật: thắng vòng,
+   * chốt vòng, sang vòng kế, và ở vòng cuối thì gọi `onAllRoundsCompleted` —
+   * callback duy nhất bật modal ăn mừng.
+   */
+  it("WP167.2: thắng rồi chốt vòng đi hết set và gọi onAllRoundsCompleted một lần", () => {
+    const onAllRoundsCompleted = vi.fn();
+    const rounds = [makeRound(0), makeRound(1), makeRound(2)];
+    const runner = new RoundRunner({
+      rounds,
+      sessionFactory: mockFactory,
+      onAllRoundsCompleted,
+    });
+
+    runner.startFirstRound();
+
+    const seenIndexes: number[] = [];
+    for (let guard = 0; guard < rounds.length + 2; guard++) {
+      const state = runner.getState();
+      if (state.isFinished) {
+        break;
+      }
+      seenIndexes.push(state.currentRoundIndex);
+
+      // Chưa thắng thì Cấm — NEVER tiến: đây là ca âm của chính `settleRoundIfWon`.
+      expect(runner.isCurrentRoundWon()).toBe(false);
+      runner.handleAction({ type: "correct", data: null });
+      expect(runner.isCurrentRoundWon()).toBe(true);
+
+      runner.completeCurrentRound();
+    }
+
+    expect(seenIndexes).toEqual([0, 1, 2]);
+    expect(runner.getState().isFinished).toBe(true);
+    expect(runner.getState().roundsCompleted).toBe(3);
+    expect(onAllRoundsCompleted).toHaveBeenCalledTimes(1);
+  });
+
+  it("WP167.2: set một vòng cũng đi qua đúng đường đó (BR-RSM-09)", () => {
+    const onAllRoundsCompleted = vi.fn();
+    const runner = new RoundRunner({
+      rounds: [makeRound(0)],
+      sessionFactory: mockFactory,
+      onAllRoundsCompleted,
+    });
+
+    runner.startFirstRound();
+    expect(runner.isCurrentRoundWon()).toBe(false);
+    runner.handleAction({ type: "correct", data: null });
+    runner.completeCurrentRound();
+
+    expect(onAllRoundsCompleted).toHaveBeenCalledTimes(1);
+    expect(runner.getState().roundsCompleted).toBe(1);
+    const names = runner.getAllTelemetry().map((e) => e.event_name);
+    expect(names).toContain("round_started");
+    expect(names).toContain("round_completed");
   });
 
   it("destroy cleans up current session", () => {

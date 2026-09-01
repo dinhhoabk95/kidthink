@@ -83,6 +83,8 @@ export const ALLOWED_EVENT_NAMES = new Set([
   "item_tapped",
   "count_undone",
   "count_submitted",
+  "item_removed",
+  "item_restored",
 ]);
 
 const PII_FIELDS = new Set([
@@ -115,6 +117,9 @@ const EVENT_PAYLOAD_FIELDS: Readonly<Record<string, ReadonlySet<string>>> = {
     "attempt_index",
     "target_slot",
     "elapsed_ms",
+    "option_id",
+    "value",
+    "is_correct",
   ]),
   answer_correct: new Set(["round_index", "attempt_index", "elapsed_ms"]),
   answer_incorrect: new Set([
@@ -138,6 +143,7 @@ const EVENT_PAYLOAD_FIELDS: Readonly<Record<string, ReadonlySet<string>>> = {
     "trigger",
     "elapsed_ms",
   ]),
+  scaffold_resolved: new Set(["round_index", "level", "trigger", "elapsed_ms"]),
   demo_shown: new Set(["round_index", "speed"]),
   asset_load_failed: new Set(["asset_kind", "asset_ref", "retry_count"]),
   fps_sample: new Set(["p50", "p95", "min", "sample_count"]),
@@ -215,6 +221,18 @@ const EVENT_PAYLOAD_FIELDS: Readonly<Record<string, ReadonlySet<string>>> = {
     "is_correct",
     "round_index",
   ]),
+  item_removed: new Set([
+    "item_id",
+    "removed_count",
+    "target_remove_count",
+    "round_index",
+  ]),
+  item_restored: new Set([
+    "item_id",
+    "removed_count",
+    "remaining_needed",
+    "round_index",
+  ]),
 };
 
 const NON_NEGATIVE_INT = z.number().int().nonnegative();
@@ -266,10 +284,13 @@ const EVENT_PAYLOAD_SCHEMAS: Readonly<Record<string, z.AnyZodObject>> = {
     ]),
   }),
   answer_selected: z.object({
-    round_index: NON_NEGATIVE_INT,
-    attempt_index: NON_NEGATIVE_INT,
-    target_slot: z.number().int().nullable(),
-    elapsed_ms: NON_NEGATIVE_INT,
+    round_index: OPTIONAL_ROUND_INDEX,
+    attempt_index: NON_NEGATIVE_INT.optional(),
+    target_slot: z.number().int().nullable().optional(),
+    elapsed_ms: NON_NEGATIVE_INT.optional(),
+    option_id: CONTENT_ID.optional(),
+    value: z.number().int().optional(),
+    is_correct: z.boolean().optional(),
   }),
   answer_correct: z.object({
     round_index: NON_NEGATIVE_INT,
@@ -516,6 +537,18 @@ const EVENT_PAYLOAD_SCHEMAS: Readonly<Record<string, z.AnyZodObject>> = {
     submitted_total: NON_NEGATIVE_INT,
     target_total: NON_NEGATIVE_INT,
     is_correct: z.boolean(),
+    round_index: OPTIONAL_ROUND_INDEX,
+  }),
+  item_removed: z.object({
+    item_id: CONTENT_ID,
+    removed_count: NON_NEGATIVE_INT,
+    target_remove_count: NON_NEGATIVE_INT,
+    round_index: OPTIONAL_ROUND_INDEX,
+  }),
+  item_restored: z.object({
+    item_id: CONTENT_ID,
+    removed_count: NON_NEGATIVE_INT,
+    remaining_needed: NON_NEGATIVE_INT,
     round_index: OPTIONAL_ROUND_INDEX,
   }),
 };

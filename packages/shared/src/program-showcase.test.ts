@@ -130,10 +130,10 @@ describe("program-showcase projections (Task #61 / P3.8)", () => {
     ];
 
     const competencyDistribution = [
-      { code: "C1", label: "Số & Đếm", share: 0.3 },
-      { code: "C2", label: "Hình học & Không gian", share: 0.3 },
-      { code: "C3", label: "Quy luật & Logic", share: 0.2 },
-      { code: "C4", label: "Đo lường & So sánh", share: 0.2 },
+      { code: "C1", label: "Tư duy toán học", share: 0.3 },
+      { code: "C2", label: "Tư duy không gian", share: 0.3 },
+      { code: "C3", label: "Tư duy logic", share: 0.2 },
+      { code: "C4", label: "Tư duy quan sát", share: 0.2 },
     ];
 
     const detail = toProgramDetailPublic({

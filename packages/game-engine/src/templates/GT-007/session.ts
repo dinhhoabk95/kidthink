@@ -9,9 +9,11 @@ import {
 import { resolveLayout } from "#src/layout/registry";
 import type { Slot } from "#src/layout/types";
 import type { DegradationState } from "#src/systems/degradation";
+import { designTokens } from "#src/systems/designTokens";
 import type { Particle, RenderSystem } from "#src/systems/render-system";
 import {
   drawEmptyTargetSlot,
+  drawMatchLine,
   drawPromptText,
   drawSceneBackground,
   drawSlotItem,
@@ -136,6 +138,19 @@ export class GT007Session extends TemplateGameSession<
     // Slot 0 của number-bond-tree là ô tổng, các ô sau là nhánh.
     const wholeSlot = targets[0];
     if (wholeSlot) {
+      this.content.parts.forEach((_, i) => {
+        const slot = targets[i + 1];
+        if (slot) {
+          drawMatchLine(
+            ctx,
+            wholeSlot.x,
+            wholeSlot.y,
+            slot.x,
+            slot.y,
+            designTokens.colors.montessori.woodBevel
+          );
+        }
+      });
       drawSlotItem(ctx, rs, wholeSlot, {
         id: this.content.whole.id,
         text: String(this.content.whole.value),

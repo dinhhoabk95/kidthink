@@ -15,10 +15,12 @@ import {
   drawPromptText,
   drawSceneBackground,
   drawSlotItem,
+  drawWoodenTokenDock,
   type ItemVisualState,
   resolveEmojiGlyph,
   updateParticles,
 } from "../shared-render.js";
+import { boxFromSlots, drawEquationTray } from "../shared-render-shapes.js";
 import { evaluateQuestionAnswer, solveEquationSystem } from "./solver.js";
 import type { GT010Content, GT010Difficulty } from "./template.js";
 
@@ -166,6 +168,11 @@ export class SubstitutionSession extends TemplateGameSession<
     drawPromptText(ctx, rs, this.content.prompt);
     const eqSlots = this.slots.filter((s) => s.role === "target");
     const optionSlots = this.slots.filter((s) => s.role === "source");
+    const eqBox = boxFromSlots(eqSlots);
+    if (eqBox) {
+      drawEquationTray(ctx, eqBox);
+    }
+    drawWoodenTokenDock(ctx, rs);
     const glyphOf = (symbolId: string): string => {
       const sym = this.content.symbols.find((s) => s.symbol_id === symbolId);
       if (sym?.asset.kind !== "emoji") {
@@ -190,7 +197,7 @@ export class SubstitutionSession extends TemplateGameSession<
         `${lhs} = ${eq.right_value}${hint}`,
         slot.x,
         slot.y,
-        26
+        28
       );
     });
 

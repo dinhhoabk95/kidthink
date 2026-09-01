@@ -11,12 +11,11 @@ import { shuffle } from "#src/rng/shuffle";
 import type { DegradationState } from "#src/systems/degradation";
 import type { Particle, RenderSystem } from "#src/systems/render-system";
 import {
-  drawCheckMark,
-  drawEmojiContent,
-  drawPlaceholderBox,
+  drawCentralTargetCard,
   drawPromptText,
   drawSceneBackground,
-  getColorsForState,
+  drawSlotItem,
+  drawWoodenTokenDock,
   type ItemVisualState,
   spawnParticlesAtSlot,
   updateParticles,
@@ -132,6 +131,10 @@ export class GT001Session extends TemplateGameSession<
     const slots = this.slots;
     drawSceneBackground(ctx, rs);
     drawPromptText(ctx, rs, this.content.prompt);
+    if (this.content.target_item) {
+      drawCentralTargetCard(ctx, rs, this.content.target_item.asset);
+    }
+    drawWoodenTokenDock(ctx, rs);
     this.drawInteractive(rs, ctx, slots);
     this.drawFeedback(rs, ctx, slots, timeMs);
   }
@@ -148,19 +151,17 @@ export class GT001Session extends TemplateGameSession<
         continue;
       }
       const state = this.getItemState(opt.item_id);
-      const { fill, border } = getColorsForState(state);
-      const r = Math.min(slot.hitW, slot.hitH) / 2;
-      rs.drawClayBody(ctx, slot.x, slot.y, r, fill, border);
-
-      if (opt.asset.kind === "emoji") {
-        drawEmojiContent(ctx, opt.asset.ref, slot);
-      } else {
-        drawPlaceholderBox(ctx, slot);
-      }
-
-      if (state === "selected" || state === "correct") {
-        drawCheckMark(ctx, slot);
-      }
+      drawSlotItem(
+        ctx,
+        rs,
+        slot,
+        {
+          id: opt.item_id,
+          asset: opt.asset,
+          state,
+        },
+        "circle"
+      );
     }
   }
 

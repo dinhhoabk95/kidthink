@@ -33,16 +33,16 @@ export const designTokens = {
     ctaLight: "#ffedd5",
     surface: {
       0: "#ffffff",
-      50: "#fafaf9",
-      100: "#f5f5f4",
-      200: "#e7e5e4",
-      300: "#d6d3d1",
-      400: "#a8a29e", // Note: border/placeholder only, does not satisfy 4.5:1 body contrast
-      500: "#78716c",
-      600: "#57534e",
+      50: "#fbf9f5", // Warm oatmeal canvas
+      100: "#f5f3ef", // Soft tray background
+      200: "#efeeea",
+      300: "#eae8e4", // Container high
+      400: "#d4c5ab", // Wood bevel / border light
+      500: "#827660", // Wood border dark
+      600: "#504532", // On-surface variant
       700: "#44403c",
       800: "#292524",
-      900: "#1c1917",
+      900: "#1b1c1a", // On-surface primary text
       950: "#0c0a09",
     },
     retry: {
@@ -57,6 +57,24 @@ export const designTokens = {
       800: "#92400e",
       900: "#78350f",
       950: "#451a03",
+    },
+    montessori: {
+      amber: "#ffbf00",
+      amberDark: "#795900",
+      amberLight: "#ffdfa0",
+      amberBright: "#fbbc00",
+      emerald: "#006d37",
+      emeraldLight: "#6bfe9c",
+      emeraldBright: "#2ecc71",
+      coral: "#c00500",
+      coralLight: "#ffb8ac",
+      indigo: "#4f46e5",
+      indigoLight: "#e0e7ff",
+      woodBorder: "#827660",
+      woodBevel: "#d4c5ab",
+      woodTray: "#f5f3ef",
+      woodTrayHigh: "#eae8e4",
+      paper: "#fbf9f5",
     },
     semantic: {
       success: {
@@ -109,8 +127,8 @@ export const designTokens = {
     },
   },
   fonts: {
-    sans: '"Be Vietnam Pro", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
-    heading: '"Baloo 2", cursive, sans-serif',
+    sans: '"Quicksand", "Be Vietnam Pro", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+    heading: '"Fredoka", "Quicksand", "Baloo 2", cursive, sans-serif',
   },
   radius: {
     chip: "12px",

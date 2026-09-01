@@ -1,3 +1,4 @@
+import { getByCode } from "@mindkid/emoji";
 import type { Slot } from "#src/layout/types";
 import { designTokens } from "#src/systems/designTokens";
 import type { Particle, RenderSystem } from "#src/systems/render-system";
@@ -67,13 +68,13 @@ export function getColorsForState(state: ItemVisualState): {
       };
     case "touching":
       return {
-        fill: designTokens.colors.brand[100],
-        border: designTokens.colors.brand[600],
+        fill: designTokens.colors.montessori.amberLight,
+        border: designTokens.colors.montessori.amberDark,
       };
     case "selected":
       return {
-        fill: designTokens.colors.brand[200],
-        border: designTokens.colors.brand[700],
+        fill: designTokens.colors.montessori.amberLight,
+        border: designTokens.colors.montessori.amber,
       };
     case "locked":
       return {
@@ -114,6 +115,10 @@ export function resolveEmojiGlyph(ref: string): string | null {
       return resolved;
     }
   }
+  const entry = getByCode(ref);
+  if (entry?.emoji) {
+    return entry.emoji;
+  }
   // Glyph thô còn sót trong corpus: không phải mã, không phải ASCII → vẽ luôn.
   if (ref.length > 0 && !ASCII_PRINTABLE_REGEX.test(ref)) {
     return ref;
@@ -130,8 +135,17 @@ export function drawSceneBackground(
   rs: RenderSystem
 ): void {
   ctx.save();
+  // Warm oatmeal paper base
   ctx.fillStyle = designTokens.colors.surface[50];
   ctx.fillRect(0, 0, rs.LOGIC_WIDTH, rs.LOGIC_HEIGHT);
+
+  // Soft sunlit warm gradient from top
+  const grad = ctx.createLinearGradient(0, 0, 0, rs.LOGIC_HEIGHT * 0.45);
+  grad.addColorStop(0, "rgba(255, 250, 240, 0.65)");
+  grad.addColorStop(1, "rgba(251, 249, 245, 0)");
+  ctx.fillStyle = grad;
+  ctx.fillRect(0, 0, rs.LOGIC_WIDTH, rs.LOGIC_HEIGHT);
+
   ctx.restore();
 }
 
@@ -145,12 +159,63 @@ export function drawPromptText(
   const rs = typeof rsOrPrompt === "object" ? rsOrPrompt : undefined;
   const width = rs?.LOGIC_WIDTH ?? 960;
   const height = rs?.LOGIC_HEIGHT ?? 540;
+
+  if (!prompt) {
+    return;
+  }
+
   ctx.save();
-  ctx.fillStyle = designTokens.colors.surface[700];
   ctx.font = `${PROMPT_FONT_PX}px ${designTokens.fonts.heading}`;
+  const textMetrics = ctx.measureText(prompt);
+  const cardW = Math.max(340, Math.min(840, textMetrics.width + 100));
+  const cardH = 50;
+  const cardX = (width - cardW) / 2;
+  const cardY = height * PROMPT_TOP_RATIO;
+  const radius = 24;
+
+  // Ambient card shadow
+  ctx.save();
+  ctx.shadowColor = "rgba(130, 118, 96, 0.12)";
+  ctx.shadowBlur = 10;
+  ctx.shadowOffsetY = 4;
+  ctx.fillStyle = designTokens.colors.surface[0];
+  ctx.beginPath();
+  ctx.roundRect(cardX, cardY, cardW, cardH, radius);
+  ctx.fill();
+  ctx.restore();
+
+  // Floating claymorphic card body
+  ctx.fillStyle = designTokens.colors.surface[0];
+  ctx.strokeStyle = designTokens.colors.surface[300];
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+  ctx.roundRect(cardX, cardY, cardW, cardH, radius);
+  ctx.fill();
+  ctx.stroke();
+
+  // Honey Amber Speaker Icon Badge at left
+  const badgeRadius = 16;
+  const badgeX = cardX + 24;
+  const badgeY = cardY + cardH / 2;
+  ctx.fillStyle = designTokens.colors.montessori.amber;
+  ctx.beginPath();
+  ctx.arc(badgeX, badgeY, badgeRadius, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Speaker symbol inside badge
+  ctx.font =
+    '16px "Noto Color Emoji", "Apple Color Emoji", "Segoe UI Emoji", sans-serif';
   ctx.textAlign = "center";
-  ctx.textBaseline = "top";
-  ctx.fillText(prompt, width / 2, height * PROMPT_TOP_RATIO);
+  ctx.textBaseline = "middle";
+  ctx.fillText("🔊", badgeX, badgeY);
+
+  // Prompt text
+  ctx.fillStyle = designTokens.colors.surface[900];
+  ctx.font = `bold ${PROMPT_FONT_PX}px ${designTokens.fonts.heading}`;
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.fillText(prompt, cardX + cardW / 2 + 12, cardY + cardH / 2);
+
   ctx.restore();
 }
 
@@ -162,22 +227,134 @@ export function drawEmojiContent(
   return drawAssetInSlot(ctx, { kind: "emoji", ref: emojiRef }, slot);
 }
 
+/** Thẻ gỗ trung tâm hiển thị vật thể / câu đố lớn cho trẻ (GT-001, GT-009, GT-026...) */
+export function drawCentralTargetCard(
+  ctx: CanvasRenderingContext2D,
+  rs: RenderSystem,
+  asset?: RenderAsset | null,
+  text?: string
+): void {
+  const cardW = 180;
+  const cardH = 180;
+  const cardX = (rs.LOGIC_WIDTH - cardW) / 2;
+  const cardY = rs.LOGIC_HEIGHT * 0.22;
+  const slot: Slot = {
+    index: 0,
+    x: cardX + cardW / 2,
+    y: cardY + cardH / 2,
+    w: cardW,
+    h: cardH,
+    hitW: cardW,
+    hitH: cardH,
+    page: 0,
+    role: "target",
+  };
+
+  ctx.save();
+  // 1. Ambient drop shadow
+  ctx.save();
+  ctx.shadowColor = "rgba(130, 118, 96, 0.2)";
+  ctx.shadowBlur = 16;
+  ctx.shadowOffsetY = 8;
+  ctx.fillStyle = designTokens.colors.surface[0];
+  ctx.beginPath();
+  ctx.roundRect(cardX, cardY, cardW, cardH, 28);
+  ctx.fill();
+  ctx.restore();
+
+  // 2. 3D Bottom Wood Slab
+  ctx.save();
+  ctx.translate(0, 6);
+  ctx.fillStyle = designTokens.colors.montessori.woodBorder;
+  ctx.beginPath();
+  ctx.roundRect(cardX, cardY, cardW, cardH, 28);
+  ctx.fill();
+  ctx.restore();
+
+  // 3. Card Body & Wooden Bevel Border
+  ctx.fillStyle = designTokens.colors.surface[0];
+  ctx.strokeStyle = designTokens.colors.montessori.woodBevel;
+  ctx.lineWidth = 4;
+  ctx.beginPath();
+  ctx.roundRect(cardX, cardY, cardW, cardH, 28);
+  ctx.fill();
+  ctx.stroke();
+
+  // 4. Specular White Highlight
+  ctx.strokeStyle = "rgba(255, 255, 255, 0.9)";
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+  ctx.moveTo(cardX + 28, cardY + 6);
+  ctx.lineTo(cardX + cardW - 28, cardY + 6);
+  ctx.stroke();
+
+  // 5. Draw Asset or Text
+  if (text) {
+    drawTextInSlot(ctx, text, slot, designTokens.colors.montessori.amberDark);
+  } else if (asset) {
+    drawAssetInSlot(ctx, asset, slot);
+  }
+
+  ctx.restore();
+}
+
+/** Dock khay gỗ phía dưới cho các token lựa chọn */
+export function drawWoodenTokenDock(
+  ctx: CanvasRenderingContext2D,
+  rs: RenderSystem
+): void {
+  const dockW = rs.LOGIC_WIDTH * 0.88;
+  const dockH = 130;
+  const dockX = (rs.LOGIC_WIDTH - dockW) / 2;
+  const dockY = rs.LOGIC_HEIGHT - dockH - 12;
+
+  ctx.save();
+  ctx.save();
+  ctx.shadowColor = "rgba(130, 118, 96, 0.12)";
+  ctx.shadowBlur = 10;
+  ctx.shadowOffsetY = 4;
+  ctx.fillStyle = designTokens.colors.surface[100];
+  ctx.beginPath();
+  ctx.roundRect(dockX, dockY, dockW, dockH, 32);
+  ctx.fill();
+  ctx.restore();
+
+  ctx.strokeStyle = designTokens.colors.montessori.woodBevel;
+  ctx.lineWidth = 3;
+  ctx.stroke();
+  ctx.restore();
+}
+
 /** Dòng phụ dưới câu lệnh — tiêu chí lọc, tên mô hình đích, luật đang hiệu lực. */
 export function drawSubPromptText(
   ctx: CanvasRenderingContext2D,
   rs: RenderSystem,
   text: string
 ): void {
+  if (!text) {
+    return;
+  }
   ctx.save();
-  ctx.fillStyle = designTokens.colors.brand[700];
-  ctx.font = `18px ${designTokens.fonts.sans}`;
+  ctx.font = `16px ${designTokens.fonts.sans}`;
+  const metrics = ctx.measureText(text);
+  const pillW = Math.max(160, metrics.width + 36);
+  const pillH = 32;
+  const pillX = (rs.LOGIC_WIDTH - pillW) / 2;
+  const pillY = rs.LOGIC_HEIGHT * PROMPT_TOP_RATIO + 56;
+
+  // Sub-prompt pill background
+  ctx.fillStyle = designTokens.colors.montessori.amberLight;
+  ctx.strokeStyle = designTokens.colors.montessori.amber;
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.roundRect(pillX, pillY, pillW, pillH, 16);
+  ctx.fill();
+  ctx.stroke();
+
+  ctx.fillStyle = designTokens.colors.montessori.amberDark;
   ctx.textAlign = "center";
-  ctx.textBaseline = "top";
-  ctx.fillText(
-    text,
-    rs.LOGIC_WIDTH / 2,
-    rs.LOGIC_HEIGHT * PROMPT_TOP_RATIO + PROMPT_FONT_PX + 6
-  );
+  ctx.textBaseline = "middle";
+  ctx.fillText(text, rs.LOGIC_WIDTH / 2, pillY + pillH / 2);
   ctx.restore();
 }
 
@@ -239,7 +416,7 @@ export function drawTextInSlot(
   ctx: CanvasRenderingContext2D,
   text: string,
   slot: Slot,
-  color = designTokens.colors.surface[800]
+  color: string = designTokens.colors.surface[800]
 ): void {
   const size = Math.floor(Math.min(slot.w, slot.h) * 0.42);
   ctx.save();
@@ -323,33 +500,52 @@ export function drawSlotItems(
 
 export function drawCheckMark(ctx: CanvasRenderingContext2D, slot: Slot): void {
   const r = Math.min(slot.w, slot.h) / 2;
-  const cx = slot.x + r * 0.6;
-  const cy = slot.y - r * 0.6;
-  const arm = Math.max(5, r * 0.22);
+  const badgeR = Math.max(12, r * 0.32);
+  const cx = slot.x + r * 0.55;
+  const cy = slot.y - r * 0.55;
+  const arm = badgeR * 0.55;
+
   ctx.save();
-  ctx.strokeStyle = designTokens.colors.semantic.success[600];
-  ctx.lineWidth = Math.max(3, r * 0.12);
-  ctx.lineCap = "round";
+  // Emerald circle badge
+  ctx.fillStyle = designTokens.colors.montessori.emeraldBright;
+  ctx.strokeStyle = designTokens.colors.montessori.emerald;
+  ctx.lineWidth = 2;
   ctx.beginPath();
-  ctx.moveTo(cx - arm, cy);
-  ctx.lineTo(cx - arm * 0.2, cy + arm * 0.8);
-  ctx.lineTo(cx + arm, cy - arm * 0.8);
+  ctx.arc(cx, cy, badgeR, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.stroke();
+
+  // Crisp white checkmark
+  ctx.strokeStyle = designTokens.colors.surface[0];
+  ctx.lineWidth = Math.max(2.5, badgeR * 0.22);
+  ctx.lineCap = "round";
+  ctx.lineJoin = "round";
+  ctx.beginPath();
+  ctx.moveTo(cx - arm * 0.7, cy);
+  ctx.lineTo(cx - arm * 0.1, cy + arm * 0.6);
+  ctx.lineTo(cx + arm * 0.7, cy - arm * 0.5);
   ctx.stroke();
   ctx.restore();
 }
 
-/** Ô đích rỗng — viền đứt, chờ trẻ thả vật vào. */
+/** Ô đích rỗng — viền đứt, hốc chìm chờ trẻ thả vật vào. */
 export function drawEmptyTargetSlot(
   ctx: CanvasRenderingContext2D,
   slot: Slot
 ): void {
   ctx.save();
-  ctx.strokeStyle = designTokens.colors.surface[400];
-  ctx.lineWidth = 3;
-  ctx.setLineDash([9, 7]);
   const r = Math.min(slot.w, slot.h) / 2;
+
+  // Soft wooden recessed socket background
+  ctx.fillStyle = designTokens.colors.surface[100];
   ctx.beginPath();
   ctx.roundRect(slot.x - r, slot.y - r, r * 2, r * 2, Math.max(8, r * 0.2));
+  ctx.fill();
+
+  // Dashed wood/amber outline
+  ctx.strokeStyle = designTokens.colors.surface[400];
+  ctx.lineWidth = 3;
+  ctx.setLineDash([8, 6]);
   ctx.stroke();
   ctx.restore();
 }

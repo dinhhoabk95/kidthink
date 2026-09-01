@@ -121,6 +121,7 @@ export type GameMechanic =
   | "listen-respond"
   | "mirror-complete"
   | "hidden-object"
+  | "remove-from-set"
   | "free-create";
 
 // ─── Game template & level ───────────────────────────────────────────

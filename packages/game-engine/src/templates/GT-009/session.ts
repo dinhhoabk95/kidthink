@@ -231,6 +231,9 @@ export class GT009Session extends TemplateGameSession<
           state,
         });
       }
+      if (eliminated) {
+        drawLabelText(ctx, "❌", slot.x, slot.y, 32);
+      }
     });
     this.drawRenderFeedback(rs, ctx);
   }

@@ -150,6 +150,8 @@ set một vòng — xem `BR-RSP-02` ở [`round-sequence-play.md`](../04-play/ro
 | `item_tapped` | `{ item_id, current_total, step, round_index? }` | `GT-028` |
 | `count_undone` | `{ item_id, current_total, step, round_index? }` | `GT-028` |
 | `count_submitted` | `{ submitted_total, target_total, is_correct, round_index? }` | `GT-028` |
+| `item_removed` | `{ item_id, removed_count, target_remove_count, round_index? }` | `GT-029` |
+| `item_restored` | `{ item_id, removed_count, remaining_needed, round_index? }` | `GT-029` |
 
 ### 7.3 Trợ giúp
 
