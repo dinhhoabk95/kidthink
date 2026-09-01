@@ -80,18 +80,17 @@ function countWords(text: string): number {
     .filter((w) => w.length > 0).length;
 }
 
+const NEGATIVE_REGEXES = [
+  /(?:^|\s|[.,!?])không(?:$|\s|[.,!?])/i,
+  /(?:^|\s|[.,!?])đừng(?:$|\s|[.,!?])/i,
+  /(?:^|\s|[.,!?])chớ(?:$|\s|[.,!?])/i,
+  /\bnever\b/i,
+  /\bdon't\b/i,
+  /\bdo not\b/i,
+];
+
 function hasNegation(text: string): boolean {
-  const negatives = [
-    "không",
-    "đừng",
-    "chớ",
-    "never",
-    "don't",
-    "do not",
-    "không được",
-  ];
-  const lower = text.toLowerCase();
-  return negatives.some((neg) => lower.includes(neg));
+  return NEGATIVE_REGEXES.some((reg) => reg.test(text));
 }
 
 function contentPackFingerprint(pack: unknown): string {

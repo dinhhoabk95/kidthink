@@ -5,7 +5,7 @@ area: admin
 status: implemented
 mvp: true
 phase: P2
-reviewed: 2026-08-08
+reviewed: 2026-09-01
 owns:
   - Giao diện chọn emoji trong studio
 depends_on:
@@ -36,7 +36,7 @@ Mọi field có `uiHint = emoji` (§[`schema-driven-form.md`](schema-driven-form
 2. Hàng đầu: **12 emoji gần đây**.
 3. Ô tìm kiếm tự động focus — gõ tiếng Việt.
 4. Dưới: 32 nhóm chủ đề, cuộn ngang chọn nhóm.
-5. Chọn → đóng popover, lưu `EMJ-<slug>`, preview cập nhật.
+5. Chọn → đóng popover, lưu **ký tự UTF-8** (`"🍎"`), preview cập nhật.
 
 ## 5. Alternative flows
 
@@ -44,8 +44,8 @@ Mọi field có `uiHint = emoji` (§[`schema-driven-form.md`](schema-driven-form
 |---|---|
 | Tìm không ra | Hiện nhóm gần nhất + nút "báo thiếu emoji" gửi cho dev |
 | Gõ ký tự emoji trực tiếp | Bị chặn, hiện gợi ý dùng picker |
-| Emoji `deprecated` | Cấm xuất hiện trong picker; nội dung cũ vẫn render |
-| Nội dung cho trẻ | Lọc bỏ `age_suitability = blocked` |
+| Emoji bị gỡ khỏi package | Không còn trong picker; nội dung cũ vẫn render vì ref *là* glyph, và cổng `emoji-glyph-integrity` báo ref mồ côi (`BR-EMJ-10`) |
+| Nội dung cho trẻ | Lọc theo `age_min` của hàng |
 
 ## 6. Business rules
 
@@ -53,12 +53,13 @@ Mọi field có `uiHint = emoji` (§[`schema-driven-form.md`](schema-driven-form
 |---|---|---|
 | `BR-EPK-01` | Ô emoji ≥ **40×40px**, glyph render ≥ **28px** | Nhỏ hơn thì nhiều emoji trông giống nhau — sai emoji là sai bài học |
 | `BR-EPK-02` | Tìm kiếm **bắt buộc** hoạt động tiếng Việt, có dấu và không dấu | `BR-EMJ-04` |
-| `BR-EPK-03` | Cấm — **NEVER cho gõ emoji ngoài registry** | `BR-EMJ-01` |
+| `BR-EPK-03` | Cấm — **NEVER cho gõ emoji ngoài registry** | `BR-EMJ-01` — picker là đường duy nhất; glyph ngoài danh sách bị `EmojiRef` từ chối ở contract (`BR-EMJ-12`) |
 | `BR-EPK-04` | 12 emoji **gần đây** hiện đầu tiên | Một level thường dùng lặp một bộ nhỏ |
 | `BR-EPK-05` | Duyệt theo **32 nhóm chủ đề học**, không theo Unicode block | Manager nghĩ theo chủ đề dạy |
 | `BR-EPK-06` | Bàn phím: mũi tên di chuyển, Enter chọn, Esc đóng | Chọn hàng chục emoji bằng chuột là chậm |
 | `BR-EPK-07` | Ghim font stack emoji | `BR-EMJ-06` |
 | `BR-EPK-08` | Picker là **chrome** — nút, tab, icon của nó dùng SVG | `BR-EMJ-03` |
+| `BR-EPK-09` | Chọn xong lưu **ký tự UTF-8**, Cấm — **NEVER mã `EMJ-<slug>`** | `BR-EMJ-02` — mã trùng và mã không tra được là lỗi im lặng tới lúc render |
 
 ## 7. Data
 
@@ -81,7 +82,9 @@ bộ, không phải dữ liệu.
 
 ### `GET /api/managers/emoji`
 
-Query `q` `category` `age_band` `limit` ≤100. 200 → `{ items: [{ code, unicode, name, category }] }`.
+Query `q` `category` `age_band` `limit` ≤100.
+200 → `{ items: [{ emoji, name, categories, keywords, age_min }], total, categories }`.
+Nguồn là `@mindkid/emoji` trực tiếp — Cấm — **NEVER truy vấn DB**.
 Cache `private, max-age=3600` — registry đổi hiếm.
 
 ## 9. Acceptance criteria
@@ -118,15 +121,22 @@ Scenario: BR-EPK-08 — chrome của picker là SVG
   Then tab và nút dùng UIcon
   And không dùng emoji làm icon điều hướng
 
-Scenario: emoji bị chặn theo tuổi không xuất hiện
-  Given một emoji age_suitability = blocked
-  When mở picker cho nội dung trẻ
+Scenario: emoji vượt tuổi không xuất hiện
+  Given một emoji có age_min = 6
+  When mở picker cho nội dung tuổi 3-4
   Then emoji đó không có trong bất kỳ nhóm nào
+
+Scenario: BR-EPK-09 — chọn xong lưu ký tự, không lưu mã
+  Given manager chọn quả táo trong picker
+  When đọc giá trị field
+  Then giá trị là "🍎"
+  And không khớp /^EMJ-/
 ```
 
 ## 10. Boundaries
 
 **Always**
+- Lưu ký tự UTF-8.
 - Ô ≥40px, glyph ≥28px.
 - Tìm tiếng Việt có dấu và không dấu.
 - Hiện 12 gần đây.
@@ -137,6 +147,7 @@ Scenario: emoji bị chặn theo tuổi không xuất hiện
 - Đổi bố cục nhóm.
 
 **Never**
+- Lưu mã `EMJ-<slug>`.
 - Cho gõ emoji tự do.
 - Ô nhỏ hơn 40px.
 - Emoji làm chrome của chính picker.

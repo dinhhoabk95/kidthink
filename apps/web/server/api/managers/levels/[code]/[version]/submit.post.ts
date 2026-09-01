@@ -1,11 +1,12 @@
 import {
   contentSkillMap,
+  gameLevelRounds,
   gameLevels,
   getOwnerDb,
   transitionContent,
 } from "@mindkid/db";
 import { validatePublishChecklist } from "@mindkid/shared";
-import { and, eq, sql } from "drizzle-orm";
+import { and, asc, eq, sql } from "drizzle-orm";
 import { createError, defineEventHandler, getRouterParam } from "h3";
 import { requireManagerSession } from "#server/utils/admin-auth-runtime";
 
@@ -48,6 +49,33 @@ export default defineEventHandler(async (event) => {
   const skillIds =
     attachedSkills.length > 0 ? attachedSkills.map((s) => s.skillId) : [1];
 
+  const roundRows = await db
+    .select()
+    .from(gameLevelRounds)
+    .where(eq(gameLevelRounds.gameLevelId, level.id))
+    .orderBy(asc(gameLevelRounds.roundIndex));
+
+  const rounds =
+    roundRows.length > 0
+      ? roundRows.map((r) => ({
+          round_index: r.roundIndex,
+          instruction: r.instruction,
+          instruction_audio_path: r.instructionAudioPath,
+          content_pack: r.contentPack,
+          difficulty_params: r.difficultyParams,
+          difficulty: r.difficulty,
+        }))
+      : [
+          {
+            round_index: 0,
+            instruction: level.instruction ?? "Chơi trò chơi",
+            instruction_audio_path: level.instructionAudioPath ?? undefined,
+            content_pack: level.contentPack,
+            difficulty_params: level.difficultyParams,
+            difficulty: level.difficulty ?? 1,
+          },
+        ];
+
   const checklistResult = validatePublishChecklist("game_level", {
     ...level,
     title: level.title,
@@ -58,6 +86,7 @@ export default defineEventHandler(async (event) => {
     difficulty: level.difficulty,
     skillIds,
     learningObjectiveIds: [1],
+    rounds,
   });
 
   if (!checklistResult.ok) {

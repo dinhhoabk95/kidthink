@@ -20,6 +20,7 @@ import { and, eq } from "drizzle-orm";
 import { getAppDb } from "#src/client";
 import { childProfiles } from "#src/schema/child";
 import { activities, lessonActivities, lessons } from "#src/schema/content";
+import { gameLevels } from "#src/schema/game";
 import {
   lessonRunObservations,
   lessonRunSteps,
@@ -44,6 +45,7 @@ export interface LessonRunStepDetail {
     kind: string;
     title: string;
     instruction: string | null;
+    gameLevelCode?: string | null;
   } | null;
 }
 
@@ -292,9 +294,11 @@ export async function getLessonRun(
     .select({
       step: lessonRunSteps,
       activity: activities,
+      gameLevel: gameLevels,
     })
     .from(lessonRunSteps)
     .leftJoin(activities, eq(lessonRunSteps.activityId, activities.id))
+    .leftJoin(gameLevels, eq(activities.refId, gameLevels.id))
     .where(eq(lessonRunSteps.lessonRunId, run.run.id));
 
   const sortedSteps = [...stepsRaw].sort(
@@ -312,6 +316,7 @@ export async function getLessonRun(
           kind: s.activity.kind,
           title: s.activity.title,
           instruction: s.activity.instruction,
+          gameLevelCode: s.gameLevel?.code ?? null,
         }
       : null,
   }));

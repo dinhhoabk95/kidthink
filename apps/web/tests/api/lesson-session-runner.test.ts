@@ -1,7 +1,11 @@
 import {
+  activities,
   childProfiles,
+  gameLevels,
+  gameTemplates,
   getAppDb,
   LessonSessionRunnerService,
+  lessonActivities,
   lessonRuns,
   lessons,
   users,
@@ -281,5 +285,92 @@ describe("Task #95 — Lesson Session Runner (BR-LSR-01..16)", () => {
     await expect(
       LessonSessionRunnerService.updateStep(run.runUuid, otherUserId, 0, "done")
     ).rejects.toThrow("NOT_FOUND");
+  });
+
+  it("Scenario 8 & WP167.4: Resolves digital_game activity refId to gameLevelCode", async () => {
+    // 1. Create a game template & game level
+    let [template] = await db
+      .select()
+      .from(gameTemplates)
+      .where(eq(gameTemplates.code, "GT-001"));
+    if (!template) {
+      const [t] = await db
+        .insert(gameTemplates)
+        .values({
+          code: "GT-001",
+          name: "Tap Select",
+          engineSession: "GT-001",
+          mechanic: "tap_select",
+          status: "active",
+        })
+        .returning();
+      template = t;
+    }
+
+    const testGameLevelCode = "GL-C1-CNT-NUM-0001";
+    const [level] = await db
+      .insert(gameLevels)
+      .values({
+        entityId: 99_991,
+        code: testGameLevelCode,
+        title: "Test Digital Game Level",
+        contentVersion: 1,
+        templateId: template.id,
+        status: "published",
+        accessTier: "free",
+        instruction: "Chơi thử",
+        ageMin: 3,
+        ageMax: 4,
+        difficulty: 1,
+        contentPack: { items: [] },
+        difficultyParams: { count: 3 },
+      })
+      .returning();
+
+    // 2. Create activity of kind digital_game with refId = level.id
+    const [act] = await db
+      .insert(activities)
+      .values({
+        entityId: 99_992,
+        code: "ACT-9992",
+        kind: "digital_game",
+        title: "Hoạt động trò chơi số",
+        contentVersion: 1,
+        status: "published",
+        accessTier: "free",
+        refType: "game_level",
+        refId: level.id,
+        instruction: { goal: "Chơi game" },
+        estimatedMinutes: 5,
+      })
+      .returning();
+
+    // 3. Link activity to test lesson
+    await db.insert(lessonActivities).values({
+      lessonId: testLessonId,
+      activityId: act.id,
+      position: 1,
+      isRequired: true,
+    });
+
+    // 4. Start lesson run
+    const result = await LessonSessionRunnerService.startLessonRun({
+      userId: testUserId,
+      childProfileId: testChildId,
+      lessonCode: testLessonCode,
+    });
+
+    // 5. Verify gameLevelCode is resolved correctly
+    const digitalGameStep = result.steps.find((s) => s.kind === "digital_game");
+    expect(digitalGameStep).toBeDefined();
+    expect(digitalGameStep?.activity?.gameLevelCode).toBe(testGameLevelCode);
+
+    // Cleanup
+    await db.delete(lessonRuns).where(eq(lessonRuns.uuid, result.runUuid));
+    await db
+      .delete(lessonActivities)
+      .where(eq(lessonActivities.activityId, act.id));
+    await db.delete(activities).where(eq(activities.id, act.id));
+    await db.delete(gameLevels).where(eq(gameLevels.id, level.id));
   });
 });

@@ -175,7 +175,7 @@ Không thêm route. Hai payload đổi hình dạng.
     }
   ],
   "session": { "uuid": "…", "started_at": "…" },
-  "assets": [ { "ref": "EMJ-apple-red", "kind": "emoji", "glyph": "🍎" } ]
+  "assets": [ { "ref": "🍎", "kind": "emoji", "glyph": "🍎" } ]
 }
 ```
 

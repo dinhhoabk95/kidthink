@@ -93,7 +93,7 @@ Payload phải nhỏ (tablet trên 4G) và đã qua gating (không rò nội dun
   "scoring": { "mode": "rounds", "max_rounds": 5 },
   "session": { "uuid": "…", "started_at": "…" },
   "flags": { "reduced_motion": false, "audio_enabled": true, "tap_fallback": true },
-  "assets": [ { "ref": "EMJ-apple-red", "kind": "emoji", "glyph": "🍎" } ],
+  "assets": [ { "ref": "🍎", "kind": "emoji", "glyph": "🍎" } ],
   "age_mismatch": false,
   "is_preview": false
 }

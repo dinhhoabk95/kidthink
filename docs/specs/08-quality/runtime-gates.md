@@ -38,7 +38,7 @@ file này — nhưng file chưa từng được tạo. Đây là file đó.
 | `apps/web/tests/security/route-validation.ts` | `BR-SEC-04`, `BR-TYP-04` | có |
 | `packages/db/tests/gates/engine-content-depth.test.ts` | `BR-ECD-01..13` | có |
 | `packages/db/tests/gates/theme-registry.test.ts` | `BR-CTR-*` | có |
-| `packages/db/tests/gates/emoji-ref-debt.test.ts` | `BR-CTR-08` (bậc thang nợ) | 2 |
+| `packages/db/tests/gates/emoji-glyph-integrity.test.ts` | `BR-EMJ-09/10/11/12` | 5 |
 | `packages/db/tests/gates/corpus-truth.test.ts` | `BR-LCD-01`, `BR-LCD-10`, `BR-GLR-06` | 2 |
 | `packages/db/tests/gates/cli-gates.test.ts` | ba cổng CLI thực sự chạy | 1 |
 | `packages/ui/tests/tokens.test.ts` | `BR-DSC-03/06/14` | có |

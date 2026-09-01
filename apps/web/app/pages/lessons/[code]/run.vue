@@ -222,8 +222,8 @@
                   class="min-h-11 rounded-2xl font-bold"
                   color="primary"
                   target="_blank"
-                  v-if="currentStep.activity?.code"
-                  :to="`/games/${currentStep.activity.code}`"
+                  v-if="currentStep.activity?.gameLevelCode || currentStep.activity?.code"
+                  :to="`/play/${currentStep.activity.gameLevelCode || currentStep.activity.code}`"
                 >
                   Mở trò chơi
                   <UIcon class="ml-2 w-4 h-4" name="i-lucide-external-link" />
@@ -398,6 +398,7 @@
       kind: string;
       title: string;
       instruction: string | null;
+      gameLevelCode?: string | null;
     } | null;
   }
 

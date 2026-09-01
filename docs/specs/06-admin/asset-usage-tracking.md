@@ -114,7 +114,7 @@ Scenario: BR-AUT2-04 — hiện trạng thái nơi dùng
 
 Scenario: BR-AUT2-02 — emoji không xoá cứng
   When quét route admin
-  Then không route nào xoá hàng emoji_registry
+  Then không route nào xoá emoji — registry là code, không phải bảng (BR-EMJ-07)
 
 Scenario: BR-AUT2-03 — truy vấn ngược đủ nhanh
   Given DB có 3000 game level

@@ -18,6 +18,7 @@ export interface GeneratorInput {
   what?: string;
   theme: string;
   vocabulary: ThemeVocabulary;
+  escalation_step?: number;
 }
 
 export interface GeneratedLevel<TContent = unknown, TDifficulty = unknown> {

@@ -36,11 +36,20 @@ export interface ContentSeedHeader {
   legacy_v1_ref?: string;
 }
 
+export interface ContentSeedRound<TPack = unknown, TParams = unknown> {
+  instruction: string;
+  instruction_audio_path?: string;
+  content_pack: TPack;
+  difficulty_params: TParams;
+  difficulty: number;
+}
+
 export interface ContentSeed<TPack = unknown, TParams = unknown> {
   kind?: "game_level";
   header: ContentSeedHeader;
   content_pack: TPack;
   difficulty_params: TParams;
+  rounds?: ContentSeedRound<TPack, TParams>[];
 }
 
 export interface ActivitySeedHeader {

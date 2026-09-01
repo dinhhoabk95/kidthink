@@ -380,7 +380,7 @@
 
       await fetchSession();
       const nextDest = await resolvePostLoginDestination();
-      await router.push(nextDest);
+      await navigateTo(nextDest);
     } catch (err) {
       const fetchError = err as ApiErrorResponse;
       if (fetchError?.statusCode === 428 && fetchError.data?.challenge) {
@@ -418,7 +418,7 @@
 
       await fetchSession();
       const nextDest = await resolvePostLoginDestination();
-      await router.push(nextDest);
+      await navigateTo(nextDest);
     } catch (err) {
       const fetchError = err as ApiErrorResponse;
       errorMessage.value =

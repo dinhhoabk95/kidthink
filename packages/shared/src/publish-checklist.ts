@@ -185,9 +185,12 @@ function checkGameLevelRules(
   entity: GenericEntityPayload,
   missing: string[]
 ): void {
-  const contentPack = (entity.contentPack ?? entity.content_pack) as
-    | Record<string, unknown>
-    | undefined;
+  const contentPack = (entity.contentPack ??
+    entity.content_pack ??
+    (Array.isArray(entity.rounds) && entity.rounds.length > 0
+      ? ((entity.rounds[0] as Record<string, unknown>).content_pack ??
+        (entity.rounds[0] as Record<string, unknown>).contentPack)
+      : undefined)) as Record<string, unknown> | undefined;
 
   if (!contentPack || typeof contentPack !== "object") {
     missing.push("content_pack_invalid");
@@ -505,26 +508,143 @@ function checkWorksheetRules(
   checkWorksheetBlockValidation(entity, missing);
 }
 
+function resolveEntityAgeRange(entity: GenericEntityPayload): {
+  ageMin: number;
+  ageMax: number;
+} {
+  let ageMin = 3;
+  let ageMax = 4;
+  if (typeof entity.ageMin === "number") {
+    ageMin = entity.ageMin;
+  } else if (typeof entity.age_min === "number") {
+    ageMin = entity.age_min;
+  }
+  if (typeof entity.ageMax === "number") {
+    ageMax = entity.ageMax;
+  } else if (typeof entity.age_max === "number") {
+    ageMax = entity.age_max;
+  }
+  return { ageMin, ageMax };
+}
+
+function resolveEntityLoCount(entity: GenericEntityPayload): number {
+  if (Array.isArray(entity.learningObjectiveIds)) {
+    return entity.learningObjectiveIds.length;
+  }
+  if (Array.isArray(entity.learning_objective_ids)) {
+    return entity.learning_objective_ids.length;
+  }
+  if (Array.isArray(entity.learningObjectives)) {
+    return entity.learningObjectives.length;
+  }
+  return 1;
+}
+
+function normalizeRoundItem(
+  r: Record<string, unknown>,
+  idx: number,
+  defaults: {
+    template: string;
+    ageMin: number;
+    ageMax: number;
+    theme?: string;
+    difficulty: number;
+  }
+): RoundInput {
+  let ageMin = defaults.ageMin;
+  let ageMax = defaults.ageMax;
+  if (typeof r.age_min === "number") {
+    ageMin = r.age_min;
+  } else if (typeof r.ageMin === "number") {
+    ageMin = r.ageMin;
+  }
+  if (typeof r.age_max === "number") {
+    ageMax = r.age_max;
+  } else if (typeof r.ageMax === "number") {
+    ageMax = r.ageMax;
+  }
+
+  const roundDiff =
+    typeof r.difficulty === "number" ? r.difficulty : defaults.difficulty;
+  const themeId = (r.theme_id ?? r.themeId ?? defaults.theme) as
+    | string
+    | undefined;
+
+  return {
+    round_index: typeof r.round_index === "number" ? r.round_index : idx,
+    template_code:
+      (r.template_code as string) ||
+      (r.templateCode as string) ||
+      defaults.template,
+    instruction: (r.instruction as string) || undefined,
+    content_pack: r.content_pack ?? r.contentPack,
+    difficulty_params: r.difficulty_params ?? r.difficultyParams,
+    difficulty: roundDiff,
+    age_min: ageMin,
+    age_max: ageMax,
+    theme_id: themeId,
+  };
+}
+
+function extractRawRounds(
+  entity: GenericEntityPayload,
+  defaultDifficulty: number
+): Record<string, unknown>[] | undefined {
+  if (Array.isArray(entity.rounds) && entity.rounds.length > 0) {
+    return entity.rounds as Record<string, unknown>[];
+  }
+  if (entity.contentPack || entity.content_pack) {
+    return [
+      {
+        round_index: 0,
+        instruction: (entity.instruction as string) || "Chơi trò chơi",
+        instruction_audio_path:
+          (entity.instructionAudioPath as string) ||
+          (entity.instruction_audio_path as string) ||
+          undefined,
+        content_pack: entity.contentPack ?? entity.content_pack,
+        difficulty_params: entity.difficultyParams ?? entity.difficulty_params,
+        difficulty: defaultDifficulty,
+      },
+    ];
+  }
+  return undefined;
+}
+
 function checkRoundSetRules(
   entity: GenericEntityPayload,
   missing: string[]
 ): void {
-  const roundsRaw = entity.rounds;
-  if (!Array.isArray(roundsRaw) || roundsRaw.length === 0) {
+  const defaultTemplate =
+    (entity.templateCode as string) ||
+    (entity.template_code as string) ||
+    (entity.engine as string) ||
+    "GT-001";
+  const { ageMin: defaultAgeMin, ageMax: defaultAgeMax } =
+    resolveEntityAgeRange(entity);
+  const defaultTheme = (entity.themeId ?? entity.theme_id) as
+    | string
+    | undefined;
+  const defaultDifficulty = (entity.difficulty as number) || 1;
+
+  const rawRounds = extractRawRounds(entity, defaultDifficulty);
+  if (!rawRounds) {
     return;
   }
-  const rounds: RoundInput[] = roundsRaw;
 
-  const loCount =
-    (Array.isArray(entity.learningObjectiveIds)
-      ? entity.learningObjectiveIds.length
-      : 0) ||
-    (Array.isArray(entity.learning_objective_ids)
-      ? entity.learning_objective_ids.length
-      : 0) ||
-    (Array.isArray(entity.learningObjectives)
-      ? entity.learningObjectives.length
-      : 0);
+  const defaults = {
+    template: defaultTemplate,
+    ageMin: defaultAgeMin,
+    ageMax: defaultAgeMax,
+    theme: defaultTheme,
+    difficulty: defaultDifficulty,
+  };
+
+  const rounds: RoundInput[] = rawRounds.map((r, idx) =>
+    normalizeRoundItem(r, idx, defaults)
+  );
+
+  const loCount = resolveEntityLoCount(entity);
 
   const result = validateRoundSet({
     rounds,

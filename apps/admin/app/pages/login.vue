@@ -369,10 +369,13 @@
         authState.value = "enroll";
       }
     } catch (err) {
+      const fetchError = err as {
+        data?: { message?: string; reason?: string };
+      };
       errorMessage.value =
-        err instanceof Error
-          ? err.message
-          : "Email hoặc mật khẩu không chính xác.";
+        fetchError?.data?.message ||
+        fetchError?.data?.reason ||
+        "Email hoặc mật khẩu không chính xác.";
     } finally {
       isLoading.value = false;
     }
@@ -400,10 +403,13 @@
         await finishEnrollmentAndRedirect();
       }
     } catch (err) {
+      const fetchError = err as {
+        data?: { message?: string; reason?: string };
+      };
       errorMessage.value =
-        err instanceof Error
-          ? err.message
-          : "Mã xác thực không hợp lệ. Vui lòng thử lại.";
+        fetchError?.data?.message ||
+        fetchError?.data?.reason ||
+        "Mã xác thực không hợp lệ. Vui lòng thử lại.";
     } finally {
       isLoading.value = false;
     }
@@ -411,7 +417,7 @@
 
   async function finishEnrollmentAndRedirect() {
     await fetchSession();
-    await router.push("/");
+    await navigateTo("/");
   }
 
   function resetToPassword() {

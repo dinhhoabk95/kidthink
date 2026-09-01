@@ -41,6 +41,7 @@
     "check:lesson-supply": "tsx src/seed-content/cli/check-lesson-supply.ts",
     "check:skill-quota": "tsx scripts/check-skill-quota.ts",
     "check:go-live": "tsx src/seed-content/cli/check-go-live.ts",
+    "check:round-sets": "tsx src/seed-content/gates/round-sets.ts",
     "gen:levels": "tsx src/seed-content/cli/gen-levels.ts",
     "reset-content": "tsx scripts/reset-content.ts"
   },

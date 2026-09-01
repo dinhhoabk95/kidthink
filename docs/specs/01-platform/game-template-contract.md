@@ -156,7 +156,7 @@ const SortGroupsContent = z.object({
   groups: z.array(z.object({
     group_id: z.string().regex(/^g[0-9]$/),
     label: z.string().max(24),
-    label_emoji: EmojiRef,          // FK logic tới emoji_registry
+    label_emoji: EmojiRef,          // ký tự UTF-8, thành viên @mindkid/emoji
   })).min(2).max(4),
   items: z.array(z.object({
     item_id: z.string(),

@@ -75,7 +75,7 @@ nội dung Montessori đều ngầm giả định mười một khuôn trò chơ
 | Workbook thiếu phần gợi ý sư phạm | 18 trên 21 workbook không có | Người biên soạn tự viết ba mức theo [`scaffolding-and-hints.md`](../04-play/scaffolding-and-hints.md). Cấm seed level không có gợi ý |
 | Dạng bài mang tên một bộ test có bản quyền | Workbook 21 nêu tên một bộ test tâm lý thương mại | Giữ cấu trúc bài toán, bỏ tên bộ test, bỏ mọi tuyên bố đo chỉ số trí tuệ |
 | Dạng bài chỉ chạy được với khuôn chưa có | 11 khuôn ở mục 7.3 | Ghi vào lô B. Cấm ép sang khuôn gần đúng để ship sớm |
-| Emoji trong dataset không có trong registry | `EMJ-*` chưa đăng ký | Đăng ký emoji trước theo [`emoji-registry.md`](../01-platform/emoji-registry.md), hoặc đổi vật liệu |
+| Emoji trong dataset không có trong registry | glyph chưa đăng ký | Đăng ký emoji trước theo [`emoji-registry.md`](../01-platform/emoji-registry.md), hoặc đổi vật liệu |
 
 ## 6. Business rules
 
@@ -99,7 +99,7 @@ nội dung Montessori đều ngầm giả định mười một khuôn trò chơ
 
 ## 7. Data
 
-**Đọc:** dataset và 21 tập PDF nguồn · [`taxonomy/index.md`](../../taxonomy/index.md) · `emoji_registry`.
+**Đọc:** dataset và 21 tập PDF nguồn · [`taxonomy/index.md`](../../taxonomy/index.md) · `@mindkid/emoji`.
 **Ghi:** không ghi vào database. Đầu ra là bảng ánh xạ trong chính file này.
 
 ### 7.0 Bốn nguyên lý sư phạm của nguồn
@@ -204,7 +204,7 @@ mới, `GT-012` tới `GT-017` mỗi khuôn kéo theo một system engine chưa 
 | Số liệu cụ thể của một bài | Không | Sinh lại bộ số khác, giữ nguyên cấu trúc |
 | Lời dẫn nguyên văn | Không | Viết lại theo mục 7.3 của [`game-level-model.md`](game-level-model.md) |
 | Bối cảnh và nhân vật | Không | Chọn lại từ theme đã đăng ký |
-| Hình vẽ, bố cục trang | Không | Dựng lại bằng emoji trong `emoji_registry` |
+| Hình vẽ, bố cục trang | Không | Dựng lại bằng emoji trong `@mindkid/emoji` |
 | Tên bộ test tâm lý thương mại | Không | Bỏ hẳn, không thay bằng tên khác |
 
 ### 7.5 Độ đầy đủ đo được của dataset

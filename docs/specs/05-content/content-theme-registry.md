@@ -194,7 +194,7 @@ từ vựng phải mô tả được thứ người soạn thật sự cần, n�
 | `code` | `string` | `^[a-z][a-z_]{2,15}$`, bất biến sau khi merge |
 | `label_vi` | `string` | Chuỗi hiển thị, tiếng Việt |
 | `age_floor` | `3 \| 4 \| 5 \| 6` | `BR-CTR-09` |
-| `icon_emoji_ref` | `EmojiRef` | Phải resolve trong `emoji_registry` |
+| `icon_emoji_ref` | `EmojiRef` | **Ký tự UTF-8**, phải là thành viên `@mindkid/emoji` |
 
 ### 7.3 Trần tập trung
 

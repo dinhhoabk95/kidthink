@@ -62,6 +62,7 @@ export interface GenOptions {
   band?: AgeBand;
   out?: string;
   silent?: boolean;
+  rounds?: number;
 }
 
 export interface GenResult {
@@ -147,6 +148,164 @@ export const GEN_${sanitizedEngine.toUpperCase()}_${seed}: ContentSeed<unknown, 
   return filePath;
 }
 
+interface RoundCandidate {
+  content_pack: unknown;
+  difficulty_params: unknown;
+  instruction: string;
+  difficulty: number;
+}
+
+function generateSingleRoundCandidate(params: {
+  generator: ReturnType<typeof getLevelGenerator>;
+  template: (typeof ALL_TEMPLATES)[string];
+  itemRng: ReturnType<typeof deriveStream>;
+  targetBand: AgeBand;
+  theme: string;
+  vocab: ReturnType<typeof getThemeVocabulary>;
+  escalationStep: number;
+  seenHashes: Set<string>;
+  stats: {
+    candidatesGenerated: number;
+    contractRejectedCount: number;
+    duplicatesCount: number;
+  };
+}): RoundCandidate | undefined {
+  const {
+    generator,
+    template,
+    itemRng,
+    targetBand,
+    theme,
+    vocab,
+    escalationStep,
+    seenHashes,
+    stats,
+  } = params;
+  if (!generator) {
+    return undefined;
+  }
+
+  for (let attempt = 0; attempt < MAX_ATTEMPTS_PER_ITEM; attempt++) {
+    stats.candidatesGenerated++;
+    const generated = generator.generate({
+      rng: itemRng,
+      age_band: targetBand,
+      theme,
+      vocabulary: vocab,
+      escalation_step: escalationStep,
+    });
+
+    const parseResult = template.content_contract.safeParse(
+      generated.content_pack
+    );
+    if (!parseResult.success) {
+      stats.contractRejectedCount++;
+      continue;
+    }
+
+    const contentHash = JSON.stringify(parseResult.data);
+    if (seenHashes.has(contentHash)) {
+      stats.duplicatesCount++;
+      continue;
+    }
+    seenHashes.add(contentHash);
+
+    return {
+      instruction: "",
+      content_pack: parseResult.data,
+      difficulty_params: generated.difficulty_params,
+      difficulty: 1,
+    };
+  }
+
+  return undefined;
+}
+
+function generateLevelItem(params: {
+  engine: string;
+  seed: number;
+  candidateIndex: number;
+  theme: string;
+  ageRange: { min: number; max: number };
+  numRounds: number;
+  generator: ReturnType<typeof getLevelGenerator>;
+  template: (typeof ALL_TEMPLATES)[string];
+  itemRng: ReturnType<typeof deriveStream>;
+  targetBand: AgeBand;
+  vocab: ReturnType<typeof getThemeVocabulary>;
+  seenHashes: Set<string>;
+  stats: {
+    candidatesGenerated: number;
+    contractRejectedCount: number;
+    duplicatesCount: number;
+  };
+}): unknown | undefined {
+  const {
+    engine,
+    seed,
+    candidateIndex,
+    theme,
+    ageRange,
+    numRounds,
+    generator,
+    template,
+    itemRng,
+    targetBand,
+    vocab,
+    seenHashes,
+    stats,
+  } = params;
+
+  const levelRounds: RoundCandidate[] = [];
+  for (let r = 0; r < numRounds; r++) {
+    const candidate = generateSingleRoundCandidate({
+      generator,
+      template,
+      itemRng,
+      targetBand,
+      theme,
+      vocab,
+      escalationStep: r,
+      seenHashes,
+      stats,
+    });
+
+    if (!candidate) {
+      return undefined;
+    }
+    levelRounds.push(candidate);
+  }
+
+  const firstRound = levelRounds[0];
+  if (!firstRound) {
+    return undefined;
+  }
+
+  return {
+    header: {
+      code: `GL-GEN-${engine}-${seed}-${String(candidateIndex).padStart(2, "0")}`,
+      content_version: 1,
+      template_code: engine,
+      title: "",
+      instruction: "",
+      age_min: ageRange.min,
+      age_max: ageRange.max,
+      difficulty: 1,
+      access_tier: "free",
+      skill_codes: [],
+      learning_objective_codes: [],
+      what_tags: [],
+      thinking_tags: [],
+      theme_tag: theme,
+      origin: "ai_assisted",
+      authored_in: "repo_seed",
+    },
+    content_pack: firstRound.content_pack,
+    difficulty_params: firstRound.difficulty_params,
+    ...(numRounds > 1 ? { rounds: levelRounds } : {}),
+  };
+}
+
 export function generateLevelsCore(options: GenOptions): GenResult {
   const { engine, count, seed, theme, band, out } = options;
 
@@ -167,77 +326,36 @@ export function generateLevelsCore(options: GenOptions): GenResult {
   const vocab = getThemeVocabulary(theme);
   const ageRange = getAgeRange(targetBand);
 
-  // Một luồng cho cả lượt sinh: level thứ i+1 đi tiếp chuỗi thay vì khởi tạo
-  // một PRNG mới. Bản cũ gọi `deriveStream` rồi **vứt** giá trị trả về và tự
-  // dựng `createRng(seed * 1000 + i)`; tích đó vượt 2^32 nên hai seed cách nhau
-  // đúng 2^32/1000 cho ra cùng một chuỗi.
   const itemRng = deriveStream(seed, "items");
   const candidates: unknown[] = [];
-  let contractRejectedCount = 0;
-  let duplicatesCount = 0;
-  let candidatesGenerated = 0;
+  const stats = {
+    candidatesGenerated: 0,
+    contractRejectedCount: 0,
+    duplicatesCount: 0,
+  };
   const seenHashes = new Set<string>();
+  const numRounds = options.rounds && options.rounds > 1 ? options.rounds : 1;
 
   for (let i = 0; i < count; i++) {
-    let parsed: unknown;
-    let difficultyParams: unknown;
-    for (let attempt = 0; attempt < MAX_ATTEMPTS_PER_ITEM; attempt++) {
-      candidatesGenerated++;
-      const generated = generator.generate({
-        rng: itemRng,
-        age_band: targetBand,
-        theme,
-        vocabulary: vocab,
-      });
+    const levelSeed = generateLevelItem({
+      engine,
+      seed,
+      candidateIndex: candidates.length + 1,
+      theme,
+      ageRange,
+      numRounds,
+      generator,
+      template,
+      itemRng,
+      targetBand,
+      vocab,
+      seenHashes,
+      stats,
+    });
 
-      const parseResult = template.content_contract.safeParse(
-        generated.content_pack
-      );
-      if (!parseResult.success) {
-        contractRejectedCount++;
-        continue;
-      }
-
-      const contentHash = JSON.stringify(parseResult.data);
-      if (seenHashes.has(contentHash)) {
-        duplicatesCount++;
-        continue;
-      }
-      seenHashes.add(contentHash);
-      parsed = parseResult.data;
-      difficultyParams = generated.difficulty_params;
+    if (!levelSeed) {
       break;
     }
-
-    if (parsed === undefined) {
-      // Hết lượt rút mà vẫn không có ứng viên mới: vốn từ đã cạn. Dừng vòng và
-      // để người gọi thấy `writtenCount < countRequested`.
-      break;
-    }
-
-    const levelSeed = {
-      header: {
-        code: `GL-GEN-${engine}-${seed}-${String(candidates.length + 1).padStart(2, "0")}`,
-        content_version: 1,
-        template_code: engine,
-        title: "",
-        instruction: "",
-        age_min: ageRange.min,
-        age_max: ageRange.max,
-        difficulty: 1,
-        access_tier: "free",
-        skill_codes: [],
-        learning_objective_codes: [],
-        what_tags: [],
-        thinking_tags: [],
-        theme_tag: theme,
-        origin: "ai_assisted",
-        authored_in: "repo_seed",
-      },
-      content_pack: parsed,
-      difficulty_params: difficultyParams,
-    };
-
     candidates.push(levelSeed);
   }
 
@@ -256,9 +374,9 @@ export function generateLevelsCore(options: GenOptions): GenResult {
   return {
     engine,
     countRequested: count,
-    candidatesGenerated,
-    contractRejectedCount,
-    duplicatesCount,
+    candidatesGenerated: stats.candidatesGenerated,
+    contractRejectedCount: stats.contractRejectedCount,
+    duplicatesCount: stats.duplicatesCount,
     writtenCount: candidates.length,
     outputPath: finalOutputPath,
     items: candidates,
@@ -282,9 +400,9 @@ function parsePositiveInt(raw: string, flag: string): number {
 }
 
 function parseBand(raw: string): AgeBand {
-  if (!(AGE_BANDS as readonly string[]).includes(raw)) {
+  if (!AGE_BANDS.includes(raw as AgeBand)) {
     throw new Error(
-      `--band phải thuộc ${AGE_BANDS.join(" | ")}, nhận '${raw}'.`
+      `--band '${raw}' không thuộc AGE_BANDS (${AGE_BANDS.join(", ")}).`
     );
   }
   return raw as AgeBand;
@@ -293,6 +411,43 @@ function parseBand(raw: string): AgeBand {
 function readFlag(arg: string, name: string): string | undefined {
   const prefix = `--${name}=`;
   return arg.startsWith(prefix) ? arg.slice(prefix.length) : undefined;
+}
+
+function applyFlag(arg: string, options: GenOptions): void {
+  const engine = readFlag(arg, "engine");
+  if (engine !== undefined) {
+    options.engine = engine;
+  }
+
+  const count = readFlag(arg, "count");
+  if (count !== undefined) {
+    options.count = parsePositiveInt(count, "--count");
+  }
+
+  const seed = readFlag(arg, "seed");
+  if (seed !== undefined) {
+    options.seed = parsePositiveInt(seed, "--seed");
+  }
+
+  const theme = readFlag(arg, "theme");
+  if (theme !== undefined) {
+    options.theme = theme;
+  }
+
+  const band = readFlag(arg, "band");
+  if (band !== undefined) {
+    options.band = parseBand(band);
+  }
+
+  const out = readFlag(arg, "out");
+  if (out !== undefined) {
+    options.out = out;
+  }
+
+  const rounds = readFlag(arg, "rounds");
+  if (rounds !== undefined) {
+    options.rounds = parsePositiveInt(rounds, "--rounds");
+  }
 }
 
 export function parseArgs(args: string[]): GenOptions {
@@ -304,31 +459,7 @@ export function parseArgs(args: string[]): GenOptions {
   };
 
   for (const arg of args) {
-    const engine = readFlag(arg, "engine");
-    const count = readFlag(arg, "count");
-    const seed = readFlag(arg, "seed");
-    const theme = readFlag(arg, "theme");
-    const band = readFlag(arg, "band");
-    const out = readFlag(arg, "out");
-
-    if (engine !== undefined) {
-      options.engine = engine;
-    }
-    if (count !== undefined) {
-      options.count = parsePositiveInt(count, "--count");
-    }
-    if (seed !== undefined) {
-      options.seed = parsePositiveInt(seed, "--seed");
-    }
-    if (theme !== undefined) {
-      options.theme = theme;
-    }
-    if (band !== undefined) {
-      options.band = parseBand(band);
-    }
-    if (out !== undefined) {
-      options.out = out;
-    }
+    applyFlag(arg, options);
   }
 
   if (!CANONICAL_THEME_CODES.has(options.theme)) {

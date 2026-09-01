@@ -117,7 +117,7 @@ Tên test mang ID rule, nên `grep BR-SPT-03` tìm được cả spec lẫn test
 | Curriculum | `CUR-001` | 2 |
 | Worksheet | `WS-0009` | 2 |
 | Package | `PKG-premium` | 1 |
-| Emoji | `EMJ-apple-red` | 1 |
+| Emoji | `🍎` (ký tự UTF-8, không có mã) | 1 |
 
 Lưu ý: **`GT-` vs `GL-` là cặp dễ lẫn nhất.** Template = *cơ chế chơi* (code, dev viết).
 Level = *nội dung* (data, admin tạo). Một `GT-` phục vụ hàng chục `GL-`.

@@ -33,11 +33,17 @@ pre-commit:
 
     # Cổng thật vẫn là lượt đo trên toàn cây: `--write` chỉ sửa được thứ Biome
     # coi là an toàn, phần còn lại phải đỏ ở đây.
-    - name: lint
-      run: pnpm lint
-
-    - name: deps
-      run: pnpm lint:deps
+    # lint + deps chạy song song (không phụ thuộc nhau), tiết kiệm ~2s.
+    - name: lint-and-deps
+      run: |
+        pnpm lint &
+        PID_LINT=$!
+        pnpm lint:deps &
+        PID_DEPS=$!
+        FAIL=0
+        wait $PID_LINT || FAIL=1
+        wait $PID_DEPS || FAIL=1
+        exit $FAIL
 
 # pre-push:
 #   parallel: false

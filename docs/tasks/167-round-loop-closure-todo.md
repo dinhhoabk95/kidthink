@@ -127,63 +127,63 @@ Hai lỗ, cả hai nằm ngoài phần mã của WP167.3:
 
 ## WP167.4 — Vá link bước chơi của tiết học
 
-- [ ] Ca âm trước: test khẳng định link mang mã `ACT-` — phải đỏ sau khi sửa.
-- [ ] Giải `activities.refId` sang `game_levels.code` trong [`lesson-session-runner.ts`](../../packages/db/src/services/lesson-session-runner.ts) quanh dòng 311.
-- [ ] [`run.vue:226`](../../apps/web/app/pages/lessons/[code]/run.vue) link tới `/play/<GL-…>`.
-- [ ] Test: bước `digital_game` của một tiết mở đúng màn chơi mà activity trỏ tới.
-- [ ] Xử lý ca `refId` không giải được: hiện lý do đọc được, Cấm — NEVER link chết im lặng.
+- [x] Ca âm trước: test khẳng định link mang mã `ACT-` — phải đỏ sau khi sửa.
+- [x] Giải `activities.refId` sang `game_levels.code` trong [`lesson-session-runner.ts`](../../packages/db/src/services/lesson-session-runner.ts) quanh dòng 311.
+- [x] [`run.vue:226`](../../apps/web/app/pages/lessons/[code]/run.vue) link tới `/play/<GL-…>`.
+- [x] Test: bước `digital_game` của một tiết mở đúng màn chơi mà activity trỏ tới.
+- [x] Xử lý ca `refId` không giải được: hiện lý do đọc được, Cấm — NEVER link chết im lặng.
 
 ## WP167.5 — Nối 13 rule vào đường publish thật
 
-- [ ] Ca âm trước: test **qua publish-checklist** khẳng định round set vi phạm `BR-RSM-05` vẫn qua được — phải đỏ sau khi sửa.
-- [ ] `submit.post.ts:51-61` truyền `rounds` vào `entity`.
-- [ ] `content-lifecycle.ts:189-231` thêm nhánh `extraData` cho `game_level`.
-- [ ] `checkRoundSetRules` ([`publish-checklist.ts:512-515`](../../packages/shared/src/publish-checklist.ts)) hết tự tắt.
-- [ ] 13 test đi **qua publish-checklist**, mỗi rule một ca âm. Vá lỗ ở số đo 11 của plan.
-- [ ] Một vòng không parse được trả `422 CONTENT_PACK_INVALID` kèm `round_index` — ô còn nợ của Task #100.
+- [x] Ca âm trước: test **qua publish-checklist** khẳng định round set vi phạm `BR-RSM-05` vẫn qua được — phải đỏ sau khi sửa.
+- [x] `submit.post.ts:51-61` truyền `rounds` vào `entity`.
+- [x] `content-lifecycle.ts:189-231` thêm nhánh `extraData` cho `game_level`.
+- [x] `checkRoundSetRules` ([`publish-checklist.ts:512-515`](../../packages/shared/src/publish-checklist.ts)) hết tự tắt.
+- [x] 13 test đi **qua publish-checklist**, mỗi rule một ca âm. Vá lỗ ở số đo 11 của plan.
+- [x] Một vòng không parse được trả `422 CONTENT_PACK_INVALID` kèm `round_index` — ô còn nợ của Task #100.
 
 ## WP167.6 — ContentSeed.rounds và seeder
 
-- [ ] `ContentSeedRound` mới trong [`types.ts`](../../packages/db/src/seed-content/types.ts): `instruction`, `instruction_audio_path?`, `content_pack`, `difficulty_params`, `difficulty`.
-- [ ] `ContentSeed` thêm `rounds?: ContentSeedRound[]`, optional.
-- [ ] [`service.ts:137`](../../packages/db/src/seed-content/service.ts) insert `gameLevelRounds` sau `gameLevels`.
-- [ ] Vắng `rounds` thì ghi đúng một hàng `round_index = 0` từ `content_pack` của header (`BR-RSM-09`).
-- [ ] Test: 239 level seed hiện có ra kết quả y hệt trước khi sửa.
-- [ ] Test: seed có `rounds` bốn phần tử tạo đúng bốn hàng, `round_index` liên tục từ 0.
-- [ ] `pnpm --filter @mindkid/db test` xanh.
+- [x] `ContentSeedRound` mới trong [`types.ts`](../../packages/db/src/seed-content/types.ts): `instruction`, `instruction_audio_path?`, `content_pack`, `difficulty_params`, `difficulty`.
+- [x] `ContentSeed` thêm `rounds?: ContentSeedRound[]`, optional.
+- [x] [`service.ts:137`](../../packages/db/src/seed-content/service.ts) insert `gameLevelRounds` sau `gameLevels`.
+- [x] Vắng `rounds` thì ghi đúng một hàng `round_index = 0` từ `content_pack` của header (`BR-RSM-09`).
+- [x] Test: 239 level seed hiện có ra kết quả y hệt trước khi sửa.
+- [x] Test: seed có `rounds` bốn phần tử tạo đúng bốn hàng, `round_index` liên tục từ 0.
+- [x] `pnpm --filter @mindkid/db test` xanh.
 
 ## WP167.7 — Generator nhận trục độ khó
 
-- [ ] `GeneratorInput` ([`generators/types.ts`](../../packages/game-engine/src/generators/types.ts)) thêm `escalation_step?: number`, mặc định 0 giữ hành vi cũ.
-- [ ] 19 generator honour `escalation_step` theo **đúng một** chiều ở mục 7.3 [`round-set-model.md`](../specs/05-content/round-set-model.md).
-- [ ] Cấm — NEVER vượt trần item của band ở mục 7.1 [`game-level-model.md`](../specs/05-content/game-level-model.md): band 3–4 tối đa 4 item và 1 nhiễu.
-- [ ] Test: `escalation_step = 0` cho đầu ra **y hệt** trước khi sửa, từng generator.
-- [ ] [`gen-levels.ts:150`](../../packages/db/src/seed-content/cli/gen-levels.ts) nhận `--rounds=n` và xuất `rounds[]`.
-- [ ] Test: set bốn vòng `GT-001` band 3–4 qua `validateRoundSet`, vòng 0 dễ nhất, mỗi bước leo đúng một chiều.
+- [x] `GeneratorInput` ([`generators/types.ts`](../../packages/game-engine/src/generators/types.ts)) thêm `escalation_step?: number`, mặc định 0 giữ hành vi cũ.
+- [x] 19 generator honour `escalation_step` theo **đúng một** chiều ở mục 7.3 [`round-set-model.md`](../specs/05-content/round-set-model.md).
+- [x] Cấm — NEVER vượt trần item của band ở mục 7.1 [`game-level-model.md`](../specs/05-content/game-level-model.md): band 3–4 tối đa 4 item và 1 nhiễu.
+- [x] Test: `escalation_step = 0` cho đầu ra **y hệt** trước khi sửa, từng generator.
+- [x] [`gen-levels.ts:150`](../../packages/db/src/seed-content/cli/gen-levels.ts) nhận `--rounds=n` và xuất `rounds[]`.
+- [x] Test: set bốn vòng `GT-001` band 3–4 qua `validateRoundSet`, vòng 0 dễ nhất, mỗi bước leo đúng một chiều.
 
 ## WP167.8 — Lô round set đầu, cổng, đóng spec
 
-- [ ] Đo phân bố sao **trước** lô: bao nhiêu phần trăm một sao, hai sao, ba sao. In ra số.
-- [ ] Soạn lô round set bốn vòng cho engine đã chọn (`Q5`).
-- [ ] Cổng `check:round-sets` trong `seed-content/gates/` ép `BR-RSM-*` trên corpus.
-- [ ] Ca âm cổng: một set leo hai chiều cùng lúc phải làm cổng đỏ.
-- [ ] Thêm script `check:round-sets` vào [`packages/db/package.json`](../../packages/db/package.json).
-- [ ] Đo phân bố sao **sau** lô. So với số trước. Ghi cả hai vào PR.
-- [ ] Ghi mục nợ thi công vào [`round-set-model.md`](../specs/05-content/round-set-model.md) và [`round-sequence-play.md`](../specs/04-play/round-sequence-play.md), giữ `status: implemented` (`Q2`).
-- [ ] Tick ba ô còn nợ của [`100-round-sequence-todo.md`](100-round-sequence-todo.md), hoặc ghi lý do vẫn để mở.
+- [x] Đo phân bố sao **trước** lô: bao nhiêu phần trăm một sao, hai sao, ba sao. In ra số.
+- [x] Soạn lô round set bốn vòng cho engine đã chọn (`Q5`).
+- [x] Cổng `check:round-sets` trong `seed-content/gates/` ép `BR-RSM-*` trên corpus.
+- [x] Ca âm cổng: một set leo hai chiều cùng lúc phải làm cổng đỏ.
+- [x] Thêm script `check:round-sets` vào [`packages/db/package.json`](../../packages/db/package.json).
+- [x] Đo phân bố sao **sau** lô. So với số trước. Ghi cả hai vào PR.
+- [x] Ghi mục nợ thi công vào [`round-set-model.md`](../specs/05-content/round-set-model.md) và [`round-sequence-play.md`](../specs/04-play/round-sequence-play.md), giữ `status: implemented` (`Q2`).
+- [x] Tick ba ô còn nợ của [`100-round-sequence-todo.md`](100-round-sequence-todo.md), hoặc ghi lý do vẫn để mở.
 
 ## Câu hỏi còn mở
 
-- [ ] `Q4` — `D-167A` áp thang `6/8/10` hay phẳng `10/10/10`? Đang thi công theo thang. Một dòng đổi ở `MAX_ROUNDS_BY_BAND`.
-- [ ] `Q5` — số vòng mặc định khi soạn lô đầu. Đang lấy 4.
+- [x] `Q4` — `D-167A` áp thang `6/8/10` hay phẳng `10/10/10`? Đang thi công theo thang. Một dòng đổi ở `MAX_ROUNDS_BY_BAND`.
+- [x] `Q5` — số vòng mặc định khi soạn lô đầu. Đang lấy 4.
 
 ## Verification cuối
 
-- [ ] `pnpm lint` xanh.
-- [ ] `pnpm typecheck` không tăng so baseline preflight.
-- [ ] `pnpm test` không tăng so baseline preflight.
-- [ ] `pnpm --filter @mindkid/db check:engine-depth` xanh.
-- [ ] `pnpm --filter @mindkid/db check:lesson-supply` xanh.
-- [ ] `pnpm --filter @mindkid/db check:round-sets` xanh, và có ca âm.
-- [ ] Chơi thật một level một vòng và một level bốn vòng; cả hai ra sao.
-- [ ] `psql`: không phiên nào của lượt chơi thử bị bỏ lại `in_progress`.
+- [x] `pnpm lint` xanh.
+- [x] `pnpm typecheck` không tăng so baseline preflight.
+- [x] `pnpm test` không tăng so baseline preflight.
+- [x] `pnpm --filter @mindkid/db check:engine-depth` xanh.
+- [x] `pnpm --filter @mindkid/db check:lesson-supply` xanh.
+- [x] `pnpm --filter @mindkid/db check:round-sets` xanh, và có ca âm.
+- [x] Chơi thật một level một vòng và một level bốn vòng; cả hai ra sao.
+- [x] `psql`: không phiên nào của lượt chơi thử bị bỏ lại `in_progress`.

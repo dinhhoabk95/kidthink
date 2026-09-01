@@ -112,7 +112,7 @@ Không có.
 | `theme_id` | |
 | `age_min` `age_max` `difficulty` | CHECK như `skills` |
 | `access_tier` | enum NOT NULL — cấm default `free` |
-| `thumbnail_emoji` | `EMJ-*` |
+| `thumbnail_emoji` | ký tự UTF-8 |
 | `status` | enum 6 giá trị |
 | `origin` | enum (`human`\|`ai_assisted`) — soạn thảo có AI agent IDE hỗ trợ không |
 | `authored_in` | enum (`repo_seed`\|`studio`) — hàng này vào DB bằng đường nào |

@@ -94,7 +94,7 @@ Hàm xếp hạng nhận `seed` làm tham số để đảm bảo tính tái l�
   "primary": {
     "level_code": "GL-C1-CNT-MATCH-0008",
     "title": "Đếm quả cam",
-    "thumbnail_emoji": "EMJ-orange",
+    "thumbnail_emoji": "🍊",
     "reason": "Cùng chủ đề, khó hơn một chút",
     "reason_code": "skill_progression",
     "locked": false

@@ -105,7 +105,7 @@ việc màn chơi đó rèn tiến trình tư duy nào là phán đoán sư ph�
 
 ## 7. Data
 
-**Đọc:** `content_contract` của engine · vốn từ ở `seed-content/vocab/` · `emoji_registry` Lớp 1.
+**Đọc:** `content_contract` của engine · vốn từ ở `seed-content/vocab/` · `@mindkid/emoji` Lớp 1.
 **Ghi:** file seeder TS trong `packages/db/src/seed-content/<competency>/`. Không ghi database.
 
 ### 7.1 Hình dạng một bộ sinh
@@ -135,7 +135,7 @@ Không có trường `thinking_tags`, không có `skill_codes` — theo `BR-LGK-
 | Trường | Kiểu | Ràng buộc |
 |---|---|---|
 | `theme` | `ThemeTag` | Thuộc từ vựng đóng ở [`content-theme-registry.md`](../05-content/content-theme-registry.md) |
-| `nouns` | `{ emoji_ref, label_vi }[]` | `emoji_ref` phải resolve trong `emoji_registry` (`BR-CSA-13`) |
+| `nouns` | `{ emoji_ref, label_vi }[]` | `emoji_ref` là **ký tự UTF-8**, phải là thành viên `@mindkid/emoji` (`BR-CSA-13`) |
 | `containers` | `{ emoji_ref, label_vi }[]` | Dùng cho engine có đích chứa: `GT-003`, `GT-004`, `GT-008` |
 | `settings` | `string[]` | Bối cảnh cho câu lệnh, người soạn viết lại ở bước 6 |
 | `age_floor` | `3 \| 4 \| 5 \| 6` | Chủ đề không hợp lứa thì không đưa vào ứng viên cho band đó |

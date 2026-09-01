@@ -2,7 +2,7 @@ import { AppError } from "@mindkid/auth";
 import { and, desc, eq } from "drizzle-orm";
 import type { NodePgDatabase } from "drizzle-orm/node-postgres";
 import { activities, lessonActivities, lessons } from "#src/schema/content";
-import { gameLevels, gameTemplates } from "#src/schema/game";
+import { gameLevelRounds, gameLevels, gameTemplates } from "#src/schema/game";
 import { contentReviewLog, contentSeedBatches } from "#src/schema/ops";
 import { contentSkillMap } from "#src/schema/tagging";
 import { skills } from "#src/schema/taxonomy";
@@ -15,6 +15,7 @@ import type {
   ActivitySeed,
   AnyContentSeed,
   ContentSeed,
+  ContentSeedRound,
   GateResult,
   LessonSeed,
 } from "./types.js";
@@ -164,6 +165,31 @@ async function processGameLevelSeed(
   if (!newLevel) {
     throw new Error("Failed to insert game level");
   }
+
+  const roundsToInsert =
+    seed.rounds && seed.rounds.length > 0
+      ? seed.rounds.map((r: ContentSeedRound, idx: number) => ({
+          gameLevelId: newLevel.id,
+          roundIndex: idx,
+          instruction: r.instruction,
+          instructionAudioPath: r.instruction_audio_path ?? null,
+          contentPack: r.content_pack,
+          difficultyParams: r.difficulty_params,
+          difficulty: r.difficulty,
+        }))
+      : [
+          {
+            gameLevelId: newLevel.id,
+            roundIndex: 0,
+            instruction: header.instruction,
+            instructionAudioPath: null,
+            contentPack: content_pack,
+            difficultyParams: difficulty_params,
+            difficulty: header.difficulty,
+          },
+        ];
+
+  await tx.insert(gameLevelRounds).values(roundsToInsert);
 
   await linkGameLevelSkills(tx, newLevel.id, header.skill_codes);
 

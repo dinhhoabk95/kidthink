@@ -83,7 +83,7 @@ File này chốt định dạng, ai cấp, và cái gì không bao giờ đượ
 | Package | `PKG-` | `^PKG-[a-z_]{3,24}$` | `PKG-premium` | 1 |
 | Entitlement key | — | `^[a-z][a-z0-9_]{4,40}$` | `play_premium_games` | 1 |
 | Theme | — | `^[a-z][a-z0-9-]{2,24}$` | `farm` | 1 |
-| Emoji entry | `EMJ-` | `^EMJ-[a-z0-9-]{2,40}$` | `EMJ-apple-red` | 1 |
+| Emoji entry | — | không có mã; khoá là chính ký tự UTF-8 | `🍎` | 1 |
 
 ### 7.2 Bất biến sau `published`
 

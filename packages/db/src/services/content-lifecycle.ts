@@ -18,7 +18,7 @@ import {
   curriculumItems,
   curriculumWeeks,
 } from "#src/schema/curriculum";
-import { gameLevels } from "#src/schema/game";
+import { gameLevelRounds, gameLevels } from "#src/schema/game";
 import { contentReviewLog } from "#src/schema/ops";
 import { contentSkillMap } from "#src/schema/tagging";
 import { skills } from "#src/schema/taxonomy";
@@ -230,6 +230,48 @@ async function resolveActivityExtraData(
   };
 }
 
+async function resolveGameLevelRoundsExtraData(
+  db: ReturnType<typeof getOwnerDb>,
+  entityId: number,
+  recordData: Record<string, unknown>
+): Promise<Record<string, unknown>> {
+  const roundRows = await db
+    .select()
+    .from(gameLevelRounds)
+    .where(eq(gameLevelRounds.gameLevelId, entityId))
+    .orderBy(asc(gameLevelRounds.roundIndex));
+
+  if (roundRows.length > 0) {
+    return {
+      rounds: roundRows.map((r) => ({
+        round_index: r.roundIndex,
+        instruction: r.instruction,
+        instruction_audio_path: r.instructionAudioPath,
+        content_pack: r.contentPack,
+        difficulty_params: r.difficultyParams,
+        difficulty: r.difficulty,
+      })),
+    };
+  }
+
+  return {
+    rounds: [
+      {
+        round_index: 0,
+        instruction: (recordData.instruction as string) ?? "Chơi trò chơi",
+        instruction_audio_path:
+          (recordData.instructionAudioPath as string) ??
+          (recordData.instruction_audio_path as string) ??
+          undefined,
+        content_pack: recordData.contentPack ?? recordData.content_pack,
+        difficulty_params:
+          recordData.difficultyParams ?? recordData.difficulty_params,
+        difficulty: (recordData.difficulty as number) ?? 1,
+      },
+    ],
+  };
+}
+
 async function verifyPublishChecklist(
   entityType: string,
   recordData: Record<string, unknown>
@@ -261,6 +303,8 @@ async function verifyPublishChecklist(
 
   if (entityType === "lesson") {
     extraData = await verifyLessonActivities(db, entityId);
+  } else if (entityType === "game_level") {
+    extraData = await resolveGameLevelRoundsExtraData(db, entityId, recordData);
   } else if (entityType === "activity") {
     extraData = await resolveActivityExtraData(db, recordData, attachedSkills);
   } else if (entityType === "curriculum") {

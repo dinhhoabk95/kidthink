@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { EMOJI_REF_PATTERN, EmojiRef } from "#src/contracts/shared-fields";
+import { GT001Generator } from "#src/generators/gt001";
 import { GT010Generator } from "#src/generators/gt010";
 import { GT028Generator } from "#src/generators/gt028";
 import { GT029Generator } from "#src/generators/gt029";
@@ -392,5 +393,53 @@ describe("GT-034 — generator contract conformity", () => {
       expect(content_pack.grid.cols).toBeGreaterThanOrEqual(3);
       expect(content_pack.allowed_commands.length).toBeGreaterThanOrEqual(3);
     }
+  });
+
+  describe("WP167.7: escalation_step support across rounds", () => {
+    it("escalation_step = 0 yields identical output to undefined", () => {
+      const rng1 = createRng(12_345);
+      const rng2 = createRng(12_345);
+      const resWithout = GT001Generator.generate({
+        rng: rng1,
+        age_band: "3-4",
+        theme: "school",
+        vocabulary: themeVocab,
+      });
+      const resWithZero = GT001Generator.generate({
+        rng: rng2,
+        age_band: "3-4",
+        theme: "school",
+        vocabulary: themeVocab,
+        escalation_step: 0,
+      });
+
+      expect(resWithZero).toEqual(resWithout);
+    });
+
+    it("generates 4 rounds of GT-001 escalating monotonically within band limits", () => {
+      const rounds = [0, 1, 2, 3].map((step) => {
+        const rng = createRng(42);
+        return GT001Generator.generate({
+          rng,
+          age_band: "3-4",
+          theme: "school",
+          vocabulary: themeVocab,
+          escalation_step: step,
+        });
+      });
+
+      const optionCounts = rounds.map(
+        (r) => (r.content_pack as { options: unknown[] }).options.length
+      );
+      // For band 3-4, step 0 gives 3, step 1 gives 4, step 2 gives 4, step 3 gives 4 (capped at 4)
+      expect(optionCounts[0]).toBe(3);
+      expect(optionCounts[1]).toBe(4);
+      expect(optionCounts[2]).toBe(4);
+      expect(optionCounts[3]).toBe(4);
+
+      for (const count of optionCounts) {
+        expect(count).toBeLessThanOrEqual(4); // Band 3-4 cap is 4 items
+      }
+    });
   });
 });

@@ -1,7 +1,11 @@
 import { eq } from "drizzle-orm";
 import { describe, expect, it } from "vitest";
 import { getOwnerDb } from "#src/index";
-import { gameLevels, gameTemplates } from "#src/schema/game";
+import { gameLevelRounds, gameLevels, gameTemplates } from "#src/schema/game";
+import { executeSeedBatch } from "#src/seed-content/service";
+import type { ContentSeed } from "#src/seed-content/types";
+import { seedContentTags } from "#src/seed-master/content-tags";
+import { seedTaxonomyMasterData } from "#src/seed-master/taxonomy/index";
 
 describe("Game Schema Integration Tests", () => {
   async function getUniqueGameLevelCode(prefix = "GL-C1-NUM-DRAG") {
@@ -187,5 +191,171 @@ describe("Game Schema Integration Tests", () => {
       const fullText = (e.message ?? "") + (e.cause?.message ?? "");
       return fullText.includes("BR-SCT-05");
     });
+  });
+
+  it("WP167.6: ContentSeed with rounds creates rows in game_level_rounds", async () => {
+    const db = getOwnerDb();
+    await seedTaxonomyMasterData(db);
+    await seedContentTags(db);
+
+    const gtCode = "GT-001";
+    let [template] = await db
+      .select()
+      .from(gameTemplates)
+      .where(eq(gameTemplates.code, gtCode));
+    if (!template) {
+      const [t] = await db
+        .insert(gameTemplates)
+        .values({
+          code: gtCode,
+          name: "Tap Select",
+          engineSession: "GT-001",
+          mechanic: "tap_select",
+          status: "active",
+        })
+        .returning();
+      template = t;
+    }
+
+    const validGt001Content = {
+      prompt: "Tìm quả táo",
+      target_item: {
+        item_id: "apple",
+        asset: { kind: "emoji" as const, ref: "EMJ-red-apple" },
+      },
+      options: [
+        {
+          item_id: "apple",
+          asset: { kind: "emoji" as const, ref: "EMJ-red-apple" },
+          is_correct: true,
+        },
+        {
+          item_id: "banana",
+          asset: { kind: "emoji" as const, ref: "EMJ-banana" },
+          is_correct: false,
+        },
+      ],
+    };
+    const validGt001Diff = {
+      distractor_count: 1,
+      hint_after_ms: 10_000,
+      allow_retry: true,
+      shuffle_items: true,
+    };
+
+    const codeMulti = await getUniqueGameLevelCode("GL-C1-CNT-NUM");
+    const seedWithRounds: ContentSeed = {
+      kind: "game_level",
+      header: {
+        code: codeMulti,
+        content_version: 1,
+        template_code: gtCode,
+        title: "Multi Round Level",
+        instruction: "Chơi 4 vòng",
+        age_min: 3,
+        age_max: 4,
+        difficulty: 1,
+        access_tier: "free",
+        skill_codes: ["C1.CNT.01"],
+        learning_objective_codes: ["LO-C1.CNT.01-01"],
+        what_tags: ["fruits"],
+        thinking_tags: ["counting"],
+        origin: "human",
+        authored_in: "studio",
+      },
+      content_pack: validGt001Content,
+      difficulty_params: validGt001Diff,
+      rounds: [
+        {
+          instruction: "Vòng 0",
+          content_pack: validGt001Content,
+          difficulty_params: validGt001Diff,
+          difficulty: 1,
+        },
+        {
+          instruction: "Vòng 1",
+          content_pack: validGt001Content,
+          difficulty_params: validGt001Diff,
+          difficulty: 1,
+        },
+        {
+          instruction: "Vòng 2",
+          content_pack: validGt001Content,
+          difficulty_params: validGt001Diff,
+          difficulty: 2,
+        },
+        {
+          instruction: "Vòng 3",
+          content_pack: validGt001Content,
+          difficulty_params: validGt001Diff,
+          difficulty: 2,
+        },
+      ],
+    };
+
+    const codeSingle = await getUniqueGameLevelCode("GL-C1-CNT-NUM");
+    const seedWithoutRounds: ContentSeed = {
+      kind: "game_level",
+      header: {
+        code: codeSingle,
+        content_version: 1,
+        template_code: gtCode,
+        title: "Single Round Default Level",
+        instruction: "Chơi 1 vòng mặc định",
+        age_min: 3,
+        age_max: 4,
+        difficulty: 1,
+        access_tier: "free",
+        skill_codes: ["C1.CNT.01"],
+        learning_objective_codes: ["LO-C1.CNT.01-01"],
+        what_tags: ["fruits"],
+        thinking_tags: ["counting"],
+        origin: "human",
+        authored_in: "studio",
+      },
+      content_pack: validGt001Content,
+      difficulty_params: validGt001Diff,
+    };
+
+    const batchRes = await executeSeedBatch(db, {
+      batchCode: `TEST-ROUNDS-${Date.now()}`,
+      seeds: [seedWithRounds, seedWithoutRounds],
+    });
+
+    expect(batchRes.rowsInserted).toBe(2);
+
+    // 1. Verify multi-round level has 4 rows
+    const [levelMulti] = await db
+      .select()
+      .from(gameLevels)
+      .where(eq(gameLevels.code, codeMulti));
+    expect(levelMulti).toBeDefined();
+    if (!levelMulti) {
+      throw new Error("levelMulti not found");
+    }
+
+    const roundsMulti = await db
+      .select()
+      .from(gameLevelRounds)
+      .where(eq(gameLevelRounds.gameLevelId, levelMulti.id));
+    expect(roundsMulti).toHaveLength(4);
+    expect(roundsMulti.map((r) => r.roundIndex).sort()).toEqual([0, 1, 2, 3]);
+
+    // 2. Verify single-round level has 1 row with round_index = 0
+    const [levelSingle] = await db
+      .select()
+      .from(gameLevels)
+      .where(eq(gameLevels.code, codeSingle));
+    expect(levelSingle).toBeDefined();
+    if (!levelSingle) {
+      throw new Error("levelSingle not found");
+    }
+
+    const roundsSingle = await db
+      .select()
+      .from(gameLevelRounds)
+      .where(eq(gameLevelRounds.gameLevelId, levelSingle.id));
+    expect(roundsSingle).toHaveLength(1);
+    expect(roundsSingle[0]?.roundIndex).toBe(0);
   });
 });
