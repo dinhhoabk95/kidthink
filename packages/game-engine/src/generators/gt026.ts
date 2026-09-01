@@ -1,4 +1,4 @@
-import { getNouns, sampleUnique } from "./helpers.js";
+import { getNouns, sampleUnique, VALID_GENERATOR_THEMES } from "./helpers.js";
 import type { LevelGenerator } from "./types.js";
 
 export const GT026Generator: LevelGenerator = {
@@ -6,7 +6,7 @@ export const GT026Generator: LevelGenerator = {
   axes: {
     age_band: ["4-5", "5-6"],
     what: ["inhibition", "attention", "reaction"],
-    theme: ["school", "farm", "home", "nature", "food"],
+    theme: [...VALID_GENERATOR_THEMES],
   },
   generate({ rng, vocabulary }) {
     const nouns = getNouns(vocabulary, 6);

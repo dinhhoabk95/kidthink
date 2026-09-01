@@ -303,6 +303,47 @@ export const CONTENT_THEMES: readonly ContentTheme[] = [
       { text_vi: "Ngọn nến", emoji_ref: "EMJ-candle" },
     ],
   },
+  {
+    code: "job",
+    label_vi: "Nghề nghiệp",
+    label: "Nghề nghiệp",
+    age_floor: 3,
+    icon_emoji_ref: "EMJ-firefighter",
+    description: "Bác sĩ, cô giáo, đầu bếp, công an, nông dân, thợ xây",
+    nouns: [
+      { text_vi: "Bác sĩ", emoji_ref: "EMJ-doctor" },
+      { text_vi: "Cô giáo", emoji_ref: "EMJ-teacher" },
+      { text_vi: "Đầu bếp", emoji_ref: "EMJ-chef" },
+      { text_vi: "Lính cứu hỏa", emoji_ref: "EMJ-firefighter" },
+      { text_vi: "Cảnh sát", emoji_ref: "EMJ-police" },
+      { text_vi: "Nông dân", emoji_ref: "EMJ-farmer" },
+      { text_vi: "Phi công", emoji_ref: "EMJ-pilot" },
+      { text_vi: "Thợ sửa", emoji_ref: "EMJ-mechanic" },
+      { text_vi: "Họa sĩ", emoji_ref: "EMJ-artist" },
+      { text_vi: "Nhà khoa học", emoji_ref: "EMJ-scientist" },
+    ],
+  },
+  {
+    code: "homeland",
+    label_vi: "Quê hương – Đất nước",
+    label: "Quê hương – Đất nước",
+    age_floor: 4,
+    icon_emoji_ref: "EMJ-vietnam-flag",
+    description:
+      "Quê hương, cờ đỏ sao vàng, danh lam thắng cảnh, di tích truyền thống",
+    nouns: [
+      { text_vi: "Cờ Việt Nam", emoji_ref: "EMJ-vietnam-flag" },
+      { text_vi: "Hoa sen", emoji_ref: "EMJ-lotus" },
+      { text_vi: "Bông lúa", emoji_ref: "EMJ-rice" },
+      { text_vi: "Ngôi sao vàng", emoji_ref: "EMJ-glowing-star" },
+      { text_vi: "Cánh đồng lúa", emoji_ref: "EMJ-rice-paddy" },
+      { text_vi: "Núi non", emoji_ref: "EMJ-mountain" },
+      { text_vi: "Trâu nước", emoji_ref: "EMJ-water-buffalo" },
+      { text_vi: "Cầu ban đêm", emoji_ref: "EMJ-bridge-at-night" },
+      { text_vi: "Bình minh", emoji_ref: "EMJ-sunrise-over-mountains" },
+      { text_vi: "Thuyền buồm", emoji_ref: "EMJ-sailboat" },
+    ],
+  },
 ] as const;
 
 export type ContentThemeCode = (typeof CONTENT_THEMES)[number]["code"];

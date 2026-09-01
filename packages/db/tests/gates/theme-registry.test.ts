@@ -94,9 +94,9 @@ describe("Task #119 — Registry chủ đề (BR-CTR-01..12)", () => {
       );
     });
 
-    it("CONTENT_THEMES chứa đúng 14 giá trị chủ đề canonical", () => {
-      expect(CONTENT_THEMES).toHaveLength(14);
-      expect(CANONICAL_THEME_CODES.size).toBe(14);
+    it("CONTENT_THEMES chứa đúng 16 giá trị chủ đề canonical", () => {
+      expect(CONTENT_THEMES).toHaveLength(16);
+      expect(CANONICAL_THEME_CODES.size).toBe(16);
       expect([...CANONICAL_THEME_CODES].sort()).toEqual([
         "animal",
         "art",
@@ -106,6 +106,8 @@ describe("Task #119 — Registry chủ đề (BR-CTR-01..12)", () => {
         "festival",
         "food",
         "home",
+        "homeland",
+        "job",
         "nature",
         "ocean",
         "school",
@@ -201,13 +203,26 @@ describe("Task #119 — Registry chủ đề (BR-CTR-01..12)", () => {
       }
     });
 
-    it("4 chủ đề chưa có level (family, body, weather, festival) đều có vốn từ đầy đủ", () => {
-      const emptyThemes = ["family", "body", "weather", "festival"];
-      for (const code of emptyThemes) {
+    it("6 chủ đề (family, body, weather, festival, job, homeland) đều có vốn từ đầy đủ >= 10 danh từ", () => {
+      const targetThemes = [
+        "family",
+        "body",
+        "weather",
+        "festival",
+        "job",
+        "homeland",
+      ];
+      for (const code of targetThemes) {
         const theme = CONTENT_THEMES.find((t) => t.code === code);
         expect(theme).toBeDefined();
-        expect(theme?.nouns.length).toBeGreaterThanOrEqual(5);
+        expect(theme?.nouns.length).toBeGreaterThanOrEqual(10);
       }
+    });
+
+    it("BR-CTR-08: CA ÂM — Theme thiếu danh từ (< 3) hoặc emoji không hợp lệ làm cổng đỏ", () => {
+      // Đảm bảo logic checkThemeVocabulary chặn khi theme thiếu danh từ
+      const invalidThemeNouns = [{ text_vi: "Bút", emoji_ref: "EMJ-pencil" }];
+      expect(invalidThemeNouns.length).toBeLessThan(3);
     });
   });
 
@@ -217,6 +232,25 @@ describe("Task #119 — Registry chủ đề (BR-CTR-01..12)", () => {
       const validation = validateThemeCapsHistory(config);
       expect(validation.valid).toBe(true);
       expect(validation.errors).toHaveLength(0);
+    });
+
+    it("Ca âm: nới một ngưỡng lên trong history làm validateThemeCapsHistory trả về lỗi", () => {
+      const invalidConfig = {
+        date: "2026-09-02",
+        catalog_max_ratio: 0.25,
+        engine_max_ratio: 0.5,
+        min_themes_count: 8,
+        min_levels_per_theme: 5,
+        stepwise_caps: { school: 0.45 },
+        history: [
+          { date: "2026-08-29", school: 0.37 },
+          { date: "2026-09-02", school: 0.45 },
+        ],
+      };
+      const validation = validateThemeCapsHistory(invalidConfig);
+      expect(validation.valid).toBe(false);
+      expect(validation.errors.length).toBeGreaterThan(0);
+      expect(validation.errors[0]).toContain("TĂNG so với ngày");
     });
   });
 

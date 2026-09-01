@@ -39,6 +39,7 @@
     "check:theme-registry": "vitest run tests/gates/theme-registry.test.ts",
     "check:engine-depth": "tsx src/seed-content/cli/check-engine-depth.ts",
     "check:lesson-supply": "tsx src/seed-content/cli/check-lesson-supply.ts",
+    "check:skill-quota": "tsx scripts/check-skill-quota.ts",
     "check:go-live": "tsx src/seed-content/cli/check-go-live.ts",
     "gen:levels": "tsx src/seed-content/cli/gen-levels.ts",
     "reset-content": "tsx scripts/reset-content.ts"

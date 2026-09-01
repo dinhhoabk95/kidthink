@@ -3,18 +3,8 @@ import type {
   GT033Difficulty,
   GT033PaletteItem,
 } from "#src/templates/GT-033/template";
+import { VALID_GENERATOR_THEMES } from "./helpers.js";
 import type { LevelGenerator } from "./types.js";
-
-const DEFAULT_THEMES = [
-  "home",
-  "school",
-  "food",
-  "farm",
-  "nature",
-  "festival",
-  "sports",
-  "craft",
-];
 
 const COLOR_NAMES: Record<string, string> = {
   red: "Đỏ",
@@ -30,7 +20,7 @@ export const GT033Generator: LevelGenerator = {
   axes: {
     age_band: ["5-6"],
     what: ["pattern", "colour", "space", "sequence"],
-    theme: DEFAULT_THEMES,
+    theme: [...VALID_GENERATOR_THEMES],
   },
   generate({ rng, age_band: _age_band }) {
     const size = 2 + rng.nextInt(2); // 2 or 3 (2x2 or 3x3)

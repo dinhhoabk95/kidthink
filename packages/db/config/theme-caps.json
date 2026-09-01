@@ -1,8 +1,8 @@
 {
-  "date": "2026-08-29",
+  "date": "2026-09-01",
   "catalog_max_ratio": 0.25,
   "engine_max_ratio": 0.5,
-  "min_themes_count": 8,
+  "min_themes_count": 10,
   "min_levels_per_theme": 5,
   "stepwise_caps": {
     "school": 0.37
@@ -10,6 +10,10 @@
   "history": [
     {
       "date": "2026-08-29",
+      "school": 0.37
+    },
+    {
+      "date": "2026-09-01",
       "school": 0.37
     }
   ]

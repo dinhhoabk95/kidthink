@@ -2261,7 +2261,7 @@ export const C6_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
       age_min: 5,
       age_max: 6,
       difficulty: 3,
-      access_tier: "standard",
+      access_tier: "free",
       skill_codes: ["C6.FLX.01"],
       learning_objective_codes: ["LO-C6.FLX.01-01"],
       what_tags: ["rule"],

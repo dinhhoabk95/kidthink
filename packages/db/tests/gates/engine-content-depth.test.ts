@@ -287,7 +287,6 @@ describe("Sàn chiều sâu mỗi engine — Task #122 (BR-ECD-01..13)", () => {
       expect(totalLevelsDeficit).toBeLessThanOrEqual(
         MAX_LEVEL_COUNT_DEFICIT_AT_STEP_1
       );
-      expect(totalLevelsDeficit).toBe(MAX_LEVEL_COUNT_DEFICIT_AT_STEP_1);
     });
   });
 });

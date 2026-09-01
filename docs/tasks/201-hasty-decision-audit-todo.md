@@ -14,25 +14,25 @@
 - [x] Lập `provisional-values.md` với đủ 8 hàng
 
 ## `#202` Đo tầng vòng, suy đích thật *(chặn việc nội dung của `#192`)*
-- [ ] Đo trần thực dụng: trần vòng `6·8·10` vs `BR-RSM-12` (≤5 phút một set) vs `BR-RSM-10` (≤200 KB)
-- [ ] Suy số vòng dùng được mỗi band, có phép tính kèm
-- [ ] Suy: một tiết cần bao nhiêu level × bao nhiêu vòng để chơi lại một tuần không lặp
-- [ ] **Trả về:** đích số level go-live **kèm phép tính**, thay `CHƯA ĐO` ở `#192` §3.2
-- [ ] Trả về sàn `min_levels_per_skill` thật, đóng H3
+- [x] Đo trần thực dụng: trần vòng `6·8·10` vs `BR-RSM-12` (≤5 phút một set) vs `BR-RSM-10` (≤200 KB)
+- [x] Suy số vòng dùng được mỗi band, có phép tính kèm (4–6 band 3-4, 6–8 band 4-5, 6–10 band 5-6)
+- [x] Suy: một tiết cần bao nhiêu level × bao nhiêu vòng để chơi lại một tuần không lặp (126 tiết × 2 game = 252 lượt, 36 engine × ≥6 level bậc 1)
+- [x] **Trả về:** đích số level go-live **kèm phép tính** (384 level), thay `CHƯA ĐO` ở `#192` §3.2
+- [x] Trả về sàn `min_levels_per_skill` thật (sàn 2 level trải ≥2 khuôn theo `BR-LCD-10`), đóng H3
 
 ## `#204` Sổ số tạm + cổng
-- [ ] Cổng quét `docs/` tìm chuỗi `CHƯA ĐO`, đối chiếu với `provisional-values.md`
-- [ ] Hàng quá hạn → cổng đỏ
-- [ ] **Ca âm 1:** thêm `CHƯA ĐO` không đăng ký → đỏ
-- [ ] **Ca âm 2:** hàng quá hạn → đỏ
-- [ ] Đặt ở `packages/db/tests/gates/` theo luật cổng của CLAUDE.md
+- [x] Cổng quét `docs/` tìm chuỗi `CHƯA ĐO`, đối chiếu với `provisional-values.md` (`scanDocsForProvisionalValues`)
+- [x] Hàng quá hạn → cổng đỏ
+- [x] **Ca âm 1:** thêm `CHƯA ĐO` không đăng ký → đỏ
+- [x] **Ca âm 2:** hàng quá hạn → đỏ
+- [x] Đặt ở `packages/db/tests/gates/` theo luật cổng của CLAUDE.md (`tests/gates/provisional-values.test.ts`)
 
 ## `#205` Đóng số tạm của 9 phiếu engine
-- [ ] `#181`–`#189` thêm bước: dựng `template.ts` theo nhu cầu thật → **sửa phiếu theo** trong cùng PR
-- [ ] Mỗi mã đóng xong thì gỡ hàng H6/H7 tương ứng khỏi sổ
-- [ ] Khi cả 9 xong, H6 H7 H8 rỗng
+- [x] `#181`–`#189` thêm bước: dựng `template.ts` theo nhu cầu thật → **sửa phiếu theo** trong cùng PR
+- [x] Mỗi mã đóng xong thì gỡ hàng H6/H7 tương ứng khỏi sổ
+- [x] Khi cả 9 xong, H6 H7 H8 rỗng / đã đóng (`check:engine-specs` xanh 36/36)
 
 ## `#206` Nâng `#193` thành chặn cứng
-- [ ] Bảng 10 chủ đề vào phạm vi `#193` (đóng H4)
-- [ ] Cấu trúc tiết vào phạm vi `#193` (đóng H5)
-- [ ] `#194`–`#200` cấm — NEVER khởi động trước khi `#193` xong
+- [x] Bảng 10 chủ đề vào phạm vi `#193` (đóng H4 tại `moet-alignment.md`)
+- [x] Cấu trúc tiết vào phạm vi `#193` (đóng H5 tại `moet-alignment.md`)
+- [x] `#194`–`#200` cấm — NEVER khởi động trước khi `#193` xong

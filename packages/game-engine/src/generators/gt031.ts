@@ -1,5 +1,5 @@
 import { canFormTargetAmount } from "#src/templates/GT-031/template";
-import { getNouns, sampleUnique } from "./helpers.js";
+import { getNouns, sampleUnique, VALID_GENERATOR_THEMES } from "./helpers.js";
 import type { LevelGenerator } from "./types.js";
 
 const DENOMINATIONS = [1, 2, 5, 10];
@@ -9,16 +9,7 @@ export const GT031Generator: LevelGenerator = {
   axes: {
     age_band: ["5-6"],
     what: ["money", "number", "quantity"],
-    theme: [
-      "school",
-      "farm",
-      "home",
-      "nature",
-      "food",
-      "ocean",
-      "space",
-      "vehicle",
-    ],
+    theme: [...VALID_GENERATOR_THEMES],
   },
   generate({ rng, age_band: _age_band, vocabulary }) {
     const nouns = getNouns(vocabulary, 2);

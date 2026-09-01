@@ -1,5 +1,10 @@
 import type { Rng } from "#src/rng/types";
-import { getNouns, pickOne, sampleUnique } from "./helpers.js";
+import {
+  getNouns,
+  pickOne,
+  sampleUnique,
+  VALID_GENERATOR_THEMES,
+} from "./helpers.js";
 import type { LevelGenerator } from "./types.js";
 
 function generateOptions(
@@ -55,16 +60,7 @@ export const GT030Generator: LevelGenerator = {
   axes: {
     age_band: ["5-6"],
     what: ["size", "quantity", "number"],
-    theme: [
-      "school",
-      "farm",
-      "home",
-      "nature",
-      "food",
-      "ocean",
-      "space",
-      "vehicle",
-    ],
+    theme: [...VALID_GENERATOR_THEMES],
   },
   generate({ rng, age_band: _age_band, vocabulary }) {
     const nouns = getNouns(vocabulary, 6);

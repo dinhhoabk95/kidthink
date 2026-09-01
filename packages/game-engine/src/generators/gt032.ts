@@ -3,6 +3,7 @@ import type {
   GT032CupShape,
   GT032QuestionType,
 } from "#src/templates/GT-032/template";
+import { VALID_GENERATOR_THEMES } from "./helpers.js";
 import type { LevelGenerator } from "./types.js";
 
 const SHAPES: GT032CupShape[] = [
@@ -18,16 +19,7 @@ export const GT032Generator: LevelGenerator = {
   axes: {
     age_band: ["5-6"],
     what: ["capacity", "quantity", "size"],
-    theme: [
-      "school",
-      "farm",
-      "home",
-      "nature",
-      "food",
-      "ocean",
-      "space",
-      "vehicle",
-    ],
+    theme: [...VALID_GENERATOR_THEMES],
   },
   generate({ rng, age_band: _age_band }) {
     const isTrap = rng.nextInt(2) === 1;

@@ -1,10 +1,10 @@
 /**
- * @generated from LEVEL-GENERATOR-KIT@2603751deab2
+ * @generated from LEVEL-GENERATOR-KIT@104ad5da676b
  * Engine: GT-001
  * Seed: 999
- * Theme: farm
+ * Theme: school
  * Band: 3-4
- * Total generated: 5
+ * Total generated: 10
  */
 import type { ContentSeed } from "#src/seed-content/types";
 
@@ -24,17 +24,17 @@ export const GEN_GT001_999: ContentSeed<unknown, unknown>[] = [
       "learning_objective_codes": [],
       "what_tags": [],
       "thinking_tags": [],
-      "theme_tag": "farm",
+      "theme_tag": "school",
       "origin": "ai_assisted",
       "authored_in": "repo_seed"
     },
     "content_pack": {
       "prompt": "Bé hãy chạm vào hình giống mẫu nhé!",
       "target_item": {
-        "item_id": "item_EMJ-duck",
+        "item_id": "item_EMJ-bell",
         "asset": {
           "kind": "emoji",
-          "ref": "EMJ-duck"
+          "ref": "EMJ-bell"
         }
       },
       "options": [
@@ -42,7 +42,7 @@ export const GEN_GT001_999: ContentSeed<unknown, unknown>[] = [
           "item_id": "opt_1",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-duck"
+            "ref": "EMJ-bell"
           },
           "is_correct": true
         },
@@ -50,7 +50,7 @@ export const GEN_GT001_999: ContentSeed<unknown, unknown>[] = [
           "item_id": "opt_2",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-sheep"
+            "ref": "EMJ-open-book"
           },
           "is_correct": false
         },
@@ -58,7 +58,7 @@ export const GEN_GT001_999: ContentSeed<unknown, unknown>[] = [
           "item_id": "opt_3",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-rooster"
+            "ref": "EMJ-pencil"
           },
           "is_correct": false
         }
@@ -86,17 +86,17 @@ export const GEN_GT001_999: ContentSeed<unknown, unknown>[] = [
       "learning_objective_codes": [],
       "what_tags": [],
       "thinking_tags": [],
-      "theme_tag": "farm",
+      "theme_tag": "school",
       "origin": "ai_assisted",
       "authored_in": "repo_seed"
     },
     "content_pack": {
       "prompt": "Bé hãy chạm vào hình giống mẫu nhé!",
       "target_item": {
-        "item_id": "item_EMJ-goat",
+        "item_id": "item_EMJ-scissors",
         "asset": {
           "kind": "emoji",
-          "ref": "EMJ-goat"
+          "ref": "EMJ-scissors"
         }
       },
       "options": [
@@ -104,7 +104,7 @@ export const GEN_GT001_999: ContentSeed<unknown, unknown>[] = [
           "item_id": "opt_1",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-sheep"
+            "ref": "EMJ-open-book"
           },
           "is_correct": false
         },
@@ -112,7 +112,7 @@ export const GEN_GT001_999: ContentSeed<unknown, unknown>[] = [
           "item_id": "opt_2",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-goat"
+            "ref": "EMJ-scissors"
           },
           "is_correct": true
         },
@@ -120,7 +120,7 @@ export const GEN_GT001_999: ContentSeed<unknown, unknown>[] = [
           "item_id": "opt_3",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-duck"
+            "ref": "EMJ-bell"
           },
           "is_correct": false
         }
@@ -148,17 +148,17 @@ export const GEN_GT001_999: ContentSeed<unknown, unknown>[] = [
       "learning_objective_codes": [],
       "what_tags": [],
       "thinking_tags": [],
-      "theme_tag": "farm",
+      "theme_tag": "school",
       "origin": "ai_assisted",
       "authored_in": "repo_seed"
     },
     "content_pack": {
       "prompt": "Bé hãy chạm vào hình giống mẫu nhé!",
       "target_item": {
-        "item_id": "item_EMJ-cow",
+        "item_id": "item_EMJ-backpack",
         "asset": {
           "kind": "emoji",
-          "ref": "EMJ-cow"
+          "ref": "EMJ-backpack"
         }
       },
       "options": [
@@ -166,7 +166,7 @@ export const GEN_GT001_999: ContentSeed<unknown, unknown>[] = [
           "item_id": "opt_1",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-goat"
+            "ref": "EMJ-scissors"
           },
           "is_correct": false
         },
@@ -174,7 +174,7 @@ export const GEN_GT001_999: ContentSeed<unknown, unknown>[] = [
           "item_id": "opt_2",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-rooster"
+            "ref": "EMJ-pencil"
           },
           "is_correct": false
         },
@@ -182,7 +182,7 @@ export const GEN_GT001_999: ContentSeed<unknown, unknown>[] = [
           "item_id": "opt_3",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-cow"
+            "ref": "EMJ-backpack"
           },
           "is_correct": true
         }
@@ -210,17 +210,17 @@ export const GEN_GT001_999: ContentSeed<unknown, unknown>[] = [
       "learning_objective_codes": [],
       "what_tags": [],
       "thinking_tags": [],
-      "theme_tag": "farm",
+      "theme_tag": "school",
       "origin": "ai_assisted",
       "authored_in": "repo_seed"
     },
     "content_pack": {
       "prompt": "Bé hãy chạm vào hình giống mẫu nhé!",
       "target_item": {
-        "item_id": "item_EMJ-horse",
+        "item_id": "item_EMJ-crayon",
         "asset": {
           "kind": "emoji",
-          "ref": "EMJ-horse"
+          "ref": "EMJ-crayon"
         }
       },
       "options": [
@@ -228,7 +228,7 @@ export const GEN_GT001_999: ContentSeed<unknown, unknown>[] = [
           "item_id": "opt_1",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-horse"
+            "ref": "EMJ-crayon"
           },
           "is_correct": true
         },
@@ -236,7 +236,7 @@ export const GEN_GT001_999: ContentSeed<unknown, unknown>[] = [
           "item_id": "opt_2",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-duck"
+            "ref": "EMJ-bell"
           },
           "is_correct": false
         },
@@ -244,7 +244,7 @@ export const GEN_GT001_999: ContentSeed<unknown, unknown>[] = [
           "item_id": "opt_3",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-cow"
+            "ref": "EMJ-backpack"
           },
           "is_correct": false
         }
@@ -272,17 +272,17 @@ export const GEN_GT001_999: ContentSeed<unknown, unknown>[] = [
       "learning_objective_codes": [],
       "what_tags": [],
       "thinking_tags": [],
-      "theme_tag": "farm",
+      "theme_tag": "school",
       "origin": "ai_assisted",
       "authored_in": "repo_seed"
     },
     "content_pack": {
       "prompt": "Bé hãy chạm vào hình giống mẫu nhé!",
       "target_item": {
-        "item_id": "item_EMJ-tractor",
+        "item_id": "item_EMJ-school",
         "asset": {
           "kind": "emoji",
-          "ref": "EMJ-tractor"
+          "ref": "EMJ-school"
         }
       },
       "options": [
@@ -290,7 +290,7 @@ export const GEN_GT001_999: ContentSeed<unknown, unknown>[] = [
           "item_id": "opt_1",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-sheep"
+            "ref": "EMJ-open-book"
           },
           "is_correct": false
         },
@@ -298,7 +298,7 @@ export const GEN_GT001_999: ContentSeed<unknown, unknown>[] = [
           "item_id": "opt_2",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-rooster"
+            "ref": "EMJ-pencil"
           },
           "is_correct": false
         },
@@ -306,7 +306,317 @@ export const GEN_GT001_999: ContentSeed<unknown, unknown>[] = [
           "item_id": "opt_3",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-tractor"
+            "ref": "EMJ-school"
+          },
+          "is_correct": true
+        }
+      ]
+    },
+    "difficulty_params": {
+      "distractor_count": 2,
+      "hint_after_ms": 10000,
+      "allow_retry": true,
+      "shuffle_items": true
+    }
+  },
+  {
+    "header": {
+      "code": "GL-GEN-GT-001-999-06",
+      "content_version": 1,
+      "template_code": "GT-001",
+      "title": "",
+      "instruction": "",
+      "age_min": 3,
+      "age_max": 4,
+      "difficulty": 1,
+      "access_tier": "free",
+      "skill_codes": [],
+      "learning_objective_codes": [],
+      "what_tags": [],
+      "thinking_tags": [],
+      "theme_tag": "school",
+      "origin": "ai_assisted",
+      "authored_in": "repo_seed"
+    },
+    "content_pack": {
+      "prompt": "Bé hãy chạm vào hình giống mẫu nhé!",
+      "target_item": {
+        "item_id": "item_EMJ-backpack",
+        "asset": {
+          "kind": "emoji",
+          "ref": "EMJ-backpack"
+        }
+      },
+      "options": [
+        {
+          "item_id": "opt_1",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-scissors"
+          },
+          "is_correct": false
+        },
+        {
+          "item_id": "opt_2",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-backpack"
+          },
+          "is_correct": true
+        },
+        {
+          "item_id": "opt_3",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-open-book"
+          },
+          "is_correct": false
+        }
+      ]
+    },
+    "difficulty_params": {
+      "distractor_count": 2,
+      "hint_after_ms": 10000,
+      "allow_retry": true,
+      "shuffle_items": true
+    }
+  },
+  {
+    "header": {
+      "code": "GL-GEN-GT-001-999-07",
+      "content_version": 1,
+      "template_code": "GT-001",
+      "title": "",
+      "instruction": "",
+      "age_min": 3,
+      "age_max": 4,
+      "difficulty": 1,
+      "access_tier": "free",
+      "skill_codes": [],
+      "learning_objective_codes": [],
+      "what_tags": [],
+      "thinking_tags": [],
+      "theme_tag": "school",
+      "origin": "ai_assisted",
+      "authored_in": "repo_seed"
+    },
+    "content_pack": {
+      "prompt": "Bé hãy chạm vào hình giống mẫu nhé!",
+      "target_item": {
+        "item_id": "item_EMJ-pencil",
+        "asset": {
+          "kind": "emoji",
+          "ref": "EMJ-pencil"
+        }
+      },
+      "options": [
+        {
+          "item_id": "opt_1",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-crayon"
+          },
+          "is_correct": false
+        },
+        {
+          "item_id": "opt_2",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-pencil"
+          },
+          "is_correct": true
+        },
+        {
+          "item_id": "opt_3",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-school"
+          },
+          "is_correct": false
+        }
+      ]
+    },
+    "difficulty_params": {
+      "distractor_count": 2,
+      "hint_after_ms": 10000,
+      "allow_retry": true,
+      "shuffle_items": true
+    }
+  },
+  {
+    "header": {
+      "code": "GL-GEN-GT-001-999-08",
+      "content_version": 1,
+      "template_code": "GT-001",
+      "title": "",
+      "instruction": "",
+      "age_min": 3,
+      "age_max": 4,
+      "difficulty": 1,
+      "access_tier": "free",
+      "skill_codes": [],
+      "learning_objective_codes": [],
+      "what_tags": [],
+      "thinking_tags": [],
+      "theme_tag": "school",
+      "origin": "ai_assisted",
+      "authored_in": "repo_seed"
+    },
+    "content_pack": {
+      "prompt": "Bé hãy chạm vào hình giống mẫu nhé!",
+      "target_item": {
+        "item_id": "item_EMJ-crayon",
+        "asset": {
+          "kind": "emoji",
+          "ref": "EMJ-crayon"
+        }
+      },
+      "options": [
+        {
+          "item_id": "opt_1",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-bell"
+          },
+          "is_correct": false
+        },
+        {
+          "item_id": "opt_2",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-pencil"
+          },
+          "is_correct": false
+        },
+        {
+          "item_id": "opt_3",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-crayon"
+          },
+          "is_correct": true
+        }
+      ]
+    },
+    "difficulty_params": {
+      "distractor_count": 2,
+      "hint_after_ms": 10000,
+      "allow_retry": true,
+      "shuffle_items": true
+    }
+  },
+  {
+    "header": {
+      "code": "GL-GEN-GT-001-999-09",
+      "content_version": 1,
+      "template_code": "GT-001",
+      "title": "",
+      "instruction": "",
+      "age_min": 3,
+      "age_max": 4,
+      "difficulty": 1,
+      "access_tier": "free",
+      "skill_codes": [],
+      "learning_objective_codes": [],
+      "what_tags": [],
+      "thinking_tags": [],
+      "theme_tag": "school",
+      "origin": "ai_assisted",
+      "authored_in": "repo_seed"
+    },
+    "content_pack": {
+      "prompt": "Bé hãy chạm vào hình giống mẫu nhé!",
+      "target_item": {
+        "item_id": "item_EMJ-crayon",
+        "asset": {
+          "kind": "emoji",
+          "ref": "EMJ-crayon"
+        }
+      },
+      "options": [
+        {
+          "item_id": "opt_1",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-abacus"
+          },
+          "is_correct": false
+        },
+        {
+          "item_id": "opt_2",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-crayon"
+          },
+          "is_correct": true
+        },
+        {
+          "item_id": "opt_3",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-backpack"
+          },
+          "is_correct": false
+        }
+      ]
+    },
+    "difficulty_params": {
+      "distractor_count": 2,
+      "hint_after_ms": 10000,
+      "allow_retry": true,
+      "shuffle_items": true
+    }
+  },
+  {
+    "header": {
+      "code": "GL-GEN-GT-001-999-10",
+      "content_version": 1,
+      "template_code": "GT-001",
+      "title": "",
+      "instruction": "",
+      "age_min": 3,
+      "age_max": 4,
+      "difficulty": 1,
+      "access_tier": "free",
+      "skill_codes": [],
+      "learning_objective_codes": [],
+      "what_tags": [],
+      "thinking_tags": [],
+      "theme_tag": "school",
+      "origin": "ai_assisted",
+      "authored_in": "repo_seed"
+    },
+    "content_pack": {
+      "prompt": "Bé hãy chạm vào hình giống mẫu nhé!",
+      "target_item": {
+        "item_id": "item_EMJ-abacus",
+        "asset": {
+          "kind": "emoji",
+          "ref": "EMJ-abacus"
+        }
+      },
+      "options": [
+        {
+          "item_id": "opt_1",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-books"
+          },
+          "is_correct": false
+        },
+        {
+          "item_id": "opt_2",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-bell"
+          },
+          "is_correct": false
+        },
+        {
+          "item_id": "opt_3",
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-abacus"
           },
           "is_correct": true
         }

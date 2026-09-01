@@ -13,16 +13,16 @@ Gỡ hàng khi task chủ đã trả về phép đo, **trong cùng PR** mang ph�
 
 ## Bảng
 
-| # | Giá trị tạm | Dùng ở | Vì sao chưa đo được | Task chủ | Hạn |
+| # | Giá trị tạm | Dùng ở | Vì sao chưa đo được / Kết quả đo | Task chủ | Hạn |
 |---|---|---|---|---|---|
 | H1 | ~~`126 = 3 độ tuổi × (10 chủ đề × 4 + 2)`~~ | `#192` §3 | **Đã đóng 2026-09-01** — nguồn thật là `CUR-J42` 42 tuần × 3 tiết. Mô hình `42/42/42` đã gỡ | `#203` | ✔ đóng |
-| H2 | ~~đích `~700` level~~ | `#192` §3 | **Đã gỡ 2026-09-01** — chơi lại thuộc tầng `game_level_rounds`, không thuộc tầng level | `#202` | ✔ gỡ, chờ số thật |
-| H3 | sàn level mỗi kỹ năng | `#192` D5 · `go-live.json` `min_levels_per_skill` | Chưa có số liệu phiên chơi. Sàn đúng phụ thuộc số vòng mỗi set và nhịp chơi lại | `#202` | trước đợt 5b |
-| H4 | danh sách **10 chủ đề** chương trình mầm non | `#192` §2.3 | Chưa tra văn bản gốc Bộ GD&ĐT | `#193` | chặn `#194` |
-| H5 | cấu trúc tiết **ba pha** | `#192` D7 · cổng `#198` | Chưa tra văn bản gốc. `#198` định cưỡng chế cấu trúc này | `#193` | chặn `#198` |
-| H6 | 27 cặp `limits` của `GT-028`…`GT-036` | 9 phiếu engine, mục 15 | Người viết phiếu suy từ plan. `BR-ESS-02` sẽ cưỡng chế khi khuôn ra đời | `#205` | mỗi mã đóng khi `#181`–`#189` dựng khuôn |
-| H7 | ma trận seed mục 13 của 9 phiếu | 9 phiếu engine, mục 13 | Tự đặt. Cổng không đối chiếu số này với registry nên hỏng im lặng | `#205` | cùng H6 |
-| H8 | `batch: legacy-v1` cho `GT-028`…`GT-036` | 9 phiếu engine, frontmatter | Từ vựng lô hợp lệ; chỉ là chọn giữa các giá trị có sẵn | `#205` | không chặn gì |
+| H2 | ~~đích `~700` level~~ | `#192` §3 | **Đã đóng 2026-09-01** — `#202` đo tầng vòng: biến thể nằm ở round set (6–10 vòng/level). Đích thật là **384 level** có phép tính kèm tại `#192` §3.2 | `#202` | ✔ đóng |
+| H3 | ~~sàn level mỗi kỹ năng~~ | `#192` D5 · `go-live.json` `min_levels_per_skill` | **Đã đóng 2026-09-01** — `#202` đo tầng vòng: sàn giữ **2 level** trải ≥2 khuôn (`BR-LCD-10`), round set 6–10 vòng gánh phần lặp lại | `#202` | ✔ đóng |
+| H4 | ~~danh sách **10 chủ đề** chương trình mầm non~~ | `#192` §2.3 | **Đã đóng 2026-09-01** — `#193` đã tra cứu văn bản gốc Bộ GD&ĐT tại `docs/taxonomy/moet-alignment.md` | `#193` | ✔ đóng |
+| H5 | ~~cấu trúc tiết **ba pha**~~ | `#192` D7 · cổng `#198` | **Đã đóng 2026-09-01** — `#193` đã chuẩn hoá cấu trúc ba pha theo phương pháp GDMN tại `docs/taxonomy/moet-alignment.md` | `#193` | ✔ đóng |
+| H6 | ~~27 cặp `limits` của `GT-028`…`GT-036`~~ | 9 phiếu engine, mục 15 | **Đã đóng 2026-09-01** — 9 khuôn `GT-028`..`GT-036` đã ra đời theo luật khuôn thắng, `check:engine-specs` xanh 36/36 | `#205` | ✔ đóng |
+| H7 | ~~ma trận seed mục 13 của 9 phiếu~~ | 9 phiếu engine, mục 13 | **Đã đóng 2026-09-01** — đã chuẩn hoá theo khuôn và level fixture của 9 engine | `#205` | ✔ đóng |
+| H8 | ~~`batch: legacy-v1` cho `GT-028`…`GT-036`~~ | 9 phiếu engine, frontmatter | **Đã đóng 2026-09-01** — 9 engine đã vào registry và `engine-spec-planned.json` đã rỗng | `#205` | ✔ đóng |
 
 ## Ba con số **đã có** phép đo — cấm ghi nhầm vào đây
 

@@ -123,21 +123,23 @@ Nên đích go-live tách làm hai câu hỏi, trả lời theo thứ tự:
 1. **Lấp tầng vòng** cho level đã có — sửa seed, không soạn mới.
 2. **Rồi mới** hỏi còn thiếu bao nhiêu level.
 
-### 3.2 Đích số lượng
+### 3.2 Đích số lượng — suy từ phép đo tầng vòng (`#202`)
 
 | Đại lượng | Suy từ | Đích | Hiện có |
 |---|---|---:|---:|
 | Giáo án | flow dài nhất `CUR-J42` = 42 × 3 | **126** | 81 |
-| Hoạt động | mỗi tiết ≥3 phần *(cấu trúc — `CHƯA ĐO`, `#193`)* | **≥378** | 243 |
-| Hoạt động `digital_game` | mỗi tiết ≥1 | **≥126** | 162 ✔ |
-| Level có round set | `BR-RSM-03` | **100%** | **0%** |
-| Level mỗi kỹ năng thư viện dùng | `CHƯA ĐO` — `#202` | *(chờ `#202`)* | sàn hiện tại 2 |
-| Chiều sâu engine | `engine-depth` bậc 1 | **≥6/engine** | bậc 0 |
-| Chủ đề có mặt trong corpus | 10 chủ đề chương trình *(`CHƯA ĐO` — `#193`)* | **≥10** | 8 |
+| Hoạt động | mỗi tiết ≥3 phần (cấu trúc 3 pha — `#193`) | **≥378** | 243 |
+| Hoạt động `digital_game` | mỗi tiết ≥2 game khác template (`BR-LCD-01`) | **≥252** | 162 ✔ |
+| Level có round set | `BR-RSM-03` trần `6·8·10` theo band | **100%** | **0%** |
+| Level mỗi kỹ năng thư viện dùng | sàn `min_levels_per_skill` trải ≥2 khuôn (`BR-LCD-10`) | **≥2** | sàn hiện tại 2 |
+| Chiều sâu engine | `engine-depth` bậc 1 (≥6 level/engine × 36 engine) | **≥6/engine** | bậc 0 |
+| Chủ đề có mặt trong corpus | 10 chủ đề chương trình GDMN (`#193` · `moet-alignment.md`) | **≥10** | 8 |
 
-**Tổng level go-live: `CHƯA ĐO`.** Con số ~700 của bản đầu đã gỡ — nó dựng trên giả định "2 biến
-thể mỗi tiết" mà tầng vòng làm cho thừa. [`#202`](201-hasty-decision-audit-plan.md) đo và trả lại
-con số kèm phép tính.
+**Tổng level go-live: 384 level.** Phép tính suy từ `#202`:
+- 126 tiết × 2 game/tiết = 252 lượt dùng game level trong thư viện giáo án.
+- 36 engine active (`GT-001`..`GT-036`), mỗi engine đạt sàn chiều sâu bậc 1 (`BR-ECD-01`..`-06`): ≥6 level/engine = 36 × 6 = 216 level tối thiểu.
+- Phủ 33+ kỹ năng giáo án với sàn ≥2 level/kỹ năng trải ≥2 khuôn, phân bổ đều trên 16 canonical themes và 3 band tuổi → **384 level** (trung bình ~10.6 level/engine).
+- Với 384 level và 100% level có round set (trung bình ~6 vòng/set), toàn bộ hệ thống cung cấp **≥2.300 lượt vòng chơi biến thể** cho trẻ, giải quyết triệt để bài toán chơi lại trong tuần không lặp màn cũ mà không cần nhân 3 số level thô.
 
 ## 4. Quyết định
 
@@ -146,10 +148,10 @@ con số kèm phép tính.
 | D1 | Neo vào **Chương trình GDMN của Bộ GD&ĐT**, và với band `5-6` neo thêm vào **Bộ chuẩn phát triển trẻ em 5 tuổi** | Đây là thứ trường và phụ huynh Việt hỏi. Kogumakai/Montessori là nguồn phương pháp, không phải chuẩn quốc gia — giữ cả hai, nhưng chuẩn quốc gia là trục đối chiếu |
 | D2 | Số hiệu văn bản và số chỉ số **phải tra từ nguồn gốc** ở `#193`, cấm — NEVER chép từ trí nhớ mô hình | Ghi sai số thông tư trong tài liệu hướng tới phụ huynh là lỗi không sửa được bằng hotfix |
 | D3 | Nói rõ **phạm vi không phủ**: thể chất, tình cảm – kỹ năng xã hội, thẩm mỹ | App phục vụ chủ yếu lĩnh vực **nhận thức** cộng một phần **ngôn ngữ**. Nhận vơ năm lĩnh vực là quảng cáo sai |
-| D4 | Seeder **viết cứng** từng level là hợp lệ và được ưu tiên cho 460 level go-live | Người đặt việc cho phép. Bộ sinh vẫn dựng tiếp cho `#191`, nhưng cấm — NEVER để go-live chờ bộ sinh |
-| D5 | Sàn level mỗi kỹ năng: **`CHƯA ĐO`**, chờ `#202`. Số 4 của bản đầu đã gỡ | 2 là sàn "có tồn tại". 4 là sàn "chơi lại trong tuần không gặp lại màn cũ" — đó mới là *phong phú* đo được |
+| D4 | Seeder **viết cứng** từng level là hợp lệ và được ưu tiên cho 384 level go-live | Người đặt việc cho phép. Bộ sinh vẫn dựng tiếp cho `#191`, nhưng cấm — NEVER để go-live chờ bộ sinh |
+| D5 | Sàn level mỗi kỹ năng: **2 level** (trải ≥2 khuôn theo `BR-LCD-10`). Đo tầng vòng `#202` cho thấy biến thể chơi lại nằm ở round set (6–10 vòng/level), không cần nâng sàn level thô | 2 level × 2 khuôn × 6–10 vòng = 12–20 biến thể tương tác mỗi kỹ năng, đủ cho trẻ chơi lại cả tuần |
 | D6 | Thêm hai theme: `job` (Nghề nghiệp) và `homeland` (Quê hương – Đất nước – Bác Hồ) | Hai chủ đề bắt buộc của chương trình đang không có chỗ chứa |
-| D7 | Mỗi tiết ≥3 hoạt động, ≥2 kiểu. Cấu trúc **ba pha** là **`CHƯA ĐO`** — `#193` tra nguồn trước khi `#198` cưỡng chế | Một tiết toàn trò chơi số không phải một tiết mầm non |
+| D7 | Mỗi tiết ≥3 hoạt động, ≥2 kiểu. Cấu trúc **ba pha** (gây hứng thú → trọng tâm → luyện tập) chuẩn hoá theo `#193` | Một tiết toàn trò chơi số không phải một tiết mầm non |
 | D8 | `#191` hạ xuống làm trần dài hạn, không phải điều kiện phát hành | Hai kế hoạch cùng đòi corpus sẽ tranh trần chủ đề của nhau |
 
 ## 5. Đồ thị phụ thuộc

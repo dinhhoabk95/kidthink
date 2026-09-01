@@ -59,6 +59,26 @@ const SKILL_CODE_REGEX = /^C[1-6]\.[A-Z]{2,5}\.\d{2}$/;
 const STRAND_HEADER_REGEX = /^##\s+(C[1-6]\.[A-Z]{2,5})\s+—/;
 const AGE_RANGE_SPLIT_REGEX = /[–-]/;
 const PREREQ_SPLIT_REGEX = /[·,]/;
+const CANONICAL_THINKING_SET: ReadonlySet<string> = new Set([
+  "observe",
+  "compare",
+  "sort",
+  "match",
+  "count",
+  "sequence",
+  "infer",
+  "predict",
+  "deduce",
+  "solve",
+  "verify",
+  "create",
+  "plan",
+  "recall",
+  "inhibit",
+  "shift",
+  "describe",
+  "listen",
+]);
 
 function parseAgeRange(ageStr: string): { age_min: number; age_max: number } {
   if (ageStr.includes("–") || ageStr.includes("-")) {
@@ -257,10 +277,28 @@ function validateCounts(skillsToSeed: ParsedSkill[]): void {
   }
 }
 
-function validateSkillBounds(
+function validateSkillPrerequisites(
   skillsToSeed: ParsedSkill[],
   skillMap: Map<string, ParsedSkill>
 ): void {
+  for (const s of skillsToSeed) {
+    for (const pCode of s.prerequisites) {
+      const pSkill = skillMap.get(pCode);
+      if (
+        s.status === "seeded" &&
+        pSkill &&
+        pSkill.status === "seeded" &&
+        pSkill.difficulty > s.difficulty
+      ) {
+        throw new Error(
+          `BR-TAX-05 violation: Prerequisite ${pCode} (diff ${pSkill.difficulty}) > skill ${s.code} (diff ${s.difficulty})`
+        );
+      }
+    }
+  }
+}
+
+function validateSkillBounds(skillsToSeed: ParsedSkill[]): void {
   for (const s of skillsToSeed) {
     if (s.age_min < 3 || s.age_max > 6 || s.age_min > s.age_max) {
       throw new Error(
@@ -277,17 +315,10 @@ function validateSkillBounds(
         `BR-TAX-04 violation: Skill ${s.code} missing thinking process`
       );
     }
-
-    for (const pCode of s.prerequisites) {
-      const pSkill = skillMap.get(pCode);
-      if (
-        s.status === "seeded" &&
-        pSkill &&
-        pSkill.status === "seeded" &&
-        pSkill.difficulty > s.difficulty
-      ) {
+    for (const tp of s.thinking_processes) {
+      if (!CANONICAL_THINKING_SET.has(tp)) {
         throw new Error(
-          `BR-TAX-05 violation: Prerequisite ${pCode} (diff ${pSkill.difficulty}) > skill ${s.code} (diff ${s.difficulty})`
+          `BR-TAX-04 violation: Skill ${s.code} has invalid thinking process '${tp}'`
         );
       }
     }
@@ -310,7 +341,8 @@ export function validateTaxonomyInvariants(skillsToSeed: ParsedSkill[]): void {
     }
   }
 
-  validateSkillBounds(skillsToSeed, skillMap);
+  validateSkillBounds(skillsToSeed);
+  validateSkillPrerequisites(skillsToSeed, skillMap);
 
   const skillRows: SkillRow[] = skillsToSeed.map((s) => ({
     code: s.code,

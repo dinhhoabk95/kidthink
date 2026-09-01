@@ -11,22 +11,12 @@ import type {
   GT035FacingSchema,
   GT035GridCoordSchema,
 } from "#src/templates/GT-035/template";
+import { VALID_GENERATOR_THEMES } from "./helpers.js";
 import type { LevelGenerator } from "./types.js";
 
 type Facing = z.infer<typeof GT035FacingSchema>;
 type GridCoord = z.infer<typeof GT035GridCoordSchema>;
 type Collectible = z.infer<typeof GT035CollectibleSchema>;
-
-const DEFAULT_THEMES = [
-  "space",
-  "school",
-  "home",
-  "farm",
-  "nature",
-  "ocean",
-  "festival",
-  "art",
-];
 
 const THEME_GOALS: Record<string, { ref: string; name_vi: string }> = {
   space: { ref: "EMJ-satellite", name_vi: "Trạm vũ trụ" },
@@ -188,7 +178,7 @@ export const GT035Generator: LevelGenerator = {
   axes: {
     age_band: ["5-6"],
     what: ["space", "rule", "pattern"],
-    theme: DEFAULT_THEMES,
+    theme: [...VALID_GENERATOR_THEMES],
   },
   generate({ rng, age_band: _age_band, theme }) {
     const activeTheme = theme && THEME_GOALS[theme] ? theme : "space";

@@ -3,18 +3,8 @@ import type {
   GT034Difficulty,
   GT034Instrument,
 } from "#src/templates/GT-034/template";
+import { VALID_GENERATOR_THEMES } from "./helpers.js";
 import type { LevelGenerator } from "./types.js";
-
-const DEFAULT_THEMES = [
-  "school",
-  "art",
-  "nature",
-  "animal",
-  "home",
-  "festival",
-  "space",
-  "food",
-];
 
 const INSTRUMENT_POOLS: Record<
   string,
@@ -117,7 +107,7 @@ export const GT034Generator: LevelGenerator = {
   axes: {
     age_band: ["5-6"],
     what: ["sound", "pattern", "time", "sequence"],
-    theme: DEFAULT_THEMES,
+    theme: [...VALID_GENERATOR_THEMES],
   },
   generate({ rng, age_band: _age_band, theme }) {
     const activeTheme = theme && INSTRUMENT_POOLS[theme] ? theme : "school";

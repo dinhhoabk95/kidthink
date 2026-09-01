@@ -1,6 +1,23 @@
 import type { Rng } from "#src/rng/types";
 import type { ThemeVocabulary, VocabularyEntry } from "./types.js";
 
+export const VALID_GENERATOR_THEMES: readonly string[] = [
+  "school",
+  "farm",
+  "home",
+  "animal",
+  "nature",
+  "ocean",
+  "food",
+  "vehicle",
+  "art",
+  "space",
+  "family",
+  "body",
+  "weather",
+  "festival",
+] as const;
+
 export function sampleUnique<T>(rng: Rng, array: T[], count: number): T[] {
   if (count <= 0 || array.length === 0) {
     return [];
@@ -31,17 +48,6 @@ export function pickOne<T>(rng: Rng, array: T[]): T {
   return item;
 }
 
-/**
- * Kho từ ngắn hơn yêu cầu là **lỗi dữ liệu**, không phải điều kiện runtime —
- * nên nó ném, Cấm — NEVER độn thầm.
- *
- * Bản cũ độn từ một danh sách hoa quả cố định. Vì mọi chủ đề chỉ có 5 danh từ
- * còn generator xin 6–10, nhánh độn là đường đi **mặc định**: cả 21 file sinh
- * ra đều dính emoji lạc chủ đề (một level `school` chứa 🍎🍌🥕🍓🍇) trong khi
- * `gen-levels.ts` vẫn đóng dấu `theme_tag: "school"` lên nó. Tệ hơn, danh sách
- * độn dùng **glyph thô** ở `emoji_ref` trong khi registry tra theo mã `EMJ-*`,
- * nên mọi mục độn đều `not_found` lúc render.
- */
 export function getNouns(
   vocab: ThemeVocabulary,
   minCount = 6
@@ -50,7 +56,7 @@ export function getNouns(
   if (result.length < minCount) {
     throw new Error(
       `Chủ đề '${vocab?.theme ?? "?"}' thiếu danh từ: có ${result.length}, cần ${minCount}. ` +
-        "Bổ sung vào CONTENT_THEMES thay vì độn từ ngoài chủ đề."
+        "Bổ sung vào registry chủ đề thay vì độn từ ngoài chủ đề."
     );
   }
   return result;

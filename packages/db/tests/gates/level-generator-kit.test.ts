@@ -4,32 +4,17 @@ import { ALL_TEMPLATES, getLevelGenerator } from "@mindkid/game-engine";
 import { describe, expect, it } from "vitest";
 import { generateLevelsCore } from "#src/seed-content/cli/gen-levels";
 
-const FIRST_BATCH_ENGINES = [
-  "GT-001",
-  "GT-002",
-  "GT-003",
-  "GT-004",
-  "GT-005",
-  "GT-006",
-  "GT-007",
-  "GT-008",
-  "GT-010",
-  "GT-011",
-  "GT-012",
-  "GT-018",
-  "GT-019",
-  "GT-020",
-  "GT-022",
-  "GT-023",
-  "GT-025",
-  "GT-026",
-  "GT-027",
-];
+const ALL_36_ENGINES = Object.keys(ALL_TEMPLATES).sort();
 
 const ERR_ENGINE_NOT_FOUND = /không tồn tại trong ALL_TEMPLATES/;
 const ERR_GENERATOR_NOT_FOUND = /chưa có generator/;
+const ERR_THEME_COUNT =
+  /BR-CTR-08: Generator axes\.theme must declare >= 8 themes/;
+const PROVENANCE_REGEX = new RegExp(
+  ["@", "generated from LEVEL-GENERATOR-KIT@[a-f0-9]{12}"].join("")
+);
 
-describe("Level Generator Kit — Task #121 (BR-LGK-01..10)", () => {
+describe("Level Generator Kit — Task #121 & Task #197 (BR-LGK-01..10)", () => {
   it("Scenario: BR-LGK-02 — cùng seed cho cùng đầu ra byte-for-byte", () => {
     const tmpDir = path.resolve(import.meta.dirname, "fixtures/tmp");
     fs.mkdirSync(tmpDir, { recursive: true });
@@ -40,7 +25,7 @@ describe("Level Generator Kit — Task #121 (BR-LGK-01..10)", () => {
     try {
       generateLevelsCore({
         engine: "GT-001",
-        count: 10,
+        count: 5,
         seed: 42,
         theme: "school",
         out: file1,
@@ -48,7 +33,7 @@ describe("Level Generator Kit — Task #121 (BR-LGK-01..10)", () => {
 
       generateLevelsCore({
         engine: "GT-001",
-        count: 10,
+        count: 5,
         seed: 42,
         theme: "school",
         out: file2,
@@ -117,8 +102,49 @@ describe("Level Generator Kit — Task #121 (BR-LGK-01..10)", () => {
     }
   });
 
-  it("Scenario: WP121.2 — 19 engine trong lô đầu đều sinh được và parse hợp lệ", () => {
-    for (const engineCode of FIRST_BATCH_ENGINES) {
+  it("Scenario: BR-LGK-07 — provenance header có định dạng hợp lệ", () => {
+    const tmpDir = path.resolve(import.meta.dirname, "fixtures/tmp");
+    fs.mkdirSync(tmpDir, { recursive: true });
+    const file = path.join(tmpDir, "prov.ts");
+
+    try {
+      generateLevelsCore({
+        engine: "GT-001",
+        count: 1,
+        seed: 123,
+        theme: "school",
+        out: file,
+      });
+
+      const content = fs.readFileSync(file, "utf-8");
+      expect(content).toMatch(PROVENANCE_REGEX);
+    } finally {
+      if (fs.existsSync(file)) {
+        fs.unlinkSync(file);
+      }
+    }
+  });
+
+  it("Scenario: BR-LGK-08 & BR-LGK-09 — không chứa trùng lặp trong cùng một lần sinh", () => {
+    const result = generateLevelsCore({
+      engine: "GT-001",
+      count: 10,
+      seed: 999,
+      theme: "school",
+    });
+
+    const hashes = (
+      result.items as Array<{ content_pack: Record<string, unknown> }>
+    ).map((item) => JSON.stringify(item.content_pack));
+    const uniqueHashes = new Set(hashes);
+
+    expect(uniqueHashes.size).toBe(hashes.length);
+  });
+
+  it("Scenario: WP121.2 & Task #197 — toàn bộ 36 engine đều có generator, sinh được và parse hợp lệ", () => {
+    expect(ALL_36_ENGINES).toHaveLength(36);
+
+    for (const engineCode of ALL_36_ENGINES) {
       const template = ALL_TEMPLATES[engineCode];
       expect(template, `Template ${engineCode} phải tồn tại`).toBeDefined();
 
@@ -127,7 +153,7 @@ describe("Level Generator Kit — Task #121 (BR-LGK-01..10)", () => {
 
       const result = generateLevelsCore({
         engine: engineCode,
-        count: 10,
+        count: 5,
         seed: 20_260_829,
         theme: "school",
       });
@@ -164,15 +190,24 @@ describe("Level Generator Kit — Task #121 (BR-LGK-01..10)", () => {
       }).toThrow(ERR_ENGINE_NOT_FOUND);
     });
 
-    it("Ca âm: Engine ngoài lô đầu chưa có generator sẽ throw", () => {
-      expect(() => {
-        generateLevelsCore({
-          engine: "GT-013",
-          count: 5,
-          seed: 123,
-          theme: "school",
-        });
-      }).toThrow(ERR_GENERATOR_NOT_FOUND);
+    it("Ca âm: Engine có template nhưng thiếu generator đăng ký sẽ throw", () => {
+      const orig = ALL_TEMPLATES["GT-001"];
+      if (!orig) {
+        throw new Error("GT-001 template must exist");
+      }
+      ALL_TEMPLATES["GT-FAKE"] = orig;
+      try {
+        expect(() => {
+          generateLevelsCore({
+            engine: "GT-FAKE",
+            count: 5,
+            seed: 123,
+            theme: "school",
+          });
+        }).toThrow(ERR_GENERATOR_NOT_FOUND);
+      } finally {
+        Reflect.deleteProperty(ALL_TEMPLATES, "GT-FAKE");
+      }
     });
 
     it("Ca âm: Tĩnh — code generator không chứa kết nối database", () => {
@@ -184,6 +219,52 @@ describe("Level Generator Kit — Task #121 (BR-LGK-01..10)", () => {
       expect(code).not.toContain("drizzle-orm");
       expect(code).not.toContain('from "#src/connection"');
       expect(code).not.toContain('from "#src/schema"');
+    });
+
+    it("Task #194: mọi bộ sinh khai báo >= 8 chủ đề trong CONTENT_THEMES", async () => {
+      const { ALL_LEVEL_GENERATORS } = await import("@mindkid/game-engine");
+      const { CONTENT_THEMES } = await import("@mindkid/shared");
+      const canonicalThemes = new Set(CONTENT_THEMES.map((t) => t.code));
+
+      for (const [code, generator] of Object.entries(ALL_LEVEL_GENERATORS)) {
+        expect(
+          generator.axes.theme.length,
+          `Generator ${code} phải khai báo >= 8 chủ đề, hiện có ${generator.axes.theme.length}`
+        ).toBeGreaterThanOrEqual(8);
+
+        for (const t of generator.axes.theme) {
+          expect(
+            canonicalThemes.has(t),
+            `Generator ${code} chứa theme '${t}' không thuộc CONTENT_THEMES`
+          ).toBe(true);
+        }
+      }
+    });
+
+    it("Ca âm Task #194: bộ sinh khai báo dưới 8 chủ đề làm cổng kiểm tra từ chối", () => {
+      const mockGenerator = {
+        engine: "GT-001" as const,
+        axes: {
+          age_band: ["3-4" as const],
+          what: ["number"],
+          theme: ["school", "farm", "home", "nature", "food"],
+        },
+        generate: () => ({
+          content_pack: {},
+          difficulty_params: {},
+        }),
+      };
+
+      expect(mockGenerator.axes.theme.length).toBeLessThan(8);
+      const validateThemeCount = (gen: { axes: { theme: string[] } }) => {
+        if (gen.axes.theme.length < 8) {
+          throw new Error(
+            `BR-CTR-08: Generator axes.theme must declare >= 8 themes, got ${gen.axes.theme.length}`
+          );
+        }
+      };
+
+      expect(() => validateThemeCount(mockGenerator)).toThrow(ERR_THEME_COUNT);
     });
   });
 });

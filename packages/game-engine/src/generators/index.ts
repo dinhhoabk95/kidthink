@@ -6,14 +6,22 @@ import { GT005Generator } from "./gt005.js";
 import { GT006Generator } from "./gt006.js";
 import { GT007Generator } from "./gt007.js";
 import { GT008Generator } from "./gt008.js";
+import { GT009Generator } from "./gt009.js";
 import { GT010Generator } from "./gt010.js";
 import { GT011Generator } from "./gt011.js";
 import { GT012Generator } from "./gt012.js";
+import { GT013Generator } from "./gt013.js";
+import { GT014Generator } from "./gt014.js";
+import { GT015Generator } from "./gt015.js";
+import { GT016Generator } from "./gt016.js";
+import { GT017Generator } from "./gt017.js";
 import { GT018Generator } from "./gt018.js";
 import { GT019Generator } from "./gt019.js";
 import { GT020Generator } from "./gt020.js";
+import { GT021Generator } from "./gt021.js";
 import { GT022Generator } from "./gt022.js";
 import { GT023Generator } from "./gt023.js";
+import { GT024Generator } from "./gt024.js";
 import { GT025Generator } from "./gt025.js";
 import { GT026Generator } from "./gt026.js";
 import { GT027Generator } from "./gt027.js";
@@ -45,14 +53,22 @@ export const ALL_LEVEL_GENERATORS: Record<string, LevelGenerator> = {
   "GT-006": GT006Generator,
   "GT-007": GT007Generator,
   "GT-008": GT008Generator,
+  "GT-009": GT009Generator,
   "GT-010": GT010Generator,
   "GT-011": GT011Generator,
   "GT-012": GT012Generator,
+  "GT-013": GT013Generator,
+  "GT-014": GT014Generator,
+  "GT-015": GT015Generator,
+  "GT-016": GT016Generator,
+  "GT-017": GT017Generator,
   "GT-018": GT018Generator,
   "GT-019": GT019Generator,
   "GT-020": GT020Generator,
+  "GT-021": GT021Generator,
   "GT-022": GT022Generator,
   "GT-023": GT023Generator,
+  "GT-024": GT024Generator,
   "GT-025": GT025Generator,
   "GT-026": GT026Generator,
   "GT-027": GT027Generator,

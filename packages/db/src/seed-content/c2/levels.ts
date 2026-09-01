@@ -524,7 +524,7 @@ export const C2_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
       age_min: 4,
       age_max: 5,
       difficulty: 2,
-      access_tier: "standard",
+      access_tier: "free",
       skill_codes: ["C2.DIR.05"],
       learning_objective_codes: ["LO-C2.DIR.05-01"],
       what_tags: ["spt"],

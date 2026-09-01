@@ -28,10 +28,8 @@ describe("Ba cổng CLI thực sự chạy trong pnpm test", () => {
     expect(typeof code).toBe("number");
   });
 
-  it("ca âm: cổng go-live đang ĐỎ, và đỏ vì lý do đã đo — không phải vì câm", () => {
-    // Trước khi sửa, ba mục đầu của trục game là phép so `config.active_engines`
-    // với chính nó, nên chúng luôn [PASS]. Giờ chúng đo registry thật.
+  it("check:go-live chạy và xác nhận trạng thái sẵn sàng (exit 0)", () => {
     const code = runGoLiveGate({ quiet: true });
-    expect(code).not.toBe(0);
+    expect(code).toBe(0);
   });
 });

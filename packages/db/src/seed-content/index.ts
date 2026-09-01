@@ -6,6 +6,7 @@ import { C4_SEED_LEVELS } from "./c4/levels.js";
 import { C5_SEED_LEVELS } from "./c5/levels.js";
 import { C6_SEED_LEVELS } from "./c6/levels.js";
 import { ALL_SEED_LESSONS } from "./lessons/index.js";
+import { PEDAGOGY_MISSING_SKILL_LEVELS } from "./pedagogy-missing-skills.js";
 import { QUARANTINED_LEVEL_SET } from "./quarantine.js";
 import type { AnyContentSeed, ContentSeed } from "./types.js";
 
@@ -24,6 +25,7 @@ export const ALL_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
   ...C4_SEED_LEVELS,
   ...C5_SEED_LEVELS,
   ...C6_SEED_LEVELS,
+  ...PEDAGOGY_MISSING_SKILL_LEVELS,
 ];
 
 /**

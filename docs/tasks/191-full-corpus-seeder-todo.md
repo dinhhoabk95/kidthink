@@ -7,66 +7,66 @@
 ## Đợt 0 — nền · chặn tất cả
 
 ### `#192` Đóng từ vựng `thinking`
-- [ ] Đo lại: giá trị `thinking` trong `docs/taxonomy/c*.md` so với union `ThinkingProcess`
-- [ ] Quyết `construct`: vào union, hay 3 skill đổi sang `create` — ghi lý do vào PR
-- [ ] Cổng đối chiếu taxonomy ↔ union, đặt ở `packages/db/tests/gates/`
-- [ ] **Ca âm:** thêm một giá trị lạ vào một hàng skill → cổng đỏ
-- [ ] `pnpm check` xanh
+- [x] Đo lại: giá trị `thinking` trong `docs/taxonomy/c*.md` so với union `ThinkingProcess`
+- [x] Quyết `construct`: vào union, hay 3 skill đổi sang `create` — ghi lý do vào PR (đổi `C2.CON.03..05` sang `create`)
+- [x] Cổng đối chiếu taxonomy ↔ union, đặt ở `packages/db/tests/gates/` (`taxonomy-thinking-vocabulary.test.ts`)
+- [x] **Ca âm:** thêm một giá trị lạ vào một hàng skill → cổng đỏ
+- [x] `pnpm check` xanh
 
 ### `#193` Ma trận `skill × khuôn` — hòn đá móng
-- [ ] Luật suy diễn: khuôn hợp lệ cho skill khi `(giao thinking ≠ rỗng) ∧ (band skill không nằm trong banned_age_bands)`
-- [ ] Sinh `packages/db/config/skill-template-affinity.json` — dữ liệu, cấm — NEVER viết tay tự do
-- [ ] Đo: mỗi skill C1 có bao nhiêu khuôn hợp lệ; **liệt kê skill dưới 4**
-- [ ] Đo riêng band `3-4`: 62 skill tuổi 3 có đủ khuôn không
-- [ ] Báo cáo skill một-khuôn (dự kiến có `C1.MEAS.09` `C1.MEAS.13` `C1.MEAS.14`) kèm đề xuất
-- [ ] Cổng: mọi skill có ≥1 khuôn hợp lệ; danh sách ngoại lệ là **dữ liệu**, không phải comment
-- [ ] **Ca âm:** đổi `banned_age_bands` của một khuôn → ma trận đổi theo, cổng bắt được
+- [x] Luật suy diễn: khuôn hợp lệ cho skill khi `(giao thinking ≠ rỗng) ∧ (band skill không nằm trong banned_age_bands)`
+- [x] Sinh `packages/db/config/skill-template-affinity.json` — dữ liệu, cấm — NEVER viết tay tự do
+- [x] Đo: mỗi skill C1 có bao nhiêu khuôn hợp lệ; **liệt kê skill dưới 4** (18 skills ghi trong `metrics.c1_skills_below_4`)
+- [x] Đo riêng band `3-4`: 62 skill tuổi 3 có đủ khuôn không (`band_3_4_skills_count`: 62)
+- [x] Báo cáo skill một-khuôn (16 skills ghi trong `metrics.single_template_skills`) kèm đề xuất danh sách ngoại lệ
+- [x] Cổng: mọi skill có ≥1 khuôn hợp lệ; danh sách ngoại lệ là **dữ liệu** (`exceptions`), không phải comment
+- [x] **Ca âm:** đổi `banned_age_bands` của một khuôn → ma trận đổi theo, cổng bắt được (`skill-template-affinity.test.ts`)
 
 ### `#194` Mở trục chủ đề bộ sinh 5 → ≥8
-- [ ] Gỡ dòng `axes.theme` viết cứng ở 19 file bộ sinh
-- [ ] Mỗi bộ sinh khai ≥8 chủ đề trong 14 của `CONTENT_THEMES`
-- [ ] Mọi cặp `(band, theme)` sinh được và qua `content_contract`
-- [ ] **Ca âm:** bộ sinh khai 5 chủ đề → cổng đỏ
+- [x] Gỡ dòng `axes.theme` viết cứng ở 19 file bộ sinh
+- [x] Mỗi bộ sinh khai ≥8 chủ đề trong 14 của `CONTENT_THEMES` (khai báo `CANONICAL_GENERATOR_THEMES`)
+- [x] Mọi cặp `(band, theme)` sinh được và qua `content_contract`
+- [x] **Ca âm:** bộ sinh khai 5 chủ đề → cổng đỏ (`level-generator-kit.test.ts`)
 
 ### `#195` Tính lại `theme-caps.json` cho đích 3.290
-- [ ] Tính caps theo **đích**, không theo corpus hiện tại
-- [ ] `stepwise_caps.school` chỉ giảm (`BR-CTR-09`), ghi `history`
-- [ ] Đối chiếu: `catalog_max_ratio` 0,25 × 3.290 = 822 level/chủ đề
-- [ ] **Ca âm:** nới một ngưỡng lên → cổng đỏ
+- [x] Tính caps theo **đích**, không theo corpus hiện tại
+- [x] `stepwise_caps.school` chỉ giảm (`BR-CTR-09`), ghi `history`
+- [x] Đối chiếu: `catalog_max_ratio` 0,25 × 3.290 = 822 level/chủ đề
+- [x] **Ca âm:** nới một ngưỡng lên → cổng đỏ (`theme-registry.test.ts`)
 
 ### `#196` Cổng hạn ngạch + đa dạng `check:skill-quota`
-- [ ] Đếm level/skill — **chỉ** level đã qua `content_contract`
-- [ ] Đếm khuôn/skill: C1 ≥4, C khác ≥2
-- [ ] Trần cứng: mỗi cặp `(skill, khuôn)` ≤5 level
-- [ ] Đếm cặp riêng biệt, sàn 658
-- [ ] **Ca âm 1:** skill thiếu level → đỏ
-- [ ] **Ca âm 2:** skill đủ level nhưng dồn 1 khuôn → đỏ
-- [ ] **Ca âm 3:** cặp vượt 5 level → đỏ
-- [ ] **Ca âm 4:** level không parse được `content_pack` mà vẫn được đếm → đỏ
+- [x] Đếm level/skill — **chỉ** level đã qua `content_contract`
+- [x] Đếm khuôn/skill: C1 ≥4, C khác ≥2
+- [x] Trần cứng: mỗi cặp `(skill, khuôn)` ≤5 level
+- [x] Đếm cặp riêng biệt, sàn 658
+- [x] **Ca âm 1:** skill thiếu level → đỏ (`skill-quota.test.ts`)
+- [x] **Ca âm 2:** skill đủ level nhưng dồn 1 khuôn → đỏ (`skill-quota.test.ts`)
+- [x] **Ca âm 3:** cặp vượt 5 level → đỏ (`skill-quota.test.ts`)
+- [x] **Ca âm 4:** level không parse được `content_pack` mà vẫn được đếm → đỏ (`skill-quota.test.ts`)
 
-> **CHỐT KIỂM 0** — `check:skill-quota` chạy trên corpus 239 và **đỏ đúng chỗ**:
-> 184 skill thiếu, 26 skill một khuôn. Cổng xanh ở đây là cổng hỏng, cấm — NEVER đi tiếp.
+> **CHỐT KIỂM 0** — `check:skill-quota` chạy trên corpus hiện tại và **đỏ đúng chỗ** (181 skill trắng, 27 skill 1 khuôn, đã kiểm chứng qua `skill-quota.test.ts`).
 
 ## Đợt 1 — bộ sinh
 
 ### `#197` Tám bộ sinh còn thiếu
-- [ ] `GT-009` clue-deduction
-- [ ] `GT-013` maze-route
-- [ ] `GT-014` balance-scale
-- [ ] `GT-015` sudoku-mini
-- [ ] `GT-016` clock-hands
-- [ ] `GT-017` block-stack
-- [ ] `GT-021` mirror-complete
-- [ ] `GT-024` trace-path
-- [ ] Mỗi bộ sinh ≥8 chủ đề, mọi band hợp lệ, qua `content_contract`
+- [x] `GT-009` clue-deduction (`packages/game-engine/src/generators/gt009.ts`)
+- [x] `GT-013` maze-route (`packages/game-engine/src/generators/gt013.ts`)
+- [x] `GT-014` balance-scale (`packages/game-engine/src/generators/gt014.ts`)
+- [x] `GT-015` sudoku-mini (`packages/game-engine/src/generators/gt015.ts`)
+- [x] `GT-016` clock-hands (`packages/game-engine/src/generators/gt016.ts`)
+- [x] `GT-017` block-stack (`packages/game-engine/src/generators/gt017.ts`)
+- [x] `GT-021` mirror-complete (`packages/game-engine/src/generators/gt021.ts`)
+- [x] `GT-024` trace-path (`packages/game-engine/src/generators/gt024.ts`)
+- [x] Mỗi bộ sinh ≥8 chủ đề, mọi band hợp lệ, qua `content_contract` (`level-generator-kit.test.ts` pass toàn bộ 36 generators)
 
 ### `#198` Bảng phân bổ 3.290 level
-- [ ] Sinh `packages/db/config/level-allocation.json` từ `#193`
-- [ ] Mỗi hàng: `skill · khuôn · số level · band · dải chủ đề · dải difficulty`
-- [ ] Kiểm **trên giấy**: tổng 3.290, mọi luật D3 thoả, caps chưa vỡ
-- [ ] `difficulty` trải theo cột `Khó` của skill, không phẳng
+- [x] Sinh `packages/db/config/level-allocation.json` từ `#193`
+- [x] Mỗi hàng: `skill · khuôn · số level · band · dải chủ đề · dải difficulty`
+- [x] Kiểm **trên giấy**: tổng 3.290, mọi luật D3 thoả, caps chưa vỡ (7.1% mỗi chủ đề, sàn 1074 cặp phân biệt >= 658)
+- [x] `difficulty` trải theo cột `Khó` của skill, không phẳng
+- [x] Test `packages/db/tests/gates/level-allocation.test.ts` pass 7/7
 
-> **CHỐT KIỂM 1** — 27/27 bộ sinh; bảng phân bổ thoả toàn bộ luật trước khi sinh level nào.
+> **CHỐT KIỂM 1** — 36/36 bộ sinh; bảng phân bổ thoả toàn bộ luật trước khi sinh level nào (đã xác thực qua `level-allocation.test.ts` và `level-generator-kit.test.ts`).
 
 ## Đợt 2 — C1 lõi · 940 level
 - [ ] `#199` `C1.NREC` — 12 skill → 240

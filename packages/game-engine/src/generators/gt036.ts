@@ -3,18 +3,8 @@ import type {
   GT036Difficulty,
   GT036PaletteItem,
 } from "#src/templates/GT-036/template";
+import { VALID_GENERATOR_THEMES } from "./helpers.js";
 import type { LevelGenerator } from "./types.js";
-
-const DEFAULT_THEMES = [
-  "nature",
-  "art",
-  "farm",
-  "ocean",
-  "school",
-  "festival",
-  "space",
-  "home",
-];
 
 const THEME_PALETTES: Record<string, { id: string; ref: string }[]> = {
   nature: [
@@ -83,7 +73,7 @@ export const GT036Generator: LevelGenerator = {
   axes: {
     age_band: ["5-6"],
     what: ["pattern", "rule", "colour"],
-    theme: DEFAULT_THEMES,
+    theme: [...VALID_GENERATOR_THEMES],
   },
   generate({ rng, age_band: _age_band, theme }) {
     const activeTheme = theme && THEME_PALETTES[theme] ? theme : "nature";

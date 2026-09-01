@@ -1295,7 +1295,7 @@ export const C5_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
       age_min: 4,
       age_max: 5,
       difficulty: 1,
-      access_tier: "standard",
+      access_tier: "free",
       skill_codes: ["C5.LIS.01"],
       learning_objective_codes: ["LO-C5.LIS.01-01"],
       what_tags: ["sound"],

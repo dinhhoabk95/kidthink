@@ -63,9 +63,9 @@ Xây dựng, lắp ghép. Froebel Gifts.
 |---|---|---|---|---|---|---|
 | C2.CON.01 | Xếp hình theo mẫu | 3 | 2 | C2.GEO.01 | `match` `observe` | |
 | C2.CON.02 | Tangram | 5 | 4 | C2.CON.01 · C2.ROT.04 | `solve` `plan` | |
-| C2.CON.03 | Ghép khối Lego | 4 | 3 | C2.CON.01 | `construct` `plan` | |
-| C2.CON.04 | Ghép khối 3D | 5 | 4 | C2.CON.03 | `construct` `infer` | |
-| C2.CON.05 | Block Pattern — sao chép cấu trúc | 5 | 4 | C2.CON.01 · C1.PAT.09 | `observe` `construct` | |
+| C2.CON.03 | Ghép khối Lego | 4 | 3 | C2.CON.01 | `create` `plan` | |
+| C2.CON.04 | Ghép khối 3D | 5 | 4 | C2.CON.03 | `create` `infer` | |
+| C2.CON.05 | Block Pattern — sao chép cấu trúc | 5 | 4 | C2.CON.01 · C1.PAT.09 | `observe` `create` | |
 
 ## C2.ROT — Rotation (4)
 
