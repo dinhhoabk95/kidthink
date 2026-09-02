@@ -63,12 +63,7 @@ phase_end
 echo "▸ Phase 2: typecheck"
 phase_start
 
-# `pnpm typecheck` = cổng bậc thang, chỗ DUY NHẤT typecheck chạy (Task #204):
-# 10 project, tối đa 4 compiler cùng lúc, mỗi project một tsBuildInfoFile trong
-# node_modules/.cache. Đường chạy thứ hai đã bị xoá vì nó không có bậc thang —
-# hai đường thì đo hai thứ khác nhau mà không ai báo. Cổng giữ bất biến này:
-# scripts/script-surface.test.ts.
-pnpm typecheck
+bash "${SCRIPT_DIR}/typecheck-parallel.sh"
 TC_STATUS=$?
 
 if [ $TC_STATUS -ne 0 ]; then

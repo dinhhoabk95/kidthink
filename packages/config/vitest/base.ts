@@ -1,5 +1,4 @@
 import fs from "node:fs";
-import { cpus } from "node:os";
 import path from "node:path";
 import { defineConfig, mergeConfig, type ViteUserConfig } from "vitest/config";
 import { testDatabaseUrls } from "./test-database.ts";
@@ -109,73 +108,10 @@ export function nuxtAppAliases(appRoot: string): PrefixAlias[] {
 export const SEQUENTIAL_DEFAULTS = {
   fileParallelism: false,
   maxWorkers: 1,
+  minWorkers: 1,
   maxConcurrency: 1,
   pool: "forks" as const,
-  sequence: { concurrent: false },
-} as const;
-
-/*
- * Hai khoá đã gỡ khỏi khối trên ngày 2026-09-02 vì **vitest 4 không còn đọc chúng**
- * (đối chiếu `InlineConfig` trong `vitest/dist/chunks/reporters.d.*.d.ts`):
- *
- *   minWorkers: 1              → khoá không còn tồn tại
- *   forks: { singleFork: true } → `poolOptions`/`forks`/`threads` bị gỡ ở vitest 4
- *
- * Spread một object `as const` vào `test:` KHÔNG kích hoạt excess property check của
- * TypeScript, nên hai khoá chết này type-check sạch và không cổng nào báo — đúng dạng
- * "xanh giả" mà repo đã trả giá nhiều lần.
- *
- * Hệ quả cần biết khi đọc số đo: thứ thật sự ép chạy tuần tự là `fileParallelism:false`
- * (vitest tự hạ `maxWorkers` về 1 khi nó tắt). `singleFork` — gom mọi file vào MỘT tiến
- * trình — thì **đã không còn hiệu lực từ lúc nâng lên vitest 4**, nên mỗi file test vẫn
- * bị dựng lại module registry. Đo lại 2026-09-02 máy rảnh trên `packages/game-engine`:
- * `Duration 72,75 s (transform 4,99 s, import 25,00 s, tests 12,67 s)` — phần việc THẬT
- * chỉ 12,67 s, còn `import` một mình đã 25 s.
- */
-
-/** Chừa một core cho tiến trình chính của vitest và cho máy. */
-const PARALLEL_WORKER_RESERVE = 1;
-
-/**
- * Cấu hình cho workspace **không** mở kết nối PostgreSQL nào.
- *
- * Đo 2026-09-02 trên `packages/game-engine` (65 file, 1.039 test, 0 file chạm DB).
- * Cả bốn lượt đều **máy rảnh, cache ấm**, và đều ra 65 file / 1.039 test xanh:
- *
- * | Cấu hình                             | Wall clock | so với hiện tại |
- * |--------------------------------------|------------|-----------------|
- * | `SEQUENTIAL_DEFAULTS` (đang dùng)     | 74,0 s     | —               |
- * | `forks` + song song                   | 21,9 s     | 3,4×            |
- * | **`threads` + song song + `isolate`** | **16,3 s** | **4,5×**        |
- * | `threads` + song song, `isolate:false`| 9,0 s      | 8,2×            |
- *
- * Hai điều rút ra:
- *
- * 1. `pool:"threads"` thắng `forks` (16,3 s vs 21,9 s) vì phần việc thật chỉ chiếm
- *    một phần nhỏ tổng số — phần còn lại là `import` dựng lại module registry cho
- *    từng file. Thread chia sẻ tiến trình nên dựng rẻ hơn fork.
- *
- * 2. `isolate:false` nhanh hơn nữa (9,0 s) nhưng **CHƯA dùng**, và Cấm — NEVER bật
- *    nó chỉ vì con số. Nó bỏ ranh giới module giữa các file test: file nào lỡ đổi
- *    state ở tầng module sẽ rò sang file sau, và một lượt xanh KHÔNG chứng minh
- *    được điều ngược lại — lỗi kiểu này phụ thuộc thứ tự chạy. Muốn bật thì phải
- *    có phép đo riêng cho chuyện rò state, không phải phép đo thời gian.
- *
- * ❗ Số cũ ghi ở bản trước (91,7 → 23,3 s, và "isolate:false CHẬM HƠN, 43,9 s") đo
- * khi máy đang chạy song song việc khác nên **sai**; `isolate:false` thật ra nhanh
- * hơn. Cấm — NEVER đo lại các con số này khi còn tiến trình nặng khác trên máy.
- */
-export const PARALLEL_DEFAULTS = {
-  fileParallelism: true,
-  maxWorkers: Math.max(1, cpus().length - PARALLEL_WORKER_RESERVE),
-  maxConcurrency: 5,
-  pool: "threads" as const,
-  // `isolate` là khoá **cấp cao nhất** ở vitest 4; `poolOptions.threads.isolate`
-  // của vitest 3 bị gỡ và chỉ in một dòng DEPRECATED rồi bỏ qua.
-  isolate: true,
-  // Test trong CÙNG một file vẫn chạy nối đuôi. Song song ở đây là song song
-  // **giữa các file**, đúng thứ `fileParallelism` bật. Cho phép `concurrent`
-  // trong file là đổi hợp đồng của từng bài test, không phải đổi cách chạy.
+  forks: { singleFork: true },
   sequence: { concurrent: false },
 } as const;
 
@@ -225,44 +161,10 @@ export const WORKSPACE_TEST_EXCLUDE: readonly string[] = [
   "**/fixtures/**",
 ];
 
-/**
- * Database KHÔNG tồn tại, trên loopback.
- *
- * Workspace khai `database: false` vẫn được nhận hai biến này thay vì bị bỏ
- * trống. Bỏ trống là nguy hiểm hơn hẳn: `requireEnv` nạp `.env` ở gốc repo, nên
- * một test tưởng là thuần mà lỡ mở kết nối sẽ ghi thẳng vào **database dev** —
- * đúng sự cố đã đo 2026-08-30 (1.117 dòng fixture lọt vào catalog công khai,
- * xem `test-database.ts`). Trỏ vào một tên không tồn tại thì lần mở kết nối đó
- * **đỏ ngay và nói rõ**, thay vì âm thầm thành công ở nhầm chỗ.
- *
- * Host là loopback để `assertDisposableDatabaseUrl` (BR-TST-05) vẫn đúng nếu có
- * đường mã nào chạm tới.
- */
-const NO_DATABASE_URL =
-  "postgresql://mindkid_no_db:mindkid_no_db@127.0.0.1:5433/mindkid_khong_co_database_cho_test_thuan";
-
-export interface WorkspaceTestOptions {
-  /**
-   * `false` khi **không file test nào** của workspace mở kết nối PostgreSQL.
-   *
-   * Mặc định `true` — quên khai thì workspace vẫn chạy tuần tự và vẫn có
-   * `globalSetup`. Đó là chiều fail-safe: chậm mà đúng, chứ Cấm — NEVER để một
-   * workspace chạm DB lặng lẽ rơi vào nhóm song song.
-   *
-   * Kiểm bằng đo, không bằng trí nhớ:
-   * `grep -rl '@mindkid/db\|from "postgres"\|getOwnerDb\|drizzle-orm' <workspace>`
-   * ra rỗng thì mới được khai `false`. Cổng
-   * `packages/config/tests/vitest-projects.test.ts` giữ bất biến này.
-   */
-  readonly database?: boolean;
-}
-
 /** Điểm vào duy nhất cho `vitest.config.ts` của workspace. */
 export function defineWorkspaceTest(
-  overrides: ViteUserConfig = {},
-  options: WorkspaceTestOptions = {}
+  overrides: ViteUserConfig = {}
 ): ViteUserConfig {
-  const usesDatabase = options.database ?? true;
   const { owner, app } = testDatabaseUrls();
   const base = defineConfig({
     resolve: { alias: workspaceAliases() },
@@ -274,19 +176,9 @@ export function defineWorkspaceTest(
       // Database RIÊNG cho test, dựng và dọn bởi `globalSetup` bên dưới.
       // `requireEnv` nạp `.env` nhưng Cấm — NEVER ghi đè biến đã có giá trị,
       // nên hai dòng này thắng file `.env` của máy dev.
-      env: usesDatabase
-        ? { DATABASE_URL: owner, DATABASE_URL_APP: app }
-        : { DATABASE_URL: NO_DATABASE_URL, DATABASE_URL_APP: NO_DATABASE_URL },
-      // `globalSetup` chạy migration + TRUNCATE 81 bảng ở MỖI lần gọi vitest.
-      // A/B trên CÙNG `packages/taxonomy` (1 file), 3 lượt, máy rảnh:
-      //   có globalSetup  4,12 / 4,65 / 4,91 s
-      //   không globalSetup 2,85 / 3,14 / 3,26 s
-      // → **~1,5 s** thuế cố định mỗi lần gọi vitest. Nhỏ so với phần song song,
-      // nhưng workspace không chạm DB thì đó là trả cho việc không dùng — và nó
-      // cũng là thứ gây `deadlock detected` khi hai `vitest run` cùng chạm
-      // `mindkid_test` (đã đo 2026-09-02).
-      ...(usesDatabase ? { globalSetup: [DATABASE_GLOBAL_SETUP] } : {}),
-      ...(usesDatabase ? SEQUENTIAL_DEFAULTS : PARALLEL_DEFAULTS),
+      env: { DATABASE_URL: owner, DATABASE_URL_APP: app },
+      globalSetup: [DATABASE_GLOBAL_SETUP],
+      ...SEQUENTIAL_DEFAULTS,
     },
   });
 
