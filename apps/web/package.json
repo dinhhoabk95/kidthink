@@ -6,8 +6,7 @@
   "scripts": {
     "build": "nuxt build",
     "dev": "nuxt dev --port 3000",
-    "test": "vitest run",
-    "typecheck": "vue-tsc -b"
+    "test": "vitest run"
   },
   "dependencies": {
     "@mindkid/adaptive": "workspace:*",

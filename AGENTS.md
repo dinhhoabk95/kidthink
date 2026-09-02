@@ -77,20 +77,29 @@ admin:app/server/shared/node), so từng file với
 Giảm → xanh kèm nhắc chạy `pnpm typecheck:update`. Đây là **chỗ duy nhất** typecheck
 chạy: không app hay package nào còn script `typecheck` riêng.
 
-Nợ theo `typecheck-baseline.json` hiện tại: **3.142 lỗi** — root 1.318 · worker 312 ·
-web:app 685 · web:server 680 · admin:app 147 · bốn project còn lại 0. Con số **2.931** ghi
-trước đây sai ở mọi hạng mục. Trong 3.142 đó có **+194 lỗi mà Task #124 và #125 ghi THÊM**
-vào baseline cho mã vừa viết — bậc thang khi ấy chỉ là lời khuyên. Từ nay `--update` **từ
-chối** mọi lần tăng (`scripts/typecheck/ratchet.ts:refuseIncrease`); muốn tăng phải có
-`--allow-increase` kèm lý do trong PR. Sau khi sửa `origin` của bộ sinh level, root đo được
-**1.139** (−179) → tổng thực đo **2.963**; chưa chốt được vì cây làm việc còn lỗi mới chưa
-commit nằm ngoài phạm vi review. Gần như toàn bộ phần còn lại là `TS18048`/`TS2532` do
-`noUncheckedIndexedAccess`. `pnpm typecheck --only web` chạy riêng một app; `--only web:app`
-chạy riêng một project.
+Nợ theo `typecheck-baseline.json`: **0 trên cả 10 project** (đo 2026-09-02). Bậc thang
+giờ chỉ đi xuống được — `--update` **từ chối** mọi lần tăng
+(`scripts/typecheck/ratchet.ts:refuseIncrease`); muốn tăng phải có `--allow-increase` kèm
+lý do trong PR. `pnpm typecheck --only web` chạy riêng một app; `--only web:app` chạy
+riêng một project.
+
+Cổng chạy **tối đa 4 compiler cùng lúc** và mỗi project có `--incremental` với
+`--tsBuildInfoFile` riêng trong `node_modules/.cache/typecheck/` (Task #204). Đo được:
+tuần tự không cache **62 s** → song song có cache **35 s nguội / 13 s ấm**. Thứ tự dòng
+báo cáo vẫn cố định theo `TYPECHECK_PROJECTS`, không theo thứ tự chạy xong.
+
+❌ NEVER dùng `vue-tsc -b` cho việc này: build mode coi project **có lỗi** là "chưa dựng
+xong" nên bỏ cache và kiểm lại từ đầu — đo được `.nuxt/tsconfig.app.tsbuildinfo` chỉ 2,8 KB
+sau một lượt, tức rỗng. `--noEmit -p` + `--incremental` thì giữ cache **kể cả khi đỏ**.
+Ca âm cho chuyện cache không nuốt lỗi mới: `scripts/typecheck/incremental-cache.test.ts`
+(chạy `tsc` thật), và đã đo tay trên cả `root` (tsc) lẫn `web:app` (vue-tsc).
 
 Convention của workspace — `tsconfig.json` extend đúng một base, `vitest.config.ts` đi
-qua `defineWorkspaceTest`, script `test`, dependency khai `catalog:`, `pnpm check` đủ
-bốn bước — ❌ KHÔNG còn cổng nào đo (gỡ 2026-08-29); giữ bằng lượt review. Workspace ❌ NEVER khai script `typecheck` riêng: lưới `root` đã include
+qua `defineWorkspaceTest`, script `test`, dependency khai `catalog:` — ❌ KHÔNG còn cổng
+nào đo (gỡ 2026-08-29); giữ bằng lượt review. Hai thứ ĐÃ có cổng trở lại (Task #204,
+`scripts/script-surface.test.ts`): `pnpm typecheck` phải là cổng bậc thang và chỉ có một
+đường, còn `scripts/check.sh` phải giữ đủ **năm** bước của
+`docs/specs/08-quality/testing-strategy.md` §8. Workspace ❌ NEVER khai script `typecheck` riêng: lưới `root` đã include
 `packages/*/{src,tests,scripts,vitest}`, nên bản sao cấp workspace phủ thêm số không và
 đỏ ngay khi chạy vì không có baseline (Task #111). `apps/web`/`apps/admin` không extend base (Nuxt sinh
 `compilerOptions` riêng) — `tsconfig.json` của chúng chỉ `references` tới đúng danh sách
