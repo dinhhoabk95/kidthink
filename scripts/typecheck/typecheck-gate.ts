@@ -9,7 +9,7 @@
  * và bản trước của nó exit 0 im lặng. Cổng gọi thẳng `vue-tsc -p` trên từng
  * `.nuxt/tsconfig.*.json` — deterministic, không phụ thuộc env.
  */
-import { spawnSync } from "node:child_process";
+import { spawn } from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
@@ -51,7 +51,83 @@ function resolveCompiler(project: TypecheckProject): string {
   );
 }
 
-function runProject(project: TypecheckProject): ProjectErrors {
+/** `web:app` → `web-app`; tên project là một phần tên file cache. */
+const NAME_SEPARATOR = /:/g;
+
+/**
+ * Đường dẫn cache cho **riêng** một project.
+ *
+ * Dùng chung một file là hai project đạp lên cache của nhau và lượt sau đo sai —
+ * ca âm `mỗi project một tsBuildInfoFile` trong `typecheck-gate.test.ts` giữ
+ * điều này. Cache nằm trong `node_modules/` (đã .gitignore), Cấm — NEVER để nó
+ * rơi vào cây nguồn.
+ */
+export function buildInfoPath(project: TypecheckProject): string {
+  return path.join(
+    REPO_ROOT,
+    project.cwd,
+    "node_modules",
+    ".cache",
+    "typecheck",
+    `${project.name.replace(NAME_SEPARATOR, "-")}.tsbuildinfo`
+  );
+}
+
+/**
+ * Tham số truyền cho `tsc`/`vue-tsc`.
+ *
+ * `--incremental` là thứ làm lượt ấm rẻ đi. Nó an toàn ở đây theo đúng nghĩa đắt
+ * nhất: cache **không** nuốt lỗi mới — ca âm chạy `tsc` thật nằm ở
+ * `scripts/typecheck/incremental-cache.test.ts`. Khác hẳn `vue-tsc -b`: build
+ * mode coi project có lỗi là "chưa dựng xong" nên bỏ cache và kiểm lại từ đầu,
+ * mà repo này đỏ là trạng thái bình thường (bậc thang nợ).
+ */
+export function compilerArgs(project: TypecheckProject): readonly string[] {
+  return [
+    "--noEmit",
+    "-p",
+    project.project,
+    "--incremental",
+    "--tsBuildInfoFile",
+    buildInfoPath(project),
+  ];
+}
+
+/**
+ * Chạy `items` qua `worker` với tối đa `limit` việc cùng lúc.
+ *
+ * Kết quả trả về **theo đúng thứ tự đầu vào**, không theo thứ tự xong: báo cáo
+ * của cổng phải deterministic, nếu không thì hai lượt chạy giống nhau in ra hai
+ * thứ tự khác nhau và người đọc không so được.
+ *
+ * Một việc ném thì cả lượt ném — Cấm — NEVER nuốt lỗi của compiler.
+ */
+export async function mapWithConcurrency<T, R>(
+  items: readonly T[],
+  limit: number,
+  worker: (item: T, index: number) => Promise<R>
+): Promise<R[]> {
+  const results = new Array<R>(items.length);
+  let next = 0;
+
+  async function pump(): Promise<void> {
+    for (;;) {
+      const index = next;
+      next += 1;
+      const item = items[index];
+      if (index >= items.length || item === undefined) {
+        return;
+      }
+      results[index] = await worker(item, index);
+    }
+  }
+
+  const lanes = Math.max(1, Math.min(limit, items.length));
+  await Promise.all(Array.from({ length: lanes }, () => pump()));
+  return results;
+}
+
+async function runProject(project: TypecheckProject): Promise<ProjectErrors> {
   const cwd = path.join(REPO_ROOT, project.cwd);
   const configPath = path.join(cwd, project.project);
   if (!fs.existsSync(configPath)) {
@@ -63,12 +139,41 @@ function runProject(project: TypecheckProject): ProjectErrors {
       ],
     };
   }
-  const result = spawnSync(
+  fs.mkdirSync(path.dirname(buildInfoPath(project)), { recursive: true });
+  const result = await spawnCompiler(
     resolveCompiler(project),
-    ["--noEmit", "-p", project.project],
-    { cwd, encoding: "utf8", maxBuffer: 64 * 1024 * 1024 }
+    compilerArgs(project),
+    cwd
   );
   return interpretCompilerRun(result, project.cwd);
+}
+
+/** `spawn` gói lại thành đúng hình dạng mà `interpretCompilerRun` đọc. */
+function spawnCompiler(
+  bin: string,
+  args: readonly string[],
+  cwd: string
+): Promise<CompilerRun> {
+  return new Promise((resolve) => {
+    const child = spawn(bin, [...args], { cwd });
+    let stdout = "";
+    let stderr = "";
+    child.stdout.on("data", (chunk: Buffer) => {
+      stdout += chunk.toString("utf8");
+    });
+    child.stderr.on("data", (chunk: Buffer) => {
+      stderr += chunk.toString("utf8");
+    });
+    child.on("error", (error: Error) => {
+      resolve({ status: null, signal: null, error, stdout, stderr });
+    });
+    child.on(
+      "close",
+      (status: number | null, signal: NodeJS.Signals | null) => {
+        resolve({ status, signal, stdout, stderr });
+      }
+    );
+  });
 }
 
 /** Hình dạng của `spawnSync` mà cổng thực sự đọc — tách ra để kiểm được. */
@@ -142,11 +247,11 @@ interface ProjectReport {
   readonly baseline: number;
 }
 
-function reportProject(
+async function reportProject(
   project: TypecheckProject,
   baseline: TypecheckBaseline
-): ProjectReport {
-  const errors = runProject(project);
+): Promise<ProjectReport> {
+  const errors = await runProject(project);
   const known = baseline[project.name];
   const ratchet = compareToBaseline(errors.files, known ?? {});
   return {
@@ -243,7 +348,15 @@ function applyUpdate(
   process.stdout.write("\n✅ đã ghi typecheck-baseline.json\n");
 }
 
-function main(): void {
+/**
+ * Bao nhiêu compiler chạy cùng lúc.
+ *
+ * 4 chứ không phải số core: mỗi `vue-tsc` trên project Nuxt ngốn ~1 GB, và máy
+ * dev chuẩn ở đây là 16 GB. Mở hết core là đổi cổng nhanh lấy nguy cơ swap.
+ */
+const MAX_PARALLEL_COMPILERS = 4;
+
+async function main(): Promise<void> {
   const args = process.argv.slice(2);
   const update = args.includes("--update");
   const allowIncrease = args.includes("--allow-increase");
@@ -259,7 +372,13 @@ function main(): void {
   }
 
   const baseline = readTypecheckBaseline();
-  const reports = projects.map((project) => reportProject(project, baseline));
+  // Song song, nhưng `mapWithConcurrency` trả về theo thứ tự đầu vào nên bảng
+  // báo cáo bên dưới vẫn cố định theo `TYPECHECK_PROJECTS`.
+  const reports = await mapWithConcurrency(
+    projects,
+    MAX_PARALLEL_COMPILERS,
+    (project) => reportProject(project, baseline)
+  );
 
   for (const report of reports) {
     process.stdout.write(`${describe(report)}\n`);
@@ -303,5 +422,13 @@ function main(): void {
 }
 
 if (import.meta.url === pathToFileURL(process.argv[1] ?? "").href) {
-  main();
+  // `main` là async từ Task #204. Cấm — NEVER gọi trần: một promise bị từ chối mà
+  // không ai bắt thì cổng có thể kết thúc mà KHÔNG in gì, và "không in gì" ở đây
+  // đọc y hệt "xanh".
+  main().catch((error: unknown) => {
+    process.stderr.write(
+      `\n❌ typecheck: cổng nổ trước khi kết luận — ${error instanceof Error ? error.message : String(error)}\n`
+    );
+    process.exit(1);
+  });
 }

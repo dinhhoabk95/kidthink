@@ -1,6 +1,12 @@
+import path from "node:path";
 import { describe, expect, it } from "vitest";
 import { compareToBaseline, hasRegression, refuseIncrease } from "./ratchet.ts";
-import { interpretCompilerRun } from "./typecheck-gate.ts";
+import { TYPECHECK_PROJECTS } from "./typecheck-delta.ts";
+import {
+  compilerArgs,
+  interpretCompilerRun,
+  mapWithConcurrency,
+} from "./typecheck-gate.ts";
 
 /** Hình dạng tối thiểu của `spawnSync` mà cổng thực sự đọc. */
 function run(overrides: {
@@ -110,5 +116,84 @@ describe("hasRegression giữ nguyên hợp đồng cũ", () => {
     expect(hasRegression(compareToBaseline({ "a.ts": 1 }, { "a.ts": 4 }))).toBe(
       false
     );
+  });
+});
+
+describe("compilerArgs — cache riêng cho từng project (Task #204, #204.7)", () => {
+  it("truyền --incremental cho mọi project", () => {
+    for (const project of TYPECHECK_PROJECTS) {
+      expect(compilerArgs(project)).toContain("--incremental");
+    }
+  });
+
+  it("mỗi project một tsBuildInfoFile — chung file là đạp lên cache của nhau", () => {
+    const targets = TYPECHECK_PROJECTS.map((project) => {
+      const args = compilerArgs(project);
+      const at = args.indexOf("--tsBuildInfoFile");
+      expect(at).toBeGreaterThanOrEqual(0);
+      return args[at + 1];
+    });
+    expect(new Set(targets).size).toBe(TYPECHECK_PROJECTS.length);
+  });
+
+  it("cache nằm trong node_modules/.cache — Cấm — NEVER rơi vào cây nguồn", () => {
+    for (const project of TYPECHECK_PROJECTS) {
+      const args = compilerArgs(project);
+      const target = String(args[args.indexOf("--tsBuildInfoFile") + 1]);
+      expect(target).toContain(`node_modules${path.sep}.cache`);
+    }
+  });
+
+  it("vẫn giữ --noEmit và -p đúng project", () => {
+    const project = TYPECHECK_PROJECTS[0];
+    if (project === undefined) {
+      throw new Error("TYPECHECK_PROJECTS rỗng");
+    }
+    const args = compilerArgs(project);
+    expect(args).toContain("--noEmit");
+    expect(args[args.indexOf("-p") + 1]).toBe(project.project);
+  });
+});
+
+describe("mapWithConcurrency — song song nhưng thứ tự báo cáo cố định", () => {
+  it("giữ nguyên thứ tự đầu vào dù việc xong lộn xộn", async () => {
+    const input = [40, 10, 30, 0, 20];
+    const out = await mapWithConcurrency(
+      input,
+      3,
+      (ms) =>
+        new Promise<number>((resolve) => {
+          setTimeout(() => resolve(ms), ms);
+        })
+    );
+    expect(out).toEqual(input);
+  });
+
+  it("Cấm — NEVER chạy quá số tiến trình cho phép cùng lúc", async () => {
+    let live = 0;
+    let peak = 0;
+    await mapWithConcurrency(
+      Array.from({ length: 12 }, (_, i) => i),
+      4,
+      () => {
+        live += 1;
+        peak = Math.max(peak, live);
+        return new Promise<number>((resolve) => {
+          setTimeout(() => {
+            live -= 1;
+            resolve(0);
+          }, 5);
+        });
+      }
+    );
+    expect(peak).toBe(4);
+  });
+
+  it("một việc ném lỗi thì cả lượt ném, Cấm — NEVER nuốt", async () => {
+    await expect(
+      mapWithConcurrency([1, 2, 3], 2, (n) =>
+        n === 2 ? Promise.reject(new Error("nổ")) : Promise.resolve(n)
+      )
+    ).rejects.toThrow("nổ");
   });
 });

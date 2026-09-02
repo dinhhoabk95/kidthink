@@ -26,6 +26,22 @@
     // `outDir` từng khai ở đây và ở 5 tsconfig con — tất cả đều chết.
     "noEmit": true,
     // Import khai `.ts` tường minh (Task #105) — cần noEmit, đã set ở trên.
-    "allowImportingTsExtensions": true
+    "allowImportingTsExtensions": true,
+
+    // Task #204: không có `incremental`, mỗi lượt `pnpm typecheck` kiểm lại toàn
+    // bộ 1.984 file (đo 2026-09-02: 73 s, trong đó `Check time` 55 s). TS 5.9
+    // chấp nhận `noEmit` + `incremental` cùng lúc — đã kiểm riêng, exit 0 và có
+    // ghi `.tsbuildinfo`.
+    //
+    // `${configDir}` (TS 5.5+) là BẮT BUỘC ở đây: đường dẫn tương đối trong một
+    // file `extends` được giải theo vị trí của **file base**, nên
+    // `"node_modules/.cache/..."` trần sẽ khiến mọi project dùng CHUNG một
+    // buildinfo trong `packages/config/` và đạp lên cache của nhau.
+    // `${configDir}` giải theo thư mục của config ĐANG dùng → mỗi project một file.
+    //
+    // Cache nằm trong `node_modules/` (đã .gitignore), Cấm — NEVER để nó rơi vào
+    // cây nguồn. Ca âm cho cả hai điều trên: `scripts/typecheck/incremental-cache.test.ts`.
+    "incremental": true,
+    "tsBuildInfoFile": "${configDir}/node_modules/.cache/typecheck/tsbuildinfo"
   }
 }
