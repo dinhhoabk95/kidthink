@@ -48,7 +48,7 @@
 - [x] [`#175`](175-backfill-gt003-drag-to-container-plan.md) `GT-003` — 8 game type, 80 level
 - [x] [`#176`](176-backfill-gt001-tap-select-plan.md) `GT-001` — 7 game type, 70 level
 - [x] [`#177`](177-backfill-gt008-drag-to-slot-plan.md) `GT-008` — 6 game type, 60 level
-- [ ] [`#178`](178-backfill-gt006-gt005-order-and-pair-plan.md) `GT-006` + `GT-005` — 8 game type, 80 level
+- [x] [`#178`](178-backfill-gt006-gt005-order-and-pair-plan.md) `GT-006` + `GT-005` — 8 game type, 80 level
 - [ ] [`#179`](179-backfill-five-engines-mid-load-plan.md) `GT-012` `GT-018` `GT-023` `GT-019` `GT-022` — 13 game type, 130 level
 - [ ] [`#180`](180-backfill-eight-engines-single-type-plan.md) tám engine tải mỏng — 9 game type, 90 level
 

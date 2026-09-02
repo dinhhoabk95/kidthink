@@ -1,6 +1,7 @@
 import { ALL_SEED_ACTIVITIES } from "./activities/index.js";
 import { GT001_BACKFILL_LEVELS } from "./backfill/seed-gt001-backfill.js";
 import { GT003_BACKFILL_LEVELS } from "./backfill/seed-gt003-backfill.js";
+import { GT006_GT005_BACKFILL_LEVELS } from "./backfill/seed-gt006-gt005-backfill.js";
 import { GT008_BACKFILL_LEVELS } from "./backfill/seed-gt008-backfill.js";
 import { C1_SEED_LEVELS } from "./c1/levels.js";
 import { C2_SEED_LEVELS } from "./c2/levels.js";
@@ -33,6 +34,7 @@ export const STATIC_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
   ...PEDAGOGY_MISSING_SKILL_LEVELS,
   ...GT001_BACKFILL_LEVELS,
   ...GT003_BACKFILL_LEVELS,
+  ...GT006_GT005_BACKFILL_LEVELS,
   ...GT008_BACKFILL_LEVELS,
 ];
 
