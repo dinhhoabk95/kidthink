@@ -6,7 +6,7 @@
       "title": "Ghép đôi Ngôi nhà tương ứng",
       "instruction": "Bé ghép đôi các Ngôi nhà tương ứng nhé!",
       "theme_tag": "home",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["infer"],
       "skill_codes": ["C3.INF.01"],
       "learning_objective_codes": [
@@ -85,7 +85,7 @@
       "title": "Ghép đôi Voi tương ứng",
       "instruction": "Bé ghép đôi các Voi tương ứng nhé!",
       "theme_tag": "animal",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["infer"],
       "skill_codes": ["C3.INF.01"],
       "learning_objective_codes": [
@@ -164,7 +164,7 @@
       "title": "Tìm bóng của Cây xanh",
       "instruction": "Bé tìm bóng của Cây xanh nhé!",
       "theme_tag": "nature",
-      "what_tags": ["classification"],
+      "what_tags": ["ops"],
       "thinking_tags": ["infer"],
       "skill_codes": ["C3.INF.01"],
       "learning_objective_codes": [
@@ -240,7 +240,7 @@
       "title": "Tìm bóng của Cá heo",
       "instruction": "Bé tìm bóng của Cá heo nhé!",
       "theme_tag": "ocean",
-      "what_tags": ["classification"],
+      "what_tags": ["ops"],
       "thinking_tags": ["infer"],
       "skill_codes": ["C3.INF.01"],
       "learning_objective_codes": [
@@ -316,7 +316,7 @@
       "title": "Xếp Táo đỏ theo kích thước",
       "instruction": "Bé sắp xếp Táo đỏ theo kích thước nhé!",
       "theme_tag": "food",
-      "what_tags": ["deduction", "logic", "number", "comparison"],
+      "what_tags": ["log", "number", "cmp"],
       "thinking_tags": ["infer"],
       "skill_codes": ["C3.INF.01"],
       "learning_objective_codes": [
@@ -402,7 +402,7 @@
       "title": "Xếp Xe buýt theo kích thước",
       "instruction": "Bé sắp xếp Xe buýt theo kích thước nhé!",
       "theme_tag": "vehicle",
-      "what_tags": ["deduction", "logic", "number", "comparison"],
+      "what_tags": ["log", "number", "cmp"],
       "thinking_tags": ["infer"],
       "skill_codes": ["C3.INF.01"],
       "learning_objective_codes": [
@@ -488,7 +488,7 @@
       "title": "Ghép hình Bảng vẽ hoàn chỉnh",
       "instruction": "Bé ghép các mảnh thành hình Bảng vẽ nhé!",
       "theme_tag": "art",
-      "what_tags": ["logic"],
+      "what_tags": ["log"],
       "thinking_tags": ["infer"],
       "skill_codes": ["C3.INF.01"],
       "learning_objective_codes": [
@@ -572,7 +572,7 @@
       "title": "Ghép hình Hành tinh hoàn chỉnh",
       "instruction": "Bé ghép các mảnh thành hình Hành tinh nhé!",
       "theme_tag": "space",
-      "what_tags": ["logic"],
+      "what_tags": ["log"],
       "thinking_tags": ["infer"],
       "skill_codes": ["C3.INF.01"],
       "learning_objective_codes": [
@@ -656,7 +656,7 @@
       "title": "Xem giờ trên đồng hồ",
       "instruction": "Bé xem đồng hồ và chọn giờ đúng nhé!",
       "theme_tag": "family",
-      "what_tags": ["number", "quantity"],
+      "what_tags": ["number", "quantity", "ops"],
       "thinking_tags": ["infer"],
       "skill_codes": ["C3.INF.01"],
       "learning_objective_codes": [
@@ -745,7 +745,7 @@
       "title": "Xem giờ trên đồng hồ",
       "instruction": "Bé xem đồng hồ và chọn giờ đúng nhé!",
       "theme_tag": "body",
-      "what_tags": ["number", "quantity"],
+      "what_tags": ["number", "quantity", "ops"],
       "thinking_tags": ["infer"],
       "skill_codes": ["C3.INF.01"],
       "learning_objective_codes": [
@@ -834,7 +834,7 @@
       "title": "Ghép đôi Mặt trời tương ứng",
       "instruction": "Bé ghép đôi các Mặt trời tương ứng nhé!",
       "theme_tag": "weather",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["predict", "infer"],
       "skill_codes": ["C3.INF.02"],
       "learning_objective_codes": [
@@ -913,7 +913,7 @@
       "title": "Ghép đôi Bao lì xì tương ứng",
       "instruction": "Bé ghép đôi các Bao lì xì tương ứng nhé!",
       "theme_tag": "festival",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["predict", "infer"],
       "skill_codes": ["C3.INF.02"],
       "learning_objective_codes": [
@@ -992,7 +992,7 @@
       "title": "Phân loại Trường học theo nhóm",
       "instruction": "Bé phân loại Trường học theo đặc điểm phù hợp!",
       "theme_tag": "school",
-      "what_tags": ["classification"],
+      "what_tags": ["cmp", "sequence"],
       "thinking_tags": ["predict", "infer"],
       "skill_codes": ["C3.INF.02"],
       "learning_objective_codes": [
@@ -1053,7 +1053,7 @@
       "title": "Phân loại Bò sữa theo nhóm",
       "instruction": "Bé phân loại Bò sữa theo đặc điểm phù hợp!",
       "theme_tag": "farm",
-      "what_tags": ["classification"],
+      "what_tags": ["cmp", "sequence"],
       "thinking_tags": ["predict", "infer"],
       "skill_codes": ["C3.INF.02"],
       "learning_objective_codes": [
@@ -1114,7 +1114,7 @@
       "title": "Tìm bóng của Ngôi nhà",
       "instruction": "Bé tìm chiếc bóng đúng của Ngôi nhà nhé!",
       "theme_tag": "home",
-      "what_tags": ["classification"],
+      "what_tags": ["ops"],
       "thinking_tags": ["predict", "infer"],
       "skill_codes": ["C3.INF.02"],
       "learning_objective_codes": [
@@ -1190,7 +1190,7 @@
       "title": "Tìm bóng của Voi",
       "instruction": "Bé tìm chiếc bóng đúng của Voi nhé!",
       "theme_tag": "animal",
-      "what_tags": ["classification"],
+      "what_tags": ["ops"],
       "thinking_tags": ["predict", "infer"],
       "skill_codes": ["C3.INF.02"],
       "learning_objective_codes": [
@@ -1266,7 +1266,7 @@
       "title": "Xếp Cây xanh theo kích thước",
       "instruction": "Bé sắp xếp Cây xanh theo kích thước nhé!",
       "theme_tag": "nature",
-      "what_tags": ["deduction", "logic", "number", "comparison"],
+      "what_tags": ["log", "number", "cmp"],
       "thinking_tags": ["predict", "infer"],
       "skill_codes": ["C3.INF.02"],
       "learning_objective_codes": [
@@ -1352,7 +1352,7 @@
       "title": "Xếp Cá heo theo kích thước",
       "instruction": "Bé sắp xếp Cá heo theo kích thước nhé!",
       "theme_tag": "ocean",
-      "what_tags": ["deduction", "logic", "number", "comparison"],
+      "what_tags": ["log", "number", "cmp"],
       "thinking_tags": ["predict", "infer"],
       "skill_codes": ["C3.INF.02"],
       "learning_objective_codes": [
@@ -1438,7 +1438,7 @@
       "title": "Ghép hình Táo đỏ hoàn chỉnh",
       "instruction": "Bé ghép các mảnh thành hình Táo đỏ nhé!",
       "theme_tag": "food",
-      "what_tags": ["logic"],
+      "what_tags": ["log"],
       "thinking_tags": ["predict", "infer"],
       "skill_codes": ["C3.INF.02"],
       "learning_objective_codes": [
@@ -1522,7 +1522,7 @@
       "title": "Ghép hình Xe buýt hoàn chỉnh",
       "instruction": "Bé ghép các mảnh thành hình Xe buýt nhé!",
       "theme_tag": "vehicle",
-      "what_tags": ["logic"],
+      "what_tags": ["log"],
       "thinking_tags": ["predict", "infer"],
       "skill_codes": ["C3.INF.02"],
       "learning_objective_codes": [
@@ -1606,8 +1606,8 @@
       "title": "Ghép đôi Bảng vẽ tương ứng",
       "instruction": "Bé ghép đôi các Bảng vẽ tương ứng nhé!",
       "theme_tag": "art",
-      "what_tags": ["classification"],
-      "thinking_tags": ["infer", "deduce"],
+      "what_tags": ["cls"],
+      "thinking_tags": ["infer"],
       "skill_codes": ["C3.INF.03"],
       "learning_objective_codes": [
         "LO-C3.INF.03-01",
@@ -1685,8 +1685,8 @@
       "title": "Ghép đôi Hành tinh tương ứng",
       "instruction": "Bé ghép đôi các Hành tinh tương ứng nhé!",
       "theme_tag": "space",
-      "what_tags": ["classification"],
-      "thinking_tags": ["infer", "deduce"],
+      "what_tags": ["cls"],
+      "thinking_tags": ["infer"],
       "skill_codes": ["C3.INF.03"],
       "learning_objective_codes": [
         "LO-C3.INF.03-01",
@@ -1764,8 +1764,8 @@
       "title": "Phân loại Gia đình theo nhóm",
       "instruction": "Bé phân loại Gia đình theo đặc điểm phù hợp!",
       "theme_tag": "family",
-      "what_tags": ["classification"],
-      "thinking_tags": ["infer", "deduce"],
+      "what_tags": ["cmp", "sequence"],
+      "thinking_tags": ["infer"],
       "skill_codes": ["C3.INF.03"],
       "learning_objective_codes": [
         "LO-C3.INF.03-01",
@@ -1825,8 +1825,8 @@
       "title": "Phân loại Tai theo nhóm",
       "instruction": "Bé phân loại Tai theo đặc điểm phù hợp!",
       "theme_tag": "body",
-      "what_tags": ["classification"],
-      "thinking_tags": ["infer", "deduce"],
+      "what_tags": ["cmp", "sequence"],
+      "thinking_tags": ["infer"],
       "skill_codes": ["C3.INF.03"],
       "learning_objective_codes": [
         "LO-C3.INF.03-01",
@@ -1886,8 +1886,8 @@
       "title": "Tìm bóng của Mặt trời",
       "instruction": "Bé tìm chiếc bóng đúng của Mặt trời nhé!",
       "theme_tag": "weather",
-      "what_tags": ["classification"],
-      "thinking_tags": ["infer", "deduce"],
+      "what_tags": ["ops"],
+      "thinking_tags": ["infer"],
       "skill_codes": ["C3.INF.03"],
       "learning_objective_codes": [
         "LO-C3.INF.03-01",
@@ -1962,8 +1962,8 @@
       "title": "Tìm bóng của Bao lì xì",
       "instruction": "Bé tìm chiếc bóng đúng của Bao lì xì nhé!",
       "theme_tag": "festival",
-      "what_tags": ["classification"],
-      "thinking_tags": ["infer", "deduce"],
+      "what_tags": ["ops"],
+      "thinking_tags": ["infer"],
       "skill_codes": ["C3.INF.03"],
       "learning_objective_codes": [
         "LO-C3.INF.03-01",
@@ -2038,8 +2038,8 @@
       "title": "Xếp Trường học theo kích thước",
       "instruction": "Bé sắp xếp Trường học theo kích thước nhé!",
       "theme_tag": "school",
-      "what_tags": ["deduction", "logic", "number", "comparison"],
-      "thinking_tags": ["infer", "deduce"],
+      "what_tags": ["log", "number", "cmp"],
+      "thinking_tags": ["infer"],
       "skill_codes": ["C3.INF.03"],
       "learning_objective_codes": [
         "LO-C3.INF.03-01",
@@ -2124,8 +2124,8 @@
       "title": "Xếp Bò sữa theo kích thước",
       "instruction": "Bé sắp xếp Bò sữa theo kích thước nhé!",
       "theme_tag": "farm",
-      "what_tags": ["deduction", "logic", "number", "comparison"],
-      "thinking_tags": ["infer", "deduce"],
+      "what_tags": ["log", "number", "cmp"],
+      "thinking_tags": ["infer"],
       "skill_codes": ["C3.INF.03"],
       "learning_objective_codes": [
         "LO-C3.INF.03-01",
@@ -2210,8 +2210,8 @@
       "title": "Ghép hình Ngôi nhà hoàn chỉnh",
       "instruction": "Bé ghép các mảnh thành hình Ngôi nhà nhé!",
       "theme_tag": "home",
-      "what_tags": ["logic"],
-      "thinking_tags": ["infer", "deduce"],
+      "what_tags": ["log"],
+      "thinking_tags": ["infer"],
       "skill_codes": ["C3.INF.03"],
       "learning_objective_codes": [
         "LO-C3.INF.03-01",
@@ -2294,8 +2294,8 @@
       "title": "Ghép hình Voi hoàn chỉnh",
       "instruction": "Bé ghép các mảnh thành hình Voi nhé!",
       "theme_tag": "animal",
-      "what_tags": ["logic"],
-      "thinking_tags": ["infer", "deduce"],
+      "what_tags": ["log"],
+      "thinking_tags": ["infer"],
       "skill_codes": ["C3.INF.03"],
       "learning_objective_codes": [
         "LO-C3.INF.03-01",

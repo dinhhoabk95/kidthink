@@ -1,5 +1,5 @@
 /**
- * @generated from LEVEL-GENERATOR-KIT@b0b36bbbcbad
+ * @generated from LEVEL-GENERATOR-KIT@4d17f70e151d
  * Engine: GT-017
  * Seed: 20260829
  * Theme: school
@@ -34,7 +34,8 @@ export const GEN_GT017_20260829: ContentSeed<unknown, unknown>[] = [
         {
           "x": 0,
           "y": 0,
-          "z": 0
+          "z": 0,
+          "colorToken": "violet"
         },
         {
           "x": 0,
@@ -78,7 +79,7 @@ export const GEN_GT017_20260829: ContentSeed<unknown, unknown>[] = [
       ]
     },
     "difficulty_params": {
-      "hidden_cube_count": 1,
+      "hidden_cube_count": 0,
       "distractor_count": 2,
       "allow_rotate": false,
       "hint_after_ms": 10000,
@@ -110,7 +111,8 @@ export const GEN_GT017_20260829: ContentSeed<unknown, unknown>[] = [
         {
           "x": 0,
           "y": 0,
-          "z": 0
+          "z": 0,
+          "colorToken": "sky"
         },
         {
           "x": 0,
@@ -186,7 +188,8 @@ export const GEN_GT017_20260829: ContentSeed<unknown, unknown>[] = [
         {
           "x": 0,
           "y": 0,
-          "z": 0
+          "z": 0,
+          "colorToken": "amber"
         },
         {
           "x": 1,
@@ -230,7 +233,7 @@ export const GEN_GT017_20260829: ContentSeed<unknown, unknown>[] = [
       ]
     },
     "difficulty_params": {
-      "hidden_cube_count": 1,
+      "hidden_cube_count": 0,
       "distractor_count": 2,
       "allow_rotate": false,
       "hint_after_ms": 10000,
@@ -262,7 +265,8 @@ export const GEN_GT017_20260829: ContentSeed<unknown, unknown>[] = [
         {
           "x": 0,
           "y": 0,
-          "z": 0
+          "z": 0,
+          "colorToken": "peach"
         },
         {
           "x": 0,
@@ -312,7 +316,7 @@ export const GEN_GT017_20260829: ContentSeed<unknown, unknown>[] = [
       ]
     },
     "difficulty_params": {
-      "hidden_cube_count": 1,
+      "hidden_cube_count": 0,
       "distractor_count": 2,
       "allow_rotate": false,
       "hint_after_ms": 10000,
@@ -344,7 +348,8 @@ export const GEN_GT017_20260829: ContentSeed<unknown, unknown>[] = [
         {
           "x": 0,
           "y": 0,
-          "z": 0
+          "z": 0,
+          "colorToken": "sky"
         },
         {
           "x": 0,
@@ -388,7 +393,7 @@ export const GEN_GT017_20260829: ContentSeed<unknown, unknown>[] = [
       ]
     },
     "difficulty_params": {
-      "hidden_cube_count": 1,
+      "hidden_cube_count": 0,
       "distractor_count": 2,
       "allow_rotate": false,
       "hint_after_ms": 10000,

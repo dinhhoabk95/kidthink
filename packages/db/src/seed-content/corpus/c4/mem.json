@@ -6,7 +6,7 @@
       "title": "Tìm Trường học giống mẫu",
       "instruction": "Bé chạm vào Trường học giống mẫu nhé!",
       "theme_tag": "school",
-      "what_tags": ["classification", "number"],
+      "what_tags": ["cls", "shp", "number"],
       "thinking_tags": ["recall", "match"],
       "skill_codes": ["C4.MEM.01"],
       "learning_objective_codes": [
@@ -72,7 +72,7 @@
       "title": "Tìm Bò sữa giống mẫu",
       "instruction": "Bé chạm vào Bò sữa giống mẫu nhé!",
       "theme_tag": "farm",
-      "what_tags": ["classification", "number"],
+      "what_tags": ["cls", "shp", "number"],
       "thinking_tags": ["recall", "match"],
       "skill_codes": ["C4.MEM.01"],
       "learning_objective_codes": [
@@ -146,7 +146,7 @@
       "title": "So sánh nhóm Ngôi nhà",
       "instruction": "Bé chọn nhóm nhiều Ngôi nhà hơn nhé!",
       "theme_tag": "home",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["recall", "match"],
       "skill_codes": ["C4.MEM.01"],
       "learning_objective_codes": [
@@ -213,7 +213,7 @@
       "title": "So sánh nhóm Voi",
       "instruction": "Bé chọn nhóm nhiều Voi hơn nhé!",
       "theme_tag": "animal",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["recall", "match"],
       "skill_codes": ["C4.MEM.01"],
       "learning_objective_codes": [
@@ -280,7 +280,7 @@
       "title": "Xếp Cây xanh theo quy luật",
       "instruction": "Bé chọn Cây xanh tiếp theo theo quy luật!",
       "theme_tag": "nature",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["recall", "match"],
       "skill_codes": ["C4.MEM.01"],
       "learning_objective_codes": [
@@ -348,7 +348,7 @@
       "title": "Xếp Cá heo theo quy luật",
       "instruction": "Bé chọn Cá heo tiếp theo theo quy luật!",
       "theme_tag": "ocean",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["recall", "match"],
       "skill_codes": ["C4.MEM.01"],
       "learning_objective_codes": [
@@ -416,7 +416,7 @@
       "title": "Kéo Táo đỏ vào đúng ô",
       "instruction": "Bé kéo Táo đỏ vào đúng ô nhé!",
       "theme_tag": "food",
-      "what_tags": ["classification"],
+      "what_tags": ["spt"],
       "thinking_tags": ["recall", "match"],
       "skill_codes": ["C4.MEM.01"],
       "learning_objective_codes": [
@@ -480,7 +480,7 @@
       "title": "Kéo Xe buýt vào đúng ô",
       "instruction": "Bé kéo Xe buýt vào đúng ô nhé!",
       "theme_tag": "vehicle",
-      "what_tags": ["classification"],
+      "what_tags": ["spt"],
       "thinking_tags": ["recall", "match"],
       "skill_codes": ["C4.MEM.01"],
       "learning_objective_codes": [
@@ -544,7 +544,7 @@
       "title": "Tìm cặp thẻ Bảng vẽ giống nhau",
       "instruction": "Bé lật mở cặp Bảng vẽ giống nhau nhé!",
       "theme_tag": "art",
-      "what_tags": ["subitizing", "number"],
+      "what_tags": ["mem", "cnt", "number"],
       "thinking_tags": ["recall", "match"],
       "skill_codes": ["C4.MEM.01"],
       "learning_objective_codes": [
@@ -617,7 +617,7 @@
       "title": "Tìm cặp thẻ Cây đàn ghi-ta giống nhau",
       "instruction": "Bé lật mở cặp Cây đàn ghi-ta giống nhau nhé!",
       "theme_tag": "art",
-      "what_tags": ["subitizing", "number"],
+      "what_tags": ["mem", "cnt", "number"],
       "thinking_tags": ["recall", "match"],
       "skill_codes": ["C4.MEM.01"],
       "learning_objective_codes": [
@@ -683,7 +683,7 @@
       "title": "Xếp Gia đình theo quy luật",
       "instruction": "Bé chọn Gia đình tiếp theo theo quy luật!",
       "theme_tag": "family",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["recall", "sequence"],
       "skill_codes": ["C4.MEM.02"],
       "learning_objective_codes": [
@@ -751,7 +751,7 @@
       "title": "Xếp Tai theo quy luật",
       "instruction": "Bé chọn Tai tiếp theo theo quy luật!",
       "theme_tag": "body",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["recall", "sequence"],
       "skill_codes": ["C4.MEM.02"],
       "learning_objective_codes": [
@@ -819,7 +819,7 @@
       "title": "Kéo Mặt trời vào đúng ô",
       "instruction": "Bé kéo Mặt trời vào đúng ô nhé!",
       "theme_tag": "weather",
-      "what_tags": ["classification"],
+      "what_tags": ["spt"],
       "thinking_tags": ["recall", "sequence"],
       "skill_codes": ["C4.MEM.02"],
       "learning_objective_codes": [
@@ -883,7 +883,7 @@
       "title": "Kéo Bao lì xì vào đúng ô",
       "instruction": "Bé kéo Bao lì xì vào đúng ô nhé!",
       "theme_tag": "festival",
-      "what_tags": ["classification"],
+      "what_tags": ["spt"],
       "thinking_tags": ["recall", "sequence"],
       "skill_codes": ["C4.MEM.02"],
       "learning_objective_codes": [
@@ -947,7 +947,7 @@
       "title": "Xếp Trường học theo kích thước",
       "instruction": "Bé sắp xếp Trường học theo kích thước nhé!",
       "theme_tag": "school",
-      "what_tags": ["deduction", "logic", "number", "comparison"],
+      "what_tags": ["log", "number", "cmp"],
       "thinking_tags": ["recall", "sequence"],
       "skill_codes": ["C4.MEM.02"],
       "learning_objective_codes": [
@@ -1033,7 +1033,7 @@
       "title": "Xếp Bò sữa theo kích thước",
       "instruction": "Bé sắp xếp Bò sữa theo kích thước nhé!",
       "theme_tag": "farm",
-      "what_tags": ["deduction", "logic", "number", "comparison"],
+      "what_tags": ["log", "number", "cmp"],
       "thinking_tags": ["recall", "sequence"],
       "skill_codes": ["C4.MEM.02"],
       "learning_objective_codes": [
@@ -1119,7 +1119,7 @@
       "title": "Ghép hình Ngôi nhà hoàn chỉnh",
       "instruction": "Bé ghép các mảnh thành hình Ngôi nhà nhé!",
       "theme_tag": "home",
-      "what_tags": ["logic"],
+      "what_tags": ["log"],
       "thinking_tags": ["recall", "sequence"],
       "skill_codes": ["C4.MEM.02"],
       "learning_objective_codes": [
@@ -1203,7 +1203,7 @@
       "title": "Ghép hình Voi hoàn chỉnh",
       "instruction": "Bé ghép các mảnh thành hình Voi nhé!",
       "theme_tag": "animal",
-      "what_tags": ["logic"],
+      "what_tags": ["log"],
       "thinking_tags": ["recall", "sequence"],
       "skill_codes": ["C4.MEM.02"],
       "learning_objective_codes": [
@@ -1287,7 +1287,7 @@
       "title": "Tìm cặp thẻ Cây xanh giống nhau",
       "instruction": "Bé lật mở cặp Cây xanh giống nhau nhé!",
       "theme_tag": "nature",
-      "what_tags": ["subitizing", "number"],
+      "what_tags": ["mem", "cnt", "number"],
       "thinking_tags": ["recall", "sequence"],
       "skill_codes": ["C4.MEM.02"],
       "learning_objective_codes": [
@@ -1360,7 +1360,7 @@
       "title": "Tìm cặp thẻ Cá heo giống nhau",
       "instruction": "Bé lật mở cặp Cá heo giống nhau nhé!",
       "theme_tag": "ocean",
-      "what_tags": ["subitizing", "number"],
+      "what_tags": ["mem", "cnt", "number"],
       "thinking_tags": ["recall", "sequence"],
       "skill_codes": ["C4.MEM.02"],
       "learning_objective_codes": [
@@ -1426,7 +1426,7 @@
       "title": "Xếp Táo đỏ theo quy luật",
       "instruction": "Bé chọn Táo đỏ tiếp theo theo quy luật!",
       "theme_tag": "food",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["recall", "sequence"],
       "skill_codes": ["C4.MEM.03"],
       "learning_objective_codes": [
@@ -1494,7 +1494,7 @@
       "title": "Xếp Xe buýt theo quy luật",
       "instruction": "Bé chọn Xe buýt tiếp theo theo quy luật!",
       "theme_tag": "vehicle",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["recall", "sequence"],
       "skill_codes": ["C4.MEM.03"],
       "learning_objective_codes": [
@@ -1562,7 +1562,7 @@
       "title": "Kéo Bảng vẽ vào đúng ô",
       "instruction": "Bé kéo Bảng vẽ vào đúng ô nhé!",
       "theme_tag": "art",
-      "what_tags": ["classification"],
+      "what_tags": ["spt"],
       "thinking_tags": ["recall", "sequence"],
       "skill_codes": ["C4.MEM.03"],
       "learning_objective_codes": [
@@ -1626,7 +1626,7 @@
       "title": "Kéo Cây đàn ghi-ta vào đúng ô",
       "instruction": "Bé kéo Cây đàn ghi-ta vào đúng ô nhé!",
       "theme_tag": "art",
-      "what_tags": ["classification"],
+      "what_tags": ["spt"],
       "thinking_tags": ["recall", "sequence"],
       "skill_codes": ["C4.MEM.03"],
       "learning_objective_codes": [
@@ -1690,7 +1690,7 @@
       "title": "Xếp Gia đình theo kích thước",
       "instruction": "Bé sắp xếp Gia đình theo kích thước nhé!",
       "theme_tag": "family",
-      "what_tags": ["deduction", "logic", "number", "comparison"],
+      "what_tags": ["log", "number", "cmp"],
       "thinking_tags": ["recall", "sequence"],
       "skill_codes": ["C4.MEM.03"],
       "learning_objective_codes": [
@@ -1776,7 +1776,7 @@
       "title": "Xếp Tai theo kích thước",
       "instruction": "Bé sắp xếp Tai theo kích thước nhé!",
       "theme_tag": "body",
-      "what_tags": ["deduction", "logic", "number", "comparison"],
+      "what_tags": ["log", "number", "cmp"],
       "thinking_tags": ["recall", "sequence"],
       "skill_codes": ["C4.MEM.03"],
       "learning_objective_codes": [
@@ -1862,7 +1862,7 @@
       "title": "Ghép hình Mặt trời hoàn chỉnh",
       "instruction": "Bé ghép các mảnh thành hình Mặt trời nhé!",
       "theme_tag": "weather",
-      "what_tags": ["logic"],
+      "what_tags": ["log"],
       "thinking_tags": ["recall", "sequence"],
       "skill_codes": ["C4.MEM.03"],
       "learning_objective_codes": [
@@ -1946,7 +1946,7 @@
       "title": "Ghép hình Bao lì xì hoàn chỉnh",
       "instruction": "Bé ghép các mảnh thành hình Bao lì xì nhé!",
       "theme_tag": "festival",
-      "what_tags": ["logic"],
+      "what_tags": ["log"],
       "thinking_tags": ["recall", "sequence"],
       "skill_codes": ["C4.MEM.03"],
       "learning_objective_codes": [
@@ -2030,7 +2030,7 @@
       "title": "Tìm cặp thẻ Trường học giống nhau",
       "instruction": "Bé lật mở cặp Trường học giống nhau nhé!",
       "theme_tag": "school",
-      "what_tags": ["subitizing", "number"],
+      "what_tags": ["mem", "cnt", "number"],
       "thinking_tags": ["recall", "sequence"],
       "skill_codes": ["C4.MEM.03"],
       "learning_objective_codes": [
@@ -2103,7 +2103,7 @@
       "title": "Tìm cặp thẻ Bò sữa giống nhau",
       "instruction": "Bé lật mở cặp Bò sữa giống nhau nhé!",
       "theme_tag": "farm",
-      "what_tags": ["subitizing", "number"],
+      "what_tags": ["mem", "cnt", "number"],
       "thinking_tags": ["recall", "sequence"],
       "skill_codes": ["C4.MEM.03"],
       "learning_objective_codes": [
@@ -2169,7 +2169,7 @@
       "title": "Xếp Ngôi nhà theo quy luật",
       "instruction": "Bé tìm Ngôi nhà còn thiếu trong dãy quy luật!",
       "theme_tag": "home",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["recall"],
       "skill_codes": ["C4.MEM.04"],
       "learning_objective_codes": [
@@ -2254,7 +2254,7 @@
       "title": "Xếp Voi theo quy luật",
       "instruction": "Bé tìm Voi còn thiếu trong dãy quy luật!",
       "theme_tag": "animal",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["recall"],
       "skill_codes": ["C4.MEM.04"],
       "learning_objective_codes": [
@@ -2339,7 +2339,7 @@
       "title": "Xếp Cây xanh theo kích thước",
       "instruction": "Bé sắp xếp Cây xanh theo kích thước nhé!",
       "theme_tag": "nature",
-      "what_tags": ["deduction", "logic", "number", "comparison"],
+      "what_tags": ["log", "number", "cmp"],
       "thinking_tags": ["recall"],
       "skill_codes": ["C4.MEM.04"],
       "learning_objective_codes": [
@@ -2425,7 +2425,7 @@
       "title": "Xếp Cá heo theo kích thước",
       "instruction": "Bé sắp xếp Cá heo theo kích thước nhé!",
       "theme_tag": "ocean",
-      "what_tags": ["deduction", "logic", "number", "comparison"],
+      "what_tags": ["log", "number", "cmp"],
       "thinking_tags": ["recall"],
       "skill_codes": ["C4.MEM.04"],
       "learning_objective_codes": [
@@ -2511,7 +2511,7 @@
       "title": "Ghép hình Táo đỏ hoàn chỉnh",
       "instruction": "Bé ghép các mảnh thành hình Táo đỏ nhé!",
       "theme_tag": "food",
-      "what_tags": ["logic"],
+      "what_tags": ["log"],
       "thinking_tags": ["recall"],
       "skill_codes": ["C4.MEM.04"],
       "learning_objective_codes": [
@@ -2595,7 +2595,7 @@
       "title": "Ghép hình Xe buýt hoàn chỉnh",
       "instruction": "Bé ghép các mảnh thành hình Xe buýt nhé!",
       "theme_tag": "vehicle",
-      "what_tags": ["logic"],
+      "what_tags": ["log"],
       "thinking_tags": ["recall"],
       "skill_codes": ["C4.MEM.04"],
       "learning_objective_codes": [
@@ -2679,7 +2679,7 @@
       "title": "Tìm cặp thẻ Bảng vẽ giống nhau",
       "instruction": "Bé tìm cặp thẻ Bảng vẽ giống nhau nhé!",
       "theme_tag": "art",
-      "what_tags": ["subitizing", "number"],
+      "what_tags": ["mem", "cnt", "number"],
       "thinking_tags": ["recall"],
       "skill_codes": ["C4.MEM.04"],
       "learning_objective_codes": [
@@ -2759,7 +2759,7 @@
       "title": "Tìm cặp thẻ Hành tinh giống nhau",
       "instruction": "Bé tìm cặp thẻ Hành tinh giống nhau nhé!",
       "theme_tag": "space",
-      "what_tags": ["subitizing", "number"],
+      "what_tags": ["mem", "cnt", "number"],
       "thinking_tags": ["recall"],
       "skill_codes": ["C4.MEM.04"],
       "learning_objective_codes": [
@@ -2846,7 +2846,7 @@
       "title": "Tách và gộp số lượng Gia đình",
       "instruction": "Bé tách gộp số lượng Gia đình chính xác nhé!",
       "theme_tag": "family",
-      "what_tags": ["classification"],
+      "what_tags": ["lst", "shp"],
       "thinking_tags": ["recall"],
       "skill_codes": ["C4.MEM.04"],
       "learning_objective_codes": [
@@ -2908,7 +2908,7 @@
       "title": "Tách và gộp số lượng Tai",
       "instruction": "Bé tách gộp số lượng Tai chính xác nhé!",
       "theme_tag": "body",
-      "what_tags": ["classification"],
+      "what_tags": ["lst", "shp"],
       "thinking_tags": ["recall"],
       "skill_codes": ["C4.MEM.04"],
       "learning_objective_codes": [

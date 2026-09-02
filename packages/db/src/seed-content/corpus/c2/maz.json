@@ -6,7 +6,7 @@
       "title": "Tìm bóng của Gia đình",
       "instruction": "Bé tìm bóng của Gia đình nhé!",
       "theme_tag": "family",
-      "what_tags": ["classification"],
+      "what_tags": ["ops"],
       "thinking_tags": ["plan"],
       "skill_codes": ["C2.MAZ.01"],
       "learning_objective_codes": [
@@ -82,7 +82,7 @@
       "title": "Tìm bóng của Tai",
       "instruction": "Bé tìm bóng của Tai nhé!",
       "theme_tag": "body",
-      "what_tags": ["classification"],
+      "what_tags": ["ops"],
       "thinking_tags": ["plan"],
       "skill_codes": ["C2.MAZ.01"],
       "learning_objective_codes": [
@@ -158,7 +158,7 @@
       "title": "Tìm bóng của Mưa",
       "instruction": "Bé tìm bóng của Mưa nhé!",
       "theme_tag": "weather",
-      "what_tags": ["classification"],
+      "what_tags": ["ops"],
       "thinking_tags": ["plan"],
       "skill_codes": ["C2.MAZ.01"],
       "learning_objective_codes": [
@@ -234,7 +234,7 @@
       "title": "Tìm bóng của Bí ngô Halloween",
       "instruction": "Bé tìm bóng của Bí ngô Halloween nhé!",
       "theme_tag": "festival",
-      "what_tags": ["classification"],
+      "what_tags": ["ops"],
       "thinking_tags": ["plan"],
       "skill_codes": ["C2.MAZ.01"],
       "learning_objective_codes": [
@@ -310,7 +310,7 @@
       "title": "Bảng lưới logic với Máy kéo",
       "instruction": "Bé xếp Máy kéo vào ô phù hợp nhé!",
       "theme_tag": "farm",
-      "what_tags": ["classification"],
+      "what_tags": ["mem", "cls"],
       "thinking_tags": ["plan"],
       "skill_codes": ["C2.MAZ.01"],
       "learning_objective_codes": [
@@ -379,7 +379,7 @@
       "title": "Bảng lưới logic với Cái giường",
       "instruction": "Bé xếp Cái giường vào ô phù hợp nhé!",
       "theme_tag": "home",
-      "what_tags": ["classification"],
+      "what_tags": ["mem", "cls"],
       "thinking_tags": ["plan"],
       "skill_codes": ["C2.MAZ.01"],
       "learning_objective_codes": [
@@ -448,7 +448,7 @@
       "title": "Bảng lưới logic với Hổ",
       "instruction": "Bé xếp Hổ vào ô phù hợp nhé!",
       "theme_tag": "animal",
-      "what_tags": ["classification"],
+      "what_tags": ["mem", "cls"],
       "thinking_tags": ["plan"],
       "skill_codes": ["C2.MAZ.01"],
       "learning_objective_codes": [
@@ -517,7 +517,7 @@
       "title": "Bảng lưới logic với Núi",
       "instruction": "Bé xếp Núi vào ô phù hợp nhé!",
       "theme_tag": "nature",
-      "what_tags": ["classification"],
+      "what_tags": ["mem", "cls"],
       "thinking_tags": ["plan"],
       "skill_codes": ["C2.MAZ.01"],
       "learning_objective_codes": [
@@ -586,8 +586,8 @@
       "title": "Phân loại Táo đỏ theo nhóm",
       "instruction": "Bé phân loại Táo đỏ theo đặc điểm phù hợp!",
       "theme_tag": "food",
-      "what_tags": ["classification"],
-      "thinking_tags": ["plan", "deduce"],
+      "what_tags": ["cmp", "sequence"],
+      "thinking_tags": ["plan"],
       "skill_codes": ["C2.MAZ.02"],
       "learning_objective_codes": [
         "LO-C2.MAZ.02-01",
@@ -647,8 +647,8 @@
       "title": "Phân loại Xe buýt theo nhóm",
       "instruction": "Bé phân loại Xe buýt theo đặc điểm phù hợp!",
       "theme_tag": "vehicle",
-      "what_tags": ["classification"],
-      "thinking_tags": ["plan", "deduce"],
+      "what_tags": ["cmp", "sequence"],
+      "thinking_tags": ["plan"],
       "skill_codes": ["C2.MAZ.02"],
       "learning_objective_codes": [
         "LO-C2.MAZ.02-01",
@@ -708,8 +708,8 @@
       "title": "Tìm bóng của Bảng vẽ",
       "instruction": "Bé tìm chiếc bóng đúng của Bảng vẽ nhé!",
       "theme_tag": "art",
-      "what_tags": ["classification"],
-      "thinking_tags": ["plan", "deduce"],
+      "what_tags": ["ops"],
+      "thinking_tags": ["plan"],
       "skill_codes": ["C2.MAZ.02"],
       "learning_objective_codes": [
         "LO-C2.MAZ.02-01",
@@ -784,8 +784,8 @@
       "title": "Tìm bóng của Hành tinh",
       "instruction": "Bé tìm chiếc bóng đúng của Hành tinh nhé!",
       "theme_tag": "space",
-      "what_tags": ["classification"],
-      "thinking_tags": ["plan", "deduce"],
+      "what_tags": ["ops"],
+      "thinking_tags": ["plan"],
       "skill_codes": ["C2.MAZ.02"],
       "learning_objective_codes": [
         "LO-C2.MAZ.02-01",
@@ -860,8 +860,8 @@
       "title": "Xếp Gia đình theo kích thước",
       "instruction": "Bé sắp xếp Gia đình theo kích thước nhé!",
       "theme_tag": "family",
-      "what_tags": ["deduction", "logic", "number", "comparison"],
-      "thinking_tags": ["plan", "deduce"],
+      "what_tags": ["log", "number", "cmp"],
+      "thinking_tags": ["plan"],
       "skill_codes": ["C2.MAZ.02"],
       "learning_objective_codes": [
         "LO-C2.MAZ.02-01",
@@ -946,8 +946,8 @@
       "title": "Xếp Tai theo kích thước",
       "instruction": "Bé sắp xếp Tai theo kích thước nhé!",
       "theme_tag": "body",
-      "what_tags": ["deduction", "logic", "number", "comparison"],
-      "thinking_tags": ["plan", "deduce"],
+      "what_tags": ["log", "number", "cmp"],
+      "thinking_tags": ["plan"],
       "skill_codes": ["C2.MAZ.02"],
       "learning_objective_codes": [
         "LO-C2.MAZ.02-01",
@@ -1032,8 +1032,8 @@
       "title": "Dẫn đường qua mê cung",
       "instruction": "Bé vẽ đường đi an toàn qua mê cung!",
       "theme_tag": "weather",
-      "what_tags": ["maze"],
-      "thinking_tags": ["plan", "deduce"],
+      "what_tags": ["spt", "flw"],
+      "thinking_tags": ["plan"],
       "skill_codes": ["C2.MAZ.02"],
       "learning_objective_codes": [
         "LO-C2.MAZ.02-01",
@@ -1126,8 +1126,8 @@
       "title": "Dẫn đường qua mê cung",
       "instruction": "Bé vẽ đường đi an toàn qua mê cung!",
       "theme_tag": "festival",
-      "what_tags": ["maze"],
-      "thinking_tags": ["plan", "deduce"],
+      "what_tags": ["spt", "flw"],
+      "thinking_tags": ["plan"],
       "skill_codes": ["C2.MAZ.02"],
       "learning_objective_codes": [
         "LO-C2.MAZ.02-01",
@@ -1225,8 +1225,8 @@
       "title": "Tìm Trường học đang ẩn nấp",
       "instruction": "Bé tinh mắt tìm đủ Trường học giấu trong tranh!",
       "theme_tag": "school",
-      "what_tags": ["logic", "pattern", "matrix"],
-      "thinking_tags": ["plan", "deduce"],
+      "what_tags": ["log", "pattern"],
+      "thinking_tags": ["plan"],
       "skill_codes": ["C2.MAZ.02"],
       "learning_objective_codes": [
         "LO-C2.MAZ.02-01",
@@ -1281,7 +1281,7 @@
         {
           "row": 0,
           "col": 2,
-          "symbol_id": "sym_3"
+          "symbol_id": null
         },
         {
           "row": 1,
@@ -1291,7 +1291,7 @@
         {
           "row": 1,
           "col": 1,
-          "symbol_id": "sym_3"
+          "symbol_id": null
         },
         {
           "row": 1,
@@ -1301,7 +1301,7 @@
         {
           "row": 2,
           "col": 0,
-          "symbol_id": "sym_3"
+          "symbol_id": null
         },
         {
           "row": 2,
@@ -1311,13 +1311,13 @@
         {
           "row": 2,
           "col": 2,
-          "symbol_id": null
+          "symbol_id": "sym_2"
         }
       ],
       "regions": "row_col"
     },
     "difficulty_params": {
-      "blank_count": 1,
+      "blank_count": 3,
       "hint_after_ms": 15000,
       "allow_retry": true
     }
@@ -1329,8 +1329,8 @@
       "title": "Tìm Bò sữa đang ẩn nấp",
       "instruction": "Bé tinh mắt tìm đủ Bò sữa giấu trong tranh!",
       "theme_tag": "farm",
-      "what_tags": ["logic", "pattern", "matrix"],
-      "thinking_tags": ["plan", "deduce"],
+      "what_tags": ["log", "pattern"],
+      "thinking_tags": ["plan"],
       "skill_codes": ["C2.MAZ.02"],
       "learning_objective_codes": [
         "LO-C2.MAZ.02-01",
@@ -1385,7 +1385,7 @@
         {
           "row": 0,
           "col": 2,
-          "symbol_id": "sym_3"
+          "symbol_id": null
         },
         {
           "row": 1,
@@ -1395,7 +1395,7 @@
         {
           "row": 1,
           "col": 1,
-          "symbol_id": "sym_3"
+          "symbol_id": null
         },
         {
           "row": 1,
@@ -1405,7 +1405,7 @@
         {
           "row": 2,
           "col": 0,
-          "symbol_id": "sym_3"
+          "symbol_id": null
         },
         {
           "row": 2,
@@ -1415,13 +1415,13 @@
         {
           "row": 2,
           "col": 2,
-          "symbol_id": null
+          "symbol_id": "sym_2"
         }
       ],
       "regions": "row_col"
     },
     "difficulty_params": {
-      "blank_count": 1,
+      "blank_count": 3,
       "hint_after_ms": 15000,
       "allow_retry": true
     }
@@ -1433,7 +1433,7 @@
       "title": "Tìm Ngôi nhà giống mẫu",
       "instruction": "Bé quan sát và chọn Ngôi nhà giống mẫu nhé!",
       "theme_tag": "home",
-      "what_tags": ["classification", "number"],
+      "what_tags": ["cls", "shp", "number"],
       "thinking_tags": ["plan", "compare"],
       "skill_codes": ["C2.MAZ.03"],
       "learning_objective_codes": [
@@ -1515,7 +1515,7 @@
       "title": "Tìm Voi giống mẫu",
       "instruction": "Bé quan sát và chọn Voi giống mẫu nhé!",
       "theme_tag": "animal",
-      "what_tags": ["classification", "number"],
+      "what_tags": ["cls", "shp", "number"],
       "thinking_tags": ["plan", "compare"],
       "skill_codes": ["C2.MAZ.03"],
       "learning_objective_codes": [
@@ -1605,7 +1605,7 @@
       "title": "Đếm số lượng Cây xanh",
       "instruction": "Bé đếm số lượng Cây xanh và chọn số đúng!",
       "theme_tag": "nature",
-      "what_tags": ["category"],
+      "what_tags": ["cls"],
       "thinking_tags": ["plan", "compare"],
       "skill_codes": ["C2.MAZ.03"],
       "learning_objective_codes": [
@@ -1689,7 +1689,7 @@
       "title": "Đếm số lượng Cá heo",
       "instruction": "Bé đếm số lượng Cá heo và chọn số đúng!",
       "theme_tag": "ocean",
-      "what_tags": ["category"],
+      "what_tags": ["cls"],
       "thinking_tags": ["plan", "compare"],
       "skill_codes": ["C2.MAZ.03"],
       "learning_objective_codes": [
@@ -1773,7 +1773,7 @@
       "title": "Ghép đôi Táo đỏ tương ứng",
       "instruction": "Bé ghép các cặp Táo đỏ tương ứng với nhau!",
       "theme_tag": "food",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["plan", "compare"],
       "skill_codes": ["C2.MAZ.03"],
       "learning_objective_codes": [
@@ -1852,7 +1852,7 @@
       "title": "Ghép đôi Xe buýt tương ứng",
       "instruction": "Bé ghép các cặp Xe buýt tương ứng với nhau!",
       "theme_tag": "vehicle",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["plan", "compare"],
       "skill_codes": ["C2.MAZ.03"],
       "learning_objective_codes": [
@@ -1931,7 +1931,7 @@
       "title": "Xếp Bảng vẽ theo quy luật",
       "instruction": "Bé quan sát quy luật và điền Bảng vẽ thích hợp!",
       "theme_tag": "art",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["plan", "compare"],
       "skill_codes": ["C2.MAZ.03"],
       "learning_objective_codes": [
@@ -2016,7 +2016,7 @@
       "title": "Xếp Hành tinh theo quy luật",
       "instruction": "Bé quan sát quy luật và điền Hành tinh thích hợp!",
       "theme_tag": "space",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["plan", "compare"],
       "skill_codes": ["C2.MAZ.03"],
       "learning_objective_codes": [
@@ -2101,7 +2101,7 @@
       "title": "Phân loại Gia đình theo nhóm",
       "instruction": "Bé phân loại Gia đình theo đặc điểm phù hợp!",
       "theme_tag": "family",
-      "what_tags": ["classification"],
+      "what_tags": ["cmp", "sequence"],
       "thinking_tags": ["plan", "compare"],
       "skill_codes": ["C2.MAZ.03"],
       "learning_objective_codes": [
@@ -2162,7 +2162,7 @@
       "title": "Phân loại Tai theo nhóm",
       "instruction": "Bé phân loại Tai theo đặc điểm phù hợp!",
       "theme_tag": "body",
-      "what_tags": ["classification"],
+      "what_tags": ["cmp", "sequence"],
       "thinking_tags": ["plan", "compare"],
       "skill_codes": ["C2.MAZ.03"],
       "learning_objective_codes": [

@@ -2,6 +2,7 @@
   import { type EngineConfig, GameEngine } from "@mindkid/game-engine";
   import { onMounted, onUnmounted, ref } from "vue";
   import { useRoute } from "vue-router";
+  import { definePageMeta } from "#imports";
   import { createSessionFactory } from "~/utils/game-session-factory";
 
   interface StudioUpdatePayload {
@@ -11,6 +12,11 @@
     reducedMotion?: boolean;
     muted?: boolean;
   }
+
+  // Không khai gì thì trang rơi vào layout `default` — navbar và footer
+  // marketing đè lên khung xem trước của Studio. Đây là bề mặt nhúng, không
+  // phải trang cho người đọc.
+  definePageMeta({ layout: false });
 
   const route = useRoute();
   const canvasRef = ref<HTMLCanvasElement | null>(null);
@@ -148,8 +154,13 @@
   }
 
   .game-canvas {
+    /* Engine vẽ trong không gian logic 16:9. Cho hộp đúng tỉ lệ đó thì lề
+       letterbox bằng 0 và ảnh chụp phản ánh đúng cảnh, không lẫn nền trống. */
     width: 100%;
-    height: 100%;
+    height: auto;
+    max-width: calc(100vh * 16 / 9);
+    max-height: 100vh;
+    aspect-ratio: 16 / 9;
     touch-action: none;
   }
 

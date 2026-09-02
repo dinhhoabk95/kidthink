@@ -48,7 +48,7 @@ const AMPERSAND_LABEL_REGEX =
 const HARDCODED_COUNT_REGEX = /\b(?:\d{1,4}\+|\d{2,4})\s*trò chơi/gu;
 
 /** Mã năng lực ở gần thì chuỗi `&` mới được coi là nhãn năng lực. */
-const COMPETENCY_CODE_REGEX = /\bC[1-6]\b/u;
+const COMPETENCY_CODE_REGEX = /\bC[1-6]\b(?![-.])/u;
 
 /** Số dòng quanh chuỗi còn được coi là cùng một bảng nhãn. */
 const CODE_PROXIMITY_LINES = 3;

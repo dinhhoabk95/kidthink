@@ -64,14 +64,14 @@ describe("Sàn chiều sâu mỗi engine — Task #122 (BR-ECD-01..13)", () => {
   });
 
   describe("Ca âm bắt buộc (WP122.1 & WP122.4)", () => {
-    it("Ca âm 1: bớt 1 level của engine sát sàn ở bậc 0 → cổng đỏ (BR-ECD-11, BR-ECD-01)", () => {
+    it("Ca âm 1: bớt level của engine sát sàn ở bậc 0 (còn 2 level) → cổng đỏ (BR-ECD-11, BR-ECD-01)", () => {
       const config = loadEngineDepthConfig();
-      // GT-009 chỉ có 3 level ở seed hiện tại. Lọc bỏ 1 level của GT-009:
-      let removed = false;
+      // Giữ chỉ 2 level cho GT-009 (sàn bậc 0 yêu cầu >= 3):
+      let keepCount = 0;
       const reducedLevels = ALL_SEED_LEVELS.filter((l) => {
-        if (!removed && l.header.template_code === "GT-009") {
-          removed = true;
-          return false;
+        if (l.header.template_code === "GT-009") {
+          keepCount++;
+          return keepCount <= 2;
         }
         return true;
       });

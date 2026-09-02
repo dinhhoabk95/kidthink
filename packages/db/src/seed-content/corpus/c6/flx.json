@@ -6,7 +6,7 @@
       "title": "Ghép hình Bảng vẽ hoàn chỉnh",
       "instruction": "Bé ghép các mảnh thành hình Bảng vẽ nhé!",
       "theme_tag": "art",
-      "what_tags": ["logic"],
+      "what_tags": ["log"],
       "thinking_tags": ["shift"],
       "skill_codes": ["C6.FLX.01"],
       "learning_objective_codes": [
@@ -90,7 +90,7 @@
       "title": "Ghép hình Hành tinh hoàn chỉnh",
       "instruction": "Bé ghép các mảnh thành hình Hành tinh nhé!",
       "theme_tag": "space",
-      "what_tags": ["logic"],
+      "what_tags": ["log"],
       "thinking_tags": ["shift"],
       "skill_codes": ["C6.FLX.01"],
       "learning_objective_codes": [
@@ -174,7 +174,7 @@
       "title": "Ghép hình Bà hoàn chỉnh",
       "instruction": "Bé ghép các mảnh thành hình Bà nhé!",
       "theme_tag": "family",
-      "what_tags": ["logic"],
+      "what_tags": ["log"],
       "thinking_tags": ["shift"],
       "skill_codes": ["C6.FLX.01"],
       "learning_objective_codes": [
@@ -258,7 +258,7 @@
       "title": "Ghép hình Miệng hoàn chỉnh",
       "instruction": "Bé ghép các mảnh thành hình Miệng nhé!",
       "theme_tag": "body",
-      "what_tags": ["logic"],
+      "what_tags": ["log"],
       "thinking_tags": ["shift"],
       "skill_codes": ["C6.FLX.01"],
       "learning_objective_codes": [
@@ -342,7 +342,7 @@
       "title": "Phép cộng trực quan với Mặt trời",
       "instruction": "Bé tính tổng số Mặt trời của hai nhóm nhé!",
       "theme_tag": "weather",
-      "what_tags": ["classification"],
+      "what_tags": ["fnc"],
       "thinking_tags": ["shift"],
       "skill_codes": ["C6.FLX.01"],
       "learning_objective_codes": [
@@ -407,7 +407,7 @@
       "title": "Phép cộng trực quan với Bao lì xì",
       "instruction": "Bé tính tổng số Bao lì xì của hai nhóm nhé!",
       "theme_tag": "festival",
-      "what_tags": ["classification"],
+      "what_tags": ["fnc"],
       "thinking_tags": ["shift"],
       "skill_codes": ["C6.FLX.01"],
       "learning_objective_codes": [
@@ -472,7 +472,7 @@
       "title": "Phép cộng trực quan với Bút chì",
       "instruction": "Bé tính tổng số Bút chì của hai nhóm nhé!",
       "theme_tag": "school",
-      "what_tags": ["classification"],
+      "what_tags": ["fnc"],
       "thinking_tags": ["shift"],
       "skill_codes": ["C6.FLX.01"],
       "learning_objective_codes": [
@@ -537,7 +537,7 @@
       "title": "Đếm số lượng Cây xanh",
       "instruction": "Bé đếm số Cây xanh rồi chọn số đúng!",
       "theme_tag": "nature",
-      "what_tags": ["category"],
+      "what_tags": ["cls"],
       "thinking_tags": ["shift", "sort"],
       "skill_codes": ["C6.FLX.02"],
       "learning_objective_codes": [
@@ -605,7 +605,7 @@
       "title": "Đếm số lượng Cá heo",
       "instruction": "Bé đếm số Cá heo rồi chọn số đúng!",
       "theme_tag": "ocean",
-      "what_tags": ["category"],
+      "what_tags": ["cls"],
       "thinking_tags": ["shift", "sort"],
       "skill_codes": ["C6.FLX.02"],
       "learning_objective_codes": [
@@ -668,164 +668,12 @@
   },
   {
     "header": {
-      "code": "GL-C6-FLX-TCMP-0001",
-      "template_code": "GT-003",
-      "title": "So sánh nhóm Táo đỏ",
-      "instruction": "Bé chọn nhóm có nhiều Táo đỏ hơn nhé!",
-      "theme_tag": "food",
-      "what_tags": ["classification"],
-      "thinking_tags": ["shift", "sort"],
-      "skill_codes": ["C6.FLX.02"],
-      "learning_objective_codes": [
-        "LO-C6.FLX.02-01",
-        "LO-C6.FLX.02-02",
-        "LO-C6.FLX.02-03"
-      ],
-      "difficulty": 3,
-      "age_min": 4,
-      "age_max": 5,
-      "access_tier": "standard",
-      "content_version": 1,
-      "authored_in": "repo_seed",
-      "origin": "ai_assisted"
-    },
-    "content_pack": {
-      "prompt": "Bé hãy kéo các đồ vật thích hợp vào giỏ nhé!",
-      "container": {
-        "container_id": "basket_1",
-        "label": "Giỏ đồ",
-        "accepts_attribute": "target_attr"
-      },
-      "items": [
-        {
-          "item_id": "item_1",
-          "attribute": "target_attr",
-          "asset": {
-            "kind": "emoji",
-            "ref": "EMJ-bread"
-          },
-          "is_correct": true
-        },
-        {
-          "item_id": "item_2",
-          "attribute": "target_attr",
-          "asset": {
-            "kind": "emoji",
-            "ref": "EMJ-noodles"
-          },
-          "is_correct": true
-        },
-        {
-          "item_id": "item_3",
-          "attribute": "other_attr",
-          "asset": {
-            "kind": "emoji",
-            "ref": "EMJ-cake"
-          },
-          "is_correct": false
-        },
-        {
-          "item_id": "item_4",
-          "attribute": "other_attr",
-          "asset": {
-            "kind": "emoji",
-            "ref": "EMJ-milk"
-          },
-          "is_correct": false
-        }
-      ]
-    },
-    "difficulty_params": {
-      "distractor_count": 2,
-      "target_count": 2,
-      "hint_after_ms": 10000,
-      "allow_retry": true
-    }
-  },
-  {
-    "header": {
-      "code": "GL-C6-FLX-TCMP-0002",
-      "template_code": "GT-003",
-      "title": "So sánh nhóm Xe buýt",
-      "instruction": "Bé chọn nhóm có nhiều Xe buýt hơn nhé!",
-      "theme_tag": "vehicle",
-      "what_tags": ["classification"],
-      "thinking_tags": ["shift", "sort"],
-      "skill_codes": ["C6.FLX.02"],
-      "learning_objective_codes": [
-        "LO-C6.FLX.02-01",
-        "LO-C6.FLX.02-02",
-        "LO-C6.FLX.02-03"
-      ],
-      "difficulty": 4,
-      "age_min": 4,
-      "age_max": 5,
-      "access_tier": "premium",
-      "content_version": 1,
-      "authored_in": "repo_seed",
-      "origin": "ai_assisted"
-    },
-    "content_pack": {
-      "prompt": "Bé hãy kéo các đồ vật thích hợp vào giỏ nhé!",
-      "container": {
-        "container_id": "basket_1",
-        "label": "Giỏ đồ",
-        "accepts_attribute": "target_attr"
-      },
-      "items": [
-        {
-          "item_id": "item_1",
-          "attribute": "target_attr",
-          "asset": {
-            "kind": "emoji",
-            "ref": "EMJ-ship"
-          },
-          "is_correct": true
-        },
-        {
-          "item_id": "item_2",
-          "attribute": "target_attr",
-          "asset": {
-            "kind": "emoji",
-            "ref": "EMJ-sailboat"
-          },
-          "is_correct": true
-        },
-        {
-          "item_id": "item_3",
-          "attribute": "other_attr",
-          "asset": {
-            "kind": "emoji",
-            "ref": "EMJ-bicycle"
-          },
-          "is_correct": false
-        },
-        {
-          "item_id": "item_4",
-          "attribute": "other_attr",
-          "asset": {
-            "kind": "emoji",
-            "ref": "EMJ-car"
-          },
-          "is_correct": false
-        }
-      ]
-    },
-    "difficulty_params": {
-      "distractor_count": 2,
-      "target_count": 2,
-      "hint_after_ms": 10000,
-      "allow_retry": true
-    }
-  },
-  {
-    "header": {
       "code": "GL-C6-FLX-PAIR-0001",
       "template_code": "GT-004",
       "title": "Ghép đôi Bảng vẽ tương ứng",
       "instruction": "Bé ghép đôi các Bảng vẽ tương ứng nhé!",
       "theme_tag": "art",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["shift", "sort"],
       "skill_codes": ["C6.FLX.02"],
       "learning_objective_codes": [
@@ -904,7 +752,7 @@
       "title": "Ghép đôi Hành tinh tương ứng",
       "instruction": "Bé ghép đôi các Hành tinh tương ứng nhé!",
       "theme_tag": "space",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["shift", "sort"],
       "skill_codes": ["C6.FLX.02"],
       "learning_objective_codes": [
@@ -983,7 +831,7 @@
       "title": "Kéo Gia đình vào đúng ô",
       "instruction": "Bé kéo Gia đình vào vị trí tương ứng nhé!",
       "theme_tag": "family",
-      "what_tags": ["classification"],
+      "what_tags": ["spt"],
       "thinking_tags": ["shift", "sort"],
       "skill_codes": ["C6.FLX.02"],
       "learning_objective_codes": [
@@ -1060,7 +908,7 @@
       "title": "Kéo Tai vào đúng ô",
       "instruction": "Bé kéo Tai vào vị trí tương ứng nhé!",
       "theme_tag": "body",
-      "what_tags": ["classification"],
+      "what_tags": ["spt"],
       "thinking_tags": ["shift", "sort"],
       "skill_codes": ["C6.FLX.02"],
       "learning_objective_codes": [
@@ -1137,7 +985,7 @@
       "title": "Ghép hình Mặt trời hoàn chỉnh",
       "instruction": "Bé ghép các mảnh thành hình Mặt trời nhé!",
       "theme_tag": "weather",
-      "what_tags": ["logic"],
+      "what_tags": ["log"],
       "thinking_tags": ["shift", "sort"],
       "skill_codes": ["C6.FLX.02"],
       "learning_objective_codes": [
@@ -1221,7 +1069,7 @@
       "title": "Ghép hình Bao lì xì hoàn chỉnh",
       "instruction": "Bé ghép các mảnh thành hình Bao lì xì nhé!",
       "theme_tag": "festival",
-      "what_tags": ["logic"],
+      "what_tags": ["log"],
       "thinking_tags": ["shift", "sort"],
       "skill_codes": ["C6.FLX.02"],
       "learning_objective_codes": [
@@ -1305,7 +1153,7 @@
       "title": "Phân loại Trường học theo nhóm",
       "instruction": "Bé phân loại Trường học theo đặc điểm phù hợp!",
       "theme_tag": "school",
-      "what_tags": ["classification"],
+      "what_tags": ["cmp", "sequence"],
       "thinking_tags": ["shift", "plan"],
       "skill_codes": ["C6.FLX.03"],
       "learning_objective_codes": [
@@ -1366,7 +1214,7 @@
       "title": "Phân loại Bò sữa theo nhóm",
       "instruction": "Bé phân loại Bò sữa theo đặc điểm phù hợp!",
       "theme_tag": "farm",
-      "what_tags": ["classification"],
+      "what_tags": ["cmp", "sequence"],
       "thinking_tags": ["shift", "plan"],
       "skill_codes": ["C6.FLX.03"],
       "learning_objective_codes": [
@@ -1427,7 +1275,7 @@
       "title": "Tìm bóng của Ngôi nhà",
       "instruction": "Bé quan sát và chọn bóng đúng của Ngôi nhà!",
       "theme_tag": "home",
-      "what_tags": ["classification"],
+      "what_tags": ["ops"],
       "thinking_tags": ["shift", "plan"],
       "skill_codes": ["C6.FLX.03"],
       "learning_objective_codes": [
@@ -1503,7 +1351,7 @@
       "title": "Tìm bóng của Voi",
       "instruction": "Bé quan sát và chọn bóng đúng của Voi!",
       "theme_tag": "animal",
-      "what_tags": ["classification"],
+      "what_tags": ["ops"],
       "thinking_tags": ["shift", "plan"],
       "skill_codes": ["C6.FLX.03"],
       "learning_objective_codes": [
@@ -1579,7 +1427,7 @@
       "title": "Xếp Cây xanh theo kích thước",
       "instruction": "Bé sắp xếp các Cây xanh từ nhỏ đến lớn!",
       "theme_tag": "nature",
-      "what_tags": ["deduction", "logic", "number", "comparison"],
+      "what_tags": ["log", "number", "cmp"],
       "thinking_tags": ["shift", "plan"],
       "skill_codes": ["C6.FLX.03"],
       "learning_objective_codes": [
@@ -1603,7 +1451,7 @@
           "value": 2,
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-rose"
+            "ref": "EMJ-sunflower"
           }
         },
         {
@@ -1611,7 +1459,7 @@
           "value": 4,
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-sunflower"
+            "ref": "EMJ-mountain"
           }
         },
         {
@@ -1619,7 +1467,7 @@
           "value": 6,
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-mountain"
+            "ref": "EMJ-cactus"
           }
         },
         {
@@ -1627,7 +1475,7 @@
           "value": 8,
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-palm-tree"
+            "ref": "EMJ-four-leaf-clover"
           }
         },
         {
@@ -1635,33 +1483,41 @@
           "value": 10,
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-four-leaf-clover"
+            "ref": "EMJ-deciduous-tree"
+          }
+        },
+        {
+          "candidate_id": "cand_6",
+          "value": 12,
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-rose"
           }
         }
       ],
       "clues": [
         {
           "clue_id": "clue_1",
-          "text": "Số lượng lớn hơn 2",
+          "text": "Số lượng lớn hơn 6",
           "predicate": {
             "kind": "greater_than",
-            "value": 2
+            "value": 6
           }
         },
         {
           "clue_id": "clue_2",
-          "text": "Số lượng nhỏ hơn 6",
+          "text": "Số lượng nhỏ hơn 10",
           "predicate": {
             "kind": "less_than",
-            "value": 6
+            "value": 10
           }
         }
       ],
-      "answer_candidate_id": "cand_2"
+      "answer_candidate_id": "cand_4"
     },
     "difficulty_params": {
       "clue_count": 2,
-      "candidate_count": 5,
+      "candidate_count": 6,
       "hint_after_ms": 15000,
       "allow_retry": true
     }
@@ -1673,7 +1529,7 @@
       "title": "Xếp Cá heo theo kích thước",
       "instruction": "Bé sắp xếp các Cá heo từ nhỏ đến lớn!",
       "theme_tag": "ocean",
-      "what_tags": ["deduction", "logic", "number", "comparison"],
+      "what_tags": ["log", "number", "cmp"],
       "thinking_tags": ["shift", "plan"],
       "skill_codes": ["C6.FLX.03"],
       "learning_objective_codes": [
@@ -1694,60 +1550,68 @@
       "candidates": [
         {
           "candidate_id": "cand_1",
-          "value": 2,
-          "asset": {
-            "kind": "emoji",
-            "ref": "EMJ-sea-turtle"
-          }
-        },
-        {
-          "candidate_id": "cand_2",
-          "value": 4,
+          "value": 3,
           "asset": {
             "kind": "emoji",
             "ref": "EMJ-fish"
           }
         },
         {
-          "candidate_id": "cand_3",
-          "value": 6,
+          "candidate_id": "cand_2",
+          "value": 5,
           "asset": {
             "kind": "emoji",
             "ref": "EMJ-dolphin"
           }
         },
         {
-          "candidate_id": "cand_4",
-          "value": 8,
+          "candidate_id": "cand_3",
+          "value": 7,
           "asset": {
             "kind": "emoji",
             "ref": "EMJ-jellyfish"
           }
         },
         {
-          "candidate_id": "cand_5",
-          "value": 10,
+          "candidate_id": "cand_4",
+          "value": 9,
           "asset": {
             "kind": "emoji",
             "ref": "EMJ-shell"
+          }
+        },
+        {
+          "candidate_id": "cand_5",
+          "value": 11,
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-whale"
+          }
+        },
+        {
+          "candidate_id": "cand_6",
+          "value": 13,
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-crab"
           }
         }
       ],
       "clues": [
         {
           "clue_id": "clue_1",
-          "text": "Số lượng lớn hơn 2",
+          "text": "Số lượng lớn hơn 3",
           "predicate": {
             "kind": "greater_than",
-            "value": 2
+            "value": 3
           }
         },
         {
           "clue_id": "clue_2",
-          "text": "Số lượng nhỏ hơn 6",
+          "text": "Số lượng nhỏ hơn 7",
           "predicate": {
             "kind": "less_than",
-            "value": 6
+            "value": 7
           }
         }
       ],
@@ -1755,7 +1619,7 @@
     },
     "difficulty_params": {
       "clue_count": 2,
-      "candidate_count": 5,
+      "candidate_count": 6,
       "hint_after_ms": 15000,
       "allow_retry": true
     }
@@ -1767,7 +1631,7 @@
       "title": "Ghép hình Táo đỏ hoàn chỉnh",
       "instruction": "Bé ghép các mảnh thành tranh Táo đỏ hoàn chỉnh!",
       "theme_tag": "food",
-      "what_tags": ["logic"],
+      "what_tags": ["log"],
       "thinking_tags": ["shift", "plan"],
       "skill_codes": ["C6.FLX.03"],
       "learning_objective_codes": [
@@ -1851,7 +1715,7 @@
       "title": "Ghép hình Xe buýt hoàn chỉnh",
       "instruction": "Bé ghép các mảnh thành tranh Xe buýt hoàn chỉnh!",
       "theme_tag": "vehicle",
-      "what_tags": ["logic"],
+      "what_tags": ["log"],
       "thinking_tags": ["shift", "plan"],
       "skill_codes": ["C6.FLX.03"],
       "learning_objective_codes": [
@@ -1935,7 +1799,7 @@
       "title": "Dẫn đường qua mê cung",
       "instruction": "Bé chọn hướng đi vượt qua mê cung tới đích!",
       "theme_tag": "art",
-      "what_tags": ["maze"],
+      "what_tags": ["spt", "flw"],
       "thinking_tags": ["shift", "plan"],
       "skill_codes": ["C6.FLX.03"],
       "learning_objective_codes": [
@@ -2084,7 +1948,7 @@
       "title": "Dẫn đường qua mê cung",
       "instruction": "Bé chọn hướng đi vượt qua mê cung tới đích!",
       "theme_tag": "space",
-      "what_tags": ["maze"],
+      "what_tags": ["spt", "flw"],
       "thinking_tags": ["shift", "plan"],
       "skill_codes": ["C6.FLX.03"],
       "learning_objective_codes": [

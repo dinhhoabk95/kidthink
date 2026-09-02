@@ -1,5 +1,5 @@
 /**
- * @generated from LEVEL-GENERATOR-KIT@b0b36bbbcbad
+ * @generated from LEVEL-GENERATOR-KIT@4d17f70e151d
  * Engine: GT-015
  * Seed: 20260829
  * Theme: school
@@ -56,23 +56,23 @@ export const GEN_GT015_20260829: ContentSeed<unknown, unknown>[] = [
         {
           "row": 0,
           "col": 1,
-          "symbol_id": "sym_2"
+          "symbol_id": null
         },
         {
           "row": 1,
           "col": 0,
-          "symbol_id": "sym_2"
+          "symbol_id": null
         },
         {
           "row": 1,
           "col": 1,
-          "symbol_id": null
+          "symbol_id": "sym_1"
         }
       ],
       "regions": "row_col"
     },
     "difficulty_params": {
-      "blank_count": 1,
+      "blank_count": 2,
       "hint_after_ms": 10000,
       "allow_retry": true
     }
@@ -124,23 +124,23 @@ export const GEN_GT015_20260829: ContentSeed<unknown, unknown>[] = [
         {
           "row": 0,
           "col": 1,
-          "symbol_id": "sym_2"
+          "symbol_id": null
         },
         {
           "row": 1,
           "col": 0,
-          "symbol_id": "sym_2"
+          "symbol_id": null
         },
         {
           "row": 1,
           "col": 1,
-          "symbol_id": null
+          "symbol_id": "sym_1"
         }
       ],
       "regions": "row_col"
     },
     "difficulty_params": {
-      "blank_count": 1,
+      "blank_count": 2,
       "hint_after_ms": 10000,
       "allow_retry": true
     }
@@ -192,23 +192,23 @@ export const GEN_GT015_20260829: ContentSeed<unknown, unknown>[] = [
         {
           "row": 0,
           "col": 1,
-          "symbol_id": "sym_2"
+          "symbol_id": null
         },
         {
           "row": 1,
           "col": 0,
-          "symbol_id": "sym_2"
+          "symbol_id": null
         },
         {
           "row": 1,
           "col": 1,
-          "symbol_id": null
+          "symbol_id": "sym_1"
         }
       ],
       "regions": "row_col"
     },
     "difficulty_params": {
-      "blank_count": 1,
+      "blank_count": 2,
       "hint_after_ms": 10000,
       "allow_retry": true
     }
@@ -260,23 +260,23 @@ export const GEN_GT015_20260829: ContentSeed<unknown, unknown>[] = [
         {
           "row": 0,
           "col": 1,
-          "symbol_id": "sym_2"
+          "symbol_id": null
         },
         {
           "row": 1,
           "col": 0,
-          "symbol_id": "sym_2"
+          "symbol_id": null
         },
         {
           "row": 1,
           "col": 1,
-          "symbol_id": null
+          "symbol_id": "sym_1"
         }
       ],
       "regions": "row_col"
     },
     "difficulty_params": {
-      "blank_count": 1,
+      "blank_count": 2,
       "hint_after_ms": 10000,
       "allow_retry": true
     }
@@ -328,23 +328,23 @@ export const GEN_GT015_20260829: ContentSeed<unknown, unknown>[] = [
         {
           "row": 0,
           "col": 1,
-          "symbol_id": "sym_2"
+          "symbol_id": null
         },
         {
           "row": 1,
           "col": 0,
-          "symbol_id": "sym_2"
+          "symbol_id": null
         },
         {
           "row": 1,
           "col": 1,
-          "symbol_id": null
+          "symbol_id": "sym_1"
         }
       ],
       "regions": "row_col"
     },
     "difficulty_params": {
-      "blank_count": 1,
+      "blank_count": 2,
       "hint_after_ms": 10000,
       "allow_retry": true
     }

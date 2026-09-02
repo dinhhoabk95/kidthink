@@ -6,7 +6,7 @@
       "title": "Nối điểm vẽ hình Mặt trời",
       "instruction": "Bé nối các điểm theo thứ tự để hoàn thành!",
       "theme_tag": "weather",
-      "what_tags": ["matrix", "pattern", "logic"],
+      "what_tags": ["log", "pattern"],
       "thinking_tags": ["predict"],
       "skill_codes": ["C2.ROT.01"],
       "learning_objective_codes": [
@@ -140,7 +140,7 @@
       "title": "Nối điểm vẽ hình Bao lì xì",
       "instruction": "Bé nối các điểm theo thứ tự để hoàn thành!",
       "theme_tag": "festival",
-      "what_tags": ["matrix", "pattern", "logic"],
+      "what_tags": ["log", "pattern"],
       "thinking_tags": ["predict"],
       "skill_codes": ["C2.ROT.01"],
       "learning_objective_codes": [
@@ -274,7 +274,7 @@
       "title": "Dẫn đường qua mê cung",
       "instruction": "Bé vẽ đường đi an toàn qua mê cung!",
       "theme_tag": "school",
-      "what_tags": ["maze"],
+      "what_tags": ["spt", "flw"],
       "thinking_tags": ["predict"],
       "skill_codes": ["C2.ROT.01"],
       "learning_objective_codes": [
@@ -363,7 +363,7 @@
       "title": "Dẫn đường qua mê cung",
       "instruction": "Bé vẽ đường đi an toàn qua mê cung!",
       "theme_tag": "farm",
-      "what_tags": ["maze"],
+      "what_tags": ["spt", "flw"],
       "thinking_tags": ["predict"],
       "skill_codes": ["C2.ROT.01"],
       "learning_objective_codes": [
@@ -457,7 +457,7 @@
       "title": "Tìm điểm khác biệt của Ngôi nhà",
       "instruction": "Bé quan sát kỹ và chỉ ra điểm khác biệt!",
       "theme_tag": "home",
-      "what_tags": ["measurement", "comparison"],
+      "what_tags": ["msr", "cmp"],
       "thinking_tags": ["predict"],
       "skill_codes": ["C2.ROT.01"],
       "learning_objective_codes": [
@@ -482,7 +482,7 @@
             "kind": "emoji",
             "ref": "EMJ-couch"
           },
-          "weight": 5
+          "weight": 6
         }
       ],
       "right_pan": [
@@ -492,7 +492,7 @@
             "kind": "emoji",
             "ref": "EMJ-window"
           },
-          "weight": 2
+          "weight": 4
         }
       ],
       "tray": [
@@ -502,7 +502,7 @@
             "kind": "emoji",
             "ref": "EMJ-spoon"
           },
-          "weight": 3
+          "weight": 2
         },
         {
           "item_id": "tray_2",
@@ -510,7 +510,7 @@
             "kind": "emoji",
             "ref": "EMJ-door"
           },
-          "weight": 1
+          "weight": 3
         },
         {
           "item_id": "tray_3",
@@ -525,7 +525,7 @@
     },
     "difficulty_params": {
       "tray_count": 3,
-      "weight_span": 5,
+      "weight_span": 6,
       "hint_after_ms": 12000,
       "allow_retry": true
     }
@@ -537,7 +537,7 @@
       "title": "Tìm điểm khác biệt của Voi",
       "instruction": "Bé quan sát kỹ và chỉ ra điểm khác biệt!",
       "theme_tag": "animal",
-      "what_tags": ["measurement", "comparison"],
+      "what_tags": ["msr", "cmp"],
       "thinking_tags": ["predict"],
       "skill_codes": ["C2.ROT.01"],
       "learning_objective_codes": [
@@ -562,7 +562,7 @@
             "kind": "emoji",
             "ref": "EMJ-bear"
           },
-          "weight": 5
+          "weight": 4
         }
       ],
       "right_pan": [
@@ -582,7 +582,7 @@
             "kind": "emoji",
             "ref": "EMJ-panda"
           },
-          "weight": 3
+          "weight": 2
         },
         {
           "item_id": "tray_2",
@@ -590,7 +590,7 @@
             "kind": "emoji",
             "ref": "EMJ-rabbit"
           },
-          "weight": 1
+          "weight": 3
         },
         {
           "item_id": "tray_3",
@@ -605,7 +605,7 @@
     },
     "difficulty_params": {
       "tray_count": 3,
-      "weight_span": 5,
+      "weight_span": 4,
       "hint_after_ms": 12000,
       "allow_retry": true
     }
@@ -617,7 +617,7 @@
       "title": "Đếm khối hình không gian",
       "instruction": "Bé quan sát phối cảnh đếm đúng số khối nhé!",
       "theme_tag": "nature",
-      "what_tags": ["geometry"],
+      "what_tags": ["spt", "shp", "geometry", "cnt"],
       "thinking_tags": ["predict"],
       "skill_codes": ["C2.ROT.01"],
       "learning_objective_codes": [
@@ -639,11 +639,6 @@
         {
           "x": 0,
           "y": 0,
-          "z": 0
-        },
-        {
-          "x": 1,
-          "y": 0,
           "z": 0,
           "colorToken": "peach"
         },
@@ -654,20 +649,26 @@
           "colorToken": "peach"
         },
         {
-          "x": 1,
+          "x": 0,
           "y": 1,
+          "z": 1,
+          "colorToken": "peach"
+        },
+        {
+          "x": 0,
+          "y": 1,
+          "z": 2,
+          "colorToken": "peach"
+        },
+        {
+          "x": 1,
+          "y": 0,
           "z": 0,
           "colorToken": "peach"
         },
         {
           "x": 1,
-          "y": 0,
-          "z": 1,
-          "colorToken": "peach"
-        },
-        {
-          "x": 2,
-          "y": 0,
+          "y": 1,
           "z": 0,
           "colorToken": "peach"
         }
@@ -678,15 +679,15 @@
           "option_id": "opt_1",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-tulip"
+            "ref": "EMJ-seedling"
           },
-          "is_correct": true
+          "is_correct": false
         },
         {
           "option_id": "opt_2",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-palm-tree"
+            "ref": "EMJ-mountain"
           },
           "is_correct": false
         },
@@ -694,7 +695,7 @@
           "option_id": "opt_3",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-cactus"
+            "ref": "EMJ-four-leaf-clover"
           },
           "is_correct": false
         },
@@ -702,16 +703,16 @@
           "option_id": "opt_4",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-tulip"
+            "ref": "EMJ-seedling"
           },
-          "is_correct": false
+          "is_correct": true
         }
       ]
     },
     "difficulty_params": {
-      "hidden_cube_count": 1,
+      "hidden_cube_count": 0,
       "distractor_count": 3,
-      "allow_rotate": true,
+      "allow_rotate": false,
       "hint_after_ms": 15000,
       "allow_retry": true
     }
@@ -723,7 +724,7 @@
       "title": "Đếm khối hình không gian",
       "instruction": "Bé quan sát phối cảnh đếm đúng số khối nhé!",
       "theme_tag": "ocean",
-      "what_tags": ["geometry"],
+      "what_tags": ["spt", "shp", "geometry", "cnt"],
       "thinking_tags": ["predict"],
       "skill_codes": ["C2.ROT.01"],
       "learning_objective_codes": [
@@ -745,7 +746,8 @@
         {
           "x": 0,
           "y": 0,
-          "z": 0
+          "z": 0,
+          "colorToken": "violet"
         },
         {
           "x": 0,
@@ -815,9 +817,9 @@
       ]
     },
     "difficulty_params": {
-      "hidden_cube_count": 1,
+      "hidden_cube_count": 0,
       "distractor_count": 3,
-      "allow_rotate": true,
+      "allow_rotate": false,
       "hint_after_ms": 15000,
       "allow_retry": true
     }
@@ -829,7 +831,7 @@
       "title": "Xếp Táo đỏ vào khung mười ô",
       "instruction": "Bé đặt đủ số lượng Táo đỏ vào khung mười!",
       "theme_tag": "food",
-      "what_tags": ["geometry"],
+      "what_tags": ["spt", "geometry"],
       "thinking_tags": ["predict"],
       "skill_codes": ["C2.ROT.01"],
       "learning_objective_codes": [
@@ -904,7 +906,7 @@
       "title": "Xếp Xe buýt vào khung mười ô",
       "instruction": "Bé đặt đủ số lượng Xe buýt vào khung mười!",
       "theme_tag": "vehicle",
-      "what_tags": ["geometry"],
+      "what_tags": ["spt", "geometry"],
       "thinking_tags": ["predict"],
       "skill_codes": ["C2.ROT.01"],
       "learning_objective_codes": [
@@ -979,7 +981,7 @@
       "title": "Nối điểm vẽ hình Bảng vẽ",
       "instruction": "Bé nối các điểm theo thứ tự để hoàn thành!",
       "theme_tag": "art",
-      "what_tags": ["matrix", "pattern", "logic"],
+      "what_tags": ["log", "pattern"],
       "thinking_tags": ["predict"],
       "skill_codes": ["C2.ROT.02"],
       "learning_objective_codes": [
@@ -1113,7 +1115,7 @@
       "title": "Nối điểm vẽ hình Hành tinh",
       "instruction": "Bé nối các điểm theo thứ tự để hoàn thành!",
       "theme_tag": "space",
-      "what_tags": ["matrix", "pattern", "logic"],
+      "what_tags": ["log", "pattern"],
       "thinking_tags": ["predict"],
       "skill_codes": ["C2.ROT.02"],
       "learning_objective_codes": [
@@ -1247,7 +1249,7 @@
       "title": "Dẫn đường qua mê cung",
       "instruction": "Bé vẽ đường đi an toàn qua mê cung!",
       "theme_tag": "family",
-      "what_tags": ["maze"],
+      "what_tags": ["spt", "flw"],
       "thinking_tags": ["predict"],
       "skill_codes": ["C2.ROT.02"],
       "learning_objective_codes": [
@@ -1341,7 +1343,7 @@
       "title": "Dẫn đường qua mê cung",
       "instruction": "Bé vẽ đường đi an toàn qua mê cung!",
       "theme_tag": "body",
-      "what_tags": ["maze"],
+      "what_tags": ["spt", "flw"],
       "thinking_tags": ["predict"],
       "skill_codes": ["C2.ROT.02"],
       "learning_objective_codes": [
@@ -1430,7 +1432,7 @@
       "title": "Tìm điểm khác biệt của Mặt trời",
       "instruction": "Bé quan sát kỹ và chỉ ra điểm khác biệt!",
       "theme_tag": "weather",
-      "what_tags": ["measurement", "comparison"],
+      "what_tags": ["msr", "cmp"],
       "thinking_tags": ["predict"],
       "skill_codes": ["C2.ROT.02"],
       "learning_objective_codes": [
@@ -1455,7 +1457,7 @@
             "kind": "emoji",
             "ref": "EMJ-droplet"
           },
-          "weight": 5
+          "weight": 6
         }
       ],
       "right_pan": [
@@ -1465,7 +1467,7 @@
             "kind": "emoji",
             "ref": "EMJ-wind"
           },
-          "weight": 2
+          "weight": 3
         }
       ],
       "tray": [
@@ -1483,7 +1485,7 @@
             "kind": "emoji",
             "ref": "EMJ-snowflake"
           },
-          "weight": 1
+          "weight": 4
         },
         {
           "item_id": "tray_3",
@@ -1491,14 +1493,14 @@
             "kind": "emoji",
             "ref": "EMJ-sun"
           },
-          "weight": 4
+          "weight": 5
         }
       ],
       "goal": "balance"
     },
     "difficulty_params": {
       "tray_count": 3,
-      "weight_span": 5,
+      "weight_span": 6,
       "hint_after_ms": 12000,
       "allow_retry": true
     }
@@ -1510,7 +1512,7 @@
       "title": "Tìm điểm khác biệt của Bao lì xì",
       "instruction": "Bé quan sát kỹ và chỉ ra điểm khác biệt!",
       "theme_tag": "festival",
-      "what_tags": ["measurement", "comparison"],
+      "what_tags": ["msr", "cmp"],
       "thinking_tags": ["predict"],
       "skill_codes": ["C2.ROT.02"],
       "learning_objective_codes": [
@@ -1535,7 +1537,7 @@
             "kind": "emoji",
             "ref": "EMJ-gift"
           },
-          "weight": 5
+          "weight": 4
         }
       ],
       "right_pan": [
@@ -1545,7 +1547,7 @@
             "kind": "emoji",
             "ref": "EMJ-candle"
           },
-          "weight": 2
+          "weight": 1
         }
       ],
       "tray": [
@@ -1563,7 +1565,7 @@
             "kind": "emoji",
             "ref": "EMJ-jack-o-lantern"
           },
-          "weight": 1
+          "weight": 4
         },
         {
           "item_id": "tray_3",
@@ -1571,14 +1573,14 @@
             "kind": "emoji",
             "ref": "EMJ-balloon"
           },
-          "weight": 4
+          "weight": 5
         }
       ],
       "goal": "balance"
     },
     "difficulty_params": {
       "tray_count": 3,
-      "weight_span": 5,
+      "weight_span": 4,
       "hint_after_ms": 12000,
       "allow_retry": true
     }
@@ -1590,7 +1592,7 @@
       "title": "Đếm khối hình không gian",
       "instruction": "Bé quan sát phối cảnh đếm đúng số khối nhé!",
       "theme_tag": "school",
-      "what_tags": ["geometry"],
+      "what_tags": ["spt", "shp", "geometry", "cnt"],
       "thinking_tags": ["predict"],
       "skill_codes": ["C2.ROT.02"],
       "learning_objective_codes": [
@@ -1612,7 +1614,8 @@
         {
           "x": 0,
           "y": 0,
-          "z": 0
+          "z": 0,
+          "colorToken": "mint"
         },
         {
           "x": 0,
@@ -1688,9 +1691,9 @@
       ]
     },
     "difficulty_params": {
-      "hidden_cube_count": 1,
+      "hidden_cube_count": 0,
       "distractor_count": 3,
-      "allow_rotate": true,
+      "allow_rotate": false,
       "hint_after_ms": 15000,
       "allow_retry": true
     }
@@ -1702,7 +1705,7 @@
       "title": "Đếm khối hình không gian",
       "instruction": "Bé quan sát phối cảnh đếm đúng số khối nhé!",
       "theme_tag": "farm",
-      "what_tags": ["geometry"],
+      "what_tags": ["spt", "shp", "geometry", "cnt"],
       "thinking_tags": ["predict"],
       "skill_codes": ["C2.ROT.02"],
       "learning_objective_codes": [
@@ -1724,11 +1727,6 @@
         {
           "x": 0,
           "y": 0,
-          "z": 0
-        },
-        {
-          "x": 1,
-          "y": 0,
           "z": 0,
           "colorToken": "violet"
         },
@@ -1746,14 +1744,20 @@
         },
         {
           "x": 0,
+          "y": 0,
+          "z": 1,
+          "colorToken": "violet"
+        },
+        {
+          "x": 0,
           "y": 1,
           "z": 1,
           "colorToken": "violet"
         },
         {
           "x": 0,
-          "y": 0,
-          "z": 1,
+          "y": 1,
+          "z": 2,
           "colorToken": "violet"
         }
       ],
@@ -1763,15 +1767,15 @@
           "option_id": "opt_1",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-goat"
+            "ref": "EMJ-pig"
           },
-          "is_correct": false
+          "is_correct": true
         },
         {
           "option_id": "opt_2",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-cow"
+            "ref": "EMJ-rice"
           },
           "is_correct": false
         },
@@ -1779,7 +1783,7 @@
           "option_id": "opt_3",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-tractor"
+            "ref": "EMJ-chicken"
           },
           "is_correct": false
         },
@@ -1787,16 +1791,16 @@
           "option_id": "opt_4",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-goat"
+            "ref": "EMJ-pig"
           },
-          "is_correct": true
+          "is_correct": false
         }
       ]
     },
     "difficulty_params": {
-      "hidden_cube_count": 1,
+      "hidden_cube_count": 0,
       "distractor_count": 3,
-      "allow_rotate": true,
+      "allow_rotate": false,
       "hint_after_ms": 15000,
       "allow_retry": true
     }
@@ -1808,7 +1812,7 @@
       "title": "Xếp Ngôi nhà vào khung mười ô",
       "instruction": "Bé đặt đủ số lượng Ngôi nhà vào khung mười!",
       "theme_tag": "home",
-      "what_tags": ["geometry"],
+      "what_tags": ["spt", "geometry"],
       "thinking_tags": ["predict"],
       "skill_codes": ["C2.ROT.02"],
       "learning_objective_codes": [
@@ -1883,7 +1887,7 @@
       "title": "Xếp Voi vào khung mười ô",
       "instruction": "Bé đặt đủ số lượng Voi vào khung mười!",
       "theme_tag": "animal",
-      "what_tags": ["geometry"],
+      "what_tags": ["spt", "geometry"],
       "thinking_tags": ["predict"],
       "skill_codes": ["C2.ROT.02"],
       "learning_objective_codes": [
@@ -1958,7 +1962,7 @@
       "title": "Nối điểm vẽ hình Cây xanh",
       "instruction": "Bé nối các điểm theo thứ tự để hoàn thành!",
       "theme_tag": "nature",
-      "what_tags": ["matrix", "pattern", "logic"],
+      "what_tags": ["log", "pattern"],
       "thinking_tags": ["predict"],
       "skill_codes": ["C2.ROT.03"],
       "learning_objective_codes": [
@@ -2092,7 +2096,7 @@
       "title": "Nối điểm vẽ hình Cá heo",
       "instruction": "Bé nối các điểm theo thứ tự để hoàn thành!",
       "theme_tag": "ocean",
-      "what_tags": ["matrix", "pattern", "logic"],
+      "what_tags": ["log", "pattern"],
       "thinking_tags": ["predict"],
       "skill_codes": ["C2.ROT.03"],
       "learning_objective_codes": [
@@ -2226,7 +2230,7 @@
       "title": "Dẫn đường qua mê cung",
       "instruction": "Bé chọn hướng đi vượt qua mê cung tới đích!",
       "theme_tag": "food",
-      "what_tags": ["maze"],
+      "what_tags": ["spt", "flw"],
       "thinking_tags": ["predict"],
       "skill_codes": ["C2.ROT.03"],
       "learning_objective_codes": [
@@ -2340,7 +2344,7 @@
       "title": "Dẫn đường qua mê cung",
       "instruction": "Bé chọn hướng đi vượt qua mê cung tới đích!",
       "theme_tag": "vehicle",
-      "what_tags": ["maze"],
+      "what_tags": ["spt", "flw"],
       "thinking_tags": ["predict"],
       "skill_codes": ["C2.ROT.03"],
       "learning_objective_codes": [
@@ -2449,7 +2453,7 @@
       "title": "Tìm điểm khác biệt của Bảng vẽ",
       "instruction": "Bé quan sát kỹ và chỉ ra điểm khác biệt!",
       "theme_tag": "art",
-      "what_tags": ["measurement", "comparison"],
+      "what_tags": ["msr", "cmp"],
       "thinking_tags": ["predict"],
       "skill_codes": ["C2.ROT.03"],
       "learning_objective_codes": [
@@ -2474,7 +2478,7 @@
             "kind": "emoji",
             "ref": "EMJ-piano"
           },
-          "weight": 5
+          "weight": 6
         }
       ],
       "right_pan": [
@@ -2484,7 +2488,7 @@
             "kind": "emoji",
             "ref": "EMJ-crayon"
           },
-          "weight": 2
+          "weight": 4
         }
       ],
       "tray": [
@@ -2494,7 +2498,7 @@
             "kind": "emoji",
             "ref": "EMJ-saxophone"
           },
-          "weight": 3
+          "weight": 2
         },
         {
           "item_id": "tray_2",
@@ -2502,7 +2506,7 @@
             "kind": "emoji",
             "ref": "EMJ-trumpet"
           },
-          "weight": 1
+          "weight": 3
         },
         {
           "item_id": "tray_3",
@@ -2517,7 +2521,7 @@
     },
     "difficulty_params": {
       "tray_count": 3,
-      "weight_span": 5,
+      "weight_span": 6,
       "hint_after_ms": 12000,
       "allow_retry": true
     }
@@ -2529,7 +2533,7 @@
       "title": "Tìm điểm khác biệt của Hành tinh",
       "instruction": "Bé quan sát kỹ và chỉ ra điểm khác biệt!",
       "theme_tag": "space",
-      "what_tags": ["measurement", "comparison"],
+      "what_tags": ["msr", "cmp"],
       "thinking_tags": ["predict"],
       "skill_codes": ["C2.ROT.03"],
       "learning_objective_codes": [
@@ -2554,7 +2558,7 @@
             "kind": "emoji",
             "ref": "EMJ-earth"
           },
-          "weight": 5
+          "weight": 7
         }
       ],
       "right_pan": [
@@ -2564,7 +2568,7 @@
             "kind": "emoji",
             "ref": "EMJ-crescent-moon"
           },
-          "weight": 2
+          "weight": 4
         }
       ],
       "tray": [
@@ -2582,7 +2586,7 @@
             "kind": "emoji",
             "ref": "EMJ-flying-saucer"
           },
-          "weight": 1
+          "weight": 4
         },
         {
           "item_id": "tray_3",
@@ -2590,14 +2594,14 @@
             "kind": "emoji",
             "ref": "EMJ-comet"
           },
-          "weight": 4
+          "weight": 5
         }
       ],
       "goal": "balance"
     },
     "difficulty_params": {
       "tray_count": 3,
-      "weight_span": 5,
+      "weight_span": 7,
       "hint_after_ms": 12000,
       "allow_retry": true
     }
@@ -2609,7 +2613,7 @@
       "title": "Đếm khối hình không gian",
       "instruction": "Bé quan sát phối cảnh đếm đúng số khối nhé!",
       "theme_tag": "family",
-      "what_tags": ["geometry"],
+      "what_tags": ["spt", "shp", "geometry", "cnt"],
       "thinking_tags": ["predict"],
       "skill_codes": ["C2.ROT.03"],
       "learning_objective_codes": [
@@ -2631,7 +2635,8 @@
         {
           "x": 0,
           "y": 0,
-          "z": 0
+          "z": 0,
+          "colorToken": "amber"
         },
         {
           "x": 0,
@@ -2640,8 +2645,8 @@
           "colorToken": "amber"
         },
         {
-          "x": 1,
-          "y": 0,
+          "x": 0,
+          "y": 2,
           "z": 0,
           "colorToken": "amber"
         },
@@ -2652,15 +2657,15 @@
           "colorToken": "amber"
         },
         {
-          "x": 1,
+          "x": 0,
           "y": 1,
-          "z": 0,
+          "z": 1,
           "colorToken": "amber"
         },
         {
           "x": 0,
-          "y": 1,
-          "z": 1,
+          "y": 0,
+          "z": 2,
           "colorToken": "amber"
         }
       ],
@@ -2670,9 +2675,9 @@
           "option_id": "opt_1",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-grandmother"
+            "ref": "EMJ-baby"
           },
-          "is_correct": true
+          "is_correct": false
         },
         {
           "option_id": "opt_2",
@@ -2680,13 +2685,13 @@
             "kind": "emoji",
             "ref": "EMJ-mother"
           },
-          "is_correct": false
+          "is_correct": true
         },
         {
           "option_id": "opt_3",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-boy"
+            "ref": "EMJ-grandmother"
           },
           "is_correct": false
         },
@@ -2694,16 +2699,16 @@
           "option_id": "opt_4",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-grandmother"
+            "ref": "EMJ-baby"
           },
           "is_correct": false
         }
       ]
     },
     "difficulty_params": {
-      "hidden_cube_count": 1,
+      "hidden_cube_count": 0,
       "distractor_count": 3,
-      "allow_rotate": true,
+      "allow_rotate": false,
       "hint_after_ms": 15000,
       "allow_retry": true
     }
@@ -2715,7 +2720,7 @@
       "title": "Đếm khối hình không gian",
       "instruction": "Bé quan sát phối cảnh đếm đúng số khối nhé!",
       "theme_tag": "body",
-      "what_tags": ["geometry"],
+      "what_tags": ["spt", "shp", "geometry", "cnt"],
       "thinking_tags": ["predict"],
       "skill_codes": ["C2.ROT.03"],
       "learning_objective_codes": [
@@ -2737,11 +2742,6 @@
         {
           "x": 0,
           "y": 0,
-          "z": 0
-        },
-        {
-          "x": 0,
-          "y": 1,
           "z": 0,
           "colorToken": "berry"
         },
@@ -2752,21 +2752,27 @@
           "colorToken": "berry"
         },
         {
+          "x": 1,
+          "y": 1,
+          "z": 0,
+          "colorToken": "berry"
+        },
+        {
           "x": 0,
+          "y": 1,
+          "z": 0,
+          "colorToken": "berry"
+        },
+        {
+          "x": 1,
           "y": 0,
           "z": 1,
           "colorToken": "berry"
         },
         {
           "x": 0,
-          "y": 2,
-          "z": 0,
-          "colorToken": "berry"
-        },
-        {
-          "x": 2,
-          "y": 0,
-          "z": 0,
+          "y": 1,
+          "z": 1,
           "colorToken": "berry"
         }
       ],
@@ -2776,7 +2782,7 @@
           "option_id": "opt_1",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-eyes"
+            "ref": "EMJ-raised-hand"
           },
           "is_correct": false
         },
@@ -2784,7 +2790,7 @@
           "option_id": "opt_2",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-heart"
+            "ref": "EMJ-tongue"
           },
           "is_correct": false
         },
@@ -2792,24 +2798,24 @@
           "option_id": "opt_3",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-tongue"
+            "ref": "EMJ-leg"
           },
-          "is_correct": false
+          "is_correct": true
         },
         {
           "option_id": "opt_4",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-eyes"
+            "ref": "EMJ-raised-hand"
           },
-          "is_correct": true
+          "is_correct": false
         }
       ]
     },
     "difficulty_params": {
-      "hidden_cube_count": 1,
+      "hidden_cube_count": 0,
       "distractor_count": 3,
-      "allow_rotate": true,
+      "allow_rotate": false,
       "hint_after_ms": 15000,
       "allow_retry": true
     }
@@ -2821,7 +2827,7 @@
       "title": "Xếp Mặt trời vào khung mười ô",
       "instruction": "Bé điền Mặt trời vào khung mười biểu diễn số!",
       "theme_tag": "weather",
-      "what_tags": ["geometry"],
+      "what_tags": ["spt", "geometry"],
       "thinking_tags": ["predict"],
       "skill_codes": ["C2.ROT.03"],
       "learning_objective_codes": [
@@ -2896,7 +2902,7 @@
       "title": "Xếp Bao lì xì vào khung mười ô",
       "instruction": "Bé điền Bao lì xì vào khung mười biểu diễn số!",
       "theme_tag": "festival",
-      "what_tags": ["geometry"],
+      "what_tags": ["spt", "geometry"],
       "thinking_tags": ["predict"],
       "skill_codes": ["C2.ROT.03"],
       "learning_objective_codes": [
@@ -2971,7 +2977,7 @@
       "title": "Tìm Trường học giống mẫu",
       "instruction": "Bé tìm Trường học giống hình mẫu nhé!",
       "theme_tag": "school",
-      "what_tags": ["classification", "number"],
+      "what_tags": ["cls", "shp", "number"],
       "thinking_tags": ["compare", "infer"],
       "skill_codes": ["C2.ROT.04"],
       "learning_objective_codes": [
@@ -3045,7 +3051,7 @@
       "title": "Tìm Bò sữa giống mẫu",
       "instruction": "Bé tìm Bò sữa giống hình mẫu nhé!",
       "theme_tag": "farm",
-      "what_tags": ["classification", "number"],
+      "what_tags": ["cls", "shp", "number"],
       "thinking_tags": ["compare", "infer"],
       "skill_codes": ["C2.ROT.04"],
       "learning_objective_codes": [
@@ -3127,7 +3133,7 @@
       "title": "Đếm số lượng Ngôi nhà",
       "instruction": "Bé đếm số Ngôi nhà rồi chọn số đúng!",
       "theme_tag": "home",
-      "what_tags": ["category"],
+      "what_tags": ["cls"],
       "thinking_tags": ["compare", "infer"],
       "skill_codes": ["C2.ROT.04"],
       "learning_objective_codes": [
@@ -3195,7 +3201,7 @@
       "title": "Đếm số lượng Voi",
       "instruction": "Bé đếm số Voi rồi chọn số đúng!",
       "theme_tag": "animal",
-      "what_tags": ["category"],
+      "what_tags": ["cls"],
       "thinking_tags": ["compare", "infer"],
       "skill_codes": ["C2.ROT.04"],
       "learning_objective_codes": [
@@ -3263,7 +3269,7 @@
       "title": "Ghép đôi Cây xanh tương ứng",
       "instruction": "Bé ghép đôi các Cây xanh tương ứng nhé!",
       "theme_tag": "nature",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["compare", "infer"],
       "skill_codes": ["C2.ROT.04"],
       "learning_objective_codes": [
@@ -3342,7 +3348,7 @@
       "title": "Ghép đôi Cá heo tương ứng",
       "instruction": "Bé ghép đôi các Cá heo tương ứng nhé!",
       "theme_tag": "ocean",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["compare", "infer"],
       "skill_codes": ["C2.ROT.04"],
       "learning_objective_codes": [
@@ -3421,7 +3427,7 @@
       "title": "Xếp Táo đỏ theo quy luật",
       "instruction": "Bé tìm Táo đỏ còn thiếu trong dãy quy luật!",
       "theme_tag": "food",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["compare", "infer"],
       "skill_codes": ["C2.ROT.04"],
       "learning_objective_codes": [
@@ -3506,7 +3512,7 @@
       "title": "Xếp Xe buýt theo quy luật",
       "instruction": "Bé tìm Xe buýt còn thiếu trong dãy quy luật!",
       "theme_tag": "vehicle",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["compare", "infer"],
       "skill_codes": ["C2.ROT.04"],
       "learning_objective_codes": [
@@ -3591,7 +3597,7 @@
       "title": "Phân loại Bảng vẽ theo nhóm",
       "instruction": "Bé phân loại Bảng vẽ theo đặc điểm phù hợp!",
       "theme_tag": "art",
-      "what_tags": ["classification"],
+      "what_tags": ["cmp", "sequence"],
       "thinking_tags": ["compare", "infer"],
       "skill_codes": ["C2.ROT.04"],
       "learning_objective_codes": [
@@ -3652,7 +3658,7 @@
       "title": "Phân loại Hành tinh theo nhóm",
       "instruction": "Bé phân loại Hành tinh theo đặc điểm phù hợp!",
       "theme_tag": "space",
-      "what_tags": ["classification"],
+      "what_tags": ["cmp", "sequence"],
       "thinking_tags": ["compare", "infer"],
       "skill_codes": ["C2.ROT.04"],
       "learning_objective_codes": [

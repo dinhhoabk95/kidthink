@@ -35,6 +35,7 @@
     "db:reset-content": "pnpm --filter @mindkid/db run reset-content",
     "db:restore": "pnpm --filter @mindkid/worker run restore",
     "services": "tsx scripts/check-services.ts",
+    "qa:capture": "tsx scripts/qa/capture-engines.ts",
     "deploy": "tsx scripts/deploy/cli.ts"
   },
   "devDependencies": {
@@ -45,6 +46,7 @@
     "drizzle-orm": "catalog:",
     "ioredis": "catalog:",
     "lefthook": "catalog:",
+    "playwright": "catalog:",
     "postgres": "catalog:",
     "tsx": "catalog:",
     "typescript": "catalog:",

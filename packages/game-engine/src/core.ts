@@ -133,6 +133,18 @@ export class GameEngine {
       );
     }
 
+    // KHÔNG dùng `validation.data` ở đây, dù nó có sẵn default đã điền.
+    //
+    // Đo ngày 2026-09-01 trên 3.647 level published: parse điền default cho
+    // 3.647/3.647 pack, nhưng đồng thời **xoá** khoá không khai trong contract ở
+    // 297 level — `options[].label` trên 285 level (được vẽ thật qua
+    // `drawSlotLabel`) và `scaffolding` trên 12 level. Đổi sang pack đã parse sẽ
+    // chữa được default nhưng làm mất chữ trên màn của 285 level.
+    //
+    // Hố này là thật và còn nguyên: 23/36 contract khai `.default(...)` mà
+    // session không bao giờ nhận được. Vá đúng cách là khai đủ trường trong
+    // contract rồi mới chuyển sang dùng pack đã parse — việc của một task riêng,
+    // không phải một dòng lén ở đây.
     this.slots = computeEngineSlots(config);
 
     this.config = config;

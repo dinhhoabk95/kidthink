@@ -6,8 +6,8 @@
       "title": "Ghép đôi Mặt trời tương ứng",
       "instruction": "Bé ghép đôi các Mặt trời tương ứng nhé!",
       "theme_tag": "weather",
-      "what_tags": ["classification"],
-      "thinking_tags": ["infer", "deduce"],
+      "what_tags": ["cls"],
+      "thinking_tags": ["infer"],
       "skill_codes": ["C3.MTX.01"],
       "learning_objective_codes": [
         "LO-C3.MTX.01-01",
@@ -85,8 +85,8 @@
       "title": "Ghép đôi Bao lì xì tương ứng",
       "instruction": "Bé ghép đôi các Bao lì xì tương ứng nhé!",
       "theme_tag": "festival",
-      "what_tags": ["classification"],
-      "thinking_tags": ["infer", "deduce"],
+      "what_tags": ["cls"],
+      "thinking_tags": ["infer"],
       "skill_codes": ["C3.MTX.01"],
       "learning_objective_codes": [
         "LO-C3.MTX.01-01",
@@ -164,8 +164,8 @@
       "title": "Phân loại Trường học theo nhóm",
       "instruction": "Bé phân loại Trường học theo đặc điểm phù hợp!",
       "theme_tag": "school",
-      "what_tags": ["classification"],
-      "thinking_tags": ["infer", "deduce"],
+      "what_tags": ["cmp", "sequence"],
+      "thinking_tags": ["infer"],
       "skill_codes": ["C3.MTX.01"],
       "learning_objective_codes": [
         "LO-C3.MTX.01-01",
@@ -225,8 +225,8 @@
       "title": "Phân loại Bò sữa theo nhóm",
       "instruction": "Bé phân loại Bò sữa theo đặc điểm phù hợp!",
       "theme_tag": "farm",
-      "what_tags": ["classification"],
-      "thinking_tags": ["infer", "deduce"],
+      "what_tags": ["cmp", "sequence"],
+      "thinking_tags": ["infer"],
       "skill_codes": ["C3.MTX.01"],
       "learning_objective_codes": [
         "LO-C3.MTX.01-01",
@@ -286,8 +286,8 @@
       "title": "Tìm bóng của Ngôi nhà",
       "instruction": "Bé tìm chiếc bóng đúng của Ngôi nhà nhé!",
       "theme_tag": "home",
-      "what_tags": ["classification"],
-      "thinking_tags": ["infer", "deduce"],
+      "what_tags": ["ops"],
+      "thinking_tags": ["infer"],
       "skill_codes": ["C3.MTX.01"],
       "learning_objective_codes": [
         "LO-C3.MTX.01-01",
@@ -362,8 +362,8 @@
       "title": "Xếp Cây xanh theo kích thước",
       "instruction": "Bé sắp xếp Cây xanh theo kích thước nhé!",
       "theme_tag": "nature",
-      "what_tags": ["deduction", "logic", "number", "comparison"],
-      "thinking_tags": ["infer", "deduce"],
+      "what_tags": ["log", "number", "cmp"],
+      "thinking_tags": ["infer"],
       "skill_codes": ["C3.MTX.01"],
       "learning_objective_codes": [
         "LO-C3.MTX.01-01",
@@ -448,8 +448,8 @@
       "title": "Xếp Cá heo theo kích thước",
       "instruction": "Bé sắp xếp Cá heo theo kích thước nhé!",
       "theme_tag": "ocean",
-      "what_tags": ["deduction", "logic", "number", "comparison"],
-      "thinking_tags": ["infer", "deduce"],
+      "what_tags": ["log", "number", "cmp"],
+      "thinking_tags": ["infer"],
       "skill_codes": ["C3.MTX.01"],
       "learning_objective_codes": [
         "LO-C3.MTX.01-01",
@@ -534,8 +534,8 @@
       "title": "Ghép hình Táo đỏ hoàn chỉnh",
       "instruction": "Bé ghép các mảnh thành hình Táo đỏ nhé!",
       "theme_tag": "food",
-      "what_tags": ["logic"],
-      "thinking_tags": ["infer", "deduce"],
+      "what_tags": ["log"],
+      "thinking_tags": ["infer"],
       "skill_codes": ["C3.MTX.01"],
       "learning_objective_codes": [
         "LO-C3.MTX.01-01",
@@ -618,8 +618,8 @@
       "title": "Ghép hình Xe buýt hoàn chỉnh",
       "instruction": "Bé ghép các mảnh thành hình Xe buýt nhé!",
       "theme_tag": "vehicle",
-      "what_tags": ["logic"],
-      "thinking_tags": ["infer", "deduce"],
+      "what_tags": ["log"],
+      "thinking_tags": ["infer"],
       "skill_codes": ["C3.MTX.01"],
       "learning_objective_codes": [
         "LO-C3.MTX.01-01",
@@ -702,8 +702,8 @@
       "title": "Ghép đôi Bảng vẽ tương ứng",
       "instruction": "Bé ghép các cặp Bảng vẽ tương ứng với nhau!",
       "theme_tag": "art",
-      "what_tags": ["classification"],
-      "thinking_tags": ["infer", "deduce"],
+      "what_tags": ["cls"],
+      "thinking_tags": ["infer"],
       "skill_codes": ["C3.MTX.02"],
       "learning_objective_codes": [
         "LO-C3.MTX.02-01",
@@ -781,8 +781,8 @@
       "title": "Ghép đôi Hành tinh tương ứng",
       "instruction": "Bé ghép các cặp Hành tinh tương ứng với nhau!",
       "theme_tag": "space",
-      "what_tags": ["classification"],
-      "thinking_tags": ["infer", "deduce"],
+      "what_tags": ["cls"],
+      "thinking_tags": ["infer"],
       "skill_codes": ["C3.MTX.02"],
       "learning_objective_codes": [
         "LO-C3.MTX.02-01",
@@ -860,8 +860,8 @@
       "title": "Phân loại Gia đình theo nhóm",
       "instruction": "Bé phân loại Gia đình theo đặc điểm phù hợp!",
       "theme_tag": "family",
-      "what_tags": ["classification"],
-      "thinking_tags": ["infer", "deduce"],
+      "what_tags": ["cmp", "sequence"],
+      "thinking_tags": ["infer"],
       "skill_codes": ["C3.MTX.02"],
       "learning_objective_codes": [
         "LO-C3.MTX.02-01",
@@ -921,8 +921,8 @@
       "title": "Phân loại Tai theo nhóm",
       "instruction": "Bé phân loại Tai theo đặc điểm phù hợp!",
       "theme_tag": "body",
-      "what_tags": ["classification"],
-      "thinking_tags": ["infer", "deduce"],
+      "what_tags": ["cmp", "sequence"],
+      "thinking_tags": ["infer"],
       "skill_codes": ["C3.MTX.02"],
       "learning_objective_codes": [
         "LO-C3.MTX.02-01",
@@ -982,8 +982,8 @@
       "title": "Tìm bóng của Mặt trời",
       "instruction": "Bé quan sát và chọn bóng đúng của Mặt trời!",
       "theme_tag": "weather",
-      "what_tags": ["classification"],
-      "thinking_tags": ["infer", "deduce"],
+      "what_tags": ["ops"],
+      "thinking_tags": ["infer"],
       "skill_codes": ["C3.MTX.02"],
       "learning_objective_codes": [
         "LO-C3.MTX.02-01",
@@ -1058,8 +1058,8 @@
       "title": "Tìm bóng của Bao lì xì",
       "instruction": "Bé quan sát và chọn bóng đúng của Bao lì xì!",
       "theme_tag": "festival",
-      "what_tags": ["classification"],
-      "thinking_tags": ["infer", "deduce"],
+      "what_tags": ["ops"],
+      "thinking_tags": ["infer"],
       "skill_codes": ["C3.MTX.02"],
       "learning_objective_codes": [
         "LO-C3.MTX.02-01",
@@ -1134,8 +1134,8 @@
       "title": "Xếp Trường học theo kích thước",
       "instruction": "Bé sắp xếp các Trường học từ nhỏ đến lớn!",
       "theme_tag": "school",
-      "what_tags": ["deduction", "logic", "number", "comparison"],
-      "thinking_tags": ["infer", "deduce"],
+      "what_tags": ["log", "number", "cmp"],
+      "thinking_tags": ["infer"],
       "skill_codes": ["C3.MTX.02"],
       "learning_objective_codes": [
         "LO-C3.MTX.02-01",
@@ -1155,14 +1155,6 @@
       "candidates": [
         {
           "candidate_id": "cand_1",
-          "value": 2,
-          "asset": {
-            "kind": "emoji",
-            "ref": "EMJ-open-book"
-          }
-        },
-        {
-          "candidate_id": "cand_2",
           "value": 4,
           "asset": {
             "kind": "emoji",
@@ -1170,7 +1162,7 @@
           }
         },
         {
-          "candidate_id": "cand_3",
+          "candidate_id": "cand_2",
           "value": 6,
           "asset": {
             "kind": "emoji",
@@ -1178,7 +1170,7 @@
           }
         },
         {
-          "candidate_id": "cand_4",
+          "candidate_id": "cand_3",
           "value": 8,
           "asset": {
             "kind": "emoji",
@@ -1186,37 +1178,53 @@
           }
         },
         {
-          "candidate_id": "cand_5",
+          "candidate_id": "cand_4",
           "value": 10,
           "asset": {
             "kind": "emoji",
             "ref": "EMJ-school"
+          }
+        },
+        {
+          "candidate_id": "cand_5",
+          "value": 12,
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-backpack"
+          }
+        },
+        {
+          "candidate_id": "cand_6",
+          "value": 14,
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-pencil"
           }
         }
       ],
       "clues": [
         {
           "clue_id": "clue_1",
-          "text": "Số lượng lớn hơn 2",
+          "text": "Số lượng lớn hơn 10",
           "predicate": {
             "kind": "greater_than",
-            "value": 2
+            "value": 10
           }
         },
         {
           "clue_id": "clue_2",
-          "text": "Số lượng nhỏ hơn 6",
+          "text": "Số lượng nhỏ hơn 14",
           "predicate": {
             "kind": "less_than",
-            "value": 6
+            "value": 14
           }
         }
       ],
-      "answer_candidate_id": "cand_2"
+      "answer_candidate_id": "cand_5"
     },
     "difficulty_params": {
       "clue_count": 2,
-      "candidate_count": 5,
+      "candidate_count": 6,
       "hint_after_ms": 15000,
       "allow_retry": true
     }
@@ -1228,8 +1236,8 @@
       "title": "Xếp Bò sữa theo kích thước",
       "instruction": "Bé sắp xếp các Bò sữa từ nhỏ đến lớn!",
       "theme_tag": "farm",
-      "what_tags": ["deduction", "logic", "number", "comparison"],
-      "thinking_tags": ["infer", "deduce"],
+      "what_tags": ["log", "number", "cmp"],
+      "thinking_tags": ["infer"],
       "skill_codes": ["C3.MTX.02"],
       "learning_objective_codes": [
         "LO-C3.MTX.02-01",
@@ -1249,31 +1257,31 @@
       "candidates": [
         {
           "candidate_id": "cand_1",
-          "value": 4,
+          "value": 3,
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-tractor"
+            "ref": "EMJ-rooster"
           }
         },
         {
           "candidate_id": "cand_2",
-          "value": 6,
-          "asset": {
-            "kind": "emoji",
-            "ref": "EMJ-pig"
-          }
-        },
-        {
-          "candidate_id": "cand_3",
-          "value": 8,
+          "value": 5,
           "asset": {
             "kind": "emoji",
             "ref": "EMJ-chicken"
           }
         },
         {
+          "candidate_id": "cand_3",
+          "value": 7,
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-pig"
+          }
+        },
+        {
           "candidate_id": "cand_4",
-          "value": 10,
+          "value": 9,
           "asset": {
             "kind": "emoji",
             "ref": "EMJ-rice"
@@ -1281,28 +1289,28 @@
         },
         {
           "candidate_id": "cand_5",
-          "value": 12,
+          "value": 11,
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-sheep"
+            "ref": "EMJ-horse"
           }
         }
       ],
       "clues": [
         {
           "clue_id": "clue_1",
-          "text": "Số lượng lớn hơn 6",
+          "text": "Số lượng lớn hơn 5",
           "predicate": {
             "kind": "greater_than",
-            "value": 6
+            "value": 5
           }
         },
         {
           "clue_id": "clue_2",
-          "text": "Số lượng nhỏ hơn 10",
+          "text": "Số lượng nhỏ hơn 9",
           "predicate": {
             "kind": "less_than",
-            "value": 10
+            "value": 9
           }
         }
       ],
@@ -1322,8 +1330,8 @@
       "title": "Ghép hình Ngôi nhà hoàn chỉnh",
       "instruction": "Bé ghép các mảnh thành tranh Ngôi nhà hoàn chỉnh!",
       "theme_tag": "home",
-      "what_tags": ["logic"],
-      "thinking_tags": ["infer", "deduce"],
+      "what_tags": ["log"],
+      "thinking_tags": ["infer"],
       "skill_codes": ["C3.MTX.02"],
       "learning_objective_codes": [
         "LO-C3.MTX.02-01",
@@ -1406,8 +1414,8 @@
       "title": "Ghép hình Voi hoàn chỉnh",
       "instruction": "Bé ghép các mảnh thành tranh Voi hoàn chỉnh!",
       "theme_tag": "animal",
-      "what_tags": ["logic"],
-      "thinking_tags": ["infer", "deduce"],
+      "what_tags": ["log"],
+      "thinking_tags": ["infer"],
       "skill_codes": ["C3.MTX.02"],
       "learning_objective_codes": [
         "LO-C3.MTX.02-01",
@@ -1490,8 +1498,8 @@
       "title": "Ghép đôi Cây xanh tương ứng",
       "instruction": "Bé ghép các cặp Cây xanh tương ứng với nhau!",
       "theme_tag": "nature",
-      "what_tags": ["classification"],
-      "thinking_tags": ["infer", "deduce"],
+      "what_tags": ["cls"],
+      "thinking_tags": ["infer"],
       "skill_codes": ["C3.MTX.03"],
       "learning_objective_codes": [
         "LO-C3.MTX.03-01",
@@ -1569,8 +1577,8 @@
       "title": "Ghép đôi Cá heo tương ứng",
       "instruction": "Bé ghép các cặp Cá heo tương ứng với nhau!",
       "theme_tag": "ocean",
-      "what_tags": ["classification"],
-      "thinking_tags": ["infer", "deduce"],
+      "what_tags": ["cls"],
+      "thinking_tags": ["infer"],
       "skill_codes": ["C3.MTX.03"],
       "learning_objective_codes": [
         "LO-C3.MTX.03-01",
@@ -1648,8 +1656,8 @@
       "title": "Phân loại Táo đỏ theo nhóm",
       "instruction": "Bé phân loại Táo đỏ theo đặc điểm phù hợp!",
       "theme_tag": "food",
-      "what_tags": ["classification"],
-      "thinking_tags": ["infer", "deduce"],
+      "what_tags": ["cmp", "sequence"],
+      "thinking_tags": ["infer"],
       "skill_codes": ["C3.MTX.03"],
       "learning_objective_codes": [
         "LO-C3.MTX.03-01",
@@ -1709,8 +1717,8 @@
       "title": "Phân loại Xe buýt theo nhóm",
       "instruction": "Bé phân loại Xe buýt theo đặc điểm phù hợp!",
       "theme_tag": "vehicle",
-      "what_tags": ["classification"],
-      "thinking_tags": ["infer", "deduce"],
+      "what_tags": ["cmp", "sequence"],
+      "thinking_tags": ["infer"],
       "skill_codes": ["C3.MTX.03"],
       "learning_objective_codes": [
         "LO-C3.MTX.03-01",
@@ -1770,8 +1778,8 @@
       "title": "Tìm bóng của Bảng vẽ",
       "instruction": "Bé quan sát và chọn bóng đúng của Bảng vẽ!",
       "theme_tag": "art",
-      "what_tags": ["classification"],
-      "thinking_tags": ["infer", "deduce"],
+      "what_tags": ["ops"],
+      "thinking_tags": ["infer"],
       "skill_codes": ["C3.MTX.03"],
       "learning_objective_codes": [
         "LO-C3.MTX.03-01",
@@ -1846,8 +1854,8 @@
       "title": "Tìm bóng của Hành tinh",
       "instruction": "Bé quan sát và chọn bóng đúng của Hành tinh!",
       "theme_tag": "space",
-      "what_tags": ["classification"],
-      "thinking_tags": ["infer", "deduce"],
+      "what_tags": ["ops"],
+      "thinking_tags": ["infer"],
       "skill_codes": ["C3.MTX.03"],
       "learning_objective_codes": [
         "LO-C3.MTX.03-01",
@@ -1922,8 +1930,8 @@
       "title": "Xếp Gia đình theo kích thước",
       "instruction": "Bé sắp xếp các Gia đình từ nhỏ đến lớn!",
       "theme_tag": "family",
-      "what_tags": ["deduction", "logic", "number", "comparison"],
-      "thinking_tags": ["infer", "deduce"],
+      "what_tags": ["log", "number", "cmp"],
+      "thinking_tags": ["infer"],
       "skill_codes": ["C3.MTX.03"],
       "learning_objective_codes": [
         "LO-C3.MTX.03-01",
@@ -1943,60 +1951,68 @@
       "candidates": [
         {
           "candidate_id": "cand_1",
-          "value": 3,
-          "asset": {
-            "kind": "emoji",
-            "ref": "EMJ-father"
-          }
-        },
-        {
-          "candidate_id": "cand_2",
-          "value": 5,
+          "value": 2,
           "asset": {
             "kind": "emoji",
             "ref": "EMJ-family"
           }
         },
         {
-          "candidate_id": "cand_3",
-          "value": 7,
+          "candidate_id": "cand_2",
+          "value": 4,
           "asset": {
             "kind": "emoji",
             "ref": "EMJ-house-with-garden"
           }
         },
         {
-          "candidate_id": "cand_4",
-          "value": 9,
+          "candidate_id": "cand_3",
+          "value": 6,
           "asset": {
             "kind": "emoji",
             "ref": "EMJ-boy"
           }
         },
         {
-          "candidate_id": "cand_5",
-          "value": 11,
+          "candidate_id": "cand_4",
+          "value": 8,
           "asset": {
             "kind": "emoji",
             "ref": "EMJ-grandfather"
+          }
+        },
+        {
+          "candidate_id": "cand_5",
+          "value": 10,
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-father"
+          }
+        },
+        {
+          "candidate_id": "cand_6",
+          "value": 12,
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-mother"
           }
         }
       ],
       "clues": [
         {
           "clue_id": "clue_1",
-          "text": "Số lượng lớn hơn 5",
+          "text": "Số lượng lớn hơn 4",
           "predicate": {
             "kind": "greater_than",
-            "value": 5
+            "value": 4
           }
         },
         {
           "clue_id": "clue_2",
-          "text": "Số lượng nhỏ hơn 9",
+          "text": "Số lượng nhỏ hơn 8",
           "predicate": {
             "kind": "less_than",
-            "value": 9
+            "value": 8
           }
         }
       ],
@@ -2004,7 +2020,7 @@
     },
     "difficulty_params": {
       "clue_count": 2,
-      "candidate_count": 5,
+      "candidate_count": 6,
       "hint_after_ms": 15000,
       "allow_retry": true
     }
@@ -2016,8 +2032,8 @@
       "title": "Xếp Tai theo kích thước",
       "instruction": "Bé sắp xếp các Tai từ nhỏ đến lớn!",
       "theme_tag": "body",
-      "what_tags": ["deduction", "logic", "number", "comparison"],
-      "thinking_tags": ["infer", "deduce"],
+      "what_tags": ["log", "number", "cmp"],
+      "thinking_tags": ["infer"],
       "skill_codes": ["C3.MTX.03"],
       "learning_objective_codes": [
         "LO-C3.MTX.03-01",
@@ -2037,14 +2053,6 @@
       "candidates": [
         {
           "candidate_id": "cand_1",
-          "value": 2,
-          "asset": {
-            "kind": "emoji",
-            "ref": "EMJ-leg"
-          }
-        },
-        {
-          "candidate_id": "cand_2",
           "value": 4,
           "asset": {
             "kind": "emoji",
@@ -2052,53 +2060,69 @@
           }
         },
         {
-          "candidate_id": "cand_3",
+          "candidate_id": "cand_2",
           "value": 6,
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-foot"
+          }
+        },
+        {
+          "candidate_id": "cand_3",
+          "value": 8,
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-leg"
+          }
+        },
+        {
+          "candidate_id": "cand_4",
+          "value": 10,
           "asset": {
             "kind": "emoji",
             "ref": "EMJ-mouth"
           }
         },
         {
-          "candidate_id": "cand_4",
-          "value": 8,
+          "candidate_id": "cand_5",
+          "value": 12,
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-raised-hand"
+            "ref": "EMJ-ear"
           }
         },
         {
-          "candidate_id": "cand_5",
-          "value": 10,
+          "candidate_id": "cand_6",
+          "value": 14,
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-foot"
+            "ref": "EMJ-heart"
           }
         }
       ],
       "clues": [
         {
           "clue_id": "clue_1",
-          "text": "Số lượng lớn hơn 6",
+          "text": "Số lượng lớn hơn 10",
           "predicate": {
             "kind": "greater_than",
-            "value": 6
+            "value": 10
           }
         },
         {
           "clue_id": "clue_2",
-          "text": "Số lượng nhỏ hơn 10",
+          "text": "Số lượng nhỏ hơn 14",
           "predicate": {
             "kind": "less_than",
-            "value": 10
+            "value": 14
           }
         }
       ],
-      "answer_candidate_id": "cand_4"
+      "answer_candidate_id": "cand_5"
     },
     "difficulty_params": {
       "clue_count": 2,
-      "candidate_count": 5,
+      "candidate_count": 6,
       "hint_after_ms": 15000,
       "allow_retry": true
     }
@@ -2110,8 +2134,8 @@
       "title": "Ghép hình Mặt trời hoàn chỉnh",
       "instruction": "Bé ghép các mảnh thành tranh Mặt trời hoàn chỉnh!",
       "theme_tag": "weather",
-      "what_tags": ["logic"],
-      "thinking_tags": ["infer", "deduce"],
+      "what_tags": ["log"],
+      "thinking_tags": ["infer"],
       "skill_codes": ["C3.MTX.03"],
       "learning_objective_codes": [
         "LO-C3.MTX.03-01",
@@ -2194,8 +2218,8 @@
       "title": "Ghép hình Bao lì xì hoàn chỉnh",
       "instruction": "Bé ghép các mảnh thành tranh Bao lì xì hoàn chỉnh!",
       "theme_tag": "festival",
-      "what_tags": ["logic"],
-      "thinking_tags": ["infer", "deduce"],
+      "what_tags": ["log"],
+      "thinking_tags": ["infer"],
       "skill_codes": ["C3.MTX.03"],
       "learning_objective_codes": [
         "LO-C3.MTX.03-01",

@@ -178,7 +178,11 @@ export {
   MirrorSystem,
   type SymmetricSlotPair,
 } from "./systems/mirror-system.js";
-export { type Particle, RenderSystem } from "./systems/render-system";
+export {
+  type CanvasViewport,
+  type Particle,
+  RenderSystem,
+} from "./systems/render-system";
 export {
   type FlipAxis,
   isPieceTransformMatch,

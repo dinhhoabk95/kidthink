@@ -6,7 +6,7 @@
       "title": "Tìm Gia đình giống mẫu",
       "instruction": "Bé chạm vào Gia đình giống mẫu nhé!",
       "theme_tag": "family",
-      "what_tags": ["classification", "number"],
+      "what_tags": ["cls", "shp", "number"],
       "thinking_tags": ["observe", "predict"],
       "skill_codes": ["C2.MIR.01"],
       "learning_objective_codes": [
@@ -72,7 +72,7 @@
       "title": "Tìm Tai giống mẫu",
       "instruction": "Bé chạm vào Tai giống mẫu nhé!",
       "theme_tag": "body",
-      "what_tags": ["classification", "number"],
+      "what_tags": ["cls", "shp", "number"],
       "thinking_tags": ["observe", "predict"],
       "skill_codes": ["C2.MIR.01"],
       "learning_objective_codes": [
@@ -146,7 +146,7 @@
       "title": "Đếm số lượng Mặt trời",
       "instruction": "Bé đếm số Mặt trời rồi chọn số đúng!",
       "theme_tag": "weather",
-      "what_tags": ["category"],
+      "what_tags": ["cls"],
       "thinking_tags": ["observe", "predict"],
       "skill_codes": ["C2.MIR.01"],
       "learning_objective_codes": [
@@ -214,7 +214,7 @@
       "title": "Đếm số lượng Bao lì xì",
       "instruction": "Bé đếm số Bao lì xì rồi chọn số đúng!",
       "theme_tag": "festival",
-      "what_tags": ["category"],
+      "what_tags": ["cls"],
       "thinking_tags": ["observe", "predict"],
       "skill_codes": ["C2.MIR.01"],
       "learning_objective_codes": [
@@ -282,7 +282,7 @@
       "title": "So sánh nhóm Trường học",
       "instruction": "Bé chọn nhóm nhiều Trường học hơn nhé!",
       "theme_tag": "school",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["observe", "predict"],
       "skill_codes": ["C2.MIR.01"],
       "learning_objective_codes": [
@@ -293,7 +293,7 @@
       "difficulty": 2,
       "age_min": 3,
       "age_max": 4,
-      "access_tier": "premium",
+      "access_tier": "standard",
       "content_version": 1,
       "authored_in": "repo_seed",
       "origin": "ai_assisted"
@@ -349,7 +349,7 @@
       "title": "So sánh nhóm Bò sữa",
       "instruction": "Bé chọn nhóm nhiều Bò sữa hơn nhé!",
       "theme_tag": "farm",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["observe", "predict"],
       "skill_codes": ["C2.MIR.01"],
       "learning_objective_codes": [
@@ -360,7 +360,7 @@
       "difficulty": 3,
       "age_min": 3,
       "age_max": 4,
-      "access_tier": "standard",
+      "access_tier": "premium",
       "content_version": 1,
       "authored_in": "repo_seed",
       "origin": "ai_assisted"
@@ -416,7 +416,7 @@
       "title": "Ghép đôi Ngôi nhà tương ứng",
       "instruction": "Bé ghép đôi các Ngôi nhà tương ứng nhé!",
       "theme_tag": "home",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["observe", "predict"],
       "skill_codes": ["C2.MIR.01"],
       "learning_objective_codes": [
@@ -495,7 +495,7 @@
       "title": "Ghép đôi Voi tương ứng",
       "instruction": "Bé ghép đôi các Voi tương ứng nhé!",
       "theme_tag": "animal",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["observe", "predict"],
       "skill_codes": ["C2.MIR.01"],
       "learning_objective_codes": [
@@ -574,7 +574,7 @@
       "title": "Xếp Cây xanh theo quy luật",
       "instruction": "Bé chọn Cây xanh tiếp theo theo quy luật!",
       "theme_tag": "nature",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["observe", "predict"],
       "skill_codes": ["C2.MIR.01"],
       "learning_objective_codes": [
@@ -642,7 +642,7 @@
       "title": "Xếp Cá heo theo quy luật",
       "instruction": "Bé chọn Cá heo tiếp theo theo quy luật!",
       "theme_tag": "ocean",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["observe", "predict"],
       "skill_codes": ["C2.MIR.01"],
       "learning_objective_codes": [
@@ -710,7 +710,7 @@
       "title": "Ghép đôi Táo đỏ tương ứng",
       "instruction": "Bé ghép đôi các Táo đỏ tương ứng nhé!",
       "theme_tag": "food",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["predict", "infer"],
       "skill_codes": ["C2.MIR.02"],
       "learning_objective_codes": [
@@ -789,7 +789,7 @@
       "title": "Ghép đôi Xe buýt tương ứng",
       "instruction": "Bé ghép đôi các Xe buýt tương ứng nhé!",
       "theme_tag": "vehicle",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["predict", "infer"],
       "skill_codes": ["C2.MIR.02"],
       "learning_objective_codes": [
@@ -868,7 +868,7 @@
       "title": "Phân loại Bảng vẽ theo nhóm",
       "instruction": "Bé phân loại Bảng vẽ theo đặc điểm phù hợp!",
       "theme_tag": "art",
-      "what_tags": ["classification"],
+      "what_tags": ["cmp", "sequence"],
       "thinking_tags": ["predict", "infer"],
       "skill_codes": ["C2.MIR.02"],
       "learning_objective_codes": [
@@ -929,7 +929,7 @@
       "title": "Phân loại Hành tinh theo nhóm",
       "instruction": "Bé phân loại Hành tinh theo đặc điểm phù hợp!",
       "theme_tag": "space",
-      "what_tags": ["classification"],
+      "what_tags": ["cmp", "sequence"],
       "thinking_tags": ["predict", "infer"],
       "skill_codes": ["C2.MIR.02"],
       "learning_objective_codes": [
@@ -990,7 +990,7 @@
       "title": "Tìm bóng của Gia đình",
       "instruction": "Bé tìm chiếc bóng đúng của Gia đình nhé!",
       "theme_tag": "family",
-      "what_tags": ["classification"],
+      "what_tags": ["ops"],
       "thinking_tags": ["predict", "infer"],
       "skill_codes": ["C2.MIR.02"],
       "learning_objective_codes": [
@@ -1066,7 +1066,7 @@
       "title": "Tìm bóng của Tai",
       "instruction": "Bé tìm chiếc bóng đúng của Tai nhé!",
       "theme_tag": "body",
-      "what_tags": ["classification"],
+      "what_tags": ["ops"],
       "thinking_tags": ["predict", "infer"],
       "skill_codes": ["C2.MIR.02"],
       "learning_objective_codes": [
@@ -1142,7 +1142,7 @@
       "title": "Xếp Mặt trời theo kích thước",
       "instruction": "Bé sắp xếp Mặt trời theo kích thước nhé!",
       "theme_tag": "weather",
-      "what_tags": ["deduction", "logic", "number", "comparison"],
+      "what_tags": ["log", "number", "cmp"],
       "thinking_tags": ["predict", "infer"],
       "skill_codes": ["C2.MIR.02"],
       "learning_objective_codes": [
@@ -1228,7 +1228,7 @@
       "title": "Xếp Bao lì xì theo kích thước",
       "instruction": "Bé sắp xếp Bao lì xì theo kích thước nhé!",
       "theme_tag": "festival",
-      "what_tags": ["deduction", "logic", "number", "comparison"],
+      "what_tags": ["log", "number", "cmp"],
       "thinking_tags": ["predict", "infer"],
       "skill_codes": ["C2.MIR.02"],
       "learning_objective_codes": [
@@ -1314,7 +1314,7 @@
       "title": "Ghép hình Trường học hoàn chỉnh",
       "instruction": "Bé ghép các mảnh thành hình Trường học nhé!",
       "theme_tag": "school",
-      "what_tags": ["logic"],
+      "what_tags": ["log"],
       "thinking_tags": ["predict", "infer"],
       "skill_codes": ["C2.MIR.02"],
       "learning_objective_codes": [
@@ -1398,7 +1398,7 @@
       "title": "Ghép hình Bò sữa hoàn chỉnh",
       "instruction": "Bé ghép các mảnh thành hình Bò sữa nhé!",
       "theme_tag": "farm",
-      "what_tags": ["logic"],
+      "what_tags": ["log"],
       "thinking_tags": ["predict", "infer"],
       "skill_codes": ["C2.MIR.02"],
       "learning_objective_codes": [
@@ -1482,7 +1482,7 @@
       "title": "Nối điểm vẽ hình Ngôi nhà",
       "instruction": "Bé nối các điểm theo thứ tự để hoàn thành!",
       "theme_tag": "home",
-      "what_tags": ["matrix", "pattern", "logic"],
+      "what_tags": ["log", "pattern"],
       "thinking_tags": ["predict"],
       "skill_codes": ["C2.MIR.03"],
       "learning_objective_codes": [
@@ -1616,7 +1616,7 @@
       "title": "Nối điểm vẽ hình Voi",
       "instruction": "Bé nối các điểm theo thứ tự để hoàn thành!",
       "theme_tag": "animal",
-      "what_tags": ["matrix", "pattern", "logic"],
+      "what_tags": ["log", "pattern"],
       "thinking_tags": ["predict"],
       "skill_codes": ["C2.MIR.03"],
       "learning_objective_codes": [
@@ -1750,7 +1750,7 @@
       "title": "Dẫn đường qua mê cung",
       "instruction": "Bé vẽ đường đi an toàn qua mê cung!",
       "theme_tag": "nature",
-      "what_tags": ["maze"],
+      "what_tags": ["spt", "flw"],
       "thinking_tags": ["predict"],
       "skill_codes": ["C2.MIR.03"],
       "learning_objective_codes": [
@@ -1849,7 +1849,7 @@
       "title": "Dẫn đường qua mê cung",
       "instruction": "Bé vẽ đường đi an toàn qua mê cung!",
       "theme_tag": "ocean",
-      "what_tags": ["maze"],
+      "what_tags": ["spt", "flw"],
       "thinking_tags": ["predict"],
       "skill_codes": ["C2.MIR.03"],
       "learning_objective_codes": [
@@ -1948,7 +1948,7 @@
       "title": "Tìm điểm khác biệt của Táo đỏ",
       "instruction": "Bé quan sát kỹ và chỉ ra điểm khác biệt!",
       "theme_tag": "food",
-      "what_tags": ["measurement", "comparison"],
+      "what_tags": ["msr", "cmp"],
       "thinking_tags": ["predict"],
       "skill_codes": ["C2.MIR.03"],
       "learning_objective_codes": [
@@ -1973,7 +1973,7 @@
             "kind": "emoji",
             "ref": "EMJ-corn"
           },
-          "weight": 5
+          "weight": 4
         }
       ],
       "right_pan": [
@@ -1993,7 +1993,7 @@
             "kind": "emoji",
             "ref": "EMJ-milk"
           },
-          "weight": 3
+          "weight": 2
         },
         {
           "item_id": "tray_2",
@@ -2001,7 +2001,7 @@
             "kind": "emoji",
             "ref": "EMJ-bread"
           },
-          "weight": 1
+          "weight": 3
         },
         {
           "item_id": "tray_3",
@@ -2016,7 +2016,7 @@
     },
     "difficulty_params": {
       "tray_count": 3,
-      "weight_span": 5,
+      "weight_span": 4,
       "hint_after_ms": 12000,
       "allow_retry": true
     }
@@ -2028,7 +2028,7 @@
       "title": "Tìm điểm khác biệt của Xe buýt",
       "instruction": "Bé quan sát kỹ và chỉ ra điểm khác biệt!",
       "theme_tag": "vehicle",
-      "what_tags": ["measurement", "comparison"],
+      "what_tags": ["msr", "cmp"],
       "thinking_tags": ["predict"],
       "skill_codes": ["C2.MIR.03"],
       "learning_objective_codes": [
@@ -2063,7 +2063,7 @@
             "kind": "emoji",
             "ref": "EMJ-sailboat"
           },
-          "weight": 2
+          "weight": 1
         }
       ],
       "tray": [
@@ -2073,7 +2073,7 @@
             "kind": "emoji",
             "ref": "EMJ-truck"
           },
-          "weight": 3
+          "weight": 4
         },
         {
           "item_id": "tray_2",
@@ -2081,7 +2081,7 @@
             "kind": "emoji",
             "ref": "EMJ-bus"
           },
-          "weight": 1
+          "weight": 5
         },
         {
           "item_id": "tray_3",
@@ -2089,7 +2089,7 @@
             "kind": "emoji",
             "ref": "EMJ-car"
           },
-          "weight": 4
+          "weight": 6
         }
       ],
       "goal": "balance"
@@ -2108,7 +2108,7 @@
       "title": "Đếm khối hình không gian",
       "instruction": "Bé quan sát phối cảnh đếm đúng số khối nhé!",
       "theme_tag": "art",
-      "what_tags": ["geometry"],
+      "what_tags": ["spt", "shp", "geometry", "cnt"],
       "thinking_tags": ["predict"],
       "skill_codes": ["C2.MIR.03"],
       "learning_objective_codes": [
@@ -2130,7 +2130,8 @@
         {
           "x": 0,
           "y": 0,
-          "z": 0
+          "z": 0,
+          "colorToken": "peach"
         },
         {
           "x": 0,
@@ -2188,9 +2189,9 @@
       ]
     },
     "difficulty_params": {
-      "hidden_cube_count": 1,
+      "hidden_cube_count": 0,
       "distractor_count": 3,
-      "allow_rotate": true,
+      "allow_rotate": false,
       "hint_after_ms": 15000,
       "allow_retry": true
     }
@@ -2202,7 +2203,7 @@
       "title": "Đếm khối hình không gian",
       "instruction": "Bé quan sát phối cảnh đếm đúng số khối nhé!",
       "theme_tag": "space",
-      "what_tags": ["geometry"],
+      "what_tags": ["spt", "shp", "geometry", "cnt"],
       "thinking_tags": ["predict"],
       "skill_codes": ["C2.MIR.03"],
       "learning_objective_codes": [
@@ -2224,7 +2225,8 @@
         {
           "x": 0,
           "y": 0,
-          "z": 0
+          "z": 0,
+          "colorToken": "mint"
         },
         {
           "x": 0,
@@ -2288,9 +2290,9 @@
       ]
     },
     "difficulty_params": {
-      "hidden_cube_count": 1,
+      "hidden_cube_count": 0,
       "distractor_count": 3,
-      "allow_rotate": true,
+      "allow_rotate": false,
       "hint_after_ms": 15000,
       "allow_retry": true
     }
@@ -2302,7 +2304,7 @@
       "title": "Xếp Gia đình vào khung mười ô",
       "instruction": "Bé đặt đủ số lượng Gia đình vào khung mười!",
       "theme_tag": "family",
-      "what_tags": ["geometry"],
+      "what_tags": ["spt", "geometry"],
       "thinking_tags": ["predict"],
       "skill_codes": ["C2.MIR.03"],
       "learning_objective_codes": [
@@ -2377,7 +2379,7 @@
       "title": "Xếp Tai vào khung mười ô",
       "instruction": "Bé đặt đủ số lượng Tai vào khung mười!",
       "theme_tag": "body",
-      "what_tags": ["geometry"],
+      "what_tags": ["spt", "geometry"],
       "thinking_tags": ["predict"],
       "skill_codes": ["C2.MIR.03"],
       "learning_objective_codes": [

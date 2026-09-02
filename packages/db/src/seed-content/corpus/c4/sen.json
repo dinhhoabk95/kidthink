@@ -6,7 +6,7 @@
       "title": "Tìm Mặt trời giống mẫu",
       "instruction": "Bé chạm vào Mặt trời giống mẫu nhé!",
       "theme_tag": "weather",
-      "what_tags": ["classification", "number"],
+      "what_tags": ["cls", "shp", "number"],
       "thinking_tags": ["compare", "observe"],
       "skill_codes": ["C4.SEN.01"],
       "learning_objective_codes": [
@@ -72,7 +72,7 @@
       "title": "Tìm Bao lì xì giống mẫu",
       "instruction": "Bé chạm vào Bao lì xì giống mẫu nhé!",
       "theme_tag": "festival",
-      "what_tags": ["classification", "number"],
+      "what_tags": ["cls", "shp", "number"],
       "thinking_tags": ["compare", "observe"],
       "skill_codes": ["C4.SEN.01"],
       "learning_objective_codes": [
@@ -146,7 +146,7 @@
       "title": "Đếm số lượng Trường học",
       "instruction": "Bé đếm số Trường học rồi chọn số đúng!",
       "theme_tag": "school",
-      "what_tags": ["category"],
+      "what_tags": ["cls"],
       "thinking_tags": ["compare", "observe"],
       "skill_codes": ["C4.SEN.01"],
       "learning_objective_codes": [
@@ -214,7 +214,7 @@
       "title": "Đếm số lượng Bò sữa",
       "instruction": "Bé đếm số Bò sữa rồi chọn số đúng!",
       "theme_tag": "farm",
-      "what_tags": ["category"],
+      "what_tags": ["cls"],
       "thinking_tags": ["compare", "observe"],
       "skill_codes": ["C4.SEN.01"],
       "learning_objective_codes": [
@@ -282,7 +282,7 @@
       "title": "So sánh nhóm Ngôi nhà",
       "instruction": "Bé chọn nhóm nhiều Ngôi nhà hơn nhé!",
       "theme_tag": "home",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["compare", "observe"],
       "skill_codes": ["C4.SEN.01"],
       "learning_objective_codes": [
@@ -349,7 +349,7 @@
       "title": "So sánh nhóm Voi",
       "instruction": "Bé chọn nhóm nhiều Voi hơn nhé!",
       "theme_tag": "animal",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["compare", "observe"],
       "skill_codes": ["C4.SEN.01"],
       "learning_objective_codes": [
@@ -416,7 +416,7 @@
       "title": "Xếp Táo đỏ theo quy luật",
       "instruction": "Bé chọn Táo đỏ tiếp theo theo quy luật!",
       "theme_tag": "food",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["compare", "observe"],
       "skill_codes": ["C4.SEN.01"],
       "learning_objective_codes": [
@@ -484,7 +484,7 @@
       "title": "Xếp Xe buýt theo quy luật",
       "instruction": "Bé chọn Xe buýt tiếp theo theo quy luật!",
       "theme_tag": "vehicle",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["compare", "observe"],
       "skill_codes": ["C4.SEN.01"],
       "learning_objective_codes": [
@@ -552,7 +552,7 @@
       "title": "Tìm Bảng vẽ giống mẫu",
       "instruction": "Bé chạm vào Bảng vẽ giống mẫu nhé!",
       "theme_tag": "art",
-      "what_tags": ["classification", "number"],
+      "what_tags": ["cls", "shp", "number"],
       "thinking_tags": ["compare", "observe"],
       "skill_codes": ["C4.SEN.02"],
       "learning_objective_codes": [
@@ -618,7 +618,7 @@
       "title": "Tìm Cây đàn ghi-ta giống mẫu",
       "instruction": "Bé chạm vào Cây đàn ghi-ta giống mẫu nhé!",
       "theme_tag": "art",
-      "what_tags": ["classification", "number"],
+      "what_tags": ["cls", "shp", "number"],
       "thinking_tags": ["compare", "observe"],
       "skill_codes": ["C4.SEN.02"],
       "learning_objective_codes": [
@@ -692,7 +692,7 @@
       "title": "Đếm số lượng Gia đình",
       "instruction": "Bé đếm số Gia đình rồi chọn số đúng!",
       "theme_tag": "family",
-      "what_tags": ["category"],
+      "what_tags": ["cls"],
       "thinking_tags": ["compare", "observe"],
       "skill_codes": ["C4.SEN.02"],
       "learning_objective_codes": [
@@ -760,7 +760,7 @@
       "title": "Đếm số lượng Tai",
       "instruction": "Bé đếm số Tai rồi chọn số đúng!",
       "theme_tag": "body",
-      "what_tags": ["category"],
+      "what_tags": ["cls"],
       "thinking_tags": ["compare", "observe"],
       "skill_codes": ["C4.SEN.02"],
       "learning_objective_codes": [
@@ -828,7 +828,7 @@
       "title": "So sánh nhóm Mặt trời",
       "instruction": "Bé chọn nhóm nhiều Mặt trời hơn nhé!",
       "theme_tag": "weather",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["compare", "observe"],
       "skill_codes": ["C4.SEN.02"],
       "learning_objective_codes": [
@@ -895,7 +895,7 @@
       "title": "So sánh nhóm Bao lì xì",
       "instruction": "Bé chọn nhóm nhiều Bao lì xì hơn nhé!",
       "theme_tag": "festival",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["compare", "observe"],
       "skill_codes": ["C4.SEN.02"],
       "learning_objective_codes": [
@@ -962,7 +962,7 @@
       "title": "Ghép đôi Trường học tương ứng",
       "instruction": "Bé ghép đôi các Trường học tương ứng nhé!",
       "theme_tag": "school",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["compare", "observe"],
       "skill_codes": ["C4.SEN.02"],
       "learning_objective_codes": [
@@ -1041,7 +1041,7 @@
       "title": "Ghép đôi Bò sữa tương ứng",
       "instruction": "Bé ghép đôi các Bò sữa tương ứng nhé!",
       "theme_tag": "farm",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["compare", "observe"],
       "skill_codes": ["C4.SEN.02"],
       "learning_objective_codes": [
@@ -1120,7 +1120,7 @@
       "title": "Xếp Ngôi nhà theo quy luật",
       "instruction": "Bé chọn Ngôi nhà tiếp theo theo quy luật!",
       "theme_tag": "home",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["compare", "observe"],
       "skill_codes": ["C4.SEN.02"],
       "learning_objective_codes": [
@@ -1188,7 +1188,7 @@
       "title": "Xếp Voi theo quy luật",
       "instruction": "Bé chọn Voi tiếp theo theo quy luật!",
       "theme_tag": "animal",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["compare", "observe"],
       "skill_codes": ["C4.SEN.02"],
       "learning_objective_codes": [
@@ -1256,7 +1256,7 @@
       "title": "Tìm Cây xanh giống mẫu",
       "instruction": "Bé chạm vào Cây xanh giống mẫu nhé!",
       "theme_tag": "nature",
-      "what_tags": ["classification", "number"],
+      "what_tags": ["cls", "shp", "number"],
       "thinking_tags": ["compare", "observe"],
       "skill_codes": ["C4.SEN.03"],
       "learning_objective_codes": [
@@ -1322,7 +1322,7 @@
       "title": "Tìm Cá heo giống mẫu",
       "instruction": "Bé chạm vào Cá heo giống mẫu nhé!",
       "theme_tag": "ocean",
-      "what_tags": ["classification", "number"],
+      "what_tags": ["cls", "shp", "number"],
       "thinking_tags": ["compare", "observe"],
       "skill_codes": ["C4.SEN.03"],
       "learning_objective_codes": [
@@ -1396,7 +1396,7 @@
       "title": "Đếm số lượng Táo đỏ",
       "instruction": "Bé đếm số Táo đỏ rồi chọn số đúng!",
       "theme_tag": "food",
-      "what_tags": ["category"],
+      "what_tags": ["cls"],
       "thinking_tags": ["compare", "observe"],
       "skill_codes": ["C4.SEN.03"],
       "learning_objective_codes": [
@@ -1464,7 +1464,7 @@
       "title": "So sánh nhóm Bảng vẽ",
       "instruction": "Bé chọn nhóm nhiều Bảng vẽ hơn nhé!",
       "theme_tag": "art",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["compare", "observe"],
       "skill_codes": ["C4.SEN.03"],
       "learning_objective_codes": [
@@ -1531,7 +1531,7 @@
       "title": "So sánh nhóm Cây đàn ghi-ta",
       "instruction": "Bé chọn nhóm nhiều Cây đàn ghi-ta hơn nhé!",
       "theme_tag": "art",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["compare", "observe"],
       "skill_codes": ["C4.SEN.03"],
       "learning_objective_codes": [
@@ -1598,7 +1598,7 @@
       "title": "Ghép đôi Gia đình tương ứng",
       "instruction": "Bé ghép đôi các Gia đình tương ứng nhé!",
       "theme_tag": "family",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["compare", "observe"],
       "skill_codes": ["C4.SEN.03"],
       "learning_objective_codes": [
@@ -1677,7 +1677,7 @@
       "title": "Ghép đôi Tai tương ứng",
       "instruction": "Bé ghép đôi các Tai tương ứng nhé!",
       "theme_tag": "body",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["compare", "observe"],
       "skill_codes": ["C4.SEN.03"],
       "learning_objective_codes": [
@@ -1756,7 +1756,7 @@
       "title": "Xếp Mặt trời theo quy luật",
       "instruction": "Bé chọn Mặt trời tiếp theo theo quy luật!",
       "theme_tag": "weather",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["compare", "observe"],
       "skill_codes": ["C4.SEN.03"],
       "learning_objective_codes": [
@@ -1824,7 +1824,7 @@
       "title": "Xếp Bao lì xì theo quy luật",
       "instruction": "Bé chọn Bao lì xì tiếp theo theo quy luật!",
       "theme_tag": "festival",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["compare", "observe"],
       "skill_codes": ["C4.SEN.03"],
       "learning_objective_codes": [
@@ -1892,7 +1892,7 @@
       "title": "Tìm Trường học giống mẫu",
       "instruction": "Bé tìm Trường học giống hình mẫu nhé!",
       "theme_tag": "school",
-      "what_tags": ["classification", "number"],
+      "what_tags": ["cls", "shp", "number"],
       "thinking_tags": ["compare"],
       "skill_codes": ["C4.SEN.04"],
       "learning_objective_codes": [
@@ -1966,7 +1966,7 @@
       "title": "Tìm Bò sữa giống mẫu",
       "instruction": "Bé tìm Bò sữa giống hình mẫu nhé!",
       "theme_tag": "farm",
-      "what_tags": ["classification", "number"],
+      "what_tags": ["cls", "shp", "number"],
       "thinking_tags": ["compare"],
       "skill_codes": ["C4.SEN.04"],
       "learning_objective_codes": [
@@ -2048,7 +2048,7 @@
       "title": "Đếm số lượng Ngôi nhà",
       "instruction": "Bé đếm số Ngôi nhà rồi chọn số đúng!",
       "theme_tag": "home",
-      "what_tags": ["category"],
+      "what_tags": ["cls"],
       "thinking_tags": ["compare"],
       "skill_codes": ["C4.SEN.04"],
       "learning_objective_codes": [
@@ -2116,7 +2116,7 @@
       "title": "Đếm số lượng Voi",
       "instruction": "Bé đếm số Voi rồi chọn số đúng!",
       "theme_tag": "animal",
-      "what_tags": ["category"],
+      "what_tags": ["cls"],
       "thinking_tags": ["compare"],
       "skill_codes": ["C4.SEN.04"],
       "learning_objective_codes": [
@@ -2184,7 +2184,7 @@
       "title": "Ghép đôi Cây xanh tương ứng",
       "instruction": "Bé ghép đôi các Cây xanh tương ứng nhé!",
       "theme_tag": "nature",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["compare"],
       "skill_codes": ["C4.SEN.04"],
       "learning_objective_codes": [
@@ -2263,7 +2263,7 @@
       "title": "Ghép đôi Cá heo tương ứng",
       "instruction": "Bé ghép đôi các Cá heo tương ứng nhé!",
       "theme_tag": "ocean",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["compare"],
       "skill_codes": ["C4.SEN.04"],
       "learning_objective_codes": [
@@ -2342,7 +2342,7 @@
       "title": "Xếp Táo đỏ theo quy luật",
       "instruction": "Bé tìm Táo đỏ còn thiếu trong dãy quy luật!",
       "theme_tag": "food",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["compare"],
       "skill_codes": ["C4.SEN.04"],
       "learning_objective_codes": [
@@ -2427,7 +2427,7 @@
       "title": "Xếp Xe buýt theo quy luật",
       "instruction": "Bé tìm Xe buýt còn thiếu trong dãy quy luật!",
       "theme_tag": "vehicle",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["compare"],
       "skill_codes": ["C4.SEN.04"],
       "learning_objective_codes": [
@@ -2512,7 +2512,7 @@
       "title": "Phân loại Bảng vẽ theo nhóm",
       "instruction": "Bé phân loại Bảng vẽ theo đặc điểm phù hợp!",
       "theme_tag": "art",
-      "what_tags": ["classification"],
+      "what_tags": ["cmp", "sequence"],
       "thinking_tags": ["compare"],
       "skill_codes": ["C4.SEN.04"],
       "learning_objective_codes": [
@@ -2573,7 +2573,7 @@
       "title": "Phân loại Hành tinh theo nhóm",
       "instruction": "Bé phân loại Hành tinh theo đặc điểm phù hợp!",
       "theme_tag": "space",
-      "what_tags": ["classification"],
+      "what_tags": ["cmp", "sequence"],
       "thinking_tags": ["compare"],
       "skill_codes": ["C4.SEN.04"],
       "learning_objective_codes": [

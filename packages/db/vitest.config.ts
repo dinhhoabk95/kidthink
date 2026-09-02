@@ -7,5 +7,10 @@ import { defineWorkspaceTest } from "@mindkid/config/vitest";
 export default defineWorkspaceTest({
   test: {
     setupFiles: [path.resolve(import.meta.dirname, "./tests/setup.ts")],
+    fileParallelism: false,
+    maxConcurrency: 1,
+    sequence: {
+      concurrent: false,
+    },
   },
 });

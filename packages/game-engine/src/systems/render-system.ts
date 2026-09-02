@@ -18,38 +18,104 @@ export interface Particle {
   maxLife: number;
 }
 
+/**
+ * Hình học của một khung vẽ: cách đưa toạ độ logic 960x540 về pixel CSS.
+ *
+ * Đây là **nguồn sự thật duy nhất** cho cả vẽ lẫn hit-test. Nơi nào cần đổi
+ * toạ độ thì đọc ở đây; cấm — NEVER tự dựng lại công thức letterbox, vì hai
+ * bản sao sẽ trôi khỏi nhau và điểm chạm lệch khỏi ô đang vẽ.
+ */
+export interface CanvasViewport {
+  cssHeight: number;
+  cssWidth: number;
+  dpr: number;
+  /** Lề letterbox theo pixel CSS, do khung không đúng tỉ lệ 16:9. */
+  offsetX: number;
+  offsetY: number;
+  /** Pixel CSS trên một đơn vị logic. */
+  scale: number;
+}
+
 export class RenderSystem {
   readonly LOGIC_WIDTH = 960;
   readonly LOGIC_HEIGHT = 540;
 
-  setupCanvas(canvas: HTMLCanvasElement): { scale: number; dpr: number } {
+  /** Đặt bởi `setupCanvas`. Chưa dựng khung thì chưa có. */
+  viewport?: CanvasViewport;
+
+  /**
+   * Đặt canvas về không gian logic 960x540 (`game-engine-runtime.md` §7.1).
+   *
+   * Trước đây hàm này tính `scale` rồi trả về mà không áp dụng, và nơi gọi thì
+   * vứt giá trị trả về đi — ngữ cảnh ở lại không gian pixel CSS trong khi mọi
+   * `render()` vẽ theo toạ độ logic. Hậu quả đo được ngày 2026-09-01: cảnh chỉ
+   * lấp 67%x60% khung ở `1440x900`, và tràn 246% chiều ngang ở `390x844`.
+   */
+  setupCanvas(canvas: HTMLCanvasElement): CanvasViewport {
     const dpr =
       typeof window === "undefined" ? 1 : window.devicePixelRatio || 1;
     const rect = canvas.getBoundingClientRect();
     const width = rect.width || this.LOGIC_WIDTH;
     const height = rect.height || this.LOGIC_HEIGHT;
 
-    canvas.width = width * dpr;
-    canvas.height = height * dpr;
+    // Gán width/height reset luôn transform của ngữ cảnh về identity.
+    canvas.width = Math.round(width * dpr);
+    canvas.height = Math.round(height * dpr);
 
     const scaleX = width / this.LOGIC_WIDTH;
     const scaleY = height / this.LOGIC_HEIGHT;
     const scale = Math.min(scaleX, scaleY);
+    const offsetX = (width - this.LOGIC_WIDTH * scale) / 2;
+    const offsetY = (height - this.LOGIC_HEIGHT * scale) / 2;
 
     const ctx = canvas.getContext("2d");
     if (ctx) {
-      ctx.scale(dpr, dpr);
+      // Một phép biến đổi tuyệt đối, không cộng dồn: logic -> CSS -> thiết bị.
+      ctx.setTransform(
+        dpr * scale,
+        0,
+        0,
+        dpr * scale,
+        dpr * offsetX,
+        dpr * offsetY
+      );
     }
 
-    return { scale, dpr };
+    const viewport: CanvasViewport = {
+      cssHeight: height,
+      cssWidth: width,
+      dpr,
+      offsetX,
+      offsetY,
+      scale,
+    };
+    this.viewport = viewport;
+    return viewport;
   }
 
-  clear(
-    ctx: CanvasRenderingContext2D,
-    width = this.LOGIC_WIDTH,
-    height = this.LOGIC_HEIGHT
-  ): void {
-    ctx.clearRect(0, 0, width, height);
+  /** Đổi một điểm trong hộp canvas (pixel CSS) sang toạ độ logic. */
+  toLogicPoint(clientX: number, clientY: number): { x: number; y: number } {
+    const vp = this.viewport;
+    if (!vp || vp.scale === 0) {
+      return { x: clientX, y: clientY };
+    }
+    return {
+      x: (clientX - vp.offsetX) / vp.scale,
+      y: (clientY - vp.offsetY) / vp.scale,
+    };
+  }
+
+  /**
+   * Xoá **toàn bộ** backing store, không phải hình chữ nhật 960x540.
+   *
+   * Ngữ cảnh đang mang transform logic, nên `clearRect(0,0,960,540)` chỉ chạm
+   * đúng vùng cảnh và để nguyên phần lề — pixel cũ ở lề không bao giờ được xoá.
+   */
+  clear(ctx: CanvasRenderingContext2D): void {
+    ctx.save();
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+    ctx.restore();
   }
 
   /** Ported from v1: Clay-morphism 3D body with drop shadow, fill, and top highlight */

@@ -77,7 +77,7 @@ phase_end
 echo "▸ Phase 3: test"
 phase_start
 
-NODE_OPTIONS=--max-old-space-size=4096 pnpm exec vitest run --bail 1
+NODE_OPTIONS=--max-old-space-size=4096 pnpm exec vitest run --bail 1 --max-workers=1 --no-file-parallelism
 TEST_STATUS=$?
 
 if [ $TEST_STATUS -ne 0 ]; then

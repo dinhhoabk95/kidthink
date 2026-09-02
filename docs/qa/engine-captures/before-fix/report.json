@@ -1,0 +1,2111 @@
+{
+  "baseUrl": "http://localhost:3000",
+  "records": [
+    {
+      "ageBand": "4-5",
+      "canvas": {
+        "backingHeight": 1688,
+        "backingWidth": 780,
+        "cssHeight": 844,
+        "cssWidth": 390,
+        "devicePixelRatio": 2,
+        "transform": [2, 0, 0, 2, 0, 0]
+      },
+      "consoleErrors": [],
+      "engineError": null,
+      "levelCode": "GL-C1-CNT-STEP-0005",
+      "pageErrors": [],
+      "screenshot": "GT-001-mobile-390x844.png",
+      "templateCode": "GT-001",
+      "verdict": "CẮT — cảnh logic tràn ra ngoài hộp (246%×64%)",
+      "viewport": "mobile-390x844",
+      "visibleErrorText": null
+    },
+    {
+      "ageBand": "4-5",
+      "canvas": {
+        "backingHeight": 1688,
+        "backingWidth": 780,
+        "cssHeight": 844,
+        "cssWidth": 390,
+        "devicePixelRatio": 2,
+        "transform": [2, 0, 0, 2, 0, 0]
+      },
+      "consoleErrors": [],
+      "engineError": null,
+      "levelCode": "GL-C3-CLS-MULTI-0201",
+      "pageErrors": [],
+      "screenshot": "GT-002-mobile-390x844.png",
+      "templateCode": "GT-002",
+      "verdict": "CẮT — cảnh logic tràn ra ngoài hộp (246%×64%)",
+      "viewport": "mobile-390x844",
+      "visibleErrorText": null
+    },
+    {
+      "ageBand": "3-4",
+      "canvas": {
+        "backingHeight": 1688,
+        "backingWidth": 780,
+        "cssHeight": 844,
+        "cssWidth": 390,
+        "devicePixelRatio": 2,
+        "transform": [2, 0, 0, 2, 0, 0]
+      },
+      "consoleErrors": [],
+      "engineError": null,
+      "levelCode": "GL-C1-CMP-CONT-0117",
+      "pageErrors": [],
+      "screenshot": "GT-003-mobile-390x844.png",
+      "templateCode": "GT-003",
+      "verdict": "CẮT — cảnh logic tràn ra ngoài hộp (246%×64%)",
+      "viewport": "mobile-390x844",
+      "visibleErrorText": null
+    },
+    {
+      "ageBand": "5-6",
+      "canvas": {
+        "backingHeight": 1688,
+        "backingWidth": 780,
+        "cssHeight": 844,
+        "cssWidth": 390,
+        "devicePixelRatio": 2,
+        "transform": [2, 0, 0, 2, 0, 0]
+      },
+      "consoleErrors": [],
+      "engineError": null,
+      "levelCode": "GL-C1-PROB-BAL-0001",
+      "pageErrors": [],
+      "screenshot": "GT-004-mobile-390x844.png",
+      "templateCode": "GT-004",
+      "verdict": "CẮT — cảnh logic tràn ra ngoài hộp (246%×64%)",
+      "viewport": "mobile-390x844",
+      "visibleErrorText": null
+    },
+    {
+      "ageBand": "4-5",
+      "canvas": {
+        "backingHeight": 1688,
+        "backingWidth": 780,
+        "cssHeight": 844,
+        "cssWidth": 390,
+        "devicePixelRatio": 2,
+        "transform": [2, 0, 0, 2, 0, 0]
+      },
+      "consoleErrors": [],
+      "engineError": null,
+      "levelCode": "GL-C1-CNT-PAIR-0111",
+      "pageErrors": [],
+      "screenshot": "GT-005-mobile-390x844.png",
+      "templateCode": "GT-005",
+      "verdict": "CẮT — cảnh logic tràn ra ngoài hộp (246%×64%)",
+      "viewport": "mobile-390x844",
+      "visibleErrorText": null
+    },
+    {
+      "ageBand": "5-6",
+      "canvas": {
+        "backingHeight": 1688,
+        "backingWidth": 780,
+        "cssHeight": 844,
+        "cssWidth": 390,
+        "devicePixelRatio": 2,
+        "transform": [2, 0, 0, 2, 0, 0]
+      },
+      "consoleErrors": [],
+      "engineError": null,
+      "levelCode": "GL-C1-CNT-BCK-0001",
+      "pageErrors": [],
+      "screenshot": "GT-006-mobile-390x844.png",
+      "templateCode": "GT-006",
+      "verdict": "CẮT — cảnh logic tràn ra ngoài hộp (246%×64%)",
+      "viewport": "mobile-390x844",
+      "visibleErrorText": null
+    },
+    {
+      "ageBand": "4-5",
+      "canvas": {
+        "backingHeight": 1688,
+        "backingWidth": 780,
+        "cssHeight": 844,
+        "cssWidth": 390,
+        "devicePixelRatio": 2,
+        "transform": [2, 0, 0, 2, 0, 0]
+      },
+      "consoleErrors": [],
+      "engineError": null,
+      "levelCode": "GL-C2-MAZ-PATH-0001",
+      "pageErrors": [],
+      "screenshot": "GT-007-mobile-390x844.png",
+      "templateCode": "GT-007",
+      "verdict": "CẮT — cảnh logic tràn ra ngoài hộp (246%×64%)",
+      "viewport": "mobile-390x844",
+      "visibleErrorText": null
+    },
+    {
+      "ageBand": "3-4",
+      "canvas": {
+        "backingHeight": 1688,
+        "backingWidth": 780,
+        "cssHeight": 844,
+        "cssWidth": 390,
+        "devicePixelRatio": 2,
+        "transform": [2, 0, 0, 2, 0, 0]
+      },
+      "consoleErrors": [],
+      "engineError": null,
+      "levelCode": "GL-C5-VOC-SLOT-0034",
+      "pageErrors": [],
+      "screenshot": "GT-008-mobile-390x844.png",
+      "templateCode": "GT-008",
+      "verdict": "CẮT — cảnh logic tràn ra ngoài hộp (246%×64%)",
+      "viewport": "mobile-390x844",
+      "visibleErrorText": null
+    },
+    {
+      "ageBand": "4-5",
+      "canvas": {
+        "backingHeight": 1688,
+        "backingWidth": 780,
+        "cssHeight": 844,
+        "cssWidth": 390,
+        "devicePixelRatio": 2,
+        "transform": [2, 0, 0, 2, 0, 0]
+      },
+      "consoleErrors": [],
+      "engineError": null,
+      "levelCode": "GL-C3-CLU-DED-0021",
+      "pageErrors": [],
+      "screenshot": "GT-009-mobile-390x844.png",
+      "templateCode": "GT-009",
+      "verdict": "CẮT — cảnh logic tràn ra ngoài hộp (246%×64%)",
+      "viewport": "mobile-390x844",
+      "visibleErrorText": null
+    },
+    {
+      "ageBand": "4-5",
+      "canvas": {
+        "backingHeight": 1688,
+        "backingWidth": 780,
+        "cssHeight": 844,
+        "cssWidth": 390,
+        "devicePixelRatio": 2,
+        "transform": [2, 0, 0, 2, 0, 0]
+      },
+      "consoleErrors": [],
+      "engineError": null,
+      "levelCode": "GL-C1-SUB-SYM-0031",
+      "pageErrors": [],
+      "screenshot": "GT-010-mobile-390x844.png",
+      "templateCode": "GT-010",
+      "verdict": "CẮT — cảnh logic tràn ra ngoài hộp (246%×64%)",
+      "viewport": "mobile-390x844",
+      "visibleErrorText": null
+    },
+    {
+      "ageBand": "5-6",
+      "canvas": {
+        "backingHeight": 1688,
+        "backingWidth": 780,
+        "cssHeight": 844,
+        "cssWidth": 390,
+        "devicePixelRatio": 2,
+        "transform": [2, 0, 0, 2, 0, 0]
+      },
+      "consoleErrors": [],
+      "engineError": null,
+      "levelCode": "GL-C4-MEM-SEQ-0001",
+      "pageErrors": [],
+      "screenshot": "GT-011-mobile-390x844.png",
+      "templateCode": "GT-011",
+      "verdict": "CẮT — cảnh logic tràn ra ngoài hộp (246%×64%)",
+      "viewport": "mobile-390x844",
+      "visibleErrorText": null
+    },
+    {
+      "ageBand": "3-4",
+      "canvas": {
+        "backingHeight": 1688,
+        "backingWidth": 780,
+        "cssHeight": 844,
+        "cssWidth": 390,
+        "devicePixelRatio": 2,
+        "transform": [2, 0, 0, 2, 0, 0]
+      },
+      "consoleErrors": [],
+      "engineError": null,
+      "levelCode": "GL-C1-CMP-CARD-0115",
+      "pageErrors": [],
+      "screenshot": "GT-012-mobile-390x844.png",
+      "templateCode": "GT-012",
+      "verdict": "CẮT — cảnh logic tràn ra ngoài hộp (246%×64%)",
+      "viewport": "mobile-390x844",
+      "visibleErrorText": null
+    },
+    {
+      "ageBand": "4-5",
+      "canvas": {
+        "backingHeight": 1688,
+        "backingWidth": 780,
+        "cssHeight": 844,
+        "cssWidth": 390,
+        "devicePixelRatio": 2,
+        "transform": [2, 0, 0, 2, 0, 0]
+      },
+      "consoleErrors": [],
+      "engineError": null,
+      "levelCode": "GL-C3-RULE-PAT-0001",
+      "pageErrors": [],
+      "screenshot": "GT-013-mobile-390x844.png",
+      "templateCode": "GT-013",
+      "verdict": "CẮT — cảnh logic tràn ra ngoài hộp (246%×64%)",
+      "viewport": "mobile-390x844",
+      "visibleErrorText": null
+    },
+    {
+      "ageBand": "5-6",
+      "canvas": {
+        "backingHeight": 1688,
+        "backingWidth": 780,
+        "cssHeight": 844,
+        "cssWidth": 390,
+        "devicePixelRatio": 2,
+        "transform": [2, 0, 0, 2, 0, 0]
+      },
+      "consoleErrors": [],
+      "engineError": null,
+      "levelCode": "GL-C1-BAL-SCL-0034",
+      "pageErrors": [],
+      "screenshot": "GT-014-mobile-390x844.png",
+      "templateCode": "GT-014",
+      "verdict": "CẮT — cảnh logic tràn ra ngoài hộp (246%×64%)",
+      "viewport": "mobile-390x844",
+      "visibleErrorText": null
+    },
+    {
+      "ageBand": "5-6",
+      "canvas": {
+        "backingHeight": 1688,
+        "backingWidth": 780,
+        "cssHeight": 844,
+        "cssWidth": 390,
+        "devicePixelRatio": 2,
+        "transform": [2, 0, 0, 2, 0, 0]
+      },
+      "consoleErrors": [],
+      "engineError": null,
+      "levelCode": "GL-C3-SUD-MIN-0027",
+      "pageErrors": [],
+      "screenshot": "GT-015-mobile-390x844.png",
+      "templateCode": "GT-015",
+      "verdict": "CẮT — cảnh logic tràn ra ngoài hộp (246%×64%)",
+      "viewport": "mobile-390x844",
+      "visibleErrorText": null
+    },
+    {
+      "ageBand": "5-6",
+      "canvas": {
+        "backingHeight": 1688,
+        "backingWidth": 780,
+        "cssHeight": 844,
+        "cssWidth": 390,
+        "devicePixelRatio": 2,
+        "transform": [2, 0, 0, 2, 0, 0]
+      },
+      "consoleErrors": [],
+      "engineError": null,
+      "levelCode": "GL-C1-CLK-HND-0037",
+      "pageErrors": [],
+      "screenshot": "GT-016-mobile-390x844.png",
+      "templateCode": "GT-016",
+      "verdict": "CẮT — cảnh logic tràn ra ngoài hộp (246%×64%)",
+      "viewport": "mobile-390x844",
+      "visibleErrorText": null
+    },
+    {
+      "ageBand": "5-6",
+      "canvas": {
+        "backingHeight": 1688,
+        "backingWidth": 780,
+        "cssHeight": 844,
+        "cssWidth": 390,
+        "devicePixelRatio": 2,
+        "transform": [2, 0, 0, 2, 0, 0]
+      },
+      "consoleErrors": [],
+      "engineError": null,
+      "levelCode": "GL-C3-MTX-GRID-0001",
+      "pageErrors": [],
+      "screenshot": "GT-017-mobile-390x844.png",
+      "templateCode": "GT-017",
+      "verdict": "CẮT — cảnh logic tràn ra ngoài hộp (246%×64%)",
+      "viewport": "mobile-390x844",
+      "visibleErrorText": null
+    },
+    {
+      "ageBand": "4-5",
+      "canvas": {
+        "backingHeight": 1688,
+        "backingWidth": 780,
+        "cssHeight": 844,
+        "cssWidth": 390,
+        "devicePixelRatio": 2,
+        "transform": [2, 0, 0, 2, 0, 0]
+      },
+      "consoleErrors": [],
+      "engineError": "CONTENT_PACK_INVALID: Content pack invalid for GT-018",
+      "levelCode": "GL-C4-DET-FIND-0001",
+      "pageErrors": [],
+      "screenshot": "GT-018-mobile-390x844.png",
+      "templateCode": "GT-018",
+      "verdict": "CẮT — cảnh logic tràn ra ngoài hộp (246%×64%)",
+      "viewport": "mobile-390x844",
+      "visibleErrorText": "CONTENT_PACK_INVALID: Content pack invalid for GT-018"
+    },
+    {
+      "ageBand": "4-5",
+      "canvas": null,
+      "consoleErrors": [],
+      "engineError": null,
+      "levelCode": "GL-C2-ROT-TRANS-0021",
+      "pageErrors": [
+        "page.goto: Timeout 90000ms exceeded.\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3000/play/preview-sandbox?template=GT-019\", waiting until \"domcontentloaded\"\u001b[22m\n"
+      ],
+      "screenshot": "GT-019-mobile-390x844.png",
+      "templateCode": "GT-019",
+      "verdict": "HỎNG KHI CHỤP",
+      "viewport": "mobile-390x844",
+      "visibleErrorText": null
+    },
+    {
+      "ageBand": "3-4",
+      "canvas": {
+        "backingHeight": 1688,
+        "backingWidth": 780,
+        "cssHeight": 844,
+        "cssWidth": 390,
+        "devicePixelRatio": 2,
+        "transform": [2, 0, 0, 2, 0, 0]
+      },
+      "consoleErrors": [],
+      "engineError": "CONTENT_PACK_INVALID: Content pack invalid for GT-020",
+      "levelCode": "GL-C2-SHP-FLIP-0030",
+      "pageErrors": [],
+      "screenshot": "GT-020-mobile-390x844.png",
+      "templateCode": "GT-020",
+      "verdict": "CẮT — cảnh logic tràn ra ngoài hộp (246%×64%)",
+      "viewport": "mobile-390x844",
+      "visibleErrorText": "CONTENT_PACK_INVALID: Content pack invalid for GT-020"
+    },
+    {
+      "ageBand": "4-5",
+      "canvas": null,
+      "consoleErrors": [],
+      "engineError": null,
+      "levelCode": "GL-C2-MIR-COMP-0024",
+      "pageErrors": [
+        "page.goto: Timeout 90000ms exceeded.\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3000/play/preview-sandbox?template=GT-021\", waiting until \"domcontentloaded\"\u001b[22m\n"
+      ],
+      "screenshot": "GT-021-mobile-390x844.png",
+      "templateCode": "GT-021",
+      "verdict": "HỎNG KHI CHỤP",
+      "viewport": "mobile-390x844",
+      "visibleErrorText": null
+    },
+    {
+      "ageBand": "4-5",
+      "canvas": {
+        "backingHeight": 1688,
+        "backingWidth": 780,
+        "cssHeight": 844,
+        "cssWidth": 390,
+        "devicePixelRatio": 2,
+        "transform": [2, 0, 0, 2, 0, 0]
+      },
+      "consoleErrors": [],
+      "engineError": null,
+      "levelCode": "GL-C2-DIR-NAV-0010",
+      "pageErrors": [],
+      "screenshot": "GT-022-mobile-390x844.png",
+      "templateCode": "GT-022",
+      "verdict": "CẮT — cảnh logic tràn ra ngoài hộp (246%×64%)",
+      "viewport": "mobile-390x844",
+      "visibleErrorText": null
+    },
+    {
+      "ageBand": "4-5",
+      "canvas": {
+        "backingHeight": 1688,
+        "backingWidth": 780,
+        "cssHeight": 844,
+        "cssWidth": 390,
+        "devicePixelRatio": 2,
+        "transform": [2, 0, 0, 2, 0, 0]
+      },
+      "consoleErrors": [],
+      "engineError": null,
+      "levelCode": "GL-C2-CON-SHP-0027",
+      "pageErrors": [],
+      "screenshot": "GT-023-mobile-390x844.png",
+      "templateCode": "GT-023",
+      "verdict": "CẮT — cảnh logic tràn ra ngoài hộp (246%×64%)",
+      "viewport": "mobile-390x844",
+      "visibleErrorText": null
+    },
+    {
+      "ageBand": "5-6",
+      "canvas": {
+        "backingHeight": 1688,
+        "backingWidth": 780,
+        "cssHeight": 844,
+        "cssWidth": 390,
+        "devicePixelRatio": 2,
+        "transform": [2, 0, 0, 2, 0, 0]
+      },
+      "consoleErrors": [],
+      "engineError": "CONTENT_PACK_INVALID: Content pack invalid for GT-024",
+      "levelCode": "GL-C2-TRC-PTH-0030",
+      "pageErrors": [],
+      "screenshot": "GT-024-mobile-390x844.png",
+      "templateCode": "GT-024",
+      "verdict": "CẮT — cảnh logic tràn ra ngoài hộp (246%×64%)",
+      "viewport": "mobile-390x844",
+      "visibleErrorText": "CONTENT_PACK_INVALID: Content pack invalid for GT-024"
+    },
+    {
+      "ageBand": "4-5",
+      "canvas": null,
+      "consoleErrors": [],
+      "engineError": null,
+      "levelCode": "GL-C3-VIS-SPOT-0030",
+      "pageErrors": [
+        "page.goto: Timeout 90000ms exceeded.\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3000/play/preview-sandbox?template=GT-025\", waiting until \"domcontentloaded\"\u001b[22m\n"
+      ],
+      "screenshot": "GT-025-mobile-390x844.png",
+      "templateCode": "GT-025",
+      "verdict": "HỎNG KHI CHỤP",
+      "viewport": "mobile-390x844",
+      "visibleErrorText": null
+    },
+    {
+      "ageBand": "4-5",
+      "canvas": {
+        "backingHeight": 1688,
+        "backingWidth": 780,
+        "cssHeight": 844,
+        "cssWidth": 390,
+        "devicePixelRatio": 2,
+        "transform": [2, 0, 0, 2, 0, 0]
+      },
+      "consoleErrors": [],
+      "engineError": "CONTENT_PACK_INVALID: Content pack invalid for GT-026",
+      "levelCode": "GL-C6-INH-NOGO-0030",
+      "pageErrors": [],
+      "screenshot": "GT-026-mobile-390x844.png",
+      "templateCode": "GT-026",
+      "verdict": "CẮT — cảnh logic tràn ra ngoài hộp (246%×64%)",
+      "viewport": "mobile-390x844",
+      "visibleErrorText": "CONTENT_PACK_INVALID: Content pack invalid for GT-026"
+    },
+    {
+      "ageBand": "5-6",
+      "canvas": null,
+      "consoleErrors": [],
+      "engineError": null,
+      "levelCode": "GL-C6-FLX-SWT-0033",
+      "pageErrors": [
+        "page.goto: Timeout 90000ms exceeded.\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3000/play/preview-sandbox?template=GT-027\", waiting until \"domcontentloaded\"\u001b[22m\n"
+      ],
+      "screenshot": "GT-027-mobile-390x844.png",
+      "templateCode": "GT-027",
+      "verdict": "HỎNG KHI CHỤP",
+      "viewport": "mobile-390x844",
+      "visibleErrorText": null
+    },
+    {
+      "ageBand": "4-5",
+      "canvas": {
+        "backingHeight": 1688,
+        "backingWidth": 780,
+        "cssHeight": 844,
+        "cssWidth": 390,
+        "devicePixelRatio": 2,
+        "transform": [2, 0, 0, 2, 0, 0]
+      },
+      "consoleErrors": [],
+      "engineError": null,
+      "levelCode": "GL-C1-CNT-TAP-0001",
+      "pageErrors": [],
+      "screenshot": "GT-028-mobile-390x844.png",
+      "templateCode": "GT-028",
+      "verdict": "CẮT — cảnh logic tràn ra ngoài hộp (246%×64%)",
+      "viewport": "mobile-390x844",
+      "visibleErrorText": null
+    },
+    {
+      "ageBand": "4-5",
+      "canvas": {
+        "backingHeight": 1688,
+        "backingWidth": 780,
+        "cssHeight": 844,
+        "cssWidth": 390,
+        "devicePixelRatio": 2,
+        "transform": [2, 0, 0, 2, 0, 0]
+      },
+      "consoleErrors": [],
+      "engineError": null,
+      "levelCode": "GL-C1-REM-SET-0001",
+      "pageErrors": [],
+      "screenshot": "GT-029-mobile-390x844.png",
+      "templateCode": "GT-029",
+      "verdict": "CẮT — cảnh logic tràn ra ngoài hộp (246%×64%)",
+      "viewport": "mobile-390x844",
+      "visibleErrorText": null
+    },
+    {
+      "ageBand": "5-6",
+      "canvas": {
+        "backingHeight": 1688,
+        "backingWidth": 780,
+        "cssHeight": 844,
+        "cssWidth": 390,
+        "devicePixelRatio": 2,
+        "transform": [2, 0, 0, 2, 0, 0]
+      },
+      "consoleErrors": [],
+      "engineError": null,
+      "levelCode": "GL-C1-MSR-UNIT-0001",
+      "pageErrors": [],
+      "screenshot": "GT-030-mobile-390x844.png",
+      "templateCode": "GT-030",
+      "verdict": "CẮT — cảnh logic tràn ra ngoài hộp (246%×64%)",
+      "viewport": "mobile-390x844",
+      "visibleErrorText": null
+    },
+    {
+      "ageBand": "5-6",
+      "canvas": {
+        "backingHeight": 1688,
+        "backingWidth": 780,
+        "cssHeight": 844,
+        "cssWidth": 390,
+        "devicePixelRatio": 2,
+        "transform": [2, 0, 0, 2, 0, 0]
+      },
+      "consoleErrors": [],
+      "engineError": "CONTENT_PACK_INVALID: Content pack invalid for GT-031",
+      "levelCode": "GL-C1-COIN-CMP-0001",
+      "pageErrors": [],
+      "screenshot": "GT-031-mobile-390x844.png",
+      "templateCode": "GT-031",
+      "verdict": "CẮT — cảnh logic tràn ra ngoài hộp (246%×64%)",
+      "viewport": "mobile-390x844",
+      "visibleErrorText": "CONTENT_PACK_INVALID: Content pack invalid for GT-031"
+    },
+    {
+      "ageBand": "5-6",
+      "canvas": null,
+      "consoleErrors": [],
+      "engineError": null,
+      "levelCode": "GL-C1-LIQ-POUR-0001",
+      "pageErrors": [
+        "page.goto: Timeout 90000ms exceeded.\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3000/play/preview-sandbox?template=GT-032\", waiting until \"domcontentloaded\"\u001b[22m\n"
+      ],
+      "screenshot": "GT-032-mobile-390x844.png",
+      "templateCode": "GT-032",
+      "verdict": "HỎNG KHI CHỤP",
+      "viewport": "mobile-390x844",
+      "visibleErrorText": null
+    },
+    {
+      "ageBand": "5-6",
+      "canvas": {
+        "backingHeight": 1688,
+        "backingWidth": 780,
+        "cssHeight": 844,
+        "cssWidth": 390,
+        "devicePixelRatio": 2,
+        "transform": [2, 0, 0, 2, 0, 0]
+      },
+      "consoleErrors": [],
+      "engineError": null,
+      "levelCode": "GL-C1-PAT-WEAVE-0001",
+      "pageErrors": [],
+      "screenshot": "GT-033-mobile-390x844.png",
+      "templateCode": "GT-033",
+      "verdict": "CẮT — cảnh logic tràn ra ngoài hộp (246%×64%)",
+      "viewport": "mobile-390x844",
+      "visibleErrorText": null
+    },
+    {
+      "ageBand": "5-6",
+      "canvas": {
+        "backingHeight": 1688,
+        "backingWidth": 780,
+        "cssHeight": 844,
+        "cssWidth": 390,
+        "devicePixelRatio": 2,
+        "transform": [2, 0, 0, 2, 0, 0]
+      },
+      "consoleErrors": [],
+      "engineError": null,
+      "levelCode": "GL-C1-PAT-BEAT-0001",
+      "pageErrors": [],
+      "screenshot": "GT-034-mobile-390x844.png",
+      "templateCode": "GT-034",
+      "verdict": "CẮT — cảnh logic tràn ra ngoài hộp (246%×64%)",
+      "viewport": "mobile-390x844",
+      "visibleErrorText": null
+    },
+    {
+      "ageBand": "5-6",
+      "canvas": {
+        "backingHeight": 1688,
+        "backingWidth": 780,
+        "cssHeight": 844,
+        "cssWidth": 390,
+        "devicePixelRatio": 2,
+        "transform": [2, 0, 0, 2, 0, 0]
+      },
+      "consoleErrors": [],
+      "engineError": null,
+      "levelCode": "GL-C1-ALG-CMD-0001",
+      "pageErrors": [],
+      "screenshot": "GT-035-mobile-390x844.png",
+      "templateCode": "GT-035",
+      "verdict": "CẮT — cảnh logic tràn ra ngoài hộp (246%×64%)",
+      "viewport": "mobile-390x844",
+      "visibleErrorText": null
+    },
+    {
+      "ageBand": "5-6",
+      "canvas": {
+        "backingHeight": 1688,
+        "backingWidth": 780,
+        "cssHeight": 844,
+        "cssWidth": 390,
+        "devicePixelRatio": 2,
+        "transform": [2, 0, 0, 2, 0, 0]
+      },
+      "consoleErrors": [],
+      "engineError": null,
+      "levelCode": "GL-C1-PAT-FCR-0001",
+      "pageErrors": [],
+      "screenshot": "GT-036-mobile-390x844.png",
+      "templateCode": "GT-036",
+      "verdict": "CẮT — cảnh logic tràn ra ngoài hộp (246%×64%)",
+      "viewport": "mobile-390x844",
+      "visibleErrorText": null
+    },
+    {
+      "ageBand": "4-5",
+      "canvas": {
+        "backingHeight": 2360,
+        "backingWidth": 1640,
+        "cssHeight": 1180,
+        "cssWidth": 820,
+        "devicePixelRatio": 2,
+        "transform": [2, 0, 0, 2, 0, 0]
+      },
+      "consoleErrors": [],
+      "engineError": null,
+      "levelCode": "GL-C1-CNT-STEP-0005",
+      "pageErrors": [],
+      "screenshot": "GT-001-tablet-820x1180.png",
+      "templateCode": "GT-001",
+      "verdict": "CẮT — cảnh logic tràn ra ngoài hộp (117%×46%)",
+      "viewport": "tablet-820x1180",
+      "visibleErrorText": null
+    },
+    {
+      "ageBand": "4-5",
+      "canvas": {
+        "backingHeight": 2360,
+        "backingWidth": 1640,
+        "cssHeight": 1180,
+        "cssWidth": 820,
+        "devicePixelRatio": 2,
+        "transform": [2, 0, 0, 2, 0, 0]
+      },
+      "consoleErrors": [],
+      "engineError": null,
+      "levelCode": "GL-C3-CLS-MULTI-0201",
+      "pageErrors": [],
+      "screenshot": "GT-002-tablet-820x1180.png",
+      "templateCode": "GT-002",
+      "verdict": "CẮT — cảnh logic tràn ra ngoài hộp (117%×46%)",
+      "viewport": "tablet-820x1180",
+      "visibleErrorText": null
+    },
+    {
+      "ageBand": "3-4",
+      "canvas": {
+        "backingHeight": 2360,
+        "backingWidth": 1640,
+        "cssHeight": 1180,
+        "cssWidth": 820,
+        "devicePixelRatio": 2,
+        "transform": [2, 0, 0, 2, 0, 0]
+      },
+      "consoleErrors": [],
+      "engineError": null,
+      "levelCode": "GL-C1-CMP-CONT-0117",
+      "pageErrors": [],
+      "screenshot": "GT-003-tablet-820x1180.png",
+      "templateCode": "GT-003",
+      "verdict": "CẮT — cảnh logic tràn ra ngoài hộp (117%×46%)",
+      "viewport": "tablet-820x1180",
+      "visibleErrorText": null
+    },
+    {
+      "ageBand": "5-6",
+      "canvas": {
+        "backingHeight": 2360,
+        "backingWidth": 1640,
+        "cssHeight": 1180,
+        "cssWidth": 820,
+        "devicePixelRatio": 2,
+        "transform": [2, 0, 0, 2, 0, 0]
+      },
+      "consoleErrors": [],
+      "engineError": null,
+      "levelCode": "GL-C1-PROB-BAL-0001",
+      "pageErrors": [],
+      "screenshot": "GT-004-tablet-820x1180.png",
+      "templateCode": "GT-004",
+      "verdict": "CẮT — cảnh logic tràn ra ngoài hộp (117%×46%)",
+      "viewport": "tablet-820x1180",
+      "visibleErrorText": null
+    },
+    {
+      "ageBand": "4-5",
+      "canvas": {
+        "backingHeight": 2360,
+        "backingWidth": 1640,
+        "cssHeight": 1180,
+        "cssWidth": 820,
+        "devicePixelRatio": 2,
+        "transform": [2, 0, 0, 2, 0, 0]
+      },
+      "consoleErrors": [],
+      "engineError": null,
+      "levelCode": "GL-C1-CNT-PAIR-0111",
+      "pageErrors": [],
+      "screenshot": "GT-005-tablet-820x1180.png",
+      "templateCode": "GT-005",
+      "verdict": "CẮT — cảnh logic tràn ra ngoài hộp (117%×46%)",
+      "viewport": "tablet-820x1180",
+      "visibleErrorText": null
+    },
+    {
+      "ageBand": "5-6",
+      "canvas": {
+        "backingHeight": 2360,
+        "backingWidth": 1640,
+        "cssHeight": 1180,
+        "cssWidth": 820,
+        "devicePixelRatio": 2,
+        "transform": [2, 0, 0, 2, 0, 0]
+      },
+      "consoleErrors": [],
+      "engineError": null,
+      "levelCode": "GL-C1-CNT-BCK-0001",
+      "pageErrors": [],
+      "screenshot": "GT-006-tablet-820x1180.png",
+      "templateCode": "GT-006",
+      "verdict": "CẮT — cảnh logic tràn ra ngoài hộp (117%×46%)",
+      "viewport": "tablet-820x1180",
+      "visibleErrorText": null
+    },
+    {
+      "ageBand": "4-5",
+      "canvas": {
+        "backingHeight": 2360,
+        "backingWidth": 1640,
+        "cssHeight": 1180,
+        "cssWidth": 820,
+        "devicePixelRatio": 2,
+        "transform": [2, 0, 0, 2, 0, 0]
+      },
+      "consoleErrors": [],
+      "engineError": null,
+      "levelCode": "GL-C2-MAZ-PATH-0001",
+      "pageErrors": [],
+      "screenshot": "GT-007-tablet-820x1180.png",
+      "templateCode": "GT-007",
+      "verdict": "CẮT — cảnh logic tràn ra ngoài hộp (117%×46%)",
+      "viewport": "tablet-820x1180",
+      "visibleErrorText": null
+    },
+    {
+      "ageBand": "3-4",
+      "canvas": {
+        "backingHeight": 2360,
+        "backingWidth": 1640,
+        "cssHeight": 1180,
+        "cssWidth": 820,
+        "devicePixelRatio": 2,
+        "transform": [2, 0, 0, 2, 0, 0]
+      },
+      "consoleErrors": [],
+      "engineError": null,
+      "levelCode": "GL-C5-VOC-SLOT-0034",
+      "pageErrors": [],
+      "screenshot": "GT-008-tablet-820x1180.png",
+      "templateCode": "GT-008",
+      "verdict": "CẮT — cảnh logic tràn ra ngoài hộp (117%×46%)",
+      "viewport": "tablet-820x1180",
+      "visibleErrorText": null
+    },
+    {
+      "ageBand": "4-5",
+      "canvas": {
+        "backingHeight": 2360,
+        "backingWidth": 1640,
+        "cssHeight": 1180,
+        "cssWidth": 820,
+        "devicePixelRatio": 2,
+        "transform": [2, 0, 0, 2, 0, 0]
+      },
+      "consoleErrors": [],
+      "engineError": null,
+      "levelCode": "GL-C3-CLU-DED-0021",
+      "pageErrors": [],
+      "screenshot": "GT-009-tablet-820x1180.png",
+      "templateCode": "GT-009",
+      "verdict": "CẮT — cảnh logic tràn ra ngoài hộp (117%×46%)",
+      "viewport": "tablet-820x1180",
+      "visibleErrorText": null
+    },
+    {
+      "ageBand": "4-5",
+      "canvas": {
+        "backingHeight": 2360,
+        "backingWidth": 1640,
+        "cssHeight": 1180,
+        "cssWidth": 820,
+        "devicePixelRatio": 2,
+        "transform": [2, 0, 0, 2, 0, 0]
+      },
+      "consoleErrors": [],
+      "engineError": null,
+      "levelCode": "GL-C1-SUB-SYM-0031",
+      "pageErrors": [],
+      "screenshot": "GT-010-tablet-820x1180.png",
+      "templateCode": "GT-010",
+      "verdict": "CẮT — cảnh logic tràn ra ngoài hộp (117%×46%)",
+      "viewport": "tablet-820x1180",
+      "visibleErrorText": null
+    },
+    {
+      "ageBand": "5-6",
+      "canvas": {
+        "backingHeight": 2360,
+        "backingWidth": 1640,
+        "cssHeight": 1180,
+        "cssWidth": 820,
+        "devicePixelRatio": 2,
+        "transform": [2, 0, 0, 2, 0, 0]
+      },
+      "consoleErrors": [],
+      "engineError": null,
+      "levelCode": "GL-C4-MEM-SEQ-0001",
+      "pageErrors": [],
+      "screenshot": "GT-011-tablet-820x1180.png",
+      "templateCode": "GT-011",
+      "verdict": "CẮT — cảnh logic tràn ra ngoài hộp (117%×46%)",
+      "viewport": "tablet-820x1180",
+      "visibleErrorText": null
+    },
+    {
+      "ageBand": "3-4",
+      "canvas": {
+        "backingHeight": 2360,
+        "backingWidth": 1640,
+        "cssHeight": 1180,
+        "cssWidth": 820,
+        "devicePixelRatio": 2,
+        "transform": [2, 0, 0, 2, 0, 0]
+      },
+      "consoleErrors": [],
+      "engineError": null,
+      "levelCode": "GL-C1-CMP-CARD-0115",
+      "pageErrors": [],
+      "screenshot": "GT-012-tablet-820x1180.png",
+      "templateCode": "GT-012",
+      "verdict": "CẮT — cảnh logic tràn ra ngoài hộp (117%×46%)",
+      "viewport": "tablet-820x1180",
+      "visibleErrorText": null
+    },
+    {
+      "ageBand": "4-5",
+      "canvas": {
+        "backingHeight": 2360,
+        "backingWidth": 1640,
+        "cssHeight": 1180,
+        "cssWidth": 820,
+        "devicePixelRatio": 2,
+        "transform": [2, 0, 0, 2, 0, 0]
+      },
+      "consoleErrors": [],
+      "engineError": null,
+      "levelCode": "GL-C3-RULE-PAT-0001",
+      "pageErrors": [],
+      "screenshot": "GT-013-tablet-820x1180.png",
+      "templateCode": "GT-013",
+      "verdict": "CẮT — cảnh logic tràn ra ngoài hộp (117%×46%)",
+      "viewport": "tablet-820x1180",
+      "visibleErrorText": null
+    },
+    {
+      "ageBand": "5-6",
+      "canvas": {
+        "backingHeight": 2360,
+        "backingWidth": 1640,
+        "cssHeight": 1180,
+        "cssWidth": 820,
+        "devicePixelRatio": 2,
+        "transform": [2, 0, 0, 2, 0, 0]
+      },
+      "consoleErrors": [],
+      "engineError": null,
+      "levelCode": "GL-C1-BAL-SCL-0034",
+      "pageErrors": [],
+      "screenshot": "GT-014-tablet-820x1180.png",
+      "templateCode": "GT-014",
+      "verdict": "CẮT — cảnh logic tràn ra ngoài hộp (117%×46%)",
+      "viewport": "tablet-820x1180",
+      "visibleErrorText": null
+    },
+    {
+      "ageBand": "5-6",
+      "canvas": null,
+      "consoleErrors": [],
+      "engineError": null,
+      "levelCode": "GL-C3-SUD-MIN-0027",
+      "pageErrors": [
+        "page.goto: Timeout 90000ms exceeded.\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3000/play/preview-sandbox?template=GT-015\", waiting until \"domcontentloaded\"\u001b[22m\n"
+      ],
+      "screenshot": "GT-015-tablet-820x1180.png",
+      "templateCode": "GT-015",
+      "verdict": "HỎNG KHI CHỤP",
+      "viewport": "tablet-820x1180",
+      "visibleErrorText": null
+    },
+    {
+      "ageBand": "5-6",
+      "canvas": {
+        "backingHeight": 2360,
+        "backingWidth": 1640,
+        "cssHeight": 1180,
+        "cssWidth": 820,
+        "devicePixelRatio": 2,
+        "transform": [2, 0, 0, 2, 0, 0]
+      },
+      "consoleErrors": [],
+      "engineError": null,
+      "levelCode": "GL-C1-CLK-HND-0037",
+      "pageErrors": [],
+      "screenshot": "GT-016-tablet-820x1180.png",
+      "templateCode": "GT-016",
+      "verdict": "CẮT — cảnh logic tràn ra ngoài hộp (117%×46%)",
+      "viewport": "tablet-820x1180",
+      "visibleErrorText": null
+    },
+    {
+      "ageBand": "5-6",
+      "canvas": {
+        "backingHeight": 2360,
+        "backingWidth": 1640,
+        "cssHeight": 1180,
+        "cssWidth": 820,
+        "devicePixelRatio": 2,
+        "transform": [2, 0, 0, 2, 0, 0]
+      },
+      "consoleErrors": [],
+      "engineError": "CONTENT_PACK_INVALID: Content pack invalid for GT-017",
+      "levelCode": "GL-C3-MTX-GRID-0001",
+      "pageErrors": [],
+      "screenshot": "GT-017-tablet-820x1180.png",
+      "templateCode": "GT-017",
+      "verdict": "CẮT — cảnh logic tràn ra ngoài hộp (117%×46%)",
+      "viewport": "tablet-820x1180",
+      "visibleErrorText": "CONTENT_PACK_INVALID: Content pack invalid for GT-017"
+    },
+    {
+      "ageBand": "4-5",
+      "canvas": null,
+      "consoleErrors": [],
+      "engineError": null,
+      "levelCode": "GL-C4-DET-FIND-0001",
+      "pageErrors": [
+        "page.goto: Timeout 90000ms exceeded.\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3000/play/preview-sandbox?template=GT-018\", waiting until \"domcontentloaded\"\u001b[22m\n"
+      ],
+      "screenshot": "GT-018-tablet-820x1180.png",
+      "templateCode": "GT-018",
+      "verdict": "HỎNG KHI CHỤP",
+      "viewport": "tablet-820x1180",
+      "visibleErrorText": null
+    },
+    {
+      "ageBand": "4-5",
+      "canvas": {
+        "backingHeight": 2360,
+        "backingWidth": 1640,
+        "cssHeight": 1180,
+        "cssWidth": 820,
+        "devicePixelRatio": 2,
+        "transform": [2, 0, 0, 2, 0, 0]
+      },
+      "consoleErrors": [],
+      "engineError": null,
+      "levelCode": "GL-C2-ROT-TRANS-0021",
+      "pageErrors": [],
+      "screenshot": "GT-019-tablet-820x1180.png",
+      "templateCode": "GT-019",
+      "verdict": "CẮT — cảnh logic tràn ra ngoài hộp (117%×46%)",
+      "viewport": "tablet-820x1180",
+      "visibleErrorText": null
+    },
+    {
+      "ageBand": "3-4",
+      "canvas": {
+        "backingHeight": 2360,
+        "backingWidth": 1640,
+        "cssHeight": 1180,
+        "cssWidth": 820,
+        "devicePixelRatio": 2,
+        "transform": [2, 0, 0, 2, 0, 0]
+      },
+      "consoleErrors": [],
+      "engineError": null,
+      "levelCode": "GL-C2-SHP-FLIP-0030",
+      "pageErrors": [],
+      "screenshot": "GT-020-tablet-820x1180.png",
+      "templateCode": "GT-020",
+      "verdict": "CẮT — cảnh logic tràn ra ngoài hộp (117%×46%)",
+      "viewport": "tablet-820x1180",
+      "visibleErrorText": null
+    },
+    {
+      "ageBand": "4-5",
+      "canvas": {
+        "backingHeight": 2360,
+        "backingWidth": 1640,
+        "cssHeight": 1180,
+        "cssWidth": 820,
+        "devicePixelRatio": 2,
+        "transform": [2, 0, 0, 2, 0, 0]
+      },
+      "consoleErrors": [],
+      "engineError": null,
+      "levelCode": "GL-C2-MIR-COMP-0024",
+      "pageErrors": [],
+      "screenshot": "GT-021-tablet-820x1180.png",
+      "templateCode": "GT-021",
+      "verdict": "CẮT — cảnh logic tràn ra ngoài hộp (117%×46%)",
+      "viewport": "tablet-820x1180",
+      "visibleErrorText": null
+    },
+    {
+      "ageBand": "4-5",
+      "canvas": {
+        "backingHeight": 2360,
+        "backingWidth": 1640,
+        "cssHeight": 1180,
+        "cssWidth": 820,
+        "devicePixelRatio": 2,
+        "transform": [2, 0, 0, 2, 0, 0]
+      },
+      "consoleErrors": [],
+      "engineError": null,
+      "levelCode": "GL-C2-DIR-NAV-0010",
+      "pageErrors": [],
+      "screenshot": "GT-022-tablet-820x1180.png",
+      "templateCode": "GT-022",
+      "verdict": "CẮT — cảnh logic tràn ra ngoài hộp (117%×46%)",
+      "viewport": "tablet-820x1180",
+      "visibleErrorText": null
+    },
+    {
+      "ageBand": "4-5",
+      "canvas": {
+        "backingHeight": 2360,
+        "backingWidth": 1640,
+        "cssHeight": 1180,
+        "cssWidth": 820,
+        "devicePixelRatio": 2,
+        "transform": [2, 0, 0, 2, 0, 0]
+      },
+      "consoleErrors": [],
+      "engineError": null,
+      "levelCode": "GL-C2-CON-SHP-0027",
+      "pageErrors": [],
+      "screenshot": "GT-023-tablet-820x1180.png",
+      "templateCode": "GT-023",
+      "verdict": "CẮT — cảnh logic tràn ra ngoài hộp (117%×46%)",
+      "viewport": "tablet-820x1180",
+      "visibleErrorText": null
+    },
+    {
+      "ageBand": "5-6",
+      "canvas": {
+        "backingHeight": 2360,
+        "backingWidth": 1640,
+        "cssHeight": 1180,
+        "cssWidth": 820,
+        "devicePixelRatio": 2,
+        "transform": [2, 0, 0, 2, 0, 0]
+      },
+      "consoleErrors": [],
+      "engineError": null,
+      "levelCode": "GL-C2-TRC-PTH-0030",
+      "pageErrors": [],
+      "screenshot": "GT-024-tablet-820x1180.png",
+      "templateCode": "GT-024",
+      "verdict": "CẮT — cảnh logic tràn ra ngoài hộp (117%×46%)",
+      "viewport": "tablet-820x1180",
+      "visibleErrorText": null
+    },
+    {
+      "ageBand": "4-5",
+      "canvas": {
+        "backingHeight": 2360,
+        "backingWidth": 1640,
+        "cssHeight": 1180,
+        "cssWidth": 820,
+        "devicePixelRatio": 2,
+        "transform": [2, 0, 0, 2, 0, 0]
+      },
+      "consoleErrors": [],
+      "engineError": null,
+      "levelCode": "GL-C3-VIS-SPOT-0030",
+      "pageErrors": [],
+      "screenshot": "GT-025-tablet-820x1180.png",
+      "templateCode": "GT-025",
+      "verdict": "CẮT — cảnh logic tràn ra ngoài hộp (117%×46%)",
+      "viewport": "tablet-820x1180",
+      "visibleErrorText": null
+    },
+    {
+      "ageBand": "4-5",
+      "canvas": {
+        "backingHeight": 2360,
+        "backingWidth": 1640,
+        "cssHeight": 1180,
+        "cssWidth": 820,
+        "devicePixelRatio": 2,
+        "transform": [2, 0, 0, 2, 0, 0]
+      },
+      "consoleErrors": [],
+      "engineError": null,
+      "levelCode": "GL-C6-INH-NOGO-0030",
+      "pageErrors": [],
+      "screenshot": "GT-026-tablet-820x1180.png",
+      "templateCode": "GT-026",
+      "verdict": "CẮT — cảnh logic tràn ra ngoài hộp (117%×46%)",
+      "viewport": "tablet-820x1180",
+      "visibleErrorText": null
+    },
+    {
+      "ageBand": "5-6",
+      "canvas": {
+        "backingHeight": 2360,
+        "backingWidth": 1640,
+        "cssHeight": 1180,
+        "cssWidth": 820,
+        "devicePixelRatio": 2,
+        "transform": [2, 0, 0, 2, 0, 0]
+      },
+      "consoleErrors": [],
+      "engineError": null,
+      "levelCode": "GL-C6-FLX-SWT-0033",
+      "pageErrors": [],
+      "screenshot": "GT-027-tablet-820x1180.png",
+      "templateCode": "GT-027",
+      "verdict": "CẮT — cảnh logic tràn ra ngoài hộp (117%×46%)",
+      "viewport": "tablet-820x1180",
+      "visibleErrorText": null
+    },
+    {
+      "ageBand": "4-5",
+      "canvas": {
+        "backingHeight": 2360,
+        "backingWidth": 1640,
+        "cssHeight": 1180,
+        "cssWidth": 820,
+        "devicePixelRatio": 2,
+        "transform": [2, 0, 0, 2, 0, 0]
+      },
+      "consoleErrors": [],
+      "engineError": null,
+      "levelCode": "GL-C1-CNT-TAP-0001",
+      "pageErrors": [],
+      "screenshot": "GT-028-tablet-820x1180.png",
+      "templateCode": "GT-028",
+      "verdict": "CẮT — cảnh logic tràn ra ngoài hộp (117%×46%)",
+      "viewport": "tablet-820x1180",
+      "visibleErrorText": null
+    },
+    {
+      "ageBand": "4-5",
+      "canvas": {
+        "backingHeight": 2360,
+        "backingWidth": 1640,
+        "cssHeight": 1180,
+        "cssWidth": 820,
+        "devicePixelRatio": 2,
+        "transform": [2, 0, 0, 2, 0, 0]
+      },
+      "consoleErrors": [],
+      "engineError": null,
+      "levelCode": "GL-C1-REM-SET-0001",
+      "pageErrors": [],
+      "screenshot": "GT-029-tablet-820x1180.png",
+      "templateCode": "GT-029",
+      "verdict": "CẮT — cảnh logic tràn ra ngoài hộp (117%×46%)",
+      "viewport": "tablet-820x1180",
+      "visibleErrorText": null
+    },
+    {
+      "ageBand": "5-6",
+      "canvas": {
+        "backingHeight": 2360,
+        "backingWidth": 1640,
+        "cssHeight": 1180,
+        "cssWidth": 820,
+        "devicePixelRatio": 2,
+        "transform": [2, 0, 0, 2, 0, 0]
+      },
+      "consoleErrors": [],
+      "engineError": null,
+      "levelCode": "GL-C1-MSR-UNIT-0001",
+      "pageErrors": [],
+      "screenshot": "GT-030-tablet-820x1180.png",
+      "templateCode": "GT-030",
+      "verdict": "CẮT — cảnh logic tràn ra ngoài hộp (117%×46%)",
+      "viewport": "tablet-820x1180",
+      "visibleErrorText": null
+    },
+    {
+      "ageBand": "5-6",
+      "canvas": {
+        "backingHeight": 2360,
+        "backingWidth": 1640,
+        "cssHeight": 1180,
+        "cssWidth": 820,
+        "devicePixelRatio": 2,
+        "transform": [2, 0, 0, 2, 0, 0]
+      },
+      "consoleErrors": [],
+      "engineError": null,
+      "levelCode": "GL-C1-COIN-CMP-0001",
+      "pageErrors": [],
+      "screenshot": "GT-031-tablet-820x1180.png",
+      "templateCode": "GT-031",
+      "verdict": "CẮT — cảnh logic tràn ra ngoài hộp (117%×46%)",
+      "viewport": "tablet-820x1180",
+      "visibleErrorText": null
+    },
+    {
+      "ageBand": "5-6",
+      "canvas": {
+        "backingHeight": 2360,
+        "backingWidth": 1640,
+        "cssHeight": 1180,
+        "cssWidth": 820,
+        "devicePixelRatio": 2,
+        "transform": [2, 0, 0, 2, 0, 0]
+      },
+      "consoleErrors": [],
+      "engineError": null,
+      "levelCode": "GL-C1-LIQ-POUR-0001",
+      "pageErrors": [],
+      "screenshot": "GT-032-tablet-820x1180.png",
+      "templateCode": "GT-032",
+      "verdict": "CẮT — cảnh logic tràn ra ngoài hộp (117%×46%)",
+      "viewport": "tablet-820x1180",
+      "visibleErrorText": null
+    },
+    {
+      "ageBand": "5-6",
+      "canvas": {
+        "backingHeight": 2360,
+        "backingWidth": 1640,
+        "cssHeight": 1180,
+        "cssWidth": 820,
+        "devicePixelRatio": 2,
+        "transform": [2, 0, 0, 2, 0, 0]
+      },
+      "consoleErrors": [],
+      "engineError": null,
+      "levelCode": "GL-C1-PAT-WEAVE-0001",
+      "pageErrors": [],
+      "screenshot": "GT-033-tablet-820x1180.png",
+      "templateCode": "GT-033",
+      "verdict": "CẮT — cảnh logic tràn ra ngoài hộp (117%×46%)",
+      "viewport": "tablet-820x1180",
+      "visibleErrorText": null
+    },
+    {
+      "ageBand": "5-6",
+      "canvas": {
+        "backingHeight": 2360,
+        "backingWidth": 1640,
+        "cssHeight": 1180,
+        "cssWidth": 820,
+        "devicePixelRatio": 2,
+        "transform": [2, 0, 0, 2, 0, 0]
+      },
+      "consoleErrors": [],
+      "engineError": null,
+      "levelCode": "GL-C1-PAT-BEAT-0001",
+      "pageErrors": [],
+      "screenshot": "GT-034-tablet-820x1180.png",
+      "templateCode": "GT-034",
+      "verdict": "CẮT — cảnh logic tràn ra ngoài hộp (117%×46%)",
+      "viewport": "tablet-820x1180",
+      "visibleErrorText": null
+    },
+    {
+      "ageBand": "5-6",
+      "canvas": {
+        "backingHeight": 2360,
+        "backingWidth": 1640,
+        "cssHeight": 1180,
+        "cssWidth": 820,
+        "devicePixelRatio": 2,
+        "transform": [2, 0, 0, 2, 0, 0]
+      },
+      "consoleErrors": [],
+      "engineError": null,
+      "levelCode": "GL-C1-ALG-CMD-0001",
+      "pageErrors": [],
+      "screenshot": "GT-035-tablet-820x1180.png",
+      "templateCode": "GT-035",
+      "verdict": "CẮT — cảnh logic tràn ra ngoài hộp (117%×46%)",
+      "viewport": "tablet-820x1180",
+      "visibleErrorText": null
+    },
+    {
+      "ageBand": "5-6",
+      "canvas": {
+        "backingHeight": 2360,
+        "backingWidth": 1640,
+        "cssHeight": 1180,
+        "cssWidth": 820,
+        "devicePixelRatio": 2,
+        "transform": [2, 0, 0, 2, 0, 0]
+      },
+      "consoleErrors": [],
+      "engineError": null,
+      "levelCode": "GL-C1-PAT-FCR-0001",
+      "pageErrors": [],
+      "screenshot": "GT-036-tablet-820x1180.png",
+      "templateCode": "GT-036",
+      "verdict": "CẮT — cảnh logic tràn ra ngoài hộp (117%×46%)",
+      "viewport": "tablet-820x1180",
+      "visibleErrorText": null
+    },
+    {
+      "ageBand": "4-5",
+      "canvas": {
+        "backingHeight": 1800,
+        "backingWidth": 2880,
+        "cssHeight": 900,
+        "cssWidth": 1440,
+        "devicePixelRatio": 2,
+        "transform": [2, 0, 0, 2, 0, 0]
+      },
+      "consoleErrors": [],
+      "engineError": null,
+      "levelCode": "GL-C1-CNT-STEP-0005",
+      "pageErrors": [],
+      "screenshot": "GT-001-desktop-1440x900.png",
+      "templateCode": "GT-001",
+      "verdict": "KHÔNG LẤP — cảnh chỉ chiếm 67%×60% hộp",
+      "viewport": "desktop-1440x900",
+      "visibleErrorText": null
+    },
+    {
+      "ageBand": "4-5",
+      "canvas": {
+        "backingHeight": 1800,
+        "backingWidth": 2880,
+        "cssHeight": 900,
+        "cssWidth": 1440,
+        "devicePixelRatio": 2,
+        "transform": [2, 0, 0, 2, 0, 0]
+      },
+      "consoleErrors": [],
+      "engineError": null,
+      "levelCode": "GL-C3-CLS-MULTI-0201",
+      "pageErrors": [],
+      "screenshot": "GT-002-desktop-1440x900.png",
+      "templateCode": "GT-002",
+      "verdict": "KHÔNG LẤP — cảnh chỉ chiếm 67%×60% hộp",
+      "viewport": "desktop-1440x900",
+      "visibleErrorText": null
+    },
+    {
+      "ageBand": "3-4",
+      "canvas": {
+        "backingHeight": 1800,
+        "backingWidth": 2880,
+        "cssHeight": 900,
+        "cssWidth": 1440,
+        "devicePixelRatio": 2,
+        "transform": [2, 0, 0, 2, 0, 0]
+      },
+      "consoleErrors": [],
+      "engineError": null,
+      "levelCode": "GL-C1-CMP-CONT-0117",
+      "pageErrors": [],
+      "screenshot": "GT-003-desktop-1440x900.png",
+      "templateCode": "GT-003",
+      "verdict": "KHÔNG LẤP — cảnh chỉ chiếm 67%×60% hộp",
+      "viewport": "desktop-1440x900",
+      "visibleErrorText": null
+    },
+    {
+      "ageBand": "5-6",
+      "canvas": {
+        "backingHeight": 1800,
+        "backingWidth": 2880,
+        "cssHeight": 900,
+        "cssWidth": 1440,
+        "devicePixelRatio": 2,
+        "transform": [2, 0, 0, 2, 0, 0]
+      },
+      "consoleErrors": [],
+      "engineError": null,
+      "levelCode": "GL-C1-PROB-BAL-0001",
+      "pageErrors": [],
+      "screenshot": "GT-004-desktop-1440x900.png",
+      "templateCode": "GT-004",
+      "verdict": "KHÔNG LẤP — cảnh chỉ chiếm 67%×60% hộp",
+      "viewport": "desktop-1440x900",
+      "visibleErrorText": null
+    },
+    {
+      "ageBand": "4-5",
+      "canvas": {
+        "backingHeight": 1800,
+        "backingWidth": 2880,
+        "cssHeight": 900,
+        "cssWidth": 1440,
+        "devicePixelRatio": 2,
+        "transform": [2, 0, 0, 2, 0, 0]
+      },
+      "consoleErrors": [],
+      "engineError": null,
+      "levelCode": "GL-C1-CNT-PAIR-0111",
+      "pageErrors": [],
+      "screenshot": "GT-005-desktop-1440x900.png",
+      "templateCode": "GT-005",
+      "verdict": "KHÔNG LẤP — cảnh chỉ chiếm 67%×60% hộp",
+      "viewport": "desktop-1440x900",
+      "visibleErrorText": null
+    },
+    {
+      "ageBand": "5-6",
+      "canvas": {
+        "backingHeight": 1800,
+        "backingWidth": 2880,
+        "cssHeight": 900,
+        "cssWidth": 1440,
+        "devicePixelRatio": 2,
+        "transform": [2, 0, 0, 2, 0, 0]
+      },
+      "consoleErrors": [],
+      "engineError": null,
+      "levelCode": "GL-C1-CNT-BCK-0001",
+      "pageErrors": [],
+      "screenshot": "GT-006-desktop-1440x900.png",
+      "templateCode": "GT-006",
+      "verdict": "KHÔNG LẤP — cảnh chỉ chiếm 67%×60% hộp",
+      "viewport": "desktop-1440x900",
+      "visibleErrorText": null
+    },
+    {
+      "ageBand": "4-5",
+      "canvas": {
+        "backingHeight": 1800,
+        "backingWidth": 2880,
+        "cssHeight": 900,
+        "cssWidth": 1440,
+        "devicePixelRatio": 2,
+        "transform": [2, 0, 0, 2, 0, 0]
+      },
+      "consoleErrors": [],
+      "engineError": null,
+      "levelCode": "GL-C2-MAZ-PATH-0001",
+      "pageErrors": [],
+      "screenshot": "GT-007-desktop-1440x900.png",
+      "templateCode": "GT-007",
+      "verdict": "KHÔNG LẤP — cảnh chỉ chiếm 67%×60% hộp",
+      "viewport": "desktop-1440x900",
+      "visibleErrorText": null
+    },
+    {
+      "ageBand": "3-4",
+      "canvas": {
+        "backingHeight": 1800,
+        "backingWidth": 2880,
+        "cssHeight": 900,
+        "cssWidth": 1440,
+        "devicePixelRatio": 2,
+        "transform": [2, 0, 0, 2, 0, 0]
+      },
+      "consoleErrors": [],
+      "engineError": null,
+      "levelCode": "GL-C5-VOC-SLOT-0034",
+      "pageErrors": [],
+      "screenshot": "GT-008-desktop-1440x900.png",
+      "templateCode": "GT-008",
+      "verdict": "KHÔNG LẤP — cảnh chỉ chiếm 67%×60% hộp",
+      "viewport": "desktop-1440x900",
+      "visibleErrorText": null
+    },
+    {
+      "ageBand": "4-5",
+      "canvas": {
+        "backingHeight": 1800,
+        "backingWidth": 2880,
+        "cssHeight": 900,
+        "cssWidth": 1440,
+        "devicePixelRatio": 2,
+        "transform": [2, 0, 0, 2, 0, 0]
+      },
+      "consoleErrors": [],
+      "engineError": null,
+      "levelCode": "GL-C3-CLU-DED-0021",
+      "pageErrors": [],
+      "screenshot": "GT-009-desktop-1440x900.png",
+      "templateCode": "GT-009",
+      "verdict": "KHÔNG LẤP — cảnh chỉ chiếm 67%×60% hộp",
+      "viewport": "desktop-1440x900",
+      "visibleErrorText": null
+    },
+    {
+      "ageBand": "4-5",
+      "canvas": {
+        "backingHeight": 1800,
+        "backingWidth": 2880,
+        "cssHeight": 900,
+        "cssWidth": 1440,
+        "devicePixelRatio": 2,
+        "transform": [2, 0, 0, 2, 0, 0]
+      },
+      "consoleErrors": [],
+      "engineError": null,
+      "levelCode": "GL-C1-SUB-SYM-0031",
+      "pageErrors": [],
+      "screenshot": "GT-010-desktop-1440x900.png",
+      "templateCode": "GT-010",
+      "verdict": "KHÔNG LẤP — cảnh chỉ chiếm 67%×60% hộp",
+      "viewport": "desktop-1440x900",
+      "visibleErrorText": null
+    },
+    {
+      "ageBand": "5-6",
+      "canvas": {
+        "backingHeight": 1800,
+        "backingWidth": 2880,
+        "cssHeight": 900,
+        "cssWidth": 1440,
+        "devicePixelRatio": 2,
+        "transform": [2, 0, 0, 2, 0, 0]
+      },
+      "consoleErrors": [],
+      "engineError": null,
+      "levelCode": "GL-C4-MEM-SEQ-0001",
+      "pageErrors": [],
+      "screenshot": "GT-011-desktop-1440x900.png",
+      "templateCode": "GT-011",
+      "verdict": "KHÔNG LẤP — cảnh chỉ chiếm 67%×60% hộp",
+      "viewport": "desktop-1440x900",
+      "visibleErrorText": null
+    },
+    {
+      "ageBand": "3-4",
+      "canvas": {
+        "backingHeight": 1800,
+        "backingWidth": 2880,
+        "cssHeight": 900,
+        "cssWidth": 1440,
+        "devicePixelRatio": 2,
+        "transform": [2, 0, 0, 2, 0, 0]
+      },
+      "consoleErrors": [],
+      "engineError": null,
+      "levelCode": "GL-C1-CMP-CARD-0115",
+      "pageErrors": [],
+      "screenshot": "GT-012-desktop-1440x900.png",
+      "templateCode": "GT-012",
+      "verdict": "KHÔNG LẤP — cảnh chỉ chiếm 67%×60% hộp",
+      "viewport": "desktop-1440x900",
+      "visibleErrorText": null
+    },
+    {
+      "ageBand": "4-5",
+      "canvas": {
+        "backingHeight": 1800,
+        "backingWidth": 2880,
+        "cssHeight": 900,
+        "cssWidth": 1440,
+        "devicePixelRatio": 2,
+        "transform": [2, 0, 0, 2, 0, 0]
+      },
+      "consoleErrors": [],
+      "engineError": null,
+      "levelCode": "GL-C3-RULE-PAT-0001",
+      "pageErrors": [],
+      "screenshot": "GT-013-desktop-1440x900.png",
+      "templateCode": "GT-013",
+      "verdict": "KHÔNG LẤP — cảnh chỉ chiếm 67%×60% hộp",
+      "viewport": "desktop-1440x900",
+      "visibleErrorText": null
+    },
+    {
+      "ageBand": "5-6",
+      "canvas": null,
+      "consoleErrors": [],
+      "engineError": null,
+      "levelCode": "GL-C1-BAL-SCL-0034",
+      "pageErrors": [
+        "page.goto: Timeout 90000ms exceeded.\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3000/play/preview-sandbox?template=GT-014\", waiting until \"domcontentloaded\"\u001b[22m\n"
+      ],
+      "screenshot": "GT-014-desktop-1440x900.png",
+      "templateCode": "GT-014",
+      "verdict": "HỎNG KHI CHỤP",
+      "viewport": "desktop-1440x900",
+      "visibleErrorText": null
+    },
+    {
+      "ageBand": "5-6",
+      "canvas": null,
+      "consoleErrors": [],
+      "engineError": null,
+      "levelCode": "GL-C3-SUD-MIN-0027",
+      "pageErrors": [
+        "page.goto: Timeout 90000ms exceeded.\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3000/play/preview-sandbox?template=GT-015\", waiting until \"domcontentloaded\"\u001b[22m\n"
+      ],
+      "screenshot": "GT-015-desktop-1440x900.png",
+      "templateCode": "GT-015",
+      "verdict": "HỎNG KHI CHỤP",
+      "viewport": "desktop-1440x900",
+      "visibleErrorText": null
+    },
+    {
+      "ageBand": "5-6",
+      "canvas": null,
+      "consoleErrors": [],
+      "engineError": null,
+      "levelCode": "GL-C1-CLK-HND-0037",
+      "pageErrors": [
+        "page.goto: Timeout 90000ms exceeded.\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3000/play/preview-sandbox?template=GT-016\", waiting until \"domcontentloaded\"\u001b[22m\n"
+      ],
+      "screenshot": "GT-016-desktop-1440x900.png",
+      "templateCode": "GT-016",
+      "verdict": "HỎNG KHI CHỤP",
+      "viewport": "desktop-1440x900",
+      "visibleErrorText": null
+    },
+    {
+      "ageBand": "5-6",
+      "canvas": {
+        "backingHeight": 1800,
+        "backingWidth": 2880,
+        "cssHeight": 900,
+        "cssWidth": 1440,
+        "devicePixelRatio": 2,
+        "transform": [2, 0, 0, 2, 0, 0]
+      },
+      "consoleErrors": [],
+      "engineError": null,
+      "levelCode": "GL-C3-MTX-GRID-0001",
+      "pageErrors": [],
+      "screenshot": "GT-017-desktop-1440x900.png",
+      "templateCode": "GT-017",
+      "verdict": "KHÔNG LẤP — cảnh chỉ chiếm 67%×60% hộp",
+      "viewport": "desktop-1440x900",
+      "visibleErrorText": null
+    },
+    {
+      "ageBand": "4-5",
+      "canvas": {
+        "backingHeight": 1800,
+        "backingWidth": 2880,
+        "cssHeight": 900,
+        "cssWidth": 1440,
+        "devicePixelRatio": 2,
+        "transform": [2, 0, 0, 2, 0, 0]
+      },
+      "consoleErrors": [],
+      "engineError": null,
+      "levelCode": "GL-C4-DET-FIND-0001",
+      "pageErrors": [],
+      "screenshot": "GT-018-desktop-1440x900.png",
+      "templateCode": "GT-018",
+      "verdict": "KHÔNG LẤP — cảnh chỉ chiếm 67%×60% hộp",
+      "viewport": "desktop-1440x900",
+      "visibleErrorText": null
+    },
+    {
+      "ageBand": "4-5",
+      "canvas": {
+        "backingHeight": 1800,
+        "backingWidth": 2880,
+        "cssHeight": 900,
+        "cssWidth": 1440,
+        "devicePixelRatio": 2,
+        "transform": [2, 0, 0, 2, 0, 0]
+      },
+      "consoleErrors": [],
+      "engineError": null,
+      "levelCode": "GL-C2-ROT-TRANS-0021",
+      "pageErrors": [],
+      "screenshot": "GT-019-desktop-1440x900.png",
+      "templateCode": "GT-019",
+      "verdict": "KHÔNG LẤP — cảnh chỉ chiếm 67%×60% hộp",
+      "viewport": "desktop-1440x900",
+      "visibleErrorText": null
+    },
+    {
+      "ageBand": "3-4",
+      "canvas": {
+        "backingHeight": 1800,
+        "backingWidth": 2880,
+        "cssHeight": 900,
+        "cssWidth": 1440,
+        "devicePixelRatio": 2,
+        "transform": [2, 0, 0, 2, 0, 0]
+      },
+      "consoleErrors": [],
+      "engineError": null,
+      "levelCode": "GL-C2-SHP-FLIP-0030",
+      "pageErrors": [],
+      "screenshot": "GT-020-desktop-1440x900.png",
+      "templateCode": "GT-020",
+      "verdict": "KHÔNG LẤP — cảnh chỉ chiếm 67%×60% hộp",
+      "viewport": "desktop-1440x900",
+      "visibleErrorText": null
+    },
+    {
+      "ageBand": "4-5",
+      "canvas": {
+        "backingHeight": 1800,
+        "backingWidth": 2880,
+        "cssHeight": 900,
+        "cssWidth": 1440,
+        "devicePixelRatio": 2,
+        "transform": [2, 0, 0, 2, 0, 0]
+      },
+      "consoleErrors": [],
+      "engineError": null,
+      "levelCode": "GL-C2-MIR-COMP-0024",
+      "pageErrors": [],
+      "screenshot": "GT-021-desktop-1440x900.png",
+      "templateCode": "GT-021",
+      "verdict": "KHÔNG LẤP — cảnh chỉ chiếm 67%×60% hộp",
+      "viewport": "desktop-1440x900",
+      "visibleErrorText": null
+    },
+    {
+      "ageBand": "4-5",
+      "canvas": {
+        "backingHeight": 1800,
+        "backingWidth": 2880,
+        "cssHeight": 900,
+        "cssWidth": 1440,
+        "devicePixelRatio": 2,
+        "transform": [2, 0, 0, 2, 0, 0]
+      },
+      "consoleErrors": [],
+      "engineError": null,
+      "levelCode": "GL-C2-DIR-NAV-0010",
+      "pageErrors": [],
+      "screenshot": "GT-022-desktop-1440x900.png",
+      "templateCode": "GT-022",
+      "verdict": "KHÔNG LẤP — cảnh chỉ chiếm 67%×60% hộp",
+      "viewport": "desktop-1440x900",
+      "visibleErrorText": null
+    },
+    {
+      "ageBand": "4-5",
+      "canvas": {
+        "backingHeight": 1800,
+        "backingWidth": 2880,
+        "cssHeight": 900,
+        "cssWidth": 1440,
+        "devicePixelRatio": 2,
+        "transform": [2, 0, 0, 2, 0, 0]
+      },
+      "consoleErrors": [],
+      "engineError": null,
+      "levelCode": "GL-C2-CON-SHP-0027",
+      "pageErrors": [],
+      "screenshot": "GT-023-desktop-1440x900.png",
+      "templateCode": "GT-023",
+      "verdict": "KHÔNG LẤP — cảnh chỉ chiếm 67%×60% hộp",
+      "viewport": "desktop-1440x900",
+      "visibleErrorText": null
+    },
+    {
+      "ageBand": "5-6",
+      "canvas": {
+        "backingHeight": 1800,
+        "backingWidth": 2880,
+        "cssHeight": 900,
+        "cssWidth": 1440,
+        "devicePixelRatio": 2,
+        "transform": [2, 0, 0, 2, 0, 0]
+      },
+      "consoleErrors": [],
+      "engineError": null,
+      "levelCode": "GL-C2-TRC-PTH-0030",
+      "pageErrors": [],
+      "screenshot": "GT-024-desktop-1440x900.png",
+      "templateCode": "GT-024",
+      "verdict": "KHÔNG LẤP — cảnh chỉ chiếm 67%×60% hộp",
+      "viewport": "desktop-1440x900",
+      "visibleErrorText": null
+    },
+    {
+      "ageBand": "4-5",
+      "canvas": {
+        "backingHeight": 1800,
+        "backingWidth": 2880,
+        "cssHeight": 900,
+        "cssWidth": 1440,
+        "devicePixelRatio": 2,
+        "transform": [2, 0, 0, 2, 0, 0]
+      },
+      "consoleErrors": [],
+      "engineError": null,
+      "levelCode": "GL-C3-VIS-SPOT-0030",
+      "pageErrors": [],
+      "screenshot": "GT-025-desktop-1440x900.png",
+      "templateCode": "GT-025",
+      "verdict": "KHÔNG LẤP — cảnh chỉ chiếm 67%×60% hộp",
+      "viewport": "desktop-1440x900",
+      "visibleErrorText": null
+    },
+    {
+      "ageBand": "4-5",
+      "canvas": {
+        "backingHeight": 1800,
+        "backingWidth": 2880,
+        "cssHeight": 900,
+        "cssWidth": 1440,
+        "devicePixelRatio": 2,
+        "transform": [2, 0, 0, 2, 0, 0]
+      },
+      "consoleErrors": [],
+      "engineError": null,
+      "levelCode": "GL-C6-INH-NOGO-0030",
+      "pageErrors": [],
+      "screenshot": "GT-026-desktop-1440x900.png",
+      "templateCode": "GT-026",
+      "verdict": "KHÔNG LẤP — cảnh chỉ chiếm 67%×60% hộp",
+      "viewport": "desktop-1440x900",
+      "visibleErrorText": null
+    },
+    {
+      "ageBand": "5-6",
+      "canvas": null,
+      "consoleErrors": [],
+      "engineError": null,
+      "levelCode": "GL-C6-FLX-SWT-0033",
+      "pageErrors": [
+        "page.goto: Timeout 90000ms exceeded.\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3000/play/preview-sandbox?template=GT-027\", waiting until \"domcontentloaded\"\u001b[22m\n"
+      ],
+      "screenshot": "GT-027-desktop-1440x900.png",
+      "templateCode": "GT-027",
+      "verdict": "HỎNG KHI CHỤP",
+      "viewport": "desktop-1440x900",
+      "visibleErrorText": null
+    },
+    {
+      "ageBand": "4-5",
+      "canvas": {
+        "backingHeight": 1800,
+        "backingWidth": 2880,
+        "cssHeight": 900,
+        "cssWidth": 1440,
+        "devicePixelRatio": 2,
+        "transform": [2, 0, 0, 2, 0, 0]
+      },
+      "consoleErrors": [],
+      "engineError": null,
+      "levelCode": "GL-C1-CNT-TAP-0001",
+      "pageErrors": [],
+      "screenshot": "GT-028-desktop-1440x900.png",
+      "templateCode": "GT-028",
+      "verdict": "KHÔNG LẤP — cảnh chỉ chiếm 67%×60% hộp",
+      "viewport": "desktop-1440x900",
+      "visibleErrorText": null
+    },
+    {
+      "ageBand": "4-5",
+      "canvas": {
+        "backingHeight": 1800,
+        "backingWidth": 2880,
+        "cssHeight": 900,
+        "cssWidth": 1440,
+        "devicePixelRatio": 2,
+        "transform": [2, 0, 0, 2, 0, 0]
+      },
+      "consoleErrors": [],
+      "engineError": null,
+      "levelCode": "GL-C1-REM-SET-0001",
+      "pageErrors": [],
+      "screenshot": "GT-029-desktop-1440x900.png",
+      "templateCode": "GT-029",
+      "verdict": "KHÔNG LẤP — cảnh chỉ chiếm 67%×60% hộp",
+      "viewport": "desktop-1440x900",
+      "visibleErrorText": null
+    },
+    {
+      "ageBand": "5-6",
+      "canvas": {
+        "backingHeight": 1800,
+        "backingWidth": 2880,
+        "cssHeight": 900,
+        "cssWidth": 1440,
+        "devicePixelRatio": 2,
+        "transform": [2, 0, 0, 2, 0, 0]
+      },
+      "consoleErrors": [],
+      "engineError": null,
+      "levelCode": "GL-C1-MSR-UNIT-0001",
+      "pageErrors": [],
+      "screenshot": "GT-030-desktop-1440x900.png",
+      "templateCode": "GT-030",
+      "verdict": "KHÔNG LẤP — cảnh chỉ chiếm 67%×60% hộp",
+      "viewport": "desktop-1440x900",
+      "visibleErrorText": null
+    },
+    {
+      "ageBand": "5-6",
+      "canvas": {
+        "backingHeight": 1800,
+        "backingWidth": 2880,
+        "cssHeight": 900,
+        "cssWidth": 1440,
+        "devicePixelRatio": 2,
+        "transform": [2, 0, 0, 2, 0, 0]
+      },
+      "consoleErrors": [],
+      "engineError": null,
+      "levelCode": "GL-C1-COIN-CMP-0001",
+      "pageErrors": [],
+      "screenshot": "GT-031-desktop-1440x900.png",
+      "templateCode": "GT-031",
+      "verdict": "KHÔNG LẤP — cảnh chỉ chiếm 67%×60% hộp",
+      "viewport": "desktop-1440x900",
+      "visibleErrorText": null
+    },
+    {
+      "ageBand": "5-6",
+      "canvas": {
+        "backingHeight": 1800,
+        "backingWidth": 2880,
+        "cssHeight": 900,
+        "cssWidth": 1440,
+        "devicePixelRatio": 2,
+        "transform": [2, 0, 0, 2, 0, 0]
+      },
+      "consoleErrors": [],
+      "engineError": null,
+      "levelCode": "GL-C1-LIQ-POUR-0001",
+      "pageErrors": [],
+      "screenshot": "GT-032-desktop-1440x900.png",
+      "templateCode": "GT-032",
+      "verdict": "KHÔNG LẤP — cảnh chỉ chiếm 67%×60% hộp",
+      "viewport": "desktop-1440x900",
+      "visibleErrorText": null
+    },
+    {
+      "ageBand": "5-6",
+      "canvas": {
+        "backingHeight": 1800,
+        "backingWidth": 2880,
+        "cssHeight": 900,
+        "cssWidth": 1440,
+        "devicePixelRatio": 2,
+        "transform": [2, 0, 0, 2, 0, 0]
+      },
+      "consoleErrors": [],
+      "engineError": null,
+      "levelCode": "GL-C1-PAT-WEAVE-0001",
+      "pageErrors": [],
+      "screenshot": "GT-033-desktop-1440x900.png",
+      "templateCode": "GT-033",
+      "verdict": "KHÔNG LẤP — cảnh chỉ chiếm 67%×60% hộp",
+      "viewport": "desktop-1440x900",
+      "visibleErrorText": null
+    },
+    {
+      "ageBand": "5-6",
+      "canvas": {
+        "backingHeight": 1800,
+        "backingWidth": 2880,
+        "cssHeight": 900,
+        "cssWidth": 1440,
+        "devicePixelRatio": 2,
+        "transform": [2, 0, 0, 2, 0, 0]
+      },
+      "consoleErrors": [],
+      "engineError": null,
+      "levelCode": "GL-C1-PAT-BEAT-0001",
+      "pageErrors": [],
+      "screenshot": "GT-034-desktop-1440x900.png",
+      "templateCode": "GT-034",
+      "verdict": "KHÔNG LẤP — cảnh chỉ chiếm 67%×60% hộp",
+      "viewport": "desktop-1440x900",
+      "visibleErrorText": null
+    },
+    {
+      "ageBand": "5-6",
+      "canvas": {
+        "backingHeight": 1800,
+        "backingWidth": 2880,
+        "cssHeight": 900,
+        "cssWidth": 1440,
+        "devicePixelRatio": 2,
+        "transform": [2, 0, 0, 2, 0, 0]
+      },
+      "consoleErrors": [],
+      "engineError": null,
+      "levelCode": "GL-C1-ALG-CMD-0001",
+      "pageErrors": [],
+      "screenshot": "GT-035-desktop-1440x900.png",
+      "templateCode": "GT-035",
+      "verdict": "KHÔNG LẤP — cảnh chỉ chiếm 67%×60% hộp",
+      "viewport": "desktop-1440x900",
+      "visibleErrorText": null
+    },
+    {
+      "ageBand": "5-6",
+      "canvas": {
+        "backingHeight": 1800,
+        "backingWidth": 2880,
+        "cssHeight": 900,
+        "cssWidth": 1440,
+        "devicePixelRatio": 2,
+        "transform": [2, 0, 0, 2, 0, 0]
+      },
+      "consoleErrors": [],
+      "engineError": null,
+      "levelCode": "GL-C1-PAT-FCR-0001",
+      "pageErrors": [],
+      "screenshot": "GT-036-desktop-1440x900.png",
+      "templateCode": "GT-036",
+      "verdict": "KHÔNG LẤP — cảnh chỉ chiếm 67%×60% hộp",
+      "viewport": "desktop-1440x900",
+      "visibleErrorText": null
+    }
+  ],
+  "stamp": "2026-09-01"
+}

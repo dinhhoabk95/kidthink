@@ -6,7 +6,7 @@
       "title": "Tìm Gia đình giống mẫu",
       "instruction": "Bé chạm vào Gia đình giống mẫu nhé!",
       "theme_tag": "family",
-      "what_tags": ["classification", "number"],
+      "what_tags": ["cls", "shp", "number"],
       "thinking_tags": ["match"],
       "skill_codes": ["C5.LIS.01"],
       "learning_objective_codes": [
@@ -72,7 +72,7 @@
       "title": "Tìm Tai giống mẫu",
       "instruction": "Bé chạm vào Tai giống mẫu nhé!",
       "theme_tag": "body",
-      "what_tags": ["classification", "number"],
+      "what_tags": ["cls", "shp", "number"],
       "thinking_tags": ["match"],
       "skill_codes": ["C5.LIS.01"],
       "learning_objective_codes": [
@@ -146,7 +146,7 @@
       "title": "So sánh nhóm Mặt trời",
       "instruction": "Bé chọn nhóm nhiều Mặt trời hơn nhé!",
       "theme_tag": "weather",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["match"],
       "skill_codes": ["C5.LIS.01"],
       "learning_objective_codes": [
@@ -213,7 +213,7 @@
       "title": "So sánh nhóm Bao lì xì",
       "instruction": "Bé chọn nhóm nhiều Bao lì xì hơn nhé!",
       "theme_tag": "festival",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["match"],
       "skill_codes": ["C5.LIS.01"],
       "learning_objective_codes": [
@@ -280,7 +280,7 @@
       "title": "Xếp Trường học theo quy luật",
       "instruction": "Bé chọn Trường học tiếp theo theo quy luật!",
       "theme_tag": "school",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["match"],
       "skill_codes": ["C5.LIS.01"],
       "learning_objective_codes": [
@@ -348,7 +348,7 @@
       "title": "Xếp Bò sữa theo quy luật",
       "instruction": "Bé chọn Bò sữa tiếp theo theo quy luật!",
       "theme_tag": "farm",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["match"],
       "skill_codes": ["C5.LIS.01"],
       "learning_objective_codes": [
@@ -416,7 +416,7 @@
       "title": "Kéo Ngôi nhà vào đúng ô",
       "instruction": "Bé kéo Ngôi nhà vào đúng ô nhé!",
       "theme_tag": "home",
-      "what_tags": ["classification"],
+      "what_tags": ["spt"],
       "thinking_tags": ["match"],
       "skill_codes": ["C5.LIS.01"],
       "learning_objective_codes": [
@@ -480,7 +480,7 @@
       "title": "Kéo Voi vào đúng ô",
       "instruction": "Bé kéo Voi vào đúng ô nhé!",
       "theme_tag": "animal",
-      "what_tags": ["classification"],
+      "what_tags": ["spt"],
       "thinking_tags": ["match"],
       "skill_codes": ["C5.LIS.01"],
       "learning_objective_codes": [
@@ -544,7 +544,7 @@
       "title": "Bảng lưới logic với Cây xanh",
       "instruction": "Bé xếp Cây xanh vào ô phù hợp nhé!",
       "theme_tag": "nature",
-      "what_tags": ["classification"],
+      "what_tags": ["mem", "cls"],
       "thinking_tags": ["match"],
       "skill_codes": ["C5.LIS.01"],
       "learning_objective_codes": [
@@ -613,7 +613,7 @@
       "title": "Bảng lưới logic với Cá heo",
       "instruction": "Bé xếp Cá heo vào ô phù hợp nhé!",
       "theme_tag": "ocean",
-      "what_tags": ["classification"],
+      "what_tags": ["mem", "cls"],
       "thinking_tags": ["match"],
       "skill_codes": ["C5.LIS.01"],
       "learning_objective_codes": [
@@ -682,7 +682,7 @@
       "title": "Tìm bóng của Táo đỏ",
       "instruction": "Bé tìm bóng của Táo đỏ nhé!",
       "theme_tag": "food",
-      "what_tags": ["classification"],
+      "what_tags": ["ops"],
       "thinking_tags": ["plan"],
       "skill_codes": ["C5.LIS.02"],
       "learning_objective_codes": [
@@ -758,7 +758,7 @@
       "title": "Tìm bóng của Xe buýt",
       "instruction": "Bé tìm bóng của Xe buýt nhé!",
       "theme_tag": "vehicle",
-      "what_tags": ["classification"],
+      "what_tags": ["ops"],
       "thinking_tags": ["plan"],
       "skill_codes": ["C5.LIS.02"],
       "learning_objective_codes": [
@@ -834,7 +834,7 @@
       "title": "Tìm bóng của Kèn saxophone",
       "instruction": "Bé tìm bóng của Kèn saxophone nhé!",
       "theme_tag": "art",
-      "what_tags": ["classification"],
+      "what_tags": ["ops"],
       "thinking_tags": ["plan"],
       "skill_codes": ["C5.LIS.02"],
       "learning_objective_codes": [
@@ -910,7 +910,7 @@
       "title": "Tìm bóng của Cà rốt",
       "instruction": "Bé tìm bóng của Cà rốt nhé!",
       "theme_tag": "food",
-      "what_tags": ["classification"],
+      "what_tags": ["ops"],
       "thinking_tags": ["plan"],
       "skill_codes": ["C5.LIS.02"],
       "learning_objective_codes": [
@@ -986,7 +986,7 @@
       "title": "Tìm bóng của Mẹ",
       "instruction": "Bé tìm bóng của Mẹ nhé!",
       "theme_tag": "family",
-      "what_tags": ["classification"],
+      "what_tags": ["ops"],
       "thinking_tags": ["plan"],
       "skill_codes": ["C5.LIS.02"],
       "learning_objective_codes": [
@@ -1062,7 +1062,7 @@
       "title": "Bảng lưới logic với Mắt",
       "instruction": "Bé xếp Mắt vào ô phù hợp nhé!",
       "theme_tag": "body",
-      "what_tags": ["classification"],
+      "what_tags": ["mem", "cls"],
       "thinking_tags": ["plan"],
       "skill_codes": ["C5.LIS.02"],
       "learning_objective_codes": [
@@ -1131,7 +1131,7 @@
       "title": "Bảng lưới logic với Mây",
       "instruction": "Bé xếp Mây vào ô phù hợp nhé!",
       "theme_tag": "weather",
-      "what_tags": ["classification"],
+      "what_tags": ["mem", "cls"],
       "thinking_tags": ["plan"],
       "skill_codes": ["C5.LIS.02"],
       "learning_objective_codes": [
@@ -1200,7 +1200,7 @@
       "title": "Bảng lưới logic với Pháo hoa",
       "instruction": "Bé xếp Pháo hoa vào ô phù hợp nhé!",
       "theme_tag": "festival",
-      "what_tags": ["classification"],
+      "what_tags": ["mem", "cls"],
       "thinking_tags": ["plan"],
       "skill_codes": ["C5.LIS.02"],
       "learning_objective_codes": [
@@ -1269,7 +1269,7 @@
       "title": "Bảng lưới logic với Sách",
       "instruction": "Bé xếp Sách vào ô phù hợp nhé!",
       "theme_tag": "school",
-      "what_tags": ["classification"],
+      "what_tags": ["mem", "cls"],
       "thinking_tags": ["plan"],
       "skill_codes": ["C5.LIS.02"],
       "learning_objective_codes": [
@@ -1338,7 +1338,7 @@
       "title": "Bảng lưới logic với Lúa",
       "instruction": "Bé xếp Lúa vào ô phù hợp nhé!",
       "theme_tag": "farm",
-      "what_tags": ["classification"],
+      "what_tags": ["mem", "cls"],
       "thinking_tags": ["plan"],
       "skill_codes": ["C5.LIS.02"],
       "learning_objective_codes": [
@@ -1407,7 +1407,7 @@
       "title": "Xếp Ngôi nhà theo quy luật",
       "instruction": "Bé tìm Ngôi nhà còn thiếu trong dãy quy luật!",
       "theme_tag": "home",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["sequence", "recall"],
       "skill_codes": ["C5.LIS.03"],
       "learning_objective_codes": [
@@ -1492,7 +1492,7 @@
       "title": "Xếp Voi theo quy luật",
       "instruction": "Bé tìm Voi còn thiếu trong dãy quy luật!",
       "theme_tag": "animal",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["sequence", "recall"],
       "skill_codes": ["C5.LIS.03"],
       "learning_objective_codes": [
@@ -1577,7 +1577,7 @@
       "title": "Phân loại Cây xanh theo nhóm",
       "instruction": "Bé phân loại Cây xanh theo đặc điểm phù hợp!",
       "theme_tag": "nature",
-      "what_tags": ["classification"],
+      "what_tags": ["cmp", "sequence"],
       "thinking_tags": ["sequence", "recall"],
       "skill_codes": ["C5.LIS.03"],
       "learning_objective_codes": [
@@ -1638,7 +1638,7 @@
       "title": "Phân loại Cá heo theo nhóm",
       "instruction": "Bé phân loại Cá heo theo đặc điểm phù hợp!",
       "theme_tag": "ocean",
-      "what_tags": ["classification"],
+      "what_tags": ["cmp", "sequence"],
       "thinking_tags": ["sequence", "recall"],
       "skill_codes": ["C5.LIS.03"],
       "learning_objective_codes": [
@@ -1699,7 +1699,7 @@
       "title": "Kéo Táo đỏ vào đúng ô",
       "instruction": "Bé kéo Táo đỏ vào vị trí tương ứng nhé!",
       "theme_tag": "food",
-      "what_tags": ["classification"],
+      "what_tags": ["spt"],
       "thinking_tags": ["sequence", "recall"],
       "skill_codes": ["C5.LIS.03"],
       "learning_objective_codes": [
@@ -1776,7 +1776,7 @@
       "title": "Kéo Xe buýt vào đúng ô",
       "instruction": "Bé kéo Xe buýt vào vị trí tương ứng nhé!",
       "theme_tag": "vehicle",
-      "what_tags": ["classification"],
+      "what_tags": ["spt"],
       "thinking_tags": ["sequence", "recall"],
       "skill_codes": ["C5.LIS.03"],
       "learning_objective_codes": [
@@ -1853,7 +1853,7 @@
       "title": "Xếp Bảng vẽ theo kích thước",
       "instruction": "Bé sắp xếp Bảng vẽ theo kích thước nhé!",
       "theme_tag": "art",
-      "what_tags": ["deduction", "logic", "number", "comparison"],
+      "what_tags": ["log", "number", "cmp"],
       "thinking_tags": ["sequence", "recall"],
       "skill_codes": ["C5.LIS.03"],
       "learning_objective_codes": [
@@ -1939,7 +1939,7 @@
       "title": "Xếp Hành tinh theo kích thước",
       "instruction": "Bé sắp xếp Hành tinh theo kích thước nhé!",
       "theme_tag": "space",
-      "what_tags": ["deduction", "logic", "number", "comparison"],
+      "what_tags": ["log", "number", "cmp"],
       "thinking_tags": ["sequence", "recall"],
       "skill_codes": ["C5.LIS.03"],
       "learning_objective_codes": [
@@ -2025,7 +2025,7 @@
       "title": "Ghép hình Gia đình hoàn chỉnh",
       "instruction": "Bé ghép các mảnh thành hình Gia đình nhé!",
       "theme_tag": "family",
-      "what_tags": ["logic"],
+      "what_tags": ["log"],
       "thinking_tags": ["sequence", "recall"],
       "skill_codes": ["C5.LIS.03"],
       "learning_objective_codes": [
@@ -2109,7 +2109,7 @@
       "title": "Ghép hình Tai hoàn chỉnh",
       "instruction": "Bé ghép các mảnh thành hình Tai nhé!",
       "theme_tag": "body",
-      "what_tags": ["logic"],
+      "what_tags": ["log"],
       "thinking_tags": ["sequence", "recall"],
       "skill_codes": ["C5.LIS.03"],
       "learning_objective_codes": [

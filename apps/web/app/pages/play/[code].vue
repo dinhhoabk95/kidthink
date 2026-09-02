@@ -361,21 +361,25 @@
     router.push("/games");
   }
 
+  /**
+   * Đổi điểm chạm sang toạ độ logic bằng **chính** hình học mà engine đang vẽ.
+   *
+   * Trước đây hàm này tự dựng lại công thức letterbox. Bản sao thứ hai đó trôi
+   * khỏi bản engine dùng, nên điểm chạm rơi lệch khỏi ô đang hiện. Giờ hỏi
+   * thẳng `RenderSystem` — một nguồn sự thật, không có bản sao để trôi.
+   */
   function getLogicCoordinates(
     canvas: HTMLCanvasElement,
     clientX: number,
     clientY: number
   ): { x: number; y: number } {
     const rect = canvas.getBoundingClientRect();
-    const scaleX = rect.width / 960;
-    const scaleY = rect.height / 540;
-    const scale = Math.min(scaleX, scaleY);
-    const offsetX = (rect.width - 960 * scale) / 2;
-    const offsetY = (rect.height - 540 * scale) / 2;
-    return {
-      x: (clientX - rect.left - offsetX) / scale,
-      y: (clientY - rect.top - offsetY) / scale,
-    };
+    const boxX = clientX - rect.left;
+    const boxY = clientY - rect.top;
+    if (engine) {
+      return engine.renderSystem.toLogicPoint(boxX, boxY);
+    }
+    return { x: boxX, y: boxY };
   }
 
   function findHitSlot(slots: readonly Slot[], x: number, y: number): number {
@@ -903,8 +907,11 @@
   }
 
   .game-canvas {
+    /* `height` phải là `auto`: khai cả `width:100%` lẫn `height:100%` thì
+       `aspect-ratio` bị vô hiệu, hộp canvas giãn theo container và lệch khỏi
+       tỉ lệ mà engine vẽ. */
     width: 100%;
-    height: 100%;
+    height: auto;
     max-height: 85vh;
     aspect-ratio: 16 / 9;
     object-fit: contain;

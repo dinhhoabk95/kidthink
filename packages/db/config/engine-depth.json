@@ -1,14 +1,10 @@
 {
-  "active_step": 1,
-  "date": "2026-09-01",
+  "active_step": 0,
+  "date": "2026-08-30",
   "history": [
     {
       "step": 0,
       "date": "2026-08-30"
-    },
-    {
-      "step": 1,
-      "date": "2026-09-01"
     }
   ],
   "steps": {

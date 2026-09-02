@@ -7,7 +7,7 @@
       "instruction": "Bé dùng thước đo chiều dài của Mặt trời nhé!",
       "theme_tag": "weather",
       "what_tags": ["number", "quantity", "pattern"],
-      "thinking_tags": ["verify"],
+      "thinking_tags": ["observe"],
       "skill_codes": ["C6.MON.01"],
       "learning_objective_codes": [
         "LO-C6.MON.01-01",
@@ -87,7 +87,7 @@
       "instruction": "Bé dùng thước đo chiều dài của Bao lì xì nhé!",
       "theme_tag": "festival",
       "what_tags": ["number", "quantity", "pattern"],
-      "thinking_tags": ["verify"],
+      "thinking_tags": ["observe"],
       "skill_codes": ["C6.MON.01"],
       "learning_objective_codes": [
         "LO-C6.MON.01-01",
@@ -166,8 +166,8 @@
       "title": "Xem giờ trên đồng hồ",
       "instruction": "Bé xem đồng hồ và chọn giờ đúng nhé!",
       "theme_tag": "school",
-      "what_tags": ["number", "quantity"],
-      "thinking_tags": ["verify"],
+      "what_tags": ["number", "quantity", "ops"],
+      "thinking_tags": ["observe"],
       "skill_codes": ["C6.MON.01"],
       "learning_objective_codes": [
         "LO-C6.MON.01-01",
@@ -248,8 +248,8 @@
       "title": "Xem giờ trên đồng hồ",
       "instruction": "Bé xem đồng hồ và chọn giờ đúng nhé!",
       "theme_tag": "farm",
-      "what_tags": ["number", "quantity"],
-      "thinking_tags": ["verify"],
+      "what_tags": ["number", "quantity", "ops"],
+      "thinking_tags": ["observe"],
       "skill_codes": ["C6.MON.01"],
       "learning_objective_codes": [
         "LO-C6.MON.01-01",
@@ -331,7 +331,7 @@
       "instruction": "Bé tính tổng mệnh giá các đồng xu cho đúng!",
       "theme_tag": "home",
       "what_tags": ["size", "quantity", "number"],
-      "thinking_tags": ["verify"],
+      "thinking_tags": ["observe"],
       "skill_codes": ["C6.MON.01"],
       "learning_objective_codes": [
         "LO-C6.MON.01-01",
@@ -396,7 +396,7 @@
       "instruction": "Bé tính tổng mệnh giá các đồng xu cho đúng!",
       "theme_tag": "animal",
       "what_tags": ["size", "quantity", "number"],
-      "thinking_tags": ["verify"],
+      "thinking_tags": ["observe"],
       "skill_codes": ["C6.MON.01"],
       "learning_objective_codes": [
         "LO-C6.MON.01-01",
@@ -466,7 +466,7 @@
       "instruction": "Bé phân tích biểu đồ tranh để chọn đáp án!",
       "theme_tag": "nature",
       "what_tags": ["money", "number", "quantity"],
-      "thinking_tags": ["verify"],
+      "thinking_tags": ["observe"],
       "skill_codes": ["C6.MON.01"],
       "learning_objective_codes": [
         "LO-C6.MON.01-01",
@@ -550,7 +550,7 @@
       "instruction": "Bé phân tích biểu đồ tranh để chọn đáp án!",
       "theme_tag": "ocean",
       "what_tags": ["money", "number", "quantity"],
-      "thinking_tags": ["verify"],
+      "thinking_tags": ["observe"],
       "skill_codes": ["C6.MON.01"],
       "learning_objective_codes": [
         "LO-C6.MON.01-01",
@@ -617,8 +617,8 @@
       "title": "Biểu đồ Venn phân loại Táo đỏ",
       "instruction": "Bé phân loại vào phần giao của biểu đồ Venn!",
       "theme_tag": "food",
-      "what_tags": ["quantity", "size"],
-      "thinking_tags": ["verify"],
+      "what_tags": ["msr", "quantity", "size"],
+      "thinking_tags": ["observe"],
       "skill_codes": ["C6.MON.01"],
       "learning_objective_codes": [
         "LO-C6.MON.01-01",
@@ -676,8 +676,8 @@
       "title": "Biểu đồ Venn phân loại Xe buýt",
       "instruction": "Bé phân loại vào phần giao của biểu đồ Venn!",
       "theme_tag": "vehicle",
-      "what_tags": ["quantity", "size"],
-      "thinking_tags": ["verify"],
+      "what_tags": ["msr", "quantity", "size"],
+      "thinking_tags": ["observe"],
       "skill_codes": ["C6.MON.01"],
       "learning_objective_codes": [
         "LO-C6.MON.01-01",
@@ -728,8 +728,8 @@
       "title": "Ghép hình Bảng vẽ hoàn chỉnh",
       "instruction": "Bé ghép các mảnh thành hình Bảng vẽ nhé!",
       "theme_tag": "art",
-      "what_tags": ["logic"],
-      "thinking_tags": ["verify", "shift"],
+      "what_tags": ["log"],
+      "thinking_tags": ["shift"],
       "skill_codes": ["C6.MON.02"],
       "learning_objective_codes": [
         "LO-C6.MON.02-01",
@@ -812,8 +812,8 @@
       "title": "Ghép hình Hành tinh hoàn chỉnh",
       "instruction": "Bé ghép các mảnh thành hình Hành tinh nhé!",
       "theme_tag": "space",
-      "what_tags": ["logic"],
-      "thinking_tags": ["verify", "shift"],
+      "what_tags": ["log"],
+      "thinking_tags": ["shift"],
       "skill_codes": ["C6.MON.02"],
       "learning_objective_codes": [
         "LO-C6.MON.02-01",
@@ -896,8 +896,8 @@
       "title": "Phép cộng trực quan với Gia đình",
       "instruction": "Bé tính tổng số Gia đình của hai nhóm nhé!",
       "theme_tag": "family",
-      "what_tags": ["classification"],
-      "thinking_tags": ["verify", "shift"],
+      "what_tags": ["fnc"],
+      "thinking_tags": ["shift"],
       "skill_codes": ["C6.MON.02"],
       "learning_objective_codes": [
         "LO-C6.MON.02-01",
@@ -961,8 +961,8 @@
       "title": "Phép cộng trực quan với Tai",
       "instruction": "Bé tính tổng số Tai của hai nhóm nhé!",
       "theme_tag": "body",
-      "what_tags": ["classification"],
-      "thinking_tags": ["verify", "shift"],
+      "what_tags": ["fnc"],
+      "thinking_tags": ["shift"],
       "skill_codes": ["C6.MON.02"],
       "learning_objective_codes": [
         "LO-C6.MON.02-01",
@@ -1026,8 +1026,8 @@
       "title": "Phép trừ trực quan với Mặt trời",
       "instruction": "Bé làm phép trừ và chọn kết quả đúng nhé!",
       "theme_tag": "weather",
-      "what_tags": ["classification"],
-      "thinking_tags": ["verify", "shift"],
+      "what_tags": ["fnc", "rule", "cls"],
+      "thinking_tags": ["shift"],
       "skill_codes": ["C6.MON.02"],
       "learning_objective_codes": [
         "LO-C6.MON.02-01",
@@ -1115,8 +1115,8 @@
       "title": "Phép trừ trực quan với Bao lì xì",
       "instruction": "Bé làm phép trừ và chọn kết quả đúng nhé!",
       "theme_tag": "festival",
-      "what_tags": ["classification"],
-      "thinking_tags": ["verify", "shift"],
+      "what_tags": ["fnc", "rule", "cls"],
+      "thinking_tags": ["shift"],
       "skill_codes": ["C6.MON.02"],
       "learning_objective_codes": [
         "LO-C6.MON.02-01",
@@ -1205,7 +1205,7 @@
       "instruction": "Bé dùng thước đo chiều dài của Trường học nhé!",
       "theme_tag": "school",
       "what_tags": ["number", "quantity", "pattern"],
-      "thinking_tags": ["verify", "shift"],
+      "thinking_tags": ["shift"],
       "skill_codes": ["C6.MON.02"],
       "learning_objective_codes": [
         "LO-C6.MON.02-01",
@@ -1285,7 +1285,7 @@
       "instruction": "Bé dùng thước đo chiều dài của Bò sữa nhé!",
       "theme_tag": "farm",
       "what_tags": ["number", "quantity", "pattern"],
-      "thinking_tags": ["verify", "shift"],
+      "thinking_tags": ["shift"],
       "skill_codes": ["C6.MON.02"],
       "learning_objective_codes": [
         "LO-C6.MON.02-01",
@@ -1364,8 +1364,8 @@
       "title": "Xem giờ trên đồng hồ",
       "instruction": "Bé xem đồng hồ và chọn giờ đúng nhé!",
       "theme_tag": "home",
-      "what_tags": ["number", "quantity"],
-      "thinking_tags": ["verify", "shift"],
+      "what_tags": ["number", "quantity", "ops"],
+      "thinking_tags": ["shift"],
       "skill_codes": ["C6.MON.02"],
       "learning_objective_codes": [
         "LO-C6.MON.02-01",
@@ -1460,8 +1460,8 @@
       "title": "Xem giờ trên đồng hồ",
       "instruction": "Bé xem đồng hồ và chọn giờ đúng nhé!",
       "theme_tag": "animal",
-      "what_tags": ["number", "quantity"],
-      "thinking_tags": ["verify", "shift"],
+      "what_tags": ["number", "quantity", "ops"],
+      "thinking_tags": ["shift"],
       "skill_codes": ["C6.MON.02"],
       "learning_objective_codes": [
         "LO-C6.MON.02-01",
@@ -1557,7 +1557,7 @@
       "instruction": "Bé đo và so sánh chiều dài các vật thể!",
       "theme_tag": "nature",
       "what_tags": ["number", "quantity", "pattern"],
-      "thinking_tags": ["verify"],
+      "thinking_tags": ["observe"],
       "skill_codes": ["C6.MON.03"],
       "learning_objective_codes": [
         "LO-C6.MON.03-01",
@@ -1637,7 +1637,7 @@
       "instruction": "Bé đo và so sánh chiều dài các vật thể!",
       "theme_tag": "ocean",
       "what_tags": ["number", "quantity", "pattern"],
-      "thinking_tags": ["verify"],
+      "thinking_tags": ["observe"],
       "skill_codes": ["C6.MON.03"],
       "learning_objective_codes": [
         "LO-C6.MON.03-01",
@@ -1716,8 +1716,8 @@
       "title": "Xem giờ trên đồng hồ",
       "instruction": "Bé quan sát kim giờ phút đọc thời gian nhé!",
       "theme_tag": "food",
-      "what_tags": ["number", "quantity"],
-      "thinking_tags": ["verify"],
+      "what_tags": ["number", "quantity", "ops"],
+      "thinking_tags": ["observe"],
       "skill_codes": ["C6.MON.03"],
       "learning_objective_codes": [
         "LO-C6.MON.03-01",
@@ -1812,8 +1812,8 @@
       "title": "Xem giờ trên đồng hồ",
       "instruction": "Bé quan sát kim giờ phút đọc thời gian nhé!",
       "theme_tag": "vehicle",
-      "what_tags": ["number", "quantity"],
-      "thinking_tags": ["verify"],
+      "what_tags": ["number", "quantity", "ops"],
+      "thinking_tags": ["observe"],
       "skill_codes": ["C6.MON.03"],
       "learning_objective_codes": [
         "LO-C6.MON.03-01",
@@ -1930,7 +1930,7 @@
       "instruction": "Bé tính tổng mệnh giá các đồng xu cho đúng!",
       "theme_tag": "art",
       "what_tags": ["size", "quantity", "number"],
-      "thinking_tags": ["verify"],
+      "thinking_tags": ["observe"],
       "skill_codes": ["C6.MON.03"],
       "learning_objective_codes": [
         "LO-C6.MON.03-01",
@@ -1995,7 +1995,7 @@
       "instruction": "Bé tính tổng mệnh giá các đồng xu cho đúng!",
       "theme_tag": "space",
       "what_tags": ["size", "quantity", "number"],
-      "thinking_tags": ["verify"],
+      "thinking_tags": ["observe"],
       "skill_codes": ["C6.MON.03"],
       "learning_objective_codes": [
         "LO-C6.MON.03-01",
@@ -2065,7 +2065,7 @@
       "instruction": "Bé phân tích biểu đồ tranh để chọn đáp án!",
       "theme_tag": "family",
       "what_tags": ["money", "number", "quantity"],
-      "thinking_tags": ["verify"],
+      "thinking_tags": ["observe"],
       "skill_codes": ["C6.MON.03"],
       "learning_objective_codes": [
         "LO-C6.MON.03-01",
@@ -2141,7 +2141,7 @@
       "instruction": "Bé phân tích biểu đồ tranh để chọn đáp án!",
       "theme_tag": "body",
       "what_tags": ["money", "number", "quantity"],
-      "thinking_tags": ["verify"],
+      "thinking_tags": ["observe"],
       "skill_codes": ["C6.MON.03"],
       "learning_objective_codes": [
         "LO-C6.MON.03-01",
@@ -2224,8 +2224,8 @@
       "title": "Biểu đồ Venn phân loại Mặt trời",
       "instruction": "Bé phân loại vào phần giao của biểu đồ Venn!",
       "theme_tag": "weather",
-      "what_tags": ["quantity", "size"],
-      "thinking_tags": ["verify"],
+      "what_tags": ["msr", "quantity", "size"],
+      "thinking_tags": ["observe"],
       "skill_codes": ["C6.MON.03"],
       "learning_objective_codes": [
         "LO-C6.MON.03-01",
@@ -2276,8 +2276,8 @@
       "title": "Biểu đồ Venn phân loại Bao lì xì",
       "instruction": "Bé phân loại vào phần giao của biểu đồ Venn!",
       "theme_tag": "festival",
-      "what_tags": ["quantity", "size"],
-      "thinking_tags": ["verify"],
+      "what_tags": ["msr", "quantity", "size"],
+      "thinking_tags": ["observe"],
       "skill_codes": ["C6.MON.03"],
       "learning_objective_codes": [
         "LO-C6.MON.03-01",

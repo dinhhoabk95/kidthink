@@ -37,6 +37,10 @@ catalog:
   # Accessibility & Browser Testing — Task 4 (BR-A11-01)
   "@playwright/test": ^1.50.0
   "@axe-core/playwright": ^4.10.0
+  # Task #203: bàn chụp engine. Ghim CỨNG 1.59.1 — nó ánh xạ sang chromium build
+  # 1223, bản duy nhất đã có sẵn trên máy dev. Dải ^ sẽ kéo 1.61+ vốn đòi build
+  # 1228 và bắt tải lại toàn bộ browser.
+  playwright: 1.59.1
 
   # Auth — Task #85: nuxt-auth-utils >=0.5.30 for opaque session locator projection
   "nuxt-auth-utils": ^0.5.30

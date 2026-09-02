@@ -6,7 +6,7 @@
       "title": "Tìm Trường học giống mẫu",
       "instruction": "Bé chạm vào Trường học giống mẫu nhé!",
       "theme_tag": "school",
-      "what_tags": ["classification", "number"],
+      "what_tags": ["cls", "shp", "number"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C1.NREC.01"],
       "learning_objective_codes": [
@@ -72,7 +72,7 @@
       "title": "Tìm Bò sữa giống mẫu",
       "instruction": "Bé chạm vào Bò sữa giống mẫu nhé!",
       "theme_tag": "farm",
-      "what_tags": ["classification", "number"],
+      "what_tags": ["cls", "shp", "number"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C1.NREC.01"],
       "learning_objective_codes": [
@@ -146,7 +146,7 @@
       "title": "So sánh nhóm Cây xanh",
       "instruction": "Bé chọn nhóm nhiều Cây xanh hơn nhé!",
       "theme_tag": "nature",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C1.NREC.01"],
       "learning_objective_codes": [
@@ -213,7 +213,7 @@
       "title": "So sánh nhóm Cá heo",
       "instruction": "Bé chọn nhóm nhiều Cá heo hơn nhé!",
       "theme_tag": "ocean",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C1.NREC.01"],
       "learning_objective_codes": [
@@ -280,7 +280,7 @@
       "title": "So sánh nhóm Bánh mì",
       "instruction": "Bé chọn nhóm nhiều Bánh mì hơn nhé!",
       "theme_tag": "food",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C1.NREC.01"],
       "learning_objective_codes": [
@@ -342,79 +342,12 @@
   },
   {
     "header": {
-      "code": "GL-C1-NREC-TCMP-0004",
-      "template_code": "GT-003",
-      "title": "So sánh nhóm Tàu hoả",
-      "instruction": "Bé chọn nhóm nhiều Tàu hoả hơn nhé!",
-      "theme_tag": "vehicle",
-      "what_tags": ["classification"],
-      "thinking_tags": ["observe"],
-      "skill_codes": ["C1.NREC.01"],
-      "learning_objective_codes": [
-        "LO-C1.NREC.01-01",
-        "LO-C1.NREC.01-02",
-        "LO-C1.NREC.01-03"
-      ],
-      "difficulty": 2,
-      "age_min": 3,
-      "age_max": 4,
-      "access_tier": "premium",
-      "content_version": 1,
-      "authored_in": "repo_seed",
-      "origin": "ai_assisted"
-    },
-    "content_pack": {
-      "prompt": "Bé hãy kéo các đồ vật thích hợp vào giỏ nhé!",
-      "container": {
-        "container_id": "basket_1",
-        "label": "Giỏ đồ",
-        "accepts_attribute": "target_attr"
-      },
-      "items": [
-        {
-          "item_id": "item_1",
-          "attribute": "target_attr",
-          "asset": {
-            "kind": "emoji",
-            "ref": "EMJ-bicycle"
-          },
-          "is_correct": true
-        },
-        {
-          "item_id": "item_2",
-          "attribute": "target_attr",
-          "asset": {
-            "kind": "emoji",
-            "ref": "EMJ-helicopter"
-          },
-          "is_correct": true
-        },
-        {
-          "item_id": "item_3",
-          "attribute": "other_attr",
-          "asset": {
-            "kind": "emoji",
-            "ref": "EMJ-motorcycle"
-          },
-          "is_correct": false
-        }
-      ]
-    },
-    "difficulty_params": {
-      "distractor_count": 1,
-      "target_count": 2,
-      "hint_after_ms": 10000,
-      "allow_retry": true
-    }
-  },
-  {
-    "header": {
       "code": "GL-C1-NREC-PATT-0001",
       "template_code": "GT-005",
       "title": "Xếp Bảng vẽ theo quy luật",
       "instruction": "Bé chọn Bảng vẽ tiếp theo theo quy luật!",
       "theme_tag": "art",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C1.NREC.01"],
       "learning_objective_codes": [
@@ -482,7 +415,7 @@
       "title": "Xếp Cây đàn ghi-ta theo quy luật",
       "instruction": "Bé chọn Cây đàn ghi-ta tiếp theo theo quy luật!",
       "theme_tag": "art",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C1.NREC.01"],
       "learning_objective_codes": [
@@ -550,7 +483,7 @@
       "title": "Xếp Bà theo quy luật",
       "instruction": "Bé chọn Bà tiếp theo theo quy luật!",
       "theme_tag": "family",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C1.NREC.01"],
       "learning_objective_codes": [
@@ -618,7 +551,7 @@
       "title": "Xếp Miệng theo quy luật",
       "instruction": "Bé chọn Miệng tiếp theo theo quy luật!",
       "theme_tag": "body",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C1.NREC.01"],
       "learning_objective_codes": [
@@ -686,7 +619,7 @@
       "title": "Kéo Mặt trời vào đúng ô",
       "instruction": "Bé kéo Mặt trời vào đúng ô nhé!",
       "theme_tag": "weather",
-      "what_tags": ["classification"],
+      "what_tags": ["spt"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C1.NREC.01"],
       "learning_objective_codes": [
@@ -750,7 +683,7 @@
       "title": "Kéo Bao lì xì vào đúng ô",
       "instruction": "Bé kéo Bao lì xì vào đúng ô nhé!",
       "theme_tag": "festival",
-      "what_tags": ["classification"],
+      "what_tags": ["spt"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C1.NREC.01"],
       "learning_objective_codes": [
@@ -814,7 +747,7 @@
       "title": "Kéo Bút chì vào đúng ô",
       "instruction": "Bé kéo Bút chì vào đúng ô nhé!",
       "theme_tag": "school",
-      "what_tags": ["classification"],
+      "what_tags": ["spt"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C1.NREC.01"],
       "learning_objective_codes": [
@@ -878,7 +811,7 @@
       "title": "Kéo Heo vào đúng ô",
       "instruction": "Bé kéo Heo vào đúng ô nhé!",
       "theme_tag": "farm",
-      "what_tags": ["classification"],
+      "what_tags": ["spt"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C1.NREC.01"],
       "learning_objective_codes": [
@@ -942,7 +875,7 @@
       "title": "Tìm cặp thẻ Ngôi nhà giống nhau",
       "instruction": "Bé lật mở cặp Ngôi nhà giống nhau nhé!",
       "theme_tag": "home",
-      "what_tags": ["subitizing", "number"],
+      "what_tags": ["mem", "cnt", "number"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C1.NREC.01"],
       "learning_objective_codes": [
@@ -1015,7 +948,7 @@
       "title": "Tìm cặp thẻ Voi giống nhau",
       "instruction": "Bé lật mở cặp Voi giống nhau nhé!",
       "theme_tag": "animal",
-      "what_tags": ["subitizing", "number"],
+      "what_tags": ["mem", "cnt", "number"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C1.NREC.01"],
       "learning_objective_codes": [
@@ -1081,7 +1014,7 @@
       "title": "Tìm cặp thẻ Cỏ bốn lá giống nhau",
       "instruction": "Bé lật mở cặp Cỏ bốn lá giống nhau nhé!",
       "theme_tag": "nature",
-      "what_tags": ["subitizing", "number"],
+      "what_tags": ["mem", "cnt", "number"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C1.NREC.01"],
       "learning_objective_codes": [
@@ -1154,7 +1087,7 @@
       "title": "Tìm cặp thẻ Cua giống nhau",
       "instruction": "Bé lật mở cặp Cua giống nhau nhé!",
       "theme_tag": "ocean",
-      "what_tags": ["subitizing", "number"],
+      "what_tags": ["mem", "cnt", "number"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C1.NREC.01"],
       "learning_objective_codes": [
@@ -1220,7 +1153,7 @@
       "title": "Tìm Táo đỏ giống mẫu",
       "instruction": "Bé chạm vào Táo đỏ giống mẫu nhé!",
       "theme_tag": "food",
-      "what_tags": ["classification", "number"],
+      "what_tags": ["cls", "shp", "number"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C1.NREC.02"],
       "learning_objective_codes": [
@@ -1286,7 +1219,7 @@
       "title": "Tìm Xe buýt giống mẫu",
       "instruction": "Bé chạm vào Xe buýt giống mẫu nhé!",
       "theme_tag": "vehicle",
-      "what_tags": ["classification", "number"],
+      "what_tags": ["cls", "shp", "number"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C1.NREC.02"],
       "learning_objective_codes": [
@@ -1360,7 +1293,7 @@
       "title": "Tìm Kèn saxophone giống mẫu",
       "instruction": "Bé chạm vào Kèn saxophone giống mẫu nhé!",
       "theme_tag": "art",
-      "what_tags": ["classification", "number"],
+      "what_tags": ["cls", "shp", "number"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C1.NREC.02"],
       "learning_objective_codes": [
@@ -1429,12 +1362,12 @@
   },
   {
     "header": {
-      "code": "GL-C1-NREC-TCMP-0005",
+      "code": "GL-C1-NREC-TCMP-0004",
       "template_code": "GT-003",
       "title": "So sánh nhóm Gia đình",
       "instruction": "Bé chọn nhóm nhiều Gia đình hơn nhé!",
       "theme_tag": "family",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C1.NREC.02"],
       "learning_objective_codes": [
@@ -1445,7 +1378,7 @@
       "difficulty": 1,
       "age_min": 3,
       "age_max": 4,
-      "access_tier": "standard",
+      "access_tier": "premium",
       "content_version": 1,
       "authored_in": "repo_seed",
       "origin": "ai_assisted"
@@ -1496,12 +1429,12 @@
   },
   {
     "header": {
-      "code": "GL-C1-NREC-TCMP-0006",
+      "code": "GL-C1-NREC-TCMP-0005",
       "template_code": "GT-003",
       "title": "So sánh nhóm Tai",
       "instruction": "Bé chọn nhóm nhiều Tai hơn nhé!",
       "theme_tag": "body",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C1.NREC.02"],
       "learning_objective_codes": [
@@ -1512,7 +1445,7 @@
       "difficulty": 2,
       "age_min": 3,
       "age_max": 4,
-      "access_tier": "premium",
+      "access_tier": "standard",
       "content_version": 1,
       "authored_in": "repo_seed",
       "origin": "ai_assisted"
@@ -1563,12 +1496,12 @@
   },
   {
     "header": {
-      "code": "GL-C1-NREC-TCMP-0007",
+      "code": "GL-C1-NREC-TCMP-0006",
       "template_code": "GT-003",
       "title": "So sánh nhóm Mưa",
       "instruction": "Bé chọn nhóm nhiều Mưa hơn nhé!",
       "theme_tag": "weather",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C1.NREC.02"],
       "learning_objective_codes": [
@@ -1579,7 +1512,7 @@
       "difficulty": 1,
       "age_min": 3,
       "age_max": 4,
-      "access_tier": "standard",
+      "access_tier": "premium",
       "content_version": 1,
       "authored_in": "repo_seed",
       "origin": "ai_assisted"
@@ -1630,79 +1563,12 @@
   },
   {
     "header": {
-      "code": "GL-C1-NREC-TCMP-0008",
-      "template_code": "GT-003",
-      "title": "So sánh nhóm Bí ngô Halloween",
-      "instruction": "Bé chọn nhóm nhiều Bí ngô Halloween hơn nhé!",
-      "theme_tag": "festival",
-      "what_tags": ["classification"],
-      "thinking_tags": ["observe"],
-      "skill_codes": ["C1.NREC.02"],
-      "learning_objective_codes": [
-        "LO-C1.NREC.02-01",
-        "LO-C1.NREC.02-02",
-        "LO-C1.NREC.02-03"
-      ],
-      "difficulty": 2,
-      "age_min": 3,
-      "age_max": 4,
-      "access_tier": "premium",
-      "content_version": 1,
-      "authored_in": "repo_seed",
-      "origin": "ai_assisted"
-    },
-    "content_pack": {
-      "prompt": "Bé hãy kéo các đồ vật thích hợp vào giỏ nhé!",
-      "container": {
-        "container_id": "basket_1",
-        "label": "Giỏ đồ",
-        "accepts_attribute": "target_attr"
-      },
-      "items": [
-        {
-          "item_id": "item_1",
-          "attribute": "target_attr",
-          "asset": {
-            "kind": "emoji",
-            "ref": "EMJ-fireworks"
-          },
-          "is_correct": true
-        },
-        {
-          "item_id": "item_2",
-          "attribute": "target_attr",
-          "asset": {
-            "kind": "emoji",
-            "ref": "EMJ-gift"
-          },
-          "is_correct": true
-        },
-        {
-          "item_id": "item_3",
-          "attribute": "other_attr",
-          "asset": {
-            "kind": "emoji",
-            "ref": "EMJ-confetti-ball"
-          },
-          "is_correct": false
-        }
-      ]
-    },
-    "difficulty_params": {
-      "distractor_count": 1,
-      "target_count": 2,
-      "hint_after_ms": 10000,
-      "allow_retry": true
-    }
-  },
-  {
-    "header": {
       "code": "GL-C1-NREC-PATT-0005",
       "template_code": "GT-005",
       "title": "Xếp Trường học theo quy luật",
       "instruction": "Bé chọn Trường học tiếp theo theo quy luật!",
       "theme_tag": "school",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C1.NREC.02"],
       "learning_objective_codes": [
@@ -1770,7 +1636,7 @@
       "title": "Xếp Bò sữa theo quy luật",
       "instruction": "Bé chọn Bò sữa tiếp theo theo quy luật!",
       "theme_tag": "farm",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C1.NREC.02"],
       "learning_objective_codes": [
@@ -1838,7 +1704,7 @@
       "title": "Xếp Cái ghế theo quy luật",
       "instruction": "Bé chọn Cái ghế tiếp theo theo quy luật!",
       "theme_tag": "home",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C1.NREC.02"],
       "learning_objective_codes": [
@@ -1906,7 +1772,7 @@
       "title": "Xếp Khỉ theo quy luật",
       "instruction": "Bé chọn Khỉ tiếp theo theo quy luật!",
       "theme_tag": "animal",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C1.NREC.02"],
       "learning_objective_codes": [
@@ -1974,7 +1840,7 @@
       "title": "Kéo Cây xanh vào đúng ô",
       "instruction": "Bé kéo Cây xanh vào đúng ô nhé!",
       "theme_tag": "nature",
-      "what_tags": ["classification"],
+      "what_tags": ["spt"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C1.NREC.02"],
       "learning_objective_codes": [
@@ -2038,7 +1904,7 @@
       "title": "Kéo Cá heo vào đúng ô",
       "instruction": "Bé kéo Cá heo vào đúng ô nhé!",
       "theme_tag": "ocean",
-      "what_tags": ["classification"],
+      "what_tags": ["spt"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C1.NREC.02"],
       "learning_objective_codes": [
@@ -2102,7 +1968,7 @@
       "title": "Kéo Bánh mì vào đúng ô",
       "instruction": "Bé kéo Bánh mì vào đúng ô nhé!",
       "theme_tag": "food",
-      "what_tags": ["classification"],
+      "what_tags": ["spt"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C1.NREC.02"],
       "learning_objective_codes": [
@@ -2166,7 +2032,7 @@
       "title": "Kéo Tàu hoả vào đúng ô",
       "instruction": "Bé kéo Tàu hoả vào đúng ô nhé!",
       "theme_tag": "vehicle",
-      "what_tags": ["classification"],
+      "what_tags": ["spt"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C1.NREC.02"],
       "learning_objective_codes": [
@@ -2230,7 +2096,7 @@
       "title": "Tìm cặp thẻ Bảng vẽ giống nhau",
       "instruction": "Bé lật mở cặp Bảng vẽ giống nhau nhé!",
       "theme_tag": "art",
-      "what_tags": ["subitizing", "number"],
+      "what_tags": ["mem", "cnt", "number"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C1.NREC.02"],
       "learning_objective_codes": [
@@ -2296,7 +2162,7 @@
       "title": "Tìm cặp thẻ Cây đàn ghi-ta giống nhau",
       "instruction": "Bé lật mở cặp Cây đàn ghi-ta giống nhau nhé!",
       "theme_tag": "art",
-      "what_tags": ["subitizing", "number"],
+      "what_tags": ["mem", "cnt", "number"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C1.NREC.02"],
       "learning_objective_codes": [
@@ -2369,7 +2235,7 @@
       "title": "Tìm cặp thẻ Bà giống nhau",
       "instruction": "Bé lật mở cặp Bà giống nhau nhé!",
       "theme_tag": "family",
-      "what_tags": ["subitizing", "number"],
+      "what_tags": ["mem", "cnt", "number"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C1.NREC.02"],
       "learning_objective_codes": [
@@ -2435,7 +2301,7 @@
       "title": "Tìm cặp thẻ Miệng giống nhau",
       "instruction": "Bé lật mở cặp Miệng giống nhau nhé!",
       "theme_tag": "body",
-      "what_tags": ["subitizing", "number"],
+      "what_tags": ["mem", "cnt", "number"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C1.NREC.02"],
       "learning_objective_codes": [
@@ -2508,7 +2374,7 @@
       "title": "Tìm Mặt trời giống mẫu",
       "instruction": "Bé chạm vào Mặt trời giống mẫu nhé!",
       "theme_tag": "weather",
-      "what_tags": ["classification", "number"],
+      "what_tags": ["cls", "shp", "number"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C1.NREC.03"],
       "learning_objective_codes": [
@@ -2574,7 +2440,7 @@
       "title": "Tìm Bao lì xì giống mẫu",
       "instruction": "Bé chạm vào Bao lì xì giống mẫu nhé!",
       "theme_tag": "festival",
-      "what_tags": ["classification", "number"],
+      "what_tags": ["cls", "shp", "number"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C1.NREC.03"],
       "learning_objective_codes": [
@@ -2648,7 +2514,7 @@
       "title": "Tìm Bút chì giống mẫu",
       "instruction": "Bé chạm vào Bút chì giống mẫu nhé!",
       "theme_tag": "school",
-      "what_tags": ["classification", "number"],
+      "what_tags": ["cls", "shp", "number"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C1.NREC.03"],
       "learning_objective_codes": [
@@ -2722,7 +2588,7 @@
       "title": "Tìm Heo giống mẫu",
       "instruction": "Bé chạm vào Heo giống mẫu nhé!",
       "theme_tag": "farm",
-      "what_tags": ["classification", "number"],
+      "what_tags": ["cls", "shp", "number"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C1.NREC.03"],
       "learning_objective_codes": [
@@ -2788,7 +2654,7 @@
       "title": "Đếm số lượng Ngôi nhà",
       "instruction": "Bé đếm số Ngôi nhà rồi chọn số đúng!",
       "theme_tag": "home",
-      "what_tags": ["category"],
+      "what_tags": ["cls"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C1.NREC.03"],
       "learning_objective_codes": [
@@ -2856,7 +2722,7 @@
       "title": "Đếm số lượng Voi",
       "instruction": "Bé đếm số Voi rồi chọn số đúng!",
       "theme_tag": "animal",
-      "what_tags": ["category"],
+      "what_tags": ["cls"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C1.NREC.03"],
       "learning_objective_codes": [
@@ -2924,7 +2790,7 @@
       "title": "Đếm số lượng Cỏ bốn lá",
       "instruction": "Bé đếm số Cỏ bốn lá rồi chọn số đúng!",
       "theme_tag": "nature",
-      "what_tags": ["category"],
+      "what_tags": ["cls"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C1.NREC.03"],
       "learning_objective_codes": [
@@ -2992,7 +2858,7 @@
       "title": "Đếm số lượng Cua",
       "instruction": "Bé đếm số Cua rồi chọn số đúng!",
       "theme_tag": "ocean",
-      "what_tags": ["category"],
+      "what_tags": ["cls"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C1.NREC.03"],
       "learning_objective_codes": [
@@ -3055,12 +2921,12 @@
   },
   {
     "header": {
-      "code": "GL-C1-NREC-TCMP-0009",
+      "code": "GL-C1-NREC-TCMP-0007",
       "template_code": "GT-003",
       "title": "So sánh nhóm Táo đỏ",
       "instruction": "Bé chọn nhóm nhiều Táo đỏ hơn nhé!",
       "theme_tag": "food",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C1.NREC.03"],
       "learning_objective_codes": [
@@ -3122,12 +2988,12 @@
   },
   {
     "header": {
-      "code": "GL-C1-NREC-TCMP-0010",
+      "code": "GL-C1-NREC-TCMP-0008",
       "template_code": "GT-003",
       "title": "So sánh nhóm Xe buýt",
       "instruction": "Bé chọn nhóm nhiều Xe buýt hơn nhé!",
       "theme_tag": "vehicle",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C1.NREC.03"],
       "learning_objective_codes": [
@@ -3189,12 +3055,12 @@
   },
   {
     "header": {
-      "code": "GL-C1-NREC-TCMP-0011",
+      "code": "GL-C1-NREC-TCMP-0009",
       "template_code": "GT-003",
       "title": "So sánh nhóm Kèn saxophone",
       "instruction": "Bé chọn nhóm nhiều Kèn saxophone hơn nhé!",
       "theme_tag": "art",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C1.NREC.03"],
       "learning_objective_codes": [
@@ -3256,12 +3122,12 @@
   },
   {
     "header": {
-      "code": "GL-C1-NREC-TCMP-0012",
+      "code": "GL-C1-NREC-TCMP-0010",
       "template_code": "GT-003",
       "title": "So sánh nhóm Cà rốt",
       "instruction": "Bé chọn nhóm nhiều Cà rốt hơn nhé!",
       "theme_tag": "food",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C1.NREC.03"],
       "learning_objective_codes": [
@@ -3328,7 +3194,7 @@
       "title": "Ghép đôi Gia đình tương ứng",
       "instruction": "Bé ghép đôi các Gia đình tương ứng nhé!",
       "theme_tag": "family",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C1.NREC.03"],
       "learning_objective_codes": [
@@ -3407,7 +3273,7 @@
       "title": "Ghép đôi Tai tương ứng",
       "instruction": "Bé ghép đôi các Tai tương ứng nhé!",
       "theme_tag": "body",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C1.NREC.03"],
       "learning_objective_codes": [
@@ -3486,7 +3352,7 @@
       "title": "Ghép đôi Mưa tương ứng",
       "instruction": "Bé ghép đôi các Mưa tương ứng nhé!",
       "theme_tag": "weather",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C1.NREC.03"],
       "learning_objective_codes": [
@@ -3565,7 +3431,7 @@
       "title": "Ghép đôi Bí ngô Halloween tương ứng",
       "instruction": "Bé ghép đôi các Bí ngô Halloween tương ứng nhé!",
       "theme_tag": "festival",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C1.NREC.03"],
       "learning_objective_codes": [
@@ -3644,7 +3510,7 @@
       "title": "Xếp Trường học theo quy luật",
       "instruction": "Bé chọn Trường học tiếp theo theo quy luật!",
       "theme_tag": "school",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C1.NREC.03"],
       "learning_objective_codes": [
@@ -3712,7 +3578,7 @@
       "title": "Xếp Bò sữa theo quy luật",
       "instruction": "Bé chọn Bò sữa tiếp theo theo quy luật!",
       "theme_tag": "farm",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C1.NREC.03"],
       "learning_objective_codes": [
@@ -3780,7 +3646,7 @@
       "title": "Xếp Cái ghế theo quy luật",
       "instruction": "Bé chọn Cái ghế tiếp theo theo quy luật!",
       "theme_tag": "home",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C1.NREC.03"],
       "learning_objective_codes": [
@@ -3848,7 +3714,7 @@
       "title": "Xếp Khỉ theo quy luật",
       "instruction": "Bé chọn Khỉ tiếp theo theo quy luật!",
       "theme_tag": "animal",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C1.NREC.03"],
       "learning_objective_codes": [
@@ -3916,7 +3782,7 @@
       "title": "Tìm Cây xanh giống mẫu",
       "instruction": "Bé tìm Cây xanh giống hình mẫu nhé!",
       "theme_tag": "nature",
-      "what_tags": ["classification", "number"],
+      "what_tags": ["cls", "shp", "number"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C1.NREC.04"],
       "learning_objective_codes": [
@@ -3990,7 +3856,7 @@
       "title": "Tìm Cá heo giống mẫu",
       "instruction": "Bé tìm Cá heo giống hình mẫu nhé!",
       "theme_tag": "ocean",
-      "what_tags": ["classification", "number"],
+      "what_tags": ["cls", "shp", "number"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C1.NREC.04"],
       "learning_objective_codes": [
@@ -4072,7 +3938,7 @@
       "title": "Tìm Bánh mì giống mẫu",
       "instruction": "Bé tìm Bánh mì giống hình mẫu nhé!",
       "theme_tag": "food",
-      "what_tags": ["classification", "number"],
+      "what_tags": ["cls", "shp", "number"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C1.NREC.04"],
       "learning_objective_codes": [
@@ -4154,7 +4020,7 @@
       "title": "Tìm Tàu hoả giống mẫu",
       "instruction": "Bé tìm Tàu hoả giống hình mẫu nhé!",
       "theme_tag": "vehicle",
-      "what_tags": ["classification", "number"],
+      "what_tags": ["cls", "shp", "number"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C1.NREC.04"],
       "learning_objective_codes": [
@@ -4228,7 +4094,7 @@
       "title": "Đếm số lượng Bảng vẽ",
       "instruction": "Bé đếm số Bảng vẽ rồi chọn số đúng!",
       "theme_tag": "art",
-      "what_tags": ["category"],
+      "what_tags": ["cls"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C1.NREC.04"],
       "learning_objective_codes": [
@@ -4296,7 +4162,7 @@
       "title": "Đếm số lượng Hành tinh",
       "instruction": "Bé đếm số Hành tinh rồi chọn số đúng!",
       "theme_tag": "space",
-      "what_tags": ["category"],
+      "what_tags": ["cls"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C1.NREC.04"],
       "learning_objective_codes": [
@@ -4364,7 +4230,7 @@
       "title": "Đếm số lượng Bà",
       "instruction": "Bé đếm số Bà rồi chọn số đúng!",
       "theme_tag": "family",
-      "what_tags": ["category"],
+      "what_tags": ["cls"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C1.NREC.04"],
       "learning_objective_codes": [
@@ -4432,7 +4298,7 @@
       "title": "Đếm số lượng Miệng",
       "instruction": "Bé đếm số Miệng rồi chọn số đúng!",
       "theme_tag": "body",
-      "what_tags": ["category"],
+      "what_tags": ["cls"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C1.NREC.04"],
       "learning_objective_codes": [
@@ -4495,12 +4361,12 @@
   },
   {
     "header": {
-      "code": "GL-C1-NREC-TCMP-0013",
+      "code": "GL-C1-NREC-TCMP-0011",
       "template_code": "GT-003",
       "title": "So sánh nhóm Mặt trời",
       "instruction": "Bé chọn nhóm có nhiều Mặt trời hơn nhé!",
       "theme_tag": "weather",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C1.NREC.04"],
       "learning_objective_codes": [
@@ -4571,12 +4437,12 @@
   },
   {
     "header": {
-      "code": "GL-C1-NREC-TCMP-0014",
+      "code": "GL-C1-NREC-TCMP-0012",
       "template_code": "GT-003",
       "title": "So sánh nhóm Bao lì xì",
       "instruction": "Bé chọn nhóm có nhiều Bao lì xì hơn nhé!",
       "theme_tag": "festival",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C1.NREC.04"],
       "learning_objective_codes": [
@@ -4647,12 +4513,12 @@
   },
   {
     "header": {
-      "code": "GL-C1-NREC-TCMP-0015",
+      "code": "GL-C1-NREC-TCMP-0013",
       "template_code": "GT-003",
       "title": "So sánh nhóm Bút chì",
       "instruction": "Bé chọn nhóm có nhiều Bút chì hơn nhé!",
       "theme_tag": "school",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C1.NREC.04"],
       "learning_objective_codes": [
@@ -4723,12 +4589,12 @@
   },
   {
     "header": {
-      "code": "GL-C1-NREC-TCMP-0016",
+      "code": "GL-C1-NREC-TCMP-0014",
       "template_code": "GT-003",
       "title": "So sánh nhóm Heo",
       "instruction": "Bé chọn nhóm có nhiều Heo hơn nhé!",
       "theme_tag": "farm",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C1.NREC.04"],
       "learning_objective_codes": [
@@ -4804,7 +4670,7 @@
       "title": "Ghép đôi Ngôi nhà tương ứng",
       "instruction": "Bé ghép đôi các Ngôi nhà tương ứng nhé!",
       "theme_tag": "home",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C1.NREC.04"],
       "learning_objective_codes": [
@@ -4883,7 +4749,7 @@
       "title": "Ghép đôi Voi tương ứng",
       "instruction": "Bé ghép đôi các Voi tương ứng nhé!",
       "theme_tag": "animal",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C1.NREC.04"],
       "learning_objective_codes": [
@@ -4962,7 +4828,7 @@
       "title": "Ghép đôi Cỏ bốn lá tương ứng",
       "instruction": "Bé ghép đôi các Cỏ bốn lá tương ứng nhé!",
       "theme_tag": "nature",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C1.NREC.04"],
       "learning_objective_codes": [
@@ -5041,7 +4907,7 @@
       "title": "Ghép đôi Cua tương ứng",
       "instruction": "Bé ghép đôi các Cua tương ứng nhé!",
       "theme_tag": "ocean",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C1.NREC.04"],
       "learning_objective_codes": [
@@ -5120,7 +4986,7 @@
       "title": "Xếp Táo đỏ theo quy luật",
       "instruction": "Bé tìm Táo đỏ còn thiếu trong dãy quy luật!",
       "theme_tag": "food",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C1.NREC.04"],
       "learning_objective_codes": [
@@ -5205,7 +5071,7 @@
       "title": "Xếp Xe buýt theo quy luật",
       "instruction": "Bé tìm Xe buýt còn thiếu trong dãy quy luật!",
       "theme_tag": "vehicle",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C1.NREC.04"],
       "learning_objective_codes": [
@@ -5290,7 +5156,7 @@
       "title": "Xếp Kèn saxophone theo quy luật",
       "instruction": "Bé tìm Kèn saxophone còn thiếu trong dãy quy luật!",
       "theme_tag": "art",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C1.NREC.04"],
       "learning_objective_codes": [
@@ -5375,7 +5241,7 @@
       "title": "Xếp Phi hành gia theo quy luật",
       "instruction": "Bé tìm Phi hành gia còn thiếu trong dãy quy luật!",
       "theme_tag": "space",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C1.NREC.04"],
       "learning_objective_codes": [
@@ -5460,7 +5326,7 @@
       "title": "Tìm Gia đình giống mẫu",
       "instruction": "Bé chạm vào Gia đình giống mẫu nhé!",
       "theme_tag": "family",
-      "what_tags": ["classification", "number"],
+      "what_tags": ["cls", "shp", "number"],
       "thinking_tags": ["match"],
       "skill_codes": ["C1.NREC.05"],
       "learning_objective_codes": [
@@ -5526,7 +5392,7 @@
       "title": "Tìm Tai giống mẫu",
       "instruction": "Bé chạm vào Tai giống mẫu nhé!",
       "theme_tag": "body",
-      "what_tags": ["classification", "number"],
+      "what_tags": ["cls", "shp", "number"],
       "thinking_tags": ["match"],
       "skill_codes": ["C1.NREC.05"],
       "learning_objective_codes": [
@@ -5600,7 +5466,7 @@
       "title": "Tìm Mưa giống mẫu",
       "instruction": "Bé chạm vào Mưa giống mẫu nhé!",
       "theme_tag": "weather",
-      "what_tags": ["classification", "number"],
+      "what_tags": ["cls", "shp", "number"],
       "thinking_tags": ["match"],
       "skill_codes": ["C1.NREC.05"],
       "learning_objective_codes": [
@@ -5674,7 +5540,7 @@
       "title": "Tìm Bí ngô Halloween giống mẫu",
       "instruction": "Bé chạm vào Bí ngô Halloween giống mẫu nhé!",
       "theme_tag": "festival",
-      "what_tags": ["classification", "number"],
+      "what_tags": ["cls", "shp", "number"],
       "thinking_tags": ["match"],
       "skill_codes": ["C1.NREC.05"],
       "learning_objective_codes": [
@@ -5735,12 +5601,12 @@
   },
   {
     "header": {
-      "code": "GL-C1-NREC-TCMP-0017",
+      "code": "GL-C1-NREC-TCMP-0015",
       "template_code": "GT-003",
       "title": "So sánh nhóm Trường học",
       "instruction": "Bé chọn nhóm nhiều Trường học hơn nhé!",
       "theme_tag": "school",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["match"],
       "skill_codes": ["C1.NREC.05"],
       "learning_objective_codes": [
@@ -5802,12 +5668,12 @@
   },
   {
     "header": {
-      "code": "GL-C1-NREC-TCMP-0018",
+      "code": "GL-C1-NREC-TCMP-0016",
       "template_code": "GT-003",
       "title": "So sánh nhóm Bò sữa",
       "instruction": "Bé chọn nhóm nhiều Bò sữa hơn nhé!",
       "theme_tag": "farm",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["match"],
       "skill_codes": ["C1.NREC.05"],
       "learning_objective_codes": [
@@ -5869,12 +5735,12 @@
   },
   {
     "header": {
-      "code": "GL-C1-NREC-TCMP-0019",
+      "code": "GL-C1-NREC-TCMP-0017",
       "template_code": "GT-003",
       "title": "So sánh nhóm Cái ghế",
       "instruction": "Bé chọn nhóm nhiều Cái ghế hơn nhé!",
       "theme_tag": "home",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["match"],
       "skill_codes": ["C1.NREC.05"],
       "learning_objective_codes": [
@@ -5936,12 +5802,12 @@
   },
   {
     "header": {
-      "code": "GL-C1-NREC-TCMP-0020",
+      "code": "GL-C1-NREC-TCMP-0018",
       "template_code": "GT-003",
       "title": "So sánh nhóm Khỉ",
       "instruction": "Bé chọn nhóm nhiều Khỉ hơn nhé!",
       "theme_tag": "animal",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["match"],
       "skill_codes": ["C1.NREC.05"],
       "learning_objective_codes": [
@@ -6008,7 +5874,7 @@
       "title": "Xếp Cây xanh theo quy luật",
       "instruction": "Bé chọn Cây xanh tiếp theo theo quy luật!",
       "theme_tag": "nature",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["match"],
       "skill_codes": ["C1.NREC.05"],
       "learning_objective_codes": [
@@ -6076,7 +5942,7 @@
       "title": "Xếp Cá heo theo quy luật",
       "instruction": "Bé chọn Cá heo tiếp theo theo quy luật!",
       "theme_tag": "ocean",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["match"],
       "skill_codes": ["C1.NREC.05"],
       "learning_objective_codes": [
@@ -6144,7 +6010,7 @@
       "title": "Xếp Bánh mì theo quy luật",
       "instruction": "Bé chọn Bánh mì tiếp theo theo quy luật!",
       "theme_tag": "food",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["match"],
       "skill_codes": ["C1.NREC.05"],
       "learning_objective_codes": [
@@ -6212,7 +6078,7 @@
       "title": "Xếp Tàu hoả theo quy luật",
       "instruction": "Bé chọn Tàu hoả tiếp theo theo quy luật!",
       "theme_tag": "vehicle",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["match"],
       "skill_codes": ["C1.NREC.05"],
       "learning_objective_codes": [
@@ -6280,7 +6146,7 @@
       "title": "Kéo Bảng vẽ vào đúng ô",
       "instruction": "Bé kéo Bảng vẽ vào đúng ô nhé!",
       "theme_tag": "art",
-      "what_tags": ["classification"],
+      "what_tags": ["spt"],
       "thinking_tags": ["match"],
       "skill_codes": ["C1.NREC.05"],
       "learning_objective_codes": [
@@ -6344,7 +6210,7 @@
       "title": "Kéo Cây đàn ghi-ta vào đúng ô",
       "instruction": "Bé kéo Cây đàn ghi-ta vào đúng ô nhé!",
       "theme_tag": "art",
-      "what_tags": ["classification"],
+      "what_tags": ["spt"],
       "thinking_tags": ["match"],
       "skill_codes": ["C1.NREC.05"],
       "learning_objective_codes": [
@@ -6408,7 +6274,7 @@
       "title": "Kéo Bà vào đúng ô",
       "instruction": "Bé kéo Bà vào đúng ô nhé!",
       "theme_tag": "family",
-      "what_tags": ["classification"],
+      "what_tags": ["spt"],
       "thinking_tags": ["match"],
       "skill_codes": ["C1.NREC.05"],
       "learning_objective_codes": [
@@ -6472,7 +6338,7 @@
       "title": "Kéo Miệng vào đúng ô",
       "instruction": "Bé kéo Miệng vào đúng ô nhé!",
       "theme_tag": "body",
-      "what_tags": ["classification"],
+      "what_tags": ["spt"],
       "thinking_tags": ["match"],
       "skill_codes": ["C1.NREC.05"],
       "learning_objective_codes": [
@@ -6536,7 +6402,7 @@
       "title": "Bảng lưới logic với Mặt trời",
       "instruction": "Bé xếp Mặt trời vào ô phù hợp nhé!",
       "theme_tag": "weather",
-      "what_tags": ["classification"],
+      "what_tags": ["mem", "cls"],
       "thinking_tags": ["match"],
       "skill_codes": ["C1.NREC.05"],
       "learning_objective_codes": [
@@ -6605,7 +6471,7 @@
       "title": "Bảng lưới logic với Bao lì xì",
       "instruction": "Bé xếp Bao lì xì vào ô phù hợp nhé!",
       "theme_tag": "festival",
-      "what_tags": ["classification"],
+      "what_tags": ["mem", "cls"],
       "thinking_tags": ["match"],
       "skill_codes": ["C1.NREC.05"],
       "learning_objective_codes": [
@@ -6674,7 +6540,7 @@
       "title": "Bảng lưới logic với Bút chì",
       "instruction": "Bé xếp Bút chì vào ô phù hợp nhé!",
       "theme_tag": "school",
-      "what_tags": ["classification"],
+      "what_tags": ["mem", "cls"],
       "thinking_tags": ["match"],
       "skill_codes": ["C1.NREC.05"],
       "learning_objective_codes": [
@@ -6743,7 +6609,7 @@
       "title": "Bảng lưới logic với Heo",
       "instruction": "Bé xếp Heo vào ô phù hợp nhé!",
       "theme_tag": "farm",
-      "what_tags": ["classification"],
+      "what_tags": ["mem", "cls"],
       "thinking_tags": ["match"],
       "skill_codes": ["C1.NREC.05"],
       "learning_objective_codes": [
@@ -6812,7 +6678,7 @@
       "title": "Tìm Ngôi nhà giống mẫu",
       "instruction": "Bé chạm vào Ngôi nhà giống mẫu nhé!",
       "theme_tag": "home",
-      "what_tags": ["classification", "number"],
+      "what_tags": ["cls", "shp", "number"],
       "thinking_tags": ["observe", "match"],
       "skill_codes": ["C1.NREC.06"],
       "learning_objective_codes": [
@@ -6878,7 +6744,7 @@
       "title": "Tìm Voi giống mẫu",
       "instruction": "Bé chạm vào Voi giống mẫu nhé!",
       "theme_tag": "animal",
-      "what_tags": ["classification", "number"],
+      "what_tags": ["cls", "shp", "number"],
       "thinking_tags": ["observe", "match"],
       "skill_codes": ["C1.NREC.06"],
       "learning_objective_codes": [
@@ -6952,7 +6818,7 @@
       "title": "Tìm Cỏ bốn lá giống mẫu",
       "instruction": "Bé chạm vào Cỏ bốn lá giống mẫu nhé!",
       "theme_tag": "nature",
-      "what_tags": ["classification", "number"],
+      "what_tags": ["cls", "shp", "number"],
       "thinking_tags": ["observe", "match"],
       "skill_codes": ["C1.NREC.06"],
       "learning_objective_codes": [
@@ -7026,7 +6892,7 @@
       "title": "Tìm Cua giống mẫu",
       "instruction": "Bé chạm vào Cua giống mẫu nhé!",
       "theme_tag": "ocean",
-      "what_tags": ["classification", "number"],
+      "what_tags": ["cls", "shp", "number"],
       "thinking_tags": ["observe", "match"],
       "skill_codes": ["C1.NREC.06"],
       "learning_objective_codes": [
@@ -7092,7 +6958,7 @@
       "title": "Đếm số lượng Táo đỏ",
       "instruction": "Bé đếm số Táo đỏ rồi chọn số đúng!",
       "theme_tag": "food",
-      "what_tags": ["category"],
+      "what_tags": ["cls"],
       "thinking_tags": ["observe", "match"],
       "skill_codes": ["C1.NREC.06"],
       "learning_objective_codes": [
@@ -7160,7 +7026,7 @@
       "title": "Đếm số lượng Xe buýt",
       "instruction": "Bé đếm số Xe buýt rồi chọn số đúng!",
       "theme_tag": "vehicle",
-      "what_tags": ["category"],
+      "what_tags": ["cls"],
       "thinking_tags": ["observe", "match"],
       "skill_codes": ["C1.NREC.06"],
       "learning_objective_codes": [
@@ -7228,7 +7094,7 @@
       "title": "Đếm số lượng Kèn saxophone",
       "instruction": "Bé đếm số Kèn saxophone rồi chọn số đúng!",
       "theme_tag": "art",
-      "what_tags": ["category"],
+      "what_tags": ["cls"],
       "thinking_tags": ["observe", "match"],
       "skill_codes": ["C1.NREC.06"],
       "learning_objective_codes": [
@@ -7296,7 +7162,7 @@
       "title": "Đếm số lượng Phi hành gia",
       "instruction": "Bé đếm số Phi hành gia rồi chọn số đúng!",
       "theme_tag": "space",
-      "what_tags": ["category"],
+      "what_tags": ["cls"],
       "thinking_tags": ["observe", "match"],
       "skill_codes": ["C1.NREC.06"],
       "learning_objective_codes": [
@@ -7359,12 +7225,12 @@
   },
   {
     "header": {
-      "code": "GL-C1-NREC-TCMP-0021",
+      "code": "GL-C1-NREC-TCMP-0019",
       "template_code": "GT-003",
       "title": "So sánh nhóm Gia đình",
       "instruction": "Bé chọn nhóm nhiều Gia đình hơn nhé!",
       "theme_tag": "family",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["observe", "match"],
       "skill_codes": ["C1.NREC.06"],
       "learning_objective_codes": [
@@ -7426,12 +7292,12 @@
   },
   {
     "header": {
-      "code": "GL-C1-NREC-TCMP-0022",
+      "code": "GL-C1-NREC-TCMP-0020",
       "template_code": "GT-003",
       "title": "So sánh nhóm Tai",
       "instruction": "Bé chọn nhóm nhiều Tai hơn nhé!",
       "theme_tag": "body",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["observe", "match"],
       "skill_codes": ["C1.NREC.06"],
       "learning_objective_codes": [
@@ -7493,12 +7359,12 @@
   },
   {
     "header": {
-      "code": "GL-C1-NREC-TCMP-0023",
+      "code": "GL-C1-NREC-TCMP-0021",
       "template_code": "GT-003",
       "title": "So sánh nhóm Mưa",
       "instruction": "Bé chọn nhóm nhiều Mưa hơn nhé!",
       "theme_tag": "weather",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["observe", "match"],
       "skill_codes": ["C1.NREC.06"],
       "learning_objective_codes": [
@@ -7560,12 +7426,12 @@
   },
   {
     "header": {
-      "code": "GL-C1-NREC-TCMP-0024",
+      "code": "GL-C1-NREC-TCMP-0022",
       "template_code": "GT-003",
       "title": "So sánh nhóm Bí ngô Halloween",
       "instruction": "Bé chọn nhóm nhiều Bí ngô Halloween hơn nhé!",
       "theme_tag": "festival",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["observe", "match"],
       "skill_codes": ["C1.NREC.06"],
       "learning_objective_codes": [
@@ -7632,7 +7498,7 @@
       "title": "Ghép đôi Trường học tương ứng",
       "instruction": "Bé ghép đôi các Trường học tương ứng nhé!",
       "theme_tag": "school",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["observe", "match"],
       "skill_codes": ["C1.NREC.06"],
       "learning_objective_codes": [
@@ -7711,7 +7577,7 @@
       "title": "Ghép đôi Bò sữa tương ứng",
       "instruction": "Bé ghép đôi các Bò sữa tương ứng nhé!",
       "theme_tag": "farm",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["observe", "match"],
       "skill_codes": ["C1.NREC.06"],
       "learning_objective_codes": [
@@ -7790,7 +7656,7 @@
       "title": "Ghép đôi Cái ghế tương ứng",
       "instruction": "Bé ghép đôi các Cái ghế tương ứng nhé!",
       "theme_tag": "home",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["observe", "match"],
       "skill_codes": ["C1.NREC.06"],
       "learning_objective_codes": [
@@ -7869,7 +7735,7 @@
       "title": "Ghép đôi Khỉ tương ứng",
       "instruction": "Bé ghép đôi các Khỉ tương ứng nhé!",
       "theme_tag": "animal",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["observe", "match"],
       "skill_codes": ["C1.NREC.06"],
       "learning_objective_codes": [
@@ -7948,7 +7814,7 @@
       "title": "Xếp Cây xanh theo quy luật",
       "instruction": "Bé chọn Cây xanh tiếp theo theo quy luật!",
       "theme_tag": "nature",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["observe", "match"],
       "skill_codes": ["C1.NREC.06"],
       "learning_objective_codes": [
@@ -8016,7 +7882,7 @@
       "title": "Xếp Cá heo theo quy luật",
       "instruction": "Bé chọn Cá heo tiếp theo theo quy luật!",
       "theme_tag": "ocean",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["observe", "match"],
       "skill_codes": ["C1.NREC.06"],
       "learning_objective_codes": [
@@ -8084,7 +7950,7 @@
       "title": "Xếp Bánh mì theo quy luật",
       "instruction": "Bé chọn Bánh mì tiếp theo theo quy luật!",
       "theme_tag": "food",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["observe", "match"],
       "skill_codes": ["C1.NREC.06"],
       "learning_objective_codes": [
@@ -8152,7 +8018,7 @@
       "title": "Xếp Tàu hoả theo quy luật",
       "instruction": "Bé chọn Tàu hoả tiếp theo theo quy luật!",
       "theme_tag": "vehicle",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["observe", "match"],
       "skill_codes": ["C1.NREC.06"],
       "learning_objective_codes": [
@@ -8220,7 +8086,7 @@
       "title": "Tìm Bảng vẽ giống mẫu",
       "instruction": "Bé chạm vào Bảng vẽ giống mẫu nhé!",
       "theme_tag": "art",
-      "what_tags": ["classification", "number"],
+      "what_tags": ["cls", "shp", "number"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C1.NREC.07"],
       "learning_objective_codes": [
@@ -8286,7 +8152,7 @@
       "title": "Tìm Cây đàn ghi-ta giống mẫu",
       "instruction": "Bé chạm vào Cây đàn ghi-ta giống mẫu nhé!",
       "theme_tag": "art",
-      "what_tags": ["classification", "number"],
+      "what_tags": ["cls", "shp", "number"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C1.NREC.07"],
       "learning_objective_codes": [
@@ -8360,7 +8226,7 @@
       "title": "Tìm Bà giống mẫu",
       "instruction": "Bé chạm vào Bà giống mẫu nhé!",
       "theme_tag": "family",
-      "what_tags": ["classification", "number"],
+      "what_tags": ["cls", "shp", "number"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C1.NREC.07"],
       "learning_objective_codes": [
@@ -8434,7 +8300,7 @@
       "title": "Tìm Miệng giống mẫu",
       "instruction": "Bé chạm vào Miệng giống mẫu nhé!",
       "theme_tag": "body",
-      "what_tags": ["classification", "number"],
+      "what_tags": ["cls", "shp", "number"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C1.NREC.07"],
       "learning_objective_codes": [
@@ -8500,7 +8366,7 @@
       "title": "Tìm Bông tuyết giống mẫu",
       "instruction": "Bé chạm vào Bông tuyết giống mẫu nhé!",
       "theme_tag": "weather",
-      "what_tags": ["classification", "number"],
+      "what_tags": ["cls", "shp", "number"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C1.NREC.07"],
       "learning_objective_codes": [
@@ -8574,7 +8440,7 @@
       "title": "Đếm số lượng Đèn lồng",
       "instruction": "Bé đếm số Đèn lồng rồi chọn số đúng!",
       "theme_tag": "festival",
-      "what_tags": ["category"],
+      "what_tags": ["cls"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C1.NREC.07"],
       "learning_objective_codes": [
@@ -8642,7 +8508,7 @@
       "title": "Đếm số lượng Cặp sách",
       "instruction": "Bé đếm số Cặp sách rồi chọn số đúng!",
       "theme_tag": "school",
-      "what_tags": ["category"],
+      "what_tags": ["cls"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C1.NREC.07"],
       "learning_objective_codes": [
@@ -8710,7 +8576,7 @@
       "title": "Đếm số lượng Gà trống",
       "instruction": "Bé đếm số Gà trống rồi chọn số đúng!",
       "theme_tag": "farm",
-      "what_tags": ["category"],
+      "what_tags": ["cls"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C1.NREC.07"],
       "learning_objective_codes": [
@@ -8778,7 +8644,7 @@
       "title": "Đếm số lượng Cái cửa",
       "instruction": "Bé đếm số Cái cửa rồi chọn số đúng!",
       "theme_tag": "home",
-      "what_tags": ["category"],
+      "what_tags": ["cls"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C1.NREC.07"],
       "learning_objective_codes": [
@@ -8846,7 +8712,7 @@
       "title": "Đếm số lượng Hươu cao cổ",
       "instruction": "Bé đếm số Hươu cao cổ rồi chọn số đúng!",
       "theme_tag": "animal",
-      "what_tags": ["category"],
+      "what_tags": ["cls"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C1.NREC.07"],
       "learning_objective_codes": [
@@ -8909,12 +8775,12 @@
   },
   {
     "header": {
-      "code": "GL-C1-NREC-TCMP-0025",
+      "code": "GL-C1-NREC-TCMP-0023",
       "template_code": "GT-003",
       "title": "So sánh nhóm Cây xanh",
       "instruction": "Bé chọn nhóm nhiều Cây xanh hơn nhé!",
       "theme_tag": "nature",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C1.NREC.07"],
       "learning_objective_codes": [
@@ -8976,12 +8842,12 @@
   },
   {
     "header": {
-      "code": "GL-C1-NREC-TCMP-0026",
+      "code": "GL-C1-NREC-TCMP-0024",
       "template_code": "GT-003",
       "title": "So sánh nhóm Cá heo",
       "instruction": "Bé chọn nhóm nhiều Cá heo hơn nhé!",
       "theme_tag": "ocean",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C1.NREC.07"],
       "learning_objective_codes": [
@@ -9043,12 +8909,12 @@
   },
   {
     "header": {
-      "code": "GL-C1-NREC-TCMP-0027",
+      "code": "GL-C1-NREC-TCMP-0025",
       "template_code": "GT-003",
       "title": "So sánh nhóm Bánh mì",
       "instruction": "Bé chọn nhóm nhiều Bánh mì hơn nhé!",
       "theme_tag": "food",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C1.NREC.07"],
       "learning_objective_codes": [
@@ -9110,12 +8976,12 @@
   },
   {
     "header": {
-      "code": "GL-C1-NREC-TCMP-0028",
+      "code": "GL-C1-NREC-TCMP-0026",
       "template_code": "GT-003",
       "title": "So sánh nhóm Tàu hoả",
       "instruction": "Bé chọn nhóm nhiều Tàu hoả hơn nhé!",
       "theme_tag": "vehicle",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C1.NREC.07"],
       "learning_objective_codes": [
@@ -9177,12 +9043,12 @@
   },
   {
     "header": {
-      "code": "GL-C1-NREC-TCMP-0029",
+      "code": "GL-C1-NREC-TCMP-0027",
       "template_code": "GT-003",
       "title": "So sánh nhóm Trống",
       "instruction": "Bé chọn nhóm nhiều Trống hơn nhé!",
       "theme_tag": "art",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C1.NREC.07"],
       "learning_objective_codes": [
@@ -9249,7 +9115,7 @@
       "title": "Ghép đôi Tên lửa tương ứng",
       "instruction": "Bé ghép đôi các Tên lửa tương ứng nhé!",
       "theme_tag": "space",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C1.NREC.07"],
       "learning_objective_codes": [
@@ -9328,7 +9194,7 @@
       "title": "Ghép đôi Em bé tương ứng",
       "instruction": "Bé ghép đôi các Em bé tương ứng nhé!",
       "theme_tag": "family",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C1.NREC.07"],
       "learning_objective_codes": [
@@ -9407,7 +9273,7 @@
       "title": "Ghép đôi Mũi tương ứng",
       "instruction": "Bé ghép đôi các Mũi tương ứng nhé!",
       "theme_tag": "body",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C1.NREC.07"],
       "learning_objective_codes": [
@@ -9486,7 +9352,7 @@
       "title": "Ghép đôi Cầu vồng tương ứng",
       "instruction": "Bé ghép đôi các Cầu vồng tương ứng nhé!",
       "theme_tag": "weather",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C1.NREC.07"],
       "learning_objective_codes": [
@@ -9565,7 +9431,7 @@
       "title": "Ghép đôi Cây thông Noel tương ứng",
       "instruction": "Bé ghép đôi các Cây thông Noel tương ứng nhé!",
       "theme_tag": "festival",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C1.NREC.07"],
       "learning_objective_codes": [
@@ -9644,7 +9510,7 @@
       "title": "Tìm Trường học giống mẫu",
       "instruction": "Bé tìm Trường học giống hình mẫu nhé!",
       "theme_tag": "school",
-      "what_tags": ["classification", "number"],
+      "what_tags": ["cls", "shp", "number"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C1.NREC.08"],
       "learning_objective_codes": [
@@ -9718,7 +9584,7 @@
       "title": "Tìm Bò sữa giống mẫu",
       "instruction": "Bé tìm Bò sữa giống hình mẫu nhé!",
       "theme_tag": "farm",
-      "what_tags": ["classification", "number"],
+      "what_tags": ["cls", "shp", "number"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C1.NREC.08"],
       "learning_objective_codes": [
@@ -9800,7 +9666,7 @@
       "title": "Tìm Cái ghế giống mẫu",
       "instruction": "Bé tìm Cái ghế giống hình mẫu nhé!",
       "theme_tag": "home",
-      "what_tags": ["classification", "number"],
+      "what_tags": ["cls", "shp", "number"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C1.NREC.08"],
       "learning_objective_codes": [
@@ -9882,7 +9748,7 @@
       "title": "Tìm Khỉ giống mẫu",
       "instruction": "Bé tìm Khỉ giống hình mẫu nhé!",
       "theme_tag": "animal",
-      "what_tags": ["classification", "number"],
+      "what_tags": ["cls", "shp", "number"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C1.NREC.08"],
       "learning_objective_codes": [
@@ -9956,7 +9822,7 @@
       "title": "Đếm số lượng Cây xanh",
       "instruction": "Bé đếm số Cây xanh rồi chọn số đúng!",
       "theme_tag": "nature",
-      "what_tags": ["category"],
+      "what_tags": ["cls"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C1.NREC.08"],
       "learning_objective_codes": [
@@ -10024,7 +9890,7 @@
       "title": "Đếm số lượng Cá heo",
       "instruction": "Bé đếm số Cá heo rồi chọn số đúng!",
       "theme_tag": "ocean",
-      "what_tags": ["category"],
+      "what_tags": ["cls"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C1.NREC.08"],
       "learning_objective_codes": [
@@ -10092,7 +9958,7 @@
       "title": "Đếm số lượng Bánh mì",
       "instruction": "Bé đếm số Bánh mì rồi chọn số đúng!",
       "theme_tag": "food",
-      "what_tags": ["category"],
+      "what_tags": ["cls"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C1.NREC.08"],
       "learning_objective_codes": [
@@ -10160,7 +10026,7 @@
       "title": "Đếm số lượng Tàu hoả",
       "instruction": "Bé đếm số Tàu hoả rồi chọn số đúng!",
       "theme_tag": "vehicle",
-      "what_tags": ["category"],
+      "what_tags": ["cls"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C1.NREC.08"],
       "learning_objective_codes": [
@@ -10223,12 +10089,12 @@
   },
   {
     "header": {
-      "code": "GL-C1-NREC-TCMP-0030",
+      "code": "GL-C1-NREC-TCMP-0028",
       "template_code": "GT-003",
       "title": "So sánh nhóm Bảng vẽ",
       "instruction": "Bé chọn nhóm có nhiều Bảng vẽ hơn nhé!",
       "theme_tag": "art",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C1.NREC.08"],
       "learning_objective_codes": [
@@ -10299,12 +10165,12 @@
   },
   {
     "header": {
-      "code": "GL-C1-NREC-TCMP-0031",
+      "code": "GL-C1-NREC-TCMP-0029",
       "template_code": "GT-003",
       "title": "So sánh nhóm Hành tinh",
       "instruction": "Bé chọn nhóm có nhiều Hành tinh hơn nhé!",
       "theme_tag": "space",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C1.NREC.08"],
       "learning_objective_codes": [
@@ -10375,12 +10241,12 @@
   },
   {
     "header": {
-      "code": "GL-C1-NREC-TCMP-0032",
+      "code": "GL-C1-NREC-TCMP-0030",
       "template_code": "GT-003",
       "title": "So sánh nhóm Bà",
       "instruction": "Bé chọn nhóm có nhiều Bà hơn nhé!",
       "theme_tag": "family",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C1.NREC.08"],
       "learning_objective_codes": [
@@ -10451,12 +10317,12 @@
   },
   {
     "header": {
-      "code": "GL-C1-NREC-TCMP-0033",
+      "code": "GL-C1-NREC-TCMP-0031",
       "template_code": "GT-003",
       "title": "So sánh nhóm Miệng",
       "instruction": "Bé chọn nhóm có nhiều Miệng hơn nhé!",
       "theme_tag": "body",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C1.NREC.08"],
       "learning_objective_codes": [
@@ -10532,7 +10398,7 @@
       "title": "Ghép đôi Mặt trời tương ứng",
       "instruction": "Bé ghép đôi các Mặt trời tương ứng nhé!",
       "theme_tag": "weather",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C1.NREC.08"],
       "learning_objective_codes": [
@@ -10611,7 +10477,7 @@
       "title": "Ghép đôi Bao lì xì tương ứng",
       "instruction": "Bé ghép đôi các Bao lì xì tương ứng nhé!",
       "theme_tag": "festival",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C1.NREC.08"],
       "learning_objective_codes": [
@@ -10690,7 +10556,7 @@
       "title": "Ghép đôi Bút chì tương ứng",
       "instruction": "Bé ghép đôi các Bút chì tương ứng nhé!",
       "theme_tag": "school",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C1.NREC.08"],
       "learning_objective_codes": [
@@ -10769,7 +10635,7 @@
       "title": "Ghép đôi Heo tương ứng",
       "instruction": "Bé ghép đôi các Heo tương ứng nhé!",
       "theme_tag": "farm",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C1.NREC.08"],
       "learning_objective_codes": [
@@ -10848,7 +10714,7 @@
       "title": "Xếp Ngôi nhà theo quy luật",
       "instruction": "Bé tìm Ngôi nhà còn thiếu trong dãy quy luật!",
       "theme_tag": "home",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C1.NREC.08"],
       "learning_objective_codes": [
@@ -10933,7 +10799,7 @@
       "title": "Xếp Voi theo quy luật",
       "instruction": "Bé tìm Voi còn thiếu trong dãy quy luật!",
       "theme_tag": "animal",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C1.NREC.08"],
       "learning_objective_codes": [
@@ -11018,7 +10884,7 @@
       "title": "Xếp Cỏ bốn lá theo quy luật",
       "instruction": "Bé tìm Cỏ bốn lá còn thiếu trong dãy quy luật!",
       "theme_tag": "nature",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C1.NREC.08"],
       "learning_objective_codes": [
@@ -11103,7 +10969,7 @@
       "title": "Xếp Cua theo quy luật",
       "instruction": "Bé tìm Cua còn thiếu trong dãy quy luật!",
       "theme_tag": "ocean",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C1.NREC.08"],
       "learning_objective_codes": [
@@ -11188,7 +11054,7 @@
       "title": "Kéo Táo đỏ vào đúng ô",
       "instruction": "Bé kéo Táo đỏ vào đúng ô nhé!",
       "theme_tag": "food",
-      "what_tags": ["classification"],
+      "what_tags": ["spt"],
       "thinking_tags": ["sequence"],
       "skill_codes": ["C1.NREC.09"],
       "learning_objective_codes": [
@@ -11252,7 +11118,7 @@
       "title": "Dẫn đường qua mê cung",
       "instruction": "Bé vẽ đường đi an toàn qua mê cung!",
       "theme_tag": "body",
-      "what_tags": ["maze"],
+      "what_tags": ["spt", "flw"],
       "thinking_tags": ["sequence"],
       "skill_codes": ["C1.NREC.09"],
       "learning_objective_codes": [
@@ -11351,7 +11217,7 @@
       "title": "Dẫn đường qua mê cung",
       "instruction": "Bé vẽ đường đi an toàn qua mê cung!",
       "theme_tag": "weather",
-      "what_tags": ["maze"],
+      "what_tags": ["spt", "flw"],
       "thinking_tags": ["sequence"],
       "skill_codes": ["C1.NREC.09"],
       "learning_objective_codes": [
@@ -11440,7 +11306,7 @@
       "title": "Dẫn đường qua mê cung",
       "instruction": "Bé vẽ đường đi an toàn qua mê cung!",
       "theme_tag": "festival",
-      "what_tags": ["maze"],
+      "what_tags": ["spt", "flw"],
       "thinking_tags": ["sequence"],
       "skill_codes": ["C1.NREC.09"],
       "learning_objective_codes": [
@@ -11539,7 +11405,7 @@
       "title": "Dẫn đường qua mê cung",
       "instruction": "Bé vẽ đường đi an toàn qua mê cung!",
       "theme_tag": "school",
-      "what_tags": ["maze"],
+      "what_tags": ["spt", "flw"],
       "thinking_tags": ["sequence"],
       "skill_codes": ["C1.NREC.09"],
       "learning_objective_codes": [
@@ -11633,7 +11499,7 @@
       "title": "Dẫn đường qua mê cung",
       "instruction": "Bé vẽ đường đi an toàn qua mê cung!",
       "theme_tag": "farm",
-      "what_tags": ["maze"],
+      "what_tags": ["spt", "flw"],
       "thinking_tags": ["sequence"],
       "skill_codes": ["C1.NREC.09"],
       "learning_objective_codes": [
@@ -11732,7 +11598,7 @@
       "title": "Tách và gộp số lượng Ngôi nhà",
       "instruction": "Bé tách gộp số lượng Ngôi nhà chính xác nhé!",
       "theme_tag": "home",
-      "what_tags": ["classification"],
+      "what_tags": ["lst", "shp"],
       "thinking_tags": ["sequence"],
       "skill_codes": ["C1.NREC.09"],
       "learning_objective_codes": [
@@ -11794,7 +11660,7 @@
       "title": "Tách và gộp số lượng Voi",
       "instruction": "Bé tách gộp số lượng Voi chính xác nhé!",
       "theme_tag": "animal",
-      "what_tags": ["classification"],
+      "what_tags": ["lst", "shp"],
       "thinking_tags": ["sequence"],
       "skill_codes": ["C1.NREC.09"],
       "learning_objective_codes": [
@@ -11856,7 +11722,7 @@
       "title": "Tách và gộp số lượng Cỏ bốn lá",
       "instruction": "Bé tách gộp số lượng Cỏ bốn lá chính xác nhé!",
       "theme_tag": "nature",
-      "what_tags": ["classification"],
+      "what_tags": ["lst", "shp"],
       "thinking_tags": ["sequence"],
       "skill_codes": ["C1.NREC.09"],
       "learning_objective_codes": [
@@ -11918,7 +11784,7 @@
       "title": "Tách và gộp số lượng Cua",
       "instruction": "Bé tách gộp số lượng Cua chính xác nhé!",
       "theme_tag": "ocean",
-      "what_tags": ["classification"],
+      "what_tags": ["lst", "shp"],
       "thinking_tags": ["sequence"],
       "skill_codes": ["C1.NREC.09"],
       "learning_objective_codes": [
@@ -11980,7 +11846,7 @@
       "title": "Tách và gộp số lượng Bắp ngô",
       "instruction": "Bé tách gộp số lượng Bắp ngô chính xác nhé!",
       "theme_tag": "food",
-      "what_tags": ["classification"],
+      "what_tags": ["lst", "shp"],
       "thinking_tags": ["sequence"],
       "skill_codes": ["C1.NREC.09"],
       "learning_objective_codes": [
@@ -12042,7 +11908,7 @@
       "title": "Ma trận quy luật logic",
       "instruction": "Bé tìm hình đúng điền vào ma trận logic!",
       "theme_tag": "vehicle",
-      "what_tags": ["classification"],
+      "what_tags": ["spt", "shp"],
       "thinking_tags": ["sequence"],
       "skill_codes": ["C1.NREC.09"],
       "learning_objective_codes": [
@@ -12118,7 +11984,7 @@
       "title": "Ma trận quy luật logic",
       "instruction": "Bé tìm hình đúng điền vào ma trận logic!",
       "theme_tag": "art",
-      "what_tags": ["classification"],
+      "what_tags": ["spt", "shp"],
       "thinking_tags": ["sequence"],
       "skill_codes": ["C1.NREC.09"],
       "learning_objective_codes": [
@@ -12194,7 +12060,7 @@
       "title": "Ma trận quy luật logic",
       "instruction": "Bé tìm hình đúng điền vào ma trận logic!",
       "theme_tag": "space",
-      "what_tags": ["classification"],
+      "what_tags": ["spt", "shp"],
       "thinking_tags": ["sequence"],
       "skill_codes": ["C1.NREC.09"],
       "learning_objective_codes": [
@@ -12270,7 +12136,7 @@
       "title": "Ma trận quy luật logic",
       "instruction": "Bé tìm hình đúng điền vào ma trận logic!",
       "theme_tag": "family",
-      "what_tags": ["classification"],
+      "what_tags": ["spt", "shp"],
       "thinking_tags": ["sequence"],
       "skill_codes": ["C1.NREC.09"],
       "learning_objective_codes": [
@@ -12346,7 +12212,7 @@
       "title": "Ma trận quy luật logic",
       "instruction": "Bé tìm hình đúng điền vào ma trận logic!",
       "theme_tag": "body",
-      "what_tags": ["classification"],
+      "what_tags": ["spt", "shp"],
       "thinking_tags": ["sequence"],
       "skill_codes": ["C1.NREC.09"],
       "learning_objective_codes": [
@@ -12422,7 +12288,7 @@
       "title": "Ghép đôi Mặt trời tương ứng",
       "instruction": "Bé ghép đôi các Mặt trời tương ứng nhé!",
       "theme_tag": "weather",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["infer"],
       "skill_codes": ["C1.NREC.10"],
       "learning_objective_codes": [
@@ -12501,7 +12367,7 @@
       "title": "Ghép đôi Bao lì xì tương ứng",
       "instruction": "Bé ghép đôi các Bao lì xì tương ứng nhé!",
       "theme_tag": "festival",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["infer"],
       "skill_codes": ["C1.NREC.10"],
       "learning_objective_codes": [
@@ -12580,7 +12446,7 @@
       "title": "Ghép đôi Bút chì tương ứng",
       "instruction": "Bé ghép đôi các Bút chì tương ứng nhé!",
       "theme_tag": "school",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["infer"],
       "skill_codes": ["C1.NREC.10"],
       "learning_objective_codes": [
@@ -12659,7 +12525,7 @@
       "title": "Ghép đôi Heo tương ứng",
       "instruction": "Bé ghép đôi các Heo tương ứng nhé!",
       "theme_tag": "farm",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["infer"],
       "skill_codes": ["C1.NREC.10"],
       "learning_objective_codes": [
@@ -12738,7 +12604,7 @@
       "title": "Tìm bóng của Ngôi nhà",
       "instruction": "Bé tìm bóng của Ngôi nhà nhé!",
       "theme_tag": "home",
-      "what_tags": ["classification"],
+      "what_tags": ["ops"],
       "thinking_tags": ["infer"],
       "skill_codes": ["C1.NREC.10"],
       "learning_objective_codes": [
@@ -12814,7 +12680,7 @@
       "title": "Tìm bóng của Voi",
       "instruction": "Bé tìm bóng của Voi nhé!",
       "theme_tag": "animal",
-      "what_tags": ["classification"],
+      "what_tags": ["ops"],
       "thinking_tags": ["infer"],
       "skill_codes": ["C1.NREC.10"],
       "learning_objective_codes": [
@@ -12890,7 +12756,7 @@
       "title": "Tìm bóng của Cỏ bốn lá",
       "instruction": "Bé tìm bóng của Cỏ bốn lá nhé!",
       "theme_tag": "nature",
-      "what_tags": ["classification"],
+      "what_tags": ["ops"],
       "thinking_tags": ["infer"],
       "skill_codes": ["C1.NREC.10"],
       "learning_objective_codes": [
@@ -12966,7 +12832,7 @@
       "title": "Tìm bóng của Cua",
       "instruction": "Bé tìm bóng của Cua nhé!",
       "theme_tag": "ocean",
-      "what_tags": ["classification"],
+      "what_tags": ["ops"],
       "thinking_tags": ["infer"],
       "skill_codes": ["C1.NREC.10"],
       "learning_objective_codes": [
@@ -13042,7 +12908,7 @@
       "title": "Xếp Táo đỏ theo kích thước",
       "instruction": "Bé sắp xếp Táo đỏ theo kích thước nhé!",
       "theme_tag": "food",
-      "what_tags": ["deduction", "logic", "number", "comparison"],
+      "what_tags": ["log", "number", "cmp"],
       "thinking_tags": ["infer"],
       "skill_codes": ["C1.NREC.10"],
       "learning_objective_codes": [
@@ -13128,7 +12994,7 @@
       "title": "Xếp Xe buýt theo kích thước",
       "instruction": "Bé sắp xếp Xe buýt theo kích thước nhé!",
       "theme_tag": "vehicle",
-      "what_tags": ["deduction", "logic", "number", "comparison"],
+      "what_tags": ["log", "number", "cmp"],
       "thinking_tags": ["infer"],
       "skill_codes": ["C1.NREC.10"],
       "learning_objective_codes": [
@@ -13214,7 +13080,7 @@
       "title": "Xếp Kèn saxophone theo kích thước",
       "instruction": "Bé sắp xếp Kèn saxophone theo kích thước nhé!",
       "theme_tag": "art",
-      "what_tags": ["deduction", "logic", "number", "comparison"],
+      "what_tags": ["log", "number", "cmp"],
       "thinking_tags": ["infer"],
       "skill_codes": ["C1.NREC.10"],
       "learning_objective_codes": [
@@ -13300,7 +13166,7 @@
       "title": "Xếp Phi hành gia theo kích thước",
       "instruction": "Bé sắp xếp Phi hành gia theo kích thước nhé!",
       "theme_tag": "space",
-      "what_tags": ["deduction", "logic", "number", "comparison"],
+      "what_tags": ["log", "number", "cmp"],
       "thinking_tags": ["infer"],
       "skill_codes": ["C1.NREC.10"],
       "learning_objective_codes": [
@@ -13386,7 +13252,7 @@
       "title": "Ghép hình Gia đình hoàn chỉnh",
       "instruction": "Bé ghép các mảnh thành hình Gia đình nhé!",
       "theme_tag": "family",
-      "what_tags": ["logic"],
+      "what_tags": ["log"],
       "thinking_tags": ["infer"],
       "skill_codes": ["C1.NREC.10"],
       "learning_objective_codes": [
@@ -13470,7 +13336,7 @@
       "title": "Ghép hình Tai hoàn chỉnh",
       "instruction": "Bé ghép các mảnh thành hình Tai nhé!",
       "theme_tag": "body",
-      "what_tags": ["logic"],
+      "what_tags": ["log"],
       "thinking_tags": ["infer"],
       "skill_codes": ["C1.NREC.10"],
       "learning_objective_codes": [
@@ -13554,7 +13420,7 @@
       "title": "Ghép hình Mưa hoàn chỉnh",
       "instruction": "Bé ghép các mảnh thành hình Mưa nhé!",
       "theme_tag": "weather",
-      "what_tags": ["logic"],
+      "what_tags": ["log"],
       "thinking_tags": ["infer"],
       "skill_codes": ["C1.NREC.10"],
       "learning_objective_codes": [
@@ -13638,7 +13504,7 @@
       "title": "Ghép hình Bí ngô Halloween hoàn chỉnh",
       "instruction": "Bé ghép các mảnh thành hình Bí ngô Halloween nhé!",
       "theme_tag": "festival",
-      "what_tags": ["logic"],
+      "what_tags": ["log"],
       "thinking_tags": ["infer"],
       "skill_codes": ["C1.NREC.10"],
       "learning_objective_codes": [
@@ -13722,7 +13588,7 @@
       "title": "Xem giờ trên đồng hồ",
       "instruction": "Bé xem đồng hồ và chọn giờ đúng nhé!",
       "theme_tag": "school",
-      "what_tags": ["number", "quantity"],
+      "what_tags": ["number", "quantity", "ops"],
       "thinking_tags": ["infer"],
       "skill_codes": ["C1.NREC.10"],
       "learning_objective_codes": [
@@ -13804,7 +13670,7 @@
       "title": "Xem giờ trên đồng hồ",
       "instruction": "Bé xem đồng hồ và chọn giờ đúng nhé!",
       "theme_tag": "farm",
-      "what_tags": ["number", "quantity"],
+      "what_tags": ["number", "quantity", "ops"],
       "thinking_tags": ["infer"],
       "skill_codes": ["C1.NREC.10"],
       "learning_objective_codes": [
@@ -13886,7 +13752,7 @@
       "title": "Xem giờ trên đồng hồ",
       "instruction": "Bé xem đồng hồ và chọn giờ đúng nhé!",
       "theme_tag": "home",
-      "what_tags": ["number", "quantity"],
+      "what_tags": ["number", "quantity", "ops"],
       "thinking_tags": ["infer"],
       "skill_codes": ["C1.NREC.10"],
       "learning_objective_codes": [
@@ -13975,7 +13841,7 @@
       "title": "Xem giờ trên đồng hồ",
       "instruction": "Bé xem đồng hồ và chọn giờ đúng nhé!",
       "theme_tag": "animal",
-      "what_tags": ["number", "quantity"],
+      "what_tags": ["number", "quantity", "ops"],
       "thinking_tags": ["infer"],
       "skill_codes": ["C1.NREC.10"],
       "learning_objective_codes": [
@@ -14064,7 +13930,7 @@
       "title": "Ghép đôi Cây xanh tương ứng",
       "instruction": "Bé ghép đôi các Cây xanh tương ứng nhé!",
       "theme_tag": "nature",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["infer"],
       "skill_codes": ["C1.NREC.11"],
       "learning_objective_codes": [
@@ -14143,7 +14009,7 @@
       "title": "Ghép đôi Cá heo tương ứng",
       "instruction": "Bé ghép đôi các Cá heo tương ứng nhé!",
       "theme_tag": "ocean",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["infer"],
       "skill_codes": ["C1.NREC.11"],
       "learning_objective_codes": [
@@ -14222,7 +14088,7 @@
       "title": "Ghép đôi Bánh mì tương ứng",
       "instruction": "Bé ghép đôi các Bánh mì tương ứng nhé!",
       "theme_tag": "food",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["infer"],
       "skill_codes": ["C1.NREC.11"],
       "learning_objective_codes": [
@@ -14301,7 +14167,7 @@
       "title": "Ghép đôi Tàu hoả tương ứng",
       "instruction": "Bé ghép đôi các Tàu hoả tương ứng nhé!",
       "theme_tag": "vehicle",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["infer"],
       "skill_codes": ["C1.NREC.11"],
       "learning_objective_codes": [
@@ -14380,7 +14246,7 @@
       "title": "Tìm bóng của Bảng vẽ",
       "instruction": "Bé tìm bóng của Bảng vẽ nhé!",
       "theme_tag": "art",
-      "what_tags": ["classification"],
+      "what_tags": ["ops"],
       "thinking_tags": ["infer"],
       "skill_codes": ["C1.NREC.11"],
       "learning_objective_codes": [
@@ -14456,7 +14322,7 @@
       "title": "Tìm bóng của Cây đàn ghi-ta",
       "instruction": "Bé tìm bóng của Cây đàn ghi-ta nhé!",
       "theme_tag": "art",
-      "what_tags": ["classification"],
+      "what_tags": ["ops"],
       "thinking_tags": ["infer"],
       "skill_codes": ["C1.NREC.11"],
       "learning_objective_codes": [
@@ -14532,7 +14398,7 @@
       "title": "Tìm bóng của Bà",
       "instruction": "Bé tìm bóng của Bà nhé!",
       "theme_tag": "family",
-      "what_tags": ["classification"],
+      "what_tags": ["ops"],
       "thinking_tags": ["infer"],
       "skill_codes": ["C1.NREC.11"],
       "learning_objective_codes": [
@@ -14608,7 +14474,7 @@
       "title": "Tìm bóng của Miệng",
       "instruction": "Bé tìm bóng của Miệng nhé!",
       "theme_tag": "body",
-      "what_tags": ["classification"],
+      "what_tags": ["ops"],
       "thinking_tags": ["infer"],
       "skill_codes": ["C1.NREC.11"],
       "learning_objective_codes": [
@@ -14684,7 +14550,7 @@
       "title": "Xếp Mặt trời theo kích thước",
       "instruction": "Bé sắp xếp Mặt trời theo kích thước nhé!",
       "theme_tag": "weather",
-      "what_tags": ["deduction", "logic", "number", "comparison"],
+      "what_tags": ["log", "number", "cmp"],
       "thinking_tags": ["infer"],
       "skill_codes": ["C1.NREC.11"],
       "learning_objective_codes": [
@@ -14770,7 +14636,7 @@
       "title": "Xếp Bao lì xì theo kích thước",
       "instruction": "Bé sắp xếp Bao lì xì theo kích thước nhé!",
       "theme_tag": "festival",
-      "what_tags": ["deduction", "logic", "number", "comparison"],
+      "what_tags": ["log", "number", "cmp"],
       "thinking_tags": ["infer"],
       "skill_codes": ["C1.NREC.11"],
       "learning_objective_codes": [
@@ -14856,7 +14722,7 @@
       "title": "Xếp Bút chì theo kích thước",
       "instruction": "Bé sắp xếp Bút chì theo kích thước nhé!",
       "theme_tag": "school",
-      "what_tags": ["deduction", "logic", "number", "comparison"],
+      "what_tags": ["log", "number", "cmp"],
       "thinking_tags": ["infer"],
       "skill_codes": ["C1.NREC.11"],
       "learning_objective_codes": [
@@ -14942,7 +14808,7 @@
       "title": "Xếp Heo theo kích thước",
       "instruction": "Bé sắp xếp Heo theo kích thước nhé!",
       "theme_tag": "farm",
-      "what_tags": ["deduction", "logic", "number", "comparison"],
+      "what_tags": ["log", "number", "cmp"],
       "thinking_tags": ["infer"],
       "skill_codes": ["C1.NREC.11"],
       "learning_objective_codes": [
@@ -15028,7 +14894,7 @@
       "title": "Ghép hình Ngôi nhà hoàn chỉnh",
       "instruction": "Bé ghép các mảnh thành hình Ngôi nhà nhé!",
       "theme_tag": "home",
-      "what_tags": ["logic"],
+      "what_tags": ["log"],
       "thinking_tags": ["infer"],
       "skill_codes": ["C1.NREC.11"],
       "learning_objective_codes": [
@@ -15112,7 +14978,7 @@
       "title": "Ghép hình Voi hoàn chỉnh",
       "instruction": "Bé ghép các mảnh thành hình Voi nhé!",
       "theme_tag": "animal",
-      "what_tags": ["logic"],
+      "what_tags": ["log"],
       "thinking_tags": ["infer"],
       "skill_codes": ["C1.NREC.11"],
       "learning_objective_codes": [
@@ -15196,7 +15062,7 @@
       "title": "Ghép hình Cỏ bốn lá hoàn chỉnh",
       "instruction": "Bé ghép các mảnh thành hình Cỏ bốn lá nhé!",
       "theme_tag": "nature",
-      "what_tags": ["logic"],
+      "what_tags": ["log"],
       "thinking_tags": ["infer"],
       "skill_codes": ["C1.NREC.11"],
       "learning_objective_codes": [
@@ -15280,7 +15146,7 @@
       "title": "Ghép hình Cua hoàn chỉnh",
       "instruction": "Bé ghép các mảnh thành hình Cua nhé!",
       "theme_tag": "ocean",
-      "what_tags": ["logic"],
+      "what_tags": ["log"],
       "thinking_tags": ["infer"],
       "skill_codes": ["C1.NREC.11"],
       "learning_objective_codes": [
@@ -15364,7 +15230,7 @@
       "title": "Xem giờ trên đồng hồ",
       "instruction": "Bé xem đồng hồ và chọn giờ đúng nhé!",
       "theme_tag": "food",
-      "what_tags": ["number", "quantity"],
+      "what_tags": ["number", "quantity", "ops"],
       "thinking_tags": ["infer"],
       "skill_codes": ["C1.NREC.11"],
       "learning_objective_codes": [
@@ -15446,7 +15312,7 @@
       "title": "Xem giờ trên đồng hồ",
       "instruction": "Bé xem đồng hồ và chọn giờ đúng nhé!",
       "theme_tag": "vehicle",
-      "what_tags": ["number", "quantity"],
+      "what_tags": ["number", "quantity", "ops"],
       "thinking_tags": ["infer"],
       "skill_codes": ["C1.NREC.11"],
       "learning_objective_codes": [
@@ -15535,7 +15401,7 @@
       "title": "Xem giờ trên đồng hồ",
       "instruction": "Bé xem đồng hồ và chọn giờ đúng nhé!",
       "theme_tag": "art",
-      "what_tags": ["number", "quantity"],
+      "what_tags": ["number", "quantity", "ops"],
       "thinking_tags": ["infer"],
       "skill_codes": ["C1.NREC.11"],
       "learning_objective_codes": [
@@ -15617,7 +15483,7 @@
       "title": "Xem giờ trên đồng hồ",
       "instruction": "Bé xem đồng hồ và chọn giờ đúng nhé!",
       "theme_tag": "space",
-      "what_tags": ["number", "quantity"],
+      "what_tags": ["number", "quantity", "ops"],
       "thinking_tags": ["infer"],
       "skill_codes": ["C1.NREC.11"],
       "learning_objective_codes": [
@@ -15699,7 +15565,7 @@
       "title": "Ghép đôi Gia đình tương ứng",
       "instruction": "Bé ghép đôi các Gia đình tương ứng nhé!",
       "theme_tag": "family",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["infer"],
       "skill_codes": ["C1.NREC.12"],
       "learning_objective_codes": [
@@ -15778,7 +15644,7 @@
       "title": "Ghép đôi Tai tương ứng",
       "instruction": "Bé ghép đôi các Tai tương ứng nhé!",
       "theme_tag": "body",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["infer"],
       "skill_codes": ["C1.NREC.12"],
       "learning_objective_codes": [
@@ -15857,7 +15723,7 @@
       "title": "Ghép đôi Mưa tương ứng",
       "instruction": "Bé ghép đôi các Mưa tương ứng nhé!",
       "theme_tag": "weather",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["infer"],
       "skill_codes": ["C1.NREC.12"],
       "learning_objective_codes": [
@@ -15936,7 +15802,7 @@
       "title": "Ghép đôi Bí ngô Halloween tương ứng",
       "instruction": "Bé ghép đôi các Bí ngô Halloween tương ứng nhé!",
       "theme_tag": "festival",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["infer"],
       "skill_codes": ["C1.NREC.12"],
       "learning_objective_codes": [
@@ -16015,7 +15881,7 @@
       "title": "Phân loại Trường học theo nhóm",
       "instruction": "Bé phân loại Trường học theo đặc điểm phù hợp!",
       "theme_tag": "school",
-      "what_tags": ["classification"],
+      "what_tags": ["cmp", "sequence"],
       "thinking_tags": ["infer"],
       "skill_codes": ["C1.NREC.12"],
       "learning_objective_codes": [
@@ -16076,7 +15942,7 @@
       "title": "Phân loại Bò sữa theo nhóm",
       "instruction": "Bé phân loại Bò sữa theo đặc điểm phù hợp!",
       "theme_tag": "farm",
-      "what_tags": ["classification"],
+      "what_tags": ["cmp", "sequence"],
       "thinking_tags": ["infer"],
       "skill_codes": ["C1.NREC.12"],
       "learning_objective_codes": [
@@ -16137,7 +16003,7 @@
       "title": "Phân loại Cái ghế theo nhóm",
       "instruction": "Bé phân loại Cái ghế theo đặc điểm phù hợp!",
       "theme_tag": "home",
-      "what_tags": ["classification"],
+      "what_tags": ["cmp", "sequence"],
       "thinking_tags": ["infer"],
       "skill_codes": ["C1.NREC.12"],
       "learning_objective_codes": [
@@ -16198,7 +16064,7 @@
       "title": "Phân loại Khỉ theo nhóm",
       "instruction": "Bé phân loại Khỉ theo đặc điểm phù hợp!",
       "theme_tag": "animal",
-      "what_tags": ["classification"],
+      "what_tags": ["cmp", "sequence"],
       "thinking_tags": ["infer"],
       "skill_codes": ["C1.NREC.12"],
       "learning_objective_codes": [
@@ -16259,7 +16125,7 @@
       "title": "Tìm bóng của Cây xanh",
       "instruction": "Bé tìm chiếc bóng đúng của Cây xanh nhé!",
       "theme_tag": "nature",
-      "what_tags": ["classification"],
+      "what_tags": ["ops"],
       "thinking_tags": ["infer"],
       "skill_codes": ["C1.NREC.12"],
       "learning_objective_codes": [
@@ -16335,7 +16201,7 @@
       "title": "Tìm bóng của Cá heo",
       "instruction": "Bé tìm chiếc bóng đúng của Cá heo nhé!",
       "theme_tag": "ocean",
-      "what_tags": ["classification"],
+      "what_tags": ["ops"],
       "thinking_tags": ["infer"],
       "skill_codes": ["C1.NREC.12"],
       "learning_objective_codes": [
@@ -16411,7 +16277,7 @@
       "title": "Tìm bóng của Bánh mì",
       "instruction": "Bé tìm chiếc bóng đúng của Bánh mì nhé!",
       "theme_tag": "food",
-      "what_tags": ["classification"],
+      "what_tags": ["ops"],
       "thinking_tags": ["infer"],
       "skill_codes": ["C1.NREC.12"],
       "learning_objective_codes": [
@@ -16487,7 +16353,7 @@
       "title": "Tìm bóng của Tàu hoả",
       "instruction": "Bé tìm chiếc bóng đúng của Tàu hoả nhé!",
       "theme_tag": "vehicle",
-      "what_tags": ["classification"],
+      "what_tags": ["ops"],
       "thinking_tags": ["infer"],
       "skill_codes": ["C1.NREC.12"],
       "learning_objective_codes": [
@@ -16563,7 +16429,7 @@
       "title": "Xếp Bảng vẽ theo kích thước",
       "instruction": "Bé sắp xếp Bảng vẽ theo kích thước nhé!",
       "theme_tag": "art",
-      "what_tags": ["deduction", "logic", "number", "comparison"],
+      "what_tags": ["log", "number", "cmp"],
       "thinking_tags": ["infer"],
       "skill_codes": ["C1.NREC.12"],
       "learning_objective_codes": [
@@ -16649,7 +16515,7 @@
       "title": "Xếp Hành tinh theo kích thước",
       "instruction": "Bé sắp xếp Hành tinh theo kích thước nhé!",
       "theme_tag": "space",
-      "what_tags": ["deduction", "logic", "number", "comparison"],
+      "what_tags": ["log", "number", "cmp"],
       "thinking_tags": ["infer"],
       "skill_codes": ["C1.NREC.12"],
       "learning_objective_codes": [
@@ -16735,7 +16601,7 @@
       "title": "Xếp Bà theo kích thước",
       "instruction": "Bé sắp xếp Bà theo kích thước nhé!",
       "theme_tag": "family",
-      "what_tags": ["deduction", "logic", "number", "comparison"],
+      "what_tags": ["log", "number", "cmp"],
       "thinking_tags": ["infer"],
       "skill_codes": ["C1.NREC.12"],
       "learning_objective_codes": [
@@ -16821,7 +16687,7 @@
       "title": "Xếp Miệng theo kích thước",
       "instruction": "Bé sắp xếp Miệng theo kích thước nhé!",
       "theme_tag": "body",
-      "what_tags": ["deduction", "logic", "number", "comparison"],
+      "what_tags": ["log", "number", "cmp"],
       "thinking_tags": ["infer"],
       "skill_codes": ["C1.NREC.12"],
       "learning_objective_codes": [
@@ -16907,7 +16773,7 @@
       "title": "Ghép hình Mặt trời hoàn chỉnh",
       "instruction": "Bé ghép các mảnh thành hình Mặt trời nhé!",
       "theme_tag": "weather",
-      "what_tags": ["logic"],
+      "what_tags": ["log"],
       "thinking_tags": ["infer"],
       "skill_codes": ["C1.NREC.12"],
       "learning_objective_codes": [
@@ -16991,7 +16857,7 @@
       "title": "Ghép hình Bao lì xì hoàn chỉnh",
       "instruction": "Bé ghép các mảnh thành hình Bao lì xì nhé!",
       "theme_tag": "festival",
-      "what_tags": ["logic"],
+      "what_tags": ["log"],
       "thinking_tags": ["infer"],
       "skill_codes": ["C1.NREC.12"],
       "learning_objective_codes": [
@@ -17075,7 +16941,7 @@
       "title": "Ghép hình Bút chì hoàn chỉnh",
       "instruction": "Bé ghép các mảnh thành hình Bút chì nhé!",
       "theme_tag": "school",
-      "what_tags": ["logic"],
+      "what_tags": ["log"],
       "thinking_tags": ["infer"],
       "skill_codes": ["C1.NREC.12"],
       "learning_objective_codes": [
@@ -17159,7 +17025,7 @@
       "title": "Ghép hình Heo hoàn chỉnh",
       "instruction": "Bé ghép các mảnh thành hình Heo nhé!",
       "theme_tag": "farm",
-      "what_tags": ["logic"],
+      "what_tags": ["log"],
       "thinking_tags": ["infer"],
       "skill_codes": ["C1.NREC.12"],
       "learning_objective_codes": [

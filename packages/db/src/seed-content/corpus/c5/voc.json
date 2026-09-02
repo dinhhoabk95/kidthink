@@ -6,7 +6,7 @@
       "title": "Tìm Mặt trời giống mẫu",
       "instruction": "Bé chạm vào Mặt trời giống mẫu nhé!",
       "theme_tag": "weather",
-      "what_tags": ["classification", "number"],
+      "what_tags": ["cls", "shp", "number"],
       "thinking_tags": ["match", "recall"],
       "skill_codes": ["C5.VOC.01"],
       "learning_objective_codes": [
@@ -72,7 +72,7 @@
       "title": "Tìm Bao lì xì giống mẫu",
       "instruction": "Bé chạm vào Bao lì xì giống mẫu nhé!",
       "theme_tag": "festival",
-      "what_tags": ["classification", "number"],
+      "what_tags": ["cls", "shp", "number"],
       "thinking_tags": ["match", "recall"],
       "skill_codes": ["C5.VOC.01"],
       "learning_objective_codes": [
@@ -146,7 +146,7 @@
       "title": "So sánh nhóm Trường học",
       "instruction": "Bé chọn nhóm nhiều Trường học hơn nhé!",
       "theme_tag": "school",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["match", "recall"],
       "skill_codes": ["C5.VOC.01"],
       "learning_objective_codes": [
@@ -213,7 +213,7 @@
       "title": "So sánh nhóm Bò sữa",
       "instruction": "Bé chọn nhóm nhiều Bò sữa hơn nhé!",
       "theme_tag": "farm",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["match", "recall"],
       "skill_codes": ["C5.VOC.01"],
       "learning_objective_codes": [
@@ -280,7 +280,7 @@
       "title": "Xếp Ngôi nhà theo quy luật",
       "instruction": "Bé chọn Ngôi nhà tiếp theo theo quy luật!",
       "theme_tag": "home",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["match", "recall"],
       "skill_codes": ["C5.VOC.01"],
       "learning_objective_codes": [
@@ -348,7 +348,7 @@
       "title": "Xếp Voi theo quy luật",
       "instruction": "Bé chọn Voi tiếp theo theo quy luật!",
       "theme_tag": "animal",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["match", "recall"],
       "skill_codes": ["C5.VOC.01"],
       "learning_objective_codes": [
@@ -416,7 +416,7 @@
       "title": "Kéo Cây xanh vào đúng ô",
       "instruction": "Bé kéo Cây xanh vào đúng ô nhé!",
       "theme_tag": "nature",
-      "what_tags": ["classification"],
+      "what_tags": ["spt"],
       "thinking_tags": ["match", "recall"],
       "skill_codes": ["C5.VOC.01"],
       "learning_objective_codes": [
@@ -480,7 +480,7 @@
       "title": "Kéo Cá heo vào đúng ô",
       "instruction": "Bé kéo Cá heo vào đúng ô nhé!",
       "theme_tag": "ocean",
-      "what_tags": ["classification"],
+      "what_tags": ["spt"],
       "thinking_tags": ["match", "recall"],
       "skill_codes": ["C5.VOC.01"],
       "learning_objective_codes": [
@@ -544,7 +544,7 @@
       "title": "Tìm cặp thẻ Táo đỏ giống nhau",
       "instruction": "Bé lật mở cặp Táo đỏ giống nhau nhé!",
       "theme_tag": "food",
-      "what_tags": ["subitizing", "number"],
+      "what_tags": ["mem", "cnt", "number"],
       "thinking_tags": ["match", "recall"],
       "skill_codes": ["C5.VOC.01"],
       "learning_objective_codes": [
@@ -610,7 +610,7 @@
       "title": "Tìm cặp thẻ Xe buýt giống nhau",
       "instruction": "Bé lật mở cặp Xe buýt giống nhau nhé!",
       "theme_tag": "vehicle",
-      "what_tags": ["subitizing", "number"],
+      "what_tags": ["mem", "cnt", "number"],
       "thinking_tags": ["match", "recall"],
       "skill_codes": ["C5.VOC.01"],
       "learning_objective_codes": [
@@ -676,7 +676,7 @@
       "title": "Tìm Bảng vẽ giống mẫu",
       "instruction": "Bé chạm vào Bảng vẽ giống mẫu nhé!",
       "theme_tag": "art",
-      "what_tags": ["classification", "number"],
+      "what_tags": ["cls", "shp", "number"],
       "thinking_tags": ["match", "recall"],
       "skill_codes": ["C5.VOC.02"],
       "learning_objective_codes": [
@@ -742,7 +742,7 @@
       "title": "Tìm Cây đàn ghi-ta giống mẫu",
       "instruction": "Bé chạm vào Cây đàn ghi-ta giống mẫu nhé!",
       "theme_tag": "art",
-      "what_tags": ["classification", "number"],
+      "what_tags": ["cls", "shp", "number"],
       "thinking_tags": ["match", "recall"],
       "skill_codes": ["C5.VOC.02"],
       "learning_objective_codes": [
@@ -816,7 +816,7 @@
       "title": "So sánh nhóm Gia đình",
       "instruction": "Bé chọn nhóm nhiều Gia đình hơn nhé!",
       "theme_tag": "family",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["match", "recall"],
       "skill_codes": ["C5.VOC.02"],
       "learning_objective_codes": [
@@ -883,7 +883,7 @@
       "title": "So sánh nhóm Tai",
       "instruction": "Bé chọn nhóm nhiều Tai hơn nhé!",
       "theme_tag": "body",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["match", "recall"],
       "skill_codes": ["C5.VOC.02"],
       "learning_objective_codes": [
@@ -950,7 +950,7 @@
       "title": "Xếp Mặt trời theo quy luật",
       "instruction": "Bé chọn Mặt trời tiếp theo theo quy luật!",
       "theme_tag": "weather",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["match", "recall"],
       "skill_codes": ["C5.VOC.02"],
       "learning_objective_codes": [
@@ -1018,7 +1018,7 @@
       "title": "Xếp Bao lì xì theo quy luật",
       "instruction": "Bé chọn Bao lì xì tiếp theo theo quy luật!",
       "theme_tag": "festival",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["match", "recall"],
       "skill_codes": ["C5.VOC.02"],
       "learning_objective_codes": [
@@ -1086,7 +1086,7 @@
       "title": "Kéo Trường học vào đúng ô",
       "instruction": "Bé kéo Trường học vào đúng ô nhé!",
       "theme_tag": "school",
-      "what_tags": ["classification"],
+      "what_tags": ["spt"],
       "thinking_tags": ["match", "recall"],
       "skill_codes": ["C5.VOC.02"],
       "learning_objective_codes": [
@@ -1150,7 +1150,7 @@
       "title": "Kéo Bò sữa vào đúng ô",
       "instruction": "Bé kéo Bò sữa vào đúng ô nhé!",
       "theme_tag": "farm",
-      "what_tags": ["classification"],
+      "what_tags": ["spt"],
       "thinking_tags": ["match", "recall"],
       "skill_codes": ["C5.VOC.02"],
       "learning_objective_codes": [
@@ -1214,7 +1214,7 @@
       "title": "Tìm cặp thẻ Ngôi nhà giống nhau",
       "instruction": "Bé lật mở cặp Ngôi nhà giống nhau nhé!",
       "theme_tag": "home",
-      "what_tags": ["subitizing", "number"],
+      "what_tags": ["mem", "cnt", "number"],
       "thinking_tags": ["match", "recall"],
       "skill_codes": ["C5.VOC.02"],
       "learning_objective_codes": [
@@ -1287,7 +1287,7 @@
       "title": "Tìm cặp thẻ Voi giống nhau",
       "instruction": "Bé lật mở cặp Voi giống nhau nhé!",
       "theme_tag": "animal",
-      "what_tags": ["subitizing", "number"],
+      "what_tags": ["mem", "cnt", "number"],
       "thinking_tags": ["match", "recall"],
       "skill_codes": ["C5.VOC.02"],
       "learning_objective_codes": [
@@ -1353,7 +1353,7 @@
       "title": "Tìm Cây xanh giống mẫu",
       "instruction": "Bé chạm vào Cây xanh giống mẫu nhé!",
       "theme_tag": "nature",
-      "what_tags": ["classification", "number"],
+      "what_tags": ["cls", "shp", "number"],
       "thinking_tags": ["match", "infer"],
       "skill_codes": ["C5.VOC.03"],
       "learning_objective_codes": [
@@ -1419,7 +1419,7 @@
       "title": "Tìm Cá heo giống mẫu",
       "instruction": "Bé chạm vào Cá heo giống mẫu nhé!",
       "theme_tag": "ocean",
-      "what_tags": ["classification", "number"],
+      "what_tags": ["cls", "shp", "number"],
       "thinking_tags": ["match", "infer"],
       "skill_codes": ["C5.VOC.03"],
       "learning_objective_codes": [
@@ -1493,7 +1493,7 @@
       "title": "So sánh nhóm Táo đỏ",
       "instruction": "Bé chọn nhóm nhiều Táo đỏ hơn nhé!",
       "theme_tag": "food",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["match", "infer"],
       "skill_codes": ["C5.VOC.03"],
       "learning_objective_codes": [
@@ -1560,7 +1560,7 @@
       "title": "So sánh nhóm Xe buýt",
       "instruction": "Bé chọn nhóm nhiều Xe buýt hơn nhé!",
       "theme_tag": "vehicle",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["match", "infer"],
       "skill_codes": ["C5.VOC.03"],
       "learning_objective_codes": [
@@ -1627,7 +1627,7 @@
       "title": "Ghép đôi Bảng vẽ tương ứng",
       "instruction": "Bé ghép đôi các Bảng vẽ tương ứng nhé!",
       "theme_tag": "art",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["match", "infer"],
       "skill_codes": ["C5.VOC.03"],
       "learning_objective_codes": [
@@ -1706,7 +1706,7 @@
       "title": "Ghép đôi Hành tinh tương ứng",
       "instruction": "Bé ghép đôi các Hành tinh tương ứng nhé!",
       "theme_tag": "space",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["match", "infer"],
       "skill_codes": ["C5.VOC.03"],
       "learning_objective_codes": [
@@ -1785,7 +1785,7 @@
       "title": "Xếp Gia đình theo quy luật",
       "instruction": "Bé chọn Gia đình tiếp theo theo quy luật!",
       "theme_tag": "family",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["match", "infer"],
       "skill_codes": ["C5.VOC.03"],
       "learning_objective_codes": [
@@ -1853,7 +1853,7 @@
       "title": "Xếp Tai theo quy luật",
       "instruction": "Bé chọn Tai tiếp theo theo quy luật!",
       "theme_tag": "body",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["match", "infer"],
       "skill_codes": ["C5.VOC.03"],
       "learning_objective_codes": [
@@ -1921,7 +1921,7 @@
       "title": "Tìm bóng của Mặt trời",
       "instruction": "Bé tìm bóng của Mặt trời nhé!",
       "theme_tag": "weather",
-      "what_tags": ["classification"],
+      "what_tags": ["ops"],
       "thinking_tags": ["match", "infer"],
       "skill_codes": ["C5.VOC.03"],
       "learning_objective_codes": [
@@ -1997,7 +1997,7 @@
       "title": "Tìm bóng của Bao lì xì",
       "instruction": "Bé tìm bóng của Bao lì xì nhé!",
       "theme_tag": "festival",
-      "what_tags": ["classification"],
+      "what_tags": ["ops"],
       "thinking_tags": ["match", "infer"],
       "skill_codes": ["C5.VOC.03"],
       "learning_objective_codes": [
@@ -2073,7 +2073,7 @@
       "title": "Tìm Trường học giống mẫu",
       "instruction": "Bé chạm vào Trường học giống mẫu nhé!",
       "theme_tag": "school",
-      "what_tags": ["classification", "number"],
+      "what_tags": ["cls", "shp", "number"],
       "thinking_tags": ["match", "recall"],
       "skill_codes": ["C5.VOC.04"],
       "learning_objective_codes": [
@@ -2139,7 +2139,7 @@
       "title": "Tìm Bò sữa giống mẫu",
       "instruction": "Bé chạm vào Bò sữa giống mẫu nhé!",
       "theme_tag": "farm",
-      "what_tags": ["classification", "number"],
+      "what_tags": ["cls", "shp", "number"],
       "thinking_tags": ["match", "recall"],
       "skill_codes": ["C5.VOC.04"],
       "learning_objective_codes": [
@@ -2213,7 +2213,7 @@
       "title": "So sánh nhóm Ngôi nhà",
       "instruction": "Bé chọn nhóm nhiều Ngôi nhà hơn nhé!",
       "theme_tag": "home",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["match", "recall"],
       "skill_codes": ["C5.VOC.04"],
       "learning_objective_codes": [
@@ -2280,7 +2280,7 @@
       "title": "So sánh nhóm Voi",
       "instruction": "Bé chọn nhóm nhiều Voi hơn nhé!",
       "theme_tag": "animal",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["match", "recall"],
       "skill_codes": ["C5.VOC.04"],
       "learning_objective_codes": [
@@ -2347,7 +2347,7 @@
       "title": "Xếp Cây xanh theo quy luật",
       "instruction": "Bé chọn Cây xanh tiếp theo theo quy luật!",
       "theme_tag": "nature",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["match", "recall"],
       "skill_codes": ["C5.VOC.04"],
       "learning_objective_codes": [
@@ -2415,7 +2415,7 @@
       "title": "Xếp Cá heo theo quy luật",
       "instruction": "Bé chọn Cá heo tiếp theo theo quy luật!",
       "theme_tag": "ocean",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["match", "recall"],
       "skill_codes": ["C5.VOC.04"],
       "learning_objective_codes": [
@@ -2483,7 +2483,7 @@
       "title": "Kéo Táo đỏ vào đúng ô",
       "instruction": "Bé kéo Táo đỏ vào đúng ô nhé!",
       "theme_tag": "food",
-      "what_tags": ["classification"],
+      "what_tags": ["spt"],
       "thinking_tags": ["match", "recall"],
       "skill_codes": ["C5.VOC.04"],
       "learning_objective_codes": [
@@ -2547,7 +2547,7 @@
       "title": "Kéo Xe buýt vào đúng ô",
       "instruction": "Bé kéo Xe buýt vào đúng ô nhé!",
       "theme_tag": "vehicle",
-      "what_tags": ["classification"],
+      "what_tags": ["spt"],
       "thinking_tags": ["match", "recall"],
       "skill_codes": ["C5.VOC.04"],
       "learning_objective_codes": [
@@ -2611,7 +2611,7 @@
       "title": "Tìm cặp thẻ Bảng vẽ giống nhau",
       "instruction": "Bé lật mở cặp Bảng vẽ giống nhau nhé!",
       "theme_tag": "art",
-      "what_tags": ["subitizing", "number"],
+      "what_tags": ["mem", "cnt", "number"],
       "thinking_tags": ["match", "recall"],
       "skill_codes": ["C5.VOC.04"],
       "learning_objective_codes": [
@@ -2677,7 +2677,7 @@
       "title": "Tìm cặp thẻ Cây đàn ghi-ta giống nhau",
       "instruction": "Bé lật mở cặp Cây đàn ghi-ta giống nhau nhé!",
       "theme_tag": "art",
-      "what_tags": ["subitizing", "number"],
+      "what_tags": ["mem", "cnt", "number"],
       "thinking_tags": ["match", "recall"],
       "skill_codes": ["C5.VOC.04"],
       "learning_objective_codes": [
@@ -2750,7 +2750,7 @@
       "title": "Tìm Gia đình giống mẫu",
       "instruction": "Bé chạm vào Gia đình giống mẫu nhé!",
       "theme_tag": "family",
-      "what_tags": ["classification", "number"],
+      "what_tags": ["cls", "shp", "number"],
       "thinking_tags": ["match", "recall"],
       "skill_codes": ["C5.VOC.05"],
       "learning_objective_codes": [
@@ -2816,7 +2816,7 @@
       "title": "Tìm Tai giống mẫu",
       "instruction": "Bé chạm vào Tai giống mẫu nhé!",
       "theme_tag": "body",
-      "what_tags": ["classification", "number"],
+      "what_tags": ["cls", "shp", "number"],
       "thinking_tags": ["match", "recall"],
       "skill_codes": ["C5.VOC.05"],
       "learning_objective_codes": [
@@ -2890,7 +2890,7 @@
       "title": "So sánh nhóm Mặt trời",
       "instruction": "Bé chọn nhóm nhiều Mặt trời hơn nhé!",
       "theme_tag": "weather",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["match", "recall"],
       "skill_codes": ["C5.VOC.05"],
       "learning_objective_codes": [
@@ -2957,7 +2957,7 @@
       "title": "So sánh nhóm Bao lì xì",
       "instruction": "Bé chọn nhóm nhiều Bao lì xì hơn nhé!",
       "theme_tag": "festival",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["match", "recall"],
       "skill_codes": ["C5.VOC.05"],
       "learning_objective_codes": [
@@ -3024,7 +3024,7 @@
       "title": "Xếp Trường học theo quy luật",
       "instruction": "Bé chọn Trường học tiếp theo theo quy luật!",
       "theme_tag": "school",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["match", "recall"],
       "skill_codes": ["C5.VOC.05"],
       "learning_objective_codes": [
@@ -3092,7 +3092,7 @@
       "title": "Xếp Bò sữa theo quy luật",
       "instruction": "Bé chọn Bò sữa tiếp theo theo quy luật!",
       "theme_tag": "farm",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["match", "recall"],
       "skill_codes": ["C5.VOC.05"],
       "learning_objective_codes": [
@@ -3160,7 +3160,7 @@
       "title": "Kéo Ngôi nhà vào đúng ô",
       "instruction": "Bé kéo Ngôi nhà vào đúng ô nhé!",
       "theme_tag": "home",
-      "what_tags": ["classification"],
+      "what_tags": ["spt"],
       "thinking_tags": ["match", "recall"],
       "skill_codes": ["C5.VOC.05"],
       "learning_objective_codes": [
@@ -3224,7 +3224,7 @@
       "title": "Kéo Voi vào đúng ô",
       "instruction": "Bé kéo Voi vào đúng ô nhé!",
       "theme_tag": "animal",
-      "what_tags": ["classification"],
+      "what_tags": ["spt"],
       "thinking_tags": ["match", "recall"],
       "skill_codes": ["C5.VOC.05"],
       "learning_objective_codes": [
@@ -3288,7 +3288,7 @@
       "title": "Tìm cặp thẻ Cây xanh giống nhau",
       "instruction": "Bé lật mở cặp Cây xanh giống nhau nhé!",
       "theme_tag": "nature",
-      "what_tags": ["subitizing", "number"],
+      "what_tags": ["mem", "cnt", "number"],
       "thinking_tags": ["match", "recall"],
       "skill_codes": ["C5.VOC.05"],
       "learning_objective_codes": [
@@ -3354,7 +3354,7 @@
       "title": "Tìm cặp thẻ Cá heo giống nhau",
       "instruction": "Bé lật mở cặp Cá heo giống nhau nhé!",
       "theme_tag": "ocean",
-      "what_tags": ["subitizing", "number"],
+      "what_tags": ["mem", "cnt", "number"],
       "thinking_tags": ["match", "recall"],
       "skill_codes": ["C5.VOC.05"],
       "learning_objective_codes": [

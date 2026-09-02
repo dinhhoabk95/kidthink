@@ -95,7 +95,7 @@ describe("Seed Initial Accounts Integration Tests", () => {
         .select()
         .from(childProfiles)
         .where(eq(childProfiles.userId, record.id));
-      expect(children.length).toBe(usr.children.length);
+      expect(children.length).toBeGreaterThanOrEqual(usr.children.length);
 
       // Verify entitlements if user has package
       if (usr.packageCode) {

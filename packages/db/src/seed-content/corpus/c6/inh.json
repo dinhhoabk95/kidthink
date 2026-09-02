@@ -6,7 +6,7 @@
       "title": "Tách và gộp số lượng Gia đình",
       "instruction": "Bé tách gộp số lượng Gia đình chính xác nhé!",
       "theme_tag": "family",
-      "what_tags": ["classification"],
+      "what_tags": ["lst", "shp"],
       "thinking_tags": ["inhibit"],
       "skill_codes": ["C6.INH.01"],
       "learning_objective_codes": [
@@ -68,7 +68,7 @@
       "title": "Tách và gộp số lượng Tai",
       "instruction": "Bé tách gộp số lượng Tai chính xác nhé!",
       "theme_tag": "body",
-      "what_tags": ["classification"],
+      "what_tags": ["lst", "shp"],
       "thinking_tags": ["inhibit"],
       "skill_codes": ["C6.INH.01"],
       "learning_objective_codes": [
@@ -130,7 +130,7 @@
       "title": "Tách và gộp số lượng Mưa",
       "instruction": "Bé tách gộp số lượng Mưa chính xác nhé!",
       "theme_tag": "weather",
-      "what_tags": ["classification"],
+      "what_tags": ["lst", "shp"],
       "thinking_tags": ["inhibit"],
       "skill_codes": ["C6.INH.01"],
       "learning_objective_codes": [
@@ -192,7 +192,7 @@
       "title": "Xếp que tính thành hình",
       "instruction": "Bé di chuyển que tính tạo thành hình mới!",
       "theme_tag": "home",
-      "what_tags": ["comparison"],
+      "what_tags": ["shp", "cmp"],
       "thinking_tags": ["inhibit"],
       "skill_codes": ["C6.INH.01"],
       "learning_objective_codes": [
@@ -273,7 +273,7 @@
       "title": "Xếp que tính thành hình",
       "instruction": "Bé di chuyển que tính tạo thành hình mới!",
       "theme_tag": "animal",
-      "what_tags": ["comparison"],
+      "what_tags": ["shp", "cmp"],
       "thinking_tags": ["inhibit"],
       "skill_codes": ["C6.INH.01"],
       "learning_objective_codes": [
@@ -354,7 +354,7 @@
       "title": "Tìm Táo đỏ giống mẫu",
       "instruction": "Bé chạm vào Táo đỏ giống mẫu nhé!",
       "theme_tag": "food",
-      "what_tags": ["classification", "number"],
+      "what_tags": ["cls", "shp", "number"],
       "thinking_tags": ["inhibit"],
       "skill_codes": ["C6.INH.02"],
       "learning_objective_codes": [
@@ -420,7 +420,7 @@
       "title": "Tìm Xe buýt giống mẫu",
       "instruction": "Bé chạm vào Xe buýt giống mẫu nhé!",
       "theme_tag": "vehicle",
-      "what_tags": ["classification", "number"],
+      "what_tags": ["cls", "shp", "number"],
       "thinking_tags": ["inhibit"],
       "skill_codes": ["C6.INH.02"],
       "learning_objective_codes": [
@@ -494,7 +494,7 @@
       "title": "Tìm Kèn saxophone giống mẫu",
       "instruction": "Bé chạm vào Kèn saxophone giống mẫu nhé!",
       "theme_tag": "art",
-      "what_tags": ["classification", "number"],
+      "what_tags": ["cls", "shp", "number"],
       "thinking_tags": ["inhibit"],
       "skill_codes": ["C6.INH.02"],
       "learning_objective_codes": [
@@ -568,7 +568,7 @@
       "title": "Tìm Cà rốt giống mẫu",
       "instruction": "Bé chạm vào Cà rốt giống mẫu nhé!",
       "theme_tag": "food",
-      "what_tags": ["classification", "number"],
+      "what_tags": ["cls", "shp", "number"],
       "thinking_tags": ["inhibit"],
       "skill_codes": ["C6.INH.02"],
       "learning_objective_codes": [
@@ -634,7 +634,7 @@
       "title": "Tìm Mẹ giống mẫu",
       "instruction": "Bé chạm vào Mẹ giống mẫu nhé!",
       "theme_tag": "family",
-      "what_tags": ["classification", "number"],
+      "what_tags": ["cls", "shp", "number"],
       "thinking_tags": ["inhibit"],
       "skill_codes": ["C6.INH.02"],
       "learning_objective_codes": [
@@ -708,7 +708,7 @@
       "title": "Đếm số lượng Mắt",
       "instruction": "Bé đếm số Mắt rồi chọn số đúng!",
       "theme_tag": "body",
-      "what_tags": ["category"],
+      "what_tags": ["cls"],
       "thinking_tags": ["inhibit"],
       "skill_codes": ["C6.INH.02"],
       "learning_objective_codes": [
@@ -776,7 +776,7 @@
       "title": "Đếm số lượng Mây",
       "instruction": "Bé đếm số Mây rồi chọn số đúng!",
       "theme_tag": "weather",
-      "what_tags": ["category"],
+      "what_tags": ["cls"],
       "thinking_tags": ["inhibit"],
       "skill_codes": ["C6.INH.02"],
       "learning_objective_codes": [
@@ -844,7 +844,7 @@
       "title": "Đếm số lượng Pháo hoa",
       "instruction": "Bé đếm số Pháo hoa rồi chọn số đúng!",
       "theme_tag": "festival",
-      "what_tags": ["category"],
+      "what_tags": ["cls"],
       "thinking_tags": ["inhibit"],
       "skill_codes": ["C6.INH.02"],
       "learning_objective_codes": [
@@ -912,7 +912,7 @@
       "title": "Đếm số lượng Sách",
       "instruction": "Bé đếm số Sách rồi chọn số đúng!",
       "theme_tag": "school",
-      "what_tags": ["category"],
+      "what_tags": ["cls"],
       "thinking_tags": ["inhibit"],
       "skill_codes": ["C6.INH.02"],
       "learning_objective_codes": [
@@ -980,7 +980,7 @@
       "title": "Đếm số lượng Lúa",
       "instruction": "Bé đếm số Lúa rồi chọn số đúng!",
       "theme_tag": "farm",
-      "what_tags": ["category"],
+      "what_tags": ["cls"],
       "thinking_tags": ["inhibit"],
       "skill_codes": ["C6.INH.02"],
       "learning_objective_codes": [
@@ -1048,7 +1048,7 @@
       "title": "Tách và gộp số lượng Ngôi nhà",
       "instruction": "Bé tách gộp số lượng Ngôi nhà chính xác nhé!",
       "theme_tag": "home",
-      "what_tags": ["classification"],
+      "what_tags": ["lst", "shp"],
       "thinking_tags": ["inhibit"],
       "skill_codes": ["C6.INH.03"],
       "learning_objective_codes": [
@@ -1110,7 +1110,7 @@
       "title": "Tách và gộp số lượng Voi",
       "instruction": "Bé tách gộp số lượng Voi chính xác nhé!",
       "theme_tag": "animal",
-      "what_tags": ["classification"],
+      "what_tags": ["lst", "shp"],
       "thinking_tags": ["inhibit"],
       "skill_codes": ["C6.INH.03"],
       "learning_objective_codes": [
@@ -1172,7 +1172,7 @@
       "title": "Tách và gộp số lượng Cỏ bốn lá",
       "instruction": "Bé tách gộp số lượng Cỏ bốn lá chính xác nhé!",
       "theme_tag": "nature",
-      "what_tags": ["classification"],
+      "what_tags": ["lst", "shp"],
       "thinking_tags": ["inhibit"],
       "skill_codes": ["C6.INH.03"],
       "learning_objective_codes": [
@@ -1234,7 +1234,7 @@
       "title": "Gấp đối xứng hình Cá voi",
       "instruction": "Bé chọn nửa hình đối xứng qua trục nhé!",
       "theme_tag": "ocean",
-      "what_tags": ["classification"],
+      "what_tags": ["shp"],
       "thinking_tags": ["inhibit"],
       "skill_codes": ["C6.INH.03"],
       "learning_objective_codes": [
@@ -1334,7 +1334,7 @@
       "title": "Gấp đối xứng hình Chuối",
       "instruction": "Bé chọn nửa hình đối xứng qua trục nhé!",
       "theme_tag": "food",
-      "what_tags": ["classification"],
+      "what_tags": ["shp"],
       "thinking_tags": ["inhibit"],
       "skill_codes": ["C6.INH.03"],
       "learning_objective_codes": [
@@ -1434,7 +1434,7 @@
       "title": "Gấp đối xứng hình Máy bay",
       "instruction": "Bé chọn nửa hình đối xứng qua trục nhé!",
       "theme_tag": "vehicle",
-      "what_tags": ["classification"],
+      "what_tags": ["shp"],
       "thinking_tags": ["inhibit"],
       "skill_codes": ["C6.INH.03"],
       "learning_objective_codes": [
@@ -1534,7 +1534,7 @@
       "title": "Xếp que tính thành hình",
       "instruction": "Bé di chuyển que tính tạo thành hình mới!",
       "theme_tag": "art",
-      "what_tags": ["comparison"],
+      "what_tags": ["shp", "cmp"],
       "thinking_tags": ["inhibit"],
       "skill_codes": ["C6.INH.03"],
       "learning_objective_codes": [
@@ -1615,7 +1615,7 @@
       "title": "Xếp que tính thành hình",
       "instruction": "Bé di chuyển que tính tạo thành hình mới!",
       "theme_tag": "space",
-      "what_tags": ["comparison"],
+      "what_tags": ["shp", "cmp"],
       "thinking_tags": ["inhibit"],
       "skill_codes": ["C6.INH.03"],
       "learning_objective_codes": [
@@ -1696,7 +1696,7 @@
       "title": "Phép cộng trực quan với Gia đình",
       "instruction": "Bé tính tổng số Gia đình của hai nhóm nhé!",
       "theme_tag": "family",
-      "what_tags": ["classification"],
+      "what_tags": ["fnc"],
       "thinking_tags": ["inhibit"],
       "skill_codes": ["C6.INH.03"],
       "learning_objective_codes": [
@@ -1761,7 +1761,7 @@
       "title": "Phép cộng trực quan với Tai",
       "instruction": "Bé tính tổng số Tai của hai nhóm nhé!",
       "theme_tag": "body",
-      "what_tags": ["classification"],
+      "what_tags": ["fnc"],
       "thinking_tags": ["inhibit"],
       "skill_codes": ["C6.INH.03"],
       "learning_objective_codes": [
@@ -1826,7 +1826,7 @@
       "title": "Tách và gộp số lượng Mặt trời",
       "instruction": "Bé tách gộp số lượng Mặt trời chính xác nhé!",
       "theme_tag": "weather",
-      "what_tags": ["classification"],
+      "what_tags": ["lst", "shp"],
       "thinking_tags": ["inhibit"],
       "skill_codes": ["C6.INH.04"],
       "learning_objective_codes": [
@@ -1888,7 +1888,7 @@
       "title": "Tách và gộp số lượng Bao lì xì",
       "instruction": "Bé tách gộp số lượng Bao lì xì chính xác nhé!",
       "theme_tag": "festival",
-      "what_tags": ["classification"],
+      "what_tags": ["lst", "shp"],
       "thinking_tags": ["inhibit"],
       "skill_codes": ["C6.INH.04"],
       "learning_objective_codes": [
@@ -1950,7 +1950,7 @@
       "title": "Gấp đối xứng hình Trường học",
       "instruction": "Bé chọn nửa hình đối xứng qua trục nhé!",
       "theme_tag": "school",
-      "what_tags": ["classification"],
+      "what_tags": ["shp"],
       "thinking_tags": ["inhibit"],
       "skill_codes": ["C6.INH.04"],
       "learning_objective_codes": [
@@ -2050,7 +2050,7 @@
       "title": "Gấp đối xứng hình Bò sữa",
       "instruction": "Bé chọn nửa hình đối xứng qua trục nhé!",
       "theme_tag": "farm",
-      "what_tags": ["classification"],
+      "what_tags": ["shp"],
       "thinking_tags": ["inhibit"],
       "skill_codes": ["C6.INH.04"],
       "learning_objective_codes": [
@@ -2150,7 +2150,7 @@
       "title": "Xếp que tính thành hình",
       "instruction": "Bé di chuyển que tính tạo thành hình mới!",
       "theme_tag": "home",
-      "what_tags": ["comparison"],
+      "what_tags": ["shp", "cmp"],
       "thinking_tags": ["inhibit"],
       "skill_codes": ["C6.INH.04"],
       "learning_objective_codes": [
@@ -2231,7 +2231,7 @@
       "title": "Xếp que tính thành hình",
       "instruction": "Bé di chuyển que tính tạo thành hình mới!",
       "theme_tag": "animal",
-      "what_tags": ["comparison"],
+      "what_tags": ["shp", "cmp"],
       "thinking_tags": ["inhibit"],
       "skill_codes": ["C6.INH.04"],
       "learning_objective_codes": [
@@ -2312,7 +2312,7 @@
       "title": "Phép cộng trực quan với Cây xanh",
       "instruction": "Bé tính tổng số Cây xanh của hai nhóm nhé!",
       "theme_tag": "nature",
-      "what_tags": ["classification"],
+      "what_tags": ["fnc"],
       "thinking_tags": ["inhibit"],
       "skill_codes": ["C6.INH.04"],
       "learning_objective_codes": [
@@ -2377,7 +2377,7 @@
       "title": "Phép cộng trực quan với Cá heo",
       "instruction": "Bé tính tổng số Cá heo của hai nhóm nhé!",
       "theme_tag": "ocean",
-      "what_tags": ["classification"],
+      "what_tags": ["fnc"],
       "thinking_tags": ["inhibit"],
       "skill_codes": ["C6.INH.04"],
       "learning_objective_codes": [
@@ -2442,7 +2442,7 @@
       "title": "Phép trừ trực quan với Táo đỏ",
       "instruction": "Bé làm phép trừ và chọn kết quả đúng nhé!",
       "theme_tag": "food",
-      "what_tags": ["classification"],
+      "what_tags": ["fnc", "rule", "cls"],
       "thinking_tags": ["inhibit"],
       "skill_codes": ["C6.INH.04"],
       "learning_objective_codes": [
@@ -2531,7 +2531,7 @@
       "title": "Phép trừ trực quan với Xe buýt",
       "instruction": "Bé làm phép trừ và chọn kết quả đúng nhé!",
       "theme_tag": "vehicle",
-      "what_tags": ["classification"],
+      "what_tags": ["fnc", "rule", "cls"],
       "thinking_tags": ["inhibit"],
       "skill_codes": ["C6.INH.04"],
       "learning_objective_codes": [

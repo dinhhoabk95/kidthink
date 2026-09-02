@@ -108,7 +108,10 @@ export function nuxtAppAliases(appRoot: string): PrefixAlias[] {
 export const SEQUENTIAL_DEFAULTS = {
   fileParallelism: false,
   maxWorkers: 1,
+  minWorkers: 1,
   maxConcurrency: 1,
+  pool: "forks" as const,
+  forks: { singleFork: true },
   sequence: { concurrent: false },
 } as const;
 

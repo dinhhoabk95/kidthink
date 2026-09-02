@@ -1,5 +1,5 @@
 /**
- * @generated from LEVEL-GENERATOR-KIT@b0b36bbbcbad
+ * @generated from LEVEL-GENERATOR-KIT@4d17f70e151d
  * Engine: GT-014
  * Seed: 20260829
  * Theme: school
@@ -37,7 +37,7 @@ export const GEN_GT014_20260829: ContentSeed<unknown, unknown>[] = [
             "kind": "emoji",
             "ref": "EMJ-ruler"
           },
-          "weight": 5
+          "weight": 6
         }
       ],
       "right_pan": [
@@ -57,7 +57,7 @@ export const GEN_GT014_20260829: ContentSeed<unknown, unknown>[] = [
             "kind": "emoji",
             "ref": "EMJ-scissors"
           },
-          "weight": 3
+          "weight": 4
         },
         {
           "item_id": "tray_2",
@@ -65,7 +65,7 @@ export const GEN_GT014_20260829: ContentSeed<unknown, unknown>[] = [
             "kind": "emoji",
             "ref": "EMJ-abacus"
           },
-          "weight": 1
+          "weight": 5
         },
         {
           "item_id": "tray_3",
@@ -73,14 +73,14 @@ export const GEN_GT014_20260829: ContentSeed<unknown, unknown>[] = [
             "kind": "emoji",
             "ref": "EMJ-books"
           },
-          "weight": 4
+          "weight": 6
         }
       ],
       "goal": "balance"
     },
     "difficulty_params": {
       "tray_count": 3,
-      "weight_span": 5,
+      "weight_span": 6,
       "hint_after_ms": 12000,
       "allow_retry": true
     }
@@ -111,9 +111,9 @@ export const GEN_GT014_20260829: ContentSeed<unknown, unknown>[] = [
           "item_id": "left_1",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-scissors"
+            "ref": "EMJ-ruler"
           },
-          "weight": 5
+          "weight": 6
         }
       ],
       "right_pan": [
@@ -123,7 +123,7 @@ export const GEN_GT014_20260829: ContentSeed<unknown, unknown>[] = [
             "kind": "emoji",
             "ref": "EMJ-crayon"
           },
-          "weight": 2
+          "weight": 3
         }
       ],
       "tray": [
@@ -131,7 +131,7 @@ export const GEN_GT014_20260829: ContentSeed<unknown, unknown>[] = [
           "item_id": "tray_1",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-books"
+            "ref": "EMJ-backpack"
           },
           "weight": 3
         },
@@ -139,24 +139,24 @@ export const GEN_GT014_20260829: ContentSeed<unknown, unknown>[] = [
           "item_id": "tray_2",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-bell"
+            "ref": "EMJ-scissors"
           },
-          "weight": 1
+          "weight": 4
         },
         {
           "item_id": "tray_3",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-backpack"
+            "ref": "EMJ-pencil"
           },
-          "weight": 4
+          "weight": 5
         }
       ],
       "goal": "balance"
     },
     "difficulty_params": {
       "tray_count": 3,
-      "weight_span": 5,
+      "weight_span": 6,
       "hint_after_ms": 12000,
       "allow_retry": true
     }
@@ -187,9 +187,9 @@ export const GEN_GT014_20260829: ContentSeed<unknown, unknown>[] = [
           "item_id": "left_1",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-scissors"
+            "ref": "EMJ-backpack"
           },
-          "weight": 5
+          "weight": 4
         }
       ],
       "right_pan": [
@@ -207,23 +207,23 @@ export const GEN_GT014_20260829: ContentSeed<unknown, unknown>[] = [
           "item_id": "tray_1",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-open-book"
+            "ref": "EMJ-school"
           },
-          "weight": 3
+          "weight": 2
         },
         {
           "item_id": "tray_2",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-ruler"
+            "ref": "EMJ-open-book"
           },
-          "weight": 1
+          "weight": 3
         },
         {
           "item_id": "tray_3",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-school"
+            "ref": "EMJ-scissors"
           },
           "weight": 4
         }
@@ -232,7 +232,7 @@ export const GEN_GT014_20260829: ContentSeed<unknown, unknown>[] = [
     },
     "difficulty_params": {
       "tray_count": 3,
-      "weight_span": 5,
+      "weight_span": 4,
       "hint_after_ms": 12000,
       "allow_retry": true
     }
@@ -273,7 +273,7 @@ export const GEN_GT014_20260829: ContentSeed<unknown, unknown>[] = [
           "item_id": "right_1",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-school"
+            "ref": "EMJ-bell"
           },
           "weight": 2
         }
@@ -283,7 +283,7 @@ export const GEN_GT014_20260829: ContentSeed<unknown, unknown>[] = [
           "item_id": "tray_1",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-ruler"
+            "ref": "EMJ-school"
           },
           "weight": 3
         },
@@ -291,17 +291,17 @@ export const GEN_GT014_20260829: ContentSeed<unknown, unknown>[] = [
           "item_id": "tray_2",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-open-book"
+            "ref": "EMJ-books"
           },
-          "weight": 1
+          "weight": 4
         },
         {
           "item_id": "tray_3",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-pencil"
+            "ref": "EMJ-ruler"
           },
-          "weight": 4
+          "weight": 5
         }
       ],
       "goal": "balance"
@@ -339,9 +339,9 @@ export const GEN_GT014_20260829: ContentSeed<unknown, unknown>[] = [
           "item_id": "left_1",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-backpack"
+            "ref": "EMJ-open-book"
           },
-          "weight": 5
+          "weight": 7
         }
       ],
       "right_pan": [
@@ -349,9 +349,9 @@ export const GEN_GT014_20260829: ContentSeed<unknown, unknown>[] = [
           "item_id": "right_1",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-pencil"
+            "ref": "EMJ-crayon"
           },
-          "weight": 2
+          "weight": 3
         }
       ],
       "tray": [
@@ -359,17 +359,17 @@ export const GEN_GT014_20260829: ContentSeed<unknown, unknown>[] = [
           "item_id": "tray_1",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-bell"
+            "ref": "EMJ-scissors"
           },
-          "weight": 3
+          "weight": 4
         },
         {
           "item_id": "tray_2",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-school"
+            "ref": "EMJ-books"
           },
-          "weight": 1
+          "weight": 5
         },
         {
           "item_id": "tray_3",
@@ -377,14 +377,14 @@ export const GEN_GT014_20260829: ContentSeed<unknown, unknown>[] = [
             "kind": "emoji",
             "ref": "EMJ-ruler"
           },
-          "weight": 4
+          "weight": 6
         }
       ],
       "goal": "balance"
     },
     "difficulty_params": {
       "tray_count": 3,
-      "weight_span": 5,
+      "weight_span": 7,
       "hint_after_ms": 12000,
       "allow_retry": true
     }

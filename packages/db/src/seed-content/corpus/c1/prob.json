@@ -6,8 +6,8 @@
       "title": "Phân loại Mặt trời theo nhóm",
       "instruction": "Bé phân loại Mặt trời theo đặc điểm phù hợp!",
       "theme_tag": "weather",
-      "what_tags": ["classification"],
-      "thinking_tags": ["plan", "solve"],
+      "what_tags": ["cmp", "sequence"],
+      "thinking_tags": ["plan", "infer"],
       "skill_codes": ["C1.PROB.01"],
       "learning_objective_codes": [
         "LO-C1.PROB.01-01",
@@ -67,8 +67,8 @@
       "title": "Phân loại Bao lì xì theo nhóm",
       "instruction": "Bé phân loại Bao lì xì theo đặc điểm phù hợp!",
       "theme_tag": "festival",
-      "what_tags": ["classification"],
-      "thinking_tags": ["plan", "solve"],
+      "what_tags": ["cmp", "sequence"],
+      "thinking_tags": ["plan", "infer"],
       "skill_codes": ["C1.PROB.01"],
       "learning_objective_codes": [
         "LO-C1.PROB.01-01",
@@ -128,8 +128,8 @@
       "title": "Phân loại Bút chì theo nhóm",
       "instruction": "Bé phân loại Bút chì theo đặc điểm phù hợp!",
       "theme_tag": "school",
-      "what_tags": ["classification"],
-      "thinking_tags": ["plan", "solve"],
+      "what_tags": ["cmp", "sequence"],
+      "thinking_tags": ["plan", "infer"],
       "skill_codes": ["C1.PROB.01"],
       "learning_objective_codes": [
         "LO-C1.PROB.01-01",
@@ -189,8 +189,8 @@
       "title": "Phân loại Heo theo nhóm",
       "instruction": "Bé phân loại Heo theo đặc điểm phù hợp!",
       "theme_tag": "farm",
-      "what_tags": ["classification"],
-      "thinking_tags": ["plan", "solve"],
+      "what_tags": ["cmp", "sequence"],
+      "thinking_tags": ["plan", "infer"],
       "skill_codes": ["C1.PROB.01"],
       "learning_objective_codes": [
         "LO-C1.PROB.01-01",
@@ -250,8 +250,8 @@
       "title": "Tìm bóng của Ngôi nhà",
       "instruction": "Bé quan sát và chọn bóng đúng của Ngôi nhà!",
       "theme_tag": "home",
-      "what_tags": ["classification"],
-      "thinking_tags": ["plan", "solve"],
+      "what_tags": ["ops"],
+      "thinking_tags": ["plan", "infer"],
       "skill_codes": ["C1.PROB.01"],
       "learning_objective_codes": [
         "LO-C1.PROB.01-01",
@@ -326,8 +326,8 @@
       "title": "Tìm bóng của Voi",
       "instruction": "Bé quan sát và chọn bóng đúng của Voi!",
       "theme_tag": "animal",
-      "what_tags": ["classification"],
-      "thinking_tags": ["plan", "solve"],
+      "what_tags": ["ops"],
+      "thinking_tags": ["plan", "infer"],
       "skill_codes": ["C1.PROB.01"],
       "learning_objective_codes": [
         "LO-C1.PROB.01-01",
@@ -402,8 +402,8 @@
       "title": "Tìm bóng của Cỏ bốn lá",
       "instruction": "Bé quan sát và chọn bóng đúng của Cỏ bốn lá!",
       "theme_tag": "nature",
-      "what_tags": ["classification"],
-      "thinking_tags": ["plan", "solve"],
+      "what_tags": ["ops"],
+      "thinking_tags": ["plan", "infer"],
       "skill_codes": ["C1.PROB.01"],
       "learning_objective_codes": [
         "LO-C1.PROB.01-01",
@@ -478,196 +478,8 @@
       "title": "Xếp Táo đỏ theo kích thước",
       "instruction": "Bé sắp xếp các Táo đỏ từ nhỏ đến lớn!",
       "theme_tag": "food",
-      "what_tags": ["deduction", "logic", "number", "comparison"],
-      "thinking_tags": ["plan", "solve"],
-      "skill_codes": ["C1.PROB.01"],
-      "learning_objective_codes": [
-        "LO-C1.PROB.01-01",
-        "LO-C1.PROB.01-02",
-        "LO-C1.PROB.01-03"
-      ],
-      "difficulty": 4,
-      "age_min": 5,
-      "age_max": 6,
-      "access_tier": "standard",
-      "content_version": 1,
-      "authored_in": "repo_seed",
-      "origin": "ai_assisted"
-    },
-    "content_pack": {
-      "prompt": "Bé hãy dựa vào các manh mối để tìm ra đồ vật bí mật nhé!",
-      "candidates": [
-        {
-          "candidate_id": "cand_1",
-          "value": 4,
-          "asset": {
-            "kind": "emoji",
-            "ref": "EMJ-egg"
-          }
-        },
-        {
-          "candidate_id": "cand_2",
-          "value": 6,
-          "asset": {
-            "kind": "emoji",
-            "ref": "EMJ-bread"
-          }
-        },
-        {
-          "candidate_id": "cand_3",
-          "value": 8,
-          "asset": {
-            "kind": "emoji",
-            "ref": "EMJ-carrot"
-          }
-        },
-        {
-          "candidate_id": "cand_4",
-          "value": 10,
-          "asset": {
-            "kind": "emoji",
-            "ref": "EMJ-corn"
-          }
-        },
-        {
-          "candidate_id": "cand_5",
-          "value": 12,
-          "asset": {
-            "kind": "emoji",
-            "ref": "EMJ-rice"
-          }
-        }
-      ],
-      "clues": [
-        {
-          "clue_id": "clue_1",
-          "text": "Số lượng lớn hơn 6",
-          "predicate": {
-            "kind": "greater_than",
-            "value": 6
-          }
-        },
-        {
-          "clue_id": "clue_2",
-          "text": "Số lượng nhỏ hơn 10",
-          "predicate": {
-            "kind": "less_than",
-            "value": 10
-          }
-        }
-      ],
-      "answer_candidate_id": "cand_3"
-    },
-    "difficulty_params": {
-      "clue_count": 2,
-      "candidate_count": 5,
-      "hint_after_ms": 15000,
-      "allow_retry": true
-    }
-  },
-  {
-    "header": {
-      "code": "GL-C1-PROB-SIZE-0002",
-      "template_code": "GT-009",
-      "title": "Xếp Xe buýt theo kích thước",
-      "instruction": "Bé sắp xếp các Xe buýt từ nhỏ đến lớn!",
-      "theme_tag": "vehicle",
-      "what_tags": ["deduction", "logic", "number", "comparison"],
-      "thinking_tags": ["plan", "solve"],
-      "skill_codes": ["C1.PROB.01"],
-      "learning_objective_codes": [
-        "LO-C1.PROB.01-01",
-        "LO-C1.PROB.01-02",
-        "LO-C1.PROB.01-03"
-      ],
-      "difficulty": 5,
-      "age_min": 5,
-      "age_max": 6,
-      "access_tier": "premium",
-      "content_version": 1,
-      "authored_in": "repo_seed",
-      "origin": "ai_assisted"
-    },
-    "content_pack": {
-      "prompt": "Bé hãy dựa vào các manh mối để tìm ra đồ vật bí mật nhé!",
-      "candidates": [
-        {
-          "candidate_id": "cand_1",
-          "value": 4,
-          "asset": {
-            "kind": "emoji",
-            "ref": "EMJ-train"
-          }
-        },
-        {
-          "candidate_id": "cand_2",
-          "value": 6,
-          "asset": {
-            "kind": "emoji",
-            "ref": "EMJ-car"
-          }
-        },
-        {
-          "candidate_id": "cand_3",
-          "value": 8,
-          "asset": {
-            "kind": "emoji",
-            "ref": "EMJ-bicycle"
-          }
-        },
-        {
-          "candidate_id": "cand_4",
-          "value": 10,
-          "asset": {
-            "kind": "emoji",
-            "ref": "EMJ-airplane"
-          }
-        },
-        {
-          "candidate_id": "cand_5",
-          "value": 12,
-          "asset": {
-            "kind": "emoji",
-            "ref": "EMJ-motorcycle"
-          }
-        }
-      ],
-      "clues": [
-        {
-          "clue_id": "clue_1",
-          "text": "Số lượng lớn hơn 4",
-          "predicate": {
-            "kind": "greater_than",
-            "value": 4
-          }
-        },
-        {
-          "clue_id": "clue_2",
-          "text": "Số lượng nhỏ hơn 8",
-          "predicate": {
-            "kind": "less_than",
-            "value": 8
-          }
-        }
-      ],
-      "answer_candidate_id": "cand_2"
-    },
-    "difficulty_params": {
-      "clue_count": 2,
-      "candidate_count": 5,
-      "hint_after_ms": 15000,
-      "allow_retry": true
-    }
-  },
-  {
-    "header": {
-      "code": "GL-C1-PROB-SIZE-0003",
-      "template_code": "GT-009",
-      "title": "Xếp Kèn saxophone theo kích thước",
-      "instruction": "Bé sắp xếp các Kèn saxophone từ nhỏ đến lớn!",
-      "theme_tag": "art",
-      "what_tags": ["deduction", "logic", "number", "comparison"],
-      "thinking_tags": ["plan", "solve"],
+      "what_tags": ["log", "number", "cmp"],
+      "thinking_tags": ["plan", "infer"],
       "skill_codes": ["C1.PROB.01"],
       "learning_objective_codes": [
         "LO-C1.PROB.01-01",
@@ -690,7 +502,7 @@
           "value": 2,
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-crayon"
+            "ref": "EMJ-carrot"
           }
         },
         {
@@ -698,7 +510,7 @@
           "value": 4,
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-camera"
+            "ref": "EMJ-bread"
           }
         },
         {
@@ -706,7 +518,7 @@
           "value": 6,
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-artist-palette"
+            "ref": "EMJ-corn"
           }
         },
         {
@@ -714,7 +526,7 @@
           "value": 8,
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-guitar"
+            "ref": "EMJ-rice"
           }
         },
         {
@@ -722,46 +534,54 @@
           "value": 10,
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-musical-notes"
+            "ref": "EMJ-milk"
+          }
+        },
+        {
+          "candidate_id": "cand_6",
+          "value": 12,
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-noodles"
           }
         }
       ],
       "clues": [
         {
           "clue_id": "clue_1",
-          "text": "Số lượng lớn hơn 2",
+          "text": "Số lượng lớn hơn 6",
           "predicate": {
             "kind": "greater_than",
-            "value": 2
+            "value": 6
           }
         },
         {
           "clue_id": "clue_2",
-          "text": "Số lượng nhỏ hơn 6",
+          "text": "Số lượng nhỏ hơn 10",
           "predicate": {
             "kind": "less_than",
-            "value": 6
+            "value": 10
           }
         }
       ],
-      "answer_candidate_id": "cand_2"
+      "answer_candidate_id": "cand_4"
     },
     "difficulty_params": {
       "clue_count": 2,
-      "candidate_count": 5,
+      "candidate_count": 6,
       "hint_after_ms": 15000,
       "allow_retry": true
     }
   },
   {
     "header": {
-      "code": "GL-C1-PROB-SIZE-0004",
+      "code": "GL-C1-PROB-SIZE-0002",
       "template_code": "GT-009",
-      "title": "Xếp Phi hành gia theo kích thước",
-      "instruction": "Bé sắp xếp các Phi hành gia từ nhỏ đến lớn!",
-      "theme_tag": "space",
-      "what_tags": ["deduction", "logic", "number", "comparison"],
-      "thinking_tags": ["plan", "solve"],
+      "title": "Xếp Xe buýt theo kích thước",
+      "instruction": "Bé sắp xếp các Xe buýt từ nhỏ đến lớn!",
+      "theme_tag": "vehicle",
+      "what_tags": ["log", "number", "cmp"],
+      "thinking_tags": ["plan", "infer"],
       "skill_codes": ["C1.PROB.01"],
       "learning_objective_codes": [
         "LO-C1.PROB.01-01",
@@ -781,68 +601,272 @@
       "candidates": [
         {
           "candidate_id": "cand_1",
-          "value": 3,
+          "value": 2,
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-earth"
+            "ref": "EMJ-car"
           }
         },
         {
           "candidate_id": "cand_2",
-          "value": 5,
+          "value": 4,
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-crescent-moon"
+            "ref": "EMJ-ship"
           }
         },
         {
           "candidate_id": "cand_3",
-          "value": 7,
+          "value": 6,
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-astronaut"
+            "ref": "EMJ-airplane"
           }
         },
         {
           "candidate_id": "cand_4",
-          "value": 9,
+          "value": 8,
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-ringed-planet"
+            "ref": "EMJ-motorcycle"
           }
         },
         {
           "candidate_id": "cand_5",
-          "value": 11,
+          "value": 10,
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-flying-saucer"
+            "ref": "EMJ-helicopter"
           }
         }
       ],
       "clues": [
         {
           "clue_id": "clue_1",
-          "text": "Số lượng lớn hơn 7",
+          "text": "Số lượng lớn hơn 4",
           "predicate": {
             "kind": "greater_than",
-            "value": 7
+            "value": 4
           }
         },
         {
           "clue_id": "clue_2",
-          "text": "Số lượng nhỏ hơn 11",
+          "text": "Số lượng nhỏ hơn 8",
           "predicate": {
             "kind": "less_than",
-            "value": 11
+            "value": 8
           }
         }
       ],
-      "answer_candidate_id": "cand_4"
+      "answer_candidate_id": "cand_3"
     },
     "difficulty_params": {
       "clue_count": 2,
       "candidate_count": 5,
+      "hint_after_ms": 15000,
+      "allow_retry": true
+    }
+  },
+  {
+    "header": {
+      "code": "GL-C1-PROB-SIZE-0003",
+      "template_code": "GT-009",
+      "title": "Xếp Kèn saxophone theo kích thước",
+      "instruction": "Bé sắp xếp các Kèn saxophone từ nhỏ đến lớn!",
+      "theme_tag": "art",
+      "what_tags": ["log", "number", "cmp"],
+      "thinking_tags": ["plan", "infer"],
+      "skill_codes": ["C1.PROB.01"],
+      "learning_objective_codes": [
+        "LO-C1.PROB.01-01",
+        "LO-C1.PROB.01-02",
+        "LO-C1.PROB.01-03"
+      ],
+      "difficulty": 4,
+      "age_min": 5,
+      "age_max": 6,
+      "access_tier": "standard",
+      "content_version": 1,
+      "authored_in": "repo_seed",
+      "origin": "ai_assisted"
+    },
+    "content_pack": {
+      "prompt": "Bé hãy dựa vào các manh mối để tìm ra đồ vật bí mật nhé!",
+      "candidates": [
+        {
+          "candidate_id": "cand_1",
+          "value": 4,
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-camera"
+          }
+        },
+        {
+          "candidate_id": "cand_2",
+          "value": 6,
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-guitar"
+          }
+        },
+        {
+          "candidate_id": "cand_3",
+          "value": 8,
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-saxophone"
+          }
+        },
+        {
+          "candidate_id": "cand_4",
+          "value": 10,
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-musical-notes"
+          }
+        },
+        {
+          "candidate_id": "cand_5",
+          "value": 12,
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-drum"
+          }
+        },
+        {
+          "candidate_id": "cand_6",
+          "value": 14,
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-artist-palette"
+          }
+        }
+      ],
+      "clues": [
+        {
+          "clue_id": "clue_1",
+          "text": "Số lượng lớn hơn 10",
+          "predicate": {
+            "kind": "greater_than",
+            "value": 10
+          }
+        },
+        {
+          "clue_id": "clue_2",
+          "text": "Số lượng nhỏ hơn 14",
+          "predicate": {
+            "kind": "less_than",
+            "value": 14
+          }
+        }
+      ],
+      "answer_candidate_id": "cand_5"
+    },
+    "difficulty_params": {
+      "clue_count": 2,
+      "candidate_count": 6,
+      "hint_after_ms": 15000,
+      "allow_retry": true
+    }
+  },
+  {
+    "header": {
+      "code": "GL-C1-PROB-SIZE-0004",
+      "template_code": "GT-009",
+      "title": "Xếp Phi hành gia theo kích thước",
+      "instruction": "Bé sắp xếp các Phi hành gia từ nhỏ đến lớn!",
+      "theme_tag": "space",
+      "what_tags": ["log", "number", "cmp"],
+      "thinking_tags": ["plan", "infer"],
+      "skill_codes": ["C1.PROB.01"],
+      "learning_objective_codes": [
+        "LO-C1.PROB.01-01",
+        "LO-C1.PROB.01-02",
+        "LO-C1.PROB.01-03"
+      ],
+      "difficulty": 5,
+      "age_min": 5,
+      "age_max": 6,
+      "access_tier": "premium",
+      "content_version": 1,
+      "authored_in": "repo_seed",
+      "origin": "ai_assisted"
+    },
+    "content_pack": {
+      "prompt": "Bé hãy dựa vào các manh mối để tìm ra đồ vật bí mật nhé!",
+      "candidates": [
+        {
+          "candidate_id": "cand_1",
+          "value": 2,
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-crescent-moon"
+          }
+        },
+        {
+          "candidate_id": "cand_2",
+          "value": 4,
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-astronaut"
+          }
+        },
+        {
+          "candidate_id": "cand_3",
+          "value": 6,
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-ringed-planet"
+          }
+        },
+        {
+          "candidate_id": "cand_4",
+          "value": 8,
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-earth"
+          }
+        },
+        {
+          "candidate_id": "cand_5",
+          "value": 10,
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-comet"
+          }
+        },
+        {
+          "candidate_id": "cand_6",
+          "value": 12,
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-full-moon"
+          }
+        }
+      ],
+      "clues": [
+        {
+          "clue_id": "clue_1",
+          "text": "Số lượng lớn hơn 8",
+          "predicate": {
+            "kind": "greater_than",
+            "value": 8
+          }
+        },
+        {
+          "clue_id": "clue_2",
+          "text": "Số lượng nhỏ hơn 12",
+          "predicate": {
+            "kind": "less_than",
+            "value": 12
+          }
+        }
+      ],
+      "answer_candidate_id": "cand_5"
+    },
+    "difficulty_params": {
+      "clue_count": 2,
+      "candidate_count": 6,
       "hint_after_ms": 15000,
       "allow_retry": true
     }
@@ -854,8 +878,8 @@
       "title": "Dẫn đường qua mê cung",
       "instruction": "Bé chọn hướng đi vượt qua mê cung tới đích!",
       "theme_tag": "family",
-      "what_tags": ["maze"],
-      "thinking_tags": ["plan", "solve"],
+      "what_tags": ["spt", "flw"],
+      "thinking_tags": ["plan", "infer"],
       "skill_codes": ["C1.PROB.01"],
       "learning_objective_codes": [
         "LO-C1.PROB.01-01",
@@ -973,8 +997,8 @@
       "title": "Dẫn đường qua mê cung",
       "instruction": "Bé chọn hướng đi vượt qua mê cung tới đích!",
       "theme_tag": "body",
-      "what_tags": ["maze"],
-      "thinking_tags": ["plan", "solve"],
+      "what_tags": ["spt", "flw"],
+      "thinking_tags": ["plan", "infer"],
       "skill_codes": ["C1.PROB.01"],
       "learning_objective_codes": [
         "LO-C1.PROB.01-01",
@@ -1082,8 +1106,8 @@
       "title": "Dẫn đường qua mê cung",
       "instruction": "Bé chọn hướng đi vượt qua mê cung tới đích!",
       "theme_tag": "weather",
-      "what_tags": ["maze"],
-      "thinking_tags": ["plan", "solve"],
+      "what_tags": ["spt", "flw"],
+      "thinking_tags": ["plan", "infer"],
       "skill_codes": ["C1.PROB.01"],
       "learning_objective_codes": [
         "LO-C1.PROB.01-01",
@@ -1196,8 +1220,8 @@
       "title": "Dẫn đường qua mê cung",
       "instruction": "Bé chọn hướng đi vượt qua mê cung tới đích!",
       "theme_tag": "festival",
-      "what_tags": ["maze"],
-      "thinking_tags": ["plan", "solve"],
+      "what_tags": ["spt", "flw"],
+      "thinking_tags": ["plan", "infer"],
       "skill_codes": ["C1.PROB.01"],
       "learning_objective_codes": [
         "LO-C1.PROB.01-01",
@@ -1340,8 +1364,8 @@
       "title": "Tìm Trường học đang ẩn nấp",
       "instruction": "Bé tinh mắt tìm đủ Trường học giấu trong tranh!",
       "theme_tag": "school",
-      "what_tags": ["logic", "pattern", "matrix"],
-      "thinking_tags": ["plan", "solve"],
+      "what_tags": ["log", "pattern"],
+      "thinking_tags": ["plan", "infer"],
       "skill_codes": ["C1.PROB.01"],
       "learning_objective_codes": [
         "LO-C1.PROB.01-01",
@@ -1396,7 +1420,7 @@
         {
           "row": 0,
           "col": 2,
-          "symbol_id": "sym_3"
+          "symbol_id": null
         },
         {
           "row": 1,
@@ -1406,7 +1430,7 @@
         {
           "row": 1,
           "col": 1,
-          "symbol_id": "sym_3"
+          "symbol_id": null
         },
         {
           "row": 1,
@@ -1416,7 +1440,7 @@
         {
           "row": 2,
           "col": 0,
-          "symbol_id": "sym_3"
+          "symbol_id": null
         },
         {
           "row": 2,
@@ -1426,13 +1450,13 @@
         {
           "row": 2,
           "col": 2,
-          "symbol_id": null
+          "symbol_id": "sym_2"
         }
       ],
       "regions": "row_col"
     },
     "difficulty_params": {
-      "blank_count": 1,
+      "blank_count": 3,
       "hint_after_ms": 15000,
       "allow_retry": true
     }
@@ -1444,8 +1468,8 @@
       "title": "Tìm Bò sữa đang ẩn nấp",
       "instruction": "Bé tinh mắt tìm đủ Bò sữa giấu trong tranh!",
       "theme_tag": "farm",
-      "what_tags": ["logic", "pattern", "matrix"],
-      "thinking_tags": ["plan", "solve"],
+      "what_tags": ["log", "pattern"],
+      "thinking_tags": ["plan", "infer"],
       "skill_codes": ["C1.PROB.01"],
       "learning_objective_codes": [
         "LO-C1.PROB.01-01",
@@ -1500,7 +1524,7 @@
         {
           "row": 0,
           "col": 2,
-          "symbol_id": "sym_3"
+          "symbol_id": null
         },
         {
           "row": 1,
@@ -1510,7 +1534,7 @@
         {
           "row": 1,
           "col": 1,
-          "symbol_id": "sym_3"
+          "symbol_id": null
         },
         {
           "row": 1,
@@ -1520,7 +1544,7 @@
         {
           "row": 2,
           "col": 0,
-          "symbol_id": "sym_3"
+          "symbol_id": null
         },
         {
           "row": 2,
@@ -1530,13 +1554,13 @@
         {
           "row": 2,
           "col": 2,
-          "symbol_id": null
+          "symbol_id": "sym_2"
         }
       ],
       "regions": "row_col"
     },
     "difficulty_params": {
-      "blank_count": 1,
+      "blank_count": 3,
       "hint_after_ms": 15000,
       "allow_retry": true
     }
@@ -1548,8 +1572,8 @@
       "title": "Tìm Cái ghế đang ẩn nấp",
       "instruction": "Bé tinh mắt tìm đủ Cái ghế giấu trong tranh!",
       "theme_tag": "home",
-      "what_tags": ["logic", "pattern", "matrix"],
-      "thinking_tags": ["plan", "solve"],
+      "what_tags": ["log", "pattern"],
+      "thinking_tags": ["plan", "infer"],
       "skill_codes": ["C1.PROB.01"],
       "learning_objective_codes": [
         "LO-C1.PROB.01-01",
@@ -1604,7 +1628,7 @@
         {
           "row": 0,
           "col": 2,
-          "symbol_id": "sym_3"
+          "symbol_id": null
         },
         {
           "row": 1,
@@ -1614,7 +1638,7 @@
         {
           "row": 1,
           "col": 1,
-          "symbol_id": "sym_3"
+          "symbol_id": null
         },
         {
           "row": 1,
@@ -1624,7 +1648,7 @@
         {
           "row": 2,
           "col": 0,
-          "symbol_id": "sym_3"
+          "symbol_id": null
         },
         {
           "row": 2,
@@ -1634,13 +1658,13 @@
         {
           "row": 2,
           "col": 2,
-          "symbol_id": null
+          "symbol_id": "sym_2"
         }
       ],
       "regions": "row_col"
     },
     "difficulty_params": {
-      "blank_count": 1,
+      "blank_count": 3,
       "hint_after_ms": 15000,
       "allow_retry": true
     }
@@ -1652,8 +1676,8 @@
       "title": "Tìm Khỉ đang ẩn nấp",
       "instruction": "Bé tinh mắt tìm đủ Khỉ giấu trong tranh!",
       "theme_tag": "animal",
-      "what_tags": ["logic", "pattern", "matrix"],
-      "thinking_tags": ["plan", "solve"],
+      "what_tags": ["log", "pattern"],
+      "thinking_tags": ["plan", "infer"],
       "skill_codes": ["C1.PROB.01"],
       "learning_objective_codes": [
         "LO-C1.PROB.01-01",
@@ -1708,7 +1732,7 @@
         {
           "row": 0,
           "col": 2,
-          "symbol_id": "sym_3"
+          "symbol_id": null
         },
         {
           "row": 1,
@@ -1718,7 +1742,7 @@
         {
           "row": 1,
           "col": 1,
-          "symbol_id": "sym_3"
+          "symbol_id": null
         },
         {
           "row": 1,
@@ -1728,7 +1752,7 @@
         {
           "row": 2,
           "col": 0,
-          "symbol_id": "sym_3"
+          "symbol_id": null
         },
         {
           "row": 2,
@@ -1738,13 +1762,13 @@
         {
           "row": 2,
           "col": 2,
-          "symbol_id": null
+          "symbol_id": "sym_2"
         }
       ],
       "regions": "row_col"
     },
     "difficulty_params": {
-      "blank_count": 1,
+      "blank_count": 3,
       "hint_after_ms": 15000,
       "allow_retry": true
     }
@@ -1757,7 +1781,7 @@
       "instruction": "Bé dùng thước đo chiều dài của Cây xanh nhé!",
       "theme_tag": "nature",
       "what_tags": ["number", "quantity", "pattern"],
-      "thinking_tags": ["verify", "solve"],
+      "thinking_tags": ["infer"],
       "skill_codes": ["C1.PROB.02"],
       "learning_objective_codes": [
         "LO-C1.PROB.02-01",
@@ -1837,7 +1861,7 @@
       "instruction": "Bé dùng thước đo chiều dài của Cá heo nhé!",
       "theme_tag": "ocean",
       "what_tags": ["number", "quantity", "pattern"],
-      "thinking_tags": ["verify", "solve"],
+      "thinking_tags": ["infer"],
       "skill_codes": ["C1.PROB.02"],
       "learning_objective_codes": [
         "LO-C1.PROB.02-01",
@@ -1917,7 +1941,7 @@
       "instruction": "Bé dùng thước đo chiều dài của Bánh mì nhé!",
       "theme_tag": "food",
       "what_tags": ["number", "quantity", "pattern"],
-      "thinking_tags": ["verify", "solve"],
+      "thinking_tags": ["infer"],
       "skill_codes": ["C1.PROB.02"],
       "learning_objective_codes": [
         "LO-C1.PROB.02-01",
@@ -1997,7 +2021,7 @@
       "instruction": "Bé dùng thước đo chiều dài của Tàu hoả nhé!",
       "theme_tag": "vehicle",
       "what_tags": ["number", "quantity", "pattern"],
-      "thinking_tags": ["verify", "solve"],
+      "thinking_tags": ["infer"],
       "skill_codes": ["C1.PROB.02"],
       "learning_objective_codes": [
         "LO-C1.PROB.02-01",
@@ -2076,8 +2100,8 @@
       "title": "Xem giờ trên đồng hồ",
       "instruction": "Bé xem đồng hồ và chọn giờ đúng nhé!",
       "theme_tag": "art",
-      "what_tags": ["number", "quantity"],
-      "thinking_tags": ["verify", "solve"],
+      "what_tags": ["number", "quantity", "ops"],
+      "thinking_tags": ["infer"],
       "skill_codes": ["C1.PROB.02"],
       "learning_objective_codes": [
         "LO-C1.PROB.02-01",
@@ -2172,8 +2196,8 @@
       "title": "Xem giờ trên đồng hồ",
       "instruction": "Bé xem đồng hồ và chọn giờ đúng nhé!",
       "theme_tag": "space",
-      "what_tags": ["number", "quantity"],
-      "thinking_tags": ["verify", "solve"],
+      "what_tags": ["number", "quantity", "ops"],
+      "thinking_tags": ["infer"],
       "skill_codes": ["C1.PROB.02"],
       "learning_objective_codes": [
         "LO-C1.PROB.02-01",
@@ -2254,8 +2278,8 @@
       "title": "Xem giờ trên đồng hồ",
       "instruction": "Bé xem đồng hồ và chọn giờ đúng nhé!",
       "theme_tag": "family",
-      "what_tags": ["number", "quantity"],
-      "thinking_tags": ["verify", "solve"],
+      "what_tags": ["number", "quantity", "ops"],
+      "thinking_tags": ["infer"],
       "skill_codes": ["C1.PROB.02"],
       "learning_objective_codes": [
         "LO-C1.PROB.02-01",
@@ -2336,8 +2360,8 @@
       "title": "Xem giờ trên đồng hồ",
       "instruction": "Bé xem đồng hồ và chọn giờ đúng nhé!",
       "theme_tag": "body",
-      "what_tags": ["number", "quantity"],
-      "thinking_tags": ["verify", "solve"],
+      "what_tags": ["number", "quantity", "ops"],
+      "thinking_tags": ["infer"],
       "skill_codes": ["C1.PROB.02"],
       "learning_objective_codes": [
         "LO-C1.PROB.02-01",
@@ -2433,7 +2457,7 @@
       "instruction": "Bé tính tổng mệnh giá các đồng xu cho đúng!",
       "theme_tag": "weather",
       "what_tags": ["size", "quantity", "number"],
-      "thinking_tags": ["verify", "solve"],
+      "thinking_tags": ["infer"],
       "skill_codes": ["C1.PROB.02"],
       "learning_objective_codes": [
         "LO-C1.PROB.02-01",
@@ -2498,7 +2522,7 @@
       "instruction": "Bé tính tổng mệnh giá các đồng xu cho đúng!",
       "theme_tag": "festival",
       "what_tags": ["size", "quantity", "number"],
-      "thinking_tags": ["verify", "solve"],
+      "thinking_tags": ["infer"],
       "skill_codes": ["C1.PROB.02"],
       "learning_objective_codes": [
         "LO-C1.PROB.02-01",
@@ -2563,7 +2587,7 @@
       "instruction": "Bé tính tổng mệnh giá các đồng xu cho đúng!",
       "theme_tag": "school",
       "what_tags": ["size", "quantity", "number"],
-      "thinking_tags": ["verify", "solve"],
+      "thinking_tags": ["infer"],
       "skill_codes": ["C1.PROB.02"],
       "learning_objective_codes": [
         "LO-C1.PROB.02-01",
@@ -2628,7 +2652,7 @@
       "instruction": "Bé tính tổng mệnh giá các đồng xu cho đúng!",
       "theme_tag": "farm",
       "what_tags": ["size", "quantity", "number"],
-      "thinking_tags": ["verify", "solve"],
+      "thinking_tags": ["infer"],
       "skill_codes": ["C1.PROB.02"],
       "learning_objective_codes": [
         "LO-C1.PROB.02-01",
@@ -2693,7 +2717,7 @@
       "instruction": "Bé phân tích biểu đồ tranh để chọn đáp án!",
       "theme_tag": "home",
       "what_tags": ["money", "number", "quantity"],
-      "thinking_tags": ["verify", "solve"],
+      "thinking_tags": ["infer"],
       "skill_codes": ["C1.PROB.02"],
       "learning_objective_codes": [
         "LO-C1.PROB.02-01",
@@ -2761,7 +2785,7 @@
       "instruction": "Bé phân tích biểu đồ tranh để chọn đáp án!",
       "theme_tag": "animal",
       "what_tags": ["money", "number", "quantity"],
-      "thinking_tags": ["verify", "solve"],
+      "thinking_tags": ["infer"],
       "skill_codes": ["C1.PROB.02"],
       "learning_objective_codes": [
         "LO-C1.PROB.02-01",
@@ -2829,7 +2853,7 @@
       "instruction": "Bé phân tích biểu đồ tranh để chọn đáp án!",
       "theme_tag": "nature",
       "what_tags": ["money", "number", "quantity"],
-      "thinking_tags": ["verify", "solve"],
+      "thinking_tags": ["infer"],
       "skill_codes": ["C1.PROB.02"],
       "learning_objective_codes": [
         "LO-C1.PROB.02-01",
@@ -2905,7 +2929,7 @@
       "instruction": "Bé phân tích biểu đồ tranh để chọn đáp án!",
       "theme_tag": "ocean",
       "what_tags": ["money", "number", "quantity"],
-      "thinking_tags": ["verify", "solve"],
+      "thinking_tags": ["infer"],
       "skill_codes": ["C1.PROB.02"],
       "learning_objective_codes": [
         "LO-C1.PROB.02-01",
@@ -2988,8 +3012,8 @@
       "title": "Biểu đồ Venn phân loại Táo đỏ",
       "instruction": "Bé phân loại vào phần giao của biểu đồ Venn!",
       "theme_tag": "food",
-      "what_tags": ["quantity", "size"],
-      "thinking_tags": ["verify", "solve"],
+      "what_tags": ["msr", "quantity", "size"],
+      "thinking_tags": ["infer"],
       "skill_codes": ["C1.PROB.02"],
       "learning_objective_codes": [
         "LO-C1.PROB.02-01",
@@ -3047,8 +3071,8 @@
       "title": "Biểu đồ Venn phân loại Xe buýt",
       "instruction": "Bé phân loại vào phần giao của biểu đồ Venn!",
       "theme_tag": "vehicle",
-      "what_tags": ["quantity", "size"],
-      "thinking_tags": ["verify", "solve"],
+      "what_tags": ["msr", "quantity", "size"],
+      "thinking_tags": ["infer"],
       "skill_codes": ["C1.PROB.02"],
       "learning_objective_codes": [
         "LO-C1.PROB.02-01",
@@ -3099,8 +3123,8 @@
       "title": "Biểu đồ Venn phân loại Kèn saxophone",
       "instruction": "Bé phân loại vào phần giao của biểu đồ Venn!",
       "theme_tag": "art",
-      "what_tags": ["quantity", "size"],
-      "thinking_tags": ["verify", "solve"],
+      "what_tags": ["msr", "quantity", "size"],
+      "thinking_tags": ["infer"],
       "skill_codes": ["C1.PROB.02"],
       "learning_objective_codes": [
         "LO-C1.PROB.02-01",
@@ -3158,8 +3182,8 @@
       "title": "Biểu đồ Venn phân loại Phi hành gia",
       "instruction": "Bé phân loại vào phần giao của biểu đồ Venn!",
       "theme_tag": "space",
-      "what_tags": ["quantity", "size"],
-      "thinking_tags": ["verify", "solve"],
+      "what_tags": ["msr", "quantity", "size"],
+      "thinking_tags": ["infer"],
       "skill_codes": ["C1.PROB.02"],
       "learning_objective_codes": [
         "LO-C1.PROB.02-01",
@@ -3218,7 +3242,7 @@
       "instruction": "Bé phân tích biểu đồ tranh để chọn đáp án!",
       "theme_tag": "family",
       "what_tags": ["money", "number", "quantity"],
-      "thinking_tags": ["solve"],
+      "thinking_tags": ["infer"],
       "skill_codes": ["C1.PROB.03"],
       "learning_objective_codes": [
         "LO-C1.PROB.03-01",
@@ -3302,7 +3326,7 @@
       "instruction": "Bé phân tích biểu đồ tranh để chọn đáp án!",
       "theme_tag": "body",
       "what_tags": ["money", "number", "quantity"],
-      "thinking_tags": ["solve"],
+      "thinking_tags": ["infer"],
       "skill_codes": ["C1.PROB.03"],
       "learning_objective_codes": [
         "LO-C1.PROB.03-01",
@@ -3386,7 +3410,7 @@
       "instruction": "Bé phân tích biểu đồ tranh để chọn đáp án!",
       "theme_tag": "weather",
       "what_tags": ["money", "number", "quantity"],
-      "thinking_tags": ["solve"],
+      "thinking_tags": ["infer"],
       "skill_codes": ["C1.PROB.03"],
       "learning_objective_codes": [
         "LO-C1.PROB.03-01",
@@ -3454,7 +3478,7 @@
       "instruction": "Bé phân tích biểu đồ tranh để chọn đáp án!",
       "theme_tag": "festival",
       "what_tags": ["money", "number", "quantity"],
-      "thinking_tags": ["solve"],
+      "thinking_tags": ["infer"],
       "skill_codes": ["C1.PROB.03"],
       "learning_objective_codes": [
         "LO-C1.PROB.03-01",
@@ -3530,7 +3554,7 @@
       "instruction": "Bé phân tích biểu đồ tranh để chọn đáp án!",
       "theme_tag": "school",
       "what_tags": ["money", "number", "quantity"],
-      "thinking_tags": ["solve"],
+      "thinking_tags": ["infer"],
       "skill_codes": ["C1.PROB.03"],
       "learning_objective_codes": [
         "LO-C1.PROB.03-01",
@@ -3597,8 +3621,8 @@
       "title": "Tìm Máy kéo giống mẫu",
       "instruction": "Bé tìm Máy kéo giống hình mẫu nhé!",
       "theme_tag": "farm",
-      "what_tags": ["classification", "number"],
-      "thinking_tags": ["solve"],
+      "what_tags": ["cls", "shp", "number"],
+      "thinking_tags": ["infer"],
       "skill_codes": ["C1.PROB.03"],
       "learning_objective_codes": [
         "LO-C1.PROB.03-01",
@@ -3671,8 +3695,8 @@
       "title": "Tìm Cái giường giống mẫu",
       "instruction": "Bé tìm Cái giường giống hình mẫu nhé!",
       "theme_tag": "home",
-      "what_tags": ["classification", "number"],
-      "thinking_tags": ["solve"],
+      "what_tags": ["cls", "shp", "number"],
+      "thinking_tags": ["infer"],
       "skill_codes": ["C1.PROB.03"],
       "learning_objective_codes": [
         "LO-C1.PROB.03-01",
@@ -3753,8 +3777,8 @@
       "title": "Tìm Hổ giống mẫu",
       "instruction": "Bé tìm Hổ giống hình mẫu nhé!",
       "theme_tag": "animal",
-      "what_tags": ["classification", "number"],
-      "thinking_tags": ["solve"],
+      "what_tags": ["cls", "shp", "number"],
+      "thinking_tags": ["infer"],
       "skill_codes": ["C1.PROB.03"],
       "learning_objective_codes": [
         "LO-C1.PROB.03-01",
@@ -3835,8 +3859,8 @@
       "title": "Tìm Núi giống mẫu",
       "instruction": "Bé tìm Núi giống hình mẫu nhé!",
       "theme_tag": "nature",
-      "what_tags": ["classification", "number"],
-      "thinking_tags": ["solve"],
+      "what_tags": ["cls", "shp", "number"],
+      "thinking_tags": ["infer"],
       "skill_codes": ["C1.PROB.03"],
       "learning_objective_codes": [
         "LO-C1.PROB.03-01",
@@ -3909,8 +3933,8 @@
       "title": "Tìm Cá mập giống mẫu",
       "instruction": "Bé tìm Cá mập giống hình mẫu nhé!",
       "theme_tag": "ocean",
-      "what_tags": ["classification", "number"],
-      "thinking_tags": ["solve"],
+      "what_tags": ["cls", "shp", "number"],
+      "thinking_tags": ["infer"],
       "skill_codes": ["C1.PROB.03"],
       "learning_objective_codes": [
         "LO-C1.PROB.03-01",
@@ -3991,8 +4015,8 @@
       "title": "So sánh nhóm Táo đỏ",
       "instruction": "Bé chọn nhóm có nhiều Táo đỏ hơn nhé!",
       "theme_tag": "food",
-      "what_tags": ["classification"],
-      "thinking_tags": ["solve"],
+      "what_tags": ["cls"],
+      "thinking_tags": ["infer"],
       "skill_codes": ["C1.PROB.03"],
       "learning_objective_codes": [
         "LO-C1.PROB.03-01",
@@ -4002,7 +4026,7 @@
       "difficulty": 3,
       "age_min": 4,
       "age_max": 5,
-      "access_tier": "standard",
+      "access_tier": "premium",
       "content_version": 1,
       "authored_in": "repo_seed",
       "origin": "ai_assisted"
@@ -4067,8 +4091,8 @@
       "title": "So sánh nhóm Xe buýt",
       "instruction": "Bé chọn nhóm có nhiều Xe buýt hơn nhé!",
       "theme_tag": "vehicle",
-      "what_tags": ["classification"],
-      "thinking_tags": ["solve"],
+      "what_tags": ["cls"],
+      "thinking_tags": ["infer"],
       "skill_codes": ["C1.PROB.03"],
       "learning_objective_codes": [
         "LO-C1.PROB.03-01",
@@ -4078,7 +4102,7 @@
       "difficulty": 4,
       "age_min": 4,
       "age_max": 5,
-      "access_tier": "premium",
+      "access_tier": "standard",
       "content_version": 1,
       "authored_in": "repo_seed",
       "origin": "ai_assisted"
@@ -4143,8 +4167,8 @@
       "title": "So sánh nhóm Kèn saxophone",
       "instruction": "Bé chọn nhóm có nhiều Kèn saxophone hơn nhé!",
       "theme_tag": "art",
-      "what_tags": ["classification"],
-      "thinking_tags": ["solve"],
+      "what_tags": ["cls"],
+      "thinking_tags": ["infer"],
       "skill_codes": ["C1.PROB.03"],
       "learning_objective_codes": [
         "LO-C1.PROB.03-01",
@@ -4154,7 +4178,7 @@
       "difficulty": 5,
       "age_min": 4,
       "age_max": 5,
-      "access_tier": "standard",
+      "access_tier": "premium",
       "content_version": 1,
       "authored_in": "repo_seed",
       "origin": "ai_assisted"
@@ -4219,8 +4243,8 @@
       "title": "So sánh nhóm Phi hành gia",
       "instruction": "Bé chọn nhóm có nhiều Phi hành gia hơn nhé!",
       "theme_tag": "space",
-      "what_tags": ["classification"],
-      "thinking_tags": ["solve"],
+      "what_tags": ["cls"],
+      "thinking_tags": ["infer"],
       "skill_codes": ["C1.PROB.03"],
       "learning_objective_codes": [
         "LO-C1.PROB.03-01",
@@ -4230,7 +4254,7 @@
       "difficulty": 3,
       "age_min": 4,
       "age_max": 5,
-      "access_tier": "premium",
+      "access_tier": "standard",
       "content_version": 1,
       "authored_in": "repo_seed",
       "origin": "ai_assisted"
@@ -4295,8 +4319,8 @@
       "title": "So sánh nhóm Mẹ",
       "instruction": "Bé chọn nhóm có nhiều Mẹ hơn nhé!",
       "theme_tag": "family",
-      "what_tags": ["classification"],
-      "thinking_tags": ["solve"],
+      "what_tags": ["cls"],
+      "thinking_tags": ["infer"],
       "skill_codes": ["C1.PROB.03"],
       "learning_objective_codes": [
         "LO-C1.PROB.03-01",
@@ -4306,7 +4330,7 @@
       "difficulty": 4,
       "age_min": 4,
       "age_max": 5,
-      "access_tier": "standard",
+      "access_tier": "premium",
       "content_version": 1,
       "authored_in": "repo_seed",
       "origin": "ai_assisted"
@@ -4371,8 +4395,8 @@
       "title": "Xếp Mắt theo quy luật",
       "instruction": "Bé tìm Mắt còn thiếu trong dãy quy luật!",
       "theme_tag": "body",
-      "what_tags": ["classification"],
-      "thinking_tags": ["solve"],
+      "what_tags": ["cls"],
+      "thinking_tags": ["infer"],
       "skill_codes": ["C1.PROB.03"],
       "learning_objective_codes": [
         "LO-C1.PROB.03-01",
@@ -4456,8 +4480,8 @@
       "title": "Xếp Mây theo quy luật",
       "instruction": "Bé tìm Mây còn thiếu trong dãy quy luật!",
       "theme_tag": "weather",
-      "what_tags": ["classification"],
-      "thinking_tags": ["solve"],
+      "what_tags": ["cls"],
+      "thinking_tags": ["infer"],
       "skill_codes": ["C1.PROB.03"],
       "learning_objective_codes": [
         "LO-C1.PROB.03-01",
@@ -4541,8 +4565,8 @@
       "title": "Xếp Pháo hoa theo quy luật",
       "instruction": "Bé tìm Pháo hoa còn thiếu trong dãy quy luật!",
       "theme_tag": "festival",
-      "what_tags": ["classification"],
-      "thinking_tags": ["solve"],
+      "what_tags": ["cls"],
+      "thinking_tags": ["infer"],
       "skill_codes": ["C1.PROB.03"],
       "learning_objective_codes": [
         "LO-C1.PROB.03-01",
@@ -4626,8 +4650,8 @@
       "title": "Xếp Sách theo quy luật",
       "instruction": "Bé tìm Sách còn thiếu trong dãy quy luật!",
       "theme_tag": "school",
-      "what_tags": ["classification"],
-      "thinking_tags": ["solve"],
+      "what_tags": ["cls"],
+      "thinking_tags": ["infer"],
       "skill_codes": ["C1.PROB.03"],
       "learning_objective_codes": [
         "LO-C1.PROB.03-01",
@@ -4711,8 +4735,8 @@
       "title": "Xếp Lúa theo quy luật",
       "instruction": "Bé tìm Lúa còn thiếu trong dãy quy luật!",
       "theme_tag": "farm",
-      "what_tags": ["classification"],
-      "thinking_tags": ["solve"],
+      "what_tags": ["cls"],
+      "thinking_tags": ["infer"],
       "skill_codes": ["C1.PROB.03"],
       "learning_objective_codes": [
         "LO-C1.PROB.03-01",
@@ -4796,8 +4820,8 @@
       "title": "Đếm số lượng Ngôi nhà",
       "instruction": "Bé đếm số Ngôi nhà rồi chọn số đúng!",
       "theme_tag": "home",
-      "what_tags": ["category"],
-      "thinking_tags": ["sort", "solve"],
+      "what_tags": ["cls"],
+      "thinking_tags": ["sort", "infer"],
       "skill_codes": ["C1.PROB.04"],
       "learning_objective_codes": [
         "LO-C1.PROB.04-01",
@@ -4864,8 +4888,8 @@
       "title": "Đếm số lượng Voi",
       "instruction": "Bé đếm số Voi rồi chọn số đúng!",
       "theme_tag": "animal",
-      "what_tags": ["category"],
-      "thinking_tags": ["sort", "solve"],
+      "what_tags": ["cls"],
+      "thinking_tags": ["sort", "infer"],
       "skill_codes": ["C1.PROB.04"],
       "learning_objective_codes": [
         "LO-C1.PROB.04-01",
@@ -4932,8 +4956,8 @@
       "title": "Đếm số lượng Cỏ bốn lá",
       "instruction": "Bé đếm số Cỏ bốn lá rồi chọn số đúng!",
       "theme_tag": "nature",
-      "what_tags": ["category"],
-      "thinking_tags": ["sort", "solve"],
+      "what_tags": ["cls"],
+      "thinking_tags": ["sort", "infer"],
       "skill_codes": ["C1.PROB.04"],
       "learning_objective_codes": [
         "LO-C1.PROB.04-01",
@@ -5000,8 +5024,8 @@
       "title": "Đếm số lượng Cua",
       "instruction": "Bé đếm số Cua rồi chọn số đúng!",
       "theme_tag": "ocean",
-      "what_tags": ["category"],
-      "thinking_tags": ["sort", "solve"],
+      "what_tags": ["cls"],
+      "thinking_tags": ["sort", "infer"],
       "skill_codes": ["C1.PROB.04"],
       "learning_objective_codes": [
         "LO-C1.PROB.04-01",
@@ -5068,8 +5092,8 @@
       "title": "So sánh nhóm Táo đỏ",
       "instruction": "Bé chọn nhóm có nhiều Táo đỏ hơn nhé!",
       "theme_tag": "food",
-      "what_tags": ["classification"],
-      "thinking_tags": ["sort", "solve"],
+      "what_tags": ["cls"],
+      "thinking_tags": ["sort", "infer"],
       "skill_codes": ["C1.PROB.04"],
       "learning_objective_codes": [
         "LO-C1.PROB.04-01",
@@ -5079,7 +5103,7 @@
       "difficulty": 3,
       "age_min": 4,
       "age_max": 5,
-      "access_tier": "premium",
+      "access_tier": "standard",
       "content_version": 1,
       "authored_in": "repo_seed",
       "origin": "ai_assisted"
@@ -5144,8 +5168,8 @@
       "title": "So sánh nhóm Xe buýt",
       "instruction": "Bé chọn nhóm có nhiều Xe buýt hơn nhé!",
       "theme_tag": "vehicle",
-      "what_tags": ["classification"],
-      "thinking_tags": ["sort", "solve"],
+      "what_tags": ["cls"],
+      "thinking_tags": ["sort", "infer"],
       "skill_codes": ["C1.PROB.04"],
       "learning_objective_codes": [
         "LO-C1.PROB.04-01",
@@ -5155,7 +5179,7 @@
       "difficulty": 4,
       "age_min": 4,
       "age_max": 5,
-      "access_tier": "standard",
+      "access_tier": "premium",
       "content_version": 1,
       "authored_in": "repo_seed",
       "origin": "ai_assisted"
@@ -5220,8 +5244,8 @@
       "title": "So sánh nhóm Kèn saxophone",
       "instruction": "Bé chọn nhóm có nhiều Kèn saxophone hơn nhé!",
       "theme_tag": "art",
-      "what_tags": ["classification"],
-      "thinking_tags": ["sort", "solve"],
+      "what_tags": ["cls"],
+      "thinking_tags": ["sort", "infer"],
       "skill_codes": ["C1.PROB.04"],
       "learning_objective_codes": [
         "LO-C1.PROB.04-01",
@@ -5231,7 +5255,7 @@
       "difficulty": 5,
       "age_min": 4,
       "age_max": 5,
-      "access_tier": "premium",
+      "access_tier": "standard",
       "content_version": 1,
       "authored_in": "repo_seed",
       "origin": "ai_assisted"
@@ -5296,8 +5320,8 @@
       "title": "So sánh nhóm Phi hành gia",
       "instruction": "Bé chọn nhóm có nhiều Phi hành gia hơn nhé!",
       "theme_tag": "space",
-      "what_tags": ["classification"],
-      "thinking_tags": ["sort", "solve"],
+      "what_tags": ["cls"],
+      "thinking_tags": ["sort", "infer"],
       "skill_codes": ["C1.PROB.04"],
       "learning_objective_codes": [
         "LO-C1.PROB.04-01",
@@ -5307,7 +5331,7 @@
       "difficulty": 3,
       "age_min": 4,
       "age_max": 5,
-      "access_tier": "standard",
+      "access_tier": "premium",
       "content_version": 1,
       "authored_in": "repo_seed",
       "origin": "ai_assisted"
@@ -5372,8 +5396,8 @@
       "title": "Ghép đôi Gia đình tương ứng",
       "instruction": "Bé ghép đôi các Gia đình tương ứng nhé!",
       "theme_tag": "family",
-      "what_tags": ["classification"],
-      "thinking_tags": ["sort", "solve"],
+      "what_tags": ["cls"],
+      "thinking_tags": ["sort", "infer"],
       "skill_codes": ["C1.PROB.04"],
       "learning_objective_codes": [
         "LO-C1.PROB.04-01",
@@ -5451,8 +5475,8 @@
       "title": "Ghép đôi Tai tương ứng",
       "instruction": "Bé ghép đôi các Tai tương ứng nhé!",
       "theme_tag": "body",
-      "what_tags": ["classification"],
-      "thinking_tags": ["sort", "solve"],
+      "what_tags": ["cls"],
+      "thinking_tags": ["sort", "infer"],
       "skill_codes": ["C1.PROB.04"],
       "learning_objective_codes": [
         "LO-C1.PROB.04-01",
@@ -5530,8 +5554,8 @@
       "title": "Ghép đôi Mưa tương ứng",
       "instruction": "Bé ghép đôi các Mưa tương ứng nhé!",
       "theme_tag": "weather",
-      "what_tags": ["classification"],
-      "thinking_tags": ["sort", "solve"],
+      "what_tags": ["cls"],
+      "thinking_tags": ["sort", "infer"],
       "skill_codes": ["C1.PROB.04"],
       "learning_objective_codes": [
         "LO-C1.PROB.04-01",
@@ -5609,8 +5633,8 @@
       "title": "Ghép đôi Bí ngô Halloween tương ứng",
       "instruction": "Bé ghép đôi các Bí ngô Halloween tương ứng nhé!",
       "theme_tag": "festival",
-      "what_tags": ["classification"],
-      "thinking_tags": ["sort", "solve"],
+      "what_tags": ["cls"],
+      "thinking_tags": ["sort", "infer"],
       "skill_codes": ["C1.PROB.04"],
       "learning_objective_codes": [
         "LO-C1.PROB.04-01",
@@ -5688,8 +5712,8 @@
       "title": "Kéo Trường học vào đúng ô",
       "instruction": "Bé kéo Trường học vào vị trí tương ứng nhé!",
       "theme_tag": "school",
-      "what_tags": ["classification"],
-      "thinking_tags": ["sort", "solve"],
+      "what_tags": ["spt"],
+      "thinking_tags": ["sort", "infer"],
       "skill_codes": ["C1.PROB.04"],
       "learning_objective_codes": [
         "LO-C1.PROB.04-01",
@@ -5765,8 +5789,8 @@
       "title": "Kéo Bò sữa vào đúng ô",
       "instruction": "Bé kéo Bò sữa vào vị trí tương ứng nhé!",
       "theme_tag": "farm",
-      "what_tags": ["classification"],
-      "thinking_tags": ["sort", "solve"],
+      "what_tags": ["spt"],
+      "thinking_tags": ["sort", "infer"],
       "skill_codes": ["C1.PROB.04"],
       "learning_objective_codes": [
         "LO-C1.PROB.04-01",
@@ -5842,8 +5866,8 @@
       "title": "Kéo Cái ghế vào đúng ô",
       "instruction": "Bé kéo Cái ghế vào vị trí tương ứng nhé!",
       "theme_tag": "home",
-      "what_tags": ["classification"],
-      "thinking_tags": ["sort", "solve"],
+      "what_tags": ["spt"],
+      "thinking_tags": ["sort", "infer"],
       "skill_codes": ["C1.PROB.04"],
       "learning_objective_codes": [
         "LO-C1.PROB.04-01",
@@ -5919,8 +5943,8 @@
       "title": "Kéo Khỉ vào đúng ô",
       "instruction": "Bé kéo Khỉ vào vị trí tương ứng nhé!",
       "theme_tag": "animal",
-      "what_tags": ["classification"],
-      "thinking_tags": ["sort", "solve"],
+      "what_tags": ["spt"],
+      "thinking_tags": ["sort", "infer"],
       "skill_codes": ["C1.PROB.04"],
       "learning_objective_codes": [
         "LO-C1.PROB.04-01",
@@ -5996,8 +6020,8 @@
       "title": "Tìm Cây xanh đang ẩn nấp",
       "instruction": "Bé tinh mắt tìm đủ Cây xanh giấu trong tranh!",
       "theme_tag": "nature",
-      "what_tags": ["logic", "pattern", "matrix"],
-      "thinking_tags": ["sort", "solve"],
+      "what_tags": ["log", "pattern"],
+      "thinking_tags": ["sort", "infer"],
       "skill_codes": ["C1.PROB.04"],
       "learning_objective_codes": [
         "LO-C1.PROB.04-01",
@@ -6052,7 +6076,7 @@
         {
           "row": 0,
           "col": 2,
-          "symbol_id": "sym_3"
+          "symbol_id": null
         },
         {
           "row": 1,
@@ -6062,7 +6086,7 @@
         {
           "row": 1,
           "col": 1,
-          "symbol_id": "sym_3"
+          "symbol_id": null
         },
         {
           "row": 1,
@@ -6072,7 +6096,7 @@
         {
           "row": 2,
           "col": 0,
-          "symbol_id": "sym_3"
+          "symbol_id": null
         },
         {
           "row": 2,
@@ -6082,13 +6106,13 @@
         {
           "row": 2,
           "col": 2,
-          "symbol_id": null
+          "symbol_id": "sym_2"
         }
       ],
       "regions": "row_col"
     },
     "difficulty_params": {
-      "blank_count": 1,
+      "blank_count": 3,
       "hint_after_ms": 15000,
       "allow_retry": true
     }
@@ -6100,8 +6124,8 @@
       "title": "Tìm Cá heo đang ẩn nấp",
       "instruction": "Bé tinh mắt tìm đủ Cá heo giấu trong tranh!",
       "theme_tag": "ocean",
-      "what_tags": ["logic", "pattern", "matrix"],
-      "thinking_tags": ["sort", "solve"],
+      "what_tags": ["log", "pattern"],
+      "thinking_tags": ["sort", "infer"],
       "skill_codes": ["C1.PROB.04"],
       "learning_objective_codes": [
         "LO-C1.PROB.04-01",
@@ -6156,7 +6180,7 @@
         {
           "row": 0,
           "col": 2,
-          "symbol_id": "sym_3"
+          "symbol_id": null
         },
         {
           "row": 1,
@@ -6166,7 +6190,7 @@
         {
           "row": 1,
           "col": 1,
-          "symbol_id": "sym_3"
+          "symbol_id": null
         },
         {
           "row": 1,
@@ -6176,7 +6200,7 @@
         {
           "row": 2,
           "col": 0,
-          "symbol_id": "sym_3"
+          "symbol_id": null
         },
         {
           "row": 2,
@@ -6186,13 +6210,13 @@
         {
           "row": 2,
           "col": 2,
-          "symbol_id": null
+          "symbol_id": "sym_2"
         }
       ],
       "regions": "row_col"
     },
     "difficulty_params": {
-      "blank_count": 1,
+      "blank_count": 3,
       "hint_after_ms": 15000,
       "allow_retry": true
     }
@@ -6204,8 +6228,8 @@
       "title": "Tìm Bánh mì đang ẩn nấp",
       "instruction": "Bé tinh mắt tìm đủ Bánh mì giấu trong tranh!",
       "theme_tag": "food",
-      "what_tags": ["logic", "pattern", "matrix"],
-      "thinking_tags": ["sort", "solve"],
+      "what_tags": ["log", "pattern"],
+      "thinking_tags": ["sort", "infer"],
       "skill_codes": ["C1.PROB.04"],
       "learning_objective_codes": [
         "LO-C1.PROB.04-01",
@@ -6260,7 +6284,7 @@
         {
           "row": 0,
           "col": 2,
-          "symbol_id": "sym_3"
+          "symbol_id": null
         },
         {
           "row": 1,
@@ -6270,7 +6294,7 @@
         {
           "row": 1,
           "col": 1,
-          "symbol_id": "sym_3"
+          "symbol_id": null
         },
         {
           "row": 1,
@@ -6280,7 +6304,7 @@
         {
           "row": 2,
           "col": 0,
-          "symbol_id": "sym_3"
+          "symbol_id": null
         },
         {
           "row": 2,
@@ -6290,13 +6314,13 @@
         {
           "row": 2,
           "col": 2,
-          "symbol_id": null
+          "symbol_id": "sym_2"
         }
       ],
       "regions": "row_col"
     },
     "difficulty_params": {
-      "blank_count": 1,
+      "blank_count": 3,
       "hint_after_ms": 15000,
       "allow_retry": true
     }
@@ -6308,8 +6332,8 @@
       "title": "Tìm Tàu hoả đang ẩn nấp",
       "instruction": "Bé tinh mắt tìm đủ Tàu hoả giấu trong tranh!",
       "theme_tag": "vehicle",
-      "what_tags": ["logic", "pattern", "matrix"],
-      "thinking_tags": ["sort", "solve"],
+      "what_tags": ["log", "pattern"],
+      "thinking_tags": ["sort", "infer"],
       "skill_codes": ["C1.PROB.04"],
       "learning_objective_codes": [
         "LO-C1.PROB.04-01",
@@ -6364,7 +6388,7 @@
         {
           "row": 0,
           "col": 2,
-          "symbol_id": "sym_3"
+          "symbol_id": null
         },
         {
           "row": 1,
@@ -6374,7 +6398,7 @@
         {
           "row": 1,
           "col": 1,
-          "symbol_id": "sym_3"
+          "symbol_id": null
         },
         {
           "row": 1,
@@ -6384,7 +6408,7 @@
         {
           "row": 2,
           "col": 0,
-          "symbol_id": "sym_3"
+          "symbol_id": null
         },
         {
           "row": 2,
@@ -6394,13 +6418,13 @@
         {
           "row": 2,
           "col": 2,
-          "symbol_id": null
+          "symbol_id": "sym_2"
         }
       ],
       "regions": "row_col"
     },
     "difficulty_params": {
-      "blank_count": 1,
+      "blank_count": 3,
       "hint_after_ms": 15000,
       "allow_retry": true
     }
@@ -6412,8 +6436,8 @@
       "title": "Đếm số lượng Bảng vẽ",
       "instruction": "Bé đếm số Bảng vẽ rồi chọn số đúng!",
       "theme_tag": "art",
-      "what_tags": ["category"],
-      "thinking_tags": ["sort", "solve"],
+      "what_tags": ["cls"],
+      "thinking_tags": ["sort", "infer"],
       "skill_codes": ["C1.PROB.05"],
       "learning_objective_codes": [
         "LO-C1.PROB.05-01",
@@ -6480,8 +6504,8 @@
       "title": "Đếm số lượng Hành tinh",
       "instruction": "Bé đếm số Hành tinh rồi chọn số đúng!",
       "theme_tag": "space",
-      "what_tags": ["category"],
-      "thinking_tags": ["sort", "solve"],
+      "what_tags": ["cls"],
+      "thinking_tags": ["sort", "infer"],
       "skill_codes": ["C1.PROB.05"],
       "learning_objective_codes": [
         "LO-C1.PROB.05-01",
@@ -6548,8 +6572,8 @@
       "title": "Đếm số lượng Bà",
       "instruction": "Bé đếm số Bà rồi chọn số đúng!",
       "theme_tag": "family",
-      "what_tags": ["category"],
-      "thinking_tags": ["sort", "solve"],
+      "what_tags": ["cls"],
+      "thinking_tags": ["sort", "infer"],
       "skill_codes": ["C1.PROB.05"],
       "learning_objective_codes": [
         "LO-C1.PROB.05-01",
@@ -6616,8 +6640,8 @@
       "title": "Đếm số lượng Miệng",
       "instruction": "Bé đếm số Miệng rồi chọn số đúng!",
       "theme_tag": "body",
-      "what_tags": ["category"],
-      "thinking_tags": ["sort", "solve"],
+      "what_tags": ["cls"],
+      "thinking_tags": ["sort", "infer"],
       "skill_codes": ["C1.PROB.05"],
       "learning_objective_codes": [
         "LO-C1.PROB.05-01",
@@ -6684,8 +6708,8 @@
       "title": "So sánh nhóm Mặt trời",
       "instruction": "Bé chọn nhóm có nhiều Mặt trời hơn nhé!",
       "theme_tag": "weather",
-      "what_tags": ["classification"],
-      "thinking_tags": ["sort", "solve"],
+      "what_tags": ["cls"],
+      "thinking_tags": ["sort", "infer"],
       "skill_codes": ["C1.PROB.05"],
       "learning_objective_codes": [
         "LO-C1.PROB.05-01",
@@ -6695,7 +6719,7 @@
       "difficulty": 2,
       "age_min": 4,
       "age_max": 5,
-      "access_tier": "premium",
+      "access_tier": "standard",
       "content_version": 1,
       "authored_in": "repo_seed",
       "origin": "ai_assisted"
@@ -6760,8 +6784,8 @@
       "title": "So sánh nhóm Bao lì xì",
       "instruction": "Bé chọn nhóm có nhiều Bao lì xì hơn nhé!",
       "theme_tag": "festival",
-      "what_tags": ["classification"],
-      "thinking_tags": ["sort", "solve"],
+      "what_tags": ["cls"],
+      "thinking_tags": ["sort", "infer"],
       "skill_codes": ["C1.PROB.05"],
       "learning_objective_codes": [
         "LO-C1.PROB.05-01",
@@ -6771,7 +6795,7 @@
       "difficulty": 3,
       "age_min": 4,
       "age_max": 5,
-      "access_tier": "standard",
+      "access_tier": "premium",
       "content_version": 1,
       "authored_in": "repo_seed",
       "origin": "ai_assisted"
@@ -6836,8 +6860,8 @@
       "title": "So sánh nhóm Bút chì",
       "instruction": "Bé chọn nhóm có nhiều Bút chì hơn nhé!",
       "theme_tag": "school",
-      "what_tags": ["classification"],
-      "thinking_tags": ["sort", "solve"],
+      "what_tags": ["cls"],
+      "thinking_tags": ["sort", "infer"],
       "skill_codes": ["C1.PROB.05"],
       "learning_objective_codes": [
         "LO-C1.PROB.05-01",
@@ -6847,7 +6871,7 @@
       "difficulty": 4,
       "age_min": 4,
       "age_max": 5,
-      "access_tier": "premium",
+      "access_tier": "standard",
       "content_version": 1,
       "authored_in": "repo_seed",
       "origin": "ai_assisted"
@@ -6912,8 +6936,8 @@
       "title": "So sánh nhóm Heo",
       "instruction": "Bé chọn nhóm có nhiều Heo hơn nhé!",
       "theme_tag": "farm",
-      "what_tags": ["classification"],
-      "thinking_tags": ["sort", "solve"],
+      "what_tags": ["cls"],
+      "thinking_tags": ["sort", "infer"],
       "skill_codes": ["C1.PROB.05"],
       "learning_objective_codes": [
         "LO-C1.PROB.05-01",
@@ -6923,7 +6947,7 @@
       "difficulty": 2,
       "age_min": 4,
       "age_max": 5,
-      "access_tier": "standard",
+      "access_tier": "premium",
       "content_version": 1,
       "authored_in": "repo_seed",
       "origin": "ai_assisted"
@@ -6988,8 +7012,8 @@
       "title": "Ghép đôi Ngôi nhà tương ứng",
       "instruction": "Bé ghép đôi các Ngôi nhà tương ứng nhé!",
       "theme_tag": "home",
-      "what_tags": ["classification"],
-      "thinking_tags": ["sort", "solve"],
+      "what_tags": ["cls"],
+      "thinking_tags": ["sort", "infer"],
       "skill_codes": ["C1.PROB.05"],
       "learning_objective_codes": [
         "LO-C1.PROB.05-01",
@@ -7067,8 +7091,8 @@
       "title": "Ghép đôi Voi tương ứng",
       "instruction": "Bé ghép đôi các Voi tương ứng nhé!",
       "theme_tag": "animal",
-      "what_tags": ["classification"],
-      "thinking_tags": ["sort", "solve"],
+      "what_tags": ["cls"],
+      "thinking_tags": ["sort", "infer"],
       "skill_codes": ["C1.PROB.05"],
       "learning_objective_codes": [
         "LO-C1.PROB.05-01",
@@ -7146,8 +7170,8 @@
       "title": "Ghép đôi Cỏ bốn lá tương ứng",
       "instruction": "Bé ghép đôi các Cỏ bốn lá tương ứng nhé!",
       "theme_tag": "nature",
-      "what_tags": ["classification"],
-      "thinking_tags": ["sort", "solve"],
+      "what_tags": ["cls"],
+      "thinking_tags": ["sort", "infer"],
       "skill_codes": ["C1.PROB.05"],
       "learning_objective_codes": [
         "LO-C1.PROB.05-01",
@@ -7225,8 +7249,8 @@
       "title": "Ghép đôi Cua tương ứng",
       "instruction": "Bé ghép đôi các Cua tương ứng nhé!",
       "theme_tag": "ocean",
-      "what_tags": ["classification"],
-      "thinking_tags": ["sort", "solve"],
+      "what_tags": ["cls"],
+      "thinking_tags": ["sort", "infer"],
       "skill_codes": ["C1.PROB.05"],
       "learning_objective_codes": [
         "LO-C1.PROB.05-01",
@@ -7304,8 +7328,8 @@
       "title": "Kéo Táo đỏ vào đúng ô",
       "instruction": "Bé kéo Táo đỏ vào vị trí tương ứng nhé!",
       "theme_tag": "food",
-      "what_tags": ["classification"],
-      "thinking_tags": ["sort", "solve"],
+      "what_tags": ["spt"],
+      "thinking_tags": ["sort", "infer"],
       "skill_codes": ["C1.PROB.05"],
       "learning_objective_codes": [
         "LO-C1.PROB.05-01",
@@ -7381,8 +7405,8 @@
       "title": "Kéo Xe buýt vào đúng ô",
       "instruction": "Bé kéo Xe buýt vào vị trí tương ứng nhé!",
       "theme_tag": "vehicle",
-      "what_tags": ["classification"],
-      "thinking_tags": ["sort", "solve"],
+      "what_tags": ["spt"],
+      "thinking_tags": ["sort", "infer"],
       "skill_codes": ["C1.PROB.05"],
       "learning_objective_codes": [
         "LO-C1.PROB.05-01",
@@ -7458,8 +7482,8 @@
       "title": "Kéo Kèn saxophone vào đúng ô",
       "instruction": "Bé kéo Kèn saxophone vào vị trí tương ứng nhé!",
       "theme_tag": "art",
-      "what_tags": ["classification"],
-      "thinking_tags": ["sort", "solve"],
+      "what_tags": ["spt"],
+      "thinking_tags": ["sort", "infer"],
       "skill_codes": ["C1.PROB.05"],
       "learning_objective_codes": [
         "LO-C1.PROB.05-01",
@@ -7535,8 +7559,8 @@
       "title": "Kéo Phi hành gia vào đúng ô",
       "instruction": "Bé kéo Phi hành gia vào vị trí tương ứng nhé!",
       "theme_tag": "space",
-      "what_tags": ["classification"],
-      "thinking_tags": ["sort", "solve"],
+      "what_tags": ["spt"],
+      "thinking_tags": ["sort", "infer"],
       "skill_codes": ["C1.PROB.05"],
       "learning_objective_codes": [
         "LO-C1.PROB.05-01",
@@ -7612,8 +7636,8 @@
       "title": "Tìm Gia đình đang ẩn nấp",
       "instruction": "Bé tinh mắt tìm đủ Gia đình giấu trong tranh!",
       "theme_tag": "family",
-      "what_tags": ["logic", "pattern", "matrix"],
-      "thinking_tags": ["sort", "solve"],
+      "what_tags": ["log", "pattern"],
+      "thinking_tags": ["sort", "infer"],
       "skill_codes": ["C1.PROB.05"],
       "learning_objective_codes": [
         "LO-C1.PROB.05-01",
@@ -7668,7 +7692,7 @@
         {
           "row": 0,
           "col": 2,
-          "symbol_id": "sym_3"
+          "symbol_id": null
         },
         {
           "row": 1,
@@ -7678,7 +7702,7 @@
         {
           "row": 1,
           "col": 1,
-          "symbol_id": "sym_3"
+          "symbol_id": null
         },
         {
           "row": 1,
@@ -7688,7 +7712,7 @@
         {
           "row": 2,
           "col": 0,
-          "symbol_id": "sym_3"
+          "symbol_id": null
         },
         {
           "row": 2,
@@ -7698,13 +7722,13 @@
         {
           "row": 2,
           "col": 2,
-          "symbol_id": null
+          "symbol_id": "sym_2"
         }
       ],
       "regions": "row_col"
     },
     "difficulty_params": {
-      "blank_count": 1,
+      "blank_count": 3,
       "hint_after_ms": 15000,
       "allow_retry": true
     }
@@ -7716,8 +7740,8 @@
       "title": "Tìm Tai đang ẩn nấp",
       "instruction": "Bé tinh mắt tìm đủ Tai giấu trong tranh!",
       "theme_tag": "body",
-      "what_tags": ["logic", "pattern", "matrix"],
-      "thinking_tags": ["sort", "solve"],
+      "what_tags": ["log", "pattern"],
+      "thinking_tags": ["sort", "infer"],
       "skill_codes": ["C1.PROB.05"],
       "learning_objective_codes": [
         "LO-C1.PROB.05-01",
@@ -7772,7 +7796,7 @@
         {
           "row": 0,
           "col": 2,
-          "symbol_id": "sym_3"
+          "symbol_id": null
         },
         {
           "row": 1,
@@ -7782,7 +7806,7 @@
         {
           "row": 1,
           "col": 1,
-          "symbol_id": "sym_3"
+          "symbol_id": null
         },
         {
           "row": 1,
@@ -7792,7 +7816,7 @@
         {
           "row": 2,
           "col": 0,
-          "symbol_id": "sym_3"
+          "symbol_id": null
         },
         {
           "row": 2,
@@ -7802,13 +7826,13 @@
         {
           "row": 2,
           "col": 2,
-          "symbol_id": null
+          "symbol_id": "sym_2"
         }
       ],
       "regions": "row_col"
     },
     "difficulty_params": {
-      "blank_count": 1,
+      "blank_count": 3,
       "hint_after_ms": 15000,
       "allow_retry": true
     }
@@ -7820,8 +7844,8 @@
       "title": "Tìm Mưa đang ẩn nấp",
       "instruction": "Bé tinh mắt tìm đủ Mưa giấu trong tranh!",
       "theme_tag": "weather",
-      "what_tags": ["logic", "pattern", "matrix"],
-      "thinking_tags": ["sort", "solve"],
+      "what_tags": ["log", "pattern"],
+      "thinking_tags": ["sort", "infer"],
       "skill_codes": ["C1.PROB.05"],
       "learning_objective_codes": [
         "LO-C1.PROB.05-01",
@@ -7876,7 +7900,7 @@
         {
           "row": 0,
           "col": 2,
-          "symbol_id": "sym_3"
+          "symbol_id": null
         },
         {
           "row": 1,
@@ -7886,7 +7910,7 @@
         {
           "row": 1,
           "col": 1,
-          "symbol_id": "sym_3"
+          "symbol_id": null
         },
         {
           "row": 1,
@@ -7896,7 +7920,7 @@
         {
           "row": 2,
           "col": 0,
-          "symbol_id": "sym_3"
+          "symbol_id": null
         },
         {
           "row": 2,
@@ -7906,13 +7930,13 @@
         {
           "row": 2,
           "col": 2,
-          "symbol_id": null
+          "symbol_id": "sym_2"
         }
       ],
       "regions": "row_col"
     },
     "difficulty_params": {
-      "blank_count": 1,
+      "blank_count": 3,
       "hint_after_ms": 15000,
       "allow_retry": true
     }
@@ -7924,8 +7948,8 @@
       "title": "Tìm Bí ngô Halloween đang ẩn nấp",
       "instruction": "Bé tinh mắt tìm đủ Bí ngô Halloween giấu trong tranh!",
       "theme_tag": "festival",
-      "what_tags": ["logic", "pattern", "matrix"],
-      "thinking_tags": ["sort", "solve"],
+      "what_tags": ["log", "pattern"],
+      "thinking_tags": ["sort", "infer"],
       "skill_codes": ["C1.PROB.05"],
       "learning_objective_codes": [
         "LO-C1.PROB.05-01",
@@ -7980,7 +8004,7 @@
         {
           "row": 0,
           "col": 2,
-          "symbol_id": "sym_3"
+          "symbol_id": null
         },
         {
           "row": 1,
@@ -7990,7 +8014,7 @@
         {
           "row": 1,
           "col": 1,
-          "symbol_id": "sym_3"
+          "symbol_id": null
         },
         {
           "row": 1,
@@ -8000,7 +8024,7 @@
         {
           "row": 2,
           "col": 0,
-          "symbol_id": "sym_3"
+          "symbol_id": null
         },
         {
           "row": 2,
@@ -8010,13 +8034,13 @@
         {
           "row": 2,
           "col": 2,
-          "symbol_id": null
+          "symbol_id": "sym_2"
         }
       ],
       "regions": "row_col"
     },
     "difficulty_params": {
-      "blank_count": 1,
+      "blank_count": 3,
       "hint_after_ms": 15000,
       "allow_retry": true
     }
@@ -8028,8 +8052,8 @@
       "title": "Ghép đôi Trường học tương ứng",
       "instruction": "Bé ghép các cặp Trường học tương ứng với nhau!",
       "theme_tag": "school",
-      "what_tags": ["classification"],
-      "thinking_tags": ["infer", "deduce"],
+      "what_tags": ["cls"],
+      "thinking_tags": ["infer"],
       "skill_codes": ["C1.PROB.06"],
       "learning_objective_codes": [
         "LO-C1.PROB.06-01",
@@ -8107,8 +8131,8 @@
       "title": "Ghép đôi Bò sữa tương ứng",
       "instruction": "Bé ghép các cặp Bò sữa tương ứng với nhau!",
       "theme_tag": "farm",
-      "what_tags": ["classification"],
-      "thinking_tags": ["infer", "deduce"],
+      "what_tags": ["cls"],
+      "thinking_tags": ["infer"],
       "skill_codes": ["C1.PROB.06"],
       "learning_objective_codes": [
         "LO-C1.PROB.06-01",
@@ -8186,8 +8210,8 @@
       "title": "Ghép đôi Cái ghế tương ứng",
       "instruction": "Bé ghép các cặp Cái ghế tương ứng với nhau!",
       "theme_tag": "home",
-      "what_tags": ["classification"],
-      "thinking_tags": ["infer", "deduce"],
+      "what_tags": ["cls"],
+      "thinking_tags": ["infer"],
       "skill_codes": ["C1.PROB.06"],
       "learning_objective_codes": [
         "LO-C1.PROB.06-01",
@@ -8265,8 +8289,8 @@
       "title": "Phân loại Cây xanh theo nhóm",
       "instruction": "Bé phân loại Cây xanh theo đặc điểm phù hợp!",
       "theme_tag": "nature",
-      "what_tags": ["classification"],
-      "thinking_tags": ["infer", "deduce"],
+      "what_tags": ["cmp", "sequence"],
+      "thinking_tags": ["infer"],
       "skill_codes": ["C1.PROB.06"],
       "learning_objective_codes": [
         "LO-C1.PROB.06-01",
@@ -8326,8 +8350,8 @@
       "title": "Phân loại Cá heo theo nhóm",
       "instruction": "Bé phân loại Cá heo theo đặc điểm phù hợp!",
       "theme_tag": "ocean",
-      "what_tags": ["classification"],
-      "thinking_tags": ["infer", "deduce"],
+      "what_tags": ["cmp", "sequence"],
+      "thinking_tags": ["infer"],
       "skill_codes": ["C1.PROB.06"],
       "learning_objective_codes": [
         "LO-C1.PROB.06-01",
@@ -8387,8 +8411,8 @@
       "title": "Phân loại Bánh mì theo nhóm",
       "instruction": "Bé phân loại Bánh mì theo đặc điểm phù hợp!",
       "theme_tag": "food",
-      "what_tags": ["classification"],
-      "thinking_tags": ["infer", "deduce"],
+      "what_tags": ["cmp", "sequence"],
+      "thinking_tags": ["infer"],
       "skill_codes": ["C1.PROB.06"],
       "learning_objective_codes": [
         "LO-C1.PROB.06-01",
@@ -8448,8 +8472,8 @@
       "title": "Phân loại Tàu hoả theo nhóm",
       "instruction": "Bé phân loại Tàu hoả theo đặc điểm phù hợp!",
       "theme_tag": "vehicle",
-      "what_tags": ["classification"],
-      "thinking_tags": ["infer", "deduce"],
+      "what_tags": ["cmp", "sequence"],
+      "thinking_tags": ["infer"],
       "skill_codes": ["C1.PROB.06"],
       "learning_objective_codes": [
         "LO-C1.PROB.06-01",
@@ -8509,8 +8533,8 @@
       "title": "Tìm bóng của Bảng vẽ",
       "instruction": "Bé quan sát và chọn bóng đúng của Bảng vẽ!",
       "theme_tag": "art",
-      "what_tags": ["classification"],
-      "thinking_tags": ["infer", "deduce"],
+      "what_tags": ["ops"],
+      "thinking_tags": ["infer"],
       "skill_codes": ["C1.PROB.06"],
       "learning_objective_codes": [
         "LO-C1.PROB.06-01",
@@ -8585,8 +8609,8 @@
       "title": "Tìm bóng của Hành tinh",
       "instruction": "Bé quan sát và chọn bóng đúng của Hành tinh!",
       "theme_tag": "space",
-      "what_tags": ["classification"],
-      "thinking_tags": ["infer", "deduce"],
+      "what_tags": ["ops"],
+      "thinking_tags": ["infer"],
       "skill_codes": ["C1.PROB.06"],
       "learning_objective_codes": [
         "LO-C1.PROB.06-01",
@@ -8661,8 +8685,8 @@
       "title": "Tìm bóng của Bà",
       "instruction": "Bé quan sát và chọn bóng đúng của Bà!",
       "theme_tag": "family",
-      "what_tags": ["classification"],
-      "thinking_tags": ["infer", "deduce"],
+      "what_tags": ["ops"],
+      "thinking_tags": ["infer"],
       "skill_codes": ["C1.PROB.06"],
       "learning_objective_codes": [
         "LO-C1.PROB.06-01",
@@ -8737,8 +8761,8 @@
       "title": "Xếp Mặt trời theo kích thước",
       "instruction": "Bé sắp xếp các Mặt trời từ nhỏ đến lớn!",
       "theme_tag": "weather",
-      "what_tags": ["deduction", "logic", "number", "comparison"],
-      "thinking_tags": ["infer", "deduce"],
+      "what_tags": ["log", "number", "cmp"],
+      "thinking_tags": ["infer"],
       "skill_codes": ["C1.PROB.06"],
       "learning_objective_codes": [
         "LO-C1.PROB.06-01",
@@ -8761,7 +8785,7 @@
           "value": 3,
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-rain"
+            "ref": "EMJ-cloud"
           }
         },
         {
@@ -8769,7 +8793,7 @@
           "value": 5,
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-cloud"
+            "ref": "EMJ-umbrella-with-rain"
           }
         },
         {
@@ -8777,7 +8801,7 @@
           "value": 7,
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-umbrella-with-rain"
+            "ref": "EMJ-snowflake"
           }
         },
         {
@@ -8793,7 +8817,7 @@
           "value": 11,
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-snowflake"
+            "ref": "EMJ-rainbow"
           }
         }
       ],
@@ -8831,8 +8855,8 @@
       "title": "Xếp Bao lì xì theo kích thước",
       "instruction": "Bé sắp xếp các Bao lì xì từ nhỏ đến lớn!",
       "theme_tag": "festival",
-      "what_tags": ["deduction", "logic", "number", "comparison"],
-      "thinking_tags": ["infer", "deduce"],
+      "what_tags": ["log", "number", "cmp"],
+      "thinking_tags": ["infer"],
       "skill_codes": ["C1.PROB.06"],
       "learning_objective_codes": [
         "LO-C1.PROB.06-01",
@@ -8852,64 +8876,64 @@
       "candidates": [
         {
           "candidate_id": "cand_1",
-          "value": 3,
-          "asset": {
-            "kind": "emoji",
-            "ref": "EMJ-red-lantern"
-          }
-        },
-        {
-          "candidate_id": "cand_2",
-          "value": 5,
+          "value": 4,
           "asset": {
             "kind": "emoji",
             "ref": "EMJ-confetti-ball"
           }
         },
         {
-          "candidate_id": "cand_3",
-          "value": 7,
+          "candidate_id": "cand_2",
+          "value": 6,
           "asset": {
             "kind": "emoji",
             "ref": "EMJ-birthday-cake"
           }
         },
         {
-          "candidate_id": "cand_4",
-          "value": 9,
+          "candidate_id": "cand_3",
+          "value": 8,
           "asset": {
             "kind": "emoji",
             "ref": "EMJ-gift"
           }
         },
         {
-          "candidate_id": "cand_5",
-          "value": 11,
+          "candidate_id": "cand_4",
+          "value": 10,
           "asset": {
             "kind": "emoji",
             "ref": "EMJ-balloon"
+          }
+        },
+        {
+          "candidate_id": "cand_5",
+          "value": 12,
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-fireworks"
           }
         }
       ],
       "clues": [
         {
           "clue_id": "clue_1",
-          "text": "Số lượng lớn hơn 7",
+          "text": "Số lượng lớn hơn 6",
           "predicate": {
             "kind": "greater_than",
-            "value": 7
+            "value": 6
           }
         },
         {
           "clue_id": "clue_2",
-          "text": "Số lượng nhỏ hơn 11",
+          "text": "Số lượng nhỏ hơn 10",
           "predicate": {
             "kind": "less_than",
-            "value": 11
+            "value": 10
           }
         }
       ],
-      "answer_candidate_id": "cand_4"
+      "answer_candidate_id": "cand_3"
     },
     "difficulty_params": {
       "clue_count": 2,
@@ -8925,8 +8949,8 @@
       "title": "Xếp Bút chì theo kích thước",
       "instruction": "Bé sắp xếp các Bút chì từ nhỏ đến lớn!",
       "theme_tag": "school",
-      "what_tags": ["deduction", "logic", "number", "comparison"],
-      "thinking_tags": ["infer", "deduce"],
+      "what_tags": ["log", "number", "cmp"],
+      "thinking_tags": ["infer"],
       "skill_codes": ["C1.PROB.06"],
       "learning_objective_codes": [
         "LO-C1.PROB.06-01",
@@ -8946,31 +8970,31 @@
       "candidates": [
         {
           "candidate_id": "cand_1",
-          "value": 3,
-          "asset": {
-            "kind": "emoji",
-            "ref": "EMJ-school"
-          }
-        },
-        {
-          "candidate_id": "cand_2",
-          "value": 5,
+          "value": 2,
           "asset": {
             "kind": "emoji",
             "ref": "EMJ-abacus"
           }
         },
         {
-          "candidate_id": "cand_3",
-          "value": 7,
+          "candidate_id": "cand_2",
+          "value": 4,
           "asset": {
             "kind": "emoji",
             "ref": "EMJ-open-book"
           }
         },
         {
+          "candidate_id": "cand_3",
+          "value": 6,
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-scissors"
+          }
+        },
+        {
           "candidate_id": "cand_4",
-          "value": 9,
+          "value": 8,
           "asset": {
             "kind": "emoji",
             "ref": "EMJ-crayon"
@@ -8978,28 +9002,28 @@
         },
         {
           "candidate_id": "cand_5",
-          "value": 11,
+          "value": 10,
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-bell"
+            "ref": "EMJ-pencil"
           }
         }
       ],
       "clues": [
         {
           "clue_id": "clue_1",
-          "text": "Số lượng lớn hơn 3",
+          "text": "Số lượng lớn hơn 2",
           "predicate": {
             "kind": "greater_than",
-            "value": 3
+            "value": 2
           }
         },
         {
           "clue_id": "clue_2",
-          "text": "Số lượng nhỏ hơn 7",
+          "text": "Số lượng nhỏ hơn 6",
           "predicate": {
             "kind": "less_than",
-            "value": 7
+            "value": 6
           }
         }
       ],
@@ -9019,8 +9043,8 @@
       "title": "Xếp Heo theo kích thước",
       "instruction": "Bé sắp xếp các Heo từ nhỏ đến lớn!",
       "theme_tag": "farm",
-      "what_tags": ["deduction", "logic", "number", "comparison"],
-      "thinking_tags": ["infer", "deduce"],
+      "what_tags": ["log", "number", "cmp"],
+      "thinking_tags": ["infer"],
       "skill_codes": ["C1.PROB.06"],
       "learning_objective_codes": [
         "LO-C1.PROB.06-01",
@@ -9040,39 +9064,39 @@
       "candidates": [
         {
           "candidate_id": "cand_1",
-          "value": 2,
-          "asset": {
-            "kind": "emoji",
-            "ref": "EMJ-tractor"
-          }
-        },
-        {
-          "candidate_id": "cand_2",
-          "value": 4,
+          "value": 3,
           "asset": {
             "kind": "emoji",
             "ref": "EMJ-goat"
           }
         },
         {
-          "candidate_id": "cand_3",
-          "value": 6,
-          "asset": {
-            "kind": "emoji",
-            "ref": "EMJ-sheep"
-          }
-        },
-        {
-          "candidate_id": "cand_4",
-          "value": 8,
+          "candidate_id": "cand_2",
+          "value": 5,
           "asset": {
             "kind": "emoji",
             "ref": "EMJ-rice"
           }
         },
         {
+          "candidate_id": "cand_3",
+          "value": 7,
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-pig"
+          }
+        },
+        {
+          "candidate_id": "cand_4",
+          "value": 9,
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-cow"
+          }
+        },
+        {
           "candidate_id": "cand_5",
-          "value": 10,
+          "value": 11,
           "asset": {
             "kind": "emoji",
             "ref": "EMJ-rooster"
@@ -9082,18 +9106,18 @@
       "clues": [
         {
           "clue_id": "clue_1",
-          "text": "Số lượng lớn hơn 4",
+          "text": "Số lượng lớn hơn 5",
           "predicate": {
             "kind": "greater_than",
-            "value": 4
+            "value": 5
           }
         },
         {
           "clue_id": "clue_2",
-          "text": "Số lượng nhỏ hơn 8",
+          "text": "Số lượng nhỏ hơn 9",
           "predicate": {
             "kind": "less_than",
-            "value": 8
+            "value": 9
           }
         }
       ],
@@ -9113,8 +9137,8 @@
       "title": "Ghép hình Ngôi nhà hoàn chỉnh",
       "instruction": "Bé ghép các mảnh thành tranh Ngôi nhà hoàn chỉnh!",
       "theme_tag": "home",
-      "what_tags": ["logic"],
-      "thinking_tags": ["infer", "deduce"],
+      "what_tags": ["log"],
+      "thinking_tags": ["infer"],
       "skill_codes": ["C1.PROB.06"],
       "learning_objective_codes": [
         "LO-C1.PROB.06-01",
@@ -9197,8 +9221,8 @@
       "title": "Ghép hình Voi hoàn chỉnh",
       "instruction": "Bé ghép các mảnh thành tranh Voi hoàn chỉnh!",
       "theme_tag": "animal",
-      "what_tags": ["logic"],
-      "thinking_tags": ["infer", "deduce"],
+      "what_tags": ["log"],
+      "thinking_tags": ["infer"],
       "skill_codes": ["C1.PROB.06"],
       "learning_objective_codes": [
         "LO-C1.PROB.06-01",
@@ -9281,8 +9305,8 @@
       "title": "Ghép hình Cỏ bốn lá hoàn chỉnh",
       "instruction": "Bé ghép các mảnh thành tranh Cỏ bốn lá hoàn chỉnh!",
       "theme_tag": "nature",
-      "what_tags": ["logic"],
-      "thinking_tags": ["infer", "deduce"],
+      "what_tags": ["log"],
+      "thinking_tags": ["infer"],
       "skill_codes": ["C1.PROB.06"],
       "learning_objective_codes": [
         "LO-C1.PROB.06-01",
@@ -9365,8 +9389,8 @@
       "title": "Ghép hình Cua hoàn chỉnh",
       "instruction": "Bé ghép các mảnh thành tranh Cua hoàn chỉnh!",
       "theme_tag": "ocean",
-      "what_tags": ["logic"],
-      "thinking_tags": ["infer", "deduce"],
+      "what_tags": ["log"],
+      "thinking_tags": ["infer"],
       "skill_codes": ["C1.PROB.06"],
       "learning_objective_codes": [
         "LO-C1.PROB.06-01",

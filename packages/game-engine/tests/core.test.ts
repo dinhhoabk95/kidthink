@@ -181,7 +181,14 @@ describe("Task 3 & Task 4 — Core Engine & GT-001 End-to-End (BR-ENG-01..17)", 
       throw new Error("Fixture missing");
     }
     const rendered: number[] = [];
-    const ctxStub = { clearRect: () => undefined, scale: () => undefined };
+    const ctxStub = {
+      canvas: { width: 960, height: 540 },
+      clearRect: () => undefined,
+      scale: () => undefined,
+      setTransform: () => undefined,
+      save: () => undefined,
+      restore: () => undefined,
+    };
     const canvasStub = {
       getBoundingClientRect: () => ({ width: 960, height: 540 }),
       getContext: () => ctxStub,

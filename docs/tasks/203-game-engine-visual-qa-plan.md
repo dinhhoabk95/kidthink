@@ -46,10 +46,20 @@ bước scale logic nào. Đúng như đọc mã: `render-system.ts` chỉ chạ
 
 ### 2.2 Đo được nhưng KHÔNG thuộc task này
 
+> **Sửa lại số đã ghi sai.** Lần đo đầu grep chuỗi `"EMJ-<slug>"` trong
+> `packages/emoji/src/data/*.ts` và kết luận 21 mã thiếu, 40 level hỏng. Phép đo đó
+> sai: `getByCode()` khớp **cả** mã **suy ra** từ từ khoá tiếng Anh của mỗi mục
+> (`getEmojiCode()` ở `packages/emoji/src/query.ts`), chứ mã không nằm sẵn trong
+> file dữ liệu. Đo lại bằng chính `getByCode` cho 16 mã và 18 level. Năm mã từng bị
+> kết tội oan: `EMJ-coin`, `EMJ-barn`, `EMJ-battery`, `EMJ-satellite`, `EMJ-yarn`.
+>
+> Corpus cũng đã đổi giữa chừng: một phiên khác seed từ **384** lên **3.647** level
+> published trong lúc task này chạy.
+
 | Việc | Số đo | Giao cho |
 |---|---|---|
-| 21 mã `EMJ-*` không có trong `@mindkid/emoji` lẫn bảng seed ra từ nó, làm 40 level vẽ ô xám | GT-031 10/10 · GT-033 10/10 · GT-035 8/10 · GT-036 6/10 · GT-030 3/10 · GT-028 2/10 · GT-017 1/4 | [`#202`](202-emoji-package-single-source-plan.md) đang bỏ hẳn không gian mã `EMJ-*` |
-| Hướng dẫn chỉ có chữ trên bề mặt trẻ | `instruction_audio_path` rỗng trên 384/384 level published | Task #204 |
+| 16 mã `EMJ-*` không resolve được qua `getByCode`, làm level vẽ ô xám thay vì emoji | 18 level trên 3.647 published: GT-036 6/10 · GT-035 4/10 · GT-030 3/24 · GT-031 3/84 · GT-017 1/12 · GT-028 1/26 | [`#202`](202-emoji-package-single-source-plan.md) đang bỏ hẳn không gian mã `EMJ-*` |
+| Hướng dẫn chỉ có chữ trên bề mặt trẻ | `instruction_audio_path` rỗng trên 3.647/3.647 level published | Task #204 |
 | `<canvas>` không có `role`, `aria-label`, `tabindex` | 0 thuộc tính tiếp cận trên cả hai trang chơi | Task #205 |
 
 `validateKidInstruction()` ở `packages/ui/src/kid-surface/contracts.ts` cưỡng chế đúng luật

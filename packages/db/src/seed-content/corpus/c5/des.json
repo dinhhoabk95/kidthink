@@ -6,7 +6,7 @@
       "title": "So sánh nhóm Táo đỏ",
       "instruction": "Bé chọn nhóm nhiều Táo đỏ hơn nhé!",
       "theme_tag": "food",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C5.DES.01"],
       "learning_objective_codes": [
@@ -73,7 +73,7 @@
       "title": "So sánh nhóm Xe buýt",
       "instruction": "Bé chọn nhóm nhiều Xe buýt hơn nhé!",
       "theme_tag": "vehicle",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C5.DES.01"],
       "learning_objective_codes": [
@@ -140,7 +140,7 @@
       "title": "Xếp Bảng vẽ theo quy luật",
       "instruction": "Bé chọn Bảng vẽ tiếp theo theo quy luật!",
       "theme_tag": "art",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C5.DES.01"],
       "learning_objective_codes": [
@@ -208,7 +208,7 @@
       "title": "Xếp Cây đàn ghi-ta theo quy luật",
       "instruction": "Bé chọn Cây đàn ghi-ta tiếp theo theo quy luật!",
       "theme_tag": "art",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C5.DES.01"],
       "learning_objective_codes": [
@@ -276,7 +276,7 @@
       "title": "Kéo Gia đình vào đúng ô",
       "instruction": "Bé kéo Gia đình vào đúng ô nhé!",
       "theme_tag": "family",
-      "what_tags": ["classification"],
+      "what_tags": ["spt"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C5.DES.01"],
       "learning_objective_codes": [
@@ -340,7 +340,7 @@
       "title": "Kéo Tai vào đúng ô",
       "instruction": "Bé kéo Tai vào đúng ô nhé!",
       "theme_tag": "body",
-      "what_tags": ["classification"],
+      "what_tags": ["spt"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C5.DES.01"],
       "learning_objective_codes": [
@@ -404,7 +404,7 @@
       "title": "Tìm cặp thẻ Mặt trời giống nhau",
       "instruction": "Bé lật mở cặp Mặt trời giống nhau nhé!",
       "theme_tag": "weather",
-      "what_tags": ["subitizing", "number"],
+      "what_tags": ["mem", "cnt", "number"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C5.DES.01"],
       "learning_objective_codes": [
@@ -470,7 +470,7 @@
       "title": "Tìm cặp thẻ Bao lì xì giống nhau",
       "instruction": "Bé lật mở cặp Bao lì xì giống nhau nhé!",
       "theme_tag": "festival",
-      "what_tags": ["subitizing", "number"],
+      "what_tags": ["mem", "cnt", "number"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C5.DES.01"],
       "learning_objective_codes": [
@@ -536,7 +536,7 @@
       "title": "Tìm Trường học giống mẫu",
       "instruction": "Bé chạm vào Trường học giống mẫu nhé!",
       "theme_tag": "school",
-      "what_tags": ["classification", "number"],
+      "what_tags": ["cls", "shp", "number"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C5.DES.02"],
       "learning_objective_codes": [
@@ -602,7 +602,7 @@
       "title": "Tìm Bò sữa giống mẫu",
       "instruction": "Bé chạm vào Bò sữa giống mẫu nhé!",
       "theme_tag": "farm",
-      "what_tags": ["classification", "number"],
+      "what_tags": ["cls", "shp", "number"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C5.DES.02"],
       "learning_objective_codes": [
@@ -676,7 +676,7 @@
       "title": "Đếm số lượng Ngôi nhà",
       "instruction": "Bé đếm số Ngôi nhà rồi chọn số đúng!",
       "theme_tag": "home",
-      "what_tags": ["category"],
+      "what_tags": ["cls"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C5.DES.02"],
       "learning_objective_codes": [
@@ -744,7 +744,7 @@
       "title": "Đếm số lượng Voi",
       "instruction": "Bé đếm số Voi rồi chọn số đúng!",
       "theme_tag": "animal",
-      "what_tags": ["category"],
+      "what_tags": ["cls"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C5.DES.02"],
       "learning_objective_codes": [
@@ -812,7 +812,7 @@
       "title": "So sánh nhóm Cây xanh",
       "instruction": "Bé chọn nhóm nhiều Cây xanh hơn nhé!",
       "theme_tag": "nature",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C5.DES.02"],
       "learning_objective_codes": [
@@ -879,7 +879,7 @@
       "title": "So sánh nhóm Cá heo",
       "instruction": "Bé chọn nhóm nhiều Cá heo hơn nhé!",
       "theme_tag": "ocean",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C5.DES.02"],
       "learning_objective_codes": [
@@ -946,7 +946,7 @@
       "title": "Ghép đôi Táo đỏ tương ứng",
       "instruction": "Bé ghép đôi các Táo đỏ tương ứng nhé!",
       "theme_tag": "food",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C5.DES.02"],
       "learning_objective_codes": [
@@ -1025,7 +1025,7 @@
       "title": "Ghép đôi Xe buýt tương ứng",
       "instruction": "Bé ghép đôi các Xe buýt tương ứng nhé!",
       "theme_tag": "vehicle",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C5.DES.02"],
       "learning_objective_codes": [
@@ -1104,7 +1104,7 @@
       "title": "Xếp Bảng vẽ theo quy luật",
       "instruction": "Bé chọn Bảng vẽ tiếp theo theo quy luật!",
       "theme_tag": "art",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C5.DES.02"],
       "learning_objective_codes": [
@@ -1172,7 +1172,7 @@
       "title": "Xếp Cây đàn ghi-ta theo quy luật",
       "instruction": "Bé chọn Cây đàn ghi-ta tiếp theo theo quy luật!",
       "theme_tag": "art",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C5.DES.02"],
       "learning_objective_codes": [
@@ -1240,7 +1240,7 @@
       "title": "Tìm Gia đình giống mẫu",
       "instruction": "Bé chạm vào Gia đình giống mẫu nhé!",
       "theme_tag": "family",
-      "what_tags": ["classification", "number"],
+      "what_tags": ["cls", "shp", "number"],
       "thinking_tags": ["compare"],
       "skill_codes": ["C5.DES.03"],
       "learning_objective_codes": [
@@ -1306,7 +1306,7 @@
       "title": "Tìm Tai giống mẫu",
       "instruction": "Bé chạm vào Tai giống mẫu nhé!",
       "theme_tag": "body",
-      "what_tags": ["classification", "number"],
+      "what_tags": ["cls", "shp", "number"],
       "thinking_tags": ["compare"],
       "skill_codes": ["C5.DES.03"],
       "learning_objective_codes": [
@@ -1380,7 +1380,7 @@
       "title": "Đếm số lượng Mặt trời",
       "instruction": "Bé đếm số Mặt trời rồi chọn số đúng!",
       "theme_tag": "weather",
-      "what_tags": ["category"],
+      "what_tags": ["cls"],
       "thinking_tags": ["compare"],
       "skill_codes": ["C5.DES.03"],
       "learning_objective_codes": [
@@ -1448,7 +1448,7 @@
       "title": "Đếm số lượng Bao lì xì",
       "instruction": "Bé đếm số Bao lì xì rồi chọn số đúng!",
       "theme_tag": "festival",
-      "what_tags": ["category"],
+      "what_tags": ["cls"],
       "thinking_tags": ["compare"],
       "skill_codes": ["C5.DES.03"],
       "learning_objective_codes": [
@@ -1516,7 +1516,7 @@
       "title": "Ghép đôi Trường học tương ứng",
       "instruction": "Bé ghép đôi các Trường học tương ứng nhé!",
       "theme_tag": "school",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["compare"],
       "skill_codes": ["C5.DES.03"],
       "learning_objective_codes": [
@@ -1595,7 +1595,7 @@
       "title": "Ghép đôi Bò sữa tương ứng",
       "instruction": "Bé ghép đôi các Bò sữa tương ứng nhé!",
       "theme_tag": "farm",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["compare"],
       "skill_codes": ["C5.DES.03"],
       "learning_objective_codes": [
@@ -1674,7 +1674,7 @@
       "title": "Xếp Ngôi nhà theo quy luật",
       "instruction": "Bé chọn Ngôi nhà tiếp theo theo quy luật!",
       "theme_tag": "home",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["compare"],
       "skill_codes": ["C5.DES.03"],
       "learning_objective_codes": [
@@ -1742,7 +1742,7 @@
       "title": "Xếp Voi theo quy luật",
       "instruction": "Bé chọn Voi tiếp theo theo quy luật!",
       "theme_tag": "animal",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["compare"],
       "skill_codes": ["C5.DES.03"],
       "learning_objective_codes": [
@@ -1810,7 +1810,7 @@
       "title": "Tìm bóng của Cây xanh",
       "instruction": "Bé tìm bóng của Cây xanh nhé!",
       "theme_tag": "nature",
-      "what_tags": ["classification"],
+      "what_tags": ["ops"],
       "thinking_tags": ["compare"],
       "skill_codes": ["C5.DES.03"],
       "learning_objective_codes": [
@@ -1886,7 +1886,7 @@
       "title": "Tìm bóng của Cá heo",
       "instruction": "Bé tìm bóng của Cá heo nhé!",
       "theme_tag": "ocean",
-      "what_tags": ["classification"],
+      "what_tags": ["ops"],
       "thinking_tags": ["compare"],
       "skill_codes": ["C5.DES.03"],
       "learning_objective_codes": [
@@ -1962,8 +1962,8 @@
       "title": "Tìm Táo đỏ giống mẫu",
       "instruction": "Bé tìm Táo đỏ giống hình mẫu nhé!",
       "theme_tag": "food",
-      "what_tags": ["classification", "number"],
-      "thinking_tags": ["deduce"],
+      "what_tags": ["cls", "shp", "number"],
+      "thinking_tags": ["observe"],
       "skill_codes": ["C5.DES.04"],
       "learning_objective_codes": [
         "LO-C5.DES.04-01",
@@ -2036,8 +2036,8 @@
       "title": "Tìm Xe buýt giống mẫu",
       "instruction": "Bé tìm Xe buýt giống hình mẫu nhé!",
       "theme_tag": "vehicle",
-      "what_tags": ["classification", "number"],
-      "thinking_tags": ["deduce"],
+      "what_tags": ["cls", "shp", "number"],
+      "thinking_tags": ["observe"],
       "skill_codes": ["C5.DES.04"],
       "learning_objective_codes": [
         "LO-C5.DES.04-01",
@@ -2118,8 +2118,8 @@
       "title": "Tìm Kèn saxophone giống mẫu",
       "instruction": "Bé tìm Kèn saxophone giống hình mẫu nhé!",
       "theme_tag": "art",
-      "what_tags": ["classification", "number"],
-      "thinking_tags": ["deduce"],
+      "what_tags": ["cls", "shp", "number"],
+      "thinking_tags": ["observe"],
       "skill_codes": ["C5.DES.04"],
       "learning_objective_codes": [
         "LO-C5.DES.04-01",
@@ -2200,8 +2200,8 @@
       "title": "Tìm Phi hành gia giống mẫu",
       "instruction": "Bé tìm Phi hành gia giống hình mẫu nhé!",
       "theme_tag": "space",
-      "what_tags": ["classification", "number"],
-      "thinking_tags": ["deduce"],
+      "what_tags": ["cls", "shp", "number"],
+      "thinking_tags": ["observe"],
       "skill_codes": ["C5.DES.04"],
       "learning_objective_codes": [
         "LO-C5.DES.04-01",
@@ -2274,8 +2274,8 @@
       "title": "Đếm số lượng Mắt",
       "instruction": "Bé đếm số Mắt rồi chọn số đúng!",
       "theme_tag": "body",
-      "what_tags": ["category"],
-      "thinking_tags": ["deduce"],
+      "what_tags": ["cls"],
+      "thinking_tags": ["observe"],
       "skill_codes": ["C5.DES.04"],
       "learning_objective_codes": [
         "LO-C5.DES.04-01",
@@ -2342,8 +2342,8 @@
       "title": "Đếm số lượng Mây",
       "instruction": "Bé đếm số Mây rồi chọn số đúng!",
       "theme_tag": "weather",
-      "what_tags": ["category"],
-      "thinking_tags": ["deduce"],
+      "what_tags": ["cls"],
+      "thinking_tags": ["observe"],
       "skill_codes": ["C5.DES.04"],
       "learning_objective_codes": [
         "LO-C5.DES.04-01",
@@ -2410,8 +2410,8 @@
       "title": "Đếm số lượng Pháo hoa",
       "instruction": "Bé đếm số Pháo hoa rồi chọn số đúng!",
       "theme_tag": "festival",
-      "what_tags": ["category"],
-      "thinking_tags": ["deduce"],
+      "what_tags": ["cls"],
+      "thinking_tags": ["observe"],
       "skill_codes": ["C5.DES.04"],
       "learning_objective_codes": [
         "LO-C5.DES.04-01",
@@ -2478,8 +2478,8 @@
       "title": "Đếm số lượng Sách",
       "instruction": "Bé đếm số Sách rồi chọn số đúng!",
       "theme_tag": "school",
-      "what_tags": ["category"],
-      "thinking_tags": ["deduce"],
+      "what_tags": ["cls"],
+      "thinking_tags": ["observe"],
       "skill_codes": ["C5.DES.04"],
       "learning_objective_codes": [
         "LO-C5.DES.04-01",
@@ -2546,8 +2546,8 @@
       "title": "Đếm số lượng Lúa",
       "instruction": "Bé đếm số Lúa rồi chọn số đúng!",
       "theme_tag": "farm",
-      "what_tags": ["category"],
-      "thinking_tags": ["deduce"],
+      "what_tags": ["cls"],
+      "thinking_tags": ["observe"],
       "skill_codes": ["C5.DES.04"],
       "learning_objective_codes": [
         "LO-C5.DES.04-01",

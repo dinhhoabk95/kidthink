@@ -6,7 +6,7 @@
       "title": "Tìm Gia đình giống mẫu",
       "instruction": "Bé chạm vào Gia đình giống mẫu nhé!",
       "theme_tag": "family",
-      "what_tags": ["classification", "number"],
+      "what_tags": ["cls", "shp", "number"],
       "thinking_tags": ["infer", "observe"],
       "skill_codes": ["C3.RULE.01"],
       "learning_objective_codes": [
@@ -72,7 +72,7 @@
       "title": "Tìm Tai giống mẫu",
       "instruction": "Bé chạm vào Tai giống mẫu nhé!",
       "theme_tag": "body",
-      "what_tags": ["classification", "number"],
+      "what_tags": ["cls", "shp", "number"],
       "thinking_tags": ["infer", "observe"],
       "skill_codes": ["C3.RULE.01"],
       "learning_objective_codes": [
@@ -146,7 +146,7 @@
       "title": "Đếm số lượng Mặt trời",
       "instruction": "Bé đếm số Mặt trời rồi chọn số đúng!",
       "theme_tag": "weather",
-      "what_tags": ["category"],
+      "what_tags": ["cls"],
       "thinking_tags": ["infer", "observe"],
       "skill_codes": ["C3.RULE.01"],
       "learning_objective_codes": [
@@ -214,7 +214,7 @@
       "title": "Đếm số lượng Bao lì xì",
       "instruction": "Bé đếm số Bao lì xì rồi chọn số đúng!",
       "theme_tag": "festival",
-      "what_tags": ["category"],
+      "what_tags": ["cls"],
       "thinking_tags": ["infer", "observe"],
       "skill_codes": ["C3.RULE.01"],
       "learning_objective_codes": [
@@ -282,7 +282,7 @@
       "title": "So sánh nhóm Trường học",
       "instruction": "Bé chọn nhóm nhiều Trường học hơn nhé!",
       "theme_tag": "school",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["infer", "observe"],
       "skill_codes": ["C3.RULE.01"],
       "learning_objective_codes": [
@@ -349,7 +349,7 @@
       "title": "So sánh nhóm Bò sữa",
       "instruction": "Bé chọn nhóm nhiều Bò sữa hơn nhé!",
       "theme_tag": "farm",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["infer", "observe"],
       "skill_codes": ["C3.RULE.01"],
       "learning_objective_codes": [
@@ -416,7 +416,7 @@
       "title": "Ghép đôi Ngôi nhà tương ứng",
       "instruction": "Bé ghép đôi các Ngôi nhà tương ứng nhé!",
       "theme_tag": "home",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["infer", "observe"],
       "skill_codes": ["C3.RULE.01"],
       "learning_objective_codes": [
@@ -495,7 +495,7 @@
       "title": "Ghép đôi Voi tương ứng",
       "instruction": "Bé ghép đôi các Voi tương ứng nhé!",
       "theme_tag": "animal",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["infer", "observe"],
       "skill_codes": ["C3.RULE.01"],
       "learning_objective_codes": [
@@ -574,7 +574,7 @@
       "title": "Xếp Cây xanh theo quy luật",
       "instruction": "Bé chọn Cây xanh tiếp theo theo quy luật!",
       "theme_tag": "nature",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["infer", "observe"],
       "skill_codes": ["C3.RULE.01"],
       "learning_objective_codes": [
@@ -642,7 +642,7 @@
       "title": "Xếp Cá heo theo quy luật",
       "instruction": "Bé chọn Cá heo tiếp theo theo quy luật!",
       "theme_tag": "ocean",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["infer", "observe"],
       "skill_codes": ["C3.RULE.01"],
       "learning_objective_codes": [
@@ -710,7 +710,7 @@
       "title": "Dẫn đường qua mê cung",
       "instruction": "Bé vẽ đường đi an toàn qua mê cung!",
       "theme_tag": "food",
-      "what_tags": ["maze"],
+      "what_tags": ["spt", "flw"],
       "thinking_tags": ["predict"],
       "skill_codes": ["C3.RULE.02"],
       "learning_objective_codes": [
@@ -804,7 +804,7 @@
       "title": "Dẫn đường qua mê cung",
       "instruction": "Bé vẽ đường đi an toàn qua mê cung!",
       "theme_tag": "vehicle",
-      "what_tags": ["maze"],
+      "what_tags": ["spt", "flw"],
       "thinking_tags": ["predict"],
       "skill_codes": ["C3.RULE.02"],
       "learning_objective_codes": [
@@ -893,7 +893,7 @@
       "title": "Xếp Tên lửa vào khung mười ô",
       "instruction": "Bé đặt đủ số lượng Tên lửa vào khung mười!",
       "theme_tag": "space",
-      "what_tags": ["geometry"],
+      "what_tags": ["spt", "geometry"],
       "thinking_tags": ["predict"],
       "skill_codes": ["C3.RULE.02"],
       "learning_objective_codes": [
@@ -968,7 +968,7 @@
       "title": "Xếp Em bé vào khung mười ô",
       "instruction": "Bé đặt đủ số lượng Em bé vào khung mười!",
       "theme_tag": "family",
-      "what_tags": ["geometry"],
+      "what_tags": ["spt", "geometry"],
       "thinking_tags": ["predict"],
       "skill_codes": ["C3.RULE.02"],
       "learning_objective_codes": [
@@ -1043,7 +1043,7 @@
       "title": "Ghép hình Tangram",
       "instruction": "Bé xoay ghép mảnh tangram thành hình nhé!",
       "theme_tag": "weather",
-      "what_tags": ["geometry", "pattern"],
+      "what_tags": ["shp", "geometry", "pattern"],
       "thinking_tags": ["predict"],
       "skill_codes": ["C3.RULE.02"],
       "learning_objective_codes": [
@@ -1136,7 +1136,7 @@
       "title": "Ghép hình Tangram",
       "instruction": "Bé xoay ghép mảnh tangram thành hình nhé!",
       "theme_tag": "festival",
-      "what_tags": ["geometry", "pattern"],
+      "what_tags": ["shp", "geometry", "pattern"],
       "thinking_tags": ["predict"],
       "skill_codes": ["C3.RULE.02"],
       "learning_objective_codes": [
@@ -1229,7 +1229,7 @@
       "title": "Ma trận quy luật logic",
       "instruction": "Bé tìm hình đúng điền vào ma trận logic!",
       "theme_tag": "school",
-      "what_tags": ["classification"],
+      "what_tags": ["spt", "shp"],
       "thinking_tags": ["predict"],
       "skill_codes": ["C3.RULE.02"],
       "learning_objective_codes": [
@@ -1305,7 +1305,7 @@
       "title": "Ma trận quy luật logic",
       "instruction": "Bé tìm hình đúng điền vào ma trận logic!",
       "theme_tag": "farm",
-      "what_tags": ["classification"],
+      "what_tags": ["spt", "shp"],
       "thinking_tags": ["predict"],
       "skill_codes": ["C3.RULE.02"],
       "learning_objective_codes": [
@@ -1382,7 +1382,7 @@
       "instruction": "Bé dùng thước đo chiều dài của Ngôi nhà nhé!",
       "theme_tag": "home",
       "what_tags": ["number", "quantity", "pattern"],
-      "thinking_tags": ["verify", "deduce"],
+      "thinking_tags": ["observe"],
       "skill_codes": ["C3.RULE.03"],
       "learning_objective_codes": [
         "LO-C3.RULE.03-01",
@@ -1462,7 +1462,7 @@
       "instruction": "Bé dùng thước đo chiều dài của Voi nhé!",
       "theme_tag": "animal",
       "what_tags": ["number", "quantity", "pattern"],
-      "thinking_tags": ["verify", "deduce"],
+      "thinking_tags": ["observe"],
       "skill_codes": ["C3.RULE.03"],
       "learning_objective_codes": [
         "LO-C3.RULE.03-01",
@@ -1541,8 +1541,8 @@
       "title": "Xem giờ trên đồng hồ",
       "instruction": "Bé xem đồng hồ và chọn giờ đúng nhé!",
       "theme_tag": "nature",
-      "what_tags": ["number", "quantity"],
-      "thinking_tags": ["verify", "deduce"],
+      "what_tags": ["number", "quantity", "ops"],
+      "thinking_tags": ["observe"],
       "skill_codes": ["C3.RULE.03"],
       "learning_objective_codes": [
         "LO-C3.RULE.03-01",
@@ -1630,8 +1630,8 @@
       "title": "Xem giờ trên đồng hồ",
       "instruction": "Bé xem đồng hồ và chọn giờ đúng nhé!",
       "theme_tag": "ocean",
-      "what_tags": ["number", "quantity"],
-      "thinking_tags": ["verify", "deduce"],
+      "what_tags": ["number", "quantity", "ops"],
+      "thinking_tags": ["observe"],
       "skill_codes": ["C3.RULE.03"],
       "learning_objective_codes": [
         "LO-C3.RULE.03-01",
@@ -1720,7 +1720,7 @@
       "instruction": "Bé tính tổng mệnh giá các đồng xu cho đúng!",
       "theme_tag": "food",
       "what_tags": ["size", "quantity", "number"],
-      "thinking_tags": ["verify", "deduce"],
+      "thinking_tags": ["observe"],
       "skill_codes": ["C3.RULE.03"],
       "learning_objective_codes": [
         "LO-C3.RULE.03-01",
@@ -1790,7 +1790,7 @@
       "instruction": "Bé tính tổng mệnh giá các đồng xu cho đúng!",
       "theme_tag": "vehicle",
       "what_tags": ["size", "quantity", "number"],
-      "thinking_tags": ["verify", "deduce"],
+      "thinking_tags": ["observe"],
       "skill_codes": ["C3.RULE.03"],
       "learning_objective_codes": [
         "LO-C3.RULE.03-01",
@@ -1860,7 +1860,7 @@
       "instruction": "Bé phân tích biểu đồ tranh để chọn đáp án!",
       "theme_tag": "art",
       "what_tags": ["money", "number", "quantity"],
-      "thinking_tags": ["verify", "deduce"],
+      "thinking_tags": ["observe"],
       "skill_codes": ["C3.RULE.03"],
       "learning_objective_codes": [
         "LO-C3.RULE.03-01",
@@ -1952,7 +1952,7 @@
       "instruction": "Bé phân tích biểu đồ tranh để chọn đáp án!",
       "theme_tag": "space",
       "what_tags": ["money", "number", "quantity"],
-      "thinking_tags": ["verify", "deduce"],
+      "thinking_tags": ["observe"],
       "skill_codes": ["C3.RULE.03"],
       "learning_objective_codes": [
         "LO-C3.RULE.03-01",
@@ -2035,8 +2035,8 @@
       "title": "Biểu đồ Venn phân loại Gia đình",
       "instruction": "Bé phân loại vào phần giao của biểu đồ Venn!",
       "theme_tag": "family",
-      "what_tags": ["quantity", "size"],
-      "thinking_tags": ["verify", "deduce"],
+      "what_tags": ["msr", "quantity", "size"],
+      "thinking_tags": ["observe"],
       "skill_codes": ["C3.RULE.03"],
       "learning_objective_codes": [
         "LO-C3.RULE.03-01",
@@ -2087,8 +2087,8 @@
       "title": "Biểu đồ Venn phân loại Tai",
       "instruction": "Bé phân loại vào phần giao của biểu đồ Venn!",
       "theme_tag": "body",
-      "what_tags": ["quantity", "size"],
-      "thinking_tags": ["verify", "deduce"],
+      "what_tags": ["msr", "quantity", "size"],
+      "thinking_tags": ["observe"],
       "skill_codes": ["C3.RULE.03"],
       "learning_objective_codes": [
         "LO-C3.RULE.03-01",

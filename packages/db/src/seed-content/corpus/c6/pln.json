@@ -6,7 +6,7 @@
       "title": "Phân loại Gia đình theo nhóm",
       "instruction": "Bé phân loại Gia đình theo đặc điểm phù hợp!",
       "theme_tag": "family",
-      "what_tags": ["classification"],
+      "what_tags": ["cmp", "sequence"],
       "thinking_tags": ["plan"],
       "skill_codes": ["C6.PLN.01"],
       "learning_objective_codes": [
@@ -67,7 +67,7 @@
       "title": "Phân loại Tai theo nhóm",
       "instruction": "Bé phân loại Tai theo đặc điểm phù hợp!",
       "theme_tag": "body",
-      "what_tags": ["classification"],
+      "what_tags": ["cmp", "sequence"],
       "thinking_tags": ["plan"],
       "skill_codes": ["C6.PLN.01"],
       "learning_objective_codes": [
@@ -128,7 +128,7 @@
       "title": "Tìm bóng của Mặt trời",
       "instruction": "Bé tìm chiếc bóng đúng của Mặt trời nhé!",
       "theme_tag": "weather",
-      "what_tags": ["classification"],
+      "what_tags": ["ops"],
       "thinking_tags": ["plan"],
       "skill_codes": ["C6.PLN.01"],
       "learning_objective_codes": [
@@ -204,7 +204,7 @@
       "title": "Tìm bóng của Bao lì xì",
       "instruction": "Bé tìm chiếc bóng đúng của Bao lì xì nhé!",
       "theme_tag": "festival",
-      "what_tags": ["classification"],
+      "what_tags": ["ops"],
       "thinking_tags": ["plan"],
       "skill_codes": ["C6.PLN.01"],
       "learning_objective_codes": [
@@ -280,7 +280,7 @@
       "title": "Xếp Trường học theo kích thước",
       "instruction": "Bé sắp xếp Trường học theo kích thước nhé!",
       "theme_tag": "school",
-      "what_tags": ["deduction", "logic", "number", "comparison"],
+      "what_tags": ["log", "number", "cmp"],
       "thinking_tags": ["plan"],
       "skill_codes": ["C6.PLN.01"],
       "learning_objective_codes": [
@@ -366,7 +366,7 @@
       "title": "Xếp Bò sữa theo kích thước",
       "instruction": "Bé sắp xếp Bò sữa theo kích thước nhé!",
       "theme_tag": "farm",
-      "what_tags": ["deduction", "logic", "number", "comparison"],
+      "what_tags": ["log", "number", "cmp"],
       "thinking_tags": ["plan"],
       "skill_codes": ["C6.PLN.01"],
       "learning_objective_codes": [
@@ -452,7 +452,7 @@
       "title": "Tìm Cây xanh đang ẩn nấp",
       "instruction": "Bé tinh mắt tìm đủ Cây xanh giấu trong tranh!",
       "theme_tag": "nature",
-      "what_tags": ["logic", "pattern", "matrix"],
+      "what_tags": ["log", "pattern"],
       "thinking_tags": ["plan"],
       "skill_codes": ["C6.PLN.01"],
       "learning_objective_codes": [
@@ -508,7 +508,7 @@
         {
           "row": 0,
           "col": 2,
-          "symbol_id": "sym_3"
+          "symbol_id": null
         },
         {
           "row": 1,
@@ -518,7 +518,7 @@
         {
           "row": 1,
           "col": 1,
-          "symbol_id": "sym_3"
+          "symbol_id": null
         },
         {
           "row": 1,
@@ -528,7 +528,7 @@
         {
           "row": 2,
           "col": 0,
-          "symbol_id": "sym_3"
+          "symbol_id": null
         },
         {
           "row": 2,
@@ -538,13 +538,13 @@
         {
           "row": 2,
           "col": 2,
-          "symbol_id": null
+          "symbol_id": "sym_2"
         }
       ],
       "regions": "row_col"
     },
     "difficulty_params": {
-      "blank_count": 1,
+      "blank_count": 3,
       "hint_after_ms": 15000,
       "allow_retry": true
     }
@@ -556,7 +556,7 @@
       "title": "Tìm Cá heo đang ẩn nấp",
       "instruction": "Bé tinh mắt tìm đủ Cá heo giấu trong tranh!",
       "theme_tag": "ocean",
-      "what_tags": ["logic", "pattern", "matrix"],
+      "what_tags": ["log", "pattern"],
       "thinking_tags": ["plan"],
       "skill_codes": ["C6.PLN.01"],
       "learning_objective_codes": [
@@ -612,7 +612,7 @@
         {
           "row": 0,
           "col": 2,
-          "symbol_id": "sym_3"
+          "symbol_id": null
         },
         {
           "row": 1,
@@ -622,7 +622,7 @@
         {
           "row": 1,
           "col": 1,
-          "symbol_id": "sym_3"
+          "symbol_id": null
         },
         {
           "row": 1,
@@ -632,7 +632,7 @@
         {
           "row": 2,
           "col": 0,
-          "symbol_id": "sym_3"
+          "symbol_id": null
         },
         {
           "row": 2,
@@ -642,13 +642,13 @@
         {
           "row": 2,
           "col": 2,
-          "symbol_id": null
+          "symbol_id": "sym_2"
         }
       ],
       "regions": "row_col"
     },
     "difficulty_params": {
-      "blank_count": 1,
+      "blank_count": 3,
       "hint_after_ms": 15000,
       "allow_retry": true
     }
@@ -660,7 +660,7 @@
       "title": "Tìm Táo đỏ giống mẫu",
       "instruction": "Bé tìm Táo đỏ giống hình mẫu nhé!",
       "theme_tag": "food",
-      "what_tags": ["classification", "number"],
+      "what_tags": ["cls", "shp", "number"],
       "thinking_tags": ["plan", "compare"],
       "skill_codes": ["C6.PLN.02"],
       "learning_objective_codes": [
@@ -734,7 +734,7 @@
       "title": "Tìm Xe buýt giống mẫu",
       "instruction": "Bé tìm Xe buýt giống hình mẫu nhé!",
       "theme_tag": "vehicle",
-      "what_tags": ["classification", "number"],
+      "what_tags": ["cls", "shp", "number"],
       "thinking_tags": ["plan", "compare"],
       "skill_codes": ["C6.PLN.02"],
       "learning_objective_codes": [
@@ -816,7 +816,7 @@
       "title": "Đếm số lượng Bảng vẽ",
       "instruction": "Bé đếm số Bảng vẽ rồi chọn số đúng!",
       "theme_tag": "art",
-      "what_tags": ["category"],
+      "what_tags": ["cls"],
       "thinking_tags": ["plan", "compare"],
       "skill_codes": ["C6.PLN.02"],
       "learning_objective_codes": [
@@ -884,7 +884,7 @@
       "title": "Đếm số lượng Hành tinh",
       "instruction": "Bé đếm số Hành tinh rồi chọn số đúng!",
       "theme_tag": "space",
-      "what_tags": ["category"],
+      "what_tags": ["cls"],
       "thinking_tags": ["plan", "compare"],
       "skill_codes": ["C6.PLN.02"],
       "learning_objective_codes": [
@@ -952,7 +952,7 @@
       "title": "Ghép đôi Gia đình tương ứng",
       "instruction": "Bé ghép đôi các Gia đình tương ứng nhé!",
       "theme_tag": "family",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["plan", "compare"],
       "skill_codes": ["C6.PLN.02"],
       "learning_objective_codes": [
@@ -1031,7 +1031,7 @@
       "title": "Ghép đôi Tai tương ứng",
       "instruction": "Bé ghép đôi các Tai tương ứng nhé!",
       "theme_tag": "body",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["plan", "compare"],
       "skill_codes": ["C6.PLN.02"],
       "learning_objective_codes": [
@@ -1110,7 +1110,7 @@
       "title": "Xếp Mặt trời theo quy luật",
       "instruction": "Bé tìm Mặt trời còn thiếu trong dãy quy luật!",
       "theme_tag": "weather",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["plan", "compare"],
       "skill_codes": ["C6.PLN.02"],
       "learning_objective_codes": [
@@ -1195,7 +1195,7 @@
       "title": "Xếp Bao lì xì theo quy luật",
       "instruction": "Bé tìm Bao lì xì còn thiếu trong dãy quy luật!",
       "theme_tag": "festival",
-      "what_tags": ["classification"],
+      "what_tags": ["cls"],
       "thinking_tags": ["plan", "compare"],
       "skill_codes": ["C6.PLN.02"],
       "learning_objective_codes": [
@@ -1280,7 +1280,7 @@
       "title": "Phân loại Trường học theo nhóm",
       "instruction": "Bé phân loại Trường học theo đặc điểm phù hợp!",
       "theme_tag": "school",
-      "what_tags": ["classification"],
+      "what_tags": ["cmp", "sequence"],
       "thinking_tags": ["plan", "compare"],
       "skill_codes": ["C6.PLN.02"],
       "learning_objective_codes": [
@@ -1341,7 +1341,7 @@
       "title": "Phân loại Bò sữa theo nhóm",
       "instruction": "Bé phân loại Bò sữa theo đặc điểm phù hợp!",
       "theme_tag": "farm",
-      "what_tags": ["classification"],
+      "what_tags": ["cmp", "sequence"],
       "thinking_tags": ["plan", "compare"],
       "skill_codes": ["C6.PLN.02"],
       "learning_objective_codes": [
@@ -1402,7 +1402,7 @@
       "title": "Phân loại Ngôi nhà theo nhóm",
       "instruction": "Bé phân loại Ngôi nhà theo đặc điểm phù hợp!",
       "theme_tag": "home",
-      "what_tags": ["classification"],
+      "what_tags": ["cmp", "sequence"],
       "thinking_tags": ["plan", "predict"],
       "skill_codes": ["C6.PLN.03"],
       "learning_objective_codes": [
@@ -1463,7 +1463,7 @@
       "title": "Phân loại Voi theo nhóm",
       "instruction": "Bé phân loại Voi theo đặc điểm phù hợp!",
       "theme_tag": "animal",
-      "what_tags": ["classification"],
+      "what_tags": ["cmp", "sequence"],
       "thinking_tags": ["plan", "predict"],
       "skill_codes": ["C6.PLN.03"],
       "learning_objective_codes": [
@@ -1524,7 +1524,7 @@
       "title": "Tìm bóng của Cây xanh",
       "instruction": "Bé quan sát và chọn bóng đúng của Cây xanh!",
       "theme_tag": "nature",
-      "what_tags": ["classification"],
+      "what_tags": ["ops"],
       "thinking_tags": ["plan", "predict"],
       "skill_codes": ["C6.PLN.03"],
       "learning_objective_codes": [
@@ -1600,7 +1600,7 @@
       "title": "Tìm bóng của Cá heo",
       "instruction": "Bé quan sát và chọn bóng đúng của Cá heo!",
       "theme_tag": "ocean",
-      "what_tags": ["classification"],
+      "what_tags": ["ops"],
       "thinking_tags": ["plan", "predict"],
       "skill_codes": ["C6.PLN.03"],
       "learning_objective_codes": [
@@ -1676,7 +1676,7 @@
       "title": "Xếp Táo đỏ theo kích thước",
       "instruction": "Bé sắp xếp các Táo đỏ từ nhỏ đến lớn!",
       "theme_tag": "food",
-      "what_tags": ["deduction", "logic", "number", "comparison"],
+      "what_tags": ["log", "number", "cmp"],
       "thinking_tags": ["plan", "predict"],
       "skill_codes": ["C6.PLN.03"],
       "learning_objective_codes": [
@@ -1700,7 +1700,7 @@
           "value": 2,
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-red-apple"
+            "ref": "EMJ-milk"
           }
         },
         {
@@ -1708,7 +1708,7 @@
           "value": 4,
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-milk"
+            "ref": "EMJ-carrot"
           }
         },
         {
@@ -1724,7 +1724,7 @@
           "value": 8,
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-carrot"
+            "ref": "EMJ-rice"
           }
         },
         {
@@ -1732,29 +1732,29 @@
           "value": 10,
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-rice"
+            "ref": "EMJ-banana"
           }
         }
       ],
       "clues": [
         {
           "clue_id": "clue_1",
-          "text": "Số lượng lớn hơn 2",
+          "text": "Số lượng lớn hơn 4",
           "predicate": {
             "kind": "greater_than",
-            "value": 2
+            "value": 4
           }
         },
         {
           "clue_id": "clue_2",
-          "text": "Số lượng nhỏ hơn 6",
+          "text": "Số lượng nhỏ hơn 8",
           "predicate": {
             "kind": "less_than",
-            "value": 6
+            "value": 8
           }
         }
       ],
-      "answer_candidate_id": "cand_2"
+      "answer_candidate_id": "cand_3"
     },
     "difficulty_params": {
       "clue_count": 2,
@@ -1770,7 +1770,7 @@
       "title": "Xếp Xe buýt theo kích thước",
       "instruction": "Bé sắp xếp các Xe buýt từ nhỏ đến lớn!",
       "theme_tag": "vehicle",
-      "what_tags": ["deduction", "logic", "number", "comparison"],
+      "what_tags": ["log", "number", "cmp"],
       "thinking_tags": ["plan", "predict"],
       "skill_codes": ["C6.PLN.03"],
       "learning_objective_codes": [
@@ -1791,64 +1791,64 @@
       "candidates": [
         {
           "candidate_id": "cand_1",
-          "value": 3,
+          "value": 2,
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-car"
+            "ref": "EMJ-ship"
           }
         },
         {
           "candidate_id": "cand_2",
-          "value": 5,
+          "value": 4,
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-sailboat"
+          }
+        },
+        {
+          "candidate_id": "cand_3",
+          "value": 6,
+          "asset": {
+            "kind": "emoji",
+            "ref": "EMJ-bus"
+          }
+        },
+        {
+          "candidate_id": "cand_4",
+          "value": 8,
           "asset": {
             "kind": "emoji",
             "ref": "EMJ-bicycle"
           }
         },
         {
-          "candidate_id": "cand_3",
-          "value": 7,
-          "asset": {
-            "kind": "emoji",
-            "ref": "EMJ-motorcycle"
-          }
-        },
-        {
-          "candidate_id": "cand_4",
-          "value": 9,
-          "asset": {
-            "kind": "emoji",
-            "ref": "EMJ-airplane"
-          }
-        },
-        {
           "candidate_id": "cand_5",
-          "value": 11,
+          "value": 10,
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-ship"
+            "ref": "EMJ-train"
           }
         }
       ],
       "clues": [
         {
           "clue_id": "clue_1",
-          "text": "Số lượng lớn hơn 3",
+          "text": "Số lượng lớn hơn 6",
           "predicate": {
             "kind": "greater_than",
-            "value": 3
+            "value": 6
           }
         },
         {
           "clue_id": "clue_2",
-          "text": "Số lượng nhỏ hơn 7",
+          "text": "Số lượng nhỏ hơn 10",
           "predicate": {
             "kind": "less_than",
-            "value": 7
+            "value": 10
           }
         }
       ],
-      "answer_candidate_id": "cand_2"
+      "answer_candidate_id": "cand_4"
     },
     "difficulty_params": {
       "clue_count": 2,
@@ -1864,7 +1864,7 @@
       "title": "Nối điểm vẽ hình Bảng vẽ",
       "instruction": "Bé nối các điểm theo thứ tự để hoàn thành!",
       "theme_tag": "art",
-      "what_tags": ["matrix", "pattern", "logic"],
+      "what_tags": ["log", "pattern"],
       "thinking_tags": ["plan", "predict"],
       "skill_codes": ["C6.PLN.03"],
       "learning_objective_codes": [
@@ -1998,7 +1998,7 @@
       "title": "Nối điểm vẽ hình Hành tinh",
       "instruction": "Bé nối các điểm theo thứ tự để hoàn thành!",
       "theme_tag": "space",
-      "what_tags": ["matrix", "pattern", "logic"],
+      "what_tags": ["log", "pattern"],
       "thinking_tags": ["plan", "predict"],
       "skill_codes": ["C6.PLN.03"],
       "learning_objective_codes": [
@@ -2132,7 +2132,7 @@
       "title": "Dẫn đường qua mê cung",
       "instruction": "Bé chọn hướng đi vượt qua mê cung tới đích!",
       "theme_tag": "family",
-      "what_tags": ["maze"],
+      "what_tags": ["spt", "flw"],
       "thinking_tags": ["plan", "predict"],
       "skill_codes": ["C6.PLN.03"],
       "learning_objective_codes": [
@@ -2281,7 +2281,7 @@
       "title": "Dẫn đường qua mê cung",
       "instruction": "Bé chọn hướng đi vượt qua mê cung tới đích!",
       "theme_tag": "body",
-      "what_tags": ["maze"],
+      "what_tags": ["spt", "flw"],
       "thinking_tags": ["plan", "predict"],
       "skill_codes": ["C6.PLN.03"],
       "learning_objective_codes": [
