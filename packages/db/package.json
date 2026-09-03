@@ -44,6 +44,7 @@
     "check:round-sets": "tsx src/seed-content/gates/round-sets.ts",
     "check:legacy-v1": "tsx src/seed-content/gates/legacy-v1-coverage.ts",
     "check:engine-allocation": "tsx src/seed-content/gates/allocation.ts",
+    "check:age-band-fit": "tsx src/seed-content/gates/age-band-fit.ts",
     "gen:levels": "tsx src/seed-content/cli/gen-levels.ts",
     "gen:corpus": "tsx src/seed-content/cli/gen-corpus.ts",
     "reset-content": "tsx scripts/reset-content.ts",

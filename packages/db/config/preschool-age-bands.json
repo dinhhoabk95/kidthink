@@ -1,0 +1,28 @@
+{
+  "date": "2026-09-03",
+  "version": "1.0",
+  "description": "Trần giới hạn sư phạm biên soạn theo band tuổi mầm non (Task #159 / BR-PAR-01..07)",
+  "bands": {
+    "3-4": {
+      "difficulty_max": 2,
+      "estimated_minutes_max": 12,
+      "step_count_max": 2,
+      "concurrent_items_max": 4,
+      "criteria_max": 1
+    },
+    "4-5": {
+      "difficulty_max": 3,
+      "estimated_minutes_max": 18,
+      "step_count_max": 3,
+      "concurrent_items_max": 6,
+      "criteria_max": 2
+    },
+    "5-6": {
+      "difficulty_max": 5,
+      "estimated_minutes_max": 25,
+      "step_count_max": 4,
+      "concurrent_items_max": 8,
+      "criteria_max": 3
+    }
+  }
+}
